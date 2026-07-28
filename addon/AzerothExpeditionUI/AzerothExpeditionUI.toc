@@ -1,0 +1,10 @@
+## Interface: 11200
+## Title: Azeroth Expedition UI
+## Notes: Vanilla-style UI overhaul built as a visual adapter for pfUI.
+## Author: Azeroth Expedition
+## Version: 0.3.1
+## RequiredDeps: pfUI
+## SavedVariables: AzerothExpeditionUIDB
+
+Core\Bootstrap.lua
+Modules\Chat.lua

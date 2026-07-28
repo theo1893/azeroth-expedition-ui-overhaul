@@ -8,5 +8,6 @@ build/
 dist/
 release/
 archive/
+generated/
 *.zip
 *.log
