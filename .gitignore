@@ -1,0 +1,12 @@
+.DS_Store
+.idea/
+.vscode/
+*.tmp
+*.bak
+*.swp
+build/
+dist/
+release/
+archive/
+*.zip
+*.log
