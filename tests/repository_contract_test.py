@@ -207,6 +207,7 @@ def main() -> None:
     assert "## Version: 0.5.0" in aeui_toc
     bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(encoding="utf-8")
     assert 'addon.version = "0.5.0"' in bootstrap
+    assert "chat-runtime=" in bootstrap
 
     for toc_name in ("pfUI.toc", "pfUI-tbc.toc"):
         toc_source = (pfui / toc_name).read_text(encoding="utf-8-sig")
@@ -217,6 +218,14 @@ def main() -> None:
     assert "ChatPanelSegment" not in chat_source
     assert "SuppressLegacyInfoPanels" in chat_source
     assert "SuppressRightChat" in chat_source
+    assert 'Chat.runtimeContract = "1.6"' in chat_source
+    assert "InstallPfUIHooks" in chat_source
+    assert "InstallOwnerScaleHook" in chat_source
+    assert "ObserveOwnerScale" in chat_source
+    assert "RestoreRuntimeLayout" in chat_source
+    assert "startupLayoutForce" in chat_source
+    assert 'event == "UI_SCALE_CHANGED"' in chat_source
+    assert 'text:SetJustifyV("MIDDLE")' in chat_source
     for texture in (
         "ChatBookFrameV3",
         "ChatTabAtlasV3",
@@ -235,8 +244,49 @@ def main() -> None:
         / "ChatV3_RuntimeManifest_v1.json"
     )
     runtime_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    assert runtime_manifest["runtime_contract"] == "1.6"
     assert runtime_manifest["status"] == "runtime-exported"
     assert runtime_manifest["single_chat_frame"] is True
+    tab_runtime = runtime_manifest["tab"]["runtime"]
+    assert tab_runtime["height"] == 30
+    assert tab_runtime["top_offset"] == 2
+    assert tab_runtime["panel_height"] == 32
+    assert tab_runtime["content_top_inset"] == 32
+    assert tab_runtime["hit_rect_insets"] == [0, 0, 0, -8]
+    assert tab_runtime["selected_text_rgba"] == [1.0, 0.88, 0.62, 1.0]
+    assert tab_runtime["text_layout"] == {
+        "anchor": "CENTER",
+        "horizontal_inset": 6,
+        "height": 18,
+        "justify_h": "CENTER",
+        "justify_v": "MIDDLE",
+    }
+    assert tab_runtime["startup_settle_delay_seconds"] == 0.5
+    assert tab_runtime["scale_change_reflow"] == {
+        "owner_scale_hook": "pfChatLeft.OnMove",
+        "effective_scale_edge_detection": True,
+        "event_fallback": "UI_SCALE_CHANGED",
+        "event_delay_seconds": 0.5,
+        "force_geometry_once": True,
+        "ordinary_move_forces_geometry": False,
+        "covers": [
+            "tab_panel",
+            "tabs",
+            "tab_text",
+            "content_frames",
+            "hit_rect",
+        ],
+    }
+    assert tab_runtime["content_safe_area"] == {
+        "left": 30,
+        "right": 30,
+        "top": 32,
+        "bottom": 40,
+    }
+    assert tab_runtime["locked_movement_deferred_once"] is True
+    tab_shelf_runtime = runtime_manifest["tab_shelf"]["runtime"]
+    assert tab_shelf_runtime["height"] == 16
+    assert tab_shelf_runtime["top_offset"] == 18
     for record in runtime_manifest["runtime_exports"].values():
         runtime_path = ROOT / record["file"]
         assert runtime_path.is_file(), f"missing runtime media {record['file']}"
@@ -264,6 +314,13 @@ def main() -> None:
     pfui_chat = (pfui / "modules" / "chat.lua").read_text(encoding="utf-8")
     assert "single-journal route" in pfui_chat
     assert "AddSecondaryMessagesTo(ChatFrame1)" in pfui_chat
+    assert "not v.aeuiManaged" in pfui_chat
+    assert "not tabtext.aeuiManaged" in pfui_chat
+    pfui_unlock = (pfui / "modules" / "unlock.lua").read_text(
+        encoding="utf-8"
+    )
+    assert "frame:SetScale(scale)" in pfui_unlock
+    assert "if frame.OnMove then frame:OnMove() end" in pfui_unlock
     for message_group in (
         "COMBAT_XP_GAIN",
         "COMBAT_HONOR_GAIN",

@@ -48,6 +48,21 @@ TAB_BOXES = (
 )
 TAB_ATLAS_X_PIXELS = (4, 52, 204, 252)
 TAB_ATLAS_STATE_HEIGHT = 128
+TAB_RUNTIME_WIDTH = 92
+TAB_RUNTIME_HEIGHT = 30
+TAB_RUNTIME_GAP = 3
+TAB_RUNTIME_TOP_OFFSET = 2
+TAB_PANEL_HEIGHT = 32
+TAB_SHELF_TOP_OFFSET = 18
+TAB_SHELF_RUNTIME_HEIGHT = 16
+CHAT_CONTENT_TOP_INSET = 32
+TAB_HIT_BOTTOM_EXTENSION = 8
+TAB_STARTUP_SETTLE_DELAY = 0.50
+TAB_SELECTED_TEXT_RGBA = (1.00, 0.88, 0.62, 1.00)
+TAB_TEXT_HORIZONTAL_INSET = 6
+TAB_TEXT_RUNTIME_HEIGHT = 18
+CHAT_CONTENT_HORIZONTAL_INSET = 30
+CHAT_CONTENT_BOTTOM_INSET = 40
 
 INPUT_NORMAL_BOX = (51, 187, 1437, 363)
 INPUT_FOCUS_BOX = (51, 448, 1437, 625)
@@ -218,6 +233,60 @@ def build_tab_shelf(tabs_sheet: Image.Image) -> Image.Image:
     return atlas
 
 
+def build_runtime_tab(
+    atlas: Image.Image,
+    state_index: int,
+    width: int = TAB_RUNTIME_WIDTH,
+    height: int = TAB_RUNTIME_HEIGHT,
+) -> Image.Image:
+    row_top = state_index * TAB_ATLAS_STATE_HEIGHT
+    row_bottom = row_top + TAB_ATLAS_STATE_HEIGHT
+    source_x = TAB_ATLAS_X_PIXELS
+    target_x = (0, 16, width - 16, width)
+    output = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+
+    for index in range(3):
+        patch = atlas.crop(
+            (
+                source_x[index],
+                row_top,
+                source_x[index + 1],
+                row_bottom,
+            )
+        )
+        patch = patch.resize(
+            (target_x[index + 1] - target_x[index], height),
+            RESAMPLE,
+        )
+        output.alpha_composite(patch, (target_x[index], 0))
+    return output
+
+
+def build_tab_layout_preview(
+    book_preview: Image.Image,
+    tab_atlas: Image.Image,
+    shelf: Image.Image,
+) -> Image.Image:
+    """Reassemble the four-tab baseline at the exact runtime geometry."""
+
+    output = book_preview.copy()
+    output.alpha_composite(
+        shelf.resize((380, TAB_SHELF_RUNTIME_HEIGHT), RESAMPLE),
+        (30, TAB_SHELF_TOP_OFFSET),
+    )
+    states = (2, 0, 0, 0)
+    for index, state in enumerate(states):
+        tab = build_runtime_tab(tab_atlas, state)
+        output.alpha_composite(
+            tab,
+            (
+                30 + index * (TAB_RUNTIME_WIDTH + TAB_RUNTIME_GAP),
+                TAB_RUNTIME_TOP_OFFSET,
+            ),
+        )
+    return output.crop((0, 0, 440, 96))
+
+
 def build_input_atlas(controls_sheet: Image.Image) -> Image.Image:
     atlas = Image.new("RGBA", (1024, 256), (0, 0, 0, 0))
     for index, box in enumerate((INPUT_NORMAL_BOX, INPUT_FOCUS_BOX)):
@@ -353,6 +422,10 @@ def main() -> None:
         ),
         artifacts / "ChatRuntimeAtlasesPreview_v3.png",
     )
+    save_png(
+        build_tab_layout_preview(book_preview, tab_atlas, shelf),
+        artifacts / "ChatTabs_440x96_v3.png",
+    )
 
     source_images = {
         "frame": (args.frame, frame),
@@ -362,6 +435,7 @@ def main() -> None:
     manifest = {
         "schema_version": 2,
         "batch": "CHAT.CORE.V3",
+        "runtime_contract": "1.6",
         "status": "runtime-exported",
         "single_chat_frame": True,
         "sources": {
@@ -391,13 +465,73 @@ def main() -> None:
             },
             "source_state_crops": TAB_BOXES,
             "x_pixels": TAB_ATLAS_X_PIXELS,
-            "runtime": {"height": 42, "left": 16, "right": 16},
+            "runtime": {
+                "preferred_width": TAB_RUNTIME_WIDTH,
+                "height": TAB_RUNTIME_HEIGHT,
+                "left": 16,
+                "right": 16,
+                "gap": TAB_RUNTIME_GAP,
+                "top_offset": TAB_RUNTIME_TOP_OFFSET,
+                "panel_height": TAB_PANEL_HEIGHT,
+                "content_top_inset": CHAT_CONTENT_TOP_INSET,
+                "hit_rect_insets": (
+                    0,
+                    0,
+                    0,
+                    -TAB_HIT_BOTTOM_EXTENSION,
+                ),
+                "selected_text_rgba": TAB_SELECTED_TEXT_RGBA,
+                "text_layout": {
+                    "anchor": "CENTER",
+                    "horizontal_inset": TAB_TEXT_HORIZONTAL_INSET,
+                    "height": TAB_TEXT_RUNTIME_HEIGHT,
+                    "justify_h": "CENTER",
+                    "justify_v": "MIDDLE",
+                },
+                "startup_settle_delay_seconds": TAB_STARTUP_SETTLE_DELAY,
+                "scale_change_reflow": {
+                    "owner_scale_hook": "pfChatLeft.OnMove",
+                    "effective_scale_edge_detection": True,
+                    "event_fallback": "UI_SCALE_CHANGED",
+                    "event_delay_seconds": TAB_STARTUP_SETTLE_DELAY,
+                    "force_geometry_once": True,
+                    "ordinary_move_forces_geometry": False,
+                    "covers": (
+                        "tab_panel",
+                        "tabs",
+                        "tab_text",
+                        "content_frames",
+                        "hit_rect",
+                    ),
+                },
+                "content_safe_area": {
+                    "left": CHAT_CONTENT_HORIZONTAL_INSET,
+                    "right": CHAT_CONTENT_HORIZONTAL_INSET,
+                    "top": CHAT_CONTENT_TOP_INSET,
+                    "bottom": CHAT_CONTENT_BOTTOM_INSET,
+                },
+                "available_width": 380,
+                "overflow": "shrink equally when more than four tabs are docked",
+                "layout_trigger": (
+                    "initial Apply; synchronous post-pfUI RefreshChat, "
+                    "post-FCF_SelectDockFrame, post-FCF_DockUpdate, and "
+                    "post-FCF_SaveDock; one deferred final pass after startup; "
+                    "one forced reflow on a real pfChatLeft local/effective "
+                    "scale edge, with UI_SCALE_CHANGED as fallback"
+                ),
+                "locked_movement_deferred_once": True,
+                "maintenance_mutates_geometry": False,
+            },
         },
         "tab_shelf": {
             "source_crop": TAB_SHELF_BOX,
             "atlas": (1024, 64),
             "content_box": (4, 4, 1020, 60),
-            "runtime": {"width": 380, "height": 23},
+            "runtime": {
+                "width": 380,
+                "height": TAB_SHELF_RUNTIME_HEIGHT,
+                "top_offset": TAB_SHELF_TOP_OFFSET,
+            },
         },
         "input": {
             "atlas": (1024, 256),

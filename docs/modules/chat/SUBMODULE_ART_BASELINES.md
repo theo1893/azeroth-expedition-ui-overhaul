@@ -23,8 +23,10 @@ legacy 信息底栏。
 生成一条连续书页承托带，以及普通、悬停、选中、禁用四枚无字皮革索引签。
 四状态外接尺寸与点击几何相同，均可拆为左端帽、可横向延展中段和右端帽。
 普通状态后退且偏暗；悬停仅在边缘出现短暖光；选中状态向前抬起并自然压住
-承托带；禁用状态降低对比但保持轮廓。不得做成网页 Tab、矩形卡片、胶囊按钮
-或独立金属牌。
+承托带；禁用状态降低对比但保持轮廓。选中签文字由 runtime 使用亮暖金，
+并以每枚真实 Tab 的视觉中心为锚点，不得因 pfUI 默认底边锚点向上偏移，也
+不得因状态切换变成贴近皮革底色的黑褐字。不得做成网页 Tab、矩形卡片、
+胶囊按钮或独立金属牌。
 
 已接受源：
 [ChatTabs_Master_v3.png](../../../assets/source/chat/v3/ChatTabs_Master_v3.png)。
@@ -53,11 +55,13 @@ legacy 信息底栏。
 
 ## 尚未锁定的真实控件
 
-`CHAT.INPUT.LANGUAGE`、`CHAT.POPUP.*`、`CHAT.URLCOPY.*`、`CHAT.COPY.*`
-与 `CHAT.WHISPER.TOGGLE` 已登记真实对象，但没有经过用户视觉验收，因此
-没有可执行美术 Prompt。它们暂时保持原生／不加载；取得实机几何并锁定方向
-后，才能在本文件增加稳定条款。`CHAT.WHISPER.DIALOG` 归未来 System 公共
-弹窗，不在 Chat 中独立生成。
+`CHAT.INPUT.LANGUAGE`、`CHAT.POPUP.*`、`CHAT.URLCOPY.*` 与
+`CHAT.WHISPER.TOGGLE` 已登记真实对象，但没有经过用户视觉验收，因此没有
+可执行美术 Prompt。`CHAT.COPY.*` 的
+[`CHAT.COPY.V1`](work/CHAT.COPY.V1.md) 已获用户执行授权，但尚未生成或通过
+视觉验收，不能在此凝结为稳定条款，也不能恢复加载。其余对象暂时保持原生／
+不加载；取得实机几何并锁定方向后，才能在本文件增加稳定条款。
+`CHAT.WHISPER.DIALOG` 归未来 System 公共弹窗，不在 Chat 中独立生成。
 
 `CHAT.SCROLL.UP`、`CHAT.SCROLL.DOWN`、`CHAT.SCROLL.BOTTOM`、
 `CHAT.MENU.BUTTON` 与 `CHAT.RESIZE` 当前由 pfUI 明确隐藏，不生产占位资产。
@@ -71,7 +75,8 @@ legacy 信息底栏。
 - V3 主框源尺寸：`1608 × 978` RGBA。
 - V3 Tab 源尺寸：`1774 × 887` RGBA。
 - V3 控件源尺寸：`1536 × 1024` RGBA。
-- `440 × 320` 合成验证使用 `380 × 236` 正文安全区。
+- V3 source 接受时的 `440 × 320` 合成验证使用 `380 × 236` 正文安全区；
+  runtime contract v1.2 压缩 Tab 后把正文扩展为 `380 × 248`，不改变 source。
 - 当前只允许一个左侧运行时聊天书；右侧框无资产。
 - 已停用的底栏字段即使仍存在于控件母版，也不得由 exporter 裁切或 runtime
   挂载。

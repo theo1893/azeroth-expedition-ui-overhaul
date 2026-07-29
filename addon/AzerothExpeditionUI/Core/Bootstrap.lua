@@ -141,10 +141,15 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       expedition and
       expedition.enabled == "1" and
       expedition.native_blizzard_skins == "1"
+    local chatRuntime =
+      addon.modules.Chat and
+      addon.modules.Chat.runtimeContract or
+      "unknown"
     addon:Print(
       "version " .. addon.version ..
       ", chat=" ..
       (AzerothExpeditionUIDB.chat.enabled and "enabled" or "disabled") ..
+      ", chat-runtime=" .. tostring(chatRuntime) ..
       ", pfUI=" .. (pfUI and "available" or "missing") ..
       ", route=" .. (nativeFallback and "native-first" or "pfui") ..
       ", blizzard-skins=" .. (nativeSkins and "native" or "pfui")

@@ -22,6 +22,7 @@ local function NewObject(name, parent)
     parent = parent,
     width = 0,
     height = 0,
+    scale = 1,
     shown = true,
     points = {},
     scripts = {},
@@ -30,6 +31,9 @@ local function NewObject(name, parent)
     clearAllPointsCalls = 0,
     setPointCalls = 0,
     setParentCalls = 0,
+    setWidthCalls = 0,
+    setHeightCalls = 0,
+    hitRectCalls = 0,
   }, Object)
   if name then
     _G[name] = value
@@ -37,7 +41,10 @@ local function NewObject(name, parent)
   return value
 end
 
-function Object:RegisterEvent() end
+function Object:RegisterEvent(value)
+  self.events = self.events or {}
+  self.events[value] = true
+end
 function Object:SetFrameStrata() end
 function Object:SetFrameLevel() end
 function Object:SetBlendMode() end
@@ -50,11 +57,34 @@ function Object:SetBackdropBorderColor(...) self.borderColor = { ... } end
 function Object:SetTextColor(...) self.textColor = { ... } end
 function Object:SetFont(...) self.font = { ... } end
 function Object:SetJustifyH(value) self.justifyH = value end
+function Object:SetJustifyV(value) self.justifyV = value end
 function Object:SetTextInsets(...) self.textInsets = { ... } end
-function Object:SetHeight(value) self.height = value end
-function Object:SetWidth(value) self.width = value end
+function Object:SetHitRectInsets(...)
+  self.hitRectCalls = self.hitRectCalls + 1
+  self.hitRectInsets = { ... }
+end
+function Object:SetHeight(value)
+  self.setHeightCalls = self.setHeightCalls + 1
+  self.height = value
+end
+function Object:SetWidth(value)
+  self.setWidthCalls = self.setWidthCalls + 1
+  self.width = value
+end
 function Object:GetHeight() return self.height end
 function Object:GetWidth() return self.width end
+function Object:SetScale(value) self.scale = value end
+function Object:GetScale() return self.scale end
+function Object:GetEffectiveScale()
+  local parentScale = 1
+  if
+    type(self.parent) == "table" and
+    self.parent.GetEffectiveScale
+  then
+    parentScale = self.parent:GetEffectiveScale()
+  end
+  return self.scale * parentScale
+end
 function Object:GetParent() return self.parent end
 function Object:SetParent(parent)
   self.setParentCalls = self.setParentCalls + 1
@@ -73,6 +103,13 @@ function Object:SetPoint(...)
   self.setPointCalls = self.setPointCalls + 1
   table.insert(self.points, { ... })
 end
+function Object:GetPoint(index)
+  local point = self.points[index or 1]
+  if point then
+    return table.unpack(point)
+  end
+end
+function Object:GetNumPoints() return #self.points end
 function Object:SetAllPoints(target) self.allPoints = target end
 function Object:SetScript(kind, callback) self.scripts[kind] = callback end
 function Object:GetScript(kind) return self.scripts[kind] end
@@ -101,11 +138,62 @@ function hooksecurefunc(name, callback)
   end
 end
 
+local simulateNativeSelectionLayout = false
 function FCF_SelectDockFrame(frame)
   SELECTED_CHAT_FRAME = frame
+  if simulateNativeSelectionLayout then
+    frame:ClearAllPoints()
+    frame:SetPoint("TOPLEFT", pfChatLeft, "TOPLEFT", 5, -25)
+    frame:SetPoint(
+      "BOTTOMRIGHT",
+      pfChatLeft,
+      "BOTTOMRIGHT",
+      -5,
+      25
+    )
+  end
 end
 
-function FCF_DockUpdate() end
+local simulateNativeDockLayout = false
+function FCF_DockUpdate()
+  if not simulateNativeDockLayout then
+    return
+  end
+
+  for index = 1, NUM_CHAT_WINDOWS do
+    local tab = _G["ChatFrame" .. index .. "Tab"]
+    tab:ClearAllPoints()
+    tab:SetPoint(
+      "LEFT",
+      leftChatPanelTop,
+      "LEFT",
+      (index - 1) * 72,
+      0
+    )
+    tab:SetWidth(72)
+    tab:SetHeight(18)
+  end
+end
+
+local simulateNativeSaveDockLayout = false
+function FCF_SaveDock()
+  if not simulateNativeSaveDockLayout then
+    return
+  end
+
+  for index = 1, NUM_CHAT_WINDOWS do
+    local frame = _G["ChatFrame" .. index]
+    frame:ClearAllPoints()
+    frame:SetPoint("TOPLEFT", pfChatLeft, "TOPLEFT", 5, -25)
+    frame:SetPoint(
+      "BOTTOMRIGHT",
+      pfChatLeft,
+      "BOTTOMRIGHT",
+      -5,
+      25
+    )
+  end
+end
 
 UIParent = NewObject("UIParent", nil)
 DEFAULT_CHAT_FRAME = {
@@ -149,20 +237,27 @@ local minimapPanel = CreateFrame("Frame", "pfPanelMinimap", UIParent)
 
 NUM_CHAT_WINDOWS = 4
 for index = 1, NUM_CHAT_WINDOWS do
-  local parent = index <= 2 and left or UIParent
+  local parent = left
   local frame = CreateFrame("ScrollingMessageFrame", "ChatFrame" .. index, parent)
-  frame.isDocked = index <= 2
+  frame.isDocked = true
   frame:SetPoint("TOPLEFT", parent, "TOPLEFT", 3, -24)
   local tab = CreateFrame("Button", "ChatFrame" .. index .. "Tab", left.panelTop)
-  tab.shown = index <= 2
+  tab.shown = true
   tab:SetPoint("LEFT", left.panelTop, "LEFT", (index - 1) * 80, 0)
   NewObject("ChatFrame" .. index .. "TabText", tab)
   local flash = NewObject("ChatFrame" .. index .. "TabFlash", tab)
   flash:Hide()
 end
 SELECTED_CHAT_FRAME = ChatFrame1
+DOCKED_CHAT_FRAMES = {
+  ChatFrame1,
+  ChatFrame2,
+  ChatFrame3,
+  ChatFrame4,
+}
 
 local refreshCount = 0
+local simulatePfUIRefreshLayout = false
 pfUI = {
   font_default = "pfui-font.ttf",
   chat = {
@@ -171,6 +266,27 @@ pfUI = {
     editbox = input,
     RefreshChat = function()
       refreshCount = refreshCount + 1
+      if simulatePfUIRefreshLayout then
+        for index = 1, NUM_CHAT_WINDOWS do
+          local frame = _G["ChatFrame" .. index]
+          local text = _G["ChatFrame" .. index .. "TabText"]
+          frame:ClearAllPoints()
+          frame:SetPoint("TOPLEFT", left, "TOPLEFT", 5, -25)
+          frame:SetPoint(
+            "BOTTOMRIGHT",
+            left,
+            "BOTTOMRIGHT",
+            -5,
+            25
+          )
+          text:ClearAllPoints()
+          text:SetPoint("BOTTOM", text.parent, "BOTTOM", 0, 1)
+          text:SetWidth(32)
+          text:SetHeight(14)
+          text:SetJustifyH("LEFT")
+          text:SetJustifyV("BOTTOM")
+        end
+      end
     end,
   },
   panel = {
@@ -179,6 +295,9 @@ pfUI = {
     minimap = minimapPanel,
   },
 }
+left.OnMove = function()
+  pfUI.chat:RefreshChat()
+end
 pfUI_config = {
   chat = {
     right = {
@@ -246,13 +365,94 @@ assert(
   ChatFrame1Tab.aeuiVisualState == "selected",
   "selected chat tab state was not applied"
 )
+assert(
+  ChatFrame1TabText.textColor[1] >= 0.95 and
+  ChatFrame1TabText.textColor[2] >= 0.80,
+  "selected chat tab text does not remain readable"
+)
+assert(
+  #ChatFrame1TabText.points == 1 and
+  ChatFrame1TabText.points[1][1] == "CENTER" and
+  ChatFrame1TabText.points[1][2] == ChatFrame1Tab and
+  ChatFrame1TabText.points[1][3] == "CENTER" and
+  ChatFrame1TabText.justifyH == "CENTER" and
+  ChatFrame1TabText.justifyV == "MIDDLE",
+  "chat tab text was not centered inside the runtime button"
+)
+assert(
+  ChatFrame1TabText:GetWidth() == 80 and
+  ChatFrame1TabText:GetHeight() == 18 and
+  ChatFrame1TabText.aeuiManaged,
+  "chat tab text safe area was not applied"
+)
 assert(ChatFrame1Tab:GetWidth() == 92, "chat tab width contract changed")
-assert(ChatFrame1Tab:GetHeight() == 42, "chat tab height contract changed")
+assert(ChatFrame1Tab:GetHeight() == 30, "chat tab height contract changed")
+assert(
+  ChatFrame1Tab.hitRectInsets[4] == -8,
+  "chat tab hit area was not extended over the lower visual body"
+)
+assert(
+  left.panelTop:GetHeight() == 32,
+  "compact chat tab panel height was not applied"
+)
+assert(
+  left.aeuiTabShelf:GetHeight() == 16 and
+  left.aeuiTabShelf.points[1][5] == -18,
+  "compact tab shelf geometry was not applied"
+)
+assert(
+  ChatFrame1.points[1][5] == -32,
+  "chat text did not reclaim the space below the compact tabs"
+)
+assert(
+  left.aeuiTabLayoutCount == 4,
+  "docked chat tab count was not recorded"
+)
+assert(
+  ChatFrame2Tab.points[1][4] == 95 and
+  ChatFrame4Tab.points[1][4] == 285,
+  "four docked chat tabs do not use the three-pixel runtime gap"
+)
+assert(
+  ChatFrame1Tab.aeuiStateSlices.left.aeuiManaged,
+  "AEUI tab slices were not protected from pfUI region resizing"
+)
 assert(
   ChatFrameEditBox.aeuiInputState == "normal",
   "chat input did not start in its normal state"
 )
 assert(refreshCount >= 1, "pfUI chat refresh was not retained")
+
+local chatModule = AzerothExpeditionUI.modules.Chat
+assert(
+  chatModule.startupLayoutAt,
+  "startup tab finalization was not scheduled"
+)
+for index = 1, NUM_CHAT_WINDOWS do
+  local tab = _G["ChatFrame" .. index .. "Tab"]
+  tab:ClearAllPoints()
+  tab:SetPoint(
+    "LEFT",
+    leftChatPanelTop,
+    "LEFT",
+    (index - 1) * 72,
+    0
+  )
+  tab:SetWidth(72)
+  tab:SetHeight(18)
+end
+clock = chatModule.startupLayoutAt + 0.01
+chatModule.driver.scripts.OnUpdate()
+assert(
+  ChatFrame1Tab:GetHeight() == 30 and
+  ChatFrame4Tab.points[1][4] == 285,
+  "late startup layout was not corrected without a tab click"
+)
+assert(
+  left.aeuiStartupLayoutFinalized and
+  chatModule.startupLayoutAt == nil,
+  "startup layout finalization did not complete exactly once"
+)
 
 SlashCmdList.AZEROTHEXPEDITIONUI("status")
 local statusMessage =
@@ -262,13 +462,106 @@ assert(
   "status command did not report the native-first route"
 )
 assert(
+  string.find(statusMessage, "chat-runtime=1.6", 1, true),
+  "status command did not report the chat runtime contract"
+)
+assert(
   string.find(statusMessage, "blizzard-skins=native", 1, true),
   "status command did not report native Blizzard skins"
+)
+
+local scaleTabWidthCalls = ChatFrame1Tab.setWidthCalls
+local scaleTabHeightCalls = ChatFrame1Tab.setHeightCalls
+local scaleTabPointCalls = ChatFrame1Tab.setPointCalls
+local scaleTextWidthCalls = ChatFrame1TabText.setWidthCalls
+local scaleFramePointCalls = ChatFrame1.setPointCalls
+local scaleHitRectCalls = ChatFrame1Tab.hitRectCalls
+event = "UI_SCALE_CHANGED"
+chatModule.driver.scripts.OnEvent()
+event = nil
+assert(
+  chatModule.startupLayoutForce,
+  "UI scale change did not schedule a forced runtime layout"
+)
+local scaleLayoutAt = chatModule.startupLayoutAt
+AzerothExpeditionUI:Refresh()
+assert(
+  chatModule.startupLayoutForce and
+  chatModule.startupLayoutAt == scaleLayoutAt,
+  "normal addon refresh discarded the pending scale reflow"
+)
+assert(
+  ChatFrame1Tab.setWidthCalls == scaleTabWidthCalls and
+  ChatFrame1Tab.setHeightCalls == scaleTabHeightCalls,
+  "normal refresh rewrote clean tab geometry before scale settle"
+)
+clock = chatModule.startupLayoutAt + 0.01
+chatModule.driver.scripts.OnUpdate()
+assert(
+  ChatFrame1Tab.setWidthCalls > scaleTabWidthCalls and
+  ChatFrame1Tab.setHeightCalls > scaleTabHeightCalls and
+  ChatFrame1Tab.setPointCalls > scaleTabPointCalls and
+  ChatFrame1TabText.setWidthCalls > scaleTextWidthCalls and
+  ChatFrame1.setPointCalls > scaleFramePointCalls and
+  ChatFrame1Tab.hitRectCalls > scaleHitRectCalls,
+  "UI scale settle did not force a one-shot geometry reflow"
+)
+assert(
+  left.aeuiScaleLayoutFinalized and
+  not chatModule.startupLayoutForce and
+  not chatModule.runtimeLayoutForce,
+  "UI scale forced reflow did not finish exactly once"
+)
+
+local ownerScaleTabWidthCalls = ChatFrame1Tab.setWidthCalls
+local ownerScaleTabHeightCalls = ChatFrame1Tab.setHeightCalls
+local ownerScaleTabPointCalls = ChatFrame1Tab.setPointCalls
+local ownerScaleFramePointCalls = ChatFrame1.setPointCalls
+left:SetScale(1.2)
+left:OnMove()
+assert(
+  left.aeuiObservedScale == 1.2 and
+  left.aeuiScaleChangeCount == 1,
+  "pfUI owner scale change was not observed through pfChatLeft.OnMove"
+)
+assert(
+  ChatFrame1Tab.setWidthCalls > ownerScaleTabWidthCalls and
+  ChatFrame1Tab.setHeightCalls > ownerScaleTabHeightCalls and
+  ChatFrame1Tab.setPointCalls > ownerScaleTabPointCalls and
+  ChatFrame1.setPointCalls > ownerScaleFramePointCalls,
+  "pfUI owner scale change did not force an immediate tab reflow"
+)
+
+local moveOnlyTabWidthCalls = ChatFrame1Tab.setWidthCalls
+local moveOnlyTabPointCalls = ChatFrame1Tab.setPointCalls
+local moveOnlyFramePointCalls = ChatFrame1.setPointCalls
+left:OnMove()
+assert(
+  ChatFrame1Tab.setWidthCalls == moveOnlyTabWidthCalls and
+  ChatFrame1Tab.setPointCalls == moveOnlyTabPointCalls and
+  ChatFrame1.setPointCalls == moveOnlyFramePointCalls,
+  "ordinary pfUI movement forced clean geometry without a scale edge"
+)
+
+local effectiveScaleTabWidthCalls = ChatFrame1Tab.setWidthCalls
+local effectiveScaleTabPointCalls = ChatFrame1Tab.setPointCalls
+UIParent:SetScale(0.8)
+chatModule:Maintain()
+assert(
+  left.aeuiObservedEffectiveScale == 0.96 and
+  left.aeuiScaleChangeCount == 2,
+  "effective UI scale edge was not observed without UI_SCALE_CHANGED"
+)
+assert(
+  ChatFrame1Tab.setWidthCalls > effectiveScaleTabWidthCalls and
+  ChatFrame1Tab.setPointCalls > effectiveScaleTabPointCalls,
+  "effective UI scale edge did not force a one-shot tab reflow"
 )
 
 local geometryTargets = {
   ChatFrame1,
   ChatFrame1Tab,
+  ChatFrame1TabText,
   input,
   panel,
 }
@@ -307,18 +600,61 @@ for _, target in ipairs(geometryTargets) do
   )
 end
 
+simulateNativeSelectionLayout = true
+FCF_SelectDockFrame(ChatFrame3)
+simulateNativeSelectionLayout = false
+assert(
+  ChatFrame3.points[1][4] == 30 and
+  ChatFrame3.points[1][5] == -32 and
+  ChatFrame3.points[2][4] == -30 and
+  ChatFrame3.points[2][5] == 40,
+  "tab selection did not restore the chat content safe area"
+)
+
+simulatePfUIRefreshLayout = true
+pfUI.chat:RefreshChat()
+simulatePfUIRefreshLayout = false
+assert(
+  ChatFrame1.points[1][4] == 30 and
+  ChatFrame1.points[1][5] == -32 and
+  ChatFrame1.points[2][4] == -30 and
+  ChatFrame1.points[2][5] == 40,
+  "pfUI RefreshChat overrode the chat content safe area"
+)
+assert(
+  ChatFrame1TabText.points[1][1] == "CENTER" and
+  ChatFrame1TabText.justifyH == "CENTER" and
+  ChatFrame1TabText.justifyV == "MIDDLE",
+  "pfUI RefreshChat overrode the centered tab text"
+)
+
+simulateNativeSaveDockLayout = true
+FCF_SaveDock()
+simulateNativeSaveDockLayout = false
+assert(
+  ChatFrame1.points[1][4] == 30 and
+  ChatFrame1.points[2][4] == -30,
+  "FCF_SaveDock overrode the chat content safe area"
+)
+
 pfUI.chat.hideLock = true
 SELECTED_CHAT_FRAME = ChatFrame1
-AzerothExpeditionUI.modules.Chat:Maintain()
+simulatePfUIRefreshLayout = true
+pfUI.chat:RefreshChat()
+simulatePfUIRefreshLayout = false
 assert(
-  ChatFrame2Tab.aeuiVisualState == "selected",
-  "visual maintenance ran while pfUI was moving a chat frame"
+  chatModule.runtimeLayoutPending and
+  ChatFrame1.points[1][4] == 5,
+  "pfUI movement did not defer the runtime layout restore"
 )
 pfUI.chat.hideLock = false
-AzerothExpeditionUI.modules.Chat:Maintain()
+chatModule.driver.scripts.OnUpdate()
 assert(
+  not chatModule.runtimeLayoutPending and
+  ChatFrame1.points[1][4] == 30 and
+  ChatFrame1.points[2][4] == -30 and
   ChatFrame1Tab.aeuiVisualState == "selected",
-  "visual maintenance did not resume after pfUI movement"
+  "runtime layout did not restore once after pfUI movement"
 )
 
 ChatFrame2Tab.scripts.OnEnter()
@@ -339,6 +675,25 @@ assert(
   "disabled chat tab state was not applied"
 )
 ChatFrame2Tab.enabled = true
+
+simulateNativeDockLayout = true
+FCF_DockUpdate()
+simulateNativeDockLayout = false
+assert(
+  ChatFrame1Tab:GetWidth() == 92 and
+  ChatFrame4Tab:GetWidth() == 92,
+  "native dock refresh overrode the AEUI tab width"
+)
+assert(
+  ChatFrame1Tab:GetHeight() == 30 and
+  ChatFrame4Tab:GetHeight() == 30,
+  "native dock refresh overrode the AEUI tab height"
+)
+assert(
+  ChatFrame1Tab.points[1][5] == -2 and
+  ChatFrame4Tab.points[1][4] == 285,
+  "AEUI tab geometry was not restored synchronously after docking"
+)
 
 ChatFrame2TabFlash:Show()
 AzerothExpeditionUI.modules.Chat:Maintain()

@@ -23,7 +23,7 @@
 | `CHAT.FRAME` | 左侧物理资产合同 | 空战地旧书九宫格 | 不含 Tab、文字、输入、滚动或固定槽 |
 | `CHAT.FRAME.LEFT` | `pfUI.chat.left`／`pfChatLeft` | `CHAT.FRAME` 的左侧运行时实例 | 保留移动、尺寸和左侧停靠行为 |
 | `CHAT.FRAME.RIGHT` | `pfUI.chat.right`／`pfChatRight` | 明确停用的兼容对象；`C.chat.right.enable=0` | 强制隐藏，不分配 AEUI 资产；源码保留以便关闭 overhaul 后对照 |
-| `CHAT.TABS` | `pfUI.chat.left.panelTop`、左侧 `ChatFrameNTab` | 连续承托带；普通／悬停／选中／禁用 Tab，各自三段式 | 状态切换不改变点击框；Tab 文字运行时绘制 |
+| `CHAT.TABS` | `pfUI.chat.left.panelTop`、左侧 `ChatFrameNTab`／`ChatFrameNTabText` | 连续承托带；普通／悬停／选中／禁用 Tab，各自三段式；运行时文字居中 | 普通布局事件后按需恢复共同几何；`pfChatLeft.OnMove` 中检测真实局部 Scale 边沿并立即强制重放一次，现有维护节拍只检测 EffectiveScale 边沿作为全局缩放兜底；登录后只做一次延迟终局装配；普通状态维护只换 UV |
 | `CHAT.UNREAD` | `ChatFrameNTabFlash` | 蜡封或布结显示／隐藏 | 独立覆盖，不参与 Tab 排列 |
 | `CHAT.INPUT` | `pfUI.chat.editbox`、`ChatFrameEditBox` | 普通／聚焦输入纸带，各自左／中／右 | 两状态几何完全相同；不烘焙输入文字 |
 | `CHAT.INPUT.LANGUAGE` | 可选 `ChatFrameEditBoxLanguage` | 普通／悬停／按下／禁用／当前语言 | 独立 Button，不画进输入纸带 |
@@ -55,9 +55,21 @@
 ## 标准几何
 
 - 唯一聊天书基准容器：`440 × 320 UI px`；`pfChatRight` 不参与布局或资产。
-- 正文安全区：`x=30..410`、`y=44..280`，即 `380 × 236 UI px`。
-- 最低容量：12px 字号、14px 行高时 16 行中文。
-- Tab：约 `92 × 42 UI px`，四个共用底线与点击画布。
+- 正文安全区：`x=30..410`、`y=32..280`，即 `380 × 248 UI px`。
+- 最低容量：12px 字号、14px 行高时 17 行中文。
+- Tab：四枚基准为 `92 × 30 UI px`、间距 `3px`、顶部下移 `2px`，共用
+  底线与点击画布；承托带高 `16px`、顶部下移 `18px`；超过四枚时只在
+  停靠事件后等宽收缩。
+- Tab 命中区：视觉与 Button 高度仍为 `30px`，只把底部命中边界向下扩展
+  `8px`，覆盖皮革主体，不改变纹理比例或相邻 Tab 排列。
+- Tab 文字：以真实 Button 的 `CENTER` 为唯一锚点，水平各留 `6px`、文字区高
+  `18px`，水平 `CENTER`／垂直 `MIDDLE`；pfUI 不再覆盖受管文字几何。
+- UI Scale：逻辑尺寸仍为上述 UI px。pfUI 解锁界面的缩放路径直接对
+  `pfChatLeft:SetScale` 并随后调用 `pfChatLeft.OnMove`，不会可靠触发
+  `UI_SCALE_CHANGED`；因此在 `OnMove` 返回后只于 LocalScale／
+  EffectiveScale 真正变化时立即强制重放一次 panel、四枚 Tab、TabText、
+  正文锚点与命中区。现有维护节拍只比较 EffectiveScale 边沿，用于捕获
+  `UIParent:SetScale` 等无事件路径；数值未变的普通拖动不得重放几何。
 - 输入条：`380 × 25 UI px`。
 - 未读覆盖：约 `16 × 16 UI px`。
 - 还需检查 `540 × 420` 与常用 UI Scale；默认最小值不会产生 `400 × 300`。
@@ -70,5 +82,15 @@
   `COMBAT_FACTION_CHANGE`、`SKILL` 与 `LOOT` 必须回收到 `ChatFrame1`，
   不能因隐藏右框而丢失。
 - 周期维护不得持续重写 Parent、Point 或尺寸。
+- `PLAYER_ENTERING_WORLD`／刷新后的 `0.5s` 终局装配只允许执行一次；用于
+  吸收 pfUI／原生登录时序，不得退化为周期几何抢写。
+- `pfUI.chat.RefreshChat`、`FCF_SelectDockFrame`、`FCF_DockUpdate` 与
+  `FCF_SaveDock` 如果改变 Tab 或正文锚点，只在事件返回后恢复偏离合同的
+  对象；拖动锁期间记一枚 pending 标志，解锁后的下一帧恢复一次。几何已
+  正确时不得重复改写。
+- 缩放边沿是唯一例外：pfUI owner 的真实 Scale 变化立即执行一次强制
+  reflow；`UI_SCALE_CHANGED` 保留为事件兜底，现有维护节拍只在
+  EffectiveScale 数值变化时触发一次。无缩放的普通拖动和后续周期维护均
+  不得重写几何。
 - 禁用 AEUI 后回退 pfUI 维护分支；对象缺失时局部回退。
 - legacy 信息 panel 不得因聊天重构重新挂载。

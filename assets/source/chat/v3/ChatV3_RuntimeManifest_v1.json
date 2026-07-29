@@ -1,6 +1,7 @@
 {
   "schema_version": 2,
   "batch": "CHAT.CORE.V3",
+  "runtime_contract": "1.6",
   "status": "runtime-exported",
   "single_chat_frame": true,
   "sources": {
@@ -116,9 +117,60 @@
       252
     ],
     "runtime": {
-      "height": 42,
+      "preferred_width": 92,
+      "height": 30,
       "left": 16,
-      "right": 16
+      "right": 16,
+      "gap": 3,
+      "top_offset": 2,
+      "panel_height": 32,
+      "content_top_inset": 32,
+      "hit_rect_insets": [
+        0,
+        0,
+        0,
+        -8
+      ],
+      "selected_text_rgba": [
+        1.0,
+        0.88,
+        0.62,
+        1.0
+      ],
+      "text_layout": {
+        "anchor": "CENTER",
+        "horizontal_inset": 6,
+        "height": 18,
+        "justify_h": "CENTER",
+        "justify_v": "MIDDLE"
+      },
+      "startup_settle_delay_seconds": 0.5,
+      "scale_change_reflow": {
+        "owner_scale_hook": "pfChatLeft.OnMove",
+        "effective_scale_edge_detection": true,
+        "event_fallback": "UI_SCALE_CHANGED",
+        "event_delay_seconds": 0.5,
+        "force_geometry_once": true,
+        "ordinary_move_forces_geometry": false,
+        "covers": [
+          "tab_panel",
+          "tabs",
+          "tab_text",
+          "content_frames",
+          "hit_rect"
+        ]
+      },
+      "content_safe_area": {
+        "left": 30,
+        "right": 30,
+        "top": 32,
+        "bottom": 40
+      },
+      "available_width": 380,
+      "overflow": "shrink equally when more than four tabs are docked",
+      "layout_trigger": "initial Apply; synchronous post-pfUI RefreshChat, post-FCF_SelectDockFrame, post-FCF_DockUpdate, and post-FCF_SaveDock; one deferred final pass after startup; one forced reflow on a real pfChatLeft local/effective scale edge, with UI_SCALE_CHANGED as fallback",
+      "locked_movement_deferred_once": true,
+      "maintenance_mutates_geometry": false
     }
   },
   "tab_shelf": {
@@ -140,7 +192,8 @@
     ],
     "runtime": {
       "width": 380,
-      "height": 23
+      "height": 16,
+      "top_offset": 18
     }
   },
   "input": {

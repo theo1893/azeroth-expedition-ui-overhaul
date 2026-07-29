@@ -401,7 +401,9 @@ pfUI:RegisterModule("chat", "vanilla:tbc", function ()
       -- hide textures
       for j,v in ipairs({tab:GetRegions()}) do
         if j==5 then v:SetTexture(0,0,0,0) end
-        v:SetHeight(C.global.font_size+default_border*2)
+        if not v.aeuiManaged then
+          v:SetHeight(C.global.font_size+default_border*2)
+        end
       end
 
       -- remove background on docked frames
@@ -423,9 +425,12 @@ pfUI:RegisterModule("chat", "vanilla:tbc", function ()
       end
 
       _G["ChatFrame" .. i .. "ResizeBottom"]:Hide()
-      _G["ChatFrame" .. i .. "TabText"]:SetJustifyV("CENTER")
-      _G["ChatFrame" .. i .. "TabText"]:SetHeight(C.global.font_size+default_border*2)
-      _G["ChatFrame" .. i .. "TabText"]:SetPoint("BOTTOM", 0, default_border)
+      local tabtext = _G["ChatFrame" .. i .. "TabText"]
+      if not tabtext.aeuiManaged then
+        tabtext:SetJustifyV("CENTER")
+        tabtext:SetHeight(C.global.font_size+default_border*2)
+        tabtext:SetPoint("BOTTOM", 0, default_border)
+      end
       _G["ChatFrame" .. i .. "TabLeft"]:SetAlpha(0)
       _G["ChatFrame" .. i .. "TabMiddle"]:SetAlpha(0)
       _G["ChatFrame" .. i .. "TabRight"]:SetAlpha(0)

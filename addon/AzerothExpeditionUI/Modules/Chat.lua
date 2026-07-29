@@ -1,5 +1,6 @@
 local addon = AzerothExpeditionUI
 local Chat = {}
+Chat.runtimeContract = "1.6"
 
 local CHAT_MEDIA = addon.media.root .. "Chat\\"
 local BOOK_TEXTURE = CHAT_MEDIA .. "ChatBookFrameV3"
@@ -49,8 +50,23 @@ local INPUT_Y = {
 
 local COLORS = {
   text = { 0.900, 0.790, 0.570, 1.00 },
-  textSelected = { 0.190, 0.095, 0.035, 1.00 },
+  textSelected = { 1.000, 0.880, 0.620, 1.00 },
   textDisabled = { 0.460, 0.400, 0.320, 1.00 },
+}
+
+local TAB_LAYOUT = {
+  preferredWidth = 92,
+  height = 30,
+  gap = 3,
+  topOffset = 2,
+  panelHeight = 32,
+  shelfTopOffset = 18,
+  shelfHeight = 16,
+  contentTopInset = 32,
+  hitBottomExtension = 8,
+  startupSettleDelay = 0.50,
+  textHorizontalInset = 6,
+  textHeight = 18,
 }
 
 local function ConfigureBookSlice(
@@ -125,6 +141,9 @@ local function EnsureHorizontalSlices(
       0,
       0
     )
+    slices.left.aeuiManaged = true
+    slices.center.aeuiManaged = true
+    slices.right.aeuiManaged = true
     parent[key] = slices
   end
 
@@ -218,6 +237,110 @@ local function IsDisabled(tab)
   return false
 end
 
+local function NearlyEqual(left, right)
+  return
+    type(left) == "number" and
+    type(right) == "number" and
+    math.abs(left - right) < 0.01
+end
+
+local function GetOwnerScale(owner)
+  local scale = 1
+  local effectiveScale = 1
+
+  if owner and owner.GetScale then
+    scale = tonumber(owner:GetScale()) or scale
+  end
+  if owner and owner.GetEffectiveScale then
+    effectiveScale =
+      tonumber(owner:GetEffectiveScale()) or scale
+  else
+    effectiveScale = scale
+  end
+
+  return scale, effectiveScale
+end
+
+local function PointCountMatches(region, expected)
+  return
+    not region.GetNumPoints or
+    region:GetNumPoints() == expected
+end
+
+local function PointMatches(
+  region,
+  index,
+  point,
+  relativeTo,
+  relativePoint,
+  x,
+  y
+)
+  if not region.GetPoint then
+    return false
+  end
+
+  local actualPoint,
+    actualRelativeTo,
+    actualRelativePoint,
+    actualX,
+    actualY = region:GetPoint(index)
+
+  return
+    actualPoint == point and
+    actualRelativeTo == relativeTo and
+    actualRelativePoint == relativePoint and
+    NearlyEqual(actualX, x) and
+    NearlyEqual(actualY, y)
+end
+
+local function AddDockedTab(tabs, seen, owner, frame)
+  if not IsDockedIn(frame, owner) then
+    return
+  end
+
+  for index = 1, NUM_CHAT_WINDOWS do
+    if frame == getglobal("ChatFrame" .. index) then
+      local tab = getglobal("ChatFrame" .. index .. "Tab")
+      if tab and tab:IsShown() and not seen[tab] then
+        table.insert(tabs, tab)
+        seen[tab] = true
+      end
+      return
+    end
+  end
+end
+
+local function GetDockedTabs(owner)
+  local tabs = {}
+  local seen = {}
+
+  if DOCKED_CHAT_FRAMES then
+    for _, frame in ipairs(DOCKED_CHAT_FRAMES) do
+      AddDockedTab(tabs, seen, owner, frame)
+    end
+  end
+
+  for index = 1, NUM_CHAT_WINDOWS do
+    AddDockedTab(
+      tabs,
+      seen,
+      owner,
+      getglobal("ChatFrame" .. index)
+    )
+  end
+
+  return tabs
+end
+
+local function GetTabText(tab)
+  for index = 1, NUM_CHAT_WINDOWS do
+    if tab == getglobal("ChatFrame" .. index .. "Tab") then
+      return getglobal("ChatFrame" .. index .. "TabText")
+    end
+  end
+end
+
 function Chat:Initialize()
   self.driver = CreateFrame(
     "Frame",
@@ -225,12 +348,25 @@ function Chat:Initialize()
     UIParent
   )
   self:InstallHooks()
+  self:InstallPfUIHooks()
+  self.driver:RegisterEvent("PLAYER_ENTERING_WORLD")
+  self.driver:RegisterEvent("UI_SCALE_CHANGED")
+  self.driver:SetScript("OnEvent", function()
+    Chat:ScheduleStartupLayout(
+      TAB_LAYOUT.startupSettleDelay,
+      event == "UI_SCALE_CHANGED"
+    )
+  end)
   self.driver:SetScript("OnUpdate", function()
     if not addon.db or not addon.db.chat.enabled then
       return
     end
 
     local now = GetTime()
+    Chat:ProcessStartupLayout(now)
+    if Chat.runtimeLayoutPending then
+      Chat:RestoreRuntimeLayout()
+    end
     if Chat.nextMaintain and now < Chat.nextMaintain then
       return
     end
@@ -239,6 +375,64 @@ function Chat:Initialize()
       now + (addon.db.chat.maintainInterval or 0.25)
     Chat:Maintain()
   end)
+end
+
+function Chat:ScheduleStartupLayout(delay, force)
+  local targetAt =
+    GetTime() + (delay or TAB_LAYOUT.startupSettleDelay)
+  if
+    not force and
+    self.startupLayoutForce and
+    self.startupLayoutAt
+  then
+    return
+  end
+  if force then
+    self.startupLayoutForce = true
+  end
+  self.startupLayoutAt = targetAt
+end
+
+function Chat:ProcessStartupLayout(now)
+  if not self.startupLayoutAt or now < self.startupLayoutAt then
+    return
+  end
+  if not addon.db or not addon.db.chat.enabled then
+    self.startupLayoutAt = nil
+    self.startupLayoutForce = nil
+    return
+  end
+  if not pfUI or not pfUI.chat or not pfUI.chat.left then
+    self.startupLayoutAt = now + 0.10
+    return
+  end
+  if pfUI.chat.hideLock then
+    self.startupLayoutAt = now + 0.10
+    return
+  end
+
+  local owner = pfUI.chat.left
+  local force = self.startupLayoutForce
+  self.startupLayoutAt = nil
+  self.startupLayoutForce = nil
+  self.runtimeLayoutPending = true
+  if force then
+    self.runtimeLayoutForce = true
+  end
+  self:RestoreRuntimeLayout()
+  if self.runtimeLayoutPending then
+    self.startupLayoutAt = now + 0.10
+    if force then
+      self.startupLayoutForce = true
+    end
+    return
+  end
+  owner.aeuiStartupLayoutFinalized = true
+  owner.aeuiStartupLayoutFinalizedAt = now
+  if force then
+    owner.aeuiScaleLayoutFinalized = true
+    owner.aeuiScaleLayoutFinalizedAt = now
+  end
 end
 
 function Chat:InstallHooks()
@@ -250,14 +444,135 @@ function Chat:InstallHooks()
 
   if type(getglobal("FCF_SelectDockFrame")) == "function" then
     hooksecurefunc("FCF_SelectDockFrame", function()
-      Chat:Maintain()
+      Chat:OnRuntimeLayoutChanged()
     end)
   end
 
   if type(getglobal("FCF_DockUpdate")) == "function" then
     hooksecurefunc("FCF_DockUpdate", function()
-      Chat:Maintain()
+      Chat:OnRuntimeLayoutChanged()
     end)
+  end
+
+  if type(getglobal("FCF_SaveDock")) == "function" then
+    hooksecurefunc("FCF_SaveDock", function()
+      Chat:OnRuntimeLayoutChanged()
+    end)
+  end
+end
+
+function Chat:InstallPfUIHooks()
+  if not pfUI or not pfUI.chat then
+    return
+  end
+
+  if
+    not self.pfUIRefreshHooked and
+    type(pfUI.chat.RefreshChat) == "function"
+  then
+    self.pfUIRefreshHooked = true
+    self.originalPfUIRefreshChat = pfUI.chat.RefreshChat
+    pfUI.chat.RefreshChat = function(chat)
+      local result = Chat.originalPfUIRefreshChat(chat)
+      Chat:OnRuntimeLayoutChanged()
+      return result
+    end
+  end
+
+  self:InstallOwnerScaleHook(pfUI.chat.left)
+end
+
+function Chat:InstallOwnerScaleHook(owner)
+  if not owner or owner.aeuiScaleMoveHooked then
+    return
+  end
+
+  owner.aeuiScaleMoveHooked = true
+  owner.aeuiOriginalOnMove = owner.OnMove
+  owner.OnMove = function(frame)
+    if owner.aeuiOriginalOnMove then
+      owner.aeuiOriginalOnMove(frame)
+    end
+    Chat:ObserveOwnerScale(owner, true)
+  end
+  self:CaptureOwnerScale(owner)
+end
+
+function Chat:CaptureOwnerScale(owner)
+  local scale, effectiveScale = GetOwnerScale(owner)
+  local changed =
+    self.ownerScale ~= nil and
+    (
+      not NearlyEqual(scale, self.ownerScale) or
+      not NearlyEqual(effectiveScale, self.ownerEffectiveScale)
+    )
+
+  self.ownerScale = scale
+  self.ownerEffectiveScale = effectiveScale
+  owner.aeuiObservedScale = scale
+  owner.aeuiObservedEffectiveScale = effectiveScale
+  return changed
+end
+
+function Chat:ObserveOwnerScale(owner, immediate)
+  if not owner or not self:CaptureOwnerScale(owner) then
+    return false
+  end
+
+  owner.aeuiScaleChangeCount =
+    (owner.aeuiScaleChangeCount or 0) + 1
+  if not addon.db or not addon.db.chat.enabled then
+    return true
+  end
+
+  if immediate then
+    if self.startupLayoutForce then
+      self.startupLayoutAt = nil
+      self.startupLayoutForce = nil
+    end
+    self:OnRuntimeLayoutChanged(true)
+  else
+    self:ScheduleStartupLayout(
+      TAB_LAYOUT.startupSettleDelay,
+      true
+    )
+  end
+
+  return true
+end
+
+function Chat:OnRuntimeLayoutChanged(force)
+  self.runtimeLayoutPending = true
+  if force then
+    self.runtimeLayoutForce = true
+  end
+  self:RestoreRuntimeLayout()
+end
+
+function Chat:RestoreRuntimeLayout()
+  if not addon.db or not addon.db.chat.enabled then
+    self.runtimeLayoutPending = nil
+    self.runtimeLayoutForce = nil
+    return
+  end
+  if not pfUI or not pfUI.chat or not pfUI.chat.left then
+    return
+  end
+  if pfUI.chat.hideLock then
+    return
+  end
+
+  local owner = pfUI.chat.left
+  local force = self.runtimeLayoutForce
+  self.runtimeLayoutPending = nil
+  self.runtimeLayoutForce = nil
+  self:LayoutTabPanel(owner, force)
+  self:LayoutChatFrames(owner, force)
+  self:StyleTabs(owner)
+  owner.aeuiRuntimeLayoutVersion = self.runtimeContract
+  if force then
+    owner.aeuiScaleLayoutFinalized = true
+    owner.aeuiScaleLayoutFinalizedAt = GetTime()
   end
 end
 
@@ -272,6 +587,7 @@ function Chat:Apply()
   end
 
   local owner = pfUI.chat.left
+  self:InstallPfUIHooks()
   if pfUI.chat.hideLock then
     addon:ScheduleRefresh(0.1)
     return
@@ -285,11 +601,11 @@ function Chat:Apply()
   end
 
   self:EnsureBook(owner)
-  self:LayoutTabPanel(owner)
-  self:LayoutChatFrames(owner)
+  self:OnRuntimeLayoutChanged()
   self:StyleInput(owner)
   self:SuppressLegacyInfoPanels()
   self:Maintain()
+  self:ScheduleStartupLayout(TAB_LAYOUT.startupSettleDelay)
 end
 
 function Chat:SuppressRightChat()
@@ -412,64 +728,239 @@ function Chat:EnsureBook(owner)
     owner,
     "TOPLEFT",
     30,
-    -25
+    -TAB_LAYOUT.shelfTopOffset
   )
   owner.aeuiTabShelf:SetPoint(
     "TOPRIGHT",
     owner,
     "TOPRIGHT",
     -30,
-    -25
+    -TAB_LAYOUT.shelfTopOffset
   )
-  owner.aeuiTabShelf:SetHeight(23)
+  owner.aeuiTabShelf:SetHeight(TAB_LAYOUT.shelfHeight)
   owner.aeuiTabShelf:Show()
 end
 
-function Chat:LayoutTabPanel(owner)
+function Chat:LayoutTabPanel(owner, force)
   if not owner.panelTop then
     return
   end
 
-  owner.panelTop:ClearAllPoints()
-  owner.panelTop:SetPoint(
-    "TOPLEFT",
-    owner,
-    "TOPLEFT",
-    30,
-    0
-  )
-  owner.panelTop:SetPoint(
-    "TOPRIGHT",
-    owner,
-    "TOPRIGHT",
-    -30,
-    0
-  )
-  owner.panelTop:SetHeight(45)
-
-  for index = 1, NUM_CHAT_WINDOWS do
-    local frame = getglobal("ChatFrame" .. index)
-    local tab = getglobal("ChatFrame" .. index .. "Tab")
-    if IsDockedIn(frame, owner) and tab then
-      tab:SetWidth(92)
-      tab:SetHeight(42)
-    end
+  if
+    force or
+    not PointCountMatches(owner.panelTop, 2) or
+    not PointMatches(
+      owner.panelTop,
+      1,
+      "TOPLEFT",
+      owner,
+      "TOPLEFT",
+      30,
+      0
+    ) or
+    not PointMatches(
+      owner.panelTop,
+      2,
+      "TOPRIGHT",
+      owner,
+      "TOPRIGHT",
+      -30,
+      0
+    ) or
+    not NearlyEqual(
+      owner.panelTop:GetHeight(),
+      TAB_LAYOUT.panelHeight
+    )
+  then
+    owner.panelTop:ClearAllPoints()
+    owner.panelTop:SetPoint(
+      "TOPLEFT",
+      owner,
+      "TOPLEFT",
+      30,
+      0
+    )
+    owner.panelTop:SetPoint(
+      "TOPRIGHT",
+      owner,
+      "TOPRIGHT",
+      -30,
+      0
+    )
+    owner.panelTop:SetHeight(TAB_LAYOUT.panelHeight)
   end
+
+  self:LayoutDockedTabs(owner, force)
 end
 
-function Chat:LayoutChatFrames(owner)
+function Chat:LayoutTabText(tab, text, force)
+  if not text then
+    return
+  end
+
+  local width =
+    (tab:GetWidth() or 0) -
+    TAB_LAYOUT.textHorizontalInset * 2
+  if width < 1 then
+    width = 1
+  end
+
+  if
+    force or
+    not PointCountMatches(text, 1) or
+    not PointMatches(
+      text,
+      1,
+      "CENTER",
+      tab,
+      "CENTER",
+      0,
+      0
+    ) or
+    not NearlyEqual(text:GetWidth(), width) or
+    not NearlyEqual(text:GetHeight(), TAB_LAYOUT.textHeight)
+  then
+    text:ClearAllPoints()
+    text:SetPoint("CENTER", tab, "CENTER", 0, 0)
+    text:SetWidth(width)
+    text:SetHeight(TAB_LAYOUT.textHeight)
+  end
+
+  if text.SetJustifyH then
+    text:SetJustifyH("CENTER")
+  end
+  if text.SetJustifyV then
+    text:SetJustifyV("MIDDLE")
+  end
+  text.aeuiManaged = true
+  text.aeuiTextLayoutVersion = self.runtimeContract
+end
+
+function Chat:LayoutDockedTabs(owner, force)
+  if not owner or not owner.panelTop then
+    return
+  end
+
+  local tabs = GetDockedTabs(owner)
+  local count = table.getn(tabs)
+  if count == 0 then
+    return
+  end
+
+  local availableWidth = owner.panelTop:GetWidth()
+  if not availableWidth or availableWidth <= 0 then
+    availableWidth = owner:GetWidth() - 60
+  end
+
+  local width = TAB_LAYOUT.preferredWidth
+  local maximumWidth =
+    (availableWidth - TAB_LAYOUT.gap * (count - 1)) / count
+  if maximumWidth < width then
+    width = math.floor(maximumWidth)
+  end
+
+  local x = 0
+  for index, tab in ipairs(tabs) do
+    if
+      force or
+      not PointCountMatches(tab, 1) or
+      not PointMatches(
+        tab,
+        1,
+        "TOPLEFT",
+        owner.panelTop,
+        "TOPLEFT",
+        x,
+        -TAB_LAYOUT.topOffset
+      ) or
+      not NearlyEqual(tab:GetWidth(), width) or
+      not NearlyEqual(tab:GetHeight(), TAB_LAYOUT.height)
+    then
+      tab:ClearAllPoints()
+      tab:SetPoint(
+        "TOPLEFT",
+        owner.panelTop,
+        "TOPLEFT",
+        x,
+        -TAB_LAYOUT.topOffset
+      )
+      tab:SetWidth(width)
+      tab:SetHeight(TAB_LAYOUT.height)
+    end
+    if
+      tab.SetHitRectInsets and
+      (
+        force or
+        tab.aeuiHitRectVersion ~= self.runtimeContract
+      )
+    then
+      tab:SetHitRectInsets(
+        0,
+        0,
+        0,
+        -TAB_LAYOUT.hitBottomExtension
+      )
+      tab.aeuiHitRectVersion = self.runtimeContract
+    end
+    self:LayoutTabText(tab, GetTabText(tab), force)
+    tab.aeuiLayoutIndex = index
+    tab.aeuiLayoutWidth = width
+    x = x + width + TAB_LAYOUT.gap
+  end
+
+  owner.aeuiTabLayoutCount = count
+  owner.aeuiTabLayoutWidth = width
+end
+
+function Chat:LayoutChatFrames(owner, force)
   for index = 1, NUM_CHAT_WINDOWS do
     local frame = getglobal("ChatFrame" .. index)
     if IsDockedIn(frame, owner) then
-      local topInset = 44
+      local topInset = TAB_LAYOUT.contentTopInset
       if frame.pfCombatLog and CombatLogQuickButtonFrame_Custom then
         topInset =
           topInset + (CombatLogQuickButtonFrame_Custom:GetHeight() or 0)
       end
 
-      frame:ClearAllPoints()
-      frame:SetPoint("TOPLEFT", owner, "TOPLEFT", 30, -topInset)
-      frame:SetPoint("BOTTOMRIGHT", owner, "BOTTOMRIGHT", -30, 40)
+      if
+        force or
+        not PointCountMatches(frame, 2) or
+        not PointMatches(
+          frame,
+          1,
+          "TOPLEFT",
+          owner,
+          "TOPLEFT",
+          30,
+          -topInset
+        ) or
+        not PointMatches(
+          frame,
+          2,
+          "BOTTOMRIGHT",
+          owner,
+          "BOTTOMRIGHT",
+          -30,
+          40
+        )
+      then
+        frame:ClearAllPoints()
+        frame:SetPoint(
+          "TOPLEFT",
+          owner,
+          "TOPLEFT",
+          30,
+          -topInset
+        )
+        frame:SetPoint(
+          "BOTTOMRIGHT",
+          owner,
+          "BOTTOMRIGHT",
+          -30,
+          40
+        )
+      end
+      frame.aeuiContentLayoutVersion = self.runtimeContract
     end
   end
 end
@@ -506,6 +997,7 @@ function Chat:StyleTabs(owner)
 
       if not tab.aeuiUnreadSeal then
         tab.aeuiUnreadSeal = tab:CreateTexture(nil, "OVERLAY")
+        tab.aeuiUnreadSeal.aeuiManaged = true
         tab.aeuiUnreadSeal:SetTexture(TEXTURES.unread)
         tab.aeuiUnreadSeal:SetWidth(16)
         tab.aeuiUnreadSeal:SetHeight(32)
@@ -619,6 +1111,13 @@ function Chat:Maintain()
   end
 
   local owner = pfUI.chat.left
+  self:ObserveOwnerScale(owner, true)
+  if self.runtimeLayoutPending then
+    self:RestoreRuntimeLayout()
+    if self.runtimeLayoutPending then
+      return
+    end
+  end
   self:StyleTabs(owner)
   self:UpdateInputState(ChatFrameEditBox)
 end
