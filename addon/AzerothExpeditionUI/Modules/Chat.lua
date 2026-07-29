@@ -1,58 +1,57 @@
 local addon = AzerothExpeditionUI
 local Chat = {}
 
-local WHITE_TEXTURE = "Interface\\Buttons\\WHITE8X8"
 local CHAT_MEDIA = addon.media.root .. "Chat\\"
-local BOOK_TEXTURE = CHAT_MEDIA .. "ChatBookFrame"
+local BOOK_TEXTURE = CHAT_MEDIA .. "ChatBookFrameV3"
+local TAB_FONT =
+  addon.media.root .. "Fonts\\LXGWWenKaiGB-Medium.ttf"
 
--- The source art occupies the top 586 pixels of a 1024 x 1024 texture.
--- These cuts follow the inner parchment edge and let the frame behave as a
--- nine-slice without requiring a modern NineSlice API.
 local BOOK_UV = {
-  left = 0.111328125,
-  right = 0.845703125,
-  upper = 0.091796875,
-  lower = 0.490234375,
-  bottom = 0.572265625,
+  left = 0.1337890625,
+  right = 0.923828125,
+  upper = 0.0625,
+  lower = 0.53515625,
+  bottom = 0.6083984375,
 }
 
 local TEXTURES = {
-  tabNormal = CHAT_MEDIA .. "ChatTabNormal",
-  tabHover = CHAT_MEDIA .. "ChatTabHover",
-  tabSelected = CHAT_MEDIA .. "ChatTabSelected",
-  tabShelf = CHAT_MEDIA .. "ChatTabShelf",
-  input = CHAT_MEDIA .. "ChatInputStrip",
-  waxSeal = CHAT_MEDIA .. "ChatWaxSeal",
+  tabs = CHAT_MEDIA .. "ChatTabAtlasV3",
+  tabShelf = CHAT_MEDIA .. "ChatTabShelfV3",
+  input = CHAT_MEDIA .. "ChatInputAtlasV3",
+  unread = CHAT_MEDIA .. "ChatUnreadSealV3",
+}
+
+local TAB_X = {
+  0.0078125,
+  0.1015625,
+  0.3984375,
+  0.4921875,
+}
+
+local TAB_Y = {
+  normal = { 0.00, 0.25 },
+  hover = { 0.25, 0.50 },
+  selected = { 0.50, 0.75 },
+  disabled = { 0.75, 1.00 },
+}
+
+local INPUT_X = {
+  0.0078125,
+  0.1181640625,
+  0.91015625,
+  0.9921875,
+}
+
+local INPUT_Y = {
+  normal = { 0.00, 0.50 },
+  focus = { 0.50, 1.00 },
 }
 
 local COLORS = {
-  ink = { 0.105, 0.060, 0.025, 0.20 },
   text = { 0.900, 0.790, 0.570, 1.00 },
   textSelected = { 0.190, 0.095, 0.035, 1.00 },
+  textDisabled = { 0.460, 0.400, 0.320, 1.00 },
 }
-
-local TAB_TINTS = {
-  { 1.00, 0.96, 0.88, 1 },
-  { 0.94, 0.88, 0.78, 1 },
-  { 0.98, 0.91, 0.80, 1 },
-  { 0.92, 0.86, 0.76, 1 },
-  { 0.96, 0.90, 0.82, 1 },
-  { 0.90, 0.84, 0.74, 1 },
-}
-
-local function SetTextureColor(texture, color)
-  texture:SetTexture(WHITE_TEXTURE)
-  texture:SetVertexColor(color[1], color[2], color[3], color[4])
-end
-
-local function EnsureComponentTexture(parent, key, layer, texturePath)
-  if not parent[key] then
-    parent[key] = parent:CreateTexture(nil, layer or "BACKGROUND")
-    parent[key]:SetAllPoints(parent)
-  end
-  parent[key]:SetTexture(texturePath)
-  return parent[key]
-end
 
 local function ConfigureBookSlice(
   owner,
@@ -82,16 +81,66 @@ local function ConfigureBookSlice(
   texture:SetTexture(BOOK_TEXTURE)
   texture:SetTexCoord(left, right, top, bottom)
   texture:SetBlendMode("BLEND")
-  texture:SetVertexColor(
-    brightness,
-    brightness * 0.94,
-    brightness * 0.82,
-    1
-  )
+  texture:SetVertexColor(brightness, brightness, brightness, 1)
   texture:ClearAllPoints()
   texture:SetPoint(point1, owner, relativePoint1, x1, y1)
   texture:SetPoint(point2, owner, relativePoint2, x2, y2)
   texture:Show()
+end
+
+local function EnsureHorizontalSlices(
+  parent,
+  key,
+  layer,
+  texturePath,
+  leftWidth,
+  rightWidth
+)
+  if not parent[key] then
+    local slices = {
+      left = parent:CreateTexture(nil, layer or "BACKGROUND"),
+      center = parent:CreateTexture(nil, layer or "BACKGROUND"),
+      right = parent:CreateTexture(nil, layer or "BACKGROUND"),
+    }
+
+    slices.left:SetWidth(leftWidth)
+    slices.left:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, 0)
+    slices.left:SetPoint("BOTTOMLEFT", parent, "BOTTOMLEFT", 0, 0)
+
+    slices.right:SetWidth(rightWidth)
+    slices.right:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, 0)
+    slices.right:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", 0, 0)
+
+    slices.center:SetPoint(
+      "TOPLEFT",
+      slices.left,
+      "TOPRIGHT",
+      0,
+      0
+    )
+    slices.center:SetPoint(
+      "BOTTOMRIGHT",
+      slices.right,
+      "BOTTOMLEFT",
+      0,
+      0
+    )
+    parent[key] = slices
+  end
+
+  for _, texture in pairs(parent[key]) do
+    texture:SetTexture(texturePath)
+    texture:SetVertexColor(1, 1, 1, 1)
+    texture:Show()
+  end
+
+  return parent[key]
+end
+
+local function SetHorizontalSliceTexCoords(slices, x, y)
+  slices.left:SetTexCoord(x[1], x[2], y[1], y[2])
+  slices.center:SetTexCoord(x[2], x[3], y[1], y[2])
+  slices.right:SetTexCoord(x[3], x[4], y[1], y[2])
 end
 
 local function HookHoverState(frame)
@@ -120,6 +169,34 @@ local function HookHoverState(frame)
   end)
 end
 
+local function HookInputFocusState(editbox)
+  if editbox.aeuiFocusHooked or not editbox.GetScript then
+    return
+  end
+
+  editbox.aeuiFocusHooked = true
+  editbox.aeuiOriginalOnEditFocusGained =
+    editbox:GetScript("OnEditFocusGained")
+  editbox.aeuiOriginalOnEditFocusLost =
+    editbox:GetScript("OnEditFocusLost")
+
+  editbox:SetScript("OnEditFocusGained", function()
+    editbox.aeuiFocused = true
+    if editbox.aeuiOriginalOnEditFocusGained then
+      editbox.aeuiOriginalOnEditFocusGained(editbox)
+    end
+    Chat:UpdateInputState(editbox)
+  end)
+
+  editbox:SetScript("OnEditFocusLost", function()
+    editbox.aeuiFocused = nil
+    if editbox.aeuiOriginalOnEditFocusLost then
+      editbox.aeuiOriginalOnEditFocusLost(editbox)
+    end
+    Chat:UpdateInputState(editbox)
+  end)
+end
+
 local function MakeBackdropTransparent(frame)
   if frame and frame.backdrop then
     frame.backdrop:SetBackdropColor(0, 0, 0, 0)
@@ -134,8 +211,19 @@ local function IsDockedIn(frame, owner)
   return frame and frame.isDocked and frame:GetParent() == owner
 end
 
+local function IsDisabled(tab)
+  if tab and tab.IsEnabled then
+    return not tab:IsEnabled()
+  end
+  return false
+end
+
 function Chat:Initialize()
-  self.driver = CreateFrame("Frame", "AzerothExpeditionUIChatDriver", UIParent)
+  self.driver = CreateFrame(
+    "Frame",
+    "AzerothExpeditionUIChatDriver",
+    UIParent
+  )
   self:InstallHooks()
   self.driver:SetScript("OnUpdate", function()
     if not addon.db or not addon.db.chat.enabled then
@@ -171,7 +259,6 @@ function Chat:InstallHooks()
       Chat:Maintain()
     end)
   end
-
 end
 
 function Chat:Apply()
@@ -190,6 +277,7 @@ function Chat:Apply()
     return
   end
 
+  self:SuppressRightChat()
   local resized = self:EnsureMinimumSize(owner)
 
   if resized and pfUI.chat.RefreshChat then
@@ -197,10 +285,26 @@ function Chat:Apply()
   end
 
   self:EnsureBook(owner)
+  self:LayoutTabPanel(owner)
   self:LayoutChatFrames(owner)
   self:StyleInput(owner)
   self:SuppressLegacyInfoPanels()
   self:Maintain()
+end
+
+function Chat:SuppressRightChat()
+  local rightConfig =
+    pfUI_config and
+    pfUI_config.chat and
+    pfUI_config.chat.right
+  if rightConfig then
+    rightConfig.enable = "0"
+  end
+
+  local right = pfUI and pfUI.chat and pfUI.chat.right
+  if right and right:IsShown() then
+    right:Hide()
+  end
 end
 
 function Chat:EnsureMinimumSize(owner)
@@ -227,174 +331,206 @@ function Chat:EnsureBook(owner)
   if owner.aeuiBookTexture then
     owner.aeuiBookTexture:Hide()
   end
+  if owner.aeuiReadingWash then
+    owner.aeuiReadingWash:Hide()
+  end
 
-  local brightness = tonumber(addon.db.chat.bookBrightness) or 0.78
+  local brightness = tonumber(addon.db.chat.bookBrightness) or 1.00
 
   ConfigureBookSlice(
     owner, "center",
     BOOK_UV.left, BOOK_UV.right, BOOK_UV.upper, BOOK_UV.lower,
-    "TOPLEFT", "TOPLEFT", 42, -50,
-    "BOTTOMRIGHT", "BOTTOMRIGHT", -42, 58,
+    "TOPLEFT", "TOPLEFT", 30, -28,
+    "BOTTOMRIGHT", "BOTTOMRIGHT", -30, 28,
     brightness
   )
   ConfigureBookSlice(
     owner, "top",
     BOOK_UV.left, BOOK_UV.right, 0, BOOK_UV.upper,
-    "TOPLEFT", "TOPLEFT", 42, 26,
-    "BOTTOMRIGHT", "TOPRIGHT", -42, -50,
+    "TOPLEFT", "TOPLEFT", 30, 0,
+    "BOTTOMRIGHT", "TOPRIGHT", -30, -28,
     brightness
   )
   ConfigureBookSlice(
     owner, "bottom",
     BOOK_UV.left, BOOK_UV.right, BOOK_UV.lower, BOOK_UV.bottom,
-    "TOPLEFT", "BOTTOMLEFT", 42, 58,
-    "BOTTOMRIGHT", "BOTTOMRIGHT", -42, -16,
+    "TOPLEFT", "BOTTOMLEFT", 30, 28,
+    "BOTTOMRIGHT", "BOTTOMRIGHT", -30, 0,
     brightness
   )
   ConfigureBookSlice(
     owner, "left",
     0, BOOK_UV.left, BOOK_UV.upper, BOOK_UV.lower,
-    "TOPLEFT", "TOPLEFT", -10, -50,
-    "BOTTOMRIGHT", "BOTTOMLEFT", 42, 58,
+    "TOPLEFT", "TOPLEFT", 0, -28,
+    "BOTTOMRIGHT", "BOTTOMLEFT", 30, 28,
     brightness
   )
   ConfigureBookSlice(
     owner, "right",
     BOOK_UV.right, 1, BOOK_UV.upper, BOOK_UV.lower,
-    "TOPLEFT", "TOPRIGHT", -42, -50,
-    "BOTTOMRIGHT", "BOTTOMRIGHT", 10, 58,
+    "TOPLEFT", "TOPRIGHT", -30, -28,
+    "BOTTOMRIGHT", "BOTTOMRIGHT", 0, 28,
     brightness
   )
   ConfigureBookSlice(
     owner, "topLeft",
     0, BOOK_UV.left, 0, BOOK_UV.upper,
-    "TOPLEFT", "TOPLEFT", -10, 26,
-    "BOTTOMRIGHT", "TOPLEFT", 42, -50,
+    "TOPLEFT", "TOPLEFT", 0, 0,
+    "BOTTOMRIGHT", "TOPLEFT", 30, -28,
     brightness
   )
   ConfigureBookSlice(
     owner, "topRight",
     BOOK_UV.right, 1, 0, BOOK_UV.upper,
-    "TOPLEFT", "TOPRIGHT", -42, 26,
-    "BOTTOMRIGHT", "TOPRIGHT", 10, -50,
+    "TOPLEFT", "TOPRIGHT", -30, 0,
+    "BOTTOMRIGHT", "TOPRIGHT", 0, -28,
     brightness
   )
   ConfigureBookSlice(
     owner, "bottomLeft",
     0, BOOK_UV.left, BOOK_UV.lower, BOOK_UV.bottom,
-    "TOPLEFT", "BOTTOMLEFT", -10, 58,
-    "BOTTOMRIGHT", "BOTTOMLEFT", 42, -16,
+    "TOPLEFT", "BOTTOMLEFT", 0, 28,
+    "BOTTOMRIGHT", "BOTTOMLEFT", 30, 0,
     brightness
   )
   ConfigureBookSlice(
     owner, "bottomRight",
     BOOK_UV.right, 1, BOOK_UV.lower, BOOK_UV.bottom,
-    "TOPLEFT", "BOTTOMRIGHT", -42, 58,
-    "BOTTOMRIGHT", "BOTTOMRIGHT", 10, -16,
+    "TOPLEFT", "BOTTOMRIGHT", -30, 28,
+    "BOTTOMRIGHT", "BOTTOMRIGHT", 0, 0,
     brightness
   )
 
   if not owner.aeuiTabShelf then
     owner.aeuiTabShelf = owner:CreateTexture(nil, "BORDER")
-    owner.aeuiTabShelf:SetTexture(TEXTURES.tabShelf)
   end
+  owner.aeuiTabShelf:SetTexture(TEXTURES.tabShelf)
+  owner.aeuiTabShelf:SetVertexColor(1, 1, 1, 1)
   owner.aeuiTabShelf:ClearAllPoints()
-  owner.aeuiTabShelf:SetPoint("TOPLEFT", owner, "TOPLEFT", 35, 24)
-  owner.aeuiTabShelf:SetPoint("TOPRIGHT", owner, "TOPRIGHT", -35, 24)
-  owner.aeuiTabShelf:SetHeight(64)
-  owner.aeuiTabShelf:Show()
-
-  if not owner.aeuiReadingWash then
-    owner.aeuiReadingWash = owner:CreateTexture(nil, "BACKGROUND")
-  end
-  owner.aeuiReadingWash:ClearAllPoints()
-  owner.aeuiReadingWash:SetPoint("TOPLEFT", owner, "TOPLEFT", 38, -47)
-  owner.aeuiReadingWash:SetPoint(
-    "BOTTOMRIGHT",
+  owner.aeuiTabShelf:SetPoint(
+    "TOPLEFT",
     owner,
-    "BOTTOMRIGHT",
-    -38,
-    57
+    "TOPLEFT",
+    30,
+    -25
   )
-  SetTextureColor(owner.aeuiReadingWash, COLORS.ink)
+  owner.aeuiTabShelf:SetPoint(
+    "TOPRIGHT",
+    owner,
+    "TOPRIGHT",
+    -30,
+    -25
+  )
+  owner.aeuiTabShelf:SetHeight(23)
+  owner.aeuiTabShelf:Show()
+end
+
+function Chat:LayoutTabPanel(owner)
+  if not owner.panelTop then
+    return
+  end
+
+  owner.panelTop:ClearAllPoints()
+  owner.panelTop:SetPoint(
+    "TOPLEFT",
+    owner,
+    "TOPLEFT",
+    30,
+    0
+  )
+  owner.panelTop:SetPoint(
+    "TOPRIGHT",
+    owner,
+    "TOPRIGHT",
+    -30,
+    0
+  )
+  owner.panelTop:SetHeight(45)
+
+  for index = 1, NUM_CHAT_WINDOWS do
+    local frame = getglobal("ChatFrame" .. index)
+    local tab = getglobal("ChatFrame" .. index .. "Tab")
+    if IsDockedIn(frame, owner) and tab then
+      tab:SetWidth(92)
+      tab:SetHeight(42)
+    end
+  end
 end
 
 function Chat:LayoutChatFrames(owner)
   for index = 1, NUM_CHAT_WINDOWS do
     local frame = getglobal("ChatFrame" .. index)
     if IsDockedIn(frame, owner) then
-      local topInset = 50
+      local topInset = 44
       if frame.pfCombatLog and CombatLogQuickButtonFrame_Custom then
         topInset =
           topInset + (CombatLogQuickButtonFrame_Custom:GetHeight() or 0)
       end
 
       frame:ClearAllPoints()
-      frame:SetPoint("TOPLEFT", owner, "TOPLEFT", 42, -topInset)
-      frame:SetPoint("BOTTOMRIGHT", owner, "BOTTOMRIGHT", -42, 58)
+      frame:SetPoint("TOPLEFT", owner, "TOPLEFT", 30, -topInset)
+      frame:SetPoint("BOTTOMRIGHT", owner, "BOTTOMRIGHT", -30, 40)
     end
   end
 end
 
 function Chat:StyleTabs(owner)
-  local visualIndex = 0
   for index = 1, NUM_CHAT_WINDOWS do
     local frame = getglobal("ChatFrame" .. index)
     local tab = getglobal("ChatFrame" .. index .. "Tab")
     if IsDockedIn(frame, owner) and tab and tab:IsShown() then
-      visualIndex = visualIndex + 1
-
       local text = getglobal("ChatFrame" .. index .. "TabText")
       local flash = getglobal("ChatFrame" .. index .. "TabFlash")
-      local selected = SELECTED_CHAT_FRAME == frame
-      local texturePath = TEXTURES.tabNormal
+      local state = "normal"
 
       HookHoverState(tab)
-      if selected then
-        texturePath = TEXTURES.tabSelected
+      if IsDisabled(tab) then
+        state = "disabled"
+      elseif SELECTED_CHAT_FRAME == frame then
+        state = "selected"
       elseif tab.aeuiHovered then
-        texturePath = TEXTURES.tabHover
+        state = "hover"
       end
 
-      local stateTexture = EnsureComponentTexture(
+      local slices = EnsureHorizontalSlices(
         tab,
-        "aeuiStateTexture",
+        "aeuiStateSlices",
         "BACKGROUND",
-        texturePath
+        TEXTURES.tabs,
+        16,
+        16
       )
-      local tint = TAB_TINTS[visualIndex] or TAB_TINTS[1]
-      stateTexture:SetVertexColor(tint[1], tint[2], tint[3], tint[4])
+      SetHorizontalSliceTexCoords(slices, TAB_X, TAB_Y[state])
+      tab.aeuiStateTexture = slices.center
+      tab.aeuiVisualState = state
 
       if not tab.aeuiUnreadSeal then
         tab.aeuiUnreadSeal = tab:CreateTexture(nil, "OVERLAY")
-        tab.aeuiUnreadSeal:SetTexture(TEXTURES.waxSeal)
-        tab.aeuiUnreadSeal:SetWidth(15)
-        tab.aeuiUnreadSeal:SetHeight(15)
-        tab.aeuiUnreadSeal:SetPoint("TOPRIGHT", tab, "TOPRIGHT", 4, 5)
+        tab.aeuiUnreadSeal:SetTexture(TEXTURES.unread)
+        tab.aeuiUnreadSeal:SetWidth(16)
+        tab.aeuiUnreadSeal:SetHeight(32)
+        tab.aeuiUnreadSeal:SetPoint("TOPRIGHT", tab, "TOPRIGHT", 4, 8)
       end
 
-      if flash and flash:IsShown() and not selected then
+      if flash and flash:IsShown() and state ~= "selected" then
         tab.aeuiUnreadSeal:Show()
       else
         tab.aeuiUnreadSeal:Hide()
       end
 
       if text then
-        if selected then
-          text:SetTextColor(
-            COLORS.textSelected[1],
-            COLORS.textSelected[2],
-            COLORS.textSelected[3],
-            COLORS.textSelected[4]
-          )
-        else
-          text:SetTextColor(
-            COLORS.text[1],
-            COLORS.text[2],
-            COLORS.text[3],
-            COLORS.text[4]
-          )
+        if not text.aeuiFontApplied and text.SetFont then
+          text:SetFont(TAB_FONT, 13, "OUTLINE")
+          text.aeuiFontApplied = true
         end
+
+        local color = COLORS.text
+        if state == "selected" then
+          color = COLORS.textSelected
+        elseif state == "disabled" then
+          color = COLORS.textDisabled
+        end
+        text:SetTextColor(color[1], color[2], color[3], color[4])
       end
     end
   end
@@ -407,20 +543,44 @@ function Chat:StyleInput(owner)
 
   local input = pfUI.chat.editbox
   input:ClearAllPoints()
-  input:SetPoint("BOTTOMLEFT", owner, "BOTTOMLEFT", 45, 29)
-  input:SetPoint("BOTTOMRIGHT", owner, "BOTTOMRIGHT", -45, 29)
-  input:SetHeight(26)
+  input:SetPoint("BOTTOMLEFT", owner, "BOTTOMLEFT", 30, 6)
+  input:SetPoint("BOTTOMRIGHT", owner, "BOTTOMRIGHT", -30, 6)
+  input:SetHeight(25)
 
   MakeBackdropTransparent(ChatFrameEditBox)
-  EnsureComponentTexture(
+  local slices = EnsureHorizontalSlices(
     ChatFrameEditBox,
-    "aeuiInputTexture",
+    "aeuiInputSlices",
     "BACKGROUND",
-    TEXTURES.input
+    TEXTURES.input,
+    28,
+    20
   )
+  ChatFrameEditBox.aeuiInputTexture = slices.center
+  HookInputFocusState(ChatFrameEditBox)
+  self:UpdateInputState(ChatFrameEditBox)
+
   if ChatFrameEditBox.SetTextInsets then
-    ChatFrameEditBox:SetTextInsets(12, 12, 0, 0)
+    ChatFrameEditBox:SetTextInsets(34, 22, 0, 0)
   end
+end
+
+function Chat:UpdateInputState(editbox)
+  if not editbox or not editbox.aeuiInputSlices then
+    return
+  end
+
+  local focused = editbox.aeuiFocused
+  if editbox.HasFocus then
+    focused = editbox:HasFocus()
+  end
+  local state = focused and "focus" or "normal"
+  SetHorizontalSliceTexCoords(
+    editbox.aeuiInputSlices,
+    INPUT_X,
+    INPUT_Y[state]
+  )
+  editbox.aeuiInputState = state
 end
 
 function Chat:SuppressLegacyInfoPanels()
@@ -452,12 +612,15 @@ function Chat:Maintain()
   if not pfUI or not pfUI.chat or not pfUI.chat.left then
     return
   end
+
+  self:SuppressRightChat()
   if pfUI.chat.hideLock then
     return
   end
 
   local owner = pfUI.chat.left
   self:StyleTabs(owner)
+  self:UpdateInputState(ChatFrameEditBox)
 end
 
 addon:RegisterModule("Chat", Chat)

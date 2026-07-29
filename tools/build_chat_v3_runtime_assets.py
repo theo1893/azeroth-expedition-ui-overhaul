@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Build review-only Turtle WoW runtime textures from V3 chat artwork.
+"""Build Turtle WoW runtime textures from the accepted V3 chat artwork.
 
 The tracked A/B/C masters remain the visual source. This script performs only
 deterministic validation, cropping, scaling, atlas packing and TGA conversion.
-Its outputs are migration artifacts until Lua integration and in-game review
-are complete.
+It never redraws the accepted art.
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
@@ -46,9 +46,12 @@ TAB_BOXES = (
     (906, TAB_COMMON_Y[0], 1307, TAB_COMMON_Y[1]),
     (1345, TAB_COMMON_Y[0], 1744, TAB_COMMON_Y[1]),
 )
+TAB_ATLAS_X_PIXELS = (4, 52, 204, 252)
+TAB_ATLAS_STATE_HEIGHT = 128
 
 INPUT_NORMAL_BOX = (51, 187, 1437, 363)
 INPUT_FOCUS_BOX = (51, 448, 1437, 625)
+INPUT_ATLAS_X_PIXELS = (8, 121, 932, 1016)
 SEAL_BOX = (1048, 686, 1160, 864)
 
 EXPECTED_SOURCE_SIZES = {
@@ -82,6 +85,31 @@ def validate_source(
 
 def is_power_of_two(value: int) -> bool:
     return value > 0 and value & (value - 1) == 0
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def display_path(path: Path) -> str:
+    resolved = path.resolve()
+    try:
+        return resolved.relative_to(ROOT).as_posix()
+    except ValueError:
+        return str(resolved)
+
+
+def alpha_evidence(image: Image.Image) -> dict[str, int]:
+    histogram = image.getchannel("A").histogram()
+    return {
+        "transparent_pixels": histogram[0],
+        "partially_transparent_pixels": sum(histogram[1:255]),
+        "opaque_pixels": histogram[255],
+    }
 
 
 def validate_runtime_image(name: str, image: Image.Image) -> None:
@@ -173,15 +201,20 @@ def build_tab_atlas(tabs_sheet: Image.Image) -> Image.Image:
     for index, box in enumerate(TAB_BOXES):
         # All states use the same source canvas.  The selected state already
         # rises inside that canvas, so runtime geometry never has to move.
-        state = tabs_sheet.crop(box).resize((256, 124), RESAMPLE)
-        atlas.alpha_composite(state, (0, index * 128 + 2))
+        # Four transparent pixels around each cell prevent linear filtering
+        # from sampling the adjacent state.
+        state = tabs_sheet.crop(box).resize((248, 120), RESAMPLE)
+        atlas.alpha_composite(
+            state,
+            (TAB_ATLAS_X_PIXELS[0], index * TAB_ATLAS_STATE_HEIGHT + 4),
+        )
     return atlas
 
 
 def build_tab_shelf(tabs_sheet: Image.Image) -> Image.Image:
     atlas = Image.new("RGBA", (1024, 64), (0, 0, 0, 0))
-    shelf = tabs_sheet.crop(TAB_SHELF_BOX).resize((1024, 62), RESAMPLE)
-    atlas.alpha_composite(shelf, (0, 1))
+    shelf = tabs_sheet.crop(TAB_SHELF_BOX).resize((1016, 56), RESAMPLE)
+    atlas.alpha_composite(shelf, (4, 4))
     return atlas
 
 
@@ -261,6 +294,14 @@ def parse_args() -> argparse.Namespace:
         default=GENERATED_DIR / "runtime-artifacts",
         help="Directory for review previews and the generated UV manifest",
     )
+    parser.add_argument(
+        "--manifest",
+        type=Path,
+        default=GENERATED_DIR
+        / "runtime-artifacts"
+        / "ChatV3_RuntimeManifest_v1.json",
+        help="Destination for the deterministic runtime crop/UV manifest",
+    )
     return parser.parse_args()
 
 
@@ -286,11 +327,18 @@ def main() -> None:
     seal = build_seal(controls_sheet)
 
     runtime = args.runtime_dir
-    save_tga(book, runtime / "ChatBookFrameV3.tga")
-    save_tga(tab_atlas, runtime / "ChatTabAtlasV3.tga")
-    save_tga(shelf, runtime / "ChatTabShelfV3.tga")
-    save_tga(input_atlas, runtime / "ChatInputAtlasV3.tga")
-    save_tga(seal, runtime / "ChatUnreadSealV3.tga")
+    runtime_images = {
+        "book": ("ChatBookFrameV3.tga", book),
+        "tabs": ("ChatTabAtlasV3.tga", tab_atlas),
+        "tab_shelf": ("ChatTabShelfV3.tga", shelf),
+        "input": ("ChatInputAtlasV3.tga", input_atlas),
+        "unread": ("ChatUnreadSealV3.tga", seal),
+    }
+    runtime_paths: dict[str, Path] = {}
+    for component, (filename, image) in runtime_images.items():
+        destination = runtime / filename
+        save_tga(image, destination)
+        runtime_paths[component] = destination
 
     artifacts = args.artifact_dir
     save_png(book, artifacts / "ChatBookFrame_RuntimeAtlas_v3.png")
@@ -306,31 +354,30 @@ def main() -> None:
         artifacts / "ChatRuntimeAtlasesPreview_v3.png",
     )
 
+    source_images = {
+        "frame": (args.frame, frame),
+        "tabs": (args.tabs, tabs_sheet),
+        "controls": (args.controls, controls_sheet),
+    }
     manifest = {
-        "schema": 1,
-        "status": "migration-review-only",
+        "schema_version": 2,
+        "batch": "CHAT.CORE.V3",
+        "status": "runtime-exported",
+        "single_chat_frame": True,
         "sources": {
-            "frame": {
-                "file": args.frame.name,
-                "size": frame.size,
-                "nine_slice_cuts": BOOK_SOURCE_CUTS,
-            },
-            "tabs": {
-                "file": args.tabs.name,
-                "size": tabs_sheet.size,
-                "shelf_crop": TAB_SHELF_BOX,
-                "state_crops": TAB_BOXES,
-            },
-            "controls": {
-                "file": args.controls.name,
-                "size": controls_sheet.size,
-                "input_normal_crop": INPUT_NORMAL_BOX,
-                "input_focus_crop": INPUT_FOCUS_BOX,
-                "seal_crop": SEAL_BOX,
-            },
+            name: {
+                "file": display_path(path),
+                "sha256": sha256(path),
+                "width": image.width,
+                "height": image.height,
+                "mode": image.mode,
+                **alpha_evidence(image),
+            }
+            for name, (path, image) in source_images.items()
         },
         "book": {
             "canvas": BOOK_CANVAS,
+            "source_nine_slice_cuts": BOOK_SOURCE_CUTS,
             "cuts": BOOK_RUNTIME_CUTS,
             "runtime_border": BOOK_RUNTIME_BORDER,
         },
@@ -342,18 +389,50 @@ def main() -> None:
                 "selected": (0.5, 0.75),
                 "disabled": (0.75, 1.0),
             },
-            "x": (0.0, 0.09375, 0.40625, 0.5),
+            "source_state_crops": TAB_BOXES,
+            "x_pixels": TAB_ATLAS_X_PIXELS,
             "runtime": {"height": 42, "left": 16, "right": 16},
+        },
+        "tab_shelf": {
+            "source_crop": TAB_SHELF_BOX,
+            "atlas": (1024, 64),
+            "content_box": (4, 4, 1020, 60),
+            "runtime": {"width": 380, "height": 23},
         },
         "input": {
             "atlas": (1024, 256),
             "state_rows": {"normal": (0.0, 0.5), "focus": (0.5, 1.0)},
-            "x_pixels": (8, 121, 932, 1016),
+            "source_crops": {
+                "normal": INPUT_NORMAL_BOX,
+                "focus": INPUT_FOCUS_BOX,
+            },
+            "x_pixels": INPUT_ATLAS_X_PIXELS,
             "runtime": {"height": 25, "left": 28, "right": 20},
         },
-        "seal": {"atlas": (64, 128), "runtime": (14, 22)},
+        "unread": {
+            "source_crop": SEAL_BOX,
+            "atlas": (64, 128),
+            "runtime_texture": (16, 32),
+            "visible_mark_approx": (14, 22),
+        },
+        "runtime_exports": {
+            component: {
+                "file": display_path(path),
+                "sha256": sha256(path),
+                "width": runtime_images[component][1].width,
+                "height": runtime_images[component][1].height,
+                "mode": runtime_images[component][1].mode,
+            }
+            for component, path in runtime_paths.items()
+        },
+        "forbidden_runtime_uses": [
+            "do not load accepted high-resolution masters directly in game",
+            "do not crop or mount the retired bottom information field",
+            "do not instantiate a right-side chat book",
+            "do not bake tabs, text, input, or unread state into the book frame",
+        ],
     }
-    manifest_path = artifacts / "ChatRuntimeManifest_v3.json"
+    manifest_path = args.manifest
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     manifest_path.write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",

@@ -3,7 +3,7 @@
 ## Author: Shagu - modfied by me0wg4ming
 ## Notes: pfUI functionality with native-first Azeroth Expedition presentation routing.
 ## Notes-zhCN: 保留pfUI功能；未完成视觉模块优先使用香草原生界面。
-## Version: 8.1.0-aeui.2
+## Version: 8.1.0-aeui.3
 ## X-Upstream-Version: 8.1.0
 ## X-Upstream-Commit: fbc8fb608b79adf32049543ec12fcc020e0acd69
 ## SavedVariables: pfUI_profiles, pfUI_addon_profiles, pfUI_cache, pfUI_throttle, pfUI_playerDB

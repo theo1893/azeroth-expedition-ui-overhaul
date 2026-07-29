@@ -15,8 +15,8 @@ legacy 信息底栏。
 
 已接受源：
 [ChatBookFrame_Master_v3.png](../../../assets/source/chat/v3/ChatBookFrame_Master_v3.png)。
-`CHAT.FRAME.LEFT` 与 `CHAT.FRAME.RIGHT` 共享这套物理资产和九宫格规则，但
-是两个独立运行时实例；不得把两本书画在同一张背景。
+`CHAT.FRAME.LEFT` 是唯一运行时实例。`CHAT.FRAME.RIGHT` 已按产品决策隐藏，
+不得为它复制、镜像或重新生成第二本书。
 
 ## `CHAT.TABS`
 
@@ -53,14 +53,16 @@ legacy 信息底栏。
 
 ## 尚未锁定的真实控件
 
-`CHAT.INPUT.LANGUAGE`、`CHAT.URLCOPY.SHELL`、`CHAT.URLCOPY.INPUT`、
-`CHAT.URLCOPY.CLOSE` 与 `CHAT.WHISPER` 已登记真实或待映射对象，但没有经过
-用户视觉验收，因此没有可执行美术 Prompt。它们暂时保持原生／不加载；
-取得几何并锁定方向后，才能在本文件增加稳定条款。
+`CHAT.INPUT.LANGUAGE`、`CHAT.POPUP.*`、`CHAT.URLCOPY.*`、`CHAT.COPY.*`
+与 `CHAT.WHISPER.TOGGLE` 已登记真实对象，但没有经过用户视觉验收，因此
+没有可执行美术 Prompt。它们暂时保持原生／不加载；取得实机几何并锁定方向
+后，才能在本文件增加稳定条款。`CHAT.WHISPER.DIALOG` 归未来 System 公共
+弹窗，不在 Chat 中独立生成。
 
 `CHAT.SCROLL.UP`、`CHAT.SCROLL.DOWN`、`CHAT.SCROLL.BOTTOM`、
-`CHAT.MENU` 与 `CHAT.RESIZE` 当前由 pfUI 明确隐藏，不生产占位资产。若未来
-恢复，必须按各自真实 Button／拖拽对象单独设计，不能画进 `CHAT.FRAME`。
+`CHAT.MENU.BUTTON` 与 `CHAT.RESIZE` 当前由 pfUI 明确隐藏，不生产占位资产。
+若未来恢复，必须按各自真实 Button／拖拽对象单独设计，不能画进
+`CHAT.FRAME`。
 
 ## 接受资产 provenance
 
@@ -70,6 +72,7 @@ legacy 信息底栏。
 - V3 Tab 源尺寸：`1774 × 887` RGBA。
 - V3 控件源尺寸：`1536 × 1024` RGBA。
 - `440 × 320` 合成验证使用 `380 × 236` 正文安全区。
+- 当前只允许一个左侧运行时聊天书；右侧框无资产。
 - 已停用的底栏字段即使仍存在于控件母版，也不得由 exporter 裁切或 runtime
   挂载。
 - 历史完整执行正文与失败尝试保留在 Git 历史；当前树以本文件、确认源资产

@@ -10,7 +10,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 - 运行时由 `addon/pfUI/` 与 `addon/AzerothExpeditionUI/` 共同组成。
 - pfUI 功能底座版本：`8.1.0`，来源提交
   `fbc8fb608b79adf32049543ec12fcc020e0acd69`；项目分支版本
-  `8.1.0-aeui.2`，MIT 许可见 `addon/pfUI/LICENSE`。
+  `8.1.0-aeui.3`，MIT 许可见 `addon/pfUI/LICENSE`。
 - pfUI 提供数据、事件、交互、SavedVariables 与兼容能力；项目允许大规模
   重构视觉、布局和呈现连接，但不改写无关功能。
 - 未完成最终替换的可见模块默认回退香草／Turtle WoW 原生 Frame；不得为了
@@ -19,7 +19,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 | 模块 | 当前状态 | 下一门禁 |
 |---|---|---|
 | pfUI／原生回退 | 路由与公共过渡材质 `P5`，未实机 | Turtle WoW 全场景回归 |
-| 聊天 | V3 透明母版 `P4`；legacy runtime `P5` | 导出 V3、接入 Lua、实机验收 |
+| 聊天 | 核心 V3 runtime `P5`；单一左框，右框隐藏 | Turtle WoW 实机验收核心批次 |
 | 任务 | QL-A1 `P4`；QL-A2 V3.1 为未授权 `prompt-draft / P2` | 用户明确授权 V3.1 |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |
@@ -54,6 +54,7 @@ docs/
 - [主模块美术基线 Prompt](docs/modules/chat/ART_BASELINE.md)
 - [子模块美术基线 Prompt](docs/modules/chat/SUBMODULE_ART_BASELINES.md)
 - [详细进度](docs/modules/chat/PROGRESS.md)
+- [当前核心 V3 工作文件](docs/modules/chat/work/CHAT.CORE.V3.md)
 
 任务：
 

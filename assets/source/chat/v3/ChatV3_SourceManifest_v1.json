@@ -1,0 +1,112 @@
+{
+  "schema_version": 2,
+  "module": "chat",
+  "batch": "CHAT.CORE.V3",
+  "accepted_version": "V3",
+  "status": "accepted-source",
+  "accepted_on": "2026-07-29",
+  "sources": [
+    {
+      "file": "ChatBookFrame_Master_v3.png",
+      "sha256": "f45cfe614dffd4cbc1e17b1af0f6c66b2100f530c353e3954956476b7cf05057",
+      "width": 1608,
+      "height": 978,
+      "mode": "RGBA",
+      "transparent_pixels": 182214,
+      "partially_transparent_pixels": 5317,
+      "opaque_pixels": 1385093,
+      "visible_green_spill_pixels": 0
+    },
+    {
+      "file": "ChatTabs_Master_v3.png",
+      "sha256": "8172d9d5145ac16ed23913fb7fbf75e626e0976d6bb33b27a555de4c55853023",
+      "width": 1774,
+      "height": 887,
+      "mode": "RGBA",
+      "transparent_pixels": 1192405,
+      "partially_transparent_pixels": 8715,
+      "opaque_pixels": 372418,
+      "visible_green_spill_pixels": 0
+    },
+    {
+      "file": "ChatControls_Master_v3.png",
+      "sha256": "de0e5c66753ab59be1448f75f0843b37265c98f104381f3529314f494ac52968",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGBA",
+      "transparent_pixels": 1056656,
+      "partially_transparent_pixels": 0,
+      "opaque_pixels": 516208,
+      "visible_green_spill_pixels": 0
+    }
+  ],
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "codex_package": "@openai/codex@0.143.0",
+    "generation_session": null,
+    "result_ids": [],
+    "provenance_gap": "The V3 assets predate the current manifest workflow. The original fixed-executor session and result IDs were not retained in the repository; no replacement IDs were invented.",
+    "historical_prompt": {
+      "git_commit": "73da6c5",
+      "path": "prompts/chat/聊天框模块化资源_执行提示词_v3.md"
+    },
+    "current_prompt_contract": "../../../../docs/modules/chat/SUBMODULE_ART_BASELINES.md",
+    "module_prompt": "../../../../docs/modules/chat/ART_BASELINE.md",
+    "global_prompt": "../../../../docs/GLOBAL_ART_BASELINE.md",
+    "locked_visual_references": [
+      "../../../locked/chat/聊天框视觉基准_v1.png",
+      "../../../locked/chat/聊天框独立艺术资源_v3.png"
+    ],
+    "accepted_candidate_commit": "a095457"
+  },
+  "logical_components": [
+    {
+      "id": "CHAT.FRAME",
+      "source": "ChatBookFrame_Master_v3.png",
+      "states": [
+        "static"
+      ]
+    },
+    {
+      "id": "CHAT.TABS",
+      "source": "ChatTabs_Master_v3.png",
+      "states": [
+        "normal",
+        "hover",
+        "selected",
+        "disabled"
+      ]
+    },
+    {
+      "id": "CHAT.INPUT",
+      "source": "ChatControls_Master_v3.png",
+      "states": [
+        "normal",
+        "focus"
+      ]
+    },
+    {
+      "id": "CHAT.UNREAD",
+      "source": "ChatControls_Master_v3.png",
+      "states": [
+        "hidden",
+        "visible"
+      ]
+    }
+  ],
+  "runtime_contract": {
+    "single_chat_frame": true,
+    "owner": "pfUI.chat.left / pfChatLeft",
+    "right_chat_owner": "pfUI.chat.right remains in source for compatibility but is disabled and receives no AEUI art",
+    "exporter": "../../../../tools/build_chat_v3_runtime_assets.py",
+    "runtime_manifest": "ChatV3_RuntimeManifest_v1.json",
+    "crop_uv_status": "defined",
+    "whole_source_runtime_allowed": false
+  },
+  "forbidden_runtime_uses": [
+    "do not load the high-resolution source masters directly in Turtle WoW",
+    "do not crop or mount the retired guild, bag, latency, or reusable bottom information field",
+    "do not instantiate a right-side chat book",
+    "do not bake runtime text, tabs, input, unread state, language controls, or popup controls into the frame"
+  ]
+}

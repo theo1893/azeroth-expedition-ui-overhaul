@@ -25,6 +25,8 @@ local function NewObject(name, parent)
     shown = true,
     points = {},
     scripts = {},
+    enabled = true,
+    focused = false,
     clearAllPointsCalls = 0,
     setPointCalls = 0,
     setParentCalls = 0,
@@ -59,6 +61,8 @@ function Object:SetParent(parent)
   self.parent = parent
 end
 function Object:IsShown() return self.shown end
+function Object:IsEnabled() return self.enabled end
+function Object:HasFocus() return self.focused end
 function Object:Show() self.shown = true end
 function Object:Hide() self.shown = false end
 function Object:ClearAllPoints()
@@ -125,6 +129,12 @@ input:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 5, 5)
 ChatFrameEditBox = CreateFrame("EditBox", "ChatFrameEditBox", input)
 ChatFrameEditBox.backdrop = NewObject(nil, ChatFrameEditBox)
 
+local rightChat = CreateFrame("Frame", "pfChatRight", UIParent)
+rightChat:SetWidth(380)
+rightChat:SetHeight(180)
+rightChat.backdrop = NewObject(nil, rightChat)
+rightChat.panelTop = CreateFrame("Frame", "rightChatPanelTop", rightChat)
+
 local panel = CreateFrame("Frame", "pfPanelLeft", UIParent)
 panel:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", 5, 5)
 panel.backdrop = NewObject(nil, panel)
@@ -147,6 +157,8 @@ for index = 1, NUM_CHAT_WINDOWS do
   tab.shown = index <= 2
   tab:SetPoint("LEFT", left.panelTop, "LEFT", (index - 1) * 80, 0)
   NewObject("ChatFrame" .. index .. "TabText", tab)
+  local flash = NewObject("ChatFrame" .. index .. "TabFlash", tab)
+  flash:Hide()
 end
 SELECTED_CHAT_FRAME = ChatFrame1
 
@@ -155,6 +167,7 @@ pfUI = {
   font_default = "pfui-font.ttf",
   chat = {
     left = left,
+    right = rightChat,
     editbox = input,
     RefreshChat = function()
       refreshCount = refreshCount + 1
@@ -167,6 +180,11 @@ pfUI = {
   },
 }
 pfUI_config = {
+  chat = {
+    right = {
+      enable = "1",
+    },
+  },
   appearance = {
     expedition = {
       enabled = "1",
@@ -200,11 +218,20 @@ for _, key in ipairs({
   assert(left.aeuiBookSlices[key], "missing book slice: " .. key)
 end
 assert(
-  left.aeuiBookSlices.bottom.texcoord[4] == 0.572265625,
+  left.aeuiBookSlices.bottom.texcoord[4] == 0.6083984375,
   "book texture coordinate does not match the runtime asset"
+)
+assert(
+  left.aeuiBookSlices.center.texture:find("ChatBookFrameV3"),
+  "V3 chat book texture was not mounted"
 )
 assert(#ChatFrame1.points == 2, "docked chat frame was not inset")
 assert(#input.points == 2, "pfUI input frame was not integrated")
+assert(not rightChat:IsShown(), "right chat container was not suppressed")
+assert(
+  pfUI_config.chat.right.enable == "0",
+  "right chat configuration was not disabled"
+)
 assert(not panel:IsShown(), "left legacy info panel was not suppressed")
 assert(not rightPanel:IsShown(), "right legacy info panel was not suppressed")
 assert(not minimapPanel:IsShown(), "minimap legacy info panel was not suppressed")
@@ -212,8 +239,18 @@ assert(not panel.left.aeuiPanelTexture, "retired panel art was still created")
 assert(#ChatFrame1Tab.points == 1, "pfUI chat tab anchor was not preserved")
 assert(ChatFrame1Tab.aeuiStateTexture, "chat tab state texture was not applied")
 assert(
-  ChatFrame1Tab.aeuiStateTexture.texture:find("ChatTabSelected"),
-  "selected chat tab texture was not applied"
+  ChatFrame1Tab.aeuiStateTexture.texture:find("ChatTabAtlasV3"),
+  "V3 chat tab atlas was not applied"
+)
+assert(
+  ChatFrame1Tab.aeuiVisualState == "selected",
+  "selected chat tab state was not applied"
+)
+assert(ChatFrame1Tab:GetWidth() == 92, "chat tab width contract changed")
+assert(ChatFrame1Tab:GetHeight() == 42, "chat tab height contract changed")
+assert(
+  ChatFrameEditBox.aeuiInputState == "normal",
+  "chat input did not start in its normal state"
 )
 assert(refreshCount >= 1, "pfUI chat refresh was not retained")
 
@@ -246,11 +283,11 @@ end
 
 FCF_SelectDockFrame(ChatFrame2)
 assert(
-  ChatFrame2Tab.aeuiStateTexture.texture:find("ChatTabSelected"),
+  ChatFrame2Tab.aeuiVisualState == "selected",
   "tab selection state did not update synchronously"
 )
 assert(
-  ChatFrame1Tab.aeuiStateTexture.texture:find("ChatTabNormal"),
+  ChatFrame1Tab.aeuiVisualState == "normal",
   "previous tab did not return to its normal state"
 )
 
@@ -274,25 +311,54 @@ pfUI.chat.hideLock = true
 SELECTED_CHAT_FRAME = ChatFrame1
 AzerothExpeditionUI.modules.Chat:Maintain()
 assert(
-  ChatFrame2Tab.aeuiStateTexture.texture:find("ChatTabSelected"),
+  ChatFrame2Tab.aeuiVisualState == "selected",
   "visual maintenance ran while pfUI was moving a chat frame"
 )
 pfUI.chat.hideLock = false
 AzerothExpeditionUI.modules.Chat:Maintain()
 assert(
-  ChatFrame1Tab.aeuiStateTexture.texture:find("ChatTabSelected"),
+  ChatFrame1Tab.aeuiVisualState == "selected",
   "visual maintenance did not resume after pfUI movement"
 )
 
 ChatFrame2Tab.scripts.OnEnter()
 assert(
-  ChatFrame2Tab.aeuiStateTexture.texture:find("ChatTabHover"),
+  ChatFrame2Tab.aeuiVisualState == "hover",
   "chat tab hover state was not applied immediately"
 )
 ChatFrame2Tab.scripts.OnLeave()
 assert(
-  ChatFrame2Tab.aeuiStateTexture.texture:find("ChatTabNormal"),
+  ChatFrame2Tab.aeuiVisualState == "normal",
   "chat tab hover state was not cleared immediately"
+)
+
+ChatFrame2Tab.enabled = false
+AzerothExpeditionUI.modules.Chat:Maintain()
+assert(
+  ChatFrame2Tab.aeuiVisualState == "disabled",
+  "disabled chat tab state was not applied"
+)
+ChatFrame2Tab.enabled = true
+
+ChatFrame2TabFlash:Show()
+AzerothExpeditionUI.modules.Chat:Maintain()
+assert(
+  ChatFrame2Tab.aeuiUnreadSeal:IsShown(),
+  "unread seal did not follow the native tab flash semantic"
+)
+ChatFrame2TabFlash:Hide()
+
+ChatFrameEditBox.focused = true
+ChatFrameEditBox.scripts.OnEditFocusGained()
+assert(
+  ChatFrameEditBox.aeuiInputState == "focus",
+  "focused chat input atlas state was not applied"
+)
+ChatFrameEditBox.focused = false
+ChatFrameEditBox.scripts.OnEditFocusLost()
+assert(
+  ChatFrameEditBox.aeuiInputState == "normal",
+  "chat input did not return to its normal atlas state"
 )
 
 print("chat module smoke test passed")

@@ -1,0 +1,250 @@
+{
+  "schema_version": 2,
+  "batch": "CHAT.CORE.V3",
+  "status": "runtime-exported",
+  "single_chat_frame": true,
+  "sources": {
+    "frame": {
+      "file": "assets/source/chat/v3/ChatBookFrame_Master_v3.png",
+      "sha256": "f45cfe614dffd4cbc1e17b1af0f6c66b2100f530c353e3954956476b7cf05057",
+      "width": 1608,
+      "height": 978,
+      "mode": "RGBA",
+      "transparent_pixels": 182214,
+      "partially_transparent_pixels": 5317,
+      "opaque_pixels": 1385093
+    },
+    "tabs": {
+      "file": "assets/source/chat/v3/ChatTabs_Master_v3.png",
+      "sha256": "8172d9d5145ac16ed23913fb7fbf75e626e0976d6bb33b27a555de4c55853023",
+      "width": 1774,
+      "height": 887,
+      "mode": "RGBA",
+      "transparent_pixels": 1192405,
+      "partially_transparent_pixels": 8715,
+      "opaque_pixels": 372418
+    },
+    "controls": {
+      "file": "assets/source/chat/v3/ChatControls_Master_v3.png",
+      "sha256": "de0e5c66753ab59be1448f75f0843b37265c98f104381f3529314f494ac52968",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGBA",
+      "transparent_pixels": 1056656,
+      "partially_transparent_pixels": 0,
+      "opaque_pixels": 516208
+    }
+  },
+  "book": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "source_nine_slice_cuts": [
+      215,
+      100,
+      1485,
+      860
+    ],
+    "cuts": {
+      "left": 137,
+      "top": 64,
+      "right": 946,
+      "bottom_inner": 548,
+      "content_bottom": 623
+    },
+    "runtime_border": {
+      "left": 30,
+      "top": 28,
+      "right": 30,
+      "bottom": 28
+    }
+  },
+  "tab": {
+    "atlas": [
+      512,
+      512
+    ],
+    "state_rows": {
+      "normal": [
+        0.0,
+        0.25
+      ],
+      "hover": [
+        0.25,
+        0.5
+      ],
+      "selected": [
+        0.5,
+        0.75
+      ],
+      "disabled": [
+        0.75,
+        1.0
+      ]
+    },
+    "source_state_crops": [
+      [
+        27,
+        508,
+        426,
+        703
+      ],
+      [
+        465,
+        508,
+        864,
+        703
+      ],
+      [
+        906,
+        508,
+        1307,
+        703
+      ],
+      [
+        1345,
+        508,
+        1744,
+        703
+      ]
+    ],
+    "x_pixels": [
+      4,
+      52,
+      204,
+      252
+    ],
+    "runtime": {
+      "height": 42,
+      "left": 16,
+      "right": 16
+    }
+  },
+  "tab_shelf": {
+    "source_crop": [
+      39,
+      196,
+      1733,
+      298
+    ],
+    "atlas": [
+      1024,
+      64
+    ],
+    "content_box": [
+      4,
+      4,
+      1020,
+      60
+    ],
+    "runtime": {
+      "width": 380,
+      "height": 23
+    }
+  },
+  "input": {
+    "atlas": [
+      1024,
+      256
+    ],
+    "state_rows": {
+      "normal": [
+        0.0,
+        0.5
+      ],
+      "focus": [
+        0.5,
+        1.0
+      ]
+    },
+    "source_crops": {
+      "normal": [
+        51,
+        187,
+        1437,
+        363
+      ],
+      "focus": [
+        51,
+        448,
+        1437,
+        625
+      ]
+    },
+    "x_pixels": [
+      8,
+      121,
+      932,
+      1016
+    ],
+    "runtime": {
+      "height": 25,
+      "left": 28,
+      "right": 20
+    }
+  },
+  "unread": {
+    "source_crop": [
+      1048,
+      686,
+      1160,
+      864
+    ],
+    "atlas": [
+      64,
+      128
+    ],
+    "runtime_texture": [
+      16,
+      32
+    ],
+    "visible_mark_approx": [
+      14,
+      22
+    ]
+  },
+  "runtime_exports": {
+    "book": {
+      "file": "addon/AzerothExpeditionUI/Media/Chat/ChatBookFrameV3.tga",
+      "sha256": "d11bac498a9092ec46073326f711f14bdb3d3a6ccc572cf12337d5f3f6f2a04e",
+      "width": 1024,
+      "height": 1024,
+      "mode": "RGBA"
+    },
+    "tabs": {
+      "file": "addon/AzerothExpeditionUI/Media/Chat/ChatTabAtlasV3.tga",
+      "sha256": "4ab2d572a345b53ee55b5a21b5ed542de27ec0bdcd3eb05b9c094cf6d9889384",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA"
+    },
+    "tab_shelf": {
+      "file": "addon/AzerothExpeditionUI/Media/Chat/ChatTabShelfV3.tga",
+      "sha256": "a895728fc886a526b09f3b5858243fd62d08960bd0a064ec2de0269424d5ec1e",
+      "width": 1024,
+      "height": 64,
+      "mode": "RGBA"
+    },
+    "input": {
+      "file": "addon/AzerothExpeditionUI/Media/Chat/ChatInputAtlasV3.tga",
+      "sha256": "0b613e1b2050090b76527db18ab69943e9bdbbdfa61edf4e2dd0bfe9a081646a",
+      "width": 1024,
+      "height": 256,
+      "mode": "RGBA"
+    },
+    "unread": {
+      "file": "addon/AzerothExpeditionUI/Media/Chat/ChatUnreadSealV3.tga",
+      "sha256": "ddd6ea5f1bb8c4d1019ea257eb59651d9a0084ec9e52ef3316fc0d4e4da9e23d",
+      "width": 64,
+      "height": 128,
+      "mode": "RGBA"
+    }
+  },
+  "forbidden_runtime_uses": [
+    "do not load accepted high-resolution masters directly in game",
+    "do not crop or mount the retired bottom information field",
+    "do not instantiate a right-side chat book",
+    "do not bake tabs, text, input, or unread state into the book frame"
+  ]
+}

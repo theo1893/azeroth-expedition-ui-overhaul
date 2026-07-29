@@ -107,6 +107,14 @@ function pfUI:ShouldUseVanillaSkin()
     true or false
 end
 
+function pfUI:ShouldUseSingleChatFrame()
+  local expedition = GetExpeditionConfig()
+  return expedition and
+    expedition.enabled == "1" and
+    expedition.single_chat_frame == "1" and
+    true or false
+end
+
 local textureKeys = {
   bartexture = true,
   healthtexture = true,
@@ -149,6 +157,9 @@ function pfUI:ApplyExpeditionVisualContract()
   if expedition.legacy_info_panels == nil then
     expedition.legacy_info_panels = "0"
   end
+  if expedition.single_chat_frame == nil then
+    expedition.single_chat_frame = "1"
+  end
 
   if expedition.enabled ~= "1" then return end
 
@@ -184,6 +195,15 @@ function pfUI:ApplyExpeditionVisualContract()
     config.panel.right.center = "none"
     config.panel.right.right = "none"
     config.panel.other.minimap = "none"
+  end
+
+  -- The overhaul owns one left-side field journal. Disable pfUI's secondary
+  -- Loot & Spam container before the chat module distributes its windows.
+  -- The chat module keeps those message groups in ChatFrame1 instead.
+  if expedition.single_chat_frame == "1" then
+    config.chat = config.chat or {}
+    config.chat.right = config.chat.right or {}
+    config.chat.right.enable = "0"
   end
 
   -- Compatibility baseline for explicit pfUI action-bar opt-in. The default

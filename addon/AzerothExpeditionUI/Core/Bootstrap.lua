@@ -3,7 +3,7 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 
 addon.name = "AzerothExpeditionUI"
-addon.version = "0.4.1"
+addon.version = "0.5.0"
 addon.modules = addon.modules or {}
 addon.media = addon.media or {}
 addon.media.root = "Interface\\AddOns\\AzerothExpeditionUI\\Media\\"
@@ -13,8 +13,8 @@ local defaults = {
     enabled = true,
     minimumWidth = 440,
     minimumHeight = 320,
-    artVersion = 3,
-    bookBrightness = 0.78,
+    artVersion = 4,
+    bookBrightness = 1.00,
     maintainInterval = 0.25,
   },
 }
@@ -52,10 +52,10 @@ function addon:Initialize()
   AzerothExpeditionUIDB = AzerothExpeditionUIDB or {}
   if (
     AzerothExpeditionUIDB.chat and
-    (tonumber(AzerothExpeditionUIDB.chat.artVersion) or 0) >= 4
+    (tonumber(AzerothExpeditionUIDB.chat.artVersion) or 0) < 4
   ) then
-    AzerothExpeditionUIDB.chat.artVersion = 3
-    AzerothExpeditionUIDB.chat.bookBrightness = 0.78
+    AzerothExpeditionUIDB.chat.artVersion = 4
+    AzerothExpeditionUIDB.chat.bookBrightness = 1.00
   end
   ApplyDefaults(AzerothExpeditionUIDB, defaults)
   self.db = AzerothExpeditionUIDB

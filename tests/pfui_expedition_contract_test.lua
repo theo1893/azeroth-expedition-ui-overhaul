@@ -39,6 +39,9 @@ pfUI_config = {
     font_blizzard = "0",
   },
   chat = {
+    right = {
+      enable = "1",
+    },
     global = {
       fadeout = "1",
     },
@@ -67,6 +70,14 @@ assert(border.shadow == "1")
 assert(tonumber(border.shadow_intensity) >= 0.45)
 assert(tonumber(pfUI.expedition.alpha_floor) >= 0.92)
 assert(pfUI_config.global.font_blizzard == "1")
+assert(
+  pfUI:ShouldUseSingleChatFrame(),
+  "expedition route did not select the single chat journal"
+)
+assert(
+  pfUI_config.chat.right.enable == "0",
+  "pfUI right chat remained enabled"
+)
 
 local vanillaModules = {
   actionbar = "action_bars",

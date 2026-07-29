@@ -482,6 +482,11 @@ pfUI:RegisterModule("chat", "vanilla:tbc", function ()
   end
 
   function pfUI.chat.SetupRightChat(state)
+    if pfUI.ShouldUseSingleChatFrame and
+       pfUI:ShouldUseSingleChatFrame() then
+      state = false
+    end
+
     if state then
       C.chat.right.enable = "1"
       pfUI.chat.right:Show()
@@ -538,6 +543,27 @@ pfUI:RegisterModule("chat", "vanilla:tbc", function ()
     FCF_DockUpdate()
   end
 
+  local secondaryMessageGroups = {
+    "COMBAT_XP_GAIN",
+    "COMBAT_HONOR_GAIN",
+    "COMBAT_FACTION_CHANGE",
+    "SKILL",
+    "LOOT",
+  }
+
+  local function AddSecondaryMessagesTo(frame)
+    for _,group in pairs(secondaryMessageGroups) do
+      ChatFrame_AddMessageGroup(frame, group)
+    end
+
+    for _, chan in pairs({EnumerateServerChannels()}) do
+      ChatFrame_AddChannel(frame, chan)
+    end
+
+    JoinChannelByName("World")
+    ChatFrame_AddChannel(frame, "World")
+  end
+
   function pfUI.chat.SetupChannels()
     ChatFrame_RemoveAllMessageGroups(ChatFrame1)
     ChatFrame_RemoveAllMessageGroups(ChatFrame2)
@@ -555,18 +581,16 @@ pfUI:RegisterModule("chat", "vanilla:tbc", function ()
     ChatFrame_ActivateCombatMessages(ChatFrame2)
 
     if C.chat.right.enable == "1" then
-      local spamg = { "COMBAT_XP_GAIN", "COMBAT_HONOR_GAIN", "COMBAT_FACTION_CHANGE", "SKILL", "LOOT" }
-      for _,group in pairs(spamg) do
-        ChatFrame_AddMessageGroup(ChatFrame3, group)
-      end
-
+      AddSecondaryMessagesTo(ChatFrame3)
       for _, chan in pairs({EnumerateServerChannels()}) do
-        ChatFrame_AddChannel(ChatFrame3, chan)
         ChatFrame_RemoveChannel(ChatFrame1, chan)
       end
 
-      JoinChannelByName("World")
-      ChatFrame_AddChannel(ChatFrame3, "World")
+      ChatFrame_RemoveChannel(ChatFrame1, "World")
+    else
+      -- The single-journal route has no secondary Loot & Spam window. Keep
+      -- every message group visible by returning it to the main chat frame.
+      AddSecondaryMessagesTo(ChatFrame1)
     end
     pfUI.chat:RefreshChat()
   end
@@ -579,6 +603,9 @@ pfUI:RegisterModule("chat", "vanilla:tbc", function ()
     pfUI.chat:RefreshChat()
     FCF_DockUpdate()
     if C.chat.right.enable == "0" then
+      -- Existing profiles may still have these groups assigned only to the
+      -- old right frame. Re-assert the single-frame distribution on login.
+      AddSecondaryMessagesTo(ChatFrame1)
       pfUI.chat.right:Hide()
     end
   end)

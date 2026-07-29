@@ -3,12 +3,22 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import re
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
 ADDON = ROOT / "addon"
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def assert_toc_paths(toc: Path) -> None:
@@ -105,7 +115,7 @@ def main() -> None:
         "run-aeui-asset-workflow",
         "imagegen-0-143-0",
         "P6-C",
-        "8.1.0-aeui.2",
+        "8.1.0-aeui.3",
     ):
         assert required in agents, f"AGENTS.md missing {required}"
     for path in sorted(expected_durable_docs | work_docs):
@@ -155,11 +165,21 @@ def main() -> None:
         "CHAT.SCROLL.UP",
         "CHAT.SCROLL.DOWN",
         "CHAT.SCROLL.BOTTOM",
-        "CHAT.MENU",
+        "CHAT.MENU.BUTTON",
         "CHAT.RESIZE",
+        "CHAT.POPUP.SHELL",
+        "CHAT.POPUP.CHAT",
+        "CHAT.POPUP.EMOTE",
+        "CHAT.POPUP.LANGUAGE",
+        "CHAT.POPUP.VOICE",
         "CHAT.URLCOPY.SHELL",
         "CHAT.URLCOPY.INPUT",
         "CHAT.URLCOPY.CLOSE",
+        "CHAT.COPY.TOGGLE",
+        "CHAT.COPY.SURFACE",
+        "CHAT.COPY.TEXT",
+        "CHAT.WHISPER.TOGGLE",
+        "CHAT.WHISPER.DIALOG",
     ):
         assert f"`{component_id}`" in chat_submodules, (
             f"chat pfUI object contract missing {component_id}"
@@ -184,18 +204,45 @@ def main() -> None:
         encoding="utf-8-sig"
     )
     assert "## RequiredDeps: pfUI" in aeui_toc
-    assert "## Version: 0.4.1" in aeui_toc
+    assert "## Version: 0.5.0" in aeui_toc
     bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(encoding="utf-8")
-    assert 'addon.version = "0.4.1"' in bootstrap
+    assert 'addon.version = "0.5.0"' in bootstrap
 
     for toc_name in ("pfUI.toc", "pfUI-tbc.toc"):
         toc_source = (pfui / toc_name).read_text(encoding="utf-8-sig")
-        assert "## Version: 8.1.0-aeui.2" in toc_source
+        assert "## Version: 8.1.0-aeui.3" in toc_source
 
     assert not (aeui / "Media" / "Chat" / "ChatPanelSegment.tga").exists()
     chat_source = (aeui / "Modules" / "Chat.lua").read_text(encoding="utf-8")
     assert "ChatPanelSegment" not in chat_source
     assert "SuppressLegacyInfoPanels" in chat_source
+    assert "SuppressRightChat" in chat_source
+    for texture in (
+        "ChatBookFrameV3",
+        "ChatTabAtlasV3",
+        "ChatTabShelfV3",
+        "ChatInputAtlasV3",
+        "ChatUnreadSealV3",
+    ):
+        assert texture in chat_source, f"chat adapter does not mount {texture}"
+
+    manifest_path = (
+        ROOT
+        / "assets"
+        / "source"
+        / "chat"
+        / "v3"
+        / "ChatV3_RuntimeManifest_v1.json"
+    )
+    runtime_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    assert runtime_manifest["status"] == "runtime-exported"
+    assert runtime_manifest["single_chat_frame"] is True
+    for record in runtime_manifest["runtime_exports"].values():
+        runtime_path = ROOT / record["file"]
+        assert runtime_path.is_file(), f"missing runtime media {record['file']}"
+        assert sha256(runtime_path) == record["sha256"], (
+            f"runtime hash changed without manifest update: {record['file']}"
+        )
 
     imagegen_wrapper = (
         ROOT / ".codex" / "skills" / "imagegen-0-143-0" / "SKILL.md"
@@ -212,6 +259,19 @@ def main() -> None:
     assert "ApplyExpeditionVisualContract" in expedition
     assert "ShouldUseVanillaModule" in expedition
     assert "ShouldUseVanillaSkin" in expedition
+    assert "ShouldUseSingleChatFrame" in expedition
+
+    pfui_chat = (pfui / "modules" / "chat.lua").read_text(encoding="utf-8")
+    assert "single-journal route" in pfui_chat
+    assert "AddSecondaryMessagesTo(ChatFrame1)" in pfui_chat
+    for message_group in (
+        "COMBAT_XP_GAIN",
+        "COMBAT_HONOR_GAIN",
+        "COMBAT_FACTION_CHANGE",
+        "SKILL",
+        "LOOT",
+    ):
+        assert message_group in pfui_chat
 
     fallback_block = expedition.split(
         "local vanillaModuleGroups = {", 1
