@@ -45,6 +45,25 @@
 `docs/implementation/OVERHAUL_TRACKER.md` 为唯一进度事实来源。任何状态变化
 必须在同一 Git 提交中更新 tracker。
 
+## 模块信息路由
+
+`AGENTS.md` 只保存跨模块、长期稳定且代理必须始终遵守的约束，不记录单个模块
+的当前版本、阶段、候选资产、否决历史、实现波次或下一步。
+
+处理具体模块前，按职责读取：
+
+| 信息 | 权威位置 |
+|---|---|
+| 当前阶段、资产、提示词、runtime 与下一步 | `docs/implementation/OVERHAUL_TRACKER.md` |
+| 模块视觉语言与已锁定／弃用方向 | `docs/modules/<module>/`、`docs/DESIGN_STATUS.md` |
+| 真实对象、状态、交互、几何与 provider 边界 | `docs/implementation/<MODULE>_COMPONENT_SPEC.md` |
+| 当前 runtime 接入、媒体映射与 pfUI fork 差异 | `docs/runtime/`、`docs/pfui/` |
+| 可执行正文、执行记录与失败 provenance | `prompts/<module>/` |
+| 跨模块美术和长期决策 | `docs/ART_DIRECTION.md`、`docs/SESSION_DECISIONS.md` |
+
+找不到对应权威文件时，按 `docs/WORKFLOW.md` 建立或补充文档；不得把临时模块
+事实回填到本文件。
+
 ## 组件级资产
 
 - 资产粒度必须与游戏内逻辑对象一致。
@@ -60,108 +79,42 @@
 
 完整流程见 `docs/ASSET_PIPELINE.md`。
 
-## 资产生成与审查工作流
+## 资产工作流与固定执行器
 
-处理组件资产的准备、生图、修图、审查、退回、接受、源资产晋级、runtime
-导出或实机验收时，必须使用仓库内：
+处理组件资产的准备、生成、审查、修订、接受、退回、源资产晋级、runtime
+导出或实机验收时，必须完整读取并使用：
 
 ```text
 .codex/skills/run-aeui-asset-workflow/SKILL.md
 ```
 
-该 Skill 负责组件合同、版本化提示词、候选审查、用户门禁、文件晋级和 tracker
-同步；它不直接替代生图模型。所有实际位图生成／修图仍委托下方固定
-`imagegen-0-143-0` Skill。
-
-“已生图”“技术检查通过”“内部结构审查通过”“用户接受源资产”和“runtime
-接入”是不同状态。用户没有明确接受具体候选时，不得写入 `assets/source/`；
-没有真实 Frame 几何、crop／UV、状态映射和静态测试时，不得晋级 `P5`。
-
-## 固定生图执行器
-
-所有位图生成和修图必须使用仓库内：
+所有实际位图生成和修图必须继续委托：
 
 ```text
 .codex/skills/imagegen-0-143-0/SKILL.md
 ```
 
-其固定实现为 `@openai/codex@0.143.0`。禁止改用会话内建 imagegen 或其他
-未确认的模型／版本。
+其固定实现为 `@openai/codex@0.143.0`；禁止改用会话内建 imagegen 或未确认
+模型。详细步骤、状态机、提示词原文规则、Alpha 处理和仓库同步只在上述 Skill
+与 `docs/ASSET_PIPELINE.md` 维护，本文件不复制第二份流程。
 
-执行顺序：
+全局硬门禁仍然适用：
 
-1. 完整阅读该 `SKILL.md` 和它直接要求的参考说明。
-2. 读取本模块的锁定基准、视觉规范、组件合同、tracker 和参考授权。
-3. 将用户需求重写成专业、可执行、可验收的版本化提示词，保存在
-   `prompts/<module>/`。
-4. 用户确认后，把提示词文件中的最终正文原样传给 `$imagegen`；执行时不再
-   二次改写。
-5. 原始结果只写入 `generated/<module>/<version>/`。
-6. 检查对象数量、尺寸、Alpha、残色、状态共同画布、文字安全区和 100% 游戏
-   尺寸预演。
-7. 用户确认后才把透明母版加入 `assets/source/`；明确锁定后才进入
-   `assets/locked/`。
-8. 使用确定性脚本导出 runtime，并同步更新 tracker。
-
-若模型不能可靠输出真透明背景，要求完全均匀的 `#00FF00` 色键；用确定性流程
-转 Alpha，不以自由重绘掩盖背景错误。
-
-## 聊天模块当前边界
-
-- 只接入 pfUI；用户未扩大范围前，不处理其他聊天插件。
-- pfUI 继续负责窗口、Tab、停靠、拖动、滚动、历史和输入。
-- 公会、背包空间、延迟、时钟、金币等 legacy 信息 panel 默认不加载；源码
-  只为上游比对与显式兼容回退保留，不得重新制作强制常驻底栏。
-- 插件 `0.4.1` 仍加载 legacy 聊天主框／Tab／输入／未读资源，但已移除信息
-  底栏资源与挂载。
-- V3 A／B／C 透明母版位于 `assets/source/chat/v3/`，已通过
-  `440 × 320` 预演，但尚未导出或接入游戏。
-- 恢复迁移时先复核 `tools/build_chat_v3_runtime_assets.py`、manifest 和
-  Lua UV；不得把 V3 的 `P4` 误标为 runtime 完成。
-- 聊天组件合同见 `docs/implementation/CHAT_COMPONENT_SPEC.md`。
-
-## 任务模块当前边界
-
-- 真实对象与资产粒度以
-  `docs/implementation/QUEST_COMPONENT_SPEC.md` 为准。
-- 第一实现波次只处理按 `L` 打开的原生 `QuestLogFrame`；当前游戏页面中的
-  任务追踪属于另一个外部插件，在该插件源码与 provider 对象进入审计范围前
-  暂停接入。NPC 对话同样保持原生回退。
-- `QL-A1` 已按
-  `prompts/quests/任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md` 使用固定
-  `imagegen-0-143-0` 执行并经用户确认；透明母版与 manifest 位于
-  `assets/source/quests/ql-a1/`，当前为 `P4`。raw 与临时候选仍只在被忽略的
-  `generated/quests/QL-A1/v1/`。
-- `prompts/quests/任务详情组件资产_生产提示词_v2.md` 继续承载 `QL-A2`、
-  `QL-B`、`QL-C` 和 `QL-D` 的批次入口。`QL-A2 V1` 已因外置封脊视角、
-  翻页空间、共同透视和图层错误退回；不得继续使用其五对象或 `140 × 60`
-  假定。修正后的八对象母提示词与合规修订分别冻结到
-  `prompts/quests/任务详情内页沟结构部件_生产提示词_QL-A2_v2.md` 和
-  `prompts/quests/任务详情内页沟结构部件_修订提示词_QL-A2_v2.1.md`。
-  V2.1 当前为 `P3` 候选；raw、透明图和预演只在被忽略的
-  `generated/quests/QL-A2/v2/`。用户确认候选前不得写入
-  `assets/source/quests/ql-a2/`。`QL-B`、`QL-C`、`QL-D` 仍需分别确认。
-- `QL-A1` 不能整图进入 runtime；切片坐标、拉伸安全区和 atlas UV 等待
-  `QL-A2` 用户确认与目标客户端测量，不得为了推进阶段提前猜测。`QL-A2`
-  物理双页必须保持近等宽，`42%／58%` 只属于 runtime 文字阅读安全区；
-  页沟底层、左右内折、缝线周期和上下收口必须保持独立逻辑对象。当前离线
-  重组只证明“页沟／装订在下、双页在上、内折最后覆盖”的层序，不是最终
-  crop manifest。
-- `prompts/quests/任务追踪组件资产_生产提示词_v2.md` 仅保留为
-  `deferred-compatibility-draft` 视觉拆分参考，不是可执行提示词。不得假设
-  `QuestWatchFrame`、提前生成追踪器资产或创建 runtime Hook；先取得外部插件
-  的顶层 Frame、行对象、更新生命周期、数据状态和交互证据，再重写提示词。
-- pfUI `modules/questitem.lua` 是 Tooltip 数据行为，不是任务快捷按钮；不得
-  为了视觉改造改变它的扫描、缓存或物品链接逻辑。
-- 没有目标客户端对象、尺寸和 provider 证据时，不创建任务 runtime 空壳。
+- “提示词已授权”“已生图”“内部审查通过”“用户接受”和“runtime 接入”是
+  不同状态。
+- 用户未明确接受具体候选时，不得写入 `assets/source/`。
+- 没有真实 Frame／provider、crop／UV、状态映射和静态测试时，不得晋级
+  `P5`。
+- 没有 Turtle WoW `1.18.1` 实机证据时，不得晋级 `P6`。
 
 ## 运行时实现约束
 
-- 不覆盖 `ChatFrame_OnEvent`、物品链接、战斗日志等行为入口。
+- 不覆盖原生／上游事件分发、物品链接、战斗日志或其他数据行为入口。
 - Hook 后不得在维护循环中持续改写 Parent、Point、Width 或 Height。
 - 组件纹理缺失、pfUI 对象不存在或版本不匹配时，应局部降级并给出诊断。
 - 只创建当前实现确实需要的代码和资源，不建立空壳模块。
 - 修改后至少运行静态资源检查、脚本检查和已有 smoke test；只有目标客户端
   实机通过后才能标记 `P6`。
 - 修改 pfUI 模块路由时必须同步测试 `IsModuleEnabled`／`IsSkinEnabled`，
-  并确认 Turtle WoW 不会在 pfUI 单位框被回退后继续隐藏原生团队框。
+  并确认被保留的非视觉功能与原生回退 Frame 没有被误关闭；具体模块回归项写
+  入对应组件、runtime 或 pfUI 文档。

@@ -61,6 +61,24 @@ def main() -> None:
     assert (docs / "pfui" / "PFUI_FORK.md").is_file(), (
         "central pfUI fork manifest is missing"
     )
+    agents_source = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+    assert "## 模块信息路由" in agents_source
+    assert "run-aeui-asset-workflow" in agents_source
+    assert "imagegen-0-143-0" in agents_source
+    for forbidden in (
+        "## 聊天模块当前边界",
+        "## 任务模块当前边界",
+        "QL-A1",
+        "QL-A2",
+        "V3 A／B／C",
+        "440 × 320",
+        "QuestWatchFrame",
+        "questitem.lua",
+    ):
+        assert forbidden not in agents_source, (
+            "AGENTS.md contains module-specific mutable state: "
+            f"{forbidden}"
+        )
     addon_markdown = sorted(ADDON.rglob("*.md"))
     assert not addon_markdown, (
         "addon must contain runtime files and required licenses, not Markdown: "
