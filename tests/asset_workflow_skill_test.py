@@ -10,6 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / ".codex" / "skills" / "run-aeui-asset-workflow"
+IMAGEGEN_WRAPPER = ROOT / ".codex" / "skills" / "imagegen-0-143-0"
 
 
 def require(source: str, values: tuple[str, ...], label: str) -> None:
@@ -159,6 +160,35 @@ def main() -> None:
     )
     assert help_result.returncode == 0, help_result.stderr
     assert "ID=x0,y0,x1,y1" in help_result.stdout
+
+    imagegen_skill = (IMAGEGEN_WRAPPER / "SKILL.md").read_text(
+        encoding="utf-8"
+    )
+    imagegen_usage = (
+        IMAGEGEN_WRAPPER / "references" / "usage.md"
+    ).read_text(encoding="utf-8")
+    require(
+        imagegen_skill,
+        (
+            "### Windows PowerShell",
+            "npx.ps1",
+            "npx.cmd",
+            "UTF-8 standard input",
+            "`-- -`",
+            "complete authorized prompt",
+        ),
+        "fixed imagegen Windows transport",
+    )
+    require(
+        imagegen_usage,
+        (
+            "UTF-8 stdin",
+            "`-- -`",
+            "`npx.cmd`",
+            "`npx.ps1`",
+        ),
+        "fixed imagegen usage",
+    )
 
     agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
     require(

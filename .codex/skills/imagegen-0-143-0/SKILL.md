@@ -76,6 +76,40 @@ npx --yes --package=@openai/codex@0.143.0 -- \
 Execution instruction: Image 1 is /absolute/path/to/input.png. Image 2 is /absolute/path/to/reference.jpg. Save the final image to ./generated and output its absolute file path directly. No need to review and verify.'
 ```
 
+### Windows PowerShell
+
+On Windows PowerShell, do not pass a multiline prompt as an argument through `npx.cmd`,
+and do not invoke `npx.ps1` with a splatted argument array:
+
+- `npx.ps1` can reparse `@args` and resolve the wrong npm package.
+- `npx.cmd` routes through `cmd.exe`; a multiline final argument can be truncated to its
+  first line even when the process exits successfully.
+- Resolve `npx.cmd`, put the complete `$imagegen ...` request plus the separate execution
+  instruction on UTF-8 standard input, and use `-- -` after the final image. The `-`
+  tells `codex exec` to read the initial instructions from stdin.
+
+Use this pattern:
+
+```powershell
+$imagegenNpxCmd = (Get-Command npx.cmd -ErrorAction Stop).Source
+$imagegenChildPrompt = '$imagegen ' + $verbatimPrompt + "`n`n" + $executionInstruction
+$imagegenPreviousOutputEncoding = $OutputEncoding
+$OutputEncoding = New-Object System.Text.UTF8Encoding($false)
+try {
+  $imagegenChildPrompt |
+    & $imagegenNpxCmd --yes --package=@openai/codex@0.143.0 -- `
+      codex exec -C $emptyTemporaryDirectory --skip-git-repo-check `
+      -m gpt-5.5 -c 'model_reasoning_effort="medium"' `
+      -i $absoluteImage1 -i $absoluteImage2 -- -
+} finally {
+  $OutputEncoding = $imagegenPreviousOutputEncoding
+}
+```
+
+Confirm the fixed child's printed `user` block contains the complete authorized prompt,
+not only its first line. Treat a truncated transport as an internal failed attempt; record
+its session/result, do not promote its output, and retry only with the same authorized body.
+
 ## Prompt Preservation
 
 Preserve the user's prompt exactly:

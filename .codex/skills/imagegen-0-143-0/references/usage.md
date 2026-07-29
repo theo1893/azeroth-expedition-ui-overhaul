@@ -71,3 +71,8 @@ Keep the image prompt verbatim. Put file-role mapping and save-path requirements
 When this wrapper is stored inside the current repository, run the fixed child from an empty
 temporary directory via `-C`. The standalone `--` after the final `-i` is required because
 Codex `0.143.0` treats `--image` as variadic and can otherwise consume the prompt.
+
+On Windows PowerShell, pass the complete multiline request through UTF-8 stdin and end the
+argument list with `-- -`. Use `npx.cmd`, not `npx.ps1`; do not pass the multiline request
+as a `npx.cmd` argument because `cmd.exe` can truncate it at the first newline. The full
+PowerShell pattern is maintained in the parent `SKILL.md`.
