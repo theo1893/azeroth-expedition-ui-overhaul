@@ -3,8 +3,8 @@
 ## 元数据
 
 - 类型：`production-edit`
-- 状态：固定版本修订、Alpha 清理与离线重组检查已完成，达到 `P3` 候选；
-  等待用户视觉复审，尚未成为 source 或 runtime
+- 状态：`candidate-rejected`；固定版本修订、Alpha 清理与离线重组检查曾
+  达到 `P3` 候选，但已于 `2026-07-29` 被用户退回，未成为 source 或 runtime
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 固定执行会话：`019fac8e-bae8-73f2-af89-674e925b0068`
 - 首次编辑结果：`ig_0e15261f6bc2a618016a699d6f4f5481919c35afcaa581e3fc`；
@@ -36,6 +36,8 @@
   双页在上，左右内折最后覆盖；没有外置封脊、皮革底板、跨页横梁或大型端帽
 - `42%／58%`：只用于 runtime 左／右文字阅读安全区，不改变物理页面宽度
 - 禁止用途：未经用户确认不得进入 `assets/source/` 或 addon runtime
+- 替代 production draft：
+  [任务详情对称内页沟结构部件_生产提示词_QL-A2_v3.md](任务详情对称内页沟结构部件_生产提示词_QL-A2_v3.md)
 
 下面“已确认修订提示词正文”是提交给固定执行器的完整创作提示词。绝对路径、
 Image 1／Image 2 映射和保存位置只作为独立 `Execution instruction` 传入。
@@ -106,3 +108,25 @@ Six lower-row groups, strictly left to right:
 Avoid: any exterior book spine, front-facing leather strip, raised rigid structure, page-stack slabs, controls, buttons, text, watermark, backing plate behind stitch cycle, or cast shadows spreading over green background.
 Final checklist the image must satisfy: two preserved upper pages; six lower groups arranged horizontally; eight logical objects total; group 4 has no backing plate behind the rope; groups 5 and 6 are side-by-side, not stacked.
 ```
+
+## 用户复审退回记录
+
+- 结论：`candidate-rejected`
+- 否决人：user
+- 日期：`2026-07-29`
+- 第一个失败门禁：语义／物理结构。重组后装订针脚没有稳定落在打开书本的
+  绝对中心线上；针脚两侧与左右纸页相交的位置形成显眼接头，不能读作藏在
+  内折下方的真实装订。
+- 次要失败门禁：正文纸面使用了满页、均匀、密集的高频纹样，可能在真实中文
+  任务标题、长正文、目标和奖励文字下产生持续视觉噪声。
+- 可观察证据：`generated/quests/QL-A2/v2/QL-A2_v2_reassembly_preview.png`
+  中的纵向绳段和结点形成偏斜、突出的独立构件；两侧接触区没有被内折充分
+  遮住。透明候选的 Alpha、尺寸与残色检查通过，但不能证明装订结构正确。
+- 本版本保留内容：近等宽物理双页、从书内向外看的俯视关系、凹陷页沟、
+  厚封皮／页叠尺度、暖赭与旧象牙色关系，以及“结构对象必须独立裁切”的原则。
+- 下一版本必须改变：物理双页围绕 `QuestLogFrame` 中线近 1:1 对称；针脚
+  改为不含连续纵向绳杆的单个横向针脚站；所有针脚、页沟和上下收口共用绝对
+  中心线；针脚端点伸入左右内折遮罩并自然消失；正文中央改为低频、安静的
+  可读纸面。
+- 本版本无 tracked source／runtime：是。不得把 V2.1 候选、raw 或重组预演
+  复制到 `assets/source/` 或 addon。

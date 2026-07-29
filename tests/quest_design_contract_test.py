@@ -46,6 +46,12 @@ def main() -> None:
         / "quests"
         / "任务详情内页沟结构部件_修订提示词_QL-A2_v2.1.md"
     )
+    ql_a2_v3_prompt_path = (
+        ROOT
+        / "prompts"
+        / "quests"
+        / "任务详情对称内页沟结构部件_生产提示词_QL-A2_v3.md"
+    )
     tracker_prompt_path = (
         ROOT / "prompts" / "quests" / "任务追踪组件资产_生产提示词_v2.md"
     )
@@ -70,6 +76,7 @@ def main() -> None:
     ql_a2_v1_prompt = ql_a2_v1_prompt_path.read_text(encoding="utf-8")
     ql_a2_v2_prompt = ql_a2_v2_prompt_path.read_text(encoding="utf-8")
     ql_a2_v2_1_prompt = ql_a2_v2_1_prompt_path.read_text(encoding="utf-8")
+    ql_a2_v3_prompt = ql_a2_v3_prompt_path.read_text(encoding="utf-8")
     tracker_prompt = tracker_prompt_path.read_text(encoding="utf-8")
     tracker = tracker_path.read_text(encoding="utf-8")
 
@@ -88,10 +95,12 @@ def main() -> None:
             "QL-A1_SourceManifest_v1.json",
             "不能直接充当",
             "`QL-A2 V1` 的五对象方案已因外置封脊朝向",
-            "`QL-A2 V2.1` 已生成精确八组逻辑对象的透明候选并达到 `P3`",
+            "因装订针脚偏离绝对中心线",
+            "`QL-A2 V3` 为 `production-draft / P2`",
             "任务详情可拉伸结构部件_生产提示词_QL-A2_v1.md",
             "任务详情内页沟结构部件_生产提示词_QL-A2_v2.md",
             "任务详情内页沟结构部件_修订提示词_QL-A2_v2.1.md",
+            "任务详情对称内页沟结构部件_生产提示词_QL-A2_v3.md",
             "`QUEST.LOG.SPINE` 只保留为“中央装订结构包”的父级兼容名称",
             "QUEST.LOG.GUTTER.UNDERLAY",
             "QUEST.LOG.GUTTER.LEFT_FOLD",
@@ -101,6 +110,48 @@ def main() -> None:
             "QUEST.LOG.GUTTER.BOTTOM",
             "左右物理纸页保持近等宽",
             "左 `42%`／右 `58%` 只指 runtime 文字阅读",
+            "局部 `x=338`",
+            "不得超过约 `1%`",
+            "单个可离散重复的横向粗麻针脚站",
+            "中央至少约 `70%`",
+            "QUEST.LOG.REGION.TOGGLE",
+            "QUEST.LOG.LIST.SCROLL.TRACK",
+            "QUEST.LOG.LIST.SCROLL.THUMB",
+            "QUEST.LOG.LIST.SCROLL.UP",
+            "QUEST.LOG.LIST.SCROLL.DOWN",
+            "QUEST.LOG.DETAIL.SCROLL.TRACK",
+            "QUEST.LOG.DETAIL.SCROLL.THUMB",
+            "QUEST.LOG.DETAIL.SCROLL.UP",
+            "QUEST.LOG.DETAIL.SCROLL.DOWN",
+            "QUEST.LOG.DETAIL.TITLE",
+            "QUEST.LOG.DETAIL.DESCRIPTION",
+            "QUEST.LOG.DETAIL.OBJECTIVES",
+            "QUEST.LOG.DETAIL.REWARD_TEXT",
+            "`QuestLogTitleNCheck` 只显示已追踪状态",
+            "不能拥有“已选择奖励”状态",
+            "QUEST.DIALOG.QUEST.SHELL",
+            "QUEST.DIALOG.GOSSIP.SHELL",
+            "QUEST.DIALOG.QUEST.PORTRAIT",
+            "QUEST.DIALOG.GOSSIP.PORTRAIT",
+            "QUEST.DIALOG.QUEST.GREETING.PANEL",
+            "QUEST.DIALOG.GOSSIP.GREETING.PANEL",
+            "QUEST.DIALOG.QUEST.DETAIL.PANEL",
+            "QUEST.DIALOG.QUEST.PROGRESS.PANEL",
+            "QUEST.DIALOG.QUEST.REWARD.PANEL",
+            "QUEST.DIALOG.ACTION.QUEST_GREETING_GOODBYE",
+            "QUEST.DIALOG.ACTION.GOSSIP_GREETING_GOODBYE",
+            "QUEST.DIALOG.ACTION.DECLINE",
+            "QUEST.DIALOG.ACTION.ACCEPT",
+            "QUEST.DIALOG.ACTION.GOODBYE",
+            "QUEST.DIALOG.ACTION.COMPLETE",
+            "QUEST.DIALOG.ACTION.CANCEL",
+            "QUEST.DIALOG.ACTION.COMPLETE_QUEST",
+            "QUEST.DIALOG.ITEM.PROGRESS",
+            "QUEST.DIALOG.ITEM.DETAIL",
+            "QUEST.DIALOG.ITEM.REWARD.SLOT",
+            "QUEST.DIALOG.ITEM.REWARD.SELECTION",
+            "`P1 contract-draft`",
+            "`P0 geometry`",
             "外部插件",
             "QuestWatchFrame",
             "假设已作废",
@@ -117,25 +168,46 @@ def main() -> None:
     assert "书脊必须从中段内部提取 `140 × 60`" not in spec, (
         "rejected QL-A2 V1 tiling assumption is still active"
     )
+    assert "| `QUEST.DIALOG.FRAME` |" not in spec
+    assert "| `QUEST.DIALOG.PANELS` |" not in spec
+    assert "| `QUEST.DIALOG.ACTIONS` |" not in spec
+    assert "| `QUEST.DIALOG.REWARD` |" not in spec
 
     require(
         log_prompt,
         (
             "production-draft",
             "`QL-A1` 已确认并达到 `P4`",
-            "`QL-A2 V1` 已否决",
-            "`QL-A2 V2.1`\n  已形成 `P3` 候选",
-            "等待复审 `QL-A2 V2.1`",
+            "`QL-A2 V1`、`QL-A2 V2.1` 已否决",
+            "`QL-A2 V3` 为未授权的 `production-draft / P2`",
+            "等待用户确认 `QL-A2 V3` 提示词",
             "任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md",
             "任务详情可拉伸结构部件_生产提示词_QL-A2_v1.md",
             "任务详情内页沟结构部件_生产提示词_QL-A2_v2.md",
             "任务详情内页沟结构部件_修订提示词_QL-A2_v2.1.md",
+            "任务详情对称内页沟结构部件_生产提示词_QL-A2_v3.md",
             "imagegen-0-143-0",
             "@openai/codex@0.143.0",
             "执行块 QL-A1",
             "执行块 QL-B1",
             "执行块 QL-C1",
             "执行块 QL-D",
+            "QUEST.LOG.REGION.TOGGLE",
+            "QUEST.LOG.LIST.SCROLL.TRACK",
+            "QUEST.LOG.LIST.SCROLL.THUMB",
+            "QUEST.LOG.LIST.SCROLL.UP",
+            "QUEST.LOG.LIST.SCROLL.DOWN",
+            "QUEST.LOG.DETAIL.SCROLL.TRACK",
+            "QUEST.LOG.DETAIL.SCROLL.THUMB",
+            "QUEST.LOG.DETAIL.SCROLL.UP",
+            "QUEST.LOG.DETAIL.SCROLL.DOWN",
+            "QUEST.LOG.DETAIL.TITLE",
+            "QUEST.LOG.DETAIL.DESCRIPTION",
+            "QUEST.LOG.DETAIL.OBJECTIVES",
+            "QUEST.LOG.DETAIL.REWARD_TEXT",
+            "layout-only，不生成位图",
+            "`QuestLogTitleNCheck` 是追踪",
+            "`QUEST.LOG.SELECTION` 持有",
             "真正 RGBA 透明背景",
             "#00FF00",
             "不得生成中文、英文、数字、伪文字",
@@ -222,12 +294,14 @@ def main() -> None:
         (
             "类型：`production`",
             "首轮 V2 已修正双页视角",
-            "V2.1 已形成 `P3` 候选",
+            "V2.1 曾形成 `P3` 候选",
+            "针脚中心线、纸页接头融合和正文纹理问题",
             "imagegen-0-143-0",
             "@openai/codex@0.143.0",
             "QuestLogBookShell_Master_v1.png",
             "任务详情面板_视觉基准_v1.png",
             "任务详情内页沟结构部件_修订提示词_QL-A2_v2.1.md",
+            "任务详情对称内页沟结构部件_生产提示词_QL-A2_v3.md",
             "精确 `8` 组",
             "QUEST.LOG.LIST.PAPER",
             "QUEST.LOG.DETAIL.PAPER",
@@ -270,7 +344,9 @@ def main() -> None:
         ql_a2_v2_1_prompt,
         (
             "类型：`production-edit`",
+            "状态：`candidate-rejected`",
             "达到 `P3` 候选",
+            "已于 `2026-07-29` 被用户退回",
             "019fac8e-bae8-73f2-af89-674e925b0068",
             "ig_0e15261f6bc2a618016a699d6f4f5481919c35afcaa581e3fc",
             "ig_0bda33a80800f83f016a699ddd6dbc8191a674cb8b33717482",
@@ -288,6 +364,13 @@ def main() -> None:
             "Internal stitch cycle: ONLY rope pixels",
             "group 4 has no backing plate behind the rope",
             "groups 5 and 6 are side-by-side, not stacked",
+            "## 用户复审退回记录",
+            "第一个失败门禁：语义／物理结构",
+            "装订针脚没有稳定落在打开书本的",
+            "正文纸面使用了满页、均匀、密集的高频纹样",
+            "单个横向针脚站",
+            "不得把 V2.1 候选、raw 或重组预演",
+            "任务详情对称内页沟结构部件_生产提示词_QL-A2_v3.md",
         ),
         "QL-A2 V2.1 production edit prompt and execution record",
     )
@@ -300,6 +383,58 @@ def main() -> None:
     assert "QL-B" not in ql_a2_v2_1_prompt, (
         "QL-A2 V2.1 prompt contains an unauthorized later batch"
     )
+
+    require(
+        ql_a2_v3_prompt,
+        (
+            "版本：`QL-A2 V3`",
+            "子状态：`prompt-draft`",
+            "项目阶段：`P2`",
+            "类型：`production-draft`",
+            "执行状态：未授权，禁止执行",
+            "imagegen-0-143-0",
+            "@openai/codex@0.143.0",
+            "QuestLogBookShell_Master_v1.png",
+            "任务详情面板_视觉基准_v1.png",
+            "QL-A2 V2.1 退回记录",
+            "不作为 Image 输入",
+            "目标源画布：`1536 × 1024`",
+            "最终源画布必须恰好包含 `8` 组逻辑对象",
+            "QUEST.LOG.LIST.PAPER",
+            "QUEST.LOG.DETAIL.PAPER",
+            "QUEST.LOG.GUTTER.UNDERLAY",
+            "QUEST.LOG.GUTTER.LEFT_FOLD",
+            "QUEST.LOG.GUTTER.RIGHT_FOLD",
+            "QUEST.LOG.GUTTER.STITCH",
+            "QUEST.LOG.GUTTER.TOP",
+            "QUEST.LOG.GUTTER.BOTTOM",
+            "`QuestLogFrame = 676 × 440 UI px`",
+            "局部 `x=338`",
+            "不得超过约 `1%`",
+            "偏移不得超过 `1 UI px`",
+            "单个可重复横向针脚站",
+            "不得纵向无缝平铺成连续绳杆",
+            "遮住针脚两端",
+            "中央至少约 `70%`",
+            "不要使用任何旧的 QL-A2",
+            "分别使用 3、5、7 个针脚站",
+            "raw：未生成",
+            "最终 source：无",
+            "结论：`prompt-draft`，没有候选",
+        ),
+        "QL-A2 V3 symmetric-gutter production draft",
+    )
+    ql_a2_v3_body = ql_a2_v3_prompt.split(
+        "## 最终执行正文\n\n", 1
+    )[1].split("\n## 执行记录", 1)[0].strip()
+    assert "/Users/" not in ql_a2_v3_body, (
+        "QL-A2 V3 creative body contains a machine-specific absolute path"
+    )
+    assert "QL-B" not in ql_a2_v3_prompt, (
+        "QL-A2 V3 prompt contains an unauthorized later batch"
+    )
+    assert "generated/quests/QL-A2/v3/" in ql_a2_v3_prompt
+    assert "会话／结果 ID：无" in ql_a2_v3_prompt
 
     manifest = json.loads(ql_a1_manifest_path.read_text(encoding="utf-8"))
     source_bytes = ql_a1_source_path.read_bytes()
@@ -381,12 +516,13 @@ def main() -> None:
         (
             "`QUEST.LOG.SHELL`",
             "`QL-A1` 空卷宗透明源母版达到 `P4`",
-            "`QL-A2 V1` 已退回",
-            "八对象 `V2.1` 透明候选达到 `P3`",
+            "`QL-A2 V1`／`V2.1` 均已退回",
+            "对称内页沟 `V3` 为未授权 `prompt-draft / P2`",
             "任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md",
             "任务详情可拉伸结构部件_生产提示词_QL-A2_v1.md",
             "任务详情内页沟结构部件_生产提示词_QL-A2_v2.md",
             "任务详情内页沟结构部件_修订提示词_QL-A2_v2.1.md",
+            "任务详情对称内页沟结构部件_生产提示词_QL-A2_v3.md",
             "QuestLogBookShell_Master_v1.png",
             "QL-A1_SourceManifest_v1.json",
             "1514 × 1039",
@@ -404,6 +540,12 @@ def main() -> None:
             "745186／57546／770132",
             "八组为近等宽左右纸面",
             "`42%／58%` 仅为 runtime 文字安全区",
+            "技术门禁；后续用户视觉复审退回",
+            "装订针脚未稳定对齐书本绝对中心线",
+            "正文纸面高频纹理过密",
+            "绝对中心 `x=338`",
+            "物理页宽差约 `≤1%`",
+            "正文中央约 `70%`",
             "`QUEST.LOG.SPINE`",
             "`P2 parent`",
             "`QUEST.LOG.GUTTER.UNDERLAY`",
@@ -412,10 +554,56 @@ def main() -> None:
             "`QUEST.LOG.GUTTER.STITCH`",
             "`QUEST.LOG.GUTTER.TOP`",
             "`QUEST.LOG.GUTTER.BOTTOM`",
-            "只有麻线，无皮革底板",
+            "单个可离散重复的横向装订针脚站",
+            "`QUEST.LOG.REGION.TOGGLE`",
+            "`QUEST.LOG.LIST.ROW`",
+            "`QUEST.LOG.LIST.CHECK`",
+            "不是任务选择 Button",
+            "`QUEST.LOG.SELECTION`",
+            "`QUEST.LOG.LIST.SCROLL.TRACK`",
+            "`QUEST.LOG.LIST.SCROLL.THUMB`",
+            "`QUEST.LOG.LIST.SCROLL.UP`",
+            "`QUEST.LOG.LIST.SCROLL.DOWN`",
+            "`QUEST.LOG.DETAIL.SCROLL.TRACK`",
+            "`QUEST.LOG.DETAIL.SCROLL.THUMB`",
+            "`QUEST.LOG.DETAIL.SCROLL.UP`",
+            "`QUEST.LOG.DETAIL.SCROLL.DOWN`",
+            "`QUEST.LOG.DETAIL.TITLE`",
+            "`QUEST.LOG.DETAIL.DESCRIPTION`",
+            "`QUEST.LOG.DETAIL.OBJECTIVES`",
+            "`QUEST.LOG.DETAIL.REWARD_TEXT`",
+            "无 selected 状态",
             "`QUEST.LOG.ACTION.ABANDON`",
             "`QUEST.LOG.ACTION.SHARE`",
             "`QUEST.LOG.ACTION.EXIT`",
+            "`QUEST.DIALOG.QUEST.SHELL`",
+            "`QUEST.DIALOG.GOSSIP.SHELL`",
+            "`QUEST.DIALOG.QUEST.PORTRAIT`",
+            "`QUEST.DIALOG.GOSSIP.PORTRAIT`",
+            "`QUEST.DIALOG.QUEST.GREETING.PANEL`",
+            "`QUEST.DIALOG.GOSSIP.GREETING.PANEL`",
+            "`QUEST.DIALOG.QUEST.DETAIL.PANEL`",
+            "`QUEST.DIALOG.QUEST.PROGRESS.PANEL`",
+            "`QUEST.DIALOG.QUEST.REWARD.PANEL`",
+            "`QUEST.DIALOG.QUEST.GREETING.SCROLL.TRACK`",
+            "`QUEST.DIALOG.GOSSIP.GREETING.SCROLL.TRACK`",
+            "`QUEST.DIALOG.QUEST.DETAIL.SCROLL.TRACK`",
+            "`QUEST.DIALOG.QUEST.PROGRESS.SCROLL.TRACK`",
+            "`QUEST.DIALOG.QUEST.REWARD.SCROLL.TRACK`",
+            "`QUEST.DIALOG.ACTION.QUEST_GREETING_GOODBYE`",
+            "`QUEST.DIALOG.ACTION.GOSSIP_GREETING_GOODBYE`",
+            "`QUEST.DIALOG.ACTION.DECLINE`",
+            "`QUEST.DIALOG.ACTION.ACCEPT`",
+            "`QUEST.DIALOG.ACTION.GOODBYE`",
+            "`QUEST.DIALOG.ACTION.COMPLETE`",
+            "`QUEST.DIALOG.ACTION.CANCEL`",
+            "`QUEST.DIALOG.ACTION.COMPLETE_QUEST`",
+            "`QUEST.DIALOG.ITEM.PROGRESS`",
+            "`QUEST.DIALOG.ITEM.DETAIL`",
+            "`QUEST.DIALOG.ITEM.REWARD.SLOT`",
+            "`QUEST.DIALOG.ITEM.REWARD.SELECTION`",
+            "`P1 contract-draft`",
+            "`P0 geometry`",
             "`QUEST.TRACKER.HEADER`",
             "`QUEST.TRACKER.PAPER`",
             "`QUEST.TRACKER.BOTTOM`",
@@ -442,6 +630,24 @@ def main() -> None:
     assert "QL-A2` 上端／中段／下端候选通过五对象检查" not in tracker, (
         "tracker still treats the rejected three-part exterior spine as active"
     )
+    assert "| `QUEST.LOG.LIST.SCROLL` |" not in tracker
+    assert "| `QUEST.LOG.DETAIL.SCROLL` |" not in tracker
+    assert "| `QUEST.DIALOG.FRAME` |" not in tracker
+    assert "| `QUEST.DIALOG.PANELS` |" not in tracker
+    assert "| `QUEST.DIALOG.ACTIONS` |" not in tracker
+    assert "| `QUEST.DIALOG.REWARD` |" not in tracker
+    for panel in (
+        "QUEST.GREETING",
+        "GOSSIP.GREETING",
+        "QUEST.DETAIL",
+        "QUEST.PROGRESS",
+        "QUEST.REWARD",
+    ):
+        for part in ("TRACK", "THUMB", "UP", "DOWN"):
+            component_id = f"`QUEST.DIALOG.{panel}.SCROLL.{part}`"
+            assert component_id in tracker, (
+                f"overhaul tracker is missing NPC dialog scroll child {component_id}"
+            )
 
     print("quest design contract test passed")
 
