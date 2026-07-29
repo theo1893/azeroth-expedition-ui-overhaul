@@ -5,8 +5,8 @@
 - 模块：Chat
 - 组件 ID：`CHAT.COPY.TOGGLE`、`CHAT.COPY.SURFACE`、`CHAT.COPY.TEXT`
 - 版本：`CHAT.COPY.V1.1`
-- 子状态：`prompt-draft`
-- 项目阶段：`P2`
+- 子状态：`prompt-authorized`
+- 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 操作：`edit`
 - 功能来源：
@@ -170,8 +170,9 @@
 
 ## 最终执行正文
 
-状态：`production-draft`。以下 A／B1／B2 只有在用户看到本版本并明确授权
-`CHAT.COPY.V1.1` 后，才能逐字交给固定执行器。
+状态：`production`。用户已于 `2026-07-29` 明确授权
+`CHAT.COPY.V1.1` A／B1／B2，并允许外部上传 A scaffold、B1 scaffold 和
+B1 raw。以下三段正文必须逐字交给固定执行器，不得改写。
 
 ### A：单张薄抄录纸编辑
 
@@ -285,7 +286,7 @@ green, cell border, or label.
 
 - 日期：未执行
 - 会话／结果 ID：无
-- 实际输入绝对路径与职责：待用户授权 V1.1 后按本文件的确定性输入合同创建
+- 实际输入绝对路径与职责：按本文件的确定性输入合同创建后逐项记录
 - imagegen 报告的 revised prompt：无
 - 输出尺寸／模式／SHA-256：无
 - Alpha／残色：未检查
@@ -300,15 +301,15 @@ green, cell border, or label.
   持久 source；hover 由 runtime Alpha 派生。
 - 装配／尺寸：合同已定义 `380 × 248`、`22 × 26`、九宫格固定边和预演。
 - 技术像素：待生成。
-- 结论：`prompt-draft / P2`
-- 用户结论与日期：尚未授权 `CHAT.COPY.V1.1`
-- 下一门禁：用户审查 A／B1／B2 完整正文，并明确授权本版本以及三个隔离
-  输入（A scaffold、B1 scaffold、B1 raw）的外部上传；授权前不得创建
-  候选或调用 ImageGen
+- 结论：`prompt-authorized / P3`
+- 用户结论与日期：`2026-07-29`，明确授权 `CHAT.COPY.V1.1`，并允许上传
+  A scaffold、B1 scaffold 和 B1 raw
+- 下一门禁：先创建并检查 A scaffold，再由固定 ImageGen 0.143.0 执行 A；
+  A 通过首个语义门禁后才允许创建或上传 B1 输入
 
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
 |---|---|---|---|
 | V1 | commit `69ada1f`；session `019fae2a…`／`019fae2c…` | `candidate-rejected` | 不上传完整 UI；A 单物件 edit；B 按真实持久状态拆分 |
-| V1.1 | 三个隔离 edit 调用的完整 production-draft | `prompt-draft` | 等待用户逐版本授权，不直接生图 |
+| V1.1 | 三个隔离 edit 调用；用户于 `2026-07-29` 明确授权 | `prompt-authorized` | 固定执行器按 A → B1 → B2 门禁顺序执行 |
