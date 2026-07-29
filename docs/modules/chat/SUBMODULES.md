@@ -38,9 +38,9 @@
 | `CHAT.POPUP.EMOTE` | `EmoteMenu` | 表情菜单实例 | 动态条目由原生 runtime 绘制 |
 | `CHAT.POPUP.LANGUAGE` | `LanguageMenu` | 语言菜单实例 | 与语言 Button 分离 |
 | `CHAT.POPUP.VOICE` | `VoiceMacroMenu` | 语音宏菜单实例 | 不把语音内容烘焙进外壳 |
-| `CHAT.URLCOPY.SHELL` | `pfUI.chat.urlcopy`／`pfURLCopy` | 小型弹窗外壳待设计 | 不复用整张聊天书框 |
-| `CHAT.URLCOPY.INPUT` | `pfUI.chat.urlcopy.text`／`pfURLCopyEditBox` | 可选中 URL 的 EditBox 待设计 | 文字与选择状态由 runtime 持有 |
-| `CHAT.URLCOPY.CLOSE` | `pfUI.chat.urlcopy.close`／`pfURLCopyClose` | 四状态 Button 待设计 | 不烘焙“关闭”文字 |
+| `CHAT.URLCOPY.SHELL` | `pfUI.chat.urlcopy`／`pfURLCopy` | 一态的窄横向抄录便笺 shell | 固定 `270 × 65`，`UIParent CENTER`，`FULLSCREEN` strata；保留左键拖动；不复用整张聊天书框，不烘焙 input／close |
+| `CHAT.URLCOPY.INPUT` | `pfUI.chat.urlcopy.text`／`pfURLCopyEditBox` | normal／focus 两态三段式输入纸带 | 固定 `250 × 20`，锚到 shell 顶部 `0,-10`；URL、全选、选择与光标由 runtime 持有 |
+| `CHAT.URLCOPY.CLOSE` | `pfUI.chat.urlcopy.close`／`pfURLCopyClose` | normal／hover／pushed／disabled 四状态 Button | 固定 `70 × 18`，锚到 shell 右下 `-10,10`；不烘焙本地化“关闭”文字 |
 | `CHAT.COPY.TOGGLE` | `pfChatCopyButton` | 关闭／开启两种持久纹理；悬停沿用同一纹理并由 runtime 调整 Alpha | 当前 pfUI 无独立按下／禁用纹理；独立 Button，不烘焙进 Tab 承托带 |
 | `CHAT.COPY.SURFACE` | `ChatFrameScrollN` | 显示／隐藏的可滚动复制纸面 | 每个聊天 Frame 独立实例，可共享物理九宫格 |
 | `CHAT.COPY.TEXT` | `pfChatCopyBoxN` | 可选择的多行 EditBox | 无消息行位图；选择与光标由 runtime 持有 |
@@ -72,12 +72,17 @@
   `UIParent:SetScale` 等无事件路径；数值未变的普通拖动不得重放几何。
 - 输入条：`380 × 25 UI px`。
 - 未读覆盖：约 `16 × 16 UI px`。
+- URL Copy：shell `270 × 65 UI px`；input `250 × 20 UI px`；
+  close `70 × 18 UI px`。三个对象保持 provider 现有 Parent、Point 和
+  显示／关闭时序。
 - 还需检查 `540 × 420` 与常用 UI Scale；默认最小值不会产生 `400 × 300`。
 
 ## 功能不变量
 
 - 保留聊天消息、频道、左侧停靠、拖动、滚动、历史、URL 复制、链接、输入
   焦点、可选语言切换与 Tab 点击。
+- URL Copy 必须保留 `_G.SetItemRef` 对 `url:` 的截取、其他链接转发、
+  `CopyText`、显示后全选、Escape／失焦／按钮关闭和 shell 左键拖动。
 - 右侧 Loot & Spam 容器停用时，`COMBAT_XP_GAIN`、`COMBAT_HONOR_GAIN`、
   `COMBAT_FACTION_CHANGE`、`SKILL` 与 `LOOT` 必须回收到 `ChatFrame1`，
   不能因隐藏右框而丢失。

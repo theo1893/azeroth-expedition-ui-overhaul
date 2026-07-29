@@ -55,12 +55,14 @@ legacy 信息底栏。
 
 ## 尚未锁定的真实控件
 
-`CHAT.INPUT.LANGUAGE`、`CHAT.POPUP.*`、`CHAT.URLCOPY.*` 与
-`CHAT.WHISPER.TOGGLE` 已登记真实对象，但没有经过用户视觉验收，因此没有
-可执行美术 Prompt。`CHAT.COPY.*` 的活跃工作仍在
-[`CHAT.COPY.V1.md`](work/CHAT.COPY.V1.md)，尚无用户接受的 source，不能在
-此凝结为稳定条款，也不能恢复加载。其余对象暂时保持原生／不加载；取得
-实机几何并锁定方向后，才能在本文件增加稳定条款。
+`CHAT.INPUT.LANGUAGE`、`CHAT.POPUP.*` 与 `CHAT.WHISPER.TOGGLE` 已登记真实
+对象，但没有经过用户视觉验收，因此没有可执行美术 Prompt。
+`CHAT.URLCOPY.*` 的当前合同与 shell production draft 位于
+[`CHAT.URLCOPY.V1.md`](work/CHAT.URLCOPY.V1.md)，尚未授权生成；
+`CHAT.COPY.*` 的失败证据保留在
+[`CHAT.COPY.V1.md`](work/CHAT.COPY.V1.md)，并已由用户暂缓。两者都没有用户
+接受的 source，不能在此凝结为稳定条款或恢复新 runtime。其余对象暂时保持
+原生／不加载；取得实机几何并锁定方向后，才能在本文件增加稳定条款。
 `CHAT.WHISPER.DIALOG` 归未来 System 公共弹窗，不在 Chat 中独立生成。
 
 `CHAT.SCROLL.UP`、`CHAT.SCROLL.DOWN`、`CHAT.SCROLL.BOTTOM`、
