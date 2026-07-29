@@ -116,9 +116,14 @@
   `assets/source/quests/ql-a1/`，当前为 `P4`。raw 与临时候选仍只在被忽略的
   `generated/quests/QL-A1/v1/`。
 - `prompts/quests/任务详情组件资产_生产提示词_v2.md` 继续承载 `QL-A2`、
-  `QL-B`、`QL-C` 和 `QL-D` 的 production draft；这些块仍需分别确认。
+  `QL-B`、`QL-C` 和 `QL-D` 的批次入口。`QL-A2` 已冻结到
+  `prompts/quests/任务详情可拉伸结构部件_生产提示词_QL-A2_v1.md` 并使用
+  固定版本执行，当前为 `P3` 候选；raw、透明图和预演只在被忽略的
+  `generated/quests/QL-A2/v1/`。用户确认候选前不得写入
+  `assets/source/quests/ql-a2/`。`QL-B`、`QL-C`、`QL-D` 仍需分别确认。
 - `QL-A1` 不能整图进入 runtime；切片坐标、拉伸安全区和 atlas UV 等待
-  `QL-A2` 与目标客户端测量，不得为了推进阶段提前猜测。
+  `QL-A2` 用户确认与目标客户端测量，不得为了推进阶段提前猜测。当前离线
+  预演仅证明可从中段内部提取重复周期，不是最终 crop manifest。
 - `prompts/quests/任务追踪组件资产_生产提示词_v2.md` 仅保留为
   `deferred-compatibility-draft` 视觉拆分参考，不是可执行提示词。不得假设
   `QuestWatchFrame`、提前生成追踪器资产或创建 runtime Hook；先取得外部插件

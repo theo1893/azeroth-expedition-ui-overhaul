@@ -19,7 +19,8 @@ NPC 任务对话、Gossip 和任务物品 Tooltip 已完成对象登记，但不
 资产。任务快捷按钮目前没有可靠基础对象，不得假设 pfUI 已经提供。`QL-A1`
 空卷宗结构母版已经用户确认并达到 `P4`；透明源母版与来源清单位于
 `assets/source/quests/ql-a1/`。该整张母版只作为结构来源，不能直接充当
-runtime 背景。
+runtime 背景。`QL-A2 V1` 已生成精确五对象的透明候选并达到 `P3`；它只在
+被忽略的 `generated/quests/QL-A2/v1/`，尚未成为源资产。
 
 视觉权威：
 
@@ -192,7 +193,7 @@ provider。此前把香草 `QuestWatchFrame` 设为第一 provider 的假设已�
 
 | 批次 | 组件 | 输出责任 | 当前状态 |
 |---|---|---|---|
-| `QL-A` | `SHELL`、`LIST.PAPER`、`DETAIL.PAPER`、中央书脊、页叠 | 纯结构资源；分离九宫格／三段式部件 | `QL-A1` 源母版已确认为 `P4`；`QL-A2` 待单独确认 |
+| `QL-A` | `SHELL`、`LIST.PAPER`、`DETAIL.PAPER`、中央书脊、页叠 | 纯结构资源；分离九宫格／三段式部件 | `QL-A1` 源母版为 `P4`；`QL-A2 V1` 五对象透明候选为 `P3`，待视觉复审 |
 | `QL-B` | `LIST.ROW`、`SELECTION`、`TYPE.BADGE`、`STATE.SEAL` | 目录状态覆盖与任务徽记 | 后续任务详情草案 |
 | `QL-C` | 两套 ScrollBar、`CLOSE`、操作按钮、`TRACK`、`DETAIL.TOGGLE`、`LEVELS` | 每个交互对象的完整状态画布 | 后续任务详情草案 |
 | `QL-D` | `REWARD.SLOT`、`DETAIL.DIVIDER` | 奖励槽和非交互墨线 | 后续任务详情草案 |
@@ -205,8 +206,11 @@ provider。此前把香草 `QuestWatchFrame` 设为第一 provider 的假设已�
   已确认执行结果；[透明源母版](../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png)
   与 [manifest](../../assets/source/quests/ql-a1/QL-A1_SourceManifest_v1.json)
   已登记为 `P4`。
+- [QL-A2 可拉伸结构部件 production V1](../../prompts/quests/任务详情可拉伸结构部件_生产提示词_QL-A2_v1.md)：
+  已确认并执行；精确五对象透明候选达到 `P3`，尚未进入 tracked source。
 - [任务详情后续组件资产生产提示词 V2](../../prompts/quests/任务详情组件资产_生产提示词_v2.md)：
-  `QL-A2`、`QL-B`、`QL-C`、`QL-D` 仍为 `production-draft`。
+  `QL-A2` 已冻结到上方 production；`QL-B`、`QL-C`、`QL-D` 仍为
+  `production-draft`。
 - [任务追踪组件资产兼容草案 V2](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md)：
   `deferred-compatibility-draft`，不能执行。
 
@@ -214,16 +218,19 @@ provider。此前把香草 `QuestWatchFrame` 设为第一 provider 的假设已�
 
 1. 保持 `QL-A1` 已确认源母版不变：整图不得进入 runtime，不得从旧草案
    无版本重跑。
-2. 另行确认 `QL-A2` 可拉伸纸面、书脊与页叠部件；确认 `QL-A1` 不会自动
-   授权 `QL-A2`。
-3. `QL-A2` 通过并回到目标客户端后，记录 Quest Log 对象是否存在、原始
-   尺寸、锚点和层级，再确定结构切片、拉伸安全区与 adapter 几何。物理双页
-   接近等宽已被接受，runtime 阅读安全区仍以左 `42%`／右 `58%` 为目标。
-4. 先接入 `QUEST.LOG.SHELL`，只改变呈现，不修改事件与数据。
-5. 后续逐批确认并接入左右 ScrollBar、真实 Button 状态、任务行覆盖、日志内
+2. 用户复审 `generated/quests/QL-A2/v1/QL-A2_v1.png`。接受后才复制到
+   `assets/source/quests/ql-a2/` 并建立确定性 crop manifest；不接受则先
+   创建修订提示词新版本，不能覆盖 V1。
+3. `QL-A2` 候选的离线预演已验证五对象和 `42.1%／57.9%` 页面组合；书脊
+   必须从中段内部提取 `140 × 60` 重复周期，不能直接重复带收边的整块对象。
+4. `QL-A2` 通过并回到目标客户端后，记录 Quest Log 对象是否存在、原始
+   尺寸、锚点和层级，再确定最终结构切片、拉伸安全区与 adapter 几何。物理
+   双页接近等宽已被接受，runtime 阅读安全区仍以左 `42%`／右 `58%` 为目标。
+5. 先接入 `QUEST.LOG.SHELL`，只改变呈现，不修改事件与数据。
+6. 后续逐批确认并接入左右 ScrollBar、真实 Button 状态、任务行覆盖、日志内
    追踪标记和奖励槽；确认点击区没有改变。
-6. 最后评估是否重建 pfUI 的等级显示与详情收起增强。
-7. NPC 对话继续使用原生回退；外部 tracker 保持其插件原状，直到完成独立
+7. 最后评估是否重建 pfUI 的等级显示与详情收起增强。
+8. NPC 对话继续使用原生回退；外部 tracker 保持其插件原状，直到完成独立
    provider 合同、重写提示词并再次获得用户确认。
 
 ## 8. 当前 Quest Log 实机验收清单

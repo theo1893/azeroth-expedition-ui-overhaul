@@ -28,6 +28,12 @@ def main() -> None:
         / "quests"
         / "任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md"
     )
+    ql_a2_prompt_path = (
+        ROOT
+        / "prompts"
+        / "quests"
+        / "任务详情可拉伸结构部件_生产提示词_QL-A2_v1.md"
+    )
     tracker_prompt_path = (
         ROOT / "prompts" / "quests" / "任务追踪组件资产_生产提示词_v2.md"
     )
@@ -49,6 +55,7 @@ def main() -> None:
     spec = spec_path.read_text(encoding="utf-8")
     log_prompt = log_prompt_path.read_text(encoding="utf-8")
     ql_a1_prompt = ql_a1_prompt_path.read_text(encoding="utf-8")
+    ql_a2_prompt = ql_a2_prompt_path.read_text(encoding="utf-8")
     tracker_prompt = tracker_prompt_path.read_text(encoding="utf-8")
     tracker = tracker_path.read_text(encoding="utf-8")
 
@@ -66,6 +73,9 @@ def main() -> None:
             "QuestLogBookShell_Master_v1.png",
             "QL-A1_SourceManifest_v1.json",
             "不能直接充当",
+            "`QL-A2 V1` 已生成精确五对象的透明候选并达到 `P3`",
+            "任务详情可拉伸结构部件_生产提示词_QL-A2_v1.md",
+            "140 × 60",
             "外部插件",
             "QuestWatchFrame",
             "假设已作废",
@@ -85,9 +95,10 @@ def main() -> None:
         (
             "production-draft",
             "`QL-A1` 已确认并达到 `P4`",
-            "`QL-A2` 尚待单独确认",
-            "当前没有已授权执行块",
+            "`QL-A2 V1` 已执行并达到 `P3` 候选",
+            "等待用户复审 `QL-A2 V1`",
             "任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md",
+            "任务详情可拉伸结构部件_生产提示词_QL-A2_v1.md",
             "imagegen-0-143-0",
             "@openai/codex@0.143.0",
             "执行块 QL-A1",
@@ -139,6 +150,54 @@ def main() -> None:
     )[1].strip()
     assert frozen_ql_a1_body == expected_ql_a1_body, (
         "confirmed QL-A1 prompt no longer matches the executed draft body"
+    )
+
+    require(
+        ql_a2_prompt,
+        (
+            "类型：`production`",
+            "通过“进入下一步”确认并授权执行",
+            "透明候选",
+            "达到 `P3`",
+            "imagegen-0-143-0",
+            "@openai/codex@0.143.0",
+            "QuestLogBookShell_Master_v1.png",
+            "任务详情面板_视觉基准_v1.png",
+            "精确 `5` 个",
+            "019fac4a-c73e-71c1-a6bd-a94a86627b3e",
+            "generated/quests/QL-A2/v1/QL-A2_v1_raw.png",
+            "generated/quests/QL-A2/v1/QL-A2_v1.png",
+            "1536 × 1024",
+            "83ddda9099be456f1dd984161b09d69101c389209e25e621d4f382b79cc31967",
+            "8507dde8339bb9839f6ef157e7f34f7f56ca09cedc825658f9db2ae0933454ae",
+            "604346",
+            "6576",
+            "961942",
+            "可见绿色残留 `0`",
+            "42.1%／57.9%",
+            "140 × 60",
+            "真正\nRGBA 透明背景",
+            "#00FF00",
+            "对象 1：左页旧象牙纸九宫格源面",
+            "对象 2：右页稍亮旧象牙纸九宫格源面",
+            "对象 3：中央书脊上端帽",
+            "对象 4：中央书脊可纵向平铺中段",
+            "对象 5：中央书脊下端帽与底部多层页叠连接件",
+            "不得包含中文、英文、数字、伪文字",
+        ),
+        "confirmed QL-A2 production prompt",
+    )
+    ql_a2_body = ql_a2_prompt.split(
+        "## 已确认提示词正文\n\n", 1
+    )[1].strip()
+    assert not ql_a2_body.startswith("Execution instruction:"), (
+        "QL-A2 creative body was replaced by execution metadata"
+    )
+    assert "/Users/" not in ql_a2_body, (
+        "QL-A2 creative body contains a machine-specific absolute path"
+    )
+    assert "QL-B" not in ql_a2_prompt, (
+        "confirmed QL-A2 prompt contains an unauthorized later batch"
     )
 
     manifest = json.loads(ql_a1_manifest_path.read_text(encoding="utf-8"))
@@ -221,7 +280,9 @@ def main() -> None:
         (
             "`QUEST.LOG.SHELL`",
             "`QL-A1` 空卷宗透明源母版达到 `P4`",
+            "`QL-A2 V1` 五对象透明候选达到 `P3`",
             "任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md",
+            "任务详情可拉伸结构部件_生产提示词_QL-A2_v1.md",
             "QuestLogBookShell_Master_v1.png",
             "QL-A1_SourceManifest_v1.json",
             "1514 × 1039",
@@ -229,6 +290,11 @@ def main() -> None:
             "42%／58%",
             "接近等宽的物理双页已经接受",
             "整张源图不得进入 runtime",
+            "019fac4a-c73e-71c1-a6bd-a94a86627b3e",
+            "8507dde8339bb9839f6ef157e7f34f7f56ca09cedc825658f9db2ae0933454ae",
+            "Alpha 连通区域精确 `5` 个",
+            "42.1%／57.9%",
+            "140 × 60",
             "`QUEST.LOG.ACTION.ABANDON`",
             "`QUEST.LOG.ACTION.SHARE`",
             "`QUEST.LOG.ACTION.EXIT`",
