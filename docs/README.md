@@ -27,7 +27,7 @@ Lua、XML、TOC、媒体资产和随分发必须保留的许可证，不放 READ
 | [CHAT_COMPONENT_SPEC.md](implementation/CHAT_COMPONENT_SPEC.md) | 聊天真实组件、状态、几何、切片与交互合同 |
 | [CHAT_MODULE.md](implementation/CHAT_MODULE.md) | 当前聊天 runtime adapter 的实现说明 |
 | [CHAT_V3_SOURCE.md](implementation/CHAT_V3_SOURCE.md) | `assets/source/chat/v3/` 母版与验收证据清单 |
-| [QUEST_COMPONENT_SPEC.md](implementation/QUEST_COMPONENT_SPEC.md) | 任务日志、原生追踪器、NPC 对话与任务物品的真实对象、状态和资产合同 |
+| [QUEST_COMPONENT_SPEC.md](implementation/QUEST_COMPONENT_SPEC.md) | 任务日志真实对象合同、外部追踪器兼容门槛、NPC 对话与任务物品边界 |
 | [FONT_SYSTEM.md](implementation/FONT_SYSTEM.md) | 字体角色、加载、回退和实机验收规则 |
 
 ## 模块视觉规范

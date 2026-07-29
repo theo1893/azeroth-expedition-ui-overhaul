@@ -6,13 +6,18 @@
 用于下一轮组件级资产生产和 runtime adapter 实现。当前只完成可离线验证的
 结构审计，不代表 Turtle WoW `1.18.1` 实机通过。
 
-第一实现波次只包含：
+当前实现波次只包含：
 
 1. 按 `L` 打开的 `QuestLogFrame` 双页任务卷宗。
-2. 游戏画面中的原生 `QuestWatchFrame` 行军便笺。
+
+游戏画面中的任务追踪由另一个外部插件提供。该插件源码、名称与 provider
+对象尚未纳入仓库，所以“行军便笺”只保留锁定视觉和未来逻辑组件 ID，不在
+本轮生成资产、创建 Hook 或实现 runtime，也不得把原生 `QuestWatchFrame`
+当作替代 provider。
 
 NPC 任务对话、Gossip 和任务物品 Tooltip 已完成对象登记，但不在本轮生成
-资产。任务快捷按钮目前没有可靠基础对象，不得假设 pfUI 已经提供。
+资产。任务快捷按钮目前没有可靠基础对象，不得假设 pfUI 已经提供。当前唯一
+进入用户确认队列的生产批次是 `QL-A1` 空卷宗结构母版。
 
 视觉权威：
 
@@ -31,16 +36,19 @@ NPC 任务对话、Gossip 和任务物品 Tooltip 已完成对象登记，但不
 
 | 职责 | 所有者 | 本项目允许的处理 |
 |---|---|---|
-| 任务数据、选择、追踪、展开分组、奖励与事件 | 香草／Turtle WoW FrameXML | 保留；只通过现有 API 和安全 Hook 读取状态 |
+| Quest Log 数据、选择、日志内追踪标记、展开分组、奖励与事件 | 香草／Turtle WoW FrameXML | 保留；只通过现有 API 和安全 Hook 读取状态 |
 | pfUI 任务等级显示、双栏布局等 UI 相关增强 | pfUI `questlog.lua` | 可在新 adapter 中按需重建，但不得启用其现代 backdrop |
 | 任务物品 Tooltip 扫描与计数 | pfUI `questitem.lua` | 原样保留；不改写扫描、缓存或 Tooltip 行为 |
-| 双页卷宗、便笺、按钮与状态覆盖 | `AzerothExpeditionUI` | 新建纯呈现层；缺失对象时局部回退原生 |
+| 双页卷宗、按钮与日志内状态覆盖 | `AzerothExpeditionUI` | 新建纯呈现层；缺失对象时局部回退原生 |
 | NPC 任务交互和奖励选择 | 原生 `QuestFrame`／`GossipFrame` | 本波次保持原生；以后单独换肤 |
-| 第三方任务追踪器 | 对应第三方插件 | 默认不接管；以后以 provider adapter 兼容 |
+| 游戏页面任务追踪器 | 对应外部插件 | 当前完全不接管；取得源码与真实对象后再建立 provider adapter |
 
 默认 `native_blizzard_skins = "1"` 时 pfUI 的 `Quest Log` 和
 `Gossip and Quest` skin 不加载。新任务模块必须直接检测原生全局对象，不能
 以 pfUI skin 已经创建的辅助按钮为前提。
+
+上述直接检测仅适用于 `QuestLogFrame`。追踪器不得扫描或猜测
+`QuestWatchFrame`、命名相似的全局对象或屏幕区域来自动接管。
 
 ## 3. Quest Log 运行时对象图
 
@@ -108,48 +116,61 @@ pfUI skin 当前使用 `676 × 440` 双栏布局、`350` 高列表和 `376` 高�
 `DETAIL.TOGGLE` 和 `LEVELS` 属于 UI 相关增强，不是首轮运行的硬依赖。若目标
 客户端对象或对应配置不存在，整个任务日志仍必须正常打开和交互。
 
-## 4. Quest Tracker 运行时对象图
+## 4. Quest Tracker 未来兼容合同（暂停）
 
-### 4.1 Provider 策略
+### 4.1 Provider 证据门槛
 
-第一 provider 是香草 `QuestWatchFrame`：
+用户已确认当前游戏页面中的任务追踪来自另一个插件。仓库目前没有该插件源码、
+provider 名称、运行时对象树或版本信息，因此本项目当前没有默认 tracker
+provider。此前把香草 `QuestWatchFrame` 设为第一 provider 的假设已作废；
+下列对象也不能作为本次实现依据：
 
-- 顶层：`QuestWatchFrame`
-- 动态文字：`QuestWatchLine1..MAX_QUESTWATCH_LINES`
-- 更新入口：`QuestWatch_Update`
-- 数据入口：`GetNumQuestWatches`、`GetQuestIndexForWatch`、
-  `GetNumQuestLeaderBoards`、`GetQuestLogLeaderBoard`
+- `QuestWatchFrame`
+- `QuestWatchLine1..MAX_QUESTWATCH_LINES`
+- `QuestWatch_Update`
+- `QuestTimerFrame`
 
-这些对象在 Turtle WoW `1.18.1` 上仍需实机确认，因此 adapter 必须逐项
-feature-detect。找不到 `QuestWatchFrame` 时只跳过 tracker 皮肤，不阻止
-Quest Log 或插件其他模块加载。
+恢复兼容工作前，必须从外部插件源码和目标客户端同时取得：
 
-第三方任务插件不得通过字符串猜测强制接管。以后每个 provider 必须单独登记
-顶层 Frame、行对象、更新事件、所有权和降级路径。
+1. 插件名称、版本、加载顺序和 SavedVariables 边界。
+2. 顶层 Frame、任务组、目标行、标题、计时器与所有可点击对象。
+3. 列表刷新入口、事件生命周期、任务状态和排序数据来源。
+4. 拖动、锁定、缩放、收起、过滤和战斗态等插件自身能力。
+5. 每个可见对象的实际尺寸、锚点、层级、所有权与缺失回退。
 
-### 4.2 结构与内容
+在这些证据齐全前，`AzerothExpeditionUI` 不注册 tracker Hook、不改变外部
+插件 Frame、不生成追踪器资产。外部插件继续按它自身的原始界面运行。
 
-| ID | 运行时对象 | 逻辑职责 | 资产粒度 | 状态 |
+### 4.2 保留的视觉逻辑组件
+
+下表只记录已锁定视觉方向未来可能需要的逻辑粒度，不声称对应对象已经存在。
+实际 provider 可能合并、拆分或不提供其中某些交互；完成对象映射后必须据实
+修订，不能为了沿用这张表而伪造功能。
+
+| ID | 未来 provider 证据 | 逻辑职责 | 资产粒度 | 状态 |
 |---|---|---|---|---|
-| `QUEST.TRACKER.HEADER` | adapter 呈现层，锚定 `QuestWatchFrame` | 顶部皮带、双铆钉 | 三段式横向结构 | 普通 |
-| `QUEST.TRACKER.EMBLEM` | adapter Texture | 羽毛笔与指南针徽记 | 独立透明装饰，不接收点击 | 普通 |
-| `QUEST.TRACKER.PAPER` | adapter 呈现层 | 可纵向扩展正文纸面 | 中段可平铺，左右叠页边独立 | 普通／战斗收紧 |
-| `QUEST.TRACKER.BOTTOM` | adapter 呈现层 | 自然撕裂底边 | 独立三段式；不得纵向拉伸 | 普通 |
-| `QUEST.TRACKER.COLLAPSE` | adapter 可选 Button | 收起／展开 | 独立皮革拉环 | 展开／收起；普通／悬停／按下／禁用 |
-| `QUEST.TRACKER.ENTRY` | 一组 `QuestWatchLineN` | 任务标题和目标文字 | 无条目背景卡片；动态排版 | normal／focus／complete／failed／timed |
-| `QUEST.TRACKER.OBJECTIVE` | 对应目标行 | 目标进度 | 空心墨圈、羽毛笔勾记分别制作 | incomplete／complete |
-| `QUEST.TRACKER.FOCUS` | adapter Texture | 当前重点任务 | 小型暗酒红页边织物标记 | hidden／shown |
-| `QUEST.TRACKER.SEAL` | adapter Texture | 整项完成／失败 | 小蜡封与破裂蜡封分别制作 | complete／failed |
-| `QUEST.TRACKER.TIMER` | 任务时间数据；具体 `QuestTimerFrame` 待实测 | 限时状态 | 沙漏压印 | normal／warning |
+| `QUEST.TRACKER.HEADER` | 外部顶层容器及其可装饰安全区待映射 | 顶部皮带、双铆钉 | 三段式横向结构 | 普通 |
+| `QUEST.TRACKER.EMBLEM` | 外部标题区与鼠标命中范围待映射 | 羽毛笔与指南针徽记 | 独立透明装饰，不接收点击 | 普通 |
+| `QUEST.TRACKER.PAPER` | 外部内容容器和尺寸更新方式待映射 | 可纵向扩展正文纸面 | 中段可平铺，左右叠页边独立 | 普通／插件可证实的战斗态 |
+| `QUEST.TRACKER.BOTTOM` | 外部容器底部锚点待映射 | 自然撕裂底边 | 独立三段式；不得纵向拉伸 | 普通 |
+| `QUEST.TRACKER.COLLAPSE` | 外部插件真实 Button 待映射 | 收起／展开 | 仅在插件已有交互时制作独立皮革拉环 | 展开／收起；真实 Button 支持的状态 |
+| `QUEST.TRACKER.ENTRY` | 外部任务组／行对象待映射 | 任务标题和目标文字 | 无条目背景卡片；动态排版 | provider 实际可判定状态 |
+| `QUEST.TRACKER.OBJECTIVE` | 外部目标行和完成状态待映射 | 目标进度 | 空心墨圈、羽毛笔勾记分别制作 | incomplete／complete |
+| `QUEST.TRACKER.FOCUS` | 外部重点任务数据待映射 | 当前重点任务 | 小型暗酒红页边织物标记 | 仅在 provider 有该语义时 |
+| `QUEST.TRACKER.SEAL` | 外部完成／失败状态待映射 | 整项完成／失败 | 小蜡封与破裂蜡封分别制作 | provider 实际可判定状态 |
+| `QUEST.TRACKER.TIMER` | 外部计时对象与阈值待映射 | 限时状态 | 沙漏压印 | provider 实际可判定状态 |
 
-追踪器的纸面高度必须由实际可见文字总高度驱动：
+未来 adapter 若能安全实现，追踪器纸面应由实际可见内容高度驱动：
 
 - 顶部和底部保持固定尺寸。
 - 中段仅在内容增加时纵向平铺。
 - 没有追踪任务时隐藏整个便笺，不显示空纸。
 - 多个任务共享连续纸面，不能给每项任务创建独立卡片。
-- 第一实现波次不改变原生行点击能力；若原生行只是 FontString，不额外伪造
-  点击行为。
+- 不改变外部插件原有的点击、拖动、折叠或排序能力；若没有稳定点击对象，
+  不额外伪造点击行为。
+
+当前这些条目统一为“视觉 `P2`／兼容 `P0`”。对应提示词是暂停的
+`deferred-compatibility-draft`，不得执行，也不能创建空壳 runtime。
 
 ## 5. NPC 对话与任务物品的登记边界
 
@@ -164,41 +185,49 @@ Quest Log 或插件其他模块加载。
 
 ## 6. 资产包与执行批次
 
-任何批次只能生成下面列出的逻辑对象。禁止生成整张带按钮、任务文字和奖励
-图标的完成界面。
+任何获准执行的批次都只能生成下面列出的逻辑对象。禁止生成整张带按钮、
+任务文字和奖励图标的完成界面。
 
-| 批次 | 组件 | 输出责任 |
-|---|---|---|
-| `QL-A` | `SHELL`、`LIST.PAPER`、`DETAIL.PAPER`、中央书脊、页叠 | 纯结构资源；分离九宫格／三段式部件 |
-| `QL-B` | `LIST.ROW`、`SELECTION`、`TYPE.BADGE`、`STATE.SEAL` | 目录状态覆盖与任务徽记 |
-| `QL-C` | 两套 ScrollBar、`CLOSE`、操作按钮、`TRACK`、`DETAIL.TOGGLE`、`LEVELS` | 每个交互对象的完整状态画布 |
-| `QL-D` | `REWARD.SLOT`、`DETAIL.DIVIDER` | 奖励槽和非交互墨线 |
-| `QT-A` | `HEADER`、`PAPER`、左右叠页边、`BOTTOM`、`EMBLEM` | 可动态伸缩的追踪器结构 |
-| `QT-B` | `COLLAPSE`、`OBJECTIVE`、`FOCUS`、`SEAL`、`TIMER` | 追踪器交互与状态覆盖 |
+| 批次 | 组件 | 输出责任 | 当前状态 |
+|---|---|---|---|
+| `QL-A` | `SHELL`、`LIST.PAPER`、`DETAIL.PAPER`、中央书脊、页叠 | 纯结构资源；分离九宫格／三段式部件 | 当前只提交 `QL-A1` 用户确认；`QL-A2` 后续 |
+| `QL-B` | `LIST.ROW`、`SELECTION`、`TYPE.BADGE`、`STATE.SEAL` | 目录状态覆盖与任务徽记 | 后续任务详情草案 |
+| `QL-C` | 两套 ScrollBar、`CLOSE`、操作按钮、`TRACK`、`DETAIL.TOGGLE`、`LEVELS` | 每个交互对象的完整状态画布 | 后续任务详情草案 |
+| `QL-D` | `REWARD.SLOT`、`DETAIL.DIVIDER` | 奖励槽和非交互墨线 | 后续任务详情草案 |
+| `QT-A` | `HEADER`、`PAPER`、左右叠页边、`BOTTOM`、`EMBLEM` | 可动态伸缩的追踪器结构 | 外部 provider 未映射，暂停且不可执行 |
+| `QT-B` | `COLLAPSE`、`OBJECTIVE`、`FOCUS`、`SEAL`、`TIMER` | 追踪器交互与状态覆盖 | 外部 provider 未映射，暂停且不可执行 |
 
-对应 production draft：
+对应提示词状态：
 
-- [任务详情组件资产生产提示词 V2](../../prompts/quests/任务详情组件资产_生产提示词_v2.md)
-- [任务追踪组件资产生产提示词 V2](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md)
+- [任务详情组件资产生产提示词 V2](../../prompts/quests/任务详情组件资产_生产提示词_v2.md)：
+  `production-draft`，当前只推进 `QL-A1`。
+- [任务追踪组件资产兼容草案 V2](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md)：
+  `deferred-compatibility-draft`，不能执行。
 
-## 7. Runtime 实现顺序
+## 7. 资产与 Runtime 实现顺序
 
-1. 在目标客户端记录所有对象是否存在、原始尺寸、锚点、层级和 provider。
-2. 先接入 `QUEST.LOG.SHELL`，只改变呈现，不修改事件与数据。
-3. 接入左右 ScrollBar 和真实 Button 状态，确认点击区没有改变。
-4. 接入任务行状态覆盖、追踪标记和奖励槽。
-5. 对 `QuestWatchFrame` 建立局部 adapter；以可见文字高度驱动便笺伸缩。
+1. 用户先确认 `QL-A1` 最终提示词。
+2. 只用固定 `imagegen-0-143-0` 执行 `QL-A1`，结果进入 `generated/`；
+   复审通过后才能进入 `assets/source/quests/`。
+3. 回到目标客户端后，记录 Quest Log 对象是否存在、原始尺寸、锚点和层级，
+   再确定结构切片与 adapter 几何。
+4. 先接入 `QUEST.LOG.SHELL`，只改变呈现，不修改事件与数据。
+5. 后续逐批确认并接入左右 ScrollBar、真实 Button 状态、任务行覆盖、日志内
+   追踪标记和奖励槽；确认点击区没有改变。
 6. 最后评估是否重建 pfUI 的等级显示与详情收起增强。
-7. NPC 对话与第三方 tracker 在各自合同完成前继续使用原生回退。
+7. NPC 对话继续使用原生回退；外部 tracker 保持其插件原状，直到完成独立
+   provider 合同、重写提示词并再次获得用户确认。
 
-## 8. 实机验收清单
+## 8. 当前 Quest Log 实机验收清单
 
 - `L` 打开、关闭、拖动和 ESC 行为不变。
 - 地区展开／收起、任务选择、追踪、分享、放弃和滚动都能点击。
 - 空日志、满日志、长中文标题、长正文和多奖励不会越过安全区。
 - 右页隐藏或对象缺失时仍可使用左页。
-- 没有追踪任务时 `QuestWatchFrame` 不留下空纸。
-- 一项、多项、完成、失败和限时任务能正确改变便笺高度与状态。
 - UI Scale 改变后文字与纸面仍对齐。
 - 禁用 `AzerothExpeditionUI` 后恢复原生任务界面；pfUI 非视觉功能不变。
-- 出现第三方任务插件时宁可局部跳过，也不重复显示两个追踪面板。
+- 外部任务追踪插件的 Frame、事件、设置和视觉保持不变，本轮不会重复创建
+  第二个追踪面板。
+
+未来恢复 tracker 兼容后，另行验收一项、多项、完成、失败、限时、收起、
+移动和战斗态；这些不是当前 `QL-A1` 或 Quest Log runtime 的完成门槛。

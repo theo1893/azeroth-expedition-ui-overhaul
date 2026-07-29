@@ -40,19 +40,28 @@ def main() -> None:
             "QuestLogFrameCloseButton",
             "QuestLogFrameAbandonButton",
             "QuestFramePushQuestButton",
+            "当前唯一",
+            "QL-A1",
+            "外部插件",
             "QuestWatchFrame",
-            "QuestWatchLine1..MAX_QUESTWATCH_LINES",
-            "feature-detect",
+            "假设已作废",
+            "deferred-compatibility-draft",
+            "兼容 `P0`",
             "QUEST.ITEM.TOOLTIP",
             "QUEST.ITEM.QUICKBUTTON",
         ),
         "quest component specification",
+    )
+    assert "第一 provider 是香草 `QuestWatchFrame`" not in spec, (
+        "quest tracker still assumes the native QuestWatchFrame provider"
     )
 
     require(
         log_prompt,
         (
             "production-draft",
+            "当前唯一待确认执行块为 `QL-A1`",
+            "当前生产队列：`QL-A1`",
             "imagegen-0-143-0",
             "@openai/codex@0.143.0",
             "执行块 QL-A1",
@@ -69,14 +78,16 @@ def main() -> None:
     require(
         tracker_prompt,
         (
-            "production-draft",
+            "deferred-compatibility-draft",
+            "执行状态：禁止执行",
+            "不得把原生 `QuestWatchFrame`",
             "imagegen-0-143-0",
             "@openai/codex@0.143.0",
-            "执行块 QT-A1",
-            "执行块 QT-A2",
-            "执行块 QT-A3",
-            "执行块 QT-B1",
-            "执行块 QT-B2",
+            "视觉预拆分 QT-A1",
+            "视觉预拆分 QT-A2",
+            "视觉预拆分 QT-A3",
+            "视觉预拆分 QT-B1",
+            "视觉预拆分 QT-B2",
             "真正 RGBA 透明背景",
             "#00FF00",
             "不得生成任务名称、目标文字、数字、伪文字",
@@ -94,6 +105,9 @@ def main() -> None:
             "`QUEST.TRACKER.HEADER`",
             "`QUEST.TRACKER.PAPER`",
             "`QUEST.TRACKER.BOTTOM`",
+            "`P2 visual／P0 compat`",
+            "外部 provider",
+            "deferred compatibility draft",
             "`QUEST.ITEM.TOOLTIP`",
             "`QUEST.ITEM.QUICKBUTTON`",
             "任务详情组件资产_生产提示词_v2.md",
@@ -104,6 +118,12 @@ def main() -> None:
 
     assert "| `QUEST.ITEM` | 任务物品快捷按钮" not in tracker, (
         "tracker still misclassifies pfUI questitem as a quick button"
+    )
+    assert "adapter 层锚定 `QuestWatchFrame`" not in tracker, (
+        "overhaul tracker still binds tracker art to native QuestWatchFrame"
+    )
+    assert "`QuestWatchLine1..MAX_QUESTWATCH_LINES`" not in tracker, (
+        "overhaul tracker still assumes native QuestWatchLine objects"
     )
 
     print("quest design contract test passed")

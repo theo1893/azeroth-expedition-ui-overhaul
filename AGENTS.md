@@ -107,10 +107,16 @@
 
 - 真实对象与资产粒度以
   `docs/implementation/QUEST_COMPONENT_SPEC.md` 为准。
-- 第一实现波次只处理原生 `QuestLogFrame` 和 `QuestWatchFrame`；NPC 对话与
-  第三方 tracker 在建立独立合同前保持原生回退。
-- `prompts/quests/*_生产提示词_v2.md` 是尚未执行的 production draft；用户
-  确认前不得生图、写入 `assets/source/quests/` 或提升到 `P3`。
+- 第一实现波次只处理按 `L` 打开的原生 `QuestLogFrame`；当前游戏页面中的
+  任务追踪属于另一个外部插件，在该插件源码与 provider 对象进入审计范围前
+  暂停接入。NPC 对话同样保持原生回退。
+- `prompts/quests/任务详情组件资产_生产提示词_v2.md` 是尚未执行的
+  production draft；当前唯一待确认执行块是 `QL-A1`。用户确认前不得生图、
+  写入 `assets/source/quests/` 或提升到 `P3`。
+- `prompts/quests/任务追踪组件资产_生产提示词_v2.md` 仅保留为
+  `deferred-compatibility-draft` 视觉拆分参考，不是可执行提示词。不得假设
+  `QuestWatchFrame`、提前生成追踪器资产或创建 runtime Hook；先取得外部插件
+  的顶层 Frame、行对象、更新生命周期、数据状态和交互证据，再重写提示词。
 - pfUI `modules/questitem.lua` 是 Tooltip 数据行为，不是任务快捷按钮；不得
   为了视觉改造改变它的扫描、缓存或物品链接逻辑。
 - 没有目标客户端对象、尺寸和 provider 证据时，不创建任务 runtime 空壳。

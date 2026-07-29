@@ -21,6 +21,9 @@
 “整张视觉原型”只能使模块达到 `P2`。只有每个按钮、状态和可拉伸部件均已
 映射，才允许进入 `P3`。
 
+`P2 visual／P0 compat` 表示综合色感已锁定，但外部 provider 尚未取得，
+不能据此生产资产或实现 runtime。
+
 表中的 `—` 表示当前没有可登记的文件，不是路径占位符。已有文件必须写成
 仓库内的直接链接，不使用“同上”；未来新增资产或提示词时应先补路径，再提升
 阶段。
@@ -36,7 +39,7 @@
 |---|---|---|
 | pfUI 基础 | 可安装维护分支已迁入 `addon/pfUI`；现代可见模块默认回退香草呈现，路由达到 `P5` | Turtle WoW 实机核对原生 Frame 未被隐藏，再逐模块替换 |
 | 聊天 | V3 主框／Tab／输入／未读母版达到 `P4`；legacy 信息底栏已退役 | 复核五张 V3 exporter、UV 和 Lua，再做实机迁移 |
-| 任务 | 详情／追踪视觉达到 `P2`；真实对象合同与两份 production draft 已建立 | 用户确认 V2 提示词；回到游戏后复核 Frame、尺寸与 tracker provider |
+| 任务 | 任务详情为当前实现主线；追踪器仅保留 `P2` 视觉，外部 provider 兼容为 `P0` | 用户确认 `QL-A1` 空卷宗；追踪器等待外部插件源码后另立合同 |
 | 地图 | 大地图／小地图视觉达到 `P2` | 清点 WorldMap 与 Minimap 按钮、遮罩、缩放、插件图标 |
 | 角色 | 香草纸娃娃视觉达到 `P2` | 清点装备槽、Tab、旋转、属性、关闭按钮状态 |
 | 其他 | `P0–P1` | 按表中顺序完成结构截图与组件合同 |
@@ -45,7 +48,7 @@
 
 | 日期 | 范围 | 结果 | 证据／限制 |
 |---|---|---|---|
-| `2026-07-29` | 任务模块离线结构审计 | 通过静态检查 | [`QUEST_COMPONENT_SPEC.md`](QUEST_COMPONENT_SPEC.md) 映射 pfUI Quest Log／Gossip skin、原生 QuestWatch 合同和 questitem 行为；生产提示词未执行，Turtle WoW 对象与尺寸仍待实机 |
+| `2026-07-29` | 任务模块范围收敛 | 通过静态检查 | [`QUEST_COMPONENT_SPEC.md`](QUEST_COMPONENT_SPEC.md) 保留 Quest Log 对象合同和 questitem 行为；原生 QuestWatch provider 假设已撤销，外部追踪插件待后续审计；当前仅 `QL-A1` 待确认 |
 | `2026-07-29` | 文档信息架构 | 通过静态测试 | 项目说明集中到 `docs/`；`addon/` 无 Markdown；文档中心逐项索引且相对链接通过仓库契约测试 |
 | `2026-07-29` | 仓库结构 | 通过 | Markdown 相对链接、Git whitespace、runtime 媒体引用均通过静态检查 |
 | `2026-07-29` | 聊天 0.4.1 legacy | 通过静态测试 | [`chat_module_smoke.lua`](../../tests/chat_module_smoke.lua) 验证旧书、Tab、输入、legacy panel 隐藏与 native-first 状态诊断；不等于目标客户端实机 |
@@ -96,10 +99,10 @@
 | `CHAT.TEXT` | 正文安全区与排版 | `ChatFrameN` | adapter | `P5` | 无美术资产 | N/A | `380×236`／16 行预演 | 实机验证 UI Scale 与长中文 |
 | `CHAT.SCROLL` | 滚轮、复制、滚动控制 | pfUI chat／chatcopy | skin | `P1` | — | — | 未换肤 | 先确认实际显示 Frame |
 | `CHAT.WHISPER` | whisper proxy／独立密语入口 | pfUI whisperproxy | replacement candidate | `P5` route／`P0` final | — | — | 未换肤的可见入口默认不加载 | 映射输入、目标、关闭和转发状态后再恢复 |
-| `QUEST.LOG.SHELL` | 双页卷宗封皮、包角与外围页叠 | `QuestLogFrame` | adapter | `P2` | [详情基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | [QL-A1/A2 production draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；尚无 runtime／源资产 | 用户确认提示词后生成纯结构母版；不烘焙控件 |
-| `QUEST.LOG.LIST.PAPER` | 左页目录连续纸面 | `QuestLogListScrollFrame` 外围呈现层 | adapter | `P2` | [详情基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | [QL-A1/A2 production draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；尚无 runtime／源资产 | 生成可九宫格拉伸的左页纸面 |
-| `QUEST.LOG.DETAIL.PAPER` | 右页正文连续纸面 | `QuestLogDetailScrollFrame` | adapter | `P2` | [详情基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | [QL-A1/A2 production draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；尚无 runtime／源资产 | 生成安静正文纸面并保留动态文字 |
-| `QUEST.LOG.SPINE` | 中央书脊、缝线与底部连接 | `QuestLogFrame` 中央非交互呈现层 | adapter | `P2` | [详情基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | [QL-A1/A2 production draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；尚无 runtime／源资产 | 生成上／中／下三段并验证纵向拼接 |
+| `QUEST.LOG.SHELL` | 双页卷宗封皮、包角与外围页叠 | `QuestLogFrame` | adapter | `P2` | [详情基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | [QL-A1 当前 production draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；尚无 runtime／源资产 | 用户确认 `QL-A1` 后只生成空卷宗结构母版；不烘焙控件 |
+| `QUEST.LOG.LIST.PAPER` | 左页目录连续纸面 | `QuestLogListScrollFrame` 外围呈现层 | adapter | `P2` | [详情基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | [QL-A1 当前／QL-A2 后续 draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；尚无 runtime／源资产 | 先随 `QL-A1` 复审整体纸面；`QL-A2` 不自动执行 |
+| `QUEST.LOG.DETAIL.PAPER` | 右页正文连续纸面 | `QuestLogDetailScrollFrame` | adapter | `P2` | [详情基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | [QL-A1 当前／QL-A2 后续 draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；尚无 runtime／源资产 | 先随 `QL-A1` 复审安静正文区；`QL-A2` 不自动执行 |
+| `QUEST.LOG.SPINE` | 中央书脊、缝线与底部连接 | `QuestLogFrame` 中央非交互呈现层 | adapter | `P2` | [详情基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | [QL-A1 当前／QL-A2 后续 draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；尚无 runtime／源资产 | 先随 `QL-A1` 复审书脊结构；切片批次后续确认 |
 | `QUEST.LOG.TITLE` | 卷宗标题与任务计数安全区 | `QuestLogTitleText`、`QuestLogQuestCount`／`QuestLogCount` | adapter | `P1` | [任务模块规范](../modules/quests/任务模块视觉规范_公会任务卷宗与行军便笺_v1.md) | N/A（runtime 字体与文字） | [任务组件合同](QUEST_COMPONENT_SPEC.md) | 实机测量中文标题、任务计数和书脊避让 |
 | `QUEST.LOG.LIST.ROW` | 地区标题／任务条目的普通、悬停、选中、禁用覆盖 | `QuestLogTitle1..QUESTS_DISPLAYED` | adapter | `P2` | [详情基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | [QL-B1 production draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；不生成独立卡片 | 确认提示词后生成同几何四状态 |
 | `QUEST.LOG.LIST.CHECK` | 任务追踪状态墨圈／墨勾 | `QuestLogTitleNCheck` | skin | `P1` | [任务模块规范](../modules/quests/任务模块视觉规范_公会任务卷宗与行军便笺_v1.md) | [QL-B1 production draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md) | 实机确认可见条件与原生点击关系 |
@@ -117,16 +120,16 @@
 | `QUEST.LOG.ACTION.EXIT` | 底部关闭／退出按钮 | `QuestFrameExitButton`／`QuestLogFrameCancelButton` | skin | `P1` | [任务模块规范](../modules/quests/任务模块视觉规范_公会任务卷宗与行军便笺_v1.md) | [QL-C2 production draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；与其他操作按钮共享同几何资产 | 实机选择真实对象，不重复创建关闭行为 |
 | `QUEST.LOG.DETAIL.TOGGLE` | 左／右折页式详情收起 | pfUI skin 才创建的 `QuestLogFrameExpandButton` | optional extension | `P1` | [任务模块规范](../modules/quests/任务模块视觉规范_公会任务卷宗与行军便笺_v1.md) | [QL-C2 production draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；不是首轮硬依赖 | 实机后决定是否重建 pfUI UI 增强 |
 | `QUEST.LOG.LEVELS` | 显示任务等级复选框 | pfUI skin 才创建的 `QuestLogFrameLevelsCheckButton` | optional extension | `P1` | [任务模块规范](../modules/quests/任务模块视觉规范_公会任务卷宗与行军便笺_v1.md) | [QL-C2 production draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；非视觉配置不得改写 | 实机后决定是否重建并兼容 pfQuest 配置 |
-| `QUEST.TRACKER.HEADER` | 行军便笺顶部皮带与双铆钉 | adapter 层锚定 `QuestWatchFrame` | adapter | `P2` | [追踪基准](../../assets/locked/quests/任务追踪面板_视觉基准_v1.png) | [QT-A1 production draft](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；尚无 runtime／源资产 | 生成左端／平铺中段／右端 |
-| `QUEST.TRACKER.EMBLEM` | 羽毛笔与指南针徽记 | adapter 非交互 Texture | adapter | `P2` | [追踪基准](../../assets/locked/quests/任务追踪面板_视觉基准_v1.png) | [QT-A1 production draft](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md) | 独立透明资源，不遮挡标题 |
-| `QUEST.TRACKER.PAPER` | 可纵向扩展纸面和左右叠页边 | adapter 层锚定 `QuestWatchFrame` | adapter | `P2` | [追踪基准](../../assets/locked/quests/任务追踪面板_视觉基准_v1.png) | [QT-A2 production draft](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；高度由可见文字驱动 | 生成填充块、左右平铺页边和上连接角 |
-| `QUEST.TRACKER.BOTTOM` | 自然撕裂底边与后方叠页 | adapter 层锚定 `QuestWatchFrame` | adapter | `P2` | [追踪基准](../../assets/locked/quests/任务追踪面板_视觉基准_v1.png) | [QT-A3 production draft](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md) | 生成左右端、横向中段和后方页层；禁止纵向拉伸 |
-| `QUEST.TRACKER.ENTRY` | 任务标题和目标动态排版 | `QuestWatchLine1..MAX_QUESTWATCH_LINES` | adapter | `P2` visual／`P1` provider | [追踪基准](../../assets/locked/quests/任务追踪面板_视觉基准_v1.png) | [QT-B3 optional draft](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；原生行可能只有 FontString | 实机确认 provider 与点击对象；没有稳定对象则不生成行覆盖 |
-| `QUEST.TRACKER.COLLAPSE` | 便笺收起／展开拉环 | adapter 可选 Button | extension | `P1` | [追踪基准](../../assets/locked/quests/任务追踪面板_视觉基准_v1.png) | [QT-B1 production draft](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；不属于原生硬依赖 | 确认交互范围后生成两语义四状态 |
-| `QUEST.TRACKER.OBJECTIVE` | 未完成墨圈／已完成墨勾 | 目标行 adapter Texture | adapter | `P2` | [任务模块规范](../modules/quests/任务模块视觉规范_公会任务卷宗与行军便笺_v1.md) | [QT-B2 production draft](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md) | 用 `GetQuestLogLeaderBoard` 状态驱动，不解析颜色 |
-| `QUEST.TRACKER.FOCUS` | 当前重点任务页边织物标记 | 任务组 adapter Texture | adapter | `P2` | [追踪基准](../../assets/locked/quests/任务追踪面板_视觉基准_v1.png) | [QT-B2 production draft](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md) | 明确 focus 数据来源后接入 |
-| `QUEST.TRACKER.SEAL` | 整项完成／失败小蜡封 | 任务组 adapter Texture | adapter | `P2` | [任务模块规范](../modules/quests/任务模块视觉规范_公会任务卷宗与行军便笺_v1.md) | [QT-B2 production draft](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md) | 生成完整／破裂同尺寸状态 |
-| `QUEST.TRACKER.TIMER` | 限时任务沙漏与警告 | 任务时间数据；`QuestTimerFrame` 待实测 | adapter | `P1` | [任务模块规范](../modules/quests/任务模块视觉规范_公会任务卷宗与行军便笺_v1.md) | [QT-B2 production draft](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md) | 实机确认 timer 对象、事件和警告阈值 |
+| `QUEST.TRACKER.HEADER` | 行军便笺顶部皮带与双铆钉 | 外部 provider 顶层容器待识别 | future adapter | `P2 visual／P0 compat` | [追踪基准](../../assets/locked/quests/任务追踪面板_视觉基准_v1.png) | [deferred compatibility draft](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；无 provider／runtime／源资产 | 取得外部插件源码后映射安全区并重写提示词 |
+| `QUEST.TRACKER.EMBLEM` | 羽毛笔与指南针徽记 | 外部 provider 标题区与鼠标命中范围待识别 | future adapter | `P2 visual／P0 compat` | [追踪基准](../../assets/locked/quests/任务追踪面板_视觉基准_v1.png) | [deferred compatibility draft](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；禁止提前生成 | 先确认装饰不会遮挡外部插件交互 |
+| `QUEST.TRACKER.PAPER` | 可纵向扩展纸面和左右叠页边 | 外部 provider 内容容器与尺寸更新待识别 | future adapter | `P2 visual／P0 compat` | [追踪基准](../../assets/locked/quests/任务追踪面板_视觉基准_v1.png) | [deferred compatibility draft](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；禁止提前生成 | 映射 provider 高度计算后重新定义切片 |
+| `QUEST.TRACKER.BOTTOM` | 自然撕裂底边与后方叠页 | 外部 provider 底部锚点待识别 | future adapter | `P2 visual／P0 compat` | [追踪基准](../../assets/locked/quests/任务追踪面板_视觉基准_v1.png) | [deferred compatibility draft](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；禁止提前生成 | 映射实际宽度与伸缩规则后重写批次 |
+| `QUEST.TRACKER.ENTRY` | 任务标题和目标动态排版 | 外部 provider 任务组／行对象待识别 | future adapter | `P2 visual／P0 compat` | [追踪基准](../../assets/locked/quests/任务追踪面板_视觉基准_v1.png) | [deferred compatibility draft](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；未证明点击对象或状态 | 取得对象树与更新生命周期；不伪造行交互 |
+| `QUEST.TRACKER.COLLAPSE` | 便笺收起／展开拉环 | 外部 provider 真实 Button 待识别 | future extension | `P1 visual／P0 compat` | [追踪基准](../../assets/locked/quests/任务追踪面板_视觉基准_v1.png) | [deferred compatibility draft](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；未知是否存在此能力 | 仅在 provider 已有收起交互时保留该组件 |
+| `QUEST.TRACKER.OBJECTIVE` | 未完成墨圈／已完成墨勾 | 外部 provider 目标行与完成状态待识别 | future adapter | `P2 visual／P0 compat` | [任务模块规范](../modules/quests/任务模块视觉规范_公会任务卷宗与行军便笺_v1.md) | [deferred compatibility draft](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；状态数据未知 | 依据 provider 数据合同重写状态映射 |
+| `QUEST.TRACKER.FOCUS` | 当前重点任务页边织物标记 | 外部 provider 重点任务语义待识别 | future adapter | `P2 visual／P0 compat` | [追踪基准](../../assets/locked/quests/任务追踪面板_视觉基准_v1.png) | [deferred compatibility draft](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；状态数据未知 | 仅在 provider 有 focus 语义时接入 |
+| `QUEST.TRACKER.SEAL` | 整项完成／失败小蜡封 | 外部 provider 完成／失败状态待识别 | future adapter | `P2 visual／P0 compat` | [任务模块规范](../modules/quests/任务模块视觉规范_公会任务卷宗与行军便笺_v1.md) | [deferred compatibility draft](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；状态数据未知 | 依据 provider 可判定状态裁减资产 |
+| `QUEST.TRACKER.TIMER` | 限时任务沙漏与警告 | 外部 provider 计时对象与阈值待识别 | future adapter | `P1 visual／P0 compat` | [任务模块规范](../modules/quests/任务模块视觉规范_公会任务卷宗与行军便笺_v1.md) | [deferred compatibility draft](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；计时能力未知 | 取得事件、对象和阈值后再决定是否保留 |
 | `QUEST.DIALOG.FRAME` | NPC 任务／Gossip 外框 | `QuestFrame`、`GossipFrame` | skin | `P1` | [任务模块规范](../modules/quests/任务模块视觉规范_公会任务卷宗与行军便笺_v1.md) | — | [任务组件合同](QUEST_COMPONENT_SPEC.md)；本波次保持原生 | 后续建立“NPC 委托文书”视觉合同 |
 | `QUEST.DIALOG.PANELS` | Greeting／Detail／Progress／Reward 正文区 | 对应 panels 与 ScrollFrames | skin | `P1` | [任务模块规范](../modules/quests/任务模块视觉规范_公会任务卷宗与行军便笺_v1.md) | — | [任务组件合同](QUEST_COMPONENT_SPEC.md)；本波次保持原生 | 清点材料背景、滚动条和文字安全区 |
 | `QUEST.DIALOG.ACTIONS` | 接受／拒绝／继续／完成／取消 | Quest／Gossip action buttons | skin | `P1` | [任务模块规范](../modules/quests/任务模块视觉规范_公会任务卷宗与行军便笺_v1.md) | — | [任务组件合同](QUEST_COMPONENT_SPEC.md)；本波次保持原生 | 每个按钮映射后再决定共用几何 |
