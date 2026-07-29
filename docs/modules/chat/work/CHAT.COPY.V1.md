@@ -5,7 +5,7 @@
 - 模块：Chat
 - 组件 ID：`CHAT.COPY.TOGGLE`、`CHAT.COPY.SURFACE`、`CHAT.COPY.TEXT`
 - 版本：`CHAT.COPY.V1`
-- 子状态：`prompt-authorized`
+- 子状态：`candidate-rejected`
 - 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 操作：`generate`
@@ -30,9 +30,11 @@
   - Image 4：
     [`ChatControls_Master_v3.png`](../../../../assets/source/chat/v3/ChatControls_Master_v3.png)
     — 只用于小型控件的笔触密度、纸边厚度和皮绳尺度；不继承已退役底栏字段
-- raw：生成后仅写入 `generated/chat/copy/v1/`
-- 透明候选：生成后仅写入 `generated/chat/copy/v1/`
-- 重组预演：生成后仅写入 `generated/chat/copy/v1/`
+- raw：
+  - A：`generated/chat/copy/v1/a/CHAT.COPY.SURFACE.V1.raw.png`
+  - B：`generated/chat/copy/v1/b/CHAT.COPY.TOGGLE.V1.raw.png`
+- 透明候选：未生成；A／B 在首个语义门禁失败
+- 重组预演：未生成；失败候选不得进入装配审查
 - 最终 source：无；必须经用户明确接受后才能进入 `assets/source/chat/copy/`
 
 ## 美术基准继承
@@ -256,28 +258,117 @@ on the green field, labels, or additional objects.
 
 ## 执行记录
 
-- 日期：未执行
-- 会话／结果 ID：无
-- 实际输入绝对路径与职责：待用户授权后按元数据中的 Image 1–4 映射
-- imagegen 报告的 revised prompt：无
-- 输出尺寸／模式／SHA-256：无
-- Alpha／残色：未检查
-- 内部失败重试：无
+- 日期：`2026-07-29`
+- 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
+- A 会话／结果：
+  - session：`019fae2a-34b9-7f60-a838-de96b4407c80`
+  - image call：`ig_0a47f137ed8bad95016a6a06d17d7881919f80bfe1b27825bf`
+  - raw：
+    `generated/chat/copy/v1/a/CHAT.COPY.SURFACE.V1.raw.png`
+- B 会话／结果：
+  - session：`019fae2c-0c40-7bf2-8713-79708add2e8c`
+  - image call：`ig_042663cb312d3ad2016a6a0748a4448191ad1e9f184c43898d`
+  - raw：
+    `generated/chat/copy/v1/b/CHAT.COPY.TOGGLE.V1.raw.png`
+- 实际输入绝对路径与职责：
+  - `D:\Git\azeroth-expedition-ui-overhaul\assets\locked\chat\聊天框视觉基准_v1.png`
+    — 游戏内尺度、位置和战地旧书身份
+  - `D:\Git\azeroth-expedition-ui-overhaul\assets\locked\chat\聊天框独立艺术资源_v3.png`
+    — 锁定绘制精度与旧书材料语言；不得复制完整框架
+  - `D:\Git\azeroth-expedition-ui-overhaul\assets\source\chat\v3\ChatBookFrame_Master_v3.png`
+    — 已部署纸色、笔触和磨损尺度
+  - `D:\Git\azeroth-expedition-ui-overhaul\assets\source\chat\v3\ChatControls_Master_v3.png`
+    — 小控件的笔触密度、纸边厚度和皮绳尺度
+- 输出尺寸／模式／SHA-256：
+  - A：`1672 × 941`／`RGB`／
+    `c06ef69185c6b424b0e983cf4624e54bab45307d55074c698e840c9059796324`
+  - B：`2172 × 724`／`RGB`／
+    `2e466f0b532605dc786a1e344f5988dc6faf73965111eba2834918566cc8e209`
+- Alpha／残色：
+  - A：全不透明；没有 `#00FF00`，背景被改成黑色
+  - B：全不透明；精确 `#00FF00` 469 像素，启发式强绿 877171 像素
+  - 因首个语义门禁已失败，未执行色键转透明或边缘残色修复
+- 内部失败重试：`0`；A／B 各执行一次，均保留原始失败证据
+
+### A：imagegen 报告的 revised prompt
+
+```text
+Use case: ui-mockup
+Asset type: production-ready modular bitmap asset for a fantasy RPG chat-copy surface / chat log panel background.
+Primary request: Create one standalone modular bitmap UI asset: an ornate parchment-and-dark-wood chat-copy surface that can be placed over a game HUD. It should match the Azeroth expedition fantasy interface style shown in the references: aged parchment reading area, carved dark wooden frame, antique gold metal trim, leather bindings, small rivets, worn edges, high-detail hand-painted game UI finish.
+Input images: Image 1 is the in-game visual benchmark for scale and chat placement; Image 2 is the ornate independent chat frame art reference; Image 3 is the preferred parchment/book-frame material reference; Image 4 is the preferred long chat control strip material reference.
+Composition/framing: horizontal rectangular chat panel, wide and low, optimized for bottom-left HUD placement. Include a large clean parchment text area with generous empty readable space, bordered by layered paper edges and a compact dark carved frame. Add subtle modular details: top tab rail with 4 blank tab plaques, left narrow vertical binding column with two small blank icon medallions, bottom-right small wax-seal-like accent. Keep all decorative elements attached to the frame so the asset reads as one reusable module.
+Style/medium: high-resolution hand-painted fantasy game UI bitmap, crisp production asset, not a screenshot, not a mockup pasted onto gameplay.
+Lighting/mood: warm parchment glow, dark dungeon-fantasy trim, controlled highlights on gold edges, readable but ornate.
+Color palette: aged tan parchment, dark brown wood/leather, antique brass/gold, small muted blue enamel accents only.
+Materials/textures: parchment fibers, torn layered paper edges, scratched dark wood, hammered brass, stitched leather, worn corners.
+Text: no readable text, no labels, no letters, no numbers.
+Constraints: isolated asset on a plain black background; front-facing orthographic UI asset; clean silhouette; no characters, no gameplay scene, no chat messages, no icons with text, no watermark. Leave interior parchment mostly empty for later text overlay. Ensure edges are sharp enough for compositing and the design is visually coherent at game HUD scale.
+Avoid: modern UI, flat vector style, photoreal object photo, busy parchment center, excessive skulls, oversized dragon ornament, glowing effects inside text area, cropped frame, perspective tilt, drop shadow that merges into the black background.
+```
+
+该 revised prompt 把授权正文中的“单张薄抄录纸”改成完整
+`chat log panel`，主动加入顶部四槽、左柱、金属框、蜡封，并把
+`#00FF00` 改成黑底；这些变化直接导致 A 的对象身份失败。
+
+### B：imagegen 报告的 revised prompt
+
+```text
+Use case: stylized-concept
+Asset type: production-ready game UI sprite source for pfChatCopyButton
+Primary request: Create one sprite sheet source image for a real pfChatCopyButton that fits the provided Azeroth-style chat frame references. The asset should be a compact ornate copy/scroll/document button for a fantasy MMO chat window, not a mockup screen.
+Input images: Image 1 is the in-game visual benchmark for scale and placement; Image 2 is the ornate locked chat-frame art style reference; Image 3 is the parchment/leather master frame style reference; Image 4 is the chat control strip material/style reference.
+Subject: A small square-ish copy button icon with a readable parchment/document-copy motif, framed in aged dark leather, hammered brass/gold trim, tiny rivets, worn beveled edges, and subtle blue enamel accent matching the references.
+Composition/framing: One horizontal sprite sheet containing four equal cells: normal, hover, pressed, disabled. Each cell shows the same button centered with generous padding and consistent dimensions. Normal state is neutral; hover has warmer gold rim glow; pressed is slightly darker and inset; disabled is desaturated and lower contrast. No text labels.
+Style/medium: High-detail painted fantasy game UI asset, hand-painted raster sprite source, Warcraft-inspired medieval parchment and brass UI ornamentation, crisp edges for downscaling.
+Lighting/mood: Warm brass highlights, dark leather shadows, subtle parchment glow, high contrast readable at small size.
+Color palette: aged gold, dark umber leather, parchment tan, muted stone gray, tiny cool blue accent; avoid one-note color wash.
+Materials/textures: cracked leather, worn brass, scratched metal bevels, parchment document glyph, slight grime, carved/embossed trim.
+Constraints: Sprite sheet only, four button states in a single row, transparent-looking asset silhouette on a perfectly flat solid #00ff00 chroma-key background for later background removal. Keep background one uniform color with no shadows, gradients, texture, reflections, floor plane, or lighting variation. Do not use #00ff00 anywhere in the button art. No cast shadow outside the button silhouette. No text, no watermark, no UI screen, no character art.
+Avoid: oversized decorative frame, chat panel, tabs, readable letters, labels, modern flat UI, SVG/vector look, blurry edges, mismatched state sizes, black background.
+```
+
+该 revised prompt 把七个双页夹状态压缩成四个方形
+`copy/scroll/document button`，又主动加入现代文档图标、完整按钮牌、蓝色珐琅
+和连续金属边；这些变化直接导致 B 的对象身份和状态清单失败。
 
 ## 审查记录
 
-- 语义／物理：待生成
-- 透视／图层：待生成
-- 美术一致性：待生成
-- 对象／状态合同：待生成
-- 装配／尺寸：待生成
-- 技术像素：待生成
-- 结论：`prompt-authorized / P3`
-- 用户结论与日期：`2026-07-29`，明确授权执行 `CHAT.COPY.V1` A／B
-- 下一门禁：固定 ImageGen 0.143.0 分别执行 A／B，并记录原始输出与会话
+- 判定：`退回`
+- 当前子状态／最高阶段：`candidate-rejected / P3`
+- 否决人：`internal-review`
+- 日期：`2026-07-29`
+- 第一个失败门禁：范围与对象身份；B 同时失败于状态清单
+- 可观察证据：
+  - A 是带顶部四槽、左木柱、完整金属边框和右下蜡封的第二聊天框，不是覆盖
+    原书正文纸面的单张薄抄录纸；黑底也违背色键合同。
+  - B 只有四个大型方形按钮，烘焙现代叠放文档图标、蓝色宝石和连续金属边；
+    不是七个同外接框的 `22 × 26` 双层页夹状态。
+- 语义／物理：A 没有“薄纸盖在原书页上”的层级；B 没有收拢／展开的双叶
+  物理关系，只有方形工具栏按钮。
+- 透视／图层：因对象身份已致命失败，停止进入真实 z-order 重组审查。
+- 美术一致性：A 错误复制明确排除的完整规则框架；B 使用精工黄铜牌、蓝色
+  珠宝和现代图标语义，均偏离“纸张第一、皮革第二、黄铜仅连接点”的条款。
+- 对象／状态合同：A 包含合同外 Tab、柱、蜡封和框架；B 为四状态而非七状态，
+  且没有 off／on 两族。
+- 装配／尺寸：未制作 `440 × 320` 预演；致命结构错误不得进入缩放与装配。
+- 技术像素：两张 raw 均为无 Alpha 的 RGB；A `1672 × 941` 黑底，B
+  `2172 × 724` 绿底；数值证据不能挽救错误对象。
+- 本版本保留内容：授权执行正文、固定执行器会话／结果 ID、原始失败图、
+  revised prompt、像素检查与 SHA-256。
+- 下一版本必须改变：
+  - A 必须只生成一张无遮挡、无外框的 `380:248` 薄抄录纸，不再允许执行器
+    把完整聊天框参考转译为目标结构。
+  - B 必须保证七个状态和双页夹实体身份；若单次七状态生成仍会被模型压缩，
+    下一合同应拆分物理基态生成，并把派生交互状态写成确定性 runtime 规则。
+- 本版本无 tracked source／runtime：是；raw 只存在于被忽略的 `generated/`
+- 是否允许进入用户复审／source／runtime：否
+- 用户结论与日期：`2026-07-29` 仅授权执行 A／B，尚未接受任何候选
+- 下一门禁：先制定 `CHAT.COPY.V1.1` 的输入裁减与状态拆分合同，展示完整
+  Prompt 并取得用户明确授权；不得直接重跑
 
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
 |---|---|---|---|
-| V1 | 用户于 `2026-07-29` 授权本文件 A／B 正文 | `prompt-authorized` | 使用固定执行器逐字执行 |
+| V1 | session `019fae2a…`／`019fae2c…`；A `c06ef691…`，B `2e466f0b…` | `candidate-rejected` | A 隔离为单张纸；B 保证双页夹身份与完整状态清单 |

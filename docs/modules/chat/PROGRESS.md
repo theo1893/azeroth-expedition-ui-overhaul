@@ -15,9 +15,10 @@
 - 尚未完成：language、聊天弹出菜单、URL copy、chatcopy、whisper proxy 的
   最终美术；这些对象保持原生或默认不加载。
 - 用户决定暂时延后 `CHAT.TEXT` 的字体、描边和频道色可读性改造；本轮不修改
-  正文呈现。下一项已选择复用 pfUI `chatcopy` 逻辑，并建立
-  `CHAT.COPY.V1 / prompt-authorized / P3`；用户已于 `2026-07-29` 明确授权
-  A／B 执行正文，等待固定 ImageGen 0.143.0 生成。
+  正文呈现。下一项已选择复用 pfUI `chatcopy` 逻辑。固定 ImageGen 0.143.0
+  已按用户授权分别执行 `CHAT.COPY.V1` A／B，但 A 错生为完整第二聊天框，
+  B 错生为四个现代方形文档按钮；两者均在范围与对象身份门禁被内部退回，
+  当前为 `candidate-rejected / P3`，没有透明 source、预演或 runtime。
 - Turtle WoW 实机：原始 runtime 截图确认 `FCF_DockUpdate` 覆盖停靠几何，
   且用户否决 `42px` 外接高度。随后两张复测截图仍由未同步的 Git HEAD
   安装副本产生，未加载 v1.1／v1.2，因此不构成版本验收。v1.2 正确部署后
@@ -45,7 +46,7 @@
 | `CHAT.SCROLL.*`／`MENU.BUTTON`／`RESIZE` | `P1` hidden | 原生对象已登记，pfUI 当前隐藏 | 仅在决定恢复时建立资产合同 |
 | `CHAT.POPUP.*` | `P1` | 四个原生菜单实例已映射，仍为过渡外观 | 实机拆分 shell、行状态和滚动 |
 | `CHAT.URLCOPY.*` | `P1` | pfUI shell／input／close 已映射 | 实机测量并锁定便笺弹窗视觉 |
-| `CHAT.COPY.*` | `P3` V1 prompt-authorized | 复用 pfUI 历史、选择、滚动与左右键逻辑；独立右侧页夹和抄录纸合同已获授权；仍默认不加载 | 固定 ImageGen 0.143.0 分别执行 A／B 并内部审查 |
+| `CHAT.COPY.*` | `P3` V1 candidate-rejected | 复用 pfUI 历史、选择、滚动与左右键逻辑；A 错生完整框架，B 错生四状态现代文档按钮；raw 仅留在 ignored `generated/`，仍默认不加载 | 制定 V1.1 输入裁减／状态拆分合同并取得明确授权 |
 | `CHAT.WHISPER.TOGGLE` | `P5` route／`P1` object | 功能源码保留，默认不加载 | 锁定代理开关视觉 |
 | `CHAT.WHISPER.DIALOG` | `P1` shared-owner | 归未来 System 公共弹窗 | System 模块统一拆分 |
 
@@ -103,8 +104,9 @@
 7. 确认右框始终隐藏，并验证拾取、经验、荣誉、声望与技能消息仍进入左框。
 8. 核心批次实机通过后达到 `P6`，但保留 work 与 legacy 回退资产直至用户批准
    `P6-C` 清理清单。
-9. 使用固定 ImageGen 0.143.0 逐字执行已授权的
-   [`CHAT.COPY.V1`](work/CHAT.COPY.V1.md) A／B，保留 raw、透明候选和
-   `440 × 320` 重组预演；内部审查后交给用户视觉复审。
+9. 审查 [`CHAT.COPY.V1`](work/CHAT.COPY.V1.md) 的失败记录，再制定 V1.1：
+   A 必须隔离成单张 `380:248` 抄录纸；B 必须避免被压缩成四状态方形按钮，
+   必要时拆分物理基态生成与确定性 runtime 状态。完整 Prompt 先交用户授权，
+   不直接重跑。
 10. `CHAT.INPUT.LANGUAGE`、`CHAT.POPUP.*`、`CHAT.URLCOPY.*` 与
     `CHAT.WHISPER.TOGGLE` 在取得实机几何后另行准备组件 Prompt。
