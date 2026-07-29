@@ -8,10 +8,12 @@
   `QUEST.LOG.GUTTER.RIGHT_FOLD`、`QUEST.LOG.GUTTER.STITCH`、
   `QUEST.LOG.GUTTER.TOP`、`QUEST.LOG.GUTTER.BOTTOM`
 - 版本：`QL-A2 V3.1`
-- 子状态：`prompt-draft`
-- 项目阶段：`P2`
-- 类型：`production-draft`
-- 执行状态：未授权，禁止执行
+- 子状态：`prompt-authorized`
+- 项目阶段：`P3`
+- 类型：`production`
+- 执行状态：用户于 `2026-07-30` 明确授权，等待固定执行器
+- 用户授权：明确授权 `QL-A2 V3.1`，并允许上传固定 SHA 的 Image 1、
+  Image 2、Image 3
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 操作：`generate`；从锁定基准与受限次级参考重新生成，不编辑或上传任何 QL-A2
   失败候选
@@ -51,9 +53,10 @@
 - 重组预演：未生成
 - 最终 source：无
 
-本文件只有在用户明确授权 `QL-A2 V3.1` 后才能冻结为 `production` 并原样
-交给固定执行器。授权前不得创建 `generated/quests/QL-A2/v3.1/` 输出，不得
-修改 `assets/source/`，也不得接入 runtime。
+本文件已由用户明确授权 `QL-A2 V3.1` 执行正文及三张固定 SHA 输入图上传。
+当前正文必须先作为 `prompt-authorized / P3` 提交，随后原样交给固定执行器；
+生成结果只能进入 `generated/quests/QL-A2/v3.1/`。本授权不允许修改
+`assets/source/`、导出 runtime 或接入 Lua。
 
 ## 尝试摘要
 
@@ -65,7 +68,7 @@
 | V1 | 用户退回；会话 `019fac4a-c73e-71c1-a6bd-a94a86627b3e` | 外置封脊视角错误，上下端件压死翻页，图层／透视不一致；`42%／58%` 不能作为物理页宽，`140 × 60` 周期作废 |
 | V2.1 | 用户退回；会话 `019fac8e-bae8-73f2-af89-674e925b0068`，结果 `ig_0bda33a80800f83f016a699ddd6dbc8191a674cb8b33717482` | 近等宽双页和内部页沟方向可保留；针脚偏离中心、端点与纸页融合差、正文高频纹理过密 |
 | V3 | 内部退回；会话 `019fad38-517b-7ca1-82af-853b0ddc68f2`，结果 `ig_0e8d8bb14f37caff016a69c8e4f918819186e21dd3df807ff2` | Underlay 变成完整织纹竖条，内折变成实心纸条，正确层序下针脚消失，上下收口像把手，正文仍满页压花；流程还错误提升了派生 source 的权威 |
-| V3.1 | 当前 `prompt-draft / P2` | 从锁定任务图与本模块 Prompt 重新继承；未授权、未生成 |
+| V3.1 | 当前 `prompt-authorized / P3` | 从锁定任务图与本模块 Prompt 重新继承；正文与三张固定 SHA 输入上传已授权，尚未生成 |
 
 V3 raw SHA-256 为
 `44e3cf1b01625b4c9e810229a6d33a9bcf381bb9bc0dc9feda06384034c0a0cc`；
@@ -380,7 +383,7 @@ Image 2 只提供与战地旧书聊天框共用的纸张、旧皮革、暗金、
 - 对象／状态合同：提示词要求精确八组；尚无候选
 - 装配／尺寸：待确定性重组
 - 技术像素：待生成
-- 结论：`prompt-draft / P2`，没有候选，不允许进入用户资产复审
-- 用户结论与日期：尚未授权执行
-- 下一门禁：用户明确授权 `QL-A2 V3.1` 最终执行正文，并允许上传固定
-  Image 1／Image 2／Image 3
+- 结论：`prompt-authorized / P3`；没有候选，尚不允许进入用户资产复审
+- 用户结论与日期：`2026-07-30`；明确授权 `QL-A2 V3.1` 最终执行正文，
+  并允许上传固定 SHA 的 Image 1／Image 2／Image 3
+- 下一门禁：先提交本授权版本，再由固定 ImageGen 0.143.0 执行器生成 raw

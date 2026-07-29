@@ -7,7 +7,8 @@
   实机对象几何尚未完成，继续保持后续顺位。
 - Quest Log 真实对象合同：`P1` 完成，QL-A 当前处于 `P2–P4` 混合阶段。
 - `QL-A1` 空卷宗结构 source：用户确认，`P4`。
-- `QL-A2 V3.1`：`prompt-draft / P2`，未授权、未生成。
+- `QL-A2 V3.1`：用户于 `2026-07-30` 明确授权执行正文与固定 SHA 的
+  Image 1／2／3 上传；当前为 `prompt-authorized / P3`，尚未生成。
 - Quest Tracker：视觉 `P2`，外部 provider `P0`，暂停。
 - NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
 - `questitem.lua`：行为保留，视觉 `N/A`。
@@ -17,7 +18,7 @@
 | 批次 | 子模块 | 阶段 | 当前事实 | 下一门禁 |
 |---|---|---:|---|---|
 | `QL-A1` | `QUEST.LOG.SHELL` 结构母版 | `P4` | [透明 source](../../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png) 已接受；整图不得进 runtime | 等待 QL-A2 后确定 crop／UV |
-| `QL-A2` | 两纸页与六个 `GUTTER.*` | `P2` current | V1、V2.1、V3 已退回；[V3.1 work](work/QUEST.LOG.GUTTER.md) 已融合最高美术基线 | 用户明确授权 `QL-A2 V3.1` |
+| `QL-A2` | 两纸页与六个 `GUTTER.*` | `P3` prompt-authorized | V1、V2.1、V3 已退回；[V3.1 work](work/QUEST.LOG.GUTTER.md) 已获正文与三张固定输入上传授权 | 固定 ImageGen 0.143.0 生成并先做内部结构审查 |
 | `QL-B` | 目录行、展开、追踪、选择、类型、状态 | `P1–P2` | 子模块与稳定美术基线已定义，无生产 work | QL-A2 source 接受后逐对象建 Prompt |
 | `QL-C` | 两套 ScrollBar、关闭、操作与辅助按钮 | `P1–P2` | 真实对象已拆，部分全局名需 feature-detect | 实机对象与几何 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | `P1–P2` | Quest Log 奖励只读，无 selected | 实机奖励数量与尺寸 |
@@ -65,7 +66,7 @@ source 或 runtime。
 
 ## 下一步
 
-用户审阅 [当前 QL-A2 V3.1 执行正文](work/QUEST.LOG.GUTTER.md)，并在接受时
-明确回复版本，同时允许上传 work 中按固定 SHA 锁定的 Image 1／2／3。只有
-具体版本与三张输入图均获授权后，固定 `imagegen-0-143-0` 执行器才可生成
-候选；“继续”或“下一步”不构成授权。
+先提交 [已授权的 QL-A2 V3.1 执行正文](work/QUEST.LOG.GUTTER.md) 以冻结
+精确版本，再由固定 `imagegen-0-143-0` 执行器上传三张固定 SHA 输入并生成
+raw。结果只进入被忽略的 `generated/`；必须先通过语义／物理、层序、美术、
+对象数量、装配与技术像素审查，才允许进入用户候选复审。
