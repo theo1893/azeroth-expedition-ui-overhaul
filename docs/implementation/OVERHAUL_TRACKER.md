@@ -39,7 +39,7 @@
 |---|---|---|
 | pfUI 基础 | 可安装维护分支已迁入 `addon/pfUI`；现代可见模块默认回退香草呈现，路由达到 `P5` | Turtle WoW 实机核对原生 Frame 未被隐藏，再逐模块替换 |
 | 聊天 | V3 主框／Tab／输入／未读母版达到 `P4`；legacy 信息底栏已退役 | 复核五张 V3 exporter、UV 和 Lua，再做实机迁移 |
-| 任务 | 任务详情为当前实现主线；追踪器仅保留 `P2` 视觉，外部 provider 兼容为 `P0` | 用户确认 `QL-A1` 空卷宗；追踪器等待外部插件源码后另立合同 |
+| 任务 | `QL-A1` 空卷宗达到 `P3`，透明候选待视觉复审；追踪器仅保留 `P2` 视觉，外部 provider 兼容为 `P0` | 接受候选后进入 `assets/source`，或先修订提示词新版本；追踪器等待外部插件源码 |
 | 地图 | 大地图／小地图视觉达到 `P2` | 清点 WorldMap 与 Minimap 按钮、遮罩、缩放、插件图标 |
 | 角色 | 香草纸娃娃视觉达到 `P2` | 清点装备槽、Tab、旋转、属性、关闭按钮状态 |
 | 其他 | `P0–P1` | 按表中顺序完成结构截图与组件合同 |
@@ -48,7 +48,8 @@
 
 | 日期 | 范围 | 结果 | 证据／限制 |
 |---|---|---|---|
-| `2026-07-29` | 任务模块范围收敛 | 通过静态检查 | [`QUEST_COMPONENT_SPEC.md`](QUEST_COMPONENT_SPEC.md) 保留 Quest Log 对象合同和 questitem 行为；原生 QuestWatch provider 假设已撤销，外部追踪插件待后续审计；当前仅 `QL-A1` 待确认 |
+| `2026-07-29` | `QL-A1` 空卷宗候选 | 离线技术检查通过；视觉复审待用户 | 固定 `imagegen-0-143-0` 生成会话 `019fac35-620b-78d3-8b46-2e1f02105f74`；本地 `generated/quests/QL-A1/v1/QL-A1_v1.png` 为 `1514 × 1039` RGBA，透明／半透明／不透明像素为 `241402／5650／1325994`，可见绿色残留 `0`；无文字、任务行、按钮、滚动条或奖励槽。左右物理页视觉接近等宽，与提示词 `42%／58%` 阅读分配存在待确认差异；尚无 tracked source／runtime |
+| `2026-07-29` | 任务模块范围收敛 | 通过静态检查 | [`QUEST_COMPONENT_SPEC.md`](QUEST_COMPONENT_SPEC.md) 保留 Quest Log 对象合同和 questitem 行为；原生 QuestWatch provider 假设已撤销，外部追踪插件待后续审计；当前仅 `QL-A1` 候选待视觉复审 |
 | `2026-07-29` | 文档信息架构 | 通过静态测试 | 项目说明集中到 `docs/`；`addon/` 无 Markdown；文档中心逐项索引且相对链接通过仓库契约测试 |
 | `2026-07-29` | 仓库结构 | 通过 | Markdown 相对链接、Git whitespace、runtime 媒体引用均通过静态检查 |
 | `2026-07-29` | 聊天 0.4.1 legacy | 通过静态测试 | [`chat_module_smoke.lua`](../../tests/chat_module_smoke.lua) 验证旧书、Tab、输入、legacy panel 隐藏与 native-first 状态诊断；不等于目标客户端实机 |
@@ -99,10 +100,10 @@
 | `CHAT.TEXT` | 正文安全区与排版 | `ChatFrameN` | adapter | `P5` | 无美术资产 | N/A | `380×236`／16 行预演 | 实机验证 UI Scale 与长中文 |
 | `CHAT.SCROLL` | 滚轮、复制、滚动控制 | pfUI chat／chatcopy | skin | `P1` | — | — | 未换肤 | 先确认实际显示 Frame |
 | `CHAT.WHISPER` | whisper proxy／独立密语入口 | pfUI whisperproxy | replacement candidate | `P5` route／`P0` final | — | — | 未换肤的可见入口默认不加载 | 映射输入、目标、关闭和转发状态后再恢复 |
-| `QUEST.LOG.SHELL` | 双页卷宗封皮、包角与外围页叠 | `QuestLogFrame` | adapter | `P2` | [详情基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | [QL-A1 当前 production draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；尚无 runtime／源资产 | 用户确认 `QL-A1` 后只生成空卷宗结构母版；不烘焙控件 |
-| `QUEST.LOG.LIST.PAPER` | 左页目录连续纸面 | `QuestLogListScrollFrame` 外围呈现层 | adapter | `P2` | [详情基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | [QL-A1 当前／QL-A2 后续 draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；尚无 runtime／源资产 | 先随 `QL-A1` 复审整体纸面；`QL-A2` 不自动执行 |
-| `QUEST.LOG.DETAIL.PAPER` | 右页正文连续纸面 | `QuestLogDetailScrollFrame` | adapter | `P2` | [详情基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | [QL-A1 当前／QL-A2 后续 draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；尚无 runtime／源资产 | 先随 `QL-A1` 复审安静正文区；`QL-A2` 不自动执行 |
-| `QUEST.LOG.SPINE` | 中央书脊、缝线与底部连接 | `QuestLogFrame` 中央非交互呈现层 | adapter | `P2` | [详情基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | [QL-A1 当前／QL-A2 后续 draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；尚无 runtime／源资产 | 先随 `QL-A1` 复审书脊结构；切片批次后续确认 |
+| `QUEST.LOG.SHELL` | 双页卷宗封皮、包角与外围页叠 | `QuestLogFrame` | adapter | `P3` | [详情基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | [QL-A1 production V1](../../prompts/quests/任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md) | 本地 `generated/quests/QL-A1/v1/QL-A1_v1.png`；尚无 tracked source／runtime | 用户复审候选；不烘焙控件 |
+| `QUEST.LOG.LIST.PAPER` | 左页目录连续纸面 | `QuestLogListScrollFrame` 外围呈现层 | adapter | `P3` | [详情基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | [QL-A1 production V1](../../prompts/quests/任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md)；[QL-A2 后续 draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | 本地候选通过 Alpha 检查；尚无 tracked source／runtime | 复审整体纸面与接近等宽的物理页；`QL-A2` 不自动执行 |
+| `QUEST.LOG.DETAIL.PAPER` | 右页正文连续纸面 | `QuestLogDetailScrollFrame` | adapter | `P3` | [详情基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | [QL-A1 production V1](../../prompts/quests/任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md)；[QL-A2 后续 draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | 本地候选通过 Alpha 检查；尚无 tracked source／runtime | 复审安静正文区与 `42%／58%` 阅读分配风险 |
+| `QUEST.LOG.SPINE` | 中央书脊、缝线与底部连接 | `QuestLogFrame` 中央非交互呈现层 | adapter | `P3` | [详情基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | [QL-A1 production V1](../../prompts/quests/任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md)；[QL-A2 后续 draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | 本地候选书脊／缝线／页叠齐全；尚无 tracked source／runtime | 用户确认结构后再进入切片批次 |
 | `QUEST.LOG.TITLE` | 卷宗标题与任务计数安全区 | `QuestLogTitleText`、`QuestLogQuestCount`／`QuestLogCount` | adapter | `P1` | [任务模块规范](../modules/quests/任务模块视觉规范_公会任务卷宗与行军便笺_v1.md) | N/A（runtime 字体与文字） | [任务组件合同](QUEST_COMPONENT_SPEC.md) | 实机测量中文标题、任务计数和书脊避让 |
 | `QUEST.LOG.LIST.ROW` | 地区标题／任务条目的普通、悬停、选中、禁用覆盖 | `QuestLogTitle1..QUESTS_DISPLAYED` | adapter | `P2` | [详情基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | [QL-B1 production draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md)；不生成独立卡片 | 确认提示词后生成同几何四状态 |
 | `QUEST.LOG.LIST.CHECK` | 任务追踪状态墨圈／墨勾 | `QuestLogTitleNCheck` | skin | `P1` | [任务模块规范](../modules/quests/任务模块视觉规范_公会任务卷宗与行军便笺_v1.md) | [QL-B1 production draft](../../prompts/quests/任务详情组件资产_生产提示词_v2.md) | [任务组件合同](QUEST_COMPONENT_SPEC.md) | 实机确认可见条件与原生点击关系 |

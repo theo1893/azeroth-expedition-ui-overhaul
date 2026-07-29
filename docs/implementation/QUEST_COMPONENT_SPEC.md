@@ -16,8 +16,9 @@
 当作替代 provider。
 
 NPC 任务对话、Gossip 和任务物品 Tooltip 已完成对象登记，但不在本轮生成
-资产。任务快捷按钮目前没有可靠基础对象，不得假设 pfUI 已经提供。当前唯一
-进入用户确认队列的生产批次是 `QL-A1` 空卷宗结构母版。
+资产。任务快捷按钮目前没有可靠基础对象，不得假设 pfUI 已经提供。`QL-A1`
+空卷宗结构母版已经生成本地透明候选，当前等待用户视觉复审；尚未进入
+`assets/source/quests/`。
 
 视觉权威：
 
@@ -190,7 +191,7 @@ provider。此前把香草 `QuestWatchFrame` 设为第一 provider 的假设已�
 
 | 批次 | 组件 | 输出责任 | 当前状态 |
 |---|---|---|---|
-| `QL-A` | `SHELL`、`LIST.PAPER`、`DETAIL.PAPER`、中央书脊、页叠 | 纯结构资源；分离九宫格／三段式部件 | 当前只提交 `QL-A1` 用户确认；`QL-A2` 后续 |
+| `QL-A` | `SHELL`、`LIST.PAPER`、`DETAIL.PAPER`、中央书脊、页叠 | 纯结构资源；分离九宫格／三段式部件 | `QL-A1` 已执行候选待复审；`QL-A2` 后续 |
 | `QL-B` | `LIST.ROW`、`SELECTION`、`TYPE.BADGE`、`STATE.SEAL` | 目录状态覆盖与任务徽记 | 后续任务详情草案 |
 | `QL-C` | 两套 ScrollBar、`CLOSE`、操作按钮、`TRACK`、`DETAIL.TOGGLE`、`LEVELS` | 每个交互对象的完整状态画布 | 后续任务详情草案 |
 | `QL-D` | `REWARD.SLOT`、`DETAIL.DIVIDER` | 奖励槽和非交互墨线 | 后续任务详情草案 |
@@ -199,16 +200,18 @@ provider。此前把香草 `QuestWatchFrame` 设为第一 provider 的假设已�
 
 对应提示词状态：
 
-- [任务详情组件资产生产提示词 V2](../../prompts/quests/任务详情组件资产_生产提示词_v2.md)：
-  `production-draft`，当前只推进 `QL-A1`。
+- [QL-A1 空卷宗结构母版 production V1](../../prompts/quests/任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md)：
+  已确认并执行；本地候选待复审。
+- [任务详情后续组件资产生产提示词 V2](../../prompts/quests/任务详情组件资产_生产提示词_v2.md)：
+  `QL-A2`、`QL-B`、`QL-C`、`QL-D` 仍为 `production-draft`。
 - [任务追踪组件资产兼容草案 V2](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md)：
   `deferred-compatibility-draft`，不能执行。
 
 ## 7. 资产与 Runtime 实现顺序
 
-1. 用户先确认 `QL-A1` 最终提示词。
-2. 只用固定 `imagegen-0-143-0` 执行 `QL-A1`，结果进入 `generated/`；
-   复审通过后才能进入 `assets/source/quests/`。
+1. 用户复审 `generated/quests/QL-A1/v1/QL-A1_v1.png`：接受后才复制到
+   `assets/source/quests/`；不接受则先建立修订提示词新版本再重新执行。
+2. `QL-A1` 透明母版通过后，另行确认 `QL-A2` 可拉伸纸面、书脊与页叠部件。
 3. 回到目标客户端后，记录 Quest Log 对象是否存在、原始尺寸、锚点和层级，
    再确定结构切片与 adapter 几何。
 4. 先接入 `QUEST.LOG.SHELL`，只改变呈现，不修改事件与数据。

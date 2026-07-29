@@ -95,6 +95,14 @@ def main() -> None:
     assert "ChatPanelSegment" not in chat_source
     assert "SuppressLegacyInfoPanels" in chat_source
 
+    imagegen_wrapper = (
+        ROOT / ".codex" / "skills" / "imagegen-0-143-0" / "SKILL.md"
+    ).read_text(encoding="utf-8")
+    assert "-C /absolute/path/to/empty-temp-directory" in imagegen_wrapper
+    assert "`--image` is variadic in Codex `0.143.0`" in imagegen_wrapper
+    assert "No prompt provided via stdin" in imagegen_wrapper
+    assert "## Read-only child recovery" in imagegen_wrapper
+
     expedition = (pfui / "api" / "expedition.lua").read_text(encoding="utf-8")
     assert 'legacy_info_panels = "0"' in expedition
     assert 'vanilla_fallback = "1"' in expedition
