@@ -103,6 +103,18 @@
   Lua UV；不得把 V3 的 `P4` 误标为 runtime 完成。
 - 聊天组件合同见 `docs/implementation/CHAT_COMPONENT_SPEC.md`。
 
+## 任务模块当前边界
+
+- 真实对象与资产粒度以
+  `docs/implementation/QUEST_COMPONENT_SPEC.md` 为准。
+- 第一实现波次只处理原生 `QuestLogFrame` 和 `QuestWatchFrame`；NPC 对话与
+  第三方 tracker 在建立独立合同前保持原生回退。
+- `prompts/quests/*_生产提示词_v2.md` 是尚未执行的 production draft；用户
+  确认前不得生图、写入 `assets/source/quests/` 或提升到 `P3`。
+- pfUI `modules/questitem.lua` 是 Tooltip 数据行为，不是任务快捷按钮；不得
+  为了视觉改造改变它的扫描、缓存或物品链接逻辑。
+- 没有目标客户端对象、尺寸和 provider 证据时，不创建任务 runtime 空壳。
+
 ## 运行时实现约束
 
 - 不覆盖 `ChatFrame_OnEvent`、物品链接、战斗日志等行为入口。
