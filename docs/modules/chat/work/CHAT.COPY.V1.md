@@ -5,8 +5,8 @@
 - 模块：Chat
 - 组件 ID：`CHAT.COPY.TOGGLE`、`CHAT.COPY.SURFACE`、`CHAT.COPY.TEXT`
 - 版本：`CHAT.COPY.V1.2`
-- 子状态：`prompt-draft`
-- 项目阶段：`P2`
+- 子状态：`prompt-authorized`
+- 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 操作：A 为确定性派生；B1／B2 为 `edit`
 - 功能来源：
@@ -27,7 +27,7 @@
     笔触与磨损连续性，不高于两张锁定图及其 Prompt
   - A 通过内部审查后的确定性候选
     — 只在本地构造 B1／B2 的双页夹结构 scaffold，保证三个对象共享纸色
-- 外部 ImageGen 实际输入计划：
+- 已授权的外部 ImageGen 实际输入：
   - A：不调用 ImageGen，也不上传图片
   - B1：只上传
     `generated/chat/copy/v1_2/inputs/CHAT.COPY.TOGGLE.CLOSED.SCAFFOLD.V1_2.png`
@@ -37,7 +37,7 @@
     `generated/chat/copy/v1_2/inputs/CHAT.COPY.TOGGLE.OPEN.SCAFFOLD.V1_2.png`
   - 两张完整锁定图与两张完整 V3 source 均不直接上传；它们继续通过本文件
     和基线 Prompt 提供项目权威，但不得再诱导执行器复制完整 UI 结构
-- V1.2 raw：无；尚未授权执行
+- V1.2 raw：无；已授权、尚未执行
 - V1.2 透明候选：无
 - V1.2 重组预演：无
 - V1.1 失败 raw：继续只保留在被忽略的
@@ -202,10 +202,11 @@
 
 ## 最终执行正文
 
-状态：`production-draft`。用户于 `2026-07-29` 要求“继续执行”，按工作流
-只授权推进到下一门禁，不构成 `CHAT.COPY.V1.2` 生图授权。A 不调用
-ImageGen；B1／B2 只有在用户看过并明确授权本版本后，才把以下英文正文逐字
-交给固定执行器。
+状态：`production`。用户于 `2026-07-29` 明确授权
+`CHAT.COPY.V1.2`，并明确允许上传 B1 closed scaffold、通过 mask 的 B1
+candidate 与 B2 open scaffold。A 不调用 ImageGen；B1／B2 必须按
+A 确定性构建 → 内部门禁 → B1 → 内部门禁／mask → B2 的顺序，把以下英文
+正文逐字交给固定执行器。
 
 ### A：确定性连续抄录纸面
 
@@ -307,9 +308,10 @@ label.
 
 ## 执行记录
 
-- 日期：未执行
-- 授权 Prompt commit：无；当前为 `production-draft`
-- A：待授权后确定性构建；无 ImageGen 会话
+- 日期：`2026-07-29`；已授权，尚未执行
+- 授权 Prompt commit：本次 `prompt-authorized` 提交；生成记录阶段补入
+  精确 commit 哈希
+- A：待授权版本提交后确定性构建；无 ImageGen 会话
 - B1／B2 会话／结果 ID：无
 - 实际输入绝对路径与职责：待按本文件合同创建并在执行前记录
 - imagegen 报告的 revised prompt：无
@@ -335,13 +337,12 @@ label.
 - 装配／尺寸：合同已定义 `380 × 248`、`22 × 26`、`28 × 32` 命中区、
   B 共用外接框和真实层序预演；候选尚未构建。
 - 技术像素：待执行。
-- 结论：`prompt-draft / P2`
-- 用户结论与日期：`2026-07-29`，“继续执行”只授权准备下一门禁，未明确
-  授权 `CHAT.COPY.V1.2` 生图或外部上传
-- 下一门禁：用户查看本版本的 A 确定性合同及 B1／B2 英文执行正文后，
-  明确授权 `CHAT.COPY.V1.2`，并明确允许上传 B1 closed scaffold、通过
-  mask 的 B1 candidate 与 B2 open scaffold；随后先提交授权版本，再按
-  A 确定性构建 → 内部门禁 → B1 → 内部门禁 → B2 顺序执行。
+- 结论：`prompt-authorized / P3`
+- 用户结论与日期：`2026-07-29`，明确授权 `CHAT.COPY.V1.2`，并允许上传
+  B1 closed scaffold、通过 mask 的 B1 candidate 和 B2 open scaffold
+- 下一门禁：先提交本授权版本；随后确定性构建并内审 A。A 通过后才创建并
+  上传 B1 closed scaffold；B1 通过对象、物理、美术和 mask 门禁后，才上传
+  通过 mask 的 B1 candidate 与 B2 open scaffold 执行 B2。
 
 ## 尝试摘要
 
@@ -349,4 +350,4 @@ label.
 |---|---|---|---|
 | V1 | commit `69ada1f`；session `019fae2a…`／`019fae2c…` | `candidate-rejected` | 不上传完整 UI；A 单物件 edit；B 按真实持久状态拆分 |
 | V1.1 | commit `8b0a4e3`；A session `019fae4d…`／result `ig_0d80…`；B1／B2 因门禁停止 | `candidate-rejected` | A 必须锁死外接框；四条边的 stretch zone 不得由模型生成独特缺口；降低照片式纤维与中性光漂移 |
-| V1.2 | A 改为已接受 V3 纸面的确定性派生；B1／B2 使用分状态 scaffold／mask | `prompt-draft` | 用户明确授权本版本及三项外部输入后才能执行 |
+| V1.2 | A 改为已接受 V3 纸面的确定性派生；B1／B2 使用分状态 scaffold／mask；用户授权三项外部输入 | `prompt-authorized / P3` | 按 A → B1 → B2 的内部门禁串行执行 |
