@@ -5,7 +5,7 @@
 - 模块：Chat
 - 组件 ID：`CHAT.COPY.TOGGLE`、`CHAT.COPY.SURFACE`、`CHAT.COPY.TEXT`
 - 版本：`CHAT.COPY.V1.1`
-- 子状态：`prompt-authorized`
+- 子状态：`candidate-rejected`
 - 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 操作：`edit`
@@ -35,9 +35,11 @@
     `generated/chat/copy/v1_1/b1/CHAT.COPY.TOGGLE.CLOSED.V1_1.raw.png`
   - 两张完整锁定图与两张完整 V3 source 均不直接上传；它们继续通过本文件
     和基线 Prompt 提供项目权威，但不得再诱导执行器复制完整 UI 结构
-- raw：执行后仅写入 `generated/chat/copy/v1_1/`
-- 透明候选：执行后仅写入 `generated/chat/copy/v1_1/`
-- 重组预演：执行后仅写入 `generated/chat/copy/v1_1/previews/`
+- raw：A 已写入
+  `generated/chat/copy/v1_1/a/CHAT.COPY.SURFACE.V1_1.raw.png`；B1／B2
+  因 A 未通过门禁而未创建
+- 透明候选：无；A 在 Alpha 清理前已被合同门禁退回
+- 重组预演：无；未用后处理或装配掩盖 A 的结构失败
 - 最终 source：无；必须经用户明确接受后才能进入
   `assets/source/chat/copy/`
 
@@ -170,7 +172,8 @@
 
 ## 最终执行正文
 
-状态：`production`。用户已于 `2026-07-29` 明确授权
+状态：`production / executed-to-A / candidate-rejected`。用户已于
+`2026-07-29` 明确授权
 `CHAT.COPY.V1.1` A／B1／B2，并允许外部上传 A scaffold、B1 scaffold 和
 B1 raw。以下三段正文必须逐字交给固定执行器，不得改写。
 
@@ -284,32 +287,82 @@ green, cell border, or label.
 
 ## 执行记录
 
-- 日期：未执行
-- 会话／结果 ID：无
-- 实际输入绝对路径与职责：按本文件的确定性输入合同创建后逐项记录
-- imagegen 报告的 revised prompt：无
-- 输出尺寸／模式／SHA-256：无
-- Alpha／残色：未检查
-- 内部失败重试：无
+- 日期：`2026-07-29`
+- 授权 Prompt commit：`8b0a4e3`
+- 固定执行器：`npx -y @openai/codex@0.143.0 exec` 委托其内建
+  `imagegen`；本会话未调用内建 ImageGen
+- A 授权正文 SHA-256：
+  `783aa1aed65afeed64da8e20d2a61ff52c61f8c8d3e3674e11e8729f63b88b2a`
+- A 固定子会话：
+  `019fae4d-889c-7951-bff0-337e401dac35`
+- A imagegen 结果 ID：
+  `ig_0d80c3d4513bb246016a6a0fe0ed848191a66dd20b22649fa2`
+- A 实际输入绝对路径与职责：
+  `D:\Git\azeroth-expedition-ui-overhaul\generated\chat\copy\v1_1\inputs\CHAT.COPY.SURFACE.SCAFFOLD.V1_1.png`
+  — 唯一上传的单纸几何／材料 scaffold，`1536 × 1024 RGB`，
+  SHA-256
+  `a411d4b8f8a5fa90c12e4f2142981b48ab8b714d313dc83b216fb53b5a694c11`
+- A 缓存原图：
+  `C:\Users\西奥\.codex\generated_images\019fae4d-889c-7951-bff0-337e401dac35\ig_0d80c3d4513bb246016a6a0fe0ed848191a66dd20b22649fa2.png`
+- A 仓库内未改动 raw：
+  `D:\Git\azeroth-expedition-ui-overhaul\generated\chat\copy\v1_1\a\CHAT.COPY.SURFACE.V1_1.raw.png`
+  — `1536 × 1024 RGB`，SHA-256
+  `a19df966e053d8d69e097a5b91d3e75f582c8a575e0f5f194c77ca49fc7632e6`
+- imagegen 报告的 revised prompt：
+
+```text
+Use case: precise-object-edit
+Asset type: Azeroth Expedition UI chat copy surface asset, production loose parchment sheet
+Primary request: Edit the supplied isolated paper scaffold into one production-ready loose parchment surface for an in-game fantasy UI panel.
+Input image: Image #1 is the edit target and geometry scaffold. Preserve the broad rectangular parchment silhouette, placement, and overall aspect ratio from the scaffold.
+Subject: A single loose aged paper/parchment sheet, suitable as a chat copy text surface. It should feel like hand-made, worn expedition journal paper: fibrous surface, subtle uneven stains, mild edge darkening, small tears and curled frayed bottom edge details, but still clean and readable in the center.
+Style/medium: Painterly high-resolution game UI asset, World of Warcraft classic-era parchment material language, practical runtime texture.
+Composition/framing: Keep the sheet centered with generous padding. Do not add buttons, frames, text, symbols, icons, stitching, metal, wax seals, shadows, or background scenery. The green background is only isolation/backdrop and should remain a flat removable chroma-key field outside the paper.
+Lighting/mood: Soft neutral baked material lighting, no cast shadow, no dramatic directional lighting.
+Color palette: Warm tan parchment with ochre, umber, and muted sepia variation; readable pale center; darker worn edges.
+Materials/textures: Fine paper fibers, mottled age, slight waviness, torn lower edge, lightly worn corners. Avoid excessive dirt in the text area.
+Constraints: Change only the paper surface into a polished production asset; preserve the scaffold's single-sheet identity and rectangular loose-paper layout. No dynamic text or UI state baked in. No watermark.
+Avoid: rolled scrolls, bound books, ornate frames, heavy burns, holes through the main reading area, fake UI controls, text, logos, shadows on the green background.
+```
+
+- revised prompt 漂移：省略精确 `380:248`、`1140 × 744` 外接框、
+  `24px` 固定边、`1080 × 696` 安静区与边中段禁放独特细节；把左上暖光
+  改成中性光，并主动要求 `high-resolution` 细纤维、底边撕裂与卷曲。
+- Alpha／残色：未执行。A 在九宫格合同门禁已失败，按审查顺序不以抠图、
+  裁切或装配掩盖 raw 问题。
+- 内部失败重试：两次本地启动器错误均发生在上传前，未产生外部调用；修正
+  PowerShell 编码与启动参数后只有一次 A live generation。固定子会话无法
+  从 Windows shell 复制结果，已从其 `$CODEX_HOME/generated_images`
+  缓存恢复未改动 raw。
+- B1／B2：未创建 scaffold、未上传、未生成；A 门禁失败后串行停止。
 
 ## 审查记录
 
-- 语义／物理：提示词预检通过；A、B1、B2 均只对应一个真实物理对象。
-- 透视／图层：A 是底页上的上层纸；B 是右侧页边上的独立 Button 纹理。
-- 美术一致性：锁定图与 provenance 继续最高；完整 UI 图不直接上传。
-- 对象／状态合同：已按 pfUI 真实代码把七张生成状态收敛为 off／on 两个
-  持久 source；hover 由 runtime Alpha 派生。
-- 装配／尺寸：合同已定义 `380 × 248`、`22 × 26`、九宫格固定边和预演。
-- 技术像素：待生成。
-- 结论：`prompt-authorized / P3`
+- 范围／对象身份：通过。raw 只有一张横向散页，没有完整聊天框、书本、
+  Tab、按钮、文字或其他 UI 对象。
+- 语义／物理：通过。主体是单张薄纸，底部只露出一层很浅的第二纸叶。
+- 透视／图层：通过。近正交平放，纸层关系可读，未出现错误悬浮部件。
+- 美术一致性：有条件。暖色旧纸与安静中心方向正确，但高分辨率真实纸纤维、
+  中性均匀照明和照片式旧化弱于 V3 的 2004 年手绘位图语言。
+- 对象／状态合同：`致命失败`，是首个失败门禁。绿色背景估算的非绿主体
+  外接框为 `(144,110)–(1400,916)`，即约 `1256 × 806`、比例
+  `1.558313`；目标 `380:248` 为 `1.532258`，比例偏差 `+1.70%`。
+  更关键的是上下边中段分布多处不可重复的缺口、撕裂、卷边与硬阴影，直接
+  落入九宫格水平 stretch zone；不能通过拉伸生成稳定的 `380 × 248`
+  正文纸面。
+- 装配／尺寸：未进入。禁止用裁切、局部擦除或预演隐藏上一个门禁失败。
+- 技术像素：raw 为 `RGB` 且背景近绿色；因前序失败，未做 Alpha 和 TGA
+  验证。
+- 结论：`candidate-rejected / P3`
 - 用户结论与日期：`2026-07-29`，明确授权 `CHAT.COPY.V1.1`，并允许上传
-  A scaffold、B1 scaffold 和 B1 raw
-- 下一门禁：先创建并检查 A scaffold，再由固定 ImageGen 0.143.0 执行 A；
-  A 通过首个语义门禁后才允许创建或上传 B1 输入
+  A scaffold、B1 scaffold 和 B1 raw；该授权不覆盖接受失败候选
+- 下一门禁：先保留本次 raw 作为反例并提交退回记录；若建立 V1.2，A 必须
+  改为能够确定性锁死外接框和九宫格中段的编辑策略，重新取得授权后才可
+  执行。B1／B2 继续冻结。
 
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
 |---|---|---|---|
 | V1 | commit `69ada1f`；session `019fae2a…`／`019fae2c…` | `candidate-rejected` | 不上传完整 UI；A 单物件 edit；B 按真实持久状态拆分 |
-| V1.1 | 三个隔离 edit 调用；用户于 `2026-07-29` 明确授权 | `prompt-authorized` | 固定执行器按 A → B1 → B2 门禁顺序执行 |
+| V1.1 | commit `8b0a4e3`；A session `019fae4d…`／result `ig_0d80…`；B1／B2 因门禁停止 | `candidate-rejected` | A 必须锁死外接框；四条边的 stretch zone 不得由模型生成独特缺口；降低照片式纤维与中性光漂移 |

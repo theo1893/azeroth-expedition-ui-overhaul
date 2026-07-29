@@ -18,10 +18,12 @@
   正文呈现。下一项已选择复用 pfUI `chatcopy` 逻辑。固定 ImageGen 0.143.0
   已按用户授权分别执行 `CHAT.COPY.V1` A／B，但 A 错生为完整第二聊天框，
   B 错生为四个现代方形文档按钮；两者均在范围与对象身份门禁被内部退回。
-  当前活跃版本为 `CHAT.COPY.V1.1 / prompt-authorized / P3`：A、B1、B2
-  改用单物件隔离 scaffold，B 只生成 pfUI 真实拥有的 off／on 持久状态；
-  用户已于 `2026-07-29` 明确授权三段正文及 A scaffold、B1 scaffold、
-  B1 raw 的外部上传；尚无透明 source、预演或 runtime。
+  `CHAT.COPY.V1.1 / candidate-rejected / P3` 已按用户授权用固定
+  ImageGen 0.143.0 执行到 A：单纸对象身份和安静中心通过，但主体外接比例
+  相对 `380:248` 偏差 `+1.70%`，上下边中段的独特缺口、撕裂和卷边违反
+  九宫格 stretch-zone 合同；照片式纸纤维与中性光也是次要美术漂移。
+  因此未做 Alpha、预演或 source，B1 scaffold／B1 raw／B2 均未创建或
+  上传，chatcopy 继续默认不加载。
 - Turtle WoW 实机：原始 runtime 截图确认 `FCF_DockUpdate` 覆盖停靠几何，
   且用户否决 `42px` 外接高度。随后两张复测截图仍由未同步的 Git HEAD
   安装副本产生，未加载 v1.1／v1.2，因此不构成版本验收。v1.2 正确部署后
@@ -49,7 +51,7 @@
 | `CHAT.SCROLL.*`／`MENU.BUTTON`／`RESIZE` | `P1` hidden | 原生对象已登记，pfUI 当前隐藏 | 仅在决定恢复时建立资产合同 |
 | `CHAT.POPUP.*` | `P1` | 四个原生菜单实例已映射，仍为过渡外观 | 实机拆分 shell、行状态和滚动 |
 | `CHAT.URLCOPY.*` | `P1` | pfUI shell／input／close 已映射 | 实机测量并锁定便笺弹窗视觉 |
-| `CHAT.COPY.*` | `P3` V1.1 prompt-authorized | 复用 pfUI 历史、选择、滚动与左右键逻辑；完整 UI 不再直接上传；A 单纸 edit，B 拆为 off／on 两个持久物理状态；仍默认不加载 | 创建并检查 A scaffold，固定 ImageGen 0.143.0 执行 A |
+| `CHAT.COPY.*` | `P3` V1.1 candidate-rejected | A 单纸范围通过但外接比例和九宫格边中段失败；B1／B2 已按门禁停止；pfUI 逻辑保持未加载 | 建立能确定性锁死外接框与 stretch zone 的 V1.2 草案，再取得执行授权 |
 | `CHAT.WHISPER.TOGGLE` | `P5` route／`P1` object | 功能源码保留，默认不加载 | 锁定代理开关视觉 |
 | `CHAT.WHISPER.DIALOG` | `P1` shared-owner | 归未来 System 公共弹窗 | System 模块统一拆分 |
 
@@ -107,8 +109,8 @@
 7. 确认右框始终隐藏，并验证拾取、经验、荣誉、声望与技能消息仍进入左框。
 8. 核心批次实机通过后达到 `P6`，但保留 work 与 legacy 回退资产直至用户批准
    `P6-C` 清理清单。
-9. 按 [`CHAT.COPY.V1.1`](work/CHAT.COPY.V1.md) 的已授权正文，先创建并
-   检查 A scaffold，再按 A → 内部门禁 → B1 → 内部门禁 → B2 顺序调用
-   固定 ImageGen 0.143.0；任一步范围或对象身份失败即停止后续上传。
+9. `CHAT.COPY.V1.1` 已在 A 的九宫格合同门禁退回并停止 B1／B2。下一版
+   先锁死 A 的 `380:248` 外接框和四条无独特细节的 stretch zone，再经过
+   新版本 Prompt 审查与用户授权；不得用抠图、裁切或装配修补 V1.1 raw。
 10. `CHAT.INPUT.LANGUAGE`、`CHAT.POPUP.*`、`CHAT.URLCOPY.*` 与
     `CHAT.WHISPER.TOGGLE` 在取得实机几何后另行准备组件 Prompt。

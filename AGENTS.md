@@ -19,7 +19,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 | 模块 | 当前状态 | 下一门禁 |
 |---|---|---|
 | pfUI／原生回退 | 路由与公共过渡材质 `P5`，未实机 | Turtle WoW 全场景回归 |
-| 聊天 | 核心 V3 runtime `P5`；`CHAT.COPY.V1.1` 为 `prompt-authorized / P3`；单一左框，右框隐藏 | Turtle WoW 实机验收核心批次；固定 ImageGen 0.143.0 执行 Chat Copy V1.1 |
+| 聊天 | 核心 V3 runtime `P5`；`CHAT.COPY.V1.1` 为 `candidate-rejected / P3`；单一左框，右框隐藏 | Turtle WoW 实机验收核心批次；为 Chat Copy 建立锁死九宫格边界的下一版草案 |
 | 任务 | QL-A1 `P4`；QL-A2 V3.1 为未授权 `prompt-draft / P2` | 用户明确授权 V3.1 |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |
