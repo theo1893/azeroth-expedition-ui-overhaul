@@ -34,11 +34,14 @@
   审查；B1 固定执行器的两次完整调用均输出 `1254 × 1254`，把对象放大到
   scaffold 外，并把纯绿底改成渐变。第一个失败门禁是 B1 画布／外接框／
   色键结构，故未做 mask，B2 没有上传或调用。chatcopy 继续默认不加载。
-  当前活跃版本已升级为 `CHAT.COPY.V1.3 / prompt-authorized / P3`：A
-  保持不变；用户已于 `2026-07-29` 明确授权按固定 SHA 只读复用 V1.2
-  第一次 B1 raw 中已通过对象／美术审查的表面像素，且明确要求零外部上传。
-  本版本不调用 ImageGen；B 的外接框、lower／upper／clamp、off／on 差异、
-  Alpha 与图层全部改由本地确定性 polygon、mask 和 upper 局部变形持有。
+  `CHAT.COPY.V1.3 / candidate-rejected / P3` 已按用户授权完成纯本地确定性
+  构建：A 保持 V1.2 已通过的 SHA；固定 SHA 的 V1.2 第一次 B1 raw 只读
+  提供表面，全程没有 ImageGen、网络访问或外部上传。B 的画布、共同外接框、
+  polygon、Alpha、图层和 off／on 局部变形均通过技术门禁；但在真实
+  `22 × 26` 尺寸下，两状态的 Alpha 差异均值只有 `0.021/255`、最大
+  `7/255`，并排与 `440 × 320` 装配预演均几乎无法分辨开合；两页夹同时
+  退化成浅色矩形书签。第一个失败门禁是运行时状态语义／组件身份，因此
+  内部退回，未创建 source、runtime 或 Lua，chatcopy 继续默认不加载。
 - Turtle WoW 实机：原始 runtime 截图确认 `FCF_DockUpdate` 覆盖停靠几何，
   且用户否决 `42px` 外接高度。随后两张复测截图仍由未同步的 Git HEAD
   安装副本产生，未加载 v1.1／v1.2，因此不构成版本验收。v1.2 正确部署后
@@ -66,7 +69,7 @@
 | `CHAT.SCROLL.*`／`MENU.BUTTON`／`RESIZE` | `P1` hidden | 原生对象已登记，pfUI 当前隐藏 | 仅在决定恢复时建立资产合同 |
 | `CHAT.POPUP.*` | `P1` | 四个原生菜单实例已映射，仍为过渡外观 | 实机拆分 shell、行状态和滚动 |
 | `CHAT.URLCOPY.*` | `P1` | pfUI shell／input／close 已映射 | 实机测量并锁定便笺弹窗视觉 |
-| `CHAT.COPY.*` | `P3` V1.3 prompt-authorized | A 保持确定性；固定 SHA 的 V1.2 B1 raw 只供表面；B 两状态几何与 Alpha 全归本地；零外部上传；pfUI 逻辑保持未加载 | 本地构建并审查 A／off／on 候选与真实尺寸预演 |
+| `CHAT.COPY.*` | `P3` V1.3 candidate-rejected | A 候选继续通过；B 技术合同通过，但 `22 × 26` 下 off／on 不可辨认且物件退化为浅色矩形书签；零外部上传；pfUI 逻辑保持未加载 | 准备下一版，先在真实尺寸锁定更清楚的开合轮廓和页夹身份 |
 | `CHAT.WHISPER.TOGGLE` | `P5` route／`P1` object | 功能源码保留，默认不加载 | 锁定代理开关视觉 |
 | `CHAT.WHISPER.DIALOG` | `P1` shared-owner | 归未来 System 公共弹窗 | System 模块统一拆分 |
 
@@ -124,9 +127,9 @@
 7. 确认右框始终隐藏，并验证拾取、经验、荣誉、声望与技能消息仍进入左框。
 8. 核心批次实机通过后达到 `P6`，但保留 work 与 legacy 回退资产直至用户批准
    `P6-C` 清理清单。
-9. 按已授权的 [`CHAT.COPY.V1.3`](work/CHAT.COPY.V1.md) 确定性正文，
-   在本地校验 V1.2 第一次 B1 raw 的固定 SHA，仅复用其表面像素；构建并
-   审查 A／off／on 候选和真实尺寸预演。全程不调用 ImageGen、不上传图片，
-   审查通过后再交给用户复审，未经明确接受不创建 source 或 runtime。
+9. 为 `CHAT.COPY` 准备下一版执行正文：保留 V1.3 已通过的 A、固定 donor
+   受限职责和零上传边界；先以 `22 × 26` 反推 off／on 的独立轮廓、层间
+   阴影和皮夹可读面积，使开合在 `440 × 320` 装配中可辨认，同时避免直线
+   polygon 把手绘页边裁成规则矩形。新版本仍须先展示正文并取得明确授权。
 10. `CHAT.INPUT.LANGUAGE`、`CHAT.POPUP.*`、`CHAT.URLCOPY.*` 与
     `CHAT.WHISPER.TOGGLE` 在取得实机几何后另行准备组件 Prompt。

@@ -5,7 +5,7 @@
 - 模块：Chat
 - 组件 ID：`CHAT.COPY.TOGGLE`、`CHAT.COPY.SURFACE`、`CHAT.COPY.TEXT`
 - 版本：`CHAT.COPY.V1.3`
-- 子状态：`prompt-authorized`
+- 子状态：`candidate-rejected`
 - 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 操作：A 为确定性派生；B 复用 V1.2 固定执行器 raw 的合格表面区域，
@@ -37,8 +37,24 @@
   - donor provenance：session
     `019fae80-fabb-7030-8fc7-fbee2c142d99`／result
     `ig_063f0c62bfe8a6e9016a6a1cfd1a148191b735c96afa0341ec`
-- V1.3 透明候选：无；已授权，尚未执行
-- V1.3 重组预演：无
+- V1.3 透明候选：
+  - A：
+    `generated/chat/copy/v1_3/a/CHAT.COPY.SURFACE.V1_3.candidate.png`
+    — `1140 × 744 RGBA`，SHA-256
+    `ed4e1c1a3bfdf4b37775a383b18636454834562eefd7ab526f3ecaf03f8e8efb`
+  - B closed：
+    `generated/chat/copy/v1_3/b/CHAT.COPY.TOGGLE.CLOSED.V1_3.candidate.png`
+    — `1024 × 1024 RGBA`，SHA-256
+    `e8a38407ac05131763032796a7e6ac9000bece42b3692462e53a68567b3666ce`
+  - B open：
+    `generated/chat/copy/v1_3/b/CHAT.COPY.TOGGLE.OPEN.V1_3.candidate.png`
+    — `1024 × 1024 RGBA`，SHA-256
+    `ba1134e704f326dd895a01b5592d6162e4c564a6e6b96ab84b4633a44c4ea3ac`
+- V1.3 重组预演：
+  - `generated/chat/copy/v1_3/previews/CHAT.COPY.ASSEMBLY.OFF-ON.V1_3.png`
+  - `generated/chat/copy/v1_3/previews/CHAT.COPY.TOGGLE.CLOSED-OPEN.10X.V1_3.png`
+  - 完整本地构建记录：
+    `generated/chat/copy/v1_3/CHAT.COPY.V1_3.build.json`
 - V1.1 失败 raw：继续只保留在被忽略的
   `generated/chat/copy/v1_1/`，只作反例，不进入 V1.3 输入
 - 最终 source：无；必须经用户明确接受后才能进入
@@ -303,39 +319,72 @@ accepted.
 
 ## 执行记录
 
-- 日期：`2026-07-29` 授权；候选尚未执行
-- 授权版本 commit：本次授权状态提交；候选记录将补充其精确 commit
+- 日期：`2026-07-29`
+- 授权版本 commit：
+  `77fb32f804d0b06700fcef4f9562318635866baa`
 - 用户授权：明确授权 `CHAT.COPY.V1.3`；允许按固定 SHA 仅复用 V1.2
   第一次 B1 raw 的表面像素；禁止任何外部上传
-- A：待在 `generated/chat/copy/v1_3/a/` 重建；无 ImageGen 会话
-- B donor：只读复用 V1.2 session／result；V1.3 不产生新会话或上传
-- 实际输出尺寸／模式／SHA-256：无
-- Alpha／残色／polygon／装配：未检查
+- 本地工具：
+  [`build_chat_copy_v1_3_candidates.py`](../../../../tools/build_chat_copy_v1_3_candidates.py)
+- ImageGen／网络／上传：均未发生；V1.3 无新 session／result ID，构建记录
+  为 `network_access=false`、`imagegen_called=false`、
+  `external_uploads=[]`
+- A：验证接受源 SHA 后按冻结 crop 与 Lanczos 重建；输出路径、尺寸和 SHA
+  见元数据。`848160` 个像素全部不透明；无绿残留。
+- B donor：严格验证 `1254 × 1254 RGB` 与 SHA
+  `682459afa17ac43d3961085d211b340ed446152cf52fd2e7b250422316180e4b`；
+  retry2 未读取。
+- B closed：`134459` 不透明、`160` 半透明、`913957` 透明像素；可见
+  bbox `(336,304)–(688,720)`；一个连通对象；无绿残留。
+- B open：`134471` 不透明、`157` 半透明、`913948` 透明像素；可见
+  bbox `(336,304)–(688,720)`；一个连通对象；无绿残留。
+- 确定性层：lower／clamp 共享层 SHA 分别为
+  `226c974f51d3eadfec56990e8c12d583c8becbe847b72390bdfbd77a8573b6f6`
+  与
+  `436c2f1b911e5453347b9007c543b7058d553f7c74c51116b4715aae7581168f`；
+  状态差异只在 upper 合并区 `(350,329)–(679,705)`。
+- 内部技术重试：
+  1. 首次构建在插值后发现 closed 有 `6` 个半透明强绿像素，停止写出最终
+     B；把已授权的半透明绿通道上限重放到每次插值之后。
+  2. 第二次构建在 open 发现一个位于 `(373,329)`、`alpha=1` 的独立
+     透视振铃像素；加入仅允许移除面积不超过 `4px` 且最大 Alpha 不超过
+     `2` 的亚像素孤岛清理。更大的断裂仍会使构建失败。
+  3. 第三次构建通过所有确定性断言；候选 SHA 如元数据所列。
 
 ## 审查记录
 
-- 范围／对象身份：Prompt 预检通过。A 只对应 `ChatFrameScrollN` 背景；
-  B 的两个状态只对应同一个 `pfChatCopyButton`。
-- 语义／物理：Prompt 预检通过。lower、upper 和 clamp 均有明确 polygon
-  与图层；on 只改变 upper，lower／clamp 逐像素固定。
+- 范围／对象身份：A 只对应 `ChatFrameScrollN` 背景；B 的两个状态只对应
+  同一个 `pfChatCopyButton`，没有额外控件或烘焙文字。范围通过。
+- 语义／物理：`352 × 416` 审查图能识别 lower、upper 和皮夹，on 也只
+  改变 upper；但在合同要求的 `22 × 26` 真实尺寸下，两态都退化成同一枚
+  浅色矩形书签，开合语义与“双纸叶页夹”身份不可读。此项失败。
 - 透视／图层：A 是复制文字下方的连续纸面；B 是书本右侧页边上的独立
   Button。两者不覆盖 Tab 或输入条。
-- 美术一致性：两张锁定图与书面 Prompt 继续最高；A 仍只复用已接受 V3
-  纸面。V1.2 donor 只保留已通过的表面笔触、纸／皮革分离与左上暖光，
-  其错误画布和轮廓不再获得任何权威。
+- 美术一致性：A 继续匹配已接受 V3 纸面。B 的纸／皮革表面、暖光和色域
+  延续 donor，但硬 polygon 在右边与下边裁出规则直线；缩到运行时时纸张
+  与主书阅读面合并，皮夹只剩约两像素暗线。此为次要失败。
 - 对象／状态合同：A 的 `1092 × 696` stretch center 与
   `1080 × 696` text-safe center 继续分离。B 只有 off／on 两个物理状态；
   hover 仍由 runtime Alpha 派生。
-- 装配／尺寸：合同已锁定 `380 × 248`、`480 × 348`、共同
-  `(336,304)–(688,720)` 外接框、`22 × 26` 视觉与 `28 × 32` 命中区；
-  候选尚未构建。
-- 技术像素：待执行。
-- 结论：`prompt-authorized / P3`
-- 用户结论与日期：`2026-07-29` 明确授权 V1.3；允许固定 SHA donor 的
-  受限表面复用，并要求零外部上传
-- 下一门禁：提交本授权版本后，使用本地确定性工具构建并依次审查
-  A／off／on 候选、九宫格预演和 `22 × 26` 真实尺寸装配；未经用户明确
-  接受，不创建 source、runtime 或 Lua 变更。
+- 装配／尺寸：A 在 `380 × 248` 与 `480 × 348` 无接缝或纹理突变；
+  `1080 × 696` text-safe 与 `1092 × 696` stretch center 均正确。B 的
+  共同外接框、`28 × 32` 命中区和书框锚点正确；但真实尺寸并排预演
+  视觉上几乎相同。`22 × 26` 差异为 `491/572` 像素存在数值变化，但
+  Alpha 差异均值只有 `0.021/255`、最大 `7/255`，综合色差主要来自轻微
+  重采样，不能表达状态。
+- 技术像素：A／closed／open 的尺寸、模式、SHA、Alpha、bbox、mask 外
+  泄漏、连通性和绿残留全部通过；技术指标不能覆盖状态语义失败。
+- 结论：`candidate-rejected / P3`
+- 否决人：internal-review
+- 日期：`2026-07-29`
+- 第一个失败门禁：真实运行时尺寸的状态语义／物件身份
+- 本版本保留：A 的全部确定性合同与 SHA；固定 donor 的受限职责、零上传
+  边界、共同外接框和本地 Alpha 技术流程
+- 下一版本必须改变：先在 `22 × 26` 锁定能读出的 closed／open 独立轮廓，
+  增大上层纸叶开合差与层间接触阴影的屏幕像素占比，并避免硬 polygon
+  把页边裁成规则矩形；再反推高分辨率 mask。未经新版本授权不执行。
+- 用户结论与日期：无；内部审查已退回，未进入 source 接受门禁
+- 本版本无 tracked source／runtime／Lua。
 
 ## 尝试摘要
 
@@ -344,4 +393,4 @@ accepted.
 | V1 | commit `69ada1f`；session `019fae2a…`／`019fae2c…` | `candidate-rejected` | 不上传完整 UI；A 单物件 edit；B 按真实持久状态拆分 |
 | V1.1 | commit `8b0a4e3`；A session `019fae4d…`／result `ig_0d80…`；B1／B2 因门禁停止 | `candidate-rejected` | A 必须锁死外接框；四条边的 stretch zone 不得由模型生成独特缺口；降低照片式纤维与中性光漂移 |
 | V1.2 | commit `3e9eb8e`；A SHA `ed4e1c…`；B1 sessions `019fae80…`／`019fae83…`，results `ig_063f…`／`ig_0a42…` | `candidate-rejected / P3` | 保留 A；B 将 ImageGen 降为表面 donor，所有像素几何归确定性工具 |
-| V1.3 | A 保持确定性；固定 SHA donor 只供表面；两状态完全由 polygon／mask／局部变形构造；用户于 `2026-07-29` 明确授权且要求零外部上传 | `prompt-authorized / P3` | 提交授权版本后在本地构建并审查候选 |
+| V1.3 | 授权 commit `77fb32f`；A SHA `ed4e1c…`；closed／open SHA `e8a3840…`／`ba1134e…`；零 ImageGen／网络／上传；技术合同通过；真实尺寸并排与书框装配 | `candidate-rejected / P3` | 保留 A 与受限 donor 边界；在 `22 × 26` 先锁定可辨认的开合轮廓、层影和页夹身份 |
