@@ -8,6 +8,8 @@
 - 版本：`CHAT.URLCOPY.V1`
 - 子状态：`prompt-draft`
 - 项目阶段：`P2`
+- 处置：`user-deferred`；用户于 `2026-07-30` 要求暂缓该项，优先处理对
+  用户体验更关键的大面积 UI
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 操作：shell 单物件 generate；input／close 只复用已接受 V3 source 和
   runtime atlas，不调用 ImageGen
@@ -303,13 +305,14 @@ Output no text and no additional object.
   `chat.lua` 静态确认；仍需候选真实尺寸预演与 Turtle WoW 测量。
 - 技术像素：待执行。
 - 结论：`prompt-draft / P2`
-- 用户结论与日期：无
-- 下一门禁：用户确认是否授权 `CHAT.URLCOPY.V1` 的 shell 正文，并允许固定
-  执行器上传 Image 1／Image 2。授权版本先提交，再生成；未经授权不创建
-  raw、candidate、source、runtime 或 Lua。
+- 用户结论与日期：`2026-07-30`；用户要求 URL Copy 也暂缓，转向大面积
+  主窗口
+- 下一门禁：无活跃生产门禁；仅在用户明确恢复 URL Copy 后，才重新开放
+  V1 正文与 Image 1／Image 2 上传授权。暂缓期间不创建 raw、candidate、
+  source、runtime 或 Lua。
 
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
 |---|---|---|---|
-| V1 | provider 静态对象／几何审计；锁定 provenance；单 shell generate + input／close 复用合同 | `prompt-draft / P2` | 等待用户授权具体正文与两张输入图上传 |
+| V1 | provider 静态对象／几何审计；锁定 provenance；单 shell generate + input／close 复用合同 | `prompt-draft / P2 / user-deferred` | 仅在用户明确恢复后重开授权门禁 |

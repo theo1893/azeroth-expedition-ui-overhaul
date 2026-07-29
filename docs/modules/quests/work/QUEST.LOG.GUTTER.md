@@ -20,7 +20,9 @@
   [SUBMODULES.md](../SUBMODULES.md)
 - 锁定视觉基准／Image 1：
   [任务详情面板_视觉基准_v1.png](../../../../assets/locked/quests/任务详情面板_视觉基准_v1.png)
-  — 最高视觉权威；负责香草魔兽公会任务卷宗身份、综合色感、纸张与封皮
+  — SHA-256
+  `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`；
+  最高视觉权威，负责香草魔兽公会任务卷宗身份、综合色感、纸张与封皮
   关系、手绘轮廓、材料年代、低频正文纸面和装订的总体语义；
   忽略其中烘焙的任务行、文字、按钮、滚动条、徽记、蜡封和奖励框
 - 基准提示词 provenance：
@@ -29,14 +31,18 @@
   磨损尺度和反现代约束
 - 上级共用材质参考／Image 2：
   [聊天框独立艺术资源_v3.png](../../../../assets/locked/chat/聊天框独立艺术资源_v3.png)
-  — 只负责纸张、旧皮革、暗金、手绘边缘、左上暖光和年代感的制作精度；
+  — SHA-256
+  `272528e6d89cc90e5cbb37dce4ae572ddf9de0402078cdcf0ed5804f734faab8`；
+  只负责纸张、旧皮革、暗金、手绘边缘、左上暖光和年代感的制作精度；
   不得复制聊天框的单页轮廓、页码、索引签或交互结构
 - 上级共用材质 provenance：
   [Chat 子模块美术基线](../../chat/SUBMODULE_ART_BASELINES.md)
   — 只用于解释 Image 2 的共享材料和绘制职责
 - 结构次级参考／Image 3：
   [QuestLogBookShell_Master_v1.png](../../../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png)
-  — 只负责已经接受的书体外轮廓、厚度、外围页叠、左上暖光与内部浅俯视角；
+  — SHA-256
+  `91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5`；
+  只负责已经接受的书体外轮廓、厚度、外围页叠、左上暖光与内部浅俯视角；
   不负责纸面微纹样、综合色感优先级、现有装订线或页沟造型
 - 失败证据：本文件下方“尝试摘要”；只用于负面约束与 provenance，不作为
   Image 输入
@@ -339,11 +345,28 @@ Image 2 只提供与战地旧书聊天框共用的纸张、旧皮革、暗金、
 纸条；针脚只有横向短段且没有圆头和纵向绳；上下收口不是把手；背景是真透明
 或完全均匀的纯 `#00FF00`。
 
+### 固定执行映射
+
+- `-i Image 1`：
+  `D:\Git\azeroth-expedition-ui-overhaul\assets\locked\quests\任务详情面板_视觉基准_v1.png`
+- `-i Image 2`：
+  `D:\Git\azeroth-expedition-ui-overhaul\assets\locked\chat\聊天框独立艺术资源_v3.png`
+- `-i Image 3`：
+  `D:\Git\azeroth-expedition-ui-overhaul\assets\source\quests\ql-a1\QuestLogBookShell_Master_v1.png`
+- raw 目标：
+  `generated/quests/QL-A2/v3.1/QL-A2_V3_1.raw.png`
+- 透明候选目标：
+  `generated/quests/QL-A2/v3.1/QL-A2_V3_1.candidate.png`
+- 三张输入图只有在用户针对 `QL-A2 V3.1` 明确允许上传后才能传给固定
+  子进程；“继续”“处理 Quest Log”或对版本正文的单独确认，均不自动构成
+  外部上传授权。
+
 ## 执行记录
 
 - 日期：未执行
 - 会话／结果 ID：无
-- 实际输入绝对路径与职责：未提交
+- 实际输入绝对路径与职责：未提交；拟执行路径与 SHA 已在上方固定映射中
+  锁定，三张图均尚未上传
 - imagegen 报告的 revised prompt：无
 - 输出尺寸／模式／SHA-256：无
 - Alpha／残色：无
@@ -359,4 +382,5 @@ Image 2 只提供与战地旧书聊天框共用的纸张、旧皮革、暗金、
 - 技术像素：待生成
 - 结论：`prompt-draft / P2`，没有候选，不允许进入用户资产复审
 - 用户结论与日期：尚未授权执行
-- 下一门禁：用户明确授权 `QL-A2 V3.1` 最终执行正文
+- 下一门禁：用户明确授权 `QL-A2 V3.1` 最终执行正文，并允许上传固定
+  Image 1／Image 2／Image 3

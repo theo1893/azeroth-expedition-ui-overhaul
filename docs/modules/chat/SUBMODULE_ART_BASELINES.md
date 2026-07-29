@@ -58,7 +58,7 @@ legacy 信息底栏。
 `CHAT.INPUT.LANGUAGE`、`CHAT.POPUP.*` 与 `CHAT.WHISPER.TOGGLE` 已登记真实
 对象，但没有经过用户视觉验收，因此没有可执行美术 Prompt。
 `CHAT.URLCOPY.*` 的当前合同与 shell production draft 位于
-[`CHAT.URLCOPY.V1.md`](work/CHAT.URLCOPY.V1.md)，尚未授权生成；
+[`CHAT.URLCOPY.V1.md`](work/CHAT.URLCOPY.V1.md)，并已由用户暂缓；
 `CHAT.COPY.*` 的失败证据保留在
 [`CHAT.COPY.V1.md`](work/CHAT.COPY.V1.md)，并已由用户暂缓。两者都没有用户
 接受的 source，不能在此凝结为稳定条款或恢复新 runtime。其余对象暂时保持

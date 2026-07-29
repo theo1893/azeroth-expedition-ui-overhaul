@@ -48,7 +48,9 @@
   shell／input／close 分别为 `270 × 65`、`250 × 20`、`70 × 18`。V1 只
   新生成一个无字抄录便笺 shell；input 复用 V3 normal／focus 输入纸带，
   close 复用 V3 Tab 材料并由 runtime 表达 pushed，避免重复生产低价值
-  资产。尚未上传参考、调用 ImageGen 或修改 runtime。
+  资产。尚未上传参考、调用 ImageGen 或修改 runtime。用户随后于
+  `2026-07-30` 要求该项也暂缓，优先处理对体验更关键的大面积 UI；V1
+  草案与审计证据保留，但不再占用当前生产门禁。
 - Turtle WoW 实机：原始 runtime 截图确认 `FCF_DockUpdate` 覆盖停靠几何，
   且用户否决 `42px` 外接高度。随后两张复测截图仍由未同步的 Git HEAD
   安装副本产生，未加载 v1.1／v1.2，因此不构成版本验收。v1.2 正确部署后
@@ -75,7 +77,7 @@
 | `CHAT.TEXT` | `P5` layout / r1.4 | `380 × 248`／17 行；`30/30/32/40px` 安全区在 pfUI 刷新、Tab 切换和停靠后按需恢复 | 复测切换、拖动、保存停靠后不越出书页 |
 | `CHAT.SCROLL.*`／`MENU.BUTTON`／`RESIZE` | `P1` hidden | 原生对象已登记，pfUI 当前隐藏 | 仅在决定恢复时建立资产合同 |
 | `CHAT.POPUP.*` | `P1` | 四个原生菜单实例已映射，仍为过渡外观 | 实机拆分 shell、行状态和滚动 |
-| `CHAT.URLCOPY.*` | `P2` V1 prompt-draft | 三个真实对象与现有锚点已锁定；只新生成 shell，input／close 复用 V3 接受资产；当前 pfUI 功能继续可用 | 用户授权 V1 shell 正文并允许上传两张受限 source 参考 |
+| `CHAT.URLCOPY.*` | `P2` V1 prompt-draft / user-deferred | 三个真实对象与现有锚点已锁定；只新生成 shell，input／close 复用 V3 接受资产；用户于 `2026-07-30` 暂缓；当前 pfUI 功能继续可用 | 仅在用户明确恢复该功能时重新开放授权门禁 |
 | `CHAT.COPY.*` | `P3` V1.3 candidate-rejected / user-deferred | A 候选继续通过；B 技术合同通过但真实尺寸状态不可辨认；用户认为体验收益不明显并于 `2026-07-30` 暂缓；pfUI 逻辑保持未加载 | 仅在用户明确恢复该功能时准备新版本 |
 | `CHAT.WHISPER.TOGGLE` | `P5` route／`P1` object | 功能源码保留，默认不加载 | 锁定代理开关视觉 |
 | `CHAT.WHISPER.DIALOG` | `P1` shared-owner | 归未来 System 公共弹窗 | System 模块统一拆分 |
@@ -105,7 +107,7 @@
   [`work/CHAT.CORE.V3.md`](work/CHAT.CORE.V3.md)
 - 已暂缓的 Chat copy 工作：
   [`work/CHAT.COPY.V1.md`](work/CHAT.COPY.V1.md)
-- 当前 URL Copy 草案：
+- 已暂缓的 URL Copy 草案：
   [`work/CHAT.URLCOPY.V1.md`](work/CHAT.URLCOPY.V1.md)
 - 首轮实机失败证据：
   [`04_chat_tabs_p5_game_failure.png`](../../../assets/references/chat/session-2026-07-29/04_chat_tabs_p5_game_failure.png)
@@ -136,9 +138,7 @@
 7. 确认右框始终隐藏，并验证拾取、经验、荣誉、声望与技能消息仍进入左框。
 8. 核心批次实机通过后达到 `P6`，但保留 work 与 legacy 回退资产直至用户批准
    `P6-C` 清理清单。
-9. 查看 [`CHAT.URLCOPY.V1`](work/CHAT.URLCOPY.V1.md) 的单 shell 专业正文；
-   确认是否允许固定执行器上传
-   `ChatBookFrame_Master_v3.png`／`ChatControls_Master_v3.png` 两张受限
-   参考。只有用户明确授权 V1 后才先提交授权版本，再生成 shell raw。
-10. `CHAT.COPY` 保持暂缓；`CHAT.INPUT.LANGUAGE`、`CHAT.POPUP.*` 与
-    `CHAT.WHISPER.TOGGLE` 在 URL Copy 或核心实机门禁完成后继续。
+9. `CHAT.COPY` 与 `CHAT.URLCOPY` 均保持暂缓；不上传参考、不调用 ImageGen、
+   不创建 source／runtime，也不恢复新加载项。
+10. 当前资产优先级移交大面积主窗口；Chat 只继续核心 V3 实机门禁。
+    `CHAT.INPUT.LANGUAGE`、`CHAT.POPUP.*` 与 `CHAT.WHISPER.TOGGLE` 后续再排期。
