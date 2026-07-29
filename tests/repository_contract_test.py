@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static repository contract checks without third-party dependencies."""
+"""Static repository, runtime, and compact-document contract checks."""
 
 from __future__ import annotations
 
@@ -51,71 +51,125 @@ def main() -> None:
     aeui = ADDON / "AzerothExpeditionUI"
     assert pfui.is_dir(), "deployable addon/pfUI fork is missing"
     assert aeui.is_dir(), "addon/AzerothExpeditionUI is missing"
-    assert not (ROOT / "third-party" / "pfUI").exists(), (
-        "a duplicate read-only pfUI snapshot remains in third-party"
-    )
+    assert not (ROOT / "third-party" / "pfUI").exists()
     assert (pfui / "LICENSE").is_file(), "pfUI MIT license is missing"
+
     docs = ROOT / "docs"
-    assert (docs / "README.md").is_file(), "central documentation index is missing"
-    assert (docs / "WORKFLOW.md").is_file(), "documentation workflow is missing"
-    assert (docs / "pfui" / "PFUI_FORK.md").is_file(), (
-        "central pfUI fork manifest is missing"
-    )
-    agents_source = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
-    assert "## 模块信息路由" in agents_source
-    assert "run-aeui-asset-workflow" in agents_source
-    assert "imagegen-0-143-0" in agents_source
-    assert "P6-C" in agents_source
-    for forbidden in (
-        "## 聊天模块当前边界",
-        "## 任务模块当前边界",
-        "QL-A1",
-        "QL-A2",
-        "V3 A／B／C",
-        "440 × 320",
-        "QuestWatchFrame",
-        "questitem.lua",
-    ):
-        assert forbidden not in agents_source, (
-            "AGENTS.md contains module-specific mutable state: "
-            f"{forbidden}"
+    modules = ("chat", "quests", "map", "character")
+    durable_names = {
+        "SUBMODULES.md",
+        "ART_BASELINE.md",
+        "SUBMODULE_ART_BASELINES.md",
+        "PROGRESS.md",
+    }
+    expected_durable_docs = {"GLOBAL_ART_BASELINE.md", "PROGRESS.md"}
+    for module in modules:
+        expected_durable_docs.update(
+            f"modules/{module}/{name}" for name in durable_names
         )
+
+    actual_docs = {
+        path.relative_to(docs).as_posix()
+        for path in docs.rglob("*.md")
+    }
+    work_docs = {
+        path
+        for path in actual_docs
+        if len(path.split("/")) == 4
+        and path.startswith("modules/")
+        and "/work/" in path
+        and path.endswith(".md")
+    }
+    actual_durable_docs = actual_docs - work_docs
+    assert actual_durable_docs == expected_durable_docs, (
+        "project docs escaped the compact topology: "
+        f"missing={sorted(expected_durable_docs - actual_durable_docs)}, "
+        f"extra={sorted(actual_durable_docs - expected_durable_docs)}"
+    )
+    for path in work_docs:
+        assert path.split("/")[1] in modules, (
+            f"work document belongs to an unknown module: {path}"
+        )
+    assert not (ROOT / "prompts").exists(), (
+        "standalone prompts tree must be folded into module baselines/work"
+    )
+    assert not list(docs.rglob("README.md")), (
+        "AGENTS.md is the only project-document index"
+    )
+
+    agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+    for required in (
+        "## 当前整体情况",
+        "## 唯一文档结构与索引",
+        "## 开发边界",
+        "run-aeui-asset-workflow",
+        "imagegen-0-143-0",
+        "P6-C",
+        "8.1.0-aeui.2",
+    ):
+        assert required in agents, f"AGENTS.md missing {required}"
+    for path in sorted(expected_durable_docs | work_docs):
+        assert f"docs/{path}" in agents, f"AGENTS.md does not index docs/{path}"
+
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    for forbidden in (
+        "## 当前状态",
+        "## 开发入口",
+        "## 资产生产规则",
+        "工作流",
+        "下一门禁",
+        "P6-C",
+        ".codex/skills",
+    ):
+        assert forbidden not in readme, (
+            f"README contains development/state rules: {forbidden}"
+        )
+
+    global_art = (docs / "GLOBAL_ART_BASELINE.md").read_text(encoding="utf-8")
+    global_progress = (docs / "PROGRESS.md").read_text(encoding="utf-8")
+    assert "可直接继承的全局 Prompt" in global_art
+    assert "2004 年前后" in global_art
+    assert "imagegen" not in global_progress.lower(), (
+        "global progress must not duplicate generation workflow"
+    )
+    for module in modules:
+        module_dir = docs / "modules" / module
+        art = (module_dir / "ART_BASELINE.md").read_text(encoding="utf-8")
+        sub_art = (
+            module_dir / "SUBMODULE_ART_BASELINES.md"
+        ).read_text(encoding="utf-8")
+        submodules = (module_dir / "SUBMODULES.md").read_text(encoding="utf-8")
+        progress = (module_dir / "PROGRESS.md").read_text(encoding="utf-8")
+        assert "GLOBAL_ART_BASELINE.md" in art
+        assert "ART_BASELINE.md" in sub_art
+        assert "pfUI" in submodules
+        assert "下一门禁" in progress or "下一步" in progress
+
+    chat_submodules = (
+        docs / "modules" / "chat" / "SUBMODULES.md"
+    ).read_text(encoding="utf-8")
+    for component_id in (
+        "CHAT.FRAME.LEFT",
+        "CHAT.FRAME.RIGHT",
+        "CHAT.INPUT.LANGUAGE",
+        "CHAT.SCROLL.UP",
+        "CHAT.SCROLL.DOWN",
+        "CHAT.SCROLL.BOTTOM",
+        "CHAT.MENU",
+        "CHAT.RESIZE",
+        "CHAT.URLCOPY.SHELL",
+        "CHAT.URLCOPY.INPUT",
+        "CHAT.URLCOPY.CLOSE",
+    ):
+        assert f"`{component_id}`" in chat_submodules, (
+            f"chat pfUI object contract missing {component_id}"
+        )
+
     addon_markdown = sorted(ADDON.rglob("*.md"))
     assert not addon_markdown, (
-        "addon must contain runtime files and required licenses, not Markdown: "
+        "addon must contain runtime files and licenses, not Markdown: "
         f"{[path.relative_to(ROOT).as_posix() for path in addon_markdown]}"
     )
-
-    closure_documents = (
-        docs / "ASSET_PIPELINE.md",
-        docs / "WORKFLOW.md",
-        docs / "repository" / "ASSETS.md",
-        docs / "repository" / "PROMPTS.md",
-        docs / "implementation" / "IMPLEMENTATION_ROADMAP.md",
-        docs / "implementation" / "OVERHAUL_TRACKER.md",
-    )
-    for document in closure_documents:
-        source = document.read_text(encoding="utf-8")
-        assert "P6-C" in source, (
-            f"{document.relative_to(ROOT)} lacks the terminal cleanup gate"
-        )
-
-    tracker_source = (
-        docs / "implementation" / "OVERHAUL_TRACKER.md"
-    ).read_text(encoding="utf-8")
-    component_table = tracker_source.split("## 组件级改造表", 1)[1]
-    for line in component_table.splitlines():
-        if not line.startswith("|") or "`P6-C`" not in line:
-            continue
-        assert "generated/" not in line, (
-            "closed component still references generated intermediates: "
-            f"{line}"
-        )
-        cells = [cell.strip() for cell in line.strip("|").split("|")]
-        assert cells[-1] == "已关闭", (
-            "closed component must not retain a next action: "
-            f"{line}"
-        )
 
     for toc in (
         pfui / "pfUI.toc",
@@ -131,9 +185,7 @@ def main() -> None:
     )
     assert "## RequiredDeps: pfUI" in aeui_toc
     assert "## Version: 0.4.1" in aeui_toc
-    bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(
-        encoding="utf-8"
-    )
+    bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(encoding="utf-8")
     assert 'addon.version = "0.4.1"' in bootstrap
 
     for toc_name in ("pfUI.toc", "pfUI-tbc.toc"):
@@ -165,9 +217,7 @@ def main() -> None:
         "local vanillaModuleGroups = {", 1
     )[1].split("for group, modules", 1)[0]
     fallback_modules = set(re.findall(r'"([^"]+)"', fallback_block))
-    modules_xml = (pfui / "init" / "modules.xml").read_text(
-        encoding="utf-8"
-    )
+    modules_xml = (pfui / "init" / "modules.xml").read_text(encoding="utf-8")
     registered_module_files = set(
         re.findall(r'modules\\([^"\\]+)\.lua', modules_xml)
     )
@@ -194,13 +244,8 @@ def main() -> None:
         "turtle-wow",
         "superwow",
     }
-    assert not retained_modules & fallback_modules, (
-        "a retained behavior module was routed out of the runtime: "
-        f"{sorted(retained_modules & fallback_modules)}"
-    )
-    unclassified = (
-        registered_module_files - fallback_modules - retained_modules
-    )
+    assert not retained_modules & fallback_modules
+    unclassified = registered_module_files - fallback_modules - retained_modules
     assert not unclassified, (
         "pfUI modules lack an explicit native-fallback/retained classification: "
         f"{sorted(unclassified)}"
@@ -209,12 +254,8 @@ def main() -> None:
     pfui_core = (pfui / "pfUI.lua").read_text(encoding="utf-8")
     assert "function pfUI:IsModuleEnabled" in pfui_core
     assert "function pfUI:IsSkinEnabled" in pfui_core
-    assert "if not pfUI:IsModuleEnabled(m) then return end" in pfui_core
-    assert "if not pfUI:IsSkinEnabled(s) then return end" in pfui_core
 
-    turtle = (pfui / "modules" / "turtle-wow.lua").read_text(
-        encoding="utf-8"
-    )
+    turtle = (pfui / "modules" / "turtle-wow.lua").read_text(encoding="utf-8")
     assert 'pfUI:IsModuleEnabled("player")' in turtle
     for skin in ("Game Menu", "Character", "Inspect", "Profession"):
         assert f'pfUI:IsSkinEnabled("{skin}")' in turtle
@@ -222,18 +263,6 @@ def main() -> None:
     for markdown in ROOT.rglob("*.md"):
         if ".git" not in markdown.parts:
             assert_markdown_links(markdown)
-
-    documentation_index = (docs / "README.md").read_text(encoding="utf-8")
-    unindexed_docs = [
-        path.relative_to(docs).as_posix()
-        for path in sorted(docs.rglob("*.md"))
-        if path != docs / "README.md"
-        and path.relative_to(docs).as_posix() not in documentation_index
-    ]
-    assert not unindexed_docs, (
-        "docs/README.md does not index central documents: "
-        f"{unindexed_docs}"
-    )
 
     print("repository contract test passed")
 

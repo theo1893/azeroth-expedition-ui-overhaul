@@ -1,0 +1,68 @@
+# Quests 详细进度
+
+## 当前结论
+
+- Quest Log 主视觉：已锁定。
+- Quest Log 真实对象合同：`P1` 完成，QL-A 当前处于 `P2–P4` 混合阶段。
+- `QL-A1` 空卷宗结构 source：用户确认，`P4`。
+- `QL-A2 V3.1`：`prompt-draft / P2`，未授权、未生成。
+- Quest Tracker：视觉 `P2`，外部 provider `P0`，暂停。
+- NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
+- `questitem.lua`：行为保留，视觉 `N/A`。
+
+## Quest Log 批次
+
+| 批次 | 子模块 | 阶段 | 当前事实 | 下一门禁 |
+|---|---|---:|---|---|
+| `QL-A1` | `QUEST.LOG.SHELL` 结构母版 | `P4` | [透明 source](../../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png) 已接受；整图不得进 runtime | 等待 QL-A2 后确定 crop／UV |
+| `QL-A2` | 两纸页与六个 `GUTTER.*` | `P2` current | V1、V2.1、V3 已退回；[V3.1 work](work/QUEST.LOG.GUTTER.md) 已融合最高美术基线 | 用户明确授权 `QL-A2 V3.1` |
+| `QL-B` | 目录行、展开、追踪、选择、类型、状态 | `P1–P2` | 子模块与稳定美术基线已定义，无生产 work | QL-A2 source 接受后逐对象建 Prompt |
+| `QL-C` | 两套 ScrollBar、关闭、操作与辅助按钮 | `P1–P2` | 真实对象已拆，部分全局名需 feature-detect | 实机对象与几何 |
+| `QL-D` | 奖励槽、分隔与文字安全区 | `P1–P2` | Quest Log 奖励只读，无 selected | 实机奖励数量与尺寸 |
+
+QL-A1 manifest 记录：
+
+- `1514 × 1039` RGBA。
+- SHA-256
+  `91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5`。
+- 透明／半透明／不透明像素：`241402／5650／1325994`。
+- 可见绿色残留：`0`。
+- 固定执行会话：`019fac35-620b-78d3-8b46-2e1f02105f74`。
+- 物理双页接近等宽；`42%／58%` 只用于 runtime 阅读列。
+
+## NPC Quest／Gossip
+
+| 批次 | 范围 | 阶段 | 下一门禁 |
+|---|---|---:|---|
+| `QD-A` | 两外壳、两肖像、名称、关闭与五内容面板 | `P1 contract-draft` | 锁定 NPC 委托文书主视觉并实测几何 |
+| `QD-B` | 五面板 × 四滚动子件；两类 Greeting Entry | Scroll `P1`／Entry `P0` | FrameXML／`/fstack` 证据 |
+| `QD-C` | 八个真实操作 Button | `P1` | 四状态尺寸与点击区 |
+| `QD-D` | 所需物品、奖励槽与选择覆盖 | `P1` | 奖励流程实机验证 |
+
+当前原生 `QuestFrame`／`GossipFrame` 完整保留；没有 production Prompt、
+source 或 runtime。
+
+## 外部 Quest Tracker
+
+| 批次 | 范围 | 阶段 | 下一门禁 |
+|---|---|---:|---|
+| `QT-A` | header、paper、叠页边、bottom、emblem | `P2 visual／P0 compat` | 提供外部插件源码与对象树 |
+| `QT-B` | collapse、objective、focus、seal、timer | `P2 visual／P0 compat` | 真实交互与状态来源 |
+
+本项目不会扫描或接管 `QuestWatchFrame`，也不会创建第二个追踪器。
+
+## 当前验证
+
+- 静态对象合同与 Prompt 继承测试：
+  [`quest_design_contract_test.py`](../../../tests/quest_design_contract_test.py)。
+- QL-A1 source manifest：
+  [`QL-A1_SourceManifest_v1.json`](../../../assets/source/quests/ql-a1/QL-A1_SourceManifest_v1.json)。
+- QL-A2 失败候选只存在于被忽略的 `generated/quests/QL-A2/`；没有 tracked
+  source 或 runtime。
+- Turtle WoW 实机验证尚未开始。
+
+## 下一步
+
+用户审阅 [当前 QL-A2 V3.1 执行正文](work/QUEST.LOG.GUTTER.md)，并在接受时
+明确回复版本。只有具体版本授权后，固定 `imagegen-0-143-0` 执行器才可生成
+候选；“继续”或“下一步”不构成授权。

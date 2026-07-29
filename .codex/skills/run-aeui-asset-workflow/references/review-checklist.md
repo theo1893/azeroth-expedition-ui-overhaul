@@ -35,12 +35,13 @@
 
 ## 4. 美术一致性
 
-- 生产提示词是否链接每张 `assets/locked/` 基准对应的原始
-  prototype／provenance prompt，而不是只上传图片？
+- work 是否链接每张 `assets/locked/` 基准对应的模块／子模块基线 Prompt，
+  而不是只上传图片？
 - 提示词是否逐项记录“必须继承、组件级转译、明确排除、冲突裁决”，并把这些
   约束写入实际执行正文？
-- 是否遵循 `assets/locked/`、其提示词 provenance、模块规范和
-  `ART_DIRECTION.md`？
+- 是否遵循 `assets/locked/`、其 Prompt provenance、模块
+  `ART_BASELINE.md`／`SUBMODULE_ART_BASELINES.md` 和
+  `docs/GLOBAL_ART_BASELINE.md`？
 - 是否把 `assets/source/` 派生母版错误提升为高于锁定基准的视觉权威？
 - 是否保持香草时代的手绘轮廓、厚重材料与有限高光？
 - 是否出现现代 HUD 语言：半透明黑玻璃、细金线、规则卡片、扁平矩形、

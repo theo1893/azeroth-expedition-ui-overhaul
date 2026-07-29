@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static contract checks for the repository-local asset workflow skill."""
+"""Static contract checks for the compact AEUI asset workflow skill."""
 
 from __future__ import annotations
 
@@ -27,7 +27,11 @@ def main() -> None:
         SKILL / "references" / "record-templates.md",
         SKILL / "scripts" / "inspect_candidate.py",
     )
-    missing = [path.relative_to(ROOT).as_posix() for path in required if not path.is_file()]
+    missing = [
+        path.relative_to(ROOT).as_posix()
+        for path in required
+        if not path.is_file()
+    ]
     assert not missing, f"asset workflow skill is incomplete: {missing}"
 
     skill = (SKILL / "SKILL.md").read_text(encoding="utf-8")
@@ -36,28 +40,32 @@ def main() -> None:
     require(
         skill,
         (
+            "docs/GLOBAL_ART_BASELINE.md",
+            "SUBMODULES.md",
+            "ART_BASELINE.md",
+            "SUBMODULE_ART_BASELINES.md",
+            "PROGRESS.md",
+            "docs/modules/<module>/work/",
+            "## Use the compact document lifecycle",
+            "one active Markdown work file",
+            "Before executing a prompt, commit",
+            "Then delete the component work file",
             "../imagegen-0-143-0/SKILL.md",
             "Do not call the current session's built-in",
             "Do not copy anything into `assets/source/` without explicit user acceptance",
-            "semantic structure has been checked",
-            "[state-machine.md](references/state-machine.md)",
-            "[review-checklist.md](references/review-checklist.md)",
-            "[repository-sync.md](references/repository-sync.md)",
-            "[record-templates.md](references/record-templates.md)",
-            "inspect_candidate.py",
-            "| finish, close, compact, clean completed work | `close`",
-            "Do not remove intermediate or superseded files before `P6`",
-            "## Close after P6",
-            "`P6-C / component-closed`",
-            "Do not describe ignored generated files as durable cross-device assets",
-            "A locked image without its prompt provenance is an incomplete authority",
-            "## Resolve visual authority and inheritance",
-            "art-inheritance block",
-            "`assets/source/` derivative the highest visual authority",
+            "A locked image without prompt provenance",
             "“continue” or “next step” alone does not authorize generation",
+            "`P6-C / component-closed`",
         ),
         "asset workflow skill",
     )
+    for obsolete in (
+        "docs/ASSET_PIPELINE.md",
+        "docs/implementation/OVERHAUL_TRACKER.md",
+        "docs/ART_DIRECTION.md",
+        "prompt under `prompts/<module>/`",
+    ):
+        assert obsolete not in skill, f"skill still routes through {obsolete}"
 
     state_machine = (SKILL / "references" / "state-machine.md").read_text(
         encoding="utf-8"
@@ -65,6 +73,7 @@ def main() -> None:
     require(
         state_machine,
         (
+            "docs/modules/<module>/PROGRESS.md",
             "`prompt-draft → prompt-authorized`",
             "`candidate-raw → candidate-reviewed`",
             "`candidate-reviewed → source-accepted`",
@@ -72,13 +81,9 @@ def main() -> None:
             "`runtime-exported → game-validated`",
             "`game-validated → closure-planned`",
             "`closure-planned → component-closed`",
-            "技术指标",
-            "用户明确接受具体候选",
-            "执行过的提示词正文不可原地覆盖",
-            "完整历史由 Git 保存",
-            "原始提示词",
-            "“继续”或“下一步”本身不构成生图授权",
-            "`assets/source/` 中的派生母版不能",
+            "执行前必须提交 work 文件",
+            "完整正文由 Git 历史保存",
+            "然后删除 work",
         ),
         "asset workflow state machine",
     )
@@ -86,23 +91,51 @@ def main() -> None:
     review = (SKILL / "references" / "review-checklist.md").read_text(
         encoding="utf-8"
     )
-    semantic_index = review.index("## 2. 语义、解剖与物理逻辑")
-    technical_index = review.index("## 7. 技术像素检查")
-    assert semantic_index < technical_index, (
-        "technical checks must not precede semantic/physical review"
+    assert review.index("## 2. 语义、解剖与物理逻辑") < review.index(
+        "## 7. 技术像素检查"
     )
     require(
         review,
         (
-            "连通区数量、尺寸和透明度不能证明",
             "必须制作一次按真实层序的离线重组",
-            "现代 HUD 语言",
-            "预演图只进入 `generated/`",
-            "`通过`、`有条件通过` 或 `退回`",
-            "原始提示词提取的美术 DNA",
+            "docs/GLOBAL_ART_BASELINE.md",
             "`assets/source/` 派生母版错误提升",
+            "预演图只进入 `generated/`",
         ),
-        "asset review checklist",
+        "review checklist",
+    )
+
+    repository_sync = (
+        SKILL / "references" / "repository-sync.md"
+    ).read_text(encoding="utf-8")
+    require(
+        repository_sync,
+        (
+            "## 四份长期模块文档",
+            "## 单一组件 work",
+            "不得新增路线图",
+            "`prompts/` 树",
+            "每次执行前先提交 work",
+            "## `P6-C` 终态收口",
+            "该组件的 work 文件",
+            "不得对",
+        ),
+        "repository sync",
+    )
+
+    templates = (
+        SKILL / "references" / "record-templates.md"
+    ).read_text(encoding="utf-8")
+    require(
+        templates,
+        (
+            "## 组件 work 文件",
+            "## 美术基准继承",
+            "## 尝试摘要",
+            "SUBMODULE_ART_BASELINES.md",
+            "并删除 work",
+        ),
+        "record templates",
     )
 
     interface = (SKILL / "agents" / "openai.yaml").read_text(encoding="utf-8")
@@ -110,10 +143,10 @@ def main() -> None:
         interface,
         (
             'display_name: "AEUI 资产生成与审查"',
-            "short_description:",
+            "单一组件 work 文件",
             'default_prompt: "Use $run-aeui-asset-workflow',
         ),
-        "asset workflow interface metadata",
+        "skill interface",
     )
 
     script = SKILL / "scripts" / "inspect_candidate.py"
@@ -127,84 +160,36 @@ def main() -> None:
     assert help_result.returncode == 0, help_result.stderr
     assert "ID=x0,y0,x1,y1" in help_result.stdout
 
-    pipeline = (ROOT / "docs" / "ASSET_PIPELINE.md").read_text(encoding="utf-8")
-    workflow = (ROOT / "docs" / "WORKFLOW.md").read_text(encoding="utf-8")
     agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
-    for source, label in (
-        (pipeline, "asset pipeline"),
-        (workflow, "documentation workflow"),
-        (agents, "agent instructions"),
-    ):
-        assert "run-aeui-asset-workflow" in source, (
-            f"{label} does not route work through the workflow skill"
-        )
-        assert "P6-C" in source, (
-            f"{label} does not require terminal component closure"
-        )
-    require(
-        pipeline,
-        (
-            "原始 prototype／provenance prompt 路径",
-            "必须继承／组件级转译／明确不继承／冲突裁决",
-            "派生 `assets/source/` 不得反向覆盖",
-            "“继续”或“下一步”只允许走到展示提示词",
-        ),
-        "asset pipeline art-inheritance gate",
-    )
     require(
         agents,
         (
-            "同时读取产生或语义锁定该图的版本化",
-            "`assets/source/` 是",
-            "不得在后续提示词中被提升为高于锁定基准",
+            "## 唯一文档结构与索引",
+            "work/*.md",
+            "组件达到 `P6-C` 后必须删除",
+            "run-aeui-asset-workflow",
+            "imagegen-0-143-0",
         ),
-        "agent visual-authority gate",
+        "AGENTS workflow routing",
     )
 
-    legacy_executed = {
-        "任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md",
-        "任务详情可拉伸结构部件_生产提示词_QL-A2_v1.md",
-        "任务详情内页沟结构部件_生产提示词_QL-A2_v2.md",
-        "任务详情内页沟结构部件_修订提示词_QL-A2_v2.1.md",
-        "任务详情对称内页沟结构部件_生产提示词_QL-A2_v3.md",
-    }
-    for prompt in sorted((ROOT / "prompts").rglob("*.md")):
-        source = prompt.read_text(encoding="utf-8")
-        if "子状态：`prompt-draft`" not in source:
-            continue
-        assert prompt.name not in legacy_executed
+    for work in sorted((ROOT / "docs" / "modules").glob("*/work/*.md")):
+        source = work.read_text(encoding="utf-8")
         require(
             source,
             (
+                "子状态：",
+                "项目阶段：",
+                "固定执行器：",
                 "## 美术基准继承",
-                "基准提示词 provenance",
-                "### 权威顺序",
-                "### 必须继承的视觉 DNA",
-                "### 本批组件级转译",
-                "### 明确不继承",
-                "### 冲突审计",
+                "## 组件合同",
+                "## 最终执行正文",
+                "## 执行记录",
+                "## 审查记录",
+                "## 尝试摘要",
             ),
-            f"active production prompt {prompt.relative_to(ROOT)}",
+            f"active work {work.relative_to(ROOT)}",
         )
-        assert "source` 只" in source or "source，只" in source, (
-            f"{prompt.relative_to(ROOT)} does not limit derivative source authority"
-        )
-
-    repository_sync = (
-        SKILL / "references" / "repository-sync.md"
-    ).read_text(encoding="utf-8")
-    require(
-        repository_sync,
-        (
-            "## `P6-C` 终态收口",
-            "### 保留",
-            "### 清理",
-            "精确清单",
-            "不得对",
-            "独立提交",
-        ),
-        "terminal cleanup rules",
-    )
 
     print("asset workflow skill contract test passed")
 

@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "batch": "QL-A1",
   "status": "accepted-source",
   "accepted_on": "2026-07-29",
@@ -18,7 +18,8 @@
     "executor": "imagegen-0-143-0",
     "codex_package": "@openai/codex@0.143.0",
     "generation_session": "019fac35-620b-78d3-8b46-2e1f02105f74",
-    "prompt": "../../../../prompts/quests/任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md",
+    "prompt": "../../../../docs/modules/quests/SUBMODULE_ART_BASELINES.md",
+    "prompt_section": "QUEST.LOG.SHELL / QL-A1",
     "visual_reference": "../../../locked/quests/任务详情面板_视觉基准_v1.png",
     "ignored_raw": "../../../../generated/quests/QL-A1/v1/QL-A1_v1_raw.png",
     "ignored_transparent_candidate": "../../../../generated/quests/QL-A1/v1/QL-A1_v1.png",
@@ -49,7 +50,7 @@
     },
     {
       "id": "QUEST.LOG.SPINE",
-      "role": "central spine, stitching and page-contact structure"
+      "role": "legacy parent label for structural provenance only; not a single runtime spine asset"
     }
   ],
   "review": {
@@ -65,12 +66,12 @@
   "crop_contract": {
     "status": "deferred",
     "whole_image_runtime_allowed": false,
-    "reason": "QL-A1 is the accepted structural source master. Deterministic crop boxes, stretch-safe regions and atlas UVs require the separately confirmed QL-A2 batch plus target-client QuestLog measurements.",
+    "reason": "QL-A1 is the accepted structural source master. Deterministic crop boxes, stretch-safe regions and atlas UVs require the separately accepted QL-A2 batch plus target-client QuestLog measurements. Current runtime object ownership is defined in docs/modules/quests/SUBMODULES.md.",
     "planned_outputs": [
       "outer cover edges and corners",
       "left-page stretchable surface",
       "right-page stretchable surface",
-      "spine top, tileable middle and bottom",
+      "gutter underlay, left/right folds, discrete horizontal stitch, top/bottom closures",
       "outer page-stack segments"
     ]
   },

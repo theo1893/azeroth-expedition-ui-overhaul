@@ -1,127 +1,157 @@
-# Azeroth Expedition UI 仓库约束
+# Azeroth Expedition UI 项目入口
 
-## 项目边界
+Codex 进入仓库后先读本文件。本文件同时承担项目级开发约束、文档索引和当前
+状态快照；处理具体模块时，再按下方索引只读取该模块的四份长期文档与现存
+`work/` 文件。
+
+## 当前整体情况
 
 - 目标客户端：Turtle WoW `1.18.1`，Interface `11200`。
-- `addon/pfUI/` 与 `addon/AzerothExpeditionUI/` 共同构成可测试运行时：
-  前者是 pfUI 功能底座的项目维护分支，后者承载模块级替换与项目媒体。
-- pfUI 是功能、数据和生命周期底座。允许在本插件内大规模重构其视觉层、
-  布局层和呈现组件；不要求局限于简单换肤。
-- `addon/pfUI/` 可以修改 UI、布局和与呈现直接相关的连接逻辑；不得借视觉
-  重构之名改写自动售卖、物品操作、聊天事件、战斗数据、社交或兼容行为。
-- 没有达到组件级 runtime 门槛的 pfUI 可见替换模块默认在加载前回退到
-  香草／Turtle WoW 原生 Frame；不得为了隐藏现代界面而删除模块源码、改写
-  非视觉 SavedVariables 或破坏原生交互。
-- 上游版本与项目差异记录在 `docs/pfui/PFUI_UPSTREAM_SNAPSHOT.md` 和
-  `docs/pfui/PFUI_FORK.md`。
-- 复制或实质改写 pfUI 代码时，记录上游文件、提交和修改原因，并保留 MIT
-  版权与许可声明。
-- 每个模块必须能够独立启用、禁用并回退；局部兼容失败不能阻止整个插件加载。
+- 运行时由 `addon/pfUI/` 与 `addon/AzerothExpeditionUI/` 共同组成。
+- pfUI 功能底座版本：`8.1.0`，来源提交
+  `fbc8fb608b79adf32049543ec12fcc020e0acd69`；项目分支版本
+  `8.1.0-aeui.2`，MIT 许可见 `addon/pfUI/LICENSE`。
+- pfUI 提供数据、事件、交互、SavedVariables 与兼容能力；项目允许大规模
+  重构视觉、布局和呈现连接，但不改写无关功能。
+- 未完成最终替换的可见模块默认回退香草／Turtle WoW 原生 Frame；不得为了
+  隐藏现代 pfUI 外观而破坏原生交互。
 
-架构边界见 `docs/ARCHITECTURE.md`。
+| 模块 | 当前状态 | 下一门禁 |
+|---|---|---|
+| pfUI／原生回退 | 路由与公共过渡材质 `P5`，未实机 | Turtle WoW 全场景回归 |
+| 聊天 | V3 透明母版 `P4`；legacy runtime `P5` | 导出 V3、接入 Lua、实机验收 |
+| 任务 | QL-A1 `P4`；QL-A2 V3.1 为未授权 `prompt-draft / P2` | 用户明确授权 V3.1 |
+| 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
+| 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |
+| 其他 UI | `P0–P1`，保持原生回退 | 逐模块建立四份长期文档 |
 
-## 文档位置与工作流
+全量模块状态以 [docs/PROGRESS.md](docs/PROGRESS.md) 为准。
 
-- `docs/README.md` 是项目文档的唯一入口，列出每份文档的职责。
-- `docs/WORKFLOW.md` 规定不同变更必须同步更新哪些权威文件。
-- `addon/` 只承载运行时代码、媒体与随包分发所必需的许可证，禁止新增
-  `*.md`。
-- 版本化生图提示词保留在 `prompts/`；第三方 `SOURCE.md`、许可证和校验凭据
-  与对应文件共同保存。它们是生产输入／来源证据，不是散落的项目说明。
-- 新增、移动或删除文档时，必须在同一提交更新 `docs/README.md`。
+## 唯一文档结构与索引
 
-## 权威文件
+长期项目文档只允许以下类型：
 
-发生冲突时，按以下优先级裁决：
+```text
+docs/
+  GLOBAL_ART_BASELINE.md
+  PROGRESS.md
+  modules/<module>/
+    SUBMODULES.md
+    ART_BASELINE.md
+    SUBMODULE_ART_BASELINES.md
+    PROGRESS.md
+    work/                         # 仅未完成组件可存在
+```
 
-1. `assets/locked/<module>/` 中用户确认的视觉基准。
-2. `docs/modules/<module>/` 中对应模块规范。
-3. `docs/ART_DIRECTION.md` 的跨模块规则。
-4. `docs/implementation/<MODULE>_COMPONENT_SPEC.md` 中的组件与几何合同。
-5. `assets/source/<module>/` 中已确认的透明母版。
-6. `assets/references/` 中明确标注用途的结构或故障参考。
+全局：
 
-使用锁定视觉基准时，必须同时读取产生或语义锁定该图的版本化
-prototype／provenance prompt，并把其中不可变的物件身份、轮廓语言、材料、
-配色、笔触、光照、磨损和反模式转译进组件生产提示词。`assets/source/` 是
-派生参考，不得在后续提示词中被提升为高于锁定基准的视觉权威。
+- [全局美术基线 Prompt](docs/GLOBAL_ART_BASELINE.md)
+- [模块整体进度](docs/PROGRESS.md)
 
-组件状态、资产来源、原始提示词和 runtime 路径以
-`docs/implementation/OVERHAUL_TRACKER.md` 为唯一进度事实来源。任何状态变化
-必须在同一 Git 提交中更新 tracker。
+聊天：
 
-## 模块信息路由
+- [子模块与 pfUI 对齐](docs/modules/chat/SUBMODULES.md)
+- [主模块美术基线 Prompt](docs/modules/chat/ART_BASELINE.md)
+- [子模块美术基线 Prompt](docs/modules/chat/SUBMODULE_ART_BASELINES.md)
+- [详细进度](docs/modules/chat/PROGRESS.md)
 
-`AGENTS.md` 只保存跨模块、长期稳定且代理必须始终遵守的约束，不记录单个模块
-的当前版本、阶段、候选资产、否决历史、实现波次或下一步。
+任务：
 
-处理具体模块前，按职责读取：
+- [子模块与 pfUI 对齐](docs/modules/quests/SUBMODULES.md)
+- [主模块美术基线 Prompt](docs/modules/quests/ART_BASELINE.md)
+- [子模块美术基线 Prompt](docs/modules/quests/SUBMODULE_ART_BASELINES.md)
+- [详细进度](docs/modules/quests/PROGRESS.md)
+- [当前 QL-A2 工作文件](docs/modules/quests/work/QUEST.LOG.GUTTER.md)
 
-| 信息 | 权威位置 |
-|---|---|
-| 当前阶段、资产、提示词、runtime 与下一步 | `docs/implementation/OVERHAUL_TRACKER.md` |
-| 模块视觉语言与已锁定／弃用方向 | `docs/modules/<module>/`、`docs/DESIGN_STATUS.md` |
-| 真实对象、状态、交互、几何与 provider 边界 | `docs/implementation/<MODULE>_COMPONENT_SPEC.md` |
-| 当前 runtime 接入、媒体映射与 pfUI fork 差异 | `docs/runtime/`、`docs/pfui/` |
-| 可执行正文、执行记录与失败 provenance | `prompts/<module>/` |
-| 跨模块美术和长期决策 | `docs/ART_DIRECTION.md`、`docs/SESSION_DECISIONS.md` |
+地图：
 
-找不到对应权威文件时，按 `docs/WORKFLOW.md` 建立或补充文档；不得把临时模块
-事实回填到本文件。
+- [子模块与 pfUI 对齐](docs/modules/map/SUBMODULES.md)
+- [主模块美术基线 Prompt](docs/modules/map/ART_BASELINE.md)
+- [子模块美术基线 Prompt](docs/modules/map/SUBMODULE_ART_BASELINES.md)
+- [详细进度](docs/modules/map/PROGRESS.md)
 
-## 组件级资产
+角色：
 
-- 资产粒度必须与游戏内逻辑对象一致。
-- 每个 Button、Tab、输入框、滚动条、状态条和图标槽都要分别定义对象、状态、
-  点击几何、文字安全区和可拉伸区。
-- 可以把多个逻辑资产打包到同一物理图集，但必须提供 manifest／UV 映射。
-- 不得把真实按钮、状态、动态文字、图标、滚动条或固定槽位烘焙进整张背景。
-- 生成前先完成 pfUI／原生 Frame 映射；找不到稳定对象时，不制作“看起来像”
-  的假控件。
-- 运行时 TGA 使用 32 位 RGBA、2 的幂画布，并给 UV 留出防渗色边距。
-- 可再生预览、色键 raw、失败稿和调试图放在被 Git 忽略的 `generated/`，
-  不进入 `assets/source/`。
+- [子模块与 pfUI 对齐](docs/modules/character/SUBMODULES.md)
+- [主模块美术基线 Prompt](docs/modules/character/ART_BASELINE.md)
+- [子模块美术基线 Prompt](docs/modules/character/SUBMODULE_ART_BASELINES.md)
+- [详细进度](docs/modules/character/PROGRESS.md)
 
-完整流程见 `docs/ASSET_PIPELINE.md`。
+`NOTICE.md`、第三方 `SOURCE.md`、许可证、JSON manifest 和 Skill
+references 是法律、来源或机器契约，不属于项目说明文档，不在上表重复维护。
+`README.md` 只介绍项目，不承载开发规则、资产状态或工作流。
 
-## 资产工作流与固定执行器
+## 文档职责
 
-处理组件资产的准备、生成、审查、修订、接受、退回、源资产晋级、runtime
-导出或实机验收时，必须完整读取并使用：
+- `GLOBAL_ART_BASELINE.md`：唯一跨模块美术 Prompt；包含时代语言、材料、
+  配色、字体、反模式和组件级转译原则。
+- `PROGRESS.md`：只记录各主模块的阶段、当前结论和下一门禁。
+- `SUBMODULES.md`：该主模块所有真实子模块、pfUI 文件、原生 Frame、逻辑
+  ID、状态与功能所有权；不写生产过程。
+- `ART_BASELINE.md`：该主模块唯一美术基线 Prompt，必须显式继承全局 Prompt。
+- `SUBMODULE_ART_BASELINES.md`：每个真实子模块的稳定 Prompt 条款，必须继承
+  主模块 Prompt，不能记录逐次失败流水。
+- `PROGRESS.md`：该主模块的资产、代码、测试、阶段和下一步唯一详细事实。
+- `work/*.md`：尚未完成组件的当前合同、当前可执行 Prompt、尝试摘要与审查
+  记录。组件达到 `P6-C` 后必须删除；历史由 Git 保存。
+
+新增主模块时一次性建立四份长期文档，并把索引与状态同时写入本文件和全局
+进度。不得新增第二套路线图、决策日志、审计报告、媒体清单或独立 Prompt
+目录。
+
+## 开发边界
+
+- `addon/` 只承载运行时代码、媒体和分发必需许可证，不放 Markdown。
+- `addon/pfUI/` 可修改公共绘制入口、布局与呈现连接；自动售卖、物品操作、
+  聊天事件、战斗数据、社交与平台兼容等非视觉行为保持不变。
+- `addon/AzerothExpeditionUI/` 承载项目 adapter、replacement、extension
+  和媒体；只在真实模块需要时创建文件，不建立空壳。
+- 每个模块必须可独立启用、禁用和回退。对象缺失或媒体失败时局部回退原生，
+  不能阻止整个插件加载。
+- Hook 后不得在维护循环中持续改写 Parent、Point、Width 或 Height。
+- 上游 pfUI 初始测试基线包含本机已有的 `pfUI.lua` 与 `libs/libtotem.lua`
+  修改；嵌套 `.git` 未纳入。后续实质改写必须保留 MIT 版权和来源。
+
+## 视觉与组件权威
+
+发生冲突时按以下顺序裁决：
+
+1. `assets/locked/<module>/` 中用户锁定的图，以及对应模块
+   `ART_BASELINE.md`／`SUBMODULE_ART_BASELINES.md` 中的 Prompt。
+2. `docs/GLOBAL_ART_BASELINE.md`。
+3. 模块 `SUBMODULES.md` 对真实对象、几何、状态、层序和禁止烘焙的合同。
+4. `assets/source/<module>/` 中用户接受的透明母版及 manifest。
+5. `assets/references/` 中明确声明用途的结构参考。
+
+锁定图与 Prompt 共同定义物件身份、轮廓、材料关系、配色、笔触、光照、
+磨损和反模式。组件合同负责把完整原型过滤成可运行对象，但不能改写其美术
+DNA。派生 source 只能承担声明过的结构或材料职责，不能反向成为最高视觉
+权威。
+
+资产粒度必须与游戏逻辑对象一致。每个 Button、Tab、输入框、滚动条、状态条、
+图标槽和独立交互状态都要单独定义；允许共用物理图集，但必须有 manifest／UV。
+不得把动态文字、图标、状态或真实按钮烘焙进整张背景。找不到稳定的 pfUI、
+Blizzard 或外部 provider 对象时，不生产“看起来像”的假控件。
+
+## 工作流入口
+
+所有组件资产的准备、生成、审查、修订、接受、导出、实机验证和完成后清理，
+必须使用：
 
 ```text
 .codex/skills/run-aeui-asset-workflow/SKILL.md
 ```
 
-所有实际位图生成和修图必须继续委托：
+所有位图生成与修图必须继续委托：
 
 ```text
 .codex/skills/imagegen-0-143-0/SKILL.md
 ```
 
-其固定实现为 `@openai/codex@0.143.0`；禁止改用会话内建 imagegen 或未确认
-模型。详细步骤、状态机、提示词原文规则、Alpha 处理和仓库同步只在上述 Skill
-与 `docs/ASSET_PIPELINE.md` 维护，本文件不复制第二份流程。
+固定执行实现为 `@openai/codex@0.143.0`；禁止改用会话内建 imagegen。
+详细状态机、授权门禁、审查顺序、版本处理、仓库同步与 `P6-C` 清理规则只在
+Skill 中维护，本文件不复制流程。
 
-全局硬门禁仍然适用：
-
-- “提示词已授权”“已生图”“内部审查通过”“用户接受”和“runtime 接入”是
-  不同状态。
-- 用户未明确接受具体候选时，不得写入 `assets/source/`。
-- 没有真实 Frame／provider、crop／UV、状态映射和静态测试时，不得晋级
-  `P5`。
-- 没有 Turtle WoW `1.18.1` 实机证据时，不得晋级 `P6`。
-- `P6` 后必须按工作流生成精确保留／删除清单；用户确认、清理和复测完成后
-  才能标记 `P6-C`。不得提前或宽泛删除共享资产与过程材料。
-
-## 运行时实现约束
-
-- 不覆盖原生／上游事件分发、物品链接、战斗日志或其他数据行为入口。
-- Hook 后不得在维护循环中持续改写 Parent、Point、Width 或 Height。
-- 组件纹理缺失、pfUI 对象不存在或版本不匹配时，应局部降级并给出诊断。
-- 只创建当前实现确实需要的代码和资源，不建立空壳模块。
-- 修改后至少运行静态资源检查、脚本检查和已有 smoke test；只有目标客户端
-  实机通过后才能标记 `P6`。
-- 修改 pfUI 模块路由时必须同步测试 `IsModuleEnabled`／`IsSkinEnabled`，
-  并确认被保留的非视觉功能与原生回退 Frame 没有被误关闭；具体模块回归项写
-  入对应组件、runtime 或 pfUI 文档。
+任何代码或资产变更都要更新目标模块 `PROGRESS.md`；主模块阶段变化时再同步
+全局 `docs/PROGRESS.md` 与本文件顶部快照。提交前运行受影响测试与
+`git diff --check`。除非用户要求，不自动 push。

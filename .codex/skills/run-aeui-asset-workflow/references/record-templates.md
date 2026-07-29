@@ -2,7 +2,11 @@
 
 模板用于保证字段齐全；可按模块调整标题，但不要改变已执行提示词正文。
 
-## 生产提示词文件
+## 组件 work 文件
+
+路径固定为
+`docs/modules/<module>/work/<COMPONENT-OR-BATCH>.md`。同一未完成组件只保留
+一份 work；每次执行前先提交，失败版本的完整正文由 Git 历史保存。
 
 ```markdown
 # <模块／批次> <版本>
@@ -21,7 +25,7 @@
 - 锁定视觉基准：
   - Image 1：<assets/locked 仓库路径> — <最高视觉职责>
 - 基准提示词 provenance：
-  - <prompts 仓库路径> — <对应哪张锁定基准及其语义职责>
+  - <模块 ART_BASELINE／SUBMODULE_ART_BASELINES 路径> — <对应哪张锁定基准及其语义职责>
 - 次级参考：
   - Image 2：<source/reference 仓库路径> — <受限职责；不得覆盖锁定基准>
 - raw：
@@ -34,9 +38,9 @@
 ### 权威顺序
 
 1. <锁定图 + 对应原始提示词>
-2. <模块规范>
-3. <ART_DIRECTION>
-4. <组件合同：对象／几何／状态／禁止烘焙>
+2. <模块 ART_BASELINE.md／SUBMODULE_ART_BASELINES.md>
+3. <docs/GLOBAL_ART_BASELINE.md>
+4. <模块 SUBMODULES.md：对象／几何／状态／禁止烘焙>
 5. <接受 source 或结构参考的受限职责>
 
 ### 必须继承的视觉 DNA
@@ -93,6 +97,12 @@
 - 结论：
 - 用户结论与日期：
 - 下一门禁：
+
+## 尝试摘要
+
+| 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
+|---|---|---|---|
+| <Vn> | <commit、session、result、hash> | <accepted/rejected> | <具体结构或美术条款> |
 ```
 
 `## 美术基准继承` 不是内部笔记。它必须链接锁定基准的真实 prompt
@@ -100,8 +110,8 @@ provenance，并且“必须继承”和“冲突裁决”的实质内容必须�
 中。只写“参考 Image 1 风格”“保持统一”或把派生 source 称为“最高权威”
 均不合格。
 
-若 `revised prompt` 很长，允许放在同目录的独立 provenance 文件并从这里链接；
-不能只写“模型自动优化”。
+若 `revised prompt` 很长，仍放在同一 work 文件的折叠或附录段；不要为它新增
+永久 Markdown。不能只写“模型自动优化”。
 
 ## 退回记录
 
@@ -129,8 +139,9 @@ provenance，并且“必须继承”和“冲突裁决”的实质内容必须�
 
 ## `P6-C` 收口计划
 
-先用本模板向用户展示，不创建永久的逐组件收口文档。执行后只把精简结果写入
-tracker、最终 manifest 或组件规范。
+先用本模板向用户展示，临时写入现有 work，不创建新的收口文档。执行后只把
+精简结果写入 `SUBMODULES.md`、`SUBMODULE_ART_BASELINES.md`、模块
+`PROGRESS.md` 和最终 manifest，并删除 work。
 
 ```markdown
 - 组件 ID：
@@ -142,7 +153,7 @@ tracker、最终 manifest 或组件规范。
   - implementation/tests：
 - 明确删除：
   - ignored generated：
-  - superseded tracked prompts：
+  - component work：
   - obsolete references/tools/previews：
   - duplicated process narration：
 - 排除清理的共享依赖：

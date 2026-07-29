@@ -1,6 +1,6 @@
 ---
 name: run-aeui-asset-workflow
-description: "Run the repository-specific Azeroth Expedition UI component-asset workflow with locked-baseline prompt provenance and art-language inheritance, from component contract and versioned prompt through fixed ImageGen 0.143.0 execution, semantic and technical review, revision, explicit user acceptance or rejection, source promotion, deterministic runtime export, tracker synchronization, target-client validation, and post-P6 closure cleanup. Use when generating, editing, reviewing, accepting, rejecting, promoting, exporting, validating, closing, or cleaning an AEUI component, or when the user asks to continue the next UI asset step."
+description: "Run the repository-specific Azeroth Expedition UI component-asset workflow with locked-baseline prompt provenance, compact per-component work files, and art-language inheritance, from component contract and fixed ImageGen 0.143.0 execution through review, revision, explicit acceptance or rejection, source promotion, runtime export, module-progress synchronization, target-client validation, and post-P6 work-file cleanup. Use when generating, editing, reviewing, accepting, rejecting, promoting, exporting, validating, closing, or cleaning an AEUI component, or when the user asks to continue the next UI asset step."
 ---
 
 # AEUI Asset Workflow
@@ -11,14 +11,14 @@ machine. This skill orchestrates the work; it does not replace the repository's 
 
 ## Read in this order
 
-1. Read repository `AGENTS.md`, `docs/ASSET_PIPELINE.md`, and the relevant rows in
-   `docs/implementation/OVERHAUL_TRACKER.md`.
-2. Read the target module's visual specification, component specification, locked
-   references, and current versioned prompt.
-3. Resolve every locked reference to the versioned prototype/provenance prompt that
-   produced or semantically locked it. Read those prompt bodies in full. Also read any
-   explicitly linked upstream material baseline, such as a shared chat-book material
-   reference. A locked image without its prompt provenance is an incomplete authority.
+1. Read repository `AGENTS.md`. It is the project index and current overall snapshot.
+2. Read `docs/GLOBAL_ART_BASELINE.md`, then the target module's `SUBMODULES.md`,
+   `ART_BASELINE.md`, `SUBMODULE_ART_BASELINES.md`, `PROGRESS.md`, and every existing
+   target-component file under `docs/modules/<module>/work/`.
+3. Resolve every locked reference to the module/submodule baseline prompt that produced
+   or semantically locked it. Read those prompt bodies in full. Also read explicitly
+   linked upstream material baselines. A locked image without prompt provenance is an
+   incomplete authority.
 4. Read [state-machine.md](references/state-machine.md) for every operation.
 5. Read [review-checklist.md](references/review-checklist.md) before reviewing,
    revising, rejecting, or presenting a candidate.
@@ -42,7 +42,8 @@ Treat runtime geometry and visual identity as two compatible but distinct author
 2. `assets/locked/<module>/` plus the versioned prompt provenance that produced it
    control object metaphor, silhouette language, material relationships, palette,
    brushwork, light direction, wear scale, and period identity.
-3. The module specification and `docs/ART_DIRECTION.md` refine that locked identity.
+3. The module `ART_BASELINE.md`, `SUBMODULE_ART_BASELINES.md`, and
+   `docs/GLOBAL_ART_BASELINE.md` refine that locked identity.
 4. Accepted `assets/source/` and structural references may constrain geometry or a
    named material sample, but may never become a higher visual authority than the
    locked baseline.
@@ -62,6 +63,30 @@ filtering out buttons, text, decoration, or geometry owned by other runtime comp
 Do not use vague substitutes such as “same style” or “more epic” in place of the extracted
 rules.
 
+## Use the compact document lifecycle
+
+Keep one active Markdown work file per incomplete component or tightly coupled asset batch:
+
+```text
+docs/modules/<module>/work/<COMPONENT-OR-BATCH>.md
+```
+
+The work file contains the current versioned execution body, component contract, prompt
+inheritance, compact attempt ledger, execution evidence, review, and next gate. Do not
+create a separate permanent Markdown file for every attempt, audit, preview, decision, or
+runtime media list.
+
+Before executing a prompt, commit the authorized work-file version so its exact body is in
+Git history. After rejection, append a compact durable attempt row, commit the rejection,
+then replace the active body with the new version in the same work file. Git history is the
+full archive; the current tree contains only the evidence needed for the next decision.
+
+When the component reaches `P6-C`, merge final stable visual clauses into
+`SUBMODULE_ART_BASELINES.md`, final object ownership into `SUBMODULES.md`, and final paths
+and validation into module `PROGRESS.md` and manifests. Then delete the component work file
+and ignored generated directory. Never keep an empty `work/` directory by adding placeholder
+files.
+
 ## Select the operation
 
 Infer only the narrowest operation authorized by the user:
@@ -78,7 +103,7 @@ Infer only the narrowest operation authorized by the user:
 | validate in Turtle WoW | `game-validate` | `P6` only after real-client evidence |
 | finish, close, compact, clean completed work | `close` | `P6-C` after an approved cleanup plan |
 
-“Continue” means proceed through the next unblocked gate shown by the tracker. If that
+“Continue” means proceed through the next unblocked gate shown by module progress. If that
 gate is prompt authorization, stop after preparing and presenting the exact versioned
 execution body; “continue” or “next step” alone does not authorize generation. It never
 means silently accepting a candidate, promoting a source, inventing missing runtime
@@ -112,16 +137,17 @@ inspection still in scope. Do not create plausible-looking placeholder controls.
 
 ## Prepare
 
-1. Resolve the exact module and component IDs from the tracker.
+1. Resolve the exact module and component IDs from module `SUBMODULES.md` and
+   `PROGRESS.md`.
 2. Map every visual object to a real pfUI, Blizzard, or external-provider object.
 3. Record object count, state count, runtime size, source canvas, Alpha strategy, safe
    areas, stretch/crop rules, reference-image roles, forbidden baked content, acceptance
    preview, and fallback.
 4. Resolve the locked baseline image-to-prompt provenance chain and write the
    art-inheritance/conflict block before the creative body.
-5. Rewrite the request against that resolved authority as a versioned professional
-   prompt under `prompts/<module>/`. State secondary source limits explicitly; never call
-   an `assets/source/` derivative the highest visual authority.
+5. Rewrite the request against that resolved authority as the active versioned prompt in
+   `docs/modules/<module>/work/<COMPONENT-OR-BATCH>.md`. State secondary source limits
+   explicitly; never call an `assets/source/` derivative the highest visual authority.
 6. Mark it `production-draft` and show the user the substantive changes. Wait for
    authorization before generation.
 
@@ -141,8 +167,8 @@ to runtime ownership, interaction state, z-order, and independent scaling behavi
 5. Write raw, transparent, and preview files only under
    `generated/<module>/<component-or-batch>/<version>/`.
 6. Record the executor version, session/result identifiers, exact output paths, and any
-   executor-reported revised prompt. Never conceal an internal retry or silently replace
-   the approved prompt with a different one.
+   executor-reported revised prompt in the active work file. Never conceal an internal
+   retry or silently replace the approved prompt with a different one.
 7. Advance no further than `P3` until review and explicit user acceptance are complete.
 
 ## Review
@@ -174,18 +200,18 @@ expose perspective, overlap, safe-area, stretch, and layer errors.
 1. Lead with the verdict and the first failed gate.
 2. Express corrections in structural terms: object identity, orientation, layer,
    perspective, overlap, free-motion space, crop, stretch, or state semantics.
-3. Preserve the rejected prompt and execution record. Create a new prompt version for a
-   new externally meaningful attempt.
+3. Preserve the rejected prompt and execution record in Git before changing the active
+   body. Add a compact attempt-ledger row in the same work file and use a new version for
+   every externally meaningful attempt.
 4. Use a failed candidate as an edit input only when retaining its correct regions is
    intentional and the correction scope is explicit. Otherwise regenerate from the
    locked authority references to avoid carrying the defect forward.
 5. Keep all failed images ignored under `generated/`; record durable rejection reasons in
-   the prompt and tracker. Never create source or runtime files for a rejected version.
+   the work-file attempt ledger and module progress. Never create source or runtime files
+   for a rejected version.
 
-Preserve this evidence while production is active. After `P6`, the closure operation may
-remove superseded tracked prompts and detailed attempt logs from the current tree only
-after their necessary final provenance has been condensed and the user approves the exact
-cleanup plan. Git history remains the historical archive.
+Preserve the active work file while production is active. Do not preserve a forest of
+superseded prompt files in the current tree. Git history remains the historical archive.
 
 ## Accept
 
@@ -196,7 +222,8 @@ Acceptance must be explicit and version-specific. Then:
 2. Add a source manifest containing SHA-256, dimensions, color mode, Alpha evidence,
    prompt path, executor/session provenance, accepted candidate path, component mapping,
    and forbidden runtime uses.
-3. Update the prompt, component specification, and tracker in the same commit.
+3. Update the work file, source manifest, module `SUBMODULES.md`, and module
+   `PROGRESS.md` in the same commit.
 4. Mark `P4`; do not imply that runtime slicing or game validation has happened.
 
 ## Export and game-validate
@@ -219,11 +246,12 @@ cleanup rules in [repository-sync.md](references/repository-sync.md), then:
 2. Produce an exact component-scoped keep/delete inventory. Exclude shared assets, shared
    tools, active locked baselines, third-party evidence, licenses, and user originals.
 3. Show the inventory to the user and obtain explicit approval before deletion.
-4. Remove ignored raw/candidates/previews, superseded tracked prompts, obsolete
+4. Remove ignored raw/candidates/previews, the component work file, obsolete
    component-only references/tools, and duplicated process narration approved in the
    plan. Do not purge Git history.
-5. Compact the component specification and tracker to final contracts, final paths,
-   final validation, and one concise closure result.
+5. Compact `SUBMODULES.md`, `SUBMODULE_ART_BASELINES.md`, module `PROGRESS.md`, and
+   manifests to final contracts, final paths, final validation, and one concise closure
+   result.
 6. Run all relevant tests and confirm the checkout contains no dangling links or
    references to deleted files.
 7. Mark `P6-C / component-closed` only in the same dedicated cleanup commit.

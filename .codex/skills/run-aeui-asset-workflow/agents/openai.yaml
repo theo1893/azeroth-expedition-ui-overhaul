@@ -1,4 +1,4 @@
 interface:
   display_name: "AEUI 资产生成与审查"
-  short_description: "继承锁定美术基准并编排 AEUI 组件资产全生命周期"
-  default_prompt: "Use $run-aeui-asset-workflow to resolve locked-baseline prompt provenance, then prepare, generate, review, revise, accept, export, validate, or close an AEUI component asset batch."
+  short_description: "用单一组件 work 文件编排 AEUI 资产全生命周期"
+  default_prompt: "Use $run-aeui-asset-workflow to resolve locked-baseline prompt provenance, maintain one compact component work file, then prepare, generate, review, revise, accept, export, validate, or close an AEUI asset batch."
