@@ -49,7 +49,6 @@ TAB_BOXES = (
 
 INPUT_NORMAL_BOX = (51, 187, 1437, 363)
 INPUT_FOCUS_BOX = (51, 448, 1437, 625)
-PANEL_BOX = (199, 693, 811, 849)
 SEAL_BOX = (1048, 686, 1160, 864)
 
 EXPECTED_SOURCE_SIZES = {
@@ -194,13 +193,6 @@ def build_input_atlas(controls_sheet: Image.Image) -> Image.Image:
     return atlas
 
 
-def build_panel_atlas(controls_sheet: Image.Image) -> Image.Image:
-    atlas = Image.new("RGBA", (512, 128), (0, 0, 0, 0))
-    field = controls_sheet.crop(PANEL_BOX).resize((480, 122), RESAMPLE)
-    atlas.alpha_composite(field, (16, 3))
-    return atlas
-
-
 def build_seal(controls_sheet: Image.Image) -> Image.Image:
     atlas = Image.new("RGBA", (64, 128), (0, 0, 0, 0))
     seal = controls_sheet.crop(SEAL_BOX)
@@ -230,7 +222,6 @@ def build_atlas_preview(
     tab_atlas: Image.Image,
     shelf: Image.Image,
     input_atlas: Image.Image,
-    panel: Image.Image,
     seal: Image.Image,
 ) -> Image.Image:
     preview = checkerboard((1024, 768))
@@ -238,8 +229,7 @@ def build_atlas_preview(
     preview.alpha_composite(tab_atlas.resize((384, 384), RESAMPLE), (536, 20))
     preview.alpha_composite(shelf.resize((456, 29), RESAMPLE), (24, 380))
     preview.alpha_composite(input_atlas.resize((456, 114), RESAMPLE), (24, 438))
-    preview.alpha_composite(panel.resize((256, 64), RESAMPLE), (536, 438))
-    preview.alpha_composite(seal.resize((32, 64), RESAMPLE), (832, 438))
+    preview.alpha_composite(seal.resize((32, 64), RESAMPLE), (536, 438))
     return preview
 
 
@@ -285,7 +275,7 @@ def main() -> None:
     validate_source(
         "controls",
         controls_sheet,
-        (INPUT_NORMAL_BOX, INPUT_FOCUS_BOX, PANEL_BOX, SEAL_BOX),
+        (INPUT_NORMAL_BOX, INPUT_FOCUS_BOX, SEAL_BOX),
     )
 
     book = build_book(frame)
@@ -293,7 +283,6 @@ def main() -> None:
     tab_atlas = build_tab_atlas(tabs_sheet)
     shelf = build_tab_shelf(tabs_sheet)
     input_atlas = build_input_atlas(controls_sheet)
-    panel = build_panel_atlas(controls_sheet)
     seal = build_seal(controls_sheet)
 
     runtime = args.runtime_dir
@@ -301,7 +290,6 @@ def main() -> None:
     save_tga(tab_atlas, runtime / "ChatTabAtlasV3.tga")
     save_tga(shelf, runtime / "ChatTabShelfV3.tga")
     save_tga(input_atlas, runtime / "ChatInputAtlasV3.tga")
-    save_tga(panel, runtime / "ChatPanelV3.tga")
     save_tga(seal, runtime / "ChatUnreadSealV3.tga")
 
     artifacts = args.artifact_dir
@@ -313,7 +301,6 @@ def main() -> None:
             tab_atlas,
             shelf,
             input_atlas,
-            panel,
             seal,
         ),
         artifacts / "ChatRuntimeAtlasesPreview_v3.png",
@@ -339,7 +326,6 @@ def main() -> None:
                 "size": controls_sheet.size,
                 "input_normal_crop": INPUT_NORMAL_BOX,
                 "input_focus_crop": INPUT_FOCUS_BOX,
-                "panel_crop": PANEL_BOX,
                 "seal_crop": SEAL_BOX,
             },
         },
@@ -364,11 +350,6 @@ def main() -> None:
             "state_rows": {"normal": (0.0, 0.5), "focus": (0.5, 1.0)},
             "x_pixels": (8, 121, 932, 1016),
             "runtime": {"height": 25, "left": 28, "right": 20},
-        },
-        "panel": {
-            "atlas": (512, 128),
-            "x_pixels": (16, 88, 432, 496),
-            "runtime": {"height": 22, "left": 18, "right": 16},
         },
         "seal": {"atlas": (64, 128), "runtime": (14, 22)},
     }

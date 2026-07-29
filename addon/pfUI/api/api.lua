@@ -1105,17 +1105,25 @@ function pfUI.api.GetPerfectPixel()
     pfUI.pixel = .7
   end
 
-  pfUI.backdrop = {
-    bgFile = "Interface\\BUTTONS\\WHITE8X8", tile = false, tileSize = 0,
-    edgeFile = "Interface\\BUTTONS\\WHITE8X8", edgeSize = pfUI.pixel,
-    insets = {left = -pfUI.pixel, right = -pfUI.pixel, top = -pfUI.pixel, bottom = -pfUI.pixel},
-  }
+  local expedition = C.appearance and C.appearance.expedition and
+    C.appearance.expedition.enabled == "1" and pfUI.expedition
 
-  pfUI.backdrop_thin = {
-    bgFile = "Interface\\BUTTONS\\WHITE8X8", tile = false, tileSize = 0,
-    edgeFile = "Interface\\BUTTONS\\WHITE8X8", edgeSize = pfUI.pixel,
-    insets = {left = 0, right = 0, top = 0, bottom = 0},
-  }
+  if expedition then
+    pfUI.backdrop = expedition.compact
+    pfUI.backdrop_thin = expedition.thin
+  else
+    pfUI.backdrop = {
+      bgFile = "Interface\\BUTTONS\\WHITE8X8", tile = false, tileSize = 0,
+      edgeFile = "Interface\\BUTTONS\\WHITE8X8", edgeSize = pfUI.pixel,
+      insets = {left = -pfUI.pixel, right = -pfUI.pixel, top = -pfUI.pixel, bottom = -pfUI.pixel},
+    }
+
+    pfUI.backdrop_thin = {
+      bgFile = "Interface\\BUTTONS\\WHITE8X8", tile = false, tileSize = 0,
+      edgeFile = "Interface\\BUTTONS\\WHITE8X8", edgeSize = pfUI.pixel,
+      insets = {left = 0, right = 0, top = 0, bottom = 0},
+    }
+  end
 
   return pfUI.pixel
 end
@@ -1140,16 +1148,42 @@ function pfUI.api.CreateBackdrop(f, inset, legacy, transp, backdropSetting)
     border = inset
   end
 
-  -- detect if blizzard backdrops shall be used
-  local blizz = C.appearance.border.force_blizz == "1" and true or nil
-  backdrop = blizz and pfUI.backdrop_blizz_full or rawborder == 1 and pfUI.backdrop_thin or pfUI.backdrop
+  -- The expedition fork uses material backdrops for all visible pfUI
+  -- surfaces. The old pixel-perfect fallback remains available when the
+  -- visual contract is explicitly disabled.
+  local expedition = C.appearance and C.appearance.expedition and
+    C.appearance.expedition.enabled == "1" and pfUI.expedition
+  local blizz = not expedition and
+    C.appearance.border.force_blizz == "1" and true or nil
+  if expedition then
+    local useSurface = transp ~= nil
+    if useSurface and f.GetWidth and f.GetHeight then
+      local width = f:GetWidth() or 0
+      local height = f:GetHeight() or 0
+      if width > 0 and height > 0 then
+        useSurface = width >= 220 or height >= 80
+      end
+    end
+    backdrop = useSurface and expedition.surface or
+      rawborder == 1 and expedition.thin or expedition.compact
+  else
+    backdrop = blizz and pfUI.backdrop_blizz_full or
+      rawborder == 1 and pfUI.backdrop_thin or pfUI.backdrop
+  end
   border = blizz and math.max(border, 3) or border
 
   -- get the color settings
   br, bg, bb, ba = pfUI.api.GetStringColor(pfUI_config.appearance.border.background)
   er, eg, eb, ea = pfUI.api.GetStringColor(pfUI_config.appearance.border.color)
 
-  if transp and transp < tonumber(ba) then ba = transp end
+  if expedition then
+    ba = math.max(
+      tonumber(ba) or 1,
+      tonumber(expedition.alpha_floor) or 0.92
+    )
+  elseif transp and transp < tonumber(ba) then
+    ba = transp
+  end
 
   -- use legacy backdrop handling
   if legacy then

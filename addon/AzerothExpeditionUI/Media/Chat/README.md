@@ -2,7 +2,7 @@
 
 本目录只保存当前插件实际加载的聊天 runtime 资源。
 
-## 0.3.1 legacy
+## 0.4.0 legacy
 
 | 文件 | 逻辑职责 |
 |---|---|
@@ -11,7 +11,6 @@
 | `ChatTabHover.tga` | 悬停 Tab |
 | `ChatTabSelected.tga` | 选中 Tab |
 | `ChatTabShelf.tga` | 连续承托带 |
-| `ChatPanelSegment.tga` | 可复用底栏字段，实例化三次 |
 | `ChatInputStrip.tga` | 输入条 |
 | `ChatWaxSeal.tga` | 未读覆盖 |
 
@@ -22,7 +21,8 @@
 - `tools/build_chat_book_texture.py`
 - `tools/build_chat_component_textures.py`
 
-不要把频道名、消息、输入文字或底栏数值烘焙进纹理。
+不要把频道名、消息或输入文字烘焙进纹理。legacy 信息底栏已从 runtime
+删除，builder 不再导出对应字段。
 
 ## V3
 

@@ -134,6 +134,8 @@ panel.right = CreateFrame("Button", nil, panel)
 for _, segment in ipairs({ panel.left, panel.center, panel.right }) do
   segment.text = NewObject(nil, segment)
 end
+local rightPanel = CreateFrame("Frame", "pfPanelRight", UIParent)
+local minimapPanel = CreateFrame("Frame", "pfPanelMinimap", UIParent)
 
 NUM_CHAT_WINDOWS = 4
 for index = 1, NUM_CHAT_WINDOWS do
@@ -160,6 +162,15 @@ pfUI = {
   },
   panel = {
     left = panel,
+    right = rightPanel,
+    minimap = minimapPanel,
+  },
+}
+pfUI_config = {
+  appearance = {
+    expedition = {
+      legacy_info_panels = "0",
+    },
   },
 }
 
@@ -191,8 +202,10 @@ assert(
 )
 assert(#ChatFrame1.points == 2, "docked chat frame was not inset")
 assert(#input.points == 2, "pfUI input frame was not integrated")
-assert(panel:GetWidth() == 348, "pfUI panel was not fitted to the book")
-assert(panel.left.aeuiPanelTexture, "pfUI panel segment was not skinned")
+assert(not panel:IsShown(), "left legacy info panel was not suppressed")
+assert(not rightPanel:IsShown(), "right legacy info panel was not suppressed")
+assert(not minimapPanel:IsShown(), "minimap legacy info panel was not suppressed")
+assert(not panel.left.aeuiPanelTexture, "retired panel art was still created")
 assert(#ChatFrame1Tab.points == 1, "pfUI chat tab anchor was not preserved")
 assert(ChatFrame1Tab.aeuiStateTexture, "chat tab state texture was not applied")
 assert(

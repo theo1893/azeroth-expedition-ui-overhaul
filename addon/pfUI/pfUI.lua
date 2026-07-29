@@ -314,6 +314,9 @@ pfUI:SetScript("OnEvent", function()
 
     pfUI:LoadConfig()
     pfUI:MigrateConfig()
+    if pfUI.ApplyExpeditionVisualContract then
+      pfUI:ApplyExpeditionVisualContract()
+    end
 
     pfUI:UpdateFonts()
 
@@ -336,16 +339,19 @@ pfUI:SetScript("OnEvent", function()
 end)
 
 pfUI.backdrop = {
-  bgFile = "Interface\\BUTTONS\\WHITE8X8", tile = false, tileSize = 0,
-  edgeFile = "Interface\\BUTTONS\\WHITE8X8", edgeSize = 1,
-  insets = {left = -1, right = -1, top = -1, bottom = -1},
+  bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+  tile = true,
+  tileSize = 32,
+  edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+  edgeSize = 12,
+  insets = {left = 4, right = 4, top = 4, bottom = 4},
 }
 pfUI.backdrop_no_top = pfUI.backdrop
 
 pfUI.backdrop_thin = {
-  bgFile = "Interface\\BUTTONS\\WHITE8X8", tile = false, tileSize = 0,
-  edgeFile = "Interface\\BUTTONS\\WHITE8X8", edgeSize = 1,
-  insets = {left = 0, right = 0, top = 0, bottom = 0},
+  bgFile = pfUI.media["img:bg"], tile = true, tileSize = 8,
+  edgeFile = pfUI.media["img:border_blizz"], edgeSize = 6,
+  insets = {left = 2, right = 2, top = 2, bottom = 2},
 }
 
 pfUI.backdrop_hover = {

@@ -222,40 +222,6 @@ def build_tab_shelf(source: Image.Image, scale: int) -> Image.Image:
     return canvas
 
 
-def build_panel_segment(source: Image.Image, scale: int) -> Image.Image:
-    canvas = Image.new("RGBA", (128 * scale, 32 * scale), (0, 0, 0, 0))
-    points = scaled_points(
-        [
-            (2, 7),
-            (8, 2),
-            (120, 2),
-            (126, 7),
-            (124, 27),
-            (118, 30),
-            (9, 30),
-            (3, 27),
-        ],
-        scale,
-    )
-    fill = material(
-        source,
-        LEATHER_BOX,
-        canvas.size,
-        brightness=0.58,
-        rotate=90,
-    )
-    paste_masked(canvas, fill, points)
-    draw = ImageDraw.Draw(canvas)
-    draw.line(points + [points[0]], fill=DARK, width=4 * scale)
-    draw.line(points + [points[0]], fill=BRASS, width=scale)
-    draw.line(
-        (12 * scale, 6 * scale, 116 * scale, 6 * scale),
-        fill=STITCH,
-        width=scale,
-    )
-    return canvas
-
-
 def build_input_strip(source: Image.Image, scale: int) -> Image.Image:
     canvas = Image.new("RGBA", (256 * scale, 32 * scale), (0, 0, 0, 0))
     points = scaled_points(
@@ -347,9 +313,8 @@ def build_preview(
     preview.alpha_composite(assets["TabHover"], (152 * scale, 16 * scale))
     preview.alpha_composite(assets["TabSelected"], (288 * scale, 16 * scale))
     preview.alpha_composite(assets["TabShelf"], (0, 84 * scale))
-    preview.alpha_composite(assets["PanelSegment"], (16 * scale, 164 * scale))
-    preview.alpha_composite(assets["InputStrip"], (152 * scale, 164 * scale))
-    preview.alpha_composite(assets["WaxSeal"], (424 * scale, 164 * scale))
+    preview.alpha_composite(assets["InputStrip"], (16 * scale, 164 * scale))
+    preview.alpha_composite(assets["WaxSeal"], (296 * scale, 164 * scale))
     destination.parent.mkdir(parents=True, exist_ok=True)
     preview.save(destination, format="PNG", optimize=True)
 
@@ -372,7 +337,6 @@ def main() -> None:
         "TabHover": build_tab(source, "hover", scale),
         "TabSelected": build_tab(source, "selected", scale),
         "TabShelf": build_tab_shelf(source, scale),
-        "PanelSegment": build_panel_segment(source, scale),
         "InputStrip": build_input_strip(source, scale),
         "WaxSeal": build_wax_seal(scale),
     }

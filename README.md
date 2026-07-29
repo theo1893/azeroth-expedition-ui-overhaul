@@ -11,8 +11,8 @@
 
 | 模块 | 设计／资产 | 运行时 |
 |---|---|---|
-| pfUI 基础 | 8.1.0 参考快照已入库；重构边界已定义 | 功能底座 |
-| 聊天 | 战地旧书 V3 组件母版已确认 | `0.3.1` 仍加载 legacy 资产，V3 待迁移 |
+| pfUI 基础 | 8.1.0 项目维护分支已迁入 `addon/pfUI` | 功能底座；全局材质基线待实机 |
+| 聊天 | 战地旧书 V3 组件母版已确认 | `0.4.0` 加载无信息底栏的 legacy 资产，V3 待迁移 |
 | 任务 | 详情卷宗与追踪便笺视觉已锁定 | 待按真实控件拆分 |
 | 地图 | 羊皮大地图与黄铜罗盘视觉已锁定 | 待按真实控件拆分 |
 | 角色 | 香草同构纸娃娃视觉已锁定 | 待按真实控件拆分 |
@@ -37,20 +37,34 @@
 ## 目录
 
 ```text
-addon/AzerothExpeditionUI/   可运行插件、runtime 媒体与字体
+addon/pfUI/                  可独立安装的 pfUI 项目维护分支
+addon/AzerothExpeditionUI/   模块级重绘、runtime 媒体与字体
 assets/locked/               用户确认的整体视觉基准
 assets/references/           结构、比例或故障参考
 assets/source/               用户确认的透明生产母版
 docs/modules/                模块级美术与结构规范
 docs/implementation/         组件合同、进度表与实现说明
 prompts/                     可追溯的原型／生产提示词
-third-party/pfUI/            pfUI 固定参考快照（默认只读）
 third-party/fonts/           字体许可、来源和校验值
 tools/                       确定性资源导出与预演脚本
 tests/                       静态／smoke test
 ```
 
 临时生成、色键 raw 和可再生预演应进入被 Git 忽略的 `generated/`。
+
+## 独立测试
+
+把 `addon/` 下的两个目录同时复制到客户端 `Interface/AddOns/`：
+
+```text
+Interface/AddOns/pfUI/
+Interface/AddOns/AzerothExpeditionUI/
+```
+
+`pfUI` 可单独加载以检查功能底座与全局视觉基线；
+`AzerothExpeditionUI` 依赖 `pfUI`，用于检查聊天旧书等模块级替换。当前全局
+基线会统一处理仍由 pfUI 绘制的窗口、边框和状态条，但不代表每个模块的最终
+专属资产都已经达到 `P6`。
 
 ## 资产生产规则
 
@@ -64,6 +78,6 @@ Tab、输入框、滚动条和状态必须先映射到真实 pfUI／原生对象
 
 ## 许可与发布
 
-仓库含 pfUI MIT 参考快照、OFL 字体、游戏结构参考和生成式视觉资产。公开
+仓库含 pfUI MIT 维护分支、OFL 字体、游戏结构参考和生成式视觉资产。公开
 发布或商业使用前请阅读 [NOTICE](NOTICE.md)，并分别审查代码、字体、截图、
 商标和美术资产的权利边界。

@@ -1,5 +1,8 @@
 # pfUI - Turtle WoW Edition
 
+> 本目录是 Azeroth Expedition UI 使用的可安装维护分支。项目差异、功能边界
+> 和测试方式见 [AEUI_FORK.md](AEUI_FORK.md)；以下内容保留上游说明。
+
 [![Version](https://img.shields.io/badge/version-7.6.0-blue.svg)](https://github.com/me0wg4ming/pfUI)
 [![Turtle WoW](https://img.shields.io/badge/Turtle%20WoW-1.18.0-brightgreen.svg)](https://turtlecraft.gg/)
 [![SuperWoW](https://img.shields.io/badge/SuperWoW-Required-purple.svg)](https://github.com/balakethelock/SuperWoW)

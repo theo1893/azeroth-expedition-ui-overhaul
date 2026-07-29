@@ -2,18 +2,19 @@
 
 ## 结论
 
-`AzerothExpeditionUI` 不是独立重写所有魔兽功能，也不是只能给 pfUI 换一张
-背景图。pfUI 是功能与生命周期基础；本插件可以在自己的代码目录中对其
-视觉、布局和呈现组件进行大规模重构。
+本项目不是独立重写所有魔兽功能，也不是只能给 pfUI 换一张背景图。
+`addon/pfUI/` 是功能与生命周期底座的可安装维护分支；
+`addon/AzerothExpeditionUI/` 负责书本、卷宗等模块级替换。两者共同组成
+测试和发布单元。
 
 ## 事实来源
 
-- 运行时代码唯一事实来源：`addon/AzerothExpeditionUI/`
-- pfUI 开发参考：`third-party/pfUI/`
+- pfUI 运行时与公共视觉入口：`addon/pfUI/`
+- 模块级替换、项目媒体与字体：`addon/AzerothExpeditionUI/`
 - 当前 pfUI 快照：`8.1.0`，来源 HEAD
   `fbc8fb608b79adf32049543ec12fcc020e0acd69`
-- pfUI 许可证：MIT；复制或实质改写代码时必须保留其版权和许可声明
-- `third-party/pfUI/` 默认只读，不能直接承载项目功能
+- pfUI 许可证：MIT；同目录保留 `LICENSE`
+- fork 修改必须登记在 `addon/pfUI/AEUI_FORK.md` 与 overhaul tracker
 
 ## 四种重构方式
 
@@ -44,11 +45,14 @@
 ## pfUI 依赖边界
 
 - 不覆盖 `ChatFrame_OnEvent`、物品链接、战斗日志等原始行为入口。
+- 只修改可见 Frame、布局、材质、字体、状态呈现及其直接连接逻辑；自动售卖、
+  修理、背包操作、聊天事件、战斗数据、社交和兼容逻辑保持不变。
 - Hook 后不得在低频维护循环中持续改写 Parent、Point、Width、Height。
-- 模块必须能够单独启用、禁用并回退到 pfUI 外观。
+- 模块必须能够单独启用、禁用；公共基线可通过
+  `pfUI_config.appearance.expedition.enabled` 回退。
 - pfUI 对象不存在或版本不匹配时，模块失败应局部降级，不能阻止整个插件加载。
-- 复制 pfUI 代码进入本插件时，记录上游文件、提交和修改原因。
-- 不能让测试客户端中的本机修改反向污染 `third-party/pfUI/` 快照。
+- 直接改动 pfUI 时记录上游文件、提交、修改原因和功能边界。
+- 测试客户端的临时 SavedVariables 与实验改动不得反向污染维护分支。
 
 ## 推荐代码结构
 
@@ -78,14 +82,29 @@ addon/AzerothExpeditionUI/
 
 只在实际实现时创建文件，不建立空壳模块。
 
+```text
+addon/pfUI/
+  api/
+    expedition.lua       公共视觉合同
+    api.lua              pfUI 公共绘制入口
+  modules/               保留 pfUI 功能模块
+  skins/                 保留并逐步重做可见原生面板
+  AEUI_FORK.md            fork 差异与回退说明
+```
+
 ## 当前状态
 
 聊天模块是第一个 `adapter`：
 
 - pfUI 继续负责窗口、停靠、拖动、滚动、历史、输入和 Tab 点击。
-- 本插件负责书框九宫格、正文安全区、Tab 状态、输入条和底栏皮肤。
-- 当前 Lua 仍加载 `0.3.1` 旧运行时资产。
+- 本插件负责书框九宫格、正文安全区、Tab 状态和输入条。
+- pfUI legacy 信息 widget 仍保留，但聊天／小地图底栏默认不挂载。
+- 当前 Lua 仍加载 `0.4.0` legacy 主框／Tab／输入／未读资产。
 - V3 组件母版已经在 `assets/source/chat/v3/`，但尚未导出并接入运行时。
+
+仍由 pfUI 绘制、且尚未获得模块专属资产的界面，先经过统一的非透明材质
+backdrop 与香草状态条基线。这能消除全局半透明方块，但不等同于各模块最终
+资产完成；具体阶段以 tracker 为准。
 
 其他模块必须先完成 pfUI／原生 Frame 清单与逻辑资产表，不能直接从整张视觉
 原型开始切图。

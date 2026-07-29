@@ -1,0 +1,19 @@
+## Interface: 11200
+## Title-zhCN: |CFFC89B55[界面]|RpfUI - 艾泽拉斯征程维护分支
+## Author: Shagu - modfied by me0wg4ming
+## Notes: pfUI functionality with the Azeroth Expedition visual contract.
+## Notes-zhCN: 保留pfUI功能并使用艾泽拉斯征程统一视觉基线。
+## Version: 8.1.0-aeui.1
+## X-Upstream-Version: 8.1.0
+## X-Upstream-Commit: fbc8fb608b79adf32049543ec12fcc020e0acd69
+## SavedVariables: pfUI_profiles, pfUI_addon_profiles, pfUI_cache, pfUI_throttle, pfUI_playerDB
+## SavedVariablesPerCharacter: pfUI_config, pfUI_init
+
+pfUI.lua
+
+init\env.xml
+init\compat.xml
+init\api.xml
+init\libs.xml
+init\skins.xml
+init\modules.xml

@@ -223,11 +223,10 @@ def crop_tabs(tabs_sheet: Image.Image) -> tuple[Image.Image, list[Image.Image]]:
 
 def crop_controls(
     controls_sheet: Image.Image,
-) -> tuple[Image.Image, Image.Image, Image.Image, Image.Image]:
+) -> tuple[Image.Image, Image.Image, Image.Image]:
     return (
         controls_sheet.crop((51, 187, 1437, 363)),
         controls_sheet.crop((51, 448, 1437, 625)),
-        controls_sheet.crop((199, 693, 811, 849)),
         controls_sheet.crop((1048, 686, 1160, 864)),
     )
 
@@ -236,7 +235,7 @@ def build_view(
     frame: Image.Image,
     shelf: Image.Image,
     tabs: Sequence[Image.Image],
-    controls: tuple[Image.Image, Image.Image, Image.Image, Image.Image],
+    controls: tuple[Image.Image, Image.Image, Image.Image],
     input_focus: bool,
 ) -> Image.Image:
     canvas = make_game_backdrop()
@@ -274,15 +273,15 @@ def build_view(
 
     draw_chat_lines(canvas)
 
-    input_normal, input_active, status_field, unread_marker = controls
+    input_normal, input_active, unread_marker = controls
+    input_strip = three_slice(
+        input_active if input_focus else input_normal,
+        target_size=(380, 25),
+        source_caps=(155, 105),
+        target_caps=(28, 20),
+    )
+    alpha_composite_at(canvas, input_strip, (30, 289))
     if input_focus:
-        input_strip = three_slice(
-            input_active,
-            target_size=(380, 25),
-            source_caps=(155, 105),
-            target_caps=(28, 20),
-        )
-        alpha_composite_at(canvas, input_strip, (30, 289))
         draw = ImageDraw.Draw(canvas)
         draw.text(
             (59, 294),
@@ -291,25 +290,6 @@ def build_view(
             fill=(62, 35, 17, 255),
         )
         draw.line((82, 295, 82, 307), fill=(65, 36, 17, 255), width=1)
-    else:
-        status_runtime = three_slice(
-            status_field,
-            target_size=(122, 22),
-            source_caps=(92, 82),
-            target_caps=(18, 16),
-        )
-        status_x = (30, 159, 288)
-        status_labels = ("公会：无", "68 (4/72)", "59 帧 · 43 毫秒")
-        for x, label in zip(status_x, status_labels):
-            alpha_composite_at(canvas, status_runtime, (x, 291))
-            draw_centered_text(
-                ImageDraw.Draw(canvas),
-                (x + 5, 292, x + 117, 312),
-                label,
-                FONT_STATUS,
-                (53, 31, 15, 255),
-                shadow=(222, 189, 113, 110),
-            )
 
     unread_runtime = unread_marker.resize((16, 16), RESAMPLE)
     alpha_composite_at(canvas, unread_runtime, (401, 29))
@@ -382,7 +362,7 @@ def main() -> None:
         default_view,
         input_view,
         clean_path,
-        ("默认状态：独立 Tab + 三个复用底栏字段", "输入状态：同一框架 + 聚焦输入纸带"),
+        ("默认状态：独立 Tab + 普通输入纸带", "输入状态：同一框架 + 聚焦输入纸带"),
     )
     build_contact_sheet(
         annotate_safe_area(default_view),

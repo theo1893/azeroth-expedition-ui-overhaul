@@ -21,7 +21,6 @@ local TEXTURES = {
   tabHover = CHAT_MEDIA .. "ChatTabHover",
   tabSelected = CHAT_MEDIA .. "ChatTabSelected",
   tabShelf = CHAT_MEDIA .. "ChatTabShelf",
-  panel = CHAT_MEDIA .. "ChatPanelSegment",
   input = CHAT_MEDIA .. "ChatInputStrip",
   waxSeal = CHAT_MEDIA .. "ChatWaxSeal",
 }
@@ -200,7 +199,7 @@ function Chat:Apply()
   self:EnsureBook(owner)
   self:LayoutChatFrames(owner)
   self:StyleInput(owner)
-  self:StylePanel(owner)
+  self:SuppressLegacyInfoPanels()
   self:Maintain()
 end
 
@@ -424,57 +423,25 @@ function Chat:StyleInput(owner)
   end
 end
 
-function Chat:StylePanel(owner)
-  if not pfUI.panel or not pfUI.panel.left then
+function Chat:SuppressLegacyInfoPanels()
+  if not pfUI.panel then
     return
   end
 
-  local panel = pfUI.panel.left
-  MakeBackdropTransparent(panel)
-  panel:ClearAllPoints()
-  panel:SetPoint("BOTTOM", owner, "BOTTOM", 0, 5)
-  panel:SetWidth(owner:GetWidth() - 92)
-  panel:SetHeight(22)
+  local expedition =
+    pfUI_config and
+    pfUI_config.appearance and
+    pfUI_config.appearance.expedition
+  if expedition and expedition.legacy_info_panels == "1" then
+    return
+  end
 
-  local segments = {
-    panel.left,
-    panel.center,
-    panel.right,
-  }
-  local segmentWidth = (panel:GetWidth() - 6) / 3
-  local previous
-
-  for _, segment in ipairs(segments) do
-    if segment then
-      segment:ClearAllPoints()
-      segment:SetWidth(segmentWidth)
-      segment:SetHeight(22)
-      if previous then
-        segment:SetPoint("LEFT", previous, "RIGHT", 3, 0)
-      else
-        segment:SetPoint("LEFT", panel, "LEFT", 0, 0)
-      end
-
-      EnsureComponentTexture(
-        segment,
-        "aeuiPanelTexture",
-        "BACKGROUND",
-        TEXTURES.panel
-      )
-
-      if segment.text then
-        segment.text:ClearAllPoints()
-        segment.text:SetAllPoints(segment)
-        segment.text:SetJustifyH("CENTER")
-        segment.text:SetTextColor(
-          COLORS.text[1],
-          COLORS.text[2],
-          COLORS.text[3],
-          COLORS.text[4]
-        )
-      end
-      previous = segment
-    end
+  for _, panel in ipairs({
+    pfUI.panel.left,
+    pfUI.panel.right,
+    pfUI.panel.minimap,
+  }) do
+    if panel then panel:Hide() end
   end
 end
 
