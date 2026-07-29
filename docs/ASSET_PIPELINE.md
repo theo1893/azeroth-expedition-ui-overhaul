@@ -64,6 +64,50 @@
 
 这同时满足项目“先专业转译”和 imagegen 技能“执行时保持提示词原文”的要求。
 
+## Generate → Review 编排 Skill
+
+所有组件资产的准备、生成、审查、修订、退回、接受、源资产晋级和 runtime
+导出，统一由仓库内
+[`run-aeui-asset-workflow`](../.codex/skills/run-aeui-asset-workflow/SKILL.md)
+编排。它负责生命周期与仓库同步；实际生图仍只由固定
+[`imagegen-0-143-0`](../.codex/skills/imagegen-0-143-0/SKILL.md) 执行。
+
+编排子状态为：
+
+```text
+contract-draft
+  → prompt-draft
+  → prompt-authorized
+  → candidate-raw
+  → candidate-reviewed
+  → source-accepted
+  → runtime-exported
+  → game-validated
+```
+
+其中 `prompt-authorized`、`candidate-raw` 和 `candidate-reviewed` 都最多属于
+`P3`；只有用户明确接受具体候选后才进入 `P4`。候选被内部或用户退回时，保留
+原提示词、执行记录与失败原因，创建新版本，不覆盖已执行正文，也不产生 tracked
+source／runtime。
+
+审查顺序必须是：
+
+1. 范围与真实对象身份。
+2. 语义、物理结构、观察方向与可运动空间。
+3. 透视、图层、轮廓和真实 z-order 重组。
+4. 香草结构与跨模块美术一致性。
+5. 对象／状态数量、点击与文字安全区、裁切和拉伸合同。
+6. 最小／基准／最大尺寸装配。
+7. 尺寸、SHA-256、Alpha、色键残留和 atlas 边距。
+8. 用户视觉复审。
+
+Alpha、尺寸、色键清理和连通区只能证明技术性质，不能证明书籍能翻页、部件
+属于正确图层、按钮对应真实对象或美术已经符合香草魔兽。结构失败时先退回，
+不以透明化、锐化或追加装饰掩盖错误。
+
+完整状态机、审查表、同步矩阵与记录模板由该 Skill 的 `references/` 维护；
+本文件继续作为仓库层面的权威制度。
+
 ## 提示词文件必须包含
 
 - 模块、组件 ID、版本、状态。
@@ -77,6 +121,8 @@
 - 禁止项。
 - 输出验收标准。
 - 生成结果、确认结果和最终源资产路径。
+- 固定执行器会话／结果 ID，以及执行器实际报告的 revised prompt（若存在）。
+- 内部失败重试、结构审查结论和下一道门禁。
 
 高层视觉原型提示词必须标注 `prototype-only`，不得被 runtime 脚本直接使用。
 

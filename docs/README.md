@@ -71,7 +71,8 @@ Lua、XML、TOC、媒体资产和随分发必须保留的许可证，不放 READ
 - 根目录 `NOTICE.md`：分发与权利边界声明。
 - `prompts/<module>/*.md`：可直接执行、版本化且需要原样追溯的生产输入，不是
   说明文档。
-- `.codex/skills/`：固定 imagegen 执行器包，目录结构由技能加载机制决定。
+- `.codex/skills/`：固定 imagegen 执行器与项目级资产生命周期编排 Skill，
+  目录结构由技能加载机制决定。
 - `third-party/**/SOURCE.md`、许可证与校验清单：必须和对应第三方文件共同
   分发的来源证据。
 - `addon/pfUI/LICENSE`：pfUI 独立分发时必须随插件保留的 MIT 许可证。

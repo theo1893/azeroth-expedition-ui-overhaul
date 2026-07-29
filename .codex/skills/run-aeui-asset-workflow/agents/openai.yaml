@@ -1,0 +1,4 @@
+interface:
+  display_name: "AEUI 资产生成与审查"
+  short_description: "编排 AEUI 组件资产生成、结构审查、修订、接受与运行时晋级"
+  default_prompt: "Use $run-aeui-asset-workflow to prepare, generate, review, revise, accept, or export the next AEUI component asset batch."

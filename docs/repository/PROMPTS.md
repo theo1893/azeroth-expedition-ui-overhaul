@@ -17,9 +17,14 @@
 
 ## 执行要求
 
-1. 使用 `.codex/skills/imagegen-0-143-0/SKILL.md`。
+1. 使用 `.codex/skills/run-aeui-asset-workflow/SKILL.md` 编排完整生命周期，
+   实际生图／修图只使用 `.codex/skills/imagegen-0-143-0/SKILL.md`。
 2. 先依据项目基线把需求重写进版本化提示词文件。
 3. 用户确认后，将文件中的最终提示词正文原样交给 `$imagegen`。
-4. 结果只写入被 Git 忽略的 `generated/`。
-5. 用户确认透明母版后才进入 `assets/source/`。
-6. 每次执行、确认和路径变化同时更新 overhaul tracker。
+4. 记录固定执行器会话、结果、内部失败和执行器实际报告的 revised prompt；
+   已执行正文不得原地覆盖。
+5. 结果只写入被 Git 忽略的 `generated/`。
+6. 候选先通过物件身份、物理结构、透视、图层、装配和技术审查；技术指标不
+   等于综合色觉通过。
+7. 用户明确确认具体透明母版后才进入 `assets/source/`。
+8. 每次执行、退回、确认和路径变化同时更新 overhaul tracker。
