@@ -41,7 +41,7 @@
 | `CHAT.URLCOPY.SHELL` | `pfUI.chat.urlcopy`／`pfURLCopy` | 小型弹窗外壳待设计 | 不复用整张聊天书框 |
 | `CHAT.URLCOPY.INPUT` | `pfUI.chat.urlcopy.text`／`pfURLCopyEditBox` | 可选中 URL 的 EditBox 待设计 | 文字与选择状态由 runtime 持有 |
 | `CHAT.URLCOPY.CLOSE` | `pfUI.chat.urlcopy.close`／`pfURLCopyClose` | 四状态 Button 待设计 | 不烘焙“关闭”文字 |
-| `CHAT.COPY.TOGGLE` | `pfChatCopyButton` | 关闭／开启、悬停、按下、禁用 | 独立 Button；不烘焙进 Tab 承托带 |
+| `CHAT.COPY.TOGGLE` | `pfChatCopyButton` | 关闭／开启两种持久纹理；悬停沿用同一纹理并由 runtime 调整 Alpha | 当前 pfUI 无独立按下／禁用纹理；独立 Button，不烘焙进 Tab 承托带 |
 | `CHAT.COPY.SURFACE` | `ChatFrameScrollN` | 显示／隐藏的可滚动复制纸面 | 每个聊天 Frame 独立实例，可共享物理九宫格 |
 | `CHAT.COPY.TEXT` | `pfChatCopyBoxN` | 可选择的多行 EditBox | 无消息行位图；选择与光标由 runtime 持有 |
 | `CHAT.WHISPER.TOGGLE` | `pfWhisperProxy` | 关闭／开启、悬停、按下、禁用 | Chat 只拥有代理开关 |

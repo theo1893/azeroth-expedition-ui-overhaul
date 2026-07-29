@@ -19,7 +19,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 | 模块 | 当前状态 | 下一门禁 |
 |---|---|---|
 | pfUI／原生回退 | 路由与公共过渡材质 `P5`，未实机 | Turtle WoW 全场景回归 |
-| 聊天 | 核心 V3 runtime `P5`；`CHAT.COPY.V1` 为 `candidate-rejected / P3`；单一左框，右框隐藏 | Turtle WoW 实机验收核心批次；制定并授权 Chat Copy V1.1 |
+| 聊天 | 核心 V3 runtime `P5`；`CHAT.COPY.V1.1` 为 `prompt-draft / P2`；单一左框，右框隐藏 | Turtle WoW 实机验收核心批次；用户明确授权 Chat Copy V1.1 |
 | 任务 | QL-A1 `P4`；QL-A2 V3.1 为未授权 `prompt-draft / P2` | 用户明确授权 V3.1 |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |
@@ -55,7 +55,7 @@ docs/
 - [子模块美术基线 Prompt](docs/modules/chat/SUBMODULE_ART_BASELINES.md)
 - [详细进度](docs/modules/chat/PROGRESS.md)
 - [当前核心 V3 工作文件](docs/modules/chat/work/CHAT.CORE.V3.md)
-- [当前 Chat Copy V1 工作文件](docs/modules/chat/work/CHAT.COPY.V1.md)
+- [当前 Chat Copy V1.1 工作文件](docs/modules/chat/work/CHAT.COPY.V1.md)
 
 任务：
 

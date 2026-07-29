@@ -1,374 +1,314 @@
-# Chat 复制纸页 V1
+# Chat 复制纸页 V1.1
 
 ## 元数据
 
 - 模块：Chat
 - 组件 ID：`CHAT.COPY.TOGGLE`、`CHAT.COPY.SURFACE`、`CHAT.COPY.TEXT`
-- 版本：`CHAT.COPY.V1`
-- 子状态：`candidate-rejected`
-- 项目阶段：`P3`
+- 版本：`CHAT.COPY.V1.1`
+- 子状态：`prompt-draft`
+- 项目阶段：`P2`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 操作：`generate`
+- 操作：`edit`
 - 功能来源：
   [`addon/pfUI/modules/chatcopy.lua`](../../../../addon/pfUI/modules/chatcopy.lua)
 - 锁定视觉基准：
-  - Image 1：
-    [`聊天框视觉基准_v1.png`](../../../../assets/locked/chat/聊天框视觉基准_v1.png)
+  - [`聊天框视觉基准_v1.png`](../../../../assets/locked/chat/聊天框视觉基准_v1.png)
     — 战地旧书身份、香草 HUD 中的紧凑比例和低干扰控件尺度
-  - Image 2：
-    [`聊天框独立艺术资源_v3.png`](../../../../assets/locked/chat/聊天框独立艺术资源_v3.png)
-    — 二维手绘页边、纸张厚度和材料绘制精度；不继承其龙饰、尖顶或规则框架
+  - [`聊天框独立艺术资源_v3.png`](../../../../assets/locked/chat/聊天框独立艺术资源_v3.png)
+    — 二维手绘页边、纸张厚度和材料精度；其完整框架结构明确排除
 - 基准 Prompt provenance：
   - [`ART_BASELINE.md`](../ART_BASELINE.md)
   - [`SUBMODULE_ART_BASELINES.md`](../SUBMODULE_ART_BASELINES.md)
   - Git `73da6c5` 中
     `prompts/chat/聊天框模块化资源_执行提示词_v3.md`
-- 次级参考：
-  - Image 3：
-    [`ChatBookFrame_Master_v3.png`](../../../../assets/source/chat/v3/ChatBookFrame_Master_v3.png)
-    — 只用于匹配当前运行时书页的纸色、皮革色、磨损尺度和左上暖光
-  - Image 4：
-    [`ChatControls_Master_v3.png`](../../../../assets/source/chat/v3/ChatControls_Master_v3.png)
-    — 只用于小型控件的笔触密度、纸边厚度和皮绳尺度；不继承已退役底栏字段
-- raw：
-  - A：`generated/chat/copy/v1/a/CHAT.COPY.SURFACE.V1.raw.png`
-  - B：`generated/chat/copy/v1/b/CHAT.COPY.TOGGLE.V1.raw.png`
-- 透明候选：未生成；A／B 在首个语义门禁失败
-- 重组预演：未生成；失败候选不得进入装配审查
-- 最终 source：无；必须经用户明确接受后才能进入 `assets/source/chat/copy/`
+- 本地派生依据：
+  - [`ChatBookFrame_Master_v3.png`](../../../../assets/source/chat/v3/ChatBookFrame_Master_v3.png)
+    — 只在本地提取安静纸面，生成 A 的单物件结构引导
+  - A 通过内部对象审查后的候选
+    — 只在本地构造 B1 的双页夹结构引导，保证 A／B 纸色与笔触一致
+- 外部 ImageGen 实际输入计划：
+  - A：只上传
+    `generated/chat/copy/v1_1/inputs/CHAT.COPY.SURFACE.SCAFFOLD.V1_1.png`
+  - B1：只上传
+    `generated/chat/copy/v1_1/inputs/CHAT.COPY.TOGGLE.CLOSED.SCAFFOLD.V1_1.png`
+  - B2：只上传内部通过后的
+    `generated/chat/copy/v1_1/b1/CHAT.COPY.TOGGLE.CLOSED.V1_1.raw.png`
+  - 两张完整锁定图与两张完整 V3 source 均不直接上传；它们继续通过本文件
+    和基线 Prompt 提供项目权威，但不得再诱导执行器复制完整 UI 结构
+- raw：执行后仅写入 `generated/chat/copy/v1_1/`
+- 透明候选：执行后仅写入 `generated/chat/copy/v1_1/`
+- 重组预演：执行后仅写入 `generated/chat/copy/v1_1/previews/`
+- 最终 source：无；必须经用户明确接受后才能进入
+  `assets/source/chat/copy/`
 
 ## 美术基准继承
 
 ### 权威顺序
 
-1. 两张 Chat 锁定图，以及 Chat 主／子模块 Prompt 和其历史 V3 provenance。
+1. 两张 Chat 锁定图，以及 Chat 主／子模块 Prompt 和历史 V3 provenance。
 2. [`GLOBAL_ART_BASELINE.md`](../../../GLOBAL_ART_BASELINE.md)。
 3. [`SUBMODULES.md`](../SUBMODULES.md) 的真实 pfUI 对象、状态、几何和禁止
    烘焙合同。
-4. 两张已接受 V3 source，只承担当前书本的材料连续性，不得改写锁定基准。
+4. 已接受 V3 source 只承担已部署纸色、笔触与磨损连续性。
+5. V1 失败候选只提供反例，不进入 V1.1 的任何编辑输入。
 
 ### 必须继承的视觉 DNA
 
-- 组件必须像同一本长期携带、反复修补的战地旧书上的附加纸页和页夹，不能像
-  覆盖在聊天框上的现代复制面板。
-- 纸张第一、深胡桃旧皮革第二、氧化黄铜只允许作为极少量连接点；使用
+- 组件必须像同一本长期携带、反复修补的战地旧书上的附加抄录纸与页夹。
+- 纸张第一、深胡桃旧皮革第二、黄铜最多只是一枚暗哑连接点；使用
   `#B8955C` 旧书页、`#D2B77E` 克制高光、`#76512E` 页影、
   `#28180E` 深皮革、`#80602D` 暗哑黄铜和 `#24170F` 墨褐结构线。
-- 左上暖光、低饱和暖赭色域、略不规则手绘轮廓、非镜像磨损和可辨认的实体
-  厚度必须与 V3 主框一致。
-- 阅读区必须连续安静；高频破损只放在纸页外缘和小型页夹，不得穿过可选择
-  文本。
+- 左上暖光、低饱和暖赭色域、略不规则二维手绘边缘、非镜像磨损和清楚的
+  纸页厚度必须与当前 V3 聊天书一致。
+- 阅读区域连续、安静、低对比；高频磨损只允许出现在抄录纸外缘和页夹。
 
 ### 本批组件级转译
 
-- `CHAT.COPY.SURFACE` 是盖在原书正文纸面上的一张薄抄录纸，不是第二本书。
-  它只在复制模式显示，以轻微错层毛边和短接触阴影区别于底页。
-- `CHAT.COPY.TOGGLE` 是夹在书本右侧页边的一枚双层抄录页夹。关闭时两张纸
-  收拢，开启时上层纸在同一外接框内略微展开；轮廓本身表达复制语义，不使用
-  现代“双文档”图标、文字或发光。
-- `CHAT.COPY.TEXT` 继续由 pfUI 的真实多行 EditBox 绘制。本批不改变聊天
-  正文字体、频道颜色或复制文字配色。
+- `CHAT.COPY.SURFACE` 只是一张覆盖正文区域的薄抄录纸。V1.1 先在本地从
+  V3 主框安静纸面构造严格 `380:248` 的单矩形编辑引导，再让 ImageGen
+  只把这块矩形转成轻微错层毛边纸；执行器看不到完整聊天框。
+- `CHAT.COPY.TOGGLE` 只生成关闭、开启两个持久物理状态。关闭时两张短纸叶
+  收拢；开启时上层纸叶在同一外接框内稍微扇开。悬停继续由 pfUI／adapter
+  对同一物理纹理调整 Alpha，不再要求模型绘制七个近重复状态。
+- `CHAT.COPY.TEXT` 始终由真实 `pfChatCopyBoxN` 绘制。本批不改变正文或
+  复制文字的字体、字号、颜色、选择和光标。
 
 ### 明确不继承
 
-- 不继承 Image 1 中其他模块的动作条、任务追踪、单位框和固定侧边按钮。
-- 不继承 Image 2 的龙饰、尖顶、四枚规则槽、木柱或完整金属边框。
-- 不复刻 V3 主框、Tab、输入纸带、蜡封未读、旧底栏字段或任何动态文字。
-- 不生成滚动条、关闭按钮、搜索框、复选框、Tooltip 或独立 ChatMenu 外壳。
+- 不继承游戏基准中其他模块的动作条、单位框、任务追踪或侧边按钮。
+- 不继承独立艺术资源的龙饰、尖顶、顶部四槽、木柱、宝石或完整金属框。
+- 不复刻 V3 主框、Tab、输入纸带、蜡封、底栏字段或动态文字。
+- 不生成现代“双文档”图标、方形按钮牌、滚动条、关闭按钮、搜索框、
+  Tooltip 或 ChatMenu 外壳。
 
 ### 冲突审计
 
-- pfUI 当前把 `pfChatCopyButton` 放在 `panelTop` 右上角，尺寸为
-  `16 × 16`；四枚 `92px` Tab 加三个 `3px` 间距已占用 `377 / 380px`，
-  原位置必然与第四枚 Tab 冲突。V1 将真实 Button 保持为同一逻辑对象，但把
-  视觉和命中区移到书本右侧外缘，不能挤压或覆盖 Tab。
-- pfUI 当前用 `95%` 不透明黑色覆盖 `ChatFrameScrollN`。它与锁定的连续
-  羊皮纸阅读面冲突；V1 改成一张低对比抄录纸，保留复制、选择和滚动行为。
-- Image 3／4 的材料连续性不能高于锁定图。若派生 source 的边框更规则、
-  更工整，则以锁定图的手工误差和战地磨损为准。
-- 用户已明确把正文可读性改造延后。本批不得借复制纸页生成或代码接入，顺带
-  改写 `CHAT.TEXT` 字体、字号、描边或频道色。
+- V1 的授权正文已经明确排除完整框架，但同时上传四张完整 UI 图；ImageGen
+  的 revised prompt 仍把 A 改成第二聊天框，把 B 改成现代文档按钮。
+  V1.1 的裁决是保留完整书本的书面视觉权威，却只向外部模型提供每次调用
+  唯一目标对象的隔离编辑引导。
+- pfUI 的真实 `pfChatCopyButton` 只有关闭／开启两种持久纹理，并用
+  `OnEnter`／`OnLeave` 调整 Alpha；当前实现没有独立 pressed 或 disabled
+  纹理。V1 的七状态表高于真实 provider 所有权。V1.1 改为两个物理 source，
+  悬停由 runtime 派生，不生产不存在的状态。
+- `pfChatCopyButton` 原始 `16 × 16` 位置与第四枚 Tab 冲突。V1.1 仍保留同一
+  Button 和左右键逻辑，只把视觉放在书本右侧页边，不覆盖 Tab 或正文。
+- pfUI 原始 `95%` 黑色复制覆盖层与连续纸面冲突；V1.1 只替换其背景 Region，
+  不改变历史缓存、滚动、选择、Escape 或消息转发。
+- 用户已延后 `CHAT.TEXT` 可读性改造；V1.1 不借本批修改正文字体或频道色。
 
 ## 组件合同
 
-- 逻辑对象与数量：
-  - 一个全局 `pfChatCopyButton`。
-  - 每个 pfUI 判定为非战斗日志的 `ChatFrameN` 各一个
-    `ChatFrameScrollN` 和 `pfChatCopyBoxN`；所有实例共享同一物理纸页资产。
-- pfUI／Blizzard 映射：
-  - `CHAT.COPY.TOGGLE` → `pfChatCopyButton`。
-  - `CHAT.COPY.SURFACE` → `ChatFrameScrollN` 及其背景 Region。
-  - `CHAT.COPY.TEXT` → `pfChatCopyBoxN`。
-- 功能不变量：
-  - 左键继续统一显示／隐藏复制纸页。
-  - 右键继续显示／隐藏 `ChatMenu`。
-  - 原有 100 条历史缓存、颜色码、滚动、选择、Escape 两段式退出和
-    `ChatFrameN.AddMessage` 转发保持不变。
-- `CHAT.COPY.TOGGLE` 状态：
-  - `off-normal`、`off-hover`、`off-pressed`；
-  - `on-normal`、`on-hover`、`on-pressed`；
-  - 一个共用 `disabled`。
-- Toggle runtime 几何：
-  - 视觉 Button `22 × 26 UI px`，七状态外接尺寸完全一致。
-  - 锚到 `pfChatLeft` 右侧页边：
+### 真实对象与功能
+
+- 一个全局 `pfChatCopyButton`：
+  - 左键切换所有非战斗日志复制纸面的显示状态。
+  - 右键继续显示／隐藏原生 `ChatMenu`。
+  - 持久状态只有 `off` 与 `on`；`hover` 是同一纹理的 runtime Alpha。
+- 每个非战斗日志 `ChatFrameN`：
+  - 一个 `ChatFrameScrollN`，共享 A 的九宫格物理资产。
+  - 一个 `pfChatCopyBoxN`，继续作为可选择多行 EditBox。
+- 保留 100 条历史、颜色码、滚动、选择、Escape 两段式退出和
+  `ChatFrameN.AddMessage` 转发。
+
+### Runtime 几何与状态
+
+- `CHAT.COPY.TOGGLE`：
+  - 两个物理状态：`off`、`on`。
+  - 视觉范围统一为 `22 × 26 UI px`；锚到 `pfChatLeft` 右侧页边
     `RIGHT → RIGHT, x=-14, y=-8`。
-  - 命中区只向四边各扩展 `3px`，最终 `28 × 32 UI px`；不得侵入
-    `x=30..410` 正文安全区或顶部 Tab 带。
-  - 父级保持 `pfUI.chat.left.panelTop`；只在首次装配和已知布局事件后按需
-    恢复锚点，维护循环不持续改写 Parent、Point 或尺寸。
-- `CHAT.COPY.SURFACE` runtime 几何：
-  - 与所属 `ChatFrameN` 同尺寸；最小聊天书下为 `380 × 248 UI px`。
-  - 九宫格固定边为 `8px`；中段可水平、垂直拉伸。
-  - 复制 EditBox 在纸页内使用左／右 `10px`、上／下 `8px` 安全内边距；
-    滚动子级仍由 pfUI 更新高度和垂直范围。
-  - 隐藏状态不分配额外可见占位。
-- 源画布与排布：
-  - A：一张完整抄录纸，建议 `1536 × 1024`，对象比例严格服从
-    `380 : 248`；四周保留均匀色键空间。
-  - B：七个无字页夹状态，建议 `1536 × 1024`，上排四个、下排三个；每格
-    留出独立色键间隔，不画格线、标签或状态文字。
-- 拉伸、裁切与 UV：
-  - A 只允许九宫格；毛边、折角和接触阴影必须留在 `8px` 固定边内。
-  - B 七格确定性裁切；状态切换不得改变 Button 几何。
-- Alpha：固定执行器先输出纯 `#00FF00` 平整色键背景，后处理为真透明 RGBA；
-  任何纸页半透明边缘都必须检查绿色残色。
-- 禁止烘焙：聊天消息、玩家名、颜色码、选择高亮、光标、按钮文字、现代复制
-  图标、Tab、输入条、未读、滚动条、关闭按钮和 ChatMenu。
+  - 命中区向四边各扩展 `3px`，最终 `28 × 32 UI px`。
+  - normal／hover 共用相同 UV；hover 只改变 Alpha，不改变纹理、Point、
+    Width、Height 或外接轮廓。
+  - 当前 provider 不拥有独立 pressed／disabled 纹理，V1.1 不生成。
+- `CHAT.COPY.SURFACE`：
+  - 与所属 `ChatFrameN` 同尺寸；最小书框下为 `380 × 248 UI px`。
+  - 九宫格固定边 `8px`；中间边段与中心可水平、垂直拉伸。
+  - `pfChatCopyBoxN` 使用左右 `10px`、上下 `8px` 安全内边距。
+  - 隐藏状态不占用额外可见空间。
+- 维护约束：只在首次装配和已知布局事件后按需恢复 Anchor；周期维护不得
+  持续改写 Parent、Point、Width 或 Height。
+
+### 确定性本地输入
+
+- A 结构引导：
+  1. 从 `ChatBookFrame_Master_v3.png` 取半开区间
+     `(270,160)–(1338,857)`，得到 `1068 × 697` 的安静纸面，不含封皮、
+     Tab、金属框或页夹。
+  2. Lanczos 缩放为 `1140 × 744`，精确等于 `380 × 248` 的三倍。
+  3. 居中放入 `1536 × 1024` 的纯 `#00FF00` 画布，左上角
+     `(198,140)`；输出 A scaffold。
+- B1 结构引导：
+  1. 只有 A 通过范围、对象身份与纸面安全区审查后才创建。
+  2. 在 `1024 × 1024` 纯 `#00FF00` 画布的
+     `(336,304)–(688,720)` 内构造一个 `352 × 416`、比例精确服从
+     `22:26` 的双纸叶引导。
+  3. 两张短纸叶使用 A 候选的纸面采样，彼此只横向错开少量；一个短深皮革
+     夹横跨上缘且完全留在共同外接框内。引导只定义结构和材料分区，不是
+     最终 source。
+- B2 编辑输入：只使用内部通过后的 B1 raw；改变上层纸叶开合，保持画布、
+  外接框、锚点、夹具和下层纸叶不变。
+
+### 输出、裁切与验收
+
+- A raw：建议 `1536 × 1024`；完整纸对象保持 `1140 × 744` 外接比例。
+  所有毛边、页层、折角和接触阴影限制在外缘 `24px` source 带内，对应
+  runtime `8px` 固定边；中心 `1080 × 696` 对应 runtime
+  `360 × 232` 安静区。
+- B1／B2 raw：各自一张 `1024 × 1024` 单物件图；共同外接框、锚点、光源
+  和缩放必须相同。不得合成多状态 contact sheet 交给 ImageGen。
+- 所有调用输出纯 `#00FF00` 平整背景，审查通过后才转为真透明 RGBA。
+- A 只允许九宫格；B1／B2 后续确定性合成两个 UV cell，状态切换不改几何。
+- 禁止烘焙：聊天消息、玩家名、颜色码、选择高亮、光标、Tab、输入条、
+  未读、现代复制图标、状态标签、按钮牌、ChatMenu 和任何完整聊天框结构。
 - 验收预演：
-  - 在 `440 × 320` V3 主框中重组；
-  - 关闭／开启两张预演分别显示页夹状态；
-  - 开启预演显示 `380 × 248` 抄录纸和文字安全区，但不烘焙真实聊天内容。
-- 回退：任何资产、Frame 或状态缺失时继续把 `chatcopy` 路由为不加载；不得
-  恢复 pfUI 黑色覆盖层作为 AEUI 的局部替代。
+  - 在 `440 × 320` 当前 V3 主框中分别重组 off／on；
+  - on 预演显示 `380 × 248` 抄录纸和安全区，不烘焙真实聊天内容；
+  - 以 `22 × 26` 和 `28 × 32` 调试覆盖分别检查视觉与命中区。
+- 回退：任何资产、Frame 或状态缺失时 `chatcopy` 继续不加载；不得恢复
+  pfUI 黑色覆盖层作为 AEUI 局部替代。
 
 ## 最终执行正文
 
-状态：`production`。用户已于 `2026-07-29` 明确授权以下 A／B 作为完整的
-`CHAT.COPY.V1` 执行正文；执行时必须逐字传给固定执行器，不得改写。
+状态：`production-draft`。以下 A／B1／B2 只有在用户看到本版本并明确授权
+`CHAT.COPY.V1.1` 后，才能逐字交给固定执行器。
 
-### A：抄录纸面
+### A：单张薄抄录纸编辑
 
 ```text
-Create one production-ready modular bitmap asset for the chat-copy surface of
-the locked Azeroth Expedition battlefield-journal UI for Turtle WoW 1.18.1.
-This object is a thin loose transcription leaf placed over the existing chat
-book's reading page while copy mode is active. It is not another book, not a
-dialog window, and not a dark overlay.
+Edit the supplied isolated paper scaffold into one production-ready loose
+transcription leaf for the real ChatFrameScrollN copy surface in Turtle WoW
+1.18.1. Preserve exactly one object, the scaffold's landscape 380:248 outer
+proportion, its placement, and its generous green separation. This is a thin
+sheet laid over the reading page of an existing battlefield journal. It is not
+a chat window, not a second book, not a framed panel, and not a mockup.
 
-The locked in-game chat baseline and its written project prompt are the highest
-visual authority. Preserve their compact vanilla-era silhouette language,
-hand-painted 2004-era bitmap rendering, slightly irregular handmade edges,
-low-saturation warm palette, upper-left warm light, and practical long-use
-wear. Paper must dominate. Use old parchment near #B8955C, restrained
-highlights near #D2B77E, page shadows near #76512E, sparing deep-leather contact
-details near #28180E, and dark ink-brown structural lines near #24170F. The
-current accepted V3 book and control sources are secondary references only for
-matching the already deployed paper hue, brush scale, edge thickness, and wear
-density; they must not override the looser locked battlefield-journal identity.
+The written Azeroth Expedition chat baseline is the visual authority: a
+compact 2004-era hand-painted bitmap, upper-left warm light, low-saturation
+smoked parchment, slightly irregular handmade edges, practical non-mirrored
+wear, and clear paper thickness. Paper must account for the entire object.
+Use old parchment near #B8955C, restrained highlights near #D2B77E, page
+shadows near #76512E, and dark ink-brown edge accents near #24170F. The
+scaffold already contains the deployed V3 paper sample; preserve its hue,
+brush scale, fiber frequency, and wear density.
 
-Produce exactly one complete, text-free loose parchment sheet in an orthographic
-front view. Its runtime contract is 380 by 248 UI pixels. The outer proportion
-must therefore remain exactly 380:248. Give it one or two shallow offset page
-edges, restrained deckled wear, and a short soft contact shadow so it visibly
-rests on the main book page. Keep all visible wear, folds, page layering, and
-shadow inside an 8-pixel runtime edge band. The center must remain continuous,
-flat, quiet, and low contrast, with at least a 360 by 232 runtime-pixel safe
-field before the code applies its final text insets. Use only low-frequency
-smoke and subtle fiber variation in that center.
+Replace only the scaffold's straight outer boundary with a restrained
+deckled boundary and one shallow offset leaf underneath. Keep the result
+orthographic and nearly flat. The second leaf may appear only as a narrow
+paper edge. Add one short soft contact shadow between those two paper layers,
+never a shadow cast onto the green field. Keep every tear, fold, page layer,
+hard stain, and shadow inside the outer 24 source pixels. The complete center
+1080 by 696 source pixels must remain continuous, quiet, low contrast, and
+free of seams so it can become a 360 by 232 runtime text-safe field.
 
-Build the sheet for deterministic nine-slice export: all four corners and the
-8-pixel edge bands are fixed, while the entire middle of every edge and the
-central parchment can stretch without crossing a tear, stitch, fold, stain,
-repair, or hard shadow. The four edges may be individually irregular but no
-detail may create a step across a stretch seam.
+The four 24-pixel source edge bands and corners will become fixed nine-slice
+regions. Do not place a tear, fold, stain, repair, stitch, or hard shadow
+across the middle stretch zone of any edge. Do not change the outer object
+ratio or create protrusions outside the scaffold's original bounds.
 
-Do not include chat messages, player names, timestamps, color swatches,
-selection highlights, cursors, tabs, input fields, scroll bars, buttons,
-labels, icons, wax seals, metal frames, a second book cover, or any other UI
-component. Reject a black or translucent panel, modern card, modal, framed
-text box, clipboard, polished document viewer, ruled notebook paper, ornate
-quest parchment, photographic antique paper, symmetrical gold framing, and
-high-frequency dirt in the reading area.
+Include no leather cover, wood, brass frame, metal trim, tab, slot, pillar,
+wax seal, button, icon, clipboard, document glyph, input strip, scroll bar,
+text, letter, line, number, label, chat message, cursor, selection, or other
+UI object. Reject ornate quest parchment, a complete book, a framed text box,
+a modern card, black glass, a polished document viewer, photographic paper,
+symmetrical decoration, and high-frequency dirt in the center.
 
-Place the complete object on one perfectly flat uniform chroma-key green
-background #00FF00. Use no checkerboard, gradient, floor, vignette, cast shadow
-on the green field, labels, cell borders, or extra objects. Use a 1536 by 1024
-source canvas with generous green separation around the object.
+Return exactly one isolated object on one perfectly flat uniform #00FF00
+background. Preserve the 1536 by 1024 canvas. Use no checkerboard, gradient,
+floor, vignette, cast shadow on green, cell border, label, or extra object.
 ```
 
-### B：双层抄录页夹七状态
+### B1：关闭状态双页夹编辑
 
 ```text
-Create one production-ready sprite source for the real pfChatCopyButton in the
-locked Azeroth Expedition battlefield-journal chat UI for Turtle WoW 1.18.1.
-The button is a tiny double-leaf transcription clip attached to the right page
-edge of the same deployed chat book. Its physical silhouette, rather than a
-modern pictogram, must communicate that it opens a selectable copy sheet.
+Edit the supplied isolated two-leaf structure scaffold into exactly one
+production-ready closed transcription page clip for the real
+pfChatCopyButton in Turtle WoW 1.18.1. Preserve the scaffold's one-object
+scope, vertical 22:26 outer proportion, common anchor, placement, and green
+separation. Do not turn it into a square button or a toolbar icon.
 
-The locked in-game chat baseline and its written project prompt are the highest
-visual authority. Inherit their compact vanilla-era scale, hand-painted
-low-resolution bitmap language, slightly crooked handmade construction,
-upper-left warm light, low-saturation worn parchment, deep-walnut leather, and
-restrained practical wear. Use paper near #B8955C and #D2B77E, shadows near
-#76512E, a small leather clip or tie near #28180E, dark structural accents near
-#24170F, and no more than a pinhead of oxidized brass near #80602D. The current
-accepted V3 book and control sources are secondary material references only;
-match their deployed brush scale and paper thickness without copying the
-retired status field, unread seal, or input strip.
+This physical object belongs to the same battered Azeroth Expedition chat
+journal as the transcription leaf sampled into the scaffold. Preserve that
+paper hue and brush scale. Render it as a compact 2004-era hand-painted bitmap
+with upper-left warm light, broad readable value groups, slightly crooked
+hand-cut edges, and restrained practical wear. Use two short overlapping
+parchment leaves near #B8955C and #D2B77E, page separation near #76512E, one
+small worn deep-walnut leather clamp near #28180E, and dark structural accents
+near #24170F. Brass is optional and may occupy no more than one pinhead.
 
-Produce exactly seven separate, text-free state sprites:
-1. off-normal;
-2. off-hover;
-3. off-pressed;
-4. on-normal;
-5. on-hover;
-6. on-pressed;
-7. disabled.
+The two leaves are closed: they overlap closely under the short leather clamp,
+with only two clear paper edges visible. Keep the complete construction inside
+the scaffold's unchanged 22:26 outer bounds. The clamp must physically hold
+both leaves at their upper edge. Use no long cord, hanging ornament, detached
+part, or one-pixel noise. The silhouette must remain readable when reduced to
+22 by 26 UI pixels and when runtime hover changes only its Alpha.
 
-Every state must use the exact same outer canvas, anchor, 22 by 26 runtime-pixel
-visual bounds, light direction, and underlying double-leaf construction.
-Nothing may move outside those shared bounds. In the off family, the two small
-paper leaves sit closely aligned and partially closed under one short worn
-leather clip. In the on family, the upper leaf fans outward slightly inside the
-same bounds so two distinct page edges are readable at runtime size. Hover adds
-only a short candle-warm edge and slightly clearer paper separation. Pressed
-looks compressed downward by one to two runtime pixels inside the unchanged
-canvas. Disabled keeps the same silhouette with lower saturation and contrast.
+Include no duplicate-document pictogram, clipboard, quill, book symbol,
+letter, line, arrow, rune, jewel, wax seal, text, label, square plaque,
+beveled button frame, continuous metal border, glow, or other UI object.
+Reject a modern copy icon, website toolbar button, symmetrical gold badge,
+polished brass control, photoreal stationery, and machine-perfect folds.
 
-Keep the shape compact and readable at 22 by 26 pixels: broad value groups,
-two clear paper layers, one small dark leather attachment, no one-pixel noise,
-no long cords, and no decorative protrusion. It must look like a physical page
-clip from the same battered journal, not a toolbar icon.
+Return exactly one isolated object on one perfectly flat uniform #00FF00
+background. Preserve the 1024 by 1024 canvas and the scaffold's original
+outer bounds. Use no checkerboard, gradient, floor, vignette, cast shadow on
+green, cell border, label, or extra object.
+```
 
-Arrange the seven sprites with generous equal green spacing on a 1536 by 1024
-source canvas, four objects in the upper row and three in the lower row. Keep
-each object's full alpha silhouette isolated. Do not draw cell frames, state
-labels, numbers, arrows, text, a duplicate-document glyph, clipboard symbol,
-quill, book icon, button plaque, red notification dot, glow, rune, jewel, or
-continuous metal border.
+### B2：开启状态局部编辑
 
-Reject modern flat icons, web toolbar buttons, beveled square buttons,
-symmetrical gold badges, photorealistic stationery, polished brass, rigid
-machine-perfect folds, and state sprites with different outer geometry.
+```text
+Edit the supplied internally reviewed closed transcription page clip into its
+open persistent state for the same real pfChatCopyButton. This is a local
+state edit, not a redesign. Preserve exactly the same 1024 by 1024 canvas,
+22:26 outer bounds, anchor, lower leaf, leather clamp, paper material,
+palette, brushwork, wear, light direction, and one-object scope.
 
-Place all seven objects on one perfectly flat uniform chroma-key green
-background #00FF00. Use no checkerboard, gradient, floor, vignette, cast shadow
-on the green field, labels, or additional objects.
+Change only the upper paper leaf: fan its free lower and right edge outward
+slightly around the existing top leather clamp so two paper layers read more
+clearly at 22 by 26 UI pixels. Keep the rotated leaf completely inside the
+unchanged outer bounds. The clamp must still hold both leaves, and no part may
+detach, lengthen, or move the shared anchor. The difference from closed to open
+must come from this small physical overlap change, not from a symbol, color
+swap, glow, border, added decoration, or different canvas.
+
+Add no duplicate-document pictogram, clipboard, quill, book symbol, text,
+letter, line, arrow, rune, jewel, wax seal, square plaque, button frame,
+continuous metal border, glow, or extra object. Do not alter the background.
+
+Return exactly one isolated object on one perfectly flat uniform #00FF00
+background. Use no checkerboard, gradient, floor, vignette, cast shadow on
+green, cell border, or label.
 ```
 
 ## 执行记录
 
-- 日期：`2026-07-29`
-- 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- A 会话／结果：
-  - session：`019fae2a-34b9-7f60-a838-de96b4407c80`
-  - image call：`ig_0a47f137ed8bad95016a6a06d17d7881919f80bfe1b27825bf`
-  - raw：
-    `generated/chat/copy/v1/a/CHAT.COPY.SURFACE.V1.raw.png`
-- B 会话／结果：
-  - session：`019fae2c-0c40-7bf2-8713-79708add2e8c`
-  - image call：`ig_042663cb312d3ad2016a6a0748a4448191ad1e9f184c43898d`
-  - raw：
-    `generated/chat/copy/v1/b/CHAT.COPY.TOGGLE.V1.raw.png`
-- 实际输入绝对路径与职责：
-  - `D:\Git\azeroth-expedition-ui-overhaul\assets\locked\chat\聊天框视觉基准_v1.png`
-    — 游戏内尺度、位置和战地旧书身份
-  - `D:\Git\azeroth-expedition-ui-overhaul\assets\locked\chat\聊天框独立艺术资源_v3.png`
-    — 锁定绘制精度与旧书材料语言；不得复制完整框架
-  - `D:\Git\azeroth-expedition-ui-overhaul\assets\source\chat\v3\ChatBookFrame_Master_v3.png`
-    — 已部署纸色、笔触和磨损尺度
-  - `D:\Git\azeroth-expedition-ui-overhaul\assets\source\chat\v3\ChatControls_Master_v3.png`
-    — 小控件的笔触密度、纸边厚度和皮绳尺度
-- 输出尺寸／模式／SHA-256：
-  - A：`1672 × 941`／`RGB`／
-    `c06ef69185c6b424b0e983cf4624e54bab45307d55074c698e840c9059796324`
-  - B：`2172 × 724`／`RGB`／
-    `2e466f0b532605dc786a1e344f5988dc6faf73965111eba2834918566cc8e209`
-- Alpha／残色：
-  - A：全不透明；没有 `#00FF00`，背景被改成黑色
-  - B：全不透明；精确 `#00FF00` 469 像素，启发式强绿 877171 像素
-  - 因首个语义门禁已失败，未执行色键转透明或边缘残色修复
-- 内部失败重试：`0`；A／B 各执行一次，均保留原始失败证据
-
-### A：imagegen 报告的 revised prompt
-
-```text
-Use case: ui-mockup
-Asset type: production-ready modular bitmap asset for a fantasy RPG chat-copy surface / chat log panel background.
-Primary request: Create one standalone modular bitmap UI asset: an ornate parchment-and-dark-wood chat-copy surface that can be placed over a game HUD. It should match the Azeroth expedition fantasy interface style shown in the references: aged parchment reading area, carved dark wooden frame, antique gold metal trim, leather bindings, small rivets, worn edges, high-detail hand-painted game UI finish.
-Input images: Image 1 is the in-game visual benchmark for scale and chat placement; Image 2 is the ornate independent chat frame art reference; Image 3 is the preferred parchment/book-frame material reference; Image 4 is the preferred long chat control strip material reference.
-Composition/framing: horizontal rectangular chat panel, wide and low, optimized for bottom-left HUD placement. Include a large clean parchment text area with generous empty readable space, bordered by layered paper edges and a compact dark carved frame. Add subtle modular details: top tab rail with 4 blank tab plaques, left narrow vertical binding column with two small blank icon medallions, bottom-right small wax-seal-like accent. Keep all decorative elements attached to the frame so the asset reads as one reusable module.
-Style/medium: high-resolution hand-painted fantasy game UI bitmap, crisp production asset, not a screenshot, not a mockup pasted onto gameplay.
-Lighting/mood: warm parchment glow, dark dungeon-fantasy trim, controlled highlights on gold edges, readable but ornate.
-Color palette: aged tan parchment, dark brown wood/leather, antique brass/gold, small muted blue enamel accents only.
-Materials/textures: parchment fibers, torn layered paper edges, scratched dark wood, hammered brass, stitched leather, worn corners.
-Text: no readable text, no labels, no letters, no numbers.
-Constraints: isolated asset on a plain black background; front-facing orthographic UI asset; clean silhouette; no characters, no gameplay scene, no chat messages, no icons with text, no watermark. Leave interior parchment mostly empty for later text overlay. Ensure edges are sharp enough for compositing and the design is visually coherent at game HUD scale.
-Avoid: modern UI, flat vector style, photoreal object photo, busy parchment center, excessive skulls, oversized dragon ornament, glowing effects inside text area, cropped frame, perspective tilt, drop shadow that merges into the black background.
-```
-
-该 revised prompt 把授权正文中的“单张薄抄录纸”改成完整
-`chat log panel`，主动加入顶部四槽、左柱、金属框、蜡封，并把
-`#00FF00` 改成黑底；这些变化直接导致 A 的对象身份失败。
-
-### B：imagegen 报告的 revised prompt
-
-```text
-Use case: stylized-concept
-Asset type: production-ready game UI sprite source for pfChatCopyButton
-Primary request: Create one sprite sheet source image for a real pfChatCopyButton that fits the provided Azeroth-style chat frame references. The asset should be a compact ornate copy/scroll/document button for a fantasy MMO chat window, not a mockup screen.
-Input images: Image 1 is the in-game visual benchmark for scale and placement; Image 2 is the ornate locked chat-frame art style reference; Image 3 is the parchment/leather master frame style reference; Image 4 is the chat control strip material/style reference.
-Subject: A small square-ish copy button icon with a readable parchment/document-copy motif, framed in aged dark leather, hammered brass/gold trim, tiny rivets, worn beveled edges, and subtle blue enamel accent matching the references.
-Composition/framing: One horizontal sprite sheet containing four equal cells: normal, hover, pressed, disabled. Each cell shows the same button centered with generous padding and consistent dimensions. Normal state is neutral; hover has warmer gold rim glow; pressed is slightly darker and inset; disabled is desaturated and lower contrast. No text labels.
-Style/medium: High-detail painted fantasy game UI asset, hand-painted raster sprite source, Warcraft-inspired medieval parchment and brass UI ornamentation, crisp edges for downscaling.
-Lighting/mood: Warm brass highlights, dark leather shadows, subtle parchment glow, high contrast readable at small size.
-Color palette: aged gold, dark umber leather, parchment tan, muted stone gray, tiny cool blue accent; avoid one-note color wash.
-Materials/textures: cracked leather, worn brass, scratched metal bevels, parchment document glyph, slight grime, carved/embossed trim.
-Constraints: Sprite sheet only, four button states in a single row, transparent-looking asset silhouette on a perfectly flat solid #00ff00 chroma-key background for later background removal. Keep background one uniform color with no shadows, gradients, texture, reflections, floor plane, or lighting variation. Do not use #00ff00 anywhere in the button art. No cast shadow outside the button silhouette. No text, no watermark, no UI screen, no character art.
-Avoid: oversized decorative frame, chat panel, tabs, readable letters, labels, modern flat UI, SVG/vector look, blurry edges, mismatched state sizes, black background.
-```
-
-该 revised prompt 把七个双页夹状态压缩成四个方形
-`copy/scroll/document button`，又主动加入现代文档图标、完整按钮牌、蓝色珐琅
-和连续金属边；这些变化直接导致 B 的对象身份和状态清单失败。
+- 日期：未执行
+- 会话／结果 ID：无
+- 实际输入绝对路径与职责：待用户授权 V1.1 后按本文件的确定性输入合同创建
+- imagegen 报告的 revised prompt：无
+- 输出尺寸／模式／SHA-256：无
+- Alpha／残色：未检查
+- 内部失败重试：无
 
 ## 审查记录
 
-- 判定：`退回`
-- 当前子状态／最高阶段：`candidate-rejected / P3`
-- 否决人：`internal-review`
-- 日期：`2026-07-29`
-- 第一个失败门禁：范围与对象身份；B 同时失败于状态清单
-- 可观察证据：
-  - A 是带顶部四槽、左木柱、完整金属边框和右下蜡封的第二聊天框，不是覆盖
-    原书正文纸面的单张薄抄录纸；黑底也违背色键合同。
-  - B 只有四个大型方形按钮，烘焙现代叠放文档图标、蓝色宝石和连续金属边；
-    不是七个同外接框的 `22 × 26` 双层页夹状态。
-- 语义／物理：A 没有“薄纸盖在原书页上”的层级；B 没有收拢／展开的双叶
-  物理关系，只有方形工具栏按钮。
-- 透视／图层：因对象身份已致命失败，停止进入真实 z-order 重组审查。
-- 美术一致性：A 错误复制明确排除的完整规则框架；B 使用精工黄铜牌、蓝色
-  珠宝和现代图标语义，均偏离“纸张第一、皮革第二、黄铜仅连接点”的条款。
-- 对象／状态合同：A 包含合同外 Tab、柱、蜡封和框架；B 为四状态而非七状态，
-  且没有 off／on 两族。
-- 装配／尺寸：未制作 `440 × 320` 预演；致命结构错误不得进入缩放与装配。
-- 技术像素：两张 raw 均为无 Alpha 的 RGB；A `1672 × 941` 黑底，B
-  `2172 × 724` 绿底；数值证据不能挽救错误对象。
-- 本版本保留内容：授权执行正文、固定执行器会话／结果 ID、原始失败图、
-  revised prompt、像素检查与 SHA-256。
-- 下一版本必须改变：
-  - A 必须只生成一张无遮挡、无外框的 `380:248` 薄抄录纸，不再允许执行器
-    把完整聊天框参考转译为目标结构。
-  - B 必须保证七个状态和双页夹实体身份；若单次七状态生成仍会被模型压缩，
-    下一合同应拆分物理基态生成，并把派生交互状态写成确定性 runtime 规则。
-- 本版本无 tracked source／runtime：是；raw 只存在于被忽略的 `generated/`
-- 是否允许进入用户复审／source／runtime：否
-- 用户结论与日期：`2026-07-29` 仅授权执行 A／B，尚未接受任何候选
-- 下一门禁：先制定 `CHAT.COPY.V1.1` 的输入裁减与状态拆分合同，展示完整
-  Prompt 并取得用户明确授权；不得直接重跑
+- 语义／物理：提示词预检通过；A、B1、B2 均只对应一个真实物理对象。
+- 透视／图层：A 是底页上的上层纸；B 是右侧页边上的独立 Button 纹理。
+- 美术一致性：锁定图与 provenance 继续最高；完整 UI 图不直接上传。
+- 对象／状态合同：已按 pfUI 真实代码把七张生成状态收敛为 off／on 两个
+  持久 source；hover 由 runtime Alpha 派生。
+- 装配／尺寸：合同已定义 `380 × 248`、`22 × 26`、九宫格固定边和预演。
+- 技术像素：待生成。
+- 结论：`prompt-draft / P2`
+- 用户结论与日期：尚未授权 `CHAT.COPY.V1.1`
+- 下一门禁：用户审查 A／B1／B2 完整正文，并明确授权本版本以及三个隔离
+  输入（A scaffold、B1 scaffold、B1 raw）的外部上传；授权前不得创建
+  候选或调用 ImageGen
 
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
 |---|---|---|---|
-| V1 | session `019fae2a…`／`019fae2c…`；A `c06ef691…`，B `2e466f0b…` | `candidate-rejected` | A 隔离为单张纸；B 保证双页夹身份与完整状态清单 |
+| V1 | commit `69ada1f`；session `019fae2a…`／`019fae2c…` | `candidate-rejected` | 不上传完整 UI；A 单物件 edit；B 按真实持久状态拆分 |
+| V1.1 | 三个隔离 edit 调用的完整 production-draft | `prompt-draft` | 等待用户逐版本授权，不直接生图 |
