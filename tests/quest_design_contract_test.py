@@ -28,11 +28,23 @@ def main() -> None:
         / "quests"
         / "任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md"
     )
-    ql_a2_prompt_path = (
+    ql_a2_v1_prompt_path = (
         ROOT
         / "prompts"
         / "quests"
         / "任务详情可拉伸结构部件_生产提示词_QL-A2_v1.md"
+    )
+    ql_a2_v2_prompt_path = (
+        ROOT
+        / "prompts"
+        / "quests"
+        / "任务详情内页沟结构部件_生产提示词_QL-A2_v2.md"
+    )
+    ql_a2_v2_1_prompt_path = (
+        ROOT
+        / "prompts"
+        / "quests"
+        / "任务详情内页沟结构部件_修订提示词_QL-A2_v2.1.md"
     )
     tracker_prompt_path = (
         ROOT / "prompts" / "quests" / "任务追踪组件资产_生产提示词_v2.md"
@@ -55,7 +67,9 @@ def main() -> None:
     spec = spec_path.read_text(encoding="utf-8")
     log_prompt = log_prompt_path.read_text(encoding="utf-8")
     ql_a1_prompt = ql_a1_prompt_path.read_text(encoding="utf-8")
-    ql_a2_prompt = ql_a2_prompt_path.read_text(encoding="utf-8")
+    ql_a2_v1_prompt = ql_a2_v1_prompt_path.read_text(encoding="utf-8")
+    ql_a2_v2_prompt = ql_a2_v2_prompt_path.read_text(encoding="utf-8")
+    ql_a2_v2_1_prompt = ql_a2_v2_1_prompt_path.read_text(encoding="utf-8")
     tracker_prompt = tracker_prompt_path.read_text(encoding="utf-8")
     tracker = tracker_path.read_text(encoding="utf-8")
 
@@ -73,9 +87,20 @@ def main() -> None:
             "QuestLogBookShell_Master_v1.png",
             "QL-A1_SourceManifest_v1.json",
             "不能直接充当",
-            "`QL-A2 V1` 已生成精确五对象的透明候选并达到 `P3`",
+            "`QL-A2 V1` 的五对象方案已因外置封脊朝向",
+            "`QL-A2 V2.1` 已生成精确八组逻辑对象的透明候选并达到 `P3`",
             "任务详情可拉伸结构部件_生产提示词_QL-A2_v1.md",
-            "140 × 60",
+            "任务详情内页沟结构部件_生产提示词_QL-A2_v2.md",
+            "任务详情内页沟结构部件_修订提示词_QL-A2_v2.1.md",
+            "`QUEST.LOG.SPINE` 只保留为“中央装订结构包”的父级兼容名称",
+            "QUEST.LOG.GUTTER.UNDERLAY",
+            "QUEST.LOG.GUTTER.LEFT_FOLD",
+            "QUEST.LOG.GUTTER.RIGHT_FOLD",
+            "QUEST.LOG.GUTTER.STITCH",
+            "QUEST.LOG.GUTTER.TOP",
+            "QUEST.LOG.GUTTER.BOTTOM",
+            "左右物理纸页保持近等宽",
+            "左 `42%`／右 `58%` 只指 runtime 文字阅读",
             "外部插件",
             "QuestWatchFrame",
             "假设已作废",
@@ -89,16 +114,22 @@ def main() -> None:
     assert "第一 provider 是香草 `QuestWatchFrame`" not in spec, (
         "quest tracker still assumes the native QuestWatchFrame provider"
     )
+    assert "书脊必须从中段内部提取 `140 × 60`" not in spec, (
+        "rejected QL-A2 V1 tiling assumption is still active"
+    )
 
     require(
         log_prompt,
         (
             "production-draft",
             "`QL-A1` 已确认并达到 `P4`",
-            "`QL-A2 V1` 已执行并达到 `P3` 候选",
-            "等待用户复审 `QL-A2 V1`",
+            "`QL-A2 V1` 已否决",
+            "`QL-A2 V2.1`\n  已形成 `P3` 候选",
+            "等待复审 `QL-A2 V2.1`",
             "任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md",
             "任务详情可拉伸结构部件_生产提示词_QL-A2_v1.md",
+            "任务详情内页沟结构部件_生产提示词_QL-A2_v2.md",
+            "任务详情内页沟结构部件_修订提示词_QL-A2_v2.1.md",
             "imagegen-0-143-0",
             "@openai/codex@0.143.0",
             "执行块 QL-A1",
@@ -153,51 +184,121 @@ def main() -> None:
     )
 
     require(
-        ql_a2_prompt,
+        ql_a2_v1_prompt,
         (
             "类型：`production`",
-            "通过“进入下一步”确认并授权执行",
-            "透明候选",
-            "达到 `P3`",
+            "状态：`rejected`",
+            "用户于 `2026-07-29` 复审后否决",
+            "imagegen-0-143-0",
+            "@openai/codex@0.143.0",
+            "019fac4a-c73e-71c1-a6bd-a94a86627b3e",
+            "generated/quests/QL-A2/v1/QL-A2_v1_raw.png",
+            "generated/quests/QL-A2/v1/QL-A2_v1.png",
+            "从外部观察的凸起封脊",
+            "上下端件压死翻页空间",
+            "透视、曲面法线和图层关系不一致",
+            "42.1%／57.9%",
+            "140 × 60",
+            "任务详情内页沟结构部件_生产提示词_QL-A2_v2.md",
+            "不得进入源资产、crop manifest 或 runtime",
+        ),
+        "rejected QL-A2 V1 prompt",
+    )
+    ql_a2_v1_body = ql_a2_v1_prompt.split(
+        "## 已确认提示词正文\n\n", 1
+    )[1].strip()
+    assert not ql_a2_v1_body.startswith("Execution instruction:"), (
+        "QL-A2 V1 creative body was replaced by execution metadata"
+    )
+    assert "/Users/" not in ql_a2_v1_body, (
+        "QL-A2 V1 creative body contains a machine-specific absolute path"
+    )
+    assert "QL-B" not in ql_a2_v1_prompt, (
+        "rejected QL-A2 V1 prompt contains an unauthorized later batch"
+    )
+
+    require(
+        ql_a2_v2_prompt,
+        (
+            "类型：`production`",
+            "首轮 V2 已修正双页视角",
+            "V2.1 已形成 `P3` 候选",
             "imagegen-0-143-0",
             "@openai/codex@0.143.0",
             "QuestLogBookShell_Master_v1.png",
             "任务详情面板_视觉基准_v1.png",
-            "精确 `5` 个",
-            "019fac4a-c73e-71c1-a6bd-a94a86627b3e",
-            "generated/quests/QL-A2/v1/QL-A2_v1_raw.png",
-            "generated/quests/QL-A2/v1/QL-A2_v1.png",
-            "1536 × 1024",
-            "83ddda9099be456f1dd984161b09d69101c389209e25e621d4f382b79cc31967",
-            "8507dde8339bb9839f6ef157e7f34f7f56ca09cedc825658f9db2ae0933454ae",
-            "604346",
-            "6576",
-            "961942",
-            "可见绿色残留 `0`",
-            "42.1%／57.9%",
-            "140 × 60",
-            "真正\nRGBA 透明背景",
-            "#00FF00",
-            "对象 1：左页旧象牙纸九宫格源面",
-            "对象 2：右页稍亮旧象牙纸九宫格源面",
-            "对象 3：中央书脊上端帽",
-            "对象 4：中央书脊可纵向平铺中段",
-            "对象 5：中央书脊下端帽与底部多层页叠连接件",
-            "不得包含中文、英文、数字、伪文字",
+            "任务详情内页沟结构部件_修订提示词_QL-A2_v2.1.md",
+            "精确 `8` 组",
+            "QUEST.LOG.LIST.PAPER",
+            "QUEST.LOG.DETAIL.PAPER",
+            "QUEST.LOG.GUTTER.UNDERLAY",
+            "QUEST.LOG.GUTTER.LEFT_FOLD",
+            "QUEST.LOG.GUTTER.RIGHT_FOLD",
+            "QUEST.LOG.GUTTER.STITCH",
+            "QUEST.LOG.GUTTER.TOP",
+            "QUEST.LOG.GUTTER.BOTTOM",
+            "对象 1：左页非对称九宫格纸面",
+            "对象 2：右页非对称九宫格纸面",
+            "对象 3：内部页沟底层",
+            "对象 4：左页内折过渡层",
+            "对象 5：右页内折过渡层",
+            "对象 6：内部装订缝线周期",
+            "对象 7：顶部装订收口",
+            "对象 8：底部装订收口",
+            "两块纸面使用近似相同的物理宽度",
+            "`42%／58%` 只代表未来左／右文字阅读安全区",
+            "最底层是已经确认的封皮与外围页叠",
+            "纸页必须从视觉上覆盖页沟两侧",
+            "明确禁止外置封脊",
         ),
-        "confirmed QL-A2 production prompt",
+        "QL-A2 V2 eight-object production prompt",
     )
-    ql_a2_body = ql_a2_prompt.split(
+    ql_a2_v2_body = ql_a2_v2_prompt.split(
         "## 已确认提示词正文\n\n", 1
     )[1].strip()
-    assert not ql_a2_body.startswith("Execution instruction:"), (
-        "QL-A2 creative body was replaced by execution metadata"
+    assert not ql_a2_v2_body.startswith("Execution instruction:"), (
+        "QL-A2 V2 creative body was replaced by execution metadata"
     )
-    assert "/Users/" not in ql_a2_body, (
-        "QL-A2 creative body contains a machine-specific absolute path"
+    assert "/Users/" not in ql_a2_v2_body, (
+        "QL-A2 V2 creative body contains a machine-specific absolute path"
     )
-    assert "QL-B" not in ql_a2_prompt, (
-        "confirmed QL-A2 prompt contains an unauthorized later batch"
+    assert "QL-B" not in ql_a2_v2_prompt, (
+        "QL-A2 V2 prompt contains an unauthorized later batch"
+    )
+
+    require(
+        ql_a2_v2_1_prompt,
+        (
+            "类型：`production-edit`",
+            "达到 `P3` 候选",
+            "019fac8e-bae8-73f2-af89-674e925b0068",
+            "ig_0e15261f6bc2a618016a699d6f4f5481919c35afcaa581e3fc",
+            "ig_0bda33a80800f83f016a699ddd6dbc8191a674cb8b33717482",
+            "generated/quests/QL-A2/v2/QL-A2_v2_1_raw.png",
+            "generated/quests/QL-A2/v2/QL-A2_v2.png",
+            "generated/quests/QL-A2/v2/QL-A2_v2_reassembly_preview.png",
+            "e0f04181a297f37f48dbfd568c374e0578e9cace24106a3adcdee613d5cf57ff",
+            "c4f3b41c8108776ddeb69cd092627e605fe2bfa41c28822f491a151cd327a461",
+            "745186／57546／770132",
+            "可见绿色残留 `0`",
+            "六个下排对象横向分离",
+            "没有外置封脊、皮革底板、跨页横梁或大型端帽",
+            "`42%／58%`：只用于 runtime 左／右文字阅读安全区",
+            "Critical composition: The final lower row MUST contain exactly SIX",
+            "Internal stitch cycle: ONLY rope pixels",
+            "group 4 has no backing plate behind the rope",
+            "groups 5 and 6 are side-by-side, not stacked",
+        ),
+        "QL-A2 V2.1 production edit prompt and execution record",
+    )
+    ql_a2_v2_1_body = ql_a2_v2_1_prompt.split(
+        "## 已确认修订提示词正文\n\n", 1
+    )[1].split("\n## 固定执行器最终 revised_prompt", 1)[0].strip()
+    assert "/Users/" not in ql_a2_v2_1_body, (
+        "QL-A2 V2.1 creative body contains a machine-specific absolute path"
+    )
+    assert "QL-B" not in ql_a2_v2_1_prompt, (
+        "QL-A2 V2.1 prompt contains an unauthorized later batch"
     )
 
     manifest = json.loads(ql_a1_manifest_path.read_text(encoding="utf-8"))
@@ -280,9 +381,12 @@ def main() -> None:
         (
             "`QUEST.LOG.SHELL`",
             "`QL-A1` 空卷宗透明源母版达到 `P4`",
-            "`QL-A2 V1` 五对象透明候选达到 `P3`",
+            "`QL-A2 V1` 已退回",
+            "八对象 `V2.1` 透明候选达到 `P3`",
             "任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md",
             "任务详情可拉伸结构部件_生产提示词_QL-A2_v1.md",
+            "任务详情内页沟结构部件_生产提示词_QL-A2_v2.md",
+            "任务详情内页沟结构部件_修订提示词_QL-A2_v2.1.md",
             "QuestLogBookShell_Master_v1.png",
             "QL-A1_SourceManifest_v1.json",
             "1514 × 1039",
@@ -290,11 +394,25 @@ def main() -> None:
             "42%／58%",
             "接近等宽的物理双页已经接受",
             "整张源图不得进入 runtime",
+            "用户视觉复审未通过；正式退回",
             "019fac4a-c73e-71c1-a6bd-a94a86627b3e",
-            "8507dde8339bb9839f6ef157e7f34f7f56ca09cedc825658f9db2ae0933454ae",
-            "Alpha 连通区域精确 `5` 个",
             "42.1%／57.9%",
-            "140 × 60",
+            "`140 × 60` 周期假定作废",
+            "019fac8e-bae8-73f2-af89-674e925b0068",
+            "ig_0bda33a80800f83f016a699ddd6dbc8191a674cb8b33717482",
+            "c4f3b41c8108776ddeb69cd092627e605fe2bfa41c28822f491a151cd327a461",
+            "745186／57546／770132",
+            "八组为近等宽左右纸面",
+            "`42%／58%` 仅为 runtime 文字安全区",
+            "`QUEST.LOG.SPINE`",
+            "`P2 parent`",
+            "`QUEST.LOG.GUTTER.UNDERLAY`",
+            "`QUEST.LOG.GUTTER.LEFT_FOLD`",
+            "`QUEST.LOG.GUTTER.RIGHT_FOLD`",
+            "`QUEST.LOG.GUTTER.STITCH`",
+            "`QUEST.LOG.GUTTER.TOP`",
+            "`QUEST.LOG.GUTTER.BOTTOM`",
+            "只有麻线，无皮革底板",
             "`QUEST.LOG.ACTION.ABANDON`",
             "`QUEST.LOG.ACTION.SHARE`",
             "`QUEST.LOG.ACTION.EXIT`",
@@ -320,6 +438,9 @@ def main() -> None:
     )
     assert "`QuestWatchLine1..MAX_QUESTWATCH_LINES`" not in tracker, (
         "overhaul tracker still assumes native QuestWatchLine objects"
+    )
+    assert "QL-A2` 上端／中段／下端候选通过五对象检查" not in tracker, (
+        "tracker still treats the rejected three-part exterior spine as active"
     )
 
     print("quest design contract test passed")

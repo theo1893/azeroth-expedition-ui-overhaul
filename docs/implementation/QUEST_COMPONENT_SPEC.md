@@ -19,8 +19,10 @@ NPC 任务对话、Gossip 和任务物品 Tooltip 已完成对象登记，但不
 资产。任务快捷按钮目前没有可靠基础对象，不得假设 pfUI 已经提供。`QL-A1`
 空卷宗结构母版已经用户确认并达到 `P4`；透明源母版与来源清单位于
 `assets/source/quests/ql-a1/`。该整张母版只作为结构来源，不能直接充当
-runtime 背景。`QL-A2 V1` 已生成精确五对象的透明候选并达到 `P3`；它只在
-被忽略的 `generated/quests/QL-A2/v1/`，尚未成为源资产。
+runtime 背景。`QL-A2 V1` 的五对象方案已因外置封脊朝向、翻页空间、共同
+透视和图层关系错误而退回，不得进入 source 或 runtime。修正后的
+`QL-A2 V2.1` 已生成精确八组逻辑对象的透明候选并达到 `P3`；它只在被忽略的
+`generated/quests/QL-A2/v2/`，尚未成为源资产。
 
 视觉权威：
 
@@ -59,7 +61,7 @@ runtime 背景。`QL-A2 V1` 已生成精确五对象的透明候选并达到 `P3
 
 | ID | 运行时对象 | 类型 | 行为所有者 | 需要的视觉资产／状态 |
 |---|---|---|---|---|
-| `QUEST.LOG.SHELL` | `QuestLogFrame` | Frame | 原生显示、隐藏、层级 | 封皮外壳、页叠、左右纸面、书脊；结构切片 |
+| `QUEST.LOG.SHELL` | `QuestLogFrame` | Frame | 原生显示、隐藏、层级 | 封皮外壳、外围页叠、左右纸面和内部装订结构；必须切片 |
 | `QUEST.LOG.TITLE` | `QuestLogTitleText` | FontString | 原生文字 | 无烘焙文字；只定义标题安全区和字体 |
 | `QUEST.LOG.COUNT` | Vanilla `QuestLogQuestCount`；兼容对象 `QuestLogCount` | FontString／Frame | 原生／客户端 | 无背景卡片；可使用小型墨印分隔 |
 | `QUEST.LOG.CLOSE` | `QuestLogFrameCloseButton` | Button | 原生关闭 | 黄铜书扣，普通／悬停／按下／禁用 |
@@ -76,6 +78,35 @@ runtime 背景。`QL-A2 V1` 已生成精确五对象的透明候选并达到 `P3
 pfUI skin 当前使用 `676 × 440` 双栏布局、`350` 高列表和 `376` 高详情区；
 这些值只作为首轮离线几何参考。外层美术允许在不改变点击对象的情况下向上下
 各延展约 `8–12 UI px`，最终位置必须由目标客户端 `/fstack` 和截图复核。
+
+#### 3.1.1 内页沟与装订结构
+
+`QUEST.LOG.SPINE` 只保留为“中央装订结构包”的父级兼容名称，不对应一张
+可直接渲染的外置封脊资产。进入组件生产与 crop manifest 后必须使用以下
+六个稳定子组件 ID：
+
+| ID | 运行时对象／层 | 逻辑职责 | 资产粒度 |
+|---|---|---|---|
+| `QUEST.LOG.GUTTER.UNDERLAY` | `QuestLogFrame` 中央非交互底层 Texture | 向内凹陷的页沟衬布与接触阴影 | 独立纵向可平铺底层 |
+| `QUEST.LOG.GUTTER.LEFT_FOLD` | 左页内缘上方非交互 Texture | 左纸面到页沟的内折过渡 | 独立窄长覆盖层 |
+| `QUEST.LOG.GUTTER.RIGHT_FOLD` | 右页内缘上方非交互 Texture | 右纸面到页沟的内折过渡 | 独立窄长覆盖层 |
+| `QUEST.LOG.GUTTER.STITCH` | 页沟中央非交互 Texture | 局部露出的粗麻装订线周期 | 只有绳线；无皮革底板 |
+| `QUEST.LOG.GUTTER.TOP` | 页沟顶端非交互 Texture | 藏在纸页下方的小型装订收口 | 独立小线结 |
+| `QUEST.LOG.GUTTER.BOTTOM` | 页沟底端非交互 Texture | 藏在纸页下方的小型装订收口 | 独立小线结 |
+
+固定图层顺序为：
+
+1. `QUEST.LOG.SHELL` 的封皮和外围页叠。
+2. `GUTTER.UNDERLAY`、`GUTTER.STITCH`、`GUTTER.TOP`、
+   `GUTTER.BOTTOM`。
+3. `LIST.PAPER` 与 `DETAIL.PAPER` 两张近等宽顶层纸面。
+4. `GUTTER.LEFT_FOLD` 与 `GUTTER.RIGHT_FOLD`。
+5. runtime 文字、滚动条、任务行和按钮。
+
+纸面必须覆盖页沟两侧，麻线只能从中央窄缝局部露出。不得出现正面朝向
+观察者的凸起皮革长条、覆盖正文的束带、横向压条、巨大上下端帽或完整底部
+页块。左右物理纸页保持近等宽；左 `42%`／右 `58%` 只指 runtime 文字阅读
+安全区，由内边距、列宽和滚动条占用实现。
 
 ### 3.2 左页目录
 
@@ -193,7 +224,7 @@ provider。此前把香草 `QuestWatchFrame` 设为第一 provider 的假设已�
 
 | 批次 | 组件 | 输出责任 | 当前状态 |
 |---|---|---|---|
-| `QL-A` | `SHELL`、`LIST.PAPER`、`DETAIL.PAPER`、中央书脊、页叠 | 纯结构资源；分离九宫格／三段式部件 | `QL-A1` 源母版为 `P4`；`QL-A2 V1` 五对象透明候选为 `P3`，待视觉复审 |
+| `QL-A` | `SHELL`、`LIST.PAPER`、`DETAIL.PAPER`、六个 `GUTTER.*` 子组件 | 纯结构资源；近等宽双页、页沟、内折和装订分别裁切 | `QL-A1` 源母版为 `P4`；`QL-A2 V1` 已退回；`QL-A2 V2.1` 八对象透明候选为 `P3`，待视觉复审 |
 | `QL-B` | `LIST.ROW`、`SELECTION`、`TYPE.BADGE`、`STATE.SEAL` | 目录状态覆盖与任务徽记 | 后续任务详情草案 |
 | `QL-C` | 两套 ScrollBar、`CLOSE`、操作按钮、`TRACK`、`DETAIL.TOGGLE`、`LEVELS` | 每个交互对象的完整状态画布 | 后续任务详情草案 |
 | `QL-D` | `REWARD.SLOT`、`DETAIL.DIVIDER` | 奖励槽和非交互墨线 | 后续任务详情草案 |
@@ -207,10 +238,14 @@ provider。此前把香草 `QuestWatchFrame` 设为第一 provider 的假设已�
   与 [manifest](../../assets/source/quests/ql-a1/QL-A1_SourceManifest_v1.json)
   已登记为 `P4`。
 - [QL-A2 可拉伸结构部件 production V1](../../prompts/quests/任务详情可拉伸结构部件_生产提示词_QL-A2_v1.md)：
-  已确认并执行；精确五对象透明候选达到 `P3`，尚未进入 tracked source。
+  已执行但因外置封脊、翻页与图层错误被用户退回，只保留为失败记录。
+- [QL-A2 内页沟结构部件 production V2](../../prompts/quests/任务详情内页沟结构部件_生产提示词_QL-A2_v2.md)：
+  冻结近等宽双页与六个中央结构子组件的八对象合同。
+- [QL-A2 内页沟结构部件 production edit V2.1](../../prompts/quests/任务详情内页沟结构部件_修订提示词_QL-A2_v2.1.md)：
+  固定版本执行；八对象透明候选达到 `P3`，尚未进入 tracked source。
 - [任务详情后续组件资产生产提示词 V2](../../prompts/quests/任务详情组件资产_生产提示词_v2.md)：
-  `QL-A2` 已冻结到上方 production；`QL-B`、`QL-C`、`QL-D` 仍为
-  `production-draft`。
+  `QL-A2` 已冻结到上方 V2／V2.1 production；`QL-B`、`QL-C`、`QL-D`
+  仍为 `production-draft`。
 - [任务追踪组件资产兼容草案 V2](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md)：
   `deferred-compatibility-draft`，不能执行。
 
@@ -218,14 +253,14 @@ provider。此前把香草 `QuestWatchFrame` 设为第一 provider 的假设已�
 
 1. 保持 `QL-A1` 已确认源母版不变：整图不得进入 runtime，不得从旧草案
    无版本重跑。
-2. 用户复审 `generated/quests/QL-A2/v1/QL-A2_v1.png`。接受后才复制到
-   `assets/source/quests/ql-a2/` 并建立确定性 crop manifest；不接受则先
-   创建修订提示词新版本，不能覆盖 V1。
-3. `QL-A2` 候选的离线预演已验证五对象和 `42.1%／57.9%` 页面组合；书脊
-   必须从中段内部提取 `140 × 60` 重复周期，不能直接重复带收边的整块对象。
+2. 保留 `QL-A2 V1` 退回记录，不再从其中提取三段外置封脊或
+   `140 × 60` 周期。
+3. 用户复审 `generated/quests/QL-A2/v2/QL-A2_v2.png` 和确定性重组预演。
+   接受后才复制到 `assets/source/quests/ql-a2/` 并为八个逻辑对象建立
+   crop manifest；不接受则创建新版本，不能覆盖 V2／V2.1。
 4. `QL-A2` 通过并回到目标客户端后，记录 Quest Log 对象是否存在、原始
    尺寸、锚点和层级，再确定最终结构切片、拉伸安全区与 adapter 几何。物理
-   双页接近等宽已被接受，runtime 阅读安全区仍以左 `42%`／右 `58%` 为目标。
+   双页继续接近等宽，runtime 阅读安全区仍以左 `42%`／右 `58%` 为目标。
 5. 先接入 `QUEST.LOG.SHELL`，只改变呈现，不修改事件与数据。
 6. 后续逐批确认并接入左右 ScrollBar、真实 Button 状态、任务行覆盖、日志内
    追踪标记和奖励槽；确认点击区没有改变。
