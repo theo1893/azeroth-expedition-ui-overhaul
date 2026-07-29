@@ -2,16 +2,18 @@
 if not TargetHPText or not TargetHPPercText then return end
 
 pfUI:RegisterModule("turtle-wow", "vanilla", function ()
+  local unitFramesEnabled = pfUI:IsModuleEnabled("player")
+
   -- Turtle WoW's new RaidFrame.lua uses GROUP_REPLACE_PARTY to decide whether to
   -- call ShowPartyFrame(). Since pfUI replaces party frames, always set this so
   -- RaidOptionsFrame_UpdatePartyFrames never tries to restore the Blizzard frames.
-  if C.unitframes.disable ~= "1" then
+  if unitFramesEnabled and C.unitframes.disable ~= "1" then
     GROUP_REPLACE_PARTY = "1"
   end
 
   -- hide Turtle WoW's new compact GroupFrame (GroupClusterFrame1-8) when pfUI
   -- unitframes are active, since pfUI has its own party/raid frames
-  if C.unitframes.disable ~= "1" then
+  if unitFramesEnabled and C.unitframes.disable ~= "1" then
     HookAddonOrVariable("GroupFrame", function()
       local function HideGroupFrames()
         if GroupFrame then
@@ -137,7 +139,7 @@ pfUI:RegisterModule("turtle-wow", "vanilla", function ()
       GameMenuButtonOptions:SetPoint("TOP", GameMenuButtonShop, "BOTTOM", 0, -16)
 
       -- apply pfUI skin to the new shop button
-      if pfUI.skin["Game Menu"] and pfUI_config["disabled"]["skin_Game Menu"] ~= "1" then
+      if pfUI:IsSkinEnabled("Game Menu") then
         local font = GameMenuButtonShop:GetFontString()
         font:SetTextColor(1,1,1,1)
         SkinButton(GameMenuButtonShop)
@@ -269,7 +271,7 @@ pfUI:RegisterModule("turtle-wow", "vanilla", function ()
 
     -- skin title dropdown menu
     -- taken from: https://github.com/doorknob6/pfUI-turtle/blob/master/skins/turtle/character.lua
-    if TWTitles and pfUI.skin["Character"] and pfUI_config["disabled"]["skin_Character"] ~= "1" then
+    if TWTitles and pfUI:IsSkinEnabled("Character") then
       CharacterLevelText:SetPoint("TOP", CharacterNameText, "BOTTOM", 0, -2)
       SkinDropDown(TWTitles)
       TWTitles:SetPoint("TOP", CharacterGuildText, "BOTTOM", 0, -2)
@@ -333,7 +335,7 @@ pfUI:RegisterModule("turtle-wow", "vanilla", function ()
   end
 
   -- add skin to twow's talent inspect frame
-  if pfUI.skin["Inspect"] and pfUI_config["disabled"]["skin_Inspect"] ~= "1" then
+  if pfUI:IsSkinEnabled("Inspect") then
     local initialized = false
 
     HookAddonOrVariable("Blizzard_InspectUI", function()
@@ -377,7 +379,7 @@ pfUI:RegisterModule("turtle-wow", "vanilla", function ()
 
   -- rearrange twow's profession window additions
   HookAddonOrVariable("Blizzard_TradeSkillUI", function()
-    if TradeSkillSkillCheckButton and pfUI.skin["Profession"] and pfUI_config["disabled"]["skin_Profession"] ~= "1" then
+    if TradeSkillSkillCheckButton and pfUI:IsSkinEnabled("Profession") then
       SkinCheckbox(TradeSkillSkillCheckButton)
       TradeSkillSkillCheckButton:SetWidth(24)
       TradeSkillSkillCheckButton:SetHeight(24)

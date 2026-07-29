@@ -34,7 +34,7 @@
 
 | 模块 | 当前结论 | 下一道门 |
 |---|---|---|
-| pfUI 基础 | 可安装维护分支已迁入 `addon/pfUI`；非透明公共材质基线达到 `P5` | Turtle WoW 实机核对所有常用窗口，再逐模块替换 |
+| pfUI 基础 | 可安装维护分支已迁入 `addon/pfUI`；现代可见模块默认回退香草呈现，路由达到 `P5` | Turtle WoW 实机核对原生 Frame 未被隐藏，再逐模块替换 |
 | 聊天 | V3 主框／Tab／输入／未读母版达到 `P4`；legacy 信息底栏已退役 | 复核五张 V3 exporter、UV 和 Lua，再做实机迁移 |
 | 任务 | 详情／追踪视觉达到 `P2` | 按真实 QuestLog／tracker 控件拆分 |
 | 地图 | 大地图／小地图视觉达到 `P2` | 清点 WorldMap 与 Minimap 按钮、遮罩、缩放、插件图标 |
@@ -46,19 +46,38 @@
 | 日期 | 范围 | 结果 | 证据／限制 |
 |---|---|---|---|
 | `2026-07-29` | 仓库结构 | 通过 | Markdown 相对链接、Git whitespace、runtime 媒体引用均通过静态检查 |
-| `2026-07-29` | 聊天 0.4.0 legacy | 通过静态测试 | [`chat_module_smoke.lua`](../../tests/chat_module_smoke.lua) 验证旧书、Tab、输入与 legacy panel 隐藏；不等于目标客户端实机 |
+| `2026-07-29` | 聊天 0.4.1 legacy | 通过静态测试 | [`chat_module_smoke.lua`](../../tests/chat_module_smoke.lua) 验证旧书、Tab、输入、legacy panel 隐藏与 native-first 状态诊断；不等于目标客户端实机 |
 | `2026-07-29` | 聊天 V3 源资产 | 通过离线验证 | 三张母版尺寸与 RGBA Alpha 通过；[`build_chat_v3_layout_preview.py`](../../tools/build_chat_v3_layout_preview.py) 和 [`build_chat_v3_runtime_assets.py`](../../tools/build_chat_v3_runtime_assets.py) 在临时目录成功运行；runtime 仍未接入 |
 | `2026-07-29` | 字体文件 | 校验通过 | [`MANIFEST.sha256`](../../third-party/fonts/MANIFEST.sha256) 三项匹配；Turtle WoW 字体加载仍待实机 |
 | `2026-07-29` | pfUI 维护分支与视觉合同 | 通过静态测试 | [`pfui_expedition_contract_test.lua`](../../tests/pfui_expedition_contract_test.lua) 验证非透明材质配置、香草状态条、成对狮鹫、legacy panel 退役及非视觉配置保持；尚未实机 |
+| `2026-07-29` | pfUI 香草回退路由 | 通过静态测试 | 动作条、导航、单位框、战斗 HUD、背包／拾取、system surfaces 与全部 Blizzard skin 按组跳过；聊天和非呈现功能保留；`turtle-wow.lua` 不再误隐藏原生团队框；尚未实机 |
 | `2026-07-29` | 聊天无信息底栏资源链 | 通过离线验证 | V3 exporter 只产出五张图集，legacy builder 只产出六张资源；普通／聚焦预演无三联 panel；Pillow 12.0.0 smoke 通过 |
+
+## 运行时路由矩阵
+
+本表记录“当前测试包会实际加载什么”，不提升下方组件的最终美术阶段。原生
+回退表示组件仍需后续重绘，不是已经完成 overhaul。
+
+| 路由组 | 当前 pfUI 模块 | 当前结果 | 保留边界 |
+|---|---|---|---|
+| `action_bars` | `actionbar`、`gryphons`、`hunterbar`、`hoverbind` | 不加载 pfUI 呈现；显示原生动作条与双头狮鹫 | 原生按钮、快捷键、姿态和宠物条 |
+| `chat` | `chat` | 加载，供 `AzerothExpeditionUI` 旧书 adapter 使用 | 聊天事件、停靠、输入、历史、Tab 点击 |
+| `chat_auxiliary` | `whisperproxy`、`chatcopy`、`bubbles` | 暂不加载未换肤的附属呈现 | 原生聊天气泡；附属功能待组件化后恢复 |
+| `navigation` | `minimap`、`tracking`、`farmmode`、`addonbuttons`、`map*` | 不加载 pfUI 呈现；显示原生地图／小地图 | 原生地图内容、缩放、追踪与插件按钮 |
+| `unit_frames` | `player`、`target`、`focus`、`targettarget*`、`pet*`、`group`、`raid`、`mouseover`、`uf_tukui` | 不加载 pfUI 呈现；显示原生／Turtle WoW 单位与团队框 | Turtle WoW 兼容模块继续加载，但不得隐藏原生团队框 |
+| `combat_hud` | `castbar`、计时器、Buff、Totem、姓名板、经验条等 | 不加载 pfUI 呈现；使用客户端原生组件 | pfUI 战斗数据库与平台兼容继续可供未来模块复用 |
+| `inventory_and_loot` | `bags`、`itemclick`、`unusable`、`cooldown`、`loot`、`roll` | 不加载 pfUI 呈现；显示原生背包／拾取／Roll | 原生物品操作；自动售卖、修理、售价与任务物品功能另行保留 |
+| `system_surfaces` | `skin`、`tooltip`、`panel`、`addons`、`firstrun`、`thirdparty*`、`bgscore`、`easteregg`、`afkcam`、`addoncompat` | 不加载未重绘可见层；全部 Blizzard skin 也跳过 | `/pfui`、`unlock`、`share` 作为维护工具保留并走非透明公共材质 |
+| `behavior` | `autoshift`、`autovendor`、`questitem`、`sellvalue`、`eqcompare`、`socialmod`、`macrotweak`、`turtle-wow`、`superwow` 等 | 正常加载 | 不因视觉回退改写对应数据、事件或用户开关 |
 
 ## 组件级改造表
 
 | ID | 游戏内组件 | pfUI／原生基础 | 方式 | 阶段 | 源资产／视觉基准 | 原始生产提示词 | runtime／验证 | 下一步 |
 |---|---|---|---|---|---|---|---|---|
 | `CORE.PFUI.FORK` | 可独立安装的 pfUI 功能底座 | pfUI `8.1.0` | fork | `P5` | [上游基线](../../addon/pfUI/UPSTREAM_SNAPSHOT.md) | N/A | [维护分支清单](../../addon/pfUI/AEUI_FORK.md)；静态测试 | Turtle WoW 加载、SavedVariables 与第三方兼容回归 |
-| `CORE.SURFACE` | 大型窗口、紧凑框体、边缘与阴影公共基线 | `pfUI.api.CreateBackdrop` | refactor | `P5` baseline | [统一美术方向](../ART_DIRECTION.md)；香草内置 Dialog／Tooltip 材质 | N/A（使用客户端内置材质） | [expedition.lua](../../addon/pfUI/api/expedition.lua)、[api.lua](../../addon/pfUI/api/api.lua)；静态测试 | 主城／副本／团本逐窗口实机审计；最终资产仍按组件拆分 |
-| `CORE.STATUS` | 血量、能量、施法及其他状态条过渡材质 | pfUI status texture 配置 | adapter | `P5` baseline | 香草内置 `UI-StatusBar` | N/A（使用客户端内置材质） | [expedition.lua](../../addon/pfUI/api/expedition.lua)；静态测试 | 为单位框、团队、施法条分别建立端帽／背景／填充合同 |
+| `CORE.NATIVE.FALLBACK` | 未完成组件的香草／Turtle WoW 原生呈现路由 | `pfUI:LoadModule`／`LoadSkin` | adapter | `P5` | 客户端原生 Frame；无仓库位图 | N/A（加载路由，不生产资产） | [expedition.lua](../../addon/pfUI/api/expedition.lua)、[pfUI.lua](../../addon/pfUI/pfUI.lua)、[turtle-wow.lua](../../addon/pfUI/modules/turtle-wow.lua)；静态测试 | 实机验证动作条、团队、背包、拾取、地图和所有系统窗口 |
+| `CORE.SURFACE` | 大型窗口、紧凑框体、边缘与阴影公共基线 | `pfUI.api.CreateBackdrop` | refactor | `P5` compatibility baseline | [统一美术方向](../ART_DIRECTION.md)；香草内置 Dialog／Tooltip 材质 | N/A（使用客户端内置材质） | [expedition.lua](../../addon/pfUI/api/expedition.lua)、[api.lua](../../addon/pfUI/api/api.lua)；当前用于维护工具与显式 opt-in 模块 | 主城／副本／团本逐窗口实机审计；最终资产仍按组件拆分 |
+| `CORE.STATUS` | 血量、能量、施法及其他状态条过渡材质 | pfUI status texture 配置 | adapter | `P5` compatibility baseline | 香草内置 `UI-StatusBar` | N/A（使用客户端内置材质） | [expedition.lua](../../addon/pfUI/api/expedition.lua)；默认香草回退时不接管原生状态条 | 为单位框、团队、施法条分别建立端帽／背景／填充合同 |
 | `CORE.MEDIA` | 媒体注册与回退 | `pfUI.api`、插件路径 | extension | `P1` | [字体媒体](../../addon/AzerothExpeditionUI/Media/Fonts/README.md) | — | [Bootstrap.lua](../../addon/AzerothExpeditionUI/Core/Bootstrap.lua) | 建立 MediaRegistry 和缺失回退 |
 | `CORE.9SLICE` | 九宫格容器 | Vanilla Texture API | extension | `P1` | [聊天组件合同](CHAT_COMPONENT_SPEC.md) | — | [Chat.lua](../../addon/AzerothExpeditionUI/Modules/Chat.lua) 内部实现 | 抽成共用组件并锁 UV manifest |
 | `CORE.3SLICE` | 三段式按钮／Tab／输入条 | Vanilla Texture API | extension | `P1` | [V3 Tab 母版](../../assets/source/chat/v3/ChatTabs_Master_v3.png)；[V3 控件母版](../../assets/source/chat/v3/ChatControls_Master_v3.png) | [V3 原始提示词](../../prompts/chat/聊天框模块化资源_执行提示词_v3.md) | 尚未共用 | 建立端帽／中央段工厂 |
@@ -71,10 +90,10 @@
 | `CHAT.TABS` | Tab 承托带；普通／悬停／选中／禁用 | `ChatFrameNTab`、`panelTop` | adapter | `P4` V3／`P5` legacy | [V3 Tab 母版](../../assets/source/chat/v3/ChatTabs_Master_v3.png) | [V3 原始提示词](../../prompts/chat/聊天框模块化资源_执行提示词_v3.md) | 旧资源只接入三状态 | 接入统一 atlas；确认禁用状态来源 |
 | `CHAT.UNREAD` | 未读蜡封／布结 | `ChatFrameNTabFlash` | adapter | `P4` V3／`P5` legacy | [V3 控件母版](../../assets/source/chat/v3/ChatControls_Master_v3.png) | [V3 原始提示词](../../prompts/chat/聊天框模块化资源_执行提示词_v3.md) | 旧 `ChatWaxSeal.tga` 已接入 | 用 V3 未读切片替换 |
 | `CHAT.INPUT` | 输入条普通／聚焦 | `pfUI.chat.editbox`、`ChatFrameEditBox` | adapter | `P4` V3／`P5` legacy | [V3 控件母版](../../assets/source/chat/v3/ChatControls_Master_v3.png) | [V3 provenance](../../prompts/chat/聊天框模块化资源_执行提示词_v3.md)；[V4 修订约束](../../prompts/chat/聊天框模块化资源_修订约束_v4.md) | 旧资源未区分聚焦 | 接入两状态 atlas，不改变正文高度 |
-| `CHAT.LEGACY.PANEL` | 公会／背包空间／耐久／好友／延迟／时钟／金币等旧信息底栏 | `pfUI.panel.left/right/minimap` | unmount | `P5` | 无 runtime 美术；widget 代码保留 | [V4 移除约束](../../prompts/chat/聊天框模块化资源_修订约束_v4.md) | [expedition.lua](../../addon/pfUI/api/expedition.lua)、[Chat.lua](../../addon/AzerothExpeditionUI/Modules/Chat.lua)；smoke | 实机确认聊天与小地图下方均无常驻 panel |
+| `CHAT.LEGACY.PANEL` | 公会／背包空间／耐久／好友／延迟／时钟／金币等旧信息底栏 | `pfUI.panel.left/right/minimap` | unmount | `P5` | 无 runtime 美术；widget 代码保留 | [V4 移除约束](../../prompts/chat/聊天框模块化资源_修订约束_v4.md) | 默认路由不加载 `panel`；[Chat.lua](../../addon/AzerothExpeditionUI/Modules/Chat.lua) 仍提供二次隐藏；smoke | 实机确认聊天与小地图下方均无常驻 panel |
 | `CHAT.TEXT` | 正文安全区与排版 | `ChatFrameN` | adapter | `P5` | 无美术资产 | N/A | `380×236`／16 行预演 | 实机验证 UI Scale 与长中文 |
 | `CHAT.SCROLL` | 滚轮、复制、滚动控制 | pfUI chat／chatcopy | skin | `P1` | — | — | 未换肤 | 先确认实际显示 Frame |
-| `CHAT.WHISPER` | whisper proxy／独立密语入口 | pfUI whisperproxy | N/A | `N/A` | — | — | 当前明确不做 | 用户扩大范围后立项 |
+| `CHAT.WHISPER` | whisper proxy／独立密语入口 | pfUI whisperproxy | replacement candidate | `P5` route／`P0` final | — | — | 未换肤的可见入口默认不加载 | 映射输入、目标、关闭和转发状态后再恢复 |
 | `QUEST.LOG.FRAME` | 按 L 打开的双页任务卷宗 | `skins/blizzard/questlog.lua` | replacement | `P2` | [详情基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | [视觉原型提示词](../../prompts/quests/任务模块_视觉原型提示词_v1.md) | — | 截取真实 QuestLog Frame 树 |
 | `QUEST.LOG.LIST` | 地域分组、任务列表、选中状态 | QuestLog list buttons | refactor | `P2` | [详情基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | [视觉原型提示词](../../prompts/quests/任务模块_视觉原型提示词_v1.md) | — | 拆分行、展开箭头、滚动条、选中书签 |
 | `QUEST.LOG.DETAIL` | 标题、正文、目标、奖励、页码 | QuestLog detail | refactor | `P2` | [详情基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | [视觉原型提示词](../../prompts/quests/任务模块_视觉原型提示词_v1.md) | — | 定义文字安全区与奖励槽 |
@@ -96,7 +115,7 @@
 | `CHAR.STATS` | 双列属性与下拉分类 | PaperDoll stats | refactor | `P2` | [角色模块规范](../modules/character/角色属性模块视觉规范_香草同构角色面板_v1.md) | — | — | 先确认 Turtle WoW 扩展字段 |
 | `CHAR.TABS` | 角色／声望／技能／PVP | CharacterFrame tabs | refactor | `P2` | [V3 基准](../../assets/locked/character/角色属性面板_香草同构收敛_风格确认_v3.png) | — | — | 每个 Tab 共用状态画布 |
 | `CHAR.INSPECT` | 查看与试衣 | `inspect.lua`、`dressup.lua` | skin | `P1` | [角色模块规范](../modules/character/角色属性模块视觉规范_香草同构角色面板_v1.md) | — | — | 复用角色组件库 |
-| `HUD.ACTION.MAIN` | 主动作条与双头狮鹫 | `actionbar.lua`、`gryphons.lua` | adapter baseline／replacement final | `P5` baseline／`P1` final | [美术方向](../ART_DIRECTION.md)；香草内置狮鹫端饰 | N/A baseline；最终提示词待写 | [expedition.lua](../../addon/pfUI/api/expedition.lua) 恢复成对狮鹫 | 实机校验位置与缩放，再按真实按钮拆分最终动作条 |
+| `HUD.ACTION.MAIN` | 主动作条与双头狮鹫 | 原生 `MainMenuBar`；pfUI `actionbar.lua`、`gryphons.lua` 待重构 | native fallback／replacement final | `P5` route／`P1` final | [美术方向](../ART_DIRECTION.md)；客户端原生双头狮鹫 | N/A route；最终提示词待写 | `CORE.NATIVE.FALLBACK` 保留原生动作条；pfUI 现代条不加载 | 实机校验原生按钮、翻页、姿态和双狮鹫，再按真实按钮拆分最终动作条 |
 | `HUD.ACTION.EXTRA` | 多动作条、姿态、宠物、背包、微菜单 | actionbar／pet | refactor | `P1` | — | — | — | 按真实 Button 分组拆分 |
 | `HUD.ACTION.STATE` | 可用、悬停、按下、冷却、缺资源、超距 | actionbar／cooldown／unusable | refactor | `P1` | — | — | pfUI 功能复用 | 先定义统一 IconSlot |
 | `HUD.UNIT.PLAYER` | 玩家头像、血量、资源、状态 | player／unitframes API | replacement | `P1` | — | — | — | 获取香草与 pfUI 玩家框对照截图 |

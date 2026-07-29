@@ -3,7 +3,7 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 
 addon.name = "AzerothExpeditionUI"
-addon.version = "0.4.0"
+addon.version = "0.4.1"
 addon.modules = addon.modules or {}
 addon.media = addon.media or {}
 addon.media.root = "Interface\\AddOns\\AzerothExpeditionUI\\Media\\"
@@ -129,11 +129,25 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
     addon:Refresh()
     addon:Print("visual adapters refreshed.")
   elseif command == "status" then
+    local expedition =
+      pfUI_config and
+      pfUI_config.appearance and
+      pfUI_config.appearance.expedition
+    local nativeFallback =
+      expedition and
+      expedition.enabled == "1" and
+      expedition.vanilla_fallback == "1"
+    local nativeSkins =
+      expedition and
+      expedition.enabled == "1" and
+      expedition.native_blizzard_skins == "1"
     addon:Print(
       "version " .. addon.version ..
       ", chat=" ..
       (AzerothExpeditionUIDB.chat.enabled and "enabled" or "disabled") ..
-      ", pfUI=" .. (pfUI and "available" or "missing")
+      ", pfUI=" .. (pfUI and "available" or "missing") ..
+      ", route=" .. (nativeFallback and "native-first" or "pfui") ..
+      ", blizzard-skins=" .. (nativeSkins and "native" or "pfui")
     )
   else
     addon:Print("/aeui chat, /aeui refresh, /aeui status")

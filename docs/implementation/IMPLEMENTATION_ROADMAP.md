@@ -6,6 +6,8 @@
 ## 0. 基础与兼容层
 
 - 记录 Turtle WoW `1.18.1` 客户端、Lua／XML API、pfUI 版本和加载顺序。
+- 未达到组件级 runtime 门槛的可见 pfUI 模块先按依赖组回退原生 Frame，
+  保留非呈现功能，并用实机测试确认客户端原生 UI 没有被误隐藏。
 - 建立 `PfUIBridge`、`MediaRegistry` 与缺失对象的局部回退。
 - 从聊天实现中提取九宫格、三段式、Button、Tab、StatusBar 和 IconSlot
   等已被真实模块使用的公共组件。

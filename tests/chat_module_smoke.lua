@@ -169,6 +169,9 @@ pfUI = {
 pfUI_config = {
   appearance = {
     expedition = {
+      enabled = "1",
+      vanilla_fallback = "1",
+      native_blizzard_skins = "1",
       legacy_info_panels = "0",
     },
   },
@@ -213,6 +216,18 @@ assert(
   "selected chat tab texture was not applied"
 )
 assert(refreshCount >= 1, "pfUI chat refresh was not retained")
+
+SlashCmdList.AZEROTHEXPEDITIONUI("status")
+local statusMessage =
+  DEFAULT_CHAT_FRAME.messages[#DEFAULT_CHAT_FRAME.messages] or ""
+assert(
+  string.find(statusMessage, "route=native-first", 1, true),
+  "status command did not report the native-first route"
+)
+assert(
+  string.find(statusMessage, "blizzard-skins=native", 1, true),
+  "status command did not report native Blizzard skins"
+)
 
 local geometryTargets = {
   ChatFrame1,

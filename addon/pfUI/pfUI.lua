@@ -278,12 +278,40 @@ function pfUI:RegisterSkin(name, a2, a3)
   end
 end
 
+function pfUI:IsModuleEnabled(name)
+  if not pfUI.module[name] then return false end
+  if pfUI_config["disabled"] and
+    pfUI_config["disabled"][name] == "1" then
+    return false
+  end
+  if pfUI.ShouldUseVanillaModule and
+    pfUI:ShouldUseVanillaModule(name) then
+    return false
+  end
+  return true
+end
+
+function pfUI:IsSkinEnabled(name)
+  if not pfUI.skin[name] then return false end
+  if pfUI_config["disabled"] and
+    pfUI_config["disabled"]["skin_" .. name] == "1" then
+    return false
+  end
+  if pfUI.ShouldUseVanillaSkin and
+    pfUI:ShouldUseVanillaSkin(name) then
+    return false
+  end
+  return true
+end
+
 function pfUI:LoadModule(m)
+  if not pfUI:IsModuleEnabled(m) then return end
   setfenv(pfUI.module[m], pfUI:GetEnvironment())
   pfUI.module[m]()
 end
 
 function pfUI:LoadSkin(s)
+  if not pfUI:IsSkinEnabled(s) then return end
   setfenv(pfUI.skin[s], pfUI:GetEnvironment())
   pfUI.skin[s]()
 end
@@ -322,14 +350,14 @@ pfUI:SetScript("OnEvent", function()
 
     -- load modules
     for _, m in pairs(this.modules) do
-      if not ( pfUI_config["disabled"] and pfUI_config["disabled"][m]  == "1" ) then
+      if pfUI:IsModuleEnabled(m) then
         pfUI:LoadModule(m)
       end
     end
 
     -- load skins
     for _, s in pairs(this.skins) do
-      if not ( pfUI_config["disabled"] and pfUI_config["disabled"]["skin_" .. s]  == "1" ) then
+      if pfUI:IsSkinEnabled(s) then
         pfUI:LoadSkin(s)
       end
     end

@@ -70,6 +70,15 @@ def main() -> None:
         encoding="utf-8-sig"
     )
     assert "## RequiredDeps: pfUI" in aeui_toc
+    assert "## Version: 0.4.1" in aeui_toc
+    bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(
+        encoding="utf-8"
+    )
+    assert 'addon.version = "0.4.1"' in bootstrap
+
+    for toc_name in ("pfUI.toc", "pfUI-tbc.toc"):
+        toc_source = (pfui / toc_name).read_text(encoding="utf-8-sig")
+        assert "## Version: 8.1.0-aeui.2" in toc_source
 
     assert not (aeui / "Media" / "Chat" / "ChatPanelSegment.tga").exists()
     chat_source = (aeui / "Modules" / "Chat.lua").read_text(encoding="utf-8")
@@ -78,7 +87,69 @@ def main() -> None:
 
     expedition = (pfui / "api" / "expedition.lua").read_text(encoding="utf-8")
     assert 'legacy_info_panels = "0"' in expedition
+    assert 'vanilla_fallback = "1"' in expedition
+    assert 'native_blizzard_skins = "1"' in expedition
     assert "ApplyExpeditionVisualContract" in expedition
+    assert "ShouldUseVanillaModule" in expedition
+    assert "ShouldUseVanillaSkin" in expedition
+
+    fallback_block = expedition.split(
+        "local vanillaModuleGroups = {", 1
+    )[1].split("for group, modules", 1)[0]
+    fallback_modules = set(re.findall(r'"([^"]+)"', fallback_block))
+    modules_xml = (pfui / "init" / "modules.xml").read_text(
+        encoding="utf-8"
+    )
+    registered_module_files = set(
+        re.findall(r'modules\\([^"\\]+)\.lua', modules_xml)
+    )
+    retained_modules = {
+        "gui",
+        "unlock",
+        "updatenotify",
+        "chat",
+        "autoshift",
+        "autovendor",
+        "questitem",
+        "sellvalue",
+        "eqcompare",
+        "custom",
+        "gm",
+        "feigndeath",
+        "pixelperfect",
+        "hdgraphic",
+        "share",
+        "socialmod",
+        "screenshot",
+        "combatlogfix",
+        "macrotweak",
+        "turtle-wow",
+        "superwow",
+    }
+    assert not retained_modules & fallback_modules, (
+        "a retained behavior module was routed out of the runtime: "
+        f"{sorted(retained_modules & fallback_modules)}"
+    )
+    unclassified = (
+        registered_module_files - fallback_modules - retained_modules
+    )
+    assert not unclassified, (
+        "pfUI modules lack an explicit native-fallback/retained classification: "
+        f"{sorted(unclassified)}"
+    )
+
+    pfui_core = (pfui / "pfUI.lua").read_text(encoding="utf-8")
+    assert "function pfUI:IsModuleEnabled" in pfui_core
+    assert "function pfUI:IsSkinEnabled" in pfui_core
+    assert "if not pfUI:IsModuleEnabled(m) then return end" in pfui_core
+    assert "if not pfUI:IsSkinEnabled(s) then return end" in pfui_core
+
+    turtle = (pfui / "modules" / "turtle-wow.lua").read_text(
+        encoding="utf-8"
+    )
+    assert 'pfUI:IsModuleEnabled("player")' in turtle
+    for skin in ("Game Menu", "Character", "Inspect", "Profession"):
+        assert f'pfUI:IsSkinEnabled("{skin}")' in turtle
 
     for markdown in ROOT.rglob("*.md"):
         if ".git" not in markdown.parts:

@@ -50,6 +50,9 @@
 - Hook 后不得在低频维护循环中持续改写 Parent、Point、Width、Height。
 - 模块必须能够单独启用、禁用；公共基线可通过
   `pfUI_config.appearance.expedition.enabled` 回退。
+- 尚未完成组件级重绘的 pfUI 可见替换模块通过
+  `vanilla_fallback` 在加载前路由到客户端原生呈现；该路由不能写入或覆盖
+  用户的 `pfUI_config.disabled`。
 - pfUI 对象不存在或版本不匹配时，模块失败应局部降级，不能阻止整个插件加载。
 - 直接改动 pfUI 时记录上游文件、提交、修改原因和功能边界。
 - 测试客户端的临时 SavedVariables 与实验改动不得反向污染维护分支。
@@ -98,13 +101,16 @@ addon/pfUI/
 
 - pfUI 继续负责窗口、停靠、拖动、滚动、历史、输入和 Tab 点击。
 - 本插件负责书框九宫格、正文安全区、Tab 状态和输入条。
-- pfUI legacy 信息 widget 仍保留，但聊天／小地图底栏默认不挂载。
-- 当前 Lua 仍加载 `0.4.0` legacy 主框／Tab／输入／未读资产。
+- pfUI legacy 信息 widget 源码仍保留，但 panel 呈现模块默认不加载，聊天／
+  小地图底栏也不挂载。
+- 当前 Lua 仍加载 `0.4.1` legacy 主框／Tab／输入／未读资产。
 - V3 组件母版已经在 `assets/source/chat/v3/`，但尚未导出并接入运行时。
 
-仍由 pfUI 绘制、且尚未获得模块专属资产的界面，先经过统一的非透明材质
-backdrop 与香草状态条基线。这能消除全局半透明方块，但不等同于各模块最终
-资产完成；具体阶段以 tracker 为准。
+尚未获得模块专属资产的游戏界面不再先显示 pfUI 的现代几何：动作条、单位框、
+小地图、地图、背包、拾取、Buff、姓名板、Tooltip 和全部 Blizzard skin
+默认保留香草／Turtle WoW 原生呈现。pfUI 的非视觉功能与维护工具继续加载；
+维护工具和未来 opt-in 模块使用统一的非透明材质 backdrop。这个回退只是安全
+的测试基线，不等同于各模块最终资产完成；具体阶段以 tracker 为准。
 
 其他模块必须先完成 pfUI／原生 Frame 清单与逻辑资产表，不能直接从整张视觉
 原型开始切图。

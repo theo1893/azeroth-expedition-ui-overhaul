@@ -36,6 +36,7 @@ pfUI_config = {
   global = {
     autosell = "0",
     autorepair = "1",
+    font_blizzard = "0",
   },
   chat = {
     global = {
@@ -65,6 +66,37 @@ assert(border.color == "0.64,0.48,0.25,1")
 assert(border.shadow == "1")
 assert(tonumber(border.shadow_intensity) >= 0.45)
 assert(tonumber(pfUI.expedition.alpha_floor) >= 0.92)
+assert(pfUI_config.global.font_blizzard == "1")
+
+local vanillaModules = {
+  actionbar = "action_bars",
+  panel = "system_surfaces",
+  minimap = "navigation",
+  player = "unit_frames",
+  raid = "unit_frames",
+  bags = "inventory_and_loot",
+  loot = "inventory_and_loot",
+  nameplates = "combat_hud",
+}
+for name, expectedGroup in pairs(vanillaModules) do
+  local fallback, group = pfUI:ShouldUseVanillaModule(name)
+  assert(fallback, name .. " did not route to its native presentation")
+  assert(group == expectedGroup, name .. " has the wrong fallback group")
+end
+
+for _, name in ipairs({
+  "chat", "gui", "autovendor", "questitem", "sellvalue",
+  "turtle-wow", "superwow",
+}) do
+  assert(
+    not pfUI:ShouldUseVanillaModule(name),
+    name .. " is a retained behavior module and must remain loaded"
+  )
+end
+assert(
+  pfUI:ShouldUseVanillaSkin("Character"),
+  "Blizzard window skins did not route to native presentation"
+)
 
 for _, value in pairs(pfUI_config.panel.left) do
   assert(value == "none", "left chat info slot remains visible")
@@ -116,5 +148,12 @@ pfUI:ApplyExpeditionVisualContract()
 assert(pfUI_config.panel.left.left == "guild")
 assert(pfUI_config.panel.right.left == "fps")
 assert(pfUI_config.panel.other.minimap == "zone")
+
+-- Both routing layers are opt-out for upstream comparison and emergency
+-- compatibility checks.
+pfUI_config.appearance.expedition.vanilla_fallback = "0"
+pfUI_config.appearance.expedition.native_blizzard_skins = "0"
+assert(not pfUI:ShouldUseVanillaModule("actionbar"))
+assert(not pfUI:ShouldUseVanillaSkin("Character"))
 
 print("pfUI expedition visual contract test passed")

@@ -15,7 +15,7 @@
 - 组件合同：[CHAT_COMPONENT_SPEC.md](implementation/CHAT_COMPONENT_SPEC.md)
 
 不可重新解释为现代半透明聊天面板。厚封皮、多层毛边书页、皮革索引签与纸面文字属于不可变特征。
-当前插件仍加载 `0.4.0` legacy 主框／Tab／输入／未读资源；legacy 信息底栏
+当前插件仍加载 `0.4.1` legacy 主框／Tab／输入／未读资源；legacy 信息底栏
 已退役，V3 源资产尚未接入 runtime。
 
 ### 任务模块：公会任务卷宗与行军便笺 V1
