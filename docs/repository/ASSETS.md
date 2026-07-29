@@ -36,3 +36,16 @@
 - 源资产、原始提示词和 runtime 路径登记到
   [OVERHAUL_TRACKER.md](../implementation/OVERHAUL_TRACKER.md)。
 - runtime 资源只能由确定性脚本输出到插件 `Media/`。
+
+## `P6-C` 收口
+
+组件通过 `P6` 实机验收后，先确认最终 source／manifest、exporter、runtime、
+实现和实机证据完整，再形成精确清理清单并取得用户确认。
+
+收口时删除该组件的 `generated/` raw、失败候选、透明中间图、调试合成、预演
+和临时 atlas；移除已经失去维护或验收职责的 component-only 故障参考、实验
+脚本和 source 目录中的过程预览。保留 accepted source、最终 manifest、最终
+deterministic exporter、runtime 媒体和仍被其他组件引用的公共资产。
+
+不得按模块根目录批量删除，也不得删除锁定基准、共享工具、第三方来源、许可证
+或用户原始文件。清理和复测通过后，在 tracker 标记 `P6-C`。

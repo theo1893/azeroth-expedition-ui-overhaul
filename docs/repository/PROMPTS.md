@@ -28,3 +28,14 @@
    等于综合色觉通过。
 7. 用户明确确认具体透明母版后才进入 `assets/source/`。
 8. 每次执行、退回、确认和路径变化同时更新 overhaul tracker。
+
+## `P6-C` 收口
+
+活跃生产期间保留每个已执行和被拒版本，禁止覆盖历史正文。组件达到 `P6` 后，
+先把最终执行正文、实际 revised prompt、必要会话／结果 ID、输入职责和校验值
+收敛到最终 provenance prompt 与 manifest。
+
+用户确认精确清理清单后，可从当前树删除已被上述最终 provenance 概括的
+`production-draft`、rejected／superseded prompt 和逐次审查记录；Git 历史
+继续承担完整追溯。最终树只保留能解释 accepted source 和 runtime 的最终提示
+词，不保留重复版本流水。

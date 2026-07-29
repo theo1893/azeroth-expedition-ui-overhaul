@@ -33,6 +33,7 @@
 | 生图／修图提示词变化 | `prompts/<module>/<version>.md`；`implementation/OVERHAUL_TRACKER.md` | 对应模块规范 |
 | 资产生成／审查工作流变化 | `ASSET_PIPELINE.md`；对应 `.codex/skills/` | `SESSION_DECISIONS.md`、`AGENTS.md` |
 | 源资产确认、切片或 runtime 媒体变化 | 对应 source／media 清单；组件合同；`implementation/OVERHAUL_TRACKER.md` | `ASSET_PIPELINE.md`、`repository/TOOLS.md` |
+| `P6 → P6-C` 组件终态收口 | 最终 source／runtime manifest；组件合同；`implementation/OVERHAUL_TRACKER.md`；独立清理提交 | 模块规范、`SESSION_DECISIONS.md`、`repository/ASSETS.md`、`repository/PROMPTS.md` |
 | 字体、许可证或第三方材料变化 | `legal/` 对应清单；`NOTICE.md`；校验凭据 | `implementation/FONT_SYSTEM.md` |
 | Turtle WoW 实机验证 | `implementation/OVERHAUL_TRACKER.md` 的验证记录和阶段 | 发现偏差时更新实现说明、模块规范或决策记录 |
 | 新增、移动或删除文档 | `docs/README.md` | `AGENTS.md`、根 `README.md` |
@@ -50,6 +51,8 @@
 5. 若新增文档，在 `docs/README.md` 写明唯一职责和更新时机。
 6. 运行仓库契约、Markdown 链接、Lua 语法和相关 smoke test。
 7. 只有目标客户端实机通过后，才把组件从 `P5` 提升到 `P6`。
+8. `P6` 后按资产工作流生成精确保留／删除清单；用户确认、清理中间产物并
+   复测后，使用独立提交提升为 `P6-C`。
 
 ## 去重与生命周期
 
@@ -61,6 +64,8 @@
   当前说明。
 - `AGENTS.md` 只声明代理必须始终遵守的全局规则，不复制聊天、任务或其他
   模块的当前状态；代理按其中的路由读取对应权威文件。
+- `P6-C` 收口时删除当前树中的过程性冗余，Git 历史承担历史追溯；最终树只
+  保留维护、再生、运行和验收仍必需的文件。
 - 文档失去唯一职责时，应合并到权威文件并删除旧文件，不能留下“已弃用”
   空壳。
 
@@ -72,5 +77,7 @@
 - 新组件在 tracker 中有稳定 ID、资产、提示词、runtime 和下一步。
 - 资产状态没有把“生成完成”“内部审查”“用户接受”“runtime 接入”混为一项。
 - `AGENTS.md` 没有新增任何模块当前版本、阶段、候选或下一步。
+- `P6-C` 组件没有残留 raw、失败候选、预演、临时 atlas、过时 prompt 或
+  重复过程叙述，且没有删除共享依赖。
 - 代码行为、TOC 版本、runtime 媒体清单与文档描述一致。
 - 实机未验证的内容没有标记为 `P6`。

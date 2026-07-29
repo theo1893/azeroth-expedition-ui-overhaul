@@ -45,6 +45,10 @@ def main() -> None:
             "[repository-sync.md](references/repository-sync.md)",
             "[record-templates.md](references/record-templates.md)",
             "inspect_candidate.py",
+            "| finish, close, compact, clean completed work | `close`",
+            "Do not remove intermediate or superseded files before `P6`",
+            "## Close after P6",
+            "`P6-C / component-closed`",
             "Do not describe ignored generated files as durable cross-device assets",
         ),
         "asset workflow skill",
@@ -61,9 +65,12 @@ def main() -> None:
             "`candidate-reviewed → source-accepted`",
             "`source-accepted → runtime-exported`",
             "`runtime-exported → game-validated`",
+            "`game-validated → closure-planned`",
+            "`closure-planned → component-closed`",
             "技术指标",
             "用户明确接受具体候选",
             "执行过的提示词正文不可原地覆盖",
+            "完整历史由 Git 保存",
         ),
         "asset workflow state machine",
     )
@@ -121,6 +128,25 @@ def main() -> None:
         assert "run-aeui-asset-workflow" in source, (
             f"{label} does not route work through the workflow skill"
         )
+        assert "P6-C" in source, (
+            f"{label} does not require terminal component closure"
+        )
+
+    repository_sync = (
+        SKILL / "references" / "repository-sync.md"
+    ).read_text(encoding="utf-8")
+    require(
+        repository_sync,
+        (
+            "## `P6-C` 终态收口",
+            "### 保留",
+            "### 清理",
+            "精确清单",
+            "不得对",
+            "独立提交",
+        ),
+        "terminal cleanup rules",
+    )
 
     print("asset workflow skill contract test passed")
 

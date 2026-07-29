@@ -1,6 +1,6 @@
 ---
 name: run-aeui-asset-workflow
-description: "Run the repository-specific Azeroth Expedition UI component-asset workflow from contract and versioned prompt through fixed ImageGen 0.143.0 execution, semantic and technical review, revision, explicit user acceptance or rejection, source promotion, deterministic runtime export, tracker synchronization, and validation. Use when generating, editing, reviewing, accepting, rejecting, promoting, or exporting AEUI bitmap assets, or when the user asks to continue the next UI asset step."
+description: "Run the repository-specific Azeroth Expedition UI component-asset workflow from contract and versioned prompt through fixed ImageGen 0.143.0 execution, semantic and technical review, revision, explicit user acceptance or rejection, source promotion, deterministic runtime export, tracker synchronization, target-client validation, and post-P6 closure cleanup. Use when generating, editing, reviewing, accepting, rejecting, promoting, exporting, validating, closing, or cleaning a fully accepted AEUI component, or when the user asks to continue the next UI asset step."
 ---
 
 # AEUI Asset Workflow
@@ -43,10 +43,12 @@ Infer only the narrowest operation authorized by the user:
 | accept, lock this asset | `accept` | confirmed source at `P4` |
 | slice, atlas, integrate | `export` | tested runtime at `P5` |
 | validate in Turtle WoW | `game-validate` | `P6` only after real-client evidence |
+| finish, close, compact, clean completed work | `close` | `P6-C` after an approved cleanup plan |
 
 “Continue” means proceed through the next unblocked gate shown by the tracker. It never
 means silently accepting a candidate, promoting a source, or inventing missing runtime
-geometry.
+geometry. It also never authorizes deleting intermediate files; closure requires a
+version-specific cleanup plan and explicit user confirmation.
 
 If the user asks only for an assessment, stay read-only. If the user explicitly asks to
 generate, revise, accept, or export, perform the normal repository writes for that
@@ -64,6 +66,8 @@ operation.
 7. Do not export runtime media until the accepted source, crop/UV contract, safe areas,
    stretch rules, and target Frame geometry are known.
 8. Do not mark `P6` without evidence from Turtle WoW `1.18.1`.
+9. Do not remove intermediate or superseded files before `P6`, a verified final keep set,
+   an exact cleanup inventory, and explicit user approval.
 
 When a gate is blocked, state the missing evidence and perform any useful read-only
 inspection still in scope. Do not create plausible-looking placeholder controls.
@@ -131,6 +135,11 @@ expose perspective, overlap, safe-area, stretch, and layer errors.
 5. Keep all failed images ignored under `generated/`; record durable rejection reasons in
    the prompt and tracker. Never create source or runtime files for a rejected version.
 
+Preserve this evidence while production is active. After `P6`, the closure operation may
+remove superseded tracked prompts and detailed attempt logs from the current tree only
+after their necessary final provenance has been condensed and the user approves the exact
+cleanup plan. Git history remains the historical archive.
+
 ## Accept
 
 Acceptance must be explicit and version-specific. Then:
@@ -153,6 +162,25 @@ Mark `P5` only after static and relevant smoke tests pass. Mark `P6` only after 
 Turtle WoW screenshots and interaction checks confirm scale, hit regions, state changes,
 text safety, layering, fallback, and unaffected nonvisual behavior.
 
+## Close after P6
+
+Treat `P6` as fully accepted in game but not yet repository-closed. Read the terminal
+cleanup rules in [repository-sync.md](references/repository-sync.md), then:
+
+1. Verify the final prompt provenance, accepted source and manifest, deterministic
+   exporter, runtime media/manifest, implementation, and P6 evidence.
+2. Produce an exact component-scoped keep/delete inventory. Exclude shared assets, shared
+   tools, active locked baselines, third-party evidence, licenses, and user originals.
+3. Show the inventory to the user and obtain explicit approval before deletion.
+4. Remove ignored raw/candidates/previews, superseded tracked prompts, obsolete
+   component-only references/tools, and duplicated process narration approved in the
+   plan. Do not purge Git history.
+5. Compact the component specification and tracker to final contracts, final paths,
+   final validation, and one concise closure result.
+6. Run all relevant tests and confirm the checkout contains no dangling links or
+   references to deleted files.
+7. Mark `P6-C / component-closed` only in the same dedicated cleanup commit.
+
 ## Handoff
 
 End each operation with:
@@ -161,6 +189,7 @@ End each operation with:
 - the current workflow substate and project phase;
 - the verdict or artifact paths;
 - the first remaining gate;
+- for closure, the approved keep/delete inventory and final retained paths;
 - tests run and their results;
 - whether files are only local, committed, synchronized, or pushed.
 

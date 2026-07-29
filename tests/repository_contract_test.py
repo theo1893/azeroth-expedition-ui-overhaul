@@ -65,6 +65,7 @@ def main() -> None:
     assert "## 模块信息路由" in agents_source
     assert "run-aeui-asset-workflow" in agents_source
     assert "imagegen-0-143-0" in agents_source
+    assert "P6-C" in agents_source
     for forbidden in (
         "## 聊天模块当前边界",
         "## 任务模块当前边界",
@@ -84,6 +85,37 @@ def main() -> None:
         "addon must contain runtime files and required licenses, not Markdown: "
         f"{[path.relative_to(ROOT).as_posix() for path in addon_markdown]}"
     )
+
+    closure_documents = (
+        docs / "ASSET_PIPELINE.md",
+        docs / "WORKFLOW.md",
+        docs / "repository" / "ASSETS.md",
+        docs / "repository" / "PROMPTS.md",
+        docs / "implementation" / "IMPLEMENTATION_ROADMAP.md",
+        docs / "implementation" / "OVERHAUL_TRACKER.md",
+    )
+    for document in closure_documents:
+        source = document.read_text(encoding="utf-8")
+        assert "P6-C" in source, (
+            f"{document.relative_to(ROOT)} lacks the terminal cleanup gate"
+        )
+
+    tracker_source = (
+        docs / "implementation" / "OVERHAUL_TRACKER.md"
+    ).read_text(encoding="utf-8")
+    component_table = tracker_source.split("## 组件级改造表", 1)[1]
+    for line in component_table.splitlines():
+        if not line.startswith("|") or "`P6-C`" not in line:
+            continue
+        assert "generated/" not in line, (
+            "closed component still references generated intermediates: "
+            f"{line}"
+        )
+        cells = [cell.strip() for cell in line.strip("|").split("|")]
+        assert cells[-1] == "已关闭", (
+            "closed component must not retain a next action: "
+            f"{line}"
+        )
 
     for toc in (
         pfui / "pfUI.toc",

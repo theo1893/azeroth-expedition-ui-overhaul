@@ -13,8 +13,9 @@
 - 组件 ID：
 - 版本：
 - 子状态：prompt-draft | prompt-authorized | candidate-raw |
-  candidate-reviewed | candidate-rejected | source-accepted
-- 项目阶段：P0–P6
+  candidate-reviewed | candidate-rejected | source-accepted |
+  closure-planned | component-closed
+- 项目阶段：P0–P6-C
 - 固定执行器：imagegen-0-143-0 / @openai/codex@0.143.0
 - 操作：generate | edit
 - 参考图：
@@ -89,4 +90,28 @@
 - 请重点确认：<综合色感或具体物件语义>
 - 若接受：晋级 P4，仅加入透明 source 与 manifest
 - 尚未发生：runtime 切片、Lua/XML 接入、Turtle WoW 实机验证
+```
+
+## `P6-C` 收口计划
+
+先用本模板向用户展示，不创建永久的逐组件收口文档。执行后只把精简结果写入
+tracker、最终 manifest 或组件规范。
+
+```markdown
+- 组件 ID：
+- P6 实机证据：
+- 最终保留：
+  - final prompt/provenance：
+  - accepted source/manifest：
+  - exporter/runtime/manifest：
+  - implementation/tests：
+- 明确删除：
+  - ignored generated：
+  - superseded tracked prompts：
+  - obsolete references/tools/previews：
+  - duplicated process narration：
+- 排除清理的共享依赖：
+- 用户确认：
+- 清理后链接与测试：
+- 关闭日期与状态：P6-C / component-closed
 ```

@@ -83,12 +83,15 @@ contract-draft
   → source-accepted
   → runtime-exported
   → game-validated
+  → closure-planned
+  → component-closed
 ```
 
 其中 `prompt-authorized`、`candidate-raw` 和 `candidate-reviewed` 都最多属于
 `P3`；只有用户明确接受具体候选后才进入 `P4`。候选被内部或用户退回时，保留
 原提示词、执行记录与失败原因，创建新版本，不覆盖已执行正文，也不产生 tracked
-source／runtime。
+source／runtime。`game-validated` 为 `P6` 实机验收；完成终态清理后才进入
+`P6-C / component-closed`。
 
 审查顺序必须是：
 
@@ -135,6 +138,29 @@ Alpha、尺寸、色键清理和连通区只能证明技术性质，不能证明
 - 只允许拉伸中央纸面、横／竖边中段和控件中央段。
 - 端帽、铆钉、缝线、缺口、书页角和符号不得拉伸。
 
+## `P6-C` 完成后收口
+
+`P6` 表示组件已经通过 Turtle WoW 实机验收，但仓库仍可能包含生产过程材料。
+每个组件在完全验收后必须经过固定收口节点：
+
+1. 验证最终 prompt／provenance、accepted source／manifest、确定性 exporter、
+   runtime／manifest、实现、测试和 P6 证据均完整。
+2. 生成组件级精确保留／删除清单，审计共享引用，并取得用户对删除范围的明确
+   确认。
+3. 清理该组件在 `generated/` 中的 raw、失败候选、透明中间图、预演、debug
+   和临时 atlas。
+4. 在必要失败结论已经压缩进最终规范／manifest／tracker 后，从当前树移除
+   superseded prompt、实验脚本、故障参考和重复过程叙述；历史继续由 Git
+   保留。
+5. 只保留最终 prompt、source、manifest、exporter、runtime、实现、测试、
+   最终组件合同和最小实机证据。
+6. 运行链接、manifest、静态和模块 smoke test；同一独立清理提交中把 tracker
+   标记为 `P6-C`，下一步置为“已关闭”。
+
+不得在 `P6` 前执行收口，也不得对模块根目录、`assets/`、`prompts/` 或仓库根
+使用宽泛递归删除。共享资产、公共工具、锁定基准、第三方来源、许可证和用户
+原始文件不属于组件清理范围。
+
 ## 验收与登记
 
 每次状态变化必须在同一提交中更新
@@ -147,4 +173,4 @@ Alpha、尺寸、色键清理和连通区只能证明技术性质，不能证明
 - 下一道验收门。
 
 只有完成源图检查、确定性导出、静态测试、三种尺寸预演和游戏内验证后，组件
-才可标记为完成。
+才可标记为 `P6`；完成精确收口、清理和复测后，仓库状态才可标记为 `P6-C`。

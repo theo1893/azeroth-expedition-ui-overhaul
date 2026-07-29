@@ -1,6 +1,6 @@
 # Generate → Review 状态机
 
-项目阶段仍以 `docs/implementation/OVERHAUL_TRACKER.md` 的 `P0–P6` 为准。本表
+项目阶段仍以 `docs/implementation/OVERHAUL_TRACKER.md` 的 `P0–P6-C` 为准。本表
 增加的是同一 `P3` 内部的生产子状态，防止“已经生图”“技术检查通过”和
 “用户接受源资产”被混为一谈。
 
@@ -16,7 +16,9 @@
 | `candidate-rejected` | 不晋级 | 否决人、日期、具体失败门禁 | 原提示词和 tracker 的失败记录 | 新版本或停止 |
 | `source-accepted` | `P4` | 用户明确接受具体候选 | `assets/source/`、manifest | runtime 合同与导出 |
 | `runtime-exported` | `P5` | 确定性导出、UV/manifest、Lua/XML、静态测试 | addon runtime、工具、文档 | 目标客户端实机 |
-| `game-validated` | `P6` | Turtle WoW `1.18.1` 场景截图与交互证据 | tracker 验收记录 | 完成 |
+| `game-validated` | `P6` | Turtle WoW `1.18.1` 场景截图与交互证据 | tracker 验收记录 | 收口清单 |
+| `closure-planned` | `P6` | 最终保留集、精确删除集与共享依赖审计 | 临时计划；必要的 tracker 待办 | 用户确认后执行清理与复测 |
+| `component-closed` | `P6-C` | 中间产物已清理；最终路径、链接与测试通过 | 精简后的规范、manifest、tracker 与最终产物 | 终态 |
 
 ## 合法转换
 
@@ -29,6 +31,8 @@ contract-draft
   → source-accepted
   → runtime-exported
   → game-validated
+  → closure-planned
+  → component-closed
 ```
 
 以下是回路而非晋级：
@@ -48,6 +52,10 @@ runtime-exported → static/game failure → corrected exporter/runtime, remain 
 - `source-accepted → runtime-exported`：必须已知真实 Frame 几何、切片、UV、
   安全区、拉伸规则和状态映射。
 - `runtime-exported → game-validated`：必须有目标客户端证据。
+- `game-validated → closure-planned`：必须验证最终 source、prompt、
+  manifest、runtime、实现和 P6 证据，并列出精确保留／删除清单。
+- `closure-planned → component-closed`：必须获得用户对清单的明确确认，完成
+  清理、链接检查和全量相关测试；不得用通配符删除共享目录。
 
 ## 版本规则
 
@@ -59,3 +67,5 @@ runtime-exported → static/game failure → corrected exporter/runtime, remain 
    实际报告的 revised prompt（若存在）。
 5. 被拒候选不会因为已有透明背景、正确尺寸或干净色键而自动恢复资格。
 6. “接受整体风格”不等于接受每个组件源资产；接受必须指向明确批次和版本。
+7. 活跃生产期间保留失败版本；`P6-C` 收口时可从当前树删除已被最终 provenance
+   概括的旧版本，完整历史由 Git 保存。

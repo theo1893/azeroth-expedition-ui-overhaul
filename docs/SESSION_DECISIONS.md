@@ -75,6 +75,10 @@
 - 新的临时生成图、色键 raw 和可再生预览应保存在被 Git 忽略的
   `generated/`；确认后的透明生产母版进入 `assets/source/`，明确锁定的
   整体基准才进入 `assets/locked/`。
+- 每个组件在 `P6` 实机验收后必须经过 `P6-C` 终态收口：先审计最终保留集和
+  共享依赖、让用户确认精确删除清单，再清理中间图、过时 prompt、实验材料和
+  重复过程叙述。当前树只保留最终 provenance、source、manifest、exporter、
+  runtime、实现、测试和最小实机证据；完整过程由 Git 历史追溯。
 
 ## 文档信息架构
 
