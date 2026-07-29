@@ -34,6 +34,11 @@
   审查；B1 固定执行器的两次完整调用均输出 `1254 × 1254`，把对象放大到
   scaffold 外，并把纯绿底改成渐变。第一个失败门禁是 B1 画布／外接框／
   色键结构，故未做 mask，B2 没有上传或调用。chatcopy 继续默认不加载。
+  当前活跃版本已升级为 `CHAT.COPY.V1.3 / prompt-draft / P2`：A 保持不变；
+  不再调用 ImageGen 或上传图片，只按固定 SHA 复用 V1.2 第一次 B1 raw 中
+  已通过对象／美术审查的表面像素；B 的外接框、lower／upper／clamp、
+  off／on 差异、Alpha 与图层全部改由确定性 polygon、mask 和 upper
+  局部变形持有。
 - Turtle WoW 实机：原始 runtime 截图确认 `FCF_DockUpdate` 覆盖停靠几何，
   且用户否决 `42px` 外接高度。随后两张复测截图仍由未同步的 Git HEAD
   安装副本产生，未加载 v1.1／v1.2，因此不构成版本验收。v1.2 正确部署后
@@ -61,7 +66,7 @@
 | `CHAT.SCROLL.*`／`MENU.BUTTON`／`RESIZE` | `P1` hidden | 原生对象已登记，pfUI 当前隐藏 | 仅在决定恢复时建立资产合同 |
 | `CHAT.POPUP.*` | `P1` | 四个原生菜单实例已映射，仍为过渡外观 | 实机拆分 shell、行状态和滚动 |
 | `CHAT.URLCOPY.*` | `P1` | pfUI shell／input／close 已映射 | 实机测量并锁定便笺弹窗视觉 |
-| `CHAT.COPY.*` | `P3` V1.2 candidate-rejected | A 的确定性纸面通过；B1 两次都改变画布、外接框和绿底；未 mask，未执行 B2；pfUI 逻辑保持未加载 | 新版本必须把 ImageGen 降为表面 donor，不再要求其保真像素坐标 |
+| `CHAT.COPY.*` | `P2` V1.3 prompt-draft | A 保持确定性；固定 SHA 的 V1.2 B1 raw 只供表面；B 两状态几何与 Alpha 全归本地；pfUI 逻辑保持未加载 | 用户明确授权 V1.3 的受限 donor 复用与确定性正文 |
 | `CHAT.WHISPER.TOGGLE` | `P5` route／`P1` object | 功能源码保留，默认不加载 | 锁定代理开关视觉 |
 | `CHAT.WHISPER.DIALOG` | `P1` shared-owner | 归未来 System 公共弹窗 | System 模块统一拆分 |
 
@@ -119,10 +124,9 @@
 7. 确认右框始终隐藏，并验证拾取、经验、荣誉、声望与技能消息仍进入左框。
 8. 核心批次实机通过后达到 `P6`，但保留 work 与 legacy 回退资产直至用户批准
    `P6-C` 清理清单。
-9. 以 [`CHAT.COPY.V1.2`](work/CHAT.COPY.V1.md) 的失败证据为输入，准备新
-   版本合同：A 的确定性纸面保持不变；B 的几何、外接框、状态差与 Alpha
-   必须完全归本地确定性工具，ImageGen 只能提供可裁取的纸／皮革表面，
-   不再承担画布尺寸、绝对坐标、共同锚点或 mask 对齐。新正文需用户另行
-   明确授权后才能执行。
+9. 查看 [`CHAT.COPY.V1.3`](work/CHAT.COPY.V1.md) 的确定性正文；确认是否
+   允许只按固定 SHA 复用 V1.2 第一次 B1 raw 的表面像素，并由本地工具
+   完全持有 B 的两状态 polygon、共同锚点、局部变形与 Alpha。只有用户
+   明确授权 V1.3 后，才先提交授权版本，再构建 A／off／on 候选和预演。
 10. `CHAT.INPUT.LANGUAGE`、`CHAT.POPUP.*`、`CHAT.URLCOPY.*` 与
     `CHAT.WHISPER.TOGGLE` 在取得实机几何后另行准备组件 Prompt。

@@ -1,14 +1,15 @@
-# Chat 复制纸页 V1.2
+# Chat 复制纸页 V1.3
 
 ## 元数据
 
 - 模块：Chat
 - 组件 ID：`CHAT.COPY.TOGGLE`、`CHAT.COPY.SURFACE`、`CHAT.COPY.TEXT`
-- 版本：`CHAT.COPY.V1.2`
-- 子状态：`candidate-rejected`
-- 项目阶段：`P3`
+- 版本：`CHAT.COPY.V1.3`
+- 子状态：`prompt-draft`
+- 项目阶段：`P2`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 操作：A 为确定性派生；B1／B2 为 `edit`
+- 操作：A 为确定性派生；B 复用 V1.2 固定执行器 raw 的合格表面区域，
+  只做确定性裁取、归一化、分层、局部变形与 Alpha
 - 功能来源：
   [`addon/pfUI/modules/chatcopy.lua`](../../../../addon/pfUI/modules/chatcopy.lua)
 - 锁定视觉基准：
@@ -25,30 +26,21 @@
   - [`ChatBookFrame_Master_v3.png`](../../../../assets/source/chat/v3/ChatBookFrame_Master_v3.png)
     — 只在本地提取已接受的安静纸面，确定性生成 A；它只承担已部署纸色、
     笔触与磨损连续性，不高于两张锁定图及其 Prompt
-  - A 通过内部审查后的确定性候选
-    — 只在本地构造 B1／B2 的双页夹结构 scaffold，保证三个对象共享纸色
-- 已授权的外部 ImageGen 实际输入：
-  - A：不调用 ImageGen，也不上传图片
-  - B1：只上传
-    `generated/chat/copy/v1_2/inputs/CHAT.COPY.TOGGLE.CLOSED.SCAFFOLD.V1_2.png`
-  - B2：上传内部通过并经过确定性 mask 的
-    `generated/chat/copy/v1_2/b1/CHAT.COPY.TOGGLE.CLOSED.V1_2.candidate.png`
-    与
-    `generated/chat/copy/v1_2/inputs/CHAT.COPY.TOGGLE.OPEN.SCAFFOLD.V1_2.png`
-  - 两张完整锁定图与两张完整 V3 source 均不直接上传；它们继续通过本文件
-    和基线 Prompt 提供项目权威，但不得再诱导执行器复制完整 UI 结构
-- V1.2 raw：
+  - V1.2 B1 第一次完整调用 raw
+    — 只保留其已通过内部审查的纸叶／皮夹对象身份、表面笔触、材料分离和
+    左上暖光；明确丢弃其画布、坐标、比例、绿底与外接框
+- V1.3 外部输入：无；本版本不再调用 ImageGen，也不上传图片
+- V1.2 donor raw：
   - `generated/chat/copy/v1_2/b1/CHAT.COPY.TOGGLE.CLOSED.V1_2.raw.png`
-    — B1 第一次完整调用；`1254 × 1254 RGB`
-  - `generated/chat/copy/v1_2/b1/CHAT.COPY.TOGGLE.CLOSED.V1_2.retry2.raw.png`
-    — B1 同正文受控重试；`1254 × 1254 RGB`
-- V1.2 透明候选：无
-- V1.2 重组预演：
-  - `generated/chat/copy/v1_2/previews/CHAT.COPY.SURFACE.V1_2.nineslice.380x248.png`
-  - `generated/chat/copy/v1_2/previews/CHAT.COPY.SURFACE.V1_2.nineslice.480x348.png`
-  - B1 在 mask 前被退回，无 Toggle 重组预演
+    — `1254 × 1254 RGB`，SHA-256
+    `682459afa17ac43d3961085d211b340ed446152cf52fd2e7b250422316180e4b`
+  - donor provenance：session
+    `019fae80-fabb-7030-8fc7-fbee2c142d99`／result
+    `ig_063f0c62bfe8a6e9016a6a1cfd1a148191b735c96afa0341ec`
+- V1.3 透明候选：无；尚未授权执行
+- V1.3 重组预演：无
 - V1.1 失败 raw：继续只保留在被忽略的
-  `generated/chat/copy/v1_1/`，只作反例，不进入 V1.2 输入
+  `generated/chat/copy/v1_1/`，只作反例，不进入 V1.3 输入
 - 最终 source：无；必须经用户明确接受后才能进入
   `assets/source/chat/copy/`
 
@@ -61,7 +53,8 @@
 3. [`SUBMODULES.md`](../SUBMODULES.md) 的真实 pfUI 对象、状态、几何和禁止
    烘焙合同。
 4. 已接受 V3 source 只承担已部署纸色、笔触与磨损连续性。
-5. V1／V1.1 失败候选只提供反例，不进入 V1.2 的任何编辑输入。
+5. V1／V1.1 失败候选只提供反例。V1.2 B1 第一次 raw 仅以本文件声明的
+   表面 donor 职责进入 V1.3；它不能提供任何几何权威。
 
 ### 必须继承的视觉 DNA
 
@@ -75,14 +68,15 @@
 
 ### 本批组件级转译
 
-- `CHAT.COPY.SURFACE` 是覆盖正文区域的连续抄录纸面。V1.2 不再让
+- `CHAT.COPY.SURFACE` 是覆盖正文区域的连续抄录纸面。V1.3 继续不让
   ImageGen 决定它的外轮廓：直接从已接受 V3 主框提取安静纸面并确定性
   缩放到严格 `380:248` 的三倍源尺寸。它保持完整消息容量，不再增加第二
   纸叶、毛边或任何可能跨越九宫格 stretch zone 的独特细节。
 - `CHAT.COPY.TOGGLE` 只生成关闭、开启两个持久物理状态。关闭时两张短纸叶
   收拢；开启时上层纸叶在同一外接框内稍微扇开。悬停继续由 pfUI／adapter
-  对同一物理纹理调整 Alpha。两状态的画布、外接框、下层纸叶与夹具由
-  确定性 scaffold／mask 锁定；ImageGen 只负责纸叶与皮夹的手绘表面。
+  对同一物理纹理调整 Alpha。两状态的画布、外接框、下层纸叶、夹具和
+  上层纸叶变形全部由确定性 polygon／mask 锁定。V1.2 donor 只提供已经
+  生成的纸叶与皮夹表面像素，不再参与任何外部调用。
 - `CHAT.COPY.TEXT` 始终由真实 `pfChatCopyBoxN` 绘制。本批不改变正文或
   复制文字的字体、字号、颜色、选择和光标。
 
@@ -107,15 +101,21 @@
 - V1.1 同时把 `24px` 九宫格固定边后的中心误写为 `1080 × 696`。正确关系
   是九宫格 stretch center 为 `1092 × 696`；`1080 × 696` 是另一个合同，
   即 `30px` 左右文字内边距和 `24px` 上下文字内边距后的文本安全区。
+- V1.2 的 A 已证明确定性几何有效；B1 两次独立完整调用都把
+  `1024 × 1024` 改成 `1254 × 1254`、放大对象并污染平整绿底，说明固定
+  ImageGen 不适合承担像素坐标保真。两次 raw 的对象身份、纸／皮革物理关系
+  和第一次 raw 的宽面笔触通过内部审查。V1.3 因此只保留第一次 raw 的
+  donor 表面，按固定 SHA 与固定 crop 读取；其错误画布、背景、坐标和轮廓
+  一律不继承。此使用范围明确、局部且不把失败候选伪装成已通过 source。
 - pfUI 的真实 `pfChatCopyButton` 只有关闭／开启两种持久纹理，并用
   `OnEnter`／`OnLeave` 调整 Alpha；当前实现没有独立 pressed 或 disabled
-  纹理。V1 的七状态表高于真实 provider 所有权。V1.2 保持两个物理 source，
+  纹理。V1 的七状态表高于真实 provider 所有权。V1.3 保持两个物理 source，
   悬停由 runtime 派生，不生产不存在的状态。
-- `pfChatCopyButton` 原始 `16 × 16` 位置与第四枚 Tab 冲突。V1.2 仍保留同一
+- `pfChatCopyButton` 原始 `16 × 16` 位置与第四枚 Tab 冲突。V1.3 仍保留同一
   Button 和左右键逻辑，只把视觉放在书本右侧页边，不覆盖 Tab 或正文。
-- pfUI 原始 `95%` 黑色复制覆盖层与连续纸面冲突；V1.2 只替换其背景 Region，
+- pfUI 原始 `95%` 黑色复制覆盖层与连续纸面冲突；V1.3 只替换其背景 Region，
   不改变历史缓存、滚动、选择、Escape 或消息转发。
-- 用户已延后 `CHAT.TEXT` 可读性改造；V1.2 不借本批修改正文字体或频道色。
+- 用户已延后 `CHAT.TEXT` 可读性改造；V1.3 不借本批修改正文字体或频道色。
 
 ## 组件合同
 
@@ -140,7 +140,7 @@
   - 命中区向四边各扩展 `3px`，最终 `28 × 32 UI px`。
   - normal／hover 共用相同 UV；hover 只改变 Alpha，不改变纹理、Point、
     Width、Height 或外接轮廓。
-  - 当前 provider 不拥有独立 pressed／disabled 纹理，V1.2 不生成。
+  - 当前 provider 不拥有独立 pressed／disabled 纹理，V1.3 不生成。
 - `CHAT.COPY.SURFACE`：
   - 与所属 `ChatFrameN` 同尺寸；最小书框下为 `380 × 248 UI px`。
   - 九宫格固定边 `8px`；中间边段与中心可水平、垂直拉伸。
@@ -166,36 +166,53 @@
      `1092 × 696`。复制文字安全区另按 source 左右各 `30px`、上下各
      `24px` 检查，得到 `1080 × 696`。
   5. 写入
-     `generated/chat/copy/v1_2/a/CHAT.COPY.SURFACE.V1_2.candidate.png`；
+     `generated/chat/copy/v1_3/a/CHAT.COPY.SURFACE.V1_3.candidate.png`；
      在通过原尺寸、`380 × 248`，以及 `540 × 420` 书框所对应的
      `480 × 348` 正文尺寸拉伸预演前，
      不创建 tracked source。
-- B1／B2 结构 scaffold：
-  1. 只有 A 通过范围、对象身份与纸面安全区审查后才创建。
-  2. 在 `1024 × 1024` 纯 `#00FF00` 画布的
-     `(336,304)–(688,720)` 内构造一个 `352 × 416`、比例精确服从
-     `22:26` 的共同外接框；它同时是后续确定性 Alpha mask。
-  3. closed scaffold 包含两张紧密重叠的短纸叶与一个横跨上缘的短深皮革
-     夹；open scaffold 只把上层纸叶的下缘与右缘小幅扇开。两者的下层纸叶、
-     夹具、共同锚点和外接框逐像素相同。
-  4. 两张纸叶只使用 A 候选的纸面采样；深皮革只使用 V3 已接受色域。
-     scaffold 定义结构和材料分区，不是最终 source。
-- B2 编辑输入：使用内部通过并经 closed scaffold mask 锁定的 B1 透明
-  candidate 作为 Image 1，open scaffold 作为 Image 2。ImageGen 只重绘
-  上层纸叶的开合表面；确定性装配继续保留 B1 的下层纸叶与夹具，并应用
-  open scaffold 的外轮廓 mask。
+- B 表面 donor 与确定性状态：
+  1. 验证 V1.2 第一次 B1 raw 为 `1254 × 1254 RGB`，SHA-256 为
+     `682459afa17ac43d3961085d211b340ed446152cf52fd2e7b250422316180e4b`。
+     只允许此文件；V1.2 retry2 不进入 V1.3。
+  2. 对 donor 每个像素计算 `d = G - max(R,B)`。`d >= 96` 时 Alpha 为
+     `0`，`d <= 16` 时 Alpha 为 `255`，中间用 smoothstep
+     `t=(96-d)/80; a=round(255*t*t*(3-2*t))`。半透明像素把绿色通道上限
+     压到 `max(0,max(R,B)-1)`；不增加羽化、阴影、描边或新表面。
+  3. 只读取半开 crop `(360,242)–(915,994)`。该固定 `555 × 752` 区域由
+     V1.2 raw 的绿色优势预检得出，完整包含一个双页夹对象；crop 外所有
+     像素，包括错误画布与绿底，全部丢弃。
+  4. 把 crop 以 Lanczos 归一化为 `352 × 416 RGBA`，放入共同逻辑画布
+     `(336,304)–(688,720)`。归一化结果只是 donor surface，不直接成为
+     候选。
+  5. 两状态使用以下逐像素固定 polygon；坐标均在 `1024 × 1024` 工作画布：
+     - lower：
+       `(336,348),(674,332),(687,719),(344,711)`
+     - upper closed：
+       `(370,328),(650,340),(638,672),(358,690)`
+     - upper open：
+       `(370,328),(650,340),(678,684),(350,704)`
+     - clamp：
+       `(420,312),(584,304),(606,338),(592,378),(414,370),(402,340)`
+  6. lower 在 off／on 中都取 A 候选半开 crop
+     `(0,0)–(600,744)`，Lanczos 缩放到 `352 × 416` 后放入共同外接框，
+     再以 lower polygon 裁出，保证逐像素相同；clamp 从 normalized donor
+     的 clamp polygon 读取，在两状态中逐像素相同。
+     upper 从 normalized donor 的 closed upper polygon 读取：off 原位；
+     on 只按四角对应关系把 upper closed 确定性透视变形到 upper open。
+     图层固定为 lower → upper → clamp。
+  7. 两状态最终 Alpha 分别与 `lower ∪ upper-state ∪ clamp` 相乘；共同可见
+     外接框必须精确为 `(336,304)–(688,720)`。不得用此 mask 保存 donor 的
+     错误轮廓；候选的轮廓、开合差和锚点全部来自上述 polygon。
 
 ### 输出、裁切与验收
 
 - A：只有一张精确 `1140 × 744 RGBA` 的确定性矩形候选；不产生 A raw，
   不经过色键或 Alpha 清理。九宫格固定边与文字安全区按上节的两套独立
   切线检查，不再混用。
-- B1／B2 raw：各自一张 `1024 × 1024` 单物件图；共同外接框、锚点、光源
-  和缩放必须相同。不得合成多状态 contact sheet 交给 ImageGen。
-- B1／B2 调用输出纯 `#00FF00` 平整背景；raw 必须先通过对象身份、物理
-  和美术门禁，再转为真透明并应用对应 scaffold mask。mask 是预先声明的
-  几何所有者，不得拿来把错误对象伪装成合格候选。
-- A 只允许九宫格；B1／B2 后续确定性合成两个 UV cell，状态切换不改几何。
+- B：不产生新 raw、不调用 ImageGen、不上传任何图。只从固定 SHA donor
+  裁取已声明表面，确定性生成 off／on 两张 `1024 × 1024 RGBA` 候选；
+  两者的可见外接框、锚点和 Alpha 合同相同。
+- A 只允许九宫格；B 后续确定性合成两个 UV cell，状态切换不改几何。
 - 禁止烘焙：聊天消息、玩家名、颜色码、选择高亮、光标、Tab、输入条、
   未读、现代复制图标、状态标签、按钮牌、ChatMenu 和任何完整聊天框结构。
 - 验收预演：
@@ -209,11 +226,9 @@
 
 ## 最终执行正文
 
-状态：`executed-rejected`。用户于 `2026-07-29` 明确授权
-`CHAT.COPY.V1.2`，并明确允许上传 B1 closed scaffold、通过 mask 的 B1
-candidate 与 B2 open scaffold。A 不调用 ImageGen；B1／B2 必须按
-A 确定性构建 → 内部门禁 → B1 → 内部门禁／mask → B2 的顺序，把以下英文
-正文逐字交给固定执行器。
+状态：`production-draft`。本版本不调用 ImageGen、不上传图片，也不复用
+V1.2 的错误画布／坐标。用户明确授权 `CHAT.COPY.V1.3` 后，才执行以下
+确定性正文。
 
 ### A：确定性连续抄录纸面
 
@@ -231,168 +246,92 @@ nine-slice stretch center is 1092 by 696. Separately, reserve 30 source pixels
 at left and right and 24 source pixels at top and bottom for the copy-text
 safe area, producing 1080 by 696. Do not conflate those two rectangles.
 
-Write only an ignored candidate under generated/chat/copy/v1_2/a/. Do not
+Write only an ignored candidate under generated/chat/copy/v1_3/a/. Do not
 promote it to assets/source, export a runtime TGA, or modify Lua until the
 candidate and its real-size stretch previews are explicitly accepted.
 ```
 
-### B1：关闭状态双页夹编辑
+### B：固定 donor 的确定性双状态
 
 ```text
-Edit Image 1, the isolated closed two-leaf structure scaffold, into exactly
-one production-ready closed transcription page clip for the real
-pfChatCopyButton in Turtle WoW 1.18.1. Image 1 is the geometry authority.
-Preserve its 1024 by 1024 canvas, one-object scope, vertical 22:26 outer box
-at (336,304)-(688,720), common anchor, material regions, and flat green
-separation. Paint through the scaffold-owned regions, place nothing outside
-that box, and do not turn the object into a square button or toolbar icon.
+Use only the internally reviewed surface regions from
+generated/chat/copy/v1_2/b1/CHAT.COPY.TOGGLE.CLOSED.V1_2.raw.png.
+Require a 1254 by 1254 RGB input with SHA-256
+682459afa17ac43d3961085d211b340ed446152cf52fd2e7b250422316180e4b.
+Do not call ImageGen and do not upload this or any other image.
 
-This object belongs to the same battered Azeroth Expedition battlefield
-journal as the accepted V3 chat book. Render a compact 2004-era hand-painted
-bitmap with upper-left warm light, low-saturation smoked parchment, broad
-readable value groups, slightly crooked hand-cut edges, non-mirrored practical
-wear, and no photographic fiber detail. Use two short overlapping parchment
-leaves near #B8955C and #D2B77E, restrained separation near #76512E, one small
-worn deep-walnut leather clamp near #28180E, and dark structural accents near
-#24170F. Paper is primary, leather is secondary, and brass is absent unless a
-single pinhead is physically necessary.
+For every donor pixel compute d = G - max(R,B). Set alpha to 0 when d is at
+least 96 and to 255 when d is at most 16. Between those values use
+t = (96-d)/80 and alpha = round(255*t*t*(3-2*t)). For partially transparent
+pixels cap G at max(0,max(R,B)-1). Add no feather, shadow, outline, highlight,
+stain, or generated pixel.
 
-The two leaves are closed and overlap closely under the short top clamp. The
-clamp must visibly hold both leaves, while two paper edges remain readable.
-Keep the lower leaf, upper leaf, and clamp as parts of one connected physical
-object. Use no long cord, hanging ornament, detached part, loose symbol, or
-one-pixel noise. Use only broad shapes and short highlights that remain
-legible when reduced to 22 by 26 UI pixels and when hover changes only Alpha.
+Crop only the half-open rectangle (360,242)-(915,994), then resize that exact
+555 by 752 RGBA donor to 352 by 416 with Lanczos resampling and place it at
+(336,304)-(688,720) in a 1024 by 1024 transparent working canvas. Treat the
+result as surface material only, never as geometry.
 
-Include no duplicate-document pictogram, clipboard, quill, book symbol,
-letter, line, arrow, rune, jewel, wax seal, text, label, square plaque,
-beveled button frame, continuous metal border, glow, or other UI object.
-Reject a modern copy icon, website toolbar button, symmetrical gold badge,
-polished brass control, photoreal stationery, machine-perfect folds, and
-high-frequency texture.
+Use these exact polygons in working-canvas coordinates:
+lower = (336,348),(674,332),(687,719),(344,711)
+upper_closed = (370,328),(650,340),(638,672),(358,690)
+upper_open = (370,328),(650,340),(678,684),(350,704)
+clamp = (420,312),(584,304),(606,338),(592,378),(414,370),(402,340)
 
-Return exactly one isolated object on one perfectly flat uniform #00FF00
-background. Preserve the 1024 by 1024 canvas. Use no checkerboard, gradient,
-floor, vignette, cast shadow on green, cell border, label, or extra object.
-```
+For the lower leaf, crop (0,0)-(600,744) from the deterministically derived A
+parchment sample, resize it to 352 by 416 with Lanczos, place it at the shared
+outer box, and clip it by lower. Use those exact pixels in both states. Read
+the clamp surface from the normalized donor inside clamp and keep it
+pixel-identical between states. Read the upper-leaf surface from the
+normalized donor inside upper_closed. For off, place that upper surface
+unchanged. For on, transform only that upper surface by the four ordered
+corner correspondences from upper_closed to upper_open. Composite in the
+fixed order lower, upper, clamp.
 
-### B2：开启状态局部编辑
-
-```text
-Edit Image 1, the internally reviewed closed transcription page clip, into
-its open persistent state for the same real pfChatCopyButton. Image 2 is the
-open-state geometry scaffold and is authoritative only for the changed upper
-leaf silhouette. This is a local state edit, not a redesign. Preserve exactly
-the same 1024 by 1024 canvas, vertical 22:26 outer box at
-(336,304)-(688,720), common anchor, lower leaf, top leather clamp, paper
-material, palette, brushwork, wear scale, upper-left light, and one-object
-scope.
-
-Change only the upper paper leaf. Follow Image 2 to fan its free lower and
-right edge outward slightly around the existing top clamp, while keeping it
-completely inside the unchanged outer box. The lower leaf and clamp must
-remain visually identical to Image 1 and in exactly the same positions. The
-clamp must still hold both leaves; no part may detach, lengthen, or move the
-shared anchor. The open state must differ through this small physical overlap
-change, not through a symbol, color swap, glow, border, decoration, or new
-object.
-
-Keep the same compact 2004-era hand-painted bitmap language: low-saturation
-smoked parchment, deep-walnut worn leather, broad value groups, restrained
-non-mirrored wear, and no photographic fiber detail. The state difference
-must remain readable at 22 by 26 UI pixels without introducing one-pixel
-noise.
-
-Add no duplicate-document pictogram, clipboard, quill, book symbol, text,
-letter, line, arrow, rune, jewel, wax seal, square plaque, button frame,
-continuous metal border, glow, label, or extra object.
-
-Return exactly one isolated object on one perfectly flat uniform #00FF00
-background. Preserve the 1024 by 1024 canvas and unchanged outer box. Use no
-checkerboard, gradient, floor, vignette, cast shadow on green, cell border, or
-label.
+Multiply final alpha by lower union upper_state union clamp. Both outputs
+must have an exact visible bounding box of (336,304)-(688,720), one connected
+two-leaf-and-clamp object, no visible green spill, and no pixels outside their
+declared masks. Write the off state to
+generated/chat/copy/v1_3/b/CHAT.COPY.TOGGLE.CLOSED.V1_3.candidate.png and the
+on state to
+generated/chat/copy/v1_3/b/CHAT.COPY.TOGGLE.OPEN.V1_3.candidate.png. Write
+only ignored RGBA candidates and review previews under
+generated/chat/copy/v1_3/. Do not create assets/source, runtime media, or Lua
+changes until both states and their 22 by 26 assembly previews are explicitly
+accepted.
 ```
 
 ## 执行记录
 
-- 日期：`2026-07-29`
-- 授权 Prompt commit：`3e9eb8e`
-- 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`，
-  `gpt-5.5`，reasoning `medium`
-- A：
-  - 工具：
-    [`build_chat_copy_v1_2_candidates.py`](../../../../tools/build_chat_copy_v1_2_candidates.py)
-    `build-a`
-  - 输入：`assets/source/chat/v3/ChatBookFrame_Master_v3.png`，
-    SHA-256
-    `f45cfe614dffd4cbc1e17b1af0f6c66b2100f530c353e3954956476b7cf05057`
-  - 输出：`1140 × 744 RGBA`，SHA-256
-    `ed4e1c1a3bfdf4b37775a383b18636454834562eefd7ab526f3ecaf03f8e8efb`
-  - Alpha：`848160` 不透明、`0` 半透明、`0` 透明；无绿色残留
-- B1 closed scaffold：
-  - 输入绝对路径：
-    `D:\Git\azeroth-expedition-ui-overhaul\generated\chat\copy\v1_2\inputs\CHAT.COPY.TOGGLE.CLOSED.SCAFFOLD.V1_2.png`
-  - 职责：唯一外部输入；锁定共同 `1024 × 1024` 画布、
-    `(336,304)–(688,720)` 外接框、两张纸叶与短皮夹的结构／材料分区
-  - scaffold SHA-256：
-    `c71d97ef9856ddd2812dbc3bbdeae4f9d9600feded9222913d77152b7c3e8f15`
-  - B1 Prompt SHA-256：
-    `af8164cb288c7aa02ae97ef9ddc89c213c6113d61de39b3f7510b2a6f78eb1c0`
-- 启动器内部失败：
-  - session `019fae7f-d4fd-7dd3-80dc-a9a70d2867da`
-  - Windows 多行参数被截断到首行 `into exactly`；未进入 ImageGen，
-    无 result。随后改为通过 stdin 逐字传递；本次失败没有隐藏或计为候选。
-- B1 完整调用 1：
-  - session `019fae80-fabb-7030-8fc7-fbee2c142d99`
-  - result `ig_063f0c62bfe8a6e9016a6a1cfd1a148191b735c96afa0341ec`
-  - raw：`1254 × 1254 RGB`，SHA-256
-    `682459afa17ac43d3961085d211b340ed446152cf52fd2e7b250422316180e4b`
-  - revised prompt：固定子执行器未报告
-- B1 完整调用 2，同正文受控重试：
-  - session `019fae83-af38-7c33-b523-d23da5748290`
-  - result `ig_0a42b813d342b369016a6a1db5dafc81918adc8038587474a6`
-  - raw：`1254 × 1254 RGB`，SHA-256
-    `7b4b0e167cf35fb420f36cefc5fc651a310f1fc2754164552f3b36bd4d9bfcfe`
-  - revised prompt：固定子执行器未报告
-- Alpha／mask：两张 B1 raw 均在结构门禁被退回；未做色键转 Alpha，
-  未应用 closed mask。
-- B2：未执行；通过 mask 的 B1 candidate 与 B2 open scaffold 均未上传。
+- 日期：未执行
+- 授权版本 commit：无；当前为 `production-draft`
+- A：待授权后在 `generated/chat/copy/v1_3/a/` 重建；无 ImageGen 会话
+- B donor：只读复用 V1.2 session／result；V1.3 不产生新会话或上传
+- 实际输出尺寸／模式／SHA-256：无
+- Alpha／残色／polygon／装配：未检查
 
 ## 审查记录
 
-- 范围／对象身份：A 通过。两张 B1 raw 均只有两张纸叶和一枚上沿旧皮夹，
-  没有文字、符号、方形按钮框或额外控件；对象身份本身可读。
-- 语义／物理：B1 的纸叶确由同一上沿皮夹连接，重叠关系成立；但固定执行器
-  没有把 scaffold 当作逐像素几何权威。
+- 范围／对象身份：Prompt 预检通过。A 只对应 `ChatFrameScrollN` 背景；
+  B 的两个状态只对应同一个 `pfChatCopyButton`。
+- 语义／物理：Prompt 预检通过。lower、upper 和 clamp 均有明确 polygon
+  与图层；on 只改变 upper，lower／clamp 逐像素固定。
 - 透视／图层：A 是复制文字下方的连续纸面；B 是书本右侧页边上的独立
   Button。两者不覆盖 Tab 或输入条。
-- 美术一致性：两张锁定图与书面 Prompt 继续最高；A 只复用已接受 V3
-  纸面，B 的执行正文完整写入左上暖光、低饱和纸／皮革色域、手绘位图、
-  非镜像磨损和照片级反模式。
-- 对象／状态合同：V1.2 已把 A 的外接框、九宫格切线和 stretch zone
-  完全移出 ImageGen 所有权，并区分 `1092 × 696` stretch center 与
-  `1080 × 696` text-safe center。B 保持 off／on 两个状态，hover 仍由
-  runtime Alpha 派生。
-- 装配／尺寸：A 的 `380 × 248` 和 `480 × 348` 九宫格预演无可见接缝，
-  `10/10/8/8px` runtime 文字安全区安静。B1 两次都把输入的
-  `1024 × 1024` 改为 `1254 × 1254`，并把物件放大到声明外接框之外；
-  无法与预声明 mask 或共同锚点装配。
-- 技术像素：B1 调用 1 仅 `1582` 像素保持精确 `#00FF00`，调用 2 仅
-  `44` 像素保持精确 `#00FF00`；两张背景均出现明显绿梯度／暗角，不是
-  平整色键。
-- 结论：`candidate-rejected / P3`
-- 否决人：`internal-review`
-- 第一个失败门禁：B1 canvas／绝对外接框／平整绿底结构。
-- 可观察证据：两次独立完整调用均为 `1254 × 1254`，物件明显超出
-  `(336,304)–(688,720)`，整张绿底有渐变。
-- 用户结论与日期：`2026-07-29`，明确授权 `CHAT.COPY.V1.2`，并允许上传
-  B1 closed scaffold、通过 mask 的 B1 candidate 和 B2 open scaffold
-- 本版本保留内容：A 的确定性派生合同、通过的 A 候选与两种 stretch 预演；
-  B1 raw 的纸／皮革美术仅作为失败反例，不进入 source 或 B2。
-- 下一版本必须改变：ImageGen 不能再拥有或被要求保真画布像素、绝对坐标、
-  外接框或 mask 对齐；它只能提供可裁取的纸／皮革表面，B 的两状态几何、
-  共同锚点、开合差异与 Alpha 必须全部由本地确定性工具持有。
-- 本版本无 tracked source／runtime：是。
+- 美术一致性：两张锁定图与书面 Prompt 继续最高；A 仍只复用已接受 V3
+  纸面。V1.2 donor 只保留已通过的表面笔触、纸／皮革分离与左上暖光，
+  其错误画布和轮廓不再获得任何权威。
+- 对象／状态合同：A 的 `1092 × 696` stretch center 与
+  `1080 × 696` text-safe center 继续分离。B 只有 off／on 两个物理状态；
+  hover 仍由 runtime Alpha 派生。
+- 装配／尺寸：合同已锁定 `380 × 248`、`480 × 348`、共同
+  `(336,304)–(688,720)` 外接框、`22 × 26` 视觉与 `28 × 32` 命中区；
+  候选尚未构建。
+- 技术像素：待执行。
+- 结论：`prompt-draft / P2`
+- 用户结论与日期：无；V1.3 尚未授权
+- 下一门禁：用户查看并明确授权 `CHAT.COPY.V1.3` 的确定性正文，特别是
+  对 V1.2 第一次 B1 raw 仅作表面 donor 的受限复用；授权版本提交后才构建
+  A／off／on 候选和真实尺寸预演。
 
 ## 尝试摘要
 
@@ -401,3 +340,4 @@ label.
 | V1 | commit `69ada1f`；session `019fae2a…`／`019fae2c…` | `candidate-rejected` | 不上传完整 UI；A 单物件 edit；B 按真实持久状态拆分 |
 | V1.1 | commit `8b0a4e3`；A session `019fae4d…`／result `ig_0d80…`；B1／B2 因门禁停止 | `candidate-rejected` | A 必须锁死外接框；四条边的 stretch zone 不得由模型生成独特缺口；降低照片式纤维与中性光漂移 |
 | V1.2 | commit `3e9eb8e`；A SHA `ed4e1c…`；B1 sessions `019fae80…`／`019fae83…`，results `ig_063f…`／`ig_0a42…` | `candidate-rejected / P3` | 保留 A；B 将 ImageGen 降为表面 donor，所有像素几何归确定性工具 |
+| V1.3 | A 保持确定性；固定 SHA donor 只供表面；两状态完全由 polygon／mask／局部变形构造 | `prompt-draft / P2` | 用户明确授权受限 donor 复用与确定性执行正文 |
