@@ -5,7 +5,7 @@
 - 模块：Chat
 - 组件 ID：`CHAT.COPY.TOGGLE`、`CHAT.COPY.SURFACE`、`CHAT.COPY.TEXT`
 - 版本：`CHAT.COPY.V1.2`
-- 子状态：`prompt-authorized`
+- 子状态：`candidate-rejected`
 - 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 操作：A 为确定性派生；B1／B2 为 `edit`
@@ -37,9 +37,16 @@
     `generated/chat/copy/v1_2/inputs/CHAT.COPY.TOGGLE.OPEN.SCAFFOLD.V1_2.png`
   - 两张完整锁定图与两张完整 V3 source 均不直接上传；它们继续通过本文件
     和基线 Prompt 提供项目权威，但不得再诱导执行器复制完整 UI 结构
-- V1.2 raw：无；已授权、尚未执行
+- V1.2 raw：
+  - `generated/chat/copy/v1_2/b1/CHAT.COPY.TOGGLE.CLOSED.V1_2.raw.png`
+    — B1 第一次完整调用；`1254 × 1254 RGB`
+  - `generated/chat/copy/v1_2/b1/CHAT.COPY.TOGGLE.CLOSED.V1_2.retry2.raw.png`
+    — B1 同正文受控重试；`1254 × 1254 RGB`
 - V1.2 透明候选：无
-- V1.2 重组预演：无
+- V1.2 重组预演：
+  - `generated/chat/copy/v1_2/previews/CHAT.COPY.SURFACE.V1_2.nineslice.380x248.png`
+  - `generated/chat/copy/v1_2/previews/CHAT.COPY.SURFACE.V1_2.nineslice.480x348.png`
+  - B1 在 mask 前被退回，无 Toggle 重组预演
 - V1.1 失败 raw：继续只保留在被忽略的
   `generated/chat/copy/v1_1/`，只作反例，不进入 V1.2 输入
 - 最终 source：无；必须经用户明确接受后才能进入
@@ -202,7 +209,7 @@
 
 ## 最终执行正文
 
-状态：`production`。用户于 `2026-07-29` 明确授权
+状态：`executed-rejected`。用户于 `2026-07-29` 明确授权
 `CHAT.COPY.V1.2`，并明确允许上传 B1 closed scaffold、通过 mask 的 B1
 candidate 与 B2 open scaffold。A 不调用 ImageGen；B1／B2 必须按
 A 确定性构建 → 内部门禁 → B1 → 内部门禁／mask → B2 的顺序，把以下英文
@@ -308,23 +315,55 @@ label.
 
 ## 执行记录
 
-- 日期：`2026-07-29`；已授权，尚未执行
-- 授权 Prompt commit：本次 `prompt-authorized` 提交；生成记录阶段补入
-  精确 commit 哈希
-- A：待授权版本提交后确定性构建；无 ImageGen 会话
-- B1／B2 会话／结果 ID：无
-- 实际输入绝对路径与职责：待按本文件合同创建并在执行前记录
-- imagegen 报告的 revised prompt：无
-- 输出尺寸／模式／SHA-256：无
-- Alpha／残色：未检查
-- 内部失败重试：无
+- 日期：`2026-07-29`
+- 授权 Prompt commit：`3e9eb8e`
+- 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`，
+  `gpt-5.5`，reasoning `medium`
+- A：
+  - 工具：
+    [`build_chat_copy_v1_2_candidates.py`](../../../../tools/build_chat_copy_v1_2_candidates.py)
+    `build-a`
+  - 输入：`assets/source/chat/v3/ChatBookFrame_Master_v3.png`，
+    SHA-256
+    `f45cfe614dffd4cbc1e17b1af0f6c66b2100f530c353e3954956476b7cf05057`
+  - 输出：`1140 × 744 RGBA`，SHA-256
+    `ed4e1c1a3bfdf4b37775a383b18636454834562eefd7ab526f3ecaf03f8e8efb`
+  - Alpha：`848160` 不透明、`0` 半透明、`0` 透明；无绿色残留
+- B1 closed scaffold：
+  - 输入绝对路径：
+    `D:\Git\azeroth-expedition-ui-overhaul\generated\chat\copy\v1_2\inputs\CHAT.COPY.TOGGLE.CLOSED.SCAFFOLD.V1_2.png`
+  - 职责：唯一外部输入；锁定共同 `1024 × 1024` 画布、
+    `(336,304)–(688,720)` 外接框、两张纸叶与短皮夹的结构／材料分区
+  - scaffold SHA-256：
+    `c71d97ef9856ddd2812dbc3bbdeae4f9d9600feded9222913d77152b7c3e8f15`
+  - B1 Prompt SHA-256：
+    `af8164cb288c7aa02ae97ef9ddc89c213c6113d61de39b3f7510b2a6f78eb1c0`
+- 启动器内部失败：
+  - session `019fae7f-d4fd-7dd3-80dc-a9a70d2867da`
+  - Windows 多行参数被截断到首行 `into exactly`；未进入 ImageGen，
+    无 result。随后改为通过 stdin 逐字传递；本次失败没有隐藏或计为候选。
+- B1 完整调用 1：
+  - session `019fae80-fabb-7030-8fc7-fbee2c142d99`
+  - result `ig_063f0c62bfe8a6e9016a6a1cfd1a148191b735c96afa0341ec`
+  - raw：`1254 × 1254 RGB`，SHA-256
+    `682459afa17ac43d3961085d211b340ed446152cf52fd2e7b250422316180e4b`
+  - revised prompt：固定子执行器未报告
+- B1 完整调用 2，同正文受控重试：
+  - session `019fae83-af38-7c33-b523-d23da5748290`
+  - result `ig_0a42b813d342b369016a6a1db5dafc81918adc8038587474a6`
+  - raw：`1254 × 1254 RGB`，SHA-256
+    `7b4b0e167cf35fb420f36cefc5fc651a310f1fc2754164552f3b36bd4d9bfcfe`
+  - revised prompt：固定子执行器未报告
+- Alpha／mask：两张 B1 raw 均在结构门禁被退回；未做色键转 Alpha，
+  未应用 closed mask。
+- B2：未执行；通过 mask 的 B1 candidate 与 B2 open scaffold 均未上传。
 
 ## 审查记录
 
-- 范围／对象身份：Prompt 预检通过。A 只对应 `ChatFrameScrollN` 背景；
-  B1／B2 各自只对应同一个 `pfChatCopyButton` 的持久状态。
-- 语义／物理：Prompt 预检通过。B 的两张纸叶由同一上沿皮夹连接；open
-  只改变上层纸叶的重叠关系。
+- 范围／对象身份：A 通过。两张 B1 raw 均只有两张纸叶和一枚上沿旧皮夹，
+  没有文字、符号、方形按钮框或额外控件；对象身份本身可读。
+- 语义／物理：B1 的纸叶确由同一上沿皮夹连接，重叠关系成立；但固定执行器
+  没有把 scaffold 当作逐像素几何权威。
 - 透视／图层：A 是复制文字下方的连续纸面；B 是书本右侧页边上的独立
   Button。两者不覆盖 Tab 或输入条。
 - 美术一致性：两张锁定图与书面 Prompt 继续最高；A 只复用已接受 V3
@@ -334,15 +373,26 @@ label.
   完全移出 ImageGen 所有权，并区分 `1092 × 696` stretch center 与
   `1080 × 696` text-safe center。B 保持 off／on 两个状态，hover 仍由
   runtime Alpha 派生。
-- 装配／尺寸：合同已定义 `380 × 248`、`22 × 26`、`28 × 32` 命中区、
-  B 共用外接框和真实层序预演；候选尚未构建。
-- 技术像素：待执行。
-- 结论：`prompt-authorized / P3`
+- 装配／尺寸：A 的 `380 × 248` 和 `480 × 348` 九宫格预演无可见接缝，
+  `10/10/8/8px` runtime 文字安全区安静。B1 两次都把输入的
+  `1024 × 1024` 改为 `1254 × 1254`，并把物件放大到声明外接框之外；
+  无法与预声明 mask 或共同锚点装配。
+- 技术像素：B1 调用 1 仅 `1582` 像素保持精确 `#00FF00`，调用 2 仅
+  `44` 像素保持精确 `#00FF00`；两张背景均出现明显绿梯度／暗角，不是
+  平整色键。
+- 结论：`candidate-rejected / P3`
+- 否决人：`internal-review`
+- 第一个失败门禁：B1 canvas／绝对外接框／平整绿底结构。
+- 可观察证据：两次独立完整调用均为 `1254 × 1254`，物件明显超出
+  `(336,304)–(688,720)`，整张绿底有渐变。
 - 用户结论与日期：`2026-07-29`，明确授权 `CHAT.COPY.V1.2`，并允许上传
   B1 closed scaffold、通过 mask 的 B1 candidate 和 B2 open scaffold
-- 下一门禁：先提交本授权版本；随后确定性构建并内审 A。A 通过后才创建并
-  上传 B1 closed scaffold；B1 通过对象、物理、美术和 mask 门禁后，才上传
-  通过 mask 的 B1 candidate 与 B2 open scaffold 执行 B2。
+- 本版本保留内容：A 的确定性派生合同、通过的 A 候选与两种 stretch 预演；
+  B1 raw 的纸／皮革美术仅作为失败反例，不进入 source 或 B2。
+- 下一版本必须改变：ImageGen 不能再拥有或被要求保真画布像素、绝对坐标、
+  外接框或 mask 对齐；它只能提供可裁取的纸／皮革表面，B 的两状态几何、
+  共同锚点、开合差异与 Alpha 必须全部由本地确定性工具持有。
+- 本版本无 tracked source／runtime：是。
 
 ## 尝试摘要
 
@@ -350,4 +400,4 @@ label.
 |---|---|---|---|
 | V1 | commit `69ada1f`；session `019fae2a…`／`019fae2c…` | `candidate-rejected` | 不上传完整 UI；A 单物件 edit；B 按真实持久状态拆分 |
 | V1.1 | commit `8b0a4e3`；A session `019fae4d…`／result `ig_0d80…`；B1／B2 因门禁停止 | `candidate-rejected` | A 必须锁死外接框；四条边的 stretch zone 不得由模型生成独特缺口；降低照片式纤维与中性光漂移 |
-| V1.2 | A 改为已接受 V3 纸面的确定性派生；B1／B2 使用分状态 scaffold／mask；用户授权三项外部输入 | `prompt-authorized / P3` | 按 A → B1 → B2 的内部门禁串行执行 |
+| V1.2 | commit `3e9eb8e`；A SHA `ed4e1c…`；B1 sessions `019fae80…`／`019fae83…`，results `ig_063f…`／`ig_0a42…` | `candidate-rejected / P3` | 保留 A；B 将 ImageGen 降为表面 donor，所有像素几何归确定性工具 |
