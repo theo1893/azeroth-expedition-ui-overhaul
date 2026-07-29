@@ -52,6 +52,18 @@ def main() -> None:
         / "quests"
         / "任务详情对称内页沟结构部件_生产提示词_QL-A2_v3.md"
     )
+    ql_a2_v3_1_prompt_path = (
+        ROOT
+        / "prompts"
+        / "quests"
+        / "任务详情低频对称内页沟结构部件_生产提示词_QL-A2_v3.1.md"
+    )
+    visual_provenance_path = (
+        ROOT
+        / "prompts"
+        / "quests"
+        / "任务模块_视觉原型提示词_v1.md"
+    )
     tracker_prompt_path = (
         ROOT / "prompts" / "quests" / "任务追踪组件资产_生产提示词_v2.md"
     )
@@ -77,6 +89,8 @@ def main() -> None:
     ql_a2_v2_prompt = ql_a2_v2_prompt_path.read_text(encoding="utf-8")
     ql_a2_v2_1_prompt = ql_a2_v2_1_prompt_path.read_text(encoding="utf-8")
     ql_a2_v3_prompt = ql_a2_v3_prompt_path.read_text(encoding="utf-8")
+    ql_a2_v3_1_prompt = ql_a2_v3_1_prompt_path.read_text(encoding="utf-8")
+    visual_provenance = visual_provenance_path.read_text(encoding="utf-8")
     tracker_prompt = tracker_prompt_path.read_text(encoding="utf-8")
     tracker = tracker_path.read_text(encoding="utf-8")
 
@@ -96,11 +110,14 @@ def main() -> None:
             "不能直接充当",
             "`QL-A2 V1` 的五对象方案已因外置封脊朝向",
             "因装订针脚偏离绝对中心线",
-            "`QL-A2 V3` 为 `production-draft / P2`",
+            "`QL-A2 V3.1` 为 `production-draft / P2`",
             "任务详情可拉伸结构部件_生产提示词_QL-A2_v1.md",
             "任务详情内页沟结构部件_生产提示词_QL-A2_v2.md",
             "任务详情内页沟结构部件_修订提示词_QL-A2_v2.1.md",
             "任务详情对称内页沟结构部件_生产提示词_QL-A2_v3.md",
+            "任务详情低频对称内页沟结构部件_生产提示词_QL-A2_v3.1.md",
+            "任务模块_视觉原型提示词_v1.md",
+            "不能覆盖基准的物件身份",
             "`QUEST.LOG.SPINE` 只保留为“中央装订结构包”的父级兼容名称",
             "QUEST.LOG.GUTTER.UNDERLAY",
             "QUEST.LOG.GUTTER.LEFT_FOLD",
@@ -174,18 +191,38 @@ def main() -> None:
     assert "| `QUEST.DIALOG.REWARD` |" not in spec
 
     require(
+        visual_provenance,
+        (
+            "任务详情与任务追踪视觉原型已锁定",
+            "与已确定的厚重",
+            "旧书聊天框拥有相同的材质精度、绘制手法、光照方向和年代感",
+            "2004 年前后香草魔兽 UI 的手绘感、厚轮廓、略夸张的体积",
+            "赭黄、烟褐、暗酒红、森林绿和旧黄铜",
+            "主要信息区平整安静，装饰集中在外沿",
+            "正式的“冒险者公会任务",
+            "必须保持香草",
+        ),
+        "locked quest visual prompt provenance",
+    )
+
+    require(
         log_prompt,
         (
             "production-draft",
             "`QL-A1` 已确认并达到 `P4`",
-            "`QL-A2 V1`、`QL-A2 V2.1` 已否决",
-            "`QL-A2 V3` 为未授权的 `production-draft / P2`",
-            "等待用户确认 `QL-A2 V3` 提示词",
+            "`QL-A2 V1`、`QL-A2 V2.1`、`QL-A2 V3`",
+            "`QL-A2 V3.1` 为未授权的 `production-draft / P2`",
+            "等待用户确认 `QL-A2 V3.1` 提示词",
             "任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md",
             "任务详情可拉伸结构部件_生产提示词_QL-A2_v1.md",
             "任务详情内页沟结构部件_生产提示词_QL-A2_v2.md",
             "任务详情内页沟结构部件_修订提示词_QL-A2_v2.1.md",
             "任务详情对称内页沟结构部件_生产提示词_QL-A2_v3.md",
+            "任务详情低频对称内页沟结构部件_生产提示词_QL-A2_v3.1.md",
+            "## 美术基准继承",
+            "任务模块_视觉原型提示词_v1.md",
+            "最高视觉权威",
+            "覆盖锁定基准的综合色感和绘制语言",
             "imagegen-0-143-0",
             "@openai/codex@0.143.0",
             "执行块 QL-A1",
@@ -388,14 +425,17 @@ def main() -> None:
         ql_a2_v3_prompt,
         (
             "版本：`QL-A2 V3`",
-            "子状态：`prompt-draft`",
-            "项目阶段：`P2`",
-            "类型：`production-draft`",
-            "执行状态：未授权，禁止执行",
+            "子状态：`candidate-rejected`",
+            "项目阶段：`P3` 候选历史；不晋级",
+            "类型：`production`",
+            "“进入下一步”解释为授权",
+            "不满足版本明确授权门禁",
             "imagegen-0-143-0",
             "@openai/codex@0.143.0",
             "QuestLogBookShell_Master_v1.png",
             "任务详情面板_视觉基准_v1.png",
+            "任务模块_视觉原型提示词_v1.md",
+            "错误声明为最高视觉权威",
             "QL-A2 V2.1 退回记录",
             "不作为 Image 输入",
             "目标源画布：`1536 × 1024`",
@@ -418,11 +458,21 @@ def main() -> None:
             "中央至少约 `70%`",
             "不要使用任何旧的 QL-A2",
             "分别使用 3、5、7 个针脚站",
-            "raw：未生成",
+            "generated/quests/QL-A2/v3/QL-A2_v3_raw.png",
             "最终 source：无",
-            "结论：`prompt-draft`，没有候选",
+            "019fad38-517b-7ca1-82af-853b0ddc68f2",
+            "ig_0e8d8bb14f37caff016a69c8e4f918819186e21dd3df807ff2",
+            "44e3cf1b01625b4c9e810229a6d33a9bcf381bb9bc0dc9feda06384034c0a0cc",
+            "97908ab5a32ee3b3ee37763d4b28dbb6dac4199a52c7424255805dc011271178",
+            "674973／32176／865715",
+            "Operation not permitted",
+            "candidate-rejected / P3",
+            "高对比、边界清楚的竖向织纹条",
+            "实心独立",
+            "完全遮没",
+            "满页均匀细碎压花",
         ),
-        "QL-A2 V3 symmetric-gutter production draft",
+        "QL-A2 V3 rejected production record",
     )
     ql_a2_v3_body = ql_a2_v3_prompt.split(
         "## 最终执行正文\n\n", 1
@@ -434,7 +484,57 @@ def main() -> None:
         "QL-A2 V3 prompt contains an unauthorized later batch"
     )
     assert "generated/quests/QL-A2/v3/" in ql_a2_v3_prompt
-    assert "会话／结果 ID：无" in ql_a2_v3_prompt
+
+    require(
+        ql_a2_v3_1_prompt,
+        (
+            "版本：`QL-A2 V3.1`",
+            "子状态：`prompt-draft`",
+            "项目阶段：`P2`",
+            "类型：`production-draft`",
+            "执行状态：未授权，禁止执行",
+            "## 美术基准继承",
+            "### 权威顺序",
+            "### 必须继承的视觉 DNA",
+            "### 本批组件级转译",
+            "### 明确不继承",
+            "### 冲突审计",
+            "任务模块_视觉原型提示词_v1.md",
+            "聊天框独立艺术资源_v3.png",
+            "聊天框模块化资源_执行提示词_v3.md",
+            "QuestLogBookShell_Master_v1.png",
+            "Image 1 是用户锁定的任务详情视觉基准，是最高视觉权威",
+            "Image 2 只提供",
+            "Image 3 只是已经接受的派生结构参考",
+            "Image 3 不得覆盖 Image 1",
+            "正式的冒险者公会双页任务卷宗",
+            "2004 年前后《魔兽世界》香草时代的二维手绘位图语言",
+            "暖赭与旧象牙纸面",
+            "与战地旧书聊天框共用",
+            "主要阅读区平整、安静、低对比",
+            "`42%`／右 `58%` 指信息列",
+            "Image 3 的正文有高频压花",
+            "Image 3 是已经接受的派生 source",
+            "目标画布：`1536 × 1024`",
+            "最终源画布必须恰好包含 `8` 组",
+            "每页中央至少 `80%`",
+            "3、5、7 个针脚站",
+            "raw：未生成",
+            "结论：`prompt-draft / P2`",
+        ),
+        "QL-A2 V3.1 baseline-inherited production draft",
+    )
+    ql_a2_v3_1_body = ql_a2_v3_1_prompt.split(
+        "## 最终执行正文\n\n", 1
+    )[1].split("\n## 执行记录", 1)[0].strip()
+    assert "/Users/" not in ql_a2_v3_1_body, (
+        "QL-A2 V3.1 creative body contains a machine-specific absolute path"
+    )
+    assert "QL-B" not in ql_a2_v3_1_prompt, (
+        "QL-A2 V3.1 prompt contains an unauthorized later batch"
+    )
+    assert "generated/quests/QL-A2/v3.1/" in ql_a2_v3_1_prompt
+    assert "会话／结果 ID：无" in ql_a2_v3_1_prompt
 
     manifest = json.loads(ql_a1_manifest_path.read_text(encoding="utf-8"))
     source_bytes = ql_a1_source_path.read_bytes()
@@ -516,13 +616,15 @@ def main() -> None:
         (
             "`QUEST.LOG.SHELL`",
             "`QL-A1` 空卷宗透明源母版达到 `P4`",
-            "`QL-A2 V1`／`V2.1` 均已退回",
-            "对称内页沟 `V3` 为未授权 `prompt-draft / P2`",
+            "`QL-A2 V1`／`V2.1`／`V3` 均已退回",
+            "低频对称内页沟 `V3.1` 为未授权 `prompt-draft / P2`",
             "任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md",
             "任务详情可拉伸结构部件_生产提示词_QL-A2_v1.md",
             "任务详情内页沟结构部件_生产提示词_QL-A2_v2.md",
             "任务详情内页沟结构部件_修订提示词_QL-A2_v2.1.md",
             "任务详情对称内页沟结构部件_生产提示词_QL-A2_v3.md",
+            "任务详情低频对称内页沟结构部件_生产提示词_QL-A2_v3.1.md",
+            "任务模块_视觉原型提示词_v1.md",
             "QuestLogBookShell_Master_v1.png",
             "QL-A1_SourceManifest_v1.json",
             "1514 × 1039",
@@ -543,9 +645,20 @@ def main() -> None:
             "技术门禁；后续用户视觉复审退回",
             "装订针脚未稳定对齐书本绝对中心线",
             "正文纸面高频纹理过密",
+            "019fad38-517b-7ca1-82af-853b0ddc68f2",
+            "ig_0e8d8bb14f37caff016a69c8e4f918819186e21dd3df807ff2",
+            "44e3cf1b01625b4c9e810229a6d33a9bcf381bb9bc0dc9feda06384034c0a0cc",
+            "97908ab5a32ee3b3ee37763d4b28dbb6dac4199a52c7424255805dc011271178",
+            "674973／32176／865715",
+            "高对比完整织纹竖条",
+            "3／5／7 针脚",
+            "流程审计认定这不满足版本明确授权门禁",
+            "强制解析锁定图对应的原始 prompt provenance",
+            "QL-A1 source 只负责结构",
             "绝对中心 `x=338`",
             "物理页宽差约 `≤1%`",
             "正文中央约 `70%`",
+            "正文中央 `80%` 低频",
             "`QUEST.LOG.SPINE`",
             "`P2 parent`",
             "`QUEST.LOG.GUTTER.UNDERLAY`",

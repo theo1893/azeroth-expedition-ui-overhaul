@@ -9,8 +9,8 @@
 | 子状态 | 项目阶段 | 必备证据 | 允许写入 | 下一门禁 |
 |---|---:|---|---|---|
 | `contract-draft` | `P0–P2` | 真实对象映射尚未完整 | 组件规范、tracker | 补齐组件合同 |
-| `prompt-draft` | `P1–P2` | 完整合同；`production-draft` | 版本化提示词、规范、tracker | 用户授权具体版本 |
-| `prompt-authorized` | `P3` | 用户确认执行正文；状态 `production` | 提示词、tracker | 固定执行器生图 |
+| `prompt-draft` | `P1–P2` | 完整合同；锁定图到原始提示词的 provenance；美术继承与冲突表；`production-draft` | 版本化提示词、规范、tracker | 用户授权具体版本 |
+| `prompt-authorized` | `P3` | 用户看到并明确确认具体版本执行正文；状态 `production` | 提示词、tracker | 固定执行器生图 |
 | `candidate-raw` | `P3` | raw 路径、执行器与会话记录 | 被忽略的 `generated/`；执行记录 | 内部结构审查 |
 | `candidate-reviewed` | `P3` | 语义、结构、风格、装配和技术证据 | 被忽略的预演；review 记录 | 用户视觉复审 |
 | `candidate-rejected` | 不晋级 | 否决人、日期、具体失败门禁 | 原提示词和 tracker 的失败记录 | 新版本或停止 |
@@ -45,7 +45,9 @@ runtime-exported → static/game failure → corrected exporter/runtime, remain 
 
 ## 不可跨越的门禁
 
-- `prompt-draft → prompt-authorized`：必须由用户授权具体提示词版本。
+- `prompt-draft → prompt-authorized`：必须先验证锁定视觉基准、对应原始提示词、
+  组件级继承条款和权威冲突结论完整，再由用户看过执行正文后授权具体提示词
+  版本。“继续”或“下一步”本身不构成生图授权。
 - `candidate-raw → candidate-reviewed`：必须先过语义／物理结构审查；技术指标
   不能替代这一门。
 - `candidate-reviewed → source-accepted`：必须由用户明确接受具体候选。
@@ -69,3 +71,6 @@ runtime-exported → static/game failure → corrected exporter/runtime, remain 
 6. “接受整体风格”不等于接受每个组件源资产；接受必须指向明确批次和版本。
 7. 活跃生产期间保留失败版本；`P6-C` 收口时可从当前树删除已被最终 provenance
    概括的旧版本，完整历史由 Git 保存。
+8. `assets/source/` 中的派生母版不能在新提示词中被提升为高于
+   `assets/locked/` 与其原始提示词 provenance 的视觉权威；发现权威倒置时
+   必须退回 `prompt-draft`。

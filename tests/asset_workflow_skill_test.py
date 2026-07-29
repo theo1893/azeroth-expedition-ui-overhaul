@@ -50,6 +50,11 @@ def main() -> None:
             "## Close after P6",
             "`P6-C / component-closed`",
             "Do not describe ignored generated files as durable cross-device assets",
+            "A locked image without its prompt provenance is an incomplete authority",
+            "## Resolve visual authority and inheritance",
+            "art-inheritance block",
+            "`assets/source/` derivative the highest visual authority",
+            "“continue” or “next step” alone does not authorize generation",
         ),
         "asset workflow skill",
     )
@@ -71,6 +76,9 @@ def main() -> None:
             "用户明确接受具体候选",
             "执行过的提示词正文不可原地覆盖",
             "完整历史由 Git 保存",
+            "原始提示词",
+            "“继续”或“下一步”本身不构成生图授权",
+            "`assets/source/` 中的派生母版不能",
         ),
         "asset workflow state machine",
     )
@@ -91,6 +99,8 @@ def main() -> None:
             "现代 HUD 语言",
             "预演图只进入 `generated/`",
             "`通过`、`有条件通过` 或 `退回`",
+            "原始提示词提取的美术 DNA",
+            "`assets/source/` 派生母版错误提升",
         ),
         "asset review checklist",
     )
@@ -130,6 +140,54 @@ def main() -> None:
         )
         assert "P6-C" in source, (
             f"{label} does not require terminal component closure"
+        )
+    require(
+        pipeline,
+        (
+            "原始 prototype／provenance prompt 路径",
+            "必须继承／组件级转译／明确不继承／冲突裁决",
+            "派生 `assets/source/` 不得反向覆盖",
+            "“继续”或“下一步”只允许走到展示提示词",
+        ),
+        "asset pipeline art-inheritance gate",
+    )
+    require(
+        agents,
+        (
+            "同时读取产生或语义锁定该图的版本化",
+            "`assets/source/` 是",
+            "不得在后续提示词中被提升为高于锁定基准",
+        ),
+        "agent visual-authority gate",
+    )
+
+    legacy_executed = {
+        "任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md",
+        "任务详情可拉伸结构部件_生产提示词_QL-A2_v1.md",
+        "任务详情内页沟结构部件_生产提示词_QL-A2_v2.md",
+        "任务详情内页沟结构部件_修订提示词_QL-A2_v2.1.md",
+        "任务详情对称内页沟结构部件_生产提示词_QL-A2_v3.md",
+    }
+    for prompt in sorted((ROOT / "prompts").rglob("*.md")):
+        source = prompt.read_text(encoding="utf-8")
+        if "子状态：`prompt-draft`" not in source:
+            continue
+        assert prompt.name not in legacy_executed
+        require(
+            source,
+            (
+                "## 美术基准继承",
+                "基准提示词 provenance",
+                "### 权威顺序",
+                "### 必须继承的视觉 DNA",
+                "### 本批组件级转译",
+                "### 明确不继承",
+                "### 冲突审计",
+            ),
+            f"active production prompt {prompt.relative_to(ROOT)}",
+        )
+        assert "source` 只" in source or "source，只" in source, (
+            f"{prompt.relative_to(ROOT)} does not limit derivative source authority"
         )
 
     repository_sync = (

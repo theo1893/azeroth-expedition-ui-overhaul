@@ -41,6 +41,11 @@
 5. `assets/source/<module>/` 中已确认的透明母版。
 6. `assets/references/` 中明确标注用途的结构或故障参考。
 
+使用锁定视觉基准时，必须同时读取产生或语义锁定该图的版本化
+prototype／provenance prompt，并把其中不可变的物件身份、轮廓语言、材料、
+配色、笔触、光照、磨损和反模式转译进组件生产提示词。`assets/source/` 是
+派生参考，不得在后续提示词中被提升为高于锁定基准的视觉权威。
+
 组件状态、资产来源、原始提示词和 runtime 路径以
 `docs/implementation/OVERHAUL_TRACKER.md` 为唯一进度事实来源。任何状态变化
 必须在同一 Git 提交中更新 tracker。

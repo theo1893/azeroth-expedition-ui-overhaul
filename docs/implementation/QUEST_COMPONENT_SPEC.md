@@ -25,14 +25,20 @@ runtime 背景。`QL-A2 V1` 的五对象方案已因外置封脊朝向、翻页�
 虽然生成了八组逻辑对象的透明候选并完成技术检查，但用户于 `2026-07-29`
 因装订针脚偏离绝对中心线、针脚端点与纸页交界突兀以及正文纹理过密而退回；
 它只保留在被忽略的 `generated/quests/QL-A2/v2/`，没有成为源资产。替代的
-`QL-A2 V3` 为 `production-draft / P2`，等待用户授权提示词，尚未生图。
+`QL-A2 V3` 也已因页沟、内折、针脚可见性、收口和正文纹理问题被内部退回；
+流程审计同时发现它遗漏锁定基准的原始提示词并倒置了视觉权威。替代的
+`QL-A2 V3.1` 为 `production-draft / P2`，尚未授权或生图。
 
 视觉权威：
 
-- [任务模块视觉规范](../modules/quests/任务模块视觉规范_公会任务卷宗与行军便笺_v1.md)
 - [任务详情视觉基准](../../assets/locked/quests/任务详情面板_视觉基准_v1.png)
 - [任务追踪视觉基准](../../assets/locked/quests/任务追踪面板_视觉基准_v1.png)
+- [两张锁定基准的原始提示词 provenance](../../prompts/quests/任务模块_视觉原型提示词_v1.md)
+- [任务模块视觉规范](../modules/quests/任务模块视觉规范_公会任务卷宗与行军便笺_v1.md)
 - [统一美术方向](../ART_DIRECTION.md)
+
+锁定图与原始提示词共同构成最高视觉权威。`QL-A1 source` 只承担书体结构和
+相邻材料职责，不能覆盖基准的物件身份、笔触、配色、光照、磨损或正文纹理。
 
 实现审计来源：
 
@@ -346,7 +352,7 @@ pfUI 当前换肤会隐藏两张原生肖像；本 overhaul 不得把这种现�
 
 | 批次 | 组件 | 输出责任 | 当前状态 |
 |---|---|---|---|
-| `QL-A` | `SHELL`、`LIST.PAPER`、`DETAIL.PAPER`、六个 `GUTTER.*` 子组件 | 纯结构资源；近等宽双页、页沟、内折和装订分别裁切 | `QL-A1` 源母版为 `P4`；`QL-A2 V1`／`V2.1` 已退回；对称 `V3` 为 `prompt-draft / P2`，未授权 |
+| `QL-A` | `SHELL`、`LIST.PAPER`、`DETAIL.PAPER`、六个 `GUTTER.*` 子组件 | 纯结构资源；近等宽双页、页沟、内折和装订分别裁切 | `QL-A1` 源母版为 `P4`；`QL-A2 V1`／`V2.1`／`V3` 已退回；基准继承修订 `V3.1` 为 `prompt-draft / P2`，未授权 |
 | `QL-B` | `LIST.ROW`、`REGION.TOGGLE`、`LIST.CHECK`、`SELECTION`、`TYPE.BADGE`、`STATE.SEAL` | 目录展开、追踪、选择与任务状态覆盖 | 后续任务详情草案 |
 | `QL-C` | 列表／详情各自的 `SCROLL.TRACK`、`THUMB`、`UP`、`DOWN`；`CLOSE`、操作按钮、`TRACK`、`DETAIL.TOGGLE`、`LEVELS` | 每个真实交互对象的完整状态画布 | 后续任务详情草案 |
 | `QL-D` | `REWARD.SLOT`、`DETAIL.DIVIDER` 与四个 `DETAIL.*` layout-only 区域 | 只读奖励槽、非交互墨线和文字安全区 | 后续任务详情草案 |
@@ -369,11 +375,14 @@ pfUI 当前换肤会隐藏两张原生肖像；本 overhaul 不得把这种现�
   冻结过近等宽双页与六个中央结构子组件的八对象合同；后续复审结论已退回。
 - [QL-A2 内页沟结构部件 production edit V2.1](../../prompts/quests/任务详情内页沟结构部件_修订提示词_QL-A2_v2.1.md)：
   固定版本执行后被用户退回；只保留 provenance，不得进入 tracked source。
-- [QL-A2 对称内页沟结构部件 production draft V3](../../prompts/quests/任务详情对称内页沟结构部件_生产提示词_QL-A2_v3.md)：
-  `prompt-draft / P2`；绝对中心线、近 1:1 双页、横向针脚站与安静正文纸面
-  已写入合同，但尚未获准执行。
+- [QL-A2 对称内页沟结构部件 production V3](../../prompts/quests/任务详情对称内页沟结构部件_生产提示词_QL-A2_v3.md)：
+  固定版本已执行并被内部结构／美术继承审查退回；只保留 provenance，不得
+  进入 tracked source。
+- [QL-A2 基准继承修订 production draft V3.1](../../prompts/quests/任务详情低频对称内页沟结构部件_生产提示词_QL-A2_v3.1.md)：
+  `prompt-draft / P2`；保留绝对中心线、近 1:1 双页与横向针脚合同，并新增
+  锁定基准 prompt provenance、美术 DNA、组件转译、排除项和冲突裁决。
 - [任务详情后续组件资产生产提示词 V2](../../prompts/quests/任务详情组件资产_生产提示词_v2.md)：
-  `QL-B`、`QL-C`、`QL-D` 仍为 `production-draft`；必须在 V3 结构通过后
+  `QL-B`、`QL-C`、`QL-D` 仍为 `production-draft`；必须在 V3.1 结构通过后
   按本合同新增的对象粒度再次审查。
 - [任务追踪组件资产兼容草案 V2](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md)：
   `deferred-compatibility-draft`，不能执行。
@@ -387,23 +396,26 @@ Quest Log 提示词，也不得把整张 NPC 对话效果图登记成可运行�
    无版本重跑。
 2. 保留 `QL-A2 V1` 退回记录，不再从其中提取三段外置封脊或
    `140 × 60` 周期。
-3. 保留 `QL-A2 V2.1` 的用户退回记录；不得上传它作为 V3 输入，不得通过
+3. 保留 `QL-A2 V2.1` 的用户退回记录；不得上传它作为 V3.1 输入，不得通过
    Alpha 清理、锐化或手工平移伪装修正结构。
-4. 用户先审查并明确授权 `QL-A2 V3` 最终执行正文；授权后才允许由固定
+4. 保留 `QL-A2 V3` 的内部退回和流程审计记录；不得上传候选，也不得沿用其
+   “QL-A1 source 最高权威”的错误参考职责。
+5. 用户看到最终执行正文后，必须明确授权 `QL-A2 V3.1`；“继续”或“下一步”
+   本身不构成生图授权。获得版本明确授权后才允许由固定
    `imagegen-0-143-0` 执行器生成新候选和确定性重组预演。
-5. 只有 V3 候选再次经用户明确接受，才可复制到
+6. 只有 V3.1 候选再次经用户明确接受，才可复制到
    `assets/source/quests/ql-a2/` 并为八个逻辑对象建立 crop manifest。
-6. `QL-A2` 通过并回到目标客户端后，记录 Quest Log 对象是否存在、原始
+7. `QL-A2` 通过并回到目标客户端后，记录 Quest Log 对象是否存在、原始
    尺寸、锚点和层级，再确定最终结构切片、拉伸安全区与 adapter 几何。物理
    双页继续接近等宽，runtime 阅读安全区仍以左 `42%`／右 `58%` 为目标。
-7. 先接入 `QUEST.LOG.SHELL`，只改变呈现，不修改事件与数据。
-8. 后续逐批确认并接入左右 ScrollBar、真实 Button 状态、任务行覆盖、日志内
+8. 先接入 `QUEST.LOG.SHELL`，只改变呈现，不修改事件与数据。
+9. 后续逐批确认并接入左右 ScrollBar、真实 Button 状态、任务行覆盖、日志内
    追踪标记和奖励槽；确认点击区没有改变。
-9. 最后评估是否重建 pfUI 的等级显示与详情收起增强。
-10. NPC 对话继续使用原生回退。只有“NPC 委托文书”视觉方向和目标几何均
+10. 最后评估是否重建 pfUI 的等级显示与详情收起增强。
+11. NPC 对话继续使用原生回退。只有“NPC 委托文书”视觉方向和目标几何均
     确认后，才能按 `QD-A` 至 `QD-D` 分批写 production prompt；不得从父级
     整图开始。
-11. 外部 tracker 保持其插件原状，直到完成独立
+12. 外部 tracker 保持其插件原状，直到完成独立
    provider 合同、重写提示词并再次获得用户确认。
 
 ## 8. 当前 Quest Log 实机验收清单
