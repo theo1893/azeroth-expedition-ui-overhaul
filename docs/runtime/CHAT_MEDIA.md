@@ -1,6 +1,7 @@
-# Chat runtime media
+# 聊天 runtime 媒体清单
 
-本目录只保存当前插件实际加载的聊天 runtime 资源。
+`addon/AzerothExpeditionUI/Media/Chat/` 只保存当前插件实际加载的聊天
+runtime 资源；本文件是它的外部媒体清单。
 
 ## 0.4.1 legacy
 

@@ -13,8 +13,9 @@
 - 模块级替换、项目媒体与字体：`addon/AzerothExpeditionUI/`
 - 当前 pfUI 快照：`8.1.0`，来源 HEAD
   `fbc8fb608b79adf32049543ec12fcc020e0acd69`
-- pfUI 许可证：MIT；同目录保留 `LICENSE`
-- fork 修改必须登记在 `addon/pfUI/AEUI_FORK.md` 与 overhaul tracker
+- pfUI 许可证：MIT；运行时目录保留 `addon/pfUI/LICENSE`
+- fork 修改必须登记在 [`PFUI_FORK.md`](pfui/PFUI_FORK.md) 与 overhaul
+  tracker
 
 ## 四种重构方式
 
@@ -92,8 +93,10 @@ addon/pfUI/
     api.lua              pfUI 公共绘制入口
   modules/               保留 pfUI 功能模块
   skins/                 保留并逐步重做可见原生面板
-  AEUI_FORK.md            fork 差异与回退说明
 ```
+
+pfUI 的上游基线、fork 差异与测试说明统一位于 `docs/pfui/`，不随运行时代码
+散放在插件目录。
 
 ## 当前状态
 

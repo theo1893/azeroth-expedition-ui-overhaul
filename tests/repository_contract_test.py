@@ -55,7 +55,17 @@ def main() -> None:
         "a duplicate read-only pfUI snapshot remains in third-party"
     )
     assert (pfui / "LICENSE").is_file(), "pfUI MIT license is missing"
-    assert (pfui / "AEUI_FORK.md").is_file(), "pfUI fork manifest is missing"
+    docs = ROOT / "docs"
+    assert (docs / "README.md").is_file(), "central documentation index is missing"
+    assert (docs / "WORKFLOW.md").is_file(), "documentation workflow is missing"
+    assert (docs / "pfui" / "PFUI_FORK.md").is_file(), (
+        "central pfUI fork manifest is missing"
+    )
+    addon_markdown = sorted(ADDON.rglob("*.md"))
+    assert not addon_markdown, (
+        "addon must contain runtime files and required licenses, not Markdown: "
+        f"{[path.relative_to(ROOT).as_posix() for path in addon_markdown]}"
+    )
 
     for toc in (
         pfui / "pfUI.toc",
@@ -154,6 +164,18 @@ def main() -> None:
     for markdown in ROOT.rglob("*.md"):
         if ".git" not in markdown.parts:
             assert_markdown_links(markdown)
+
+    documentation_index = (docs / "README.md").read_text(encoding="utf-8")
+    unindexed_docs = [
+        path.relative_to(docs).as_posix()
+        for path in sorted(docs.rglob("*.md"))
+        if path != docs / "README.md"
+        and path.relative_to(docs).as_posix() not in documentation_index
+    ]
+    assert not unindexed_docs, (
+        "docs/README.md does not index central documents: "
+        f"{unindexed_docs}"
+    )
 
     print("repository contract test passed")
 

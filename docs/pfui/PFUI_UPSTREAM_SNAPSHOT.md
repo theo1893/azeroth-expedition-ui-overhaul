@@ -15,8 +15,8 @@
 - `libs\libtotem.lua`
 
 嵌套的 `.git` 目录没有复制，避免在主项目内形成嵌套仓库。原项目许可证
-保留在同目录的 `LICENSE`。
+保留在 [addon/pfUI/LICENSE](../../addon/pfUI/LICENSE)。
 
 此目录现位于 `addon/pfUI/`，是可直接部署的项目维护分支，不再是只读参考。
 上游 MIT 许可仍保留；项目修改清单、回退开关与功能边界见
-[`AEUI_FORK.md`](AEUI_FORK.md)。
+[`PFUI_FORK.md`](PFUI_FORK.md)。

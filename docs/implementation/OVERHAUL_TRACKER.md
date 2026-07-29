@@ -45,6 +45,7 @@
 
 | 日期 | 范围 | 结果 | 证据／限制 |
 |---|---|---|---|
+| `2026-07-29` | 文档信息架构 | 通过静态测试 | 项目说明集中到 `docs/`；`addon/` 无 Markdown；文档中心逐项索引且相对链接通过仓库契约测试 |
 | `2026-07-29` | 仓库结构 | 通过 | Markdown 相对链接、Git whitespace、runtime 媒体引用均通过静态检查 |
 | `2026-07-29` | 聊天 0.4.1 legacy | 通过静态测试 | [`chat_module_smoke.lua`](../../tests/chat_module_smoke.lua) 验证旧书、Tab、输入、legacy panel 隐藏与 native-first 状态诊断；不等于目标客户端实机 |
 | `2026-07-29` | 聊天 V3 源资产 | 通过离线验证 | 三张母版尺寸与 RGBA Alpha 通过；[`build_chat_v3_layout_preview.py`](../../tools/build_chat_v3_layout_preview.py) 和 [`build_chat_v3_runtime_assets.py`](../../tools/build_chat_v3_runtime_assets.py) 在临时目录成功运行；runtime 仍未接入 |
@@ -74,18 +75,18 @@
 
 | ID | 游戏内组件 | pfUI／原生基础 | 方式 | 阶段 | 源资产／视觉基准 | 原始生产提示词 | runtime／验证 | 下一步 |
 |---|---|---|---|---|---|---|---|---|
-| `CORE.PFUI.FORK` | 可独立安装的 pfUI 功能底座 | pfUI `8.1.0` | fork | `P5` | [上游基线](../../addon/pfUI/UPSTREAM_SNAPSHOT.md) | N/A | [维护分支清单](../../addon/pfUI/AEUI_FORK.md)；静态测试 | Turtle WoW 加载、SavedVariables 与第三方兼容回归 |
+| `CORE.PFUI.FORK` | 可独立安装的 pfUI 功能底座 | pfUI `8.1.0` | fork | `P5` | [上游基线](../pfui/PFUI_UPSTREAM_SNAPSHOT.md) | N/A | [维护分支清单](../pfui/PFUI_FORK.md)；静态测试 | Turtle WoW 加载、SavedVariables 与第三方兼容回归 |
 | `CORE.NATIVE.FALLBACK` | 未完成组件的香草／Turtle WoW 原生呈现路由 | `pfUI:LoadModule`／`LoadSkin` | adapter | `P5` | 客户端原生 Frame；无仓库位图 | N/A（加载路由，不生产资产） | [expedition.lua](../../addon/pfUI/api/expedition.lua)、[pfUI.lua](../../addon/pfUI/pfUI.lua)、[turtle-wow.lua](../../addon/pfUI/modules/turtle-wow.lua)；静态测试 | 实机验证动作条、团队、背包、拾取、地图和所有系统窗口 |
 | `CORE.SURFACE` | 大型窗口、紧凑框体、边缘与阴影公共基线 | `pfUI.api.CreateBackdrop` | refactor | `P5` compatibility baseline | [统一美术方向](../ART_DIRECTION.md)；香草内置 Dialog／Tooltip 材质 | N/A（使用客户端内置材质） | [expedition.lua](../../addon/pfUI/api/expedition.lua)、[api.lua](../../addon/pfUI/api/api.lua)；当前用于维护工具与显式 opt-in 模块 | 主城／副本／团本逐窗口实机审计；最终资产仍按组件拆分 |
 | `CORE.STATUS` | 血量、能量、施法及其他状态条过渡材质 | pfUI status texture 配置 | adapter | `P5` compatibility baseline | 香草内置 `UI-StatusBar` | N/A（使用客户端内置材质） | [expedition.lua](../../addon/pfUI/api/expedition.lua)；默认香草回退时不接管原生状态条 | 为单位框、团队、施法条分别建立端帽／背景／填充合同 |
-| `CORE.MEDIA` | 媒体注册与回退 | `pfUI.api`、插件路径 | extension | `P1` | [字体媒体](../../addon/AzerothExpeditionUI/Media/Fonts/README.md) | — | [Bootstrap.lua](../../addon/AzerothExpeditionUI/Core/Bootstrap.lua) | 建立 MediaRegistry 和缺失回退 |
+| `CORE.MEDIA` | 媒体注册与回退 | `pfUI.api`、插件路径 | extension | `P1` | [字体媒体](../runtime/FONT_MEDIA.md) | — | [Bootstrap.lua](../../addon/AzerothExpeditionUI/Core/Bootstrap.lua) | 建立 MediaRegistry 和缺失回退 |
 | `CORE.9SLICE` | 九宫格容器 | Vanilla Texture API | extension | `P1` | [聊天组件合同](CHAT_COMPONENT_SPEC.md) | — | [Chat.lua](../../addon/AzerothExpeditionUI/Modules/Chat.lua) 内部实现 | 抽成共用组件并锁 UV manifest |
 | `CORE.3SLICE` | 三段式按钮／Tab／输入条 | Vanilla Texture API | extension | `P1` | [V3 Tab 母版](../../assets/source/chat/v3/ChatTabs_Master_v3.png)；[V3 控件母版](../../assets/source/chat/v3/ChatControls_Master_v3.png) | [V3 原始提示词](../../prompts/chat/聊天框模块化资源_执行提示词_v3.md) | 尚未共用 | 建立端帽／中央段工厂 |
 | `CORE.BUTTON` | 普通／悬停／按下／禁用按钮 | pfUI widgets | refactor | `P1` | [美术方向](../ART_DIRECTION.md) | 待按组件编写 | — | 定义统一状态合同 |
 | `CORE.TAB` | 普通／悬停／选中／禁用 Tab | pfUI／Blizzard Tab | refactor | `P1` | 聊天 V3 Tab | 待按模块编写 | — | 定义统一点击几何 |
 | `CORE.SCROLL` | 轨道、滑块、上下按钮 | pfUI skins | refactor | `P1` | — | — | — | 建立首个真实模块样例 |
 | `CORE.ICON` | 图标槽、品质边、冷却、计数 | pfUI actionbar／bags | refactor | `P1` | — | — | — | 与动作条、背包共同定义 |
-| `CORE.FONT` | 标题／正文／战斗字体 | pfUI font paths | adapter | `P4` | [字体文件](../../addon/AzerothExpeditionUI/Media/Fonts/README.md) | N/A | 未接入 | Turtle WoW 加载与内存测试 |
+| `CORE.FONT` | 标题／正文／战斗字体 | pfUI font paths | adapter | `P4` | [字体文件](../runtime/FONT_MEDIA.md) | N/A | 未接入 | Turtle WoW 加载与内存测试 |
 | `CHAT.FRAME` | 旧书主框九宫格 | `pfUI.chat.left` | adapter | `P4` V3／`P5` legacy | [V3 主框](../../assets/source/chat/v3/ChatBookFrame_Master_v3.png)；[锁定基准](../../assets/locked/chat/聊天框视觉基准_v1.png) | [V3 原始提示词](../../prompts/chat/聊天框模块化资源_执行提示词_v3.md) | `Chat.lua` 加载旧 `ChatBookFrame.tga`；smoke 已有 | 导出 V3 atlas，更新 UV 后实机验收 |
 | `CHAT.TABS` | Tab 承托带；普通／悬停／选中／禁用 | `ChatFrameNTab`、`panelTop` | adapter | `P4` V3／`P5` legacy | [V3 Tab 母版](../../assets/source/chat/v3/ChatTabs_Master_v3.png) | [V3 原始提示词](../../prompts/chat/聊天框模块化资源_执行提示词_v3.md) | 旧资源只接入三状态 | 接入统一 atlas；确认禁用状态来源 |
 | `CHAT.UNREAD` | 未读蜡封／布结 | `ChatFrameNTabFlash` | adapter | `P4` V3／`P5` legacy | [V3 控件母版](../../assets/source/chat/v3/ChatControls_Master_v3.png) | [V3 原始提示词](../../prompts/chat/聊天框模块化资源_执行提示词_v3.md) | 旧 `ChatWaxSeal.tga` 已接入 | 用 V3 未读切片替换 |

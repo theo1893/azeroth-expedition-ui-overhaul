@@ -12,13 +12,23 @@
 - 没有达到组件级 runtime 门槛的 pfUI 可见替换模块默认在加载前回退到
   香草／Turtle WoW 原生 Frame；不得为了隐藏现代界面而删除模块源码、改写
   非视觉 SavedVariables 或破坏原生交互。
-- 上游版本与项目差异记录在 `addon/pfUI/UPSTREAM_SNAPSHOT.md` 和
-  `addon/pfUI/AEUI_FORK.md`。
+- 上游版本与项目差异记录在 `docs/pfui/PFUI_UPSTREAM_SNAPSHOT.md` 和
+  `docs/pfui/PFUI_FORK.md`。
 - 复制或实质改写 pfUI 代码时，记录上游文件、提交和修改原因，并保留 MIT
   版权与许可声明。
 - 每个模块必须能够独立启用、禁用并回退；局部兼容失败不能阻止整个插件加载。
 
 架构边界见 `docs/ARCHITECTURE.md`。
+
+## 文档位置与工作流
+
+- `docs/README.md` 是项目文档的唯一入口，列出每份文档的职责。
+- `docs/WORKFLOW.md` 规定不同变更必须同步更新哪些权威文件。
+- `addon/` 只承载运行时代码、媒体与随包分发所必需的许可证，禁止新增
+  `*.md`。
+- 版本化生图提示词保留在 `prompts/`；第三方 `SOURCE.md`、许可证和校验凭据
+  与对应文件共同保存。它们是生产输入／来源证据，不是散落的项目说明。
+- 新增、移动或删除文档时，必须在同一提交更新 `docs/README.md`。
 
 ## 权威文件
 

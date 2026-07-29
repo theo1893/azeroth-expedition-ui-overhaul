@@ -2,7 +2,7 @@
 
 ## 用途
 
-本目录保持标准插件名 `pfUI`，可直接复制到 Turtle WoW
+运行时目录 `addon/pfUI/` 保持标准插件名 `pfUI`，可直接复制到 Turtle WoW
 `Interface/AddOns/pfUI/`。它继续提供 pfUI 的事件、数据、交互和兼容能力，
 同时把公共视觉入口切换为 Azeroth Expedition 的过渡材质基线。尚未完成
 组件级重绘的游戏界面默认使用香草／Turtle WoW 原生呈现，不再加载 pfUI 的
@@ -12,8 +12,8 @@
 
 - 版本：`8.1.0`
 - 提交：`fbc8fb608b79adf32049543ec12fcc020e0acd69`
-- 许可：同目录 `LICENSE`（MIT）
-- 初始本机差异：见 `UPSTREAM_SNAPSHOT.md`
+- 许可：[addon/pfUI/LICENSE](../../addon/pfUI/LICENSE)（MIT）
+- 初始本机差异：见 [PFUI_UPSTREAM_SNAPSHOT.md](PFUI_UPSTREAM_SNAPSHOT.md)
 
 ## 项目修改
 

@@ -1,4 +1,7 @@
-# 聊天模块 V3 源资源
+# 聊天模块 V3 源资源清单
+
+本文件描述 `assets/source/chat/v3/` 中的生产母版和验收证据；源目录只保存
+二进制资产，不再放置说明文档。
 
 ## 母版与职责
 
@@ -12,7 +15,7 @@
 尚未升级为正式 runtime，也不会由游戏直接加载。
 
 原始执行提示词：
-[`聊天框模块化资源_执行提示词_v3.md`](../../../../prompts/chat/聊天框模块化资源_执行提示词_v3.md)。
+[`聊天框模块化资源_执行提示词_v3.md`](../../prompts/chat/聊天框模块化资源_执行提示词_v3.md)。
 
 ## 验收证据
 
@@ -34,5 +37,5 @@
 - 恢复时先在临时目录复核 `tools/build_chat_v3_runtime_assets.py`，再更新
   TGA、manifest、Lua 和 smoke test。
 
-色键 raw、临时 crop、可再生 atlas 和调试导出不得放回本目录；统一写入被
-Git 忽略的 `generated/`。
+色键 raw、临时 crop、可再生 atlas 和调试导出不得放回
+`assets/source/chat/v3/`；统一写入被 Git 忽略的 `generated/`。

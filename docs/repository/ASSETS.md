@@ -1,4 +1,4 @@
-# 视觉资产目录
+# 视觉资产存储规则
 
 ## `locked/`
 
@@ -13,8 +13,9 @@
 
 ## `references/`
 
-保存香草结构、比例或故障参考，不是可发布贴图。每个会话目录必须用 README
-说明文件用途；被否决方案的结论写入文档后，不继续保留大型反例。
+保存香草结构、比例或故障参考，不是可发布贴图。每个需要长期保留的会话目录
+必须在 `docs/provenance/` 建立用途清单；被否决方案的结论写入文档后，不继续
+保留大型反例。
 
 ## `source/`
 
@@ -33,5 +34,5 @@
 - 每个可交互对象和状态有明确组件 ID。
 - 九宫格／三段式切片有 manifest 或脚本坐标。
 - 源资产、原始提示词和 runtime 路径登记到
-  `docs/implementation/OVERHAUL_TRACKER.md`。
+  [OVERHAUL_TRACKER.md](../implementation/OVERHAUL_TRACKER.md)。
 - runtime 资源只能由确定性脚本输出到插件 `Media/`。

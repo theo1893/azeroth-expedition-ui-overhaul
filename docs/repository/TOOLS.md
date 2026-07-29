@@ -16,7 +16,8 @@ V3 脚本默认从 `assets/source/chat/v3/` 读取；可再生输出必须写到
 `generated/` 或系统临时目录。只有完成脚本审查、Lua 接入和目标客户端验证
 后，才能把 TGA 复制到插件 `Media/Chat/`。
 
-脚本依赖锁见根目录 [`requirements-tools.txt`](../requirements-tools.txt)。
+脚本依赖锁见根目录 [`requirements-tools.txt`](../../requirements-tools.txt)。
 本次无底栏资源链在 Pillow `12.0.0` 上完成兼容 smoke；正式环境仍应安装锁定
 的 `12.2.0`。对 exporter 的任何 crop／UV 变更必须同步
-`docs/implementation/CHAT_COMPONENT_SPEC.md`、Lua 和 tracker。
+[CHAT_COMPONENT_SPEC.md](../implementation/CHAT_COMPONENT_SPEC.md)、Lua 和
+tracker。

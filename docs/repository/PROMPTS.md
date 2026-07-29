@@ -1,7 +1,7 @@
-# Prompt registry
+# Prompt 存储与版本规则
 
-所有可执行生图／修图提示词按模块保存在本目录，并由
-`docs/implementation/OVERHAUL_TRACKER.md` 直接引用。
+所有可执行生图／修图提示词按模块保存在 `prompts/`，并由
+[OVERHAUL_TRACKER.md](../implementation/OVERHAUL_TRACKER.md) 直接引用。
 
 ## 类型
 

@@ -23,16 +23,12 @@
 
 ## 开发入口
 
-- [统一美术方向](docs/ART_DIRECTION.md)
-- [pfUI 基础与重构架构](docs/ARCHITECTURE.md)
-- [组件级资产与 imagegen 流程](docs/ASSET_PIPELINE.md)
-- [设计状态索引](docs/DESIGN_STATUS.md)
-- [实现路线](docs/implementation/IMPLEMENTATION_ROADMAP.md)
-- [聊天组件与资产契约](docs/implementation/CHAT_COMPONENT_SPEC.md)
-- [字体系统](docs/implementation/FONT_SYSTEM.md)
-- [设计决策记录](docs/SESSION_DECISIONS.md)
+- [文档中心与职责索引](docs/README.md)
+- [文档与实现同步工作流](docs/WORKFLOW.md)
+- [UI 改造进度总表](docs/implementation/OVERHAUL_TRACKER.md)
 
-模块级锁定规范位于 `docs/modules/`；版本化提示词位于 `prompts/`。
+项目说明统一位于 `docs/`。`addon/` 只包含运行时代码、媒体和必要许可证；
+版本化、可直接执行的提示词作为生产输入保留在 `prompts/`。
 
 ## 目录
 
@@ -42,8 +38,11 @@ addon/AzerothExpeditionUI/   模块级重绘、runtime 媒体与字体
 assets/locked/               用户确认的整体视觉基准
 assets/references/           结构、比例或故障参考
 assets/source/               用户确认的透明生产母版
+docs/                        项目文档唯一集中入口
 docs/modules/                模块级美术与结构规范
 docs/implementation/         组件合同、进度表与实现说明
+docs/runtime/                addon 与 runtime 媒体清单
+docs/pfui/                   pfUI 上游基线与维护分支差异
 prompts/                     可追溯的原型／生产提示词
 third-party/fonts/           字体许可、来源和校验值
 tools/                       确定性资源导出与预演脚本
@@ -69,7 +68,7 @@ Blizzard skin 进入游戏；这些组件先显示客户端原生版本。只有
 公共材质；这不代表每个模块的最终专属资产都已经达到 `P6`。
 
 默认路由、回退开关与保留功能清单见
-[pfUI 维护分支说明](addon/pfUI/AEUI_FORK.md)。
+[pfUI 维护分支说明](docs/pfui/PFUI_FORK.md)。
 
 ## 资产生产规则
 

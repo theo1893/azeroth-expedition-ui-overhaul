@@ -24,7 +24,8 @@
 `addon/pfUI/` 保存 pfUI `8.1.0` 的可测试维护分支，来源提交
 `fbc8fb608b79adf32049543ec12fcc020e0acd69`，按其 MIT License 保存。
 完整许可见 `addon/pfUI/LICENSE`，上游状态与本地视觉差异说明见
-`addon/pfUI/UPSTREAM_SNAPSHOT.md` 和 `addon/pfUI/AEUI_FORK.md`。
+[`PFUI_UPSTREAM_SNAPSHOT.md`](docs/pfui/PFUI_UPSTREAM_SNAPSHOT.md) 和
+[`PFUI_FORK.md`](docs/pfui/PFUI_FORK.md)。
 
 该许可只覆盖相应 pfUI 代码，不自动覆盖本项目生成的视觉资产、游戏截图、
 商标、字体或将来新增的原创代码。
