@@ -5,8 +5,8 @@
 - 模块：Chat
 - 组件 ID：`CHAT.COPY.TOGGLE`、`CHAT.COPY.SURFACE`、`CHAT.COPY.TEXT`
 - 版本：`CHAT.COPY.V1.3`
-- 子状态：`prompt-draft`
-- 项目阶段：`P2`
+- 子状态：`prompt-authorized`
+- 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 操作：A 为确定性派生；B 复用 V1.2 固定执行器 raw 的合格表面区域，
   只做确定性裁取、归一化、分层、局部变形与 Alpha
@@ -37,7 +37,7 @@
   - donor provenance：session
     `019fae80-fabb-7030-8fc7-fbee2c142d99`／result
     `ig_063f0c62bfe8a6e9016a6a1cfd1a148191b735c96afa0341ec`
-- V1.3 透明候选：无；尚未授权执行
+- V1.3 透明候选：无；已授权，尚未执行
 - V1.3 重组预演：无
 - V1.1 失败 raw：继续只保留在被忽略的
   `generated/chat/copy/v1_1/`，只作反例，不进入 V1.3 输入
@@ -226,9 +226,10 @@
 
 ## 最终执行正文
 
-状态：`production-draft`。本版本不调用 ImageGen、不上传图片，也不复用
-V1.2 的错误画布／坐标。用户明确授权 `CHAT.COPY.V1.3` 后，才执行以下
-确定性正文。
+状态：`production`。用户已于 `2026-07-29` 明确授权
+`CHAT.COPY.V1.3`，允许按固定 SHA 只复用 V1.2 第一次 B1 raw 的表面像素，
+并明确要求不进行任何外部上传。本版本不调用 ImageGen、不上传图片，也不
+复用 V1.2 的错误画布／坐标。以下确定性正文已冻结，执行时不得改写。
 
 ### A：确定性连续抄录纸面
 
@@ -302,9 +303,11 @@ accepted.
 
 ## 执行记录
 
-- 日期：未执行
-- 授权版本 commit：无；当前为 `production-draft`
-- A：待授权后在 `generated/chat/copy/v1_3/a/` 重建；无 ImageGen 会话
+- 日期：`2026-07-29` 授权；候选尚未执行
+- 授权版本 commit：本次授权状态提交；候选记录将补充其精确 commit
+- 用户授权：明确授权 `CHAT.COPY.V1.3`；允许按固定 SHA 仅复用 V1.2
+  第一次 B1 raw 的表面像素；禁止任何外部上传
+- A：待在 `generated/chat/copy/v1_3/a/` 重建；无 ImageGen 会话
 - B donor：只读复用 V1.2 session／result；V1.3 不产生新会话或上传
 - 实际输出尺寸／模式／SHA-256：无
 - Alpha／残色／polygon／装配：未检查
@@ -327,11 +330,12 @@ accepted.
   `(336,304)–(688,720)` 外接框、`22 × 26` 视觉与 `28 × 32` 命中区；
   候选尚未构建。
 - 技术像素：待执行。
-- 结论：`prompt-draft / P2`
-- 用户结论与日期：无；V1.3 尚未授权
-- 下一门禁：用户查看并明确授权 `CHAT.COPY.V1.3` 的确定性正文，特别是
-  对 V1.2 第一次 B1 raw 仅作表面 donor 的受限复用；授权版本提交后才构建
-  A／off／on 候选和真实尺寸预演。
+- 结论：`prompt-authorized / P3`
+- 用户结论与日期：`2026-07-29` 明确授权 V1.3；允许固定 SHA donor 的
+  受限表面复用，并要求零外部上传
+- 下一门禁：提交本授权版本后，使用本地确定性工具构建并依次审查
+  A／off／on 候选、九宫格预演和 `22 × 26` 真实尺寸装配；未经用户明确
+  接受，不创建 source、runtime 或 Lua 变更。
 
 ## 尝试摘要
 
@@ -340,4 +344,4 @@ accepted.
 | V1 | commit `69ada1f`；session `019fae2a…`／`019fae2c…` | `candidate-rejected` | 不上传完整 UI；A 单物件 edit；B 按真实持久状态拆分 |
 | V1.1 | commit `8b0a4e3`；A session `019fae4d…`／result `ig_0d80…`；B1／B2 因门禁停止 | `candidate-rejected` | A 必须锁死外接框；四条边的 stretch zone 不得由模型生成独特缺口；降低照片式纤维与中性光漂移 |
 | V1.2 | commit `3e9eb8e`；A SHA `ed4e1c…`；B1 sessions `019fae80…`／`019fae83…`，results `ig_063f…`／`ig_0a42…` | `candidate-rejected / P3` | 保留 A；B 将 ImageGen 降为表面 donor，所有像素几何归确定性工具 |
-| V1.3 | A 保持确定性；固定 SHA donor 只供表面；两状态完全由 polygon／mask／局部变形构造 | `prompt-draft / P2` | 用户明确授权受限 donor 复用与确定性执行正文 |
+| V1.3 | A 保持确定性；固定 SHA donor 只供表面；两状态完全由 polygon／mask／局部变形构造；用户于 `2026-07-29` 明确授权且要求零外部上传 | `prompt-authorized / P3` | 提交授权版本后在本地构建并审查候选 |
