@@ -3,6 +3,9 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
+import struct
 from pathlib import Path
 
 
@@ -31,6 +34,17 @@ def main() -> None:
     tracker_path = (
         ROOT / "docs" / "implementation" / "OVERHAUL_TRACKER.md"
     )
+    ql_a1_source_path = (
+        ROOT
+        / "assets"
+        / "source"
+        / "quests"
+        / "ql-a1"
+        / "QuestLogBookShell_Master_v1.png"
+    )
+    ql_a1_manifest_path = ql_a1_source_path.with_name(
+        "QL-A1_SourceManifest_v1.json"
+    )
 
     spec = spec_path.read_text(encoding="utf-8")
     log_prompt = log_prompt_path.read_text(encoding="utf-8")
@@ -48,7 +62,10 @@ def main() -> None:
             "QuestLogFrameAbandonButton",
             "QuestFramePushQuestButton",
             "QL-A1",
-            "已经生成本地透明候选",
+            "空卷宗结构母版已经用户确认并达到 `P4`",
+            "QuestLogBookShell_Master_v1.png",
+            "QL-A1_SourceManifest_v1.json",
+            "不能直接充当",
             "外部插件",
             "QuestWatchFrame",
             "假设已作废",
@@ -67,8 +84,9 @@ def main() -> None:
         log_prompt,
         (
             "production-draft",
-            "`QL-A1` 已冻结到独立 production 文件并执行",
-            "等待用户复审 `QL-A1` 候选",
+            "`QL-A1` 已确认并达到 `P4`",
+            "`QL-A2` 尚待单独确认",
+            "当前没有已授权执行块",
             "任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md",
             "imagegen-0-143-0",
             "@openai/codex@0.143.0",
@@ -87,12 +105,15 @@ def main() -> None:
         ql_a1_prompt,
         (
             "类型：`production`",
-            "用户已于 `2026-07-29` 确认并执行",
+            "用户已于 `2026-07-29` 确认执行结果",
+            "透明源母版达到 `P4`",
             "imagegen-0-143-0",
             "@openai/codex@0.143.0",
             "019fac35-620b-78d3-8b46-2e1f02105f74",
             "generated/quests/QL-A1/v1/QL-A1_v1_raw.png",
             "generated/quests/QL-A1/v1/QL-A1_v1.png",
+            "QuestLogBookShell_Master_v1.png",
+            "QL-A1_SourceManifest_v1.json",
             "执行块 QL-A1",
             "真正 RGBA 透明背景",
             "#00FF00",
@@ -120,6 +141,61 @@ def main() -> None:
         "confirmed QL-A1 prompt no longer matches the executed draft body"
     )
 
+    manifest = json.loads(ql_a1_manifest_path.read_text(encoding="utf-8"))
+    source_bytes = ql_a1_source_path.read_bytes()
+    source_sha256 = hashlib.sha256(source_bytes).hexdigest()
+    assert source_bytes[:8] == b"\x89PNG\r\n\x1a\n", (
+        "accepted QL-A1 source is not a PNG"
+    )
+    assert source_bytes[12:16] == b"IHDR", (
+        "accepted QL-A1 source is missing its PNG IHDR"
+    )
+    width, height = struct.unpack(">II", source_bytes[16:24])
+    assert (width, height, source_bytes[24], source_bytes[25]) == (
+        1514,
+        1039,
+        8,
+        6,
+    ), "accepted QL-A1 source must be 1514x1039 8-bit RGBA"
+    assert manifest["batch"] == "QL-A1"
+    assert manifest["status"] == "accepted-source"
+    assert manifest["source"] == {
+        "file": "QuestLogBookShell_Master_v1.png",
+        "sha256": "91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5",
+        "width": 1514,
+        "height": 1039,
+        "mode": "RGBA",
+        "transparent_pixels": 241402,
+        "partially_transparent_pixels": 5650,
+        "opaque_pixels": 1325994,
+        "visible_green_spill_pixels": 0,
+    }
+    assert source_sha256 == manifest["source"]["sha256"], (
+        "accepted QL-A1 source no longer matches its manifest"
+    )
+    assert {
+        component["id"] for component in manifest["logical_components"]
+    } == {
+        "QUEST.LOG.SHELL",
+        "QUEST.LOG.LIST.PAPER",
+        "QUEST.LOG.DETAIL.PAPER",
+        "QUEST.LOG.SPINE",
+    }
+    assert "near equal width" in manifest["review"]["physical_pages"]
+    assert manifest["review"]["runtime_reading_area_target"] == (
+        "left 42 percent, right 58 percent"
+    )
+    assert manifest["crop_contract"]["status"] == "deferred"
+    assert manifest["crop_contract"]["whole_image_runtime_allowed"] is False
+    assert manifest["runtime_exports"] == []
+    for key in ("prompt", "visual_reference"):
+        linked_path = (
+            ql_a1_manifest_path.parent / manifest["provenance"][key]
+        ).resolve()
+        assert linked_path.is_file(), (
+            f"QL-A1 manifest provenance link is missing: {key}"
+        )
+
     require(
         tracker_prompt,
         (
@@ -144,11 +220,15 @@ def main() -> None:
         tracker,
         (
             "`QUEST.LOG.SHELL`",
-            "`P3`",
+            "`QL-A1` 空卷宗透明源母版达到 `P4`",
             "任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md",
+            "QuestLogBookShell_Master_v1.png",
+            "QL-A1_SourceManifest_v1.json",
             "1514 × 1039",
             "241402／5650／1325994",
             "42%／58%",
+            "接近等宽的物理双页已经接受",
+            "整张源图不得进入 runtime",
             "`QUEST.LOG.ACTION.ABANDON`",
             "`QUEST.LOG.ACTION.SHARE`",
             "`QUEST.LOG.ACTION.EXIT`",

@@ -3,20 +3,24 @@
 ## 元数据
 
 - 类型：`production`
-- 状态：用户已于 `2026-07-29` 确认并执行；候选图待视觉复审
+- 状态：用户已于 `2026-07-29` 确认执行结果；透明源母版达到 `P4`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 目标客户端：Turtle WoW `1.18.1`／Interface `11200`
 - 对应合同：[QUEST_COMPONENT_SPEC.md](../../docs/implementation/QUEST_COMPONENT_SPEC.md)
 - 视觉基准：[任务详情面板_视觉基准_v1.png](../../assets/locked/quests/任务详情面板_视觉基准_v1.png)
 - 本地 raw：`generated/quests/QL-A1/v1/QL-A1_v1_raw.png`
 - 本地透明候选：`generated/quests/QL-A1/v1/QL-A1_v1.png`
+- 已确认源母版：
+  [QuestLogBookShell_Master_v1.png](../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png)
+- 源资产 manifest：
+  [QL-A1_SourceManifest_v1.json](../../assets/source/quests/ql-a1/QL-A1_SourceManifest_v1.json)
 - 固定版本生成会话：`019fac35-620b-78d3-8b46-2e1f02105f74`
 - raw：`1514 × 1039` RGB，均匀色键约 `#03FB04`
 - Alpha 后处理：固定 `remove_chroma_key.py`
 - Alpha 参数：`--auto-key border --soft-matte`、
   `--transparent-threshold 12 --opaque-threshold 220 --despill`
-- Git 状态：两个候选文件均在被忽略的 `generated/`；用户确认前不进入
-  `assets/source/quests/`
+- Git 状态：raw 与候选保留在被忽略的 `generated/`；已确认透明母版和
+  manifest 进入 `assets/source/quests/ql-a1/`
 
 下面“已确认提示词正文”中的内容是本次提交给固定执行器的完整创作提示词。
 文件角色映射和输出路径只作为独立 `Execution instruction` 传入，没有加入

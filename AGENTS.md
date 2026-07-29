@@ -112,11 +112,13 @@
   暂停接入。NPC 对话同样保持原生回退。
 - `QL-A1` 已按
   `prompts/quests/任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md` 使用固定
-  `imagegen-0-143-0` 执行，当前为 `P3` 候选复审；raw 与透明图只在被忽略的
-  `generated/quests/QL-A1/v1/`。用户确认候选前不得写入
-  `assets/source/quests/` 或提升到 `P4`。
+  `imagegen-0-143-0` 执行并经用户确认；透明母版与 manifest 位于
+  `assets/source/quests/ql-a1/`，当前为 `P4`。raw 与临时候选仍只在被忽略的
+  `generated/quests/QL-A1/v1/`。
 - `prompts/quests/任务详情组件资产_生产提示词_v2.md` 继续承载 `QL-A2`、
   `QL-B`、`QL-C` 和 `QL-D` 的 production draft；这些块仍需分别确认。
+- `QL-A1` 不能整图进入 runtime；切片坐标、拉伸安全区和 atlas UV 等待
+  `QL-A2` 与目标客户端测量，不得为了推进阶段提前猜测。
 - `prompts/quests/任务追踪组件资产_生产提示词_v2.md` 仅保留为
   `deferred-compatibility-draft` 视觉拆分参考，不是可执行提示词。不得假设
   `QuestWatchFrame`、提前生成追踪器资产或创建 runtime Hook；先取得外部插件

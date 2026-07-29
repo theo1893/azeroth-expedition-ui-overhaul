@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "batch": "QL-A1",
+  "status": "accepted-source",
+  "accepted_on": "2026-07-29",
+  "source": {
+    "file": "QuestLogBookShell_Master_v1.png",
+    "sha256": "91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5",
+    "width": 1514,
+    "height": 1039,
+    "mode": "RGBA",
+    "transparent_pixels": 241402,
+    "partially_transparent_pixels": 5650,
+    "opaque_pixels": 1325994,
+    "visible_green_spill_pixels": 0
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "codex_package": "@openai/codex@0.143.0",
+    "generation_session": "019fac35-620b-78d3-8b46-2e1f02105f74",
+    "prompt": "../../../../prompts/quests/任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md",
+    "visual_reference": "../../../locked/quests/任务详情面板_视觉基准_v1.png",
+    "ignored_raw": "../../../../generated/quests/QL-A1/v1/QL-A1_v1_raw.png",
+    "ignored_transparent_candidate": "../../../../generated/quests/QL-A1/v1/QL-A1_v1.png",
+    "alpha_helper": "skills/.system/imagegen/scripts/remove_chroma_key.py",
+    "alpha_arguments": [
+      "--auto-key",
+      "border",
+      "--soft-matte",
+      "--transparent-threshold",
+      "12",
+      "--opaque-threshold",
+      "220",
+      "--despill"
+    ]
+  },
+  "logical_components": [
+    {
+      "id": "QUEST.LOG.SHELL",
+      "role": "cover, brass corners, outer page stack and non-interactive book silhouette"
+    },
+    {
+      "id": "QUEST.LOG.LIST.PAPER",
+      "role": "blank left-page source surface"
+    },
+    {
+      "id": "QUEST.LOG.DETAIL.PAPER",
+      "role": "blank right-page source surface"
+    },
+    {
+      "id": "QUEST.LOG.SPINE",
+      "role": "central spine, stitching and page-contact structure"
+    }
+  ],
+  "review": {
+    "blank_structure_only": true,
+    "baked_text": false,
+    "baked_buttons": false,
+    "baked_scrollbars": false,
+    "baked_quest_rows": false,
+    "baked_reward_slots": false,
+    "physical_pages": "visually near equal width; explicitly accepted as the physical book structure",
+    "runtime_reading_area_target": "left 42 percent, right 58 percent"
+  },
+  "crop_contract": {
+    "status": "deferred",
+    "whole_image_runtime_allowed": false,
+    "reason": "QL-A1 is the accepted structural source master. Deterministic crop boxes, stretch-safe regions and atlas UVs require the separately confirmed QL-A2 batch plus target-client QuestLog measurements.",
+    "planned_outputs": [
+      "outer cover edges and corners",
+      "left-page stretchable surface",
+      "right-page stretchable surface",
+      "spine top, tileable middle and bottom",
+      "outer page-stack segments"
+    ]
+  },
+  "runtime_exports": []
+}

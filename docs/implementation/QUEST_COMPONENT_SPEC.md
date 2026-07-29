@@ -17,8 +17,9 @@
 
 NPC 任务对话、Gossip 和任务物品 Tooltip 已完成对象登记，但不在本轮生成
 资产。任务快捷按钮目前没有可靠基础对象，不得假设 pfUI 已经提供。`QL-A1`
-空卷宗结构母版已经生成本地透明候选，当前等待用户视觉复审；尚未进入
-`assets/source/quests/`。
+空卷宗结构母版已经用户确认并达到 `P4`；透明源母版与来源清单位于
+`assets/source/quests/ql-a1/`。该整张母版只作为结构来源，不能直接充当
+runtime 背景。
 
 视觉权威：
 
@@ -191,7 +192,7 @@ provider。此前把香草 `QuestWatchFrame` 设为第一 provider 的假设已�
 
 | 批次 | 组件 | 输出责任 | 当前状态 |
 |---|---|---|---|
-| `QL-A` | `SHELL`、`LIST.PAPER`、`DETAIL.PAPER`、中央书脊、页叠 | 纯结构资源；分离九宫格／三段式部件 | `QL-A1` 已执行候选待复审；`QL-A2` 后续 |
+| `QL-A` | `SHELL`、`LIST.PAPER`、`DETAIL.PAPER`、中央书脊、页叠 | 纯结构资源；分离九宫格／三段式部件 | `QL-A1` 源母版已确认为 `P4`；`QL-A2` 待单独确认 |
 | `QL-B` | `LIST.ROW`、`SELECTION`、`TYPE.BADGE`、`STATE.SEAL` | 目录状态覆盖与任务徽记 | 后续任务详情草案 |
 | `QL-C` | 两套 ScrollBar、`CLOSE`、操作按钮、`TRACK`、`DETAIL.TOGGLE`、`LEVELS` | 每个交互对象的完整状态画布 | 后续任务详情草案 |
 | `QL-D` | `REWARD.SLOT`、`DETAIL.DIVIDER` | 奖励槽和非交互墨线 | 后续任务详情草案 |
@@ -201,7 +202,9 @@ provider。此前把香草 `QuestWatchFrame` 设为第一 provider 的假设已�
 对应提示词状态：
 
 - [QL-A1 空卷宗结构母版 production V1](../../prompts/quests/任务详情空卷宗结构母版_生产提示词_QL-A1_v1.md)：
-  已确认并执行；本地候选待复审。
+  已确认执行结果；[透明源母版](../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png)
+  与 [manifest](../../assets/source/quests/ql-a1/QL-A1_SourceManifest_v1.json)
+  已登记为 `P4`。
 - [任务详情后续组件资产生产提示词 V2](../../prompts/quests/任务详情组件资产_生产提示词_v2.md)：
   `QL-A2`、`QL-B`、`QL-C`、`QL-D` 仍为 `production-draft`。
 - [任务追踪组件资产兼容草案 V2](../../prompts/quests/任务追踪组件资产_生产提示词_v2.md)：
@@ -209,11 +212,13 @@ provider。此前把香草 `QuestWatchFrame` 设为第一 provider 的假设已�
 
 ## 7. 资产与 Runtime 实现顺序
 
-1. 用户复审 `generated/quests/QL-A1/v1/QL-A1_v1.png`：接受后才复制到
-   `assets/source/quests/`；不接受则先建立修订提示词新版本再重新执行。
-2. `QL-A1` 透明母版通过后，另行确认 `QL-A2` 可拉伸纸面、书脊与页叠部件。
-3. 回到目标客户端后，记录 Quest Log 对象是否存在、原始尺寸、锚点和层级，
-   再确定结构切片与 adapter 几何。
+1. 保持 `QL-A1` 已确认源母版不变：整图不得进入 runtime，不得从旧草案
+   无版本重跑。
+2. 另行确认 `QL-A2` 可拉伸纸面、书脊与页叠部件；确认 `QL-A1` 不会自动
+   授权 `QL-A2`。
+3. `QL-A2` 通过并回到目标客户端后，记录 Quest Log 对象是否存在、原始
+   尺寸、锚点和层级，再确定结构切片、拉伸安全区与 adapter 几何。物理双页
+   接近等宽已被接受，runtime 阅读安全区仍以左 `42%`／右 `58%` 为目标。
 4. 先接入 `QUEST.LOG.SHELL`，只改变呈现，不修改事件与数据。
 5. 后续逐批确认并接入左右 ScrollBar、真实 Button 状态、任务行覆盖、日志内
    追踪标记和奖励槽；确认点击区没有改变。
