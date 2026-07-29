@@ -1,33 +1,32 @@
 # Chat runtime media
 
-`ChatBookFrame.tga` 是 Turtle WoW 运行时使用的 32 位 TGA。
+本目录只保存当前插件实际加载的聊天 runtime 资源。
 
-- 画布：1024 × 1024。
-- 有效画面：顶部 586 像素。
-- Lua 使用同一张纹理的九组 UV 构成九宫格，避免宽高拉伸造成边框变形。
-- 高分辨率透明母版：
-  `assets/source/chat/ChatBookFrame_Master_v1.png`。
-- 运行时预览：
-  `assets/source/chat/ChatBookFrame_RuntimePreview_v2.png`。
-- 九宫格预览：
-  `assets/source/chat/ChatBookFrame_NineSlicePreview_v2.png`。
-- 重建脚本：`tools/build_chat_book_texture.py`。
+## 0.3.1 legacy
 
-不要把频道名或聊天文字烘焙进此纹理；全部文字由游戏 UI 层渲染。
+| 文件 | 逻辑职责 |
+|---|---|
+| `ChatBookFrame.tga` | 主书框九宫格图集 |
+| `ChatTabNormal.tga` | 普通 Tab |
+| `ChatTabHover.tga` | 悬停 Tab |
+| `ChatTabSelected.tga` | 选中 Tab |
+| `ChatTabShelf.tga` | 连续承托带 |
+| `ChatPanelSegment.tga` | 可复用底栏字段，实例化三次 |
+| `ChatInputStrip.tga` | 输入条 |
+| `ChatWaxSeal.tga` | 未读覆盖 |
 
-组件级资源由 `tools/build_chat_component_textures.py` 生成：
+`ChatBookFrame.tga` 为 `1024 × 1024`、32 位 TGA，有效图像位于画布上部。
+`Modules/Chat.lua` 用九组 UV 构成九宫格。legacy 源母版是
+`assets/source/chat/ChatBookFrame_Master_v1.png`；重建脚本为：
 
-- `ChatTabNormal.tga`
-- `ChatTabHover.tga`
-- `ChatTabSelected.tga`
-- `ChatTabShelf.tga`
-- `ChatPanelSegment.tga`
-- `ChatInputStrip.tga`
-- `ChatWaxSeal.tga`
+- `tools/build_chat_book_texture.py`
+- `tools/build_chat_component_textures.py`
 
-这些 pfUI 组件资源以 2× 分辨率输出，分别对应控件状态，不能再合并回
-单张聊天框背景。目录中遗留的频道与 WIM 试验资源当前不会被 Lua 加载。
+不要把频道名、消息、输入文字或底栏数值烘焙进纹理。
 
-imagegen-v4 因风格过度工整、上下边界不对称且与 pfUI Tab 几何冲突，已从
-运行时和正式资源中移除；反例只保存在被 Git 忽略的
-`generated/chat_pfui_hq/rejected_imagegen_v4/`。
+## V3
+
+V3 透明母版位于 `assets/source/chat/v3/`，当前并未被 Lua 加载。
+`tools/build_chat_v3_runtime_assets.py` 仍处于迁移前审查阶段。V3 正式接入
+前必须同时更新 runtime 媒体、atlas manifest、Lua UV、smoke test、聊天组件
+合同和 overhaul tracker。

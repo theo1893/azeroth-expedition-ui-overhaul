@@ -1,14 +1,12 @@
 # 2026-07-29 聊天模块实机参考
 
-这些图片只用于问题复现、比例测量和风格取舍，不是可直接发布的运行时
-贴图。
+这些图片只用于运行时测量和正向风格取舍，不是可发布贴图：
 
-| 文件 | 作用 |
+| 文件 | 唯一职责 |
 |---|---|
-| `01_background_only_first_attempt.png` | 记录只替换背景、没有独立处理 Tab 时的不足 |
-| `02_pfui_drag_and_tab_flicker.png` | 记录聊天窗位置异常、pfUI 拖动报错以及 Tab 切换闪烁／错位 |
-| `03_preferred_irregular_book_style.png` | 用户偏好的较凌乱战地旧书风格与消息容量参考 |
-| `04_rejected_overly_regular_version.png` | 被否决的过度规整版本；上下未对齐，不得作为正向结构参考 |
+| `02_pfui_drag_and_tab_flicker.png` | 复现 pfUI 拖动、位置和 Tab 闪烁／错位问题 |
+| `03_preferred_irregular_book_style.png` | 记录用户偏好的凌乱战地旧书重量、比例和消息容量 |
 
-提示词的最终裁决顺序仍以项目锁定基线和文字规范为先，详见根目录
-`AGENTS.md`。
+早期“仅背景替换”与过度规整反例已经删除；它们的结论已收敛到聊天规范、
+组件合同和设计决策记录。生图时仍以 `assets/locked/chat/` 与模块规范为
+最高优先级。

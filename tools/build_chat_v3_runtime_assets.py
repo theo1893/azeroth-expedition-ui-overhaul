@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Build power-of-two Turtle WoW runtime textures from V3 chat artwork.
+"""Build review-only Turtle WoW runtime textures from V3 chat artwork.
 
-The generated A/B/C sheets remain the visual source.  This script performs
-only deterministic cropping, scaling, atlas packing and TGA conversion.
+The tracked A/B/C masters remain the visual source. This script performs only
+deterministic validation, cropping, scaling, atlas packing and TGA conversion.
+Its outputs are migration artifacts until Lua integration and in-game review
+are complete.
 """
 
 from __future__ import annotations
@@ -13,6 +15,10 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
+
+ROOT = Path(__file__).resolve().parents[1]
+SOURCE_DIR = ROOT / "assets" / "source" / "chat" / "v3"
+GENERATED_DIR = ROOT / "generated" / "chat" / "v3"
 
 RESAMPLE = Image.Resampling.LANCZOS
 
@@ -45,6 +51,34 @@ INPUT_NORMAL_BOX = (51, 187, 1437, 363)
 INPUT_FOCUS_BOX = (51, 448, 1437, 625)
 PANEL_BOX = (199, 693, 811, 849)
 SEAL_BOX = (1048, 686, 1160, 864)
+
+EXPECTED_SOURCE_SIZES = {
+    "frame": (1608, 978),
+    "tabs": (1774, 887),
+    "controls": (1536, 1024),
+}
+
+
+def validate_source(
+    name: str,
+    image: Image.Image,
+    crop_boxes: tuple[tuple[int, int, int, int], ...],
+) -> None:
+    expected = EXPECTED_SOURCE_SIZES[name]
+    if image.size != expected:
+        raise ValueError(f"{name} source must be {expected}, got {image.size}")
+    minimum, maximum = image.getchannel("A").getextrema()
+    if minimum != 0 or maximum != 255:
+        raise ValueError(
+            f"{name} source must contain transparent and opaque pixels: "
+            f"{(minimum, maximum)}"
+        )
+    for box in crop_boxes:
+        left, top, right, bottom = box
+        if left < 0 or top < 0 or right > image.width or bottom > image.height:
+            raise ValueError(f"{name} crop is outside source bounds: {box}")
+        if left >= right or top >= bottom:
+            raise ValueError(f"{name} crop is empty: {box}")
 
 
 def is_power_of_two(value: int) -> bool:
@@ -211,11 +245,32 @@ def build_atlas_preview(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--frame", required=True, type=Path)
-    parser.add_argument("--tabs", required=True, type=Path)
-    parser.add_argument("--controls", required=True, type=Path)
-    parser.add_argument("--runtime-dir", required=True, type=Path)
-    parser.add_argument("--source-dir", required=True, type=Path)
+    parser.add_argument(
+        "--frame",
+        type=Path,
+        default=SOURCE_DIR / "ChatBookFrame_Master_v3.png",
+    )
+    parser.add_argument(
+        "--tabs",
+        type=Path,
+        default=SOURCE_DIR / "ChatTabs_Master_v3.png",
+    )
+    parser.add_argument(
+        "--controls",
+        type=Path,
+        default=SOURCE_DIR / "ChatControls_Master_v3.png",
+    )
+    parser.add_argument(
+        "--runtime-dir",
+        type=Path,
+        default=GENERATED_DIR / "runtime-review",
+    )
+    parser.add_argument(
+        "--artifact-dir",
+        type=Path,
+        default=GENERATED_DIR / "runtime-artifacts",
+        help="Directory for review previews and the generated UV manifest",
+    )
     return parser.parse_args()
 
 
@@ -224,6 +279,14 @@ def main() -> None:
     frame = Image.open(args.frame).convert("RGBA")
     tabs_sheet = Image.open(args.tabs).convert("RGBA")
     controls_sheet = Image.open(args.controls).convert("RGBA")
+
+    validate_source("frame", frame, (BOOK_SOURCE_CUTS,))
+    validate_source("tabs", tabs_sheet, (TAB_SHELF_BOX,) + TAB_BOXES)
+    validate_source(
+        "controls",
+        controls_sheet,
+        (INPUT_NORMAL_BOX, INPUT_FOCUS_BOX, PANEL_BOX, SEAL_BOX),
+    )
 
     book = build_book(frame)
     book_preview = build_book_preview(book)
@@ -241,12 +304,9 @@ def main() -> None:
     save_tga(panel, runtime / "ChatPanelV3.tga")
     save_tga(seal, runtime / "ChatUnreadSealV3.tga")
 
-    source = args.source_dir
-    save_png(frame, source / "ChatBookFrame_Master_v3.png")
-    save_png(tabs_sheet, source / "ChatTabs_Master_v3.png")
-    save_png(controls_sheet, source / "ChatControls_Master_v3.png")
-    save_png(book, source / "ChatBookFrame_RuntimeAtlas_v3.png")
-    save_png(book_preview, source / "ChatBookFrame_440x320_v3.png")
+    artifacts = args.artifact_dir
+    save_png(book, artifacts / "ChatBookFrame_RuntimeAtlas_v3.png")
+    save_png(book_preview, artifacts / "ChatBookFrame_440x320_v3.png")
     save_png(
         build_atlas_preview(
             book_preview,
@@ -256,10 +316,33 @@ def main() -> None:
             panel,
             seal,
         ),
-        source / "ChatRuntimeAtlasesPreview_v3.png",
+        artifacts / "ChatRuntimeAtlasesPreview_v3.png",
     )
 
     manifest = {
+        "schema": 1,
+        "status": "migration-review-only",
+        "sources": {
+            "frame": {
+                "file": args.frame.name,
+                "size": frame.size,
+                "nine_slice_cuts": BOOK_SOURCE_CUTS,
+            },
+            "tabs": {
+                "file": args.tabs.name,
+                "size": tabs_sheet.size,
+                "shelf_crop": TAB_SHELF_BOX,
+                "state_crops": TAB_BOXES,
+            },
+            "controls": {
+                "file": args.controls.name,
+                "size": controls_sheet.size,
+                "input_normal_crop": INPUT_NORMAL_BOX,
+                "input_focus_crop": INPUT_FOCUS_BOX,
+                "panel_crop": PANEL_BOX,
+                "seal_crop": SEAL_BOX,
+            },
+        },
         "book": {
             "canvas": BOOK_CANVAS,
             "cuts": BOOK_RUNTIME_CUTS,
@@ -289,7 +372,8 @@ def main() -> None:
         },
         "seal": {"atlas": (64, 128), "runtime": (14, 22)},
     }
-    manifest_path = source / "ChatRuntimeManifest_v3.json"
+    manifest_path = artifacts / "ChatRuntimeManifest_v3.json"
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
     manifest_path.write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",

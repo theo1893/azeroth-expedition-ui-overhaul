@@ -1,71 +1,69 @@
 # Azeroth Expedition UI Overhaul
 
-面向 Turtle WoW `1.18.1` 的香草时代 UI 美术整合项目。
+面向 Turtle WoW `1.18.1`／Interface `11200` 的 UI 重构项目。pfUI 提供
+功能、数据和生命周期基础；本项目在独立插件中大规模重构视觉、布局和呈现
+组件，使它们重新接近 60 级香草魔兽的结构、重量和手绘质感。
 
-项目目标是在尽量保留 60 级香草魔兽结构、信息密度与操作习惯的前提下，统一 pfUI 与各类单体插件的视觉语言，并增强厚重、史诗、魔幻与长期使用后的旧物质感。
+核心原则是“香草结构优先，材质增强次之”。这不是棕色现代 HUD，也不是
+《暗黑破坏神 3》或《上古卷轴 5》的移植主题。
 
-当前仓库已包含可运行的 `AzerothExpeditionUI` 插件。首个实现模块是
-pfUI-only 聊天框视觉适配；其他模块仍以设计基线为主。
+## 当前状态
 
-## 核心美术语言
-
-- 2004 年前后香草魔兽式手绘位图、厚轮廓与明确明暗切面。
-- 深胡桃旧皮革、暖赭羊皮纸与暗哑氧化黄铜。
-- 厚重感来自物件结构和材料厚度，不来自大型龙头、祭坛、黑铁尖刺或持续发光。
-- 保留香草界面的经典轮廓；避免 pfUI 式规整窄边、现代卡片、玻璃拟态及《暗黑破坏神 3》式装备陈列框。
-
-## 当前已锁定模块
-
-| 模块 | 锁定方向 | 状态 |
+| 模块 | 设计／资产 | 运行时 |
 |---|---|---|
-| 聊天框 | 战地旧书 V1 / pfUI-only | 基线已恢复，下一版资源待定义 |
-| 任务详情／追踪 | 公会任务卷宗与行军便笺 V1 | 已锁定 |
-| 大地图／小地图 | 远征地图卷与黄铜航向罗盘 V1 | 已锁定 |
-| 角色属性面板 | 香草同构角色面板 V1 | 已锁定 |
+| pfUI 基础 | 8.1.0 参考快照已入库；重构边界已定义 | 功能底座 |
+| 聊天 | 战地旧书 V3 组件母版已确认 | `0.3.1` 仍加载 legacy 资产，V3 待迁移 |
+| 任务 | 详情卷宗与追踪便笺视觉已锁定 | 待按真实控件拆分 |
+| 地图 | 羊皮大地图与黄铜罗盘视觉已锁定 | 待按真实控件拆分 |
+| 角色 | 香草同构纸娃娃视觉已锁定 | 待按真实控件拆分 |
+| 战斗／监控／其他 | 已登记模块范围 | 待逐组件设计 |
 
-详细状态与权威文件见 [设计状态索引](docs/DESIGN_STATUS.md)。
+精确到每个组件的阶段、源资产、原始提示词和 runtime 路径见
+[UI 改造进度总表](docs/implementation/OVERHAUL_TRACKER.md)。
 
-## 快速入口
+## 开发入口
 
-- [整合包总提示词与顶层设计](docs/艾泽拉斯远征手记_UI整合包提示词.md)
-- [聊天框视觉规范](docs/modules/chat/聊天框视觉规范_战地旧书_v1.md)
-- [任务模块视觉规范](docs/modules/quests/任务模块视觉规范_公会任务卷宗与行军便笺_v1.md)
-- [地图模块视觉规范](docs/modules/map/地图模块视觉规范_远征地图卷与黄铜航向罗盘_v1.md)
-- [角色属性模块视觉规范](docs/modules/character/角色属性模块视觉规范_香草同构角色面板_v1.md)
-- [字体系统与运行时策略](docs/implementation/FONT_SYSTEM.md)
-- [后续实现路线](docs/implementation/IMPLEMENTATION_ROADMAP.md)
-- [本次会话决策记录](docs/SESSION_DECISIONS.md)
+- [统一美术方向](docs/ART_DIRECTION.md)
+- [pfUI 基础与重构架构](docs/ARCHITECTURE.md)
+- [组件级资产与 imagegen 流程](docs/ASSET_PIPELINE.md)
+- [设计状态索引](docs/DESIGN_STATUS.md)
+- [实现路线](docs/implementation/IMPLEMENTATION_ROADMAP.md)
+- [聊天组件与资产契约](docs/implementation/CHAT_COMPONENT_SPEC.md)
+- [字体系统](docs/implementation/FONT_SYSTEM.md)
+- [设计决策记录](docs/SESSION_DECISIONS.md)
 
-## 目录结构
+模块级锁定规范位于 `docs/modules/`；版本化提示词位于 `prompts/`。
+
+## 目录
 
 ```text
-addon/AzerothExpeditionUI/   可运行插件代码、聊天框资源与字体候选
-assets/locked/               已锁定的唯一视觉基准
-assets/references/           香草结构参考
-docs/modules/                各模块正式视觉规范
-docs/audits/                 设计审计与能力评估
-docs/implementation/         实现路线与技术拆分
-prompts/                     锁定提示词和生成稿
-source-assets/               未来可编辑母版、切片和导出源
-third-party/fonts/           字体许可证、来源与可复现信息
-tools/                       聊天框资源转换、校验和后续打包工具
+addon/AzerothExpeditionUI/   可运行插件、runtime 媒体与字体
+assets/locked/               用户确认的整体视觉基准
+assets/references/           结构、比例或故障参考
+assets/source/               用户确认的透明生产母版
+docs/modules/                模块级美术与结构规范
+docs/implementation/         组件合同、进度表与实现说明
+prompts/                     可追溯的原型／生产提示词
+third-party/pfUI/            pfUI 固定参考快照（默认只读）
+third-party/fonts/           字体许可、来源和校验值
+tools/                       确定性资源导出与预演脚本
+tests/                       静态／smoke test
 ```
 
-## 权威优先级
+临时生成、色键 raw 和可再生预演应进入被 Git 忽略的 `generated/`。
 
-1. `assets/locked/` 中对应模块的视觉基准。
-2. `docs/modules/` 中对应模块的锁定规范。
-3. `docs/艾泽拉斯远征手记_UI整合包提示词.md` 的跨模块原则。
-4. `prompts/` 中的生成提示词。
+## 资产生产规则
 
-被否决方案的结论保留在模块规范和 `docs/SESSION_DECISIONS.md` 中；对应的大型探索图和过程对照不进入仓库。
+整张效果图只能锁定综合色感，不能直接充当 runtime 背景。每个可交互 Button、
+Tab、输入框、滚动条和状态必须先映射到真实 pfUI／原生对象，再生成独立逻辑
+资产。逻辑切片可打包进图集，但必须保留 manifest、UV 和状态映射。
 
-## 下一阶段
+所有生图和修图固定使用仓库内 `imagegen-0-143-0` 技能，对应
+`@openai/codex@0.143.0`。先将需求重写进版本化提示词文件，确认后再把该正文
+原样交给执行器。
 
-先完成聊天框 V4 在 Turtle WoW 中的拖动、Tab 切换、不同尺寸与 UI Scale
-验收，再依次实现任务、地图和角色属性面板。战斗 HUD、动作条、单位框架、
-DPS／仇恨与消耗品监控仍需继续完成顶层设计。
+## 许可与发布
 
-## 发布注意
-
-仓库包含游戏截图、结构参考、基于现有游戏视觉语言生成的概念图，以及采用 SIL Open Font License 1.1 的第三方字体。公开发布、分发或商业使用前，请先阅读 [NOTICE](NOTICE.md) 并完成第三方素材与商标审查。
+仓库含 pfUI MIT 参考快照、OFL 字体、游戏结构参考和生成式视觉资产。公开
+发布或商业使用前请阅读 [NOTICE](NOTICE.md)，并分别审查代码、字体、截图、
+商标和美术资产的权利边界。

@@ -5,6 +5,7 @@
 - 游戏界面截图和结构参考。
 - 基于既有游戏视觉语言生成的设计概念图。
 - 与 Turtle WoW、pfUI 和其他插件相关的描述性设计资料。
+- pfUI `8.1.0` 的 MIT 许可开发参考快照。
 - 采用 SIL Open Font License 1.1 的第三方字体文件。
 
 这些内容不自动获得开放源代码或商业分发许可。`World of Warcraft` 及相关名称、视觉元素与商标归其各自权利人所有；Turtle WoW、pfUI 和其他插件也可能拥有各自许可与署名要求。
@@ -17,6 +18,16 @@
 4. 仓库整体应采用的代码许可证，以及视觉资产是否需要单独许可。
 
 因此，本仓库暂不附带开源许可证。
+
+## pfUI 参考快照
+
+`third-party/pfUI/` 保存 pfUI `8.1.0` 的开发参考快照，来源提交
+`fbc8fb608b79adf32049543ec12fcc020e0acd69`，按其 MIT License 保存。
+完整许可见 `third-party/pfUI/LICENSE`，快照与本地差异说明见
+`third-party/pfUI/UPSTREAM_SNAPSHOT.md`。
+
+该许可只覆盖相应 pfUI 代码，不自动覆盖本项目生成的视觉资产、游戏截图、
+商标、字体或将来新增的原创代码。
 
 ## 已纳入的第三方字体
 

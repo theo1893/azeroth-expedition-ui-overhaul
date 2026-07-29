@@ -13,28 +13,11 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 ROOT = Path(__file__).resolve().parents[1]
-FRAME_PATH = (
-    ROOT
-    / "generated"
-    / "chat_v3_candidates"
-    / "batch_a_revision2"
-    / "chat_book_frame_v3_a_final_transparent.png"
-)
-TABS_PATH = (
-    ROOT
-    / "generated"
-    / "chat_v3_candidates"
-    / "batch_b"
-    / "chat_tabs_v3_b_final_transparent.png"
-)
-CONTROLS_PATH = (
-    ROOT
-    / "generated"
-    / "chat_v3_candidates"
-    / "batch_c_revision2"
-    / "chat_controls_v3_c_final_transparent.png"
-)
-OUTPUT_DIR = ROOT / "generated" / "chat_v3_candidates" / "previews"
+SOURCE_DIR = ROOT / "assets" / "source" / "chat" / "v3"
+FRAME_PATH = SOURCE_DIR / "ChatBookFrame_Master_v3.png"
+TABS_PATH = SOURCE_DIR / "ChatTabs_Master_v3.png"
+CONTROLS_PATH = SOURCE_DIR / "ChatControls_Master_v3.png"
+OUTPUT_DIR = ROOT / "generated" / "chat" / "v3" / "layout-previews"
 
 VIEWPORT = (440, 320)
 MESSAGE_RECT = (30, 44, 410, 280)  # 380 x 236
@@ -44,6 +27,18 @@ RESAMPLE = Image.Resampling.LANCZOS
 
 def load_font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
     candidates = [
+        (
+            ROOT
+            / "addon"
+            / "AzerothExpeditionUI"
+            / "Media"
+            / "Fonts"
+            / (
+                "NotoSerifSC-SemiBold.ttf"
+                if bold
+                else "NotoSansSC-Medium.ttf"
+            )
+        ),
         Path(r"C:\Windows\Fonts\simhei.ttf") if bold else Path(r"C:\Windows\Fonts\msyh.ttc"),
         Path(r"C:\Windows\Fonts\msyhbd.ttc"),
         Path(r"C:\Windows\Fonts\arial.ttf"),
@@ -376,10 +371,10 @@ def main() -> None:
     default_view = build_view(frame, shelf, tabs, controls, input_focus=False)
     input_view = build_view(frame, shelf, tabs, controls, input_focus=True)
 
-    default_path = OUTPUT_DIR / "ChatLayout_Default_440x320.png"
-    input_path = OUTPUT_DIR / "ChatLayout_Input_440x320.png"
-    clean_path = OUTPUT_DIR / "ChatLayout_Combined_Clean.png"
-    debug_path = OUTPUT_DIR / "ChatLayout_Combined_Debug.png"
+    default_path = OUTPUT_DIR / "ChatLayout_Default_440x320_v3.png"
+    input_path = OUTPUT_DIR / "ChatLayout_Input_440x320_v3.png"
+    clean_path = OUTPUT_DIR / "ChatLayout_Combined_Clean_v3.png"
+    debug_path = OUTPUT_DIR / "ChatLayout_Combined_Debug_v3.png"
 
     default_view.convert("RGB").save(default_path, quality=95)
     input_view.convert("RGB").save(input_path, quality=95)

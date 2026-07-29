@@ -163,8 +163,8 @@ pfUI = {
   },
 }
 
-dofile(root .. "\\addon\\AzerothExpeditionUI\\Core\\Bootstrap.lua")
-dofile(root .. "\\addon\\AzerothExpeditionUI\\Modules\\Chat.lua")
+dofile(root .. "/addon/AzerothExpeditionUI/Core/Bootstrap.lua")
+dofile(root .. "/addon/AzerothExpeditionUI/Modules/Chat.lua")
 
 AzerothExpeditionUI:Initialize()
 AzerothExpeditionUI:Refresh()

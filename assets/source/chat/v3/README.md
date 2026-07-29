@@ -1,41 +1,35 @@
 # 聊天模块 V3 源资源
 
-## 透明母版
+## 母版与职责
 
-- `ChatBookFrame_Master_v3.png`
-  - A：凌乱、不对称的战地旧书空主框。
-- `ChatTabs_Master_v3.png`
-  - B：连续承托页边，以及普通、悬停、选中、禁用四个独立无字 Tab。
-- `ChatControls_Master_v3.png`
-  - C：普通／聚焦输入纸带、可复用底栏字段和未读蜡封书签。
+| 文件 | 组件 | 对象 |
+|---|---|---|
+| `ChatBookFrame_Master_v3.png` | `CHAT.FRAME` | 一张无控件的空战地旧书 |
+| `ChatTabs_Master_v3.png` | `CHAT.TABS` | 一条承托带；普通、悬停、选中、禁用 Tab |
+| `ChatControls_Master_v3.png` | `CHAT.INPUT`、`CHAT.PANEL`、`CHAT.UNREAD` | 两状态输入条；一个可复用字段；一个未读标记 |
 
-三张母版均为真 RGBA，保留原始高分辨率。它们没有直接加载到游戏，也
-没有升级为 `assets\locked\`。
+三张母版均为真 RGBA、高分辨率、无运行时文字。它们是已确认的 `P4` 生产源，
+尚未升级为正式 runtime，也不会由游戏直接加载。
 
-## `raw/`
+原始执行提示词：
+[`聊天框模块化资源_执行提示词_v3.md`](../../../../prompts/chat/聊天框模块化资源_执行提示词_v3.md)。
 
-保存 imagegen 的均匀绿色色键输出，便于将来重新检查或改进去背景：
+## 验收证据
 
-- `ChatBookFrame_Chroma_v3.png`
-- `ChatTabs_Chroma_v3.png`
-- `ChatControls_Chroma_v3.png`
+`previews/` 保存两张不可从截图文字描述替代的标准尺寸证据：
 
-不要把这些绿色背景文件直接转换为游戏 TGA。
+- `ChatLayout_Combined_Clean_v3.png`：默认底栏与输入焦点状态。
+- `ChatLayout_Combined_Debug_v3.png`：标出 `380 × 236` 正文安全区。
 
-## `previews/`
+每个内框精确为 `440 × 320 UI px`。样例文字只存在于预览，没有进入母版。
 
-- `ChatLayout_Combined_Clean_v3.png`
-  - 默认底栏状态和输入状态的干净合成。
-- `ChatLayout_Combined_Debug_v3.png`
-  - 标出 `380 × 236` 正文安全区的校验版本。
+## 状态
 
-每个内框都是精确 `440 × 320 UI px`。预览中的频道名、聊天内容和状态
-文字只是运行时排版样例，没有烘焙进 A/B/C 母版。
+- A／B／C 美术与透明化完成。
+- `440 × 320` 容量预演完成，可放 16 行 12px 中文。
+- pfUI runtime 迁移尚未开始。
+- 恢复时先在临时目录复核 `tools/build_chat_v3_runtime_assets.py`，再更新
+  TGA、manifest、Lua 和 smoke test。
 
-## 当前状态
-
-- 美术生成与透明化完成。
-- 440 × 320 容量校验完成，可放 16 行 12px 中文消息。
-- pfUI 运行时接入已于 2026-07-29 按用户要求暂停。
-- 恢复时先复核 `tools\build_chat_v3_runtime_assets.py`，再导出 TGA 和修改
-  `addon\AzerothExpeditionUI\Modules\Chat.lua`。
+色键 raw、临时 crop、可再生 atlas 和调试导出不得放回本目录；统一写入被
+Git 忽略的 `generated/`。
