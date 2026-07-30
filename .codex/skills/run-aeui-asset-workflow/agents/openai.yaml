@@ -1,4 +1,4 @@
 interface:
   display_name: "AEUI 资产生成与审查"
-  short_description: "用单一组件 work 文件编排 AEUI 资产全生命周期"
-  default_prompt: "Use $run-aeui-asset-workflow to resolve locked-baseline prompt provenance, maintain one compact component work file, then prepare, generate, review, revise, accept, export, validate, or close an AEUI asset batch."
+  short_description: "以最多五次自主修复循环编排 AEUI 资产全生命周期"
+  default_prompt: "Use $run-aeui-asset-workflow to prepare an AEUI asset batch, then run its authorized generate-review-repair loop for at most five fixed ImageGen calls before presenting the internally reviewed result."

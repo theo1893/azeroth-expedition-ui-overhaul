@@ -17,11 +17,14 @@
 - 组件 ID：
 - 版本：
 - 子状态：prompt-draft | prompt-authorized | candidate-raw |
-  candidate-reviewed | candidate-rejected | source-accepted |
+  repair-prepared | candidate-reviewed | candidate-rejected | source-accepted |
   closure-planned | component-closed
 - 项目阶段：P0–P6-C
 - 固定执行器：imagegen-0-143-0 / @openai/codex@0.143.0
 - 操作：generate | edit
+- 自动修复预算：最多 5 次固定执行器调用，含首次
+- 当前尝试：0/5
+- 多执行正文最坏总调用数：
 - 锁定视觉基准：
   - Image 1：<assets/locked 仓库路径> — <最高视觉职责>
 - 基准提示词 provenance：
@@ -76,6 +79,25 @@
 
 <用户确认后原样交给固定执行器的正文>
 
+## 自主修复循环
+
+- 不可变修复边界：<组件 ID、对象／状态数量、权威顺序、参考职责、画布、
+  runtime 几何、Alpha、禁止烘焙>
+- 允许的自主修复：<可改变的构图／结构／材料措辞；edit 或 regenerate；
+  是否允许把同一循环前次输出作为 edit 输入>
+- 必须重新授权：<新增参考／上传、对象、状态、视觉方向、画布、provider 或
+  其他合同变化>
+
+| 尝试 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
+|---:|---|---|---|---|---|---|---|
+| 1/5 | `<version>` / `<commit>` | generate |  |  |  |  |  |
+| 2/5 | `<version>.r1` / `<commit>` | edit／generate |  |  |  |  |  |
+
+每次固定执行器调用前先递增尝试号。调用失败、提示词截断和不可用输出也占用
+一次。第 1–4 次失败后，先把本行和下一份完整 `.rN` 正文提交，再继续；第 5
+次失败后停止并记录 `repair-budget-exhausted`。任何一次完整内审通过后立即
+停止，不使用剩余次数。
+
 ## 执行记录
 
 - 日期：
@@ -84,7 +106,9 @@
 - imagegen 报告的 revised prompt：
 - 输出尺寸／模式／SHA-256：
 - Alpha／残色：
-- 内部失败重试：
+- 调用次数：
+- 循环终态：candidate-reviewed | repair-budget-exhausted |
+  authority-blocked
 
 ## 审查记录
 
@@ -119,6 +143,8 @@ provenance，并且“必须继承”和“冲突裁决”的实质内容必须�
 - 结论：candidate-rejected
 - 否决人：internal-review | user
 - 日期：
+- 尝试次数：<n>/5
+- 循环终态：repair-budget-exhausted | user-rejected | authority-blocked
 - 第一个失败门禁：
 - 可观察证据：
 - 本版本保留内容：

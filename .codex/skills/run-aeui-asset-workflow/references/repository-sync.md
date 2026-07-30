@@ -47,18 +47,37 @@ references 不属于项目说明文档。
 - 紧凑尝试摘要；
 - 下一门禁。
 
-每次执行前先提交 work，使精确正文进入 Git 历史。被拒后先补执行／审查记录
-并提交，再在同一文件中升级当前版本。不要为 V1、V2、V3、review、audit、
+首次执行前先提交用户授权的 work，使精确正文进入 Git 历史。自主修复循环中，
+每次失败后在同一文件补齐执行／审查记录和下一份完整 `.rN` 修复正文，并在
+下一次调用前提交。不要为 V1、V2、V3、每次 attempt、review、audit、
 preview 或 revised prompt 分别建立永久 Markdown。
+
+## 五次自主修复同步
+
+- 一个用户明确授权的执行正文最多调用固定 ImageGen `5` 次，含首次。多段
+  独立执行正文必须在授权前分别列出预算和最坏总调用数。
+- 每次调用使用独立的 ignored attempt 路径，例如
+  `generated/<module>/<batch>/<version>/attempt-01/`；不得覆盖前次 raw、
+  candidate、Alpha 中间图或重组预演。
+- 第 1 次使用已提交的授权正文。第 2–5 次只能使用同一修复边界内的完整
+  `.rN` 正文；提交中同时保存前次失败记录和下次执行正文。
+- work 的循环表必须记录尝试号、正文／commit、session／result、输出 SHA、
+  第一失败门禁、保留区域、edit／regenerate 决定和结论。执行器调用失败也
+  占用次数并记录。
+- 中间失败只更新 work；模块 `PROGRESS.md` 在内部通过、第五次耗尽或出现
+  需要新授权的边界阻塞时再同步，避免复制五份流水。
+- 内部通过只达到 `candidate-reviewed / P3`。第五次仍失败才达到
+  `candidate-rejected / repair-budget-exhausted`。两种情况都不得自动创建
+  tracked source、manifest 或 runtime。
 
 ## 按操作同步
 
 | 操作 | 必须同步 | 禁止 |
 |---|---|---|
 | `prepare` | 组件 work；必要时 `SUBMODULES.md` 与模块进度 | 写 raw、source 或 runtime |
-| `generate` | 已提交的授权正文；work 执行记录；模块进度 | commit raw／失败图／预演 |
-| `review` | work 审查证据与结论 | 用像素指标替代视觉结论 |
-| `revise` | work 尝试摘要；新版本正文；模块进度 | 丢失旧版本 Git 证据 |
+| `generate` | 已提交的授权正文／`.rN` 修复正文；work 执行记录 | 超过五次调用；commit raw／失败图／预演 |
+| `review` | 每次尝试的 work 审查证据；循环终态同步模块进度 | 用像素指标替代视觉结论 |
+| `revise` | 同一 work 的尝试表、完整 `.rN` 正文与边界复核 | 丢失旧版本 Git 证据；用修复名义改变合同 |
 | `reject` | work 的版本、原因、日期、主体；模块进度 | 创建 source 或 runtime |
 | `accept` | source、manifest、work、子模块基线、模块进度 | 把完整原型直接当 runtime |
 | `export` | exporter、UV/crop manifest、runtime、Lua/XML、tests、模块进度 | 自由重绘确定性导出结果 |
@@ -112,7 +131,8 @@ tests 中；`work/` 不保留空占位文件。
 ## 提交与同步
 
 1. 开始前检查工作树并保留无关修改。
-2. 每次状态变化把 work、模块进度、manifest 与实现放在同一提交。
+2. 每次调用前提交当前完整执行正文；循环内失败只更新同一 work，循环终态再
+   同步模块进度、manifest 或实现。
 3. 确认 `generated/` 仍被忽略。
 4. 运行 `git diff --check`、文档拓扑／链接测试、相关合同测试与 Lua smoke。
 5. 提交信息指出模块、批次和状态变化。
