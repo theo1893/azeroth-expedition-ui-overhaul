@@ -59,7 +59,7 @@ Texture、FontString。禁止在 SHELL 上烘焙任务行、滚动状态、选�
 
 | ID | 真实对象 | 状态／资产 |
 |---|---|---|
-| `QUEST.LOG.LIST.INSET` | 围绕 `QuestLogListScrollFrame` 的 adapter 非交互 Texture | 固定列表内框；中央开口透明，不承载行、文字、滚动条或命中 |
+| `QUEST.LOG.LIST.INSET` | 无独立 runtime 对象；`QuestLogListScrollFrame` 直接露出 QL-A2 连续纸面 | 用户已移出范围；不得创建内框 Texture、占位、命中或 fallback 分支 |
 | `QUEST.LOG.REGION.BACKPLATE` | `QuestLogTitleN` 且 `isHeader=true` 的 Button 背景 Texture | normal／hover／pressed／disabled；同一基础物件确定性派生 |
 | `QUEST.LOG.ROW.BACKPLATE` | `QuestLogTitleN` 且 `isHeader=false` 的 Button 背景 Texture | normal／hover／pressed／disabled；同一基础物件确定性派生 |
 | `QUEST.LOG.REGION.TOGGLE` | `QuestLogTitleN` 且 `isHeader=true` 的图标区 | 展开／收起覆盖，不新增命中区 |
@@ -141,10 +141,11 @@ QL-B0／B1／B2 当前 V1 runtime 已接入
 刷新 UV，pressed 仅把锚点改为 `y=-1`。API 缺失、无可见选择或 header
 被选中时隐藏覆盖。
 
-QL-B0 V2 已获用户授权，处于 `prompt-authorized / P3`；`LIST.INSET`、
-`REGION.BACKPLATE` 与 `ROW.BACKPLATE` 尚无 source、runtime 或占位 Texture。
+QL-B0 V2 的 `LIST.INSET` 已在四次候选审查后由用户移出范围，不建立 source、
+runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
+`ROW.BACKPLATE` 仍处于 `prompt-authorized / P3`，尚无 source 或 runtime；
 只允许按 [work/QUEST.LOG.LEFTPAGE.md](work/QUEST.LOG.LEFTPAGE.md)
-所列固定正文、输入、repair envelope 与 A／B 独立预算调用 ImageGen。
+所列固定 B 正文、输入、repair envelope 与独立预算调用 ImageGen。
 
 ## Quest Log 滚动与控制
 

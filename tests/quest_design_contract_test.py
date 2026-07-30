@@ -237,11 +237,13 @@ def main() -> None:
             "1b6b21cd3db74202051a2ceb8b5ba1d91ca7beb636accf247603edbc3cfeb40e",
             "`QL-B1 V1`",
             "`QL-B0 V2`",
-            "`repair-prepared / P3`",
+            "`prompt-authorized / P3`",
             "work/QUEST.LOG.LEFTPAGE.md",
             "`QUESTS_DISPLAYED = 18`",
             "`224 × 18px`",
-            "A `3/5`",
+            "A 终止于 `4/5`",
+            "`user-rejected /",
+            "scope-removed / P3`",
             "B `0/5`",
             "`runtime-exported / P5`",
             "`5/5`",
@@ -288,12 +290,14 @@ def main() -> None:
             "Quest Log 左页卷宗目录 V2",
             "`QL-B0-A V2`",
             "`QL-B0-B V2`",
-            "`repair-prepared`",
+            "B `prompt-authorized`",
+            "A `user-rejected / scope-removed`",
             "项目阶段：`P3`",
-            "授权正文状态：`production`",
+            "授权正文状态：B `production`",
             "用户授权：`2026-07-30`",
-            "当前实际生图：A `3/5`；B `0/5`",
-            "最坏总预算：`10`",
+            "当前实际生图：A `4/5`；B `0/5`",
+            "原授权最坏总预算：`10`",
+            "最坏总实际调用变为 `9`",
             "@openai/codex@0.143.0",
             "任务详情面板_视觉基准_v1.png",
             "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
@@ -315,7 +319,7 @@ def main() -> None:
             "不生成假图标槽",
             "## 生产正文完整性预检",
             "结论：pass",
-            "## 当前执行正文 — QL-B0-A V2.r3",
+            "## 已撤销且不得执行的草案 — QL-B0-A V2.r4",
             "## 最终执行正文 — QL-B0-B V2",
             "## Repair envelope 与计数",
             "`candidate-rejected / repair-budget-exhausted`",
@@ -328,6 +332,11 @@ def main() -> None:
             "019fb35e-6697-71f3-b2b7-f6033ef290d2",
             "92ce740a8812d2c5fee96ae6152cac482458fa958b683795abf742dc792a723c",
             "4fc83fd50ec4345edba7dd5a3bc8ef243a35ceecac885ca5e228743d559819da",
+            "019fb367-828c-71a2-a5b8-088bcf4e1472",
+            "f2d03067e47578a8444ec8efb4d9548f185ab320152e8cf9d4fdcd7c9b44ef4f",
+            "96ea48421304cfeef52afa9b740998537ca21fbcfa8dab0ba2d33cfdfa042ade",
+            "`user-rejected / scope-removed`",
+            "不建立 A source、manifest、TGA、adapter Texture",
             "## 下一门禁",
             "每段最多 5 次，最坏合计 10 次",
         ),
@@ -335,7 +344,8 @@ def main() -> None:
     )
     assert "/Users/" not in leftpage_work
     assert "codex-clipboard-" not in leftpage_work
-    assert leftpage_work.count("## 当前执行正文 — QL-B0-A") == 1
+    assert leftpage_work.count("## 当前执行正文 — QL-B0-A") == 0
+    assert leftpage_work.count("## 已撤销且不得执行的草案 — QL-B0-A") == 1
     assert leftpage_work.count("## 最终执行正文 — QL-B0-B") == 1
 
     require(
