@@ -18,10 +18,11 @@
 - 操作：三段均为首次 `generate`；同一段后续可在冻结边界内选择
   `edit` 或 `generate`。
 - 当前实际生图：
-  - QL-B3-A：`3/5`
+  - QL-B3-A：`4/5`
   - QL-B3-B：`0/5`
   - QL-B3-C：`0/5`
-- 流程错误：`3`；无候选且无 provider 生成证据时单列，不占上述额度。
+- 流程错误／执行异常：`4`；无候选且无 provider 生成证据时单列且不占
+  上述额度；E4 发生在已计数 provider output 之后，不新增一次生图计数。
 - 多执行正文最坏实际生图数：`15`。
 - 用户授权：`2026-07-30` 明确授权 `QL-B3-A/B/C V1`；允许每段上传固定
   SHA 的 Image 1／2，允许同一段前次输出仅在冻结边界内作为 edit 输入；
@@ -49,9 +50,9 @@
 - 非上传的内部尺度证据：
   - QL-B1 已接受 `12px`／`10px` 目录墨记只用于审查小尺寸线重与信息密度；
     不作为 Image 3，不要求生成模型模仿其生产偏差。
-- raw：A attempt 3 native SHA-256 `488cab28…`；仍为循环中间产物。
-- 透明候选：A attempt 3 SHA-256 `d15bb7ae…`；仍为循环中间产物。
-- 真实排版预演：A attempt 3 SHA-256 `aaa11ecb…`；B／C 使用明确标记的
+- raw：A attempt 4 native SHA-256 `f3a6272a…`；仍为循环中间产物。
+- 透明候选：A attempt 4 SHA-256 `d5aa0ef5…`；仍为循环中间产物。
+- 真实排版预演：A attempt 4 SHA-256 `da9bf7d9…`；B／C 使用明确标记的
   非权威中性占位。
 - 最终 source：无。
 
@@ -563,6 +564,56 @@ Image 3 原图标约 `50%` 尺寸的完整贴图，不是新设计；四枚分�
 无文字、底座、格线和新物件；四类在 bbox-fit 后的 `10 × 10px` 下可辨；
 空白背景每个像素都是精确 `#00FF00`。
 
+## QL-B3-A V1.r4 完整修复正文
+
+编辑 Image 3，制作一张只包含四枚《魔兽世界》60 级香草时代任务目录
+“类型压印”的二维手绘 UI sprite atlas。本次只修复背景色键；Image 3
+现有四枚图标的全部可见像素、形状、尺寸、位置和美术均已通过，不得改变。
+四枚仍是盖在旧公会任务纸面上的档案墨印，不是按钮、硬币、金属徽章、
+任务卡片或独立面板；绝不出现任务名、等级、`Elite`、`Dungeon`、
+`Raid`、`PvP` 等文字、字母或数字。
+
+Image 1 是最高视觉权威。四枚现有图标已经继承其 2004 年前后香草魔兽
+二维手绘位图语言：粗厚略不规则的手工轮廓、有限而明确的明暗切面、左上
+暖光、低饱和暖赭与烟褐综合色、真实旧墨和克制磨损。继续忽略 Image 1
+中的完整双页书、逐行卡片、指南针横条、黄铜边框、页脚蜡封、飘带、按钮、
+分隔线、文字和整体布局。Image 2 只提供当前任务纸张综合色、左上暖光、
+磨损尺度和墨迹贴纸面的接触感；不要复制书壳、纸页轮廓、页沟、装订、
+包角或全幅背景。
+
+Image 3 是本段前一次生成的四格候选，也是唯一编辑目标。必须保留 Image 3
+四枚现有图标的像素语义与视觉外观：左上三尖冠军纹章、右上圆拱石门、
+左下三面行军旗、右下两把交叉短剑。不要重新生成、重新描摹、锐化、模糊、
+重采样、缩放、平移、旋转、镜像、交换、增删、拉伸、补画或重新上色这些
+图标；不要改变任何尖端、门洞、门柱、旗角、基座、剑尖、护手、轮廓、
+内部负形、墨色、暖赭干刷、手绘边缘或磨损。只选择 Image 3 的绿色背景
+区域并做纯色替换，图标区域必须保持原样。
+
+输出恰好一张 `1024 × 1024` 图，严格保留 Image 3 的 `2 × 2` 格序和
+当前构图，不要新增格线、边框、标题或标签。四枚继续处于各自象限中央，
+并保持已经通过的中央安全盒关系：归一化后的本地可见 bbox 为 elite
+约 `[237,243,338,354]`、dungeon 约 `[157,243,273,349]`、raid 约
+`[230,149,340,257]`、pvp 约 `[163,160,265,259]`；不得让任何可见像素
+越出各格本地 `x=128..384, y=128..384`。runtime 会按每枚可见 bbox
+确定性裁切后缩到 `10 × 10px`，不得改变当前已通过的四类可辨性。
+
+唯一允许改变的区域是绿色背景。删除 Image 3 中所有旧绿色背景像素，
+不要对旧绿进行调色、滤镜、平滑或生成式重绘；用一个完全平坦的数字颜色
+填充层一次性替换全部背景。每个背景像素的 RGB 必须恰好为
+`(0,255,0)`，十六进制 `#00FF00`。背景不得只是“接近绿色”或视觉上类似
+纯绿；不得出现 `(9,249,17)`、`#09F911` 或任何其他近似值。背景不能有
+纹理、颗粒、压缩色差、渐变、暗角、阴影、亮度漂移、透明度变化或色彩
+噪声；四角、象限分界、图标周围和任意空白点取样都必须得到完全相同的
+`#00FF00`。图标边缘不得残留绿色、绿色反射或绿色描边；安全盒外不得有
+阴影、碎屑、辅助线或额外物件。
+
+禁止现代扁平矢量 icon、移动应用 badge、细金线网页图标、玻璃、霓虹、
+镜面黄金、暗黑 3 式尖刺黑铁、恶魔角、骷髅和照片级古董。最终自检：
+除背景像素从旧绿统一替换为精确 `#00FF00` 外，Image 3 四枚图标及其
+位置、尺寸、格序和美术没有任何变化；恰好四枚，无文字、底座、格线或
+新物件；四枚仍通过中央安全盒并在 bbox-fit `10 × 10px` 下可辨；所有
+空白背景像素都是同一个精确 RGB `(0,255,0)`。
+
 ## 自主修复循环
 
 ### 不可变修复边界
@@ -599,7 +650,8 @@ Image 3 原图标约 `50%` 尺寸的完整贴图，不是新设计；四枚分�
 | A | 1/5 | `QL-B3-A V1` / `265503a` | generate | `019fb293-2175-7070-a257-87086887f603`／`ig_0cb39047645036d8016a6b27c524288191801b7e6dd6d8a610` | native `6bb9996a…`；normalized `1af5e8b3…`；transparent `011c7eda…`；layout `1586abe8…` | 四格可见 bbox 全部越出中央 `256 × 256` 安全盒；native 色键为 `#04F904` 而非精确 `#00FF00` | 保留四个正确物件、格序、正视、综合色与 10px 可读性；以本段输出作为 Image 3，只做等比缩小、居中和纯色背景清理 | internal-fail；`1/5` |
 | A | 2/5 | `QL-B3-A V1.r1` / `0fabed1` | edit | `019fb2a0-e316-70b0-ae98-3de032a2fe93`／`ig_095752b9d2875834016a6b2b5244388191872768206eb8a502` | native `25a0de6f…`；normalized `4c7f7c3b…`；transparent `1d06098f…`；layout `67eac225…` | dungeon 左越安全盒 `3px`、raid 上越 `25px`、pvp 上越 `8px`；native 背景约 `#07EB0B` 且不均匀 | 保留四枚物件与 10px 可读性；以本段输出作为 Image 3，进一步缩到 `140px` 以内、严格居中并替换数字纯绿底 | internal-fail；`2/5` |
 | A | 3/5 | `QL-B3-A V1.r2` / `cfa7715` | edit | `019fb2a9-8a48-7da2-addf-dfc7e0f29a05`／`ig_0eae0c803936b5ed016a6b2d8312b881919466d9ff6ef9f738` | native `488cab28…`；normalized `a3cb06af…`；transparent `d15bb7ae…`；layout `aaa11ecb…` | dungeon 左越安全盒 `3px`、raid 上越 `17px`；native 背景约 `#09E90F` 且不均匀 | 保留四枚物件；以本段输出作为 Image 3，用约 50% 相对缩放和绝对象限居中替代未被遵循的像素尺寸措辞 | internal-fail；`3/5` |
-| A | 4/5 | `QL-B3-A V1.r3` / `36e7921` | edit |  |  |  |  |  |
+| A | 4/5 | `QL-B3-A V1.r3` / `36e7921` | edit | `019fb2b0-f3b2-7ff2-a6d1-3911625e53bc`／`ig_02db1bbbb2af7430016a6b2f7019408191afcde04361b058d0` | native `f3a6272a…`；normalized `94c229c9…`；transparent `d5aa0ef5…`；layout `da9bf7d9…` | 四格正式安全盒均通过；唯一硬失败为 native 背景约 `#09F911` 且不均匀 | 冻结 attempt 4 四枚图标的全部可见像素、位置和尺寸；以本段输出作为 Image 3，只替换精确数字纯绿背景 | internal-fail；`4/5` |
+| A | 5/5 | `QL-B3-A V1.r4` / `TBD` | edit |  |  |  |  |  |
 | B | 1/5 | `QL-B3-B V1` / `265503a` | generate |  |  |  |  |  |
 | C | 1/5 | `QL-B3-C V1` / `265503a` | generate |  |  |  |  |  |
 
@@ -608,6 +660,7 @@ Image 3 原图标约 `50%` 尺寸的完整贴图，不是新设计；四枚分�
 | E1 | A／`QL-B3-A V1`／`923c6f0` | local fixed-executor launch | `npx` 请求 npm registry 时返回 `EPERM`；无输出文件、无 provider result、无生成证据 | 保持正文与 Image 1／2 不变，改在获准网络／用户 npm cache 环境重试 | 不占生图额度 |
 | E2 | A／`QL-B3-A V1`／`3dfc92e` | fixed CLI argument transport | 固定 CLI 返回 `Reading prompt from stdin / No prompt provided via stdin`；无输出文件、无 provider result、无生成证据 | `codex exec -i <FILE>...` 的 image 参数为 variadic；保持正文与输入不变，在两张 image 参数后增加 `--` 终止选项并传入同一 prompt | 不占生图额度 |
 | E3 | A／`QL-B3-A V1`／`b00918b` | `019fb290-ca5b-7b02-a8f4-d014bb24c303` | 子进程从仓库工作目录再次读取包装 skill，准备递归启动固定 CLI；主流程在任何 `image_gen` tool call／provider result 前中断，无输出文件 | 按仓库 skill 改用独立临时工作目录、`-s workspace-write`，并明确当前 0.143.0 子进程只调用自身 built-in `image_gen`、不得读取包装器或启动 `codex`／`npx` | 不占生图额度 |
+| E4 | A／`QL-B3-A V1.r3`／`36e7921` | `019fb2b0-f3b2-7ff2-a6d1-3911625e53bc` | provider image 已返回并计为 A `4/5`；子进程随后没有原样复制，而尝试用缺少 Pillow 的 Python 做确定性缩放／抠图，失败后被中断；缓存中的 provider raw 完整可恢复 | 直接恢复 provider raw 审查；下次 execution instruction 明确禁止生成后重排、调色或像素后处理，只可原样复制 provider output | 不新增生图计数；attempt 4 仍只计一次 |
 
 ## 执行记录
 
@@ -751,6 +804,46 @@ Image 3 原图标约 `50%` 尺寸的完整贴图，不是新设计；四枚分�
   V1.r3 改用“当前约 50% + 四格绝对中心 + 大片对称留白”的相对视觉约束；
   四对象、格序、材料、画布和 runtime 合同不变。
 
+### QL-B3-A V1.r3 attempt 4
+
+- 日期：`2026-07-30`。
+- 固定执行器：`@openai/codex@0.143.0`，子进程 session
+  `019fb2b0-f3b2-7ff2-a6d1-3911625e53bc`，provider image
+  `ig_02db1bbbb2af7430016a6b2f7019408191afcde04361b058d0`。
+- 输入：固定 Image 1 SHA `03dc589a…`；固定 Image 2 SHA `91f9feca…`；
+  同段 Image 3 为 attempt 3 native SHA `488cab28…`。
+- executor user block 已核对为完整 `QL-B3-A V1.r3`；没有报告 revised
+  prompt。provider output 返回后，子进程试图以缺少 Pillow 的 Python
+  进行未授权后处理；主流程中断并直接恢复缓存 provider raw，故无二次
+  生成或污染 raw。
+- native：`1254 × 1254 RGB`，
+  `generated/quests/QL-B3/v1/type/attempt-04/raw/QL-B3-A_V1_r3.raw.png`，
+  SHA-256
+  `f3a6272a37fc0220cabb1fab45ae52b57a2f65965e8b5bcdf2151df0c9984901`。
+- 确定性归一化：`1024 × 1024 RGB`，SHA-256
+  `94c229c94301b6d5beac58b6e71ef4afd28aee2810cda6f7d4547ec168de4d3f`。
+- 固定色键清理使用 corner key `#09F911`；透明候选 SHA-256
+  `d5aa0ef5dd2a52001d944a438fb8a1199060adcb261ad117b9122b15e582d2a4`，
+  Alpha `1023574` 全透明／`2522` 半透明／`22480` 不透明，可见强绿 `0`。
+- `676 × 464`、23 行真实排版 SHA-256
+  `da9bf7d92ac72f493445a996ed9eeaa917cd8ef310413ab49291b4635ac99ec4`；
+  B／C 仍为明确标注的中性非权威占位。
+- 实际生图：A `4/5`；无 tracked source／runtime。
+
+## Attempt 4 审查记录
+
+- 结论：`internal-fail / repair-prepared / P3`。
+- 语义／美术／真实排版：pass。恰好四枚、正确格序、同一香草墨印语言；
+  bbox-fit 后 `10px` 四类可辨，23 行三槽无重叠。
+- 正式 source 安全盒：pass。elite `[237,243,338,354]`、dungeon
+  `[157,243,273,349]`、raid `[230,149,340,257]`、pvp
+  `[163,160,265,259]` 全部完整落入本地 `[128,128,384,384]`。
+- 唯一正式硬失败：native 背景约 `#09F911` 且不均匀，不是精确
+  `#00FF00`。确定性 Alpha 清理无可见强绿，但 raw 合同仍失败。
+- 修复决定：最后一次 scoped edit。V1.r4 冻结 Image 3 四枚图标的全部
+  可见像素、格序、尺寸和位置，只允许删除旧绿并以数字填充层重铺精确
+  `#00FF00`；不改变画布、材料或 runtime 合同。
+
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
@@ -758,9 +851,11 @@ Image 3 原图标约 `50%` 尺寸的完整贴图，不是新设计；四枚分�
 | QL-B3-A V1 | session `019fb293-2175-7070-a257-87086887f603`；transparent `011c7eda…`；layout `1586abe8…` | internal-fail；`1/5` | 保持物件与美术；四格 bbox 等比缩入安全盒并清理 native 色键 |
 | QL-B3-A V1.r1 | session `019fb2a0-e316-70b0-ae98-3de032a2fe93`；transparent `1d06098f…`；layout `67eac225…` | internal-fail；`2/5` | 保持物件与美术；进一步缩小、严格居中并重铺数字纯绿 |
 | QL-B3-A V1.r2 | session `019fb2a9-8a48-7da2-addf-dfc7e0f29a05`；transparent `d15bb7ae…`；layout `aaa11ecb…` | internal-fail；`3/5` | 保持物件；改用约 50% 相对缩放、绝对居中和数字纯绿 |
+| QL-B3-A V1.r3 | session `019fb2b0-f3b2-7ff2-a6d1-3911625e53bc`；transparent `d5aa0ef5…`；layout `da9bf7d9…` | internal-fail；`4/5` | 冻结已通过图标，只替换精确数字纯绿背景 |
 | QL-B3-B／C V1 | 用户已授权；实际生图各 `0` | prompt-authorized | 执行各自 attempt 1 |
 
 ## 下一门禁
 
-提交 A attempt 3 审查和完整 `QL-B3-A V1.r3` 正文后，以固定 Image 1／2
-加同段 attempt 3 Image 3 执行 A attempt 4；B／C 保持各 `0/5`。
+提交 A attempt 4 审查和完整 `QL-B3-A V1.r4` 正文后，以固定 Image 1／2
+加同段 attempt 4 Image 3 执行 A attempt 5；这是 A 的最后一次授权额度。
+B／C 保持各 `0/5`。
