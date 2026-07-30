@@ -56,9 +56,11 @@
   shell、全部 23 行、代表性中文任务内容与四态分布，SHA-256
   `c0e5bdffc5ce09872c0da0709a3269245ef424f4dde03335d59ded335dc5fdd5`。
   QL-C 未完成按钮仅为 manifest 标注的非权威占位；该预演不能替代实机。
-- `QL-B2`／`QL-B3`：只完成稳定边界。选中书签与类型／计时／状态章将在
-  QL-B1 小尺寸视觉重量确认后分别准备；Collapse All 归 QL-C 独立 Button，
-  不混入目录墨记。
+- `QL-B2 V1`：组件合同、锁定基准继承／冲突审计、单 source 三状态的
+  确定性导出合同、完整生产正文和三张真实排版预演要求已经形成
+  `production-draft / P2`；尚无生图授权，固定执行器 `0/5`。
+- `QL-B3`：只完成稳定边界。类型／计时／状态章将在 QL-B2 候选形成后单独
+  准备；Collapse All 归 QL-C 独立 Button，不混入目录状态。
 - Quest Tracker：视觉 `P2`，外部 provider `P0`，暂停。
 - NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
 - `questitem.lua`：行为保留，视觉 `N/A`。
@@ -71,7 +73,7 @@
 | `QL-A2` | 静态空卷宗结构与页沟 | `P5` V4 runtime-exported | V3.3 `15/15` 已终止；V4 已从 QL-A1 source 导出 `676 × 464` 显示区／`1024 × 512` TGA，固定执行器 `0/0`，Lua smoke 通过 | Turtle WoW 验证纹理方向、裁切、命中与 list-only |
 | `QL-B0` | 23 行创建、排布、文字安全区和状态刷新 | `P5 runtime-exported` | 23 行 `323px` 几何、字体与状态刷新已接入；Lua smoke 覆盖创建、偏移、状态和原脚本 | Turtle WoW 验证文字基线、重叠命中与滚动 |
 | `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P5 runtime-exported` | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；内部失败与 `5/5` 事实保留 | Turtle WoW 验证 TGA、四态切换、字体和 fallback |
-| `QL-B2` | 当前任务暗酒红书签三状态 | `P2 baseline` | 真实语义与美术边界已定义，无执行正文 | QL-B1 视觉重量确认 |
+| `QL-B2` | 当前任务暗酒红书签三状态 | `P2 production-draft` | [V1 work](work/QUEST.LOG.SELECTION.md) 已冻结一枚基础 source、`24 × 14` 可见几何、三态确定性派生和 23 行逐态真实排版；固定执行器 `0/5` | 用户授权 `QL-B2 V1` 与五次修复边界 |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P2 baseline` | 类型 tag、timer API、isComplete 已分离；未知 tag 不猜测 | QL-B1 视觉重量确认 |
 | `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作与辅助按钮 | `P1–P2` | 真实对象已拆，部分全局名需 feature-detect | 实机对象与几何 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | `P1–P2` | Quest Log 奖励只读，无 selected | 实机奖励数量与尺寸 |
@@ -140,12 +142,16 @@ source 或 runtime。
   [`build_quest_log_directory_marks_v1.py`](../../../tools/build_quest_log_directory_marks_v1.py)；
   adapter runtime contract `1.1`，Lua smoke 覆盖 23 行创建、四态、滚动偏移、
   原脚本与原生纹理抑制。
+- QL-B2 V1 生产合同：
+  [`QUEST.LOG.SELECTION.md`](work/QUEST.LOG.SELECTION.md)；当前为
+  `production-draft / P2`，固定执行器 `0/5`，没有 raw、source 或 runtime。
 - Turtle WoW 实机验证尚未开始。
 
 ## 下一步
 
 QL-A2 保持 [runtime work](work/QUEST.LOG.GUTTER.md)，等待 Turtle WoW
-`1.18.1` 实机验收后才可进入 `P6`／清理。QL-B0／B1 已进入 `P5`；下一
-门禁是实机验证纹理方向／过滤、字体加载、23 行文字基线与重叠命中、滚动
-偏移、四态刷新、原生回退和非视觉行为。不得继续调用 V1 ImageGen，也不得
-把确定性处理描述成重新生成美术。
+`1.18.1` 实机验收后才可进入 `P6`／清理。QL-B0／B1 已进入 `P5` 并等待
+实机。离线下一门禁是用户审阅并明确授权 `QL-B2 V1` 的完整执行正文、固定
+Image 1／2 职责、同循环 edit 输入边界和最多五次调用；“继续”本身不触发
+ImageGen。QL-B1 不得继续调用 V1 ImageGen，也不得把确定性处理描述成重新
+生成美术。

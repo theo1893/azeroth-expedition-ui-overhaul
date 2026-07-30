@@ -53,8 +53,13 @@ expanded 向下。`QUEST.LOG.LIST.CHECK` 使用同一枚开放墨圈：untracked
 2004 年前后香草魔兽二维手绘 sprite，无金属底座、无方形 checkbox、无
 `+`／`-` 字符、无独立命中区。
 
-`QUEST.LOG.SELECTION` 使用从左页外缘探入当前行的暗酒红窄织物书签舌，不铺满
-整行；选中、选中悬停、选中按下只改变受光、压入和色重，不改变物件身份。
+`QUEST.LOG.SELECTION` 使用从左页外缘水平探入当前行的暗酒红窄织物书签舌，
+不铺满整行。它是贴纸面的厚旧布短舌：左端像仍压在纸缘下，右端柔软收口而
+不形成箭头、燕尾旗、标签牌或按钮；无黄铜、扣环、文字和高频刺绣。只生成
+一枚基础 source；选中、选中悬停、选中按下由同一 Alpha 确定性派生，只改变
+受光、色重与运行时 `1px` 压入，不改变轮廓、磨损位置和物件身份。当前完整
+生产正文与真实排版验收合同见
+[work/QUEST.LOG.SELECTION.md](work/QUEST.LOG.SELECTION.md)。
 
 `QUEST.LOG.TYPE.BADGE` 只为客户端可靠返回的 Elite、Dungeon、Raid、PvP
 制作克制小压印；normal 与未知 tag 不显示资产。`QUEST.LOG.TIMER.BADGE`

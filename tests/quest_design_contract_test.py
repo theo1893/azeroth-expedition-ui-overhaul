@@ -31,6 +31,9 @@ def main() -> None:
     directory_work = (
         QUESTS / "work" / "QUEST.LOG.DIRECTORY.md"
     ).read_text(encoding="utf-8")
+    selection_work = (
+        QUESTS / "work" / "QUEST.LOG.SELECTION.md"
+    ).read_text(encoding="utf-8")
 
     require(
         submodules,
@@ -62,6 +65,10 @@ def main() -> None:
             "`QUEST.LOG.LIST.CHECK`",
             "不是选择 Button",
             "`QUEST.LOG.SELECTION`",
+            "`GetQuestLogSelection()`",
+            "`24 × 14 UI px`",
+            "`32 × 16 UI px`",
+            "任务文字从 `x>=18`",
             "`QUEST.LOG.TYPE.BADGE`",
             "`QUEST.LOG.TIMER.BADGE`",
             "`GetQuestTimers()`",
@@ -166,6 +173,7 @@ def main() -> None:
             "work/QUEST.LOG.GUTTER.md",
             "左页目录状态",
             "work/QUEST.LOG.DIRECTORY.md",
+            "work/QUEST.LOG.SELECTION.md",
             "`QUEST.LOG.TIMER.BADGE`",
             "未知 tag",
             "ScrollBar 与操作 Button",
@@ -211,6 +219,10 @@ def main() -> None:
             "QuestLogDirectoryMarksV1.tga",
             "e734bbf59da00f7fbc9c75649d33eaf635b5a0c19e1737128dfdce0db58eee8f",
             "c0e5bdffc5ce09872c0da0709a3269245ef424f4dde03335d59ded335dc5fdd5",
+            "`QL-B2 V1`",
+            "`P2 production-draft`",
+            "work/QUEST.LOG.SELECTION.md",
+            "固定执行器 `0/5`",
             "Quest Tracker",
             "外部 provider `P0`",
             "NPC Quest／Gossip",
@@ -354,6 +366,56 @@ def main() -> None:
     assert directory_work.count("## 最终执行正文") == 1
     assert "attempt 1" in directory_work.lower()
     assert "该接受不声称失败门禁已经客观通过" in directory_work
+
+    require(
+        selection_work,
+        (
+            "版本：`QL-B2 V1`",
+            "子状态：`prompt-draft`",
+            "项目阶段：`P2`",
+            "固定执行器：`imagegen-0-143-0`",
+            "当前尝试：`0/5`",
+            "`QUEST.LOG.SELECTION`",
+            "任务详情面板_视觉基准_v1.png",
+            "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
+            "QuestLogBookShell_Master_v1.png",
+            "91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5",
+            "## 当前批次边界",
+            "## 美术基准继承",
+            "Image 1 与 `ART_BASELINE.md`",
+            "三状态只允许从一份 source 确定性派生",
+            "## 组件合同",
+            "`GetQuestLogSelection()`",
+            "`FauxScrollFrame_GetOffset(QuestLogListScrollFrame)`",
+            "`224 × 15 UI px`",
+            "`24 × 14 UI px`",
+            "`32 × 16 UI px`",
+            "`x=-12 UI px`",
+            "`x>=18`",
+            "`128 × 16`",
+            "全透明保留格",
+            "三格 Alpha 必须逐像素相同",
+            "三张独立的",
+            "`676 × 464`／100% runtime",
+            "全部 23 个真实行槽",
+            "## 生产正文完整性预检",
+            "结论：`pass`",
+            "## 最终执行正文",
+            "单物件 UI sprite",
+            "`384 × 224px` 安全盒",
+            "左端必须平直",
+            "不能形成三角箭头",
+            "纯 `#00FF00`",
+            "## 自主修复循环",
+            "最多 `5` 次",
+            "同一循环的前次输出",
+            "production-draft / P2",
+        ),
+        "active QL-B2 work",
+    )
+    assert "/Users/" not in selection_work
+    assert selection_work.count("## 最终执行正文") == 1
+    assert "不构成生图授权" in selection_work
 
     directory_source_path = (
         ROOT

@@ -62,15 +62,21 @@ Texture、FontString。禁止在 SHELL 上烘焙任务行、滚动状态、选�
 | `QUEST.LOG.REGION.TOGGLE` | `QuestLogTitleN` 且 `isHeader=true` 的图标区 | 展开／收起覆盖，不新增命中区 |
 | `QUEST.LOG.LIST.ROW` | `QuestLogTitle1..23`；`7..23` 继承 `QuestLogTitleButtonTemplate` 创建 | 普通／悬停／按下／禁用；layout／字体状态，不生成完整行卡片 |
 | `QUEST.LOG.LIST.CHECK` | `QuestLogTitleNCheck` | 未追踪／已追踪；不是选择 Button |
-| `QUEST.LOG.SELECTION` | 当前选中的 `QuestLogTitleN` | 选中／选中悬停／选中按下织物书签 |
+| `QUEST.LOG.SELECTION` | 当前选中的非地区 `QuestLogTitleN` | 一枚基础织物书签；选中／选中悬停／选中按下为三个确定性 runtime 状态 |
 | `QUEST.LOG.TYPE.BADGE` | `GetQuestLogTitle` 的可靠 `questTag` | `normal` 无资产；Elite／Dungeon／Raid／PvP 小压印；未知 tag 不猜测 |
 | `QUEST.LOG.TIMER.BADGE` | `GetQuestTimers()` 与 `GetQuestIndexForTimer()` | timed 沙漏压印；API 缺失时不显示 |
 | `QUEST.LOG.STATE.SEAL` | `GetQuestLogTitle` 的 `isComplete` | `+1` complete／`-1` failed；nil 不显示 |
 
 整条 `QuestLogTitleN` 才是选择命中对象。名称、等级、任务数量与勾选均动态
 绘制。地区展开状态来自同一条目的 `isHeader`／`isCollapsed`；追踪状态来自
-绝对任务索引的 `IsQuestWatched`；选择状态来自 `GetQuestLogSelection`。
+绝对任务索引的 `IsQuestWatched`；选择状态来自 `GetQuestLogSelection()`。
 不得通过解析本地化任务名或显示文字推断状态。
+
+`QUEST.LOG.SELECTION` 不拥有鼠标：任何时刻最多只显示在一条可见、非地区的
+当前任务行。它使用 `24 × 14 UI px` 可见书签装在 `32 × 16 UI px` 透明
+Texture 内，从行局部 `x=-8..15` 探入；任务文字从 `x>=18` 开始。覆盖位于
+shell 之上、任务 FontString 与 QL-B1／B3 状态之下。无选择、选择不可见、
+API／媒体缺失或选择指向地区 header 时隐藏并保留原生选择反馈。
 
 pfUI 的功能合同保留 `QUESTS_DISPLAYED = 23`，而 QL-A2 左页安全区只有
 `246 × 324 UI px`。QL-B0 的离线目标几何为 `23` 条
@@ -83,7 +89,9 @@ QL-B 的生产边界：
 - `QL-B1`：`REGION.TOGGLE` 与 `LIST.CHECK` 四枚墨记；V1.r3 透明 source
   已接受。runtime 只允许按 manifest 固定四格裁切、等比缩放并居中，
   不得修改任务行交互或状态来源。
-- `QL-B2`：`SELECTION` 的三状态暗酒红织物书签。
+- `QL-B2`：`SELECTION` 只生成一枚暗酒红织物基础书签；selected／
+  selected-hover／selected-pressed 由同一 Alpha 确定性导出为三格，
+  pressed 只在原行 Button 上产生 `1 UI px` 视觉压入，不新增命中区。
 - `QL-B3`：四类可靠 `TYPE.BADGE`、独立 `TIMER.BADGE` 与两类
   `STATE.SEAL`。
 - `LIST.ROW` 自身只承担布局、字体色和真实点击，不持有位图行卡。
