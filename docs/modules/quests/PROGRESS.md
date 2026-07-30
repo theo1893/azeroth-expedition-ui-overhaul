@@ -14,11 +14,12 @@
   八组对象，却仍有满页高频压花、双边实心内折、粗长辫绳针脚和完全外露
   线结；RGB 背景也不是合同要求的真透明或均匀 `#00FF00`。未创建透明候选、
   重组预演、source 或 runtime。
-- `QL-A2 V3.2`：`prompt-draft / P2`。根据 V3.1 首个失败门禁，把两张大
-  纸页与六个页沟小件拆成 A／B 两个固定调用；两次都只拟上传任务锁定图与
-  已接受 QL-A1 结构 source，聊天整框图改为只通过书面基线继承。A／B
-  已分别冻结最多 `5` 次自主生成－审查－修复预算，最坏总调用数为 `10`；
-  尚未授权、未上传、未生成。
+- `QL-A2 V3.2`：`candidate-raw / P3`。用户已明确授权 V3.2-A／B 两段
+  正文、各最多 `5` 次固定调用，最坏总调用数为 `10`，并允许每次上传固定
+  SHA 的任务锁定图与 QL-A1 结构 source。A 在 attempt 5 通过目标级内审：透明候选
+  恰好包含两张近等宽单层纸页，中央已无满页高频压花；其相向内缘仍须和
+  B 的 fold 在真实层序重组中复核。A 循环已停止，B attempt 1 已计数并
+  正在执行；尚未形成可交给用户复审的完整批次候选。
 - Quest Tracker：视觉 `P2`，外部 provider `P0`，暂停。
 - NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
 - `questitem.lua`：行为保留，视觉 `N/A`。
@@ -28,7 +29,7 @@
 | 批次 | 子模块 | 阶段 | 当前事实 | 下一门禁 |
 |---|---|---:|---|---|
 | `QL-A1` | `QUEST.LOG.SHELL` 结构母版 | `P4` | [透明 source](../../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png) 已接受；整图不得进 runtime | 等待 QL-A2 后确定 crop／UV |
-| `QL-A2` | 两纸页与六个 `GUTTER.*` | `P2` V3.2 prompt-draft | V1、V2.1、V3、V3.1 均已退回；[当前 work](work/QUEST.LOG.GUTTER.md) 已把纸页／页沟拆成两段执行正文，并为两段各冻结最多 5 次修复预算 | 用户授权 V3.2-A／B、A/B 各 5 次且最坏 10 次调用，并允许每次调用上传两张固定 SHA 参考 |
+| `QL-A2` | 两纸页与六个 `GUTTER.*` | `P3` V3.2 candidate-raw | A attempt 5 已通过目标级内审并停止；B attempt 1 已计数、正在固定执行；所有生成物仍只在 ignored `generated/` | 完成 B 最多 5 次内审循环；通过后制作 `676 × 440`、3／5／7 针脚、中文与三尺寸重组预演 |
 | `QL-B` | 目录行、展开、追踪、选择、类型、状态 | `P1–P2` | 子模块与稳定美术基线已定义，无生产 work | QL-A2 source 接受后逐对象建 Prompt |
 | `QL-C` | 两套 ScrollBar、关闭、操作与辅助按钮 | `P1–P2` | 真实对象已拆，部分全局名需 feature-detect | 实机对象与几何 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | `P1–P2` | Quest Log 奖励只读，无 selected | 实机奖励数量与尺寸 |
@@ -70,13 +71,13 @@ source 或 runtime。
   [`quest_design_contract_test.py`](../../../tests/quest_design_contract_test.py)。
 - QL-A1 source manifest：
   [`QL-A1_SourceManifest_v1.json`](../../../assets/source/quests/ql-a1/QL-A1_SourceManifest_v1.json)。
-- QL-A2 失败候选只存在于被忽略的 `generated/quests/QL-A2/`；没有 tracked
-  source 或 runtime。
+- QL-A2 raw、透明候选与失败候选只存在于被忽略的
+  `generated/quests/QL-A2/`；没有 tracked source 或 runtime。
 - Turtle WoW 实机验证尚未开始。
 
 ## 下一步
 
-用户审阅 [QL-A2 V3.2-A／B 执行正文与修复边界](work/QUEST.LOG.GUTTER.md)。
-只有用户明确授权两段正文，接受 A／B 各最多 `5` 次、最坏总计 `10` 次
-固定执行器调用，并允许每次调用上传按 SHA 锁定的 Image 1 与 Image 2 后
-才能生成；V3.1 授权、“继续”或对拆分方向的认可均不构成 V3.2 生成授权。
+继续执行 [QL-A2 V3.2-B 自主修复循环](work/QUEST.LOG.GUTTER.md)。B 通过
+目标级内审后，必须与 A 按真实层序完成 `676 × 440`、3／5／7 针脚、
+真实中文安全区和最小／基准／最大尺寸预演；只有整批内部通过后才能交用户
+复审，内部通过不构成 source 接受。
