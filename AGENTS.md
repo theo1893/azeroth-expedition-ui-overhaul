@@ -20,7 +20,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 |---|---|---|
 | pfUI／原生回退 | 路由与公共过渡材质 `P5`，未实机 | Turtle WoW 全场景回归 |
 | 聊天 | 核心 V3 runtime `P5`；Chat Copy 与 URL Copy 均已暂缓；单一左框，右框隐藏 | Turtle WoW 实机验收核心批次 |
-| 任务 | 当前首要大面积 UI；QL-A2 V4、QL-B0 23 行 V1、QL-B1 与 QL-B2 当前为 `P5 fallback`；完整重启后的实机图确认 QL-A2 连续左页与十八行布局稳定。QL-B0 V2 的内框 A 已完成 `4/5` 审查，用户随后将该对象移出范围，不建立 source/runtime；地区条与任务条底板 B 已执行 `3/5`，平面底条语义与真实排版方向已收敛，但 bbox／色键仍失败。V2.r3 edit 需要同循环固定 SHA 的 Image 3 上传授权，现为 `authority-blocked / P3`；QL-B3-A `5/5` exhausted、B/C `0/5` 并暂停 | 明确授权 attempt 3 raw 作为 Image 3 后执行 B attempt 4；内部通过只到 P3 |
+| 任务 | 当前首要大面积 UI；QL-A2 V4、QL-B0 23 行 V1、QL-B1 与 QL-B2 当前为 `P5 fallback`；完整重启后的实机图确认 QL-A2 连续左页与十八行布局稳定。QL-B0 V2 的内框 A 已完成 `4/5` 审查，用户随后将该对象移出范围，不建立 source/runtime；地区条与任务条底板 B 已执行 `3/5`，平面底条语义与真实排版方向已收敛，但 bbox／色键仍失败。V2.r3 同循环固定 SHA Image 3 上传已获授权，现为 `repair-prepared / P3`；QL-B3-A `5/5` exhausted、B/C `0/5` 并暂停 | 执行 B attempt 4 edit；内部通过只到 P3 |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |
 | 其他 UI | `P0–P1`，保持原生回退 | 逐模块建立四份长期文档 |

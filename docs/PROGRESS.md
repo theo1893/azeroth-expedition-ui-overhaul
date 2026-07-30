@@ -22,7 +22,7 @@
 |---|---|---:|---|---|
 | Core／pfUI | `api/expedition.lua`、`pfUI.lua`、原生回退路由 | `P5` | 现代可见模块默认回退原生；非视觉功能保留 | 实机覆盖原生 Frame、SavedVariables 与第三方兼容 |
 | Chat | `modules/chat.lua` + AEUI Chat adapter | `P5` V3 | 单一左侧旧书、四状态 Tab、双状态输入与未读已接入；右框隐藏且消息回收；两项 Copy 辅助功能暂缓 | Turtle WoW 实机验收核心批次 |
-| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua` + AEUI Quests adapter | `P1–P5` | QL-A2 V4 固定卷宗背景、QL-B0 23 行 V1、QL-B1 四态 atlas 与 QL-B2 同 Alpha 三态书签已接入并静态通过；完整重启后的实机图确认连续左页与十八行布局稳定。QL-B0 V2 内框 A 在 `4/5` 后由用户移出范围，不建立 source/runtime；地区条与任务条底板 B 已执行 `3/5`，平面底条语义和真实排版方向已收敛，但 bbox／色键仍失败。V2.r3 同循环 edit 需要固定 SHA 的 Image 3 上传授权，现为 `authority-blocked / P3`。QL-B3-A `5/5` exhausted、B/C `0/5` 并继续暂停；QL-C/D 未完成；外部 tracker 暂停 | 明确授权同循环 attempt 3 raw 作为 Image 3 后执行 B attempt 4；内部通过只到 P3 |
+| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua` + AEUI Quests adapter | `P1–P5` | QL-A2 V4 固定卷宗背景、QL-B0 23 行 V1、QL-B1 四态 atlas 与 QL-B2 同 Alpha 三态书签已接入并静态通过；完整重启后的实机图确认连续左页与十八行布局稳定。QL-B0 V2 内框 A 在 `4/5` 后由用户移出范围，不建立 source/runtime；地区条与任务条底板 B 已执行 `3/5`，平面底条语义和真实排版方向已收敛，但 bbox／色键仍失败。V2.r3 同循环固定 SHA Image 3 上传已获授权，现为 `repair-prepared / P3`。QL-B3-A `5/5` exhausted、B/C `0/5` 并继续暂停；QL-C/D 未完成；外部 tracker 暂停 | 执行 B attempt 4 edit；内部通过只到 P3 |
 | Map | `map.lua`、`minimap.lua`、`addonbuttons.lua` 等 | `P2` | 羊皮地图卷与黄铜罗盘已锁定 | 实机对象审计和组件级合同 |
 | Character | `character.lua`、`inspect.lua`、`dressup.lua` | `P2` | 香草同构角色面板已锁定 | 实机几何与装备槽／属性／页签拆分 |
 

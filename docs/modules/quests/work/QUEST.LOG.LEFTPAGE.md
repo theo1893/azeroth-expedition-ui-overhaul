@@ -3,7 +3,7 @@
 ## 当前状态
 
 - 工作范围：`QL-B0-B V2`；`QL-B0-A V2` 已由用户移出范围。
-- 子状态：B `authority-blocked`；A `user-rejected / scope-removed`。
+- 子状态：B `repair-prepared`；A `user-rejected / scope-removed`。
 - 项目阶段：`P3`。
 - 授权正文状态：B attempt 1／2／3 已完成并退回，下一次必须逐字使用本文件
   `QL-B0-B V2.r3` 完整正文；A V2.r4 只作为未执行草案，用户在任何 A5
@@ -18,10 +18,10 @@
 - 用户授权：`2026-07-30` 明确授权 `QL-B0-A V2` 与 `QL-B0-B V2`，
   允许分别上传固定 SHA 的 Image 1／Image 2；每段最多 `5` 次，最坏合计
   `10` 次。
-- 当前门禁：`QL-B0-B V2.r3` 完整正文已提交，但用户现有上传授权只明确
-  覆盖固定 Image 1／2。必须先取得对固定 SHA 的同循环 attempt 3 raw
-  作为 Image 3 的显式上传授权，才能执行 B attempt 4 edit；不执行
-  A attempt 5。任何 B 候选都只到 P3，不自动晋级 source 或 runtime。
+- 当前门禁：用户已明确授权 `QL-B0-B V2.r3`，以及固定 SHA 的同循环
+  attempt 3 raw 作为 Image 3。以固定 Image 1／2／3 执行 B attempt 4
+  edit；不执行 A attempt 5。任何 B 候选都只到 P3，不自动晋级 source
+  或 runtime。
 
 ## 为什么建立 V2
 
@@ -678,7 +678,7 @@ Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 
   当前正确表面与物件身份，Image 1 仍是最高美术权威，Image 2 仍只匹配纸页；
   编辑只执行明确的 `90.40% × 61.54%` 缩放、中心移动和旧位置清除。
 
-## B attempt 4 上传授权门禁
+## B attempt 4 上传授权
 
 - 需要上传的新增同循环输入：
   `generated/quests/QL-B0/v2/backplates/attempt-03/raw/QL-B0-B_V2_r2_attempt-03_raw.png`。
@@ -688,10 +688,12 @@ Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 
   只修正其 bbox、中心和背景；不是新的视觉权威，也不取代 Image 1／2。
 - 已发生的审批拒绝在 fixed child 启动前结束；无上传、无 session、无
   provider result、无图片，故 B 保持 `3/5`。
-- 必需用户授权原文：
+- 用户于 `2026-07-30` 使用下列精确语句完成授权：
   `明确授权 QL-B0-B V2.r3，并允许上传固定 SHA
   5ee6ba57d94006b0833bba1e96074d3ebeab8d3d8e7b8f233ebde3d664030721
   的同循环 attempt 3 raw 作为 Image 3；B 预算仍为 3/5，最多再 2 次。`
+- 结论：上传门禁已满足；V2.r3 正文、Image 1／2／3 角色和剩余预算均未
+  改变，可执行 B attempt 4 edit。
 
 ## 下一门禁
 
@@ -700,7 +702,6 @@ Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 
 > 明确授权 QL-B0-A V2 与 QL-B0-B V2，并允许分别上传固定 SHA 的
 > Image 1、Image 2；每段最多 5 次，最坏合计 10 次。
 
-下一门禁为：等待用户使用上方精确语句授权 Image 3 上传；获得授权后重试
-同一已提交 `QL-B0-B V2.r3` 正文并执行 B attempt 4 edit。没有授权时不
-改用间接上传或浪费剩余 regenerate 预算。B 任何内部通过都必须停在
+下一门禁为：使用同一已提交 `QL-B0-B V2.r3` 正文与固定 Image 1／2／3
+执行 B attempt 4 edit。B 任何内部通过都必须停在
 `candidate-reviewed / P3` 等待用户视觉复审。
