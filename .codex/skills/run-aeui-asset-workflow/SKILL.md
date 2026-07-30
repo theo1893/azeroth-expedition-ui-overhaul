@@ -1,6 +1,6 @@
 ---
 name: run-aeui-asset-workflow
-description: "Run the repository-specific Azeroth Expedition UI component-asset workflow with locked-baseline prompt provenance, compact per-component work files, art-language inheritance, and a bounded five-call autonomous generate-review-repair loop, from component contract and fixed ImageGen 0.143.0 execution through explicit acceptance or rejection, source promotion, runtime export, module-progress synchronization, target-client validation, and post-P6 work-file cleanup. Use when generating, editing, reviewing, accepting, rejecting, promoting, exporting, validating, closing, or cleaning an AEUI component, or when the user asks to continue the next UI asset step."
+description: "Run the repository-specific Azeroth Expedition UI component-asset workflow with locked-baseline prompt provenance, self-contained ambiguity-audited production prompts, compact per-component work files, art-language inheritance, and a bounded five-call autonomous generate-review-repair loop, from component contract and fixed ImageGen 0.143.0 execution through explicit acceptance or rejection, source promotion, runtime export, module-progress synchronization, target-client validation, and post-P6 work-file cleanup. Use when generating, editing, reviewing, accepting, rejecting, promoting, exporting, validating, closing, or cleaning an AEUI component, or when the user asks to continue the next UI asset step."
 ---
 
 # AEUI Asset Workflow
@@ -63,6 +63,46 @@ filtering out buttons, text, decoration, or geometry owned by other runtime comp
 Do not use vague substitutes such as “same style” or “more epic” in place of the extracted
 rules.
 
+## Make execution bodies complete, not merely longer
+
+The fixed executor receives the execution body and declared image inputs, not repository
+links or surrounding work-file explanations. Every production or `.rN` execution body
+must therefore be self-contained. Do not set a word-count minimum: more adjectives,
+history, or repeated mood language do not make a prompt more precise.
+
+Scale detail to ambiguity:
+
+- A single object with one state may use a compact body if every applicable gate below is
+  explicit.
+- Atlases, multiple states, assemblies, repeated/tiled pieces, and stretchable assets
+  require exact per-cell or per-object instructions and relationship rules.
+- Conflicting references or recurring failure modes require explicit inherit/ignore
+  clauses and an objective final self-check.
+
+Before marking a prompt `production-draft`, verify that its execution body explicitly
+covers every applicable item:
+
+1. Intended in-world object identity, exact scope, and what the image must not become.
+2. Exact object/state count, names, order, runtime ownership, and dynamic content that
+   must remain unbaked.
+3. Each image input's authority and separate inherit/ignore responsibilities.
+4. Canvas, layout, cell order, bounds, margins, and object occupancy when authoritative.
+5. Viewpoint, perspective, orientation, scale, light, z-order, contact, and overlap.
+6. Per-object anatomy, silhouette, material, edge treatment, states, and relationships.
+7. Text/icon quiet areas, crop, stretch, tile, repeat, seam, and safe-area behavior.
+8. Locked art DNA: period, brushwork, palette, material hierarchy, wear, and concrete
+   prohibited visual languages.
+9. Alpha or chroma-key behavior, output cleanliness, and other technical constraints.
+10. A concise final self-check that repeats only the highest-risk objective gates.
+
+Every applicable hard gate must appear in the execution body itself, not only in the
+component contract or inheritance notes. Use exact counts, directions, roles, and bounded
+relationships where authority exists. If a required value is unknown, stop at the
+component contract instead of inventing precision. Resolve contradictions before writing
+the body. A clause adds useful detail only when it removes a meaningful wrong
+interpretation; keep provenance history, commit IDs, and process narration outside the
+executor body unless they affect the image.
+
 ## Use the compact document lifecycle
 
 Keep one active Markdown work file per incomplete component or tightly coupled asset batch:
@@ -122,22 +162,24 @@ operation.
 1. Do not generate without a complete component contract.
 2. Do not authorize or execute a production prompt without a complete locked-baseline
    provenance chain, an art-inheritance block, and a resolved authority/conflict audit.
-3. Do not execute a `production-draft` or a prompt version the user has not explicitly
+3. Do not authorize or execute an execution body until its self-contained prompt
+   completeness audit passes; prompt length alone is never evidence of completeness.
+4. Do not execute a `production-draft` or a prompt version the user has not explicitly
    authorized by version after seeing its execution body.
-4. Do not use a visual prototype as a runtime texture.
-5. Do not present a candidate as viable until semantic structure has been checked.
-6. Do not treat dimensions, Alpha, chroma-key cleanup, or connected regions as proof of
+5. Do not use a visual prototype as a runtime texture.
+6. Do not present a candidate as viable until semantic structure has been checked.
+7. Do not treat dimensions, Alpha, chroma-key cleanup, or connected regions as proof of
    correct anatomy, function, component identity, or style.
-7. Do not copy anything into `assets/source/` without explicit user acceptance.
-8. Do not export runtime media until the accepted source, crop/UV contract, safe areas,
+8. Do not copy anything into `assets/source/` without explicit user acceptance.
+9. Do not export runtime media until the accepted source, crop/UV contract, safe areas,
    stretch rules, and target Frame geometry are known.
-9. Do not mark `P6` without evidence from Turtle WoW `1.18.1`.
-10. Do not remove intermediate or superseded files before `P6`, a verified final keep set,
+10. Do not mark `P6` without evidence from Turtle WoW `1.18.1`.
+11. Do not remove intermediate or superseded files before `P6`, a verified final keep set,
    an exact cleanup inventory, and explicit user approval.
-11. Never invoke the fixed executor more than five times for one authorized execution
+12. Never invoke the fixed executor more than five times for one authorized execution
     body. The first generation is attempt 1; every invocation counts, including transport
     failures and unusable outputs.
-12. Autonomous repair may change only the repairable wording, edit/regenerate choice, and
+13. Autonomous repair may change only the repairable wording, edit/regenerate choice, and
     use of an earlier output from the same loop. It may not change component identity,
     object/state count, authority order, reference roles, canvas/runtime contract,
     forbidden content, or add a new external input without new user authorization.
@@ -158,10 +200,12 @@ inspection still in scope. Do not create plausible-looking placeholder controls.
 5. Rewrite the request against that resolved authority as the active versioned prompt in
    `docs/modules/<module>/work/<COMPONENT-OR-BATCH>.md`. State secondary source limits
    explicitly; never call an `assets/source/` derivative the highest visual authority.
-6. Record the immutable repair envelope and `5`-call budget. For a batch with multiple
+6. Run the self-contained prompt completeness audit above. Record its compact result in
+   the work file and return to the component contract if any required value is unknown.
+7. Record the immutable repair envelope and `5`-call budget. For a batch with multiple
    independent execution bodies, state each body's budget and the worst-case aggregate
    call count.
-7. Mark it `production-draft` and show the user the substantive changes. Wait for
+8. Mark it `production-draft` and show the user the substantive changes. Wait for
    authorization before generation.
 
 Do not split assets according to what is convenient for the model. Split them according
@@ -209,11 +253,12 @@ After every output:
    gate, observable evidence, correct regions to preserve, and the next repair decision.
    Choose a scoped edit only when preserving the correct regions is intentional;
    otherwise regenerate from the locked authorities.
-4. Write a complete derived repair body labeled `<authorized-version>.rN`. It may sharpen
-   structural, compositional, material, or technical instructions inside the frozen
-   envelope. It may use an earlier output from the same loop as an edit input unless the
-   work file forbids that upload. It may not add new references or change the frozen
-   contract.
+4. Write a complete, self-contained derived repair body labeled
+   `<authorized-version>.rN`; never use delta-only wording such as “same as before except”.
+   It may sharpen structural, compositional, material, or technical instructions inside
+   the frozen envelope. It may use an earlier output from the same loop as an edit input
+   unless the work file forbids that upload. It may not add new references or change the
+   frozen contract.
 5. Commit the failed-attempt record and the next complete repair body in the same work
    file before invoking that repair. Do not create one Markdown file per attempt.
 6. If a repair requires a new object, state, reference role, external input, visual

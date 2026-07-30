@@ -9,7 +9,7 @@
 | 子状态 | 项目阶段 | 必备证据 | 允许写入 | 下一门禁 |
 |---|---:|---|---|---|
 | `contract-draft` | `P0–P2` | 真实对象映射尚未完整 | 模块 `SUBMODULES.md`、`PROGRESS.md`、组件 work | 补齐组件合同 |
-| `prompt-draft` | `P1–P2` | 完整合同；锁定图到基线 Prompt 的 provenance；美术继承与冲突表；`production-draft` | 单一组件 work、模块进度 | 用户授权具体版本 |
+| `prompt-draft` | `P1–P2` | 完整合同；锁定图到基线 Prompt 的 provenance；美术继承与冲突表；自包含生产正文完整性预检通过；`production-draft` | 单一组件 work、模块进度 | 用户授权具体版本 |
 | `prompt-authorized` | `P3` | 用户看到并明确确认具体版本执行正文、不可变修复边界与五次调用预算；授权版本已提交 | work、模块进度 | 固定执行器第 1 次生图 |
 | `candidate-raw` | `P3` | 尝试编号、raw 路径、执行器与会话记录 | 被忽略的 `generated/`；work 执行记录 | 本次完整内部审查 |
 | `repair-prepared` | `P3` | 前次失败门禁、保留区域、完整 `.rN` 修复正文、边界复核、累计调用少于 5 次 | 同一 work 与 Git 历史 | 固定执行器下一次调用 |
@@ -57,8 +57,9 @@ runtime-exported → static/game failure → corrected exporter/runtime, remain 
 ## 不可跨越的门禁
 
 - `prompt-draft → prompt-authorized`：必须先验证锁定视觉基准、对应原始提示词、
-  组件级继承条款和权威冲突结论完整，再由用户看过执行正文后授权具体提示词
-  版本、不可变修复边界和五次调用预算。“继续”或“下一步”本身不构成生图
+  组件级继承条款、权威冲突结论和自包含生产正文完整性预检全部通过，再由
+  用户看过执行正文后授权具体提示词版本、不可变修复边界和五次调用预算。
+  完整性按适用约束判定，不按字数判定；“继续”或“下一步”本身不构成生图
   授权。
 - `candidate-raw → repair-prepared`：只允许在同一授权边界内修正。新增对象、
   状态、参考职责、外部输入、视觉方向、画布／runtime 合同或禁止项变化必须
@@ -82,8 +83,8 @@ runtime-exported → static/game failure → corrected exporter/runtime, remain 
 1. 执行前必须提交 work 文件；执行过的正文不可在未形成 Git 历史的情况下
    原地覆盖。
 2. 授权正文的首次调用使用原版本；同一修复边界内的自主尝试使用
-   `<authorized-version>.r1` 至 `.r4`，不需要逐次用户授权，但每份完整修复
-   正文必须在执行前提交。
+   `<authorized-version>.r1` 至 `.r4`，不需要逐次用户授权，但每份修复
+   正文都必须完整、自包含，不能只写相对上一版的差异，并在执行前提交。
 3. 改变对象数量、物件身份、布局、透视、层序、参考职责、画布、验收标准或
    外部输入时，结束循环并创建需用户授权的新主版本或次版本。
 4. 每次内部失败都要记录固定执行器会话、结果 ID、输出 SHA、第一失败门禁、

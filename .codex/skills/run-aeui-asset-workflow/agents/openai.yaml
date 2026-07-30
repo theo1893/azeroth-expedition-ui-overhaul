@@ -1,4 +1,4 @@
 interface:
   display_name: "AEUI 资产生成与审查"
-  short_description: "以最多五次自主修复循环编排 AEUI 资产全生命周期"
-  default_prompt: "Use $run-aeui-asset-workflow to prepare an AEUI asset batch, then run its authorized generate-review-repair loop for at most five fixed ImageGen calls before presenting the internally reviewed result."
+  short_description: "以自包含提示词和最多五次自主修复编排 AEUI 资产"
+  default_prompt: "Use $run-aeui-asset-workflow to prepare a self-contained, ambiguity-audited AEUI asset prompt, then run its authorized generate-review-repair loop for at most five fixed ImageGen calls before presenting the internally reviewed result."

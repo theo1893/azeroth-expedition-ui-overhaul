@@ -42,6 +42,7 @@ references 不属于项目说明文档。
 - 当前版本与子状态；
 - 锁定图与 Prompt provenance；
 - 真实组件合同；
+- 自包含生产正文的紧凑完整性预检；
 - 当前可执行正文；
 - 执行与审查记录；
 - 紧凑尝试摘要；
@@ -74,7 +75,7 @@ preview 或 revised prompt 分别建立永久 Markdown。
 
 | 操作 | 必须同步 | 禁止 |
 |---|---|---|
-| `prepare` | 组件 work；必要时 `SUBMODULES.md` 与模块进度 | 写 raw、source 或 runtime |
+| `prepare` | 组件 work、自包含正文完整性预检；必要时 `SUBMODULES.md` 与模块进度 | 写 raw、source 或 runtime |
 | `generate` | 已提交的授权正文／`.rN` 修复正文；work 执行记录 | 超过五次调用；commit raw／失败图／预演 |
 | `review` | 每次尝试的 work 审查证据；循环终态同步模块进度 | 用像素指标替代视觉结论 |
 | `revise` | 同一 work 的尝试表、完整 `.rN` 正文与边界复核 | 丢失旧版本 Git 证据；用修复名义改变合同 |
