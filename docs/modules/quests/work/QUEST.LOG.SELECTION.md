@@ -13,7 +13,7 @@
 - 自动修复预算：最多 `5` 次实际 ImageGen 生图／修图，含首次；无候选且
   无 provider 生成证据的流程错误单列，不占额度。
 - 当前实际生图：`0/5`。
-- 流程错误：`0`。
+- 流程错误：`1`。
 - 多执行正文最坏实际生图数：`5`。
 - 生成授权：`2026-07-30` 明确授权 `QL-B2 V1`；允许每次上传固定 SHA 的
   Image 1／Image 2，允许同一循环前次输出仅在冻结边界内作为 edit 输入，
@@ -316,20 +316,21 @@ Collapse All、操作按钮、奖励槽或动态文字。
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
-| E1 |  |  |  |  | 尚未发生；不占生图额度 |
+| E1 | `QL-B2 V1` / `7aa6773` | shell session `6938`；无 child session／result | `npx` 在固定 Codex 启动前访问 npm registry 发生 `EPERM / FetchError`；无图片、无 provider 生成证据 | 保持正文和 Image 1／2 不变；使用临时 npm cache 与获准网络重试 | `process-error`；不占生图额度，仍为 `0/5` |
 
 ## 执行记录
 
-- 日期：未执行。
-- 会话／结果 ID：无。
-- 实际输入绝对路径与职责：待具体版本授权后，从当前工作副本解析 Image 1／2
-  的绝对路径并在调用记录中冻结；当前文档不持久化设备绝对路径。
+- 日期：`2026-07-30`；E1 发生在固定 Codex 启动前，尚无实际生图。
+- 会话／结果 ID：E1 shell session `6938`；无 fixed child session、
+  generated-image 或 provider result。
+- 实际输入绝对路径与职责：E1 命令已映射固定 SHA 的 Image 1／2，但在上传
+  与 child 启动前失败；设备绝对路径不持久化，重试时从当前工作副本解析。
 - imagegen 报告的 revised prompt：无。
 - 输出尺寸／模式／SHA-256：无。
 - Alpha／残色：无。
 - 实际生图次数：`0/5`。
-- 流程错误次数：`0`。
-- 循环终态：`prompt-authorized`，等待首次实际生图。
+- 流程错误次数：`1`。
+- 循环终态：`prompt-authorized`；E1 不占额度，等待同正文首次实际生图。
 
 ## 审查记录
 
