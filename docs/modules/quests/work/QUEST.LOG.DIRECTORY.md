@@ -13,7 +13,7 @@
   `@openai/codex@0.143.0`。
 - 操作：`edit`（attempt 5；attempt 1–4 记录见循环表）。
 - 自动修复预算：最多 `5` 次固定执行器调用，含首次。
-- 当前尝试：`4/5`（attempt 4 已完成并退回；attempt 5 尚未计数）。
+- 当前尝试：`5/5`（attempt 5 调用前已计数；无剩余预算）。
 - 多执行正文最坏总调用数：`5`。
 - 用户授权：`2026-07-30` 明确授权 `QL-B1 V1`；允许每次上传固定 SHA 的
   Image 1／Image 2，允许同一循环前次输出仅在冻结边界内作为 edit 输入，
@@ -268,7 +268,7 @@ UI 或文字。任何一项不满足都不要输出。
 | 2/5 | `QL-B1 V1.r1` / `6fdf109` | generate | outer session `019fb1dc-57c5-77a0-b3ce-a884d61e0c99` | 无输出／无 SHA | 0. 执行正文与传输一致性：同名包装 skill 触发递归委托 | 完整提示词和固定两图均已正确传入；中断递归，不保留输出 | executor-recursion；计入预算 |
 | 3/5 | `QL-B1 V1.r1` 非预期递归重放 / `453450d` | generate | observed nested task/session `019fb1dc-58df-7a43-83d0-97d674a5229a` | 无输出／无 SHA | 0. 执行正文与传输一致性：非预期嵌套固定调用 | 主进程发送 `Ctrl-C`，无候选；后续明确禁止二次委托 | interrupted；按最保守口径计入预算 |
 | 4/5 | `QL-B1 V1.r2` / `21871a0` | generate | session `019fb1e0-9914-74f2-ab21-a3af62713f58`；generated-image `ig_0003fcc8d237f171016a6afa0f7e9c8191b71f23127c34cfc5` | raw `cc14b469…`；transparent `79e5bf71…` | 2. 语义／状态同源关系：箭头非严格旋转，圈并非只差墨勾 | 保留四格顺序、对象身份、方向、综合色和无额外物；以本稿作 Image 3，只修冻结四格 | rejected；进入最终修复 |
-| 5/5 | `QL-B1 V1.r3` / 待提交 | edit | 待调用 |  |  | 固定 Image 1／2 + attempt 4 Image 3；修复同源、平面墨迹、占用与画布 | repair-prepared |
+| 5/5 | `QL-B1 V1.r3` / `f99d17a` | edit | 待回填 | 待回填 | 待审查 | 固定 Image 1／2 + attempt 4 Image 3；修复同源、平面墨迹、占用与画布 | 调用前已计数 |
 
 ## QL-B1 V1.r3 完整修复执行正文
 
@@ -392,7 +392,7 @@ UI 或文字。任何一项不满足都不要输出。
   `1420536／5914／146066`；可见 `#00FF00` 与 heuristic green spill
   均为 `0`。raw 只有 `143` 个精确 `#00FF00` 像素，背景并非合同要求的
   均匀纯色。
-- 调用次数：`4/5`。
+- 调用次数：`5/5`（attempt 5 调用前已计数）。
 - 循环终态：继续；attempt 1 为
   `transport-error: Operation not permitted`；attempt 2／3 为
   `executor-recursion / interrupted`；attempt 4 为内部退回。
@@ -430,4 +430,4 @@ UI 或文字。任何一项不满足都不要输出。
 | `QL-B1 V1` | commit `13edad9`；session `019fb1d9-0792-7110-8156-2aed5644d5c7`；无输出 | transport-error；`1/5` 已消耗 | 不改美术正文；修复子进程写入环境 |
 | `QL-B1 V1.r1` | commits `6fdf109`／`453450d`；outer session `019fb1dc-57c5-77a0-b3ce-a884d61e0c99`；observed nested `019fb1dc-58df-7a43-83d0-97d674a5229a`；无输出 | executor-recursion；attempt 2／3 均计入 | 不改美术正文；禁止当前固定进程二次委托 |
 | `QL-B1 V1.r2` | commit `21871a0`；session `019fb1e0-9914-74f2-ab21-a3af62713f58`；raw `cc14b469…`；transparent `79e5bf71…` | rejected：状态同源、平面墨迹、画布、占用与色键失败 | 以本稿为 Image 3 做最后一次冻结边界内 edit |
-| `QL-B1 V1.r3` | 完整自包含 edit 正文已准备；固定 Image 1／2 + attempt 4 Image 3 | repair-prepared | 提交后执行 attempt 5 |
+| `QL-B1 V1.r3` | commit `f99d17a`；完整自包含 edit 正文；固定 Image 1／2 + attempt 4 Image 3 | repair-prepared | 执行 attempt 5 并完整内审 |
