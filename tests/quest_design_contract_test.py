@@ -243,10 +243,11 @@ def main() -> None:
             "bab9e8bf6961b743d9591bb148878e9eadbbbbd99eac9a183446bf9c81a770b4",
             "2cd8de894c389f5c7eaf5c5d5388a20b363fa414022dc4dac57eacda1fa79029",
             "build_quest_log_selection_bookmark_v1.py",
-            "`P3 prompt-authorized`",
+            "`P3 repair-prepared`",
             "work/QUEST.LOG.STATUS.md",
             "QL-B3-A／B／C V1",
             "最坏 `15`",
+            "review_quest_log_status_candidate_v1.py",
             "Quest Tracker",
             "外部 provider `P0`",
             "NPC Quest／Gossip",
@@ -484,13 +485,13 @@ def main() -> None:
         status_work,
         (
             "QL-B3 目录任务状态覆盖 V1",
-            "`prompt-authorized`",
+            "`repair-prepared`",
             "`P3`",
             "`imagegen-0-143-0`",
             "`QL-B3-A V1`",
             "`QL-B3-B V1`",
             "`QL-B3-C V1`",
-            "QL-B3-A：`0/5`",
+            "QL-B3-A：`1/5`",
             "QL-B3-B：`0/5`",
             "QL-B3-C：`0/5`",
             "多执行正文最坏实际生图数：`15`",
@@ -521,16 +522,53 @@ def main() -> None:
             "右下 `pvp`",
             "一个正面平视、垂直朝上的沙漏压印",
             "左格只放 `complete`，右格只放 `failed`",
+            "## QL-B3-A V1.r1 完整修复正文",
+            "Image 3 是本段前一次生成",
+            "不得超过 `220px`",
             "## 自主修复循环",
             "同一段循环前一次输出",
             "2026-07-30",
             "用户授权范围已经冻结",
-            "固定执行器分别开始",
+            "019fb293-2175-7070-a257-87086887f603",
+            "ig_0cb39047645036d8016a6b27c524288191801b7e6dd6d8a610",
+            "6bb9996a8b8f83b9185c0d4e1c123f74ce9de0077bec4e2722fc456a5b945364",
+            "011c7eda3751aff17b148fa433b8c39b764faa6cf327d3fd8857da054ea079d1",
+            "1586abe81346c5a163cab3a5eb2d33c24db11c6cb5d57a3efd1dacabd54d412a",
+            "E1／E2／E3",
+            "internal-fail / repair-prepared / P3",
+            "提交 A attempt 1 审查",
         ),
         "active QL-B3 work",
     )
     assert "/Users/" not in status_work
     assert status_work.count("## 最终执行正文 — QL-B3-") == 3
+
+    status_review_tool = (
+        ROOT / "tools" / "review_quest_log_status_candidate_v1.py"
+    )
+    status_review_source = status_review_tool.read_text(encoding="utf-8")
+    require(
+        status_review_source,
+        (
+            "SOURCE_SIZE = (1024, 1024)",
+            "ROW_COUNT = 23",
+            "TEXT_WIDTH = 155",
+            "TYPE_X = 176",
+            "TIMER_X = 187",
+            "STATE_X = 198",
+            "TRACK_X = 212",
+            "source_safe_box_pass",
+            "non_authoritative_placeholders",
+            "real_layout_676x464.png",
+            "QuestLogSelectionBookmarkV1.tga",
+        ),
+        "QL-B3 deterministic review tool",
+    )
+    compile(
+        status_review_source,
+        str(status_review_tool),
+        "exec",
+    )
 
     selection_source_path = (
         ROOT
