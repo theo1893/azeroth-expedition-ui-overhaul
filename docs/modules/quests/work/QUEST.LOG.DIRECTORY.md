@@ -13,7 +13,7 @@
   `@openai/codex@0.143.0`。
 - 操作：`generate`。
 - 自动修复预算：最多 `5` 次固定执行器调用，含首次。
-- 当前尝试：`1/5`（第 1 次固定执行器调用已消耗；第 2 次尚未计数）。
+- 当前尝试：`2/5`（第 2 次固定执行器调用前已计数）。
 - 多执行正文最坏总调用数：`5`。
 - 用户授权：`2026-07-30` 明确授权 `QL-B1 V1`；允许每次上传固定 SHA 的
   Image 1／Image 2，允许同一循环前次输出仅在冻结边界内作为 edit 输入，
@@ -257,7 +257,7 @@ UI 或文字。任何一项不满足都不要输出。
 | 尝试 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
 | 1/5 | `QL-B1 V1` / `48ee8ec` | generate | session `019fb1d9-0792-7110-8156-2aed5644d5c7`；无 result | 无输出／无 SHA | 0. 执行正文与传输一致性：保存目录不可写 | 保持完整视觉合同；预建子进程输出目录并使用 `workspace-write`，仅固定 Image 1／2 重生 | transport-error；计入预算 |
-| 2/5 | `QL-B1 V1.r1` / 待提交 | generate | 待调用 |  |  | 不上传 attempt 1（无输出）；固定 Image 1／2 | repair-prepared |
+| 2/5 | `QL-B1 V1.r1` / `6fdf109` | generate | 待回填 | 待回填 | 待审查 | 不上传 attempt 1（无输出）；固定 Image 1／2 | 调用前已计数 |
 | 3/5 | `QL-B1 V1.r2` /  | edit／generate |  |  |  |  |  |
 | 4/5 | `QL-B1 V1.r3` /  | edit／generate |  |  |  |  |  |
 | 5/5 | `QL-B1 V1.r4` /  | edit／generate |  |  |  |  |  |
@@ -337,7 +337,7 @@ UI 或文字。任何一项不满足都不要输出。
 
 ## 执行记录
 
-- 日期：`2026-07-30`，第 1 次调用已终止；第 2 次修复已准备。
+- 日期：`2026-07-30`，第 1 次调用已终止；第 2 次调用待执行。
 - 会话／结果 ID：
   - attempt 1：session
     `019fb1d9-0792-7110-8156-2aed5644d5c7`；无 result。
@@ -354,9 +354,9 @@ UI 或文字。任何一项不满足都不要输出。
   生图。
 - 输出尺寸／模式／SHA-256：attempt 1 无输出。
 - Alpha／残色：无。
-- 调用次数：`1/5`。
+- 调用次数：`2/5`（第 2 次调用前已计数）。
 - 循环终态：继续；attempt 1 为
-  `transport-error: Operation not permitted`，attempt 2 待执行。
+  `transport-error: Operation not permitted`，attempt 2 调用前已计数。
 
 ## 审查记录
 
@@ -380,4 +380,4 @@ UI 或文字。任何一项不满足都不要输出。
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
 |---|---|---|---|
 | `QL-B1 V1` | commit `13edad9`；session `019fb1d9-0792-7110-8156-2aed5644d5c7`；无输出 | transport-error；`1/5` 已消耗 | 不改美术正文；修复子进程写入环境 |
-| `QL-B1 V1.r1` | 完整自包含正文已准备；固定 Image 1／2 | repair-prepared | 提交后执行第 2 次调用 |
+| `QL-B1 V1.r1` | commit `6fdf109`；完整自包含正文；固定 Image 1／2 | repair-prepared | 执行第 2 次调用并完整内审 |
