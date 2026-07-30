@@ -48,6 +48,35 @@ function addon:RegisterModule(name, module)
   self.modules[name] = module
 end
 
+function addon:RunModuleMethod(name, module, methodName)
+  if not module or type(module[methodName]) ~= "function" then
+    return true
+  end
+
+  self.moduleFailures = self.moduleFailures or {}
+  self.reportedModuleFailures =
+    self.reportedModuleFailures or {}
+
+  local key = tostring(name) .. ":" .. tostring(methodName)
+  local ok, result = pcall(module[methodName], module)
+  if not ok then
+    local message = tostring(result)
+    self.moduleFailures[key] = message
+    if self.reportedModuleFailures[key] ~= message then
+      self.reportedModuleFailures[key] = message
+      self:Print(
+        "module " .. tostring(name) .. " " ..
+        tostring(methodName) .. " failed: " .. message
+      )
+    end
+    return false
+  end
+
+  self.moduleFailures[key] = nil
+  self.reportedModuleFailures[key] = nil
+  return true
+end
+
 function addon:Initialize()
   if self.initialized then
     return
@@ -64,10 +93,8 @@ function addon:Initialize()
   ApplyDefaults(AzerothExpeditionUIDB, defaults)
   self.db = AzerothExpeditionUIDB
 
-  for _, module in pairs(self.modules) do
-    if module.Initialize then
-      module:Initialize()
-    end
+  for name, module in pairs(self.modules) do
+    self:RunModuleMethod(name, module, "Initialize")
   end
 
   self.initialized = true
@@ -79,10 +106,8 @@ function addon:Refresh()
     return
   end
 
-  for _, module in pairs(self.modules) do
-    if module.Apply then
-      module:Apply()
-    end
+  for name, module in pairs(self.modules) do
+    self:RunModuleMethod(name, module, "Apply")
   end
 end
 

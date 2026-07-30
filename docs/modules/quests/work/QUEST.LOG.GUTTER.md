@@ -12,7 +12,8 @@
 - 操作：`deterministic-export / static-integration`
 - 固定执行器：V4 不调用 ImageGen；`0/0`
 - 当前结论：停止 V3.3 的独立页沟小件生成，改为从已接受的 QL-A1 空卷宗
-  source 做确定性、固定尺寸的运行时结构导出；静态测试已通过
+  source 做确定性、固定尺寸的运行时结构导出；静态测试已通过。用户于
+  `2026-07-31` 接受当前游戏内书本主体，不再增加第二层框或列表底板
 - 用户授权：`2026-07-30` 确认 QL-A1 单一静态背景、`676 × 464`、
   list-only 不缩窄书体、`GUTTER.*` 静态归属，以及继续执行导出与接入
 - 目标客户端：Turtle WoW `1.18.1`／Interface `11200`
@@ -43,6 +44,8 @@
   [build_quest_log_shell_v4.py](../../../../tools/build_quest_log_shell_v4.py)
 - adapter：
   [Quests.lua](../../../../addon/AzerothExpeditionUI/Modules/Quests.lua)
+  — 当前 runtime contract `1.6`；SHELL 本身不变，新增内容只作用于书本外
+  真实控件、隐藏的右页 scrollbar chrome 与滚轮连接
 
 V4 是新的运行时所有权与导出合同，不延续 V3.3 的生成预算。它只晋级固定
 书体结构；QL-B／QL-C／QL-D 的动态对象与交互状态仍未完成。

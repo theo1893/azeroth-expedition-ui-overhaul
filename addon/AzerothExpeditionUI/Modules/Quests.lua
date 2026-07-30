@@ -1,13 +1,11 @@
 local addon = AzerothExpeditionUI
 local Quests = {}
-Quests.runtimeContract = "1.4"
+Quests.runtimeContract = "1.6"
 
 local SHELL_TEXTURE =
   addon.media.root .. "Quests\\QuestLogShellV4"
 local DIRECTORY_MARK_TEXTURE =
   addon.media.root .. "Quests\\QuestLogDirectoryMarksV1"
-local SELECTION_TEXTURE =
-  addon.media.root .. "Quests\\QuestLogSelectionBookmarkV1"
 local QUEST_TITLE_FONT =
   addon.media.root .. "Fonts\\NotoSerifSC-SemiBold.ttf"
 local QUEST_ROW_FONT =
@@ -45,16 +43,18 @@ local LAYOUT = {
   },
   titleTop = 28,
   countTop = 52,
+  controlsTop = 44,
   closeRight = 18,
   closeTop = 20,
   actionLeft = 62,
-  actionBottom = 22,
+  actionBottom = 19,
   actionWidth = 78,
+  actionHeight = 22,
   actionGap = 5,
 }
 
 local DIRECTORY = {
-  contract = "1.2",
+  contract = "1.3",
   rowCount = 23,
   rowWidth = 224,
   rowHeight = 15,
@@ -96,33 +96,24 @@ local DIRECTORY = {
   },
 }
 
-local SELECTION = {
+local CONTROL = {
   contract = "1.0",
-  width = 32,
-  height = 16,
-  x = -12,
-  states = {
-    selected = {
-      left = 0,
-      right = 0.25,
-      top = 0,
-      bottom = 1,
-      y = 0,
-    },
-    hover = {
-      left = 0.25,
-      right = 0.5,
-      top = 0,
-      bottom = 1,
-      y = 0,
-    },
-    pressed = {
-      left = 0.5,
-      right = 0.75,
-      top = 0,
-      bottom = 1,
-      y = -1,
-    },
+  trackSize = 14,
+  scrollStep = 28,
+  leather = {
+    base = { 0.20, 0.075, 0.035, 0.96 },
+    edge = { 0.55, 0.32, 0.12, 0.90 },
+    shadow = { 0.055, 0.022, 0.012, 0.95 },
+    hover = { 0.52, 0.27, 0.08, 0.30 },
+    pressed = { 0.02, 0.01, 0.005, 0.45 },
+    disabled = { 0.08, 0.065, 0.05, 0.58 },
+  },
+  text = {
+    normal = { 0.96, 0.79, 0.42, 1 },
+    hover = { 1, 0.91, 0.62, 1 },
+    pressed = { 0.86, 0.64, 0.28, 1 },
+    disabled = { 0.48, 0.40, 0.30, 1 },
+    ink = { 0.24, 0.12, 0.055, 1 },
   },
 }
 
@@ -302,87 +293,410 @@ local function SetDirectoryState(texture, state)
   texture:Show()
 end
 
-local function SetSelectionState(row, texture, state)
-  if not row or not texture or not state then
+local function SetTextureColor(texture, color)
+  if not texture or not texture.SetTexture or not color then
     return
   end
-  texture:SetTexCoord(
-    state.left,
-    state.right,
-    state.top,
-    state.bottom
+  texture:SetTexture(
+    color[1],
+    color[2],
+    color[3],
+    color[4]
   )
-  SetSinglePoint(
-    texture,
-    "LEFT",
-    row,
-    "LEFT",
-    SELECTION.x,
-    state.y
-  )
-  texture:Show()
 end
 
-local function InstallSelectionHooks(row)
-  if not row then
+local function GetButtonText(button)
+  if not button then
+    return nil
+  end
+  if button.GetFontString then
+    local text = button:GetFontString()
+    if text then
+      return text
+    end
+  end
+  if button.GetName then
+    local name = button:GetName()
+    if name then
+      return _G[name .. "Text"]
+    end
+  end
+  return nil
+end
+
+local function ClearButtonStateTextures(button)
+  if not button then
+    return
+  end
+  if button.SetNormalTexture then
+    button:SetNormalTexture("")
+  end
+  if button.SetHighlightTexture then
+    button:SetHighlightTexture("")
+  end
+  if button.SetPushedTexture then
+    button:SetPushedTexture("")
+  end
+  if button.SetDisabledTexture then
+    button:SetDisabledTexture("")
+  end
+end
+
+local function EnsureControlTexture(button, key, layer)
+  if not button or not button.CreateTexture then
+    return nil
+  end
+  if not button[key] then
+    button[key] = button:CreateTexture(nil, layer)
+    button[key].aeuiQuestManaged = true
+  end
+  return button[key]
+end
+
+local function AnchorHorizontalEdge(texture, button, edge)
+  if not texture or not button then
+    return
+  end
+  texture:ClearAllPoints()
+  if edge == "TOP" then
+    texture:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+    texture:SetPoint("TOPRIGHT", button, "TOPRIGHT", 0, 0)
+  else
+    texture:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", 0, 0)
+    texture:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
+  end
+  texture:SetHeight(1)
+end
+
+local function AnchorVerticalEdge(texture, button, edge)
+  if not texture or not button then
+    return
+  end
+  texture:ClearAllPoints()
+  if edge == "LEFT" then
+    texture:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+    texture:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", 0, 0)
+  else
+    texture:SetPoint("TOPRIGHT", button, "TOPRIGHT", 0, 0)
+    texture:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
+  end
+  texture:SetWidth(1)
+end
+
+local function SetButtonTextColor(button, color)
+  local text = GetButtonText(button)
+  if text and text.SetTextColor and color then
+    text:SetTextColor(
+      color[1],
+      color[2],
+      color[3],
+      color[4]
+    )
+  end
+end
+
+local function UpdateLeatherButtonState(button)
+  if not button or not button.aeuiQuestLeatherBase then
     return
   end
 
+  local disabled =
+    button.IsEnabled and not button:IsEnabled()
+  button.aeuiQuestLeatherHover:Hide()
+  button.aeuiQuestLeatherPressed:Hide()
+  button.aeuiQuestLeatherDisabled:Hide()
+
+  if disabled then
+    button.aeuiQuestLeatherDisabled:Show()
+    SetButtonTextColor(button, CONTROL.text.disabled)
+  elseif button.aeuiQuestControlPressed then
+    button.aeuiQuestLeatherPressed:Show()
+    SetButtonTextColor(button, CONTROL.text.pressed)
+  elseif button.aeuiQuestControlHovered then
+    button.aeuiQuestLeatherHover:Show()
+    SetButtonTextColor(button, CONTROL.text.hover)
+  else
+    SetButtonTextColor(button, CONTROL.text.normal)
+  end
+end
+
+local function InstallLeatherButtonHooks(button)
   AppendScript(
-    row,
+    button,
     "OnEnter",
-    "aeuiQuestSelectionOnEnterHooked",
+    "aeuiQuestLeatherOnEnterHooked",
     function()
-      row.aeuiQuestSelectionHovered = true
-      Quests:UpdateDirectoryRows()
+      button.aeuiQuestControlHovered = true
+      UpdateLeatherButtonState(button)
     end
   )
   AppendScript(
-    row,
+    button,
     "OnLeave",
-    "aeuiQuestSelectionOnLeaveHooked",
+    "aeuiQuestLeatherOnLeaveHooked",
     function()
-      row.aeuiQuestSelectionHovered = nil
-      row.aeuiQuestSelectionPressed = nil
-      Quests:UpdateDirectoryRows()
+      button.aeuiQuestControlHovered = nil
+      button.aeuiQuestControlPressed = nil
+      UpdateLeatherButtonState(button)
     end
   )
   AppendScript(
-    row,
+    button,
     "OnMouseDown",
-    "aeuiQuestSelectionOnMouseDownHooked",
-    function(button)
-      local mouseButton = button or arg1
-      if mouseButton == "LeftButton" then
-        row.aeuiQuestSelectionPressed = true
-        Quests:UpdateDirectoryRows()
-      end
-    end
-  )
-  AppendScript(
-    row,
-    "OnMouseUp",
-    "aeuiQuestSelectionOnMouseUpHooked",
-    function(button)
-      local mouseButton = button or arg1
+    "aeuiQuestLeatherOnMouseDownHooked",
+    function(buttonName)
+      local mouseButton = buttonName or arg1
       if
         not mouseButton or
         mouseButton == "LeftButton"
       then
-        row.aeuiQuestSelectionPressed = nil
-        Quests:UpdateDirectoryRows()
+        button.aeuiQuestControlPressed = true
+        UpdateLeatherButtonState(button)
       end
     end
   )
   AppendScript(
-    row,
-    "OnClick",
-    "aeuiQuestSelectionOnClickHooked",
-    function()
-      row.aeuiQuestSelectionPressed = nil
-      Quests:UpdateDirectoryRows()
+    button,
+    "OnMouseUp",
+    "aeuiQuestLeatherOnMouseUpHooked",
+    function(buttonName)
+      local mouseButton = buttonName or arg1
+      if
+        not mouseButton or
+        mouseButton == "LeftButton"
+      then
+        button.aeuiQuestControlPressed = nil
+        UpdateLeatherButtonState(button)
+      end
     end
   )
+  AppendScript(
+    button,
+    "OnEnable",
+    "aeuiQuestLeatherOnEnableHooked",
+    function()
+      UpdateLeatherButtonState(button)
+    end
+  )
+  AppendScript(
+    button,
+    "OnDisable",
+    "aeuiQuestLeatherOnDisableHooked",
+    function()
+      button.aeuiQuestControlPressed = nil
+      UpdateLeatherButtonState(button)
+    end
+  )
+end
+
+local function StyleLeatherButton(button, width, height)
+  if not button then
+    return
+  end
+
+  MakeBackdropTransparent(button)
+  ClearButtonStateTextures(button)
+  if button.icon and button.icon.Hide then
+    button.icon:Hide()
+  end
+  SetSize(button, width, height)
+
+  if not button.aeuiQuestLeatherBase then
+    button.aeuiQuestLeatherBase =
+      EnsureControlTexture(
+        button,
+        "aeuiQuestLeatherBase",
+        "BACKGROUND"
+      )
+    button.aeuiQuestLeatherTop =
+      EnsureControlTexture(
+        button,
+        "aeuiQuestLeatherTop",
+        "BORDER"
+      )
+    button.aeuiQuestLeatherBottom =
+      EnsureControlTexture(
+        button,
+        "aeuiQuestLeatherBottom",
+        "BORDER"
+      )
+    button.aeuiQuestLeatherLeft =
+      EnsureControlTexture(
+        button,
+        "aeuiQuestLeatherLeft",
+        "BORDER"
+      )
+    button.aeuiQuestLeatherRight =
+      EnsureControlTexture(
+        button,
+        "aeuiQuestLeatherRight",
+        "BORDER"
+      )
+    button.aeuiQuestLeatherHover =
+      EnsureControlTexture(
+        button,
+        "aeuiQuestLeatherHover",
+        "BACKGROUND"
+      )
+    button.aeuiQuestLeatherPressed =
+      EnsureControlTexture(
+        button,
+        "aeuiQuestLeatherPressed",
+        "BACKGROUND"
+      )
+    button.aeuiQuestLeatherDisabled =
+      EnsureControlTexture(
+        button,
+        "aeuiQuestLeatherDisabled",
+        "BACKGROUND"
+      )
+
+    button.aeuiQuestLeatherBase:SetAllPoints(button)
+    AnchorHorizontalEdge(
+      button.aeuiQuestLeatherTop,
+      button,
+      "TOP"
+    )
+    AnchorHorizontalEdge(
+      button.aeuiQuestLeatherBottom,
+      button,
+      "BOTTOM"
+    )
+    AnchorVerticalEdge(
+      button.aeuiQuestLeatherLeft,
+      button,
+      "LEFT"
+    )
+    AnchorVerticalEdge(
+      button.aeuiQuestLeatherRight,
+      button,
+      "RIGHT"
+    )
+    button.aeuiQuestLeatherHover:SetAllPoints(button)
+    button.aeuiQuestLeatherPressed:SetAllPoints(button)
+    button.aeuiQuestLeatherDisabled:SetAllPoints(button)
+
+    SetTextureColor(
+      button.aeuiQuestLeatherBase,
+      CONTROL.leather.base
+    )
+    SetTextureColor(
+      button.aeuiQuestLeatherTop,
+      CONTROL.leather.edge
+    )
+    SetTextureColor(
+      button.aeuiQuestLeatherBottom,
+      CONTROL.leather.shadow
+    )
+    SetTextureColor(
+      button.aeuiQuestLeatherLeft,
+      CONTROL.leather.edge
+    )
+    SetTextureColor(
+      button.aeuiQuestLeatherRight,
+      CONTROL.leather.shadow
+    )
+    SetTextureColor(
+      button.aeuiQuestLeatherHover,
+      CONTROL.leather.hover
+    )
+    SetTextureColor(
+      button.aeuiQuestLeatherPressed,
+      CONTROL.leather.pressed
+    )
+    SetTextureColor(
+      button.aeuiQuestLeatherDisabled,
+      CONTROL.leather.disabled
+    )
+    InstallLeatherButtonHooks(button)
+  end
+
+  if button.SetFont then
+    button:SetFont(QUEST_TITLE_FONT, 12, "OUTLINE")
+  end
+  UpdateLeatherButtonState(button)
+end
+
+local function StyleTrackToggle(button)
+  if not button then
+    return
+  end
+  MakeBackdropTransparent(button)
+  SetSize(button, CONTROL.trackSize, CONTROL.trackSize)
+
+  if button.SetNormalTexture then
+    button:SetNormalTexture(DIRECTORY_MARK_TEXTURE)
+  end
+  local normal =
+    button.GetNormalTexture and button:GetNormalTexture()
+  if normal then
+    normal:SetTexture(DIRECTORY_MARK_TEXTURE)
+    normal:SetTexCoord(
+      DIRECTORY.states.untracked.left,
+      DIRECTORY.states.untracked.right,
+      DIRECTORY.states.untracked.top,
+      DIRECTORY.states.untracked.bottom
+    )
+    SetSize(normal, 10, 10)
+    SetSinglePoint(
+      normal,
+      "CENTER",
+      button,
+      "CENTER",
+      0,
+      0
+    )
+  end
+
+  local checked
+  if button.GetCheckedTexture then
+    checked = button:GetCheckedTexture()
+  end
+  checked = checked or QuestLogTrackTracking
+  if checked then
+    checked:SetTexture(DIRECTORY_MARK_TEXTURE)
+    checked:SetTexCoord(
+      DIRECTORY.states.tracked.left,
+      DIRECTORY.states.tracked.right,
+      DIRECTORY.states.tracked.top,
+      DIRECTORY.states.tracked.bottom
+    )
+    SetSize(checked, 10, 10)
+    SetSinglePoint(
+      checked,
+      "CENTER",
+      button,
+      "CENTER",
+      0,
+      0
+    )
+    if button.GetChecked then
+      if button:GetChecked() then
+        checked:Show()
+      else
+        checked:Hide()
+      end
+    end
+  end
+
+  if button.SetHighlightTexture then
+    button:SetHighlightTexture("")
+  end
+
+  if checked and button.GetChecked then
+    AppendScript(
+      button,
+      "OnClick",
+      "aeuiQuestInkCheckOnClickHooked",
+      function()
+        if button.GetChecked and button:GetChecked() then
+          checked:Show()
+        else
+          checked:Hide()
+        end
+      end
+    )
+  end
 end
 
 local function HideNativeRegionToggle(row)
@@ -430,6 +744,120 @@ local function SuppressNativeRowSelection(row, index)
   if row and row.GetPushedTexture then
     SuppressNativeSelectionVisual(row:GetPushedTexture())
   end
+end
+
+local function HideFrame(frame)
+  if not frame then
+    return
+  end
+  if frame.Hide then
+    frame:Hide()
+  elseif frame.SetAlpha then
+    frame:SetAlpha(0)
+  end
+  if frame.EnableMouse then
+    frame:EnableMouse(false)
+  end
+end
+
+function Quests:HideCollapseAllButton()
+  local button = QuestLogCollapseAllButton
+  if not button then
+    return
+  end
+
+  HideFrame(button.icon)
+  if button.Disable then
+    button:Disable()
+  end
+  if not button.aeuiQuestCollapseSuppressed then
+    AppendScript(
+      button,
+      "OnShow",
+      "aeuiQuestCollapseSuppressed",
+      function()
+        HideFrame(button)
+      end
+    )
+  end
+  HideFrame(button)
+end
+
+function Quests:HideDetailScrollbar()
+  local scrollbar = QuestLogDetailScrollFrameScrollBar
+  if not scrollbar then
+    return
+  end
+
+  MakeBackdropTransparent(scrollbar)
+  local thumb
+  if scrollbar.GetThumbTexture then
+    thumb = scrollbar:GetThumbTexture()
+  end
+  HideFrame(thumb)
+  HideFrame(
+    QuestLogDetailScrollFrameScrollBarScrollUpButton
+  )
+  HideFrame(
+    QuestLogDetailScrollFrameScrollBarScrollDownButton
+  )
+  HideFrame(scrollbar.ScrollUpButton)
+  HideFrame(scrollbar.ScrollDownButton)
+
+  if not scrollbar.aeuiQuestHideOnShowHooked then
+    AppendScript(
+      scrollbar,
+      "OnShow",
+      "aeuiQuestHideOnShowHooked",
+      function()
+        HideFrame(scrollbar)
+      end
+    )
+  end
+  HideFrame(scrollbar)
+end
+
+function Quests:InstallDetailMouseWheel()
+  local detail = QuestLogDetailScrollFrame
+  if
+    not detail or
+    not detail.EnableMouseWheel or
+    not detail.GetVerticalScroll or
+    not detail.SetVerticalScroll
+  then
+    return
+  end
+
+  detail:EnableMouseWheel(true)
+  if detail.aeuiQuestMouseWheelHooked then
+    return
+  end
+
+  AppendScript(
+    detail,
+    "OnMouseWheel",
+    "aeuiQuestMouseWheelHooked",
+    function(delta)
+      local wheel = tonumber(delta) or tonumber(arg1) or 0
+      if wheel == 0 then
+        return
+      end
+
+      local current = detail:GetVerticalScroll() or 0
+      local maximum = 0
+      if detail.GetVerticalScrollRange then
+        maximum = detail:GetVerticalScrollRange() or 0
+      end
+      local target =
+        current - wheel * CONTROL.scrollStep
+      if target < 0 then
+        target = 0
+      elseif target > maximum then
+        target = maximum
+      end
+      detail:SetVerticalScroll(target)
+    end
+  )
 end
 
 local function ReadQuestEntry(index)
@@ -549,20 +977,9 @@ function Quests:LayoutDirectoryRows()
         )
       end
 
-      if not row.aeuiQuestSelection then
-        row.aeuiQuestSelection =
-          row:CreateTexture(nil, "BORDER")
-        row.aeuiQuestSelection.aeuiQuestManaged = true
-        row.aeuiQuestSelection:SetTexture(
-          SELECTION_TEXTURE
-        )
-        SetSize(
-          row.aeuiQuestSelection,
-          SELECTION.width,
-          SELECTION.height
-        )
+      if row.aeuiQuestSelection then
+        row.aeuiQuestSelection:Hide()
       end
-      InstallSelectionHooks(row)
 
       if not row.aeuiQuestRegionToggle then
         row.aeuiQuestRegionToggle =
@@ -600,7 +1017,6 @@ function Quests:LayoutDirectoryRows()
         )
       end
 
-      row.aeuiQuestSelection:Hide()
       row.aeuiQuestRegionToggle:Hide()
       row.aeuiQuestListCheck:Hide()
       previous = row
@@ -651,13 +1067,6 @@ function Quests:UpdateDirectoryRows()
   end
 
   local count = GetNumQuestLogEntries() or 0
-  local selection
-  if type(GetQuestLogSelection) == "function" then
-    selection = tonumber(GetQuestLogSelection())
-    if not selection or selection < 1 then
-      selection = nil
-    end
-  end
   local offset = 0
   if
     type(FauxScrollFrame_GetOffset) == "function" and
@@ -673,7 +1082,6 @@ function Quests:UpdateDirectoryRows()
     if row then
       local toggle = row.aeuiQuestRegionToggle
       local check = row.aeuiQuestListCheck
-      local selectionTexture = row.aeuiQuestSelection
 
       local questIndex = index + offset
       if questIndex <= count then
@@ -703,25 +1111,6 @@ function Quests:UpdateDirectoryRows()
           )
         end
 
-        if
-          title and
-          not isHeader and
-          selection and
-          questIndex == selection and
-          selectionTexture
-        then
-          local selectionState = SELECTION.states.selected
-          if row.aeuiQuestSelectionPressed then
-            selectionState = SELECTION.states.pressed
-          elseif row.aeuiQuestSelectionHovered then
-            selectionState = SELECTION.states.hover
-          end
-          SetSelectionState(
-            row,
-            selectionTexture,
-            selectionState
-          )
-        end
       end
     end
   end
@@ -777,6 +1166,9 @@ function Quests:ApplyDetailTextGeometry()
       objective:SetWidth(LAYOUT.detail.objectiveWidth)
     end
   end
+
+  self:HideDetailScrollbar()
+  self:InstallDetailMouseWheel()
 end
 
 function Quests:EnsureShell(frame)
@@ -812,6 +1204,64 @@ function Quests:EnsureShell(frame)
   texture:Show()
 end
 
+function Quests:ApplyControlVisuals()
+  self:HideCollapseAllButton()
+  StyleTrackToggle(QuestLogFrameLevelsCheckButton)
+  StyleTrackToggle(QuestLogTrack)
+
+  local count = QuestLogQuestCount or QuestLogCount
+  if count and count.SetFont then
+    count:SetFont(QUEST_TITLE_FONT, 12, "OUTLINE")
+  end
+  if count and count.SetTextColor then
+    count:SetTextColor(
+      CONTROL.text.ink[1],
+      CONTROL.text.ink[2],
+      CONTROL.text.ink[3],
+      CONTROL.text.ink[4]
+    )
+  end
+
+  local levelsText = QuestLogFrameLevelsCheckButtonText
+  if levelsText then
+    if levelsText.SetFont then
+      levelsText:SetFont(QUEST_TITLE_FONT, 11, "OUTLINE")
+    end
+    if levelsText.SetTextColor then
+      levelsText:SetTextColor(
+        CONTROL.text.ink[1],
+        CONTROL.text.ink[2],
+        CONTROL.text.ink[3],
+        CONTROL.text.ink[4]
+      )
+    end
+  end
+
+  StyleLeatherButton(
+    QuestLogFrameAbandonButton,
+    LAYOUT.actionWidth,
+    LAYOUT.actionHeight
+  )
+  StyleLeatherButton(
+    QuestFramePushQuestButton,
+    LAYOUT.actionWidth,
+    LAYOUT.actionHeight
+  )
+  StyleLeatherButton(
+    QuestFrameExitButton or QuestLogFrameCancelButton,
+    LAYOUT.actionWidth,
+    LAYOUT.actionHeight
+  )
+  StyleLeatherButton(
+    QuestLogFrameExpandButton,
+    24,
+    LAYOUT.actionHeight
+  )
+
+  self:HideDetailScrollbar()
+  self:InstallDetailMouseWheel()
+end
+
 function Quests:ApplyFrameGeometry()
   local frame = QuestLogFrame
   if not frame then
@@ -819,6 +1269,7 @@ function Quests:ApplyFrameGeometry()
   end
 
   SetSize(frame, SHELL.width, SHELL.height)
+  self:ApplyControlVisuals()
 
   SetSinglePoint(
     QuestLogTitleText,
@@ -839,24 +1290,14 @@ function Quests:ApplyFrameGeometry()
     -LAYOUT.countTop
   )
 
-  if QuestLogCollapseAllButton and QuestLogListScrollFrame then
-    SetSinglePoint(
-      QuestLogCollapseAllButton,
-      "BOTTOMLEFT",
-      QuestLogListScrollFrame,
-      "TOPLEFT",
-      -4,
-      4
-    )
-  end
-  if QuestLogFrameLevelsCheckButton and QuestLogCollapseAllButton then
+  if QuestLogFrameLevelsCheckButton then
     SetSinglePoint(
       QuestLogFrameLevelsCheckButton,
-      "LEFT",
-      QuestLogCollapseAllButton,
-      "RIGHT",
-      0,
-      1
+      "TOPLEFT",
+      frame,
+      "TOPLEFT",
+      LAYOUT.list.left + 74,
+      -LAYOUT.controlsTop - 2
     )
   end
   if count then
@@ -937,12 +1378,11 @@ function Quests:ApplyFrameGeometry()
   local previous
   for _, button in ipairs(actions) do
     if button then
-      local height =
-        button.GetHeight and button:GetHeight() or 20
-      if not height or height <= 0 then
-        height = 20
-      end
-      SetSize(button, LAYOUT.actionWidth, height)
+      SetSize(
+        button,
+        LAYOUT.actionWidth,
+        LAYOUT.actionHeight
+      )
       if not previous then
         SetSinglePoint(
           button,

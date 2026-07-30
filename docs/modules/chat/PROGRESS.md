@@ -4,10 +4,11 @@
 
 - 主模块视觉：已锁定。
 - 核心批次：`CHAT.CORE.V3 / runtime-corrected / P5`；runtime contract
-  v1.6 已否定 v1.5 对全局 `UI_SCALE_CHANGED` 的单一路径假设，改为挂接
-  pfUI 解锁缩放真实调用链 `pfChatLeft:SetScale → pfChatLeft.OnMove`；
-  LocalScale／EffectiveScale 真正变化时强制重放一次，普通拖动不写几何；
-  完整静态测试通过并已同步到 `TurtleWoWTest`。
+  v1.7 保留 v1.6 的 pfUI 解锁缩放链，并处理最新实机中“Tab 仍在但书本
+  主体消失”的回归：Bootstrap 的模块 Initialize／Apply 改为逐模块隔离，
+  Chat 的现有维护节拍会检查书本中心片、承托带、贴图与版本标记，缺失时
+  重新挂载九宫格并恢复 BACKGROUND draw layer。完整静态测试通过；尚待
+  `/reload` 实机确认。
 - 运行时：插件 `0.6.0` 已加载 V3 主框、四状态 Tab、普通／聚焦输入和独立
   未读覆盖；静态测试通过。
 - 容器：只保留 `pfChatLeft`。`pfChatRight` 默认强制隐藏，原本分流到右框的
@@ -61,16 +62,17 @@
   虽增加 `UI_SCALE_CHANGED` 强制重放，但实机确认问题没有变化。代码审计
   随后确认 pfUI 解锁模式缩放直接调用 `pfChatLeft:SetScale` 与
   `pfChatLeft.OnMove`，并不走 v1.5 监听的全局事件。当前仍为 `P5`，不能
-  标记 `P6`。
+  标记 `P6`。`2026-07-31` 最新截图又显示四枚 AEUI Tab 存在而书本主体
+  未显示；v1.7 已增加自愈与模块失败隔离，但还没有实机复测结论。
 - legacy 公会／背包／延迟等信息 panel：默认路由已退役，源码保留。
 
 ## 子模块状态
 
 | ID | 阶段 | 当前资产／实现 | 下一门禁 |
 |---|---:|---|---|
-| `CHAT.FRAME`／`LEFT` | `P5` V3 | `ChatBookFrameV3.tga` 九宫格；唯一左侧实例 | 实机检查接缝、缩放、拖动 |
+| `CHAT.FRAME`／`LEFT` | `P5` V3 / r1.7 | `ChatBookFrameV3.tga` 九宫格；唯一左侧实例；现有维护节拍在贴图缺失／隐藏／版本过期时重建 | `/reload` 确认主体从回归状态恢复，再检查接缝、缩放、拖动 |
 | `CHAT.FRAME.RIGHT` | `P5` disabled-route | `single_chat_frame=1`；不分配资产 | 验证右框不显示且消息无丢失 |
-| `CHAT.TABS` | `P5` V3 / r1.6 | `92 × 30` 四状态 atlas；TabText 居中；挂接 `pfChatLeft.OnMove` 的真实局部缩放边沿，并以 EffectiveScale 边沿检测兜底；普通拖动不强制重排 | 复测 pfUI 解锁滚轮与全局 UI Scale 均无需点击即可同步比例 |
+| `CHAT.TABS` | `P5` V3 / r1.7 | `92 × 30` 四状态 atlas；沿用 r1.6 的 TabText、命中与 Scale 修正；r1.7 不修改 Tab 资产／几何 | 在书本主体恢复后复测 pfUI 解锁滚轮与全局 UI Scale |
 | `CHAT.INPUT` | `P5` V3 | 普通／聚焦两状态三段式 atlas | 实机验证焦点、IME、输入历史 |
 | `CHAT.INPUT.LANGUAGE` | `P1` | 可选原生 Button 已映射 | 实机确认对象、尺寸和语言状态 |
 | `CHAT.UNREAD` | `P5` V3 | 独立 `ChatFrameNTabFlash` 覆盖 | 实机验证闪烁配置与选中清除 |
@@ -124,21 +126,23 @@
 
 ## 下一步
 
-1. 在已同步 v1.6 的测试客户端执行 `/reload`；确认 `/aeui status` 报告
-   `chat-runtime=1.6`。
-2. 打开 pfUI 解锁界面，在 `pfChatLeft` 拖动层上连续滚轮切换至少三档局部
+1. 在 Junction 指向当前仓库的测试客户端执行 `/reload`；确认
+   `/aeui status` 报告 `chat-runtime=1.7`。
+2. 先确认九宫格书本主体与承托带立即恢复；若任一模块失败，记录 AEUI
+   单次打印的具体 `module <name> <method> failed` 信息。
+3. 打开 pfUI 解锁界面，在 `pfChatLeft` 拖动层上连续滚轮切换至少三档局部
    Scale；全程不点击 Tab，确认每档四枚 Tab 都立即应用新比例。
-3. 再切换至少两档全局 UI Scale；不点击 Tab，确认 EffectiveScale 边沿兜底
+4. 再切换至少两档全局 UI Scale；不点击 Tab，确认 EffectiveScale 边沿兜底
    同样只重放一次并应用新比例。
-4. 检查四枚 Tab 文字是否同时水平、垂直居中，并从皮革主体中下部切换频道。
-5. 依次切换 Tab、尝试拖动后松开、触发停靠保存，确认正文始终保留
+5. 检查四枚 Tab 文字是否同时水平、垂直居中，并从皮革主体中下部切换频道。
+6. 依次切换 Tab、尝试拖动后松开、触发停靠保存，确认正文始终保留
    `30/30/32/40px` 安全区且不会越出书页。
-6. 再验证左框滚动、Tab 四状态、未读、输入焦点、链接、聊天历史与
+7. 再验证左框滚动、Tab 四状态、未读、输入焦点、链接、聊天历史与
    `540 × 420`／常用 UI Scale。
-7. 确认右框始终隐藏，并验证拾取、经验、荣誉、声望与技能消息仍进入左框。
-8. 核心批次实机通过后达到 `P6`，但保留 work 与 legacy 回退资产直至用户批准
+8. 确认右框始终隐藏，并验证拾取、经验、荣誉、声望与技能消息仍进入左框。
+9. 核心批次实机通过后达到 `P6`，但保留 work 与 legacy 回退资产直至用户批准
    `P6-C` 清理清单。
-9. `CHAT.COPY` 与 `CHAT.URLCOPY` 均保持暂缓；不上传参考、不调用 ImageGen、
+10. `CHAT.COPY` 与 `CHAT.URLCOPY` 均保持暂缓；不上传参考、不调用 ImageGen、
    不创建 source／runtime，也不恢复新加载项。
-10. 当前资产优先级移交大面积主窗口；Chat 只继续核心 V3 实机门禁。
+11. 当前资产优先级移交大面积主窗口；Chat 只继续核心 V3 实机门禁。
     `CHAT.INPUT.LANGUAGE`、`CHAT.POPUP.*` 与 `CHAT.WHISPER.TOGGLE` 后续再排期。

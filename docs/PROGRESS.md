@@ -20,9 +20,9 @@
 
 | 主模块 | pfUI／原生边界 | 阶段 | 当前结论 | 下一门禁 |
 |---|---|---:|---|---|
-| Core／pfUI | `api/expedition.lua`、`pfUI.lua`、原生回退路由 | `P5` | 现代可见模块默认回退原生；非视觉功能保留 | 实机覆盖原生 Frame、SavedVariables 与第三方兼容 |
-| Chat | `modules/chat.lua` + AEUI Chat adapter | `P5` V3 | 单一左侧旧书、四状态 Tab、双状态输入与未读已接入；右框隐藏且消息回收；两项 Copy 辅助功能暂缓 | Turtle WoW 实机验收核心批次 |
-| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua` + AEUI Quests adapter | `P1–P5` | QL-A2 V4 固定卷宗背景、QL-B0 23 行 V1、QL-B1 四态 atlas 与 QL-B2 同 Alpha 三态书签已接入并静态通过；完整重启后的实机图确认连续左页与十八行布局稳定。QL-B0 V2 内框 A 在 `4/5` 后由用户移出范围，不建立 source/runtime；地区条与任务条底板 B 已执行 `5/5`，语义、美术和真实排版方向已收敛，但五次均未满足固定 bbox／色键，现为 `candidate-rejected / repair-budget-exhausted / P3`，无 source/runtime。QL-B3-A `5/5` exhausted、B/C `0/5` 并继续暂停；QL-C/D 未完成；外部 tracker 暂停 | 等待用户决定 B 的 bbox-fit source 例外／source 策略重开／拒绝；不得 attempt 6 |
+| Core／pfUI | `api/expedition.lua`、`pfUI.lua`、原生回退路由 | `P5` | 现代可见模块默认回退原生；非视觉功能保留；Initialize／Apply 按模块 `pcall` 隔离并单次报告异常 | 实机覆盖原生 Frame、SavedVariables、单模块失败隔离与第三方兼容 |
+| Chat | `modules/chat.lua` + AEUI Chat adapter | `P5` V3 / r1.7 | 单一左侧旧书、四状态 Tab、双状态输入与未读已接入；右框隐藏且消息回收；书本九宫格在缺失、隐藏或贴图被剥离时自愈；两项 Copy 辅助功能暂缓 | `/reload` 验证书本主体恢复，再执行核心批次实机验收 |
+| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P5` | 用户接受 QL-A2 V4 当前书本主体；QL-B0 内框与条目底板路线均已移出范围。QL-B1 四态墨记继续运行；QL-B2 source/runtime 资产保留但酒红书签暂停挂载。QL-C contract `1.6` 已隐藏并禁用 Collapse All，保留任务计数／追踪、底部暗皮革四态，隐藏右页 scrollbar chrome 并保留滚轮；静态测试通过。已确认魔改版 `pfQuest 7.0.1`／`pfQuest-turtle 7.0.2` 会改写 Quest Log 并造成布局冲突，两份源码已纳入 `addon/`；tracker 当前界面参考已保存。QL-B3-A `5/5` exhausted、B/C `0/5` 并继续暂停；QL-D 未完成 | 审计 pfQuest Quest Log Hook 与 tracker runtime 对象，隔离布局冲突后进入 tracker overhaul |
 | Map | `map.lua`、`minimap.lua`、`addonbuttons.lua` 等 | `P2` | 羊皮地图卷与黄铜罗盘已锁定 | 实机对象审计和组件级合同 |
 | Character | `character.lua`、`inspect.lua`、`dressup.lua` | `P2` | 香草同构角色面板已锁定 | 实机几何与装备槽／属性／页签拆分 |
 

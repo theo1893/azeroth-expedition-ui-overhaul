@@ -23,7 +23,7 @@ Frame。美术见 [ART_BASELINE.md](ART_BASELINE.md)，状态见
 |---|---|---|
 | `QUEST.LOG.SHELL` | `QuestLogFrame` | `676 × 464` 固定非交互空卷宗背景；不拉伸，不包含任何动态内容或交互状态 |
 | `QUEST.LOG.TITLE` | `QuestLogTitleText` | layout-only 动态文字 |
-| `QUEST.LOG.COUNT` | `QuestLogQuestCount`；兼容 `QuestLogCount` | layout-only，可有独立小墨印分隔 |
+| `QUEST.LOG.COUNT` | `QuestLogQuestCount`；兼容 `QuestLogCount` | layout-only；使用纸面深墨文字，不新增外框 |
 | `QUEST.LOG.CLOSE` | `QuestLogFrameCloseButton` | 普通／悬停／按下／禁用 |
 | `QUEST.LOG.EMPTY` | `EmptyQuestLogFrame`、`QuestLogNoQuestsText` | 安静纸面，不生成空状态卡片 |
 
@@ -65,7 +65,7 @@ Texture、FontString。禁止在 SHELL 上烘焙任务行、滚动状态、选�
 | `QUEST.LOG.REGION.TOGGLE` | `QuestLogTitleN` 且 `isHeader=true` 的图标区 | 展开／收起覆盖，不新增命中区 |
 | `QUEST.LOG.LIST.ROW` | V1 fallback 为 `QuestLogTitle1..23`，其中 `7..23` 继承 `QuestLogTitleButtonTemplate` 创建；V2 活动窗口为 `QuestLogTitle1..18` | 普通／悬停／按下／禁用；保留真实 Button 与脚本；V1 不生成完整行卡片，V2 挂载独立薄型卷宗底板 |
 | `QUEST.LOG.LIST.CHECK` | `QuestLogTitleNCheck` | 未追踪／已追踪；不是选择 Button |
-| `QUEST.LOG.SELECTION` | 当前选中的非地区 `QuestLogTitleN` | 一枚基础织物书签；选中／选中悬停／选中按下为三个确定性 runtime 状态 |
+| `QUEST.LOG.SELECTION` | 当前选中的非地区 `QuestLogTitleN` | 已接受的三态织物书签资产保留，但按 `2026-07-31` 用户决定暂停挂载并隐藏 |
 | `QUEST.LOG.TYPE.BADGE` | `GetQuestLogTitle` 的可靠 `questTag` | `normal` 无资产；Elite／Dungeon／Raid／PvP 小压印；未知 tag 不猜测 |
 | `QUEST.LOG.TIMER.BADGE` | `GetQuestTimers()` 与 `GetQuestIndexForTimer()` | timed 沙漏压印；API 缺失时不显示 |
 | `QUEST.LOG.STATE.SEAL` | `GetQuestLogTitle` 的 `isComplete` | `+1` complete／`-1` failed；nil 不显示 |
@@ -75,12 +75,11 @@ Texture、FontString。禁止在 SHELL 上烘焙任务行、滚动状态、选�
 绝对任务索引的 `IsQuestWatched`；选择状态来自 `GetQuestLogSelection()`。
 不得通过解析本地化任务名或显示文字推断状态。
 
-`QUEST.LOG.SELECTION` 不拥有鼠标：任何时刻最多只显示在一条可见、非地区的
-当前任务行。当前 P5／V1 fallback 使用 `24 × 14 UI px` 可见书签装在
-`32 × 16 UI px` 透明 Texture 内，从行局部 `x=-8..15` 探入；任务文字从
-`x>=18` 开始，即任务文字从 `x>=18` 起。覆盖位于
-shell 之上、任务 FontString 与 QL-B1／B3 状态之下。无选择、选择不可见、
-API／媒体缺失或选择指向地区 header 时隐藏并保留原生选择反馈。
+`QUEST.LOG.SELECTION` 不拥有鼠标。已接受的 QL-B2 source、runtime atlas、
+manifest 与 exporter 继续作为可恢复的历史产物保留，但 `2026-07-31` 起
+adapter 不再创建、挂载或刷新酒红色书签，也不再包装任务行的 hover／pressed
+脚本。原生整行选择高亮仍保持透明抑制；目录文字继续从 `x>=18` 起，以维持
+QL-B1 墨记及未来状态槽的安全区。
 
 当前 P5／V1 fallback 仍保留 pfUI 的 `QUESTS_DISPLAYED = 23`：QL-A2 左页
 `246 × 324 UI px` 安全区中使用 `23` 条 `224 × 15 UI px` 行、
@@ -116,6 +115,8 @@ QL-B 的生产边界：
   selected-pressed／全透明保留格；每格可见 content 为 `24 × 14`，
   三态 Alpha 逐像素相同。V2 接受后只允许从同一 source 确定性重导出为
   `32 × 16` cell 内 `30 × 16` 可见书签，锚点 `x=-12`；不重新生图。
+  当前 runtime 明确暂停挂载；恢复前必须由用户重新确认，不得因为资产仍在
+  仓库中而自动显示。
 - `QL-B3`：四类可靠 `TYPE.BADGE`、独立 `TIMER.BADGE` 与两类
   `STATE.SEAL`。非地区行固定保留三个可同时显示的无鼠标状态槽：
   type `10 × 10 UI px`、`x=176..186`；timer `10 × 10 UI px`、
@@ -130,22 +131,21 @@ QL-B 的生产边界：
   `REGION.BACKPLATE`／`ROW.BACKPLATE` 的无鼠标 Texture 承担；它们是薄型
   卷宗条目，不是现代卡片，也不改变 Button 命中区。
 
-QL-B0／B1／B2 当前 V1 runtime 已接入
+QL-B0／B1 当前 V1 runtime 已接入
 `addon/AzerothExpeditionUI/Modules/Quests.lua`：atlas 为
 `QuestLogDirectoryMarksV1.tga`，四个 `16 × 16` cell 的内部 content box
 分别以 `12 × 12` 箭头和 `10 × 10` 墨圈显示。覆盖 Texture 不接收鼠标；
 原 `QuestLogTitleN` Button、脚本、滚动、选择和追踪数据均保持。字体仅按
 模块基线把主标题设为 Noto Serif SC、任务行设为霞鹜文楷，仍需实机加载
-与 1px 行重叠命中验证。QL-B2 另以 `BORDER` Texture 挂载完整
-`32 × 16` atlas cell，锚点 `x=-12`；hover／pressed 只在保留原脚本后
-刷新 UV，pressed 仅把锚点改为 `y=-1`。API 缺失、无可见选择或 header
-被选中时隐藏覆盖。
+与 1px 行重叠命中验证。QL-B2 的 `BORDER` Texture 挂载与三态脚本已从
+runtime contract `1.5` 起移除；资产文件不删除，运行时一律隐藏。当前
+runtime contract 已升至 `1.6`，该决定保持不变。
 
 QL-B0 V2 的 `LIST.INSET` 已在四次候选审查后由用户移出范围，不建立 source、
 runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
-`ROW.BACKPLATE` 仍处于 `prompt-authorized / P3`，尚无 source 或 runtime；
-只允许按 [work/QUEST.LOG.LEFTPAGE.md](work/QUEST.LOG.LEFTPAGE.md)
-所列固定 B 正文、输入、repair envelope 与独立预算调用 ImageGen。
+`ROW.BACKPLATE` 在五次候选耗尽后也由用户于 `2026-07-31` 明确移出范围；
+不建立 source、runtime、占位 Texture 或新的生成路线。失败候选与合同只在
+[work/QUEST.LOG.LEFTPAGE.md](work/QUEST.LOG.LEFTPAGE.md) 保留历史证据。
 
 ## Quest Log 滚动与控制
 
@@ -155,28 +155,32 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 | `QUEST.LOG.LIST.SCROLL.THUMB` | 对应 ThumbTexture | 普通／悬停／按下／禁用 |
 | `QUEST.LOG.LIST.SCROLL.UP` | 对应 ScrollUpButton，需 feature-detect | 四状态 Button |
 | `QUEST.LOG.LIST.SCROLL.DOWN` | 对应 ScrollDownButton，需 feature-detect | 四状态 Button |
-| `QUEST.LOG.COLLAPSE.ALL` | `QuestLogCollapseAllButton` | 独立 Button；展开／收起方向与普通／悬停／按下／禁用状态均需保留 |
+| `QUEST.LOG.COLLAPSE.ALL` | `QuestLogCollapseAllButton` | runtime `1.6` 起完整隐藏并禁用真实 Button 与 pfUI `+`／`-` 子控件；不保留命中区、不生产替代资产 |
 
 ## Quest Log 右页与操作
 
 | ID | 真实对象 | 状态／资产 |
 |---|---|---|
-| `QUEST.LOG.DETAIL.SCROLL.TRACK` | `QuestLogDetailScrollFrameScrollBar` 轨道 | 上／中／下 |
-| `QUEST.LOG.DETAIL.SCROLL.THUMB` | 对应 ThumbTexture | 四状态 |
-| `QUEST.LOG.DETAIL.SCROLL.UP` | 对应 ScrollUpButton，需 feature-detect | 四状态 |
-| `QUEST.LOG.DETAIL.SCROLL.DOWN` | 对应 ScrollDownButton，需 feature-detect | 四状态 |
+| `QUEST.LOG.DETAIL.SCROLL.TRACK` | `QuestLogDetailScrollFrameScrollBar` 轨道 | 视觉隐藏且不接收鼠标；不删除真实 ScrollFrame |
+| `QUEST.LOG.DETAIL.SCROLL.THUMB` | 对应 ThumbTexture | 视觉隐藏 |
+| `QUEST.LOG.DETAIL.SCROLL.UP` | 对应 ScrollUpButton，需 feature-detect | 视觉隐藏且不接收鼠标 |
+| `QUEST.LOG.DETAIL.SCROLL.DOWN` | 对应 ScrollDownButton，需 feature-detect | 视觉隐藏且不接收鼠标 |
 | `QUEST.LOG.DETAIL.TITLE` | ScrollChild 标题 FontString，需实机确认名 | layout-only |
 | `QUEST.LOG.DETAIL.DESCRIPTION` | 叙述 FontString 集 | layout-only |
 | `QUEST.LOG.DETAIL.OBJECTIVES` | 目标 FontString 集 | layout-only |
 | `QUEST.LOG.DETAIL.REWARD_TEXT` | 奖励文字 FontString 集 | layout-only |
 | `QUEST.LOG.DETAIL.DIVIDER` | adapter 非交互 Texture | 可横向三段式短墨线 |
 | `QUEST.LOG.REWARD.SLOT` | `QuestLogItem1..MAX_NUM_ITEMS` | 普通／悬停／按下／禁用；图标动态，无 selected |
-| `QUEST.LOG.TRACK` | `QuestLogTrack`、`QuestLogTrackTracking` | 未追踪／已追踪／禁用 |
-| `QUEST.LOG.ACTION.ABANDON` | `QuestLogFrameAbandonButton` | 四状态，文字动态 |
-| `QUEST.LOG.ACTION.SHARE` | `QuestFramePushQuestButton`；兼容名需探测 | 四状态 |
-| `QUEST.LOG.ACTION.EXIT` | `QuestFrameExitButton`；兼容 `QuestLogFrameCancelButton` | 四状态 |
-| `QUEST.LOG.DETAIL.TOGGLE` | pfUI `QuestLogFrameExpandButton`；可选重建 | 左／右，各四状态 |
-| `QUEST.LOG.LEVELS` | pfUI `QuestLogFrameLevelsCheckButton`；可选重建 | 未选／已选／悬停／禁用 |
+| `QUEST.LOG.TRACK` | `QuestLogTrack`、`QuestLogTrackTracking` | 复用 QL-B1 开放墨圈／墨勾 atlas；保留原状态控制 |
+| `QUEST.LOG.ACTION.ABANDON` | `QuestLogFrameAbandonButton` | 程序化暗皮革搭扣四状态，文字动态，原脚本不变 |
+| `QUEST.LOG.ACTION.SHARE` | `QuestFramePushQuestButton`；兼容名需探测 | 同族程序化暗皮革搭扣四状态，原脚本不变 |
+| `QUEST.LOG.ACTION.EXIT` | `QuestFrameExitButton`；兼容 `QuestLogFrameCancelButton` | 同族程序化暗皮革搭扣四状态，原脚本不变 |
+| `QUEST.LOG.DETAIL.TOGGLE` | pfUI `QuestLogFrameExpandButton`；缺失时可创建真实 Button | 加入底部暗皮革控件行，动态左右文字，pfUI 箭头贴图隐藏 |
+| `QUEST.LOG.LEVELS` | pfUI `QuestLogFrameLevelsCheckButton` | 复用 QL-B1 开放墨圈／墨勾 atlas；保留原脚本与文字 |
+
+右页仍由 `QuestLogDetailScrollFrame` 承担裁切与滚动，adapter 只隐藏最右侧
+滚动条 chrome，并在页面本体上追加 `OnMouseWheel`，以 `28 UI px` 步进在
+真实 `GetVerticalScrollRange()` 内限位。左页列表滚动条完全不受此规则影响。
 
 ## 外部 Quest Tracker（暂停）
 
@@ -187,9 +191,23 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 `QUEST.TRACKER.ENTRY`、`QUEST.TRACKER.OBJECTIVE`、
 `QUEST.TRACKER.FOCUS`、`QUEST.TRACKER.SEAL`、`QUEST.TRACKER.TIMER`。
 
+用户于 `2026-07-31` 提供并要求保存当前外部 tracker 的游戏内结构参考：
+[01_external_quest_tracker_current_state.png](../../../assets/references/quests/session-2026-07-31/01_external_quest_tracker_current_state.png)。
+该图只证明纵向任务／目标层级、等级、完成率、目标计数与多种彩色状态标记的
+可见结构，不是美术权威，也不证明任何 Frame 名、事件、数据 API 或插件身份。
+
+同日确认该插件为魔改版 `pfQuest 7.0.1` 与配套
+`pfQuest-turtle 7.0.2`，源码已复制到 `addon/pfQuest/` 与
+`addon/pfQuest-turtle/`。启用后 Quest Log 任务行会增加等级，右页会出现
+额外文字／按钮并破坏 AEUI 现有布局。兼容失败证据为
+[02_third_party_quest_plugin_layout_failure.png](../../../assets/references/quests/session-2026-07-31/02_third_party_quest_plugin_layout_failure.png)。
+该问题登记为后续 TODO；完成 pfQuest Hook／对象审计前不继续修补几何。
+
 恢复前必须取得插件名称、版本、加载顺序、SavedVariables、顶层 Frame、任务
 组、目标行、标题、计时器、点击对象、刷新入口、状态来源、拖动／缩放／收起
-能力和真实几何。此前对 `QuestWatchFrame`、`QuestWatchLineN`、
+能力和真实几何；同时审计它对 `QuestLogFrame`、`QuestLogTitleN`、详情
+ScrollChild、按钮与刷新函数的写入／Hook。此前对 `QuestWatchFrame`、
+`QuestWatchLineN`、
 `QuestWatch_Update` 与 `QuestTimerFrame` 的假设全部作废。
 
 ## NPC Quest／Gossip（已映射，未锁美术）

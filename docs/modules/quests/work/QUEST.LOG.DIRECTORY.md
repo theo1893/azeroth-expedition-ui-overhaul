@@ -448,6 +448,9 @@ UI 或文字。任何一项不满足都不要输出。
     `IsQuestWatched` 动态驱动。原行 Button、点击脚本、选择和滚动逻辑不变。
   - QL-B1 的覆盖 Texture 不接收鼠标；pfUI 的现代 `+`／`-` 小面板和原生
     check 可见纹理在 AEUI 状态刷新后隐藏，真实行为与状态源仍保留。
+  - 当前 adapter runtime contract `1.6` 额外把同一 untracked／tracked
+    墨圈 cell 复用于顶部 pfUI 等级与任务追踪 CheckButton；只改变纹理与
+    尺寸，不改变原 `OnClick`、checked 状态或 SavedVariables。
   - 真实排版预演使用 QL-A2 当前 runtime shell、全部 23 个行槽、霞鹜文楷
     任务行、代表性中文任务名／等级／地区／追踪状态和右页真实密度。QL-C
     未完成按钮只作 manifest 明示的简化非权威占位。

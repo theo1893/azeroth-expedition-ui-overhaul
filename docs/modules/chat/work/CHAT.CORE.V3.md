@@ -5,13 +5,13 @@
 - 模块：Chat
 - 组件 ID：`CHAT.FRAME`、`CHAT.FRAME.LEFT`、`CHAT.TABS`、`CHAT.INPUT`、
   `CHAT.UNREAD`、`CHAT.TEXT`
-- 版本：`CHAT.CORE.V3 / runtime contract v1.6`
+- 版本：`CHAT.CORE.V3 / runtime contract v1.7`
 - 子状态：`runtime-corrected`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 当前操作：修正 v1.5 只监听全局缩放事件、遗漏 pfUI 解锁界面对
-  `pfChatLeft` 直接缩放的问题；本版本未生图、未修改已接受 source 或
-  atlas 像素
+- 当前操作：保留 v1.6 的 pfUI 局部缩放修正，新增书本九宫格运行时自愈与
+  Bootstrap 模块失败隔离，处理“Tab 尚在但书本主体消失”的最新实机回归；
+  本版本未生图、未修改已接受 source 或 atlas 像素
 - 锁定视觉基准：
   - [`聊天框视觉基准_v1.png`](../../../../assets/locked/chat/聊天框视觉基准_v1.png)
     — 游戏内物件身份、紧凑尺度和香草 HUD 综合色感
@@ -279,6 +279,27 @@ python3 tools/build_chat_v3_runtime_assets.py
 - 未改变：Tab 逻辑尺寸、文字／命中区、安全区、五张 runtime TGA 像素与
   SHA、已接受 source、atlas UV、消息与停靠数据。
 
+### Runtime contract v1.7 修正
+
+- 有效实机结论：`2026-07-31` 截图中四枚 AEUI Tab 仍存在，正文消息也仍
+  路由到左框，但九宫格书本主体未显示，画面退回 pfUI 的透明容器外观。
+- 第一个失败门禁：`runtime-corrected → game-validated` 的主框持续装配。
+- 当前证据不能唯一证明是模块 Apply 被前序异常中断，还是书本 Texture／
+  BACKGROUND draw layer 被后续刷新剥离；因此修正同时覆盖两个可独立验证的
+  失败面，不把推断写成已证实根因。
+- 修正：
+  - Bootstrap 逐模块 `pcall` 执行 Initialize／Apply；单模块异常只记录在
+    `moduleFailures` 并对同一错误打印一次，不再中断其他模块；
+  - `Chat:EnsureBookVisible()` 在现有维护节拍与延迟布局恢复前检查书本中心片、
+    Tab 承托带、Texture 路径和 runtime 标记；
+  - 缺失、隐藏、贴图被清空或版本过期时调用既有 `EnsureBook()`，恢复
+    BACKGROUND draw layer、透明 pfUI backdrop、九宫格与承托带；
+  - 不增加新的 OnUpdate，不在书本完整时重写几何。
+- 静态证据：Lua 5.0 语法、Chat smoke 中的贴图剥离恢复断言、失败模块后
+  健康模块继续 Apply 的隔离断言均通过。
+- 未改变：Tab 逻辑尺寸、文字／命中区、安全区、五张 runtime TGA 像素与
+  SHA、已接受 source、atlas UV、消息与停靠数据。
+
 ### 测试客户端部署核验
 
 - 未同步部署截图：
@@ -337,6 +358,10 @@ python3 tools/build_chat_v3_runtime_assets.py
 - v1.6 同步时仍检测到两个 `WoW.exe` 进程；磁盘副本已匹配，相关游戏会话
   必须 `/reload` 或重启，并以 `/aeui status` 的
   `chat-runtime=1.6` 为加载证据。
+- v1.7 位于仓库工作树；测试客户端的
+  `Interface\AddOns\AzerothExpeditionUI` 是指向该目录的 Junction，无需
+  复制第二份文件。当前游戏会话仍必须 `/reload` 或重启，并以
+  `/aeui status` 的 `chat-runtime=1.7` 为加载证据；尚无实机通过结论。
 
 ## 审查记录
 
@@ -380,6 +405,9 @@ python3 tools/build_chat_v3_runtime_assets.py
   `pfChatLeft.OnMove` 后置边沿检测、无事件 EffectiveScale 兜底，以及
   “普通拖动不强制写几何”的 smoke 断言；完整静态测试通过，三份目标 Lua
   哈希匹配并已部署，等待 `/reload` 后实机复测。
+- 2026-07-31 v1.7：用户报告 Tab 与正文仍在但书本主体消失。新增书本
+  Texture／版本自愈以及模块 Initialize／Apply 失败隔离；Lua 语法、
+  Chat smoke 与隔离断言通过，等待 `/reload` 实机复测。
 
 ## 尝试摘要
 
@@ -392,3 +420,4 @@ python3 tools/build_chat_v3_runtime_assets.py
 | V3 runtime contract v1.4 | TabText 中心合同；pfUI Refresh／选择／停靠后按需恢复完整几何；拖动锁后单次恢复；runtime 版本自报；有效缩放实机反馈 | 缩放后逻辑尺寸未变，条件恢复跳过实际重放；点击后才刷新，保持 `P5` | 为 UI Scale 增加一次强制定型 |
 | V3 runtime contract v1.5 | `UI_SCALE_CHANGED` force 标志；连续事件合并；延迟单次全几何重放；force 自动清除；缓存场景 smoke；有效实机反馈 | 未覆盖 pfUI owner 局部缩放入口；实机仍需点击一次 Tab，失败并保持 `P5` | 挂接真实 `pfChatLeft.OnMove` 缩放链 |
 | V3 runtime contract v1.6 | owner Scale／EffectiveScale 边沿检测；`pfChatLeft.OnMove` 后置单次强制重放；全局无事件兜底；普通移动零几何写入 smoke；完整静态测试与目标目录哈希核验 | `runtime-corrected / P5`，已部署到测试客户端 | `/reload` 后分别测试 pfUI 局部 Scale 与全局 UI Scale，全程不点击 Tab |
+| V3 runtime contract v1.7 | 书本中心片／承托带／贴图／版本自愈；BACKGROUND 恢复；Bootstrap 逐模块失败隔离；Chat smoke 与 Lua 语法 | `runtime-corrected / P5`，Junction 已指向当前工作树但尚未重载验证 | `/reload` 确认书本主体恢复并记录任何单次模块错误 |

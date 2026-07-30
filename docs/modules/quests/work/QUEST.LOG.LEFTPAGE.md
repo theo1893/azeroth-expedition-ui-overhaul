@@ -2,9 +2,10 @@
 
 ## 当前状态
 
-- 工作范围：`QL-B0-B V2`；`QL-B0-A V2` 已由用户移出范围。
-- 子状态：B `candidate-rejected / repair-budget-exhausted`；A
-  `user-rejected / scope-removed`。
+- 工作范围：历史审查保留；`QL-B0-A V2` 与 `QL-B0-B V2` 均已由用户移出
+  当前产品范围。
+- 子状态：A／B 均为 `user-rejected / scope-removed`；B 的预算终态同时保留
+  `candidate-rejected / repair-budget-exhausted` 事实。
 - 项目阶段：`P3`。
 - 授权正文状态：B attempt 1／2／3／4／5 均已完成并退回；attempt 5
   已逐字执行 `QL-B0-B V2.r4`，B 预算已经耗尽，不再存在可执行正文。
@@ -20,13 +21,10 @@
 - 用户授权：`2026-07-30` 明确授权 `QL-B0-A V2` 与 `QL-B0-B V2`，
   允许分别上传固定 SHA 的 Image 1／Image 2；每段最多 `5` 次，最坏合计
   `10` 次。
-- 当前门禁：用户已明确授权 `QL-B0-B V2.r3`、固定 SHA 的同循环
-  attempt 3 raw 作为 Image 3，以及在 B `3/5` 后最多再两次的完整
-  in-envelope 修复循环。attempt 4／5 均已返回并因 source bbox／色键
-  退回；B 已到 `5/5`，不得执行 attempt 6，不上传 attempt 4／5 raw，
-  不执行 A attempt 5，不自动晋级 source 或 runtime。等待用户决定是否
-  明确接受某一候选的确定性 bbox-fit source 例外、改变 source 策略重开
-  新版本，或拒绝 B。
+- 当前门禁：用户于 `2026-07-31` 接受当前游戏内书本主体，并明确表示不再
+  增加框；地区条与任务条底板也不继续。不得执行 attempt 6，不上传
+  attempt 4／5 raw，不执行 A attempt 5，不建立 source/runtime，也不再
+  等待 bbox-fit 例外或 source 策略重开。
 - V2.r4 完整正文 UTF-8 SHA-256：
   `84f6764d4817c2872dbb8800b17de6044698753bcc96887d880a01a2f57c0a2e`。
 
@@ -41,7 +39,7 @@ Turtle WoW 实机截图已经证明 QL-A2 V4 正常加载，但左页主体仍�
 资源。当前 V1 runtime 在 V2 资源接受和导出前继续作为可回退实现，不把
 `prompt-draft` 误记为已接入。
 
-## 权威、输入与冲突审计
+## 美术基准继承
 
 视觉裁决顺序：
 
@@ -420,7 +418,7 @@ Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 
   source bbox 检查、确定性透明预演、`262 × 340` 或 `224 × 18` 真实排版
   预演。未通过时只能在同段 envelope 内修复。
 
-## 执行账本
+## 执行记录
 
 | 段 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---|---:|---|---|---|---|---|---|---|
@@ -444,7 +442,9 @@ Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 
 | B-E1 | B／`QL-B0-B V2.r3`／`5e7a9d6` | fixed CLI 未启动；无 child session／result | 执行器上传审批在进程启动前拒绝：用户现有授权只明确涵盖固定 SHA 的 Image 1／2，尚未明确授权同循环 attempt 3 raw 作为 Image 3；没有上传、图片、provider result 或生成证据 | 保持已提交 V2.r3 正文、Image 1／2 和 B `3/5` 不变；暂停并向用户展示 Image 3 精确 SHA 与用途，取得显式授权后才重试同一正文 | `authority-blocked / process-error`；不占生图额度，B 仍为 `3/5` |
 | B-E2 | B／`QL-B0-B V2.r4`／`e97723e` | fixed CLI 未启动；无 child session／result | Windows PowerShell 5 按本地代码页读取 ignored launcher，包含中文的精确标题正则在正文抽取阶段失配；在 stdin 写入、上传和 child 启动前停止，无图片或 provider result | launcher 只把标题抽取改成 ASCII 锚点 `QL-B0-B V2.r4`，并继续强制正文 SHA `84f6764d4817c2872dbb8800b17de6044698753bcc96887d880a01a2f57c0a2e`；production 正文、Image 1／2／3 和参数均不变 | `process-error`；不占生图额度，B 仍为 `4/5` |
 
-## A attempt 1 审查记录
+## 审查记录
+
+### A attempt 1 审查记录
 
 - 执行器／传输：`codex-cli 0.143.0`，model `gpt-5.5`，medium；
   child session `019fb343-1f5c-7c83-94d4-a89c7b11451f`。子进程打印的
@@ -495,7 +495,7 @@ Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 
   收紧设计网格比例、外盒／开口、薄带厚度与材料反模式，不新增上传、对象、
   状态或视觉方向。
 
-## A attempt 2 审查记录
+### A attempt 2 审查记录
 
 - 执行器／传输：`codex-cli 0.143.0`，model `gpt-5.5`，medium；
   child session `019fb354-1d02-78f3-8d01-9cde28c841bf`。stdin 中的
@@ -539,7 +539,7 @@ Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 
   `assets/source/` 或 runtime。V2.r2 只保留已改善的暗皮材料，并在既有
   repair envelope 内进一步收紧尺寸、单层厚度与非对称黄铜关系。
 
-## A attempt 3 审查记录
+### A attempt 3 审查记录
 
 - 执行器／传输：`codex-cli 0.143.0`，model `gpt-5.5`，medium；
   child session `019fb35e-6697-71f3-b2b7-f6033ef290d2`。stdin 中的
@@ -581,7 +581,7 @@ Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 
   V2.r3 只在既有 repair envelope 内把同一几何改写为宽高比、可见面积占比
   与最大直边厚度，保留 attempt 3 已改善的材料与非对称关系。
 
-## A attempt 4 审查记录
+### A attempt 4 审查记录
 
 - 执行器／传输：`codex-cli 0.143.0`，model `gpt-5.5`，medium；
   child session `019fb367-828c-71a2-a5b8-088bcf4e1472`。stdin 中的
@@ -624,7 +624,7 @@ Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 
   内，不改变对象、状态、输入或视觉方向；只把几何构造顺序改为从已接近目标的
   开口向外画 `16px`，并要求细节为几何让步。
 
-## A 用户取消决定
+### A 用户取消决定
 
 - 日期：`2026-07-30`。
 - 用户原话：`看起来没必要做这个框`。
@@ -642,7 +642,7 @@ Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 
 - 后续：B 的地区条／任务条底板仍具有直接的信息分层价值，按既有授权与独立
   `0/5` 起始预算继续，不借用或消耗未使用的 A5。
 
-## B attempt 1 审查记录
+### B attempt 1 审查记录
 
 - 执行器／传输：`codex-cli 0.143.0`，model `gpt-5.5`，medium；
   child session `019fb37c-4303-7c13-9208-06c86d57abbe`。stdin 中的
@@ -693,7 +693,7 @@ Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 
   regenerate，不上传 attempt 1 raw；只保留两个对象、综合色与低频旧化，
   在既有 envelope 内删除全部端件／金属框并收紧固定 bbox 与边厚。
 
-## B attempt 2 审查记录
+### B attempt 2 审查记录
 
 - 执行器／传输：`codex-cli 0.143.0`，model `gpt-5.5`，medium；
   child session `019fb386-2fd3-76e3-b11b-1828fec80275`。stdin 中的
@@ -740,7 +740,7 @@ Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 
   平面身份不变，只把完整画布的中心、百分比、纯绿边距、64px 高度与
   3px／2px 最大边厚写成首要构图门禁；继续 regenerate，且不上传任何 B raw。
 
-## B attempt 3 审查记录
+### B attempt 3 审查记录
 
 - 执行器／传输：`codex-cli 0.143.0`，model `gpt-5.5`，medium；
   child session `019fb38e-19d1-7a70-9e4a-efdb8bff70c1`。stdin 中的
@@ -784,7 +784,7 @@ Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 
   当前正确表面与物件身份，Image 1 仍是最高美术权威，Image 2 仍只匹配纸页；
   编辑只执行明确的 `90.40% × 61.54%` 缩放、中心移动和旧位置清除。
 
-## B attempt 4 上传授权
+### B attempt 4 上传授权
 
 - 需要上传的新增同循环输入：
   `generated/quests/QL-B0/v2/backplates/attempt-03/raw/QL-B0-B_V2_r2_attempt-03_raw.png`。
@@ -801,7 +801,7 @@ Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 
 - 结论：上传门禁已满足；V2.r3 正文、Image 1／2／3 角色和剩余预算均未
   改变，可执行 B attempt 4 edit。
 
-## B attempt 4 审查记录
+### B attempt 4 审查记录
 
 - 执行器／传输：`codex-cli 0.143.0`，model `gpt-5.5`，medium；
   child session `019fb3a0-832a-7dd2-a880-796d5b824397`。stdin 中的
@@ -855,7 +855,7 @@ Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 
   的负面测量写为第一优先级。对象、输入 SHA、视觉权威、状态与禁止内容均
   不变，仍在已授权 repair envelope 内。
 
-## B attempt 5 审查记录
+### B attempt 5 审查记录
 
 - 执行器／传输：`codex-cli 0.143.0`，model `gpt-5.5`，medium；
   child session `019fb3b4-1ce9-7111-b1aa-6595f9e4a7e2`。stdin 中的
@@ -907,11 +907,17 @@ Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 
   它确认两个底条在十八行中的信息层级与可读性仍然成立，但会把约
   `8.40:1`／`8.34:1` 的源物件非等比拉伸成 `12.44:1`；按本合同不能
   自动成为 source 例外。
-- 判定：`candidate-rejected / repair-budget-exhausted / P3`。B 已完成
+- 判定：生成终态为 `candidate-rejected / repair-budget-exhausted / P3`，
+  产品终态为 `user-rejected / scope-removed / P3`。B 已完成
   五次实际生成／编辑，禁止 attempt 6。attempt 1–5 都不得自动进入
-  `assets/source/` 或 runtime。可供用户下一步决定的只有：明确接受某一
-  候选并单独授权确定性 bbox-fit source 例外；改变 source 策略后以新版本
-  和新预算重开；或拒绝 B、继续使用当前连续纸面与 V1 fallback。
+  `assets/source/` 或 runtime。用户已选择继续使用当前连续纸面；不再创建
+  地区条或任务条底板。
+
+## 尝试摘要
+
+A 在 `4/5` 后由用户移出范围；B 在 `5/5` 耗尽后由用户移出范围。两段均
+没有 source/runtime，全部候选只作为 Git 与 ignored `generated/` 中的审查
+证据。当前产品决定是保留连续书页，不再增加列表内框、地区条或任务条底板。
 
 ## 下一门禁
 
@@ -926,7 +932,6 @@ Image 3，并确认 B 在 `3/5` 后最多再两次。attempt 4／5 均已产生�
 repair-budget-exhausted / P3`。不得调用 attempt 6，不得自动建立 source
 或 runtime。
 
-下一门禁为用户决定其一：明确接受指定候选的运行时视觉并单独授权确定性
-bbox-fit source 合同例外；改变 source 策略、合同与预算后以新版本重开；
-或拒绝 B 并继续使用当前连续纸面与 V1 fallback。用户决定前不执行任何
-生成、source 晋级、runtime 导出或清理。
+用户于 `2026-07-31` 已作出最终产品决定：当前书本主体可接受，不再增加框，
+并停止地区条／任务条底板路线。A／B 均不执行任何后续生成、source 晋级或
+runtime 导出；本文件只保留合同、授权、预算与失败审查证据。

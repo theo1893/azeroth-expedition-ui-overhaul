@@ -211,21 +211,29 @@ def main() -> None:
     assert "chat-runtime=" in bootstrap
     assert "quest-runtime=" in bootstrap
     assert 'elseif command == "quests" then' in bootstrap
+    assert "function addon:RunModuleMethod" in bootstrap
+    assert "pcall(module[methodName], module)" in bootstrap
 
     quest_source = (aeui / "Modules" / "Quests.lua").read_text(
         encoding="utf-8"
     )
-    assert 'Quests.runtimeContract = "1.4"' in quest_source
+    assert 'Quests.runtimeContract = "1.6"' in quest_source
     assert "QuestLogShellV4" in quest_source
     assert "QuestLogDirectoryMarksV1" in quest_source
-    assert "QuestLogSelectionBookmarkV1" in quest_source
+    assert "QuestLogSelectionBookmarkV1" not in quest_source
     assert "QuestLogTitleButtonTemplate" in quest_source
     assert "FauxScrollFrame_GetOffset" in quest_source
     assert "IsQuestWatched" in quest_source
-    assert "GetQuestLogSelection" in quest_source
+    assert "GetQuestLogSelection" not in quest_source
     assert "CaptureAndHideNativeTextures" in quest_source
     assert "SuppressNativeRowSelection" in quest_source
     assert "ApplyDetailTextGeometry" in quest_source
+    assert "HideCollapseAllButton" in quest_source
+    assert "aeuiQuestCollapseSuppressed" in quest_source
+    assert "StyleLeatherButton" in quest_source
+    assert "HideDetailScrollbar" in quest_source
+    assert "InstallDetailMouseWheel" in quest_source
+    assert "QuestLogDetailScrollFrameScrollBar" in quest_source
     assert "ToggleDetail" in quest_source
     assert 'addon:RegisterModule("Quests", Quests)' in quest_source
     assert (aeui / "Media" / "Quests" / "QuestLogShellV4.tga").is_file()
@@ -245,7 +253,9 @@ def main() -> None:
     assert "ChatPanelSegment" not in chat_source
     assert "SuppressLegacyInfoPanels" in chat_source
     assert "SuppressRightChat" in chat_source
-    assert 'Chat.runtimeContract = "1.6"' in chat_source
+    assert 'Chat.runtimeContract = "1.7"' in chat_source
+    assert "EnsureBookVisible" in chat_source
+    assert 'owner:EnableDrawLayer("BACKGROUND")' in chat_source
     assert "InstallPfUIHooks" in chat_source
     assert "InstallOwnerScaleHook" in chat_source
     assert "ObserveOwnerScale" in chat_source

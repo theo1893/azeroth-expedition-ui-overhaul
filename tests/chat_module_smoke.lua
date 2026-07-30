@@ -47,9 +47,11 @@ function Object:RegisterEvent(value)
 end
 function Object:SetFrameStrata() end
 function Object:SetFrameLevel() end
+function Object:EnableDrawLayer(value) self.enabledDrawLayer = value end
 function Object:SetBlendMode() end
 function Object:SetAlpha(value) self.alpha = value end
 function Object:SetTexture(value) self.texture = value end
+function Object:GetTexture() return self.texture end
 function Object:SetVertexColor(...) self.vertexColor = { ... } end
 function Object:SetTexCoord(...) self.texcoord = { ... } end
 function Object:SetBackdropColor(...) self.backdropColor = { ... } end
@@ -344,6 +346,19 @@ assert(
   left.aeuiBookSlices.center.texture:find("ChatBookFrameV3"),
   "V3 chat book texture was not mounted"
 )
+assert(
+  left.enabledDrawLayer == "BACKGROUND" and
+    left.aeuiBookRuntimeVersion == "1.7",
+  "chat book background layer or runtime marker was not restored"
+)
+left.aeuiBookSlices.center:SetTexture(nil)
+left.aeuiBookRuntimeVersion = nil
+AzerothExpeditionUI.modules.Chat:Maintain()
+assert(
+  left.aeuiBookSlices.center.texture:find("ChatBookFrameV3") and
+    left.aeuiBookRecoveredAt,
+  "chat maintenance did not recover a stripped book texture"
+)
 assert(#ChatFrame1.points == 2, "docked chat frame was not inset")
 assert(#input.points == 2, "pfUI input frame was not integrated")
 assert(not rightChat:IsShown(), "right chat container was not suppressed")
@@ -462,7 +477,7 @@ assert(
   "status command did not report the native-first route"
 )
 assert(
-  string.find(statusMessage, "chat-runtime=1.6", 1, true),
+  string.find(statusMessage, "chat-runtime=1.7", 1, true),
   "status command did not report the chat runtime contract"
 )
 assert(
@@ -715,5 +730,25 @@ assert(
   ChatFrameEditBox.aeuiInputState == "normal",
   "chat input did not return to its normal atlas state"
 )
+
+local healthyProbeCalls = 0
+AzerothExpeditionUI:RegisterModule("FailureProbe", {
+  Apply = function()
+    error("intentional module isolation probe")
+  end,
+})
+AzerothExpeditionUI:RegisterModule("HealthyProbe", {
+  Apply = function()
+    healthyProbeCalls = healthyProbeCalls + 1
+  end,
+})
+AzerothExpeditionUI:Refresh()
+assert(
+  healthyProbeCalls == 1 and
+    AzerothExpeditionUI.moduleFailures["FailureProbe:Apply"],
+  "one failed module prevented an unrelated module refresh"
+)
+AzerothExpeditionUI.modules.FailureProbe = nil
+AzerothExpeditionUI.modules.HealthyProbe = nil
 
 print("chat module smoke test passed")

@@ -36,16 +36,30 @@ function Object:RegisterEvent(value)
   self.events = self.events or {}
   self.events[value] = true
 end
+function Object:GetName() return self.name end
 function Object:GetObjectType() return self.objectType end
 function Object:IsObjectType(value) return self.objectType == value end
-function Object:SetTexture(value) self.texture = value end
+function Object:SetTexture(...)
+  self.textureArgs = { ... }
+  if select("#", ...) == 1 then
+    self.texture = select(1, ...)
+  else
+    self.texture = nil
+  end
+end
 function Object:SetTexCoord(...) self.texcoord = { ... } end
 function Object:SetVertexColor(...) self.vertexColor = { ... } end
 function Object:SetBackdropColor(...) self.backdropColor = { ... } end
 function Object:SetBackdropBorderColor(...) self.borderColor = { ... } end
 function Object:SetAlpha(value) self.alpha = value end
-function Object:SetText(value) self.text = value end
+function Object:SetText(value)
+  self.text = value
+  if self.fontString then
+    self.fontString.text = value
+  end
+end
 function Object:GetText() return self.text end
+function Object:SetTextColor(...) self.textColor = { ... } end
 function Object:SetID(value) self.id = value end
 function Object:GetID() return self.id end
 function Object:SetFont(...) self.font = { ... } end
@@ -80,9 +94,28 @@ function Object:Hide()
     self.scripts.OnHide()
   end
 end
-function Object:Enable() self.enabled = true end
-function Object:Disable() self.enabled = false end
+function Object:Enable()
+  local changed = not self.enabled
+  self.enabled = true
+  if changed and self.scripts.OnEnable then
+    self.scripts.OnEnable()
+  end
+end
+function Object:Disable()
+  local changed = self.enabled
+  self.enabled = false
+  if changed and self.scripts.OnDisable then
+    self.scripts.OnDisable()
+  end
+end
 function Object:IsEnabled() return self.enabled end
+function Object:EnableMouse(value) self.mouseEnabled = value end
+function Object:EnableMouseWheel(value) self.mouseWheelEnabled = value end
+function Object:GetVerticalScroll() return self.verticalScroll or 0 end
+function Object:SetVerticalScroll(value) self.verticalScroll = value end
+function Object:GetVerticalScrollRange()
+  return self.verticalScrollRange or 0
+end
 function Object:GetRegions() return table.unpack(self.regions) end
 function Object:CreateTexture(name, layer)
   local texture = NewObject(name, self, "Texture")
@@ -93,6 +126,11 @@ end
 function Object:GetNormalTexture() return self.normalTexture end
 function Object:GetHighlightTexture() return self.highlightTexture end
 function Object:GetPushedTexture() return self.pushedTexture end
+function Object:GetDisabledTexture() return self.disabledTexture end
+function Object:GetCheckedTexture() return self.checkedTexture end
+function Object:GetThumbTexture() return self.thumbTexture end
+function Object:GetChecked() return self.checked end
+function Object:SetChecked(value) self.checked = value and true or false end
 function Object:SetNormalTexture(value)
   if not self.normalTexture then
     self.normalTexture =
@@ -100,11 +138,39 @@ function Object:SetNormalTexture(value)
   end
   self.normalTexture:SetTexture(value)
 end
+function Object:SetHighlightTexture(value)
+  if not self.highlightTexture then
+    self.highlightTexture =
+      NewObject(self.name and self.name .. "Highlight", self, "Texture")
+  end
+  self.highlightTexture:SetTexture(value)
+end
+function Object:SetPushedTexture(value)
+  if not self.pushedTexture then
+    self.pushedTexture =
+      NewObject(self.name and self.name .. "PushedTexture", self, "Texture")
+  end
+  self.pushedTexture:SetTexture(value)
+end
+function Object:SetDisabledTexture(value)
+  if not self.disabledTexture then
+    self.disabledTexture =
+      NewObject(self.name and self.name .. "DisabledTexture", self, "Texture")
+  end
+  self.disabledTexture:SetTexture(value)
+end
+function Object:SetCheckedTexture(value)
+  if not self.checkedTexture then
+    self.checkedTexture =
+      NewObject(self.name and self.name .. "CheckedTexture", self, "Texture")
+  end
+  self.checkedTexture:SetTexture(value)
+end
 
 function CreateFrame(objectType, name, parent, template)
   local frame = NewObject(name, parent, objectType)
   frame.template = template
-  if template == "QuestLogTitleButtonTemplate" then
+  if objectType == "Button" or objectType == "CheckButton" then
     frame.fontString =
       NewObject(name and name .. "Text", frame, "FontString")
     frame.normalTexture =
@@ -113,6 +179,14 @@ function CreateFrame(objectType, name, parent, template)
       NewObject(name and name .. "Highlight", frame, "Texture")
     frame.pushedTexture =
       NewObject(name and name .. "PushedTexture", frame, "Texture")
+    frame.disabledTexture =
+      NewObject(name and name .. "DisabledTexture", frame, "Texture")
+    if objectType == "CheckButton" then
+      frame.checkedTexture =
+        NewObject(name and name .. "CheckedTexture", frame, "Texture")
+    end
+  end
+  if template == "QuestLogTitleButtonTemplate" then
     NewObject(name and name .. "Check", frame, "Texture")
   end
   return frame
@@ -211,8 +285,23 @@ QuestLogQuestCount =
 QuestLogQuestCount:SetText("12/20")
 QuestLogCollapseAllButton =
   CreateFrame("Button", "QuestLogCollapseAllButton", QuestLogFrame)
+QuestLogCollapseAllButton:SetText("全部")
+QuestLogCollapseAllButton.icon =
+  CreateFrame(
+    "Button",
+    "QuestLogCollapseAllButtonCollapseButton",
+    QuestLogCollapseAllButton
+  )
+QuestLogCollapseAllButton.icon.mouseEnabled = true
+QuestLogCollapseAllButton.icon.text =
+  NewObject(
+    "QuestLogCollapseAllButtonCollapseButtonText",
+    QuestLogCollapseAllButton.icon,
+    "FontString"
+  )
 QuestLogFrameLevelsCheckButton =
   CreateFrame("CheckButton", "QuestLogFrameLevelsCheckButton", QuestLogFrame)
+QuestLogFrameLevelsCheckButton:SetChecked(true)
 QuestLogTrack =
   CreateFrame("CheckButton", "QuestLogTrack", QuestLogFrame)
 QuestLogTrackTitle =
@@ -227,13 +316,54 @@ local nativeListTexture =
     "QuestLogNativeListTexture",
     "BACKGROUND"
   )
+QuestLogListScrollFrameScrollBar =
+  CreateFrame(
+    "Slider",
+    "QuestLogListScrollFrameScrollBar",
+    QuestLogListScrollFrame
+  )
+QuestLogListScrollFrameScrollBar.mouseEnabled = true
+QuestLogListScrollFrameScrollBar.thumbTexture =
+  QuestLogListScrollFrameScrollBar:CreateTexture(
+    "QuestLogListScrollFrameScrollBarThumbTexture",
+    "ARTWORK"
+  )
 
 QuestLogDetailScrollFrame =
   CreateFrame("ScrollFrame", "QuestLogDetailScrollFrame", QuestLogFrame)
+QuestLogDetailScrollFrame.verticalScrollRange = 140
+local detailWheelCalls = 0
+QuestLogDetailScrollFrame:SetScript("OnMouseWheel", function()
+  detailWheelCalls = detailWheelCalls + 1
+end)
 local nativeDetailTexture =
   QuestLogDetailScrollFrame:CreateTexture(
     "QuestLogNativeDetailTexture",
     "BACKGROUND"
+  )
+QuestLogDetailScrollFrameScrollBar =
+  CreateFrame(
+    "Slider",
+    "QuestLogDetailScrollFrameScrollBar",
+    QuestLogDetailScrollFrame
+  )
+QuestLogDetailScrollFrameScrollBar.mouseEnabled = true
+QuestLogDetailScrollFrameScrollBar.thumbTexture =
+  QuestLogDetailScrollFrameScrollBar:CreateTexture(
+    "QuestLogDetailScrollFrameScrollBarThumbTexture",
+    "ARTWORK"
+  )
+QuestLogDetailScrollFrameScrollBarScrollUpButton =
+  CreateFrame(
+    "Button",
+    "QuestLogDetailScrollFrameScrollBarScrollUpButton",
+    QuestLogDetailScrollFrameScrollBar
+  )
+QuestLogDetailScrollFrameScrollBarScrollDownButton =
+  CreateFrame(
+    "Button",
+    "QuestLogDetailScrollFrameScrollBarScrollDownButton",
+    QuestLogDetailScrollFrameScrollBar
   )
 QuestLogDetailScrollChildFrame =
   CreateFrame(
@@ -335,12 +465,15 @@ end
 QuestLogFrameAbandonButton =
   CreateFrame("Button", "QuestLogFrameAbandonButton", QuestLogFrame)
 QuestLogFrameAbandonButton:SetHeight(20)
+QuestLogFrameAbandonButton:SetText("放弃任务")
 QuestFramePushQuestButton =
   CreateFrame("Button", "QuestFramePushQuestButton", QuestLogFrame)
 QuestFramePushQuestButton:SetHeight(20)
+QuestFramePushQuestButton:SetText("共享任务")
 QuestFrameExitButton =
   CreateFrame("Button", "QuestFrameExitButton", QuestLogFrame)
 QuestFrameExitButton:SetHeight(20)
+QuestFrameExitButton:SetText("退出")
 
 local abandonCalls = 0
 local abandonScript = function()
@@ -366,7 +499,7 @@ AzerothExpeditionUI:Refresh()
 assert(QuestLogFrame:GetWidth() == 676, "quest shell width was not applied")
 assert(QuestLogFrame:GetHeight() == 464, "quest shell height was not applied")
 assert(
-  QuestLogFrame.aeuiQuestRuntimeContract == "1.4",
+  QuestLogFrame.aeuiQuestRuntimeContract == "1.6",
   "quest runtime contract was not recorded"
 )
 assert(QuestLogFrame.aeuiQuestShell, "quest shell texture was not created")
@@ -439,12 +572,38 @@ assert(
     countY == -52,
   "quest count was not constrained to the left-page control row"
 )
-local collapsePoint, collapseRelative =
-  QuestLogCollapseAllButton:GetPoint()
 assert(
-  collapsePoint == "BOTTOMLEFT" and
-    collapseRelative == QuestLogListScrollFrame,
-  "collapse-all control was not anchored to the list safe area"
+  not QuestLogCollapseAllButton:IsShown() and
+    not QuestLogCollapseAllButton:IsEnabled() and
+    QuestLogCollapseAllButton.mouseEnabled == false,
+  "collapse-all button remained visible or interactive"
+)
+assert(
+  not QuestLogCollapseAllButton.icon:IsShown() and
+    QuestLogCollapseAllButton.icon.mouseEnabled == false and
+    not QuestLogCollapseAllButton.aeuiQuestInkWash,
+  "pfUI collapse glyph or retired ink treatment remained active"
+)
+QuestLogCollapseAllButton:Show()
+assert(
+  not QuestLogCollapseAllButton:IsShown(),
+  "collapse-all button returned after an external Show call"
+)
+local levelsPoint, levelsRelative, levelsRelativePoint,
+  levelsX, levelsY =
+  QuestLogFrameLevelsCheckButton:GetPoint()
+assert(
+  levelsPoint == "TOPLEFT" and
+    levelsRelative == QuestLogFrame and
+    levelsRelativePoint == "TOPLEFT" and
+    levelsX == 138 and
+    levelsY == -46,
+  "quest-level control still depended on the removed collapse button"
+)
+assert(
+  QuestLogQuestCount.font[1]:find("NotoSerifSC%-SemiBold.ttf") and
+    QuestLogQuestCount.textColor[1] == 0.24,
+  "quest count did not receive the book-ink typography"
 )
 local trackPoint, trackRelative =
   QuestLogTrack:GetPoint()
@@ -456,9 +615,67 @@ assert(
   not QuestLogTrackTitle:IsShown(),
   "native tracking label overlapped the quest count"
 )
+for _, toggle in ipairs({
+  QuestLogFrameLevelsCheckButton,
+  QuestLogTrack,
+}) do
+  assert(
+    toggle:GetWidth() == 14 and toggle:GetHeight() == 14,
+    "top tracking control did not use the compact ink-mark hit box"
+  )
+  assert(
+    toggle:GetNormalTexture().texture:find(
+      "QuestLogDirectoryMarksV1"
+    ) and
+      toggle:GetCheckedTexture().texture:find(
+        "QuestLogDirectoryMarksV1"
+      ),
+    "top tracking control did not reuse the accepted ink atlas"
+  )
+end
 assert(
   QuestLogFrameAbandonButton:GetScript("OnClick") == abandonScript,
   "quest action behavior was replaced by the visual adapter"
+)
+for _, button in ipairs({
+  QuestLogFrameAbandonButton,
+  QuestFramePushQuestButton,
+  QuestFrameExitButton,
+}) do
+  assert(
+    button:GetWidth() == 78 and button:GetHeight() == 22,
+    "bottom action button geometry is outside the shell safe area"
+  )
+  assert(
+    button.aeuiQuestLeatherBase and
+      button.aeuiQuestLeatherTop and
+      button.aeuiQuestLeatherBottom and
+      button.aeuiQuestLeatherHover and
+      button.aeuiQuestLeatherPressed and
+      button.aeuiQuestLeatherDisabled,
+    "bottom action button did not receive the leather clasp treatment"
+  )
+  assert(
+    button.font[1]:find("NotoSerifSC%-SemiBold.ttf"),
+    "bottom action button did not use the quest title font"
+  )
+end
+assert(
+  not QuestLogDetailScrollFrameScrollBar:IsShown() and
+    not QuestLogDetailScrollFrameScrollBar.thumbTexture:IsShown() and
+    not QuestLogDetailScrollFrameScrollBarScrollUpButton:IsShown() and
+    not QuestLogDetailScrollFrameScrollBarScrollDownButton:IsShown(),
+  "right-page scrollbar chrome remained visible"
+)
+assert(
+  QuestLogDetailScrollFrameScrollBar.mouseEnabled == false and
+    QuestLogDetailScrollFrame.mouseWheelEnabled == true,
+  "hidden detail scrollbar did not hand reading control to the page"
+)
+assert(
+  QuestLogListScrollFrameScrollBar:IsShown() and
+    QuestLogListScrollFrameScrollBar.mouseEnabled == true,
+  "left-page list scrollbar was hidden with the detail scrollbar"
 )
 assert(AzerothExpeditionUIDB.sentinel == "preserve")
 
@@ -474,12 +691,11 @@ for index = 1, 23 do
   assert(
     row.highlightTexture.alpha == 0 and
       row.pushedTexture.alpha == 0,
-    "native row selection visual remained above QL-B2"
+    "native row selection visual remained visible"
   )
   assert(
     row.aeuiQuestRegionToggle and
-      row.aeuiQuestListCheck and
-      row.aeuiQuestSelection,
+      row.aeuiQuestListCheck,
     "quest directory overlays were not created"
   )
   assert(
@@ -495,26 +711,19 @@ for index = 1, 23 do
     "quest tracking mark did not mount the accepted atlas"
   )
   assert(
-    row.aeuiQuestSelection.texture:find(
-      "QuestLogSelectionBookmarkV1"
-    ),
-    "quest selection did not mount the accepted atlas"
-  )
-  assert(
-    row.aeuiQuestSelection.layer == "BORDER" and
-      row.aeuiQuestSelection:GetWidth() == 32 and
-      row.aeuiQuestSelection:GetHeight() == 16,
-    "quest selection Texture contract is incorrect"
+    not row.aeuiQuestSelection or
+      not row.aeuiQuestSelection:IsShown(),
+    "wine-red selection bookmark should be hidden"
   )
   local _, _, _, textX, textY = row.fontString:GetPoint()
   assert(
     textX == 18 and textY == 0,
-    "quest text did not preserve the QL-B2 safe area"
+    "quest text did not preserve the directory-mark safe area"
   )
 end
 assert(
   QuestLogHighlightFrame.alpha == 0,
-  "native full-row selection frame remained above QL-B2"
+  "native full-row selection frame remained visible"
 )
 assert(
   QuestLogTitle1.aeuiQuestRegionToggle:IsShown() and
@@ -547,94 +756,44 @@ assert(
   "native quest tracking texture remained visible"
 )
 
-local function visibleSelectionCount()
-  local count = 0
-  for index = 1, 23 do
-    if _G["QuestLogTitle" .. index].aeuiQuestSelection:IsShown() then
-      count = count + 1
-    end
-  end
-  return count
-end
-
 assert(
-  QuestLogTitle2.aeuiQuestSelection:IsShown() and
-    QuestLogTitle2.aeuiQuestSelection.texcoord[1] == 0 and
-    QuestLogTitle2.aeuiQuestSelection.texcoord[2] == 0.25,
-  "selected quest did not use the base bookmark state"
-)
-assert(
-  visibleSelectionCount() == 1,
-  "more than one visible quest row has a selection bookmark"
-)
-local _, _, _, selectionX, selectionY =
-  QuestLogTitle2.aeuiQuestSelection:GetPoint()
-assert(
-  selectionX == -12 and selectionY == 0,
-  "selected bookmark anchor does not match the runtime manifest"
+  QuestLogTitle2:GetScript("OnEnter") == originalQuestRowEnter and
+    QuestLogTitle2:GetScript("OnLeave") == originalQuestRowLeave and
+    QuestLogTitle2:GetScript("OnMouseDown") ==
+      originalQuestRowMouseDown and
+    QuestLogTitle2:GetScript("OnMouseUp") ==
+      originalQuestRowMouseUp and
+    QuestLogTitle2:GetScript("OnClick") == originalQuestRowClick,
+  "hiding the bookmark must not wrap quest-row interaction"
 )
 
 QuestLogTitle2:GetScript("OnEnter")()
 assert(originalQuestRowEnterCalls == 1)
-assert(
-  QuestLogTitle2.aeuiQuestSelection.texcoord[1] == 0.25,
-  "selected-hover state was not mapped"
-)
 QuestLogTitle2:GetScript("OnMouseDown")("RightButton")
 assert(originalQuestRowMouseDownCalls == 1)
-assert(
-  QuestLogTitle2.aeuiQuestSelection.texcoord[1] == 0.25,
-  "right click incorrectly entered the pressed state"
-)
 QuestLogTitle2:GetScript("OnMouseDown")("LeftButton")
 assert(originalQuestRowMouseDownCalls == 2)
-local _, _, _, pressedX, pressedY =
-  QuestLogTitle2.aeuiQuestSelection:GetPoint()
-assert(
-  QuestLogTitle2.aeuiQuestSelection.texcoord[1] == 0.5 and
-    pressedX == -12 and
-    pressedY == -1,
-  "selected-pressed state or anchor offset was not mapped"
-)
 QuestLogTitle2:GetScript("OnMouseUp")("LeftButton")
 assert(originalQuestRowMouseUpCalls == 1)
-assert(
-  QuestLogTitle2.aeuiQuestSelection.texcoord[1] == 0.25,
-  "mouse-up did not return the selected row to hover"
-)
 QuestLogTitle2:GetScript("OnLeave")()
 assert(originalQuestRowLeaveCalls == 1)
-assert(
-  QuestLogTitle2.aeuiQuestSelection.texcoord[1] == 0,
-  "mouse leave did not return the selected row to base"
-)
-QuestLogTitle2:GetScript("OnMouseDown")("LeftButton")
 QuestLogTitle2:GetScript("OnClick")()
 assert(
   originalQuestRowClickCalls == 1,
   "existing quest row OnClick behavior was not preserved"
 )
-assert(
-  QuestLogTitle2.aeuiQuestSelection.texcoord[1] == 0,
-  "click did not clear the transient pressed state"
-)
 
 selectedQuestIndex = 3
 QuestLog_Update()
-assert(
-  not QuestLogTitle2.aeuiQuestSelection:IsShown() and
-    QuestLogTitle3.aeuiQuestSelection:IsShown() and
-    visibleSelectionCount() == 1,
-  "selection API refresh did not move the bookmark"
-)
-selectedQuestIndex = 1
-QuestLog_Update()
-assert(
-  visibleSelectionCount() == 0,
-  "header selection incorrectly displayed a bookmark"
-)
 selectedQuestIndex = 2
 QuestLog_Update()
+for index = 1, 23 do
+  assert(
+    not _G["QuestLogTitle" .. index].aeuiQuestSelection or
+      not _G["QuestLogTitle" .. index].aeuiQuestSelection:IsShown(),
+    "selection refresh restored the hidden wine-red bookmark"
+  )
+end
 assert(
   QuestLogTitle1.font[1]:find("LXGWWenKaiGB%-Medium.ttf"),
   "quest row font does not match the module baseline"
@@ -672,23 +831,7 @@ assert(
   QuestLogTitle1.aeuiQuestListCheck:IsShown(),
   "scroll offset was not applied to the visible row mapping"
 )
-assert(
-  QuestLogTitle1.aeuiQuestSelection:IsShown() and
-    not QuestLogTitle2.aeuiQuestSelection:IsShown() and
-    visibleSelectionCount() == 1,
-  "selection did not follow the absolute quest index after scrolling"
-)
 fauxOffset = 0
-QuestLog_Update()
-
-local savedGetQuestLogSelection = GetQuestLogSelection
-GetQuestLogSelection = nil
-QuestLog_Update()
-assert(
-  visibleSelectionCount() == 0,
-  "AEUI selection art guessed a state without the selection API"
-)
-GetQuestLogSelection = savedGetQuestLogSelection
 QuestLog_Update()
 
 local savedIsQuestWatched = IsQuestWatched
@@ -705,10 +848,80 @@ assert(
 IsQuestWatched = savedIsQuestWatched
 QuestLog_Update()
 
+local detailWheel = QuestLogDetailScrollFrame:GetScript("OnMouseWheel")
+detailWheel(-1)
+assert(
+  detailWheelCalls == 1 and
+    QuestLogDetailScrollFrame:GetVerticalScroll() == 28,
+  "detail mouse wheel did not preserve the native script and scroll down"
+)
+detailWheel(-10)
+assert(
+  QuestLogDetailScrollFrame:GetVerticalScroll() == 140,
+  "detail mouse wheel did not clamp to the scroll range"
+)
+detailWheel(10)
+assert(
+  QuestLogDetailScrollFrame:GetVerticalScroll() == 0,
+  "detail mouse wheel did not clamp at the top of the page"
+)
+QuestLogDetailScrollFrameScrollBar:Show()
+assert(
+  not QuestLogDetailScrollFrameScrollBar:IsShown(),
+  "detail scrollbar returned after an external Show call"
+)
+
+local abandonEnter =
+  QuestLogFrameAbandonButton:GetScript("OnEnter")
+local abandonLeave =
+  QuestLogFrameAbandonButton:GetScript("OnLeave")
+local abandonDown =
+  QuestLogFrameAbandonButton:GetScript("OnMouseDown")
+local abandonUp =
+  QuestLogFrameAbandonButton:GetScript("OnMouseUp")
+abandonEnter()
+assert(
+  QuestLogFrameAbandonButton.aeuiQuestLeatherHover:IsShown(),
+  "bottom action hover state was not rendered"
+)
+abandonDown("RightButton")
+assert(
+  not QuestLogFrameAbandonButton.aeuiQuestLeatherPressed:IsShown(),
+  "right click incorrectly activated the action pressed state"
+)
+abandonDown("LeftButton")
+assert(
+  QuestLogFrameAbandonButton.aeuiQuestLeatherPressed:IsShown(),
+  "left click did not activate the action pressed state"
+)
+abandonUp("LeftButton")
+assert(
+  QuestLogFrameAbandonButton.aeuiQuestLeatherHover:IsShown() and
+    not QuestLogFrameAbandonButton.aeuiQuestLeatherPressed:IsShown(),
+  "mouse-up did not restore the action hover state"
+)
+abandonLeave()
+QuestLogFrameAbandonButton:Disable()
+assert(
+  QuestLogFrameAbandonButton.aeuiQuestLeatherDisabled:IsShown(),
+  "disabled action button did not receive its muted state"
+)
+QuestLogFrameAbandonButton:Enable()
+assert(
+  not QuestLogFrameAbandonButton.aeuiQuestLeatherDisabled:IsShown(),
+  "enabled action button retained its disabled overlay"
+)
+
 assert(QuestLogFrameExpandButton, "real detail toggle Button was not created")
 assert(
   QuestLogFrameExpandButton.template == "UIPanelButtonTemplate",
   "detail toggle did not use a real Button template"
+)
+assert(
+  QuestLogFrameExpandButton:GetWidth() == 24 and
+    QuestLogFrameExpandButton:GetHeight() == 22 and
+    QuestLogFrameExpandButton.aeuiQuestLeatherBase,
+  "detail toggle did not join the bottom leather control row"
 )
 QuestLogFrameExpandButton:GetScript("OnClick")()
 assert(

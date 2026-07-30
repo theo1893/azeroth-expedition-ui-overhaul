@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local Chat = {}
-Chat.runtimeContract = "1.6"
+Chat.runtimeContract = "1.7"
 
 local CHAT_MEDIA = addon.media.root .. "Chat\\"
 local BOOK_TEXTURE = CHAT_MEDIA .. "ChatBookFrameV3"
@@ -566,6 +566,7 @@ function Chat:RestoreRuntimeLayout()
   local force = self.runtimeLayoutForce
   self.runtimeLayoutPending = nil
   self.runtimeLayoutForce = nil
+  self:EnsureBookVisible(owner)
   self:LayoutTabPanel(owner, force)
   self:LayoutChatFrames(owner, force)
   self:StyleTabs(owner)
@@ -641,6 +642,9 @@ function Chat:EnsureMinimumSize(owner)
 end
 
 function Chat:EnsureBook(owner)
+  if owner.EnableDrawLayer then
+    owner:EnableDrawLayer("BACKGROUND")
+  end
   MakeBackdropTransparent(owner)
   MakeBackdropTransparent(owner.panelTop)
 
@@ -739,6 +743,49 @@ function Chat:EnsureBook(owner)
   )
   owner.aeuiTabShelf:SetHeight(TAB_LAYOUT.shelfHeight)
   owner.aeuiTabShelf:Show()
+  owner.aeuiBookRuntimeVersion = self.runtimeContract
+end
+
+function Chat:EnsureBookVisible(owner)
+  if not owner then
+    return
+  end
+
+  local slices = owner.aeuiBookSlices
+  local center = slices and slices.center
+  local shelf = owner.aeuiTabShelf
+  local missing =
+    not center or
+    not center.IsShown or
+    not center:IsShown() or
+    not shelf or
+    not shelf.IsShown or
+    not shelf:IsShown()
+
+  if
+    not missing and
+    center.GetTexture and
+    not center:GetTexture()
+  then
+    missing = true
+  end
+  if
+    not missing and
+    shelf.GetTexture and
+    not shelf:GetTexture()
+  then
+    missing = true
+  end
+  if
+    owner.aeuiBookRuntimeVersion ~= self.runtimeContract
+  then
+    missing = true
+  end
+
+  if missing then
+    self:EnsureBook(owner)
+    owner.aeuiBookRecoveredAt = GetTime()
+  end
 end
 
 function Chat:LayoutTabPanel(owner, force)
@@ -1111,6 +1158,7 @@ function Chat:Maintain()
   end
 
   local owner = pfUI.chat.left
+  self:EnsureBookVisible(owner)
   self:ObserveOwnerScale(owner, true)
   if self.runtimeLayoutPending then
     self:RestoreRuntimeLayout()

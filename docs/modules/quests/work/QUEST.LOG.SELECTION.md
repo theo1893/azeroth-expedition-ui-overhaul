@@ -5,7 +5,8 @@
 - 模块：Quests / Quest Log 左页目录。
 - 组件 ID：`QUEST.LOG.SELECTION`。
 - 版本：`QL-B2 V1`。
-- 子状态：`runtime-exported`；确定性三态 atlas、adapter 与静态测试完成。
+- 子状态：`asset-retained / runtime-hidden`；确定性三态 atlas、manifest 与
+  exporter 保留，adapter 挂载已暂停。
 - 项目阶段：`P5`。
 - 固定执行器：`imagegen-0-143-0` /
   `@openai/codex@0.143.0`。
@@ -18,6 +19,10 @@
 - 生成授权：`2026-07-30` 明确授权 `QL-B2 V1`；允许每次上传固定 SHA 的
   Image 1／Image 2，允许同一循环前次输出仅在冻结边界内作为 edit 输入，
   最多 `5` 次固定 `imagegen-0-143-0` 实际生图／修图。
+- runtime 决定：用户于 `2026-07-31` 认为当前酒红书签在游戏内效果不佳，
+  要求先隐藏。自 runtime contract `1.5` 起不再引用 atlas、不再创建选择
+  Texture，也不包装任务行 hover／pressed／click 脚本；当前 `1.6` 继续
+  保持该决定。本决定不删除或否定已接受 source，恢复显示前需要新的明确确认。
 - 锁定视觉基准：
   - Image 1：
     `assets/locked/quests/任务详情面板_视觉基准_v1.png`

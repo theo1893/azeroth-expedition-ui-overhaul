@@ -3,6 +3,16 @@
 ## 当前结论
 
 - Quest Log 主视觉：已锁定。
+- 用户于 `2026-07-31` 接受当前游戏内书本主体，并明确要求停止增加列表内框、
+  地区条或任务条底板；后续只处理书本外的真实控件与交互反馈。
+- `2026-07-31` 最新实机反馈：启用魔改版 `pfQuest 7.0.1` 与配套
+  `pfQuest-turtle 7.0.2` 后，Quest Log
+  任务行、顶部控件与右页会被额外文字／按钮改写，整体布局失序；本轮停止
+  继续修补并登记为兼容 TODO。两份源码已复制到 `addon/`；必须先审计
+  加载顺序、真实 Frame 与 Hook，再恢复布局工作。
+- 同一外部插件提供的纵向任务追踪界面将作为下一轮 overhaul 对象；当前
+  `363 × 865` 结构参考与 `1009 × 629` Quest Log 冲突复现图已保存；
+  provider 已识别但对象合同仍未完成，两图都不是美术权威。
 - 用户于 `2026-07-30` 将 Quest Log 选为当前首要大面积 UI；地图与角色因
   实机对象几何尚未完成，继续保持后续顺位。
 - Quest Log 真实对象合同：`P1` 完成，QL-A 当前处于 `P4–P5`；QL-B1
@@ -49,14 +59,15 @@
   暖赭纸条，100% 十八行排版方向正确；attempt 4／5 edit 继续保住语义和
   美术，但都未执行固定 `800 × 64` bbox。最终 attempt 5 归一化上条约
   `830 × 99`、下条约 `831 × 100`，中心也错误，背景仍不是精确色键。
-  B 现为 `candidate-rejected / repair-budget-exhausted / P3`，不建立
-  source/runtime；不得 attempt 6。B 的设计范围仍只包含
+  B 在预算耗尽后又被用户明确移出范围，终态为
+  `user-rejected / scope-removed / P3`，不建立 source/runtime，也不得
+  attempt 6。B 的历史设计范围只包含
   `224 × 18` 地区条与任务条 base，
   四态确定性派生；顶部控件、ScrollBar 与按钮继续归 QL-C；
   QL-B1／B2 只在 V2 source 接受后从现有 accepted source 确定性重导出，
   QL-B3 继续暂停。原授权最坏总预算为 `10` 次；A 未使用第 5 次后有效最坏
-  总调用已达到 `9` 次。下一门禁是用户决定 B 的确定性 bbox-fit source
-  例外、改变 source 策略重开，或拒绝 B。
+  总调用已达到 `9` 次。该路线已关闭，不再等待 bbox-fit 例外或 source
+  策略决定。
 - `QL-B1 V1` 的固定执行循环在
   `candidate-rejected / P3 / repair-budget-exhausted` 终止。用户于
   `2026-07-30` 授权固定 Image 1／2、同循环 edit 输入和最多五次调用。
@@ -69,12 +80,12 @@
   改写成通过。透明母版、source/runtime manifest、`64 × 16` TGA、确定性
   exporter 和 adapter 已 tracked，当前为 `runtime-exported / P5`；固定
   执行器仍是 `5/5` 且接受后没有新增调用。
-- `QL-B0／B1 runtime`：adapter runtime contract 已升至 `1.4`。已创建／复用
+- `QL-B0／B1 runtime`：adapter runtime contract 已升至 `1.6`。已创建／复用
   `QuestLogTitle1..23`，使用 `224 × 15` 行盒／`14px` 步进和真实滚动偏移，
   从 `GetQuestLogTitle`／`IsQuestWatched` 切换四种 atlas 状态。覆盖 Texture
   不接管点击；原行脚本、选择、滚动与 SavedVariables 保留。实机发现的
   `QuestLogHighlightFrame` 与行内 highlight／pushed 旧选择视觉
-  已在每次刷新后透明抑制，避免其覆盖 QL-B2 书签。主标题使用 Noto Serif SC，
+  已在每次刷新后透明抑制。主标题使用 Noto Serif SC，
   任务行使用霞鹜文楷。该实现现在明确是 V1 fallback；V2 尚未改写 runtime。
 - QL-B1 真实排版预演：`676 × 464`／100% runtime，使用当前 QL-A2
   shell、全部 23 行、代表性中文任务内容与四态分布，SHA-256
@@ -92,16 +103,19 @@
   真实排版与第五张运行时 Alpha 完全一致。用户已明确接受该具体候选和
   一次性确定性 bbox-fit 合同例外；同 SHA 文件已晋级 tracked source。确定性
   exporter 已按 `24 × 14` content、`32 × 16` cell、三态同 Alpha 和第四
-  透明格合同生成 `128 × 16` TGA，adapter 已从
-  `GetQuestLogSelection()` 与原行 hover／left-press 脚本切换三态，当前
-  `runtime-exported / P5`。原始 attempt 5 的安全盒与纯色键失败仍作为
-  历史事实保留；接受后 ImageGen 调用为 `0`。
-- `QL-B2 runtime`：adapter runtime contract 已升至 `1.4`。每行创建一个
-  无鼠标 `BORDER` Texture；仅当前可见的非 header 选择行显示。Texture
-  使用 `x=-12`，selected／hover `y=0`，pressed `y=-1`；原
-  `OnEnter`／`OnLeave`／`OnMouseDown`／`OnMouseUp`／`OnClick` 先执行，
-  adapter 再刷新视觉。缺少选择 API 时隐藏覆盖，不改变点击、滚动或
-  SavedVariables。
+  透明格合同生成 `128 × 16` TGA。原始 attempt 5 的安全盒与纯色键失败仍作为
+  历史事实保留；接受后 ImageGen 调用为 `0`。用户于 `2026-07-31` 要求先
+  隐藏酒红书签，因此 source、manifest、exporter 与 TGA 均保留，但 adapter
+  runtime contract `1.6` 不再引用 atlas、不创建 `BORDER` Texture，也不再
+  包装任务行 hover／pressed／click 脚本；原生整行选择高亮继续透明抑制。
+- `QL-C runtime`：adapter runtime contract `1.6` 已完成第一批书本外控件。
+  Collapse All 真实 Button 与 pfUI `+`／`-` 子控件已完整隐藏、禁用且阻止
+  外部 `Show()` 回生；任务计数改为深墨字体；等级／追踪控件复用 QL-B1
+  墨圈 atlas。底部放弃、
+  分享、退出与详情开合保留原 Button／OnClick，并使用程序化暗皮革四状态。
+  最右侧 `QuestLogDetailScrollFrameScrollBar`、Thumb 与上下箭头隐藏且不
+  接收鼠标，详情页本体追加 `28px` 步进、按真实范围限位的鼠标滚轮；左页
+  列表滚动条不受影响。Lua 5.0 语法与 smoke 已通过，尚待 Turtle WoW 实机。
 - `QL-B3`：三类真实语义已拆为三个固定并列槽，类型／计时／状态可同时出现。
   [QL-B3 work](work/QUEST.LOG.STATUS.md) 已形成 A／B／C 三段完整
   生产正文：分别生成四类类型压印、单枚沙漏和同一蜡封的完整／破裂两态。
@@ -123,11 +137,11 @@
 |---|---|---:|---|---|
 | `QL-A1` | `QUEST.LOG.SHELL` 结构母版 | `P4` | [透明 source](../../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png) 已接受；原始 PNG 不直接加载，只允许 QL-A2 V4 确定性全幅导出 | Turtle WoW 中复核最终显示 |
 | `QL-A2` | 静态空卷宗结构与页沟 | `P5` V4 runtime-exported | V3.3 `15/15` 已终止；V4 已从 QL-A1 source 导出 `676 × 464` 显示区／`1024 × 512` TGA，固定执行器 `0/0`，Lua smoke 通过 | Turtle WoW 验证纹理方向、裁切、命中与 list-only |
-| `QL-B0` | 左页列表几何、地区条与任务条底板；独立内框已撤销 | V1 `P5 fallback`；V2 `P3 candidate-rejected / repair-budget-exhausted` | A attempt 1–4 已审查，随后由用户移出范围并停在 `4/5`，无 source/runtime；B `5/5`，平面底条语义、美术与真实排版已收敛，但固定 bbox／色键始终失败，无 source/runtime，见 [work](work/QUEST.LOG.LEFTPAGE.md) | 等待用户决定 bbox-fit source 例外／source 策略重开／拒绝；不得 attempt 6 |
+| `QL-B0` | 左页列表几何；内框、地区条与任务条底板均已撤销 | V1 `P5 fallback`；V2 `P3 user-rejected / scope-removed` | A 在 `4/5` 后由用户移出范围；B `5/5` 耗尽后也于 `2026-07-31` 被用户移出范围；均无 source/runtime，见 [work](work/QUEST.LOG.LEFTPAGE.md) | 保持当前连续书页，不再增加框或底板 |
 | `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P5 runtime-exported` | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；内部失败与 `5/5` 事实保留 | Turtle WoW 验证 TGA、四态切换、字体和 fallback |
-| `QL-B2` | 当前任务暗酒红书签三状态 | `P5 runtime-exported` | 用户接受 V1.r4 bbox-fit 合同例外；[source manifest](../../../assets/source/quests/ql-b2/QL-B2_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b2/QL-B2_RuntimeManifest_v1.json)、`128 × 16` TGA、exporter、三张真实排版预演与 adapter 已完成；历史 `5/5` 与三次流程错误保留，接受后 ImageGen `0` 次 | Turtle WoW 验证三态 UV、左缘位置、1px pressed、行重叠命中、滚动与 fallback |
+| `QL-B2` | 当前任务暗酒红书签三状态 | `P5 asset-retained / runtime-hidden` | 用户接受的 source、manifest、`128 × 16` TGA、exporter 与历史证据全部保留；`2026-07-31` 起 adapter 不再挂载或包装任务行脚本 | 暂缓；只有用户重新确认后才恢复 runtime |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
-| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作与辅助按钮 | `P1–P2` | 实机已证实 Collapse All、pfUI 等级／追踪控件、关闭与底部操作 Button；adapter 仅统一顶部安全区锚点，最终状态美术仍未生产 | 继续实机测量滚动条与按钮四态 |
+| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作与辅助按钮 | `P5 runtime-integrated` | contract `1.6` 已隐藏并禁用 Collapse All；保留深墨任务计数、QL-B1 追踪墨圈与底部程序化暗皮革四态；隐藏右页滚动条 chrome 并保留滚轮，左页滚动不变；Lua smoke 通过 | 外部任务插件关闭时复核基础布局；启用时的整体错位另列兼容 TODO |
 | `QL-D` | 奖励槽、分隔与文字安全区 | `P1–P2` | Quest Log 奖励只读，无 selected | 实机奖励数量与尺寸 |
 
 QL-A1 manifest 记录：
@@ -192,8 +206,8 @@ source 或 runtime。
   `e734bbf59da00f7fbc9c75649d33eaf635b5a0c19e1737128dfdce0db58eee8f`。
 - QL-B1 exporter：
   [`build_quest_log_directory_marks_v1.py`](../../../tools/build_quest_log_directory_marks_v1.py)；
-  adapter runtime contract `1.4`，Lua smoke 覆盖 23 行创建、四态、滚动偏移、
-  原脚本、整行旧高亮抑制与刷新后不回生。
+  adapter runtime contract `1.6`，Lua smoke 覆盖 23 行创建、四态、滚动偏移、
+  原脚本、整行旧高亮抑制、顶部墨圈复用与刷新后不回生。
 - QL-B2 V1 生产合同：
   [`QUEST.LOG.SELECTION.md`](work/QUEST.LOG.SELECTION.md)；当前为
   `runtime-exported / P5`，实际生图 `5/5`、流程错误 `3`；第五张 raw、
@@ -247,31 +261,46 @@ source 或 runtime。
   `QuestLogTrackTitle`，修复上一版计数锚点暴露出的“追踪任务/20”重叠。
   当前 V1 保持 `P5 fallback`。用户随后确认 `18 × 18` V2 方向；完整重启
   后的实机图进一步确认连续纸面与十八行布局稳定，因此独立列表内框已被用户
-  移除，地区条和任务条底板的真实对象、固定几何与完整生成正文继续有效。
+  移除。`2026-07-31` 用户进一步接受当前书本主体，并同时移除地区条／任务条
+  底板路线与酒红选择书签的 runtime 显示。contract `1.6` 转而隐藏
+  Collapse All，并保留顶部任务计数／追踪控件、底部操作 Button 与右页无
+  scrollbar chrome 的滚轮阅读；外部任务插件启用后的布局冲突已另列 TODO。
 
 ## 下一步
 
 QL-A2 保持 [runtime work](work/QUEST.LOG.GUTTER.md)，不得进入 `P6`／清理。
-runtime contract `1.4` 只修正顶部文字重叠，不把左页资源缺失改写成完成。
-用户已明确授权 [QL-B0 左页 V2 work](work/QUEST.LOG.LEFTPAGE.md) 中
-`QL-B0-A V2`／`QL-B0-B V2` 两段、固定 SHA 的 Image 1／2 上传和每段最多
-五次／最坏十次预算。A attempt 1–4 已计数并完成全套内审；attempt 4
-仍因外框厚度、可见材料占比与色键退回。用户在 A5 调用前移除独立内框，
-所以 A 停在 `4/5`，没有 source/runtime，未用额度不转给 B；取消记录已经
-提交。B 已执行 `5/5`；attempt 2／3 已去掉假徽记与金属牌匾，attempt
-4／5 edit 继续保持正确语义和美术，但归一化尺寸、中心与色键仍未通过。
-B 已按上限停止，不建立 source/runtime；等待用户决定确定性 bbox-fit
-source 合同例外、改变 source 策略重开，或拒绝 B。
-当前有效批次只覆盖地区条与任务条底板；
-顶部真实控件和 ScrollBar 继续留给 QL-C 独立拆分。
-QL-B2 V1 已在 `5/5` 停止；
-用户接受的 bbox-fit source、固定三态 atlas、adapter 与静态测试现已完成到
-P5，下一门禁仍是 Turtle WoW 实机验证，在此之前不得标记 P6 或清理 work。
+当前任务日志布局暂停继续修补。后续恢复时先处理以下兼容门禁：
+
+- 审计 pfQuest／pfQuest-turtle 的加载顺序、SavedVariables、
+  `QuestLogFrame` 写入点、替换函数与 Hook；
+- 分别在外部插件关闭／启用两种场景记录任务行、顶部任务计数、
+  等级／追踪墨圈、详情 ScrollChild 和底部按钮的最终 Point／Size；
+- 确认 Collapse All 在两种场景都不可见、不可点击且不会被外部 `Show()`
+  恢复；
+- 底部放弃／共享／退出／详情按钮的普通、悬停、按下、禁用与原脚本；
+- 最右侧详情滚动条始终不显示，长任务正文仍可用鼠标滚轮滚到首尾；
+- 左页列表滚动条不受影响，任务行不出现酒红书签或旧整行浅色高亮。
+
+外部 tracker 下一轮入口：
+
+- 结构参考：
+  [`01_external_quest_tracker_current_state.png`](../../../assets/references/quests/session-2026-07-31/01_external_quest_tracker_current_state.png)，
+  `363 × 865`，SHA-256
+  `88ecd502e190311c8709a6fd15e2cde6d1f5f288a749e5f5b318f7038e188504`；
+- Quest Log 兼容失败证据：
+  [`02_third_party_quest_plugin_layout_failure.png`](../../../assets/references/quests/session-2026-07-31/02_third_party_quest_plugin_layout_failure.png)，
+  `1009 × 629`，SHA-256
+  `36e172e15ea6c6939d4f2e784131ff0e9a9a51a926aaec046a95a21af5361faf`；
+- 两图只用于对象审计、信息层级与复现，不继承其字体、颜色、现代按钮或
+  其他美术表现。取得插件身份与 runtime 对象前不生成 tracker 资产。
+
+QL-B0 V2 的内框与两类底板均已由用户移出范围，不再等待 source 例外，也不
+继续 ImageGen。QL-B2 的 accepted source、atlas、manifest 与 exporter 保留，
+但 runtime 显示暂停；恢复前必须重新确认，在此之前不得清理 work 或删除资产。
 QL-B3-A／B／C V1 已获明确授权；当前
 A 已按五次上限停止。等待用户决定是否授权 attempt 4／5 的确定性色键合同
 例外、改变 source 策略重开 A，或拒绝现有视觉。决定前不执行 B／C、
-不晋级 source／runtime；QL-B3 不阻塞用户已选择的 QL-B0 V2 大面积左页
-路线。QL-A2／B1／B2 的当前 V1 资产继续作为 fallback 等待后续实机复核。
+不晋级 source／runtime。QL-A2／B1 当前 runtime 继续等待后续实机复核。
 每个 countable output 后必须完成真实排版内审与边界内自主修复。不得继续
 调用 QL-B2 V1 ImageGen。QL-B1 的旧计数保留为当时流程的历史事实，不作为
 新口径先例。
