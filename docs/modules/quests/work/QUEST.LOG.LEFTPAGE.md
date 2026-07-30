@@ -3,14 +3,14 @@
 ## 当前状态
 
 - 工作范围：`QL-B0-B V2`；`QL-B0-A V2` 已由用户移出范围。
-- 子状态：B `candidate-rejected / repair-prepared`；A
+- 子状态：B `candidate-rejected / repair-budget-exhausted`；A
   `user-rejected / scope-removed`。
 - 项目阶段：`P3`。
-- 授权正文状态：B attempt 1／2／3／4 已完成并退回；attempt 4 已逐字执行
-  `QL-B0-B V2.r3`，最后一次必须逐字使用本文件 `QL-B0-B V2.r4` 完整
-  正文。A V2.r4 只作为未执行草案，用户在任何 A5 provider 调用前明确取消
-  该对象，草案不得执行。
-- 当前实际生图：A `4/5`；B `4/5`。
+- 授权正文状态：B attempt 1／2／3／4／5 均已完成并退回；attempt 5
+  已逐字执行 `QL-B0-B V2.r4`，B 预算已经耗尽，不再存在可执行正文。
+  A V2.r4 只作为未执行草案，用户在任何 A5 provider 调用前明确取消该
+  对象，草案不得执行。
+- 当前实际生图：A `4/5`；B `5/5`。
 - 单段预算：最多 `5` 次实际生成／编辑。
 - 原授权最坏总预算：`10` 次实际生成／编辑；A 在 `4/5` 主动停止后，有效
   最坏总实际调用变为 `9` 次。
@@ -22,10 +22,11 @@
   `10` 次。
 - 当前门禁：用户已明确授权 `QL-B0-B V2.r3`、固定 SHA 的同循环
   attempt 3 raw 作为 Image 3，以及在 B `3/5` 后最多再两次的完整
-  in-envelope 修复循环。attempt 4 已返回并因 source bbox／色键退回；
-  继续使用相同固定 Image 1／2／3 与 V2.r4 执行最后的 B attempt 5；
-  不上传 attempt 4 raw，不执行 A attempt 5。任何 B 候选都只到 P3，
-  不自动晋级 source 或 runtime。
+  in-envelope 修复循环。attempt 4／5 均已返回并因 source bbox／色键
+  退回；B 已到 `5/5`，不得执行 attempt 6，不上传 attempt 4／5 raw，
+  不执行 A attempt 5，不自动晋级 source 或 runtime。等待用户决定是否
+  明确接受某一候选的确定性 bbox-fit source 例外、改变 source 策略重开
+  新版本，或拒绝 B。
 - V2.r4 完整正文 UTF-8 SHA-256：
   `84f6764d4817c2872dbb8800b17de6044698753bcc96887d880a01a2f57c0a2e`。
 
@@ -306,7 +307,7 @@ Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 
 区分，但不会把十八行目录变成十八块厚牌匾；没有任何被禁止的动态、状态或
 交互内容。
 
-## 当前执行正文 — QL-B0-B V2.r4
+## 最终执行正文 — QL-B0-B V2.r4
 
 使用 `@openai/codex@0.143.0` 的固定 ImageGen 编辑器。只编辑 Image 3，
 Image 1 与 Image 2 只作美术参照；不要把 Image 1 或 Image 2 当作待编辑
@@ -432,6 +433,7 @@ Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 
 | B | 2/5 | `QL-B0-B V2.r1`／`7962924` | generate | fixed child session `019fb386-2fd3-76e3-b11b-1828fec80275`；built-in `image_gen` 返回图片 | raw `generated/quests/QL-B0/v2/backplates/attempt-02/raw/QL-B0-B_V2_r1_attempt-02_raw.png`；SHA `0b948e68cb50c1bf10fede8dcb473f6d2b33680f81c6d29366895fae440effab` | source 几何／色键：语义已修正，但归一化两条均约 `916 × 102`，不是 `800 × 64`；背景中位色不是精确 `#00FF00` | 保留无端件、无金属框的平面暗橄榄／暖赭纸条和真实排版层级；V2.r2 以中心、画布百分比、112px 绿边距、64px 高度和 3px／2px 边厚收紧几何，只用固定 Image 1／2 重新生成 | `candidate-rejected`；B 为 `2/5` |
 | B | 3/5 | `QL-B0-B V2.r2`／`eddca40` | generate | fixed child session `019fb38e-19d1-7a70-9e4a-efdb8bff70c1`；built-in `image_gen` 返回图片 | raw `generated/quests/QL-B0/v2/backplates/attempt-03/raw/QL-B0-B_V2_r2_attempt-03_raw.png`；SHA `5ee6ba57d94006b0833bba1e96074d3ebeab8d3d8e7b8f233ebde3d664030721` | source 几何／色键：归一化两条均约 `885 × 104`，上条中心下移、下条中心上移，固定 cell 裁切丢失主体；背景仍非精确色键 | 保留两个平面纸条的综合色、自然边与无装饰语义；V2.r3 以本 raw 为同循环 Image 3，只缩放／移动到精确 bbox 并清除旧位置，Image 1／2 权威不变 | `candidate-rejected`；B 为 `3/5` |
 | B | 4/5 | `QL-B0-B V2.r3`／`04a8c05` | edit Image 3 | fixed child session `019fb3a0-832a-7dd2-a880-796d5b824397`；built-in `image_gen` 返回图片 | raw `generated/quests/QL-B0/v2/backplates/attempt-04/raw/QL-B0-B_V2_r3_attempt-04_raw.png`；SHA `290cc9f40b6b3bf4eda0a019cdba42910bc352aed97e9e58533b61c319397091` | source 几何／色键：美术保持正确，但归一化上条约 `[118,236,906,322]`、`788 × 86`，下条约 `[118,701,906,790]`、`788 × 89`；两条仍过厚且被过度向外移动，背景也不是精确色键 | 不上传 attempt 4 raw；仍使用已授权 attempt 3 raw。V2.r4 把 1254 原生最终 bbox、中心、78px 高度和 V2.r3 过度分离的负面测量写成第一优先级，只执行最后一次 in-envelope edit | `candidate-rejected / repair-prepared`；B 为 `4/5` |
+| B | 5/5 | `QL-B0-B V2.r4`／`31f00dd` | edit Image 3 | fixed child session `019fb3b4-1ce9-7111-b1aa-6595f9e4a7e2`；built-in `image_gen` 返回图片 | raw `generated/quests/QL-B0/v2/backplates/attempt-05/raw/QL-B0-B_V2_r4_attempt-05_raw.png`；SHA `827b9d199dbc3fff3eb305aeba0c1e60ec742ef7c8b7241072cba015d269b253` | source 几何／色键：归一化上条 `[97,313,927,412]`、`830 × 99`，下条 `[96,654,927,754]`、`831 × 100`；基本回到接近原始厚度与位置，背景仍不是精确色键 | 语义、美术与十八行层级仍可保留为负面／选择证据；不再 repair，不上传为新输入，不晋级 source/runtime。等待用户决定 bbox-fit source 例外、source 策略重开或拒绝 B | `candidate-rejected / repair-budget-exhausted`；B 为 `5/5` |
 
 | 流程错误 | 段／正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
@@ -853,6 +855,64 @@ Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 
   的负面测量写为第一优先级。对象、输入 SHA、视觉权威、状态与禁止内容均
   不变，仍在已授权 repair envelope 内。
 
+## B attempt 5 审查记录
+
+- 执行器／传输：`codex-cli 0.143.0`，model `gpt-5.5`，medium；
+  child session `019fb3b4-1ce9-7111-b1aa-6595f9e4a7e2`。stdin 中的
+  V2.r4 正文 UTF-8 SHA-256 为
+  `84f6764d4817c2872dbb8800b17de6044698753bcc96887d880a01a2f57c0a2e`，
+  与执行前提交正文完全一致；没有 wrapper 递归。provider 已返回图片，
+  因此计为 B `5/5`。
+- 输入：仍只上传固定 Image 1／Image 2，以及用户明确授权、固定 SHA
+  `5ee6ba57d94006b0833bba1e96074d3ebeab8d3d8e7b8f233ebde3d664030721`
+  的 attempt 3 raw 作为 Image 3。没有上传 attempt 4 raw、实机截图、
+  任何 A raw 或其他输入；imagegen 未报告额外 revised prompt。
+- 执行器保存恢复：provider 输出可用后，child 的前两次缓存搜索分别因
+  受保护目录和 PowerShell 内联 `if` 语法失败；随后在同一 child、同一
+  provider result 下按 session 目录找到原件并完成复制，没有第二次
+  ImageGen 调用。该恢复不改变 `5/5` 计数，也不新增流程错误条目。
+- raw：`1254 × 1254 RGB PNG`，SHA-256
+  `827b9d199dbc3fff3eb305aeba0c1e60ec742ef7c8b7241072cba015d269b253`；
+  provider cache、child copy 与本地 raw 三者长度 `1,222,507 bytes`、
+  SHA 完全一致。
+- 语义／物理：通过。仍是恰好两个互不接触、正面、无端件、无金属框的
+  平面横条；没有文字、图标、状态、按钮、命中区或第三个物件。上方仍是
+  暗橄榄薄纸／极薄旧皮，下方仍是暖赭薄纸。
+- 美术继承：基本通过。上暗下浅、自然不对称收边、低饱和卷宗综合色和安静
+  中央仍与 Image 1／2 方向一致；没有重新引入假徽记、金属牌匾或现代卡片。
+  原尺寸表面纹理比 attempt 4 略密，但在 `224 × 18` 预演中退回背景层，
+  不是首个失败门禁。
+- 第一失败门禁仍为 source 几何／色键。raw 边界中位色为 `#0EF610`，
+  不是精确 `#00FF00`。使用固定透明审查参数后，候选 SHA-256
+  `492b2d10e15d35c4ee7927b084175fa0492d37551037d02eb92438156a8dac19`；
+  Alpha 为 transparent `1329392`、partial `4871`、opaque `238253`，
+  可见强绿色残留 `0`。
+- 几何：上方 native bbox `[119,383,1135,504]`，归一到 `1024` 后
+  `[97,313,927,412]`、`830 × 99`；下方 native bbox
+  `[118,801,1135,923]`，归一后 `[96,654,927,754]`、
+  `831 × 100`。两条比目标宽 `30–31px`、高 `35–36px`；上条中心约
+  `(512,363)` 而非 `(512,304)`，下条中心约 `(512,704)` 而非
+  `(512,720)`。V2.r4 的原生绝对盒与 `78px` 高度没有被执行，结果基本
+  回到接近 attempt 3 的厚度与中部位置。
+- 严格真实排版：按完整 `1024` 网格归一、只裁固定 contract bbox，再缩到
+  `224 × 18`；使用当前 QL-A2 shell、十八行真实中文密度、QL-B1／B2
+  atlas 与动态详情。`676 × 464`／100% runtime 预演 SHA-256
+  `8cc51f0bed9e593db04d3788a27b901278398aee872a2e29dde32bcc397bb6b0`，
+  路径
+  `generated/quests/QL-B0/v2/backplates/attempt-05/previews/QL-B0-B_V2_r4_attempt-05_contract-layout_676x464.png`。
+  上条固定裁切只取得实际物件底部约四分之一，下条只取得中央区段；看似有
+  底色并不代表完整自然轮廓进入合同盒。
+- 非权威美术排版：逐对象 actual-bbox-fit 预演 SHA-256
+  `a491fb6963674496c5d53a4aa2957efbb809817aeb22238029095638ce946b37`。
+  它确认两个底条在十八行中的信息层级与可读性仍然成立，但会把约
+  `8.40:1`／`8.34:1` 的源物件非等比拉伸成 `12.44:1`；按本合同不能
+  自动成为 source 例外。
+- 判定：`candidate-rejected / repair-budget-exhausted / P3`。B 已完成
+  五次实际生成／编辑，禁止 attempt 6。attempt 1–5 都不得自动进入
+  `assets/source/` 或 runtime。可供用户下一步决定的只有：明确接受某一
+  候选并单独授权确定性 bbox-fit source 例外；改变 source 策略后以新版本
+  和新预算重开；或拒绝 B、继续使用当前连续纸面与 V1 fallback。
+
 ## 下一门禁
 
 用户已于 `2026-07-30` 使用下面的精确语句完成授权：
@@ -861,10 +921,12 @@ Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 
 > Image 1、Image 2；每段最多 5 次，最坏合计 10 次。
 
 用户随后又明确授权 `QL-B0-B V2.r3`、固定 SHA 的 attempt 3 raw 作为
-Image 3，并确认 B 在 `3/5` 后最多再两次。attempt 4 已产生并完成全套
-内审，当前 B 为 `4/5`。下一门禁为：逐字使用已提交的
-`QL-B0-B V2.r4` 正文与相同固定 Image 1／2／3，执行最后的 B attempt 5
-edit。不得上传 attempt 4 raw。若全部内部门禁通过，停在
-`candidate-reviewed / P3` 等待用户视觉复审；若仍有任何门禁失败，立即
-标记 `candidate-rejected / repair-budget-exhausted / P3`，不得调用
-attempt 6。
+Image 3，并确认 B 在 `3/5` 后最多再两次。attempt 4／5 均已产生并完成
+全套内审，当前 B 为 `5/5`、`candidate-rejected /
+repair-budget-exhausted / P3`。不得调用 attempt 6，不得自动建立 source
+或 runtime。
+
+下一门禁为用户决定其一：明确接受指定候选的运行时视觉并单独授权确定性
+bbox-fit source 合同例外；改变 source 策略、合同与预算后以新版本重开；
+或拒绝 B 并继续使用当前连续纸面与 V1 fallback。用户决定前不执行任何
+生成、source 晋级、runtime 导出或清理。

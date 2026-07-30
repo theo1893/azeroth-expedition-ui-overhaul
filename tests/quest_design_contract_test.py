@@ -237,14 +237,14 @@ def main() -> None:
             "1b6b21cd3db74202051a2ceb8b5ba1d91ca7beb636accf247603edbc3cfeb40e",
             "`QL-B1 V1`",
             "`QL-B0 V2`",
-            "`candidate-rejected / repair-prepared / P3`",
+            "`candidate-rejected / repair-budget-exhausted / P3`",
             "work/QUEST.LOG.LEFTPAGE.md",
             "`QUESTS_DISPLAYED = 18`",
             "`224 × 18px`",
             "A 终止于 `4/5`",
             "`user-rejected /",
             "scope-removed / P3`",
-            "B `4/5`",
+            "B `5/5`",
             "`runtime-exported / P5`",
             "`5/5`",
             "`15px` 行高／`14px` 步进",
@@ -290,12 +290,12 @@ def main() -> None:
             "Quest Log 左页卷宗目录 V2",
             "`QL-B0-A V2`",
             "`QL-B0-B V2`",
-            "B `candidate-rejected / repair-prepared`",
+            "B `candidate-rejected / repair-budget-exhausted`",
             "`user-rejected / scope-removed`",
             "项目阶段：`P3`",
-            "授权正文状态：B attempt 1／2／3／4 已完成并退回",
+            "授权正文状态：B attempt 1／2／3／4／5 均已完成并退回",
             "用户授权：`2026-07-30`",
-            "当前实际生图：A `4/5`；B `4/5`",
+            "当前实际生图：A `4/5`；B `5/5`",
             "流程错误：A `4`；B `2`",
             "原授权最坏总预算：`10`",
             "最坏总实际调用变为 `9`",
@@ -322,7 +322,7 @@ def main() -> None:
             "结论：pass",
             "## 已撤销且不得执行的草案 — QL-B0-A V2.r4",
             "## 已执行正文 — QL-B0-B V2.r3",
-            "## 当前执行正文 — QL-B0-B V2.r4",
+            "## 最终执行正文 — QL-B0-B V2.r4",
             "84f6764d4817c2872dbb8800b17de6044698753bcc96887d880a01a2f57c0a2e",
             "## Repair envelope 与计数",
             "`candidate-rejected / repair-budget-exhausted`",
@@ -366,6 +366,14 @@ def main() -> None:
             "6f9d5aac8c3d0dc17ce29ca5b965c8fa1f72432290ef65a11a0c822420461ddd",
             "`[137,333]..[1117,411]`",
             "`[137,843]..[1117,921]`",
+            "B attempt 5 审查记录",
+            "019fb3b4-1ce9-7111-b1aa-6595f9e4a7e2",
+            "827b9d199dbc3fff3eb305aeba0c1e60ec742ef7c8b7241072cba015d269b253",
+            "492b2d10e15d35c4ee7927b084175fa0492d37551037d02eb92438156a8dac19",
+            "8cc51f0bed9e593db04d3788a27b901278398aee872a2e29dde32bcc397bb6b0",
+            "a491fb6963674496c5d53a4aa2957efbb809817aeb22238029095638ce946b37",
+            "`candidate-rejected / repair-budget-exhausted / P3`",
+            "不得调用 attempt 6",
             "`user-rejected / scope-removed`",
             "不建立 A source、manifest、TGA、adapter Texture",
             "## 下一门禁",
@@ -377,8 +385,8 @@ def main() -> None:
     assert "codex-clipboard-" not in leftpage_work
     assert leftpage_work.count("## 当前执行正文 — QL-B0-A") == 0
     assert leftpage_work.count("## 已撤销且不得执行的草案 — QL-B0-A") == 1
-    assert leftpage_work.count("## 最终执行正文 — QL-B0-B") == 0
-    assert leftpage_work.count("## 当前执行正文 — QL-B0-B") == 1
+    assert leftpage_work.count("## 最终执行正文 — QL-B0-B") == 1
+    assert leftpage_work.count("## 当前执行正文 — QL-B0-B") == 0
 
     require(
         work,

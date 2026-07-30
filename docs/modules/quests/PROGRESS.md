@@ -45,19 +45,18 @@
   provider 调用前明确认为该框没有必要，并用完整重启后的实机图确认 QL-A2
   连续左页与十八行布局稳定。A 终止于 `4/5`、`user-rejected /
   scope-removed / P3`，不建立 source、runtime 或占位对象。B 已完成
-  `4/5`：attempt 1 的金属牌匾语义已在 attempt 2／3 修正为平面暗橄榄／
-  暖赭纸条，100% 十八行排版方向正确；V2.r3 attempt 4 edit 继续保住
-  美术，但归一化上条约 `788 × 86`、下条约 `788 × 89`，两条又各自
-  过度向外移动约 `25px`，source bbox 与色键仍失败。最后的 V2.r4 已用
-  稳定 `1254 × 1254` 原生坐标、`980 × 78` 目标盒和负面测量准备完成；
-  继续使用用户已授权的固定 SHA Image 3，不上传 attempt 4 raw，当前为
-  `candidate-rejected / repair-prepared / P3`。B 仍只生成
+  `5/5`：attempt 1 的金属牌匾语义已在 attempt 2／3 修正为平面暗橄榄／
+  暖赭纸条，100% 十八行排版方向正确；attempt 4／5 edit 继续保住语义和
+  美术，但都未执行固定 `800 × 64` bbox。最终 attempt 5 归一化上条约
+  `830 × 99`、下条约 `831 × 100`，中心也错误，背景仍不是精确色键。
+  B 现为 `candidate-rejected / repair-budget-exhausted / P3`，不建立
+  source/runtime；不得 attempt 6。B 的设计范围仍只包含
   `224 × 18` 地区条与任务条 base，
   四态确定性派生；顶部控件、ScrollBar 与按钮继续归 QL-C；
   QL-B1／B2 只在 V2 source 接受后从现有 accepted source 确定性重导出，
   QL-B3 继续暂停。原授权最坏总预算为 `10` 次；A 未使用第 5 次后有效最坏
-  总调用为 `9` 次。下一门禁是执行最后的 B attempt 5 edit；通过只到 P3，
-  失败则 `5/5` 预算耗尽。
+  总调用已达到 `9` 次。下一门禁是用户决定 B 的确定性 bbox-fit source
+  例外、改变 source 策略重开，或拒绝 B。
 - `QL-B1 V1` 的固定执行循环在
   `candidate-rejected / P3 / repair-budget-exhausted` 终止。用户于
   `2026-07-30` 授权固定 Image 1／2、同循环 edit 输入和最多五次调用。
@@ -124,7 +123,7 @@
 |---|---|---:|---|---|
 | `QL-A1` | `QUEST.LOG.SHELL` 结构母版 | `P4` | [透明 source](../../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png) 已接受；原始 PNG 不直接加载，只允许 QL-A2 V4 确定性全幅导出 | Turtle WoW 中复核最终显示 |
 | `QL-A2` | 静态空卷宗结构与页沟 | `P5` V4 runtime-exported | V3.3 `15/15` 已终止；V4 已从 QL-A1 source 导出 `676 × 464` 显示区／`1024 × 512` TGA，固定执行器 `0/0`，Lua smoke 通过 | Turtle WoW 验证纹理方向、裁切、命中与 list-only |
-| `QL-B0` | 左页列表几何、地区条与任务条底板；独立内框已撤销 | V1 `P5 fallback`；V2 `P3 candidate-rejected / repair-prepared` | A attempt 1–4 已审查，随后由用户移出范围并停在 `4/5`，无 source/runtime；B `4/5`，平面底条语义与真实排版已收敛，但 V2.r3 edit 仍因 bbox／色键失败。V2.r4 已在相同固定 Image 1／2／3 与既有授权内准备，见 [work](work/QUEST.LOG.LEFTPAGE.md) | 执行最后的 B attempt 5；通过停 P3，失败则预算耗尽 |
+| `QL-B0` | 左页列表几何、地区条与任务条底板；独立内框已撤销 | V1 `P5 fallback`；V2 `P3 candidate-rejected / repair-budget-exhausted` | A attempt 1–4 已审查，随后由用户移出范围并停在 `4/5`，无 source/runtime；B `5/5`，平面底条语义、美术与真实排版已收敛，但固定 bbox／色键始终失败，无 source/runtime，见 [work](work/QUEST.LOG.LEFTPAGE.md) | 等待用户决定 bbox-fit source 例外／source 策略重开／拒绝；不得 attempt 6 |
 | `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P5 runtime-exported` | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；内部失败与 `5/5` 事实保留 | Turtle WoW 验证 TGA、四态切换、字体和 fallback |
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 runtime-exported` | 用户接受 V1.r4 bbox-fit 合同例外；[source manifest](../../../assets/source/quests/ql-b2/QL-B2_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b2/QL-B2_RuntimeManifest_v1.json)、`128 × 16` TGA、exporter、三张真实排版预演与 adapter 已完成；历史 `5/5` 与三次流程错误保留，接受后 ImageGen `0` 次 | Turtle WoW 验证三态 UV、左缘位置、1px pressed、行重叠命中、滚动与 fallback |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
@@ -259,10 +258,10 @@ runtime contract `1.4` 只修正顶部文字重叠，不把左页资源缺失改
 五次／最坏十次预算。A attempt 1–4 已计数并完成全套内审；attempt 4
 仍因外框厚度、可见材料占比与色键退回。用户在 A5 调用前移除独立内框，
 所以 A 停在 `4/5`，没有 source/runtime，未用额度不转给 B；取消记录已经
-提交。B 已执行 `4/5`；attempt 2／3 已去掉假徽记与金属牌匾，attempt 4
-的 V2.r3 edit 继续保持正确美术，但归一化尺寸、中心与色键仍未通过。
-最后的 V2.r4 已在相同固定 Image 1／2／3 与既有授权 repair envelope
-内提交，不上传 attempt 4 raw，可执行 attempt 5。
+提交。B 已执行 `5/5`；attempt 2／3 已去掉假徽记与金属牌匾，attempt
+4／5 edit 继续保持正确语义和美术，但归一化尺寸、中心与色键仍未通过。
+B 已按上限停止，不建立 source/runtime；等待用户决定确定性 bbox-fit
+source 合同例外、改变 source 策略重开，或拒绝 B。
 当前有效批次只覆盖地区条与任务条底板；
 顶部真实控件和 ScrollBar 继续留给 QL-C 独立拆分。
 QL-B2 V1 已在 `5/5` 停止；
