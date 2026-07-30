@@ -5,14 +5,14 @@
 - 模块：Quests / Quest Log 左页目录。
 - 组件 ID：`QUEST.LOG.SELECTION`。
 - 版本：`QL-B2 V1`。
-- 子状态：`repair-prepared`。
+- 子状态：`candidate-rejected / repair-budget-exhausted`。
 - 项目阶段：`P3`。
 - 固定执行器：`imagegen-0-143-0` /
   `@openai/codex@0.143.0`。
 - 操作：`generate` 一枚基础织物书签；三种运行时状态只允许确定性派生。
 - 自动修复预算：最多 `5` 次实际 ImageGen 生图／修图，含首次；无候选且
   无 provider 生成证据的流程错误单列，不占额度。
-- 当前实际生图：`4/5`。
+- 当前实际生图：`5/5`。
 - 流程错误：`2`。
 - 多执行正文最坏实际生图数：`5`。
 - 生成授权：`2026-07-30` 明确授权 `QL-B2 V1`；允许每次上传固定 SHA 的
@@ -42,18 +42,18 @@
   - QL-B1 已接受的 `12px`／`10px` 运行时视觉只作为本项目内部的
     小尺寸重量基准，不上传给执行器，不作为第三张视觉权威。
 - raw：
-  `generated/quests/QL-B2/v1/attempt-04/raw/QL-B2_V1_r3_native.png`
+  `generated/quests/QL-B2/v1/attempt-05/raw/QL-B2_V1_r4_native.png`
   （原生 `1254 × 1254 RGB`，SHA-256
-  `af86a7b32df36c91023ae2866fbc6fe5b879a1c17e6cda5d5ce36bf034eea9dc`）；
-  允许的整幅归一化副本为同目录 `QL-B2_V1_r3_a4_normalized_1024.png`
+  `ca2731c06ac7c2003a45407741739f722d61d26a4fb0ebedb9149e907bbcf161`）；
+  允许的整幅归一化副本为同目录 `QL-B2_V1_r4_a5_normalized_1024.png`
   （SHA-256
-  `fd843ceaaa5114645b9b0db0751a7e89290a0f2dbe63a38fa3fefd24a338d7cf`）。
+  `de542c1b9d35784a1f136cdd6e4eced88eda48714531f1f498d176f793dc7166`）。
 - 透明候选：
-  `generated/quests/QL-B2/v1/attempt-04/transparent/QL-B2_V1_r3_a4_transparent.png`
+  `generated/quests/QL-B2/v1/attempt-05/transparent/QL-B2_V1_r4_a5_transparent.png`
   （SHA-256
-  `32c88bd7cae43e05fba5f48e2a9ea4b7a842a095691abbf6c55a0b2e5e4529e4`）。
+  `7331a523c08d87dcb699bb2476f800d71b44574273a94a610a82278dd948ee75`）。
 - 重组预演：
-  `generated/quests/QL-B2/v1/attempt-04/previews/` 下的 contact 及
+  `generated/quests/QL-B2/v1/attempt-05/previews/` 下的 contact 及
   selected／selected-hover／selected-pressed 三张独立
   `676 × 464` 真实排版图。
 - 最终 source：无。
@@ -317,7 +317,7 @@ Collapse All、操作按钮、奖励槽或动态文字。
 | 2/5 | `QL-B2 V1.r1` / `01230d7` | edit；固定 Image 1／2，加 attempt 1 为受限 Image 3 | fixed child `019fb230-e3d7-7342-bde0-5ad5a5685a15`；generated image `ig_0983e8aa39ec4d85016a6b0ea47d6081919159877242605615.png` | native `1254² RGB` / `bdc1d32583e75ca36bb7a4c6f2dcbc5225238c8e12b74543b25c3be8895c5e7c`；normalized Alpha / `01f01e7ed9dbef360a93e15e68c4e1d1e5104a48a602b64b36d5ad6b2ec20ff4` | `2. 语义／物理`：虽更高、更软，但 `2.16:1` 仍是带密集硬纹的矩形板／皮革条 | 保留单物件、方向、平直左端、柔软右端、暗酒红与宽暗折；相同首错连续出现，V1.r2 改用固定 Image 1／2 fresh generate，彻底移除失败稿锚定 | `internal-fail`；计入 `2/5` |
 | 3/5 | `QL-B2 V1.r2` / `71ef894` | fresh generate；只用固定 Image 1／2 | fixed child `019fb239-1112-7431-9d5d-b964d7c15b3f`；generated image `ig_0a5ae3b120643833016a6b10b7ba588191bc197189bc838a37.png` | native `1254² RGB` / `97c22622c585b9c2a6c5c9de86839a940effcd8131b08c667d58cb88af60aaee`；normalized Alpha / `96fa4d64811f76291d371c1c5969438578014f7122e27a5e73fa24d86f7ebc91` | `5. 组件合同`：毛毡身份与软轮廓已成立，但 `2.37:1` / `575 × 243` 仍无法形成 `24 × 14` content | 保留毛毡软材料、低频综合色、平直左端、柔软右端和下缘接触暗面；V1.r3 用该候选作受限 Image 3，只横向缩短并轻度简化表纹，保持高度 | `internal-fail`；计入 `3/5` |
 | 4/5 | `QL-B2 V1.r3` / `fd4b30b` | edit；固定 Image 1／2，加 attempt 3 为受限 Image 3 | fixed child `019fb241-145d-7a03-a336-b9547d817439`；generated image `ig_03267291204c54fb016a6b12c921a88191939603eb800769a5.png` | native `1254² RGB` / `af86a7b32df36c91023ae2866fbc6fe5b879a1c17e6cda5d5ce36bf034eea9dc`；normalized Alpha / `32c88bd7cae43e05fba5f48e2a9ea4b7a842a095691abbf6c55a0b2e5e4529e4` | `5. 组件合同`：占用缩小，但 `2.32:1` / `509 × 219` 仍导出为 `24 × 10`；剪影更像规则圆角条 | 保留暗酒红毛毡、左上暖光、下缘厚度和平直左端；相同几何首错连续出现，V1.r4 改为只用固定 Image 1／2 fresh generate，并以前置“5:3 紧凑布舌”定义打断 ribbon 先验 | `internal-fail`；计入 `4/5` |
-| 5/5 | `QL-B2 V1.r4` / 待提交 | fresh generate；只用固定 Image 1／2 |  |  |  |  | `repair-prepared` |
+| 5/5 | `QL-B2 V1.r4` / `37e3209` | fresh generate；只用固定 Image 1／2 | fixed child `019fb249-c0d3-7301-9368-af3fbab1ea1e`；generated image `ig_00573a9acc04cbf6016a6b150153a081918fc907ab00eaf460.png` | native `1254² RGB` / `ca2731c06ac7c2003a45407741739f722d61d26a4fb0ebedb9149e907bbcf161`；normalized Alpha / `7331a523c08d87dcb699bb2476f800d71b44574273a94a610a82278dd948ee75` | `6. 裁切／装配`：`1.776:1` 已可等比形成 `24 × 14`，但 source bbox `563 × 317` 超出冻结安全盒四边；原生绿底也非逐像素纯色 | 保留第五张的紧凑比例、毛毡身份、厚度与运行时读感；不得继续调用。由用户决定是否授权确定性 bbox-fit／合同例外，或另开 V2 | `candidate-rejected / repair-budget-exhausted`；计入 `5/5` |
 
 只有候选图或 provider result 证明生成确已执行时才递增实际生图号；不可用
 候选仍计数。无候选且无生成证据的目录、权限、CLI、递归、传输、上传、连接
@@ -333,58 +333,63 @@ Collapse All、操作按钮、奖励槽或动态文字。
 
 ## 执行记录
 
-- 日期：`2026-07-30`；attempt 4 已完成第四次实际 ImageGen edit。
+- 日期：`2026-07-30`；attempt 5 已完成第五次实际 ImageGen generate。
 - 会话／结果 ID：fixed child
-  `019fb241-145d-7a03-a336-b9547d817439`；generated image
-  `ig_03267291204c54fb016a6b12c921a88191939603eb800769a5.png`。
-- 实际输入与职责：固定 SHA 的 Image 1／2；attempt 3 native SHA
-  `97c22622c585b9c2a6c5c9de86839a940effcd8131b08c667d58cb88af60aaee`
-  作为同循环受限 Image 3；设备绝对路径不持久化。
+  `019fb249-c0d3-7301-9368-af3fbab1ea1e`；generated image
+  `ig_00573a9acc04cbf6016a6b150153a081918fc907ab00eaf460.png`。
+- 实际输入与职责：只上传固定 SHA 的 Image 1／2；无 Image 3，设备绝对
+  路径不持久化。
 - imagegen 报告的 revised prompt：无。
 - 输出尺寸／模式／SHA-256：native `1254 × 1254 RGB` /
-  `af86a7b32df36c91023ae2866fbc6fe5b879a1c17e6cda5d5ce36bf034eea9dc`；
+  `ca2731c06ac7c2003a45407741739f722d61d26a4fb0ebedb9149e907bbcf161`；
   整幅无裁切归一化 `1024² RGB` /
-  `fd843ceaaa5114645b9b0db0751a7e89290a0f2dbe63a38fa3fefd24a338d7cf`；
+  `de542c1b9d35784a1f136cdd6e4eced88eda48714531f1f498d176f793dc7166`；
   透明候选 `1024² RGBA` /
-  `32c88bd7cae43e05fba5f48e2a9ea4b7a842a095691abbf6c55a0b2e5e4529e4`。
-- Alpha／残色：透明 `943884`、半透明 `1272`、不透明 `103420`；
-  可见 bbox `[260,392,769,611]`；可见精确绿与启发式强绿均为 `0`。
-  native 边缘有 `127` 种颜色且无精确 `#00FF00`。
-- 实际生图次数：`4/5`。
+  `7331a523c08d87dcb699bb2476f800d71b44574273a94a610a82278dd948ee75`。
+- Alpha／残色：透明 `885173`、半透明 `1940`、不透明 `161463`；
+  可见 bbox `[239,343,802,660]`；可见精确绿与启发式强绿均为 `0`。
+  native 边缘有 `114` 种颜色且无精确 `#00FF00`。
+- 实际生图次数：`5/5`。
 - 流程错误次数：`2`。
-- 循环终态：`repair-prepared`；attempt 4 仍为组件几何失败。相同首错
-  连续出现，V1.r4 切换到只用固定 Image 1／2 的 fresh generate。
+- 循环终态：`candidate-rejected / repair-budget-exhausted`；不得继续
+  ImageGen。第五张保留为用户审查证据，不是 source。
 
 ## 审查记录
 
 - 语义／物理：`通过`。只有一枚对象且方向正确；暗酒红毛毡、平直压入式
-  左端、柔软圆钝右端与下缘厚度成立为可弯折旧布短舌。
+  左端、柔软圆钝右端、下缘厚度和手工磨损成立为可弯折旧布短舌。右端
+  中部凹口在 runtime 约为 `1–2px`，可读为不对称软布收口而非尖箭头。
 - 透视／图层：`通过`。正面微俯视、左外右内、无投影、独立 Alpha 与
   shell → bookmark → QL-B1／文字层序兼容。
-- 美术一致性：`有条件通过`。表纹已简化、暖亮面更集中；但轮廓趋于规整
-  圆角矩形，在 runtime 更像红色 pill／标签条。V1.r4 必须恢复少量手工
-  轮廓误差，同时优先满足紧凑比例。
+- 美术一致性：`有条件通过`。低饱和暗酒红、左上烟褐暖亮、柔软毛毡、
+  下缘深胡桃厚度和手工边缘与任务卷宗一致；高分辨率表面仍略密，但缩至
+  runtime 后合并成宽阔明暗面，不呈现现代 pill 光泽。
 - 对象／状态合同：单 source 数量正确；三态按固定 RGB 公式从同一 Alpha
   派生，pressed 仅在预演下移 `1px`，未重画轮廓。
-- 装配／尺寸：归一化可见 bbox 为 `509 × 219`（约 `2.32:1`），仍超出
-  安全盒 `[320,400,704,624]` 的左右且顶部越界 `8px`；等比缩入
-  `24 × 14` 仅得到
-  `24 × 10`，不能满足 `24 × 14` 可见 content；这是本次第一失败门禁。
+- 装配／尺寸：归一化可见 bbox 为 `563 × 317`（约 `1.776:1`），宽高
+  已在原冻结的 `1.65–1.80:1` 内，等比缩入 content 可四舍五入得到
+  `24 × 14`。但 bbox 相对安全盒 `[320,400,704,624]` 分别向左越界
+  `81px`、向右 `98px`、向上 `57px`、向下 `36px`；占用约为目标面积
+  `2.43` 倍。冻结合同不允许在接受前局部缩放 source，这是第一失败门禁。
 - 真实排版：已生成 selected／selected-hover／selected-pressed 三张独立
   `676 × 464`／100% runtime 图；均包含当前 QL-A2 shell、QL-B1 runtime、
   全部 23 行、真实中文任务密度和右页内容。每张只有一枚书签；书签在左页
-  第 8 行可读但仍因 `24 × 10` 偏薄，且轮廓略像规则红色状态条。QL-C
-  按钮仍是明确的非权威 fallback。
+  第 8 行在 `24 × 14` 下可清楚读成厚布书签，未压住从 `x>=18` 开始的
+  任务文字，也未干扰右侧 QL-B1 墨圈。QL-C 按钮仍是明确的非权威
+  fallback。
 - 技术像素：透明化后为 `1024² RGBA`、无可见强绿，但 native 背景边缘
-  `127` 色、无精确 `#00FF00`；固定色键清理后没有可见强绿。原生背景
-  不均匀是次要技术不符合，组件几何仍是首要失败。
-- 结论：`internal-fail / repair-prepared / P3`；不进入用户复审、
-  `assets/source/` 或 runtime。
+  `114` 色、无精确 `#00FF00`；固定色键清理后没有可见强绿。原生背景
+  不均匀是第二项技术不符合。
+- 结论：`candidate-rejected / repair-budget-exhausted / P3`；第五张
+  具有可审视的运行时视觉，但不自动进入 `assets/source/` 或 runtime，
+  且不得进行第六次 ImageGen 调用。
 - 用户结论与日期：`2026-07-30` 明确授权 `QL-B2 V1`、固定 Image 1／2、
   同循环 edit 输入边界及最多五次实际生图／修图。
-- 下一门禁：提交完整 V1.r4 修复正文后，由固定 `imagegen-0-143-0`
-  执行第 `5/5` 次 fresh generate，并重新完成全部审查与三态真实排版；
-  若仍有客观失败立即停止，不再调用。
+- 下一门禁：用户审核第五张原貌与三态真实排版后，明确选择其一：
+  1. 授权把冻结 source 合同改为“色键后按可见 bbox 等比 fit 到中心
+     `352 × 204`，不重画像素”，再重新检查并决定是否接受；
+  2. 保持原合同，另行授权新的 `QL-B2 V2`；
+  3. 拒绝并暂停 QL-B2。
 
 ## 尝试摘要
 
@@ -394,7 +399,7 @@ Collapse All、操作按钮、奖励槽或动态文字。
 | `QL-B2 V1.r1` | fixed child `019fb230-e3d7-7342-bde0-5ad5a5685a15`；native SHA `bdc1d32583e75ca36bb7a4c6f2dcbc5225238c8e12b74543b25c3be8895c5e7c`；三态 23 行真实排版与技术检查完成 | internal-fail；`2/5` | 同一首错连续出现；停止 edit 锚定，以 fixed Image 1／2 fresh generate 强制紧凑毛毡旧布 |
 | `QL-B2 V1.r2` | fixed child `019fb239-1112-7431-9d5d-b964d7c15b3f`；native SHA `97c22622c585b9c2a6c5c9de86839a940effcd8131b08c667d58cb88af60aaee`；三态 23 行真实排版与技术检查完成 | internal-fail；`3/5` | 保留已通过的软毛毡身份；受限 edit 只缩短宽度、保持高度并简化表纹 |
 | `QL-B2 V1.r3` | fixed child `019fb241-145d-7a03-a336-b9547d817439`；native SHA `af86a7b32df36c91023ae2866fbc6fe5b879a1c17e6cda5d5ce36bf034eea9dc`；三态 23 行真实排版与技术检查完成 | internal-fail；`4/5` | 相同几何首错连续出现；停止 edit，以前置 5:3 剪影的 fresh generate 进行最后一次尝试 |
-| `QL-B2 V1.r4` | 完整修复正文见下；只用固定 Image 1／2，不上传失败候选 | repair-prepared | 提交后执行第 `5/5` 次实际 generate |
+| `QL-B2 V1.r4` | fixed child `019fb249-c0d3-7301-9368-af3fbab1ea1e`；native SHA `ca2731c06ac7c2003a45407741739f722d61d26a4fb0ebedb9149e907bbcf161`；三态 23 行真实排版与技术检查完成 | candidate-rejected / repair-budget-exhausted；`5/5` | 运行时比例已达标，但 source 安全盒与原生纯色键未达标；等待用户决定合同例外、V2 或暂停 |
 
 ## QL-B2 V1.r1 完整修复正文
 
