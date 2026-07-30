@@ -13,8 +13,7 @@
   `@openai/codex@0.143.0`。
 - 操作：`generate`。
 - 自动修复预算：最多 `5` 次固定执行器调用，含首次。
-- 当前尝试：`3/5`（attempt 2 的外层与其已启动的递归固定子进程均计数；
-  attempt 4 尚未计数）。
+- 当前尝试：`4/5`（attempt 4 调用前已计数）。
 - 多执行正文最坏总调用数：`5`。
 - 用户授权：`2026-07-30` 明确授权 `QL-B1 V1`；允许每次上传固定 SHA 的
   Image 1／Image 2，允许同一循环前次输出仅在冻结边界内作为 edit 输入，
@@ -260,7 +259,7 @@ UI 或文字。任何一项不满足都不要输出。
 | 1/5 | `QL-B1 V1` / `48ee8ec` | generate | session `019fb1d9-0792-7110-8156-2aed5644d5c7`；无 result | 无输出／无 SHA | 0. 执行正文与传输一致性：保存目录不可写 | 保持完整视觉合同；预建子进程输出目录并使用 `workspace-write`，仅固定 Image 1／2 重生 | transport-error；计入预算 |
 | 2/5 | `QL-B1 V1.r1` / `6fdf109` | generate | outer session `019fb1dc-57c5-77a0-b3ce-a884d61e0c99` | 无输出／无 SHA | 0. 执行正文与传输一致性：同名包装 skill 触发递归委托 | 完整提示词和固定两图均已正确传入；中断递归，不保留输出 | executor-recursion；计入预算 |
 | 3/5 | `QL-B1 V1.r1` 非预期递归重放 / `453450d` | generate | observed nested task/session `019fb1dc-58df-7a43-83d0-97d674a5229a` | 无输出／无 SHA | 0. 执行正文与传输一致性：非预期嵌套固定调用 | 主进程发送 `Ctrl-C`，无候选；后续明确禁止二次委托 | interrupted；按最保守口径计入预算 |
-| 4/5 | `QL-B1 V1.r2` / 待提交 | generate | 待调用 |  |  | 固定 Image 1／2；正文外明确当前进程已固定版本，只调用内建 imagegen | repair-prepared |
+| 4/5 | `QL-B1 V1.r2` / `21871a0` | generate | 待回填 | 待回填 | 待审查 | 固定 Image 1／2；正文外明确当前进程已固定版本，只调用内建 imagegen | 调用前已计数 |
 | 5/5 | `QL-B1 V1.r3` /  | edit／generate |  |  |  |  |  |
 
 ## QL-B1 V1.r2 完整修复执行正文
@@ -363,7 +362,7 @@ UI 或文字。任何一项不满足都不要输出。
   attempt 2 的嵌套命令也携带完整正文，但没有进入可审查的生图结果。
 - 输出尺寸／模式／SHA-256：attempt 1–3 均无输出。
 - Alpha／残色：无。
-- 调用次数：`3/5`。
+- 调用次数：`4/5`（attempt 4 调用前已计数）。
 - 循环终态：继续；attempt 1 为
   `transport-error: Operation not permitted`；attempt 2／3 为
   `executor-recursion / interrupted`。
@@ -393,4 +392,4 @@ UI 或文字。任何一项不满足都不要输出。
 |---|---|---|---|
 | `QL-B1 V1` | commit `13edad9`；session `019fb1d9-0792-7110-8156-2aed5644d5c7`；无输出 | transport-error；`1/5` 已消耗 | 不改美术正文；修复子进程写入环境 |
 | `QL-B1 V1.r1` | commits `6fdf109`／`453450d`；outer session `019fb1dc-57c5-77a0-b3ce-a884d61e0c99`；observed nested `019fb1dc-58df-7a43-83d0-97d674a5229a`；无输出 | executor-recursion；attempt 2／3 均计入 | 不改美术正文；禁止当前固定进程二次委托 |
-| `QL-B1 V1.r2` | 完整自包含正文已准备；固定 Image 1／2 | repair-prepared | 提交后执行 attempt 4 |
+| `QL-B1 V1.r2` | commit `21871a0`；完整自包含正文；固定 Image 1／2 | repair-prepared | 执行 attempt 4 并完整内审 |
