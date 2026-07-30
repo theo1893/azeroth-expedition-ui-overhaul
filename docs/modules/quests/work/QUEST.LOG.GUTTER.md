@@ -8,10 +8,10 @@
   `QUEST.LOG.GUTTER.RIGHT_FOLD`、`QUEST.LOG.GUTTER.STITCH`、
   `QUEST.LOG.GUTTER.TOP`、`QUEST.LOG.GUTTER.BOTTOM`
 - 版本：`QL-A2 V3.3`
-- 子状态：`repair-prepared`
+- 子状态：`candidate-rejected`（B1）／`prompt-authorized`（B2、B3）
 - 项目阶段：`P3`
 - 类型：`production`
-- 当前操作：`generate`
+- 当前操作：B1 `repair-budget-exhausted`；继续 B2 `generate`
 - 用户授权：用户于 `2026-07-30` 明确确认
   `QL-A2 V3.3-B1/B2/B3`；每段最多 `5` 次、最坏总计 `15` 次；允许 B1
   每次上传固定 SHA 的 Image 1／2，允许 B2／B3 每次只上传固定 SHA 的
@@ -22,7 +22,7 @@
   - `V3.3-B2 / STITCH`：单个横向针脚站
   - `V3.3-B3 / CLOSURES`：top closure＋bottom closure
 - 自动修复预算：
-  - `V3.3-B1`：最多 `5` 次固定执行器调用，当前 `4/5`
+  - `V3.3-B1`：最多 `5` 次固定执行器调用，当前 `5/5`，额度耗尽
   - `V3.3-B2`：最多 `5` 次固定执行器调用，当前 `0/5`
   - `V3.3-B3`：最多 `5` 次固定执行器调用，当前 `0/5`
   - 最坏总调用数：`15`；每段通过后立即停止，不借用或转移余额
@@ -57,9 +57,9 @@
   不是 accepted source，也不是跨设备耐久资产。若本机文件丢失，不得从
   文档或缩略图伪造，必须回到用户接受或新授权门禁
 - V3.3-B1 当前 raw：
-  `generated/quests/QL-A2/v3.3/folds/attempt-04/QL-A2_V3_3_B1_FOLDS.raw.png`
+  `generated/quests/QL-A2/v3.3/folds/attempt-05/QL-A2_V3_3_B1_FOLDS.raw.png`
   — SHA-256
-  `cf93df45ac3b6f601509cadb80f4f0b45ef4a93d014532e1dcb2c7619b90bfff`
+  `b91b5dab0c52d84a9edb9b22d2fcb6637da6ec60dde99e42cdee7c495f881bb3`
 - V3.3 透明候选／重组预演：未生成
 - 最终 source：无
 
@@ -480,7 +480,7 @@ bottom 的可遮挡方向相反，保持同一浅俯视表面方向与左上暖�
 | 2/5 | `V3.3-B1.r1` / `2342d7f` | generate | `019fb111-d8d5-74d0-8041-cb1b5375c2d8` / `ig_045fd8cc8b633f7e016a6ac525cc8881918ba18c3bf032a188` | `folds/attempt-02/QL-A2_V3_3_B1_FOLDS.raw.png` / `71d1e4462fe0229017d9d6dafd2e699232a04b03dc7038ebaca7aa1f4102eb56` | 美术一致性：fold 满面卷草压纹；合同／技术：两 fold 高约 `855px`，背景非均匀纯绿 | 保留三格、物理朝向、连续硬边和浅俯视；缺陷局限于材料、占用与背景，使用 attempt 2 作为 Image 3 edit | 退回 |
 | 3/5 | `V3.3-B1.r2` / `de1b282` | edit | `019fb115-def2-7991-aea6-1b26106564ad` / `ig_0f507d823d711579016a6ac62f545c8191b3e4f7c47ebe5e00` | `folds/attempt-03/QL-A2_V3_3_B1_FOLDS.raw.png` / `913bd7846a74a578134bff4c9565999babe89621871a95d389ac1b1325d31b59` | 组件／技术：两 fold 高约 `833px`；RGB 图烘焙白灰透明棋盘格 | 保留三格、朝向、连续硬边和较安静色块；使用 attempt 3 作为 Image 3，绑定 y 范围并改为强制纯绿 RGB edit | 退回 |
 | 4/5 | `V3.3-B1.r3` / `3f470b9` | edit | `019fb119-eb69-7ea2-9d61-49a6b02a96f6` / `ig_059c1d59e14a1f34016a6ac735bfe881918ddc605f0f979258` | `folds/attempt-04/QL-A2_V3_3_B1_FOLDS.raw.png` / `cf93df45ac3b6f601509cadb80f4f0b45ef4a93d014532e1dcb2c7619b90bfff` | 语义／物理：fold 成为带水平硬端的实心纸条；高度约 `879px`，压纹回归 | 仅三格与左右朝向仍正确；edit 连续两次不服从尺寸，改从固定 Image 1／2 regenerate，不上传同段输出 | 退回 |
-| 5/5 | `V3.3-B1.r4` / 待写入执行前 commit | generate |  |  |  |  | 未执行 |
+| 5/5 | `V3.3-B1.r4` / `4961c1a` | generate | `019fb11e-e7e9-71c1-81ec-3c39de2ac4c8` / `ig_0c210bc8955e0b5a016a6ac87b6ecc8191b25b0a833a458e2d` | `folds/attempt-05/QL-A2_V3_3_B1_FOLDS.raw.png` / `b91b5dab0c52d84a9edb9b22d2fcb6637da6ec60dde99e42cdee7c495f881bb3` | 语义／物理：underlay 成为深色重复纹样竖条；美术／技术：fold 仍满面压纹且无纯绿色键 | B1 已用满 `5/5`，停止；不得透明化、装配或再生。B2／B3 保持各自独立授权 | `repair-budget-exhausted` |
 
 ### V3.3-B2 尝试表
 
@@ -505,44 +505,40 @@ bottom 的可遮挡方向相反，保持同一浅俯视表面方向与左上暖�
 ## 执行记录
 
 - 日期：V3.3 于 `2026-07-30` 获得版本级生成授权
-- 会话／结果 ID：B1 attempt 4
-  `019fb119-eb69-7ea2-9d61-49a6b02a96f6`／
-  `ig_059c1d59e14a1f34016a6ac735bfe881918ddc605f0f979258`
+- 会话／结果 ID：B1 attempt 5
+  `019fb11e-e7e9-71c1-81ec-3c39de2ac4c8`／
+  `ig_0c210bc8955e0b5a016a6ac87b6ecc8191b25b0a833a458e2d`
 - 实际输入：Image 1
   `/Users/yuanshiyao/Documents/Codex/2026-07-28/new-chat/aeui-chat-work/assets/locked/quests/任务详情面板_视觉基准_v1.png`；
   Image 2
-  `/Users/yuanshiyao/Documents/Codex/2026-07-28/new-chat/aeui-chat-work/assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png`；
-  Image 3
-  `/Users/yuanshiyao/Documents/Codex/2026-07-28/new-chat/aeui-chat-work/generated/quests/QL-A2/v3.3/folds/attempt-03/QL-A2_V3_3_B1_FOLDS.raw.png`
+  `/Users/yuanshiyao/Documents/Codex/2026-07-28/new-chat/aeui-chat-work/assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png`
 - imagegen 报告的 revised prompt：无；子进程打印的 user block 与已提交
-  `V3.3-B1.r3` 完整正文一致
+  `V3.3-B1.r4` 完整正文一致
 - 输出尺寸／模式／SHA-256：`1536 × 1024 RGB`；
-  `cf93df45ac3b6f601509cadb80f4f0b45ef4a93d014532e1dcb2c7619b90bfff`
-- Alpha／残色：全图 `1572864` 个像素均不透明；精确 `#00FF00` 为 `126`；
-  启发式绿色主导像素 `1378000`
-- 固定执行器调用：B1 `4/5`；B2 `0/5`；B3 `0/5`；合计 `4/15`
+  `b91b5dab0c52d84a9edb9b22d2fcb6637da6ec60dde99e42cdee7c495f881bb3`
+- Alpha／残色：全图 `1572864` 个像素均不透明；精确 `#00FF00` 为 `0`；
+  启发式绿色主导像素 `1375621`
+- 固定执行器调用：B1 `5/5`；B2 `0/5`；B3 `0/5`；合计 `5/15`
 
 ## 审查记录
 
-- 语义／物理：通过。中格 left fold 的硬内缘位于右侧且纸色向左延伸；
-  右格 right fold 的硬内缘位于左侧且纸色向右延伸；两边连续，物理身份
-  与固定格位一致。
+- 语义／物理：退回。左右 fold 的硬内缘朝向与端部淡出基本成立，但
+  underlay 成为深色、带重复织纹的纵向实物条，不是低对比凹陷接触阴影。
 - 透视／图层：通过。三格共享浅俯视与左上暖光，两个 fold 可按真实层序
   夹住未来页沟。
-- 美术一致性：退回。两个 fold 再次出现明显满面卷草压纹；underlay 中轴
-  仍偏深，且对象边缘与绿色混色。
-- 对象／状态合同：视觉上仍恰好三组且格位正确；综合色阈值无法从绿色中
-  分离 underlay，两 fold bbox 约 `123 × 879px` 与 `119 × 879px`，
-  超过 `760px` 上限。
-- 装配／尺寸：退回。两 fold 的顶部和底部是水平硬切口，形成独立实心
-  纸条；这是物理语义错误，不能用裁切或 Alpha 掩盖。
-- 技术像素：尺寸正确但为全不透明 RGB；绿色背景并非均匀精确色键，只有
-  `126` 个精确 `#00FF00` 像素。
-- 当前结论：B1 attempt 4 退回；`repair-prepared / P3`。只保留三格数量、
-  固定格位与左右硬边朝向；连续 edit 没有服从尺寸和端部结构，最终 attempt
-  改为从固定 Image 1／2 regenerate，不上传任何同段输出。
+- 美术一致性：退回。underlay 与两个 fold 都有清晰可见的满面卷草／织纹，
+  违反安静宽面色块和正式任务卷宗基线。
+- 对象／状态合同：恰好三组且格位正确；heuristic bbox 为 underlay
+  `47 × 567px`、left fold `149 × 709px`、right fold `126 × 703px`。
+  两 fold 高度合规，underlay 低于 `600px` 下限。
+- 装配／尺寸：fold 的朝向与端部淡出可保留，但 underlay 身份失败，整段
+  不得透明化或进入 atlas／真实层序重组。
+- 技术像素：尺寸正确但为全不透明 RGB；背景仍没有任何精确 `#00FF00`
+  像素，无法安全色键化。
+- 当前结论：B1 attempt 5 退回；
+  `candidate-rejected / P3 / repair-budget-exhausted`。B1 `5/5` 已耗尽，
+  不再调用；B2／B3 的独立授权和各自预算不变，但整批装配被 B1 阻塞。
 - 用户尚未发生的结论：没有候选接受，没有 source、manifest、runtime、
   Lua 接入或 Turtle WoW 实机验收
-- 下一门禁：提交完整 `V3.3-B1.r4`，再只上传固定 SHA Image 1／2 执行
-  attempt 5，然后从语义／物理门禁重新完整内审；若仍失败则停止 B1
-  并标记 repair-budget-exhausted
+- 下一门禁：同步 B1 终态后，使用已提交的 `V3.3-B2` 正文、只上传固定
+  Image 1 执行 B2 attempt 1；不得继续 B1、透明化 B1 或进行整批装配

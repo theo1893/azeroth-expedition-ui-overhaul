@@ -11,12 +11,13 @@
   `45%` 格宽的针脚和完整外露结，整批 `10/10` 额度耗尽。没有形成
   accepted source 或 runtime；A 候选仍只是 ignored `generated/` 中的
   本机重组输入。
-- `QL-A2 V3.3`：`prompt-authorized / P3`。已将失败的 B 六件同画布合同拆成
+- `QL-A2 V3.3`：`P3` 部分执行。已将失败的 B 六件同画布合同拆成
   B1 underlay＋folds、B2 单枚 stitch、B3 top／bottom closures 三个尺度
   族；三段完整 Prompt、固定输入、验收合同、确定性等比归一化和真实纸缘
   遮挡方案已经预检通过。用户于 `2026-07-30` 明确授权三段正文、固定上传
-  范围及每段 `5` 次预算；当前调用为 `0/5 + 0/5 + 0/5`，最坏总计
-  `15` 次。
+  范围及每段 `5` 次预算。B1 已耗尽 `5/5`：最终 underlay 仍是深色纹样
+  竖条，fold 仍有满面压纹，且背景不可安全色键；当前 B2／B3 均为
+  `prompt-authorized 0/5`，合计 `5/15`。整批装配被 B1 阻塞。
 - Quest Tracker：视觉 `P2`，外部 provider `P0`，暂停。
 - NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
 - `questitem.lua`：行为保留，视觉 `N/A`。
@@ -26,7 +27,7 @@
 | 批次 | 子模块 | 阶段 | 当前事实 | 下一门禁 |
 |---|---|---:|---|---|
 | `QL-A1` | `QUEST.LOG.SHELL` 结构母版 | `P4` | [透明 source](../../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png) 已接受；整图不得进 runtime | 等待 QL-A2 后确定 crop／UV |
-| `QL-A2` | 两纸页与六个 `GUTTER.*` | `P3` V3.3 prompt-authorized | V3.3 三段正文、固定上传范围和每段 `5` 次预算已获授权；当前 `0/15`，未生图 | 固定执行器执行 B1 attempt 1 并完整内审 |
+| `QL-A2` | 两纸页与六个 `GUTTER.*` | `P3` V3.3 partial | B1 `candidate-rejected / repair-budget-exhausted`；B2／B3 仍 `prompt-authorized`；当前 `5/15`，无透明候选或装配 | 固定执行器执行 B2 attempt 1 并完整内审 |
 | `QL-B` | 目录行、展开、追踪、选择、类型、状态 | `P1–P2` | 子模块与稳定美术基线已定义，无生产 work | QL-A2 source 接受后逐对象建 Prompt |
 | `QL-C` | 两套 ScrollBar、关闭、操作与辅助按钮 | `P1–P2` | 真实对象已拆，部分全局名需 feature-detect | 实机对象与几何 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | `P1–P2` | Quest Log 奖励只读，无 selected | 实机奖励数量与尺寸 |
@@ -74,6 +75,6 @@ source 或 runtime。
 
 ## 下一步
 
-按 [QL-A2 V3.3 三段执行正文](work/QUEST.LOG.GUTTER.md) 先执行
-`V3.3-B1` attempt 1：上传固定 SHA 的 Image 1／2，生成后从语义／物理
-门禁开始完整内审；若失败，在冻结修复边界内准备并提交完整 `.rN` 正文。
+按 [QL-A2 V3.3 三段执行正文](work/QUEST.LOG.GUTTER.md) 继续执行
+`V3.3-B2` attempt 1：只上传固定 SHA 的 Image 1，生成后从语义／物理
+门禁开始完整内审。B1 已耗尽，禁止再调用或进入确定性装配。
