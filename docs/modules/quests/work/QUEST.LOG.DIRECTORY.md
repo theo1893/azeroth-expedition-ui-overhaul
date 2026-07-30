@@ -7,14 +7,18 @@
   - `QUEST.LOG.REGION.TOGGLE`
   - `QUEST.LOG.LIST.CHECK`
 - 版本：`QL-B1 V1`。
-- 子状态：`prompt-draft`。
-- 项目阶段：`P2`。
+- 子状态：`prompt-authorized`。
+- 项目阶段：`P3`。
 - 固定执行器：`imagegen-0-143-0` /
   `@openai/codex@0.143.0`。
 - 操作：`generate`。
 - 自动修复预算：最多 `5` 次固定执行器调用，含首次。
-- 当前尝试：`0/5`。
+- 当前尝试：`1/5`（第 1 次固定执行器调用前已计数）。
 - 多执行正文最坏总调用数：`5`。
+- 用户授权：`2026-07-30` 明确授权 `QL-B1 V1`；允许每次上传固定 SHA 的
+  Image 1／Image 2，允许同一循环前次输出仅在冻结边界内作为 edit 输入，
+  最多 `5` 次固定 `imagegen-0-143-0` 调用。授权不包含候选接受、P4 source、
+  runtime 导出或游戏接入。
 - 锁定视觉基准：
   - Image 1：
     `assets/locked/quests/任务详情面板_视觉基准_v1.png`
@@ -252,7 +256,7 @@ UI 或文字。任何一项不满足都不要输出。
 
 | 尝试 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
-| 1/5 | `QL-B1 V1` / 待授权后提交 | generate |  |  |  |  |  |
+| 1/5 | `QL-B1 V1` / `48ee8ec` | generate | 待回填 | 待回填 | 待审查 | 固定 Image 1／2；首次生成 | 调用前已计数 |
 | 2/5 | `QL-B1 V1.r1` /  | edit／generate |  |  |  |  |  |
 | 3/5 | `QL-B1 V1.r2` /  | edit／generate |  |  |  |  |  |
 | 4/5 | `QL-B1 V1.r3` /  | edit／generate |  |  |  |  |  |
@@ -260,14 +264,22 @@ UI 或文字。任何一项不满足都不要输出。
 
 ## 执行记录
 
-- 日期：未执行。
+- 日期：`2026-07-30`，第 1 次调用待执行。
 - 会话／结果 ID：无。
-- 实际输入绝对路径与职责：待授权后按元数据两张固定输入执行。
+- 实际输入绝对路径与职责：
+  - Image 1：
+    `/Users/yuanshiyao/Documents/Codex/2026-07-28/new-chat/aeui-chat-work/assets/locked/quests/任务详情面板_视觉基准_v1.png`
+    ——最高视觉权威，固定 SHA
+    `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`。
+  - Image 2：
+    `/Users/yuanshiyao/Documents/Codex/2026-07-28/new-chat/aeui-chat-work/assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png`
+    ——受限纸面色温／年代参考，固定 SHA
+    `91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5`。
 - imagegen 报告的 revised prompt：无。
 - 输出尺寸／模式／SHA-256：无。
 - Alpha／残色：无。
-- 调用次数：`0/5`。
-- 循环终态：等待具体版本授权。
+- 调用次数：`1/5`（调用前计数；结果待回填）。
+- 循环终态：固定执行器第 1 次调用待执行。
 
 ## 审查记录
 
@@ -277,13 +289,13 @@ UI 或文字。任何一项不满足都不要输出。
 - 对象／状态合同：未生成。
 - 装配／尺寸：未生成。
 - 技术像素：未生成。
-- 结论：`production-draft / authority-complete`。
-- 用户结论与日期：等待。
-- 下一门禁：用户看过本文件的完整执行正文后，明确授权
-  `QL-B1 V1`、固定两张输入及最多 `5` 次调用。
+- 结论：`prompt-authorized / P3`。
+- 用户结论与日期：`2026-07-30` 已授权本版本、固定两图与最多五次自主
+  修复循环；尚未接受任何候选。
+- 下一门禁：固定 `imagegen-0-143-0` 第 1 次调用与完整内部审查。
 
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
 |---|---|---|---|
-| `QL-B1 V1` | 完整对象、继承、画布、色键与修复边界已预检 | production-draft | 等待授权，不得执行 |
+| `QL-B1 V1` | 完整对象、继承、画布、色键与修复边界已预检；`2026-07-30` 获得固定范围授权 | prompt-authorized | 执行第 1 次调用并完整内审 |
