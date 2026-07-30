@@ -542,6 +542,7 @@ def main() -> None:
             "25a0de6f2411797000e062805482ec80a8aa9ab8296db19d2bf14f5537891413",
             "1d06098f3db51f512bab1f3d207d49ea5dd9b7a83c3fd7546285800d4c50be5c",
             "67eac225f1f1a1c227339eb7557c1d99989b72092e08168658cbe523d463714a",
+            "`cfa7715`",
             "E1／E2／E3",
             "internal-fail / repair-prepared / P3",
             "提交 A attempt 2 审查",

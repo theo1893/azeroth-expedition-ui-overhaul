@@ -534,6 +534,7 @@ Image 3 是本段前一次生成的四格候选，也是本次唯一编辑目标
 |---|---:|---|---|---|---|---|---|---|
 | A | 1/5 | `QL-B3-A V1` / `265503a` | generate | `019fb293-2175-7070-a257-87086887f603`／`ig_0cb39047645036d8016a6b27c524288191801b7e6dd6d8a610` | native `6bb9996a…`；normalized `1af5e8b3…`；transparent `011c7eda…`；layout `1586abe8…` | 四格可见 bbox 全部越出中央 `256 × 256` 安全盒；native 色键为 `#04F904` 而非精确 `#00FF00` | 保留四个正确物件、格序、正视、综合色与 10px 可读性；以本段输出作为 Image 3，只做等比缩小、居中和纯色背景清理 | internal-fail；`1/5` |
 | A | 2/5 | `QL-B3-A V1.r1` / `0fabed1` | edit | `019fb2a0-e316-70b0-ae98-3de032a2fe93`／`ig_095752b9d2875834016a6b2b5244388191872768206eb8a502` | native `25a0de6f…`；normalized `4c7f7c3b…`；transparent `1d06098f…`；layout `67eac225…` | dungeon 左越安全盒 `3px`、raid 上越 `25px`、pvp 上越 `8px`；native 背景约 `#07EB0B` 且不均匀 | 保留四枚物件与 10px 可读性；以本段输出作为 Image 3，进一步缩到 `140px` 以内、严格居中并替换数字纯绿底 | internal-fail；`2/5` |
+| A | 3/5 | `QL-B3-A V1.r2` / `cfa7715` | edit |  |  |  |  |  |
 | B | 1/5 | `QL-B3-B V1` / `265503a` | generate |  |  |  |  |  |
 | C | 1/5 | `QL-B3-C V1` / `265503a` | generate |  |  |  |  |  |
 
@@ -547,6 +548,9 @@ Image 3 是本段前一次生成的四格候选，也是本次唯一编辑目标
 
 - 用户授权范围已经冻结（commit `265503a`）；流程错误 E1／E2／E3 均无
   provider 生成证据，不占实际生图额度。
+- `QL-B3-A V1.r2` 完整正文与 attempt 2 审查已冻结于 commit
+  `cfa7715`；attempt 3 只允许上传固定 Image 1／2 与同段 attempt 2
+  native Image 3。
 
 ### QL-B3-A V1 attempt 1
 
