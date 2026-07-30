@@ -228,7 +228,7 @@ def main() -> None:
             "QL-A2_V3_2_B_GUTTER.raw.png",
             "47d14363049424b8c32b0eb486a87a0287adb4cc2af8f92e9416f0651cb796ea",
             "019faed6-8104-7ef2-94f7-8d80c5c885bc",
-            "结论：`prompt-authorized / P3`",
+            "`repair-prepared / P3`",
             "这不是候选接受",
             "最终 source：无",
         ),
