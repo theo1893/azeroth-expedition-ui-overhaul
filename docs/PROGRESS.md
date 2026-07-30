@@ -22,7 +22,7 @@
 |---|---|---:|---|---|
 | Core／pfUI | `api/expedition.lua`、`pfUI.lua`、原生回退路由 | `P5` | 现代可见模块默认回退原生；非视觉功能保留 | 实机覆盖原生 Frame、SavedVariables 与第三方兼容 |
 | Chat | `modules/chat.lua` + AEUI Chat adapter | `P5` V3 | 单一左侧旧书、四状态 Tab、双状态输入与未读已接入；右框隐藏且消息回收；两项 Copy 辅助功能暂缓 | Turtle WoW 实机验收核心批次 |
-| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua` + AEUI Quests adapter | `P1–P5` | QL-A2 V4 固定卷宗背景已静态接入；用户接受 QL-B1 V1.r3 运行时视觉，QL-B0 23 行和 QL-B1 四态 atlas 已确定性导出、接入并通过静态测试；QL-B2 V1 已完成 `5/5` 实际生图及三态真实排版，因 source 安全盒／原生色键不合格停在 `candidate-rejected / P3`，第五张运行时视觉可审视；QL-B3、QL-C/D 未完成；外部 tracker 暂停 | QL-A2／B0／B1 等待 Turtle WoW 实机；用户决定 QL-B2 是否采用确定性 bbox-fit 合同例外、另开 V2 或暂停 |
+| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua` + AEUI Quests adapter | `P1–P5` | QL-A2 V4 固定卷宗背景已静态接入；用户接受 QL-B1 V1.r3 运行时视觉，QL-B0 23 行和 QL-B1 四态 atlas 已确定性导出、接入并通过静态测试；QL-B2 V1 已完成 `5/5` 实际生图，现有纯确定性的 bbox-fit 合同例外候选已通过安全盒、透明像素与三态真实排版内审，但冻结合同尚未获用户修改，规范状态仍为 `candidate-rejected / P3`；QL-B3、QL-C/D 未完成；外部 tracker 暂停 | QL-A2／B0／B1 等待 Turtle WoW 实机；用户明确接受／拒绝 `QL-B2 V1.r4 bbox-fit` 合同例外 |
 | Map | `map.lua`、`minimap.lua`、`addonbuttons.lua` 等 | `P2` | 羊皮地图卷与黄铜罗盘已锁定 | 实机对象审计和组件级合同 |
 | Character | `character.lua`、`inspect.lua`、`dressup.lua` | `P2` | 香草同构角色面板已锁定 | 实机几何与装备槽／属性／页签拆分 |
 

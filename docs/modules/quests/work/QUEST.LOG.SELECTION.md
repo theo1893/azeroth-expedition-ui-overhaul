@@ -5,7 +5,8 @@
 - 模块：Quests / Quest Log 左页目录。
 - 组件 ID：`QUEST.LOG.SELECTION`。
 - 版本：`QL-B2 V1`。
-- 子状态：`candidate-rejected / repair-budget-exhausted`。
+- 子状态：`candidate-rejected / repair-budget-exhausted`；确定性
+  bbox-fit 合同例外预演已内审，等待用户明确授权。
 - 项目阶段：`P3`。
 - 固定执行器：`imagegen-0-143-0` /
   `@openai/codex@0.143.0`。
@@ -13,7 +14,7 @@
 - 自动修复预算：最多 `5` 次实际 ImageGen 生图／修图，含首次；无候选且
   无 provider 生成证据的流程错误单列，不占额度。
 - 当前实际生图：`5/5`。
-- 流程错误：`2`。
+- 流程错误：`3`。
 - 多执行正文最坏实际生图数：`5`。
 - 生成授权：`2026-07-30` 明确授权 `QL-B2 V1`；允许每次上传固定 SHA 的
   Image 1／Image 2，允许同一循环前次输出仅在冻结边界内作为 edit 输入，
@@ -56,6 +57,12 @@
   `generated/quests/QL-B2/v1/attempt-05/previews/` 下的 contact 及
   selected／selected-hover／selected-pressed 三张独立
   `676 × 464` 真实排版图。
+- 待授权的确定性合同例外候选：
+  `generated/quests/QL-B2/v1/contract-exception-preview/transparent/QL-B2_V1_r4_a5_bboxfit_transparent.png`
+  （SHA-256
+  `4f8955410ecfaac6697cabeb9bd076d4bd0f5b5adcc97964cee0b7b49d38efaa`）；
+  三态真实排版与 source 对比位于同目录的 `previews/`。该候选只用于决定
+  是否修改 source 合同，尚未接受。
 - 最终 source：无。
 - runtime：无。
 
@@ -330,6 +337,7 @@ Collapse All、操作按钮、奖励槽或动态文字。
 |---:|---|---|---|---|---|
 | E1 | `QL-B2 V1` / `7aa6773` | shell session `6938`；无 child session／result | `npx` 在固定 Codex 启动前访问 npm registry 发生 `EPERM / FetchError`；无图片、无 provider 生成证据 | 保持正文和 Image 1／2 不变；使用临时 npm cache 与获准网络重试 | `process-error`；不占生图额度，仍为 `0/5` |
 | E2 | `QL-B2 V1` / attempt 1 review | 无 provider 调用；离线预演脚本首次启动 | 本机另一个同名 `tools` Python 包遮蔽仓库构建器，预演未写出；此前生成图已经归档且未被替换 | 改为从仓库绝对文件路径加载 QL-B1 构建器后，以同一透明候选确定性重跑 | `workflow-error-resolved`；不占生图额度，仍为 `1/5` |
+| E3 | `QL-B2 V1.r4` / bbox-fit exception preview | 无 provider 调用；确定性预演首次启动 | 系统 Python 缺少 Pillow，抛出 `ModuleNotFoundError: No module named 'PIL'`；没有调用 ImageGen，也没有写出候选 | 改用 Codex workspace dependency 中固定的 Python／Pillow，以同一输入和同一算法重跑 | `workflow-error-resolved`；不占生图额度，仍为 `5/5` |
 
 ## 执行记录
 
@@ -350,7 +358,7 @@ Collapse All、操作按钮、奖励槽或动态文字。
   可见 bbox `[239,343,802,660]`；可见精确绿与启发式强绿均为 `0`。
   native 边缘有 `114` 种颜色且无精确 `#00FF00`。
 - 实际生图次数：`5/5`。
-- 流程错误次数：`2`。
+- 流程错误次数：`3`。
 - 循环终态：`candidate-rejected / repair-budget-exhausted`；不得继续
   ImageGen。第五张保留为用户审查证据，不是 source。
 
@@ -390,6 +398,65 @@ Collapse All、操作按钮、奖励槽或动态文字。
      `352 × 204`，不重画像素”，再重新检查并决定是否接受；
   2. 保持原合同，另行授权新的 `QL-B2 V2`；
   3. 拒绝并暂停 QL-B2。
+
+## 确定性 bbox-fit 合同例外预演（待用户授权）
+
+用户要求“继续”后，仅准备并审查合同例外的可视证据；这不等于用户已经修改
+冻结合同，也不等于接受 source。规范状态继续保持
+`candidate-rejected / repair-budget-exhausted / P3`，实际 ImageGen
+仍为 `5/5`。
+
+### 固定变换
+
+- 唯一输入是 attempt 5 透明候选，SHA-256
+  `7331a523c08d87dcb699bb2476f800d71b44574273a94a610a82278dd948ee75`；
+  不使用锁定图或失败稿重新绘制。
+- 从 Alpha 可见 bbox `[239,343,802,660]` 取得 `563 × 317px` 物件，
+  使用单一比例 `0.6252220248667851` 等比缩为 `352 × 198px`，不裁切、
+  不拉伸、不旋转、不镜像、不改变状态。
+- 将结果居中放入 `1024²` 透明画布，最终 bbox
+  `[336,413,688,611]`，完全位于冻结安全盒
+  `[320,400,704,624]` 内。
+- 重采样后只对 `45` 个低 Alpha 色键边缘像素执行固定绿色优势清理：
+  保留 R、B、Alpha，只把 G 限制为 `max(R,B)`；全透明像素 RGB 清零。
+  该步骤不改变 Alpha、剪影、主体颜色、磨损位置或物件身份。
+- 输出候选 SHA-256
+  `4f8955410ecfaac6697cabeb9bd076d4bd0f5b5adcc97964cee0b7b49d38efaa`。
+  source-space 对比 SHA-256
+  `c7323c8b6a2fbf1d59b43d6c73e83f0e3bcac31071ef9e8c78b5d767d009c919`。
+
+### 内部审查
+
+- 语义／物理：`通过`。对象仍是同一枚水平、左外右内的暗酒红厚旧毛毡
+  短舌；没有引入第二物件、按钮、箭头、金属或文字。
+- 透视／图层：`通过`。只做统一等比缩放与透明居中，正面微俯视和
+  shell → bookmark → QL-B1／文字的层序不变。
+- 美术一致性：`通过`。轮廓、宽阔明暗面、左上暖光、综合色、磨损位置
+  与第五张完全同源；没有重画成现代 pill 或硬质牌。
+- 对象／状态合同：`有条件通过`。单 source 和确定性 selected／hover／
+  pressed 三态不变；安全盒与 runtime 比例已满足。但“接受前可对 source
+  bbox 做一次确定性等比 fit”本身仍是未授权合同例外，因此不能晋级 P4。
+- 真实排版：`通过`。重新生成三张独立 `676 × 464`／100% runtime
+  预演，保留 QL-A2 shell、QL-B1 atlas、23 行真实密度和右页内容：
+  selected
+  `3cc9962bea3bca86aba8d56581244d8b2823776b399a2e49fc6a6c95093be16a`；
+  hover
+  `0bd9c4cac7e2939326824add14110a10913cb8b400f5603aea4c0b8f633c78d6`；
+  pressed
+  `fd14ca03af6cecf74e2c0fb89368960139723e2b6f35378ee25e2bbc2d89b749`。
+  与 attempt 5 原预演相比，三态 Alpha 改变像素均为 `0`；全幅 RGB
+  每通道平均绝对差均约 `0.0071/255`，运行时外形、占位和可读性没有
+  可见退化。
+- 技术像素：`通过`。候选为 `1024² RGBA`；透明／半透明／不透明像素
+  `983561／3321／61694`；可见 bbox 为 `352 × 198`；精确纯绿和启发式
+  绿色优势像素均为 `0`。
+- 结论：`exception-preview-reviewed / authorization-pending`。它是被忽略
+  的审查候选，不是 durable source；未创建 manifest、runtime、Lua 接入
+  或 P4 结论。
+- 下一门禁：用户明确接受或拒绝“固定色键清理后，将 attempt 5 可见 bbox
+  等比 fit 到中心 `352 × 204` 安全盒且不重画”的 source 合同例外。只有
+  明确接受具体候选后，才可把上述透明候选晋级 `assets/source/` 并进入
+  P4/P5。
 
 ## 尝试摘要
 
