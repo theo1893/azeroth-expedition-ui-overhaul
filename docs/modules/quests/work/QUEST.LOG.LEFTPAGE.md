@@ -10,7 +10,7 @@
 - 当前实际生图：A `0/5`；B `0/5`。
 - 单段预算：最多 `5` 次实际生成／编辑。
 - 最坏总预算：`10` 次实际生成／编辑。
-- 流程错误：A `0`；B `0`，与实际生图次数分开记录。
+- 流程错误：A `1`；B `0`，与实际生图次数分开记录。
 - 固定执行器：`.codex/skills/imagegen-0-143-0/SKILL.md`，
   `@openai/codex@0.143.0`。
 - 用户授权：`2026-07-30` 明确授权 `QL-B0-A V2` 与 `QL-B0-B V2`，
@@ -240,6 +240,17 @@ Image 2 `QuestLogBookShell_Master_v1.png`
 - 每个 countable output 必须依次完成：原尺寸语义／美术检查、纯绿色与
   source bbox 检查、确定性透明预演、`262 × 340` 或 `224 × 18` 真实排版
   预演。未通过时只能在同段 envelope 内修复。
+
+## 执行账本
+
+| 段 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
+|---|---:|---|---|---|---|---|---|---|
+| A | 1/5 | `QL-B0-A V2`／`8e934f6` | generate |  |  |  |  |  |
+| B | 1/5 | `QL-B0-B V2`／待执行前 commit | generate |  |  |  |  |  |
+
+| 流程错误 | 段／正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
+|---:|---|---|---|---|---|
+| E1 | A／`QL-B0-A V2`／`8e934f6` | fixed CLI 未启动；无 child session／result | `npx` 写入用户 npm cache 时返回 `EPERM`；无图片、无 provider result、无生成证据 | 保持授权正文与 Image 1／2 不变；改用 `generated/` 下独立 npm cache，并以获准网络环境重试 | `process-error`；不占生图额度，A 仍为 `0/5` |
 
 ## 下一门禁
 
