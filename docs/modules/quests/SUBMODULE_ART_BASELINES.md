@@ -63,11 +63,15 @@ expanded 向下。`QUEST.LOG.LIST.CHECK` 使用同一枚开放墨圈：untracked
 真透明、无文字，并只绑定 [SUBMODULES.md](SUBMODULES.md) 声明的真实语义；
 任务名称、等级、数量和本地化标签永远动态。
 
-QL-B1 V1 的完整五次执行与退回记录在
-[work/QUEST.LOG.DIRECTORY.md](work/QUEST.LOG.DIRECTORY.md)；该版本已耗尽
-预算且没有可执行授权、accepted source 或 runtime。QL-B2／B3 必须在新的
-QL-B1 方案确认小尺寸视觉重量后分别建立完整执行正文，不能从概念图或被拒
-候选直接裁切。
+QL-B1 V1 的完整五次执行、内部退回和用户覆盖性接受记录在
+[work/QUEST.LOG.DIRECTORY.md](work/QUEST.LOG.DIRECTORY.md)。用户于
+`2026-07-30` 接受 V1.r3 在 `12px`／`10px` 下的运行时视觉；透明母版与
+provenance 位于
+[QL-B1_SourceManifest_v1.json](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)。
+像素级旋转同源、完全相同外圈、源安全盒和 raw 精确纯绿色仍作为历史生产
+偏差保留，不被改写为通过；它们不再阻塞已授权的逐格裁切、等比缩放、居中
+与 Alpha 清理。QL-B2／B3 以已接受的小尺寸视觉重量继续分别建立完整执行
+正文，不能从概念图或未接受候选直接裁切。
 
 ## ScrollBar 与操作 Button
 

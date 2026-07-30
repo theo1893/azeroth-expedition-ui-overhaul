@@ -80,7 +80,9 @@ pfUI 的功能合同保留 `QUESTS_DISPLAYED = 23`，而 QL-A2 左页安全区�
 
 QL-B 的生产边界：
 
-- `QL-B1`：`REGION.TOGGLE` 与 `LIST.CHECK` 四枚墨记。
+- `QL-B1`：`REGION.TOGGLE` 与 `LIST.CHECK` 四枚墨记；V1.r3 透明 source
+  已接受。runtime 只允许按 manifest 固定四格裁切、等比缩放并居中，
+  不得修改任务行交互或状态来源。
 - `QL-B2`：`SELECTION` 的三状态暗酒红织物书签。
 - `QL-B3`：四类可靠 `TYPE.BADGE`、独立 `TIMER.BADGE` 与两类
   `STATE.SEAL`。

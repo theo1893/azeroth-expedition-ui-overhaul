@@ -7,18 +7,19 @@
   - `QUEST.LOG.REGION.TOGGLE`
   - `QUEST.LOG.LIST.CHECK`
 - 版本：`QL-B1 V1`。
-- 子状态：`candidate-rejected / repair-budget-exhausted`。
-- 项目阶段：`P3`。
+- 子状态：`source-accepted`。
+- 项目阶段：`P4`。
 - 固定执行器：`imagegen-0-143-0` /
   `@openai/codex@0.143.0`。
 - 操作：`edit`（attempt 5；attempt 1–4 记录见循环表）。
 - 自动修复预算：最多 `5` 次固定执行器调用，含首次。
 - 当前尝试：`5/5`（预算耗尽，无剩余调用）。
 - 多执行正文最坏总调用数：`5`。
-- 用户授权：`2026-07-30` 明确授权 `QL-B1 V1`；允许每次上传固定 SHA 的
+- 生成授权：`2026-07-30` 明确授权 `QL-B1 V1`；允许每次上传固定 SHA 的
   Image 1／Image 2，允许同一循环前次输出仅在冻结边界内作为 edit 输入，
-  最多 `5` 次固定 `imagegen-0-143-0` 调用。授权不包含候选接受、P4 source、
-  runtime 导出或游戏接入。
+  最多 `5` 次固定 `imagegen-0-143-0` 调用。
+- 用户接受：`2026-07-30` 明确接受 `QL-B1 V1.r3` 的运行时视觉，并允许按
+  已声明的确定性逐格裁切、等比缩放、居中与 Alpha 规则进入 `P4/P5`。
 - 锁定视觉基准：
   - Image 1：
     `assets/locked/quests/任务详情面板_视觉基准_v1.png`
@@ -54,7 +55,12 @@
 - 重组预演：
   - `generated/quests/QL-B1/v1/attempt-05/previews/QL-B1_V1_r3_contact.png`
   - `generated/quests/QL-B1/v1/attempt-05/previews/QL-B1_V1_r3_runtime_preview.png`
-- 最终 source：未接受。
+- 最终 source：
+  `assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
+  （tracked，SHA-256
+  `719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`）。
+- source manifest：
+  `assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json`。
 
 ## 当前批次边界
 
@@ -63,7 +69,7 @@ QL-B 目录状态按运行时语义和物件尺度拆分：
 | 批次 | 组件 | 当前状态 |
 |---|---|---|
 | `QL-B0` | 23 个真实 `QuestLogTitleN` 的创建、排布、文字安全区和状态刷新 | 合同已审计，等待随资产接入实现 |
-| `QL-B1` | 地区展开／收起墨箭头；未追踪／已追踪墨圈 | 本文件，V1 `candidate-rejected / repair-budget-exhausted` |
+| `QL-B1` | 地区展开／收起墨箭头；未追踪／已追踪墨圈 | V1.r3 `source-accepted / P4`；等待确定性 runtime 导出 |
 | `QL-B2` | 当前任务暗酒红窄织物书签及其交互状态 | 等待 QL-B1 视觉尺度确认 |
 | `QL-B3` | Elite／Dungeon／Raid／PvP 类型章、Timed 沙漏章、Complete／Failed 蜡封 | 等待 QL-B1 视觉尺度确认 |
 
@@ -147,9 +153,9 @@ Turtle WoW `1.18.1` 的目标调用按香草返回顺序读取
   `22px` 留给 QL-C 滚动条与间距。该几何要先通过 Lua smoke，再等待实机。
 - 地区墨箭头显示尺寸：`12 × 12 UI px`。
 - 追踪墨圈显示尺寸：`10 × 10 UI px`。
-- 接受后确定性导出为一个 `64 × 16` RGBA TGA：四个
+- 已授权确定性导出为一个 `64 × 16` RGBA TGA：四个
   `16 × 16` cell 依次为 collapsed、expanded、untracked、tracked；对象在
-  cell 内居中并保留透明 padding。当前不导出。
+  cell 内居中并保留透明 padding。
 - 原始生成画布：`1024 × 1024`，严格 `2 × 2` 等格，每格
   `512 × 512`。每件物体只能位于本格中心 `224 × 224px` 安全盒内。
 - Alpha：生成阶段使用全画布均匀 `#00FF00` 色键；对象不得含绿色。候选阶段
@@ -436,16 +442,17 @@ UI 或文字。任何一项不满足都不要输出。
   `#04F909` 而非均匀 `#00FF00`。透明稿 `RGBA`、SHA `719445d1…`，
   `936446` 全透明、`4792` 半透明、`107338` 不透明，无可见绿色残留，
   四格均未触 cell 边。
-- 结论：attempt 5 `退回`；当前为
-  `candidate-rejected / P3 / repair-budget-exhausted`。第一失败门禁仍是
-  “2. 语义、解剖与物理逻辑”的状态同源关系，另有平面墨迹身份、占用、
-  居中和色键失败。不得进入 source、runtime 或自动继续生图。
-- 用户结论与日期：`2026-07-30` 已授权本版本、固定两图与最多五次自主
-  修复循环；尚未接受任何候选。
-- 下一门禁：用户审核失败证据并决定是否建立新的 `QL-B1 V2` 合同。建议把
-  “同源状态”改为可验证的确定性生产：生成或接受一枚基础箭头、一枚基础
-  空圈和一笔独立墨勾，再由工具复制／旋转／叠加生成四个 runtime state；
-  这会改变 source 对象库存与装配合同，必须重新授权，不能在 V1 预算内执行。
+- 内部结论：attempt 5 曾因状态同源、平面墨迹身份、源安全盒与原始色键
+  合同失败而退回，`5/5` 预算已经耗尽；这些历史事实不改写为“内部通过”。
+- 用户结论与日期：`2026-07-30` 明确接受 `QL-B1 V1.r3` 的运行时视觉。
+  用户接受以真实 `12px`／`10px` 下的可读性和综合色为准，覆盖此前把
+  “像素级同源”“源安全盒”和“raw 精确纯绿”作为 P4 阻塞项的内部裁决；
+  透明母版无可见绿色残留，允许以确定性逐格裁切、等比缩放、居中与 Alpha
+  清理解决源占用差异。该接受不声称失败门禁已经客观通过。
+- 当前结论：`source-accepted / P4`；V1.r3 透明稿已作为 tracked source
+  与 manifest 晋级，不再调用 ImageGen。
+- 下一门禁：按 manifest 的固定四格合同确定性导出 `64 × 16` RGBA TGA，
+  接入 23 个真实 `QuestLogTitleN`，生成真实排版预演并完成静态测试。
 
 ## 尝试摘要
 
@@ -454,4 +461,4 @@ UI 或文字。任何一项不满足都不要输出。
 | `QL-B1 V1` | commit `13edad9`；session `019fb1d9-0792-7110-8156-2aed5644d5c7`；无输出 | transport-error；`1/5` 已消耗 | 不改美术正文；修复子进程写入环境 |
 | `QL-B1 V1.r1` | commits `6fdf109`／`453450d`；outer session `019fb1dc-57c5-77a0-b3ce-a884d61e0c99`；observed nested `019fb1dc-58df-7a43-83d0-97d674a5229a`；无输出 | executor-recursion；attempt 2／3 均计入 | 不改美术正文；禁止当前固定进程二次委托 |
 | `QL-B1 V1.r2` | commit `21871a0`；session `019fb1e0-9914-74f2-ab21-a3af62713f58`；raw `cc14b469…`；transparent `79e5bf71…` | rejected：状态同源、平面墨迹、画布、占用与色键失败 | 以本稿为 Image 3 做最后一次冻结边界内 edit |
-| `QL-B1 V1.r3` | commit `f99d17a`；session `019fb1e8-db9a-7010-86d1-98008548e4d6`；normalized raw `73f719d4…`；transparent `719445d1…` | rejected：状态同源、平面墨迹、占用、居中与色键失败；`5/5` 耗尽 | 等待用户审核并决定是否授权新的 V2 确定性状态生产合同 |
+| `QL-B1 V1.r3` | commit `f99d17a`；session `019fb1e8-db9a-7010-86d1-98008548e4d6`；normalized raw `73f719d4…`；transparent `719445d1…` | internal rejected；用户于 `2026-07-30` 接受其运行时视觉，`source-accepted / P4` | 按已授权确定性规则导出并接入，不再生图 |

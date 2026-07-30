@@ -5,8 +5,8 @@
 - Quest Log 主视觉：已锁定。
 - 用户于 `2026-07-30` 将 Quest Log 选为当前首要大面积 UI；地图与角色因
   实机对象几何尚未完成，继续保持后续顺位。
-- Quest Log 真实对象合同：`P1` 完成，QL-A 当前处于 `P4–P5`；QL-B1 V1
-  已在 `P3` 完成并耗尽五次自主修复循环，终态为 `candidate-rejected`。
+- Quest Log 真实对象合同：`P1` 完成，QL-A 当前处于 `P4–P5`；QL-B1
+  V1.r3 已由用户接受运行时视觉并晋级 `source-accepted / P4`。
 - `QL-A1` 空卷宗结构 source：用户确认，`P4`。
 - `QL-A2 V3.2` 已终止：A attempt 5 目标级通过；B 在 `5/5` 后仍有约
   `45%` 格宽的针脚和完整外露结，整批 `10/10` 额度耗尽。没有形成
@@ -35,14 +35,17 @@
   `324px` 安全区存在明确几何冲突；当前离线合同保留 23 行，以
   `15px` 行高／`14px` 步进占用 `323px`，不减少 pfUI 可见行数。该数值
   仍需实机验证文字基线、点击重叠和滚动偏移。
-- `QL-B1 V1`：`candidate-rejected / P3 / repair-budget-exhausted`。用户于
+- `QL-B1 V1` 的固定执行循环在
+  `candidate-rejected / P3 / repair-budget-exhausted` 终止。用户于
   `2026-07-30` 授权固定 Image 1／2、同循环 edit 输入和最多五次调用。
   attempt 1 因只读保存环境失败；attempt 2 触发同名包装 skill 递归，已启动
   的嵌套固定调用按 attempt 3 保守计数后中断；attempt 4 首次形成四格候选；
   attempt 5 以该候选为 Image 3 编辑。最终仍未满足两枚箭头严格旋转同源、
-  两枚外圈只差墨勾、平面墨迹身份、`224²` 安全盒和均匀 `#00FF00` 色键，
-  因而不能进入用户接受、source 或 runtime。normalized `1024²` 透明检查稿
-  与真实 `12px`／`10px` 预演只在 ignored `generated/` 中。
+  两枚外圈只差墨勾、平面墨迹身份、`224²` 安全盒和均匀 `#00FF00` 色键。
+  用户随后于 `2026-07-30` 明确接受 V1.r3 的运行时视觉，并允许用确定性逐格
+  裁切、等比缩放、居中与 Alpha 规则进入 P4/P5；该决定不把内部失败门禁
+  改写成通过。透明母版与 source manifest 已 tracked，当前为
+  `source-accepted / P4`，固定执行器仍是 `5/5` 且不再调用。
 - `QL-B2`／`QL-B3`：只完成稳定边界。选中书签与类型／计时／状态章将在
   QL-B1 小尺寸视觉重量确认后分别准备；Collapse All 归 QL-C 独立 Button，
   不混入目录墨记。
@@ -57,7 +60,7 @@
 | `QL-A1` | `QUEST.LOG.SHELL` 结构母版 | `P4` | [透明 source](../../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png) 已接受；原始 PNG 不直接加载，只允许 QL-A2 V4 确定性全幅导出 | Turtle WoW 中复核最终显示 |
 | `QL-A2` | 静态空卷宗结构与页沟 | `P5` V4 runtime-exported | V3.3 `15/15` 已终止；V4 已从 QL-A1 source 导出 `676 × 464` 显示区／`1024 × 512` TGA，固定执行器 `0/0`，Lua smoke 通过 | Turtle WoW 验证纹理方向、裁切、命中与 list-only |
 | `QL-B0` | 23 行创建、排布、文字安全区和状态刷新 | `P2 contract` | 保留 23 行的 `323px` 离线几何已定义，尚未接入 | 随已接受目录资产实现并做 smoke |
-| `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P3 candidate-rejected` | [完整 work](work/QUEST.LOG.DIRECTORY.md) 记录 V1 `5/5` 预算耗尽；attempt 5 仍未通过状态同源、平面墨迹、安全盒与色键门禁 | 用户审核失败证据；如继续，另行授权 V2 确定性状态生产合同 |
+| `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P4 source-accepted` | 用户接受 V1.r3 运行时视觉；[透明母版](../../../assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png) 与 [manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json) 已 tracked；内部失败与 `5/5` 事实保留 | 确定性导出四格 atlas、接入 QL-B0 23 行并静态验证 |
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P2 baseline` | 真实语义与美术边界已定义，无执行正文 | QL-B1 视觉重量确认 |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P2 baseline` | 类型 tag、timer API、isComplete 已分离；未知 tag 不猜测 | QL-B1 视觉重量确认 |
 | `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作与辅助按钮 | `P1–P2` | 真实对象已拆，部分全局名需 feature-detect | 实机对象与几何 |
@@ -110,21 +113,22 @@ source 或 runtime。
   [`quest_module_smoke.lua`](../../../tests/quest_module_smoke.lua)。
 - QL-A2 raw、透明候选与失败候选只存在于被忽略的
   `generated/quests/QL-A2/`；未晋级任何 V3.2／V3.3 候选。
-- QL-B1 生产合同与五次循环记录：
+- QL-B1 生产合同、五次循环与用户接受记录：
   [`QUEST.LOG.DIRECTORY.md`](work/QUEST.LOG.DIRECTORY.md)；固定执行器
   `5/5`，终态 `candidate-rejected / repair-budget-exhausted`。attempt 5
   normalized raw SHA-256
   `73f719d44a55b01d0ef8bc6f2c07343679a10b155d612941ca72d16869527596`，
   transparent SHA-256
-  `719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`；
-  均为 ignored 本机证据，无 tracked source／runtime。
+  `719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`。
+  同 SHA 透明稿已晋级为
+  `assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`，runtime
+  尚未导出。
 - Turtle WoW 实机验证尚未开始。
 
 ## 下一步
 
 QL-A2 保持 [runtime work](work/QUEST.LOG.GUTTER.md)，等待 Turtle WoW
-`1.18.1` 实机验收后才可进入 `P6`／清理。QL-B1 V1 已在 `5/5` 后终止；
-当前下一门禁是用户审核其透明稿／真实尺寸预演与失败结论。若继续，建议新建
-需要明确授权的 V2：把一枚基础箭头、一枚基础空圈和一笔独立墨勾作为 source
-原语，再以确定性复制、旋转和叠加形成四状态，从生产合同上保证严格同源。
-不得在 V1 预算内继续调用，也不得把 rejected 候选晋级为 source／runtime。
+`1.18.1` 实机验收后才可进入 `P6`／清理。QL-B1 V1.r3 已由用户接受并进入
+`P4`；下一门禁是按 manifest 导出四格 runtime atlas、把 23 行真实布局与
+状态刷新接入 adapter，并以真实任务文本密度和当前新 UI 生成 100% 尺寸
+预演。不得继续调用 V1 ImageGen，也不得把确定性处理描述成重新生成美术。

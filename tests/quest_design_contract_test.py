@@ -201,10 +201,12 @@ def main() -> None:
             "QL-A1_RuntimeManifest_v1.json",
             "1b6b21cd3db74202051a2ceb8b5ba1d91ca7beb636accf247603edbc3cfeb40e",
             "`QL-B1 V1`",
-            "`candidate-rejected / P3 / repair-budget-exhausted`",
+            "`source-accepted / P4`",
             "`5/5`",
             "`15px` 行高／`14px` 步进",
             "work/QUEST.LOG.DIRECTORY.md",
+            "QuestLogDirectoryMarks_Master_v1.png",
+            "QL-B1_SourceManifest_v1.json",
             "Quest Tracker",
             "外部 provider `P0`",
             "NPC Quest／Gossip",
@@ -282,8 +284,8 @@ def main() -> None:
         directory_work,
         (
             "版本：`QL-B1 V1`",
-            "子状态：`candidate-rejected / repair-budget-exhausted`",
-            "项目阶段：`P3`",
+            "子状态：`source-accepted`",
+            "项目阶段：`P4`",
             "固定执行器：`imagegen-0-143-0`",
             "当前尝试：`5/5`",
             "QUEST.LOG.REGION.TOGGLE",
@@ -328,18 +330,61 @@ def main() -> None:
             "## 自主修复循环",
             "最多 `5` 次",
             "固定 SHA 的 Image 1／Image 2",
-            "candidate-rejected / P3 / repair-budget-exhausted",
+            "source-accepted / P4",
             "QL-B1 V1.r3",
             "019fb1e8-db9a-7010-86d1-98008548e4d6",
             "73f719d44a55b01d0ef8bc6f2c07343679a10b155d612941ca72d16869527596",
             "719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44",
+            "QuestLogDirectoryMarks_Master_v1.png",
+            "QL-B1_SourceManifest_v1.json",
+            "确定性逐格裁切、等比缩放、居中与 Alpha",
         ),
         "active QL-B1 work",
     )
     assert "/Users/" not in directory_work
     assert directory_work.count("## 最终执行正文") == 1
     assert "attempt 1" in directory_work.lower()
-    assert "不得进入 source、runtime" in directory_work
+    assert "该接受不声称失败门禁已经客观通过" in directory_work
+
+    directory_source_path = (
+        ROOT
+        / "assets"
+        / "source"
+        / "quests"
+        / "ql-b1"
+        / "QuestLogDirectoryMarks_Master_v1.png"
+    )
+    directory_manifest_path = directory_source_path.with_name(
+        "QL-B1_SourceManifest_v1.json"
+    )
+    directory_manifest = json.loads(
+        directory_manifest_path.read_text(encoding="utf-8")
+    )
+    directory_source_bytes = directory_source_path.read_bytes()
+    assert directory_source_bytes[:8] == b"\x89PNG\r\n\x1a\n"
+    assert directory_source_bytes[12:16] == b"IHDR"
+    width, height = struct.unpack(">II", directory_source_bytes[16:24])
+    assert (width, height, directory_source_bytes[24:26]) == (
+        1024,
+        1024,
+        b"\x08\x06",
+    )
+    assert directory_manifest["batch"] == "QL-B1"
+    assert directory_manifest["version"] == "V1.r3"
+    assert directory_manifest["status"] == "accepted-source"
+    assert hashlib.sha256(directory_source_bytes).hexdigest() == (
+        directory_manifest["source"]["sha256"]
+    )
+    assert directory_manifest["review"]["runtime_visual_accepted"] is True
+    assert directory_manifest["review"]["prior_internal_result"] == (
+        "candidate-rejected / repair-budget-exhausted"
+    )
+    assert directory_manifest["export_contract"]["status"] == "authorized"
+    assert directory_manifest["export_contract"]["runtime_atlas_size"] == [
+        64,
+        16,
+    ]
+    assert directory_manifest["runtime_exports"] == []
 
     source_path = (
         ROOT
