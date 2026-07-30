@@ -651,7 +651,7 @@ Image 3 是本段前一次生成的四格候选，也是唯一编辑目标。必
 | A | 2/5 | `QL-B3-A V1.r1` / `0fabed1` | edit | `019fb2a0-e316-70b0-ae98-3de032a2fe93`／`ig_095752b9d2875834016a6b2b5244388191872768206eb8a502` | native `25a0de6f…`；normalized `4c7f7c3b…`；transparent `1d06098f…`；layout `67eac225…` | dungeon 左越安全盒 `3px`、raid 上越 `25px`、pvp 上越 `8px`；native 背景约 `#07EB0B` 且不均匀 | 保留四枚物件与 10px 可读性；以本段输出作为 Image 3，进一步缩到 `140px` 以内、严格居中并替换数字纯绿底 | internal-fail；`2/5` |
 | A | 3/5 | `QL-B3-A V1.r2` / `cfa7715` | edit | `019fb2a9-8a48-7da2-addf-dfc7e0f29a05`／`ig_0eae0c803936b5ed016a6b2d8312b881919466d9ff6ef9f738` | native `488cab28…`；normalized `a3cb06af…`；transparent `d15bb7ae…`；layout `aaa11ecb…` | dungeon 左越安全盒 `3px`、raid 上越 `17px`；native 背景约 `#09E90F` 且不均匀 | 保留四枚物件；以本段输出作为 Image 3，用约 50% 相对缩放和绝对象限居中替代未被遵循的像素尺寸措辞 | internal-fail；`3/5` |
 | A | 4/5 | `QL-B3-A V1.r3` / `36e7921` | edit | `019fb2b0-f3b2-7ff2-a6d1-3911625e53bc`／`ig_02db1bbbb2af7430016a6b2f7019408191afcde04361b058d0` | native `f3a6272a…`；normalized `94c229c9…`；transparent `d5aa0ef5…`；layout `da9bf7d9…` | 四格正式安全盒均通过；唯一硬失败为 native 背景约 `#09F911` 且不均匀 | 冻结 attempt 4 四枚图标的全部可见像素、位置和尺寸；以本段输出作为 Image 3，只替换精确数字纯绿背景 | internal-fail；`4/5` |
-| A | 5/5 | `QL-B3-A V1.r4` / `TBD` | edit |  |  |  |  |  |
+| A | 5/5 | `QL-B3-A V1.r4` / `9c0f4db` | edit |  |  |  |  |  |
 | B | 1/5 | `QL-B3-B V1` / `265503a` | generate |  |  |  |  |  |
 | C | 1/5 | `QL-B3-C V1` / `265503a` | generate |  |  |  |  |  |
 
@@ -672,6 +672,9 @@ Image 3 是本段前一次生成的四格候选，也是唯一编辑目标。必
 - `QL-B3-A V1.r3` 完整正文与 attempt 3 审查已冻结于 commit
   `36e7921`；attempt 4 只允许上传固定 Image 1／2 与同段 attempt 3
   native Image 3。
+- `QL-B3-A V1.r4` 完整正文与 attempt 4 审查已冻结于 commit
+  `9c0f4db`；attempt 5 只允许上传固定 Image 1／2 与同段 attempt 4
+  native Image 3，且子进程只能原样复制 provider output。
 
 ### QL-B3-A V1 attempt 1
 
