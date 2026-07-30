@@ -197,9 +197,10 @@ source 或 runtime。
 - QL-B3 生产合同：
   [`QUEST.LOG.STATUS.md`](work/QUEST.LOG.STATUS.md)。三段均为
   `P3`；固定 Image 1／2、三槽真实行几何、同段 edit、每段最多五次实际
-  生图和最坏 `15` 次总预算已获授权。当前 A `4/5`、B `0/5`、C `0/5`；
-  A attempt 4 已通过四格安全盒、语义、美术与 10px 真实排版，只剩 native
-  色键不是精确纯绿，已准备冻结图标、只替换背景的最后一次 V1.r4；
+  生图和最坏 `15` 次总预算已获授权。当前 A `5/5` exhausted、B `0/5`、
+  C `0/5`；A attempt 5 已通过四格安全盒、语义、美术与 10px 真实排版，
+  但 native 精确 `#00FF00` 像素仍为 `0`，背景-only edit 亦发生 1px 级
+  重绘漂移，已按 skill 标记 `candidate-rejected / repair-budget-exhausted`；
   三次无 provider 结果的错误与一次 provider 后处理异常均已单列，均不
   新增实际生图计数。
 - QL-B3 候选审查工具：
@@ -215,8 +216,9 @@ QL-A2 保持 [runtime work](work/QUEST.LOG.GUTTER.md)，等待 Turtle WoW
 实机。QL-B2 V1 已在 `5/5` 停止；用户接受的 bbox-fit source、固定三态
 atlas、adapter 与静态测试现已完成到 P5，下一门禁是 Turtle WoW 实机验证，
 在此之前不得标记 P6 或清理 work。QL-B3-A／B／C V1 已获明确授权；当前
-先执行 A 最后一次 V1.r4 scoped edit；若仍不能通过则按五次上限停止 A
-并等待用户决定。B／C 仍按各自独立预算继续。
+A 已按五次上限停止。等待用户决定是否授权 attempt 4／5 的确定性色键合同
+例外、改变 source 策略重开 A，或拒绝现有视觉。决定前不执行 B／C、
+不晋级 source／runtime；QL-A2／B0／B1／B2 继续等待实机。
 每个 countable output 后必须完成真实排版内审与边界内自主修复。不得继续
 调用 QL-B2 V1 ImageGen。QL-B1 的旧计数保留为当时流程的历史事实，不作为
 新口径先例。

@@ -12,13 +12,13 @@
   - `QL-B3-A V1`：四类任务类型压印。
   - `QL-B3-B V1`：一枚限时沙漏压印。
   - `QL-B3-C V1`：完整／破裂两态蜡封。
-- 子状态：`repair-prepared`。
+- 子状态：`candidate-rejected / repair-budget-exhausted`。
 - 项目阶段：`P3`。
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`。
 - 操作：三段均为首次 `generate`；同一段后续可在冻结边界内选择
   `edit` 或 `generate`。
 - 当前实际生图：
-  - QL-B3-A：`4/5`
+  - QL-B3-A：`5/5`
   - QL-B3-B：`0/5`
   - QL-B3-C：`0/5`
 - 流程错误／执行异常：`4`；无候选且无 provider 生成证据时单列且不占
@@ -50,9 +50,9 @@
 - 非上传的内部尺度证据：
   - QL-B1 已接受 `12px`／`10px` 目录墨记只用于审查小尺寸线重与信息密度；
     不作为 Image 3，不要求生成模型模仿其生产偏差。
-- raw：A attempt 4 native SHA-256 `f3a6272a…`；仍为循环中间产物。
-- 透明候选：A attempt 4 SHA-256 `d5aa0ef5…`；仍为循环中间产物。
-- 真实排版预演：A attempt 4 SHA-256 `da9bf7d9…`；B／C 使用明确标记的
+- raw：A attempt 5 native SHA-256 `2c6db95e…`；循环耗尽证据。
+- 透明候选：A attempt 5 SHA-256 `83aac7a0…`；未获用户接受，不是 source。
+- 真实排版预演：A attempt 5 SHA-256 `9c7e3320…`；B／C 使用明确标记的
   非权威中性占位。
 - 最终 source：无。
 
@@ -651,7 +651,7 @@ Image 3 是本段前一次生成的四格候选，也是唯一编辑目标。必
 | A | 2/5 | `QL-B3-A V1.r1` / `0fabed1` | edit | `019fb2a0-e316-70b0-ae98-3de032a2fe93`／`ig_095752b9d2875834016a6b2b5244388191872768206eb8a502` | native `25a0de6f…`；normalized `4c7f7c3b…`；transparent `1d06098f…`；layout `67eac225…` | dungeon 左越安全盒 `3px`、raid 上越 `25px`、pvp 上越 `8px`；native 背景约 `#07EB0B` 且不均匀 | 保留四枚物件与 10px 可读性；以本段输出作为 Image 3，进一步缩到 `140px` 以内、严格居中并替换数字纯绿底 | internal-fail；`2/5` |
 | A | 3/5 | `QL-B3-A V1.r2` / `cfa7715` | edit | `019fb2a9-8a48-7da2-addf-dfc7e0f29a05`／`ig_0eae0c803936b5ed016a6b2d8312b881919466d9ff6ef9f738` | native `488cab28…`；normalized `a3cb06af…`；transparent `d15bb7ae…`；layout `aaa11ecb…` | dungeon 左越安全盒 `3px`、raid 上越 `17px`；native 背景约 `#09E90F` 且不均匀 | 保留四枚物件；以本段输出作为 Image 3，用约 50% 相对缩放和绝对象限居中替代未被遵循的像素尺寸措辞 | internal-fail；`3/5` |
 | A | 4/5 | `QL-B3-A V1.r3` / `36e7921` | edit | `019fb2b0-f3b2-7ff2-a6d1-3911625e53bc`／`ig_02db1bbbb2af7430016a6b2f7019408191afcde04361b058d0` | native `f3a6272a…`；normalized `94c229c9…`；transparent `d5aa0ef5…`；layout `da9bf7d9…` | 四格正式安全盒均通过；唯一硬失败为 native 背景约 `#09F911` 且不均匀 | 冻结 attempt 4 四枚图标的全部可见像素、位置和尺寸；以本段输出作为 Image 3，只替换精确数字纯绿背景 | internal-fail；`4/5` |
-| A | 5/5 | `QL-B3-A V1.r4` / `9c0f4db` | edit |  |  |  |  |  |
+| A | 5/5 | `QL-B3-A V1.r4` / `9c0f4db` | edit | `019fb2b8-f1df-7583-bd8c-a6234a80ee2f`／`ig_0f3a3221a8a5ddcc016a6b3174f82c81919f2357b8d392fa96` | native `2c6db95e…`；normalized `fb0e40a9…`；transparent `83aac7a0…`；layout `9c7e3320…` | native 中精确 `#00FF00` 像素为 `0`，背景约 `#0BF815` 且不均匀；背景-only edit 仍产生 1px 级重绘漂移 | 停止 A；保留五次证据，等待用户决定是否授权确定性色键合同例外、改变 source 策略或拒绝重开 | candidate-rejected；`5/5` exhausted |
 | B | 1/5 | `QL-B3-B V1` / `265503a` | generate |  |  |  |  |  |
 | C | 1/5 | `QL-B3-C V1` / `265503a` | generate |  |  |  |  |  |
 
@@ -847,6 +847,64 @@ Image 3 是本段前一次生成的四格候选，也是唯一编辑目标。必
   可见像素、格序、尺寸和位置，只允许删除旧绿并以数字填充层重铺精确
   `#00FF00`；不改变画布、材料或 runtime 合同。
 
+### QL-B3-A V1.r4 attempt 5
+
+- 日期：`2026-07-30`。
+- 固定执行器：`@openai/codex@0.143.0`，子进程 session
+  `019fb2b8-f1df-7583-bd8c-a6234a80ee2f`，provider image
+  `ig_0f3a3221a8a5ddcc016a6b3174f82c81919f2357b8d392fa96`。
+- 输入：固定 Image 1 SHA `03dc589a…`；固定 Image 2 SHA `91f9feca…`；
+  同段 Image 3 为 attempt 4 native SHA `f3a6272a…`。
+- executor user block 已核对为完整 `QL-B3-A V1.r4`；没有报告 revised
+  prompt。子进程遵守额外执行边界，只把 provider output byte-for-byte
+  复制到临时 `generated/`，没有生成后像素处理。
+- native：`1254 × 1254 RGB`，
+  `generated/quests/QL-B3/v1/type/attempt-05/raw/QL-B3-A_V1_r4.raw.png`，
+  SHA-256
+  `2c6db95eff7d2222d05a7e014bfb1d0def29a81002371cc5d945253d933fd66c`。
+- 确定性归一化：`1024 × 1024 RGB`，SHA-256
+  `fb0e40a9f026791cefc41bd6521c1c8bba6bc216c483bcb6f741055939d1d472`。
+- 固定色键清理使用 corner key `#0BF815`；透明候选 SHA-256
+  `83aac7a09c99e98cf64dc58360126045d4cfa004441f381390fd39280fc5a60c`，
+  Alpha `1023613` 全透明／`2465` 半透明／`22498` 不透明，可见强绿 `0`。
+- `676 × 464`、23 行真实排版 SHA-256
+  `9c7e3320b8557b2dc75bf0434fc095ac1a7c43c38302b4f4c0ad5e2dd7d1c0d4`；
+  B／C 仍为明确标注的中性非权威占位。
+- 实际生图：A `5/5`，剩余额度 `0`；无 tracked source／runtime。
+
+## Attempt 5 审查记录
+
+- 结论：`candidate-rejected / P3 / repair-budget-exhausted`。
+- 语义／美术／正式安全盒／真实排版：pass。恰好四枚、正确格序、同一香草
+  墨印语言；elite `[237,244,338,354]`、dungeon
+  `[157,243,273,349]`、raid `[230,149,340,257]`、pvp
+  `[163,160,265,259]` 全部通过本地 `[128,128,384,384]`；bbox-fit
+  `10px` 四类可辨，23 行三槽无重叠。
+- 第一失败门禁：native 精确色键。原图精确 `(0,255,0)` 像素计数为 `0`；
+  主背景约 `#0BF815` 且存在色差／亮度漂移，不满足冻结的 raw
+  `#00FF00` 合同。
+- 次要失败：V1.r4 要求图标像素完全冻结，但 provider 仍进行生成式重绘；
+  与 attempt 4 相比 elite bbox 顶边从 `243` 变为 `244`，其他区域也不是
+  byte-identical。视觉与 runtime 没有可见恶化，但不能改写为 prompt pass。
+- 按五次上限停止：不得执行 A attempt 6，不得把透明中间候选晋级 source，
+  也不得自行把冻结的纯色键合同改成自动采样。B／C 的独立授权和 `0/5`
+  额度仍在，但本批按 skill 的 exhaustion stop 暂停，等待用户选择方向。
+
+## 耗尽后的用户决策边界
+
+可供用户明确选择的最小方向：
+
+1. 授权确定性色键合同例外：接受 attempt 4 或 5 的图标视觉，允许 source
+   以固定 corner-key + soft matte + despill 生成透明 Alpha；随后对透明
+   输出做 deterministic bbox-fit／atlas，不要求 provider raw 本身出现
+   精确 `#00FF00`。这不消耗新的 ImageGen。
+2. 修改 source 策略后重开 A 新预算：例如直接要求透明背景，或用非生成式
+   图像工具只做背景替换；这改变冻结合同，必须另行授权。
+3. 拒绝 A 的现有视觉并重写对象／材料／构图方向；回到 prompt-draft，
+   新预算必须另行授权。
+
+在用户决定前，不继续 B／C 生图、不晋级 source、不接入 runtime。
+
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
@@ -855,10 +913,10 @@ Image 3 是本段前一次生成的四格候选，也是唯一编辑目标。必
 | QL-B3-A V1.r1 | session `019fb2a0-e316-70b0-ae98-3de032a2fe93`；transparent `1d06098f…`；layout `67eac225…` | internal-fail；`2/5` | 保持物件与美术；进一步缩小、严格居中并重铺数字纯绿 |
 | QL-B3-A V1.r2 | session `019fb2a9-8a48-7da2-addf-dfc7e0f29a05`；transparent `d15bb7ae…`；layout `aaa11ecb…` | internal-fail；`3/5` | 保持物件；改用约 50% 相对缩放、绝对居中和数字纯绿 |
 | QL-B3-A V1.r3 | session `019fb2b0-f3b2-7ff2-a6d1-3911625e53bc`；transparent `d5aa0ef5…`；layout `da9bf7d9…` | internal-fail；`4/5` | 冻结已通过图标，只替换精确数字纯绿背景 |
+| QL-B3-A V1.r4 | session `019fb2b8-f1df-7583-bd8c-a6234a80ee2f`；transparent `83aac7a0…`；layout `9c7e3320…` | candidate-rejected；`5/5` exhausted | 停止；等待用户选择确定性色键例外、改变 source 策略或拒绝重开 |
 | QL-B3-B／C V1 | 用户已授权；实际生图各 `0` | prompt-authorized | 执行各自 attempt 1 |
 
 ## 下一门禁
 
-提交 A attempt 4 审查和完整 `QL-B3-A V1.r4` 正文后，以固定 Image 1／2
-加同段 attempt 4 Image 3 执行 A attempt 5；这是 A 的最后一次授权额度。
-B／C 保持各 `0/5`。
+A 已在 attempt 5 耗尽并停止，不得再调用 A ImageGen。等待用户从上述三个
+方向中明确选择；用户决定前 B／C 保持各 `0/5`，不执行其 attempt 1。
