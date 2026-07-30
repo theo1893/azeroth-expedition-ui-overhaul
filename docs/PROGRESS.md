@@ -22,7 +22,7 @@
 |---|---|---:|---|---|
 | Core／pfUI | `api/expedition.lua`、`pfUI.lua`、原生回退路由 | `P5` | 现代可见模块默认回退原生；非视觉功能保留 | 实机覆盖原生 Frame、SavedVariables 与第三方兼容 |
 | Chat | `modules/chat.lua` + AEUI Chat adapter | `P5` V3 | 单一左侧旧书、四状态 Tab、双状态输入与未读已接入；右框隐藏且消息回收；两项 Copy 辅助功能暂缓 | Turtle WoW 实机验收核心批次 |
-| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua` + AEUI Quests adapter | `P1–P5` | QL-A2 V4 固定卷宗背景、QL-B0 23 行 V1、QL-B1 四态 atlas 与 QL-B2 同 Alpha 三态书签已接入并静态通过，但实机确认左页大面积视觉未通过；QL-B0 V2 `18 × 18` 已获授权，A attempt 1 因设计网格／bbox／开口／色键与厚框美术退回，现为 `repair-prepared / P3`、A `1/5`、B `0/5`；QL-B3-A `5/5` exhausted、B/C `0/5` 并继续暂停；QL-C/D 未完成；外部 tracker 暂停 | 提交 `QL-B0-A V2.r1` 后执行 attempt 2；内部通过只到 P3 |
+| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua` + AEUI Quests adapter | `P1–P5` | QL-A2 V4 固定卷宗背景、QL-B0 23 行 V1、QL-B1 四态 atlas 与 QL-B2 同 Alpha 三态书签已接入并静态通过，但实机确认左页大面积视觉未通过；QL-B0 V2 `18 × 18` 已获授权，A attempt 1／2 因设计网格／bbox／开口／色键与厚框美术退回，attempt 2 的暗皮材料改善保留，现为 `repair-prepared / P3`、A `2/5`、B `0/5`；QL-B3-A `5/5` exhausted、B/C `0/5` 并继续暂停；QL-C/D 未完成；外部 tracker 暂停 | 提交 `QL-B0-A V2.r2` 后执行 attempt 3；内部通过只到 P3 |
 | Map | `map.lua`、`minimap.lua`、`addonbuttons.lua` 等 | `P2` | 羊皮地图卷与黄铜罗盘已锁定 | 实机对象审计和组件级合同 |
 | Character | `character.lua`、`inspect.lua`、`dressup.lua` | `P2` | 香草同构角色面板已锁定 | 实机几何与装备槽／属性／页签拆分 |
 
