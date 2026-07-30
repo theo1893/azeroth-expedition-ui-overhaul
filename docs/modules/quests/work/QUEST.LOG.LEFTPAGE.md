@@ -3,12 +3,12 @@
 ## 当前状态
 
 - 工作范围：`QL-B0-B V2`；`QL-B0-A V2` 已由用户移出范围。
-- 子状态：B `prompt-authorized`；A `user-rejected / scope-removed`。
+- 子状态：B `repair-prepared`；A `user-rejected / scope-removed`。
 - 项目阶段：`P3`。
-- 授权正文状态：B `production`，首次执行必须逐字使用本文件
-  `QL-B0-B V2` 完整正文；A V2.r4 只作为未执行草案，用户在任何 A5
+- 授权正文状态：B attempt 1 已完成并退回，下一次必须逐字使用本文件
+  `QL-B0-B V2.r1` 完整正文；A V2.r4 只作为未执行草案，用户在任何 A5
   provider 调用前明确取消该对象，草案不得执行。
-- 当前实际生图：A `4/5`；B `0/5`。
+- 当前实际生图：A `4/5`；B `1/5`。
 - 单段预算：最多 `5` 次实际生成／编辑。
 - 原授权最坏总预算：`10` 次实际生成／编辑；A 在 `4/5` 主动停止后，有效
   最坏总实际调用变为 `9` 次。
@@ -18,10 +18,10 @@
 - 用户授权：`2026-07-30` 明确授权 `QL-B0-A V2` 与 `QL-B0-B V2`，
   允许分别上传固定 SHA 的 Image 1／Image 2；每段最多 `5` 次，最坏合计
   `10` 次。
-- 当前门禁：提交 A attempt 4 审查与用户取消决定；不执行 A attempt 5，
-  不为 `QUEST.LOG.LIST.INSET` 建立 source 或 runtime。随后以相同固定
-  Image 1／2 执行 B attempt 1。任何 B 候选都只到 P3，不自动晋级 source
-  或 runtime。
+- 当前门禁：提交 B attempt 1 审查与 `QL-B0-B V2.r1` 完整正文后，以
+  相同固定 Image 1／2 重新生成 B attempt 2；不上传 B attempt 1 raw，
+  也不执行 A attempt 5。任何 B 候选都只到 P3，不自动晋级 source 或
+  runtime。
 
 ## 为什么建立 V2
 
@@ -224,12 +224,13 @@ Image 2 `QuestLogBookShell_Master_v1.png`
 不会遮挡 `246 × 324 UI px` 的十八行内容；没有任何被禁止的动态或交互
 内容。
 
-## 最终执行正文 — QL-B0-B V2
+## 当前执行正文 — QL-B0-B V2.r1
 
 使用 `@openai/codex@0.143.0` 的固定 ImageGen 执行器，生成一张
 `1024 × 1024` RGBA 位图。背景必须是完全均匀、无纹理、无渐变、无阴影、
 无抗锯齿污染的纯绿色 `#00FF00`。画面中恰好有两个互不接触、正面朝向、
-无透视的超宽横向基础物件；不要生成完整 UI、书页、书框或状态展示板。
+无透视的超宽横向基础物件；它们是贴在连续纸页上的平面目录底条，不是
+金属牌匾、独立卡片、按钮或完整 UI。不要生成书页、书框或状态展示板。
 
 输入角色必须严格遵守。Image 1
 `任务详情面板_视觉基准_v1.png`
@@ -239,6 +240,8 @@ Image 2 `QuestLogBookShell_Master_v1.png`
 笔触、粗厚略不规则轮廓、明确明暗切面、左上暖光、低饱和赭黄／烟黑／暗酒红
 与氧化黄铜关系，以及不均匀的翻阅磨损。不要复制 Image 1 的完整书体、顶部
 控件、文字、图标、肖像槽、按钮、滚动条、封印、书签或完整列表。
+Image 1 中的黄铜只定义整套卷宗的综合色关系，本批两个细薄目录底条不得
+绘制任何黄铜物件、端帽、包角、徽记、铆钉或几何装饰。
 
 Image 2 `QuestLogBookShell_Master_v1.png`
 （SHA-256
@@ -249,26 +252,40 @@ Image 2 `QuestLogBookShell_Master_v1.png`
 
 上方物件是 `QUEST.LOG.REGION.BACKPLATE`，外接盒必须严格位于
 `x=112..912, y=272..336`，恰为 `800 × 64px`。它是低饱和暗橄榄色的
-公会目录地区条，材料像薄旧皮与涂色厚纸的混合，边缘有克制的暗墨线和少量
-氧化黄铜收口；中央区域安静、低对比，专门承载运行时动态地区文字。保持手工
-切边与轻微不对称，不能做成工整金属牌匾。
+公会目录地区条，材料像一层压在纸上的薄旧皮与涂色厚纸混合物。它的
+`800:64 = 12.5:1` 超宽比例必须一眼成立；不得把宽度画到目标盒以外，也
+不得把高度增加成常规横幅。四边只允许一笔不连续、手绘的烟黑墨边：在
+`1024` 设计网格中，任何直边材料与明暗切面合计不得超过 `7px`，缩到
+`224 × 18 UI px` 后最多约 `2px`。中央至少 `760 × 44px` 保持安静、
+低对比，专门承载运行时动态地区文字。左右端只是不完全相同的手工切边，
+不得出现菱形、圆形、三角形、徽章、端帽、夹片、铆钉、扣具、金属轨道、
+闭合金框或任何可被误读为图标／按钮的形状。
 
 下方物件是 `QUEST.LOG.ROW.BACKPLATE`，外接盒必须严格位于
 `x=112..912, y=688..752`，恰为 `800 × 64px`。它是更浅、更薄的暖赭卷宗
-任务条底板：可见手工切边、少量自然缺口和深棕墨线，局部旧化不均匀，中央
-保持安静；它应让人感到仍贴在同一张连续纸页上，而不是悬浮的现代不透明
-卡片。
+任务条底板，比例同样严格为 `12.5:1`。它更接近压在连续纸页上的低对比
+赭色笔洗与薄纸条，而不是有实体厚度的框。边缘只允许一笔不完整的深棕墨线、
+少量自然缺口和不均匀旧化；在 `1024` 设计网格中，任何直边材料与明暗切面
+合计不得超过 `4px`，缩到 `224 × 18 UI px` 后约 `1px`。中央至少
+`772 × 48px` 保持平静，不得出现内框、浮雕、连续高光、压花纹样或金属边。
+左右端只能自然收断，不能出现任何几何符号、装饰端帽、徽记、包角或假图标。
 
 这里只生成两个 normal base，不绘制 `normal／hover／pressed／disabled`
 四态，不绘制状态矩阵。禁止绘制文字、数字、等级、任务计数、箭头、勾选圈、
 书签、选择高亮、类型章、计时章、完成／失败章、按钮、滚动条、肖像槽、
-假图标槽或任何命中区。禁止现代 UI 卡片、照片级皮革、完美镜像角、细金框、
-高频雕花、宝石与常亮发光。
+假图标槽或任何命中区。尤其禁止 attempt 1 式两端菱形、十字、珠宝形状、
+厚金属包边、双层闭合边框和整齐牌匾轮廓。禁止现代 UI 卡片、照片级皮革、
+完美镜像角、细金框、高频雕花、宝石与常亮发光。磨损必须低频且不对称，
+但不能借磨损越过固定 bbox。
 
-输出前自检：恰好两个独立横条；各自外接盒和间距正确；外部背景保持可安全
-色键的统一 `#00FF00`；两个物件正面、无透视；在各自
-`224 × 18 UI px` 显示时仍能区分暗橄榄地区条与暖赭任务条，同时拥有同一
-香草魔兽公会卷宗美术 DNA；没有任何被禁止的动态、状态或交互内容。
+输出前逐项自检：恰好两个独立横条；上方唯一可见 bbox 正好是
+`[112,272]..[912,336]`，下方唯一可见 bbox 正好是
+`[112,688]..[912,752]`，两者都是 `800 × 64px`、`12.5:1`；bbox 外与
+两物件之间全部是同一个精确 `#00FF00`；地区条边厚不超过 `7px`，任务条
+边厚不超过 `4px`；没有菱形、徽记、端帽、铆钉、金属轨道或闭合金属框；
+两个物件正面、无透视；缩到各自 `224 × 18 UI px` 时，暗橄榄地区条与
+暖赭任务条仍可区分，但不会把十八行目录变成十八块厚牌匾；没有任何被禁止
+的动态、状态或交互内容。
 
 ## Repair envelope 与计数
 
@@ -296,7 +313,7 @@ Image 2 `QuestLogBookShell_Master_v1.png`
 | A | 3/5 | `QL-B0-A V2.r2`／`2d05f77` | generate | fixed child session `019fb35e-6697-71f3-b2b7-f6033ef290d2`；built-in `image_gen` 返回图片 | raw `generated/quests/QL-B0/v2/inset/attempt-03/raw/QL-B0-A_V2_r2_attempt-03_raw.png`；SHA `92ce740a8812d2c5fee96ae6152cac482458fa958b683795abf742dc792a723c` | source 几何／色键：归一化外框约 `585 × 838`、开口约 `510 × 764`，高度比 attempt 2 更偏离；背景不是精确 `#00FF00` | 保留单层暗皮、仅左上／右下两枚非对称黄铜；V2.r3 明确宽高比、3.58% 可见材料面积与任何直边最多 16px | `candidate-rejected`；A 为 `3/5` |
 | A | 4/5 | `QL-B0-A V2.r3`／`366a32c` | generate | fixed child session `019fb367-828c-71a2-a5b8-088bcf4e1472`；built-in `image_gen` 返回图片 | raw `generated/quests/QL-B0/v2/inset/attempt-04/raw/QL-B0-A_V2_r3_attempt-04_raw.png`；SHA `f2d03067e47578a8444ec8efb4d9548f185ab320152e8cf9d4fdcd7c9b44ef4f` | source 几何／色键：开口已接近，但归一化外框约 `581 × 763`，可见材料占 `9.74%` 而非 `3.58%`；背景不是精确 `#00FF00` | 保留外框宽高比、单层暗皮与开口位置收敛；V2.r4 改为“先锁开口，再只向外画一笔 16px”，细节装不下即舍弃并取消黄铜包角 | `candidate-rejected`；A 为 `4/5` |
 | A | — | `QL-B0-A V2.r4`／未冻结为 production | cancelled before generation | 无 child session／provider result | 无输出 | 用户明确认为该框没有必要 | 保留 A1–A4 审查证据；删除 source／runtime 路线，继续露出 QL-A2 连续纸面 | `user-rejected / scope-removed`；A 停在 `4/5` |
-| B | 0/5 | `QL-B0-B V2`／`8e934f6` 首次冻结 | generate |  |  |  |  | A 已移出范围；提交本次状态同步后直接执行 |
+| B | 1/5 | `QL-B0-B V2`／`e3ab929` | generate | fixed child session `019fb37c-4303-7c13-9208-06c86d57abbe`；built-in `image_gen` 返回图片 | raw `generated/quests/QL-B0/v2/backplates/attempt-01/raw/QL-B0-B_V2_attempt-01_raw.png`；SHA `ddf18110041b24b700077f52fcaeabd48340739966b067edc6495092f574a195` | 语义／物理：两个对象均成为带两端菱形假徽记、厚黄铜闭合边和浮雕体积的金属牌匾；违反底板身份与禁止假图标合同 | 保留恰好两个独立正面横条、暗橄榄／暖赭区分和低频旧化；V2.r1 删除全部端部装饰与金属框，严格限制 `12.5:1` bbox 和 7px／4px 边厚；只用固定 Image 1／2 重新生成 | `candidate-rejected`；B 为 `1/5` |
 
 | 流程错误 | 段／正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
@@ -501,7 +518,58 @@ Image 2 `QuestLogBookShell_Master_v1.png`
 - 清理边界：ignored `generated/quests/QL-B0/v2/inset/attempt-01..04`
   暂留为本轮审查证据；A 达不到 P4，不进入 `assets/source/` 或 `addon/`。
 - 后续：B 的地区条／任务条底板仍具有直接的信息分层价值，按既有授权与独立
-  `0/5` 预算继续，不借用或消耗未使用的 A5。
+  `0/5` 起始预算继续，不借用或消耗未使用的 A5。
+
+## B attempt 1 审查记录
+
+- 执行器／传输：`codex-cli 0.143.0`，model `gpt-5.5`，medium；
+  child session `019fb37c-4303-7c13-9208-06c86d57abbe`。stdin 中的
+  V2 正文 UTF-8 SHA-256 为
+  `99cc7b15d673940bf91977b73ce3a9a8759d367da0c28e446b93c2399bd67f6c`，
+  与提交正文完全一致；没有 wrapper 递归。provider 已返回图片，因此计为
+  B `1/5`。
+- 输入：只上传授权的 Image 1／Image 2；没有上传实机截图、任何 A raw 或
+  其他外部输入。imagegen 未报告额外 revised prompt。
+- raw：`1254 × 1254 RGB PNG`，SHA-256
+  `ddf18110041b24b700077f52fcaeabd48340739966b067edc6495092f574a195`；
+  provider cache、child copy 与本地 raw 三者 SHA 完全一致。
+- 第一失败门禁是语义／物理：虽然恰好生成两个互不接触、正面、暗橄榄／
+  暖赭横条，但两条都是带厚黄铜闭合边、浮雕明暗与左右对称菱形徽记的金属
+  牌匾。菱形会与真实 QL-B1 展开箭头、追踪圈发生图标语义冲突，且明确违反
+  “不生成假图标槽／不能做成工整金属牌匾”的合同。
+- 美术：综合色与旧化方向接近锁定卷宗，但轮廓过于工整、高清和实体化；
+  连续金属边、对称端件与细密皮革纹理把十八行目录变成现代奇幻装备列表，
+  不是贴在连续纸页上的克制卷宗底条。
+- 色键／透明候选：raw 边界中位色为 `#05F80C`，不是精确 `#00FF00`。
+  使用固定审查参数
+  `remove_chroma_key.py --auto-key border --soft-matte
+  --transparent-threshold 12 --opaque-threshold 96 --spill-cleanup`；
+  透明候选 SHA-256
+  `b2b78eac320f1e96ddfafb8b07358d76f6da27b9bd114da26ef0b0f716487299`，
+  Alpha 为 transparent `1285657`、partial `6637`、opaque `280222`，
+  可见强绿色残留 `0`。
+- 几何：上方 native bbox `[33,350,1221,470]`，归一到 `1024` 后约
+  `[27,286,997,384]`、`970 × 98`；下方 native bbox
+  `[34,767,1220,897]`，归一后约 `[28,626,996,732]`、
+  `968 × 106`。两者均远宽、远厚于目标 `800 × 64`，也没有落入固定
+  `[112,272,912,336]`／`[112,688,912,752]` 盒。
+- 严格真实排版：按完整 `1024` 网格归一并只裁固定 contract bbox，再缩到
+  `224 × 18`；使用 QL-A2 shell、十八行真实密度、代表性中文、现有
+  QL-B1／B2 atlas 和动态详情。`676 × 464`／100% runtime 预演 SHA-256
+  `a91a5f264ddfa2d8cd1e996fa0484148f89789a74af3ae1fb6facf2fef752b71`，
+  路径
+  `generated/quests/QL-B0/v2/backplates/attempt-01/previews/QL-B0-B_V2_attempt-01_contract-layout_676x464.png`。
+  固定裁切会截掉端部假徽记，但留下连续金属横线；十八行仍呈现密集的规则
+  表格感。未完成 ScrollBar 只用非权威占位，其余周边为当前 runtime。
+- 非权威美术排版：逐对象 actual-bbox-fit 预演 SHA-256
+  `cd56fa1fd7624183c9c250f01fb400127d721193e8fa5f39ae4b2deaa43a04d3`。
+  它清楚显示每行两端菱形与真实墨记叠加、闭合金框重复十八次，信息噪声远高
+  于当前连续纸面；bbox-fit 还会把约 `10:1` 物件横向拉伸成 `12.44:1`，
+  因此不能作为 source 例外。
+- 判定：`candidate-rejected / repair-prepared / P3`。不得进入用户复审、
+  `assets/source/` 或 runtime。缺陷覆盖两条完整轮廓与端部，V2.r1 使用
+  regenerate，不上传 attempt 1 raw；只保留两个对象、综合色与低频旧化，
+  在既有 envelope 内删除全部端件／金属框并收紧固定 bbox 与边厚。
 
 ## 下一门禁
 
@@ -510,6 +578,7 @@ Image 2 `QuestLogBookShell_Master_v1.png`
 > 明确授权 QL-B0-A V2 与 QL-B0-B V2，并允许分别上传固定 SHA 的
 > Image 1、Image 2；每段最多 5 次，最坏合计 10 次。
 
-下一门禁为：提交 A attempt 4 审查与用户取消决定后，直接执行
-`QL-B0-B V2` attempt 1；仍只上传固定 SHA 的 Image 1／2，不上传任何 A raw。
-B 任何内部通过都必须停在 `candidate-reviewed / P3` 等待用户视觉复审。
+下一门禁为：提交 B attempt 1 审查与 `QL-B0-B V2.r1` 完整正文后执行
+B attempt 2；仍只上传固定 SHA 的 Image 1／2，不上传 attempt 1 raw 或
+任何 A raw。B 任何内部通过都必须停在 `candidate-reviewed / P3` 等待
+用户视觉复审。

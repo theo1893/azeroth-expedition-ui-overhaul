@@ -290,12 +290,12 @@ def main() -> None:
             "Quest Log 左页卷宗目录 V2",
             "`QL-B0-A V2`",
             "`QL-B0-B V2`",
-            "B `prompt-authorized`",
+            "B `repair-prepared`",
             "A `user-rejected / scope-removed`",
             "项目阶段：`P3`",
-            "授权正文状态：B `production`",
+            "授权正文状态：B attempt 1 已完成并退回",
             "用户授权：`2026-07-30`",
-            "当前实际生图：A `4/5`；B `0/5`",
+            "当前实际生图：A `4/5`；B `1/5`",
             "原授权最坏总预算：`10`",
             "最坏总实际调用变为 `9`",
             "@openai/codex@0.143.0",
@@ -320,7 +320,7 @@ def main() -> None:
             "## 生产正文完整性预检",
             "结论：pass",
             "## 已撤销且不得执行的草案 — QL-B0-A V2.r4",
-            "## 最终执行正文 — QL-B0-B V2",
+            "## 当前执行正文 — QL-B0-B V2.r1",
             "## Repair envelope 与计数",
             "`candidate-rejected / repair-budget-exhausted`",
             "019fb343-1f5c-7c83-94d4-a89c7b11451f",
@@ -335,6 +335,11 @@ def main() -> None:
             "019fb367-828c-71a2-a5b8-088bcf4e1472",
             "f2d03067e47578a8444ec8efb4d9548f185ab320152e8cf9d4fdcd7c9b44ef4f",
             "96ea48421304cfeef52afa9b740998537ca21fbcfa8dab0ba2d33cfdfa042ade",
+            "019fb37c-4303-7c13-9208-06c86d57abbe",
+            "ddf18110041b24b700077f52fcaeabd48340739966b067edc6495092f574a195",
+            "b2b78eac320f1e96ddfafb8b07358d76f6da27b9bd114da26ef0b0f716487299",
+            "a91a5f264ddfa2d8cd1e996fa0484148f89789a74af3ae1fb6facf2fef752b71",
+            "cd56fa1fd7624183c9c250f01fb400127d721193e8fa5f39ae4b2deaa43a04d3",
             "`user-rejected / scope-removed`",
             "不建立 A source、manifest、TGA、adapter Texture",
             "## 下一门禁",
@@ -346,7 +351,8 @@ def main() -> None:
     assert "codex-clipboard-" not in leftpage_work
     assert leftpage_work.count("## 当前执行正文 — QL-B0-A") == 0
     assert leftpage_work.count("## 已撤销且不得执行的草案 — QL-B0-A") == 1
-    assert leftpage_work.count("## 最终执行正文 — QL-B0-B") == 1
+    assert leftpage_work.count("## 最终执行正文 — QL-B0-B") == 0
+    assert leftpage_work.count("## 当前执行正文 — QL-B0-B") == 1
 
     require(
         work,
