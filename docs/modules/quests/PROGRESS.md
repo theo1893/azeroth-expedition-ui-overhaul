@@ -19,10 +19,11 @@
   竖条，fold 仍有满面压纹，且背景不可安全色键。B2 attempt 1 生成了
   单根水平对象；attempt 5 去除了编织纹，却变成 `832 × 101px` 的光滑
   木质／角质实体，仍非亚麻线且背景不可安全色键，B2 已耗尽 `5/5`。
-  B3 attempt 4 通过语义、美术与基础源合同，但 left／right 为
-  `371 × 216px`、`352 × 209px`，超过 `.r3` 严格 edit 目标；其透明
-  检查稿不晋级。当前 B3 为 `repair-prepared 5/5`，attempt 5 已在调用
-  前计数，合计 `15/15`。
+  B3 attempt 5 仍未满足 `.r4` 严格尺寸／位置：left／right 为
+  `321 × 184px`、`307 × 180px`，bottom 中心也发生偏移。三段现均为
+  `candidate-rejected / repair-budget-exhausted`；B3 已耗尽 `5/5`，
+  合计 `15/15`。
+  attempt 4 的透明检查稿不晋级。
   整批装配被 B1 阻塞。
 - Quest Tracker：视觉 `P2`，外部 provider `P0`，暂停。
 - NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
@@ -33,7 +34,7 @@
 | 批次 | 子模块 | 阶段 | 当前事实 | 下一门禁 |
 |---|---|---:|---|---|
 | `QL-A1` | `QUEST.LOG.SHELL` 结构母版 | `P4` | [透明 source](../../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png) 已接受；整图不得进 runtime | 等待 QL-A2 后确定 crop／UV |
-| `QL-A2` | 两纸页与六个 `GUTTER.*` | `P3` V3.3 partial | B1／B2 均 `candidate-rejected / repair-budget-exhausted`；B3 `repair-prepared 5/5`；当前 `15/15`，无可晋级透明候选或装配 | 用固定 Image 1 与同段 attempt 4 raw 执行 B3 attempt 5 bounded scale-down edit |
+| `QL-A2` | 两纸页与六个 `GUTTER.*` | `P3` V3.3 candidate-rejected | B1／B2／B3 均 `candidate-rejected / repair-budget-exhausted`；当前 `15/15`，无可晋级透明候选或装配 | 停止；等待用户决定是否授权新版本／合同 |
 | `QL-B` | 目录行、展开、追踪、选择、类型、状态 | `P1–P2` | 子模块与稳定美术基线已定义，无生产 work | QL-A2 source 接受后逐对象建 Prompt |
 | `QL-C` | 两套 ScrollBar、关闭、操作与辅助按钮 | `P1–P2` | 真实对象已拆，部分全局名需 feature-detect | 实机对象与几何 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | `P1–P2` | Quest Log 奖励只读，无 selected | 实机奖励数量与尺寸 |
@@ -81,8 +82,7 @@ source 或 runtime。
 
 ## 下一步
 
-按 [QL-A2 V3.3 三段执行正文](work/QUEST.LOG.GUTTER.md) 继续执行
-`V3.3-B3.r4` attempt 5：上传固定 SHA 的 Image 1 与同段 attempt 4 raw，
-冻结已通过的双结结构与位置，只分别做约 `0.88×`／`0.89×` 有界统一
-缩小和色键修正，再完整内审。B1／B2 均已耗尽，禁止再调用或进入确定性
-装配。
+以 [QL-A2 V3.3 三段执行终态](work/QUEST.LOG.GUTTER.md) 为准：当前已达
+`15/15`，停止所有固定执行器调用、透明化、atlas 和整书重组。若继续，
+先由用户决定是否以新的 QL-A2 版本重写 B1／B2／B3 合同；不得把任一
+V3.3 中间稿提升为 accepted source 或 runtime。

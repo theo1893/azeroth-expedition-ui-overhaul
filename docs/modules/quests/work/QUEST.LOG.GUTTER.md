@@ -8,11 +8,10 @@
   `QUEST.LOG.GUTTER.RIGHT_FOLD`、`QUEST.LOG.GUTTER.STITCH`、
   `QUEST.LOG.GUTTER.TOP`、`QUEST.LOG.GUTTER.BOTTOM`
 - 版本：`QL-A2 V3.3`
-- 子状态：`candidate-rejected`（B1、B2）／`repair-prepared`（B3）
+- 子状态：`candidate-rejected`（B1、B2、B3）
 - 项目阶段：`P3`
 - 类型：`production`
-- 当前操作：B1／B2 `repair-budget-exhausted`；B3 attempt 4 已退回，
-  执行 `V3.3-B3.r4` bounded scale-down edit
+- 当前操作：B1／B2／B3 均 `repair-budget-exhausted`；停止生成与装配
 - 用户授权：用户于 `2026-07-30` 明确确认
   `QL-A2 V3.3-B1/B2/B3`；每段最多 `5` 次、最坏总计 `15` 次；允许 B1
   每次上传固定 SHA 的 Image 1／2，允许 B2／B3 每次只上传固定 SHA 的
@@ -25,8 +24,7 @@
 - 自动修复预算：
   - `V3.3-B1`：最多 `5` 次固定执行器调用，当前 `5/5`，额度耗尽
   - `V3.3-B2`：最多 `5` 次固定执行器调用，当前 `5/5`，额度耗尽
-  - `V3.3-B3`：最多 `5` 次固定执行器调用，当前 `5/5`；attempt 5
-    已在执行前计数
+  - `V3.3-B3`：最多 `5` 次固定执行器调用，当前 `5/5`，额度耗尽
   - 最坏总调用数：`15`；每段通过后立即停止，不借用或转移余额
 - 目标客户端：Turtle WoW `1.18.1`／Interface `11200`
 - 真实对象合同：[SUBMODULES.md](../SUBMODULES.md)
@@ -67,9 +65,9 @@
   — SHA-256
   `783a4dae6b4792b2de394c1eadef348650dcb7765a863163c8ef29d89674a59a`
 - V3.3-B3 当前 raw：
-  `generated/quests/QL-A2/v3.3/closures/attempt-04/QL-A2_V3_3_B3_CLOSURES.raw.png`
+  `generated/quests/QL-A2/v3.3/closures/attempt-05/QL-A2_V3_3_B3_CLOSURES.raw.png`
   — SHA-256
-  `96905ed70fab084c728628c33f21163f2de854f13a5e1f095f58647e01bea374`
+  `fad5f588d0795e94133124330cf92f8bbf086624e3ff910cce7aafef686ac5ed`
 - V3.3-B3 未通过的透明检查稿：
   `generated/quests/QL-A2/v3.3/closures/attempt-04/QL-A2_V3_3_B3_CLOSURES.candidate.png`
   — SHA-256
@@ -79,9 +77,9 @@
 
 当前树只保留 V3.3 的当前合同与三段可执行正文。V1–V3.2 的完整执行正文、
 十次 V3.2 调用和 diff 由 Git 历史保存；本文件只保留能约束 V3.3 的失败
-结论。V3.3 已获上述版本级生成授权；只允许按冻结正文与修复边界调用固定
-执行器并写入 ignored `generated/`，仍不得写入 `assets/source/`、导出
-runtime 或接入 Lua。
+结论。V3.3 曾获上述版本级生成授权，现已用满三段预算并终止；该授权只作
+历史 provenance，不再允许继续调用固定执行器。所有 ignored
+`generated/` 结果仍不得写入 `assets/source/`、导出 runtime 或接入 Lua。
 
 ## 尝试摘要
 
@@ -589,54 +587,52 @@ UI 卡片。
 | 2/5 | `V3.3-B3.r1` / `ef2cb74` | generate | `019fb13b-74da-70a3-ab1d-bc9b623dad82` / `ig_0f5338a4abf56b5f016a6acfc67fdc819188fde9cb24d84d39` | `closures/attempt-02/QL-A2_V3_3_B3_CLOSURES.raw.png` / `7c08d087e6506b2ec5315d43a4788a6511a967efcf05cb92c5d40d4241761388` | 语义／物理仍有大环、多次交叉与长尾；格位：左件上移、右件下移；左约 `460 × 319px` 超宽，右约 `404 × 273px` | 仅保留双对象与粗厚综合色；结法和位置失败，不使用 edit，从固定 Image 1 regenerate 为单次自压的装订末端小结块 | 退回 |
 | 3/5 | `V3.3-B3.r2` / `6b9065c` | generate | `019fb13e-ae62-7292-b692-7fe4dce20f13` / `ig_0e2ff7b3898b19ec016a6ad099678c8191a5120dc4bbc9966b` | `closures/attempt-03/QL-A2_V3_3_B3_CLOSURES.raw.png` / `7221453481a7445a7a65ec08ec64efa2cfa1ab12ce0c9d9fcbe679d4dfddb3b4` | 组件尺寸：top `267 × 153px`、bottom `255 × 149px`，均低于 `280 × 180px` 下限；身份、数量、格位与透视通过 | 冻结双结结构、中心、短尾、综合色和相反可遮挡重心；使用 attempt 3 作同段 edit 底稿，仅统一放大约 `1.24–1.27×` 并修正色键 | 退回 |
 | 4/5 | `V3.3-B3.r3` / `2e7397f` | edit | `019fb141-dc94-74b1-8fe0-c97ef85d45c4` / `ig_04e976ca877c4570016a6ad16bda508191a033628474dde0cc` | `closures/attempt-04/QL-A2_V3_3_B3_CLOSURES.raw.png` / `96905ed70fab084c728628c33f21163f2de854f13a5e1f095f58647e01bea374` | `.r3` 严格尺寸：top `371 × 216px` 超过 `335 × 200px`，bottom `352 × 209px` 超过 `325 × 198px`；基础源合同与语义仍通过 | 冻结双结结构、中心、短尾和综合色；使用 attempt 4 raw 作同段 edit 底稿，分别统一缩小约 `0.88×`／`0.89×` | 退回 |
-| 5/5 | `V3.3-B3.r4` / 待生成 | edit |  |  |  |  | 未执行 |
+| 5/5 | `V3.3-B3.r4` / `ca65236` | edit | `019fb146-3af5-7542-864c-7f7e63c55cea` / `ig_0a20af4aec76de00016a6ad288bb408191a52987f9d1fde2c8` | `closures/attempt-05/QL-A2_V3_3_B3_CLOSURES.raw.png` / `fad5f588d0795e94133124330cf92f8bbf086624e3ff910cce7aafef686ac5ed` | `.r4` 严格尺寸／位置：top `321 × 184px`、bottom `307 × 180px` 均略低于目标；bottom 中心约 `(1143,539)` 偏离冻结范围 | B3 已用满 `5/5`，停止；不得透明化、装配或再生。三个分段均耗尽 | `repair-budget-exhausted` |
 
 ## 执行记录
 
 - 日期：V3.3 于 `2026-07-30` 获得版本级生成授权
-- 会话／结果 ID：B3 attempt 4
-  `019fb141-dc94-74b1-8fe0-c97ef85d45c4`／
-  `ig_04e976ca877c4570016a6ad16bda508191a033628474dde0cc`
+- 会话／结果 ID：B3 attempt 5
+  `019fb146-3af5-7542-864c-7f7e63c55cea`／
+  `ig_0a20af4aec76de00016a6ad288bb408191a52987f9d1fde2c8`
 - 实际输入：Image 1
   `/Users/yuanshiyao/Documents/Codex/2026-07-28/new-chat/aeui-chat-work/assets/locked/quests/任务详情面板_视觉基准_v1.png`；
   Image 2
-  `/Users/yuanshiyao/Documents/Codex/2026-07-28/new-chat/aeui-chat-work/generated/quests/QL-A2/v3.3/closures/attempt-03/QL-A2_V3_3_B3_CLOSURES.raw.png`
+  `/Users/yuanshiyao/Documents/Codex/2026-07-28/new-chat/aeui-chat-work/generated/quests/QL-A2/v3.3/closures/attempt-04/QL-A2_V3_3_B3_CLOSURES.raw.png`
 - imagegen 报告的 revised prompt：无；子进程打印的 user block 与已提交
-  `V3.3-B3.r3` 完整正文一致
+  `V3.3-B3.r4` 完整正文一致
 - 输出尺寸／模式／SHA-256：`1536 × 1024 RGB`；
-  `96905ed70fab084c728628c33f21163f2de854f13a5e1f095f58647e01bea374`
+  `fad5f588d0795e94133124330cf92f8bbf086624e3ff910cce7aafef686ac5ed`
 - Alpha／残色：全图 `1572864` 个像素均不透明；精确 `#00FF00` 为 `0`；
-  启发式绿色主导像素 `1476641`
+  启发式绿色主导像素 `1500814`
 - 未通过透明检查稿：`1536 × 1024 RGBA`，SHA-256
   `3bafe4f024833469f780b850345e23cd3b3e9c385dad1186ae9b23612fd8178c`；
   透明／半透明／不透明像素 `1475586／1849／95429`，可见绿色残留 `0`
 - 固定执行器调用：B1 `5/5`；B2 `5/5`；B3 `5/5`；合计 `15/15`
-- 计数说明：B3 attempt 5 已按工作流在调用前占用额度；若传输失败也保持
-  计数，不回退为 `4/5`
+- 计数说明：三段均已用满；不得再调用固定执行器
 
 ## 审查记录
 
 - 语义／物理：通过。左右各一枚紧凑无孔核心与短尾，没有大环、把手、
-  长尾或自由飘带；有界 edit 保持两件同批但非机械镜像。
-- 透视／图层：通过。两件回到同一水平带、共享浅俯视与左上暖光；top
-  上半核心和 bottom 下半核心可分别承受相反方向的未来纸缘遮挡。
+  长尾或自由飘带；最终 edit 保持两件同批但非机械镜像。
+- 透视／图层：基本通过。两件共享浅俯视与左上暖光，内部重心可分别承受
+  相反方向遮挡；但 bottom 整体中心下移，不满足 `.r4` 的冻结位置。
 - 美术一致性：通过。粗厚手绘轮廓、原麻／烟褐综合色和宽面切面符合
   任务卷宗基线；细纤维仍克制，没有辫纹或照片级绳股。
-- 对象／状态合同：恰好左右两件；启发式 bbox 为 top `371 × 216px`、
-  bottom `352 × 209px`，中心约 `(409.0,497.5)`、`(1159.5,516.0)`。
-  两件通过 B3 基础源合同，但超过 `.r3` 严格目标 top
-  `315–335 × 185–200px`、bottom `305–325 × 182–198px`。
-- 装配／尺寸：对象可分离但结法与宽度失败；不得透明化、缩小或用纸缘遮挡
-  掩盖复杂结体。B1／B2 的失败仍独立阻塞整批装配。
-- 技术像素：raw 尺寸正确但为全不透明 RGB；精确 `#00FF00` 为 `0`。
-  语义通过后生成的透明检查稿 Alpha 与绿色残留技术检查通过，但因 `.r3`
-  尺寸仍失败，它只是 ignored 中间产物，不得晋级或作为 Image 输入。
-- 当前结论：B3 attempt 4 退回；`repair-prepared / P3`。身份、数量、
-  透视、格位、美术、基础尺寸和 Alpha 均通过，失败仅限 `.r3` 严格框；
-  attempt 5 使用当前 raw 作为从属 edit 底稿，由 `V3.3-B3.r4` 只做
-  有界统一缩小与色键修正。
+- 对象／状态合同：恰好左右两件；启发式 bbox 为 top `321 × 184px`、
+  bottom `307 × 180px`，中心约 `(408.0,508.5)`、`(1143.0,538.5)`。
+  两件通过 B3 基础源合同，但低于 `.r4` 严格目标 top
+  `322–332 × 188–196px`、bottom `309–319 × 184–192px`；bottom
+  中心也偏离 `(1160±6,516±6)`。
+- 装配／尺寸：两件基础尺寸与语义可分离，但 `.r4` 严格尺寸／位置失败；
+  不得用后处理移动或缩放伪造本次通过。B1／B2 也独立阻塞整批装配。
+- 技术像素：raw 尺寸正确但为全不透明 RGB；精确 `#00FF00` 为 `0`，
+  背景仍需色键。由于 `.r4` 尺寸／位置先失败，不生成 attempt 5 透明稿。
+- 当前结论：B3 attempt 5 退回；
+  `candidate-rejected / P3 / repair-budget-exhausted`。B3 `5/5` 已耗尽；
+  B1／B2／B3 均不得再调用、透明化、装配或晋级。
 - 用户尚未发生的结论：没有候选接受，没有 source、manifest、runtime、
   Lua 接入或 Turtle WoW 实机验收
-- 下一门禁：提交 `V3.3-B3.r4` 后，上传固定 Image 1 与上述同段 attempt 4
-  raw 执行 B3 attempt 5 bounded scale-down edit；不得上传透明检查稿或
-  其他 B3 raw、继续 B1／B2、晋级中间产物或进行整批装配
+- 下一门禁：同步 `15/15` 终态并停止。若用户希望继续，必须先审查三段
+  失败模式并明确授权新的 QL-A2 版本／合同；当前 V3.3 不得继续生成、
+  透明化、组 atlas、重组整书或接入 runtime

@@ -22,7 +22,7 @@
 |---|---|---:|---|---|
 | Core／pfUI | `api/expedition.lua`、`pfUI.lua`、原生回退路由 | `P5` | 现代可见模块默认回退原生；非视觉功能保留 | 实机覆盖原生 Frame、SavedVariables 与第三方兼容 |
 | Chat | `modules/chat.lua` + AEUI Chat adapter | `P5` V3 | 单一左侧旧书、四状态 Tab、双状态输入与未读已接入；右框隐藏且消息回收；两项 Copy 辅助功能暂缓 | Turtle WoW 实机验收核心批次 |
-| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua` | `P2–P4` | 当前首要大面积 UI；QL-A1 source 已确认；QL-A2 V3.3 的 B1／B2 均在 `5/5` 后退回，B3 attempt 4 仅严格尺寸失败且 attempt 5 已在调用前计数，当前 `15/15`；外部 tracker 暂停 | 用同段底稿执行 B3 attempt 5 bounded scale-down edit；整批装配仍被 B1／B2 阻塞 |
+| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua` | `P2–P4` | 当前首要大面积 UI；QL-A1 source 已确认；QL-A2 V3.3 的 B1／B2／B3 均在 `5/5` 后退回，当前 `15/15`，无可晋级候选；外部 tracker 暂停 | 停止；等待用户决定是否授权新版本／合同 |
 | Map | `map.lua`、`minimap.lua`、`addonbuttons.lua` 等 | `P2` | 羊皮地图卷与黄铜罗盘已锁定 | 实机对象审计和组件级合同 |
 | Character | `character.lua`、`inspect.lua`、`dressup.lua` | `P2` | 香草同构角色面板已锁定 | 实机几何与装备槽／属性／页签拆分 |
 
