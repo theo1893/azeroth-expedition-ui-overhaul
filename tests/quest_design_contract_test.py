@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import re
 import struct
 from pathlib import Path
 
@@ -169,7 +168,10 @@ def main() -> None:
             "B3 已耗尽 `5/5`",
             "`candidate-rejected / repair-budget-exhausted`",
             "合计 `15/15`",
-            "整批装配被 B1 阻塞",
+            "`QL-A2 V4`",
+            "`P2 contract-draft`",
+            "`676 × 464`",
+            "固定执行器 `0/0`",
             "Quest Tracker",
             "外部 provider `P0`",
             "NPC Quest／Gossip",
@@ -184,98 +186,60 @@ def main() -> None:
     require(
         work,
         (
-            "版本：`QL-A2 V3.3`",
-            "项目阶段：`P3`",
-            "类型：`production`",
-            "当前操作：",
-            "用户授权：用户于 `2026-07-30` 明确确认",
-            "允许 B1",
-            "允许 B2／B3",
-            "固定执行器：`imagegen-0-143-0`",
-            "`V3.3-B1 / FOLDS`",
-            "`V3.3-B2 / STITCH`",
-            "`V3.3-B3 / CLOSURES`",
-            "`V3.3-B1`：最多 `5`",
-            "`V3.3-B2`：最多 `5`",
-            "`V3.3-B3`：最多 `5`",
-            "最坏总调用数：`15`",
-            "Image 2 职责：只上传给 `V3.3-B1`",
-            "B2／B3 的首次调用只上传固定 Image 1",
-            "47669c2d5c8243d47bc08cbe417be07bf74121a8a0e2aa8cae749ac109a106d8",
-            "14fbcbaf5dedb6cdbffb1a74899a47489fcedc1020cf91d2de9d9acfc3817614",
+            "版本：`QL-A2 V4`",
+            "子状态：`contract-draft`",
+            "项目阶段：`P2`",
+            "prepare / deterministic-export-proposal",
+            "V4 不调用 ImageGen；`0/0`",
+            "用户授权：尚未授权 V4 合同、导出或接入",
+            "QuestLogBookShell_Master_v1.png",
+            "91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5",
+            "QL-A2_V4_SHELL_676x464.preview.png",
+            "a1f15ddf39fd2877aa54967494d2c9d999cf1a144c34072737e657d764311922",
+            "## V3.3 终态复核与纠错",
+            "合计 `15/15`",
+            "**语义／物理失败**",
+            "多圈交叠、装饰性凯尔特／航海绳结",
+            "禁止挽救、缩放或晋级 V3.3 B3",
             "## 美术基准继承",
-            "Image 1 是用户锁定的任务详情视觉基准，是最高视觉权威",
-            "Image 2 是已接受的 QL-A1 结构 source",
-            "Image 2 不能覆盖",
-            "Image 1 的美术权威",
-            "运行时仍恰好是 `8` 个",
-            "## 组件合同",
-            "### B1 — FOLDS 源合同",
-            "固定 `3 × 1` 隐形单元",
-            "### B2 — STITCH 源合同",
-            "恰好一个居中的横向 stitch",
-            "最终 atlas 可见宽",
-            "`160px`",
-            "### B3 — CLOSURES 源合同",
-            "左右两个 `768 × 1024` 隐形单元",
-            "`45%–60%`",
-            "不超过 `96 × 72px`",
-            "最终 B atlas 为 `1536 × 1024 RGBA`",
-            "Alpha bbox 加至少 `8px`",
-            "3、5、7 个离散 stitch 预演",
-            "## 生产正文完整性预检",
-            "采用最高详细度",
-            "未知但执行必需的值：无",
-            "结论：`pass`",
-            "## 最终执行正文",
-            "### V3.3-B1",
-            "### V3.3-B2.r4 — STITCH MATERIAL EDIT",
-            "### V3.3-B3.r4 — COMPACT CLOSURES BOUNDED SCALE-DOWN EDIT",
-            "## 固定执行映射",
-            "QL-A2_V3_3_B1_FOLDS.raw.png",
-            "QL-A2_V3_3_B2_STITCH.raw.png",
-            "QL-A2_V3_3_B3_CLOSURES.raw.png",
-            "## 自主修复循环",
-            "### 共同不可变边界",
-            "三个独立授权正文，各最多 `5` 次",
-            "最坏总计 `15` 次",
-            "不得跨段互传输出",
-            "同一段前次输出只在对象数量、身份、透视和格位已通过",
-            "### V3.3-B1 尝试表",
-            "### V3.3-B2 尝试表",
-            "### V3.3-B3 尝试表",
-            "## 执行记录",
+            "QL-A1 source 是用户已接受的结构母版",
+            "不把任务标题、任务行、等级、计数",
+            "不把 Close、Expand、Levels、两套 ScrollBar",
+            "## 组件合同 — V4 运行时所有权提案",
+            "`QUEST.LOG.SHELL`",
+            "`QUEST.LOG.LIST.PAPER`",
+            "`QUEST.LOG.DETAIL.PAPER`",
+            "`QUEST.LOG.GUTTER.UNDERLAY`",
+            "`QUEST.LOG.GUTTER.STITCH`",
+            "`QUEST.LOG.GUTTER.TOP`／`BOTTOM`",
+            "不再创建独立 Texture",
+            "Close、ScrollBar、行状态、奖励槽和操作",
+            "## 状态合同",
+            "`list-only`",
+            "不再把书体缩到 `340px`",
+            "## 确定性导出合同草案",
+            "`1514 × 1039 RGBA`",
+            "`676 × 464 UI px`",
+            "`1024 × 512 RGBA TGA`",
+            "`u=0..0.66015625`、`v=0..0.90625`",
+            "QuestLogShellV4.tga",
+            "tools/build_quest_log_shell_v4.py",
+            "透明／半透明／不透明像素",
+            "`45192／6342／262130`",
+            "## ImageGen 与修复预算",
+            "V4 没有 ImageGen 执行正文",
+            "固定执行器预算：`0/0`",
             "## 审查记录",
-            "用户尚未发生的结论：没有候选接受",
-            "最终 source：无",
+            "`有条件通过`",
+            "`contract-draft / P2`",
+            "尚未发生：稳定对象合同修改",
         ),
         "active QL-A2 work",
     )
-    execution_bodies = work.split("## 最终执行正文\n\n", 1)[1].split(
-        "\n## 固定执行映射", 1
-    )[0]
-    assert "/Users/" not in execution_bodies
-    assert execution_bodies.count("### V3.3-B") == 3
-    assert any(
-        f"子状态：`{state}`" in work
-        for state in (
-            "prompt-authorized",
-            "candidate-raw",
-            "repair-prepared",
-            "candidate-reviewed",
-            "candidate-rejected",
-        )
-    )
-    call_counts = re.search(
-        r"固定执行器调用：B1 `([0-5])/5`；B2 `([0-5])/5`；"
-        r"B3 `([0-5])/5`；合计 `((?:[0-9]|1[0-5]))/15`",
-        work,
-    )
-    assert call_counts is not None
-    b1_calls, b2_calls, b3_calls, total_calls = map(
-        int, call_counts.groups()
-    )
-    assert b1_calls + b2_calls + b3_calls == total_calls
+    assert "## 最终执行正文" in work
+    assert "不适用。V4 是确定性导出合同" in work
+    assert "/Users/" not in work
+    assert "固定执行器预算：`0/0`" in work
 
     source_path = (
         ROOT

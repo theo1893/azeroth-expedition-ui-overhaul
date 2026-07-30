@@ -19,12 +19,15 @@
   竖条，fold 仍有满面压纹，且背景不可安全色键。B2 attempt 1 生成了
   单根水平对象；attempt 5 去除了编织纹，却变成 `832 × 101px` 的光滑
   木质／角质实体，仍非亚麻线且背景不可安全色键，B2 已耗尽 `5/5`。
-  B3 attempt 5 仍未满足 `.r4` 严格尺寸／位置：left／right 为
-  `321 × 184px`、`307 × 180px`，bottom 中心也发生偏移。三段现均为
-  `candidate-rejected / repair-budget-exhausted`；B3 已耗尽 `5/5`，
-  合计 `15/15`。
-  attempt 4 的透明检查稿不晋级。
-  整批装配被 B1 阻塞。
+  B3 已耗尽 `5/5`；合计 `15/15`。终态原尺寸复核纠正了此前的误判：
+  attempt 3–5 仍是多圈交叠、装饰性绳结和横向杆状尾端，第一失败门禁是
+  语义／物理，不只是尺寸／位置。三段均为
+  `candidate-rejected / repair-budget-exhausted`，无任何候选可晋级。
+- `QL-A2 V4`：`P2 contract-draft`。不再继续重画六个无交互页沟小件；
+  提议把已接受 QL-A1 空卷宗等比导出为 `676 × 464` 的固定静态背景，
+  将两张纸页与 `GUTTER.*` 作为 SHELL 静态子区域。任务行、按钮、两套
+  ScrollBar、奖励槽和状态覆盖仍全部独立。目标尺寸 ignored preview 已通过
+  静态视觉复核；V4 尚未获用户合同／导出授权。
 - Quest Tracker：视觉 `P2`，外部 provider `P0`，暂停。
 - NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
 - `questitem.lua`：行为保留，视觉 `N/A`。
@@ -34,7 +37,7 @@
 | 批次 | 子模块 | 阶段 | 当前事实 | 下一门禁 |
 |---|---|---:|---|---|
 | `QL-A1` | `QUEST.LOG.SHELL` 结构母版 | `P4` | [透明 source](../../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png) 已接受；整图不得进 runtime | 等待 QL-A2 后确定 crop／UV |
-| `QL-A2` | 两纸页与六个 `GUTTER.*` | `P3` V3.3 candidate-rejected | B1／B2／B3 均 `candidate-rejected / repair-budget-exhausted`；当前 `15/15`，无可晋级透明候选或装配 | 停止；等待用户决定是否授权新版本／合同 |
+| `QL-A2` | 静态空卷宗结构与页沟 | `P2` V4 contract-draft | V3.3 `15/15` 已终止；V4 提议从 QL-A1 accepted source 确定性导出 `676 × 464` 单一静态背景，固定执行器 `0/0` | 用户确认 V4 背景所有权、目标尺寸、list-only 行为与 `GUTTER.*` 静态归属 |
 | `QL-B` | 目录行、展开、追踪、选择、类型、状态 | `P1–P2` | 子模块与稳定美术基线已定义，无生产 work | QL-A2 source 接受后逐对象建 Prompt |
 | `QL-C` | 两套 ScrollBar、关闭、操作与辅助按钮 | `P1–P2` | 真实对象已拆，部分全局名需 feature-detect | 实机对象与几何 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | `P1–P2` | Quest Log 奖励只读，无 selected | 实机奖励数量与尺寸 |
@@ -82,7 +85,8 @@ source 或 runtime。
 
 ## 下一步
 
-以 [QL-A2 V3.3 三段执行终态](work/QUEST.LOG.GUTTER.md) 为准：当前已达
-`15/15`，停止所有固定执行器调用、透明化、atlas 和整书重组。若继续，
-先由用户决定是否以新的 QL-A2 版本重写 B1／B2／B3 合同；不得把任一
-V3.3 中间稿提升为 accepted source 或 runtime。
+审查 [QL-A2 V4 确定性结构合同](work/QUEST.LOG.GUTTER.md)。用户明确确认
+QL-A1 单一静态背景、`676 × 464`、list-only 不缩窄书体以及
+`GUTTER.*` 静态归属后，才更新 `SUBMODULES.md`、source crop contract，
+创建 deterministic exporter／runtime TGA／manifest 并进入静态接入。
+V4 不调用 ImageGen；不得把任一 V3.2／V3.3 中间稿晋级。
