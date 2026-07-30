@@ -36,9 +36,10 @@ def main() -> None:
             "skins/blizzard/gossipquest.lua",
             "modules/questitem.lua",
             "`QuestLogFrame`",
-            "`676 × 440 UI px`",
+            "`676 × 464 UI px`",
             "`x=338`",
             "`42%`／右 `58%`",
+            "不得缩成",
             "`QUEST.LOG.SHELL`",
             "`QUEST.LOG.LIST.PAPER`",
             "`QUEST.LOG.DETAIL.PAPER`",
@@ -48,6 +49,9 @@ def main() -> None:
             "`QUEST.LOG.GUTTER.STITCH`",
             "`QUEST.LOG.GUTTER.TOP`",
             "`QUEST.LOG.GUTTER.BOTTOM`",
+            "不再分别对应可加载 Texture",
+            "固定尺寸，不重复、不拉伸",
+            "禁止在 SHELL 上烘焙",
             "`QUEST.LOG.REGION.TOGGLE`",
             "`QUEST.LOG.LIST.ROW`",
             "`QUEST.LOG.LIST.CHECK`",
@@ -140,8 +144,10 @@ def main() -> None:
             "QuestLogBookShell_Master_v1.png",
             "019fac35-620b-78d3-8b46-2e1f02105f74",
             "`LIST.PAPER`／`DETAIL.PAPER`／`GUTTER.*`",
-            "中央至少 80%",
-            "短横向粗麻针脚站",
+            "QL-A2 V4",
+            "不再作为独立生图对象",
+            "固定显示尺寸为 `676 × 464`",
+            "`GUTTER.*` 仅保留逻辑",
             "work/QUEST.LOG.GUTTER.md",
             "左页目录状态",
             "ScrollBar 与操作 Button",
@@ -169,16 +175,20 @@ def main() -> None:
             "`candidate-rejected / repair-budget-exhausted`",
             "合计 `15/15`",
             "`QL-A2 V4`",
-            "`P2 contract-draft`",
+            "`runtime-exported / P5`",
             "`676 × 464`",
             "固定执行器 `0/0`",
+            "`1024 × 512` TGA",
+            "Quests.lua",
+            "QL-A1_RuntimeManifest_v1.json",
+            "1b6b21cd3db74202051a2ceb8b5ba1d91ca7beb636accf247603edbc3cfeb40e",
             "Quest Tracker",
             "外部 provider `P0`",
             "NPC Quest／Gossip",
             "QL-A1_SourceManifest_v1.json",
             "91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5",
             "241402／5650／1325994",
-            "accepted source 或 runtime",
+            "未晋级任何 V3.2／V3.3 候选",
         ),
         "quest detailed progress",
     )
@@ -187,15 +197,19 @@ def main() -> None:
         work,
         (
             "版本：`QL-A2 V4`",
-            "子状态：`contract-draft`",
-            "项目阶段：`P2`",
-            "prepare / deterministic-export-proposal",
+            "子状态：`runtime-exported`",
+            "项目阶段：`P5`",
+            "deterministic-export / static-integration",
             "V4 不调用 ImageGen；`0/0`",
-            "用户授权：尚未授权 V4 合同、导出或接入",
+            "用户授权：`2026-07-30`",
             "QuestLogBookShell_Master_v1.png",
             "91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5",
             "QL-A2_V4_SHELL_676x464.preview.png",
-            "a1f15ddf39fd2877aa54967494d2c9d999cf1a144c34072737e657d764311922",
+            "3a075d8e094fc8d3b72cf8b5fc4a5a6add020ddbcd6f1e768a841423c5b0e910",
+            "QuestLogShellV4.tga",
+            "QL-A1_RuntimeManifest_v1.json",
+            "build_quest_log_shell_v4.py",
+            "Modules/Quests.lua",
             "## V3.3 终态复核与纠错",
             "合计 `15/15`",
             "**语义／物理失败**",
@@ -205,7 +219,7 @@ def main() -> None:
             "QL-A1 source 是用户已接受的结构母版",
             "不把任务标题、任务行、等级、计数",
             "不把 Close、Expand、Levels、两套 ScrollBar",
-            "## 组件合同 — V4 运行时所有权提案",
+            "## 组件合同 — V4 运行时所有权",
             "`QUEST.LOG.SHELL`",
             "`QUEST.LOG.LIST.PAPER`",
             "`QUEST.LOG.DETAIL.PAPER`",
@@ -213,11 +227,12 @@ def main() -> None:
             "`QUEST.LOG.GUTTER.STITCH`",
             "`QUEST.LOG.GUTTER.TOP`／`BOTTOM`",
             "不再创建独立 Texture",
-            "Close、ScrollBar、行状态、奖励槽和操作",
+            "Close、",
+            "ScrollBar、行状态、奖励槽和操作 Button",
             "## 状态合同",
             "`list-only`",
-            "不再把书体缩到 `340px`",
-            "## 确定性导出合同草案",
+            "从 `676` 缩到 `340` 宽",
+            "## 确定性导出合同",
             "`1514 × 1039 RGBA`",
             "`676 × 464 UI px`",
             "`1024 × 512 RGBA TGA`",
@@ -225,14 +240,13 @@ def main() -> None:
             "QuestLogShellV4.tga",
             "tools/build_quest_log_shell_v4.py",
             "透明／半透明／不透明像素",
-            "`45192／6342／262130`",
+            "`45159／6974／261531`",
             "## ImageGen 与修复预算",
             "V4 没有 ImageGen 执行正文",
             "固定执行器预算：`0/0`",
             "## 审查记录",
-            "`有条件通过`",
-            "`contract-draft / P2`",
-            "尚未发生：稳定对象合同修改",
+            "`runtime-exported / P5`",
+            "Turtle WoW `1.18.1` 实机验证",
         ),
         "active QL-A2 work",
     )
@@ -277,6 +291,74 @@ def main() -> None:
         linked = (manifest_path.parent / manifest["provenance"][key]).resolve()
         assert linked.is_file(), f"missing QL-A1 provenance: {key}"
     assert manifest["crop_contract"]["whole_image_runtime_allowed"] is False
+    assert (
+        manifest["crop_contract"]["deterministic_full_frame_export_allowed"]
+        is True
+    )
+    assert manifest["crop_contract"]["status"] == "resolved-ql-a2-v4"
+
+    runtime_manifest_path = source_path.with_name(
+        "QL-A1_RuntimeManifest_v1.json"
+    )
+    runtime_manifest = json.loads(
+        runtime_manifest_path.read_text(encoding="utf-8")
+    )
+    assert runtime_manifest["status"] == "runtime-exported"
+    assert runtime_manifest["batch"] == "QL-A2"
+    assert runtime_manifest["version"] == "V4"
+    assert runtime_manifest["runtime_contract"] == "1.0"
+    assert runtime_manifest["transform"]["display_size"] == [676, 464]
+    assert runtime_manifest["transform"]["atlas_size"] == [1024, 512]
+    assert runtime_manifest["transform"]["content_box"] == [0, 0, 676, 464]
+    assert runtime_manifest["transform"]["texcoord"] == {
+        "left": 0.0,
+        "right": 0.66015625,
+        "top": 0.0,
+        "bottom": 0.90625,
+    }
+    assert runtime_manifest["frame_contract"]["fixed_size"] is True
+    assert runtime_manifest["frame_contract"]["stretch"] is False
+    assert "full 676 x 464 shell" in (
+        runtime_manifest["frame_contract"]["list_only"]
+    )
+    assert runtime_manifest["implementation"]["imagegen_calls"] == 0
+    assert runtime_manifest["implementation"]["game_validated"] is False
+
+    runtime_path = ROOT / runtime_manifest["runtime"]["file"]
+    runtime_bytes = runtime_path.read_bytes()
+    assert hashlib.sha256(runtime_bytes).hexdigest() == (
+        runtime_manifest["runtime"]["sha256"]
+    )
+    assert runtime_manifest["runtime"]["sha256"] == (
+        "1b6b21cd3db74202051a2ceb8b5ba1d91ca7beb636accf247603edbc3cfeb40e"
+    )
+    assert runtime_bytes[2] == 2
+    assert struct.unpack("<HH", runtime_bytes[12:16]) == (1024, 512)
+    assert runtime_bytes[16] == 32
+
+    quest_adapter = (
+        ROOT
+        / "addon"
+        / "AzerothExpeditionUI"
+        / "Modules"
+        / "Quests.lua"
+    ).read_text(encoding="utf-8")
+    require(
+        quest_adapter,
+        (
+            'Quests.runtimeContract = "1.0"',
+            "QuestLogShellV4",
+            "0.66015625",
+            "0.90625",
+            "CaptureAndHideNativeTextures",
+            "QuestLogFrameExpandButton",
+            "QuestLog_UpdateQuestDetails",
+            "addon:RegisterModule(\"Quests\", Quests)",
+        ),
+        "quest runtime adapter",
+    )
+    assert "EnableMouse" not in quest_adapter
+    assert "QuestLogFrame:SetWidth(340)" not in quest_adapter
 
     assert not (ROOT / "prompts" / "quests").exists()
     print("quest design contract test passed")

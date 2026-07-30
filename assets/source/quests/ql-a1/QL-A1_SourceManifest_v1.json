@@ -64,16 +64,49 @@
     "runtime_reading_area_target": "left 42 percent, right 58 percent"
   },
   "crop_contract": {
-    "status": "deferred",
+    "status": "resolved-ql-a2-v4",
     "whole_image_runtime_allowed": false,
-    "reason": "QL-A1 is the accepted structural source master. Deterministic crop boxes, stretch-safe regions and atlas UVs require the separately accepted QL-A2 batch plus target-client QuestLog measurements. Current runtime object ownership is defined in docs/modules/quests/SUBMODULES.md.",
+    "deterministic_full_frame_export_allowed": true,
+    "reason": "The accepted high-resolution PNG must not be loaded directly by the client. QL-A2 V4 authorizes a full-frame, aspect-preserving 676 x 464 export into the top-left of a transparent 1024 x 512 TGA. No crop, redraw, stretch, mirror, or independent gutter extraction is allowed.",
+    "display_size": [
+      676,
+      464
+    ],
+    "atlas_size": [
+      1024,
+      512
+    ],
+    "atlas_content_box": [
+      0,
+      0,
+      676,
+      464
+    ],
+    "texcoord": [
+      0.0,
+      0.66015625,
+      0.0,
+      0.90625
+    ],
     "planned_outputs": [
-      "outer cover edges and corners",
-      "left-page stretchable surface",
-      "right-page stretchable surface",
-      "gutter underlay, left/right folds, discrete horizontal stitch, top/bottom closures",
-      "outer page-stack segments"
+      "addon/AzerothExpeditionUI/Media/Quests/QuestLogShellV4.tga",
+      "assets/source/quests/ql-a1/QL-A1_RuntimeManifest_v1.json"
     ]
   },
-  "runtime_exports": []
+  "runtime_exports": [
+    {
+      "contract": "QL-A2 V4 / 1.0",
+      "manifest": "QL-A1_RuntimeManifest_v1.json",
+      "file": "../../../../addon/AzerothExpeditionUI/Media/Quests/QuestLogShellV4.tga",
+      "sha256": "1b6b21cd3db74202051a2ceb8b5ba1d91ca7beb636accf247603edbc3cfeb40e",
+      "display_size": [
+        676,
+        464
+      ],
+      "atlas_size": [
+        1024,
+        512
+      ]
+    }
+  ]
 }

@@ -204,10 +204,23 @@ def main() -> None:
         encoding="utf-8-sig"
     )
     assert "## RequiredDeps: pfUI" in aeui_toc
-    assert "## Version: 0.5.0" in aeui_toc
+    assert "## Version: 0.6.0" in aeui_toc
+    assert "Modules\\Quests.lua" in aeui_toc
     bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(encoding="utf-8")
-    assert 'addon.version = "0.5.0"' in bootstrap
+    assert 'addon.version = "0.6.0"' in bootstrap
     assert "chat-runtime=" in bootstrap
+    assert "quest-runtime=" in bootstrap
+    assert 'elseif command == "quests" then' in bootstrap
+
+    quest_source = (aeui / "Modules" / "Quests.lua").read_text(
+        encoding="utf-8"
+    )
+    assert 'Quests.runtimeContract = "1.0"' in quest_source
+    assert "QuestLogShellV4" in quest_source
+    assert "CaptureAndHideNativeTextures" in quest_source
+    assert "ToggleDetail" in quest_source
+    assert 'addon:RegisterModule("Quests", Quests)' in quest_source
+    assert (aeui / "Media" / "Quests" / "QuestLogShellV4.tga").is_file()
 
     for toc_name in ("pfUI.toc", "pfUI-tbc.toc"):
         toc_source = (pfui / toc_name).read_text(encoding="utf-8-sig")

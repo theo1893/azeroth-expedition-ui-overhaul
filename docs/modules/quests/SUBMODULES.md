@@ -9,6 +9,7 @@ Frame。美术见 [ART_BASELINE.md](ART_BASELINE.md)，状态见
 | 来源 | 已证实职责 | 项目边界 |
 |---|---|---|
 | [`skins/blizzard/questlog.lua`](../../../addon/pfUI/skins/blizzard/questlog.lua) | `QuestLogFrame` 双栏几何、列表／详情 ScrollFrame、日志按钮、奖励槽、pfUI 等级与详情收起增强 | 保留原生数据与事件；新 adapter 不加载现代 backdrop |
+| [`Modules/Quests.lua`](../../../addon/AzerothExpeditionUI/Modules/Quests.lua) | QL-A2 V4 固定 SHELL、阅读安全区、原生装饰隐藏与真实详情切换 Button | 只接管静态外壳和布局；不替代任务数据、原按钮脚本、动态内容或 SavedVariables |
 | [`skins/blizzard/gossipquest.lua`](../../../addon/pfUI/skins/blizzard/gossipquest.lua) | `QuestFrame`、`GossipFrame`、五个内容面板、滚动条、八个操作按钮、奖励高亮 | 当前原生回退；只保留对象合同 |
 | [`modules/questitem.lua`](../../../addon/pfUI/modules/questitem.lua) | 任务物品 Tooltip 的任务归属、扫描与数量 | 原样保留；不是快捷使用按钮 |
 | 外部任务追踪插件 | 游戏页面任务追踪 | provider 未提供，禁止假设 `QuestWatchFrame` |
@@ -20,34 +21,39 @@ Frame。美术见 [ART_BASELINE.md](ART_BASELINE.md)，状态见
 
 | ID | 真实对象 | 状态／资产合同 |
 |---|---|---|
-| `QUEST.LOG.SHELL` | `QuestLogFrame` | 非交互外壳与外围页叠；必须切片 |
+| `QUEST.LOG.SHELL` | `QuestLogFrame` | `676 × 464` 固定非交互空卷宗背景；不拉伸，不包含任何动态内容或交互状态 |
 | `QUEST.LOG.TITLE` | `QuestLogTitleText` | layout-only 动态文字 |
 | `QUEST.LOG.COUNT` | `QuestLogQuestCount`；兼容 `QuestLogCount` | layout-only，可有独立小墨印分隔 |
 | `QUEST.LOG.CLOSE` | `QuestLogFrameCloseButton` | 普通／悬停／按下／禁用 |
 | `QUEST.LOG.EMPTY` | `EmptyQuestLogFrame`、`QuestLogNoQuestsText` | 安静纸面，不生成空状态卡片 |
 
 支持 `closed`、`empty`、`list-only`、`dual-page` 与 `selected`。离线参考为
-`676 × 440 UI px`，物理中心线 `x=338`；左右物理纸页近 1:1，可见宽度差
+`676 × 464 UI px`，物理中心线 `x=338`；左右物理纸页近 1:1，可见宽度差
 不超过约 `1%`。左 `42%`／右 `58%` 只属于文字列，不改变纸页宽度。
+`list-only` 只隐藏右页动态内容，完整书体保持 `676 × 464`，不得缩成
+`340px` 半本书。
 
 ## Quest Log 纸页与中央装订
 
 `QUEST.LOG.SPINE` 只作为父级兼容名，不能绑定一张外置封脊。
 
-| ID | 运行时层／对象 | 资产粒度 |
-|---|---|---|
-| `QUEST.LOG.LIST.PAPER` | `QuestLogListScrollFrame` 周围顶层 | 左页九宫格；中央安静区、专用内缘 |
-| `QUEST.LOG.DETAIL.PAPER` | `QuestLogDetailScrollFrame` 周围顶层 | 右页九宫格；中央安静区、专用内缘 |
-| `QUEST.LOG.GUTTER.UNDERLAY` | 中央非交互底层 Texture | 透明为主的凹陷阴影／低对比衬布 |
-| `QUEST.LOG.GUTTER.LEFT_FOLD` | 左页内缘顶层 Texture | 大部分透明的单侧弯曲遮罩 |
-| `QUEST.LOG.GUTTER.RIGHT_FOLD` | 右页内缘顶层 Texture | 左内折的正确镜像 |
-| `QUEST.LOG.GUTTER.STITCH` | 中央非交互 Texture | 单个横向针脚站；沿中心离散重复 |
-| `QUEST.LOG.GUTTER.TOP` | 页沟顶部 Texture | 半藏小线结，不重复 |
-| `QUEST.LOG.GUTTER.BOTTOM` | 页沟底部 Texture | 半藏小线结，不重复 |
+QL-A2 V4 将下列固定、无交互结构收敛为 `QUEST.LOG.SHELL` 的静态子区域。
+这些逻辑 ID 继续用于安全区、层序和 provenance，不再分别对应可加载 Texture。
 
-固定层序：外围书壳 → underlay／stitch／top／bottom → 两张纸页 →
-left/right fold → 动态内容。针脚不得纵向平铺；内折只遮端点，中央短段必须
-可见。
+| ID | 运行时层／对象 | V4 资产所有权 |
+|---|---|---|
+| `QUEST.LOG.LIST.PAPER` | `QuestLogListScrollFrame` 的左页阅读安全区 | 使用 SHELL 已接受左纸页；无独立位图 |
+| `QUEST.LOG.DETAIL.PAPER` | `QuestLogDetailScrollFrame` 的右页阅读安全区 | 使用 SHELL 已接受右纸页；无独立位图 |
+| `QUEST.LOG.GUTTER.UNDERLAY` | SHELL 中央凹陷子区域 | 无独立 Texture |
+| `QUEST.LOG.GUTTER.LEFT_FOLD` | SHELL 左纸页既有内缘 | 无独立 Texture |
+| `QUEST.LOG.GUTTER.RIGHT_FOLD` | SHELL 右纸页既有内缘 | 无独立 Texture |
+| `QUEST.LOG.GUTTER.STITCH` | SHELL 中央既有离散装订回路 | 固定尺寸，不重复、不拉伸 |
+| `QUEST.LOG.GUTTER.TOP` | 装订在顶部页叠下自然结束 | 无外露装饰结、无独立资产 |
+| `QUEST.LOG.GUTTER.BOTTOM` | 装订在底部页叠下自然结束 | 无外露装饰结、无独立资产 |
+
+固定层序：`QUEST.LOG.SHELL` 静态背景 → 列表／详情／奖励与全部真实 Button、
+Texture、FontString。禁止在 SHELL 上烘焙任务行、滚动状态、选择状态、
+奖励槽、操作按钮、页码、书签或动态文字。
 
 ## Quest Log 左页目录
 

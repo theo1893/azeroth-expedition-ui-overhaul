@@ -7,13 +7,14 @@
   `QUEST.LOG.SHELL`、`QUEST.LOG.LIST.PAPER`、
   `QUEST.LOG.DETAIL.PAPER` 与 `QUEST.LOG.GUTTER.*`
 - 版本：`QL-A2 V4`
-- 子状态：`contract-draft`
-- 项目阶段：`P2`
-- 操作：`prepare / deterministic-export-proposal`
+- 子状态：`runtime-exported`
+- 项目阶段：`P5`
+- 操作：`deterministic-export / static-integration`
 - 固定执行器：V4 不调用 ImageGen；`0/0`
 - 当前结论：停止 V3.3 的独立页沟小件生成，改为从已接受的 QL-A1 空卷宗
-  source 做确定性、固定尺寸的运行时结构导出
-- 用户授权：尚未授权 V4 合同、导出或接入
+  source 做确定性、固定尺寸的运行时结构导出；静态测试已通过
+- 用户授权：`2026-07-30` 确认 QL-A1 单一静态背景、`676 × 464`、
+  list-only 不缩窄书体、`GUTTER.*` 静态归属，以及继续执行导出与接入
 - 目标客户端：Turtle WoW `1.18.1`／Interface `11200`
 - 当前稳定对象合同：
   [SUBMODULES.md](../SUBMODULES.md)
@@ -30,13 +31,21 @@
 - 本机 ignored 尺寸预演：
   `generated/quests/QL-A2/v4/previews/QL-A2_V4_SHELL_676x464.preview.png`
   — `676 × 464 RGBA`，SHA-256
-  `a1f15ddf39fd2877aa54967494d2c9d999cf1a144c34072737e657d764311922`
+  `3a075d8e094fc8d3b72cf8b5fc4a5a6add020ddbcd6f1e768a841423c5b0e910`
 - 新 tracked source：无
-- runtime／manifest／Lua：无
+- runtime：
+  [QuestLogShellV4.tga](../../../../addon/AzerothExpeditionUI/Media/Quests/QuestLogShellV4.tga)
+  — `1024 × 512 RGBA`，SHA-256
+  `1b6b21cd3db74202051a2ceb8b5ba1d91ca7beb636accf247603edbc3cfeb40e`
+- runtime manifest：
+  [QL-A1_RuntimeManifest_v1.json](../../../../assets/source/quests/ql-a1/QL-A1_RuntimeManifest_v1.json)
+- exporter：
+  [build_quest_log_shell_v4.py](../../../../tools/build_quest_log_shell_v4.py)
+- adapter：
+  [Quests.lua](../../../../addon/AzerothExpeditionUI/Modules/Quests.lua)
 
-V4 是新的运行时所有权与导出合同，不延续 V3.3 的生成预算。用户只说
-“继续”时，工作流只允许准备并展示本合同；不得据此生成新图、写入 runtime
-或修改稳定 `SUBMODULES.md`。
+V4 是新的运行时所有权与导出合同，不延续 V3.3 的生成预算。它只晋级固定
+书体结构；QL-B／QL-C／QL-D 的动态对象与交互状态仍未完成。
 
 ## V3.3 终态复核与纠错
 
@@ -95,14 +104,13 @@ V3.3 的 raw、透明检查稿和 V3.2-A 纸页候选仍只是 ignored 本机中
   要求针对真实运行时对象与交互状态，并不要求把同一固定背景中的每一道
   阴影都做成独立 Texture。裁决：静态书体归 `QuestLogFrame` 背景所有，
   所有真实交互对象仍独立。
-- QL-A1 manifest 当前写有 `whole_image_runtime_allowed: false`，因为当时
-  crop／UV 与 QL-A2 尚未确定。V4 只提出新合同；在用户确认并完成导出验证
-  前不修改该 manifest，也不把 source 原图直接放进 addon。
+- QL-A1 source manifest 继续禁止客户端直接加载高分辨率 PNG，但已允许
+  QL-A2 V4 的全幅确定性导出；runtime 只加载经过验证的 power-of-two TGA。
 - pfUI 当前在 list-only 时把 `QuestLogFrame` 从 `676` 缩到 `340` 宽。
   这会让一本打开的书物理折断。V4 提议保留 `676 × 464` 静态书体，只隐藏
   右页动态内容；Expand 功能仍保留，但不再缩窄书体。
 
-## 组件合同 — V4 运行时所有权提案
+## 组件合同 — V4 运行时所有权
 
 | 逻辑 ID | V4 所有权 | 独立位图／状态 |
 |---|---|---|
@@ -114,9 +122,9 @@ V3.3 的 raw、透明检查稿和 V3.2-A 纸页候选仍只是 ignored 本机中
 | `QUEST.LOG.GUTTER.STITCH` | SHELL 中央既有离散装订回路子区域 | 固定高度下不重复、不拉伸、不单独生成 |
 | `QUEST.LOG.GUTTER.TOP`／`BOTTOM` | 无外露装饰结；装订在 QL-A1 书页与外围结构下自然结束 | 无独立对象与资产 |
 
-这是待用户确认的合同差异。确认后才把它凝结进 `SUBMODULES.md` 与
-QL-A1 crop／runtime manifest。Close、ScrollBar、行状态、奖励槽和操作
-Button 等后续 QL-B／QL-C／QL-D 粒度完全不变。
+合同已凝结进 `SUBMODULES.md` 与 QL-A1 source／runtime manifest。Close、
+ScrollBar、行状态、奖励槽和操作 Button 等后续 QL-B／QL-C／QL-D 粒度
+完全不变。
 
 ## 状态合同
 
@@ -128,7 +136,7 @@ Button 等后续 QL-B／QL-C／QL-D 粒度完全不变。
 - 任一纹理、Frame 或兼容对象缺失：局部回退 Blizzard 原生
   `QuestLogFrame`，不阻止 addon 加载。
 
-## 确定性导出合同草案
+## 确定性导出合同
 
 ### 源与目标
 
@@ -139,13 +147,13 @@ Button 等后续 QL-B／QL-C／QL-D 粒度完全不变。
   不裁切、不旋转、不改变书脊中心、不进行自由重画。
 - 运行时使用 power-of-two `1024 × 512 RGBA TGA`。把 `676 × 464` 图像放在
   左上角，其余像素保持全透明。
-- 计划 TexCoord：
+- TexCoord：
   `u=0..0.66015625`、`v=0..0.90625`；显示 Texture 为 `676 × 464`。
-- 计划 runtime：
+- runtime：
   `addon/AzerothExpeditionUI/Media/Quests/QuestLogShellV4.tga`。
-- 计划 runtime manifest：
+- runtime manifest：
   `assets/source/quests/ql-a1/QL-A1_RuntimeManifest_v1.json`。
-- 计划 exporter：
+- exporter：
   `tools/build_quest_log_shell_v4.py`；只允许缩放、透明 padding、TGA 转换、
   SHA／Alpha／UV 记录和预演，不允许修复或重画美术。
 
@@ -154,15 +162,16 @@ Button 等后续 QL-B／QL-C／QL-D 粒度完全不变。
 - ignored preview：
   `generated/quests/QL-A2/v4/previews/QL-A2_V4_SHELL_676x464.preview.png`。
 - `676 × 464 RGBA`；SHA-256
-  `a1f15ddf39fd2877aa54967494d2c9d999cf1a144c34072737e657d764311922`。
+  `3a075d8e094fc8d3b72cf8b5fc4a5a6add020ddbcd6f1e768a841423c5b0e910`。
 - 透明／半透明／不透明像素：
-  `45192／6342／262130`。
-- 可见 bbox：`(0,22)–(676,438)`；精确或启发式绿色残留均为 `0`。
+  `45159／6974／261531`。
+- 可见 bbox（右下独占）：`[0,22,676,438]`；可见绿色残留为 `0`。
 - 原尺寸目视审查：通过物件身份、书内视角、近等宽双页、页沟物理关系、
   香草手绘语言与综合色；在目标尺寸仍能读出多层页厚和离散装订。
-- 尚未验证：真实中文安全区、两套 ScrollFrame 几何、按钮点击区、TGA
-  方向、客户端纹理加载、显存和 list-only 行为。它们阻塞 `P5/P6`，不应
-  用离线猜测冒充实机证据。
+- 静态已验证：TGA header／SHA、UV、Frame 固定尺寸、背景层、原生装饰
+  Texture 隐藏、动态文字保留、原按钮脚本保留、详情切换与 empty 状态。
+- 尚未验证：Turtle WoW 中的中文安全区、ScrollFrame 实际裁切、按钮命中、
+  客户端纹理方向／显存和 list-only 实机表现；这些阻塞 `P6`。
 
 ## ImageGen 与修复预算
 
@@ -174,41 +183,45 @@ Button 等后续 QL-B／QL-C／QL-D 粒度完全不变。
 
 ## 最终执行正文
 
-不适用。V4 是确定性导出合同，没有交给图像生成器的生产正文。未来 exporter
-只能执行本文件“确定性导出合同草案”中列出的统一缩放、透明 padding、TGA
-转换、SHA／Alpha／UV 记录和预演；用户确认前不得执行。
+不适用。V4 是确定性导出合同，没有交给图像生成器的生产正文。exporter 只
+执行本文件“确定性导出合同”中的统一缩放、透明 padding、TGA 转换、
+SHA／Alpha／UV 记录和预演。
 
 ## 执行记录
 
 - 日期：`2026-07-30`
-- 当前操作：只完成合同准备与 ignored `676 × 464` 尺寸预演
+- 当前操作：完成稳定合同、确定性导出、runtime manifest、AEUI adapter
+  与静态 smoke
 - 固定执行器调用：`0/0`
 - 输入 source：QL-A1 accepted source，SHA-256
   `91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5`
 - 预演输出 SHA-256：
-  `a1f15ddf39fd2877aa54967494d2c9d999cf1a144c34072737e657d764311922`
-- tracked source／runtime／manifest／Lua：无
+  `3a075d8e094fc8d3b72cf8b5fc4a5a6add020ddbcd6f1e768a841423c5b0e910`
+- runtime TGA SHA-256：
+  `1b6b21cd3db74202051a2ceb8b5ba1d91ca7beb636accf247603edbc3cfeb40e`
+- 交互边界：书体 Texture 位于 `BACKGROUND`，不接收鼠标；列表、详情、
+  动态文字、原生操作 Button 与脚本继续独立。adapter 只在缺失时创建真实
+  `QuestLogFrameExpandButton`，其状态美术仍等待 QL-C。
 
 ## 审查记录
 
-- 结论：`有条件通过`，可进入用户的 V4 合同审查，不可进入 runtime。
-- 子状态／阶段：`contract-draft / P2`。
-- 已通过：source provenance、物件身份、静态视觉、目标尺寸可读性、动态
-  内容排除、交互组件独立性和确定性缩放可行性。
-- 当前门禁：用户必须明确确认：
-  1. 允许 QL-A1 已接受空卷宗作为单一固定静态背景；
-  2. 允许 `QuestLogFrame` 改为 `676 × 464`；
-  3. list-only 只隐藏右页内容，不再把书体缩到 `340px`；
-  4. `GUTTER.*` 作为 SHELL 静态子区域，不再生产六张独立页沟资产。
-- 尚未发生：稳定对象合同修改、manifest 修改、exporter、TGA、Lua、
-  pfUI 路由、tracked runtime、Turtle WoW 实机验证或 P6 清理。
+- 结论：`通过`静态导出与接入门禁；等待实机。
+- 子状态／阶段：`runtime-exported / P5`。
+- 已通过：source provenance、物件身份、目标尺寸可读性、动态内容排除、
+  交互组件独立性、确定性重建、TGA／UV／manifest 一致性与 Lua smoke。
+- 运行时处理：原生／pfUI 真实控件在背景上方继续绘制和接收交互；静态
+  Texture 不包含点击区。list-only 只改变右页动态可见性，Frame 始终
+  `676 × 464`。
+- 下一门禁：Turtle WoW `1.18.1` 实机验证方向、裁切、中文换行、按钮命中、
+  empty／dual-page／list-only 与 SavedVariables；未达 `P6`，不清理 work
+  或 ignored 中间产物。
 
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一门禁 |
 |---|---|---|---|
 | QL-A2 V3.3 | 三段各 `5/5`，合计 `15/15`；原尺寸复核纠正 B3 语义误判 | `candidate-rejected / repair-budget-exhausted` | 不挽救或晋级任何 V3.3 输出 |
-| QL-A2 V4 | QL-A1 accepted source 的 `676 × 464` ignored 预演；固定执行器 `0/0` | `contract-draft / P2` | 用户确认四项运行时所有权与状态合同 |
+| QL-A2 V4 | QL-A1 accepted source → `1024 × 512` TGA；固定执行器 `0/0`；runtime SHA `1b6b21cd…` | `runtime-exported / P5` | Turtle WoW 实机验收 |
 
-用户确认 V4 合同后，下一步才是更新稳定对象合同并执行确定性导出；任何
-后续 QL-B／QL-C／QL-D 交互资产仍需各自的组件合同、Prompt 与验收。
+QL-A2 在实机前保持本 work。后续 QL-B／QL-C／QL-D 交互资产仍需各自的
+组件合同、Prompt 与验收，不能因为背景已接入而标记完成。

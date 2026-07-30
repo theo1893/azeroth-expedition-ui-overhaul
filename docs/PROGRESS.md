@@ -22,7 +22,7 @@
 |---|---|---:|---|---|
 | Core／pfUI | `api/expedition.lua`、`pfUI.lua`、原生回退路由 | `P5` | 现代可见模块默认回退原生；非视觉功能保留 | 实机覆盖原生 Frame、SavedVariables 与第三方兼容 |
 | Chat | `modules/chat.lua` + AEUI Chat adapter | `P5` V3 | 单一左侧旧书、四状态 Tab、双状态输入与未读已接入；右框隐藏且消息回收；两项 Copy 辅助功能暂缓 | Turtle WoW 实机验收核心批次 |
-| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua` | `P2–P4` | 当前首要大面积 UI；QL-A1 source 已确认；QL-A2 V3.3 `15/15` 终止；V4 提出从 QL-A1 确定性导出固定静态卷宗背景；外部 tracker 暂停 | 用户审查 V4 背景所有权、`676 × 464`、list-only 与静态页沟合同 |
+| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua` + AEUI Quests adapter | `P1–P5` | QL-A1 source 已确认；QL-A2 V4 固定卷宗背景已确定性导出并静态接入，真实动态控件保留；QL-B/C/D 未完成；外部 tracker 暂停 | QL-A2 等待实机；无游戏设备时继续 QL-B 目录状态合同 |
 | Map | `map.lua`、`minimap.lua`、`addonbuttons.lua` 等 | `P2` | 羊皮地图卷与黄铜罗盘已锁定 | 实机对象审计和组件级合同 |
 | Character | `character.lua`、`inspect.lua`、`dressup.lua` | `P2` | 香草同构角色面板已锁定 | 实机几何与装备槽／属性／页签拆分 |
 
@@ -47,9 +47,11 @@
 
 ## 当前运行时路由
 
-- 项目接管：pfUI `chat` 行为与 AEUI V3 单一左侧战地旧书视觉。
+- 项目接管：pfUI `chat` 行为与 AEUI V3 单一左侧战地旧书视觉；AEUI
+  QL-A2 V4 任务日志固定书体与安全区。
 - 原生回退：动作条、导航、单位／团队、战斗 HUD、背包／拾取以及全部未完成
-  Blizzard skins。
+  Blizzard skins；Quest Log 尚未完成的目录、滚动条、按钮与奖励状态继续
+  使用真实原生控件。
 - 保留行为：自动售卖／修理、任务物品 Tooltip、售价、装备比较、宏、社交、
   Turtle WoW／SuperWoW 兼容。
 - 维护工具：`/pfui`、unlock、share 使用不透明公共过渡材质。

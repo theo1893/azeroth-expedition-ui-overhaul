@@ -5,7 +5,7 @@
 - Quest Log 主视觉：已锁定。
 - 用户于 `2026-07-30` 将 Quest Log 选为当前首要大面积 UI；地图与角色因
   实机对象几何尚未完成，继续保持后续顺位。
-- Quest Log 真实对象合同：`P1` 完成，QL-A 当前处于 `P2–P4` 混合阶段。
+- Quest Log 真实对象合同：`P1` 完成，QL-A 当前处于 `P4–P5`。
 - `QL-A1` 空卷宗结构 source：用户确认，`P4`。
 - `QL-A2 V3.2` 已终止：A attempt 5 目标级通过；B 在 `5/5` 后仍有约
   `45%` 格宽的针脚和完整外露结，整批 `10/10` 额度耗尽。没有形成
@@ -23,11 +23,13 @@
   attempt 3–5 仍是多圈交叠、装饰性绳结和横向杆状尾端，第一失败门禁是
   语义／物理，不只是尺寸／位置。三段均为
   `candidate-rejected / repair-budget-exhausted`，无任何候选可晋级。
-- `QL-A2 V4`：`P2 contract-draft`。不再继续重画六个无交互页沟小件；
-  提议把已接受 QL-A1 空卷宗等比导出为 `676 × 464` 的固定静态背景，
-  将两张纸页与 `GUTTER.*` 作为 SHELL 静态子区域。任务行、按钮、两套
-  ScrollBar、奖励槽和状态覆盖仍全部独立。目标尺寸 ignored preview 已通过
-  静态视觉复核；V4 尚未获用户合同／导出授权。
+- `QL-A2 V4`：`runtime-exported / P5`。用户于 `2026-07-30` 确认 QL-A1
+  单一静态背景、`676 × 464`、list-only 不缩窄书体和 `GUTTER.*` 静态
+  归属。确定性 exporter 已生成 `1024 × 512` TGA 与 runtime manifest；
+  AEUI adapter 把它挂在 `QuestLogFrame` 的非交互背景层，隐藏原生装饰
+  Texture，但保留动态文字、列表、详情、原操作 Button、脚本和
+  SavedVariables。缺少详情切换时只创建真实 Button。任务行、两套
+  ScrollBar、按钮状态、奖励槽与状态覆盖的最终美术仍属于 QL-B/C/D。
 - Quest Tracker：视觉 `P2`，外部 provider `P0`，暂停。
 - NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
 - `questitem.lua`：行为保留，视觉 `N/A`。
@@ -36,9 +38,9 @@
 
 | 批次 | 子模块 | 阶段 | 当前事实 | 下一门禁 |
 |---|---|---:|---|---|
-| `QL-A1` | `QUEST.LOG.SHELL` 结构母版 | `P4` | [透明 source](../../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png) 已接受；整图不得进 runtime | 等待 QL-A2 后确定 crop／UV |
-| `QL-A2` | 静态空卷宗结构与页沟 | `P2` V4 contract-draft | V3.3 `15/15` 已终止；V4 提议从 QL-A1 accepted source 确定性导出 `676 × 464` 单一静态背景，固定执行器 `0/0` | 用户确认 V4 背景所有权、目标尺寸、list-only 行为与 `GUTTER.*` 静态归属 |
-| `QL-B` | 目录行、展开、追踪、选择、类型、状态 | `P1–P2` | 子模块与稳定美术基线已定义，无生产 work | QL-A2 source 接受后逐对象建 Prompt |
+| `QL-A1` | `QUEST.LOG.SHELL` 结构母版 | `P4` | [透明 source](../../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png) 已接受；原始 PNG 不直接加载，只允许 QL-A2 V4 确定性全幅导出 | Turtle WoW 中复核最终显示 |
+| `QL-A2` | 静态空卷宗结构与页沟 | `P5` V4 runtime-exported | V3.3 `15/15` 已终止；V4 已从 QL-A1 source 导出 `676 × 464` 显示区／`1024 × 512` TGA，固定执行器 `0/0`，Lua smoke 通过 | Turtle WoW 验证纹理方向、裁切、命中与 list-only |
+| `QL-B` | 目录行、展开、追踪、选择、类型、状态 | `P1–P2` | 子模块与稳定美术基线已定义，无生产 work | 以 QL-A2 实际安全区逐对象建立 Prompt |
 | `QL-C` | 两套 ScrollBar、关闭、操作与辅助按钮 | `P1–P2` | 真实对象已拆，部分全局名需 feature-detect | 实机对象与几何 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | `P1–P2` | Quest Log 奖励只读，无 selected | 实机奖励数量与尺寸 |
 
@@ -79,14 +81,21 @@ source 或 runtime。
   [`quest_design_contract_test.py`](../../../tests/quest_design_contract_test.py)。
 - QL-A1 source manifest：
   [`QL-A1_SourceManifest_v1.json`](../../../assets/source/quests/ql-a1/QL-A1_SourceManifest_v1.json)。
+- QL-A2 runtime manifest：
+  [`QL-A1_RuntimeManifest_v1.json`](../../../assets/source/quests/ql-a1/QL-A1_RuntimeManifest_v1.json)；
+  runtime SHA-256
+  `1b6b21cd3db74202051a2ceb8b5ba1d91ca7beb636accf247603edbc3cfeb40e`。
+- adapter：
+  [`Quests.lua`](../../../addon/AzerothExpeditionUI/Modules/Quests.lua)；
+  Lua smoke：
+  [`quest_module_smoke.lua`](../../../tests/quest_module_smoke.lua)。
 - QL-A2 raw、透明候选与失败候选只存在于被忽略的
-  `generated/quests/QL-A2/`；没有 tracked source 或 runtime。
+  `generated/quests/QL-A2/`；未晋级任何 V3.2／V3.3 候选。
 - Turtle WoW 实机验证尚未开始。
 
 ## 下一步
 
-审查 [QL-A2 V4 确定性结构合同](work/QUEST.LOG.GUTTER.md)。用户明确确认
-QL-A1 单一静态背景、`676 × 464`、list-only 不缩窄书体以及
-`GUTTER.*` 静态归属后，才更新 `SUBMODULES.md`、source crop contract，
-创建 deterministic exporter／runtime TGA／manifest 并进入静态接入。
-V4 不调用 ImageGen；不得把任一 V3.2／V3.3 中间稿晋级。
+QL-A2 保持 [runtime work](work/QUEST.LOG.GUTTER.md)，等待 Turtle WoW
+`1.18.1` 实机验收后才可进入 `P6`／清理。当前不在游戏设备上时，可以继续
+QL-B 的目录状态组件合同；不得把静态背景通过误标为整个 Quest Log 已完成，
+也不得晋级任一 V3.2／V3.3 中间稿。

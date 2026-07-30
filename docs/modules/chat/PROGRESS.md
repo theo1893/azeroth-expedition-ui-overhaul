@@ -8,7 +8,7 @@
   pfUI 解锁缩放真实调用链 `pfChatLeft:SetScale → pfChatLeft.OnMove`；
   LocalScale／EffectiveScale 真正变化时强制重放一次，普通拖动不写几何；
   完整静态测试通过并已同步到 `TurtleWoWTest`。
-- 运行时：插件 `0.5.0` 已加载 V3 主框、四状态 Tab、普通／聚焦输入和独立
+- 运行时：插件 `0.6.0` 已加载 V3 主框、四状态 Tab、普通／聚焦输入和独立
   未读覆盖；静态测试通过。
 - 容器：只保留 `pfChatLeft`。`pfChatRight` 默认强制隐藏，原本分流到右框的
   拾取、经验、荣誉、声望与技能消息组回收到 `ChatFrame1`。

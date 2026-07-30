@@ -3,7 +3,7 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 
 addon.name = "AzerothExpeditionUI"
-addon.version = "0.5.0"
+addon.version = "0.6.0"
 addon.modules = addon.modules or {}
 addon.media = addon.media or {}
 addon.media.root = "Interface\\AddOns\\AzerothExpeditionUI\\Media\\"
@@ -16,6 +16,10 @@ local defaults = {
     artVersion = 4,
     bookBrightness = 1.00,
     maintainInterval = 0.25,
+  },
+  quests = {
+    enabled = true,
+    artVersion = 4,
   },
 }
 
@@ -125,6 +129,15 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       "; reloading UI."
     )
     ReloadUI()
+  elseif command == "quests" then
+    AzerothExpeditionUIDB.quests.enabled =
+      not AzerothExpeditionUIDB.quests.enabled
+    addon:Print(
+      "quest log shell " ..
+      (AzerothExpeditionUIDB.quests.enabled and "enabled" or "disabled") ..
+      "; reloading UI."
+    )
+    ReloadUI()
   elseif command == "refresh" then
     addon:Refresh()
     addon:Print("visual adapters refreshed.")
@@ -145,16 +158,23 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       addon.modules.Chat and
       addon.modules.Chat.runtimeContract or
       "unknown"
+    local questRuntime =
+      addon.modules.Quests and
+      addon.modules.Quests.runtimeContract or
+      "unknown"
     addon:Print(
       "version " .. addon.version ..
       ", chat=" ..
       (AzerothExpeditionUIDB.chat.enabled and "enabled" or "disabled") ..
       ", chat-runtime=" .. tostring(chatRuntime) ..
+      ", quests=" ..
+      (AzerothExpeditionUIDB.quests.enabled and "enabled" or "disabled") ..
+      ", quest-runtime=" .. tostring(questRuntime) ..
       ", pfUI=" .. (pfUI and "available" or "missing") ..
       ", route=" .. (nativeFallback and "native-first" or "pfui") ..
       ", blizzard-skins=" .. (nativeSkins and "native" or "pfui")
     )
   else
-    addon:Print("/aeui chat, /aeui refresh, /aeui status")
+    addon:Print("/aeui chat, /aeui quests, /aeui refresh, /aeui status")
   end
 end

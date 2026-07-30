@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "batch": "QL-A2",
+  "version": "V4",
+  "runtime_contract": "1.0",
+  "status": "runtime-exported",
+  "source": {
+    "file": "assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png",
+    "sha256": "91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5",
+    "width": 1514,
+    "height": 1039,
+    "mode": "RGBA",
+    "transparent_pixels": 241402,
+    "partially_transparent_pixels": 5650,
+    "opaque_pixels": 1325994
+  },
+  "transform": {
+    "operation": "aspect-preserving resize with integer-pixel rounding, then transparent top-left atlas padding",
+    "resample": "Pillow Image.Resampling.LANCZOS",
+    "crop": null,
+    "rotation": null,
+    "mirror": false,
+    "retouch": false,
+    "display_size": [
+      676,
+      464
+    ],
+    "atlas_size": [
+      1024,
+      512
+    ],
+    "content_box": [
+      0,
+      0,
+      676,
+      464
+    ],
+    "texcoord": {
+      "left": 0.0,
+      "right": 0.66015625,
+      "top": 0.0,
+      "bottom": 0.90625
+    }
+  },
+  "preview": {
+    "file": "generated/quests/QL-A2/v4/previews/QL-A2_V4_SHELL_676x464.preview.png",
+    "sha256": "3a075d8e094fc8d3b72cf8b5fc4a5a6add020ddbcd6f1e768a841423c5b0e910",
+    "width": 676,
+    "height": 464,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      0,
+      22,
+      676,
+      438
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_pixels": 45159,
+    "partially_transparent_pixels": 6974,
+    "opaque_pixels": 261531
+  },
+  "runtime": {
+    "file": "addon/AzerothExpeditionUI/Media/Quests/QuestLogShellV4.tga",
+    "sha256": "1b6b21cd3db74202051a2ceb8b5ba1d91ca7beb636accf247603edbc3cfeb40e",
+    "width": 1024,
+    "height": 512,
+    "mode": "RGBA",
+    "tga_descriptor": 8,
+    "tga_top_origin": false,
+    "visible_bbox_exclusive": [
+      0,
+      22,
+      676,
+      438
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_pixels": 255783,
+    "partially_transparent_pixels": 6974,
+    "opaque_pixels": 261531
+  },
+  "frame_contract": {
+    "object": "QuestLogFrame",
+    "width": 676,
+    "height": 464,
+    "physical_center_x": 338,
+    "fixed_size": true,
+    "stretch": false,
+    "safe_areas_xyxy": {
+      "list": [
+        64,
+        64,
+        310,
+        388
+      ],
+      "detail": [
+        366,
+        64,
+        612,
+        388
+      ],
+      "gutter": [
+        318,
+        40,
+        358,
+        412
+      ]
+    },
+    "list_only": "keep the full 676 x 464 shell visible and hide only right-page dynamic content"
+  },
+  "ownership": {
+    "QUEST.LOG.SHELL": "single static runtime texture",
+    "QUEST.LOG.LIST.PAPER": "static SHELL subregion and layout safe area",
+    "QUEST.LOG.DETAIL.PAPER": "static SHELL subregion and layout safe area",
+    "QUEST.LOG.GUTTER.UNDERLAY": "static SHELL subregion",
+    "QUEST.LOG.GUTTER.LEFT_FOLD": "static SHELL subregion",
+    "QUEST.LOG.GUTTER.RIGHT_FOLD": "static SHELL subregion",
+    "QUEST.LOG.GUTTER.STITCH": "static SHELL subregion; no repetition",
+    "QUEST.LOG.GUTTER.TOP": "no independent asset",
+    "QUEST.LOG.GUTTER.BOTTOM": "no independent asset"
+  },
+  "dynamic_exclusions": [
+    "quest title, count, rows, levels, tags, selection and tracking",
+    "quest description, objectives, rewards, item icons and quantities",
+    "close, collapse, expand, scrollbar and action button states",
+    "all runtime text, tooltips, click regions, events and SavedVariables"
+  ],
+  "implementation": {
+    "exporter": "tools/build_quest_log_shell_v4.py",
+    "adapter": "addon/AzerothExpeditionUI/Modules/Quests.lua",
+    "imagegen_calls": 0,
+    "game_validated": false
+  }
+}
