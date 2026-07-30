@@ -13,7 +13,8 @@
   `@openai/codex@0.143.0`。
 - 操作：`generate`。
 - 自动修复预算：最多 `5` 次固定执行器调用，含首次。
-- 当前尝试：`2/5`（第 2 次固定执行器调用前已计数）。
+- 当前尝试：`3/5`（attempt 2 的外层与其已启动的递归固定子进程均计数；
+  attempt 4 尚未计数）。
 - 多执行正文最坏总调用数：`5`。
 - 用户授权：`2026-07-30` 明确授权 `QL-B1 V1`；允许每次上传固定 SHA 的
   Image 1／Image 2，允许同一循环前次输出仅在冻结边界内作为 edit 输入，
@@ -257,17 +258,20 @@ UI 或文字。任何一项不满足都不要输出。
 | 尝试 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
 | 1/5 | `QL-B1 V1` / `48ee8ec` | generate | session `019fb1d9-0792-7110-8156-2aed5644d5c7`；无 result | 无输出／无 SHA | 0. 执行正文与传输一致性：保存目录不可写 | 保持完整视觉合同；预建子进程输出目录并使用 `workspace-write`，仅固定 Image 1／2 重生 | transport-error；计入预算 |
-| 2/5 | `QL-B1 V1.r1` / `6fdf109` | generate | 待回填 | 待回填 | 待审查 | 不上传 attempt 1（无输出）；固定 Image 1／2 | 调用前已计数 |
-| 3/5 | `QL-B1 V1.r2` /  | edit／generate |  |  |  |  |  |
-| 4/5 | `QL-B1 V1.r3` /  | edit／generate |  |  |  |  |  |
-| 5/5 | `QL-B1 V1.r4` /  | edit／generate |  |  |  |  |  |
+| 2/5 | `QL-B1 V1.r1` / `6fdf109` | generate | outer session `019fb1dc-57c5-77a0-b3ce-a884d61e0c99` | 无输出／无 SHA | 0. 执行正文与传输一致性：同名包装 skill 触发递归委托 | 完整提示词和固定两图均已正确传入；中断递归，不保留输出 | executor-recursion；计入预算 |
+| 3/5 | `QL-B1 V1.r1` 非预期递归重放 / `453450d` | generate | observed nested task/session `019fb1dc-58df-7a43-83d0-97d674a5229a` | 无输出／无 SHA | 0. 执行正文与传输一致性：非预期嵌套固定调用 | 主进程发送 `Ctrl-C`，无候选；后续明确禁止二次委托 | interrupted；按最保守口径计入预算 |
+| 4/5 | `QL-B1 V1.r2` / 待提交 | generate | 待调用 |  |  | 固定 Image 1／2；正文外明确当前进程已固定版本，只调用内建 imagegen | repair-prepared |
+| 5/5 | `QL-B1 V1.r3` /  | edit／generate |  |  |  |  |  |
 
-## QL-B1 V1.r1 完整修复执行正文
+## QL-B1 V1.r2 完整修复执行正文
 
-第 1 次调用在生成前因子进程工作目录为只读且 `./generated` 不存在而终止，
-没有候选可供编辑。故本次不改变任何创作条款；完整正文与已授权 V1 保持
-语义和文字一致，只在正文外修复执行环境：调用前预建子进程输出目录，并以
-`workspace-write` 启动固定执行器。第 2 次仍只上传固定 Image 1／Image 2。
+attempt 2 已在固定 `0.143.0` 外层中正确回显完整正文、读取两张固定输入并
+取得可写工作区，但同名 `imagegen-0-143-0` 包装 skill 又启动一个固定子进程，
+形成递归委托；主进程随即中断，没有候选可供编辑。故本次仍不改变任何创作
+条款；完整正文与已授权 V1 保持语义和文字一致。只在正文外明确：当前 Codex
+进程已经是固定 `@openai/codex@0.143.0`，必须直接调用该进程内建
+`image_gen`，不得读取或调用 `imagegen-0-143-0` 包装 skill，不得再启动
+任何 `codex`／`npx` 子进程。attempt 4 仍只上传固定 Image 1／Image 2。
 
 使用固定 ImageGen v0.143.0 生成一张可拆分为游戏 UI sprite 的四状态源图。
 这不是完整界面概念图，也不是一本书的截图；输出只能包含四枚彼此独立的小型
@@ -337,10 +341,15 @@ UI 或文字。任何一项不满足都不要输出。
 
 ## 执行记录
 
-- 日期：`2026-07-30`，第 1 次调用已终止；第 2 次调用待执行。
+- 日期：`2026-07-30`；attempt 1 保存环境失败；attempt 2 触发递归，递归
+  固定调用按 attempt 3 计数并由主进程中断；attempt 4 修复已准备。
 - 会话／结果 ID：
   - attempt 1：session
     `019fb1d9-0792-7110-8156-2aed5644d5c7`；无 result。
+  - attempt 2：outer session
+    `019fb1dc-57c5-77a0-b3ce-a884d61e0c99`；无 result。
+  - attempt 3：observed nested task/session
+    `019fb1dc-58df-7a43-83d0-97d674a5229a`；无 result；由主进程中断。
 - 实际输入绝对路径与职责：
   - Image 1：
     `/Users/yuanshiyao/Documents/Codex/2026-07-28/new-chat/aeui-chat-work/assets/locked/quests/任务详情面板_视觉基准_v1.png`
@@ -350,13 +359,14 @@ UI 或文字。任何一项不满足都不要输出。
     `/Users/yuanshiyao/Documents/Codex/2026-07-28/new-chat/aeui-chat-work/assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png`
     ——受限纸面色温／年代参考，固定 SHA
     `91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5`。
-- imagegen 报告的 revised prompt：无；子进程完整回显了授权正文，未进入
-  生图。
-- 输出尺寸／模式／SHA-256：attempt 1 无输出。
+- imagegen 报告的 revised prompt：无；attempt 1／2 均完整回显授权正文，
+  attempt 2 的嵌套命令也携带完整正文，但没有进入可审查的生图结果。
+- 输出尺寸／模式／SHA-256：attempt 1–3 均无输出。
 - Alpha／残色：无。
-- 调用次数：`2/5`（第 2 次调用前已计数）。
+- 调用次数：`3/5`。
 - 循环终态：继续；attempt 1 为
-  `transport-error: Operation not permitted`，attempt 2 调用前已计数。
+  `transport-error: Operation not permitted`；attempt 2／3 为
+  `executor-recursion / interrupted`。
 
 ## 审查记录
 
@@ -366,18 +376,21 @@ UI 或文字。任何一项不满足都不要输出。
 - 对象／状态合同：无候选，未到达。
 - 装配／尺寸：无候选，未到达。
 - 技术像素：无候选，未到达。
-- 结论：`repair-prepared / P3`；第一失败门禁为“0. 执行正文与传输
-  一致性”的输出保存环境。子进程完整回显正文，两张固定输入均可读，但其
-  `/private/tmp/aeui-qlb1-a1.CWsSo7/generated` 不存在且只读沙箱拒绝创建，
-  明确报告 `Operation not permitted`。
+- 结论：`repair-prepared / P3`；attempt 1 的第一失败门禁是输出保存环境；
+  attempt 2／3 的第一失败门禁仍是“0. 执行正文与传输一致性”，具体证据为
+  固定外层读取系统 imagegen 后又读取 `imagegen-0-143-0` 包装 skill，并
+  实际执行第二条 `npx --package=@openai/codex@0.143.0 ... '$imagegen …'`
+  命令。主进程中断后返回 `turn interrupted`，临时目录无任何文件。
 - 用户结论与日期：`2026-07-30` 已授权本版本、固定两图与最多五次自主
   修复循环；尚未接受任何候选。
-- 下一门禁：提交完整 `QL-B1 V1.r1`，预建子进程 `./generated`，以
-  `workspace-write` 执行第 2 次调用并完整内审。
+- 下一门禁：提交完整 `QL-B1 V1.r2`，预建子进程 `./generated`，以
+  `workspace-write` 执行 attempt 4；执行说明明确禁止二次委托并要求直接
+  调用当前固定进程的内建 imagegen，然后完整内审。
 
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
 |---|---|---|---|
 | `QL-B1 V1` | commit `13edad9`；session `019fb1d9-0792-7110-8156-2aed5644d5c7`；无输出 | transport-error；`1/5` 已消耗 | 不改美术正文；修复子进程写入环境 |
-| `QL-B1 V1.r1` | commit `6fdf109`；完整自包含正文；固定 Image 1／2 | repair-prepared | 执行第 2 次调用并完整内审 |
+| `QL-B1 V1.r1` | commits `6fdf109`／`453450d`；outer session `019fb1dc-57c5-77a0-b3ce-a884d61e0c99`；observed nested `019fb1dc-58df-7a43-83d0-97d674a5229a`；无输出 | executor-recursion；attempt 2／3 均计入 | 不改美术正文；禁止当前固定进程二次委托 |
+| `QL-B1 V1.r2` | 完整自包含正文已准备；固定 Image 1／2 | repair-prepared | 提交后执行 attempt 4 |
