@@ -8,13 +8,14 @@
   `QUEST.LOG.GUTTER.RIGHT_FOLD`、`QUEST.LOG.GUTTER.STITCH`、
   `QUEST.LOG.GUTTER.TOP`、`QUEST.LOG.GUTTER.BOTTOM`
 - 版本：`QL-A2 V3.3`
-- 子状态：`prompt-draft`
-- 项目阶段：`P2`
-- 类型：`production-draft`
-- 当前操作：`prepare`
-- 用户方向：用户于 `2026-07-30` 回复“按这个方案执行”，确认把 V3.2-B
-  拆成三个尺度族并确定性装回图集；本文件首次展示 V3.3 的三段具体执行
-  正文、上传范围和预算，因此该回复不替代版本级生图授权
+- 子状态：`prompt-authorized`
+- 项目阶段：`P3`
+- 类型：`production`
+- 当前操作：`generate`
+- 用户授权：用户于 `2026-07-30` 明确确认
+  `QL-A2 V3.3-B1/B2/B3`；每段最多 `5` 次、最坏总计 `15` 次；允许 B1
+  每次上传固定 SHA 的 Image 1／2，允许 B2／B3 每次只上传固定 SHA 的
+  Image 1；允许同一段前次输出仅在冻结修复边界内作为 edit 输入
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 三段执行正文：
   - `V3.3-B1 / FOLDS`：underlay＋left fold＋right fold
@@ -60,8 +61,9 @@
 
 当前树只保留 V3.3 的当前合同与三段可执行正文。V1–V3.2 的完整执行正文、
 十次 V3.2 调用和 diff 由 Git 历史保存；本文件只保留能约束 V3.3 的失败
-结论。V3.3 未获版本级授权，不得调用固定执行器、写入 `assets/source/`、
-导出 runtime 或接入 Lua。
+结论。V3.3 已获上述版本级生成授权；只允许按冻结正文与修复边界调用固定
+执行器并写入 ignored `generated/`，仍不得写入 `assets/source/`、导出
+runtime 或接入 Lua。
 
 ## 尝试摘要
 
@@ -249,7 +251,7 @@ closure 不能通过真实遮挡形成半藏语义、背景无法安全透明化
   source 后的 P4→P5 合同，不阻塞三段源资产生成。
 - 去冗余结论：历史 commit／session 不放入执行正文；只保留会直接消除
   fold 纸条、辫绳、装饰结、尺度混杂和背景污染的约束。
-- 结论：`pass`。三段均达到 `production-draft`，尚未授权。
+- 结论：`pass`。三段正文已冻结为 `production`，并已取得上述版本级授权。
 
 ## 最终执行正文
 
@@ -444,7 +446,7 @@ bottom 的可遮挡方向相反，保持同一浅俯视表面方向与左上暖�
 
 | 尝试 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
-| 1/5 | `V3.3-B1` / 待授权 | generate |  |  |  |  | 未执行 |
+| 1/5 | `V3.3-B1` / 待写入执行前 commit | generate |  |  |  |  | 未执行 |
 | 2/5 | `V3.3-B1.r1` / 待生成 | edit／generate |  |  |  |  | 未执行 |
 | 3/5 | `V3.3-B1.r2` / 待生成 | edit／generate |  |  |  |  | 未执行 |
 | 4/5 | `V3.3-B1.r3` / 待生成 | edit／generate |  |  |  |  | 未执行 |
@@ -454,7 +456,7 @@ bottom 的可遮挡方向相反，保持同一浅俯视表面方向与左上暖�
 
 | 尝试 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
-| 1/5 | `V3.3-B2` / 待授权 | generate |  |  |  |  | 未执行 |
+| 1/5 | `V3.3-B2` / 待写入执行前 commit | generate |  |  |  |  | 未执行 |
 | 2/5 | `V3.3-B2.r1` / 待生成 | edit／generate |  |  |  |  | 未执行 |
 | 3/5 | `V3.3-B2.r2` / 待生成 | edit／generate |  |  |  |  | 未执行 |
 | 4/5 | `V3.3-B2.r3` / 待生成 | edit／generate |  |  |  |  | 未执行 |
@@ -464,7 +466,7 @@ bottom 的可遮挡方向相反，保持同一浅俯视表面方向与左上暖�
 
 | 尝试 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
-| 1/5 | `V3.3-B3` / 待授权 | generate |  |  |  |  | 未执行 |
+| 1/5 | `V3.3-B3` / 待写入执行前 commit | generate |  |  |  |  | 未执行 |
 | 2/5 | `V3.3-B3.r1` / 待生成 | edit／generate |  |  |  |  | 未执行 |
 | 3/5 | `V3.3-B3.r2` / 待生成 | edit／generate |  |  |  |  | 未执行 |
 | 4/5 | `V3.3-B3.r3` / 待生成 | edit／generate |  |  |  |  | 未执行 |
@@ -472,7 +474,7 @@ bottom 的可遮挡方向相反，保持同一浅俯视表面方向与左上暖�
 
 ## 执行记录
 
-- 日期：V3.3 prepare 于 `2026-07-30`
+- 日期：V3.3 于 `2026-07-30` 获得版本级生成授权
 - 会话／结果 ID：无
 - 输出尺寸／模式／SHA-256：无
 - Alpha／残色：无
@@ -480,12 +482,10 @@ bottom 的可遮挡方向相反，保持同一浅俯视表面方向与左上暖�
 
 ## 审查记录
 
-- 当前结论：三段 Prompt 完整性预检通过，`prompt-draft / P2`；尚未形成
-  raw、透明候选、确定性 atlas 或用户复审包
-- 用户尚未发生的结论：没有版本级生成授权，没有候选接受，没有 source、
-  manifest、runtime、Lua 接入或 Turtle WoW 实机验收
-- 下一门禁：用户在看到本文件三段正文后，明确授权
-  `QL-A2 V3.3-B1/B2/B3`、每段最多 `5` 次且最坏总计 `15` 次固定调用，
-  允许 B1 每次上传固定 SHA 的 Image 1／2，允许 B2／B3 每次只上传固定
-  SHA 的 Image 1，并允许同一段前次输出仅在上述冻结修复边界内作为
-  edit 输入
+- 当前结论：三段 Prompt 完整性预检与版本级授权门均通过，
+  `prompt-authorized / P3`；尚未形成 raw、透明候选、确定性 atlas 或
+  用户复审包
+- 用户尚未发生的结论：没有候选接受，没有 source、manifest、runtime、
+  Lua 接入或 Turtle WoW 实机验收
+- 下一门禁：使用已提交的 `V3.3-B1` 完整正文与固定 SHA Image 1／2
+  执行 attempt 1，然后按完整审查清单决定通过、edit 或 regenerate
