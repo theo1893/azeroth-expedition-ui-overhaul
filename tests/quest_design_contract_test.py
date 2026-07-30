@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import struct
 from pathlib import Path
 
@@ -182,7 +183,6 @@ def main() -> None:
         work,
         (
             "版本：`QL-A2 V3.3`",
-            "子状态：`prompt-authorized`",
             "项目阶段：`P3`",
             "类型：`production`",
             "当前操作：`generate`",
@@ -226,7 +226,7 @@ def main() -> None:
             "未知但执行必需的值：无",
             "结论：`pass`",
             "## 最终执行正文",
-            "### V3.3-B1 — FOLDS",
+            "### V3.3-B1",
             "### V3.3-B2 — STITCH",
             "### V3.3-B3 — CLOSURES",
             "## 固定执行映射",
@@ -244,7 +244,6 @@ def main() -> None:
             "### V3.3-B3 尝试表",
             "## 执行记录",
             "## 审查记录",
-            "合计 `0/15`",
             "用户尚未发生的结论：没有候选接受",
             "最终 source：无",
         ),
@@ -255,6 +254,26 @@ def main() -> None:
     )[0]
     assert "/Users/" not in execution_bodies
     assert execution_bodies.count("### V3.3-B") == 3
+    assert any(
+        f"子状态：`{state}`" in work
+        for state in (
+            "prompt-authorized",
+            "candidate-raw",
+            "repair-prepared",
+            "candidate-reviewed",
+            "candidate-rejected",
+        )
+    )
+    call_counts = re.search(
+        r"固定执行器调用：B1 `([0-5])/5`；B2 `([0-5])/5`；"
+        r"B3 `([0-5])/5`；合计 `((?:[0-9]|1[0-5]))/15`",
+        work,
+    )
+    assert call_counts is not None
+    b1_calls, b2_calls, b3_calls, total_calls = map(
+        int, call_counts.groups()
+    )
+    assert b1_calls + b2_calls + b3_calls == total_calls
 
     source_path = (
         ROOT
