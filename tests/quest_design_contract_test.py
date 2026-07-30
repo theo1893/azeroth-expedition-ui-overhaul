@@ -201,8 +201,8 @@ def main() -> None:
             "QL-A1_RuntimeManifest_v1.json",
             "1b6b21cd3db74202051a2ceb8b5ba1d91ca7beb636accf247603edbc3cfeb40e",
             "`QL-B1 V1`",
-            "`production-draft / P2`",
-            "`0/5`",
+            "`candidate-rejected / P3 / repair-budget-exhausted`",
+            "`5/5`",
             "`15px` 行高／`14px` 步进",
             "work/QUEST.LOG.DIRECTORY.md",
             "Quest Tracker",
@@ -282,10 +282,10 @@ def main() -> None:
         directory_work,
         (
             "版本：`QL-B1 V1`",
-            "子状态：`prompt-draft`",
-            "项目阶段：`P2`",
+            "子状态：`candidate-rejected / repair-budget-exhausted`",
+            "项目阶段：`P3`",
             "固定执行器：`imagegen-0-143-0`",
-            "当前尝试：`0/5`",
+            "当前尝试：`5/5`",
             "QUEST.LOG.REGION.TOGGLE",
             "QUEST.LOG.LIST.CHECK",
             "任务详情面板_视觉基准_v1.png",
@@ -328,13 +328,18 @@ def main() -> None:
             "## 自主修复循环",
             "最多 `5` 次",
             "固定 SHA 的 Image 1／Image 2",
-            "等待具体版本授权",
+            "candidate-rejected / P3 / repair-budget-exhausted",
+            "QL-B1 V1.r3",
+            "019fb1e8-db9a-7010-86d1-98008548e4d6",
+            "73f719d44a55b01d0ef8bc6f2c07343679a10b155d612941ca72d16869527596",
+            "719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44",
         ),
         "active QL-B1 work",
     )
     assert "/Users/" not in directory_work
     assert directory_work.count("## 最终执行正文") == 1
-    assert "attempt 1" not in directory_work.lower()
+    assert "attempt 1" in directory_work.lower()
+    assert "不得进入 source、runtime" in directory_work
 
     source_path = (
         ROOT

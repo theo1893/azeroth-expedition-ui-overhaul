@@ -218,6 +218,10 @@ def main() -> None:
             "UTF-8 standard input",
             "`-- -`",
             "complete authorized prompt",
+            "-s workspace-write",
+            "must use its built-in `image_gen`",
+            "must not start another `codex`／`npx` subprocess",
+            "recursive `npx --package=@openai/codex@0.143.0",
         ),
         "fixed imagegen Windows transport",
     )
@@ -228,6 +232,9 @@ def main() -> None:
             "`-- -`",
             "`npx.cmd`",
             "`npx.ps1`",
+            "-s workspace-write",
+            "must use its own built-in `image_gen`",
+            "must not invoke the wrapper",
         ),
         "fixed imagegen usage",
     )

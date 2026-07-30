@@ -311,8 +311,11 @@ def main() -> None:
         ROOT / ".codex" / "skills" / "imagegen-0-143-0" / "SKILL.md"
     ).read_text(encoding="utf-8")
     assert "-C /absolute/path/to/empty-temp-directory" in imagegen_wrapper
+    assert "-s workspace-write" in imagegen_wrapper
     assert "`--image` is variadic in Codex `0.143.0`" in imagegen_wrapper
     assert "No prompt provided via stdin" in imagegen_wrapper
+    assert "must use its built-in `image_gen`" in imagegen_wrapper
+    assert "must not start another `codex`／`npx` subprocess" in imagegen_wrapper
     assert "## Read-only child recovery" in imagegen_wrapper
 
     expedition = (pfui / "api" / "expedition.lua").read_text(encoding="utf-8")

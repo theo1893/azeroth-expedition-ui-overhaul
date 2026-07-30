@@ -6,6 +6,7 @@
 npx --yes --package=@openai/codex@0.143.0 -- \
   codex exec \
   -C /absolute/path/to/empty-temp-directory \
+  -s workspace-write \
   --skip-git-repo-check \
   -m gpt-5.5 \
   -c 'model_reasoning_effort="medium"' \
@@ -21,6 +22,7 @@ Execution instruction: Save the final image to ./generated and output its absolu
 npx --yes --package=@openai/codex@0.143.0 -- \
   codex exec \
   -C /absolute/path/to/empty-temp-directory \
+  -s workspace-write \
   --skip-git-repo-check \
   -m gpt-5.5 \
   -c 'model_reasoning_effort="medium"' \
@@ -37,6 +39,7 @@ Execution instruction: Image 1 is /absolute/path/to/source.png. Save the final i
 npx --yes --package=@openai/codex@0.143.0 -- \
   codex exec \
   -C /absolute/path/to/empty-temp-directory \
+  -s workspace-write \
   --skip-git-repo-check \
   -m gpt-5.5 \
   -c 'model_reasoning_effort="medium"' \
@@ -54,6 +57,7 @@ Execution instruction: Image 1 is /absolute/path/to/style.jpg. Image 2 is /absol
 npx --yes --package=@openai/codex@0.143.0 -- \
   codex exec \
   -C /absolute/path/to/empty-temp-directory \
+  -s workspace-write \
   --skip-git-repo-check \
   -m gpt-5.5 \
   -c 'model_reasoning_effort="medium"' \
@@ -69,7 +73,10 @@ Resolve local input images to absolute paths before passing them to `-i`.
 Keep the image prompt verbatim. Put file-role mapping and save-path requirements only in the separate `Execution instruction:` line.
 
 When this wrapper is stored inside the current repository, run the fixed child from an empty
-temporary directory via `-C`. The standalone `--` after the final `-i` is required because
+temporary directory via `-C`, pre-create that directory's `generated/`, and use
+`-s workspace-write`. In the separate execution instruction, state that this fixed child
+must use its own built-in `image_gen` and must not invoke the wrapper or another
+`codex`／`npx` subprocess. The standalone `--` after the final `-i` is required because
 Codex `0.143.0` treats `--image` as variadic and can otherwise consume the prompt.
 
 On Windows PowerShell, pass the complete multiline request through UTF-8 stdin and end the

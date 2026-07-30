@@ -7,13 +7,13 @@
   - `QUEST.LOG.REGION.TOGGLE`
   - `QUEST.LOG.LIST.CHECK`
 - 版本：`QL-B1 V1`。
-- 子状态：`repair-prepared`。
+- 子状态：`candidate-rejected / repair-budget-exhausted`。
 - 项目阶段：`P3`。
 - 固定执行器：`imagegen-0-143-0` /
   `@openai/codex@0.143.0`。
 - 操作：`edit`（attempt 5；attempt 1–4 记录见循环表）。
 - 自动修复预算：最多 `5` 次固定执行器调用，含首次。
-- 当前尝试：`5/5`（attempt 5 调用前已计数；无剩余预算）。
+- 当前尝试：`5/5`（预算耗尽，无剩余调用）。
 - 多执行正文最坏总调用数：`5`。
 - 用户授权：`2026-07-30` 明确授权 `QL-B1 V1`；允许每次上传固定 SHA 的
   Image 1／Image 2，允许同一循环前次输出仅在冻结边界内作为 edit 输入，
@@ -39,16 +39,21 @@
     ——只负责最终接触纸面的暖赭色关系、时代和磨损尺度；不得覆盖 Image 1
     的视觉权威，也不得把完整书体画进输出。
 - raw：
-  `generated/quests/QL-B1/v1/attempt-04/raw/QL-B1_V1_r2_raw.png`
-  （ignored，SHA-256
-  `cc14b469ff5594a973c804510b11df6cb0b496e94f2b4daadb2b1abd5208eebd`）。
+  - attempt 5 native：
+    `generated/quests/QL-B1/v1/attempt-05/raw/QL-B1_V1_r3_native_1254.png`
+    （ignored，SHA-256
+    `995764a5ab7e18136d3f3153a7184daf5d9da65d153917369c83595205606c5f`）。
+  - attempt 5 normalized executor output：
+    `generated/quests/QL-B1/v1/attempt-05/raw/QL-B1_V1_r3_normalized_1024.png`
+    （ignored，SHA-256
+    `73f719d44a55b01d0ef8bc6f2c07343679a10b155d612941ca72d16869527596`）。
 - 透明候选：
-  `generated/quests/QL-B1/v1/attempt-04/transparent/QL-B1_V1_r2_transparent.png`
+  `generated/quests/QL-B1/v1/attempt-05/transparent/QL-B1_V1_r3_transparent.png`
   （ignored，SHA-256
-  `79e5bf71d84b89fec507f6a3fb5b751d7895aa15fa32d09ec302eafca1e1f302`）。
+  `719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`）。
 - 重组预演：
-  - `generated/quests/QL-B1/v1/attempt-04/previews/QL-B1_V1_r2_contact.png`
-  - `generated/quests/QL-B1/v1/attempt-04/previews/QL-B1_V1_r2_runtime_preview.png`
+  - `generated/quests/QL-B1/v1/attempt-05/previews/QL-B1_V1_r3_contact.png`
+  - `generated/quests/QL-B1/v1/attempt-05/previews/QL-B1_V1_r3_runtime_preview.png`
 - 最终 source：未接受。
 
 ## 当前批次边界
@@ -58,7 +63,7 @@ QL-B 目录状态按运行时语义和物件尺度拆分：
 | 批次 | 组件 | 当前状态 |
 |---|---|---|
 | `QL-B0` | 23 个真实 `QuestLogTitleN` 的创建、排布、文字安全区和状态刷新 | 合同已审计，等待随资产接入实现 |
-| `QL-B1` | 地区展开／收起墨箭头；未追踪／已追踪墨圈 | 本文件，`production-draft` |
+| `QL-B1` | 地区展开／收起墨箭头；未追踪／已追踪墨圈 | 本文件，V1 `candidate-rejected / repair-budget-exhausted` |
 | `QL-B2` | 当前任务暗酒红窄织物书签及其交互状态 | 等待 QL-B1 视觉尺度确认 |
 | `QL-B3` | Elite／Dungeon／Raid／PvP 类型章、Timed 沙漏章、Complete／Failed 蜡封 | 等待 QL-B1 视觉尺度确认 |
 
@@ -268,7 +273,7 @@ UI 或文字。任何一项不满足都不要输出。
 | 2/5 | `QL-B1 V1.r1` / `6fdf109` | generate | outer session `019fb1dc-57c5-77a0-b3ce-a884d61e0c99` | 无输出／无 SHA | 0. 执行正文与传输一致性：同名包装 skill 触发递归委托 | 完整提示词和固定两图均已正确传入；中断递归，不保留输出 | executor-recursion；计入预算 |
 | 3/5 | `QL-B1 V1.r1` 非预期递归重放 / `453450d` | generate | observed nested task/session `019fb1dc-58df-7a43-83d0-97d674a5229a` | 无输出／无 SHA | 0. 执行正文与传输一致性：非预期嵌套固定调用 | 主进程发送 `Ctrl-C`，无候选；后续明确禁止二次委托 | interrupted；按最保守口径计入预算 |
 | 4/5 | `QL-B1 V1.r2` / `21871a0` | generate | session `019fb1e0-9914-74f2-ab21-a3af62713f58`；generated-image `ig_0003fcc8d237f171016a6afa0f7e9c8191b71f23127c34cfc5` | raw `cc14b469…`；transparent `79e5bf71…` | 2. 语义／状态同源关系：箭头非严格旋转，圈并非只差墨勾 | 保留四格顺序、对象身份、方向、综合色和无额外物；以本稿作 Image 3，只修冻结四格 | rejected；进入最终修复 |
-| 5/5 | `QL-B1 V1.r3` / `f99d17a` | edit | 待回填 | 待回填 | 待审查 | 固定 Image 1／2 + attempt 4 Image 3；修复同源、平面墨迹、占用与画布 | 调用前已计数 |
+| 5/5 | `QL-B1 V1.r3` / `f99d17a` | edit | session `019fb1e8-db9a-7010-86d1-98008548e4d6`；generated-image `ig_007a38bf53929826016a6afc3030688191af04ac2e61682f6d` | normalized raw `73f719d4…`；transparent `719445d1…` | 2. 语义／状态同源关系仍失败；基本复刻 attempt 4 | 保留小尺寸可辨与综合色作为负面证据；不再调用，不晋级 | rejected；repair-budget-exhausted |
 
 ## QL-B1 V1.r3 完整修复执行正文
 
@@ -354,8 +359,8 @@ UI 或文字。任何一项不满足都不要输出。
 ## 执行记录
 
 - 日期：`2026-07-30`；attempt 1 保存环境失败；attempt 2 触发递归，递归
-  固定调用按 attempt 3 计数并由主进程中断；attempt 4 已生成并完成内审；
-  attempt 5 最终修复已准备。
+  固定调用按 attempt 3 计数并由主进程中断；attempt 4 生成后退回；
+  attempt 5 编辑后仍失败，循环终止。
 - 会话／结果 ID：
   - attempt 1：session
     `019fb1d9-0792-7110-8156-2aed5644d5c7`；无 result。
@@ -366,62 +371,81 @@ UI 或文字。任何一项不满足都不要输出。
   - attempt 4：session
     `019fb1e0-9914-74f2-ab21-a3af62713f58`；generated-image
     `ig_0003fcc8d237f171016a6afa0f7e9c8191b71f23127c34cfc5`。
+  - attempt 5：session
+    `019fb1e8-db9a-7010-86d1-98008548e4d6`；generated-image
+    `ig_007a38bf53929826016a6afc3030688191af04ac2e61682f6d`。
 - 实际输入绝对路径与职责：
   - Image 1：
-    `/Users/yuanshiyao/Documents/Codex/2026-07-28/new-chat/aeui-chat-work/assets/locked/quests/任务详情面板_视觉基准_v1.png`
+    `assets/locked/quests/任务详情面板_视觉基准_v1.png`
+    （执行时从当前工作副本解析为绝对路径）
     ——最高视觉权威，固定 SHA
     `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`。
   - Image 2：
-    `/Users/yuanshiyao/Documents/Codex/2026-07-28/new-chat/aeui-chat-work/assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png`
+    `assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png`
+    （执行时从当前工作副本解析为绝对路径）
     ——受限纸面色温／年代参考，固定 SHA
     `91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5`。
 - attempt 5 允许的 Image 3：
-  `/Users/yuanshiyao/Documents/Codex/2026-07-28/new-chat/aeui-chat-work/generated/quests/QL-B1/v1/attempt-04/raw/QL-B1_V1_r2_raw.png`
+  `generated/quests/QL-B1/v1/attempt-04/raw/QL-B1_V1_r2_raw.png`
+  （执行时从当前工作副本解析为绝对路径）
   ——仅为同一循环的冻结边界内 edit 输入，SHA
   `cc14b469ff5594a973c804510b11df6cb0b496e94f2b4daadb2b1abd5208eebd`。
-- imagegen 报告的 revised prompt：无；attempt 4 完整回显
-  `QL-B1 V1.r2`，没有报告改写后的 Prompt。
+- imagegen 报告的 revised prompt：无；attempt 4／5 均完整回显对应正文，
+  没有报告改写后的 Prompt。attempt 5 遵循正文外执行说明，把工具原生
+  `1254²` 输出整幅无裁切缩放为 `1024²`。
 - 输出尺寸／模式／SHA-256：
   - attempt 1–3：无输出。
   - attempt 4 raw：`1254 × 1254 RGB`，
     `cc14b469ff5594a973c804510b11df6cb0b496e94f2b4daadb2b1abd5208eebd`。
   - attempt 4 transparent：`1254 × 1254 RGBA`，
     `79e5bf71d84b89fec507f6a3fb5b751d7895aa15fa32d09ec302eafca1e1f302`。
-- Alpha／残色：attempt 4 经固定 helper 去除自动采样色
-  `#04F906` 后，透明／半透明／不透明像素为
-  `1420536／5914／146066`；可见 `#00FF00` 与 heuristic green spill
-  均为 `0`。raw 只有 `143` 个精确 `#00FF00` 像素，背景并非合同要求的
-  均匀纯色。
+  - attempt 5 native raw：`1254 × 1254 RGB`，
+    `995764a5ab7e18136d3f3153a7184daf5d9da65d153917369c83595205606c5f`。
+  - attempt 5 normalized raw：`1024 × 1024 RGB`，
+    `73f719d44a55b01d0ef8bc6f2c07343679a10b155d612941ca72d16869527596`。
+  - attempt 5 transparent：`1024 × 1024 RGBA`，
+    `719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`。
+- Alpha／残色：
+  - attempt 4 经固定 helper 去除自动采样色 `#04F906` 后，透明／半透明／
+    不透明像素为 `1420536／5914／146066`；可见绿色残留为 `0`。
+  - attempt 5 经固定 helper 去除自动采样色 `#04F909` 后，透明／半透明／
+    不透明像素为 `936446／4792／107338`；可见绿色残留为 `0`。normalized
+    raw 只有 `135` 个精确 `#00FF00` 像素，仍非均匀纯色色键。
 - 调用次数：`5/5`（attempt 5 调用前已计数）。
-- 循环终态：继续；attempt 1 为
+- 循环终态：`candidate-rejected / repair-budget-exhausted`。attempt 1 为
   `transport-error: Operation not permitted`；attempt 2／3 为
-  `executor-recursion / interrupted`；attempt 4 为内部退回。
+  `executor-recursion / interrupted`；attempt 4／5 为内部美术与合同退回。
 
 ## 审查记录
 
-- 语义／物理：四个对象身份、顺序和基本方向正确；但右箭头与下箭头的
-  轮廓比例、边缘起伏和磨损位置不同，不能旋转重合；tracked 外圈与
-  untracked 外圈也不是完全同一外圈，违反两组状态的严格同源合同。这是
-  attempt 4 的第一个失败门禁。
+- 语义／物理：attempt 5 仍保留四个对象身份、顺序和基本方向；但右箭头与
+  下箭头的轮廓、边缘起伏、内面和磨损不能旋转重合，tracked 外圈与
+  untracked 外圈也不是“同一外圈只增加墨勾”。edit 基本延续 attempt 4，
+  没有完成逐像素同源关系。这仍是第一个失败门禁。
 - 透视／图层：对象互相独立且未跨格；但双层凸边、内嵌面和接触阴影把墨记
-  画成有厚度的皮革／木雕 token，不是正面平面墨迹。
+  画成有厚度的皮革／木雕 token，不是正面平面墨迹；attempt 5 未修复。
 - 美术一致性：综合色、粗厚轮廓、手工误差与小尺寸可读性接近锁定基准；
   但材质身份偏离子模块 Prompt，外沿倒角和均匀内面也带有现代图标的精修感。
 - 对象／状态合同：恰好四件、无文字和其他 UI；状态增量关系未通过。
-- 装配／尺寸：真实 `12px`／`10px` 叠加预演中方向、空圈和墨勾可辨；但
-  raw 为 `1254²` 而非 `1024²`。按全幅等比换算到 `1024²` 后，两枚圆圈
-  约为 `247 × 246px`，超过 `224²` 安全盒并偏离中心；不得用事后缩放掩盖。
-- 技术像素：raw `RGB`、SHA `cc14b469…`；背景自动采样为 `#04F906`，
-  不是均匀 `#00FF00`。透明稿 `RGBA`、SHA `79e5bf71…`，无可见绿色残留，
-  四格均未触边。
-- 结论：attempt 4 `退回`；当前为 `repair-prepared / P3`。第一失败门禁
-  是“2. 语义、解剖与物理逻辑”的状态同源关系，另有平面墨迹身份、画布、
-  占用和色键失败。不得进入用户复审或 source。
+- 装配／尺寸：真实 `12px`／`10px` 叠加预演中方向、空圈和墨勾仍可辨。
+  normalized 画布已为 `1024²`，但四个可见 bbox 分别是
+  `203 × 202`、`204 × 204`、`258 × 257`、`260 × 258px`；全部超过
+  V1.r3 的 `190²` 目标，两枚圆还超过 `224²` 冻结安全盒。collapsed 右缘、
+  expanded 左缘与两枚圆也越出各格中心安全盒，未严格居中。
+- 技术像素：normalized raw `RGB`、SHA `73f719d4…`，背景自动采样为
+  `#04F909` 而非均匀 `#00FF00`。透明稿 `RGBA`、SHA `719445d1…`，
+  `936446` 全透明、`4792` 半透明、`107338` 不透明，无可见绿色残留，
+  四格均未触 cell 边。
+- 结论：attempt 5 `退回`；当前为
+  `candidate-rejected / P3 / repair-budget-exhausted`。第一失败门禁仍是
+  “2. 语义、解剖与物理逻辑”的状态同源关系，另有平面墨迹身份、占用、
+  居中和色键失败。不得进入 source、runtime 或自动继续生图。
 - 用户结论与日期：`2026-07-30` 已授权本版本、固定两图与最多五次自主
   修复循环；尚未接受任何候选。
-- 下一门禁：提交完整 `QL-B1 V1.r3`，以固定 Image 1／2 和 attempt 4 raw
-  作为 Image 3 做冻结边界内 edit，执行 attempt 5 后完整内审；若仍有任一
-  客观失败，停止为 `repair-budget-exhausted`。
+- 下一门禁：用户审核失败证据并决定是否建立新的 `QL-B1 V2` 合同。建议把
+  “同源状态”改为可验证的确定性生产：生成或接受一枚基础箭头、一枚基础
+  空圈和一笔独立墨勾，再由工具复制／旋转／叠加生成四个 runtime state；
+  这会改变 source 对象库存与装配合同，必须重新授权，不能在 V1 预算内执行。
 
 ## 尝试摘要
 
@@ -430,4 +454,4 @@ UI 或文字。任何一项不满足都不要输出。
 | `QL-B1 V1` | commit `13edad9`；session `019fb1d9-0792-7110-8156-2aed5644d5c7`；无输出 | transport-error；`1/5` 已消耗 | 不改美术正文；修复子进程写入环境 |
 | `QL-B1 V1.r1` | commits `6fdf109`／`453450d`；outer session `019fb1dc-57c5-77a0-b3ce-a884d61e0c99`；observed nested `019fb1dc-58df-7a43-83d0-97d674a5229a`；无输出 | executor-recursion；attempt 2／3 均计入 | 不改美术正文；禁止当前固定进程二次委托 |
 | `QL-B1 V1.r2` | commit `21871a0`；session `019fb1e0-9914-74f2-ab21-a3af62713f58`；raw `cc14b469…`；transparent `79e5bf71…` | rejected：状态同源、平面墨迹、画布、占用与色键失败 | 以本稿为 Image 3 做最后一次冻结边界内 edit |
-| `QL-B1 V1.r3` | commit `f99d17a`；完整自包含 edit 正文；固定 Image 1／2 + attempt 4 Image 3 | repair-prepared | 执行 attempt 5 并完整内审 |
+| `QL-B1 V1.r3` | commit `f99d17a`；session `019fb1e8-db9a-7010-86d1-98008548e4d6`；normalized raw `73f719d4…`；transparent `719445d1…` | rejected：状态同源、平面墨迹、占用、居中与色键失败；`5/5` 耗尽 | 等待用户审核并决定是否授权新的 V2 确定性状态生产合同 |
