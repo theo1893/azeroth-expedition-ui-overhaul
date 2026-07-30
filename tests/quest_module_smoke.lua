@@ -143,6 +143,7 @@ end
 
 local questLogUpdateCalls = 0
 local fauxOffset = 0
+local selectedQuestIndex = 2
 local watched = {
   [3] = true,
 }
@@ -163,6 +164,9 @@ function IsQuestWatched(index)
 end
 function FauxScrollFrame_GetOffset()
   return fauxOffset
+end
+function GetQuestLogSelection()
+  return selectedQuestIndex
 end
 function QuestLog_Update()
   questLogUpdateCalls = questLogUpdateCalls + 1
@@ -239,8 +243,26 @@ QuestLogNoQuestsText =
   NewObject("QuestLogNoQuestsText", EmptyQuestLogFrame, "FontString")
 
 local originalQuestRowClickCalls = 0
+local originalQuestRowEnterCalls = 0
+local originalQuestRowLeaveCalls = 0
+local originalQuestRowMouseDownCalls = 0
+local originalQuestRowMouseUpCalls = 0
 local originalQuestRowClick = function()
   originalQuestRowClickCalls = originalQuestRowClickCalls + 1
+end
+local originalQuestRowEnter = function()
+  originalQuestRowEnterCalls = originalQuestRowEnterCalls + 1
+end
+local originalQuestRowLeave = function()
+  originalQuestRowLeaveCalls = originalQuestRowLeaveCalls + 1
+end
+local originalQuestRowMouseDown = function()
+  originalQuestRowMouseDownCalls =
+    originalQuestRowMouseDownCalls + 1
+end
+local originalQuestRowMouseUp = function()
+  originalQuestRowMouseUpCalls =
+    originalQuestRowMouseUpCalls + 1
 end
 for index = 1, 6 do
   local row = CreateFrame(
@@ -251,6 +273,10 @@ for index = 1, 6 do
   )
   row:SetID(index)
   row:SetScript("OnClick", originalQuestRowClick)
+  row:SetScript("OnEnter", originalQuestRowEnter)
+  row:SetScript("OnLeave", originalQuestRowLeave)
+  row:SetScript("OnMouseDown", originalQuestRowMouseDown)
+  row:SetScript("OnMouseUp", originalQuestRowMouseUp)
 end
 
 QuestLogFrameAbandonButton =
@@ -287,7 +313,7 @@ AzerothExpeditionUI:Refresh()
 assert(QuestLogFrame:GetWidth() == 676, "quest shell width was not applied")
 assert(QuestLogFrame:GetHeight() == 464, "quest shell height was not applied")
 assert(
-  QuestLogFrame.aeuiQuestRuntimeContract == "1.1",
+  QuestLogFrame.aeuiQuestRuntimeContract == "1.2",
   "quest runtime contract was not recorded"
 )
 assert(QuestLogFrame.aeuiQuestShell, "quest shell texture was not created")
@@ -342,7 +368,9 @@ for index = 1, 23 do
     "quest row geometry does not match QL-B0"
   )
   assert(
-    row.aeuiQuestRegionToggle and row.aeuiQuestListCheck,
+    row.aeuiQuestRegionToggle and
+      row.aeuiQuestListCheck and
+      row.aeuiQuestSelection,
     "quest directory overlays were not created"
   )
   assert(
@@ -357,11 +385,24 @@ for index = 1, 23 do
     ),
     "quest tracking mark did not mount the accepted atlas"
   )
+  assert(
+    row.aeuiQuestSelection.texture:find(
+      "QuestLogSelectionBookmarkV1"
+    ),
+    "quest selection did not mount the accepted atlas"
+  )
+  assert(
+    row.aeuiQuestSelection.layer == "BORDER" and
+      row.aeuiQuestSelection:GetWidth() == 32 and
+      row.aeuiQuestSelection:GetHeight() == 16,
+    "quest selection Texture contract is incorrect"
+  )
+  local _, _, _, textX, textY = row.fontString:GetPoint()
+  assert(
+    textX == 18 and textY == 0,
+    "quest text did not preserve the QL-B2 safe area"
+  )
 end
-assert(
-  QuestLogTitle1:GetScript("OnClick") == originalQuestRowClick,
-  "existing quest row interaction was replaced"
-)
 assert(
   QuestLogTitle1.aeuiQuestRegionToggle:IsShown() and
   QuestLogTitle1.aeuiQuestRegionToggle.texcoord[1] == 0.28125,
@@ -392,6 +433,95 @@ assert(
   not QuestLogTitle3Check:IsShown(),
   "native quest tracking texture remained visible"
 )
+
+local function visibleSelectionCount()
+  local count = 0
+  for index = 1, 23 do
+    if _G["QuestLogTitle" .. index].aeuiQuestSelection:IsShown() then
+      count = count + 1
+    end
+  end
+  return count
+end
+
+assert(
+  QuestLogTitle2.aeuiQuestSelection:IsShown() and
+    QuestLogTitle2.aeuiQuestSelection.texcoord[1] == 0 and
+    QuestLogTitle2.aeuiQuestSelection.texcoord[2] == 0.25,
+  "selected quest did not use the base bookmark state"
+)
+assert(
+  visibleSelectionCount() == 1,
+  "more than one visible quest row has a selection bookmark"
+)
+local _, _, _, selectionX, selectionY =
+  QuestLogTitle2.aeuiQuestSelection:GetPoint()
+assert(
+  selectionX == -12 and selectionY == 0,
+  "selected bookmark anchor does not match the runtime manifest"
+)
+
+QuestLogTitle2:GetScript("OnEnter")()
+assert(originalQuestRowEnterCalls == 1)
+assert(
+  QuestLogTitle2.aeuiQuestSelection.texcoord[1] == 0.25,
+  "selected-hover state was not mapped"
+)
+QuestLogTitle2:GetScript("OnMouseDown")("RightButton")
+assert(originalQuestRowMouseDownCalls == 1)
+assert(
+  QuestLogTitle2.aeuiQuestSelection.texcoord[1] == 0.25,
+  "right click incorrectly entered the pressed state"
+)
+QuestLogTitle2:GetScript("OnMouseDown")("LeftButton")
+assert(originalQuestRowMouseDownCalls == 2)
+local _, _, _, pressedX, pressedY =
+  QuestLogTitle2.aeuiQuestSelection:GetPoint()
+assert(
+  QuestLogTitle2.aeuiQuestSelection.texcoord[1] == 0.5 and
+    pressedX == -12 and
+    pressedY == -1,
+  "selected-pressed state or anchor offset was not mapped"
+)
+QuestLogTitle2:GetScript("OnMouseUp")("LeftButton")
+assert(originalQuestRowMouseUpCalls == 1)
+assert(
+  QuestLogTitle2.aeuiQuestSelection.texcoord[1] == 0.25,
+  "mouse-up did not return the selected row to hover"
+)
+QuestLogTitle2:GetScript("OnLeave")()
+assert(originalQuestRowLeaveCalls == 1)
+assert(
+  QuestLogTitle2.aeuiQuestSelection.texcoord[1] == 0,
+  "mouse leave did not return the selected row to base"
+)
+QuestLogTitle2:GetScript("OnMouseDown")("LeftButton")
+QuestLogTitle2:GetScript("OnClick")()
+assert(
+  originalQuestRowClickCalls == 1,
+  "existing quest row OnClick behavior was not preserved"
+)
+assert(
+  QuestLogTitle2.aeuiQuestSelection.texcoord[1] == 0,
+  "click did not clear the transient pressed state"
+)
+
+selectedQuestIndex = 3
+QuestLog_Update()
+assert(
+  not QuestLogTitle2.aeuiQuestSelection:IsShown() and
+    QuestLogTitle3.aeuiQuestSelection:IsShown() and
+    visibleSelectionCount() == 1,
+  "selection API refresh did not move the bookmark"
+)
+selectedQuestIndex = 1
+QuestLog_Update()
+assert(
+  visibleSelectionCount() == 0,
+  "header selection incorrectly displayed a bookmark"
+)
+selectedQuestIndex = 2
+QuestLog_Update()
 assert(
   QuestLogTitle1.font[1]:find("LXGWWenKaiGB%-Medium.ttf"),
   "quest row font does not match the module baseline"
@@ -402,8 +532,12 @@ assert(
 )
 
 watched[2] = true
+local updateCallsBeforeTrackingRefresh = questLogUpdateCalls
 QuestLog_Update()
-assert(questLogUpdateCalls == 1, "native QuestLog_Update was replaced")
+assert(
+  questLogUpdateCalls == updateCallsBeforeTrackingRefresh + 1,
+  "native QuestLog_Update was replaced"
+)
 assert(
   QuestLogTitle2.aeuiQuestListCheck.texcoord[1] == 0.796875,
   "tracking-state refresh hook did not update the runtime sprite"
@@ -420,7 +554,24 @@ assert(
   QuestLogTitle1.aeuiQuestListCheck:IsShown(),
   "scroll offset was not applied to the visible row mapping"
 )
+assert(
+  QuestLogTitle1.aeuiQuestSelection:IsShown() and
+    not QuestLogTitle2.aeuiQuestSelection:IsShown() and
+    visibleSelectionCount() == 1,
+  "selection did not follow the absolute quest index after scrolling"
+)
 fauxOffset = 0
+QuestLog_Update()
+
+local savedGetQuestLogSelection = GetQuestLogSelection
+GetQuestLogSelection = nil
+QuestLog_Update()
+assert(
+  visibleSelectionCount() == 0,
+  "AEUI selection art guessed a state without the selection API"
+)
+GetQuestLogSelection = savedGetQuestLogSelection
+QuestLog_Update()
 
 local savedIsQuestWatched = IsQuestWatched
 IsQuestWatched = nil
@@ -480,6 +631,6 @@ assert(
 QuestLogFrameAbandonButton:GetScript("OnClick")()
 assert(abandonCalls == 1)
 QuestLogTitle1:GetScript("OnClick")()
-assert(originalQuestRowClickCalls == 1)
+assert(originalQuestRowClickCalls == 2)
 
 print("quest module smoke test passed")

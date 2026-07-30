@@ -220,13 +220,18 @@ def main() -> None:
             "e734bbf59da00f7fbc9c75649d33eaf635b5a0c19e1737128dfdce0db58eee8f",
             "c0e5bdffc5ce09872c0da0709a3269245ef424f4dde03335d59ded335dc5fdd5",
             "`QL-B2 V1`",
-            "`P4 source-accepted`",
+            "`P5 runtime-exported`",
             "work/QUEST.LOG.SELECTION.md",
             "实际生图 `5/5`",
             "流程错误 `3`",
             "`1.776:1`",
             "确定性 bbox-fit",
             "4f8955410ecfaac6697cabeb9bd076d4bd0f5b5adcc97964cee0b7b49d38efaa",
+            "QL-B2_RuntimeManifest_v1.json",
+            "QuestLogSelectionBookmarkV1.tga",
+            "bab9e8bf6961b743d9591bb148878e9eadbbbbd99eac9a183446bf9c81a770b4",
+            "2cd8de894c389f5c7eaf5c5d5388a20b363fa414022dc4dac57eacda1fa79029",
+            "build_quest_log_selection_bookmark_v1.py",
             "Quest Tracker",
             "外部 provider `P0`",
             "NPC Quest／Gossip",
@@ -375,8 +380,8 @@ def main() -> None:
         selection_work,
         (
             "版本：`QL-B2 V1`",
-            "子状态：`source-accepted`",
-            "项目阶段：`P4`",
+            "子状态：`runtime-exported`",
+            "项目阶段：`P5`",
             "固定执行器：`imagegen-0-143-0`",
             "当前实际生图：`5/5`",
             "流程错误：`3`",
@@ -441,7 +446,17 @@ def main() -> None:
             "`4f8955410ecfaac6697cabeb9bd076d4bd0f5b5adcc97964cee0b7b49d38efaa`",
             "`source-accepted / P4`",
             "Alpha 改变像素均为 `0`",
-            "尚未创建 runtime、Lua 接入或 P5 结论",
+            "`runtime-exported / P5`",
+            "## P5 确定性导出与接入",
+            "QuestLogSelectionBookmarkV1.tga",
+            "QL-B2_RuntimeManifest_v1.json",
+            "build_quest_log_selection_bookmark_v1.py",
+            "`24 × 14`",
+            "`32 × 16`",
+            "`128 × 16`",
+            "精确有理数 half-up",
+            "adapter runtime contract `1.2`",
+            "Turtle WoW 实机尚未验证",
         ),
         "active QL-B2 work",
     )
@@ -496,13 +511,106 @@ def main() -> None:
         "candidate-rejected / repair-budget-exhausted"
     )
     assert selection_manifest["export_contract"]["status"] == (
-        "accepted-source-awaiting-export"
+        "runtime-exported"
     )
     assert selection_manifest["export_contract"]["runtime_atlas_size"] == [
         128,
         16,
     ]
-    assert selection_manifest["runtime_exports"] == []
+    assert len(selection_manifest["runtime_exports"]) == 1
+    assert selection_manifest["runtime_exports"][0]["sha256"] == (
+        "bab9e8bf6961b743d9591bb148878e9eadbbbbd99eac9a183446bf9c81a770b4"
+    )
+
+    selection_runtime_manifest_path = selection_source_path.with_name(
+        "QL-B2_RuntimeManifest_v1.json"
+    )
+    selection_runtime_manifest = json.loads(
+        selection_runtime_manifest_path.read_text(encoding="utf-8")
+    )
+    assert selection_runtime_manifest["status"] == "runtime-exported"
+    assert selection_runtime_manifest["runtime_contract"] == "1.0"
+    selection_transform = selection_runtime_manifest["transform"]
+    assert selection_transform["atlas_size"] == [128, 16]
+    assert selection_transform["cell_size"] == [32, 16]
+    assert selection_transform["content_size"] == [24, 14]
+    assert selection_transform["content_offset"] == [4, 1]
+    assert selection_transform["state_order"] == [
+        "selected",
+        "selected-hover",
+        "selected-pressed",
+        "reserved-transparent",
+    ]
+    assert selection_transform["state_alpha_identical"] is True
+    assert len(set(selection_transform["state_alpha_sha256"].values())) == 1
+    assert next(
+        iter(selection_transform["state_alpha_sha256"].values())
+    ) == (
+        "2cd8de894c389f5c7eaf5c5d5388a20b363fa414022dc4dac57eacda1fa79029"
+    )
+    selection_states = selection_transform["states"]
+    assert selection_states["selected"]["runtime_content_xyxy"] == [
+        4,
+        1,
+        28,
+        15,
+    ]
+    assert selection_states["selected-hover"]["texcoord"]["left"] == 0.25
+    assert selection_states["selected-pressed"]["texcoord"]["left"] == 0.5
+    assert selection_states["reserved-transparent"]["texcoord"]["left"] == 0.75
+    assert selection_runtime_manifest["layout_contract"][
+        "selection_anchor"
+    ] == {
+        "point": "LEFT",
+        "relative_point": "LEFT",
+        "x": -12,
+        "selected_y": 0,
+        "hover_y": 0,
+        "pressed_y": -1,
+    }
+    selection_previews = selection_runtime_manifest["simulation"][
+        "real_layout_previews"
+    ]
+    assert set(selection_previews) == {
+        "selected",
+        "selected-hover",
+        "selected-pressed",
+    }
+    assert all(
+        preview["size"] == [676, 464]
+        and preview["runtime_scale_percent"] == 100
+        for preview in selection_previews.values()
+    )
+    assert selection_previews["selected"]["sha256"] == (
+        "bba74c3591c60efa27c3f3d9c1a3266661d76c7aff7ed46230f8ef2b1ca4baaf"
+    )
+    assert selection_previews["selected-hover"]["sha256"] == (
+        "eac7c0fee22ca7f7eb57449b2710588743f141745510cc6029d2b9478d7a9f40"
+    )
+    assert selection_previews["selected-pressed"]["sha256"] == (
+        "47397145620353eabbca33c20be67fefe9fccc84e7f1334ae577d609e6915eb6"
+    )
+    selection_runtime_path = (
+        ROOT / selection_runtime_manifest["runtime"]["file"]
+    )
+    selection_runtime_bytes = selection_runtime_path.read_bytes()
+    assert hashlib.sha256(selection_runtime_bytes).hexdigest() == (
+        selection_runtime_manifest["runtime"]["sha256"]
+    )
+    assert selection_runtime_manifest["runtime"]["sha256"] == (
+        "bab9e8bf6961b743d9591bb148878e9eadbbbbd99eac9a183446bf9c81a770b4"
+    )
+    assert selection_runtime_bytes[2] == 2
+    assert struct.unpack("<HH", selection_runtime_bytes[12:16]) == (128, 16)
+    assert selection_runtime_bytes[16] == 32
+    selection_builder = (
+        ROOT / "tools" / "build_quest_log_selection_bookmark_v1.py"
+    )
+    compile(
+        selection_builder.read_text(encoding="utf-8"),
+        str(selection_builder),
+        "exec",
+    )
 
     directory_source_path = (
         ROOT
@@ -703,15 +811,19 @@ def main() -> None:
     require(
         quest_adapter,
         (
-            'Quests.runtimeContract = "1.1"',
+            'Quests.runtimeContract = "1.2"',
             "QuestLogShellV4",
             "QuestLogDirectoryMarksV1",
+            "QuestLogSelectionBookmarkV1",
             "0.66015625",
             "0.90625",
             "DIRECTORY.rowCount",
             "QuestLogTitleButtonTemplate",
             "FauxScrollFrame_GetOffset",
             "IsQuestWatched",
+            "GetQuestLogSelection",
+            "InstallSelectionHooks",
+            "SELECTION.states.pressed",
             "LXGWWenKaiGB-Medium.ttf",
             "NotoSerifSC-SemiBold.ttf",
             "CaptureAndHideNativeTextures",

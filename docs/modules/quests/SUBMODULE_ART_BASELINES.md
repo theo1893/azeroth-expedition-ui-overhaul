@@ -69,6 +69,13 @@ expanded 向下。`QUEST.LOG.LIST.CHECK` 使用同一枚开放墨圈：untracked
 与纯色键失败改写成通过，也不允许后续自由修图；三态只能按 source manifest
 声明的固定 RGB 公式与同一 Alpha 导出。
 
+确定性 runtime 已记录在
+[QL-B2_RuntimeManifest_v1.json](../../../assets/source/quests/ql-b2/QL-B2_RuntimeManifest_v1.json)：
+三态从同一 `24 × 14` 像素 Alpha 派生并装入 `128 × 16` atlas，第四格
+保持全透明；selected-hover 只暖亮，selected-pressed 只压暗，`1px`
+下移只在 adapter 锚点发生。三张 `676 × 464` 真实排版预演来自最终 atlas，
+未完成的 QL-B3／C／D 仍明确为非权威 fallback。
+
 `QUEST.LOG.TYPE.BADGE` 只为客户端可靠返回的 Elite、Dungeon、Raid、PvP
 制作克制小压印；normal 与未知 tag 不显示资产。`QUEST.LOG.TIMER.BADGE`
 由计时 API 独立驱动，使用小型沙漏压印，不能冒充 questTag。

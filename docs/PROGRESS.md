@@ -22,7 +22,7 @@
 |---|---|---:|---|---|
 | Core／pfUI | `api/expedition.lua`、`pfUI.lua`、原生回退路由 | `P5` | 现代可见模块默认回退原生；非视觉功能保留 | 实机覆盖原生 Frame、SavedVariables 与第三方兼容 |
 | Chat | `modules/chat.lua` + AEUI Chat adapter | `P5` V3 | 单一左侧旧书、四状态 Tab、双状态输入与未读已接入；右框隐藏且消息回收；两项 Copy 辅助功能暂缓 | Turtle WoW 实机验收核心批次 |
-| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua` + AEUI Quests adapter | `P1–P5` | QL-A2 V4 固定卷宗背景已静态接入；用户接受 QL-B1 V1.r3 运行时视觉，QL-B0 23 行和 QL-B1 四态 atlas 已确定性导出、接入并通过静态测试；QL-B2 V1 已完成 `5/5` 实际生图，现有纯确定性的 bbox-fit 合同例外候选已通过安全盒、透明像素与三态真实排版内审，但冻结合同尚未获用户修改，规范状态仍为 `candidate-rejected / P3`；QL-B3、QL-C/D 未完成；外部 tracker 暂停 | QL-A2／B0／B1 等待 Turtle WoW 实机；用户明确接受／拒绝 `QL-B2 V1.r4 bbox-fit` 合同例外 |
+| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua` + AEUI Quests adapter | `P1–P5` | QL-A2 V4 固定卷宗背景已静态接入；用户接受 QL-B1 V1.r3 与 QL-B2 V1.r4 bbox-fit 运行时视觉，QL-B0 23 行、QL-B1 四态 atlas 和 QL-B2 同 Alpha 三态书签均已确定性导出、接入并通过静态测试；QL-B2 历史 `5/5` 与合同例外保留；QL-B3、QL-C/D 未完成；外部 tracker 暂停 | QL-A2／B0／B1／B2 等待 Turtle WoW 实机；无实机设备时继续尚未进入 P6 的 QL-B3／C／D |
 | Map | `map.lua`、`minimap.lua`、`addonbuttons.lua` 等 | `P2` | 羊皮地图卷与黄铜罗盘已锁定 | 实机对象审计和组件级合同 |
 | Character | `character.lua`、`inspect.lua`、`dressup.lua` | `P2` | 香草同构角色面板已锁定 | 实机几何与装备槽／属性／页签拆分 |
 
@@ -48,7 +48,8 @@
 ## 当前运行时路由
 
 - 项目接管：pfUI `chat` 行为与 AEUI V3 单一左侧战地旧书视觉；AEUI
-  QL-A2 V4 任务日志固定书体与安全区。
+  QL-A2 V4 任务日志固定书体与安全区、QL-B0 23 行布局、QL-B1 四态
+  目录墨记和 QL-B2 三态选择书签。
 - 原生回退：动作条、导航、单位／团队、战斗 HUD、背包／拾取以及全部未完成
   Blizzard skins；Quest Log 尚未完成的目录、滚动条、按钮与奖励状态继续
   使用真实原生控件。

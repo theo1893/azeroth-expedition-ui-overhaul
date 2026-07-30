@@ -117,7 +117,7 @@
     "acceptance_override": "The user explicitly accepted the reviewed V1.r4 bbox-fit candidate and its one-time deterministic source-contract exception. The original attempt-5 safe-box and raw chroma-key misses remain historical facts and are not represented as passed generation gates."
   },
   "export_contract": {
-    "status": "accepted-source-awaiting-export",
+    "status": "runtime-exported",
     "operation": "crop accepted source to visible alpha bounds, scale proportionally into a 24 x 14 content box, derive hover and pressed RGB from the selected pixels while preserving identical alpha, center states in fixed 32 x 16 cells, reserve one transparent cell and write a 128 x 16 RGBA TGA atlas",
     "runtime_atlas_size": [
       128,
@@ -165,5 +165,24 @@
       "change quest selection, scrolling or saved data"
     ]
   },
-  "runtime_exports": []
+  "runtime_exports": [
+    {
+      "contract": "QL-B2 V1.r4-bbox-fit / 1.0",
+      "manifest": "QL-B2_RuntimeManifest_v1.json",
+      "file": "addon/AzerothExpeditionUI/Media/Quests/QuestLogSelectionBookmarkV1.tga",
+      "sha256": "bab9e8bf6961b743d9591bb148878e9eadbbbbd99eac9a183446bf9c81a770b4",
+      "atlas_size": [
+        128,
+        16
+      ],
+      "cell_size": [
+        32,
+        16
+      ],
+      "content_size": [
+        24,
+        14
+      ]
+    }
+  ]
 }

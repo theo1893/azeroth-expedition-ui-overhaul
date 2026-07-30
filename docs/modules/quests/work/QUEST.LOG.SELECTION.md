@@ -5,8 +5,8 @@
 - 模块：Quests / Quest Log 左页目录。
 - 组件 ID：`QUEST.LOG.SELECTION`。
 - 版本：`QL-B2 V1`。
-- 子状态：`source-accepted`；用户已接受确定性 bbox-fit 合同例外候选。
-- 项目阶段：`P4`。
+- 子状态：`runtime-exported`；确定性三态 atlas、adapter 与静态测试完成。
+- 项目阶段：`P5`。
 - 固定执行器：`imagegen-0-143-0` /
   `@openai/codex@0.143.0`。
 - 操作：`generate` 一枚基础织物书签；三种运行时状态只允许确定性派生。
@@ -68,7 +68,13 @@
   `4f8955410ecfaac6697cabeb9bd076d4bd0f5b5adcc97964cee0b7b49d38efaa`）。
 - source manifest：
   `assets/source/quests/ql-b2/QL-B2_SourceManifest_v1.json`。
-- runtime：无。
+- runtime：
+  `addon/AzerothExpeditionUI/Media/Quests/QuestLogSelectionBookmarkV1.tga`
+  （`128 × 16 RGBA TGA`，SHA-256
+  `bab9e8bf6961b743d9591bb148878e9eadbbbbd99eac9a183446bf9c81a770b4`）。
+- runtime manifest：
+  `assets/source/quests/ql-b2/QL-B2_RuntimeManifest_v1.json`。
+- exporter：`tools/build_quest_log_selection_bookmark_v1.py`。
 
 ## 当前批次边界
 
@@ -454,12 +460,45 @@ P4/P5。”规范状态因此晋级为 `source-accepted / P4`；实际 ImageGen 
 - 技术像素：`通过`。候选为 `1024² RGBA`；透明／半透明／不透明像素
   `983561／3321／61694`；可见 bbox 为 `352 × 198`；精确纯绿和启发式
   绿色优势像素均为 `0`。
-- 结论：`source-accepted / P4`。上述同 SHA 候选已晋级 durable source，
-  source manifest 已记录原始失败、确定性变换、用户覆盖性接受和后续
-  runtime 固定合同；尚未创建 runtime、Lua 接入或 P5 结论。
-- 下一门禁：只按 source manifest 导出 `128 × 16` 三态 atlas，生成三张
-  来自实际 runtime atlas 的真实排版预演，接入原 `QuestLogTitleN` 状态并
-  通过静态与 Lua smoke 后进入 P5；不得新增 ImageGen 调用。
+- 结论：`runtime-exported / P5`。上述同 SHA 候选已晋级 durable source；
+  source manifest 记录原始失败、确定性变换和用户覆盖性接受，runtime
+  manifest 记录三态像素、UV、锚点、所有权、fallback 与预演。
+- 下一门禁：Turtle WoW `1.18.1` 实机验证三态 UV、左缘位置、pressed
+  `1px` 下移、23 行重叠命中、滚动偏移、字体和 API fallback；不得在实机
+  证据前标记 P6 或清理本 work。
+
+## P5 确定性导出与接入
+
+- source 只按可见 Alpha bbox 裁切，并以精确有理数 half-up 尺寸计算等比
+  缩为 `24 × 14`；没有重画、拉伸、旋转、镜像或自由修图。
+- selected／selected-hover／selected-pressed 分别装入 `128 × 16` atlas
+  的前三个 `32 × 16` cell；content 均位于 cell 内
+  `[4,1,28,15]`，第四格完全透明。三态 cell Alpha SHA-256 均为
+  `2cd8de894c389f5c7eaf5c5d5388a20b363fa414022dc4dac57eacda1fa79029`。
+- hover 与 pressed 严格使用本文件已冻结的 RGB 公式；pressed 的位移没有
+  写进 atlas，只在 Lua 使用 `y=-1`。runtime 全透明／半透明／不透明像素
+  为 `1046／399／603`，可见绿色残留 `0`。
+- 第一次 exporter 预检在写出 runtime 前停止：二进制浮点把数学上的
+  `13.5px` 误落为 `13px`。修正为精确有理数 half-up 后得到合同要求的
+  `24 × 14`；这是离线流程修正，没有调用 ImageGen，也不增加实际生图
+  `5/5` 或生成循环流程错误 `3`。
+- 三张 `676 × 464`／100% 真实排版全部直接读取最终 atlas，使用 QL-A2
+  shell、QL-B1 runtime、23 行真实密度和右页动态文字；QL-B3／C／D
+  fallback 仍为非权威。SHA-256：
+  - selected：
+    `bba74c3591c60efa27c3f3d9c1a3266661d76c7aff7ed46230f8ef2b1ca4baaf`；
+  - selected-hover：
+    `eac7c0fee22ca7f7eb57449b2710588743f141745510cc6029d2b9478d7a9f40`；
+  - selected-pressed：
+    `47397145620353eabbca33c20be67fefe9fccc84e7f1334ae577d609e6915eb6`。
+- adapter runtime contract `1.2` 在每个 `QuestLogTitleN` 创建无鼠标
+  `BORDER` Texture，只让当前可见、非 header 的绝对选择索引显示。
+  原 `OnEnter`／`OnLeave`／`OnMouseDown`／`OnMouseUp`／`OnClick`
+  先执行，adapter 再刷新 UV；右键不进入 pressed。选择 API 缺失时覆盖
+  全部隐藏，原点击、滚动、追踪和 SavedVariables 保持。
+- 静态结果：exporter 可重复生成相同 TGA／manifest，TGA header 为
+  uncompressed 32-bit `128 × 16`；Python contract tests、Lua smoke 与
+  `git diff --check` 通过。Turtle WoW 实机尚未验证。
 
 ## 尝试摘要
 

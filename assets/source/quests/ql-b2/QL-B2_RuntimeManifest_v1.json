@@ -1,0 +1,345 @@
+{
+  "schema_version": 1,
+  "batch": "QL-B2",
+  "version": "V1.r4-bbox-fit",
+  "runtime_contract": "1.0",
+  "status": "runtime-exported",
+  "source": {
+    "file": "assets/source/quests/ql-b2/QuestLogSelectionBookmark_Master_v1.png",
+    "sha256": "4f8955410ecfaac6697cabeb9bd076d4bd0f5b5adcc97964cee0b7b49d38efaa",
+    "width": 1024,
+    "height": 1024,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      336,
+      413,
+      688,
+      611
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_pixels": 983561,
+    "partially_transparent_pixels": 3321,
+    "opaque_pixels": 61694
+  },
+  "transform": {
+    "operation": "visible-alpha-bounds crop, proportional LANCZOS scale to 24 x 14, fixed selected-hover and selected-pressed RGB derivation, centering in 32 x 16 cells and transparent atlas assembly",
+    "resample": "Pillow Image.Resampling.LANCZOS",
+    "alpha_cleanup": "zero RGB only where alpha is fully transparent; preserve pixel-identical alpha for all three visible states",
+    "rotation": null,
+    "mirror": false,
+    "stretch": false,
+    "retouch": false,
+    "atlas_size": [
+      128,
+      16
+    ],
+    "cell_size": [
+      32,
+      16
+    ],
+    "content_size": [
+      24,
+      14
+    ],
+    "content_offset": [
+      4,
+      1
+    ],
+    "state_order": [
+      "selected",
+      "selected-hover",
+      "selected-pressed",
+      "reserved-transparent"
+    ],
+    "hover_rgb": {
+      "red": "min(255, round(R * 1.07 + 2))",
+      "green": "min(255, round(G * 1.04 + 1))",
+      "blue": "round(B * 0.96)"
+    },
+    "pressed_rgb": {
+      "red": "round(R * 0.82)",
+      "green": "round(G * 0.80)",
+      "blue": "round(B * 0.78)"
+    },
+    "state_alpha_sha256": {
+      "selected": "2cd8de894c389f5c7eaf5c5d5388a20b363fa414022dc4dac57eacda1fa79029",
+      "selected-hover": "2cd8de894c389f5c7eaf5c5d5388a20b363fa414022dc4dac57eacda1fa79029",
+      "selected-pressed": "2cd8de894c389f5c7eaf5c5d5388a20b363fa414022dc4dac57eacda1fa79029"
+    },
+    "state_alpha_identical": true,
+    "states": {
+      "selected": {
+        "component": "QUEST.LOG.SELECTION",
+        "runtime_cell_xyxy": [
+          0,
+          0,
+          32,
+          16
+        ],
+        "runtime_content_xyxy": [
+          4,
+          1,
+          28,
+          15
+        ],
+        "runtime_display_size": [
+          24,
+          14
+        ],
+        "texcoord": {
+          "left": 0.0,
+          "right": 0.25,
+          "top": 0.0,
+          "bottom": 1.0
+        },
+        "content_texcoord": {
+          "left": 0.03125,
+          "right": 0.21875,
+          "top": 0.0625,
+          "bottom": 0.9375
+        }
+      },
+      "selected-hover": {
+        "component": "QUEST.LOG.SELECTION",
+        "runtime_cell_xyxy": [
+          32,
+          0,
+          64,
+          16
+        ],
+        "runtime_content_xyxy": [
+          36,
+          1,
+          60,
+          15
+        ],
+        "runtime_display_size": [
+          24,
+          14
+        ],
+        "texcoord": {
+          "left": 0.25,
+          "right": 0.5,
+          "top": 0.0,
+          "bottom": 1.0
+        },
+        "content_texcoord": {
+          "left": 0.28125,
+          "right": 0.46875,
+          "top": 0.0625,
+          "bottom": 0.9375
+        }
+      },
+      "selected-pressed": {
+        "component": "QUEST.LOG.SELECTION",
+        "runtime_cell_xyxy": [
+          64,
+          0,
+          96,
+          16
+        ],
+        "runtime_content_xyxy": [
+          68,
+          1,
+          92,
+          15
+        ],
+        "runtime_display_size": [
+          24,
+          14
+        ],
+        "texcoord": {
+          "left": 0.5,
+          "right": 0.75,
+          "top": 0.0,
+          "bottom": 1.0
+        },
+        "content_texcoord": {
+          "left": 0.53125,
+          "right": 0.71875,
+          "top": 0.0625,
+          "bottom": 0.9375
+        }
+      },
+      "reserved-transparent": {
+        "component": null,
+        "runtime_cell_xyxy": [
+          96,
+          0,
+          128,
+          16
+        ],
+        "runtime_content_xyxy": [
+          100,
+          1,
+          124,
+          15
+        ],
+        "runtime_display_size": [
+          0,
+          0
+        ],
+        "texcoord": {
+          "left": 0.75,
+          "right": 1.0,
+          "top": 0.0,
+          "bottom": 1.0
+        },
+        "content_texcoord": {
+          "left": 0.78125,
+          "right": 0.96875,
+          "top": 0.0625,
+          "bottom": 0.9375
+        }
+      }
+    }
+  },
+  "runtime": {
+    "file": "addon/AzerothExpeditionUI/Media/Quests/QuestLogSelectionBookmarkV1.tga",
+    "sha256": "bab9e8bf6961b743d9591bb148878e9eadbbbbd99eac9a183446bf9c81a770b4",
+    "width": 128,
+    "height": 16,
+    "mode": "RGBA",
+    "tga_header": {
+      "image_type": 2,
+      "width": 128,
+      "height": 16,
+      "bits_per_pixel": 32,
+      "descriptor": 8,
+      "top_origin": false
+    },
+    "visible_bbox_exclusive": [
+      4,
+      1,
+      92,
+      15
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_pixels": 1046,
+    "partially_transparent_pixels": 399,
+    "opaque_pixels": 603
+  },
+  "simulation": {
+    "atlas_preview": {
+      "file": "generated/quests/QL-B2/v1/accepted/previews/QL-B2_V1_r4_bboxfit_runtime_atlas.png",
+      "sha256": "d83c68639a7a8e8d1d413536935cd1b783dd6ad9d72d27cc07a39c7891eb977c",
+      "size": [
+        128,
+        16
+      ]
+    },
+    "real_layout_previews": {
+      "selected": {
+        "file": "generated/quests/QL-B2/v1/accepted/previews/QL-B2_V1_r4_bboxfit_selected_676x464.png",
+        "sha256": "bba74c3591c60efa27c3f3d9c1a3266661d76c7aff7ed46230f8ef2b1ca4baaf",
+        "size": [
+          676,
+          464
+        ],
+        "runtime_scale_percent": 100
+      },
+      "selected-hover": {
+        "file": "generated/quests/QL-B2/v1/accepted/previews/QL-B2_V1_r4_bboxfit_selected-hover_676x464.png",
+        "sha256": "eac7c0fee22ca7f7eb57449b2710588743f141745510cc6029d2b9478d7a9f40",
+        "size": [
+          676,
+          464
+        ],
+        "runtime_scale_percent": 100
+      },
+      "selected-pressed": {
+        "file": "generated/quests/QL-B2/v1/accepted/previews/QL-B2_V1_r4_bboxfit_selected-pressed_676x464.png",
+        "sha256": "47397145620353eabbca33c20be67fefe9fccc84e7f1334ae577d609e6915eb6",
+        "size": [
+          676,
+          464
+        ],
+        "runtime_scale_percent": 100
+      }
+    },
+    "shared_contract": {
+      "shell": "addon/AzerothExpeditionUI/Media/Quests/QuestLogShellV4.tga",
+      "row_count": 23,
+      "row_box": [
+        224,
+        15
+      ],
+      "row_step": 14,
+      "list_origin": [
+        64,
+        64
+      ],
+      "selected_visible_row": 8,
+      "content": "representative localized quest titles, levels, headers, tracking states and right-page text at realistic density",
+      "z_order": [
+        "QL-A2 accepted runtime shell",
+        "QL-B2 accepted runtime bookmark",
+        "QL-B1 accepted runtime marks",
+        "runtime-localized text",
+        "simplified placeholders for pending QL-C controls"
+      ],
+      "authoritative_for": [
+        "QL-B2 target-size state legibility",
+        "actual atlas cell padding and adapter anchor geometry",
+        "23-row density, text safe area and z-order review"
+      ],
+      "not_authoritative_for": [
+        "pending QL-B3, QL-C or QL-D artwork",
+        "Turtle WoW rendering, filtering, hit regions or font loading"
+      ]
+    }
+  },
+  "layout_contract": {
+    "row_objects": "QuestLogTitle1..23",
+    "row_count": 23,
+    "row_box": [
+      224,
+      15
+    ],
+    "row_step": 14,
+    "selection_texture_size": [
+      32,
+      16
+    ],
+    "selection_visible_size": [
+      24,
+      14
+    ],
+    "selection_anchor": {
+      "point": "LEFT",
+      "relative_point": "LEFT",
+      "x": -12,
+      "selected_y": 0,
+      "hover_y": 0,
+      "pressed_y": -1
+    },
+    "visible_row_local_x_inclusive": [
+      -8,
+      15
+    ],
+    "dynamic_text_safe_x_min": 18,
+    "draw_layer": "BORDER"
+  },
+  "state_mapping": {
+    "quest_index": "visible row id + FauxScrollFrame_GetOffset(QuestLogListScrollFrame)",
+    "selected_index": "GetQuestLogSelection()",
+    "unselected": "hide QL-B2 Texture",
+    "selected": "matching visible non-header row without hover or left press",
+    "selected-hover": "matching visible non-header row with appended OnEnter state",
+    "selected-pressed": "matching visible non-header row while left button is down"
+  },
+  "ownership": {
+    "row_button": "QuestLogTitleN retains its hit region and all original scripts",
+    "selection": "non-interactive BORDER Texture attached to QuestLogTitleN; at most one visible non-header row",
+    "hover_and_press": "adapter appends state refresh after original row scripts; pressed movement is an anchor-only y=-1 offset",
+    "fallback": "missing API, source/runtime media, invisible selection or header selection hides the overlay and preserves native selection, click, scroll and SavedVariables behavior"
+  },
+  "implementation": {
+    "exporter": "tools/build_quest_log_selection_bookmark_v1.py",
+    "adapter": "addon/AzerothExpeditionUI/Modules/Quests.lua",
+    "source_manifest": "assets/source/quests/ql-b2/QL-B2_SourceManifest_v1.json",
+    "imagegen_calls_after_acceptance": 0,
+    "static_tests_required": true,
+    "game_validated": false
+  }
+}

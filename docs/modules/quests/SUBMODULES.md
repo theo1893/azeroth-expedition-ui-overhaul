@@ -98,18 +98,25 @@ QL-B 的生产边界：
   `4f8955410ecfaac6697cabeb9bd076d4bd0f5b5adcc97964cee0b7b49d38efaa`。
   该例外只允许把第五次候选的可见 Alpha bbox 单次等比缩入中心安全盒、
   固定清理低 Alpha 绿色边缘并清零全透明 RGB；不允许重画、拉伸、旋转、
-  镜像或改变物件身份。
+  镜像或改变物件身份。P5 runtime 为
+  `QuestLogSelectionBookmarkV1.tga`：`128 × 16`、四个
+  `32 × 16` cell，顺序为 selected／selected-hover／
+  selected-pressed／全透明保留格；每格可见 content 为 `24 × 14`，
+  三态 Alpha 逐像素相同。
 - `QL-B3`：四类可靠 `TYPE.BADGE`、独立 `TIMER.BADGE` 与两类
   `STATE.SEAL`。
 - `LIST.ROW` 自身只承担布局、字体色和真实点击，不持有位图行卡。
 
-QL-B0／B1 runtime 已接入
+QL-B0／B1／B2 runtime 已接入
 `addon/AzerothExpeditionUI/Modules/Quests.lua`：atlas 为
 `QuestLogDirectoryMarksV1.tga`，四个 `16 × 16` cell 的内部 content box
 分别以 `12 × 12` 箭头和 `10 × 10` 墨圈显示。覆盖 Texture 不接收鼠标；
 原 `QuestLogTitleN` Button、脚本、滚动、选择和追踪数据均保持。字体仅按
 模块基线把主标题设为 Noto Serif SC、任务行设为霞鹜文楷，仍需实机加载
-与 1px 行重叠命中验证。
+与 1px 行重叠命中验证。QL-B2 另以 `BORDER` Texture 挂载完整
+`32 × 16` atlas cell，锚点 `x=-12`；hover／pressed 只在保留原脚本后
+刷新 UV，pressed 仅把锚点改为 `y=-1`。API 缺失、无可见选择或 header
+被选中时隐藏覆盖。
 
 ## Quest Log 滚动与控制
 

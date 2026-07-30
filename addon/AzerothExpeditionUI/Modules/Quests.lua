@@ -1,11 +1,13 @@
 local addon = AzerothExpeditionUI
 local Quests = {}
-Quests.runtimeContract = "1.1"
+Quests.runtimeContract = "1.2"
 
 local SHELL_TEXTURE =
   addon.media.root .. "Quests\\QuestLogShellV4"
 local DIRECTORY_MARK_TEXTURE =
   addon.media.root .. "Quests\\QuestLogDirectoryMarksV1"
+local SELECTION_TEXTURE =
+  addon.media.root .. "Quests\\QuestLogSelectionBookmarkV1"
 local QUEST_TITLE_FONT =
   addon.media.root .. "Fonts\\NotoSerifSC-SemiBold.ttf"
 local QUEST_ROW_FONT =
@@ -50,7 +52,7 @@ local LAYOUT = {
 }
 
 local DIRECTORY = {
-  contract = "1.0",
+  contract = "1.1",
   rowCount = 23,
   rowWidth = 224,
   rowHeight = 15,
@@ -88,6 +90,36 @@ local DIRECTORY = {
       right = 0.953125,
       top = 0.1875,
       bottom = 0.8125,
+    },
+  },
+}
+
+local SELECTION = {
+  contract = "1.0",
+  width = 32,
+  height = 16,
+  x = -12,
+  states = {
+    selected = {
+      left = 0,
+      right = 0.25,
+      top = 0,
+      bottom = 1,
+      y = 0,
+    },
+    hover = {
+      left = 0.25,
+      right = 0.5,
+      top = 0,
+      bottom = 1,
+      y = 0,
+    },
+    pressed = {
+      left = 0.5,
+      right = 0.75,
+      top = 0,
+      bottom = 1,
+      y = -1,
     },
   },
 }
@@ -258,6 +290,89 @@ local function SetDirectoryState(texture, state)
   texture:Show()
 end
 
+local function SetSelectionState(row, texture, state)
+  if not row or not texture or not state then
+    return
+  end
+  texture:SetTexCoord(
+    state.left,
+    state.right,
+    state.top,
+    state.bottom
+  )
+  SetSinglePoint(
+    texture,
+    "LEFT",
+    row,
+    "LEFT",
+    SELECTION.x,
+    state.y
+  )
+  texture:Show()
+end
+
+local function InstallSelectionHooks(row)
+  if not row then
+    return
+  end
+
+  AppendScript(
+    row,
+    "OnEnter",
+    "aeuiQuestSelectionOnEnterHooked",
+    function()
+      row.aeuiQuestSelectionHovered = true
+      Quests:UpdateDirectoryRows()
+    end
+  )
+  AppendScript(
+    row,
+    "OnLeave",
+    "aeuiQuestSelectionOnLeaveHooked",
+    function()
+      row.aeuiQuestSelectionHovered = nil
+      row.aeuiQuestSelectionPressed = nil
+      Quests:UpdateDirectoryRows()
+    end
+  )
+  AppendScript(
+    row,
+    "OnMouseDown",
+    "aeuiQuestSelectionOnMouseDownHooked",
+    function(button)
+      local mouseButton = button or arg1
+      if mouseButton == "LeftButton" then
+        row.aeuiQuestSelectionPressed = true
+        Quests:UpdateDirectoryRows()
+      end
+    end
+  )
+  AppendScript(
+    row,
+    "OnMouseUp",
+    "aeuiQuestSelectionOnMouseUpHooked",
+    function(button)
+      local mouseButton = button or arg1
+      if
+        not mouseButton or
+        mouseButton == "LeftButton"
+      then
+        row.aeuiQuestSelectionPressed = nil
+        Quests:UpdateDirectoryRows()
+      end
+    end
+  )
+  AppendScript(
+    row,
+    "OnClick",
+    "aeuiQuestSelectionOnClickHooked",
+    function()
+      row.aeuiQuestSelectionPressed = nil
+      Quests:UpdateDirectoryRows()
+    end
+  )
+end
+
 local function HideNativeRegionToggle(row)
   if row and row.icon and row.icon.Hide then
     row.icon:Hide()
@@ -386,7 +501,30 @@ function Quests:LayoutDirectoryRows()
         if text and text.SetWidth then
           text:SetWidth(DIRECTORY.textWidth)
         end
+        SetSinglePoint(
+          text,
+          "LEFT",
+          row,
+          "LEFT",
+          18,
+          0
+        )
       end
+
+      if not row.aeuiQuestSelection then
+        row.aeuiQuestSelection =
+          row:CreateTexture(nil, "BORDER")
+        row.aeuiQuestSelection.aeuiQuestManaged = true
+        row.aeuiQuestSelection:SetTexture(
+          SELECTION_TEXTURE
+        )
+        SetSize(
+          row.aeuiQuestSelection,
+          SELECTION.width,
+          SELECTION.height
+        )
+      end
+      InstallSelectionHooks(row)
 
       if not row.aeuiQuestRegionToggle then
         row.aeuiQuestRegionToggle =
@@ -424,6 +562,7 @@ function Quests:LayoutDirectoryRows()
         )
       end
 
+      row.aeuiQuestSelection:Hide()
       row.aeuiQuestRegionToggle:Hide()
       row.aeuiQuestListCheck:Hide()
       previous = row
@@ -459,6 +598,9 @@ function Quests:UpdateDirectoryRows()
       if row.aeuiQuestListCheck then
         row.aeuiQuestListCheck:Hide()
       end
+      if row.aeuiQuestSelection then
+        row.aeuiQuestSelection:Hide()
+      end
     end
   end
 
@@ -470,6 +612,13 @@ function Quests:UpdateDirectoryRows()
   end
 
   local count = GetNumQuestLogEntries() or 0
+  local selection
+  if type(GetQuestLogSelection) == "function" then
+    selection = tonumber(GetQuestLogSelection())
+    if not selection or selection < 1 then
+      selection = nil
+    end
+  end
   local offset = 0
   if
     type(FauxScrollFrame_GetOffset) == "function" and
@@ -485,6 +634,7 @@ function Quests:UpdateDirectoryRows()
     if row then
       local toggle = row.aeuiQuestRegionToggle
       local check = row.aeuiQuestListCheck
+      local selectionTexture = row.aeuiQuestSelection
 
       local questIndex = index + offset
       if questIndex <= count then
@@ -511,6 +661,26 @@ function Quests:UpdateDirectoryRows()
             watched and
               DIRECTORY.states.tracked or
               DIRECTORY.states.untracked
+          )
+        end
+
+        if
+          title and
+          not isHeader and
+          selection and
+          questIndex == selection and
+          selectionTexture
+        then
+          local selectionState = SELECTION.states.selected
+          if row.aeuiQuestSelectionPressed then
+            selectionState = SELECTION.states.pressed
+          elseif row.aeuiQuestSelectionHovered then
+            selectionState = SELECTION.states.hover
+          end
+          SetSelectionState(
+            row,
+            selectionTexture,
+            selectionState
           )
         end
       end

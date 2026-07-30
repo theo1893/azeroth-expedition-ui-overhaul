@@ -6,8 +6,8 @@
 - 用户于 `2026-07-30` 将 Quest Log 选为当前首要大面积 UI；地图与角色因
   实机对象几何尚未完成，继续保持后续顺位。
 - Quest Log 真实对象合同：`P1` 完成，QL-A 当前处于 `P4–P5`；QL-B1
-  V1.r3 已由用户接受运行时视觉并完成 `runtime-exported / P5`；QL-B2
-  V1.r4 bbox-fit 候选已由用户接受为 `source-accepted / P4`。
+  V1.r3 与 QL-B2 V1.r4 bbox-fit 均已由用户接受运行时视觉并完成
+  `runtime-exported / P5`。
 - `QL-A1` 空卷宗结构 source：用户确认，`P4`。
 - `QL-A2 V3.2` 已终止：A attempt 5 目标级通过；B 在 `5/5` 后仍有约
   `45%` 格宽的针脚和完整外露结，整批 `10/10` 额度耗尽。没有形成
@@ -67,9 +67,18 @@
   “固定色键清理＋可见 bbox 等比缩入中心安全盒”合同例外预演：候选
   `352 × 198px`、bbox `[336,413,688,611]`、可见绿色残留 `0`，三态
   真实排版与第五张运行时 Alpha 完全一致。用户已明确接受该具体候选和
-  一次性确定性合同例外；同 SHA 文件已晋级 tracked source，当前
-  `source-accepted / P4`。原始 attempt 5 的安全盒与纯色键失败仍作为
+  一次性确定性 bbox-fit 合同例外；同 SHA 文件已晋级 tracked source。确定性
+  exporter 已按 `24 × 14` content、`32 × 16` cell、三态同 Alpha 和第四
+  透明格合同生成 `128 × 16` TGA，adapter 已从
+  `GetQuestLogSelection()` 与原行 hover／left-press 脚本切换三态，当前
+  `runtime-exported / P5`。原始 attempt 5 的安全盒与纯色键失败仍作为
   历史事实保留；接受后 ImageGen 调用为 `0`。
+- `QL-B2 runtime`：adapter runtime contract 已升至 `1.2`。每行创建一个
+  无鼠标 `BORDER` Texture；仅当前可见的非 header 选择行显示。Texture
+  使用 `x=-12`，selected／hover `y=0`，pressed `y=-1`；原
+  `OnEnter`／`OnLeave`／`OnMouseDown`／`OnMouseUp`／`OnClick` 先执行，
+  adapter 再刷新视觉。缺少选择 API 时隐藏覆盖，不改变点击、滚动或
+  SavedVariables。
 - `QL-B3`：只完成稳定边界。类型／计时／状态章将在 QL-B2 候选形成后单独
   准备；Collapse All 归 QL-C 独立 Button，不混入目录状态。
 - Quest Tracker：视觉 `P2`，外部 provider `P0`，暂停。
@@ -84,7 +93,7 @@
 | `QL-A2` | 静态空卷宗结构与页沟 | `P5` V4 runtime-exported | V3.3 `15/15` 已终止；V4 已从 QL-A1 source 导出 `676 × 464` 显示区／`1024 × 512` TGA，固定执行器 `0/0`，Lua smoke 通过 | Turtle WoW 验证纹理方向、裁切、命中与 list-only |
 | `QL-B0` | 23 行创建、排布、文字安全区和状态刷新 | `P5 runtime-exported` | 23 行 `323px` 几何、字体与状态刷新已接入；Lua smoke 覆盖创建、偏移、状态和原脚本 | Turtle WoW 验证文字基线、重叠命中与滚动 |
 | `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P5 runtime-exported` | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；内部失败与 `5/5` 事实保留 | Turtle WoW 验证 TGA、四态切换、字体和 fallback |
-| `QL-B2` | 当前任务暗酒红书签三状态 | `P4 source-accepted` | 用户接受 V1.r4 bbox-fit 合同例外；[source manifest](../../../assets/source/quests/ql-b2/QL-B2_SourceManifest_v1.json) 锁定 `1024² RGBA` source、`352 × 198` 可见 bbox 与 SHA `4f895541…efaa`；历史 `5/5` 与三次流程错误保留，接受后 ImageGen `0` 次 | 按 manifest 固定算法导出 `128 × 16` 三态 atlas、接入原 `QuestLogTitleN` 并静态验证到 P5 |
+| `QL-B2` | 当前任务暗酒红书签三状态 | `P5 runtime-exported` | 用户接受 V1.r4 bbox-fit 合同例外；[source manifest](../../../assets/source/quests/ql-b2/QL-B2_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b2/QL-B2_RuntimeManifest_v1.json)、`128 × 16` TGA、exporter、三张真实排版预演与 adapter 已完成；历史 `5/5` 与三次流程错误保留，接受后 ImageGen `0` 次 | Turtle WoW 验证三态 UV、左缘位置、1px pressed、行重叠命中、滚动与 fallback |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P2 baseline` | 类型 tag、timer API、isComplete 已分离；未知 tag 不猜测 | QL-B1 视觉重量确认 |
 | `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作与辅助按钮 | `P1–P2` | 真实对象已拆，部分全局名需 feature-detect | 实机对象与几何 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | `P1–P2` | Quest Log 奖励只读，无 selected | 实机奖励数量与尺寸 |
@@ -155,22 +164,35 @@ source 或 runtime。
   原脚本与原生纹理抑制。
 - QL-B2 V1 生产合同：
   [`QUEST.LOG.SELECTION.md`](work/QUEST.LOG.SELECTION.md)；当前为
-  `source-accepted / P4`，实际生图 `5/5`、流程错误 `3`；第五张 raw、
+  `runtime-exported / P5`，实际生图 `5/5`、流程错误 `3`；第五张 raw、
   原透明稿和预演仍只在 ignored `generated/` 作为审查证据。同 SHA 的
   bbox-fit 候选已晋级
   [`QuestLogSelectionBookmark_Master_v1.png`](../../../assets/source/quests/ql-b2/QuestLogSelectionBookmark_Master_v1.png)，
   SHA-256
   `4f8955410ecfaac6697cabeb9bd076d4bd0f5b5adcc97964cee0b7b49d38efaa`。
-  source manifest 记录用户接受、合同例外、Alpha 证据和待执行 runtime
-  合同；尚无 runtime。
+  source manifest 记录用户接受、合同例外与 Alpha 证据。runtime
+  `QuestLogSelectionBookmarkV1.tga` SHA-256
+  `bab9e8bf6961b743d9591bb148878e9eadbbbbd99eac9a183446bf9c81a770b4`；
+  三态 cell Alpha SHA-256 均为
+  `2cd8de894c389f5c7eaf5c5d5388a20b363fa414022dc4dac57eacda1fa79029`。
+- QL-B2 exporter：
+  [`build_quest_log_selection_bookmark_v1.py`](../../../tools/build_quest_log_selection_bookmark_v1.py)；
+  runtime manifest：
+  [`QL-B2_RuntimeManifest_v1.json`](../../../assets/source/quests/ql-b2/QL-B2_RuntimeManifest_v1.json)。
+  三张来自最终 atlas 的真实排版 SHA-256 分别为 selected
+  `bba74c3591c60efa27c3f3d9c1a3266661d76c7aff7ed46230f8ef2b1ca4baaf`、
+  hover
+  `eac7c0fee22ca7f7eb57449b2710588743f141745510cc6029d2b9478d7a9f40`、
+  pressed
+  `47397145620353eabbca33c20be67fefe9fccc84e7f1334ae577d609e6915eb6`。
 - Turtle WoW 实机验证尚未开始。
 
 ## 下一步
 
 QL-A2 保持 [runtime work](work/QUEST.LOG.GUTTER.md)，等待 Turtle WoW
 `1.18.1` 实机验收后才可进入 `P6`／清理。QL-B0／B1 已进入 `P5` 并等待
-实机。QL-B2 V1 已在 `5/5` 停止；用户已接受离线的确定性 bbox-fit 例外
-候选并授权进入 P4/P5。当前 source 已锁定，下一门禁是按 manifest 的固定
-三态算法导出 `128 × 16` atlas、接入原 `QuestLogTitleN` 并通过静态与
-Lua smoke；不得继续调用 V1 ImageGen。QL-B1 的旧计数保留为当时流程的
-历史事实，不作为新口径先例。
+实机。QL-B2 V1 已在 `5/5` 停止；用户接受的 bbox-fit source、固定三态
+atlas、adapter 与静态测试现已完成到 P5，下一门禁是 Turtle WoW 实机验证，
+在此之前不得标记 P6 或清理 work。当前无游戏设备时，可继续处理尚未进入
+P6 的 QL-B3／C／D；不得继续调用 QL-B2 V1 ImageGen。QL-B1 的旧计数保留为
+当时流程的历史事实，不作为新口径先例。
