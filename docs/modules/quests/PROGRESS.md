@@ -7,21 +7,15 @@
   实机对象几何尚未完成，继续保持后续顺位。
 - Quest Log 真实对象合同：`P1` 完成，QL-A 当前处于 `P2–P4` 混合阶段。
 - `QL-A1` 空卷宗结构 source：用户确认，`P4`。
-- `QL-A2 V3.1`：用户于 `2026-07-30` 明确授权执行正文与固定 SHA 的
-  Image 1／2／3 上传；完整固定执行会话
-  `019faed6-8104-7ef2-94f7-8d80c5c885bc` 已形成 raw，但内部审查在第一道
-  语义／物理门禁退回，当前为 `candidate-rejected / P3`。raw 虽恰好包含
-  八组对象，却仍有满页高频压花、双边实心内折、粗长辫绳针脚和完全外露
-  线结；RGB 背景也不是合同要求的真透明或均匀 `#00FF00`。未创建透明候选、
-  重组预演、source 或 runtime。
-- `QL-A2 V3.2`：`candidate-rejected / P3 / repair-budget-exhausted`。
-  用户已明确授权 V3.2-A／B 两段
-  正文、各最多 `5` 次固定调用，最坏总调用数为 `10`，并允许每次上传固定
-  SHA 的任务锁定图与 QL-A1 结构 source。A 在 attempt 5 通过目标级内审：
-  透明候选恰好包含两张近等宽单层纸页，中央已无满页高频压花。B 用满
-  `5/5` 后仍未通过：attempt 5 的针脚约占格宽 `45%`，两个收口仍为完整
-  外露结；整批 `10/10` 额度耗尽，未做 B Alpha、组合重组、source 或
-  runtime。
+- `QL-A2 V3.2` 已终止：A attempt 5 目标级通过；B 在 `5/5` 后仍有约
+  `45%` 格宽的针脚和完整外露结，整批 `10/10` 额度耗尽。没有形成
+  accepted source 或 runtime；A 候选仍只是 ignored `generated/` 中的
+  本机重组输入。
+- `QL-A2 V3.3`：`prompt-draft / P2`。已将失败的 B 六件同画布合同拆成
+  B1 underlay＋folds、B2 单枚 stitch、B3 top／bottom closures 三个尺度
+  族；三段完整 Prompt、固定输入、验收合同、确定性等比归一化和真实纸缘
+  遮挡方案已经预检通过。尚未取得版本级生图授权，调用为
+  `0/5 + 0/5 + 0/5`，最坏总计 `15` 次。
 - Quest Tracker：视觉 `P2`，外部 provider `P0`，暂停。
 - NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
 - `questitem.lua`：行为保留，视觉 `N/A`。
@@ -31,7 +25,7 @@
 | 批次 | 子模块 | 阶段 | 当前事实 | 下一门禁 |
 |---|---|---:|---|---|
 | `QL-A1` | `QUEST.LOG.SHELL` 结构母版 | `P4` | [透明 source](../../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png) 已接受；整图不得进 runtime | 等待 QL-A2 后确定 crop／UV |
-| `QL-A2` | 两纸页与六个 `GUTTER.*` | `P3` V3.2 rejected／budget exhausted | A attempt 5 目标级通过；B attempt 5 仍有过长针脚和完整外露结；B `5/5`、整批 `10/10` 已耗尽，所有生成物仍只在 ignored `generated/` | 用户决定是否建立 V3.3，把 underlay＋folds、stitch、closures 拆成三个尺度族后重新授权 |
+| `QL-A2` | 两纸页与六个 `GUTTER.*` | `P2` V3.3 prompt-draft | V3.3 已把 B 拆成 folds、stitch、closures 三个独立尺度族；三段正文与确定性装配合同预检通过，当前 `0/15`，未生图 | 用户审阅三段正文并明确授权 V3.3-B1／B2／B3、固定上传范围和三段各 `5` 次预算 |
 | `QL-B` | 目录行、展开、追踪、选择、类型、状态 | `P1–P2` | 子模块与稳定美术基线已定义，无生产 work | QL-A2 source 接受后逐对象建 Prompt |
 | `QL-C` | 两套 ScrollBar、关闭、操作与辅助按钮 | `P1–P2` | 真实对象已拆，部分全局名需 feature-detect | 实机对象与几何 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | `P1–P2` | Quest Log 奖励只读，无 selected | 实机奖励数量与尺寸 |
@@ -79,7 +73,7 @@ source 或 runtime。
 
 ## 下一步
 
-用户审阅 [QL-A2 V3.2 修复预算耗尽证据](work/QUEST.LOG.GUTTER.md)，并
-决定是否建立 V3.3。推荐把 B 按尺度和物件身份拆成
-underlay＋folds、stitch、closures 三段独立生成，再确定性装回固定图集；
-这是新生产结构，必须重写完整 prompt、重新预检并取得新授权。
+用户审阅 [QL-A2 V3.3 三段执行正文](work/QUEST.LOG.GUTTER.md)，并明确
+授权 `V3.3-B1／B2／B3`、三段各最多 `5` 次且最坏总计 `15` 次固定调用：
+B1 每次上传固定 SHA 的 Image 1／2，B2／B3 每次只上传固定 SHA 的
+Image 1；同一段前次输出只可在冻结的局部修复边界内作为 edit 输入。
