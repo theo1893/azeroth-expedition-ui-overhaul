@@ -8,11 +8,12 @@
   `QUEST.LOG.GUTTER.RIGHT_FOLD`、`QUEST.LOG.GUTTER.STITCH`、
   `QUEST.LOG.GUTTER.TOP`、`QUEST.LOG.GUTTER.BOTTOM`
 - 版本：`QL-A2 V3.2`
-- 子状态：`repair-prepared`
+- 子状态：`candidate-rejected`
 - 项目阶段：`P3`
 - 类型：`production`
-- 执行状态：V3.2-A attempt 5 已通过目标级内审，等待批次重组复核；
-  V3.2-B attempt 4 内审失败，attempt 5 已计数，固定执行器即将调用
+- 执行状态：V3.2-A attempt 5 已通过目标级内审；V3.2-B attempt 5
+  仍未通过物理语义门禁，B `5/5` 与整批 `10/10` 额度已耗尽；
+  `repair-budget-exhausted`
 - 本次授权：用户于 `2026-07-30` 明确回复“确认授权 QL-A2 V3.2-A/B
   及上述修复与上传范围”，授权 A／B 两段正文、各最多 `5` 次且最坏总计
   `10` 次调用、每次固定 SHA 的 Image 1／2 上传，以及同一目标前次输出仅
@@ -22,7 +23,7 @@
   六个页沟小件；旧版 QL-A2 失败候选永不上传
 - 自动修复预算：
   - `V3.2-A`：最多 `5` 次固定执行器调用，含首次；当前 `5/5`，循环已停止
-  - `V3.2-B`：最多 `5` 次固定执行器调用，含首次；当前 `5/5`
+  - `V3.2-B`：最多 `5` 次固定执行器调用，含首次；当前 `5/5`，额度耗尽
   - 最坏总调用数：`10`；任一正文提前通过即停止其循环，不消耗剩余次数
 - 目标客户端：Turtle WoW `1.18.1`／Interface `11200`
 - 对应合同：
@@ -61,9 +62,9 @@
   — SHA-256
   `9de577d576719045467f3ef0ac33b64630bd0da63e66c77d38c1e549d6e0230f`
 - V3.2-B raw：
-  `generated/quests/QL-A2/v3.2/gutter/attempt-04/QL-A2_V3_2_B_GUTTER.raw.png`
+  `generated/quests/QL-A2/v3.2/gutter/attempt-05/QL-A2_V3_2_B_GUTTER.raw.png`
   — SHA-256
-  `ecb52703d27def1d0aec609a5f78a1ec22337a4e8c5333c516f4fe0fa454c9a4`
+  `14fbcbaf5dedb6cdbffb1a74899a47489fcedc1020cf91d2de9d9acfc3817614`
 - 透明候选：
   `generated/quests/QL-A2/v3.2/pages/attempt-05/QL-A2_V3_2_A_PAGES.candidate.png`
   — SHA-256
@@ -87,7 +88,7 @@ V3.1 正文、授权、执行与内部退回由提交 `1733678`／`52ff00f` 保�
 | V2.1 | 用户退回；会话 `019fac8e-bae8-73f2-af89-674e925b0068`，结果 `ig_0bda33a80800f83f016a699ddd6dbc8191a674cb8b33717482` | 近等宽双页和内部页沟方向可保留；针脚偏离中心、端点与纸页融合差、正文高频纹理过密 |
 | V3 | 内部退回；会话 `019fad38-517b-7ca1-82af-853b0ddc68f2`，结果 `ig_0e8d8bb14f37caff016a69c8e4f918819186e21dd3df807ff2` | Underlay 变成完整织纹竖条，内折变成实心纸条，正确层序下针脚消失，上下收口像把手，正文仍满页压花；流程还错误提升了派生 source 的权威 |
 | V3.1 | 内部退回；授权提交 `1733678`；完整会话 `019faed6-8104-7ef2-94f7-8d80c5c885bc`，结果 `ig_07c0d476174c1236016a6a32eb8384819184676137de79b733`，raw SHA `47d14363049424b8c32b0eb486a87a0287adb4cc2af8f92e9416f0651cb796ea` | 八组数量成立，但正文仍满页压花；内折仍是双边纸条；针脚是粗长辫绳；线结完全外露；RGB 色键不均匀。不得透明化、重组或进入复审 |
-| V3.2 | 当前 `repair-prepared / P3` | A attempt 5 已通过目标级内审；B attempt 4 已使六格与上排语义基本成立，但针脚过长、收口仍完整外露；attempt 5 已计数、即将执行最终 scoped edit；尚未进入用户复审 |
+| V3.2 | 当前 `candidate-rejected / P3 / repair-budget-exhausted` | A attempt 5 目标级通过；B attempt 5 仍有约 `45%` 格宽针脚和完整外露收口，B `5/5`、总计 `10/10` 已耗尽；不得继续生成、透明化或重组 |
 
 V3 raw SHA-256 为
 `44e3cf1b01625b4c9e810229a6d33a9bcf381bb9bc0dc9feda06384034c0a0cc`；
@@ -780,7 +781,7 @@ Image 2 是已接受的 QL-A1 结构 source，只负责浅俯视方向、近等�
 | 2/5 | `V3.2-B.r1` / `9f76ca3` | generate | `019fb0ed-f09a-7031-97ab-70e45adb37eb`／`ig_023f6fac323dc986016a6abbf3419081919ecd54a6ab69249c` | `attempt-02/...B_GUTTER.raw.png`／`eac0c962d8d1fce0d280e74c8776db290e45d0bf66464ceb808a2f164aed3bb5` | `1. 对象／格位合同`：左右 fold 越过 `y=512` 进入下排；随后 stitch 仍为约 `45%` 格宽辫绳，closure 仍为圆球状完整结和长尾 | 保留六对象角色和收口已不夹带纸缘这一方向；格位与物件身份均失败，不上传本图，重新 generate | 失败，计入预算 |
 | 3/5 | `V3.2-B.r2` / `8792b5d` | generate | `019fb0f1-9521-7762-8ebe-a07630eb834b`／`ig_07e3c79bae4a9b7b016a6abce030d48191a8512dc77e58ee23` | `attempt-03/...B_GUTTER.raw.png`／`6a70a2800edae6885f887d6fdbe19c77fc34bf5900ec2014af36f9de983494b4` | `1. 对象／格位合同`：underlay 与 folds 仍越过 `y=512`；stitch 约 `74%` 格宽，closures 远超限定外接框 | 保留 stitch 已无辫纹、closure 已非圆球结的文字方向；尺寸与格位失败，不上传本图，以高留白小型 sprite atlas 重新 generate | 失败，计入预算 |
 | 4/5 | `V3.2-B.r3` / `e1a532f` | generate | `019fb0f5-5488-76c3-8847-7a25bc775efc`／`ig_0b6f3a62bbd7d485016a6abe503d2c8191ad4d56a5df988b89` | `attempt-04/...B_GUTTER.raw.png`／`ecb52703d27def1d0aec609a5f78a1ec22337a4e8c5333c516f4fe0fa454c9a4` | `2. 物理语义`：stitch 约 `51%` 格宽，top／bottom 仍是完整外露结；次要为上排底边留白略小于 `48px` | 保留六格、underlay、单侧 folds、无辫纹线材与整体配色；结构已成立，最终 edit 只修下排尺寸／截断语义和上排底端 | 失败，计入预算 |
-| 5/5 | `V3.2-B.r4` / 本次提交 | edit |  |  |  |  | 已计数，调用中 |
+| 5/5 | `V3.2-B.r4` / `3b024a7` | edit | `019fb0fb-1009-7fc1-a959-330752a13447`／`ig_09d887bd3317a386016a6abf52f3048191875966674006e560` | `attempt-05/...B_GUTTER.raw.png`／`14fbcbaf5dedb6cdbffb1a74899a47489fcedc1020cf91d2de9d9acfc3817614` | `2. 物理语义`：stitch 仍约 `230px`／`45%` 格宽；top／bottom 仍为完整外露结；上排底端仍未稳定达到 `48px` 留白 | 六格、underlay、folds、无辫纹线材可作为新版本文字证据；不得继续 edit、Alpha、重组或接受 | 失败；`repair-budget-exhausted` |
 
 #### V3.2-B.r1 — UNBRAIDED STITCH AND BARE HALF-CLOSURES REGENERATION
 
@@ -1142,7 +1143,9 @@ Image 2 是已接受的 QL-A1 结构 source，只负责内部浅俯视方向、�
   `019fb0f1-9521-7762-8ebe-a07630eb834b`／
   `ig_07e3c79bae4a9b7b016a6abce030d48191a8512dc77e58ee23`；attempt 4
   `019fb0f5-5488-76c3-8847-7a25bc775efc`／
-  `ig_0b6f3a62bbd7d485016a6abe503d2c8191ad4d56a5df988b89`
+  `ig_0b6f3a62bbd7d485016a6abe503d2c8191ad4d56a5df988b89`；attempt 5
+  `019fb0fb-1009-7fc1-a959-330752a13447`／
+  `ig_09d887bd3317a386016a6abf52f3048191875966674006e560`
 - 实际输入绝对路径与职责：A attempts 2–5 均上传元数据中固定 SHA 的
   Image 1／2；attempts 4–5 另将同目标前次 raw 作为 Image 3 edit 输入；
   职责与授权正文及冻结修复边界一致
@@ -1164,7 +1167,9 @@ Image 2 是已接受的 QL-A1 结构 source，只负责内部浅俯视方向、�
   B attempt 3 `1536 × 1024 RGB`／
   `6a70a2800edae6885f887d6fdbe19c77fc34bf5900ec2014af36f9de983494b4`；
   B attempt 4 `1536 × 1024 RGB`／
-  `ecb52703d27def1d0aec609a5f78a1ec22337a4e8c5333c516f4fe0fa454c9a4`
+  `ecb52703d27def1d0aec609a5f78a1ec22337a4e8c5333c516f4fe0fa454c9a4`；
+  B attempt 5 `1536 × 1024 RGB`／
+  `14fbcbaf5dedb6cdbffb1a74899a47489fcedc1020cf91d2de9d9acfc3817614`
 - Alpha／残色：attempt 2 全部 `1572864` 像素不透明；精确 `#00FF00`
   `2259`，启发式绿色主导 `462597`；attempt 3 仍全不透明，精确绿 `209`、
   启发式绿色主导 `510783`；attempt 4 仍全不透明，精确绿 `22`、启发式
@@ -1176,13 +1181,14 @@ Image 2 是已接受的 QL-A1 结构 source，只负责内部浅俯视方向、�
   启发式绿色主导 `1500756`，同样不是均匀色键；两次都因更早结构／语义
   门禁失败。B attempt 3 也全部不透明，精确绿 `5`、启发式绿色主导
   `1450553`。B attempt 4 全部不透明，精确绿 `5`、启发式绿色主导
-  `1528405`；四次背景都不均匀，且因更早门禁失败均不做 Alpha 清理
+  `1528405`。B attempt 5 仍全部不透明，精确绿 `0`、启发式绿色主导
+  `1528789`；五次背景都不均匀，且因更早门禁失败均不做 Alpha 清理
 - attempt 5 对象外接：左页 `[96,81,745,936]`，右页
   `[799,82,1441,937]`；可见宽分别 `649px`／`642px`，差约 `1.09%`；
   两对象均未触碰画布或单元边界
 - 固定执行器调用：A `5/5`；B `5/5`；合计 `10/10`
-- 循环终态：V3.2-A 目标级内审通过并停止；V3.2-B attempt 4 内审失败，
-  attempt 5 已计数，等待最终调用结果
+- 循环终态：`candidate-rejected / P3 / repair-budget-exhausted`。V3.2-A
+  目标级内审通过；V3.2-B attempt 5 仍失败，禁止继续自动调用
 
 ## 审查记录
 
@@ -1229,8 +1235,20 @@ Image 2 是已接受的 QL-A1 结构 source，只负责内部浅俯视方向、�
   `51%`，两个 closure 仍是完整外露结；上排三件最低端的格边留白还略小于
   `48px`。结构已成立，允许把 attempt 4 作为最后一次同目标 scoped edit
   输入，只替换三个下排局部并修短上排底端。
+- V3.2-B attempt 5 结论：最终 edit 保持了六格、underlay、单侧 folds、
+  低饱和综合色和无辫纹单根亚麻线，但没有完成三个关键局部替换。stitch
+  仍约 `230px`、约占格宽 `45%`，显著超过 `179px／35%`；top／bottom
+  仍是可识别的完整外露结，而非一侧截断的半藏收口；上排最低端也没有
+  稳定达到 `48px` 连续留白。背景仍为不均匀近绿色。首个失败门禁仍为
+  物理语义，因此不做 Alpha、不做 `676 × 440` 重组、不交用户做接受审查。
+- V3.2 批次终态：A 单独通过不能补偿 B 失败；B 第 `5` 次与整批最坏
+  `10` 次额度已经耗尽。按工作流停止为
+  `candidate-rejected / P3 / repair-budget-exhausted`。保留所有 raw 于
+  ignored `generated/` 和完整 prompt／审查于本 work／Git 历史；没有
+  tracked source、manifest、runtime 或用户接受。
 - 用户结论与日期：`2026-07-30`，已明确授权 V3.2-A／B 及冻结修复／上传
   范围；这不是候选接受
-- 下一门禁：调用固定执行器执行 V3.2-B attempt 5；随后按六件语义、
-  固定格位、透明技术合同和真实层序重组依次审查，在冻结边界内最多修复
-  至 B attempt 5
+- 下一门禁：等待用户审阅失败证据并决定是否建立新版本。推荐的新合同方向
+  是把 B 再拆成三个独立尺度族：underlay＋folds、单个 stitch、两个
+  closures，分别生成并确定性装回图集；这会改变生产结构，必须创建新的
+  完整正文、重做 prompt 完整性预检并获得新授权，不能沿用 V3.2 授权
