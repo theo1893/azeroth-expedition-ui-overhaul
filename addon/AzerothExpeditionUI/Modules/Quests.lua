@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local Quests = {}
-Quests.runtimeContract = "1.2"
+Quests.runtimeContract = "1.4"
 
 local SHELL_TEXTURE =
   addon.media.root .. "Quests\\QuestLogShellV4"
@@ -39,9 +39,11 @@ local LAYOUT = {
     top = 64,
     width = 246,
     height = 324,
+    contentWidth = 224,
+    textWidth = 214,
+    objectiveWidth = 204,
   },
   titleTop = 28,
-  countLeft = 76,
   countTop = 52,
   closeRight = 18,
   closeTop = 20,
@@ -52,7 +54,7 @@ local LAYOUT = {
 }
 
 local DIRECTORY = {
-  contract = "1.1",
+  contract = "1.2",
   rowCount = 23,
   rowWidth = 224,
   rowHeight = 15,
@@ -218,11 +220,11 @@ local function AppendScript(frame, scriptName, key, callback)
 
   frame[key] = true
   local original = frame:GetScript(scriptName)
-  frame:SetScript(scriptName, function(...)
+  frame:SetScript(scriptName, function(a1, a2, a3, a4, a5)
     if original then
-      original(...)
+      original(a1, a2, a3, a4, a5)
     end
-    callback(...)
+    callback(a1, a2, a3, a4, a5)
   end)
 end
 
@@ -273,6 +275,16 @@ function Quests:InstallGlobalHooks()
     self.questLogUpdateHookInstalled = true
     hooksecurefunc("QuestLog_Update", function()
       Quests:UpdateDirectoryRows()
+    end)
+  end
+
+  if
+    not self.questLogDetailsHookInstalled and
+    type(QuestLog_UpdateQuestDetails) == "function"
+  then
+    self.questLogDetailsHookInstalled = true
+    hooksecurefunc("QuestLog_UpdateQuestDetails", function()
+      Quests:ApplyDetailTextGeometry()
     end)
   end
 end
@@ -395,6 +407,31 @@ local function HideNativeListCheck(index)
   end
 end
 
+local function SuppressNativeSelectionVisual(region)
+  if not region then
+    return
+  end
+  if region.SetAlpha then
+    region:SetAlpha(0)
+  elseif region.Hide then
+    region:Hide()
+  end
+end
+
+local function SuppressNativeRowSelection(row, index)
+  SuppressNativeSelectionVisual(QuestLogHighlightFrame)
+  SuppressNativeSelectionVisual(
+    _G["QuestLogTitle" .. index .. "Highlight"]
+  )
+
+  if row and row.GetHighlightTexture then
+    SuppressNativeSelectionVisual(row:GetHighlightTexture())
+  end
+  if row and row.GetPushedTexture then
+    SuppressNativeSelectionVisual(row:GetPushedTexture())
+  end
+end
+
 local function ReadQuestEntry(index)
   if type(GetQuestLogTitle) ~= "function" then
     return nil
@@ -472,6 +509,7 @@ function Quests:LayoutDirectoryRows()
   for index = 1, DIRECTORY.rowCount do
     local row = _G["QuestLogTitle" .. index]
     if row then
+      SuppressNativeRowSelection(row, index)
       SetSize(row, DIRECTORY.rowWidth, DIRECTORY.rowHeight)
       if not previous then
         SetSinglePoint(
@@ -592,6 +630,7 @@ function Quests:UpdateDirectoryRows()
   for index = 1, DIRECTORY.rowCount do
     local row = _G["QuestLogTitle" .. index]
     if row then
+      SuppressNativeRowSelection(row, index)
       if row.aeuiQuestRegionToggle then
         row.aeuiQuestRegionToggle:Hide()
       end
@@ -688,6 +727,58 @@ function Quests:UpdateDirectoryRows()
   end
 end
 
+local DETAIL_TEXT_NAMES = {
+  "QuestLogQuestTitle",
+  "QuestLogObjectivesText",
+  "QuestLogDescriptionTitle",
+  "QuestLogQuestDescription",
+  "QuestLogRewardTitleText",
+  "QuestLogItemChooseText",
+  "QuestLogItemReceiveText",
+  "QuestLogRequiredMoneyText",
+  "QuestLogSpellLearnText",
+  "QuestLogPlayerTitleText",
+  "QuestLogHonorFrameHonorReceiveText",
+}
+
+function Quests:ApplyDetailTextGeometry()
+  if QuestLogDetailScrollChildFrame then
+    if QuestLogDetailScrollChildFrame.SetWidth then
+      QuestLogDetailScrollChildFrame:SetWidth(
+        LAYOUT.detail.contentWidth
+      )
+    end
+    if
+      QuestLogDetailScrollChildFrame.GetHeight and
+      QuestLogDetailScrollChildFrame.SetHeight and
+      (
+        not QuestLogDetailScrollChildFrame:GetHeight() or
+        QuestLogDetailScrollChildFrame:GetHeight() <
+          LAYOUT.detail.height
+      )
+    then
+      QuestLogDetailScrollChildFrame:SetHeight(
+        LAYOUT.detail.height
+      )
+    end
+  end
+
+  for _, name in ipairs(DETAIL_TEXT_NAMES) do
+    local text = _G[name]
+    if text and text.SetWidth then
+      text:SetWidth(LAYOUT.detail.textWidth)
+    end
+  end
+
+  local objectiveCount = tonumber(MAX_OBJECTIVES) or 10
+  for index = 1, objectiveCount do
+    local objective = _G["QuestLogObjective" .. index]
+    if objective and objective.SetWidth then
+      objective:SetWidth(LAYOUT.detail.objectiveWidth)
+    end
+  end
+end
+
 function Quests:EnsureShell(frame)
   if frame.EnableDrawLayer then
     frame:EnableDrawLayer("BACKGROUND")
@@ -741,12 +832,46 @@ function Quests:ApplyFrameGeometry()
   local count = QuestLogQuestCount or QuestLogCount
   SetSinglePoint(
     count,
-    "TOPLEFT",
+    "TOPRIGHT",
     frame,
     "TOPLEFT",
-    LAYOUT.countLeft,
+    LAYOUT.list.left + LAYOUT.list.width,
     -LAYOUT.countTop
   )
+
+  if QuestLogCollapseAllButton and QuestLogListScrollFrame then
+    SetSinglePoint(
+      QuestLogCollapseAllButton,
+      "BOTTOMLEFT",
+      QuestLogListScrollFrame,
+      "TOPLEFT",
+      -4,
+      4
+    )
+  end
+  if QuestLogFrameLevelsCheckButton and QuestLogCollapseAllButton then
+    SetSinglePoint(
+      QuestLogFrameLevelsCheckButton,
+      "LEFT",
+      QuestLogCollapseAllButton,
+      "RIGHT",
+      0,
+      1
+    )
+  end
+  if count then
+    SetSinglePoint(
+      QuestLogTrack,
+      "RIGHT",
+      count,
+      "LEFT",
+      -5,
+      0
+    )
+  end
+  if QuestLogTrackTitle and QuestLogTrackTitle.Hide then
+    QuestLogTrackTitle:Hide()
+  end
 
   SetSinglePoint(
     QuestLogFrameCloseButton,
@@ -785,21 +910,7 @@ function Quests:ApplyFrameGeometry()
     LAYOUT.detail.height
   )
 
-  if QuestLogDetailScrollChildFrame then
-    if QuestLogDetailScrollChildFrame.SetWidth then
-      QuestLogDetailScrollChildFrame:SetWidth(LAYOUT.detail.width)
-    end
-    if
-      QuestLogDetailScrollChildFrame.GetHeight and
-      QuestLogDetailScrollChildFrame.SetHeight and
-      (
-        not QuestLogDetailScrollChildFrame:GetHeight() or
-        QuestLogDetailScrollChildFrame:GetHeight() < LAYOUT.detail.height
-      )
-    then
-      QuestLogDetailScrollChildFrame:SetHeight(LAYOUT.detail.height)
-    end
-  end
+  self:ApplyDetailTextGeometry()
 
   SetSinglePoint(
     QuestLogNoQuestsText,

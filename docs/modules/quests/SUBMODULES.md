@@ -59,8 +59,11 @@ Texture、FontString。禁止在 SHELL 上烘焙任务行、滚动状态、选�
 
 | ID | 真实对象 | 状态／资产 |
 |---|---|---|
+| `QUEST.LOG.LIST.INSET` | 围绕 `QuestLogListScrollFrame` 的 adapter 非交互 Texture | 固定列表内框；中央开口透明，不承载行、文字、滚动条或命中 |
+| `QUEST.LOG.REGION.BACKPLATE` | `QuestLogTitleN` 且 `isHeader=true` 的 Button 背景 Texture | normal／hover／pressed／disabled；同一基础物件确定性派生 |
+| `QUEST.LOG.ROW.BACKPLATE` | `QuestLogTitleN` 且 `isHeader=false` 的 Button 背景 Texture | normal／hover／pressed／disabled；同一基础物件确定性派生 |
 | `QUEST.LOG.REGION.TOGGLE` | `QuestLogTitleN` 且 `isHeader=true` 的图标区 | 展开／收起覆盖，不新增命中区 |
-| `QUEST.LOG.LIST.ROW` | `QuestLogTitle1..23`；`7..23` 继承 `QuestLogTitleButtonTemplate` 创建 | 普通／悬停／按下／禁用；layout／字体状态，不生成完整行卡片 |
+| `QUEST.LOG.LIST.ROW` | V1 fallback 为 `QuestLogTitle1..23`，其中 `7..23` 继承 `QuestLogTitleButtonTemplate` 创建；V2 活动窗口为 `QuestLogTitle1..18` | 普通／悬停／按下／禁用；保留真实 Button 与脚本；V1 不生成完整行卡片，V2 挂载独立薄型卷宗底板 |
 | `QUEST.LOG.LIST.CHECK` | `QuestLogTitleNCheck` | 未追踪／已追踪；不是选择 Button |
 | `QUEST.LOG.SELECTION` | 当前选中的非地区 `QuestLogTitleN` | 一枚基础织物书签；选中／选中悬停／选中按下为三个确定性 runtime 状态 |
 | `QUEST.LOG.TYPE.BADGE` | `GetQuestLogTitle` 的可靠 `questTag` | `normal` 无资产；Elite／Dungeon／Raid／PvP 小压印；未知 tag 不猜测 |
@@ -73,22 +76,31 @@ Texture、FontString。禁止在 SHELL 上烘焙任务行、滚动状态、选�
 不得通过解析本地化任务名或显示文字推断状态。
 
 `QUEST.LOG.SELECTION` 不拥有鼠标：任何时刻最多只显示在一条可见、非地区的
-当前任务行。它使用 `24 × 14 UI px` 可见书签装在 `32 × 16 UI px` 透明
-Texture 内，从行局部 `x=-8..15` 探入；任务文字从 `x>=18` 开始。覆盖位于
+当前任务行。当前 P5／V1 fallback 使用 `24 × 14 UI px` 可见书签装在
+`32 × 16 UI px` 透明 Texture 内，从行局部 `x=-8..15` 探入；任务文字从
+`x>=18` 开始，即任务文字从 `x>=18` 起。覆盖位于
 shell 之上、任务 FontString 与 QL-B1／B3 状态之下。无选择、选择不可见、
 API／媒体缺失或选择指向地区 header 时隐藏并保留原生选择反馈。
 
-pfUI 的功能合同保留 `QUESTS_DISPLAYED = 23`，而 QL-A2 左页安全区只有
-`246 × 324 UI px`。QL-B0 的离线目标几何为 `23` 条
-`224 × 15 UI px` 行、`14px` 纵向步进，总占高 `323px`；右侧 `22px`
-预留给滚动条和间距。它只压缩视觉行距，不减少可见行数、不替换原生脚本，
-并必须在 Turtle WoW 中验证文字基线、重叠命中和滚动偏移。
+当前 P5／V1 fallback 仍保留 pfUI 的 `QUESTS_DISPLAYED = 23`：QL-A2 左页
+`246 × 324 UI px` 安全区中使用 `23` 条 `224 × 15 UI px` 行、
+`14px` 纵向步进，总占高 `323px`。实机已经证明该密度不足以承载新的大面积
+左页视觉。
+
+用户确认的 V2 目标改为 `QUESTS_DISPLAYED = 18`：活动窗口使用
+`QuestLogTitle1..18`，每条 `224 × 18 UI px`，纵向步进 `18px`，总占高
+`324px`；右侧 `22px` 预留给真实滚动条与间距。现有
+`QuestLogTitle19..23` 不删除、不改写脚本，只在 V2 模式隐藏；缺少 adapter
+或媒体时回退 V1／pfUI。动态文字从 `x=20` 起；地区使用 Noto Serif SC
+SemiBold `12px`，任务使用 LXGW WenKai `11px`。完整资源与排版合同见
+[work/QUEST.LOG.LEFTPAGE.md](work/QUEST.LOG.LEFTPAGE.md)。
 
 QL-B 的生产边界：
 
 - `QL-B1`：`REGION.TOGGLE` 与 `LIST.CHECK` 四枚墨记；V1.r3 透明 source
   已接受。runtime 只允许按 manifest 固定四格裁切、等比缩放并居中，
-  不得修改任务行交互或状态来源。
+  不得修改任务行交互或状态来源。V2 接受后只允许从同一 source 确定性
+  重导出为地区箭头 `14px` 与追踪圈 `12px`，不重新生图。
 - `QL-B2`：`SELECTION` 只生成一枚暗酒红织物基础书签；selected／
   selected-hover／selected-pressed 由同一 Alpha 确定性导出为三格，
   pressed 只在原行 Button 上产生 `1 UI px` 视觉压入，不新增命中区。
@@ -102,7 +114,8 @@ QL-B 的生产边界：
   `QuestLogSelectionBookmarkV1.tga`：`128 × 16`、四个
   `32 × 16` cell，顺序为 selected／selected-hover／
   selected-pressed／全透明保留格；每格可见 content 为 `24 × 14`，
-  三态 Alpha 逐像素相同。
+  三态 Alpha 逐像素相同。V2 接受后只允许从同一 source 确定性重导出为
+  `32 × 16` cell 内 `30 × 16` 可见书签，锚点 `x=-12`；不重新生图。
 - `QL-B3`：四类可靠 `TYPE.BADGE`、独立 `TIMER.BADGE` 与两类
   `STATE.SEAL`。非地区行固定保留三个可同时显示的无鼠标状态槽：
   type `10 × 10 UI px`、`x=176..186`；timer `10 × 10 UI px`、
@@ -113,9 +126,11 @@ QL-B 的生产边界：
   `questTag` 只允许匹配 adapter 中显式登记且经目标客户端证实的等值 token；
   禁止解析任务名、显示文字或做模糊本地化猜测。未知 token、API／媒体缺失
   时只隐藏对应覆盖并保留现有动态 `level+` 回退。
-- `LIST.ROW` 自身只承担布局、字体色和真实点击，不持有位图行卡。
+- `LIST.ROW` 自身只承担真实点击、脚本与布局。V2 的地区／任务底板分别由
+  `REGION.BACKPLATE`／`ROW.BACKPLATE` 的无鼠标 Texture 承担；它们是薄型
+  卷宗条目，不是现代卡片，也不改变 Button 命中区。
 
-QL-B0／B1／B2 runtime 已接入
+QL-B0／B1／B2 当前 V1 runtime 已接入
 `addon/AzerothExpeditionUI/Modules/Quests.lua`：atlas 为
 `QuestLogDirectoryMarksV1.tga`，四个 `16 × 16` cell 的内部 content box
 分别以 `12 × 12` 箭头和 `10 × 10` 墨圈显示。覆盖 Texture 不接收鼠标；
@@ -125,6 +140,11 @@ QL-B0／B1／B2 runtime 已接入
 `32 × 16` atlas cell，锚点 `x=-12`；hover／pressed 只在保留原脚本后
 刷新 UV，pressed 仅把锚点改为 `y=-1`。API 缺失、无可见选择或 header
 被选中时隐藏覆盖。
+
+QL-B0 V2 已获用户授权，处于 `prompt-authorized / P3`；`LIST.INSET`、
+`REGION.BACKPLATE` 与 `ROW.BACKPLATE` 尚无 source、runtime 或占位 Texture。
+只允许按 [work/QUEST.LOG.LEFTPAGE.md](work/QUEST.LOG.LEFTPAGE.md)
+所列固定正文、输入、repair envelope 与 A／B 独立预算调用 ImageGen。
 
 ## Quest Log 滚动与控制
 

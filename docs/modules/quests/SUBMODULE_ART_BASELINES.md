@@ -43,9 +43,22 @@ ImageGen。
 
 ## 左页目录状态
 
-目录纸面保持连续，不生成逐行卡片。23 个真实 `QuestLogTitleN` 保留整行
-点击和 pfUI 的扩展显示数量；行本体只使用动态 FontString 色、顶点色与独立
-覆盖，不生成现代矩形 hover card。
+目录纸面保持连续，不生成逐行卡片，指的是不得制作现代悬浮卡片或把完整列表
+烘焙成一张背景；它不再排除与真实 `QuestLogTitleN` 一一对应的薄型卷宗
+底板。Turtle WoW 实机证明旧 23 行纯文字方案无法呈现锁定基准中的左页身份，
+因此 V2 使用十八行、每行 `224 × 18 UI px` 的真实 Button 窗口。
+
+`QUEST.LOG.LIST.INSET` 是围绕连续纸面的单一固定目录内框：深胡桃木色旧皮／
+墨暗硬边为主体，角部只有克制的氧化黄铜，四角略有手工差异；中央必须透明，
+不能包含纸面填充、行、文字、滚动条或假控件。
+
+`QUEST.LOG.REGION.BACKPLATE` 是低饱和暗橄榄公会目录条；
+`QUEST.LOG.ROW.BACKPLATE` 是更浅、更薄的暖赭卷宗条目。两者继承锁定图中
+粗厚、不完全规整的手绘边缘和不均匀磨损，但中央保持低对比以承载动态文字。
+它们各只生成一枚基础物件，normal／hover／pressed／disabled 由同一轮廓和
+Alpha 确定性派生；不得烘焙文字、等级、计数、墨记、书签、状态章、选择层、
+Button 命中区、滚动条、肖像或假图标槽。完整 V2 合同与两段自包含正文见
+[work/QUEST.LOG.LEFTPAGE.md](work/QUEST.LOG.LEFTPAGE.md)。
 
 `QUEST.LOG.REGION.TOGGLE` 使用同一枚深乌棕手绘三角墨箭头：collapsed 向右、
 expanded 向下。`QUEST.LOG.LIST.CHECK` 使用同一枚开放墨圈：untracked
@@ -97,8 +110,9 @@ provenance 位于
 偏差保留，不被改写为通过；它们不再阻塞已授权的逐格裁切、等比缩放、居中
 与 Alpha 清理。确定性 runtime 与 UV 记录在
 [QL-B1_RuntimeManifest_v1.json](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)；
-23 行真实密度预演与接入状态继续记录在 work。QL-B2／B3 以已接受的小尺寸
-视觉重量继续分别建立完整执行正文，不能从概念图或未接受候选直接裁切。
+23 行真实密度预演与接入状态作为 V1 历史继续记录在 work；V2 采用
+`18 × 18` 排版，并只对已接受的 QL-B1／B2 source 做确定性尺寸重导出。
+QL-B3 继续暂停，不能从概念图或未接受候选直接裁切。
 
 ## ScrollBar 与操作 Button
 

@@ -215,7 +215,7 @@ def main() -> None:
     quest_source = (aeui / "Modules" / "Quests.lua").read_text(
         encoding="utf-8"
     )
-    assert 'Quests.runtimeContract = "1.2"' in quest_source
+    assert 'Quests.runtimeContract = "1.4"' in quest_source
     assert "QuestLogShellV4" in quest_source
     assert "QuestLogDirectoryMarksV1" in quest_source
     assert "QuestLogSelectionBookmarkV1" in quest_source
@@ -224,6 +224,8 @@ def main() -> None:
     assert "IsQuestWatched" in quest_source
     assert "GetQuestLogSelection" in quest_source
     assert "CaptureAndHideNativeTextures" in quest_source
+    assert "SuppressNativeRowSelection" in quest_source
+    assert "ApplyDetailTextGeometry" in quest_source
     assert "ToggleDetail" in quest_source
     assert 'addon:RegisterModule("Quests", Quests)' in quest_source
     assert (aeui / "Media" / "Quests" / "QuestLogShellV4.tga").is_file()

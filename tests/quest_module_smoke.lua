@@ -91,6 +91,8 @@ function Object:CreateTexture(name, layer)
   return texture
 end
 function Object:GetNormalTexture() return self.normalTexture end
+function Object:GetHighlightTexture() return self.highlightTexture end
+function Object:GetPushedTexture() return self.pushedTexture end
 function Object:SetNormalTexture(value)
   if not self.normalTexture then
     self.normalTexture =
@@ -107,6 +109,10 @@ function CreateFrame(objectType, name, parent, template)
       NewObject(name and name .. "Text", frame, "FontString")
     frame.normalTexture =
       NewObject(name and name .. "NormalTexture", frame, "Texture")
+    frame.highlightTexture =
+      NewObject(name and name .. "Highlight", frame, "Texture")
+    frame.pushedTexture =
+      NewObject(name and name .. "PushedTexture", frame, "Texture")
     NewObject(name and name .. "Check", frame, "Texture")
   end
   return frame
@@ -139,6 +145,9 @@ end
 local detailUpdateCalls = 0
 function QuestLog_UpdateQuestDetails()
   detailUpdateCalls = detailUpdateCalls + 1
+  if QuestLogQuestDescription then
+    QuestLogQuestDescription:SetWidth(270)
+  end
 end
 
 local questLogUpdateCalls = 0
@@ -170,7 +179,15 @@ function GetQuestLogSelection()
 end
 function QuestLog_Update()
   questLogUpdateCalls = questLogUpdateCalls + 1
+  if QuestLogHighlightFrame then
+    QuestLogHighlightFrame:SetAlpha(1)
+    QuestLogHighlightFrame:Show()
+  end
   for index = 1, 23 do
+    local row = _G["QuestLogTitle" .. index]
+    if row and row.highlightTexture then
+      row.highlightTexture:SetAlpha(1)
+    end
     local check = _G["QuestLogTitle" .. index .. "Check"]
     if check then
       check:Show()
@@ -181,6 +198,8 @@ end
 QuestLogFrame = CreateFrame("Frame", "QuestLogFrame", UIParent)
 QuestLogFrame:SetWidth(512)
 QuestLogFrame:SetHeight(440)
+QuestLogHighlightFrame =
+  CreateFrame("Frame", "QuestLogHighlightFrame", QuestLogFrame)
 local nativeFrameTexture =
   QuestLogFrame:CreateTexture("QuestLogNativeTexture", "BACKGROUND")
 
@@ -190,6 +209,14 @@ QuestLogTitleText:SetText("任务日志")
 QuestLogQuestCount =
   NewObject("QuestLogQuestCount", QuestLogFrame, "FontString")
 QuestLogQuestCount:SetText("12/20")
+QuestLogCollapseAllButton =
+  CreateFrame("Button", "QuestLogCollapseAllButton", QuestLogFrame)
+QuestLogFrameLevelsCheckButton =
+  CreateFrame("CheckButton", "QuestLogFrameLevelsCheckButton", QuestLogFrame)
+QuestLogTrack =
+  CreateFrame("CheckButton", "QuestLogTrack", QuestLogFrame)
+QuestLogTrackTitle =
+  NewObject("QuestLogTrackTitle", QuestLogTrack, "FontString")
 QuestLogFrameCloseButton =
   CreateFrame("Button", "QuestLogFrameCloseButton", QuestLogFrame)
 
@@ -215,6 +242,32 @@ QuestLogDetailScrollChildFrame =
     QuestLogDetailScrollFrame
   )
 QuestLogDetailScrollChildFrame:SetHeight(120)
+MAX_OBJECTIVES = 3
+for _, name in ipairs({
+  "QuestLogQuestTitle",
+  "QuestLogObjectivesText",
+  "QuestLogDescriptionTitle",
+  "QuestLogQuestDescription",
+  "QuestLogRewardTitleText",
+  "QuestLogItemChooseText",
+  "QuestLogItemReceiveText",
+  "QuestLogRequiredMoneyText",
+  "QuestLogSpellLearnText",
+  "QuestLogPlayerTitleText",
+  "QuestLogHonorFrameHonorReceiveText",
+}) do
+  local text =
+    NewObject(name, QuestLogDetailScrollChildFrame, "FontString")
+  text:SetWidth(270)
+end
+for index = 1, MAX_OBJECTIVES do
+  local objective = NewObject(
+    "QuestLogObjective" .. index,
+    QuestLogDetailScrollChildFrame,
+    "FontString"
+  )
+  objective:SetWidth(260)
+end
 
 local detailOnHideCalls = 0
 local detailOnShowCalls = 0
@@ -313,7 +366,7 @@ AzerothExpeditionUI:Refresh()
 assert(QuestLogFrame:GetWidth() == 676, "quest shell width was not applied")
 assert(QuestLogFrame:GetHeight() == 464, "quest shell height was not applied")
 assert(
-  QuestLogFrame.aeuiQuestRuntimeContract == "1.2",
+  QuestLogFrame.aeuiQuestRuntimeContract == "1.4",
   "quest runtime contract was not recorded"
 )
 assert(QuestLogFrame.aeuiQuestShell, "quest shell texture was not created")
@@ -350,8 +403,59 @@ assert(QuestLogListScrollFrame:GetWidth() == 246)
 assert(QuestLogListScrollFrame:GetHeight() == 324)
 assert(QuestLogDetailScrollFrame:GetWidth() == 246)
 assert(QuestLogDetailScrollFrame:GetHeight() == 324)
-assert(QuestLogDetailScrollChildFrame:GetWidth() == 246)
+assert(QuestLogDetailScrollChildFrame:GetWidth() == 224)
 assert(QuestLogDetailScrollChildFrame:GetHeight() == 324)
+for _, name in ipairs({
+  "QuestLogQuestTitle",
+  "QuestLogObjectivesText",
+  "QuestLogDescriptionTitle",
+  "QuestLogQuestDescription",
+  "QuestLogRewardTitleText",
+  "QuestLogItemChooseText",
+  "QuestLogItemReceiveText",
+  "QuestLogRequiredMoneyText",
+  "QuestLogSpellLearnText",
+  "QuestLogPlayerTitleText",
+  "QuestLogHonorFrameHonorReceiveText",
+}) do
+  assert(
+    _G[name]:GetWidth() == 214,
+    name .. " exceeded the right-page text safe area"
+  )
+end
+for index = 1, MAX_OBJECTIVES do
+  assert(
+    _G["QuestLogObjective" .. index]:GetWidth() == 204,
+    "quest objective exceeded the inset text safe area"
+  )
+end
+local countPoint, countRelative, countRelativePoint, countX, countY =
+  QuestLogQuestCount:GetPoint()
+assert(
+  countPoint == "TOPRIGHT" and
+    countRelative == QuestLogFrame and
+    countRelativePoint == "TOPLEFT" and
+    countX == 310 and
+    countY == -52,
+  "quest count was not constrained to the left-page control row"
+)
+local collapsePoint, collapseRelative =
+  QuestLogCollapseAllButton:GetPoint()
+assert(
+  collapsePoint == "BOTTOMLEFT" and
+    collapseRelative == QuestLogListScrollFrame,
+  "collapse-all control was not anchored to the list safe area"
+)
+local trackPoint, trackRelative =
+  QuestLogTrack:GetPoint()
+assert(
+  trackPoint == "RIGHT" and trackRelative == QuestLogQuestCount,
+  "tracking control was not kept beside the quest count"
+)
+assert(
+  not QuestLogTrackTitle:IsShown(),
+  "native tracking label overlapped the quest count"
+)
 assert(
   QuestLogFrameAbandonButton:GetScript("OnClick") == abandonScript,
   "quest action behavior was replaced by the visual adapter"
@@ -366,6 +470,11 @@ for index = 1, 23 do
   assert(
     row:GetWidth() == 224 and row:GetHeight() == 15,
     "quest row geometry does not match QL-B0"
+  )
+  assert(
+    row.highlightTexture.alpha == 0 and
+      row.pushedTexture.alpha == 0,
+    "native row selection visual remained above QL-B2"
   )
   assert(
     row.aeuiQuestRegionToggle and
@@ -403,6 +512,10 @@ for index = 1, 23 do
     "quest text did not preserve the QL-B2 safe area"
   )
 end
+assert(
+  QuestLogHighlightFrame.alpha == 0,
+  "native full-row selection frame remained above QL-B2"
+)
 assert(
   QuestLogTitle1.aeuiQuestRegionToggle:IsShown() and
   QuestLogTitle1.aeuiQuestRegionToggle.texcoord[1] == 0.28125,
@@ -539,6 +652,11 @@ assert(
   "native QuestLog_Update was replaced"
 )
 assert(
+  QuestLogHighlightFrame.alpha == 0 and
+    QuestLogTitle2.highlightTexture.alpha == 0,
+  "native selection visuals returned after QuestLog_Update"
+)
+assert(
   QuestLogTitle2.aeuiQuestListCheck.texcoord[1] == 0.796875,
   "tracking-state refresh hook did not update the runtime sprite"
 )
@@ -607,6 +725,10 @@ QuestLogFrameExpandButton:GetScript("OnClick")()
 assert(QuestLogDetailScrollFrame:IsShown())
 assert(detailOnShowCalls == 1, "original detail OnShow script was not preserved")
 assert(detailUpdateCalls == 1, "detail content was not refreshed after reopening")
+assert(
+  QuestLogQuestDescription:GetWidth() == 214,
+  "detail refresh restored the clipped native text width"
+)
 
 EmptyQuestLogFrame:Hide()
 EmptyQuestLogFrame:Show()

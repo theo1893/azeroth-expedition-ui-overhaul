@@ -37,6 +37,9 @@ def main() -> None:
     status_work = (
         QUESTS / "work" / "QUEST.LOG.STATUS.md"
     ).read_text(encoding="utf-8")
+    leftpage_work = (
+        QUESTS / "work" / "QUEST.LOG.LEFTPAGE.md"
+    ).read_text(encoding="utf-8")
 
     require(
         submodules,
@@ -62,8 +65,12 @@ def main() -> None:
             "固定尺寸，不重复、不拉伸",
             "禁止在 SHELL 上烘焙",
             "`QUEST.LOG.REGION.TOGGLE`",
+            "`QUEST.LOG.LIST.INSET`",
+            "`QUEST.LOG.REGION.BACKPLATE`",
+            "`QUEST.LOG.ROW.BACKPLATE`",
             "`QUEST.LOG.LIST.ROW`",
             "`QuestLogTitle1..23`",
+            "`QuestLogTitle1..18`",
             "`QuestLogTitleButtonTemplate`",
             "`QUEST.LOG.LIST.CHECK`",
             "不是选择 Button",
@@ -79,6 +86,10 @@ def main() -> None:
             "`QUEST.LOG.STATE.SEAL`",
             "`224 × 15 UI px`",
             "`14px` 纵向步进",
+            "`QUESTS_DISPLAYED = 18`",
+            "`224 × 18 UI px`",
+            "`18px`",
+            "work/QUEST.LOG.LEFTPAGE.md",
             "`QL-B1`",
             "`QL-B2`",
             "`QL-B3`",
@@ -180,6 +191,11 @@ def main() -> None:
             "`GUTTER.*` 仅保留逻辑",
             "work/QUEST.LOG.GUTTER.md",
             "左页目录状态",
+            "`QUEST.LOG.LIST.INSET`",
+            "`QUEST.LOG.REGION.BACKPLATE`",
+            "`QUEST.LOG.ROW.BACKPLATE`",
+            "`18 × 18`",
+            "work/QUEST.LOG.LEFTPAGE.md",
             "work/QUEST.LOG.DIRECTORY.md",
             "work/QUEST.LOG.SELECTION.md",
             "`QUEST.LOG.TIMER.BADGE`",
@@ -220,6 +236,12 @@ def main() -> None:
             "QL-A1_RuntimeManifest_v1.json",
             "1b6b21cd3db74202051a2ceb8b5ba1d91ca7beb636accf247603edbc3cfeb40e",
             "`QL-B1 V1`",
+            "`QL-B0 V2`",
+            "`prompt-authorized / P3`",
+            "work/QUEST.LOG.LEFTPAGE.md",
+            "`QUESTS_DISPLAYED = 18`",
+            "`224 × 18px`",
+            "最坏 `10`",
             "`runtime-exported / P5`",
             "`5/5`",
             "`15px` 行高／`14px` 步进",
@@ -243,7 +265,7 @@ def main() -> None:
             "bab9e8bf6961b743d9591bb148878e9eadbbbbd99eac9a183446bf9c81a770b4",
             "2cd8de894c389f5c7eaf5c5d5388a20b363fa414022dc4dac57eacda1fa79029",
             "build_quest_log_selection_bookmark_v1.py",
-            "`P3 repair-prepared`",
+            "`P3 repair-budget-exhausted`",
             "work/QUEST.LOG.STATUS.md",
             "QL-B3-A／B／C V1",
             "最坏 `15`",
@@ -258,6 +280,52 @@ def main() -> None:
         ),
         "quest detailed progress",
     )
+
+    require(
+        leftpage_work,
+        (
+            "Quest Log 左页卷宗目录 V2",
+            "`QL-B0-A V2`",
+            "`QL-B0-B V2`",
+            "`prompt-authorized`",
+            "项目阶段：`P3`",
+            "授权正文状态：`production`",
+            "用户授权：`2026-07-30`",
+            "当前实际生图：A `0/5`；B `0/5`",
+            "最坏总预算：`10`",
+            "@openai/codex@0.143.0",
+            "任务详情面板_视觉基准_v1.png",
+            "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
+            "QuestLogBookShell_Master_v1.png",
+            "91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5",
+            "`QUEST.LOG.LIST.INSET`",
+            "`QUEST.LOG.REGION.BACKPLATE`",
+            "`QUEST.LOG.ROW.BACKPLATE`",
+            "`QUESTS_DISPLAYED = 18`",
+            "`QuestLogTitle1..18`",
+            "`262 × 340 UI px`",
+            "`246 × 324 UI px`",
+            "`224 × 18 UI px`",
+            "`x=250..774, y=172..852`",
+            "`x=112..912, y=272..336`",
+            "`x=112..912, y=688..752`",
+            "`normal／hover／pressed／disabled`",
+            "`512 × 128`",
+            "不生成假图标槽",
+            "## 生产正文完整性预检",
+            "结论：pass",
+            "## 最终执行正文 — QL-B0-A V2",
+            "## 最终执行正文 — QL-B0-B V2",
+            "## Repair envelope 与计数",
+            "`candidate-rejected / repair-budget-exhausted`",
+            "## 下一门禁",
+            "每段最多 5 次，最坏合计 10 次",
+        ),
+        "quest left-page V2 prompt contract",
+    )
+    assert "/Users/" not in leftpage_work
+    assert "codex-clipboard-" not in leftpage_work
+    assert leftpage_work.count("## 最终执行正文 — QL-B0-") == 2
 
     require(
         work,
@@ -950,7 +1018,7 @@ def main() -> None:
     require(
         quest_adapter,
         (
-            'Quests.runtimeContract = "1.2"',
+            'Quests.runtimeContract = "1.4"',
             "QuestLogShellV4",
             "QuestLogDirectoryMarksV1",
             "QuestLogSelectionBookmarkV1",
@@ -966,6 +1034,10 @@ def main() -> None:
             "LXGWWenKaiGB-Medium.ttf",
             "NotoSerifSC-SemiBold.ttf",
             "CaptureAndHideNativeTextures",
+            "SuppressNativeRowSelection",
+            "ApplyDetailTextGeometry",
+            "QuestLogHighlightFrame",
+            "LAYOUT.detail.contentWidth",
             "QuestLogFrameExpandButton",
             "QuestLog_UpdateQuestDetails",
             "addon:RegisterModule(\"Quests\", Quests)",
@@ -974,6 +1046,10 @@ def main() -> None:
     )
     assert "EnableMouse" not in quest_adapter
     assert "QuestLogFrame:SetWidth(340)" not in quest_adapter
+    assert "..." not in quest_adapter, (
+        "quest runtime must remain parseable by Turtle WoW's Lua 5.0; "
+        "use fixed script arguments instead of vararg forwarding"
+    )
 
     assert not (ROOT / "prompts" / "quests").exists()
     print("quest design contract test passed")
