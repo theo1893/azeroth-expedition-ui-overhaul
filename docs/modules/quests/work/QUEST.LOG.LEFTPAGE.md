@@ -10,14 +10,16 @@
 - 当前实际生图：A `0/5`；B `0/5`。
 - 单段预算：最多 `5` 次实际生成／编辑。
 - 最坏总预算：`10` 次实际生成／编辑。
-- 流程错误：A `1`；B `0`，与实际生图次数分开记录。
+- 流程错误：A `2`；B `0`，与实际生图次数分开记录。
 - 固定执行器：`.codex/skills/imagegen-0-143-0/SKILL.md`，
   `@openai/codex@0.143.0`。
 - 用户授权：`2026-07-30` 明确授权 `QL-B0-A V2` 与 `QL-B0-B V2`，
   允许分别上传固定 SHA 的 Image 1／Image 2；每段最多 `5` 次，最坏合计
   `10` 次。
-- 当前门禁：先把本授权版本提交进 Git，然后执行 A attempt 1；A 内部通过
-  或预算耗尽后再执行 B。任何候选都只到 P3，不自动晋级 source 或 runtime。
+- 当前门禁：A attempt 1 尚未真正触发 provider；先用已经落入仓库忽略目录的
+  固定版本 npm cache，通过带持久 stdout／stderr 的隐藏后台执行器离线重试。
+  A 内部通过或预算耗尽后再执行 B。任何候选都只到 P3，不自动晋级 source
+  或 runtime。
 
 ## 为什么建立 V2
 
@@ -251,6 +253,7 @@ Image 2 `QuestLogBookShell_Master_v1.png`
 | 流程错误 | 段／正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
 | E1 | A／`QL-B0-A V2`／`8e934f6` | fixed CLI 未启动；无 child session／result | `npx` 写入用户 npm cache 时返回 `EPERM`；无图片、无 provider result、无生成证据 | 保持授权正文与 Image 1／2 不变；改用 `generated/` 下独立 npm cache，并以获准网络环境重试 | `process-error`；不占生图额度，A 仍为 `0/5` |
+| E2 | A／`QL-B0-A V2`／`8e934f6` | fixed CLI 未启动；无 child session／result | 独立 npm cache 下载 `@openai/codex@0.143.0` 时连接被重置，npm 日志为 `ECONNRESET`；固定包未完成安装，空工作目录中无图片，进程管理记录与 session 中均无 child／provider 证据 | 保持授权正文与 Image 1／2 不变；复用已下载进独立 cache 的固定包内容，以持久 stdout／stderr 的隐藏后台执行器完成安装及执行，避免外层短超时截断 | `process-error`；不占生图额度，A 仍为 `0/5` |
 
 ## 下一门禁
 
