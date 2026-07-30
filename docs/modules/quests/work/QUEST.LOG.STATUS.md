@@ -21,7 +21,7 @@
   - QL-B3-A：`0/5`
   - QL-B3-B：`0/5`
   - QL-B3-C：`0/5`
-- 流程错误：`1`；无候选且无 provider 生成证据时单列，不占上述额度。
+- 流程错误：`2`；无候选且无 provider 生成证据时单列，不占上述额度。
 - 多执行正文最坏实际生图数：`15`。
 - 用户授权：`2026-07-30` 明确授权 `QL-B3-A/B/C V1`；允许每段上传固定
   SHA 的 Image 1／2，允许同一段前次输出仅在冻结边界内作为 edit 输入；
@@ -419,12 +419,14 @@ badge、霓虹、玻璃、镜面黄金、暗黑 3 尖刺黑铁、骷髅、恶魔
 | 流程错误 | 段／正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
 | E1 | A／`QL-B3-A V1`／`923c6f0` | local fixed-executor launch | `npx` 请求 npm registry 时返回 `EPERM`；无输出文件、无 provider result、无生成证据 | 保持正文与 Image 1／2 不变，改在获准网络／用户 npm cache 环境重试 | 不占生图额度 |
+| E2 | A／`QL-B3-A V1`／`3dfc92e` | fixed CLI argument transport | 固定 CLI 返回 `Reading prompt from stdin / No prompt provided via stdin`；无输出文件、无 provider result、无生成证据 | `codex exec -i <FILE>...` 的 image 参数为 variadic；保持正文与输入不变，在两张 image 参数后增加 `--` 终止选项并传入同一 prompt | 不占生图额度 |
 
 ## 执行记录
 
 - 当前没有 ImageGen 调用、候选、provider result、source 或 runtime。
-- 用户授权范围已经冻结（commit `265503a`）。A 首次启动发生流程错误 E1：
-  固定 CLI 尚未进入 provider，无候选或 result；三段实际生图仍均为 `0/5`。
+- 用户授权范围已经冻结（commit `265503a`）。A 启动先后发生流程错误
+  E1／E2；固定 CLI 均尚未进入 provider，无候选或 result；三段实际生图
+  仍均为 `0/5`。
 
 ## 审查记录
 
