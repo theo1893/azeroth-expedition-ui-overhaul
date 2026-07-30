@@ -83,3 +83,9 @@ On Windows PowerShell, pass the complete multiline request through UTF-8 stdin a
 argument list with `-- -`. Use `npx.cmd`, not `npx.ps1`; do not pass the multiline request
 as a `npx.cmd` argument because `cmd.exe` can truncate it at the first newline. The full
 PowerShell pattern is maintained in the parent `SKILL.md`.
+
+For a bounded parent workflow, count only a request that returns an image or provider
+evidence that built-in `image_gen` actually ran. A generated but unusable candidate counts;
+a launch, transport, recursion, permission, upload, connection, or save error with no
+generation evidence is a separately recorded process error and does not consume the image
+budget.

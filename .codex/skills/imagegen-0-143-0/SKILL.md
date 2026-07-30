@@ -32,6 +32,16 @@ Do not call the current session's built-in `image_gen` tool for this skill. Dele
 8. Report the final usable output path. If read-only recovery was needed, report the
    recovered destination instead of the cache path alone.
 
+## Counting semantics for bounded parent workflows
+
+Launching this wrapper or child CLI is not by itself an ImageGen generation. A parent
+workflow counts one actual generation/edit only when this child returns an image or a
+provider result proves that its built-in `image_gen` job ran. An unusable generated image
+still counts. Directory, dependency, CLI, sandbox, wrapper-recursion, prompt-transport,
+upload, connection, or save-path errors with no image and no provider-generation evidence
+must be reported as process errors. A non-generating process error does not consume the
+parent's image budget.
+
 Run the command directly:
 
 ```bash
@@ -115,11 +125,13 @@ try {
 ```
 
 Confirm the fixed child's printed `user` block contains the complete authorized prompt,
-not only its first line. Treat a truncated transport as an internal failed attempt; record
-its session/result, do not promote its output, and retry only with the same authorized body.
-Also confirm that the child does not launch another fixed Codex process. Any observed
-recursive `npx --package=@openai/codex@0.143.0 ... '$imagegen …'` invocation counts as
-another fixed-executor call and must be interrupted and recorded.
+not only its first line. If truncation occurs before any image/provider result, record a
+non-counting process error and retry only with the same authorized body after fixing the
+transport. If a truncated prompt still generates an image/result, that unusable candidate
+counts as an actual generation. Also confirm that the child does not launch another fixed
+Codex process. Interrupt and record any observed recursive
+`npx --package=@openai/codex@0.143.0 ... '$imagegen …'` execution; it counts only if it
+actually returns an image or provider-generation evidence.
 
 ## Prompt Preservation
 

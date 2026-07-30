@@ -55,16 +55,19 @@ preview 或 revised prompt 分别建立永久 Markdown。
 
 ## 五次自主修复同步
 
-- 一个用户明确授权的执行正文最多调用固定 ImageGen `5` 次，含首次。多段
-  独立执行正文必须在授权前分别列出预算和最坏总调用数。
-- 每次调用使用独立的 ignored attempt 路径，例如
+- 一个用户明确授权的执行正文最多产生固定 ImageGen `5` 次实际生图／修图，
+  含首次。多段独立执行正文必须在授权前分别列出预算和最坏实际生图数。
+- 每次实际生图使用独立的 ignored attempt 路径，例如
   `generated/<module>/<batch>/<version>/attempt-01/`；不得覆盖前次 raw、
   candidate、Alpha 中间图或重组预演。
 - 第 1 次使用已提交的授权正文。第 2–5 次只能使用同一修复边界内的完整
   `.rN` 正文；提交中同时保存前次失败记录和下次执行正文。
-- work 的循环表必须记录尝试号、正文／commit、session／result、输出 SHA、
-  第一失败门禁、保留区域、edit／regenerate 决定和结论。执行器调用失败也
-  占用次数并记录。
+- work 的循环表必须记录实际生图序号、正文／commit、session／result、
+  输出 SHA、第一失败门禁、保留区域、edit／regenerate 决定和结论。
+- 没有候选图且没有 provider 生成证据的目录、权限、CLI、递归、传输、上传、
+  连接或落盘错误进入独立流程错误表，不占实际生图次数；记录错误证据与
+  针对性修复后，以同一已提交正文重试。同一错误修复一次后仍重复则暂停诊断，
+  不得无限重试。
 - 中间失败只更新 work；模块 `PROGRESS.md` 在内部通过、第五次耗尽或出现
   需要新授权的边界阻塞时再同步，避免复制五份流水。
 - 内部通过只达到 `candidate-reviewed / P3`。第五次仍失败才达到
@@ -76,7 +79,7 @@ preview 或 revised prompt 分别建立永久 Markdown。
 | 操作 | 必须同步 | 禁止 |
 |---|---|---|
 | `prepare` | 组件 work、自包含正文完整性预检；必要时 `SUBMODULES.md` 与模块进度 | 写 raw、source 或 runtime |
-| `generate` | 已提交的授权正文／`.rN` 修复正文；work 执行记录 | 超过五次调用；commit raw／失败图／预演 |
+| `generate` | 已提交的授权正文／`.rN` 修复正文；work 实际生图与流程错误记录 | 超过五次实际生图；commit raw／失败图／预演 |
 | `review` | 每次尝试的 work 审查证据；循环终态同步模块进度 | 用像素指标替代视觉结论 |
 | `revise` | 同一 work 的尝试表、完整 `.rN` 正文与边界复核 | 丢失旧版本 Git 证据；用修复名义改变合同 |
 | `reject` | work 的版本、原因、日期、主体；模块进度 | 创建 source 或 runtime |
@@ -132,8 +135,9 @@ tests 中；`work/` 不保留空占位文件。
 ## 提交与同步
 
 1. 开始前检查工作树并保留无关修改。
-2. 每次调用前提交当前完整执行正文；循环内失败只更新同一 work，循环终态再
-   同步模块进度、manifest 或实现。
+2. 每次实际生图前提交当前完整执行正文；无候选流程错误仍写入同一 work，
+   修复后以同一正文重试；循环内候选失败只更新同一 work，循环终态再同步
+   模块进度、manifest 或实现。
 3. 确认 `generated/` 仍被忽略。
 4. 运行 `git diff --check`、文档拓扑／链接测试、相关合同测试与 Lua smoke。
 5. 提交信息指出模块、批次和状态变化。

@@ -220,9 +220,10 @@ def main() -> None:
             "e734bbf59da00f7fbc9c75649d33eaf635b5a0c19e1737128dfdce0db58eee8f",
             "c0e5bdffc5ce09872c0da0709a3269245ef424f4dde03335d59ded335dc5fdd5",
             "`QL-B2 V1`",
-            "`P2 production-draft`",
+            "`P3 prompt-authorized`",
             "work/QUEST.LOG.SELECTION.md",
-            "固定执行器 `0/5`",
+            "实际生图 `0/5`",
+            "流程错误 `0`",
             "Quest Tracker",
             "外部 provider `P0`",
             "NPC Quest／Gossip",
@@ -371,10 +372,12 @@ def main() -> None:
         selection_work,
         (
             "版本：`QL-B2 V1`",
-            "子状态：`prompt-draft`",
-            "项目阶段：`P2`",
+            "子状态：`prompt-authorized`",
+            "项目阶段：`P3`",
             "固定执行器：`imagegen-0-143-0`",
-            "当前尝试：`0/5`",
+            "当前实际生图：`0/5`",
+            "流程错误：`0`",
+            "明确授权 `QL-B2 V1`",
             "`QUEST.LOG.SELECTION`",
             "任务详情面板_视觉基准_v1.png",
             "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
@@ -409,13 +412,14 @@ def main() -> None:
             "## 自主修复循环",
             "最多 `5` 次",
             "同一循环的前次输出",
-            "production-draft / P2",
+            "prompt-authorized / P3",
         ),
         "active QL-B2 work",
     )
     assert "/Users/" not in selection_work
     assert selection_work.count("## 最终执行正文") == 1
-    assert "不构成生图授权" in selection_work
+    assert "流程错误单列，不占额度" in selection_work
+    assert "不占生图额度" in selection_work
 
     directory_source_path = (
         ROOT

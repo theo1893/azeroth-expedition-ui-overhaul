@@ -1,6 +1,6 @@
 ---
 name: run-aeui-asset-workflow
-description: "Run the repository-specific Azeroth Expedition UI component-asset workflow with locked-baseline prompt provenance, self-contained ambiguity-audited production prompts, compact per-component work files, art-language inheritance, and a bounded five-call autonomous generate-review-repair loop, from component contract and fixed ImageGen 0.143.0 execution through explicit acceptance or rejection, source promotion, runtime export, module-progress synchronization, target-client validation, and post-P6 work-file cleanup. Use when generating, editing, reviewing, accepting, rejecting, promoting, exporting, validating, closing, or cleaning an AEUI component, or when the user asks to continue the next UI asset step."
+description: "Run the repository-specific Azeroth Expedition UI component-asset workflow with locked-baseline prompt provenance, self-contained ambiguity-audited production prompts, compact per-component work files, art-language inheritance, and a bounded five-actual-generation autonomous generate-review-repair loop whose workflow errors are tracked separately, from component contract and fixed ImageGen 0.143.0 execution through explicit acceptance or rejection, source promotion, runtime export, module-progress synchronization, target-client validation, and post-P6 work-file cleanup. Use when generating, editing, reviewing, accepting, rejecting, promoting, exporting, validating, closing, or cleaning an AEUI component, or when the user asks to continue the next UI asset step."
 ---
 
 # AEUI Asset Workflow
@@ -136,7 +136,7 @@ Infer only the narrowest operation authorized by the user:
 | User intent | Operation | Highest allowed result |
 |---|---|---|
 | define, split, plan, write prompt | `prepare` | production draft |
-| generate, edit, regenerate | `generate` | internally reviewed candidate at `P3` after at most five fixed-executor calls |
+| generate, edit, regenerate | `generate` | internally reviewed candidate at `P3` after at most five actual ImageGen generations or edits |
 | assess, inspect, compare, review | `review` | verdict and review evidence |
 | correct, revise, try again | `revise` | new versioned `P3` candidate |
 | reject, abandon this version | `reject` | recorded rejection; no source |
@@ -176,9 +176,12 @@ operation.
 10. Do not mark `P6` without evidence from Turtle WoW `1.18.1`.
 11. Do not remove intermediate or superseded files before `P6`, a verified final keep set,
    an exact cleanup inventory, and explicit user approval.
-12. Never invoke the fixed executor more than five times for one authorized execution
-    body. The first generation is attempt 1; every invocation counts, including transport
-    failures and unusable outputs.
+12. Never consume more than five actual ImageGen generations or edits for one authorized
+    execution body. Count an attempt only when the fixed executor returns an image or a
+    provider result proves that generation/editing actually ran. An unusable generated
+    candidate still counts. A workflow, transport, wrapper, permission, prompt-transfer,
+    upload, or save-path error with no generated image and no provider-generation evidence
+    is recorded separately and does not consume the `0/5` image budget.
 13. Autonomous repair may change only the repairable wording, edit/regenerate choice, and
     use of an earlier output from the same loop. It may not change component identity,
     object/state count, authority order, reference roles, canvas/runtime contract,
@@ -202,9 +205,9 @@ inspection still in scope. Do not create plausible-looking placeholder controls.
    explicitly; never call an `assets/source/` derivative the highest visual authority.
 6. Run the self-contained prompt completeness audit above. Record its compact result in
    the work file and return to the component contract if any required value is unknown.
-7. Record the immutable repair envelope and `5`-call budget. For a batch with multiple
-   independent execution bodies, state each body's budget and the worst-case aggregate
-   call count.
+7. Record the immutable repair envelope and `5` actual-generation budget. For a batch
+   with multiple independent execution bodies, state each body's budget and the
+   worst-case aggregate actual-generation count. Process errors use a separate ledger.
 8. Mark it `production-draft` and show the user the substantive changes. Wait for
    authorization before generation.
 
@@ -219,7 +222,7 @@ to runtime ownership, interaction state, z-order, and independent scaling behavi
    version.
 3. Freeze the repair envelope: component IDs, object/state inventory, visual authority,
    reference roles, canvas/runtime geometry, Alpha strategy, forbidden baked content,
-   permitted edit inputs, and the maximum of five fixed-executor invocations.
+   permitted edit inputs, and the maximum of five actual ImageGen generations/edits.
 4. Use only `../imagegen-0-143-0/SKILL.md`. Do not call the current session's built-in
    image-generation tool.
 5. Pass attempt 1's approved execution body verbatim. Put absolute input paths,
@@ -236,21 +239,36 @@ to runtime ownership, interaction state, z-order, and independent scaling behavi
 
 ## Run the bounded autonomous repair loop
 
-Use one budget of at most `5` fixed ImageGen invocations for each explicitly authorized
-execution body. Attempt 1 is the initial generation, so at most four derived repair
-attempts remain. Increment the counter immediately before every invocation; a failed
-transport, truncated prompt, executor error, or unusable image still consumes that
-attempt. Do not grant “free” retries.
+Use one budget of at most `5` actual ImageGen generations/edits for each explicitly
+authorized execution body. Attempt 1 is the initial generated candidate, so at most four
+derived image repairs remain.
 
-After every output:
+Count a generation attempt only when at least one of these is true:
+
+- the fixed child returns a generated/edited image;
+- the fixed child returns a provider result ID or other direct evidence that the image
+  generation/edit job actually ran.
+
+An unusable, semantically wrong, malformed, wrong-sized, or prompt-truncated image still
+counts because an image was generated. By contrast, directory preparation, dependency
+bootstrap, CLI launch, sandbox permission, wrapper recursion interrupted before any
+provider result, prompt transport rejected before generation, input upload, connection,
+or save-path errors with no image and no provider-generation evidence are process errors.
+Record them in a separate process-error ledger, repair the transport, and retry the same
+committed execution body without changing the `0/5` image counter. If evidence is
+ambiguous, stop and establish whether generation ran before another request. Do not use
+non-counting errors as permission for blind infinite retries: the same process error
+repeating after one targeted repair requires diagnosis and a pause before continuing.
+
+After every countable output:
 
 1. Perform the complete review checklist in its required order, including direct visual
    inspection and the mandatory real-layout simulation described below.
 2. If every internal gate passes, stop the loop immediately, record
    `candidate-reviewed / P3`, and present the candidate for user review. Internal passage
    is not user acceptance and cannot create tracked source or runtime media.
-3. If a gate fails and fewer than five invocations have occurred, record the first failed
-   gate, observable evidence, correct regions to preserve, and the next repair decision.
+3. If a gate fails and fewer than five actual generations have occurred, record the first
+   failed gate, observable evidence, correct regions to preserve, and the next repair decision.
    Choose a scoped edit only when preserving the correct regions is intentional;
    otherwise regenerate from the locked authorities.
 4. Write a complete, self-contained derived repair body labeled
@@ -265,13 +283,14 @@ After every output:
    direction, canvas contract, or other envelope change, stop before invoking it and
    return to `prompt-draft` for explicit authorization; the remaining call budget does
    not broaden authority.
-7. If attempt 5 still fails any internal gate, stop with
+7. If actual generated candidate 5 still fails any internal gate, stop with
    `candidate-rejected / P3 / repair-budget-exhausted`, preserve all five attempt records,
    and ask the user to review the failure evidence and choose the next direction.
 
 Deterministic crop, Alpha cleanup, metrics, and preview assembly do not consume ImageGen
-calls, but they do not reset the counter and may never conceal a semantic, anatomical,
-perspective, component-identity, or art-language failure.
+generations. Process errors also do not consume the image budget, but both remain recorded
+and neither resets the counter. No deterministic or process recovery may conceal a
+semantic, anatomical, perspective, component-identity, or art-language failure.
 
 ## Review
 
@@ -385,8 +404,8 @@ cleanup rules in [repository-sync.md](references/repository-sync.md), then:
 End each operation with:
 
 - the exact component and prompt version;
-- fixed-executor attempts used, remaining budget, and whether the loop passed, exhausted,
-  or stopped on an authority blocker;
+- actual ImageGen generations used, remaining image budget, separately recorded process
+  errors, and whether the loop passed, exhausted, or stopped on an authority blocker;
 - the current workflow substate and project phase;
 - the verdict or artifact paths;
 - the first remaining gate;

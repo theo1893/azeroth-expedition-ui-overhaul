@@ -10,9 +10,9 @@
 |---|---:|---|---|---|
 | `contract-draft` | `P0–P2` | 真实对象映射尚未完整 | 模块 `SUBMODULES.md`、`PROGRESS.md`、组件 work | 补齐组件合同 |
 | `prompt-draft` | `P1–P2` | 完整合同；锁定图到基线 Prompt 的 provenance；美术继承与冲突表；自包含生产正文完整性预检通过；`production-draft` | 单一组件 work、模块进度 | 用户授权具体版本 |
-| `prompt-authorized` | `P3` | 用户看到并明确确认具体版本执行正文、不可变修复边界与五次调用预算；授权版本已提交 | work、模块进度 | 固定执行器第 1 次生图 |
+| `prompt-authorized` | `P3` | 用户看到并明确确认具体版本执行正文、不可变修复边界与五次实际生图预算；授权版本已提交 | work、模块进度 | 固定执行器第 1 次实际生图 |
 | `candidate-raw` | `P3` | 尝试编号、raw 路径、执行器与会话记录 | 被忽略的 `generated/`；work 执行记录 | 本次完整内部审查 |
-| `repair-prepared` | `P3` | 前次失败门禁、保留区域、完整 `.rN` 修复正文、边界复核、累计调用少于 5 次 | 同一 work 与 Git 历史 | 固定执行器下一次调用 |
+| `repair-prepared` | `P3` | 前次失败门禁、保留区域、完整 `.rN` 修复正文、边界复核、累计实际生图少于 5 次 | 同一 work 与 Git 历史 | 固定执行器下一次实际生图 |
 | `candidate-reviewed` | `P3` | 语义、结构、风格、装配和技术证据；`100%` runtime 尺寸、真实对象数量、现实信息密度和当前 accepted/runtime UI 的真实排版预演 | 被忽略的预演；review 记录 | 用户视觉复审 |
 | `candidate-rejected` | 不晋级 | 用户否决，或第 5 次内部审查仍失败；日期与具体失败门禁 | work 尝试摘要、模块进度 | 用户审核后新版本或停止 |
 | `source-accepted` | `P4` | 用户明确接受具体候选 | `assets/source/`、manifest | runtime 合同与导出 |
@@ -50,15 +50,19 @@ candidate-reviewed → user rejection → candidate-rejected → new prompt vers
 runtime-exported → static/game failure → corrected exporter/runtime, remain P4/P5
 ```
 
-一个明确授权的执行正文最多进入固定执行器 `5` 次，含首次生成。计数在调用
-前递增；传输失败、提示词截断、执行器错误和不可用输出同样占用一次。任何
-尝试通过全部内部门禁后立即结束循环，不消耗剩余次数。
+一个明确授权的执行正文最多产生 `5` 次实际 ImageGen 生图／修图，含首次。
+只有返回候选图，或有 provider result 等直接证据证明生成确已执行时，才计入
+`0/5`；不可用、错误尺寸或语义失败的生成图仍计数。没有生成图且没有 provider
+生成证据的目录、权限、CLI、递归、传输、上传、连接或落盘错误单独记为流程
+错误，不占生图额度，并以同一已提交正文重试。若是否已生成无法判定，先停止
+核实，不能继续盲调用；同一流程错误在一次针对性修复后再次出现时先暂停诊断，
+不得借“不计数”无限重试。任何候选通过全部内部门禁后立即结束循环。
 
 ## 不可跨越的门禁
 
 - `prompt-draft → prompt-authorized`：必须先验证锁定视觉基准、对应原始提示词、
   组件级继承条款、权威冲突结论和自包含生产正文完整性预检全部通过，再由
-  用户看过执行正文后授权具体提示词版本、不可变修复边界和五次调用预算。
+  用户看过执行正文后授权具体提示词版本、不可变修复边界和五次实际生图预算。
   完整性按适用约束判定，不按字数判定；“继续”或“下一步”本身不构成生图
   授权。
 - `candidate-raw → repair-prepared`：只允许在同一授权边界内修正。新增对象、
@@ -92,6 +96,7 @@ runtime-exported → static/game failure → corrected exporter/runtime, remain 
    外部输入时，结束循环并创建需用户授权的新主版本或次版本。
 4. 每次内部失败都要记录固定执行器会话、结果 ID、输出 SHA、第一失败门禁、
    保留区域、修复决定，以及执行器实际报告的 revised prompt（若存在）。
+   无候选的流程错误另表记录，不创建 `.rN`，也不占实际生图序号。
 5. 第 5 次仍失败时才把内部循环标为
    `candidate-rejected / repair-budget-exhausted` 并等待用户审核；当前树
    不为每次尝试保留独立 Markdown。
