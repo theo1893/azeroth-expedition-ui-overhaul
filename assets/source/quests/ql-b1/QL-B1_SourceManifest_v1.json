@@ -100,7 +100,7 @@
     "acceptance_override": "The user explicitly accepted the V1.r3 runtime visual after reviewing the runtime-size simulation. Pixel-identical arrow rotation, an identical outer circle, source safe-box occupancy and exact raw chroma-key green are no longer source-acceptance blockers. They remain recorded as historical production misses and are not represented as passed gates."
   },
   "export_contract": {
-    "status": "authorized",
+    "status": "runtime-exported",
     "operation": "fixed source-cell extraction, visible-alpha-bounds crop, proportional LANCZOS scale, centering in fixed runtime cells, transparent atlas assembly and TGA conversion",
     "source_grid": [
       2,
@@ -138,5 +138,20 @@
       "change quest row interaction, tracking state or saved data"
     ]
   },
-  "runtime_exports": []
+  "runtime_exports": [
+    {
+      "contract": "QL-B1 V1.r3 / 1.0",
+      "manifest": "QL-B1_RuntimeManifest_v1.json",
+      "file": "addon/AzerothExpeditionUI/Media/Quests/QuestLogDirectoryMarksV1.tga",
+      "sha256": "e734bbf59da00f7fbc9c75649d33eaf635b5a0c19e1737128dfdce0db58eee8f",
+      "atlas_size": [
+        64,
+        16
+      ],
+      "cell_size": [
+        16,
+        16
+      ]
+    }
+  ]
 }

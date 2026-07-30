@@ -201,12 +201,16 @@ def main() -> None:
             "QL-A1_RuntimeManifest_v1.json",
             "1b6b21cd3db74202051a2ceb8b5ba1d91ca7beb636accf247603edbc3cfeb40e",
             "`QL-B1 V1`",
-            "`source-accepted / P4`",
+            "`runtime-exported / P5`",
             "`5/5`",
             "`15px` 行高／`14px` 步进",
             "work/QUEST.LOG.DIRECTORY.md",
             "QuestLogDirectoryMarks_Master_v1.png",
             "QL-B1_SourceManifest_v1.json",
+            "QL-B1_RuntimeManifest_v1.json",
+            "QuestLogDirectoryMarksV1.tga",
+            "e734bbf59da00f7fbc9c75649d33eaf635b5a0c19e1737128dfdce0db58eee8f",
+            "c0e5bdffc5ce09872c0da0709a3269245ef424f4dde03335d59ded335dc5fdd5",
             "Quest Tracker",
             "外部 provider `P0`",
             "NPC Quest／Gossip",
@@ -284,8 +288,8 @@ def main() -> None:
         directory_work,
         (
             "版本：`QL-B1 V1`",
-            "子状态：`source-accepted`",
-            "项目阶段：`P4`",
+            "子状态：`runtime-exported`",
+            "项目阶段：`P5`",
             "固定执行器：`imagegen-0-143-0`",
             "当前尝试：`5/5`",
             "QUEST.LOG.REGION.TOGGLE",
@@ -330,13 +334,18 @@ def main() -> None:
             "## 自主修复循环",
             "最多 `5` 次",
             "固定 SHA 的 Image 1／Image 2",
-            "source-accepted / P4",
+            "runtime-exported / P5",
             "QL-B1 V1.r3",
             "019fb1e8-db9a-7010-86d1-98008548e4d6",
             "73f719d44a55b01d0ef8bc6f2c07343679a10b155d612941ca72d16869527596",
             "719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44",
             "QuestLogDirectoryMarks_Master_v1.png",
             "QL-B1_SourceManifest_v1.json",
+            "QL-B1_RuntimeManifest_v1.json",
+            "QuestLogDirectoryMarksV1.tga",
+            "build_quest_log_directory_marks_v1.py",
+            "`676 × 464`／100% runtime",
+            "全部 23 个行槽",
             "确定性逐格裁切、等比缩放、居中与 Alpha",
         ),
         "active QL-B1 work",
@@ -379,12 +388,80 @@ def main() -> None:
     assert directory_manifest["review"]["prior_internal_result"] == (
         "candidate-rejected / repair-budget-exhausted"
     )
-    assert directory_manifest["export_contract"]["status"] == "authorized"
+    assert directory_manifest["export_contract"]["status"] == (
+        "runtime-exported"
+    )
     assert directory_manifest["export_contract"]["runtime_atlas_size"] == [
         64,
         16,
     ]
-    assert directory_manifest["runtime_exports"] == []
+    assert len(directory_manifest["runtime_exports"]) == 1
+    assert directory_manifest["runtime_exports"][0]["sha256"] == (
+        "e734bbf59da00f7fbc9c75649d33eaf635b5a0c19e1737128dfdce0db58eee8f"
+    )
+
+    directory_runtime_manifest_path = directory_source_path.with_name(
+        "QL-B1_RuntimeManifest_v1.json"
+    )
+    directory_runtime_manifest = json.loads(
+        directory_runtime_manifest_path.read_text(encoding="utf-8")
+    )
+    assert directory_runtime_manifest["status"] == "runtime-exported"
+    assert directory_runtime_manifest["runtime_contract"] == "1.0"
+    assert directory_runtime_manifest["transform"]["atlas_size"] == [64, 16]
+    assert directory_runtime_manifest["transform"]["cell_size"] == [16, 16]
+    assert directory_runtime_manifest["transform"]["state_order"] == [
+        "collapsed",
+        "expanded",
+        "untracked",
+        "tracked",
+    ]
+    directory_states = directory_runtime_manifest["transform"]["states"]
+    assert directory_states["collapsed"]["runtime_display_size"] == [12, 12]
+    assert directory_states["expanded"]["texcoord"]["left"] == 0.28125
+    assert directory_states["untracked"]["runtime_display_size"] == [10, 10]
+    assert directory_states["tracked"]["texcoord"]["left"] == 0.796875
+    assert directory_runtime_manifest["layout_contract"] == {
+        "row_objects": "QuestLogTitle1..23",
+        "row_count": 23,
+        "row_box": [224, 15],
+        "row_step": 14,
+        "total_height": 323,
+        "list_safe_area": [64, 64, 246, 324],
+        "right_reserved": 22,
+        "region_toggle_display_size": [12, 12],
+        "list_check_display_size": [10, 10],
+    }
+    simulation = directory_runtime_manifest["simulation"][
+        "real_layout_preview"
+    ]
+    assert simulation["size"] == [676, 464]
+    assert simulation["runtime_scale_percent"] == 100
+    assert simulation["row_count"] == 23
+    assert simulation["sha256"] == (
+        "c0e5bdffc5ce09872c0da0709a3269245ef424f4dde03335d59ded335dc5fdd5"
+    )
+    directory_runtime_path = (
+        ROOT / directory_runtime_manifest["runtime"]["file"]
+    )
+    directory_runtime_bytes = directory_runtime_path.read_bytes()
+    assert hashlib.sha256(directory_runtime_bytes).hexdigest() == (
+        directory_runtime_manifest["runtime"]["sha256"]
+    )
+    assert directory_runtime_manifest["runtime"]["sha256"] == (
+        "e734bbf59da00f7fbc9c75649d33eaf635b5a0c19e1737128dfdce0db58eee8f"
+    )
+    assert directory_runtime_bytes[2] == 2
+    assert struct.unpack("<HH", directory_runtime_bytes[12:16]) == (64, 16)
+    assert directory_runtime_bytes[16] == 32
+    directory_builder = (
+        ROOT / "tools" / "build_quest_log_directory_marks_v1.py"
+    )
+    compile(
+        directory_builder.read_text(encoding="utf-8"),
+        str(directory_builder),
+        "exec",
+    )
 
     source_path = (
         ROOT
@@ -477,10 +554,17 @@ def main() -> None:
     require(
         quest_adapter,
         (
-            'Quests.runtimeContract = "1.0"',
+            'Quests.runtimeContract = "1.1"',
             "QuestLogShellV4",
+            "QuestLogDirectoryMarksV1",
             "0.66015625",
             "0.90625",
+            "DIRECTORY.rowCount",
+            "QuestLogTitleButtonTemplate",
+            "FauxScrollFrame_GetOffset",
+            "IsQuestWatched",
+            "LXGWWenKaiGB-Medium.ttf",
+            "NotoSerifSC-SemiBold.ttf",
             "CaptureAndHideNativeTextures",
             "QuestLogFrameExpandButton",
             "QuestLog_UpdateQuestDetails",

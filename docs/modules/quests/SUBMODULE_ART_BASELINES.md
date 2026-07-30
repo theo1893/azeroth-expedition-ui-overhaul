@@ -70,8 +70,10 @@ provenance 位于
 [QL-B1_SourceManifest_v1.json](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)。
 像素级旋转同源、完全相同外圈、源安全盒和 raw 精确纯绿色仍作为历史生产
 偏差保留，不被改写为通过；它们不再阻塞已授权的逐格裁切、等比缩放、居中
-与 Alpha 清理。QL-B2／B3 以已接受的小尺寸视觉重量继续分别建立完整执行
-正文，不能从概念图或未接受候选直接裁切。
+与 Alpha 清理。确定性 runtime 与 UV 记录在
+[QL-B1_RuntimeManifest_v1.json](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)；
+23 行真实密度预演与接入状态继续记录在 work。QL-B2／B3 以已接受的小尺寸
+视觉重量继续分别建立完整执行正文，不能从概念图或未接受候选直接裁切。
 
 ## ScrollBar 与操作 Button
 

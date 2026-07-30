@@ -1,9 +1,15 @@
 local addon = AzerothExpeditionUI
 local Quests = {}
-Quests.runtimeContract = "1.0"
+Quests.runtimeContract = "1.1"
 
 local SHELL_TEXTURE =
   addon.media.root .. "Quests\\QuestLogShellV4"
+local DIRECTORY_MARK_TEXTURE =
+  addon.media.root .. "Quests\\QuestLogDirectoryMarksV1"
+local QUEST_TITLE_FONT =
+  addon.media.root .. "Fonts\\NotoSerifSC-SemiBold.ttf"
+local QUEST_ROW_FONT =
+  addon.media.root .. "Fonts\\LXGWWenKaiGB-Medium.ttf"
 
 local SHELL = {
   width = 676,
@@ -41,6 +47,49 @@ local LAYOUT = {
   actionBottom = 22,
   actionWidth = 78,
   actionGap = 5,
+}
+
+local DIRECTORY = {
+  contract = "1.0",
+  rowCount = 23,
+  rowWidth = 224,
+  rowHeight = 15,
+  rowStep = 14,
+  textWidth = 190,
+  states = {
+    collapsed = {
+      width = 12,
+      height = 12,
+      left = 0.03125,
+      right = 0.21875,
+      top = 0.125,
+      bottom = 0.875,
+    },
+    expanded = {
+      width = 12,
+      height = 12,
+      left = 0.28125,
+      right = 0.46875,
+      top = 0.125,
+      bottom = 0.875,
+    },
+    untracked = {
+      width = 10,
+      height = 10,
+      left = 0.546875,
+      right = 0.703125,
+      top = 0.1875,
+      bottom = 0.8125,
+    },
+    tracked = {
+      width = 10,
+      height = 10,
+      left = 0.796875,
+      right = 0.953125,
+      top = 0.1875,
+      bottom = 0.8125,
+    },
+  },
 }
 
 local function SetSize(frame, width, height)
@@ -171,18 +220,301 @@ function Quests:Initialize()
 end
 
 function Quests:InstallGlobalHooks()
-  if self.globalHooksInstalled then
+  if type(hooksecurefunc) ~= "function" then
     return
   end
 
   if
-    type(hooksecurefunc) == "function" and
+    not self.questLogOnShowHookInstalled and
     type(QuestLog_OnShow) == "function"
   then
-    self.globalHooksInstalled = true
+    self.questLogOnShowHookInstalled = true
     hooksecurefunc("QuestLog_OnShow", function()
       Quests:Apply()
     end)
+  end
+
+  if
+    not self.questLogUpdateHookInstalled and
+    type(QuestLog_Update) == "function"
+  then
+    self.questLogUpdateHookInstalled = true
+    hooksecurefunc("QuestLog_Update", function()
+      Quests:UpdateDirectoryRows()
+    end)
+  end
+end
+
+local function SetDirectoryState(texture, state)
+  if not texture or not state then
+    return
+  end
+  texture:SetTexCoord(
+    state.left,
+    state.right,
+    state.top,
+    state.bottom
+  )
+  texture:Show()
+end
+
+local function HideNativeRegionToggle(row)
+  if row and row.icon and row.icon.Hide then
+    row.icon:Hide()
+  end
+
+  if row and row.GetNormalTexture then
+    local normal = row:GetNormalTexture()
+    if normal and normal.SetAlpha then
+      normal:SetAlpha(0)
+    end
+  end
+end
+
+local function HideNativeListCheck(index)
+  local check = _G["QuestLogTitle" .. index .. "Check"]
+  if check and check.Hide then
+    check:Hide()
+  elseif check and check.SetAlpha then
+    check:SetAlpha(0)
+  end
+end
+
+local function ReadQuestEntry(index)
+  if type(GetQuestLogTitle) ~= "function" then
+    return nil
+  end
+
+  local title
+  local level
+  local questTag
+  local suggestedGroup
+  local isHeader
+  local isCollapsed
+  local isComplete
+
+  if
+    pfUI and
+    pfUI.expansion and
+    pfUI.expansion ~= "vanilla"
+  then
+    title,
+      level,
+      questTag,
+      suggestedGroup,
+      isHeader,
+      isCollapsed,
+      isComplete = GetQuestLogTitle(index)
+  else
+    title,
+      level,
+      questTag,
+      isHeader,
+      isCollapsed,
+      isComplete = GetQuestLogTitle(index)
+  end
+
+  return title, isHeader, isCollapsed, isComplete
+end
+
+function Quests:EnsureDirectoryRows()
+  if not QuestLogFrame or not QuestLogListScrollFrame then
+    return false
+  end
+
+  for index = 1, DIRECTORY.rowCount do
+    local name = "QuestLogTitle" .. index
+    local row = _G[name]
+    if not row then
+      row = CreateFrame(
+        "Button",
+        name,
+        QuestLogFrame,
+        "QuestLogTitleButtonTemplate"
+      )
+    end
+    if row and row.SetID then
+      row:SetID(index)
+    end
+  end
+
+  QUESTS_DISPLAYED = DIRECTORY.rowCount
+  return true
+end
+
+function Quests:LayoutDirectoryRows()
+  if not self:EnsureDirectoryRows() then
+    return false
+  end
+  if
+    QuestLogFrame.aeuiQuestDirectoryLayout ==
+    DIRECTORY.contract
+  then
+    return true
+  end
+
+  local previous
+  for index = 1, DIRECTORY.rowCount do
+    local row = _G["QuestLogTitle" .. index]
+    if row then
+      SetSize(row, DIRECTORY.rowWidth, DIRECTORY.rowHeight)
+      if not previous then
+        SetSinglePoint(
+          row,
+          "TOPLEFT",
+          QuestLogListScrollFrame,
+          "TOPLEFT",
+          0,
+          0
+        )
+      else
+        SetSinglePoint(
+          row,
+          "TOPLEFT",
+          previous,
+          "BOTTOMLEFT",
+          0,
+          DIRECTORY.rowHeight - DIRECTORY.rowStep
+        )
+      end
+
+      if row.SetFont then
+        row:SetFont(QUEST_ROW_FONT, 10, "OUTLINE")
+      end
+      if row.GetFontString then
+        local text = row:GetFontString()
+        if text and text.SetWidth then
+          text:SetWidth(DIRECTORY.textWidth)
+        end
+      end
+
+      if not row.aeuiQuestRegionToggle then
+        row.aeuiQuestRegionToggle =
+          row:CreateTexture(nil, "ARTWORK")
+        row.aeuiQuestRegionToggle.aeuiQuestManaged = true
+        row.aeuiQuestRegionToggle:SetTexture(
+          DIRECTORY_MARK_TEXTURE
+        )
+        SetSize(row.aeuiQuestRegionToggle, 12, 12)
+        SetSinglePoint(
+          row.aeuiQuestRegionToggle,
+          "LEFT",
+          row,
+          "LEFT",
+          1,
+          0
+        )
+      end
+
+      if not row.aeuiQuestListCheck then
+        row.aeuiQuestListCheck =
+          row:CreateTexture(nil, "ARTWORK")
+        row.aeuiQuestListCheck.aeuiQuestManaged = true
+        row.aeuiQuestListCheck:SetTexture(
+          DIRECTORY_MARK_TEXTURE
+        )
+        SetSize(row.aeuiQuestListCheck, 10, 10)
+        SetSinglePoint(
+          row.aeuiQuestListCheck,
+          "RIGHT",
+          row,
+          "RIGHT",
+          -2,
+          0
+        )
+      end
+
+      row.aeuiQuestRegionToggle:Hide()
+      row.aeuiQuestListCheck:Hide()
+      previous = row
+    end
+  end
+
+  if QuestLogTitleText and QuestLogTitleText.SetFont then
+    QuestLogTitleText:SetFont(QUEST_TITLE_FONT, 15, "OUTLINE")
+  end
+  QuestLogFrame.aeuiQuestDirectoryLayout = DIRECTORY.contract
+  return true
+end
+
+function Quests:UpdateDirectoryRows()
+  if
+    not addon.db or
+    not addon.db.quests.enabled or
+    not QuestLogFrame
+  then
+    return
+  end
+
+  if not self:LayoutDirectoryRows() then
+    return
+  end
+
+  for index = 1, DIRECTORY.rowCount do
+    local row = _G["QuestLogTitle" .. index]
+    if row then
+      if row.aeuiQuestRegionToggle then
+        row.aeuiQuestRegionToggle:Hide()
+      end
+      if row.aeuiQuestListCheck then
+        row.aeuiQuestListCheck:Hide()
+      end
+    end
+  end
+
+  if
+    type(GetNumQuestLogEntries) ~= "function" or
+    type(GetQuestLogTitle) ~= "function"
+  then
+    return
+  end
+
+  local count = GetNumQuestLogEntries() or 0
+  local offset = 0
+  if
+    type(FauxScrollFrame_GetOffset) == "function" and
+    QuestLogListScrollFrame
+  then
+    offset = FauxScrollFrame_GetOffset(
+      QuestLogListScrollFrame
+    ) or 0
+  end
+
+  for index = 1, DIRECTORY.rowCount do
+    local row = _G["QuestLogTitle" .. index]
+    if row then
+      local toggle = row.aeuiQuestRegionToggle
+      local check = row.aeuiQuestListCheck
+
+      local questIndex = index + offset
+      if questIndex <= count then
+        local title, isHeader, isCollapsed =
+          ReadQuestEntry(questIndex)
+        if title and isHeader and toggle then
+          HideNativeRegionToggle(row)
+          SetDirectoryState(
+            toggle,
+            isCollapsed and
+              DIRECTORY.states.collapsed or
+              DIRECTORY.states.expanded
+          )
+        elseif
+          title and
+          check and
+          type(IsQuestWatched) == "function"
+        then
+          local watched = false
+          watched = IsQuestWatched(questIndex) and true or false
+          HideNativeListCheck(index)
+          SetDirectoryState(
+            check,
+            watched and
+              DIRECTORY.states.tracked or
+              DIRECTORY.states.untracked
+          )
+        end
+      end
+    end
   end
 end
 
@@ -484,6 +816,8 @@ function Quests:Apply()
   self:EnsureShell(QuestLogFrame)
   self:EnsureDetailToggle(QuestLogFrame)
   self:ApplyFrameGeometry()
+  self:LayoutDirectoryRows()
+  self:UpdateDirectoryRows()
   self:UpdateDetailToggle()
   QuestLogFrame.aeuiQuestRuntimeContract = self.runtimeContract
 end

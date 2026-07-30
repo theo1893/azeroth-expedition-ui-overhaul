@@ -215,12 +215,19 @@ def main() -> None:
     quest_source = (aeui / "Modules" / "Quests.lua").read_text(
         encoding="utf-8"
     )
-    assert 'Quests.runtimeContract = "1.0"' in quest_source
+    assert 'Quests.runtimeContract = "1.1"' in quest_source
     assert "QuestLogShellV4" in quest_source
+    assert "QuestLogDirectoryMarksV1" in quest_source
+    assert "QuestLogTitleButtonTemplate" in quest_source
+    assert "FauxScrollFrame_GetOffset" in quest_source
+    assert "IsQuestWatched" in quest_source
     assert "CaptureAndHideNativeTextures" in quest_source
     assert "ToggleDetail" in quest_source
     assert 'addon:RegisterModule("Quests", Quests)' in quest_source
     assert (aeui / "Media" / "Quests" / "QuestLogShellV4.tga").is_file()
+    assert (
+        aeui / "Media" / "Quests" / "QuestLogDirectoryMarksV1.tga"
+    ).is_file()
 
     for toc_name in ("pfUI.toc", "pfUI-tbc.toc"):
         toc_source = (pfui / toc_name).read_text(encoding="utf-8-sig")

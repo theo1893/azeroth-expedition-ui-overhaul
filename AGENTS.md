@@ -20,7 +20,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 |---|---|---|
 | pfUI／原生回退 | 路由与公共过渡材质 `P5`，未实机 | Turtle WoW 全场景回归 |
 | 聊天 | 核心 V3 runtime `P5`；Chat Copy 与 URL Copy 均已暂缓；单一左框，右框隐藏 | Turtle WoW 实机验收核心批次 |
-| 任务 | 当前首要大面积 UI；QL-A1 `P4`；QL-A2 V3.3 `15/15` 终止；QL-A2 V4 固定卷宗背景已确定性导出并静态接入，`P5`，不调用 ImageGen；QL-B1 V1 `5/5` 后 `candidate-rejected / P3 / repair-budget-exhausted`，无 source/runtime | QL-A2 等待 Turtle WoW 实机；用户审核 QL-B1 失败证据并决定是否授权 V2 确定性状态生产合同 |
+| 任务 | 当前首要大面积 UI；QL-A1 `P4`；QL-A2 V4 固定卷宗背景 `P5`；用户接受 QL-B1 V1.r3 运行时视觉，QL-B0 23 行与 QL-B1 四态 atlas 已确定性导出、接入并静态通过，`P5`；V3.3 `15/15` 与 QL-B1 `5/5` 内部失败事实保留 | QL-A2／B0／B1 等待 Turtle WoW 实机；继续 QL-B2／B3 或 QL-C／D |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |
 | 其他 UI | `P0–P1`，保持原生回退 | 逐模块建立四份长期文档 |

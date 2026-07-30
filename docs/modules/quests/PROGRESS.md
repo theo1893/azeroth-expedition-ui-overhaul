@@ -6,7 +6,7 @@
 - 用户于 `2026-07-30` 将 Quest Log 选为当前首要大面积 UI；地图与角色因
   实机对象几何尚未完成，继续保持后续顺位。
 - Quest Log 真实对象合同：`P1` 完成，QL-A 当前处于 `P4–P5`；QL-B1
-  V1.r3 已由用户接受运行时视觉并晋级 `source-accepted / P4`。
+  V1.r3 已由用户接受运行时视觉并完成 `runtime-exported / P5`。
 - `QL-A1` 空卷宗结构 source：用户确认，`P4`。
 - `QL-A2 V3.2` 已终止：A attempt 5 目标级通过；B 在 `5/5` 后仍有约
   `45%` 格宽的针脚和完整外露结，整批 `10/10` 额度耗尽。没有形成
@@ -44,8 +44,18 @@
   两枚外圈只差墨勾、平面墨迹身份、`224²` 安全盒和均匀 `#00FF00` 色键。
   用户随后于 `2026-07-30` 明确接受 V1.r3 的运行时视觉，并允许用确定性逐格
   裁切、等比缩放、居中与 Alpha 规则进入 P4/P5；该决定不把内部失败门禁
-  改写成通过。透明母版与 source manifest 已 tracked，当前为
-  `source-accepted / P4`，固定执行器仍是 `5/5` 且不再调用。
+  改写成通过。透明母版、source/runtime manifest、`64 × 16` TGA、确定性
+  exporter 和 adapter 已 tracked，当前为 `runtime-exported / P5`；固定
+  执行器仍是 `5/5` 且接受后没有新增调用。
+- `QL-B0／B1 runtime`：adapter runtime contract `1.1` 已创建／复用
+  `QuestLogTitle1..23`，使用 `224 × 15` 行盒／`14px` 步进和真实滚动偏移，
+  从 `GetQuestLogTitle`／`IsQuestWatched` 切换四种 atlas 状态。覆盖 Texture
+  不接管点击；原行脚本、选择、滚动与 SavedVariables 保留。主标题使用
+  Noto Serif SC，任务行使用霞鹜文楷。
+- QL-B1 真实排版预演：`676 × 464`／100% runtime，使用当前 QL-A2
+  shell、全部 23 行、代表性中文任务内容与四态分布，SHA-256
+  `c0e5bdffc5ce09872c0da0709a3269245ef424f4dde03335d59ded335dc5fdd5`。
+  QL-C 未完成按钮仅为 manifest 标注的非权威占位；该预演不能替代实机。
 - `QL-B2`／`QL-B3`：只完成稳定边界。选中书签与类型／计时／状态章将在
   QL-B1 小尺寸视觉重量确认后分别准备；Collapse All 归 QL-C 独立 Button，
   不混入目录墨记。
@@ -59,8 +69,8 @@
 |---|---|---:|---|---|
 | `QL-A1` | `QUEST.LOG.SHELL` 结构母版 | `P4` | [透明 source](../../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png) 已接受；原始 PNG 不直接加载，只允许 QL-A2 V4 确定性全幅导出 | Turtle WoW 中复核最终显示 |
 | `QL-A2` | 静态空卷宗结构与页沟 | `P5` V4 runtime-exported | V3.3 `15/15` 已终止；V4 已从 QL-A1 source 导出 `676 × 464` 显示区／`1024 × 512` TGA，固定执行器 `0/0`，Lua smoke 通过 | Turtle WoW 验证纹理方向、裁切、命中与 list-only |
-| `QL-B0` | 23 行创建、排布、文字安全区和状态刷新 | `P2 contract` | 保留 23 行的 `323px` 离线几何已定义，尚未接入 | 随已接受目录资产实现并做 smoke |
-| `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P4 source-accepted` | 用户接受 V1.r3 运行时视觉；[透明母版](../../../assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png) 与 [manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json) 已 tracked；内部失败与 `5/5` 事实保留 | 确定性导出四格 atlas、接入 QL-B0 23 行并静态验证 |
+| `QL-B0` | 23 行创建、排布、文字安全区和状态刷新 | `P5 runtime-exported` | 23 行 `323px` 几何、字体与状态刷新已接入；Lua smoke 覆盖创建、偏移、状态和原脚本 | Turtle WoW 验证文字基线、重叠命中与滚动 |
+| `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P5 runtime-exported` | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；内部失败与 `5/5` 事实保留 | Turtle WoW 验证 TGA、四态切换、字体和 fallback |
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P2 baseline` | 真实语义与美术边界已定义，无执行正文 | QL-B1 视觉重量确认 |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P2 baseline` | 类型 tag、timer API、isComplete 已分离；未知 tag 不猜测 | QL-B1 视觉重量确认 |
 | `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作与辅助按钮 | `P1–P2` | 真实对象已拆，部分全局名需 feature-detect | 实机对象与几何 |
@@ -121,14 +131,21 @@ source 或 runtime。
   transparent SHA-256
   `719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`。
   同 SHA 透明稿已晋级为
-  `assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`，runtime
-  尚未导出。
+  `assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`。
+- QL-B1 runtime manifest：
+  [`QL-B1_RuntimeManifest_v1.json`](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)；
+  runtime `QuestLogDirectoryMarksV1.tga` SHA-256
+  `e734bbf59da00f7fbc9c75649d33eaf635b5a0c19e1737128dfdce0db58eee8f`。
+- QL-B1 exporter：
+  [`build_quest_log_directory_marks_v1.py`](../../../tools/build_quest_log_directory_marks_v1.py)；
+  adapter runtime contract `1.1`，Lua smoke 覆盖 23 行创建、四态、滚动偏移、
+  原脚本与原生纹理抑制。
 - Turtle WoW 实机验证尚未开始。
 
 ## 下一步
 
 QL-A2 保持 [runtime work](work/QUEST.LOG.GUTTER.md)，等待 Turtle WoW
-`1.18.1` 实机验收后才可进入 `P6`／清理。QL-B1 V1.r3 已由用户接受并进入
-`P4`；下一门禁是按 manifest 导出四格 runtime atlas、把 23 行真实布局与
-状态刷新接入 adapter，并以真实任务文本密度和当前新 UI 生成 100% 尺寸
-预演。不得继续调用 V1 ImageGen，也不得把确定性处理描述成重新生成美术。
+`1.18.1` 实机验收后才可进入 `P6`／清理。QL-B0／B1 已进入 `P5`；下一
+门禁是实机验证纹理方向／过滤、字体加载、23 行文字基线与重叠命中、滚动
+偏移、四态刷新、原生回退和非视觉行为。不得继续调用 V1 ImageGen，也不得
+把确定性处理描述成重新生成美术。

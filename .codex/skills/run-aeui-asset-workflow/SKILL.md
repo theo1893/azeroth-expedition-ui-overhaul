@@ -245,7 +245,7 @@ attempt. Do not grant “free” retries.
 After every output:
 
 1. Perform the complete review checklist in its required order, including direct visual
-   inspection and real-size/z-order reassembly where the contract requires it.
+   inspection and the mandatory real-layout simulation described below.
 2. If every internal gate passes, stop the loop immediately, record
    `candidate-reviewed / P3`, and present the candidate for user review. Internal passage
    is not user acceptance and cannot create tracked source or runtime media.
@@ -293,9 +293,28 @@ Pass repeated `--cell 'ID=x0,y0,x1,y1'` arguments when the production contract d
 fixed atlas cells. This checker reports Alpha, bounds, edge contact, SHA-256, and visible
 green spill. It deliberately does not claim that a region is the correct logical object.
 
-Produce a candidate preview at the real runtime size and intended z-order whenever the
-asset participates in assembly. A contact sheet can prove inventory; only reassembly can
-expose perspective, overlap, safe-area, stretch, and layer errors.
+After every generated or edited UI candidate, produce a deterministic real-layout
+simulation before internal passage or user review. The simulation must:
+
+- use the target Frame's real pixel geometry at `100%` runtime size;
+- place the candidate over the newest accepted/runtime UI that will surround it, in the
+  intended z-order, clipping and safe areas;
+- instantiate the real object count and representative maximum/typical density rather
+  than showing a few isolated samples;
+- use realistic localized text, icons, values and state distribution for dynamic
+  content, while keeping those values out of source art;
+- show the current real fallback for unfinished neighboring components when available,
+  or identify any simplified placeholder as non-authoritative in the work record and
+  manifest; and
+- record the preview path, hash, geometry, density and authoritative/non-authoritative
+  scope.
+
+For a repeated component, this means the actual target repetition: for example, a
+23-row Quest Log asset must be simulated across all 23 row slots with realistic task
+layout, not four symbols floating on an empty book. A contact sheet remains useful for
+inventory, but a contact sheet, sparse demo, debug grid, or isolated component board
+never substitutes for the real-layout simulation. Store every simulation only under
+`generated/`.
 
 ## Revise or reject
 

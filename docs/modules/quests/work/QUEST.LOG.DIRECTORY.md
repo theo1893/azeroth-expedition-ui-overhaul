@@ -7,11 +7,12 @@
   - `QUEST.LOG.REGION.TOGGLE`
   - `QUEST.LOG.LIST.CHECK`
 - 版本：`QL-B1 V1`。
-- 子状态：`source-accepted`。
-- 项目阶段：`P4`。
+- 子状态：`runtime-exported`。
+- 项目阶段：`P5`。
 - 固定执行器：`imagegen-0-143-0` /
   `@openai/codex@0.143.0`。
-- 操作：`edit`（attempt 5；attempt 1–4 记录见循环表）。
+- 操作：`deterministic-export / runtime-integration`；ImageGen attempt 1–5
+  记录仍见循环表。
 - 自动修复预算：最多 `5` 次固定执行器调用，含首次。
 - 当前尝试：`5/5`（预算耗尽，无剩余调用）。
 - 多执行正文最坏总调用数：`5`。
@@ -61,6 +62,17 @@
   `719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`）。
 - source manifest：
   `assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json`。
+- runtime：
+  `addon/AzerothExpeditionUI/Media/Quests/QuestLogDirectoryMarksV1.tga`
+  （`64 × 16 RGBA`，SHA-256
+  `e734bbf59da00f7fbc9c75649d33eaf635b5a0c19e1737128dfdce0db58eee8f`）。
+- runtime manifest：
+  `assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json`。
+- exporter：`tools/build_quest_log_directory_marks_v1.py`。
+- 真实排版预演：
+  `generated/quests/QL-B1/v1/accepted/previews/QL-B1_V1_r3_real_layout_676x464.png`
+  （ignored，`676 × 464`／100% runtime，SHA-256
+  `c0e5bdffc5ce09872c0da0709a3269245ef424f4dde03335d59ded335dc5fdd5`）。
 
 ## 当前批次边界
 
@@ -68,8 +80,8 @@ QL-B 目录状态按运行时语义和物件尺度拆分：
 
 | 批次 | 组件 | 当前状态 |
 |---|---|---|
-| `QL-B0` | 23 个真实 `QuestLogTitleN` 的创建、排布、文字安全区和状态刷新 | 合同已审计，等待随资产接入实现 |
-| `QL-B1` | 地区展开／收起墨箭头；未追踪／已追踪墨圈 | V1.r3 `source-accepted / P4`；等待确定性 runtime 导出 |
+| `QL-B0` | 23 个真实 `QuestLogTitleN` 的创建、排布、文字安全区和状态刷新 | 已接入 adapter，`P5`，等待实机 |
+| `QL-B1` | 地区展开／收起墨箭头；未追踪／已追踪墨圈 | V1.r3 `runtime-exported / P5` |
 | `QL-B2` | 当前任务暗酒红窄织物书签及其交互状态 | 等待 QL-B1 视觉尺度确认 |
 | `QL-B3` | Elite／Dungeon／Raid／PvP 类型章、Timed 沙漏章、Complete／Failed 蜡封 | 等待 QL-B1 视觉尺度确认 |
 
@@ -153,9 +165,10 @@ Turtle WoW `1.18.1` 的目标调用按香草返回顺序读取
   `22px` 留给 QL-C 滚动条与间距。该几何要先通过 Lua smoke，再等待实机。
 - 地区墨箭头显示尺寸：`12 × 12 UI px`。
 - 追踪墨圈显示尺寸：`10 × 10 UI px`。
-- 已授权确定性导出为一个 `64 × 16` RGBA TGA：四个
+- 已确定性导出为一个 `64 × 16` RGBA TGA：四个
   `16 × 16` cell 依次为 collapsed、expanded、untracked、tracked；对象在
-  cell 内居中并保留透明 padding。
+  cell 内居中并保留透明 padding。runtime 采样各格内部的实际 `12px`／
+  `10px` content box，使目标对象不会被整个 `16px` cell 再次缩小。
 - 原始生成画布：`1024 × 1024`，严格 `2 × 2` 等格，每格
   `512 × 512`。每件物体只能位于本格中心 `224 × 224px` 安全盒内。
 - Alpha：生成阶段使用全画布均匀 `#00FF00` 色键；对象不得含绿色。候选阶段
@@ -421,6 +434,23 @@ UI 或文字。任何一项不满足都不要输出。
 - 循环终态：`candidate-rejected / repair-budget-exhausted`。attempt 1 为
   `transport-error: Operation not permitted`；attempt 2／3 为
   `executor-recursion / interrupted`；attempt 4／5 为内部美术与合同退回。
+- P4/P5 确定性执行：
+  - 用户接受后没有新增 ImageGen 调用；固定执行器仍为 `5/5`。
+  - exporter 逐格读取固定坐标、按可见 Alpha bbox 裁切、LANCZOS 等比缩放、
+    居中、清理全透明像素的 RGB，并写入 `64 × 16` TGA；不旋转、镜像、
+    重画或改变任何状态。
+  - runtime atlas SHA-256：
+    `e734bbf59da00f7fbc9c75649d33eaf635b5a0c19e1737128dfdce0db58eee8f`；
+    透明／半透明／不透明像素：`632／292／100`；可见绿色残留 `0`。
+  - adapter runtime contract `1.1` 创建／复用 `QuestLogTitle1..23`，固定
+    `224 × 15` 行盒与 `14px` 步进；四种状态由
+    `GetQuestLogTitle`、`FauxScrollFrame_GetOffset` 与
+    `IsQuestWatched` 动态驱动。原行 Button、点击脚本、选择和滚动逻辑不变。
+  - QL-B1 的覆盖 Texture 不接收鼠标；pfUI 的现代 `+`／`-` 小面板和原生
+    check 可见纹理在 AEUI 状态刷新后隐藏，真实行为与状态源仍保留。
+  - 真实排版预演使用 QL-A2 当前 runtime shell、全部 23 个行槽、霞鹜文楷
+    任务行、代表性中文任务名／等级／地区／追踪状态和右页真实密度。QL-C
+    未完成按钮只作 manifest 明示的简化非权威占位。
 
 ## 审查记录
 
@@ -449,10 +479,15 @@ UI 或文字。任何一项不满足都不要输出。
   “像素级同源”“源安全盒”和“raw 精确纯绿”作为 P4 阻塞项的内部裁决；
   透明母版无可见绿色残留，允许以确定性逐格裁切、等比缩放、居中与 Alpha
   清理解决源占用差异。该接受不声称失败门禁已经客观通过。
-- 当前结论：`source-accepted / P4`；V1.r3 透明稿已作为 tracked source
-  与 manifest 晋级，不再调用 ImageGen。
-- 下一门禁：按 manifest 的固定四格合同确定性导出 `64 × 16` RGBA TGA，
-  接入 23 个真实 `QuestLogTitleN`，生成真实排版预演并完成静态测试。
+- 当前结论：`runtime-exported / P5`。P4 source、确定性 exporter、
+  `64 × 16` TGA、UV manifest、23 行 adapter、字体和 Lua／Python 静态
+  测试已形成；不再调用 ImageGen。
+- 真实排版：100% runtime 预演已覆盖全部 23 个行槽、代表性中文任务内容、
+  四种状态分布、QL-A2 最新卷宗背景及实际层序；箭头、空圈与墨勾在密集排版
+  下仍可辨，未侵入右侧 `22px` 滚动区。该预演不是 Turtle WoW 证据。
+- 下一门禁：Turtle WoW `1.18.1` 实机验证 TGA 方向／过滤、字体加载、
+  `QuestLogTitle1..23` 文字基线、1px 行重叠命中、滚动偏移、展开／收起、
+  追踪状态刷新、原生回退和非视觉行为。
 
 ## 尝试摘要
 
@@ -461,4 +496,4 @@ UI 或文字。任何一项不满足都不要输出。
 | `QL-B1 V1` | commit `13edad9`；session `019fb1d9-0792-7110-8156-2aed5644d5c7`；无输出 | transport-error；`1/5` 已消耗 | 不改美术正文；修复子进程写入环境 |
 | `QL-B1 V1.r1` | commits `6fdf109`／`453450d`；outer session `019fb1dc-57c5-77a0-b3ce-a884d61e0c99`；observed nested `019fb1dc-58df-7a43-83d0-97d674a5229a`；无输出 | executor-recursion；attempt 2／3 均计入 | 不改美术正文；禁止当前固定进程二次委托 |
 | `QL-B1 V1.r2` | commit `21871a0`；session `019fb1e0-9914-74f2-ab21-a3af62713f58`；raw `cc14b469…`；transparent `79e5bf71…` | rejected：状态同源、平面墨迹、画布、占用与色键失败 | 以本稿为 Image 3 做最后一次冻结边界内 edit |
-| `QL-B1 V1.r3` | commit `f99d17a`；session `019fb1e8-db9a-7010-86d1-98008548e4d6`；normalized raw `73f719d4…`；transparent `719445d1…` | internal rejected；用户于 `2026-07-30` 接受其运行时视觉，`source-accepted / P4` | 按已授权确定性规则导出并接入，不再生图 |
+| `QL-B1 V1.r3` | commit `f99d17a`；session `019fb1e8-db9a-7010-86d1-98008548e4d6`；transparent/source `719445d1…`；runtime `e734bbf5…`；真实排版 `c0e5bdff…` | internal rejected；用户接受运行时视觉；`runtime-exported / P5` | Turtle WoW 实机验证，不再生图 |

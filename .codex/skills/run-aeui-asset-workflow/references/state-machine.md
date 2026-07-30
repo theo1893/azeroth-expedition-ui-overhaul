@@ -13,7 +13,7 @@
 | `prompt-authorized` | `P3` | 用户看到并明确确认具体版本执行正文、不可变修复边界与五次调用预算；授权版本已提交 | work、模块进度 | 固定执行器第 1 次生图 |
 | `candidate-raw` | `P3` | 尝试编号、raw 路径、执行器与会话记录 | 被忽略的 `generated/`；work 执行记录 | 本次完整内部审查 |
 | `repair-prepared` | `P3` | 前次失败门禁、保留区域、完整 `.rN` 修复正文、边界复核、累计调用少于 5 次 | 同一 work 与 Git 历史 | 固定执行器下一次调用 |
-| `candidate-reviewed` | `P3` | 语义、结构、风格、装配和技术证据 | 被忽略的预演；review 记录 | 用户视觉复审 |
+| `candidate-reviewed` | `P3` | 语义、结构、风格、装配和技术证据；`100%` runtime 尺寸、真实对象数量、现实信息密度和当前 accepted/runtime UI 的真实排版预演 | 被忽略的预演；review 记录 | 用户视觉复审 |
 | `candidate-rejected` | 不晋级 | 用户否决，或第 5 次内部审查仍失败；日期与具体失败门禁 | work 尝试摘要、模块进度 | 用户审核后新版本或停止 |
 | `source-accepted` | `P4` | 用户明确接受具体候选 | `assets/source/`、manifest | runtime 合同与导出 |
 | `runtime-exported` | `P5` | 确定性导出、UV/manifest、Lua/XML、静态测试 | addon runtime、工具、文档 | 目标客户端实机 |
@@ -68,7 +68,10 @@ runtime-exported → static/game failure → corrected exporter/runtime, remain 
   下一份 `.rN` 修复正文必须已写入同一 work 并提交；不得复用相同正文进行
   无差别抽卡。
 - `candidate-raw → candidate-reviewed`：必须先过语义／物理结构审查；技术指标
-  不能替代这一门，且本次必须通过完整审查清单。
+  不能替代这一门，且本次必须通过完整审查清单。每个 generate／edit 输出还
+  必须有 `100%` runtime 尺寸、真实对象数量、现实信息密度、实际层序和当前
+  accepted/runtime UI 的真实排版预演；稀疏样例与 contact sheet 不构成该
+  门禁证据。
 - `candidate-reviewed → source-accepted`：必须由用户明确接受具体候选。
 - `source-accepted → runtime-exported`：必须已知真实 Frame 几何、切片、UV、
   安全区、拉伸规则和状态映射。

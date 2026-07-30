@@ -46,6 +46,10 @@ function Object:SetBackdropBorderColor(...) self.borderColor = { ... } end
 function Object:SetAlpha(value) self.alpha = value end
 function Object:SetText(value) self.text = value end
 function Object:GetText() return self.text end
+function Object:SetID(value) self.id = value end
+function Object:GetID() return self.id end
+function Object:SetFont(...) self.font = { ... } end
+function Object:GetFontString() return self.fontString end
 function Object:SetWidth(value) self.width = value end
 function Object:SetHeight(value) self.height = value end
 function Object:GetWidth() return self.width end
@@ -86,10 +90,25 @@ function Object:CreateTexture(name, layer)
   table.insert(self.regions, texture)
   return texture
 end
+function Object:GetNormalTexture() return self.normalTexture end
+function Object:SetNormalTexture(value)
+  if not self.normalTexture then
+    self.normalTexture =
+      NewObject(self.name and self.name .. "NormalTexture", self, "Texture")
+  end
+  self.normalTexture:SetTexture(value)
+end
 
 function CreateFrame(objectType, name, parent, template)
   local frame = NewObject(name, parent, objectType)
   frame.template = template
+  if template == "QuestLogTitleButtonTemplate" then
+    frame.fontString =
+      NewObject(name and name .. "Text", frame, "FontString")
+    frame.normalTexture =
+      NewObject(name and name .. "NormalTexture", frame, "Texture")
+    NewObject(name and name .. "Check", frame, "Texture")
+  end
   return frame
 end
 
@@ -120,6 +139,39 @@ end
 local detailUpdateCalls = 0
 function QuestLog_UpdateQuestDetails()
   detailUpdateCalls = detailUpdateCalls + 1
+end
+
+local questLogUpdateCalls = 0
+local fauxOffset = 0
+local watched = {
+  [3] = true,
+}
+local questEntries = {
+  { "东瘟疫之地", 0, nil, true, false, nil },
+  { "爱与家庭", 60, nil, false, nil, nil },
+  { "达隆郡的战斗", 60, nil, false, nil, nil },
+  { "冬泉谷", 0, nil, true, true, nil },
+}
+function GetNumQuestLogEntries()
+  return table.getn(questEntries)
+end
+function GetQuestLogTitle(index)
+  return table.unpack(questEntries[index], 1, 6)
+end
+function IsQuestWatched(index)
+  return watched[index]
+end
+function FauxScrollFrame_GetOffset()
+  return fauxOffset
+end
+function QuestLog_Update()
+  questLogUpdateCalls = questLogUpdateCalls + 1
+  for index = 1, 23 do
+    local check = _G["QuestLogTitle" .. index .. "Check"]
+    if check then
+      check:Show()
+    end
+  end
 end
 
 QuestLogFrame = CreateFrame("Frame", "QuestLogFrame", UIParent)
@@ -186,6 +238,21 @@ local nativeExpandTexture =
 QuestLogNoQuestsText =
   NewObject("QuestLogNoQuestsText", EmptyQuestLogFrame, "FontString")
 
+local originalQuestRowClickCalls = 0
+local originalQuestRowClick = function()
+  originalQuestRowClickCalls = originalQuestRowClickCalls + 1
+end
+for index = 1, 6 do
+  local row = CreateFrame(
+    "Button",
+    "QuestLogTitle" .. index,
+    QuestLogFrame,
+    "QuestLogTitleButtonTemplate"
+  )
+  row:SetID(index)
+  row:SetScript("OnClick", originalQuestRowClick)
+end
+
 QuestLogFrameAbandonButton =
   CreateFrame("Button", "QuestLogFrameAbandonButton", QuestLogFrame)
 QuestLogFrameAbandonButton:SetHeight(20)
@@ -220,7 +287,7 @@ AzerothExpeditionUI:Refresh()
 assert(QuestLogFrame:GetWidth() == 676, "quest shell width was not applied")
 assert(QuestLogFrame:GetHeight() == 464, "quest shell height was not applied")
 assert(
-  QuestLogFrame.aeuiQuestRuntimeContract == "1.0",
+  QuestLogFrame.aeuiQuestRuntimeContract == "1.1",
   "quest runtime contract was not recorded"
 )
 assert(QuestLogFrame.aeuiQuestShell, "quest shell texture was not created")
@@ -265,6 +332,110 @@ assert(
 )
 assert(AzerothExpeditionUIDB.sentinel == "preserve")
 
+assert(QUESTS_DISPLAYED == 23, "quest row count was not expanded to 23")
+for index = 1, 23 do
+  local row = _G["QuestLogTitle" .. index]
+  assert(row, "missing QuestLogTitle" .. index)
+  assert(row:GetID() == index, "quest row ID was not preserved")
+  assert(
+    row:GetWidth() == 224 and row:GetHeight() == 15,
+    "quest row geometry does not match QL-B0"
+  )
+  assert(
+    row.aeuiQuestRegionToggle and row.aeuiQuestListCheck,
+    "quest directory overlays were not created"
+  )
+  assert(
+    row.aeuiQuestRegionToggle.texture:find(
+      "QuestLogDirectoryMarksV1"
+    ),
+    "quest region toggle did not mount the accepted atlas"
+  )
+  assert(
+    row.aeuiQuestListCheck.texture:find(
+      "QuestLogDirectoryMarksV1"
+    ),
+    "quest tracking mark did not mount the accepted atlas"
+  )
+end
+assert(
+  QuestLogTitle1:GetScript("OnClick") == originalQuestRowClick,
+  "existing quest row interaction was replaced"
+)
+assert(
+  QuestLogTitle1.aeuiQuestRegionToggle:IsShown() and
+  QuestLogTitle1.aeuiQuestRegionToggle.texcoord[1] == 0.28125,
+  "expanded region state was not mapped: shown=" ..
+    tostring(QuestLogTitle1.aeuiQuestRegionToggle:IsShown()) ..
+    ", left=" ..
+    tostring(
+      QuestLogTitle1.aeuiQuestRegionToggle.texcoord and
+      QuestLogTitle1.aeuiQuestRegionToggle.texcoord[1]
+    )
+)
+assert(
+  QuestLogTitle4.aeuiQuestRegionToggle:IsShown() and
+  QuestLogTitle4.aeuiQuestRegionToggle.texcoord[1] == 0.03125,
+  "collapsed region state was not mapped"
+)
+assert(
+  QuestLogTitle2.aeuiQuestListCheck:IsShown() and
+  QuestLogTitle2.aeuiQuestListCheck.texcoord[1] == 0.546875,
+  "untracked quest state was not mapped"
+)
+assert(
+  QuestLogTitle3.aeuiQuestListCheck:IsShown() and
+  QuestLogTitle3.aeuiQuestListCheck.texcoord[1] == 0.796875,
+  "tracked quest state was not mapped"
+)
+assert(
+  not QuestLogTitle3Check:IsShown(),
+  "native quest tracking texture remained visible"
+)
+assert(
+  QuestLogTitle1.font[1]:find("LXGWWenKaiGB%-Medium.ttf"),
+  "quest row font does not match the module baseline"
+)
+assert(
+  QuestLogTitleText.font[1]:find("NotoSerifSC%-SemiBold.ttf"),
+  "quest title font does not match the module baseline"
+)
+
+watched[2] = true
+QuestLog_Update()
+assert(questLogUpdateCalls == 1, "native QuestLog_Update was replaced")
+assert(
+  QuestLogTitle2.aeuiQuestListCheck.texcoord[1] == 0.796875,
+  "tracking-state refresh hook did not update the runtime sprite"
+)
+assert(
+  not QuestLogTitle2Check:IsShown(),
+  "native tracking texture returned above the accepted sprite"
+)
+
+fauxOffset = 1
+QuestLog_Update()
+assert(
+  not QuestLogTitle1.aeuiQuestRegionToggle:IsShown() and
+  QuestLogTitle1.aeuiQuestListCheck:IsShown(),
+  "scroll offset was not applied to the visible row mapping"
+)
+fauxOffset = 0
+
+local savedIsQuestWatched = IsQuestWatched
+IsQuestWatched = nil
+QuestLog_Update()
+assert(
+  not QuestLogTitle2.aeuiQuestListCheck:IsShown(),
+  "AEUI tracking art guessed a state without the tracking API"
+)
+assert(
+  QuestLogTitle2Check:IsShown(),
+  "native tracking art was not preserved when its API was unavailable"
+)
+IsQuestWatched = savedIsQuestWatched
+QuestLog_Update()
+
 assert(QuestLogFrameExpandButton, "real detail toggle Button was not created")
 assert(
   QuestLogFrameExpandButton.template == "UIPanelButtonTemplate",
@@ -308,5 +479,7 @@ assert(
 
 QuestLogFrameAbandonButton:GetScript("OnClick")()
 assert(abandonCalls == 1)
+QuestLogTitle1:GetScript("OnClick")()
+assert(originalQuestRowClickCalls == 1)
 
 print("quest module smoke test passed")
