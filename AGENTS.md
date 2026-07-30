@@ -20,7 +20,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 |---|---|---|
 | pfUI／原生回退 | 路由与公共过渡材质 `P5`，未实机 | Turtle WoW 全场景回归 |
 | 聊天 | 核心 V3 runtime `P5`；Chat Copy 与 URL Copy 均已暂缓；单一左框，右框隐藏 | Turtle WoW 实机验收核心批次 |
-| 任务 | 当前首要大面积 UI；QL-A2 V4、QL-B0 23 行 V1、QL-B1 与 QL-B2 当前为 `P5 fallback`，但实机确认左页大面积视觉未通过；用户已授权 QL-B0 V2 使用 `18 × 18`，列表内框、地区条与任务条两段完整正文现为 `prompt-authorized / P3`、各 `0/5`；QL-B3-A `5/5` exhausted、B/C `0/5` 并暂停 | 提交授权正文后执行 `QL-B0-A V2` attempt 1；内部通过只到 P3 |
+| 任务 | 当前首要大面积 UI；QL-A2 V4、QL-B0 23 行 V1、QL-B1 与 QL-B2 当前为 `P5 fallback`，但实机确认左页大面积视觉未通过；QL-B0 V2 `18 × 18` 已获授权，A attempt 1 因设计网格／bbox／开口／色键与厚框美术退回，现为 `repair-prepared / P3`、A `1/5`、B `0/5`；QL-B3-A `5/5` exhausted、B/C `0/5` 并暂停 | 提交 `QL-B0-A V2.r1` 后执行 attempt 2；内部通过只到 P3 |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |
 | 其他 UI | `P0–P1`，保持原生回退 | 逐模块建立四份长期文档 |

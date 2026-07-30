@@ -237,11 +237,12 @@ def main() -> None:
             "1b6b21cd3db74202051a2ceb8b5ba1d91ca7beb636accf247603edbc3cfeb40e",
             "`QL-B1 V1`",
             "`QL-B0 V2`",
-            "`prompt-authorized / P3`",
+            "`repair-prepared / P3`",
             "work/QUEST.LOG.LEFTPAGE.md",
             "`QUESTS_DISPLAYED = 18`",
             "`224 × 18px`",
-            "最坏 `10`",
+            "A `1/5`",
+            "B `0/5`",
             "`runtime-exported / P5`",
             "`5/5`",
             "`15px` 行高／`14px` 步进",
@@ -287,11 +288,11 @@ def main() -> None:
             "Quest Log 左页卷宗目录 V2",
             "`QL-B0-A V2`",
             "`QL-B0-B V2`",
-            "`prompt-authorized`",
+            "`repair-prepared`",
             "项目阶段：`P3`",
             "授权正文状态：`production`",
             "用户授权：`2026-07-30`",
-            "当前实际生图：A `0/5`；B `0/5`",
+            "当前实际生图：A `1/5`；B `0/5`",
             "最坏总预算：`10`",
             "@openai/codex@0.143.0",
             "任务详情面板_视觉基准_v1.png",
@@ -314,10 +315,13 @@ def main() -> None:
             "不生成假图标槽",
             "## 生产正文完整性预检",
             "结论：pass",
-            "## 最终执行正文 — QL-B0-A V2",
+            "## 当前执行正文 — QL-B0-A V2.r1",
             "## 最终执行正文 — QL-B0-B V2",
             "## Repair envelope 与计数",
             "`candidate-rejected / repair-budget-exhausted`",
+            "019fb343-1f5c-7c83-94d4-a89c7b11451f",
+            "c089b2069ec34ac6be089fba36dfc0fa7835e1c208acd7804f277ec30e602224",
+            "919f7624b4c9def6c5021ea43a7a5cd0e4be7d65e3bc0e5408d7d8b6a5531260",
             "## 下一门禁",
             "每段最多 5 次，最坏合计 10 次",
         ),
@@ -325,7 +329,8 @@ def main() -> None:
     )
     assert "/Users/" not in leftpage_work
     assert "codex-clipboard-" not in leftpage_work
-    assert leftpage_work.count("## 最终执行正文 — QL-B0-") == 2
+    assert leftpage_work.count("## 当前执行正文 — QL-B0-A") == 1
+    assert leftpage_work.count("## 最终执行正文 — QL-B0-B") == 1
 
     require(
         work,
