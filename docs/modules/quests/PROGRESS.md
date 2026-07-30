@@ -197,7 +197,9 @@ source 或 runtime。
 - QL-B3 生产合同：
   [`QUEST.LOG.STATUS.md`](work/QUEST.LOG.STATUS.md)。三段均为
   `P3`；固定 Image 1／2、三槽真实行几何、同段 edit、每段最多五次实际
-  生图和最坏 `15` 次总预算已获授权。当前 A `1/5`、B `0/5`、C `0/5`；
+  生图和最坏 `15` 次总预算已获授权。当前 A `2/5`、B `0/5`、C `0/5`；
+  A attempt 2 保住语义与 10px 视觉，但仍因三格安全盒和 native 色键失败，
+  已准备只缩放／居中／重铺纯绿底的 V1.r2；
   三次无 provider 结果的启动／传输／递归错误已单列且不占额度。
 - QL-B3 候选审查工具：
   [`review_quest_log_status_candidate_v1.py`](../../../tools/review_quest_log_status_candidate_v1.py)；
@@ -212,7 +214,7 @@ QL-A2 保持 [runtime work](work/QUEST.LOG.GUTTER.md)，等待 Turtle WoW
 实机。QL-B2 V1 已在 `5/5` 停止；用户接受的 bbox-fit source、固定三态
 atlas、adapter 与静态测试现已完成到 P5，下一门禁是 Turtle WoW 实机验证，
 在此之前不得标记 P6 或清理 work。QL-B3-A／B／C V1 已获明确授权；当前
-先执行已提交的 A V1.r1 scoped edit，完成内审后再继续 B／C attempt 1。
+先执行已提交的 A V1.r2 scoped edit，完成内审后再继续 B／C attempt 1。
 每个 countable output 后必须完成真实排版内审与边界内自主修复。不得继续
 调用 QL-B2 V1 ImageGen。QL-B1 的旧计数保留为当时流程的历史事实，不作为
 新口径先例。
