@@ -177,7 +177,7 @@ def main() -> None:
         work,
         (
             "版本：`QL-A2 V3.2`",
-            "子状态：`candidate-raw`",
+            "子状态：`repair-prepared`",
             "项目阶段：`P3`",
             "执行状态：",
             "确认授权 QL-A2 V3.2-A/B",
@@ -234,7 +234,7 @@ def main() -> None:
             "QL-A2_V3_2_B_GUTTER.raw.png",
             "47d14363049424b8c32b0eb486a87a0287adb4cc2af8f92e9416f0651cb796ea",
             "019faed6-8104-7ef2-94f7-8d80c5c885bc",
-            "`candidate-raw / P3`",
+            "`repair-prepared / P3`",
             "47669c2d5c8243d47bc08cbe417be07bf74121a8a0e2aa8cae749ac109a106d8",
             "019fb0e3-5bb6-7bd2-8504-c9f7b7c936fb",
             "这不是候选接受",
