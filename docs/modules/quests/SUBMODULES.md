@@ -104,7 +104,15 @@ QL-B 的生产边界：
   selected-pressed／全透明保留格；每格可见 content 为 `24 × 14`，
   三态 Alpha 逐像素相同。
 - `QL-B3`：四类可靠 `TYPE.BADGE`、独立 `TIMER.BADGE` 与两类
-  `STATE.SEAL`。
+  `STATE.SEAL`。非地区行固定保留三个可同时显示的无鼠标状态槽：
+  type `10 × 10 UI px`、`x=176..186`；timer `10 × 10 UI px`、
+  `x=187..197`；state `12 × 12 UI px`、`x=198..210`。QL-B1
+  追踪墨圈继续位于 `x=212..222`；任务文字保持 `x=18` 起点并收敛为
+  `155px` 宽，右边界 `x=173`。地区 header 不显示 QL-B3，继续使用
+  `190px` 文字宽度。类型、限时和完成状态不得互相覆盖或用优先级丢弃。
+  `questTag` 只允许匹配 adapter 中显式登记且经目标客户端证实的等值 token；
+  禁止解析任务名、显示文字或做模糊本地化猜测。未知 token、API／媒体缺失
+  时只隐藏对应覆盖并保留现有动态 `level+` 回退。
 - `LIST.ROW` 自身只承担布局、字体色和真实点击，不持有位图行卡。
 
 QL-B0／B1／B2 runtime 已接入

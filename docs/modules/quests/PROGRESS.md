@@ -79,8 +79,13 @@
   `OnEnter`／`OnLeave`／`OnMouseDown`／`OnMouseUp`／`OnClick` 先执行，
   adapter 再刷新视觉。缺少选择 API 时隐藏覆盖，不改变点击、滚动或
   SavedVariables。
-- `QL-B3`：只完成稳定边界。类型／计时／状态章将在 QL-B2 候选形成后单独
-  准备；Collapse All 归 QL-C 独立 Button，不混入目录状态。
+- `QL-B3`：三类真实语义已拆为三个固定并列槽，类型／计时／状态可同时出现。
+  [QL-B3 work](work/QUEST.LOG.STATUS.md) 已形成 A／B／C 三段完整
+  `production-draft`：分别生成四类类型压印、单枚沙漏和同一蜡封的完整／
+  破裂两态；每段实际 ImageGen 预算 `0/5`，最坏合计 `15`，尚未获授权、
+  尚未调用。非地区行文字安全宽度收敛为 `155px`；类型 token 的显式等值表
+  仍需在 P5 前由目标客户端证实。Collapse All 归 QL-C 独立 Button，
+  不混入目录状态。
 - Quest Tracker：视觉 `P2`，外部 provider `P0`，暂停。
 - NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
 - `questitem.lua`：行为保留，视觉 `N/A`。
@@ -94,7 +99,7 @@
 | `QL-B0` | 23 行创建、排布、文字安全区和状态刷新 | `P5 runtime-exported` | 23 行 `323px` 几何、字体与状态刷新已接入；Lua smoke 覆盖创建、偏移、状态和原脚本 | Turtle WoW 验证文字基线、重叠命中与滚动 |
 | `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P5 runtime-exported` | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；内部失败与 `5/5` 事实保留 | Turtle WoW 验证 TGA、四态切换、字体和 fallback |
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 runtime-exported` | 用户接受 V1.r4 bbox-fit 合同例外；[source manifest](../../../assets/source/quests/ql-b2/QL-B2_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b2/QL-B2_RuntimeManifest_v1.json)、`128 × 16` TGA、exporter、三张真实排版预演与 adapter 已完成；历史 `5/5` 与三次流程错误保留，接受后 ImageGen `0` 次 | Turtle WoW 验证三态 UV、左缘位置、1px pressed、行重叠命中、滚动与 fallback |
-| `QL-B3` | 类型、计时、完成／失败状态章 | `P2 baseline` | 类型 tag、timer API、isComplete 已分离；未知 tag 不猜测 | QL-B1 视觉重量确认 |
+| `QL-B3` | 类型、计时、完成／失败状态章 | `P2 prompt-draft` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已锁定 `10px`／`10px`／`12px` 三槽、A／B／C 对象合同、完整执行正文与各 `0/5` 预算；未调用 ImageGen | 用户明确授权 QL-B3-A／B／C V1 |
 | `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作与辅助按钮 | `P1–P2` | 真实对象已拆，部分全局名需 feature-detect | 实机对象与几何 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | `P1–P2` | Quest Log 奖励只读，无 selected | 实机奖励数量与尺寸 |
 
@@ -185,6 +190,10 @@ source 或 runtime。
   `eac7c0fee22ca7f7eb57449b2710588743f141745510cc6029d2b9478d7a9f40`、
   pressed
   `47397145620353eabbca33c20be67fefe9fccc84e7f1334ae577d609e6915eb6`。
+- QL-B3 生产合同：
+  [`QUEST.LOG.STATUS.md`](work/QUEST.LOG.STATUS.md)。三段均为
+  `prompt-draft / P2`；固定 Image 1／2、三槽真实行几何、每段最多五次
+  实际生图和最坏 `15` 次总预算已写明，当前实际调用 `0`。
 - Turtle WoW 实机验证尚未开始。
 
 ## 下一步
@@ -193,6 +202,7 @@ QL-A2 保持 [runtime work](work/QUEST.LOG.GUTTER.md)，等待 Turtle WoW
 `1.18.1` 实机验收后才可进入 `P6`／清理。QL-B0／B1 已进入 `P5` 并等待
 实机。QL-B2 V1 已在 `5/5` 停止；用户接受的 bbox-fit source、固定三态
 atlas、adapter 与静态测试现已完成到 P5，下一门禁是 Turtle WoW 实机验证，
-在此之前不得标记 P6 或清理 work。当前无游戏设备时，可继续处理尚未进入
-P6 的 QL-B3／C／D；不得继续调用 QL-B2 V1 ImageGen。QL-B1 的旧计数保留为
-当时流程的历史事实，不作为新口径先例。
+在此之前不得标记 P6 或清理 work。当前无游戏设备时，下一可执行门禁是用户
+审阅并明确授权 QL-B3-A／B／C V1；在授权前不调用固定 ImageGen。不得继续
+调用 QL-B2 V1 ImageGen。QL-B1 的旧计数保留为当时流程的历史事实，不作为
+新口径先例。

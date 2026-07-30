@@ -77,11 +77,16 @@ expanded 向下。`QUEST.LOG.LIST.CHECK` 使用同一枚开放墨圈：untracked
 未完成的 QL-B3／C／D 仍明确为非权威 fallback。
 
 `QUEST.LOG.TYPE.BADGE` 只为客户端可靠返回的 Elite、Dungeon、Raid、PvP
-制作克制小压印；normal 与未知 tag 不显示资产。`QUEST.LOG.TIMER.BADGE`
-由计时 API 独立驱动，使用小型沙漏压印，不能冒充 questTag。
-`QUEST.LOG.STATE.SEAL` 用小型完整／破裂蜡封表达 complete／failed。所有覆盖层
-真透明、无文字，并只绑定 [SUBMODULES.md](SUBMODULES.md) 声明的真实语义；
-任务名称、等级、数量和本地化标签永远动态。
+制作同一深乌棕旧墨家族的克制无底座压印：三尖精锐纹章、粗短石门、
+三面行军旗与交叉短剑；normal 与未知 tag 不显示资产。
+`QUEST.LOG.TIMER.BADGE` 由计时 API 独立驱动，使用同线重的小型沙漏压印，
+不能冒充 questTag 或烘焙倒计时。`QUEST.LOG.STATE.SEAL` 使用 Image 1
+页脚旧蜡材质的微型化转译：同一枚暗酒红封印的完整／沿物理裂缝破裂两态，
+不使用现代绿色勾／红色叉。三类分别以 `10px`／`10px`／`12px` 显示，
+固定并列且可以同时出现；不使用单槽优先级。所有覆盖层真透明、无文字、
+无鼠标，并只绑定 [SUBMODULES.md](SUBMODULES.md) 声明的真实语义；任务名称、
+等级、数量和本地化标签永远动态。当前完整三段生产合同见
+[work/QUEST.LOG.STATUS.md](work/QUEST.LOG.STATUS.md)。
 
 QL-B1 V1 的完整五次执行、内部退回和用户覆盖性接受记录在
 [work/QUEST.LOG.DIRECTORY.md](work/QUEST.LOG.DIRECTORY.md)。用户于

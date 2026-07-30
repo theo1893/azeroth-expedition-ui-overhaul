@@ -34,6 +34,9 @@ def main() -> None:
     selection_work = (
         QUESTS / "work" / "QUEST.LOG.SELECTION.md"
     ).read_text(encoding="utf-8")
+    status_work = (
+        QUESTS / "work" / "QUEST.LOG.STATUS.md"
+    ).read_text(encoding="utf-8")
 
     require(
         submodules,
@@ -79,6 +82,11 @@ def main() -> None:
             "`QL-B1`",
             "`QL-B2`",
             "`QL-B3`",
+            "`x=176..186`",
+            "`x=187..197`",
+            "`x=198..210`",
+            "`155px`",
+            "显式登记且经目标客户端证实",
             "`QUEST.LOG.LIST.SCROLL.TRACK`",
             "`QUEST.LOG.LIST.SCROLL.THUMB`",
             "`QUEST.LOG.LIST.SCROLL.UP`",
@@ -176,6 +184,9 @@ def main() -> None:
             "work/QUEST.LOG.SELECTION.md",
             "`QUEST.LOG.TIMER.BADGE`",
             "未知 tag",
+            "work/QUEST.LOG.STATUS.md",
+            "`10px`／`10px`／`12px`",
+            "不使用单槽优先级",
             "ScrollBar 与操作 Button",
             "Quest Tracker",
             "当前没有美术基线 Prompt",
@@ -232,6 +243,10 @@ def main() -> None:
             "bab9e8bf6961b743d9591bb148878e9eadbbbbd99eac9a183446bf9c81a770b4",
             "2cd8de894c389f5c7eaf5c5d5388a20b363fa414022dc4dac57eacda1fa79029",
             "build_quest_log_selection_bookmark_v1.py",
+            "`P2 prompt-draft`",
+            "work/QUEST.LOG.STATUS.md",
+            "QL-B3-A／B／C V1",
+            "最坏 `15`",
             "Quest Tracker",
             "外部 provider `P0`",
             "NPC Quest／Gossip",
@@ -464,6 +479,56 @@ def main() -> None:
     assert selection_work.count("## 最终执行正文") == 1
     assert "流程错误单列，不占额度" in selection_work
     assert "不占生图额度" in selection_work
+
+    require(
+        status_work,
+        (
+            "QL-B3 目录任务状态覆盖 V1",
+            "`prompt-draft`",
+            "`P2`",
+            "`imagegen-0-143-0`",
+            "`QL-B3-A V1`",
+            "`QL-B3-B V1`",
+            "`QL-B3-C V1`",
+            "QL-B3-A：`0/5`",
+            "QL-B3-B：`0/5`",
+            "QL-B3-C：`0/5`",
+            "多执行正文最坏实际生图数：`15`",
+            "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
+            "91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5",
+            "## 美术基准继承",
+            "## 组件合同",
+            "`x=176..186`",
+            "`x=187..197`",
+            "`x=198..210`",
+            "`155px`",
+            "可以在同一任务行同时出现",
+            "`1024 × 1024`",
+            "`2 × 2`",
+            "`64 × 16 RGBA TGA`",
+            "`16 × 16 RGBA TGA`",
+            "`32 × 16 RGBA TGA`",
+            "纯 `#00FF00`",
+            "全部 `23` 行",
+            "## 生产正文完整性预检",
+            "结论：三段均 `pass`",
+            "## 最终执行正文 — QL-B3-A V1",
+            "## 最终执行正文 — QL-B3-B V1",
+            "## 最终执行正文 — QL-B3-C V1",
+            "左上 `elite`",
+            "右上 `dungeon`",
+            "左下 `raid`",
+            "右下 `pvp`",
+            "一个正面平视、垂直朝上的沙漏压印",
+            "左格只放 `complete`，右格只放 `failed`",
+            "## 自主修复循环",
+            "同一段循环前一次输出",
+            "等待用户审阅并明确授权",
+        ),
+        "active QL-B3 work",
+    )
+    assert "/Users/" not in status_work
+    assert status_work.count("## 最终执行正文 — QL-B3-") == 3
 
     selection_source_path = (
         ROOT

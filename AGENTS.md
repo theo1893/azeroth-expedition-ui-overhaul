@@ -20,7 +20,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 |---|---|---|
 | pfUI／原生回退 | 路由与公共过渡材质 `P5`，未实机 | Turtle WoW 全场景回归 |
 | 聊天 | 核心 V3 runtime `P5`；Chat Copy 与 URL Copy 均已暂缓；单一左框，右框隐藏 | Turtle WoW 实机验收核心批次 |
-| 任务 | 当前首要大面积 UI；QL-A1 `P4`；QL-A2 V4 固定卷宗背景 `P5`；用户接受 QL-B1 V1.r3 与 QL-B2 V1.r4 bbox-fit 运行时视觉；QL-B0 23 行、QL-B1 四态 atlas 与 QL-B2 同 Alpha 三态书签均已确定性导出、接入并静态通过，`P5`；QL-B2 实际生图仍为 `5/5`、接受后调用 `0`，一次性 source 合同例外和原始失败事实均保留 | QL-A2／B0／B1／B2 等待 Turtle WoW 实机；无实机设备时可继续处理尚未进入 P6 的 QL-B3／C／D |
+| 任务 | 当前首要大面积 UI；QL-A1 `P4`；QL-A2 V4 固定卷宗背景 `P5`；用户接受 QL-B1 V1.r3 与 QL-B2 V1.r4 bbox-fit 运行时视觉；QL-B0 23 行、QL-B1 四态 atlas 与 QL-B2 同 Alpha 三态书签均已确定性导出、接入并静态通过，`P5`；QL-B3 三槽几何与 A／B／C 三段 V1 完整生产正文已到 `prompt-draft / P2` | QL-A2／B0／B1／B2 等待 Turtle WoW 实机；下一非实机门禁是明确授权 QL-B3-A／B／C V1 |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |
 | 其他 UI | `P0–P1`，保持原生回退 | 逐模块建立四份长期文档 |
@@ -67,6 +67,7 @@ docs/
 - [当前 QL-A2 工作文件](docs/modules/quests/work/QUEST.LOG.GUTTER.md)
 - [当前 QL-B1 目录墨记工作文件](docs/modules/quests/work/QUEST.LOG.DIRECTORY.md)
 - [当前 QL-B2 选择书签工作文件](docs/modules/quests/work/QUEST.LOG.SELECTION.md)
+- [当前 QL-B3 类型／计时／状态章工作文件](docs/modules/quests/work/QUEST.LOG.STATUS.md)
 
 地图：
 
