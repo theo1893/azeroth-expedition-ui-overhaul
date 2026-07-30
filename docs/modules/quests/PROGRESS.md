@@ -16,8 +16,9 @@
   重组预演、source 或 runtime。
 - `QL-A2 V3.2`：`prompt-draft / P2`。根据 V3.1 首个失败门禁，把两张大
   纸页与六个页沟小件拆成 A／B 两个固定调用；两次都只拟上传任务锁定图与
-  已接受 QL-A1 结构 source，聊天整框图改为只通过书面基线继承。尚未授权、
-  未上传、未生成。
+  已接受 QL-A1 结构 source，聊天整框图改为只通过书面基线继承。A／B
+  已分别冻结最多 `5` 次自主生成－审查－修复预算，最坏总调用数为 `10`；
+  尚未授权、未上传、未生成。
 - Quest Tracker：视觉 `P2`，外部 provider `P0`，暂停。
 - NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
 - `questitem.lua`：行为保留，视觉 `N/A`。
@@ -27,7 +28,7 @@
 | 批次 | 子模块 | 阶段 | 当前事实 | 下一门禁 |
 |---|---|---:|---|---|
 | `QL-A1` | `QUEST.LOG.SHELL` 结构母版 | `P4` | [透明 source](../../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png) 已接受；整图不得进 runtime | 等待 QL-A2 后确定 crop／UV |
-| `QL-A2` | 两纸页与六个 `GUTTER.*` | `P2` V3.2 prompt-draft | V1、V2.1、V3、V3.1 均已退回；[当前 work](work/QUEST.LOG.GUTTER.md) 已把纸页／页沟拆成两段执行正文 | 用户授权 V3.2-A／B，并允许两个调用上传两张固定 SHA 参考 |
+| `QL-A2` | 两纸页与六个 `GUTTER.*` | `P2` V3.2 prompt-draft | V1、V2.1、V3、V3.1 均已退回；[当前 work](work/QUEST.LOG.GUTTER.md) 已把纸页／页沟拆成两段执行正文，并为两段各冻结最多 5 次修复预算 | 用户授权 V3.2-A／B、A/B 各 5 次且最坏 10 次调用，并允许每次调用上传两张固定 SHA 参考 |
 | `QL-B` | 目录行、展开、追踪、选择、类型、状态 | `P1–P2` | 子模块与稳定美术基线已定义，无生产 work | QL-A2 source 接受后逐对象建 Prompt |
 | `QL-C` | 两套 ScrollBar、关闭、操作与辅助按钮 | `P1–P2` | 真实对象已拆，部分全局名需 feature-detect | 实机对象与几何 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | `P1–P2` | Quest Log 奖励只读，无 selected | 实机奖励数量与尺寸 |
@@ -75,7 +76,7 @@ source 或 runtime。
 
 ## 下一步
 
-用户审阅 [QL-A2 V3.2-A／B 执行正文](work/QUEST.LOG.GUTTER.md)。只有用户
-明确授权 V3.2 两段正文，并允许两个固定调用分别上传按 SHA 锁定的 Image 1
-与 Image 2 后才能生成；V3.1 授权、“继续”或对拆分方向的认可均不构成
-V3.2 生成授权。
+用户审阅 [QL-A2 V3.2-A／B 执行正文与修复边界](work/QUEST.LOG.GUTTER.md)。
+只有用户明确授权两段正文，接受 A／B 各最多 `5` 次、最坏总计 `10` 次
+固定执行器调用，并允许每次调用上传按 SHA 锁定的 Image 1 与 Image 2 后
+才能生成；V3.1 授权、“继续”或对拆分方向的认可均不构成 V3.2 生成授权。
