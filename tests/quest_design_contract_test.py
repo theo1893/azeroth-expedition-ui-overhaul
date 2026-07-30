@@ -179,7 +179,7 @@ def main() -> None:
             "版本：`QL-A2 V3.2`",
             "子状态：`prompt-authorized`",
             "项目阶段：`P3`",
-            "执行状态：已授权，固定执行器尚未调用",
+            "执行状态：V3.2-A attempt 1 已计数",
             "确认授权 QL-A2 V3.2-A/B",
             "### V3.2-A — PAGES",
             "### V3.2-B — GUTTER",
