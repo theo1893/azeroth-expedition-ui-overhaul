@@ -177,7 +177,7 @@ def main() -> None:
         work,
         (
             "版本：`QL-A2 V3.2`",
-            "子状态：`prompt-authorized`",
+            "子状态：`repair-prepared`",
             "项目阶段：`P3`",
             "执行状态：",
             "确认授权 QL-A2 V3.2-A/B",
@@ -216,6 +216,9 @@ def main() -> None:
             "`V3.2-A.r1`",
             "#### V3.2-A.r1 — TRANSPORT RETRY",
             "FetchError / EPERM",
+            "#### V3.2-A.r2 — QUIET PAPER REGENERATION",
+            "缩小到 `25%`",
+            "49bc19f8379067f7af279888db67a262e4d8015924def543ec3a1c634f44c913",
             "`V3.2-A.r4`",
             "`V3.2-B.r1`",
             "`V3.2-B.r4`",
