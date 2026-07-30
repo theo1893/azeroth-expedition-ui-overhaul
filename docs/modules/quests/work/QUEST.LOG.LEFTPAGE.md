@@ -10,7 +10,7 @@
 - 当前实际生图：A `0/5`；B `0/5`。
 - 单段预算：最多 `5` 次实际生成／编辑。
 - 最坏总预算：`10` 次实际生成／编辑。
-- 流程错误：A `2`；B `0`，与实际生图次数分开记录。
+- 流程错误：A `3`；B `0`，与实际生图次数分开记录。
 - 固定执行器：`.codex/skills/imagegen-0-143-0/SKILL.md`，
   `@openai/codex@0.143.0`。
 - 用户授权：`2026-07-30` 明确授权 `QL-B0-A V2` 与 `QL-B0-B V2`，
@@ -254,6 +254,7 @@ Image 2 `QuestLogBookShell_Master_v1.png`
 |---:|---|---|---|---|---|
 | E1 | A／`QL-B0-A V2`／`8e934f6` | fixed CLI 未启动；无 child session／result | `npx` 写入用户 npm cache 时返回 `EPERM`；无图片、无 provider result、无生成证据 | 保持授权正文与 Image 1／2 不变；改用 `generated/` 下独立 npm cache，并以获准网络环境重试 | `process-error`；不占生图额度，A 仍为 `0/5` |
 | E2 | A／`QL-B0-A V2`／`8e934f6` | fixed CLI 未启动；无 child session／result | 独立 npm cache 下载 `@openai/codex@0.143.0` 时连接被重置，npm 日志为 `ECONNRESET`；固定包未完成安装，空工作目录中无图片，进程管理记录与 session 中均无 child／provider 证据 | 保持授权正文与 Image 1／2 不变；复用已下载进独立 cache 的固定包内容，以持久 stdout／stderr 的隐藏后台执行器完成安装及执行，避免外层短超时截断 | `process-error`；不占生图额度，A 仍为 `0/5` |
+| E3 | A／`QL-B0-A V2`／`8e934f6` | fixed CLI 未启动；无 child session／result | Windows PowerShell 5 按本地代码页读取无 BOM 的忽略目录 launcher，正文标题与中文 Image 1 路径在上传前失真，授权正文抽取失败；无图片、无 provider result | launcher 改为纯 ASCII 路由：按标题中的 `QL-B0-A V2`／`QL-B0-B V2` 标识抽取正文，并按授权 SHA-256 在目录中解析 Image 1；固定正文与输入不变 | `process-error`；不占生图额度，A 仍为 `0/5` |
 
 ## 下一门禁
 
