@@ -412,9 +412,9 @@ badge、霓虹、玻璃、镜面黄金、暗黑 3 尖刺黑铁、骷髅、恶魔
 
 | 段 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---|---:|---|---|---|---|---|---|---|
-| A | 1/5 | `QL-B3-A V1` / 待授权后提交 | generate |  |  |  |  |  |
-| B | 1/5 | `QL-B3-B V1` / 待授权后提交 | generate |  |  |  |  |  |
-| C | 1/5 | `QL-B3-C V1` / 待授权后提交 | generate |  |  |  |  |  |
+| A | 1/5 | `QL-B3-A V1` / `265503a` | generate |  |  |  |  |  |
+| B | 1/5 | `QL-B3-B V1` / `265503a` | generate |  |  |  |  |  |
+| C | 1/5 | `QL-B3-C V1` / `265503a` | generate |  |  |  |  |  |
 
 | 流程错误 | 段／正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
@@ -423,7 +423,8 @@ badge、霓虹、玻璃、镜面黄金、暗黑 3 尖刺黑铁、骷髅、恶魔
 ## 执行记录
 
 - 当前没有 ImageGen 调用、候选、provider result、source 或 runtime。
-- 用户授权范围已经冻结；当前尚无 ImageGen 调用、候选或 provider result。
+- 用户授权范围已由 commit `265503a` 冻结；当前尚无 ImageGen 调用、
+  候选或 provider result。
 
 ## 审查记录
 
