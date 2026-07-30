@@ -8,12 +8,11 @@
   `QUEST.LOG.GUTTER.RIGHT_FOLD`、`QUEST.LOG.GUTTER.STITCH`、
   `QUEST.LOG.GUTTER.TOP`、`QUEST.LOG.GUTTER.BOTTOM`
 - 版本：`QL-A2 V3.3`
-- 子状态：`candidate-rejected`（B1）／`repair-prepared`（B2）／
-  `prompt-authorized`（B3）
+- 子状态：`candidate-rejected`（B1、B2）／`prompt-authorized`（B3）
 - 项目阶段：`P3`
 - 类型：`production`
-- 当前操作：B1 `repair-budget-exhausted`；B2 attempt 4 已退回，执行
-  `V3.3-B2.r4` local material edit
+- 当前操作：B1／B2 `repair-budget-exhausted`；执行 B3 attempt 1
+  `generate`
 - 用户授权：用户于 `2026-07-30` 明确确认
   `QL-A2 V3.3-B1/B2/B3`；每段最多 `5` 次、最坏总计 `15` 次；允许 B1
   每次上传固定 SHA 的 Image 1／2，允许 B2／B3 每次只上传固定 SHA 的
@@ -25,9 +24,9 @@
   - `V3.3-B3 / CLOSURES`：top closure＋bottom closure
 - 自动修复预算：
   - `V3.3-B1`：最多 `5` 次固定执行器调用，当前 `5/5`，额度耗尽
-  - `V3.3-B2`：最多 `5` 次固定执行器调用，当前 `5/5`；attempt 5
+  - `V3.3-B2`：最多 `5` 次固定执行器调用，当前 `5/5`，额度耗尽
+  - `V3.3-B3`：最多 `5` 次固定执行器调用，当前 `1/5`；attempt 1
     已在执行前计数
-  - `V3.3-B3`：最多 `5` 次固定执行器调用，当前 `0/5`
   - 最坏总调用数：`15`；每段通过后立即停止，不借用或转移余额
 - 目标客户端：Turtle WoW `1.18.1`／Interface `11200`
 - 真实对象合同：[SUBMODULES.md](../SUBMODULES.md)
@@ -64,9 +63,9 @@
   — SHA-256
   `b91b5dab0c52d84a9edb9b22d2fcb6637da6ec60dde99e42cdee7c495f881bb3`
 - V3.3-B2 当前 raw：
-  `generated/quests/QL-A2/v3.3/stitch/attempt-04/QL-A2_V3_3_B2_STITCH.raw.png`
+  `generated/quests/QL-A2/v3.3/stitch/attempt-05/QL-A2_V3_3_B2_STITCH.raw.png`
   — SHA-256
-  `2b1b0a6fd781c27bc5700233c4b453a9a1c14e67e4b54454111e566b9800b833`
+  `783a4dae6b4792b2de394c1eadef348650dcb7765a863163c8ef29d89674a59a`
 - V3.3 透明候选／重组预演：未生成
 - 最终 source：无
 
@@ -533,13 +532,13 @@ bottom 的可遮挡方向相反，保持同一浅俯视表面方向与左上暖�
 | 2/5 | `V3.3-B2.r1` / `683942d` | edit | `019fb12a-349c-7220-8c0d-0555fc8e02d3` / `ig_05a0583b1cb46a34016a6acb5b7aac8191b2e665ccd3bf451b` | `stitch/attempt-02/QL-A2_V3_3_B2_STITCH.raw.png` / `c271e082273110222a21bfe829fdb50f5d4bc3eb919a91d890c4d61ccc204ba9` | 语义／美术仍像木条；合同：bbox 约 `864 × 87px`、`9.93:1`，尺寸几乎未服从 edit | 保留单对象、中心、水平轻拱与左上暖光；同一底稿锚定失败，attempt 3 不再上传同段输出，只从固定 Image 1 regenerate | 退回 |
 | 3/5 | `V3.3-B2.r2` / `647531e` | generate | `019fb12e-07ba-77e1-9a73-27072cd06d7c` / `ig_0fa9952560959840016a6acc5817d48191a336e04d83d787d9` | `stitch/attempt-03/QL-A2_V3_3_B2_STITCH.raw.png` / `c22f24ce4ccf3451589917028fa18b95ab1006287394e233beddd31accb12565` | 语义／美术仍有根须木纹；合同：bbox 约 `795 × 68px`、`11.69:1`，宽度超限且高度不足 | 保留单对象、中心、水平朝向和综合色；继续只用固定 Image 1 regenerate，收敛到合同低宽端并改为平滑蜡处理亚麻宽面 | 退回 |
 | 4/5 | `V3.3-B2.r3` / `7a09d83` | generate | `019fb131-7359-7f23-8771-e48dae8c2873` / `ig_040d12e6115be890016a6acd36ece08191845d1b0f62477a4f` | `stitch/attempt-04/QL-A2_V3_3_B2_STITCH.raw.png` / `2b1b0a6fd781c27bc5700233c4b453a9a1c14e67e4b54454111e566b9800b833` | 语义／物理：明显多股编织麻绳、整面斜向交织纹和分叉端点；几何合同已通过 | 冻结单对象、中心、低缓拱和 `713 × 90px` bbox；使用 attempt 4 作为同段 edit 底稿，只合并绳股、删除编织纹并修正色键 | 退回 |
-| 5/5 | `V3.3-B2.r4` / 待生成 | edit |  |  |  |  | 未执行 |
+| 5/5 | `V3.3-B2.r4` / `cb7d5a7` | edit | `019fb134-fa71-7d42-9ccc-70b5575ce5a5` / `ig_0654ac4bc865a6f1016a6ace20ca048191aec61f644a4305b3` | `stitch/attempt-05/QL-A2_V3_3_B2_STITCH.raw.png` / `783a4dae6b4792b2de394c1eadef348650dcb7765a863163c8ef29d89674a59a` | 语义／材料变成光滑木质／角质实体；合同：bbox 约 `832 × 101px`，宽度重新超限；背景无精确纯绿 | B2 已用满 `5/5`，停止；不得透明化、装配或再生。B3 保持独立授权 | `repair-budget-exhausted` |
 
 ### V3.3-B3 尝试表
 
 | 尝试 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
-| 1/5 | `V3.3-B3` / 待写入执行前 commit | generate |  |  |  |  | 未执行 |
+| 1/5 | `V3.3-B3` / 待生成 | generate |  |  |  |  | 未执行 |
 | 2/5 | `V3.3-B3.r1` / 待生成 | edit／generate |  |  |  |  | 未执行 |
 | 3/5 | `V3.3-B3.r2` / 待生成 | edit／generate |  |  |  |  | 未执行 |
 | 4/5 | `V3.3-B3.r3` / 待生成 | edit／generate |  |  |  |  | 未执行 |
@@ -548,40 +547,42 @@ bottom 的可遮挡方向相反，保持同一浅俯视表面方向与左上暖�
 ## 执行记录
 
 - 日期：V3.3 于 `2026-07-30` 获得版本级生成授权
-- 会话／结果 ID：B2 attempt 4
-  `019fb131-7359-7f23-8771-e48dae8c2873`／
-  `ig_040d12e6115be890016a6acd36ece08191845d1b0f62477a4f`
+- 会话／结果 ID：B2 attempt 5
+  `019fb134-fa71-7d42-9ccc-70b5575ce5a5`／
+  `ig_0654ac4bc865a6f1016a6ace20ca048191aec61f644a4305b3`
 - 实际输入：Image 1
   `/Users/yuanshiyao/Documents/Codex/2026-07-28/new-chat/aeui-chat-work/assets/locked/quests/任务详情面板_视觉基准_v1.png`；
-  无 Image 2
+  Image 2
+  `/Users/yuanshiyao/Documents/Codex/2026-07-28/new-chat/aeui-chat-work/generated/quests/QL-A2/v3.3/stitch/attempt-04/QL-A2_V3_3_B2_STITCH.raw.png`
 - imagegen 报告的 revised prompt：无；子进程打印的 user block 与已提交
-  `V3.3-B2.r3` 完整正文一致
+  `V3.3-B2.r4` 完整正文一致
 - 输出尺寸／模式／SHA-256：`1536 × 1024 RGB`；
-  `2b1b0a6fd781c27bc5700233c4b453a9a1c14e67e4b54454111e566b9800b833`
+  `783a4dae6b4792b2de394c1eadef348650dcb7765a863163c8ef29d89674a59a`
 - Alpha／残色：全图 `1572864` 个像素均不透明；精确 `#00FF00` 为 `0`；
-  启发式绿色主导像素 `1530587`
-- 固定执行器调用：B1 `5/5`；B2 `5/5`；B3 `0/5`；合计 `10/15`
-- 计数说明：B2 attempt 5 已按工作流在调用前占用额度；若传输失败也保持
-  计数，不回退为 `4/5`
+  启发式绿色主导像素 `1516471`
+- 固定执行器调用：B1 `5/5`；B2 `5/5`；B3 `1/5`；合计 `11/15`
+- 计数说明：B3 attempt 1 已按工作流在调用前占用额度；若传输失败也保持
+  计数，不回退为 `0/5`
 
 ## 审查记录
 
-- 语义／物理：退回。对象数量、水平朝向、中心位置和低缓拱度通过，但
-  对象明显由多股绳束交织而成，两端也分叉，不是合同要求的单股针脚。
+- 语义／物理：退回。对象数量、水平朝向、中心位置、单股轮廓与低缓拱度
+  通过，但线体被重画为无纤维结构的光滑木质／角质实体，不像亚麻针脚。
 - 透视／图层：通过。单对象与玩家正对，左上暖光一致，未烘焙纸缘或遮挡。
-- 美术一致性：退回。综合色与香草手绘厚度改善，但整面菱形／X 形斜向
-  编织纹形成高频现代 rope icon，违背克制的宽面单线材。
-- 对象／状态合同：恰好一个对象；启发式 bbox 为 `713 × 90px`，中心约
-  `(783.0,508.5)`，纵横比约 `7.92:1`。宽、高和纵横比均通过基础合同。
+- 美术一致性：退回。综合色、宽面笔触和单一轮廓改善，但蜡感被放大成
+  硬质角／木条表面，缺少克制的亚麻纤维身份。
+- 对象／状态合同：恰好一个对象；启发式 bbox 为 `832 × 101px`，中心约
+  `(767.5,518.0)`，纵横比约 `8.24:1`。高度和纵横比合规，但宽度超过
+  `760px` 上限。
 - 装配／尺寸：单线与中央位置可保留；在通过前不得裁切、透明化、等比缩小
   或放入 atlas。B1 的失败仍独立阻塞整批装配。
 - 技术像素：尺寸正确但为全不透明 RGB；精确 `#00FF00` 为 `0` 像素，
   背景是近似亮绿而非逐像素统一色键，当前无法安全透明化。
-- 当前结论：B2 attempt 4 退回；`repair-prepared / P3`。数量、透视、
-  位置和几何均已通过，失败局限在局部材料与端点；attempt 5 使用当前 raw
-  作为从属 edit 底稿，由 `V3.3-B2.r4` 合并绳股、删除交织纹并修正色键。
+- 当前结论：B2 attempt 5 退回；
+  `candidate-rejected / P3 / repair-budget-exhausted`。B2 `5/5` 已耗尽，
+  不再调用、透明化或装配；B3 的独立授权与剩余预算不变。
 - 用户尚未发生的结论：没有候选接受，没有 source、manifest、runtime、
   Lua 接入或 Turtle WoW 实机验收
-- 下一门禁：提交 `V3.3-B2.r4` 后，上传固定 Image 1 与上述同段 attempt 4
-  raw 执行 B2 attempt 5 local material edit；不得上传其他 B2 raw、继续
-  B1、透明化未通过对象或进行整批装配
+- 下一门禁：提交 B2 终态并在调用前计数 B3 attempt 1 后，只上传固定
+  Image 1 执行 `V3.3-B3`；不得继续 B1／B2、跨段复用输出、透明化失败
+  对象或进行整批装配
