@@ -19,8 +19,9 @@
   竖条，fold 仍有满面压纹，且背景不可安全色键。B2 attempt 1 生成了
   单根水平对象；attempt 5 去除了编织纹，却变成 `832 × 101px` 的光滑
   木质／角质实体，仍非亚麻线且背景不可安全色键，B2 已耗尽 `5/5`。
-  当前 B3 为 `prompt-authorized 1/5`，attempt 1 已在调用前计数，
-  合计 `11/15`。
+  B3 attempt 1 生成两枚大型多环编织麻绳结，左／右约
+  `500 × 256px`、`484 × 215px`，结法与宽度均失败；当前 B3 为
+  `repair-prepared 2/5`，attempt 2 已在调用前计数，合计 `12/15`。
   整批装配被 B1 阻塞。
 - Quest Tracker：视觉 `P2`，外部 provider `P0`，暂停。
 - NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
@@ -31,7 +32,7 @@
 | 批次 | 子模块 | 阶段 | 当前事实 | 下一门禁 |
 |---|---|---:|---|---|
 | `QL-A1` | `QUEST.LOG.SHELL` 结构母版 | `P4` | [透明 source](../../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png) 已接受；整图不得进 runtime | 等待 QL-A2 后确定 crop／UV |
-| `QL-A2` | 两纸页与六个 `GUTTER.*` | `P3` V3.3 partial | B1／B2 均 `candidate-rejected / repair-budget-exhausted`；B3 `prompt-authorized 1/5`；当前 `11/15`，无透明候选或装配 | 只用固定 Image 1 执行 B3 attempt 1 |
+| `QL-A2` | 两纸页与六个 `GUTTER.*` | `P3` V3.3 partial | B1／B2 均 `candidate-rejected / repair-budget-exhausted`；B3 `repair-prepared 2/5`；当前 `12/15`，无透明候选或装配 | 只用固定 Image 1 执行 B3 attempt 2 independent regeneration |
 | `QL-B` | 目录行、展开、追踪、选择、类型、状态 | `P1–P2` | 子模块与稳定美术基线已定义，无生产 work | QL-A2 source 接受后逐对象建 Prompt |
 | `QL-C` | 两套 ScrollBar、关闭、操作与辅助按钮 | `P1–P2` | 真实对象已拆，部分全局名需 feature-detect | 实机对象与几何 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | `P1–P2` | Quest Log 奖励只读，无 selected | 实机奖励数量与尺寸 |
@@ -80,6 +81,6 @@ source 或 runtime。
 ## 下一步
 
 按 [QL-A2 V3.3 三段执行正文](work/QUEST.LOG.GUTTER.md) 继续执行
-`V3.3-B3` attempt 1：只上传固定 SHA 的 Image 1，生成左右两枚紧凑结构
-收口结，再从语义／物理门禁开始完整内审。B1／B2 均已耗尽，禁止再调用
-或进入确定性装配。
+`V3.3-B3.r1` attempt 2：只上传固定 SHA 的 Image 1，独立重生左右两枚
+紧闭无孔、单次交叉的实用止结，再从语义／物理门禁开始完整内审。B1／B2
+均已耗尽，禁止再调用或进入确定性装配。
