@@ -59,20 +59,42 @@ Texture、FontString。禁止在 SHELL 上烘焙任务行、滚动状态、选�
 
 | ID | 真实对象 | 状态／资产 |
 |---|---|---|
+| `QUEST.LOG.REGION.TOGGLE` | `QuestLogTitleN` 且 `isHeader=true` 的图标区 | 展开／收起覆盖，不新增命中区 |
+| `QUEST.LOG.LIST.ROW` | `QuestLogTitle1..23`；`7..23` 继承 `QuestLogTitleButtonTemplate` 创建 | 普通／悬停／按下／禁用；layout／字体状态，不生成完整行卡片 |
+| `QUEST.LOG.LIST.CHECK` | `QuestLogTitleNCheck` | 未追踪／已追踪；不是选择 Button |
+| `QUEST.LOG.SELECTION` | 当前选中的 `QuestLogTitleN` | 选中／选中悬停／选中按下织物书签 |
+| `QUEST.LOG.TYPE.BADGE` | `GetQuestLogTitle` 的可靠 `questTag` | `normal` 无资产；Elite／Dungeon／Raid／PvP 小压印；未知 tag 不猜测 |
+| `QUEST.LOG.TIMER.BADGE` | `GetQuestTimers()` 与 `GetQuestIndexForTimer()` | timed 沙漏压印；API 缺失时不显示 |
+| `QUEST.LOG.STATE.SEAL` | `GetQuestLogTitle` 的 `isComplete` | `+1` complete／`-1` failed；nil 不显示 |
+
+整条 `QuestLogTitleN` 才是选择命中对象。名称、等级、任务数量与勾选均动态
+绘制。地区展开状态来自同一条目的 `isHeader`／`isCollapsed`；追踪状态来自
+绝对任务索引的 `IsQuestWatched`；选择状态来自 `GetQuestLogSelection`。
+不得通过解析本地化任务名或显示文字推断状态。
+
+pfUI 的功能合同保留 `QUESTS_DISPLAYED = 23`，而 QL-A2 左页安全区只有
+`246 × 324 UI px`。QL-B0 的离线目标几何为 `23` 条
+`224 × 15 UI px` 行、`14px` 纵向步进，总占高 `323px`；右侧 `22px`
+预留给滚动条和间距。它只压缩视觉行距，不减少可见行数、不替换原生脚本，
+并必须在 Turtle WoW 中验证文字基线、重叠命中和滚动偏移。
+
+QL-B 的生产边界：
+
+- `QL-B1`：`REGION.TOGGLE` 与 `LIST.CHECK` 四枚墨记。
+- `QL-B2`：`SELECTION` 的三状态暗酒红织物书签。
+- `QL-B3`：四类可靠 `TYPE.BADGE`、独立 `TIMER.BADGE` 与两类
+  `STATE.SEAL`。
+- `LIST.ROW` 自身只承担布局、字体色和真实点击，不持有位图行卡。
+
+## Quest Log 滚动与控制
+
+| ID | 真实对象 | 状态／资产 |
+|---|---|---|
 | `QUEST.LOG.LIST.SCROLL.TRACK` | `QuestLogListScrollFrameScrollBar` 轨道 | 上端／可平铺中段／下端 |
 | `QUEST.LOG.LIST.SCROLL.THUMB` | 对应 ThumbTexture | 普通／悬停／按下／禁用 |
 | `QUEST.LOG.LIST.SCROLL.UP` | 对应 ScrollUpButton，需 feature-detect | 四状态 Button |
 | `QUEST.LOG.LIST.SCROLL.DOWN` | 对应 ScrollDownButton，需 feature-detect | 四状态 Button |
-| `QUEST.LOG.COLLAPSE.ALL` | `QuestLogCollapseAllButton` | 展开／收起，各四状态 |
-| `QUEST.LOG.REGION.TOGGLE` | `QuestLogTitleN` 且 `isHeader=true` 的图标区 | 展开／收起覆盖，不新增命中区 |
-| `QUEST.LOG.LIST.ROW` | `QuestLogTitle1..QUESTS_DISPLAYED` | 普通／悬停／按下／禁用；无完整行卡片 |
-| `QUEST.LOG.LIST.CHECK` | `QuestLogTitleNCheck` | 未追踪／已追踪；不是选择 Button |
-| `QUEST.LOG.SELECTION` | 当前选中的 `QuestLogTitleN` | 选中／选中悬停／选中按下织物书签 |
-| `QUEST.LOG.TYPE.BADGE` | `GetQuestLogTitle` 的可靠 tag | normal／elite／dungeon／raid／timed |
-| `QUEST.LOG.STATE.SEAL` | 行状态覆盖 | complete／failed |
-
-整条 `QuestLogTitleN` 才是选择命中对象。名称、等级、任务数量与勾选均动态
-绘制。
+| `QUEST.LOG.COLLAPSE.ALL` | `QuestLogCollapseAllButton` | 独立 Button；展开／收起方向与普通／悬停／按下／禁用状态均需保留 |
 
 ## Quest Log 右页与操作
 

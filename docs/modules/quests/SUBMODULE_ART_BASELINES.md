@@ -43,11 +43,30 @@ ImageGen。
 
 ## 左页目录状态
 
-目录纸面保持连续，不生成逐行卡片。地区展开使用小墨箭头；追踪状态使用独立
-墨圈／墨勾；当前任务使用暗酒红窄织物书签；精英、地下城、团队与限时类型
-使用克制的小压印；完成与失败使用小型完整／破裂蜡封。每个覆盖层真透明、
-无文字，并只绑定 [SUBMODULES.md](SUBMODULES.md) 中声明的真实语义。任务
-名称、等级和数量永远动态。
+目录纸面保持连续，不生成逐行卡片。23 个真实 `QuestLogTitleN` 保留整行
+点击和 pfUI 的扩展显示数量；行本体只使用动态 FontString 色、顶点色与独立
+覆盖，不生成现代矩形 hover card。
+
+`QUEST.LOG.REGION.TOGGLE` 使用同一枚深乌棕手绘三角墨箭头：collapsed 向右、
+expanded 向下。`QUEST.LOG.LIST.CHECK` 使用同一枚开放墨圈：untracked
+为空圈，tracked 只增加一笔粗短墨勾。它们都是正面、低分辨率友好的
+2004 年前后香草魔兽二维手绘 sprite，无金属底座、无方形 checkbox、无
+`+`／`-` 字符、无独立命中区。
+
+`QUEST.LOG.SELECTION` 使用从左页外缘探入当前行的暗酒红窄织物书签舌，不铺满
+整行；选中、选中悬停、选中按下只改变受光、压入和色重，不改变物件身份。
+
+`QUEST.LOG.TYPE.BADGE` 只为客户端可靠返回的 Elite、Dungeon、Raid、PvP
+制作克制小压印；normal 与未知 tag 不显示资产。`QUEST.LOG.TIMER.BADGE`
+由计时 API 独立驱动，使用小型沙漏压印，不能冒充 questTag。
+`QUEST.LOG.STATE.SEAL` 用小型完整／破裂蜡封表达 complete／failed。所有覆盖层
+真透明、无文字，并只绑定 [SUBMODULES.md](SUBMODULES.md) 声明的真实语义；
+任务名称、等级、数量和本地化标签永远动态。
+
+当前可执行生产正文只包含 QL-B1，记录在
+[work/QUEST.LOG.DIRECTORY.md](work/QUEST.LOG.DIRECTORY.md)。QL-B2／B3
+必须在前一批确认小尺寸视觉重量后分别建立完整执行正文，不能从概念图直接
+裁切。
 
 ## ScrollBar 与操作 Button
 

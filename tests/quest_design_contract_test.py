@@ -28,6 +28,9 @@ def main() -> None:
     work = (QUESTS / "work" / "QUEST.LOG.GUTTER.md").read_text(
         encoding="utf-8"
     )
+    directory_work = (
+        QUESTS / "work" / "QUEST.LOG.DIRECTORY.md"
+    ).read_text(encoding="utf-8")
 
     require(
         submodules,
@@ -54,9 +57,21 @@ def main() -> None:
             "禁止在 SHELL 上烘焙",
             "`QUEST.LOG.REGION.TOGGLE`",
             "`QUEST.LOG.LIST.ROW`",
+            "`QuestLogTitle1..23`",
+            "`QuestLogTitleButtonTemplate`",
             "`QUEST.LOG.LIST.CHECK`",
             "不是选择 Button",
             "`QUEST.LOG.SELECTION`",
+            "`QUEST.LOG.TYPE.BADGE`",
+            "`QUEST.LOG.TIMER.BADGE`",
+            "`GetQuestTimers()`",
+            "`GetQuestIndexForTimer()`",
+            "`QUEST.LOG.STATE.SEAL`",
+            "`224 × 15 UI px`",
+            "`14px` 纵向步进",
+            "`QL-B1`",
+            "`QL-B2`",
+            "`QL-B3`",
             "`QUEST.LOG.LIST.SCROLL.TRACK`",
             "`QUEST.LOG.LIST.SCROLL.THUMB`",
             "`QUEST.LOG.LIST.SCROLL.UP`",
@@ -150,6 +165,9 @@ def main() -> None:
             "`GUTTER.*` 仅保留逻辑",
             "work/QUEST.LOG.GUTTER.md",
             "左页目录状态",
+            "work/QUEST.LOG.DIRECTORY.md",
+            "`QUEST.LOG.TIMER.BADGE`",
+            "未知 tag",
             "ScrollBar 与操作 Button",
             "Quest Tracker",
             "当前没有美术基线 Prompt",
@@ -182,6 +200,11 @@ def main() -> None:
             "Quests.lua",
             "QL-A1_RuntimeManifest_v1.json",
             "1b6b21cd3db74202051a2ceb8b5ba1d91ca7beb636accf247603edbc3cfeb40e",
+            "`QL-B1 V1`",
+            "`production-draft / P2`",
+            "`0/5`",
+            "`15px` 行高／`14px` 步进",
+            "work/QUEST.LOG.DIRECTORY.md",
             "Quest Tracker",
             "外部 provider `P0`",
             "NPC Quest／Gossip",
@@ -254,6 +277,64 @@ def main() -> None:
     assert "不适用。V4 是确定性导出合同" in work
     assert "/Users/" not in work
     assert "固定执行器预算：`0/0`" in work
+
+    require(
+        directory_work,
+        (
+            "版本：`QL-B1 V1`",
+            "子状态：`prompt-draft`",
+            "项目阶段：`P2`",
+            "固定执行器：`imagegen-0-143-0`",
+            "当前尝试：`0/5`",
+            "QUEST.LOG.REGION.TOGGLE",
+            "QUEST.LOG.LIST.CHECK",
+            "任务详情面板_视觉基准_v1.png",
+            "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
+            "QuestLogBookShell_Master_v1.png",
+            "91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5",
+            "## 当前批次边界",
+            "`QL-B0`",
+            "`QL-B1`",
+            "`QL-B2`",
+            "`QL-B3`",
+            "`QUEST.LOG.COLLAPSE.ALL` 是独立 Button",
+            "## 美术基准继承",
+            "Image 1 与",
+            "Image 2 作为已接受书体的受限材料",
+            "不继承 Image 1 的完整书体、逐行卡片",
+            "原生／pfUI 的 `+`、`-`",
+            "## 组件合同",
+            "QuestLogTitleButtonTemplate",
+            "`QUESTS_DISPLAYED = 23`",
+            "`224 × 15 UI px`",
+            "纵向步进 `14px`",
+            "`64 × 16` RGBA TGA",
+            "`16 × 16` cell",
+            "`1024 × 1024`",
+            "`2 × 2`",
+            "`512 × 512`",
+            "`#00FF00`",
+            "## 生产正文完整性预检",
+            "结论：`pass`",
+            "## 最终执行正文",
+            "输出恰好一张 `1024 × 1024`",
+            "左上格",
+            "右上格",
+            "左下格",
+            "右下格",
+            "严格顺时针旋转九十度",
+            "只在圈内增加一笔粗短",
+            "绝对禁止出现任何文字",
+            "## 自主修复循环",
+            "最多 `5` 次",
+            "固定 SHA 的 Image 1／Image 2",
+            "等待具体版本授权",
+        ),
+        "active QL-B1 work",
+    )
+    assert "/Users/" not in directory_work
+    assert directory_work.count("## 最终执行正文") == 1
+    assert "attempt 1" not in directory_work.lower()
 
     source_path = (
         ROOT

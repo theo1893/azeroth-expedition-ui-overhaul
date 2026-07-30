@@ -5,7 +5,8 @@
 - Quest Log 主视觉：已锁定。
 - 用户于 `2026-07-30` 将 Quest Log 选为当前首要大面积 UI；地图与角色因
   实机对象几何尚未完成，继续保持后续顺位。
-- Quest Log 真实对象合同：`P1` 完成，QL-A 当前处于 `P4–P5`。
+- Quest Log 真实对象合同：`P1` 完成，QL-A 当前处于 `P4–P5`；QL-B1
+  已进入 `prompt-draft / P2`。
 - `QL-A1` 空卷宗结构 source：用户确认，`P4`。
 - `QL-A2 V3.2` 已终止：A attempt 5 目标级通过；B 在 `5/5` 后仍有约
   `45%` 格宽的针脚和完整外露结，整批 `10/10` 额度耗尽。没有形成
@@ -30,6 +31,17 @@
   Texture，但保留动态文字、列表、详情、原操作 Button、脚本和
   SavedVariables。缺少详情切换时只创建真实 Button。任务行、两套
   ScrollBar、按钮状态、奖励槽与状态覆盖的最终美术仍属于 QL-B/C/D。
+- `QL-B`：已完成目录对象与状态来源复核。pfUI 的 23 行／350px 与 QL-A2
+  `324px` 安全区存在明确几何冲突；当前离线合同保留 23 行，以
+  `15px` 行高／`14px` 步进占用 `323px`，不减少 pfUI 可见行数。该数值
+  仍需实机验证文字基线、点击重叠和滚动偏移。
+- `QL-B1 V1`：`production-draft / P2`。只包含地区 collapsed／expanded
+  墨箭头和 untracked／tracked 墨圈四状态；完整锁定基准继承、两张固定输入、
+  `1024 × 1024` 四格色键画布、runtime cell 与最多 `5` 次自主修复边界已
+  写入单一 work。尚未授权、未调用 ImageGen、无候选。
+- `QL-B2`／`QL-B3`：只完成稳定边界。选中书签与类型／计时／状态章将在
+  QL-B1 小尺寸视觉重量确认后分别准备；Collapse All 归 QL-C 独立 Button，
+  不混入目录墨记。
 - Quest Tracker：视觉 `P2`，外部 provider `P0`，暂停。
 - NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
 - `questitem.lua`：行为保留，视觉 `N/A`。
@@ -40,8 +52,11 @@
 |---|---|---:|---|---|
 | `QL-A1` | `QUEST.LOG.SHELL` 结构母版 | `P4` | [透明 source](../../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png) 已接受；原始 PNG 不直接加载，只允许 QL-A2 V4 确定性全幅导出 | Turtle WoW 中复核最终显示 |
 | `QL-A2` | 静态空卷宗结构与页沟 | `P5` V4 runtime-exported | V3.3 `15/15` 已终止；V4 已从 QL-A1 source 导出 `676 × 464` 显示区／`1024 × 512` TGA，固定执行器 `0/0`，Lua smoke 通过 | Turtle WoW 验证纹理方向、裁切、命中与 list-only |
-| `QL-B` | 目录行、展开、追踪、选择、类型、状态 | `P1–P2` | 子模块与稳定美术基线已定义，无生产 work | 以 QL-A2 实际安全区逐对象建立 Prompt |
-| `QL-C` | 两套 ScrollBar、关闭、操作与辅助按钮 | `P1–P2` | 真实对象已拆，部分全局名需 feature-detect | 实机对象与几何 |
+| `QL-B0` | 23 行创建、排布、文字安全区和状态刷新 | `P2 contract` | 保留 23 行的 `323px` 离线几何已定义，尚未接入 | 随已接受目录资产实现并做 smoke |
+| `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P2 prompt-draft` | [完整 work](work/QUEST.LOG.DIRECTORY.md) 已通过 Prompt 完整性预检，`0/5` | 用户授权 `QL-B1 V1` 与固定两图上传 |
+| `QL-B2` | 当前任务暗酒红书签三状态 | `P2 baseline` | 真实语义与美术边界已定义，无执行正文 | QL-B1 视觉重量确认 |
+| `QL-B3` | 类型、计时、完成／失败状态章 | `P2 baseline` | 类型 tag、timer API、isComplete 已分离；未知 tag 不猜测 | QL-B1 视觉重量确认 |
+| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作与辅助按钮 | `P1–P2` | 真实对象已拆，部分全局名需 feature-detect | 实机对象与几何 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | `P1–P2` | Quest Log 奖励只读，无 selected | 实机奖励数量与尺寸 |
 
 QL-A1 manifest 记录：
@@ -91,11 +106,15 @@ source 或 runtime。
   [`quest_module_smoke.lua`](../../../tests/quest_module_smoke.lua)。
 - QL-A2 raw、透明候选与失败候选只存在于被忽略的
   `generated/quests/QL-A2/`；未晋级任何 V3.2／V3.3 候选。
+- QL-B1 生产合同：
+  [`QUEST.LOG.DIRECTORY.md`](work/QUEST.LOG.DIRECTORY.md)；固定执行器尚未
+  调用，当前计数 `0/5`。
 - Turtle WoW 实机验证尚未开始。
 
 ## 下一步
 
 QL-A2 保持 [runtime work](work/QUEST.LOG.GUTTER.md)，等待 Turtle WoW
-`1.18.1` 实机验收后才可进入 `P6`／清理。当前不在游戏设备上时，可以继续
-QL-B 的目录状态组件合同；不得把静态背景通过误标为整个 Quest Log 已完成，
-也不得晋级任一 V3.2／V3.3 中间稿。
+`1.18.1` 实机验收后才可进入 `P6`／清理。当前下一门禁是用户看过
+[QL-B1 V1 完整执行正文](work/QUEST.LOG.DIRECTORY.md) 后授权具体版本、
+固定两张输入与最多 `5` 次固定执行器调用；“继续”本身不授权生图。不得把
+静态背景误标为整个 Quest Log 已完成，也不得晋级任一 V3.2／V3.3 中间稿。

@@ -20,7 +20,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 |---|---|---|
 | pfUI／原生回退 | 路由与公共过渡材质 `P5`，未实机 | Turtle WoW 全场景回归 |
 | 聊天 | 核心 V3 runtime `P5`；Chat Copy 与 URL Copy 均已暂缓；单一左框，右框隐藏 | Turtle WoW 实机验收核心批次 |
-| 任务 | 当前首要大面积 UI；QL-A1 `P4`；QL-A2 V3.3 `15/15` 终止；QL-A2 V4 固定卷宗背景已确定性导出并静态接入，`P5`，不调用 ImageGen；QL-B/C/D 未完成 | QL-A2 等待 Turtle WoW 实机；无游戏设备时继续 QL-B 目录状态合同 |
+| 任务 | 当前首要大面积 UI；QL-A1 `P4`；QL-A2 V3.3 `15/15` 终止；QL-A2 V4 固定卷宗背景已确定性导出并静态接入，`P5`，不调用 ImageGen；QL-B1 V1 `prompt-draft / P2` | QL-A2 等待 Turtle WoW 实机；QL-B1 等待具体版本与五次预算授权 |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |
 | 其他 UI | `P0–P1`，保持原生回退 | 逐模块建立四份长期文档 |
@@ -65,6 +65,7 @@ docs/
 - [子模块美术基线 Prompt](docs/modules/quests/SUBMODULE_ART_BASELINES.md)
 - [详细进度](docs/modules/quests/PROGRESS.md)
 - [当前 QL-A2 工作文件](docs/modules/quests/work/QUEST.LOG.GUTTER.md)
+- [当前 QL-B1 目录墨记工作文件](docs/modules/quests/work/QUEST.LOG.DIRECTORY.md)
 
 地图：
 
