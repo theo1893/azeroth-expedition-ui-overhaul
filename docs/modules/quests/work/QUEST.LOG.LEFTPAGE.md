@@ -14,7 +14,7 @@
 - 单段预算：最多 `5` 次实际生成／编辑。
 - 原授权最坏总预算：`10` 次实际生成／编辑；A 在 `4/5` 主动停止后，有效
   最坏总实际调用变为 `9` 次。
-- 流程错误：A `4`；B `1`，与实际生图次数分开记录。
+- 流程错误：A `4`；B `2`，与实际生图次数分开记录。
 - 固定执行器：`.codex/skills/imagegen-0-143-0/SKILL.md`，
   `@openai/codex@0.143.0`。
 - 用户授权：`2026-07-30` 明确授权 `QL-B0-A V2` 与 `QL-B0-B V2`，
@@ -440,6 +440,7 @@ Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 
 | E3 | A／`QL-B0-A V2`／`8e934f6` | fixed CLI 未启动；无 child session／result | Windows PowerShell 5 按本地代码页读取无 BOM 的忽略目录 launcher，正文标题与中文 Image 1 路径在上传前失真，授权正文抽取失败；无图片、无 provider result | launcher 改为纯 ASCII 路由：按标题中的 `QL-B0-A V2`／`QL-B0-B V2` 标识抽取正文，并按授权 SHA-256 在目录中解析 Image 1；固定正文与输入不变 | `process-error`；不占生图额度，A 仍为 `0/5` |
 | E4 | A／`QL-B0-A V2.r1`／`b03a81a` | fixed CLI 未启动；无 child session／result | launcher 的旧正文正则只允许 A 标题恰好结束于 `V2`，没有接受 `.r1` 后缀；在 stdin 生成与上传前停止，无图片、无 provider result | 正则只扩展为接受 `V2.rN` 标题；独立校验的 V2.r1 正文 SHA-256 为 `bc93f2c47d338a3650b948ed213035d0c5a759bd6aeba01cf8b4acc16008d65d`，正文、Image 1／2 与执行参数不变 | `process-error`；不占生图额度，A 仍为 `1/5` |
 | B-E1 | B／`QL-B0-B V2.r3`／`5e7a9d6` | fixed CLI 未启动；无 child session／result | 执行器上传审批在进程启动前拒绝：用户现有授权只明确涵盖固定 SHA 的 Image 1／2，尚未明确授权同循环 attempt 3 raw 作为 Image 3；没有上传、图片、provider result 或生成证据 | 保持已提交 V2.r3 正文、Image 1／2 和 B `3/5` 不变；暂停并向用户展示 Image 3 精确 SHA 与用途，取得显式授权后才重试同一正文 | `authority-blocked / process-error`；不占生图额度，B 仍为 `3/5` |
+| B-E2 | B／`QL-B0-B V2.r4`／`e97723e` | fixed CLI 未启动；无 child session／result | Windows PowerShell 5 按本地代码页读取 ignored launcher，包含中文的精确标题正则在正文抽取阶段失配；在 stdin 写入、上传和 child 启动前停止，无图片或 provider result | launcher 只把标题抽取改成 ASCII 锚点 `QL-B0-B V2.r4`，并继续强制正文 SHA `84f6764d4817c2872dbb8800b17de6044698753bcc96887d880a01a2f57c0a2e`；production 正文、Image 1／2／3 和参数均不变 | `process-error`；不占生图额度，B 仍为 `4/5` |
 
 ## A attempt 1 审查记录
 
