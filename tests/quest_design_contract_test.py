@@ -220,7 +220,7 @@ def main() -> None:
             "e734bbf59da00f7fbc9c75649d33eaf635b5a0c19e1737128dfdce0db58eee8f",
             "c0e5bdffc5ce09872c0da0709a3269245ef424f4dde03335d59ded335dc5fdd5",
             "`QL-B2 V1`",
-            "`P3 candidate-rejected`",
+            "`P4 source-accepted`",
             "work/QUEST.LOG.SELECTION.md",
             "实际生图 `5/5`",
             "流程错误 `3`",
@@ -375,8 +375,8 @@ def main() -> None:
         selection_work,
         (
             "版本：`QL-B2 V1`",
-            "子状态：`candidate-rejected / repair-budget-exhausted`",
-            "项目阶段：`P3`",
+            "子状态：`source-accepted`",
+            "项目阶段：`P4`",
             "固定执行器：`imagegen-0-143-0`",
             "当前实际生图：`5/5`",
             "流程错误：`3`",
@@ -436,12 +436,12 @@ def main() -> None:
             "`24 × 14`",
             "三张独立",
             "全部 23 行",
-            "## 确定性 bbox-fit 合同例外预演（待用户授权）",
+            "## 确定性 bbox-fit 合同例外与 P4 接受",
             "`352 × 198px`",
             "`4f8955410ecfaac6697cabeb9bd076d4bd0f5b5adcc97964cee0b7b49d38efaa`",
-            "`exception-preview-reviewed / authorization-pending`",
+            "`source-accepted / P4`",
             "Alpha 改变像素均为 `0`",
-            "未创建 manifest、runtime、Lua 接入",
+            "尚未创建 runtime、Lua 接入或 P5 结论",
         ),
         "active QL-B2 work",
     )
@@ -449,6 +449,60 @@ def main() -> None:
     assert selection_work.count("## 最终执行正文") == 1
     assert "流程错误单列，不占额度" in selection_work
     assert "不占生图额度" in selection_work
+
+    selection_source_path = (
+        ROOT
+        / "assets"
+        / "source"
+        / "quests"
+        / "ql-b2"
+        / "QuestLogSelectionBookmark_Master_v1.png"
+    )
+    selection_manifest_path = selection_source_path.with_name(
+        "QL-B2_SourceManifest_v1.json"
+    )
+    selection_manifest = json.loads(
+        selection_manifest_path.read_text(encoding="utf-8")
+    )
+    selection_source_bytes = selection_source_path.read_bytes()
+    assert selection_source_bytes[:8] == b"\x89PNG\r\n\x1a\n"
+    assert selection_source_bytes[12:16] == b"IHDR"
+    width, height = struct.unpack(">II", selection_source_bytes[16:24])
+    assert (width, height, selection_source_bytes[24:26]) == (
+        1024,
+        1024,
+        b"\x08\x06",
+    )
+    assert selection_manifest["batch"] == "QL-B2"
+    assert selection_manifest["version"] == "V1.r4-bbox-fit"
+    assert selection_manifest["status"] == "accepted-source"
+    assert hashlib.sha256(selection_source_bytes).hexdigest() == (
+        selection_manifest["source"]["sha256"]
+    )
+    assert selection_manifest["source"]["sha256"] == (
+        "4f8955410ecfaac6697cabeb9bd076d4bd0f5b5adcc97964cee0b7b49d38efaa"
+    )
+    assert selection_manifest["source"]["visible_bbox_exclusive"] == [
+        336,
+        413,
+        688,
+        611,
+    ]
+    assert selection_manifest["accepted_contract_exception"][
+        "redraw"
+    ] is False
+    assert selection_manifest["review"]["runtime_visual_accepted"] is True
+    assert selection_manifest["review"]["prior_internal_result"] == (
+        "candidate-rejected / repair-budget-exhausted"
+    )
+    assert selection_manifest["export_contract"]["status"] == (
+        "accepted-source-awaiting-export"
+    )
+    assert selection_manifest["export_contract"]["runtime_atlas_size"] == [
+        128,
+        16,
+    ]
+    assert selection_manifest["runtime_exports"] == []
 
     directory_source_path = (
         ROOT

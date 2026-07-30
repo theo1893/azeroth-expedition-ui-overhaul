@@ -92,6 +92,13 @@ QL-B 的生产边界：
 - `QL-B2`：`SELECTION` 只生成一枚暗酒红织物基础书签；selected／
   selected-hover／selected-pressed 由同一 Alpha 确定性导出为三格，
   pressed 只在原行 Button 上产生 `1 UI px` 视觉压入，不新增命中区。
+  用户已接受 QL-B2 V1.r4 的 bbox-fit source 合同例外；固定 source 为
+  [`QuestLogSelectionBookmark_Master_v1.png`](../../../assets/source/quests/ql-b2/QuestLogSelectionBookmark_Master_v1.png)，
+  SHA-256
+  `4f8955410ecfaac6697cabeb9bd076d4bd0f5b5adcc97964cee0b7b49d38efaa`。
+  该例外只允许把第五次候选的可见 Alpha bbox 单次等比缩入中心安全盒、
+  固定清理低 Alpha 绿色边缘并清零全透明 RGB；不允许重画、拉伸、旋转、
+  镜像或改变物件身份。
 - `QL-B3`：四类可靠 `TYPE.BADGE`、独立 `TIMER.BADGE` 与两类
   `STATE.SEAL`。
 - `LIST.ROW` 自身只承担布局、字体色和真实点击，不持有位图行卡。

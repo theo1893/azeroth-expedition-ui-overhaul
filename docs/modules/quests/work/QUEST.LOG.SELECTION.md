@@ -5,9 +5,8 @@
 - 模块：Quests / Quest Log 左页目录。
 - 组件 ID：`QUEST.LOG.SELECTION`。
 - 版本：`QL-B2 V1`。
-- 子状态：`candidate-rejected / repair-budget-exhausted`；确定性
-  bbox-fit 合同例外预演已内审，等待用户明确授权。
-- 项目阶段：`P3`。
+- 子状态：`source-accepted`；用户已接受确定性 bbox-fit 合同例外候选。
+- 项目阶段：`P4`。
 - 固定执行器：`imagegen-0-143-0` /
   `@openai/codex@0.143.0`。
 - 操作：`generate` 一枚基础织物书签；三种运行时状态只允许确定性派生。
@@ -63,7 +62,12 @@
   `4f8955410ecfaac6697cabeb9bd076d4bd0f5b5adcc97964cee0b7b49d38efaa`）；
   三态真实排版与 source 对比位于同目录的 `previews/`。该候选只用于决定
   是否修改 source 合同，尚未接受。
-- 最终 source：无。
+- 最终 source：
+  `assets/source/quests/ql-b2/QuestLogSelectionBookmark_Master_v1.png`
+  （SHA-256
+  `4f8955410ecfaac6697cabeb9bd076d4bd0f5b5adcc97964cee0b7b49d38efaa`）。
+- source manifest：
+  `assets/source/quests/ql-b2/QL-B2_SourceManifest_v1.json`。
 - runtime：无。
 
 ## 当前批次边界
@@ -399,12 +403,12 @@ Collapse All、操作按钮、奖励槽或动态文字。
   2. 保持原合同，另行授权新的 `QL-B2 V2`；
   3. 拒绝并暂停 QL-B2。
 
-## 确定性 bbox-fit 合同例外预演（待用户授权）
+## 确定性 bbox-fit 合同例外与 P4 接受
 
-用户要求“继续”后，仅准备并审查合同例外的可视证据；这不等于用户已经修改
-冻结合同，也不等于接受 source。规范状态继续保持
-`candidate-rejected / repair-budget-exhausted / P3`，实际 ImageGen
-仍为 `5/5`。
+用户先要求“继续”以准备并审查合同例外的可视证据，随后于 `2026-07-30`
+明确表示：“接受 QL-B2 V1.r4 bbox-fit 候选，并授权该确定性合同例外进入
+P4/P5。”规范状态因此晋级为 `source-accepted / P4`；实际 ImageGen 仍为
+`5/5`，接受后没有新增调用。
 
 ### 固定变换
 
@@ -450,13 +454,12 @@ Collapse All、操作按钮、奖励槽或动态文字。
 - 技术像素：`通过`。候选为 `1024² RGBA`；透明／半透明／不透明像素
   `983561／3321／61694`；可见 bbox 为 `352 × 198`；精确纯绿和启发式
   绿色优势像素均为 `0`。
-- 结论：`exception-preview-reviewed / authorization-pending`。它是被忽略
-  的审查候选，不是 durable source；未创建 manifest、runtime、Lua 接入
-  或 P4 结论。
-- 下一门禁：用户明确接受或拒绝“固定色键清理后，将 attempt 5 可见 bbox
-  等比 fit 到中心 `352 × 204` 安全盒且不重画”的 source 合同例外。只有
-  明确接受具体候选后，才可把上述透明候选晋级 `assets/source/` 并进入
-  P4/P5。
+- 结论：`source-accepted / P4`。上述同 SHA 候选已晋级 durable source，
+  source manifest 已记录原始失败、确定性变换、用户覆盖性接受和后续
+  runtime 固定合同；尚未创建 runtime、Lua 接入或 P5 结论。
+- 下一门禁：只按 source manifest 导出 `128 × 16` 三态 atlas，生成三张
+  来自实际 runtime atlas 的真实排版预演，接入原 `QuestLogTitleN` 状态并
+  通过静态与 Lua smoke 后进入 P5；不得新增 ImageGen 调用。
 
 ## 尝试摘要
 

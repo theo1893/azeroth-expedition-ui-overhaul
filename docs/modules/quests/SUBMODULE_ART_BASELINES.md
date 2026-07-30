@@ -61,6 +61,14 @@ expanded 向下。`QUEST.LOG.LIST.CHECK` 使用同一枚开放墨圈：untracked
 生产正文与真实排版验收合同见
 [work/QUEST.LOG.SELECTION.md](work/QUEST.LOG.SELECTION.md)。
 
+用户于 `2026-07-30` 接受 QL-B2 V1.r4 bbox-fit 候选及一次性确定性 source
+合同例外。最终美术母版为
+[QuestLogSelectionBookmark_Master_v1.png](../../../assets/source/quests/ql-b2/QuestLogSelectionBookmark_Master_v1.png)；
+它保留第五次候选的同一剪影、材料、综合色和磨损，只把可见 Alpha bbox
+等比缩入冻结安全盒并清理低 Alpha 绿色边缘。该接受不把原始 raw 的安全盒
+与纯色键失败改写成通过，也不允许后续自由修图；三态只能按 source manifest
+声明的固定 RGB 公式与同一 Alpha 导出。
+
 `QUEST.LOG.TYPE.BADGE` 只为客户端可靠返回的 Elite、Dungeon、Raid、PvP
 制作克制小压印；normal 与未知 tag 不显示资产。`QUEST.LOG.TIMER.BADGE`
 由计时 API 独立驱动，使用小型沙漏压印，不能冒充 questTag。
