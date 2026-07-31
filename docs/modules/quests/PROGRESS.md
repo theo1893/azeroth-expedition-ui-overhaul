@@ -141,8 +141,9 @@
   不混入目录状态。
 - Quest Tracker：provider 对象合同 `P1`、视觉 `P2`；聚焦主体的
   `QT-SIM V2` 已由本地确定性几何 renderer 完成，当前
-  `simulation-reviewed`、ImageGen `0/0`，等待用户确认。活动生产段只剩
-  QT-A1／B1 V1，均为 `prompt-draft 0/5`；QT-A2 为
+  `simulation-confirmed`、ImageGen `0/0`；用户于 `2026-07-31` 回复
+  “继续”确认主体方向。活动生产段只剩 QT-A1／B1 V1，均为
+  `production-final / unauthorized / 0/5`；QT-A2 为
   `scope-deferred 0/5`，当前树不保留其可执行 Prompt。
 - NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
 - `questitem.lua`：行为保留，视觉 `N/A`。
@@ -186,10 +187,10 @@ source 或 runtime。
 
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
-| `QT-SIM V2` | 约 `330 × 865` 高密度 Quest Tracking 主体本地几何预演；无工具条，十任务、十七目标与三类反馈 | `P2 simulation-reviewed` | 用户确认或否决 tracker 主体方向；ImageGen `0/0` |
-| `QT-A1 V1` | 可变宽高纸面 shell、九宫格与叠页边 | `P2 production-draft` | 先取得 `QT-SIM V2` 用户确认，再单独授权生产；当前 `0/5` |
+| `QT-SIM V2` | 约 `330 × 865` 高密度 Quest Tracking 主体本地几何预演；无工具条，十任务、十七目标与三类反馈 | `P2 simulation-confirmed` | 用户已于 `2026-07-31` 确认可见方向；ImageGen `0/0` |
+| `QT-A1 V1` | 可变宽高纸面 shell、九宫格与叠页边 | `P2 production-final / unauthorized` | 用户审阅并独立授权最终正文、固定上传与 `0/5` 修复预算 |
 | `QT-A2 V1` | `HEADER.*`、皮带／徽记、七工具 Button 与 selected 压片 | `P2 scope-deferred` | provider 对象与行为原样保留；未来重开需独立模拟、新 Prompt 与新授权；当前 `0/5` |
-| `QT-B1 V1` | focus 墨洗、tracked 页边墨记、complete 墨勾 | `P2 production-draft` | 先取得 `QT-SIM V2` 用户确认，再单独授权生产；当前 `0/5` |
+| `QT-B1 V1` | focus 墨洗、tracked 页边墨记、complete 墨勾 | `P2 production-final / unauthorized` | 用户审阅并独立授权最终正文、固定上传与 `0/5` 修复预算 |
 
 完整合同和生产正文见
 [QUEST.TRACKER.CORE.md](work/QUEST.TRACKER.CORE.md)。当前不生成折叠、
@@ -305,7 +306,7 @@ pfQuest-turtle 后验证：
 - 左页列表滚动条不受影响，任务行不出现酒红书签或旧整行浅色高亮。
 
 pfQuest tracker 已进入 [QT V2 work](work/QUEST.TRACKER.CORE.md) 的
-`simulation-reviewed / P2`。结构证据继续固定为：
+`simulation-confirmed / P2`。结构证据继续固定为：
 
 - 结构参考：
   [`01_external_quest_tracker_current_state.png`](../../../assets/references/quests/session-2026-07-31/01_external_quest_tracker_current_state.png)，
@@ -318,9 +319,10 @@ pfQuest tracker 已进入 [QT V2 work](work/QUEST.TRACKER.CORE.md) 的
 - 两图只用于信息层级、真实密度与复现，不继承其字体、颜色、现代按钮或
   其他美术表现。`QT-SIM V2` 已由本地脚本用简单几何和真实排版生成，参考图
   没有上传或进入模拟像素，ImageGen 固定 `0/0`。V2 刻意不绘制工具条，只供
-  tracker 主体方向判断，不代表 runtime 删除按钮。当前下一门禁是用户确认或
-  否决模拟方向；在用户确认并另行授权 QT-A1／B1 前，两段生产保持各 `0/5`，
-  不生成、不创建 runtime 媒体或 tracker adapter。QT-A2 继续
+  tracker 主体方向判断，不代表 runtime 删除按钮。用户已于 `2026-07-31`
+  确认 V2 可见方向，确认条款已写回 QT-A1／B1 最终正文。当前下一门禁是
+  用户独立授权或否决这两段正文；授权前两段保持各 `0/5`，不生成、不创建
+  runtime 媒体或 tracker adapter。QT-A2 继续
   `scope-deferred 0/5`。
 
 QL-B0 V2 的内框与两类底板均已由用户移出范围，不再等待 source 例外，也不

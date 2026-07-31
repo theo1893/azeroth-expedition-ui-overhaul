@@ -173,10 +173,11 @@ provider 已锁定为 `pfQuest 7.0.1` 的 `pfQuestMapTracker`。稳定视觉基�
 因此本轮不生成折叠 Button、沙漏或失败蜡封，不把 Quest Log 的 B3 状态章
 移植过来。聚焦 tracker 主体的 `QT-SIM V2` 本地几何 specification、QT-A1／
 B1 完整可授权生产正文与真实排版验收合同均位于
-[work/QUEST.TRACKER.CORE.md](work/QUEST.TRACKER.CORE.md)。当前第一门禁是
-用户确认或否决本地预演；模拟 ImageGen 固定 `0/0`，活动两段生产 ImageGen
-调用各保持 `0/5`，QT-A2 保持 `scope-deferred 0/5`。用户确认模拟方向并
-另行授权正式生产前，不创建 adapter 或 runtime 媒体。
+[work/QUEST.TRACKER.CORE.md](work/QUEST.TRACKER.CORE.md)。用户已于
+`2026-07-31` 确认 `QT-SIM V2` 的主体方向；模拟 ImageGen 固定 `0/0`。
+当前门禁是 QT-A1／B1 最终正文的独立生产授权，两段实际 ImageGen 各保持
+`0/5`，QT-A2 保持 `scope-deferred 0/5`。取得授权前不创建 adapter 或
+runtime 媒体。
 
 ## NPC Quest／Gossip
 

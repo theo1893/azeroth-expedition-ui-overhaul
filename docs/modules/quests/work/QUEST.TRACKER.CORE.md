@@ -9,9 +9,9 @@
   `ENTRY.COMPLETE`
 - 暂缓范围：`HEADER.*` 与七个 provider 工具 Button；保留对象和行为合同，
   本轮不设计资产、不进入预演、不改 runtime
-- 子状态：`simulation-reviewed`
+- 子状态：`simulation-confirmed`
 - 项目阶段：`P2`
-- 操作：`simulate`
+- 操作：`prepare`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 生成前模拟版本：`QT-SIM V2`
 - 生成前模拟方式：`deterministic-local-geometry`
@@ -20,14 +20,16 @@
 - 模拟路径／SHA：
   `generated/quests/QT/simulation/QT-SIM-V2/quest_tracker_core_local_geometry_v2.png` /
   `cb54d64f78c100fae94d387c280017f522871d144d0b71aa01fdbb8c1deea4a2`
-- 模拟用户结论：`pending`
-- 用户确认：尚无；不得执行以下生产正文
+- 模拟用户结论：`confirmed / 2026-07-31`
+- 用户确认：用户在看到 `QT-SIM V2` 主图与局部图后以“继续”确认 tracker
+  主体方向；该确认只接受下文文字化方向，不接受模拟像素
 - 实际 ImageGen：当前活动的 QT-A1 `0/5`、QT-B1 `0/5`；最坏合计
   `10` 次实际生成／修图。QT-A2 `0/5`、`scope-deferred`，不计入活动预算
 - 流程错误：QT-A1 `0`、QT-B1 `0`；不占实际生图额度
 - source／runtime／adapter：均无
-- 下一门禁：用户审阅并确认或否决 `QT-SIM V2` Tracker 核心本地几何预演；
-  QT-A1／B1 仍不得执行，QT-A2 保持暂缓
+- 下一门禁：用户审阅并明确授权最终 QT-A1 V1／QT-B1 V1 生产正文、固定
+  上传和每段五次实际 ImageGen 修复边界；确认模拟本身不授权生图，QT-A2
+  保持暂缓
 
 ## 组件合同
 
@@ -84,7 +86,7 @@ WorldMap strata、Tooltip 与原生 QuestWatch 隐藏行为。根宽度动态为
 
 | 输入 | SHA-256 | 权威与用途 |
 |---|---|---|
-| Image 1：[任务追踪面板_视觉基准_v1.png](../../../../assets/locked/quests/任务追踪面板_视觉基准_v1.png) | `3b5c2ca6c1e69c74db5c64978cde351596ece6369d339b7125aee43904eb7d86` | Tracker 物件隐喻、纵向轮廓、纸面／皮带／页边关系和总体配色的最高图像权威 |
+| Image 1：[任务追踪面板_视觉基准_v1.png](../../../../assets/locked/quests/任务追踪面板_视觉基准_v1.png) | `3b5c2ca6c1e69c74db5c64978cde351596ece6369d339b7125aee43904eb7d86` | Tracker 行军便笺身份、纵向轮廓、连续纸面、叠页厚度、反馈综合色的最高图像权威；皮带／徽记／按钮属于暂缓 QT-A2，本轮明确忽略 |
 | Image 2：[任务详情面板_视觉基准_v1.png](../../../../assets/locked/quests/任务详情面板_视觉基准_v1.png) | `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd` | 只继承同一公会卷宗系统的材料厚度、笔触、左上暖光和暗酒红／旧黄铜综合色；忽略双页书几何 |
 | Image 3：[pfQuest tracker 当前结构](../../../../assets/references/quests/session-2026-07-31/01_external_quest_tracker_current_state.png) | `88ecd502e190311c8709a6fd15e2cde6d1f5f288a749e5f5b318f7038e188504` | 只证明真实信息密度、三层文字和纵向增长；忽略透明黑底、字体、彩色标记和全部现有美术 |
 
@@ -98,26 +100,30 @@ Image 1 与 Image 2 的 Prompt provenance 是
 - 2004 年前后香草魔兽二维手绘位图；粗厚、略不规则但清晰的轮廓和明确明暗
   切面，不是照片级 PBR；
 - 左上暖光，低饱和暖赭纸、烟褐旧皮、暗酒红强调、克制旧黄铜和深乌棕墨；
-- 可感知的纸页层厚、皮革压痕、铆钉实体和小尺度磨损；中心阅读区安静低对比；
+- 可感知的纸页层厚、自然接触阴影和小尺度磨损；中心阅读区安静低对比；
 - 公会远征文书的沉重、耐用和手工感，而不是现代极简或泛棕色透明 HUD。
 
 明确排除：
 
 - Image 1 中任何烘焙文字、示意任务、完整 UI 截图或不可适配的固定高度；
+- Image 1 的顶部皮带、铆钉、徽记、工具条和按钮；它们属于暂缓的 QT-A2；
 - Image 2 的双页书、中央装订、书脊、右页正文、奖励槽和底部书本按钮；
 - Image 3 的黑色透明矩形、青绿色选中、彩虹难度色、现有 tracker icon；
 - Skyrim 菜单式细线、Diablo 3 金属祭坛、现代圆角卡片、玻璃拟态、霓虹、
   高光细金框、逐任务独立框和移动端图标按钮。
 
-权威冲突裁决：Image 1 决定 tracker 的纵向行军便笺身份；真实 provider
-决定可变宽高和对象数量；Image 2 只统一材料语言。任何固定尺寸效果图都不能
-覆盖 `130..330px` 动态宽度、任意高度和七个真实 Button 的合同。
+权威冲突裁决：Image 1 决定 tracker 的纵向行军便笺身份、纸面轮廓和反馈
+综合色；真实 provider 决定可变宽高、对象数量和行为；Image 2 只统一材料
+语言。QT-SIM V2 的用户确认要求活动纸面从顶部直接开始，因此 QT-A1／B1
+正文必须排除 Image 1 的皮带／徽记／按钮，但这不改变七个真实 Button 的
+provider 合同。任何固定尺寸效果图都不能覆盖 `130..330px` 动态宽度和任意
+高度。
 
 ## 生成前模拟实例图 — QT-SIM V2
 
 ### 模拟合同
 
-- 状态：`simulation-reviewed / 待用户确认`
+- 状态：`simulation-confirmed / 2026-07-31`
 - 目标：只确认 tracker 主体在高密度真实游戏场景下的整体轮廓、连续纸面、
   内容层级、综合色重和反馈节奏；七个工具 Button 不参与本轮方向判断。
 - Canvas：`1536 × 1024` 横向游戏画面裁切。
@@ -206,18 +212,32 @@ conda run -n py312 python \
   低频功能 Button 对体验占比很小，更关键的是 tracker 整体；V1 未触发任何
   生产。
 - 当前具体模拟版本：`QT-SIM V2`
-- 用户结论与日期：`pending`
-- 确认并写回生产正文的可见条款：尚无
+- 用户结论与日期：`confirmed / 2026-07-31`；用户回复“继续”
+- 确认并写回生产正文的可见条款：
+  - tracker 主体保持贴近屏幕右侧的窄长纵向行军便笺；在代表性最高密度下
+    约为 `330 × 865 UI px`，活动纸面从顶部直接开始；
+  - 第一眼必须是单张厚实、耐用、从公会卷宗抽出的野外便笺，不是双页书、
+    卷轴、现代任务卡或透明 HUD；顶部略有手工不规则，底部克制撕裂；
+  - 两侧和底部以少量错层纸页形成可感知厚度，但不能围成规则边框；中部保持
+    一张连续、安静、低对比的暖赭阅读面；
+  - 在十个任务、十七条目标的密度下仍不增加逐任务卡片、分隔框或烘焙内容；
+    任务名、等级、百分比、目标和节点图标继续全部动态；
+  - focus 是从纸面自然消散的低对比墨洗，tracked 是右侧页边的克制暗酒红
+    记号，complete 是小型深乌棕墨勾；三者都从属于文字层级；
+  - 综合色保持低饱和暖赭纸、烟褐页边、深乌棕墨与少量暗酒红反馈，遵循左上
+    暖光和香草魔兽粗厚二维手绘切面；
+  - 工具条、皮带、徽记和七个 Button 不在本次确认范围；QT-A2 继续暂缓，
+    provider 对象与行为保持。
 - 拒绝时必须改变：由用户观察后记录
 - 确认失效条件：可见轮廓、纸页厚度、材质层级、配色、综合色重、信息密度
   或反馈节奏发生实质变化
-- 下一门禁：用户确认或否决 `QT-SIM V2`
+- 下一门禁：最终 QT-A1 V1／QT-B1 V1 生产正文与修复边界授权
 
 ## 最终执行正文
 
 ### QT-A1 V1
 
-状态：`production-draft / 未授权`
+状态：`production-final / 未授权`
 
 固定上传：Image 1、Image 2、Image 3。只允许同段前一次输出作为后续 edit
 输入；不得追加其他图片。
@@ -227,6 +247,16 @@ conda run -n py312 python \
 > cut into nine-slice and layered-page-edge runtime textures; it is not a screenshot and
 > it is not a fixed runtime background.
 >
+> Preserve this exact assembled visual direction: at 100% UI scale the result must read
+> as one narrow, tall quest-tracker field note docked near the right edge of the game
+> screen. The runtime shell must remain coherent across the provider's real
+> 130..330 UI-pixel width range and from an empty/short tracker through as many as
+> twenty-five dynamic entries. At representative maximum density it must quietly support
+> about ten quest titles and seventeen objective lines on one uninterrupted reading
+> surface, although no text or rows may appear in this source. The visible paper begins
+> directly at its upper edge. Do not attach or imply a toolbar, leather header strap,
+> emblem, control rail, or any of the seven deferred provider Buttons.
+>
 > Canvas: exactly 1024 × 1536 pixels. Place one and only one complete paper object,
 > centered, upright, occupying approximately x=276..748 and y=96..1440. Everything
 > outside the object must be one flat, perfectly uniform pure chroma green #00FF00 with
@@ -234,12 +264,14 @@ conda run -n py312 python \
 > swatches.
 >
 > Object anatomy: a single continuous warm-ochre parchment field note, seen nearly
-> straight-on with only a slight internal top-down view. The top edge is sturdy and
-> quietly finished; the long middle is flat, calm, low contrast, and directionally
-> neutral; the bottom ends in one natural restrained torn edge. Show two or three thin,
-> offset underlying page layers only along the outer side edges and lower edge, so the
-> sheet has tangible vanilla-WoW thickness without becoming a book. Keep left and right
-> edge anatomy compatible and stable enough for later nine-slice extraction.
+> straight-on with only a slight internal top-down view. Give the top a sturdy,
+> restrained hand-cut irregularity without curling or rolling it. Keep the long middle
+> flat, calm, low contrast, and directionally neutral; end the bottom in one natural,
+> restrained torn edge. Show two or three thin, offset underlying page layers only along
+> the outer side edges and lower edge, so the sheet has tangible vanilla-WoW weight
+> without becoming a book or a framed panel. The layered edges must remain subordinate
+> to the reading field. Keep left and right edge anatomy compatible and stable enough for
+> later nine-slice extraction.
 >
 > Preserve fixed edge zones and a quiet stretch field: the top 96 source pixels of the
 > paper object contain all top-edge wear; the bottom 128 contain the torn footer; the
@@ -249,25 +281,30 @@ conda run -n py312 python \
 > or horizontal stretching. The paper may have broad hand-painted tonal variation, but
 > no repeated wallpaper motif and no visible seam.
 >
-> Art direction must inherit Images 1 and 2: circa-2004 vanilla World of Warcraft
-> hand-painted 2D bitmap art, thick slightly irregular silhouette, readable light and
-> shadow planes, warm light from upper left, muted warm ochre paper, smoke-brown edge
-> grime, deep umber ink-scale accents, restrained wear, and visibly layered material
-> thickness. It must feel like a durable guild expedition note pulled from the accepted
-> quest dossier. Use Image 3 only to understand how much dynamic text will later occupy
-> the quiet paper; inherit none of its current black backdrop, typography, colored
-> symbols, or icons.
+> Input roles and art direction: use Image 1 as the highest visual authority for the
+> vertical guild-expedition field-note identity, paper silhouette, layered page weight,
+> palette, and hand-painted age, but explicitly ignore its baked text, example quest
+> content, toolbar, strap, emblem, icons, and fixed-height composition. Use Image 2 only
+> for the shared dossier material thickness, circa-2004 vanilla World of Warcraft
+> hand-painted 2D bitmap brushwork, warm upper-left light, thick slightly irregular
+> contour, readable light/mid/shadow planes, muted warm ochre paper, smoke-brown wear,
+> deep umber accents, and restrained old-wine/aged-brass color relationships; ignore its
+> double-page book geometry, spine, binding, rewards, and Buttons. Use Image 3 only to
+> understand the real three-level text hierarchy, narrow right-side placement, and
+> density of roughly ten quests and seventeen objectives; inherit none of its transparent
+> black backdrop, typography, colored symbols, current icons, or modern styling.
 >
 > Do not create a double-page book, book spine, chat book, stone tablet, wooden plank,
 > metal plaque, Diablo-style altar, Skyrim menu, modern card, transparent black HUD,
 > rolled scroll with curled ends, per-entry bands, buttons, icons, text, quest rows,
-> objectives, percentages, seals, compass, quill, timer, or decorative border around the
-> central reading field.
+> objectives, percentages, seals, compass, quill, timer, header strap, toolbar, emblem,
+> or decorative border around the central reading field.
 >
-> Final self-check: exactly one empty vertical parchment object; pure #00FF00 everywhere
-> outside it; calm seamless central stretch field; fixed top and torn bottom; layered
-> page thickness only at edges; vanilla-WoW hand-painted weight; zero text, UI controls,
-> or baked dynamic content.
+> Final self-check: exactly one empty narrow vertical parchment object; the paper starts
+> directly at its slightly irregular top; pure #00FF00 everywhere outside it; one calm
+> seamless reading field suitable for ten quests and seventeen objectives; restrained
+> torn bottom; layered thickness only at side and lower edges; vanilla-WoW hand-painted
+> weight; zero text, rows, toolbar, Buttons, or baked dynamic content.
 
 ### QT-A2 V1 — scope-deferred
 
@@ -280,7 +317,7 @@ conda run -n py312 python \
 
 ### QT-B1 V1
 
-状态：`production-draft / 未授权`
+状态：`production-final / 未授权`
 
 固定上传：Image 1、Image 2、Image 3。只允许同段前一次输出作为后续 edit
 输入；不得追加其他图片。
@@ -288,6 +325,15 @@ conda run -n py312 python \
 > Create exactly three separate interaction-feedback art objects for real pfQuest
 > tracker entry Buttons. These are overlays above one continuous parchment, not task-row
 > cards and not a complete tracker screenshot.
+>
+> Preserve this exact assembled visual direction: at 100% UI scale, these sparse marks
+> sit above one narrow continuous right-side field note carrying about ten quest titles
+> and seventeen objective lines. They must remain subordinate to the dynamic text and
+> must not divide the parchment into cards. The focus wash must three-slice cleanly to
+> the real entry width inside a 130..330 UI-pixel tracker without implying one fixed
+> runtime width. The focus wash belongs within the reading field, the tracked mark
+> touches only the outer right page edge, and the complete check is a small far-right ink
+> annotation. Do not create any toolbar, header, emblem, or provider Button art.
 >
 > Canvas: exactly 1024 × 768 pixels. Background must be one flat, perfectly uniform pure
 > chroma green #00FF00 with no gradient, noise, cast shadow, labels, text, guides,
@@ -301,8 +347,8 @@ conda run -n py312 python \
 >    space for dynamic title and objective text.
 > 2. Bottom-left cell x=192..384, y=440..632: one short dark-wine cloth-and-ink
 >    page-edge mark for
->    `ENTRY.TRACKED`, a compact vertical tab that touches only a page edge. It is not an
->    arrow, flag, full-row ribbon, badge plate, or Button.
+>    `ENTRY.TRACKED`, a compact vertical tab designed to enter slightly from the outer
+>    right page edge. It is not an arrow, flag, full-row ribbon, badge plate, or Button.
 > 3. Bottom-right cell x=640..832, y=440..632: one small complete-state mark for
 >    `ENTRY.COMPLETE`, made from a
 >    single confident deep-umber hand-painted ink check. It has no circle, wax seal,
@@ -313,12 +359,16 @@ conda run -n py312 python \
 > other allowed runtime variations will be derived deterministically; do not create
 > duplicate states.
 >
-> Inherit Images 1 and 2 as the same circa-2004 vanilla World of Warcraft guild dossier:
-> thick low-resolution-friendly hand-painted shapes, slight human irregularity, warm
-> upper-left light, muted deep-wine cloth, warm umber ink, restrained wear, and no
-> photorealism. Use Image 3 only to preserve real text density and entry hierarchy;
-> inherit none of its black row highlight, cyan, rainbow markers, typography, or node
-> icons.
+> Input roles and art direction: use Image 1 as the highest visual authority for the
+> tracker field-note palette, low-contrast ink-on-paper relationship, restrained dark-wine
+> edge accent, and circa-2004 vanilla World of Warcraft hand-painted 2D weight; ignore its
+> baked text, complete tracker composition, toolbar, strap, emblem, and icons. Use Image 2
+> only for the shared guild-dossier brushwork, warm upper-left light, thick
+> low-resolution-friendly shapes, material wear, deep umber ink, and muted old-wine
+> color; ignore its book geometry, binding, Buttons, rewards, and page layout. Use Image 3
+> only to preserve real three-level text density, right-side placement, and the need to
+> keep marks legible around dynamic titles and objectives; inherit none of its black row
+> highlight, cyan or rainbow markers, typography, node icons, or existing toolbar.
 >
 > Do not draw a parchment background, whole task row, per-entry card, frame, text,
 > numbers, percentage, objective bullets, dynamic node icon, expand/collapse control,
@@ -326,20 +376,31 @@ conda run -n py312 python \
 > rectangle, translucent black HUD, neon glow, or fourth object.
 >
 > Final self-check: exactly three separated overlays in the declared order; focus is a
-> borderless stretchable ink wash; tracked is a small page-edge mark; complete is one
-> ink check; pure #00FF00 isolation; no baked text, icon, row card, timer, or invented
-> state.
+> borderless low-contrast stretchable ink wash; tracked is one small dark-wine mark for
+> the outer right page edge; complete is one small deep-umber ink check; all remain
+> subordinate at dense 100% UI layout; pure #00FF00 isolation; no baked text, icon, row
+> card, toolbar, Button, timer, or invented state.
 
 ## 生产正文完整性预检（Prompt 完整性预检）
 
-结论：`pass / production-draft`。
+复杂度：QT-A1 `single-object / assembly / repeat / stretch`；QT-B1
+`three-object atlas / overlay states / stretch`。
 
-- 当前两段 QT-A1／B1 分别覆盖对象身份、对象数量与顺序、Canvas、安全盒、
-  视角、材料、光照、
-  状态派生、动态内容排除、切片／拉伸、色键和最终自检。
-- Image 1／2／3 的权威与 inherit／ignore 职责已分别写入执行正文。
-- 未知的折叠、timer、failed 状态已停止在组件合同，没有伪造精度。
-- 生产拆分按独立缩放和交互所有权完成，不按模型方便性把完整 tracker 合成一图。
+结论：`pass / production-final / 未授权`。
+
+| 门禁 | 最终执行正文中的证据 | 结论 |
+|---|---|---|
+| 物件身份、精确范围、对象／状态数量与动态内容排除 | A1 明确一张空纵向行军便笺；B1 明确三件覆盖层及顺序；两段均排除文字、任务行、图标、工具条和 Button | `pass` |
+| 每张输入的 inherit／ignore 职责与权威冲突 | 两段分别写明 Image 1／2／3 的职责、禁止继承内容，以及 V2 顶部无工具条与 Image 1 原型的裁决 | `pass` |
+| 画布、格位、边距、方向、透视、尺度、光照与层序 | A1 为 `1024 × 1536` 单物件安全盒；B1 为 `1024 × 768` 三固定 cell；正面轻微俯视、左上暖光和覆盖层序明确 | `pass` |
+| 逐对象形态、材料、边缘、状态与关系 | A1 定义顶部、连续中段、两侧叠页和撕裂底边；B1 逐件定义 focus／tracked／complete，且三者从属动态文字 | `pass` |
+| 文字安全、裁切、拉伸、重复与接缝 | A1 固定四边 zone 与安静 stretch field；B1 focus 三段式中段、对象隔离与真实高密度排版关系明确 | `pass` |
+| 美术 DNA、反模式、色键与最终自检 | 两段均包含香草时代手绘、暖赭／烟褐／暗酒红／深墨、纯 `#00FF00`、现代／暗黑／上古卷轴反模式和客观自检 | `pass` |
+
+- 未知但执行必需的值：无。
+- 去冗余结论：保留对象数、输入职责、固定尺寸、安全盒、V2 可见方向、
+  stretch／seam、色键和反模式的高风险重复；不把会话历史或模拟像素写入
+  执行正文。
 - QT-A2 不属于本次完整性预检；当前树没有它的可执行 Prompt。
 
 ## Repair envelope 与计数
@@ -348,6 +409,14 @@ conda run -n py312 python \
 `10` 次；只有返回图片或 provider 证据证明生成实际运行才计数。上传、权限、
 包装、传输、保存或流程错误单列，不占 `0/5`。QT-A2 保持 `0/5`，
 `scope-deferred` 不参与预算。
+
+| 正文 | 固定上传 | 实际 ImageGen 上限 | 当前 | 最坏 |
+|---|---|---:|---:|---:|
+| `QT-A1 V1` | Image 1／2／3；同段前一次输出只可作冻结边界内 edit 输入 | `5` | `0/5` | `5` |
+| `QT-B1 V1` | Image 1／2／3；同段前一次输出只可作冻结边界内 edit 输入 | `5` | `0/5` | `5` |
+
+两段最坏合计 `10` 次实际生图／修图；当前流程错误均为 `0`。任一段提前完整
+内审通过即停止该段循环。
 
 同段自主修复只允许：
 
@@ -377,12 +446,16 @@ conda run -n py312 python \
 每个达到可预演门禁的候选都必须使用“真实排版 + 新 UI”做确定性模拟，而不是
 只展示孤立资产：
 
+- `130 × 180`：最窄／短内容或空状态，验证 A1 端帽、中心延展和页边厚度；
 - `230 × 500`：`QUEST_TRACKING`，至少六个任务、展开目标、focus、tracked
   与 complete 状态；
 - `330 × 865`：接近当前实机最高密度，最多可见内容和长中文换行；
+- 另以 `230 × 500` 覆盖 `DATABASE_TRACKING` 或 `GIVER_TRACKING` 的一组
+  代表性动态条目，验证同一 A1 shell 不依赖任务模式专属烘焙内容；
 - 动态文字、目标、百分比和节点图标使用真实 pfQuest 层级重新排版；
-- 预演只装配 QT-A1／B1 候选，不虚构 QT-A2；七个 provider Button 的原
-  对象和行为不因预演消失，未来恢复其视觉设计时必须另做包含工具条的模拟；
+- 预演只装配 QT-A1／B1 候选，不虚构 QT-A2；真实 `16px` 工具条与七个
+  provider Button 必须以当前 provider fallback 可见，并明确标记为
+  `scope-deferred / non-authoritative`，未来恢复其视觉设计时另做模拟；
 - 同时保留一张旧 tracker 与新 tracker 的 100% UI 像素对比，但旧图只作
   结构参照。
 
@@ -395,35 +468,40 @@ conda run -n py312 python \
 - `QT-SIM V1` 在本地完成后被用户调整优先级而替代；没有触发正式生产。
 - `QT-SIM V2` 已使用本地确定性几何 renderer 完成；ImageGen `0/0`，无上传、
   provider session 或生成流程错误。主图与局部查看路径、SHA 见模拟章节。
+- 用户于 `2026-07-31` 以“继续”确认 `QT-SIM V2` 的 tracker 主体可见方向；
+  确认条款已写回 QT-A1／B1 最终正文，模拟像素没有进入任何生产输入。
 - 当前活动的 QT-A1／B1 均尚未执行；无 raw、透明候选或 revised prompt。
 - 实际生图：QT-A1 `0/5`、QT-B1 `0/5`；QT-A2 `0/5 scope-deferred`。
 - 流程错误：QT-A1／B1 均为 `0`；QT-A2 无活动流程。
-- 当前终态：`simulation-reviewed`，等待用户确认方向。
+- 当前终态：`simulation-confirmed / P2`，等待最终生产授权。
 
 ## 审查记录
 
 - 已完成：provider 语义、组件粒度、权威冲突、本地模拟规格与内部可读性
-  检查、生产正文完整性和真实排版预演合同。
-- 尚未发生：用户对 `QT-SIM V2` 的方向确认。
+  检查、用户对 `QT-SIM V2` 的方向确认、最终生产正文完整性复核和真实排版
+  预演合同。
 - 尚未发生：候选语义／物理、美术、装配与技术像素审查。
-- 当前结论：`simulation-reviewed / P2`，不能授权正式生产或晋级 P3。
-- 下一门禁：用户确认或否决 `QT-SIM V2`。
+- 当前结论：`simulation-confirmed / P2`；未取得独立生产授权，不得调用
+  ImageGen 或晋级 P3。
+- 下一门禁：用户明确授权 QT-A1 V1／QT-B1 V1、固定上传、同段 edit 边界
+  和每段最多五次实际 ImageGen 调用。
 
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
 |---|---|---|---|
 | `QT-SIM V1` | 本地 specification、renderer、主图／局部图 SHA；ImageGen `0/0` | `superseded-by-user-priority` | 移除低优先级工具条，聚焦 tracker 主体 |
-| `QT-SIM V2` | 本地 specification、renderer、主图／局部图 SHA；ImageGen `0/0` | `simulation-reviewed / P2` | 等待用户确认；不得跳过到正式生产 |
-| `QT-A1/B1 V1` | 两段自包含生产预检；无 ImageGen 调用 | `prompt-draft / P2` | 先取得 V2 模拟确认，再请求独立生产授权 |
+| `QT-SIM V2` | 本地 specification、renderer、主图／局部图 SHA；用户于 `2026-07-31` 回复“继续”；ImageGen `0/0` | `simulation-confirmed / P2` | 可见方向已转写；不得跳过独立生产授权 |
+| `QT-A1/B1 V1` | 两段最终自包含正文与完整性预检；无 ImageGen 调用 | `production-final / unauthorized / P2` | 请求精确生产授权 |
 | `QT-A2 V1` | 无 ImageGen 调用；历史正文仅在 Git history | `scope-deferred / P2` | 未来重开时先做独立模拟和新授权 |
 
 ## 下一门禁
 
-等待用户查看并确认或否决 `QT-SIM V2`。该预演只确认 tracker 主体的布局、
-比例、信息密度、综合色重、平面配色角色和交互反馈节奏；不确认最终手绘
-笔触、材料微纹理、磨损、Alpha 或切片，也不确认七个工具 Button。
+等待用户明确授权 `QT-A1 V1` 与 `QT-B1 V1` 的当前最终执行正文：两段各
+固定上传 Image 1／2／3；允许同段前一次输出只在冻结边界内作为 edit 输入；
+每段最多 `5` 次实际 ImageGen 生成／修图，最坏合计 `10` 次；无生成证据的
+流程错误不占生图额度。
 
-用户确认模拟方向后，把确认条款写回 QT-A1／B1 生产正文并重新预检，再单独
-请求这两段的正式授权、固定上传、同段 edit repair envelope 和每段最多五次
-实际 ImageGen 调用。QT-A2 保持暂缓；模拟方向确认不能代替正式生产授权。
+授权后先提交精确授权正文，再只使用 `imagegen-0-143-0` 固定执行器进入自主
+生成—审查—修复循环。QT-A2 保持暂缓；本次模拟确认不能代替生产授权、候选
+接受、source 晋级、runtime 导出或实机验收。
