@@ -49,6 +49,26 @@ def main() -> None:
     tracker_sim_spec = json.loads(
         tracker_sim_spec_path.read_text(encoding="utf-8")
     )
+    tracker_review_path = (
+        ROOT / "tools" / "review_quest_tracker_candidate_v1.py"
+    )
+    assert tracker_review_path.is_file(), tracker_review_path
+    tracker_review = tracker_review_path.read_text(encoding="utf-8")
+    require(
+        tracker_review,
+        (
+            "chroma_key",
+            "nine_slice",
+            "three_slice",
+            "real-layout-short-130x180.png",
+            "real-layout-quest-230x500.png",
+            "real-layout-dense-330x865.png",
+            "real-layout-database-230x500.png",
+            "tracker_",
+            "NotoSansSC-Medium.ttf",
+        ),
+        "pfQuest tracker candidate review tool",
+    )
 
     require(
         submodules,
@@ -348,12 +368,12 @@ def main() -> None:
         tracker_work,
         (
             "pfQuest 任务追踪核心工作文件 — QT V2",
-            "`prompt-authorized`",
+            "`repair-prepared`",
             "`pfQuest 7.0.1`",
             "`pfQuest-turtle 7.0.2`",
             "`imagegen-0-143-0`",
             "`@openai/codex@0.143.0`",
-            "QT-A1 `0/5`",
+            "QT-A1 `1/5`",
             "QT-A2 `0/5`",
             "QT-B1 `0/5`",
             "最坏合计",
@@ -432,7 +452,11 @@ def main() -> None:
             "`scope-deferred / non-authoritative`",
             "本地渲染错误：`0`",
             "本授权不包含 source 晋级",
-            "同一正文重试 QT-A1 attempt 1",
+            "QT-A1 V1.r1 — 完整修复正文",
+            "019fb62d-a545-70f3-9ea1-10f1017bb806",
+            "f22dc61ea2762ca3ce54fa73436737c8ce19926c4e753149f5d42aa3cfdbbaea",
+            "tools/review_quest_tracker_candidate_v1.py",
+            "`internal-rejected / repair-prepared / P3`",
         ),
         "pfQuest tracker production final",
     )
