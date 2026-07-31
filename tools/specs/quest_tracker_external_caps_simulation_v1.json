@@ -1,0 +1,225 @@
+{
+  "schema": "aeui-quest-tracker-external-caps-simulation-v1",
+  "version": "QT-GEO-V1",
+  "component": "QUEST.TRACKER.SHELL",
+  "purpose": "local geometry direction confirmation only; never source, runtime, edit input, or image-generation reference",
+  "imagegen": {
+    "calls": 0,
+    "budget": 0,
+    "uploads": []
+  },
+  "provider": {
+    "source": "addon/pfQuest/tracker.lua",
+    "root": "pfQuestMapTracker",
+    "coordinate_system": "top-left-origin, right-bottom-exclusive, 100%-UI-pixels",
+    "width_range": [130, 330],
+    "panel_height": 16,
+    "font_size": 12,
+    "entry_height": 20,
+    "objective_step": 12,
+    "height_formula": "panel_height + entry_count * entry_height + objective_count * objective_step",
+    "preserved": [
+      "root Frame geometry",
+      "dynamic width and height formula",
+      "all live anchors",
+      "all seven Button hitboxes and scripts",
+      "all entry Button hitboxes and scripts",
+      "drag, clamp, modes, tooltip, SavedVariables, and provider OnUpdate"
+    ]
+  },
+  "proposal": {
+    "id": "external-decorative-caps",
+    "visual_outsets": {
+      "left": 14,
+      "right": 14,
+      "top": 12,
+      "bottom": 16
+    },
+    "live_center": "exactly the provider root rectangle [0,0,width,height]",
+    "cap_rule": "all decorative top, bottom, left, and right cap pixels stay strictly outside the provider root rectangle",
+    "layer": "adapter-owned non-interactive visual shell behind provider root",
+    "mouse": "disabled",
+    "screen_edge_note": "runtime integration must verify exterior-cap clipping at saved screen-edge positions without changing provider data or hitboxes"
+  },
+  "fonts": {
+    "body": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf",
+    "title": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf",
+    "narrative": "addon/AzerothExpeditionUI/Media/Fonts/LXGWWenKaiGB-Medium.ttf"
+  },
+  "palette": {
+    "paper": "#B8955C",
+    "paper_light": "#D2B77E",
+    "paper_shadow": "#76512E",
+    "page_edge": "#59402A",
+    "deep_leather": "#28180E",
+    "ink": "#24170F",
+    "old_wine": "#653A36",
+    "aged_brass": "#80602D",
+    "debug_live": "#D76555",
+    "debug_shell": "#D2B77E"
+  },
+  "localized_content": {
+    "quest_titles": [
+      "[60] 黑石深渊的余烬 (35%)",
+      "[58] 失落的矮人远征队 (60%)",
+      "[60+] 熔火之心的召唤 (0%)",
+      "[57] 东瘟疫之地的档案 (75%)",
+      "[55] 被遗忘的补给线 (40%)",
+      "[60] 银色黎明的委托 (100%)",
+      "[59] 冬泉谷的霜刃豹 (20%)",
+      "[56] 沉没神庙的石板 (50%)",
+      "[60+] 黑翼之巢的密令 (0%)",
+      "[54] 荒芜之地的线索 (90%)",
+      "[53] 羽月要塞的急件 (10%)",
+      "[52] 辛特兰的古老预言 (45%)",
+      "[51] 灼热峡谷的机械残骸 (30%)",
+      "[50] 塔纳利斯的失踪商队 (65%)",
+      "[49] 玛拉顿的腐化水晶 (80%)",
+      "[48] 菲拉斯的精灵遗迹 (25%)",
+      "[47] 诅咒之地的守望塔 (55%)",
+      "[46] 艾萨拉的破碎法器 (15%)",
+      "[45] 荆棘谷的远征补给 (70%)",
+      "[44] 尘泥沼泽的黑龙踪迹 (5%)",
+      "[43] 菲拉斯的失踪信使 (85%)",
+      "[42] 荒芜之地的石元素 (35%)",
+      "[41] 悲伤沼泽的迷雾 (60%)",
+      "[40] 奥特兰克的旧旗帜 (20%)",
+      "[39] 阿拉希高地的战报 (95%)"
+    ],
+    "objectives": [
+      "— 黑铁残片：7/12",
+      "— 找到失踪的勘探员：0/1",
+      "— 火焰精华：3/8",
+      "— 将密令交给指挥官：0/1",
+      "— 瘟疫样本：5/10",
+      "— 破损的补给箱：4/6",
+      "— 霜刃豹训练：2/6",
+      "— 阿塔莱石板：1/4",
+      "— 黑龙军团徽记：0/10",
+      "— 搜索东部营地：1/3",
+      "— 清除燃烧平原的斥候：6/9",
+      "— 熔岩之核：2/5",
+      "— 银色黎明勇气勋章：4/7",
+      "— 寻找遗失的手记：0/1",
+      "— 收集暮光信件：3/5",
+      "— 净化腐化的圣坛：1/3",
+      "— 返回圣光之愿礼拜堂：0/1"
+    ],
+    "database_titles": [
+      "黑莲花",
+      "富瑟银矿脉",
+      "元素火焰",
+      "梦叶草",
+      "黑曜石碎片",
+      "符文布补给箱"
+    ],
+    "giver_titles": [
+      "[60] 海达希亚水元素",
+      "[58] 银色黎明军需官",
+      "[55] 瑟银兄弟会密探",
+      "[52] 羽月要塞哨兵",
+      "[48] 热砂港商人",
+      "[45] 荒芜之地勘探员"
+    ]
+  },
+  "scenarios": [
+    {
+      "id": "empty-provider",
+      "label": "空状态",
+      "mode": "QUEST_TRACKING",
+      "frame": [200, 16],
+      "entry_count": 0,
+      "objective_distribution": []
+    },
+    {
+      "id": "quest-short-default-font",
+      "label": "短任务列表",
+      "mode": "QUEST_TRACKING",
+      "frame": [130, 104],
+      "entry_count": 2,
+      "objective_distribution": [2, 2]
+    },
+    {
+      "id": "quest-typical-default-font",
+      "label": "典型任务列表",
+      "mode": "QUEST_TRACKING",
+      "frame": [230, 256],
+      "entry_count": 6,
+      "objective_distribution": [2, 2, 1, 2, 2, 1]
+    },
+    {
+      "id": "quest-dense-default-font",
+      "label": "高密度任务列表",
+      "mode": "QUEST_TRACKING",
+      "frame": [330, 420],
+      "entry_count": 10,
+      "objective_distribution": [2, 1, 2, 2, 1, 2, 2, 2, 1, 2]
+    },
+    {
+      "id": "quest-maximum-entry-count-default-font",
+      "label": "25 条折叠上限",
+      "mode": "QUEST_TRACKING",
+      "frame": [330, 516],
+      "entry_count": 25,
+      "objective_distribution": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "database-six-entries-default-font",
+      "label": "数据库六条",
+      "mode": "DATABASE_TRACKING",
+      "frame": [230, 136],
+      "entry_count": 6,
+      "objective_distribution": [0, 0, 0, 0, 0, 0]
+    },
+    {
+      "id": "giver-six-entries-default-font",
+      "label": "任务给予者六条",
+      "mode": "GIVER_TRACKING",
+      "frame": [230, 136],
+      "entry_count": 6,
+      "objective_distribution": [0, 0, 0, 0, 0, 0]
+    }
+  ],
+  "ingame_scene": {
+    "canvas": [1536, 1024],
+    "scenario": "quest-dense-default-font",
+    "provider_origin": [1166, 92],
+    "ui_scale": 1.0
+  },
+  "scenario_board": {
+    "canvas": [1800, 1240],
+    "ui_scale": 1.0
+  },
+  "outputs": {
+    "directory": "generated/quests/QT/simulation/QT-GEO-V1",
+    "ingame": "quest_tracker_external_caps_ingame_v1.png",
+    "scenarios": "quest_tracker_external_caps_scenarios_v1.png",
+    "report": "quest_tracker_external_caps_report_v1.json"
+  }
+}

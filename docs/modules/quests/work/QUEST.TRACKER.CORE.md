@@ -10,14 +10,17 @@
   以及 QT-A2 的 `HEADER.*` 与七个 provider 工具 Button；保留 provider
   对象和行为合同，不创建这些自定义覆盖层
 - 子状态：QT-A1 `runtime-exported-temporary / display-region-blocked`；
+  QT-GEO V1 `simulation-rendered / awaiting-user-confirmation`；
   QT-B1 `scope-deferred / user-paused`
 - 项目阶段：`P5`
 - 操作：`export / integrate`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 生成前模拟版本：`QT-SIM V2`
+- 生成前模拟版本：`QT-SIM V2`（旧材料方向）；
+  `QT-GEO V1`（外置装饰端帽精确几何）
 - 生成前模拟方式：`deterministic-local-geometry`
 - 模拟 ImageGen：`0/0`；无上传、provider session 或独立生图预算
-- 本地渲染错误：`0`
+- 本地渲染错误：QT-SIM V2 `0`；QT-GEO V1 `1`，已修复。该脚本错误没有
+  调用 ImageGen
 - 模拟路径／SHA：
   `generated/quests/QT/simulation/QT-SIM-V2/quest_tracker_core_local_geometry_v2.png` /
   `cb54d64f78c100fae94d387c280017f522871d144d0b71aa01fdbb8c1deea4a2`
@@ -51,9 +54,12 @@
 - 本地验证：atlas 九格采样完整覆盖可见区；exporter 重跑哈希稳定；Python
   编译、quest design contract、repository contract、asset workflow skill
   contract 与 Quest Lua smoke 通过。实际展示区域门禁失败，不能进入 P6
-- 下一门禁：先修正 paper 装饰边与 provider live 内容的几何合同，并以真实
-  provider 高度重做本地确定性预演；之后才在 Turtle WoW 验证。QT-B1／A2
-  均保持暂缓
+- 用户已于 `2026-07-31` 选择第一种几何方案：保持 provider live Frame、
+  anchors、hitbox 与功能不变，把纸张四边装饰端帽移到 live 矩形外。精确
+  `QT-GEO V1` 本地预演已生成，ImageGen `0/0`，等待用户确认可见方向
+- 下一门禁：用户确认 `QT-GEO V1`；确认前不修改 runtime adapter。确认后
+  才按外置端帽合同接入、重跑七场景展示区域审计并进入 Turtle WoW 验证。
+  QT-B1／A2 均保持暂缓
 
 ## 组件合同
 
@@ -1224,12 +1230,114 @@ source-layout compositing、进一步内缩和背景替换。
   外侧，或在不改变 provider 功能的前提下建立真实内边距／重排 live anchors。
   该选择会改变可见比例，需要新的本地几何方向确认；不能直接进入 ImageGen。
 
+## 外置装饰端帽精确几何预演 — QT-GEO V1
+
+### 用户选择与冻结边界
+
+- 用户选择：`2026-07-31 / first-scheme-selected`。采用“外置装饰端帽”，
+  不采用 live 内边距／重排 anchors 方案。
+- 当前状态：`simulation-rendered / awaiting-user-confirmation`。本节只准备
+  可见方向，不构成 runtime 接入授权，也不改变 QT-A1 临时 TGA。
+- provider 权威：`pfQuestMapTracker` 根 Frame 继续使用
+  `130..330px` 动态宽度、真实高度公式、原 Parent／Point、七个 Button、
+  `pfQuestMapButton1..25`、所有文字／图标 anchors、点击区、Tooltip、拖动、
+  clamp、模式、`OnUpdate` 与 SavedVariables。
+- adapter 提案：新增一个位于 provider 后方、`EnableMouse(false)` 的纯视觉
+  shell。live 中心严格等于 provider 根矩形 `[0,0,width,height]`；装饰端帽
+  固定在 live 外侧：左 `14px`、右 `14px`、上 `12px`、下 `16px`。
+- 装饰规则：四个 cap 与 live 矩形零相交。上／下端帽不再挤进空状态的
+  `16px` 高 Frame；左右纸叠层不再覆盖 `x=2..14` 节点图标、
+  `x=1..15`／`width-15..width-1` 工具 icon 或 `width-10` 文字右界；
+  最后一行也不再进入底部撕裂边。
+- 仍未决定：provider 保存到物理屏幕边缘时，外置端帽可能被 viewport 裁切。
+  runtime 接入前必须单独验证 screen-edge policy；只能处理视觉壳的显示边界，
+  不得改写 provider 数据、hitbox 或 SavedVariables 语义。
+
+### 本地模拟规格与执行
+
+- specification：
+  `tools/specs/quest_tracker_external_caps_simulation_v1.json`，SHA-256
+  `73a3845aa1c73eba86e4323b5505e0a7c45874aa15958371aa1632f5a0d5babf`。
+- renderer：
+  `tools/render_quest_tracker_external_caps_simulation_v1.py`，SHA-256
+  `771252b38f6652c8301bc590018e609958b1fb0cabbcaebfe066c48fdcd27b5a`。
+- 平台／解释器：macOS；Conda `py312`；本机绝对路径不写入
+  specification 或模拟像素；实际 `sys.executable` 已验证为该 Conda
+  环境的 Python，版本 `3.12.12`。
+- primitives：矩形、多边形、线段、椭圆和真实中文字体排版；无生成纹理，
+  不读取 QT-A1 source／TGA 像素。
+- ImageGen：`0/0`；无上传、provider session、固定执行器调用或生产预算。
+- 场景：严格使用 provider 默认 `font_size=12`、`panel_height=16`、
+  `entry_height=20`、`objective_step=12` 与
+  `height = 16 + entries × 20 + objectives × 12`。覆盖：
+  `200 × 16` 空状态、`130 × 104` 短列表、`230 × 256` 典型列表、
+  `330 × 420` 高密度十任务／十七目标、`330 × 516` 二十五条折叠上限，
+  以及 `230 × 136` 的 database／giver 六条。
+- 游戏内代表场景：`1536 × 1024`、100% UI scale；
+  `330 × 420` provider live Frame 位于 `x=1166,y=92`，对应视觉壳为
+  `358 × 448`。背景与邻接 UI 只用简单几何表示，非任何模块的美术权威。
+- 命令：
+
+```bash
+conda run -n py312 python \
+  tools/render_quest_tracker_external_caps_simulation_v1.py \
+  tools/specs/quest_tracker_external_caps_simulation_v1.json \
+  --repo-root .
+```
+
+### 输出与内部审查
+
+- 游戏内观感图：
+  `generated/quests/QT/simulation/QT-GEO-V1/quest_tracker_external_caps_ingame_v1.png`，
+  `1536 × 1024 RGBA`，SHA-256
+  `ea4d2041090bbfc34087ce01eee410d6bf73c46f6daad6215e4e590cb3388983`。
+- 七场景几何板：
+  `generated/quests/QT/simulation/QT-GEO-V1/quest_tracker_external_caps_scenarios_v1.png`，
+  `1800 × 1240 RGBA`，SHA-256
+  `0909bc056bc3a07ee7ad74dc52d3c73b2589afff68f5ff178b24e310fdc81bb4`。
+- 机器报告：
+  `generated/quests/QT/simulation/QT-GEO-V1/quest_tracker_external_caps_report_v1.json`，
+  SHA-256
+  `fde561fcfad1d5a85267cf62f6c3489fe159f2bac2dca7d6e5fc5cedf81110c1`。
+- 流程错误：首次本地执行因 renderer 把调色板键名 `aged_brass` 误传为颜色
+  值而抛出 `ValueError: unsupported color: #aged_brass`；修正单一分支后
+  同一 specification 重跑成功。该错误没有候选生图或 provider 证据，
+  ImageGen 仍为 `0/0`。
+- 几何审查：`pass`。七种真实 Frame 的公式高度全部一致；七个 toolbar
+  icon、全部 title／objective／node icon 盒均包含于 live Frame；四个 cap
+  均与 live Frame 零相交。空状态保留 `200 × 16` live Frame，同时得到
+  `228 × 44` 的完整视觉壳，不再压缩上下端帽。
+- 视觉内审：`displayable`。本地几何足以判断端帽外扩后的重量、连续纸面和
+  空／短／密集状态比例；扁平色块、纸面纹理、手绘边缘、最终 Alpha、九宫格
+  UV 与 screen-edge policy 均非权威。
+- 生成文件位于被忽略的 `generated/`，不会提交，不是跨设备 source。只有
+  specification、renderer 和本 work 记录进入 Git。
+
+### 用户方向门禁
+
+- 当前具体模拟版本：`QT-GEO V1`
+- 用户结论：`awaiting`
+- 本次只需判断：
+  - 装饰端帽完全外置后，空／短／典型／高密度／二十五条状态的整体比例是否
+    合理；
+  - live 内容直接排在连续纸面上、四周不再牺牲内容空间，是否符合 tracker
+    主体方向；
+  - 外置左右叠页与上下纸边是否具有足够厚度，又不会把 tracker 重新变成
+    规则现代卡片。
+- 确认只接受可见方向，不接受模拟像素；模拟图不得进入 source、runtime、
+  crop、edit 或 ImageGen reference。
+- 用户确认后下一步：把上述可见结论写回运行时合同，修改 adapter 的视觉
+  shell 几何，重做展示区域 contract／七场景报告与真实排版，再请求
+  Turtle WoW 实机验证。若用户拒绝，则建立新的本地几何版本；仍不调用
+  ImageGen。
+
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
 |---|---|---|---|
 | `QT-SIM V1` | 本地 specification、renderer、主图／局部图 SHA；ImageGen `0/0` | `superseded-by-user-priority` | 移除低优先级工具条，聚焦 tracker 主体 |
 | `QT-SIM V2` | 本地 specification、renderer、主图／局部图 SHA；用户于 `2026-07-31` 回复“继续”；ImageGen `0/0` | `direction-confirmed / exact-geometry-superseded / P2` | 材料方向保留；cap／padding 新方案必须按 provider 公式重做本地模拟 |
+| `QT-GEO V1` | 外置端帽 specification、deterministic renderer、两张本地预演与七场景机器报告；ImageGen `0/0` | `simulation-rendered / awaiting-user-confirmation` | 用户确认后才改 runtime；必须另解 screen-edge clipping |
 | `QT-A1 V1` | raw 循环 `5/5` 失败事实 + attempt 4 确定性 RGBA／manifest／九宫格 TGA／provider 公式展示区域复核 | `runtime-exported-temporary / display-region-blocked / P5` | 先修正 paper cap 与 live 内容的几何合同并重做精确模拟 |
 | `QT-B1 V1` | attempt 1 fixed session、raw、归一化透明稿与四景真实排版 SHA | `scope-deferred / user-paused / 1/5` | 不执行旧 V1.r1；未来重开需新模拟、新版本与新授权 |
 | `QT-A2 V1` | 无 ImageGen 调用；历史正文仅在 Git history | `scope-deferred / P2` | 未来重开时先做独立模拟和新授权 |
@@ -1240,6 +1348,7 @@ source-layout compositing、进一步内缩和背景替换。
 quest design contract、repository contract、asset workflow skill contract
 与 Lua smoke 通过；smoke 覆盖 pfQuest 晚加载、九个 Texture、动态 resize、
 provider `OnUpdate` 保留和刷新幂等。但实际展示区域门禁明确失败，当前保持
-`P5 / display-region-blocked`，不能直接进入 Turtle WoW P6 验收。下一步是
-本地提出并模拟新的 cap／padding 几何；QT-B1／QT-A2 均保持
-scope-deferred，不再调用 ImageGen。
+`P5 / display-region-blocked`，不能直接进入 Turtle WoW P6 验收。用户已
+选择外置端帽并完成 `QT-GEO V1` 本地精确预演；当前下一门禁是用户确认该
+具体模拟版本。确认前不修改 adapter；QT-B1／QT-A2 均保持 scope-deferred，
+不再调用 ImageGen。

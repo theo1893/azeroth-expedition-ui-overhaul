@@ -55,6 +55,38 @@ def main() -> None:
     tracker_display_spec = json.loads(
         tracker_display_spec_path.read_text(encoding="utf-8")
     )
+    tracker_external_caps_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_tracker_external_caps_simulation_v1.json"
+    )
+    tracker_external_caps_spec = json.loads(
+        tracker_external_caps_spec_path.read_text(encoding="utf-8")
+    )
+    tracker_external_caps_renderer_path = (
+        ROOT / "tools" / "render_quest_tracker_external_caps_simulation_v1.py"
+    )
+    assert tracker_external_caps_renderer_path.is_file(), (
+        tracker_external_caps_renderer_path
+    )
+    tracker_external_caps_renderer = (
+        tracker_external_caps_renderer_path.read_text(encoding="utf-8")
+    )
+    require(
+        tracker_external_caps_renderer,
+        (
+            "external-cap geometry proposal",
+            "draw_external_shell",
+            "draw_toolbar",
+            "draw_entries",
+            "audit_scenario",
+            "provider-height-formula",
+            "cap.{name}.outside-live",
+            "aeui-quest-tracker-external-caps-simulation-report-v1",
+        ),
+        "pfQuest tracker external-cap simulation renderer",
+    )
     tracker_review_path = (
         ROOT / "tools" / "review_quest_tracker_candidate_v1.py"
     )
@@ -369,6 +401,11 @@ def main() -> None:
             "`display-region-blocked`",
             "`104/256/420/516/136px`",
             "`FRAME_BELOW_NINE_SLICE_MINIMUM`",
+            "`QT-GEO V1`",
+            "`simulation-rendered / awaiting-user-confirmation`",
+            "ImageGen `0/0`",
+            "把左 `14`／右 `14`／上 `12`／",
+            "cap 零相交",
             "QUEST.TRACKER.CORE.md",
             "NPC Quest／Gossip",
             "QL-A1_SourceManifest_v1.json",
@@ -495,6 +532,22 @@ def main() -> None:
             "tools/specs/quest_tracker_display_region_v1.json",
             "`fail / 35 violations`",
             "`FRAME_BELOW_NINE_SLICE_MINIMUM`",
+            "外置装饰端帽精确几何预演 — QT-GEO V1",
+            "first-scheme-selected",
+            "`simulation-rendered / awaiting-user-confirmation`",
+            "quest_tracker_external_caps_simulation_v1.json",
+            "73a3845aa1c73eba86e4323b5505e0a7c45874aa15958371aa1632f5a0d5babf",
+            "render_quest_tracker_external_caps_simulation_v1.py",
+            "771252b38f6652c8301bc590018e609958b1fb0cabbcaebfe066c48fdcd27b5a",
+            "quest_tracker_external_caps_ingame_v1.png",
+            "ea4d2041090bbfc34087ce01eee410d6bf73c46f6daad6215e4e590cb3388983",
+            "quest_tracker_external_caps_scenarios_v1.png",
+            "0909bc056bc3a07ee7ad74dc52d3c73b2589afff68f5ff178b24e310fdc81bb4",
+            "quest_tracker_external_caps_report_v1.json",
+            "fde561fcfad1d5a85267cf62f6c3489fe159f2bac2dca7d6e5fc5cedf81110c1",
+            "`228 × 44`",
+            "`358 × 448`",
+            "`awaiting`",
             "`130 × 104`",
             "`230 × 256`",
             "`330 × 420`",
@@ -577,6 +630,62 @@ def main() -> None:
         )
         assert scenario["frame"][1] == expected_height
         assert scenario["preview_frame"] == scenario["frame"]
+    assert tracker_external_caps_spec["schema"] == (
+        "aeui-quest-tracker-external-caps-simulation-v1"
+    )
+    assert tracker_external_caps_spec["version"] == "QT-GEO-V1"
+    assert tracker_external_caps_spec["imagegen"] == {
+        "calls": 0,
+        "budget": 0,
+        "uploads": [],
+    }
+    assert tracker_external_caps_spec["proposal"]["id"] == (
+        "external-decorative-caps"
+    )
+    assert tracker_external_caps_spec["proposal"]["visual_outsets"] == {
+        "left": 14,
+        "right": 14,
+        "top": 12,
+        "bottom": 16,
+    }
+    assert tracker_external_caps_spec["proposal"]["mouse"] == "disabled"
+    assert (
+        tracker_external_caps_spec["proposal"]["live_center"]
+        == "exactly the provider root rectangle [0,0,width,height]"
+    )
+    external_frames = {
+        scenario["id"]: scenario["frame"]
+        for scenario in tracker_external_caps_spec["scenarios"]
+    }
+    assert external_frames == scenario_frames
+    external_provider = tracker_external_caps_spec["provider"]
+    for scenario in tracker_external_caps_spec["scenarios"]:
+        expected_external_height = (
+            external_provider["panel_height"]
+            + scenario["entry_count"] * external_provider["entry_height"]
+            + sum(scenario["objective_distribution"])
+            * external_provider["objective_step"]
+        )
+        assert scenario["frame"][1] == expected_external_height
+        assert len(scenario["objective_distribution"]) == (
+            scenario["entry_count"]
+        )
+    assert tracker_external_caps_spec["ingame_scene"] == {
+        "canvas": [1536, 1024],
+        "scenario": "quest-dense-default-font",
+        "provider_origin": [1166, 92],
+        "ui_scale": 1.0,
+    }
+    assert tracker_external_caps_spec["scenario_board"] == {
+        "canvas": [1800, 1240],
+        "ui_scale": 1.0,
+    }
+    assert tracker_external_caps_spec["outputs"] == {
+        "directory": "generated/quests/QT/simulation/QT-GEO-V1",
+        "ingame": "quest_tracker_external_caps_ingame_v1.png",
+        "scenarios": "quest_tracker_external_caps_scenarios_v1.png",
+        "report": "quest_tracker_external_caps_report_v1.json",
+    }
     assert "Create a source atlas containing exactly ten separate art objects" not in (
         tracker_work
     )
