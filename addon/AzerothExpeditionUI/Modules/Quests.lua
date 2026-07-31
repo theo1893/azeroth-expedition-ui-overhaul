@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local Quests = {}
-Quests.runtimeContract = "1.7"
+Quests.runtimeContract = "1.8"
 
 local SHELL_TEXTURE =
   addon.media.root .. "Quests\\QuestLogShellV4"
@@ -10,6 +10,8 @@ local QUEST_TITLE_FONT =
   addon.media.root .. "Fonts\\NotoSerifSC-SemiBold.ttf"
 local QUEST_ROW_FONT =
   addon.media.root .. "Fonts\\LXGWWenKaiGB-Medium.ttf"
+local TRACKER_PAPER_TEXTURE =
+  addon.media.root .. "Quests\\QuestTrackerPaperV1"
 
 local SHELL = {
   width = 676,
@@ -130,6 +132,37 @@ local PFQUEST = {
   actionWidth = 52,
   actionHeight = 20,
   actionGap = 4,
+}
+
+local TRACKER_PAPER = {
+  contract = "1.0",
+  caps = {
+    left = 14,
+    right = 14,
+    top = 12,
+    bottom = 16,
+  },
+  slices = {
+    topLeft = { 0, 0.09375, 0, 0.0625 },
+    top = { 0.09375, 0.6484375, 0, 0.0625 },
+    topRight = { 0.6484375, 0.7421875, 0, 0.0625 },
+    left = { 0, 0.09375, 0.0625, 0.890625 },
+    center = {
+      0.09375,
+      0.6484375,
+      0.0625,
+      0.890625,
+    },
+    right = {
+      0.6484375,
+      0.7421875,
+      0.0625,
+      0.890625,
+    },
+    bottomLeft = { 0, 0.09375, 0.890625, 1 },
+    bottom = { 0.09375, 0.6484375, 0.890625, 1 },
+    bottomRight = { 0.6484375, 0.7421875, 0.890625, 1 },
+  },
 }
 
 local function HasPfQuestQuestLogControls(provider)
@@ -273,6 +306,274 @@ function Quests:Initialize()
     end
   end)
   self:InstallGlobalHooks()
+end
+
+local function GetPfQuestTracker()
+  if pfQuestMapTracker then
+    return pfQuestMapTracker
+  end
+  if pfQuest and pfQuest.tracker then
+    return pfQuest.tracker
+  end
+  return nil
+end
+
+local function ConfigureTrackerPaperTexture(texture, texcoord)
+  if not texture or not texcoord then
+    return
+  end
+  texture.aeuiQuestManaged = true
+  texture:SetTexture(TRACKER_PAPER_TEXTURE)
+  texture:SetTexCoord(
+    texcoord[1],
+    texcoord[2],
+    texcoord[3],
+    texcoord[4]
+  )
+  texture:SetVertexColor(1, 1, 1, 1)
+  texture:Show()
+end
+
+local function AnchorTrackerHorizontal(
+  texture,
+  left,
+  right,
+  height,
+  verticalPoint
+)
+  texture:ClearAllPoints()
+  texture:SetPoint(
+    verticalPoint .. "LEFT",
+    left,
+    verticalPoint .. "RIGHT",
+    0,
+    0
+  )
+  texture:SetPoint(
+    verticalPoint .. "RIGHT",
+    right,
+    verticalPoint .. "LEFT",
+    0,
+    0
+  )
+  texture:SetHeight(height)
+end
+
+local function AnchorTrackerVertical(
+  texture,
+  top,
+  bottom,
+  width,
+  horizontalPoint
+)
+  texture:ClearAllPoints()
+  texture:SetPoint(
+    "TOP" .. horizontalPoint,
+    top,
+    "BOTTOM" .. horizontalPoint,
+    0,
+    0
+  )
+  texture:SetPoint(
+    "BOTTOM" .. horizontalPoint,
+    bottom,
+    "TOP" .. horizontalPoint,
+    0,
+    0
+  )
+  texture:SetWidth(width)
+end
+
+function Quests:LayoutPfQuestTrackerPaper(tracker, force)
+  if not tracker or not tracker.aeuiQuestPaperSlices then
+    return
+  end
+
+  local width = tonumber(tracker:GetWidth()) or 0
+  local height = tonumber(tracker:GetHeight()) or 0
+  if width < 1 or height < 1 then
+    return
+  end
+  if
+    not force and
+    tracker.aeuiQuestPaperWidth == width and
+    tracker.aeuiQuestPaperHeight == height
+  then
+    return
+  end
+
+  local leftWidth = math.min(
+    TRACKER_PAPER.caps.left,
+    math.max(1, math.floor((width - 1) / 2))
+  )
+  local rightWidth = math.min(
+    TRACKER_PAPER.caps.right,
+    math.max(1, width - leftWidth - 1)
+  )
+  local topHeight = math.min(
+    TRACKER_PAPER.caps.top,
+    math.max(1, math.floor((height - 1) / 2))
+  )
+  local bottomHeight = math.min(
+    TRACKER_PAPER.caps.bottom,
+    math.max(1, height - topHeight - 1)
+  )
+  local slices = tracker.aeuiQuestPaperSlices
+
+  SetSize(slices.topLeft, leftWidth, topHeight)
+  SetSinglePoint(
+    slices.topLeft,
+    "TOPLEFT",
+    tracker,
+    "TOPLEFT",
+    0,
+    0
+  )
+  SetSize(slices.topRight, rightWidth, topHeight)
+  SetSinglePoint(
+    slices.topRight,
+    "TOPRIGHT",
+    tracker,
+    "TOPRIGHT",
+    0,
+    0
+  )
+  SetSize(slices.bottomLeft, leftWidth, bottomHeight)
+  SetSinglePoint(
+    slices.bottomLeft,
+    "BOTTOMLEFT",
+    tracker,
+    "BOTTOMLEFT",
+    0,
+    0
+  )
+  SetSize(slices.bottomRight, rightWidth, bottomHeight)
+  SetSinglePoint(
+    slices.bottomRight,
+    "BOTTOMRIGHT",
+    tracker,
+    "BOTTOMRIGHT",
+    0,
+    0
+  )
+
+  AnchorTrackerHorizontal(
+    slices.top,
+    slices.topLeft,
+    slices.topRight,
+    topHeight,
+    "TOP"
+  )
+  AnchorTrackerHorizontal(
+    slices.bottom,
+    slices.bottomLeft,
+    slices.bottomRight,
+    bottomHeight,
+    "BOTTOM"
+  )
+  AnchorTrackerVertical(
+    slices.left,
+    slices.topLeft,
+    slices.bottomLeft,
+    leftWidth,
+    "LEFT"
+  )
+  AnchorTrackerVertical(
+    slices.right,
+    slices.topRight,
+    slices.bottomRight,
+    rightWidth,
+    "RIGHT"
+  )
+  slices.center:ClearAllPoints()
+  slices.center:SetPoint(
+    "TOPLEFT",
+    slices.topLeft,
+    "BOTTOMRIGHT",
+    0,
+    0
+  )
+  slices.center:SetPoint(
+    "BOTTOMRIGHT",
+    slices.bottomRight,
+    "TOPLEFT",
+    0,
+    0
+  )
+
+  tracker.aeuiQuestPaperWidth = width
+  tracker.aeuiQuestPaperHeight = height
+end
+
+function Quests:StylePfQuestTrackerEntries(tracker)
+  if not tracker or not tracker.buttons then
+    return
+  end
+  for _, button in pairs(tracker.buttons) do
+    if button and not button.aeuiQuestPaperOnlyStyled then
+      if button.bg and button.bg.Hide then
+        button.bg:Hide()
+      elseif button.bg and button.bg.SetAlpha then
+        button.bg:SetAlpha(0)
+      end
+      button.aeuiQuestPaperOnlyStyled = true
+    end
+  end
+end
+
+function Quests:ApplyPfQuestTrackerPaper()
+  local tracker = GetPfQuestTracker()
+  if not tracker or not tracker.CreateTexture then
+    return
+  end
+
+  if tracker.backdrop and tracker.backdrop.bg then
+    if tracker.backdrop.bg.Hide then
+      tracker.backdrop.bg:Hide()
+    elseif tracker.backdrop.bg.SetAlpha then
+      tracker.backdrop.bg:SetAlpha(0)
+    end
+  end
+
+  if not tracker.aeuiQuestPaperSlices then
+    tracker.aeuiQuestPaperSlices = {}
+    for key, texcoord in pairs(TRACKER_PAPER.slices) do
+      local texture = tracker:CreateTexture(nil, "BACKGROUND")
+      ConfigureTrackerPaperTexture(texture, texcoord)
+      tracker.aeuiQuestPaperSlices[key] = texture
+    end
+  else
+    for key, texture in pairs(tracker.aeuiQuestPaperSlices) do
+      ConfigureTrackerPaperTexture(
+        texture,
+        TRACKER_PAPER.slices[key]
+      )
+    end
+  end
+
+  AppendScript(
+    tracker,
+    "OnShow",
+    "aeuiQuestTrackerPaperOnShowHooked",
+    function()
+      Quests:LayoutPfQuestTrackerPaper(tracker, true)
+      Quests:StylePfQuestTrackerEntries(tracker)
+    end
+  )
+  AppendScript(
+    tracker,
+    "OnUpdate",
+    "aeuiQuestTrackerPaperOnUpdateHooked",
+    function()
+      Quests:LayoutPfQuestTrackerPaper(tracker)
+      Quests:StylePfQuestTrackerEntries(tracker)
+    end
+  )
+
+  self:LayoutPfQuestTrackerPaper(tracker, true)
+  self:StylePfQuestTrackerEntries(tracker)
+  tracker.aeuiQuestTrackerRuntimeContract =
+    TRACKER_PAPER.contract
 end
 
 function Quests:CaptureQuestLogBaseGeometry()
@@ -1792,6 +2093,7 @@ function Quests:Apply()
   if not addon.db or not addon.db.quests.enabled then
     return
   end
+  self:ApplyPfQuestTrackerPaper()
   if not QuestLogFrame then
     addon:ScheduleRefresh(0.5)
     return

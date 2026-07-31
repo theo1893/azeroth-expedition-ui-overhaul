@@ -500,7 +500,7 @@ AzerothExpeditionUI:Refresh()
 assert(QuestLogFrame:GetWidth() == 676, "quest shell width was not applied")
 assert(QuestLogFrame:GetHeight() == 464, "quest shell height was not applied")
 assert(
-  QuestLogFrame.aeuiQuestRuntimeContract == "1.7",
+  QuestLogFrame.aeuiQuestRuntimeContract == "1.8",
   "quest runtime contract was not recorded"
 )
 assert(QuestLogFrame.aeuiQuestShell, "quest shell texture was not created")
@@ -986,7 +986,30 @@ local function CreateProviderButton(name, text, customText)
   return button
 end
 
+pfQuestMapTracker =
+  CreateFrame("Frame", "pfQuestMapTracker", UIParent)
+pfQuestMapTracker:SetWidth(230)
+pfQuestMapTracker:SetHeight(500)
+pfQuestMapTracker.backdrop =
+  CreateFrame("Frame", nil, pfQuestMapTracker)
+pfQuestMapTracker.backdrop.bg =
+  pfQuestMapTracker.backdrop:CreateTexture(nil, "BACKGROUND")
+local providerTrackerButton =
+  CreateFrame("Button", "pfQuestMapButton1", pfQuestMapTracker)
+providerTrackerButton.bg =
+  providerTrackerButton:CreateTexture(nil, "BACKGROUND")
+pfQuestMapTracker.buttons = { providerTrackerButton }
+local providerTrackerOnShowCalls = 0
+local providerTrackerOnUpdateCalls = 0
+pfQuestMapTracker:SetScript("OnShow", function()
+  providerTrackerOnShowCalls = providerTrackerOnShowCalls + 1
+end)
+pfQuestMapTracker:SetScript("OnUpdate", function()
+  providerTrackerOnUpdateCalls = providerTrackerOnUpdateCalls + 1
+end)
+
 pfQuest = {
+  tracker = pfQuestMapTracker,
   buttonOnline =
     CreateProviderButton("pfQuestOnline", "[id: 8276]", true),
   buttonLanguage =
@@ -1053,6 +1076,53 @@ AzerothExpeditionUIQuestDriver:GetScript("OnEvent")()
 AzerothExpeditionUI:Refresh()
 event = nil
 arg1 = nil
+
+assert(
+  pfQuestMapTracker.aeuiQuestTrackerRuntimeContract == "1.0",
+  "temporary tracker paper runtime contract was not recorded"
+)
+assert(
+  pfQuestMapTracker.aeuiQuestPaperSlices and
+    #pfQuestMapTracker.regions == 9,
+  "tracker paper was not mounted as exactly nine background slices"
+)
+for _, texture in pairs(pfQuestMapTracker.aeuiQuestPaperSlices) do
+  assert(
+    texture.texture and texture.texture:find("QuestTrackerPaperV1"),
+    "tracker slice did not use the exported paper atlas"
+  )
+end
+assert(
+  not pfQuestMapTracker.backdrop.bg:IsShown() and
+    not providerTrackerButton.bg:IsShown(),
+  "provider black panel or row rectangle remained visible"
+)
+assert(
+  pfQuestMapTracker.aeuiQuestPaperSlices.topLeft:GetWidth() == 14 and
+    pfQuestMapTracker.aeuiQuestPaperSlices.topLeft:GetHeight() == 12,
+  "tracker nine-slice caps do not match the runtime manifest"
+)
+local trackerOnUpdate = pfQuestMapTracker:GetScript("OnUpdate")
+trackerOnUpdate()
+assert(
+  providerTrackerOnUpdateCalls == 1,
+  "provider tracker OnUpdate behavior was replaced"
+)
+pfQuestMapTracker:SetWidth(330)
+pfQuestMapTracker:SetHeight(865)
+trackerOnUpdate()
+assert(
+  pfQuestMapTracker.aeuiQuestPaperWidth == 330 and
+    pfQuestMapTracker.aeuiQuestPaperHeight == 865,
+  "tracker paper did not follow provider size changes"
+)
+local trackerRegionCount = #pfQuestMapTracker.regions
+AzerothExpeditionUI:Refresh()
+assert(
+  #pfQuestMapTracker.regions == trackerRegionCount and
+    pfQuestMapTracker:GetScript("OnUpdate") == trackerOnUpdate,
+  "tracker paper refresh was not idempotent"
+)
 
 local nativeCallsBeforeProviderUpdate = questLogUpdateCalls
 QuestLog_Update()

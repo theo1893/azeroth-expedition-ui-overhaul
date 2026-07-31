@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "batch": "QT-A1",
+  "version": "V1-temporary",
+  "status": "user-accepted-temporary-contract-exception",
+  "source": {
+    "file": "assets/source/quests/qt-a1/QuestTrackerPaperShell_Temporary_v1.png",
+    "sha256": "a9d700cd01f26535ae2035bfa3d8c2cedd7337bfb47d3fa9494ba592d259c59b",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      261,
+      82,
+      771,
+      1454
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_pixels": 944275,
+    "partially_transparent_pixels": 1163,
+    "opaque_pixels": 627426
+  },
+  "provenance": {
+    "fixed_executor": "@openai/codex@0.143.0",
+    "fixed_child_session": "019fb641-556a-77b0-bd27-e05a629a9fea",
+    "raw_attempt": "generated/quests/QT/QT-A1/V1/attempt-04/qt-a1-field-note-shell-v1.png",
+    "raw_attempt_sha256": "13aefd716b129fd2f6b629147b77c0033b8c9db6e3f3c1d71c2a96d7dd347474",
+    "deterministic_derivation": "review_quest_tracker_candidate_v1.py chroma-key output; no redraw, crop, scale, or retouch in the tracked source",
+    "decision": "2026-07-31 user paused QT-B1 focus/tracked/complete art and directed the overhaul to use the large tracker background",
+    "exception": "raw native-green and original bbox gates remain failed; the accepted temporary source is the reviewed deterministic RGBA key"
+  },
+  "dynamic_exclusions": [
+    "all quest titles, objectives, levels, percentages and node icons",
+    "all hover, tracked and complete overlays from deferred QT-B1",
+    "all toolbar Button art from deferred QT-A2",
+    "all provider scripts, click regions, tooltips and SavedVariables"
+  ],
+  "game_validated": false
+}

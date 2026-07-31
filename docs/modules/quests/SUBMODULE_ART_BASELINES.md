@@ -182,9 +182,10 @@ ImageGen 调用。QT-A1 五次循环已耗尽：attempt 4 的宽缓纸面是本�
 纹理，终态为 `candidate-rejected / repair-budget-exhausted / 5/5`，没有
 source/runtime。QT-B1 attempt 1 已确认三件对象身份，但因 cell 越界、
 focus 绿边／综合色和 native 色键失败成为
-`internal-rejected / repair-prepared 1/5`；QT-A2 保持
-`scope-deferred 0/5`。生产内审通过也不自动创建 adapter、source 或 runtime
-媒体。
+`scope-deferred / user-paused 1/5`，旧 V1.r1 不再执行。用户选择暂时只用
+大块背景 tracker；attempt 4 的确定性 RGBA 按临时合同例外成为 QT-A1
+source，并导出为九宫格 TGA。adapter 不创建三件 QT-B1 覆盖层，同时隐藏
+provider 的现代半透明行矩形；QT-A2 保持 `scope-deferred 0/5`。
 
 ## NPC Quest／Gossip
 

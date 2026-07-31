@@ -67,6 +67,10 @@ def main() -> None:
             "tracker_",
             "NotoSansSC-Medium.ttf",
             "B1_ATLAS_SIZE = (1024, 768)",
+            '--paper-only',
+            '--runtime-paper',
+            "runtime_nine_slice",
+            "QT-B1 user-paused",
         ),
         "pfQuest tracker candidate review tool",
     )
@@ -276,7 +280,7 @@ def main() -> None:
             "用户已于",
             "确认 `QT-SIM V2`",
             "独立授权 QT-A1／B1 V1",
-            "`internal-rejected / repair-prepared 1/5`",
+            "`scope-deferred / user-paused 1/5`",
             "当前没有美术基线 Prompt",
             "完整执行正文、会话和 diff 保留在 Git",
         ),
@@ -353,7 +357,7 @@ def main() -> None:
             "`simulation-confirmed`、ImageGen `0/0`",
             "回复",
             "确认主体方向",
-            "`internal-rejected / repair-prepared / P3 / 1/5`",
+            "`P3 scope-deferred / user-paused / 1/5`",
             "`scope-deferred 0/5`",
             "QUEST.TRACKER.CORE.md",
             "NPC Quest／Gossip",
@@ -369,7 +373,7 @@ def main() -> None:
         tracker_work,
         (
             "pfQuest 任务追踪核心工作文件 — QT V2",
-            "`candidate-rejected`",
+            "`runtime-exported-temporary / user-accepted exception`",
             "`pfQuest 7.0.1`",
             "`pfQuest-turtle 7.0.2`",
             "`imagegen-0-143-0`",
@@ -438,14 +442,14 @@ def main() -> None:
             "### QT-A2 V1 — scope-deferred",
             "当前工作树不保留可误执行的正文",
             "### QT-B1 V1",
-            "exactly three separate interaction-feedback art objects",
-            "outer right page edge",
-            "three-slice cleanly",
+            "`scope-deferred / user-paused`",
+            "直接使用大块的背景 tracker",
+            "旧 V1.r1",
             "Prompt 完整性预检",
             "`pass / production / 已授权`",
             "未知但执行必需的值：无",
             "Repair envelope 与计数",
-            "两段最坏合计 `10` 次",
+            "历史合计为 `6/10`",
             "真实排版预演",
             "`130 × 180`",
             "`230 × 500`",
@@ -457,7 +461,13 @@ def main() -> None:
             "QT-A1 V1.r2 — 完整修复正文",
             "QT-A1 V1.r3 — 完整修复正文",
             "QT-A1 V1.r4 — 完整修复正文",
-            "QT-B1 V1.r1 — 完整修复正文",
+            "QuestTrackerPaperShell_Temporary_v1.png",
+            "QuestTrackerPaperV1.tga",
+            "`runtime-exported-temporary / P5`",
+            "build_quest_tracker_paper_v1.py",
+            "contract `1.8`",
+            "`--paper-only`",
+            "aad8a8fb800e0932ddd9cf7e2430ba49bf29a0039bf713bdd1fd5c350758a5ea",
             "019fb62d-a545-70f3-9ea1-10f1017bb806",
             "019fb638-0608-7be3-b76c-889f2760d373",
             "019fb63d-2013-70d0-b8b8-465afbc1c61c",
@@ -1300,6 +1310,64 @@ def main() -> None:
     assert struct.unpack("<HH", runtime_bytes[12:16]) == (1024, 512)
     assert runtime_bytes[16] == 32
 
+    tracker_source_path = (
+        ROOT
+        / "assets"
+        / "source"
+        / "quests"
+        / "qt-a1"
+        / "QuestTrackerPaperShell_Temporary_v1.png"
+    )
+    tracker_source_manifest = json.loads(
+        tracker_source_path.with_name(
+            "QT-A1_SourceManifest_v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    tracker_runtime_manifest = json.loads(
+        tracker_source_path.with_name(
+            "QT-A1_RuntimeManifest_v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert tracker_source_manifest["status"] == (
+        "user-accepted-temporary-contract-exception"
+    )
+    assert tracker_source_manifest["source"]["sha256"] == (
+        "a9d700cd01f26535ae2035bfa3d8c2cedd7337bfb47d3fa9494ba592d259c59b"
+    )
+    assert hashlib.sha256(tracker_source_path.read_bytes()).hexdigest() == (
+        tracker_source_manifest["source"]["sha256"]
+    )
+    assert tracker_runtime_manifest["status"] == (
+        "runtime-exported-temporary"
+    )
+    assert tracker_runtime_manifest["runtime_contract"] == "1.0"
+    assert tracker_runtime_manifest["transform"]["atlas_size"] == [256, 512]
+    assert tracker_runtime_manifest["nine_slice"]["display_caps"] == {
+        "left": 14,
+        "right": 14,
+        "top": 12,
+        "bottom": 16,
+    }
+    assert tracker_runtime_manifest["frame_contract"][
+        "row_overlays"
+    ] == "none; QT-B1 is scope-deferred"
+    assert tracker_runtime_manifest["implementation"]["imagegen_calls"] == 0
+    assert tracker_runtime_manifest["implementation"]["game_validated"] is False
+    tracker_runtime_path = ROOT / tracker_runtime_manifest["runtime"]["file"]
+    tracker_runtime_bytes = tracker_runtime_path.read_bytes()
+    assert hashlib.sha256(tracker_runtime_bytes).hexdigest() == (
+        tracker_runtime_manifest["runtime"]["sha256"]
+    )
+    assert tracker_runtime_manifest["runtime"]["sha256"] == (
+        "c6b1f64034fa69f01709403e592c3350445c9a6739f4b559242be48831666c61"
+    )
+    assert tracker_runtime_bytes[2] == 2
+    assert struct.unpack("<HH", tracker_runtime_bytes[12:16]) == (256, 512)
+    assert tracker_runtime_bytes[16] == 32
+    assert (
+        ROOT / "tools" / "build_quest_tracker_paper_v1.py"
+    ).is_file()
+
     quest_adapter = (
         ROOT
         / "addon"
@@ -1310,9 +1378,12 @@ def main() -> None:
     require(
         quest_adapter,
         (
-            'Quests.runtimeContract = "1.7"',
+            'Quests.runtimeContract = "1.8"',
             "QuestLogShellV4",
             "QuestLogDirectoryMarksV1",
+            "QuestTrackerPaperV1",
+            "ApplyPfQuestTrackerPaper",
+            "aeuiQuestPaperSlices",
             "0.66015625",
             "0.90625",
             "DIRECTORY.rowCount",

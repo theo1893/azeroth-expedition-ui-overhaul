@@ -14,6 +14,9 @@ from PIL import Image, ImageDraw, ImageFont
 
 CANVAS = (1536, 1024)
 B1_ATLAS_SIZE = (1024, 768)
+TRACKER_RUNTIME_X = (0, 24, 166, 190)
+TRACKER_RUNTIME_Y = (0, 32, 456, 512)
+TRACKER_RUNTIME_CAPS = (14, 14, 12, 16)
 GREEN = np.array([0, 255, 0], dtype=np.uint8)
 
 QUESTS = [
@@ -126,6 +129,54 @@ def nine_slice(source: Image.Image, size: tuple[int, int]) -> Image.Image:
     return out
 
 
+def runtime_nine_slice(
+    source: Image.Image,
+    size: tuple[int, int],
+) -> Image.Image:
+    width, height = size
+    left = min(
+        TRACKER_RUNTIME_CAPS[0],
+        max(1, (width - 1) // 2),
+    )
+    right = min(
+        TRACKER_RUNTIME_CAPS[1],
+        max(1, width - left - 1),
+    )
+    top = min(
+        TRACKER_RUNTIME_CAPS[2],
+        max(1, (height - 1) // 2),
+    )
+    bottom = min(
+        TRACKER_RUNTIME_CAPS[3],
+        max(1, height - top - 1),
+    )
+    target_x = (0, left, width - right, width)
+    target_y = (0, top, height - bottom, height)
+    out = Image.new("RGBA", size)
+    for row in range(3):
+        for column in range(3):
+            crop = source.crop(
+                (
+                    TRACKER_RUNTIME_X[column],
+                    TRACKER_RUNTIME_Y[row],
+                    TRACKER_RUNTIME_X[column + 1],
+                    TRACKER_RUNTIME_Y[row + 1],
+                )
+            )
+            piece = resize(
+                crop,
+                (
+                    target_x[column + 1] - target_x[column],
+                    target_y[row + 1] - target_y[row],
+                ),
+            )
+            out.alpha_composite(
+                piece,
+                (target_x[column], target_y[row]),
+            )
+    return out
+
+
 def three_slice(source: Image.Image, size: tuple[int, int]) -> Image.Image:
     bbox = alpha_bbox(source)
     if bbox is None:
@@ -198,6 +249,7 @@ def draw_entries(
     entries: list[tuple[str, list[str], int, bool, bool]],
     mode: str,
     b1: dict[str, Image.Image] | None,
+    paper_only: bool,
 ) -> None:
     width, height = frame.size
     dense = height >= 800
@@ -224,7 +276,7 @@ def draw_entries(
             if b1:
                 wash = three_slice(b1["focus"], (max(1, width - 8), entry_height))
                 frame.alpha_composite(wash, (4, y - 2))
-            else:
+            elif not paper_only:
                 draw.rectangle((2, y - 2, width - 2, y + entry_height - 2), fill=(20, 13, 8, 38))
 
         frame.alpha_composite(complete_node if complete else node, (3, y + 2))
@@ -257,11 +309,17 @@ def render_layout(
     mode: str,
     entries: list[tuple[str, list[str], int, bool, bool]],
     b1: dict[str, Image.Image] | None,
+    paper_only: bool,
+    runtime_paper: Image.Image | None,
 ) -> None:
     scene = world_scene(repo)
-    tracker = nine_slice(paper, size)
+    tracker = (
+        runtime_nine_slice(runtime_paper, size)
+        if runtime_paper is not None
+        else nine_slice(paper, size)
+    )
     tracker.alpha_composite(toolbar(repo, size[0]), (0, 0))
-    draw_entries(tracker, repo, entries, mode, b1)
+    draw_entries(tracker, repo, entries, mode, b1, paper_only)
     x = CANVAS[0] - size[0] - 20
     y = 72 if size[1] >= 800 else 112
     scene.alpha_composite(tracker, (x, y))
@@ -294,6 +352,8 @@ def main() -> None:
     parser.add_argument("--repo-root", type=Path, required=True)
     parser.add_argument("--a1", type=Path, required=True)
     parser.add_argument("--b1", type=Path)
+    parser.add_argument("--paper-only", action="store_true")
+    parser.add_argument("--runtime-paper", type=Path)
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args()
 
@@ -338,6 +398,10 @@ def main() -> None:
             "complete": crop_cell(b1, (640, 440, 832, 632)),
         }
 
+    runtime_paper: Image.Image | None = None
+    if args.runtime_paper:
+        runtime_paper = Image.open(args.runtime_paper).convert("RGBA")
+
     layouts = [
         ("real-layout-short-130x180.png", (130, 180), "QUEST_TRACKING", QUESTS[:2]),
         ("real-layout-quest-230x500.png", (230, 500), "QUEST_TRACKING", QUESTS[:6]),
@@ -347,7 +411,17 @@ def main() -> None:
     layout_paths: list[Path] = []
     for filename, size, mode, entries in layouts:
         path = output_dir / filename
-        render_layout(repo, a1, path, size, mode, entries, b1_assets)
+        render_layout(
+            repo,
+            a1,
+            path,
+            size,
+            mode,
+            entries,
+            b1_assets,
+            args.paper_only,
+            runtime_paper,
+        )
         layout_paths.append(path)
 
     overview = output_dir / "real-layout-overview.png"
@@ -390,7 +464,22 @@ def main() -> None:
             "dynamic_content": "representative pfQuest hierarchy at 100% UI pixels",
             "toolbar": "current pfQuest TGA fallback; QT-A2 remains non-authoritative",
             "world_and_neighboring_ui": "deterministic geometric fallback; non-authoritative",
+            "entry_feedback": (
+                "none; QT-B1 user-paused"
+                if args.paper_only
+                else "candidate B1 or current provider fallback"
+            ),
         },
+        "runtime_paper": (
+            {
+                "path": str(args.runtime_paper.resolve()),
+                "sha256": sha256(args.runtime_paper.resolve()),
+                "size": list(runtime_paper.size),
+                "assembly": "manifest-locked 3x3 atlas slices and display caps",
+            }
+            if args.runtime_paper and runtime_paper is not None
+            else None
+        ),
     }
     report_path = output_dir / "review.json"
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

@@ -22,7 +22,7 @@
 |---|---|---:|---|---|
 | Core／pfUI | `api/expedition.lua`、`pfUI.lua`、原生回退路由 | `P5` | 现代可见模块默认回退原生；非视觉功能保留；Initialize／Apply 按模块 `pcall` 隔离并单次报告异常 | 实机覆盖原生 Frame、SavedVariables、单模块失败隔离与第三方兼容 |
 | Chat | `modules/chat.lua` + AEUI Chat adapter | `P5` V3 / r1.7 | 单一左侧旧书、四状态 Tab、双状态输入与未读已接入；右框隐藏且消息回收；书本九宫格在缺失、隐藏或贴图被剥离时自愈；两项 Copy 辅助功能暂缓 | `/reload` 验证书本主体恢复，再执行核心批次实机验收 |
-| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P5` | Quest Log 主体保持已接受的 QL-A2 V4；QL-B1 四态墨记继续运行，QL-B2 资产保留但隐藏。pfQuest 冲突根因已完成源码审计；QL-C contract `1.7` 在 provider 最终刷新后恢复任务行／详情几何，并把六个真实 pfQuest 控件归入右页固定工具行和底部行，late-load smoke 通过。pfQuest tracker 已完成 `P1` 对象合同且 `QT-SIM V2` 已由用户确认。QT-A1 V1 在 `5/5` 后因中心压花、bbox 与色键失败成为 `candidate-rejected / repair-budget-exhausted`；QT-B1 V1 attempt 1 因 cell 越界、focus 绿边／综合色和 native 色键失败成为 `P3 internal-rejected / repair-prepared 1/5`。QT-A2 七工具 Button 暂缓且 provider 行为不变 | 以同段 raw 执行 QT-B1 V1.r1 edit 并继续真实排版内审；游戏设备验证 pfQuest／pfQuest-turtle 同开时的 Quest Log |
+| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P5` | Quest Log 主体保持 QL-A2 V4；QL-C `1.7` 的晚加载与六控件兼容仍有效。Quests runtime contract `1.8` 新增 pfQuest tracker 单块大纸面九宫格：QT-A1 attempt 4 的确定性 RGBA 经用户临时合同例外晋级，source、manifest、`256 × 512` TGA 与 adapter 已接入。QT-B1 focus／tracked／complete 三件覆盖层因表现很糟糕被用户暂停于 `1/5`，不挂载且现代半透明行矩形隐藏；QT-A2 七工具 Button 仍暂缓并使用 provider fallback。静态合同、exporter、Python 编译和 Lua smoke 均通过 | 游戏设备验证 tracker 动态宽高、九宫格接缝、文字／工具条与 pfQuest／pfQuest-turtle 同开行为 |
 | Map | `map.lua`、`minimap.lua`、`addonbuttons.lua` 等 | `P2` | 羊皮地图卷与黄铜罗盘已锁定 | 实机对象审计和组件级合同 |
 | Character | `character.lua`、`inspect.lua`、`dressup.lua` | `P2` | 香草同构角色面板已锁定 | 实机几何与装备槽／属性／页签拆分 |
 

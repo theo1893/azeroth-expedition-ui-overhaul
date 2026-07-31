@@ -1,0 +1,241 @@
+{
+  "schema_version": 1,
+  "batch": "QT-A1",
+  "version": "V1-temporary",
+  "runtime_contract": "1.0",
+  "status": "runtime-exported-temporary",
+  "source": {
+    "file": "assets/source/quests/qt-a1/QuestTrackerPaperShell_Temporary_v1.png",
+    "sha256": "a9d700cd01f26535ae2035bfa3d8c2cedd7337bfb47d3fa9494ba592d259c59b",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      261,
+      82,
+      771,
+      1454
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_pixels": 944275,
+    "partially_transparent_pixels": 1163,
+    "opaque_pixels": 627426
+  },
+  "transform": {
+    "operation": "crop reviewed Alpha bbox, aspect-preserving resize to 190x512, remove two resampling-only bright-green edge pixels, then transparent right padding into 256x512 atlas",
+    "resample": "Pillow Image.Resampling.LANCZOS",
+    "crop_xyxy": [
+      261,
+      82,
+      771,
+      1454
+    ],
+    "display_content_size": [
+      190,
+      512
+    ],
+    "atlas_size": [
+      256,
+      512
+    ],
+    "content_box_xyxy": [
+      0,
+      0,
+      190,
+      512
+    ],
+    "rotation": null,
+    "mirror": false,
+    "retouch": false
+  },
+  "nine_slice": {
+    "display_caps": {
+      "left": 14,
+      "right": 14,
+      "top": 12,
+      "bottom": 16
+    },
+    "minimum_frame_size": [
+      29,
+      29
+    ],
+    "slices": {
+      "top_left": {
+        "atlas_box_xyxy": [
+          0,
+          0,
+          24,
+          32
+        ],
+        "texcoord": {
+          "left": 0.0,
+          "right": 0.09375,
+          "top": 0.0,
+          "bottom": 0.0625
+        }
+      },
+      "top": {
+        "atlas_box_xyxy": [
+          24,
+          0,
+          166,
+          32
+        ],
+        "texcoord": {
+          "left": 0.09375,
+          "right": 0.6484375,
+          "top": 0.0,
+          "bottom": 0.0625
+        }
+      },
+      "top_right": {
+        "atlas_box_xyxy": [
+          166,
+          0,
+          190,
+          32
+        ],
+        "texcoord": {
+          "left": 0.6484375,
+          "right": 0.7421875,
+          "top": 0.0,
+          "bottom": 0.0625
+        }
+      },
+      "left": {
+        "atlas_box_xyxy": [
+          0,
+          32,
+          24,
+          456
+        ],
+        "texcoord": {
+          "left": 0.0,
+          "right": 0.09375,
+          "top": 0.0625,
+          "bottom": 0.890625
+        }
+      },
+      "center": {
+        "atlas_box_xyxy": [
+          24,
+          32,
+          166,
+          456
+        ],
+        "texcoord": {
+          "left": 0.09375,
+          "right": 0.6484375,
+          "top": 0.0625,
+          "bottom": 0.890625
+        }
+      },
+      "right": {
+        "atlas_box_xyxy": [
+          166,
+          32,
+          190,
+          456
+        ],
+        "texcoord": {
+          "left": 0.6484375,
+          "right": 0.7421875,
+          "top": 0.0625,
+          "bottom": 0.890625
+        }
+      },
+      "bottom_left": {
+        "atlas_box_xyxy": [
+          0,
+          456,
+          24,
+          512
+        ],
+        "texcoord": {
+          "left": 0.0,
+          "right": 0.09375,
+          "top": 0.890625,
+          "bottom": 1.0
+        }
+      },
+      "bottom": {
+        "atlas_box_xyxy": [
+          24,
+          456,
+          166,
+          512
+        ],
+        "texcoord": {
+          "left": 0.09375,
+          "right": 0.6484375,
+          "top": 0.890625,
+          "bottom": 1.0
+        }
+      },
+      "bottom_right": {
+        "atlas_box_xyxy": [
+          166,
+          456,
+          190,
+          512
+        ],
+        "texcoord": {
+          "left": 0.6484375,
+          "right": 0.7421875,
+          "top": 0.890625,
+          "bottom": 1.0
+        }
+      }
+    }
+  },
+  "preview": {
+    "file": "generated/quests/QT/QT-A1/temporary-runtime/QuestTrackerPaperV1.atlas.png",
+    "sha256": "1de8bed162c31515fa47535b1ffe309da2b58759d191c5f43d3bb5374e505216",
+    "width": 190,
+    "height": 512,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      0,
+      0,
+      190,
+      512
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_pixels": 7917,
+    "partially_transparent_pixels": 4286,
+    "opaque_pixels": 85077
+  },
+  "runtime": {
+    "file": "addon/AzerothExpeditionUI/Media/Quests/QuestTrackerPaperV1.tga",
+    "sha256": "c6b1f64034fa69f01709403e592c3350445c9a6739f4b559242be48831666c61",
+    "width": 256,
+    "height": 512,
+    "mode": "RGBA",
+    "tga_descriptor": 8,
+    "tga_top_origin": false,
+    "visible_bbox_exclusive": [
+      0,
+      0,
+      190,
+      512
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_pixels": 41709,
+    "partially_transparent_pixels": 4286,
+    "opaque_pixels": 85077
+  },
+  "frame_contract": {
+    "object": "pfQuestMapTracker",
+    "provider_width": "dynamic 130..330 UI px",
+    "provider_height": "dynamic panel plus entry content",
+    "ownership": "one non-interactive nine-slice paper background behind the provider's live toolbar, entries and text",
+    "row_overlays": "none; QT-B1 is scope-deferred",
+    "toolbar_art": "provider fallback; QT-A2 is scope-deferred"
+  },
+  "implementation": {
+    "exporter": "tools/build_quest_tracker_paper_v1.py",
+    "adapter": "addon/AzerothExpeditionUI/Modules/Quests.lua",
+    "imagegen_calls": 0,
+    "game_validated": false
+  }
+}

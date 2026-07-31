@@ -223,9 +223,11 @@ def main() -> None:
     quest_source = (aeui / "Modules" / "Quests.lua").read_text(
         encoding="utf-8"
     )
-    assert 'Quests.runtimeContract = "1.7"' in quest_source
+    assert 'Quests.runtimeContract = "1.8"' in quest_source
     assert "QuestLogShellV4" in quest_source
     assert "QuestLogDirectoryMarksV1" in quest_source
+    assert "QuestTrackerPaperV1" in quest_source
+    assert "ApplyPfQuestTrackerPaper" in quest_source
     assert "QuestLogSelectionBookmarkV1" not in quest_source
     assert "QuestLogTitleButtonTemplate" in quest_source
     assert "FauxScrollFrame_GetOffset" in quest_source

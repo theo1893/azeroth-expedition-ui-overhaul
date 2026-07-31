@@ -146,11 +146,13 @@
   Image 1／2／3、同段 edit 和各 `5` 次实际调用上限。QT-A1 已执行五次：
   attempt 4 恢复宽缓纸面但 bbox／native 色键失败，attempt 5 又引入全幅
   压花式微纹理且 bbox／色键仍未通过，当前为
-  `candidate-rejected / repair-budget-exhausted / P3 / 5/5`，无
-  source/runtime。QT-B1 attempt 1 已生成三件正确身份的覆盖层，但三件均
-  越出冻结 cell，focus 出现偏黄绿实色与色键绿边，native 背景也不纯，
-  当前为 `internal-rejected / repair-prepared / P3 / 1/5`；QT-A2 为
-  `scope-deferred 0/5`，当前树不保留其可执行 Prompt。
+  `candidate-rejected / repair-budget-exhausted / 5/5`。用户随后选择暂时
+  直接使用大块背景 tracker，attempt 4 的确定性 RGBA 已按临时合同例外晋级
+  并导出为 `256 × 512` 九宫格 TGA；当前为
+  `runtime-exported-temporary / P5`。QT-B1 attempt 1 的三件覆盖层虽有正确
+  身份，但 cell、focus 综合色／绿边和 native 色键均失败；用户认为真实
+  排版很糟糕并暂停整段于 `1/5`，旧 V1.r1 不再执行。QT-A2 为
+  `scope-deferred 0/5`，七工具 Button 使用 provider fallback。
 - NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
 - `questitem.lua`：行为保留，视觉 `N/A`。
 
@@ -194,14 +196,34 @@ source 或 runtime。
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
 | `QT-SIM V2` | 约 `330 × 865` 高密度 Quest Tracking 主体本地几何预演；无工具条，十任务、十七目标与三类反馈 | `P2 simulation-confirmed` | 用户已于 `2026-07-31` 确认可见方向；ImageGen `0/0` |
-| `QT-A1 V1` | 可变宽高纸面 shell、九宫格与叠页边 | `P3 candidate-rejected / repair-budget-exhausted / 5/5` | 停止；等待用户以后决定新版本或 deterministic source 合同例外 |
+| `QT-A1 V1` | 可变宽高纸面 shell、九宫格与叠页边 | `P5 runtime-exported-temporary / user-accepted exception` | source／manifest／`256 × 512` TGA／adapter 已接入；Turtle WoW 验证动态宽高、接缝与可读性 |
 | `QT-A2 V1` | `HEADER.*`、皮带／徽记、七工具 Button 与 selected 压片 | `P2 scope-deferred` | provider 对象与行为原样保留；未来重开需独立模拟、新 Prompt 与新授权；当前 `0/5` |
-| `QT-B1 V1` | focus 墨洗、tracked 页边墨记、complete 墨勾 | `P3 internal-rejected / repair-prepared / 1/5` | 以 attempt 1 raw 为同段 Image 4 执行 V1.r1 edit；修复三件安全盒、focus 综合色／绿边和 native 纯色背景 |
+| `QT-B1 V1` | focus 墨洗、tracked 页边墨记、complete 墨勾 | `P3 scope-deferred / user-paused / 1/5` | 不挂载三件覆盖层；旧 V1.r1 作废，未来恢复需新模拟、新版本与新授权 |
 
 完整合同和生产正文见
 [QUEST.TRACKER.CORE.md](work/QUEST.TRACKER.CORE.md)。当前不生成折叠、
 timer 或 failed 资产：provider 没有可用的公开状态来源。本项目不会扫描或
 接管 `QuestWatchFrame`，也不会创建第二个追踪器。
+
+QT-A1 临时 runtime 事实：
+
+- source：
+  `assets/source/quests/qt-a1/QuestTrackerPaperShell_Temporary_v1.png`，
+  SHA-256
+  `a9d700cd01f26535ae2035bfa3d8c2cedd7337bfb47d3fa9494ba592d259c59b`；
+- runtime：
+  `addon/AzerothExpeditionUI/Media/Quests/QuestTrackerPaperV1.tga`，
+  `256 × 512 RGBA`，SHA-256
+  `c6b1f64034fa69f01709403e592c3350445c9a6739f4b559242be48831666c61`；
+- exporter：`tools/build_quest_tracker_paper_v1.py`；九宫格 cap 为
+  左／右 `14px`、上 `12px`、下 `16px`；
+- adapter：`Quests.lua` runtime contract `1.8`。纸面为九个无鼠标
+  `BACKGROUND` Texture；provider 黑色 panel／行矩形隐藏，动态文字、图标、
+  七工具 Button、模式、Tooltip、点击、拖动和 SavedVariables 保持。
+- 验证：exporter 重跑哈希稳定；Python 编译、quest design contract、
+  repository contract、asset workflow skill contract、Quest Lua smoke 与
+  `git diff --check` 全部通过。Lua smoke 覆盖 pfQuest 晚加载、动态 resize、
+  provider `OnUpdate` 保留和刷新幂等。
 
 ## 当前验证
 
