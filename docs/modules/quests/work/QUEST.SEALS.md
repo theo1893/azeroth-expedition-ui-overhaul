@@ -1,15 +1,17 @@
 # Quest Log／Tracker 共用漆章
 
 - 批次：`QS-A1`
-- 当前版本：`QUEST-SEALS-SIM-V2`
+- 当前生产版本：`QS-A1 V1`
+- 已确认模拟：`QUEST-SEALS-SIM-V2`
 - 项目阶段：`P2`
-- 当前子状态：`simulation-reviewed / quest-log-placement-awaiting-confirmation`
+- 当前子状态：`simulation-confirmed / production-final-awaiting-authorization`
 - 固定执行器：`imagegen-0-143-0`
-- ImageGen：`0/0`
+- 模拟 ImageGen：`0/0`
+- 正式 ImageGen：`0/5`
 - runtime：未修改
-- 下一门禁：用户确认 `QUEST-SEALS-SIM-V2` 仅修订后的 Quest Log 外置锚点；
-  V1 的共享美术、尺寸与 Tracker 方向已经接受。确认 V2 后才冻结生产正文并
-  请求独立的 ImageGen 生产授权。
+- 下一门禁：用户查看并独立授权 `QS-A1 V1` 的最终生产正文、固定
+  Image 1／2、同循环前次输出的受限 edit 输入和最多 `5` 次实际 ImageGen
+  调用。模拟确认不等于生产授权。
 
 ## 组件合同
 
@@ -53,16 +55,19 @@ Tooltip、禁用／显隐、模式反馈和原脚本委托，才允许隐藏并�
 
 权威链：
 
-1. [全局美术基线](../../../GLOBAL_ART_BASELINE.md)。
-2. [Quests 主模块基线](../ART_BASELINE.md)。
-3. [Quests 子模块基线](../SUBMODULE_ART_BASELINES.md)。
-4. 锁定图
+1. 锁定图与产生／语义锁定它们的 Prompt 共同构成最高视觉权威：
    [任务详情面板](../../../../assets/locked/quests/任务详情面板_视觉基准_v1.png)，
    SHA-256
    `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`；
    [任务追踪面板](../../../../assets/locked/quests/任务追踪面板_视觉基准_v1.png)，
    SHA-256
-   `3b5c2ca6c1e69c74db5c64978cde351596ece6369d339b7125aee43904eb7d86`。
+   `3b5c2ca6c1e69c74db5c64978cde351596ece6369d339b7125aee43904eb7d86`；
+   对应 provenance 为 [Quests 主模块基线](../ART_BASELINE.md) 与
+   [Quests 子模块基线](../SUBMODULE_ART_BASELINES.md)。
+2. [全局美术基线](../../../GLOBAL_ART_BASELINE.md)。
+3. [真实子模块合同](../SUBMODULES.md) 只裁决对象、几何、状态、层序与禁止
+   烘焙，不改写上述视觉 DNA。
+4. 本批没有 `assets/source/` 或结构参考输入；本地模拟也不是视觉输入。
 
 必须继承：
 
@@ -162,22 +167,30 @@ runtime 实现或实机通过结论。
 source 或 runtime。
 
 用户结论：V1 `direction-confirmed / quest-log-placement-invalidated`；
-V2 `awaiting`。
+V2 于 `2026-07-31` `simulation-confirmed`。确认条款为：两处共用同一枚
+暗旧酒红工具漆章；Quest Log 使用 `28 × 28` 外置盒且不接触书体；
+Tracker 使用 `34 × 34` 顶部中央盒并保持明显视觉重量；综合色、共用符号、
+旧七 icon 的目标隐藏层级和 `18px` 顶部 outset 沿用 V1。确认只接受这些
+文字化方向，不接受模拟像素，也不授权正式 ImageGen。
 
 ## 最终执行正文 — QS-A1 V1
 
-状态：`production-draft / not-authorized`。模拟未确认前不可执行。
+状态：`production-final / awaiting-user-authorization`。当前不可执行。
 
 固定输入：
 
 1. Image 1：
-   `assets/locked/quests/任务详情面板_视觉基准_v1.png`。只继承香草魔兽
-   手绘年代、Quest Log 暗酒红皮革／暖赭纸／旧黄铜之间的色温与材料厚度；
-   忽略完整书本、文字、按钮、奖励槽、书脊和布局。
+   `assets/locked/quests/任务详情面板_视觉基准_v1.png`，SHA-256
+   `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`。
+   只继承香草魔兽手绘年代、Quest Log 暗酒红皮革／暖赭纸／旧黄铜之间的
+   色温、实体厚度、左上暖光和有限磨损；忽略完整书本、纸张、文字、按钮、
+   奖励槽、书脊、丝带和布局。
 2. Image 2：
-   `assets/locked/quests/任务追踪面板_视觉基准_v1.png`。只继承 Tracker
-   行军便笺的综合色重、旧酒红点缀、左上暖光和小尺寸 UI 笔触；忽略完整
-   tracker、任务文字、纸面、图标、按钮和屏幕场景。
+   `assets/locked/quests/任务追踪面板_视觉基准_v1.png`，SHA-256
+   `3b5c2ca6c1e69c74db5c64978cde351596ece6369d339b7125aee43904eb7d86`。
+   只继承 Tracker 行军便笺的综合色重、旧酒红点缀、左上暖光、小尺寸 UI
+   笔触，以及“罗盘＋羽毛笔”的公会工具语义；忽略完整 tracker、纸面、
+   皮带、金属罗盘实体、写实羽毛实体、任务文字、图标、按钮和屏幕场景。
 
 本地模拟不上传。`assets/source/` 派生物不是视觉权威，也不上传。
 
@@ -187,10 +200,19 @@ V2 `awaiting`。
 > “远征公会工具漆章”透明源资产。最终只出现一个正面略带内部俯视的圆形旧蜡
 > 压印，不出现第二个物件、书本、纸张、面板、按钮、图标底座、文字或场景。
 >
+> Image 1 是 Quest Log 综合色、实体厚度、左上暖光、有限磨损和 2004 年
+> 前后香草魔兽二维手绘年代的最高视觉参考；只继承暗酒红皮革、暖赭纸和旧
+> 黄铜之间的色温关系，忽略整本书、书页、书脊、按钮、奖励槽、丝带、文字与
+> 布局。Image 2 只补充 Tracker 行军便笺的综合色重、小尺寸手绘笔触和
+> “罗盘＋羽毛笔”的公会工具语义；忽略整张便笺、纸面、皮带、按钮、任务
+> 文字、屏幕场景，也不要复制其中的金属罗盘实体或写实羽毛实体。两张输入
+> 都只用于把同一语义转译为蜡面浅压印，不允许生成输入图里的完整 UI。
+>
 > 画布固定 1024×1024。背景必须是完全均匀、无纹理、无阴影、无渐变的精确
 > #00FF00。唯一漆章水平和垂直居中，可见 bbox 约 640×640，四周至少各留
-> 180px 纯绿色安全边。不得裁边。漆章及其克制接触阴影必须全部位于该安全盒，
-> 背景不得被蜡色、反光或半透明绿边污染。
+> 180px 纯绿色安全边。不得裁边。全部蜡体、高光和自阴影必须收在该安全盒；
+> 不生成投向纸面或书封的外部接触阴影。背景不得被蜡色、反光、烟雾或半透明
+> 绿边污染。
 >
 > 物件是一枚可作为独立 UI 工具控制的暗旧酒红蜡章，而不是现代圆形
 > icon、金属硬币、勋章、宝石、按钮底座或燃烧火球。轮廓接近圆形但保留少量
@@ -220,16 +242,48 @@ V2 `awaiting`。
 normal／hover／pressed／disabled，四态 Alpha 与轮廓完全相同；hover 只
 暖亮，pressed 只压暗且由 runtime 锚点下移 `1px`，disabled 只退灰。
 计划 runtime 为一行四个 `64 × 64` cell 的 `256 × 64` atlas，每格居中
-同一 `40 × 40` content；Quest Log 显示 `28 × 28`，Tracker 显示
-`34 × 34`。这些数值在 source 接受后还需以真实 Alpha bbox 复核，不能用
-自由重画完成导出。
+同一约 `60 × 60` visible content，四边各留约 `2px` 透明采样边，相邻
+状态可见像素间至少相隔约 `4px`。完整 cell 映射到 Quest Log
+`28 × 28` 与 Tracker `34 × 34` Texture 盒时，目标可见蜡体分别约
+`26 × 26` 与 `32 × 32 UI px`，与已确认模拟一致。source 接受后必须按真实
+Alpha bbox 复核并只做等比缩放、居中、色键转 Alpha、全透明 RGB 清零与固定
+RGB 状态派生；不得自由重画、拉伸、旋转或改变轮廓。
 
-完整性预检：对象／状态数量、输入职责、画布、bbox、视角、材料、压印、
-小尺寸安全、时代语言、色键、禁止项和最终自检均已明确。尚未授权；固定
-`imagegen-0-143-0` 的最多五次实际生图预算仍为 `0/5`。允许的循环修复只
-包括同一物件的 bbox、纯绿色背景、边缘、蜡质、压印清晰度和综合色；不得
-改变对象数量、中心符号、输入职责、画布、runtime 尺寸、功能合同或加入
-新参考图。
+## 生产正文完整性预检
+
+- 复杂度：`single-object / deterministic-derived-states`
+- 结论：`pass`
+
+| 门禁 | 执行正文中的证据 | 结论 |
+|---|---|---|
+| 物件身份、精确范围、对象／状态数量与动态内容排除 | 恰好一枚独立工具漆章；无书本、纸张、按钮、文字或场景；四态不由 ImageGen 分画 | `pass` |
+| 每张输入图的 inherit／ignore 职责与权威冲突 | 正文逐张声明 Image 1／2 的继承与忽略项，并禁止复制金属罗盘／写实羽毛实体 | `pass` |
+| 画布、边距、方向、透视、尺度、光照与层序 | `1024²`、约 `640²` bbox、至少 `180px` 安全边、正面轻俯视、左上暖光、独立对象 | `pass` |
+| 形态、材料、边缘与符号 | 暗旧酒红蜡体、不规则压边、有限缺口、浅压印罗盘＋羽毛笔、自阴影 | `pass` |
+| crop／stretch／repeat／safe area | 单物件不拉伸不平铺；source 接受后等比归一化，目标可见蜡体 `26px／32px` | `pass` |
+| 美术 DNA、反模式、色键与最终自检 | 香草手绘、低饱和旧材质、精确 `#00FF00`；明确禁止现代 icon、金属奖章、玻璃、霓虹与暗黑祭坛 | `pass` |
+
+- 未知但执行必需的值：无。
+- 去冗余结论：只保留会阻止完整 UI、金属徽章、现代圆 icon、色键污染和
+  小尺寸不可读的高风险重复；过程历史留在本 work，不传给执行器。
+
+## 自主修复循环
+
+- 不可变修复边界：`QUEST.LOG.CHROME.SEAL` 与
+  `QUEST.TRACKER.HUB.SEAL` 共用恰好一枚 base；固定 Image 1／2 及上述职责；
+  `1024 × 1024` 画布、约 `640 × 640` 中央 bbox、精确绿色背景、罗盘＋
+  羽毛笔浅压印、Quest Log `28 × 28`／Tracker `34 × 34` 盒、单 base
+  确定性四态、全部禁止项和最多 `5` 次实际 ImageGen 调用均不可变。
+- 允许的自主修复：只可修正同一物件的 bbox、居中、纯绿色背景、边缘、
+  蜡质、压印清晰度、小尺寸辨识和综合色；attempt 2–5 可以选择 regenerate，
+  或把同一循环紧邻前次输出作为额外 Image 3 做冻结区域 edit。使用 edit
+  时仍固定上传 Image 1／2，且只能保留已通过的同一漆章区域。
+- 必须重新授权：新增或替换外部输入、改变输入职责、对象／状态数量、中心
+  符号、画布、runtime 几何、物件身份、视觉方向、功能合同、Alpha／色键
+  策略，或加入书页、书封、丝带、皮带、按钮底座和其他外部承载物。
+- 预算：最多 `5` 次实际 ImageGen generation／edit，含首次；流程错误在
+  没有图片且没有 provider 生成证据时单列，不占额度。任一次内部完整通过
+  立即停止；第 5 次仍失败则停止等待用户审核。
 
 ## 执行记录
 
@@ -239,7 +293,7 @@ normal／hover／pressed／disabled，四态 Alpha 与轮廓完全相同；hover
 - 输出：无正式候选
 - 实际生图次数：`0/5`
 - 流程错误次数：`0`
-- 循环终态：未开始；等待模拟确认与独立生产授权
+- 循环终态：未开始；模拟已确认，等待独立生产授权
 
 ## 审查记录
 
@@ -256,15 +310,16 @@ normal／hover／pressed／disabled，四态 Alpha 与轮廓完全相同；hover
 - 实际展示区域：机器报告 `pass`；Tracker paper outset `0px`，seal 顶部
   outset `18px`，不覆盖列表；屏幕顶缘 clamp 为 P5 pending。
 - 技术像素：模拟非生产资产，不执行 Alpha／色键／atlas 门禁。
-- 结论：`simulation-reviewed / quest-log-placement-awaiting-confirmation`
-- 用户结论与日期：V1 方向接受并要求修订位置／`2026-07-31`；V2 awaiting
-- 下一门禁：用户确认 V2 Quest Log 外置锚点。
+- 结论：`simulation-confirmed / production-final-awaiting-authorization`
+- 用户结论与日期：V1 方向接受并要求修订位置／`2026-07-31`；
+  V2 外置锚点确认／`2026-07-31`
+- 下一门禁：用户独立授权 `QS-A1 V1` 最终正文与五次循环。
 
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
 |---|---|---|---|
 | `QUEST-SEALS-SIM-V1` | 本地 specification、renderer、两张 `1536 × 1024` 预演与机器报告；用户于 `2026-07-31` 接受方向并指出 Quest Log 位置错误；ImageGen `0/0` | `direction-confirmed / quest-log-placement-invalidated` | 保留共享美术与 Tracker；Quest Log 不得落在翻页／书封 |
-| `QUEST-SEALS-SIM-V2` | Quest Log `[600,-18,28,28]`；可见书体 Alpha 重叠 `0`；两张预演与机器报告；ImageGen `0/0` | `simulation-reviewed / awaiting-user-confirmation` | 用户只需确认新的 Quest Log 外置锚点 |
+| `QUEST-SEALS-SIM-V2` | Quest Log `[600,-18,28,28]`；可见书体 Alpha 重叠 `0`；两张预演与机器报告；用户于 `2026-07-31` 回复“进行下一步”；ImageGen `0/0` | `simulation-confirmed` | 展示并独立授权 `QS-A1 V1` 最终生产合同 |
 
 正式生产尝试：无。

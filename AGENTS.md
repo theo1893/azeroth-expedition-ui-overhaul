@@ -20,7 +20,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 |---|---|---|
 | pfUI／原生回退 | 路由与公共过渡材质 `P5`；模块 Initialize／Apply 已隔离失败，未实机 | Turtle WoW 全场景回归并确认单模块异常不会中断其他模块 |
 | 聊天 | 核心 V3 runtime `1.7 / P5`；书本九宫格加入缺失／贴图剥离自愈；Chat Copy 与 URL Copy 均已暂缓；单一左框，右框隐藏 | Turtle WoW 重载后确认书本主体恢复，再验收核心批次 |
-| 任务 | QL-A2 V4 书本主体保持；QL-B1 四态墨记继续运行，QL-B2 资产保留但隐藏。`pfQuest 7.0.1`／`pfQuest-turtle 7.0.2` 已完成源码审计。Quests runtime contract `1.8` 保留 Quest Log contract `1.7` 的 late-load／六控件兼容，并新增 pfQuest tracker 单块大纸面九宫格。用户已暂停 QT-B1 focus／tracked／complete 三件覆盖层（`1/5`），adapter 不挂载它们并隐藏现代半透明行矩形；QT-A2 其余工具美术仍为 provider fallback。QT-A1 当前为 `P5 runtime-exported-temporary / display-region-blocked`。`QS-A1` 的共用漆章美术、`28px／34px` 尺寸与 Tracker 顶部中央方向已接受；Quest Log 右下页角锚点被否决，V2 已移到书体外且可见 Alpha 重叠为零 | 用户确认 `QUEST-SEALS-SIM-V2` 的 Quest Log 外置锚点；之后单独授权漆章 source 生产 |
+| 任务 | QL-A2 V4 书本主体保持；QL-B1 四态墨记继续运行，QL-B2 资产保留但隐藏。`pfQuest 7.0.1`／`pfQuest-turtle 7.0.2` 已完成源码审计。Quests runtime contract `1.8` 保留 Quest Log contract `1.7` 的 late-load／六控件兼容，并新增 pfQuest tracker 单块大纸面九宫格。用户已暂停 QT-B1 focus／tracked／complete 三件覆盖层（`1/5`），adapter 不挂载它们并隐藏现代半透明行矩形；QT-A2 其余工具美术仍为 provider fallback。QT-A1 当前为 `P5 runtime-exported-temporary / display-region-blocked`。`QS-A1` 共用漆章方向及 V2 Quest Log 外置锚点已确认；最终生产正文已按 `26px／32px` 可见蜡体与固定 Image 1／2 收紧，正式 ImageGen 仍为 `0/5` | 用户独立授权 `QS-A1 V1` 最终正文、固定输入、受限同循环 edit 与最多五次实际 ImageGen |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |
 | 其他 UI | `P0–P1`，保持原生回退 | 逐模块建立四份长期文档 |

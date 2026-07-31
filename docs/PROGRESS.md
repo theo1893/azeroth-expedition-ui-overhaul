@@ -22,7 +22,7 @@
 |---|---|---:|---|---|
 | Core／pfUI | `api/expedition.lua`、`pfUI.lua`、原生回退路由 | `P5` | 现代可见模块默认回退原生；非视觉功能保留；Initialize／Apply 按模块 `pcall` 隔离并单次报告异常 | 实机覆盖原生 Frame、SavedVariables、单模块失败隔离与第三方兼容 |
 | Chat | `modules/chat.lua` + AEUI Chat adapter | `P5` V3 / r1.7 | 单一左侧旧书、四状态 Tab、双状态输入与未读已接入；右框隐藏且消息回收；书本九宫格在缺失、隐藏或贴图被剥离时自愈；两项 Copy 辅助功能暂缓 | `/reload` 验证书本主体恢复，再执行核心批次实机验收 |
-| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P5` | Quest Log 主体保持 QL-A2 V4；pfQuest tracker 临时纸面仍为 `display-region-blocked`。`QS-A1` 的共用漆章美术、`28px／34px` 尺寸与 Tracker 顶部中央方向已接受；Quest Log 右下页角锚点被否决，V2 已移到可见书体外且 Alpha 重叠为零。七个旧 icon 只有在 hub menu 七项功能等价后才可隐藏 | 用户确认 `QUEST-SEALS-SIM-V2` 的 Quest Log 外置锚点；随后单独授权漆章 source 生产 |
+| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P5` | Quest Log 主体保持 QL-A2 V4；pfQuest tracker 临时纸面仍为 `display-region-blocked`。`QS-A1` 共用漆章方向及 V2 Quest Log 外置锚点已确认；最终生产正文已冻结为一枚共享 base 与固定双输入，正式生产尚未授权或执行。七个旧 icon 只有在 hub menu 七项功能等价后才可隐藏 | 用户独立授权 `QS-A1 V1` 最终正文、固定输入与受限自主修复范围 |
 | Map | `map.lua`、`minimap.lua`、`addonbuttons.lua` 等 | `P2` | 羊皮地图卷与黄铜罗盘已锁定 | 实机对象审计和组件级合同 |
 | Character | `character.lua`、`inspect.lua`、`dressup.lua` | `P2` | 香草同构角色面板已锁定 | 实机几何与装备槽／属性／页签拆分 |
 

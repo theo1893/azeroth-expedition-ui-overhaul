@@ -36,7 +36,7 @@ fallback。NPC 对话仍没有获准生产资产。
 | `QUEST.LOG.COUNT` | `QuestLogQuestCount`；兼容 `QuestLogCount` | layout-only；使用纸面深墨文字，不新增外框 |
 | `QUEST.LOG.CLOSE` | `QuestLogFrameCloseButton` | 普通／悬停／按下／禁用 |
 | `QUEST.LOG.EMPTY` | `EmptyQuestLogFrame`、`QuestLogNoQuestsText` | 安静纸面，不生成空状态卡片 |
-| `QUEST.LOG.CHROME.SEAL` | 未来 adapter-owned Texture；有真实动作后才可原位升级为 Button | 独立 `28 × 28` 工具／配置候选漆章，盒 `[600,-18,28,28]`；必须与任务书可见 Alpha 完全分离，不得出现在翻页、纸页或书封上，不得烘焙进 SHELL，也不得冒充 `QUEST.LOG.STATE.SEAL` |
+| `QUEST.LOG.CHROME.SEAL` | 未来 adapter-owned Texture；有真实动作后才可原位升级为 Button | 独立 `28 × 28` 工具／配置候选漆章，目标可见蜡体约 `26 × 26`；盒 `[600,-18,28,28]`；必须与任务书可见 Alpha 完全分离，不得出现在翻页、纸页或书封上，不得烘焙进 SHELL，也不得冒充 `QUEST.LOG.STATE.SEAL` |
 
 支持 `closed`、`empty`、`list-only`、`dual-page` 与 `selected`。离线参考为
 `676 × 464 UI px`，物理中心线 `x=338`；左右物理纸页近 1:1，可见宽度差
@@ -229,7 +229,7 @@ SavedVariables。
 | `QUEST.TRACKER.PAPER.MIDDLE` | adapter-owned、挂在 `tracker.backdrop` 下的无鼠标 Texture | 可横纵延展的连续安静纸面；不得烘焙任务行 |
 | `QUEST.TRACKER.PAPER.BOTTOM` | adapter-owned、挂在 `tracker.backdrop` 下的无鼠标 Texture | 横向三段式自然撕裂底边 |
 | `QUEST.TRACKER.PAPER.EDGE` | adapter-owned 独立叠页边 Texture | 只在边缘表现错层纸页，不改变 Frame 命中 |
-| `QUEST.TRACKER.HUB.SEAL` | 未来 adapter-owned Texture／Button | `34 × 34` 顶部中央明显漆章；`x=floor((W-34)/2)`、`y=-18`，底边落在 `y=16`，不移动或覆盖列表 |
+| `QUEST.TRACKER.HUB.SEAL` | 未来 adapter-owned Texture／Button | `34 × 34` 顶部中央明显漆章，目标可见蜡体约 `32 × 32`；`x=floor((W-34)/2)`、`y=-18`，底边落在 `y=16`，不移动或覆盖列表 |
 | `QUEST.TRACKER.HUB.MENU` | 未来 adapter-owned 临时交互层 | 独立后续批次；必须一一委托七个 provider Button 的既有行为后，才能允许旧 icon 隐藏 |
 | `QUEST.TRACKER.HEADER.STRAP` | `tracker.panel` 的未来 adapter-owned 三段式背景 | `scope-deferred`；当前不创建或挂载资产，provider 工具条不变 |
 | `QUEST.TRACKER.HEADER.EMBLEM` | 未来 adapter-owned 无鼠标 Texture | `scope-deferred`；当前不存在 source 或 runtime |
