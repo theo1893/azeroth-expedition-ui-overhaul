@@ -46,10 +46,10 @@
   inherit／ignore 职责写入执行正文，并把 atlas 可见蜡体收紧为 Quest Log
   约 `26px`、Tracker 约 `32px`。用户已于 `2026-07-31` 独立授权完整
   `QS-A1 V1`、固定 Image 1／2、受限同循环 Image 3 edit 与最多 `5` 次实际
-  ImageGen。attempt 3 已完成（`3/5`）：用户指定的连体受压火漆扩散、
-  小尺寸罗盘＋羽毛笔和真实展示区域通过；折算到 `1024²` 后总 bbox 约
-  `722×706`，右下扩散偏重，安全边与纯绿失败，固定原始画布仍为 `1254²`。
-  r4 已冻结为整枚缩小约 `10%`、重新居中、保留但收敛扩散和纯化背景。
+  ImageGen。attempt 4 已完成（`4/5`）：视觉、用户指定的连体受压扩散、
+  小尺寸罗盘＋羽毛笔、折算 bbox、安全边与真实展示区域均通过；只剩执行器
+  固定 `1254²` 和非单色绿背景两项 provider 边界失败。r5 已冻结整枚蜡章，
+  只要求 `1024²` 与单一 `#00FF00`；若仍失败则在 `5/5` 停止等待用户审核。
   功能等价完成前 runtime 不隐藏旧按钮。
 - 用户于 `2026-07-30` 将 Quest Log 选为当前首要大面积 UI；地图与角色因
   实机对象几何尚未完成，继续保持后续顺位。
@@ -247,7 +247,7 @@ timer 或 failed 资产：provider 没有可用的公开状态来源。本项目
 
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
-| `QS-A1` | `QUEST.LOG.CHROME.SEAL` 与 `QUEST.TRACKER.HUB.SEAL` 共用母版；Tracker hub menu 只定义功能迁移边界 | `P3 attempt-03-reviewed / 3/5` | 提交 [QS-A1 V1.r3 审查与 V1.r4 完整修复正文](work/QUEST.SEALS.md)，以固定 Image 1／2 加紧邻 r3 的受限 Image 3 edit 执行 attempt 4 |
+| `QS-A1` | `QUEST.LOG.CHROME.SEAL` 与 `QUEST.TRACKER.HUB.SEAL` 共用母版；Tracker hub menu 只定义功能迁移边界 | `P3 attempt-04-reviewed / 4/5` | 提交 [QS-A1 V1.r4 审查与 V1.r5 完整修复正文](work/QUEST.SEALS.md)，以固定 Image 1／2 加紧邻 r4 的受限 Image 3 edit 执行最后一次 attempt 5 |
 
 QT-A1 临时 runtime 事实：
 
@@ -379,11 +379,11 @@ QT-A1 临时 runtime 事实：
 
 当前不依赖游戏设备的首要工作是继续
 [QS-A1 V1](work/QUEST.SEALS.md) 五次有界循环。attempt 1 已按真实
-Quest Log／Tracker 排版与三种 Tracker 宽度已逐轮审查。attempt 3 已实现
-用户要求的连体受压火漆扩散，并保持小尺寸符号与展示区域通过，但折算 bbox
-偏大、扩散偏重、安全边与背景纯度失败；当前 `3/5`。下一次必须固定
-Image 1／2，并只把紧邻 r3 作为 Image 3，整枚缩小约 `10%`、重新居中、
-收敛扩散并纯化背景。流程错误不占额度，任一候选内部完整通过即停止。
+Quest Log／Tracker 排版与三种 Tracker 宽度已逐轮审查。attempt 4 的
+视觉、用户要求的连体扩散、bbox、安全边、小尺寸符号与展示区域均通过，
+只剩执行器固定 `1254²` 和非单色绿背景失败；当前 `4/5`。最后一次必须固定
+Image 1／2，并只把紧邻 r4 作为 Image 3，冻结物件，只修 `1024²` 与单一
+`#00FF00`。流程错误不占额度；若仍失败则按授权停止等待用户审核。
 该授权不允许自动接受 source、修改 runtime 或立即隐藏七个 provider
 Button。Tracker hub menu 必须先完成七项功能等价，旧 icon 才能在 runtime
 隐藏。
