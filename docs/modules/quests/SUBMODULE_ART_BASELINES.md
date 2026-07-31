@@ -173,9 +173,12 @@ hover、pressed、disabled。图标使用粗厚、低分辨率友好的旧墨／
 
 当前 provider 没有公开的折叠状态对象，也没有 tracker timer／failed 状态。
 因此本轮不生成折叠 Button、沙漏或失败蜡封，不把 Quest Log 的 B3 状态章
-移植过来。完整可授权生产正文与真实排版验收合同位于
-[work/QUEST.TRACKER.CORE.md](work/QUEST.TRACKER.CORE.md)；在用户明确授权
-具体版本前，ImageGen 调用保持 `0/5`，不创建 adapter 或 runtime 媒体。
+移植过来。生成前 `QT-SIM V1` 模拟正文、完整可授权生产正文与真实排版验收
+合同均位于
+[work/QUEST.TRACKER.CORE.md](work/QUEST.TRACKER.CORE.md)。当前第一门禁是
+用户授权固定 Image 1／2／3 和一次独立模拟调用；模拟保持 `0/1`，三段生产
+ImageGen 调用保持 `0/5`。用户确认模拟方向并另行授权正式生产前，不创建
+adapter 或 runtime 媒体。
 
 ## NPC Quest／Gossip
 

@@ -11,13 +11,19 @@
 - 项目阶段：`P2`
 - 操作：`prepare`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 用户授权：尚无；不得执行以下生产正文
+- 生成前模拟版本：`QT-SIM V1`
+- 生成前模拟预算：默认 `1` 次实际 ImageGen 调用
+- 当前模拟调用：`0/1`
+- 模拟流程错误：`0`；不占模拟或生产额度
+- 模拟路径／SHA：尚无
+- 模拟用户结论：`pending`
+- 用户授权：尚无；不得执行模拟正文或以下生产正文
 - 实际 ImageGen：QT-A1 `0/5`、QT-A2 `0/5`、QT-B1 `0/5`；
   最坏合计 `15` 次实际生成／修图
 - 流程错误：QT-A1 `0`、QT-A2 `0`、QT-B1 `0`；不占实际生图额度
 - source／runtime／adapter：均无
-- 下一门禁：用户审阅并逐段或整体明确授权 V1 正文、固定上传范围和同段
-  edit 范围
+- 下一门禁：用户审阅并明确授权 `QT-SIM V1` 模拟正文、固定 Image 1／2／3
+  上传和 `1` 次独立模拟调用；正式资产三段仍不得执行
 
 ## 组件合同
 
@@ -101,6 +107,157 @@ Image 1 与 Image 2 的 Prompt provenance 是
 权威冲突裁决：Image 1 决定 tracker 的纵向行军便笺身份；真实 provider
 决定可变宽高和对象数量；Image 2 只统一材料语言。任何固定尺寸效果图都不能
 覆盖 `130..330px` 动态宽度、任意高度和七个真实 Button 的合同。
+
+## 生成前模拟实例图 — QT-SIM V1
+
+### 模拟合同
+
+- 状态：`simulation-draft / 未授权`
+- 目标：在正式拆分 QT-A1／A2／B1 source 前，先确认高密度真实游戏场景下的
+  整体轮廓、材料层级、综合色重和阅读关系。
+- Canvas：`1536 × 1024` 横向游戏画面裁切。
+- 目标 Frame：右侧 `QUEST_TRACKING`；最终确定性预演按
+  `330 × 865 UI px`、`100%` UI 像素呈现，顶部保留真实 `16px` 工具条。
+- 真实密度：七个工具 Button 全部出现；十个任务、至少十七条目标；
+  一条 focus、两条 tracked、两条 complete；任务名、等级、百分比和目标保持
+  provider 的三层动态信息结构。
+- 当前邻接 UI：Image 3 中的游戏世界／码头背景和 pfQuest 信息层级仅作
+  fallback；没有已接受的 tracker runtime。预演不虚构其他 AEUI 模块。
+- 用户需要确认：单张行军便笺是否足够厚重但仍像香草魔兽；顶部短皮带与纸面
+  比例；连续纸面在高密度文字下是否可读；暗酒红／旧黄铜强调是否克制；
+  七按钮、focus、tracked、complete 是否与内容层级协调。
+- 刻意简化且非权威：九宫格接缝、Alpha、精确 atlas cell、各 Button 全状态、
+  每枚 icon 的最终像素、world background 和微纹理。
+- 禁止用途：模拟图只写入 `generated/quests/QT/simulation/QT-SIM-V1/`；
+  不得作为 source／runtime、不得裁切／切片／晋级，也不得作为 QT-A1／A2／
+  B1 的 edit 或 reference 输入。
+
+### 模拟输入与授权
+
+固定上传：
+
+1. Image 1：
+   `assets/locked/quests/任务追踪面板_视觉基准_v1.png`，SHA-256
+   `3b5c2ca6c1e69c74db5c64978cde351596ece6369d339b7125aee43904eb7d86`；
+   最高视觉权威。
+2. Image 2：
+   `assets/locked/quests/任务详情面板_视觉基准_v1.png`，SHA-256
+   `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`；
+   只统一卷宗材料、笔触、光照和制作年代。
+3. Image 3：
+   `assets/references/quests/session-2026-07-31/01_external_quest_tracker_current_state.png`，
+   SHA-256
+   `88ecd502e190311c8709a6fd15e2cde6d1f5f288a749e5f5b318f7038e188504`；
+   只提供真实信息密度、层级和码头环境，不继承现有美术。
+
+- 模拟正文版本：`QT-SIM V1`
+- 实际 ImageGen 预算：`1` 次，与三段生产 `0/5` 分开
+- edit 输入：不允许；本版本只有一次 generate
+- 用户授权与日期：尚无
+- 执行前 commit：待授权后记录
+
+### 模拟执行正文
+
+> Create one rough, non-production in-game visual mockup for a Turtle WoW 1.18.1
+> pfQuest tracker overhaul. The purpose is to let a user judge the likely integrated
+> appearance before any isolated production asset is generated. This is not an asset
+> sheet, not a source texture, and not a fixed background to crop later.
+>
+> Input authority: Image 1 is the highest visual authority for the vertical expedition
+> field-note identity, layered parchment, short leather header, restrained brass, and
+> overall palette. Image 2 contributes only the same guild-dossier material thickness,
+> circa-2004 hand-painted bitmap technique, upper-left warm light, deep-wine leather,
+> old brass, and deep-umber ink; ignore its double-page book geometry, spine, reward
+> area, bookmarks, and book buttons. Image 3 is structural evidence only: preserve its
+> dense quest-title/objective hierarchy and dockside gameplay context, but inherit none
+> of its transparent black treatment, typography, rainbow colors, current icons, or
+> modern visual language.
+>
+> Output one landscape 1536 × 1024 game-view crop. Keep the world scene subordinate and
+> believable as a vanilla-era coastal dock or settlement. Place one quest tracker near
+> the upper-right, approximately x=1166..1496 and y=72..937, representing a
+> 330 × 865 UI-pixel high-density state at 100% scale. Do not add any other redesigned
+> panels, debug labels, callouts, asset cells, or presentation-board framing.
+>
+> The tracker must read first as one durable field note pulled from a guild quest
+> dossier, never as a modern rectangle card. Use one continuous quiet warm-ochre
+> parchment body with a thick, slightly irregular hand-painted silhouette, two or three
+> offset page layers visible only at the side and lower edges, tangible paper thickness,
+> smoke-brown edge wear, and one restrained naturally torn bottom. It must remain a
+> single sheet, not a double-page book, bound volume, rolled scroll, stone tablet, metal
+> plaque, or floating translucent HUD. Do not reproduce the large prototype compass and
+> quill at full scale, and do not include the prototype's rolled side pouch because
+> neither is a runtime object.
+>
+> Across the real 16-pixel top tool area, show a compact dark smoke-brown and deep-wine
+> leather strap with small worn-brass end rivets. Arrange seven visibly separate,
+> low-resolution-friendly vanilla-WoW tool glyphs across the actual toolbar rhythm:
+> quests, database, quest givers, search, clean, settings, close. Show quest mode as the
+> selected mode using one restrained dark-wine leather press plate or warm brass-ink
+> emphasis. Keep every glyph thick, simple, hand-painted, and readable at about
+> 14 × 14 pixels. Do not use square mobile-app tiles, thin outline icons, cyan selection,
+> a large central medallion, labels, or a second toolbar panel. A tiny quill-compass
+> dossier stamp may sit only in genuinely unused space and must remain quieter than the
+> seven real Buttons.
+>
+> Below the toolbar, preserve one uninterrupted parchment reading field. Reserve enough
+> vertical rhythm for ten quest titles and at least seventeen indented objectives with
+> the same three-level density as Image 3. Do not draw readable words, pseudo-letters,
+> fake numbers, or baked node icons; the final review composite will overlay real
+> localized text and simple provider-owned nodes deterministically. Show only the
+> non-text visual feedback needed to judge the direction: one broad, borderless,
+> low-contrast warm-umber focus wash behind a representative entry; two restrained
+> dark-wine page-edge tracked marks; and two small deep-umber complete ink checks. No
+> entry may receive its own card, border, leather strip, plaque, divider box, or fixed
+> row background.
+>
+> Follow circa-2004 vanilla World of Warcraft hand-painted 2D bitmap language: thick
+> slightly irregular contours, clear light/mid/shadow planes, restrained low-frequency
+> texture, warm light from upper left, muted ochre paper, smoke-brown leather,
+> deep-wine accents, oxidized old brass rather than bright gold, and small-scale wear.
+> The result should feel heavy, durable, magical-adventurous, and physically made, while
+> the content field stays calm enough for dense Chinese quest text.
+>
+> Reject modern flat UI, translucent black cards, glass, regular rounded rectangles,
+> fine web-style gold borders, minimalist Skyrim text menus, Diablo 3 altar metal,
+> spikes, skulls, neon, glossy mobile icons, photorealistic antiques, fixed-height
+> screenshot art, per-quest cards, fake collapse controls, timer, failed seal, or any
+> object not owned by the current pfQuest contract.
+>
+> Final self-check: one upper-right 330 × 865-proportion field-note tracker in a gameplay
+> crop; one continuous layered parchment; one compact seven-Button leather toolbar;
+> restrained focus/tracked/complete feedback; high-density empty text rhythm ready for
+> deterministic localized overlay; unmistakable vanilla-WoW hand-painted weight; no
+> modern panel language and no reusable production asset sheet.
+
+### 确定性真实文字覆盖
+
+ImageGen 输出后、不增加生图次数地制作一张最终用户预演：
+
+- 把 tracker 可见区收敛到 `330 × 865 UI px`，保持其纵横比例和右上屏幕位置；
+- 使用仓库字体与客户端可读回退绘制十个中文任务、至少十七条目标、等级和
+  完成率；内容取 Image 3 的真实结构，不把生成文字作为证据；
+- 使用 provider 层级放置简单节点标记，并实例化一条 focus、两条 tracked、
+  两条 complete；这些动态内容不回写任何 source；
+- 保留一张同尺寸旧 tracker／新模拟并排对比；两张都只进入 `generated/`。
+
+### 模拟执行与内部检查
+
+- 固定执行器会话／result：尚无
+- 输出路径／SHA：尚无
+- 实际调用：`0/1`
+- 流程错误：`0`
+- 内部结论：`authority-blocked`；等待用户授权具体模拟版本
+
+### 用户方向结论
+
+- 具体模拟版本：`QT-SIM V1`
+- 用户结论与日期：`pending`
+- 确认并写回生产正文的可见条款：尚无
+- 拒绝时必须改变：由用户观察后记录
+- 确认失效条件：可见轮廓、纸面／皮带比例、材质层级、配色、综合色重、
+  工具条节奏或高密度阅读关系发生实质变化
+- 下一门禁：用户授权 `QT-SIM V1`
 
 ## 最终执行正文
 
@@ -329,29 +486,41 @@ edit 输入；不得追加其他图片。
 
 ## 执行记录
 
-- 尚未执行；无 session、result、raw、透明候选或 revised prompt。
+- 生成前模拟尚未执行；`QT-SIM V1` 为 `0/1`，无 session、result、输出或
+  流程错误。
+- 三段正式资产均尚未执行；无 raw、透明候选或 revised prompt。
 - 实际生图：QT-A1 `0/5`、QT-A2 `0/5`、QT-B1 `0/5`。
 - 流程错误：三段均为 `0`。
-- 循环终态：`authority-blocked`，等待版本级用户授权。
+- 循环终态：`authority-blocked`，先等待模拟版本级用户授权。
 
 ## 审查记录
 
-- 已完成：provider 语义、组件粒度、权威冲突、正文完整性和真实排版预演合同。
+- 已完成：provider 语义、组件粒度、权威冲突、模拟正文、生产正文完整性和
+  真实排版预演合同。
+- 尚未发生：生成前模拟内部可读性检查与用户方向确认。
 - 尚未发生：候选语义／物理、美术、装配与技术像素审查。
-- 当前结论：`production-draft`，不能晋级 P3。
-- 下一门禁：用户授权具体执行正文、固定上传和 edit repair envelope。
+- 当前结论：`prompt-draft / P2`，不能授权正式生产或晋级 P3。
+- 下一门禁：用户授权 `QT-SIM V1`、固定 Image 1／2／3 上传和一次独立
+  ImageGen 调用。
 
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
 |---|---|---|---|
-| `QT-A1/A2/B1 V1` | 本文件自包含预检；无 ImageGen 调用 | `prompt-draft / P2` | 仅在用户审阅发现合同问题时修订；否则等待授权 |
+| `QT-SIM V1` | 模拟合同与完整正文；无 ImageGen 调用 | `simulation-draft / P2` | 等待用户审阅；不得跳过到正式生产 |
+| `QT-A1/A2/B1 V1` | 三段自包含生产预检；无 ImageGen 调用 | `prompt-draft / P2` | 先取得模拟确认，再请求独立生产授权 |
 
 ## 下一门禁
 
-等待用户审阅本文件的三段 V1 生产正文。若要生成，授权必须明确写明：
+等待用户审阅本文件的 `QT-SIM V1`。若要生成这张模拟实例图，授权必须明确
+写明：
 
-- 授权 `QT-A1 V1`、`QT-A2 V1`、`QT-B1 V1` 中的哪些段；
-- 允许上传各段声明的固定 SHA 图片；
-- 是否允许同段前次输出只在 repair envelope 内作为 edit 输入；
-- 每段最多五次实际 ImageGen 调用，流程错误不计，三段全开时最坏合计十五次。
+- 授权 `QT-SIM V1`；
+- 允许上传固定 SHA 的 Image 1／2／3；
+- 只允许一次实际 ImageGen generate，不允许 edit；
+- 无图片且无 provider 生成证据的流程错误不占 `0/1`；
+- 模拟结果只用于方向确认，不得晋级、裁切或作为生产输入。
+
+用户确认模拟方向后，把确认条款写回三段生产正文并重新预检，再单独请求
+QT-A1／A2／B1 的正式授权、固定上传、同段 edit repair envelope 和每段
+最多五次实际 ImageGen 调用。当前的模拟授权不能代替正式生产授权。
