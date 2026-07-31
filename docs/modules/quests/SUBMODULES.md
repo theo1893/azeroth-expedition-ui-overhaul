@@ -21,9 +21,10 @@ Frame。美术见 [ART_BASELINE.md](ART_BASELINE.md)，状态见
 QT-A1／B1 V1 已获独立生产授权，固定 Image 1／2／3、同段 edit 边界和各
 `5` 次实际调用上限已冻结。QT-A1 已在 `5/5` 后因中心压花式微纹理、source
 bbox 与原生色键失败成为 `candidate-rejected / repair-budget-exhausted`，
-无 source/runtime；QT-B1 仍为 `prompt-authorized 0/5`。QT-A2 七工具 Button
-保持 `scope-deferred`；任何 tracker 候选仍未获准晋级或接入。NPC 对话仍
-没有获准生产资产。
+无 source/runtime；QT-B1 attempt 1 因三件 cell 越界、focus 绿边／综合色
+和 native 色键失败成为 `internal-rejected / repair-prepared 1/5`。QT-A2
+七工具 Button 保持 `scope-deferred`；任何 tracker 候选仍未获准晋级或
+接入。NPC 对话仍没有获准生产资产。
 
 ## Quest Log 顶层
 

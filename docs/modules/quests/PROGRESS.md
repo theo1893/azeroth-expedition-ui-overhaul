@@ -147,7 +147,9 @@
   attempt 4 恢复宽缓纸面但 bbox／native 色键失败，attempt 5 又引入全幅
   压花式微纹理且 bbox／色键仍未通过，当前为
   `candidate-rejected / repair-budget-exhausted / P3 / 5/5`，无
-  source/runtime。QT-B1 仍为 `prompt-authorized / P3 / 0/5`；QT-A2 为
+  source/runtime。QT-B1 attempt 1 已生成三件正确身份的覆盖层，但三件均
+  越出冻结 cell，focus 出现偏黄绿实色与色键绿边，native 背景也不纯，
+  当前为 `internal-rejected / repair-prepared / P3 / 1/5`；QT-A2 为
   `scope-deferred 0/5`，当前树不保留其可执行 Prompt。
 - NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
 - `questitem.lua`：行为保留，视觉 `N/A`。
@@ -194,7 +196,7 @@ source 或 runtime。
 | `QT-SIM V2` | 约 `330 × 865` 高密度 Quest Tracking 主体本地几何预演；无工具条，十任务、十七目标与三类反馈 | `P2 simulation-confirmed` | 用户已于 `2026-07-31` 确认可见方向；ImageGen `0/0` |
 | `QT-A1 V1` | 可变宽高纸面 shell、九宫格与叠页边 | `P3 candidate-rejected / repair-budget-exhausted / 5/5` | 停止；等待用户以后决定新版本或 deterministic source 合同例外 |
 | `QT-A2 V1` | `HEADER.*`、皮带／徽记、七工具 Button 与 selected 压片 | `P2 scope-deferred` | provider 对象与行为原样保留；未来重开需独立模拟、新 Prompt 与新授权；当前 `0/5` |
-| `QT-B1 V1` | focus 墨洗、tracked 页边墨记、complete 墨勾 | `P3 prompt-authorized / 0/5` | 使用固定执行器进入最多五次的自主生成—审查—修复循环 |
+| `QT-B1 V1` | focus 墨洗、tracked 页边墨记、complete 墨勾 | `P3 internal-rejected / repair-prepared / 1/5` | 以 attempt 1 raw 为同段 Image 4 执行 V1.r1 edit；修复三件安全盒、focus 综合色／绿边和 native 纯色背景 |
 
 完整合同和生产正文见
 [QUEST.TRACKER.CORE.md](work/QUEST.TRACKER.CORE.md)。当前不生成折叠、

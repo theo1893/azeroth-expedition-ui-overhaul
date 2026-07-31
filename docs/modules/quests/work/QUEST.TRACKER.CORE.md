@@ -9,7 +9,7 @@
   `ENTRY.COMPLETE`
 - 暂缓范围：`HEADER.*` 与七个 provider 工具 Button；保留对象和行为合同，
   本轮不设计资产、不进入预演、不改 runtime
-- 子状态：QT-A1 `candidate-rejected`；QT-B1 `prompt-authorized`
+- 子状态：QT-A1 `candidate-rejected`；QT-B1 `internal-rejected / repair-prepared`
 - 项目阶段：`P3`
 - 操作：`generate`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
@@ -23,17 +23,18 @@
 - 模拟用户结论：`confirmed / 2026-07-31`
 - 用户确认：用户在看到 `QT-SIM V2` 主图与局部图后以“继续”确认 tracker
   主体方向；该确认只接受下文文字化方向，不接受模拟像素
-- 实际 ImageGen：QT-A1 `5/5`、QT-B1 `0/5`；活动累计 `5/10`。QT-A2
+- 实际 ImageGen：QT-A1 `5/5`、QT-B1 `1/5`；活动累计 `6/10`。QT-A2
   `0/5`、`scope-deferred`，不计入活动预算
-  `10` 次实际生成／修图。QT-A2 `0/5`、`scope-deferred`，不计入活动预算
+- 预算合同：QT-A2 `0/5`；QT-A1／B1 最坏合计仍为
+  `10` 次实际生成／修图
 - 流程错误：QT-A1 `2`、QT-B1 `0`；不占实际生图额度
 - 生产授权：`confirmed / 2026-07-31`。用户明确授权 QT-A1 V1 与 QT-B1
   V1；每段固定 Image 1／2／3；同段前次输出只可在冻结边界内作 edit 输入；
   每段最多 `5` 次实际 ImageGen，最坏合计 `10` 次；无生成证据的流程错误
   不计额度；QT-A2 继续暂缓
 - source／runtime／adapter：均无
-- 下一门禁：提交 QT-A1 `repair-budget-exhausted` 终态并同步模块进度，
-  随后以已授权原文执行 QT-B1 V1 attempt 1。QT-A2 保持暂缓
+- 下一门禁：提交 QT-B1 attempt 1 内审与完整 V1.r1 修复正文，随后以
+  attempt 1 raw 作为同段 Image 4 执行 attempt 2 edit。QT-A2 保持暂缓
 
 ## 组件合同
 
@@ -417,9 +418,9 @@ conda run -n py312 python \
 | 正文 | 固定上传 | 实际 ImageGen 上限 | 当前 | 最坏 |
 |---|---|---:|---:|---:|
 | `QT-A1 V1` | Image 1／2／3；同段前一次输出只可作冻结边界内 edit 输入 | `5` | `5/5 exhausted` | `5` |
-| `QT-B1 V1` | Image 1／2／3；同段前一次输出只可作冻结边界内 edit 输入 | `5` | `0/5` | `5` |
+| `QT-B1 V1` | Image 1／2／3；同段前一次输出只可作冻结边界内 edit 输入 | `5` | `1/5` | `5` |
 
-两段最坏合计 `10` 次实际生图／修图；当前流程错误为 QT-A1 `1`、QT-B1
+两段最坏合计 `10` 次实际生图／修图；当前流程错误为 QT-A1 `2`、QT-B1
 `0`。任一段提前完整内审通过即停止该段循环。
 
 同段自主修复只允许：
@@ -466,7 +467,7 @@ conda run -n py312 python \
 | A1 3/5 | `QT-A1 V1.r2` / `43d53a1`（official `b4e2b2a`） | edit | fixed child session `019fb63d-2013-70d0-b8b8-465afbc1c61c` | `generated/quests/QT/QT-A1/V1/attempt-03/QT-A1-V1.raw.png` / `7f671feb1e66ebee89189813904c16586f32912999739ce213b5ddab955ebd51` | 美术一致性：压花／壁纸式微纹理继续覆盖完整中心；次要失败为 bbox `[290,77,752,1462]` 与纯色键 `0` exact／`6389` RGB | 不再编辑失败像素；attempt 4 从固定 Image 1／2／3 regenerate，保留冻结物件身份／Canvas／bbox／切片／反模式合同 | `internal-rejected / repair-prepared` |
 | A1 4/5 | `QT-A1 V1.r3` / `fc14b70`（official `4d7e806`） | regenerate | fixed child session `019fb641-556a-77b0-bd27-e05a629a9fea` | `generated/quests/QT/QT-A1/V1/attempt-04/qt-a1-field-note-shell-v1.png` / `13aefd716b129fd2f6b629147b77c0033b8c9db6e3f3c1d71c2a96d7dd347474` | 组件合同：美术已恢复为宽缓纸面，但 bbox `[261,82,771,1454]` 越出外盒；技术色键仍为 `0` exact／`6218` RGB | 保留 attempt 4 整个纸张内部、粗厚轮廓、层页和宽缓纸面；最终 edit 只允许统一缩放／重定位到更保守内盒并替换背景 | `internal-rejected / repair-prepared` |
 | A1 5/5 | `QT-A1 V1.r4` / `e90ecc7`（official `b4711b9`） | edit | fixed child session `019fb645-e305-7153-bb3e-86742d276bef` | `generated/quests/QT/QT-A1/V1/attempt-05/qt-a1-field-note-shell-v1.png` / `319e084802a44161663e39b7243abd178ef64115d46b8922957b21c57eb38415` | 美术一致性：最终 edit 未保持 attempt 4 的宽缓纸面，重新引入全幅卷曲压花；同时 bbox `[275,132,759,1445]` 与色键 `0` exact／`6929` RGB 仍失败 | 停止；保留 attempt 4 作为本机最佳美术证据、attempt 5 作为预算终态；不得 attempt 6、source 或 runtime | `candidate-rejected / repair-budget-exhausted` |
-| B1 1/5 | `QT-B1 V1` / 待本次授权提交 | generate |  |  |  |  | 待执行 |
+| B1 1/5 | `QT-B1 V1` / `87e8d64`（official `5064809`） | generate | fixed child session `019fb64e-9e36-7b93-8dbc-b572a13d5373` | `generated/quests/QT/QT-B1/V1/attempt-01/QT-B1-entry-feedback-overlays.png` / `ff6bf0af0642715894b6dcc7344fb3dd966b947ff6b56e3426197697af6c4bae` | 组件合同：等比归一化后 focus、tracked、complete 均越出各自 cell 并在审查裁切中触边；focus 同时为偏黄绿的高对比实色刷带，色键后形成亮绿边，不是从属文字的暖赭淡墨洗 | 保留 tracked 的暗酒红布墨材料和 complete 的深乌棕单笔墨勾；以同段 raw 为 Image 4，只替换 focus、将三件分别内缩到保守安全盒，并替换为精确纯绿色背景 | `internal-rejected / repair-prepared` |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
@@ -1016,12 +1017,12 @@ source-layout compositing、进一步内缩和背景替换。
   `c9ece1d6f928a051d765d7a96243ca94c9bfc7d4eb5c0faad37186186c105d1b`；
   总览 SHA
   `9165eb49a93d162e38a78a57075cf86bd124f8d401c6fce41d3e869a35c9ccff`。
-- 实际生图：QT-A1 `5/5`、QT-B1 `0/5`；活动累计 `5/10`；QT-A2
+- 实际生图：QT-A1 `5/5`、QT-B1 `1/5`；活动累计 `6/10`；QT-A2
   `0/5 scope-deferred`。
 - 流程错误：QT-A1 `2`、QT-B1 `0`；QT-A2 无活动流程。
 - 当前终态：QT-A1
   `candidate-rejected / repair-budget-exhausted / P3`；QT-B1
-  `prompt-authorized / 0/5 / P3`。
+  `internal-rejected / repair-prepared / 1/5 / P3`。
 
 ## 审查记录
 
@@ -1127,6 +1128,127 @@ source-layout compositing、进一步内缩和背景替换。
 - 下一门禁：同步 QT-A1 终态；QT-B1 仍按独立授权从固定 Image 1／2／3
   执行 attempt 1。QT-B1 的真实排版可把 attempt 4 仅作为
   `rejected / non-authoritative A1 visual fallback`，不得当作 source。
+- QT-B1 V1 attempt 1 对象数量／身份：`pass`。原图只有三件彼此分离的
+  覆盖层，没有文字、任务行、图标、工具条、按钮、底板或第四件对象；
+  tracked 是暗酒红竖向布墨页边记号，complete 是单笔深乌棕墨勾。
+- 第一失败门禁：`5. 组件合同与状态`。provider 以同一 `4:3` 比例返回
+  `1448 × 1086 RGB`；审查工具只为坐标核验等比归一化为冻结的
+  `1024 × 768`，不修改 raw。归一化透明审查稿整体 bbox 为
+  `[105,143,942,633]`：focus 在 cell 内触及左／右／下边，tracked 触及
+  左／上／下边，complete 触及右边，证明三件均越出各自冻结 cell，不能
+  安全裁成独立 source。
+- 美术一致性：`partial fail`。tracked 的暗酒红布墨材料与 complete 的
+  深乌棕单笔形态可保留；focus 却成为偏黄绿、过亮、近乎不透明的宽刷带，
+  在候选色键后出现明显亮绿边，并在 `230 × 500` 与 `330 × 865` 的真实
+  排版中形成一条抢夺文字层级的荧绿横带，不符合低对比暖赭淡墨洗。
+- 技术像素：`fail`。raw SHA-256 为
+  `ff6bf0af0642715894b6dcc7344fb3dd966b947ff6b56e3426197697af6c4bae`；
+  provider raw 只有 `1` 个精确 `#00FF00` 像素。等比归一化后精确绿色为
+  `3` 像素，被色键分类的背景包含 `20489` 个 RGB 值；它不是可复现的
+  native 纯色色键。
+- 装配／真实排版：`fail with retained evidence`。审查工具使用 QT-A1
+  attempt 4 仅作 `rejected / non-authoritative A1 visual fallback`，
+  以真实 `130 × 180`、`230 × 500`、`330 × 865` 与数据库模式排版动态
+  文字。tracked 与 complete 在 `10 × 14..22`／`12 × 12` 运行时尺寸可读，
+  但 focus 的绿边和综合色明显不合格；工具条仍只是 QT-A2 暂缓期的 provider
+  fallback。
+- 审查证据：固定 Prompt SHA-256
+  `66991c20c3391160e4023ee4681239888a9708f2e063fb74041e724213102f4e`，
+  `3938` bytes；fixed child session
+  `019fb64e-9e36-7b93-8dbc-b572a13d5373`。归一化透明审查稿 SHA-256
+  `f6da60fd48f6a6dee8d37bfc6105880a5421dc97d08e44ce97144e2a15bd6fa7`；
+  四张真实排版 SHA-256 分别为
+  `8669f4a0fb633f8a219393b3313494893e7fdf7c66646ed831e15d1cb42ea87a`、
+  `e0a4a703b8678bf654edb4e1996804bc60a98bbd4a4cc29e561fd008cc7cfc5c`、
+  `d4a59694d6845eb07228368aa5a538fc01a02cd21c9a49d74f572fe864eed90c`
+  和
+  `00d2b1721cb76a48b9255b977913e3fa5e5a9d7fff1dd5ad2fde0b6027ae40f5`；
+  总览 SHA-256
+  `c1ff31782746355c8a3ed46aa8c4d108866c1cf338b81064239494c27e5637b8`。
+- 结论：`internal-rejected / repair-prepared / P3 / 1/5`。不进入用户
+  接受、source、runtime 或 adapter。V1.r1 以 attempt 1 raw 作为同段
+  Image 4，只保留 tracked／complete 已通过的对象身份与材料；替换 focus，
+  把三件分别内缩到保守安全盒并替换 native 纯绿色背景。
+
+## QT-B1 V1.r1 — 完整修复正文
+
+状态：`prepared / authorized repair envelope / attempt 2 pending`
+
+固定上传：Image 1、Image 2、Image 3，以及同段 QT-B1 V1 attempt 1 raw
+作为 Image 4。Image 4 只用于保留已通过的 tracked 暗酒红布墨材料与
+complete 深乌棕单笔墨勾；不得保留越界位置、偏黄绿 focus、绿边或非纯色
+背景。
+
+> Edit Image 4 into exactly three separate interaction-feedback art objects for the
+> real pfQuest tracker entry Buttons. This is a strict source-atlas repair inside the
+> already authorized QT-B1 boundary. These are overlays above one continuous parchment,
+> not task-row cards and not a complete tracker screenshot.
+>
+> Preserve from Image 4 only these already-correct traits: the bottom-left object is one
+> compact dark-wine cloth-and-ink page-edge mark with a worn hand-painted silhouette;
+> the bottom-right object is one confident deep-umber hand-painted ink check with no
+> enclosing shape. Preserve their object identities, restrained circa-2004 vanilla
+> World of Warcraft weight, muted old-wine and deep-umber palette, and upper-left light.
+> You may uniformly reduce and reposition each preserved object to satisfy its safe box.
+> Do not preserve Image 4's object positions, yellow-green focus wash, green fringe,
+> nonuniform green backdrop, or oversized silhouettes.
+>
+> Replace the top object with one new long, extremely quiet warm-umber ink wash for
+> `ENTRY.FOCUS`. It must be a borderless reading-field stain, not a painted parchment
+> strip. Use muted reddish-brown and smoke-umber pigment only: no olive, chartreuse,
+> yellow-green, lime, emerald, or green-tinted pixels. Its calm middle must three-slice
+> horizontally without a visible repeated motif. Its irregular ends must dissipate by
+> sparse opaque brown stipple and broken dry-brush fibers, not by green-contaminated
+> blur, simulated transparency, glow, or a soft green halo. Keep the source pigment
+> opaque enough to key cleanly; runtime alpha will provide the final low contrast.
+>
+> Preserve the exact logical canvas contract: 1024 × 768 pixels. If the image service
+> returns a proportional technical raster, preserve the same 4:3 logical composition so
+> deterministic review normalization maps every object into these exact logical safe
+> boxes. Fill every pixel outside the three objects with one digitally flat, perfectly
+> uniform RGB `#00FF00`. The background must contain no texture, lighting, gradient,
+> compression-like variation, cast shadow, contact shadow, swatch, guide, label, or
+> anti-aliased green haze. Object pixels must contain no green spill.
+>
+> Place exactly one object in each conservative safe box, with no visible pixel outside
+> its box:
+>
+> 1. Top `ENTRY.FOCUS`: x=184..840, y=112..180. Keep its visible bounding box no larger
+>    than 656 × 68 logical pixels. Leave the middle horizontally calm and stretch-safe.
+> 2. Bottom-left `ENTRY.TRACKED`: x=240..320, y=480..592. Keep its visible bounding box
+>    no larger than 80 × 112 logical pixels. It remains a short vertical mark that enters
+>    slightly from the outer right page edge; it is not an arrow, flag, ribbon, badge,
+>    plate, or Button.
+> 3. Bottom-right `ENTRY.COMPLETE`: x=688..784, y=480..576. Keep its visible bounding box
+>    no larger than 96 × 96 logical pixels. It remains one single deep-umber ink check
+>    with no circle, wax seal, colored status light, metal base, text, or counterpart.
+>
+> Keep at least 96 logical pixels of pure `#00FF00` between the visible silhouettes.
+> Generate no duplicate state. Hover intensity and runtime opacity will be derived
+> deterministically.
+>
+> Input roles remain frozen. Use Image 1 as the highest authority for the tracker
+> field-note palette, sparse ink-on-paper relationship, restrained dark-wine edge accent,
+> and vanilla-WoW hand-painted weight; ignore its baked text, whole tracker, toolbar,
+> strap, emblem, and icons. Use Image 2 only for shared guild-dossier brushwork, warm
+> upper-left light, thick low-resolution-friendly marks, material wear, deep umber ink,
+> and muted old-wine color; ignore its book geometry, binding, Buttons, rewards, and page
+> layout. Use Image 3 only for real three-level text density, right-side placement, and
+> the need for subordinate marks around dynamic titles and objectives; inherit none of
+> its black highlight, cyan or rainbow markers, typography, node icons, or toolbar.
+>
+> Do not draw parchment, a whole task row, per-entry card, frame, text, numbers,
+> percentage, objective bullet, dynamic node icon, expand/collapse control, timer,
+> hourglass, failure seal, quest-type badge, toolbar icon, book, modern rounded
+> rectangle, translucent black HUD, neon glow, shadow plate, fourth object, or any part
+> of deferred QT-A2.
+>
+> Final self-check: exactly three and only three separated overlays; all visible pixels
+> are inside their conservative safe boxes; the top object is a quiet warm-umber
+> stretchable wash with no green hue or fringe; the bottom-left object is one compact
+> dark-wine outer-page-edge mark; the bottom-right object is one small deep-umber ink
+> check; the remaining canvas is digitally uniform `#00FF00`; no baked content, card,
+> toolbar, Button, shadow, duplicate, or invented state.
 
 ## 尝试摘要
 
@@ -1135,12 +1257,13 @@ source-layout compositing、进一步内缩和背景替换。
 | `QT-SIM V1` | 本地 specification、renderer、主图／局部图 SHA；ImageGen `0/0` | `superseded-by-user-priority` | 移除低优先级工具条，聚焦 tracker 主体 |
 | `QT-SIM V2` | 本地 specification、renderer、主图／局部图 SHA；用户于 `2026-07-31` 回复“继续”；ImageGen `0/0` | `simulation-confirmed / P2` | 可见方向已转写；不得跳过独立生产授权 |
 | `QT-A1 V1` | 五次 fixed child sessions、raw／透明稿／四景真实排版 SHA；终态输出 `319e0848...` | `candidate-rejected / repair-budget-exhausted / 5/5` | 停止；等待用户以后决定新版本或 deterministic source 合同例外 |
-| `QT-B1 V1` | 已授权，尚无调用 | `prompt-authorized / 0/5` | QT-A1 循环结束后执行 |
+| `QT-B1 V1` | attempt 1 fixed session、raw、归一化透明稿与四景真实排版 SHA | `internal-rejected / repair-prepared / 1/5` | 以同段 raw 作 Image 4；执行完整 V1.r1 edit |
 | `QT-A2 V1` | 无 ImageGen 调用；历史正文仅在 Git history | `scope-deferred / P2` | 未来重开时先做独立模拟和新授权 |
 
 ## 下一门禁
 
-QT-A1 已在 `5/5` 后停止并保持无 source/runtime。先提交并同步该终态，再以
-原授权 QT-B1 V1 和固定 Image 1／2／3 执行 B1 attempt 1。B1 仍有 `5`
-次独立实际调用额度；每个输出继续生成真实排版预演。QT-A2 保持暂缓，本次
-授权不包含候选接受、source 晋级、runtime 导出或实机验收。
+QT-A1 已在 `5/5` 后停止并保持无 source/runtime。QT-B1 attempt 1 已内审
+拒绝；提交本记录与完整 V1.r1 后，以固定 Image 1／2／3 和同段 attempt 1
+raw 作为 Image 4 执行 attempt 2 edit。B1 尚余 `4` 次独立实际调用额度；
+每个输出继续生成真实排版预演。QT-A2 保持暂缓，本次授权不包含候选接受、
+source 晋级、runtime 导出或实机验收。

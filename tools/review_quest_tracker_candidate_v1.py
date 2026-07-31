@@ -13,6 +13,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 CANVAS = (1536, 1024)
+B1_ATLAS_SIZE = (1024, 768)
 GREEN = np.array([0, 255, 0], dtype=np.uint8)
 
 QUESTS = [
@@ -309,8 +310,26 @@ def main() -> None:
     b1_metrics: dict[str, object] | None = None
     b1_path: Path | None = None
     if args.b1:
-        b1_raw = Image.open(args.b1).convert("RGB")
+        b1_provider_raw = Image.open(args.b1).convert("RGB")
+        provider_rgb = np.asarray(b1_provider_raw)
+        provider_exact_green = int(np.all(provider_rgb == GREEN, axis=2).sum())
+        b1_raw = (
+            b1_provider_raw
+            if b1_provider_raw.size == B1_ATLAS_SIZE
+            else resize(b1_provider_raw, B1_ATLAS_SIZE)
+        )
         b1, b1_metrics = chroma_key(b1_raw)
+        b1_metrics = {
+            "provider_source_size": list(b1_provider_raw.size),
+            "provider_source_mode": b1_provider_raw.mode,
+            "provider_exact_00ff00_pixels": provider_exact_green,
+            "review_normalization": (
+                "none"
+                if b1_provider_raw.size == B1_ATLAS_SIZE
+                else f"proportional resize to {B1_ATLAS_SIZE[0]}x{B1_ATLAS_SIZE[1]}"
+            ),
+            **b1_metrics,
+        }
         b1_path = output_dir / "QT-B1.transparent-review.png"
         b1.save(b1_path)
         b1_assets = {
