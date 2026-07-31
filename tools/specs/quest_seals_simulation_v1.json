@@ -70,6 +70,7 @@
     "quest_log_seal_baked_into_shell": false,
     "tracker_paper_outsets": [0, 0, 0, 0],
     "tracker_seal_visual_outsets": [0, 0, 18, 0],
+    "tracker_screen_safe_top_margin_required": 18,
     "provider_buttons_hidden_before_functional_parity": false,
     "imagegen_calls": 0
   }

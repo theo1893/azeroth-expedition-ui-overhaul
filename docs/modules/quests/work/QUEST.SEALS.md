@@ -21,6 +21,9 @@
 Tracker 纸面仍严格等于 live `pfQuestMapTracker`，四边 paper outset 都是
 `0px`；只有漆章本身产生受控的顶部 `18px` 可见 outset，不形成书框、端帽、
 皮带或外围边界。`130／230／330px` 三种宽度均使用同一个居中公式。
+provider 的 `SetClampedToScreen(true)` 不一定计入 child outset；P5 必须
+feature-detect clamp inset 或在拖动结束／位置恢复时补足 `18px` 顶部屏幕
+安全距，并以屏幕顶缘场景复查。不得通过缩小漆章或下压覆盖第一行规避。
 
 现有七个 provider Button 与迁移目标一一对应：
 
@@ -89,12 +92,12 @@ Tooltip、禁用／显隐、模式反馈和原脚本委托，才允许隐藏并�
 规格：
 [quest_seals_simulation_v1.json](../../../../tools/specs/quest_seals_simulation_v1.json)，
 SHA-256
-`51cbd14b0fee292f233b6fc36ceb063ea3dd04af821d323d1ced3e3a3d2d89ca`。
+`1013ceff241cc935f374215682ec9ae1ba6bb4e70346e8a2471a5431b1505d52`。
 
 渲染器：
 [render_quest_seals_simulation_v1.py](../../../../tools/render_quest_seals_simulation_v1.py)，
 SHA-256
-`42d0f00e40ab0951ce110c448754b34f84eb9edf9649731e81a5e90303198efc`。
+`32fbd1b73a9b42ad971b7c72c98e1eae3197592bd5a91b06299867a189432fbb`。
 
 macOS 命令：
 
@@ -123,13 +126,14 @@ conda run -n py312 python \
 - 机器报告：
   `generated/quests/QUEST-SEALS/simulation/QUEST-SEALS-SIM-V1/quest_seals_report_v1.json`，
   SHA-256
-  `c34b462731685229457d8e29fd3e50fd04419e6fd9742bc9150012477a2f25dc`。
+  `5b8fb70e9d4925588a675da30aaa3919305f77f6e59de3706e164aa5a64c7f6c`。
 
-内部检查：`pass`。Quest Log 漆章位于 Frame 内，未与左右阅读安全区、
+内部检查：模拟几何 `pass`。Quest Log 漆章位于 Frame 内，未与左右阅读安全区、
 底部两组 Button 或关闭按钮相交。Tracker 在 `130／230／330px` 三种真实
 宽度下均水平居中，底边恰接 `y=16` 列表起点，不覆盖任务内容；paper
 outset 仍为零。当前新增 Frame／命中盒均为 `0`，七按钮在功能等价前不会被
-runtime 隐藏。
+runtime 隐藏。顶部 `18px` 屏幕 clamp 只是已定义的 P5 必做门禁，尚无
+runtime 实现或实机通过结论。
 
 可由本模拟确认：位置、相对尺寸、综合色重、共用符号、静态隐藏旧 icon 后的
 层级，以及 Tracker 漆章从顶部突出的受控程度。
@@ -229,7 +233,7 @@ normal／hover／pressed／disabled，四态 Alpha 与轮廓完全相同；hover
 - 真实排版：整体游戏场景包含完整 Quest Log、二十三行目录、详情、奖励、
   底部控件与十任务／十七目标 Tracker；路径与 SHA 见模拟章节。
 - 实际展示区域：机器报告 `pass`；Tracker paper outset `0px`，seal 顶部
-  outset `18px`，不覆盖列表。
+  outset `18px`，不覆盖列表；屏幕顶缘 clamp 为 P5 pending。
 - 技术像素：模拟非生产资产，不执行 Alpha／色键／atlas 门禁。
 - 结论：`simulation-reviewed / awaiting-user-confirmation`
 - 用户结论与日期：`awaiting`

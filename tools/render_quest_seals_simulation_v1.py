@@ -660,6 +660,10 @@ def main() -> None:
         "new_current_hitboxes": int(spec["constraints"]["new_current_hitboxes"]),
         "tracker_paper_outsets": spec["constraints"]["tracker_paper_outsets"],
         "tracker_seal_visual_outsets": spec["constraints"]["tracker_seal_visual_outsets"],
+        "tracker_screen_safe_top_margin_required": int(
+            spec["constraints"]["tracker_screen_safe_top_margin_required"]
+        ),
+        "runtime_screen_clamp_gate": "pending-adapter-implementation",
         "provider_buttons_hidden_before_functional_parity": spec["constraints"][
             "provider_buttons_hidden_before_functional_parity"
         ],
@@ -681,6 +685,7 @@ def main() -> None:
         and checks["new_current_hitboxes"] == 0
         and checks["tracker_paper_outsets"] == [0, 0, 0, 0]
         and checks["tracker_seal_visual_outsets"] == [0, 0, 18, 0]
+        and checks["tracker_screen_safe_top_margin_required"] == 18
         and checks["provider_buttons_hidden_before_functional_parity"] is False
     )
     payload = {

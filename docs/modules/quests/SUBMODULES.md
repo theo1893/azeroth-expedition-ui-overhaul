@@ -238,7 +238,10 @@ SavedVariables。
 
 provider 的真实几何仍是 `16px` 工具条加动态条目。纸面四边 outset 继续为
 `0px`；`QUEST.TRACKER.HUB.SEAL` 单独允许顶部 `18px` 可见 outset，不构成
-书框或纸面边界。目标视觉隐藏七枚旧 icon，但只有
+书框或纸面边界。由于 provider 的 `SetClampedToScreen(true)` 只保证 root
+Frame，本组件 P5 必须 feature-detect clamp inset 或在拖动保存时补足
+`18px` 顶部屏幕安全距，不能让子 Texture 在屏幕顶缘被裁掉。目标视觉隐藏
+七枚旧 icon，但只有
 `QUEST.TRACKER.HUB.MENU` 完成七项功能等价、Tooltip、状态反馈和原脚本委托后，
 才允许把原 Button 视觉隐藏并禁用鼠标；迁移前它们继续原样可见可用。
 当前模拟本身不授权隐藏、删除、重挂、换皮或改写 provider 对象；
