@@ -16,12 +16,19 @@
 - 模块：
 - 组件 ID：
 - 版本：
-- 子状态：prompt-draft | prompt-authorized | candidate-raw |
-  repair-prepared | candidate-reviewed | candidate-rejected | source-accepted |
-  closure-planned | component-closed
+- 子状态：prompt-draft | simulation-authorized | simulation-reviewed |
+  simulation-confirmed | prompt-authorized | candidate-raw | repair-prepared |
+  candidate-reviewed | candidate-rejected | source-accepted | closure-planned |
+  component-closed
 - 项目阶段：P0–P6-C
 - 固定执行器：imagegen-0-143-0 / @openai/codex@0.143.0
-- 操作：generate | edit
+- 操作：simulate | generate | edit
+- 生成前模拟版本：
+- 生成前模拟预算：默认 1 次实际 ImageGen 调用；显式授权可调整，上限 5
+- 当前模拟调用：0/1（与生产 `0/5` 分开）
+- 模拟流程错误：0（无图片且无 provider 生成证据，不占模拟或生产额度）
+- 模拟路径／SHA：
+- 模拟用户结论：pending | confirmed | rejected
 - 自动修复预算：最多 5 次实际 ImageGen 生图／修图，含首次
 - 当前实际生图：0/5
 - 流程错误：0（无候选且无 provider 生成证据，不占生图额度）
@@ -79,6 +86,59 @@
 - 验收预演与回退：
 - 真实排版预演：<目标 Frame 几何、实际重复数量、代表性动态内容、状态分布、
   z-order、裁切；未完成相邻组件使用真实 fallback 或显式非权威占位>
+
+## 生成前模拟实例图
+
+### 模拟合同
+
+- 版本：
+- 目标场景与 Frame 真实比例：
+- 当前 accepted/runtime 邻接 UI：
+- 真实对象数量与代表性信息密度：
+- 目标层序与交互状态：
+- 用户需要确认：<布局、物件隐喻、材质层级、轮廓、配色、视觉重量、整合>
+- 刻意简化且非权威：<Alpha、接缝、切片、独立状态、微纹理等>
+- 禁止用途：不得作为 source/runtime、不得裁切／切片／晋级、不得作为生产
+  edit/reference 输入
+
+### 模拟输入与授权
+
+- 固定图片输入及职责：
+- 允许上传范围：
+- 模拟正文版本：
+- 实际 ImageGen 预算：1（默认；用户可明确授权其他 1–5 的有界预算）
+- 用户授权与日期：
+- 执行前 commit：
+
+### 模拟执行正文
+
+<只用于粗略游戏内实例图的完整正文；与正式资产正文分开>
+
+### 模拟执行与内部检查
+
+- 固定执行器会话／result：
+- 输出路径／SHA：
+- 实际调用：0/1
+- 流程错误：0
+- 真实 Frame 比例／屏幕位置：
+- 邻接 UI／对象数量／信息密度：
+- 物件隐喻／材质／配色／重量：
+- 非权威简化说明：
+- 内部结论：displayable | blocked
+
+| 流程错误 | 模拟正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
+|---:|---|---|---|---|---|
+| SE1 | `<simulation-version>` / `<commit>` |  |  |  | 不占模拟或生产额度 |
+
+### 用户方向结论
+
+- 具体模拟版本：
+- 用户结论与日期：pending | confirmed | rejected
+- 确认并写回生产正文的可见条款：
+- 拒绝时必须改变：
+- 确认失效条件：可见布局、物件隐喻、材质层级、配色、综合色重或整合关系
+  发生实质变化
+- 下一门禁：新模拟版本授权 | 最终生产正文授权
 
 ## 生产正文完整性预检
 
@@ -167,6 +227,11 @@ provenance，并且“必须继承”和“冲突裁决”的实质内容必须�
 `## 生产正文完整性预检` 不以字数判定。所有适用门禁都必须能指向最终执行
 正文中的明确条款；不适用项要写出原因，执行必需但未知的值会阻塞生产。
 `.rN` 必须重新形成完整、自包含正文，不能只记录相对上一版的差异。
+
+`## 生成前模拟实例图` 只承担生产前方向确认。必须记录独立正文、独立预算、
+执行证据、非权威范围和用户对具体版本的结论。确认结果要转写为生产正文中的
+可验证条款；模拟像素本身永远不能成为源资产、runtime 或生产输入。生成前
+模拟不能代替正式候选生成后的 `100%` runtime 真实排版预演。
 
 若 `revised prompt` 很长，仍放在同一 work 文件的折叠或附录段；不要为它新增
 永久 Markdown。不能只写“模型自动优化”。

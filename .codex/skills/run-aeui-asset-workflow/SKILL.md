@@ -1,6 +1,6 @@
 ---
 name: run-aeui-asset-workflow
-description: "Run the repository-specific Azeroth Expedition UI component-asset workflow with locked-baseline prompt provenance, self-contained ambiguity-audited production prompts, compact per-component work files, art-language inheritance, and a bounded five-actual-generation autonomous generate-review-repair loop whose workflow errors are tracked separately, from component contract and fixed ImageGen 0.143.0 execution through explicit acceptance or rejection, source promotion, runtime export, module-progress synchronization, target-client validation, and post-P6 work-file cleanup. Use when generating, editing, reviewing, accepting, rejecting, promoting, exporting, validating, closing, or cleaning an AEUI component, or when the user asks to continue the next UI asset step."
+description: "Run the repository-specific Azeroth Expedition UI component-asset workflow with locked-baseline prompt provenance, self-contained ambiguity-audited prompts, a mandatory user-confirmed pre-production simulated in-game preview, compact per-component work files, art-language inheritance, and a bounded five-actual-generation autonomous production generate-review-repair loop whose workflow errors are tracked separately, from component contract and fixed ImageGen 0.143.0 execution through explicit acceptance or rejection, source promotion, runtime export, module-progress synchronization, target-client validation, and post-P6 work-file cleanup. Use when simulating, generating, editing, reviewing, accepting, rejecting, promoting, exporting, validating, closing, or cleaning an AEUI component, or when the user asks to continue the next UI asset step."
 ---
 
 # AEUI Asset Workflow
@@ -49,6 +49,10 @@ Treat runtime geometry and visual identity as two compatible but distinct author
    locked baseline.
 5. Failed candidates provide negative evidence only unless an edit operation explicitly
    names a region to preserve.
+6. A pre-production simulated instance image is non-authoritative direction evidence
+   only. It can communicate the intended whole-screen appearance, but it is never an
+   art source, runtime texture, production edit input, or substitute for locked
+   baseline provenance.
 
 Before writing an execution body, create an in-file art-inheritance block that records:
 
@@ -111,17 +115,17 @@ Keep one active Markdown work file per incomplete component or tightly coupled a
 docs/modules/<module>/work/<COMPONENT-OR-BATCH>.md
 ```
 
-The work file contains the current versioned execution body, component contract, prompt
-inheritance, compact attempt ledger, execution evidence, review, and next gate. Do not
-create a separate permanent Markdown file for every attempt, audit, preview, decision, or
-runtime media list.
+The work file contains the current versioned simulation and production execution bodies,
+component contract, prompt inheritance, compact attempt ledgers, execution evidence,
+review, user decisions, and next gate. Do not create a separate permanent Markdown file
+for every attempt, audit, preview, decision, or runtime media list.
 
-Before executing a prompt, commit the authorized work-file version so its exact body is in
-Git history. During the bounded repair loop, append the failed attempt and the complete
-derived repair body to the same work file, then commit them before the next invocation.
-After loop exhaustion or user rejection, record the terminal rejection in that file.
-Git history is the full archive; the current tree contains only the evidence needed for
-the next decision.
+Before executing either a simulation or production prompt, commit the authorized
+work-file version so its exact body is in Git history. During the bounded production
+repair loop, append the failed attempt and the complete derived repair body to the same
+work file, then commit them before the next invocation. After loop exhaustion or user
+rejection, record the terminal rejection in that file. Git history is the full archive;
+the current tree contains only the evidence needed for the next decision.
 
 When the component reaches `P6-C`, merge final stable visual clauses into
 `SUBMODULE_ART_BASELINES.md`, final object ownership into `SUBMODULES.md`, and final paths
@@ -135,7 +139,8 @@ Infer only the narrowest operation authorized by the user:
 
 | User intent | Operation | Highest allowed result |
 |---|---|---|
-| define, split, plan, write prompt | `prepare` | production draft |
+| define, split, plan, write prompt | `prepare` | simulation and production drafts at `P2` |
+| mock up, preview, simulate the likely in-game result | `simulate` | user-reviewed non-production visual direction at `P2` |
 | generate, edit, regenerate | `generate` | internally reviewed candidate at `P3` after at most five actual ImageGen generations or edits |
 | assess, inspect, compare, review | `review` | verdict and review evidence |
 | correct, revise, try again | `revise` | new versioned `P3` candidate |
@@ -146,12 +151,15 @@ Infer only the narrowest operation authorized by the user:
 | finish, close, compact, clean completed work | `close` | `P6-C` after an approved cleanup plan |
 
 “Continue” means proceed through the next unblocked gate shown by module progress. If that
-gate is prompt authorization, stop after preparing and presenting the exact versioned
-execution body, its repair envelope, and its five-call budget; “continue” or “next step”
-alone does not authorize generation. Explicit authorization of that version covers its
-bounded in-scope repair attempts, but never means silently accepting a candidate,
-promoting a source, inventing missing runtime geometry, or deleting intermediates.
-Generation and closure require explicit, version-specific confirmation.
+gate is simulation authorization, stop after preparing and presenting the exact
+versioned simulation body, fixed inputs/upload scope, and simulation-call budget. If it
+is production prompt authorization, stop after presenting the exact versioned production
+body, its repair envelope, and its five-call budget. “Continue” or “next step” alone does
+not authorize either ImageGen stage. Explicit production authorization covers its bounded
+in-scope repair attempts, but never means silently accepting a candidate, promoting a
+source, inventing missing runtime geometry, or deleting intermediates. Simulation,
+production generation, and closure require their own explicit, version-specific
+confirmation.
 
 If the user asks only for an assessment, stay read-only. If the user explicitly asks to
 generate, revise, accept, or export, perform the normal repository writes for that
@@ -164,28 +172,41 @@ operation.
    provenance chain, an art-inheritance block, and a resolved authority/conflict audit.
 3. Do not authorize or execute an execution body until its self-contained prompt
    completeness audit passes; prompt length alone is never evidence of completeness.
-4. Do not execute a `production-draft` or a prompt version the user has not explicitly
-   authorized by version after seeing its execution body.
-5. Do not use a visual prototype as a runtime texture.
-6. Do not present a candidate as viable until semantic structure has been checked.
-7. Do not treat dimensions, Alpha, chroma-key cleanup, or connected regions as proof of
+4. Do not execute a simulation version the user has not explicitly authorized after
+   seeing its complete body, declared inputs/uploads, and bounded call budget.
+5. Do not execute a `production-draft` until the user has explicitly confirmed the
+   corresponding pre-production simulated instance image and then explicitly authorized
+   the final production version after seeing its execution body.
+6. Never crop, slice, promote, export, or reuse a pre-production simulation as
+   `assets/source/`, runtime media, a production edit input, or a replacement for a
+   locked reference. User confirmation accepts only the recorded visual direction.
+7. Do not use any other visual prototype as a runtime texture.
+8. Do not present a production candidate as viable until semantic structure has been
+   checked.
+9. Do not treat dimensions, Alpha, chroma-key cleanup, or connected regions as proof of
    correct anatomy, function, component identity, or style.
-8. Do not copy anything into `assets/source/` without explicit user acceptance.
-9. Do not export runtime media until the accepted source, crop/UV contract, safe areas,
+10. Do not copy anything into `assets/source/` without explicit user acceptance.
+11. Do not export runtime media until the accepted source, crop/UV contract, safe areas,
    stretch rules, and target Frame geometry are known.
-10. Do not mark `P6` without evidence from Turtle WoW `1.18.1`.
-11. Do not remove intermediate or superseded files before `P6`, a verified final keep set,
+12. Do not mark `P6` without evidence from Turtle WoW `1.18.1`.
+13. Do not remove intermediate or superseded files before `P6`, a verified final keep set,
    an exact cleanup inventory, and explicit user approval.
-12. Never consume more than five actual ImageGen generations or edits for one authorized
+14. A pre-production simulation version uses exactly one actual ImageGen call by default.
+    The user may explicitly authorize a different bounded simulation budget, never above
+    five. Its counter is separate from the production `0/5` counter. A process error with
+    no generated image and no provider-generation evidence is recorded separately and
+    consumes neither counter.
+15. Never consume more than five actual ImageGen generations or edits for one authorized
     execution body. Count an attempt only when the fixed executor returns an image or a
     provider result proves that generation/editing actually ran. An unusable generated
     candidate still counts. A workflow, transport, wrapper, permission, prompt-transfer,
     upload, or save-path error with no generated image and no provider-generation evidence
     is recorded separately and does not consume the `0/5` image budget.
-13. Autonomous repair may change only the repairable wording, edit/regenerate choice, and
-    use of an earlier output from the same loop. It may not change component identity,
-    object/state count, authority order, reference roles, canvas/runtime contract,
-    forbidden content, or add a new external input without new user authorization.
+16. Autonomous production repair may change only the repairable wording,
+    edit/regenerate choice, and use of an earlier output from the same loop. It may not
+    change component identity, object/state count, authority order, reference roles,
+    canvas/runtime contract, forbidden content, or add a new external input without new
+    user authorization.
 
 When a gate is blocked, state the missing evidence and perform any useful read-only
 inspection still in scope. Do not create plausible-looking placeholder controls.
@@ -200,41 +221,102 @@ inspection still in scope. Do not create plausible-looking placeholder controls.
    preview, and fallback.
 4. Resolve the locked baseline image-to-prompt provenance chain and write the
    art-inheritance/conflict block before the creative body.
-5. Rewrite the request against that resolved authority as the active versioned prompt in
-   `docs/modules/<module>/work/<COMPONENT-OR-BATCH>.md`. State secondary source limits
-   explicitly; never call an `assets/source/` derivative the highest visual authority.
-6. Run the self-contained prompt completeness audit above. Record its compact result in
+5. Rewrite the request against that resolved authority as two separate active bodies in
+   `docs/modules/<module>/work/<COMPONENT-OR-BATCH>.md`:
+   - a deliberately simple pre-production simulation body for one representative
+     in-game scene; and
+   - the decomposed production asset body or bodies.
+   State secondary source limits explicitly; never call an `assets/source/` derivative
+   the highest visual authority.
+6. Make the simulation show the target Frame's real proportions, current accepted/runtime
+   neighboring UI, representative dynamic content and information density, intended
+   z-order, and the proposed material/silhouette hierarchy. It may simplify fine texture,
+   crop seams, Alpha, and individual state sheets because it is not an asset candidate.
+   Prefer deterministic overlays for readable localized text, icons, and values instead
+   of asking ImageGen to render authoritative UI text.
+7. Run the self-contained prompt completeness audit above. Record its compact result in
    the work file and return to the component contract if any required value is unknown.
-7. Record the immutable repair envelope and `5` actual-generation budget. For a batch
+8. Record the simulation version, fixed input/upload scope, default one-call budget,
+   non-production restrictions, and the exact visual decisions the user will be asked to
+   judge.
+9. Record the immutable production repair envelope and `5` actual-generation budget. For a batch
    with multiple independent execution bodies, state each body's budget and the
    worst-case aggregate actual-generation count. Process errors use a separate ledger.
-8. Mark it `production-draft` and show the user the substantive changes. Wait for
-   authorization before generation.
+10. Mark the work `prompt-draft`, show the user the simulation body and its scope, and
+    wait for simulation authorization. Production authorization cannot occur yet.
 
 Do not split assets according to what is convenient for the model. Split them according
 to runtime ownership, interaction state, z-order, and independent scaling behavior.
 
+## Simulate before production
+
+This is a mandatory low-cost direction gate, not an early asset-generation attempt.
+Keep it visibly and procedurally separate from the mandatory post-candidate real-layout
+simulation in `Review`.
+
+1. Commit the exact user-authorized simulation body, fixed image inputs, upload scope,
+   target scene, and call budget before invoking ImageGen.
+2. Use only `../imagegen-0-143-0/SKILL.md`; never use the current session's built-in
+   image-generation tool.
+3. Use one actual ImageGen call per simulation version by default. If the user explicitly
+   authorizes a larger budget, cap it at five and record it independently from every
+   production body's `0/5`. Apply the same provider-evidence counting rule: a process
+   error without a generated image or provider-generation evidence does not consume the
+   simulation budget.
+4. Store the rough render and any deterministic real-text overlay only under
+   `generated/<module>/<component-or-batch>/simulation/<version>/`. Record its path,
+   SHA-256, input roles, executor/session evidence, actual call count, and any process
+   errors in the existing work file.
+5. Internally verify only that the preview is understandable and faithful enough to judge
+   the authorized scope: real Frame proportions, plausible screen placement, intended
+   object metaphor, dominant materials, visual weight, palette, neighboring UI,
+   representative content density, z-order, and interaction state. Do not reject it for
+   missing production-grade Alpha, seams, exact state separation, or microtexture.
+6. Present the simulated instance image with a short list of which decisions are
+   representative and which details are deliberately non-authoritative. Do not start the
+   production generate-review-repair loop in the same turn unless the user explicitly
+   confirms the simulation and separately authorizes the final production version.
+7. On user confirmation, record the accepted visible direction—layout, material hierarchy,
+   silhouette, palette, visual weight, integration, and interaction-state impression—in
+   the work file. Translate those decisions into the final production body and re-run its
+   completeness audit before requesting production authorization.
+8. On user rejection, return to `prompt-draft`, revise the simulation version and
+   direction clauses, and request authorization for the next simulation. Do not run the
+   production five-call repair loop to repair a concept preview.
+9. If the design changes materially after confirmation, invalidate that confirmation and
+   create a new simulation version. Purely technical decomposition, transparent
+   extraction, or slicing changes that preserve the confirmed visible composition do not
+   require a new simulation.
+
+Simulation confirmation never accepts source pixels. The simulation cannot be copied,
+cropped, sliced, promoted, exported, or uploaded as a production edit/reference input.
+Only its recorded verbal decisions may constrain production.
+
 ## Generate
 
-1. Re-run the provenance, authority-order, and contradiction preflight. If any locked
+1. Verify that the exact corresponding simulated instance version is
+   `simulation-confirmed` and its accepted visible-direction clauses are present in the
+   final production body. Then verify the user separately authorized that exact
+   production body. Otherwise return to `Simulate before production` or `prepare`.
+2. Re-run the provenance, authority-order, and contradiction preflight. If any locked
    baseline prompt is unresolved or a derivative source outranks it, return to `prepare`.
-2. Freeze the explicitly authorized prompt as `production`; never overwrite an executed
+3. Freeze the explicitly authorized prompt as `production`; never overwrite an executed
    version.
-3. Freeze the repair envelope: component IDs, object/state inventory, visual authority,
+4. Freeze the repair envelope: component IDs, object/state inventory, visual authority,
    reference roles, canvas/runtime geometry, Alpha strategy, forbidden baked content,
    permitted edit inputs, and the maximum of five actual ImageGen generations/edits.
-4. Use only `../imagegen-0-143-0/SKILL.md`. Do not call the current session's built-in
+5. Use only `../imagegen-0-143-0/SKILL.md`. Do not call the current session's built-in
    image-generation tool.
-5. Pass attempt 1's approved execution body verbatim. Put absolute input paths,
+6. Pass attempt 1's approved execution body verbatim. Put absolute input paths,
    image-role mappings, and output instructions outside that body as required by the
    fixed executor.
-6. Write raw, transparent, and preview files only under
+7. Write raw, transparent, and preview files only under
    `generated/<module>/<component-or-batch>/<version>/`.
-7. Record the executor version, attempt number, session/result identifiers, exact output
+8. Record the executor version, attempt number, session/result identifiers, exact output
    paths, and any
    executor-reported revised prompt in the active work file. Never conceal an internal
    retry or silently replace an executed prompt.
-8. Run the bounded loop below. Advance no further than `P3` until review and explicit
+9. Run the bounded loop below. Advance no further than `P3` until review and explicit
    user acceptance are complete.
 
 ## Run the bounded autonomous repair loop
@@ -312,8 +394,9 @@ Pass repeated `--cell 'ID=x0,y0,x1,y1'` arguments when the production contract d
 fixed atlas cells. This checker reports Alpha, bounds, edge contact, SHA-256, and visible
 green spill. It deliberately does not claim that a region is the correct logical object.
 
-After every generated or edited UI candidate, produce a deterministic real-layout
-simulation before internal passage or user review. The simulation must:
+After every generated or edited production UI candidate, produce a deterministic
+candidate real-layout simulation before internal passage or user review. Unlike the
+rough pre-production simulated instance, this validation composition is exact and must:
 
 - use the target Frame's real pixel geometry at `100%` runtime size;
 - place the candidate over the newest accepted/runtime UI that will surround it, in the
@@ -332,8 +415,10 @@ For a repeated component, this means the actual target repetition: for example, 
 23-row Quest Log asset must be simulated across all 23 row slots with realistic task
 layout, not four symbols floating on an empty book. A contact sheet remains useful for
 inventory, but a contact sheet, sparse demo, debug grid, or isolated component board
-never substitutes for the real-layout simulation. Store every simulation only under
-`generated/`.
+never substitutes for the candidate real-layout simulation. Store every simulation only
+under `generated/`. Neither kind of simulation is source art, but the pre-production
+simulation confirms a visual direction while this post-candidate simulation validates
+the actual candidate at runtime geometry.
 
 ## Revise or reject
 
@@ -358,7 +443,8 @@ superseded prompt files in the current tree. Git history remains the historical 
 
 ## Accept
 
-Acceptance must be explicit and version-specific. Then:
+Acceptance must be explicit and version-specific. Confirmation of the pre-production
+simulation does not satisfy this requirement. Then:
 
 1. Copy only the accepted transparent master into
    `assets/source/<module>/<component>/`.
@@ -389,9 +475,9 @@ cleanup rules in [repository-sync.md](references/repository-sync.md), then:
 2. Produce an exact component-scoped keep/delete inventory. Exclude shared assets, shared
    tools, active locked baselines, third-party evidence, licenses, and user originals.
 3. Show the inventory to the user and obtain explicit approval before deletion.
-4. Remove ignored raw/candidates/previews, the component work file, obsolete
-   component-only references/tools, and duplicated process narration approved in the
-   plan. Do not purge Git history.
+4. Remove ignored raw/candidates/previews, all pre-production simulations, the component
+   work file, obsolete component-only references/tools, and duplicated process narration
+   approved in the plan. Do not purge Git history.
 5. Compact `SUBMODULES.md`, `SUBMODULE_ART_BASELINES.md`, module `PROGRESS.md`, and
    manifests to final contracts, final paths, final validation, and one concise closure
    result.
@@ -404,6 +490,8 @@ cleanup rules in [repository-sync.md](references/repository-sync.md), then:
 End each operation with:
 
 - the exact component and prompt version;
+- the pre-production simulation version, its actual call count and process errors,
+  whether the user confirmed it, and the accepted visible-direction clauses;
 - actual ImageGen generations used, remaining image budget, separately recorded process
   errors, and whether the loop passed, exhausted, or stopped on an authority blocker;
 - the current workflow substate and project phase;

@@ -16,7 +16,7 @@
 | 综合色感／结构锁定图 | `assets/locked/<module>/` | tracked |
 | 结构／故障参考 | `assets/references/<module>/` | tracked only while required |
 | 用户接受的透明母版 | `assets/source/<module>/<component>/` | tracked |
-| raw、失败稿、透明候选、预演 | `generated/<module>/...` | ignored |
+| 生成前模拟、raw、失败稿、透明候选、候选真实排版预演 | `generated/<module>/...` | ignored |
 | 运行时媒体 | `addon/AzerothExpeditionUI/Media/<Module>/` | tracked |
 
 `addon/` 只承载运行时文件与必须随包分发的许可证，不加入 Markdown。
@@ -42,16 +42,39 @@ references 不属于项目说明文档。
 - 当前版本与子状态；
 - 锁定图与 Prompt provenance；
 - 真实组件合同；
+- 生成前模拟实例图的正文、固定输入／上传范围、独立预算、执行证据、用户结论
+  与文字化的可见方向；
 - 自包含生产正文的紧凑完整性预检；
 - 当前可执行正文；
 - 执行与审查记录；
 - 紧凑尝试摘要；
 - 下一门禁。
 
-首次执行前先提交用户授权的 work，使精确正文进入 Git 历史。自主修复循环中，
-每次失败后在同一文件补齐执行／审查记录和下一份完整 `.rN` 修复正文，并在
-下一次调用前提交。不要为 V1、V2、V3、每次 attempt、review、audit、
-preview 或 revised prompt 分别建立永久 Markdown。
+首次模拟和首次生产执行前都先提交用户授权的 work，使两种精确正文分别进入
+Git 历史。自主修复循环中，每次失败后在同一文件补齐执行／审查记录和下一份
+完整 `.rN` 修复正文，并在下一次调用前提交。不要为模拟版本、V1、V2、V3、
+每次 attempt、review、audit、preview 或 revised prompt 分别建立永久
+Markdown。
+
+## 生成前模拟同步
+
+- 正式资产生成前必须先产生一个可供用户确认的模拟实例图。它沿用真实 Frame
+  比例、当前 accepted/runtime 邻接 UI、代表性对象数量与信息密度，但可以
+  简化 Alpha、接缝、切片、独立状态和微纹理。
+- 模拟正文、固定输入／上传范围、目标场景和独立预算必须先写入同一组件 work，
+  由用户授权具体版本，再提交后调用固定 `imagegen-0-143-0`。
+- 每个模拟版本默认 `1` 次实际 ImageGen 调用；用户可明确授权其他不超过
+  `5` 次的有界预算。模拟与生产分别计数，模拟调用不消耗任何生产正文的
+  `0/5`。无候选且无 provider 生成证据的流程错误另表记录。
+- 模拟输出固定写入
+  `generated/<module>/<batch>/simulation/<version>/`，并记录路径、SHA、
+  session/result、实际输入职责、调用数、流程错误和内部可读性结论；不得
+  commit 图片本身。
+- 用户确认具体模拟版本后，把可见布局、材质层级、轮廓、配色、视觉重量、
+  整合关系与交互状态观感写回 work 的生产正文，再请求独立的正式生产授权。
+- 模拟确认只接受方向，不接受像素。模拟图不得复制到 `assets/source/`，
+  不得裁切、切片、导出为 runtime，也不得作为正式资产的 edit/reference
+  输入。可见方向实质变化时必须创建并重新确认新的模拟版本。
 
 ## 五次自主修复同步
 
@@ -79,6 +102,7 @@ preview 或 revised prompt 分别建立永久 Markdown。
 | 操作 | 必须同步 | 禁止 |
 |---|---|---|
 | `prepare` | 组件 work、自包含正文完整性预检；必要时 `SUBMODULES.md` 与模块进度 | 写 raw、source 或 runtime |
+| `simulate` | 已提交的模拟正文／输入范围／独立预算；work 执行证据、内部检查与用户方向结论 | 把模拟当 source/runtime/生产输入；未确认模拟就进入生产 |
 | `generate` | 已提交的授权正文／`.rN` 修复正文；work 实际生图与流程错误记录 | 超过五次实际生图；commit raw／失败图／预演 |
 | `review` | 每次尝试的 work 审查证据；循环终态同步模块进度 | 用像素指标替代视觉结论 |
 | `revise` | 同一 work 的尝试表、完整 `.rN` 正文与边界复核 | 丢失旧版本 Git 证据；用修复名义改变合同 |
@@ -106,8 +130,8 @@ work 中并交给用户确认，不创建新的 closure 文档。
 
 删除：
 
-- 该组件 `generated/` 下的 raw、失败图、透明中间图、contact sheet、预演、
-  debug 输出与临时 atlas。
+- 该组件 `generated/` 下的生成前模拟、raw、失败图、透明中间图、contact
+  sheet、候选真实排版预演、debug 输出与临时 atlas。
 - 该组件的 work 文件。
 - 已被最终实现取代且仅服务该组件的实验脚本、故障参考与预演。
 - 长期文档中重复的尝试流水、过期下一步和过程叙述。
@@ -135,9 +159,9 @@ tests 中；`work/` 不保留空占位文件。
 ## 提交与同步
 
 1. 开始前检查工作树并保留无关修改。
-2. 每次实际生图前提交当前完整执行正文；无候选流程错误仍写入同一 work，
-   修复后以同一正文重试；循环内候选失败只更新同一 work，循环终态再同步
-   模块进度、manifest 或实现。
+2. 每次模拟或生产实际生图前提交当前完整执行正文；无候选流程错误仍写入
+   同一 work，修复后以同一正文重试；循环内候选失败只更新同一 work，循环
+   终态再同步模块进度、manifest 或实现。
 3. 确认 `generated/` 仍被忽略。
 4. 运行 `git diff --check`、文档拓扑／链接测试、相关合同测试与 Lua smoke。
 5. 提交信息指出模块、批次和状态变化。
