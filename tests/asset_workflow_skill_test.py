@@ -3,8 +3,10 @@
 
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 
@@ -24,10 +26,14 @@ def main() -> None:
         SKILL / "agents" / "openai.yaml",
         SKILL / "references" / "state-machine.md",
         SKILL / "references" / "review-checklist.md",
+        SKILL / "references" / "display-region-gate.md",
+        SKILL / "references" / "prompt-completeness.md",
+        SKILL / "references" / "bounded-repair-loop.md",
         SKILL / "references" / "repository-sync.md",
         SKILL / "references" / "record-templates.md",
         SKILL / "scripts" / "inspect_candidate.py",
         SKILL / "scripts" / "render_geometric_mockup.py",
+        SKILL / "scripts" / "validate_display_regions.py",
     )
     missing = [
         path.relative_to(ROOT).as_posix()
@@ -65,10 +71,10 @@ def main() -> None:
             "Do not copy anything into `assets/source/` without explicit user acceptance",
             "A locked image without prompt provenance",
             "## Make execution bodies complete, not merely longer",
-            "Every production or `.rN` execution body",
-            "Do not set a word-count minimum",
+            "`.rN` execution body must be self-contained",
+            "do not set a word-count minimum",
             "self-contained prompt completeness audit",
-            "same as before except",
+            "prompt-completeness.md",
             "“Continue” or “next step”",
             "never authorizes ImageGen",
             "## Simulate before production",
@@ -82,18 +88,17 @@ def main() -> None:
             "cannot be copied",
             "production edit/reference input",
             "## Run the bounded autonomous repair loop",
-            "at most `5` actual ImageGen generations/edits",
-            "Attempt 1 is the initial generated candidate",
+            "bounded-repair-loop.md",
+            "including attempt 1",
             "provider result proves",
-            "process-error ledger",
             "does not consume the `0/5` image budget",
-            "`candidate-reviewed / P3`",
-            "`candidate-rejected / P3 / repair-budget-exhausted`",
-            "Internal passage",
-            "is not user acceptance",
-            "mandatory real-layout simulation",
+            "neither condition is user acceptance",
+            "mandatory post-candidate real-layout",
             "candidate real-layout simulation",
             "`100%` runtime size",
+            "display-region-gate.md",
+            "Background coverage alone is insufficient",
+            "`display-region-blocked`",
             "23-row Quest Log asset",
             "sparse demo",
             "`P6-C / component-closed`",
@@ -124,6 +129,7 @@ def main() -> None:
             "`candidate-raw → candidate-reviewed`",
             "`candidate-reviewed → source-accepted`",
             "`source-accepted → runtime-exported`",
+            "`display-region-blocked`",
             "`runtime-exported → game-validated`",
             "`game-validated → closure-planned`",
             "`closure-planned → component-closed`",
@@ -186,8 +192,69 @@ def main() -> None:
             "当前最新的新 UI",
             "简化占位",
             "预演图只进入 `generated/`",
+            "实际展示区域门禁",
+            "人为指定的固定高度",
+            "背景覆盖",
         ),
         "review checklist",
+    )
+
+    display_region = (
+        SKILL / "references" / "display-region-gate.md"
+    ).read_text(encoding="utf-8")
+    require(
+        display_region,
+        (
+            "## 四层区域",
+            "`frame coverage`",
+            "`content conformance`",
+            "`interaction conformance`",
+            "`preview fidelity`",
+            "空状态也必须检查",
+            "容量包络图",
+            "validate_display_regions.py",
+            "`aeui-display-region-contract-v1`",
+            "动态文字、图标、Button 可见区",
+            "`display-region-blocked`",
+        ),
+        "display-region gate",
+    )
+
+    prompt_completeness = (
+        SKILL / "references" / "prompt-completeness.md"
+    ).read_text(encoding="utf-8")
+    require(
+        prompt_completeness,
+        (
+            "每个 production／`.rN` 正文都必须自包含",
+            "不设字数下限",
+            "对象／状态数量",
+            "每张图片输入的权威",
+            "Canvas、排布、cell 顺序",
+            "文字／图标安静区",
+            "Alpha／色键",
+            "执行必需值未知时返回组件合同",
+        ),
+        "prompt completeness reference",
+    )
+
+    bounded_loop = (
+        SKILL / "references" / "bounded-repair-loop.md"
+    ).read_text(encoding="utf-8")
+    require(
+        bounded_loop,
+        (
+            "最多使用 `5` 次实际 ImageGen",
+            "attempt 1 是首次候选",
+            "provider result ID",
+            "process error",
+            "不改变 `0/5`",
+            "`candidate-reviewed / P3`",
+            "same as before except",
+            "`candidate-rejected / P3 / repair-budget-exhausted`",
+            "不消耗 ImageGen",
+        ),
+        "bounded repair loop reference",
     )
 
     repository_sync = (
@@ -254,6 +321,8 @@ def main() -> None:
             "真实排版预演",
             "真实对象",
             "现实信息密度",
+            "实际展示区域合同／报告",
+            "provider 公式",
             "## 尝试摘要",
             "SUBMODULE_ART_BASELINES.md",
             "并删除 work",
@@ -266,11 +335,11 @@ def main() -> None:
         interface,
         (
             'display_name: "AEUI 资产生成与审查"',
-            "先用本地几何预演确认方向",
+            "真实展示区门禁",
             'default_prompt: "Use $run-aeui-asset-workflow',
-            "deterministic local geometric in-game preview",
-            "zero ImageGen calls",
-            "bounded five-generation review-repair loop",
+            "preview it locally",
+            "provider-to-art display regions",
+            "five-generation review-repair workflow",
         ),
         "skill interface",
     )
@@ -300,6 +369,81 @@ def main() -> None:
     )
     assert geometric_help.returncode == 0, geometric_help.stderr
     assert "rect, rounded_rect, polygon, line, ellipse, text" in geometric_help.stdout
+
+    display_script = SKILL / "scripts" / "validate_display_regions.py"
+    compile(
+        display_script.read_text(encoding="utf-8"),
+        str(display_script),
+        "exec",
+    )
+    display_help = subprocess.run(
+        [sys.executable, str(display_script), "--help"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert display_help.returncode == 0, display_help.stderr
+    assert "Validate exact UI display regions" in display_help.stdout
+
+    passing_contract = {
+        "schema": "aeui-display-region-contract-v1",
+        "component": "TEST.COMPONENT",
+        "atlas": {
+            "size": [3, 3],
+            "visible_bbox": [0, 0, 3, 3],
+            "require_exact_visible_coverage": True,
+            "sampled_regions": [{"id": "all", "box": [0, 0, 3, 3]}],
+        },
+        "nine_slice": {
+            "caps": {"left": 1, "right": 1, "top": 1, "bottom": 1},
+            "minimum_frame_size": [3, 3],
+        },
+        "scenarios": [
+            {
+                "id": "default",
+                "frame": [5, 5],
+                "preview_frame": [5, 5],
+                "zones": {"content": [1, 1, 4, 4]},
+                "regions": [
+                    {
+                        "id": "text",
+                        "box": [1, 1, 4, 4],
+                        "zone": "content",
+                    }
+                ],
+            }
+        ],
+    }
+    failing_contract = json.loads(json.dumps(passing_contract))
+    failing_contract["scenarios"][0]["preview_frame"] = [5, 6]
+    with tempfile.TemporaryDirectory() as temporary:
+        temporary_path = Path(temporary)
+        passing_path = temporary_path / "passing.json"
+        failing_path = temporary_path / "failing.json"
+        passing_path.write_text(
+            json.dumps(passing_contract),
+            encoding="utf-8",
+        )
+        failing_path.write_text(
+            json.dumps(failing_contract),
+            encoding="utf-8",
+        )
+        passing_result = subprocess.run(
+            [sys.executable, str(display_script), str(passing_path)],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        assert passing_result.returncode == 0, passing_result.stderr
+        assert '"status": "pass"' in passing_result.stdout
+        failing_result = subprocess.run(
+            [sys.executable, str(display_script), str(failing_path)],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        assert failing_result.returncode == 1, failing_result.stderr
+        assert "PREVIEW_FRAME_MISMATCH" in failing_result.stdout
 
     imagegen_skill = (IMAGEGEN_WRAPPER / "SKILL.md").read_text(
         encoding="utf-8"

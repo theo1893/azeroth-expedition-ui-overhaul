@@ -1,4 +1,4 @@
 interface:
   display_name: "AEUI 资产生成与审查"
-  short_description: "先用本地几何预演确认方向，再以最多五次正式生图编排资产"
-  default_prompt: "Use $run-aeui-asset-workflow to prepare a self-contained AEUI component contract, render a deterministic local geometric in-game preview with zero ImageGen calls for user direction confirmation, and only then request authorization for the final production prompt and its bounded five-generation review-repair loop."
+  short_description: "以本地预演、真实展示区门禁和五次正式生图闭环审查资产"
+  default_prompt: "Use $run-aeui-asset-workflow to define an AEUI component, preview it locally, verify exact provider-to-art display regions, and run the authorized five-generation review-repair workflow."

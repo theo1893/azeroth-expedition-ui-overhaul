@@ -104,11 +104,11 @@ V1、V2、V3、每次 attempt、review、audit、preview 或 revised prompt 分�
 | `prepare` | 组件 work、自包含正文完整性预检；必要时 `SUBMODULES.md` 与模块进度 | 写 raw、source 或 runtime |
 | `simulate` | 本地几何规格、可复现脚本命令、ImageGen `0/0`、work 执行证据、内部检查与用户方向结论 | 调用 ImageGen／上传参考图；把模拟当 source/runtime/生产输入；未确认模拟就进入生产 |
 | `generate` | 已提交的授权正文／`.rN` 修复正文；work 实际生图与流程错误记录 | 超过五次实际生图；commit raw／失败图／预演 |
-| `review` | 每次尝试的 work 审查证据；循环终态同步模块进度 | 用像素指标替代视觉结论 |
+| `review` | 每次尝试的 work 审查证据；真实 provider 尺寸的展示区域合同／报告路径与 SHA；循环终态同步模块进度 | 用像素指标替代视觉结论；用固定容量画布冒充实际 Frame |
 | `revise` | 同一 work 的尝试表、完整 `.rN` 正文与边界复核 | 丢失旧版本 Git 证据；用修复名义改变合同 |
 | `reject` | work 的版本、原因、日期、主体；模块进度 | 创建 source 或 runtime |
 | `accept` | source、manifest、work、子模块基线、模块进度 | 把完整原型直接当 runtime |
-| `export` | exporter、UV/crop manifest、runtime、Lua/XML、tests、模块进度 | 自由重绘确定性导出结果 |
+| `export` | exporter、UV/crop manifest、runtime、Lua/XML、tests、最终 atlas／adapter／provider 的展示区域复查、模块进度 | 自由重绘确定性导出结果；以背景覆盖代替内容安全 |
 | `game-validate` | 模块进度的场景、版本、交互与结论 | 无实机证据标 `P6` |
 | `close` | 精确保留／删除清单；四份长期文档与 manifest；清理提交 | `P6` 前清理或宽泛删除 |
 

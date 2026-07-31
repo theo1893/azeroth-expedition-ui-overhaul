@@ -19,6 +19,13 @@
   `pfQuestMapTracker`，包含三种模式、七个工具 Button、最多二十五个动态
   Button，宽度 `130..330px`、高度随目标变化。当前结构图与 Quest Log
   故障图继续只作信息层级和复现证据，不是美术权威。
+- `2026-07-31` 新增实际展示区域复核。atlas 九格采样完整、普通尺寸背景可
+  铺满 Frame，但当前 QT-A1 runtime 不符合 live 内容安全区：空 tracker
+  `16px` 高度低于九宫格 `29px` 合同最小值；节点图标、左右外侧工具 icon、
+  文字右缘和最后一行进入装饰 cap。旧 `180/500/865/500px` 固定高度预演
+  不是 provider 实例，已由空状态、`104/256/420/516/136px` 及三种模式的
+  精确预演取代。QT-A1 保持
+  P5 文件，但标记 `display-region-blocked`，不能直接进入 P6。
 - 用户于 `2026-07-31` 将七个低频工具 Button 与 `HEADER.*` 的视觉改造暂缓，
   当前优先确认 tracker 主体。provider 对象、Tooltip、OnClick、模式切换和
   SavedVariables 合同不变；暂缓不授权隐藏、删除、重挂、换皮或改写脚本。
@@ -153,6 +160,10 @@
   身份，但 cell、focus 综合色／绿边和 native 色键均失败；用户认为真实
   排版很糟糕并暂停整段于 `1/5`，旧 V1.r1 不再执行。QT-A2 为
   `scope-deferred 0/5`，七工具 Button 使用 provider fallback。
+  后续展示区域门禁证明历史 `QT-SIM V2` 的 `330 × 865` 只是容量包络，不是
+  十任务／十七目标的 provider 真实高度；其材料／综合色方向仍保留，但精确
+  几何证据失效。QT-A1 当前完整状态为
+  `runtime-exported-temporary / display-region-blocked / P5`。
 - NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
 - `questitem.lua`：行为保留，视觉 `N/A`。
 
@@ -195,8 +206,8 @@ source 或 runtime。
 
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
-| `QT-SIM V2` | 约 `330 × 865` 高密度 Quest Tracking 主体本地几何预演；无工具条，十任务、十七目标与三类反馈 | `P2 simulation-confirmed` | 用户已于 `2026-07-31` 确认可见方向；ImageGen `0/0` |
-| `QT-A1 V1` | 可变宽高纸面 shell、九宫格与叠页边 | `P5 runtime-exported-temporary / user-accepted exception` | source／manifest／`256 × 512` TGA／adapter 已接入；Turtle WoW 验证动态宽高、接缝与可读性 |
+| `QT-SIM V2` | `330 × 865` 高密度容量包络；无工具条，十任务、十七目标与三类反馈 | `P2 direction-confirmed / exact-geometry-superseded` | 材料／综合色方向保留；真实 provider 高度需以新几何模拟重新确认 |
+| `QT-A1 V1` | 可变宽高纸面 shell、九宫格与叠页边 | `P5 runtime-exported-temporary / display-region-blocked` | source／manifest／`256 × 512` TGA／adapter 保留；先修正 cap／padding 与 live 内容安全区 |
 | `QT-A2 V1` | `HEADER.*`、皮带／徽记、七工具 Button 与 selected 压片 | `P2 scope-deferred` | provider 对象与行为原样保留；未来重开需独立模拟、新 Prompt 与新授权；当前 `0/5` |
 | `QT-B1 V1` | focus 墨洗、tracked 页边墨记、complete 墨勾 | `P3 scope-deferred / user-paused / 1/5` | 不挂载三件覆盖层；旧 V1.r1 作废，未来恢复需新模拟、新版本与新授权 |
 
@@ -223,7 +234,13 @@ QT-A1 临时 runtime 事实：
 - 验证：exporter 重跑哈希稳定；Python 编译、quest design contract、
   repository contract、asset workflow skill contract、Quest Lua smoke 与
   `git diff --check` 全部通过。Lua smoke 覆盖 pfQuest 晚加载、动态 resize、
-  provider `OnUpdate` 保留和刷新幂等。
+  provider `OnUpdate` 保留和刷新幂等。另有
+  `tools/specs/quest_tracker_display_region_v1.json` 的七场景展示区域报告：
+  `fail / 35 violations`，第一失败码
+  `FRAME_BELOW_NINE_SLICE_MINIMUM`；报告只在 ignored `generated/`，SHA-256
+  `511dcffcf9bbb93a9e969c75d3dcb1fe10711258be85442044e3450af261801c`。
+  额外失败项是 provider 未限制 `trackerfontsize` 和单任务 objective 数量，
+  项目支持边界仍需冻结。
 
 ## 当前验证
 
@@ -333,8 +350,8 @@ pfQuest-turtle 后验证：
 - 最右侧详情滚动条始终不显示，长任务正文仍可用鼠标滚轮滚到首尾；
 - 左页列表滚动条不受影响，任务行不出现酒红书签或旧整行浅色高亮。
 
-pfQuest tracker 已进入 [QT V2 work](work/QUEST.TRACKER.CORE.md) 的
-`simulation-confirmed / P2`。结构证据继续固定为：
+pfQuest tracker 当前在 [QT V2 work](work/QUEST.TRACKER.CORE.md) 为
+`P5 / display-region-blocked`。历史结构证据继续固定为：
 
 - 结构参考：
   [`01_external_quest_tracker_current_state.png`](../../../assets/references/quests/session-2026-07-31/01_external_quest_tracker_current_state.png)，
@@ -345,15 +362,17 @@ pfQuest tracker 已进入 [QT V2 work](work/QUEST.TRACKER.CORE.md) 的
   `1009 × 629`，SHA-256
   `36e172e15ea6c6939d4f2e784131ff0e9a9a51a926aaec046a95a21af5361faf`；
 - 两图只用于信息层级、真实密度与复现，不继承其字体、颜色、现代按钮或
-  其他美术表现。`QT-SIM V2` 已由本地脚本用简单几何和真实排版生成，参考图
+  其他美术表现。`QT-SIM V2` 已由本地脚本用简单几何和代表性排版生成，参考图
   没有上传或进入模拟像素，ImageGen 固定 `0/0`。V2 刻意不绘制工具条，只供
-  tracker 主体方向判断，不代表 runtime 删除按钮。用户已于 `2026-07-31`
+  tracker 主体材料／综合色方向判断，不代表 runtime 删除按钮，也不再作为
+  精确 Frame 高度证据。用户已于 `2026-07-31`
   确认 V2 可见方向，确认条款已写回 QT-A1／B1 最终正文。用户随后独立授权
-  两段的固定上传、同段 edit 边界和各 `5` 次实际调用上限。QT-A1 已在五次
-  上限后停止，没有 source/runtime；当前下一门禁是固定执行器的 QT-B1
-  attempt 1，随后完成每次真实排版内审与边界内自主修复。生产内审通过前不
-  创建 runtime 媒体或 tracker adapter。QT-A2 继续
-  `scope-deferred 0/5`。
+  两段的固定上传、同段 edit 边界和各 `5` 次实际调用上限。QT-A1 五次原始
+  生成循环虽耗尽，随后临时例外 source/runtime 已接入；QT-B1 在 `1/5`
+  后由用户暂停，QT-A2 继续 `scope-deferred 0/5`。当前下一门禁不是继续
+  ImageGen 或直接实机 P6，而是用本地简单几何提出 cap 外扩或 live 内边距
+  方案，以 provider 公式的空／短／典型／密集／二十五条上限／数据库／
+  任务给予者七场景重新确认。
 
 QL-B0 V2 的内框与两类底板均已由用户移出范围，不再等待 source 例外，也不
 继续 ImageGen。QL-B2 的 accepted source、atlas、manifest 与 exporter 保留，

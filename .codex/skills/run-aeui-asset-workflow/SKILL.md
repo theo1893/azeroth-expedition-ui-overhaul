@@ -1,6 +1,6 @@
 ---
 name: run-aeui-asset-workflow
-description: "Run the repository-specific Azeroth Expedition UI component-asset workflow with locked-baseline prompt provenance, self-contained ambiguity-audited prompts, a mandatory user-confirmed deterministic local geometric in-game preview before production, compact per-component work files, art-language inheritance, and a bounded five-actual-generation autonomous production generate-review-repair loop whose workflow errors are tracked separately, from component contract and fixed ImageGen 0.143.0 production execution through explicit acceptance or rejection, source promotion, runtime export, module-progress synchronization, target-client validation, and post-P6 work-file cleanup. Use when simulating, generating, editing, reviewing, accepting, rejecting, promoting, exporting, validating, closing, or cleaning an AEUI component, or when the user asks to continue the next UI asset step."
+description: "Run the repository-specific Azeroth Expedition UI component-asset workflow with locked-baseline prompt provenance, self-contained ambiguity-audited prompts, a mandatory user-confirmed deterministic local geometric in-game preview before production, exact provider-to-art display-region conformance, compact per-component work files, art-language inheritance, and a bounded five-actual-generation autonomous production generate-review-repair loop whose workflow errors are tracked separately, from component contract and fixed ImageGen 0.143.0 production execution through explicit acceptance or rejection, source promotion, runtime export, module-progress synchronization, target-client validation, and post-P6 work-file cleanup. Use when simulating, generating, editing, reviewing, accepting, rejecting, promoting, exporting, validating, closing, or cleaning an AEUI component, or when the user asks to continue the next UI asset step."
 ---
 
 # AEUI Asset Workflow
@@ -22,11 +22,18 @@ machine. This skill orchestrates the work; it does not replace the repository's 
 4. Read [state-machine.md](references/state-machine.md) for every operation.
 5. Read [review-checklist.md](references/review-checklist.md) before reviewing,
    revising, rejecting, or presenting a candidate.
-6. Read [repository-sync.md](references/repository-sync.md) before changing any
+6. Read [display-region-gate.md](references/display-region-gate.md) before simulating,
+   reviewing, exporting, game-validating, or assessing whether live plugin content fits
+   the proposed art.
+7. Read [prompt-completeness.md](references/prompt-completeness.md) before preparing or
+   revising any production／`.rN` execution body.
+8. Read [bounded-repair-loop.md](references/bounded-repair-loop.md) before any production
+   generation or in-loop repair.
+9. Read [repository-sync.md](references/repository-sync.md) before changing any
    tracked file or advancing a phase.
-7. Read [record-templates.md](references/record-templates.md) when creating or
+10. Read [record-templates.md](references/record-templates.md) when creating or
    updating a production prompt or review record.
-8. For generation or image editing, additionally read
+11. For generation or image editing, additionally read
    `../imagegen-0-143-0/SKILL.md` and every reference that it requires.
 
 Repository documents remain authoritative if this skill and the current checkout
@@ -87,43 +94,9 @@ rules.
 
 ## Make execution bodies complete, not merely longer
 
-The fixed executor receives the execution body and declared image inputs, not repository
-links or surrounding work-file explanations. Every production or `.rN` execution body
-must therefore be self-contained. Do not set a word-count minimum: more adjectives,
-history, or repeated mood language do not make a prompt more precise.
-
-Scale detail to ambiguity:
-
-- A single object with one state may use a compact body if every applicable gate below is
-  explicit.
-- Atlases, multiple states, assemblies, repeated/tiled pieces, and stretchable assets
-  require exact per-cell or per-object instructions and relationship rules.
-- Conflicting references or recurring failure modes require explicit inherit/ignore
-  clauses and an objective final self-check.
-
-Before marking a prompt `production-draft`, verify that its execution body explicitly
-covers every applicable item:
-
-1. Intended in-world object identity, exact scope, and what the image must not become.
-2. Exact object/state count, names, order, runtime ownership, and dynamic content that
-   must remain unbaked.
-3. Each image input's authority and separate inherit/ignore responsibilities.
-4. Canvas, layout, cell order, bounds, margins, and object occupancy when authoritative.
-5. Viewpoint, perspective, orientation, scale, light, z-order, contact, and overlap.
-6. Per-object anatomy, silhouette, material, edge treatment, states, and relationships.
-7. Text/icon quiet areas, crop, stretch, tile, repeat, seam, and safe-area behavior.
-8. Locked art DNA: period, brushwork, palette, material hierarchy, wear, and concrete
-   prohibited visual languages.
-9. Alpha or chroma-key behavior, output cleanliness, and other technical constraints.
-10. A concise final self-check that repeats only the highest-risk objective gates.
-
-Every applicable hard gate must appear in the execution body itself, not only in the
-component contract or inheritance notes. Use exact counts, directions, roles, and bounded
-relationships where authority exists. If a required value is unknown, stop at the
-component contract instead of inventing precision. Resolve contradictions before writing
-the body. A clause adds useful detail only when it removes a meaningful wrong
-interpretation; keep provenance history, commit IDs, and process narration outside the
-executor body unless they affect the image.
+Apply [prompt-completeness.md](references/prompt-completeness.md). Every production or
+`.rN` execution body must be self-contained; do not set a word-count minimum. Unknown
+execution-critical values return the work to the component contract.
 
 ## Use the compact document lifecycle
 
@@ -209,20 +182,23 @@ operation.
 10. Do not copy anything into `assets/source/` without explicit user acceptance.
 11. Do not export runtime media until the accepted source, crop/UV contract, safe areas,
    stretch rules, and target Frame geometry are known.
-12. Do not mark `P6` without evidence from Turtle WoW `1.18.1`.
-13. Do not remove intermediate or superseded files before `P6`, a verified final keep set,
+12. Do not call a preview “real layout” or treat runtime as P6-ready until the exact
+    display-region gate passes for empty, minimum, typical, maximum-density, and
+    supported-mode cases. Background coverage alone is insufficient.
+13. Do not mark `P6` without evidence from Turtle WoW `1.18.1`.
+14. Do not remove intermediate or superseded files before `P6`, a verified final keep set,
    an exact cleanup inventory, and explicit user approval.
-14. A pre-production simulation version uses `0` ImageGen calls by contract. Render it
+15. A pre-production simulation version uses `0` ImageGen calls by contract. Render it
     with a local deterministic script using simple geometric primitives, representative
     real text, real object counts, and explicit non-authoritative placeholders. Local
     rendering errors are ordinary tool errors, never image-generation attempts.
-15. Never consume more than five actual ImageGen generations or edits for one authorized
+16. Never consume more than five actual ImageGen generations or edits for one authorized
     execution body. Count an attempt only when the fixed executor returns an image or a
     provider result proves that generation/editing actually ran. An unusable generated
     candidate still counts. A workflow, transport, wrapper, permission, prompt-transfer,
     upload, or save-path error with no generated image and no provider-generation evidence
     is recorded separately and does not consume the `0/5` image budget.
-16. Autonomous production repair may change only the repairable wording,
+17. Autonomous production repair may change only the repairable wording,
     edit/regenerate choice, and use of an earlier output from the same loop. It may not
     change component identity, object/state count, authority order, reference roles,
     canvas/runtime contract, forbidden content, or add a new external input without new
@@ -239,30 +215,33 @@ inspection still in scope. Do not create plausible-looking placeholder controls.
 3. Record object count, state count, runtime size, source canvas, Alpha strategy, safe
    areas, stretch/crop rules, reference-image roles, forbidden baked content, acceptance
    preview, and fallback.
-4. Resolve the locked baseline image-to-prompt provenance chain and write the
+4. Record a display-region contract that distinguishes source/atlas visible pixels,
+   sampled UVs, assembled decorative caps, quiet content zones, live visible regions,
+   hit regions, and provider-derived Frame sizes.
+5. Resolve the locked baseline image-to-prompt provenance chain and write the
    art-inheritance/conflict block before the creative body.
-5. Rewrite the request against that resolved authority as two separate active contracts in
+6. Rewrite the request against that resolved authority as two separate active contracts in
    `docs/modules/<module>/work/<COMPONENT-OR-BATCH>.md`:
    - a deliberately simple deterministic local simulation specification for one
      representative in-game scene; and
    - the decomposed production asset body or bodies.
    State secondary source limits explicitly; never call an `assets/source/` derivative
    the highest visual authority.
-6. Make the simulation show the target Frame's real proportions, current accepted/runtime
+7. Make the simulation show the target Frame's real proportions, current accepted/runtime
    neighboring UI, representative dynamic content and information density, intended
    z-order, and the proposed material/silhouette hierarchy. Represent these with simple
    rectangles, polygons, lines, ellipses, flat palette roles, and real localized text. It
    may simplify fine texture, crop seams, Alpha, and individual state sheets because it
    is not an asset candidate.
-7. Run the self-contained prompt completeness audit above. Record its compact result in
+8. Run the self-contained prompt completeness audit above. Record its compact result in
    the work file and return to the component contract if any required value is unknown.
-8. Record the simulation version, local script/specification, read-only reference roles,
+9. Record the simulation version, local script/specification, read-only reference roles,
    `0` ImageGen calls, non-production restrictions, and the exact visual decisions the
    user will be asked to judge.
-9. Record the immutable production repair envelope and `5` actual-generation budget. For a batch
+10. Record the immutable production repair envelope and `5` actual-generation budget. For a batch
    with multiple independent execution bodies, state each body's budget and the
    worst-case aggregate actual-generation count. Process errors use a separate ledger.
-10. Render and internally review the local simulation, mark it
+11. Render and internally review the local simulation, mark it
     `simulation-reviewed`, show it to the user, and wait for direction confirmation.
     Production authorization cannot occur yet.
 
@@ -279,6 +258,8 @@ simulation in `Review`.
    target screen geometry, Frame bounds, real object count, representative high-density
    content, interaction states, z-order, flat palette roles, and which visual qualities
    are intentionally not represented.
+   Derive each exact instance size from the live provider formula; an additional capacity
+   envelope must be labeled non-real and cannot replace an exact instance.
 2. Render it only with a local deterministic script. Prefer the bundled
    `scripts/render_geometric_mockup.py` when its primitives are sufficient. Do not call
    any image-generation tool, provider, browser service, or remote renderer, and do not
@@ -347,58 +328,11 @@ atlas separation, or exact in-client rendering.
 
 ## Run the bounded autonomous repair loop
 
-Use one budget of at most `5` actual ImageGen generations/edits for each explicitly
-authorized execution body. Attempt 1 is the initial generated candidate, so at most four
-derived image repairs remain.
-
-Count a generation attempt only when at least one of these is true:
-
-- the fixed child returns a generated/edited image;
-- the fixed child returns a provider result ID or other direct evidence that the image
-  generation/edit job actually ran.
-
-An unusable, semantically wrong, malformed, wrong-sized, or prompt-truncated image still
-counts because an image was generated. By contrast, directory preparation, dependency
-bootstrap, CLI launch, sandbox permission, wrapper recursion interrupted before any
-provider result, prompt transport rejected before generation, input upload, connection,
-or save-path errors with no image and no provider-generation evidence are process errors.
-Record them in a separate process-error ledger, repair the transport, and retry the same
-committed execution body without changing the `0/5` image counter. If evidence is
-ambiguous, stop and establish whether generation ran before another request. Do not use
-non-counting errors as permission for blind infinite retries: the same process error
-repeating after one targeted repair requires diagnosis and a pause before continuing.
-
-After every countable output:
-
-1. Perform the complete review checklist in its required order, including direct visual
-   inspection and the mandatory real-layout simulation described below.
-2. If every internal gate passes, stop the loop immediately, record
-   `candidate-reviewed / P3`, and present the candidate for user review. Internal passage
-   is not user acceptance and cannot create tracked source or runtime media.
-3. If a gate fails and fewer than five actual generations have occurred, record the first
-   failed gate, observable evidence, correct regions to preserve, and the next repair decision.
-   Choose a scoped edit only when preserving the correct regions is intentional;
-   otherwise regenerate from the locked authorities.
-4. Write a complete, self-contained derived repair body labeled
-   `<authorized-version>.rN`; never use delta-only wording such as “same as before except”.
-   It may sharpen structural, compositional, material, or technical instructions inside
-   the frozen envelope. It may use an earlier output from the same loop as an edit input
-   unless the work file forbids that upload. It may not add new references or change the
-   frozen contract.
-5. Commit the failed-attempt record and the next complete repair body in the same work
-   file before invoking that repair. Do not create one Markdown file per attempt.
-6. If a repair requires a new object, state, reference role, external input, visual
-   direction, canvas contract, or other envelope change, stop before invoking it and
-   return to `prompt-draft` for explicit authorization; the remaining call budget does
-   not broaden authority.
-7. If actual generated candidate 5 still fails any internal gate, stop with
-   `candidate-rejected / P3 / repair-budget-exhausted`, preserve all five attempt records,
-   and ask the user to review the failure evidence and choose the next direction.
-
-Deterministic crop, Alpha cleanup, metrics, and preview assembly do not consume ImageGen
-generations. Process errors also do not consume the image budget, but both remain recorded
-and neither resets the counter. No deterministic or process recovery may conceal a
-semantic, anatomical, perspective, component-identity, or art-language failure.
+Apply [bounded-repair-loop.md](references/bounded-repair-loop.md). One authorized
+execution body receives at most `5` actual generations/edits including attempt 1.
+Process errors without generated-image or provider-generation evidence use a separate
+ledger and do not consume `0/5`. Stop immediately at internal passage or attempt-5
+failure; neither condition is user acceptance.
 
 ## Review
 
@@ -424,6 +358,11 @@ On Linux replace `conda run -n py312 python` with `python3`; on Windows PowerShe
 Pass repeated `--cell 'ID=x0,y0,x1,y1'` arguments when the production contract defines
 fixed atlas cells. This checker reports Alpha, bounds, edge contact, SHA-256, and visible
 green spill. It deliberately does not claim that a region is the correct logical object.
+
+Also run the exact region procedure in
+[display-region-gate.md](references/display-region-gate.md). Record the contract and
+report path/hash. A visually plausible composition fails if its chosen canvas height,
+padding, or safe area does not exist in the live provider.
 
 After every generated or edited production UI candidate, produce a deterministic
 candidate real-layout simulation before internal passage or user review. Unlike the
@@ -492,6 +431,10 @@ Use deterministic tools for crop, Alpha, scale, atlas, format conversion, and pr
 Store reproducible intermediates in `generated/`. Commit runtime media only with its
 manifest/UV mapping, Lua/XML ownership, tests, and documentation updates.
 
+Before treating P5 as P6-ready, repeat the display-region gate against the final atlas,
+adapter constants, live anchors, and provider layout formula. A new or inherited failure
+keeps the export at `display-region-blocked`; do not hide it behind a passing Lua smoke.
+
 Mark `P5` only after static and relevant smoke tests pass. Mark `P6` only after real
 Turtle WoW screenshots and interaction checks confirm scale, hit regions, state changes,
 text safety, layering, fallback, and unaffected nonvisual behavior.
@@ -528,6 +471,8 @@ End each operation with:
   errors, and whether the loop passed, exhausted, or stopped on an authority blocker;
 - the current workflow substate and project phase;
 - the verdict or artifact paths;
+- the display-region contract/report path and hash, exact scenarios, result, and first
+  failed region when applicable;
 - the first remaining gate;
 - for closure, the approved keep/delete inventory and final retained paths;
 - tests run, selected Python interpreter and version, and their results;

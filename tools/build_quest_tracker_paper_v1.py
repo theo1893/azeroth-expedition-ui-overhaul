@@ -334,6 +334,27 @@ def main() -> None:
             ),
             "row_overlays": "none; QT-B1 is scope-deferred",
             "toolbar_art": "provider fallback; QT-A2 is scope-deferred",
+            "display_region_conformance": {
+                "status": "display-region-blocked",
+                "contract": (
+                    "tools/specs/quest_tracker_display_region_v1.json"
+                ),
+                "first_failure": "FRAME_BELOW_NINE_SLICE_MINIMUM",
+                "notes": [
+                    (
+                        "the provider empty height is 16px, below the declared "
+                        "29px nine-slice minimum"
+                    ),
+                    (
+                        "live outer toolbar icons, entry node icons, right text "
+                        "edge, and final content intersect decorative caps"
+                    ),
+                    (
+                        "trackerfontsize and per-quest objective count have no "
+                        "frozen supported bounds"
+                    ),
+                ],
+            },
         },
         "implementation": {
             "exporter": "tools/build_quest_tracker_paper_v1.py",

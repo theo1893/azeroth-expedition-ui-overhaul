@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 from pathlib import Path
 
 import numpy as np
@@ -17,6 +18,9 @@ B1_ATLAS_SIZE = (1024, 768)
 TRACKER_RUNTIME_X = (0, 24, 166, 190)
 TRACKER_RUNTIME_Y = (0, 32, 456, 512)
 TRACKER_RUNTIME_CAPS = (14, 14, 12, 16)
+PROVIDER_FONT_SIZE = 12
+PROVIDER_PANEL_HEIGHT = 16
+PROVIDER_ENTRY_HEIGHT = math.ceil(PROVIDER_FONT_SIZE * 1.6)
 GREEN = np.array([0, 255, 0], dtype=np.uint8)
 
 QUESTS = [
@@ -33,12 +37,32 @@ QUESTS = [
 ]
 
 DATABASE = [
-    ("数据库：稀有敌人", ["暮色森林：未知刷新点", "荆棘谷：两个记录节点"], 0, False, False),
-    ("数据库：草药", ["卡德加的胡须", "太阳草"], 0, False, False),
-    ("数据库：矿脉", ["秘银矿脉", "瑟银矿脉"], 0, False, False),
-    ("任务给予者", ["塔纳利斯：加基森", "菲拉斯：羽月要塞"], 0, False, False),
-    ("历史搜索", ["失落的远征队"], 0, False, False),
-    ("地图节点", ["Shift 点击可隐藏节点"], 0, False, False),
+    ("数据库：稀有敌人", [], 0, False, False),
+    ("数据库：草药", [], 0, False, False),
+    ("数据库：矿脉", [], 0, False, False),
+    ("任务给予者", [], 0, False, False),
+    ("历史搜索", [], 0, False, False),
+    ("地图节点", [], 0, False, False),
+]
+
+GIVERS = [
+    ("[12] 北郡修道院的委托", [], 0, False, False),
+    ("[21] 夜色镇的守夜人", [], 0, False, False),
+    ("[31] 南海镇的急件", [], 0, False, False),
+    ("[42] 羽月要塞的斥候", [], 0, False, False),
+    ("[49] 加基森的远征者", [], 0, False, False),
+    ("[55] 东瘟疫之地的档案员", [], 0, False, False),
+]
+
+MAXIMUM_ENTRIES = [
+    (
+        f"[{20 + index}] 远征记录 {index + 1:02d}",
+        [],
+        0,
+        False,
+        False,
+    )
+    for index in range(25)
 ]
 
 
@@ -228,7 +252,8 @@ def world_scene(repo: Path) -> Image.Image:
 
 
 def toolbar(repo: Path, width: int) -> Image.Image:
-    bar = Image.new("RGBA", (width, 16), (0, 0, 0, 90))
+    # AEUI hides tracker.backdrop.bg. Only the seven live provider icons remain.
+    bar = Image.new("RGBA", (width, PROVIDER_PANEL_HEIGHT), (0, 0, 0, 0))
     names = ("quests", "database", "giver", "search", "clean", "settings", "close")
     positions = [1, 18, 35, width - 66, width - 49, width - 32, width - 15]
     for index, (name, x) in enumerate(zip(names, positions)):
@@ -252,45 +277,49 @@ def draw_entries(
     paper_only: bool,
 ) -> None:
     width, height = frame.size
-    dense = height >= 800
-    title_size = 15 if dense else 12 if width >= 200 else 10
-    objective_size = 13 if dense else 11 if width >= 200 else 9
-    title_step = 28 if dense else 22 if width >= 200 else 18
-    objective_step = 22 if dense else 16 if width >= 200 else 13
     font_path = repo / "addon" / "AzerothExpeditionUI" / "Media" / "Fonts" / "NotoSansSC-Medium.ttf"
-    title_font = font(font_path, title_size)
-    objective_font = font(font_path, objective_size)
+    title_font = font(font_path, PROVIDER_FONT_SIZE)
+    objective_font = font(font_path, PROVIDER_FONT_SIZE)
     draw = ImageDraw.Draw(frame, "RGBA")
     node = resize(Image.open(repo / "addon" / "pfQuest" / "img" / "node.tga").convert("RGBA"), (12, 12))
     complete_node = resize(
         Image.open(repo / "addon" / "pfQuest" / "img" / "complete_c.tga").convert("RGBA"),
         (12, 12),
     )
-    y = 19
+    y = PROVIDER_PANEL_HEIGHT
 
     for index, (title, objectives, percent, tracked, complete) in enumerate(entries):
-        entry_height = title_step + objective_step * len(objectives)
-        if y + entry_height > height - 8:
-            break
+        live_objectives = objectives if mode == "QUEST_TRACKING" else []
+        entry_height = (
+            PROVIDER_ENTRY_HEIGHT
+            + PROVIDER_FONT_SIZE * len(live_objectives)
+        )
         if index == 1:
             if b1:
                 wash = three_slice(b1["focus"], (max(1, width - 8), entry_height))
-                frame.alpha_composite(wash, (4, y - 2))
+                frame.alpha_composite(wash, (4, y))
             elif not paper_only:
-                draw.rectangle((2, y - 2, width - 2, y + entry_height - 2), fill=(20, 13, 8, 38))
+                draw.rectangle(
+                    (2, y, width - 2, y + entry_height),
+                    fill=(20, 13, 8, 38),
+                )
 
-        frame.alpha_composite(complete_node if complete else node, (3, y + 2))
+        frame.alpha_composite(complete_node if complete else node, (2, y + 4))
         title_color = (46, 79, 33, 255) if percent >= 100 else (74, 50, 25, 255)
         if mode != "QUEST_TRACKING":
             title_color = (65, 53, 31, 255)
         title_text = f"{title} ({percent}%)" if mode == "QUEST_TRACKING" else title
-        draw.text((18, y), title_text, font=title_font, fill=title_color)
+        draw.text((16, y + 4), title_text, font=title_font, fill=title_color)
 
-        objective_y = y + title_step
-        for objective in objectives:
+        for objective_index, objective in enumerate(live_objectives, start=1):
+            objective_y = y + PROVIDER_FONT_SIZE * objective_index + 6
             color = (54, 83, 36, 255) if percent >= 100 else (65, 48, 31, 255)
-            draw.text((23, objective_y), f"— {objective}", font=objective_font, fill=color)
-            objective_y += objective_step
+            draw.text(
+                (20, objective_y),
+                f"— {objective}",
+                font=objective_font,
+                fill=color,
+            )
 
         if b1 and tracked:
             mark = resize(b1["tracked"], (10, max(14, min(22, entry_height - 4))))
@@ -299,6 +328,27 @@ def draw_entries(
             mark = resize(b1["complete"], (12, 12))
             frame.alpha_composite(mark, (max(0, width - 28), y + 2))
         y += entry_height
+
+    if y != height:
+        raise ValueError(
+            f"provider layout mismatch: drew to y={y}, frame height is {height}"
+        )
+
+
+def provider_frame_height(
+    mode: str,
+    entries: list[tuple[str, list[str], int, bool, bool]],
+) -> int:
+    objective_count = (
+        sum(len(entry[1]) for entry in entries)
+        if mode == "QUEST_TRACKING"
+        else 0
+    )
+    return (
+        PROVIDER_PANEL_HEIGHT
+        + len(entries) * PROVIDER_ENTRY_HEIGHT
+        + objective_count * PROVIDER_FONT_SIZE
+    )
 
 
 def render_layout(
@@ -341,7 +391,8 @@ def render_layout(
 
 def build_overview(paths: list[Path], output: Path) -> None:
     thumbs = [resize(Image.open(path).convert("RGBA"), (768, 512)) for path in paths]
-    board = Image.new("RGBA", (1536, 1024), "#201A15FF")
+    rows = math.ceil(len(thumbs) / 2)
+    board = Image.new("RGBA", (1536, rows * 512), "#201A15FF")
     for index, thumb in enumerate(thumbs):
         board.alpha_composite(thumb, ((index % 2) * 768, (index // 2) * 512))
     board.save(output)
@@ -402,12 +453,26 @@ def main() -> None:
     if args.runtime_paper:
         runtime_paper = Image.open(args.runtime_paper).convert("RGBA")
 
-    layouts = [
-        ("real-layout-short-130x180.png", (130, 180), "QUEST_TRACKING", QUESTS[:2]),
-        ("real-layout-quest-230x500.png", (230, 500), "QUEST_TRACKING", QUESTS[:6]),
-        ("real-layout-dense-330x865.png", (330, 865), "QUEST_TRACKING", QUESTS),
-        ("real-layout-database-230x500.png", (230, 500), "DATABASE_TRACKING", DATABASE),
+    layout_inputs = [
+        ("empty", 200, "QUEST_TRACKING", []),
+        ("short", 130, "QUEST_TRACKING", QUESTS[:2]),
+        ("quest", 230, "QUEST_TRACKING", QUESTS[:6]),
+        ("dense", 330, "QUEST_TRACKING", QUESTS),
+        ("maximum", 330, "QUEST_TRACKING", MAXIMUM_ENTRIES),
+        ("database", 230, "DATABASE_TRACKING", DATABASE),
+        ("giver", 230, "GIVER_TRACKING", GIVERS),
     ]
+    layouts = []
+    for label, width, mode, entries in layout_inputs:
+        height = provider_frame_height(mode, entries)
+        layouts.append(
+            (
+                f"real-layout-{label}-{width}x{height}.png",
+                (width, height),
+                mode,
+                entries,
+            )
+        )
     layout_paths: list[Path] = []
     for filename, size, mode, entries in layouts:
         path = output_dir / filename
@@ -427,7 +492,7 @@ def main() -> None:
     overview = output_dir / "real-layout-overview.png"
     build_overview(layout_paths, overview)
     report = {
-        "schema": "aeui-quest-tracker-candidate-review-v1",
+        "schema": "aeui-quest-tracker-candidate-review-v2",
         "a1": {
             **a1_metrics,
             "raw_path": str(args.a1.resolve()),
@@ -454,6 +519,11 @@ def main() -> None:
                 "frame_size": list(layouts[index][1]),
                 "mode": layouts[index][2],
                 "content_count": len(layouts[index][3]),
+                "objective_count": (
+                    sum(len(entry[1]) for entry in layouts[index][3])
+                    if layouts[index][2] == "QUEST_TRACKING"
+                    else 0
+                ),
                 "qt_a2": "current pfQuest icon fallback / non-authoritative",
             }
             for index, path in enumerate(layout_paths)
@@ -468,6 +538,26 @@ def main() -> None:
                 "none; QT-B1 user-paused"
                 if args.paper_only
                 else "candidate B1 or current provider fallback"
+            ),
+        },
+        "provider_geometry": {
+            "source": "addon/pfQuest/tracker.lua",
+            "font_size": PROVIDER_FONT_SIZE,
+            "panel_height": PROVIDER_PANEL_HEIGHT,
+            "entry_height": PROVIDER_ENTRY_HEIGHT,
+            "height_formula": (
+                "panel_height + entry_count * entry_height + "
+                "objective_count * font_size"
+            ),
+            "superseded_fixed_capacity_previews": [
+                [130, 180],
+                [230, 500],
+                [330, 865],
+                [230, 500],
+            ],
+            "note": (
+                "Those fixed heights were not provider instances and are not "
+                "valid display-region evidence."
             ),
         },
         "runtime_paper": (

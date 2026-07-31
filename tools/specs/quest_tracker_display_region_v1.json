@@ -1,0 +1,191 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "QUEST.TRACKER.SHELL",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, 100%-UI-pixels",
+  "evidence": {
+    "provider": "addon/pfQuest/tracker.lua",
+    "adapter": "addon/AzerothExpeditionUI/Modules/Quests.lua",
+    "runtime_manifest": "assets/source/quests/qt-a1/QT-A1_RuntimeManifest_v1.json",
+    "superseded_fixed_preview_sizes": [
+      [130, 180],
+      [230, 500],
+      [330, 865],
+      [230, 500]
+    ]
+  },
+  "atlas": {
+    "size": [256, 512],
+    "visible_bbox": [0, 0, 190, 512],
+    "require_exact_visible_coverage": true,
+    "sampled_regions": [
+      {"id": "top_left", "box": [0, 0, 24, 32]},
+      {"id": "top", "box": [24, 0, 166, 32]},
+      {"id": "top_right", "box": [166, 0, 190, 32]},
+      {"id": "left", "box": [0, 32, 24, 456]},
+      {"id": "center", "box": [24, 32, 166, 456]},
+      {"id": "right", "box": [166, 32, 190, 456]},
+      {"id": "bottom_left", "box": [0, 456, 24, 512]},
+      {"id": "bottom", "box": [24, 456, 166, 512]},
+      {"id": "bottom_right", "box": [166, 456, 190, 512]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {
+      "left": 14,
+      "right": 14,
+      "top": 12,
+      "bottom": 16
+    },
+    "minimum_frame_size": [29, 29]
+  },
+  "provider_layout": {
+    "font_size": 12,
+    "panel_height": 16,
+    "entry_height": 20,
+    "objective_step": 12,
+    "objective_count_bound": "not bounded by tracker.lua; quest-data dependent",
+    "unresolved_bounds": [
+      "trackerfontsize is free numeric text in pfQuest config and has no provider min/max",
+      "objective count per quest is data-dependent and has no bound in tracker.lua"
+    ],
+    "height_formula": "panel_height + entry_count * entry_height + objective_count * objective_step"
+  },
+  "scenarios": [
+    {
+      "id": "empty-provider",
+      "mode": "QUEST_TRACKING",
+      "configuration": {"trackerfontsize": "12", "trackerexpand": "1"},
+      "frame": [200, 16],
+      "preview_frame": [200, 16],
+      "entry_count": 0,
+      "objective_count": 0,
+      "zones": {
+        "toolbar_safe": [14, 0, 186, 16]
+      },
+      "regions": [
+        {"id": "toolbar.quest", "kind": "icon", "box": [1, 1, 15, 15], "zone": "toolbar_safe"},
+        {"id": "toolbar.close", "kind": "icon", "box": [185, 1, 199, 15], "zone": "toolbar_safe"}
+      ]
+    },
+    {
+      "id": "quest-short-default-font",
+      "mode": "QUEST_TRACKING",
+      "configuration": {"trackerfontsize": "12", "trackerexpand": "1"},
+      "frame": [130, 104],
+      "preview_frame": [130, 104],
+      "entry_count": 2,
+      "objective_count": 4,
+      "zones": {
+        "toolbar_safe": [14, 0, 116, 16],
+        "reading_safe": [14, 12, 116, 88]
+      },
+      "regions": [
+        {"id": "toolbar.quest", "kind": "icon", "box": [1, 1, 15, 15], "zone": "toolbar_safe"},
+        {"id": "toolbar.close", "kind": "icon", "box": [115, 1, 129, 15], "zone": "toolbar_safe"},
+        {"id": "entry.first.icon", "kind": "icon", "box": [2, 20, 14, 32], "zone": "reading_safe"},
+        {"id": "entry.first.title", "kind": "text", "box": [16, 20, 120, 32], "zone": "reading_safe"},
+        {"id": "entry.last.objective", "kind": "text", "box": [20, 90, 120, 102], "zone": "reading_safe"}
+      ]
+    },
+    {
+      "id": "quest-typical-default-font",
+      "mode": "QUEST_TRACKING",
+      "configuration": {"trackerfontsize": "12", "trackerexpand": "1"},
+      "frame": [230, 256],
+      "preview_frame": [230, 256],
+      "entry_count": 6,
+      "objective_count": 10,
+      "zones": {
+        "toolbar_safe": [14, 0, 216, 16],
+        "reading_safe": [14, 12, 216, 240]
+      },
+      "regions": [
+        {"id": "toolbar.quest", "kind": "icon", "box": [1, 1, 15, 15], "zone": "toolbar_safe"},
+        {"id": "toolbar.close", "kind": "icon", "box": [215, 1, 229, 15], "zone": "toolbar_safe"},
+        {"id": "entry.first.icon", "kind": "icon", "box": [2, 20, 14, 32], "zone": "reading_safe"},
+        {"id": "entry.first.title", "kind": "text", "box": [16, 20, 220, 32], "zone": "reading_safe"},
+        {"id": "entry.last.objective", "kind": "text", "box": [20, 242, 220, 254], "zone": "reading_safe"}
+      ]
+    },
+    {
+      "id": "quest-dense-default-font",
+      "mode": "QUEST_TRACKING",
+      "configuration": {"trackerfontsize": "12", "trackerexpand": "1"},
+      "frame": [330, 420],
+      "preview_frame": [330, 420],
+      "entry_count": 10,
+      "objective_count": 17,
+      "zones": {
+        "toolbar_safe": [14, 0, 316, 16],
+        "reading_safe": [14, 12, 316, 404]
+      },
+      "regions": [
+        {"id": "toolbar.quest", "kind": "icon", "box": [1, 1, 15, 15], "zone": "toolbar_safe"},
+        {"id": "toolbar.close", "kind": "icon", "box": [315, 1, 329, 15], "zone": "toolbar_safe"},
+        {"id": "entry.first.icon", "kind": "icon", "box": [2, 20, 14, 32], "zone": "reading_safe"},
+        {"id": "entry.first.title", "kind": "text", "box": [16, 20, 320, 32], "zone": "reading_safe"},
+        {"id": "entry.last.objective", "kind": "text", "box": [20, 406, 320, 418], "zone": "reading_safe"}
+      ]
+    },
+    {
+      "id": "quest-maximum-entry-count-default-font",
+      "mode": "QUEST_TRACKING",
+      "configuration": {"trackerfontsize": "12", "trackerexpand": "0"},
+      "frame": [330, 516],
+      "preview_frame": [330, 516],
+      "entry_count": 25,
+      "objective_count": 0,
+      "zones": {
+        "toolbar_safe": [14, 0, 316, 16],
+        "reading_safe": [14, 12, 316, 500]
+      },
+      "regions": [
+        {"id": "toolbar.quest", "kind": "icon", "box": [1, 1, 15, 15], "zone": "toolbar_safe"},
+        {"id": "toolbar.close", "kind": "icon", "box": [315, 1, 329, 15], "zone": "toolbar_safe"},
+        {"id": "entry.first.icon", "kind": "icon", "box": [2, 20, 14, 32], "zone": "reading_safe"},
+        {"id": "entry.first.title", "kind": "text", "box": [16, 20, 320, 32], "zone": "reading_safe"},
+        {"id": "entry.last.title", "kind": "text", "box": [16, 500, 320, 512], "zone": "reading_safe"}
+      ]
+    },
+    {
+      "id": "database-six-entries-default-font",
+      "mode": "DATABASE_TRACKING",
+      "configuration": {"trackerfontsize": "12"},
+      "frame": [230, 136],
+      "preview_frame": [230, 136],
+      "entry_count": 6,
+      "objective_count": 0,
+      "zones": {
+        "toolbar_safe": [14, 0, 216, 16],
+        "reading_safe": [14, 12, 216, 120]
+      },
+      "regions": [
+        {"id": "toolbar.quest", "kind": "icon", "box": [1, 1, 15, 15], "zone": "toolbar_safe"},
+        {"id": "toolbar.close", "kind": "icon", "box": [215, 1, 229, 15], "zone": "toolbar_safe"},
+        {"id": "entry.first.icon", "kind": "icon", "box": [2, 20, 14, 32], "zone": "reading_safe"},
+        {"id": "entry.first.title", "kind": "text", "box": [16, 20, 220, 32], "zone": "reading_safe"},
+        {"id": "entry.last.title", "kind": "text", "box": [16, 120, 220, 132], "zone": "reading_safe"}
+      ]
+    },
+    {
+      "id": "giver-six-entries-default-font",
+      "mode": "GIVER_TRACKING",
+      "configuration": {"trackerfontsize": "12"},
+      "frame": [230, 136],
+      "preview_frame": [230, 136],
+      "entry_count": 6,
+      "objective_count": 0,
+      "zones": {
+        "toolbar_safe": [14, 0, 216, 16],
+        "reading_safe": [14, 12, 216, 120]
+      },
+      "regions": [
+        {"id": "toolbar.quest", "kind": "icon", "box": [1, 1, 15, 15], "zone": "toolbar_safe"},
+        {"id": "toolbar.close", "kind": "icon", "box": [215, 1, 229, 15], "zone": "toolbar_safe"},
+        {"id": "entry.first.icon", "kind": "icon", "box": [2, 20, 14, 32], "zone": "reading_safe"},
+        {"id": "entry.first.title", "kind": "text", "box": [16, 20, 220, 32], "zone": "reading_safe"},
+        {"id": "entry.last.title", "kind": "text", "box": [16, 120, 220, 132], "zone": "reading_safe"}
+      ]
+    }
+  ]
+}

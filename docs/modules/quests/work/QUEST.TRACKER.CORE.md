@@ -9,7 +9,7 @@
 - 暂缓范围：QT-B1 的 `ENTRY.FOCUS`、`ENTRY.TRACKED`、`ENTRY.COMPLETE`，
   以及 QT-A2 的 `HEADER.*` 与七个 provider 工具 Button；保留 provider
   对象和行为合同，不创建这些自定义覆盖层
-- 子状态：QT-A1 `runtime-exported-temporary / user-accepted exception`；
+- 子状态：QT-A1 `runtime-exported-temporary / display-region-blocked`；
   QT-B1 `scope-deferred / user-paused`
 - 项目阶段：`P5`
 - 操作：`export / integrate`
@@ -41,11 +41,19 @@
   `c6b1f64034fa69f01709403e592c3350445c9a6739f4b559242be48831666c61`
 - exporter／adapter：`tools/build_quest_tracker_paper_v1.py` /
   `addon/AzerothExpeditionUI/Modules/Quests.lua` runtime contract `1.8`
-- 本地验证：exporter 重跑哈希稳定；Python 编译、quest design contract、
-  repository contract、asset workflow skill contract、Quest Lua smoke 与
-  `git diff --check` 全部通过
-- 下一门禁：在 Turtle WoW 实机验证动态宽高、九宫格接缝、工具条 fallback、
-  文字可读性和 provider 交互。QT-B1／A2 均保持暂缓
+- 实际展示区域合同：
+  `tools/specs/quest_tracker_display_region_v1.json`
+- 展示区域报告：
+  `generated/quests/QT/QT-A1/display-region-audit/display-region-report.json` /
+  SHA-256
+  `511dcffcf9bbb93a9e969c75d3dcb1fe10711258be85442044e3450af261801c` /
+  `fail / 35 violations`
+- 本地验证：atlas 九格采样完整覆盖可见区；exporter 重跑哈希稳定；Python
+  编译、quest design contract、repository contract、asset workflow skill
+  contract 与 Quest Lua smoke 通过。实际展示区域门禁失败，不能进入 P6
+- 下一门禁：先修正 paper 装饰边与 provider live 内容的几何合同，并以真实
+  provider 高度重做本地确定性预演；之后才在 Turtle WoW 验证。QT-B1／A2
+  均保持暂缓
 
 ## 组件合同
 
@@ -143,8 +151,11 @@ provider 合同。任何固定尺寸效果图都不能覆盖 `130..330px` 动态
 - 目标：只确认 tracker 主体在高密度真实游戏场景下的整体轮廓、连续纸面、
   内容层级、综合色重和反馈节奏；七个工具 Button 不参与本轮方向判断。
 - Canvas：`1536 × 1024` 横向游戏画面裁切。
-- 目标 Frame：右侧 `QUEST_TRACKING`；确定性预演按约 `330 × 865 UI px`、
-  `100%` UI 像素呈现，纸面从顶部直接开始。
+- 目标 Frame：右侧 `QUEST_TRACKING`。历史确定性预演使用
+  `330 × 865 UI px` 容量包络表达高密度视觉方向；`2026-07-31` 的源码复算
+  证明它不是十任务／十七目标在默认 `12px` 字体下的真实 provider 实例，
+  后者实际为 `330 × 420 UI px`。因此该图只保留材料／综合色方向证据，不再
+  作为精确 Frame 几何证据。
 - 真实密度：十个任务、十七条目标；一条 focus、两条 tracked、两条
   complete；任务名、等级、百分比和目标保持 provider 的三层动态信息结构。
 - 暂缓边界：预演不绘制 `tracker.panel`、16px 工具条、皮带、徽记或七个
@@ -217,8 +228,9 @@ conda run -n py312 python \
   `a49b3913591f32b305e18b9802cb3317a1a329f8692af99e7580b679b1f8f360`
 - ImageGen：`0/0`
 - 本地渲染错误：`0`
-- 真实 Frame／密度：约 `330 × 865`、右上位置；十个任务、十七条目标、
-  一 focus、两 tracked、两 complete 全部可见。
+- 历史容量包络／密度：`330 × 865`、右上位置；十个任务、十七条目标、
+  一 focus、两 tracked、两 complete 全部可见。该高度不是 provider 公式
+  结果，精确几何证据已由后续展示区域复核取代。
 - 内部结论：`displayable`。布局、层级、比例和配色角色足以交给用户判断；
   手绘轮廓、纸皮微纹理、磨损、Alpha 和切片均非权威。
 
@@ -230,8 +242,9 @@ conda run -n py312 python \
 - 当前具体模拟版本：`QT-SIM V2`
 - 用户结论与日期：`confirmed / 2026-07-31`；用户回复“继续”
 - 确认并写回生产正文的可见条款：
-  - tracker 主体保持贴近屏幕右侧的窄长纵向行军便笺；在代表性最高密度下
-    约为 `330 × 865 UI px`，活动纸面从顶部直接开始；
+  - tracker 主体保持贴近屏幕右侧的纵向行军便笺；历史确认图使用
+    `330 × 865 UI px` 容量包络，活动纸面从顶部直接开始。该固定高度不再
+    作为 runtime 几何授权，真实高度必须由 provider 公式重新确认；
   - 第一眼必须是单张厚实、耐用、从公会卷宗抽出的野外便笺，不是双页书、
     卷轴、现代任务卡或透明 HUD；顶部略有手工不规则，底部克制撕裂；
   - 两侧和底部以少量错层纸页形成可感知厚度，但不能围成规则边框；中部保持
@@ -820,14 +833,17 @@ source-layout compositing、进一步内缩和背景替换。
 色键；不得仅凭透明化成功晋级。
 
 每个达到可预演门禁的候选都必须使用“真实排版 + 新 UI”做确定性模拟，而不是
-只展示孤立资产：
+只展示孤立资产。历史 `130 × 180`／`230 × 500`／`330 × 865`／
+`230 × 500` 是人工固定容量画布，已在 `2026-07-31` 展示区域复核中作废为
+精确实例证据。默认 `12px` provider 公式的当前必查实例为：
 
-- `130 × 180`：最窄／短内容或空状态，验证 A1 端帽、中心延展和页边厚度；
-- `230 × 500`：`QUEST_TRACKING`，至少六个任务、展开目标、focus、tracked
-  与 complete 状态；
-- `330 × 865`：接近当前实机最高密度，最多可见内容和长中文换行；
-- 另以 `230 × 500` 覆盖 `DATABASE_TRACKING` 或 `GIVER_TRACKING` 的一组
-  代表性动态条目，验证同一 A1 shell 不依赖任务模式专属烘焙内容；
+- `200 × 16`：空 tracker，验证工具条和九宫格最小高度；
+- `130 × 104`：两任务／四目标；
+- `230 × 256`：六任务／十目标；
+- `330 × 420`：十任务／十七目标；
+- `330 × 516`：provider 上限二十五任务、目标折叠；
+- `230 × 136`：六条 `DATABASE_TRACKING`，无 objective FontString；
+- `230 × 136`：六条 `GIVER_TRACKING`，无 objective FontString；
 - 动态文字、目标、百分比和节点图标使用真实 pfQuest 层级重新排版；
 - 预演只装配 QT-A1／B1 候选，不虚构 QT-A2；真实 `16px` 工具条与七个
   provider Button 必须以当前 provider fallback 可见，并明确标记为
@@ -1160,22 +1176,70 @@ source-layout compositing、进一步内缩和背景替换。
   `8c6d79c04bc6f89537bce9543ed2c66b861b9562fd2a00b474dd13f3b7fafefb`；
   总览
   `aad8a8fb800e0932ddd9cf7e2430ba49bf29a0039bf713bdd1fd5c350758a5ea`。
+  这些图的固定高度现只保留为历史容量包络，不再构成“真实排版”门禁证据。
+
+## 实际展示区域复核 — 2026-07-31
+
+- 结论：`fail / display-region-blocked / P5`。runtime 文件仍保留，但不能
+  进入 P6；本轮没有改写 provider 或 adapter 布局。
+- 合同：
+  `tools/specs/quest_tracker_display_region_v1.json`。坐标以 tracker 左上为
+  原点、右下排他，读取 `pfQuest/tracker.lua` 的默认 `fontsize=12`、
+  `panelheight=16`、`entryheight=20` 和
+  `height = panel + entries × entryheight + objectives × fontsize`。
+- 报告：
+  `generated/quests/QT/QT-A1/display-region-audit/display-region-report.json`，
+  SHA-256
+  `511dcffcf9bbb93a9e969c75d3dcb1fe10711258be85442044e3450af261801c`；
+  七个场景全部失败，加一项 provider 边界未冻结，共 `35` 项，第一失败码
+  `FRAME_BELOW_NINE_SLICE_MINIMUM`。
+- 已通过：runtime atlas `256 × 512` 的九个采样盒无越界、无重叠、无缺口，
+  精确覆盖可见区 `[0,0,190,512]`；普通尺寸下九宫格可铺满 Frame。
+- 空状态失败：provider 高度为 `16px`，低于 manifest 声明的
+  `29px` 最小高度。adapter 会把上／下端帽压为约 `7px`／`8px` 并保留
+  `1px` 中心，因此不会留缝，但原 `12px`／`16px` 纸边美术被挤压，不能称为
+  按合同显示。
+- 内容安全失败：纸面装饰 cap 为左／右 `14px`、上 `12px`、下 `16px`；
+  provider 首个节点图标位于 `x=2..14`，完全压在左边缘；标题／目标的右边界
+  为 `width-10`，进入右 cap `4px`；最外侧 quest／close 工具 icon 分别越过
+  左／右工具安全区 `13px`；最后一条目标在默认字体下进入底部撕裂 cap
+  `14px`，数据库最后标题进入 `12px`。
+- provider 边界未冻结：`trackerfontsize` 是可输入任意数字的文本配置，
+  `tracker.lua` 没有 min／max；单任务 objective 数量也由数据决定且没有
+  provider 上限。本次报告只以默认 `12px` 与已声明场景作确定性复核，P6 前
+  必须冻结项目支持范围并补测。
+- 旧预演失真：两任务／四目标、六任务／十目标、十任务／十七目标和六条
+  database 的真实高度分别为 `104`、`256`、`420`、`136px`，而旧图使用
+  `180`、`500`、`865`、`500px`，额外制造 `76`、`244`、`445`、`364px`
+  不存在的底部留白，遮蔽了最后一行与撕裂底边冲突。
+- 修正后的确定性预演：
+  `generated/quests/QT/QT-A1/display-region-audit/runtime-real-layout/`；
+  `review.json` SHA-256
+  `1be7cff5baf0b98f0d60c27a3db30ca0bf1dac93a0dd0f14654aba11ec27d912`，
+  总览 SHA-256
+  `19466df28049d2063117d78a981f926b8a278ce9c8f649a91b0c608bc4401efa`。
+  工具条黑底已按 adapter 真实行为移除，只显示 provider 七枚 icon；数据库
+  与任务给予者模式不再虚构 objective 行；另覆盖空状态和二十五条上限。
+- 下一步必须先选择并模拟新的几何策略：把纸面装饰端帽移到 provider 内容盒
+  外侧，或在不改变 provider 功能的前提下建立真实内边距／重排 live anchors。
+  该选择会改变可见比例，需要新的本地几何方向确认；不能直接进入 ImageGen。
 
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
 |---|---|---|---|
 | `QT-SIM V1` | 本地 specification、renderer、主图／局部图 SHA；ImageGen `0/0` | `superseded-by-user-priority` | 移除低优先级工具条，聚焦 tracker 主体 |
-| `QT-SIM V2` | 本地 specification、renderer、主图／局部图 SHA；用户于 `2026-07-31` 回复“继续”；ImageGen `0/0` | `simulation-confirmed / P2` | 可见方向已转写；不得跳过独立生产授权 |
-| `QT-A1 V1` | raw 循环 `5/5` 失败事实 + attempt 4 确定性 RGBA／manifest／九宫格 TGA／background-only 四景 | `runtime-exported-temporary / P5 / user-accepted exception` | Turtle WoW 验证动态尺寸、接缝与可读性 |
+| `QT-SIM V2` | 本地 specification、renderer、主图／局部图 SHA；用户于 `2026-07-31` 回复“继续”；ImageGen `0/0` | `direction-confirmed / exact-geometry-superseded / P2` | 材料方向保留；cap／padding 新方案必须按 provider 公式重做本地模拟 |
+| `QT-A1 V1` | raw 循环 `5/5` 失败事实 + attempt 4 确定性 RGBA／manifest／九宫格 TGA／provider 公式展示区域复核 | `runtime-exported-temporary / display-region-blocked / P5` | 先修正 paper cap 与 live 内容的几何合同并重做精确模拟 |
 | `QT-B1 V1` | attempt 1 fixed session、raw、归一化透明稿与四景真实排版 SHA | `scope-deferred / user-paused / 1/5` | 不执行旧 V1.r1；未来重开需新模拟、新版本与新授权 |
 | `QT-A2 V1` | 无 ImageGen 调用；历史正文仅在 Git history | `scope-deferred / P2` | 未来重开时先做独立模拟和新授权 |
 
 ## 下一门禁
 
-本地门禁已通过：exporter 重跑保持 source／TGA 哈希，Python 编译、quest
-design contract、repository contract、asset workflow skill contract、Lua
-smoke 与 `git diff --check` 全部通过；smoke 覆盖 pfQuest 晚加载、九个
-Texture、动态 resize、provider `OnUpdate` 保留和刷新幂等。当前保持 `P5`，
-等待 Turtle WoW 实机验证；不得以本地 smoke 升为 P6。QT-B1／QT-A2 均
-保持 scope-deferred，不再调用 ImageGen。
+静态实现门禁仍通过：exporter 重跑保持 source／TGA 哈希，Python 编译、
+quest design contract、repository contract、asset workflow skill contract
+与 Lua smoke 通过；smoke 覆盖 pfQuest 晚加载、九个 Texture、动态 resize、
+provider `OnUpdate` 保留和刷新幂等。但实际展示区域门禁明确失败，当前保持
+`P5 / display-region-blocked`，不能直接进入 Turtle WoW P6 验收。下一步是
+本地提出并模拟新的 cap／padding 几何；QT-B1／QT-A2 均保持
+scope-deferred，不再调用 ImageGen。

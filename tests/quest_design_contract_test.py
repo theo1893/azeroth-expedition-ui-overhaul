@@ -49,6 +49,12 @@ def main() -> None:
     tracker_sim_spec = json.loads(
         tracker_sim_spec_path.read_text(encoding="utf-8")
     )
+    tracker_display_spec_path = (
+        ROOT / "tools" / "specs" / "quest_tracker_display_region_v1.json"
+    )
+    tracker_display_spec = json.loads(
+        tracker_display_spec_path.read_text(encoding="utf-8")
+    )
     tracker_review_path = (
         ROOT / "tools" / "review_quest_tracker_candidate_v1.py"
     )
@@ -60,10 +66,11 @@ def main() -> None:
             "chroma_key",
             "nine_slice",
             "three_slice",
-            "real-layout-short-130x180.png",
-            "real-layout-quest-230x500.png",
-            "real-layout-dense-330x865.png",
-            "real-layout-database-230x500.png",
+            "provider_frame_height",
+            "PROVIDER_PANEL_HEIGHT = 16",
+            "PROVIDER_ENTRY_HEIGHT = math.ceil",
+            "real-layout-{label}-{width}x{height}.png",
+            "superseded_fixed_capacity_previews",
             "tracker_",
             "NotoSansSC-Medium.ttf",
             "B1_ATLAS_SIZE = (1024, 768)",
@@ -359,6 +366,9 @@ def main() -> None:
             "确认主体方向",
             "`P3 scope-deferred / user-paused / 1/5`",
             "`scope-deferred 0/5`",
+            "`display-region-blocked`",
+            "`104/256/420/516/136px`",
+            "`FRAME_BELOW_NINE_SLICE_MINIMUM`",
             "QUEST.TRACKER.CORE.md",
             "NPC Quest／Gossip",
             "QL-A1_SourceManifest_v1.json",
@@ -373,7 +383,7 @@ def main() -> None:
         tracker_work,
         (
             "pfQuest 任务追踪核心工作文件 — QT V2",
-            "`runtime-exported-temporary / user-accepted exception`",
+            "`runtime-exported-temporary / display-region-blocked`",
             "`pfQuest 7.0.1`",
             "`pfQuest-turtle 7.0.2`",
             "`imagegen-0-143-0`",
@@ -482,6 +492,14 @@ def main() -> None:
             "ff6bf0af0642715894b6dcc7344fb3dd966b947ff6b56e3426197697af6c4bae",
             "f6da60fd48f6a6dee8d37bfc6105880a5421dc97d08e44ce97144e2a15bd6fa7",
             "tools/review_quest_tracker_candidate_v1.py",
+            "tools/specs/quest_tracker_display_region_v1.json",
+            "`fail / 35 violations`",
+            "`FRAME_BELOW_NINE_SLICE_MINIMUM`",
+            "`130 × 104`",
+            "`230 × 256`",
+            "`330 × 420`",
+            "`330 × 516`",
+            "`230 × 136`",
             "`internal-rejected / repair-prepared / P3`",
             "`candidate-rejected / repair-budget-exhausted / P3`",
         ),
@@ -515,6 +533,50 @@ def main() -> None:
         == "../../generated/quests/QT/simulation/QT-SIM-V2/"
         "quest_tracker_core_local_geometry_v2.png"
     )
+    assert tracker_display_spec["schema"] == (
+        "aeui-display-region-contract-v1"
+    )
+    assert tracker_display_spec["component"] == "QUEST.TRACKER.SHELL"
+    assert tracker_display_spec["atlas"]["visible_bbox"] == [0, 0, 190, 512]
+    assert tracker_display_spec["nine_slice"]["caps"] == {
+        "left": 14,
+        "right": 14,
+        "top": 12,
+        "bottom": 16,
+    }
+    assert tracker_display_spec["nine_slice"]["minimum_frame_size"] == [29, 29]
+    provider_layout = tracker_display_spec["provider_layout"]
+    assert provider_layout["unresolved_bounds"] == [
+        (
+            "trackerfontsize is free numeric text in pfQuest config and has no "
+            "provider min/max"
+        ),
+        (
+            "objective count per quest is data-dependent and has no bound in "
+            "tracker.lua"
+        ),
+    ]
+    scenario_frames = {
+        scenario["id"]: scenario["frame"]
+        for scenario in tracker_display_spec["scenarios"]
+    }
+    assert scenario_frames == {
+        "empty-provider": [200, 16],
+        "quest-short-default-font": [130, 104],
+        "quest-typical-default-font": [230, 256],
+        "quest-dense-default-font": [330, 420],
+        "quest-maximum-entry-count-default-font": [330, 516],
+        "database-six-entries-default-font": [230, 136],
+        "giver-six-entries-default-font": [230, 136],
+    }
+    for scenario in tracker_display_spec["scenarios"]:
+        expected_height = (
+            provider_layout["panel_height"]
+            + scenario["entry_count"] * provider_layout["entry_height"]
+            + scenario["objective_count"] * provider_layout["objective_step"]
+        )
+        assert scenario["frame"][1] == expected_height
+        assert scenario["preview_frame"] == scenario["frame"]
     assert "Create a source atlas containing exactly ten separate art objects" not in (
         tracker_work
     )
@@ -1351,6 +1413,16 @@ def main() -> None:
     assert tracker_runtime_manifest["frame_contract"][
         "row_overlays"
     ] == "none; QT-B1 is scope-deferred"
+    display_region_conformance = tracker_runtime_manifest["frame_contract"][
+        "display_region_conformance"
+    ]
+    assert display_region_conformance["status"] == "display-region-blocked"
+    assert display_region_conformance["contract"] == (
+        "tools/specs/quest_tracker_display_region_v1.json"
+    )
+    assert display_region_conformance["first_failure"] == (
+        "FRAME_BELOW_NINE_SLICE_MINIMUM"
+    )
     assert tracker_runtime_manifest["implementation"]["imagegen_calls"] == 0
     assert tracker_runtime_manifest["implementation"]["game_validated"] is False
     tracker_runtime_path = ROOT / tracker_runtime_manifest["runtime"]["file"]

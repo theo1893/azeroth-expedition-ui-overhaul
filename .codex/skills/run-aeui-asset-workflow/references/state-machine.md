@@ -15,10 +15,11 @@
 | `prompt-authorized` | `P3` | 对应模拟已确认；用户看到并明确确认最终生产正文、不可变修复边界与五次实际生图预算；授权版本已提交 | work、模块进度 | 固定执行器第 1 次正式资产生图 |
 | `candidate-raw` | `P3` | 尝试编号、raw 路径、执行器与会话记录 | 被忽略的 `generated/`；work 执行记录 | 本次完整内部审查 |
 | `repair-prepared` | `P3` | 前次失败门禁、保留区域、完整 `.rN` 修复正文、边界复核、累计实际生图少于 5 次 | 同一 work 与 Git 历史 | 固定执行器下一次实际生图 |
-| `candidate-reviewed` | `P3` | 语义、结构、风格、装配和技术证据；`100%` runtime 尺寸、真实对象数量、现实信息密度和当前 accepted/runtime UI 的真实排版预演 | 被忽略的预演；review 记录 | 用户视觉复审 |
+| `candidate-reviewed` | `P3` | 语义、结构、风格、装配和技术证据；`100%` runtime 尺寸、真实对象数量、现实信息密度和当前 accepted/runtime UI 的真实排版预演；实际展示区域报告通过 | 被忽略的预演／区域报告；review 记录 | 用户视觉复审 |
 | `candidate-rejected` | 不晋级 | 用户否决，或第 5 次内部审查仍失败；日期与具体失败门禁 | work 尝试摘要、模块进度 | 用户审核后新版本或停止 |
 | `source-accepted` | `P4` | 用户明确接受具体候选 | `assets/source/`、manifest | runtime 合同与导出 |
-| `runtime-exported` | `P5` | 确定性导出、UV/manifest、Lua/XML、静态测试 | addon runtime、工具、文档 | 目标客户端实机 |
+| `display-region-blocked` | `P5` 文件已导出但未合格 | 最终 atlas／adapter／provider 的实际展示区域报告失败 | 保留现有 runtime、修正合同／adapter／工具与 work | 重新导出并通过展示区域门禁 |
+| `runtime-exported` | `P5` | 确定性导出、UV/manifest、Lua/XML、静态测试；最终 atlas、adapter 与 provider 的实际展示区域报告通过 | addon runtime、工具、文档 | 目标客户端实机 |
 | `game-validated` | `P6` | Turtle WoW `1.18.1` 场景截图与交互证据 | 模块进度的验收记录 | 收口清单 |
 | `closure-planned` | `P6` | 最终保留集、精确删除集与共享依赖审计 | work 内临时计划 | 用户确认后执行清理与复测 |
 | `component-closed` | `P6-C` | work 与中间产物已清理；最终路径、链接与测试通过 | 四份模块长期文档、manifest 与最终产物 | 终态 |
@@ -54,6 +55,7 @@ candidate-raw (attempt 5)
   → candidate-rejected / repair-budget-exhausted
 candidate-reviewed → user rejection → candidate-rejected → new prompt version
 runtime-exported → static/game failure → corrected exporter/runtime, remain P4/P5
+display-region-blocked → corrected geometry/export → runtime-exported
 ```
 
 生成前模拟固定为本地确定性几何渲染，实际 ImageGen 为 `0/0`，没有上传范围、
@@ -95,10 +97,13 @@ provider 生成证据的目录、权限、CLI、递归、传输、上传、连�
   不能替代这一门，且本次必须通过完整审查清单。每个 generate／edit 输出还
   必须有 `100%` runtime 尺寸、真实对象数量、现实信息密度、实际层序和当前
   accepted/runtime UI 的真实排版预演；稀疏样例与 contact sheet 不构成该
-  门禁证据。
+  门禁证据。预演 Frame 必须由真实 provider 布局公式计算，并通过
+  `display-region-gate.md`；固定容量画布不能冒充实际实例。
 - `candidate-reviewed → source-accepted`：必须由用户明确接受具体候选。
 - `source-accepted → runtime-exported`：必须已知真实 Frame 几何、切片、UV、
-  安全区、拉伸规则和状态映射。
+  安全区、拉伸规则和状态映射，并以最终 atlas／adapter／provider 再次通过
+  实际展示区域门禁。已有导出首次补查失败时保留文件，但标记
+  `display-region-blocked`，不得进入 P6。
 - `runtime-exported → game-validated`：必须有目标客户端证据。
 - `game-validated → closure-planned`：必须验证最终 source、prompt、
   manifest、runtime、实现和 P6 证据，并列出精确保留／删除清单。
