@@ -46,10 +46,11 @@
   inherit／ignore 职责写入执行正文，并把 atlas 可见蜡体收紧为 Quest Log
   约 `26px`、Tracker 约 `32px`。用户已于 `2026-07-31` 独立授权完整
   `QS-A1 V1`、固定 Image 1／2、受限同循环 Image 3 edit 与最多 `5` 次实际
-  ImageGen。attempt 1 已完成（`1/5`）：单物件、居中和真实展示区域通过；
-  `1254²` 原图、`981×970` bbox、纯绿背景及照片级高频蜡质失败。r2 已冻结
-  为缩小 bbox、净化背景、二维手绘降频和浅压印简化；功能等价完成前 runtime
-  不隐藏旧按钮。
+  ImageGen。attempt 2 已完成（`2/5`）：二维手绘、小尺寸罗盘＋羽毛笔和
+  真实展示区域通过；折算到 `1024²` 后 bbox 约 `548×551`，背景仍非纯绿，
+  固定原始画布仍为 `1254²`。用户在 r3 前要求增加少量周围火漆扩散；已将其
+  限制为计入既定总 bbox 的三至五处连体受压堆蜡，不允许分离蜡滴或第二
+  物件。功能等价完成前 runtime 不隐藏旧按钮。
 - 用户于 `2026-07-30` 将 Quest Log 选为当前首要大面积 UI；地图与角色因
   实机对象几何尚未完成，继续保持后续顺位。
 - Quest Log 真实对象合同：`P1` 完成，QL-A 当前处于 `P4–P5`；QL-B1
@@ -246,7 +247,7 @@ timer 或 failed 资产：provider 没有可用的公开状态来源。本项目
 
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
-| `QS-A1` | `QUEST.LOG.CHROME.SEAL` 与 `QUEST.TRACKER.HUB.SEAL` 共用母版；Tracker hub menu 只定义功能迁移边界 | `P3 attempt-01-reviewed / 1/5` | 提交 [QS-A1 V1.r1 审查与 V1.r2 完整修复正文](work/QUEST.SEALS.md)，以固定 Image 1／2 加紧邻 r1 的受限 Image 3 edit 执行 attempt 2 |
+| `QS-A1` | `QUEST.LOG.CHROME.SEAL` 与 `QUEST.TRACKER.HUB.SEAL` 共用母版；Tracker hub menu 只定义功能迁移边界 | `P3 attempt-02-reviewed / 2/5` | 提交 [QS-A1 V1.r2 审查与 V1.r3 完整修复正文](work/QUEST.SEALS.md)，以固定 Image 1／2 加紧邻 r2 的受限 Image 3 edit 执行 attempt 3 |
 
 QT-A1 临时 runtime 事实：
 
@@ -378,10 +379,11 @@ QT-A1 临时 runtime 事实：
 
 当前不依赖游戏设备的首要工作是继续
 [QS-A1 V1](work/QUEST.SEALS.md) 五次有界循环。attempt 1 已按真实
-Quest Log／Tracker 排版与三种 Tracker 宽度完成审查；显示区域通过，但源
-尺寸、安全边、纯绿背景和香草二维手绘视觉失败。当前 `1/5`，下一次必须固定
-Image 1／2，并只把紧邻 r1 作为 Image 3 修正同一物件的 bbox、背景、蜡质
-降频、浅压印与小尺寸辨识。流程错误不占额度，任一候选内部完整通过即停止。
+Quest Log／Tracker 排版与三种 Tracker 宽度完成审查。attempt 2 已让二维
+手绘与小尺寸符号通过，但折算 bbox 偏小且背景非纯绿；当前 `2/5`。下一次
+必须固定 Image 1／2，并只把紧邻 r2 作为 Image 3，收敛总 bbox、纯绿、
+外缘综合色，以及用户新增的三至五处连体受压火漆扩散。流程错误不占额度，
+任一候选内部完整通过即停止。
 该授权不允许自动接受 source、修改 runtime 或立即隐藏七个 provider
 Button。Tracker hub menu 必须先完成七项功能等价，旧 icon 才能在 runtime
 隐藏。

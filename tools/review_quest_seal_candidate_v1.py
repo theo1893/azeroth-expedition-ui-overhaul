@@ -140,17 +140,41 @@ def source_contract(
     bbox = metrics.get("transparent_bbox", [])
     if len(bbox) == 4:
         left, top, right, bottom = bbox
-        width = right - left
-        height = bottom - top
-        margins = [left, top, raw.width - right, raw.height - bottom]
+        raw_width = right - left
+        raw_height = bottom - top
+        raw_margins = [left, top, raw.width - right, raw.height - bottom]
+        scale_x = SOURCE_CANVAS[0] / raw.width
+        scale_y = SOURCE_CANVAS[1] / raw.height
+        canonical_bbox = [
+            left * scale_x,
+            top * scale_y,
+            right * scale_x,
+            bottom * scale_y,
+        ]
+        width = canonical_bbox[2] - canonical_bbox[0]
+        height = canonical_bbox[3] - canonical_bbox[1]
+        margins = [
+            canonical_bbox[0],
+            canonical_bbox[1],
+            SOURCE_CANVAS[0] - canonical_bbox[2],
+            SOURCE_CANVAS[1] - canonical_bbox[3],
+        ]
         center_error = [
-            abs((left + right) / 2 - raw.width / 2),
-            abs((top + bottom) / 2 - raw.height / 2),
+            abs(
+                (canonical_bbox[0] + canonical_bbox[2]) / 2
+                - SOURCE_CANVAS[0] / 2
+            ),
+            abs(
+                (canonical_bbox[1] + canonical_bbox[3]) / 2
+                - SOURCE_CANVAS[1] / 2
+            ),
         ]
     else:
-        width = height = 0
+        raw_width = raw_height = width = height = 0
+        raw_margins = [0, 0, 0, 0]
+        canonical_bbox = []
         margins = [0, 0, 0, 0]
-        center_error = [raw.width / 2, raw.height / 2]
+        center_error = [SOURCE_CANVAS[0] / 2, SOURCE_CANVAS[1] / 2]
     exact_background = (
         metrics["source_background_pixels"] > 0
         and metrics["source_background_exact_ratio"] == 1.0
@@ -168,10 +192,13 @@ def source_contract(
         "source_not_edge_clipped": min(margins) > 0,
     }
     return {
-        "visible_bbox_exclusive": bbox,
-        "visible_size": [width, height],
-        "safe_margins_ltrb": margins,
-        "center_error_xy": center_error,
+        "raw_visible_bbox_exclusive": bbox,
+        "raw_visible_size": [raw_width, raw_height],
+        "raw_safe_margins_ltrb": raw_margins,
+        "canonical_1024_bbox_exclusive": canonical_bbox,
+        "canonical_1024_visible_size": [width, height],
+        "canonical_1024_safe_margins_ltrb": margins,
+        "canonical_1024_center_error_xy": center_error,
         "checks": checks,
         "overall": "pass" if all(checks.values()) else "fail",
     }
