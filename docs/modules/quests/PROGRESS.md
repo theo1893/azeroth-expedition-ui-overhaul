@@ -46,7 +46,9 @@
   inherit／ignore 职责写入执行正文，并把 atlas 可见蜡体收紧为 Quest Log
   约 `26px`、Tracker 约 `32px`。用户已于 `2026-07-31` 独立授权完整
   `QS-A1 V1`、固定 Image 1／2、受限同循环 Image 3 edit 与最多 `5` 次实际
-  ImageGen；当前 `prompt-authorized / P3 / 0/5`。功能等价完成前 runtime
+  ImageGen。attempt 1 已完成（`1/5`）：单物件、居中和真实展示区域通过；
+  `1254²` 原图、`981×970` bbox、纯绿背景及照片级高频蜡质失败。r2 已冻结
+  为缩小 bbox、净化背景、二维手绘降频和浅压印简化；功能等价完成前 runtime
   不隐藏旧按钮。
 - 用户于 `2026-07-30` 将 Quest Log 选为当前首要大面积 UI；地图与角色因
   实机对象几何尚未完成，继续保持后续顺位。
@@ -244,7 +246,7 @@ timer 或 failed 资产：provider 没有可用的公开状态来源。本项目
 
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
-| `QS-A1` | `QUEST.LOG.CHROME.SEAL` 与 `QUEST.TRACKER.HUB.SEAL` 共用母版；Tracker hub menu 只定义功能迁移边界 | `P3 prompt-authorized / 0/5` | 提交已授权的 [QS-A1 V1](work/QUEST.SEALS.md)，随后运行固定执行器 attempt 1 并完成候选真实排版与展示区域审查 |
+| `QS-A1` | `QUEST.LOG.CHROME.SEAL` 与 `QUEST.TRACKER.HUB.SEAL` 共用母版；Tracker hub menu 只定义功能迁移边界 | `P3 attempt-01-reviewed / 1/5` | 提交 [QS-A1 V1.r1 审查与 V1.r2 完整修复正文](work/QUEST.SEALS.md)，以固定 Image 1／2 加紧邻 r1 的受限 Image 3 edit 执行 attempt 2 |
 
 QT-A1 临时 runtime 事实：
 
@@ -374,14 +376,15 @@ QT-A1 临时 runtime 事实：
 
 ## 下一步
 
-当前不依赖游戏设备的首要工作是执行已授权的
-[QS-A1 V1](work/QUEST.SEALS.md) 五次有界循环。`QUEST-SEALS-SIM-V2`
-已经确认；生产授权固定 Quest Log 书体外 `28 × 28` 盒、Tracker 顶部中央
-`34 × 34` 盒、同一枚暗旧酒红罗盘＋羽毛笔浅压印、固定两张锁定图，以及
-同循环前次输出仅可作为额外 Image 3 的冻结边界 edit。当前 `0/5`；流程错误
-不占额度，任一候选内部完整通过即停止。该授权不允许自动接受 source、
-修改 runtime 或立即隐藏七个 provider Button。Tracker hub menu 必须先完成
-七项功能等价，旧 icon 才能在 runtime 隐藏。
+当前不依赖游戏设备的首要工作是继续
+[QS-A1 V1](work/QUEST.SEALS.md) 五次有界循环。attempt 1 已按真实
+Quest Log／Tracker 排版与三种 Tracker 宽度完成审查；显示区域通过，但源
+尺寸、安全边、纯绿背景和香草二维手绘视觉失败。当前 `1/5`，下一次必须固定
+Image 1／2，并只把紧邻 r1 作为 Image 3 修正同一物件的 bbox、背景、蜡质
+降频、浅压印与小尺寸辨识。流程错误不占额度，任一候选内部完整通过即停止。
+该授权不允许自动接受 source、修改 runtime 或立即隐藏七个 provider
+Button。Tracker hub menu 必须先完成七项功能等价，旧 icon 才能在 runtime
+隐藏。
 
 QL-A2 保持 [runtime work](work/QUEST.LOG.GUTTER.md)，不得进入 `P6`／清理。
 Quest Log 静态兼容已完成，下一门禁是在游戏设备同时启用 pfQuest 与
