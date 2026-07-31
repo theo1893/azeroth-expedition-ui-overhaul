@@ -44,8 +44,10 @@
   不变，机器报告 `pass`、ImageGen `0/0`。用户于 `2026-07-31` 回复
   “进行下一步”确认 V2 外置锚点。`QS-A1 V1` 最终生产正文已将两张锁定图的
   inherit／ignore 职责写入执行正文，并把 atlas 可见蜡体收紧为 Quest Log
-  约 `26px`、Tracker 约 `32px`；当前正式 ImageGen `0/5`，等待独立授权。
-  功能等价完成前 runtime 不隐藏旧按钮。
+  约 `26px`、Tracker 约 `32px`。用户已于 `2026-07-31` 独立授权完整
+  `QS-A1 V1`、固定 Image 1／2、受限同循环 Image 3 edit 与最多 `5` 次实际
+  ImageGen；当前 `prompt-authorized / P3 / 0/5`。功能等价完成前 runtime
+  不隐藏旧按钮。
 - 用户于 `2026-07-30` 将 Quest Log 选为当前首要大面积 UI；地图与角色因
   实机对象几何尚未完成，继续保持后续顺位。
 - Quest Log 真实对象合同：`P1` 完成，QL-A 当前处于 `P4–P5`；QL-B1
@@ -242,7 +244,7 @@ timer 或 failed 资产：provider 没有可用的公开状态来源。本项目
 
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
-| `QS-A1` | `QUEST.LOG.CHROME.SEAL` 与 `QUEST.TRACKER.HUB.SEAL` 共用母版；Tracker hub menu 只定义功能迁移边界 | `P2 simulation-confirmed / production-final-awaiting-authorization` | 用户查看并独立授权 [QS-A1 V1](work/QUEST.SEALS.md) 最终正文、固定 Image 1／2、受限同循环 Image 3 edit 与最多 `5` 次实际 ImageGen |
+| `QS-A1` | `QUEST.LOG.CHROME.SEAL` 与 `QUEST.TRACKER.HUB.SEAL` 共用母版；Tracker hub menu 只定义功能迁移边界 | `P3 prompt-authorized / 0/5` | 提交已授权的 [QS-A1 V1](work/QUEST.SEALS.md)，随后运行固定执行器 attempt 1 并完成候选真实排版与展示区域审查 |
 
 QT-A1 临时 runtime 事实：
 
@@ -372,14 +374,14 @@ QT-A1 临时 runtime 事实：
 
 ## 下一步
 
-当前不依赖游戏设备的首要门禁是获得
-[QS-A1 V1](work/QUEST.SEALS.md) 的独立生产授权。`QUEST-SEALS-SIM-V2`
-已经确认；已冻结方向为 Quest Log 书体外 `28 × 28` 盒、Tracker 顶部中央
-`34 × 34` 盒、同一枚暗旧酒红罗盘＋羽毛笔浅压印，以及 Tracker 顶部
-`18px` 受控 outset。最终正文固定上传两张锁定图；同循环前次输出只可作为
-额外 Image 3 做冻结边界 edit；最多 `5` 次实际 ImageGen，流程错误不占额度。
-本次模拟确认仍不授权正式调用，也不授权立即隐藏七个 provider Button。
-Tracker hub menu 必须先完成七项功能等价，旧 icon 才能在 runtime 隐藏。
+当前不依赖游戏设备的首要工作是执行已授权的
+[QS-A1 V1](work/QUEST.SEALS.md) 五次有界循环。`QUEST-SEALS-SIM-V2`
+已经确认；生产授权固定 Quest Log 书体外 `28 × 28` 盒、Tracker 顶部中央
+`34 × 34` 盒、同一枚暗旧酒红罗盘＋羽毛笔浅压印、固定两张锁定图，以及
+同循环前次输出仅可作为额外 Image 3 的冻结边界 edit。当前 `0/5`；流程错误
+不占额度，任一候选内部完整通过即停止。该授权不允许自动接受 source、
+修改 runtime 或立即隐藏七个 provider Button。Tracker hub menu 必须先完成
+七项功能等价，旧 icon 才能在 runtime 隐藏。
 
 QL-A2 保持 [runtime work](work/QUEST.LOG.GUTTER.md)，不得进入 `P6`／清理。
 Quest Log 静态兼容已完成，下一门禁是在游戏设备同时启用 pfQuest 与

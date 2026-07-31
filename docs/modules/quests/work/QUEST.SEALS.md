@@ -3,15 +3,16 @@
 - 批次：`QS-A1`
 - 当前生产版本：`QS-A1 V1`
 - 已确认模拟：`QUEST-SEALS-SIM-V2`
-- 项目阶段：`P2`
-- 当前子状态：`simulation-confirmed / production-final-awaiting-authorization`
+- 项目阶段：`P3`
+- 当前子状态：`prompt-authorized`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - 正式 ImageGen：`0/5`
 - runtime：未修改
-- 下一门禁：用户查看并独立授权 `QS-A1 V1` 的最终生产正文、固定
-  Image 1／2、同循环前次输出的受限 edit 输入和最多 `5` 次实际 ImageGen
-  调用。模拟确认不等于生产授权。
+- 用户生产授权：`2026-07-31`；固定 Image 1／2、同循环紧邻前次输出仅可在
+  冻结修复边界内作为 Image 3 edit 输入、最多 `5` 次实际 ImageGen 调用，
+  流程错误不占额度。
+- 下一门禁：提交本授权状态后，以固定执行器运行 `QS-A1 V1` attempt 1。
 
 ## 组件合同
 
@@ -175,7 +176,7 @@ Tracker 使用 `34 × 34` 顶部中央盒并保持明显视觉重量；综合色
 
 ## 最终执行正文 — QS-A1 V1
 
-状态：`production-final / awaiting-user-authorization`。当前不可执行。
+状态：`production / authorized 2026-07-31`。必须按本正文原样执行。
 
 固定输入：
 
@@ -284,16 +285,19 @@ RGB 状态派生；不得自由重画、拉伸、旋转或改变轮廓。
 - 预算：最多 `5` 次实际 ImageGen generation／edit，含首次；流程错误在
   没有图片且没有 provider 生成证据时单列，不占额度。任一次内部完整通过
   立即停止；第 5 次仍失败则停止等待用户审核。
+- 用户授权原文：`确认授权 QS-A1 V1；允许每次上传固定 SHA 的 Image 1/2，
+  允许同循环紧邻前次输出仅在冻结修复边界内作为 Image 3 edit 输入；最多
+  5 次实际 ImageGen 调用；流程错误不占生图额度。`
 
 ## 执行记录
 
-- 日期：未执行
+- 日期：`2026-07-31` 已授权，尚未执行 attempt 1
 - 会话／结果 ID：无
 - 实际输入：无上传
 - 输出：无正式候选
 - 实际生图次数：`0/5`
 - 流程错误次数：`0`
-- 循环终态：未开始；模拟已确认，等待独立生产授权
+- 循环终态：未开始；`prompt-authorized`
 
 ## 审查记录
 
@@ -310,10 +314,10 @@ RGB 状态派生；不得自由重画、拉伸、旋转或改变轮廓。
 - 实际展示区域：机器报告 `pass`；Tracker paper outset `0px`，seal 顶部
   outset `18px`，不覆盖列表；屏幕顶缘 clamp 为 P5 pending。
 - 技术像素：模拟非生产资产，不执行 Alpha／色键／atlas 门禁。
-- 结论：`simulation-confirmed / production-final-awaiting-authorization`
+- 结论：`prompt-authorized / P3`
 - 用户结论与日期：V1 方向接受并要求修订位置／`2026-07-31`；
   V2 外置锚点确认／`2026-07-31`
-- 下一门禁：用户独立授权 `QS-A1 V1` 最终正文与五次循环。
+- 下一门禁：提交授权版本后执行 attempt 1。
 
 ## 尝试摘要
 
@@ -321,5 +325,6 @@ RGB 状态派生；不得自由重画、拉伸、旋转或改变轮廓。
 |---|---|---|---|
 | `QUEST-SEALS-SIM-V1` | 本地 specification、renderer、两张 `1536 × 1024` 预演与机器报告；用户于 `2026-07-31` 接受方向并指出 Quest Log 位置错误；ImageGen `0/0` | `direction-confirmed / quest-log-placement-invalidated` | 保留共享美术与 Tracker；Quest Log 不得落在翻页／书封 |
 | `QUEST-SEALS-SIM-V2` | Quest Log `[600,-18,28,28]`；可见书体 Alpha 重叠 `0`；两张预演与机器报告；用户于 `2026-07-31` 回复“进行下一步”；ImageGen `0/0` | `simulation-confirmed` | 展示并独立授权 `QS-A1 V1` 最终生产合同 |
+| `QS-A1 V1` | 用户于 `2026-07-31` 明确授权完整正文、固定 Image 1／2、受限同循环 Image 3 edit 与最多 `5` 次实际调用 | `prompt-authorized / 0/5` | 提交授权状态并执行 attempt 1 |
 
 正式生产尝试：无。
