@@ -1,0 +1,136 @@
+{
+  "canvas": {
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGBA",
+    "fill": "#344D50FF"
+  },
+  "output": "../../generated/quests/QT/simulation/QT-SIM-V1/quest_tracker_local_geometry_v1.png",
+  "fonts": {
+    "quest": {
+      "path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf",
+      "size": 14
+    },
+    "objective": {
+      "path": "addon/AzerothExpeditionUI/Media/Fonts/LXGWWenKaiGB-Medium.ttf",
+      "size": 13
+    },
+    "toolbar": {
+      "path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf",
+      "size": 9
+    }
+  },
+  "layers": [
+    {"type": "rect", "xy": [0, 0, 1535, 220], "fill": "#5C6B68FF"},
+    {"type": "rect", "xy": [0, 221, 1535, 460], "fill": "#42656AFF"},
+    {"type": "rect", "xy": [0, 461, 1535, 1023], "fill": "#34575DFF"},
+    {"type": "line", "points": [[0, 270], [1535, 270]], "fill": "#78908AFF", "width": 2},
+    {"type": "line", "points": [[0, 328], [1535, 328]], "fill": "#50757AFF", "width": 2},
+    {"type": "line", "points": [[0, 402], [1535, 402]], "fill": "#2E4C52FF", "width": 3},
+    {"type": "polygon", "points": [[0, 330], [1060, 248], [1180, 520], [390, 740], [0, 690]], "fill": "#5B4637FF", "outline": "#2A211CFF", "width": 3},
+    {"type": "line", "points": [[90, 330], [455, 720]], "fill": "#2F251FFF", "width": 3},
+    {"type": "line", "points": [[235, 318], [585, 690]], "fill": "#2F251FFF", "width": 3},
+    {"type": "line", "points": [[392, 305], [715, 655]], "fill": "#2F251FFF", "width": 3},
+    {"type": "line", "points": [[560, 292], [838, 620]], "fill": "#2F251FFF", "width": 3},
+    {"type": "line", "points": [[742, 278], [965, 580]], "fill": "#2F251FFF", "width": 3},
+    {"type": "line", "points": [[920, 264], [1082, 540]], "fill": "#2F251FFF", "width": 3},
+    {"type": "line", "points": [[0, 408], [1091, 310]], "fill": "#8B6C50FF", "width": 2},
+    {"type": "line", "points": [[0, 495], [1123, 366]], "fill": "#8B6C50FF", "width": 2},
+    {"type": "line", "points": [[0, 586], [1154, 428]], "fill": "#8B6C50FF", "width": 2},
+    {"type": "polygon", "points": [[0, 690], [390, 740], [580, 1023], [0, 1023]], "fill": "#7A6A52FF", "outline": "#40372DFF", "width": 3},
+    {"type": "ellipse", "xy": [588, 425, 650, 490], "fill": "#273334FF", "outline": "#9A7A45FF", "width": 3},
+    {"type": "polygon", "points": [[607, 485], [635, 485], [665, 645], [575, 645]], "fill": "#2D3B3CFF", "outline": "#1A2324FF", "width": 3},
+    {"type": "line", "points": [[600, 642], [555, 790]], "fill": "#1E2828FF", "width": 15},
+    {"type": "line", "points": [[640, 642], [684, 788]], "fill": "#1E2828FF", "width": 15},
+    {"type": "rounded_rect", "xy": [420, 962, 1115, 1023], "radius": 12, "fill": "#302923FF", "outline": "#8B6B3DFF", "width": 3},
+    {"type": "rect", "xy": [442, 972, 480, 1010], "fill": "#594A37FF", "outline": "#B08A4DFF", "width": 2},
+    {"type": "rect", "xy": [486, 972, 524, 1010], "fill": "#594A37FF", "outline": "#B08A4DFF", "width": 2},
+    {"type": "rect", "xy": [530, 972, 568, 1010], "fill": "#594A37FF", "outline": "#B08A4DFF", "width": 2},
+    {"type": "rect", "xy": [574, 972, 612, 1010], "fill": "#594A37FF", "outline": "#B08A4DFF", "width": 2},
+    {"type": "rect", "xy": [618, 972, 656, 1010], "fill": "#594A37FF", "outline": "#B08A4DFF", "width": 2},
+    {"type": "rect", "xy": [662, 972, 700, 1010], "fill": "#594A37FF", "outline": "#B08A4DFF", "width": 2},
+    {"type": "rect", "xy": [706, 972, 744, 1010], "fill": "#594A37FF", "outline": "#B08A4DFF", "width": 2},
+    {"type": "rect", "xy": [750, 972, 788, 1010], "fill": "#594A37FF", "outline": "#B08A4DFF", "width": 2},
+    {"type": "rect", "xy": [794, 972, 832, 1010], "fill": "#594A37FF", "outline": "#B08A4DFF", "width": 2},
+    {"type": "rect", "xy": [838, 972, 876, 1010], "fill": "#594A37FF", "outline": "#B08A4DFF", "width": 2},
+    {"type": "rect", "xy": [882, 972, 920, 1010], "fill": "#594A37FF", "outline": "#B08A4DFF", "width": 2},
+    {"type": "rect", "xy": [926, 972, 964, 1010], "fill": "#594A37FF", "outline": "#B08A4DFF", "width": 2},
+
+    {"type": "polygon", "points": [[1161, 84], [1498, 81], [1507, 922], [1494, 943], [1163, 940], [1152, 99]], "fill": "#241A16B8"},
+    {"type": "polygon", "points": [[1159, 83], [1488, 80], [1501, 916], [1488, 934], [1161, 933], [1154, 95]], "fill": "#6B4C35FF", "outline": "#3D2A20FF", "width": 3},
+    {"type": "polygon", "points": [[1164, 79], [1493, 79], [1498, 914], [1485, 929], [1167, 927], [1159, 90]], "fill": "#8B6744FF", "outline": "#4C3324FF", "width": 3},
+    {"type": "polygon", "points": [[1168, 77], [1490, 77], [1493, 906], [1486, 918], [1474, 914], [1462, 924], [1448, 918], [1436, 925], [1420, 917], [1405, 923], [1390, 916], [1374, 922], [1358, 915], [1340, 921], [1323, 915], [1305, 921], [1288, 914], [1270, 919], [1253, 913], [1236, 920], [1218, 914], [1200, 919], [1181, 913], [1166, 917], [1164, 88]], "fill": "#C3A56CFF", "outline": "#513729FF", "width": 3},
+    {"type": "polygon", "points": [[1171, 82], [1485, 82], [1487, 900], [1475, 910], [1458, 906], [1440, 913], [1420, 906], [1401, 911], [1381, 905], [1360, 911], [1340, 904], [1320, 910], [1300, 904], [1280, 909], [1260, 903], [1240, 909], [1220, 903], [1200, 909], [1170, 906]], "fill": "#C9AD75FF"},
+    {"type": "line", "points": [[1174, 105], [1483, 105]], "fill": "#A07B4DFF", "width": 1},
+
+    {"type": "polygon", "points": [[1163, 73], [1494, 73], [1488, 90], [1167, 90]], "fill": "#4E3029FF", "outline": "#2C1D19FF", "width": 2},
+    {"type": "line", "points": [[1168, 75], [1489, 75]], "fill": "#7D5143FF", "width": 2},
+    {"type": "ellipse", "xy": [1165, 76, 1173, 84], "fill": "#8E7045FF", "outline": "#483520FF", "width": 1},
+    {"type": "ellipse", "xy": [1483, 76, 1491, 84], "fill": "#8E7045FF", "outline": "#483520FF", "width": 1},
+
+    {"type": "rect", "xy": [1177, 74, 1191, 88], "fill": "#6E3137FF", "outline": "#B08A4DFF", "width": 1},
+    {"type": "text", "xy": [1184, 81], "text": "任", "font": "toolbar", "fill": "#E0C485FF", "anchor": "mm"},
+    {"type": "text", "xy": [1204, 81], "text": "库", "font": "toolbar", "fill": "#B99A5DFF", "anchor": "mm"},
+    {"type": "text", "xy": [1224, 81], "text": "人", "font": "toolbar", "fill": "#B99A5DFF", "anchor": "mm"},
+    {"type": "text", "xy": [1244, 81], "text": "查", "font": "toolbar", "fill": "#B99A5DFF", "anchor": "mm"},
+    {"type": "text", "xy": [1264, 81], "text": "清", "font": "toolbar", "fill": "#B99A5DFF", "anchor": "mm"},
+    {"type": "text", "xy": [1284, 81], "text": "设", "font": "toolbar", "fill": "#B99A5DFF", "anchor": "mm"},
+    {"type": "text", "xy": [1304, 81], "text": "×", "font": "toolbar", "fill": "#B99A5DFF", "anchor": "mm"},
+    {"type": "line", "points": [[1321, 80], [1466, 80]], "fill": "#321F1BFF", "width": 1},
+    {"type": "ellipse", "xy": [1469, 75, 1483, 88], "fill": "#715039FF", "outline": "#A88751FF", "width": 1},
+    {"type": "line", "points": [[1473, 84], [1479, 78]], "fill": "#C5A466FF", "width": 1},
+
+    {"type": "polygon", "points": [[1172, 281], [1484, 279], [1488, 292], [1486, 362], [1479, 369], [1175, 367], [1170, 354]], "fill": "#B38F5CFF"},
+    {"type": "polygon", "points": [[1486, 283], [1492, 291], [1486, 299]], "fill": "#6D2F38FF"},
+    {"type": "polygon", "points": [[1486, 673], [1492, 681], [1486, 689]], "fill": "#6D2F38FF"},
+
+    {"type": "ellipse", "xy": [1175, 108, 1181, 114], "fill": "#8A6B38FF"},
+    {"type": "text", "xy": [1186, 105], "text": "[44] 魔王的公正  100%", "font": "quest", "fill": "#3B271BFF"},
+    {"type": "text", "xy": [1196, 126], "text": "— 已杀死废土游荡者：8/8", "font": "objective", "fill": "#533824FF"},
+    {"type": "text", "xy": [1196, 143], "text": "— 已杀死废土刺客：6/6", "font": "objective", "fill": "#533824FF"},
+    {"type": "line", "points": [[1468, 111], [1472, 115], [1480, 105]], "fill": "#563A26FF", "width": 2},
+
+    {"type": "ellipse", "xy": [1175, 169, 1181, 175], "fill": "#8A6B38FF"},
+    {"type": "text", "xy": [1186, 166], "text": "[51+] 沉没的神庙  100%", "font": "quest", "fill": "#3B271BFF"},
+    {"type": "text", "xy": [1196, 187], "text": "— 已杀死哈卡祭司：10/10", "font": "objective", "fill": "#533824FF"},
+    {"type": "line", "points": [[1468, 172], [1472, 176], [1480, 166]], "fill": "#563A26FF", "width": 2},
+
+    {"type": "ellipse", "xy": [1175, 217, 1181, 223], "fill": "#8A6B38FF"},
+    {"type": "text", "xy": [1186, 214], "text": "[46] 加基森水业公司  0%", "font": "quest", "fill": "#3B271BFF"},
+    {"type": "text", "xy": [1196, 235], "text": "— 使用过的寻水器：0/1", "font": "objective", "fill": "#533824FF"},
+
+    {"type": "ellipse", "xy": [1175, 286, 1181, 292], "fill": "#6D2F38FF"},
+    {"type": "text", "xy": [1186, 283], "text": "[45] 南海复仇  0%", "font": "quest", "fill": "#3B271BFF"},
+    {"type": "text", "xy": [1196, 304], "text": "— 杀死南海海盗：0/10", "font": "objective", "fill": "#533824FF"},
+    {"type": "text", "xy": [1196, 321], "text": "— 杀死南海码头工：0/10", "font": "objective", "fill": "#533824FF"},
+    {"type": "text", "xy": [1196, 338], "text": "— 杀死南海流氓：0/10", "font": "objective", "fill": "#533824FF"},
+
+    {"type": "ellipse", "xy": [1175, 385, 1181, 391], "fill": "#8A6B38FF"},
+    {"type": "text", "xy": [1186, 382], "text": "[49] 口渴的地精  0%", "font": "quest", "fill": "#3B271BFF"},
+    {"type": "text", "xy": [1196, 403], "text": "— 饱满的露水腺：0/1", "font": "objective", "fill": "#533824FF"},
+
+    {"type": "ellipse", "xy": [1175, 451, 1181, 457], "fill": "#8A6B38FF"},
+    {"type": "text", "xy": [1186, 448], "text": "[45+] 巨魔调和剂  0%", "font": "quest", "fill": "#3B271BFF"},
+    {"type": "text", "xy": [1196, 469], "text": "— 巨魔调和剂：0/20", "font": "objective", "fill": "#533824FF"},
+
+    {"type": "ellipse", "xy": [1175, 517, 1181, 523], "fill": "#8A6B38FF"},
+    {"type": "text", "xy": [1186, 514], "text": "[47+] 探水棒  0%", "font": "quest", "fill": "#3B271BFF"},
+    {"type": "text", "xy": [1196, 535], "text": "— 探水棒：0/1", "font": "objective", "fill": "#533824FF"},
+
+    {"type": "ellipse", "xy": [1175, 583, 1181, 589], "fill": "#6D2F38FF"},
+    {"type": "text", "xy": [1186, 580], "text": "[45] 海盗的帽子  0%", "font": "quest", "fill": "#3B271BFF"},
+    {"type": "text", "xy": [1196, 601], "text": "— 南海海盗帽：0/20", "font": "objective", "fill": "#533824FF"},
+
+    {"type": "ellipse", "xy": [1175, 649, 1181, 655], "fill": "#8A6B38FF"},
+    {"type": "text", "xy": [1186, 646], "text": "[51] 滑芯石油钻井平台  0%", "font": "quest", "fill": "#3B271BFF"},
+    {"type": "text", "xy": [1196, 667], "text": "— 杀死软泥怪：0/6", "font": "objective", "fill": "#533824FF"},
+    {"type": "text", "xy": [1196, 684], "text": "— 杀死钻井工：0/8", "font": "objective", "fill": "#533824FF"},
+    {"type": "text", "xy": [1196, 701], "text": "— 取回平台钥匙：0/1", "font": "objective", "fill": "#533824FF"},
+
+    {"type": "ellipse", "xy": [1175, 733, 1181, 739], "fill": "#8A6B38FF"},
+    {"type": "text", "xy": [1186, 730], "text": "[50] 灌木谷  0%", "font": "quest", "fill": "#3B271BFF"},
+    {"type": "text", "xy": [1196, 751], "text": "— 杀死长牙灌木兽：0/8", "font": "objective", "fill": "#533824FF"},
+    {"type": "text", "xy": [1196, 768], "text": "— 杀死灌木塑根者：0/8", "font": "objective", "fill": "#533824FF"},
+    {"type": "text", "xy": [1196, 785], "text": "— 收集灌木心木：0/5", "font": "objective", "fill": "#533824FF"}
+  ]
+}

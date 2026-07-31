@@ -136,10 +136,10 @@
   `0/5` 并暂停。非地区行文字安全宽度收敛为 `155px`；类型 token 的显式等值表
   仍需在 P5 前由目标客户端证实。Collapse All 归 QL-C 独立 Button，
   不混入目录状态。
-- Quest Tracker：provider 对象合同 `P1`、视觉 `P2`；`QT-SIM V1`
-  生成前模拟正文已完成，当前 `simulation-draft`、`0/1`、未授权。三段 V1
-  生产正文仍为 `prompt-draft`、各 `0/5`；只有用户确认模拟方向并另行授权
-  后才能正式生成。
+- Quest Tracker：provider 对象合同 `P1`、视觉 `P2`；`QT-SIM V1` 已由本地
+  确定性几何 renderer 完成，当前 `simulation-reviewed`、ImageGen `0/0`，
+  等待用户确认。三段 V1 生产正文仍为 `prompt-draft`、各 `0/5`；只有用户
+  确认模拟方向并另行授权后才能正式生成。
 - NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
 - `questitem.lua`：行为保留，视觉 `N/A`。
 
@@ -182,7 +182,7 @@ source 或 runtime。
 
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
-| `QT-SIM V1` | `330 × 865` 高密度 Quest Tracking 生成前模拟；七工具 Button、十任务、十七目标与三类反馈 | `P2 simulation-draft` | 用户授权固定 Image 1／2／3 和一次独立 ImageGen generate；当前 `0/1` |
+| `QT-SIM V1` | `330 × 865` 高密度 Quest Tracking 本地几何预演；七工具 Button、十任务、十七目标与三类反馈 | `P2 simulation-reviewed` | 用户确认或否决布局与视觉方向；ImageGen `0/0` |
 | `QT-A1 V1` | 可变宽高纸面 shell、九宫格与叠页边 | `P2 production-draft` | 先取得 `QT-SIM V1` 用户确认，再单独授权生产；当前 `0/5` |
 | `QT-A2 V1` | 短皮带、徽记、七个工具图标与 selected 压片 | `P2 production-draft` | 先取得 `QT-SIM V1` 用户确认，再单独授权生产；当前 `0/5` |
 | `QT-B1 V1` | focus 墨洗、tracked 页边墨记、complete 墨勾 | `P2 production-draft` | 先取得 `QT-SIM V1` 用户确认，再单独授权生产；当前 `0/5` |
@@ -301,7 +301,7 @@ pfQuest-turtle 后验证：
 - 左页列表滚动条不受影响，任务行不出现酒红书签或旧整行浅色高亮。
 
 pfQuest tracker 已进入 [QT V1 work](work/QUEST.TRACKER.CORE.md) 的
-`prompt-draft / P2`。结构证据继续固定为：
+`simulation-reviewed / P2`。结构证据继续固定为：
 
 - 结构参考：
   [`01_external_quest_tracker_current_state.png`](../../../assets/references/quests/session-2026-07-31/01_external_quest_tracker_current_state.png)，
@@ -312,10 +312,10 @@ pfQuest tracker 已进入 [QT V1 work](work/QUEST.TRACKER.CORE.md) 的
   `1009 × 629`，SHA-256
   `36e172e15ea6c6939d4f2e784131ff0e9a9a51a926aaec046a95a21af5361faf`；
 - 两图只用于信息层级、真实密度与复现，不继承其字体、颜色、现代按钮或
-  其他美术表现。当前下一门禁是用户审阅并明确授权 `QT-SIM V1`、固定
-  Image 1／2／3 上传和一次独立 ImageGen generate。模拟保持 `0/1`；在用户
-  确认模拟方向并另行授权 QT-A1／A2／B1 前，三段生产保持各 `0/5`，不生成、
-  不创建 runtime 媒体或 tracker adapter。
+  其他美术表现。`QT-SIM V1` 已由本地脚本用简单几何和真实排版生成，参考图
+  没有上传或进入模拟像素，ImageGen 固定 `0/0`。当前下一门禁是用户确认或
+  否决模拟方向；在用户确认并另行授权 QT-A1／A2／B1 前，三段生产保持各
+  `0/5`，不生成、不创建 runtime 媒体或 tracker adapter。
 
 QL-B0 V2 的内框与两类底板均已由用户移出范围，不再等待 source 例外，也不
 继续 ImageGen。QL-B2 的 accepted source、atlas、manifest 与 exporter 保留，

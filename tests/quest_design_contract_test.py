@@ -43,6 +43,12 @@ def main() -> None:
     tracker_work = (
         QUESTS / "work" / "QUEST.TRACKER.CORE.md"
     ).read_text(encoding="utf-8")
+    tracker_sim_spec_path = (
+        ROOT / "tools" / "specs" / "quest_tracker_simulation_v1.json"
+    )
+    tracker_sim_spec = json.loads(
+        tracker_sim_spec_path.read_text(encoding="utf-8")
+    )
 
     require(
         submodules,
@@ -239,12 +245,13 @@ def main() -> None:
             "ScrollBar 与操作 Button",
             "Quest Tracker",
             "`QT-SIM V1`",
-            "模拟保持 `0/1`",
+            "模拟 ImageGen 固定 `0/0`",
             "`130..330 UI px`",
             "七个独立逻辑对象",
             "不沿用 pfQuest 当前青绿色",
             "work/QUEST.TRACKER.CORE.md",
-            "ImageGen 调用保持 `0/5`",
+            "三段生产 ImageGen 调用",
+            "保持 `0/5`",
             "当前没有美术基线 Prompt",
             "完整执行正文、会话和 diff 保留在 Git",
         ),
@@ -318,8 +325,8 @@ def main() -> None:
             "三段 V1",
             "生产正文仍为 `prompt-draft`",
             "`QT-SIM V1`",
-            "`simulation-draft`、`0/1`",
-            "一次独立 ImageGen generate",
+            "`simulation-reviewed`、ImageGen `0/0`",
+            "用户确认或否决布局与视觉方向",
             "各 `0/5`",
             "QUEST.TRACKER.CORE.md",
             "NPC Quest／Gossip",
@@ -335,7 +342,7 @@ def main() -> None:
         tracker_work,
         (
             "pfQuest 任务追踪核心工作文件 — QT V1",
-            "`prompt-draft / P2`",
+            "`simulation-reviewed`",
             "`pfQuest 7.0.1`",
             "`pfQuest-turtle 7.0.2`",
             "`imagegen-0-143-0`",
@@ -363,21 +370,21 @@ def main() -> None:
             "`QT-A2 V1`",
             "`QT-B1 V1`",
             "生成前模拟实例图 — QT-SIM V1",
-            "`simulation-draft / 未授权`",
+            "`simulation-reviewed / 待用户确认`",
             "`1536 × 1024`",
             "`330 × 865 UI px`",
             "十个任务、至少十七条目标",
-            "实际 ImageGen 预算：`1` 次",
-            "本版本只有一次 generate",
-            "rough, non-production in-game visual mockup",
-            "approximately x=1166..1496 and y=72..937",
-            "one continuous quiet warm-ochre",
-            "Across the real 16-pixel top tool area",
-            "seven visibly separate",
-            "Do not draw readable words",
-            "deterministic localized overlay",
-            "确定性真实文字覆盖",
-            "模拟结果只用于方向确认",
+            "deterministic-local-geometry",
+            "模拟 ImageGen：`0/0`",
+            "tools/specs/quest_tracker_simulation_v1.json",
+            "render_geometric_mockup.py",
+            "`x=1166..1496`、`y=72..937`",
+            "矩形、多边形、线段、椭圆和真实字体排版",
+            "无生成纹理",
+            "本地渲染命令",
+            "quest_tracker_local_geometry_v1.png",
+            "quest_tracker_local_geometry_v1_zoom.png",
+            "displayable",
             "3b5c2ca6c1e69c74db5c64978cde351596ece6369d339b7125aee43904eb7d86",
             "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
             "88ecd502e190311c8709a6fd15e2cde6d1f5f288a749e5f5b318f7038e188504",
@@ -395,8 +402,8 @@ def main() -> None:
             "`130 × 180`",
             "`230 × 500`",
             "`330 × 865`",
-            "模拟流程错误：`0`",
-            "不得执行模拟正文或以下生产正文",
+            "本地渲染错误：`0`",
+            "不得执行以下生产正文",
         ),
         "pfQuest tracker production draft",
     )
@@ -405,6 +412,24 @@ def main() -> None:
     )
     assert "/Users/" not in tracker_work
     assert "QuestWatchLine" not in tracker_work
+    assert tracker_sim_spec["canvas"] == {
+        "width": 1536,
+        "height": 1024,
+        "mode": "RGBA",
+        "fill": "#344D50FF",
+    }
+    tracker_sim_layers = tracker_sim_spec["layers"]
+    tracker_sim_text = [
+        layer["text"]
+        for layer in tracker_sim_layers
+        if layer["type"] == "text"
+    ]
+    assert sum(text.startswith("[") for text in tracker_sim_text) == 10
+    assert sum(text.startswith("—") for text in tracker_sim_text) == 17
+    assert all(
+        toolbar in tracker_sim_text
+        for toolbar in ("任", "库", "人", "查", "清", "设", "×")
+    )
 
     require(
         leftpage_work,

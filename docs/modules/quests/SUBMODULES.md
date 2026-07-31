@@ -17,8 +17,8 @@ Frame。美术见 [ART_BASELINE.md](ART_BASELINE.md)，状态见
 | [`modules/questitem.lua`](../../../addon/pfUI/modules/questitem.lua) | 任务物品 Tooltip 的任务归属、扫描与数量 | 原样保留；不是快捷使用按钮 |
 
 当前 runtime 波次只接入按 `L` 打开的 `QuestLogFrame`。pfQuest tracker
-已经完成对象审计、生成前 `QT-SIM V1` 模拟草案和三段生产 Prompt 草案；
-模拟与正式资产均尚未获准生成或接入。NPC 对话仍没有获准生产资产。
+已经完成对象审计、本地确定性 `QT-SIM V1` 几何预演和三段生产 Prompt 草案；
+模拟等待用户确认，正式资产尚未获准生成或接入。NPC 对话仍没有获准生产资产。
 
 ## Quest Log 顶层
 

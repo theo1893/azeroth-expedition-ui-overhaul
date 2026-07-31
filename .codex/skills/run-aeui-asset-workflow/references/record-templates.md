@@ -16,17 +16,18 @@
 - 模块：
 - 组件 ID：
 - 版本：
-- 子状态：prompt-draft | simulation-authorized | simulation-reviewed |
-  simulation-confirmed | prompt-authorized | candidate-raw | repair-prepared |
+- 子状态：prompt-draft | simulation-reviewed | simulation-confirmed |
+  prompt-authorized | candidate-raw | repair-prepared |
   candidate-reviewed | candidate-rejected | source-accepted | closure-planned |
   component-closed
 - 项目阶段：P0–P6-C
 - 固定执行器：imagegen-0-143-0 / @openai/codex@0.143.0
 - 操作：simulate | generate | edit
 - 生成前模拟版本：
-- 生成前模拟预算：默认 1 次实际 ImageGen 调用；显式授权可调整，上限 5
-- 当前模拟调用：0/1（与生产 `0/5` 分开）
-- 模拟流程错误：0（无图片且无 provider 生成证据，不占模拟或生产额度）
+- 生成前模拟方式：deterministic-local-geometry
+- 模拟 ImageGen：0/0
+- 模拟脚本／specification：
+- 本地渲染错误：0
 - 模拟路径／SHA：
 - 模拟用户结论：pending | confirmed | rejected
 - 自动修复预算：最多 5 次实际 ImageGen 生图／修图，含首次
@@ -101,34 +102,36 @@
 - 禁止用途：不得作为 source/runtime、不得裁切／切片／晋级、不得作为生产
   edit/reference 输入
 
-### 模拟输入与授权
+### 本地模拟规格
 
-- 固定图片输入及职责：
-- 允许上传范围：
-- 模拟正文版本：
-- 实际 ImageGen 预算：1（默认；用户可明确授权其他 1–5 的有界预算）
-- 用户授权与日期：
-- 执行前 commit：
+- 只读参考及职责：
+- 上传范围：无；不得上传
+- specification 版本：
+- 几何 primitives 与平面配色角色：
+- 真实排版数据：
+- ImageGen：0/0
+- 本地脚本／命令：
+- Python 解释器：
 
-### 模拟执行正文
+### 模拟规格正文
 
-<只用于粗略游戏内实例图的完整正文；与正式资产正文分开>
+<只用于本地几何预演的完整规格；与正式资产 ImageGen 正文分开>
 
 ### 模拟执行与内部检查
 
-- 固定执行器会话／result：
+- 本地脚本／specification：
 - 输出路径／SHA：
-- 实际调用：0/1
-- 流程错误：0
+- ImageGen：0/0
+- 本地渲染错误：0
 - 真实 Frame 比例／屏幕位置：
 - 邻接 UI／对象数量／信息密度：
 - 物件隐喻／材质／配色／重量：
 - 非权威简化说明：
 - 内部结论：displayable | blocked
 
-| 流程错误 | 模拟正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
+| 本地渲染错误 | specification 版本 | 命令 | 错误 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
-| SE1 | `<simulation-version>` / `<commit>` |  |  |  | 不占模拟或生产额度 |
+| SE1 | `<simulation-version>` |  |  |  | 不涉及 ImageGen |
 
 ### 用户方向结论
 
@@ -138,7 +141,7 @@
 - 拒绝时必须改变：
 - 确认失效条件：可见布局、物件隐喻、材质层级、配色、综合色重或整合关系
   发生实质变化
-- 下一门禁：新模拟版本授权 | 最终生产正文授权
+- 下一门禁：新本地模拟版本 | 最终生产正文授权
 
 ## 生产正文完整性预检
 
@@ -228,10 +231,11 @@ provenance，并且“必须继承”和“冲突裁决”的实质内容必须�
 正文中的明确条款；不适用项要写出原因，执行必需但未知的值会阻塞生产。
 `.rN` 必须重新形成完整、自包含正文，不能只记录相对上一版的差异。
 
-`## 生成前模拟实例图` 只承担生产前方向确认。必须记录独立正文、独立预算、
-执行证据、非权威范围和用户对具体版本的结论。确认结果要转写为生产正文中的
-可验证条款；模拟像素本身永远不能成为源资产、runtime 或生产输入。生成前
-模拟不能代替正式候选生成后的 `100%` runtime 真实排版预演。
+`## 生成前模拟实例图` 只承担生产前方向确认。必须记录本地几何 specification、
+脚本命令、ImageGen `0/0`、输出证据、非权威范围和用户对具体版本的结论。
+确认结果要转写为生产正文中的可验证条款；模拟像素本身永远不能成为源资产、
+runtime 或生产输入。生成前模拟不能代替正式候选生成后的 `100%` runtime
+真实排版预演。
 
 若 `revised prompt` 很长，仍放在同一 work 文件的折叠或附录段；不要为它新增
 永久 Markdown。不能只写“模型自动优化”。

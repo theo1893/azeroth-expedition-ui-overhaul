@@ -1,4 +1,4 @@
 interface:
   display_name: "AEUI 资产生成与审查"
-  short_description: "先确认模拟实例图，再以最多五次正式生图编排 AEUI 资产"
-  default_prompt: "Use $run-aeui-asset-workflow to prepare a self-contained, ambiguity-audited AEUI asset contract, create a separately authorized low-cost simulated in-game preview for user direction confirmation, and only after that confirmation request authorization for the final production prompt and run its generate-review-repair loop for at most five actual ImageGen generations or edits, tracking simulation calls, production calls, and workflow errors separately."
+  short_description: "先用本地几何预演确认方向，再以最多五次正式生图编排资产"
+  default_prompt: "Use $run-aeui-asset-workflow to prepare a self-contained AEUI component contract, render a deterministic local geometric in-game preview with zero ImageGen calls for user direction confirmation, and only then request authorization for the final production prompt and its bounded five-generation review-repair loop."
