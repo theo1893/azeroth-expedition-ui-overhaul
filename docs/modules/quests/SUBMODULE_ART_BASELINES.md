@@ -175,8 +175,10 @@ provider 已锁定为 `pfQuest 7.0.1` 的 `pfQuestMapTracker`。稳定视觉基�
 B1 完整可授权生产正文与真实排版验收合同均位于
 [work/QUEST.TRACKER.CORE.md](work/QUEST.TRACKER.CORE.md)。用户已于
 `2026-07-31` 确认 `QT-SIM V2` 的主体方向；模拟 ImageGen 固定 `0/0`。
-当前门禁是 QT-A1／B1 最终正文的独立生产授权，两段实际 ImageGen 各保持
-`0/5`，QT-A2 保持 `scope-deferred 0/5`。取得授权前不创建 adapter 或
+用户随后于 `2026-07-31` 独立授权 QT-A1／B1 V1 的最终正文、固定
+Image 1／2／3、同段前次输出的冻结边界 edit 和每段最多 `5` 次实际
+ImageGen 调用；两段当前均为 `prompt-authorized 0/5`。QT-A2 保持
+`scope-deferred 0/5`。生产内审通过也不自动创建 adapter、source 或
 runtime 媒体。
 
 ## NPC Quest／Gossip

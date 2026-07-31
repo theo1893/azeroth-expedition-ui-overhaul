@@ -18,8 +18,10 @@ Frame。美术见 [ART_BASELINE.md](ART_BASELINE.md)，状态见
 
 当前 runtime 波次只接入按 `L` 打开的 `QuestLogFrame`。pfQuest tracker
 已经完成对象审计；用户已确认聚焦主体的本地确定性 `QT-SIM V2` 几何方向。
-QT-A1／B1 最终生产 Prompt 等待独立授权，QT-A2 七工具 Button 为
-`scope-deferred`。正式资产尚未获准生成或接入。NPC 对话仍没有获准生产资产。
+QT-A1／B1 V1 已获独立生产授权，固定 Image 1／2／3、同段 edit 边界和各
+`5` 次实际调用上限已冻结，当前均为 `prompt-authorized 0/5`。QT-A2 七工具
+Button 保持 `scope-deferred`；任何 tracker 候选仍未获准晋级或接入。NPC
+对话仍没有获准生产资产。
 
 ## Quest Log 顶层
 

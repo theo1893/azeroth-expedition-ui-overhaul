@@ -9,9 +9,9 @@
   `ENTRY.COMPLETE`
 - 暂缓范围：`HEADER.*` 与七个 provider 工具 Button；保留对象和行为合同，
   本轮不设计资产、不进入预演、不改 runtime
-- 子状态：`simulation-confirmed`
-- 项目阶段：`P2`
-- 操作：`prepare`
+- 子状态：`prompt-authorized`
+- 项目阶段：`P3`
+- 操作：`generate`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 生成前模拟版本：`QT-SIM V2`
 - 生成前模拟方式：`deterministic-local-geometry`
@@ -26,9 +26,13 @@
 - 实际 ImageGen：当前活动的 QT-A1 `0/5`、QT-B1 `0/5`；最坏合计
   `10` 次实际生成／修图。QT-A2 `0/5`、`scope-deferred`，不计入活动预算
 - 流程错误：QT-A1 `0`、QT-B1 `0`；不占实际生图额度
+- 生产授权：`confirmed / 2026-07-31`。用户明确授权 QT-A1 V1 与 QT-B1
+  V1；每段固定 Image 1／2／3；同段前次输出只可在冻结边界内作 edit 输入；
+  每段最多 `5` 次实际 ImageGen，最坏合计 `10` 次；无生成证据的流程错误
+  不计额度；QT-A2 继续暂缓
 - source／runtime／adapter：均无
-- 下一门禁：用户审阅并明确授权最终 QT-A1 V1／QT-B1 V1 生产正文、固定
-  上传和每段五次实际 ImageGen 修复边界；确认模拟本身不授权生图，QT-A2
+- 下一门禁：先提交本授权状态，再以固定 `imagegen-0-143-0` 原样执行
+  QT-A1 V1 attempt 1；每个可计数输出完成全门禁与真实排版内审。QT-A2
   保持暂缓
 
 ## 组件合同
@@ -237,7 +241,7 @@ conda run -n py312 python \
 
 ### QT-A1 V1
 
-状态：`production-final / 未授权`
+状态：`production / 已授权`
 
 固定上传：Image 1、Image 2、Image 3。只允许同段前一次输出作为后续 edit
 输入；不得追加其他图片。
@@ -317,7 +321,7 @@ conda run -n py312 python \
 
 ### QT-B1 V1
 
-状态：`production-final / 未授权`
+状态：`production / 已授权`
 
 固定上传：Image 1、Image 2、Image 3。只允许同段前一次输出作为后续 edit
 输入；不得追加其他图片。
@@ -386,7 +390,7 @@ conda run -n py312 python \
 复杂度：QT-A1 `single-object / assembly / repeat / stretch`；QT-B1
 `three-object atlas / overlay states / stretch`。
 
-结论：`pass / production-final / 未授权`。
+结论：`pass / production / 已授权`。
 
 | 门禁 | 最终执行正文中的证据 | 结论 |
 |---|---|---|
@@ -437,6 +441,33 @@ conda run -n py312 python \
 
 任一段五次仍未通过，停止并等待用户审核，不以其他段剩余额度补充。
 
+### 用户生产授权
+
+- 日期：`2026-07-31`
+- 授权正文：当前 QT-A1 V1 与 QT-B1 V1 完整执行正文，正文像素级内容未在
+  授权后改写。
+- 固定上传：每段 Image 1／2／3，SHA 与“美术基准继承”表一致。
+- edit 边界：只允许同段前次输出作为额外输入，并且只修正上文冻结范围内的
+  失败门禁。
+- 调用预算：QT-A1 `0/5`、QT-B1 `0/5`，最坏合计 `10` 次实际
+  ImageGen；无生成图且无 provider 生成证据的流程错误另表记录。
+- 明确排除：QT-A2 继续暂缓；本授权不包含 source 晋级、runtime 导出或
+  adapter 创建。
+- 用户原文：“确认授权 QT-A1 V1 与 QT-B1 V1；允许每段上传固定 Image
+  1/2/3，允许同段前次输出仅在冻结边界内作为 edit 输入；每段最多 5 次实际
+  ImageGen 调用，最坏合计 10 次；流程错误不占生图额度；QT-A2 继续暂缓。”
+
+### 自主修复循环记录
+
+| 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
+|---:|---|---|---|---|---|---|---|
+| A1 1/5 | `QT-A1 V1` / 待本次授权提交 | generate |  |  |  |  | 待执行 |
+| B1 1/5 | `QT-B1 V1` / 待本次授权提交 | generate |  |  |  |  | 待执行 |
+
+| 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
+|---:|---|---|---|---|---|
+| — | — | — | 当前无流程错误 | — | 不占生图额度 |
+
 ## 候选审查与真实排版预演
 
 每次 countable output 先检查：精确对象数、语义、纯色背景、连通域、bbox、
@@ -470,10 +501,12 @@ conda run -n py312 python \
   provider session 或生成流程错误。主图与局部查看路径、SHA 见模拟章节。
 - 用户于 `2026-07-31` 以“继续”确认 `QT-SIM V2` 的 tracker 主体可见方向；
   确认条款已写回 QT-A1／B1 最终正文，模拟像素没有进入任何生产输入。
+- 用户于 `2026-07-31` 明确授权当前 QT-A1／B1 V1 正文、固定输入、同段
+  edit 边界和每段五次上限；授权后正文未改写。
 - 当前活动的 QT-A1／B1 均尚未执行；无 raw、透明候选或 revised prompt。
 - 实际生图：QT-A1 `0/5`、QT-B1 `0/5`；QT-A2 `0/5 scope-deferred`。
 - 流程错误：QT-A1／B1 均为 `0`；QT-A2 无活动流程。
-- 当前终态：`simulation-confirmed / P2`，等待最终生产授权。
+- 当前终态：`prompt-authorized / P3`，等待固定执行器首次调用。
 
 ## 审查记录
 
@@ -481,10 +514,9 @@ conda run -n py312 python \
   检查、用户对 `QT-SIM V2` 的方向确认、最终生产正文完整性复核和真实排版
   预演合同。
 - 尚未发生：候选语义／物理、美术、装配与技术像素审查。
-- 当前结论：`simulation-confirmed / P2`；未取得独立生产授权，不得调用
-  ImageGen 或晋级 P3。
-- 下一门禁：用户明确授权 QT-A1 V1／QT-B1 V1、固定上传、同段 edit 边界
-  和每段最多五次实际 ImageGen 调用。
+- 当前结论：`prompt-authorized / P3`；独立生产授权与冻结修复边界已记录，
+  尚无候选。
+- 下一门禁：固定执行器 QT-A1 V1 attempt 1。
 
 ## 尝试摘要
 
@@ -492,16 +524,12 @@ conda run -n py312 python \
 |---|---|---|---|
 | `QT-SIM V1` | 本地 specification、renderer、主图／局部图 SHA；ImageGen `0/0` | `superseded-by-user-priority` | 移除低优先级工具条，聚焦 tracker 主体 |
 | `QT-SIM V2` | 本地 specification、renderer、主图／局部图 SHA；用户于 `2026-07-31` 回复“继续”；ImageGen `0/0` | `simulation-confirmed / P2` | 可见方向已转写；不得跳过独立生产授权 |
-| `QT-A1/B1 V1` | 两段最终自包含正文与完整性预检；无 ImageGen 调用 | `production-final / unauthorized / P2` | 请求精确生产授权 |
+| `QT-A1/B1 V1` | 两段最终自包含正文、完整性预检与用户生产授权；无 ImageGen 调用 | `prompt-authorized / P3 / 0/5 each` | 固定执行器先执行 QT-A1 attempt 1 |
 | `QT-A2 V1` | 无 ImageGen 调用；历史正文仅在 Git history | `scope-deferred / P2` | 未来重开时先做独立模拟和新授权 |
 
 ## 下一门禁
 
-等待用户明确授权 `QT-A1 V1` 与 `QT-B1 V1` 的当前最终执行正文：两段各
-固定上传 Image 1／2／3；允许同段前一次输出只在冻结边界内作为 edit 输入；
-每段最多 `5` 次实际 ImageGen 生成／修图，最坏合计 `10` 次；无生成证据的
-流程错误不占生图额度。
-
-授权后先提交精确授权正文，再只使用 `imagegen-0-143-0` 固定执行器进入自主
-生成—审查—修复循环。QT-A2 保持暂缓；本次模拟确认不能代替生产授权、候选
-接受、source 晋级、runtime 导出或实机验收。
+先提交当前精确授权正文，再只使用 `imagegen-0-143-0` 固定执行器原样执行
+QT-A1 V1 attempt 1；完成候选级真实排版内审和必要的边界内自主修复后，再
+进入 QT-B1。两段各最多 `5` 次实际 ImageGen，流程错误不占额度。QT-A2
+保持暂缓；本次授权不包含候选接受、source 晋级、runtime 导出或实机验收。
