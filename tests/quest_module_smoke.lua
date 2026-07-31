@@ -69,6 +69,15 @@ function Object:SetHeight(value) self.height = value end
 function Object:GetWidth() return self.width end
 function Object:GetHeight() return self.height end
 function Object:SetParent(value) self.parent = value end
+function Object:SetClampRectInsets(...)
+  self.clampRectInsets = { ... }
+end
+function Object:GetClampRectInsets()
+  if self.clampRectInsets then
+    return table.unpack(self.clampRectInsets)
+  end
+  return 0, 0, 0, 0
+end
 function Object:ClearAllPoints() self.points = {} end
 function Object:SetPoint(...) table.insert(self.points, { ... }) end
 function Object:GetPoint(index)
@@ -500,7 +509,7 @@ AzerothExpeditionUI:Refresh()
 assert(QuestLogFrame:GetWidth() == 676, "quest shell width was not applied")
 assert(QuestLogFrame:GetHeight() == 464, "quest shell height was not applied")
 assert(
-  QuestLogFrame.aeuiQuestRuntimeContract == "1.8",
+  QuestLogFrame.aeuiQuestRuntimeContract == "1.9",
   "quest runtime contract was not recorded"
 )
 assert(QuestLogFrame.aeuiQuestShell, "quest shell texture was not created")
@@ -516,6 +525,30 @@ assert(
   QuestLogFrame.aeuiQuestShell.texcoord[2] == 0.66015625 and
   QuestLogFrame.aeuiQuestShell.texcoord[4] == 0.90625,
   "quest shell UV does not match the runtime manifest"
+)
+assert(
+  QuestLogFrame.aeuiQuestChromeSeal and
+    QuestLogFrame.aeuiQuestChromeSeal.texture:find(
+      "QuestToolWaxSealStatesV1"
+    ),
+  "Quest Log tool seal runtime texture was not mounted"
+)
+assert(
+  QuestLogFrame.aeuiQuestChromeSeal.layer == "OVERLAY" and
+    QuestLogFrame.aeuiQuestChromeSeal:GetWidth() == 28 and
+    QuestLogFrame.aeuiQuestChromeSeal:GetHeight() == 28 and
+    QuestLogFrame.aeuiQuestChromeSeal.texcoord[1] == 0 and
+    QuestLogFrame.aeuiQuestChromeSeal.texcoord[2] == 0.25,
+  "Quest Log tool seal does not use the accepted normal cell"
+)
+local sealPoint, sealRelative, sealRelativePoint, sealX, sealY =
+  QuestLogFrame.aeuiQuestChromeSeal:GetPoint()
+assert(
+  sealPoint == "TOPLEFT" and
+    sealRelative == QuestLogFrame and
+    sealRelativePoint == "TOPLEFT" and
+    sealX == 600 and sealY == 18,
+  "Quest Log tool seal escaped its external transparent-space box"
 )
 
 for _, nativeTexture in ipairs({
@@ -999,6 +1032,20 @@ local providerTrackerButton =
 providerTrackerButton.bg =
   providerTrackerButton:CreateTexture(nil, "BACKGROUND")
 pfQuestMapTracker.buttons = { providerTrackerButton }
+local providerToolbarClick = function() end
+for _, name in ipairs({
+  "btnquest",
+  "btndatabase",
+  "btngiver",
+  "btnsearch",
+  "btnclean",
+  "btnsettings",
+  "btnclose",
+}) do
+  local button = CreateFrame("Button", nil, pfQuestMapTracker)
+  button:SetScript("OnClick", providerToolbarClick)
+  pfQuestMapTracker[name] = button
+end
 local providerTrackerOnShowCalls = 0
 local providerTrackerOnUpdateCalls = 0
 pfQuestMapTracker:SetScript("OnShow", function()
@@ -1083,8 +1130,8 @@ assert(
 )
 assert(
   pfQuestMapTracker.aeuiQuestPaperSlices and
-    #pfQuestMapTracker.regions == 9,
-  "tracker paper was not mounted as exactly nine background slices"
+    #pfQuestMapTracker.regions == 10,
+  "tracker paper and one seal were not mounted at runtime"
 )
 for _, texture in pairs(pfQuestMapTracker.aeuiQuestPaperSlices) do
   assert(
@@ -1102,6 +1149,50 @@ assert(
     pfQuestMapTracker.aeuiQuestPaperSlices.topLeft:GetHeight() == 12,
   "tracker nine-slice caps do not match the runtime manifest"
 )
+assert(
+  pfQuestMapTracker.aeuiQuestHubSeal and
+    pfQuestMapTracker.aeuiQuestHubSeal.layer == "ARTWORK" and
+    pfQuestMapTracker.aeuiQuestHubSeal.texture:find(
+      "QuestToolWaxSealStatesV1"
+    ) and
+    pfQuestMapTracker.aeuiQuestHubSeal:GetWidth() == 34 and
+    pfQuestMapTracker.aeuiQuestHubSeal:GetHeight() == 34 and
+    pfQuestMapTracker.aeuiQuestHubSeal.texcoord[1] == 0 and
+    pfQuestMapTracker.aeuiQuestHubSeal.texcoord[2] == 0.25,
+  "tracker hub seal did not use the accepted non-interactive normal cell"
+)
+local hubPoint, hubRelative, hubRelativePoint, hubX, hubY =
+  pfQuestMapTracker.aeuiQuestHubSeal:GetPoint()
+assert(
+  hubPoint == "TOP" and
+    hubRelative == pfQuestMapTracker and
+    hubRelativePoint == "TOP" and
+    hubX == 0 and hubY == 18,
+  "tracker hub seal escaped the centered 18px top-outset contract"
+)
+assert(
+  pfQuestMapTracker.clampRectInsets[1] == 0 and
+    pfQuestMapTracker.clampRectInsets[2] == 0 and
+    pfQuestMapTracker.clampRectInsets[3] == 18 and
+    pfQuestMapTracker.clampRectInsets[4] == 0,
+  "tracker clamp inset does not protect the seal at the screen top"
+)
+for _, name in ipairs({
+  "btnquest",
+  "btndatabase",
+  "btngiver",
+  "btnsearch",
+  "btnclean",
+  "btnsettings",
+  "btnclose",
+}) do
+  assert(
+    pfQuestMapTracker[name]:IsShown() and
+      pfQuestMapTracker[name]:GetScript("OnClick") ==
+        providerToolbarClick,
+    "tracker seal replaced or hid provider behavior: " .. name
+  )
+end
 local trackerOnUpdate = pfQuestMapTracker:GetScript("OnUpdate")
 trackerOnUpdate()
 assert(

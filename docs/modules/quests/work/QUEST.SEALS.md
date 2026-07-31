@@ -1,20 +1,64 @@
 # Quest Log／Tracker 共用漆章
 
 - 批次：`QS-A1`
-- 当前生产版本：`QS-A1 V1`
+- 当前接受版本：`QS-A1 V1.r4`
 - 已确认模拟：`QUEST-SEALS-SIM-V2`
-- 项目阶段：`P3`
-- 当前子状态：`budget-exhausted / user-review-required`
+- 项目阶段：`P5`
+- 当前子状态：`runtime-exported / P5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - 正式 ImageGen：`5/5`
-- runtime：未修改
+- 流程错误：`0`
+- tracked source：
+  `assets/source/quests/qs-a1/QuestToolWaxSeal_Master_v1.png`，SHA-256
+  `377dcdc141ee5487884bfc99dbfd82013a8c4d7cb7200a4414feebb81d72ab75`。
+- runtime：`QuestToolWaxSealStatesV1.tga`，`256 × 64`、一行四个
+  `64 × 64` cell，SHA-256
+  `f113e670f1b61be1a50e3cfa16dfce95a2b0d159fc35d986a9b2e1d314a72902`。
 - 用户生产授权：`2026-07-31`；固定 Image 1／2、同循环紧邻前次输出仅可在
   冻结修复边界内作为 Image 3 edit 输入、最多 `5` 次实际 ImageGen 调用，
   流程错误不占额度。
-- 推荐用户审核候选：`QS-A1 V1.r4`。不得再执行 ImageGen；下一门禁是用户
-  查看 r4 的未修改原图、透明归一化预览与真实排版，并明确接受或拒绝
-  “provider 固定 `1254²`＋渐变绿经确定性色键／归一化处理”的合同例外。
+- 用户于 `2026-07-31` 接受 `QS-A1 V1.r4` 的运行时视觉，并明确授权
+  确定性色键、透明 RGB 清零与 `1024²` 归一化例外进入 P4／P5。不得再执行
+  ImageGen。当前只等待 Turtle WoW `1.18.1` 实机 P6；旧七个 provider
+  Button 在 hub menu 功能等价前继续可见可用。
+
+## 用户接受与 P4／P5 固化
+
+- 用户接受原文：`接受 QS-A1 V1.r4 的运行时视觉，并授权确定性色键、透明
+  RGB 清零及 1024² 归一化例外进入 P4/P5。`
+- 未修改 r4 原图仍只作为 provenance：`1254 × 1254 RGB`，SHA-256
+  `3e972a67a3b27bb28b6b7ef314f0784886d4e16d3de98df022891b08571e4da1`；
+  固定输出尺寸与渐变绿背景的历史失败没有被改写为通过。
+- accepted candidate 是 r4 经现有审查器确定性色键、可见 bbox 等比缩放、
+  居中与透明 RGB 清零后的 `1024 × 1024 RGBA`，原候选 SHA-256
+  `d5e5d12e09bd06e9e76f4382eea40b5501f5f6823d58b8693902ab98d8470f75`。
+  归一化产生的 `58` 个重采样色键边缘像素按同一合同清为透明：其中 `32`
+  个纯绿像素 Alpha 为 `1..4`，另 `26` 个绿色优势像素 Alpha 为 `3..19`。
+  由此形成上述 tracked source；可见 bbox 保持
+  `[192,200,832,824]`，透明像素下 RGB 全为 `0`，可见绿色残留为 `0`。
+- source manifest：
+  `assets/source/quests/qs-a1/QS-A1_SourceManifest_v1.json`；runtime manifest：
+  `assets/source/quests/qs-a1/QS-A1_RuntimeManifest_v1.json`。
+- exporter：`tools/build_quest_tool_wax_seal_v1.py`。normal／hover／pressed／
+  disabled 使用同一 `60 × 58` Alpha；hover 只暖亮，pressed 只压暗并为未来
+  Button 保留 runtime `1px` 下移合同，disabled 只退灰。当前两处都是无鼠标
+  normal Texture，不伪造交互。
+- Quest Log 使用 `[600,-18,28,28]`，与书体可见 Alpha 重叠 `0`；Tracker
+  使用居中 `34 × 34`、顶部 outset `18px`，并通过 feature-detect
+  `SetClampRectInsets` 补足顶缘限位。`130／230／330px` 均不进入列表区。
+- 最窄 `130px` 下，旧 `search` icon 覆盖漆章右下部，`giver／clean` 各触及
+  `1px` 边条；这是功能迁移前的显式过渡层序。漆章在父 Frame 的 ARTWORK，
+  旧七个 provider Button 仍在其上、保持可见、鼠标与原脚本。不得用 P5
+  结果提前隐藏旧按钮。
+- 最终展示区域合同：
+  `tools/specs/quest_seals_runtime_display_region_v1.json`；ignored 机器报告
+  SHA-256
+  `2f027e5459148da600835653e481f42ac535b2c1a2d44e1e43ad456587d2a97c`，
+  Quest Log 与三种 Tracker 宽度均为 `pass`。真实排版使用最终 atlas 和
+  当前旧按钮层序重新生成；不替代目标客户端验证。
+- P4／P5 后新增实际 ImageGen：`0`。当前不得进入 `P6`，也不得清理 work
+  或五次尝试中间证据。
 
 ## 组件合同
 
@@ -662,12 +706,11 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 - 结论：`budget-exhausted / user-review-required / 5/5`
 - 用户结论与日期：V1 方向接受并要求修订位置／`2026-07-31`；
   V2 外置锚点确认／`2026-07-31`
-- 下一门禁：用户明确选择：
-  1. 接受 r4 的运行时视觉，并授权确定性 provider 例外：保留未修改原图
-     作为 provenance，以本地色键、全透明 RGB 清零、等比归一化到
-     `1024² / 640px` 和后续固定四态派生进入 P4／P5；
-  2. 拒绝 r4，结束本批且不产生 source／runtime；新方向必须重新建立生产
-     版本与独立授权。
+- 用户结论：接受 r4 的运行时视觉与确定性 provider 例外；P4 source 与 P5
+  runtime 已完成。下一门禁是在 Turtle WoW `1.18.1` 同时启用 pfQuest／
+  pfQuest-turtle 后验证 TGA 方向、两处锚点、顶缘 clamp、旧七按钮点击／
+  Tooltip、Tracker 拖动保存与 `130／230／330px` 层序；没有实机证据前不得
+  进入 P6。
 
 ## 尝试摘要
 
@@ -682,4 +725,5 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 | `QS-A1 V1.r4` | 固定双输入＋紧邻 r3；session `019fb766-ff17-7cb0-b175-0b8cd2464a76`；视觉、bbox、安全边、小尺寸与展示区域通过；只剩固定 `1254²` 与非单色绿背景失败 | `rejected-internal / 4/5` | r5 冻结物件，只要求 `1024²` 与单一 `#00FF00` |
 | `QS-A1 V1.r5` | 固定双输入＋紧邻 r4；session `019fb772-0f97-7603-a66f-cbf2e7f0359e`；bbox 与显示区域继续通过；仍为 `1254²`，背景 `6189` 种 RGB 且无精确纯绿；视觉无实质改善 | `budget-exhausted / 5/5` | 停止生成；用户审核 r4 并裁决确定性 provider 例外 |
 
-正式生产尝试：`5/5`；流程错误：`0`；source／runtime：未修改。
+正式生产尝试：`5/5`；流程错误：`0`；接受后新增生成：`0`；当前终态：
+`runtime-exported / P5 / game-validation-pending`。

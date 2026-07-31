@@ -1,0 +1,267 @@
+{
+  "schema_version": 1,
+  "batch": "QS-A1",
+  "version": "V1.r4",
+  "runtime_contract": "1.0",
+  "status": "runtime-exported",
+  "source": {
+    "file": "assets/source/quests/qs-a1/QuestToolWaxSeal_Master_v1.png",
+    "sha256": "377dcdc141ee5487884bfc99dbfd82013a8c4d7cb7200a4414feebb81d72ab75",
+    "width": 1024,
+    "height": 1024,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      192,
+      200,
+      832,
+      824
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_pixels": 751279,
+    "partially_transparent_pixels": 5854,
+    "opaque_pixels": 291443
+  },
+  "transform": {
+    "operation": "accepted Alpha bbox crop, one proportional LANCZOS scale, four deterministic RGB-only state transforms, fixed-cell centering, resampling-green cleanup, transparent RGB zeroing and TGA conversion",
+    "source_crop_xyxy": [
+      192,
+      200,
+      832,
+      824
+    ],
+    "resample": "Pillow Image.Resampling.LANCZOS",
+    "alpha_cleanup": "zero RGB only where Alpha equals 0",
+    "rotation": null,
+    "mirror": false,
+    "retouch": false,
+    "atlas_size": [
+      256,
+      64
+    ],
+    "cell_size": [
+      64,
+      64
+    ],
+    "state_order": [
+      "normal",
+      "hover",
+      "pressed",
+      "disabled"
+    ],
+    "states": {
+      "normal": {
+        "runtime_cell_xyxy": [
+          0,
+          0,
+          64,
+          64
+        ],
+        "runtime_content_xyxy": [
+          2,
+          3,
+          62,
+          61
+        ],
+        "runtime_visible_size": [
+          60,
+          58
+        ],
+        "alpha_sha256": "f11b4072daa68b8afd3b26afbd53e8c3772e64ae26c28ae610b11f260a276e8c",
+        "texcoord": {
+          "left": 0.0,
+          "right": 0.25,
+          "top": 0.0,
+          "bottom": 1.0
+        },
+        "rgb_transform": "none"
+      },
+      "hover": {
+        "runtime_cell_xyxy": [
+          64,
+          0,
+          128,
+          64
+        ],
+        "runtime_content_xyxy": [
+          66,
+          3,
+          126,
+          61
+        ],
+        "runtime_visible_size": [
+          60,
+          58
+        ],
+        "alpha_sha256": "f11b4072daa68b8afd3b26afbd53e8c3772e64ae26c28ae610b11f260a276e8c",
+        "texcoord": {
+          "left": 0.25,
+          "right": 0.5,
+          "top": 0.0,
+          "bottom": 1.0
+        },
+        "rgb_transform": "brightness 1.12, then +9 red channel"
+      },
+      "pressed": {
+        "runtime_cell_xyxy": [
+          128,
+          0,
+          192,
+          64
+        ],
+        "runtime_content_xyxy": [
+          130,
+          3,
+          190,
+          61
+        ],
+        "runtime_visible_size": [
+          60,
+          58
+        ],
+        "alpha_sha256": "f11b4072daa68b8afd3b26afbd53e8c3772e64ae26c28ae610b11f260a276e8c",
+        "texcoord": {
+          "left": 0.5,
+          "right": 0.75,
+          "top": 0.0,
+          "bottom": 1.0
+        },
+        "rgb_transform": "brightness 0.82; runtime anchor y +1px when interactive"
+      },
+      "disabled": {
+        "runtime_cell_xyxy": [
+          192,
+          0,
+          256,
+          64
+        ],
+        "runtime_content_xyxy": [
+          194,
+          3,
+          254,
+          61
+        ],
+        "runtime_visible_size": [
+          60,
+          58
+        ],
+        "alpha_sha256": "f11b4072daa68b8afd3b26afbd53e8c3772e64ae26c28ae610b11f260a276e8c",
+        "texcoord": {
+          "left": 0.75,
+          "right": 1.0,
+          "top": 0.0,
+          "bottom": 1.0
+        },
+        "rgb_transform": "saturation 0.25, then brightness 0.78"
+      }
+    }
+  },
+  "runtime": {
+    "file": "addon/AzerothExpeditionUI/Media/Quests/QuestToolWaxSealStatesV1.tga",
+    "sha256": "f113e670f1b61be1a50e3cfa16dfce95a2b0d159fc35d986a9b2e1d314a72902",
+    "width": 256,
+    "height": 64,
+    "mode": "RGBA",
+    "tga_header": {
+      "image_type": 2,
+      "width": 256,
+      "height": 64,
+      "bits_per_pixel": 32,
+      "descriptor": 8,
+      "top_origin": false
+    },
+    "visible_bbox_exclusive": [
+      2,
+      3,
+      254,
+      61
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0,
+    "transparent_pixels": 5164,
+    "partially_transparent_pixels": 2100,
+    "opaque_pixels": 9120
+  },
+  "layout_contract": {
+    "quest_log": {
+      "object": "QuestLogFrame.aeuiQuestChromeSeal",
+      "box_xywh": [
+        600,
+        -18,
+        28,
+        28
+      ],
+      "texcoord_state": "normal full 64x64 cell",
+      "visible_content_goal": [
+        26,
+        26
+      ],
+      "mouse": false
+    },
+    "tracker": {
+      "object": "pfQuestMapTracker.aeuiQuestHubSeal",
+      "box_formula": "TOP to TOP, x=0, y=18, 34x34",
+      "visible_content_goal": [
+        32,
+        32
+      ],
+      "top_clamp_inset": 18,
+      "mouse": false,
+      "provider_toolbar": "visible and functional until hub-menu parity"
+    }
+  },
+  "display_region": {
+    "status": "pass",
+    "contract": "tools/specs/quest_seals_runtime_display_region_v1.json",
+    "report": "generated/quests/QUEST-SEALS/QS-A1-V1/accepted-runtime/QS-A1_V1_r4_runtime_display_region.json",
+    "report_sha256": "2f027e5459148da600835653e481f42ac535b2c1a2d44e1e43ad456587d2a97c",
+    "scenarios": [
+      "QuestLogFrame",
+      "tracker-130",
+      "tracker-230",
+      "tracker-330"
+    ],
+    "transitional_provider_overlap": "tracker-130 search icon overlap plus 1px giver/clean edge strips; all provider controls remain above the decorative seal"
+  },
+  "simulation": {
+    "atlas_preview": {
+      "file": "generated/quests/QUEST-SEALS/QS-A1-V1/accepted-runtime/QS-A1_V1_r4_runtime_atlas.png",
+      "sha256": "c3f0a50659bd3c48e760d10d702a34564239faf020d8a49c34a8f280dddf30fc",
+      "size": [
+        256,
+        64
+      ]
+    },
+    "real_layout_preview": {
+      "file": "generated/quests/QUEST-SEALS/QS-A1-V1/accepted-runtime/QS-A1_V1_r4_runtime_real_layout.png",
+      "sha256": "741f8859ac7d16362c11196dbc97be54130f49351a85c2d38506daaf765dc940",
+      "size": [
+        1536,
+        1024
+      ],
+      "provider_buttons": "drawn above the current decorative tracker Texture"
+    },
+    "tracker_width_preview": {
+      "file": "generated/quests/QUEST-SEALS/QS-A1-V1/accepted-runtime/QS-A1_V1_r4_runtime_tracker_widths.png",
+      "sha256": "c81154c2fd8521a3eb21540cb9507670ed198f5332fccb7c09008346a9ab5ddb",
+      "supported_widths": [
+        130,
+        230,
+        330
+      ]
+    }
+  },
+  "ownership": {
+    "quest_log": "adapter-owned non-interactive OVERLAY Texture",
+    "tracker": "adapter-owned non-interactive ARTWORK Texture",
+    "future_states": "atlas retained for a separately authorized Button upgrade",
+    "provider_buttons": "pfQuest retains objects, scripts, tooltips, mouse and visibility"
+  },
+  "implementation": {
+    "exporter": "tools/build_quest_tool_wax_seal_v1.py",
+    "adapter": "addon/AzerothExpeditionUI/Modules/Quests.lua",
+    "source_manifest": "assets/source/quests/qs-a1/QS-A1_SourceManifest_v1.json",
+    "imagegen_calls_after_acceptance": 0,
+    "static_tests_required": true,
+    "game_validated": false
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "schema": "aeui.quest-seal.runtime-display-region-contract.v1",
+  "component": "QS-A1",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, 100%-UI-pixels",
+  "atlas": {
+    "size": [256, 64],
+    "cell_size": [64, 64],
+    "visible_content_max": [60, 60],
+    "state_order": ["normal", "hover", "pressed", "disabled"]
+  },
+  "quest_log": {
+    "provider": "QuestLogFrame",
+    "frame": [676, 464],
+    "texture_box_xywh": [600, -18, 28, 28],
+    "visible_content_goal": [26, 26],
+    "shell_runtime": "addon/AzerothExpeditionUI/Media/Quests/QuestLogShellV4.tga",
+    "shell_texcoord": [0.0, 0.66015625, 0.0, 0.90625],
+    "shell_visible_alpha_overlap_max_pixels": 0,
+    "hit_region_count": 0
+  },
+  "tracker": {
+    "provider": "pfQuestMapTracker",
+    "supported_widths": [130, 230, 330],
+    "panel_height": 16,
+    "texture_size": [34, 34],
+    "top_outset": 18,
+    "visible_content_goal": [32, 32],
+    "x_formula": "floor((W-34)/2)",
+    "y": -18,
+    "provider_button_size": 14,
+    "provider_button_step": 17,
+    "provider_buttons": {
+      "left": ["btnquest", "btndatabase", "btngiver"],
+      "right": ["btnclose", "btnsettings", "btnclean", "btnsearch"]
+    },
+    "current_layering": "adapter-owned parent ARTWORK Texture below provider child Button frames",
+    "current_interaction": "Texture has no mouse region; all seven provider Buttons remain visible, enabled and script-owning",
+    "narrow_width_overlap_policy": "At 130px the live search icon covers the seal's right-lower area and the giver/clean icons touch one 1px edge strip. This is a declared transitional underlay, not a hidden or replaced control; target visual cleanup remains gated by hub-menu functional parity.",
+    "screen_top_clamp": {
+      "method": "feature-detect Frame:SetClampRectInsets",
+      "top_inset": 18,
+      "fallback": "provider root remains SetClampedToScreen(true); target-client verification remains required"
+    },
+    "hit_region_count": 0
+  },
+  "forbidden": [
+    "hide, disable, reparent or replace any provider toolbar Button before hub-menu parity",
+    "move quest rows or change the provider height formula",
+    "place the Quest Log seal on a page, page turn, cover, corner or binding",
+    "treat the tool seal as quest complete or failed state",
+    "load the 1024x1024 source directly in the client"
+  ]
+}

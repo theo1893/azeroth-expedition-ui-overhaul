@@ -43,6 +43,9 @@ def main() -> None:
     tracker_work = (
         QUESTS / "work" / "QUEST.TRACKER.CORE.md"
     ).read_text(encoding="utf-8")
+    seals_work = (
+        QUESTS / "work" / "QUEST.SEALS.md"
+    ).read_text(encoding="utf-8")
     tracker_sim_spec_path = (
         ROOT / "tools" / "specs" / "quest_tracker_simulation_v2.json"
     )
@@ -583,6 +586,30 @@ def main() -> None:
             "`candidate-rejected / repair-budget-exhausted / P3`",
         ),
         "pfQuest tracker production final",
+    )
+
+    require(
+        seals_work,
+        (
+            "Quest Log／Tracker 共用漆章",
+            "`QS-A1 V1.r4`",
+            "`runtime-exported / P5`",
+            "QuestToolWaxSeal_Master_v1.png",
+            "QS-A1_SourceManifest_v1.json",
+            "QS-A1_RuntimeManifest_v1.json",
+            "QuestToolWaxSealStatesV1.tga",
+            "377dcdc141ee5487884bfc99dbfd82013a8c4d7cb7200a4414feebb81d72ab75",
+            "f113e670f1b61be1a50e3cfa16dfce95a2b0d159fc35d986a9b2e1d314a72902",
+            "`256 × 64`",
+            "normal／hover／pressed／disabled",
+            "透明 RGB 清零",
+            "SetClampRectInsets",
+            "旧七个 provider Button",
+            "`5/5`",
+            "流程错误：`0`",
+            "不得进入 `P6`",
+        ),
+        "accepted QS-A1 work",
     )
     assert tracker_work.index("## 生成前模拟实例图") < tracker_work.index(
         "## 最终执行正文"
@@ -1628,6 +1655,80 @@ def main() -> None:
         ROOT / "tools" / "build_quest_tracker_paper_v1.py"
     ).is_file()
 
+    seal_source_path = (
+        ROOT
+        / "assets"
+        / "source"
+        / "quests"
+        / "qs-a1"
+        / "QuestToolWaxSeal_Master_v1.png"
+    )
+    seal_source_manifest = json.loads(
+        seal_source_path.with_name(
+            "QS-A1_SourceManifest_v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    seal_runtime_manifest = json.loads(
+        seal_source_path.with_name(
+            "QS-A1_RuntimeManifest_v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    seal_source_bytes = seal_source_path.read_bytes()
+    assert seal_source_bytes[:8] == b"\x89PNG\r\n\x1a\n"
+    assert struct.unpack(">II", seal_source_bytes[16:24]) == (1024, 1024)
+    assert hashlib.sha256(seal_source_bytes).hexdigest() == (
+        "377dcdc141ee5487884bfc99dbfd82013a8c4d7cb7200a4414feebb81d72ab75"
+    )
+    assert seal_source_manifest["version"] == "V1.r4"
+    assert seal_source_manifest["status"] == "accepted-source"
+    assert seal_source_manifest["source"]["visible_bbox_exclusive"] == [
+        192,
+        200,
+        832,
+        824,
+    ]
+    assert seal_source_manifest["source"]["visible_green_spill_pixels"] == 0
+    assert seal_source_manifest["source"]["transparent_rgb_nonzero_values"] == 0
+    assert seal_source_manifest["review"]["runtime_visual_accepted"] is True
+    assert seal_source_manifest["export_contract"]["runtime_atlas_size"] == [
+        256,
+        64,
+    ]
+    assert seal_runtime_manifest["status"] == "runtime-exported"
+    assert seal_runtime_manifest["transform"]["state_order"] == [
+        "normal",
+        "hover",
+        "pressed",
+        "disabled",
+    ]
+    seal_states = seal_runtime_manifest["transform"]["states"]
+    assert len({state["alpha_sha256"] for state in seal_states.values()}) == 1
+    assert all(
+        state["runtime_visible_size"] == [60, 58]
+        for state in seal_states.values()
+    )
+    assert seal_runtime_manifest["display_region"]["status"] == "pass"
+    assert seal_runtime_manifest["layout_contract"]["quest_log"][
+        "box_xywh"
+    ] == [600, -18, 28, 28]
+    assert seal_runtime_manifest["layout_contract"]["tracker"][
+        "top_clamp_inset"
+    ] == 18
+    seal_runtime_path = ROOT / seal_runtime_manifest["runtime"]["file"]
+    seal_runtime_bytes = seal_runtime_path.read_bytes()
+    assert hashlib.sha256(seal_runtime_bytes).hexdigest() == (
+        "f113e670f1b61be1a50e3cfa16dfce95a2b0d159fc35d986a9b2e1d314a72902"
+    )
+    assert seal_runtime_bytes[2] == 2
+    assert struct.unpack("<HH", seal_runtime_bytes[12:16]) == (256, 64)
+    assert seal_runtime_bytes[16] == 32
+    seal_builder = ROOT / "tools" / "build_quest_tool_wax_seal_v1.py"
+    compile(
+        seal_builder.read_text(encoding="utf-8"),
+        str(seal_builder),
+        "exec",
+    )
+
     quest_adapter = (
         ROOT
         / "addon"
@@ -1638,12 +1739,16 @@ def main() -> None:
     require(
         quest_adapter,
         (
-            'Quests.runtimeContract = "1.8"',
+            'Quests.runtimeContract = "1.9"',
             "QuestLogShellV4",
             "QuestLogDirectoryMarksV1",
             "QuestTrackerPaperV1",
+            "QuestToolWaxSealStatesV1",
             "ApplyPfQuestTrackerPaper",
             "aeuiQuestPaperSlices",
+            "EnsureQuestLogChromeSeal",
+            "EnsurePfQuestTrackerHubSeal",
+            "SetClampRectInsets",
             "0.66015625",
             "0.90625",
             "DIRECTORY.rowCount",

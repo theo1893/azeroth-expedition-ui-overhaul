@@ -36,7 +36,7 @@ fallback。NPC 对话仍没有获准生产资产。
 | `QUEST.LOG.COUNT` | `QuestLogQuestCount`；兼容 `QuestLogCount` | layout-only；使用纸面深墨文字，不新增外框 |
 | `QUEST.LOG.CLOSE` | `QuestLogFrameCloseButton` | 普通／悬停／按下／禁用 |
 | `QUEST.LOG.EMPTY` | `EmptyQuestLogFrame`、`QuestLogNoQuestsText` | 安静纸面，不生成空状态卡片 |
-| `QUEST.LOG.CHROME.SEAL` | 未来 adapter-owned Texture；有真实动作后才可原位升级为 Button | 独立 `28 × 28` 工具／配置候选漆章，目标可见蜡体约 `26 × 26`；盒 `[600,-18,28,28]`；必须与任务书可见 Alpha 完全分离，不得出现在翻页、纸页或书封上，不得烘焙进 SHELL，也不得冒充 `QUEST.LOG.STATE.SEAL` |
+| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，adapter-owned 无鼠标 `OVERLAY` Texture；有真实动作后才可原位升级为 Button | QS-A1 V1.r4 accepted；独立 `28 × 28` 工具／配置候选漆章，实际可见蜡体约 `26 × 25`；盒 `[600,-18,28,28]`；采样 `QuestToolWaxSealStatesV1.tga` normal cell。必须与任务书可见 Alpha 完全分离，不得出现在翻页、纸页或书封上，不得烘焙进 SHELL，也不得冒充 `QUEST.LOG.STATE.SEAL` |
 
 支持 `closed`、`empty`、`list-only`、`dual-page` 与 `selected`。离线参考为
 `676 × 464 UI px`，物理中心线 `x=338`；左右物理纸页近 1:1，可见宽度差
@@ -44,10 +44,12 @@ fallback。NPC 对话仍没有获准生产资产。
 `list-only` 只隐藏右页动态内容，完整书体保持 `676 × 464`，不得缩成
 `340px` 半本书。
 
-`QUEST.LOG.CHROME.SEAL` 的当前修订锚点位于书本右上方的透明 UI 空间，
+`QUEST.LOG.CHROME.SEAL` 的 runtime 锚点位于书本右上方的透明 UI 空间，
 与 `676 × 464` SHELL 的可见 Alpha 重叠像素必须为 `0`；顶部 visual
-outset 为 `18px`。P5 必须同时补足 `18px` 屏幕顶缘安全距。该对象不能因为
-实现方便重新落到右下页角、翻页区、封皮、包角或装订结构上。
+outset 为 `18px`。`QuestLogFrame` 仍由原生固定 UIPanel 布局管理，不为该
+无鼠标 Texture 新增拖动或位置保存；目标客户端必须复核最小分辨率／UI scale
+下的 `18px` 顶缘安全距。该对象不能因为实现方便重新落到右下页角、翻页区、
+封皮、包角或装订结构上。
 
 ## Quest Log 纸页与中央装订
 
@@ -229,7 +231,7 @@ SavedVariables。
 | `QUEST.TRACKER.PAPER.MIDDLE` | adapter-owned、挂在 `tracker.backdrop` 下的无鼠标 Texture | 可横纵延展的连续安静纸面；不得烘焙任务行 |
 | `QUEST.TRACKER.PAPER.BOTTOM` | adapter-owned、挂在 `tracker.backdrop` 下的无鼠标 Texture | 横向三段式自然撕裂底边 |
 | `QUEST.TRACKER.PAPER.EDGE` | adapter-owned 独立叠页边 Texture | 只在边缘表现错层纸页，不改变 Frame 命中 |
-| `QUEST.TRACKER.HUB.SEAL` | 未来 adapter-owned Texture／Button | `34 × 34` 顶部中央明显漆章，目标可见蜡体约 `32 × 32`；`x=floor((W-34)/2)`、`y=-18`，底边落在 `y=16`，不移动或覆盖列表 |
+| `QUEST.TRACKER.HUB.SEAL` | `pfQuestMapTracker.aeuiQuestHubSeal`，adapter-owned 无鼠标父级 `ARTWORK` Texture；未来有功能等价后才升级为 Button | QS-A1 V1.r4 accepted；`34 × 34` 顶部中央明显漆章，实际可见蜡体约 `32 × 31`；`x=floor((W-34)/2)`、`y=-18`，底边落在 `y=16`，不移动或覆盖列表；采样同一 atlas normal cell |
 | `QUEST.TRACKER.HUB.MENU` | 未来 adapter-owned 临时交互层 | 独立后续批次；必须一一委托七个 provider Button 的既有行为后，才能允许旧 icon 隐藏 |
 | `QUEST.TRACKER.HEADER.STRAP` | `tracker.panel` 的未来 adapter-owned 三段式背景 | `scope-deferred`；当前不创建或挂载资产，provider 工具条不变 |
 | `QUEST.TRACKER.HEADER.EMBLEM` | 未来 adapter-owned 无鼠标 Texture | `scope-deferred`；当前不存在 source 或 runtime |
@@ -244,13 +246,17 @@ SavedVariables。
 provider 的真实几何仍是 `16px` 工具条加动态条目。纸面四边 outset 继续为
 `0px`；`QUEST.TRACKER.HUB.SEAL` 单独允许顶部 `18px` 可见 outset，不构成
 书框或纸面边界。由于 provider 的 `SetClampedToScreen(true)` 只保证 root
-Frame，本组件 P5 必须 feature-detect clamp inset 或在拖动保存时补足
-`18px` 顶部屏幕安全距，不能让子 Texture 在屏幕顶缘被裁掉。目标视觉隐藏
+Frame，adapter 现已 feature-detect `SetClampRectInsets` 并在既有 top inset
+上补 `18px`；目标客户端仍需复核缺少该 API 时的 provider fallback 与拖动
+保存。不能让子 Texture 在屏幕顶缘被裁掉。目标视觉隐藏
 七枚旧 icon，但只有
 `QUEST.TRACKER.HUB.MENU` 完成七项功能等价、Tooltip、状态反馈和原脚本委托后，
 才允许把原 Button 视觉隐藏并禁用鼠标；迁移前它们继续原样可见可用。
-当前模拟本身不授权隐藏、删除、重挂、换皮或改写 provider 对象；
-`QT-SIM V2` 未绘制工具条也不是 runtime 决策。
+当前 runtime 不隐藏、删除、重挂、换皮或改写 provider 对象。最窄
+`130px` 时 `search` 覆盖漆章右下部、`giver／clean` 各触及 `1px` 边条；
+Button 子 Frame 继续绘制在父级 ARTWORK 之上并保有鼠标与原脚本。这是 hub
+menu 等价完成前的显式过渡状态，不授权隐藏、删除、重挂、换皮或改写重叠
+按钮。
 
 ### 动态条目
 

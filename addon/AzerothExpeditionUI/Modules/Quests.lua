@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local Quests = {}
-Quests.runtimeContract = "1.8"
+Quests.runtimeContract = "1.9"
 
 local SHELL_TEXTURE =
   addon.media.root .. "Quests\\QuestLogShellV4"
@@ -12,6 +12,8 @@ local QUEST_ROW_FONT =
   addon.media.root .. "Fonts\\LXGWWenKaiGB-Medium.ttf"
 local TRACKER_PAPER_TEXTURE =
   addon.media.root .. "Quests\\QuestTrackerPaperV1"
+local QUEST_SEAL_TEXTURE =
+  addon.media.root .. "Quests\\QuestToolWaxSealStatesV1"
 
 local SHELL = {
   width = 676,
@@ -162,6 +164,27 @@ local TRACKER_PAPER = {
     bottomLeft = { 0, 0.09375, 0.890625, 1 },
     bottom = { 0.09375, 0.6484375, 0.890625, 1 },
     bottomRight = { 0.6484375, 0.7421875, 0.890625, 1 },
+  },
+}
+
+local QUEST_SEAL = {
+  contract = "1.0",
+  topOutset = 18,
+  states = {
+    normal = { 0, 0.25, 0, 1 },
+    hover = { 0.25, 0.5, 0, 1 },
+    pressed = { 0.5, 0.75, 0, 1 },
+    disabled = { 0.75, 1, 0, 1 },
+  },
+  questLog = {
+    width = 28,
+    height = 28,
+    left = 600,
+    top = -18,
+  },
+  tracker = {
+    width = 34,
+    height = 34,
   },
 }
 
@@ -332,6 +355,81 @@ local function ConfigureTrackerPaperTexture(texture, texcoord)
   )
   texture:SetVertexColor(1, 1, 1, 1)
   texture:Show()
+end
+
+local function ConfigureQuestSealTexture(texture, state)
+  if not texture then
+    return
+  end
+  local texcoord = QUEST_SEAL.states[state or "normal"]
+  texture.aeuiQuestManaged = true
+  texture:SetTexture(QUEST_SEAL_TEXTURE)
+  texture:SetTexCoord(
+    texcoord[1],
+    texcoord[2],
+    texcoord[3],
+    texcoord[4]
+  )
+  texture:SetVertexColor(1, 1, 1, 1)
+  texture:Show()
+end
+
+function Quests:ApplyTrackerSealClampInset(tracker)
+  if not tracker or not tracker.SetClampRectInsets then
+    return
+  end
+  if not tracker.aeuiQuestBaseClampInsets then
+    local left, right, top, bottom = 0, 0, 0, 0
+    if tracker.GetClampRectInsets then
+      left, right, top, bottom = tracker:GetClampRectInsets()
+      left = tonumber(left) or 0
+      right = tonumber(right) or 0
+      top = tonumber(top) or 0
+      bottom = tonumber(bottom) or 0
+    end
+    tracker.aeuiQuestBaseClampInsets = {
+      left,
+      right,
+      top,
+      bottom,
+    }
+  end
+  local base = tracker.aeuiQuestBaseClampInsets
+  tracker:SetClampRectInsets(
+    base[1],
+    base[2],
+    base[3] + QUEST_SEAL.topOutset,
+    base[4]
+  )
+end
+
+function Quests:EnsurePfQuestTrackerHubSeal(tracker)
+  if not tracker or not tracker.CreateTexture then
+    return
+  end
+  if not tracker.aeuiQuestHubSeal then
+    -- Parent ARTWORK stays below pfQuest's child Button frames. The seal is a
+    -- visual underlay only until a separately authorized hub menu preserves
+    -- all seven provider actions.
+    tracker.aeuiQuestHubSeal = tracker:CreateTexture(nil, "ARTWORK")
+  end
+  local texture = tracker.aeuiQuestHubSeal
+  ConfigureQuestSealTexture(texture, "normal")
+  SetSize(
+    texture,
+    QUEST_SEAL.tracker.width,
+    QUEST_SEAL.tracker.height
+  )
+  SetSinglePoint(
+    texture,
+    "TOP",
+    tracker,
+    "TOP",
+    0,
+    QUEST_SEAL.topOutset
+  )
+  self:ApplyTrackerSealClampInset(tracker)
+  tracker.aeuiQuestSealRuntimeContract = QUEST_SEAL.contract
 end
 
 local function AnchorTrackerHorizontal(
@@ -558,6 +656,7 @@ function Quests:ApplyPfQuestTrackerPaper()
     function()
       Quests:LayoutPfQuestTrackerPaper(tracker, true)
       Quests:StylePfQuestTrackerEntries(tracker)
+      Quests:EnsurePfQuestTrackerHubSeal(tracker)
     end
   )
   AppendScript(
@@ -572,6 +671,7 @@ function Quests:ApplyPfQuestTrackerPaper()
 
   self:LayoutPfQuestTrackerPaper(tracker, true)
   self:StylePfQuestTrackerEntries(tracker)
+  self:EnsurePfQuestTrackerHubSeal(tracker)
   tracker.aeuiQuestTrackerRuntimeContract =
     TRACKER_PAPER.contract
 end
@@ -1769,6 +1869,31 @@ function Quests:EnsureShell(frame)
   texture:Show()
 end
 
+function Quests:EnsureQuestLogChromeSeal(frame)
+  if not frame or not frame.CreateTexture then
+    return
+  end
+  if not frame.aeuiQuestChromeSeal then
+    frame.aeuiQuestChromeSeal = frame:CreateTexture(nil, "OVERLAY")
+  end
+  local texture = frame.aeuiQuestChromeSeal
+  ConfigureQuestSealTexture(texture, "normal")
+  SetSize(
+    texture,
+    QUEST_SEAL.questLog.width,
+    QUEST_SEAL.questLog.height
+  )
+  SetSinglePoint(
+    texture,
+    "TOPLEFT",
+    frame,
+    "TOPLEFT",
+    QUEST_SEAL.questLog.left,
+    -QUEST_SEAL.questLog.top
+  )
+  frame.aeuiQuestSealRuntimeContract = QUEST_SEAL.contract
+end
+
 function Quests:ApplyControlVisuals()
   self:HideCollapseAllButton()
   StyleTrackToggle(QuestLogFrameLevelsCheckButton)
@@ -2102,6 +2227,7 @@ function Quests:Apply()
   self:InstallGlobalHooks()
   self:InstallQuestLogFrameOnShowHook()
   self:EnsureShell(QuestLogFrame)
+  self:EnsureQuestLogChromeSeal(QuestLogFrame)
   self:EnsureDetailToggle(QuestLogFrame)
   self:ApplyFrameGeometry()
   self:ApplyPfQuestQuestLogCompatibility()

@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "batch": "QS-A1",
+  "version": "V1.r4",
+  "status": "accepted-source",
+  "accepted_on": "2026-07-31",
+  "source": {
+    "file": "QuestToolWaxSeal_Master_v1.png",
+    "sha256": "377dcdc141ee5487884bfc99dbfd82013a8c4d7cb7200a4414feebb81d72ab75",
+    "width": 1024,
+    "height": 1024,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      192,
+      200,
+      832,
+      824
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0,
+    "transparent_pixels": 751279,
+    "partially_transparent_pixels": 5854,
+    "opaque_pixels": 291443
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "codex_package": "@openai/codex@0.143.0",
+    "generation_session": "019fb766-ff17-7cb0-b175-0b8cd2464a76",
+    "generation_before_commit": "e032522a5323f61c003fda277af5d3cd0ab13def",
+    "raw_attempt": "generated/quests/QUEST-SEALS/QS-A1-V1/attempt-04/raw/QS-A1-V1.r4.png",
+    "raw_attempt_sha256": "3e972a67a3b27bb28b6b7ef314f0784886d4e16d3de98df022891b08571e4da1",
+    "accepted_candidate": "generated/quests/QUEST-SEALS/QS-A1-V1/attempt-04/review/QS-A1-V1.r4.normalized-review.png",
+    "accepted_candidate_sha256": "d5e5d12e09bd06e9e76f4382eea40b5501f5f6823d58b8693902ab98d8470f75",
+    "prompt": "docs/modules/quests/work/QUEST.SEALS.md",
+    "prompt_sections": [
+      "最终执行正文 — QS-A1 V1",
+      "修复执行正文 — QS-A1 V1.r4"
+    ],
+    "visual_references": [
+      "assets/locked/quests/任务详情面板_视觉基准_v1.png",
+      "assets/locked/quests/任务追踪面板_视觉基准_v1.png"
+    ],
+    "deterministic_derivation": "review_quest_seal_candidate_v1.py chroma_key, fully transparent RGB zeroing, visible-bbox proportional fit to 640px and centering on a 1024x1024 transparent canvas; then clear 58 LANCZOS-only chroma-fringe pixels: 32 pure-green pixels at Alpha 1..4 and 26 residual green-dominant pixels at Alpha 3..19"
+  },
+  "user_acceptance": {
+    "statement": "接受 QS-A1 V1.r4 的运行时视觉，并授权确定性色键、透明 RGB 清零及 1024² 归一化例外进入 P4/P5。",
+    "scope": [
+      "accept the V1.r4 runtime appearance and connected wax spread",
+      "promote the deterministic 1024x1024 transparent normalization",
+      "derive normal, hover, pressed and disabled RGB states from one Alpha",
+      "export and integrate without further image generation calls"
+    ],
+    "historical_failures_not_rewritten": [
+      "raw provider output remained 1254x1254 RGB",
+      "raw provider background was gradient green rather than exact #00FF00"
+    ]
+  },
+  "logical_components": [
+    {
+      "id": "QUEST.LOG.CHROME.SEAL",
+      "runtime_object": "QuestLogFrame adapter-owned Texture",
+      "box_xywh": [
+        600,
+        -18,
+        28,
+        28
+      ],
+      "visible_content_goal": [
+        26,
+        26
+      ],
+      "mouse": false
+    },
+    {
+      "id": "QUEST.TRACKER.HUB.SEAL",
+      "runtime_object": "pfQuestMapTracker adapter-owned Texture",
+      "box_formula": "x=floor((W-34)/2), y=-18, 34x34",
+      "visible_content_goal": [
+        32,
+        32
+      ],
+      "mouse": false
+    }
+  ],
+  "review": {
+    "runtime_visual_accepted": true,
+    "single_base_object": true,
+    "connected_wax_spread": true,
+    "small_size_legibility": true,
+    "baked_text": false,
+    "baked_buttons": false,
+    "baked_quest_state": false,
+    "display_region_review_before_acceptance": "pass"
+  },
+  "export_contract": {
+    "status": "runtime-exported",
+    "operation": "crop accepted Alpha bbox, proportional LANCZOS scale once, center the shared sprite in four 64x64 cells, derive RGB-only states, clear resampling-only green fringe, zero transparent RGB and write one 256x64 RGBA TGA",
+    "runtime_atlas_size": [
+      256,
+      64
+    ],
+    "runtime_cell_size": [
+      64,
+      64
+    ],
+    "runtime_cell_order": [
+      "normal",
+      "hover",
+      "pressed",
+      "disabled"
+    ],
+    "runtime_visible_size": [
+      60,
+      58
+    ],
+    "allowed": [
+      "crop only the accepted visible Alpha bbox",
+      "proportional resize to at most 60x60 visible pixels",
+      "center the same Alpha in each fixed cell",
+      "apply the declared RGB-only state transforms",
+      "zero RGB only where Alpha is fully transparent"
+    ],
+    "forbidden_runtime_uses": [
+      "load the 1024x1024 source directly in the client",
+      "redraw, rotate, mirror, stretch or change the state silhouette",
+      "hide or disable the seven provider toolbar Buttons before hub parity",
+      "give either current Texture a click region",
+      "use the tool seal as complete or failed quest state"
+    ]
+  },
+  "runtime_exports": [
+    {
+      "contract": "QS-A1 V1.r4 / 1.0",
+      "manifest": "QS-A1_RuntimeManifest_v1.json",
+      "file": "addon/AzerothExpeditionUI/Media/Quests/QuestToolWaxSealStatesV1.tga",
+      "sha256": "f113e670f1b61be1a50e3cfa16dfce95a2b0d159fc35d986a9b2e1d314a72902",
+      "atlas_size": [
+        256,
+        64
+      ],
+      "cell_size": [
+        64,
+        64
+      ]
+    }
+  ]
+}

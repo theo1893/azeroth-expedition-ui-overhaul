@@ -118,6 +118,37 @@ provenance 位于
 `18 × 18` 排版，并只对已接受的 QL-B1／B2 source 做确定性尺寸重导出。
 QL-B3 继续暂停，不能从概念图或未接受候选直接裁切。
 
+## Quest Log／Tracker 共用工具漆章
+
+`QUEST.LOG.CHROME.SEAL` 与 `QUEST.TRACKER.HUB.SEAL` 共用 QS-A1 V1.r4 的
+同一枚“远征公会工具漆章”：低饱和暗旧酒红蜡体、深乌棕浅压印、左上短暖光、
+少量与主体连续的受压火漆扩散，以及粗短四向罗盘叠加一笔斜向羽毛笔。必须
+继续读取为 2004 年前后香草魔兽二维手绘 sprite，而不是现代圆 icon、金属
+勋章、宝石、照片级蜡封或暗黑式祭坛。无文字、阵营徽记、任务完成／失败符号、
+发光符文、丝带、火焰、书页、书封或额外承载面。
+
+用户于 `2026-07-31` 接受 V1.r4 的运行时视觉，并授权原始 provider
+`1254²`／渐变绿输出经过确定性色键、透明 RGB 清零与 `1024²` 等比归一化
+进入 P4／P5；这些历史 raw 失败不改写为通过。最终透明 source、接受原文、
+固定执行器／会话、raw／candidate SHA、Prompt、两张锁定视觉参考和禁止用途
+见
+[QS-A1_SourceManifest_v1.json](../../../assets/source/quests/qs-a1/QS-A1_SourceManifest_v1.json)。
+tracked source 为
+[QuestToolWaxSeal_Master_v1.png](../../../assets/source/quests/qs-a1/QuestToolWaxSeal_Master_v1.png)，
+SHA-256
+`377dcdc141ee5487884bfc99dbfd82013a8c4d7cb7200a4414feebb81d72ab75`；
+`1024 × 1024 RGBA`、可见 bbox `[192,200,832,824]`、可见绿色残留 `0`，
+全透明像素的 RGB 全为 `0`。
+
+确定性 runtime 见
+[QS-A1_RuntimeManifest_v1.json](../../../assets/source/quests/qs-a1/QS-A1_RuntimeManifest_v1.json)：
+同一 Alpha 等比缩为 `60 × 58`，居中放入 normal／hover／pressed／disabled
+四个 `64 × 64` cell；hover 只暖亮，pressed 只压暗且未来交互锚点下移
+`1px`，disabled 只退灰，四态不重画轮廓。Quest Log 当前以 `28px` 外置于
+书体右上透明空间，Tracker 以 `34px` 位于顶部中央；两处当前均只使用 normal
+无鼠标 Texture。旧七个 provider Button 在 hub menu 取得一一功能等价前
+继续可见可用，不能为了纯净构图提前隐藏。
+
 ## ScrollBar 与操作 Button
 
 左页列表滚动仍可使用嵌在页边的窄装订槽与小型黄铜页夹；右页书本正文不显示

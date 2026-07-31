@@ -223,11 +223,15 @@ def main() -> None:
     quest_source = (aeui / "Modules" / "Quests.lua").read_text(
         encoding="utf-8"
     )
-    assert 'Quests.runtimeContract = "1.8"' in quest_source
+    assert 'Quests.runtimeContract = "1.9"' in quest_source
     assert "QuestLogShellV4" in quest_source
     assert "QuestLogDirectoryMarksV1" in quest_source
     assert "QuestTrackerPaperV1" in quest_source
+    assert "QuestToolWaxSealStatesV1" in quest_source
     assert "ApplyPfQuestTrackerPaper" in quest_source
+    assert "EnsureQuestLogChromeSeal" in quest_source
+    assert "EnsurePfQuestTrackerHubSeal" in quest_source
+    assert "SetClampRectInsets" in quest_source
     assert "QuestLogSelectionBookmarkV1" not in quest_source
     assert "QuestLogTitleButtonTemplate" in quest_source
     assert "FauxScrollFrame_GetOffset" in quest_source
@@ -266,6 +270,25 @@ def main() -> None:
     assert (
         aeui / "Media" / "Quests" / "QuestLogSelectionBookmarkV1.tga"
     ).is_file()
+    seal_runtime = (
+        aeui / "Media" / "Quests" / "QuestToolWaxSealStatesV1.tga"
+    )
+    assert seal_runtime.is_file()
+    seal_runtime_manifest = json.loads(
+        (
+            ROOT
+            / "assets"
+            / "source"
+            / "quests"
+            / "qs-a1"
+            / "QS-A1_RuntimeManifest_v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert seal_runtime_manifest["status"] == "runtime-exported"
+    assert seal_runtime_manifest["display_region"]["status"] == "pass"
+    assert hashlib.sha256(seal_runtime.read_bytes()).hexdigest() == (
+        seal_runtime_manifest["runtime"]["sha256"]
+    )
 
     for toc_name in ("pfUI.toc", "pfUI-tbc.toc"):
         toc_source = (pfui / toc_name).read_text(encoding="utf-8-sig")

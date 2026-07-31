@@ -10,7 +10,8 @@
   后加载替换 Quest Log 刷新入口、再次调用 `QuestLogTitleButton_Resize`，
   并把六个 provider 控件塞入详情 ScrollChild；`pfQuest-turtle` 只扩展
   数据，没有独立 UI 写入。
-- AEUI Quests runtime contract 已升至 `1.7`：在 provider 最终刷新后以
+- AEUI Quests runtime contract 已升至 `1.9`；其中 Quest Log provider
+  兼容子合同保持 `1.7`：在 provider 最终刷新后以
   事件驱动方式恢复 23 条列表行与右页正文安全区，将 online／language 搬至
   右页固定顶部工具行，将 show／hide／clean／reset 搬至右页固定底部四格；
   所有 provider OnClick／OnUpdate、显隐、禁用、ID 和数据行为保持。没有使用
@@ -46,12 +47,17 @@
   inherit／ignore 职责写入执行正文，并把 atlas 可见蜡体收紧为 Quest Log
   约 `26px`、Tracker 约 `32px`。用户已于 `2026-07-31` 独立授权完整
   `QS-A1 V1`、固定 Image 1／2、受限同循环 Image 3 edit 与最多 `5` 次实际
-  ImageGen 五次额度已耗尽（`5/5`）。r4 为推荐审核候选：视觉、用户指定的
-  连体受压火漆扩散、小尺寸罗盘＋羽毛笔、折算 bbox、安全边与真实展示区域
-  均通过。r5 冻结物件后仍为 `1254²`，背景有 `6189` 种 RGB 且精确纯绿为
-  `0`，没有改善两项 provider 边界。source／runtime 未修改；等待用户接受
-  或拒绝确定性色键＋`1024²` 归一化例外。功能等价完成前 runtime 不隐藏旧
-  按钮。
+  ImageGen 五次额度已耗尽（`5/5`）。用户现已接受 r4 的运行时视觉，并授权
+  确定性色键、透明 RGB 清零与 `1024²` 归一化例外。tracked source SHA-256
+  为 `377dcdc141ee5487884bfc99dbfd82013a8c4d7cb7200a4414feebb81d72ab75`；
+  可见 bbox `[192,200,832,824]`，可见绿色残留与透明像素 RGB 均为 `0`。
+  normal／hover／pressed／disabled 四态以同一 Alpha 导出为 `256 × 64` TGA，
+  SHA-256
+  `f113e670f1b61be1a50e3cfa16dfce95a2b0d159fc35d986a9b2e1d314a72902`。
+  Quest Log `28px` 与 Tracker `34px` 无鼠标 Texture 已接入，Tracker 追加
+  `18px` top clamp inset；三种宽度展示区域与 Lua smoke 通过，当前为
+  `runtime-exported / P5`。功能等价完成前 runtime 不隐藏旧按钮；`130px`
+  下的旧按钮覆盖属于已记录的过渡层序，仍待实机。
 - 用户于 `2026-07-30` 将 Quest Log 选为当前首要大面积 UI；地图与角色因
   实机对象几何尚未完成，继续保持后续顺位。
 - Quest Log 真实对象合同：`P1` 完成，QL-A 当前处于 `P4–P5`；QL-B1
@@ -248,7 +254,24 @@ timer 或 failed 资产：provider 没有可用的公开状态来源。本项目
 
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
-| `QS-A1` | `QUEST.LOG.CHROME.SEAL` 与 `QUEST.TRACKER.HUB.SEAL` 共用母版；Tracker hub menu 只定义功能迁移边界 | `P3 budget-exhausted / user-review-required / 5/5` | 用户查看 [QS-A1 r4 推荐候选与五次审查](work/QUEST.SEALS.md)，明确接受确定性色键／清零／归一化例外进入 P4，或拒绝并结束本批 |
+| `QS-A1` | `QUEST.LOG.CHROME.SEAL` 与 `QUEST.TRACKER.HUB.SEAL` 共用母版；Tracker hub menu 只定义功能迁移边界 | `P5 runtime-exported / 5/5` | [source／runtime manifest 与接受记录](work/QUEST.SEALS.md) 已固化；Turtle WoW 验证两处锚点、TGA、clamp、旧七按钮层序与交互 |
+
+QS-A1 当前事实：
+
+- source：
+  `assets/source/quests/qs-a1/QuestToolWaxSeal_Master_v1.png`；source manifest：
+  `QS-A1_SourceManifest_v1.json`；runtime manifest：
+  `QS-A1_RuntimeManifest_v1.json`。
+- exporter：`tools/build_quest_tool_wax_seal_v1.py`；runtime：
+  `addon/AzerothExpeditionUI/Media/Quests/QuestToolWaxSealStatesV1.tga`。
+- 最终展示区域合同：
+  `tools/specs/quest_seals_runtime_display_region_v1.json`；ignored 报告 SHA-256
+  `2f027e5459148da600835653e481f42ac535b2c1a2d44e1e43ad456587d2a97c`，
+  Quest Log 与 Tracker `130／230／330px` 均 `pass`。最窄宽度下旧
+  `search` 覆盖漆章右下部且 `giver／clean` 各触及 `1px`，但 Button 仍在
+  父级装饰 Texture 上方并保留脚本、鼠标、Tooltip 与显隐。
+- 接受后新增生成 `0`；正式调用仍为 `5/5`、流程错误 `0`。没有目标客户端
+  证据，不得进入 P6 或清理 work／中间产物。
 
 QT-A1 临时 runtime 事实：
 
@@ -262,7 +285,7 @@ QT-A1 临时 runtime 事实：
   `c6b1f64034fa69f01709403e592c3350445c9a6739f4b559242be48831666c61`；
 - exporter：`tools/build_quest_tracker_paper_v1.py`；九宫格 cap 为
   左／右 `14px`、上 `12px`、下 `16px`；
-- adapter：`Quests.lua` runtime contract `1.8`。纸面为九个无鼠标
+- adapter：`Quests.lua` runtime contract `1.9`。纸面为九个无鼠标
   `BACKGROUND` Texture；provider 黑色 panel／行矩形隐藏，动态文字、图标、
   七工具 Button、模式、Tooltip、点击、拖动和 SavedVariables 保持。
 - 验证：exporter 重跑哈希稳定；Python 编译、quest design contract、
@@ -299,6 +322,15 @@ QT-A1 临时 runtime 事实：
   [`Quests.lua`](../../../addon/AzerothExpeditionUI/Modules/Quests.lua)；
   Lua smoke：
   [`quest_module_smoke.lua`](../../../tests/quest_module_smoke.lua)。
+- QS-A1 accepted source／manifest：
+  [`QuestToolWaxSeal_Master_v1.png`](../../../assets/source/quests/qs-a1/QuestToolWaxSeal_Master_v1.png)／
+  [`QS-A1_SourceManifest_v1.json`](../../../assets/source/quests/qs-a1/QS-A1_SourceManifest_v1.json)；
+  runtime manifest：
+  [`QS-A1_RuntimeManifest_v1.json`](../../../assets/source/quests/qs-a1/QS-A1_RuntimeManifest_v1.json)。
+  runtime `QuestToolWaxSealStatesV1.tga` SHA-256
+  `f113e670f1b61be1a50e3cfa16dfce95a2b0d159fc35d986a9b2e1d314a72902`；
+  四态 Alpha SHA-256 均为
+  `f11b4072daa68b8afd3b26afbd53e8c3772e64ae26c28ae610b11f260a276e8c`。
 - QL-A2 raw、透明候选与失败候选只存在于被忽略的
   `generated/quests/QL-A2/`；未晋级任何 V3.2／V3.3 候选。
 - QL-B1 生产合同、五次循环与用户接受记录：
@@ -378,16 +410,14 @@ QT-A1 临时 runtime 事实：
 
 ## 下一步
 
-当前不依赖游戏设备的首要工作是继续
-[QS-A1 V1](work/QUEST.SEALS.md) 五次有界循环。attempt 1 已按真实
-Quest Log／Tracker 排版与三种 Tracker 宽度已逐轮审查。五次实际调用已经
-耗尽，流程错误 `0`。r4 是推荐审核候选；视觉、用户要求的连体扩散、bbox、
-安全边、小尺寸符号与展示区域通过。r5 未解决执行器固定 `1254²` 与渐变绿
-背景。当前停止生成，等待用户明确接受 r4 的运行时视觉及确定性色键、全透明
-RGB 清零、`1024² / 640px` 归一化例外，或拒绝并结束本批；不得自动推进。
-该授权不允许自动接受 source、修改 runtime 或立即隐藏七个 provider
-Button。Tracker hub menu 必须先完成七项功能等价，旧 icon 才能在 runtime
-隐藏。
+QS-A1 V1.r4 已完成 P4／P5，当前没有新的离线生成门禁。下一步是在游戏设备
+同时启用 pfQuest／pfQuest-turtle 后验证：Quest Log 外置 `28px` 漆章不接触
+书体且不被屏幕顶缘裁切；Tracker `34px` 漆章在 `130／230／330px` 居中、
+底边接 `y=16`；`SetClampRectInsets` 分支、拖动与位置恢复有效；旧七个
+provider Button 仍可见、可点、Tooltip／模式状态不丢失；TGA 方向、Alpha
+边缘与 UI scale 正确。通过前 [QS-A1 work](work/QUEST.SEALS.md) 保留，不能
+进入 P6／P6-C，也不能隐藏旧 icon。Tracker hub menu 必须先完成七项功能
+等价，旧 icon 才能在 runtime 隐藏。
 
 QL-A2 保持 [runtime work](work/QUEST.LOG.GUTTER.md)，不得进入 `P6`／清理。
 Quest Log 静态兼容已完成，下一门禁是在游戏设备同时启用 pfQuest 与
