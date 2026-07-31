@@ -144,11 +144,10 @@ chrome，不是 ScrollFrame、裁切、滚动范围或任务详情数据。
 ## Quest Tracker
 
 provider 已锁定为 `pfQuest 7.0.1` 的 `pfQuestMapTracker`。稳定视觉基线
-仍是纵向行军便笺：顶部短皮带与克制旧黄铜铆钉、连续可延展的安静暖赭纸面、
-独立错层页边、自然撕裂底边，以及极少量羽毛笔／指南针压印。它与 Quest Log
-共享公会卷宗的纸张、墨迹、暗酒红皮革、旧黄铜、左上暖光和 2004 年前后
-香草魔兽二维手绘笔触，但轮廓必须是从卷宗中抽出的单张野外便笺，不能变成
-双页书、聊天旧书、透明黑色 HUD、现代卡片列或暗黑式金属祭坛。
+仍是纵向行军便笺：连续可延展的安静暖赭纸面、独立错层页边和自然撕裂底边。
+它与 Quest Log 共享公会卷宗的纸张、墨迹、暗酒红、克制旧黄铜、左上暖光和
+2004 年前后香草魔兽二维手绘笔触，但轮廓必须是从卷宗中抽出的单张野外便笺，
+不能变成双页书、聊天旧书、透明黑色 HUD、现代卡片列或暗黑式金属祭坛。
 
 `QUEST.TRACKER.PAPER.TOP`／`MIDDLE`／`BOTTOM`／`EDGE` 必须组成可横向适配
 `130..330 UI px`、可纵向适配任意条目高度的切片系统。顶部和撕裂底边采用
@@ -157,13 +156,12 @@ provider 已锁定为 `pfQuest 7.0.1` 的 `pfQuestMapTracker`。稳定视觉基�
 固定高度背景，也不在任何切片中烘焙任务名、等级、目标、百分比、节点图标、
 按钮或空状态。
 
-`QUEST.TRACKER.HEADER.STRAP` 是承载真实 `tracker.panel` 的短皮带 chrome，
-同样按左右端帽与安静中段拆分。七个工具 Button 仍是七个独立逻辑对象：
-任务、数据库、任务给予者、搜索、清理、设置和关闭。可共用 atlas，但每个
-图标必须有独立 cell 和 UV；前三个模式额外具有 selected，全部具有 normal、
-hover、pressed、disabled。图标使用粗厚、低分辨率友好的旧墨／浅黄铜手绘
-轮廓，不使用线性现代 icon、圆角方块底座、霓虹高亮或烘焙文字。选中态只用
-暗酒红皮革压片或温暖铜墨强调，不沿用 pfQuest 当前青绿色 vertex color。
+`QUEST.TRACKER.HEADER.STRAP`、`HEADER.EMBLEM` 与七个工具 Button 的逻辑 ID
+继续保留，但视觉基线尚未冻结，QT-A2 当前为 `scope-deferred`。本轮不创建
+它们的 Prompt、source、runtime 或 adapter，也不以 tracker 主体预演替代
+按钮评审。provider 的现有对象、状态、Tooltip、脚本和模式行为必须保留。
+未来恢复时需从主模块基线重新提出有独立 cell／UV 的组件方案，并完成新的
+本地几何预演和生产授权。
 
 `QUEST.TRACKER.ENTRY.FOCUS` 是可横向延展、边缘自然消散的淡墨洗，不形成卡片
 边框。`ENTRY.TRACKED` 是克制的暗酒红页边短墨记，`ENTRY.COMPLETE` 是小型
@@ -173,12 +171,12 @@ hover、pressed、disabled。图标使用粗厚、低分辨率友好的旧墨／
 
 当前 provider 没有公开的折叠状态对象，也没有 tracker timer／failed 状态。
 因此本轮不生成折叠 Button、沙漏或失败蜡封，不把 Quest Log 的 B3 状态章
-移植过来。生成前 `QT-SIM V1` 本地几何 specification、完整可授权生产正文
-与真实排版验收合同均位于
+移植过来。聚焦 tracker 主体的 `QT-SIM V2` 本地几何 specification、QT-A1／
+B1 完整可授权生产正文与真实排版验收合同均位于
 [work/QUEST.TRACKER.CORE.md](work/QUEST.TRACKER.CORE.md)。当前第一门禁是
-用户确认或否决本地预演；模拟 ImageGen 固定 `0/0`，三段生产 ImageGen 调用
-保持 `0/5`。用户确认模拟方向并另行授权正式生产前，不创建 adapter 或
-runtime 媒体。
+用户确认或否决本地预演；模拟 ImageGen 固定 `0/0`，活动两段生产 ImageGen
+调用各保持 `0/5`，QT-A2 保持 `scope-deferred 0/5`。用户确认模拟方向并
+另行授权正式生产前，不创建 adapter 或 runtime 媒体。
 
 ## NPC Quest／Gossip
 

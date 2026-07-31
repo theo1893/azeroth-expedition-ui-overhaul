@@ -19,6 +19,9 @@
   `pfQuestMapTracker`，包含三种模式、七个工具 Button、最多二十五个动态
   Button，宽度 `130..330px`、高度随目标变化。当前结构图与 Quest Log
   故障图继续只作信息层级和复现证据，不是美术权威。
+- 用户于 `2026-07-31` 将七个低频工具 Button 与 `HEADER.*` 的视觉改造暂缓，
+  当前优先确认 tracker 主体。provider 对象、Tooltip、OnClick、模式切换和
+  SavedVariables 合同不变；暂缓不授权隐藏、删除、重挂、换皮或改写脚本。
 - 用户于 `2026-07-30` 将 Quest Log 选为当前首要大面积 UI；地图与角色因
   实机对象几何尚未完成，继续保持后续顺位。
 - Quest Log 真实对象合同：`P1` 完成，QL-A 当前处于 `P4–P5`；QL-B1
@@ -136,10 +139,11 @@
   `0/5` 并暂停。非地区行文字安全宽度收敛为 `155px`；类型 token 的显式等值表
   仍需在 P5 前由目标客户端证实。Collapse All 归 QL-C 独立 Button，
   不混入目录状态。
-- Quest Tracker：provider 对象合同 `P1`、视觉 `P2`；`QT-SIM V1` 已由本地
-  确定性几何 renderer 完成，当前 `simulation-reviewed`、ImageGen `0/0`，
-  等待用户确认。三段 V1 生产正文仍为 `prompt-draft`、各 `0/5`；只有用户
-  确认模拟方向并另行授权后才能正式生成。
+- Quest Tracker：provider 对象合同 `P1`、视觉 `P2`；聚焦主体的
+  `QT-SIM V2` 已由本地确定性几何 renderer 完成，当前
+  `simulation-reviewed`、ImageGen `0/0`，等待用户确认。活动生产段只剩
+  QT-A1／B1 V1，均为 `prompt-draft 0/5`；QT-A2 为
+  `scope-deferred 0/5`，当前树不保留其可执行 Prompt。
 - NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
 - `questitem.lua`：行为保留，视觉 `N/A`。
 
@@ -182,10 +186,10 @@ source 或 runtime。
 
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
-| `QT-SIM V1` | `330 × 865` 高密度 Quest Tracking 本地几何预演；七工具 Button、十任务、十七目标与三类反馈 | `P2 simulation-reviewed` | 用户确认或否决布局与视觉方向；ImageGen `0/0` |
-| `QT-A1 V1` | 可变宽高纸面 shell、九宫格与叠页边 | `P2 production-draft` | 先取得 `QT-SIM V1` 用户确认，再单独授权生产；当前 `0/5` |
-| `QT-A2 V1` | 短皮带、徽记、七个工具图标与 selected 压片 | `P2 production-draft` | 先取得 `QT-SIM V1` 用户确认，再单独授权生产；当前 `0/5` |
-| `QT-B1 V1` | focus 墨洗、tracked 页边墨记、complete 墨勾 | `P2 production-draft` | 先取得 `QT-SIM V1` 用户确认，再单独授权生产；当前 `0/5` |
+| `QT-SIM V2` | 约 `330 × 865` 高密度 Quest Tracking 主体本地几何预演；无工具条，十任务、十七目标与三类反馈 | `P2 simulation-reviewed` | 用户确认或否决 tracker 主体方向；ImageGen `0/0` |
+| `QT-A1 V1` | 可变宽高纸面 shell、九宫格与叠页边 | `P2 production-draft` | 先取得 `QT-SIM V2` 用户确认，再单独授权生产；当前 `0/5` |
+| `QT-A2 V1` | `HEADER.*`、皮带／徽记、七工具 Button 与 selected 压片 | `P2 scope-deferred` | provider 对象与行为原样保留；未来重开需独立模拟、新 Prompt 与新授权；当前 `0/5` |
+| `QT-B1 V1` | focus 墨洗、tracked 页边墨记、complete 墨勾 | `P2 production-draft` | 先取得 `QT-SIM V2` 用户确认，再单独授权生产；当前 `0/5` |
 
 完整合同和生产正文见
 [QUEST.TRACKER.CORE.md](work/QUEST.TRACKER.CORE.md)。当前不生成折叠、
@@ -300,7 +304,7 @@ pfQuest-turtle 后验证：
 - 最右侧详情滚动条始终不显示，长任务正文仍可用鼠标滚轮滚到首尾；
 - 左页列表滚动条不受影响，任务行不出现酒红书签或旧整行浅色高亮。
 
-pfQuest tracker 已进入 [QT V1 work](work/QUEST.TRACKER.CORE.md) 的
+pfQuest tracker 已进入 [QT V2 work](work/QUEST.TRACKER.CORE.md) 的
 `simulation-reviewed / P2`。结构证据继续固定为：
 
 - 结构参考：
@@ -312,10 +316,12 @@ pfQuest tracker 已进入 [QT V1 work](work/QUEST.TRACKER.CORE.md) 的
   `1009 × 629`，SHA-256
   `36e172e15ea6c6939d4f2e784131ff0e9a9a51a926aaec046a95a21af5361faf`；
 - 两图只用于信息层级、真实密度与复现，不继承其字体、颜色、现代按钮或
-  其他美术表现。`QT-SIM V1` 已由本地脚本用简单几何和真实排版生成，参考图
-  没有上传或进入模拟像素，ImageGen 固定 `0/0`。当前下一门禁是用户确认或
-  否决模拟方向；在用户确认并另行授权 QT-A1／A2／B1 前，三段生产保持各
-  `0/5`，不生成、不创建 runtime 媒体或 tracker adapter。
+  其他美术表现。`QT-SIM V2` 已由本地脚本用简单几何和真实排版生成，参考图
+  没有上传或进入模拟像素，ImageGen 固定 `0/0`。V2 刻意不绘制工具条，只供
+  tracker 主体方向判断，不代表 runtime 删除按钮。当前下一门禁是用户确认或
+  否决模拟方向；在用户确认并另行授权 QT-A1／B1 前，两段生产保持各 `0/5`，
+  不生成、不创建 runtime 媒体或 tracker adapter。QT-A2 继续
+  `scope-deferred 0/5`。
 
 QL-B0 V2 的内框与两类底板均已由用户移出范围，不再等待 source 例外，也不
 继续 ImageGen。QL-B2 的 accepted source、atlas、manifest 与 exporter 保留，

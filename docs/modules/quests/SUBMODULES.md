@@ -17,8 +17,9 @@ Frame。美术见 [ART_BASELINE.md](ART_BASELINE.md)，状态见
 | [`modules/questitem.lua`](../../../addon/pfUI/modules/questitem.lua) | 任务物品 Tooltip 的任务归属、扫描与数量 | 原样保留；不是快捷使用按钮 |
 
 当前 runtime 波次只接入按 `L` 打开的 `QuestLogFrame`。pfQuest tracker
-已经完成对象审计、本地确定性 `QT-SIM V1` 几何预演和三段生产 Prompt 草案；
-模拟等待用户确认，正式资产尚未获准生成或接入。NPC 对话仍没有获准生产资产。
+已经完成对象审计和聚焦主体的本地确定性 `QT-SIM V2` 几何预演；QT-A1／B1
+生产 Prompt 等待模拟确认，QT-A2 七工具 Button 为 `scope-deferred`。正式
+资产尚未获准生成或接入。NPC 对话仍没有获准生产资产。
 
 ## Quest Log 顶层
 
@@ -216,15 +217,20 @@ SavedVariables。
 | `QUEST.TRACKER.PAPER.MIDDLE` | adapter-owned、挂在 `tracker.backdrop` 下的无鼠标 Texture | 可横纵延展的连续安静纸面；不得烘焙任务行 |
 | `QUEST.TRACKER.PAPER.BOTTOM` | adapter-owned、挂在 `tracker.backdrop` 下的无鼠标 Texture | 横向三段式自然撕裂底边 |
 | `QUEST.TRACKER.PAPER.EDGE` | adapter-owned 独立叠页边 Texture | 只在边缘表现错层纸页，不改变 Frame 命中 |
-| `QUEST.TRACKER.HEADER.STRAP` | `tracker.panel` 的 adapter-owned 三段式背景 | `16px` provider 工具条的短皮带 chrome；不是第二个 Button |
-| `QUEST.TRACKER.HEADER.EMBLEM` | adapter-owned 无鼠标 Texture | 极小羽毛笔／指南针压印；必须避开七个真实 Button |
-| `QUEST.TRACKER.MODE.QUESTS` | `tracker.btnquest` | `QUEST_TRACKING`；normal／hover／pressed／selected／disabled |
-| `QUEST.TRACKER.MODE.DATABASE` | `tracker.btndatabase` | `DATABASE_TRACKING`；同上 |
-| `QUEST.TRACKER.MODE.GIVERS` | `tracker.btngiver` | `GIVER_TRACKING`；同上 |
-| `QUEST.TRACKER.ACTION.SEARCH` | `tracker.btnsearch` | normal／hover／pressed／disabled，保留打开数据库脚本 |
-| `QUEST.TRACKER.ACTION.CLEAN` | `tracker.btnclean` | 同族四态，保留清空数据库结果脚本 |
-| `QUEST.TRACKER.ACTION.SETTINGS` | `tracker.btnsettings` | 同族四态，保留设置入口 |
-| `QUEST.TRACKER.ACTION.CLOSE` | `tracker.btnclose` | 同族四态，保留隐藏和配置写入 |
+| `QUEST.TRACKER.HEADER.STRAP` | `tracker.panel` 的未来 adapter-owned 三段式背景 | `scope-deferred`；当前不创建或挂载资产，provider 工具条不变 |
+| `QUEST.TRACKER.HEADER.EMBLEM` | 未来 adapter-owned 无鼠标 Texture | `scope-deferred`；当前不存在 source 或 runtime |
+| `QUEST.TRACKER.MODE.QUESTS` | `tracker.btnquest` | `scope-deferred`；保留 `QUEST_TRACKING` 和全部真实状态／行为 |
+| `QUEST.TRACKER.MODE.DATABASE` | `tracker.btndatabase` | `scope-deferred`；保留 `DATABASE_TRACKING` 和全部真实状态／行为 |
+| `QUEST.TRACKER.MODE.GIVERS` | `tracker.btngiver` | `scope-deferred`；保留 `GIVER_TRACKING` 和全部真实状态／行为 |
+| `QUEST.TRACKER.ACTION.SEARCH` | `tracker.btnsearch` | `scope-deferred`；保留打开数据库脚本、Tooltip 与状态 |
+| `QUEST.TRACKER.ACTION.CLEAN` | `tracker.btnclean` | `scope-deferred`；保留清空数据库结果脚本、Tooltip 与状态 |
+| `QUEST.TRACKER.ACTION.SETTINGS` | `tracker.btnsettings` | `scope-deferred`；保留设置入口、Tooltip 与状态 |
+| `QUEST.TRACKER.ACTION.CLOSE` | `tracker.btnclose` | `scope-deferred`；保留隐藏、配置写入、Tooltip 与状态 |
+
+provider 的真实几何仍是 `16px` 工具条加动态条目。`QT-SIM V2` 为了单独评审
+tracker 主体而不绘制工具条，这不是 runtime 决策，也不授权隐藏、删除、重挂、
+换皮或改写上述对象。未来恢复可见工具条设计时，必须从这些稳定 ID 重新建立
+独立模拟、资产 Prompt 和生产授权。
 
 ### 动态条目
 

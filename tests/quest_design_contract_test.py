@@ -44,7 +44,7 @@ def main() -> None:
         QUESTS / "work" / "QUEST.TRACKER.CORE.md"
     ).read_text(encoding="utf-8")
     tracker_sim_spec_path = (
-        ROOT / "tools" / "specs" / "quest_tracker_simulation_v1.json"
+        ROOT / "tools" / "specs" / "quest_tracker_simulation_v2.json"
     )
     tracker_sim_spec = json.loads(
         tracker_sim_spec_path.read_text(encoding="utf-8")
@@ -150,7 +150,7 @@ def main() -> None:
             "`QUEST.LOG.PFQUEST.CLEAN`",
             "`QUEST.LOG.PFQUEST.RESET`",
             "`pfQuestMapTracker`",
-            "`QT-SIM V1`",
+            "`QT-SIM V2`",
             "`QUEST.TRACKER.SHELL`",
             "`QUEST.TRACKER.PAPER.TOP`",
             "`QUEST.TRACKER.PAPER.MIDDLE`",
@@ -173,6 +173,8 @@ def main() -> None:
             "`130..330 UI px`",
             "`expand_states`",
             "timer／failed",
+            "`scope-deferred`",
+            "不授权隐藏、删除、重挂",
             "`QUEST.ITEM.TOOLTIP`",
             "`QUEST.ITEM.QUICKBUTTON`",
         ),
@@ -244,14 +246,14 @@ def main() -> None:
             "不使用单槽优先级",
             "ScrollBar 与操作 Button",
             "Quest Tracker",
-            "`QT-SIM V1`",
+            "`QT-SIM V2`",
             "模拟 ImageGen 固定 `0/0`",
             "`130..330 UI px`",
-            "七个独立逻辑对象",
-            "不沿用 pfQuest 当前青绿色",
+            "视觉基线尚未冻结",
+            "`scope-deferred`",
             "work/QUEST.TRACKER.CORE.md",
-            "三段生产 ImageGen 调用",
-            "保持 `0/5`",
+            "活动两段生产 ImageGen",
+            "各保持 `0/5`",
             "当前没有美术基线 Prompt",
             "完整执行正文、会话和 diff 保留在 Git",
         ),
@@ -322,12 +324,12 @@ def main() -> None:
             "review_quest_log_status_candidate_v1.py",
             "Quest Tracker",
             "provider 对象合同 `P1`",
-            "三段 V1",
-            "生产正文仍为 `prompt-draft`",
-            "`QT-SIM V1`",
+            "活动生产段只剩",
+            "QT-A1／B1 V1",
+            "`QT-SIM V2`",
             "`simulation-reviewed`、ImageGen `0/0`",
-            "用户确认或否决布局与视觉方向",
-            "各 `0/5`",
+            "用户确认或否决 tracker 主体方向",
+            "`scope-deferred 0/5`",
             "QUEST.TRACKER.CORE.md",
             "NPC Quest／Gossip",
             "QL-A1_SourceManifest_v1.json",
@@ -341,7 +343,7 @@ def main() -> None:
     require(
         tracker_work,
         (
-            "pfQuest 任务追踪核心工作文件 — QT V1",
+            "pfQuest 任务追踪核心工作文件 — QT V2",
             "`simulation-reviewed`",
             "`pfQuest 7.0.1`",
             "`pfQuest-turtle 7.0.2`",
@@ -350,7 +352,9 @@ def main() -> None:
             "QT-A1 `0/5`",
             "QT-A2 `0/5`",
             "QT-B1 `0/5`",
-            "最坏合计 `15`",
+            "最坏合计",
+            "`10` 次实际生成／修图",
+            "`scope-deferred`",
             "流程错误",
             "`pfQuestMapTracker`",
             "`130..330 UI px`",
@@ -369,21 +373,24 @@ def main() -> None:
             "`QT-A1 V1`",
             "`QT-A2 V1`",
             "`QT-B1 V1`",
-            "生成前模拟实例图 — QT-SIM V1",
+            "生成前模拟实例图 — QT-SIM V2",
             "`simulation-reviewed / 待用户确认`",
             "`1536 × 1024`",
             "`330 × 865 UI px`",
-            "十个任务、至少十七条目标",
+            "十个任务、十七条目标",
             "deterministic-local-geometry",
             "模拟 ImageGen：`0/0`",
-            "tools/specs/quest_tracker_simulation_v1.json",
+            "tools/specs/quest_tracker_simulation_v2.json",
+            "3961a538bae7debf770e4e036e6ac643c2e1ed5ca3c1b9ce959bc61bc5c362fe",
             "render_geometric_mockup.py",
             "`x=1166..1496`、`y=72..937`",
             "矩形、多边形、线段、椭圆和真实字体排版",
             "无生成纹理",
             "本地渲染命令",
-            "quest_tracker_local_geometry_v1.png",
-            "quest_tracker_local_geometry_v1_zoom.png",
+            "quest_tracker_core_local_geometry_v2.png",
+            "quest_tracker_core_local_geometry_v2_zoom.png",
+            "cb54d64f78c100fae94d387c280017f522871d144d0b71aa01fdbb8c1deea4a2",
+            "a49b3913591f32b305e18b9802cb3317a1a329f8692af99e7580b679b1f8f360",
             "displayable",
             "3b5c2ca6c1e69c74db5c64978cde351596ece6369d339b7125aee43904eb7d86",
             "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
@@ -391,15 +398,14 @@ def main() -> None:
             "2004 年前后香草魔兽二维手绘位图",
             "### QT-A1 V1",
             "exactly 1024 × 1536 pixels",
-            "### QT-A2 V1",
-            "exactly ten separate art objects",
+            "### QT-A2 V1 — scope-deferred",
+            "当前工作树不保留可误执行的正文",
             "### QT-B1 V1",
             "exactly three separate interaction-feedback art objects",
             "Prompt 完整性预检",
             "`pass / production-draft`",
             "Repair envelope 与计数",
             "真实排版预演",
-            "`130 × 180`",
             "`230 × 500`",
             "`330 × 865`",
             "本地渲染错误：`0`",
@@ -426,9 +432,17 @@ def main() -> None:
     ]
     assert sum(text.startswith("[") for text in tracker_sim_text) == 10
     assert sum(text.startswith("—") for text in tracker_sim_text) == 17
-    assert all(
-        toolbar in tracker_sim_text
-        for toolbar in ("任", "库", "人", "查", "清", "设", "×")
+    assert not any(
+        text in ("任", "库", "人", "查", "清", "设", "×")
+        for text in tracker_sim_text
+    )
+    assert (
+        tracker_sim_spec["output"]
+        == "../../generated/quests/QT/simulation/QT-SIM-V2/"
+        "quest_tracker_core_local_geometry_v2.png"
+    )
+    assert "Create a source atlas containing exactly ten separate art objects" not in (
+        tracker_work
     )
 
     require(
