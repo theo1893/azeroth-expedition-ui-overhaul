@@ -432,7 +432,7 @@ def main() -> None:
             "`scope-deferred / non-authoritative`",
             "本地渲染错误：`0`",
             "本授权不包含 source 晋级",
-            "固定执行器首次调用",
+            "同一正文重试 QT-A1 attempt 1",
         ),
         "pfQuest tracker production final",
     )

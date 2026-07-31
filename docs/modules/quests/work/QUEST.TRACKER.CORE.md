@@ -25,7 +25,7 @@
   主体方向；该确认只接受下文文字化方向，不接受模拟像素
 - 实际 ImageGen：当前活动的 QT-A1 `0/5`、QT-B1 `0/5`；最坏合计
   `10` 次实际生成／修图。QT-A2 `0/5`、`scope-deferred`，不计入活动预算
-- 流程错误：QT-A1 `0`、QT-B1 `0`；不占实际生图额度
+- 流程错误：QT-A1 `1`、QT-B1 `0`；不占实际生图额度
 - 生产授权：`confirmed / 2026-07-31`。用户明确授权 QT-A1 V1 与 QT-B1
   V1；每段固定 Image 1／2／3；同段前次输出只可在冻结边界内作 edit 输入；
   每段最多 `5` 次实际 ImageGen，最坏合计 `10` 次；无生成证据的流程错误
@@ -466,7 +466,7 @@ conda run -n py312 python \
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
-| — | — | — | 当前无流程错误 | — | 不占生图额度 |
+| E1 | `QT-A1 V1` / `a6a4c12`（official `afd0b1c`） | 无 provider session | 固定 CLI 的 `-i <FILE>...` 吞入末尾位置参数；返回 `Reading prompt from stdin... No prompt provided via stdin.`，无图片、result 或生成证据 | 在第三个输入后增加参数终止符 `--`，继续使用同一已提交正文与三张固定输入 | 不占生图额度；QT-A1 仍为 `0/5` |
 
 ## 候选审查与真实排版预演
 
@@ -503,10 +503,15 @@ conda run -n py312 python \
   确认条款已写回 QT-A1／B1 最终正文，模拟像素没有进入任何生产输入。
 - 用户于 `2026-07-31` 明确授权当前 QT-A1／B1 V1 正文、固定输入、同段
   edit 边界和每段五次上限；授权后正文未改写。
+- QT-A1 首次传输发生一次无生成证据的 CLI 参数错误：授权正文 SHA-256
+  `3adadf4655841d25528e7755e5f9bcadf669ca2622113f5b79018c3b8f4ea0c7`、
+  `4444` bytes 已正确提取，但 `-i` 的可变参数吞入正文，固定 child 返回
+  `No prompt provided via stdin.`。没有图片、provider result 或 session，
+  因此作为 E1 单列且不计入 `0/5`；针对性修复只增加 `--` 参数终止符。
 - 当前活动的 QT-A1／B1 均尚未执行；无 raw、透明候选或 revised prompt。
 - 实际生图：QT-A1 `0/5`、QT-B1 `0/5`；QT-A2 `0/5 scope-deferred`。
-- 流程错误：QT-A1／B1 均为 `0`；QT-A2 无活动流程。
-- 当前终态：`prompt-authorized / P3`，等待固定执行器首次调用。
+- 流程错误：QT-A1 `1`、QT-B1 `0`；QT-A2 无活动流程。
+- 当前终态：`prompt-authorized / P3`，等待以同一正文重试 QT-A1 attempt 1。
 
 ## 审查记录
 
@@ -516,7 +521,8 @@ conda run -n py312 python \
 - 尚未发生：候选语义／物理、美术、装配与技术像素审查。
 - 当前结论：`prompt-authorized / P3`；独立生产授权与冻结修复边界已记录，
   尚无候选。
-- 下一门禁：固定执行器 QT-A1 V1 attempt 1。
+- 下一门禁：以已修正的参数终止边界重试固定执行器 QT-A1 V1 attempt 1；
+  正文、输入和 `0/5` 计数均不变。
 
 ## 尝试摘要
 
