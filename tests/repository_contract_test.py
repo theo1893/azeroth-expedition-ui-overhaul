@@ -59,8 +59,12 @@ def assert_markdown_links(markdown: Path) -> None:
 def main() -> None:
     pfui = ADDON / "pfUI"
     aeui = ADDON / "AzerothExpeditionUI"
+    pfquest = ADDON / "pfQuest"
+    pfquest_turtle = ADDON / "pfQuest-turtle"
     assert pfui.is_dir(), "deployable addon/pfUI fork is missing"
     assert aeui.is_dir(), "addon/AzerothExpeditionUI is missing"
+    assert pfquest.is_dir(), "addon/pfQuest provider is missing"
+    assert pfquest_turtle.is_dir(), "addon/pfQuest-turtle data pack is missing"
     assert not (ROOT / "third-party" / "pfUI").exists()
     assert (pfui / "LICENSE").is_file(), "pfUI MIT license is missing"
 
@@ -195,6 +199,8 @@ def main() -> None:
         pfui / "pfUI.toc",
         pfui / "pfUI-tbc.toc",
         aeui / "AzerothExpeditionUI.toc",
+        pfquest / "pfQuest.toc",
+        pfquest_turtle / "pfQuest-turtle.toc",
     ):
         assert_toc_paths(toc)
     for xml in (pfui / "init").glob("*.xml"):
@@ -217,7 +223,7 @@ def main() -> None:
     quest_source = (aeui / "Modules" / "Quests.lua").read_text(
         encoding="utf-8"
     )
-    assert 'Quests.runtimeContract = "1.6"' in quest_source
+    assert 'Quests.runtimeContract = "1.7"' in quest_source
     assert "QuestLogShellV4" in quest_source
     assert "QuestLogDirectoryMarksV1" in quest_source
     assert "QuestLogSelectionBookmarkV1" not in quest_source
@@ -235,6 +241,21 @@ def main() -> None:
     assert "InstallDetailMouseWheel" in quest_source
     assert "QuestLogDetailScrollFrameScrollBar" in quest_source
     assert "ToggleDetail" in quest_source
+    assert "CaptureQuestLogBaseGeometry" in quest_source
+    assert "HasPfQuestQuestLogControls" in quest_source
+    assert "InstallGlobalPostHook" in quest_source
+    assert "InstallQuestLogFrameOnShowHook" in quest_source
+    assert "ApplyPfQuestQuestLogCompatibility" in quest_source
+    assert "LayoutDirectoryRows(true)" in quest_source
+    for provider_object in (
+        "buttonOnline",
+        "buttonLanguage",
+        "buttonShow",
+        "buttonHide",
+        "buttonClean",
+        "buttonReset",
+    ):
+        assert provider_object in quest_source
     assert 'addon:RegisterModule("Quests", Quests)' in quest_source
     assert (aeui / "Media" / "Quests" / "QuestLogShellV4.tga").is_file()
     assert (
@@ -247,6 +268,42 @@ def main() -> None:
     for toc_name in ("pfUI.toc", "pfUI-tbc.toc"):
         toc_source = (pfui / toc_name).read_text(encoding="utf-8-sig")
         assert "## Version: 8.1.0-aeui.3" in toc_source
+
+    pfquest_toc = (pfquest / "pfQuest.toc").read_text(encoding="utf-8-sig")
+    assert "## Interface: 11200" in pfquest_toc
+    assert "## Version: 7.0.1" in pfquest_toc
+    assert "## OptionalDeps: pfUI" in pfquest_toc
+    pfquest_turtle_toc = (
+        pfquest_turtle / "pfQuest-turtle.toc"
+    ).read_text(encoding="utf-8-sig")
+    assert "## Interface: 11200" in pfquest_turtle_toc
+    assert "## Version: 7.0.2" in pfquest_turtle_toc
+    assert "## Dependencies: pfQuest" in pfquest_turtle_toc
+
+    provider_quest = (pfquest / "quest.lua").read_text(encoding="utf-8")
+    for provider_object in (
+        "pfQuest.buttonOnline",
+        "pfQuest.buttonLanguage",
+        "pfQuest.buttonShow",
+        "pfQuest.buttonHide",
+        "pfQuest.buttonClean",
+        "pfQuest.buttonReset",
+        "QuestLogTitleButton_Resize",
+    ):
+        assert provider_object in provider_quest
+    provider_tracker = (pfquest / "tracker.lua").read_text(encoding="utf-8")
+    for provider_object in (
+        "pfQuestMapTracker",
+        "tracker.btnquest",
+        "tracker.btndatabase",
+        "tracker.btngiver",
+        "tracker.btnsearch",
+        "tracker.btnclean",
+        "tracker.btnsettings",
+        "tracker.btnclose",
+        "pfQuestMapButton",
+    ):
+        assert provider_object in provider_tracker
 
     assert not (aeui / "Media" / "Chat" / "ChatPanelSegment.tga").exists()
     chat_source = (aeui / "Modules" / "Chat.lua").read_text(encoding="utf-8")

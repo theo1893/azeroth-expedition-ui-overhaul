@@ -68,6 +68,7 @@ function Object:SetWidth(value) self.width = value end
 function Object:SetHeight(value) self.height = value end
 function Object:GetWidth() return self.width end
 function Object:GetHeight() return self.height end
+function Object:SetParent(value) self.parent = value end
 function Object:ClearAllPoints() self.points = {} end
 function Object:SetPoint(...) table.insert(self.points, { ... }) end
 function Object:GetPoint(index)
@@ -499,7 +500,7 @@ AzerothExpeditionUI:Refresh()
 assert(QuestLogFrame:GetWidth() == 676, "quest shell width was not applied")
 assert(QuestLogFrame:GetHeight() == 464, "quest shell height was not applied")
 assert(
-  QuestLogFrame.aeuiQuestRuntimeContract == "1.6",
+  QuestLogFrame.aeuiQuestRuntimeContract == "1.7",
   "quest runtime contract was not recorded"
 )
 assert(QuestLogFrame.aeuiQuestShell, "quest shell texture was not created")
@@ -967,5 +968,195 @@ QuestLogFrameAbandonButton:GetScript("OnClick")()
 assert(abandonCalls == 1)
 QuestLogTitle1:GetScript("OnClick")()
 assert(originalQuestRowClickCalls == 2)
+
+-- Simulate pfQuest loading after AEUI. Its real integration replaces the
+-- QuestLog update globals, resizes rows after the original update, replaces
+-- QuestLogFrame OnShow, adds 30px to the description flow and parents six
+-- controls to the scrolling detail child.
+local function CreateProviderButton(name, text, customText)
+  local button =
+    CreateFrame("Button", name, QuestLogDetailScrollChildFrame)
+  if customText then
+    button.txt =
+      NewObject(name .. "ProviderText", button, "FontString")
+    button.txt:SetText(text)
+  else
+    button:SetText(text)
+  end
+  return button
+end
+
+pfQuest = {
+  buttonOnline =
+    CreateProviderButton("pfQuestOnline", "[id: 8276]", true),
+  buttonLanguage =
+    CreateProviderButton("pfQuestLanguage", "[简体中文]", true),
+  buttonShow = CreateProviderButton("pfQuestShow", "显示"),
+  buttonHide = CreateProviderButton("pfQuestHide", "隐藏"),
+  buttonClean = CreateProviderButton("pfQuestClean", "清空"),
+  buttonReset = CreateProviderButton("pfQuestReset", "重置"),
+}
+
+local providerClicks = 0
+local providerClick = function()
+  providerClicks = providerClicks + 1
+end
+for _, button in ipairs({
+  pfQuest.buttonOnline,
+  pfQuest.buttonLanguage,
+  pfQuest.buttonShow,
+  pfQuest.buttonHide,
+  pfQuest.buttonClean,
+  pfQuest.buttonReset,
+}) do
+  button:SetScript("OnClick", providerClick)
+end
+
+local nativeDescriptionTitleHeight =
+  QuestLogDescriptionTitle:GetHeight()
+QuestLogDescriptionTitle:SetHeight(
+  nativeDescriptionTitleHeight + 30
+)
+
+local beforeProviderUpdate = QuestLog_Update
+local providerUpdateCalls = 0
+QuestLog_Update = function()
+  providerUpdateCalls = providerUpdateCalls + 1
+  beforeProviderUpdate()
+  for index = 1, 23 do
+    local row = _G["QuestLogTitle" .. index]
+    row:SetWidth(300 + index)
+    row.fontString:SetWidth(280)
+    row.fontString:ClearAllPoints()
+    row.fontString:SetPoint("LEFT", row, "LEFT", 4, 0)
+  end
+  pfQuest.buttonOnline:SetWidth(18)
+end
+
+local beforeProviderDetails = QuestLog_UpdateQuestDetails
+local providerDetailCalls = 0
+QuestLog_UpdateQuestDetails = function()
+  providerDetailCalls = providerDetailCalls + 1
+  beforeProviderDetails()
+  QuestLogQuestDescription:SetWidth(300)
+end
+
+local providerOnShowCalls = 0
+QuestLogFrame:SetScript("OnShow", function()
+  providerOnShowCalls = providerOnShowCalls + 1
+  QuestLogTitle1:SetWidth(333)
+end)
+
+event = "ADDON_LOADED"
+arg1 = "pfQuest"
+AzerothExpeditionUIQuestDriver:GetScript("OnEvent")()
+AzerothExpeditionUI:Refresh()
+event = nil
+arg1 = nil
+
+local nativeCallsBeforeProviderUpdate = questLogUpdateCalls
+QuestLog_Update()
+assert(
+  providerUpdateCalls == 1 and
+    questLogUpdateCalls == nativeCallsBeforeProviderUpdate + 1,
+  "late pfQuest update wrapper or native quest update was lost"
+)
+for index = 1, 23 do
+  local row = _G["QuestLogTitle" .. index]
+  assert(
+    row:GetWidth() == 224 and row:GetHeight() == 15,
+    "pfQuest QuestLogTitleButton_Resize remained authoritative"
+  )
+  local _, _, _, textX, textY = row.fontString:GetPoint()
+  assert(
+    row.fontString:GetWidth() == 190 and
+      textX == 18 and textY == 0,
+    "pfQuest row text escaped the directory safe area"
+  )
+end
+
+assert(
+  QuestLogDescriptionTitle:GetHeight() ==
+    nativeDescriptionTitleHeight,
+  "pfQuest's 30px description-title reservation remained in the scroll flow"
+)
+
+local providerActions = {
+  pfQuest.buttonShow,
+  pfQuest.buttonHide,
+  pfQuest.buttonClean,
+  pfQuest.buttonReset,
+}
+for _, button in ipairs(providerActions) do
+  assert(
+    button.parent == QuestLogFrame and
+      button:GetWidth() == 52 and
+      button:GetHeight() == 20 and
+      button.aeuiQuestPfQuestManaged,
+    "pfQuest action was not moved into the fixed right-page footer"
+  )
+  assert(
+    button:GetScript("OnClick") == providerClick,
+    "pfQuest action behavior was replaced by compatibility styling"
+  )
+end
+
+local showPoint, showRelative, showRelativePoint, showX, showY =
+  pfQuest.buttonShow:GetPoint()
+assert(
+  showPoint == "BOTTOMLEFT" and
+    showRelative == QuestLogFrame and
+    showRelativePoint == "BOTTOMLEFT" and
+    showX == 379 and showY == 19,
+  "pfQuest action row did not fit the right-page footer"
+)
+assert(
+  pfQuest.buttonOnline.parent == QuestLogFrame and
+    pfQuest.buttonOnline:GetWidth() == 72 and
+    pfQuest.buttonOnline:GetHeight() == 16 and
+    pfQuest.buttonOnline.txt.font[1]:find(
+      "LXGWWenKaiGB%-Medium.ttf"
+    ),
+  "pfQuest online control still overlapped the scrolling quest title"
+)
+assert(
+  pfQuest.buttonLanguage.parent == QuestLogFrame and
+    pfQuest.buttonLanguage:GetWidth() == 86 and
+    pfQuest.buttonLanguage:GetHeight() == 16,
+  "pfQuest language control still lived in the detail scroll child"
+)
+
+QuestLog_UpdateQuestDetails()
+assert(
+  providerDetailCalls == 1 and
+    QuestLogQuestDescription:GetWidth() == 214,
+  "late pfQuest detail update escaped the right-page text geometry"
+)
+
+QuestLogFrame:GetScript("OnShow")()
+assert(
+  providerOnShowCalls == 1 and
+    QuestLogTitle1:GetWidth() == 224 and
+    QuestLogFrame.aeuiQuestShell:IsShown(),
+  "late pfQuest QuestLogFrame OnShow replacement bypassed AEUI"
+)
+
+-- Repeated refreshes must not stack another hook around the same provider
+-- function.
+AzerothExpeditionUI:Refresh()
+local providerCallsBeforeIdempotentUpdate = providerUpdateCalls
+local nativeCallsBeforeIdempotentUpdate = questLogUpdateCalls
+QuestLog_Update()
+assert(
+  providerUpdateCalls == providerCallsBeforeIdempotentUpdate + 1 and
+    questLogUpdateCalls == nativeCallsBeforeIdempotentUpdate + 1,
+  "provider compatibility hooks stacked during an ordinary refresh"
+)
+
+pfQuest.buttonShow:GetScript("OnClick")()
+assert(
+  providerClicks == 1,
+  "pfQuest map-control functionality was lost during visual relocation"
+)
 
 print("quest module smoke test passed")

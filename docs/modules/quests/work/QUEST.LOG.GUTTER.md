@@ -44,8 +44,8 @@
   [build_quest_log_shell_v4.py](../../../../tools/build_quest_log_shell_v4.py)
 - adapter：
   [Quests.lua](../../../../addon/AzerothExpeditionUI/Modules/Quests.lua)
-  — 当前 runtime contract `1.6`；SHELL 本身不变，新增内容只作用于书本外
-  真实控件、隐藏的右页 scrollbar chrome 与滚轮连接
+  — 当前 runtime contract `1.7`；SHELL 本身不变，新增内容只作用于书本外
+  真实控件、隐藏的右页 scrollbar chrome、滚轮连接与 pfQuest 后加载兼容
 
 V4 是新的运行时所有权与导出合同，不延续 V3.3 的生成预算。它只晋级固定
 书体结构；QL-B／QL-C／QL-D 的动态对象与交互状态仍未完成。

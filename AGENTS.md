@@ -20,7 +20,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 |---|---|---|
 | pfUI／原生回退 | 路由与公共过渡材质 `P5`；模块 Initialize／Apply 已隔离失败，未实机 | Turtle WoW 全场景回归并确认单模块异常不会中断其他模块 |
 | 聊天 | 核心 V3 runtime `1.7 / P5`；书本九宫格加入缺失／贴图剥离自愈；Chat Copy 与 URL Copy 均已暂缓；单一左框，右框隐藏 | Turtle WoW 重载后确认书本主体恢复，再验收核心批次 |
-| 任务 | 当前首要大面积 UI；用户接受 QL-A2 V4 当前书本主体，不再增加 QL-B0 内框或条目底板。QL-B1 四态墨记继续运行；QL-B2 source/runtime 资产保留但酒红书签已暂停挂载。runtime contract `1.6` 已彻底隐藏／禁用 Collapse All，保留任务计数与追踪控件、底部暗皮革四态，隐藏右页 scrollbar chrome 并保留滚轮；静态测试通过。已确认 `pfQuest 7.0.1` 与 `pfQuest-turtle 7.0.2` 会改写任务列表／右页并造成布局冲突，两份魔改版源码已复制到 `addon/`，兼容 TODO 与 tracker 参考均已保存。QL-B3-A `5/5` exhausted、B/C `0/5` 并暂停 | 后续审计 pfQuest 的 Quest Log Hook 与 tracker 对象，先隔离布局冲突，再 overhaul tracker |
+| 任务 | QL-A2 V4 书本主体保持；QL-B1 四态墨记继续运行，QL-B2 资产保留但隐藏。`pfQuest 7.0.1`／`pfQuest-turtle 7.0.2` 已完成源码审计：后者仅为数据，前者后加载改写 Quest Log。runtime contract `1.7` 已在 provider 最终刷新后恢复列表／详情几何，并按真实 Button 粒度归位六个 pfQuest 控件；late-load 与幂等 smoke 通过。pfQuest tracker 已完成真实 `P1` 对象合同；QT-A1／A2／B1 V1 均为 `P2 production-draft`、`0/5`、未授权 | 在游戏设备验证 pfQuest／pfQuest-turtle 同开时的 Quest Log；审阅 QT V1 三段正文后决定是否授权生成 |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |
 | 其他 UI | `P0–P1`，保持原生回退 | 逐模块建立四份长期文档 |
@@ -69,6 +69,7 @@ docs/
 - [当前 QL-B1 目录墨记工作文件](docs/modules/quests/work/QUEST.LOG.DIRECTORY.md)
 - [当前 QL-B2 选择书签工作文件](docs/modules/quests/work/QUEST.LOG.SELECTION.md)
 - [当前 QL-B3 类型／计时／状态章工作文件](docs/modules/quests/work/QUEST.LOG.STATUS.md)
+- [当前 pfQuest Tracker 核心工作文件](docs/modules/quests/work/QUEST.TRACKER.CORE.md)
 
 地图：
 

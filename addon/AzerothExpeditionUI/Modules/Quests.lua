@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local Quests = {}
-Quests.runtimeContract = "1.6"
+Quests.runtimeContract = "1.7"
 
 local SHELL_TEXTURE =
   addon.media.root .. "Quests\\QuestLogShellV4"
@@ -117,6 +117,34 @@ local CONTROL = {
   },
 }
 
+local PFQUEST = {
+  addons = {
+    pfQuest = true,
+    ["pfQuest-tbc"] = true,
+    ["pfQuest-wotlk"] = true,
+    ["pfQuest-turtle"] = true,
+  },
+  utilityWidth = 72,
+  languageWidth = 86,
+  utilityHeight = 16,
+  actionWidth = 52,
+  actionHeight = 20,
+  actionGap = 4,
+}
+
+local function HasPfQuestQuestLogControls(provider)
+  return
+    provider and
+    (
+      provider.buttonOnline or
+      provider.buttonLanguage or
+      provider.buttonShow or
+      provider.buttonHide or
+      provider.buttonClean or
+      provider.buttonReset
+    )
+end
+
 local function SetSize(frame, width, height)
   if not frame then
     return
@@ -220,6 +248,7 @@ local function AppendScript(frame, scriptName, key, callback)
 end
 
 function Quests:Initialize()
+  self:CaptureQuestLogBaseGeometry()
   self.driver = CreateFrame(
     "Frame",
     "AzerothExpeditionUIQuestDriver",
@@ -228,13 +257,15 @@ function Quests:Initialize()
   self.driver:RegisterEvent("PLAYER_ENTERING_WORLD")
   self.driver:RegisterEvent("ADDON_LOADED")
   self.driver:SetScript("OnEvent", function()
+    local loadedAddon = arg1
     if
       event == "PLAYER_ENTERING_WORLD" or
       (
         event == "ADDON_LOADED" and
         (
-          arg1 == "Blizzard_QuestUI" or
-          arg1 == "Blizzard_QuestLog"
+          loadedAddon == "Blizzard_QuestUI" or
+          loadedAddon == "Blizzard_QuestLog" or
+          PFQUEST.addons[loadedAddon]
         )
       )
     then
@@ -244,40 +275,109 @@ function Quests:Initialize()
   self:InstallGlobalHooks()
 end
 
-function Quests:InstallGlobalHooks()
+function Quests:CaptureQuestLogBaseGeometry()
+  local title = QuestLogDescriptionTitle
+  if
+    self.questLogDescriptionTitleHeight == nil and
+    title and
+    title.GetHeight
+  then
+    local height = tonumber(title:GetHeight()) or 0
+    -- AEUI normally loads before pfQuest, but dependency ordering is not a
+    -- contract between two pfUI dependants. If the provider is already loaded,
+    -- its controls prove that the title has received the provider's +30px
+    -- reservation; capture the native height rather than the modified height.
+    if HasPfQuestQuestLogControls(pfQuest) then
+      height = math.max(0, height - 30)
+    end
+    self.questLogDescriptionTitleHeight = height
+  end
+end
+
+function Quests:InstallGlobalPostHook(name, key, callback)
   if type(hooksecurefunc) ~= "function" then
     return
   end
 
+  local current = _G[name]
+  if type(current) ~= "function" then
+    return
+  end
+
+  self.globalPostHooks = self.globalPostHooks or {}
+  if self.globalPostHooks[key] == current then
+    return
+  end
+
+  -- pfUI's Vanilla hooksecurefunc implementation keys wrappers by callback
+  -- identity. Use a fresh closure whenever a late provider replaces a global,
+  -- then remember the resulting wrapper so normal refreshes stay idempotent.
+  local postHook = function(a1, a2, a3, a4, a5)
+    callback(a1, a2, a3, a4, a5)
+  end
+  hooksecurefunc(name, postHook)
+  self.globalPostHooks[key] = _G[name]
+end
+
+function Quests:InstallGlobalHooks()
   if
-    not self.questLogOnShowHookInstalled and
     type(QuestLog_OnShow) == "function"
   then
-    self.questLogOnShowHookInstalled = true
-    hooksecurefunc("QuestLog_OnShow", function()
-      Quests:Apply()
-    end)
+    self:InstallGlobalPostHook(
+      "QuestLog_OnShow",
+      "questLogOnShow",
+      function()
+        Quests:Apply()
+      end
+    )
   end
 
   if
-    not self.questLogUpdateHookInstalled and
     type(QuestLog_Update) == "function"
   then
-    self.questLogUpdateHookInstalled = true
-    hooksecurefunc("QuestLog_Update", function()
-      Quests:UpdateDirectoryRows()
-    end)
+    self:InstallGlobalPostHook(
+      "QuestLog_Update",
+      "questLogUpdate",
+      function()
+        Quests:UpdateDirectoryRows()
+        Quests:ApplyPfQuestQuestLogCompatibility()
+      end
+    )
   end
 
   if
-    not self.questLogDetailsHookInstalled and
     type(QuestLog_UpdateQuestDetails) == "function"
   then
-    self.questLogDetailsHookInstalled = true
-    hooksecurefunc("QuestLog_UpdateQuestDetails", function()
-      Quests:ApplyDetailTextGeometry()
-    end)
+    self:InstallGlobalPostHook(
+      "QuestLog_UpdateQuestDetails",
+      "questLogDetails",
+      function()
+        Quests:ApplyDetailTextGeometry()
+      end
+    )
   end
+end
+
+function Quests:InstallQuestLogFrameOnShowHook()
+  local frame = QuestLogFrame
+  if not frame or not frame.GetScript or not frame.SetScript then
+    return
+  end
+
+  local current = frame:GetScript("OnShow")
+  if self.questLogFrameOnShowHook == current then
+    return
+  end
+
+  local original = current
+  local wrapper = function(a1, a2, a3, a4, a5)
+    if original then
+      original(a1, a2, a3, a4, a5)
+    end
+    Quests:Apply()
+  end
+  frame:SetScript("OnShow", wrapper)
+  self.questLogFrameOnShowHook = wrapper
 end
 
 local function SetDirectoryState(texture, state)
@@ -308,6 +408,9 @@ end
 local function GetButtonText(button)
   if not button then
     return nil
+  end
+  if button.txt then
+    return button.txt
   end
   if button.GetFontString then
     local text = button:GetFontString()
@@ -617,6 +720,163 @@ local function StyleLeatherButton(button, width, height)
   UpdateLeatherButtonState(button)
 end
 
+local function StylePfQuestButton(button, width, height, fontSize)
+  if not button then
+    return
+  end
+  if button.SetParent and QuestLogFrame then
+    button:SetParent(QuestLogFrame)
+  end
+  StyleLeatherButton(button, width, height)
+
+  local text = GetButtonText(button)
+  if text and text.SetFont then
+    text:SetFont(
+      QUEST_ROW_FONT,
+      fontSize or 10,
+      "OUTLINE"
+    )
+  end
+  button.aeuiQuestPfQuestManaged = true
+end
+
+function Quests:ApplyPfQuestQuestLogCompatibility()
+  local provider = pfQuest
+  local frame = QuestLogFrame
+  if not provider or not frame then
+    return
+  end
+
+  if not HasPfQuestQuestLogControls(provider) then
+    return
+  end
+
+  -- pfQuest reserves 30px inside the scrolling description flow so it can
+  -- inject four wide buttons. Restore the native title height captured before
+  -- pfQuest loaded; the provider controls are moved to fixed book chrome below.
+  local descriptionTitle = QuestLogDescriptionTitle
+  if descriptionTitle and descriptionTitle.SetHeight then
+    if self.questLogDescriptionTitleHeight ~= nil then
+      descriptionTitle:SetHeight(
+        self.questLogDescriptionTitleHeight
+      )
+    elseif
+      not descriptionTitle.aeuiQuestPfQuestHeightRestored and
+      descriptionTitle.GetHeight
+    then
+      local currentHeight =
+        tonumber(descriptionTitle:GetHeight()) or 0
+      descriptionTitle:SetHeight(
+        math.max(0, currentHeight - 30)
+      )
+      descriptionTitle.aeuiQuestPfQuestHeightRestored = true
+    end
+  end
+
+  local utilityRight =
+    LAYOUT.detail.left + LAYOUT.detail.width
+  local online = provider.buttonOnline
+  local language = provider.buttonLanguage
+
+  if online then
+    StylePfQuestButton(
+      online,
+      PFQUEST.utilityWidth,
+      PFQUEST.utilityHeight,
+      9
+    )
+    SetSinglePoint(
+      online,
+      "TOPRIGHT",
+      frame,
+      "TOPLEFT",
+      utilityRight,
+      -LAYOUT.controlsTop
+    )
+  end
+
+  if language then
+    StylePfQuestButton(
+      language,
+      PFQUEST.languageWidth,
+      PFQUEST.utilityHeight,
+      9
+    )
+    if online then
+      SetSinglePoint(
+        language,
+        "RIGHT",
+        online,
+        "LEFT",
+        -PFQUEST.actionGap,
+        0
+      )
+    else
+      SetSinglePoint(
+        language,
+        "TOPRIGHT",
+        frame,
+        "TOPLEFT",
+        utilityRight,
+        -LAYOUT.controlsTop
+      )
+    end
+  end
+
+  local actions = {
+    provider.buttonShow,
+    provider.buttonHide,
+    provider.buttonClean,
+    provider.buttonReset,
+  }
+  local visibleActions = {}
+  for _, button in ipairs(actions) do
+    if button then
+      table.insert(visibleActions, button)
+    end
+  end
+
+  local count = table.getn(visibleActions)
+  if count < 1 then
+    return
+  end
+  local totalWidth =
+    count * PFQUEST.actionWidth +
+    (count - 1) * PFQUEST.actionGap
+  local left =
+    LAYOUT.detail.left +
+    math.floor((LAYOUT.detail.width - totalWidth) / 2)
+  local previous
+  for _, button in ipairs(visibleActions) do
+    StylePfQuestButton(
+      button,
+      PFQUEST.actionWidth,
+      PFQUEST.actionHeight,
+      10
+    )
+    if not previous then
+      SetSinglePoint(
+        button,
+        "BOTTOMLEFT",
+        frame,
+        "BOTTOMLEFT",
+        left,
+        LAYOUT.actionBottom
+      )
+    else
+      SetSinglePoint(
+        button,
+        "LEFT",
+        previous,
+        "RIGHT",
+        PFQUEST.actionGap,
+        0
+      )
+    end
+    previous = button
+  end
+end
+
 local function StyleTrackToggle(button)
   if not button then
     return
@@ -922,11 +1182,12 @@ function Quests:EnsureDirectoryRows()
   return true
 end
 
-function Quests:LayoutDirectoryRows()
+function Quests:LayoutDirectoryRows(force)
   if not self:EnsureDirectoryRows() then
     return false
   end
   if
+    not force and
     QuestLogFrame.aeuiQuestDirectoryLayout ==
     DIRECTORY.contract
   then
@@ -1039,7 +1300,10 @@ function Quests:UpdateDirectoryRows()
     return
   end
 
-  if not self:LayoutDirectoryRows() then
+  -- Re-assert this event-driven layout after every QuestLog_Update. pfQuest
+  -- calls QuestLogTitleButton_Resize after the original update and otherwise
+  -- leaves each row at a provider-defined width.
+  if not self:LayoutDirectoryRows(true) then
     return
   end
 
@@ -1534,9 +1798,11 @@ function Quests:Apply()
   end
 
   self:InstallGlobalHooks()
+  self:InstallQuestLogFrameOnShowHook()
   self:EnsureShell(QuestLogFrame)
   self:EnsureDetailToggle(QuestLogFrame)
   self:ApplyFrameGeometry()
+  self:ApplyPfQuestQuestLogCompatibility()
   self:LayoutDirectoryRows()
   self:UpdateDirectoryRows()
   self:UpdateDetailToggle()

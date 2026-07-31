@@ -22,7 +22,7 @@
 |---|---|---:|---|---|
 | Core／pfUI | `api/expedition.lua`、`pfUI.lua`、原生回退路由 | `P5` | 现代可见模块默认回退原生；非视觉功能保留；Initialize／Apply 按模块 `pcall` 隔离并单次报告异常 | 实机覆盖原生 Frame、SavedVariables、单模块失败隔离与第三方兼容 |
 | Chat | `modules/chat.lua` + AEUI Chat adapter | `P5` V3 / r1.7 | 单一左侧旧书、四状态 Tab、双状态输入与未读已接入；右框隐藏且消息回收；书本九宫格在缺失、隐藏或贴图被剥离时自愈；两项 Copy 辅助功能暂缓 | `/reload` 验证书本主体恢复，再执行核心批次实机验收 |
-| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P5` | 用户接受 QL-A2 V4 当前书本主体；QL-B0 内框与条目底板路线均已移出范围。QL-B1 四态墨记继续运行；QL-B2 source/runtime 资产保留但酒红书签暂停挂载。QL-C contract `1.6` 已隐藏并禁用 Collapse All，保留任务计数／追踪、底部暗皮革四态，隐藏右页 scrollbar chrome 并保留滚轮；静态测试通过。已确认魔改版 `pfQuest 7.0.1`／`pfQuest-turtle 7.0.2` 会改写 Quest Log 并造成布局冲突，两份源码已纳入 `addon/`；tracker 当前界面参考已保存。QL-B3-A `5/5` exhausted、B/C `0/5` 并继续暂停；QL-D 未完成 | 审计 pfQuest Quest Log Hook 与 tracker runtime 对象，隔离布局冲突后进入 tracker overhaul |
+| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P5` | Quest Log 主体保持已接受的 QL-A2 V4；QL-B1 四态墨记继续运行，QL-B2 资产保留但隐藏。pfQuest 冲突根因已完成源码审计；QL-C contract `1.7` 在 provider 最终刷新后恢复任务行／详情几何，并把六个真实 pfQuest 控件归入右页固定工具行和底部行，late-load smoke 通过。pfQuest tracker 已完成 `P1` 对象合同；QT-A1／A2／B1 为 `P2 production-draft`、均 `0/5`、未授权 | 游戏设备验证 pfQuest／pfQuest-turtle 同开时的 Quest Log；审阅并决定是否授权 QT V1 三段生产正文 |
 | Map | `map.lua`、`minimap.lua`、`addonbuttons.lua` 等 | `P2` | 羊皮地图卷与黄铜罗盘已锁定 | 实机对象审计和组件级合同 |
 | Character | `character.lua`、`inspect.lua`、`dressup.lua` | `P2` | 香草同构角色面板已锁定 | 实机几何与装备槽／属性／页签拆分 |
 
@@ -49,8 +49,9 @@
 
 - 项目接管：pfUI `chat` 行为与 AEUI V3 单一左侧战地旧书视觉；AEUI
   QL-A2 V4 任务日志固定书体与安全区、QL-B0 23 行 V1 fallback、QL-B1
-  四态目录墨记和 QL-B2 三态选择书签。QL-B0 V2 `18 × 18` 的独立内框
-  已撤销，地区条与任务条底板仍在候选循环；V2 尚无 source 或 runtime 接入。
+  四态目录墨记，以及 QL-C `1.7` 的 pfQuest 后加载布局兼容。QL-B2 三态
+  选择书签资产保留但 runtime 隐藏；QL-B0 V2 内框、地区条与任务条底板路线
+  均已撤销。pfQuest tracker 仍使用 provider 原 UI，尚未接入新视觉。
 - 原生回退：动作条、导航、单位／团队、战斗 HUD、背包／拾取以及全部未完成
   Blizzard skins；Quest Log 尚未完成的目录、滚动条、按钮与奖励状态继续
   使用真实原生控件。

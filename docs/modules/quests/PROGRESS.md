@@ -5,14 +5,20 @@
 - Quest Log 主视觉：已锁定。
 - 用户于 `2026-07-31` 接受当前游戏内书本主体，并明确要求停止增加列表内框、
   地区条或任务条底板；后续只处理书本外的真实控件与交互反馈。
-- `2026-07-31` 最新实机反馈：启用魔改版 `pfQuest 7.0.1` 与配套
-  `pfQuest-turtle 7.0.2` 后，Quest Log
-  任务行、顶部控件与右页会被额外文字／按钮改写，整体布局失序；本轮停止
-  继续修补并登记为兼容 TODO。两份源码已复制到 `addon/`；必须先审计
-  加载顺序、真实 Frame 与 Hook，再恢复布局工作。
-- 同一外部插件提供的纵向任务追踪界面将作为下一轮 overhaul 对象；当前
-  `363 × 865` 结构参考与 `1009 × 629` Quest Log 冲突复现图已保存；
-  provider 已识别但对象合同仍未完成，两图都不是美术权威。
+- `2026-07-31` 已完成魔改版 `pfQuest 7.0.1` 与
+  `pfQuest-turtle 7.0.2` 的源码审计。布局失序来自 `pfQuest/quest.lua`
+  后加载替换 Quest Log 刷新入口、再次调用 `QuestLogTitleButton_Resize`，
+  并把六个 provider 控件塞入详情 ScrollChild；`pfQuest-turtle` 只扩展
+  数据，没有独立 UI 写入。
+- AEUI Quests runtime contract 已升至 `1.7`：在 provider 最终刷新后以
+  事件驱动方式恢复 23 条列表行与右页正文安全区，将 online／language 搬至
+  右页固定顶部工具行，将 show／hide／clean／reset 搬至右页固定底部四格；
+  所有 provider OnClick／OnUpdate、显隐、禁用、ID 和数据行为保持。没有使用
+  维护型 `OnUpdate` 几何争夺；late-load 与幂等 smoke 已通过，仍待实机。
+- pfQuest tracker 的真实对象合同已完成：唯一 root 为
+  `pfQuestMapTracker`，包含三种模式、七个工具 Button、最多二十五个动态
+  Button，宽度 `130..330px`、高度随目标变化。当前结构图与 Quest Log
+  故障图继续只作信息层级和复现证据，不是美术权威。
 - 用户于 `2026-07-30` 将 Quest Log 选为当前首要大面积 UI；地图与角色因
   实机对象几何尚未完成，继续保持后续顺位。
 - Quest Log 真实对象合同：`P1` 完成，QL-A 当前处于 `P4–P5`；QL-B1
@@ -80,7 +86,7 @@
   改写成通过。透明母版、source/runtime manifest、`64 × 16` TGA、确定性
   exporter 和 adapter 已 tracked，当前为 `runtime-exported / P5`；固定
   执行器仍是 `5/5` 且接受后没有新增调用。
-- `QL-B0／B1 runtime`：adapter runtime contract 已升至 `1.6`。已创建／复用
+- `QL-B0／B1 runtime`：adapter runtime contract 已升至 `1.7`。已创建／复用
   `QuestLogTitle1..23`，使用 `224 × 15` 行盒／`14px` 步进和真实滚动偏移，
   从 `GetQuestLogTitle`／`IsQuestWatched` 切换四种 atlas 状态。覆盖 Texture
   不接管点击；原行脚本、选择、滚动与 SavedVariables 保留。实机发现的
@@ -108,14 +114,17 @@
   隐藏酒红书签，因此 source、manifest、exporter 与 TGA 均保留，但 adapter
   runtime contract `1.6` 不再引用 atlas、不创建 `BORDER` Texture，也不再
   包装任务行 hover／pressed／click 脚本；原生整行选择高亮继续透明抑制。
-- `QL-C runtime`：adapter runtime contract `1.6` 已完成第一批书本外控件。
+- `QL-C runtime`：adapter runtime contract `1.7` 已完成第一批书本外控件
+  和 pfQuest Quest Log 兼容。
   Collapse All 真实 Button 与 pfUI `+`／`-` 子控件已完整隐藏、禁用且阻止
   外部 `Show()` 回生；任务计数改为深墨字体；等级／追踪控件复用 QL-B1
   墨圈 atlas。底部放弃、
   分享、退出与详情开合保留原 Button／OnClick，并使用程序化暗皮革四状态。
   最右侧 `QuestLogDetailScrollFrameScrollBar`、Thumb 与上下箭头隐藏且不
   接收鼠标，详情页本体追加 `28px` 步进、按真实范围限位的鼠标滚轮；左页
-  列表滚动条不受影响。Lua 5.0 语法与 smoke 已通过，尚待 Turtle WoW 实机。
+  列表滚动条不受影响。pfQuest 六个控件已按真实 Button 粒度归位，后加载
+  全局函数和 Frame `OnShow` 替换均有事件驱动恢复。Lua 5.0 语法与 smoke
+  已通过，尚待 Turtle WoW 实机。
 - `QL-B3`：三类真实语义已拆为三个固定并列槽，类型／计时／状态可同时出现。
   [QL-B3 work](work/QUEST.LOG.STATUS.md) 已形成 A／B／C 三段完整
   生产正文：分别生成四类类型压印、单枚沙漏和同一蜡封的完整／破裂两态。
@@ -127,7 +136,8 @@
   `0/5` 并暂停。非地区行文字安全宽度收敛为 `155px`；类型 token 的显式等值表
   仍需在 P5 前由目标客户端证实。Collapse All 归 QL-C 独立 Button，
   不混入目录状态。
-- Quest Tracker：视觉 `P2`，外部 provider `P0`，暂停。
+- Quest Tracker：provider 对象合同 `P1`、视觉 `P2`；三段 V1 生产正文
+  已完成自包含预检，均为 `prompt-draft`、`0/5`、未获生成授权。
 - NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
 - `questitem.lua`：行为保留，视觉 `N/A`。
 
@@ -141,7 +151,7 @@
 | `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P5 runtime-exported` | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；内部失败与 `5/5` 事实保留 | Turtle WoW 验证 TGA、四态切换、字体和 fallback |
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 asset-retained / runtime-hidden` | 用户接受的 source、manifest、`128 × 16` TGA、exporter 与历史证据全部保留；`2026-07-31` 起 adapter 不再挂载或包装任务行脚本 | 暂缓；只有用户重新确认后才恢复 runtime |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
-| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作与辅助按钮 | `P5 runtime-integrated` | contract `1.6` 已隐藏并禁用 Collapse All；保留深墨任务计数、QL-B1 追踪墨圈与底部程序化暗皮革四态；隐藏右页滚动条 chrome 并保留滚轮，左页滚动不变；Lua smoke 通过 | 外部任务插件关闭时复核基础布局；启用时的整体错位另列兼容 TODO |
+| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated` | contract `1.7` 保留既有控件方案；新增 pfQuest late-load 兼容，在最终刷新后恢复列表／详情几何，并将六个真实 provider Button 分配到右页固定工具行和底部行；Lua smoke 通过 | 在 pfQuest／pfQuest-turtle 同时启用时实机复核排版、点击和滚动 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | `P1–P2` | Quest Log 奖励只读，无 selected | 实机奖励数量与尺寸 |
 
 QL-A1 manifest 记录：
@@ -170,10 +180,14 @@ source 或 runtime。
 
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
-| `QT-A` | header、paper、叠页边、bottom、emblem | `P2 visual／P0 compat` | 提供外部插件源码与对象树 |
-| `QT-B` | collapse、objective、focus、seal、timer | `P2 visual／P0 compat` | 真实交互与状态来源 |
+| `QT-A1 V1` | 可变宽高纸面 shell、九宫格与叠页边 | `P2 production-draft` | 用户授权固定正文与 Image 1／2／3 上传；当前 `0/5` |
+| `QT-A2 V1` | 短皮带、徽记、七个工具图标与 selected 压片 | `P2 production-draft` | 用户授权固定正文与 Image 1／2 上传；当前 `0/5` |
+| `QT-B1 V1` | focus 墨洗、tracked 页边墨记、complete 墨勾 | `P2 production-draft` | 用户授权固定正文与 Image 1／2／3 上传；当前 `0/5` |
 
-本项目不会扫描或接管 `QuestWatchFrame`，也不会创建第二个追踪器。
+完整合同和生产正文见
+[QUEST.TRACKER.CORE.md](work/QUEST.TRACKER.CORE.md)。当前不生成折叠、
+timer 或 failed 资产：provider 没有可用的公开状态来源。本项目不会扫描或
+接管 `QuestWatchFrame`，也不会创建第二个追踪器。
 
 ## 当前验证
 
@@ -206,7 +220,7 @@ source 或 runtime。
   `e734bbf59da00f7fbc9c75649d33eaf635b5a0c19e1737128dfdce0db58eee8f`。
 - QL-B1 exporter：
   [`build_quest_log_directory_marks_v1.py`](../../../tools/build_quest_log_directory_marks_v1.py)；
-  adapter runtime contract `1.6`，Lua smoke 覆盖 23 行创建、四态、滚动偏移、
+  adapter runtime contract `1.7`，Lua smoke 覆盖 23 行创建、四态、滚动偏移、
   原脚本、整行旧高亮抑制、顶部墨圈复用与刷新后不回生。
 - QL-B2 V1 生产合同：
   [`QUEST.LOG.SELECTION.md`](work/QUEST.LOG.SELECTION.md)；当前为
@@ -269,19 +283,22 @@ source 或 runtime。
 ## 下一步
 
 QL-A2 保持 [runtime work](work/QUEST.LOG.GUTTER.md)，不得进入 `P6`／清理。
-当前任务日志布局暂停继续修补。后续恢复时先处理以下兼容门禁：
+Quest Log 静态兼容已完成，下一门禁是在游戏设备同时启用 pfQuest 与
+pfQuest-turtle 后验证：
 
-- 审计 pfQuest／pfQuest-turtle 的加载顺序、SavedVariables、
-  `QuestLogFrame` 写入点、替换函数与 Hook；
-- 分别在外部插件关闭／启用两种场景记录任务行、顶部任务计数、
-  等级／追踪墨圈、详情 ScrollChild 和底部按钮的最终 Point／Size；
+- 23 条任务行在滚动、地区展开和等级重写后仍保持 `224 × 15` 行盒、
+  `190px` 文字安全区，且原点击／Shift 追踪行为不变；
+- online／language 始终位于右页顶部工具行，show／hide／clean／reset
+  始终位于右页底部四格，六个 provider 控件的点击、OnUpdate、显隐和禁用
+  都保持；
 - 确认 Collapse All 在两种场景都不可见、不可点击且不会被外部 `Show()`
   恢复；
 - 底部放弃／共享／退出／详情按钮的普通、悬停、按下、禁用与原脚本；
 - 最右侧详情滚动条始终不显示，长任务正文仍可用鼠标滚轮滚到首尾；
 - 左页列表滚动条不受影响，任务行不出现酒红书签或旧整行浅色高亮。
 
-外部 tracker 下一轮入口：
+pfQuest tracker 已进入 [QT V1 work](work/QUEST.TRACKER.CORE.md) 的
+`prompt-draft / P2`。结构证据继续固定为：
 
 - 结构参考：
   [`01_external_quest_tracker_current_state.png`](../../../assets/references/quests/session-2026-07-31/01_external_quest_tracker_current_state.png)，
@@ -291,8 +308,10 @@ QL-A2 保持 [runtime work](work/QUEST.LOG.GUTTER.md)，不得进入 `P6`／清�
   [`02_third_party_quest_plugin_layout_failure.png`](../../../assets/references/quests/session-2026-07-31/02_third_party_quest_plugin_layout_failure.png)，
   `1009 × 629`，SHA-256
   `36e172e15ea6c6939d4f2e784131ff0e9a9a51a926aaec046a95a21af5361faf`；
-- 两图只用于对象审计、信息层级与复现，不继承其字体、颜色、现代按钮或
-  其他美术表现。取得插件身份与 runtime 对象前不生成 tracker 资产。
+- 两图只用于信息层级、真实密度与复现，不继承其字体、颜色、现代按钮或
+  其他美术表现。当前下一门禁是用户审阅并明确授权 QT-A1／A2／B1 V1 的
+  具体正文和固定上传范围；在此之前三段均保持 `0/5`，不生成、不创建
+  runtime 媒体或 tracker adapter。
 
 QL-B0 V2 的内框与两类底板均已由用户移出范围，不再等待 source 例外，也不
 继续 ImageGen。QL-B2 的 accepted source、atlas、manifest 与 exporter 保留，

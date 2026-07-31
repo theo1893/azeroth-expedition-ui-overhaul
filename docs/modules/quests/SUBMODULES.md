@@ -10,12 +10,15 @@ Frame。美术见 [ART_BASELINE.md](ART_BASELINE.md)，状态见
 |---|---|---|
 | [`skins/blizzard/questlog.lua`](../../../addon/pfUI/skins/blizzard/questlog.lua) | `QuestLogFrame` 双栏几何、列表／详情 ScrollFrame、日志按钮、奖励槽、pfUI 等级与详情收起增强 | 保留原生数据与事件；新 adapter 不加载现代 backdrop |
 | [`Modules/Quests.lua`](../../../addon/AzerothExpeditionUI/Modules/Quests.lua) | QL-A2 V4 固定 SHELL、阅读安全区、原生装饰隐藏与真实详情切换 Button | 只接管静态外壳和布局；不替代任务数据、原按钮脚本、动态内容或 SavedVariables |
+| [`pfQuest/quest.lua`](../../../addon/pfQuest/quest.lua) | Quest Log 等级文字、在线／语言入口、显示／隐藏／清空／重置操作，以及对三个 Quest Log 刷新入口的后加载替换 | provider 继续拥有任务数据库与全部点击行为；AEUI 只在 provider 最终刷新后恢复安全区并搬移真实控件 |
+| [`pfQuest/tracker.lua`](../../../addon/pfQuest/tracker.lua) | `pfQuestMapTracker`、三种追踪模式、七个工具 Button、最多二十五个动态任务／目标 Button | 唯一 tracker provider；AEUI 未来只替换 chrome、排版和状态反馈，不创建第二个追踪器 |
+| [`pfQuest-turtle/`](../../../addon/pfQuest-turtle/) | Turtle WoW 任务数据库、语言数据、覆盖和补丁表 | 数据扩展；没有独立 tracker 或 Quest Log UI 所有权 |
 | [`skins/blizzard/gossipquest.lua`](../../../addon/pfUI/skins/blizzard/gossipquest.lua) | `QuestFrame`、`GossipFrame`、五个内容面板、滚动条、八个操作按钮、奖励高亮 | 当前原生回退；只保留对象合同 |
 | [`modules/questitem.lua`](../../../addon/pfUI/modules/questitem.lua) | 任务物品 Tooltip 的任务归属、扫描与数量 | 原样保留；不是快捷使用按钮 |
-| 外部任务追踪插件 | 游戏页面任务追踪 | provider 未提供，禁止假设 `QuestWatchFrame` |
 
-当前资产波次只包含按 `L` 打开的 `QuestLogFrame`。NPC 对话和外部 tracker
-没有获准生产资产。
+当前 runtime 波次只接入按 `L` 打开的 `QuestLogFrame`。pfQuest tracker
+已经完成对象审计和生产 Prompt 草案，但尚未获准生成或接入资产；NPC 对话
+仍没有获准生产资产。
 
 ## Quest Log 顶层
 
@@ -139,7 +142,7 @@ QL-B0／B1 当前 V1 runtime 已接入
 模块基线把主标题设为 Noto Serif SC、任务行设为霞鹜文楷，仍需实机加载
 与 1px 行重叠命中验证。QL-B2 的 `BORDER` Texture 挂载与三态脚本已从
 runtime contract `1.5` 起移除；资产文件不删除，运行时一律隐藏。当前
-runtime contract 已升至 `1.6`，该决定保持不变。
+runtime contract 已升至 `1.7`，该决定保持不变。
 
 QL-B0 V2 的 `LIST.INSET` 已在四次候选审查后由用户移出范围，不建立 source、
 runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
@@ -177,38 +180,79 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 | `QUEST.LOG.ACTION.EXIT` | `QuestFrameExitButton`；兼容 `QuestLogFrameCancelButton` | 同族程序化暗皮革搭扣四状态，原脚本不变 |
 | `QUEST.LOG.DETAIL.TOGGLE` | pfUI `QuestLogFrameExpandButton`；缺失时可创建真实 Button | 加入底部暗皮革控件行，动态左右文字，pfUI 箭头贴图隐藏 |
 | `QUEST.LOG.LEVELS` | pfUI `QuestLogFrameLevelsCheckButton` | 复用 QL-B1 开放墨圈／墨勾 atlas；保留原脚本与文字 |
+| `QUEST.LOG.PFQUEST.ONLINE` | `pfQuest.buttonOnline`／`pfQuestOnline` | `72 × 16`，右页顶部固定工具行；动态 ID 与原 OnClick 不变 |
+| `QUEST.LOG.PFQUEST.LANGUAGE` | `pfQuest.buttonLanguage`／`pfQuestLanguage` | `86 × 16`，与 ONLINE 同行；动态语言、下拉与原 OnUpdate／OnClick 不变 |
+| `QUEST.LOG.PFQUEST.SHOW` | `pfQuest.buttonShow`／`pfQuestShow` | `52 × 20`，右页固定底部四按钮行第 1 格 |
+| `QUEST.LOG.PFQUEST.HIDE` | `pfQuest.buttonHide`／`pfQuestHide` | `52 × 20`，第 2 格 |
+| `QUEST.LOG.PFQUEST.CLEAN` | `pfQuest.buttonClean`／`pfQuestClean` | `52 × 20`，第 3 格 |
+| `QUEST.LOG.PFQUEST.RESET` | `pfQuest.buttonReset`／`pfQuestReset` | `52 × 20`，第 4 格 |
 
 右页仍由 `QuestLogDetailScrollFrame` 承担裁切与滚动，adapter 只隐藏最右侧
 滚动条 chrome，并在页面本体上追加 `OnMouseWheel`，以 `28 UI px` 步进在
 真实 `GetVerticalScrollRange()` 内限位。左页列表滚动条完全不受此规则影响。
 
-## 外部 Quest Tracker（暂停）
+pfQuest 在加载后会替换 `QuestLog_Update`、
+`QuestLog_UpdateQuestDetails` 和 `QuestLogFrame` 的 `OnShow`，并在详情
+ScrollChild 内增加六个控件和 `30px` 标题预留。AEUI 必须在 provider 的
+最终刷新之后，以事件驱动方式恢复 `QuestLogTitle1..23` 的
+`224 × 15` 行盒、`190px` 文字宽度和右页正文几何；不得用 `OnUpdate`
+持续争夺 Parent／Point／Size。六个 provider Button 只改 Parent、Point、
+Size、字体和视觉状态，不替换脚本、ID、Enable／Disable、Show／Hide 或
+SavedVariables。
 
-以下 ID 只是已锁定视觉的未来逻辑，不证明 provider 已存在：
+## pfQuest Quest Tracker
 
-`QUEST.TRACKER.HEADER`、`QUEST.TRACKER.EMBLEM`、`QUEST.TRACKER.PAPER`、
-`QUEST.TRACKER.BOTTOM`、`QUEST.TRACKER.COLLAPSE`、
-`QUEST.TRACKER.ENTRY`、`QUEST.TRACKER.OBJECTIVE`、
-`QUEST.TRACKER.FOCUS`、`QUEST.TRACKER.SEAL`、`QUEST.TRACKER.TIMER`。
-
-用户于 `2026-07-31` 提供并要求保存当前外部 tracker 的游戏内结构参考：
+用户于 `2026-07-31` 提供的当前游戏内结构参考：
 [01_external_quest_tracker_current_state.png](../../../assets/references/quests/session-2026-07-31/01_external_quest_tracker_current_state.png)。
-该图只证明纵向任务／目标层级、等级、完成率、目标计数与多种彩色状态标记的
-可见结构，不是美术权威，也不证明任何 Frame 名、事件、数据 API 或插件身份。
-
-同日确认该插件为魔改版 `pfQuest 7.0.1` 与配套
-`pfQuest-turtle 7.0.2`，源码已复制到 `addon/pfQuest/` 与
-`addon/pfQuest-turtle/`。启用后 Quest Log 任务行会增加等级，右页会出现
-额外文字／按钮并破坏 AEUI 现有布局。兼容失败证据为
+该图只证明现有信息密度和层级，不是美术权威。Quest Log 兼容失败证据为
 [02_third_party_quest_plugin_layout_failure.png](../../../assets/references/quests/session-2026-07-31/02_third_party_quest_plugin_layout_failure.png)。
-该问题登记为后续 TODO；完成 pfQuest Hook／对象审计前不继续修补几何。
 
-恢复前必须取得插件名称、版本、加载顺序、SavedVariables、顶层 Frame、任务
-组、目标行、标题、计时器、点击对象、刷新入口、状态来源、拖动／缩放／收起
-能力和真实几何；同时审计它对 `QuestLogFrame`、`QuestLogTitleN`、详情
-ScrollChild、按钮与刷新函数的写入／Hook。此前对 `QuestWatchFrame`、
-`QuestWatchLineN`、
-`QuestWatch_Update` 与 `QuestTimerFrame` 的假设全部作废。
+### 顶层、纸面与工具条
+
+| ID | provider 对象 | 合同 |
+|---|---|---|
+| `QUEST.TRACKER.SHELL` | 全局 `tracker`／`pfQuest.tracker`，Frame 名 `pfQuestMapTracker` | 唯一顶层 Frame；保留拖动、锁定、屏幕限位、位置保存、显隐和 WorldMap strata 行为 |
+| `QUEST.TRACKER.PAPER.TOP` | adapter-owned、挂在 `tracker.backdrop` 下的无鼠标 Texture | 横向三段式纸面顶部；宽度随 tracker 变化 |
+| `QUEST.TRACKER.PAPER.MIDDLE` | adapter-owned、挂在 `tracker.backdrop` 下的无鼠标 Texture | 可横纵延展的连续安静纸面；不得烘焙任务行 |
+| `QUEST.TRACKER.PAPER.BOTTOM` | adapter-owned、挂在 `tracker.backdrop` 下的无鼠标 Texture | 横向三段式自然撕裂底边 |
+| `QUEST.TRACKER.PAPER.EDGE` | adapter-owned 独立叠页边 Texture | 只在边缘表现错层纸页，不改变 Frame 命中 |
+| `QUEST.TRACKER.HEADER.STRAP` | `tracker.panel` 的 adapter-owned 三段式背景 | `16px` provider 工具条的短皮带 chrome；不是第二个 Button |
+| `QUEST.TRACKER.HEADER.EMBLEM` | adapter-owned 无鼠标 Texture | 极小羽毛笔／指南针压印；必须避开七个真实 Button |
+| `QUEST.TRACKER.MODE.QUESTS` | `tracker.btnquest` | `QUEST_TRACKING`；normal／hover／pressed／selected／disabled |
+| `QUEST.TRACKER.MODE.DATABASE` | `tracker.btndatabase` | `DATABASE_TRACKING`；同上 |
+| `QUEST.TRACKER.MODE.GIVERS` | `tracker.btngiver` | `GIVER_TRACKING`；同上 |
+| `QUEST.TRACKER.ACTION.SEARCH` | `tracker.btnsearch` | normal／hover／pressed／disabled，保留打开数据库脚本 |
+| `QUEST.TRACKER.ACTION.CLEAN` | `tracker.btnclean` | 同族四态，保留清空数据库结果脚本 |
+| `QUEST.TRACKER.ACTION.SETTINGS` | `tracker.btnsettings` | 同族四态，保留设置入口 |
+| `QUEST.TRACKER.ACTION.CLOSE` | `tracker.btnclose` | 同族四态，保留隐藏和配置写入 |
+
+### 动态条目
+
+| ID | provider 对象／状态 | 合同 |
+|---|---|---|
+| `QUEST.TRACKER.ENTRY` | `tracker.buttons`／`pfQuestMapButton1..25` | 真实 Button；高度为 `entryheight + objectives × fontsize`，不生成逐项卡片 |
+| `QUEST.TRACKER.ENTRY.FOCUS` | `button.bg` 与 `pfMap.highlight == button.title` | 可横向延展的低对比墨洗；不创建命中区 |
+| `QUEST.TRACKER.ENTRY.ICON` | `button.icon`／`button.node` | provider 动态节点图标和颜色；不得烘焙进背景 |
+| `QUEST.TRACKER.ENTRY.TITLE` | `button.text` | 动态等级、任务名与完成率；layout-only |
+| `QUEST.TRACKER.OBJECTIVE` | `button.objectives[i]` | 动态目标文字与计数；layout-only |
+| `QUEST.TRACKER.ENTRY.TRACKED` | `button.tracked` | 仅在任务模式可用的克制页边墨记；无新 Button |
+| `QUEST.TRACKER.ENTRY.COMPLETE` | `button.perc == 100` | 小型完成墨勾；无失败／蜡封语义 |
+
+provider 当前根宽度为 `min(内容宽度, 300) + 30`，即 `130..330 UI px`；
+高度为 `16px` 工具条加最多二十五个动态条目。三种模式、空状态、目标折叠／
+展开和任意高度都必须由同一组可拉伸／平铺切片承载，禁止使用一张固定尺寸
+tracker 背景。
+
+`expand_states` 是 provider 文件内局部表，没有独立 Frame 或公开状态字段；
+当前不得为 `QUEST.TRACKER.COLLAPSE` 生成假 Button。pfQuest tracker 没有
+独立 timer／failed 状态，因此 `QUEST.TRACKER.TIMER` 和失败蜡封不进入当前
+合同。未来只有取得真实状态来源后才能新增。
+
+所有现有行为保持：左键折叠／展开目标，右键打开 Quest Log，Ctrl 点击打开
+地图／切色，Shift 点击隐藏节点或标记完成；三模式、Tooltips、最多二十五条、
+动态排序、配置字体／透明度、`trackerpos` 和 `showtracker` 均由 provider
+继续拥有。provider 隐藏原生 `QuestWatchFrame` 的行为保持；AEUI 不扫描或
+接管 `QuestWatchLineN`，也不创建第二个追踪器。
 
 ## NPC Quest／Gossip（已映射，未锁美术）
 

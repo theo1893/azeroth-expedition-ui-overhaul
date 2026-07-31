@@ -143,13 +143,39 @@ chrome，不是 ScrollFrame、裁切、滚动范围或任务详情数据。
 
 ## Quest Tracker
 
-视觉基线是纵向行军便笺：顶部短皮带与双铆钉、可纵向扩展的安静纸面、独立
-叠页边、自然撕裂底边、极少量羽毛笔／指南针徽记。多个任务共享连续纸面，
-没有逐项卡片。完成使用墨勾，重点任务使用小暗酒红页边标，完成／失败使用
-小蜡封，限时使用沙漏压印。
+provider 已锁定为 `pfQuest 7.0.1` 的 `pfQuestMapTracker`。稳定视觉基线
+仍是纵向行军便笺：顶部短皮带与克制旧黄铜铆钉、连续可延展的安静暖赭纸面、
+独立错层页边、自然撕裂底边，以及极少量羽毛笔／指南针压印。它与 Quest Log
+共享公会卷宗的纸张、墨迹、暗酒红皮革、旧黄铜、左上暖光和 2004 年前后
+香草魔兽二维手绘笔触，但轮廓必须是从卷宗中抽出的单张野外便笺，不能变成
+双页书、聊天旧书、透明黑色 HUD、现代卡片列或暗黑式金属祭坛。
 
-这只是锁定基线，不是生产 Prompt。外部 provider 未映射前禁止执行、生成或
-创建 adapter。
+`QUEST.TRACKER.PAPER.TOP`／`MIDDLE`／`BOTTOM`／`EDGE` 必须组成可横向适配
+`130..330 UI px`、可纵向适配任意条目高度的切片系统。顶部和撕裂底边采用
+左右端帽加可延展中段；纸面中部使用安静、低对比、无方向性接缝的可平铺／
+拉伸中心和独立页边。多个任务共享一张连续纸，不制作逐项卡片、逐项皮框、
+固定高度背景，也不在任何切片中烘焙任务名、等级、目标、百分比、节点图标、
+按钮或空状态。
+
+`QUEST.TRACKER.HEADER.STRAP` 是承载真实 `tracker.panel` 的短皮带 chrome，
+同样按左右端帽与安静中段拆分。七个工具 Button 仍是七个独立逻辑对象：
+任务、数据库、任务给予者、搜索、清理、设置和关闭。可共用 atlas，但每个
+图标必须有独立 cell 和 UV；前三个模式额外具有 selected，全部具有 normal、
+hover、pressed、disabled。图标使用粗厚、低分辨率友好的旧墨／浅黄铜手绘
+轮廓，不使用线性现代 icon、圆角方块底座、霓虹高亮或烘焙文字。选中态只用
+暗酒红皮革压片或温暖铜墨强调，不沿用 pfQuest 当前青绿色 vertex color。
+
+`QUEST.TRACKER.ENTRY.FOCUS` 是可横向延展、边缘自然消散的淡墨洗，不形成卡片
+边框。`ENTRY.TRACKED` 是克制的暗酒红页边短墨记，`ENTRY.COMPLETE` 是小型
+深墨勾；二者均为无鼠标覆盖，不能遮挡 provider 的动态 `button.icon`、
+`button.text` 或 `button.objectives[i]`。任务名、目标、等级、完成率与数字
+继续由客户端排版；目标使用缩进和行距表达层级，不加独立底板。
+
+当前 provider 没有公开的折叠状态对象，也没有 tracker timer／failed 状态。
+因此本轮不生成折叠 Button、沙漏或失败蜡封，不把 Quest Log 的 B3 状态章
+移植过来。完整可授权生产正文与真实排版验收合同位于
+[work/QUEST.TRACKER.CORE.md](work/QUEST.TRACKER.CORE.md)；在用户明确授权
+具体版本前，ImageGen 调用保持 `0/5`，不创建 adapter 或 runtime 媒体。
 
 ## NPC Quest／Gossip
 

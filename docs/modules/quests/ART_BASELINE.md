@@ -45,6 +45,8 @@
 ## 当前边界
 
 - Quest Log 与 Tracker 的视觉语言已锁定。
-- Tracker 必须等待真实外部 provider，不能根据原生 QuestWatch 假设生产。
+- Tracker 已严格映射到仓库内 `pfQuest 7.0.1` 的
+  `pfQuestMapTracker`；只能按真实动态宽高、七个工具 Button 和最多二十五个
+  条目生产，不能根据原生 QuestWatch 或效果图假设对象。
 - NPC Quest／Gossip 已有真实对象合同，但尚无独立美术基线；不能直接借用
   双页 Quest Log Prompt 或完整效果图。
