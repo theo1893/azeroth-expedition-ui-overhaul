@@ -51,6 +51,33 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def visible_shell_alpha_overlap(
+    root: Path,
+    shell_path: str,
+    frame_width: int,
+    frame_height: int,
+    box: list[int],
+    threshold: int,
+) -> int:
+    shell = Image.open(resolve(root, shell_path)).convert("RGBA").resize(
+        (frame_width, frame_height), Image.Resampling.LANCZOS
+    )
+    alpha = shell.getchannel("A")
+    x, y, width, height = box
+    left = max(0, x)
+    top = max(0, y)
+    right = min(frame_width, x + width)
+    bottom = min(frame_height, y + height)
+    if left >= right or top >= bottom:
+        return 0
+    return sum(
+        1
+        for py in range(top, bottom)
+        for px in range(left, right)
+        if alpha.getpixel((px, py)) > threshold
+    )
+
+
 def resolve(root: Path, value: str) -> Path:
     path = Path(value)
     return path if path.is_absolute() else root / path
@@ -363,7 +390,10 @@ def draw_quest_log(
         )
         draw.text(
             (frame_x + frame_w + 42, seal_box[1] + sh / 2),
-            "28×28 独立 Texture\n当前不接收鼠标",
+            spec["seal"].get(
+                "annotation",
+                "28×28 独立 Texture\n当前不接收鼠标",
+            ).replace("\\n", "\n"),
             font=utility,
             fill=(236, 202, 127, 255),
             anchor="lm",
@@ -519,7 +549,7 @@ def render_ingame(root: Path, spec: dict[str, Any], output: Path) -> None:
     draw.rectangle((18, 980, 407, 1011), fill=(32, 22, 17, 210))
     draw.text(
         (28, 995),
-        "QUEST-SEALS-SIM-V1 · 本地几何预演 · ImageGen 0/0",
+        f"{spec['version']} · 本地几何预演 · ImageGen 0/0",
         font=fonts["utility"],
         fill=(228, 199, 137, 255),
         anchor="lm",
@@ -614,6 +644,17 @@ def main() -> None:
     ql = spec["quest_log"]
     frame = [0, 0, ql["frame"][2], ql["frame"][3]]
     quest_log_seal = ql["seal"]["box"]
+    quest_log_shell_overlap = visible_shell_alpha_overlap(
+        root,
+        spec["inputs"]["quest_log_shell"],
+        frame[2],
+        frame[3],
+        quest_log_seal,
+        int(ql["seal"].get("alpha_overlap_threshold", 8)),
+    )
+    quest_log_placement = ql["seal"].get(
+        "placement_contract", "inside-frame"
+    )
     tracker_checks = []
     for width in spec["tracker"]["supported_widths"]:
         seal_size = int(spec["tracker"]["seal"]["size"])
@@ -640,6 +681,12 @@ def main() -> None:
         )
     checks = {
         "quest_log_seal_inside_frame": contains(frame, quest_log_seal),
+        "quest_log_seal_placement_contract": quest_log_placement,
+        "quest_log_seal_visible_shell_alpha_overlap_pixels": quest_log_shell_overlap,
+        "quest_log_seal_overlaps_title_box": overlaps(
+            quest_log_seal,
+            ql["layout"].get("title_box", [270, 16, 136, 24]),
+        ),
         "quest_log_seal_overlaps_list_safe_region": overlaps(
             quest_log_seal, ql["layout"]["list"]
         ),
@@ -658,6 +705,19 @@ def main() -> None:
         "tracker_widths": tracker_checks,
         "new_runtime_frames": int(spec["constraints"]["new_runtime_frames"]),
         "new_current_hitboxes": int(spec["constraints"]["new_current_hitboxes"]),
+        "quest_log_seal_visual_outsets": spec["constraints"].get(
+            "quest_log_seal_visual_outsets", [0, 0, 0, 0]
+        ),
+        "quest_log_screen_safe_top_margin_required": int(
+            spec["constraints"].get(
+                "quest_log_screen_safe_top_margin_required", 0
+            )
+        ),
+        "quest_log_seal_must_not_overlap_visible_book": bool(
+            spec["constraints"].get(
+                "quest_log_seal_must_not_overlap_visible_book", False
+            )
+        ),
         "tracker_paper_outsets": spec["constraints"]["tracker_paper_outsets"],
         "tracker_seal_visual_outsets": spec["constraints"]["tracker_seal_visual_outsets"],
         "tracker_screen_safe_top_margin_required": int(
@@ -668,8 +728,37 @@ def main() -> None:
             "provider_buttons_hidden_before_functional_parity"
         ],
     }
+    quest_log_placement_passed = (
+        (
+            quest_log_placement == "inside-frame"
+            and checks["quest_log_seal_inside_frame"]
+        )
+        or (
+            quest_log_placement == "outside-visible-book-silhouette"
+            and checks[
+                "quest_log_seal_visible_shell_alpha_overlap_pixels"
+            ]
+            == 0
+            and checks[
+                "quest_log_seal_must_not_overlap_visible_book"
+            ]
+        )
+    )
+    quest_log_outset_passed = (
+        quest_log_placement != "outside-visible-book-silhouette"
+        or (
+            checks["quest_log_seal_visual_outsets"]
+            == [0, 0, 18, 0]
+            and checks[
+                "quest_log_screen_safe_top_margin_required"
+            ]
+            == 18
+        )
+    )
     passed = (
-        checks["quest_log_seal_inside_frame"]
+        quest_log_placement_passed
+        and quest_log_outset_passed
+        and not checks["quest_log_seal_overlaps_title_box"]
         and not checks["quest_log_seal_overlaps_list_safe_region"]
         and not checks["quest_log_seal_overlaps_detail_safe_region"]
         and not checks["quest_log_seal_overlaps_bottom_action_band"]

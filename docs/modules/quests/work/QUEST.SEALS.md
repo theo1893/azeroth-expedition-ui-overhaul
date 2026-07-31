@@ -1,20 +1,21 @@
 # Quest Log／Tracker 共用漆章
 
 - 批次：`QS-A1`
-- 当前版本：`QUEST-SEALS-SIM-V1`
+- 当前版本：`QUEST-SEALS-SIM-V2`
 - 项目阶段：`P2`
-- 当前子状态：`simulation-reviewed / awaiting-user-confirmation`
+- 当前子状态：`simulation-reviewed / quest-log-placement-awaiting-confirmation`
 - 固定执行器：`imagegen-0-143-0`
 - ImageGen：`0/0`
 - runtime：未修改
-- 下一门禁：用户确认或否决本模拟中的可见方向；确认后才冻结生产正文并请求
-  独立的 ImageGen 生产授权。
+- 下一门禁：用户确认 `QUEST-SEALS-SIM-V2` 仅修订后的 Quest Log 外置锚点；
+  V1 的共享美术、尺寸与 Tracker 方向已经接受。确认 V2 后才冻结生产正文并
+  请求独立的 ImageGen 生产授权。
 
 ## 组件合同
 
 | ID | 当前对象 | 目标合同 |
 |---|---|---|
-| `QUEST.LOG.CHROME.SEAL` | 尚无 runtime 对象 | `QuestLogFrame` 上独立的 `28 × 28` 无鼠标 Texture；相对 Frame 盒为 `[625,377,28,28]`，不烘焙进 `QUEST.LOG.SHELL`。只有取得真实动作后，才允许在同一盒内一对一升级为 Button |
+| `QUEST.LOG.CHROME.SEAL` | 尚无 runtime 对象 | `QuestLogFrame` 上独立的 `28 × 28` 无鼠标 Texture；修订盒为 `[600,-18,28,28]`，位于任务书右上方透明 UI 空间，与 SHELL 可见 Alpha 重叠必须为 `0`。只有取得真实动作后，才允许在同一盒内一对一升级为 Button |
 | `QUEST.TRACKER.HUB.SEAL` | 尚无 runtime 对象 | adapter-owned `34 × 34` 顶部中央漆章；宽度 `W` 时 `x=floor((W-34)/2)`、`y=-18`，底边恰好落在 provider `16px` 工具条／列表起点，不移动任务内容 |
 | `QUEST.TRACKER.HUB.MENU` | 尚无对象 | 未来独立交互批次；漆章点击后承载七项 provider 行为。本模拟不绘制、不实现，也不把它当成已有 Button |
 
@@ -44,7 +45,9 @@ Tooltip、禁用／显隐、模式反馈和原脚本委托，才允许隐藏并�
 
 `QUEST.LOG.CHROME.SEAL` 是工具／配置候选入口，不是
 `QUEST.LOG.STATE.SEAL` 的 complete／failed 状态。两者不能共享状态语义、
-任务数据或显示条件。
+任务数据或显示条件。用户已明确禁止它出现在任务书翻页、纸页、书封、包角或
+装订结构上；当前锚点产生顶部 `18px` visual outset，P5 必须补足同值屏幕
+顶缘安全距。
 
 ## 美术基准继承
 
@@ -73,7 +76,8 @@ Tooltip、禁用／显隐、模式反馈和原脚本委托，才允许隐藏并�
 
 - 两处共用同一枚“远征公会工具漆章”美术母版，中心为极简四向罗盘与一笔
   斜向羽毛笔刻痕；无字母、阵营徽记、任务状态勾叉或发光符文；
-- Quest Log 以 `28px` 显示，克制地压在右下纸页／封皮交界；
+- Quest Log 以 `28px` 显示，悬置在右上方透明 UI 空间，与可见书体保持
+  明确间隔；不得压在翻页、纸页或书封上；
 - Tracker 以 `34px` 显示并成为顶部中央明显视觉焦点；它明显但不发展成
   巨大蜡封、徽章墙或覆盖任务文字的奖章；
 - normal／hover／pressed／disabled 必须保持同一轮廓与压印，交互差异由
@@ -89,22 +93,35 @@ Tooltip、禁用／显隐、模式反馈和原脚本委托，才允许隐藏并�
 
 ## 生成前模拟实例图
 
+### V1 用户结论
+
+用户于 `2026-07-31` 明确接受 `QUEST-SEALS-SIM-V1` 的共用漆章美术方向、
+Quest Log `28px`／Tracker `34px` 相对尺寸、Tracker 顶部中央锚点、旧七
+icon 的目标隐藏层级和综合色；同时否决 Quest Log 的
+`[625,377,28,28]` 右下位置，因为它落在翻页／书封结构上。V1 因该可见位置
+修订不能整体晋级为 `simulation-confirmed`；生产 ImageGen 仍未授权。
+
+### 当前 V2 位置修订
+
+V2 只把 Quest Log 漆章移到 `[600,-18,28,28]`。Tracker、两处尺寸、符号、
+综合色、状态节奏和功能迁移边界全部沿用用户已接受的 V1，不重新打开范围。
+
 规格：
-[quest_seals_simulation_v1.json](../../../../tools/specs/quest_seals_simulation_v1.json)，
+[quest_seals_simulation_v2.json](../../../../tools/specs/quest_seals_simulation_v2.json)，
 SHA-256
-`1013ceff241cc935f374215682ec9ae1ba6bb4e70346e8a2471a5431b1505d52`。
+`ebb31e6226c6755cf4cbdb884a414264885b32a0698cc30e0d574025805251d7`。
 
 渲染器：
 [render_quest_seals_simulation_v1.py](../../../../tools/render_quest_seals_simulation_v1.py)，
 SHA-256
-`32fbd1b73a9b42ad971b7c72c98e1eae3197592bd5a91b06299867a189432fbb`。
+`a9417bd4739781f953ffdb01e19cb5762a5e19790e5b2c070b4db6b1b4239199`。
 
 macOS 命令：
 
 ```bash
 conda run -n py312 python \
   tools/render_quest_seals_simulation_v1.py \
-  tools/specs/quest_seals_simulation_v1.json \
+  tools/specs/quest_seals_simulation_v2.json \
   --repo-root .
 ```
 
@@ -116,33 +133,36 @@ conda run -n py312 python \
 输出：
 
 - 游戏内整体预演：
-  `generated/quests/QUEST-SEALS/simulation/QUEST-SEALS-SIM-V1/quest_seals_ingame_v1.png`，
+  `generated/quests/QUEST-SEALS/simulation/QUEST-SEALS-SIM-V2/quest_seals_ingame_v2.png`，
   `1536 × 1024 RGBA`，SHA-256
-  `d8a37476f70801f43759fd7c907a7ef48b84ec715cf6bc76ef46eb996f12d991`；
+  `cf05105d8f1ae021e28773be10b282ef6977c365b43c87b6b33c318f1208739e`；
 - 组件／宽度合同板：
-  `generated/quests/QUEST-SEALS/simulation/QUEST-SEALS-SIM-V1/quest_seals_contract_v1.png`，
+  `generated/quests/QUEST-SEALS/simulation/QUEST-SEALS-SIM-V2/quest_seals_contract_v2.png`，
   `1536 × 1024 RGBA`，SHA-256
-  `0dc1511de3ed70095ad078759b78a4d1ae0fac838a8429c014f8551a8cca67fa`；
+  `a85de786c75dab4cbcd2e02fc0ef8150f802f146578cbd9b884d8a315a6db727`；
 - 机器报告：
-  `generated/quests/QUEST-SEALS/simulation/QUEST-SEALS-SIM-V1/quest_seals_report_v1.json`，
+  `generated/quests/QUEST-SEALS/simulation/QUEST-SEALS-SIM-V2/quest_seals_report_v2.json`，
   SHA-256
-  `5b8fb70e9d4925588a675da30aaa3919305f77f6e59de3706e164aa5a64c7f6c`。
+  `dd4d40f18841dc8dbf5d6896a3fbb6d64db26d48d3b8ec02f68b530420b1d1e7`。
 
-内部检查：模拟几何 `pass`。Quest Log 漆章位于 Frame 内，未与左右阅读安全区、
-底部两组 Button 或关闭按钮相交。Tracker 在 `130／230／330px` 三种真实
+内部检查：模拟几何 `pass`。Quest Log 漆章与缩放后的 SHELL 可见 Alpha
+重叠像素为 `0`，且未与标题、左右阅读安全区、底部两组 Button 或关闭按钮
+相交；顶部 visual outset 与未来屏幕安全距均为 `18px`。Tracker 在
+`130／230／330px` 三种真实
 宽度下均水平居中，底边恰接 `y=16` 列表起点，不覆盖任务内容；paper
 outset 仍为零。当前新增 Frame／命中盒均为 `0`，七按钮在功能等价前不会被
 runtime 隐藏。顶部 `18px` 屏幕 clamp 只是已定义的 P5 必做门禁，尚无
 runtime 实现或实机通过结论。
 
-可由本模拟确认：位置、相对尺寸、综合色重、共用符号、静态隐藏旧 icon 后的
-层级，以及 Tracker 漆章从顶部突出的受控程度。
+可由本模拟确认：Quest Log 不接触书体的外置位置，以及 V1 已接受的相对尺寸、
+综合色重、共用符号、静态隐藏旧 icon 后的层级和 Tracker 顶部突出程度。
 
 非权威范围：最终蜡质笔触、裂纹、Alpha、像素边缘、source bbox、atlas、
 四状态确定性数值、客户端混合和 hub menu 展开形态。模拟图不得成为生图输入、
 source 或 runtime。
 
-用户结论：`awaiting`。
+用户结论：V1 `direction-confirmed / quest-log-placement-invalidated`；
+V2 `awaiting`。
 
 ## 最终执行正文 — QS-A1 V1
 
@@ -172,10 +192,11 @@ source 或 runtime。
 > 180px 纯绿色安全边。不得裁边。漆章及其克制接触阴影必须全部位于该安全盒，
 > 背景不得被蜡色、反光或半透明绿边污染。
 >
-> 物件是一枚真实压在公会卷宗纸页或皮革上的暗旧酒红蜡章，而不是现代圆形
+> 物件是一枚可作为独立 UI 工具控制的暗旧酒红蜡章，而不是现代圆形
 > icon、金属硬币、勋章、宝石、按钮底座或燃烧火球。轮廓接近圆形但保留少量
 > 手压不规则边、局部堆蜡和最多三处小缺口；有可读但不过厚的蜡体侧缘、左上
-> 暖色短高光、右下深乌棕接触阴影和哑光微透蜡质。不要光滑塑料、玻璃反射、
+> 暖色短高光、收敛在自身轮廓内的右下深乌棕自阴影和哑光微透蜡质。不要依赖
+> 纸张、书封、丝带或其他背景才能读懂。不要光滑塑料、玻璃反射、
 > 写实摄影噪声或大量裂纹。
 >
 > 中央只有一个浅压印：粗短、低分辨率友好的四向公会罗盘，叠加一笔斜向
@@ -223,8 +244,8 @@ normal／hover／pressed／disabled，四态 Alpha 与轮廓完全相同；hover
 ## 审查记录
 
 - 语义／物理：模拟中的两处漆章均为独立对象；未烘焙背景，未冒充任务状态。
-- 透视／图层：正面轻微内部俯视；Quest Log 贴合右下纸页／封皮交界，
-  Tracker 位于纸面上缘并在列表层之前结束。
+- 透视／图层：正面轻微内部俯视；V1 Quest Log 右下锚点已按用户物理逻辑
+  反馈作废，V2 位于可见书体之外；Tracker 位于纸面上缘并在列表层之前结束。
 - 美术一致性：本地几何只证明暗酒红、深乌棕、暖赭和旧黄铜的综合色角色；
   最终手绘蜡质仍未生产。
 - 对象／状态合同：一个共用 base，未来四态确定性派生；当前无 Button 或
@@ -235,14 +256,15 @@ normal／hover／pressed／disabled，四态 Alpha 与轮廓完全相同；hover
 - 实际展示区域：机器报告 `pass`；Tracker paper outset `0px`，seal 顶部
   outset `18px`，不覆盖列表；屏幕顶缘 clamp 为 P5 pending。
 - 技术像素：模拟非生产资产，不执行 Alpha／色键／atlas 门禁。
-- 结论：`simulation-reviewed / awaiting-user-confirmation`
-- 用户结论与日期：`awaiting`
-- 下一门禁：用户确认具体模拟版本。
+- 结论：`simulation-reviewed / quest-log-placement-awaiting-confirmation`
+- 用户结论与日期：V1 方向接受并要求修订位置／`2026-07-31`；V2 awaiting
+- 下一门禁：用户确认 V2 Quest Log 外置锚点。
 
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
 |---|---|---|---|
-| `QUEST-SEALS-SIM-V1` | 本地 specification、renderer、两张 `1536 × 1024` 预演与机器报告；ImageGen `0/0` | `simulation-reviewed / awaiting-user-confirmation` | 由用户确认；若否决，按具体位置、尺寸或综合色反馈建立新模拟 |
+| `QUEST-SEALS-SIM-V1` | 本地 specification、renderer、两张 `1536 × 1024` 预演与机器报告；用户于 `2026-07-31` 接受方向并指出 Quest Log 位置错误；ImageGen `0/0` | `direction-confirmed / quest-log-placement-invalidated` | 保留共享美术与 Tracker；Quest Log 不得落在翻页／书封 |
+| `QUEST-SEALS-SIM-V2` | Quest Log `[600,-18,28,28]`；可见书体 Alpha 重叠 `0`；两张预演与机器报告；ImageGen `0/0` | `simulation-reviewed / awaiting-user-confirmation` | 用户只需确认新的 Quest Log 外置锚点 |
 
 正式生产尝试：无。

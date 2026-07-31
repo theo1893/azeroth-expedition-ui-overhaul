@@ -1,0 +1,84 @@
+{
+  "schema": "aeui.quest-seals.simulation.v1",
+  "version": "QUEST-SEALS-SIM-V2",
+  "canvas": {
+    "width": 1536,
+    "height": 1024
+  },
+  "inputs": {
+    "quest_log_shell": "assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png",
+    "title_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf",
+    "body_font": "addon/AzerothExpeditionUI/Media/Fonts/LXGWWenKaiGB-Medium.ttf",
+    "utility_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf"
+  },
+  "outputs": {
+    "ingame": "generated/quests/QUEST-SEALS/simulation/QUEST-SEALS-SIM-V2/quest_seals_ingame_v2.png",
+    "contract": "generated/quests/QUEST-SEALS/simulation/QUEST-SEALS-SIM-V2/quest_seals_contract_v2.png",
+    "report": "generated/quests/QUEST-SEALS/simulation/QUEST-SEALS-SIM-V2/quest_seals_report_v2.json"
+  },
+  "quest_log": {
+    "frame": [104, 164, 676, 464],
+    "layout": {
+      "list": [64, 64, 246, 324],
+      "detail": [366, 64, 246, 324],
+      "title_box": [270, 16, 136, 24],
+      "bottom_action_band": [62, 423, 537, 22],
+      "provider_bottom_band": [379, 423, 220, 20],
+      "close_box": [636, 12, 22, 22]
+    },
+    "seal": {
+      "component": "QUEST.LOG.CHROME.SEAL",
+      "box": [600, -18, 28, 28],
+      "placement_contract": "outside-visible-book-silhouette",
+      "alpha_overlap_threshold": 8,
+      "annotation": "28×28 独立 Texture\\n位于可见任务书轮廓之外",
+      "current_owner": "adapter-owned Texture; mouse disabled",
+      "future_owner": "same-box adapter Button after a real action is assigned",
+      "state_in_scene": "normal"
+    }
+  },
+  "tracker": {
+    "frame": [1170, 92, 330, 420],
+    "panel_height": 16,
+    "button_size": 14,
+    "button_gap": 3,
+    "supported_widths": [130, 230, 330],
+    "seal": {
+      "component": "QUEST.TRACKER.HUB.SEAL",
+      "size": 34,
+      "top_outset": 18,
+      "current_owner": "adapter-owned Texture; mouse disabled until functional parity exists",
+      "future_owner": "adapter-owned Button that toggles a one-to-one provider action menu",
+      "state_in_scene": "normal"
+    },
+    "provider_buttons": [
+      "tracker.btnquest",
+      "tracker.btndatabase",
+      "tracker.btngiver",
+      "tracker.btnsearch",
+      "tracker.btnclean",
+      "tracker.btnsettings",
+      "tracker.btnclose"
+    ],
+    "target_provider_button_visibility": "hidden only after hub-menu functional parity",
+    "hub_menu_scope": "future separate component batch; not rendered or implemented by this simulation"
+  },
+  "content": {
+    "quest_log_rows": 23,
+    "tracker_tasks": 10,
+    "tracker_objectives": 17
+  },
+  "constraints": {
+    "new_runtime_frames": 0,
+    "new_current_hitboxes": 0,
+    "quest_log_seal_baked_into_shell": false,
+    "quest_log_seal_visual_outsets": [0, 0, 18, 0],
+    "quest_log_screen_safe_top_margin_required": 18,
+    "quest_log_seal_must_not_overlap_visible_book": true,
+    "tracker_paper_outsets": [0, 0, 0, 0],
+    "tracker_seal_visual_outsets": [0, 0, 18, 0],
+    "tracker_screen_safe_top_margin_required": 18,
+    "provider_buttons_hidden_before_functional_parity": false,
+    "imagegen_calls": 0
+  }
+}

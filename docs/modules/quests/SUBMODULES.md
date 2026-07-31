@@ -36,13 +36,18 @@ fallback。NPC 对话仍没有获准生产资产。
 | `QUEST.LOG.COUNT` | `QuestLogQuestCount`；兼容 `QuestLogCount` | layout-only；使用纸面深墨文字，不新增外框 |
 | `QUEST.LOG.CLOSE` | `QuestLogFrameCloseButton` | 普通／悬停／按下／禁用 |
 | `QUEST.LOG.EMPTY` | `EmptyQuestLogFrame`、`QuestLogNoQuestsText` | 安静纸面，不生成空状态卡片 |
-| `QUEST.LOG.CHROME.SEAL` | 未来 adapter-owned Texture；有真实动作后才可原位升级为 Button | 独立 `28 × 28` 工具／配置候选漆章，盒 `[625,377,28,28]`；不得烘焙进 SHELL，不得冒充 `QUEST.LOG.STATE.SEAL` |
+| `QUEST.LOG.CHROME.SEAL` | 未来 adapter-owned Texture；有真实动作后才可原位升级为 Button | 独立 `28 × 28` 工具／配置候选漆章，盒 `[600,-18,28,28]`；必须与任务书可见 Alpha 完全分离，不得出现在翻页、纸页或书封上，不得烘焙进 SHELL，也不得冒充 `QUEST.LOG.STATE.SEAL` |
 
 支持 `closed`、`empty`、`list-only`、`dual-page` 与 `selected`。离线参考为
 `676 × 464 UI px`，物理中心线 `x=338`；左右物理纸页近 1:1，可见宽度差
 不超过约 `1%`。左 `42%`／右 `58%` 只属于文字列，不改变纸页宽度。
 `list-only` 只隐藏右页动态内容，完整书体保持 `676 × 464`，不得缩成
 `340px` 半本书。
+
+`QUEST.LOG.CHROME.SEAL` 的当前修订锚点位于书本右上方的透明 UI 空间，
+与 `676 × 464` SHELL 的可见 Alpha 重叠像素必须为 `0`；顶部 visual
+outset 为 `18px`。P5 必须同时补足 `18px` 屏幕顶缘安全距。该对象不能因为
+实现方便重新落到右下页角、翻页区、封皮、包角或装订结构上。
 
 ## Quest Log 纸页与中央装订
 
