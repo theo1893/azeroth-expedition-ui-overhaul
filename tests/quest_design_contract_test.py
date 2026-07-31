@@ -64,6 +64,15 @@ def main() -> None:
     tracker_external_caps_spec = json.loads(
         tracker_external_caps_spec_path.read_text(encoding="utf-8")
     )
+    tracker_direct_paper_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_tracker_direct_paper_simulation_v1.json"
+    )
+    tracker_direct_paper_spec = json.loads(
+        tracker_direct_paper_spec_path.read_text(encoding="utf-8")
+    )
     tracker_external_caps_renderer_path = (
         ROOT / "tools" / "render_quest_tracker_external_caps_simulation_v1.py"
     )
@@ -84,6 +93,9 @@ def main() -> None:
             "provider-height-formula",
             "cap.{name}.outside-live",
             "aeui-quest-tracker-external-caps-simulation-report-v1",
+            "aeui-quest-tracker-direct-paper-simulation-report-v1",
+            "visual-shell-equals-live",
+            "exterior book-frame",
         ),
         "pfQuest tracker external-cap simulation renderer",
     )
@@ -402,10 +414,12 @@ def main() -> None:
             "`104/256/420/516/136px`",
             "`FRAME_BELOW_NINE_SLICE_MINIMUM`",
             "`QT-GEO V1`",
+            "`QT-GEO V2`",
             "`simulation-rendered / awaiting-user-confirmation`",
             "ImageGen `0/0`",
-            "把左 `14`／右 `14`／上 `12`／",
-            "cap 零相交",
+            "外置装饰端帽",
+            "四边 outsets 全为 `0px`",
+            "`visual-shell-equals-live`",
             "QUEST.TRACKER.CORE.md",
             "NPC Quest／Gossip",
             "QL-A1_SourceManifest_v1.json",
@@ -547,6 +561,18 @@ def main() -> None:
             "fde561fcfad1d5a85267cf62f6c3489fe159f2bac2dca7d6e5fc5cedf81110c1",
             "`228 × 44`",
             "`358 × 448`",
+            "直接使用 live tracker 纸面预演 — QT-GEO V2",
+            "no-exterior-book-frame",
+            "quest_tracker_direct_paper_simulation_v1.json",
+            "906ea23c2d77c88208ca546feaa4522d1b742978f113f56265beef63c03e475d",
+            "e0466cae14513f01866ea768e6858d1886a706d6b24f81f3539292966b55b7a2",
+            "quest_tracker_direct_paper_ingame_v1.png",
+            "1e865eeb5f679f3b83d49eab7b370ae96d1d4f692d4679d8f590eb35b44e6255",
+            "quest_tracker_direct_paper_scenarios_v1.png",
+            "f598bf8bc89a336b74bd475782de85896d0c284fe804e0cc8b81b16192fc4ca9",
+            "quest_tracker_direct_paper_report_v1.json",
+            "cc90edd7c58e07a0a31fcdd37b6dc8ac23aac3d1df3cfd6ae873ae92f2cb0747",
+            "`pass / 7 of 7`",
             "`awaiting`",
             "`130 × 104`",
             "`230 × 256`",
@@ -685,6 +711,59 @@ def main() -> None:
         "ingame": "quest_tracker_external_caps_ingame_v1.png",
         "scenarios": "quest_tracker_external_caps_scenarios_v1.png",
         "report": "quest_tracker_external_caps_report_v1.json",
+    }
+    assert tracker_direct_paper_spec["schema"] == (
+        "aeui-quest-tracker-direct-paper-simulation-v1"
+    )
+    assert tracker_direct_paper_spec["base_specification"] == (
+        "tools/specs/quest_tracker_external_caps_simulation_v1.json"
+    )
+    assert tracker_direct_paper_spec["version"] == "QT-GEO-V2"
+    assert tracker_direct_paper_spec["imagegen"] == {
+        "calls": 0,
+        "budget": 0,
+        "uploads": [],
+    }
+    assert tracker_direct_paper_spec["proposal"] == {
+        "id": "direct-live-paper",
+        "visual_outsets": {
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0,
+        },
+        "live_center": (
+            "exactly the provider root rectangle [0,0,width,height]"
+        ),
+        "boundary_rule": (
+            "no exterior book frame, decorative caps, layered page edges, "
+            "outline, or cast shadow"
+        ),
+        "layer": (
+            "one adapter-owned non-interactive quiet paper field exactly "
+            "matching the provider root"
+        ),
+        "mouse": "disabled",
+        "screen_edge_note": (
+            "no visual pixels exist outside the provider root, so saved "
+            "screen-edge positions introduce no decorative clipping"
+        ),
+    }
+    assert tracker_direct_paper_spec["ingame_scene"] == {
+        "canvas": [1536, 1024],
+        "scenario": "quest-dense-default-font",
+        "provider_origin": [1166, 92],
+        "ui_scale": 1.0,
+    }
+    assert tracker_direct_paper_spec["scenario_board"] == {
+        "canvas": [1800, 1240],
+        "ui_scale": 1.0,
+    }
+    assert tracker_direct_paper_spec["outputs"] == {
+        "directory": "generated/quests/QT/simulation/QT-GEO-V2",
+        "ingame": "quest_tracker_direct_paper_ingame_v1.png",
+        "scenarios": "quest_tracker_direct_paper_scenarios_v1.png",
+        "report": "quest_tracker_direct_paper_report_v1.json",
     }
     assert "Create a source atlas containing exactly ten separate art objects" not in (
         tracker_work

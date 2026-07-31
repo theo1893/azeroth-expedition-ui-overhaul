@@ -26,12 +26,12 @@
   不是 provider 实例，已由空状态、`104/256/420/516/136px` 及三种模式的
   精确预演取代。QT-A1 保持
   P5 文件，但标记 `display-region-blocked`，不能直接进入 P6。
-- 用户于 `2026-07-31` 选择第一个修正方案：保持 pfQuest live Frame、
-  anchors、hitbox、动态尺寸和全部功能不变，把左 `14`／右 `14`／上 `12`／
-  下 `16px` 纸张装饰端帽移到 live 矩形外。`QT-GEO V1` 已以七种真实
-  provider 尺寸完成本地确定性几何预演与机器审查，ImageGen `0/0`；
-  七场景公式、live 内容包含与 cap 零相交均通过，当前等待用户确认可见方向。
-  确认前不修改 runtime；贴屏保存位置的外置端帽裁切仍需在接入前验证。
+- 用户于 `2026-07-31` 否决 `QT-GEO V1` 的外置装饰端帽：tracker 外侧不得
+  增加类似书框的边界，当前 tracker 直接展示已经足够。`QT-GEO V2` 已按
+  “显示面严格等于 pfQuest live Frame、四边 outsets 全为 `0px`”完成七种
+  真实尺寸的本地确定性预演与机器审查，ImageGen `0/0`；七场景公式、动态
+  内容包含与 `visual-shell-equals-live` 全部通过，当前等待用户确认具体
+  模拟版本。确认前不修改 runtime。
 - 用户于 `2026-07-31` 将七个低频工具 Button 与 `HEADER.*` 的视觉改造暂缓，
   当前优先确认 tracker 主体。provider 对象、Tooltip、OnClick、模式切换和
   SavedVariables 合同不变；暂缓不授权隐藏、删除、重挂、换皮或改写脚本。
@@ -169,9 +169,10 @@
   后续展示区域门禁证明历史 `QT-SIM V2` 的 `330 × 865` 只是容量包络，不是
   十任务／十七目标的 provider 真实高度；其材料／综合色方向仍保留，但精确
   几何证据失效。QT-A1 当前完整状态为
-  `runtime-exported-temporary / display-region-blocked / P5`。用户已选择外置
-  装饰端帽方案；`QT-GEO V1` 为
-  `simulation-rendered / awaiting-user-confirmation`，没有修改 adapter。
+  `runtime-exported-temporary / display-region-blocked / P5`。用户已否决外置
+  端帽；`QT-GEO V1` 为 `user-rejected / superseded`，新的无边界
+  `QT-GEO V2` 为 `simulation-rendered / awaiting-user-confirmation`，
+  没有修改 adapter。
 - NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
 - `questitem.lua`：行为保留，视觉 `N/A`。
 
@@ -215,7 +216,8 @@ source 或 runtime。
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
 | `QT-SIM V2` | `330 × 865` 高密度容量包络；无工具条，十任务、十七目标与三类反馈 | `P2 direction-confirmed / exact-geometry-superseded` | 材料／综合色方向保留；真实 provider 高度需以新几何模拟重新确认 |
-| `QT-GEO V1` | 外置纸张装饰端帽；七种真实 provider Frame 与 100% UI 像素游戏内预演 | `simulation-rendered / awaiting-user-confirmation` | 用户确认该具体模拟版本；确认前不改 runtime，之后另验 screen-edge clipping |
+| `QT-GEO V1` | 外置纸张装饰端帽；七种真实 provider Frame 与 100% UI 像素游戏内预演 | `user-rejected / superseded` | 用户拒绝外置书框；不得接入 runtime |
+| `QT-GEO V2` | 纸面严格等于 live Frame；无外置书框、端帽、页叠层、轮廓或投影 | `simulation-rendered / awaiting-user-confirmation` | 用户确认该具体模拟版本；确认前不改 runtime |
 | `QT-A1 V1` | 可变宽高纸面 shell、九宫格与叠页边 | `P5 runtime-exported-temporary / display-region-blocked` | source／manifest／`256 × 512` TGA／adapter 保留；先修正 cap／padding 与 live 内容安全区 |
 | `QT-A2 V1` | `HEADER.*`、皮带／徽记、七工具 Button 与 selected 压片 | `P2 scope-deferred` | provider 对象与行为原样保留；未来重开需独立模拟、新 Prompt 与新授权；当前 `0/5` |
 | `QT-B1 V1` | focus 墨洗、tracked 页边墨记、complete 墨勾 | `P3 scope-deferred / user-paused / 1/5` | 不挂载三件覆盖层；旧 V1.r1 作废，未来恢复需新模拟、新版本与新授权 |
@@ -250,11 +252,15 @@ QT-A1 临时 runtime 事实：
   `511dcffcf9bbb93a9e969c75d3dcb1fe10711258be85442044e3450af261801c`。
   额外失败项是 provider 未限制 `trackerfontsize` 和单任务 objective 数量，
   项目支持边界仍需冻结。
-- 外置端帽提案 specification：
+- 已拒绝的外置端帽提案 specification：
   `tools/specs/quest_tracker_external_caps_simulation_v1.json`；renderer：
   `tools/render_quest_tracker_external_caps_simulation_v1.py`。本地 ignored
   输出为 `1536 × 1024` 游戏内观感图、`1800 × 1240` 七场景板和机器报告；
-  报告 `pass`，但只证明提案几何，不替代 runtime 接入后的展示区域门禁。
+  报告 `pass`，但用户拒绝其可见方向，不得接入 runtime。
+- 当前 direct-paper specification：
+  `tools/specs/quest_tracker_direct_paper_simulation_v1.json`，复用同一 renderer
+  的零 outsets 分支。本地 ignored 输出同样覆盖游戏内高密度场景与七种真实
+  provider 尺寸；报告 `pass / 7 of 7`，当前等待用户确认 `QT-GEO V2`。
 
 ## 当前验证
 

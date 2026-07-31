@@ -1,0 +1,42 @@
+{
+  "schema": "aeui-quest-tracker-direct-paper-simulation-v1",
+  "base_specification": "tools/specs/quest_tracker_external_caps_simulation_v1.json",
+  "version": "QT-GEO-V2",
+  "component": "QUEST.TRACKER.SHELL",
+  "purpose": "local direction confirmation for direct live-frame paper only; never source, runtime, edit input, or image-generation reference",
+  "imagegen": {
+    "calls": 0,
+    "budget": 0,
+    "uploads": []
+  },
+  "proposal": {
+    "id": "direct-live-paper",
+    "visual_outsets": {
+      "left": 0,
+      "right": 0,
+      "top": 0,
+      "bottom": 0
+    },
+    "live_center": "exactly the provider root rectangle [0,0,width,height]",
+    "boundary_rule": "no exterior book frame, decorative caps, layered page edges, outline, or cast shadow",
+    "layer": "one adapter-owned non-interactive quiet paper field exactly matching the provider root",
+    "mouse": "disabled",
+    "screen_edge_note": "no visual pixels exist outside the provider root, so saved screen-edge positions introduce no decorative clipping"
+  },
+  "ingame_scene": {
+    "canvas": [1536, 1024],
+    "scenario": "quest-dense-default-font",
+    "provider_origin": [1166, 92],
+    "ui_scale": 1.0
+  },
+  "scenario_board": {
+    "canvas": [1800, 1240],
+    "ui_scale": 1.0
+  },
+  "outputs": {
+    "directory": "generated/quests/QT/simulation/QT-GEO-V2",
+    "ingame": "quest_tracker_direct_paper_ingame_v1.png",
+    "scenarios": "quest_tracker_direct_paper_scenarios_v1.png",
+    "report": "quest_tracker_direct_paper_report_v1.json"
+  }
+}

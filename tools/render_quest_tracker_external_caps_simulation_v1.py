@@ -81,6 +81,7 @@ def draw_world(
     height: int,
     body: ImageFont.FreeTypeFont,
     small: ImageFont.FreeTypeFont,
+    version: str,
 ) -> None:
     draw.rectangle(rect_xy(0, 0, width, height), fill=(49, 65, 69, 255))
     draw.rectangle(rect_xy(0, 0, width, 330), fill=(62, 74, 75, 255))
@@ -145,7 +146,7 @@ def draw_world(
 
     draw.text(
         (24, height - 34),
-        "QT-GEO V1 · 本地几何预演 · ImageGen 0/0 · 非最终美术",
+        f"{version.replace('-', ' ')} · 本地几何预演 · ImageGen 0/0 · 非最终美术",
         font=body,
         fill=(221, 205, 166, 235),
     )
@@ -179,6 +180,26 @@ def draw_external_shell(
         "top": (x - left, y - top, x + width + right, y),
         "bottom": (x - left, y + height, x + width + right, y + height + bottom),
     }
+
+    if left == 0 and right == 0 and top == 0 and bottom == 0:
+        # QT-GEO-V2: the user explicitly rejected every exterior book-frame,
+        # page-stack, cap, and outline. The visible paper is exactly the live
+        # provider rectangle; only the debug board draws its live-frame line.
+        draw.rectangle(rect_xy(x, y, width, height), fill=paper)
+        for offset, alpha in ((37, 24), (91, 18), (157, 14)):
+            if offset < height:
+                draw.line(
+                    [(x + 6, y + offset), (x + width - 7, y + offset + 1)],
+                    fill=rgba(palette["paper_light"], alpha),
+                    width=1,
+                )
+        if debug:
+            draw.rectangle(
+                (live[0], live[1], live[2] - 1, live[3] - 1),
+                outline=rgba(palette["debug_live"]),
+                width=2,
+            )
+        return {"shell": shell, "live": live, **caps}
 
     # All rectangles below use inclusive Pillow coordinates while the returned
     # contract boxes stay right/bottom exclusive.
@@ -470,6 +491,17 @@ def audit_scenario(
         ),
     }
     checks: list[dict[str, Any]] = []
+    checks.append(
+        {
+            "id": "visual-shell-equals-live"
+            if not any(int(value) for value in outsets.values())
+            else "visual-shell-outsets-match-contract",
+            "pass": True,
+            "outsets": {
+                key: int(value) for key, value in outsets.items()
+            },
+        }
+    )
     formula_height = expected_height(scenario, provider)
     checks.append(
         {
@@ -576,7 +608,14 @@ def render_ingame(
     width, height = (int(value) for value in spec["ingame_scene"]["canvas"])
     image = Image.new("RGBA", (width, height))
     draw = ImageDraw.Draw(image, "RGBA")
-    draw_world(draw, width, height, fonts["body13"], fonts["body10"])
+    draw_world(
+        draw,
+        width,
+        height,
+        fonts["body13"],
+        fonts["body10"],
+        spec["version"],
+    )
     scenario = next(
         item
         for item in spec["scenarios"]
@@ -613,15 +652,29 @@ def render_board(
     width, height = (int(value) for value in spec["scenario_board"]["canvas"])
     image = Image.new("RGBA", (width, height), (28, 26, 23, 255))
     draw = ImageDraw.Draw(image, "RGBA")
+    direct_live = not any(
+        int(value)
+        for value in spec["proposal"]["visual_outsets"].values()
+    )
+    heading = (
+        "QT-GEO V2 · 直接使用 live tracker 纸面 · 七种真实 provider 尺寸"
+        if direct_live
+        else "QT-GEO V1 · 外置装饰端帽 · 七种真实 provider 尺寸"
+    )
+    subheading = (
+        "酒红线只标记原 pfQuest live Frame，非最终边框；无外置书框、端帽、页叠层或阴影。所有图均为 100% UI 像素，ImageGen 0/0。"
+        if direct_live
+        else "酒红线 = 原 pfQuest live Frame；浅金线 = 外层视觉壳。所有图均为 100% UI 像素，ImageGen 0/0。"
+    )
     draw.text(
         (54, 34),
-        "QT-GEO V1 · 外置装饰端帽 · 七种真实 provider 尺寸",
+        heading,
         font=fonts["title24"],
         fill=(220, 195, 139, 255),
     )
     draw.text(
         (54, 76),
-        "酒红线 = 原 pfQuest live Frame；浅金线 = 外层视觉壳。所有图均为 100% UI 像素，ImageGen 0/0。",
+        subheading,
         font=fonts["body14"],
         fill=(194, 180, 148, 255),
     )
@@ -643,7 +696,11 @@ def render_board(
         )
         draw.text(
             (x - int(outsets["left"]), y - int(outsets["top"]) - 27),
-            f"视觉壳 {shell_width}×{shell_height} · {scenario['mode']}",
+            (
+                f"显示面 {shell_width}×{shell_height} · {scenario['mode']}"
+                if direct_live
+                else f"视觉壳 {shell_width}×{shell_height} · {scenario['mode']}"
+            ),
             font=fonts["body10"],
             fill=(160, 147, 119, 255),
         )
@@ -658,21 +715,33 @@ def render_board(
     )
     draw.text(
         (122, legend_y - 10),
-        "provider live Frame：文字、节点图标、七个 Button 与全部 hitbox 仍在这里",
+        (
+            "provider live Frame：也是唯一显示面；文字、节点图标、七个 Button 与全部 hitbox 仍在这里"
+            if direct_live
+            else "provider live Frame：文字、节点图标、七个 Button 与全部 hitbox 仍在这里"
+        ),
         font=fonts["body13"],
         fill=(211, 193, 158, 255),
     )
-    draw.line(
-        [(58, legend_y + 40), (110, legend_y + 40)],
-        fill=rgba(spec["palette"]["debug_shell"]),
-        width=2,
-    )
-    draw.text(
-        (122, legend_y + 29),
-        "adapter 外层视觉壳：左 14／右 14／上 12／下 16px；不接收鼠标，位于 provider 后方",
-        font=fonts["body13"],
-        fill=(211, 193, 158, 255),
-    )
+    if direct_live:
+        draw.text(
+            (58, legend_y + 29),
+            "无外置视觉壳：四边 outsets 全为 0px；没有书框、端帽、页叠层或外投影。",
+            font=fonts["body13"],
+            fill=(211, 193, 158, 255),
+        )
+    else:
+        draw.line(
+            [(58, legend_y + 40), (110, legend_y + 40)],
+            fill=rgba(spec["palette"]["debug_shell"]),
+            width=2,
+        )
+        draw.text(
+            (122, legend_y + 29),
+            "adapter 外层视觉壳：左 14／右 14／上 12／下 16px；不接收鼠标，位于 provider 后方",
+            font=fonts["body13"],
+            fill=(211, 193, 158, 255),
+        )
     draw.text(
         (58, legend_y + 78),
         "高度公式：16 + 任务数 × 20 + 目标数 × 12。空状态仍保持 16px live Frame；端帽不再被压缩。",
@@ -681,7 +750,11 @@ def render_board(
     )
     draw.text(
         (58, legend_y + 108),
-        "未决定：外置端帽在贴屏保存位置的裁切策略；必须在 runtime 接入前单独验证，不能改写 provider 数据或点击区。",
+        (
+            "无外置像素，因此不存在端帽贴屏裁切；runtime 仍需复核纸面覆盖、动态尺寸与原 provider 交互。"
+            if direct_live
+            else "未决定：外置端帽在贴屏保存位置的裁切策略；必须在 runtime 接入前单独验证，不能改写 provider 数据或点击区。"
+        ),
         font=fonts["body13"],
         fill=(194, 147, 120, 255),
     )
@@ -694,9 +767,30 @@ def main() -> None:
     args = parse_args()
     repo_root = args.repo_root.resolve()
     spec_path = args.spec.resolve()
-    spec = json.loads(spec_path.read_text(encoding="utf-8"))
-    if spec["schema"] != "aeui-quest-tracker-external-caps-simulation-v1":
-        raise ValueError(f"unsupported schema: {spec['schema']}")
+    requested_spec = json.loads(spec_path.read_text(encoding="utf-8"))
+    if requested_spec["schema"] == (
+        "aeui-quest-tracker-direct-paper-simulation-v1"
+    ):
+        base_path = repo_root / requested_spec["base_specification"]
+        spec = json.loads(base_path.read_text(encoding="utf-8"))
+        for field in (
+            "schema",
+            "version",
+            "component",
+            "purpose",
+            "imagegen",
+            "proposal",
+            "ingame_scene",
+            "scenario_board",
+            "outputs",
+        ):
+            spec[field] = requested_spec[field]
+    elif requested_spec["schema"] == (
+        "aeui-quest-tracker-external-caps-simulation-v1"
+    ):
+        spec = requested_spec
+    else:
+        raise ValueError(f"unsupported schema: {requested_spec['schema']}")
 
     fonts = {
         "body10": font(repo_root, spec["fonts"], "body", 10),
@@ -717,7 +811,11 @@ def main() -> None:
     )
     scenario_audits = render_board(spec, board_path, fonts)
     report = {
-        "schema": "aeui-quest-tracker-external-caps-simulation-report-v1",
+        "schema": (
+            "aeui-quest-tracker-direct-paper-simulation-report-v1"
+            if spec["schema"] == "aeui-quest-tracker-direct-paper-simulation-v1"
+            else "aeui-quest-tracker-external-caps-simulation-report-v1"
+        ),
         "version": spec["version"],
         "component": spec["component"],
         "imagegen": "0/0",
