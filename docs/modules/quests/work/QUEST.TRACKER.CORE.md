@@ -9,7 +9,7 @@
   `ENTRY.COMPLETE`
 - 暂缓范围：`HEADER.*` 与七个 provider 工具 Button；保留对象和行为合同，
   本轮不设计资产、不进入预演、不改 runtime
-- 子状态：`repair-prepared`
+- 子状态：QT-A1 `candidate-rejected`；QT-B1 `prompt-authorized`
 - 项目阶段：`P3`
 - 操作：`generate`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
@@ -23,7 +23,8 @@
 - 模拟用户结论：`confirmed / 2026-07-31`
 - 用户确认：用户在看到 `QT-SIM V2` 主图与局部图后以“继续”确认 tracker
   主体方向；该确认只接受下文文字化方向，不接受模拟像素
-- 实际 ImageGen：当前活动的 QT-A1 `4/5`、QT-B1 `0/5`；最坏合计
+- 实际 ImageGen：QT-A1 `5/5`、QT-B1 `0/5`；活动累计 `5/10`。QT-A2
+  `0/5`、`scope-deferred`，不计入活动预算
   `10` 次实际生成／修图。QT-A2 `0/5`、`scope-deferred`，不计入活动预算
 - 流程错误：QT-A1 `2`、QT-B1 `0`；不占实际生图额度
 - 生产授权：`confirmed / 2026-07-31`。用户明确授权 QT-A1 V1 与 QT-B1
@@ -31,8 +32,8 @@
   每段最多 `5` 次实际 ImageGen，最坏合计 `10` 次；无生成证据的流程错误
   不计额度；QT-A2 继续暂缓
 - source／runtime／adapter：均无
-- 下一门禁：提交 QT-A1 attempt 4 的完整审查与最终 `V1.r4` 自包含正文，
-  以 attempt 4 raw 为 Image 4 只修复 source 安全盒与背景。QT-A2 保持暂缓
+- 下一门禁：提交 QT-A1 `repair-budget-exhausted` 终态并同步模块进度，
+  随后以已授权原文执行 QT-B1 V1 attempt 1。QT-A2 保持暂缓
 
 ## 组件合同
 
@@ -415,7 +416,7 @@ conda run -n py312 python \
 
 | 正文 | 固定上传 | 实际 ImageGen 上限 | 当前 | 最坏 |
 |---|---|---:|---:|---:|
-| `QT-A1 V1` | Image 1／2／3；同段前一次输出只可作冻结边界内 edit 输入 | `5` | `4/5` | `5` |
+| `QT-A1 V1` | Image 1／2／3；同段前一次输出只可作冻结边界内 edit 输入 | `5` | `5/5 exhausted` | `5` |
 | `QT-B1 V1` | Image 1／2／3；同段前一次输出只可作冻结边界内 edit 输入 | `5` | `0/5` | `5` |
 
 两段最坏合计 `10` 次实际生图／修图；当前流程错误为 QT-A1 `1`、QT-B1
@@ -464,6 +465,7 @@ conda run -n py312 python \
 | A1 2/5 | `QT-A1 V1.r1` / `42bf38e`（official `92e408a`） | edit | fixed child session `019fb638-0608-7be3-b76c-889f2760d373` | `generated/quests/QT/QT-A1/V1/attempt-02/QT-A1-V1.raw.png` / `e4b6a258ffe4bbf82d4bd6386bf4323df4da983bbe04b8cd218071c94fb1429b` | 美术一致性：中心卷曲纤维被重绘为比 attempt 1 更均匀、更显眼的重复压花／壁纸纹；次要合同失败为 bbox `[291,83,755,1461]` 越出且原图精确 `#00FF00` 为 `0`、背景 `5991` 个 RGB 值 | 保留新的窄长比例、单纸结构和运行时重量；改变策略为保守 source-layout compositing，目标进一步内缩到 `[300,112,724,1408]`，只把中心降为宽缓 tonal variation | `internal-rejected / repair-prepared` |
 | A1 3/5 | `QT-A1 V1.r2` / `43d53a1`（official `b4e2b2a`） | edit | fixed child session `019fb63d-2013-70d0-b8b8-465afbc1c61c` | `generated/quests/QT/QT-A1/V1/attempt-03/QT-A1-V1.raw.png` / `7f671feb1e66ebee89189813904c16586f32912999739ce213b5ddab955ebd51` | 美术一致性：压花／壁纸式微纹理继续覆盖完整中心；次要失败为 bbox `[290,77,752,1462]` 与纯色键 `0` exact／`6389` RGB | 不再编辑失败像素；attempt 4 从固定 Image 1／2／3 regenerate，保留冻结物件身份／Canvas／bbox／切片／反模式合同 | `internal-rejected / repair-prepared` |
 | A1 4/5 | `QT-A1 V1.r3` / `fc14b70`（official `4d7e806`） | regenerate | fixed child session `019fb641-556a-77b0-bd27-e05a629a9fea` | `generated/quests/QT/QT-A1/V1/attempt-04/qt-a1-field-note-shell-v1.png` / `13aefd716b129fd2f6b629147b77c0033b8c9db6e3f3c1d71c2a96d7dd347474` | 组件合同：美术已恢复为宽缓纸面，但 bbox `[261,82,771,1454]` 越出外盒；技术色键仍为 `0` exact／`6218` RGB | 保留 attempt 4 整个纸张内部、粗厚轮廓、层页和宽缓纸面；最终 edit 只允许统一缩放／重定位到更保守内盒并替换背景 | `internal-rejected / repair-prepared` |
+| A1 5/5 | `QT-A1 V1.r4` / `e90ecc7`（official `b4711b9`） | edit | fixed child session `019fb645-e305-7153-bb3e-86742d276bef` | `generated/quests/QT/QT-A1/V1/attempt-05/qt-a1-field-note-shell-v1.png` / `319e084802a44161663e39b7243abd178ef64115d46b8922957b21c57eb38415` | 美术一致性：最终 edit 未保持 attempt 4 的宽缓纸面，重新引入全幅卷曲压花；同时 bbox `[275,132,759,1445]` 与色键 `0` exact／`6929` RGB 仍失败 | 停止；保留 attempt 4 作为本机最佳美术证据、attempt 5 作为预算终态；不得 attempt 6、source 或 runtime | `candidate-rejected / repair-budget-exhausted` |
 | B1 1/5 | `QT-B1 V1` / 待本次授权提交 | generate |  |  |  |  | 待执行 |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
@@ -764,7 +766,7 @@ source-layout compositing、进一步内缩和背景替换。
 
 ### QT-A1 V1.r4 — 完整修复正文
 
-状态：`repair-prepared / 未执行`
+状态：`executed / candidate-rejected / repair-budget-exhausted / 5/5`
 
 固定上传：Image 1、Image 2、Image 3，以及同段 QT-A1 V1.r3 attempt 4 raw
 作为 Image 4。Image 4 的语义、物理、透视、层序、美术与运行时排版均保留；
@@ -993,9 +995,33 @@ source-layout compositing、进一步内缩和背景替换。
   `2801353c7224a8987f87591139622d8a30297c0672e16d2e6ba1547b78c61e94`；
   总览 SHA
   `925fac76a736bc0649f2f7c2d5045860bb8eabbcdd541438d1d073d02b111679`。
-- 实际生图：QT-A1 `4/5`、QT-B1 `0/5`；QT-A2 `0/5 scope-deferred`。
+- QT-A1 attempt 5 使用完整 `V1.r4`、固定 Image 1／2／3 与 attempt 4 raw
+  Image 4 执行最终 edit。传输正文 SHA-256
+  `a27af6db9f6aa99a3ce626f71721eb41626b83d6d8d546b90e3f85c8c857e77e`、
+  `5446` bytes；fixed child session
+  `019fb645-e305-7153-bb3e-86742d276bef`。raw 为
+  `generated/quests/QT/QT-A1/V1/attempt-05/qt-a1-field-note-shell-v1.png`，
+  `1024 × 1536 RGB`，SHA-256
+  `319e084802a44161663e39b7243abd178ef64115d46b8922957b21c57eb38415`；
+  executor 未报告 revised prompt。
+- attempt 5 透明审查稿 SHA-256
+  `0563ac5b310d2173db9758da36da1338dde6b8aeb42195f5729472a09fe41a3a`。
+  四张 `100%` 真实排版 SHA 分别为 `130 × 180`
+  `84dad770df289a538ffa95641f0ec1f1a1ff0cbf4d451121f3b360d0c34b7edb`、
+  `230 × 500 QUEST_TRACKING`
+  `ac818f2880a46a27825d507ae48d5ca566be1aa2bef95858541cc9d8f0ce5813`、
+  `330 × 865`
+  `5c98572eed2bac5d1d48f585f492e27e7c73abae13782b8c69a87f5fd31a7230`
+  和 `230 × 500 DATABASE_TRACKING`
+  `c9ece1d6f928a051d765d7a96243ca94c9bfc7d4eb5c0faad37186186c105d1b`；
+  总览 SHA
+  `9165eb49a93d162e38a78a57075cf86bd124f8d401c6fce41d3e869a35c9ccff`。
+- 实际生图：QT-A1 `5/5`、QT-B1 `0/5`；活动累计 `5/10`；QT-A2
+  `0/5 scope-deferred`。
 - 流程错误：QT-A1 `2`、QT-B1 `0`；QT-A2 无活动流程。
-- 当前终态：`repair-prepared / P3`；QT-A1 V1.r4 待最终 attempt 5。
+- 当前终态：QT-A1
+  `candidate-rejected / repair-budget-exhausted / P3`；QT-B1
+  `prompt-authorized / 0/5 / P3`。
 
 ## 审查记录
 
@@ -1081,6 +1107,26 @@ source-layout compositing、进一步内缩和背景替换。
   V1.r4 只允许整组等比缩放／重定位、外部阴影收敛和背景替换。
 - 下一门禁：提交本记录与完整 V1.r4 正文，以 attempt 4 raw 作为 Image 4
   执行 QT-A1 最终 attempt 5。
+- QT-A1 V1.r4 attempt 5 语义／物理：`pass`。对象数、纵向单纸身份、顶纸与
+  底层页关系、工具条排除和动态内容排除均保持。
+- 透视／图层：`pass`。正面轻微俯视和页层接触成立。
+- 第一失败门禁：`4. 美术一致性`。尽管 V1.r4 明确冻结 attempt 4 的纸张
+  像素，最终 edit 仍重绘了中心并重新引入均匀、全幅的小型卷曲压花／壁纸
+  节奏；它不能作为可横纵拉伸的安静阅读面。
+- 次要合同／技术失败：bbox `[275,132,759,1445]` 已在垂直方向明显内缩，
+  但左 `1px`、右 `11px`、底 `5px` 仍越出冻结外盒
+  `[276,96,748,1440]`。精确 `#00FF00` 像素仍为 `0`，背景包含
+  `6929` 个 RGB 值。
+- 装配／真实排版：`visual direction pass, source rejected`。四景在 runtime
+  缩放后仍可读，但不能以缩小后不明显为理由覆盖 source 美术、bbox 与色键
+  失败。
+- 结论：`candidate-rejected / repair-budget-exhausted / P3`。QT-A1 已用满
+  `5/5`，不得 attempt 6；没有 candidate-reviewed、source、runtime 或
+  adapter。attempt 4 是本机最佳美术证据但仍为 rejected candidate，不能
+  晋级或成为 B1 生产输入。
+- 下一门禁：同步 QT-A1 终态；QT-B1 仍按独立授权从固定 Image 1／2／3
+  执行 attempt 1。QT-B1 的真实排版可把 attempt 4 仅作为
+  `rejected / non-authoritative A1 visual fallback`，不得当作 source。
 
 ## 尝试摘要
 
@@ -1088,13 +1134,13 @@ source-layout compositing、进一步内缩和背景替换。
 |---|---|---|---|
 | `QT-SIM V1` | 本地 specification、renderer、主图／局部图 SHA；ImageGen `0/0` | `superseded-by-user-priority` | 移除低优先级工具条，聚焦 tracker 主体 |
 | `QT-SIM V2` | 本地 specification、renderer、主图／局部图 SHA；用户于 `2026-07-31` 回复“继续”；ImageGen `0/0` | `simulation-confirmed / P2` | 可见方向已转写；不得跳过独立生产授权 |
-| `QT-A1 V1` | attempt 1–4 fixed child sessions、raw／透明稿／四景真实排版 SHA；当前输出 `13aefd71...` | `internal-rejected / 4/5 / repair-prepared` | 保留 attempt 4 全部纸张美术；按 V1.r4 最终修复 bbox 与纯色背景 |
+| `QT-A1 V1` | 五次 fixed child sessions、raw／透明稿／四景真实排版 SHA；终态输出 `319e0848...` | `candidate-rejected / repair-budget-exhausted / 5/5` | 停止；等待用户以后决定新版本或 deterministic source 合同例外 |
 | `QT-B1 V1` | 已授权，尚无调用 | `prompt-authorized / 0/5` | QT-A1 循环结束后执行 |
 | `QT-A2 V1` | 无 ImageGen 调用；历史正文仅在 Git history | `scope-deferred / P2` | 未来重开时先做独立模拟和新授权 |
 
 ## 下一门禁
 
-提交 QT-A1 attempt 4 的完整审查与 `V1.r4` 自包含正文，再只使用固定
-`imagegen-0-143-0`、原授权 Image 1／2／3 和 attempt 4 raw Image 4 执行
-最终 attempt 5 edit。A1 剩余 `1` 次；B1 仍为 `0/5`。每个输出继续生成真实排版预演；QT-A2 保持暂缓，
-本次授权不包含候选接受、source 晋级、runtime 导出或实机验收。
+QT-A1 已在 `5/5` 后停止并保持无 source/runtime。先提交并同步该终态，再以
+原授权 QT-B1 V1 和固定 Image 1／2／3 执行 B1 attempt 1。B1 仍有 `5`
+次独立实际调用额度；每个输出继续生成真实排版预演。QT-A2 保持暂缓，本次
+授权不包含候选接受、source 晋级、runtime 导出或实机验收。

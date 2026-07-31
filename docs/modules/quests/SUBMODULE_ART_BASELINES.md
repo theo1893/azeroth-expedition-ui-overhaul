@@ -177,9 +177,12 @@ B1 完整可授权生产正文与真实排版验收合同均位于
 `2026-07-31` 确认 `QT-SIM V2` 的主体方向；模拟 ImageGen 固定 `0/0`。
 用户随后于 `2026-07-31` 独立授权 QT-A1／B1 V1 的最终正文、固定
 Image 1／2／3、同段前次输出的冻结边界 edit 和每段最多 `5` 次实际
-ImageGen 调用；两段当前均为 `prompt-authorized 0/5`。QT-A2 保持
-`scope-deferred 0/5`。生产内审通过也不自动创建 adapter、source 或
-runtime 媒体。
+ImageGen 调用。QT-A1 五次循环已耗尽：attempt 4 的宽缓纸面是本机最佳美术
+证据，但 raw bbox 与 native 纯色键仍失败；attempt 5 又重绘出压花式中心
+纹理，终态为 `candidate-rejected / repair-budget-exhausted / 5/5`，没有
+source/runtime。QT-B1 仍为 `prompt-authorized 0/5`；QT-A2 保持
+`scope-deferred 0/5`。生产内审通过也不自动创建 adapter、source 或 runtime
+媒体。
 
 ## NPC Quest／Gossip
 

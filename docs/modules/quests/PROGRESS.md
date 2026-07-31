@@ -143,8 +143,11 @@
   `QT-SIM V2` 已由本地确定性几何 renderer 完成，当前
   `simulation-confirmed`、ImageGen `0/0`；用户于 `2026-07-31` 回复
   “继续”确认主体方向。用户随后独立授权 QT-A1／B1 V1 的最终正文、固定
-  Image 1／2／3、同段 edit 和各 `5` 次实际调用上限；两段当前均为
-  `prompt-authorized / P3 / 0/5`。QT-A2 为
+  Image 1／2／3、同段 edit 和各 `5` 次实际调用上限。QT-A1 已执行五次：
+  attempt 4 恢复宽缓纸面但 bbox／native 色键失败，attempt 5 又引入全幅
+  压花式微纹理且 bbox／色键仍未通过，当前为
+  `candidate-rejected / repair-budget-exhausted / P3 / 5/5`，无
+  source/runtime。QT-B1 仍为 `prompt-authorized / P3 / 0/5`；QT-A2 为
   `scope-deferred 0/5`，当前树不保留其可执行 Prompt。
 - NPC Quest／Gossip：对象合同 `P1`，美术与实机几何未锁定，保持原生。
 - `questitem.lua`：行为保留，视觉 `N/A`。
@@ -189,7 +192,7 @@ source 或 runtime。
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
 | `QT-SIM V2` | 约 `330 × 865` 高密度 Quest Tracking 主体本地几何预演；无工具条，十任务、十七目标与三类反馈 | `P2 simulation-confirmed` | 用户已于 `2026-07-31` 确认可见方向；ImageGen `0/0` |
-| `QT-A1 V1` | 可变宽高纸面 shell、九宫格与叠页边 | `P3 prompt-authorized / 0/5` | 使用固定执行器进入最多五次的自主生成—审查—修复循环 |
+| `QT-A1 V1` | 可变宽高纸面 shell、九宫格与叠页边 | `P3 candidate-rejected / repair-budget-exhausted / 5/5` | 停止；等待用户以后决定新版本或 deterministic source 合同例外 |
 | `QT-A2 V1` | `HEADER.*`、皮带／徽记、七工具 Button 与 selected 压片 | `P2 scope-deferred` | provider 对象与行为原样保留；未来重开需独立模拟、新 Prompt 与新授权；当前 `0/5` |
 | `QT-B1 V1` | focus 墨洗、tracked 页边墨记、complete 墨勾 | `P3 prompt-authorized / 0/5` | 使用固定执行器进入最多五次的自主生成—审查—修复循环 |
 
@@ -322,9 +325,10 @@ pfQuest tracker 已进入 [QT V2 work](work/QUEST.TRACKER.CORE.md) 的
   没有上传或进入模拟像素，ImageGen 固定 `0/0`。V2 刻意不绘制工具条，只供
   tracker 主体方向判断，不代表 runtime 删除按钮。用户已于 `2026-07-31`
   确认 V2 可见方向，确认条款已写回 QT-A1／B1 最终正文。用户随后独立授权
-  两段的固定上传、同段 edit 边界和各 `5` 次实际调用上限；当前下一门禁是
-  固定执行器的 QT-A1 attempt 1，随后逐段完成真实排版内审与边界内自主修复。
-  生产内审通过前不创建 runtime 媒体或 tracker adapter。QT-A2 继续
+  两段的固定上传、同段 edit 边界和各 `5` 次实际调用上限。QT-A1 已在五次
+  上限后停止，没有 source/runtime；当前下一门禁是固定执行器的 QT-B1
+  attempt 1，随后完成每次真实排版内审与边界内自主修复。生产内审通过前不
+  创建 runtime 媒体或 tracker adapter。QT-A2 继续
   `scope-deferred 0/5`。
 
 QL-B0 V2 的内框与两类底板均已由用户移出范围，不再等待 source 例外，也不
