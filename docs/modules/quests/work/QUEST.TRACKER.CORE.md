@@ -25,7 +25,7 @@
   主体方向；该确认只接受下文文字化方向，不接受模拟像素
 - 实际 ImageGen：当前活动的 QT-A1 `1/5`、QT-B1 `0/5`；最坏合计
   `10` 次实际生成／修图。QT-A2 `0/5`、`scope-deferred`，不计入活动预算
-- 流程错误：QT-A1 `1`、QT-B1 `0`；不占实际生图额度
+- 流程错误：QT-A1 `2`、QT-B1 `0`；不占实际生图额度
 - 生产授权：`confirmed / 2026-07-31`。用户明确授权 QT-A1 V1 与 QT-B1
   V1；每段固定 Image 1／2／3；同段前次输出只可在冻结边界内作 edit 输入；
   每段最多 `5` 次实际 ImageGen，最坏合计 `10` 次；无生成证据的流程错误
@@ -466,6 +466,7 @@ conda run -n py312 python \
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
 | E1 | `QT-A1 V1` / `a6a4c12`（official `afd0b1c`） | 无 provider session | 固定 CLI 的 `-i <FILE>...` 吞入末尾位置参数；返回 `Reading prompt from stdin... No prompt provided via stdin.`，无图片、result 或生成证据 | 在第三个输入后增加参数终止符 `--`，继续使用同一已提交正文与三张固定输入 | 不占生图额度；QT-A1 仍为 `0/5` |
+| E2 | `QT-A1 V1.r1` / `8575821`（official `e05be00`） | 未启动 fixed child | 本地正文传输校验器只接受 `Create exactly` 开头，而已提交的完整修复正文以合法的 `Edit` 开头；返回 `authorized prompt extraction failed`，无上传、图片、session、result 或 provider 生成证据 | 只扩展本地校验器以接受 `Edit` 开头；正文、Image 1／2／3／4、修复边界与 `1/5` 计数不变 | 不占生图额度；以同一 V1.r1 重试 |
 
 ### QT-A1 V1.r1 — 完整修复正文
 
@@ -611,6 +612,10 @@ conda run -n py312 python \
 - attempt 1 raw：`1024 × 1536 RGB`，SHA-256
   `f22dc61ea2762ca3ce54fa73436737c8ce19926c4e753149f5d42aa3cfdbbaea`。
   固定 executor 没有报告 revised prompt。
+- V1.r1 首次本地传输在启动 fixed child 前被正文校验器拒绝：校验器只接受
+  `Create exactly`，而完整修复正文以 `Edit` 开头；无上传、图片、session、
+  result 或 provider 证据，作为 E2 单列且不计额度。针对性修复只放宽本地
+  开头校验，V1.r1 正文与四张输入不变。
 - 确定性审查工具：
   `tools/review_quest_tracker_candidate_v1.py`；使用 Conda `py312`／Python
   `3.12.12`，不调用 ImageGen。透明审查稿 SHA-256
@@ -637,7 +642,7 @@ conda run -n py312 python \
   fallback，world／相邻 UI 为确定性几何 fallback，均不代表 QT-A2／B1
   已完成。
 - 实际生图：QT-A1 `1/5`、QT-B1 `0/5`；QT-A2 `0/5 scope-deferred`。
-- 流程错误：QT-A1 `1`、QT-B1 `0`；QT-A2 无活动流程。
+- 流程错误：QT-A1 `2`、QT-B1 `0`；QT-A2 无活动流程。
 - 当前终态：`repair-prepared / P3`；QT-A1 V1.r1 待执行。
 
 ## 审查记录
