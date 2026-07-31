@@ -22,7 +22,7 @@
 |---|---|---:|---|---|
 | Core／pfUI | `api/expedition.lua`、`pfUI.lua`、原生回退路由 | `P5` | 现代可见模块默认回退原生；非视觉功能保留；Initialize／Apply 按模块 `pcall` 隔离并单次报告异常 | 实机覆盖原生 Frame、SavedVariables、单模块失败隔离与第三方兼容 |
 | Chat | `modules/chat.lua` + AEUI Chat adapter | `P5` V3 / r1.7 | 单一左侧旧书、四状态 Tab、双状态输入与未读已接入；右框隐藏且消息回收；书本九宫格在缺失、隐藏或贴图被剥离时自愈；两项 Copy 辅助功能暂缓 | `/reload` 验证书本主体恢复，再执行核心批次实机验收 |
-| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P5` | Quest Log 主体保持 QL-A2 V4；pfQuest tracker 临时纸面仍为 `display-region-blocked`。`QS-A1` attempt 4 已完成（`P3 / 4/5`）：视觉、连体扩散、bbox、安全边、小尺寸与真实展示区域通过；只剩固定输出尺寸和非单色背景失败，最后修复冻结物件。七个旧 icon 只有在 hub menu 七项功能等价后才可隐藏 | 以固定双输入和紧邻 r4 执行 attempt 5；若两项 provider 边界仍失败则停止等待用户审核 |
+| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P5` | Quest Log 主体保持 QL-A2 V4；pfQuest tracker 临时纸面仍为 `display-region-blocked`。`QS-A1` 已耗尽 `P3 / 5/5`：推荐 r4，视觉、连体扩散、bbox、安全边、小尺寸与真实展示区域通过；r5 仍未解决固定输出尺寸和非单色背景。source／runtime 未修改。七个旧 icon 只有在 hub menu 七项功能等价后才可隐藏 | 用户审核 r4，并裁决是否允许确定性色键、全透明 RGB 清零和 1024 归一化的 provider 例外 |
 | Map | `map.lua`、`minimap.lua`、`addonbuttons.lua` 等 | `P2` | 羊皮地图卷与黄铜罗盘已锁定 | 实机对象审计和组件级合同 |
 | Character | `character.lua`、`inspect.lua`、`dressup.lua` | `P2` | 香草同构角色面板已锁定 | 实机几何与装备槽／属性／页签拆分 |
 

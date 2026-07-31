@@ -4,16 +4,17 @@
 - 当前生产版本：`QS-A1 V1`
 - 已确认模拟：`QUEST-SEALS-SIM-V2`
 - 项目阶段：`P3`
-- 当前子状态：`attempt-04-reviewed / final-repair-prompt-ready`
+- 当前子状态：`budget-exhausted / user-review-required`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
-- 正式 ImageGen：`4/5`
+- 正式 ImageGen：`5/5`
 - runtime：未修改
 - 用户生产授权：`2026-07-31`；固定 Image 1／2、同循环紧邻前次输出仅可在
   冻结修复边界内作为 Image 3 edit 输入、最多 `5` 次实际 ImageGen 调用，
   流程错误不占额度。
-- 下一门禁：提交 attempt 4 审查与 `QS-A1 V1.r5` 完整修复正文后，以固定
-  Image 1／2 和紧邻 r4 作为 Image 3 执行最后一次 attempt 5。
+- 推荐用户审核候选：`QS-A1 V1.r4`。不得再执行 ImageGen；下一门禁是用户
+  查看 r4 的未修改原图、透明归一化预览与真实排版，并明确接受或拒绝
+  “provider 固定 `1254²`＋渐变绿经确定性色键／归一化处理”的合同例外。
 
 ## 组件合同
 
@@ -549,8 +550,21 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
   `3e972a67a3b27bb28b6b7ef314f0784886d4e16d3de98df022891b08571e4da1`。
 - 实际生图次数：`4/5`
 - 流程错误次数：`0`
-- 循环终态：继续最后一次；attempt 4 的视觉、几何与展示区域通过，r5
-  冻结物件，只修固定画布与单色背景。
+- attempt 5 会话 ID：`019fb772-0f97-7603-a66f-cbf2e7f0359e`
+- attempt 5 生成前仓库提交：
+  `b95e2750263cadf43227f7e63a53719c9073d69a`
+- attempt 5 实际输入：固定 Image 1／2 加紧邻 r4 未修改原图；未上传本地
+  审查派生物。
+- attempt 5 输出：未修改原图
+  `generated/quests/QUEST-SEALS/QS-A1-V1/attempt-05/raw/QS-A1-V1.r5.png`，
+  SHA-256
+  `a672fb4c2e05e9460c04dd6839cc2be9071a207dab0f945b417769d40cc53bc4`。
+- attempt 5 在图片实际生成后发生一次 responses stream 断开并自动恢复；
+  最终图片存在、子进程退出 `0`，故不记流程错误，也不产生额外生图次数。
+- 实际生图次数：`5/5`
+- 流程错误次数：`0`
+- 循环终态：`budget-exhausted / user-review-required`。不再执行生成，不
+  自动接受 source，不修改 runtime。
 
 ## 审查记录
 
@@ -630,11 +644,30 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
   `a0e5cdd4c789116ff8c8c4ed5a3d9f09563814e18f9b5c3fac0a79b9612f3ea2`；
   机器 `display-region pass`，屏幕顶缘 clamp 仍为 P5 实机 pending。
 - 结论：`attempt-04-rejected-internal / continue-final-attempt / 4/5`
+- r5 语义／美术：与 r4 近似，仍保持单一蜡章、连体火漆扩散、浅压印
+  罗盘＋羽毛笔、小尺寸辨识和展示区域；没有引入新物件。r5 未对推荐视觉
+  产生有意义改善，综合色比 r4 略亮，故不替代 r4 为推荐审核候选。
+- r5 技术像素：`fail-same-two-provider-boundaries`。原图仍为
+  `1254×1254 RGB`；色键 bbox 与 r4 完全相同，为
+  `[274,255,1001,964]`，折算可见约 `593.66×578.96px`。bbox 容差、
+  四边安全边、居中、单物件与未裁边通过；分类背景从 r4 的 `5864` 种 RGB
+  增至 `6189` 种，精确 `#00FF00` 仍为 `0` 像素。
+- r5 真实排版／展示区域：完整排版 SHA-256
+  `619797eeacfdb1109c439f3c3139fded88876215c50b12f8986e002d9220acf2`，
+  三宽度组件图 SHA-256
+  `8262b095da2e01f0fcf95b6546e74b6ee79290d9abdc52f61d51c941878ed835`；
+  机器 `display-region pass`，屏幕顶缘 clamp 仍为 P5 实机 pending。
+- 推荐审核候选：r4。原因是 r4 已通过视觉与运行时几何，综合色略克制，
+  背景 RGB 种类也少于 r5；r5 仅证明生成器不能执行像素级填充。
+- 结论：`budget-exhausted / user-review-required / 5/5`
 - 用户结论与日期：V1 方向接受并要求修订位置／`2026-07-31`；
   V2 外置锚点确认／`2026-07-31`
-- 下一门禁：提交 r4 审查与 r5 完整正文，然后执行 attempt 5；若固定
-  `1254²`／非纯绿仍存在，按授权在 `5/5` 停止等待用户审核，不自行接受
-  provider 例外。
+- 下一门禁：用户明确选择：
+  1. 接受 r4 的运行时视觉，并授权确定性 provider 例外：保留未修改原图
+     作为 provenance，以本地色键、全透明 RGB 清零、等比归一化到
+     `1024² / 640px` 和后续固定四态派生进入 P4／P5；
+  2. 拒绝 r4，结束本批且不产生 source／runtime；新方向必须重新建立生产
+     版本与独立授权。
 
 ## 尝试摘要
 
@@ -647,5 +680,6 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 | `QS-A1 V1.r2` | 固定双输入＋紧邻 r1；session `019fb74d-e9cf-7662-bd96-245d347eea0e`；二维手绘与小尺寸符号显著改善，显示区域通过；折算 bbox 约 `548×551`，背景仍非纯绿，固定源尺寸仍失败；用户在 r3 前明确要求少量周围火漆扩散 | `rejected-internal / 2/5` | r3 保留 r2 核心造型与线重，总 bbox 收敛至约 `640²`，纯化背景、压低鲜红外缘，并增加三至五处连体受压扩散 |
 | `QS-A1 V1.r3` | 固定双输入＋紧邻 r2；session `019fb75b-c474-7b03-9613-fe2d4eddfa71`；连体火漆扩散、小尺寸符号与显示区域通过；折算 bbox 约 `722×706`、右下扩散偏重、安全边和纯绿失败 | `rejected-internal / 3/5` | r4 整体缩小约 `10%` 并居中，保留但收敛扩散，背景强制单色 |
 | `QS-A1 V1.r4` | 固定双输入＋紧邻 r3；session `019fb766-ff17-7cb0-b175-0b8cd2464a76`；视觉、bbox、安全边、小尺寸与展示区域通过；只剩固定 `1254²` 与非单色绿背景失败 | `rejected-internal / 4/5` | r5 冻结物件，只要求 `1024²` 与单一 `#00FF00` |
+| `QS-A1 V1.r5` | 固定双输入＋紧邻 r4；session `019fb772-0f97-7603-a66f-cbf2e7f0359e`；bbox 与显示区域继续通过；仍为 `1254²`，背景 `6189` 种 RGB 且无精确纯绿；视觉无实质改善 | `budget-exhausted / 5/5` | 停止生成；用户审核 r4 并裁决确定性 provider 例外 |
 
-正式生产尝试：`4/5`；流程错误：`0`。
+正式生产尝试：`5/5`；流程错误：`0`；source／runtime：未修改。
