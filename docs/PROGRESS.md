@@ -22,7 +22,7 @@
 |---|---|---:|---|---|
 | Core／pfUI | `api/expedition.lua`、`pfUI.lua`、原生回退路由 | `P5` | 现代可见模块默认回退原生；非视觉功能保留；Initialize／Apply 按模块 `pcall` 隔离并单次报告异常 | 实机覆盖原生 Frame、SavedVariables、单模块失败隔离与第三方兼容 |
 | Chat | `modules/chat.lua` + AEUI Chat adapter | `P5` V3 / r1.7 | 单一左侧旧书、四状态 Tab、双状态输入与未读已接入；右框隐藏且消息回收；书本九宫格在缺失、隐藏或贴图被剥离时自愈；两项 Copy 辅助功能暂缓 | `/reload` 验证书本主体恢复，再执行核心批次实机验收 |
-| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P5` | Quest Log 主体保持 QL-A2 V4；QL-C `1.7` 的晚加载与六控件兼容仍有效。Quests runtime contract `1.8` 的 pfQuest tracker 单块纸面已接入，但七种真实 provider 尺寸的展示区域复核失败，QT-A1 为 `runtime-exported-temporary / display-region-blocked`。QT-B1 三件覆盖层暂停于 `1/5`，QT-A2 七工具 Button 使用 provider fallback。用户已否决外置书框／端帽并要求直接使用当前 tracker；`QT-GEO V2` 让纸面严格等于 live Frame，七场景本地几何审查通过，尚未修改 runtime | 用户确认 `QT-GEO V2` 无边界方向；之后收敛 adapter 纸面、重跑展示区域门禁，再进入游戏设备验证 |
+| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P5` | Quest Log 主体保持 QL-A2 V4；QL-C `1.7` 的晚加载与六控件兼容仍有效。pfQuest tracker 临时单块纸面仍为 `runtime-exported-temporary / display-region-blocked`；无外置书框的 `QT-GEO V2` 已通过七场景模拟。QT-B1 三件覆盖层暂停。新 `QS-A1` 把 Quest Log `28px` 漆章与 Tracker 顶部中央 `34px` 功能漆章收为同族，三种 Tracker 宽度本地预演通过；七个旧 icon 只有在 hub menu 七项功能等价后才可隐藏 | 用户确认 `QUEST-SEALS-SIM-V1`；随后单独授权漆章 source 生产，hub menu 另批实现并保持 provider 行为 |
 | Map | `map.lua`、`minimap.lua`、`addonbuttons.lua` 等 | `P2` | 羊皮地图卷与黄铜罗盘已锁定 | 实机对象审计和组件级合同 |
 | Character | `character.lua`、`inspect.lua`、`dressup.lua` | `P2` | 香草同构角色面板已锁定 | 实机几何与装备槽／属性／页签拆分 |
 

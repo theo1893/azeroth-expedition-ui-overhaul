@@ -35,6 +35,12 @@
 - 用户于 `2026-07-31` 将七个低频工具 Button 与 `HEADER.*` 的视觉改造暂缓，
   当前优先确认 tracker 主体。provider 对象、Tooltip、OnClick、模式切换和
   SavedVariables 合同不变；暂缓不授权隐藏、删除、重挂、换皮或改写脚本。
+- 用户随后重开一个更窄的工具入口方向：Quest Log 与 Tracker 共用同族旧酒红
+  漆章；Tracker 不使用微型 icon，而以 `34 × 34` 漆章置于列表顶部中央，
+  目标视觉隐藏七枚旧 icon，并在未来由漆章唤起的一对一菜单承载全部行为。
+  `QUEST-SEALS-SIM-V1` 已用本地几何完成 Quest Log `28px`、Tracker
+  `130／230／330px` 三宽度和整体游戏场景预演，机器报告 `pass`、
+  ImageGen `0/0`，当前等待用户确认。功能等价完成前 runtime 不隐藏旧按钮。
 - 用户于 `2026-07-30` 将 Quest Log 选为当前首要大面积 UI；地图与角色因
   实机对象几何尚未完成，继续保持后续顺位。
 - Quest Log 真实对象合同：`P1` 完成，QL-A 当前处于 `P4–P5`；QL-B1
@@ -227,6 +233,12 @@ source 或 runtime。
 timer 或 failed 资产：provider 没有可用的公开状态来源。本项目不会扫描或
 接管 `QuestWatchFrame`，也不会创建第二个追踪器。
 
+## Quest Log／Tracker 共用漆章
+
+| 批次 | 范围 | 阶段 | 下一门禁 |
+|---|---|---:|---|
+| `QS-A1` | `QUEST.LOG.CHROME.SEAL` 与 `QUEST.TRACKER.HUB.SEAL` 共用母版；Tracker hub menu 只定义功能迁移边界 | `P2 simulation-reviewed / awaiting-user-confirmation` | 用户确认 [QUEST-SEALS-SIM-V1](work/QUEST.SEALS.md) 的 `28px／34px` 比例、位置、综合色和顶部突出程度；确认后单独授权最多 `5` 次固定 ImageGen |
+
 QT-A1 临时 runtime 事实：
 
 - source：
@@ -354,6 +366,13 @@ QT-A1 临时 runtime 事实：
   scrollbar chrome 的滚轮阅读；外部任务插件启用后的布局冲突已另列 TODO。
 
 ## 下一步
+
+当前不依赖游戏设备的首要门禁是确认
+[QUEST-SEALS-SIM-V1](work/QUEST.SEALS.md)。若接受，只冻结漆章的位置、
+相对尺寸、共用符号、综合色和 Tracker 顶部 `18px` 受控可见 outset；随后
+还需展示并获得 `QS-A1 V1` 的独立生产授权。模拟确认不授权 ImageGen，
+也不授权立即隐藏七个 provider Button。Tracker 的 hub menu 必须先完成七项
+功能等价，旧 icon 才能在 runtime 隐藏。
 
 QL-A2 保持 [runtime work](work/QUEST.LOG.GUTTER.md)，不得进入 `P6`／清理。
 Quest Log 静态兼容已完成，下一门禁是在游戏设备同时启用 pfQuest 与
