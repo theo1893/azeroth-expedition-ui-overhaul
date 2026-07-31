@@ -163,7 +163,11 @@ tests 中；`work/` 不保留空占位文件。
    同一 work，修复后以同一正文重试；循环内候选失败只更新同一 work，循环
    终态再同步模块进度、manifest 或实现。
 3. 确认 `generated/` 仍被忽略。
-4. 运行 `git diff --check`、文档拓扑／链接测试、相关合同测试与 Lua smoke。
+4. 先检测当前 OS，再运行 `git diff --check`、文档拓扑／链接测试、相关合同
+   测试与 Lua smoke。macOS 必须使用 `conda run -n py312 python` 执行所有
+   Python 脚本与 Skill validator，不得静默回退到系统 `python3`；Linux 使用
+   活跃项目环境的 `python3`，Windows PowerShell 优先 `py -3`，否则使用活跃
+   项目环境的 `python`。记录实际 `sys.executable` 与版本。
 5. 提交信息指出模块、批次和状态变化。
 6. 明确报告仅本机、已提交或已推送；除非用户要求，不自动 push。
 7. `P6-C` 使用独立清理提交，便于审阅与恢复。

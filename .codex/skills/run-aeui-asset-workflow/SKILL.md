@@ -33,6 +33,23 @@ Repository documents remain authoritative if this skill and the current checkout
 disagree. Fix the skill and the authority document in the same change when the workflow
 itself has changed.
 
+## Resolve the Python runtime
+
+Detect the current operating system before running any repository Python script or Skill
+validator. Use one interpreter policy for the whole operation:
+
+- macOS (`uname -s` returns `Darwin`): use
+  `conda run -n py312 python`. Verify once with
+  `conda run -n py312 python -c 'import sys; print(sys.executable)'`; do not fall back to
+  `/usr/bin/python3`, an unqualified `python3`, or another Conda environment.
+- Linux: use `python3` from the active project environment.
+- Windows PowerShell: use `py -3` when available, otherwise `python` from the active
+  project environment.
+
+Record the selected interpreter and `--version` with test evidence. If the required
+macOS `py312` environment is missing or lacks a dependency, stop and report that exact
+environment error instead of silently switching interpreters.
+
 ## Resolve visual authority and inheritance
 
 Treat runtime geometry and visual identity as two compatible but distinct authorities:
@@ -386,9 +403,14 @@ metrics alone are insufficient.
 For deterministic PNG metrics, run:
 
 ```bash
-python3 .codex/skills/run-aeui-asset-workflow/scripts/inspect_candidate.py \
+# macOS
+conda run -n py312 python \
+  .codex/skills/run-aeui-asset-workflow/scripts/inspect_candidate.py \
   /absolute/path/to/candidate.png
 ```
+
+On Linux replace `conda run -n py312 python` with `python3`; on Windows PowerShell use
+`py -3` or the active-environment `python` according to the runtime policy above.
 
 Pass repeated `--cell 'ID=x0,y0,x1,y1'` arguments when the production contract defines
 fixed atlas cells. This checker reports Alpha, bounds, edge contact, SHA-256, and visible
@@ -498,7 +520,7 @@ End each operation with:
 - the verdict or artifact paths;
 - the first remaining gate;
 - for closure, the approved keep/delete inventory and final retained paths;
-- tests run and their results;
+- tests run, selected Python interpreter and version, and their results;
 - whether files are only local, committed, synchronized, or pushed.
 
 Do not describe ignored generated files as durable cross-device assets.
