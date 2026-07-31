@@ -23,7 +23,7 @@
 - 模拟用户结论：`confirmed / 2026-07-31`
 - 用户确认：用户在看到 `QT-SIM V2` 主图与局部图后以“继续”确认 tracker
   主体方向；该确认只接受下文文字化方向，不接受模拟像素
-- 实际 ImageGen：当前活动的 QT-A1 `2/5`、QT-B1 `0/5`；最坏合计
+- 实际 ImageGen：当前活动的 QT-A1 `3/5`、QT-B1 `0/5`；最坏合计
   `10` 次实际生成／修图。QT-A2 `0/5`、`scope-deferred`，不计入活动预算
 - 流程错误：QT-A1 `2`、QT-B1 `0`；不占实际生图额度
 - 生产授权：`confirmed / 2026-07-31`。用户明确授权 QT-A1 V1 与 QT-B1
@@ -31,8 +31,9 @@
   每段最多 `5` 次实际 ImageGen，最坏合计 `10` 次；无生成证据的流程错误
   不计额度；QT-A2 继续暂缓
 - source／runtime／adapter：均无
-- 下一门禁：提交 QT-A1 attempt 2 的完整审查与 `V1.r2` 自包含正文，再以
-  attempt 2 raw 为 Image 4 执行严格 source-layout edit。QT-A2 保持暂缓
+- 下一门禁：提交 QT-A1 attempt 3 的完整审查与 `V1.r3` 自包含正文；由于
+  连续 edit 未移除压花式微纹理，attempt 4 改为只用固定 Image 1／2／3
+  regenerate。QT-A2 保持暂缓
 
 ## 组件合同
 
@@ -415,7 +416,7 @@ conda run -n py312 python \
 
 | 正文 | 固定上传 | 实际 ImageGen 上限 | 当前 | 最坏 |
 |---|---|---:|---:|---:|
-| `QT-A1 V1` | Image 1／2／3；同段前一次输出只可作冻结边界内 edit 输入 | `5` | `2/5` | `5` |
+| `QT-A1 V1` | Image 1／2／3；同段前一次输出只可作冻结边界内 edit 输入 | `5` | `3/5` | `5` |
 | `QT-B1 V1` | Image 1／2／3；同段前一次输出只可作冻结边界内 edit 输入 | `5` | `0/5` | `5` |
 
 两段最坏合计 `10` 次实际生图／修图；当前流程错误为 QT-A1 `1`、QT-B1
@@ -462,6 +463,7 @@ conda run -n py312 python \
 |---:|---|---|---|---|---|---|---|
 | A1 1/5 | `QT-A1 V1` / `2a5f74c`（official `55f8330`） | generate | fixed child session `019fb62d-a545-70f3-9ea1-10f1017bb806` | `generated/quests/QT/QT-A1/V1/attempt-01/QT-A1-V1.raw.png` / `f22dc61ea2762ca3ce54fa73436737c8ce19926c4e753149f5d42aa3cfdbbaea` | 组件合同：可见 bbox `[200,45,834,1473]`，不是约定 `[276,96,748,1440]`；原图精确 `#00FF00` 像素为 `0`，背景有 `6576` 个 RGB 值 | 保留单张行军便笺身份、正面透视、暖赭纸、侧／底叠页、撕裂底边与安静中心；以同段 raw 为 Image 4，只修复窄长安全盒、纯色背景和中心重复纹理 | `internal-rejected / repair-prepared` |
 | A1 2/5 | `QT-A1 V1.r1` / `42bf38e`（official `92e408a`） | edit | fixed child session `019fb638-0608-7be3-b76c-889f2760d373` | `generated/quests/QT/QT-A1/V1/attempt-02/QT-A1-V1.raw.png` / `e4b6a258ffe4bbf82d4bd6386bf4323df4da983bbe04b8cd218071c94fb1429b` | 美术一致性：中心卷曲纤维被重绘为比 attempt 1 更均匀、更显眼的重复压花／壁纸纹；次要合同失败为 bbox `[291,83,755,1461]` 越出且原图精确 `#00FF00` 为 `0`、背景 `5991` 个 RGB 值 | 保留新的窄长比例、单纸结构和运行时重量；改变策略为保守 source-layout compositing，目标进一步内缩到 `[300,112,724,1408]`，只把中心降为宽缓 tonal variation | `internal-rejected / repair-prepared` |
+| A1 3/5 | `QT-A1 V1.r2` / `43d53a1`（official `b4e2b2a`） | edit | fixed child session `019fb63d-2013-70d0-b8b8-465afbc1c61c` | `generated/quests/QT/QT-A1/V1/attempt-03/QT-A1-V1.raw.png` / `7f671feb1e66ebee89189813904c16586f32912999739ce213b5ddab955ebd51` | 美术一致性：压花／壁纸式微纹理继续覆盖完整中心；次要失败为 bbox `[290,77,752,1462]` 与纯色键 `0` exact／`6389` RGB | 不再编辑失败像素；attempt 4 从固定 Image 1／2／3 regenerate，保留冻结物件身份／Canvas／bbox／切片／反模式合同 | `internal-rejected / repair-prepared` |
 | B1 1/5 | `QT-B1 V1` / 待本次授权提交 | generate |  |  |  |  | 待执行 |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
@@ -565,7 +567,7 @@ conda run -n py312 python \
 
 ### QT-A1 V1.r2 — 完整修复正文
 
-状态：`repair-prepared / 未执行`
+状态：`executed / internal-rejected / 3/5`
 
 固定上传：Image 1、Image 2、Image 3，以及同段 QT-A1 V1.r1 attempt 2 raw
 作为 Image 4。因为 attempt 1／2 连续出现 source 安全盒与色键失败，本次改变
@@ -658,6 +660,107 @@ source-layout compositing、进一步内缩和背景替换。
 > RGB #00FF00; one calm non-repeating stretch field; restrained hand-cut top and torn
 > bottom; layered thickness only at side and lower edges; preserved vanilla-WoW
 > hand-painted weight; zero text, rows, toolbar, Buttons, or baked dynamic content.
+
+### QT-A1 V1.r3 — 完整修复正文
+
+状态：`repair-prepared / 未执行`
+
+固定上传：只使用原授权的 Image 1、Image 2、Image 3。attempt 2／3 连续 edit
+保留了失败的压花式微纹理，因此本次不上传任何同段候选，改为从锁定权威重新
+生成；对象、Canvas、安全盒、切片、色键和禁止内容均不改变。
+
+> Create exactly one empty, front-facing, narrow vertical field-note paper shell source
+> for a Turtle WoW 1.18.1 addon. Generate a fresh source from Images 1, 2, and 3; do not
+> reproduce or infer any previous candidate. This is a source master for deterministic
+> nine-slice and layered-page-edge runtime textures, not a screenshot, not a fixed
+> runtime background, and not a complete tracker.
+>
+> Canvas: exactly 1024 × 1536 pixels. Place one and only one complete upright paper
+> assembly, centered, wholly inside x=300..724 and y=112..1408. This conservative inner
+> box must keep every visible top-sheet pixel, underlying page edge, antialiasing pixel,
+> contact shadow, fringe, and wear mark inside the frozen outer contract box
+> x=276..748 and y=96..1440. Do not crop any part of the object. Everything outside the
+> visible paper assembly must be one flat, perfectly uniform digital RGB #00FF00 field:
+> every background pixel exactly R=0, G=255, B=0, with no near-green variation,
+> gradient, noise, texture, glow, vignette, shadow outside the object, halo, labels,
+> guides, text, swatches, compression contamination, or second object.
+>
+> Object identity and anatomy: one tall, narrow guild-expedition field note cut from the
+> same formal dossier system as the quest log. View it nearly straight-on with only a
+> slight internal top-down perspective. The visible top sheet begins directly at a
+> sturdy, restrained hand-cut irregular upper edge; it does not curl, roll, or carry a
+> header. The long middle is one uninterrupted warm-ochre parchment reading surface.
+> The bottom ends in one natural restrained torn edge. Show two or three thin,
+> subordinate offset sheets only along the outer side edges and lower edge to create
+> tangible page thickness. Those layers never surround the reading field as a regular
+> frame and never become leather, wood, or metal. Keep left and right edge anatomy
+> compatible for later nine-slice extraction while retaining slight handmade
+> asymmetry.
+>
+> Art language: unmistakable circa-2004 vanilla World of Warcraft hand-painted 2D
+> bitmap art. Use a thick, slightly irregular deep-umber contour; broad readable
+> light/midtone/shadow planes; warm upper-left light; smoke-brown wear; muted
+> warm-ochre paper; restrained old-wine accents only where naturally inherited from the
+> dossier family; tangible contact shadows between paper layers; and low-resolution-
+> friendly shapes. The result must feel heavy, durable, handmade, and used on a long
+> Azeroth expedition. It must not look photorealistic, PBR, procedurally embossed,
+> digitally airbrushed, flat-modern, or like a brown website card.
+>
+> The central stretch field is the highest-risk region. Keep it broad, calm, low
+> contrast, directionally neutral, and visually quiet enough for roughly ten quest
+> titles and seventeen objective lines at representative maximum density. Paint only
+> large soft tonal clouds and sparse irregular fibers. Do not place any repeated
+> curling line, arabesque, rosette, embossing, filigree, maze, wallpaper grain, stamped
+> motif, evenly distributed micro-crackle, or other high-frequency pattern anywhere in
+> the central field. No repeated unit or directional feature smaller than 24 source
+> pixels may cover the reading surface. There is no focal stain, emblem, crease
+> crossing, hole, rivet, ornament, hard cast shadow, seam, or mark that would reveal
+> vertical or horizontal stretching.
+>
+> Preserve the slicing contract inside the paper object. Confine every top-edge wear
+> feature to the top 96 source pixels of the object. Confine all torn-footer anatomy to
+> its bottom 128 pixels. Confine all side thickness and edge wear to its leftmost and
+> rightmost 64 pixels. The remaining center must support horizontal and vertical
+> stretching without a visible seam, repeated rhythm, directional fiber clump, or
+> lighting discontinuity.
+>
+> Runtime relationship: the assembled shell must remain coherent at 100% UI scale
+> across the real pfQuest provider width range of 130..330 UI pixels and from a short
+> tracker through as many as twenty-five dynamic entries. The paper itself begins at
+> the tracker upper edge. It contains no fixed task row and no task-mode-specific art,
+> so the same shell supports QUEST_TRACKING, DATABASE_TRACKING, and GIVER_TRACKING.
+> The source contains zero text, titles, objectives, levels, percentages, node icons,
+> interaction feedback, controls, or empty-state messages.
+>
+> Input roles and authority: use Image 1 as the highest visual authority for the
+> vertical guild-expedition field-note identity, layered page silhouette and weight,
+> warm parchment palette, and hand-painted age. Explicitly ignore Image 1's baked text,
+> example quest content, toolbar, leather strap, rivets, compass/quill emblem, icons,
+> and fixed-height composition; all of those belong outside QT-A1. Use Image 2 only for
+> shared dossier material thickness, circa-2004 vanilla World of Warcraft hand-painted
+> 2D brushwork, warm upper-left light, thick irregular contour, broad readable tonal
+> planes, muted ochre, smoke-brown wear, deep umber, and restrained old-wine/aged-brass
+> color relationships. Ignore Image 2's double-page book, central binding, spine,
+> rewards, list rows, and Buttons. Use Image 3 only to understand the real narrow
+> right-side placement, three-level dynamic text hierarchy, and density of roughly ten
+> quests and seventeen objectives. Inherit none of Image 3's transparent black
+> backdrop, typography, bright colored symbols, node icons, current focus bar, or
+> modern styling.
+>
+> Do not create a double-page book, book spine, chat book, rolled scroll, stone tablet,
+> wooden plank, metal plaque, Diablo-style altar, Skyrim menu, modern card,
+> transparent black HUD, per-entry band, decorative frame, text, number, percentage,
+> objective bullet, dynamic node icon, focus wash, tracked mark, complete check,
+> expand/collapse control, timer, seal, compass, quill, header strap, toolbar, emblem,
+> Button, or any second visual object.
+>
+> Final self-check: exactly one fresh empty narrow vertical parchment assembly; exact
+> 1024 × 1536 canvas; the complete visible object remains inside x=300..724 and
+> y=112..1408; every remaining pixel is identical exact RGB #00FF00; paper starts
+> directly at its restrained irregular top; one broad calm central stretch field with
+> no repeated micro-pattern; restrained torn bottom; layered thickness only at side and
+> lower edges; clear vanilla-WoW hand-painted weight; zero text, rows, toolbar, Buttons,
+> or baked dynamic content.
 
 ## 候选审查与真实排版预演
 
@@ -761,9 +864,30 @@ source-layout compositing、进一步内缩和背景替换。
   总览 SHA
   `573cc78c5a7f574746bf4b7fcbcac2837adc5236827bfa1ef1832611019ad907`。
   权威／非权威范围与 attempt 1 相同。
-- 实际生图：QT-A1 `2/5`、QT-B1 `0/5`；QT-A2 `0/5 scope-deferred`。
+- QT-A1 attempt 3 使用完整 `V1.r2`、固定 Image 1／2／3 与同段 attempt 2
+  raw Image 4 执行 edit。传输正文 SHA-256
+  `860f1e5de941f4b3729376976f85a89a49c2a72e28d7666ae3681b7e6b12ad5b`、
+  `6106` bytes；fixed child session
+  `019fb63d-2013-70d0-b8b8-465afbc1c61c`。raw 为
+  `generated/quests/QT/QT-A1/V1/attempt-03/QT-A1-V1.raw.png`，
+  `1024 × 1536 RGB`，SHA-256
+  `7f671feb1e66ebee89189813904c16586f32912999739ce213b5ddab955ebd51`；
+  executor 未报告 revised prompt。
+- attempt 3 透明审查稿 SHA-256
+  `a3d1102e8536d43e035b5ed506d0330c4b059c7ed1b6800e265bb6b14f8fd7be`。
+  四张 `100%` 真实排版 SHA 分别为 `130 × 180`
+  `0c51fc47e05f90361f26bfb103eb9361ee132c501ca31ece97f68b3daa5a9f1e`、
+  `230 × 500 QUEST_TRACKING`
+  `22fa334b71d7f4bc307fb42ac6f7209c594592970430c3de3863c9d090e45f4a`、
+  `330 × 865`
+  `83b2852fa6cf5af333989cfaf6ffafbb5642fe06e5888be02f832e9800c023e5`
+  和 `230 × 500 DATABASE_TRACKING`
+  `b0fcc433baa4bd7ad32cc84f7e0563ced162a75b417a2dd8a2a6ae377d9293e8`；
+  总览 SHA
+  `450a2d3c1d8c9546bbd9686c6dbb61a098c6f21790a2ba8b05ff3e01f675ad12`。
+- 实际生图：QT-A1 `3/5`、QT-B1 `0/5`；QT-A2 `0/5 scope-deferred`。
 - 流程错误：QT-A1 `2`、QT-B1 `0`；QT-A2 无活动流程。
-- 当前终态：`repair-prepared / P3`；QT-A1 V1.r2 待执行。
+- 当前终态：`repair-prepared / P3`；QT-A1 V1.r3 待执行。
 
 ## 审查记录
 
@@ -810,6 +934,24 @@ source-layout compositing、进一步内缩和背景替换。
   只把中心纹理降为宽缓 tonal variation。
 - 下一门禁：提交本记录与完整 V1.r2 正文，再以 attempt 2 raw 作为同段
   Image 4 执行 attempt 3 edit。
+- QT-A1 V1.r2 attempt 3 语义／物理：`pass`。对象数量、正面纵向纸张身份、
+  顶纸／侧层／底层关系和禁止烘焙内容均未变化。
+- 透视／图层：`pass`。共同观察角度、左上暖光和页层接触阴影保持。
+- 第一失败门禁：`4. 美术一致性`。V1.r2 明确要求移除的小型卷曲压花仍近乎
+  全幅覆盖中心，且比宽缓纸纤维更像程序化壁纸；连续第二次 edit 未改变该
+  失败像素，不能继续用相同 edit 策略。
+- 次要合同／技术失败：bbox `[290,77,752,1462]` 仍未进入外盒；精确
+  `#00FF00` 像素为 `0`，背景有 `6389` 个 RGB 值。相较 attempt 2，目标
+  内缩没有发生。
+- 装配／真实排版：`visual direction pass, source blocked`。四景中纸面
+  轮廓、厚度、撕裂底边和高密度中文层级仍可读，但 source 中心纹理与安全盒
+  不满足可拉伸资产合同。
+- 结论：`internal-rejected / repair-prepared / P3`。不进入用户复审或
+  source/runtime。为避免继续继承失败纹理，V1.r3 不上传任何候选，改从固定
+  Image 1／2／3 regenerate；冻结的对象、Canvas、bbox、切片、色键和禁止项
+  不变。
+- 下一门禁：提交本记录与完整 V1.r3 正文，以固定三张输入执行 attempt 4
+  regenerate。
 
 ## 尝试摘要
 
@@ -817,13 +959,13 @@ source-layout compositing、进一步内缩和背景替换。
 |---|---|---|---|
 | `QT-SIM V1` | 本地 specification、renderer、主图／局部图 SHA；ImageGen `0/0` | `superseded-by-user-priority` | 移除低优先级工具条，聚焦 tracker 主体 |
 | `QT-SIM V2` | 本地 specification、renderer、主图／局部图 SHA；用户于 `2026-07-31` 回复“继续”；ImageGen `0/0` | `simulation-confirmed / P2` | 可见方向已转写；不得跳过独立生产授权 |
-| `QT-A1 V1` | attempt 1／2 fixed child sessions、raw／透明稿／四景真实排版 SHA；当前输出 `e4b6a258...` | `internal-rejected / 2/5 / repair-prepared` | 保持 attempt 2 窄长结构；按 V1.r2 内缩 bbox、纯化背景并移除压花式中心重复 |
+| `QT-A1 V1` | attempt 1–3 fixed child sessions、raw／透明稿／四景真实排版 SHA；当前输出 `7f671feb...` | `internal-rejected / 3/5 / repair-prepared` | 停止继承失败像素；按 V1.r3 从锁定三图 regenerate |
 | `QT-B1 V1` | 已授权，尚无调用 | `prompt-authorized / 0/5` | QT-A1 循环结束后执行 |
 | `QT-A2 V1` | 无 ImageGen 调用；历史正文仅在 Git history | `scope-deferred / P2` | 未来重开时先做独立模拟和新授权 |
 
 ## 下一门禁
 
-提交 QT-A1 attempt 2 的完整审查与 `V1.r2` 自包含正文，再只使用固定
-`imagegen-0-143-0` 以 attempt 2 raw 作为 Image 4 执行 attempt 3 edit。
-A1 剩余 `3` 次；B1 仍为 `0/5`。每个输出继续生成真实排版预演；QT-A2 保持暂缓，
+提交 QT-A1 attempt 3 的完整审查与 `V1.r3` 自包含正文，再只使用固定
+`imagegen-0-143-0` 和原授权 Image 1／2／3 执行 attempt 4 regenerate。
+A1 剩余 `2` 次；B1 仍为 `0/5`。每个输出继续生成真实排版预演；QT-A2 保持暂缓，
 本次授权不包含候选接受、source 晋级、runtime 导出或实机验收。
