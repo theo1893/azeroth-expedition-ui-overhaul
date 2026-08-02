@@ -26,20 +26,21 @@
   `2026-08-02` 明确指出暖黑 donor 与未重绘的金色页边／皮革之间仍像拼接；
   首个失败门禁为材料连续性／整体物件身份，剩余 `4` 次不转移给新合同，
   候选未晋级 source、正式 TGA 或 Lua
-- 新并行生产：`CHAT.FRAME.FULL.V1 / attempt-01-rejected / r1-ready / P3`；改为让固定
+- 新并行生产：`CHAT.FRAME.FULL.V1 / candidate-reviewed / attempt-02 / P3`；改为让固定
   V3 母版只承担结构比例参考，并让 ImageGen 在一次完整 edit 中重绘所有可见
   书体像素。纸面、页叠、皮革、黄铜、接触阴影、磨损和暖光共同生成，不再用
   donor／旧母版 mask 进行视觉拼接；Tab、文字、输入与未读仍是独立 runtime
   对象。本地 `CHAT-FULL-SIM-V1` 已以 ImageGen `0/0` 验证 `440 × 320`
   典型／最大排版及五种展示场景。用户于 `2026-08-02` 明确确认该模拟并授权
   完整生产正文、固定 SHA 的唯一 Image 1、新 `0/5` 预算和单一固定子进程。
-  attempt 1 已在该唯一子进程中实际生成 `1/5`：整体书体连续且无烘焙控件，
-  但中央阅读面被生成成规则压纹皮革而不是暖黑纤维纸，首个失败门禁为
-  纸／皮身份区分；去键 RGBA 左透明留白还只有 `12px`。候选未进入布局预演、
-  source 或 runtime；只针对首个失败门禁的完整 `.r1` 正文已经准备。用户于
-  `2026-08-02` 明确允许 `.r1` 使用剩余预算并额外启动一个固定
-  `npx @openai/codex@0.143.0` 子进程；当前状态为
-  `repair-prepared / executor-authorized`，下一门禁是 attempt 2
+  attempt 1 在纸／皮身份区分门禁失败；只针对该门禁的完整 `.r1` 随后由
+  commit `c28d6b3` 固定。用户于 `2026-08-02` 明确允许 `.r1` 使用剩余预算并
+  额外启动一个固定 `npx @openai/codex@0.143.0` 子进程。attempt 2 已实际生成
+  `2/5`：完整书体、暖黑纤维纸、页叠、皮革与黄铜形成连续物件；provider 将
+  透明区画成 RGB 棋盘，但只使用本候选自身像素的确定性 Alpha 清理已恢复真
+  透明。`440 × 320` 空／最小／15 行／16 行和 `540 × 420` 扩展五场景均通过，
+  当前状态为 `candidate-reviewed / awaiting-user-review`；source、正式 TGA、
+  Lua 与 runtime 均未改变
 - 锁定视觉基准：
   - [`聊天框视觉基准_v1.png`](../../../../assets/locked/chat/聊天框视觉基准_v1.png)
     — 游戏内物件身份、紧凑尺度和香草 HUD 综合色感
@@ -471,7 +472,7 @@ Final self-check: exactly one full-canvas warm-black parchment surface; paper ma
 ### 产品、对象与几何合同
 
 - 组件：`CHAT.FRAME`；版本：`CHAT.FRAME.FULL.V1`；当前子状态
-  `repair-prepared / r1-ready / executor-authorized`；项目阶段 `P3`；操作
+  `candidate-reviewed / attempt-02 / awaiting-user-review`；项目阶段 `P3`；操作
   `edit`。
 - 正式生成对象只有一个：不含任何动态内容的完整横向战地旧书聊天背景。
   纸面、页叠、皮革封套、少量氧化黄铜修补、接触阴影、磨损和左上暖光必须
@@ -550,8 +551,8 @@ Final self-check: exactly one full-canvas warm-black parchment surface; paper ma
 - 用户方向结论：`2026-08-02 / CHAT-FULL-SIM-V1 confirmed`。确认条款为整本
   书共同变暗、纸面／页叠／皮革作为连续物件生成、保留 `440 × 320` 容量与
   独立 Tab 关系；模拟的规整几何、微纹理、Alpha 和笔触仍不属于接受像素。
-- 下一门禁：使用已授权且已提交的完整正文执行 `CHAT.FRAME.FULL.V1`
-  attempt 1；不得复用旧 PAPER 子进程或调用当前会话内建 imagegen。
+- 生产已执行至 attempt 2 并通过内部候选门禁；下一门禁为用户复审。未获得
+  明确接受前不得晋级 source、正式 TGA 或 runtime。
 
 ### 完整生产正文（已授权，必须原样执行）
 
@@ -668,7 +669,7 @@ runtime text and controls are absent; and that the exterior is truly transparent
   `assets/source/chat/v3/ChatBookFrame_Master_v3.png`，SHA-256
   `f45cfe614dffd4cbc1e17b1af0f6c66b2100f530c353e3954956476b7cf05057`；
   只承担完整生产正文声明的高权重结构／比例／拓扑职责。
-- 实际 ImageGen 预算：新批次最多 `5` 次，当前 `1/5`；旧
+- 实际 ImageGen 预算：新批次最多 `5` 次，当前 `2/5`；旧
   `CHAT.FRAME.PAPER.V1` 剩余次数不转移。
 - 执行机制：原授权的一个 `npx @openai/codex@0.143.0` 子进程已用于
   attempt 1 并退出。用户现明确允许 `.r1` 额外启动一个固定
@@ -704,13 +705,15 @@ runtime text and controls are absent; and that the exterior is truly transparent
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
 | 1/5 | `CHAT.FRAME.FULL.V1` / `aa39bd1` | edit | session `019fc246-3bd9-7730-b57a-74a8fe4c7e71`；provider result `ig_0bc4514bd99f52a9016a6f2cb1e2cc819190420510b3116e61` | provider raw `6686274e00358207f98573b7c0bb6c9819394a959d0be662fa39e386ac8f4cdc`；去键 RGBA `f454efa1e9409d40c9f1eafcae84abff05ed72f04975c9f44252e915d728d98b` | 纸／皮身份区分：中央阅读面是规则压纹皮革，不是暖黑纤维纸 | 保留“单一完整连续书体、无烘焙控件”的方向；`.r1` 只强化纸张身份。唯一获准子进程已退出，等待新的执行机制授权 | `candidate-rejected` |
+| 2/5 | `CHAT.FRAME.FULL.V1.r1` / `31d35c8` | edit | session `019fc27e-f6fb-7d90-ac30-5fbdfef99c11`；provider result `ig_0008a6d335a216a8016a6f3b35b41481919d0752e2d83926a4` | provider raw `8275b815b19677fda2fe242b79a06557af90032e570841236cab41ec429917b5`；确定性透明 RGBA `23981aca770e93335efc5df3e917a9b220fe800b08e9142a4d4579415a6af741` | 无；provider 棋盘背景属于已允许的纯候选技术清理项，清理后全部候选门禁通过 | 保留整张 attempt 2 候选；停止自主循环并提交用户复审，不消费剩余三次 | `candidate-reviewed` |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
 
-- 当前实际生图：`1/5`；流程错误：`0`；循环终态：
-  `repair-prepared / pending attempt 2`。剩余最多 `4` 次仍属于本合同；本次
-  只允许新增的一个固定 Codex／npx 子进程执行 `.r1`，不得再启动其他进程。
+- 当前实际生图：`2/5`；流程错误：`0`；循环终态：
+  `candidate-reviewed / awaiting-user-review`。剩余最多 `3` 次冻结；新增的固定
+  Codex／npx 子进程已完成 attempt 2 并退出。全部内部门禁通过后已按合同停止，
+  不得继续生图或启动其他进程。
 
 ### `CHAT.FRAME.FULL.V1` attempt 1 审查记录
 
@@ -752,8 +755,8 @@ runtime text and controls are absent; and that the exterior is truly transparent
 
 `.r1` 只修复首个失败门禁：中央阅读面的纸张身份。对象、唯一输入、材料层级、
 布局、安全区、九宫格、Alpha、禁止内容和美术方向均不变；该修订属于已冻结的
-自主修复包络，正文已由 commit `c28d6b3` 固定。用户已额外授权一个固定
-0.143.0 子进程，当前等待 attempt 2 执行。
+自主修复包络，正文已由 commit `c28d6b3` 固定。用户额外授权的固定 0.143.0
+子进程已经执行 attempt 2 并退出。
 
 ```text
 Create one production-ready bitmap asset by editing Image 1 as a whole.
@@ -862,6 +865,74 @@ pasted-center effect; that the silhouette and wear are irregular rather than
 overly orderly; that the central field and stretch bands stay quiet; that all
 runtime text and controls are absent; and that the exterior is truly transparent.
 ```
+
+### `CHAT.FRAME.FULL.V1.r1` attempt 2 审查记录
+
+- Prompt／传输：执行前 commit 为 `31d35c8`；固定子进程收到上方 `.r1` 完整
+  正文与唯一 Image 1 的绝对路径。实际执行器为
+  `@openai/codex@0.143.0`，session
+  `019fc27e-f6fb-7d90-ac30-5fbdfef99c11`，provider result
+  `ig_0008a6d335a216a8016a6f3b35b41481919d0752e2d83926a4`。子进程未启动嵌套
+  Codex／npx；当前会话未调用内建 imagegen。
+- 输入：唯一上传图仍为
+  `assets/source/chat/v3/ChatBookFrame_Master_v3.png`，SHA-256
+  `f45cfe614dffd4cbc1e17b1af0f6c66b2100f530c353e3954956476b7cf05057`。
+- provider raw：ignored 路径
+  `generated/chat/core/CHAT.FRAME.FULL.V1/attempt-02/ChatBookFrame_Full_V1_r1_attempt02.provider-raw.png`；
+  `1620 × 971 RGB`，SHA-256
+  `8275b815b19677fda2fe242b79a06557af90032e570841236cab41ec429917b5`。
+  provider 把透明预览棋盘绘进 RGB；provider cache、子进程副本和仓库审查副本
+  字节一致。
+- 透明技术清理：
+  [`extract_chat_full_frame_candidate_v1.py`](../../../../tools/extract_chat_full_frame_candidate_v1.py)，
+  SHA-256 `ff762fcbdd64a69e83aee033dc26af4d40b3f22ac51b9b22173cb371497fc9a5`，
+  只读取 attempt 2 raw；不读取旧 source、旧 mask 或其他候选。它保留中心连通
+  书体、填充物件内部中性高光、从候选自身邻域恢复软边颜色，并将完整物件无
+  裁切地等比缩放至 `0.975` 后放到 `1608 × 978` 透明画布。输出
+  `generated/chat/core/CHAT.FRAME.FULL.V1/attempt-02/review/ChatBookFrame_Full_V1_r1_attempt02.transparent.png`，
+  SHA-256 `23981aca770e93335efc5df3e917a9b220fe800b08e9142a4d4579415a6af741`；
+  RGBA 可见 bbox `[24,25,1584,952]`，四边透明留白
+  `24/25/24/26px`，opaque／partial／transparent 为
+  `1,325,523 / 23,952 / 223,149`。棋盘、外部投影、白边和绿色残留均未进入
+  可见像素；蓝色对照底合成未见 Alpha 光晕，满足每边至少 `24px` 合同。
+- 门禁 1／对象身份：通过。恰为一张完整横向战地旧书；正视、单状态、空内容，
+  外轮廓由左侧卷脊、非镜像磨损、右侧系绳和右下黄铜修补形成自然凌乱度。
+- 门禁 2／禁止烘焙内容：通过。无 Tab、文字、按钮、输入、未读、滚动条、
+  底栏、右侧聊天框、图标、标志或世界场景。
+- 门禁 3／整体材料连续性：通过。中央纸张、毛边页叠、深胡桃皮革、系绳、
+  黄铜与接触暗部属于同一次整体生成，不存在 donor、旧像素 mask、覆盖层或
+  中心贴片边界。
+- 门禁 4／纸皮身份：通过。阅读面以低频烟熏吸附、扁平不规则纤维、稀疏暖褐
+  污渍、干裂和毛边读作哑光暖黑纸；外围皮革保留更平滑、更高微对比的压纹与
+  折痕。阅读面没有规则菱格、鳞纹、编织压痕或重复皮革 tooling。
+- 门禁 5／美术继承与伸缩区：通过。综合色重、暖左上光、低饱和黄铜、旧书
+  厚度和 2004 年手绘位图语言与锁定基线一致；独特点均位于外侧／固定 cap，
+  长水平／垂直中段保持低频，未出现明亮金圈或规则对称建筑感。
+- 真实装配工具继续使用
+  [`render_chat_dark_paper_candidate_v1.py`](../../../../tools/render_chat_dark_paper_candidate_v1.py)，
+  SHA-256 `c0ae1d1bc17f5f0736a844f70e255f36ccfd183ed26445e2f948d5c4e63d6ba4`；
+  候选 specification 为
+  [`chat_full_frame_candidate_preview_v1.json`](../../../../tools/specs/chat_full_frame_candidate_preview_v1.json)，
+  SHA-256 `b382aaa2f70f96316e427e5cb30fd25b7213668437c1cd2f5316075ee3593acb`。
+  预演只叠加已接受 V3 Tab 与动态代表文字，不把它们写入候选。
+- 真实排版输出：
+  `generated/chat/core/CHAT.FRAME.FULL.V1/attempt-02/review/ChatFullFrame_candidate_real_layout_v1.png`，
+  SHA-256 `ebafc9daa5be97f5202e35f0b45520ecc06adcb35f5bae58546c4f282cf4caf0`；
+  空内容 `0` 行、最小内容 `1` 行、典型 `15/15` 行、最大 `16/16` 行、
+  `540 × 420` 扩展 `22/22` 行均无截断，末基线分别为
+  `42/42/252/267/357`，对应正文底边为 `280/280/280/280/380`。九宫格在
+  `440 × 320` 与 `540 × 420` 均无可见拼接缝、重复金属件或 cap 拉伸。
+- 展示区域合同：
+  [`chat_full_frame_display_region_v1.json`](../../../../tools/specs/chat_full_frame_display_region_v1.json)，
+  SHA-256 `00010e8b80412d17c01fc2ddff6fc565789c9707b2c7b913953c095f429505c0`；
+  报告
+  `generated/chat/core/CHAT.FRAME.FULL.V1/attempt-02/review/CHAT.FRAME.FULL.V1.r1-attempt02.display-region-report.json`，
+  SHA-256 `f7bbc7f1eab5a0dc086addca79329335a15db7459886057810e167a91c05abea`。
+  empty、minimum、15 行 typical、16 行 maximum 和 expanded 五场景全部
+  `pass`，violations `0`，first failure `null`。
+- 结论：`candidate-reviewed / P3 / awaiting-user-review`。自主循环在实际
+  ImageGen `2/5` 处停止，剩余 `3` 次不消费。候选未晋级 source、正式 TGA、
+  Lua 或 runtime；现有 V3 和 v1.18 继续保持。
 
 ## 最终执行正文
 

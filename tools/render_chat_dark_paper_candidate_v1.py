@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render exact 100%-UI candidate layouts for CHAT.FRAME.PAPER.V1.
+"""Render exact 100%-UI candidate layouts for a generated CHAT.FRAME.
 
 The candidate frame and accepted V3 tab pixels are assembled at the live
 440x320 geometry. Text is deterministic runtime evidence only and is never
@@ -111,14 +111,21 @@ def draw_messages(
     palette: dict[str, str],
     body_font: ImageFont.FreeTypeFont,
     maximum_lines: int,
-) -> dict[str, int]:
-    safe_width, safe_height = 380, 248
+    frame_size: tuple[int, int] = (440, 320),
+) -> dict[str, Any]:
+    safe_width = frame_size[0] - 60
+    safe_height = frame_size[1] - 72
     layer = Image.new("RGBA", (safe_width, safe_height), (0, 0, 0, 0))
     draw = ImageDraw.Draw(layer, "RGBA")
     line_height = 15
+    line_capacity = ((safe_height - 10) // line_height) + 1
+    if maximum_lines > line_capacity:
+        raise ValueError(
+            f"maximum_lines {maximum_lines} exceeds frame capacity {line_capacity}"
+        )
     cursor_x = 0.0
     cursor_y = 10
-    rendered_lines = 1
+    rendered_lines = 1 if messages else 0
     truncated = False
 
     def newline() -> bool:
@@ -195,7 +202,8 @@ def draw_messages(
         "maximum_lines": maximum_lines,
         "truncated": int(truncated),
         "last_baseline_y": 32 + cursor_y,
-        "content_bottom": 280,
+        "content_bottom": frame_size[1] - 40,
+        "content_safe_area": [30, 32, frame_size[0] - 30, frame_size[1] - 40],
     }
 
 
@@ -213,7 +221,7 @@ def main() -> None:
     tabs_path = resolve(spec["accepted_tabs"])
     frame_source = Image.open(frame_path).convert("RGBA")
     tabs_source = Image.open(tabs_path).convert("RGBA")
-    book = v3.build_book_preview(v3.build_book(frame_source))
+    book_atlas = v3.build_book(frame_source)
     tab_atlas = v3.build_tab_atlas(tabs_source)
     shelf = v3.build_tab_shelf(tabs_source)
 
@@ -228,15 +236,16 @@ def main() -> None:
 
     for scenario in spec["scenarios"]:
         origin = tuple(scenario["origin"])
+        frame_size = tuple(scenario.get("frame_size", [440, 320]))
         draw.text(
-            (origin[0] + 220, 19),
+            (origin[0] + frame_size[0] // 2, origin[1] - 21),
             scenario["label"],
             font=label_font,
             fill=rgba("#E8D2A8FF"),
             anchor="mm",
         )
         assembled = build_tabbed_frame(
-            book,
+            v3.build_book_preview(book_atlas, frame_size),
             tab_atlas,
             shelf,
             direction["tabs"],
@@ -253,10 +262,11 @@ def main() -> None:
             theme["palette"],
             body_font,
             scenario["maximum_lines"],
+            frame_size,
         )
         canvas.alpha_composite(assembled, origin)
         evidence[scenario["id"]] = {
-            "frame": [440, 320],
+            "frame": list(frame_size),
             "origin": list(origin),
             "selected_tab": scenario["selected_tab"],
             "message_count": len(messages),
@@ -274,7 +284,7 @@ def main() -> None:
         metrics_path = ROOT / metrics_path
     metrics_path.parent.mkdir(parents=True, exist_ok=True)
     metrics = {
-        "schema": "aeui-chat-dark-paper-candidate-layout-metrics-v1",
+        "schema": "aeui-chat-frame-candidate-layout-metrics-v1",
         "version": spec["version"],
         "candidate_frame": {
             "path": frame_path.relative_to(ROOT).as_posix(),
@@ -292,10 +302,14 @@ def main() -> None:
             "size": list(canvas.size),
             "mode": canvas.mode,
         },
-        "frame_size": [440, 320],
-        "content_safe_area": [30, 32, 410, 280],
+        "frame_sizes": sorted(
+            {tuple(item["frame"]) for item in evidence.values()}
+        ),
         "authority": {
-            "candidate_pixels": "assembled CHAT.FRAME.PAPER.V1 attempt 1",
+            "candidate_pixels": (
+                f"whole generated {spec['version']} candidate after "
+                "deterministic alpha cleanup"
+            ),
             "tabs": "accepted V3 runtime-equivalent pixels",
             "text": "dynamic representative content; never source or runtime pixels",
             "world_backdrop": "non-authoritative geometric context",

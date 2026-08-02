@@ -7,7 +7,12 @@
     "adapter": "addon/AzerothExpeditionUI/Modules/Chat.lua",
     "runtime_exporter": "tools/build_chat_v3_runtime_assets.py",
     "simulation_spec": "tools/specs/chat_full_frame_simulation_v1.json",
-    "direction_only": true
+    "candidate_preview_spec": "tools/specs/chat_full_frame_candidate_preview_v1.json",
+    "candidate_layout_metrics": "generated/chat/core/CHAT.FRAME.FULL.V1/attempt-02/review/ChatFullFrame_candidate_real_layout_v1.metrics.json",
+    "candidate_source": "generated/chat/core/CHAT.FRAME.FULL.V1/attempt-02/review/ChatBookFrame_Full_V1_r1_attempt02.transparent.png",
+    "candidate_source_sha256": "23981aca770e93335efc5df3e917a9b220fe800b08e9142a4d4579415a6af741",
+    "provider_raw_sha256": "8275b815b19677fda2fe242b79a06557af90032e570841236cab41ec429917b5",
+    "direction_only": false
   },
   "atlas": {
     "size": [440, 320],

@@ -33,15 +33,21 @@
   `0/0`、上传 `0`，完整生产正文已写入 work。用户于 `2026-08-02` 明确确认
   `CHAT-FULL-SIM-V1`，并授权 `CHAT.FRAME.FULL.V1` 完整正文、固定 SHA 的
   唯一 Image 1、新 `0/5` 预算及一个固定 `@openai/codex@0.143.0` 子进程。
-  attempt 1 已在 session `019fc246-3bd9-7730-b57a-74a8fe4c7e71` 实际生成
-  `1/5`：单一完整书体、整体材料连续性和禁止烘焙内容通过，但中央阅读面被生成
-  为重复压纹皮革而非暖黑纤维纸，首个失败门禁为纸／皮身份区分；RGBA 左透明
-  留白还只有 `12px`。状态现为
-  `repair-prepared / r1-ready / executor-authorized / P3`；只针对纸张身份的
-  完整 `.r1` 已写入 work 并由 commit `c28d6b3` 固定。用户于
-  `2026-08-02` 明确允许 `.r1` 使用剩余预算，并额外启动一个固定
-  `@openai/codex@0.143.0` 子进程；下一门禁为 attempt 2。当前亮纸基线、
-  V3 source、正式 TGA、Lua 和 v1.18 runtime 均未改变。
+  attempt 1 在纸／皮身份区分门禁失败；只针对该门禁的完整 `.r1` 由 commit
+  `c28d6b3` 固定。用户随后明确允许 `.r1` 使用剩余预算并额外启动一个固定
+  `@openai/codex@0.143.0` 子进程。attempt 2 已在 session
+  `019fc27e-f6fb-7d90-ac30-5fbdfef99c11` 实际生成，累计 ImageGen `2/5`；raw
+  SHA-256 为
+  `8275b815b19677fda2fe242b79a06557af90032e570841236cab41ec429917b5`。
+  完整书体、整体材料连续性、禁止烘焙内容和暖黑纤维纸／皮革身份全部通过。
+  provider 烘焙的 RGB 棋盘背景已仅用该候选自身像素做确定性透明清理；
+  `1608 × 978 RGBA` 审查副本 SHA-256 为
+  `23981aca770e93335efc5df3e917a9b220fe800b08e9142a4d4579415a6af741`，
+  四边透明留白为 `24/25/24/26px`。
+  `440 × 320` 空／最小／15 行／16 行及 `540 × 420` 22 行扩展场景均无截断，
+  display-region 五场景 violations `0`。状态为
+  `candidate-reviewed / awaiting-user-review / P3`，剩余 `3` 次已停止消费；
+  当前亮纸基线、V3 source、正式 TGA、Lua 和 v1.18 runtime 均未改变。
 - 核心批次：`CHAT.CORE.V3 / runtime-corrected / P5`；runtime contract
   v1.18 保留 v1.15 的左书 Parent 唯一作用域、v1.14 的三层最终输出桥、
   v1.11 的无阴影旧字体、v1.8 的 `3px` 行距、v1.7 书本自愈和 v1.6 pfUI
@@ -150,7 +156,7 @@
 | `CHAT.INPUT.LANGUAGE` | `P1` | 可选原生 Button 已映射 | 实机确认对象、尺寸和语言状态 |
 | `CHAT.UNREAD` | `P5` V3 | 独立 `ChatFrameNTabFlash` 覆盖 | 实机验证闪烁配置与选中清除 |
 | `CHAT.TEXT` | `P5` parchment-palette / r1.18 | `380 × 248`／约 16 行；pfUI 配置字体、用户字号、无描边／无阴影、`3px` spacing、无额外背景层；频道／职业保留 Vanilla 色相并降低明度，小队与团队分色；未知亮色连续压暗 | 实机确认团队焦橙／小队蓝紫、战士棕褐及其余职业仍符合原版识别，同时 DPSMate 红绿报告不再发亮 |
-| `CHAT.FRAME`／`CHAT.TEXT` 暖黑候选 | `P3` `CHAT.FRAME.PAPER.V1` rejected／`CHAT.FRAME.FULL.V1` repair-prepared、r1-ready | donor attempt `1/5` 因拼接感退回；整本重绘 attempt `1/5` 已消除拼接，但中央误生为压纹皮革，未进入布局预演；`.r1` 只强化暖黑纤维纸身份；新增的唯一固定 0.143.0 子进程已授权；无 source／runtime 变更 | 以固定 Image 1 执行 `.r1` attempt 2；不得调用当前会话内建 imagegen |
+| `CHAT.FRAME`／`CHAT.TEXT` 暖黑候选 | `P3` `CHAT.FRAME.PAPER.V1` rejected／`CHAT.FRAME.FULL.V1` candidate-reviewed、attempt 2 | donor attempt `1/5` 因拼接感退回；整本重绘 attempt 1 因纸／皮身份失败，`.r1` attempt 2 在累计 `2/5` 时通过整体材料、纸张身份、透明、九宫格及五场景展示区域门禁；无 source／runtime 变更 | 等待用户复审；未明确接受前不晋级 source／runtime，不消费剩余三次 |
 | `CHAT.SCROLL.*`／`MENU.BUTTON`／`RESIZE` | `P1` hidden | 原生对象已登记，pfUI 当前隐藏 | 仅在决定恢复时建立资产合同 |
 | `CHAT.POPUP.*` | `P1` | 四个原生菜单实例已映射，仍为过渡外观 | 实机拆分 shell、行状态和滚动 |
 | `CHAT.URLCOPY.*` | `P2` V1 prompt-draft / user-deferred | 三个真实对象与现有锚点已锁定；只新生成 shell，input／close 复用 V3 接受资产；用户于 `2026-07-30` 暂缓；当前 pfUI 功能继续可用 | 仅在用户明确恢复该功能时重新开放授权门禁 |
@@ -204,12 +210,12 @@
 
 1. `CHAT.FRAME.PAPER.V1` 已按用户反馈退回；实际 `1/5`，剩余四次终止且不
    转移。首个失败门禁是暖黑中心与旧金色页边／皮革之间的材料连续性。
-2. `CHAT.FRAME.FULL.V1` attempt 1 已实际生成 `1/5` 并在纸／皮身份区分门禁
-   失败；provider raw 与去键 RGBA 已保存在 ignored 生产目录，未晋级 source。
-3. `.r1` 完整正文已在冻结修复包络内准备，只强化中央暖黑纤维纸身份；用户
-   已明确允许一个新的固定 `@openai/codex@0.143.0` 子进程。下一步以原固定
-   SHA 的唯一 Image 1 执行 attempt 2；剩余最多 `4` 次且禁止当前会话内建
-   imagegen 的边界保持不变。
+2. `CHAT.FRAME.FULL.V1.r1` attempt 2 已使累计实际生成达到 `2/5`；完整书体、
+   暖黑纸／皮身份、透明清理、`440 × 320`／`540 × 420` 九宫格和五场景
+   display-region 全部通过，状态为 `candidate-reviewed / P3`。
+3. 下一步只等待用户复审候选与真实排版图。明确接受后才可晋级 source、导出
+   正式 TGA 并接入 runtime；若退回，只能在同一冻结合同内修复第一个新失败
+   门禁。剩余 `3` 次继续冻结，当前会话内建 imagegen 仍禁止使用。
 
 ### 仍保留的 v1.18 实机门禁
 
