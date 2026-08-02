@@ -20,9 +20,12 @@
   选择 B（`#18120D` 暖黑纸面＋接近 Vanilla 的识别色）。当前只固定
   可见方向与生产边界；v1.18 runtime、已接受 source、正式 TGA 与稳定
   美术基线仍保持不变
-- 并行生产批次：`CHAT.FRAME.PAPER.V1 / prompt-authorized / P3`；用户已授权
-  固定 V3 母版作为唯一 Image 1，同一生产正文最多 5 次实际 ImageGen
-  调用；当前 `0/5`，生成前流程错误 `1`
+- 并行生产批次：`CHAT.FRAME.PAPER.V1 / candidate-reviewed / P3`；固定
+  `@openai/codex@0.143.0` 子进程已按授权只执行一次，使用固定 V3 母版作为
+  唯一 Image 1；当前实际 ImageGen `1/5`、生成前流程错误 `1`。attempt 1
+  暖黑纸面 donor、确定性装配、`440 × 320` 真实排版与四场景展示区域门禁均
+  已通过内部审查，剩余 `4` 次未使用；尚未晋级 source、正式 TGA 或 Lua，
+  等待用户接受／退回候选
 - 锁定视觉基准：
   - [`聊天框视觉基准_v1.png`](../../../../assets/locked/chat/聊天框视觉基准_v1.png)
     — 游戏内物件身份、紧凑尺度和香草 HUD 综合色感
@@ -351,11 +354,96 @@ Final self-check: exactly one full-canvas warm-black parchment surface; paper ma
 
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
-| 1/5 | `CHAT.FRAME.PAPER.V1` / pending | generate | pending | pending | pending | pending | pending |
+| 1/5 | `CHAT.FRAME.PAPER.V1` / `aa4ba91` | generate | session `019fc0b0-167a-7ad1-9489-1a07d1f7d066`／cache result `ig_0da97b4f5e55322f016a6ec4b86a80819181fcddbd6b40c4e5.png` | `generated/chat/core/CHAT.FRAME.PAPER.V1/attempt-01/ChatBookPaper_WarmBlack_Surface_1536x1024.raw.png`／`5e45c11b1a8a902e27e1912eac6488bee3f945cd6445bd962a4efdf2fe5c233c` | 无；对象、材料、技术、装配、排版与展示区域全部通过 | 保留完整 donor；停止自主循环并提交用户复审，不消费剩余四次 | `candidate-reviewed / P3`；`1/5` |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
 | E1 | `CHAT.FRAME.PAPER.V1` / `6c34ad1` | 未创建 | sandbox approval reviewer 在 PowerShell／`npx` 启动前拒绝；无子进程、无上传、无图片、无 provider result | 用户已补充授权固定 Skill 要求的 `npx @openai/codex@0.143.0` 子进程机制；以同一已提交正文重试 | 不占生图额度；已解除流程授权阻塞，仍为 `0/5` |
+
+### `CHAT.FRAME.PAPER.V1` attempt 1 执行记录
+
+- 日期：`2026-08-02`。
+- 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`；会话
+  `019fc0b0-167a-7ad1-9489-1a07d1f7d066`。当前会话未调用内建
+  imagegen；已授权子进程没有再启动其他 Codex／npx 子进程。
+- 唯一实际输入：
+  `D:\Git\azeroth-expedition-ui-overhaul\assets\source\chat\v3\ChatBookFrame_Master_v3.png`，
+  SHA-256
+  `f45cfe614dffd4cbc1e17b1af0f6c66b2100f530c353e3954956476b7cf05057`；
+  只承担冻结正文声明的低权重材料尺度参考。
+- 子进程完整显示了已授权生产正文，没有截断或改写；未报告 revised prompt。
+- provider 原始结果：
+  `C:\Users\西奥\.codex\generated_images\019fc0b0-167a-7ad1-9489-1a07d1f7d066\ig_0da97b4f5e55322f016a6ec4b86a80819181fcddbd6b40c4e5.png`；
+  未经修图复制到本批 ignored raw 路径。
+- raw：`1536 × 1024 RGB`，全画布 `1,572,864` 像素均不透明，partial／
+  transparent／精确绿底／启发式绿色残留均为 `0`；SHA-256
+  `5e45c11b1a8a902e27e1912eac6488bee3f945cd6445bd962a4efdf2fe5c233c`。
+- 实际 ImageGen：`1/5`；流程错误：`1`；循环终态：
+  `candidate-reviewed`。完整内审通过后已立即停止，未消费剩余四次。
+
+### `CHAT.FRAME.PAPER.V1` attempt 1 审查记录
+
+- 语义／物理：raw 恰为一个边到边、正视、无边框的不透明暖黑旧纸表面；无
+  书框、书页外轮廓、皮革件、黄铜件、Tab、文字、符号或控件。无第二对象。
+- 透视／图层：平面正投影，无厚度、卷角、孤立投影、透明边或展示场景；低频
+  烟熏与纤维连续覆盖全画布，没有中间压光矩形、规则线或平铺接缝。
+- 美术一致性：综合色接近 `#18120D` 方向，保留暖棕底色、哑光纤维和克制的
+  非镜像磨损；没有中性灰／蓝黑、纯黑、金黄中心或现代黑色面板。raw 单看已
+  接近极深烟熏材质，但表面由细纤维而非皮革粒面构成；装回原页叠后，旧书纸面
+  身份仍成立。该边界作为用户复审重点，不把内部判断冒充最终接受。
+- 对象／状态合同：本批只有一个 donor，无交互状态；动态文字、频道色、职业色、
+  四枚 Tab 和输入条仍由现有 runtime／独立 atlas 所有，没有烘焙进候选。
+- 装配／尺寸：固定工具把 donor 只装入既定 paper mask，候选为
+  `1608 × 978 RGBA`，SHA-256
+  `c976bfc0acbea12f7e07a12e59d0949fbad50485b31ef57599dff8312293a20a`；
+  Alpha 差异像素 `0`，mask 外 RGB 差异像素 `0`。报告：
+  `generated/chat/core/CHAT.FRAME.PAPER.V1/attempt-01/assembly/ChatBookPaperAssemblyV1.report.json`，
+  SHA-256
+  `f2ef886f66837e8c91e47f92a94e92d80e32e4a3f37eaee9210f158612771dc1`。
+- 真实排版：新增确定性审查器
+  [`render_chat_dark_paper_candidate_v1.py`](../../../../tools/render_chat_dark_paper_candidate_v1.py)
+  与
+  [`chat_dark_paper_candidate_preview_v1.json`](../../../../tools/specs/chat_dark_paper_candidate_preview_v1.json)，
+  复用正式 exporter 的九宫格和已接受 V3 Tab 像素，在两个真实
+  `440 × 320` Frame 中分别装入综合频道典型 `15` 行与团队频道最大 `16` 行；
+  两者均无截断，最后基线分别为 `252`／`267`，低于正文底界 `280`。预演：
+  `generated/chat/core/CHAT.FRAME.PAPER.V1/attempt-01/review/ChatDarkPaper_candidate_real_layout_v1.png`，
+  SHA-256
+  `cc6f7ab61cc3a31b3c9a84e1cd1370bfde9651da51685845763c65fc3eb00906`；
+  metrics SHA-256
+  `0074a515c9a4fe3cfb68364ef00a59e62b3b7f20d917fe96ce8171faa0e2476f`。
+  正文只是在候选上方绘制的确定性动态示例；世界背景为非权威几何占位，正文
+  字体为中文可用的代表性 fallback，正式 runtime 仍保留 pfUI 配置字体。
+- 实际展示区域：合同
+  [`chat_dark_paper_candidate_display_region_v1.json`](../../../../tools/specs/chat_dark_paper_candidate_display_region_v1.json)
+  覆盖 empty、minimum-one-line、typical-fifteen-lines 与
+  maximum-sixteen-lines；`440 × 320` frame coverage、Tab 区和
+  `380 × 248` 正文区全部 `pass`，violation `0`、first failure `null`。报告：
+  `generated/chat/core/CHAT.FRAME.PAPER.V1/attempt-01/review/display-region-report.json`，
+  SHA-256
+  `85f5f66d791a94e98e228401cdc8b54df53c4e5c7a7c1bd4de7332f448886210`。
+- runtime 等价审查：只写入 ignored review 目录；候选书框 TGA SHA-256
+  `9e7400125feb15506af3d44aa72332891a9f7d2158383d542b96132dc7bc695a`，
+  其余已接受 atlas 的 review 导出保持原源。没有修改 tracked source、正式
+  TGA、Lua、pfUI／ChatMOD 配置或 SavedVariables。
+- 内部结论：`candidate-reviewed / P3`。对象身份、材料、像素、装配、真实排版、
+  展示区域和反模式门禁通过；停止自主循环。
+- 用户结论与日期：`pending`。
+- 下一门禁：用户对 attempt 1 原始 donor 与 100% 布局预演明确接受或退回。
+  若接受，只晋级 P4 source／manifest；若退回，因为补充授权禁止再启动另一个
+  Codex／npx 子进程，先停止并请求新的执行机制授权，绝不改用当前会话内建
+  imagegen。
+
+### `CHAT.FRAME.PAPER.V1` 用户复审摘要
+
+- 批次／版本：`CHAT.FRAME.PAPER.V1` attempt 1。
+- 当前状态：`candidate-reviewed / P3`；实际生成 `1/5`，剩余 `4` 次未使用。
+- 已通过：单一暖黑旧纸对象、无禁止烘焙内容、固定 mask 装配、Alpha／mask 外
+  字节不变、现有 `440 × 320` 布局、典型／最大消息容量与四场景展示区域。
+- 请重点确认：暖黑纸面是否在“降低视觉疲劳、恢复 Vanilla 彩色文字区分度”与
+  “仍像烟熏羊皮纸而非黑皮革”之间达到希望的平衡。
+- 若接受：只晋级 P4，加入透明 source 与 manifest；尚不切正式 runtime。
+- 尚未发生：正式 runtime 切片、Lua／pfUI 接入、Turtle WoW 实机验证。
 
 ## 最终执行正文
 

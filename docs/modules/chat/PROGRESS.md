@@ -10,19 +10,21 @@
   `440 × 320`、`380 × 248` 正文安全区、12px／15px、15 条可见行且无截断，
   展示区域合同两场景通过。用户于 `2026-08-02` 明确选择 B，并要求保持现有
   合理尺寸与资源布局。模拟 ImageGen `0/0`、无上传，像素被忽略且禁止进入
-  source／runtime／生产输入。`CHAT.FRAME.PAPER.V1 / prompt-authorized / P3`
+  source／runtime／生产输入。`CHAT.FRAME.PAPER.V1 / candidate-reviewed / P3`
   已把正式对象收窄为单一暖黑旧纸表面 donor；已提前固定 `1608 × 978`
   母版、Alpha、九宫格切线、`440 × 320` 装配、Tab／输入 atlas，并以本地 mask
   确认只会替换纸面和页叠表面，不重画皮革、缝线、黄铜或整本书。完整生产
   提示词、唯一固定上传图和最多 `5` 次调用修复包络已写入 work。
-  用户于 `2026-08-02` 明确授权该版本与固定 SHA 的唯一 Image 1；当前实际
-  ImageGen `0/5`。首次启动在创建固定子进程前被 sandbox approval reviewer
-  拒绝，无子会话、无上传、无图片或 provider result，记为非计数流程错误
-  `E1`。用户随后明确补充授权固定 Skill 要求的
-  `npx @openai/codex@0.143.0` 子进程机制，允许该子进程上传既定唯一
-  Image 1 并仅在子进程内使用其自带 image_gen；不允许当前会话内建生图或
-  更深层子进程。下一门禁是以同一已提交正文重试 attempt 1。
-  当前已锁定亮纸基线、V3 source、正式 TGA 和 v1.18 runtime 均未改变。
+  用户于 `2026-08-02` 明确授权该版本、固定 SHA 的唯一 Image 1 及固定
+  `npx @openai/codex@0.143.0` 子进程机制。attempt 1 已在 session
+  `019fc0b0-167a-7ad1-9489-1a07d1f7d066` 完成，实际 ImageGen `1/5`；raw
+  SHA-256 为
+  `5e45c11b1a8a902e27e1912eac6488bee3f945cd6445bd962a4efdf2fe5c233c`。
+  单一暖黑旧纸对象、确定性 mask 装配、Alpha 与 mask 外字节、现有
+  `440 × 320` 九宫格、典型 15 行／最大 16 行排版，以及空／最小／典型／最大
+  四种展示场景均通过内部审查；循环已停止，剩余 `4` 次未使用。首次启动前的
+  sandbox 拒绝仍记为非计数流程错误 `E1`。下一门禁是用户复审纸面与皮革的
+  材质边界；当前亮纸基线、V3 source、正式 TGA、Lua 和 v1.18 runtime 均未改变。
 - 核心批次：`CHAT.CORE.V3 / runtime-corrected / P5`；runtime contract
   v1.18 保留 v1.15 的左书 Parent 唯一作用域、v1.14 的三层最终输出桥、
   v1.11 的无阴影旧字体、v1.8 的 `3px` 行距、v1.7 书本自愈和 v1.6 pfUI
@@ -131,7 +133,7 @@
 | `CHAT.INPUT.LANGUAGE` | `P1` | 可选原生 Button 已映射 | 实机确认对象、尺寸和语言状态 |
 | `CHAT.UNREAD` | `P5` V3 | 独立 `ChatFrameNTabFlash` 覆盖 | 实机验证闪烁配置与选中清除 |
 | `CHAT.TEXT` | `P5` parchment-palette / r1.18 | `380 × 248`／约 16 行；pfUI 配置字体、用户字号、无描边／无阴影、`3px` spacing、无额外背景层；频道／职业保留 Vanilla 色相并降低明度，小队与团队分色；未知亮色连续压暗 | 实机确认团队焦橙／小队蓝紫、战士棕褐及其余职业仍符合原版识别，同时 DPSMate 红绿报告不再发亮 |
-| `CHAT.FRAME`／`CHAT.TEXT` 暖黑候选 | `P3` `CHAT-DARK-SIM-V1` confirmed／`CHAT.FRAME.PAPER.V1` prompt-authorized | B 已确认；正式产物只生成单一暖黑旧纸 donor，确定性 mask 保留 V3 母版、Alpha、皮革／黄铜、九宫格、`440 × 320` 布局与独立 Tab／Input atlas；用户已授权唯一固定 Image 1、最多 5 次实际生成与固定 `npx`／子进程机制；当前 `0/5`，非计数流程错误 `E1` 已解除授权阻塞 | 以同一已提交正文和唯一 Image 1 重试 attempt 1；每个输出从对象身份开始完整审查 |
+| `CHAT.FRAME`／`CHAT.TEXT` 暖黑候选 | `P3` `CHAT-DARK-SIM-V1` confirmed／`CHAT.FRAME.PAPER.V1` candidate-reviewed | B 已确认；attempt 1 只生成单一暖黑旧纸 donor，确定性 mask 保留 V3 母版、Alpha、皮革／黄铜、九宫格、`440 × 320` 布局与独立 Tab／Input atlas；当前实际生成 `1/5`、流程错误 `E1`，对象／技术／装配／15–16 行真实排版与四场景展示区域均通过，剩余四次未使用；无 tracked source／runtime 变更 | 用户复审 attempt 1，重点确认极深烟熏纸是否仍明确区别于旧皮革；接受后只晋级 P4 source／manifest |
 | `CHAT.SCROLL.*`／`MENU.BUTTON`／`RESIZE` | `P1` hidden | 原生对象已登记，pfUI 当前隐藏 | 仅在决定恢复时建立资产合同 |
 | `CHAT.POPUP.*` | `P1` | 四个原生菜单实例已映射，仍为过渡外观 | 实机拆分 shell、行状态和滚动 |
 | `CHAT.URLCOPY.*` | `P2` V1 prompt-draft / user-deferred | 三个真实对象与现有锚点已锁定；只新生成 shell，input／close 复用 V3 接受资产；用户于 `2026-07-30` 暂缓；当前 pfUI 功能继续可用 | 仅在用户明确恢复该功能时重新开放授权门禁 |
@@ -183,11 +185,12 @@
 
 ### 当前优先门禁
 
-1. B 方向、现有资源布局、完整生产正文、固定单图上传范围和最多 5 次
-   有界修复已确认；用户已明确授权 `CHAT.FRAME.PAPER.V1`。
-2. 先提交已授权 work 与固定装配规格，再使用 `imagegen-0-143-0`／
-   `@openai/codex@0.143.0` 上传固定 SHA 的 V3 母版作为唯一 Image 1 执行
-   attempt 1。完整审查通过前不修改 source、TGA 或 Lua；通过也仅进入用户复审。
+1. `CHAT.FRAME.PAPER.V1` attempt 1 已完成固定子进程生成与完整内部审查；实际
+   `1/5`，剩余四次未使用。单一 donor、确定性装配、真实 `440 × 320` 排版与
+   四场景展示区域均通过，source、正式 TGA 与 Lua 未修改。
+2. 用户复审原始暖黑纸 donor 与 100% 布局预演，重点确认正文综合色感和纸／
+   皮革边界。接受后只晋级 P4 source／manifest；退回时先停下，因为当前补充
+   授权不允许再启动另一个 Codex／npx 子进程。
 
 ### 仍保留的 v1.18 实机门禁
 
