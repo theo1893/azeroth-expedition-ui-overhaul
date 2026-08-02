@@ -18,8 +18,10 @@
   用户于 `2026-08-02` 明确授权该版本与固定 SHA 的唯一 Image 1；当前实际
   ImageGen `0/5`。首次启动在创建固定子进程前被 sandbox approval reviewer
   拒绝，无子会话、无上传、无图片或 provider result，记为非计数流程错误
-  `E1`。下一门禁是用户补充授权固定 Skill 的精确 `npx`／子进程机制，然后
-  以同一已提交正文重试 attempt 1。
+  `E1`。用户随后明确补充授权固定 Skill 要求的
+  `npx @openai/codex@0.143.0` 子进程机制，允许该子进程上传既定唯一
+  Image 1 并仅在子进程内使用其自带 image_gen；不允许当前会话内建生图或
+  更深层子进程。下一门禁是以同一已提交正文重试 attempt 1。
   当前已锁定亮纸基线、V3 source、正式 TGA 和 v1.18 runtime 均未改变。
 - 核心批次：`CHAT.CORE.V3 / runtime-corrected / P5`；runtime contract
   v1.18 保留 v1.15 的左书 Parent 唯一作用域、v1.14 的三层最终输出桥、
@@ -129,7 +131,7 @@
 | `CHAT.INPUT.LANGUAGE` | `P1` | 可选原生 Button 已映射 | 实机确认对象、尺寸和语言状态 |
 | `CHAT.UNREAD` | `P5` V3 | 独立 `ChatFrameNTabFlash` 覆盖 | 实机验证闪烁配置与选中清除 |
 | `CHAT.TEXT` | `P5` parchment-palette / r1.18 | `380 × 248`／约 16 行；pfUI 配置字体、用户字号、无描边／无阴影、`3px` spacing、无额外背景层；频道／职业保留 Vanilla 色相并降低明度，小队与团队分色；未知亮色连续压暗 | 实机确认团队焦橙／小队蓝紫、战士棕褐及其余职业仍符合原版识别，同时 DPSMate 红绿报告不再发亮 |
-| `CHAT.FRAME`／`CHAT.TEXT` 暖黑候选 | `P3` `CHAT-DARK-SIM-V1` confirmed／`CHAT.FRAME.PAPER.V1` prompt-authorized | B 已确认；正式产物只生成单一暖黑旧纸 donor，确定性 mask 保留 V3 母版、Alpha、皮革／黄铜、九宫格、`440 × 320` 布局与独立 Tab／Input atlas；用户已授权唯一固定 Image 1 和最多 5 次实际生成；当前 `0/5`，非计数流程错误 `E1` | 用户补充授权 `imagegen-0-143-0` 要求的 `npx @openai/codex@0.143.0` 子进程机制后，以同一已提交正文重试 attempt 1 |
+| `CHAT.FRAME`／`CHAT.TEXT` 暖黑候选 | `P3` `CHAT-DARK-SIM-V1` confirmed／`CHAT.FRAME.PAPER.V1` prompt-authorized | B 已确认；正式产物只生成单一暖黑旧纸 donor，确定性 mask 保留 V3 母版、Alpha、皮革／黄铜、九宫格、`440 × 320` 布局与独立 Tab／Input atlas；用户已授权唯一固定 Image 1、最多 5 次实际生成与固定 `npx`／子进程机制；当前 `0/5`，非计数流程错误 `E1` 已解除授权阻塞 | 以同一已提交正文和唯一 Image 1 重试 attempt 1；每个输出从对象身份开始完整审查 |
 | `CHAT.SCROLL.*`／`MENU.BUTTON`／`RESIZE` | `P1` hidden | 原生对象已登记，pfUI 当前隐藏 | 仅在决定恢复时建立资产合同 |
 | `CHAT.POPUP.*` | `P1` | 四个原生菜单实例已映射，仍为过渡外观 | 实机拆分 shell、行状态和滚动 |
 | `CHAT.URLCOPY.*` | `P2` V1 prompt-draft / user-deferred | 三个真实对象与现有锚点已锁定；只新生成 shell，input／close 复用 V3 接受资产；用户于 `2026-07-30` 暂缓；当前 pfUI 功能继续可用 | 仅在用户明确恢复该功能时重新开放授权门禁 |

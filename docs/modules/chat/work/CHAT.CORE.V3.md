@@ -332,6 +332,12 @@ Final self-check: exactly one full-canvas warm-black parchment surface; paper ma
 > 的 `ChatBookFrame_Master_v3.png` 作为 Image 1；同一生产正文最多 5 次实际
 > ImageGen 调用。
 
+- E1 后的补充执行机制授权：`2026-08-02 confirmed`。用户原文：
+
+> 明确允许 imagegen-0-143-0 通过 npx 启动 @openai/codex@0.143.0 子进程；
+> 允许该子进程上传此前授权的唯一 Image 1，并仅在子进程内调用其自带
+> image_gen。不得调用当前会话内建 imagegen，也不得再启动其他 codex/npx 子进程。
+
 ### `CHAT.FRAME.PAPER.V1` 自主修复循环
 
 - 固定执行器：`imagegen-0-143-0` / `@openai/codex@0.143.0`。
@@ -349,7 +355,7 @@ Final self-check: exactly one full-canvas warm-black parchment surface; paper ma
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
-| E1 | `CHAT.FRAME.PAPER.V1` / `6c34ad1` | 未创建 | sandbox approval reviewer 在 PowerShell／`npx` 启动前拒绝；无子进程、无上传、无图片、无 provider result | 暂停；向用户说明固定 Skill 的精确执行机制，只在用户补充授权后以同一已提交正文重试 | 不占生图额度；仍为 `0/5` |
+| E1 | `CHAT.FRAME.PAPER.V1` / `6c34ad1` | 未创建 | sandbox approval reviewer 在 PowerShell／`npx` 启动前拒绝；无子进程、无上传、无图片、无 provider result | 用户已补充授权固定 Skill 要求的 `npx @openai/codex@0.143.0` 子进程机制；以同一已提交正文重试 | 不占生图额度；已解除流程授权阻塞，仍为 `0/5` |
 
 ## 最终执行正文
 
