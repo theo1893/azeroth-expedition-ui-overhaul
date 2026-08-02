@@ -10,10 +10,11 @@ Frame。美术见 [ART_BASELINE.md](ART_BASELINE.md)，状态见
 |---|---|---|
 | [`skins/blizzard/questlog.lua`](../../../addon/pfUI/skins/blizzard/questlog.lua) | `QuestLogFrame` 双栏几何、列表／详情 ScrollFrame、日志按钮、奖励槽、pfUI 等级与详情收起增强 | 保留原生数据与事件；新 adapter 不加载现代 backdrop |
 | [`Modules/Quests.lua`](../../../addon/AzerothExpeditionUI/Modules/Quests.lua) | QL-A2 V4 固定 SHELL、阅读安全区、原生装饰隐藏与真实详情切换 Button | 只接管静态外壳和布局；不替代任务数据、原按钮脚本、动态内容或 SavedVariables |
+| [`Modules/QuestVisualTheme.lua`](../../../addon/AzerothExpeditionUI/Modules/QuestVisualTheme.lua) | Quest Log／Tracker 共用媒体入口、字体角色、语义墨色与皮革控件色 | 唯一视觉主题入口；统一材料和状态语言，但不得把双页卷宗与纵向行军便笺合并为同一轮廓 |
 | [`pfQuest/quest.lua`](../../../addon/pfQuest/quest.lua) | Quest Log 等级文字、在线／语言入口、显示／隐藏／清空／重置操作，以及对三个 Quest Log 刷新入口的后加载替换 | provider 继续拥有任务数据库与全部点击行为；AEUI 只在 provider 最终刷新后恢复安全区并搬移真实控件 |
 | [`pfQuest/tracker.lua`](../../../addon/pfQuest/tracker.lua) | `pfQuestMapTracker`、三种追踪模式、七个工具 Button、最多二十五个动态任务／目标 Button | 唯一 tracker provider；AEUI 未来只替换 chrome、排版和状态反馈，不创建第二个追踪器 |
 | [`pfQuest-turtle/`](../../../addon/pfQuest-turtle/) | Turtle WoW 任务数据库、语言数据、覆盖和补丁表 | 数据扩展；没有独立 tracker 或 Quest Log UI 所有权 |
-| [`skins/blizzard/gossipquest.lua`](../../../addon/pfUI/skins/blizzard/gossipquest.lua) | `QuestFrame`、`GossipFrame`、五个内容面板、滚动条、八个操作按钮、奖励高亮 | 当前原生回退；只保留对象合同 |
+| [`skins/blizzard/gossipquest.lua`](../../../addon/pfUI/skins/blizzard/gossipquest.lua) | `QuestFrame`、`GossipFrame`、五个内容面板、滚动条、八个操作按钮、奖励高亮 | 当前由 pfUI 正常加载；不在 Quest Log 的接管路由内 |
 | [`modules/questitem.lua`](../../../addon/pfUI/modules/questitem.lua) | 任务物品 Tooltip 的任务归属、扫描与数量 | 原样保留；不是快捷使用按钮 |
 
 当前 runtime 波次只接入按 `L` 打开的 `QuestLogFrame`。pfQuest tracker
@@ -82,7 +83,7 @@ Texture、FontString。禁止在 SHELL 上烘焙任务行、滚动状态、选�
 | `QUEST.LOG.ROW.BACKPLATE` | `QuestLogTitleN` 且 `isHeader=false` 的 Button 背景 Texture | normal／hover／pressed／disabled；同一基础物件确定性派生 |
 | `QUEST.LOG.REGION.TOGGLE` | `QuestLogTitleN` 且 `isHeader=true` 的图标区 | 展开／收起覆盖，不新增命中区 |
 | `QUEST.LOG.LIST.ROW` | V1 fallback 为 `QuestLogTitle1..23`，其中 `7..23` 继承 `QuestLogTitleButtonTemplate` 创建；V2 活动窗口为 `QuestLogTitle1..18` | 普通／悬停／按下／禁用；保留真实 Button 与脚本；V1 不生成完整行卡片，V2 挂载独立薄型卷宗底板 |
-| `QUEST.LOG.LIST.CHECK` | `QuestLogTitleNCheck` | 未追踪／已追踪；不是选择 Button |
+| `QUEST.LOG.LIST.CHECK` | `QuestLogTitleNCheck` 与历史 `aeuiQuestListCheck` | 用户于 `2026-08-01` 判定行末圈无有效信息价值；runtime 全部隐藏且不创建替代命中，追踪数据与 Shift 点击行为仍由 provider 保留 |
 | `QUEST.LOG.SELECTION` | 当前选中的非地区 `QuestLogTitleN` | 已接受的三态织物书签资产保留，但按 `2026-07-31` 用户决定暂停挂载并隐藏 |
 | `QUEST.LOG.TYPE.BADGE` | `GetQuestLogTitle` 的可靠 `questTag` | `normal` 无资产；Elite／Dungeon／Raid／PvP 小压印；未知 tag 不猜测 |
 | `QUEST.LOG.TIMER.BADGE` | `GetQuestTimers()` 与 `GetQuestIndexForTimer()` | timed 沙漏压印；API 缺失时不显示 |
@@ -99,25 +100,22 @@ adapter 不再创建、挂载或刷新酒红色书签，也不再包装任务行
 脚本。原生整行选择高亮仍保持透明抑制；目录文字继续从 `x>=18` 起，以维持
 QL-B1 墨记及未来状态槽的安全区。
 
-当前 P5／V1 fallback 仍保留 pfUI 的 `QUESTS_DISPLAYED = 23`：QL-A2 左页
-`246 × 324 UI px` 安全区中使用 `23` 条 `224 × 15 UI px` 行、
-`14px` 纵向步进，总占高 `323px`。实机已经证明该密度不足以承载新的大面积
-左页视觉。
-
-用户确认的 V2 目标改为 `QUESTS_DISPLAYED = 18`：活动窗口使用
-`QuestLogTitle1..18`，每条 `224 × 18 UI px`，纵向步进 `18px`，总占高
-`324px`；右侧 `22px` 预留给真实滚动条与间距。现有
-`QuestLogTitle19..23` 不删除、不改写脚本，只在 V2 模式隐藏；缺少 adapter
-或媒体时回退 V1／pfUI。动态文字从 `x=20` 起；地区使用 Noto Serif SC
-SemiBold `12px`，任务使用 LXGW WenKai `11px`。完整资源与排版合同见
+runtime `1.16` 已落实用户确认的 V2 阅读密度：`QUESTS_DISPLAYED = 18`，
+活动窗口使用 `QuestLogTitle1..18`，每条 `246 × 18 UI px`、纵向步进
+`18px`，总占高 `324px`。左右页 scrollbar chrome 均隐藏后，活动行使用
+完整 `246px` 左页安全宽度；动态文字从 `x=18` 起，安全宽度 `226px`。
+任务名、地区名以及模板可能拆出的完成／地下城等状态 FontString 统一使用
+LXGW WenKai `12px`、空 flags、透明 shadow。`QuestLogTitle19..23` 继续创建以
+兼容 provider，但不删除、不改写脚本并保持隐藏；缺少 adapter 时仍回退
+pfUI。完整资源与排版历史合同见
 [work/QUEST.LOG.LEFTPAGE.md](work/QUEST.LOG.LEFTPAGE.md)。
 
 QL-B 的生产边界：
 
 - `QL-B1`：`REGION.TOGGLE` 与 `LIST.CHECK` 四枚墨记；V1.r3 透明 source
   已接受。runtime 只允许按 manifest 固定四格裁切、等比缩放并居中，
-  不得修改任务行交互或状态来源。V2 接受后只允许从同一 source 确定性
-  重导出为地区箭头 `14px` 与追踪圈 `12px`，不重新生图。
+  不得修改任务行交互或状态来源。当前只显示地区箭头；行末追踪圈按用户
+  决定隐藏，accepted source 仍保留供顶部真实 CheckButton 使用，不重新生图。
 - `QL-B2`：`SELECTION` 只生成一枚暗酒红织物基础书签；selected／
   selected-hover／selected-pressed 由同一 Alpha 确定性导出为三格，
   pressed 只在原行 Button 上产生 `1 UI px` 视觉压入，不新增命中区。
@@ -149,15 +147,18 @@ QL-B 的生产边界：
   `REGION.BACKPLATE`／`ROW.BACKPLATE` 的无鼠标 Texture 承担；它们是薄型
   卷宗条目，不是现代卡片，也不改变 Button 命中区。
 
-QL-B0／B1 当前 V1 runtime 已接入
+QL-B0／B1 当前 runtime 已接入
 `addon/AzerothExpeditionUI/Modules/Quests.lua`：atlas 为
 `QuestLogDirectoryMarksV1.tga`，四个 `16 × 16` cell 的内部 content box
-分别以 `12 × 12` 箭头和 `10 × 10` 墨圈显示。覆盖 Texture 不接收鼠标；
+保留 `12 × 12` 箭头和 `10 × 10` 墨圈；任务行只挂载箭头，墨圈继续供顶部
+等级／追踪 CheckButton 使用。覆盖 Texture 不接收鼠标；
 原 `QuestLogTitleN` Button、脚本、滚动、选择和追踪数据均保持。字体仅按
-模块基线把主标题设为 Noto Serif SC、任务行设为霞鹜文楷，仍需实机加载
-与 1px 行重叠命中验证。QL-B2 的 `BORDER` Texture 挂载与三态脚本已从
+模块基线把主标题设为 Noto Serif SC、任务及状态行设为 `12px` 霞鹜文楷，
+空 flags 且清除 shadow，仍需实机加载验证。QL-B2 的 `BORDER` Texture 挂载与三态脚本已从
 runtime contract `1.5` 起移除；资产文件不删除，运行时一律隐藏。当前
-runtime contract 已升至 `1.7`，该决定保持不变。
+Quests runtime contract 已升至 `1.16`；任务名难度色及完成／失败／类型提示
+统一读取 Quest Visual Theme `1.5` 的高对比深墨，模板拆分 FontString 与
+标题后的内联色码均在 provider 最终刷新后归一化。
 
 QL-B0 V2 的 `LIST.INSET` 已在四次候选审查后由用户移出范围，不建立 source、
 runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
@@ -169,10 +170,10 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 
 | ID | 真实对象 | 状态／资产 |
 |---|---|---|
-| `QUEST.LOG.LIST.SCROLL.TRACK` | `QuestLogListScrollFrameScrollBar` 轨道 | 上端／可平铺中段／下端 |
-| `QUEST.LOG.LIST.SCROLL.THUMB` | 对应 ThumbTexture | 普通／悬停／按下／禁用 |
-| `QUEST.LOG.LIST.SCROLL.UP` | 对应 ScrollUpButton，需 feature-detect | 四状态 Button |
-| `QUEST.LOG.LIST.SCROLL.DOWN` | 对应 ScrollDownButton，需 feature-detect | 四状态 Button |
+| `QUEST.LOG.LIST.SCROLL.TRACK` | `QuestLogListScrollFrameScrollBar` 轨道 | 视觉隐藏且不接收鼠标；真实 Slider 保留供滚轮设置值 |
+| `QUEST.LOG.LIST.SCROLL.THUMB` | 对应 ThumbTexture | 视觉隐藏 |
+| `QUEST.LOG.LIST.SCROLL.UP` | 对应 ScrollUpButton，需 feature-detect | 视觉隐藏且不接收鼠标 |
+| `QUEST.LOG.LIST.SCROLL.DOWN` | 对应 ScrollDownButton，需 feature-detect | 视觉隐藏且不接收鼠标 |
 | `QUEST.LOG.COLLAPSE.ALL` | `QuestLogCollapseAllButton` | runtime `1.6` 起完整隐藏并禁用真实 Button 与 pfUI `+`／`-` 子控件；不保留命中区、不生产替代资产 |
 
 ## Quest Log 右页与操作
@@ -202,15 +203,19 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 | `QUEST.LOG.PFQUEST.CLEAN` | `pfQuest.buttonClean`／`pfQuestClean` | `52 × 20`，第 3 格 |
 | `QUEST.LOG.PFQUEST.RESET` | `pfQuest.buttonReset`／`pfQuestReset` | `52 × 20`，第 4 格 |
 
-右页仍由 `QuestLogDetailScrollFrame` 承担裁切与滚动，adapter 只隐藏最右侧
-滚动条 chrome，并在页面本体上追加 `OnMouseWheel`，以 `28 UI px` 步进在
-真实 `GetVerticalScrollRange()` 内限位。左页列表滚动条完全不受此规则影响。
+右页仍由 `QuestLogDetailScrollFrame` 承担裁切与滚动；左页仍由
+`QuestLogListScrollFrame`、FauxScrollFrame offset 与隐藏的真实 Slider
+承担列表滚动。adapter 只隐藏两侧滚动条 chrome，并分别追加
+`OnMouseWheel`：右页以 `28 UI px` 在真实 range 内限位，左页按原生
+`QUESTLOG_QUEST_HEIGHT`（缺失时 `18px`）推进一个逻辑行。隐藏视觉不删除
+ScrollFrame、offset、裁切或数据。
 
 pfQuest 在加载后会替换 `QuestLog_Update`、
 `QuestLog_UpdateQuestDetails` 和 `QuestLogFrame` 的 `OnShow`，并在详情
 ScrollChild 内增加六个控件和 `30px` 标题预留。AEUI 必须在 provider 的
-最终刷新之后，以事件驱动方式恢复 `QuestLogTitle1..23` 的
-`224 × 15` 行盒、`190px` 文字宽度和右页正文几何；不得用 `OnUpdate`
+最终刷新之后，以事件驱动方式恢复 `QuestLogTitle1..18` 的
+`246 × 18` 行盒、`226px` 文字宽度，隐藏 `19..23` 与行末追踪圈，并恢复
+右页正文几何；不得用 `OnUpdate`
 持续争夺 Parent／Point／Size。六个 provider Button 只改 Parent、Point、
 Size、字体和视觉状态，不替换脚本、ID、Enable／Disable、Show／Hide 或
 SavedVariables。
@@ -243,8 +248,9 @@ SavedVariables。
 | `QUEST.TRACKER.ACTION.SETTINGS` | `tracker.btnsettings` | `scope-deferred`；保留设置入口、Tooltip 与状态 |
 | `QUEST.TRACKER.ACTION.CLOSE` | `tracker.btnclose` | `scope-deferred`；保留隐藏、配置写入、Tooltip 与状态 |
 
-provider 的真实几何仍是 `16px` 工具条加动态条目。纸面四边 outset 继续为
-`0px`；`QUEST.TRACKER.HUB.SEAL` 单独允许顶部 `18px` 可见 outset，不构成
+provider 的内容几何仍是 `16px` 工具条加动态条目；adapter 只在 root 底部
+追加 `16px` 非交互内容安全区，使最后一条目标不进入撕裂装饰 cap。纸面四边
+outset 继续为 `0px`；`QUEST.TRACKER.HUB.SEAL` 单独允许顶部 `18px` 可见 outset，不构成
 书框或纸面边界。由于 provider 的 `SetClampedToScreen(true)` 只保证 root
 Frame，adapter 现已 feature-detect `SetClampRectInsets` 并在既有 top inset
 上补 `18px`；目标客户端仍需复核缺少该 API 时的 provider fallback 与拖动
@@ -262,16 +268,18 @@ menu 等价完成前的显式过渡状态，不授权隐藏、删除、重挂、
 
 | ID | provider 对象／状态 | 合同 |
 |---|---|---|
-| `QUEST.TRACKER.ENTRY` | `tracker.buttons`／`pfQuestMapButton1..25` | 真实 Button；高度为 `entryheight + objectives × fontsize`，不生成逐项卡片 |
+| `QUEST.TRACKER.ENTRY` | `tracker.buttons`／`pfQuestMapButton1..25` | 真实 Button；高度为 `entryheight + objectives × fontsize`，不生成逐项卡片；provider 回调后只置主题 dirty，整批重建完成后统一提交呈现 |
 | `QUEST.TRACKER.ENTRY.FOCUS` | `button.bg` 与 `pfMap.highlight == button.title` | 可横向延展的低对比墨洗；不创建命中区 |
-| `QUEST.TRACKER.ENTRY.ICON` | `button.icon`／`button.node` | provider 动态节点图标和颜色；不得烘焙进背景 |
-| `QUEST.TRACKER.ENTRY.TITLE` | `button.text` | 动态等级、任务名与完成率；layout-only |
-| `QUEST.TRACKER.OBJECTIVE` | `button.objectives[i]` | 动态目标文字与计数；layout-only |
+| `QUEST.TRACKER.ENTRY.ICON` | `button.icon`／`button.node` | 用户于 `2026-08-01` 明确要求隐藏彩色点／问号；adapter 只隐藏 `button.icon` Texture，保留 `button.node` 数据、Button 命中与全部 provider 行为，也不生成替代图标 |
+| `QUEST.TRACKER.ENTRY.TITLE` | `button.text` | 动态等级、任务名与完成率；保留 pfUI／pfQuest 原有统一字体路径和 provider 动态字号；任务名与 Quest Log 调用同一难度墨色 resolver，进度保留独立状态墨色；移除 `OUTLINE`，shadow 为透明／零偏移 |
+| `QUEST.TRACKER.OBJECTIVE` | `button.objectives[i]` | 动态目标文字与计数；保留 provider 高可读字号，完成／未完成状态读取共享主题墨色 |
 | `QUEST.TRACKER.ENTRY.TRACKED` | `button.tracked` | 仅在任务模式可用的克制页边墨记；无新 Button |
 | `QUEST.TRACKER.ENTRY.COMPLETE` | `button.perc == 100` | 小型完成墨勾；无失败／蜡封语义 |
 
 provider 当前根宽度为 `min(内容宽度, 300) + 30`，即 `130..330 UI px`；
-高度为 `16px` 工具条加最多二十五个动态条目。三种模式、空状态、目标折叠／
+provider 内容高度为 `16px` 工具条加最多二十五个动态条目，AEUI root 显示高度
+固定再加 `16px` 底部安全区。空状态显示高度因此为 `32px`；非空状态在一次
+dirty 批次提交中按全部有效 Button 高度计算，clean 帧不重复写尺寸。三种模式、空状态、目标折叠／
 展开和任意高度都必须由同一组可拉伸／平铺切片承载，禁止使用一张固定尺寸
 tracker 背景。
 

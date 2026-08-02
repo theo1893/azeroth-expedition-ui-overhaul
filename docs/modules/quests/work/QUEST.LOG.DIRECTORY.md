@@ -492,6 +492,30 @@ UI 或文字。任何一项不满足都不要输出。
   `QuestLogTitle1..23` 文字基线、1px 行重叠命中、滚动偏移、展开／收起、
   追踪状态刷新、原生回退和非视觉行为。
 
+## 2026-08-01 runtime 呈现覆盖
+
+- 上述 `23 × 15px`、行末 untracked／tracked 圈和可见左页滚动条继续作为
+  QL-B1 V1 资产生产与首次接入历史，不再是当前显示合同。
+- 用户根据实机图明确要求提高整页字号、移除任务描边、统一完成／地下城等
+  状态字体、隐藏行末圈和 scrollbar。Quests runtime `1.16`／Quest Visual
+  Theme `1.5` 因此只显示 `QuestLogTitle1..18`，每行 `246 × 18px`、步进
+  `18px`，文字从 `x=18` 起并使用 `226px` 安全宽；全部行内 FontString
+  使用 `12px` 霞鹜文楷、空 flags 和透明／零偏移 shadow。
+- `QuestLogTitle19..23` 仍由 adapter 创建并保留 ID／脚本以兼容 pfUI／
+  pfQuest，但每次 provider 最终刷新后隐藏。任务行原生 check 与历史
+  `aeuiQuestListCheck` 均隐藏，不创建替代图标；accepted atlas 的两枚圈继续
+  供顶部真实等级／追踪 CheckButton 使用。
+- 左右页 scrollbar chrome 都隐藏并禁用鼠标；左页通过隐藏的真实 Slider
+  与 FauxScrollFrame offset 接收滚轮，右页通过 ScrollFrame range 接收滚轮。
+  任务名在 Quest Log 与 Tracker 共同调用 `ResolveQuestNameInk`，完成／失败／
+  地下城／进度只保留自己的状态墨色。Theme `1.5` 将实机中过淡的五档难度色
+  压为高对比深墨，并把任务类型／完成／失败分别归一化为深紫／深绿／深红；
+  adapter 同时处理模板拆分 FontString 和标题后的内联色码。该覆盖没有修改
+  source、atlas、manifest 或 provider 行为，也没有调用 ImageGen。
+- 新门禁：Turtle WoW 验证 18 行实际基线、状态 FontString、长列表滚轮首尾、
+  行末圈／scrollbar／19..23 不回生，以及同一任务跨 Quest Log／Tracker 的
+  名称颜色一致。
+
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |

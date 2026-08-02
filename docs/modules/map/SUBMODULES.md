@@ -7,10 +7,10 @@
 
 | 文件 | 已证实职责 | 项目处理 |
 |---|---|---|
-| [`modules/map.lua`](../../../addon/pfUI/modules/map.lua) | WorldMap 布局、缩放／拖动及地图相关呈现 | 当前原生回退；以后只替换外壳与控件 |
+| [`modules/map.lua`](../../../addon/pfUI/modules/map.lua) | WorldMap 布局、缩放／拖动及地图相关呈现 | 当前由 pfUI 正常加载；以后只在 Map 接管范围内替换外壳与控件 |
 | [`modules/mapcolors.lua`](../../../addon/pfUI/modules/mapcolors.lua) | 地图颜色行为 | 保留数据／配置，不把颜色烘焙进外框 |
 | [`modules/mapreveal.lua`](../../../addon/pfUI/modules/mapreveal.lua) | 未探索区域显示增强 | 保留功能，独立于外壳美术 |
-| [`modules/minimap.lua`](../../../addon/pfUI/modules/minimap.lua) | `Minimap`、mask、缩放、区域、坐标、邮件与战场入口 | 当前原生回退；未来 adapter 保留原生内容 |
+| [`modules/minimap.lua`](../../../addon/pfUI/modules/minimap.lua) | `Minimap`、mask、缩放、区域、坐标、邮件与战场入口 | 当前由 pfUI 正常加载；未来 adapter 保留真实内容与行为 |
 | [`modules/tracking.lua`](../../../addon/pfUI/modules/tracking.lua) | 追踪入口与状态 | 保留功能，按真实 Button 换肤 |
 | [`modules/addonbuttons.lua`](../../../addon/pfUI/modules/addonbuttons.lua) | 扫描、移动、保存小地图插件按钮；`pfMinimapButtons`／`pfMinimapButton` | 可复用行为，重做动态锚点与溢出呈现 |
 | [`modules/farmmode.lua`](../../../addon/pfUI/modules/farmmode.lua) | 小地图扩展使用模式 | 作为兼容状态，不能固化进罗盘母版 |

@@ -5,7 +5,8 @@
 - “香草同构角色面板”整体视觉：`P2`，已锁定。
 - pfUI 文件级映射：`P1`。
 - 子组件实机几何、production Prompt、透明 source 与 runtime：未开始。
-- 当前运行时：Character、Inspect 与 DressUp 使用原生回退。
+- 当前运行时：Character、Inspect 与 DressUp 恢复 pfUI 默认 skins；AEUI 尚未
+  接管任何 Character 对象。
 
 ## 子模块状态
 

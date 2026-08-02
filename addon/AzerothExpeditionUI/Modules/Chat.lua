@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local Chat = {}
-Chat.runtimeContract = "1.7"
+Chat.runtimeContract = "1.18"
 
 local CHAT_MEDIA = addon.media.root .. "Chat\\"
 local BOOK_TEXTURE = CHAT_MEDIA .. "ChatBookFrameV3"
@@ -68,6 +68,241 @@ local TAB_LAYOUT = {
   textHorizontalInset = 6,
   textHeight = 18,
 }
+
+local CHAT_TEXT_DEFAULT_SIZE = 12
+local CHAT_TEXT_LINE_SPACING = 3
+local CHAT_TEXT_SHADOW_COLOR = { 0, 0, 0, 0 }
+local CHAT_TEXT_SHADOW_OFFSET = { 0, 0 }
+
+local function RGB8(red, green, blue)
+  return { red / 255, green / 255, blue / 255 }
+end
+
+-- Preserve the familiar Vanilla channel hues, then lower their luminance into
+-- parchment ink. These are proportional darkened forms of the default colors,
+-- targeting at least 4.5:1 against the accepted book's representative paper
+-- color (#CDA155). Party and raid intentionally remain separate families.
+local CHAT_TEXT_PALETTE = {
+  say = RGB8(61, 61, 61),
+  channel = RGB8(77, 57, 57),
+  system = RGB8(64, 64, 0),
+  guild = RGB8(18, 71, 18),
+  party = RGB8(59, 59, 89),
+  raid = RGB8(98, 49, 0),
+  whisper = RGB8(90, 45, 90),
+  danger = RGB8(117, 29, 29),
+  emote = RGB8(97, 49, 24),
+}
+
+local CHAT_BASE_COLOR_RULES = {
+  {
+    target = "whisper",
+    types = {
+      "WHISPER", "WHISPER_INFORM", "REPLY",
+      "MONSTER_WHISPER", "MONSTER_BOSS_WHISPER",
+    },
+  },
+  {
+    target = "guild",
+    types = {
+      "GUILD", "OFFICER", "LOOT", "MONEY",
+      "COMBAT_XP_GAIN", "COMBAT_HONOR_GAIN",
+      "COMBAT_FACTION_CHANGE", "SKILL",
+    },
+  },
+  {
+    target = "party",
+    types = { "PARTY", "PARTY_LEADER" },
+  },
+  {
+    target = "raid",
+    types = {
+      "RAID", "RAID_LEADER",
+      "BATTLEGROUND", "BATTLEGROUND_LEADER",
+      "BATTLEGROUND_SYSTEM_ALLIANCE",
+    },
+  },
+  {
+    target = "danger",
+    types = {
+      "YELL", "RAID_WARNING", "ERROR", "MONSTER_YELL",
+      "MONSTER_BOSS_EMOTE", "BATTLEGROUND_SYSTEM_HORDE",
+    },
+  },
+  {
+    target = "emote",
+    types = { "EMOTE", "TEXT_EMOTE", "MONSTER_EMOTE" },
+  },
+  {
+    target = "system",
+    types = {
+      "SYSTEM", "IGNORED", "AFK", "DND", "FILTERED",
+      "CHANNEL_JOIN", "CHANNEL_LEAVE", "CHANNEL_LIST",
+      "CHANNEL_NOTICE", "CHANNEL_NOTICE_USER",
+      "BATTLEGROUND_SYSTEM_NEUTRAL", "OPENING",
+      "TRADESKILLS", "PET_INFO", "COMBAT_MISC_INFO",
+    },
+  },
+  {
+    target = "channel",
+    types = {
+      "CHANNEL", "CHANNEL1", "CHANNEL2", "CHANNEL3",
+      "CHANNEL4", "CHANNEL5", "CHANNEL6", "CHANNEL7",
+      "CHANNEL8", "CHANNEL9", "CHANNEL10",
+    },
+  },
+  {
+    target = "say",
+    types = { "SAY", "MONSTER_SAY" },
+  },
+}
+
+-- Exact colors emitted by ChatMOD 1.1, pfUI's class tinting and Vanilla
+-- item quality links. Values keep their source hue identity and only lower
+-- display luminance; payloads and global provider colors are never changed.
+local CHAT_INLINE_COLOR_MAP = {
+  -- ChatMOD timestamp, URL and generic accents.
+  ff33ccff = "ff103e4e",
+  ff00ffff = "ff004141",
+  ff00ccff = "ff003f4f",
+  ff66ffe6 = "ff1a403a",
+  ff9999ee = "ff363655",
+  ffff0000 = "ff7a0000",
+  ffff1919 = "ff760c0c",
+  ffff7f3f = "ff5b2d17",
+  ffffff00 = "ff3c3c00",
+  ffff9c00 = "ff533200",
+  ffff00ff = "ff6b006b",
+  ff10ff10 = "ff044404",
+  ff00ff00 = "ff004400",
+  ff3fbf3f = "ff164216",
+  ff0000ff = "ff0000c8",
+  ff006cff = "ff00367f",
+  ffb2b2b2 = "ff393939",
+  ff7f7f7f = "ff393939",
+  ffa0a0a0 = "ff393939",
+  a0a0a0a0 = "a0393939",
+  fff86256 = "ff622722",
+
+  -- DPSMate report accents seen in raid chat.
+  ffff8080 = "ff592d2d",
+  ff8cff80 = "ff234020",
+
+  -- Nine Vanilla class colors, proportionally darkened rather than reassigned.
+  ffc79c6e = "ff4b3b2a",
+  fff58cba = "ff583243",
+  ffabd473 = "ff354224",
+  fffff569 = "ff423f1b",
+  ffffffff = "ff333333",
+  ff0070de = "ff003d7a",
+  ff69ccf0 = "ff22424e",
+  ff9482c9 = "ff413959",
+  ffff7d0a = "ff633004",
+
+  -- Known Vanilla item-quality colors; links remain links and keep hue.
+  ff9d9d9d = "ff393939",
+  ff1eff00 = "ff084400",
+  ff0070dd = "ff003971",
+  ffa335ee = "ff551c7b",
+  ffff8000 = "ff5b2e00",
+  ffe6cc80 = "ff413924",
+}
+
+local CHAT_INLINE_CONTRAST_TARGET = 4.8
+local CHAT_INLINE_PAPER_COLOR = { 205, 161, 85 }
+local CHAT_INLINE_COLOR_CACHE = {}
+local CHAT_INLINE_COLOR_TARGETS = {}
+
+for _, target in pairs(CHAT_INLINE_COLOR_MAP) do
+  CHAT_INLINE_COLOR_TARGETS[target] = true
+end
+
+local function LinearizeColorChannel(value)
+  local encoded = value / 255
+  if encoded <= 0.04045 then
+    return encoded / 12.92
+  end
+  return ((encoded + 0.055) / 1.055) ^ 2.4
+end
+
+local function RelativeLuminance(red, green, blue)
+  return
+    0.2126 * LinearizeColorChannel(red) +
+    0.7152 * LinearizeColorChannel(green) +
+    0.0722 * LinearizeColorChannel(blue)
+end
+
+local CHAT_INLINE_PAPER_LUMINANCE = RelativeLuminance(
+  CHAT_INLINE_PAPER_COLOR[1],
+  CHAT_INLINE_PAPER_COLOR[2],
+  CHAT_INLINE_PAPER_COLOR[3]
+)
+
+local function InlineContrast(red, green, blue)
+  return
+    (CHAT_INLINE_PAPER_LUMINANCE + 0.05) /
+    (RelativeLuminance(red, green, blue) + 0.05)
+end
+
+-- Third-party addons can inject colors AEUI has never audited. Preserve dark
+-- custom colors exactly; only colors that are too bright for the paper are
+-- scaled toward black. Scaling all RGB channels equally retains their hue and
+-- saturation while avoiding an ever-growing destructive replacement list.
+local function AdaptUnknownInlineColor(color)
+  -- The provider chain can legitimately pass through more than one AEUI
+  -- bridge. Deterministic outputs are terminal even when a class target sits
+  -- at the 4.5:1 base-text threshold instead of the 4.8:1 unknown-color clamp.
+  if CHAT_INLINE_COLOR_TARGETS[color] then
+    return nil
+  end
+
+  local cached = CHAT_INLINE_COLOR_CACHE[color]
+  if cached ~= nil then
+    if cached then
+      return cached
+    end
+    return nil
+  end
+
+  local alpha = string.sub(color, 1, 2)
+  local red = tonumber(string.sub(color, 3, 4), 16)
+  local green = tonumber(string.sub(color, 5, 6), 16)
+  local blue = tonumber(string.sub(color, 7, 8), 16)
+  if not red or not green or not blue then
+    CHAT_INLINE_COLOR_CACHE[color] = false
+    return nil
+  end
+
+  if InlineContrast(red, green, blue) >= CHAT_INLINE_CONTRAST_TARGET then
+    CHAT_INLINE_COLOR_CACHE[color] = false
+    return nil
+  end
+
+  local lower = 0
+  local upper = 1
+  for _ = 1, 12 do
+    local scale = (lower + upper) / 2
+    local testRed = math.floor(red * scale + 0.5)
+    local testGreen = math.floor(green * scale + 0.5)
+    local testBlue = math.floor(blue * scale + 0.5)
+    if InlineContrast(testRed, testGreen, testBlue) >=
+      CHAT_INLINE_CONTRAST_TARGET
+    then
+      lower = scale
+    else
+      upper = scale
+    end
+  end
+
+  local replacement = alpha .. string.format(
+    "%02x%02x%02x",
+    math.floor(red * lower + 0.5),
+    math.floor(green * lower + 0.5),
+    math.floor(blue * lower + 0.5)
+  )
+  CHAT_INLINE_COLOR_CACHE[color] = replacement
+  return replacement
+end
 
 local function ConfigureBookSlice(
   owner,
@@ -459,6 +694,18 @@ function Chat:InstallHooks()
       Chat:OnRuntimeLayoutChanged()
     end)
   end
+
+  if type(getglobal("FCF_SetChatWindowFontSize")) == "function" then
+    hooksecurefunc("FCF_SetChatWindowFontSize", function(frame)
+      if
+        pfUI and
+        pfUI.chat and
+        IsDockedIn(frame, pfUI.chat.left)
+      then
+        Chat:OnRuntimeLayoutChanged()
+      end
+    end)
+  end
 end
 
 function Chat:InstallPfUIHooks()
@@ -604,7 +851,7 @@ function Chat:Apply()
   self:EnsureBook(owner)
   self:OnRuntimeLayoutChanged()
   self:StyleInput(owner)
-  self:SuppressLegacyInfoPanels()
+  self:SuppressChatInfoPanels()
   self:Maintain()
   self:ScheduleStartupLayout(TAB_LAYOUT.startupSettleDelay)
 end
@@ -653,6 +900,8 @@ function Chat:EnsureBook(owner)
   end
   if owner.aeuiReadingWash then
     owner.aeuiReadingWash:Hide()
+    owner.aeuiReadingWash:SetTexture(nil)
+    owner.aeuiReadingWash.aeuiRuntimeVersion = nil
   end
 
   local brightness = tonumber(addon.db.chat.bookBrightness) or 1.00
@@ -786,6 +1035,262 @@ function Chat:EnsureBookVisible(owner)
     self:EnsureBook(owner)
     owner.aeuiBookRecoveredAt = GetTime()
   end
+end
+
+function Chat:StyleChatFrameText(frame, force)
+  local currentFont
+  local currentSize
+  local currentFlags
+  if frame.GetFont then
+    currentFont, currentSize, currentFlags = frame:GetFont()
+  end
+
+  local fontSize = tonumber(currentSize)
+  if not fontSize or fontSize <= 0 then
+    fontSize =
+      tonumber(frame.aeuiTextFontSize) or CHAT_TEXT_DEFAULT_SIZE
+  end
+
+  local providerFont = currentFont
+  if not providerFont or providerFont == "" then
+    providerFont =
+      (pfUI and pfUI.font_default) or frame.aeuiTextFontPath
+  end
+
+  local styleNeedsApply =
+    force or
+    not currentFont or
+    not providerFont or
+    (currentFlags and currentFlags ~= "") or
+    frame.aeuiTextStyleVersion ~= self.runtimeContract
+
+  if frame.SetFont and providerFont and styleNeedsApply then
+    -- Omitting font flags removes pfUI's full OUTLINE while preserving both
+    -- the provider-owned font and the user's font size.
+    frame:SetFont(providerFont, fontSize)
+  end
+  if frame.SetShadowColor and styleNeedsApply then
+    frame:SetShadowColor(
+      CHAT_TEXT_SHADOW_COLOR[1],
+      CHAT_TEXT_SHADOW_COLOR[2],
+      CHAT_TEXT_SHADOW_COLOR[3],
+      CHAT_TEXT_SHADOW_COLOR[4]
+    )
+  end
+  if frame.SetShadowOffset and styleNeedsApply then
+    frame:SetShadowOffset(
+      CHAT_TEXT_SHADOW_OFFSET[1],
+      CHAT_TEXT_SHADOW_OFFSET[2]
+    )
+  end
+
+  frame.aeuiTextFontPath = providerFont
+  frame.aeuiTextFontSize = fontSize
+  frame.aeuiTextFontFlags = nil
+  frame.aeuiTextStyleVersion = self.runtimeContract
+end
+
+function Chat:TransformBaseMessageColor(red, green, blue)
+  if type(ChatTypeInfo) ~= "table" then
+    return red, green, blue
+  end
+
+  for _, rule in ipairs(CHAT_BASE_COLOR_RULES) do
+    for _, chatType in ipairs(rule.types) do
+      local source = ChatTypeInfo[chatType]
+      if
+        source and
+        NearlyEqual(red, source.r) and
+        NearlyEqual(green, source.g) and
+        NearlyEqual(blue, source.b)
+      then
+        local target = CHAT_TEXT_PALETTE[rule.target]
+        return target[1], target[2], target[3]
+      end
+    end
+  end
+
+  return red, green, blue
+end
+
+function Chat:NormalizeInlineMessageColors(text)
+  if type(text) ~= "string" then
+    return text
+  end
+
+  return string.gsub(
+    text,
+    "|([cC])([0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]" ..
+      "[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])",
+    function(marker, color)
+      local normalizedColor = string.lower(color)
+      local replacement =
+        CHAT_INLINE_COLOR_MAP[normalizedColor] or
+        AdaptUnknownInlineColor(normalizedColor)
+      if replacement then
+        return "|c" .. replacement
+      end
+      return "|" .. marker .. color
+    end
+  )
+end
+
+function Chat:IsMessagePaletteManaged(frame)
+  return
+    frame and
+    frame.GetParent and
+    addon.db and
+    addon.db.chat and
+    addon.db.chat.enabled and
+    pfUI and
+    pfUI.chat and
+    frame:GetParent() == pfUI.chat.left
+end
+
+function Chat:ApplyMessagePalette(frame, text, red, green, blue)
+  if self:IsMessagePaletteManaged(frame) then
+    local originalText = text
+    local originalRed = red
+    local originalGreen = green
+    local originalBlue = blue
+
+    text = self:NormalizeInlineMessageColors(text)
+    red, green, blue =
+      self:TransformBaseMessageColor(red, green, blue)
+
+    self.messagePaletteCalls = (self.messagePaletteCalls or 0) + 1
+    frame.aeuiMessagePaletteCalls =
+      (frame.aeuiMessagePaletteCalls or 0) + 1
+    if
+      text ~= originalText or
+      red ~= originalRed or
+      green ~= originalGreen or
+      blue ~= originalBlue
+    then
+      self.messagePaletteMutations =
+        (self.messagePaletteMutations or 0) + 1
+      frame.aeuiMessagePaletteMutations =
+        (frame.aeuiMessagePaletteMutations or 0) + 1
+    end
+  end
+
+  return text, red, green, blue
+end
+
+function Chat:InstallChatMODFinalColorHook(frame)
+  if not frame or type(frame.ORG_AddMessage) ~= "function" then
+    return
+  end
+
+  if frame.ORG_AddMessage == frame.aeuiChatMODFinalColorWrapper then
+    frame.aeuiChatMODFinalColorVersion = self.runtimeContract
+    return
+  end
+
+  local providerAddMessage = frame.ORG_AddMessage
+  local wrapper = function(
+    self,
+    text,
+    red,
+    green,
+    blue,
+    alpha,
+    messageId
+  )
+    text, red, green, blue =
+      Chat:ApplyMessagePalette(self, text, red, green, blue)
+    return providerAddMessage(
+      self,
+      text,
+      red,
+      green,
+      blue,
+      alpha,
+      messageId
+    )
+  end
+
+  frame.aeuiChatMODFinalColorWrapper = wrapper
+  frame.ORG_AddMessage = wrapper
+  frame.aeuiChatMODFinalColorVersion = self.runtimeContract
+end
+
+function Chat:InstallMessageColorHook(frame)
+  self:InstallChatMODFinalColorHook(frame)
+
+  if
+    not frame or
+    frame.aeuiMessageColorHooked or
+    type(frame.HookAddMessage) ~= "function"
+  then
+    return
+  end
+
+  frame.aeuiProviderHookAddMessage = frame.HookAddMessage
+  frame.HookAddMessage = function(
+    self,
+    text,
+    red,
+    green,
+    blue,
+    alpha,
+    messageId
+  )
+    text, red, green, blue =
+      Chat:ApplyMessagePalette(self, text, red, green, blue)
+
+    return self:aeuiProviderHookAddMessage(
+      text,
+      red,
+      green,
+      blue,
+      alpha,
+      messageId
+    )
+  end
+  frame.aeuiMessageColorHooked = true
+  frame.aeuiMessageColorVersion = self.runtimeContract
+end
+
+function Chat:EnsureMessageColorHooks(owner)
+  for index = 1, NUM_CHAT_WINDOWS do
+    local frame = getglobal("ChatFrame" .. index)
+    if frame and frame.GetParent and frame:GetParent() == owner then
+      self:InstallMessageColorHook(frame)
+    end
+  end
+end
+
+function Chat:GetMessageColorStatus()
+  local managed = 0
+  local hooked = 0
+  local final = 0
+  local count = tonumber(NUM_CHAT_WINDOWS) or 0
+
+  for index = 1, count do
+    local frame = getglobal("ChatFrame" .. index)
+    if frame then
+      if self:IsMessagePaletteManaged(frame) then
+        managed = managed + 1
+      end
+      if frame.aeuiMessageColorHooked then
+        hooked = hooked + 1
+      end
+      if
+        frame.aeuiChatMODFinalColorWrapper and
+        frame.ORG_AddMessage == frame.aeuiChatMODFinalColorWrapper
+      then
+        final = final + 1
+      end
+    end
+  end
+
+  return
+    "m" .. managed ..
+    "/h" .. hooked ..
+    "/f" .. final ..
+    "/c" .. (self.messagePaletteCalls or 0) ..
+    "/x" .. (self.messagePaletteMutations or 0)
 end
 
 function Chat:LayoutTabPanel(owner, force)
@@ -963,6 +1468,24 @@ function Chat:LayoutChatFrames(owner, force)
   for index = 1, NUM_CHAT_WINDOWS do
     local frame = getglobal("ChatFrame" .. index)
     if IsDockedIn(frame, owner) then
+      self:InstallMessageColorHook(frame)
+      self:StyleChatFrameText(frame, force)
+      if frame.SetSpacing then
+        local spacing
+        if frame.GetSpacing then
+          spacing = frame:GetSpacing()
+        end
+        if
+          spacing == nil or
+          not NearlyEqual(spacing, CHAT_TEXT_LINE_SPACING) or
+          frame.aeuiTextMetricsVersion ~= self.runtimeContract
+        then
+          frame:SetSpacing(CHAT_TEXT_LINE_SPACING)
+        end
+        frame.aeuiTextLineSpacing = CHAT_TEXT_LINE_SPACING
+        frame.aeuiTextMetricsVersion = self.runtimeContract
+      end
+
       local topInset = TAB_LAYOUT.contentTopInset
       if frame.pfCombatLog and CombatLogQuickButtonFrame_Custom then
         topInset =
@@ -1122,26 +1645,40 @@ function Chat:UpdateInputState(editbox)
   editbox.aeuiInputState = state
 end
 
-function Chat:SuppressLegacyInfoPanels()
-  if not pfUI.panel then
+function Chat:SuppressChatInfoPanel(panel)
+  if not panel then
     return
   end
 
-  local expedition =
-    pfUI_config and
-    pfUI_config.appearance and
-    pfUI_config.appearance.expedition
-  if expedition and expedition.legacy_info_panels == "1" then
+  if not panel.aeuiChatInfoPanelHideHook and panel.SetScript then
+    local originalOnShow = panel.GetScript and panel:GetScript("OnShow")
+    panel:SetScript("OnShow", function()
+      if originalOnShow then
+        originalOnShow()
+      end
+      if addon.db and addon.db.chat and addon.db.chat.enabled then
+        panel:Hide()
+      end
+    end)
+    panel.aeuiChatInfoPanelHideHook = true
+  end
+
+  if panel:IsShown() then
+    panel:Hide()
+  end
+end
+
+function Chat:SuppressChatInfoPanels()
+  local panels = pfUI and pfUI.panel
+  if not panels then
     return
   end
 
-  for _, panel in ipairs({
-    pfUI.panel.left,
-    pfUI.panel.right,
-    pfUI.panel.minimap,
-  }) do
-    if panel then panel:Hide() end
-  end
+  -- These two bars are visually attached to pfUI's left/right chat frames.
+  -- Keep the panel provider and its configuration loaded, and leave the
+  -- independent minimap panel untouched.
+  self:SuppressChatInfoPanel(panels.left)
+  self:SuppressChatInfoPanel(panels.right)
 end
 
 function Chat:Maintain()
@@ -1153,11 +1690,13 @@ function Chat:Maintain()
   end
 
   self:SuppressRightChat()
+  self:SuppressChatInfoPanels()
   if pfUI.chat.hideLock then
     return
   end
 
   local owner = pfUI.chat.left
+  self:EnsureMessageColorHooks(owner)
   self:EnsureBookVisible(owner)
   self:ObserveOwnerScale(owner, true)
   if self.runtimeLayoutPending then

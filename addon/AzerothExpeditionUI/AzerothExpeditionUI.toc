@@ -8,4 +8,5 @@
 
 Core\Bootstrap.lua
 Modules\Chat.lua
+Modules\QuestVisualTheme.lua
 Modules\Quests.lua

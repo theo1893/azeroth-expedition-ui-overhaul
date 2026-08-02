@@ -7,7 +7,7 @@
 
 | 文件 | 已证实对象 | 项目处理 |
 |---|---|---|
-| [`skins/blizzard/character.lua`](../../../addon/pfUI/skins/blizzard/character.lua) | `CharacterFrame`、`PaperDollFrame`、装备槽、属性、抗性、Pet、Reputation、Skills、Honor／Arena 与底部 Tabs | 当前原生回退；以后按子模块换肤 |
+| [`skins/blizzard/character.lua`](../../../addon/pfUI/skins/blizzard/character.lua) | `CharacterFrame`、`PaperDollFrame`、装备槽、属性、抗性、Pet、Reputation、Skills、Honor／Arena 与底部 Tabs | 当前由 pfUI 正常加载；以后只在 Character 接管范围内按子模块换肤 |
 | [`skins/blizzard/inspect.lua`](../../../addon/pfUI/skins/blizzard/inspect.lua) | `InspectFrame`、纸娃娃、装备槽、Honor／Arena／Turtle talent tabs | 复用角色组件，但保持只读语义 |
 | [`skins/blizzard/dressup.lua`](../../../addon/pfUI/skins/blizzard/dressup.lua) | `DressUpFrame`、模型、旋转、Reset／Cancel | 复用外壳、按钮和模型背景 |
 
@@ -70,4 +70,4 @@ Ranged。
 - 中央原生 3D 模型、装备图标、属性文字、品质、耐久和交互保持动态。
 - 点击装备槽、旋转、隐藏头盔／披风、切换 Tabs、声望／技能操作不改写。
 - 第三方附页只能作为可收起 adapter，默认不改变主窗口轮廓。
-- 对象缺失时局部回退原生，不启用 pfUI 现代半透明 skin。
+- 对象缺失时局部回退 pfUI／原生；Character adapter 不得改变其他 pfUI skin。

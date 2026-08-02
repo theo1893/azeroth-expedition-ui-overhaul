@@ -161,7 +161,7 @@ def main() -> None:
             "`QuestLogTitle1..18`",
             "`QuestLogTitleButtonTemplate`",
             "`QUEST.LOG.LIST.CHECK`",
-            "不是选择 Button",
+            "runtime 全部隐藏且不创建替代命中",
             "`QUEST.LOG.SELECTION`",
             "暂停挂载并隐藏",
             "adapter 不再创建、挂载或刷新酒红色书签",
@@ -171,10 +171,9 @@ def main() -> None:
             "`GetQuestTimers()`",
             "`GetQuestIndexForTimer()`",
             "`QUEST.LOG.STATE.SEAL`",
-            "`224 × 15 UI px`",
-            "`14px` 纵向步进",
             "`QUESTS_DISPLAYED = 18`",
-            "`224 × 18 UI px`",
+            "`246 × 18 UI px`",
+            "安全宽度 `226px`",
             "`18px`",
             "work/QUEST.LOG.LEFTPAGE.md",
             "`QL-B1`",
@@ -370,7 +369,7 @@ def main() -> None:
             "`candidate-rejected / repair-budget-exhausted / P3`",
             "work/QUEST.LOG.LEFTPAGE.md",
             "`QUESTS_DISPLAYED = 18`",
-            "`224 × 18px`",
+            "`246 × 18px`",
             "A 终止于 `4/5`",
             "`user-rejected /",
             "scope-removed / P3`",
@@ -1736,15 +1735,62 @@ def main() -> None:
         / "Modules"
         / "Quests.lua"
     ).read_text(encoding="utf-8")
+    quest_theme = (
+        ROOT
+        / "addon"
+        / "AzerothExpeditionUI"
+        / "Modules"
+        / "QuestVisualTheme.lua"
+    ).read_text(encoding="utf-8")
     require(
-        quest_adapter,
+        quest_theme,
         (
-            'Quests.runtimeContract = "1.9"',
+            'contract = "1.5"',
             "QuestLogShellV4",
             "QuestLogDirectoryMarksV1",
             "QuestTrackerPaperV1",
             "QuestToolWaxSealStatesV1",
+            "LXGWWenKaiGB-Medium.ttf",
+            "NotoSerifSC-SemiBold.ttf",
+            "difficulty",
+            "questType",
+            "|cff2f1236",
+            "|cff291d00",
+            "complete",
+            "incomplete",
+            "leather",
+            "providerPanelHeight = 16",
+            "bottomContentPadding = 16",
+            "trackerQuestName",
+            "providerOwned = true",
+            "fallbackPath",
+            'flags = ""',
+            "hideEntryIcons = true",
+            "size = 12",
+        ),
+        "shared quest visual theme",
+    )
+    require(
+        quest_adapter,
+        (
+            'Quests.runtimeContract = "1.16"',
+            "ApplyTrackerProviderFont",
+            "ResolveQuestNameInk",
+            "ApplyDirectoryTypography",
+            "NormalizeDirectoryInlineStatus",
+            "ResolveDirectoryStatusInks",
+            "pfUI.font_default",
+            "addon.questVisualTheme",
             "ApplyPfQuestTrackerPaper",
+            "ApplyPfQuestTrackerEntryTheme",
+            "InstallPfQuestTrackerEntryThemeHooks",
+            "ApplyPfQuestTrackerContentSafeHeight",
+            "aeuiQuestVisualThemeDirty",
+            "aeuiQuestBottomContentPadding",
+            "SuppressPfQuestTrackerEntryIcon",
+            "aeuiQuestEntryIconThemeContract",
+            "ApplyDetailTextTheme",
+            "aeuiQuestVisualThemeContract",
             "aeuiQuestPaperSlices",
             "EnsureQuestLogChromeSeal",
             "EnsurePfQuestTrackerHubSeal",
@@ -1755,15 +1801,20 @@ def main() -> None:
             "local CONTROL",
             "QuestLogTitleButtonTemplate",
             "FauxScrollFrame_GetOffset",
-            "IsQuestWatched",
-            "LXGWWenKaiGB-Medium.ttf",
-            "NotoSerifSC-SemiBold.ttf",
+            "rowCount = 18",
+            "providerRowCeiling = 23",
+            "rowWidth = 246",
+            "rowHeight = 18",
+            "textWidth = 226",
             "CaptureAndHideNativeTextures",
             "SuppressNativeRowSelection",
             "HideCollapseAllButton",
             "aeuiQuestCollapseSuppressed",
             "StyleLeatherButton",
+            "UpdateActionButtonStates",
             "HideDetailScrollbar",
+            "HideListScrollbar",
+            "InstallListMouseWheel",
             "InstallDetailMouseWheel",
             "QuestLogDetailScrollFrameScrollBar",
             "EnableMouseWheel(true)",
@@ -1789,6 +1840,8 @@ def main() -> None:
         "quest runtime adapter",
     )
     assert "QuestLogSelectionBookmarkV1" not in quest_adapter
+    assert '"OnEnable"' not in quest_adapter
+    assert '"OnDisable"' not in quest_adapter
     assert "InstallSelectionHooks" not in quest_adapter
     assert "GetQuestLogSelection" not in quest_adapter
     assert "StyleCollapseAllButton" not in quest_adapter

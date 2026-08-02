@@ -7,14 +7,15 @@
 
 | 来源 | 真实对象／职责 | 项目处理 |
 |---|---|---|
-| [`modules/chat.lua`](../../../addon/pfUI/modules/chat.lua) | `pfUI.chat.left/right`、`panelTop`、`ChatFrameN`、`ChatFrameNTab`、`pfUI.chat.editbox`、`ChatFrameEditBox`；聊天事件、停靠、滚动、历史、输入 | 只保留左侧主聊天书；右侧容器隐藏，其拾取／经验／荣誉／技能消息组回收到 `ChatFrame1` |
+| [`modules/chat.lua`](../../../addon/pfUI/modules/chat.lua) | `pfUI.chat.left/right`、`panelTop`、`ChatFrameN`、`ChatFrameNTab`、`pfUI.chat.editbox`、`ChatFrameEditBox`；聊天事件、停靠、滚动、历史、输入 | 只保留左侧主聊天书；右侧容器隐藏，其拾取／经验／荣誉／技能消息组回收到 `ChatFrame1`；在 pfUI 完成解析和历史存储后、调用 provider `HookAddMessage` 前，直接调用 AEUI 的显示色板桥 |
+| 外部 `ChatMOD 1.1` | `S_AddMessage` 在消息中注入时间戳、职业名、等级难度、URL、自身高亮等内嵌颜色，并依据加载顺序经 pfUI `HookAddMessage` 或直接调用 Frame 的 `ORG_AddMessage`；其功能、配置与 SavedVariables 仍由 ChatMOD 持有 | 不修改 ChatMOD 文件或配置；同时守卫 pfUI 最终输出、受管 Hook 与 ChatMOD `ORG_AddMessage`，不再依赖 `S_AddMessage` 函数身份；已审计颜色映射为保留原色相的羊皮纸墨色，未知亮色仅等比例压暗，深色自定义值与链接载荷原样保留 |
 | `ChatFrameNTabFlash` | Tab 未读闪烁语义 | 绑定独立未读覆盖，不改变 Tab 几何 |
 | `ChatMenu`、`EmoteMenu`、`LanguageMenu`、`VoiceMacroMenu` | 原生聊天弹出菜单实例 | 当前仍为过渡外观；未来复用一套 `CHAT.POPUP.SHELL`，不得生成四套不同物件 |
 | [`modules/chatcopy.lua`](../../../addon/pfUI/modules/chatcopy.lua) | `pfChatCopyButton`、`ChatFrameScrollN`、`pfChatCopyBoxN` | 功能源码保留，默认不加载；完成组件资产后恢复 |
 | [`modules/whisperproxy.lua`](../../../addon/pfUI/modules/whisperproxy.lua) | `pfWhisperProxy` 代理开关；调用共享 `CreateQuestionDialog` | 功能源码保留，默认不加载；Chat 只拥有代理开关，对话框归未来 System 公共弹窗 |
 | [`modules/bubbles.lua`](../../../addon/pfUI/modules/bubbles.lua) | 聊天气泡呈现 | 不属于战地旧书主框，当前原生回退 |
-| [`modules/panel.lua`](../../../addon/pfUI/modules/panel.lua) | 公会、背包、耐久、好友、延迟、时钟、金币等 legacy widgets | 源码保留但默认不加载；不属于聊天视觉 |
-| [`Modules/Chat.lua`](../../../addon/AzerothExpeditionUI/Modules/Chat.lua) | AEUI 书框、Tab、输入和未读 adapter | 只换纹理、UV 和状态，不改聊天数据 |
+| [`modules/panel.lua`](../../../addon/pfUI/modules/panel.lua) | 公会、护甲、好友、帧率／延迟、时间、金币与小地图等 legacy widgets | provider 与配置页由 pfUI 正常加载；Chat 只隐藏贴附左右聊天框的 `pfUI.panel.left/right`，不改槽位／脚本／SavedVariables，`pfUI.panel.minimap` 保留 |
+| [`Modules/Chat.lua`](../../../addon/AzerothExpeditionUI/Modules/Chat.lua) | AEUI 书框、Tab、输入、未读与最终显示 adapter | 只换纹理、UV、状态和受管显示颜色，不改聊天事件、历史、链接载荷或 provider 配置 |
 
 ## 稳定子模块
 
@@ -27,7 +28,7 @@
 | `CHAT.UNREAD` | `ChatFrameNTabFlash` | 蜡封或布结显示／隐藏 | 独立覆盖，不参与 Tab 排列 |
 | `CHAT.INPUT` | `pfUI.chat.editbox`、`ChatFrameEditBox` | 普通／聚焦输入纸带，各自左／中／右 | 两状态几何完全相同；不烘焙输入文字 |
 | `CHAT.INPUT.LANGUAGE` | 可选 `ChatFrameEditBoxLanguage` | 普通／悬停／按下／禁用／当前语言 | 独立 Button，不画进输入纸带 |
-| `CHAT.TEXT` | `ChatFrameN` | 无位图；字体、安全区和内边距 | 不生成行卡片、气泡或消息底色 |
+| `CHAT.TEXT` | `ChatFrameN` | 无新增位图；pfUI 配置字体、无描边／无阴影、安全区、内边距、`3px` 行距；频道与九职业采用 Vanilla 原色相的深墨版本，小队蓝紫与团队焦橙独立；基础目标在代表纸色上约 `>=4.5:1` | 接管当前 Parent 为左书的全部正文最终显示参数，包括被 pfUI 启发式标为 `pfCombatLog` 的窗口；不改全局 `ChatTypeInfo`、ChatMOD／pfUI 配置、历史存储或链接载荷；已知颜色使用确定性映射，未知色仅在低于 `4.8:1` 时等比例压暗，足够深则原样保留；不生成连续压光、行卡片、气泡或逐行底色 |
 | `CHAT.SCROLL.UP` | `ChatFrameNUpButton` | 当前被 pfUI 隐藏 | 未来若恢复，必须独立四状态 |
 | `CHAT.SCROLL.DOWN` | `ChatFrameNDownButton` | 当前被 pfUI 隐藏 | 未来若恢复，必须独立四状态 |
 | `CHAT.SCROLL.BOTTOM` | `ChatFrameNBottomButton` | 当前被 pfUI 隐藏 | 未来若恢复，必须独立四状态 |
@@ -56,7 +57,12 @@
 
 - 唯一聊天书基准容器：`440 × 320 UI px`；`pfChatRight` 不参与布局或资产。
 - 正文安全区：`x=30..410`、`y=32..280`，即 `380 × 248 UI px`。
-- 最低容量：12px 字号、14px 行高时 17 行中文。
+- 最低容量：12px 字号加 `3px` `SetSpacing`，形成约 15px 行高与 16 行中文；
+  用户字号、字体配置和消息内容仍由原生／pfUI 持有，AEUI 仅为受管正文移除
+  全描边与文字阴影，并把基础频道色与 ChatMOD／pfUI 已知内嵌高亮局部映射为
+  保留 Vanilla 原色相的深色语义墨色；小队保持蓝紫、团队保持焦橙，九职业
+  采用各自原始 RGB 的等比例深色版本，战士保持棕褐／青铜、牧师保持中性；
+  书页上不增加连续压光层。
 - Tab：四枚基准为 `92 × 30 UI px`、间距 `3px`、顶部下移 `2px`，共用
   底线与点击画布；承托带高 `16px`、顶部下移 `18px`；超过四枚时只在
   停靠事件后等宽收缩。
@@ -98,4 +104,16 @@
   EffectiveScale 数值变化时触发一次。无缩放的普通拖动和后续周期维护均
   不得重写几何。
 - 禁用 AEUI 后回退 pfUI 维护分支；对象缺失时局部回退。
-- legacy 信息 panel 不得因聊天重构重新挂载。
+- legacy 信息 provider 由 pfUI 独立拥有；Chat adapter 只允许隐藏
+  `pfUI.panel.left/right` 并安装幂等 `OnShow` guard，不得重挂或改写其
+  Parent、Point、尺寸、槽位、Button 脚本和 SavedVariables；小地图 Panel
+  不得隐藏。
+- ChatMOD 的时间戳、彩色玩家名、等级难度、自身高亮与 URL 功能保持启用；
+  AEUI 在 pfUI 解析完成后的直接桥、受管 `HookAddMessage` 链和 ChatMOD
+  `ORG_AddMessage` 最终出口上幂等替换已审计的八位颜色码，以兼容两种加载
+  顺序与包装函数；作用域只要求 Frame 当前 Parent 为 `pfUI.chat.left`，包括
+  被 pfUI 按消息类型数量启发式标为 `pfCombatLog` 的窗口，不依赖瞬时
+  `isDocked`。不修改 ChatMOD 源码／SavedVariables，
+  不剥离 `|H...|h` 链接；未知第三方颜色只有在纸面过亮时才等比例压暗，已经
+  足够深的值原样保留。现有维护节拍只负责
+  发现晚出现的 provider 并安装一次 wrapper，不重写消息、几何或插件配置。

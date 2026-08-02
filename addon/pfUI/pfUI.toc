@@ -1,9 +1,9 @@
 ## Interface: 11200
 ## Title-zhCN: |CFFC89B55[界面]|RpfUI - 艾泽拉斯征程维护分支
 ## Author: Shagu - modfied by me0wg4ming
-## Notes: pfUI functionality with native-first Azeroth Expedition presentation routing.
-## Notes-zhCN: 保留pfUI功能；未完成视觉模块优先使用香草原生界面。
-## Version: 8.1.0-aeui.3
+## Notes: pfUI with scoped Azeroth Expedition ownership for Chat and Quest Log.
+## Notes-zhCN: pfUI 默认接管全部界面；艾泽拉斯征程仅接管聊天与任务日志。
+## Version: 8.1.0-aeui.4
 ## X-Upstream-Version: 8.1.0
 ## X-Upstream-Commit: fbc8fb608b79adf32049543ec12fcc020e0acd69
 ## SavedVariables: pfUI_profiles, pfUI_addon_profiles, pfUI_cache, pfUI_throttle, pfUI_playerDB

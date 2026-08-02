@@ -171,14 +171,10 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       pfUI_config and
       pfUI_config.appearance and
       pfUI_config.appearance.expedition
-    local nativeFallback =
+    local scopedRoute =
       expedition and
       expedition.enabled == "1" and
-      expedition.vanilla_fallback == "1"
-    local nativeSkins =
-      expedition and
-      expedition.enabled == "1" and
-      expedition.native_blizzard_skins == "1"
+      expedition.ownership == "scoped-v1"
     local chatRuntime =
       addon.modules.Chat and
       addon.modules.Chat.runtimeContract or
@@ -187,17 +183,25 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       addon.modules.Quests and
       addon.modules.Quests.runtimeContract or
       "unknown"
+    local chatColorStatus =
+      addon.modules.Chat and
+      addon.modules.Chat.GetMessageColorStatus and
+      addon.modules.Chat:GetMessageColorStatus() or
+      "unavailable"
     addon:Print(
       "version " .. addon.version ..
       ", chat=" ..
       (AzerothExpeditionUIDB.chat.enabled and "enabled" or "disabled") ..
       ", chat-runtime=" .. tostring(chatRuntime) ..
+      ", chat-color=" .. tostring(chatColorStatus) ..
       ", quests=" ..
       (AzerothExpeditionUIDB.quests.enabled and "enabled" or "disabled") ..
       ", quest-runtime=" .. tostring(questRuntime) ..
       ", pfUI=" .. (pfUI and "available" or "missing") ..
-      ", route=" .. (nativeFallback and "native-first" or "pfui") ..
-      ", blizzard-skins=" .. (nativeSkins and "native" or "pfui")
+      ", route=" .. (scopedRoute and "scoped" or "pfui") ..
+      ", ownership=" .. (scopedRoute and "chat,quests" or "none") ..
+      ", blizzard-skins=" ..
+      (scopedRoute and "pfui-except-quest-log" or "pfui")
     )
   else
     addon:Print("/aeui chat, /aeui quests, /aeui refresh, /aeui status")

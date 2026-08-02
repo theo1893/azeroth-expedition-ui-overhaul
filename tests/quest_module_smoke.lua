@@ -60,9 +60,25 @@ function Object:SetText(value)
 end
 function Object:GetText() return self.text end
 function Object:SetTextColor(...) self.textColor = { ... } end
+function Object:GetTextColor()
+  if self.textColor then
+    return table.unpack(self.textColor)
+  end
+  return 1, 1, 1, 1
+end
 function Object:SetID(value) self.id = value end
 function Object:GetID() return self.id end
 function Object:SetFont(...) self.font = { ... } end
+function Object:GetFont()
+  if self.font then
+    return table.unpack(self.font)
+  end
+end
+function Object:SetShadowColor(...) self.shadowColor = { ... } end
+function Object:SetShadowOffset(...) self.shadowOffset = { ... } end
+function Object:GetStringWidth()
+  return string.len(tostring(self.text or "")) * 6
+end
 function Object:GetFontString() return self.fontString end
 function Object:SetWidth(value) self.width = value end
 function Object:SetHeight(value) self.height = value end
@@ -87,8 +103,24 @@ function Object:GetPoint(index)
   end
 end
 function Object:SetAllPoints(target) self.allPoints = target end
-function Object:SetScript(kind, callback) self.scripts[kind] = callback end
-function Object:GetScript(kind) return self.scripts[kind] end
+local unsupportedVanillaButtonScripts = {
+  OnEnable = true,
+  OnDisable = true,
+}
+function Object:SetScript(kind, callback)
+  assert(
+    not unsupportedVanillaButtonScripts[kind],
+    kind .. " is not a Vanilla 1.12 Button script handler"
+  )
+  self.scripts[kind] = callback
+end
+function Object:GetScript(kind)
+  assert(
+    not unsupportedVanillaButtonScripts[kind],
+    kind .. " is not a Vanilla 1.12 Button script handler"
+  )
+  return self.scripts[kind]
+end
 function Object:IsShown() return self.shown end
 function Object:Show()
   local changed = not self.shown
@@ -105,18 +137,10 @@ function Object:Hide()
   end
 end
 function Object:Enable()
-  local changed = not self.enabled
   self.enabled = true
-  if changed and self.scripts.OnEnable then
-    self.scripts.OnEnable()
-  end
 end
 function Object:Disable()
-  local changed = self.enabled
   self.enabled = false
-  if changed and self.scripts.OnDisable then
-    self.scripts.OnDisable()
-  end
 end
 function Object:IsEnabled() return self.enabled end
 function Object:EnableMouse(value) self.mouseEnabled = value end
@@ -125,6 +149,11 @@ function Object:GetVerticalScroll() return self.verticalScroll or 0 end
 function Object:SetVerticalScroll(value) self.verticalScroll = value end
 function Object:GetVerticalScrollRange()
   return self.verticalScrollRange or 0
+end
+function Object:GetValue() return self.value or 0 end
+function Object:SetValue(value) self.value = value end
+function Object:GetMinMaxValues()
+  return self.minimumValue or 0, self.maximumValue or 0
 end
 function Object:GetRegions() return table.unpack(self.regions) end
 function Object:CreateTexture(name, layer)
@@ -245,6 +274,7 @@ local questEntries = {
   { "爱与家庭", 60, nil, false, nil, nil },
   { "达隆郡的战斗", 60, nil, false, nil, nil },
   { "冬泉谷", 0, nil, true, true, nil },
+  { "完成的地下城任务", 60, "Dungeon", false, nil, 1 },
 }
 function GetNumQuestLogEntries()
   return table.getn(questEntries)
@@ -252,6 +282,7 @@ end
 function GetQuestLogTitle(index)
   return table.unpack(questEntries[index], 1, 6)
 end
+function UnitLevel() return 60 end
 function IsQuestWatched(index)
   return watched[index]
 end
@@ -333,6 +364,8 @@ QuestLogListScrollFrameScrollBar =
     QuestLogListScrollFrame
   )
 QuestLogListScrollFrameScrollBar.mouseEnabled = true
+QuestLogListScrollFrameScrollBar.minimumValue = 0
+QuestLogListScrollFrameScrollBar.maximumValue = 180
 QuestLogListScrollFrameScrollBar.thumbTexture =
   QuestLogListScrollFrameScrollBar:CreateTexture(
     "QuestLogListScrollFrameScrollBarThumbTexture",
@@ -471,6 +504,19 @@ for index = 1, 6 do
   row:SetScript("OnMouseDown", originalQuestRowMouseDown)
   row:SetScript("OnMouseUp", originalQuestRowMouseUp)
 end
+QuestLogTitle5:SetText(
+  " [60+] " ..
+    questEntries[5][1] ..
+    " |cffffff00(Dungeon)|r"
+)
+local questLogTitle5Tag =
+  NewObject("QuestLogTitle5Tag", QuestLogTitle5, "FontString")
+questLogTitle5Tag:SetText("(Dungeon)")
+questLogTitle5Tag:SetTextColor(1, 1, 0, 1)
+questLogTitle5Tag:SetFont("NativeSmall.ttf", 9, "OUTLINE")
+questLogTitle5Tag:SetShadowColor(0, 0, 0, 1)
+questLogTitle5Tag:SetShadowOffset(1, -1)
+table.insert(QuestLogTitle5.regions, questLogTitle5Tag)
 
 QuestLogFrameAbandonButton =
   CreateFrame("Button", "QuestLogFrameAbandonButton", QuestLogFrame)
@@ -491,7 +537,9 @@ local abandonScript = function()
 end
 QuestLogFrameAbandonButton:SetScript("OnClick", abandonScript)
 
-pfUI = {}
+pfUI = {
+  font_default = "pfui-font.ttf",
+}
 AzerothExpeditionUIDB = {
   sentinel = "preserve",
   quests = {
@@ -501,6 +549,10 @@ AzerothExpeditionUIDB = {
 }
 
 dofile(root .. "/addon/AzerothExpeditionUI/Core/Bootstrap.lua")
+dofile(
+  root ..
+    "/addon/AzerothExpeditionUI/Modules/QuestVisualTheme.lua"
+)
 dofile(root .. "/addon/AzerothExpeditionUI/Modules/Quests.lua")
 
 AzerothExpeditionUI:Initialize()
@@ -509,8 +561,12 @@ AzerothExpeditionUI:Refresh()
 assert(QuestLogFrame:GetWidth() == 676, "quest shell width was not applied")
 assert(QuestLogFrame:GetHeight() == 464, "quest shell height was not applied")
 assert(
-  QuestLogFrame.aeuiQuestRuntimeContract == "1.9",
+  QuestLogFrame.aeuiQuestRuntimeContract == "1.16",
   "quest runtime contract was not recorded"
+)
+assert(
+  QuestLogFrame.aeuiQuestVisualThemeContract == "1.5",
+  "Quest Log did not consume the shared visual theme"
 )
 assert(QuestLogFrame.aeuiQuestShell, "quest shell texture was not created")
 assert(
@@ -636,7 +692,7 @@ assert(
 )
 assert(
   QuestLogQuestCount.font[1]:find("NotoSerifSC%-SemiBold.ttf") and
-    QuestLogQuestCount.textColor[1] == 0.24,
+    QuestLogQuestCount.textColor[1] == 0.141,
   "quest count did not receive the book-ink typography"
 )
 local trackPoint, trackRelative =
@@ -707,20 +763,22 @@ assert(
   "hidden detail scrollbar did not hand reading control to the page"
 )
 assert(
-  QuestLogListScrollFrameScrollBar:IsShown() and
-    QuestLogListScrollFrameScrollBar.mouseEnabled == true,
-  "left-page list scrollbar was hidden with the detail scrollbar"
+  not QuestLogListScrollFrameScrollBar:IsShown() and
+    not QuestLogListScrollFrameScrollBar.thumbTexture:IsShown() and
+    QuestLogListScrollFrameScrollBar.mouseEnabled == false and
+    QuestLogListScrollFrame.mouseWheelEnabled == true,
+  "left-page scrollbar chrome remained visible or wheel input was lost"
 )
 assert(AzerothExpeditionUIDB.sentinel == "preserve")
 
-assert(QUESTS_DISPLAYED == 23, "quest row count was not expanded to 23")
-for index = 1, 23 do
+assert(QUESTS_DISPLAYED == 18, "quest row count was not restored to 18")
+for index = 1, 18 do
   local row = _G["QuestLogTitle" .. index]
   assert(row, "missing QuestLogTitle" .. index)
   assert(row:GetID() == index, "quest row ID was not preserved")
   assert(
-    row:GetWidth() == 224 and row:GetHeight() == 15,
-    "quest row geometry does not match QL-B0"
+    row:GetWidth() == 246 and row:GetHeight() == 18,
+    "quest row geometry does not match the readable left-page contract"
   )
   assert(
     row.highlightTexture.alpha == 0 and
@@ -728,9 +786,8 @@ for index = 1, 23 do
     "native row selection visual remained visible"
   )
   assert(
-    row.aeuiQuestRegionToggle and
-      row.aeuiQuestListCheck,
-    "quest directory overlays were not created"
+    row.aeuiQuestRegionToggle,
+    "quest region toggle overlay was not created"
   )
   assert(
     row.aeuiQuestRegionToggle.texture:find(
@@ -739,10 +796,9 @@ for index = 1, 23 do
     "quest region toggle did not mount the accepted atlas"
   )
   assert(
-    row.aeuiQuestListCheck.texture:find(
-      "QuestLogDirectoryMarksV1"
-    ),
-    "quest tracking mark did not mount the accepted atlas"
+    not row.aeuiQuestListCheck or
+      not row.aeuiQuestListCheck:IsShown(),
+    "quest-row tracking circle should remain hidden"
   )
   assert(
     not row.aeuiQuestSelection or
@@ -754,7 +810,33 @@ for index = 1, 23 do
     textX == 18 and textY == 0,
     "quest text did not preserve the directory-mark safe area"
   )
+  assert(
+    row.font[2] == 12 and row.font[3] == "" and
+      row.fontString.font[2] == 12 and
+      row.fontString.font[3] == "" and
+      row.fontString.shadowColor[4] == 0,
+    "quest row retained a small outlined or shadowed font"
+  )
+  assert(
+    not _G["QuestLogTitle" .. index .. "Check"]:IsShown(),
+    "native quest-row tracking circle remained visible"
+  )
 end
+for index = 19, 23 do
+  local row = _G["QuestLogTitle" .. index]
+  assert(row and not row:IsShown(), "surplus provider row remained visible")
+end
+assert(
+  questLogTitle5Tag.font[1]:find("LXGWWenKaiGB%-Medium.ttf") and
+    questLogTitle5Tag.font[2] == 12 and
+    questLogTitle5Tag.font[3] == "" and
+    questLogTitle5Tag.shadowColor[4] == 0 and
+    questLogTitle5Tag.textColor[1] == 0.184 and
+    QuestLogTitle5.fontString:GetText():find(
+      "|cff2f1236%(Dungeon%)"
+    ),
+  "completion or dungeon status text kept the native small outlined font"
+)
 assert(
   QuestLogHighlightFrame.alpha == 0,
   "native full-row selection frame remained visible"
@@ -774,16 +856,6 @@ assert(
   QuestLogTitle4.aeuiQuestRegionToggle:IsShown() and
   QuestLogTitle4.aeuiQuestRegionToggle.texcoord[1] == 0.03125,
   "collapsed region state was not mapped"
-)
-assert(
-  QuestLogTitle2.aeuiQuestListCheck:IsShown() and
-  QuestLogTitle2.aeuiQuestListCheck.texcoord[1] == 0.546875,
-  "untracked quest state was not mapped"
-)
-assert(
-  QuestLogTitle3.aeuiQuestListCheck:IsShown() and
-  QuestLogTitle3.aeuiQuestListCheck.texcoord[1] == 0.796875,
-  "tracked quest state was not mapped"
 )
 assert(
   not QuestLogTitle3Check:IsShown(),
@@ -829,8 +901,10 @@ for index = 1, 23 do
   )
 end
 assert(
-  QuestLogTitle1.font[1]:find("LXGWWenKaiGB%-Medium.ttf"),
-  "quest row font does not match the module baseline"
+  QuestLogTitle1.font[1]:find("LXGWWenKaiGB%-Medium.ttf") and
+    QuestLogTitle1.font[2] == 12 and
+    QuestLogTitle1.font[3] == "",
+  "quest row font does not match the readable module baseline"
 )
 assert(
   QuestLogTitleText.font[1]:find("NotoSerifSC%-SemiBold.ttf"),
@@ -850,19 +924,15 @@ assert(
   "native selection visuals returned after QuestLog_Update"
 )
 assert(
-  QuestLogTitle2.aeuiQuestListCheck.texcoord[1] == 0.796875,
-  "tracking-state refresh hook did not update the runtime sprite"
-)
-assert(
   not QuestLogTitle2Check:IsShown(),
-  "native tracking texture returned above the accepted sprite"
+  "native tracking texture returned after the refresh"
 )
 
 fauxOffset = 1
 QuestLog_Update()
 assert(
   not QuestLogTitle1.aeuiQuestRegionToggle:IsShown() and
-  QuestLogTitle1.aeuiQuestListCheck:IsShown(),
+    not QuestLogTitle1Check:IsShown(),
   "scroll offset was not applied to the visible row mapping"
 )
 fauxOffset = 0
@@ -872,15 +942,33 @@ local savedIsQuestWatched = IsQuestWatched
 IsQuestWatched = nil
 QuestLog_Update()
 assert(
-  not QuestLogTitle2.aeuiQuestListCheck:IsShown(),
-  "AEUI tracking art guessed a state without the tracking API"
-)
-assert(
-  QuestLogTitle2Check:IsShown(),
-  "native tracking art was not preserved when its API was unavailable"
+  not QuestLogTitle2Check:IsShown(),
+  "quest-row tracking art returned when its state API was unavailable"
 )
 IsQuestWatched = savedIsQuestWatched
 QuestLog_Update()
+
+local listWheel = QuestLogListScrollFrame:GetScript("OnMouseWheel")
+listWheel(-1)
+assert(
+  QuestLogListScrollFrameScrollBar:GetValue() == 18,
+  "hidden list scrollbar did not preserve mouse-wheel scrolling"
+)
+listWheel(-20)
+assert(
+  QuestLogListScrollFrameScrollBar:GetValue() == 180,
+  "list mouse wheel did not clamp to the final row"
+)
+listWheel(20)
+assert(
+  QuestLogListScrollFrameScrollBar:GetValue() == 0,
+  "list mouse wheel did not clamp to the first row"
+)
+QuestLogListScrollFrameScrollBar:Show()
+assert(
+  not QuestLogListScrollFrameScrollBar:IsShown(),
+  "list scrollbar returned after an external Show call"
+)
 
 local detailWheel = QuestLogDetailScrollFrame:GetScript("OnMouseWheel")
 detailWheel(-1)
@@ -936,11 +1024,13 @@ assert(
 )
 abandonLeave()
 QuestLogFrameAbandonButton:Disable()
+QuestLog_Update()
 assert(
   QuestLogFrameAbandonButton.aeuiQuestLeatherDisabled:IsShown(),
   "disabled action button did not receive its muted state"
 )
 QuestLogFrameAbandonButton:Enable()
+QuestLog_Update()
 assert(
   not QuestLogFrameAbandonButton.aeuiQuestLeatherDisabled:IsShown(),
   "enabled action button retained its disabled overlay"
@@ -1023,14 +1113,72 @@ pfQuestMapTracker =
   CreateFrame("Frame", "pfQuestMapTracker", UIParent)
 pfQuestMapTracker:SetWidth(230)
 pfQuestMapTracker:SetHeight(500)
+pfQuestMapTracker.panel =
+  CreateFrame("Frame", nil, pfQuestMapTracker)
+pfQuestMapTracker.panel:SetHeight(16)
 pfQuestMapTracker.backdrop =
   CreateFrame("Frame", nil, pfQuestMapTracker)
 pfQuestMapTracker.backdrop.bg =
   pfQuestMapTracker.backdrop:CreateTexture(nil, "BACKGROUND")
 local providerTrackerButton =
   CreateFrame("Button", "pfQuestMapButton1", pfQuestMapTracker)
+providerTrackerButton:SetHeight(44)
 providerTrackerButton.bg =
   providerTrackerButton:CreateTexture(nil, "BACKGROUND")
+providerTrackerButton.icon =
+  providerTrackerButton:CreateTexture(nil, "BORDER")
+providerTrackerButton.text =
+  NewObject(
+    "pfQuestMapButton1QuestText",
+    providerTrackerButton,
+    "FontString"
+  )
+providerTrackerButton.text:SetFont("ProviderReadable.ttf", 12, "")
+providerTrackerButton.text:SetText(
+  "[60] 完成的地下城任务 |cffaaaaaa(|cff00ff00100%|cffaaaaaa)|r"
+)
+providerTrackerButton.text:SetTextColor(1, 1, 0, 1)
+providerTrackerButton.perc = 100
+local providerTrackerObjectiveComplete =
+  NewObject(
+    "pfQuestMapButton1Objective1",
+    providerTrackerButton,
+    "FontString"
+  )
+providerTrackerObjectiveComplete:SetText(
+  "|cffffffff- Complete:|r 1/1"
+)
+local providerTrackerObjectiveIncomplete =
+  NewObject(
+    "pfQuestMapButton1Objective2",
+    providerTrackerButton,
+    "FontString"
+  )
+providerTrackerObjectiveIncomplete:SetText(
+  "|cffffffff- Incomplete:|r 0/2"
+)
+providerTrackerButton.objectives = {
+  providerTrackerObjectiveComplete,
+  providerTrackerObjectiveIncomplete,
+}
+local providerTrackerEntryEventCalls = 0
+providerTrackerButton:SetScript("OnEvent", function()
+  providerTrackerEntryEventCalls =
+    providerTrackerEntryEventCalls + 1
+  providerTrackerButton.perc = 50
+  providerTrackerButton.text:SetText(
+    "[55] Refreshed Quest |cffaaaaaa(|cffff800050%|cffaaaaaa)|r"
+  )
+  providerTrackerButton.text:SetTextColor(1, 0, 0, 1)
+  providerTrackerButton.icon:Show()
+  providerTrackerButton:SetHeight(56)
+  -- Match pfQuest's final provider size before AEUI reserves the decorative
+  -- bottom cap. The adapter must not intervene until the whole rebuild ends.
+  pfQuestMapTracker:SetHeight(72)
+  providerTrackerObjectiveIncomplete:SetText(
+    "|cffffffff- Incomplete:|r 1/2"
+  )
+end)
 pfQuestMapTracker.buttons = { providerTrackerButton }
 local providerToolbarClick = function() end
 for _, name in ipairs({
@@ -1129,6 +1277,72 @@ assert(
   "temporary tracker paper runtime contract was not recorded"
 )
 assert(
+  pfQuestMapTracker.aeuiQuestVisualThemeContract == "1.5" and
+    providerTrackerButton.aeuiQuestVisualThemeContract == "1.5",
+  "pfQuest Tracker did not consume the shared visual theme"
+)
+assert(
+  pfQuestMapTracker:GetHeight() == 76 and
+    pfQuestMapTracker.aeuiQuestProviderContentHeight == 60 and
+    pfQuestMapTracker.aeuiQuestBottomContentPadding == 16 and
+    pfQuestMapTracker.aeuiQuestPaperHeight == 76,
+  "tracker did not reserve the bottom content-safe area"
+)
+assert(
+  providerTrackerButton.text.font[1] == "pfui-font.ttf" and
+    providerTrackerButton.text.font[3] == "" and
+    providerTrackerButton.text.shadowColor[4] == 0 and
+    providerTrackerButton.text.shadowOffset[1] == 0 and
+    providerTrackerButton.text.shadowOffset[2] == 0 and
+    providerTrackerButton.text:GetText():find("|cff062a22100%%") and
+    providerTrackerButton.text.textColor[1] == 0.161,
+  "tracker title retained an outline/shadow or missed shared typography and ink"
+)
+assert(
+  providerTrackerButton.text.textColor[1] ==
+      QuestLogTitle5.fontString.textColor[1] and
+    providerTrackerButton.text.textColor[2] ==
+      QuestLogTitle5.fontString.textColor[2] and
+    providerTrackerButton.text.textColor[3] ==
+      QuestLogTitle5.fontString.textColor[3] and
+    QuestLogTitle5.fontString.textColor[1] == 0.161,
+  "a completed dungeon task used different Quest Log and Tracker name inks"
+)
+assert(
+  not providerTrackerButton.icon:IsShown() and
+    providerTrackerButton.aeuiQuestEntryIconThemeContract == "1.5",
+  "tracker entry color dot/question-mark texture remained visible"
+)
+assert(
+  providerTrackerObjectiveComplete.textColor[1] == 0.024 and
+    providerTrackerObjectiveComplete.textColor[2] == 0.165 and
+    providerTrackerObjectiveIncomplete.textColor[1] == 0.267 and
+    providerTrackerObjectiveIncomplete:GetText():find("|cff24170f"),
+  "tracker objectives did not receive shared complete/incomplete inks"
+)
+providerTrackerButton:GetScript("OnEvent")()
+assert(
+  providerTrackerEntryEventCalls == 1 and
+    pfQuestMapTracker.aeuiQuestVisualThemeDirty and
+    not providerTrackerButton.aeuiQuestVisualThemeContract and
+    not providerTrackerButton.icon:IsShown() and
+    providerTrackerButton.text:GetText():find("|cffff800050%%") and
+    pfQuestMapTracker:GetHeight() == 72 and
+    pfQuestMapTracker.aeuiQuestPaperHeight == 76,
+  "entry event did not defer AEUI presentation until the rebuild commit"
+)
+pfQuestMapTracker:GetScript("OnUpdate")()
+assert(
+  providerTrackerButton.text:GetText():find("|cff321b0050%%") and
+    providerTrackerButton.text.textColor[1] == 0.020 and
+    providerTrackerObjectiveIncomplete.textColor[1] == 0.267 and
+    not pfQuestMapTracker.aeuiQuestVisualThemeDirty and
+    pfQuestMapTracker:GetHeight() == 88 and
+    pfQuestMapTracker.aeuiQuestProviderContentHeight == 72 and
+    pfQuestMapTracker.aeuiQuestPaperHeight == 88,
+  "provider rebuild was not committed as one themed, content-safe batch"
+)
+assert(
   pfQuestMapTracker.aeuiQuestPaperSlices and
     #pfQuestMapTracker.regions == 10,
   "tracker paper and one seal were not mounted at runtime"
@@ -1194,9 +1408,10 @@ for _, name in ipairs({
   )
 end
 local trackerOnUpdate = pfQuestMapTracker:GetScript("OnUpdate")
+local trackerCallsBeforeUpdate = providerTrackerOnUpdateCalls
 trackerOnUpdate()
 assert(
-  providerTrackerOnUpdateCalls == 1,
+  providerTrackerOnUpdateCalls == trackerCallsBeforeUpdate + 1,
   "provider tracker OnUpdate behavior was replaced"
 )
 pfQuestMapTracker:SetWidth(330)
@@ -1222,15 +1437,15 @@ assert(
     questLogUpdateCalls == nativeCallsBeforeProviderUpdate + 1,
   "late pfQuest update wrapper or native quest update was lost"
 )
-for index = 1, 23 do
+for index = 1, 18 do
   local row = _G["QuestLogTitle" .. index]
   assert(
-    row:GetWidth() == 224 and row:GetHeight() == 15,
+    row:GetWidth() == 246 and row:GetHeight() == 18,
     "pfQuest QuestLogTitleButton_Resize remained authoritative"
   )
   local _, _, _, textX, textY = row.fontString:GetPoint()
   assert(
-    row.fontString:GetWidth() == 190 and
+    row.fontString:GetWidth() == 226 and
       textX == 18 and textY == 0,
     "pfQuest row text escaped the directory safe area"
   )
@@ -1297,7 +1512,7 @@ assert(
 QuestLogFrame:GetScript("OnShow")()
 assert(
   providerOnShowCalls == 1 and
-    QuestLogTitle1:GetWidth() == 224 and
+    QuestLogTitle1:GetWidth() == 246 and
     QuestLogFrame.aeuiQuestShell:IsShown(),
   "late pfQuest QuestLogFrame OnShow replacement bypassed AEUI"
 )

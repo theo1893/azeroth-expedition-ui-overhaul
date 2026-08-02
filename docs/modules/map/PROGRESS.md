@@ -6,7 +6,7 @@
 - 小地图“黄铜航向罗盘”：整体视觉 `P2`。
 - pfUI／原生文件级对齐：`P1`。
 - 组件级 production Prompt、透明 source、runtime：均未开始。
-- 当前运行时：地图与小地图使用香草／Turtle WoW 原生回退。
+- 当前运行时：地图与小地图恢复 pfUI 默认模块；AEUI 尚未接管任何 Map 对象。
 
 ## 子模块状态
 

@@ -45,7 +45,8 @@
   / SHA-256
   `c6b1f64034fa69f01709403e592c3350445c9a6739f4b559242be48831666c61`
 - exporter／adapter：`tools/build_quest_tracker_paper_v1.py` /
-  `addon/AzerothExpeditionUI/Modules/Quests.lua` runtime contract `1.8`
+  `addon/AzerothExpeditionUI/Modules/Quests.lua` runtime contract `1.16`；
+  `Quest Visual Theme 1.5`
 - 实际展示区域合同：
   `tools/specs/quest_tracker_display_region_v1.json`
 - 展示区域报告：
@@ -60,9 +61,14 @@
   增加类似书框的边界，当前 tracker 直接展示已经足够。`QT-GEO V2` 已按
   “显示面严格等于 provider live Frame、四边 outsets 全为 0”生成本地预演，
   ImageGen `0/0`
-- 下一门禁：用户确认 `QT-GEO V2`；确认前不修改 runtime adapter。确认后
-  才把纸面收敛为 live Frame 同尺寸的无边界显示面，重跑七场景展示区域审计
-  并进入 Turtle WoW 验证。QT-B1／A2 均保持暂缓
+- `2026-08-01` 新增用户实机裁决：隐藏所有条目 `button.icon` 彩色点／问号，
+  Tracker 任务名换回 pfUI／pfQuest 旧统一字体并移除 `OUTLINE` 与 shadow；
+  不改变 `button.node` 数据、动态字号、条目命中、排序或脚本。随后 runtime
+  `1.16` 让任务名与 Quest Log 共用同一高对比深墨难度色 resolver；完成率
+  继续使用独立深墨语义色。
+- 下一门禁：Turtle WoW `/reload` 后验证接受／放弃任务批次、底部安全区、
+  条目 icon 持续隐藏、任务名无描边／阴影及同一任务跨面板颜色一致。
+  QT-B1／A2 均保持暂缓。
 
 ## 组件合同
 
@@ -77,7 +83,8 @@
 `pfQuestMapTracker` 是唯一顶层 Frame，同时通过全局 `tracker` 和
 `pfQuest.tracker` 暴露。它保留拖动、锁定、屏幕限位、位置保存、显隐、
 WorldMap strata、Tooltip 与原生 QuestWatch 隐藏行为。根宽度动态为
-`130..330 UI px`；根高度为 `16px` 工具条加动态条目总高。
+`130..330 UI px`；provider 内容高度为 `16px` 工具条加动态条目总高，
+AEUI 显示高度另加 `16px` 底部内容安全区。
 
 真实工具 Button 共七个，但均处于本轮 `scope-deferred`：
 
@@ -97,7 +104,8 @@ WorldMap strata、Tooltip 与原生 QuestWatch 隐藏行为。根宽度动态为
 `button.bg`、`button.icon`、`button.text` 和零到多个
 `button.objectives[i]`；`button.tracked`、`button.perc`、
 `pfMap.highlight` 是当前可用的覆盖状态。条目高度、排序、文字、目标数、
-等级、百分比和节点图标全部动态。左键、右键、Ctrl、Shift 的原行为不得改变。
+等级、百分比和节点数据全部动态。用户于 `2026-08-01` 只撤销节点图标的可见
+纹理；左键、右键、Ctrl、Shift 的原行为不得改变。
 
 `expand_states` 是 provider 局部表；tracker 没有独立 timer 或 failed
 状态。当前活动范围不生成折叠 Button、沙漏或失败蜡封，不从显示文字猜测状态。
@@ -108,7 +116,7 @@ WorldMap strata、Tooltip 与原生 QuestWatch 隐藏行为。根宽度动态为
 |---|---|---|---|
 | `QT-A1 V1` | 一张空的纵向纸面 shell 母版 | 已确定性导出为单张 TGA 的九宫格；根 Frame 动态拼装 | 工具条、按钮、文字、任务行、目标、节点图标、状态 |
 | `QT-A2 V1` | `scope-deferred`；当前不生成任何 source | 七个 provider Button 与 `tracker.panel` 原样保留，未来独立重开 | 当前禁止生成、隐藏、重挂、换皮或改变行为 |
-| `QT-B1 V1` | `scope-deferred`；当前不生成或挂载三件覆盖层 | adapter 隐藏 provider 的现代半透明行矩形，只保留大纸面与动态内容 | 完整任务行、任务名、等级、百分比、目标、节点图标 |
+| `QT-B1 V1` | `scope-deferred`；当前不生成或挂载三件覆盖层 | adapter 隐藏 provider 的现代半透明行矩形与条目节点 icon，只保留大纸面及文字动态内容 | 完整任务行、任务名、等级、百分比、目标、节点图标 |
 
 可以共用物理 atlas，但 manifest 必须分别记录每个逻辑对象、cell、UV、
 运行时尺寸、状态派生和九宫格／三段式规则。客户端不得直接加载高分辨率 PNG。
@@ -1172,7 +1180,9 @@ source-layout compositing、进一步内缩和背景替换。
   `pfQuestMapTracker` 上创建九个 `BACKGROUND` Texture；固定 cap 为
   左／右 `14px`、上 `12px`、下 `16px`，中心随 provider 的动态
   `130..330px` 宽度和内容高度拉伸。provider 黑色 panel Texture 和每行
-  半透明矩形被隐藏；动态文字、目标、节点图标、七工具 Button、Tooltip、
+  半透明矩形被隐藏；当前 runtime `1.16` 进一步按用户裁决隐藏节点图标并
+  统一 Quest Log／Tracker 高对比深墨任务名难度色；动态
+  文字、目标、七工具 Button、Tooltip、
   点击、拖动、模式与 SavedVariables 均保持原对象／脚本。
 - 背景-only 真实排版：`--paper-only` 明确不绘制 QT-B1 或 provider 灰色
   focus fallback，并从最终 TGA 的 manifest-locked 九宫格／cap 装配，不再
@@ -1431,5 +1441,9 @@ quest design contract、repository contract、asset workflow skill contract
 provider `OnUpdate` 保留和刷新幂等。但实际展示区域门禁明确失败，当前保持
 `P5 / display-region-blocked`，不能直接进入 Turtle WoW P6 验收。用户已
 否决 `QT-GEO V1` 外置端帽，`QT-GEO V2` 已按无外置书框的直接纸面方向完成
-本地预演；当前下一门禁是用户确认该具体模拟版本。确认前不修改 adapter；
-QT-B1／QT-A2 均保持 scope-deferred，不再调用 ImageGen。
+本地预演。当前 runtime `1.16` 继续保留批次提交、底部安全区、条目 icon
+隐藏及 Tracker 任务名旧统一字体／无描边／shadow，并把 Tracker 任务名与
+Quest Log 任务名收敛到同一个 `ResolveQuestNameInk` 难度色入口；完成率仍是
+独立状态墨色。下一门禁是 Turtle WoW 比较同一任务的跨面板名称颜色，并验证
+这些状态在接受／放弃任务后仍稳定。QT-B1／QT-A2 均保持 scope-deferred，
+不再调用 ImageGen。

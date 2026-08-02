@@ -34,6 +34,9 @@ local function NewObject(name, parent)
     setWidthCalls = 0,
     setHeightCalls = 0,
     hitRectCalls = 0,
+    setFontCalls = 0,
+    spacing = 0,
+    setSpacingCalls = 0,
   }, Object)
   if name then
     _G[name] = value
@@ -47,6 +50,7 @@ function Object:RegisterEvent(value)
 end
 function Object:SetFrameStrata() end
 function Object:SetFrameLevel() end
+function Object:SetDrawLayer(value) self.drawLayer = value end
 function Object:EnableDrawLayer(value) self.enabledDrawLayer = value end
 function Object:SetBlendMode() end
 function Object:SetAlpha(value) self.alpha = value end
@@ -57,10 +61,26 @@ function Object:SetTexCoord(...) self.texcoord = { ... } end
 function Object:SetBackdropColor(...) self.backdropColor = { ... } end
 function Object:SetBackdropBorderColor(...) self.borderColor = { ... } end
 function Object:SetTextColor(...) self.textColor = { ... } end
-function Object:SetFont(...) self.font = { ... } end
+function Object:SetFont(...)
+  self.setFontCalls = self.setFontCalls + 1
+  self.font = { ... }
+  return true
+end
+function Object:GetFont()
+  if self.font then
+    return table.unpack(self.font)
+  end
+end
+function Object:SetShadowColor(...) self.shadowColor = { ... } end
+function Object:SetShadowOffset(...) self.shadowOffset = { ... } end
 function Object:SetJustifyH(value) self.justifyH = value end
 function Object:SetJustifyV(value) self.justifyV = value end
 function Object:SetTextInsets(...) self.textInsets = { ... } end
+function Object:SetSpacing(value)
+  self.setSpacingCalls = self.setSpacingCalls + 1
+  self.spacing = value
+end
+function Object:GetSpacing() return self.spacing end
 function Object:SetHitRectInsets(...)
   self.hitRectCalls = self.hitRectCalls + 1
   self.hitRectInsets = { ... }
@@ -119,8 +139,10 @@ function Object:GetStringWidth() return self.stringWidth or 32 end
 function Object:SetNormalTexture(value) self.normalTexture = value end
 function Object:SetHighlightTexture(value) self.highlightTexture = value end
 function Object:GetRegions() return table.unpack(self.regions or {}) end
-function Object:CreateTexture(name)
-  return NewObject(name, self)
+function Object:CreateTexture(name, layer)
+  local texture = NewObject(name, self)
+  texture.drawLayer = layer
+  return texture
 end
 
 function CreateFrame(_, name, parent)
@@ -197,7 +219,57 @@ function FCF_SaveDock()
   end
 end
 
+function FCF_SetChatWindowFontSize(frame, size)
+  frame.fontSize = size
+  frame:SetFont("pfui-font.ttf", size, "OUTLINE")
+  frame:SetShadowColor(0, 0, 0, 1)
+  frame:SetShadowOffset(0, 0)
+  frame:SetSpacing(0)
+end
+
 UIParent = NewObject("UIParent", nil)
+ChatTypeInfo = {
+  CHANNEL = {
+    r = 1.00,
+    g = 0.75,
+    b = 0.75,
+  },
+  SAY = {
+    r = 1.00,
+    g = 1.00,
+    b = 1.00,
+  },
+  GUILD = {
+    r = 0.25,
+    g = 1.00,
+    b = 0.25,
+  },
+  PARTY = {
+    r = 0.67,
+    g = 0.67,
+    b = 1.00,
+  },
+  RAID = {
+    r = 1.00,
+    g = 0.50,
+    b = 0.00,
+  },
+  WHISPER = {
+    r = 1.00,
+    g = 0.50,
+    b = 1.00,
+  },
+  YELL = {
+    r = 1.00,
+    g = 0.25,
+    b = 0.25,
+  },
+  SYSTEM = {
+    r = 1.00,
+    g = 1.00,
+    b = 0.00,
+  },
+}
 DEFAULT_CHAT_FRAME = {
   messages = {},
   AddMessage = function(self, message)
@@ -238,10 +310,37 @@ local rightPanel = CreateFrame("Frame", "pfPanelRight", UIParent)
 local minimapPanel = CreateFrame("Frame", "pfPanelMinimap", UIParent)
 
 NUM_CHAT_WINDOWS = 4
+local function DeliverChatMessage(
+  self,
+  text,
+  red,
+  green,
+  blue,
+  alpha,
+  messageId
+)
+  self.lastDeliveredMessage = {
+    text,
+    red,
+    green,
+    blue,
+    alpha,
+    messageId,
+  }
+  return "delivered"
+end
+
 for index = 1, NUM_CHAT_WINDOWS do
   local parent = left
   local frame = CreateFrame("ScrollingMessageFrame", "ChatFrame" .. index, parent)
   frame.isDocked = true
+  frame.testProviderAddMessage = DeliverChatMessage
+  if index ~= 4 then
+    frame.HookAddMessage = DeliverChatMessage
+  end
+  frame:SetFont("pfui-font.ttf", 12, "OUTLINE")
+  frame:SetShadowColor(0, 0, 0, 1)
+  frame:SetShadowOffset(0, 0)
   frame:SetPoint("TOPLEFT", parent, "TOPLEFT", 3, -24)
   local tab = CreateFrame("Button", "ChatFrame" .. index .. "Tab", left.panelTop)
   tab.shown = true
@@ -281,6 +380,14 @@ pfUI = {
             -5,
             25
           )
+          local _, fontSize
+          if frame.GetFont then
+            _, fontSize = frame:GetFont()
+          end
+          frame:SetFont("pfui-font.ttf", fontSize or 12, "OUTLINE")
+          frame:SetShadowColor(0, 0, 0, 1)
+          frame:SetShadowOffset(0, 0)
+          frame:SetSpacing(0)
           text:ClearAllPoints()
           text:SetPoint("BOTTOM", text.parent, "BOTTOM", 0, 1)
           text:SetWidth(32)
@@ -309,9 +416,11 @@ pfUI_config = {
   appearance = {
     expedition = {
       enabled = "1",
-      vanilla_fallback = "1",
-      native_blizzard_skins = "1",
-      legacy_info_panels = "0",
+      ownership = "scoped-v1",
+      vanilla_fallback = "0",
+      native_blizzard_skins = "0",
+      legacy_info_panels = "1",
+      single_chat_frame = "1",
     },
   },
 }
@@ -347,8 +456,16 @@ assert(
   "V3 chat book texture was not mounted"
 )
 assert(
+  not left.aeuiReadingWash or
+    (
+      not left.aeuiReadingWash:IsShown() and
+      not left.aeuiReadingWash:GetTexture()
+    ),
+  "retired chat reading wash remained visible"
+)
+assert(
   left.enabledDrawLayer == "BACKGROUND" and
-    left.aeuiBookRuntimeVersion == "1.7",
+    left.aeuiBookRuntimeVersion == "1.18",
   "chat book background layer or runtime marker was not restored"
 )
 left.aeuiBookSlices.center:SetTexture(nil)
@@ -357,18 +474,388 @@ AzerothExpeditionUI.modules.Chat:Maintain()
 assert(
   left.aeuiBookSlices.center.texture:find("ChatBookFrameV3") and
     left.aeuiBookRecoveredAt,
-  "chat maintenance did not recover a stripped book texture"
+  "chat maintenance did not recover stripped book textures"
 )
 assert(#ChatFrame1.points == 2, "docked chat frame was not inset")
+assert(
+  ChatFrame1:GetSpacing() == 3 and
+    ChatFrame1.aeuiTextLineSpacing == 3 and
+    ChatFrame1.aeuiTextMetricsVersion == "1.18",
+  "chat text did not receive the relaxed line-height contract"
+)
+assert(
+  ChatFrame1.font[1] == "pfui-font.ttf" and
+    ChatFrame1.font[2] == 12 and
+    ChatFrame1.font[3] == nil and
+    ChatFrame1.shadowColor[1] == 0 and
+    ChatFrame1.shadowColor[4] == 0 and
+    ChatFrame1.shadowOffset[1] == 0 and
+    ChatFrame1.shadowOffset[2] == 0 and
+    ChatFrame1.aeuiTextStyleVersion == "1.18",
+  "chat text did not restore the provider-owned comfort typography"
+)
+local channelMessage =
+  "[8. 世界频道][60][Player]: public channel body"
+local channelResult = ChatFrame1:HookAddMessage(
+  channelMessage,
+  ChatTypeInfo.CHANNEL.r,
+  ChatTypeInfo.CHANNEL.g,
+  ChatTypeInfo.CHANNEL.b,
+  1,
+  17
+)
+assert(
+  channelResult == "delivered" and
+    ChatFrame1.lastDeliveredMessage[1] == channelMessage and
+    ChatFrame1.lastDeliveredMessage[2] == 77 / 255 and
+    ChatFrame1.lastDeliveredMessage[3] == 57 / 255 and
+    ChatFrame1.lastDeliveredMessage[4] == 57 / 255 and
+    ChatFrame1.lastDeliveredMessage[5] == 1 and
+    ChatFrame1.lastDeliveredMessage[6] == 17,
+  "managed public channel color was not mapped to body ink"
+)
+assert(
+  ChatTypeInfo.CHANNEL.r == 1.00 and
+    ChatTypeInfo.CHANNEL.g == 0.75 and
+    ChatTypeInfo.CHANNEL.b == 0.75,
+  "managed public channel mapping mutated the global channel color"
+)
+ChatFrame1.isDocked = nil
+ChatFrame1:HookAddMessage(
+  "transient dock flag",
+  ChatTypeInfo.CHANNEL.r,
+  ChatTypeInfo.CHANNEL.g,
+  ChatTypeInfo.CHANNEL.b,
+  1,
+  171
+)
+assert(
+  ChatFrame1.lastDeliveredMessage[2] == 77 / 255 and
+    ChatFrame1.lastDeliveredMessage[3] == 57 / 255 and
+    ChatFrame1.lastDeliveredMessage[4] == 57 / 255,
+  "transient isDocked state disabled the managed palette"
+)
+ChatFrame1.isDocked = true
+ChatFrame1:HookAddMessage("system", 1, 1, 0, 1, 18)
+assert(
+  ChatFrame1.lastDeliveredMessage[1] == "system" and
+    ChatFrame1.lastDeliveredMessage[2] == 64 / 255 and
+    ChatFrame1.lastDeliveredMessage[3] == 64 / 255 and
+    ChatFrame1.lastDeliveredMessage[4] == 0,
+  "managed system color was not mapped to metadata ink"
+)
+
+local semanticColorCases = {
+  { "say", ChatTypeInfo.SAY, { 61, 61, 61 } },
+  { "guild", ChatTypeInfo.GUILD, { 18, 71, 18 } },
+  { "party", ChatTypeInfo.PARTY, { 59, 59, 89 } },
+  { "raid", ChatTypeInfo.RAID, { 98, 49, 0 } },
+  { "whisper", ChatTypeInfo.WHISPER, { 90, 45, 90 } },
+  { "yell", ChatTypeInfo.YELL, { 117, 29, 29 } },
+}
+local semanticColorsSeen = {
+  ["77:57:57"] = true,
+  ["64:64:0"] = true,
+}
+for index, colorCase in ipairs(semanticColorCases) do
+  local source = colorCase[2]
+  local expected = colorCase[3]
+  ChatFrame1:HookAddMessage(
+    colorCase[1],
+    source.r,
+    source.g,
+    source.b,
+    1,
+    180 + index
+  )
+  assert(
+    ChatFrame1.lastDeliveredMessage[2] == expected[1] / 255 and
+      ChatFrame1.lastDeliveredMessage[3] == expected[2] / 255 and
+      ChatFrame1.lastDeliveredMessage[4] == expected[3] / 255,
+    "semantic channel color did not retain a distinct parchment hue"
+  )
+  local colorKey =
+    expected[1] .. ":" .. expected[2] .. ":" .. expected[3]
+  assert(
+    not semanticColorsSeen[colorKey],
+    "semantic channel colors collapsed onto the same ink"
+  )
+  semanticColorsSeen[colorKey] = true
+end
+ChatFrame1:HookAddMessage("custom", 0.12, 0.23, 0.34, 1, 18)
+assert(
+  ChatFrame1.lastDeliveredMessage[1] == "custom" and
+    ChatFrame1.lastDeliveredMessage[2] == 0.12 and
+    ChatFrame1.lastDeliveredMessage[3] == 0.23 and
+    ChatFrame1.lastDeliveredMessage[4] == 0.34,
+  "unknown base message color was changed by the whitelist"
+)
+
+local enhancedMessage =
+  "|CFF33CCFF|Hezc:copy|h[11:32]|h|r" ..
+  "|cfff58cba|Hplayer:Paladin|h[Paladin]|h|r" ..
+  "|cffff1919[60]|r" ..
+  "|cff0070dd|Hitem:1:0:0:0|h[Rare Item]|h|r" ..
+  "|cff9999ee|Href:www.example.com|h[www.example.com]|h|r" ..
+  "|cff123456custom|r"
+ChatFrame1:HookAddMessage(
+  enhancedMessage,
+  ChatTypeInfo.CHANNEL.r,
+  ChatTypeInfo.CHANNEL.g,
+  ChatTypeInfo.CHANNEL.b,
+  1,
+  181
+)
+local normalizedMessage = ChatFrame1.lastDeliveredMessage[1]
+assert(
+  string.find(normalizedMessage, "|cff103e4e", 1, true) and
+    string.find(normalizedMessage, "|cff583243", 1, true) and
+    string.find(normalizedMessage, "|cff760c0c", 1, true) and
+    string.find(normalizedMessage, "|cff003971", 1, true) and
+    string.find(normalizedMessage, "|cff363655", 1, true) and
+    string.find(normalizedMessage, "|cff123456", 1, true) and
+    string.find(normalizedMessage, "|Hezc:copy", 1, true) and
+    string.find(normalizedMessage, "|Hplayer:Paladin", 1, true) and
+    string.find(normalizedMessage, "|Hitem:1:0:0:0", 1, true) and
+    string.find(normalizedMessage, "|Href:www.example.com", 1, true),
+  "ChatMOD and link colors were not normalized without changing links"
+)
+assert(
+  not string.find(normalizedMessage, "33CCFF", 1, true) and
+    not string.find(normalizedMessage, "f58cba", 1, true) and
+    not string.find(normalizedMessage, "ff1919", 1, true) and
+    not string.find(normalizedMessage, "0070dd", 1, true) and
+    not string.find(normalizedMessage, "9999ee", 1, true),
+  "bright ChatMOD colors survived the parchment whitelist"
+)
+
+local classColorCases = {
+  { "ffc79c6e", "ff4b3b2a" },
+  { "fff58cba", "ff583243" },
+  { "ffabd473", "ff354224" },
+  { "fffff569", "ff423f1b" },
+  { "ffffffff", "ff333333" },
+  { "ff0070de", "ff003d7a" },
+  { "ff69ccf0", "ff22424e" },
+  { "ff9482c9", "ff413959" },
+  { "ffff7d0a", "ff633004" },
+}
+local classColorsSeen = {}
+for _, colorCase in ipairs(classColorCases) do
+  local normalized =
+    AzerothExpeditionUI.modules.Chat:NormalizeInlineMessageColors(
+      "|c" .. colorCase[1] .. "class|r"
+    )
+  assert(
+    normalized == "|c" .. colorCase[2] .. "class|r",
+    "class color did not map to its expected parchment ink"
+  )
+  assert(
+    not classColorsSeen[colorCase[2]],
+    "two class colors collapsed onto the same parchment ink"
+  )
+  classColorsSeen[colorCase[2]] = true
+end
+
+local adaptiveMessage =
+  AzerothExpeditionUI.modules.Chat:NormalizeInlineMessageColors(
+    "|cffffcc44bright gold|r" ..
+    "|cfff0a0f0bright pink|r" ..
+    "|cff223344dark custom|r" ..
+    "|cffff8080damage|r" ..
+    "|cff8cff80healing|r"
+  )
+assert(
+  string.find(adaptiveMessage, "|cff463813", 1, true) and
+    string.find(adaptiveMessage, "|cff4a314a", 1, true) and
+    string.find(adaptiveMessage, "|cff223344", 1, true) and
+    string.find(adaptiveMessage, "|cff592d2d", 1, true) and
+    string.find(adaptiveMessage, "|cff234020", 1, true),
+  "unknown bright colors were not hue-preserving clamped"
+)
+
+-- ChatMOD can capture the native sink before pfUI installs HookAddMessage.
+-- In that order it injects bright inline colors after AEUI's first wrapper,
+-- then calls ORG_AddMessage directly. The maintenance pass must discover and
+-- wrap that true final sink without changing ChatMOD itself.
+function S_AddMessage(
+  self,
+  text,
+  red,
+  green,
+  blue,
+  messageId
+)
+  local injected =
+    "|CFF33CCFF|Hezc:late|h[12:18]|h|r" ..
+    "|cfff58cba|Hplayer:LatePaladin|h[LatePaladin]|h|r " ..
+    text
+  return self:ORG_AddMessage(
+    injected,
+    red,
+    green,
+    blue,
+    messageId
+  )
+end
+
+ChatFrame3.ORG_AddMessage = ChatFrame3.aeuiProviderHookAddMessage
+ChatFrame3.aeuiProviderHookAddMessage = function(...)
+  return S_AddMessage(...)
+end
+AzerothExpeditionUI.modules.Chat:Maintain()
+local chatMODFinalWrapper = ChatFrame3.ORG_AddMessage
+AzerothExpeditionUI.modules.Chat:Maintain()
+assert(
+  ChatFrame3.ORG_AddMessage == chatMODFinalWrapper and
+    ChatFrame3.aeuiChatMODFinalColorVersion == "1.18",
+  "ChatMOD final color hook was missing or installed more than once"
+)
+ChatFrame3:HookAddMessage(
+  "late ChatMOD order",
+  ChatTypeInfo.CHANNEL.r,
+  ChatTypeInfo.CHANNEL.g,
+  ChatTypeInfo.CHANNEL.b,
+  1,
+  183
+)
+assert(
+  string.find(
+    ChatFrame3.lastDeliveredMessage[1],
+    "|cff103e4e",
+    1,
+    true
+  ) and
+    string.find(
+      ChatFrame3.lastDeliveredMessage[1],
+      "|cff583243",
+      1,
+      true
+    ) and
+    not string.find(
+      ChatFrame3.lastDeliveredMessage[1],
+      "33CCFF",
+      1,
+      true
+    ) and
+    not string.find(
+      ChatFrame3.lastDeliveredMessage[1],
+      "f58cba",
+      1,
+      true
+    ) and
+    ChatFrame3.lastDeliveredMessage[2] == 77 / 255 and
+    ChatFrame3.lastDeliveredMessage[3] == 57 / 255 and
+    ChatFrame3.lastDeliveredMessage[4] == 57 / 255,
+  "colors injected after the pfUI hook bypassed the parchment palette"
+)
+
+-- The opposite load order is also valid: ChatMOD can call back through the
+-- already wrapped pfUI path. Frame 4 also models HookAddMessage appearing
+-- after AEUI's first layout pass, which the maintenance pass must discover.
+assert(
+  not ChatFrame4.aeuiMessageColorHooked,
+  "late provider unexpectedly had an AEUI color hook"
+)
+ChatFrame4.HookAddMessage = ChatFrame4.testProviderAddMessage
+AzerothExpeditionUI.modules.Chat:Maintain()
+assert(
+  ChatFrame4.aeuiMessageColorHooked and
+    ChatFrame4.aeuiMessageColorVersion == "1.18",
+  "late HookAddMessage provider was not discovered"
+)
+ChatFrame4.ORG_AddMessage = ChatFrame4.HookAddMessage
+ChatFrame4.AddMessage = S_AddMessage
+AzerothExpeditionUI.modules.Chat:Maintain()
+ChatFrame4:AddMessage(
+  "early ChatMOD order",
+  ChatTypeInfo.CHANNEL.r,
+  ChatTypeInfo.CHANNEL.g,
+  ChatTypeInfo.CHANNEL.b,
+  1,
+  184
+)
+assert(
+  string.find(
+    ChatFrame4.lastDeliveredMessage[1],
+    "|cff103e4e",
+    1,
+    true
+  ) and
+    string.find(
+      ChatFrame4.lastDeliveredMessage[1],
+      "|cff583243",
+      1,
+      true
+    ) and
+    ChatFrame4.lastDeliveredMessage[2] == 77 / 255 and
+    ChatFrame4.aeuiChatMODFinalColorVersion == "1.18",
+  "ChatMOD post-pfUI load order did not retain the parchment palette"
+)
+
+ChatFrame2.pfCombatLog = true
+ChatFrame2:HookAddMessage(
+  "|CFF33CCFFcombat|r",
+  ChatTypeInfo.CHANNEL.r,
+  ChatTypeInfo.CHANNEL.g,
+  ChatTypeInfo.CHANNEL.b,
+  1,
+  182
+)
+assert(
+  ChatFrame2.lastDeliveredMessage[1] == "|cff103e4ecombat|r" and
+    ChatFrame2.lastDeliveredMessage[2] == 77 / 255 and
+    ChatFrame2.lastDeliveredMessage[3] == 57 / 255 and
+    ChatFrame2.lastDeliveredMessage[4] == 57 / 255,
+  "left-book frame classified as combat log bypassed the managed palette"
+)
+ChatFrame2.pfCombatLog = nil
+AzerothExpeditionUI.db.chat.enabled = false
+ChatFrame1:HookAddMessage(
+  "disabled channel",
+  ChatTypeInfo.CHANNEL.r,
+  ChatTypeInfo.CHANNEL.g,
+  ChatTypeInfo.CHANNEL.b,
+  1,
+  19
+)
+assert(
+  ChatFrame1.lastDeliveredMessage[2] == 1.00 and
+    ChatFrame1.lastDeliveredMessage[3] == 0.75 and
+    ChatFrame1.lastDeliveredMessage[4] == 0.75,
+  "disabled AEUI Chat retained its display-only channel mapping"
+)
+AzerothExpeditionUI.db.chat.enabled = true
+FCF_SetChatWindowFontSize(ChatFrame1, 14)
+assert(
+  ChatFrame1.fontSize == 14 and
+    ChatFrame1.font[2] == 14 and
+    ChatFrame1.font[3] == nil and
+    ChatFrame1.font[1] == "pfui-font.ttf" and
+    ChatFrame1:GetSpacing() == 3 and
+    ChatFrame1.shadowColor[4] == 0 and
+    ChatFrame1.shadowOffset[1] == 0 and
+    ChatFrame1.shadowOffset[2] == 0,
+  "chat font-size change did not preserve the managed comfort style"
+)
 assert(#input.points == 2, "pfUI input frame was not integrated")
 assert(not rightChat:IsShown(), "right chat container was not suppressed")
 assert(
   pfUI_config.chat.right.enable == "0",
   "right chat configuration was not disabled"
 )
-assert(not panel:IsShown(), "left legacy info panel was not suppressed")
-assert(not rightPanel:IsShown(), "right legacy info panel was not suppressed")
-assert(not minimapPanel:IsShown(), "minimap legacy info panel was not suppressed")
+assert(not panel:IsShown(), "left chat info panel was not suppressed")
+assert(not rightPanel:IsShown(), "right chat info panel was not suppressed")
+assert(minimapPanel:IsShown(), "AEUI Chat hid the unrelated minimap pfUI panel")
+assert(panel.aeuiChatInfoPanelHideHook, "left panel OnShow guard is missing")
+assert(rightPanel.aeuiChatInfoPanelHideHook, "right panel OnShow guard is missing")
+panel:Show()
+panel.scripts.OnShow()
+assert(not panel:IsShown(), "left chat info panel escaped its OnShow guard")
+rightPanel:Show()
+rightPanel.scripts.OnShow()
+assert(not rightPanel:IsShown(), "right chat info panel escaped its OnShow guard")
+assert(minimapPanel.scripts.OnShow == nil, "minimap panel received a chat guard")
 assert(not panel.left.aeuiPanelTexture, "retired panel art was still created")
 assert(#ChatFrame1Tab.points == 1, "pfUI chat tab anchor was not preserved")
 assert(ChatFrame1Tab.aeuiStateTexture, "chat tab state texture was not applied")
@@ -473,16 +960,25 @@ SlashCmdList.AZEROTHEXPEDITIONUI("status")
 local statusMessage =
   DEFAULT_CHAT_FRAME.messages[#DEFAULT_CHAT_FRAME.messages] or ""
 assert(
-  string.find(statusMessage, "route=native-first", 1, true),
-  "status command did not report the native-first route"
+  string.find(statusMessage, "route=scoped", 1, true),
+  "status command did not report the scoped route"
 )
 assert(
-  string.find(statusMessage, "chat-runtime=1.7", 1, true),
+  string.find(statusMessage, "chat-runtime=1.18", 1, true),
   "status command did not report the chat runtime contract"
 )
 assert(
-  string.find(statusMessage, "blizzard-skins=native", 1, true),
-  "status command did not report native Blizzard skins"
+  string.find(statusMessage, "chat-color=m4/h4/f2/c", 1, true),
+  "status command did not report the chat color hook diagnostics: " ..
+    statusMessage
+)
+assert(
+  string.find(statusMessage, "ownership=chat,quests", 1, true),
+  "status command did not report scoped ownership"
+)
+assert(
+  string.find(statusMessage, "blizzard-skins=pfui-except-quest-log", 1, true),
+  "status command did not report the scoped Blizzard skin route"
 )
 
 local scaleTabWidthCalls = ChatFrame1Tab.setWidthCalls
@@ -626,6 +1122,8 @@ assert(
   "tab selection did not restore the chat content safe area"
 )
 
+ChatFrame4.GetSpacing = false
+ChatFrame4.GetFont = false
 simulatePfUIRefreshLayout = true
 pfUI.chat:RefreshChat()
 simulatePfUIRefreshLayout = false
@@ -635,6 +1133,23 @@ assert(
   ChatFrame1.points[2][4] == -30 and
   ChatFrame1.points[2][5] == 40,
   "pfUI RefreshChat overrode the chat content safe area"
+)
+assert(
+  ChatFrame1:GetSpacing() == 3 and ChatFrame4.spacing == 3,
+  "pfUI RefreshChat retained a reset chat line spacing"
+)
+assert(
+  ChatFrame1.font[1] == "pfui-font.ttf" and
+    ChatFrame4.font[1] == "pfui-font.ttf" and
+    ChatFrame1.font[2] == 14 and
+    ChatFrame4.font[2] == 12 and
+    ChatFrame1.font[3] == nil and
+    ChatFrame4.font[3] == nil and
+    ChatFrame1.shadowColor[4] == 0 and
+    ChatFrame4.shadowColor[4] == 0 and
+    ChatFrame1.shadowOffset[1] == 0 and
+    ChatFrame4.shadowOffset[2] == 0,
+  "pfUI RefreshChat did not restore the provider-owned chat font"
 )
 assert(
   ChatFrame1TabText.points[1][1] == "CENTER" and

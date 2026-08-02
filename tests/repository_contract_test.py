@@ -6,6 +6,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import colorsys
 from pathlib import Path
 
 
@@ -119,7 +120,7 @@ def main() -> None:
         "run-aeui-asset-workflow",
         "imagegen-0-143-0",
         "P6-C",
-        "8.1.0-aeui.3",
+        "8.1.0-aeui.4",
     ):
         assert required in agents, f"AGENTS.md missing {required}"
     for path in sorted(expected_durable_docs | work_docs):
@@ -211,10 +212,12 @@ def main() -> None:
     )
     assert "## RequiredDeps: pfUI" in aeui_toc
     assert "## Version: 0.6.0" in aeui_toc
+    assert "Modules\\QuestVisualTheme.lua" in aeui_toc
     assert "Modules\\Quests.lua" in aeui_toc
     bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(encoding="utf-8")
     assert 'addon.version = "0.6.0"' in bootstrap
     assert "chat-runtime=" in bootstrap
+    assert "chat-color=" in bootstrap
     assert "quest-runtime=" in bootstrap
     assert 'elseif command == "quests" then' in bootstrap
     assert "function addon:RunModuleMethod" in bootstrap
@@ -223,11 +226,59 @@ def main() -> None:
     quest_source = (aeui / "Modules" / "Quests.lua").read_text(
         encoding="utf-8"
     )
-    assert 'Quests.runtimeContract = "1.9"' in quest_source
-    assert "QuestLogShellV4" in quest_source
-    assert "QuestLogDirectoryMarksV1" in quest_source
-    assert "QuestTrackerPaperV1" in quest_source
-    assert "QuestToolWaxSealStatesV1" in quest_source
+    quest_theme_source = (
+        aeui / "Modules" / "QuestVisualTheme.lua"
+    ).read_text(encoding="utf-8")
+    assert 'contract = "1.5"' in quest_theme_source
+    assert "QuestLogShellV4" in quest_theme_source
+    assert "QuestLogDirectoryMarksV1" in quest_theme_source
+    assert "QuestTrackerPaperV1" in quest_theme_source
+    assert "QuestToolWaxSealStatesV1" in quest_theme_source
+    assert "NotoSerifSC-SemiBold.ttf" in quest_theme_source
+    assert "LXGWWenKaiGB-Medium.ttf" in quest_theme_source
+    assert "providerPanelHeight = 16" in quest_theme_source
+    assert "bottomContentPadding = 16" in quest_theme_source
+    assert "trackerQuestName" in quest_theme_source
+    assert "providerOwned = true" in quest_theme_source
+    assert "fallbackPath" in quest_theme_source
+    assert 'flags = ""' in quest_theme_source
+    assert "hideEntryIcons = true" in quest_theme_source
+    quest_name_role = quest_theme_source.split(
+        "questName = {", 1
+    )[1].split("},", 1)[0]
+    assert "size = 12" in quest_name_role
+    assert 'flags = ""' in quest_name_role
+    for shared_ink in (
+        "|cff24170f",
+        "|cff062a22",
+        "|cff440705",
+        "|cff2f1236",
+        "|cff400909",
+        "|cff421704",
+        "|cff291d00",
+        "|cff052b0f",
+        "|cff24211f",
+    ):
+        assert shared_ink in quest_theme_source
+
+    assert 'Quests.runtimeContract = "1.16"' in quest_source
+    assert "ApplyTrackerProviderFont" in quest_source
+    assert "ResolveQuestNameInk" in quest_source
+    assert quest_source.count("ResolveQuestNameInk(") >= 3
+    assert "ApplyDirectoryTypography" in quest_source
+    assert "NormalizeDirectoryInlineStatus" in quest_source
+    assert "ResolveDirectoryStatusInks" in quest_source
+    assert "pfUI.font_default" in quest_source
+    assert "addon.questVisualTheme" in quest_source
+    assert "ApplyPfQuestTrackerEntryTheme" in quest_source
+    assert "InstallPfQuestTrackerEntryThemeHooks" in quest_source
+    assert "ApplyPfQuestTrackerContentSafeHeight" in quest_source
+    assert "aeuiQuestVisualThemeDirty" in quest_source
+    assert "aeuiQuestBottomContentPadding" in quest_source
+    assert "SuppressPfQuestTrackerEntryIcon" in quest_source
+    assert "aeuiQuestEntryIconThemeContract" in quest_source
+    assert "ApplyDetailTextTheme" in quest_source
+    assert "aeuiQuestVisualThemeContract" in quest_source
     assert "ApplyPfQuestTrackerPaper" in quest_source
     assert "EnsureQuestLogChromeSeal" in quest_source
     assert "EnsurePfQuestTrackerHubSeal" in quest_source
@@ -235,7 +286,8 @@ def main() -> None:
     assert "QuestLogSelectionBookmarkV1" not in quest_source
     assert "QuestLogTitleButtonTemplate" in quest_source
     assert "FauxScrollFrame_GetOffset" in quest_source
-    assert "IsQuestWatched" in quest_source
+    assert "type(IsQuestWatched)" not in quest_source
+    assert "row.aeuiQuestListCheck =" not in quest_source
     assert "GetQuestLogSelection" not in quest_source
     assert "CaptureAndHideNativeTextures" in quest_source
     assert "SuppressNativeRowSelection" in quest_source
@@ -243,8 +295,19 @@ def main() -> None:
     assert "HideCollapseAllButton" in quest_source
     assert "aeuiQuestCollapseSuppressed" in quest_source
     assert "StyleLeatherButton" in quest_source
+    assert "UpdateActionButtonStates" in quest_source
+    assert '"OnEnable"' not in quest_source
+    assert '"OnDisable"' not in quest_source
     assert "HideDetailScrollbar" in quest_source
+    assert "HideListScrollbar" in quest_source
+    assert "HideScrollbarChrome" in quest_source
+    assert "InstallListMouseWheel" in quest_source
     assert "InstallDetailMouseWheel" in quest_source
+    assert "rowCount = 18" in quest_source
+    assert "providerRowCeiling = 23" in quest_source
+    assert "rowWidth = 246" in quest_source
+    assert "rowHeight = 18" in quest_source
+    assert "textWidth = 226" in quest_source
     assert "QuestLogDetailScrollFrameScrollBar" in quest_source
     assert "ToggleDetail" in quest_source
     assert "CaptureQuestLogBaseGeometry" in quest_source
@@ -292,7 +355,7 @@ def main() -> None:
 
     for toc_name in ("pfUI.toc", "pfUI-tbc.toc"):
         toc_source = (pfui / toc_name).read_text(encoding="utf-8-sig")
-        assert "## Version: 8.1.0-aeui.3" in toc_source
+        assert "## Version: 8.1.0-aeui.4" in toc_source
 
     pfquest_toc = (pfquest / "pfQuest.toc").read_text(encoding="utf-8-sig")
     assert "## Interface: 11200" in pfquest_toc
@@ -333,15 +396,164 @@ def main() -> None:
     assert not (aeui / "Media" / "Chat" / "ChatPanelSegment.tga").exists()
     chat_source = (aeui / "Modules" / "Chat.lua").read_text(encoding="utf-8")
     assert "ChatPanelSegment" not in chat_source
-    assert "SuppressLegacyInfoPanels" in chat_source
+    assert "SuppressLegacyInfoPanels" not in chat_source
+    assert "SuppressChatInfoPanels" in chat_source
+    assert "panels.minimap" not in chat_source
     assert "SuppressRightChat" in chat_source
-    assert 'Chat.runtimeContract = "1.7"' in chat_source
+    assert 'Chat.runtimeContract = "1.18"' in chat_source
     assert "EnsureBookVisible" in chat_source
     assert 'owner:EnableDrawLayer("BACKGROUND")' in chat_source
     assert "InstallPfUIHooks" in chat_source
     assert "InstallOwnerScaleHook" in chat_source
     assert "ObserveOwnerScale" in chat_source
     assert "RestoreRuntimeLayout" in chat_source
+    assert "CHAT_TEXT_LINE_SPACING = 3" in chat_source
+    assert "CHAT_TEXT_SHADOW_COLOR" in chat_source
+    assert "CHAT_TEXT_SHADOW_COLOR = { 0, 0, 0, 0 }" in chat_source
+    assert "CHAT_TEXT_SHADOW_OFFSET = { 0, 0 }" in chat_source
+    assert "CHAT_TEXT_PALETTE" in chat_source
+    assert "CHAT_BASE_COLOR_RULES" in chat_source
+    assert "CHAT_INLINE_COLOR_MAP" in chat_source
+    assert "AdaptUnknownInlineColor" in chat_source
+    assert "CHAT_INLINE_COLOR_TARGETS" in chat_source
+    assert "CHAT_INLINE_CONTRAST_TARGET = 4.8" in chat_source
+    assert "StyleChatFrameText" in chat_source
+    assert "InstallMessageColorHook" in chat_source
+    assert "InstallChatMODFinalColorHook" in chat_source
+    assert "EnsureMessageColorHooks" in chat_source
+    assert "ApplyMessagePalette" in chat_source
+    assert "GetMessageColorStatus" in chat_source
+    assert 'getglobal("S_AddMessage")' not in chat_source
+    assert "frame.ORG_AddMessage = wrapper" in chat_source
+    assert "frame:GetParent() == pfUI.chat.left" in chat_source
+    palette_scope = chat_source.split(
+        "function Chat:IsMessagePaletteManaged", 1
+    )[1].split("function Chat:ApplyMessagePalette", 1)[0]
+    assert "frame.pfCombatLog" not in palette_scope
+    assert "TransformBaseMessageColor" in chat_source
+    assert "NormalizeInlineMessageColors" in chat_source
+    for color_code in (
+        "ff33ccff",
+        "fff58cba",
+        "ffabd473",
+        "ff69ccf0",
+        "fffff569",
+        "ff0070dd",
+        "ffa335ee",
+    ):
+        assert color_code in chat_source
+    for parchment_color in (
+        "ff4b3b2a",
+        "ff583243",
+        "ff354224",
+        "ff423f1b",
+        "ff333333",
+        "ff003d7a",
+        "ff22424e",
+        "ff413959",
+        "ff633004",
+        "ff592d2d",
+        "ff234020",
+    ):
+        assert parchment_color in chat_source
+    class_sources = (
+        "ffc79c6e",
+        "fff58cba",
+        "ffabd473",
+        "fffff569",
+        "ffffffff",
+        "ff0070de",
+        "ff69ccf0",
+        "ff9482c9",
+        "ffff7d0a",
+    )
+    class_targets = []
+    for source_color in class_sources:
+        match = re.search(
+            rf"{source_color}\s*=\s*\"ff([0-9a-f]{{6}})\"",
+            chat_source,
+        )
+        assert match, f"missing parchment class mapping for {source_color}"
+        class_targets.append(match.group(1))
+    assert len(set(class_targets)) == len(class_targets)
+    class_rgb = [
+        tuple(int(color[index:index + 2], 16) for index in (0, 2, 4))
+        for color in class_targets
+    ]
+    palette_rgb = {
+        name: (int(red), int(green), int(blue))
+        for name, red, green, blue in re.findall(
+            r"^\s*(say|channel|system|guild|party|raid|whisper|danger|emote)\s*="
+            r"\s*RGB8\((\d+),\s*(\d+),\s*(\d+)\)",
+            chat_source,
+            re.M,
+        )
+    }
+    assert palette_rgb == {
+        "say": (61, 61, 61),
+        "channel": (77, 57, 57),
+        "system": (64, 64, 0),
+        "guild": (18, 71, 18),
+        "party": (59, 59, 89),
+        "raid": (98, 49, 0),
+        "whisper": (90, 45, 90),
+        "danger": (117, 29, 29),
+        "emote": (97, 49, 24),
+    }
+
+    def relative_luminance(color: tuple[int, int, int]) -> float:
+        channels = []
+        for value in color:
+            encoded = value / 255
+            channels.append(
+                encoded / 12.92
+                if encoded <= 0.04045
+                else ((encoded + 0.055) / 1.055) ** 2.4
+            )
+        return (
+            0.2126 * channels[0]
+            + 0.7152 * channels[1]
+            + 0.0722 * channels[2]
+        )
+
+    class_source_rgb = [
+        tuple(int(color[index:index + 2], 16) for index in (2, 4, 6))
+        for color in class_sources
+    ]
+    for source, target in zip(class_source_rgb, class_rgb):
+        if max(source) == min(source):
+            assert max(target) == min(target)
+            continue
+        source_hue = colorsys.rgb_to_hsv(
+            *(channel / 255 for channel in source)
+        )[0]
+        target_hue = colorsys.rgb_to_hsv(
+            *(channel / 255 for channel in target)
+        )[0]
+        hue_delta = abs(source_hue - target_hue)
+        assert min(hue_delta, 1 - hue_delta) <= 0.01
+
+    assert palette_rgb["party"] != palette_rgb["raid"]
+    paper_luminance = relative_luminance((205, 161, 85))
+    for ink in class_rgb + list(palette_rgb.values()):
+        contrast = (paper_luminance + 0.05) / (
+            relative_luminance(ink) + 0.05
+        )
+        assert contrast >= 4.5
+    assert "NotoSansSC-Medium.ttf" not in chat_source
+    assert "READING_WASH_COLOR" not in chat_source
+    assert "Interface\\\\Buttons\\\\WHITE8X8" not in chat_source
+    assert "ChangeChatColor" not in chat_source
+    assert "ChatTypeInfo.CHANNEL =" not in chat_source
+    assert "frame:SetSpacing(CHAT_TEXT_LINE_SPACING)" in chat_source
+    assert 'getglobal("FCF_SetChatWindowFontSize")' in chat_source
+    text_style_block = chat_source.split(
+        "function Chat:StyleChatFrameText", 1
+    )[1].split("function Chat:LayoutTabPanel", 1)[0]
+    assert "frame:SetFont(providerFont, fontSize)" in text_style_block
+    assert "frame:SetShadowColor" in text_style_block
+    assert "frame:SetShadowOffset" in text_style_block
+    assert '"OUTLINE"' not in text_style_block
     assert "startupLayoutForce" in chat_source
     assert 'event == "UI_SCALE_CHANGED"' in chat_source
     assert 'text:SetJustifyV("MIDDLE")' in chat_source
@@ -425,15 +637,21 @@ def main() -> None:
     assert "## Read-only child recovery" in imagegen_wrapper
 
     expedition = (pfui / "api" / "expedition.lua").read_text(encoding="utf-8")
-    assert 'legacy_info_panels = "0"' in expedition
-    assert 'vanilla_fallback = "1"' in expedition
-    assert 'native_blizzard_skins = "1"' in expedition
+    assert 'ownership = "scoped-v1"' in expedition
+    assert 'expedition.vanilla_fallback = "0"' in expedition
+    assert 'expedition.native_blizzard_skins = "0"' in expedition
+    assert 'expedition.legacy_info_panels = "1"' in expedition
+    assert "vanillaModuleGroups" not in expedition
     assert "ApplyExpeditionVisualContract" in expedition
+    assert "GetExpeditionModuleOwner" in expedition
+    assert "GetExpeditionSkinOwner" in expedition
     assert "ShouldUseVanillaModule" in expedition
     assert "ShouldUseVanillaSkin" in expedition
     assert "ShouldUseSingleChatFrame" in expedition
 
     pfui_chat = (pfui / "modules" / "chat.lua").read_text(encoding="utf-8")
+    assert "ApplyExpeditionMessagePalette" in pfui_chat
+    assert "chat:ApplyMessagePalette" in pfui_chat
     assert "single-journal route" in pfui_chat
     assert "AddSecondaryMessagesTo(ChatFrame1)" in pfui_chat
     assert "not v.aeuiManaged" in pfui_chat
@@ -452,47 +670,60 @@ def main() -> None:
     ):
         assert message_group in pfui_chat
 
-    fallback_block = expedition.split(
-        "local vanillaModuleGroups = {", 1
-    )[1].split("for group, modules", 1)[0]
-    fallback_modules = set(re.findall(r'"([^"]+)"', fallback_block))
+    owner_block = expedition.split("module_owners = {", 1)[1].split(
+        "skin_owners = {", 1
+    )[0]
+    owned_modules = set(
+        re.findall(r'^\s*([a-z0-9_-]+)\s*=\s*"chat"', owner_block, re.M)
+    )
+    assert owned_modules == {"chatcopy", "whisperproxy", "bubbles"}
     modules_xml = (pfui / "init" / "modules.xml").read_text(encoding="utf-8")
     registered_module_files = set(
         re.findall(r'modules\\([^"\\]+)\.lua', modules_xml)
     )
-    retained_modules = {
-        "gui",
-        "unlock",
-        "updatenotify",
-        "chat",
-        "autoshift",
-        "autovendor",
-        "questitem",
-        "sellvalue",
-        "eqcompare",
-        "custom",
-        "gm",
-        "feigndeath",
-        "pixelperfect",
-        "hdgraphic",
-        "share",
-        "socialmod",
-        "screenshot",
-        "combatlogfix",
-        "macrotweak",
-        "turtle-wow",
-        "superwow",
-    }
-    assert not retained_modules & fallback_modules
-    unclassified = registered_module_files - fallback_modules - retained_modules
-    assert not unclassified, (
-        "pfUI modules lack an explicit native-fallback/retained classification: "
-        f"{sorted(unclassified)}"
-    )
+    assert owned_modules <= registered_module_files
+    for retained in (
+        "gui", "skin", "panel", "actionbar", "minimap", "player", "raid",
+        "bags", "loot", "nameplates", "chat", "questitem", "turtle-wow",
+    ):
+        assert retained in registered_module_files
+        assert retained not in owned_modules
+
+    skin_owner_block = expedition.split("skin_owners = {", 1)[1].split(
+        "local function GetExpeditionConfig", 1
+    )[0]
+    assert re.findall(
+        r'\["([^"]+)"\]\s*=\s*"quests"', skin_owner_block
+    ) == ["Quest Log"]
 
     pfui_core = (pfui / "pfUI.lua").read_text(encoding="utf-8")
     assert "function pfUI:IsModuleEnabled" in pfui_core
     assert "function pfUI:IsSkinEnabled" in pfui_core
+    assert 'bgFile = "Interface\\\\BUTTONS\\\\WHITE8X8"' in pfui_core
+
+    pfui_api = (pfui / "api" / "api.lua").read_text(encoding="utf-8")
+    assert "C.appearance.expedition" not in pfui_api
+    assert "expedition.compact" not in pfui_api
+    assert "expedition.surface" not in pfui_api
+
+    pfui_config_source = (pfui / "api" / "config.lua").read_text(
+        encoding="utf-8"
+    )
+    for restored_default in (
+        '"background",       "0,0,0,1"',
+        '"color",            "0.2,0.2,0.2,1"',
+        '"texture",          "None"',
+        '"left",             "guild"',
+        '"right",            "gold"',
+        '"minimap",          "zone"',
+    ):
+        assert restored_default in pfui_config_source
+
+    game_menu = (pfui / "skins" / "blizzard" / "game_menu.lua").read_text(
+        encoding="utf-8"
+    )
+    assert "GameMenuButtonPFUI" in game_menu
+    assert "pfUI.gui:Show()" in game_menu
 
     turtle = (pfui / "modules" / "turtle-wow.lua").read_text(encoding="utf-8")
     assert 'pfUI:IsModuleEnabled("player")' in turtle
