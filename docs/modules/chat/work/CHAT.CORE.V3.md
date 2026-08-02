@@ -22,7 +22,7 @@
   美术基线仍保持不变
 - 并行生产批次：`CHAT.FRAME.PAPER.V1 / prompt-authorized / P3`；用户已授权
   固定 V3 母版作为唯一 Image 1，同一生产正文最多 5 次实际 ImageGen
-  调用；当前 `0/5`
+  调用；当前 `0/5`，生成前流程错误 `1`
 - 锁定视觉基准：
   - [`聊天框视觉基准_v1.png`](../../../../assets/locked/chat/聊天框视觉基准_v1.png)
     — 游戏内物件身份、紧凑尺度和香草 HUD 综合色感
@@ -349,7 +349,7 @@ Final self-check: exactly one full-canvas warm-black parchment surface; paper ma
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
-| — | — | — | — | — | 当前 `0` 次流程错误 |
+| E1 | `CHAT.FRAME.PAPER.V1` / `6c34ad1` | 未创建 | sandbox approval reviewer 在 PowerShell／`npx` 启动前拒绝；无子进程、无上传、无图片、无 provider result | 暂停；向用户说明固定 Skill 的精确执行机制，只在用户补充授权后以同一已提交正文重试 | 不占生图额度；仍为 `0/5` |
 
 ## 最终执行正文
 
