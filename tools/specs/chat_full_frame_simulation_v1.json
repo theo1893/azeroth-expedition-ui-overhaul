@@ -1,0 +1,120 @@
+{
+  "schema": "aeui-chat-full-frame-simulation-v1",
+  "version": "CHAT-FULL-SIM-V1",
+  "component": "CHAT.FRAME.FULL.V1",
+  "canvas": {
+    "width": 1000,
+    "height": 390,
+    "mode": "RGBA",
+    "fill": "#111713FF"
+  },
+  "output": "generated/chat/core/simulation/CHAT-FULL-SIM-V1/chat_full_frame_v1.png",
+  "metrics": "generated/chat/core/simulation/CHAT-FULL-SIM-V1/chat_full_frame_v1.metrics.json",
+  "fonts": {
+    "body": {
+      "path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf",
+      "size": 12
+    },
+    "tab": {
+      "path": "addon/AzerothExpeditionUI/Media/Fonts/LXGWWenKaiGB-Medium.ttf",
+      "size": 14
+    },
+    "label": {
+      "path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf",
+      "size": 16
+    },
+    "note": {
+      "path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf",
+      "size": 11
+    }
+  },
+  "frame": {
+    "size": [440, 320],
+    "content_safe_area": [30, 32, 410, 280],
+    "tab_size": [92, 30],
+    "tab_gap": 3,
+    "line_height": 15,
+    "maximum_visible_lines": 16,
+    "nine_slice_caps": [30, 28, 30, 28]
+  },
+  "materials": {
+    "shadow": "#050302B8",
+    "leather": "#211209FF",
+    "leather_dark": "#100905FF",
+    "leather_light": "#3A2111FF",
+    "brass": "#6F5227FF",
+    "brass_dark": "#37270FFF",
+    "page_stack_outer": "#130C07FF",
+    "page_stack_mid": "#21150DFF",
+    "page_stack_inner": "#2E2015FF",
+    "paper": "#18120DFF",
+    "paper_warm": "#21170FFF",
+    "paper_edge": "#4A3320FF",
+    "fiber": "#5E40222B",
+    "shelf": "#170D08FF",
+    "shelf_edge": "#6F5024FF",
+    "tab_normal": "#2B180FFF",
+    "tab_selected": "#503018FF",
+    "tab_edge": "#765629FF",
+    "tab_text": "#A98D61FF",
+    "tab_text_selected": "#FFE0A0FF"
+  },
+  "palette": {
+    "body": "#D5C39BFF",
+    "time": "#33CCFFFF",
+    "world": "#FFC0C0FF",
+    "system": "#FFFF00FF",
+    "guild": "#40FF40FF",
+    "party": "#AAAAFFFF",
+    "raid": "#FF7F00FF",
+    "whisper": "#FF80FFFF",
+    "danger": "#FF4040FF",
+    "warrior": "#C79C6EFF",
+    "paladin": "#F58CBAFF",
+    "hunter": "#ABD473FF",
+    "rogue": "#FFF569FF",
+    "priest": "#FFFFFFFF",
+    "shaman": "#1684EDFF",
+    "mage": "#69CCF0FF",
+    "warlock": "#9482C9FF",
+    "druid": "#FF7D0AFF",
+    "positive": "#7CFF72FF",
+    "negative": "#FF6868FF"
+  },
+  "tabs": ["综合", "团队", "个人", "拾取"],
+  "scenarios": [
+    {
+      "id": "typical-fifteen-lines",
+      "origin": [40, 45],
+      "label": "常用密度 · 15 行 · 综合",
+      "selected_tab": 0,
+      "line_count": 15
+    },
+    {
+      "id": "maximum-sixteen-lines",
+      "origin": [520, 45],
+      "label": "最大密度 · 16 行 · 团队",
+      "selected_tab": 1,
+      "line_count": 16
+    }
+  ],
+  "messages": [
+    [["time", "[09:14]"], ["world", "[8. 世界][60]"], ["warrior", "[梅西十号]: "], ["world", "K10 来的报天赋，过载满，镰刀 2/3"]],
+    [["time", "[09:14]"], ["world", "[8. 世界][60]"], ["mage", "[StarOcean]: "], ["world", "卡下来人 65+，欢迎小号"]],
+    [["time", "[09:14]"], ["world", "[9. 世界][60]"], ["priest", "[蔚锦]: "], ["world", "有附魔吗"]],
+    [["time", "[09:14]"], ["raid", "[团][60]"], ["shaman", "[大奶黑牛]: "], ["raid", "DPSMate 输出助手 - 报告"]],
+    [["time", "[09:14]"], ["raid", "[团][60]"], ["shaman", "[大奶黑牛]: "], ["negative", "星界洞察 => -7038 (HIT)"]],
+    [["time", "[09:14]"], ["raid", "[团][60]"], ["shaman", "[大奶黑牛]: "], ["positive", "圣光闪现 => +1117 (HIT)"]],
+    [["time", "[09:14]"], ["party", "[队][60]"], ["warlock", "[芙蕾雅]: "], ["party", "北门集合，术士先拉糖"]],
+    [["time", "[09:14]"], ["guild", "[公][60]"], ["hunter", "[猎风者]: "], ["guild", "今晚八点公会团，准时集合"]],
+    [["time", "[09:14]"], ["whisper", "[密][60]"], ["paladin", "[Winwin]: "], ["whisper", "需要什么配置呀？"]],
+    [["time", "[09:14]"], ["system", "[系统] 你获得了物品：精良战利品"]],
+    [["time", "[09:14]"], ["body", "[说][60]"], ["druid", "[赤狐]: "], ["body", "有人一起去黑石深渊吗"]],
+    [["time", "[09:14]"], ["danger", "[警告] 目标正在施放暗影箭！"]],
+    [["time", "[09:14]"], ["body", "[说][60]"], ["rogue", "[夜幕]: "], ["body", "开始冷静下来了。"]],
+    [["time", "[09:14]"], ["party", "[队][60]"], ["priest", "[白羽]: "], ["party", "治疗已就位，可以开怪"]],
+    [["time", "[09:14]"], ["raid", "[团][60]"], ["warrior", "[铁壁]: "], ["raid", "二队去左侧，三队守门"]],
+    [["time", "[09:14]"], ["guild", "[公][60]"], ["mage", "[霜火]: "], ["guild", "传送门已经开好"]]
+  ],
+  "footer": "方向模拟：所有书体材料连续生成；Tab 与文字仅代表现有独立运行时对象；模拟像素不得进入游戏"
+}
