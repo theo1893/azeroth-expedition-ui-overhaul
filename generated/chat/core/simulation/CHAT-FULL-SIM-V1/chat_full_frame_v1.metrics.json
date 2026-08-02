@@ -1,0 +1,70 @@
+{
+  "schema": "aeui-chat-full-frame-simulation-metrics-v1",
+  "version": "CHAT-FULL-SIM-V1",
+  "component": "CHAT.FRAME.FULL.V1",
+  "preview": {
+    "path": "generated/chat/core/simulation/CHAT-FULL-SIM-V1/chat_full_frame_v1.png",
+    "sha256": "5d73b5afc11ec128c4938967206301f288b3f734cb5c2dc85e146b38c1b8487c",
+    "size": [
+      1000,
+      390
+    ],
+    "mode": "RGBA"
+  },
+  "frame_size": [
+    440,
+    320
+  ],
+  "content_safe_area": [
+    30,
+    32,
+    410,
+    280
+  ],
+  "nine_slice_caps": [
+    30,
+    28,
+    30,
+    28
+  ],
+  "layout": {
+    "typical-fifteen-lines": {
+      "frame": [
+        440,
+        320
+      ],
+      "origin": [
+        40,
+        45
+      ],
+      "selected_tab": 0,
+      "rendered_lines": 15,
+      "first_baseline_y": 42,
+      "last_baseline_y": 252,
+      "content_bottom": 280
+    },
+    "maximum-sixteen-lines": {
+      "frame": [
+        440,
+        320
+      ],
+      "origin": [
+        520,
+        45
+      ],
+      "selected_tab": 1,
+      "rendered_lines": 16,
+      "first_baseline_y": 42,
+      "last_baseline_y": 267,
+      "content_bottom": 280
+    }
+  },
+  "authority": {
+    "book": "direction-only geometric representation of one coherently generated object",
+    "tabs_and_text": "independent runtime-neighbor representations; not frame art",
+    "world_backdrop": "non-authoritative geometric context",
+    "promotion": "never source, runtime, or production input"
+  },
+  "imagegen": "0/0",
+  "external_uploads": 0
+}

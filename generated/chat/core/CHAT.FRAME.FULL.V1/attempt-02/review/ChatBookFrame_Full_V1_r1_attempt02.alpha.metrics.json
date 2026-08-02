@@ -1,0 +1,73 @@
+{
+  "schema": "aeui-chat-full-frame-alpha-cleanup-v1",
+  "input": {
+    "path": "D:\\Git\\azeroth-expedition-ui-overhaul\\generated\\chat\\core\\CHAT.FRAME.FULL.V1\\attempt-02\\ChatBookFrame_Full_V1_r1_attempt02.provider-raw.png",
+    "sha256": "8275b815b19677fda2fe242b79a06557af90032e570841236cab41ec429917b5",
+    "size": [
+      1620,
+      971
+    ],
+    "mode": "RGB"
+  },
+  "output": {
+    "path": "D:\\Git\\azeroth-expedition-ui-overhaul\\generated\\chat\\core\\CHAT.FRAME.FULL.V1\\attempt-02\\review\\ChatBookFrame_Full_V1_r1_attempt02.transparent.png",
+    "sha256": "23981aca770e93335efc5df3e917a9b220fe800b08e9142a4d4579415a6af741",
+    "size": [
+      1608,
+      978
+    ],
+    "mode": "RGBA",
+    "visible_bbox": [
+      24,
+      25,
+      1584,
+      952
+    ],
+    "opaque_pixels": 1325523,
+    "partial_pixels": 23952,
+    "transparent_pixels": 223149
+  },
+  "parameters": {
+    "canvas": [
+      1608,
+      978
+    ],
+    "margin": 24,
+    "minimum_threshold": 140,
+    "chroma_threshold": 28,
+    "chroma_luma_ceiling": 185,
+    "close_radius": 0,
+    "edge_radius": 0.8,
+    "edge_color_radius": 2.0,
+    "edge_color_inset": 3
+  },
+  "placement": {
+    "source_visible_bbox": [
+      1,
+      14,
+      1601,
+      965
+    ],
+    "normalized_object_size": [
+      1560,
+      927
+    ],
+    "normalized_origin": [
+      24,
+      25
+    ],
+    "transparent_margins_ltrb": [
+      24,
+      25,
+      24,
+      26
+    ],
+    "scale": 0.975
+  },
+  "provenance": {
+    "candidate_pixels": "only the generated attempt-02 RGB candidate",
+    "old_source_pixels": false,
+    "old_masks": false,
+    "operation": "deterministic whole-candidate alpha cleanup and normalization"
+  }
+}

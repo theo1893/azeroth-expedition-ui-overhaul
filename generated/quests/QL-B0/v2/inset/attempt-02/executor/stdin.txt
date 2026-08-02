@@ -1,0 +1,52 @@
+$imagegen 使用 `@openai/codex@0.143.0` 的固定 ImageGen 执行器，生成一张
+`1024 × 1024` RGBA 位图；整张画布也是唯一的 `1024 × 1024` 归一化设计
+网格，不得裁边。若 provider 使用不同的正方形原生边长，仍必须严格保持下面
+坐标在完整画布中的比例，以便后续只做一次全画布等比归一化。所有不属于物件
+的像素，包括外部背景和中央开口，都必须是完全均匀、无纹理、无渐变、无阴影、
+无光晕、无色偏的精确 RGB `#00FF00`。画面中只允许有一个正面朝向、无透视
+的 Quest Log 左页目录内框 `QUEST.LOG.LIST.INSET`。
+
+输入角色必须严格遵守。Image 1
+`任务详情面板_视觉基准_v1.png`
+（SHA-256
+`03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`）
+是最高视觉权威：继承正式公会任务卷宗身份、2004 年前后香草魔兽二维手绘
+笔触、略不规则但清楚的明暗切面、左上暖光、低饱和赭黄／烟黑／暗酒红与
+氧化黄铜关系，以及被长期翻阅造成的不均匀磨损。不要复制 Image 1 的完整
+书体、顶部控件、逐行内容、文字、图标、按钮、滚动条、封印或书签。
+
+Image 2 `QuestLogBookShell_Master_v1.png`
+（SHA-256
+`91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5`）
+只用于匹配当前 runtime 的纸页接触色、材质尺度和受光连续性。不要复制完整
+书壳、书脊、四角、页沟或纸页；Image 2 不得覆盖 Image 1 的物件身份、
+轮廓语言和笔触。
+
+构图和厚度是本次最高几何门禁。唯一物件以 `(512, 512)` 为中心；可见外接盒
+必须严格位于 `x=250..774, y=172..852`，恰为 `524 × 680px`，盒外不得有
+任何物件像素、投影或光晕。中央必须是从 `x=266..758, y=188..836` 的完整
+矩形纯绿色开口，恰为 `492 × 648px`。因此上、下、左、右的结构材料都只能
+占用外盒与开口之间的 `16px` 薄带；四角也必须留在同一薄带内，绝不能向开口
+增厚。它缩到 `262 × 340 UI px` 后必须只形成四边各 `8px` 的目录嵌边，并
+完整露出 `246 × 324 UI px` 的十八行阅读区。
+
+这个物件是嵌在暖赭纸页接缝处的“薄目录装订唇边”，不是完整书壳、窗框、
+门框、肖像框或独立厚面板。主体只用深胡桃木色旧皮与烟黑硬边；氧化黄铜只可
+作为少量、窄小、非对称的角部接缝点，不能形成大块角包、铆钉阵列或连续金属
+边。禁止把浅色羊皮纸、砂岩、石板或厚木条当作四边主体。四边可有轻微手工
+起伏、缺口和不均匀磨损，但必须始终留在 `16px` 薄带中；四角不能镜像复制，
+装饰密度不能规律重复。保留 Image 1 的手绘概括和旧化尺度，避免高清写实
+裂纹、照片级材质和机械般工整。
+
+禁止绘制任何纸面填充、行分隔、地区条、任务条、文字、数字、图标、按钮、
+滚动条、滑块、选择高亮、书签、印章、状态章、假肖像槽或假图标槽。禁止现代
+矩形面板、暗黑祭坛、聊天旧书风格、细金框、宝石、巨大徽章、浮夸雕花和常亮
+发光。
+
+输出前逐项自检：只有一个薄目录内框；物件中心、外盒、开口和四边 `16px`
+厚度全部正确；外盒以外与开口以内都是同一个精确 `#00FF00`；没有任何投影、
+绿色纹理或抗锯齿污染扩散到安全区；内框正面、无透视、无拉伸；在
+`262 × 340 UI px` 显示时不会遮挡 `246 × 324 UI px` 的十八行内容；没有
+任何被禁止的动态或交互内容。
+
+Execution instruction: Image 1 is D:\Git\azeroth-expedition-ui-overhaul\assets\locked\quests\任务详情面板_视觉基准_v1.png. Image 2 is D:\Git\azeroth-expedition-ui-overhaul\assets\source\quests\ql-a1\QuestLogBookShell_Master_v1.png. This Codex process is already @openai/codex@0.143.0. Fulfill the $imagegen request inside this process with its built-in image_gen tool. Do not read or invoke the imagegen-0-143-0 wrapper skill, and do not start any codex or npx subprocess. Save the provider output unchanged to ./generated and output its absolute file path directly. Do not review, resize, crop, recolor, chroma-key, or otherwise post-process it.

@@ -1,0 +1,235 @@
+{
+  "schema": "aeui.chat-copy-candidate-build.v1",
+  "component_version": "CHAT.COPY.V1.3",
+  "authorization_commit": "77fb32f804d0b06700fcef4f9562318635866baa",
+  "network_access": false,
+  "imagegen_called": false,
+  "external_uploads": [],
+  "inputs": {
+    "accepted_frame": {
+      "path": "assets/source/chat/v3/ChatBookFrame_Master_v3.png",
+      "sha256": "f45cfe614dffd4cbc1e17b1af0f6c66b2100f530c353e3954956476b7cf05057",
+      "size": [
+        1608,
+        978
+      ],
+      "mode": "RGBA",
+      "crop": [
+        270,
+        130,
+        1338,
+        827
+      ]
+    },
+    "surface_donor": {
+      "path": "generated/chat/copy/v1_2/b1/CHAT.COPY.TOGGLE.CLOSED.V1_2.raw.png",
+      "sha256": "682459afa17ac43d3961085d211b340ed446152cf52fd2e7b250422316180e4b",
+      "size": [
+        1254,
+        1254
+      ],
+      "mode": "RGB",
+      "crop": [
+        360,
+        242,
+        915,
+        994
+      ]
+    }
+  },
+  "outputs": {
+    "a": {
+      "path": "generated/chat/copy/v1_3/a/CHAT.COPY.SURFACE.V1_3.candidate.png",
+      "sha256": "ed4e1c1a3bfdf4b37775a383b18636454834562eefd7ab526f3ecaf03f8e8efb",
+      "size": [
+        1140,
+        744
+      ],
+      "mode": "RGBA",
+      "visible_bbox": [
+        0,
+        0,
+        1140,
+        744
+      ],
+      "nine_slice_center": [
+        1092,
+        696
+      ],
+      "text_safe_center": [
+        1080,
+        696
+      ]
+    },
+    "closed": {
+      "path": "generated/chat/copy/v1_3/b/CHAT.COPY.TOGGLE.CLOSED.V1_3.candidate.png",
+      "sha256": "e8a38407ac05131763032796a7e6ac9000bece42b3692462e53a68567b3666ce",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "visible_bbox": [
+        336,
+        304,
+        688,
+        720
+      ],
+      "connected_components": 1,
+      "visible_green_pixels": 0
+    },
+    "open": {
+      "path": "generated/chat/copy/v1_3/b/CHAT.COPY.TOGGLE.OPEN.V1_3.candidate.png",
+      "sha256": "ba1134e704f326dd895a01b5592d6162e4c564a6e6b96ab84b4633a44c4ea3ac",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "visible_bbox": [
+        336,
+        304,
+        688,
+        720
+      ],
+      "connected_components": 1,
+      "visible_green_pixels": 0
+    }
+  },
+  "geometry": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "outer_box_half_open": [
+      336,
+      304,
+      688,
+      720
+    ],
+    "lower": [
+      [
+        336,
+        348
+      ],
+      [
+        674,
+        332
+      ],
+      [
+        687,
+        719
+      ],
+      [
+        344,
+        711
+      ]
+    ],
+    "upper_closed": [
+      [
+        370,
+        328
+      ],
+      [
+        650,
+        340
+      ],
+      [
+        638,
+        672
+      ],
+      [
+        358,
+        690
+      ]
+    ],
+    "upper_open": [
+      [
+        370,
+        328
+      ],
+      [
+        650,
+        340
+      ],
+      [
+        678,
+        684
+      ],
+      [
+        350,
+        704
+      ]
+    ],
+    "clamp": [
+      [
+        420,
+        312
+      ],
+      [
+        584,
+        304
+      ],
+      [
+        606,
+        338
+      ],
+      [
+        592,
+        378
+      ],
+      [
+        414,
+        370
+      ],
+      [
+        402,
+        340
+      ]
+    ],
+    "layer_order": [
+      "lower",
+      "upper",
+      "clamp"
+    ],
+    "state_difference_bbox": [
+      350,
+      329,
+      679,
+      705
+    ]
+  },
+  "shared_layers": {
+    "lower_sha256": "226c974f51d3eadfec56990e8c12d583c8becbe847b72390bdfbd77a8573b6f6",
+    "clamp_sha256": "436c2f1b911e5453347b9007c543b7058d553f7c74c51116b4715aae7581168f"
+  },
+  "runtime_review": {
+    "toggle_difference": {
+      "size": [
+        22,
+        26
+      ],
+      "changed_pixels": 491,
+      "total_pixels": 572,
+      "channel_maximum": {
+        "red": 15,
+        "green": 84,
+        "blue": 13,
+        "alpha": 7
+      },
+      "channel_mean": {
+        "red": 1.729020979020979,
+        "green": 2.0681818181818183,
+        "blue": 2.034965034965035,
+        "alpha": 0.02097902097902098
+      },
+      "channel_rms": {
+        "red": 2.679565250198235,
+        "green": 4.614320973009793,
+        "blue": 2.9812936601602815,
+        "alpha": 0.3396831102433787
+      }
+    },
+    "visual_verdict": "internal-reject: off/on are not legible at 22x26"
+  }
+}

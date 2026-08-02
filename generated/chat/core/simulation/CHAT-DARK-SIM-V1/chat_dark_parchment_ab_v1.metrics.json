@@ -1,0 +1,85 @@
+{
+  "schema": "aeui-chat-dark-parchment-simulation-metrics-v1",
+  "version": "CHAT-DARK-SIM-V1",
+  "image": {
+    "path": "generated/chat/core/simulation/CHAT-DARK-SIM-V1/chat_dark_parchment_ab_v1.png",
+    "size": [
+      1000,
+      420
+    ],
+    "mode": "RGBA",
+    "sha256": "4a8d78c026147a87b5a0a3bde97cdd142344a7441d12ff84957184062990be8f"
+  },
+  "frame_size": [
+    440,
+    320
+  ],
+  "content_safe_area": [
+    30,
+    32,
+    410,
+    280
+  ],
+  "layout": {
+    "A-current-light": {
+      "rendered_lines": 15,
+      "truncated": 0
+    },
+    "B-near-black-paper": {
+      "rendered_lines": 15,
+      "truncated": 0
+    }
+  },
+  "contrast": {
+    "A-current-light": {
+      "body": 4.565,
+      "time": 4.846,
+      "world": 4.503,
+      "system": 4.522,
+      "guild": 4.559,
+      "party": 4.512,
+      "raid": 4.506,
+      "whisper": 4.508,
+      "danger": 4.526,
+      "emote": 4.501,
+      "warrior": 4.507,
+      "paladin": 4.52,
+      "hunter": 4.511,
+      "rogue": 4.506,
+      "priest": 5.31,
+      "shaman": 4.529,
+      "mage": 4.509,
+      "warlock": 4.516,
+      "druid": 4.514,
+      "positive": 4.834,
+      "negative": 4.801,
+      "uncommon": 4.804
+    },
+    "B-near-black-paper": {
+      "body": 9.57,
+      "time": 9.921,
+      "world": 11.981,
+      "system": 17.288,
+      "guild": 13.787,
+      "party": 8.755,
+      "raid": 7.327,
+      "whisper": 8.649,
+      "danger": 5.357,
+      "emote": 7.39,
+      "warrior": 7.434,
+      "paladin": 8.259,
+      "hunter": 10.959,
+      "rogue": 16.37,
+      "priest": 18.565,
+      "shaman": 4.913,
+      "mage": 10.163,
+      "warlock": 5.566,
+      "druid": 7.24,
+      "positive": 14.791,
+      "negative": 7.648,
+      "uncommon": 13.578
+    }
+  },
+  "authority": "direction-only; never source, runtime, or production input",
+  "imagegen": "0/0"
+}

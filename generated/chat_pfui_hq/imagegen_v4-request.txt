@@ -1,0 +1,7 @@
+$imagegen 不是很好看.
+需要再做细节一点, 比如每个tab单独处理. 不能仅仅替换背景
+
+暂时不考虑其他单体插件. 只考虑pfui的接入.
+目前看起来质感很差, 图像精度很低
+
+Execution instruction: Image 1 is D:\Git\azeroth-expedition-ui-overhaul\assets\source\chat\ChatBookFrame_Master_v1.png. Image 2 is C:\Users\西奥\AppData\Local\Temp\codex-clipboard-932a6522-78f3-40dc-879a-4241863b96f9.png. Image 3 is D:\Git\azeroth-expedition-ui-overhaul\assets\locked\chat\聊天框独立艺术资源_v3.png. Save the final image to D:\Git\azeroth-expedition-ui-overhaul\generated\chat_pfui_hq\imagegen_v4 and output its absolute file path directly. No need to review and verify.

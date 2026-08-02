@@ -1,0 +1,328 @@
+{
+  "schema_version": 1,
+  "batch": "QL-B1",
+  "version": "V1.r3",
+  "runtime_contract": "1.0",
+  "status": "runtime-exported",
+  "source": {
+    "file": "assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png",
+    "sha256": "719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44",
+    "width": 1024,
+    "height": 1024,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      144,
+      155,
+      875,
+      862
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_pixels": 936446,
+    "partially_transparent_pixels": 4792,
+    "opaque_pixels": 107338
+  },
+  "transform": {
+    "operation": "fixed cell extraction, visible-alpha-bounds crop, proportional LANCZOS scale, centering and transparent atlas assembly",
+    "resample": "Pillow Image.Resampling.LANCZOS",
+    "alpha_cleanup": "zero RGB only where alpha is fully transparent; preserve visible source alpha",
+    "rotation": null,
+    "mirror": false,
+    "retouch": false,
+    "atlas_size": [
+      64,
+      16
+    ],
+    "cell_size": [
+      16,
+      16
+    ],
+    "state_order": [
+      "collapsed",
+      "expanded",
+      "untracked",
+      "tracked"
+    ],
+    "states": {
+      "collapsed": {
+        "component": "QUEST.LOG.REGION.TOGGLE",
+        "source_cell_xyxy": [
+          0,
+          0,
+          512,
+          512
+        ],
+        "source_visible_bbox_local_exclusive": [
+          182,
+          155,
+          385,
+          357
+        ],
+        "source_visible_size": [
+          203,
+          202
+        ],
+        "runtime_cell_xyxy": [
+          0,
+          0,
+          16,
+          16
+        ],
+        "runtime_content_xyxy": [
+          2,
+          2,
+          14,
+          14
+        ],
+        "runtime_display_size": [
+          12,
+          12
+        ],
+        "texcoord": {
+          "left": 0.03125,
+          "right": 0.21875,
+          "top": 0.125,
+          "bottom": 0.875
+        }
+      },
+      "expanded": {
+        "component": "QUEST.LOG.REGION.TOGGLE",
+        "source_cell_xyxy": [
+          512,
+          0,
+          1024,
+          512
+        ],
+        "source_visible_bbox_local_exclusive": [
+          135,
+          160,
+          339,
+          364
+        ],
+        "source_visible_size": [
+          204,
+          204
+        ],
+        "runtime_cell_xyxy": [
+          16,
+          0,
+          32,
+          16
+        ],
+        "runtime_content_xyxy": [
+          18,
+          2,
+          30,
+          14
+        ],
+        "runtime_display_size": [
+          12,
+          12
+        ],
+        "texcoord": {
+          "left": 0.28125,
+          "right": 0.46875,
+          "top": 0.125,
+          "bottom": 0.875
+        }
+      },
+      "untracked": {
+        "component": "QUEST.LOG.LIST.CHECK",
+        "source_cell_xyxy": [
+          0,
+          512,
+          512,
+          1024
+        ],
+        "source_visible_bbox_local_exclusive": [
+          144,
+          92,
+          402,
+          349
+        ],
+        "source_visible_size": [
+          258,
+          257
+        ],
+        "runtime_cell_xyxy": [
+          32,
+          0,
+          48,
+          16
+        ],
+        "runtime_content_xyxy": [
+          35,
+          3,
+          45,
+          13
+        ],
+        "runtime_display_size": [
+          10,
+          10
+        ],
+        "texcoord": {
+          "left": 0.546875,
+          "right": 0.703125,
+          "top": 0.1875,
+          "bottom": 0.8125
+        }
+      },
+      "tracked": {
+        "component": "QUEST.LOG.LIST.CHECK",
+        "source_cell_xyxy": [
+          512,
+          512,
+          1024,
+          1024
+        ],
+        "source_visible_bbox_local_exclusive": [
+          103,
+          92,
+          363,
+          350
+        ],
+        "source_visible_size": [
+          260,
+          258
+        ],
+        "runtime_cell_xyxy": [
+          48,
+          0,
+          64,
+          16
+        ],
+        "runtime_content_xyxy": [
+          51,
+          3,
+          61,
+          13
+        ],
+        "runtime_display_size": [
+          10,
+          10
+        ],
+        "texcoord": {
+          "left": 0.796875,
+          "right": 0.953125,
+          "top": 0.1875,
+          "bottom": 0.8125
+        }
+      }
+    }
+  },
+  "runtime": {
+    "file": "generated/verification/quest-7c44d64/QuestLogDirectoryMarksV1.tga",
+    "sha256": "e734bbf59da00f7fbc9c75649d33eaf635b5a0c19e1737128dfdce0db58eee8f",
+    "width": 64,
+    "height": 16,
+    "mode": "RGBA",
+    "tga_header": {
+      "image_type": 2,
+      "width": 64,
+      "height": 16,
+      "bits_per_pixel": 32,
+      "descriptor": 8,
+      "top_origin": false
+    },
+    "visible_bbox_exclusive": [
+      2,
+      2,
+      61,
+      14
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_pixels": 632,
+    "partially_transparent_pixels": 292,
+    "opaque_pixels": 100
+  },
+  "simulation": {
+    "atlas_preview": {
+      "file": "generated/verification/quest-7c44d64/QL-B1.atlas.png",
+      "sha256": "7502cc1e4f576f1f28ea418a413145ba880abc18b01e4a99b5c7ce40fa366273",
+      "size": [
+        64,
+        16
+      ]
+    },
+    "real_layout_preview": {
+      "file": "generated/verification/quest-7c44d64/QL-B1.layout.png",
+      "sha256": "7680516c649f216ba84535dbbb684cb0c150518b7d47cc251452098a1276c1c5",
+      "size": [
+        676,
+        464
+      ],
+      "runtime_scale_percent": 100,
+      "shell": "addon/AzerothExpeditionUI/Media/Quests/QuestLogShellV4.tga",
+      "row_count": 23,
+      "row_box": [
+        224,
+        15
+      ],
+      "row_step": 14,
+      "list_origin": [
+        64,
+        64
+      ],
+      "content": "representative localized quest titles, levels, headers, tracking states and right-page text at realistic density",
+      "z_order": [
+        "QL-A2 accepted runtime shell",
+        "QL-B1 accepted runtime marks",
+        "runtime-localized text",
+        "simplified placeholders for pending QL-C controls"
+      ],
+      "authoritative_for": [
+        "QL-B1 target-size legibility",
+        "23-row density",
+        "safe-area and z-order review"
+      ],
+      "not_authoritative_for": [
+        "pending QL-B2, QL-B3, QL-C or QL-D artwork",
+        "Turtle WoW rendering, filtering, hit regions or font loading"
+      ]
+    }
+  },
+  "layout_contract": {
+    "row_objects": "QuestLogTitle1..23",
+    "row_count": 23,
+    "row_box": [
+      224,
+      15
+    ],
+    "row_step": 14,
+    "total_height": 323,
+    "list_safe_area": [
+      64,
+      64,
+      246,
+      324
+    ],
+    "right_reserved": 22,
+    "region_toggle_display_size": [
+      12,
+      12
+    ],
+    "list_check_display_size": [
+      10,
+      10
+    ]
+  },
+  "state_mapping": {
+    "quest_index": "visible row id + FauxScrollFrame_GetOffset(QuestLogListScrollFrame)",
+    "collapsed": "isHeader and isCollapsed",
+    "expanded": "isHeader and not isCollapsed",
+    "untracked": "not isHeader and not IsQuestWatched(questIndex)",
+    "tracked": "not isHeader and IsQuestWatched(questIndex)"
+  },
+  "ownership": {
+    "row_button": "QuestLogTitleN retains all click scripts and selection behavior",
+    "region_toggle": "non-interactive ARTWORK Texture attached to QuestLogTitleN",
+    "list_check": "non-interactive ARTWORK Texture attached to QuestLogTitleN; QuestLogTitleNCheck remains the native state visual and is hidden only while AEUI has the required tracking API"
+  },
+  "implementation": {
+    "exporter": "tools/build_quest_log_directory_marks_v1.py",
+    "adapter": "addon/AzerothExpeditionUI/Modules/Quests.lua",
+    "source_manifest": "generated/verification/quest-7c44d64/QL-B1_SourceManifest_v1.json",
+    "imagegen_calls_after_acceptance": 0,
+    "static_tests_required": true,
+    "game_validated": false
+  }
+}

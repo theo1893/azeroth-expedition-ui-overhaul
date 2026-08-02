@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "batch": "QL-B1",
+  "version": "V1.r3",
+  "status": "accepted-source",
+  "accepted_on": "2026-07-30",
+  "source": {
+    "file": "QuestLogDirectoryMarks_Master_v1.png",
+    "sha256": "719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44",
+    "width": 1024,
+    "height": 1024,
+    "mode": "RGBA",
+    "transparent_pixels": 936446,
+    "partially_transparent_pixels": 4792,
+    "opaque_pixels": 107338,
+    "visible_green_spill_pixels": 0
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "codex_package": "@openai/codex@0.143.0",
+    "generation_session": "019fb1e8-db9a-7010-86d1-98008548e4d6",
+    "generated_image": "ig_007a38bf53929826016a6afc3030688191af04ac2e61682f6d",
+    "prompt": "../../../../docs/modules/quests/work/QUEST.LOG.DIRECTORY.md",
+    "prompt_section": "QL-B1 V1.r3 完整修复执行正文",
+    "visual_reference": "../../../locked/quests/任务详情面板_视觉基准_v1.png",
+    "material_reference": "../ql-a1/QuestLogBookShell_Master_v1.png",
+    "ignored_normalized_raw": "../../../../generated/quests/QL-B1/v1/attempt-05/raw/QL-B1_V1_r3_normalized_1024.png",
+    "ignored_transparent_candidate": "../../../../generated/quests/QL-B1/v1/attempt-05/transparent/QL-B1_V1_r3_transparent.png"
+  },
+  "user_acceptance": {
+    "statement": "接受 QL-B1 V1.r3 的运行时视觉，并允许按上述确定性规则进入 P4/P5。",
+    "scope": [
+      "accept the visible runtime appearance of all four QL-B1 states",
+      "promote the transparent V1.r3 candidate as the tracked P4 source",
+      "allow deterministic per-cell crop, proportional scale, centering and alpha cleanup",
+      "allow deterministic export and runtime integration without further ImageGen calls"
+    ]
+  },
+  "logical_components": [
+    {
+      "id": "QUEST.LOG.REGION.TOGGLE",
+      "states": [
+        "collapsed",
+        "expanded"
+      ],
+      "source_cells_xyxy": {
+        "collapsed": [
+          0,
+          0,
+          512,
+          512
+        ],
+        "expanded": [
+          512,
+          0,
+          1024,
+          512
+        ]
+      },
+      "runtime_display_size": [
+        12,
+        12
+      ]
+    },
+    {
+      "id": "QUEST.LOG.LIST.CHECK",
+      "states": [
+        "untracked",
+        "tracked"
+      ],
+      "source_cells_xyxy": {
+        "untracked": [
+          0,
+          512,
+          512,
+          1024
+        ],
+        "tracked": [
+          512,
+          512,
+          1024,
+          1024
+        ]
+      },
+      "runtime_display_size": [
+        10,
+        10
+      ]
+    }
+  ],
+  "review": {
+    "runtime_visual_accepted": true,
+    "four_state_inventory": true,
+    "runtime_size_legibility": true,
+    "baked_text": false,
+    "baked_buttons": false,
+    "baked_quest_rows": false,
+    "visible_green_spill_pixels": 0,
+    "prior_internal_result": "candidate-rejected / repair-budget-exhausted",
+    "acceptance_override": "The user explicitly accepted the V1.r3 runtime visual after reviewing the runtime-size simulation. Pixel-identical arrow rotation, an identical outer circle, source safe-box occupancy and exact raw chroma-key green are no longer source-acceptance blockers. They remain recorded as historical production misses and are not represented as passed gates."
+  },
+  "export_contract": {
+    "status": "runtime-exported",
+    "operation": "fixed source-cell extraction, visible-alpha-bounds crop, proportional LANCZOS scale, centering in fixed runtime cells, transparent atlas assembly and TGA conversion",
+    "source_grid": [
+      2,
+      2
+    ],
+    "source_cell_size": [
+      512,
+      512
+    ],
+    "runtime_atlas_size": [
+      64,
+      16
+    ],
+    "runtime_cell_size": [
+      16,
+      16
+    ],
+    "runtime_cell_order": [
+      "collapsed",
+      "expanded",
+      "untracked",
+      "tracked"
+    ],
+    "allowed": [
+      "crop each fixed source cell to its visible alpha bounds",
+      "scale proportionally to the declared runtime display size",
+      "center each result in its 16 x 16 cell",
+      "discard fully transparent RGB data and preserve meaningful source alpha",
+      "write a 64 x 16 RGBA TGA atlas"
+    ],
+    "forbidden": [
+      "redraw or invent pixels",
+      "rotate, mirror or deform a state",
+      "load the 1024 x 1024 source directly in the client",
+      "change quest row interaction, tracking state or saved data"
+    ]
+  },
+  "runtime_exports": [
+    {
+      "contract": "QL-B1 V1.r3 / 1.0",
+      "manifest": "QL-B1_RuntimeManifest_v1.json",
+      "file": "generated/verification/quest-7c44d64/QuestLogDirectoryMarksV1.tga",
+      "sha256": "e734bbf59da00f7fbc9c75649d33eaf635b5a0c19e1737128dfdce0db58eee8f",
+      "atlas_size": [
+        64,
+        16
+      ],
+      "cell_size": [
+        16,
+        16
+      ]
+    }
+  ]
+}

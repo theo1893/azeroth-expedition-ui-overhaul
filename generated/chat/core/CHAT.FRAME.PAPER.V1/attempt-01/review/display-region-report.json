@@ -1,0 +1,57 @@
+{
+  "schema": "aeui-display-region-report-v1",
+  "component": "CHAT.FRAME.PAPER.V1",
+  "status": "pass",
+  "summary": {
+    "scenario_count": 4,
+    "violation_count": 0,
+    "first_failure": null
+  },
+  "checks": [
+    {
+      "id": "atlas_sampling",
+      "sampled_area": 140800,
+      "visible_area": 140800,
+      "regions": 1
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "empty",
+      "frame": [
+        440,
+        320
+      ],
+      "status": "pass",
+      "violation_count": 0
+    },
+    {
+      "id": "minimum-one-line",
+      "frame": [
+        440,
+        320
+      ],
+      "status": "pass",
+      "violation_count": 0
+    },
+    {
+      "id": "typical-fifteen-lines",
+      "frame": [
+        440,
+        320
+      ],
+      "status": "pass",
+      "violation_count": 0
+    },
+    {
+      "id": "maximum-sixteen-lines",
+      "frame": [
+        440,
+        320
+      ],
+      "status": "pass",
+      "violation_count": 0
+    }
+  ],
+  "violations": []
+}

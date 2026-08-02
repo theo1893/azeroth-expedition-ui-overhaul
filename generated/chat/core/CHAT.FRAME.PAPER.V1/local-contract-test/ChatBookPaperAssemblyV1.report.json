@@ -1,0 +1,43 @@
+{
+  "schema": "aeui-chat-dark-paper-assembly-report-v1",
+  "version": "CHAT.FRAME.PAPER.V1",
+  "source": {
+    "path": "assets/source/chat/v3/ChatBookFrame_Master_v3.png",
+    "sha256": "f45cfe614dffd4cbc1e17b1af0f6c66b2100f530c353e3954956476b7cf05057",
+    "size": [
+      1608,
+      978
+    ],
+    "mode": "RGBA"
+  },
+  "mask": {
+    "path": "generated/chat/core/CHAT.FRAME.PAPER.V1/local-contract-test/ChatBookPaperMaskV1.png",
+    "sha256": "14c6903bbfbe2002ecdc4a2ded0a9a3d3cbcc9e05b69c7745cb931dcfb289b6f",
+    "nonzero_pixels": 1028763,
+    "total_pixels": 1572624
+  },
+  "overlay": {
+    "path": "generated/chat/core/CHAT.FRAME.PAPER.V1/local-contract-test/ChatBookPaperMaskV1.overlay.png",
+    "sha256": "464b12de1a4353287b13faee6e047239b3d445fcfc5bebade8bea6bbe3dd9701"
+  },
+  "donor": {
+    "path": "D:/Git/azeroth-expedition-ui-overhaul/assets/source/chat/v3/ChatBookFrame_Master_v3.png",
+    "sha256": "f45cfe614dffd4cbc1e17b1af0f6c66b2100f530c353e3954956476b7cf05057",
+    "size": [
+      1608,
+      978
+    ],
+    "mode": "RGBA"
+  },
+  "assembly": {
+    "path": "generated/chat/core/CHAT.FRAME.PAPER.V1/local-contract-test/ChatBookFrame_Master_darkpaper_v1.candidate.png",
+    "sha256": "dada4733360dbf43cab0f091cc2f1638fe9b942df777445c530e0f2741980d86",
+    "size": [
+      1608,
+      978
+    ],
+    "mode": "RGBA",
+    "alpha_difference_pixels": 0,
+    "outside_mask_rgb_difference_pixels": 0
+  }
+}

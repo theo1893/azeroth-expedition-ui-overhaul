@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "batch": "QL-B2",
+  "version": "V1.r4-bbox-fit",
+  "status": "accepted-source",
+  "accepted_on": "2026-07-30",
+  "source": {
+    "file": "QuestLogSelectionBookmark_Master_v1.png",
+    "sha256": "4f8955410ecfaac6697cabeb9bd076d4bd0f5b5adcc97964cee0b7b49d38efaa",
+    "width": 1024,
+    "height": 1024,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      336,
+      413,
+      688,
+      611
+    ],
+    "visible_size": [
+      352,
+      198
+    ],
+    "transparent_pixels": 983561,
+    "partially_transparent_pixels": 3321,
+    "opaque_pixels": 61694,
+    "visible_green_spill_pixels": 0
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "codex_package": "@openai/codex@0.143.0",
+    "generation_session": "019fb249-c0d3-7301-9368-af3fbab1ea1e",
+    "generated_image": "ig_00573a9acc04cbf6016a6b150153a081918fc907ab00eaf460",
+    "prompt": "../../../../docs/modules/quests/work/QUEST.LOG.SELECTION.md",
+    "prompt_section": "QL-B2 V1.r4 完整修复正文",
+    "visual_reference": "../../../locked/quests/任务详情面板_视觉基准_v1.png",
+    "material_reference": "../ql-a1/QuestLogBookShell_Master_v1.png",
+    "ignored_native_output": "../../../../generated/quests/QL-B2/v1/attempt-05/raw/QL-B2_V1_r4_native.png",
+    "ignored_normalized_raw": "../../../../generated/quests/QL-B2/v1/attempt-05/raw/QL-B2_V1_r4_a5_normalized_1024.png",
+    "ignored_transparent_candidate": "../../../../generated/quests/QL-B2/v1/attempt-05/transparent/QL-B2_V1_r4_a5_transparent.png",
+    "ignored_contract_exception_candidate": "../../../../generated/quests/QL-B2/v1/contract-exception-preview/transparent/QL-B2_V1_r4_a5_bboxfit_transparent.png"
+  },
+  "accepted_contract_exception": {
+    "input_sha256": "7331a523c08d87dcb699bb2476f800d71b44574273a94a610a82278dd948ee75",
+    "input_visible_bbox_exclusive": [
+      239,
+      343,
+      802,
+      660
+    ],
+    "input_visible_size": [
+      563,
+      317
+    ],
+    "operation": "crop to visible alpha bounds, scale once with a uniform factor, center on a 1024 x 1024 transparent canvas, apply fixed low-alpha green-edge cleanup and clear fully transparent RGB",
+    "uniform_scale": 0.6252220248667851,
+    "output_visible_bbox_exclusive": [
+      336,
+      413,
+      688,
+      611
+    ],
+    "output_visible_size": [
+      352,
+      198
+    ],
+    "safe_box_exclusive": [
+      320,
+      400,
+      704,
+      624
+    ],
+    "low_alpha_green_edge_pixels_cleaned": 45,
+    "redraw": false,
+    "crop_visible_pixels": false,
+    "stretch": false,
+    "rotation": null,
+    "mirror": false
+  },
+  "user_acceptance": {
+    "statement": "接受 QL-B2 V1.r4 bbox-fit 候选，并授权该确定性合同例外进入 P4/P5。",
+    "scope": [
+      "accept the exact transparent bbox-fit candidate with SHA-256 4f8955410ecfaac6697cabeb9bd076d4bd0f5b5adcc97964cee0b7b49d38efaa",
+      "accept the documented one-time deterministic source-contract exception",
+      "promote the candidate as the tracked P4 source",
+      "allow deterministic three-state atlas export and runtime integration without further ImageGen calls"
+    ]
+  },
+  "logical_components": [
+    {
+      "id": "QUEST.LOG.SELECTION",
+      "source_state": "selected",
+      "runtime_states": [
+        "selected",
+        "selected-hover",
+        "selected-pressed"
+      ],
+      "runtime_display_size": [
+        24,
+        14
+      ],
+      "runtime_texture_size": [
+        32,
+        16
+      ]
+    }
+  ],
+  "review": {
+    "runtime_visual_accepted": true,
+    "single_object_inventory": true,
+    "runtime_size_legibility": true,
+    "same_alpha_for_all_runtime_states": true,
+    "baked_text": false,
+    "baked_buttons": false,
+    "baked_quest_rows": false,
+    "visible_green_spill_pixels": 0,
+    "prior_internal_result": "candidate-rejected / repair-budget-exhausted",
+    "acceptance_override": "The user explicitly accepted the reviewed V1.r4 bbox-fit candidate and its one-time deterministic source-contract exception. The original attempt-5 safe-box and raw chroma-key misses remain historical facts and are not represented as passed generation gates."
+  },
+  "export_contract": {
+    "status": "runtime-exported",
+    "operation": "crop accepted source to visible alpha bounds, scale proportionally into a 24 x 14 content box, derive hover and pressed RGB from the selected pixels while preserving identical alpha, center states in fixed 32 x 16 cells, reserve one transparent cell and write a 128 x 16 RGBA TGA atlas",
+    "runtime_atlas_size": [
+      128,
+      16
+    ],
+    "runtime_cell_size": [
+      32,
+      16
+    ],
+    "runtime_content_size": [
+      24,
+      14
+    ],
+    "runtime_cell_order": [
+      "selected",
+      "selected-hover",
+      "selected-pressed",
+      "reserved-transparent"
+    ],
+    "hover_rgb_transform": {
+      "red": "min(255, round(R * 1.07 + 2))",
+      "green": "min(255, round(G * 1.04 + 1))",
+      "blue": "round(B * 0.96)"
+    },
+    "pressed_rgb_transform": {
+      "red": "round(R * 0.82)",
+      "green": "round(G * 0.80)",
+      "blue": "round(B * 0.78)"
+    },
+    "allowed": [
+      "crop the accepted source to its visible alpha bounds",
+      "scale proportionally to the declared 24 x 14 runtime content size",
+      "derive hover and pressed RGB with the exact declared formulas",
+      "preserve pixel-identical alpha for selected, hover and pressed",
+      "center each state in a 32 x 16 transparent cell",
+      "clear fully transparent RGB and write a 128 x 16 RGBA TGA atlas",
+      "move the pressed Texture down by 1 UI pixel only in the adapter"
+    ],
+    "forbidden": [
+      "redraw or invent source pixels",
+      "rotate, mirror, stretch or deform a state",
+      "encode the pressed 1-pixel movement in the atlas",
+      "load the 1024 x 1024 source directly in the client",
+      "add a hit region or replace QuestLogTitleN scripts",
+      "change quest selection, scrolling or saved data"
+    ]
+  },
+  "runtime_exports": [
+    {
+      "contract": "QL-B2 V1.r4-bbox-fit / 1.0",
+      "manifest": "QL-B2_RuntimeManifest_v1.json",
+      "file": "generated/verification/quest-7c44d64/QuestLogSelectionBookmarkV1.tga",
+      "sha256": "bab9e8bf6961b743d9591bb148878e9eadbbbbd99eac9a183446bf9c81a770b4",
+      "atlas_size": [
+        128,
+        16
+      ],
+      "cell_size": [
+        32,
+        16
+      ],
+      "content_size": [
+        24,
+        14
+      ]
+    }
+  ]
+}

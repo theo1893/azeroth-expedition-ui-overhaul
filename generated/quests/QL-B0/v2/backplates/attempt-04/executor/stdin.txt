@@ -1,0 +1,75 @@
+$imagegen 使用 `@openai/codex@0.143.0` 的固定 ImageGen 编辑器，以 Image 3 为
+唯一编辑目标，输出一张 `1024 × 1024` RGBA 位图；这也是唯一的归一化
+设计网格。不要重新发明两个物件，不要改变它们的材料身份、综合色或自然
+磨损方向；只修正两个既有横条的尺寸、中心和纯绿背景。
+
+输入角色必须严格遵守。Image 1
+`任务详情面板_视觉基准_v1.png`
+（SHA-256
+`03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`）
+是最高视觉权威：继承正式公会任务卷宗身份、2004 年前后香草魔兽二维手绘
+笔触、粗厚略不规则轮廓、明确明暗切面、左上暖光、低饱和赭黄／烟黑／暗酒红
+与氧化黄铜关系，以及不均匀的翻阅磨损。不要复制 Image 1 的完整书体、顶部
+控件、文字、图标、肖像槽、按钮、滚动条、封印、书签或完整列表。
+Image 1 中的黄铜只定义整套卷宗的综合色关系，本批两个细薄目录底条不得
+绘制任何黄铜物件、端帽、包角、徽记、铆钉或几何装饰。
+
+Image 2 `QuestLogBookShell_Master_v1.png`
+（SHA-256
+`91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5`）
+只用于匹配当前 runtime 的暖赭纸页接触色、材质尺度和左上受光连续性。
+不要复制完整书壳、书脊、四角、页沟或纸页；Image 2 不得覆盖 Image 1 的
+物件身份、轮廓语言和笔触。
+
+Image 3 `QL-B0-B_V2_r2_attempt-03_raw.png`
+（SHA-256
+`5ee6ba57d94006b0833bba1e96074d3ebeab8d3d8e7b8f233ebde3d664030721`）
+是本次同循环编辑目标。只继承 Image 3 中恰好两个正面、无端件、无金属框的
+平面横条：上方低饱和暗橄榄涂色厚纸／极薄旧皮，下方更浅的暖赭笔洗／薄纸；
+保留两者现有的低频表面色差、自然不对称收边和上暗下浅关系。不要继承
+Image 3 的横条尺寸、纵向位置或近绿色背景；Image 3 不能覆盖 Image 1 的
+最高美术权威。
+
+把 Image 3 完整画布先等比解释为 `1024 × 1024` 设计网格，不裁画布。
+当前上条可见 bbox 约为 `[69,317]..[954,421]`、`885 × 104px`；
+当前下条约为 `[69,626]..[954,730]`、`885 × 104px`。这两个旧 bbox
+只是待修正输入，不得原样保留。
+
+对上条 `QUEST.LOG.REGION.BACKPLATE` 只做一次几何编辑：以其中心为基准，
+宽度缩放为当前的约 `90.40%`，高度缩放为当前的约 `61.54%`，然后把中心
+移动到精确 `(512,304)`。最终唯一可见 bbox 必须严格成为
+`[112,272]..[912,336]`、`800 × 64px`、`12.5:1`。保留现有暗橄榄平面
+纸／薄皮表面和自然边缘，不增加细节；设计网格中上、下、左、右的视觉边厚
+均不得超过 `3px`，中央至少 `780 × 54px` 安静。
+
+对下条 `QUEST.LOG.ROW.BACKPLATE` 做同样的独立几何编辑：宽度缩放为当前的
+约 `90.40%`，高度缩放为当前的约 `61.54%`，然后把中心移动到精确
+`(512,720)`。最终唯一可见 bbox 必须严格成为
+`[112,688]..[912,752]`、`800 × 64px`、`12.5:1`。保留现有暖赭平面
+笔洗／薄纸表面和自然边缘，不增加细节；设计网格中上、下、左、右的视觉
+边厚均不得超过 `2px`，中央至少 `784 × 56px` 安静。
+
+几何编辑完成后，清除 Image 3 中两个旧 bbox 的全部残影，并把两个新 bbox
+以外的每一个像素统一替换为精确 `#00FF00`。外部背景必须完全均匀、无纹理、
+无渐变、无阴影、无光晕；两个物件之间不接触。不要对两个横条做第二次自由
+重绘，不要增加第三个物件，也不要让旧位置留下绿色以外的像素。
+
+这里只生成两个 normal base，不绘制 `normal／hover／pressed／disabled`
+四态，不绘制状态矩阵。禁止绘制文字、数字、等级、任务计数、箭头、勾选圈、
+书签、选择高亮、类型章、计时章、完成／失败章、按钮、滚动条、肖像槽、
+假图标槽或任何命中区。禁止两端菱形、十字、珠宝形状、厚金属包边、双层
+闭合边框和整齐牌匾轮廓。禁止现代 UI 卡片、照片级皮革、完美镜像角、
+细金框、高频雕花、宝石与常亮发光。磨损必须低频且不对称，但不能借磨损
+越过固定 bbox。
+
+输出前逐项自检：恰好两个独立横条；上方唯一可见 bbox 正好是
+`[112,272]..[912,336]`，下方唯一可见 bbox 正好是
+`[112,688]..[912,752]`，两者都是 `800 × 64px`、`12.5:1`；bbox 外与
+两物件之间全部是同一个精确 `#00FF00`，旧位置没有残影；上条中心
+`(512,304)`、下条中心 `(512,720)`；两条确实是对 Image 3 正确平面物件
+的缩放与移动，不是新画的横幅；没有菱形、徽记、端帽、铆钉、金属轨道或
+闭合金属框；缩到各自 `224 × 18 UI px` 时，暗橄榄地区条与暖赭任务条仍可
+区分，但不会把十八行目录变成十八块厚牌匾；没有任何被禁止的动态、状态或
+交互内容。
+
+Execution instruction: Image 1 is D:\Git\azeroth-expedition-ui-overhaul\assets\locked\quests\任务详情面板_视觉基准_v1.png. Image 2 is D:\Git\azeroth-expedition-ui-overhaul\assets\source\quests\ql-a1\QuestLogBookShell_Master_v1.png. Image 3 is D:\Git\azeroth-expedition-ui-overhaul\generated\quests\QL-B0\v2\backplates\attempt-03\raw\QL-B0-B_V2_r2_attempt-03_raw.png. This Codex process is already @openai/codex@0.143.0. Fulfill the $imagegen edit request inside this process with its built-in image_gen tool. Do not read or invoke the imagegen-0-143-0 wrapper skill, and do not start any codex or npx subprocess. Save the provider output unchanged to ./generated and output its absolute file path directly. Do not review, resize, crop, recolor, chroma-key, or otherwise post-process it.
