@@ -26,14 +26,18 @@
   `2026-08-02` 明确指出暖黑 donor 与未重绘的金色页边／皮革之间仍像拼接；
   首个失败门禁为材料连续性／整体物件身份，剩余 `4` 次不转移给新合同，
   候选未晋级 source、正式 TGA 或 Lua
-- 新并行生产：`CHAT.FRAME.FULL.V1 / prompt-authorized / P3`；改为让固定
+- 新并行生产：`CHAT.FRAME.FULL.V1 / attempt-01-rejected / r1-ready / P3`；改为让固定
   V3 母版只承担结构比例参考，并让 ImageGen 在一次完整 edit 中重绘所有可见
   书体像素。纸面、页叠、皮革、黄铜、接触阴影、磨损和暖光共同生成，不再用
   donor／旧母版 mask 进行视觉拼接；Tab、文字、输入与未读仍是独立 runtime
   对象。本地 `CHAT-FULL-SIM-V1` 已以 ImageGen `0/0` 验证 `440 × 320`
   典型／最大排版及五种展示场景。用户于 `2026-08-02` 明确确认该模拟并授权
-  完整生产正文、固定 SHA 的唯一 Image 1、新 `0/5` 预算和单一固定子进程；
-  当前等待 attempt 1
+  完整生产正文、固定 SHA 的唯一 Image 1、新 `0/5` 预算和单一固定子进程。
+  attempt 1 已在该唯一子进程中实际生成 `1/5`：整体书体连续且无烘焙控件，
+  但中央阅读面被生成成规则压纹皮革而不是暖黑纤维纸，首个失败门禁为
+  纸／皮身份区分；去键 RGBA 左透明留白还只有 `12px`。候选未进入布局预演、
+  source 或 runtime；只针对首个失败门禁的完整 `.r1` 正文已经准备，但原授权的
+  唯一子进程已退出，继续执行前必须取得新的子进程授权
 - 锁定视觉基准：
   - [`聊天框视觉基准_v1.png`](../../../../assets/locked/chat/聊天框视觉基准_v1.png)
     — 游戏内物件身份、紧凑尺度和香草 HUD 综合色感
@@ -465,7 +469,8 @@ Final self-check: exactly one full-canvas warm-black parchment surface; paper ma
 ### 产品、对象与几何合同
 
 - 组件：`CHAT.FRAME`；版本：`CHAT.FRAME.FULL.V1`；当前子状态
-  `prompt-authorized`；项目阶段 `P3`；操作 `edit`。
+  `attempt-01-rejected / r1-ready / executor-authorization-required`；项目阶段
+  `P3`；操作 `edit`。
 - 正式生成对象只有一个：不含任何动态内容的完整横向战地旧书聊天背景。
   纸面、页叠、皮革封套、少量氧化黄铜修补、接触阴影、磨损和左上暖光必须
   在同一张结果中形成连续物理关系，不能生成 donor、覆盖层或第二块中心面板。
@@ -661,7 +666,7 @@ runtime text and controls are absent; and that the exterior is truly transparent
   `assets/source/chat/v3/ChatBookFrame_Master_v3.png`，SHA-256
   `f45cfe614dffd4cbc1e17b1af0f6c66b2100f530c353e3954956476b7cf05057`；
   只承担完整生产正文声明的高权重结构／比例／拓扑职责。
-- 实际 ImageGen 预算：新批次最多 `5` 次，当前 `0/5`；旧
+- 实际 ImageGen 预算：新批次最多 `5` 次，当前 `1/5`；旧
   `CHAT.FRAME.PAPER.V1` 剩余次数不转移。
 - 执行机制：只允许启动一个 `npx @openai/codex@0.143.0` 子进程；只在该
   子进程内调用其自带 `image_gen`；当前会话不得调用内建 imagegen，子进程
@@ -688,12 +693,165 @@ runtime text and controls are absent; and that the exterior is truly transparent
 
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
-| 1/5 | `CHAT.FRAME.FULL.V1` / pending | edit | pending | pending | pending | pending | pending |
+| 1/5 | `CHAT.FRAME.FULL.V1` / `aa39bd1` | edit | session `019fc246-3bd9-7730-b57a-74a8fe4c7e71`；provider result `ig_0bc4514bd99f52a9016a6f2cb1e2cc819190420510b3116e61` | provider raw `6686274e00358207f98573b7c0bb6c9819394a959d0be662fa39e386ac8f4cdc`；去键 RGBA `f454efa1e9409d40c9f1eafcae84abff05ed72f04975c9f44252e915d728d98b` | 纸／皮身份区分：中央阅读面是规则压纹皮革，不是暖黑纤维纸 | 保留“单一完整连续书体、无烘焙控件”的方向；`.r1` 只强化纸张身份。唯一获准子进程已退出，等待新的执行机制授权 | `candidate-rejected` |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
 
-- 当前实际生图：`0/5`；流程错误：`0`；循环终态：`pending attempt 1`。
+- 当前实际生图：`1/5`；流程错误：`0`；循环终态：
+  `stopped-after-first-failed-gate / executor-authorization-required`。剩余最多
+  `4` 次仍属于本合同，但不得通过第二个 Codex／npx 子进程消费，除非用户明确
+  扩展执行机制授权。
+
+### `CHAT.FRAME.FULL.V1` attempt 1 审查记录
+
+- Prompt／传输：固定执行前 commit 为 `aa39bd1`；子进程终端回显包含完整授权
+  正文和唯一 Image 1 的绝对路径。实际执行器为 `@openai/codex@0.143.0`，
+  session `019fc246-3bd9-7730-b57a-74a8fe4c7e71`；未启动嵌套 Codex／npx，
+  当前会话未调用内建 imagegen。
+- 输入：唯一上传图仍为
+  `assets/source/chat/v3/ChatBookFrame_Master_v3.png`，SHA-256
+  `f45cfe614dffd4cbc1e17b1af0f6c66b2100f530c353e3954956476b7cf05057`。
+- 原始输出：provider raw 保存在 ignored 路径
+  `generated/chat/core/CHAT.FRAME.FULL.V1/attempt-01/ChatBookFrame_Full_V1_attempt01.provider-raw.png`；
+  `1619 × 971 RGB`，绿色键背景，SHA-256
+  `6686274e00358207f98573b7c0bb6c9819394a959d0be662fa39e386ac8f4cdc`。
+- RGBA 审查副本：子进程只对 provider raw 执行确定性去键，未混入旧母版像素；
+  路径
+  `generated/chat/core/CHAT.FRAME.FULL.V1/attempt-01/ChatBookFrame_Full_V1_attempt01.rgba.png`，
+  `1619 × 971 RGBA`，SHA-256
+  `f454efa1e9409d40c9f1eafcae84abff05ed72f04975c9f44252e915d728d98b`；
+  opaque／partial／transparent 为 `1,340,051 / 5,666 / 226,332`，可见绿色
+  残留为 `0`。
+- 门禁 1／对象身份：通过。恰为一张完整、横向、正视、空内容的旧书框，没有
+  第二书框、场景或 atlas。
+- 门禁 2／禁止烘焙内容：通过。没有 Tab、文字、按钮、滚动条、输入条、底部
+  信息栏或右侧聊天框。
+- 门禁 3／整体材料连续性：通过。书体、页叠、皮革、缝补和黄铜由同一次生成
+  构成，没有旧像素中心蒙层或贴片接缝。
+- 门禁 4／纸皮区分：失败，也是首个失败门禁。中央阅读区覆盖了均匀、重复、
+  压印式的皮革粒面，并与外层皮革共享质感；缺少哑光纸浆、纤维吸附、烟熏渍
+  和纸页毛边等身份线索，无法读作 `#18120D` 附近的暖黑羊皮纸。
+- 未作为本轮修复目标的后续证据：可见 Alpha bbox 为
+  `[12,33,1590,944]`，四边透明留白为 `12/33/29/27px`，左侧低于合同要求的
+  `24px`。由于纸／皮门禁更早失败，本轮未继续九宫格、真实排版或五场景
+  display-region 预演。
+- 结论：`candidate-rejected / P3`。已接受 V3 source、正式 TGA、Lua、pfUI、
+  ChatMOD 和 v1.18 runtime 全部未改变。
+
+### `CHAT.FRAME.FULL.V1.r1` 完整修订正文
+
+`.r1` 只修复首个失败门禁：中央阅读面的纸张身份。对象、唯一输入、材料层级、
+布局、安全区、九宫格、Alpha、禁止内容和美术方向均不变；该修订属于已冻结的
+自主修复包络。由于唯一获准的子进程已经退出，本正文尚未执行。
+
+```text
+Create one production-ready bitmap asset by editing Image 1 as a whole.
+
+OBJECT AND RESPONSIBILITY
+Redraw Image 1 into one complete, coherent, empty fantasy chat-book frame for a
+Vanilla-era MMORPG UI. This is exactly one landscape old book object in exactly
+one static state. Regenerate every visible book pixel together in the same edit:
+the reading paper, stacked page edges, leather cover, restrained oxidized-brass
+repairs, contact shadows, wear, stains, and warm lighting. Do not generate a
+paper donor, center overlay, insert, patch, or second panel. Do not preserve or
+composite any of Image 1's old surface pixels.
+
+IMAGE 1 ROLE
+Use Image 1 as a high-weight structural, proportional, and topology reference
+only. Preserve its landscape bounding proportions, compact border-to-center
+ratio, empty central reading-field topology, complete-object scale, and gently
+irregular overall silhouette. Do not preserve its bright golden paper color,
+old pixel texture, old seam lighting, old paper/leather boundary, alpha defects,
+or local ornaments. The art direction below overrides those visible qualities.
+Do not use the previous generated attempt as an input.
+
+FIRST REPAIR PRIORITY: THE CENTER MUST BE PAPER
+The central reading field must be unmistakably matte paper both at native
+resolution and when reduced to a 440x320 game UI object. It must never look like
+embossed leather, tooled hide, padded fabric, painted wood, or a modern black
+panel. Build the paper identity with flattened irregular pulp fibers, subtle
+directional fiber breaks, broad low-frequency soot absorption, sparse feathered
+warm-brown stains, faint dry creases, worn thin spots, and a slightly frayed
+deckled boundary where the top leaf meets the stacked page edges. Keep these
+marks quiet and non-repeating so chat text remains readable.
+
+Do not place repeating diamonds, scales, stamped motifs, braided impressions,
+pebbled hide grain, leather tooling, upholstery texture, stitched seams, knots,
+rivets, or metal fittings anywhere inside the central reading field. The paper
+surface must have visibly lower micro-contrast and a flatter matte response than
+the surrounding leather. Leather grain and leather tooling are allowed only
+outside the complete stacked-page boundary.
+
+ART DIRECTION
+The result must read first as a thick battlefield field book that has been
+carried, opened, stained, repaired, and reused for years. Use a 2004-era
+hand-painted low-resolution fantasy UI bitmap language: deliberately simplified
+forms, broad readable value groups, restrained brush texture, mild pixel-era
+edge softness, no photographic detail, and no clean vector symmetry. Make the
+book visibly irregular and slightly untidy, with non-mirrored page wear and
+repairs. Use warm upper-left illumination with quiet lower-right falloff.
+
+MATERIAL HIERARCHY
+The material hierarchy is matte fibrous paper first, deep walnut-brown worn
+leather second, and small muted oxidized-brass repairs third. The opaque central
+reading paper is near-black warm soot parchment, visually centered around
+#18120D, with subtle warm-brown fibers and sparse irregular smoke staining. It
+must remain visibly paper. Transition outward through several physical layers
+of near-black umber and tobacco-brown paper edges. Generate their fibers,
+deckled edges, thickness, contact occlusion, and wear together with the top
+paper leaf. The page stack must clearly sit on and inside the smoother, creased
+deep-walnut leather cover.
+
+Do not surround the dark paper with a bright gold rim or an abrupt rectangular
+seam. Do not let the leather texture leak across the reading field. Oxidized
+brass stays low-saturation and sparse, limited to believable edge or corner
+repairs.
+
+LAYOUT AND RUNTIME-SAFE REGIONS
+Keep the complete book fully visible in a flat, straight-on orthographic UI view.
+The output is an empty frame only. Reserve a quiet uninterrupted central reading
+field covering approximately x=7%..93% and y=10%..87.5% of the visible book
+bounds; it must accommodate a 380x248 text region when the book is displayed at
+440x320 UI pixels. Keep the top edge quiet enough for four separately rendered
+92x30 leather tabs to be overlaid by the game. Do not draw those tabs or their
+shelf into this asset.
+
+The frame will be exported as a nine-slice with 30-pixel left/right and 28-pixel
+top/bottom caps at 440x320. Put unique tears, stitch endpoints, rivets, metal
+repairs, knots, and corner highlights only near the outer corners and fixed cap
+regions. Keep the long horizontal and vertical middle bands low-frequency,
+continuous, and stretch-safe. The same frame must remain coherent at 540x420.
+
+FORBIDDEN BAKED CONTENT
+Do not include tabs, tab labels, tab shelf, chat text, timestamps, player names,
+channel colors, input strip, unread seal, buttons, icons, scroll bars, resize
+grips, language controls, popup menus, copy controls, guild/bag/latency/time/gold
+panels, a bottom information bar, or a second/right-side chat frame. Do not add
+dragons, skulls, horns, spikes, gothic cathedral tracery, modern bevels, glossy
+glass, neon, bloom, hard black outlines, perfect bilateral symmetry, readable
+letters, runes, logos, watermarks, signatures, or a world scene.
+
+CANVAS, ALPHA, AND OUTPUT
+Return one landscape RGBA PNG on a true transparent background. Show exactly one
+complete isolated book, centered with at least 24 transparent pixels of clear
+margin on every side, with no clipping and no cast shadow extending into the
+margin. Do not use green, white, checkerboard, or scenic backgrounds. Do not make
+an atlas or contact sheet. The provider may use its native landscape resolution;
+the accepted single result will later be deterministically normalized as a whole
+to the existing 1608x978 source canvas, then nine-sliced. No old pixels or mask
+compositing will be used during normalization.
+
+FINAL SELF-CHECK BEFORE RETURNING
+Verify that the image contains exactly one complete empty old-book frame; that
+all visible materials look generated as one physically continuous object; that
+the near-black center reads immediately as matte fibrous paper at 440x320 and
+cannot plausibly be mistaken for leather; that no repeated embossed or tooled
+pattern exists in the reading field; that no bright old-paper rim creates a
+pasted-center effect; that the silhouette and wear are irregular rather than
+overly orderly; that the central field and stretch bands stay quiet; that all
+runtime text and controls are absent; and that the exterior is truly transparent.
+```
 
 ## 最终执行正文
 
