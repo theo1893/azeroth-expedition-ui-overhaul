@@ -26,12 +26,14 @@
   `2026-08-02` 明确指出暖黑 donor 与未重绘的金色页边／皮革之间仍像拼接；
   首个失败门禁为材料连续性／整体物件身份，剩余 `4` 次不转移给新合同，
   候选未晋级 source、正式 TGA 或 Lua
-- 新并行方向：`CHAT.FRAME.FULL.V1 / simulation-reviewed / P2`；改为让固定
+- 新并行生产：`CHAT.FRAME.FULL.V1 / prompt-authorized / P3`；改为让固定
   V3 母版只承担结构比例参考，并让 ImageGen 在一次完整 edit 中重绘所有可见
   书体像素。纸面、页叠、皮革、黄铜、接触阴影、磨损和暖光共同生成，不再用
   donor／旧母版 mask 进行视觉拼接；Tab、文字、输入与未读仍是独立 runtime
   对象。本地 `CHAT-FULL-SIM-V1` 已以 ImageGen `0/0` 验证 `440 × 320`
-  典型／最大排版及五种展示场景，等待用户确认模拟和新的完整生产正文
+  典型／最大排版及五种展示场景。用户于 `2026-08-02` 明确确认该模拟并授权
+  完整生产正文、固定 SHA 的唯一 Image 1、新 `0/5` 预算和单一固定子进程；
+  当前等待 attempt 1
 - 锁定视觉基准：
   - [`聊天框视觉基准_v1.png`](../../../../assets/locked/chat/聊天框视觉基准_v1.png)
     — 游戏内物件身份、紧凑尺度和香草 HUD 综合色感
@@ -463,7 +465,7 @@ Final self-check: exactly one full-canvas warm-black parchment surface; paper ma
 ### 产品、对象与几何合同
 
 - 组件：`CHAT.FRAME`；版本：`CHAT.FRAME.FULL.V1`；当前子状态
-  `simulation-reviewed / prompt-draft`；项目阶段 `P2`；操作拟为 `edit`。
+  `prompt-authorized`；项目阶段 `P3`；操作 `edit`。
 - 正式生成对象只有一个：不含任何动态内容的完整横向战地旧书聊天背景。
   纸面、页叠、皮革封套、少量氧化黄铜修补、接触阴影、磨损和左上暖光必须
   在同一张结果中形成连续物理关系，不能生成 donor、覆盖层或第二块中心面板。
@@ -538,11 +540,13 @@ Final self-check: exactly one full-canvas warm-black parchment surface; paper ma
   `repository_contract_test.py`、Chat Lua smoke、pfUI scoped ownership contract
   和目标文件 `git diff --check` 全部通过。
 - ImageGen `0/0`；外部上传 `0`；未启动 Codex／npx 子进程。
-- 下一门禁：用户明确确认 `CHAT-FULL-SIM-V1` 的整体方向与下方完整生产正文；
-  之后再单独授权固定 Image 1、最多五次新实际调用和新的
-  `@openai/codex@0.143.0` 子进程。此前只允许一次的子进程授权不复用。
+- 用户方向结论：`2026-08-02 / CHAT-FULL-SIM-V1 confirmed`。确认条款为整本
+  书共同变暗、纸面／页叠／皮革作为连续物件生成、保留 `440 × 320` 容量与
+  独立 Tab 关系；模拟的规整几何、微纹理、Alpha 和笔触仍不属于接受像素。
+- 下一门禁：使用已授权且已提交的完整正文执行 `CHAT.FRAME.FULL.V1`
+  attempt 1；不得复用旧 PAPER 子进程或调用当前会话内建 imagegen。
 
-### 完整生产正文（待授权）
+### 完整生产正文（已授权，必须原样执行）
 
 ```text
 Create one production-ready bitmap asset by editing Image 1 as a whole.
@@ -645,9 +649,51 @@ runtime text and controls are absent; and that the exterior is truly transparent
   与皮革差异、修正过度规则轮廓、清除禁止控件、恢复透明外部、把独特细节移出
   stretch 中段。不得引入旧母版 mask、donor 或当前会话内建 imagegen。
 - 通过全部内部门禁后必须停止并提交用户复审；不得自动晋级 source／runtime。
-- 待用户确认后所需明确授权应同时覆盖：版本 `CHAT.FRAME.FULL.V1`、上述完整
-  正文、固定 SHA 的唯一 Image 1、最多五次实际调用，以及仅启动一个
+- 用户授权已经同时覆盖：版本 `CHAT.FRAME.FULL.V1`、上述完整正文、固定 SHA
+  的唯一 Image 1、最多五次实际调用，以及仅启动一个
   `npx @openai/codex@0.143.0` 子进程并只在该子进程使用其自带 image_gen。
+
+### 精确授权记录与冻结修复包络
+
+- 用户授权日期：`2026-08-02`。
+- 授权版本：`CHAT.FRAME.FULL.V1`；对应模拟：`CHAT-FULL-SIM-V1 confirmed`。
+- 唯一允许上传的 Image 1：
+  `assets/source/chat/v3/ChatBookFrame_Master_v3.png`，SHA-256
+  `f45cfe614dffd4cbc1e17b1af0f6c66b2100f530c353e3954956476b7cf05057`；
+  只承担完整生产正文声明的高权重结构／比例／拓扑职责。
+- 实际 ImageGen 预算：新批次最多 `5` 次，当前 `0/5`；旧
+  `CHAT.FRAME.PAPER.V1` 剩余次数不转移。
+- 执行机制：只允许启动一个 `npx @openai/codex@0.143.0` 子进程；只在该
+  子进程内调用其自带 `image_gen`；当前会话不得调用内建 imagegen，子进程
+  不得再启动其他 Codex／npx 子进程。
+- 不可变边界：一个完整空战地旧书、一种 static 状态、唯一 Image 1 及其职责、
+  `440 × 320`／`540 × 420`、`380 × 248` 安静区、`30/28/30/28px` 九宫格
+  cap、真透明外部、独立 Tab／Input／Unread／文字、全部禁止烘焙内容，以及
+  不使用旧像素 mask／donor／视觉合成。
+- 允许的自主修复：只在上述冻结边界内强化整体连续重绘、暖黑纸的纸张身份、
+  页叠到皮革过渡、非镜像凌乱度、透明外部、stretch 中段安静度或删除误生的
+  禁止内容；可在明确保留正确区域时 edit 同循环上一候选，否则仍以唯一
+  Image 1 regenerate。任何新输入、对象、状态、布局、画布或视觉方向变化都
+  立即停止并重新授权。
+- 用户原文：
+
+> 明确确认 CHAT-FULL-SIM-V1，并明确授权 CHAT.FRAME.FULL.V1 的完整生产正文；
+> 允许上传固定 SHA-256
+> f45cfe614dffd4cbc1e17b1af0f6c66b2100f530c353e3954956476b7cf05057 的
+> ChatBookFrame_Master_v3.png 作为唯一 Image 1；允许最多 5 次实际 ImageGen
+> 调用；允许仅启动一个 npx @openai/codex@0.143.0 子进程，并仅在该子进程内
+> 调用其自带 image_gen。不得调用当前会话内建 imagegen。
+
+### `CHAT.FRAME.FULL.V1` 自主修复循环
+
+| 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
+|---:|---|---|---|---|---|---|---|
+| 1/5 | `CHAT.FRAME.FULL.V1` / pending | edit | pending | pending | pending | pending | pending |
+
+| 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
+|---:|---|---|---|---|---|
+
+- 当前实际生图：`0/5`；流程错误：`0`；循环终态：`pending attempt 1`。
 
 ## 最终执行正文
 
