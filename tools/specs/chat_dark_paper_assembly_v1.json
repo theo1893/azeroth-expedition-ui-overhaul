@@ -1,0 +1,55 @@
+{
+  "schema": "aeui-chat-dark-paper-assembly-v1",
+  "component": "CHAT.FRAME",
+  "version": "CHAT.FRAME.PAPER.V1",
+  "source": {
+    "path": "assets/source/chat/v3/ChatBookFrame_Master_v3.png",
+    "sha256": "f45cfe614dffd4cbc1e17b1af0f6c66b2100f530c353e3954956476b7cf05057",
+    "size": [1608, 978],
+    "mode": "RGBA"
+  },
+  "donor": {
+    "role": "ImageGen surface pixels only; never geometry or alpha",
+    "normalization": "ImageOps.fit to 1608x978 with centered LANCZOS crop",
+    "target_base": "#18120D",
+    "mode": "opaque RGB or RGBA"
+  },
+  "mask": {
+    "size": [1608, 978],
+    "feather_radius": 2,
+    "minimum_source_luminance": 52,
+    "editable_polygons": [
+      {
+        "id": "all_visible_paper_layers",
+        "value": 255,
+        "points": [
+          [178, 130], [178, 108], [204, 94], [236, 86], [1360, 88],
+          [1423, 94], [1463, 111], [1484, 141], [1495, 230], [1495, 730],
+          [1484, 808], [1459, 849], [1418, 875], [1350, 890], [250, 895],
+          [201, 880], [176, 850], [160, 790], [160, 240]
+        ]
+      }
+    ],
+    "protected_polygons": [
+      {
+        "id": "bottom_right_brass_corner",
+        "points": [
+          [1472, 780], [1546, 778], [1584, 813], [1608, 850],
+          [1608, 978], [1438, 978], [1438, 928], [1452, 848]
+        ]
+      }
+    ],
+    "outside_contract": "source RGB and alpha byte-identical wherever final mask is zero"
+  },
+  "shading": {
+    "source_luminance_factor": "clamp(190 + (luma - 128) * 0.35, 150, 242) / 242",
+    "purpose": "preserve accepted page folds, contact shadows and stacked-page depth while donor supplies color and microtexture"
+  },
+  "output": {
+    "size": [1608, 978],
+    "mode": "RGBA",
+    "alpha": "byte-identical copy from accepted V3 source",
+    "geometry": "byte-identical outside the fixed paper mask; no resampling of the source frame",
+    "runtime_layout": "reuse existing ChatV3 nine-slice cuts, 440x320 assembly and separate Tab/Input atlases"
+  }
+}

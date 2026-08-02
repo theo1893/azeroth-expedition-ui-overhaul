@@ -1,0 +1,231 @@
+{
+  "schema": "aeui-chat-dark-parchment-simulation-v1",
+  "version": "CHAT-DARK-SIM-V1",
+  "canvas": {
+    "width": 1000,
+    "height": 420,
+    "mode": "RGBA",
+    "fill": "#121914FF"
+  },
+  "output": "generated/chat/core/simulation/CHAT-DARK-SIM-V1/chat_dark_parchment_ab_v1.png",
+  "fonts": {
+    "body": {
+      "path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf",
+      "size": 12
+    },
+    "tab": {
+      "path": "addon/AzerothExpeditionUI/Media/Fonts/LXGWWenKaiGB-Medium.ttf",
+      "size": 14
+    },
+    "label": {
+      "path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf",
+      "size": 17
+    },
+    "note": {
+      "path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf",
+      "size": 12
+    }
+  },
+  "frame": {
+    "size": [440, 320],
+    "content_safe_area": [30, 32, 410, 280],
+    "tab_size": [92, 30],
+    "tab_gap": 3,
+    "line_height": 15,
+    "maximum_visible_lines": 16
+  },
+  "tabs": ["综合", "团队", "个人", "拾取"],
+  "footer": "同一几何、字体、密度与消息内容；只比较纸面极性及对应语义色策略（模拟像素不进入游戏）",
+  "themes": [
+    {
+      "id": "A-current-light",
+      "origin": [40, 64],
+      "label": "A · 当前亮色羊皮纸 / 深墨映射",
+      "label_color": "#E4CAA0FF",
+      "leather": "#2B170CFF",
+      "brass": "#80602DFF",
+      "page_stack_dark": "#6A4526FF",
+      "page_stack_mid": "#9A6C36FF",
+      "paper": "#CDA155FF",
+      "paper_edge": "#76512EFF",
+      "fiber": "#75522A12",
+      "shelf": "#2A160BFF",
+      "shelf_edge": "#80602DFF",
+      "tab_normal": "#392016FF",
+      "tab_selected": "#5A3219FF",
+      "tab_edge": "#8A6630FF",
+      "tab_text": "#A98D61FF",
+      "tab_text_selected": "#FFE09EFF",
+      "palette": {
+        "body": "#3D3D3DFF",
+        "time": "#103E4EFF",
+        "world": "#4D3939FF",
+        "system": "#404000FF",
+        "guild": "#124712FF",
+        "party": "#3B3B59FF",
+        "raid": "#623100FF",
+        "whisper": "#5A2D5AFF",
+        "danger": "#751D1DFF",
+        "emote": "#613118FF",
+        "warrior": "#4B3B2AFF",
+        "paladin": "#583243FF",
+        "hunter": "#354224FF",
+        "rogue": "#423F1BFF",
+        "priest": "#333333FF",
+        "shaman": "#003D7AFF",
+        "mage": "#22424EFF",
+        "warlock": "#413959FF",
+        "druid": "#633004FF",
+        "positive": "#234020FF",
+        "negative": "#592D2DFF",
+        "uncommon": "#084400FF"
+      }
+    },
+    {
+      "id": "B-near-black-paper",
+      "origin": [520, 64],
+      "label": "B · 暖黑烟熏纸 / Vanilla 识别色",
+      "label_color": "#F0D6A8FF",
+      "leather": "#1F120AFF",
+      "brass": "#80602DFF",
+      "page_stack_dark": "#0B0806FF",
+      "page_stack_mid": "#2B1E14FF",
+      "paper": "#18120DFF",
+      "paper_edge": "#4B3420FF",
+      "fiber": "#5A3E2628",
+      "shelf": "#170D08FF",
+      "shelf_edge": "#755426FF",
+      "tab_normal": "#25150EFF",
+      "tab_selected": "#4A2A15FF",
+      "tab_edge": "#80602DFF",
+      "tab_text": "#9F8257FF",
+      "tab_text_selected": "#FFE09EFF",
+      "palette": {
+        "body": "#C9B990FF",
+        "time": "#33CCFFFF",
+        "world": "#FFC0C0FF",
+        "system": "#FFFF00FF",
+        "guild": "#40FF40FF",
+        "party": "#AAAAFFFF",
+        "raid": "#FF7F00FF",
+        "whisper": "#FF80FFFF",
+        "danger": "#FF4040FF",
+        "emote": "#FF7F3FFF",
+        "warrior": "#C79C6EFF",
+        "paladin": "#F58CBAFF",
+        "hunter": "#ABD473FF",
+        "rogue": "#FFF569FF",
+        "priest": "#FFFFFFFF",
+        "shaman": "#1684EDFF",
+        "mage": "#69CCF0FF",
+        "warlock": "#9482C9FF",
+        "druid": "#FF7D0AFF",
+        "positive": "#8CFF80FF",
+        "negative": "#FF8080FF",
+        "uncommon": "#1EFF00FF"
+      }
+    }
+  ],
+  "messages": [
+    {
+      "segments": [
+        {"role": "time", "text": "[09:14]"},
+        {"role": "world", "text": "[8. 世界][60]"},
+        {"role": "warrior", "text": "[梅西十号]："},
+        {"role": "world", "text": "K10来的报天赋，过载满，镰刀2/3，FM满"}
+      ]
+    },
+    {
+      "segments": [
+        {"role": "time", "text": "[09:14]"},
+        {"role": "world", "text": "[8. 世界][60]"},
+        {"role": "mage", "text": "[StarOcean]："},
+        {"role": "world", "text": "卡下来人65+欢迎小号，过载镰刀满～"}
+      ]
+    },
+    {
+      "segments": [
+        {"role": "time", "text": "[09:14]"},
+        {"role": "world", "text": "[9. 世界][60]"},
+        {"role": "priest", "text": "[蔚锦]："},
+        {"role": "world", "text": "有附魔吗"}
+      ]
+    },
+    {
+      "segments": [
+        {"role": "time", "text": "[09:14]"},
+        {"role": "raid", "text": "[团][60]"},
+        {"role": "shaman", "text": "[大奶黑牛]："},
+        {"role": "raid", "text": "DPSMate输出助手 - 报告"}
+      ]
+    },
+    {
+      "segments": [
+        {"role": "time", "text": "[09:14]"},
+        {"role": "raid", "text": "[团][60]"},
+        {"role": "shaman", "text": "[大奶黑牛]："},
+        {"role": "negative", "text": "星界洞察 => -7038 (HIT)"}
+      ]
+    },
+    {
+      "segments": [
+        {"role": "time", "text": "[09:14]"},
+        {"role": "raid", "text": "[团][60]"},
+        {"role": "shaman", "text": "[大奶黑牛]："},
+        {"role": "positive", "text": "圣光闪现 => +1117 (HIT)"}
+      ]
+    },
+    {
+      "segments": [
+        {"role": "time", "text": "[09:14]"},
+        {"role": "party", "text": "[队][60]"},
+        {"role": "warlock", "text": "[芙蕾雅]："},
+        {"role": "party", "text": "北门集合，术士先拉糖"}
+      ]
+    },
+    {
+      "segments": [
+        {"role": "time", "text": "[09:14]"},
+        {"role": "guild", "text": "[公][60]"},
+        {"role": "hunter", "text": "[猎风者]："},
+        {"role": "guild", "text": "今晚八点公会团，准时集合"}
+      ]
+    },
+    {
+      "segments": [
+        {"role": "time", "text": "[09:14]"},
+        {"role": "whisper", "text": "[密][60]"},
+        {"role": "paladin", "text": "[Winwin]："},
+        {"role": "whisper", "text": "需要什么配置啊？"}
+      ]
+    },
+    {
+      "segments": [
+        {"role": "time", "text": "[09:14]"},
+        {"role": "system", "text": "[系统]你获得了物品："},
+        {"role": "uncommon", "text": "[奥金锭]"}
+      ]
+    },
+    {
+      "segments": [
+        {"role": "time", "text": "[09:14]"},
+        {"role": "body", "text": "[说][60]"},
+        {"role": "druid", "text": "[赤狐]："},
+        {"role": "body", "text": "有人一起去黑石深渊吗"}
+      ]
+    },
+    {
+      "segments": [
+        {"role": "time", "text": "[09:14]"},
+        {"role": "danger", "text": "[警告]目标正在施放暗影箭！"}
+      ]
+    },
+    {
+      "segments": [
+        {"role": "time", "text": "[09:14]"},
+        {"role": "rogue", "text": "[夜幕]"},
+        {"role": "emote", "text": "开始冷静下来了。"}
+      ]
+    }
+  ]
+}

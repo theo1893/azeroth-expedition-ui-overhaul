@@ -1,0 +1,63 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "CHAT.CORE.DARKPAPER.SIMULATION",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, 100%-UI-pixels",
+  "evidence": {
+    "provider": "addon/pfUI/modules/chat.lua",
+    "adapter": "addon/AzerothExpeditionUI/Modules/Chat.lua",
+    "runtime_manifest": "assets/source/chat/v3/ChatV3_RuntimeManifest_v1.json",
+    "simulation_spec": "tools/specs/chat_dark_parchment_simulation_v1.json",
+    "direction_only": true
+  },
+  "atlas": {
+    "size": [440, 320],
+    "visible_bbox": [0, 0, 440, 320],
+    "require_exact_visible_coverage": true,
+    "sampled_regions": [
+      {"id": "logical_simulation_frame", "box": [0, 0, 440, 320]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {
+      "left": 30,
+      "right": 30,
+      "top": 28,
+      "bottom": 28
+    },
+    "minimum_frame_size": [61, 57]
+  },
+  "scenarios": [
+    {
+      "id": "A-current-light",
+      "frame": [440, 320],
+      "preview_frame": [440, 320],
+      "zones": {
+        "tabs": [30, 0, 410, 32],
+        "content": [30, 32, 410, 280]
+      },
+      "regions": [
+        {"id": "tab.general", "kind": "visual", "box": [30, 2, 122, 32], "zone": "tabs"},
+        {"id": "tab.raid", "kind": "visual", "box": [125, 2, 217, 32], "zone": "tabs"},
+        {"id": "tab.personal", "kind": "visual", "box": [220, 2, 312, 32], "zone": "tabs"},
+        {"id": "tab.loot", "kind": "visual", "box": [315, 2, 407, 32], "zone": "tabs"},
+        {"id": "messages", "kind": "text", "box": [30, 44, 410, 280], "zone": "content"}
+      ]
+    },
+    {
+      "id": "B-near-black-paper",
+      "frame": [440, 320],
+      "preview_frame": [440, 320],
+      "zones": {
+        "tabs": [30, 0, 410, 32],
+        "content": [30, 32, 410, 280]
+      },
+      "regions": [
+        {"id": "tab.general", "kind": "visual", "box": [30, 2, 122, 32], "zone": "tabs"},
+        {"id": "tab.raid", "kind": "visual", "box": [125, 2, 217, 32], "zone": "tabs"},
+        {"id": "tab.personal", "kind": "visual", "box": [220, 2, 312, 32], "zone": "tabs"},
+        {"id": "tab.loot", "kind": "visual", "box": [315, 2, 407, 32], "zone": "tabs"},
+        {"id": "messages", "kind": "text", "box": [30, 44, 410, 280], "zone": "content"}
+      ]
+    }
+  ]
+}
