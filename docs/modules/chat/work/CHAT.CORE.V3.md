@@ -36,8 +36,10 @@
   attempt 1 已在该唯一子进程中实际生成 `1/5`：整体书体连续且无烘焙控件，
   但中央阅读面被生成成规则压纹皮革而不是暖黑纤维纸，首个失败门禁为
   纸／皮身份区分；去键 RGBA 左透明留白还只有 `12px`。候选未进入布局预演、
-  source 或 runtime；只针对首个失败门禁的完整 `.r1` 正文已经准备，但原授权的
-  唯一子进程已退出，继续执行前必须取得新的子进程授权
+  source 或 runtime；只针对首个失败门禁的完整 `.r1` 正文已经准备。用户于
+  `2026-08-02` 明确允许 `.r1` 使用剩余预算并额外启动一个固定
+  `npx @openai/codex@0.143.0` 子进程；当前状态为
+  `repair-prepared / executor-authorized`，下一门禁是 attempt 2
 - 锁定视觉基准：
   - [`聊天框视觉基准_v1.png`](../../../../assets/locked/chat/聊天框视觉基准_v1.png)
     — 游戏内物件身份、紧凑尺度和香草 HUD 综合色感
@@ -469,8 +471,8 @@ Final self-check: exactly one full-canvas warm-black parchment surface; paper ma
 ### 产品、对象与几何合同
 
 - 组件：`CHAT.FRAME`；版本：`CHAT.FRAME.FULL.V1`；当前子状态
-  `attempt-01-rejected / r1-ready / executor-authorization-required`；项目阶段
-  `P3`；操作 `edit`。
+  `repair-prepared / r1-ready / executor-authorized`；项目阶段 `P3`；操作
+  `edit`。
 - 正式生成对象只有一个：不含任何动态内容的完整横向战地旧书聊天背景。
   纸面、页叠、皮革封套、少量氧化黄铜修补、接触阴影、磨损和左上暖光必须
   在同一张结果中形成连续物理关系，不能生成 donor、覆盖层或第二块中心面板。
@@ -668,9 +670,11 @@ runtime text and controls are absent; and that the exterior is truly transparent
   只承担完整生产正文声明的高权重结构／比例／拓扑职责。
 - 实际 ImageGen 预算：新批次最多 `5` 次，当前 `1/5`；旧
   `CHAT.FRAME.PAPER.V1` 剩余次数不转移。
-- 执行机制：只允许启动一个 `npx @openai/codex@0.143.0` 子进程；只在该
-  子进程内调用其自带 `image_gen`；当前会话不得调用内建 imagegen，子进程
-  不得再启动其他 Codex／npx 子进程。
+- 执行机制：原授权的一个 `npx @openai/codex@0.143.0` 子进程已用于
+  attempt 1 并退出。用户现明确允许 `.r1` 额外启动一个固定
+  `npx @openai/codex@0.143.0` 子进程；只在这个新增子进程内调用其自带
+  `image_gen`。当前会话仍不得调用内建 imagegen，新增子进程不得再启动其他
+  Codex／npx 子进程。
 - 不可变边界：一个完整空战地旧书、一种 static 状态、唯一 Image 1 及其职责、
   `440 × 320`／`540 × 420`、`380 × 248` 安静区、`30/28/30/28px` 九宫格
   cap、真透明外部、独立 Tab／Input／Unread／文字、全部禁止烘焙内容，以及
@@ -689,6 +693,12 @@ runtime text and controls are absent; and that the exterior is truly transparent
 > 调用；允许仅启动一个 npx @openai/codex@0.143.0 子进程，并仅在该子进程内
 > 调用其自带 image_gen。不得调用当前会话内建 imagegen。
 
+- `.r1` 新增执行机制授权日期：`2026-08-02`。用户原文：
+
+> 明确允许 CHAT.FRAME.FULL.V1.r1 使用剩余预算，并额外启动一个固定的 npx
+> @openai/codex@0.143.0 子进程；继续使用原固定 SHA 的唯一 Image 1，仍禁止
+> 当前会话内建 imagegen。
+
 ### `CHAT.FRAME.FULL.V1` 自主修复循环
 
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
@@ -699,9 +709,8 @@ runtime text and controls are absent; and that the exterior is truly transparent
 |---:|---|---|---|---|---|
 
 - 当前实际生图：`1/5`；流程错误：`0`；循环终态：
-  `stopped-after-first-failed-gate / executor-authorization-required`。剩余最多
-  `4` 次仍属于本合同，但不得通过第二个 Codex／npx 子进程消费，除非用户明确
-  扩展执行机制授权。
+  `repair-prepared / pending attempt 2`。剩余最多 `4` 次仍属于本合同；本次
+  只允许新增的一个固定 Codex／npx 子进程执行 `.r1`，不得再启动其他进程。
 
 ### `CHAT.FRAME.FULL.V1` attempt 1 审查记录
 
@@ -743,7 +752,8 @@ runtime text and controls are absent; and that the exterior is truly transparent
 
 `.r1` 只修复首个失败门禁：中央阅读面的纸张身份。对象、唯一输入、材料层级、
 布局、安全区、九宫格、Alpha、禁止内容和美术方向均不变；该修订属于已冻结的
-自主修复包络。由于唯一获准的子进程已经退出，本正文尚未执行。
+自主修复包络，正文已由 commit `c28d6b3` 固定。用户已额外授权一个固定
+0.143.0 子进程，当前等待 attempt 2 执行。
 
 ```text
 Create one production-ready bitmap asset by editing Image 1 as a whole.
