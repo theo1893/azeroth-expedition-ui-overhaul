@@ -147,7 +147,7 @@ def main() -> None:
     chat_source = (
         ROOT / "addon" / "AzerothExpeditionUI" / "Modules" / "Chat.lua"
     ).read_text(encoding="utf-8")
-    assert 'Chat.runtimeContract = "1.20"' in chat_source
+    assert 'Chat.runtimeContract = "1.21"' in chat_source
     assert 'input = CHAT_MEDIA .. "ChatInputDarkV1"' in chat_source
     assert "ChatInputAtlasV3" not in chat_source
     print("chat dark-input runtime test passed")

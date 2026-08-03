@@ -5,17 +5,17 @@
 - 模块：Chat
 - 组件 ID：`CHAT.FRAME`、`CHAT.FRAME.LEFT`、`CHAT.TABS`、`CHAT.INPUT`、
   `CHAT.UNREAD`、`CHAT.TEXT`
-- 版本：`CHAT.CORE.V3 / runtime contract v1.20`；输入生产版本
+- 版本：`CHAT.CORE.V3 / runtime contract v1.21`；输入生产版本
   `CHAT.INPUT.DARK.V1.r3 attempt 4 / runtime-exported`
 - 子状态：核心 `runtime-exported`；输入 `runtime-exported / P5`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 当前操作：Full V1 固定 P4 source 已按全图比例确定性导出到 `1024²`
   `ChatBookFrameFullV1.tga`，通过九个 slice 接管唯一左框；V3 Tab、承托带和
-  未读继续复用。保留左书 Parent 唯一颜色作用域、三层最终输出桥、
-  pfUI 配置字体、无描边／阴影、`3px` 行距、压光层退役与书本自愈；暖黑纸面
-  使用熟悉的 Vanilla 语义色，未知低对比色只向白色做达到 `4.8:1` 所需的
-  最小提升。该 P4→P5 阶段 ImageGen `0` 次，不修改外部 ChatMOD 功能／配置。
+  未读继续复用。保留 pfUI 配置字体、无描边／阴影、`3px` 行距、压光层退役
+  与书本自愈；v1.21 移除 AEUI 的基础 RGB、内嵌八位色、pfUI 输出桥和 ChatMOD
+  `ORG_AddMessage` wrapper，客户端／pfUI／ChatMOD 成为经典配色的唯一权威。
+  该代码收敛阶段 ImageGen `0` 次，不修改外部 ChatMOD 功能／配置。
   用户随后指出 V3 浅金输入纸带在暖黑书页上像现代进度条；
   `CHAT.INPUT.DARK.V1-SIM` 暖烟草抄写纸条本地几何模拟已于 `2026-08-03`
   获得用户方向确认。稳定输入 Prompt 与完整生产正文现已按确认结果凝结；
@@ -1589,8 +1589,9 @@ python3 tools/build_chat_v3_runtime_assets.py
   区分度不足被用户退回。v1.16 也因战士／牧师发灰和频道扫读不足被用户退回；
   v1.18 随后取代已被实机退回的 v1.17；该结论现已由 Full V1 contract
   v1.19 取代。下一次具备游戏设备时必须让实际 AddOn 目录加载当前仓库并
-  `/reload`，以 `/aeui status` 的 `chat-runtime=1.20` 与 `chat-color` 计数为
-  加载证据；当前三帧布局预期 `m3/h3/f3`，且 `c/x` 随可见新消息增长。
+  `/reload`，以 `/aeui status` 的 `chat-runtime=1.21` 与
+  `chat-color=classic-provider` 为加载证据；任何 AEUI 消息颜色 wrapper 或
+  计数都不应再出现。
   尚无 v1.19 实机通过结论。
 
 ## 审查记录
@@ -1709,6 +1710,7 @@ python3 tools/build_chat_v3_runtime_assets.py
 | V3 runtime contract v1.18 | Vanilla 原色相等比例深墨；团队焦橙／小队蓝紫分色；DPSMate 与未知亮色保色相压暗；多层桥终态幂等；链接载荷不变 | `runtime-corrected / P5`，完整静态回归通过 | `/reload` 确认 `chat-runtime=1.18`，重点比较团队／小队、职业原色识别与 DPSMate 红绿报告 |
 | Full V1 runtime contract v1.19 | 新暖黑主框九宫格；V3 交互邻件；Vanilla 暖黑纸面色板；低对比色最小提亮；五场景最终 TGA 门禁 | `runtime-exported / P5`，静态回归与 display-region 通过；整体版本已由 v1.20 取代 | 随 v1.20 一并实机验证书框、频道／职业色、Tab、缩放与右框消息回收 |
 | Dark Input runtime contract v1.20 | 固定 P4 source 确定性导出；normal／focus 共同 Alpha；三段 UV 与 EditBox 行为不变；五场景最终 TGA 门禁 | `runtime-exported / P5`，静态回归与 display-region 通过 | `/reload` 确认 `chat-runtime=1.20`、输入 normal／focus、文字、光标、IME、历史与键盘行为 |
+| Classic color runtime contract v1.21 | 输入与书框资源不变；移除 AEUI 色板、对比度适配、pfUI 直桥及 ChatMOD／Frame wrapper；基础 RGB、内嵌色、Alpha 和链接载荷完全透传 | `runtime-corrected / P5`，静态回归与既有 display-region 几何合同待重放 | `/reload` 确认 `chat-runtime=1.21`、`chat-color=classic-provider`，并比较经典频道／职业／物品／插件色 |
 
 ## `CHAT.INPUT.DARK.V1` 暖烟草抄写纸条
 

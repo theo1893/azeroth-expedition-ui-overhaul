@@ -399,7 +399,8 @@ def main() -> None:
     assert "SuppressChatInfoPanels" in chat_source
     assert "panels.minimap" not in chat_source
     assert "SuppressRightChat" in chat_source
-    assert 'Chat.runtimeContract = "1.20"' in chat_source
+    assert 'Chat.runtimeContract = "1.21"' in chat_source
+    assert 'Chat.colorContract = "classic-provider"' in chat_source
     assert "ChatBookFrameFullV1" in chat_source
     assert "EnsureBookVisible" in chat_source
     assert 'owner:EnableDrawLayer("BACKGROUND")' in chat_source
@@ -411,28 +412,24 @@ def main() -> None:
     assert "CHAT_TEXT_SHADOW_COLOR" in chat_source
     assert "CHAT_TEXT_SHADOW_COLOR = { 0, 0, 0, 0 }" in chat_source
     assert "CHAT_TEXT_SHADOW_OFFSET = { 0, 0 }" in chat_source
-    assert "CHAT_TEXT_PALETTE" in chat_source
-    assert "CHAT_BASE_COLOR_RULES" in chat_source
-    assert "CHAT_INLINE_COLOR_MAP" in chat_source
-    assert "AdaptUnknownInlineColor" in chat_source
-    assert "CHAT_INLINE_COLOR_TARGETS" in chat_source
-    assert "CHAT_INLINE_CONTRAST_TARGET = 4.8" in chat_source
-    assert "CHAT_INLINE_PAPER_COLOR = { 48, 36, 27 }" in chat_source
+    assert "CHAT_TEXT_PALETTE" not in chat_source
+    assert "CHAT_BASE_COLOR_RULES" not in chat_source
+    assert "CHAT_INLINE_COLOR_MAP" not in chat_source
+    assert "AdaptUnknownInlineColor" not in chat_source
+    assert "CHAT_INLINE_COLOR_TARGETS" not in chat_source
+    assert "CHAT_INLINE_CONTRAST_TARGET" not in chat_source
+    assert "CHAT_INLINE_PAPER_COLOR" not in chat_source
     assert "StyleChatFrameText" in chat_source
-    assert "InstallMessageColorHook" in chat_source
-    assert "InstallChatMODFinalColorHook" in chat_source
-    assert "EnsureMessageColorHooks" in chat_source
-    assert "ApplyMessagePalette" in chat_source
+    assert "InstallMessageColorHook" not in chat_source
+    assert "InstallChatMODFinalColorHook" not in chat_source
+    assert "EnsureMessageColorHooks" not in chat_source
+    assert "ApplyMessagePalette" not in chat_source
     assert "GetMessageColorStatus" in chat_source
+    assert "return self.colorContract" in chat_source
     assert 'getglobal("S_AddMessage")' not in chat_source
-    assert "frame.ORG_AddMessage = wrapper" in chat_source
-    assert "frame:GetParent() == pfUI.chat.left" in chat_source
-    palette_scope = chat_source.split(
-        "function Chat:IsMessagePaletteManaged", 1
-    )[1].split("function Chat:ApplyMessagePalette", 1)[0]
-    assert "frame.pfCombatLog" not in palette_scope
-    assert "TransformBaseMessageColor" in chat_source
-    assert "NormalizeInlineMessageColors" in chat_source
+    assert "frame.ORG_AddMessage = wrapper" not in chat_source
+    assert "TransformBaseMessageColor" not in chat_source
+    assert "NormalizeInlineMessageColors" not in chat_source
     for obsolete_parchment_color in (
         "ff4b3b2a",
         "ff583243",
@@ -447,50 +444,6 @@ def main() -> None:
         "ff234020",
     ):
         assert obsolete_parchment_color not in chat_source
-    palette_rgb = {
-        name: (int(red), int(green), int(blue))
-        for name, red, green, blue in re.findall(
-            r"^\s*(say|channel|system|guild|party|raid|whisper|danger|emote)\s*="
-            r"\s*RGB8\((\d+),\s*(\d+),\s*(\d+)\)",
-            chat_source,
-            re.M,
-        )
-    }
-    assert palette_rgb == {
-        "say": (201, 185, 144),
-        "channel": (255, 192, 192),
-        "system": (255, 255, 0),
-        "guild": (64, 255, 64),
-        "party": (170, 170, 255),
-        "raid": (255, 127, 0),
-        "whisper": (255, 128, 255),
-        "danger": (255, 86, 86),
-        "emote": (255, 127, 63),
-    }
-
-    def relative_luminance(color: tuple[int, int, int]) -> float:
-        channels = []
-        for value in color:
-            encoded = value / 255
-            channels.append(
-                encoded / 12.92
-                if encoded <= 0.04045
-                else ((encoded + 0.055) / 1.055) ** 2.4
-            )
-        return (
-            0.2126 * channels[0]
-            + 0.7152 * channels[1]
-            + 0.0722 * channels[2]
-        )
-
-    assert palette_rgb["party"] != palette_rgb["raid"]
-    paper_luminance = relative_luminance((48, 36, 27))
-    for ink in palette_rgb.values():
-        ink_luminance = relative_luminance(ink)
-        contrast = (max(paper_luminance, ink_luminance) + 0.05) / (
-            min(paper_luminance, ink_luminance) + 0.05
-        )
-        assert contrast >= 4.5
     assert "NotoSansSC-Medium.ttf" not in chat_source
     assert "READING_WASH_COLOR" not in chat_source
     assert "Interface\\\\Buttons\\\\WHITE8X8" not in chat_source
@@ -717,8 +670,8 @@ def main() -> None:
     assert "ShouldUseSingleChatFrame" in expedition
 
     pfui_chat = (pfui / "modules" / "chat.lua").read_text(encoding="utf-8")
-    assert "ApplyExpeditionMessagePalette" in pfui_chat
-    assert "chat:ApplyMessagePalette" in pfui_chat
+    assert "ApplyExpeditionMessagePalette" not in pfui_chat
+    assert "chat:ApplyMessagePalette" not in pfui_chat
     assert "single-journal route" in pfui_chat
     assert "AddSecondaryMessagesTo(ChatFrame1)" in pfui_chat
     assert "not v.aeuiManaged" in pfui_chat
