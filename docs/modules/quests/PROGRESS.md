@@ -20,9 +20,12 @@
 - 同日用户否决 Quest Log 漆章的旧顶部悬空锚点，并要求把底部分享／放弃等
   功能收纳到漆章。V1 外沿皮革事务签在进一步物理语义复核中也被淘汰：火漆
   若附着书框就没有封住文书。现已按用户要求完成
-  `QUEST-LOG-SEAL-ACTIONS-SIM-V2` 本地确定性关闭／展开两态预演：独立羊皮纸
-  封签根部夹在右页层间，由页唇压住，窄身横跨封皮伸出书外，QS-A1 火漆只压
-  外露折头；菜单临时向右页内展开，共七项原 Button 代理。ImageGen `0/0`，
+  V2 预演因伪页唇、二段式硬质按钮轮廓和断开的弹窗语义被用户否决；机器
+  bbox 相交不再作为物理正确证据。现已完成
+  `QUEST-LOG-SEAL-ACTIONS-SIM-V3` 本地确定性关闭／展开两态预演：一整张
+  柔性羊皮纸封签的根部由已接受 QL-A1 shell 的真实右页像素覆盖，纸身横跨
+  封皮伸出书外，QS-A1 火漆直接压在同一纸面末端；菜单由同一事务签向右页内
+  连续展开，共七项原 Button 代理，并附根部／连接局部放大。ImageGen `0/0`，
   当前为 `simulation-reviewed / awaiting-user-confirmation`；未修改火漆 runtime，
   未隐藏任何旧按钮。
 - AEUI Quest Log provider 兼容子合同保持 `1.7`：在 provider 最终刷新后以
@@ -233,7 +236,7 @@
   列表滚动条不受影响。pfQuest 六个控件已按真实 Button 粒度归位，后加载
   全局函数和 Frame `OnShow` 替换均有事件驱动恢复。Lua 5.0 语法与 smoke
   已通过，尚待 Turtle WoW 实机。旧底部按钮现同时承担事务菜单完成前的
-  fail-open fallback；`QUEST-LOG-SEAL-ACTIONS-SIM-V2` 未确认前不隐藏。
+  fail-open fallback；`QUEST-LOG-SEAL-ACTIONS-SIM-V3` 未确认前不隐藏。
 - `QL-B3`：三类真实语义已拆为三个固定并列槽，类型／计时／状态可同时出现。
   [QL-B3 work](work/QUEST.LOG.STATUS.md) 已形成 A／B／C 三段完整
   生产正文：分别生成四类类型压印、单枚沙漏和同一蜡封的完整／破裂两态。
@@ -280,7 +283,7 @@
 | `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P5 runtime-exported` | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；内部失败与 `5/5` 事实保留 | Turtle WoW 验证 TGA、四态切换、字体和 fallback |
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 asset-retained / runtime-hidden` | 用户接受的 source、manifest、`128 × 16` TGA、exporter 与历史证据全部保留；`2026-07-31` 起 adapter 不再挂载或包装任务行脚本 | 暂缓；只有用户重新确认后才恢复 runtime |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
-| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu `P2 simulation-reviewed` | 既有 late-load 兼容和原 Button fallback 保留；V2 羊皮纸封签事务菜单已模拟七项代理但尚未接入 | 用户确认 `QUEST-LOG-SEAL-ACTIONS-SIM-V2` 后实现菜单；再做实机点击／禁用／确认框验证 |
+| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu `P2 simulation-reviewed` | 既有 late-load 兼容和原 Button fallback 保留；V2 已被用户否决，V3 以真实书页像素压住单张羊皮纸根部，并把七项事务菜单从同一纸面连续展开，尚未接入 | 用户确认 `QUEST-LOG-SEAL-ACTIONS-SIM-V3` 后实现菜单；再做实机点击／禁用／确认框验证 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | geometry `P5 runtime-integrated`；final art `P1–P2` | runtime `1.17` 已把双列槽收敛为 `108px`／名称 `64px`，按真实最底对象重算 ScrollChild；奖励只读，无 selected | 实机覆盖 0／1／2／4／6 奖励和长中文正文；最终槽美术另行确认 |
 
 QL-A1 manifest 记录：
@@ -325,7 +328,7 @@ timer 或 failed 资产：provider 没有可用的公开状态来源。本项目
 
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
-| `QS-A1` | 两处共用漆章母版；Quest Log 新承载／事务菜单不改母版 | asset `P5 runtime-exported / 5/5`；Quest Log placement `P2 simulation-reviewed` | 漆章 source／atlas 保持 accepted；旧悬空锚点与 V1 书框皮签均不再作为方向，V2 羊皮纸封签与七项菜单等待确认 | 用户确认或退回 `QUEST-LOG-SEAL-ACTIONS-SIM-V2`；确认前不改 runtime、不隐藏 fallback |
+| `QS-A1` | 两处共用漆章母版；Quest Log 新承载／事务菜单不改母版 | asset `P5 runtime-exported / 5/5`；Quest Log placement `P2 simulation-reviewed` | 漆章 source／atlas 保持 accepted；旧悬空锚点、V1 书框皮签和 V2 硬质二段封签均不再作为方向；V3 单张书页夹层封签与七项连续事务签等待确认 | 用户确认或退回 `QUEST-LOG-SEAL-ACTIONS-SIM-V3`；确认前不改 runtime、不隐藏 fallback |
 
 QS-A1 当前事实：
 
@@ -484,11 +487,12 @@ QT-A1 临时 runtime 事实：
 
 ## 下一步
 
-当前离线门禁是用户审查 `QUEST-LOG-SEAL-ACTIONS-SIM-V2`。可确认的是：羊皮纸
-封签是否正确从右页层间伸出、页唇压住根部的层序、`32px` 漆章落在书外
-`44px` 折头上的重量、菜单向书内临时展开的方向、七项功能分组与底部固定按钮
-移除后的综合色；模拟不确认最终纸纤维、折痕／磨损、客户端字体栅格、动画或
-右侧屏幕 clamp。用户确认前不实现菜单、不移动 runtime 漆章，也不隐藏
+当前离线门禁是用户审查 `QUEST-LOG-SEAL-ACTIONS-SIM-V3`。可确认的是：单张
+羊皮纸封签是否正确从右页层间伸出、真实 shell 页缘像素压住根部的层序、
+`32px` 漆章是否直接落在书外纸张末端、菜单是否由同一张事务签向书内连续
+展开，以及七项功能分组与底部固定按钮移除后的综合色；模拟不确认最终纸
+纤维、折痕／磨损、客户端字体栅格、动画或右侧屏幕 clamp。用户确认前不实现
+菜单、不移动 runtime 漆章，也不隐藏
 放弃／分享／退出／详情与 pfQuest 四按钮。确认后实现必须一一代理原 Button、
 镜像禁用态、保留放弃确认，并在任一 provider 未捕获时 fail-open。
 

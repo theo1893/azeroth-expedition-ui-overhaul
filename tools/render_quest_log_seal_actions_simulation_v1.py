@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageChops, ImageDraw, ImageFont
 
 
 INK = (49, 29, 18, 255)
@@ -283,6 +283,178 @@ def draw_parchment_seal_tag(
     layer.alpha_composite(resized, (ox + sx, oy + sy))
 
 
+def offset_polygon(
+    points: list[list[int]],
+    dx: int,
+    dy: int,
+) -> list[tuple[int, int]]:
+    return [(x + dx, y + dy) for x, y in points]
+
+
+def draw_page_layered_seal_tag(
+    layer: Image.Image,
+    shell: Image.Image,
+    layout: dict[str, Any],
+    origin: tuple[int, int],
+    seal: Image.Image,
+) -> None:
+    """Draw one flexible docket tag, then restore the real page lip above it."""
+    ox, oy = origin
+    draw = ImageDraw.Draw(layer, "RGBA")
+    tag_points = offset_polygon(layout["document_tag_polygon"], ox, oy)
+
+    # The soft offset follows the same irregular silhouette and remains on the
+    # book surface; it is a contact shadow, not an exterior frame fastener.
+    draw.polygon(
+        offset_polygon(layout["document_tag_polygon"], ox + 2, oy + 3),
+        fill=(24, 13, 9, 155),
+    )
+    draw.polygon(tag_points, fill=PAPER, outline=PAPER_DARK)
+
+    for line in layout["tag_crease_lines"]:
+        points = offset_polygon(line, ox, oy)
+        draw.line(points, fill=(103, 69, 36, 145), width=1)
+
+    fold = offset_polygon(layout["tag_terminal_fold"], ox, oy)
+    draw.polygon(fold, fill=(163, 119, 65, 235))
+    draw.line(
+        [fold[0], fold[1], fold[2]],
+        fill=(91, 58, 30, 190),
+        width=1,
+    )
+
+    # Re-sample the already accepted shell at the same 676x464 geometry and
+    # put only the real page-lip pixels back above the tag root. The preview no
+    # longer substitutes a beige rectangle for page occlusion.
+    px, py, pw, ph = layout["page_lip_source_box"]
+    page_crop = shell.crop((px, py, px + pw, py + ph)).copy()
+    page_mask = Image.new("L", (pw, ph), 0)
+    mask_draw = ImageDraw.Draw(page_mask)
+    mask_points = [
+        (x - px, y - py) for x, y in layout["page_lip_mask_polygon"]
+    ]
+    mask_draw.polygon(mask_points, fill=255)
+    page_crop.putalpha(
+        ImageChops.multiply(page_crop.getchannel("A"), page_mask)
+    )
+    layer.alpha_composite(page_crop, (ox + px, oy + py))
+
+    lip_edge = offset_polygon(layout["page_lip_edge"], ox, oy)
+    draw.line(lip_edge, fill=(79, 48, 27, 210), width=1)
+    highlight = [(x - 1, y - 1) for x, y in lip_edge[:-1]]
+    if len(highlight) > 1:
+        draw.line(highlight, fill=(221, 190, 127, 135), width=1)
+
+    sx, sy, sw, sh = layout["seal_visual"]
+    resized = seal.resize((sw, sh), Image.Resampling.LANCZOS)
+    layer.alpha_composite(resized, (ox + sx, oy + sy))
+
+
+def draw_unfolded_tag_menu(
+    layer: Image.Image,
+    spec: dict[str, Any],
+    origin: tuple[int, int],
+    fonts: dict[str, ImageFont.FreeTypeFont],
+) -> None:
+    """Draw one parchment sheet whose right spur remains connected to the tag."""
+    ox, oy = origin
+    mx, my, mw, mh = spec["layout"]["menu"]
+    mx += ox
+    my += oy
+    connector_x, connector_y = spec["layout"]["menu_connection_point"]
+    connector_x += ox
+    connector_y += oy
+    draw = ImageDraw.Draw(layer, "RGBA")
+
+    sheet = [
+        (mx + 8, my + 3),
+        (mx + mw - 13, my),
+        (mx + mw - 7, my + 92),
+        (connector_x, connector_y - 13),
+        (connector_x + 3, connector_y + 11),
+        (mx + mw - 7, my + 132),
+        (mx + mw - 4, my + mh - 11),
+        (mx + mw - 12, my + mh - 3),
+        (mx + 7, my + mh - 6),
+        (mx + 2, my + 10),
+    ]
+    draw.polygon(
+        [(x + 3, y + 4) for x, y in sheet],
+        fill=(29, 16, 11, 175),
+    )
+    draw.polygon(sheet, fill=PAPER, outline=PAPER_DARK)
+
+    # The title is ink on a folded parchment band, not a separate leather
+    # popup title bar. This keeps the opened state one continuous document.
+    header = [
+        (mx + 11, my + 10),
+        (mx + mw - 20, my + 8),
+        (mx + mw - 17, my + 38),
+        (mx + 12, my + 40),
+    ]
+    draw.polygon(header, fill=(173, 128, 71, 235))
+    draw.line(
+        (mx + 14, my + 42, mx + mw - 21, my + 40),
+        fill=(102, 67, 33, 180),
+        width=1,
+    )
+    draw.text(
+        (mx + (mw - 8) / 2, my + 25),
+        "任务事务",
+        font=fonts["menu_title"],
+        fill=INK,
+        anchor="mm",
+    )
+
+    actions = spec["content"]["menu_actions"]
+    cursor = my + 48
+    for index, action in enumerate(actions):
+        if index == 2:
+            draw.line(
+                (mx + 17, cursor - 3, mx + mw - 24, cursor - 3),
+                fill=(104, 68, 33, 150),
+                width=1,
+            )
+            draw.text(
+                (mx + 17, cursor + 1),
+                "地图标记",
+                font=fonts["small"],
+                fill=INK_MUTED,
+            )
+            cursor += 18
+        if index == len(actions) - 1:
+            draw.line(
+                (mx + 17, cursor - 3, mx + mw - 24, cursor - 3),
+                fill=(104, 68, 33, 150),
+                width=1,
+            )
+            cursor += 3
+        row_fill = DANGER if action == "放弃任务" else INK
+        draw.ellipse(
+            (mx + 16, cursor + 6, mx + 21, cursor + 11),
+            fill=(111, 36, 26, 255) if action == "放弃任务" else BRASS,
+        )
+        draw.text(
+            (mx + 28, cursor + 3),
+            action,
+            font=fonts["menu"],
+            fill=row_fill,
+        )
+        cursor += 25
+
+    # Broad fold lines visually carry the menu back into the narrow seal tag.
+    draw.line(
+        (mx + mw - 14, my + 91, connector_x - 2, connector_y - 12),
+        fill=(111, 73, 38, 175),
+        width=1,
+    )
+    draw.line(
+        (mx + mw - 13, my + 132, connector_x, connector_y + 10),
+        fill=(225, 193, 129, 135),
+        width=1,
+    )
+
+
 def draw_action_menu(
     layer: Image.Image,
     spec: dict[str, Any],
@@ -500,12 +672,60 @@ def draw_quest_log(
         fill=INK_MUTED,
     )
     support_type = spec.get("support_type", "leather-tab")
-    if support_type == "parchment-seal-tag":
+    if support_type == "page-layered-parchment-seal-tag":
+        if menu_open:
+            draw_unfolded_tag_menu(layer, spec, origin, fonts)
+        draw_page_layered_seal_tag(
+            layer,
+            shell,
+            spec["layout"],
+            origin,
+            seal,
+        )
+    elif support_type == "parchment-seal-tag":
         draw_parchment_seal_tag(layer, spec["layout"], origin, seal)
+        if menu_open:
+            draw_action_menu(layer, spec, origin, fonts)
     else:
         draw_support_tab(layer, spec["layout"], origin, seal)
-    if menu_open:
-        draw_action_menu(layer, spec, origin, fonts)
+        if menu_open:
+            draw_action_menu(layer, spec, origin, fonts)
+
+
+def draw_closeup(
+    canvas: Image.Image,
+    source_origin: tuple[int, int],
+    source_box: list[int],
+    destination_box: list[int],
+    label: str,
+    fonts: dict[str, ImageFont.FreeTypeFont],
+) -> None:
+    sx, sy, sw, sh = source_box
+    dx, dy, dw, dh = destination_box
+    absolute_source = (
+        source_origin[0] + sx,
+        source_origin[1] + sy,
+        source_origin[0] + sx + sw,
+        source_origin[1] + sy + sh,
+    )
+    crop = canvas.crop(absolute_source).resize(
+        (dw, dh),
+        Image.Resampling.NEAREST,
+    )
+    draw = ImageDraw.Draw(canvas, "RGBA")
+    draw.rectangle(
+        (dx - 5, dy - 29, dx + dw + 5, dy + dh + 5),
+        fill=(26, 20, 17, 230),
+        outline=(164, 119, 56, 255),
+        width=2,
+    )
+    canvas.alpha_composite(crop, (dx, dy))
+    draw.text(
+        (dx + 4, dy - 24),
+        label,
+        font=fonts["board_body"],
+        fill=(238, 202, 128, 255),
+    )
 
 
 def main() -> None:
@@ -567,6 +787,54 @@ def main() -> None:
     draw.text((44, 665), "交互合同：左键开关；点选／点击书外／Esc 关闭；所有动作只代理原 Button，不复制任务逻辑；放弃任务继续走原生确认框。", font=fonts["board_body"], fill=(219, 187, 123, 255))
     draw.text((44, 692), "迁移完成前 fail-open：只要任一 provider 尚未捕获，旧按钮继续显示；Close、等级、追踪、在线与语言仍保持独立。", font=fonts["board_body"], fill=(219, 187, 123, 255))
 
+    closeups = spec.get("closeups")
+    if closeups:
+        draw_closeup(
+            canvas,
+            left_origin,
+            closeups["closed_source"],
+            closeups["closed_destination"],
+            "C · 根部层序放大：真实右页像素覆盖封签",
+            fonts,
+        )
+        draw_closeup(
+            canvas,
+            right_origin,
+            closeups["open_source"],
+            closeups["open_destination"],
+            "D · 展开连接放大：同一张事务签连续展开",
+            fonts,
+        )
+        draw = ImageDraw.Draw(canvas, "RGBA")
+        annotation_x = 980
+        annotation_y = 758
+        draw.text(
+            (annotation_x, annotation_y),
+            "V3 物理关系检查",
+            font=fonts["title"],
+            fill=(238, 202, 128, 255),
+        )
+        annotations = (
+            "① 封签根部消失在真实右页下方",
+            "② 羊皮纸横跨书封，但没有固定在书框",
+            "③ 火漆直接压在同一张纸的外露末端",
+            "④ 展开态没有独立弹窗底板",
+            "⑤ 七项事务写在向书内展开的同一张纸上",
+        )
+        for index, annotation in enumerate(annotations):
+            draw.text(
+                (annotation_x, annotation_y + 34 + index * 28),
+                annotation,
+                font=fonts["board_body"],
+                fill=(219, 187, 123, 255),
+            )
+        draw.text(
+            (annotation_x, annotation_y + 196),
+            "非权威：最终纸纤维、手绘折痕、动画与客户端字体。",
+            font=fonts["small"],
+            fill=(170, 145, 100, 255),
+        )
+
     board_path = resolve(root, spec["outputs"]["board"])
     board_path.parent.mkdir(parents=True, exist_ok=True)
     canvas.save(board_path, "PNG", optimize=False, compress_level=9)
@@ -575,7 +843,39 @@ def main() -> None:
     page_safe = [64, 64, 548, 324]
     seal_box = layout["seal_visual"]
     support_type = spec.get("support_type", "leather-tab")
-    if support_type == "parchment-seal-tag":
+    if support_type == "page-layered-parchment-seal-tag":
+        support_checks = {
+            "page_lip_source_inside_shell": contains(
+                [0, 0, *spec["frame"]], layout["page_lip_source_box"]
+            ),
+            "page_lip_covers_tag_root": contains(
+                layout["page_lip_source_box"], layout["tag_root_box"]
+            ),
+            "tag_crosses_book_outer_edge": (
+                layout["document_tag_bbox"][0] < spec["frame"][0]
+                and layout["document_tag_bbox"][0]
+                + layout["document_tag_bbox"][2]
+                > spec["frame"][0]
+            ),
+            "seal_sits_on_tag_terminal": contains(
+                layout["tag_head"], layout["seal_visual"]
+            ),
+            "menu_connection_intersects_tag": intersects(
+                layout["menu_connection_box"],
+                layout["document_tag_bbox"],
+            ),
+            "menu_connection_intersects_sheet": intersects(
+                layout["menu_connection_box"], layout["menu"]
+            ),
+            "tag_is_one_continuous_polygon": len(
+                layout["document_tag_polygon"]
+            ) >= 8,
+        }
+        support_non_authoritative = [
+            "final parchment fibers and hand-painted folds",
+            "runtime shell-UV sampling and page-lip edge mask",
+        ]
+    elif support_type == "parchment-seal-tag":
         support_checks = {
             "tag_root_enters_page_edge": intersects(
                 layout["document_tag"], layout["page_exit"]

@@ -64,6 +64,15 @@ def main() -> None:
     seal_actions_sim_v2_spec = json.loads(
         seal_actions_sim_v2_spec_path.read_text(encoding="utf-8")
     )
+    seal_actions_sim_v3_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v3.json"
+    )
+    seal_actions_sim_v3_spec = json.loads(
+        seal_actions_sim_v3_spec_path.read_text(encoding="utf-8")
+    )
     seal_actions_sim_renderer = (
         ROOT / "tools" / "render_quest_log_seal_actions_simulation_v1.py"
     )
@@ -1819,6 +1828,45 @@ def main() -> None:
     assert seal_actions_sim_v2_spec["interaction"]["fail_open"] == (
         "keep-original-buttons-visible-until-all-proxies-exist"
     )
+    assert seal_actions_sim_v3_spec["version"] == (
+        "QUEST-LOG-SEAL-ACTIONS-SIM-V3"
+    )
+    assert seal_actions_sim_v3_spec["support_type"] == (
+        "page-layered-parchment-seal-tag"
+    )
+    assert seal_actions_sim_v3_spec["frame"] == [676, 464]
+    assert seal_actions_sim_v3_spec["layout"][
+        "page_lip_source_box"
+    ] == [598, 176, 39, 54]
+    assert seal_actions_sim_v3_spec["layout"]["tag_root_box"] == [
+        608,
+        184,
+        27,
+        27,
+    ]
+    assert seal_actions_sim_v3_spec["layout"][
+        "document_tag_bbox"
+    ] == [608, 184, 112, 50]
+    assert seal_actions_sim_v3_spec["layout"][
+        "menu_connection_box"
+    ] == [650, 184, 42, 48]
+    assert seal_actions_sim_v3_spec["layout"]["seal_visual"] == [
+        684,
+        196,
+        32,
+        32,
+    ]
+    assert len(seal_actions_sim_v3_spec["content"]["menu_actions"]) == 7
+    assert seal_actions_sim_v3_spec["constraints"]["imagegen_calls"] == 0
+    assert seal_actions_sim_v3_spec["constraints"][
+        "page_lip_reuses_shell_pixels"
+    ]
+    assert seal_actions_sim_v3_spec["constraints"][
+        "tag_is_one_continuous_sheet"
+    ]
+    assert seal_actions_sim_v3_spec["constraints"][
+        "menu_is_same_sheet_unfold"
+    ]
     require(
         seals_work,
         (
@@ -1849,9 +1897,26 @@ def main() -> None:
             "a61ac0e3624831103cd9d1db31ffc07a0e55e21dc720b143c9c79196771c8f42",
             "082f4585bcec49244b1ac16a985177520badc6eec0b0ae166254964cc2e8ba1e",
             "ImageGen：`0/0`",
-            "用户结论：`pending`",
+            "用户结论：`user-rejected`",
         ),
         "Quest Log parchment seal-tag simulation work",
+    )
+    require(
+        seals_work,
+        (
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V3",
+            "书页夹层火漆封签",
+            "page_lip_source_box=[598,176,39,54]",
+            "tag_root_box=[608,184,27,27]",
+            "document_tag_bbox=[608,184,112,50]",
+            "menu_connection_box=[650,184,42,48]",
+            "seal_visual=[684,196,32,32]",
+            "86642cfdfaeae0326bc7917769b34f7de2b063cc272dce3d879b6be33ef71310",
+            "aec599e88fafb01b317354708b9c43f5fa2872de6c0ec4e24e767e9c39c547ae",
+            "ImageGen：`0/0`",
+            "用户结论：`pending`",
+        ),
+        "Quest Log page-layered seal-tag simulation work",
     )
 
     quest_adapter = (

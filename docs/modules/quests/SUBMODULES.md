@@ -37,7 +37,7 @@ fallback。NPC 对话仍没有获准生产资产。
 | `QUEST.LOG.COUNT` | `QuestLogQuestCount`；兼容 `QuestLogCount` | layout-only；使用纸面深墨文字，不新增外框 |
 | `QUEST.LOG.CLOSE` | `QuestLogFrameCloseButton` | 普通／悬停／按下／禁用 |
 | `QUEST.LOG.EMPTY` | `EmptyQuestLogFrame`、`QuestLogNoQuestsText` | 安静纸面，不生成空状态卡片 |
-| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前是 adapter-owned 无鼠标 `OVERLAY` Texture | QS-A1 V1.r4 美术与四态 atlas 仍 accepted；旧 `[600,-18,28,28]` 顶部悬空锚点已被用户于 `2026-08-03` 否决，只作为待替换 P5 fallback。V1 外沿皮革签不再作为方向；当前 `QUEST-LOG-SEAL-ACTIONS-SIM-V2 / simulation-reviewed` 改为从右页层间伸出的羊皮纸火漆封签，未确认前不得接入 |
+| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前是 adapter-owned 无鼠标 `OVERLAY` Texture | QS-A1 V1.r4 美术与四态 atlas 仍 accepted；旧 `[600,-18,28,28]` 顶部悬空锚点只作为待替换 P5 fallback。V1 外沿皮革签与 V2 二段式硬质封签均已否决；当前 `QUEST-LOG-SEAL-ACTIONS-SIM-V3 / simulation-reviewed` 使用一整张柔性羊皮纸，根部由真实 QL-A1 shell 页缘像素覆盖，火漆压在书外末端，未确认前不得接入 |
 | `QUEST.LOG.CHROME.SEAL.SUPPORT` | proposed adapter-owned 无鼠标 Texture／程序化层；当前不存在 | V2 只定义羊皮纸窄身、书外加宽折头、页唇遮挡和接触阴影四个独立层序职责；模拟确认前不创建，未来不得把它们烘焙进 QS-A1 漆章 atlas |
 
 支持 `closed`、`empty`、`list-only`、`dual-page` 与 `selected`。离线参考为
@@ -199,7 +199,7 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 | `QUEST.LOG.ACTION.SHARE` | `QuestFramePushQuestButton`；兼容名需探测 | 当前程序化暗皮革 fallback；目标事务菜单代理原 Button |
 | `QUEST.LOG.ACTION.EXIT` | `QuestFrameExitButton`；兼容 `QuestLogFrameCancelButton` | 目标视觉不重复收纳；右上真实 Close 保持独立，fallback 在迁移验收前继续存在 |
 | `QUEST.LOG.DETAIL.TOGGLE` | pfUI `QuestLogFrameExpandButton`；缺失时可创建真实 Button | 当前底部 fallback；目标事务菜单代理同一动态开合行为 |
-| `QUEST.LOG.ACTION.SEAL_MENU` | proposed adapter-owned transient Frame；未接入 | `QUEST-LOG-SEAL-ACTIONS-SIM-V2` 沿用分享、详情开合、pfQuest 四个地图操作与放弃，共七项；左键开关，选择／书外点击／Esc 关闭，禁用态镜像 provider；入口由羊皮纸封签外露折头上的漆章承担 |
+| `QUEST.LOG.ACTION.SEAL_MENU` | proposed adapter-owned transient Frame；未接入 | `QUEST-LOG-SEAL-ACTIONS-SIM-V3` 沿用分享、详情开合、pfQuest 四个地图操作与放弃，共七项；左键开关，选择／书外点击／Esc 关闭，禁用态镜像 provider；入口由整张羊皮纸封签末端的漆章承担，打开态菜单必须从同一纸面连续展开，不得成为断开的弹窗卡片 |
 | `QUEST.LOG.LEVELS` | pfUI `QuestLogFrameLevelsCheckButton` | 复用 QL-B1 开放墨圈／墨勾 atlas；保留原脚本与文字 |
 | `QUEST.LOG.PFQUEST.ONLINE` | `pfQuest.buttonOnline`／`pfQuestOnline` | `72 × 16`，右页顶部固定工具行；动态 ID 与原 OnClick 不变 |
 | `QUEST.LOG.PFQUEST.LANGUAGE` | `pfQuest.buttonLanguage`／`pfQuestLanguage` | `86 × 16`，与 ONLINE 同行；动态语言、下拉与原 OnUpdate／OnClick 不变 |
