@@ -82,6 +82,15 @@ def main() -> None:
     seal_actions_sim_v4_spec = json.loads(
         seal_actions_sim_v4_spec_path.read_text(encoding="utf-8")
     )
+    seal_actions_sim_v5_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v5.json"
+    )
+    seal_actions_sim_v5_spec = json.loads(
+        seal_actions_sim_v5_spec_path.read_text(encoding="utf-8")
+    )
     seal_actions_sim_renderer = (
         ROOT / "tools" / "render_quest_log_seal_actions_simulation_v1.py"
     )
@@ -1920,6 +1929,46 @@ def main() -> None:
     assert seal_actions_sim_v4_spec["layout"]["tag_root_box"][1] >= (
         reward_bottom
     )
+    assert seal_actions_sim_v5_spec["version"] == (
+        "QUEST-LOG-SEAL-ACTIONS-SIM-V5"
+    )
+    assert seal_actions_sim_v5_spec["support_type"] == (
+        "short-bottom-bookmark-same-page-menu"
+    )
+    assert seal_actions_sim_v5_spec["frame"] == [676, 464]
+    assert seal_actions_sim_v5_spec["visible_book_bottom_y"] == 432
+    assert seal_actions_sim_v5_spec["layout"][
+        "page_lip_source_box"
+    ] == [530, 384, 72, 30]
+    assert seal_actions_sim_v5_spec["layout"]["tag_root_box"] == [
+        555,
+        390,
+        26,
+        20,
+    ]
+    assert seal_actions_sim_v5_spec["layout"][
+        "document_tag_bbox"
+    ] == [546, 390, 46, 78]
+    assert seal_actions_sim_v5_spec["layout"]["menu"] == (
+        seal_actions_sim_v5_spec["layout"]["detail"]
+    )
+    assert seal_actions_sim_v5_spec["layout"]["seal_visual"] == [
+        554,
+        434,
+        32,
+        32,
+    ]
+    assert len(seal_actions_sim_v5_spec["content"]["menu_actions"]) == 7
+    assert seal_actions_sim_v5_spec["constraints"]["imagegen_calls"] == 0
+    assert seal_actions_sim_v5_spec["constraints"][
+        "bookmark_visible_length_is_short"
+    ]
+    assert seal_actions_sim_v5_spec["constraints"][
+        "menu_reuses_existing_detail_page_surface"
+    ]
+    assert seal_actions_sim_v5_spec["constraints"][
+        "menu_has_no_secondary_paper_or_popup_plane"
+    ]
     require(
         seals_work,
         (
@@ -1984,9 +2033,26 @@ def main() -> None:
             "386d625e67c1a0eae6dfda07cc7c4213d65aa992c91ab1f25752311a5b7ecd20",
             "874f240d5eaf12bb47fbe2db9428372897288068880d6ff6568471674d3241c7",
             "ImageGen：`0/0`",
-            "用户结论：`pending`",
+            "用户结论：`user-rejected`",
         ),
         "Quest Log bottom bookmark seal simulation work",
+    )
+    require(
+        seals_work,
+        (
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V5",
+            "短火漆书签与同页事务模式",
+            "page_lip_source_box=[530,384,72,30]",
+            "tag_root_box=[555,390,26,20]",
+            "document_tag_bbox=[546,390,46,78]",
+            "menu=[366,64,246,324]",
+            "seal_visual=[554,434,32,32]",
+            "ef4010a3b6d36350f5bb231cfac5df1fd96e4630a00639f15e586ff765421961",
+            "fc62895116ad8d0b5ea1f769e1a3afed681d33b6252210dcc01ed317c59ca9ff",
+            "ImageGen：`0/0`",
+            "用户结论：`pending`",
+        ),
+        "Quest Log short bookmark same-page simulation work",
     )
 
     quest_adapter = (

@@ -4,7 +4,7 @@
 - 当前接受版本：`QS-A1 V1.r4`
 - 已确认历史模拟：`QUEST-SEALS-SIM-V2`；其 Quest Log 顶部悬空位置已于
   `2026-08-03` 被用户否决，Tracker 方向仍有效
-- 当前待确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V4`
+- 当前待确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V5`
 - 项目阶段：漆章美术／atlas `P5`；Quest Log placement／menu `P2`
 - 当前子状态：`runtime-exported / placement-invalidated / simulation-reviewed`
 - 固定执行器：`imagegen-0-143-0`
@@ -26,7 +26,9 @@
   与事务菜单先等待本地模拟确认。V1 的外沿皮革承托已被物理语义复核淘汰；
   V2 因伪页唇、硬质按钮轮廓与断开的弹窗语义被用户否决；V3 虽改用真实
   shell 页缘和单张纸，却把“右页下方”误解成图层下方，仍从右侧中段横向
-  伸出。V4 按用户澄清改为从 detail 右页下缘竖直夹入、向下越过底框的书签。
+  伸出。V4 改为从 detail 下缘竖直夹入，但书签过长，展开态又新增一张大纸，
+  导致书页层级和重心突变，已被用户否决。V5 收短书签，并让事务操作直接
+  复用原 detail 右页表面，不再创建第二张纸。
   旧 Quest Log／Tracker provider Button 在各自菜单功能等价前继续可见可用。
 
 ## 用户接受与 P4／P5 固化
@@ -70,9 +72,9 @@
 
 | ID | 当前对象 | 目标合同 |
 |---|---|---|
-| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前仍是 `[600,-18,28,28]` 无鼠标 Texture | QS-A1 V1.r4 美术保持 accepted；旧顶部悬空位置与 V1／V2／V3 承载均已否决。V4 提案把 `32px` 漆章直接压在 detail 右页下缘竖向书签的书外末端，必须先确认 `QUEST-LOG-SEAL-ACTIONS-SIM-V4` |
-| `QUEST.LOG.CHROME.SEAL.SUPPORT` | 尚无 runtime 对象 | proposed 单张柔性竖向羊皮纸书签：根部夹在 detail 右页下缘与书封之间并由 QL-A1 shell 的真实下页缘像素覆盖；窄身向下跨过书封并越过底框，但不能固定在底框、包角或书封上，也不能遮住四个动态奖励槽 |
-| `QUEST.LOG.CHROME.SEAL.MENU` | 尚无 runtime 对象 | proposed transient Frame；菜单纸面必须从下方书签向上／左上连续摊入右页，不得从右侧弹出或表现成断开的现代卡片；七项菜单只代理原 Button，取得一一功能等价前旧按钮保持 fail-open |
+| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前仍是 `[600,-18,28,28]` 无鼠标 Texture | QS-A1 V1.r4 美术保持 accepted；旧顶部悬空位置与 V1–V4 承载均已否决。V5 提案把 `32px` 漆章压在 detail 下缘短竖向书签的自然末端，整体只略越过可见书框，必须先确认 `QUEST-LOG-SEAL-ACTIONS-SIM-V5` |
+| `QUEST.LOG.CHROME.SEAL.SUPPORT` | 尚无 runtime 对象 | proposed 单张短柔性羊皮纸书签：根部夹在 detail 右页下缘与书封之间并由 QL-A1 shell 的真实下页缘像素覆盖；可见长度约 `60px`，纸张完整承托漆章但不形成长吊坠，不固定在底框／包角／书封，也不遮四个奖励槽 |
+| `QUEST.LOG.CHROME.SEAL.MENU` | 尚无 runtime 对象 | proposed same-page transient content mode；点击后不创建第二张纸、浮层卡片、阴影或外框，而是暂时把原 `246 × 324px` detail 书页内容切换为七项事务墨字；收起后恢复详情，层级和 QL-A1 shell 完全不变，功能等价前旧按钮保持 fail-open |
 | `QUEST.TRACKER.HUB.SEAL` | 尚无 runtime 对象 | adapter-owned `34 × 34` 顶部中央漆章；宽度 `W` 时 `x=floor((W-34)/2)`、`y=-18`，底边恰好落在 provider `16px` 工具条／列表起点，不移动任务内容 |
 | `QUEST.TRACKER.HUB.MENU` | 尚无对象 | 未来独立交互批次；漆章点击后承载七项 provider 行为。本模拟不绘制、不实现，也不把它当成已有 Button |
 
@@ -1033,7 +1035,7 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 ### 元数据
 
 - 日期：`2026-08-03`
-- 子状态：`simulation-reviewed / P2 / awaiting-user-confirmation`
+- 子状态：`simulation-rejected / P2 / user-rejected`
 - 操作：`simulate`
 - 模拟方式：`deterministic-local-geometry`
 - ImageGen：`0/0`；上传：无；新增 bitmap source/runtime：`0`
@@ -1051,7 +1053,7 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 - report：
   `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V4/quest_log_seal_actions_report_v4.json`，SHA-256
   `874f240d5eaf12bb47fbe2db9428372897288068880d6ff6568471674d3241c7`。
-- 本地渲染错误：`0`；内部视觉修复：`1`；用户结论：`pending`。
+- 本地渲染错误：`0`；内部视觉修复：`1`；用户结论：`user-rejected / 2026-08-03`。
 
 ### 几何、层序与对象合同
 
@@ -1075,14 +1077,16 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 
 ### 内部审查
 
-- 语义／物理：`pass-for-simulation`。根部位于 detail 页面的空间下缘，
-  书签长轴竖直，窄身受重力向下，漆章压在底框之外的纸张末端；不再读取成
-  右侧横向把手、硬质钥匙或书框按钮。
+- 语义／物理：`fail-after-direction-fix`。根部方位和竖向结构已经正确，
+  但为了让漆章完全越过数值 Frame，书签从页缘到末端被拉得过长，用户明确
+  评价为“太长、太难看”；它读成吊坠而不是短任务书签。
 - 动态内容／层序：`pass-for-simulation`。最终 page-lip source 与四个奖励
   槽均不相交，根部位于全部奖励之后；关闭态不会截断奖励，打开态的覆盖是
   有意且可关闭的菜单层。Close、等级、追踪、在线和语言仍独立。
-- 连续性：`pass-for-simulation`。打开态纸面底部收窄到同一竖向书签，接缝
-  顶线被同色纸面消除，再以折线表达绕过下页缘；没有独立现代 popup 底板。
+- 连续性／层级：`fail`，且这是第二个用户明确失败点。打开态虽在几何上与
+  书签相连，却新增一张覆盖大半右页的独立纸面，导致原 detail 页、书页边缘
+  和书签之间的图层关系改变，综合色突兀、不和谐。bbox 连接不能证明层级
+  延续；V4 的二级纸面不得进入 runtime。
 - 展示区域：`displayable`。报告同时通过真实 page-lip source、根部包含、
   奖励避让、向下越过 Frame、竖向比例、漆章末端、菜单连接、Close 避让、
   `40px` 命中盒、七项动作和 fail-open 检查。
@@ -1092,11 +1096,93 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 ### 用户方向结论
 
 - 具体模拟版本：`QUEST-LOG-SEAL-ACTIONS-SIM-V4`
+- 当前结论：`user-rejected / 2026-08-03`
+- 用户结论：`user-rejected`。书签过长、难看；点击后的二级页面改变图层关系，
+  与原书本非常不和谐。
+- 后继版本：`QUEST-LOG-SEAL-ACTIONS-SIM-V5`。根部方位、真实 shell 遮挡、
+  QS-A1 漆章、七项代理和 fail-open 保留；可见书签收短，菜单改为原 detail
+  书页上的内容模式切换，禁止新增第二张纸、浮层阴影或额外页面边界。
+
+## Quest Log 短火漆书签与同页事务模式 — `QUEST-LOG-SEAL-ACTIONS-SIM-V5`
+
+### 方向修订
+
+- V5 冻结 V4 已正确的下缘竖向锚点，但把书签从
+  `document_tag_bbox=[529,385,50,125]` 收敛为
+  `document_tag_bbox=[546,390,46,78]`。相对实际可见书本底边约 `y=432`，
+  关闭态露出约 `36px` 纸张与漆章；不再为了越过透明 Frame 边界制造长吊坠。
+- QS-A1 漆章仍完整落在同一羊皮纸的自然末端。书签略微覆盖可见底框只是
+  穿过书页／书封的空间路径，漆章没有直接压在金属或皮革上；纸张轮廓完整
+  包住蜡面，默认态始终有实体支撑和明确焦点。
+- 点击后不再“弹出二级页面”。renderer 先用已接受 QL-A1 shell 的原
+  `detail=[366,64,246,324]` UV 恢复同一张空白右页，再把七项事务以动态墨字
+  写在原页面上。书本外壳、纸张纹理、页边、阴影、z-order 和 Frame 全部
+  不变；这是一种 detail 内容模式切换，不是新增纸张或浮层。
+- 再次点击火漆、点击书外或 Esc 后恢复正常任务详情。provider Button 仍是
+  行为所有者；在七项代理全部等价前，旧按钮继续 fail-open。
+
+### 元数据
+
+- 日期：`2026-08-03`
+- 子状态：`simulation-reviewed / P2 / awaiting-user-confirmation`
+- 操作：`simulate`
+- 模拟方式：`deterministic-local-geometry`
+- ImageGen：`0/0`；上传：无；新增 bitmap source/runtime：`0`
+- Python：macOS `conda run -n py312 python`；实际解释器
+  `/Users/yuanshiyao/miniconda3/envs/py312/bin/python`，`3.12.12`
+- specification：
+  `tools/specs/quest_log_seal_actions_simulation_v5.json`
+- renderer：
+  `tools/render_quest_log_seal_actions_simulation_v1.py`
+- 命令：
+  `conda run -n py312 python tools/render_quest_log_seal_actions_simulation_v1.py tools/specs/quest_log_seal_actions_simulation_v5.json --repo-root .`
+- board：
+  `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V5/quest_log_seal_actions_board_v5.png`，SHA-256
+  `ef4010a3b6d36350f5bb231cfac5df1fd96e4630a00639f15e586ff765421961`。
+- report：
+  `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V5/quest_log_seal_actions_report_v5.json`，SHA-256
+  `fc62895116ad8d0b5ea1f769e1a3afed681d33b6252210dcc01ed317c59ca9ff`。
+- 本地渲染错误：`0`；用户结论：`pending`。
+
+### 几何、层序与对象合同
+
+- 基础 Quest Log、十八任务行、详情区、四个奖励槽和七项 provider 代理不变。
+  书签根部 `tag_root_box=[555,390,26,20]` 完全位于真实下页缘采样区
+  `page_lip_source_box=[530,384,72,30]`，并晚于最下奖励槽的排他底边
+  `y=384`；关闭态不会截断任何动态奖励。
+- 短书签总高 `78px`，相对 V4 减少 `47px`；综合色可见长度约 `60px`。
+  `seal_visual=[554,434,32,32]` 位于
+  `tag_head=[546,430,46,38]` 内，`40 × 40px` 命中盒完整包含漆章。
+- 同页事务模式严格复用 `menu=[366,64,246,324]`，且该盒与原 detail 完全
+  相等。renderer 不绘制第二层 PAPER polygon、阴影、外框或独立标题底板；
+  只清除／恢复该页动态内容并绘制标题、分组线和七项墨字。
+- 层序固定为 QL-A1 shell → 当前 detail 或同页事务动态内容 → 真实 shell
+  下页缘覆盖书签根部 → 短书签／QS-A1 漆章。两种状态只交换动态内容，不改变
+  外壳、纸面或装饰层。
+
+### 内部审查
+
+- 语义／比例：`pass-for-simulation`。短书签仍从 detail 下缘竖着夹入，
+  但不再形成长吊坠；漆章有完整纸面承托，并只略微越过实际可见书框。
+- 图层／综合色：`pass-for-simulation`。打开态保持原右页材质、轮廓、阴影
+  和外壳，事务项直接成为该页动态内容；没有第二张纸或突然改变 z-order，
+  左右页视觉重量保持稳定。
+- 动态内容：`pass-for-simulation`。关闭态四奖励槽完整；打开态是有意的
+  detail mode replacement，关闭后恢复原详情。Close、等级、追踪、在线与
+  语言继续独立，七项行为继续委托原 Button。
+- 展示区域：`displayable`。报告通过真实 page-lip source、奖励避让、短长度、
+  越过可见书本底边、漆章承托、menu 与 detail 完全相等、无二级纸面、竖向
+  比例、命中盒和 fail-open 检查。
+- 非权威：最终纸纤维、短书签重力弯曲、同页内容切换动画、客户端字体栅格、
+  Tooltip、屏幕底缘 clamp 和真实点击／焦点恢复。
+
+### 用户方向结论
+
+- 具体模拟版本：`QUEST-LOG-SEAL-ACTIONS-SIM-V5`
 - 当前结论：`pending`
-- 可确认：书签是否确实从 detail 右页下缘竖着夹入、窄身与火漆的长度／视觉
-  重量、末端是否应完全越过底框，以及事务签从下向上展开的方向是否成立。
-- 若确认：下一步收敛程序化 runtime 层序、底部 clamp 和七项原 Button proxy
-  合同；不调用 ImageGen、不修改 QS-A1 source／atlas，也不在功能等价前
-  隐藏旧按钮。
-- 若否决：只继续修改本地 V5 的锚点、书签长度／宽度、page-lip mask 或向上
-  展开轮廓；ImageGen 仍为 `0/0`。
+- 可确认：短书签长度和漆章重量是否合适，以及“点击后在原 detail 右页切换
+  任务事务内容、不新增二级纸面”的层级方案是否符合预期。
+- 若确认：下一步收敛 same-page mode 的运行时对象／焦点／滚动恢复合同以及
+  七项原 Button proxy；不调用 ImageGen、不修改 QS-A1 source／atlas，也不在
+  功能等价前隐藏旧按钮。
+- 若否决：继续用本地 V6 调整短书签比例或同页事务排版；ImageGen 仍为 `0/0`。

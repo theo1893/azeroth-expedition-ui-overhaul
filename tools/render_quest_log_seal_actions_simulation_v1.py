@@ -569,6 +569,101 @@ def draw_bottom_unfolded_tag_menu(
     )
 
 
+def draw_same_page_transaction_mode(
+    layer: Image.Image,
+    shell: Image.Image,
+    spec: dict[str, Any],
+    origin: tuple[int, int],
+    fonts: dict[str, ImageFont.FreeTypeFont],
+) -> None:
+    """Replace live detail content on the existing right-page surface."""
+    ox, oy = origin
+    mx, my, mw, mh = spec["layout"]["menu"]
+
+    # Restore the accepted shell pixels at the exact detail UV. This erases
+    # live detail/reward mock content without introducing a second paper,
+    # popup card, shadow plane, border or changed book hierarchy.
+    page = shell.crop((mx, my, mx + mw, my + mh)).copy()
+    layer.alpha_composite(page, (ox + mx, oy + my))
+
+    mx += ox
+    my += oy
+    draw = ImageDraw.Draw(layer, "RGBA")
+    center_x = mx + mw / 2
+    draw.text(
+        (center_x, my + 18),
+        "任务事务",
+        font=fonts["detail_title"],
+        fill=INK,
+        anchor="mm",
+    )
+    draw.line(
+        (mx + 10, my + 34, mx + mw - 12, my + 34),
+        fill=(105, 69, 34, 155),
+        width=1,
+    )
+    draw.text(
+        (mx + 12, my + 43),
+        "当前任务：熔火之心",
+        font=fonts["small"],
+        fill=INK_MUTED,
+    )
+
+    actions = spec["content"]["menu_actions"]
+    cursor = my + 66
+    for index, action in enumerate(actions):
+        if index == 2:
+            draw.line(
+                (mx + 12, cursor - 5, mx + mw - 14, cursor - 5),
+                fill=(104, 68, 33, 130),
+                width=1,
+            )
+            draw.text(
+                (mx + 12, cursor + 1),
+                "地图标记",
+                font=fonts["small"],
+                fill=INK_MUTED,
+            )
+            cursor += 19
+        if index == len(actions) - 1:
+            draw.line(
+                (mx + 12, cursor - 5, mx + mw - 14, cursor - 5),
+                fill=(104, 68, 33, 130),
+                width=1,
+            )
+            cursor += 4
+        row_fill = DANGER if action == "放弃任务" else INK
+        draw.polygon(
+            [
+                (mx + 15, cursor + 8),
+                (mx + 19, cursor + 4),
+                (mx + 23, cursor + 8),
+                (mx + 19, cursor + 12),
+            ],
+            fill=(111, 36, 26, 255) if action == "放弃任务" else BRASS,
+        )
+        draw.text(
+            (mx + 31, cursor + 1),
+            action,
+            font=fonts["menu"],
+            fill=row_fill,
+        )
+        cursor += 27
+
+    draw.line(
+        (mx + 12, my + mh - 27, mx + mw - 14, my + mh - 27),
+        fill=(104, 68, 33, 115),
+        width=1,
+    )
+    draw.text(
+        (center_x, my + mh - 19),
+        "再次点击火漆返回任务详情",
+        font=fonts["small"],
+        fill=INK_MUTED,
+        anchor="mm",
+    )
+
+
 def draw_action_menu(
     layer: Image.Image,
     spec: dict[str, Any],
@@ -786,7 +881,24 @@ def draw_quest_log(
         fill=INK_MUTED,
     )
     support_type = spec.get("support_type", "leather-tab")
-    if support_type == "bottom-page-layered-parchment-bookmark":
+    if support_type == "short-bottom-bookmark-same-page-menu":
+        if menu_open:
+            draw_same_page_transaction_mode(
+                layer,
+                shell,
+                spec,
+                origin,
+                fonts,
+            )
+        draw_page_layered_seal_tag(
+            layer,
+            shell,
+            spec["layout"],
+            origin,
+            seal,
+            cover_root=True,
+        )
+    elif support_type == "bottom-page-layered-parchment-bookmark":
         if menu_open:
             draw_bottom_unfolded_tag_menu(layer, spec, origin, fonts)
         draw_page_layered_seal_tag(
@@ -1000,7 +1112,63 @@ def main() -> None:
     page_safe = [64, 64, 548, 324]
     seal_box = layout["seal_visual"]
     support_type = spec.get("support_type", "leather-tab")
-    if support_type == "bottom-page-layered-parchment-bookmark":
+    if support_type == "short-bottom-bookmark-same-page-menu":
+        visible_book_bottom = spec["visible_book_bottom_y"]
+        support_checks = {
+            "page_lip_source_inside_shell": contains(
+                [0, 0, *spec["frame"]], layout["page_lip_source_box"]
+            ),
+            "page_lip_covers_bookmark_root": contains(
+                layout["page_lip_source_box"], layout["tag_root_box"]
+            ),
+            "page_lip_avoids_all_reward_slots": all(
+                not intersects(layout["page_lip_source_box"], box)
+                for box in layout["reward_slots"]
+            ),
+            "bookmark_crosses_visible_book_bottom": (
+                layout["document_tag_bbox"][1] < visible_book_bottom
+                and layout["document_tag_bbox"][1]
+                + layout["document_tag_bbox"][3]
+                > visible_book_bottom
+            ),
+            "bookmark_is_short": layout["document_tag_bbox"][3] <= 80,
+            "seal_sits_on_bookmark_terminal": contains(
+                layout["tag_head"], layout["seal_visual"]
+            ),
+            "menu_reuses_exact_detail_page": (
+                layout["menu"] == layout["detail"]
+            ),
+            "menu_connection_intersects_bookmark": intersects(
+                layout["menu_connection_box"],
+                layout["document_tag_bbox"],
+            ),
+            "menu_connection_intersects_same_page": intersects(
+                layout["menu_connection_box"], layout["menu"]
+            ),
+            "bookmark_is_one_continuous_polygon": len(
+                layout["document_tag_polygon"]
+            ) >= 12,
+            "bookmark_is_vertical": (
+                layout["document_tag_bbox"][3]
+                > layout["document_tag_bbox"][2]
+            ),
+            "bookmark_root_is_below_all_rewards": (
+                layout["tag_root_box"][1]
+                >= max(
+                    box[1] + box[3]
+                    for box in layout["reward_slots"]
+                )
+            ),
+            "no_secondary_paper_layer": spec["constraints"][
+                "menu_reuses_existing_detail_page_surface"
+            ],
+        }
+        support_non_authoritative = [
+            "final short-bookmark fibers, gravity bend and hand-painted folds",
+            "runtime shell-UV sampling and lower-page edge mask",
+            "same-page transaction-mode transition",
+        ]
+    elif support_type == "bottom-page-layered-parchment-bookmark":
         support_checks = {
             "page_lip_source_inside_shell": contains(
                 [0, 0, *spec["frame"]], layout["page_lip_source_box"]
@@ -1150,13 +1318,26 @@ def main() -> None:
             "menu_overlaps_detail_when_open": intersects(
                 layout["menu"], layout["detail"]
             ),
-            "reason": "transient action layer; closes after selection/outside-click/Escape",
+            "reason": (
+                "same accepted right-page surface temporarily replaces detail content; no secondary art plane"
+                if support_type == "short-bottom-bookmark-same-page-menu"
+                else "transient action layer; closes after selection/outside-click/Escape"
+            ),
         },
-        "non_authoritative": support_non_authoritative + [
-            "menu paper edge, seam and final state art",
-            "client font rasterization",
-            "runtime animation and tooltip",
-        ],
+        "non_authoritative": support_non_authoritative
+        + (
+            [
+                "same-page ink spacing and final interaction feedback",
+                "client font rasterization",
+                "runtime animation and tooltip",
+            ]
+            if support_type == "short-bottom-bookmark-same-page-menu"
+            else [
+                "menu paper edge, seam and final state art",
+                "client font rasterization",
+                "runtime animation and tooltip",
+            ]
+        ),
         "board": {
             "path": spec["outputs"]["board"],
             "sha256": sha256(board_path),

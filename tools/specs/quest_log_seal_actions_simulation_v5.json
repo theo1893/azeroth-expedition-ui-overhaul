@@ -1,0 +1,164 @@
+{
+  "schema": "aeui.quest-log.seal-actions.simulation.v1",
+  "version": "QUEST-LOG-SEAL-ACTIONS-SIM-V5",
+  "support_type": "short-bottom-bookmark-same-page-menu",
+  "canvas": [1536, 1024],
+  "visible_book_bottom_y": 432,
+  "inputs": {
+    "quest_log_shell": "assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png",
+    "seal_atlas": "addon/AzerothExpeditionUI/Media/Quests/QuestToolWaxSealStatesV1.tga",
+    "title_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf",
+    "body_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf"
+  },
+  "outputs": {
+    "board": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V5/quest_log_seal_actions_board_v5.png",
+    "report": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V5/quest_log_seal_actions_report_v5.json"
+  },
+  "presentation": {
+    "title": "任务日志短火漆书签与同页事务模式 · V5 本地几何预演",
+    "subtitle": "关闭态只保留短书签和火漆；点击后不新增第二张纸，而是在原 detail 右页上切换任务事务内容，书本外壳、纸面、页缘与层级完全不变。100% UI 像素，ImageGen 0/0。",
+    "annotation_origin": [670, 758],
+    "annotation_title": "V5 长度与图层检查",
+    "annotations": [
+      "① 可见书签由约 120px 收短到约 60px",
+      "② 火漆仍完整压在羊皮纸末端，不直接接触书框",
+      "③ 右图复用原 detail 书页，不绘制第二张纸",
+      "④ 菜单只是原书页内容模式切换，外壳与层级不变",
+      "⑤ 收起后恢复任务详情，短书签与火漆始终保留"
+    ],
+    "non_authoritative_note": "非权威：最终纸纤维、短书签弯曲、模式切换动画、Tooltip 与客户端字体。"
+  },
+  "frame": [676, 464],
+  "layout": {
+    "list": [64, 64, 246, 324],
+    "detail": [366, 64, 246, 324],
+    "detail_content": [376, 72, 224, 306],
+    "close": [636, 12, 22, 22],
+    "document_tag_bbox": [546, 390, 46, 78],
+    "document_tag_polygon": [
+      [558, 390],
+      [578, 390],
+      [579, 402],
+      [576, 414],
+      [579, 428],
+      [586, 435],
+      [592, 448],
+      [589, 461],
+      [581, 468],
+      [559, 467],
+      [550, 462],
+      [546, 450],
+      [550, 438],
+      [557, 428],
+      [554, 414],
+      [557, 402]
+    ],
+    "tag_root_box": [555, 390, 26, 20],
+    "page_lip_source_box": [530, 384, 72, 30],
+    "page_lip_mask_polygon": [
+      [530, 384],
+      [602, 384],
+      [602, 400],
+      [591, 403],
+      [580, 405],
+      [568, 403],
+      [557, 407],
+      [546, 404],
+      [537, 407],
+      [530, 404]
+    ],
+    "page_lip_edge": [
+      [530, 404],
+      [537, 407],
+      [546, 404],
+      [557, 407],
+      [568, 403],
+      [580, 405],
+      [591, 403],
+      [602, 400]
+    ],
+    "tag_crease_lines": [
+      [[562, 410], [565, 421], [561, 433], [565, 442]],
+      [[573, 410], [570, 422], [575, 433], [572, 443]]
+    ],
+    "tag_terminal_fold": [
+      [547, 450],
+      [559, 467],
+      [563, 458],
+      [557, 445]
+    ],
+    "tag_head": [546, 430, 46, 38],
+    "seal_visual": [554, 434, 32, 32],
+    "seal_hitbox": [550, 430, 40, 40],
+    "menu": [366, 64, 246, 324],
+    "menu_connection_box": [546, 378, 46, 42],
+    "reward_slots": [
+      [376, 316, 108, 32],
+      [488, 316, 108, 32],
+      [376, 352, 108, 32],
+      [488, 352, 108, 32]
+    ]
+  },
+  "closeups": {
+    "closed_source": [470, 334, 170, 145],
+    "closed_destination": [44, 738, 324, 276],
+    "closed_label": "C · 关闭态放大：短书签只略微越过可见书框",
+    "open_source": [350, 52, 280, 350],
+    "open_destination": [410, 738, 221, 276],
+    "open_label": "D · 展开态放大：原右页直接切换为事务内容"
+  },
+  "content": {
+    "quest_rows": 18,
+    "reward_slots": 4,
+    "menu_actions": [
+      "共享任务",
+      "收起详情",
+      "显示任务位置",
+      "隐藏任务位置",
+      "清理地图标记",
+      "重建地图标记",
+      "放弃任务"
+    ],
+    "always_separate": [
+      "QuestLogFrameCloseButton",
+      "QuestLogFrameLevelsCheckButton",
+      "QuestLogTrack",
+      "pfQuest.buttonOnline",
+      "pfQuest.buttonLanguage"
+    ],
+    "provider_proxies": [
+      "QuestFramePushQuestButton",
+      "QuestLogFrameExpandButton",
+      "pfQuest.buttonShow",
+      "pfQuest.buttonHide",
+      "pfQuest.buttonClean",
+      "pfQuest.buttonReset",
+      "QuestLogFrameAbandonButton"
+    ]
+  },
+  "interaction": {
+    "left_click": "toggle-same-page-transaction-mode",
+    "outside_click_or_escape": "restore-detail-mode",
+    "action_click": "proxy-original-provider-button-then-restore-detail",
+    "abandon": "preserve-native-confirmation",
+    "disabled": "mirror-provider-enabled-state",
+    "right_click": "reserved-for-quest-module-settings",
+    "fail_open": "keep-original-buttons-visible-until-all-proxies-exist"
+  },
+  "constraints": {
+    "imagegen_calls": 0,
+    "new_bitmap_assets": 0,
+    "seal_reuses_accepted_runtime_atlas": true,
+    "tag_and_menu_are_non_authoritative_geometry": true,
+    "page_lip_reuses_shell_pixels": true,
+    "bookmark_is_vertical": true,
+    "bookmark_visible_length_is_short": true,
+    "bookmark_is_one_continuous_sheet": true,
+    "menu_reuses_existing_detail_page_surface": true,
+    "menu_has_no_secondary_paper_or_popup_plane": true,
+    "seal_must_sit_on_exposed_bookmark_terminal": true,
+    "bookmark_root_must_be_occluded_by_real_page_pixels": true,
+    "page_lip_must_not_cover_reward_slots": true,
+    "bottom_action_buttons_hidden_only_after_proxy_parity": true
+  }
+}
