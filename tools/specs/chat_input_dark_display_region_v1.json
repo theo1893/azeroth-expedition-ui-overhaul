@@ -1,0 +1,98 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "CHAT.INPUT.DARK.V1-SIM",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, 100%-UI-pixels",
+  "evidence": {
+    "provider": "addon/pfUI/modules/chat.lua",
+    "adapter": "addon/AzerothExpeditionUI/Modules/Chat.lua",
+    "current_runtime_manifest": "assets/source/chat/v3/ChatV3_RuntimeManifest_v1.json",
+    "simulation_spec": "tools/specs/chat_input_dark_simulation_v1.json",
+    "simulation_atlas": "generated/chat/core/CHAT.INPUT.DARK.V1/simulation/CHAT_INPUT_DARK_V1_logical_atlas.png",
+    "simulation_layout": "generated/chat/core/CHAT.INPUT.DARK.V1/simulation/CHAT_INPUT_DARK_V1_game_layout.png",
+    "direction_only": true
+  },
+  "atlas": {
+    "size": [1024, 256],
+    "visible_bbox": [8, 4, 1016, 252],
+    "require_exact_visible_coverage": false,
+    "sampled_regions": [
+      {"id": "normal-state", "box": [8, 4, 1016, 124]},
+      {"id": "focus-state", "box": [8, 132, 1016, 252]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 28, "right": 20, "top": 12, "bottom": 12},
+    "minimum_frame_size": [49, 25]
+  },
+  "scenarios": [
+    {
+      "id": "empty-normal-440",
+      "frame": [440, 320],
+      "preview_frame": [440, 320],
+      "zones": {
+        "input": [30, 289, 410, 314],
+        "input-text": [64, 289, 388, 314]
+      },
+      "regions": [
+        {"id": "input.normal.visual", "kind": "visual", "box": [30, 289, 410, 314], "zone": "input"},
+        {"id": "input.normal.hit", "kind": "hit", "box": [30, 289, 410, 314], "zone": "input"}
+      ]
+    },
+    {
+      "id": "minimum-focus-440",
+      "frame": [440, 320],
+      "preview_frame": [440, 320],
+      "zones": {
+        "input": [30, 289, 410, 314],
+        "input-text": [64, 289, 388, 314]
+      },
+      "regions": [
+        {"id": "input.focus.minimum.visual", "kind": "visual", "box": [30, 289, 410, 314], "zone": "input"},
+        {"id": "input.focus.minimum.hit", "kind": "hit", "box": [30, 289, 410, 314], "zone": "input"},
+        {"id": "input.focus.minimum.text", "kind": "text", "box": [64, 293, 108, 310], "zone": "input-text"}
+      ]
+    },
+    {
+      "id": "typical-focus-440",
+      "frame": [440, 320],
+      "preview_frame": [440, 320],
+      "zones": {
+        "input": [30, 289, 410, 314],
+        "input-text": [64, 289, 388, 314]
+      },
+      "regions": [
+        {"id": "input.focus.typical.visual", "kind": "visual", "box": [30, 289, 410, 314], "zone": "input"},
+        {"id": "input.focus.typical.hit", "kind": "hit", "box": [30, 289, 410, 314], "zone": "input"},
+        {"id": "input.focus.typical.text", "kind": "text", "box": [64, 293, 284, 310], "zone": "input-text"}
+      ]
+    },
+    {
+      "id": "maximum-focus-440",
+      "frame": [440, 320],
+      "preview_frame": [440, 320],
+      "zones": {
+        "input": [30, 289, 410, 314],
+        "input-text": [64, 289, 388, 314]
+      },
+      "regions": [
+        {"id": "input.focus.maximum.visual", "kind": "visual", "box": [30, 289, 410, 314], "zone": "input"},
+        {"id": "input.focus.maximum.hit", "kind": "hit", "box": [30, 289, 410, 314], "zone": "input"},
+        {"id": "input.focus.maximum.text", "kind": "text", "box": [64, 293, 332, 310], "zone": "input-text"}
+      ]
+    },
+    {
+      "id": "expanded-focus-540",
+      "frame": [540, 420],
+      "preview_frame": [540, 420],
+      "zones": {
+        "input": [30, 389, 510, 414],
+        "input-text": [64, 389, 488, 414]
+      },
+      "regions": [
+        {"id": "input.focus.expanded.visual", "kind": "visual", "box": [30, 389, 510, 414], "zone": "input"},
+        {"id": "input.focus.expanded.hit", "kind": "hit", "box": [30, 389, 510, 414], "zone": "input"},
+        {"id": "input.focus.expanded.text", "kind": "text", "box": [64, 393, 432, 410], "zone": "input-text"}
+      ]
+    }
+  ]
+}

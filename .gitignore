@@ -13,3 +13,7 @@ release/
 archive/
 *.zip
 *.log
+
+# Local review-only output for the active CHAT.INPUT dark-paper simulation.
+# The durable contract lives in tools/specs/ and docs/modules/chat/work/.
+/generated/chat/core/CHAT.INPUT.DARK.V1/
