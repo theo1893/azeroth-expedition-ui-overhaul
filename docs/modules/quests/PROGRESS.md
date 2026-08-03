@@ -34,9 +34,11 @@
   `exterior_action_menu=[612,112,112,158]`。真实 QL-A1 页边
   `[604,102,24,180]` 遮住根部；无尖头、逐项铆钉或明亮顶部高光，放弃项只
   用低饱和酒红文字／边线。打开态只声明 `48px` 右侧 outset，机器展示区域
-  `25/25` 通过。ImageGen `0/0`，当前为
-  `simulation-reviewed / awaiting-user-confirmation`；未修改火漆 runtime，
-  未隐藏任何旧按钮。
+  `25/25` 通过。ImageGen `0/0`；用户于 `2026-08-03` 回复“进入下一步”，
+  明确确认 V9 的可见方向。当前已形成 `QS-B1 V1` 单一无字事务签母版、
+  standard／danger 各四态确定性 atlas 和七个独立 Button 的完整合同与生产
+  正文，状态为 `simulation-confirmed / prompt-draft / 0/5`，等待独立生产
+  授权；未修改火漆 runtime，未隐藏任何旧按钮。
 - AEUI Quest Log provider 兼容子合同保持 `1.7`：在 provider 最终刷新后以
   事件驱动方式恢复 18 条列表行与右页正文安全区，将 online／language 搬至
   右页固定顶部工具行，将 show／hide／clean／reset 搬至右页固定底部四格；
@@ -245,7 +247,7 @@
   列表滚动条不受影响。pfQuest 六个控件已按真实 Button 粒度归位，后加载
   全局函数和 Frame `OnShow` 替换均有事件驱动恢复。Lua 5.0 语法与 smoke
   已通过，尚待 Turtle WoW 实机。旧底部按钮现同时承担事务菜单完成前的
-  fail-open fallback；`QUEST-LOG-SEAL-ACTIONS-SIM-V9` 未确认前不隐藏。
+  fail-open fallback；`QS-B1 V1` 未完成七项代理等价前不隐藏。
 - `QL-B3`：三类真实语义已拆为三个固定并列槽，类型／计时／状态可同时出现。
   [QL-B3 work](work/QUEST.LOG.STATUS.md) 已形成 A／B／C 三段完整
   生产正文：分别生成四类类型压印、单枚沙漏和同一蜡封的完整／破裂两态。
@@ -292,7 +294,7 @@
 | `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P5 runtime-exported` | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；内部失败与 `5/5` 事实保留 | Turtle WoW 验证 TGA、四态切换、字体和 fallback |
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 asset-retained / runtime-hidden` | 用户接受的 source、manifest、`128 × 16` TGA、exporter 与历史证据全部保留；`2026-07-31` 起 adapter 不再挂载或包装任务行脚本 | 暂缓；只有用户重新确认后才恢复 runtime |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
-| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu `P2 simulation-reviewed` | 既有 late-load 兼容和原 Button fallback 保留；V1–V8 已否决，V9 将漆章直接放在详情页右上纸面，七项以 `112×20px` 短书口事务签从右页外缘向书外伸出，页内零占用且只产生 `48px` outset | 用户确认 `QUEST-LOG-SEAL-ACTIONS-SIM-V9` 后实现克制型外侧事务签；再做实机点击／禁用／右缘 clamp／确认框验证 |
+| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu `P2 simulation-confirmed / prompt-draft` | 既有 late-load 兼容和原 Button fallback 保留；V1–V8 已否决，V9 已确认。`QS-B1 V1` 只生成一枚无字暗胡桃事务签母版，七项仍为独立 `112×20px` Button，页内零占用且只产生 `48px` outset | 用户独立授权 `QS-B1 V1`、固定 Image 1／2、受限 Image 3 edit、确定性后处理与最多 `5` 次实际调用；候选通过后再做 P4/P5 与实机代理验证 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | geometry `P5 runtime-integrated`；final art `P1–P2` | runtime `1.17` 已把双列槽收敛为 `108px`／名称 `64px`，按真实最底对象重算 ScrollChild；奖励只读，无 selected | 实机覆盖 0／1／2／4／6 奖励和长中文正文；最终槽美术另行确认 |
 
 QL-A1 manifest 记录：
@@ -337,7 +339,8 @@ timer 或 failed 资产：provider 没有可用的公开状态来源。本项目
 
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
-| `QS-A1` | 两处共用漆章母版；Quest Log 新承载／事务菜单不改母版 | asset `P5 runtime-exported / 5/5`；Quest Log placement `P2 simulation-reviewed` | 漆章 source／atlas 保持 accepted；V1–V8 placement／menu 已否决；V9 直接落在详情页右上纸面，以短书口事务签复用既有漆章且取消尖头／逐项铆钉／亮高光 | 用户确认或退回 `QUEST-LOG-SEAL-ACTIONS-SIM-V9`；确认前不改 runtime、不隐藏 fallback |
+| `QS-A1` | Quest Log／Tracker 共用漆章母版 | `P5 runtime-exported / 5/5`；Quest Log 旧 placement invalidated | source／四态 atlas 保持 accepted；本批不重开美术或 ImageGen | 等 QS-B1 功能等价后把 Quest Log 漆章从旧悬空 Texture 升级到页上 Button；Tracker 不受影响 |
+| `QS-B1` | Quest Log 页上漆章 placement、七项外侧事务签与共用无字 tab 母版 | `P2 simulation-confirmed / prompt-draft / 0/5` | V9 已确认：`32px` 页上漆章、七个独立 `112×20px` Button、`48px` outset、真实页边遮根；生产正文按全局／任务基线重写并完成完整性预检 | 用户明确授权 `QS-B1 V1` 最终正文、固定 Image 1／2、受限同循环 Image 3 edit、确定性后处理和最多五次实际调用；授权前不生图、不改 runtime |
 
 QS-A1 当前事实：
 
@@ -496,16 +499,16 @@ QT-A1 临时 runtime 事实：
 
 ## 下一步
 
-当前离线门禁是用户审查 `QUEST-LOG-SEAL-ACTIONS-SIM-V9`。可确认的是：
-`32px` 漆章直接压在详情页右上纸面的重量与位置，以及七条低对比暗胡桃
-`112×20px` 短书口事务签从右页外缘向书外伸出的物理关系、分组与密度是否
-足够克制。模拟中事务签和 detail 排他边界相切，真实页边遮住根部，正文与
-奖励零覆盖；展开只产生 `48px` 右侧 outset，且没有尖头、逐项铆钉、亮高光
-或整条危险色。模拟不确认最终标签材质、按钮四态、客户端字体栅格、短距交错
-动画、屏幕 clamp 或 Tooltip。
-用户确认前不实现菜单、不移动 runtime 漆章，也不隐藏放弃／分享／退出／详情
-与 pfQuest 四按钮。确认后实现必须一一代理原 Button、镜像禁用态、保留放弃
-确认，并在任一 provider 未捕获时 fail-open。
+当前离线门禁是用户审查并独立授权 `QS-B1 V1` 最终生产正文。V9 已确认的
+可见方向现已转写为：只生成一枚无字、无图标、近矩形浅削角的暗胡桃旧皮革
+事务签母版；七个 `112×20px` Button 仍独立代理七项原功能；确定性 atlas
+包含 standard／danger 各 normal、hover、pressed、disabled 四态；真实页边
+继续遮住左侧 `16px` 根部，detail／奖励零占用，展开只产生 `48px` outset。
+固定生产输入为任务详情锁定图和受限邻接职责的 QL-A1 source；V9 模拟像素、
+漆章和旧失败稿均不得上传。授权前 ImageGen 保持 `0/5`，不实现菜单、不移动
+runtime 漆章，也不隐藏放弃／分享／退出／详情与 pfQuest 四按钮。候选通过后
+仍必须一一代理原 Button、镜像禁用态、保留放弃确认，并在任一 provider 未
+捕获时 fail-open。
 
 Quest Log 的字体／奖励裁切修复已经进入 runtime `1.17`，下一次游戏设备验证
 同时启用 pfQuest／pfQuest-turtle，覆盖：18 行字体与字重；长中文正文滚动到
