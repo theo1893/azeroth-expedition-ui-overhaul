@@ -118,6 +118,15 @@ def main() -> None:
     seal_actions_sim_v8_spec = json.loads(
         seal_actions_sim_v8_spec_path.read_text(encoding="utf-8")
     )
+    seal_actions_sim_v9_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v9.json"
+    )
+    seal_actions_sim_v9_spec = json.loads(
+        seal_actions_sim_v9_spec_path.read_text(encoding="utf-8")
+    )
     seal_actions_sim_renderer = (
         ROOT / "tools" / "render_quest_log_seal_actions_simulation_v1.py"
     )
@@ -2091,6 +2100,58 @@ def main() -> None:
     assert seal_actions_sim_v8_spec["constraints"][
         "each_action_is_an_independent_button"
     ]
+    assert seal_actions_sim_v9_spec["version"] == (
+        "QUEST-LOG-SEAL-ACTIONS-SIM-V9"
+    )
+    assert seal_actions_sim_v9_spec["support_type"] == (
+        "direct-detail-page-seal-exterior-ledger-tabs"
+    )
+    assert seal_actions_sim_v9_spec["tab_style"] == (
+        "restrained-archival-index-v1"
+    )
+    assert seal_actions_sim_v9_spec["frame"] == [676, 464]
+    assert seal_actions_sim_v9_spec["right_outset"] == 48
+    assert seal_actions_sim_v9_spec["layout"]["seal_visual"] == [
+        576,
+        68,
+        32,
+        32,
+    ]
+    assert seal_actions_sim_v9_spec["layout"][
+        "exterior_action_menu"
+    ] == [612, 112, 112, 158]
+    assert seal_actions_sim_v9_spec["layout"]["page_edge_mask"] == [
+        604,
+        102,
+        24,
+        180,
+    ]
+    assert len(seal_actions_sim_v9_spec["layout"]["action_slots"]) == 7
+    assert all(
+        slot[2:] == [112, 20]
+        for slot in seal_actions_sim_v9_spec["layout"]["action_slots"]
+    )
+    assert seal_actions_sim_v9_spec["layout"][
+        "exterior_action_menu"
+    ][0] == sum(
+        (
+            seal_actions_sim_v9_spec["layout"]["detail"][0],
+            seal_actions_sim_v9_spec["layout"]["detail"][2],
+        )
+    )
+    assert seal_actions_sim_v9_spec["constraints"]["imagegen_calls"] == 0
+    assert seal_actions_sim_v9_spec["constraints"][
+        "tabs_must_not_occupy_detail_page"
+    ]
+    assert seal_actions_sim_v9_spec["constraints"][
+        "each_action_is_an_independent_button"
+    ]
+    assert seal_actions_sim_v9_spec["constraints"][
+        "no_arrowheads_or_per_tab_rivets"
+    ]
+    assert seal_actions_sim_v9_spec["constraints"][
+        "danger_uses_accent_only"
+    ]
     require(
         seals_work,
         (
@@ -2212,9 +2273,23 @@ def main() -> None:
             "928714893d9f3234dfea7cc497f95f666bd03e2f37aa309862754a41c3ea9279",
             "72e001d2ed5bff88ca0fd39e763aa457fdeae33b92ece9dd08f5a404c62b62fd",
             "ImageGen：`0/0`",
-            "用户结论：`pending`",
+            "用户结论：`user-rejected / 2026-08-03`",
         ),
         "Quest Log exterior ledger-tab simulation work",
+    )
+    require(
+        seals_work,
+        (
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V9",
+            "详情页火漆与克制型书口事务签",
+            "exterior_action_menu=[612,112,112,158]",
+            "page_edge_mask=[604,102,24,180]",
+            "d639e13a539942550c34e1cc2400b9b11c5374279be606324f09fe57bea6d839",
+            "58ddce681b587a7124e856b227b0929f771fc50c2c17a80994bfe4cb9f7c4718",
+            "ImageGen：`0/0`",
+            "用户结论：`pending`",
+        ),
+        "Quest Log restrained exterior docket-tab simulation work",
     )
 
     quest_adapter = (

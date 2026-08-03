@@ -335,11 +335,55 @@ def draw_exterior_ledger_tabs(
     draw = ImageDraw.Draw(layer, "RGBA")
     labels = spec["content"]["menu_actions"]
     text_boxes = spec["layout"]["action_text_safe"]
+    tab_style = spec.get("tab_style", "pointed-riveted-v8")
     for index, slot in enumerate(spec["layout"]["action_slots"]):
         x, y, width, height = slot
         x += ox
         y += oy
         is_danger = index == len(labels) - 1
+        if tab_style == "restrained-archival-index-v1":
+            # A short, quiet book-edge index: no arrowhead, repeated rivet or
+            # bright brass highlight.  The shallow clipped outer corners keep
+            # it physical without turning seven provider buttons into badges.
+            shadow = [
+                (x + 1, y + 4),
+                (x + width - 4, y + 3),
+                (x + width, y + 6),
+                (x + width, y + height - 4),
+                (x + width - 4, y + height - 1),
+                (x + 1, y + height - 2),
+            ]
+            draw.polygon(shadow, fill=(28, 17, 12, 145))
+            body = [
+                (x, y + 3),
+                (x + width - 5, y + 2),
+                (x + width - 2, y + 5),
+                (x + width - 2, y + height - 5),
+                (x + width - 5, y + height - 2),
+                (x, y + height - 3),
+            ]
+            fill = (67, 45, 30, 244)
+            edge = (105, 77, 42, 195)
+            text_fill = (202, 177, 126, 255)
+            if is_danger:
+                edge = (111, 55, 47, 205)
+                text_fill = (191, 137, 116, 255)
+            draw.polygon(body, fill=fill, outline=edge)
+            draw.line(
+                (x + 7, y + height - 3, x + width - 9, y + height - 3),
+                fill=(38, 24, 17, 155),
+                width=1,
+            )
+            tx, ty, tw, th = text_boxes[index]
+            draw.text(
+                (ox + tx + tw / 2, oy + ty + th / 2),
+                labels[index],
+                font=fonts["small"],
+                fill=text_fill,
+                anchor="mm",
+            )
+            continue
+
         fill = (88, 45, 27, 246) if not is_danger else (78, 27, 24, 250)
         outline = BRASS if not is_danger else (148, 57, 43, 255)
         points = [
@@ -1451,11 +1495,39 @@ def main() -> None:
             ),
             "seven_provider_slots": len(layout["action_slots"]) == 7,
         }
-        support_non_authoritative = [
-            "final ledger-tab leather, vellum labels, brass rivets and state art",
-            "runtime page-edge root mask and staggered slide motion",
-            "screen-right clamp shift and live provider enabled-state feedback",
-        ]
+        if spec.get("tab_style") == "restrained-archival-index-v1":
+            support_checks.update(
+                {
+                    "restrained_tab_style_declared": True,
+                    "restrained_tab_dimensions": all(
+                        box[2] <= 112 and box[3] <= 20
+                        for box in layout["action_slots"]
+                    ),
+                    "restrained_right_outset": spec["right_outset"] <= 48,
+                    "restrained_no_arrowheads_or_per_tab_rivets": (
+                        spec["constraints"].get(
+                            "no_arrowheads_or_per_tab_rivets"
+                        )
+                        is True
+                    ),
+                    "restrained_danger_uses_accent_only": (
+                        spec["constraints"].get("danger_uses_accent_only")
+                        is True
+                    ),
+                }
+            )
+        if spec.get("tab_style") == "restrained-archival-index-v1":
+            support_non_authoritative = [
+                "final restrained leather texture, low-contrast edge and state art",
+                "runtime page-edge root mask and staggered slide motion",
+                "screen-right clamp shift and live provider enabled-state feedback",
+            ]
+        else:
+            support_non_authoritative = [
+                "final ledger-tab leather, vellum labels, brass rivets and state art",
+                "runtime page-edge root mask and staggered slide motion",
+                "screen-right clamp shift and live provider enabled-state feedback",
+            ]
     elif support_type == "direct-detail-page-seal-right-action-list":
         support_checks = {
             "seal_reserved_corner_inside_detail_page": contains(
@@ -1825,11 +1897,19 @@ def main() -> None:
                 "runtime animation and tooltip",
             ]
             if support_type == "short-bottom-bookmark-same-page-menu"
-            else [
-                "menu paper edge, seam and final state art",
-                "client font rasterization",
-                "runtime animation and tooltip",
-            ]
+            else (
+                [
+                    "client font rasterization",
+                    "runtime animation and tooltip",
+                ]
+                if support_type
+                == "direct-detail-page-seal-exterior-ledger-tabs"
+                else [
+                    "menu paper edge, seam and final state art",
+                    "client font rasterization",
+                    "runtime animation and tooltip",
+                ]
+            )
         ),
         "board": {
             "path": spec["outputs"]["board"],

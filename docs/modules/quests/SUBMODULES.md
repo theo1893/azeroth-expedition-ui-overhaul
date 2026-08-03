@@ -37,8 +37,8 @@ fallback。NPC 对话仍没有获准生产资产。
 | `QUEST.LOG.COUNT` | `QuestLogQuestCount`；兼容 `QuestLogCount` | layout-only；使用纸面深墨文字，不新增外框 |
 | `QUEST.LOG.CLOSE` | `QuestLogFrameCloseButton` | 普通／悬停／按下／禁用 |
 | `QUEST.LOG.EMPTY` | `EmptyQuestLogFrame`、`QuestLogNoQuestsText` | 安静纸面，不生成空状态卡片 |
-| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前是 adapter-owned 无鼠标 `OVERLAY` Texture | QS-A1 V1.r4 美术与四态 atlas 仍 accepted；旧 `[600,-18,28,28]` 顶部悬空锚点只作为待替换 P5 fallback。V1–V7 已否决；当前 `QUEST-LOG-SEAL-ACTIONS-SIM-V8 / simulation-reviewed` 将 `32×32px` 漆章直接压在详情页右上纸面，`40×40px` 命中／保留区为 `[572,64,40,40]`，未确认前不得接入 |
-| `QUEST.LOG.CHROME.SEAL.SUPPORT` | V8 无 runtime 对象 | 用户明确要求火漆直接印在详情页纸面；不得再创建书签、包角、皮革／黄铜承托或额外 Texture。最终只允许漆章自身与纸面接触阴影 |
+| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前是 adapter-owned 无鼠标 `OVERLAY` Texture | QS-A1 V1.r4 美术与四态 atlas 仍 accepted；旧 `[600,-18,28,28]` 顶部悬空锚点只作为待替换 P5 fallback。V1–V8 已否决；当前 `QUEST-LOG-SEAL-ACTIONS-SIM-V9 / simulation-reviewed` 将 `32×32px` 漆章直接压在详情页右上纸面，`40×40px` 命中／保留区为 `[572,64,40,40]`，未确认前不得接入 |
+| `QUEST.LOG.CHROME.SEAL.SUPPORT` | V9 无 runtime 对象 | 用户明确要求火漆直接印在详情页纸面；不得再创建书签、包角、皮革／黄铜承托或额外 Texture。最终只允许漆章自身与纸面接触阴影 |
 
 支持 `closed`、`empty`、`list-only`、`dual-page` 与 `selected`。离线参考为
 `676 × 464 UI px`，物理中心线 `x=338`；左右物理纸页近 1:1，可见宽度差
@@ -48,12 +48,16 @@ fallback。NPC 对话仍没有获准生产资产。
 
 旧 runtime 锚点位于书本右上方透明空间并产生 `18px` 顶部 outset，用户已
 判定其“浮在空中”。随后 V1–V6 的外沿皮革、羊皮封签、下缘长书签、detail
-替换、黄铜包角和页内右侧菜单方向也依次被否决。当前 V8 只保留用户明确指定的物理关系：
+替换、黄铜包角和页内右侧菜单方向也依次被否决。V8 首次满足书外展开，却因
+`136×24px` 尖头、逐项铆钉、亮黄铜与 `72px` 外伸过重而继续否决。当前 V9
+只保留用户明确指定的物理关系：
 火漆直接压在右侧详情页右上纸面；标题与分隔线为其保留 `40×40px` 区域。
 点击后七项事务作为真实独立 Button 从 detail 右边界 `x=612` 向书外伸出，
 真实页边 mask 遮住根部；不得进入书页内容区或覆盖正文／奖励。打开态允许
-`72px` 右侧 outset，并在屏幕右缘不足时整体左移后恢复。该方向在用户确认前
-只是 work 中的几何提案，runtime 仍保持 fail-open fallback。
+`48px` 右侧 outset，并在屏幕右缘不足时整体左移后恢复。每条只允许
+`112×20px` 的短书口事务签、低对比暗胡桃／旧铜色边线；禁止箭头尖端、逐项
+铆钉、明亮顶部高光和整条危险色。该方向在用户确认前只是 work 中的几何提案，
+runtime 仍保持 fail-open fallback。
 
 ## Quest Log 纸页与中央装订
 
@@ -200,7 +204,7 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 | `QUEST.LOG.ACTION.SHARE` | `QuestFramePushQuestButton`；兼容名需探测 | 当前程序化暗皮革 fallback；目标事务菜单代理原 Button |
 | `QUEST.LOG.ACTION.EXIT` | `QuestFrameExitButton`；兼容 `QuestLogFrameCancelButton` | 目标视觉不重复收纳；右上真实 Close 保持独立，fallback 在迁移验收前继续存在 |
 | `QUEST.LOG.DETAIL.TOGGLE` | pfUI `QuestLogFrameExpandButton`；缺失时可创建真实 Button | 当前底部 fallback；目标事务菜单代理同一动态开合行为 |
-| `QUEST.LOG.ACTION.SEAL_MENU` | proposed adapter-owned 右页外侧卷宗索引签 Button 列；未接入 | `QUEST-LOG-SEAL-ACTIONS-SIM-V8` 沿用分享、详情开合、pfQuest 四个地图操作与放弃，共七项；左键切换，选择／书外点击／Esc 收起，禁用态镜像 provider。七个 Button 位于 `[612,108,136,186]`，和 detail 右边界排他相切并向书外伸出；真实页边 mask `[604,96,24,210]` 遮住根部，正文／奖励零占用，不画整块二级弹窗 |
+| `QUEST.LOG.ACTION.SEAL_MENU` | proposed adapter-owned 右页外侧短书口事务签 Button 列；未接入 | `QUEST-LOG-SEAL-ACTIONS-SIM-V9` 沿用分享、详情开合、pfQuest 四个地图操作与放弃，共七项；左键切换，选择／书外点击／Esc 收起，禁用态镜像 provider。七个 `112×20px` Button 位于 `[612,112,112,158]`，和 detail 右边界排他相切并向书外伸出；真实页边 mask `[604,102,24,180]` 遮住根部，正文／奖励零占用，不画整块二级弹窗；无尖头、逐项铆钉和亮黄铜高光 |
 | `QUEST.LOG.LEVELS` | pfUI `QuestLogFrameLevelsCheckButton` | 复用 QL-B1 开放墨圈／墨勾 atlas；保留原脚本与文字 |
 | `QUEST.LOG.PFQUEST.ONLINE` | `pfQuest.buttonOnline`／`pfQuestOnline` | `72 × 16`，右页顶部固定工具行；动态 ID 与原 OnClick 不变 |
 | `QUEST.LOG.PFQUEST.LANGUAGE` | `pfQuest.buttonLanguage`／`pfQuestLanguage` | `86 × 16`，与 ONLINE 同行；动态语言、下拉与原 OnUpdate／OnClick 不变 |

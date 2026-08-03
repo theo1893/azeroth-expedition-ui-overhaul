@@ -4,7 +4,7 @@
 - 当前接受版本：`QS-A1 V1.r4`
 - 已确认历史模拟：`QUEST-SEALS-SIM-V2`；其 Quest Log 顶部悬空位置已于
   `2026-08-03` 被用户否决，Tracker 方向仍有效
-- 当前待确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V8`
+- 当前待确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V9`
 - 项目阶段：漆章美术／atlas `P5`；Quest Log placement／menu `P2`
 - 当前子状态：`runtime-exported / placement-invalidated / simulation-reviewed`
 - 固定执行器：`imagegen-0-143-0`
@@ -30,7 +30,10 @@
   导致书页层级和重心突变，已被用户否决。V5 收短书签并让事务操作复用原
   detail 右页，但用户仍否决 detail 内容模式替换；V6 包角／底部事务轨也被
   用户立即改向。V7 按明确指示将火漆直接印在详情页右上纸面，但把七项事务
-  放在了页内右侧，仍遮挡正文；V8 改为从右页外缘向书外伸出的卷宗索引签。
+  放在了页内右侧，仍遮挡正文；V8 改为从右页外缘向书外伸出的卷宗索引签，
+  但用户认为其 `136×24px` 尖头、逐条铆钉、亮黄铜和 `72px` 外伸仍过重。
+  V9 保留外侧展开与七个真实 Button，只收敛为 `112×20px` 的短书口事务签、
+  `48px` 外伸，并移除箭头、逐项铆钉和明亮顶部高光。
   旧 Quest Log／Tracker provider Button 在各自菜单功能等价前继续可见可用。
 
 ## 用户接受与 P4／P5 固化
@@ -74,9 +77,9 @@
 
 | ID | 当前对象 | 目标合同 |
 |---|---|---|
-| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前仍是 `[600,-18,28,28]` 无鼠标 Texture | QS-A1 V1.r4 美术保持 accepted；V1–V7 placement／menu 已否决。V8 提案把 `32px` 漆章直接压在详情页右上纸面 `[576,68,32,32]`，命中／保留区 `[572,64,40,40]`，必须先确认 `QUEST-LOG-SEAL-ACTIONS-SIM-V8` |
-| `QUEST.LOG.CHROME.SEAL.SUPPORT` | 无 runtime 对象 | V8 明确不创建书签、包角、皮革／黄铜承托；只允许漆章自身接触阴影落在现有右页纸面 |
-| `QUEST.LOG.CHROME.SEAL.MENU` | 尚无 runtime 对象 | proposed 七个独立卷宗索引签 Button 从 detail 右边界 `x=612` 向书外伸出，整体 `[612,108,136,186]`；真实页边 mask `[604,96,24,210]` 遮住根部，正文／奖励零占用，不在底部显示，不画整块二级弹窗；功能等价前旧按钮保持 fail-open |
+| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前仍是 `[600,-18,28,28]` 无鼠标 Texture | QS-A1 V1.r4 美术保持 accepted；V1–V8 placement／menu 已否决。V9 提案把 `32px` 漆章直接压在详情页右上纸面 `[576,68,32,32]`，命中／保留区 `[572,64,40,40]`，必须先确认 `QUEST-LOG-SEAL-ACTIONS-SIM-V9` |
+| `QUEST.LOG.CHROME.SEAL.SUPPORT` | 无 runtime 对象 | V9 明确不创建书签、包角、皮革／黄铜承托；只允许漆章自身接触阴影落在现有右页纸面 |
+| `QUEST.LOG.CHROME.SEAL.MENU` | 尚无 runtime 对象 | proposed 七个独立短书口事务签 Button 从 detail 右边界 `x=612` 向书外伸出，整体 `[612,112,112,158]`；真实页边 mask `[604,102,24,180]` 遮住根部，正文／奖励零占用。单条 `112×20px`，书外只伸 `48px`；无箭头、逐项铆钉、亮黄铜或整块弹窗，功能等价前旧按钮保持 fail-open |
 | `QUEST.TRACKER.HUB.SEAL` | 尚无 runtime 对象 | adapter-owned `34 × 34` 顶部中央漆章；宽度 `W` 时 `x=floor((W-34)/2)`、`y=-18`，底边恰好落在 provider `16px` 工具条／列表起点，不移动任务内容 |
 | `QUEST.TRACKER.HUB.MENU` | 尚无对象 | 未来独立交互批次；漆章点击后承载七项 provider 行为。本模拟不绘制、不实现，也不把它当成已有 Button |
 
@@ -1290,7 +1293,7 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 ### 元数据
 
 - 日期：`2026-08-03`
-- 子状态：`simulation-reviewed / P2 / awaiting-user-confirmation`
+- 子状态：`simulation-rejected / P2 / user-rejected`
 - 操作：`simulate`；方式：`deterministic-local-geometry`
 - ImageGen：`0/0`；上传：无；新增 bitmap source/runtime：`0`
 - Python：macOS `conda run -n py312 python`；实际解释器
@@ -1306,7 +1309,7 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 - report：
   `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V8/quest_log_seal_actions_report_v8.json`，SHA-256
   `72e001d2ed5bff88ca0fd39e763aa457fdeae33b92ece9dd08f5a404c62b62fd`。
-- 本地渲染错误：`0`；用户结论：`pending`。
+- 本地渲染错误：`0`；用户结论：`user-rejected / 2026-08-03`。
 
 ### 内部审查与展示区域
 
@@ -1322,7 +1325,71 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 ### 用户方向结论
 
 - 具体模拟版本：`QUEST-LOG-SEAL-ACTIONS-SIM-V8`
+- 当前结论：`user-rejected`
+- 用户反馈：`再克制一点`。外侧展开、页边遮根和零正文占用继续成立，但七条
+  `136×24px` 尖头签、逐项亮黄铜铆钉／高光、整条酒红危险项和 `72px`
+  外伸在整本任务书上形成过强的徽章列节奏。V8 不进入 runtime。
+
+## Quest Log 详情页火漆与克制型书口事务签 — `QUEST-LOG-SEAL-ACTIONS-SIM-V9`
+
+### 方案定义
+
+- 冻结 V8 已正确的结构：火漆仍为 `[576,68,32,32]`，直接压在详情页右上
+  连续纸面；七项仍是七个独立 provider 代理 Button，从 detail 排他右边界
+  `x=612` 向书外伸出；真实 QL-A1 页边像素晚于按钮重新覆盖根部，正文、
+  ScrollFrame 与四个奖励槽均不被占用。
+- 只收敛视觉重量：每条从 `136×24px` 降为 `112×20px`；整体菜单改为
+  `exterior_action_menu=[612,112,112,158]`，相对基础 Frame 的书外伸出从
+  `72px` 降为 `48px`。共享／详情、四项地图事务、放弃之间分别保留 `3px`
+  小分组间距，其余只留 `2px`，不再形成连续厚重按钮墙。
+- 轮廓改为短、近矩形、外端仅轻微削角的书口事务签；取消箭头尖端、逐项
+  铆钉和明亮顶部黄铜高光。综合色仅保留低饱和暗胡桃旧皮革、低对比旧铜色
+  边线和暖旧文字。放弃任务与其他签共用同一暗皮革底，只以克制酒红文字／
+  边线表达危险，不整条染红。
+- 交互和 fail-open 不变：左键开关；选择／书外点击／Esc 收起；每项只代理
+  原 Button 并镜像 enabled；放弃继续走原生确认；七项等价前旧按钮继续显示。
+
+### 元数据
+
+- 日期：`2026-08-03`
+- 子状态：`simulation-reviewed / P2 / awaiting-user-confirmation`
+- 操作：`simulate`；方式：`deterministic-local-geometry`
+- ImageGen：`0/0`；上传：无；新增 bitmap source/runtime：`0`
+- Python：macOS `conda run -n py312 python`；实际解释器
+  `/Users/yuanshiyao/miniconda3/envs/py312/bin/python`，`3.12.12`
+- specification：
+  `tools/specs/quest_log_seal_actions_simulation_v9.json`
+- renderer：`tools/render_quest_log_seal_actions_simulation_v1.py`
+- 命令：
+  `conda run -n py312 python tools/render_quest_log_seal_actions_simulation_v1.py tools/specs/quest_log_seal_actions_simulation_v9.json --repo-root .`
+- board：
+  `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V9/quest_log_seal_actions_board_v9.png`，SHA-256
+  `d639e13a539942550c34e1cc2400b9b11c5374279be606324f09fe57bea6d839`。
+- report：
+  `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V9/quest_log_seal_actions_report_v9.json`，SHA-256
+  `58ddce681b587a7124e856b227b0929f771fc50c2c17a80994bfe4cb9f7c4718`。
+- 本地渲染错误：`0`；用户结论：`pending`。
+
+### 内部审查与展示区域
+
+- `displayable`：机器报告 `25/25` 通过。`676×464` 基础 Frame、18 行、
+  4 奖励槽、右上火漆、七个 Button／文字安全区、页边 root mask、detail／
+  奖励零重叠、Close 避让、命中包含、`48px` right outset 和 fail-open 均成立。
+- 视觉内审：`pass-for-user-review`。相较 V8，单条面积减少约 `31.4%`，外伸
+  减少 `33.3%`，纵向总高减少约 `15.1%`；正常态没有箭头、铆钉或亮铜高光，
+  放弃项只留低饱和酒红提示。七项仍清楚可读，但第一视觉焦点重新回到书页和
+  火漆，而不是右侧按钮列。
+- 层序仍为 QL-A1 shell → detail／奖励 → 七个短事务签 Button → 真实页边
+  mask → QS-A1 火漆。`page_edge_mask=[604,102,24,180]` 遮住每条根部且不
+  进入 `action_text_safe`。
+- 非权威：最终旧皮革笔触、Button 四态、短距交错滑出、屏幕右缘 clamp、
+  Tooltip、客户端字体栅格和真实焦点恢复。模拟像素不得成为 source、runtime
+  或正式生产输入。
+
+### 用户方向结论
+
+- 具体模拟版本：`QUEST-LOG-SEAL-ACTIONS-SIM-V9`
 - 当前结论：`pending`
-- 当前可确认：七条索引签的物件隐喻、综合色、`136×24px` 单条比例、纵向密度、
-  页边根部遮挡与 `72px` 外侧伸出量。确认前不修改 runtime、不隐藏旧按钮、
-  不调用 ImageGen。
+- 当前可确认：`112×20px` 单条比例、`48px` 外伸、两处轻分组间距、无尖头／
+  铆钉／亮高光、危险项只用酒红点到为止，以及既有页边遮根和零正文占用。
+  确认前不修改 runtime、不隐藏旧按钮、不调用 ImageGen。
