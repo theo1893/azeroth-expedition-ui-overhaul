@@ -1,0 +1,178 @@
+{
+  "schema": "aeui.quest-log.seal-actions.simulation.v1",
+  "version": "QUEST-LOG-SEAL-ACTIONS-SIM-V4",
+  "support_type": "bottom-page-layered-parchment-bookmark",
+  "canvas": [1536, 1024],
+  "inputs": {
+    "quest_log_shell": "assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png",
+    "seal_atlas": "addon/AzerothExpeditionUI/Media/Quests/QuestToolWaxSealStatesV1.tga",
+    "title_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf",
+    "body_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf"
+  },
+  "outputs": {
+    "board": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V4/quest_log_seal_actions_board_v4.png",
+    "report": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V4/quest_log_seal_actions_report_v4.json"
+  },
+  "presentation": {
+    "title": "任务日志右页下缘竖向火漆书签与事务签 · V4 本地几何预演",
+    "subtitle": "封签根部竖直夹在 detail 右页下缘与书封之间，柔软窄身向下越过书本底框，火漆压在外露末端；展开态从下方向右页内摊开。100% UI 像素，ImageGen 0/0。",
+    "annotation_origin": [830, 758],
+    "annotation_title": "V4 空间位置与方向检查",
+    "annotations": [
+      "① 根部位于 detail 右页下缘，不在右侧中段",
+      "② 封签长轴竖直，像夹入书页的任务书签",
+      "③ 窄身跨过书封但没有固定在金属底框",
+      "④ 火漆压在书本底框之外的纸张末端",
+      "⑤ 展开态从下方向上进入右页，不从侧面弹出"
+    ],
+    "non_authoritative_note": "非权威：最终纸纤维、重力弯曲、手绘折痕、动画与客户端字体。"
+  },
+  "frame": [676, 464],
+  "layout": {
+    "list": [64, 64, 246, 324],
+    "detail": [366, 64, 246, 324],
+    "detail_content": [376, 72, 224, 306],
+    "close": [636, 12, 22, 22],
+    "document_tag_bbox": [529, 385, 50, 125],
+    "document_tag_polygon": [
+      [542, 385],
+      [563, 385],
+      [565, 401],
+      [561, 418],
+      [564, 434],
+      [560, 449],
+      [565, 461],
+      [575, 472],
+      [578, 492],
+      [571, 506],
+      [559, 510],
+      [541, 507],
+      [531, 498],
+      [529, 482],
+      [534, 468],
+      [542, 458],
+      [539, 443],
+      [542, 428],
+      [539, 411],
+      [541, 397]
+    ],
+    "tag_root_box": [540, 385, 26, 25],
+    "page_lip_source_box": [512, 384, 88, 38],
+    "page_lip_mask_polygon": [
+      [512, 384],
+      [600, 384],
+      [600, 402],
+      [589, 406],
+      [578, 407],
+      [567, 411],
+      [555, 409],
+      [543, 414],
+      [531, 410],
+      [520, 412],
+      [512, 408]
+    ],
+    "page_lip_edge": [
+      [512, 408],
+      [520, 412],
+      [531, 410],
+      [543, 414],
+      [555, 409],
+      [567, 411],
+      [578, 407],
+      [589, 406],
+      [600, 402]
+    ],
+    "tag_crease_lines": [
+      [[548, 410], [552, 424], [549, 440], [553, 456], [550, 472]],
+      [[558, 410], [556, 426], [560, 442], [556, 458], [563, 472]]
+    ],
+    "tag_terminal_fold": [
+      [530, 483],
+      [541, 507],
+      [545, 497],
+      [540, 482]
+    ],
+    "tag_head": [529, 462, 50, 48],
+    "seal_visual": [537, 474, 32, 32],
+    "seal_hitbox": [533, 470, 40, 40],
+    "menu": [380, 72, 218, 326],
+    "menu_connection_point": [552, 408],
+    "menu_connection_box": [532, 382, 41, 48],
+    "open_join_erase_line": [[542, 385], [563, 385]],
+    "open_page_fold_line": [
+      [536, 402],
+      [545, 407],
+      [554, 405],
+      [564, 408],
+      [573, 403]
+    ],
+    "reward_slots": [
+      [376, 316, 108, 32],
+      [488, 316, 108, 32],
+      [376, 352, 108, 32],
+      [488, 352, 108, 32]
+    ]
+  },
+  "closeups": {
+    "closed_source": [360, 294, 280, 226],
+    "closed_destination": [44, 738, 342, 276],
+    "closed_label": "C · 关闭态放大：竖向书签从右页下缘伸出",
+    "open_source": [360, 294, 280, 226],
+    "open_destination": [430, 738, 342, 276],
+    "open_label": "D · 展开态放大：事务签由下向上连续展开"
+  },
+  "content": {
+    "quest_rows": 18,
+    "reward_slots": 4,
+    "menu_actions": [
+      "共享任务",
+      "收起详情",
+      "显示任务位置",
+      "隐藏任务位置",
+      "清理地图标记",
+      "重建地图标记",
+      "放弃任务"
+    ],
+    "always_separate": [
+      "QuestLogFrameCloseButton",
+      "QuestLogFrameLevelsCheckButton",
+      "QuestLogTrack",
+      "pfQuest.buttonOnline",
+      "pfQuest.buttonLanguage"
+    ],
+    "provider_proxies": [
+      "QuestFramePushQuestButton",
+      "QuestLogFrameExpandButton",
+      "pfQuest.buttonShow",
+      "pfQuest.buttonHide",
+      "pfQuest.buttonClean",
+      "pfQuest.buttonReset",
+      "QuestLogFrameAbandonButton"
+    ]
+  },
+  "interaction": {
+    "left_click": "toggle-menu",
+    "outside_click_or_escape": "close-menu",
+    "action_click": "proxy-original-provider-button-then-close",
+    "abandon": "preserve-native-confirmation",
+    "disabled": "mirror-provider-enabled-state",
+    "right_click": "reserved-for-quest-module-settings",
+    "fail_open": "keep-original-buttons-visible-until-all-proxies-exist"
+  },
+  "constraints": {
+    "imagegen_calls": 0,
+    "new_bitmap_assets": 0,
+    "seal_reuses_accepted_runtime_atlas": true,
+    "tag_and_menu_are_non_authoritative_geometry": true,
+    "page_lip_reuses_shell_pixels": true,
+    "bookmark_is_vertical": true,
+    "bookmark_root_is_at_detail_lower_edge": true,
+    "bookmark_is_one_continuous_sheet": true,
+    "menu_unfolds_upward_from_bottom": true,
+    "menu_is_transient_and_may_cover_detail_only_while_open": true,
+    "seal_must_sit_on_exposed_bookmark_terminal": true,
+    "bookmark_root_must_be_occluded_by_real_page_pixels_when_closed": true,
+    "bookmark_must_cross_cover_without_being_fastened_to_bottom_frame": true,
+    "bottom_action_buttons_hidden_only_after_proxy_parity": true
+  }
+}

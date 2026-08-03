@@ -73,6 +73,15 @@ def main() -> None:
     seal_actions_sim_v3_spec = json.loads(
         seal_actions_sim_v3_spec_path.read_text(encoding="utf-8")
     )
+    seal_actions_sim_v4_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v4.json"
+    )
+    seal_actions_sim_v4_spec = json.loads(
+        seal_actions_sim_v4_spec_path.read_text(encoding="utf-8")
+    )
     seal_actions_sim_renderer = (
         ROOT / "tools" / "render_quest_log_seal_actions_simulation_v1.py"
     )
@@ -1867,6 +1876,50 @@ def main() -> None:
     assert seal_actions_sim_v3_spec["constraints"][
         "menu_is_same_sheet_unfold"
     ]
+    assert seal_actions_sim_v4_spec["version"] == (
+        "QUEST-LOG-SEAL-ACTIONS-SIM-V4"
+    )
+    assert seal_actions_sim_v4_spec["support_type"] == (
+        "bottom-page-layered-parchment-bookmark"
+    )
+    assert seal_actions_sim_v4_spec["frame"] == [676, 464]
+    assert seal_actions_sim_v4_spec["layout"][
+        "page_lip_source_box"
+    ] == [512, 384, 88, 38]
+    assert seal_actions_sim_v4_spec["layout"]["tag_root_box"] == [
+        540,
+        385,
+        26,
+        25,
+    ]
+    assert seal_actions_sim_v4_spec["layout"][
+        "document_tag_bbox"
+    ] == [529, 385, 50, 125]
+    assert seal_actions_sim_v4_spec["layout"][
+        "menu_connection_box"
+    ] == [532, 382, 41, 48]
+    assert seal_actions_sim_v4_spec["layout"]["seal_visual"] == [
+        537,
+        474,
+        32,
+        32,
+    ]
+    assert len(seal_actions_sim_v4_spec["content"]["menu_actions"]) == 7
+    assert seal_actions_sim_v4_spec["constraints"]["imagegen_calls"] == 0
+    assert seal_actions_sim_v4_spec["constraints"]["bookmark_is_vertical"]
+    assert seal_actions_sim_v4_spec["constraints"][
+        "bookmark_root_is_at_detail_lower_edge"
+    ]
+    assert seal_actions_sim_v4_spec["constraints"][
+        "menu_unfolds_upward_from_bottom"
+    ]
+    reward_bottom = max(
+        box[1] + box[3]
+        for box in seal_actions_sim_v4_spec["layout"]["reward_slots"]
+    )
+    assert seal_actions_sim_v4_spec["layout"]["tag_root_box"][1] >= (
+        reward_bottom
+    )
     require(
         seals_work,
         (
@@ -1914,9 +1967,26 @@ def main() -> None:
             "86642cfdfaeae0326bc7917769b34f7de2b063cc272dce3d879b6be33ef71310",
             "aec599e88fafb01b317354708b9c43f5fa2872de6c0ec4e24e767e9c39c547ae",
             "ImageGen：`0/0`",
-            "用户结论：`pending`",
+            "用户结论：`user-rejected`",
         ),
         "Quest Log page-layered seal-tag simulation work",
+    )
+    require(
+        seals_work,
+        (
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V4",
+            "右页下缘竖向火漆书签",
+            "page_lip_source_box=[512,384,88,38]",
+            "tag_root_box=[540,385,26,25]",
+            "document_tag_bbox=[529,385,50,125]",
+            "menu_connection_box=[532,382,41,48]",
+            "seal_visual=[537,474,32,32]",
+            "386d625e67c1a0eae6dfda07cc7c4213d65aa992c91ab1f25752311a5b7ecd20",
+            "874f240d5eaf12bb47fbe2db9428372897288068880d6ff6568471674d3241c7",
+            "ImageGen：`0/0`",
+            "用户结论：`pending`",
+        ),
+        "Quest Log bottom bookmark seal simulation work",
     )
 
     quest_adapter = (

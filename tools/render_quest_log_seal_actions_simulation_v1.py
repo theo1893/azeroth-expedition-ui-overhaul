@@ -297,6 +297,8 @@ def draw_page_layered_seal_tag(
     layout: dict[str, Any],
     origin: tuple[int, int],
     seal: Image.Image,
+    *,
+    cover_root: bool = True,
 ) -> None:
     """Draw one flexible docket tag, then restore the real page lip above it."""
     ox, oy = origin
@@ -326,24 +328,25 @@ def draw_page_layered_seal_tag(
     # Re-sample the already accepted shell at the same 676x464 geometry and
     # put only the real page-lip pixels back above the tag root. The preview no
     # longer substitutes a beige rectangle for page occlusion.
-    px, py, pw, ph = layout["page_lip_source_box"]
-    page_crop = shell.crop((px, py, px + pw, py + ph)).copy()
-    page_mask = Image.new("L", (pw, ph), 0)
-    mask_draw = ImageDraw.Draw(page_mask)
-    mask_points = [
-        (x - px, y - py) for x, y in layout["page_lip_mask_polygon"]
-    ]
-    mask_draw.polygon(mask_points, fill=255)
-    page_crop.putalpha(
-        ImageChops.multiply(page_crop.getchannel("A"), page_mask)
-    )
-    layer.alpha_composite(page_crop, (ox + px, oy + py))
+    if cover_root:
+        px, py, pw, ph = layout["page_lip_source_box"]
+        page_crop = shell.crop((px, py, px + pw, py + ph)).copy()
+        page_mask = Image.new("L", (pw, ph), 0)
+        mask_draw = ImageDraw.Draw(page_mask)
+        mask_points = [
+            (x - px, y - py) for x, y in layout["page_lip_mask_polygon"]
+        ]
+        mask_draw.polygon(mask_points, fill=255)
+        page_crop.putalpha(
+            ImageChops.multiply(page_crop.getchannel("A"), page_mask)
+        )
+        layer.alpha_composite(page_crop, (ox + px, oy + py))
 
-    lip_edge = offset_polygon(layout["page_lip_edge"], ox, oy)
-    draw.line(lip_edge, fill=(79, 48, 27, 210), width=1)
-    highlight = [(x - 1, y - 1) for x, y in lip_edge[:-1]]
-    if len(highlight) > 1:
-        draw.line(highlight, fill=(221, 190, 127, 135), width=1)
+        lip_edge = offset_polygon(layout["page_lip_edge"], ox, oy)
+        draw.line(lip_edge, fill=(79, 48, 27, 210), width=1)
+        highlight = [(x - 1, y - 1) for x, y in lip_edge[:-1]]
+        if len(highlight) > 1:
+            draw.line(highlight, fill=(221, 190, 127, 135), width=1)
 
     sx, sy, sw, sh = layout["seal_visual"]
     resized = seal.resize((sw, sh), Image.Resampling.LANCZOS)
@@ -450,6 +453,117 @@ def draw_unfolded_tag_menu(
     )
     draw.line(
         (mx + mw - 13, my + 132, connector_x, connector_y + 10),
+        fill=(225, 193, 129, 135),
+        width=1,
+    )
+
+
+def draw_bottom_unfolded_tag_menu(
+    layer: Image.Image,
+    spec: dict[str, Any],
+    origin: tuple[int, int],
+    fonts: dict[str, ImageFont.FreeTypeFont],
+) -> None:
+    """Draw one docket sheet that narrows into a vertical bottom bookmark."""
+    ox, oy = origin
+    mx, my, mw, mh = spec["layout"]["menu"]
+    mx += ox
+    my += oy
+    connector_x, connector_y = spec["layout"]["menu_connection_point"]
+    connector_x += ox
+    connector_y += oy
+    draw = ImageDraw.Draw(layer, "RGBA")
+
+    sheet = [
+        (mx + 8, my + 4),
+        (mx + mw - 12, my),
+        (mx + mw - 5, my + 11),
+        (mx + mw - 8, my + mh - 12),
+        (connector_x + 13, connector_y + 18),
+        (connector_x - 12, connector_y + 18),
+        (mx + 17, my + mh - 5),
+        (mx + 4, my + mh - 13),
+    ]
+    draw.polygon(
+        [(x + 3, y + 4) for x, y in sheet],
+        fill=(29, 16, 11, 175),
+    )
+    draw.polygon(sheet, fill=PAPER, outline=PAPER_DARK)
+
+    header = [
+        (mx + 12, my + 11),
+        (mx + mw - 21, my + 8),
+        (mx + mw - 18, my + 39),
+        (mx + 13, my + 41),
+    ]
+    draw.polygon(header, fill=(173, 128, 71, 235))
+    draw.line(
+        (mx + 15, my + 43, mx + mw - 22, my + 41),
+        fill=(102, 67, 33, 180),
+        width=1,
+    )
+    draw.text(
+        (mx + (mw - 8) / 2, my + 26),
+        "任务事务",
+        font=fonts["menu_title"],
+        fill=INK,
+        anchor="mm",
+    )
+
+    actions = spec["content"]["menu_actions"]
+    cursor = my + 49
+    for index, action in enumerate(actions):
+        if index == 2:
+            draw.line(
+                (mx + 18, cursor - 3, mx + mw - 25, cursor - 3),
+                fill=(104, 68, 33, 150),
+                width=1,
+            )
+            draw.text(
+                (mx + 18, cursor + 1),
+                "地图标记",
+                font=fonts["small"],
+                fill=INK_MUTED,
+            )
+            cursor += 18
+        if index == len(actions) - 1:
+            draw.line(
+                (mx + 18, cursor - 3, mx + mw - 25, cursor - 3),
+                fill=(104, 68, 33, 150),
+                width=1,
+            )
+            cursor += 3
+        row_fill = DANGER if action == "放弃任务" else INK
+        draw.ellipse(
+            (mx + 17, cursor + 6, mx + 22, cursor + 11),
+            fill=(111, 36, 26, 255) if action == "放弃任务" else BRASS,
+        )
+        draw.text(
+            (mx + 29, cursor + 3),
+            action,
+            font=fonts["menu"],
+            fill=row_fill,
+        )
+        cursor += 25
+
+    # Two long folds converge on the narrow bookmark neck at the page bottom.
+    draw.line(
+        (
+            mx + 22,
+            my + mh - 15,
+            connector_x - 10,
+            connector_y + 14,
+        ),
+        fill=(112, 74, 38, 160),
+        width=1,
+    )
+    draw.line(
+        (
+            mx + mw - 16,
+            my + mh - 20,
+            connector_x + 11,
+            connector_y + 13,
+        ),
         fill=(225, 193, 129, 135),
         width=1,
     )
@@ -672,7 +786,36 @@ def draw_quest_log(
         fill=INK_MUTED,
     )
     support_type = spec.get("support_type", "leather-tab")
-    if support_type == "page-layered-parchment-seal-tag":
+    if support_type == "bottom-page-layered-parchment-bookmark":
+        if menu_open:
+            draw_bottom_unfolded_tag_menu(layer, spec, origin, fonts)
+        draw_page_layered_seal_tag(
+            layer,
+            shell,
+            spec["layout"],
+            origin,
+            seal,
+            cover_root=not menu_open,
+        )
+        if menu_open:
+            join = offset_polygon(
+                spec["layout"]["open_join_erase_line"],
+                origin[0],
+                origin[1],
+            )
+            open_draw = ImageDraw.Draw(layer, "RGBA")
+            open_draw.line(join, fill=PAPER, width=2)
+            fold = offset_polygon(
+                spec["layout"]["open_page_fold_line"],
+                origin[0],
+                origin[1],
+            )
+            open_draw.line(
+                fold,
+                fill=(83, 50, 27, 210),
+                width=2,
+            )
+    elif support_type == "page-layered-parchment-seal-tag":
         if menu_open:
             draw_unfolded_tag_menu(layer, spec, origin, fonts)
         draw_page_layered_seal_tag(
@@ -794,7 +937,10 @@ def main() -> None:
             left_origin,
             closeups["closed_source"],
             closeups["closed_destination"],
-            "C · 根部层序放大：真实右页像素覆盖封签",
+            closeups.get(
+                "closed_label",
+                "C · 根部层序放大：真实右页像素覆盖封签",
+            ),
             fonts,
         )
         draw_closeup(
@@ -802,24 +948,32 @@ def main() -> None:
             right_origin,
             closeups["open_source"],
             closeups["open_destination"],
-            "D · 展开连接放大：同一张事务签连续展开",
+            closeups.get(
+                "open_label",
+                "D · 展开连接放大：同一张事务签连续展开",
+            ),
             fonts,
         )
         draw = ImageDraw.Draw(canvas, "RGBA")
-        annotation_x = 980
-        annotation_y = 758
+        annotation_x, annotation_y = presentation.get(
+            "annotation_origin",
+            [980, 758],
+        )
         draw.text(
             (annotation_x, annotation_y),
-            "V3 物理关系检查",
+            presentation.get("annotation_title", "V3 物理关系检查"),
             font=fonts["title"],
             fill=(238, 202, 128, 255),
         )
-        annotations = (
-            "① 封签根部消失在真实右页下方",
-            "② 羊皮纸横跨书封，但没有固定在书框",
-            "③ 火漆直接压在同一张纸的外露末端",
-            "④ 展开态没有独立弹窗底板",
-            "⑤ 七项事务写在向书内展开的同一张纸上",
+        annotations = presentation.get(
+            "annotations",
+            (
+                "① 封签根部消失在真实右页下方",
+                "② 羊皮纸横跨书封，但没有固定在书框",
+                "③ 火漆直接压在同一张纸的外露末端",
+                "④ 展开态没有独立弹窗底板",
+                "⑤ 七项事务写在向书内展开的同一张纸上",
+            ),
         )
         for index, annotation in enumerate(annotations):
             draw.text(
@@ -830,7 +984,10 @@ def main() -> None:
             )
         draw.text(
             (annotation_x, annotation_y + 196),
-            "非权威：最终纸纤维、手绘折痕、动画与客户端字体。",
+            presentation.get(
+                "non_authoritative_note",
+                "非权威：最终纸纤维、手绘折痕、动画与客户端字体。",
+            ),
             font=fonts["small"],
             fill=(170, 145, 100, 255),
         )
@@ -843,7 +1000,60 @@ def main() -> None:
     page_safe = [64, 64, 548, 324]
     seal_box = layout["seal_visual"]
     support_type = spec.get("support_type", "leather-tab")
-    if support_type == "page-layered-parchment-seal-tag":
+    if support_type == "bottom-page-layered-parchment-bookmark":
+        support_checks = {
+            "page_lip_source_inside_shell": contains(
+                [0, 0, *spec["frame"]], layout["page_lip_source_box"]
+            ),
+            "page_lip_covers_bookmark_root": contains(
+                layout["page_lip_source_box"], layout["tag_root_box"]
+            ),
+            "page_lip_avoids_all_reward_slots": all(
+                not intersects(layout["page_lip_source_box"], box)
+                for box in layout["reward_slots"]
+            ),
+            "bookmark_crosses_book_bottom_edge": (
+                layout["document_tag_bbox"][1] < spec["frame"][1]
+                and layout["document_tag_bbox"][1]
+                + layout["document_tag_bbox"][3]
+                > spec["frame"][1]
+            ),
+            "seal_sits_on_bookmark_terminal": contains(
+                layout["tag_head"], layout["seal_visual"]
+            ),
+            "menu_connection_intersects_bookmark": intersects(
+                layout["menu_connection_box"],
+                layout["document_tag_bbox"],
+            ),
+            "menu_connection_intersects_sheet": intersects(
+                layout["menu_connection_box"], layout["menu"]
+            ),
+            "bookmark_is_one_continuous_polygon": len(
+                layout["document_tag_polygon"]
+            ) >= 12,
+            "bookmark_is_vertical": (
+                layout["document_tag_bbox"][3]
+                > layout["document_tag_bbox"][2] * 2
+            ),
+            "bookmark_root_is_below_detail_content": (
+                layout["tag_root_box"][1]
+                >= layout["detail_content"][1]
+                + layout["detail_content"][3]
+                - 20
+            ),
+            "bookmark_root_is_below_all_rewards": (
+                layout["tag_root_box"][1]
+                >= max(
+                    box[1] + box[3]
+                    for box in layout["reward_slots"]
+                )
+            ),
+        }
+        support_non_authoritative = [
+            "final parchment fibers, gravity bend and hand-painted folds",
+            "runtime shell-UV sampling and lower-page edge mask",
+        ]
+    elif support_type == "page-layered-parchment-seal-tag":
         support_checks = {
             "page_lip_source_inside_shell": contains(
                 [0, 0, *spec["frame"]], layout["page_lip_source_box"]
