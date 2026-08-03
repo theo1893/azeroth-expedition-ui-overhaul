@@ -21,8 +21,8 @@
 
 | ID | 绑定对象 | 逻辑资产与状态 | 几何／禁止项 |
 |---|---|---|---|
-| `CHAT.FRAME` | 左侧物理资产合同 | 空战地旧书九宫格 | 不含 Tab、文字、输入、滚动或固定槽 |
-| `CHAT.FRAME.LEFT` | `pfUI.chat.left`／`pfChatLeft` | `CHAT.FRAME` 的左侧运行时实例 | 保留移动、尺寸和左侧停靠行为 |
+| `CHAT.FRAME` | 左侧物理资产合同 | 空战地旧书九宫格；`CHAT.FRAME.FULL.V1.r1 attempt 2` 已作为暖黑完整书体 source 进入 `P4` | 不含 Tab、文字、输入、滚动或固定槽；`1608 × 978` source 不得整图直接加载或拉伸 |
+| `CHAT.FRAME.LEFT` | `pfUI.chat.left`／`pfChatLeft` | `CHAT.FRAME` 的唯一运行时实例；当前仍使用 V3 TGA，新 P4 source 等待确定性导出 | 保留移动、尺寸和左侧停靠行为 |
 | `CHAT.FRAME.RIGHT` | `pfUI.chat.right`／`pfChatRight` | 明确停用的兼容对象；`C.chat.right.enable=0` | 强制隐藏，不分配 AEUI 资产；源码保留以便关闭 overhaul 后对照 |
 | `CHAT.TABS` | `pfUI.chat.left.panelTop`、左侧 `ChatFrameNTab`／`ChatFrameNTabText` | 连续承托带；普通／悬停／选中／禁用 Tab，各自三段式；运行时文字居中 | 普通布局事件后按需恢复共同几何；`pfChatLeft.OnMove` 中检测真实局部 Scale 边沿并立即强制重放一次，现有维护节拍只检测 EffectiveScale 边沿作为全局缩放兜底；登录后只做一次延迟终局装配；普通状态维护只换 UV |
 | `CHAT.UNREAD` | `ChatFrameNTabFlash` | 蜡封或布结显示／隐藏 | 独立覆盖，不参与 Tab 排列 |

@@ -13,10 +13,20 @@ ImageGen 调用记录。
 不可拉伸细节只放在角和边。不得包含 Tab、输入、未读、滚动按钮、文字或
 legacy 信息底栏。
 
-已接受源：
-[ChatBookFrame_Master_v3.png](../../../assets/source/chat/v3/ChatBookFrame_Master_v3.png)。
-`CHAT.FRAME.LEFT` 是唯一运行时实例。`CHAT.FRAME.RIGHT` 已按产品决策隐藏，
-不得为它复制、镜像或重新生成第二本书。
+已接受的暖黑完整书体替换源：
+[ChatBookFrame_Full_V1_r1.png](../../../assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_r1.png)，
+对应
+[source manifest](../../../assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_SourceManifest_v1.json)。
+它在 `2026-08-03` 以 `CHAT.FRAME.FULL.V1.r1 attempt 2` 进入 `P4`：中央阅读面
+为不透明暖黑烟熏纤维纸，页叠由近黑褐过渡到烟草褐，深胡桃皮革、低饱和
+氧化黄铜、接触阴影、非镜像磨损和左上暖光必须读作同一个连续旧书物件；禁止
+用亮金纸圈、中心 donor、旧像素 mask 或规则压纹皮革替代纸张身份。
+
+现行 runtime 在确定性导出完成前仍使用
+[ChatBookFrame_Master_v3.png](../../../assets/source/chat/v3/ChatBookFrame_Master_v3.png)，
+不得把旧 V3 runtime 误写成新替换源已接入。`CHAT.FRAME.LEFT` 是唯一运行时
+实例。`CHAT.FRAME.RIGHT` 已按产品决策隐藏，不得为它复制、镜像或重新生成
+第二本书。
 
 ## `CHAT.TABS`
 
@@ -87,8 +97,13 @@ legacy 信息底栏。
 ## 接受资产 provenance
 
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`。
-- 接受日期：`2026-07-29`。
+- V3 接受日期：`2026-07-29`；暖黑完整书体替换源接受日期：`2026-08-03`。
 - V3 主框源尺寸：`1608 × 978` RGBA。
+- 暖黑完整书体替换源尺寸：`1608 × 978` RGBA；SHA-256
+  `a97d9c5fa055a119cd5ea7809bdaa51460cddb9674355efcec35f98f6cd2c673`；
+  固定 session `019fc27e-f6fb-7d90-ac30-5fbdfef99c11`，provider result
+  `ig_0008a6d335a216a8016a6f3b35b41481919d0752e2d83926a4`；实际 ImageGen
+  `2/5` 后通过，剩余三次终止且不转移。
 - V3 Tab 源尺寸：`1774 × 887` RGBA。
 - V3 控件源尺寸：`1536 × 1024` RGBA。
 - V3 source 接受时的 `440 × 320` 合成验证使用 `380 × 236` 正文安全区；

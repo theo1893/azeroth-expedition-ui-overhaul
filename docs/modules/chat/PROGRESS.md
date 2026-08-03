@@ -49,9 +49,12 @@
   `inspect_candidate.py` 的纯绿／高绿计数为 `0/0`，不涉及 ImageGen、上传、
   source 或 runtime。
   `440 × 320` 空／最小／15 行／16 行及 `540 × 420` 22 行扩展场景均无截断，
-  display-region 五场景 violations `0`。状态为
-  `candidate-reviewed / awaiting-user-review / P3`，剩余 `3` 次已停止消费；
-  当前亮纸基线、V3 source、正式 TGA、Lua 和 v1.18 runtime 均未改变。
+  display-region 五场景 violations `0`。用户于 `2026-08-03` 明确接受
+  `CHAT.FRAME.FULL.V1.r1 attempt 2` 进入 `P4`。精确候选已保存为
+  `assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_r1.png`，SHA-256
+  `a97d9c5fa055a119cd5ea7809bdaa51460cddb9674355efcec35f98f6cd2c673`，并建立
+  source manifest；实际 ImageGen 最终为 `2/5`，剩余 `3` 次终止且不转移。
+  当前 V3 正式 TGA、Lua 和 v1.18 runtime 均未改变；新 source 尚未进入 `P5`。
 - 核心批次：`CHAT.CORE.V3 / runtime-corrected / P5`；runtime contract
   v1.18 保留 v1.15 的左书 Parent 唯一作用域、v1.14 的三层最终输出桥、
   v1.11 的无阴影旧字体、v1.8 的 `3px` 行距、v1.7 书本自愈和 v1.6 pfUI
@@ -160,7 +163,7 @@
 | `CHAT.INPUT.LANGUAGE` | `P1` | 可选原生 Button 已映射 | 实机确认对象、尺寸和语言状态 |
 | `CHAT.UNREAD` | `P5` V3 | 独立 `ChatFrameNTabFlash` 覆盖 | 实机验证闪烁配置与选中清除 |
 | `CHAT.TEXT` | `P5` parchment-palette / r1.18 | `380 × 248`／约 16 行；pfUI 配置字体、用户字号、无描边／无阴影、`3px` spacing、无额外背景层；频道／职业保留 Vanilla 色相并降低明度，小队与团队分色；未知亮色连续压暗 | 实机确认团队焦橙／小队蓝紫、战士棕褐及其余职业仍符合原版识别，同时 DPSMate 红绿报告不再发亮 |
-| `CHAT.FRAME`／`CHAT.TEXT` 暖黑候选 | `P3` `CHAT.FRAME.PAPER.V1` rejected／`CHAT.FRAME.FULL.V1` candidate-reviewed、attempt 2 | donor attempt `1/5` 因拼接感退回；整本重绘 attempt 1 因纸／皮身份失败，`.r1` attempt 2 在累计 `2/5` 时通过整体材料、纸张身份、透明、九宫格及五场景展示区域门禁；无 source／runtime 变更 | 等待用户复审；未明确接受前不晋级 source／runtime，不消费剩余三次 |
+| `CHAT.FRAME` 暖黑替换源 | `P4` `CHAT.FRAME.FULL.V1.r1` source-accepted、attempt 2 | donor attempt `1/5` 因拼接感退回；整本重绘 attempt 1 因纸／皮身份失败，`.r1` attempt 2 在累计 `2/5` 时通过整体材料、纸张身份、透明、九宫格及五场景展示区域门禁；精确 `1608 × 978 RGBA` source 与 manifest 已 tracked，现行 V3 runtime 未改变 | 定义确定性归一／裁切／九宫格或 atlas 合同，以最终 runtime 产物复跑展示区域门禁和静态测试后进入 `P5` |
 | `CHAT.SCROLL.*`／`MENU.BUTTON`／`RESIZE` | `P1` hidden | 原生对象已登记，pfUI 当前隐藏 | 仅在决定恢复时建立资产合同 |
 | `CHAT.POPUP.*` | `P1` | 四个原生菜单实例已映射，仍为过渡外观 | 实机拆分 shell、行状态和滚动 |
 | `CHAT.URLCOPY.*` | `P2` V1 prompt-draft / user-deferred | 三个真实对象与现有锚点已锁定；只新生成 shell，input／close 复用 V3 接受资产；用户于 `2026-07-30` 暂缓；当前 pfUI 功能继续可用 | 仅在用户明确恢复该功能时重新开放授权门禁 |
@@ -216,10 +219,11 @@
    转移。首个失败门禁是暖黑中心与旧金色页边／皮革之间的材料连续性。
 2. `CHAT.FRAME.FULL.V1.r1` attempt 2 已使累计实际生成达到 `2/5`；完整书体、
    暖黑纸／皮身份、透明清理、`440 × 320`／`540 × 420` 九宫格和五场景
-   display-region 全部通过，状态为 `candidate-reviewed / P3`。
-3. 下一步只等待用户复审候选与真实排版图。明确接受后才可晋级 source、导出
-   正式 TGA 并接入 runtime；若退回，只能在同一冻结合同内修复第一个新失败
-   门禁。剩余 `3` 次继续冻结，当前会话内建 imagegen 仍禁止使用。
+   display-region 全部通过，并于 `2026-08-03` 由用户明确接受为
+   `source-accepted / P4`。剩余 `3` 次终止且不转移。
+3. 下一步定义新 source 的确定性归一／裁切／九宫格或 atlas 合同，导出后必须
+   以最终 TGA／adapter／provider 复跑真实展示区域门禁与静态测试。通过前不
+   修改 Lua、不替换现行 V3 runtime，也不标记 `P5`。
 
 ### 仍保留的 v1.18 实机门禁
 

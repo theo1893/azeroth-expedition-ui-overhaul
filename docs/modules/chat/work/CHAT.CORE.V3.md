@@ -26,7 +26,7 @@
   `2026-08-02` 明确指出暖黑 donor 与未重绘的金色页边／皮革之间仍像拼接；
   首个失败门禁为材料连续性／整体物件身份，剩余 `4` 次不转移给新合同，
   候选未晋级 source、正式 TGA 或 Lua
-- 新并行生产：`CHAT.FRAME.FULL.V1 / candidate-reviewed / attempt-02 / P3`；改为让固定
+- 新并行接受源：`CHAT.FRAME.FULL.V1.r1 / source-accepted / attempt-02 / P4`；改为让固定
   V3 母版只承担结构比例参考，并让 ImageGen 在一次完整 edit 中重绘所有可见
   书体像素。纸面、页叠、皮革、黄铜、接触阴影、磨损和暖光共同生成，不再用
   donor／旧母版 mask 进行视觉拼接；Tab、文字、输入与未读仍是独立 runtime
@@ -41,9 +41,10 @@
   透明。`2026-08-03` macOS 复核又移除了首版透明审查副本中仅存在于
   `alpha=1..26` 外沿的 `95` 个绿键 RGB 残留；Alpha 与不透明像素均未改变，
   最终纯绿／高绿可见像素为 `0/0`。`440 × 320` 空／最小／15 行／16 行和
-  `540 × 420` 扩展五场景均通过，
-  当前状态为 `candidate-reviewed / awaiting-user-review`；source、正式 TGA、
-  Lua 与 runtime 均未改变
+  `540 × 420` 扩展五场景均通过。用户于 `2026-08-03` 明确接受
+  `CHAT.FRAME.FULL.V1.r1 attempt 2` 进入 `P4`；精确透明候选已复制为 tracked
+  source 并建立 provenance manifest。正式 TGA、Lua 与 runtime 均未改变，
+  剩余 `3` 次 ImageGen 永久停止消费且不转移
 - 锁定视觉基准：
   - [`聊天框视觉基准_v1.png`](../../../../assets/locked/chat/聊天框视觉基准_v1.png)
     — 游戏内物件身份、紧凑尺度和香草 HUD 综合色感
@@ -58,8 +59,10 @@
   - [`ChatBookFrame_Master_v3.png`](../../../../assets/source/chat/v3/ChatBookFrame_Master_v3.png)
   - [`ChatTabs_Master_v3.png`](../../../../assets/source/chat/v3/ChatTabs_Master_v3.png)
   - [`ChatControls_Master_v3.png`](../../../../assets/source/chat/v3/ChatControls_Master_v3.png)
+  - [`ChatBookFrame_Full_V1_r1.png`](../../../../assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_r1.png)
 - source manifest：
-  [`ChatV3_SourceManifest_v1.json`](../../../../assets/source/chat/v3/ChatV3_SourceManifest_v1.json)
+  [`ChatV3_SourceManifest_v1.json`](../../../../assets/source/chat/v3/ChatV3_SourceManifest_v1.json)；
+  [`ChatBookFrame_Full_V1_SourceManifest_v1.json`](../../../../assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_SourceManifest_v1.json)
 - runtime manifest：
   [`ChatV3_RuntimeManifest_v1.json`](../../../../assets/source/chat/v3/ChatV3_RuntimeManifest_v1.json)
 
@@ -474,9 +477,9 @@ Final self-check: exactly one full-canvas warm-black parchment surface; paper ma
 
 ### 产品、对象与几何合同
 
-- 组件：`CHAT.FRAME`；版本：`CHAT.FRAME.FULL.V1`；当前子状态
-  `candidate-reviewed / attempt-02 / awaiting-user-review`；项目阶段 `P3`；操作
-  `edit`。
+- 组件：`CHAT.FRAME`；接受版本：`CHAT.FRAME.FULL.V1.r1 attempt 2`；当前子状态
+  `source-accepted`；项目阶段 `P4`。历史生产操作为 `edit`；本次接受操作不调用
+  ImageGen。
 - 正式生成对象只有一个：不含任何动态内容的完整横向战地旧书聊天背景。
   纸面、页叠、皮革封套、少量氧化黄铜修补、接触阴影、磨损和左上暖光必须
   在同一张结果中形成连续物理关系，不能生成 donor、覆盖层或第二块中心面板。
@@ -488,7 +491,8 @@ Final self-check: exactly one full-canvas warm-black parchment surface; paper ma
   进书框。顶部只要提供能自然承接现有独立 Tab 的安静书脊／页边。
 - 保留 `440 × 320` 与 `540 × 420`；九宫格中段必须低频、连续且可拉伸，
   独特裂口、铆钉、缝线终点和金属修补只能放在四角及固定 cap 内。
-- 当前 V3 source、正式 TGA 与 Lua 均保持不变；本批通过 P4 前不切 runtime。
+- 当前 V3 runtime source、正式 TGA 与 Lua 均保持不变；新 source 进入 `P4`
+  不等于切换 runtime。
 
 ### 美术继承、输入角色与冲突裁决
 
@@ -554,8 +558,10 @@ Final self-check: exactly one full-canvas warm-black parchment surface; paper ma
 - 用户方向结论：`2026-08-02 / CHAT-FULL-SIM-V1 confirmed`。确认条款为整本
   书共同变暗、纸面／页叠／皮革作为连续物件生成、保留 `440 × 320` 容量与
   独立 Tab 关系；模拟的规整几何、微纹理、Alpha 和笔触仍不属于接受像素。
-- 生产已执行至 attempt 2 并通过内部候选门禁；下一门禁为用户复审。未获得
-  明确接受前不得晋级 source、正式 TGA 或 runtime。
+- 生产已执行至 attempt 2 并通过内部候选门禁；用户于 `2026-08-03` 明确接受
+  该精确候选进入 `P4`。下一门禁是定义并验证确定性 runtime 导出合同；在最终
+  atlas／adapter 再次通过展示区域检查前，不得导出正式 TGA、修改 Lua 或标记
+  `P5`。
 
 ### 完整生产正文（已授权，必须原样执行）
 
@@ -714,7 +720,8 @@ runtime text and controls are absent; and that the exterior is truly transparent
 |---:|---|---|---|---|---|
 
 - 当前实际生图：`2/5`；流程错误：`0`；循环终态：
-  `candidate-reviewed / awaiting-user-review`。剩余最多 `3` 次冻结；新增的固定
+  `candidate-reviewed`，随后由用户接受为 `source-accepted / P4`。剩余 `3` 次
+  永久停止消费且不转移；新增的固定
   Codex／npx 子进程已完成 attempt 2 并退出。全部内部门禁通过后已按合同停止，
   不得继续生图或启动其他进程。
 
@@ -949,9 +956,24 @@ runtime text and controls are absent; and that the exterior is truly transparent
   pfUI／Quest Lua smoke 与 `git diff --check` 全部通过。三条 Lua smoke 首次
   调用遗漏必需的仓库根参数而退出，补为 `lua <test> .` 后全部通过；这是测试
   调用错误，不是 ImageGen 流程错误，也不改变 `2/5` 计数。
-- 结论：`candidate-reviewed / P3 / awaiting-user-review`。自主循环在实际
-  ImageGen `2/5` 处停止，剩余 `3` 次不消费。候选未晋级 source、正式 TGA、
-  Lua 或 runtime；现有 V3 和 v1.18 继续保持。
+- 结论：本节内审终态为 `candidate-reviewed / P3`。自主循环在实际 ImageGen
+  `2/5` 处停止；用户随后于 `2026-08-03` 接受精确候选进入 `P4`。现有 V3
+  正式 TGA、Lua 和 v1.18 runtime 继续保持。
+
+### `CHAT.FRAME.FULL.V1.r1` 用户接受记录
+
+- 用户原文：`接受 CHAT.FRAME.FULL.V1.r1 attempt 2 进入 P4。`
+- 接受日期：`2026-08-03`；状态：`source-accepted / P4`。
+- 最终 source：
+  [`ChatBookFrame_Full_V1_r1.png`](../../../../assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_r1.png)，
+  `1608 × 978 RGBA`，SHA-256
+  `a97d9c5fa055a119cd5ea7809bdaa51460cddb9674355efcec35f98f6cd2c673`。
+- provenance manifest：
+  [`ChatBookFrame_Full_V1_SourceManifest_v1.json`](../../../../assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_SourceManifest_v1.json)。
+- 接受范围只包含精确透明 source 与 provenance；不包含 runtime TGA、Lua／XML、
+  `P5` 或 Turtle WoW 实机结论。
+- 下一门禁：建立确定性归一／裁切／九宫格或 atlas 合同，以最终 runtime 产物
+  复跑真实展示区域门禁并通过静态测试后，才可进入 `P5`。
 
 ## 最终执行正文
 
@@ -1615,6 +1637,7 @@ python3 tools/build_chat_v3_runtime_assets.py
 
 | 版本 | 执行／审查证据 | 结论 | 下一门禁 |
 |---|---|---|---|
+| `CHAT.FRAME.FULL.V1.r1` attempt 2 | 固定 session／result、精确 source SHA、五场景真实排版与 display-region 报告、source manifest | `source-accepted / P4`；实际 ImageGen `2/5`，余量终止 | 确定性 runtime 导出合同与最终产物展示区域复核；不得直接加载完整 source |
 | V3 runtime contract v1 | source／runtime manifests、五张 TGA、Lua 与 tests | `runtime-exported / P5` | Turtle WoW 实机验证 |
 | V3 runtime contract v1.1 | exporter 重放；事件后 Tab 重排与受管 Region 静态测试 | 未获得有效独立实机加载，已由 v1.2 取代 | 改为紧凑纵向合同 |
 | V3 runtime contract v1.2 | 用户否决原始 `42px`；`30px` Tab、`16px` 承托带、`32px` 正文上沿；目标目录哈希核验；有效游戏加载 | 点击后几何正确；启动时序、选中文字和命中范围失败，保持 `P5` | 修正初始化、对比度与命中区 |
