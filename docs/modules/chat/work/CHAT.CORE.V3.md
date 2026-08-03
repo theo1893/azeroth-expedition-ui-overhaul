@@ -22,7 +22,8 @@
   用户又于 `2026-08-03` 明确授权固定 Image 1／2／3、冻结修复边界和最多
   五次实际 ImageGen 调用，当前进入 attempt 1 前的 `prompt-authorized / P3`。
   正式 TGA、Lua、EditBox 功能与 P5 状态均未改变，模拟 ImageGen `0/0`、
-  生产 ImageGen `0/5`、流程错误 `0`
+  生产 ImageGen `0/5`、流程错误 `1`；首个错误发生在本地命令包装阶段，固定
+  子进程未启动、无上传、无候选图或 provider 生成证据
 - 已凝结视觉方向：`CHAT-DARK-SIM-V1 / simulation-confirmed / P2` 的 B 方向
   已由 `CHAT.FRAME.FULL.V1.r1 / runtime-exported / P5` 实现；不再作为并行候选
 - 已退回生产批次：`CHAT.FRAME.PAPER.V1 / candidate-rejected / P3`；固定
@@ -2068,7 +2069,7 @@ indicator; and no runtime content or neighboring UI is baked into the sheet.
 - 循环内 edit：仅允许同一循环紧邻前次输出作为 Image 4，且只能在冻结修复
   边界内使用；其余图片一律不得上传。
 - 预算：最多 `5` 次实际 ImageGen generation／edit，含首次；当前 `0/5`。
-  流程错误没有候选图且没有 provider 生成证据时不占额度；当前 `0`。
+  流程错误没有候选图且没有 provider 生成证据时不占额度；当前 `1`。
 - 用户原文：
 
 > 确认授权 CHAT.INPUT.DARK.V1；允许上传固定 SHA 的 Image 1/2/3；允许同循环
@@ -2081,7 +2082,7 @@ indicator; and no runtime content or neighboring UI is baked into the sheet.
 
 ### `CHAT.INPUT.DARK.V1` 自主修复循环
 
-- 当前实际 ImageGen：`0/5`；流程错误：`0`；循环终态：`active`。
+- 当前实际 ImageGen：`0/5`；流程错误：`1`；循环终态：`active`。
 - attempt 1 只上传固定 Image 1／2／3并执行上方正文。attempt 2–5 的完整
   `.rN` 正文、前次失败证据和 edit／regenerate 决定必须在各自调用前提交。
 
@@ -2090,3 +2091,4 @@ indicator; and no runtime content or neighboring UI is baked into the sheet.
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
+| E1 | `CHAT.INPUT.DARK.V1` / `aa7a374` | 未创建 | 父级 JavaScript 模板在 `npx` 启动前把 shell 变量误作自身变量，抛出 `ReferenceError: aeui_imagegen_token is not defined`；固定子进程未启动，无上传、候选图或 provider result | 不改生产正文或固定输入；改用不经过 JavaScript 模板插值的等价 shell 字符串组装后重试一次 | 不占生图额度；仍为 `0/5` |

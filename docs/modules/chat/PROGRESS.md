@@ -12,7 +12,8 @@
   用户于 `2026-08-03` 明确接受 `CHAT.INPUT.DARK.V1-SIM`，并随后独立授权
   `CHAT.INPUT.DARK.V1` 完整正文、固定三张 SHA 参考、最多五次实际 ImageGen
   调用与循环内紧邻前次输出的冻结 edit 边界。完整性预检通过；模拟 ImageGen
-  `0/0`、生产 `0/5`、流程错误 `0`，正式 V3 TGA／Lua 未改变。
+  `0/0`、生产 `0/5`、流程错误 `1`；该错误发生在本地命令包装阶段，子进程未
+  启动、无上传或生成证据，正式 V3 TGA／Lua 未改变。
 - 当前 runtime：`CHAT.FRAME.FULL.V1.r1 / runtime-exported / P5`，contract
   `1.19`。固定 P4 source 已按全图比例导出为 `1024²`
   `ChatBookFrameFullV1.tga`，九个 slice 只挂载唯一左框；五个最终 TGA 真实排版
@@ -177,7 +178,7 @@
 | `CHAT.FRAME`／`LEFT` | `P5` Full V1 / r1.19 | `ChatBookFrameFullV1.tga` 九宫格；唯一左侧实例；最终 atlas SHA `becb504f…25ae`；旧 V3 主框仅作回退 | `/reload` 检查主体、九宫格接缝、缩放、拖动和常用 UI Scale |
 | `CHAT.FRAME.RIGHT` | `P5` disabled-route | `single_chat_frame=1`；不分配资产 | 验证右框不显示且消息无丢失 |
 | `CHAT.TABS` | `P5` V3 / r1.19 | `92 × 30` 四状态 atlas；沿用既有 TabText、命中与 Scale 修正；r1.19 不修改 Tab 资产／几何 | 在新书本主体上复测 pfUI 解锁滚轮与全局 UI Scale |
-| `CHAT.INPUT` | runtime `P5` V3；候选 `P3` prompt-authorized | 正式仍为 V3 普通／聚焦两状态三段式 atlas；用户已接受模拟并授权 `CHAT.INPUT.DARK.V1` 完整生产正文、精确 source cell／atlas／三段合同、固定 Image 1／2／3 与最多五次实际生图边界；当前 `0/5` | 固定执行器 attempt 1，然后逐候选执行全量审查、真实排版和展示区域门禁；runtime 仍待实机验证焦点、IME、输入历史 |
+| `CHAT.INPUT` | runtime `P5` V3；候选 `P3` prompt-authorized | 正式仍为 V3 普通／聚焦两状态三段式 atlas；用户已接受模拟并授权 `CHAT.INPUT.DARK.V1` 完整生产正文、精确 source cell／atlas／三段合同、固定 Image 1／2／3 与最多五次实际生图边界；授权 commit `aa7a374`，当前 `0/5`、流程错误 `1` | 以无模板插值的等价包装重试同一 attempt 1，然后逐候选执行全量审查、真实排版和展示区域门禁；runtime 仍待实机验证焦点、IME、输入历史 |
 | `CHAT.INPUT.LANGUAGE` | `P1` | 可选原生 Button 已映射 | 实机确认对象、尺寸和语言状态 |
 | `CHAT.UNREAD` | `P5` V3 | 独立 `ChatFrameNTabFlash` 覆盖 | 实机验证闪烁配置与选中清除 |
 | `CHAT.TEXT` | `P5` dark-paper palette / r1.19 | `380 × 248`／约 16 行；pfUI 配置字体、用户字号、无描边／无阴影、`3px` spacing、无额外背景层；Vanilla 明亮语义色，小队与团队分色；过暗未知色向白色最小提升 | 实机确认频道／职业／DPSMate 在暖黑纸面上的可读性与原版身份 |
