@@ -22,7 +22,7 @@
   用户又于 `2026-08-03` 明确授权固定 Image 1／2／3、冻结修复边界和最多
   五次实际 ImageGen 调用，当前进入 attempt 1 前的 `prompt-authorized / P3`。
   正式 TGA、Lua、EditBox 功能与 P5 状态均未改变，模拟 ImageGen `0/0`、
-  生产 ImageGen `0/5`、流程错误 `3`；均无候选图或 provider 生成证据
+  生产 ImageGen `0/5`、流程错误 `4`；均无候选图或 provider 生成证据
 - 已凝结视觉方向：`CHAT-DARK-SIM-V1 / simulation-confirmed / P2` 的 B 方向
   已由 `CHAT.FRAME.FULL.V1.r1 / runtime-exported / P5` 实现；不再作为并行候选
 - 已退回生产批次：`CHAT.FRAME.PAPER.V1 / candidate-rejected / P3`；固定
@@ -1837,7 +1837,7 @@ python3 tools/build_chat_v3_runtime_assets.py
 
 - 固定执行器只允许 `imagegen-0-143-0`／`@openai/codex@0.143.0`；操作为
   `generate`。用户已于 `2026-08-03` 开启本版本最多五次实际调用的预算；
-  当前实际 ImageGen 为 `0/5`、流程错误 `3`。
+  当前实际 ImageGen 为 `0/5`、流程错误 `4`。
 - provider raw 画布固定为 `1536 × 1024 RGBA`，背景必须为完全平坦的
   `#00FF00`。对象恰为两条无字纸条：normal 固定 source cell
   `[51,187,1437,363]`，focus 固定 source cell `[51,448,1437,625]`；坐标为
@@ -2068,7 +2068,7 @@ indicator; and no runtime content or neighboring UI is baked into the sheet.
 - 循环内 edit：仅允许同一循环紧邻前次输出作为 Image 4，且只能在冻结修复
   边界内使用；其余图片一律不得上传。
 - 预算：最多 `5` 次实际 ImageGen generation／edit，含首次；当前 `0/5`。
-  流程错误没有候选图且没有 provider 生成证据时不占额度；当前 `3`。
+  流程错误没有候选图且没有 provider 生成证据时不占额度；当前 `4`。
 - 用户原文：
 
 > 确认授权 CHAT.INPUT.DARK.V1；允许上传固定 SHA 的 Image 1/2/3；允许同循环
@@ -2081,7 +2081,7 @@ indicator; and no runtime content or neighboring UI is baked into the sheet.
 
 ### `CHAT.INPUT.DARK.V1` 自主修复循环
 
-- 当前实际 ImageGen：`0/5`；流程错误：`3`；循环终态：`active`。
+- 当前实际 ImageGen：`0/5`；流程错误：`4`；循环终态：`active`。
 - attempt 1 只上传固定 Image 1／2／3并执行上方正文。attempt 2–5 的完整
   `.rN` 正文、前次失败证据和 edit／regenerate 决定必须在各自调用前提交。
 
@@ -2093,3 +2093,4 @@ indicator; and no runtime content or neighboring UI is baked into the sheet.
 | E1 | `CHAT.INPUT.DARK.V1` / `aa7a374` | 未创建 | 父级 JavaScript 模板在 `npx` 启动前把 shell 变量误作自身变量，抛出 `ReferenceError: aeui_imagegen_token is not defined`；固定子进程未启动，无上传、候选图或 provider result | 不改生产正文或固定输入；改用不经过 JavaScript 模板插值的等价 shell 字符串组装后重试一次 | 不占生图额度；仍为 `0/5` |
 | E2 | `CHAT.INPUT.DARK.V1` / `4b4b8e7` | 未创建 | 固定 Codex CLI 返回 `Reading prompt from stdin... No prompt provided via stdin.`；只读参数校验确认完整参数长 `9179` 字符并以 `$imagegen` 开始，CLI help 随后确认 `-i, --image <FILE>...` 是 variadic，末尾 prompt 被吸收为图片参数；无 model／provider result | 不改正文、输入或职责；在最后一个 `-i` 文件后加入标准 `--` 参数终止符，再传同一完整 prompt | 不占生图额度；仍为 `0/5` |
 | E3 | `CHAT.INPUT.DARK.V1` / `2cfadcc` | `019fc5d3-fe81-7803-b26c-05128cea76cd` | 固定子进程收到完整授权正文和三张输入，但从仓库根以 `read-only` 启动，重新发现仓库内 wrapper 并准备递归执行另一个 `npx`；父流程在任何 built-in `image_gen`／provider result 前中断 | 依仓库固定 Skill 改到预创建 `generated/` 的空临时目录，以 `-C`／`-s workspace-write` 启动；执行指令明确当前已是固定版本、只用其 built-in `image_gen`、禁止读取 wrapper 或再启动 `codex`／`npx` | 不占生图额度；仍为 `0/5` |
+| E4 | `CHAT.INPUT.DARK.V1` / `ca4fc1c` | 未创建 | 空临时目录命令在 `npx` 前由父 `zsh set -u` 报 `imagegen: parameter not set`；原因是执行指令中的第二个 `$imagegen` 未作为 shell 字面量转义；无上传、子进程或 provider result | 保持空目录、三图、正文和执行指令语义，只把该处转义为字面量 `\$imagegen` | 不占生图额度；仍为 `0/5` |
