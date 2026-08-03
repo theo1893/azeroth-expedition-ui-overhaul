@@ -74,6 +74,19 @@ def intersects(a: list[int], b: list[int]) -> bool:
     )
 
 
+def has_free_square(
+    surface: list[int], occupied: list[int], size: int
+) -> bool:
+    """Return whether an axis-aligned square fits on a surface without overlap."""
+    sx, sy, sw, sh = surface
+    for y in range(sy, sy + sh - size + 1):
+        for x in range(sx, sx + sw - size + 1):
+            candidate = [x, y, size, size]
+            if not intersects(candidate, occupied):
+                return True
+    return False
+
+
 def draw_outlined_text(
     draw: ImageDraw.ImageDraw,
     xy: tuple[float, float],
@@ -175,6 +188,203 @@ def draw_support_tab(
     sx, sy, sw, sh = layout["seal_visual"]
     resized = seal.resize((sw, sh), Image.Resampling.LANCZOS)
     layer.alpha_composite(resized, (ox + sx, oy + sy))
+
+
+def draw_brass_corner_seal(
+    layer: Image.Image,
+    layout: dict[str, Any],
+    origin: tuple[int, int],
+    seal: Image.Image,
+) -> None:
+    """Place the accepted wax mark in a small socket on the real brass corner."""
+    ox, oy = origin
+    draw = ImageDraw.Draw(layer, "RGBA")
+    bx, by, bw, bh = layout["seal_socket"]
+    box = (ox + bx, oy + by, ox + bx + bw - 1, oy + by + bh - 1)
+    draw.ellipse(box, fill=(56, 33, 15, 245), outline=(53, 27, 11, 255), width=2)
+    draw.ellipse(
+        (box[0] + 3, box[1] + 3, box[2] - 3, box[3] - 3),
+        fill=(118, 77, 28, 235),
+        outline=BRASS_LIGHT,
+        width=1,
+    )
+    draw.arc(
+        (box[0] + 5, box[1] + 5, box[2] - 5, box[3] - 5),
+        205,
+        332,
+        fill=(222, 174, 84, 210),
+        width=1,
+    )
+    sx, sy, sw, sh = layout["seal_visual"]
+    resized = seal.resize((sw, sh), Image.Resampling.LANCZOS)
+    layer.alpha_composite(resized, (ox + sx, oy + sy))
+
+
+def draw_direct_page_seal(
+    layer: Image.Image,
+    layout: dict[str, Any],
+    origin: tuple[int, int],
+    seal: Image.Image,
+) -> None:
+    """Lay the accepted wax mark directly on the upper-right detail paper."""
+    ox, oy = origin
+    sx, sy, sw, sh = layout["seal_visual"]
+    resized = seal.resize((sw, sh), Image.Resampling.LANCZOS)
+    layer.alpha_composite(resized, (ox + sx, oy + sy))
+
+
+def draw_bottom_action_rail(
+    layer: Image.Image,
+    spec: dict[str, Any],
+    origin: tuple[int, int],
+    fonts: dict[str, ImageFont.FreeTypeFont],
+) -> None:
+    """Render seven transient provider proxies along the existing lower binding."""
+    ox, oy = origin
+    draw = ImageDraw.Draw(layer, "RGBA")
+    rx, ry, rw, rh = spec["layout"]["action_rail"]
+    rail_box = (ox + rx, oy + ry, ox + rx + rw - 1, oy + ry + rh - 1)
+    draw.rounded_rectangle(
+        rail_box,
+        radius=4,
+        fill=(35, 17, 13, 224),
+        outline=(79, 45, 23, 240),
+        width=2,
+    )
+    draw.line(
+        (rail_box[0] + 5, rail_box[1] + 2, rail_box[2] - 5, rail_box[1] + 2),
+        fill=(168, 116, 47, 190),
+        width=1,
+    )
+    labels = spec["content"]["menu_actions"]
+    for index, slot in enumerate(spec["layout"]["action_slots"]):
+        x, y, width, height = slot
+        x += ox
+        y += oy
+        fill = (61, 31, 21, 242)
+        outline = BRASS if index < len(labels) - 1 else (133, 54, 39, 255)
+        draw.rounded_rectangle(
+            (x, y, x + width - 1, y + height - 1),
+            radius=3,
+            fill=fill,
+            outline=outline,
+            width=1,
+        )
+        draw.line(
+            (x + 4, y + 3, x + width - 5, y + 3),
+            fill=(173, 113, 51, 150),
+            width=1,
+        )
+        draw.text(
+            (x + width / 2, y + height / 2 + 1),
+            labels[index],
+            font=fonts["small"],
+            fill=(225, 194, 132, 255),
+            anchor="mm",
+        )
+
+
+def draw_right_page_action_list(
+    layer: Image.Image,
+    spec: dict[str, Any],
+    origin: tuple[int, int],
+    fonts: dict[str, ImageFont.FreeTypeFont],
+) -> None:
+    """Render seven transient ledger tabs down the right side of the detail page."""
+    ox, oy = origin
+    draw = ImageDraw.Draw(layer, "RGBA")
+    labels = spec["content"]["menu_actions"]
+    for index, slot in enumerate(spec["layout"]["action_slots"]):
+        x, y, width, height = slot
+        x += ox
+        y += oy
+        points = [
+            (x + 7, y),
+            (x + width - 2, y),
+            (x + width, y + height // 2),
+            (x + width - 2, y + height),
+            (x + 7, y + height),
+            (x, y + height // 2),
+        ]
+        fill = (72, 39, 24, 238)
+        outline = BRASS if index < len(labels) - 1 else (133, 54, 39, 255)
+        draw.polygon(points, fill=fill, outline=outline)
+        draw.line(
+            (x + 9, y + 3, x + width - 7, y + 3),
+            fill=(178, 124, 57, 145),
+            width=1,
+        )
+        draw.text(
+            (x + width / 2 + 3, y + height / 2 + 1),
+            labels[index],
+            font=fonts["small"],
+            fill=(228, 198, 137, 255),
+            anchor="mm",
+        )
+
+
+def draw_exterior_ledger_tabs(
+    layer: Image.Image,
+    shell: Image.Image,
+    spec: dict[str, Any],
+    origin: tuple[int, int],
+    fonts: dict[str, ImageFont.FreeTypeFont],
+) -> None:
+    """Render independent ledger tabs outside the page and occlude their roots."""
+    ox, oy = origin
+    draw = ImageDraw.Draw(layer, "RGBA")
+    labels = spec["content"]["menu_actions"]
+    text_boxes = spec["layout"]["action_text_safe"]
+    for index, slot in enumerate(spec["layout"]["action_slots"]):
+        x, y, width, height = slot
+        x += ox
+        y += oy
+        is_danger = index == len(labels) - 1
+        fill = (88, 45, 27, 246) if not is_danger else (78, 27, 24, 250)
+        outline = BRASS if not is_danger else (148, 57, 43, 255)
+        points = [
+            (x, y + 5),
+            (x + width - 8, y + 1),
+            (x + width, y + height // 2),
+            (x + width - 8, y + height - 1),
+            (x, y + height - 5),
+        ]
+        draw.polygon(points, fill=(34, 17, 12, 215))
+        inset = [
+            (x + 2, y + 6),
+            (x + width - 9, y + 3),
+            (x + width - 3, y + height // 2),
+            (x + width - 9, y + height - 3),
+            (x + 2, y + height - 6),
+        ]
+        draw.polygon(inset, fill=fill, outline=outline)
+        draw.line(
+            (x + 12, y + 6, x + width - 14, y + 4),
+            fill=(188, 132, 61, 135),
+            width=1,
+        )
+        tx, ty, tw, th = text_boxes[index]
+        draw.text(
+            (ox + tx + tw / 2, oy + ty + th / 2 + 1),
+            labels[index],
+            font=fonts["small"],
+            fill=(230, 201, 143, 255),
+            anchor="mm",
+        )
+        draw.ellipse(
+            (
+                x + width - 14,
+                y + height // 2 - 2,
+                x + width - 10,
+                y + height // 2 + 2,
+            ),
+            fill=BRASS_LIGHT,
+            outline=(77, 44, 19, 255),
+        )
+
+    mx, my, mw, mh = spec["layout"]["page_edge_mask"]
+    edge = shell.crop((mx, my, mx + mw, my + mh))
+    layer.alpha_composite(edge, (ox + mx, oy + my))
 
 
 def draw_parchment_seal_tag(
@@ -769,6 +979,7 @@ def draw_quest_log(
     menu_open: bool,
 ) -> None:
     ox, oy = origin
+    support_type = spec.get("support_type", "leather-tab")
     fw, fh = spec["frame"]
     shell = Image.open(resolve(root, spec["inputs"]["quest_log_shell"])).convert(
         "RGBA"
@@ -850,7 +1061,16 @@ def draw_quest_log(
     dx = ox + 376
     dy = oy + 73
     draw.text((dx, dy), "熔火之心", font=fonts["detail_title"], fill=INK)
-    draw.line((dx, dy + 23, ox + 600, dy + 23), fill=(105, 69, 34, 145), width=1)
+    detail_rule_right = (
+        ox + 560
+        if support_type in (
+            "direct-detail-page-seal-bottom-action-rail",
+            "direct-detail-page-seal-right-action-list",
+            "direct-detail-page-seal-exterior-ledger-tabs",
+        )
+        else ox + 600
+    )
+    draw.line((dx, dy + 23, detail_rule_right, dy + 23), fill=(105, 69, 34, 145), width=1)
     lines = [
         ("黑石山深处传来古老而炽热的回声。", False),
         ("与同伴进入熔火之心，查明元素领主", False),
@@ -880,8 +1100,29 @@ def draw_quest_log(
         font=fonts["small"],
         fill=INK_MUTED,
     )
-    support_type = spec.get("support_type", "leather-tab")
-    if support_type == "short-bottom-bookmark-same-page-menu":
+    if support_type == "direct-detail-page-seal-exterior-ledger-tabs":
+        if menu_open:
+            draw_exterior_ledger_tabs(
+                layer,
+                shell,
+                spec,
+                origin,
+                fonts,
+            )
+        draw_direct_page_seal(layer, spec["layout"], origin, seal)
+    elif support_type == "direct-detail-page-seal-right-action-list":
+        if menu_open:
+            draw_right_page_action_list(layer, spec, origin, fonts)
+        draw_direct_page_seal(layer, spec["layout"], origin, seal)
+    elif support_type == "direct-detail-page-seal-bottom-action-rail":
+        if menu_open:
+            draw_bottom_action_rail(layer, spec, origin, fonts)
+        draw_direct_page_seal(layer, spec["layout"], origin, seal)
+    elif support_type == "brass-corner-seal-bottom-action-rail":
+        if menu_open:
+            draw_bottom_action_rail(layer, spec, origin, fonts)
+        draw_brass_corner_seal(layer, spec["layout"], origin, seal)
+    elif support_type == "short-bottom-bookmark-same-page-menu":
         if menu_open:
             draw_same_page_transaction_mode(
                 layer,
@@ -1005,11 +1246,22 @@ def main() -> None:
     seal = load_seal(root, spec)
     canvas = Image.new("RGBA", tuple(spec["canvas"]), (37, 28, 22, 255))
     draw = ImageDraw.Draw(canvas, "RGBA")
-    draw.rectangle((0, 0, 1536, 1024), fill=(38, 45, 43, 255))
-    draw.rectangle((0, 700, 1536, 1024), fill=(55, 41, 30, 255))
-    for x in range(-40, 1580, 130):
+    draw.rectangle(
+        (0, 0, canvas.width, canvas.height),
+        fill=(38, 45, 43, 255),
+    )
+    draw.rectangle(
+        (0, 700, canvas.width, canvas.height),
+        fill=(55, 41, 30, 255),
+    )
+    for x in range(-40, canvas.width + 50, 130):
         draw.polygon(
-            [(x, 742), (x + 110, 720), (x + 165, 1024), (x + 20, 1024)],
+            [
+                (x, 742),
+                (x + 110, 720),
+                (x + 165, canvas.height),
+                (x + 20, canvas.height),
+            ],
             fill=(73, 52, 34, 255),
             outline=(39, 28, 21, 255),
         )
@@ -1033,14 +1285,40 @@ def main() -> None:
         fill=(198, 171, 116, 255),
     )
 
-    left_origin = (35, 150)
-    right_origin = (810, 150)
+    left_origin = tuple(presentation.get("left_origin", [35, 150]))
+    right_origin = tuple(presentation.get("right_origin", [810, 150]))
     draw_quest_log(canvas, root, spec, left_origin, fonts, seal, False)
     draw_quest_log(canvas, root, spec, right_origin, fonts, seal, True)
-    draw.text((35, 128), "A · 菜单关闭", font=fonts["board_body"], fill=(238, 202, 128, 255))
-    draw.text((810, 128), "B · 菜单展开", font=fonts["board_body"], fill=(238, 202, 128, 255))
-    draw.text((44, 665), "交互合同：左键开关；点选／点击书外／Esc 关闭；所有动作只代理原 Button，不复制任务逻辑；放弃任务继续走原生确认框。", font=fonts["board_body"], fill=(219, 187, 123, 255))
-    draw.text((44, 692), "迁移完成前 fail-open：只要任一 provider 尚未捕获，旧按钮继续显示；Close、等级、追踪、在线与语言仍保持独立。", font=fonts["board_body"], fill=(219, 187, 123, 255))
+    draw.text(
+        (left_origin[0], 128),
+        presentation.get("left_label", "A · 菜单关闭"),
+        font=fonts["board_body"],
+        fill=(238, 202, 128, 255),
+    )
+    draw.text(
+        (right_origin[0], 128),
+        presentation.get("right_label", "B · 菜单展开"),
+        font=fonts["board_body"],
+        fill=(238, 202, 128, 255),
+    )
+    draw.text(
+        (44, 665),
+        presentation.get(
+            "interaction_contract",
+            "交互合同：左键开关；点选／点击书外／Esc 关闭；所有动作只代理原 Button，不复制任务逻辑；放弃任务继续走原生确认框。",
+        ),
+        font=fonts["board_body"],
+        fill=(219, 187, 123, 255),
+    )
+    draw.text(
+        (44, 692),
+        presentation.get(
+            "fail_open_note",
+            "迁移完成前 fail-open：只要任一 provider 尚未捕获，旧按钮继续显示；Close、等级、追踪、在线与语言仍保持独立。",
+        ),
+        font=fonts["board_body"],
+        fill=(219, 187, 123, 255),
+    )
 
     closeups = spec.get("closeups")
     if closeups:
@@ -1112,7 +1390,180 @@ def main() -> None:
     page_safe = [64, 64, 548, 324]
     seal_box = layout["seal_visual"]
     support_type = spec.get("support_type", "leather-tab")
-    if support_type == "short-bottom-bookmark-same-page-menu":
+    if support_type == "direct-detail-page-seal-exterior-ledger-tabs":
+        declared_frame = [
+            0,
+            0,
+            spec["frame"][0] + spec["right_outset"],
+            spec["frame"][1],
+        ]
+        support_checks = {
+            "seal_reserved_corner_inside_detail_page": contains(
+                layout["paper_interaction_surface"],
+                layout["seal_reserved_corner"],
+            ),
+            "seal_hitbox_equals_reserved_corner": (
+                layout["seal_hitbox"] == layout["seal_reserved_corner"]
+            ),
+            "detail_title_avoids_seal": not intersects(
+                layout["detail_title_safe"], layout["seal_hitbox"]
+            ),
+            "exterior_tabs_do_not_occupy_detail_page": not intersects(
+                layout["exterior_action_menu"], layout["detail"]
+            ),
+            "exterior_tabs_begin_at_detail_right_edge": (
+                layout["exterior_action_menu"][0]
+                == layout["detail"][0] + layout["detail"][2]
+            ),
+            "exterior_tabs_extend_beyond_base_frame": (
+                layout["exterior_action_menu"][0]
+                + layout["exterior_action_menu"][2]
+                > spec["frame"][0]
+            ),
+            "exterior_tabs_fit_declared_right_outset": contains(
+                declared_frame, layout["exterior_action_menu"]
+            ),
+            "all_action_slots_inside_exterior_menu": all(
+                contains(layout["exterior_action_menu"], box)
+                for box in layout["action_slots"]
+            ),
+            "all_text_safe_boxes_inside_action_slots": all(
+                contains(slot, safe)
+                for slot, safe in zip(
+                    layout["action_slots"],
+                    layout["action_text_safe"],
+                )
+            ),
+            "page_edge_mask_inside_shell": contains(
+                [0, 0, *spec["frame"]], layout["page_edge_mask"]
+            ),
+            "page_edge_mask_occludes_every_tab_root": all(
+                intersects(layout["page_edge_mask"], box)
+                for box in layout["action_slots"]
+            ),
+            "page_edge_mask_avoids_all_text": all(
+                not intersects(layout["page_edge_mask"], box)
+                for box in layout["action_text_safe"]
+            ),
+            "exterior_tabs_avoid_all_reward_slots": all(
+                not intersects(layout["exterior_action_menu"], box)
+                for box in layout["reward_slots"]
+            ),
+            "seven_provider_slots": len(layout["action_slots"]) == 7,
+        }
+        support_non_authoritative = [
+            "final ledger-tab leather, vellum labels, brass rivets and state art",
+            "runtime page-edge root mask and staggered slide motion",
+            "screen-right clamp shift and live provider enabled-state feedback",
+        ]
+    elif support_type == "direct-detail-page-seal-right-action-list":
+        support_checks = {
+            "seal_reserved_corner_inside_detail_page": contains(
+                layout["paper_interaction_surface"],
+                layout["seal_reserved_corner"],
+            ),
+            "seal_hitbox_equals_reserved_corner": (
+                layout["seal_hitbox"] == layout["seal_reserved_corner"]
+            ),
+            "detail_title_avoids_seal": not intersects(
+                layout["detail_title_safe"], layout["seal_hitbox"]
+            ),
+            "right_action_list_inside_detail_page": contains(
+                layout["detail"], layout["right_action_menu"]
+            ),
+            "right_action_list_begins_below_seal": (
+                layout["right_action_menu"][1]
+                >= layout["seal_hitbox"][1] + layout["seal_hitbox"][3]
+            ),
+            "right_action_list_avoids_all_reward_slots": all(
+                not intersects(layout["right_action_menu"], box)
+                for box in layout["reward_slots"]
+            ),
+            "all_action_slots_inside_right_list": all(
+                contains(layout["right_action_menu"], box)
+                for box in layout["action_slots"]
+            ),
+            "seven_provider_slots": len(layout["action_slots"]) == 7,
+        }
+        support_non_authoritative = [
+            "final wax-to-parchment contact shadow and page-fiber response",
+            "right-side ledger-tab state art and open/close motion",
+            "client enabled-state feedback and outside-click focus handling",
+        ]
+    elif support_type == "direct-detail-page-seal-bottom-action-rail":
+        support_checks = {
+            "seal_reserved_corner_inside_detail_page": contains(
+                layout["paper_interaction_surface"],
+                layout["seal_reserved_corner"],
+            ),
+            "seal_hitbox_equals_reserved_corner": (
+                layout["seal_hitbox"] == layout["seal_reserved_corner"]
+            ),
+            "detail_title_avoids_seal": not intersects(
+                layout["detail_title_safe"], layout["seal_hitbox"]
+            ),
+            "detail_body_avoids_seal": not intersects(
+                layout["detail_body_safe"], layout["seal_hitbox"]
+            ),
+            "seal_avoids_all_reward_slots": all(
+                not intersects(layout["seal_hitbox"], box)
+                for box in layout["reward_slots"]
+            ),
+            "action_rail_below_dynamic_detail": not intersects(
+                layout["action_rail"], layout["detail"]
+            ),
+            "all_action_slots_inside_rail": all(
+                contains(layout["action_rail"], box)
+                for box in layout["action_slots"]
+            ),
+            "seven_provider_slots": len(layout["action_slots"]) == 7,
+            "action_rail_avoids_seal_hitbox": not intersects(
+                layout["action_rail"], layout["seal_hitbox"]
+            ),
+        }
+        support_non_authoritative = [
+            "final wax-to-parchment contact shadow and page-fiber response",
+            "bottom action rail open/close motion and final button-state art",
+            "client edge clamp and live provider enabled-state feedback",
+        ]
+    elif support_type == "brass-corner-seal-bottom-action-rail":
+        support_checks = {
+            "direct_page_has_no_free_40px_square": not has_free_square(
+                layout["paper_interaction_surface"],
+                layout["detail"],
+                layout["seal_hitbox"][2],
+            ),
+            "seal_socket_inside_existing_brass_corner": contains(
+                layout["brass_corner"], layout["seal_socket"]
+            ),
+            "seal_hitbox_inside_existing_brass_corner": contains(
+                layout["brass_corner"], layout["seal_hitbox"]
+            ),
+            "seal_avoids_dynamic_detail": not intersects(
+                layout["seal_hitbox"], layout["detail"]
+            ),
+            "seal_avoids_all_reward_slots": all(
+                not intersects(layout["seal_hitbox"], box)
+                for box in layout["reward_slots"]
+            ),
+            "action_rail_below_dynamic_detail": not intersects(
+                layout["action_rail"], layout["detail"]
+            ),
+            "all_action_slots_inside_rail": all(
+                contains(layout["action_rail"], box)
+                for box in layout["action_slots"]
+            ),
+            "seven_provider_slots": len(layout["action_slots"]) == 7,
+            "action_rail_avoids_seal_hitbox": not intersects(
+                layout["action_rail"], layout["seal_hitbox"]
+            ),
+        }
+        support_non_authoritative = [
+            "final brass socket brushwork and wax-to-metal contact shadow",
+            "bottom action rail open/close motion and final button-state art",
+            "client edge clamp and live provider enabled-state feedback",
+        ]
+    elif support_type == "short-bottom-bookmark-same-page-menu":
         visible_book_bottom = spec["visible_book_bottom_y"]
         support_checks = {
             "page_lip_source_inside_shell": contains(
@@ -1298,12 +1749,44 @@ def main() -> None:
                 contains(layout["detail"], box)
                 for box in layout["reward_slots"]
             ),
-            "closed_seal_outside_page_safe_area": not intersects(
-                seal_box, page_safe
+            (
+                "closed_seal_inside_reserved_detail_corner"
+                if support_type
+                in (
+                    "direct-detail-page-seal-bottom-action-rail",
+                    "direct-detail-page-seal-right-action-list",
+                    "direct-detail-page-seal-exterior-ledger-tabs",
+                )
+                else "closed_seal_outside_page_safe_area"
+            ): (
+                contains(layout["seal_reserved_corner"], seal_box)
+                if support_type
+                in (
+                    "direct-detail-page-seal-bottom-action-rail",
+                    "direct-detail-page-seal-right-action-list",
+                    "direct-detail-page-seal-exterior-ledger-tabs",
+                )
+                else not intersects(seal_box, page_safe)
             ),
             **support_checks,
-            "menu_inside_base_frame": contains(
-                [0, 0, *spec["frame"]], layout["menu"]
+            (
+                "menu_inside_declared_frame_plus_outset"
+                if support_type
+                == "direct-detail-page-seal-exterior-ledger-tabs"
+                else "menu_inside_base_frame"
+            ): contains(
+                (
+                    [
+                        0,
+                        0,
+                        spec["frame"][0] + spec["right_outset"],
+                        spec["frame"][1],
+                    ]
+                    if support_type
+                    == "direct-detail-page-seal-exterior-ledger-tabs"
+                    else [0, 0, *spec["frame"]]
+                ),
+                layout["menu"],
             ),
             "menu_avoids_close_button": not intersects(
                 layout["menu"], layout["close"]
@@ -1321,7 +1804,17 @@ def main() -> None:
             "reason": (
                 "same accepted right-page surface temporarily replaces detail content; no secondary art plane"
                 if support_type == "short-bottom-bookmark-same-page-menu"
-                else "transient action layer; closes after selection/outside-click/Escape"
+                else (
+                    "transient right-side action list; underlying detail remains and the list closes after selection/outside-click/Escape"
+                    if support_type
+                    == "direct-detail-page-seal-right-action-list"
+                    else (
+                        "independent ledger tabs outside the page; roots are occluded by the accepted page edge and no detail content is covered"
+                        if support_type
+                        == "direct-detail-page-seal-exterior-ledger-tabs"
+                        else "transient action layer; closes after selection/outside-click/Escape"
+                    )
+                )
             ),
         },
         "non_authoritative": support_non_authoritative

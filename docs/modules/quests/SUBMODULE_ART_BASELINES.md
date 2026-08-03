@@ -154,8 +154,9 @@ SHA-256
 [QS-A1_RuntimeManifest_v1.json](../../../assets/source/quests/qs-a1/QS-A1_RuntimeManifest_v1.json)：
 同一 Alpha 等比缩为 `60 × 58`，居中放入 normal／hover／pressed／disabled
 四个 `64 × 64` cell；hover 只暖亮，pressed 只压暗且未来交互锚点下移
-`1px`，disabled 只退灰，四态不重画轮廓。Quest Log 当前以 `28px` 外置于
-书体右上透明空间，Tracker 以 `34px` 位于顶部中央；两处当前均只使用 normal
+`1px`，disabled 只退灰，四态不重画轮廓。Quest Log runtime 仍以 `28px`
+外置于书体右上透明空间作为待替换 fallback；目标 V8 将 `32px` 漆章直接压在
+详情页右上纸面。Tracker 以 `34px` 位于顶部中央；两处当前均只使用 normal
 无鼠标 Texture。旧七个 provider Button 在 hub menu 取得一一功能等价前
 继续可见可用，不能为了纯净构图提前隐藏。
 
@@ -174,12 +175,13 @@ FauxScrollFrame offset、裁切、滚动范围或任务详情数据；也不以�
 底部放弃／分享／退出、详情开合与 pfQuest 四个地图操作在火漆事务菜单取得
 完整功能等价前仍保留真实 Button 和原脚本，使用程序化暗旧皮革搭扣作为
 fail-open fallback。目标交互只允许由火漆入口代理原 Button；不得复制任务
-业务逻辑、绕过放弃确认或在 provider 尚未捕获时提前隐藏 fallback。火漆若
-作为入口，必须压在独立文书／封签的可信承载面上，不能直接附着书框、护轨、
-包角或悬空充当红色图标。菜单使用暖赭纸面、克制暗旧皮革／旧黄铜与深墨，
-不得变成现代弹出卡片、透明黑玻璃、细金框或图标矩阵。具体封签位置与层序
-仍须以用户确认的本地模拟为门禁，不调用 ImageGen，也不产生新的 bitmap
-资产。
+业务逻辑、绕过放弃确认或在 provider 尚未捕获时提前隐藏 fallback。Quest Log
+入口只允许直接压在现有详情页右上纸面，不能附着书框、护轨、包角、虚构封面
+或悬空充当红色图标，也不得再增加书签承托。七项事务使用从详情页右边界向
+书外伸出的独立卷宗索引签；真实页边遮住根部，任何按钮像素都不得进入书页
+内容区。综合色限定为暖赭标签、暗旧皮革／旧黄铜和深墨；不得变成整张二级
+页面、现代弹出卡片、透明黑玻璃、细金框或图标矩阵。具体位置与层序仍须
+以用户确认的本地模拟为门禁，不调用 ImageGen，也不产生新的 bitmap 资产。
 
 ## 奖励槽与分隔
 

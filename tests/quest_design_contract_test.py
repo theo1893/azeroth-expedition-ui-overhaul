@@ -91,6 +91,33 @@ def main() -> None:
     seal_actions_sim_v5_spec = json.loads(
         seal_actions_sim_v5_spec_path.read_text(encoding="utf-8")
     )
+    seal_actions_sim_v6_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v6.json"
+    )
+    seal_actions_sim_v6_spec = json.loads(
+        seal_actions_sim_v6_spec_path.read_text(encoding="utf-8")
+    )
+    seal_actions_sim_v7_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v7.json"
+    )
+    seal_actions_sim_v7_spec = json.loads(
+        seal_actions_sim_v7_spec_path.read_text(encoding="utf-8")
+    )
+    seal_actions_sim_v8_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v8.json"
+    )
+    seal_actions_sim_v8_spec = json.loads(
+        seal_actions_sim_v8_spec_path.read_text(encoding="utf-8")
+    )
     seal_actions_sim_renderer = (
         ROOT / "tools" / "render_quest_log_seal_actions_simulation_v1.py"
     )
@@ -1969,6 +1996,101 @@ def main() -> None:
     assert seal_actions_sim_v5_spec["constraints"][
         "menu_has_no_secondary_paper_or_popup_plane"
     ]
+    assert seal_actions_sim_v6_spec["version"] == (
+        "QUEST-LOG-SEAL-ACTIONS-SIM-V6"
+    )
+    assert seal_actions_sim_v6_spec["support_type"] == (
+        "brass-corner-seal-bottom-action-rail"
+    )
+    assert seal_actions_sim_v6_spec["layout"]["seal_visual"] == [
+        636,
+        388,
+        32,
+        32,
+    ]
+    assert len(seal_actions_sim_v6_spec["layout"]["action_slots"]) == 7
+    assert seal_actions_sim_v6_spec["constraints"]["imagegen_calls"] == 0
+    assert seal_actions_sim_v7_spec["version"] == (
+        "QUEST-LOG-SEAL-ACTIONS-SIM-V7"
+    )
+    assert seal_actions_sim_v7_spec["support_type"] == (
+        "direct-detail-page-seal-right-action-list"
+    )
+    assert seal_actions_sim_v7_spec["frame"] == [676, 464]
+    assert seal_actions_sim_v7_spec["layout"]["seal_reserved_corner"] == [
+        572,
+        64,
+        40,
+        40,
+    ]
+    assert seal_actions_sim_v7_spec["layout"]["seal_visual"] == [
+        576,
+        68,
+        32,
+        32,
+    ]
+    assert seal_actions_sim_v7_spec["layout"]["detail_title_safe"] == [
+        376,
+        72,
+        188,
+        28,
+    ]
+    assert seal_actions_sim_v7_spec["layout"]["right_action_menu"] == [
+        488,
+        108,
+        124,
+        186,
+    ]
+    assert len(seal_actions_sim_v7_spec["layout"]["action_slots"]) == 7
+    assert seal_actions_sim_v7_spec["layout"]["action_slots"][-1][1] + (
+        seal_actions_sim_v7_spec["layout"]["action_slots"][-1][3]
+    ) <= seal_actions_sim_v7_spec["layout"]["reward_slots"][0][1]
+    assert seal_actions_sim_v7_spec["constraints"]["imagegen_calls"] == 0
+    assert seal_actions_sim_v7_spec["constraints"][
+        "direct_wax_on_detail_parchment"
+    ]
+    assert seal_actions_sim_v7_spec["constraints"][
+        "no_secondary_page_or_popup_plane"
+    ]
+    assert seal_actions_sim_v8_spec["version"] == (
+        "QUEST-LOG-SEAL-ACTIONS-SIM-V8"
+    )
+    assert seal_actions_sim_v8_spec["support_type"] == (
+        "direct-detail-page-seal-exterior-ledger-tabs"
+    )
+    assert seal_actions_sim_v8_spec["frame"] == [676, 464]
+    assert seal_actions_sim_v8_spec["right_outset"] == 72
+    assert seal_actions_sim_v8_spec["layout"]["seal_visual"] == [
+        576,
+        68,
+        32,
+        32,
+    ]
+    assert seal_actions_sim_v8_spec["layout"][
+        "exterior_action_menu"
+    ] == [612, 108, 136, 186]
+    assert seal_actions_sim_v8_spec["layout"]["page_edge_mask"] == [
+        604,
+        96,
+        24,
+        210,
+    ]
+    assert len(seal_actions_sim_v8_spec["layout"]["action_slots"]) == 7
+    assert seal_actions_sim_v8_spec["layout"][
+        "exterior_action_menu"
+    ][0] == sum(
+        (
+            seal_actions_sim_v8_spec["layout"]["detail"][0],
+            seal_actions_sim_v8_spec["layout"]["detail"][2],
+        )
+    )
+    assert seal_actions_sim_v8_spec["constraints"]["imagegen_calls"] == 0
+    assert seal_actions_sim_v8_spec["constraints"][
+        "tabs_must_not_occupy_detail_page"
+    ]
+    assert seal_actions_sim_v8_spec["constraints"][
+        "each_action_is_an_independent_button"
+    ]
     require(
         seals_work,
         (
@@ -2050,9 +2172,49 @@ def main() -> None:
             "ef4010a3b6d36350f5bb231cfac5df1fd96e4630a00639f15e586ff765421961",
             "fc62895116ad8d0b5ea1f769e1a3afed681d33b6252210dcc01ed317c59ca9ff",
             "ImageGen：`0/0`",
-            "用户结论：`pending`",
+            "用户结论：`user-rejected`",
         ),
         "Quest Log short bookmark same-page simulation work",
+    )
+    require(
+        seals_work,
+        (
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V6",
+            "包角漆章与下沿事务轨",
+            "user-redirected-before-review",
+            "fcc62bf3eca59e660649ca57adac6843662c77f454d9c910a5eb71b7762f8f3d",
+            "56788f4374ece88a1e758b226bb2317b9e7523ee5a013b3ca89d921bd2f109f3",
+            "ImageGen：`0/0`",
+        ),
+        "Quest Log brass-corner seal simulation work",
+    )
+    require(
+        seals_work,
+        (
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V7",
+            "详情页右上火漆与右侧事务列",
+            "seal_visual=[576,68,32,32]",
+            "right_action_menu=[488,108,124,186]",
+            "ec69f8112ae451c39b07910c8483fe705024b55c7ceef90cce18ae459167d41d",
+            "e98e721e8d2005a765bde8ec95cc0576ed1c8cf092bd19285ff27de9dd1e741f",
+            "ImageGen：`0/0`",
+            "用户结论：`user-rejected`",
+        ),
+        "Quest Log detail-page seal right-action-list simulation work",
+    )
+    require(
+        seals_work,
+        (
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V8",
+            "详情页火漆与外侧卷宗索引签",
+            "exterior_action_menu=[612,108,136,186]",
+            "page_edge_mask=[604,96,24,210]",
+            "928714893d9f3234dfea7cc497f95f666bd03e2f37aa309862754a41c3ea9279",
+            "72e001d2ed5bff88ca0fd39e763aa457fdeae33b92ece9dd08f5a404c62b62fd",
+            "ImageGen：`0/0`",
+            "用户结论：`pending`",
+        ),
+        "Quest Log exterior ledger-tab simulation work",
     )
 
     quest_adapter = (
