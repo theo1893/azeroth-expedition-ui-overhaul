@@ -71,6 +71,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--attempt", required=True)
     parser.add_argument("--session", required=True)
     parser.add_argument("--execution-commit", required=True)
+    parser.add_argument("--imagegen-count", default="1/5")
     return parser.parse_args()
 
 
@@ -182,7 +183,22 @@ def derive_candidate_rgba(raw: Image.Image) -> tuple[Image.Image, dict[str, Any]
 def state_bbox(image: Image.Image, state: str) -> tuple[int, int, int, int]:
     half = STATE_HALVES[state]
     alpha = image.crop(half).getchannel("A")
-    bbox = alpha.getbbox()
+    visible = np.asarray(alpha, dtype=np.uint8) > 0
+    candidate_rows = np.flatnonzero(visible.sum(axis=1) > 30)
+    if not len(candidate_rows):
+        raise ValueError(f"{state} has no complete visible candidate row")
+    row_groups = np.split(
+        candidate_rows, np.flatnonzero(np.diff(candidate_rows) > 1) + 1
+    )
+    main_rows = max(
+        row_groups,
+        key=lambda group: int(visible[group[0] : group[-1] + 1].sum()),
+    )
+    main_visible = np.zeros_like(visible)
+    main_visible[main_rows[0] : main_rows[-1] + 1] = visible[
+        main_rows[0] : main_rows[-1] + 1
+    ]
+    bbox = Image.fromarray(main_visible.astype(np.uint8) * 255, mode="L").getbbox()
     if bbox is None:
         raise ValueError(f"{state} has no visible candidate pixels")
     absolute = (
@@ -489,7 +505,7 @@ def main() -> None:
         "schema": "aeui-chat-input-dark-candidate-review-v1",
         "component": "CHAT.INPUT.DARK.V1",
         "attempt": args.attempt,
-        "imagegen": "1/5",
+        "imagegen": args.imagegen_count,
         "session": args.session,
         "execution_commit": args.execution_commit,
         "raw": {
