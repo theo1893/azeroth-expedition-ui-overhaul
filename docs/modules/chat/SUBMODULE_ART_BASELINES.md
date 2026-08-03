@@ -66,13 +66,16 @@ runtime contract `1.19` 确定性导出进入 `P5`：中央阅读面
 透明 RGB 清零后的精确 `1536 × 1024 RGBA` 结果，SHA-256
 `4df36bc607a024ca0a2355f5d20ff985f61cbf3304073a65e33caa978c50cda0`。
 它包含 normal／focus 两条薄烟熏 rag-paper 纸条，不包含文字、光标、频道头、
-语言控件或历史。当前还没有正式 exporter、TGA 或 Lua 接入，因此不得称为
-`P5`。
+语言控件或历史。该 source 已由确定性 exporter 按固定 cell、共享 Alpha、
+`8/121/932/1016` 三段切线导出为 `1024 × 256`
+`ChatInputDarkV1.tga`，并在 runtime contract `1.20` 接入；最终 TGA 的空、最小、
+典型 15 行、最大 16 行与 `540 × 420`／22 行五场景 display-region 均为
+`0` violations，因此当前为 `P5`，仍待 Turtle WoW 实机验证。
 
-当前运行时回退源仍为
-[ChatControls_Master_v3.png](../../../assets/source/chat/v3/ChatControls_Master_v3.png)，
-并继续提供现行 `P5` normal／focus 三段式贴图；其浅金输入像素不属于新的
-稳定综合色方向，只在新 P4 source 完成确定性导出和静态门禁后才允许替换。
+[ChatControls_Master_v3.png](../../../assets/source/chat/v3/ChatControls_Master_v3.png)
+及 `ChatInputAtlasV3.tga` 只作为 P6-C 前的结构与运行时回退保留；浅金输入像素
+不再是现行可见综合色方向。切换只替换三枚 slice 的贴图源，不改变真实
+EditBox 的输入、焦点、光标、IME、历史、频道头、键盘事件或命中几何。
 
 ## `CHAT.UNREAD`
 
@@ -135,8 +138,11 @@ Alpha；已经可读的未知色必须原样保留。消息内容和 `|H...|h` �
   `4df36bc607a024ca0a2355f5d20ff985f61cbf3304073a65e33caa978c50cda0`；
   固定 session `019fc5fd-c995-7f50-94af-5ab05aaba66d`，provider result
   `ig_093073d7aed26787016a702047bcd48191a71c9dbbf2bce523`；实际 ImageGen
-  `4/5` 后通过并进入 `P4`，剩余一次终止且不转移。当前 runtime 仍使用
-  `ChatInputAtlasV3.tga`，未授权 P5 导出或 Lua 修改。
+  `4/5` 后通过并进入 `P4`，剩余一次终止且不转移。确定性 P4→P5 导出没有
+  ImageGen 调用；现行 `ChatInputDarkV1.tga` 为 `1024 × 256` RGBA，SHA-256
+  `43cb9a0173a2f0cf05b43bb01b13a7e2aa8853feb26d4f62ec7b399610f47666`，其
+  RGBA 像素与 P4 审查逻辑 atlas 完全一致；五场景最终展示区域为
+  `0` violations。旧 `ChatInputAtlasV3.tga` 保留到 P6-C。
 - V3 Tab 源尺寸：`1774 × 887` RGBA。
 - V3 控件源尺寸：`1536 × 1024` RGBA。
 - V3 source 接受时的 `440 × 320` 合成验证使用 `380 × 236` 正文安全区；

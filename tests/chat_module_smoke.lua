@@ -465,7 +465,7 @@ assert(
 )
 assert(
   left.enabledDrawLayer == "BACKGROUND" and
-    left.aeuiBookRuntimeVersion == "1.19",
+    left.aeuiBookRuntimeVersion == "1.20",
   "chat book background layer or runtime marker was not restored"
 )
 left.aeuiBookSlices.center:SetTexture(nil)
@@ -480,7 +480,7 @@ assert(#ChatFrame1.points == 2, "docked chat frame was not inset")
 assert(
   ChatFrame1:GetSpacing() == 3 and
     ChatFrame1.aeuiTextLineSpacing == 3 and
-    ChatFrame1.aeuiTextMetricsVersion == "1.19",
+    ChatFrame1.aeuiTextMetricsVersion == "1.20",
   "chat text did not receive the relaxed line-height contract"
 )
 assert(
@@ -491,7 +491,7 @@ assert(
     ChatFrame1.shadowColor[4] == 0 and
     ChatFrame1.shadowOffset[1] == 0 and
     ChatFrame1.shadowOffset[2] == 0 and
-    ChatFrame1.aeuiTextStyleVersion == "1.19",
+    ChatFrame1.aeuiTextStyleVersion == "1.20",
   "chat text did not restore the provider-owned comfort typography"
 )
 local channelMessage =
@@ -706,7 +706,7 @@ local chatMODFinalWrapper = ChatFrame3.ORG_AddMessage
 AzerothExpeditionUI.modules.Chat:Maintain()
 assert(
   ChatFrame3.ORG_AddMessage == chatMODFinalWrapper and
-    ChatFrame3.aeuiChatMODFinalColorVersion == "1.19",
+    ChatFrame3.aeuiChatMODFinalColorVersion == "1.20",
   "ChatMOD final color hook was missing or installed more than once"
 )
 ChatFrame3:HookAddMessage(
@@ -747,7 +747,7 @@ ChatFrame4.HookAddMessage = ChatFrame4.testProviderAddMessage
 AzerothExpeditionUI.modules.Chat:Maintain()
 assert(
   ChatFrame4.aeuiMessageColorHooked and
-    ChatFrame4.aeuiMessageColorVersion == "1.19",
+    ChatFrame4.aeuiMessageColorVersion == "1.20",
   "late HookAddMessage provider was not discovered"
 )
 ChatFrame4.ORG_AddMessage = ChatFrame4.HookAddMessage
@@ -775,7 +775,7 @@ assert(
       true
     ) and
     ChatFrame4.lastDeliveredMessage[2] == 255 / 255 and
-    ChatFrame4.aeuiChatMODFinalColorVersion == "1.19",
+    ChatFrame4.aeuiChatMODFinalColorVersion == "1.20",
   "ChatMOD post-pfUI load order did not retain the dark-paper palette"
 )
 
@@ -950,7 +950,7 @@ assert(
   "status command did not report the scoped route"
 )
 assert(
-  string.find(statusMessage, "chat-runtime=1.19", 1, true),
+  string.find(statusMessage, "chat-runtime=1.20", 1, true),
   "status command did not report the chat runtime contract"
 )
 assert(

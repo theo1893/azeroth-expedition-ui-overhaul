@@ -3,7 +3,7 @@
 ## 当前结论
 
 - 主模块视觉：已锁定。
-- 输入视觉生产：`CHAT.INPUT.DARK.V1.r3 attempt 4 / accepted-source / P4`。用户指出
+- 输入视觉生产：`CHAT.INPUT.DARK.V1.r3 attempt 4 / runtime-exported / P5`。用户指出
   V3 浅金输入纸带在 Full V1 暖黑书页上会被读成现代进度条；已按真实
   `380 × 25px`、普通／聚焦两态、三段横向伸缩、`34/22px` 文字 inset，使用
   当前 Full V1 书框、V3 Tab 与真实聊天密度完成本地几何预演。候选把输入改为
@@ -21,15 +21,21 @@
   `P4`；透明归一源已保存为
   `assets/source/chat/input-dark-v1/ChatInput_Dark_V1_r3.png`，SHA-256
   `4df36bc607a024ca0a2355f5d20ff985f61cbf3304073a65e33caa978c50cda0`，并建立
-  source manifest。剩余一次 ImageGen 终止且不转移。正式 V3 TGA／Lua、pfUI、
-  ChatMOD 与输入功能均未改变；生成中间证据按 P6-C 清理门禁保留。
-- 当前 runtime：`CHAT.FRAME.FULL.V1.r1 / runtime-exported / P5`，contract
-  `1.19`。固定 P4 source 已按全图比例导出为 `1024²`
+  source manifest。剩余一次 ImageGen 终止且不转移。随后在不调用 ImageGen 的
+  P4→P5 阶段，只从该固定 source 裁切两个 `1386 × 176` canonical cell，按
+  `8/121/932/1016` 切线导出 `1024 × 256` `ChatInputDarkV1.tga`；最终 TGA
+  SHA-256 `43cb9a01…766`，RGBA 像素与 P4 审查逻辑 atlas 完全一致。五个最终
+  真实排版场景、`380 × 25`／`480 × 25` 横向伸缩、共享 Alpha、透明 RGB 和
+  display-region 均通过。adapter 只把三枚 slice 媒体映射切到新 TGA；输入
+  文字、焦点、光标、IME、历史、频道头、键盘事件、命中几何、pfUI、ChatMOD
+  和 SavedVariables 均未改。生成证据与 V3 回退按 P6-C 门禁保留。
+- 当前 runtime：`CHAT.CORE / runtime-exported / P5`，contract `1.20`。其中
+  `CHAT.FRAME.FULL.V1.r1` 资产合同保持 `1.19`：固定 P4 source 已按全图比例导出为 `1024²`
   `ChatBookFrameFullV1.tga`，九个 slice 只挂载唯一左框；五个最终 TGA 真实排版
   场景和 display-region 均通过，violations `0`。暖黑阅读区改用熟悉的 Vanilla
   明亮语义色，无 glow／outline／shadow；未知内嵌色只有低于 `4.8:1` 时才向
-  白色做最小提升。导出没有 ImageGen 调用；仍待 Turtle WoW `/reload`，不得
-  标记 `P6`。
+  白色做最小提升。`CHAT.INPUT.DARK.V1` 资产合同为 `1.20`；两个确定性导出
+  都没有 ImageGen 调用。整体仍待 Turtle WoW `/reload`，不得标记 `P6`。
 - 暗色候选方向：`CHAT-DARK-SIM-V1 / simulation-confirmed / P2`。用户提出把
   羊皮纸压到接近黑色，以恢复熟悉的 Vanilla 职业／频道色；现已用纯本地
   确定性几何完成 A（当前 `#CDA155` 亮纸＋v1.18 深墨）／B（`#18120D`
@@ -186,11 +192,11 @@
 |---|---:|---|---|
 | `CHAT.FRAME`／`LEFT` | `P5` Full V1 / r1.19 | `ChatBookFrameFullV1.tga` 九宫格；唯一左侧实例；最终 atlas SHA `becb504f…25ae`；旧 V3 主框仅作回退 | `/reload` 检查主体、九宫格接缝、缩放、拖动和常用 UI Scale |
 | `CHAT.FRAME.RIGHT` | `P5` disabled-route | `single_chat_frame=1`；不分配资产 | 验证右框不显示且消息无丢失 |
-| `CHAT.TABS` | `P5` V3 / r1.19 | `92 × 30` 四状态 atlas；沿用既有 TabText、命中与 Scale 修正；r1.19 不修改 Tab 资产／几何 | 在新书本主体上复测 pfUI 解锁滚轮与全局 UI Scale |
-| `CHAT.INPUT` | runtime `P5` V3；新源 `P4` accepted-source | 正式仍为 V3 普通／聚焦两状态三段式 atlas；`ChatInput_Dark_V1_r3.png` 已以精确 `.r3 attempt 4` 接受，SHA `4df36bc…cda0`，共享 Alpha 与五场景展示区域通过；尚未导出新 runtime | 建立确定性 exporter 并通过最终 TGA 的真实排版、display-region 与静态测试；随后实机验证焦点、IME、输入历史 |
+| `CHAT.TABS` | `P5` V3 / r1.20 aggregate | `92 × 30` 四状态 atlas；沿用既有 TabText、命中与 Scale 修正；输入替换不修改 Tab 资产／几何 | 在新书本主体上复测 pfUI 解锁滚轮与全局 UI Scale |
+| `CHAT.INPUT` | `P5` `CHAT.INPUT.DARK.V1` / r1.20 | `ChatInputDarkV1.tga` 普通／聚焦两状态三段式 atlas；固定 source SHA `4df36bc…cda0`，最终 TGA SHA `43cb9a01…766`，共享 Alpha、最终真实排版与五场景 `0` violations；旧 V3 atlas 仅作回退 | 实机验证 normal/focus、输入文字、光标、IME、频道头、历史、键盘事件与 `380/480px` 伸缩 |
 | `CHAT.INPUT.LANGUAGE` | `P1` | 可选原生 Button 已映射 | 实机确认对象、尺寸和语言状态 |
 | `CHAT.UNREAD` | `P5` V3 | 独立 `ChatFrameNTabFlash` 覆盖 | 实机验证闪烁配置与选中清除 |
-| `CHAT.TEXT` | `P5` dark-paper palette / r1.19 | `380 × 248`／约 16 行；pfUI 配置字体、用户字号、无描边／无阴影、`3px` spacing、无额外背景层；Vanilla 明亮语义色，小队与团队分色；过暗未知色向白色最小提升 | 实机确认频道／职业／DPSMate 在暖黑纸面上的可读性与原版身份 |
+| `CHAT.TEXT` | `P5` dark-paper palette / r1.20 aggregate | `380 × 248`／约 16 行；pfUI 配置字体、用户字号、无描边／无阴影、`3px` spacing、无额外背景层；Vanilla 明亮语义色，小队与团队分色；过暗未知色向白色最小提升 | 实机确认频道／职业／DPSMate 在暖黑纸面上的可读性与原版身份 |
 | `CHAT.FRAME` 暖黑替换源 | `P5` `CHAT.FRAME.FULL.V1.r1` runtime-exported | `1608 × 978` 固定 source 经确定性 exporter 生成 `1024²` TGA；50 个 Lanczos 低 Alpha 绿振铃像素仅清零 RGB，Alpha 不变；最终纯绿／高绿 `0/0`，五场景 `0` violations | Turtle WoW 目标客户端实机 P6；P6-C 前保留 source、证据和 V3 回退 |
 | `CHAT.SCROLL.*`／`MENU.BUTTON`／`RESIZE` | `P1` hidden | 原生对象已登记，pfUI 当前隐藏 | 仅在决定恢复时建立资产合同 |
 | `CHAT.POPUP.*` | `P1` | 四个原生菜单实例已映射，仍为过渡外观 | 实机拆分 shell、行状态和滚动 |
@@ -207,14 +213,16 @@
 | `ChatBookFrameV3.tga` | `1024 × 1024` | P6-C 前保留的旧主框回退 |
 | `ChatTabAtlasV3.tga` | `512 × 512` | 普通／悬停／选中／禁用 Tab |
 | `ChatTabShelfV3.tga` | `1024 × 64` | 连续承托带 |
-| `ChatInputAtlasV3.tga` | `1024 × 256` | 普通／聚焦输入纸带 |
+| `ChatInputDarkV1.tga` | `1024 × 256` | 当前普通／聚焦暖烟草输入纸条 |
+| `ChatInputAtlasV3.tga` | `1024 × 256` | P6-C 前保留的旧浅金输入回退 |
 | `ChatUnreadSealV3.tga` | `64 × 128` | 未读覆盖 |
 
 源资产与 provenance：
 [V3 source manifest](../../../assets/source/chat/v3/ChatV3_SourceManifest_v1.json)；
 [暖烟草输入 source manifest](../../../assets/source/chat/input-dark-v1/ChatInput_Dark_V1_SourceManifest_v1.json)。
 裁切、UV、画布和 runtime SHA：
-[runtime manifest](../../../assets/source/chat/v3/ChatV3_RuntimeManifest_v1.json)。
+[V3 runtime manifest](../../../assets/source/chat/v3/ChatV3_RuntimeManifest_v1.json)；
+[暖烟草输入 runtime manifest](../../../assets/source/chat/input-dark-v1/ChatInput_Dark_V1_RuntimeManifest_v1.json)。
 
 ## 当前证据
 
@@ -222,6 +230,9 @@
 - [`build_chat_full_frame_v1_runtime.py`](../../../tools/build_chat_full_frame_v1_runtime.py)
 - [`render_chat_full_frame_runtime_v1.py`](../../../tools/render_chat_full_frame_runtime_v1.py)
 - [`chat_full_frame_runtime_test.py`](../../../tests/chat_full_frame_runtime_test.py)
+- [`build_chat_input_dark_v1_runtime.py`](../../../tools/build_chat_input_dark_v1_runtime.py)
+- [`render_chat_input_dark_runtime_v1.py`](../../../tools/render_chat_input_dark_runtime_v1.py)
+- [`chat_input_dark_runtime_test.py`](../../../tests/chat_input_dark_runtime_test.py)
 - [`chat_module_smoke.lua`](../../../tests/chat_module_smoke.lua)
 - [`pfui_expedition_contract_test.lua`](../../../tests/pfui_expedition_contract_test.lua)
 - 当前 adapter：[`Modules/Chat.lua`](../../../addon/AzerothExpeditionUI/Modules/Chat.lua)
@@ -248,22 +259,21 @@
 
 ### 当前优先门禁
 
-1. 用户已于 `2026-08-03` 接受 `CHAT.INPUT.DARK.V1.r3 attempt 4` 进入 `P4`。
-   精确透明源和 source manifest 已入库；生产最终为 `4/5`、流程错误 `4`，剩余
-   一次永久停止且不转移。下一门禁是只从该 P4 source 建立确定性 exporter，
-   输出正式 `1024 × 256` TGA，并用最终 TGA 重跑真实排版、display-region 与
-   静态合同后再接入。当前 `ChatInputAtlasV3.tga`、Lua、pfUI／ChatMOD 与输入
-   功能均保持不变；不得提前标记新输入为 `P5`。
+1. `CHAT.INPUT.DARK.V1.r3 attempt 4` 已完成确定性 P4→P5：固定 source、正式
+   `ChatInputDarkV1.tga`、三段 adapter、最终 TGA 真实排版、display-region 与
+   静态合同均已通过；导出阶段 ImageGen `0` 次，原生产仍为 `4/5`、流程错误
+   `4`，剩余一次永久停止且不转移。下一门禁是目标客户端实机验证输入焦点、
+   光标、IME、频道头、历史、键盘事件以及 normal/focus 可辨识度。
 2. `CHAT.FRAME.FULL.V1.r1` 已完成 P4→P5：最终 TGA、九宫格 adapter、暖黑
    纸面文字色板、五场景真实排版和 display-region 均已验证；本阶段 ImageGen
    `0` 次，原批次总计仍为 `2/5`，剩余三次终止且不转移。
 3. 游戏设备可用后仍需执行 Turtle WoW `1.18.1` `/reload` P6 门禁；当前不
    清理 source、runtime 证据或 V3 回退。
 
-### 仍保留的 v1.19 实机门禁
+### 仍保留的 v1.20 实机门禁
 
 1. 在 Junction 指向当前仓库的客户端执行 `/reload`；确认 `/aeui status`
-   报告 `chat-runtime=1.19`。分别观察小队与团队新消息，确认前者为蓝紫、后者
+   报告 `chat-runtime=1.20`。分别观察小队与团队新消息，确认前者为蓝紫、后者
    为焦橙；再检查九职业和 DPSMate 报告色在暖黑纸面上可读、无描边／阴影／
    glow，且仍接近原版识别色。
 2. 再次执行 `/aeui status`，确认 `chat-color` 的 `c/x` 随可见新消息增长；

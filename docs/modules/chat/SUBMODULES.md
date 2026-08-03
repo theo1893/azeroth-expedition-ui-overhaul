@@ -26,7 +26,7 @@
 | `CHAT.FRAME.RIGHT` | `pfUI.chat.right`／`pfChatRight` | 明确停用的兼容对象；`C.chat.right.enable=0` | 强制隐藏，不分配 AEUI 资产；源码保留以便关闭 overhaul 后对照 |
 | `CHAT.TABS` | `pfUI.chat.left.panelTop`、左侧 `ChatFrameNTab`／`ChatFrameNTabText` | 连续承托带；普通／悬停／选中／禁用 Tab，各自三段式；运行时文字居中 | 普通布局事件后按需恢复共同几何；`pfChatLeft.OnMove` 中检测真实局部 Scale 边沿并立即强制重放一次，现有维护节拍只检测 EffectiveScale 边沿作为全局缩放兜底；登录后只做一次延迟终局装配；普通状态维护只换 UV |
 | `CHAT.UNREAD` | `ChatFrameNTabFlash` | 蜡封或布结显示／隐藏 | 独立覆盖，不参与 Tab 排列 |
-| `CHAT.INPUT` | `pfUI.chat.editbox`、`ChatFrameEditBox` | 普通／聚焦暖烟草抄写纸条，各自左／中／右；`CHAT.INPUT.DARK.V1.r3 attempt 4` 已作为 P4 透明源接受 | 两状态几何与 Alpha 完全相同；不烘焙输入文字；现行 V3 atlas 保持到新 source 完成确定性导出与 P5 接入 |
+| `CHAT.INPUT` | `pfUI.chat.editbox`、`ChatFrameEditBox` | 普通／聚焦暖烟草抄写纸条，各自左／中／右；`CHAT.INPUT.DARK.V1.r3 attempt 4` 已确定性导出为 `ChatInputDarkV1.tga`，runtime `1.20 / P5` | 两状态几何与 Alpha 完全相同；不烘焙输入文字；只替换三枚 slice 可见像素，真实 EditBox 行为保持；V3 atlas 保留到 P6-C |
 | `CHAT.INPUT.LANGUAGE` | 可选 `ChatFrameEditBoxLanguage` | 普通／悬停／按下／禁用／当前语言 | 独立 Button，不画进输入纸带 |
 | `CHAT.TEXT` | `ChatFrameN` | 无新增位图；pfUI 配置字体、无描边／无阴影、安全区、内边距、`3px` 行距；暖黑纸面使用熟悉的 Vanilla 明亮语义色，小队蓝紫与团队焦橙独立；基础目标约 `>=4.5:1` | 接管当前 Parent 为左书的全部正文最终显示参数，包括被 pfUI 启发式标为 `pfCombatLog` 的窗口；不改全局 `ChatTypeInfo`、ChatMOD／pfUI 配置、历史存储或链接载荷；未知色仅在低于 `4.8:1` 时向白色最小提升，已达标则逐字节保留；不生成连续压光、行卡片、气泡或逐行底色 |
 | `CHAT.SCROLL.UP` | `ChatFrameNUpButton` | 当前被 pfUI 隐藏 | 未来若恢复，必须独立四状态 |

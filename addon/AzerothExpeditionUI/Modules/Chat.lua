@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local Chat = {}
-Chat.runtimeContract = "1.19"
+Chat.runtimeContract = "1.20"
 
 local CHAT_MEDIA = addon.media.root .. "Chat\\"
 local BOOK_TEXTURE = CHAT_MEDIA .. "ChatBookFrameFullV1"
@@ -18,7 +18,7 @@ local BOOK_UV = {
 local TEXTURES = {
   tabs = CHAT_MEDIA .. "ChatTabAtlasV3",
   tabShelf = CHAT_MEDIA .. "ChatTabShelfV3",
-  input = CHAT_MEDIA .. "ChatInputAtlasV3",
+  input = CHAT_MEDIA .. "ChatInputDarkV1",
   unread = CHAT_MEDIA .. "ChatUnreadSealV3",
 }
 

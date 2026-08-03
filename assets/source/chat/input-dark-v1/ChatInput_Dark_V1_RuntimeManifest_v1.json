@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "module": "chat",
+  "batch": "CHAT.INPUT.DARK.V1",
+  "component": "CHAT.INPUT",
+  "accepted_version": "CHAT.INPUT.DARK.V1.r3 attempt 4",
+  "runtime_contract": "1.20",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "source": {
+    "file": "assets/source/chat/input-dark-v1/ChatInput_Dark_V1_r3.png",
+    "sha256": "4df36bc607a024ca0a2355f5d20ff985f61cbf3304073a65e33caa978c50cda0",
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      72,
+      198,
+      1416,
+      613
+    ],
+    "transparent_pixels": 1190188,
+    "partially_transparent_pixels": 16616,
+    "opaque_pixels": 366060,
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0
+  },
+  "deterministic_export": {
+    "operation": "crop the two accepted 1386x176 canonical cells; LANCZOS resample each to 1008x120; enforce per-pixel minimum shared Alpha; cap only impossible dominant-green resampling spill; clear fully transparent RGB; place in fixed 1024x256 rows; serialize RGBA TGA",
+    "foreign_source_pixels_mixed": false,
+    "redraw": false,
+    "text_or_behavior_baked": false,
+    "source_cells_xyxy": {
+      "normal": [
+        51,
+        187,
+        1437,
+        363
+      ],
+      "focus": [
+        51,
+        448,
+        1437,
+        624
+      ]
+    },
+    "atlas_state_boxes_xyxy": {
+      "normal": [
+        8,
+        4,
+        1016,
+        124
+      ],
+      "focus": [
+        8,
+        132,
+        1016,
+        252
+      ]
+    },
+    "atlas_x_pixels": [
+      8,
+      121,
+      932,
+      1016
+    ],
+    "normalized_x_uv": [
+      0.0078125,
+      0.1181640625,
+      0.91015625,
+      0.9921875
+    ],
+    "normalized_state_y_uv": {
+      "normal": [
+        0.0,
+        0.5
+      ],
+      "focus": [
+        0.5,
+        1.0
+      ]
+    },
+    "runtime_caps_lr": [
+      28,
+      20
+    ],
+    "runtime_height": 25,
+    "text_insets_lrtb": [
+      34,
+      22,
+      0,
+      0
+    ],
+    "supported_runtime_sizes": [
+      [
+        380,
+        25
+      ],
+      [
+        480,
+        25
+      ]
+    ],
+    "state_cleanup": {
+      "normal": {
+        "visible_green_pixels_capped": 119,
+        "transparent_rgb_values_cleared": 279,
+        "post_shared_transparent_rgb_values_cleared": 0,
+        "post_shared_visible_green_pixels_capped": 0
+      },
+      "focus": {
+        "visible_green_pixels_capped": 98,
+        "transparent_rgb_values_cleared": 285,
+        "post_shared_transparent_rgb_values_cleared": 0,
+        "post_shared_visible_green_pixels_capped": 0
+      }
+    },
+    "atlas_cleanup": {
+      "visible_green_pixels_capped": 0,
+      "transparent_rgb_values_cleared": 0
+    },
+    "pre_intersection_alpha_difference_pixels": 0,
+    "shared_alpha_bbox_local": [
+      13,
+      5,
+      995,
+      115
+    ],
+    "normal_focus_alpha_equal": true
+  },
+  "runtime_export": {
+    "file": "addon/AzerothExpeditionUI/Media/Chat/ChatInputDarkV1.tga",
+    "sha256": "43cb9a0173a2f0cf05b43bb01b13a7e2aa8853feb26d4f62ec7b399610f47666",
+    "width": 1024,
+    "height": 256,
+    "mode": "RGBA",
+    "logical_sampled_bbox": [
+      8,
+      4,
+      1016,
+      252
+    ],
+    "visible_bbox_exclusive": [
+      21,
+      9,
+      1003,
+      247
+    ],
+    "transparent_pixels": 68172,
+    "partially_transparent_pixels": 14878,
+    "opaque_pixels": 179094,
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0
+  },
+  "adapter": {
+    "file": "addon/AzerothExpeditionUI/Modules/Chat.lua",
+    "provider": [
+      "pfUI.chat.editbox",
+      "ChatFrameEditBox"
+    ],
+    "runtime_owner": "ChatFrameEditBox visual slices only",
+    "texture_instances": 3,
+    "state_rows": [
+      "normal",
+      "focus"
+    ],
+    "preserved_behavior": [
+      "focus and activation",
+      "caret and dynamic text",
+      "IME",
+      "channel header",
+      "AltArrowKey and input history",
+      "keyboard events and hit geometry"
+    ],
+    "fallback": "addon/AzerothExpeditionUI/Media/Chat/ChatInputAtlasV3.tga retained until P6-C"
+  },
+  "review_artifacts": {
+    "atlas_png": "generated/chat/core/CHAT.INPUT.DARK.V1/runtime-v1/ChatInputDarkV1_RuntimeAtlas.png",
+    "normal_380x25": "generated/chat/core/CHAT.INPUT.DARK.V1/runtime-v1/ChatInputDarkV1_normal_380x25.png",
+    "focus_380x25": "generated/chat/core/CHAT.INPUT.DARK.V1/runtime-v1/ChatInputDarkV1_focus_380x25.png",
+    "focus_480x25": "generated/chat/core/CHAT.INPUT.DARK.V1/runtime-v1/ChatInputDarkV1_focus_480x25.png",
+    "real_layout_spec": "tools/specs/chat_input_dark_runtime_preview_v1.json",
+    "display_region_contract": "tools/specs/chat_input_dark_runtime_display_region_v1.json"
+  },
+  "forbidden_runtime_uses": [
+    "do not load the accepted 1536x1024 source directly in game",
+    "do not stretch one whole state instead of the three horizontal slices",
+    "do not bake input text, headers, caret, IME or history into the atlas",
+    "do not alter ChatFrameEditBox scripts, keyboard behavior or SavedVariables",
+    "do not reuse this asset as frame, tab, unread, language or legacy panel art"
+  ]
+}

@@ -399,7 +399,7 @@ def main() -> None:
     assert "SuppressChatInfoPanels" in chat_source
     assert "panels.minimap" not in chat_source
     assert "SuppressRightChat" in chat_source
-    assert 'Chat.runtimeContract = "1.19"' in chat_source
+    assert 'Chat.runtimeContract = "1.20"' in chat_source
     assert "ChatBookFrameFullV1" in chat_source
     assert "EnsureBookVisible" in chat_source
     assert 'owner:EnableDrawLayer("BACKGROUND")' in chat_source
@@ -512,7 +512,7 @@ def main() -> None:
         "ChatBookFrameFullV1",
         "ChatTabAtlasV3",
         "ChatTabShelfV3",
-        "ChatInputAtlasV3",
+        "ChatInputDarkV1",
         "ChatUnreadSealV3",
     ):
         assert texture in chat_source, f"chat adapter does not mount {texture}"
@@ -561,8 +561,8 @@ def main() -> None:
     assert input_source_manifest["accepted_version"] == (
         "CHAT.INPUT.DARK.V1.r3 attempt 4"
     )
-    assert input_source_manifest["status"] == "accepted-source"
-    assert input_source_manifest["phase"] == "P4"
+    assert input_source_manifest["status"] == "runtime-exported"
+    assert input_source_manifest["phase"] == "P5"
     assert input_source_manifest["source"]["mode"] == "RGBA"
     assert input_source_manifest["source"]["shared_state_alpha"] is True
     assert input_source_manifest["source"]["canonical_state_cells_xyxy"] == {
@@ -591,19 +591,47 @@ def main() -> None:
         "unconsumed_calls_transferable": False,
     }
     assert input_source_manifest["runtime_export_contract"]["status"] == (
-        "not-exported"
+        "runtime-exported"
     )
-    assert input_source_manifest["runtime_export_contract"]["phase"] == "P4"
+    assert input_source_manifest["runtime_export_contract"]["phase"] == "P5"
+    assert input_source_manifest["runtime_export_contract"]["version"] == "1.20"
     assert input_source_manifest["runtime_export_contract"][
         "whole_source_runtime_allowed"
     ] is False
-    current_input_runtime = (
-        aeui / "Media" / "Chat" / "ChatInputAtlasV3.tga"
-    )
+    current_input_runtime = aeui / "Media" / "Chat" / "ChatInputDarkV1.tga"
     assert sha256(current_input_runtime) == input_source_manifest[
         "runtime_export_contract"
-    ]["current_runtime_fallback"]["sha256"]
-    assert "ChatInput_Dark_V1" not in chat_source
+    ]["runtime_atlas_sha256"]
+    assert (
+        aeui / "Media" / "Chat" / "ChatInputAtlasV3.tga"
+    ).is_file()
+    assert "ChatInputDarkV1" in chat_source
+
+    input_runtime_manifest = json.loads(
+        (
+            input_source_dir / "ChatInput_Dark_V1_RuntimeManifest_v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert input_runtime_manifest["runtime_contract"] == "1.20"
+    assert input_runtime_manifest["status"] == "runtime-exported"
+    assert input_runtime_manifest["phase"] == "P5"
+    assert input_runtime_manifest["source"]["sha256"] == sha256(input_source)
+    assert input_runtime_manifest["runtime_export"]["sha256"] == sha256(
+        current_input_runtime
+    )
+    assert input_runtime_manifest["runtime_export"][
+        "visible_green_spill_pixels"
+    ] == 0
+    assert input_runtime_manifest["runtime_export"][
+        "transparent_rgb_nonzero_values"
+    ] == 0
+    assert input_runtime_manifest["deterministic_export"][
+        "normal_focus_alpha_equal"
+    ] is True
+    assert input_runtime_manifest["deterministic_export"][
+        "atlas_x_pixels"
+    ] == [8, 121, 932, 1016]
+    assert input_runtime_manifest["adapter"]["texture_instances"] == 3
 
     manifest_path = (
         ROOT
