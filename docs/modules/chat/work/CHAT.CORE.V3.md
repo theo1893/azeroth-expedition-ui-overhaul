@@ -38,7 +38,10 @@
   额外启动一个固定 `npx @openai/codex@0.143.0` 子进程。attempt 2 已实际生成
   `2/5`：完整书体、暖黑纤维纸、页叠、皮革与黄铜形成连续物件；provider 将
   透明区画成 RGB 棋盘，但只使用本候选自身像素的确定性 Alpha 清理已恢复真
-  透明。`440 × 320` 空／最小／15 行／16 行和 `540 × 420` 扩展五场景均通过，
+  透明。`2026-08-03` macOS 复核又移除了首版透明审查副本中仅存在于
+  `alpha=1..26` 外沿的 `95` 个绿键 RGB 残留；Alpha 与不透明像素均未改变，
+  最终纯绿／高绿可见像素为 `0/0`。`440 × 320` 空／最小／15 行／16 行和
+  `540 × 420` 扩展五场景均通过，
   当前状态为 `candidate-reviewed / awaiting-user-review`；source、正式 TGA、
   Lua 与 runtime 均未改变
 - 锁定视觉基准：
@@ -705,7 +708,7 @@ runtime text and controls are absent; and that the exterior is truly transparent
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
 | 1/5 | `CHAT.FRAME.FULL.V1` / `aa39bd1` | edit | session `019fc246-3bd9-7730-b57a-74a8fe4c7e71`；provider result `ig_0bc4514bd99f52a9016a6f2cb1e2cc819190420510b3116e61` | provider raw `6686274e00358207f98573b7c0bb6c9819394a959d0be662fa39e386ac8f4cdc`；去键 RGBA `f454efa1e9409d40c9f1eafcae84abff05ed72f04975c9f44252e915d728d98b` | 纸／皮身份区分：中央阅读面是规则压纹皮革，不是暖黑纤维纸 | 保留“单一完整连续书体、无烘焙控件”的方向；`.r1` 只强化纸张身份。唯一获准子进程已退出，等待新的执行机制授权 | `candidate-rejected` |
-| 2/5 | `CHAT.FRAME.FULL.V1.r1` / `31d35c8` | edit | session `019fc27e-f6fb-7d90-ac30-5fbdfef99c11`；provider result `ig_0008a6d335a216a8016a6f3b35b41481919d0752e2d83926a4` | provider raw `8275b815b19677fda2fe242b79a06557af90032e570841236cab41ec429917b5`；确定性透明 RGBA `23981aca770e93335efc5df3e917a9b220fe800b08e9142a4d4579415a6af741` | 无；provider 棋盘背景属于已允许的纯候选技术清理项，清理后全部候选门禁通过 | 保留整张 attempt 2 候选；停止自主循环并提交用户复审，不消费剩余三次 | `candidate-reviewed` |
+| 2/5 | `CHAT.FRAME.FULL.V1.r1` / `31d35c8` | edit | session `019fc27e-f6fb-7d90-ac30-5fbdfef99c11`；provider result `ig_0008a6d335a216a8016a6f3b35b41481919d0752e2d83926a4` | provider raw `8275b815b19677fda2fe242b79a06557af90032e570841236cab41ec429917b5`；最终确定性透明 RGBA `a97d9c5fa055a119cd5ea7809bdaa51460cddb9674355efcec35f98f6cd2c673` | 无；provider 棋盘背景属于已允许的纯候选技术清理项，复核后可见纯绿／高绿均为 `0`，全部候选门禁通过 | 保留整张 attempt 2 候选；停止自主循环并提交用户复审，不消费剩余三次 | `candidate-reviewed` |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
@@ -885,16 +888,23 @@ runtime text and controls are absent; and that the exterior is truly transparent
   字节一致。
 - 透明技术清理：
   [`extract_chat_full_frame_candidate_v1.py`](../../../../tools/extract_chat_full_frame_candidate_v1.py)，
-  SHA-256 `ff762fcbdd64a69e83aee033dc26af4d40b3f22ac51b9b22173cb371497fc9a5`，
+  SHA-256 `24c19cc6ec7bc63b3fecd0ac4a7ba4b7f8e787f449ac6410fc7bd00b69cec7ae`，
   只读取 attempt 2 raw；不读取旧 source、旧 mask 或其他候选。它保留中心连通
   书体、填充物件内部中性高光、从候选自身邻域恢复软边颜色，并将完整物件无
-  裁切地等比缩放至 `0.975` 后放到 `1608 × 978` 透明画布。输出
+  裁切地等比缩放至 `0.975` 后放到 `1608 × 978` 透明画布；缩放后只对仍呈
+  绿键优势的可见低 Alpha 外沿像素使用候选自身邻域颜色做确定性替换。输出
   `generated/chat/core/CHAT.FRAME.FULL.V1/attempt-02/review/ChatBookFrame_Full_V1_r1_attempt02.transparent.png`，
-  SHA-256 `23981aca770e93335efc5df3e917a9b220fe800b08e9142a4d4579415a6af741`；
+  SHA-256 `a97d9c5fa055a119cd5ea7809bdaa51460cddb9674355efcec35f98f6cd2c673`；
   RGBA 可见 bbox `[24,25,1584,952]`，四边透明留白
   `24/25/24/26px`，opaque／partial／transparent 为
-  `1,325,523 / 23,952 / 223,149`。棋盘、外部投影、白边和绿色残留均未进入
-  可见像素；蓝色对照底合成未见 Alpha 光晕，满足每边至少 `24px` 合同。
+  `1,325,523 / 23,952 / 223,149`。首次 macOS `inspect_candidate.py`
+  独立复核发现旧审查副本仍有 `28` 个纯绿与 `95` 个启发式高绿可见像素，
+  全部位于 `alpha=1..26` 的物件外沿。修订工具仅替换这 `95` 个像素的 RGB；
+  Alpha 变化像素 `0`、不透明 RGB 变化像素 `0`，最终纯绿／高绿为 `0/0`。
+  指标 SHA-256 为
+  `2cbd326ec518d772d72e6527281caebd977f4d224cc8c5020b4557bc81e36352`；
+  蓝色对照底合成未见 Alpha 光晕，满足每边至少 `24px` 合同。该修订没有
+  ImageGen、上传、新 provider result、旧 source 像素或额外生图计数。
 - 门禁 1／对象身份：通过。恰为一张完整横向战地旧书；正视、单状态、空内容，
   外轮廓由左侧卷脊、非镜像磨损、右侧系绳和右下黄铜修补形成自然凌乱度。
 - 门禁 2／禁止烘焙内容：通过。无 Tab、文字、按钮、输入、未读、滚动条、
@@ -917,7 +927,9 @@ runtime text and controls are absent; and that the exterior is truly transparent
   预演只叠加已接受 V3 Tab 与动态代表文字，不把它们写入候选。
 - 真实排版输出：
   `generated/chat/core/CHAT.FRAME.FULL.V1/attempt-02/review/ChatFullFrame_candidate_real_layout_v1.png`，
-  SHA-256 `ebafc9daa5be97f5202e35f0b45520ecc06adcb35f5bae58546c4f282cf4caf0`；
+  SHA-256 `3181c94b1dfa2288f45427ae60758bfef389a1f8dc9f45da432bd58ab6699b2d`；
+  metrics SHA-256
+  `4fd7c2bf4f4d647721901786c2976822c9774fb7c3913748a56558c088b9d46f`；
   空内容 `0` 行、最小内容 `1` 行、典型 `15/15` 行、最大 `16/16` 行、
   `540 × 420` 扩展 `22/22` 行均无截断，末基线分别为
   `42/42/252/267/357`，对应正文底边为 `280/280/280/280/380`。九宫格在
@@ -927,9 +939,16 @@ runtime text and controls are absent; and that the exterior is truly transparent
   SHA-256 `00010e8b80412d17c01fc2ddff6fc565789c9707b2c7b913953c095f429505c0`；
   报告
   `generated/chat/core/CHAT.FRAME.FULL.V1/attempt-02/review/CHAT.FRAME.FULL.V1.r1-attempt02.display-region-report.json`，
-  SHA-256 `f7bbc7f1eab5a0dc086addca79329335a15db7459886057810e167a91c05abea`。
+  SHA-256 `cc4561e63fca73ccb9423dcad4dd82f0bffaf24165c8aa0fd70e1cf888b5dbc3`。
   empty、minimum、15 行 typical、16 行 maximum 和 expanded 五场景全部
   `pass`，violations `0`，first failure `null`。
+- `2026-08-03` 本机复核环境：`Darwin`，Python
+  `/Users/yuanshiyao/miniconda3/envs/py312/bin/python`，`3.12.12`。候选提取
+  确定性复跑、`inspect_candidate.py`、五场景 display-region、两个目标工具
+  `py_compile`、asset workflow／repository／quest design contract、Chat／
+  pfUI／Quest Lua smoke 与 `git diff --check` 全部通过。三条 Lua smoke 首次
+  调用遗漏必需的仓库根参数而退出，补为 `lua <test> .` 后全部通过；这是测试
+  调用错误，不是 ImageGen 流程错误，也不改变 `2/5` 计数。
 - 结论：`candidate-reviewed / P3 / awaiting-user-review`。自主循环在实际
   ImageGen `2/5` 处停止，剩余 `3` 次不消费。候选未晋级 source、正式 TGA、
   Lua 或 runtime；现有 V3 和 v1.18 继续保持。

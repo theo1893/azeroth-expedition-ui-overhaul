@@ -150,6 +150,84 @@ def decontaminated_rgba(
     return Image.fromarray(rgba, "RGBA")
 
 
+def visible_green_spill(image: Image.Image) -> dict[str, int]:
+    """Count visible chroma-key pixels and strongly green edge contamination."""
+    values = np.asarray(image.convert("RGBA"), dtype=np.int16)
+    visible = values[:, :, 3] > 0
+    exact_key = (
+        visible
+        & (values[:, :, 0] <= 4)
+        & (values[:, :, 1] >= 251)
+        & (values[:, :, 2] <= 4)
+    )
+    green_dominant = (
+        visible
+        & (values[:, :, 1] >= 128)
+        & (values[:, :, 1] >= values[:, :, 0] + 32)
+        & (values[:, :, 1] >= values[:, :, 2] + 32)
+    )
+    return {
+        "exact_00ff00": int(np.count_nonzero(exact_key)),
+        "heuristic_green_dominant": int(np.count_nonzero(green_dominant)),
+    }
+
+
+def replace_visible_green_fringe(
+    image: Image.Image,
+    radius: float = 2.0,
+) -> tuple[Image.Image, int]:
+    """Replace only visible key-green fringe RGB with nearby candidate RGB."""
+    values = np.asarray(image.convert("RGBA"), dtype=np.float32)
+    alpha = values[:, :, 3]
+    visible = alpha > 0
+    contaminated = (
+        visible
+        & (values[:, :, 1] >= 128)
+        & (values[:, :, 1] >= values[:, :, 0] + 32)
+        & (values[:, :, 1] >= values[:, :, 2] + 32)
+    )
+    contaminated_count = int(np.count_nonzero(contaminated))
+    if contaminated_count == 0:
+        return image.convert("RGBA"), 0
+
+    safe_weight = np.where(
+        visible & ~contaminated, alpha / 255.0, 0.0
+    ).astype(np.float32)
+    weight_image = Image.fromarray(
+        np.clip(np.rint(safe_weight * 255.0), 0, 255).astype(np.uint8), "L"
+    )
+    blurred_weight = (
+        np.asarray(
+            weight_image.filter(ImageFilter.GaussianBlur(radius)),
+            dtype=np.float32,
+        )
+        / 255.0
+    )
+    if np.any(blurred_weight[contaminated] <= 0.0):
+        raise RuntimeError("green fringe has no nearby uncontaminated candidate color")
+
+    replacement = np.empty_like(values[:, :, :3])
+    for channel in range(3):
+        weighted_channel = values[:, :, channel] * safe_weight
+        blurred_channel = np.asarray(
+            Image.fromarray(
+                np.clip(np.rint(weighted_channel), 0, 255).astype(np.uint8), "L"
+            ).filter(ImageFilter.GaussianBlur(radius)),
+            dtype=np.float32,
+        )
+        replacement[:, :, channel] = blurred_channel / np.maximum(
+            blurred_weight, 1.0 / 65535.0
+        )
+
+    cleaned = values.copy()
+    cleaned[:, :, :3][contaminated] = replacement[contaminated]
+    cleaned[:, :, :3][alpha == 0] = 0
+    return (
+        Image.fromarray(np.clip(np.rint(cleaned), 0, 255).astype(np.uint8), "RGBA"),
+        contaminated_count,
+    )
+
+
 def normalize_whole_object(
     candidate: Image.Image,
     canvas_size: tuple[int, int],
@@ -207,6 +285,10 @@ def main() -> None:
         args.edge_color_inset,
     )
     normalized, placement = normalize_whole_object(candidate, args.canvas, args.margin)
+    normalized, repaired_green_fringe_pixels = replace_visible_green_fringe(normalized)
+    green_spill = visible_green_spill(normalized)
+    if any(green_spill.values()):
+        raise RuntimeError(f"visible chroma-key spill remains: {green_spill}")
     normalized.save(args.output, format="PNG", optimize=False, compress_level=9)
     if args.debug_mask:
         hard_mask.save(args.debug_mask, format="PNG", optimize=False, compress_level=9)
@@ -229,6 +311,8 @@ def main() -> None:
             "opaque_pixels": int(np.count_nonzero(alpha == 255)),
             "partial_pixels": int(np.count_nonzero((alpha > 0) & (alpha < 255))),
             "transparent_pixels": int(np.count_nonzero(alpha == 0)),
+            "visible_green_spill": green_spill,
+            "repaired_green_fringe_pixels": repaired_green_fringe_pixels,
         },
         "parameters": {
             "canvas": list(args.canvas),

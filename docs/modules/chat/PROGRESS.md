@@ -42,8 +42,12 @@
   完整书体、整体材料连续性、禁止烘焙内容和暖黑纤维纸／皮革身份全部通过。
   provider 烘焙的 RGB 棋盘背景已仅用该候选自身像素做确定性透明清理；
   `1608 × 978 RGBA` 审查副本 SHA-256 为
-  `23981aca770e93335efc5df3e917a9b220fe800b08e9142a4d4579415a6af741`，
-  四边透明留白为 `24/25/24/26px`。
+  `a97d9c5fa055a119cd5ea7809bdaa51460cddb9674355efcec35f98f6cd2c673`，
+  四边透明留白为 `24/25/24/26px`。`2026-08-03` macOS 复核发现旧审查
+  副本外沿仍有 `95` 个 `alpha=1..26` 的绿键优势 RGB 像素；确定性工具只用
+  候选自身邻域替换这 `95` 个 RGB，Alpha 与不透明像素均未改变，最终
+  `inspect_candidate.py` 的纯绿／高绿计数为 `0/0`，不涉及 ImageGen、上传、
+  source 或 runtime。
   `440 × 320` 空／最小／15 行／16 行及 `540 × 420` 22 行扩展场景均无截断，
   display-region 五场景 violations `0`。状态为
   `candidate-reviewed / awaiting-user-review / P3`，剩余 `3` 次已停止消费；
