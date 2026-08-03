@@ -4,8 +4,8 @@
   "batch": "CHAT.FRAME.FULL.V1",
   "component": "CHAT.FRAME",
   "accepted_version": "CHAT.FRAME.FULL.V1.r1 attempt 2",
-  "status": "accepted-source",
-  "phase": "P4",
+  "status": "runtime-exported",
+  "phase": "P5",
   "accepted_on": "2026-08-03",
   "source": {
     "file": "ChatBookFrame_Full_V1_r1.png",
@@ -84,14 +84,14 @@
   "logical_components": [
     {
       "id": "CHAT.FRAME",
-      "state": "static",
+      "state": "runtime-exported",
       "runtime_owner": "pfUI.chat.left / pfChatLeft",
       "runtime_instances": 1,
       "content": "one complete empty battlefield old-book frame"
     },
     {
       "id": "CHAT.FRAME.LEFT",
-      "state": "accepted replacement source pending export",
+      "state": "active runtime replacement",
       "runtime_owner": "pfUI.chat.left / pfChatLeft"
     },
     {
@@ -119,9 +119,48 @@
     "violations": 0,
     "first_failure": null
   },
+  "runtime_export_evidence": {
+    "exporter": "tools/build_chat_full_frame_v1_runtime.py",
+    "exporter_sha256": "1011f787af1da38b0ff16376ccafb9bc84f7e8c6c0a2e8dd99164aa1f27f9b53",
+    "renderer": "tools/render_chat_full_frame_runtime_v1.py",
+    "renderer_sha256": "abe395285820de4e8fa20fc5372bdae70672dbeafdda5785617a23835573d795",
+    "runtime_manifest": "ChatBookFrame_Full_V1_RuntimeManifest_v1.json",
+    "runtime_manifest_sha256": "29b0a01233036f9efd6800b8f2735c5c0e9977ec6bb725bc3a08c89dc33af321",
+    "runtime_atlas": "addon/AzerothExpeditionUI/Media/Chat/ChatBookFrameFullV1.tga",
+    "runtime_atlas_sha256": "becb504fb482cb37c0824e9b8705b4ad76d890a5cac024e83a3cce81517025ae",
+    "real_layout_preview": "generated/chat/core/CHAT.FRAME.FULL.V1/runtime-v1/ChatFullFrame_runtime_real_layout_v1.png",
+    "real_layout_preview_sha256": "45af5115e4db28759c604841708a58b4947fa47de23a6c912af04ac5222bebe1",
+    "real_layout_metrics": "generated/chat/core/CHAT.FRAME.FULL.V1/runtime-v1/ChatFullFrame_runtime_real_layout_v1.metrics.json",
+    "real_layout_metrics_sha256": "2a4a95eb5abd68ac62b75c1a43652449b96aca9dceb320cda4c80ef280b323a8",
+    "display_region_contract": "tools/specs/chat_full_frame_runtime_display_region_v1.json",
+    "display_region_contract_sha256": "adb11676fb9b53014757ba509a51e1d402e68a93a00c85d6407cae3c66a0d5e4",
+    "display_region_report": "generated/chat/core/CHAT.FRAME.FULL.V1/runtime-v1/ChatFullFrame_runtime_display-region-report.json",
+    "display_region_report_sha256": "8bd7c8680da4ff39b88677a8b4476f6bc0a37b5e7c8da4b9f5ccd03340830dc8",
+    "scenarios": 5,
+    "violations": 0,
+    "low_alpha_ringing_cleanup": {
+      "rgb_only": true,
+      "alpha_unchanged": true,
+      "cleared_pixel_count": 50,
+      "highest_affected_alpha": 13,
+      "runtime_visible_green_spill_pixels": 0
+    }
+  },
+  "runtime_transition": {
+    "instruction": "继续",
+    "date": "2026-08-03",
+    "scope": "deterministic P4-to-P5 export, adapter integration, final-runtime layout review and static validation",
+    "imagegen_calls": 0,
+    "not_claimed": [
+      "Turtle WoW target-client validation",
+      "P6",
+      "P6-C cleanup"
+    ]
+  },
   "runtime_contract": {
-    "status": "pending-export",
-    "phase": "P4",
+    "status": "runtime-exported",
+    "phase": "P5",
+    "version": "1.19",
     "base_frame_ui_px": [
       440,
       320
@@ -142,11 +181,23 @@
       30,
       28
     ],
-    "exporter": null,
-    "runtime_manifest": null,
-    "crop_uv_status": "pending",
+    "exporter": "tools/build_chat_full_frame_v1_runtime.py",
+    "runtime_manifest": "assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_RuntimeManifest_v1.json",
+    "runtime_atlas": "addon/AzerothExpeditionUI/Media/Chat/ChatBookFrameFullV1.tga",
+    "runtime_atlas_sha256": "becb504fb482cb37c0824e9b8705b4ad76d890a5cac024e83a3cce81517025ae",
+    "crop_uv_status": "defined-and-validated",
+    "normalized_uv": {
+      "left": 0.1337890625,
+      "right": 0.923828125,
+      "top": 0.0625,
+      "bottom_inner": 0.53515625,
+      "content_bottom": 0.6083984375
+    },
     "whole_source_runtime_allowed": false,
-    "next_gate": "define and test the deterministic normalization, crop, nine-slice or atlas contract, then re-run display-region checks on the final runtime artifact before P5"
+    "display_region_status": "pass / 5 scenarios / 0 violations",
+    "right_frame_instances": 0,
+    "fallback_runtime": "addon/AzerothExpeditionUI/Media/Chat/ChatBookFrameV3.tga retained until P6-C",
+    "next_gate": "Turtle WoW 1.18.1 /reload validation before P6"
   },
   "forbidden_runtime_uses": [
     "do not load the 1608x978 source master directly in Turtle WoW",
@@ -155,6 +206,6 @@
     "do not recreate guild, bag, latency, time, gold or other legacy information panels",
     "do not instantiate or allocate art to a right-side chat frame",
     "do not mix pixels from the previous V3 frame or rejected paper donor into the runtime export",
-    "do not claim P5 or P6 before deterministic export, final display-region validation and target-client validation"
+    "do not claim P6 before Turtle WoW 1.18.1 target-client validation"
   ]
 }

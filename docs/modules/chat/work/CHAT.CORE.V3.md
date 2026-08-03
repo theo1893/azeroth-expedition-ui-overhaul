@@ -5,28 +5,25 @@
 - 模块：Chat
 - 组件 ID：`CHAT.FRAME`、`CHAT.FRAME.LEFT`、`CHAT.TABS`、`CHAT.INPUT`、
   `CHAT.UNREAD`、`CHAT.TEXT`
-- 版本：`CHAT.CORE.V3 / runtime contract v1.18`
-- 子状态：`runtime-corrected`
+- 版本：`CHAT.CORE.V3 / runtime contract v1.19`
+- 子状态：`runtime-exported`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 当前操作：保留 v1.15 的左书 Parent 唯一作用域、v1.14 的三层最终输出桥、
-  v1.11 的旧字体与无描边／阴影、`3px` 行距、压光层退役和书本自愈；根据
-  v1.17 实机“部分插件色过亮、团队与小队同色、职业／频道偏离原版识别色”
-  反馈，取消任意 RGB 距离优先策略，改用 Vanilla 原色相的等比例深墨版本，
-  单独拆分小队与团队，并为未知第三方亮色增加保留色相的连续压暗；
-  本版本直接修改 runtime，不经过 Figma，未生图、未修改已接受 source 或 atlas
-  像素，也未修改外部 ChatMOD 文件／配置
-- 并行候选视觉方向：`CHAT-DARK-SIM-V1 / simulation-confirmed / P2`；用户已
-  选择 B（`#18120D` 暖黑纸面＋接近 Vanilla 的识别色）。当前只固定
-  可见方向与生产边界；v1.18 runtime、已接受 source、正式 TGA 与稳定
-  美术基线仍保持不变
+- 当前操作：固定 P4 source 已按全图比例确定性导出到 `1024²`
+  `ChatBookFrameFullV1.tga`，通过九个 slice 接管唯一左框；V3 Tab、承托带、
+  输入和未读继续复用。保留左书 Parent 唯一颜色作用域、三层最终输出桥、
+  pfUI 配置字体、无描边／阴影、`3px` 行距、压光层退役与书本自愈；暖黑纸面
+  使用熟悉的 Vanilla 语义色，未知低对比色只向白色做达到 `4.8:1` 所需的
+  最小提升。该 P4→P5 阶段 ImageGen `0` 次，不修改外部 ChatMOD 功能／配置
+- 已凝结视觉方向：`CHAT-DARK-SIM-V1 / simulation-confirmed / P2` 的 B 方向
+  已由 `CHAT.FRAME.FULL.V1.r1 / runtime-exported / P5` 实现；不再作为并行候选
 - 已退回生产批次：`CHAT.FRAME.PAPER.V1 / candidate-rejected / P3`；固定
   `@openai/codex@0.143.0` 子进程按授权实际执行 `1/5`，生成前流程错误 `1`。
   attempt 1 的对象、技术、装配、排版与展示区域虽通过内部审查，但用户于
   `2026-08-02` 明确指出暖黑 donor 与未重绘的金色页边／皮革之间仍像拼接；
   首个失败门禁为材料连续性／整体物件身份，剩余 `4` 次不转移给新合同，
   候选未晋级 source、正式 TGA 或 Lua
-- 新并行接受源：`CHAT.FRAME.FULL.V1.r1 / source-accepted / attempt-02 / P4`；改为让固定
+- 接受并已导出的源：`CHAT.FRAME.FULL.V1.r1 / runtime-exported / attempt-02 / P5`；改为让固定
   V3 母版只承担结构比例参考，并让 ImageGen 在一次完整 edit 中重绘所有可见
   书体像素。纸面、页叠、皮革、黄铜、接触阴影、磨损和暖光共同生成，不再用
   donor／旧母版 mask 进行视觉拼接；Tab、文字、输入与未读仍是独立 runtime
@@ -43,8 +40,8 @@
   最终纯绿／高绿可见像素为 `0/0`。`440 × 320` 空／最小／15 行／16 行和
   `540 × 420` 扩展五场景均通过。用户于 `2026-08-03` 明确接受
   `CHAT.FRAME.FULL.V1.r1 attempt 2` 进入 `P4`；精确透明候选已复制为 tracked
-  source 并建立 provenance manifest。正式 TGA、Lua 与 runtime 均未改变，
-  剩余 `3` 次 ImageGen 永久停止消费且不转移
+  source 并建立 provenance manifest。后续 deterministic exporter 已生成并
+  接入正式 TGA；剩余 `3` 次 ImageGen 永久停止消费且不转移
 - 锁定视觉基准：
   - [`聊天框视觉基准_v1.png`](../../../../assets/locked/chat/聊天框视觉基准_v1.png)
     — 游戏内物件身份、紧凑尺度和香草 HUD 综合色感
@@ -956,9 +953,9 @@ runtime text and controls are absent; and that the exterior is truly transparent
   pfUI／Quest Lua smoke 与 `git diff --check` 全部通过。三条 Lua smoke 首次
   调用遗漏必需的仓库根参数而退出，补为 `lua <test> .` 后全部通过；这是测试
   调用错误，不是 ImageGen 流程错误，也不改变 `2/5` 计数。
-- 结论：本节内审终态为 `candidate-reviewed / P3`。自主循环在实际 ImageGen
-  `2/5` 处停止；用户随后于 `2026-08-03` 接受精确候选进入 `P4`。现有 V3
-  正式 TGA、Lua 和 v1.18 runtime 继续保持。
+- 历史结论：该次内审终态为 `candidate-reviewed / P3`。自主循环在实际
+  ImageGen `2/5` 处停止；用户随后于 `2026-08-03` 接受精确候选进入 `P4`。
+  接受当时 V3 正式 TGA、Lua 和 v1.18 runtime 保持不变；后续 P5 导出见下节。
 
 ### `CHAT.FRAME.FULL.V1.r1` 用户接受记录
 
@@ -974,6 +971,36 @@ runtime text and controls are absent; and that the exterior is truly transparent
   `P5` 或 Turtle WoW 实机结论。
 - 下一门禁：建立确定性归一／裁切／九宫格或 atlas 合同，以最终 runtime 产物
   复跑真实展示区域门禁并通过静态测试后，才可进入 `P5`。
+
+### `CHAT.FRAME.FULL.V1.r1` P4→P5 导出记录
+
+- 后续指令：用户于 `2026-08-03` 要求“继续”；范围只覆盖确定性 export、
+  adapter 接入、最终 runtime 预演与静态验证，不包含 ImageGen、P6 或推送。
+- exporter：
+  [`build_chat_full_frame_v1_runtime.py`](../../../../tools/build_chat_full_frame_v1_runtime.py)，
+  SHA-256 `1011f787af1da38b0ff16376ccafb9bc84f7e8c6c0a2e8dd99164aa1f27f9b53`。
+  固定 source 全图按比例缩到 `1024 × 623` 并置于透明 `1024²` atlas；九宫格
+  切线为 `137/64/946/548/623`，runtime cap 为 `30/28/30/28px`。
+- Lanczos 在轮廓产生的 `50` 个 dominant-green 低 Alpha 振铃像素只清零 RGB；
+  最高 Alpha `13/255`，Alpha、主体像素和轮廓不变。最终纯绿／高绿计数 `0/0`。
+- 正式 TGA：
+  `addon/AzerothExpeditionUI/Media/Chat/ChatBookFrameFullV1.tga`，`1024² RGBA`，
+  SHA-256 `becb504fb482cb37c0824e9b8705b4ad76d890a5cac024e83a3cce81517025ae`；
+  [runtime manifest](../../../../assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_RuntimeManifest_v1.json)
+  固定 contract `1.19`。旧 `ChatBookFrameV3.tga` 只作 P6-C 前回退。
+- adapter：九个 texture slice 只挂 `pfUI.chat.left`；右框实例为 `0`。现有 V3
+  Tab、shelf、input、unread 不变。暖黑阅读区代理色为 `#30241B`；基础色保留
+  Vanilla 身份，未知内嵌色只在低于 `4.8:1` 时做最小提亮，消息和链接载荷不变。
+- 最终证据：
+  [`ChatFullFrame_runtime_real_layout_v1.png`](../../../../generated/chat/core/CHAT.FRAME.FULL.V1/runtime-v1/ChatFullFrame_runtime_real_layout_v1.png)
+  SHA-256 `45af5115e4db28759c604841708a58b4947fa47de23a6c912af04ac5222bebe1`；
+  `440 × 320` 空／最小／15 行／16 行和 `540 × 420` 22 行共五场景均通过，
+  display-region report SHA-256
+  `8bd7c8680da4ff39b88677a8b4476f6bc0a37b5e7c8da4b9f5ccd03340830dc8`，
+  violations `0`。
+- 静态门禁：exporter 重建一致性、Lua 语法、Chat smoke、repository contract
+  均通过；项目状态 `runtime-exported / P5`。下一门禁仅为 Turtle WoW `1.18.1`
+  `/reload` P6，当前不得清理 source、证据或 V3 回退。
 
 ## 最终执行正文
 
@@ -1536,12 +1563,11 @@ python3 tools/build_chat_v3_runtime_assets.py
   `m2/h3/f3/c30/x5` 证明可见 Frame 被 `pfCombatLog` 启发式排除，未通过
   颜色运行时门禁。v1.15 修复作用域后已进入实机颜色审查，但因频道／职业
   区分度不足被用户退回。v1.16 也因战士／牧师发灰和频道扫读不足被用户退回；
-  v1.18 位于仓库工作树并取代已被实机退回的 v1.17。测试客户端的
-  `Interface\AddOns\AzerothExpeditionUI` 是指向该目录的 Junction，无需
-  复制第二份文件。当前游戏会话仍必须 `/reload` 或重启，并以
-  `/aeui status` 的 `chat-runtime=1.18` 与 `chat-color` 计数为加载证据；
-  当前三帧布局预期 `m3/h3/f3`，且 `c/x` 随可见新消息增长。主客户端同样
-  通过 Junction 指向当前仓库；尚无 v1.18 实机通过结论。
+  v1.18 随后取代已被实机退回的 v1.17；该结论现已由 Full V1 contract
+  v1.19 取代。下一次具备游戏设备时必须让实际 AddOn 目录加载当前仓库并
+  `/reload`，以 `/aeui status` 的 `chat-runtime=1.19` 与 `chat-color` 计数为
+  加载证据；当前三帧布局预期 `m3/h3/f3`，且 `c/x` 随可见新消息增长。
+  尚无 v1.19 实机通过结论。
 
 ## 审查记录
 
@@ -1637,7 +1663,7 @@ python3 tools/build_chat_v3_runtime_assets.py
 
 | 版本 | 执行／审查证据 | 结论 | 下一门禁 |
 |---|---|---|---|
-| `CHAT.FRAME.FULL.V1.r1` attempt 2 | 固定 session／result、精确 source SHA、五场景真实排版与 display-region 报告、source manifest | `source-accepted / P4`；实际 ImageGen `2/5`，余量终止 | 确定性 runtime 导出合同与最终产物展示区域复核；不得直接加载完整 source |
+| `CHAT.FRAME.FULL.V1.r1` attempt 2 | 固定 session／result、精确 source SHA、最终 TGA、五场景真实排版与 display-region 报告、source／runtime manifests | `runtime-exported / P5`；实际 ImageGen 仍为 `2/5`，导出阶段 `0` 次，余量终止 | Turtle WoW 实机 P6；不得直接加载完整 source |
 | V3 runtime contract v1 | source／runtime manifests、五张 TGA、Lua 与 tests | `runtime-exported / P5` | Turtle WoW 实机验证 |
 | V3 runtime contract v1.1 | exporter 重放；事件后 Tab 重排与受管 Region 静态测试 | 未获得有效独立实机加载，已由 v1.2 取代 | 改为紧凑纵向合同 |
 | V3 runtime contract v1.2 | 用户否决原始 `42px`；`30px` Tab、`16px` 承托带、`32px` 正文上沿；目标目录哈希核验；有效游戏加载 | 点击后几何正确；启动时序、选中文字和命中范围失败，保持 `P5` | 修正初始化、对比度与命中区 |
@@ -1657,3 +1683,4 @@ python3 tools/build_chat_v3_runtime_assets.py
 | V3 runtime contract v1.16 | 七类基础语义互异；时间戳独立深青；九职业一对一；代表纸色上约 `4.5:1` 静态对比；有效实机反馈 | 战士／牧师仍发灰且频道扫读不足；`runtime-failed / P5` | 增加最近色距离门禁并按色相优先重排 |
 | V3 runtime contract v1.17 | 七类基础与九职业按色相优先重排；战士铁锈红／牧师中性灰；RGB 最近距离 `>=35`；代表纸色对比 `>=4.5:1` | `runtime-corrected / P5`，完整静态测试通过 | `/reload` 确认 `chat-runtime=1.17`，重点比较战士／牧师及世界／系统／警告 |
 | V3 runtime contract v1.18 | Vanilla 原色相等比例深墨；团队焦橙／小队蓝紫分色；DPSMate 与未知亮色保色相压暗；多层桥终态幂等；链接载荷不变 | `runtime-corrected / P5`，完整静态回归通过 | `/reload` 确认 `chat-runtime=1.18`，重点比较团队／小队、职业原色识别与 DPSMate 红绿报告 |
+| Full V1 runtime contract v1.19 | 新暖黑主框九宫格；V3 交互邻件；Vanilla 暖黑纸面色板；低对比色最小提亮；五场景最终 TGA 门禁 | `runtime-exported / P5`，静态回归与 display-region 通过 | `/reload` 确认 `chat-runtime=1.19`、书框、频道／职业色、输入、Tab、缩放与右框消息回收 |

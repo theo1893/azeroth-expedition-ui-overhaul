@@ -8,7 +8,7 @@
 | 来源 | 真实对象／职责 | 项目处理 |
 |---|---|---|
 | [`modules/chat.lua`](../../../addon/pfUI/modules/chat.lua) | `pfUI.chat.left/right`、`panelTop`、`ChatFrameN`、`ChatFrameNTab`、`pfUI.chat.editbox`、`ChatFrameEditBox`；聊天事件、停靠、滚动、历史、输入 | 只保留左侧主聊天书；右侧容器隐藏，其拾取／经验／荣誉／技能消息组回收到 `ChatFrame1`；在 pfUI 完成解析和历史存储后、调用 provider `HookAddMessage` 前，直接调用 AEUI 的显示色板桥 |
-| 外部 `ChatMOD 1.1` | `S_AddMessage` 在消息中注入时间戳、职业名、等级难度、URL、自身高亮等内嵌颜色，并依据加载顺序经 pfUI `HookAddMessage` 或直接调用 Frame 的 `ORG_AddMessage`；其功能、配置与 SavedVariables 仍由 ChatMOD 持有 | 不修改 ChatMOD 文件或配置；同时守卫 pfUI 最终输出、受管 Hook 与 ChatMOD `ORG_AddMessage`，不再依赖 `S_AddMessage` 函数身份；已审计颜色映射为保留原色相的羊皮纸墨色，未知亮色仅等比例压暗，深色自定义值与链接载荷原样保留 |
+| 外部 `ChatMOD 1.1` | `S_AddMessage` 在消息中注入时间戳、职业名、等级难度、URL、自身高亮等内嵌颜色，并依据加载顺序经 pfUI `HookAddMessage` 或直接调用 Frame 的 `ORG_AddMessage`；其功能、配置与 SavedVariables 仍由 ChatMOD 持有 | 不修改 ChatMOD 文件或配置；同时守卫 pfUI 最终输出、受管 Hook 与 ChatMOD `ORG_AddMessage`，不再依赖 `S_AddMessage` 函数身份；已读颜色保留 Vanilla 身份，未知低对比色只向白色最小提升，已经可读的值与链接载荷原样保留 |
 | `ChatFrameNTabFlash` | Tab 未读闪烁语义 | 绑定独立未读覆盖，不改变 Tab 几何 |
 | `ChatMenu`、`EmoteMenu`、`LanguageMenu`、`VoiceMacroMenu` | 原生聊天弹出菜单实例 | 当前仍为过渡外观；未来复用一套 `CHAT.POPUP.SHELL`，不得生成四套不同物件 |
 | [`modules/chatcopy.lua`](../../../addon/pfUI/modules/chatcopy.lua) | `pfChatCopyButton`、`ChatFrameScrollN`、`pfChatCopyBoxN` | 功能源码保留，默认不加载；完成组件资产后恢复 |
@@ -21,14 +21,14 @@
 
 | ID | 绑定对象 | 逻辑资产与状态 | 几何／禁止项 |
 |---|---|---|---|
-| `CHAT.FRAME` | 左侧物理资产合同 | 空战地旧书九宫格；`CHAT.FRAME.FULL.V1.r1 attempt 2` 已作为暖黑完整书体 source 进入 `P4` | 不含 Tab、文字、输入、滚动或固定槽；`1608 × 978` source 不得整图直接加载或拉伸 |
-| `CHAT.FRAME.LEFT` | `pfUI.chat.left`／`pfChatLeft` | `CHAT.FRAME` 的唯一运行时实例；当前仍使用 V3 TGA，新 P4 source 等待确定性导出 | 保留移动、尺寸和左侧停靠行为 |
+| `CHAT.FRAME` | 左侧物理资产合同 | 空战地旧书九宫格；`CHAT.FRAME.FULL.V1.r1 attempt 2` 已导出为 `ChatBookFrameFullV1.tga`，runtime `1.19 / P5` | 不含 Tab、文字、输入、滚动或固定槽；`1608 × 978` source 不得整图直接加载或拉伸 |
+| `CHAT.FRAME.LEFT` | `pfUI.chat.left`／`pfChatLeft` | `CHAT.FRAME` 的唯一运行时实例；九个 texture slice 使用新 Full V1 atlas，旧 V3 主框只作 P6-C 前回退 | 保留移动、尺寸和左侧停靠行为 |
 | `CHAT.FRAME.RIGHT` | `pfUI.chat.right`／`pfChatRight` | 明确停用的兼容对象；`C.chat.right.enable=0` | 强制隐藏，不分配 AEUI 资产；源码保留以便关闭 overhaul 后对照 |
 | `CHAT.TABS` | `pfUI.chat.left.panelTop`、左侧 `ChatFrameNTab`／`ChatFrameNTabText` | 连续承托带；普通／悬停／选中／禁用 Tab，各自三段式；运行时文字居中 | 普通布局事件后按需恢复共同几何；`pfChatLeft.OnMove` 中检测真实局部 Scale 边沿并立即强制重放一次，现有维护节拍只检测 EffectiveScale 边沿作为全局缩放兜底；登录后只做一次延迟终局装配；普通状态维护只换 UV |
 | `CHAT.UNREAD` | `ChatFrameNTabFlash` | 蜡封或布结显示／隐藏 | 独立覆盖，不参与 Tab 排列 |
 | `CHAT.INPUT` | `pfUI.chat.editbox`、`ChatFrameEditBox` | 普通／聚焦输入纸带，各自左／中／右 | 两状态几何完全相同；不烘焙输入文字 |
 | `CHAT.INPUT.LANGUAGE` | 可选 `ChatFrameEditBoxLanguage` | 普通／悬停／按下／禁用／当前语言 | 独立 Button，不画进输入纸带 |
-| `CHAT.TEXT` | `ChatFrameN` | 无新增位图；pfUI 配置字体、无描边／无阴影、安全区、内边距、`3px` 行距；频道与九职业采用 Vanilla 原色相的深墨版本，小队蓝紫与团队焦橙独立；基础目标在代表纸色上约 `>=4.5:1` | 接管当前 Parent 为左书的全部正文最终显示参数，包括被 pfUI 启发式标为 `pfCombatLog` 的窗口；不改全局 `ChatTypeInfo`、ChatMOD／pfUI 配置、历史存储或链接载荷；已知颜色使用确定性映射，未知色仅在低于 `4.8:1` 时等比例压暗，足够深则原样保留；不生成连续压光、行卡片、气泡或逐行底色 |
+| `CHAT.TEXT` | `ChatFrameN` | 无新增位图；pfUI 配置字体、无描边／无阴影、安全区、内边距、`3px` 行距；暖黑纸面使用熟悉的 Vanilla 明亮语义色，小队蓝紫与团队焦橙独立；基础目标约 `>=4.5:1` | 接管当前 Parent 为左书的全部正文最终显示参数，包括被 pfUI 启发式标为 `pfCombatLog` 的窗口；不改全局 `ChatTypeInfo`、ChatMOD／pfUI 配置、历史存储或链接载荷；未知色仅在低于 `4.8:1` 时向白色最小提升，已达标则逐字节保留；不生成连续压光、行卡片、气泡或逐行底色 |
 | `CHAT.SCROLL.UP` | `ChatFrameNUpButton` | 当前被 pfUI 隐藏 | 未来若恢复，必须独立四状态 |
 | `CHAT.SCROLL.DOWN` | `ChatFrameNDownButton` | 当前被 pfUI 隐藏 | 未来若恢复，必须独立四状态 |
 | `CHAT.SCROLL.BOTTOM` | `ChatFrameNBottomButton` | 当前被 pfUI 隐藏 | 未来若恢复，必须独立四状态 |
@@ -59,9 +59,9 @@
 - 正文安全区：`x=30..410`、`y=32..280`，即 `380 × 248 UI px`。
 - 最低容量：12px 字号加 `3px` `SetSpacing`，形成约 15px 行高与 16 行中文；
   用户字号、字体配置和消息内容仍由原生／pfUI 持有，AEUI 仅为受管正文移除
-  全描边与文字阴影，并把基础频道色与 ChatMOD／pfUI 已知内嵌高亮局部映射为
-  保留 Vanilla 原色相的深色语义墨色；小队保持蓝紫、团队保持焦橙，九职业
-  采用各自原始 RGB 的等比例深色版本，战士保持棕褐／青铜、牧师保持中性；
+  全描边与文字阴影，并把基础频道色映射为适配暖黑纸面的 Vanilla 语义色；
+  小队保持蓝紫、团队保持焦橙，已可读的职业／内嵌色原样保留，过暗未知色
+  只做达到 `4.8:1` 所需的最小提亮；
   书页上不增加连续压光层。
 - Tab：四枚基准为 `92 × 30 UI px`、间距 `3px`、顶部下移 `2px`，共用
   底线与点击画布；承托带高 `16px`、顶部下移 `18px`；超过四枚时只在
@@ -114,6 +114,6 @@
   顺序与包装函数；作用域只要求 Frame 当前 Parent 为 `pfUI.chat.left`，包括
   被 pfUI 按消息类型数量启发式标为 `pfCombatLog` 的窗口，不依赖瞬时
   `isDocked`。不修改 ChatMOD 源码／SavedVariables，
-  不剥离 `|H...|h` 链接；未知第三方颜色只有在纸面过亮时才等比例压暗，已经
-  足够深的值原样保留。现有维护节拍只负责
+  不剥离 `|H...|h` 链接；未知第三方颜色只有在暖黑纸面低于 `4.8:1` 时才向
+  白色做最小提升，已经可读的值原样保留。现有维护节拍只负责
   发现晚出现的 provider 并安装一次 wrapper，不重写消息、几何或插件配置。

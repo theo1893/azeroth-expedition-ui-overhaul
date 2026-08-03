@@ -6,7 +6,6 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-import colorsys
 from pathlib import Path
 
 
@@ -400,7 +399,8 @@ def main() -> None:
     assert "SuppressChatInfoPanels" in chat_source
     assert "panels.minimap" not in chat_source
     assert "SuppressRightChat" in chat_source
-    assert 'Chat.runtimeContract = "1.18"' in chat_source
+    assert 'Chat.runtimeContract = "1.19"' in chat_source
+    assert "ChatBookFrameFullV1" in chat_source
     assert "EnsureBookVisible" in chat_source
     assert 'owner:EnableDrawLayer("BACKGROUND")' in chat_source
     assert "InstallPfUIHooks" in chat_source
@@ -417,6 +417,7 @@ def main() -> None:
     assert "AdaptUnknownInlineColor" in chat_source
     assert "CHAT_INLINE_COLOR_TARGETS" in chat_source
     assert "CHAT_INLINE_CONTRAST_TARGET = 4.8" in chat_source
+    assert "CHAT_INLINE_PAPER_COLOR = { 48, 36, 27 }" in chat_source
     assert "StyleChatFrameText" in chat_source
     assert "InstallMessageColorHook" in chat_source
     assert "InstallChatMODFinalColorHook" in chat_source
@@ -432,17 +433,7 @@ def main() -> None:
     assert "frame.pfCombatLog" not in palette_scope
     assert "TransformBaseMessageColor" in chat_source
     assert "NormalizeInlineMessageColors" in chat_source
-    for color_code in (
-        "ff33ccff",
-        "fff58cba",
-        "ffabd473",
-        "ff69ccf0",
-        "fffff569",
-        "ff0070dd",
-        "ffa335ee",
-    ):
-        assert color_code in chat_source
-    for parchment_color in (
+    for obsolete_parchment_color in (
         "ff4b3b2a",
         "ff583243",
         "ff354224",
@@ -455,31 +446,7 @@ def main() -> None:
         "ff592d2d",
         "ff234020",
     ):
-        assert parchment_color in chat_source
-    class_sources = (
-        "ffc79c6e",
-        "fff58cba",
-        "ffabd473",
-        "fffff569",
-        "ffffffff",
-        "ff0070de",
-        "ff69ccf0",
-        "ff9482c9",
-        "ffff7d0a",
-    )
-    class_targets = []
-    for source_color in class_sources:
-        match = re.search(
-            rf"{source_color}\s*=\s*\"ff([0-9a-f]{{6}})\"",
-            chat_source,
-        )
-        assert match, f"missing parchment class mapping for {source_color}"
-        class_targets.append(match.group(1))
-    assert len(set(class_targets)) == len(class_targets)
-    class_rgb = [
-        tuple(int(color[index:index + 2], 16) for index in (0, 2, 4))
-        for color in class_targets
-    ]
+        assert obsolete_parchment_color not in chat_source
     palette_rgb = {
         name: (int(red), int(green), int(blue))
         for name, red, green, blue in re.findall(
@@ -490,15 +457,15 @@ def main() -> None:
         )
     }
     assert palette_rgb == {
-        "say": (61, 61, 61),
-        "channel": (77, 57, 57),
-        "system": (64, 64, 0),
-        "guild": (18, 71, 18),
-        "party": (59, 59, 89),
-        "raid": (98, 49, 0),
-        "whisper": (90, 45, 90),
-        "danger": (117, 29, 29),
-        "emote": (97, 49, 24),
+        "say": (201, 185, 144),
+        "channel": (255, 192, 192),
+        "system": (255, 255, 0),
+        "guild": (64, 255, 64),
+        "party": (170, 170, 255),
+        "raid": (255, 127, 0),
+        "whisper": (255, 128, 255),
+        "danger": (255, 86, 86),
+        "emote": (255, 127, 63),
     }
 
     def relative_luminance(color: tuple[int, int, int]) -> float:
@@ -516,28 +483,12 @@ def main() -> None:
             + 0.0722 * channels[2]
         )
 
-    class_source_rgb = [
-        tuple(int(color[index:index + 2], 16) for index in (2, 4, 6))
-        for color in class_sources
-    ]
-    for source, target in zip(class_source_rgb, class_rgb):
-        if max(source) == min(source):
-            assert max(target) == min(target)
-            continue
-        source_hue = colorsys.rgb_to_hsv(
-            *(channel / 255 for channel in source)
-        )[0]
-        target_hue = colorsys.rgb_to_hsv(
-            *(channel / 255 for channel in target)
-        )[0]
-        hue_delta = abs(source_hue - target_hue)
-        assert min(hue_delta, 1 - hue_delta) <= 0.01
-
     assert palette_rgb["party"] != palette_rgb["raid"]
-    paper_luminance = relative_luminance((205, 161, 85))
-    for ink in class_rgb + list(palette_rgb.values()):
-        contrast = (paper_luminance + 0.05) / (
-            relative_luminance(ink) + 0.05
+    paper_luminance = relative_luminance((48, 36, 27))
+    for ink in palette_rgb.values():
+        ink_luminance = relative_luminance(ink)
+        contrast = (max(paper_luminance, ink_luminance) + 0.05) / (
+            min(paper_luminance, ink_luminance) + 0.05
         )
         assert contrast >= 4.5
     assert "NotoSansSC-Medium.ttf" not in chat_source
@@ -558,13 +509,45 @@ def main() -> None:
     assert 'event == "UI_SCALE_CHANGED"' in chat_source
     assert 'text:SetJustifyV("MIDDLE")' in chat_source
     for texture in (
-        "ChatBookFrameV3",
+        "ChatBookFrameFullV1",
         "ChatTabAtlasV3",
         "ChatTabShelfV3",
         "ChatInputAtlasV3",
         "ChatUnreadSealV3",
     ):
         assert texture in chat_source, f"chat adapter does not mount {texture}"
+    assert (aeui / "Media" / "Chat" / "ChatBookFrameV3.tga").is_file()
+
+    full_frame_manifest_path = (
+        ROOT
+        / "assets"
+        / "source"
+        / "chat"
+        / "frame-full-v1"
+        / "ChatBookFrame_Full_V1_RuntimeManifest_v1.json"
+    )
+    full_frame_manifest = json.loads(
+        full_frame_manifest_path.read_text(encoding="utf-8")
+    )
+    full_frame_runtime = (
+        aeui / "Media" / "Chat" / "ChatBookFrameFullV1.tga"
+    )
+    assert full_frame_manifest["runtime_contract"] == "1.19"
+    assert full_frame_manifest["status"] == "runtime-exported"
+    assert full_frame_manifest["single_chat_frame"] is True
+    assert full_frame_manifest["source"]["sha256"] == (
+        "a97d9c5fa055a119cd5ea7809bdaa51460cddb9674355efcec35f98f6cd2c673"
+    )
+    assert sha256(full_frame_runtime) == (
+        full_frame_manifest["runtime_export"]["sha256"]
+    )
+    assert full_frame_manifest["runtime_export"]["width"] == 1024
+    assert full_frame_manifest["runtime_export"]["height"] == 1024
+    assert full_frame_manifest["runtime_export"][
+        "visible_green_spill_pixels"
+    ] == 0
+    assert full_frame_manifest["adapter"]["texture_instances"] == 9
+    assert full_frame_manifest["adapter"]["right_frame_instances"] == 0
 
     manifest_path = (
         ROOT

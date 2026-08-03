@@ -17,16 +17,16 @@ legacy 信息底栏。
 [ChatBookFrame_Full_V1_r1.png](../../../assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_r1.png)，
 对应
 [source manifest](../../../assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_SourceManifest_v1.json)。
-它在 `2026-08-03` 以 `CHAT.FRAME.FULL.V1.r1 attempt 2` 进入 `P4`：中央阅读面
+它在 `2026-08-03` 以 `CHAT.FRAME.FULL.V1.r1 attempt 2` 进入 `P4`，并已按
+runtime contract `1.19` 确定性导出进入 `P5`：中央阅读面
 为不透明暖黑烟熏纤维纸，页叠由近黑褐过渡到烟草褐，深胡桃皮革、低饱和
 氧化黄铜、接触阴影、非镜像磨损和左上暖光必须读作同一个连续旧书物件；禁止
 用亮金纸圈、中心 donor、旧像素 mask 或规则压纹皮革替代纸张身份。
 
-现行 runtime 在确定性导出完成前仍使用
-[ChatBookFrame_Master_v3.png](../../../assets/source/chat/v3/ChatBookFrame_Master_v3.png)，
-不得把旧 V3 runtime 误写成新替换源已接入。`CHAT.FRAME.LEFT` 是唯一运行时
-实例。`CHAT.FRAME.RIGHT` 已按产品决策隐藏，不得为它复制、镜像或重新生成
-第二本书。
+现行 runtime 使用 `ChatBookFrameFullV1.tga` 的九宫格；旧
+`ChatBookFrameV3.tga` 只作为 P6-C 前的回退资产保留。`CHAT.FRAME.LEFT` 是
+唯一运行时实例。`CHAT.FRAME.RIGHT` 已按产品决策隐藏，不得为它复制、镜像
+或重新生成第二本书。
 
 ## `CHAT.TABS`
 
@@ -64,16 +64,15 @@ legacy 信息底栏。
 在 12px 基线下使用 `3px` 额外行距；移除全方向 `OUTLINE` 并把文字阴影设为
 透明、零偏移，不允许复制出第二层字形。正文安全区不得增加连续压光、半透明
 色块、边框或逐行底色，必须直接保留书页纹理。受管聊天框的最终显示入口使用
-统一羊皮纸语义墨色板必须优先继承 Vanilla 原色相：说话中性墨、公共频道
-深玫瑰、系统赭黄、公会绿、小队蓝紫、团队焦橙、密语洋红、警告红、表情
-橙褐；小队与团队不得合并。香草九职业使用各自原始 RGB 的等比例深色版本，
-战士保持棕褐／青铜而非铁锈红，牧师保持无彩中性，其他七职业同样不得换到
-陌生色域。在代表书页色 `#CDA155` 上以约 `4.5:1` 作为基础频道／职业静态
-对比下限，不使用发光、描边或阴影补偿。
+统一暖黑纸面色板必须优先继承玩家熟悉的 Vanilla 显示色：说话暖灰米色、
+公共频道浅玫瑰、系统黄、公会绿、小队蓝紫、团队焦橙、密语洋红、警告红、
+表情橙；小队与团队不得合并。香草九职业保留各自原始色相，已经可读的颜色
+不改写。以阅读区第 90 百分位代理色 `#30241B` 为准，基础色约 `>=4.5:1`，
+未知内嵌色目标 `>=4.8:1`；不使用发光、描边或阴影补偿。
 
 经审计的 ChatMOD 1.1、pfUI 与原生精确颜色码使用确定性目标值；未知第三方
-`|cAARRGGBB` 若低于 `4.8:1`，只等比例压低 RGB，保留 Alpha、色相和饱和度；
-已经足够深的未知色必须原样保留。消息内容和 `|H...|h` 链接载荷始终原样
+`|cAARRGGBB` 若低于 `4.8:1`，只向白色混入达到门槛所需的最小比例并保留
+Alpha；已经可读的未知色必须原样保留。消息内容和 `|H...|h` 链接载荷始终原样
 转发，不得写全局 `ChatTypeInfo` 或外部插件配置。霞鹜文楷只用于短频道签，
 不用于长聊天正文。
 
@@ -104,6 +103,9 @@ legacy 信息底栏。
   固定 session `019fc27e-f6fb-7d90-ac30-5fbdfef99c11`，provider result
   `ig_0008a6d335a216a8016a6f3b35b41481919d0752e2d83926a4`；实际 ImageGen
   `2/5` 后通过，剩余三次终止且不转移。
+- 暖黑 runtime：`ChatBookFrameFullV1.tga`，`1024 × 1024` RGBA，SHA-256
+  `becb504fb482cb37c0824e9b8705b4ad76d890a5cac024e83a3cce81517025ae`；
+  九宫格和五场景最终 TGA 展示区域门禁为 `0` violations。
 - V3 Tab 源尺寸：`1774 × 887` RGBA。
 - V3 控件源尺寸：`1536 × 1024` RGBA。
 - V3 source 接受时的 `440 × 320` 合成验证使用 `380 × 236` 正文安全区；

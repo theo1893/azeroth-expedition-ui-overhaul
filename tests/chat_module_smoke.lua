@@ -452,8 +452,8 @@ assert(
   "book texture coordinate does not match the runtime asset"
 )
 assert(
-  left.aeuiBookSlices.center.texture:find("ChatBookFrameV3"),
-  "V3 chat book texture was not mounted"
+  left.aeuiBookSlices.center.texture:find("ChatBookFrameFullV1"),
+  "accepted warm-black chat book texture was not mounted"
 )
 assert(
   not left.aeuiReadingWash or
@@ -465,14 +465,14 @@ assert(
 )
 assert(
   left.enabledDrawLayer == "BACKGROUND" and
-    left.aeuiBookRuntimeVersion == "1.18",
+    left.aeuiBookRuntimeVersion == "1.19",
   "chat book background layer or runtime marker was not restored"
 )
 left.aeuiBookSlices.center:SetTexture(nil)
 left.aeuiBookRuntimeVersion = nil
 AzerothExpeditionUI.modules.Chat:Maintain()
 assert(
-  left.aeuiBookSlices.center.texture:find("ChatBookFrameV3") and
+  left.aeuiBookSlices.center.texture:find("ChatBookFrameFullV1") and
     left.aeuiBookRecoveredAt,
   "chat maintenance did not recover stripped book textures"
 )
@@ -480,7 +480,7 @@ assert(#ChatFrame1.points == 2, "docked chat frame was not inset")
 assert(
   ChatFrame1:GetSpacing() == 3 and
     ChatFrame1.aeuiTextLineSpacing == 3 and
-    ChatFrame1.aeuiTextMetricsVersion == "1.18",
+    ChatFrame1.aeuiTextMetricsVersion == "1.19",
   "chat text did not receive the relaxed line-height contract"
 )
 assert(
@@ -491,7 +491,7 @@ assert(
     ChatFrame1.shadowColor[4] == 0 and
     ChatFrame1.shadowOffset[1] == 0 and
     ChatFrame1.shadowOffset[2] == 0 and
-    ChatFrame1.aeuiTextStyleVersion == "1.18",
+    ChatFrame1.aeuiTextStyleVersion == "1.19",
   "chat text did not restore the provider-owned comfort typography"
 )
 local channelMessage =
@@ -507,12 +507,12 @@ local channelResult = ChatFrame1:HookAddMessage(
 assert(
   channelResult == "delivered" and
     ChatFrame1.lastDeliveredMessage[1] == channelMessage and
-    ChatFrame1.lastDeliveredMessage[2] == 77 / 255 and
-    ChatFrame1.lastDeliveredMessage[3] == 57 / 255 and
-    ChatFrame1.lastDeliveredMessage[4] == 57 / 255 and
+    ChatFrame1.lastDeliveredMessage[2] == 255 / 255 and
+    ChatFrame1.lastDeliveredMessage[3] == 192 / 255 and
+    ChatFrame1.lastDeliveredMessage[4] == 192 / 255 and
     ChatFrame1.lastDeliveredMessage[5] == 1 and
     ChatFrame1.lastDeliveredMessage[6] == 17,
-  "managed public channel color was not mapped to body ink"
+  "managed public channel color was not mapped for warm-black paper"
 )
 assert(
   ChatTypeInfo.CHANNEL.r == 1.00 and
@@ -530,32 +530,32 @@ ChatFrame1:HookAddMessage(
   171
 )
 assert(
-  ChatFrame1.lastDeliveredMessage[2] == 77 / 255 and
-    ChatFrame1.lastDeliveredMessage[3] == 57 / 255 and
-    ChatFrame1.lastDeliveredMessage[4] == 57 / 255,
+  ChatFrame1.lastDeliveredMessage[2] == 255 / 255 and
+    ChatFrame1.lastDeliveredMessage[3] == 192 / 255 and
+    ChatFrame1.lastDeliveredMessage[4] == 192 / 255,
   "transient isDocked state disabled the managed palette"
 )
 ChatFrame1.isDocked = true
 ChatFrame1:HookAddMessage("system", 1, 1, 0, 1, 18)
 assert(
   ChatFrame1.lastDeliveredMessage[1] == "system" and
-    ChatFrame1.lastDeliveredMessage[2] == 64 / 255 and
-    ChatFrame1.lastDeliveredMessage[3] == 64 / 255 and
+    ChatFrame1.lastDeliveredMessage[2] == 255 / 255 and
+    ChatFrame1.lastDeliveredMessage[3] == 255 / 255 and
     ChatFrame1.lastDeliveredMessage[4] == 0,
   "managed system color was not mapped to metadata ink"
 )
 
 local semanticColorCases = {
-  { "say", ChatTypeInfo.SAY, { 61, 61, 61 } },
-  { "guild", ChatTypeInfo.GUILD, { 18, 71, 18 } },
-  { "party", ChatTypeInfo.PARTY, { 59, 59, 89 } },
-  { "raid", ChatTypeInfo.RAID, { 98, 49, 0 } },
-  { "whisper", ChatTypeInfo.WHISPER, { 90, 45, 90 } },
-  { "yell", ChatTypeInfo.YELL, { 117, 29, 29 } },
+  { "say", ChatTypeInfo.SAY, { 201, 185, 144 } },
+  { "guild", ChatTypeInfo.GUILD, { 64, 255, 64 } },
+  { "party", ChatTypeInfo.PARTY, { 170, 170, 255 } },
+  { "raid", ChatTypeInfo.RAID, { 255, 127, 0 } },
+  { "whisper", ChatTypeInfo.WHISPER, { 255, 128, 255 } },
+  { "yell", ChatTypeInfo.YELL, { 255, 86, 86 } },
 }
 local semanticColorsSeen = {
-  ["77:57:57"] = true,
-  ["64:64:0"] = true,
+  ["255:192:192"] = true,
+  ["255:255:0"] = true,
 }
 for index, colorCase in ipairs(semanticColorCases) do
   local source = colorCase[2]
@@ -572,13 +572,13 @@ for index, colorCase in ipairs(semanticColorCases) do
     ChatFrame1.lastDeliveredMessage[2] == expected[1] / 255 and
       ChatFrame1.lastDeliveredMessage[3] == expected[2] / 255 and
       ChatFrame1.lastDeliveredMessage[4] == expected[3] / 255,
-    "semantic channel color did not retain a distinct parchment hue"
+    "semantic channel color did not retain a distinct Vanilla hue"
   )
   local colorKey =
     expected[1] .. ":" .. expected[2] .. ":" .. expected[3]
   assert(
     not semanticColorsSeen[colorKey],
-    "semantic channel colors collapsed onto the same ink"
+    "semantic channel colors collapsed on the warm-black paper"
   )
   semanticColorsSeen[colorKey] = true
 end
@@ -608,37 +608,35 @@ ChatFrame1:HookAddMessage(
 )
 local normalizedMessage = ChatFrame1.lastDeliveredMessage[1]
 assert(
-  string.find(normalizedMessage, "|cff103e4e", 1, true) and
-    string.find(normalizedMessage, "|cff583243", 1, true) and
-    string.find(normalizedMessage, "|cff760c0c", 1, true) and
-    string.find(normalizedMessage, "|cff003971", 1, true) and
-    string.find(normalizedMessage, "|cff363655", 1, true) and
-    string.find(normalizedMessage, "|cff123456", 1, true) and
+  string.find(normalizedMessage, "|CFF33CCFF", 1, true) and
+    string.find(normalizedMessage, "|cfff58cba", 1, true) and
+    string.find(normalizedMessage, "|cffff5656", 1, true) and
+    string.find(normalizedMessage, "|cff4396e6", 1, true) and
+    string.find(normalizedMessage, "|cff9999ee", 1, true) and
+    string.find(normalizedMessage, "|cff8194a6", 1, true) and
     string.find(normalizedMessage, "|Hezc:copy", 1, true) and
     string.find(normalizedMessage, "|Hplayer:Paladin", 1, true) and
     string.find(normalizedMessage, "|Hitem:1:0:0:0", 1, true) and
     string.find(normalizedMessage, "|Href:www.example.com", 1, true),
-  "ChatMOD and link colors were not normalized without changing links"
+  "ChatMOD and link colors were not adapted without changing links"
 )
 assert(
-  not string.find(normalizedMessage, "33CCFF", 1, true) and
-    not string.find(normalizedMessage, "f58cba", 1, true) and
-    not string.find(normalizedMessage, "ff1919", 1, true) and
-    not string.find(normalizedMessage, "0070dd", 1, true) and
-    not string.find(normalizedMessage, "9999ee", 1, true),
-  "bright ChatMOD colors survived the parchment whitelist"
+  not string.find(normalizedMessage, "|cff103e4e", 1, true) and
+    not string.find(normalizedMessage, "|cff583243", 1, true) and
+    not string.find(normalizedMessage, "|cff003971", 1, true),
+  "obsolete light-parchment ink targets survived the dark-paper migration"
 )
 
 local classColorCases = {
-  { "ffc79c6e", "ff4b3b2a" },
-  { "fff58cba", "ff583243" },
-  { "ffabd473", "ff354224" },
-  { "fffff569", "ff423f1b" },
-  { "ffffffff", "ff333333" },
-  { "ff0070de", "ff003d7a" },
-  { "ff69ccf0", "ff22424e" },
-  { "ff9482c9", "ff413959" },
-  { "ffff7d0a", "ff633004" },
+  { "ffc79c6e", "ffc79c6e" },
+  { "fff58cba", "fff58cba" },
+  { "ffabd473", "ffabd473" },
+  { "fffff569", "fffff569" },
+  { "ffffffff", "ffffffff" },
+  { "ff0070de", "ff4395e7" },
+  { "ff69ccf0", "ff69ccf0" },
+  { "ff9482c9", "ff9988cb" },
+  { "ffff7d0a", "ffff7d0a" },
 }
 local classColorsSeen = {}
 for _, colorCase in ipairs(classColorCases) do
@@ -648,11 +646,11 @@ for _, colorCase in ipairs(classColorCases) do
     )
   assert(
     normalized == "|c" .. colorCase[2] .. "class|r",
-    "class color did not map to its expected parchment ink"
+    "class color did not retain its readable Vanilla identity"
   )
   assert(
     not classColorsSeen[colorCase[2]],
-    "two class colors collapsed onto the same parchment ink"
+    "two class colors collapsed on the warm-black paper"
   )
   classColorsSeen[colorCase[2]] = true
 end
@@ -666,12 +664,12 @@ local adaptiveMessage =
     "|cff8cff80healing|r"
   )
 assert(
-  string.find(adaptiveMessage, "|cff463813", 1, true) and
-    string.find(adaptiveMessage, "|cff4a314a", 1, true) and
-    string.find(adaptiveMessage, "|cff223344", 1, true) and
-    string.find(adaptiveMessage, "|cff592d2d", 1, true) and
-    string.find(adaptiveMessage, "|cff234020", 1, true),
-  "unknown bright colors were not hue-preserving clamped"
+  string.find(adaptiveMessage, "|cffffcc44", 1, true) and
+    string.find(adaptiveMessage, "|cfff0a0f0", 1, true) and
+    string.find(adaptiveMessage, "|cff89939c", 1, true) and
+    string.find(adaptiveMessage, "|cffff8080", 1, true) and
+    string.find(adaptiveMessage, "|cff8cff80", 1, true),
+  "dark-paper contrast adaptation did not preserve or minimally lift colors"
 )
 
 -- ChatMOD can capture the native sink before pfUI installs HookAddMessage.
@@ -708,7 +706,7 @@ local chatMODFinalWrapper = ChatFrame3.ORG_AddMessage
 AzerothExpeditionUI.modules.Chat:Maintain()
 assert(
   ChatFrame3.ORG_AddMessage == chatMODFinalWrapper and
-    ChatFrame3.aeuiChatMODFinalColorVersion == "1.18",
+    ChatFrame3.aeuiChatMODFinalColorVersion == "1.19",
   "ChatMOD final color hook was missing or installed more than once"
 )
 ChatFrame3:HookAddMessage(
@@ -722,32 +720,20 @@ ChatFrame3:HookAddMessage(
 assert(
   string.find(
     ChatFrame3.lastDeliveredMessage[1],
-    "|cff103e4e",
+    "|CFF33CCFF",
     1,
     true
   ) and
     string.find(
       ChatFrame3.lastDeliveredMessage[1],
-      "|cff583243",
+      "|cfff58cba",
       1,
       true
     ) and
-    not string.find(
-      ChatFrame3.lastDeliveredMessage[1],
-      "33CCFF",
-      1,
-      true
-    ) and
-    not string.find(
-      ChatFrame3.lastDeliveredMessage[1],
-      "f58cba",
-      1,
-      true
-    ) and
-    ChatFrame3.lastDeliveredMessage[2] == 77 / 255 and
-    ChatFrame3.lastDeliveredMessage[3] == 57 / 255 and
-    ChatFrame3.lastDeliveredMessage[4] == 57 / 255,
-  "colors injected after the pfUI hook bypassed the parchment palette"
+    ChatFrame3.lastDeliveredMessage[2] == 255 / 255 and
+    ChatFrame3.lastDeliveredMessage[3] == 192 / 255 and
+    ChatFrame3.lastDeliveredMessage[4] == 192 / 255,
+  "colors injected after the pfUI hook bypassed the dark-paper palette"
 )
 
 -- The opposite load order is also valid: ChatMOD can call back through the
@@ -761,7 +747,7 @@ ChatFrame4.HookAddMessage = ChatFrame4.testProviderAddMessage
 AzerothExpeditionUI.modules.Chat:Maintain()
 assert(
   ChatFrame4.aeuiMessageColorHooked and
-    ChatFrame4.aeuiMessageColorVersion == "1.18",
+    ChatFrame4.aeuiMessageColorVersion == "1.19",
   "late HookAddMessage provider was not discovered"
 )
 ChatFrame4.ORG_AddMessage = ChatFrame4.HookAddMessage
@@ -778,19 +764,19 @@ ChatFrame4:AddMessage(
 assert(
   string.find(
     ChatFrame4.lastDeliveredMessage[1],
-    "|cff103e4e",
+    "|CFF33CCFF",
     1,
     true
   ) and
     string.find(
       ChatFrame4.lastDeliveredMessage[1],
-      "|cff583243",
+      "|cfff58cba",
       1,
       true
     ) and
-    ChatFrame4.lastDeliveredMessage[2] == 77 / 255 and
-    ChatFrame4.aeuiChatMODFinalColorVersion == "1.18",
-  "ChatMOD post-pfUI load order did not retain the parchment palette"
+    ChatFrame4.lastDeliveredMessage[2] == 255 / 255 and
+    ChatFrame4.aeuiChatMODFinalColorVersion == "1.19",
+  "ChatMOD post-pfUI load order did not retain the dark-paper palette"
 )
 
 ChatFrame2.pfCombatLog = true
@@ -803,10 +789,10 @@ ChatFrame2:HookAddMessage(
   182
 )
 assert(
-  ChatFrame2.lastDeliveredMessage[1] == "|cff103e4ecombat|r" and
-    ChatFrame2.lastDeliveredMessage[2] == 77 / 255 and
-    ChatFrame2.lastDeliveredMessage[3] == 57 / 255 and
-    ChatFrame2.lastDeliveredMessage[4] == 57 / 255,
+  ChatFrame2.lastDeliveredMessage[1] == "|CFF33CCFFcombat|r" and
+    ChatFrame2.lastDeliveredMessage[2] == 255 / 255 and
+    ChatFrame2.lastDeliveredMessage[3] == 192 / 255 and
+    ChatFrame2.lastDeliveredMessage[4] == 192 / 255,
   "left-book frame classified as combat log bypassed the managed palette"
 )
 ChatFrame2.pfCombatLog = nil
@@ -964,7 +950,7 @@ assert(
   "status command did not report the scoped route"
 )
 assert(
-  string.find(statusMessage, "chat-runtime=1.18", 1, true),
+  string.find(statusMessage, "chat-runtime=1.19", 1, true),
   "status command did not report the chat runtime contract"
 )
 assert(
