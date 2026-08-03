@@ -20,7 +20,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 | 模块 | 当前状态 | 下一门禁 |
 |---|---|---|
 | pfUI／作用域接管 | scoped ownership `P5`；pfUI 公共绘制、全部未接管模块与配置页已恢复；模块 Initialize／Apply 已隔离失败，未实机 | Turtle WoW 验证 pfUI 全模块、Game Menu／`/pfui`、旧 SavedVariables 迁移及 Chat／Quest Log 隔离 |
-| 聊天 | Full V1 runtime `1.19 / P5` 保持；正式仍复用 V3 Tab／输入／未读。因浅金输入纸带在暖黑书页上像现代进度条，新增 `CHAT.INPUT.DARK.V1-SIM / P2` 本地几何候选：暖烟草抄写纸条、普通／聚焦同几何、真实 `380 × 25` 与扩展 `480 × 25` 装配，五场景 display-region `0` violations；ImageGen／上传／runtime 改动均为 `0`。Chat Copy／URL Copy 暂缓；右框及左右聊天信息 Panel 隐藏，小地图 Panel 保留 | 先由用户确认输入候选方向；确认后才锁定正式 Prompt 与上传范围。游戏设备可用时再 `/reload` 验证 `chat-runtime=1.19`、主框、Tab／输入／未读、Scale、颜色及右框消息回收 |
+| 聊天 | Full V1 runtime `1.19 / P5` 保持；正式仍复用 V3 Tab／输入／未读。用户已于 `2026-08-03` 接受 `CHAT.INPUT.DARK.V1-SIM / P2` 暖烟草抄写纸条方向；普通／聚焦同几何、真实 `380 × 25` 与扩展 `480 × 25` 装配，五场景 display-region `0` violations。稳定 Prompt 与 `CHAT.INPUT.DARK.V1` 完整生产合同已就绪；模拟 ImageGen `0/0`、生产 `0/5` 且预算未开启，上传／runtime 改动均为 `0`。Chat Copy／URL Copy 暂缓；右框及左右聊天信息 Panel 隐藏，小地图 Panel 保留 | 用户独立授权完整生产正文、固定三图上传、最多五次实际 ImageGen 与冻结 edit 边界。游戏设备可用时再 `/reload` 验证 `chat-runtime=1.19`、主框、Tab／输入／未读、Scale、颜色及右框消息回收 |
 | 任务 | QL-A2 V4 书本主体保持；Quests `1.16`／Quest Visual Theme `1.5` 将左页恢复为 18 个 `246 × 18px` 活动行，全部任务／完成／地下城文字统一为 `12px` 霞鹜文楷、无描边和 shadow；行末追踪圈及左右页 scrollbar chrome 隐藏，两个真实 ScrollFrame 保留并支持滚轮。Quest Log 与 Tracker 共用一套高对比深墨难度色；任务类型使用深紫墨，完成／失败使用独立深绿／深红，模板拆分 FontString 与标题后的内联色码均由 adapter 归一化。Tracker 仍整批提交主题、宽度及 `16px` 底部安全区，左侧 `button.icon` 隐藏且旧统一字体保留。QL-B2 资产保留但隐藏；QT-A1 仍为 `P5 runtime-exported-temporary / display-region-blocked`，旧七工具按钮可见可用 | Turtle WoW `/reload` 验证左页深墨对比、五档难度辨识和任务类型不再荧黄，并比较同一任务在日志／Tracker 的颜色；再连续接受／放弃任务验证批次稳定 |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |

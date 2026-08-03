@@ -3,13 +3,17 @@
 ## 当前结论
 
 - 主模块视觉：已锁定。
-- 输入视觉候选：`CHAT.INPUT.DARK.V1-SIM / simulation-reviewed / P2`。用户指出
+- 输入视觉候选：`CHAT.INPUT.DARK.V1-SIM / simulation-confirmed / P2`。用户指出
   V3 浅金输入纸带在 Full V1 暖黑书页上会被读成现代进度条；已按真实
   `380 × 25px`、普通／聚焦两态、三段横向伸缩、`34/22px` 文字 inset，使用
   当前 Full V1 书框、V3 Tab 与真实聊天密度完成本地几何预演。候选把输入改为
   夹在书页下沿的暖烟草抄写纸条，普通 `#403024`、聚焦 `#503A25`，反馈只用
   页叠、短暖光、墨线和接触暗部；五个实际场景 display-region `0` violations。
-  当前等待用户确认方向，ImageGen `0/0`、上传 `0`，正式 V3 TGA／Lua 未改变。
+  用户于 `2026-08-03` 明确接受 `CHAT.INPUT.DARK.V1-SIM`；稳定 Prompt 与
+  `CHAT.INPUT.DARK.V1` 完整生产正文已经按可见方向凝结并通过完整性预检。
+  当前等待独立授权固定三张 SHA 参考、最多五次实际 ImageGen 调用与循环内
+  edit 边界；模拟 ImageGen `0/0`、生产 `0/5`（预算未开启）、上传 `0`，
+  正式 V3 TGA／Lua 未改变。
 - 当前 runtime：`CHAT.FRAME.FULL.V1.r1 / runtime-exported / P5`，contract
   `1.19`。固定 P4 source 已按全图比例导出为 `1024²`
   `ChatBookFrameFullV1.tga`，九个 slice 只挂载唯一左框；五个最终 TGA 真实排版
@@ -174,7 +178,7 @@
 | `CHAT.FRAME`／`LEFT` | `P5` Full V1 / r1.19 | `ChatBookFrameFullV1.tga` 九宫格；唯一左侧实例；最终 atlas SHA `becb504f…25ae`；旧 V3 主框仅作回退 | `/reload` 检查主体、九宫格接缝、缩放、拖动和常用 UI Scale |
 | `CHAT.FRAME.RIGHT` | `P5` disabled-route | `single_chat_frame=1`；不分配资产 | 验证右框不显示且消息无丢失 |
 | `CHAT.TABS` | `P5` V3 / r1.19 | `92 × 30` 四状态 atlas；沿用既有 TabText、命中与 Scale 修正；r1.19 不修改 Tab 资产／几何 | 在新书本主体上复测 pfUI 解锁滚轮与全局 UI Scale |
-| `CHAT.INPUT` | runtime `P5` V3；候选 `P2` simulation-reviewed | 正式仍为 V3 普通／聚焦两状态三段式 atlas；暖烟草抄写纸条候选已按 `380 × 25`／`480 × 25` 真实装配预演 | 用户先确认 `CHAT.INPUT.DARK.V1-SIM`；确认后锁定正式 Prompt 与上传范围，runtime 仍待实机验证焦点、IME、输入历史 |
+| `CHAT.INPUT` | runtime `P5` V3；候选 `P2` simulation-confirmed | 正式仍为 V3 普通／聚焦两状态三段式 atlas；用户已接受暖烟草抄写纸条模拟方向；`CHAT.INPUT.DARK.V1` 完整生产正文、精确 source cell／atlas／三段合同与固定参考职责已就绪 | 用户独立授权完整生产版本、固定 Image 1／2／3、最多 `5` 次实际 ImageGen 与冻结 edit 边界；runtime 仍待实机验证焦点、IME、输入历史 |
 | `CHAT.INPUT.LANGUAGE` | `P1` | 可选原生 Button 已映射 | 实机确认对象、尺寸和语言状态 |
 | `CHAT.UNREAD` | `P5` V3 | 独立 `ChatFrameNTabFlash` 覆盖 | 实机验证闪烁配置与选中清除 |
 | `CHAT.TEXT` | `P5` dark-paper palette / r1.19 | `380 × 248`／约 16 行；pfUI 配置字体、用户字号、无描边／无阴影、`3px` spacing、无额外背景层；Vanilla 明亮语义色，小队与团队分色；过暗未知色向白色最小提升 | 实机确认频道／职业／DPSMate 在暖黑纸面上的可读性与原版身份 |
@@ -234,10 +238,11 @@
 
 ### 当前优先门禁
 
-1. `CHAT.INPUT.DARK.V1-SIM` 已完成本地几何预演；下一门禁是用户确认普通／
-   聚焦两态是否首先读作夹入书页的暖烟草抄写纸条，而不是黑色输入框、现代
-   进度条或一块独立平板。确认前不调用 ImageGen、不上传参考、不修改正式
-   source／TGA／Lua。
+1. 用户已于 `2026-08-03` 接受 `CHAT.INPUT.DARK.V1-SIM`；稳定 Prompt 与
+   `CHAT.INPUT.DARK.V1` 完整生产正文已凝结。下一门禁是用户独立授权固定 SHA
+   的 Image 1／2／3、最多 `5` 次实际 ImageGen 调用、流程错误不计额度以及
+   同循环紧邻前次输出只在冻结边界内作为 Image 4 edit 输入。授权前不启动
+   ImageGen、不上传参考、不修改正式 source／TGA／Lua。
 2. `CHAT.FRAME.FULL.V1.r1` 已完成 P4→P5：最终 TGA、九宫格 adapter、暖黑
    纸面文字色板、五场景真实排版和 display-region 均已验证；本阶段 ImageGen
    `0` 次，原批次总计仍为 `2/5`，剩余三次终止且不转移。
