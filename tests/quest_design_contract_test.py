@@ -55,6 +55,15 @@ def main() -> None:
     seal_actions_sim_spec = json.loads(
         seal_actions_sim_spec_path.read_text(encoding="utf-8")
     )
+    seal_actions_sim_v2_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v2.json"
+    )
+    seal_actions_sim_v2_spec = json.loads(
+        seal_actions_sim_v2_spec_path.read_text(encoding="utf-8")
+    )
     seal_actions_sim_renderer = (
         ROOT / "tools" / "render_quest_log_seal_actions_simulation_v1.py"
     )
@@ -1771,11 +1780,50 @@ def main() -> None:
     assert seal_actions_sim_spec["interaction"]["fail_open"] == (
         "keep-original-buttons-visible-until-all-proxies-exist"
     )
+    assert seal_actions_sim_v2_spec["version"] == (
+        "QUEST-LOG-SEAL-ACTIONS-SIM-V2"
+    )
+    assert seal_actions_sim_v2_spec["support_type"] == (
+        "parchment-seal-tag"
+    )
+    assert seal_actions_sim_v2_spec["frame"] == [676, 464]
+    assert seal_actions_sim_v2_spec["layout"]["page_exit"] == [
+        603,
+        190,
+        34,
+        38,
+    ]
+    assert seal_actions_sim_v2_spec["layout"]["document_tag"] == [
+        614,
+        197,
+        80,
+        27,
+    ]
+    assert seal_actions_sim_v2_spec["layout"]["tag_head"] == [
+        672,
+        189,
+        44,
+        44,
+    ]
+    assert seal_actions_sim_v2_spec["layout"]["seal_visual"] == [
+        678,
+        195,
+        32,
+        32,
+    ]
+    assert len(seal_actions_sim_v2_spec["content"]["menu_actions"]) == 7
+    assert seal_actions_sim_v2_spec["constraints"]["imagegen_calls"] == 0
+    assert seal_actions_sim_v2_spec["constraints"][
+        "tag_root_must_be_occluded_by_page_lip"
+    ]
+    assert seal_actions_sim_v2_spec["interaction"]["fail_open"] == (
+        "keep-original-buttons-visible-until-all-proxies-exist"
+    )
     require(
         seals_work,
         (
             "QUEST-LOG-SEAL-ACTIONS-SIM-V1",
-            "simulation-reviewed / P2 / awaiting-user-confirmation",
+            "simulation-reviewed / P2 / superseded-before-confirmation",
             "QuestFramePushQuestButton",
             "QuestLogFrameExpandButton",
             "pfQuest.buttonShow",
@@ -1787,6 +1835,23 @@ def main() -> None:
             "ImageGen：`0/0`",
         ),
         "Quest Log seal action simulation work",
+    )
+    require(
+        seals_work,
+        (
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V2",
+            "羊皮纸火漆封签",
+            "superseded-before-confirmation",
+            "page_exit=[603,190,34,38]",
+            "document_tag=[614,197,80,27]",
+            "tag_head=[672,189,44,44]",
+            "seal_visual=[678,195,32,32]",
+            "a61ac0e3624831103cd9d1db31ffc07a0e55e21dc720b143c9c79196771c8f42",
+            "082f4585bcec49244b1ac16a985177520badc6eec0b0ae166254964cc2e8ba1e",
+            "ImageGen：`0/0`",
+            "用户结论：`pending`",
+        ),
+        "Quest Log parchment seal-tag simulation work",
     )
 
     quest_adapter = (

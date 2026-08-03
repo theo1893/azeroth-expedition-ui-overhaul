@@ -177,6 +177,112 @@ def draw_support_tab(
     layer.alpha_composite(resized, (ox + sx, oy + sy))
 
 
+def draw_parchment_seal_tag(
+    layer: Image.Image,
+    layout: dict[str, list[int]],
+    origin: tuple[int, int],
+    seal: Image.Image,
+) -> None:
+    """Draw a page-owned docket tag whose root is trapped under the page lip."""
+    ox, oy = origin
+    tx, ty, tw, th = layout["document_tag"]
+    tx += ox
+    ty += oy
+    draw = ImageDraw.Draw(layer, "RGBA")
+
+    hx, hy, hw, hh = layout["tag_head"]
+    hx += ox
+    hy += oy
+
+    # Contact shadow: a narrow strip lies over the opened cover after leaving
+    # the page stack. Its wider folded head is the actual wax-bearing surface.
+    draw.polygon(
+        [
+            (tx + 2, ty + 7),
+            (tx + tw, ty + 5),
+            (tx + tw + 3, ty + th),
+            (tx + 4, ty + th + 3),
+        ],
+        fill=(22, 12, 9, 155),
+    )
+    tag = [
+        (tx + 1, ty + 3),
+        (tx + tw - 6, ty),
+        (tx + tw, ty + 5),
+        (tx + tw - 2, ty + th - 4),
+        (tx + 4, ty + th),
+        (tx, ty + th - 5),
+    ]
+    draw.polygon(tag, fill=PAPER, outline=PAPER_DARK)
+    draw.line(
+        (tx + 7, ty + 7, tx + tw - 8, ty + 5),
+        fill=(226, 193, 130, 150),
+        width=1,
+    )
+    draw.line(
+        (tx + 9, ty + th - 6, tx + tw - 9, ty + th - 5),
+        fill=(101, 67, 34, 165),
+        width=1,
+    )
+
+    head_shadow = [
+        (hx + 5, hy + 5),
+        (hx + hw - 5, hy + 4),
+        (hx + hw + 3, hy + 12),
+        (hx + hw, hy + hh - 5),
+        (hx + hw - 7, hy + hh + 3),
+        (hx + 5, hy + hh),
+        (hx, hy + 11),
+    ]
+    draw.polygon(head_shadow, fill=(22, 12, 9, 165))
+    head = [
+        (hx + 6, hy),
+        (hx + hw - 7, hy + 1),
+        (hx + hw, hy + 8),
+        (hx + hw - 2, hy + hh - 7),
+        (hx + hw - 8, hy + hh),
+        (hx + 6, hy + hh - 2),
+        (hx, hy + hh - 9),
+        (hx + 1, hy + 7),
+    ]
+    draw.polygon(head, fill=PAPER_LIGHT, outline=PAPER_DARK)
+    draw.line(
+        (hx + 5, hy + 7, hx + 7, hy + hh - 7),
+        fill=(113, 77, 41, 130),
+        width=1,
+    )
+
+    # The right-page lip is above the tag root. This small quiet overlay is
+    # the decisive z-order cue that the tag emerges from between pages.
+    lx, ly, lw, lh = layout["page_lip"]
+    lx += ox
+    ly += oy
+    lip = [
+        (lx, ly + 3),
+        (lx + lw - 7, ly),
+        (lx + lw - 1, ly + 5),
+        (lx + lw, ly + 11),
+        (lx + lw - 4, ly + lh - 6),
+        (lx + lw - 9, ly + lh),
+        (lx, ly + lh - 3),
+    ]
+    draw.polygon(lip, fill=PAPER_LIGHT)
+    draw.line(
+        (lx + lw - 3, ly + 7, lx + lw - 5, ly + lh - 6),
+        fill=(96, 63, 33, 210),
+        width=2,
+    )
+    draw.line(
+        (lx + 3, ly + 6, lx + lw - 8, ly + 4),
+        fill=(231, 203, 145, 145),
+        width=1,
+    )
+
+    sx, sy, sw, sh = layout["seal_visual"]
+    resized = seal.resize((sw, sh), Image.Resampling.LANCZOS)
+    layer.alpha_composite(resized, (ox + sx, oy + sy))
+
+
 def draw_action_menu(
     layer: Image.Image,
     spec: dict[str, Any],
@@ -393,7 +499,11 @@ def draw_quest_log(
         font=fonts["small"],
         fill=INK_MUTED,
     )
-    draw_support_tab(layer, spec["layout"], origin, seal)
+    support_type = spec.get("support_type", "leather-tab")
+    if support_type == "parchment-seal-tag":
+        draw_parchment_seal_tag(layer, spec["layout"], origin, seal)
+    else:
+        draw_support_tab(layer, spec["layout"], origin, seal)
     if menu_open:
         draw_action_menu(layer, spec, origin, fonts)
 
@@ -428,8 +538,25 @@ def main() -> None:
             fill=(73, 52, 34, 255),
             outline=(39, 28, 21, 255),
         )
-    draw.text((44, 34), "任务日志火漆承载与事务菜单 · 本地几何预演", font=fonts["board_title"], fill=(239, 207, 139, 255))
-    draw.text((44, 66), "左：常态，仅保留侧边实体皮签与火漆；右：左键展开后，临时事务笺向书内展开。100% UI 像素，ImageGen 0/0。", font=fonts["board_body"], fill=(198, 171, 116, 255))
+    presentation = spec.get("presentation", {})
+    draw.text(
+        (44, 34),
+        presentation.get(
+            "title",
+            "任务日志火漆承载与事务菜单 · 本地几何预演",
+        ),
+        font=fonts["board_title"],
+        fill=(239, 207, 139, 255),
+    )
+    draw.text(
+        (44, 66),
+        presentation.get(
+            "subtitle",
+            "左：常态，仅保留侧边实体皮签与火漆；右：左键展开后，临时事务笺向书内展开。100% UI 像素，ImageGen 0/0。",
+        ),
+        font=fonts["board_body"],
+        fill=(198, 171, 116, 255),
+    )
 
     left_origin = (35, 150)
     right_origin = (810, 150)
@@ -447,6 +574,37 @@ def main() -> None:
     layout = spec["layout"]
     page_safe = [64, 64, 548, 324]
     seal_box = layout["seal_visual"]
+    support_type = spec.get("support_type", "leather-tab")
+    if support_type == "parchment-seal-tag":
+        support_checks = {
+            "tag_root_enters_page_edge": intersects(
+                layout["document_tag"], layout["page_exit"]
+            ),
+            "page_lip_covers_tag_root": intersects(
+                layout["page_lip"], layout["document_tag"]
+            ),
+            "tag_crosses_book_outer_edge": (
+                layout["document_tag"][0] < spec["frame"][0]
+                and layout["document_tag"][0]
+                + layout["document_tag"][2]
+                > spec["frame"][0]
+            ),
+            "seal_sits_on_tag_head": contains(
+                layout["tag_head"], layout["seal_visual"]
+            ),
+        }
+        support_non_authoritative = [
+            "parchment-tag fibers, page-lip edge and fold microtexture",
+        ]
+    else:
+        support_checks = {
+            "support_attaches_to_exterior_rail": intersects(
+                layout["support_tab"], layout["exterior_rail"]
+            ),
+        }
+        support_non_authoritative = [
+            "support-tab microtexture and stitching",
+        ]
     report = {
         "schema": "aeui.quest-log.seal-actions.simulation-report.v1",
         "version": spec["version"],
@@ -465,9 +623,7 @@ def main() -> None:
             "closed_seal_outside_page_safe_area": not intersects(
                 seal_box, page_safe
             ),
-            "support_attaches_to_exterior_rail": intersects(
-                layout["support_tab"], layout["exterior_rail"]
-            ),
+            **support_checks,
             "menu_inside_base_frame": contains(
                 [0, 0, *spec["frame"]], layout["menu"]
             ),
@@ -486,8 +642,7 @@ def main() -> None:
             ),
             "reason": "transient action layer; closes after selection/outside-click/Escape",
         },
-        "non_authoritative": [
-            "support-tab microtexture and stitching",
+        "non_authoritative": support_non_authoritative + [
             "menu paper edge, seam and final state art",
             "client font rasterization",
             "runtime animation and tooltip",

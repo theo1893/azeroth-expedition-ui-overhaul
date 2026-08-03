@@ -4,7 +4,7 @@
 - 当前接受版本：`QS-A1 V1.r4`
 - 已确认历史模拟：`QUEST-SEALS-SIM-V2`；其 Quest Log 顶部悬空位置已于
   `2026-08-03` 被用户否决，Tracker 方向仍有效
-- 当前待确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V1`
+- 当前待确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V2`
 - 项目阶段：漆章美术／atlas `P5`；Quest Log placement／menu `P2`
 - 当前子状态：`runtime-exported / placement-invalidated / simulation-reviewed`
 - 固定执行器：`imagegen-0-143-0`
@@ -23,7 +23,8 @@
 - 用户于 `2026-07-31` 接受 `QS-A1 V1.r4` 的运行时视觉，并明确授权
   确定性色键、透明 RGB 清零与 `1024²` 归一化例外进入 P4／P5。不得再执行
   ImageGen。漆章物件美术和 atlas 不重开；Quest Log 旧锚点已失效，新的承载
-  与事务菜单先等待本地模拟确认。旧 Quest Log／Tracker provider Button 在
+  与事务菜单先等待本地模拟确认。V1 的外沿皮革承托已被物理语义复核淘汰；
+  V2 改为从右页层间伸出的独立羊皮纸火漆封签。旧 Quest Log／Tracker provider Button 在
   各自菜单功能等价前继续可见可用。
 
 ## 用户接受与 P4／P5 固化
@@ -67,8 +68,8 @@
 
 | ID | 当前对象 | 目标合同 |
 |---|---|---|
-| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前仍是 `[600,-18,28,28]` 无鼠标 Texture | QS-A1 V1.r4 美术保持 accepted；旧顶部悬空位置已否决。提案改为右侧外沿皮签上的 `32px` Button，但必须先确认 `QUEST-LOG-SEAL-ACTIONS-SIM-V1` |
-| `QUEST.LOG.CHROME.SEAL.SUPPORT` | 尚无 runtime 对象 | proposed 程序化短皮革事务签，必须与右侧外沿护轨发生可信连接；不得落在纸页、翻页、页沟或书封 |
+| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前仍是 `[600,-18,28,28]` 无鼠标 Texture | QS-A1 V1.r4 美术保持 accepted；旧顶部悬空位置已否决。V2 提案把 `32px` 漆章压在羊皮纸封签的外露宽头上，必须先确认 `QUEST-LOG-SEAL-ACTIONS-SIM-V2` |
+| `QUEST.LOG.CHROME.SEAL.SUPPORT` | 尚无 runtime 对象 | proposed 独立羊皮纸封签：根部夹在右页层间、由页唇压住，窄身横跨封皮后伸出书外，不能固定在书框／护轨上；漆章只压外露宽头 |
 | `QUEST.LOG.CHROME.SEAL.MENU` | 尚无 runtime 对象 | proposed transient Frame；七项菜单只代理原 Button，取得一一功能等价前旧按钮保持 fail-open |
 | `QUEST.TRACKER.HUB.SEAL` | 尚无 runtime 对象 | adapter-owned `34 × 34` 顶部中央漆章；宽度 `W` 时 `x=floor((W-34)/2)`、`y=-18`，底边恰好落在 provider `16px` 工具条／列表起点，不移动任务内容 |
 | `QUEST.TRACKER.HUB.MENU` | 尚无对象 | 未来独立交互批次；漆章点击后承载七项 provider 行为。本模拟不绘制、不实现，也不把它当成已有 Button |
@@ -740,7 +741,7 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 - 日期：`2026-08-03`
 - 范围：只修订 `QUEST.LOG.CHROME.SEAL` 的承载位置和 Quest Log 底部操作
   收纳；不改变 QS-A1 V1.r4 漆章母版、四态 atlas 或 Tracker 漆章。
-- 子状态：`simulation-reviewed / P2 / awaiting-user-confirmation`
+- 子状态：`simulation-reviewed / P2 / superseded-before-confirmation`
 - 操作：`simulate`
 - 模拟方式：`deterministic-local-geometry`
 - ImageGen：`0/0`；上传：无；本地渲染错误：`0`
@@ -758,7 +759,7 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 - report：
   `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V1/quest_log_seal_actions_report_v1.json`，SHA-256
   `125f5e40342117301b009ae1a0572f2b91be2bc98e5cd5a492695860069ae20a`。
-- 用户结论：`pending`。
+- 用户结论：`superseded-before-confirmation / 2026-08-03`。
 
 ### 失效原因与设计裁决
 
@@ -834,10 +835,96 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 ### 用户方向结论
 
 - 具体模拟版本：`QUEST-LOG-SEAL-ACTIONS-SIM-V1`
-- 当前结论：`pending`
-- 若确认：实现程序化 support／menu、原 Button proxy、fail-open 与 Lua smoke；
-  不调用 ImageGen，不重开 QS-A1 source，不以模拟像素制作 runtime。
-- 若否决：只修改 placement、承载隐喻、菜单展开方向／分组或综合色后生成新的
-  本地几何模拟版本；ImageGen 仍为 `0/0`。
+- 当前结论：`superseded-before-confirmation`。用户要求先审视火漆在书框外的
+  物理语义，并进一步查看“书页间羊皮纸封签”方向；V1 不得进入 runtime。
+- 后继版本：`QUEST-LOG-SEAL-ACTIONS-SIM-V2`；菜单对象集合与 fail-open
+  合同保留，承载物、位置与层序重新模拟，ImageGen 仍为 `0/0`。
 - 确认失效条件：承载物从侧边皮签改为其他物件、漆章位置／尺寸发生实质变化、
   菜单改为另一方向／层级或收纳对象集合变化。
+
+## Quest Log 羊皮纸火漆封签 — `QUEST-LOG-SEAL-ACTIONS-SIM-V2`
+
+### 方向修订
+
+- 用户于 `2026-08-03` 追问：火漆位于外侧书框时，是否仍应使用“火漆”概念。
+  物理语义复核结论是：火漆若直接附着在书框／护轨上，没有封住任何文书，
+  会退化为红色装饰按钮；V1 的短皮革事务签也仍容易被读成书框附件。
+- 用户随后要求按“从书页间伸出的羊皮纸火漆封签”制作视觉展示。因此 V1
+  在用户确认前被 `superseded-before-confirmation`；它的七项菜单对象集合和
+  fail-open 交互合同继续沿用，但承载隐喻、位置与层序不得进入 runtime。
+- V2 把火漆保留为已接受的 QS-A1 V1.r4 资产，但把它的语义收敛为封住一张
+  独立任务事务签：封签根部夹在右页层间，页唇位于根部上方；窄身横跨打开的
+  封皮后伸出书外；火漆只压在外露的加宽折头上，不直接接触书框、包角或书封。
+
+### 元数据
+
+- 日期：`2026-08-03`
+- 子状态：`simulation-reviewed / P2 / awaiting-user-confirmation`
+- 操作：`simulate`
+- 模拟方式：`deterministic-local-geometry`
+- ImageGen：`0/0`；上传：无；新增 bitmap source/runtime：`0`
+- Python：macOS `conda run -n py312 python`；实际解释器
+  `/Users/yuanshiyao/miniconda3/envs/py312/bin/python`，`3.12.12`
+- specification：
+  `tools/specs/quest_log_seal_actions_simulation_v2.json`
+- 复用 renderer：
+  `tools/render_quest_log_seal_actions_simulation_v1.py`
+- 命令：
+  `conda run -n py312 python tools/render_quest_log_seal_actions_simulation_v1.py tools/specs/quest_log_seal_actions_simulation_v2.json --repo-root .`
+- board：
+  `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V2/quest_log_seal_actions_board_v2.png`，SHA-256
+  `a61ac0e3624831103cd9d1db31ffc07a0e55e21dc720b143c9c79196771c8f42`。
+- report：
+  `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V2/quest_log_seal_actions_report_v2.json`，SHA-256
+  `082f4585bcec49244b1ac16a985177520badc6eec0b0ae166254964cc2e8ba1e`。
+- 本地渲染错误：`0`；用户结论：`pending`。
+
+### 几何、层序与对象合同
+
+- 基础 Quest Log 仍为真实 `676 × 464`；左／右 ScrollFrame、十八行任务、
+  四个 `108 × 32px` 奖励槽和七项菜单代理均与 V1 相同。
+- 页面出口 `page_exit=[603,190,34,38]`；封签根部由
+  `page_lip=[603,190,24,36]` 覆盖；窄身
+  `document_tag=[614,197,80,27]` 横跨外侧封皮并越过书体右边界；外露折头
+  `tag_head=[672,189,44,44]` 承载
+  `seal_visual=[678,195,32,32]`，命中盒为
+  `[674,191,40,40]`。
+- 固定层序：QL-A1 SHELL → 封签接触阴影 → 羊皮纸窄身／外露折头 →
+  右页页唇覆盖根部 → QS-A1 漆章 → 临时事务菜单。页唇压住根部是“来自
+  书页而非安装在书框”的关键可读证据。
+- 关闭态只显示封签和漆章；左键后仍由 `190 × 278px` 暖赭事务笺向右页内
+  展开，动作、Esc／书外关闭、原 Button proxy、禁用态镜像和放弃原生确认
+  完全沿用 V1。旧按钮在功能等价前继续 fail-open。
+- 封签视觉最右端到 `x=716`、程序化轮廓到约 `x=720`，相对基础 Frame 形成
+  最大约 `44px` 右侧可见 outset；未来 P5 必须同时验证右侧屏幕边缘 clamp、
+  UI scale、命中盒和菜单展开，不能只检查基础 Frame。
+
+### 内部审查
+
+- 语义／物理：`pass-for-simulation`。漆章有明确的羊皮纸承载面；封签根部
+  与页面出口相交并被页唇覆盖；封签跨过而不是固定在书框，漆章完全位于
+  外露折头内。它不再是悬空红按钮，也不占用正文、翻页或页沟。
+- 图层／轮廓：`pass-for-simulation`。关闭态轮廓保持单一短封签，不增加
+  外围书框；打开态菜单只临时覆盖右页并避开 Close。
+- 美术继承：`pass-for-simulation`。暖赭纸、暗酒红蜡、深墨与旧黄铜角色
+  继承任务基线；QS-A1 source／atlas 没有改变。封签几何刻意低频，避免现代
+  标签卡和皮革工具栏。
+- 展示区域机器检查：`displayable`。四个奖励槽在 detail 内；漆章在页内
+  安全区外；封签根部、页唇覆盖、越过书体右边界、漆章位于折头内、菜单位于
+  Frame 内且避开 Close、`40px` 命中盒包含 `32px` 漆章和 fail-open 条件
+  全部通过。
+- 非权威：封签纸纤维、页唇最终边缘、折痕／磨损、菜单纸边、客户端字体、
+  动画、Tooltip 和屏幕 clamp；模拟像素不得成为 source、runtime 或生产输入。
+
+### 用户方向结论
+
+- 具体模拟版本：`QUEST-LOG-SEAL-ACTIONS-SIM-V2`
+- 当前结论：`pending`
+- 可确认：火漆是否应继续保留为“羊皮纸任务封签”的压印、封签从右页层间
+  伸出的物理关系、`32px` 漆章与 `44px` 折头的视觉重量，以及事务笺仍向
+  右页内展开的交互方向。
+- 若确认：只实现程序化封签／页唇层序和原 Button 菜单代理；不调用 ImageGen，
+  不修改 QS-A1 source／atlas。若最终封签需要生产级独立位图，则必须另建
+  完整组件合同和生产授权，不能裁切本模拟。
+- 若否决：继续在本地几何层调整封签朝向、长度、折头比例或菜单展开位置；
+  ImageGen 仍为 `0/0`。

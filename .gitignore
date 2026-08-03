@@ -21,4 +21,4 @@ archive/
 
 # Regenerable Quest Log seal-placement/menu simulation evidence. The tracked
 # spec and renderer reproduce these files until the interaction is accepted.
-/generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V1/
+/generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V*/
