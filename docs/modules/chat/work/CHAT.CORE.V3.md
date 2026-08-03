@@ -6,8 +6,8 @@
 - 组件 ID：`CHAT.FRAME`、`CHAT.FRAME.LEFT`、`CHAT.TABS`、`CHAT.INPUT`、
   `CHAT.UNREAD`、`CHAT.TEXT`
 - 版本：`CHAT.CORE.V3 / runtime contract v1.19`；输入生产版本
-  `CHAT.INPUT.DARK.V1.r3 / repair-ready`
-- 子状态：核心 `runtime-exported`；输入候选 `repair-ready`
+  `CHAT.INPUT.DARK.V1.r3 attempt 4 / candidate-reviewed`
+- 子状态：核心 `runtime-exported`；输入候选 `candidate-reviewed`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 当前操作：固定 P4 source 已按全图比例确定性导出到 `1024²`
@@ -24,10 +24,11 @@
   通过，但材料身份首先失败。attempt 2 移除了缝线、皮革卷和长导线，却仍以
   重复压纹表现中段，并保留连续橙金 focus 上缘；attempt 3 的紧邻 edit 又
   保留同一压纹，并进一步强化连续 focus 上缘，证明连续 Image 4 edit 已被
-  错误表面锚定。当前进入 `.r3 / repair-ready / P3`，改为只使用固定
-  Image 1／2／3 从零 regenerate。正式 TGA、Lua、EditBox 功能与 P5 状态均
-  未改变，模拟 ImageGen `0/0`、生产 ImageGen `3/5`、流程错误 `4`；四个
-  流程错误均无候选图或 provider 生成证据
+  错误表面锚定。`.r3` 随后只使用固定 Image 1／2／3 从零 regenerate；
+  attempt 4 的薄烟熏 rag-paper 两态、共享 Alpha、色键、真实排版和展示区域
+  完整内审通过，自主循环已停止并等待用户接受。正式 TGA、Lua、EditBox 功能
+  与 P5 状态均未改变，模拟 ImageGen `0/0`、生产 ImageGen `4/5`、流程错误
+  `4`；四个流程错误均无候选图或 provider 生成证据
 - 已凝结视觉方向：`CHAT-DARK-SIM-V1 / simulation-confirmed / P2` 的 B 方向
   已由 `CHAT.FRAME.FULL.V1.r1 / runtime-exported / P5` 实现；不再作为并行候选
 - 已退回生产批次：`CHAT.FRAME.PAPER.V1 / candidate-rejected / P3`；固定
@@ -1705,12 +1706,13 @@ python3 tools/build_chat_v3_runtime_assets.py
 
 - 用户反馈：Full V1 暖黑书体接入后，原 V3 浅金输入纸带在书页下沿形成过亮
   横条，容易被读成现代进度条；输入背景与正文底色关系需要重做。
-- 已确认模拟：`CHAT.INPUT.DARK.V1-SIM`；当前操作：`regenerate`；生产版本：
-  `CHAT.INPUT.DARK.V1.r3`；子状态：`repair-ready / P3`。用户于
+- 已确认模拟：`CHAT.INPUT.DARK.V1-SIM`；当前操作：`review`；生产版本：
+  `CHAT.INPUT.DARK.V1.r3 attempt 4`；子状态：`candidate-reviewed / P3`。用户于
   `2026-08-03` 先明确接受模拟方向，随后独立授权完整生产版本、固定参考、
   `0/5` 初始预算和循环内 edit 边界。attempt 1／2／3 已调用并计为 `3/5`；
   attempt 3 证明连续 edit 被错误表面锚定，因此 attempt 4 不使用 Image 4，
-  只用固定 Image 1／2／3 从零重生成；尚未 promote source、导出 TGA 或修改 Lua。
+  只用固定 Image 1／2／3 从零重生成。该候选已完整内审通过并停止循环；尚未
+  promote source、导出 TGA 或修改 Lua。
 - 现行正式 runtime 继续是 `ChatInputAtlasV3.tga`／`P5`。本模拟没有否定其
   normal／focus 状态、三段 UV 或功能，只为替换未来可见像素建立方向门禁。
 - provider：`pfUI.chat.editbox` 与 `ChatFrameEditBox`；adapter 精确几何为
@@ -1843,7 +1845,7 @@ python3 tools/build_chat_v3_runtime_assets.py
 
 - 固定执行器只允许 `imagegen-0-143-0`／`@openai/codex@0.143.0`；操作为
   `generate/edit`。用户已于 `2026-08-03` 开启本版本最多五次实际调用的预算；
-  当前实际 ImageGen 为 `3/5`、流程错误 `4`。
+  当前实际 ImageGen 为 `4/5`、流程错误 `4`。
 - provider raw 画布固定为 `1536 × 1024 RGBA`，背景必须为完全平坦的
   `#00FF00`。对象恰为两条无字纸条：normal 固定 source cell
   `[51,187,1437,363]`，focus 固定 source cell `[51,448,1437,625]`；坐标为
@@ -2073,7 +2075,7 @@ indicator; and no runtime content or neighboring UI is baked into the sheet.
 - 固定上传：上述固定 SHA、固定顺序与固定职责的 Image 1／2／3。
 - 循环内 edit：仅允许同一循环紧邻前次输出作为 Image 4，且只能在冻结修复
   边界内使用；其余图片一律不得上传。
-- 预算：最多 `5` 次实际 ImageGen generation／edit，含首次；当前 `3/5`。
+- 预算：最多 `5` 次实际 ImageGen generation／edit，含首次；当前 `4/5`。
   流程错误没有候选图且没有 provider 生成证据时不占额度；当前 `4`。
 - 用户原文：
 
@@ -2081,14 +2083,13 @@ indicator; and no runtime content or neighboring UI is baked into the sheet.
 > 紧邻前次输出仅在冻结边界内作为 Image 4 edit 输入；最多 5 次实际 ImageGen
 > 调用，流程错误不占额度。
 
-- 下一门禁：提交 attempt 3 审查和下方完整 `.r3`，然后只用固定 Image 1／2／3
-  regenerate attempt 4；每次实际输出都必须从对象身份开始完成全量审查、确定性真实
-  排版和展示区域门禁。任何候选内部通过后立即停止，不能自动进入 source 或
-  runtime。
+- 下一门禁：用户接受或退回 `.r3` attempt 4 的精确 raw 与真实排版。内部通过
+  后已立即停止，不能自动进入 source 或 runtime；只有用户接受后才允许进入
+  P4 source／manifest。若退回，剩余 `1/5` 仍受冻结边界约束。
 
 ### `CHAT.INPUT.DARK.V1` 自主修复循环
 
-- 当前实际 ImageGen：`3/5`；流程错误：`4`；循环终态：`active`。
+- 当前实际 ImageGen：`4/5`；流程错误：`4`；循环终态：`candidate-reviewed / stopped`。
 - attempt 1 只上传固定 Image 1／2／3并执行上方正文。attempt 2–5 的完整
   `.rN` 正文、前次失败证据和 edit／regenerate 决定必须在各自调用前提交。
 
@@ -2097,6 +2098,7 @@ indicator; and no runtime content or neighboring UI is baked into the sheet.
 | 1 | `CHAT.INPUT.DARK.V1` / `284a168` | generate；固定 Image 1／2／3 | `019fc5dd-d5a9-7ba0-912d-7d08fe738824` | `generated/chat/core/CHAT.INPUT.DARK.V1/attempt-01/CHAT_INPUT_DARK_V1_attempt01_raw.png`；`f70fbd24…079b` | 材料／组件身份：整块缝线皮革槽，不是夹入页叠的烟草纸 | 只保留恰为两个无字长条、普通／聚焦顺序、长浅比例与暖暗综合色；完整 `.r1` 使用本输出作 Image 4 edit，重绘全部可见材料、端部、中段与 focus | 内部失败；计 `1/5`；未晋级 source/runtime |
 | 2 | `CHAT.INPUT.DARK.V1.r1` / `3832bcb` | edit；固定 Image 1／2／3＋紧邻 Image 4 | `019fc5e9-bb26-7601-acec-19869234acda` | `generated/chat/core/CHAT.INPUT.DARK.V1/attempt-02/CHAT_INPUT_DARK_V1_attempt02_raw.png`；`43396173…ab3c1` | 材料可读性／拉伸中段：重复卷曲压纹仍像压花皮革；focus 连续橙金上缘 | 保留两个状态、当前轮廓、薄页叠、右侧纸角、无缝线／长导线和暗色顺序；`.r2` 只把中段改为低频纸纤维并把 focus 高光限制为短段 | 内部失败；计 `2/5`；未晋级 source/runtime |
 | 3 | `CHAT.INPUT.DARK.V1.r2` / `756e433` | edit；固定 Image 1／2／3＋紧邻 Image 4 | `019fc5f0-d281-7fd1-9785-7e636e686ca3` | `generated/chat/core/CHAT.INPUT.DARK.V1/attempt-03/CHAT_INPUT_DARK_V1_attempt03_raw.png`；`3fa5948a…6095` | 修复服从度／材料可读性：重复卷曲压纹仍覆盖中段，focus 连续上缘反而更亮 | 两态数量、长浅比例、页叠、无缝线／长导线与暗色顺序可保留为书面约束，但不再保留 attempt 3 像素；`.r3` 只用固定 Image 1／2／3 从零 regenerate | 内部失败；计 `3/5`；未晋级 source/runtime |
+| 4 | `CHAT.INPUT.DARK.V1.r3` / `880ed27` | regenerate；仅固定 Image 1／2／3 | `019fc5fd-c995-7f50-94af-5ab05aaba66d` | `generated/chat/core/CHAT.INPUT.DARK.V1/attempt-04/CHAT_INPUT_DARK_V1_attempt04_raw.png`；`6caa441c…2518` | 无；全部内部门禁通过 | 两态薄烟熏 rag-paper、页叠、右纸角、平静中段、暗色 focus、共享 Alpha 与真实排版全部保留；立即停止，不生成 attempt 5 | `candidate-reviewed`；计 `4/5`；等待用户接受，未晋级 source/runtime |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
@@ -2852,3 +2854,63 @@ is baked into the sheet.
 - 下一门禁：提交本完整 `.r3` 后，以提交 hash 作为 attempt 4 执行前基线；
   实际 provider 图计为 `4/5`，随后从对象身份开始运行同一全量审查。内部通过
   立即停止并交用户接受；内部失败才允许在剩余一次额度内建立完整 `.r4`。
+
+### `CHAT.INPUT.DARK.V1.r3` attempt 4 审查记录
+
+- 固定版本／session：`@openai/codex@0.143.0`；
+  `019fc5fd-c995-7f50-94af-5ab05aaba66d`。child 明确显示
+  `OpenAI Codex v0.143.0`，完整 `.r3` 与固定 Image 1／2／3 按顺序进入 user
+  block；没有 Image 4，built-in `image_gen` 实际执行，因此累计 `4/5`。
+- 执行前 commit：`880ed275f6550935b23843bdd4c2092a191fdd7a`；`.r3`
+  正文 SHA-256 `1ef8bd520244f1494aaa1208898b74dc1192bdffc5057478f85aeb1cb9a1fecf`，
+  长 `10914` 字符；完整性审计为 `pass / self-contained / repair-ready`。
+- raw：
+  `generated/chat/core/CHAT.INPUT.DARK.V1/attempt-04/CHAT_INPUT_DARK_V1_attempt04_raw.png`；
+  `1536 × 1024 RGB`；SHA-256
+  `6caa441c135de0761fcc797a59b00b11a0dd8cf8b325289d3ae29fb1c12f2518`。
+- 对象／runtime ownership：通过。恰为 NORMAL 在上、FOCUS 在下的两条完整
+  无字纸条；没有第三对象、文字、光标、按钮、图标、未读、语言字段、书框或
+  相邻 UI。两态长浅比例、基线、页层、右侧单一纸角和外轮廓一致。
+- 物件／材料：通过。两态首先读作两至三层薄烟熏 rag paper，靠 deckled 页缘、
+  页叠厚度和附着阴影成立；没有皮革端柱、缝线、绑带、金属、卷轴轴心或完整
+  硬边。表面是无规则纤维／烟熏吸收，不再出现 attempt 2／3 的卷曲、环状、
+  压花或可数重复单元。源尺度仍保留细纤维，但在 `25px` 实际高度收敛为平静
+  哑光纸面，不形成皮革粒面或拉伸重复。
+- 状态反馈：通过。NORMAL 深灰烟草并后退；FOCUS 只整体轻抬到深暖烟草，
+  长边没有醒目的连续橙金轮廓、发光或进度填充。真实布局中 focus 可辨认但
+  仍明显暗于旧 V3 浅金输入纸带；状态切换不改变轮廓或位置。
+- provider raw 使用接近纯绿但非精确 `#00FF00` 的自发光绿幕；按既定
+  candidate-self 规则从 raw 自身 `32px` 外围估计 matte：background score
+  min `219`、transparent threshold `218`、opaque threshold `160`。raw 对象带
+  bbox 为 normal `[81,230,1455,450]`、focus `[81,567,1455,787]`；等比
+  bbox-fit 后两态均为 `1344 × 154px`，完整对象、页层与右纸角均未裁切。
+- 确定性工具：`tools/review_chat_input_dark_candidate_v1.py`，SHA-256
+  `b6b26041857c643dd18a6fb3fee736beeb9fc214818f576954126885ff6b8f3a`。
+  normalized source SHA-256
+  `4df36bc607a024ca0a2355f5d20ff985f61cbf3304073a65e33caa978c50cda0`；
+  逻辑 atlas SHA-256
+  `8e2a6437b332fe28a34d8eb1d5b48f78073a3238e6b9826108e2f96650edca79`；
+  两态共享 Alpha，pre-intersection 差异 `7206` 像素已取逐像素最小值；可见
+  绿溢色 `0`，透明 RGB 非零值 `0`。在独立临时目录复跑后，normalized、atlas
+  与真实排版三个 PNG SHA 完全相同。
+- 真实排版：`attempt-04.real-layout.png`，SHA-256
+  `64e2ac242954eee68fc9cdb9730500a3b35d8c19c0b2595eed7a9622e5223749`；
+  metrics SHA-256
+  `91a752476a73aaa430e7d28e0b17536323beb6c483f8e26bbbc0e1918837ea2e`。
+  它复用 tracked Full V1 书框、V3 Tab／承托带和动态代表文字，只替换候选
+  input atlas；覆盖旧 V3 对照、空 normal、最小 focus、典型 15 行、最大 16 行
+  与 `540 × 420`／22 行横向伸缩。全部文本 `truncated=0`，`34/22px` inset
+  和 `380 × 25`／`480 × 25` 输入区保持。
+- 展示区域合同 SHA-256
+  `9dc11cd490cc9d7bd8067d547ef013210344e3299cdaaf7fa74fd4fb5a9c16b7`；
+  报告 SHA-256
+  `a399e7ffa584aec0ce40214b871546b61728b92a699a13a4b4a8d4f6a62cfc52`。
+  empty、minimum、typical、maximum、expanded 五场景全部 `pass`，violations
+  `0`、first failure `null`。
+- 内部决策：`pass / candidate-reviewed / P3`。这是本循环首个通过全部对象、
+  材料、状态、Alpha、三段拉伸、真实排版与展示区域门禁的候选，故按授权立即
+  停止；attempt 5 未调用。候选未复制到 `assets/source/`，未生成正式 TGA，
+  未修改 Lua／pfUI／ChatMOD 或 SavedVariables。
+- 用户结论与日期：`pending`。下一门禁是用户接受或退回此精确 raw 与真实排版；
+  接受后才允许进入 P4 source／manifest。若退回，剩余 `1/5` 只能修复用户指出
+  的首个失败门禁，不能扩大上传或改变组件／runtime 合同。
