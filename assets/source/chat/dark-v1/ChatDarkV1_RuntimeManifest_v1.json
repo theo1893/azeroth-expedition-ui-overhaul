@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "batch": "CHAT.CORE.DARK.V1",
+  "runtime_contract": "1.19",
+  "status": "runtime-exported",
+  "single_chat_frame": true,
+  "source_manifest": "assets/source/chat/dark-v1/ChatDarkV1_SourceManifest_v1.json",
+  "sources": {
+    "frame": {
+      "file": "assets/source/chat/dark-v1/ChatBookFrame_Dark_Master_v1.png",
+      "sha256": "c1113cba63cb4d6cab1688c4a3f46d6cd1c5be1a31be63b92bdf9e21f8099975",
+      "size": [
+        1608,
+        978
+      ],
+      "mode": "RGBA",
+      "transparent_pixels": 226357,
+      "partially_transparent_pixels": 20744,
+      "opaque_pixels": 1325523
+    },
+    "input": {
+      "file": "assets/source/chat/dark-v1/ChatInputStrip_Dark_Master_v1.png",
+      "sha256": "c25feffb282a90b4936e5e39ad5f9b86c346be9f96f7e21e061b5250ce806444",
+      "size": [
+        512,
+        64
+      ],
+      "mode": "RGBA",
+      "transparent_pixels": 0,
+      "partially_transparent_pixels": 196,
+      "opaque_pixels": 32572
+    }
+  },
+  "stable_v3_dependencies": {
+    "tabs": {
+      "file": "assets/source/chat/v3/ChatTabs_Master_v3.png",
+      "sha256": "8172d9d5145ac16ed23913fb7fbf75e626e0976d6bb33b27a555de4c55853023"
+    },
+    "tab_runtime": {
+      "file": "addon/AzerothExpeditionUI/Media/Chat/ChatTabAtlasV3.tga",
+      "sha256": "4ab2d572a345b53ee55b5a21b5ed542de27ec0bdcd3eb05b9c094cf6d9889384"
+    },
+    "tab_shelf_runtime": {
+      "file": "addon/AzerothExpeditionUI/Media/Chat/ChatTabShelfV3.tga",
+      "sha256": "a895728fc886a526b09f3b5858243fd62d08960bd0a064ec2de0269424d5ec1e"
+    },
+    "unread_runtime": {
+      "file": "addon/AzerothExpeditionUI/Media/Chat/ChatUnreadSealV3.tga",
+      "sha256": "ddd6ea5f1bb8c4d1019ea257eb59651d9a0084ec9e52ef3316fc0d4e4da9e23d"
+    }
+  },
+  "book": {
+    "atlas": [
+      1024,
+      1024
+    ],
+    "cuts": {
+      "left": 137,
+      "top": 64,
+      "right": 946,
+      "bottom_inner": 548,
+      "content_bottom": 623
+    },
+    "runtime_border": {
+      "left": 30,
+      "top": 28,
+      "right": 30,
+      "bottom": 28
+    },
+    "content_safe_area": [
+      30,
+      32,
+      410,
+      280
+    ]
+  },
+  "input": {
+    "atlas": [
+      1024,
+      256
+    ],
+    "state_rows": {
+      "normal": [
+        0.0,
+        0.5
+      ],
+      "focus": [
+        0.5,
+        1.0
+      ]
+    },
+    "x_pixels": [
+      8,
+      121,
+      932,
+      1016
+    ],
+    "runtime": {
+      "size": [
+        380,
+        25
+      ],
+      "left": 28,
+      "right": 20
+    },
+    "focus_derivation": {
+      "source": "normal accepted pixels",
+      "red_percent": 110,
+      "green_percent": 108,
+      "blue_percent": 105,
+      "alpha": "unchanged"
+    }
+  },
+  "runtime_exports": {
+    "book": {
+      "file": "addon/AzerothExpeditionUI/Media/Chat/ChatBookFrameDarkV1.tga",
+      "sha256": "ba8c95ec725df26ed9c420ee91da24f972144615cfca2a7cc1048e6fed94b997",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA"
+    },
+    "input": {
+      "file": "addon/AzerothExpeditionUI/Media/Chat/ChatInputAtlasDarkV1.tga",
+      "sha256": "630d4bcda26cdd1a9444959362f3bf354d06a385c80f574b3b2ed9f69c2d5270",
+      "size": [
+        1024,
+        256
+      ],
+      "mode": "RGBA"
+    }
+  },
+  "review": {
+    "runtime_assembly": "generated/chat/dark-v1/ChatDarkV1_RuntimeAssembly_440x320.png",
+    "display_region": {
+      "contract": "tools/specs/chat_dark_v1_runtime_display_region.json",
+      "report": "generated/chat/dark-v1/ChatDarkV1_RuntimeDisplayRegion.json",
+      "status": "pass",
+      "sha256": "a8f12d36e33f79a8698e8edf95be69c5b9559696a8118a54dec04c3d831afec2",
+      "violation_count": 0
+    }
+  },
+  "forbidden_runtime_uses": [
+    "do not load high-resolution source masters directly in game",
+    "do not bake tabs, text, unread state or dynamic input text into the frame",
+    "do not instantiate a right-side chat book or legacy information bar"
+  ]
+}

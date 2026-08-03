@@ -20,7 +20,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 | 模块 | 当前状态 | 下一门禁 |
 |---|---|---|
 | pfUI／作用域接管 | scoped ownership `P5`；pfUI 公共绘制、全部未接管模块与配置页已恢复；模块 Initialize／Apply 已隔离失败，未实机 | Turtle WoW 验证 pfUI 全模块、Game Menu／`/pfui`、旧 SavedVariables 迁移及 Chat／Quest Log 隔离 |
-| 聊天 | 核心 V3 runtime `1.18 / P5`；书本九宫格可自愈；受管正文沿用 pfUI 配置字体，移除描边、文字阴影与矩形压光层，保留 `3px` 行距；语义墨色通过 pfUI Chat 最终输出桥、`HookAddMessage` 与 `ORG_AddMessage` wrapper 接入，只以左书 Parent 判定作用域。v1.17 因插件色仍过亮、团队／小队同色及职业／频道偏离原版识别色被实机退回；v1.18 改用 Vanilla 原色相的等比例深墨，团队焦橙／小队蓝紫独立，战士恢复棕褐；未知亮色低于 `4.8:1` 时保色相压暗，深色自定义值与链接载荷保持。Chat Copy／URL Copy 暂缓；单一左框、右框及左右聊天信息 Panel 隐藏，小地图 Panel 保留 | Turtle WoW 重载后确认 `chat-runtime=1.18`，重点比较团队／小队、九职业原色识别和 DPSMate 红绿报告，同时确认 `chat-color c/x` 增长、旧字体、书外 Frame 与小地图 Panel |
+| 聊天 | 核心 V3 runtime `1.19 / P5`；Dark V1 完整暖黑书体与输入栏已接入，V3 Tab／承托带／未读继续复用；书本九宫格可自愈。受管正文沿用 pfUI 配置字体，移除描边、文字阴影与矩形压光层，保留 `3px` 行距；三层颜色桥只以左书 Parent 判定作用域。频道与九职业恢复暗纸上的 Vanilla 高辨识色，团队焦橙／小队蓝紫独立；未知暗色低于 `4.8:1` 时提升到门限，已清楚的颜色与链接载荷保持。Chat Copy／URL Copy 暂缓；单一左框、右框及左右聊天信息 Panel 隐藏，小地图 Panel 保留 | Turtle WoW 重载后确认 `chat-runtime=1.19`，重点检查暗纸／输入聚焦态、团队／小队、九职业原色识别和 DPSMate 红绿报告，同时确认 `chat-color c/x` 增长、旧字体、书外 Frame 与小地图 Panel |
 | 任务 | QL-A2 V4 书本主体保持；Quests `1.16`／Quest Visual Theme `1.5` 将左页恢复为 18 个 `246 × 18px` 活动行，全部任务／完成／地下城文字统一为 `12px` 霞鹜文楷、无描边和 shadow；行末追踪圈及左右页 scrollbar chrome 隐藏，两个真实 ScrollFrame 保留并支持滚轮。Quest Log 与 Tracker 共用一套高对比深墨难度色；任务类型使用深紫墨，完成／失败使用独立深绿／深红，模板拆分 FontString 与标题后的内联色码均由 adapter 归一化。Tracker 仍整批提交主题、宽度及 `16px` 底部安全区，左侧 `button.icon` 隐藏且旧统一字体保留。QL-B2 资产保留但隐藏；QT-A1 仍为 `P5 runtime-exported-temporary / display-region-blocked`，旧七工具按钮可见可用 | Turtle WoW `/reload` 验证左页深墨对比、五档难度辨识和任务类型不再荧黄，并比较同一任务在日志／Tracker 的颜色；再连续接受／放弃任务验证批次稳定 |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |

@@ -5,28 +5,25 @@
 - 模块：Chat
 - 组件 ID：`CHAT.FRAME`、`CHAT.FRAME.LEFT`、`CHAT.TABS`、`CHAT.INPUT`、
   `CHAT.UNREAD`、`CHAT.TEXT`
-- 版本：`CHAT.CORE.V3 / runtime contract v1.18`
+- 版本：`CHAT.CORE.V3 / runtime contract v1.19`
 - 子状态：`runtime-corrected`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 当前操作：保留 v1.15 的左书 Parent 唯一作用域、v1.14 的三层最终输出桥、
-  v1.11 的旧字体与无描边／阴影、`3px` 行距、压光层退役和书本自愈；根据
-  v1.17 实机“部分插件色过亮、团队与小队同色、职业／频道偏离原版识别色”
-  反馈，取消任意 RGB 距离优先策略，改用 Vanilla 原色相的等比例深墨版本，
-  单独拆分小队与团队，并为未知第三方亮色增加保留色相的连续压暗；
-  本版本直接修改 runtime，不经过 Figma，未生图、未修改已接受 source 或 atlas
-  像素，也未修改外部 ChatMOD 文件／配置
-- 并行候选视觉方向：`CHAT-DARK-SIM-V1 / simulation-confirmed / P2`；用户已
-  选择 B（`#18120D` 暖黑纸面＋接近 Vanilla 的识别色）。当前只固定
-  可见方向与生产边界；v1.18 runtime、已接受 source、正式 TGA 与稳定
-  美术基线仍保持不变
+  v1.11 的旧字体与无描边／阴影、`3px` 行距、压光层退役和书本自愈；把用户
+  接受的完整暖黑书体与输入 strip 晋级 source／runtime，V3 Tab、承托带和未读
+  继续复用；正文恢复暗纸上的 Vanilla 高辨识频道／职业色，未知暗色只提升到
+  `4.8:1`。不修改外部 ChatMOD 文件／配置、消息载荷或其他 pfUI 模块
+- 已接入视觉方向：`CHAT-DARK-SIM-V1 / source-accepted / P5`；用户选择 B
+  （`#18120D` 暖黑纸面＋接近 Vanilla 的识别色）并于 `2026-08-03` 要求接入。
+  Dark V1 source、正式 book／input TGA、manifest 与 runtime 1.19 已形成
 - 已退回生产批次：`CHAT.FRAME.PAPER.V1 / candidate-rejected / P3`；固定
   `@openai/codex@0.143.0` 子进程按授权实际执行 `1/5`，生成前流程错误 `1`。
   attempt 1 的对象、技术、装配、排版与展示区域虽通过内部审查，但用户于
   `2026-08-02` 明确指出暖黑 donor 与未重绘的金色页边／皮革之间仍像拼接；
   首个失败门禁为材料连续性／整体物件身份，剩余 `4` 次不转移给新合同，
   候选未晋级 source、正式 TGA 或 Lua
-- 新并行生产：`CHAT.FRAME.FULL.V1 / candidate-reviewed / attempt-02 / P3`；改为让固定
+- 已接受生产：`CHAT.FRAME.FULL.V1 / source-accepted / attempt-02 / P5`；改为让固定
   V3 母版只承担结构比例参考，并让 ImageGen 在一次完整 edit 中重绘所有可见
   书体像素。纸面、页叠、皮革、黄铜、接触阴影、磨损和暖光共同生成，不再用
   donor／旧母版 mask 进行视觉拼接；Tab、文字、输入与未读仍是独立 runtime
@@ -1433,6 +1430,26 @@ python3 tools/build_chat_v3_runtime_assets.py
 - 未改变最终输出链、左书 Parent 作用域、ChatMOD／pfUI 配置、消息／链接载荷、
   Alpha、字体／字号／行距、书页资产、历史或其他 pfUI 模块；旧历史行不重绘。
 
+### Runtime contract v1.19 暗纸接入
+
+- 用户于 `2026-08-03` 对同步到仓库的聊天窗口、输入栏与颜色映射明确要求
+  “接入”。`CHAT.FRAME.FULL.V1.r1` attempt 2 整体晋级为
+  `ChatBookFrame_Dark_Master_v1.png`；只把 `alpha <= 1` 的不可见色键残留清为
+  透明，不混入旧母版或 mask 像素。接受源 SHA-256 为
+  `c1113cba63cb4d6cab1688c4a3f46d6cd1c5be1a31be63b92bdf9e21f8099975`。
+- 同步的 `512 × 64` 输入 strip 无重绘晋级为 source；普通态保留原像素，聚焦
+  态由 exporter 固定执行 `R/G/B=110%/108%/105%`，Alpha 与三段式几何不变。
+- 新 runtime 为 `ChatBookFrameDarkV1.tga` 与 `ChatInputAtlasDarkV1.tga`；V3
+  `ChatTabAtlasV3.tga`、`ChatTabShelfV3.tga` 与 `ChatUnreadSealV3.tga` 继续
+  复用且哈希不变。正式 source／runtime manifest 位于
+  `assets/source/chat/dark-v1/`。
+- 基础频道色改为暖纸白／浅粉／黄／亮绿／蓝紫／焦橙／洋红／红／橙；九职业
+  恢复 Vanilla RGB，萨满蓝仅提亮为 `#1684ED`。未知内嵌暗色以二分混白提升到
+  `4.8:1`，已清楚的颜色字节级保持；确定性目标继续登记为多层桥终态。
+- 默认、最小、典型 15 行、最大 16 行与 `540 × 420` 扩展五场景
+  display-region 全部通过，无文字或输入区域越界。剩余 ImageGen `3/5` 冻结，
+  未发生新的生图调用。
+
 ### 测试客户端部署核验
 
 - 未同步部署截图：
@@ -1495,12 +1512,12 @@ python3 tools/build_chat_v3_runtime_assets.py
   `m2/h3/f3/c30/x5` 证明可见 Frame 被 `pfCombatLog` 启发式排除，未通过
   颜色运行时门禁。v1.15 修复作用域后已进入实机颜色审查，但因频道／职业
   区分度不足被用户退回。v1.16 也因战士／牧师发灰和频道扫读不足被用户退回；
-  v1.18 位于仓库工作树并取代已被实机退回的 v1.17。测试客户端的
+  v1.19 位于仓库工作树并取代 v1.18。测试客户端的
   `Interface\AddOns\AzerothExpeditionUI` 是指向该目录的 Junction，无需
   复制第二份文件。当前游戏会话仍必须 `/reload` 或重启，并以
-  `/aeui status` 的 `chat-runtime=1.18` 与 `chat-color` 计数为加载证据；
+  `/aeui status` 的 `chat-runtime=1.19` 与 `chat-color` 计数为加载证据；
   当前三帧布局预期 `m3/h3/f3`，且 `c/x` 随可见新消息增长。主客户端同样
-  通过 Junction 指向当前仓库；尚无 v1.18 实机通过结论。
+  通过 Junction 指向当前仓库；尚无 v1.19 实机通过结论。
 
 ## 审查记录
 
@@ -1591,6 +1608,9 @@ python3 tools/build_chat_v3_runtime_assets.py
   深色自定义值与链接载荷保持；修复多层桥对确定性目标色二次压暗的幂等性
   缺口。Lua 语法、Chat／pfUI／Quest smoke、repository／quest design／asset
   workflow 契约全部通过，等待实机重载。
+- 2026-08-03 v1.19：用户要求接入跨设备同步的完整暖黑书体、输入 strip 与
+  暗纸颜色映射。Dark V1 source／runtime、确定性 exporter、manifest、五场景
+  展示区域与回归断言已建立；等待 `/reload` 实机验证。
 
 ## 尝试摘要
 
@@ -1615,3 +1635,4 @@ python3 tools/build_chat_v3_runtime_assets.py
 | V3 runtime contract v1.16 | 七类基础语义互异；时间戳独立深青；九职业一对一；代表纸色上约 `4.5:1` 静态对比；有效实机反馈 | 战士／牧师仍发灰且频道扫读不足；`runtime-failed / P5` | 增加最近色距离门禁并按色相优先重排 |
 | V3 runtime contract v1.17 | 七类基础与九职业按色相优先重排；战士铁锈红／牧师中性灰；RGB 最近距离 `>=35`；代表纸色对比 `>=4.5:1` | `runtime-corrected / P5`，完整静态测试通过 | `/reload` 确认 `chat-runtime=1.17`，重点比较战士／牧师及世界／系统／警告 |
 | V3 runtime contract v1.18 | Vanilla 原色相等比例深墨；团队焦橙／小队蓝紫分色；DPSMate 与未知亮色保色相压暗；多层桥终态幂等；链接载荷不变 | `runtime-corrected / P5`，完整静态回归通过 | `/reload` 确认 `chat-runtime=1.18`，重点比较团队／小队、职业原色识别与 DPSMate 红绿报告 |
+| Dark V1 runtime contract v1.19 | 完整暖黑书体与输入 strip 晋级 source；新 book／input TGA 导出，V3 Tab／承托带／未读保持；频道与职业恢复暗纸上的 Vanilla 高辨识色；未知暗色提升到 `4.8:1`；五场景 display-region 通过 | `runtime-corrected / P5`，完整静态回归通过 | `/reload` 确认 `chat-runtime=1.19`，检查暗纸／输入焦点、职业／频道扫读及第三方暗色 |

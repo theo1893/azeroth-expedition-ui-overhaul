@@ -45,27 +45,29 @@
   `23981aca770e93335efc5df3e917a9b220fe800b08e9142a4d4579415a6af741`，
   四边透明留白为 `24/25/24/26px`。
   `440 × 320` 空／最小／15 行／16 行及 `540 × 420` 22 行扩展场景均无截断，
-  display-region 五场景 violations `0`。状态为
-  `candidate-reviewed / awaiting-user-review / P3`，剩余 `3` 次已停止消费；
-  当前亮纸基线、V3 source、正式 TGA、Lua 和 v1.18 runtime 均未改变。
+  display-region 五场景 violations `0`。用户于 `2026-08-03` 明确要求接入；
+  候选整体晋级为 Dark V1 source，仅清除 `alpha <= 1` 的不可见色键残留，
+  正式源 SHA-256 为
+  `c1113cba63cb4d6cab1688c4a3f46d6cd1c5be1a31be63b92bdf9e21f8099975`。
+  新输入 strip 同时晋级 source；普通态保留原像素，聚焦态固定执行
+  `R/G/B=110%/108%/105%` 暖色提升。Dark V1 book／input runtime 已导出，
+  V3 Tab／承托带／未读继续复用且哈希不变；正式展示区域五场景再次通过。
 - 核心批次：`CHAT.CORE.V3 / runtime-corrected / P5`；runtime contract
-  v1.18 保留 v1.15 的左书 Parent 唯一作用域、v1.14 的三层最终输出桥、
+  v1.19 保留 v1.15 的左书 Parent 唯一作用域、v1.14 的三层最终输出桥、
   v1.11 的无阴影旧字体、v1.8 的 `3px` 行距、v1.7 书本自愈和 v1.6 pfUI
   解锁缩放链。v1.17 为扩大任意色差，把战士改成铁锈红并把小队／团队合并为
   同一钴蓝；最新两张实机图证明这种重新分配破坏了玩家对原版职业／频道色的
   识别习惯，同时 DPSMate 的 `#FF8080`／`#8CFF80` 报告色仍在书页上过亮。
-  v1.18 改为保留 Vanilla 色相、只压低明度：说话／公共／系统／公会／小队／
-  团队／密语／警告／表情九类分别使用中性、深玫瑰、赭黄、绿、蓝紫、焦橙、
-  洋红、红、橙褐；小队 `#3B3B59` 与团队 `#623100` 明确分开。九职业使用原始
-  RGB 的等比例深色版本，战士恢复棕褐 `#4B3B2A`，牧师为中性 `#333333`。
-  已知常用内嵌色继续确定性映射；未知第三方颜色只在代表纸色上低于 `4.8:1`
-  时等比例压暗，足够深的自定义色保持原样。基础频道与职业色在 `#CDA155`
-  上仍约为 `4.5:1` 或更高，不恢复发光、描边、阴影或正文底色。消息内容、
+  v1.19 把书页改为 `#18120D` 暖黑烟熏纸，并恢复接近 Vanilla 的高辨识频道／
+  职业色：小队 `#AAAAFF`、团队 `#FF7F00` 独立，九职业保持原 RGB，萨满蓝
+  仅提亮为 `#1684ED`。已知常用内嵌色继续确定性映射；未知第三方暗色低于
+  `4.8:1` 时只向白色提升到门限，已清楚的颜色保持原样。所有基础频道与职业
+  色在 `#18120D` 上均达到 `4.8:1`，不恢复发光、描边、阴影或正文底色。消息内容、
   `|H...|h` 链接载荷、ChatMOD 配置与历史保持原样；不修改全局 `ChatTypeInfo`、
   SavedVariables 或其他 pfUI 模块。Lua 语法、Chat／pfUI／Quest smoke、
   repository／quest design／asset workflow 契约均通过；尚待 `/reload`。
-- 运行时：插件 `0.6.0` 已加载 V3 主框、四状态 Tab、普通／聚焦输入和独立
-  未读覆盖；静态测试通过。
+- 运行时：插件 `0.6.0` 已加载 Dark V1 主框／输入、V3 四状态 Tab 和独立
+  未读覆盖；runtime contract 为 `1.19`。
 - 容器：只保留 `pfChatLeft`。`pfChatRight` 默认强制隐藏，原本分流到右框的
   拾取、经验、荣誉、声望与技能消息组回收到 `ChatFrame1`。
 - 尚未完成：language、聊天弹出菜单、URL copy、chatcopy、whisper proxy 的
@@ -149,14 +151,14 @@
 
 | ID | 阶段 | 当前资产／实现 | 下一门禁 |
 |---|---:|---|---|
-| `CHAT.FRAME`／`LEFT` | `P5` V3 / r1.18 | `ChatBookFrameV3.tga` 九宫格；唯一左侧实例；现有维护节拍在贴图缺失／隐藏／版本过期时重建；r1.18 继续停用旧正文压光 texture，不改正式 TGA | `/reload` 确认主体恢复且书页上不再出现矩形色块，再检查接缝、缩放、拖动 |
+| `CHAT.FRAME`／`LEFT` | `P5` Dark V1 / r1.19 | `ChatBookFrameDarkV1.tga` 九宫格；唯一左侧实例；现有维护节拍在贴图缺失／隐藏／版本过期时重建；V3 亮纸 TGA 保留为回退 | `/reload` 确认暗纸主体、九宫格接缝、缩放和拖动 |
 | `CHAT.FRAME.RIGHT` | `P5` disabled-route | `single_chat_frame=1`；不分配资产 | 验证右框不显示且消息无丢失 |
-| `CHAT.TABS` | `P5` V3 / r1.18 | `92 × 30` 四状态 atlas；沿用 r1.6 的 TabText、命中与 Scale 修正；r1.18 不修改 Tab 资产／几何 | 在书本主体恢复后复测 pfUI 解锁滚轮与全局 UI Scale |
-| `CHAT.INPUT` | `P5` V3 | 普通／聚焦两状态三段式 atlas | 实机验证焦点、IME、输入历史 |
+| `CHAT.TABS` | `P5` V3 / r1.19 | `92 × 30` 四状态 atlas；沿用 r1.6 的 TabText、命中与 Scale 修正；Dark V1 不修改 Tab 资产／几何 | 复测 pfUI 解锁滚轮与全局 UI Scale |
+| `CHAT.INPUT` | `P5` Dark V1 / r1.19 | 单一接受 strip 确定性打包为普通／暖色聚焦两状态三段式 atlas | 实机验证焦点、IME、输入历史与聚焦差异 |
 | `CHAT.INPUT.LANGUAGE` | `P1` | 可选原生 Button 已映射 | 实机确认对象、尺寸和语言状态 |
 | `CHAT.UNREAD` | `P5` V3 | 独立 `ChatFrameNTabFlash` 覆盖 | 实机验证闪烁配置与选中清除 |
-| `CHAT.TEXT` | `P5` parchment-palette / r1.18 | `380 × 248`／约 16 行；pfUI 配置字体、用户字号、无描边／无阴影、`3px` spacing、无额外背景层；频道／职业保留 Vanilla 色相并降低明度，小队与团队分色；未知亮色连续压暗 | 实机确认团队焦橙／小队蓝紫、战士棕褐及其余职业仍符合原版识别，同时 DPSMate 红绿报告不再发亮 |
-| `CHAT.FRAME`／`CHAT.TEXT` 暖黑候选 | `P3` `CHAT.FRAME.PAPER.V1` rejected／`CHAT.FRAME.FULL.V1` candidate-reviewed、attempt 2 | donor attempt `1/5` 因拼接感退回；整本重绘 attempt 1 因纸／皮身份失败，`.r1` attempt 2 在累计 `2/5` 时通过整体材料、纸张身份、透明、九宫格及五场景展示区域门禁；无 source／runtime 变更 | 等待用户复审；未明确接受前不晋级 source／runtime，不消费剩余三次 |
+| `CHAT.TEXT` | `P5` dark-paper palette / r1.19 | `380 × 248`／约 16 行；pfUI 配置字体、用户字号、无描边／无阴影、`3px` spacing、无额外背景层；频道／职业恢复 Vanilla 高辨识色，小队与团队分色；未知暗色连续提升 | 实机确认职业／频道扫读、DPSMate 红绿报告与未知第三方暗色 |
+| `CHAT.FRAME`／`CHAT.TEXT` 暖黑方案 | `P5` Dark V1 / r1.19 | donor attempt `1/5` 因拼接感退回；整本 `.r1` attempt 2 在累计 `2/5` 时通过并由用户要求接入；source、runtime、manifest 与五场景展示区域门禁已完成 | `/reload` 实机视觉验收；剩余三次继续冻结 |
 | `CHAT.SCROLL.*`／`MENU.BUTTON`／`RESIZE` | `P1` hidden | 原生对象已登记，pfUI 当前隐藏 | 仅在决定恢复时建立资产合同 |
 | `CHAT.POPUP.*` | `P1` | 四个原生菜单实例已映射，仍为过渡外观 | 实机拆分 shell、行状态和滚动 |
 | `CHAT.URLCOPY.*` | `P2` V1 prompt-draft / user-deferred | 三个真实对象与现有锚点已锁定；只新生成 shell，input／close 复用 V3 接受资产；用户于 `2026-07-30` 暂缓；当前 pfUI 功能继续可用 | 仅在用户明确恢复该功能时重新开放授权门禁 |
@@ -164,24 +166,26 @@
 | `CHAT.WHISPER.TOGGLE` | `P5` route／`P1` object | 功能源码保留，默认不加载 | 锁定代理开关视觉 |
 | `CHAT.WHISPER.DIALOG` | `P1` shared-owner | 归未来 System 公共弹窗 | System 模块统一拆分 |
 
-## V3 正式运行时
+## Dark V1 正式运行时与 V3 稳定依赖
 
 | 文件 | 画布 | 运行时职责 |
 |---|---:|---|
-| `ChatBookFrameV3.tga` | `1024 × 1024` | 左侧旧书九宫格 |
+| `ChatBookFrameDarkV1.tga` | `1024 × 1024` | 暖黑烟熏纸左侧旧书九宫格 |
 | `ChatTabAtlasV3.tga` | `512 × 512` | 普通／悬停／选中／禁用 Tab |
 | `ChatTabShelfV3.tga` | `1024 × 64` | 连续承托带 |
-| `ChatInputAtlasV3.tga` | `1024 × 256` | 普通／聚焦输入纸带 |
+| `ChatInputAtlasDarkV1.tga` | `1024 × 256` | 普通／确定性暖色聚焦输入带 |
 | `ChatUnreadSealV3.tga` | `64 × 128` | 未读覆盖 |
 
-源资产与 provenance：
-[source manifest](../../../assets/source/chat/v3/ChatV3_SourceManifest_v1.json)。
-裁切、UV、画布和 runtime SHA：
-[runtime manifest](../../../assets/source/chat/v3/ChatV3_RuntimeManifest_v1.json)。
+Dark V1 源资产与 provenance：
+[source manifest](../../../assets/source/chat/dark-v1/ChatDarkV1_SourceManifest_v1.json)。
+裁切、UV、画布、稳定 V3 依赖和 runtime SHA：
+[runtime manifest](../../../assets/source/chat/dark-v1/ChatDarkV1_RuntimeManifest_v1.json)。
+V3 source／runtime manifest 保留为回退与 Tab／未读依赖证据。
 
 ## 当前证据
 
 - [`build_chat_v3_runtime_assets.py`](../../../tools/build_chat_v3_runtime_assets.py)
+- [`build_chat_dark_v1_runtime_assets.py`](../../../tools/build_chat_dark_v1_runtime_assets.py)
 - [`chat_module_smoke.lua`](../../../tests/chat_module_smoke.lua)
 - [`pfui_expedition_contract_test.lua`](../../../tests/pfui_expedition_contract_test.lua)
 - 当前 adapter：[`Modules/Chat.lua`](../../../addon/AzerothExpeditionUI/Modules/Chat.lua)
@@ -212,24 +216,25 @@
    转移。首个失败门禁是暖黑中心与旧金色页边／皮革之间的材料连续性。
 2. `CHAT.FRAME.FULL.V1.r1` attempt 2 已使累计实际生成达到 `2/5`；完整书体、
    暖黑纸／皮身份、透明清理、`440 × 320`／`540 × 420` 九宫格和五场景
-   display-region 全部通过，状态为 `candidate-reviewed / P3`。
-3. 下一步只等待用户复审候选与真实排版图。明确接受后才可晋级 source、导出
-   正式 TGA 并接入 runtime；若退回，只能在同一冻结合同内修复第一个新失败
-   门禁。剩余 `3` 次继续冻结，当前会话内建 imagegen 仍禁止使用。
+   display-region 全部通过，并于 `2026-08-03` 按用户要求晋级 Dark V1 source
+   与 runtime。
+3. 下一步只做 Turtle WoW 实机验收；若暗纸、输入聚焦态或 Vanilla 色板被退回，
+   再在同一冻结合同内处理首个失败门禁。剩余 `3` 次继续冻结，当前会话内建
+   imagegen 仍禁止使用。
 
-### 仍保留的 v1.18 实机门禁
+### 当前 v1.19 实机门禁
 
 1. 在 Junction 指向当前仓库的客户端执行 `/reload`；确认 `/aeui status`
-   报告 `chat-runtime=1.18`。分别观察小队与团队新消息，确认前者为蓝紫、后者
-   为焦橙；再检查战士棕褐、牧师中性和其余职业是否仍接近原版识别色，并确认
-   DPSMate 报告中的浅红／浅绿已变为深红／深绿而不发亮。
+   报告 `chat-runtime=1.19`。分别观察小队与团队新消息，确认前者为蓝紫、后者
+   为焦橙；再检查战士棕褐、牧师白和其余职业是否接近原版识别色，并确认
+   DPSMate 报告红／绿在暖黑纸上清楚且无描边、阴影或重影。
 2. 再次执行 `/aeui status`，确认 `chat-color` 的 `c/x` 随可见新消息增长；
    当前三帧布局下 `m/h/f` 预期仍为 `3/3/3`。若 Frame 数量变化，则 `m` 应与
    当前 Parent 为左书的 Frame 数量一致。
 3. 先确认九宫格书本主体与承托带正常、正文区域不再出现矩形压光；确认正文
    恢复 pfUI 旧字体、没有黑色全描边或任何文字重影，并保留 `3px` 额外行距。
-   等待新消息，逐项确认时间戳为深青黑、公共正文为暖棕墨、职业／物品／URL／
-   等级／自身高亮保留语义但不再发亮；再检查系统、公会、队伍、密语、警告与
+   等待新消息，逐项确认时间戳为亮青、公共正文为浅粉、职业／物品／URL／
+   等级／自身高亮恢复熟悉色相；再检查系统、公会、队伍、密语、警告与
    表情消息的角色区分。旧历史行不会重绘；若任一模块失败，记录 AEUI 单次
    打印的具体 `module <name> <method> failed` 信息。
 4. 打开 pfUI 解锁界面，在 `pfChatLeft` 拖动层上连续滚轮切换至少三档局部

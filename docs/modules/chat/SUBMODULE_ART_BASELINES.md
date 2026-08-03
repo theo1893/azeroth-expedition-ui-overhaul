@@ -13,8 +13,9 @@ ImageGen 调用记录。
 不可拉伸细节只放在角和边。不得包含 Tab、输入、未读、滚动按钮、文字或
 legacy 信息底栏。
 
-已接受源：
-[ChatBookFrame_Master_v3.png](../../../assets/source/chat/v3/ChatBookFrame_Master_v3.png)。
+当前已接受源：
+[ChatBookFrame_Dark_Master_v1.png](../../../assets/source/chat/dark-v1/ChatBookFrame_Dark_Master_v1.png)。
+V3 亮纸源保留为本地回退，不再由当前 runtime 挂载。
 `CHAT.FRAME.LEFT` 是唯一运行时实例。`CHAT.FRAME.RIGHT` 已按产品决策隐藏，
 不得为它复制、镜像或重新生成第二本书。
 
@@ -33,12 +34,14 @@ legacy 信息底栏。
 
 ## `CHAT.INPUT`
 
-生成普通与聚焦两个无字输入纸带状态，几何完全相同，均由左右端帽和可横向
-延展的安静中段组成。普通状态为轻压痕与浅墨线；聚焦状态只增加局部纸面提亮、
-墨线加深和极少暖金反光。不得出现黑色输入框、搜索图标、现代边框或发光。
+生成普通与聚焦两个无字深胡桃输入带状态，几何完全相同，均由左右端帽和可
+横向延展的安静中段组成。普通状态保持暗哑皮革／纸带与细金属压边；聚焦状态
+只增加局部暖色提亮。不得出现搜索图标、现代边框或发光。
 
 已接受源：
-[ChatControls_Master_v3.png](../../../assets/source/chat/v3/ChatControls_Master_v3.png)。
+[ChatInputStrip_Dark_Master_v1.png](../../../assets/source/chat/dark-v1/ChatInputStrip_Dark_Master_v1.png)。
+该 source 提供普通态；聚焦态只由 exporter 对相同像素执行固定
+`R/G/B=110%/108%/105%` 暖色提升，Alpha 与几何不变。
 
 ## `CHAT.UNREAD`
 
@@ -46,7 +49,9 @@ legacy 信息底栏。
 清楚，反馈依靠厚度、裂纹和短高光，不包含数字、感叹号、红点气泡或常亮光。
 它只能覆盖真实 `ChatFrameNTabFlash` 语义，不能改变 Tab 排列。
 
-已接受源同 `CHAT.INPUT`。
+已接受源仍为 V3
+[ChatControls_Master_v3.png](../../../assets/source/chat/v3/ChatControls_Master_v3.png)；
+Dark V1 不修改未读资产。
 
 ## `CHAT.TEXT`
 
@@ -54,16 +59,16 @@ legacy 信息底栏。
 在 12px 基线下使用 `3px` 额外行距；移除全方向 `OUTLINE` 并把文字阴影设为
 透明、零偏移，不允许复制出第二层字形。正文安全区不得增加连续压光、半透明
 色块、边框或逐行底色，必须直接保留书页纹理。受管聊天框的最终显示入口使用
-统一羊皮纸语义墨色板必须优先继承 Vanilla 原色相：说话中性墨、公共频道
-深玫瑰、系统赭黄、公会绿、小队蓝紫、团队焦橙、密语洋红、警告红、表情
-橙褐；小队与团队不得合并。香草九职业使用各自原始 RGB 的等比例深色版本，
-战士保持棕褐／青铜而非铁锈红，牧师保持无彩中性，其他七职业同样不得换到
-陌生色域。在代表书页色 `#CDA155` 上以约 `4.5:1` 作为基础频道／职业静态
+统一暗纸语义色板必须优先继承 Vanilla 原色相：说话暖纸白、公共频道浅粉、
+系统黄、公会绿、小队蓝紫、团队焦橙、密语洋红、警告红、表情橙；小队与团队
+不得合并。香草九职业使用各自原始 RGB，战士保持棕褐／青铜而非铁锈红，
+牧师保持白色，其他七职业同样不得换到陌生色域；萨满蓝只为通过暗纸对比
+轻微提亮。在代表书页色 `#18120D` 上以 `4.8:1` 作为基础频道／职业静态
 对比下限，不使用发光、描边或阴影补偿。
 
 经审计的 ChatMOD 1.1、pfUI 与原生精确颜色码使用确定性目标值；未知第三方
-`|cAARRGGBB` 若低于 `4.8:1`，只等比例压低 RGB，保留 Alpha、色相和饱和度；
-已经足够深的未知色必须原样保留。消息内容和 `|H...|h` 链接载荷始终原样
+`|cAARRGGBB` 若低于 `4.8:1`，只向白色提升到刚好通过并尽量保留色相，Alpha
+保持；已经足够清楚的未知色必须原样保留。消息内容和 `|H...|h` 链接载荷始终原样
 转发，不得写全局 `ChatTypeInfo` 或外部插件配置。霞鹜文楷只用于短频道签，
 不用于长聊天正文。
 
@@ -98,3 +103,8 @@ legacy 信息底栏。
   挂载。
 - 历史完整执行正文与失败尝试保留在 Git 历史；当前树以本文件、确认源资产
   和模块进度为准。
+- Dark V1 接受日期：`2026-08-03`；主框由固定执行器 attempt 2 的完整书体
+  候选整体晋级，只清除 `alpha <= 1` 的不可见色键残留；输入 strip 从同步的
+  固定候选无重绘转为 RGBA source。精确 SHA、session、provenance gap 与
+  runtime 依赖见
+  [ChatDarkV1_SourceManifest_v1.json](../../../assets/source/chat/dark-v1/ChatDarkV1_SourceManifest_v1.json)。

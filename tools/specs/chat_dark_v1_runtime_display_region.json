@@ -1,0 +1,79 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "CHAT.CORE.DARK.V1",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, 100%-UI-pixels",
+  "evidence": {
+    "provider": "addon/pfUI/modules/chat.lua",
+    "adapter": "addon/AzerothExpeditionUI/Modules/Chat.lua",
+    "runtime_exporter": "tools/build_chat_dark_v1_runtime_assets.py",
+    "runtime_manifest": "assets/source/chat/dark-v1/ChatDarkV1_RuntimeManifest_v1.json",
+    "preview_spec": "tools/specs/chat_dark_v1_runtime_preview.json",
+    "preview_metrics": "generated/chat/dark-v1/ChatDarkV1_RuntimeLayout.metrics.json",
+    "accepted_source": "assets/source/chat/dark-v1/ChatBookFrame_Dark_Master_v1.png",
+    "direction_only": false
+  },
+  "atlas": {
+    "size": [440, 320],
+    "visible_bbox": [0, 0, 440, 320],
+    "require_exact_visible_coverage": true,
+    "sampled_regions": [
+      {"id": "assembled_runtime_frame", "box": [0, 0, 440, 320]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 30, "right": 30, "top": 28, "bottom": 28},
+    "minimum_frame_size": [61, 57]
+  },
+  "scenarios": [
+    {
+      "id": "empty",
+      "frame": [440, 320],
+      "preview_frame": [440, 320],
+      "zones": {"tabs": [30, 0, 410, 32], "content": [30, 32, 410, 280], "input": [30, 289, 410, 314]},
+      "regions": [
+        {"id": "tabs.empty", "kind": "visual", "box": [30, 2, 407, 32], "zone": "tabs"},
+        {"id": "input.empty", "kind": "visual", "box": [30, 289, 410, 314], "zone": "input"}
+      ]
+    },
+    {
+      "id": "minimum-one-line",
+      "frame": [440, 320],
+      "preview_frame": [440, 320],
+      "zones": {"tabs": [30, 0, 410, 32], "content": [30, 32, 410, 280]},
+      "regions": [
+        {"id": "tabs.minimum", "kind": "visual", "box": [30, 2, 407, 32], "zone": "tabs"},
+        {"id": "messages.minimum", "kind": "text", "box": [30, 42, 410, 57], "zone": "content"}
+      ]
+    },
+    {
+      "id": "typical-fifteen-lines",
+      "frame": [440, 320],
+      "preview_frame": [440, 320],
+      "zones": {"tabs": [30, 0, 410, 32], "content": [30, 32, 410, 280]},
+      "regions": [
+        {"id": "tabs.typical", "kind": "visual", "box": [30, 2, 407, 32], "zone": "tabs"},
+        {"id": "messages.typical", "kind": "text", "box": [30, 42, 410, 267], "zone": "content"}
+      ]
+    },
+    {
+      "id": "maximum-sixteen-lines",
+      "frame": [440, 320],
+      "preview_frame": [440, 320],
+      "zones": {"tabs": [30, 0, 410, 32], "content": [30, 32, 410, 280]},
+      "regions": [
+        {"id": "tabs.maximum", "kind": "visual", "box": [30, 2, 407, 32], "zone": "tabs"},
+        {"id": "messages.maximum", "kind": "text", "box": [30, 42, 410, 280], "zone": "content"}
+      ]
+    },
+    {
+      "id": "supported-expanded",
+      "frame": [540, 420],
+      "preview_frame": [540, 420],
+      "zones": {"tabs": [30, 0, 410, 32], "content": [30, 32, 510, 380]},
+      "regions": [
+        {"id": "tabs.expanded", "kind": "visual", "box": [30, 2, 407, 32], "zone": "tabs"},
+        {"id": "messages.expanded", "kind": "text", "box": [30, 42, 510, 380], "zone": "content"}
+      ]
+    }
+  ]
+}

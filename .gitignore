@@ -13,3 +13,4 @@ release/
 archive/
 *.zip
 *.log
+generated/

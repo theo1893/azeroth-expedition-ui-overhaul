@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "module": "chat",
+  "batch": "CHAT.CORE.DARK.V1",
+  "accepted_version": "Dark V1",
+  "status": "accepted-source",
+  "accepted_on": "2026-08-03",
+  "acceptance": "The user requested integration after confirming the cross-device chat frame, input strip and color mapping update.",
+  "sources": [
+    {
+      "component": "CHAT.FRAME",
+      "file": "ChatBookFrame_Dark_Master_v1.png",
+      "sha256": "c1113cba63cb4d6cab1688c4a3f46d6cd1c5be1a31be63b92bdf9e21f8099975",
+      "width": 1608,
+      "height": 978,
+      "mode": "RGBA",
+      "transparent_pixels": 226357,
+      "partially_transparent_pixels": 20744,
+      "opaque_pixels": 1325523,
+      "candidate": {
+        "file": "generated/chat/core/CHAT.FRAME.FULL.V1/attempt-02/review/ChatBookFrame_Full_V1_r1_attempt02.transparent.png",
+        "sha256": "23981aca770e93335efc5df3e917a9b220fe800b08e9142a4d4579415a6af741",
+        "normalization": "whole-candidate promotion; only alpha <= 1 fringe pixels were cleared to transparent"
+      },
+      "provenance": {
+        "executor": "imagegen-0-143-0",
+        "codex_package": "@openai/codex@0.143.0",
+        "generation_session": "019fc27e-f6fb-7d90-ac30-5fbdfef99c11",
+        "result_ids": [
+          "ig_0008a6d335a216a8016a6f3b35b41481919d0752e2d83926a4"
+        ]
+      }
+    },
+    {
+      "component": "CHAT.INPUT",
+      "file": "ChatInputStrip_Dark_Master_v1.png",
+      "sha256": "c25feffb282a90b4936e5e39ad5f9b86c346be9f96f7e21e061b5250ce806444",
+      "width": 512,
+      "height": 64,
+      "mode": "RGBA",
+      "transparent_pixels": 0,
+      "partially_transparent_pixels": 196,
+      "opaque_pixels": 32572,
+      "candidate": {
+        "file": "generated/chat_pfui_hq/imagegen_v4/candidate/ChatInputStrip.tga",
+        "sha256": "d63bac917d74608357fbc0e7fdbd4a647787c005c1b864b25468ff96031977cd",
+        "normalization": "lossless RGBA container conversion only"
+      },
+      "provenance": {
+        "executor": "imagegen-0-143-0",
+        "generation_session": null,
+        "result_ids": [],
+        "provenance_gap": "The synchronized input candidate predates retained provider session metadata; no IDs were invented."
+      }
+    }
+  ],
+  "stable_dependencies": {
+    "tabs": "../v3/ChatTabs_Master_v3.png",
+    "unread": "../v3/ChatControls_Master_v3.png"
+  },
+  "prompt_contracts": {
+    "global": "../../../../docs/GLOBAL_ART_BASELINE.md",
+    "module": "../../../../docs/modules/chat/ART_BASELINE.md",
+    "submodules": "../../../../docs/modules/chat/SUBMODULE_ART_BASELINES.md",
+    "work": "../../../../docs/modules/chat/work/CHAT.CORE.V3.md"
+  },
+  "runtime_contract": {
+    "version": "1.19",
+    "single_chat_frame": true,
+    "exporter": "../../../../tools/build_chat_dark_v1_runtime_assets.py",
+    "runtime_manifest": "ChatDarkV1_RuntimeManifest_v1.json"
+  },
+  "forbidden_runtime_uses": [
+    "do not load high-resolution source masters directly in game",
+    "do not bake tabs, text, unread state or dynamic input text into the frame",
+    "do not instantiate a right-side chat book or legacy information bar"
+  ]
+}

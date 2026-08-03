@@ -400,7 +400,7 @@ def main() -> None:
     assert "SuppressChatInfoPanels" in chat_source
     assert "panels.minimap" not in chat_source
     assert "SuppressRightChat" in chat_source
-    assert 'Chat.runtimeContract = "1.18"' in chat_source
+    assert 'Chat.runtimeContract = "1.19"' in chat_source
     assert "EnsureBookVisible" in chat_source
     assert 'owner:EnableDrawLayer("BACKGROUND")' in chat_source
     assert "InstallPfUIHooks" in chat_source
@@ -442,20 +442,20 @@ def main() -> None:
         "ffa335ee",
     ):
         assert color_code in chat_source
-    for parchment_color in (
-        "ff4b3b2a",
-        "ff583243",
-        "ff354224",
-        "ff423f1b",
-        "ff333333",
-        "ff003d7a",
-        "ff22424e",
-        "ff413959",
-        "ff633004",
-        "ff592d2d",
-        "ff234020",
+    for dark_paper_color in (
+        "ffc79c6e",
+        "fff58cba",
+        "ffabd473",
+        "fffff569",
+        "ffffffff",
+        "ff1684ed",
+        "ff69ccf0",
+        "ff9482c9",
+        "ffff7d0a",
+        "ffff8080",
+        "ff8cff80",
     ):
-        assert parchment_color in chat_source
+        assert dark_paper_color in chat_source
     class_sources = (
         "ffc79c6e",
         "fff58cba",
@@ -490,15 +490,15 @@ def main() -> None:
         )
     }
     assert palette_rgb == {
-        "say": (61, 61, 61),
-        "channel": (77, 57, 57),
-        "system": (64, 64, 0),
-        "guild": (18, 71, 18),
-        "party": (59, 59, 89),
-        "raid": (98, 49, 0),
-        "whisper": (90, 45, 90),
-        "danger": (117, 29, 29),
-        "emote": (97, 49, 24),
+        "say": (201, 185, 144),
+        "channel": (255, 192, 192),
+        "system": (255, 255, 0),
+        "guild": (64, 255, 64),
+        "party": (170, 170, 255),
+        "raid": (255, 127, 0),
+        "whisper": (255, 128, 255),
+        "danger": (255, 64, 64),
+        "emote": (255, 127, 63),
     }
 
     def relative_luminance(color: tuple[int, int, int]) -> float:
@@ -534,12 +534,11 @@ def main() -> None:
         assert min(hue_delta, 1 - hue_delta) <= 0.01
 
     assert palette_rgb["party"] != palette_rgb["raid"]
-    paper_luminance = relative_luminance((205, 161, 85))
+    paper_luminance = relative_luminance((24, 18, 13))
     for ink in class_rgb + list(palette_rgb.values()):
-        contrast = (paper_luminance + 0.05) / (
-            relative_luminance(ink) + 0.05
-        )
-        assert contrast >= 4.5
+        ink_luminance = relative_luminance(ink)
+        contrast = (ink_luminance + 0.05) / (paper_luminance + 0.05)
+        assert contrast >= 4.8
     assert "NotoSansSC-Medium.ttf" not in chat_source
     assert "READING_WASH_COLOR" not in chat_source
     assert "Interface\\\\Buttons\\\\WHITE8X8" not in chat_source
@@ -558,10 +557,10 @@ def main() -> None:
     assert 'event == "UI_SCALE_CHANGED"' in chat_source
     assert 'text:SetJustifyV("MIDDLE")' in chat_source
     for texture in (
-        "ChatBookFrameV3",
+        "ChatBookFrameDarkV1",
         "ChatTabAtlasV3",
         "ChatTabShelfV3",
-        "ChatInputAtlasV3",
+        "ChatInputAtlasDarkV1",
         "ChatUnreadSealV3",
     ):
         assert texture in chat_source, f"chat adapter does not mount {texture}"
@@ -623,6 +622,46 @@ def main() -> None:
         assert runtime_path.is_file(), f"missing runtime media {record['file']}"
         assert sha256(runtime_path) == record["sha256"], (
             f"runtime hash changed without manifest update: {record['file']}"
+        )
+
+    dark_manifest_path = (
+        ROOT
+        / "assets"
+        / "source"
+        / "chat"
+        / "dark-v1"
+        / "ChatDarkV1_RuntimeManifest_v1.json"
+    )
+    dark_manifest = json.loads(dark_manifest_path.read_text(encoding="utf-8"))
+    assert dark_manifest["runtime_contract"] == "1.19"
+    assert dark_manifest["status"] == "runtime-exported"
+    assert dark_manifest["single_chat_frame"] is True
+    assert dark_manifest["book"]["runtime_border"] == {
+        "left": 30,
+        "top": 28,
+        "right": 30,
+        "bottom": 28,
+    }
+    assert dark_manifest["book"]["content_safe_area"] == [30, 32, 410, 280]
+    assert dark_manifest["input"]["runtime"] == {
+        "size": [380, 25],
+        "left": 28,
+        "right": 20,
+    }
+    assert dark_manifest["input"]["focus_derivation"] == {
+        "source": "normal accepted pixels",
+        "red_percent": 110,
+        "green_percent": 108,
+        "blue_percent": 105,
+        "alpha": "unchanged",
+    }
+    assert dark_manifest["review"]["display_region"]["status"] == "pass"
+    assert dark_manifest["review"]["display_region"]["violation_count"] == 0
+    for record in dark_manifest["runtime_exports"].values():
+        runtime_path = ROOT / record["file"]
+        assert runtime_path.is_file(), f"missing runtime media {record['file']}"
+        assert sha256(runtime_path) == record["sha256"], (
+            f"dark runtime hash changed without manifest update: {record['file']}"
         )
 
     imagegen_wrapper = (

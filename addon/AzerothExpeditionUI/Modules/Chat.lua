@@ -1,9 +1,9 @@
 local addon = AzerothExpeditionUI
 local Chat = {}
-Chat.runtimeContract = "1.18"
+Chat.runtimeContract = "1.19"
 
 local CHAT_MEDIA = addon.media.root .. "Chat\\"
-local BOOK_TEXTURE = CHAT_MEDIA .. "ChatBookFrameV3"
+local BOOK_TEXTURE = CHAT_MEDIA .. "ChatBookFrameDarkV1"
 local TAB_FONT =
   addon.media.root .. "Fonts\\LXGWWenKaiGB-Medium.ttf"
 
@@ -18,7 +18,7 @@ local BOOK_UV = {
 local TEXTURES = {
   tabs = CHAT_MEDIA .. "ChatTabAtlasV3",
   tabShelf = CHAT_MEDIA .. "ChatTabShelfV3",
-  input = CHAT_MEDIA .. "ChatInputAtlasV3",
+  input = CHAT_MEDIA .. "ChatInputAtlasDarkV1",
   unread = CHAT_MEDIA .. "ChatUnreadSealV3",
 }
 
@@ -78,20 +78,20 @@ local function RGB8(red, green, blue)
   return { red / 255, green / 255, blue / 255 }
 end
 
--- Preserve the familiar Vanilla channel hues, then lower their luminance into
--- parchment ink. These are proportional darkened forms of the default colors,
--- targeting at least 4.5:1 against the accepted book's representative paper
--- color (#CDA155). Party and raid intentionally remain separate families.
+-- The accepted dark paper makes the familiar Vanilla channel hues readable
+-- without collapsing them into similar dark inks. Party and raid intentionally
+-- remain separate families; body text uses a warm paper-white instead of pure
+-- white so long sessions remain comfortable.
 local CHAT_TEXT_PALETTE = {
-  say = RGB8(61, 61, 61),
-  channel = RGB8(77, 57, 57),
-  system = RGB8(64, 64, 0),
-  guild = RGB8(18, 71, 18),
-  party = RGB8(59, 59, 89),
-  raid = RGB8(98, 49, 0),
-  whisper = RGB8(90, 45, 90),
-  danger = RGB8(117, 29, 29),
-  emote = RGB8(97, 49, 24),
+  say = RGB8(201, 185, 144),
+  channel = RGB8(255, 192, 192),
+  system = RGB8(255, 255, 0),
+  guild = RGB8(64, 255, 64),
+  party = RGB8(170, 170, 255),
+  raid = RGB8(255, 127, 0),
+  whisper = RGB8(255, 128, 255),
+  danger = RGB8(255, 64, 64),
+  emote = RGB8(255, 127, 63),
 }
 
 local CHAT_BASE_COLOR_RULES = {
@@ -157,59 +157,61 @@ local CHAT_BASE_COLOR_RULES = {
   },
 }
 
--- Exact colors emitted by ChatMOD 1.1, pfUI's class tinting and Vanilla
--- item quality links. Values keep their source hue identity and only lower
--- display luminance; payloads and global provider colors are never changed.
+-- Exact colors emitted by ChatMOD 1.1, pfUI's class tinting and Vanilla item
+-- quality links. The dark paper can carry the familiar bright Vanilla hues;
+-- only colors that would remain too dark are lifted to a nearby readable hue.
+-- Payloads and global provider colors are never changed.
 local CHAT_INLINE_COLOR_MAP = {
   -- ChatMOD timestamp, URL and generic accents.
-  ff33ccff = "ff103e4e",
-  ff00ffff = "ff004141",
-  ff00ccff = "ff003f4f",
-  ff66ffe6 = "ff1a403a",
-  ff9999ee = "ff363655",
-  ffff0000 = "ff7a0000",
-  ffff1919 = "ff760c0c",
-  ffff7f3f = "ff5b2d17",
-  ffffff00 = "ff3c3c00",
-  ffff9c00 = "ff533200",
-  ffff00ff = "ff6b006b",
-  ff10ff10 = "ff044404",
-  ff00ff00 = "ff004400",
-  ff3fbf3f = "ff164216",
-  ff0000ff = "ff0000c8",
-  ff006cff = "ff00367f",
-  ffb2b2b2 = "ff393939",
-  ff7f7f7f = "ff393939",
-  ffa0a0a0 = "ff393939",
-  a0a0a0a0 = "a0393939",
-  fff86256 = "ff622722",
+  ff33ccff = "ff33ccff",
+  ff00ffff = "ff33ccff",
+  ff00ccff = "ff33ccff",
+  ff66ffe6 = "ff66ffe6",
+  ff9999ee = "ffaaaaff",
+  ffff0000 = "ffff4040",
+  ffff1919 = "ffff4040",
+  ffff7f3f = "ffff7f3f",
+  ffffff00 = "ffffff00",
+  ffff9c00 = "ffff7f00",
+  ffff00ff = "ffff80ff",
+  ff10ff10 = "ff40ff40",
+  ff00ff00 = "ff1eff00",
+  ff3fbf3f = "ff40ff40",
+  ff0000ff = "ff1684ed",
+  ff006cff = "ff1684ed",
+  ffb2b2b2 = "ffb2b2b2",
+  ff7f7f7f = "ff999999",
+  ffa0a0a0 = "ffa0a0a0",
+  a0a0a0a0 = "a0c9b990",
+  fff86256 = "ffff8080",
 
   -- DPSMate report accents seen in raid chat.
-  ffff8080 = "ff592d2d",
-  ff8cff80 = "ff234020",
+  ffff8080 = "ffff8080",
+  ff8cff80 = "ff8cff80",
 
-  -- Nine Vanilla class colors, proportionally darkened rather than reassigned.
-  ffc79c6e = "ff4b3b2a",
-  fff58cba = "ff583243",
-  ffabd473 = "ff354224",
-  fffff569 = "ff423f1b",
-  ffffffff = "ff333333",
-  ff0070de = "ff003d7a",
-  ff69ccf0 = "ff22424e",
-  ff9482c9 = "ff413959",
-  ffff7d0a = "ff633004",
+  -- Nine familiar Vanilla class colors. Shaman blue is lifted slightly so it
+  -- clears the dark-paper contrast floor without changing its identity.
+  ffc79c6e = "ffc79c6e",
+  fff58cba = "fff58cba",
+  ffabd473 = "ffabd473",
+  fffff569 = "fffff569",
+  ffffffff = "ffffffff",
+  ff0070de = "ff1684ed",
+  ff69ccf0 = "ff69ccf0",
+  ff9482c9 = "ff9482c9",
+  ffff7d0a = "ffff7d0a",
 
   -- Known Vanilla item-quality colors; links remain links and keep hue.
-  ff9d9d9d = "ff393939",
-  ff1eff00 = "ff084400",
-  ff0070dd = "ff003971",
-  ffa335ee = "ff551c7b",
-  ffff8000 = "ff5b2e00",
-  ffe6cc80 = "ff413924",
+  ff9d9d9d = "ff9d9d9d",
+  ff1eff00 = "ff1eff00",
+  ff0070dd = "ff3d9bff",
+  ffa335ee = "ffc768ff",
+  ffff8000 = "ffff9a2e",
+  ffe6cc80 = "ffe6cc80",
 }
 
 local CHAT_INLINE_CONTRAST_TARGET = 4.8
-local CHAT_INLINE_PAPER_COLOR = { 205, 161, 85 }
+local CHAT_INLINE_BACKGROUND_COLOR = { 24, 18, 13 }
 local CHAT_INLINE_COLOR_CACHE = {}
 local CHAT_INLINE_COLOR_TARGETS = {}
 
@@ -232,26 +234,31 @@ local function RelativeLuminance(red, green, blue)
     0.0722 * LinearizeColorChannel(blue)
 end
 
-local CHAT_INLINE_PAPER_LUMINANCE = RelativeLuminance(
-  CHAT_INLINE_PAPER_COLOR[1],
-  CHAT_INLINE_PAPER_COLOR[2],
-  CHAT_INLINE_PAPER_COLOR[3]
+local CHAT_INLINE_BACKGROUND_LUMINANCE = RelativeLuminance(
+  CHAT_INLINE_BACKGROUND_COLOR[1],
+  CHAT_INLINE_BACKGROUND_COLOR[2],
+  CHAT_INLINE_BACKGROUND_COLOR[3]
 )
 
 local function InlineContrast(red, green, blue)
+  local foreground = RelativeLuminance(red, green, blue)
+  if foreground >= CHAT_INLINE_BACKGROUND_LUMINANCE then
+    return
+      (foreground + 0.05) /
+      (CHAT_INLINE_BACKGROUND_LUMINANCE + 0.05)
+  end
   return
-    (CHAT_INLINE_PAPER_LUMINANCE + 0.05) /
-    (RelativeLuminance(red, green, blue) + 0.05)
+    (CHAT_INLINE_BACKGROUND_LUMINANCE + 0.05) /
+    (foreground + 0.05)
 end
 
--- Third-party addons can inject colors AEUI has never audited. Preserve dark
--- custom colors exactly; only colors that are too bright for the paper are
--- scaled toward black. Scaling all RGB channels equally retains their hue and
--- saturation while avoiding an ever-growing destructive replacement list.
+-- Third-party addons can inject colors AEUI has never audited. Preserve colors
+-- that already clear the dark-paper contrast floor. Unreadably dark values are
+-- mixed only as far toward white as required; this retains the original hue as
+-- far as possible while guaranteeing that arbitrary provider text is visible.
 local function AdaptUnknownInlineColor(color)
   -- The provider chain can legitimately pass through more than one AEUI
-  -- bridge. Deterministic outputs are terminal even when a class target sits
-  -- at the 4.5:1 base-text threshold instead of the 4.8:1 unknown-color clamp.
+  -- bridge. Deterministic outputs are terminal and must not be adapted again.
   if CHAT_INLINE_COLOR_TARGETS[color] then
     return nil
   end
@@ -281,24 +288,24 @@ local function AdaptUnknownInlineColor(color)
   local lower = 0
   local upper = 1
   for _ = 1, 12 do
-    local scale = (lower + upper) / 2
-    local testRed = math.floor(red * scale + 0.5)
-    local testGreen = math.floor(green * scale + 0.5)
-    local testBlue = math.floor(blue * scale + 0.5)
+    local amount = (lower + upper) / 2
+    local testRed = math.floor(red + (255 - red) * amount + 0.5)
+    local testGreen = math.floor(green + (255 - green) * amount + 0.5)
+    local testBlue = math.floor(blue + (255 - blue) * amount + 0.5)
     if InlineContrast(testRed, testGreen, testBlue) >=
       CHAT_INLINE_CONTRAST_TARGET
     then
-      lower = scale
+      upper = amount
     else
-      upper = scale
+      lower = amount
     end
   end
 
   local replacement = alpha .. string.format(
     "%02x%02x%02x",
-    math.floor(red * lower + 0.5),
-    math.floor(green * lower + 0.5),
-    math.floor(blue * lower + 0.5)
+    math.floor(red + (255 - red) * upper + 0.5),
+    math.floor(green + (255 - green) * upper + 0.5),
+    math.floor(blue + (255 - blue) * upper + 0.5)
   )
   CHAT_INLINE_COLOR_CACHE[color] = replacement
   return replacement

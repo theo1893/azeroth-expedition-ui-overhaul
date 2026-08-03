@@ -21,7 +21,7 @@
 | 主模块 | pfUI／原生边界 | 阶段 | 当前结论 | 下一门禁 |
 |---|---|---:|---|---|
 | Core／pfUI | `api/expedition.lua`、`pfUI.lua`、作用域接管路由 | `P5` | pfUI `8.1.0-aeui.4` 已恢复公共绘制、原始默认值、全部未接管模块／skins 与配置入口；仅 Chat 辅助模块和 Quest Log skin 显式让渡；旧全局回退 SavedVariables 一次迁移 | 实机覆盖 Game Menu／`/pfui`、全模块加载、旧 SavedVariables、单模块失败隔离与第三方兼容 |
-| Chat | `modules/chat.lua` + AEUI Chat adapter | `P5` V3 / r1.18 | 单一左侧旧书、四状态 Tab、双状态输入与未读已接入；右框隐藏且消息回收；正文沿用 pfUI 字体、无描边／阴影／压光并保留 `3px` 行距；三层显示桥只以左书 Parent 判定作用域。v1.17 被实机退回；v1.18 让频道／职业回到 Vanilla 原色相的等比例深墨，团队焦橙／小队蓝紫分色，并对未知第三方亮色连续压暗 | `/reload` 验证 `chat-runtime=1.18`，重点比较团队／小队、九职业原色识别与 DPSMate 红绿报告；确认不发亮且 `chat-color c/x` 增长 |
+| Chat | `modules/chat.lua` + AEUI Chat adapter | `P5` Dark V1 / r1.19 | 单一左侧暖黑旧书、新双状态输入、V3 四状态 Tab 与未读已接入；右框隐藏且消息回收；正文沿用 pfUI 字体、无描边／阴影／压光并保留 `3px` 行距；三层显示桥只以左书 Parent 判定作用域。频道／职业恢复暗纸上的 Vanilla 高辨识色，团队焦橙／小队蓝紫分色，未知暗色提升到 `4.8:1` | `/reload` 验证 `chat-runtime=1.19`，重点检查暗纸与输入聚焦态、团队／小队、九职业原色识别、DPSMate 红绿报告及 `chat-color c/x` 增长 |
 | Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P5` | Quest Log 主体保持 QL-A2 V4；pfQuest tracker 临时纸面仍为 `display-region-blocked`。Quests `1.16`／Quest Visual Theme `1.5` 让日志与追踪器共用高对比深墨难度色，并把任务类型／完成／失败提示从原生亮色归一化为独立深紫／深绿／深红墨；左页使用 18 个 `246 × 18px` 活动行，任务及状态文字统一为 `12px` 无描边／shadow 字体，行末追踪圈和两页 scrollbar chrome 隐藏，滚轮与真实 ScrollFrame 保留。Tracker 仍保留旧统一字体、批次提交和 `16px` 底部安全区 | Turtle WoW `/reload` 验证左页对比、五档难度及任务类型色，并确认同一任务跨面板颜色一致；再验接受／放弃任务批次稳定 |
 | Map | `map.lua`、`minimap.lua`、`addonbuttons.lua` 等 | `P2` | 羊皮地图卷与黄铜罗盘已锁定 | 实机对象审计和组件级合同 |
 | Character | `character.lua`、`inspect.lua`、`dressup.lua` | `P2` | 香草同构角色面板已锁定 | 实机几何与装备槽／属性／页签拆分 |
