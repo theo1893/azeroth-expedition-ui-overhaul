@@ -1,12 +1,11 @@
 local addon = AzerothExpeditionUI
 local Quests = {}
-Quests.runtimeContract = "1.16"
+Quests.runtimeContract = "1.17"
 
 local THEME = addon.questVisualTheme
 local SHELL_TEXTURE = THEME.media.questLogShell
 local DIRECTORY_MARK_TEXTURE = THEME.media.directoryMarks
 local QUEST_TITLE_FONT = THEME.fonts.panelTitle.path
-local QUEST_ROW_FONT = THEME.fonts.questName.path
 local TRACKER_PAPER_TEXTURE = THEME.media.trackerPaper
 local QUEST_SEAL_TEXTURE = THEME.media.toolSeal
 
@@ -39,6 +38,10 @@ local LAYOUT = {
     contentWidth = 224,
     textWidth = 214,
     objectiveWidth = 204,
+    rewardSlotWidth = 108,
+    rewardNameWidth = 64,
+    contentBottomPadding = 12,
+    contentMaxHeight = 4096,
   },
   titleTop = 28,
   countTop = 52,
@@ -299,6 +302,22 @@ local function SetTextColor(text, color)
   text:SetTextColor(color[1], color[2], color[3], color[4])
 end
 
+local function ResolveThemeFontPath(font)
+  if not font then
+    return nil
+  end
+
+  if
+    font.providerOwned and
+    type(pfUI) == "table" and
+    pfUI.font_default
+  then
+    return pfUI.font_default
+  end
+
+  return font.path or font.fallbackPath
+end
+
 local function ApplyThemeFont(text, font, fallbackSize)
   if not text or not text.SetFont or not font then
     return
@@ -310,7 +329,10 @@ local function ApplyThemeFont(text, font, fallbackSize)
     size = tonumber(currentSize) or size
   end
   if size then
-    text:SetFont(font.path, size, font.flags or "")
+    local path = ResolveThemeFontPath(font)
+    if path then
+      text:SetFont(path, size, font.flags or "")
+    end
   end
 end
 
@@ -351,11 +373,11 @@ local function ApplyDirectoryFontString(text)
   if not text or not text.SetFont then
     return
   end
-  text:SetFont(
-    QUEST_ROW_FONT,
-    THEME.fonts.questName.size,
-    THEME.fonts.questName.flags or ""
-  )
+  local role = THEME.fonts.questName
+  local path = ResolveThemeFontPath(role)
+  if path then
+    text:SetFont(path, role.size, role.flags or "")
+  end
   ClearTextShadow(text)
 end
 
@@ -1686,11 +1708,15 @@ local function StylePfQuestButton(button, width, height, fontSize)
 
   local text = GetButtonText(button)
   if text and text.SetFont then
-    text:SetFont(
-      QUEST_ROW_FONT,
-      fontSize or 10,
-      THEME.fonts.questName.flags
-    )
+    local role = THEME.fonts.questName
+    local path = ResolveThemeFontPath(role)
+    if path then
+      text:SetFont(
+        path,
+        fontSize or 10,
+        role.flags or ""
+      )
+    end
   end
   button.aeuiQuestPfQuestManaged = true
 end
@@ -2475,6 +2501,140 @@ local DETAIL_BODY_TEXT_NAMES = {
   "QuestLogRequiredMoneyText",
 }
 
+local DETAIL_MEASURE_FRAME_NAMES = {
+  "QuestLogSpellLearnFrame",
+  "QuestLogPlayerTitleFrame",
+  "QuestLogHonorFrame",
+}
+
+local function IsVisibleDetailObject(object)
+  if not object then
+    return false
+  end
+  if object.IsShown then
+    return object:IsShown()
+  end
+  return true
+end
+
+local function AddDetailMeasureObject(objects, object)
+  if object then
+    table.insert(objects, object)
+  end
+end
+
+local function CollectDetailMeasureObjects()
+  local objects = {}
+  for _, name in ipairs(DETAIL_TEXT_NAMES) do
+    AddDetailMeasureObject(objects, _G[name])
+  end
+
+  local objectiveCount = tonumber(MAX_OBJECTIVES) or 10
+  for index = 1, objectiveCount do
+    AddDetailMeasureObject(
+      objects,
+      _G["QuestLogObjective" .. index]
+    )
+  end
+
+  local rewardCount = tonumber(MAX_NUM_ITEMS) or 6
+  for index = 1, rewardCount do
+    AddDetailMeasureObject(
+      objects,
+      _G["QuestLogItem" .. index]
+    )
+  end
+
+  for _, name in ipairs(DETAIL_MEASURE_FRAME_NAMES) do
+    AddDetailMeasureObject(objects, _G[name])
+  end
+  return objects
+end
+
+local function ApplyDetailRewardGeometry()
+  local rewardCount = tonumber(MAX_NUM_ITEMS) or 6
+  for index = 1, rewardCount do
+    local item = _G["QuestLogItem" .. index]
+    if item and item.SetWidth then
+      item:SetWidth(LAYOUT.detail.rewardSlotWidth)
+    end
+
+    local name = _G["QuestLogItem" .. index .. "Name"]
+    if name and name.SetWidth then
+      name:SetWidth(LAYOUT.detail.rewardNameWidth)
+    end
+  end
+end
+
+local function MeasureDetailContentHeight()
+  local child = QuestLogDetailScrollChildFrame
+  if not child or not child.GetTop then
+    return nil
+  end
+
+  local childTop = tonumber(child:GetTop())
+  if not childTop then
+    return nil
+  end
+
+  local lowestBottom
+  for _, object in ipairs(CollectDetailMeasureObjects()) do
+    if
+      IsVisibleDetailObject(object) and
+      object.GetBottom
+    then
+      local bottom = tonumber(object:GetBottom())
+      if
+        bottom and
+        (not lowestBottom or bottom < lowestBottom)
+      then
+        lowestBottom = bottom
+      end
+    end
+  end
+
+  if not lowestBottom or lowestBottom > childTop then
+    return nil
+  end
+
+  local measured =
+    math.ceil(
+      childTop - lowestBottom +
+      LAYOUT.detail.contentBottomPadding
+    )
+  if measured < LAYOUT.detail.height then
+    measured = LAYOUT.detail.height
+  elseif measured > LAYOUT.detail.contentMaxHeight then
+    measured = LAYOUT.detail.contentMaxHeight
+  end
+  return measured
+end
+
+local function UpdateDetailScrollChildHeight()
+  local child = QuestLogDetailScrollChildFrame
+  if not child or not child.SetHeight then
+    return
+  end
+
+  local targetHeight = MeasureDetailContentHeight()
+  if not targetHeight then
+    local currentHeight =
+      child.GetHeight and tonumber(child:GetHeight()) or 0
+    targetHeight = math.max(
+      currentHeight or 0,
+      LAYOUT.detail.height
+    )
+  end
+  child:SetHeight(targetHeight)
+
+  if
+    QuestLogDetailScrollFrame and
+    QuestLogDetailScrollFrame.UpdateScrollChildRect
+  then
+    QuestLogDetailScrollFrame:UpdateScrollChildRect()
+  end
+end
+
 function Quests:ApplyDetailTextTheme()
   local questTitle = QuestLogQuestTitle
   ApplyThemeFont(questTitle, THEME.fonts.questName, 13)
@@ -2530,19 +2690,6 @@ function Quests:ApplyDetailTextGeometry()
         LAYOUT.detail.contentWidth
       )
     end
-    if
-      QuestLogDetailScrollChildFrame.GetHeight and
-      QuestLogDetailScrollChildFrame.SetHeight and
-      (
-        not QuestLogDetailScrollChildFrame:GetHeight() or
-        QuestLogDetailScrollChildFrame:GetHeight() <
-          LAYOUT.detail.height
-      )
-    then
-      QuestLogDetailScrollChildFrame:SetHeight(
-        LAYOUT.detail.height
-      )
-    end
   end
 
   for _, name in ipairs(DETAIL_TEXT_NAMES) do
@@ -2560,7 +2707,10 @@ function Quests:ApplyDetailTextGeometry()
     end
   end
 
+  ApplyDetailRewardGeometry()
+
   self:ApplyDetailTextTheme()
+  UpdateDetailScrollChildHeight()
 
   self:HideDetailScrollbar()
   self:InstallDetailMouseWheel()

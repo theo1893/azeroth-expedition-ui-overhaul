@@ -1,0 +1,514 @@
+#!/usr/bin/env python3
+"""Render the deterministic Quest Log seal support and action-menu preview."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+from typing import Any
+
+from PIL import Image, ImageDraw, ImageFont
+
+
+INK = (49, 29, 18, 255)
+INK_SOFT = (75, 47, 27, 255)
+INK_MUTED = (104, 80, 52, 255)
+PAPER = (190, 150, 91, 255)
+PAPER_LIGHT = (210, 174, 111, 255)
+PAPER_DARK = (139, 96, 52, 255)
+LEATHER = (69, 34, 23, 255)
+LEATHER_LIGHT = (112, 61, 31, 255)
+LEATHER_DARK = (30, 15, 12, 255)
+BRASS = (143, 99, 39, 255)
+BRASS_LIGHT = (196, 148, 67, 255)
+DANGER = (91, 22, 18, 255)
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("spec", type=Path)
+    parser.add_argument("--repo-root", type=Path, default=Path.cwd())
+    return parser.parse_args()
+
+
+def resolve(root: Path, value: str) -> Path:
+    path = Path(value)
+    return path if path.is_absolute() else root / path
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def font(path: Path, size: int) -> ImageFont.FreeTypeFont:
+    return ImageFont.truetype(
+        str(path), size, layout_engine=ImageFont.Layout.BASIC
+    )
+
+
+def contains(outer: list[int], inner: list[int]) -> bool:
+    ox, oy, ow, oh = outer
+    ix, iy, iw, ih = inner
+    return (
+        ix >= ox
+        and iy >= oy
+        and ix + iw <= ox + ow
+        and iy + ih <= oy + oh
+    )
+
+
+def intersects(a: list[int], b: list[int]) -> bool:
+    ax, ay, aw, ah = a
+    bx, by, bw, bh = b
+    return not (
+        ax + aw <= bx
+        or bx + bw <= ax
+        or ay + ah <= by
+        or by + bh <= ay
+    )
+
+
+def draw_outlined_text(
+    draw: ImageDraw.ImageDraw,
+    xy: tuple[float, float],
+    value: str,
+    face: ImageFont.FreeTypeFont,
+    fill: tuple[int, int, int, int],
+    *,
+    anchor: str | None = None,
+) -> None:
+    draw.text(
+        xy,
+        value,
+        font=face,
+        fill=fill,
+        anchor=anchor,
+        stroke_width=1,
+        stroke_fill=(20, 12, 8, 165),
+    )
+
+
+def load_seal(root: Path, spec: dict[str, Any]) -> Image.Image:
+    atlas = Image.open(resolve(root, spec["inputs"]["seal_atlas"])).convert(
+        "RGBA"
+    )
+    cell_width = atlas.width // 4
+    return atlas.crop((0, 0, cell_width, atlas.height))
+
+
+def draw_reward_slot(
+    draw: ImageDraw.ImageDraw,
+    box: list[int],
+    label: str,
+    index: int,
+    body: ImageFont.FreeTypeFont,
+) -> None:
+    x, y, width, height = box
+    draw.rounded_rectangle(
+        (x, y, x + width - 1, y + height - 1),
+        radius=3,
+        fill=(48, 28, 18, 238),
+        outline=BRASS,
+        width=1,
+    )
+    draw.rectangle(
+        (x + 4, y + 4, x + 28, y + height - 5),
+        fill=(68 + index * 15, 60, 38 + index * 12, 255),
+        outline=BRASS_LIGHT,
+        width=1,
+    )
+    draw.text(
+        (x + 33, y + height / 2),
+        label,
+        font=body,
+        fill=(222, 191, 126, 255),
+        anchor="lm",
+    )
+
+
+def draw_support_tab(
+    layer: Image.Image,
+    layout: dict[str, list[int]],
+    origin: tuple[int, int],
+    seal: Image.Image,
+) -> None:
+    ox, oy = origin
+    tx, ty, tw, th = layout["support_tab"]
+    tx += ox
+    ty += oy
+    draw = ImageDraw.Draw(layer, "RGBA")
+    tab = [
+        (tx, ty + 5),
+        (tx + 13, ty),
+        (tx + tw - 5, ty + 4),
+        (tx + tw, ty + th // 2),
+        (tx + tw - 6, ty + th - 4),
+        (tx + 13, ty + th),
+        (tx, ty + th - 5),
+    ]
+    draw.polygon(tab, fill=LEATHER_DARK)
+    inner = [(x - 2 if x == tx + tw else x + 2, y) for x, y in tab]
+    draw.polygon(inner, fill=LEATHER, outline=LEATHER_LIGHT)
+    draw.line(
+        (tx + 4, ty + 7, tx + tw - 8, ty + 5),
+        fill=BRASS_LIGHT,
+        width=1,
+    )
+    draw.line(
+        (tx + 5, ty + th - 7, tx + tw - 8, ty + th - 5),
+        fill=(26, 12, 10, 220),
+        width=2,
+    )
+    for ry in (ty + 10, ty + th - 10):
+        draw.ellipse(
+            (tx + 5, ry - 2, tx + 9, ry + 2),
+            fill=BRASS,
+            outline=(63, 37, 16, 255),
+        )
+
+    sx, sy, sw, sh = layout["seal_visual"]
+    resized = seal.resize((sw, sh), Image.Resampling.LANCZOS)
+    layer.alpha_composite(resized, (ox + sx, oy + sy))
+
+
+def draw_action_menu(
+    layer: Image.Image,
+    spec: dict[str, Any],
+    origin: tuple[int, int],
+    fonts: dict[str, ImageFont.FreeTypeFont],
+) -> None:
+    ox, oy = origin
+    mx, my, mw, mh = spec["layout"]["menu"]
+    mx += ox
+    my += oy
+    draw = ImageDraw.Draw(layer, "RGBA")
+    draw.polygon(
+        [
+            (mx + 7, my),
+            (mx + mw - 4, my + 2),
+            (mx + mw, my + mh - 8),
+            (mx + mw - 8, my + mh),
+            (mx + 3, my + mh - 3),
+            (mx, my + 7),
+        ],
+        fill=(43, 23, 16, 232),
+    )
+    draw.polygon(
+        [
+            (mx + 9, my + 5),
+            (mx + mw - 10, my + 6),
+            (mx + mw - 6, my + mh - 12),
+            (mx + mw - 12, my + mh - 6),
+            (mx + 8, my + mh - 8),
+            (mx + 5, my + 11),
+        ],
+        fill=PAPER,
+        outline=PAPER_DARK,
+        width=2,
+    )
+    draw.rectangle(
+        (mx + 10, my + 8, mx + mw - 12, my + 35),
+        fill=LEATHER,
+        outline=BRASS,
+        width=1,
+    )
+    draw.text(
+        (mx + mw / 2, my + 21),
+        "任务事务",
+        font=fonts["menu_title"],
+        fill=(234, 201, 126, 255),
+        anchor="mm",
+    )
+
+    actions = spec["content"]["menu_actions"]
+    cursor = my + 42
+    for index, action in enumerate(actions):
+        if index == 2:
+            draw.line(
+                (mx + 18, cursor - 3, mx + mw - 18, cursor - 3),
+                fill=(104, 68, 33, 150),
+                width=1,
+            )
+            draw.text(
+                (mx + 18, cursor + 1),
+                "地图标记",
+                font=fonts["small"],
+                fill=INK_MUTED,
+            )
+            cursor += 18
+        if index == len(actions) - 1:
+            draw.line(
+                (mx + 18, cursor - 3, mx + mw - 18, cursor - 3),
+                fill=(104, 68, 33, 150),
+                width=1,
+            )
+            cursor += 3
+        row_fill = DANGER if action == "放弃任务" else INK
+        draw.ellipse(
+            (mx + 17, cursor + 6, mx + 22, cursor + 11),
+            fill=(111, 36, 26, 255) if action == "放弃任务" else BRASS,
+        )
+        draw.text(
+            (mx + 29, cursor + 3),
+            action,
+            font=fonts["menu"],
+            fill=row_fill,
+        )
+        cursor += 25
+
+    # A short parchment tongue visually connects the transient docket to the
+    # fixed leather tab. It is intentionally behind the seal hit box.
+    sy = oy + spec["layout"]["seal_visual"][1] + 16
+    draw.polygon(
+        [(mx + mw - 2, sy - 8), (mx + mw + 18, sy), (mx + mw - 2, sy + 8)],
+        fill=PAPER_DARK,
+        outline=(85, 52, 27, 220),
+    )
+
+
+def draw_quest_log(
+    layer: Image.Image,
+    root: Path,
+    spec: dict[str, Any],
+    origin: tuple[int, int],
+    fonts: dict[str, ImageFont.FreeTypeFont],
+    seal: Image.Image,
+    menu_open: bool,
+) -> None:
+    ox, oy = origin
+    fw, fh = spec["frame"]
+    shell = Image.open(resolve(root, spec["inputs"]["quest_log_shell"])).convert(
+        "RGBA"
+    )
+    shell = shell.resize((fw, fh), Image.Resampling.LANCZOS)
+    layer.alpha_composite(shell, origin)
+    draw = ImageDraw.Draw(layer, "RGBA")
+
+    draw.text(
+        (ox + fw / 2, oy + 28),
+        "任务日志",
+        font=fonts["title"],
+        fill=INK,
+        anchor="mm",
+    )
+    draw_outlined_text(
+        draw,
+        (ox + 304, oy + 50),
+        "任务：18 / 20",
+        fonts["small"],
+        INK,
+        anchor="ra",
+    )
+    draw_outlined_text(
+        draw,
+        (ox + 145, oy + 50),
+        "显示任务等级",
+        fonts["small"],
+        INK,
+    )
+    draw.ellipse((ox + 134, oy + 45, ox + 143, oy + 54), outline=INK, width=1)
+    draw.text((ox + 546, oy + 48), "简体中文", font=fonts["small"], fill=INK_MUTED)
+    draw.text((ox + 599, oy + 48), "在线", font=fonts["small"], fill=INK_MUTED)
+    cx, cy, cw, ch = spec["layout"]["close"]
+    draw.line((ox + cx + 5, oy + cy + 5, ox + cx + cw - 5, oy + cy + ch - 5), fill=BRASS_LIGHT, width=2)
+    draw.line((ox + cx + cw - 5, oy + cy + 5, ox + cx + 5, oy + cy + ch - 5), fill=BRASS_LIGHT, width=2)
+
+    rows = [
+        ("东部王国", True),
+        ("[60] 黑石山的暗影", False),
+        ("[58+] 深渊中的回响", False),
+        ("[60R] 熔火之心", False),
+        ("卡利姆多", True),
+        ("[55] 费伍德的净化", False),
+        ("[57] 冬泉谷的传说", False),
+        ("[60] 希利苏斯的召唤", False),
+        ("地下城", True),
+        ("[52D] 沉没的神庙", False),
+        ("[58D] 黑石深渊", False),
+        ("[60D] 通灵学院", False),
+        ("职业任务", True),
+        ("[60] 远古法典", False),
+        ("[60] 公会的委托", False),
+        ("世界事件", True),
+        ("[59] 最后的远征", False),
+        ("[40] 旧友的来信", False),
+    ]
+    list_x = ox + spec["layout"]["list"][0]
+    list_y = oy + spec["layout"]["list"][1]
+    for index, (label, header) in enumerate(rows):
+        y = list_y + index * 18
+        if header:
+            draw.polygon(
+                [(list_x + 2, y + 6), (list_x + 10, y + 9), (list_x + 2, y + 12)],
+                fill=INK,
+            )
+            color = INK
+        else:
+            draw.ellipse((list_x + 2, y + 5, list_x + 10, y + 13), outline=INK_SOFT, width=1)
+            color = INK_SOFT
+        draw_outlined_text(
+            draw,
+            (list_x + 18, y + 2),
+            label,
+            fonts["row"],
+            color,
+        )
+
+    dx = ox + 376
+    dy = oy + 73
+    draw.text((dx, dy), "熔火之心", font=fonts["detail_title"], fill=INK)
+    draw.line((dx, dy + 23, ox + 600, dy + 23), fill=(105, 69, 34, 145), width=1)
+    lines = [
+        ("黑石山深处传来古老而炽热的回声。", False),
+        ("与同伴进入熔火之心，查明元素领主", False),
+        ("再度苏醒的征兆。", False),
+        ("任务目标", True),
+        ("· 击败熔火巨人：6 / 8", False),
+        ("· 取得远古符文碎片：2 / 4", False),
+        ("· 向洛索斯·天痕复命", False),
+        ("奖励", True),
+        ("你将获得以下奖励：", False),
+    ]
+    for index, (line, heading) in enumerate(lines):
+        face = fonts["heading"] if heading else fonts["body"]
+        color = INK if heading else INK_SOFT
+        draw.text((dx, dy + 32 + index * 20), line, font=face, fill=color)
+
+    reward_labels = ("远古徽记", "熔火碎片", "公会印记", "金币袋")
+    for index, box in enumerate(spec["layout"]["reward_slots"]):
+        absolute = [ox + box[0], oy + box[1], box[2], box[3]]
+        draw_reward_slot(draw, absolute, reward_labels[index], index, fonts["reward"])
+
+    # The accepted target contains no fixed bottom action row. The book page
+    # remains visually quiet until the side seal is invoked.
+    draw.text(
+        (ox + 335, oy + 431),
+        "",
+        font=fonts["small"],
+        fill=INK_MUTED,
+    )
+    draw_support_tab(layer, spec["layout"], origin, seal)
+    if menu_open:
+        draw_action_menu(layer, spec, origin, fonts)
+
+
+def main() -> None:
+    args = parse_args()
+    root = args.repo_root.resolve()
+    spec = json.loads(args.spec.read_text(encoding="utf-8"))
+    title_path = resolve(root, spec["inputs"]["title_font"])
+    body_path = resolve(root, spec["inputs"]["body_font"])
+    fonts = {
+        "title": font(title_path, 16),
+        "detail_title": font(title_path, 15),
+        "heading": font(title_path, 11),
+        "body": font(body_path, 10),
+        "row": font(body_path, 10),
+        "small": font(body_path, 9),
+        "reward": font(body_path, 8),
+        "menu": font(body_path, 11),
+        "menu_title": font(title_path, 12),
+        "board_title": font(title_path, 20),
+        "board_body": font(body_path, 12),
+    }
+    seal = load_seal(root, spec)
+    canvas = Image.new("RGBA", tuple(spec["canvas"]), (37, 28, 22, 255))
+    draw = ImageDraw.Draw(canvas, "RGBA")
+    draw.rectangle((0, 0, 1536, 1024), fill=(38, 45, 43, 255))
+    draw.rectangle((0, 700, 1536, 1024), fill=(55, 41, 30, 255))
+    for x in range(-40, 1580, 130):
+        draw.polygon(
+            [(x, 742), (x + 110, 720), (x + 165, 1024), (x + 20, 1024)],
+            fill=(73, 52, 34, 255),
+            outline=(39, 28, 21, 255),
+        )
+    draw.text((44, 34), "任务日志火漆承载与事务菜单 · 本地几何预演", font=fonts["board_title"], fill=(239, 207, 139, 255))
+    draw.text((44, 66), "左：常态，仅保留侧边实体皮签与火漆；右：左键展开后，临时事务笺向书内展开。100% UI 像素，ImageGen 0/0。", font=fonts["board_body"], fill=(198, 171, 116, 255))
+
+    left_origin = (35, 150)
+    right_origin = (810, 150)
+    draw_quest_log(canvas, root, spec, left_origin, fonts, seal, False)
+    draw_quest_log(canvas, root, spec, right_origin, fonts, seal, True)
+    draw.text((35, 128), "A · 菜单关闭", font=fonts["board_body"], fill=(238, 202, 128, 255))
+    draw.text((810, 128), "B · 菜单展开", font=fonts["board_body"], fill=(238, 202, 128, 255))
+    draw.text((44, 665), "交互合同：左键开关；点选／点击书外／Esc 关闭；所有动作只代理原 Button，不复制任务逻辑；放弃任务继续走原生确认框。", font=fonts["board_body"], fill=(219, 187, 123, 255))
+    draw.text((44, 692), "迁移完成前 fail-open：只要任一 provider 尚未捕获，旧按钮继续显示；Close、等级、追踪、在线与语言仍保持独立。", font=fonts["board_body"], fill=(219, 187, 123, 255))
+
+    board_path = resolve(root, spec["outputs"]["board"])
+    board_path.parent.mkdir(parents=True, exist_ok=True)
+    canvas.save(board_path, "PNG", optimize=False, compress_level=9)
+
+    layout = spec["layout"]
+    page_safe = [64, 64, 548, 324]
+    seal_box = layout["seal_visual"]
+    report = {
+        "schema": "aeui.quest-log.seal-actions.simulation-report.v1",
+        "version": spec["version"],
+        "imagegen_calls": "0/0",
+        "frame": spec["frame"],
+        "objects": {
+            "quest_rows": spec["content"]["quest_rows"],
+            "reward_slots": spec["content"]["reward_slots"],
+            "menu_actions": len(spec["content"]["menu_actions"]),
+        },
+        "checks": {
+            "all_rewards_inside_detail": all(
+                contains(layout["detail"], box)
+                for box in layout["reward_slots"]
+            ),
+            "closed_seal_outside_page_safe_area": not intersects(
+                seal_box, page_safe
+            ),
+            "support_attaches_to_exterior_rail": intersects(
+                layout["support_tab"], layout["exterior_rail"]
+            ),
+            "menu_inside_base_frame": contains(
+                [0, 0, *spec["frame"]], layout["menu"]
+            ),
+            "menu_avoids_close_button": not intersects(
+                layout["menu"], layout["close"]
+            ),
+            "seal_hitbox_contains_visual": contains(
+                layout["seal_hitbox"], layout["seal_visual"]
+            ),
+            "bottom_buttons_removed_only_in_target_visual": spec["interaction"]["fail_open"]
+                == "keep-original-buttons-visible-until-all-proxies-exist",
+        },
+        "intentional_overlay": {
+            "menu_overlaps_detail_when_open": intersects(
+                layout["menu"], layout["detail"]
+            ),
+            "reason": "transient action layer; closes after selection/outside-click/Escape",
+        },
+        "non_authoritative": [
+            "support-tab microtexture and stitching",
+            "menu paper edge, seam and final state art",
+            "client font rasterization",
+            "runtime animation and tooltip",
+        ],
+        "board": {
+            "path": spec["outputs"]["board"],
+            "sha256": sha256(board_path),
+        },
+    }
+    report["status"] = (
+        "displayable"
+        if all(report["checks"].values())
+        else "blocked"
+    )
+    report_path = resolve(root, spec["outputs"]["report"])
+    report_path.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+
+
+if __name__ == "__main__":
+    main()

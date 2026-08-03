@@ -84,6 +84,8 @@ function Object:SetWidth(value) self.width = value end
 function Object:SetHeight(value) self.height = value end
 function Object:GetWidth() return self.width end
 function Object:GetHeight() return self.height end
+function Object:GetTop() return self.screenTop end
+function Object:GetBottom() return self.screenBottom end
 function Object:SetParent(value) self.parent = value end
 function Object:SetClampRectInsets(...)
   self.clampRectInsets = { ... }
@@ -149,6 +151,20 @@ function Object:GetVerticalScroll() return self.verticalScroll or 0 end
 function Object:SetVerticalScroll(value) self.verticalScroll = value end
 function Object:GetVerticalScrollRange()
   return self.verticalScrollRange or 0
+end
+function Object:UpdateScrollChildRect()
+  self.updateScrollChildRectCalls =
+    (self.updateScrollChildRectCalls or 0) + 1
+  if
+    self == QuestLogDetailScrollFrame and
+    QuestLogDetailScrollChildFrame
+  then
+    self.verticalScrollRange = math.max(
+      0,
+      QuestLogDetailScrollChildFrame:GetHeight() -
+        self:GetHeight()
+    )
+  end
 end
 function Object:GetValue() return self.value or 0 end
 function Object:SetValue(value) self.value = value end
@@ -415,6 +431,7 @@ QuestLogDetailScrollChildFrame =
     QuestLogDetailScrollFrame
   )
 QuestLogDetailScrollChildFrame:SetHeight(120)
+QuestLogDetailScrollChildFrame.screenTop = 700
 MAX_OBJECTIVES = 3
 for _, name in ipairs({
   "QuestLogQuestTitle",
@@ -441,6 +458,22 @@ for index = 1, MAX_OBJECTIVES do
   )
   objective:SetWidth(260)
 end
+MAX_NUM_ITEMS = 6
+for index = 1, MAX_NUM_ITEMS do
+  local item = CreateFrame(
+    "Button",
+    "QuestLogItem" .. index,
+    QuestLogDetailScrollChildFrame
+  )
+  item:SetWidth(142)
+  local itemName = NewObject(
+    "QuestLogItem" .. index .. "Name",
+    item,
+    "FontString"
+  )
+  itemName:SetWidth(90)
+end
+QuestLogItem6.screenBottom = 200
 
 local detailOnHideCalls = 0
 local detailOnShowCalls = 0
@@ -561,11 +594,11 @@ AzerothExpeditionUI:Refresh()
 assert(QuestLogFrame:GetWidth() == 676, "quest shell width was not applied")
 assert(QuestLogFrame:GetHeight() == 464, "quest shell height was not applied")
 assert(
-  QuestLogFrame.aeuiQuestRuntimeContract == "1.16",
+  QuestLogFrame.aeuiQuestRuntimeContract == "1.17",
   "quest runtime contract was not recorded"
 )
 assert(
-  QuestLogFrame.aeuiQuestVisualThemeContract == "1.5",
+  QuestLogFrame.aeuiQuestVisualThemeContract == "1.6",
   "Quest Log did not consume the shared visual theme"
 )
 assert(QuestLogFrame.aeuiQuestShell, "quest shell texture was not created")
@@ -627,7 +660,15 @@ assert(QuestLogListScrollFrame:GetHeight() == 324)
 assert(QuestLogDetailScrollFrame:GetWidth() == 246)
 assert(QuestLogDetailScrollFrame:GetHeight() == 324)
 assert(QuestLogDetailScrollChildFrame:GetWidth() == 224)
-assert(QuestLogDetailScrollChildFrame:GetHeight() == 324)
+assert(
+  QuestLogDetailScrollChildFrame:GetHeight() == 512,
+  "rewrapped detail content did not extend the real scroll child"
+)
+assert(
+  QuestLogDetailScrollFrame:GetVerticalScrollRange() == 188 and
+    QuestLogDetailScrollFrame.updateScrollChildRectCalls > 0,
+  "detail scroll range was not rebuilt from the measured content height"
+)
 for _, name in ipairs({
   "QuestLogQuestTitle",
   "QuestLogObjectivesText",
@@ -650,6 +691,13 @@ for index = 1, MAX_OBJECTIVES do
   assert(
     _G["QuestLogObjective" .. index]:GetWidth() == 204,
     "quest objective exceeded the inset text safe area"
+  )
+end
+for index = 1, MAX_NUM_ITEMS do
+  assert(
+    _G["QuestLogItem" .. index]:GetWidth() == 108 and
+      _G["QuestLogItem" .. index .. "Name"]:GetWidth() == 64,
+    "reward slot escaped the right-page two-column safe area"
   )
 end
 local countPoint, countRelative, countRelativePoint, countX, countY =
@@ -811,11 +859,13 @@ for index = 1, 18 do
     "quest text did not preserve the directory-mark safe area"
   )
   assert(
-    row.font[2] == 12 and row.font[3] == "" and
+    row.font[1] == "pfui-font.ttf" and
+      row.font[2] == 12 and row.font[3] == "OUTLINE" and
+      row.fontString.font[1] == "pfui-font.ttf" and
       row.fontString.font[2] == 12 and
-      row.fontString.font[3] == "" and
+      row.fontString.font[3] == "OUTLINE" and
       row.fontString.shadowColor[4] == 0,
-    "quest row retained a small outlined or shadowed font"
+    "quest row did not restore the shared, heavier pfUI typography"
   )
   assert(
     not _G["QuestLogTitle" .. index .. "Check"]:IsShown(),
@@ -827,15 +877,15 @@ for index = 19, 23 do
   assert(row and not row:IsShown(), "surplus provider row remained visible")
 end
 assert(
-  questLogTitle5Tag.font[1]:find("LXGWWenKaiGB%-Medium.ttf") and
+  questLogTitle5Tag.font[1] == "pfui-font.ttf" and
     questLogTitle5Tag.font[2] == 12 and
-    questLogTitle5Tag.font[3] == "" and
+    questLogTitle5Tag.font[3] == "OUTLINE" and
     questLogTitle5Tag.shadowColor[4] == 0 and
     questLogTitle5Tag.textColor[1] == 0.184 and
     QuestLogTitle5.fontString:GetText():find(
       "|cff2f1236%(Dungeon%)"
     ),
-  "completion or dungeon status text kept the native small outlined font"
+  "completion or dungeon status text escaped the shared quest-row font"
 )
 assert(
   QuestLogHighlightFrame.alpha == 0,
@@ -901,9 +951,9 @@ for index = 1, 23 do
   )
 end
 assert(
-  QuestLogTitle1.font[1]:find("LXGWWenKaiGB%-Medium.ttf") and
+  QuestLogTitle1.font[1] == "pfui-font.ttf" and
     QuestLogTitle1.font[2] == 12 and
-    QuestLogTitle1.font[3] == "",
+    QuestLogTitle1.font[3] == "OUTLINE",
   "quest row font does not match the readable module baseline"
 )
 assert(
@@ -979,7 +1029,7 @@ assert(
 )
 detailWheel(-10)
 assert(
-  QuestLogDetailScrollFrame:GetVerticalScroll() == 140,
+  QuestLogDetailScrollFrame:GetVerticalScroll() == 188,
   "detail mouse wheel did not clamp to the scroll range"
 )
 detailWheel(10)
@@ -1277,8 +1327,8 @@ assert(
   "temporary tracker paper runtime contract was not recorded"
 )
 assert(
-  pfQuestMapTracker.aeuiQuestVisualThemeContract == "1.5" and
-    providerTrackerButton.aeuiQuestVisualThemeContract == "1.5",
+  pfQuestMapTracker.aeuiQuestVisualThemeContract == "1.6" and
+    providerTrackerButton.aeuiQuestVisualThemeContract == "1.6",
   "pfQuest Tracker did not consume the shared visual theme"
 )
 assert(
@@ -1310,7 +1360,7 @@ assert(
 )
 assert(
   not providerTrackerButton.icon:IsShown() and
-    providerTrackerButton.aeuiQuestEntryIconThemeContract == "1.5",
+    providerTrackerButton.aeuiQuestEntryIconThemeContract == "1.6",
   "tracker entry color dot/question-mark texture remained visible"
 )
 assert(
@@ -1490,9 +1540,8 @@ assert(
   pfQuest.buttonOnline.parent == QuestLogFrame and
     pfQuest.buttonOnline:GetWidth() == 72 and
     pfQuest.buttonOnline:GetHeight() == 16 and
-    pfQuest.buttonOnline.txt.font[1]:find(
-      "LXGWWenKaiGB%-Medium.ttf"
-    ),
+    pfQuest.buttonOnline.txt.font[1] == "pfui-font.ttf" and
+    pfQuest.buttonOnline.txt.font[3] == "OUTLINE",
   "pfQuest online control still overlapped the scrolling quest title"
 )
 assert(

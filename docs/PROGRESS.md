@@ -22,7 +22,7 @@
 |---|---|---:|---|---|
 | Core／pfUI | `api/expedition.lua`、`pfUI.lua`、作用域接管路由 | `P5` | pfUI `8.1.0-aeui.4` 已恢复公共绘制、原始默认值、全部未接管模块／skins 与配置入口；仅 Chat 辅助模块和 Quest Log skin 显式让渡；旧全局回退 SavedVariables 一次迁移 | 实机覆盖 Game Menu／`/pfui`、全模块加载、旧 SavedVariables、单模块失败隔离与第三方兼容 |
 | Chat | `modules/chat.lua` + AEUI Chat adapter | 核心 `P5` / r1.21 | Full V1 主框九宫格、右框回收、V3 Tab／未读保持；`CHAT.INPUT.DARK.V1.r3 attempt 4` 已从固定 source 确定性导出为 `ChatInputDarkV1.tga`，normal／focus 共同 Alpha、三段 UV、`380/480 × 25px` 真实排版和五场景 display-region 均通过。v1.21 移除 AEUI 基础／内嵌颜色重写及 pfUI／ChatMOD 输出 wrapper，恢复客户端与 provider 的经典配色；EditBox 行为不变，旧 V3 输入保留为回退 | 游戏设备可用时 `/reload` 验证 `chat-runtime=1.21`、`chat-color=classic-provider`、书框、输入交互、经典频道／职业／物品／插件色、Tab、缩放与右框消息回收 |
-| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P5` | Quest Log 主体保持 QL-A2 V4；pfQuest tracker 临时纸面仍为 `display-region-blocked`。Quests `1.16`／Quest Visual Theme `1.5` 让日志与追踪器共用高对比深墨难度色，并把任务类型／完成／失败提示从原生亮色归一化为独立深紫／深绿／深红墨；左页使用 18 个 `246 × 18px` 活动行，任务及状态文字统一为 `12px` 无描边／shadow 字体，行末追踪圈和两页 scrollbar chrome 隐藏，滚轮与真实 ScrollFrame 保留。Tracker 仍保留旧统一字体、批次提交和 `16px` 底部安全区 | Turtle WoW `/reload` 验证左页对比、五档难度及任务类型色，并确认同一任务跨面板颜色一致；再验接受／放弃任务批次稳定 |
+| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P5` | Quest Log 主体保持 QL-A2 V4；Quests `1.17`／Theme `1.6` 将 18 行任务文字恢复为 `pfUI.font_default` 的 `12px OUTLINE`，并按最底动态对象重算右页 ScrollChild；奖励双列槽收敛为 `108px`／名称 `64px`。旧顶部悬空漆章锚点已否决，侧边皮签＋七项事务菜单处于 `P2 simulation-reviewed`，未接入也未隐藏原 Button。pfQuest tracker 临时纸面仍 `display-region-blocked` | 用户先确认／退回火漆事务菜单模拟；实机再验证字体字重、长正文与 0／1／2／4／6 奖励、pfQuest 后加载、滚动范围和原按钮 fail-open |
 | Map | `map.lua`、`minimap.lua`、`addonbuttons.lua` 等 | `P2` | 羊皮地图卷与黄铜罗盘已锁定 | 实机对象审计和组件级合同 |
 | Character | `character.lua`、`inspect.lua`、`dressup.lua` | `P2` | 香草同构角色面板已锁定 | 实机几何与装备槽／属性／页签拆分 |
 
@@ -49,9 +49,10 @@
 
 - 项目接管：pfUI `chat` 行为与 AEUI V3 单一左侧战地旧书视觉；AEUI
   QL-A2 V4 任务日志固定书体与安全区、QL-B0 18 行可读目录、QL-B1
-  地区箭头，以及 Quests `1.16`（QL-C 子合同 `1.7`）的 pfQuest 后加载
-  布局兼容。QS-A1 共用漆章以 Quest Log `28px`、Tracker `34px` 无鼠标
-  Texture 接入；Tracker 顶缘 clamp 增加 `18px`，旧七按钮继续可见可用。QL-B2 三态
+  地区箭头，以及 Quests `1.17`（QL-C 子合同 `1.7`）的 pfQuest 后加载
+  布局兼容。QS-A1 共用漆章仍以 Quest Log `28px`、Tracker `34px` 无鼠标
+  Texture 接入，但 Quest Log 旧悬空位置已标为待替换；新侧边承载／事务菜单
+  只完成本地模拟。Tracker 顶缘 clamp 增加 `18px`，旧七按钮继续可见可用。QL-B2 三态
   选择书签资产保留但 runtime 隐藏；QL-B0 V2 内框、地区条与任务条底板路线
   均已撤销。pfQuest tracker 使用临时大纸面 runtime，保留 provider 的全部
   动态内容与交互；当前因展示区域失败等待无边界 direct-paper 方向确认。

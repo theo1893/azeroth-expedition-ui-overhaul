@@ -228,7 +228,7 @@ def main() -> None:
     quest_theme_source = (
         aeui / "Modules" / "QuestVisualTheme.lua"
     ).read_text(encoding="utf-8")
-    assert 'contract = "1.5"' in quest_theme_source
+    assert 'contract = "1.6"' in quest_theme_source
     assert "QuestLogShellV4" in quest_theme_source
     assert "QuestLogDirectoryMarksV1" in quest_theme_source
     assert "QuestTrackerPaperV1" in quest_theme_source
@@ -245,8 +245,10 @@ def main() -> None:
     quest_name_role = quest_theme_source.split(
         "questName = {", 1
     )[1].split("},", 1)[0]
+    assert "providerOwned = true" in quest_name_role
+    assert "NotoSansSC-Medium.ttf" in quest_name_role
     assert "size = 12" in quest_name_role
-    assert 'flags = ""' in quest_name_role
+    assert 'flags = "OUTLINE"' in quest_name_role
     for shared_ink in (
         "|cff24170f",
         "|cff062a22",
@@ -260,7 +262,7 @@ def main() -> None:
     ):
         assert shared_ink in quest_theme_source
 
-    assert 'Quests.runtimeContract = "1.16"' in quest_source
+    assert 'Quests.runtimeContract = "1.17"' in quest_source
     assert "ApplyTrackerProviderFont" in quest_source
     assert "ResolveQuestNameInk" in quest_source
     assert quest_source.count("ResolveQuestNameInk(") >= 3
@@ -291,6 +293,11 @@ def main() -> None:
     assert "CaptureAndHideNativeTextures" in quest_source
     assert "SuppressNativeRowSelection" in quest_source
     assert "ApplyDetailTextGeometry" in quest_source
+    assert "ApplyDetailRewardGeometry" in quest_source
+    assert "MeasureDetailContentHeight" in quest_source
+    assert "UpdateDetailScrollChildHeight" in quest_source
+    assert "rewardSlotWidth = 108" in quest_source
+    assert "rewardNameWidth = 64" in quest_source
     assert "HideCollapseAllButton" in quest_source
     assert "aeuiQuestCollapseSuppressed" in quest_source
     assert "StyleLeatherButton" in quest_source

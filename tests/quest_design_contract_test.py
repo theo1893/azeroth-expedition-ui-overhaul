@@ -46,6 +46,18 @@ def main() -> None:
     seals_work = (
         QUESTS / "work" / "QUEST.SEALS.md"
     ).read_text(encoding="utf-8")
+    seal_actions_sim_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v1.json"
+    )
+    seal_actions_sim_spec = json.loads(
+        seal_actions_sim_spec_path.read_text(encoding="utf-8")
+    )
+    seal_actions_sim_renderer = (
+        ROOT / "tools" / "render_quest_log_seal_actions_simulation_v1.py"
+    )
     tracker_sim_spec_path = (
         ROOT / "tools" / "specs" / "quest_tracker_simulation_v2.json"
     )
@@ -204,7 +216,11 @@ def main() -> None:
             "`QUEST.LOG.ACTION.ABANDON`",
             "`QUEST.LOG.ACTION.SHARE`",
             "`QUEST.LOG.ACTION.EXIT`",
-            "程序化暗皮革搭扣四状态",
+            "`QUEST.LOG.ACTION.SEAL_MENU`",
+            "当前程序化暗皮革 fallback",
+            "双列单格收敛为 `108px`",
+            "名称安全宽 `64px`",
+            "UpdateScrollChildRect()",
             "`QUEST.DIALOG.QUEST.SHELL`",
             "`QUEST.DIALOG.GOSSIP.SHELL`",
             "`QUEST.DIALOG.QUEST.PORTRAIT`",
@@ -592,7 +608,7 @@ def main() -> None:
         (
             "Quest Log／Tracker 共用漆章",
             "`QS-A1 V1.r4`",
-            "`runtime-exported / P5`",
+            "`runtime-exported / placement-invalidated / simulation-reviewed`",
             "QuestToolWaxSeal_Master_v1.png",
             "QS-A1_SourceManifest_v1.json",
             "QS-A1_RuntimeManifest_v1.json",
@@ -1727,6 +1743,51 @@ def main() -> None:
         str(seal_builder),
         "exec",
     )
+    compile(
+        seal_actions_sim_renderer.read_text(encoding="utf-8"),
+        str(seal_actions_sim_renderer),
+        "exec",
+    )
+    assert seal_actions_sim_spec["version"] == (
+        "QUEST-LOG-SEAL-ACTIONS-SIM-V1"
+    )
+    assert seal_actions_sim_spec["frame"] == [676, 464]
+    assert seal_actions_sim_spec["layout"]["list"] == [64, 64, 246, 324]
+    assert seal_actions_sim_spec["layout"]["detail"] == [366, 64, 246, 324]
+    assert seal_actions_sim_spec["layout"]["seal_visual"] == [
+        665,
+        194,
+        32,
+        32,
+    ]
+    assert seal_actions_sim_spec["layout"]["seal_hitbox"] == [
+        659,
+        190,
+        40,
+        40,
+    ]
+    assert len(seal_actions_sim_spec["content"]["menu_actions"]) == 7
+    assert seal_actions_sim_spec["constraints"]["imagegen_calls"] == 0
+    assert seal_actions_sim_spec["interaction"]["fail_open"] == (
+        "keep-original-buttons-visible-until-all-proxies-exist"
+    )
+    require(
+        seals_work,
+        (
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V1",
+            "simulation-reviewed / P2 / awaiting-user-confirmation",
+            "QuestFramePushQuestButton",
+            "QuestLogFrameExpandButton",
+            "pfQuest.buttonShow",
+            "pfQuest.buttonHide",
+            "pfQuest.buttonClean",
+            "pfQuest.buttonReset",
+            "QuestLogFrameAbandonButton",
+            "fail-open",
+            "ImageGen：`0/0`",
+        ),
+        "Quest Log seal action simulation work",
+    )
 
     quest_adapter = (
         ROOT
@@ -1745,7 +1806,7 @@ def main() -> None:
     require(
         quest_theme,
         (
-            'contract = "1.5"',
+            'contract = "1.6"',
             "QuestLogShellV4",
             "QuestLogDirectoryMarksV1",
             "QuestTrackerPaperV1",
@@ -1773,7 +1834,7 @@ def main() -> None:
     require(
         quest_adapter,
         (
-            'Quests.runtimeContract = "1.16"',
+            'Quests.runtimeContract = "1.17"',
             "ApplyTrackerProviderFont",
             "ResolveQuestNameInk",
             "ApplyDirectoryTypography",
@@ -1819,6 +1880,11 @@ def main() -> None:
             "QuestLogDetailScrollFrameScrollBar",
             "EnableMouseWheel(true)",
             "ApplyDetailTextGeometry",
+            "ApplyDetailRewardGeometry",
+            "MeasureDetailContentHeight",
+            "UpdateDetailScrollChildHeight",
+            "rewardSlotWidth = 108",
+            "rewardNameWidth = 64",
             "QuestLogHighlightFrame",
             "LAYOUT.detail.contentWidth",
             "QuestLogFrameExpandButton",

@@ -2,9 +2,11 @@
 
 - 批次：`QS-A1`
 - 当前接受版本：`QS-A1 V1.r4`
-- 已确认模拟：`QUEST-SEALS-SIM-V2`
-- 项目阶段：`P5`
-- 当前子状态：`runtime-exported / P5`
+- 已确认历史模拟：`QUEST-SEALS-SIM-V2`；其 Quest Log 顶部悬空位置已于
+  `2026-08-03` 被用户否决，Tracker 方向仍有效
+- 当前待确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V1`
+- 项目阶段：漆章美术／atlas `P5`；Quest Log placement／menu `P2`
+- 当前子状态：`runtime-exported / placement-invalidated / simulation-reviewed`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - 正式 ImageGen：`5/5`
@@ -20,8 +22,9 @@
   流程错误不占额度。
 - 用户于 `2026-07-31` 接受 `QS-A1 V1.r4` 的运行时视觉，并明确授权
   确定性色键、透明 RGB 清零与 `1024²` 归一化例外进入 P4／P5。不得再执行
-  ImageGen。当前只等待 Turtle WoW `1.18.1` 实机 P6；旧七个 provider
-  Button 在 hub menu 功能等价前继续可见可用。
+  ImageGen。漆章物件美术和 atlas 不重开；Quest Log 旧锚点已失效，新的承载
+  与事务菜单先等待本地模拟确认。旧 Quest Log／Tracker provider Button 在
+  各自菜单功能等价前继续可见可用。
 
 ## 用户接受与 P4／P5 固化
 
@@ -64,7 +67,9 @@
 
 | ID | 当前对象 | 目标合同 |
 |---|---|---|
-| `QUEST.LOG.CHROME.SEAL` | 尚无 runtime 对象 | `QuestLogFrame` 上独立的 `28 × 28` 无鼠标 Texture；修订盒为 `[600,-18,28,28]`，位于任务书右上方透明 UI 空间，与 SHELL 可见 Alpha 重叠必须为 `0`。只有取得真实动作后，才允许在同一盒内一对一升级为 Button |
+| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前仍是 `[600,-18,28,28]` 无鼠标 Texture | QS-A1 V1.r4 美术保持 accepted；旧顶部悬空位置已否决。提案改为右侧外沿皮签上的 `32px` Button，但必须先确认 `QUEST-LOG-SEAL-ACTIONS-SIM-V1` |
+| `QUEST.LOG.CHROME.SEAL.SUPPORT` | 尚无 runtime 对象 | proposed 程序化短皮革事务签，必须与右侧外沿护轨发生可信连接；不得落在纸页、翻页、页沟或书封 |
+| `QUEST.LOG.CHROME.SEAL.MENU` | 尚无 runtime 对象 | proposed transient Frame；七项菜单只代理原 Button，取得一一功能等价前旧按钮保持 fail-open |
 | `QUEST.TRACKER.HUB.SEAL` | 尚无 runtime 对象 | adapter-owned `34 × 34` 顶部中央漆章；宽度 `W` 时 `x=floor((W-34)/2)`、`y=-18`，底边恰好落在 provider `16px` 工具条／列表起点，不移动任务内容 |
 | `QUEST.TRACKER.HUB.MENU` | 尚无对象 | 未来独立交互批次；漆章点击后承载七项 provider 行为。本模拟不绘制、不实现，也不把它当成已有 Button |
 
@@ -727,3 +732,112 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 
 正式生产尝试：`5/5`；流程错误：`0`；接受后新增生成：`0`；当前终态：
 `runtime-exported / P5 / game-validation-pending`。
+
+## Quest Log 承载与事务菜单 — `QUEST-LOG-SEAL-ACTIONS-SIM-V1`
+
+### 元数据
+
+- 日期：`2026-08-03`
+- 范围：只修订 `QUEST.LOG.CHROME.SEAL` 的承载位置和 Quest Log 底部操作
+  收纳；不改变 QS-A1 V1.r4 漆章母版、四态 atlas 或 Tracker 漆章。
+- 子状态：`simulation-reviewed / P2 / awaiting-user-confirmation`
+- 操作：`simulate`
+- 模拟方式：`deterministic-local-geometry`
+- ImageGen：`0/0`；上传：无；本地渲染错误：`0`
+- Python：macOS `conda run -n py312 python`；实际解释器
+  `/Users/yuanshiyao/miniconda3/envs/py312/bin/python`，`3.12.12`
+- specification：
+  `tools/specs/quest_log_seal_actions_simulation_v1.json`
+- renderer：
+  `tools/render_quest_log_seal_actions_simulation_v1.py`
+- 命令：
+  `conda run -n py312 python tools/render_quest_log_seal_actions_simulation_v1.py tools/specs/quest_log_seal_actions_simulation_v1.json --repo-root .`
+- board：
+  `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V1/quest_log_seal_actions_board_v1.png`，SHA-256
+  `e5178c74f474613e20b1ec6ec07ed4ee0ccbc83f7207e33af7cad3f2c4f9e59e`。
+- report：
+  `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V1/quest_log_seal_actions_report_v1.json`，SHA-256
+  `125f5e40342117301b009ae1a0572f2b91be2bc98e5cd5a492695860069ae20a`。
+- 用户结论：`pending`。
+
+### 失效原因与设计裁决
+
+- 旧盒 `[600,-18,28,28]` 虽与 SHELL Alpha 重叠为零，却没有任何承重、
+  连接或悬挂结构；用户观察为“浮在任务列表右上方、在空中”。它不再是
+  Quest Log 的有效最终 placement，不能仅靠 tooltip 或点击功能挽救。
+- 仍保留此前“不得压在纸页、翻页、页沟、书封和包角”的限制。V1 将一块
+  `48 × 44px` 短暗皮革事务签从书本右侧外沿护轨伸出，左端压在外沿结构下，
+  `32 × 32px` 漆章压在伸出末端；漆章命中盒为 `40 × 40px`。这样默认态有
+  清楚的物理承载，又不占用左右页阅读安全区。
+- 菜单打开时，一张 `178 × 264px` 暖赭事务笺从承载皮签向书内展开。它只在
+  短暂操作期间覆盖右页详情；选择动作、点击书外或按 Esc 后关闭。关闭态不
+  遮挡任务列表、详情、奖励或右上 Close。
+- 菜单是公会卷宗的附属事务笺，不增加第二本书、外围书框、现代悬浮卡片、
+  透明黑玻璃或图标矩阵。模拟中的平面皮革、纸边和缝线只证明物件隐喻与
+  综合色，最终微纹理、边缘和客户端字体栅格均非权威。
+
+### 真实对象与交互合同
+
+固定保留独立、不收纳：
+
+- `QuestLogFrameCloseButton`：右上 Close 已承担关闭任务日志；不在菜单重复
+  “退出”，避免两条相同路径。
+- `QuestLogFrameLevelsCheckButton`、`QuestLogTrack`：继续位于左页顶部并
+  保留即时状态反馈。
+- `pfQuest.buttonOnline`、`pfQuest.buttonLanguage`：继续位于右页顶部；动态
+  ID、语言、OnUpdate 和下拉行为不迁移。
+
+菜单七项按原对象一一代理：
+
+| 菜单项 | provider／原对象 | 委托规则 |
+|---|---|---|
+| 分享任务 | `QuestFramePushQuestButton` | 调用原 Button 点击路径；镜像 enabled |
+| 收起／展开详情 | `QuestLogFrameExpandButton` | 文案跟随详情显隐；只调用原切换行为 |
+| 显示任务位置 | `pfQuest.buttonShow` | 保留所选任务 ID、地图打开和原脚本 |
+| 隐藏任务位置 | `pfQuest.buttonHide` | 保留原删除单任务节点行为 |
+| 清理地图标记 | `pfQuest.buttonClean` | 保留原全局清理语义 |
+| 重建地图标记 | `pfQuest.buttonReset` | 保留 `pfQuest:ResetAll()` 原路径 |
+| 放弃任务 | `QuestLogFrameAbandonButton` | 菜单关闭后进入原生确认；不得直接执行删除 |
+
+交互流程：
+
+1. 常态只显示外沿事务签和 normal 漆章；左键切换菜单，hover／pressed／
+   disabled 直接使用已接受 atlas 对应 cell。
+2. 菜单显示时按原 Button 的 `IsEnabled()`／可用性刷新每项；disabled 使用
+   退灰文字且不接收点击。菜单不缓存任务 ID、不复制 pfQuest 条件判断。
+3. 点选普通项时先关闭菜单，再以原 provider Button 为行为所有者调用其
+   OnClick／Click 路径；放弃继续由原生 StaticPopup 二次确认。
+4. 点击书外、再次点击漆章、按 Esc、关闭 Quest Log 或任务选择刷新导致对象
+   失效时关闭菜单。右键只保留给未来 Quest 模块设置入口，本轮不伪造路由。
+5. fail-open 是硬门禁：只要七个代理中任一对象未捕获、pfQuest 尚未加载或
+   adapter 自检失败，原底部 Button 全部继续可见可点，漆章保持无鼠标或菜单
+   不晋级。只有静态测试与目标客户端逐项证明功能等价后才隐藏原控件视觉和
+   命中；对象、脚本和数据本身仍保留。
+
+### 生成前模拟与展示区域审查
+
+- Frame 使用真实 `676 × 464`；左页 `246 × 324`、十八条 `18px` 行；右页
+  `246 × 324`，四个 `108 × 32px` 奖励槽；菜单七项。邻接 UI 使用当前
+  accepted QL-A1 shell 与 QS-A1 runtime normal cell。
+- 关闭／打开两态均为 `100%` UI 像素。机器检查通过：四个奖励槽全部落入
+  detail；关闭态漆章不进入页内安全区；皮签与右侧外沿护轨相交；菜单在基础
+  Frame 内、避开 Close；`40px` 命中盒完整包含 `32px` 漆章；fail-open
+  条件存在。
+- 菜单与 detail 的重叠为显式、仅打开态存在的交互层，而不是展示区域错误；
+  菜单关闭后右页恢复完整阅读与奖励命中。尚未验证最小屏幕边缘、真实 UI
+  scale、Esc 捕获、OnClick 委托和 provider late-load，这些属于实现后 P5／
+  P6 门禁。
+- 内部结论：`displayable`。可据此确认承载位置、物件隐喻、菜单展开方向、
+  七项分组与移除固定底部按钮后的综合色；不得据此接受最终材质像素、切片、
+  动画或 runtime。
+
+### 用户方向结论
+
+- 具体模拟版本：`QUEST-LOG-SEAL-ACTIONS-SIM-V1`
+- 当前结论：`pending`
+- 若确认：实现程序化 support／menu、原 Button proxy、fail-open 与 Lua smoke；
+  不调用 ImageGen，不重开 QS-A1 source，不以模拟像素制作 runtime。
+- 若否决：只修改 placement、承载隐喻、菜单展开方向／分组或综合色后生成新的
+  本地几何模拟版本；ImageGen 仍为 `0/0`。
+- 确认失效条件：承载物从侧边皮签改为其他物件、漆章位置／尺寸发生实质变化、
+  菜单改为另一方向／层级或收纳对象集合变化。

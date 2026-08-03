@@ -18,3 +18,7 @@ archive/
 # The tracked P4 source lives in assets/source/chat/input-dark-v1/; these intermediates
 # remain ignored and are retained locally until the explicit P6-C cleanup gate.
 /generated/chat/core/CHAT.INPUT.DARK.V1/
+
+# Regenerable Quest Log seal-placement/menu simulation evidence. The tracked
+# spec and renderer reproduce these files until the interaction is accepted.
+/generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V1/
