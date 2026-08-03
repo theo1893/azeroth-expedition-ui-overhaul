@@ -21,7 +21,7 @@
 | 主模块 | pfUI／原生边界 | 阶段 | 当前结论 | 下一门禁 |
 |---|---|---:|---|---|
 | Core／pfUI | `api/expedition.lua`、`pfUI.lua`、作用域接管路由 | `P5` | pfUI `8.1.0-aeui.4` 已恢复公共绘制、原始默认值、全部未接管模块／skins 与配置入口；仅 Chat 辅助模块和 Quest Log skin 显式让渡；旧全局回退 SavedVariables 一次迁移 | 实机覆盖 Game Menu／`/pfui`、全模块加载、旧 SavedVariables、单模块失败隔离与第三方兼容 |
-| Chat | `modules/chat.lua` + AEUI Chat adapter | 核心 `P5` Full V1 / r1.19；输入候选 `P3 candidate-reviewed` | 主框九宫格、右框回收、V3 Tab／输入／未读及暖黑纸面 Vanilla 色板保持。`CHAT.INPUT.DARK.V1.r3 attempt 4` 已计 `4/5`：三图 regenerate 得到薄层烟熏 rag-paper 两态，材料、共享 Alpha、真实排版和五场景展示区域内部通过；正式 runtime 尚未改变 | 等待用户接受／退回精确 attempt 4；接受后才进入 P4 source／manifest。游戏设备可用时再 `/reload` 验证核心 r1.19 与输入焦点、IME、历史 |
+| Chat | `modules/chat.lua` + AEUI Chat adapter | 核心 `P5` Full V1 / r1.19；新输入源 `P4 accepted-source` | 主框九宫格、右框回收、V3 Tab／输入／未读及暖黑纸面 Vanilla 色板保持。用户已接受 `CHAT.INPUT.DARK.V1.r3 attempt 4`；透明源 `ChatInput_Dark_V1_r3.png` 与 source manifest 已入库，SHA-256 `4df36bc…cda0`。生产循环已停止且剩余额度不转移；正式 TGA、Lua 与功能尚未改变 | 建立确定性 P4→P5 exporter，完成最终 TGA 的真实排版、display-region 与静态测试；游戏设备可用时再 `/reload` 验证核心 r1.19 与输入焦点、IME、历史 |
 | Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P5` | Quest Log 主体保持 QL-A2 V4；pfQuest tracker 临时纸面仍为 `display-region-blocked`。Quests `1.16`／Quest Visual Theme `1.5` 让日志与追踪器共用高对比深墨难度色，并把任务类型／完成／失败提示从原生亮色归一化为独立深紫／深绿／深红墨；左页使用 18 个 `246 × 18px` 活动行，任务及状态文字统一为 `12px` 无描边／shadow 字体，行末追踪圈和两页 scrollbar chrome 隐藏，滚轮与真实 ScrollFrame 保留。Tracker 仍保留旧统一字体、批次提交和 `16px` 底部安全区 | Turtle WoW `/reload` 验证左页对比、五档难度及任务类型色，并确认同一任务跨面板颜色一致；再验接受／放弃任务批次稳定 |
 | Map | `map.lua`、`minimap.lua`、`addonbuttons.lua` 等 | `P2` | 羊皮地图卷与黄铜罗盘已锁定 | 实机对象审计和组件级合同 |
 | Character | `character.lua`、`inspect.lua`、`dressup.lua` | `P2` | 香草同构角色面板已锁定 | 实机几何与装备槽／属性／页签拆分 |

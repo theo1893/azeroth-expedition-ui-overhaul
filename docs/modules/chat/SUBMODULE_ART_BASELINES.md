@@ -45,23 +45,34 @@ runtime contract `1.19` 确定性导出进入 `P5`：中央阅读面
 
 生成普通与聚焦两个无字“暖烟草抄写纸条”状态。它首先读作从暖黑战地日志
 下沿页叠中夹入的一张狭长书写纸，而不是独立面板：两至三层薄烟熏纸、轻微
-毛边、短折页、低频纸纤维、断续深墨导线与页叠接触暗部共同形成厚度。两态
+毛边、短折页、低频纸纤维与页叠接触暗部共同形成厚度。两态
 外接轮廓、Alpha、基线、左右端帽、三段切线和点击几何完全相同；固定左端帽
 为 `28px`，右端帽为 `20px`，所有折页、撕口、线结和页角只可落在端帽内，
 中段必须安静并可横向延展。动态文字走廊从左侧 `34px` 开始、在右侧
 `22px` 前结束，位图不得烘焙文字、光标、频道头、语言控件或输入历史。
 
 普通态以 `#403024` 附近的暖烟草纸后退到正文暖黑纸面；聚焦态保持同一深色
-材料，只在 `#503A25` 附近轻微前移，并增加墨线深度、一至两处短烛暖反光与
-接触阴影。不得整体发黄，不得出现全宽高光、完整矩形描边、搜索图标、胶囊、
+材料，只在 `#503A25` 附近轻微前移，并增加纸浆局部响应、一至两处短烛暖反光
+与接触阴影；不得添加写字导线表达焦点。不得整体发黄，不得出现全宽高光、
+完整矩形描边、搜索图标、胶囊、
 透明黑玻璃、现代黑色输入框、发光、进度条、血条或金色滚动条。
 
-当前运行时回退源：
-[ChatControls_Master_v3.png](../../../assets/source/chat/v3/ChatControls_Master_v3.png)。
-它仍是已接受的 V3 source，并继续提供现行 `P5` normal／focus 三段式贴图；
-其浅金输入像素不属于新的稳定综合色方向。用户于 `2026-08-03` 确认
-`CHAT.INPUT.DARK.V1-SIM` 的可见方向；该确认只冻结上述布局、材料、轮廓、
-配色、重量和两态观感，不接受模拟像素，也不构成新 source 或生产授权。
+已接受的暖烟草输入源：
+[ChatInput_Dark_V1_r3.png](../../../assets/source/chat/input-dark-v1/ChatInput_Dark_V1_r3.png)，
+对应
+[source manifest](../../../assets/source/chat/input-dark-v1/ChatInput_Dark_V1_SourceManifest_v1.json)。
+用户于 `2026-08-03` 接受 `CHAT.INPUT.DARK.V1.r3 attempt 4` 进入 `P4`；该源是
+只用候选自身像素完成近绿幕转 Alpha、等比 bbox-fit、两态逐像素共同 Alpha 与
+透明 RGB 清零后的精确 `1536 × 1024 RGBA` 结果，SHA-256
+`4df36bc607a024ca0a2355f5d20ff985f61cbf3304073a65e33caa978c50cda0`。
+它包含 normal／focus 两条薄烟熏 rag-paper 纸条，不包含文字、光标、频道头、
+语言控件或历史。当前还没有正式 exporter、TGA 或 Lua 接入，因此不得称为
+`P5`。
+
+当前运行时回退源仍为
+[ChatControls_Master_v3.png](../../../assets/source/chat/v3/ChatControls_Master_v3.png)，
+并继续提供现行 `P5` normal／focus 三段式贴图；其浅金输入像素不属于新的
+稳定综合色方向，只在新 P4 source 完成确定性导出和静态门禁后才允许替换。
 
 ## `CHAT.UNREAD`
 
@@ -109,7 +120,8 @@ Alpha；已经可读的未知色必须原样保留。消息内容和 `|H...|h` �
 ## 接受资产 provenance
 
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`。
-- V3 接受日期：`2026-07-29`；暖黑完整书体替换源接受日期：`2026-08-03`。
+- V3 接受日期：`2026-07-29`；暖黑完整书体替换源与暖烟草输入源接受日期：
+  `2026-08-03`。
 - V3 主框源尺寸：`1608 × 978` RGBA。
 - 暖黑完整书体替换源尺寸：`1608 × 978` RGBA；SHA-256
   `a97d9c5fa055a119cd5ea7809bdaa51460cddb9674355efcec35f98f6cd2c673`；
@@ -119,6 +131,12 @@ Alpha；已经可读的未知色必须原样保留。消息内容和 `|H...|h` �
 - 暖黑 runtime：`ChatBookFrameFullV1.tga`，`1024 × 1024` RGBA，SHA-256
   `becb504fb482cb37c0824e9b8705b4ad76d890a5cac024e83a3cce81517025ae`；
   九宫格和五场景最终 TGA 展示区域门禁为 `0` violations。
+- 暖烟草输入源：`ChatInput_Dark_V1_r3.png`，`1536 × 1024` RGBA，SHA-256
+  `4df36bc607a024ca0a2355f5d20ff985f61cbf3304073a65e33caa978c50cda0`；
+  固定 session `019fc5fd-c995-7f50-94af-5ab05aaba66d`，provider result
+  `ig_093073d7aed26787016a702047bcd48191a71c9dbbf2bce523`；实际 ImageGen
+  `4/5` 后通过并进入 `P4`，剩余一次终止且不转移。当前 runtime 仍使用
+  `ChatInputAtlasV3.tga`，未授权 P5 导出或 Lua 修改。
 - V3 Tab 源尺寸：`1774 × 887` RGBA。
 - V3 控件源尺寸：`1536 × 1024` RGBA。
 - V3 source 接受时的 `440 × 320` 合成验证使用 `380 × 236` 正文安全区；

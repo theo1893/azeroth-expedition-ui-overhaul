@@ -549,6 +549,62 @@ def main() -> None:
     assert full_frame_manifest["adapter"]["texture_instances"] == 9
     assert full_frame_manifest["adapter"]["right_frame_instances"] == 0
 
+    input_source_dir = (
+        ROOT / "assets" / "source" / "chat" / "input-dark-v1"
+    )
+    input_source_manifest = json.loads(
+        (
+            input_source_dir / "ChatInput_Dark_V1_SourceManifest_v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    input_source = input_source_dir / input_source_manifest["source"]["file"]
+    assert input_source_manifest["accepted_version"] == (
+        "CHAT.INPUT.DARK.V1.r3 attempt 4"
+    )
+    assert input_source_manifest["status"] == "accepted-source"
+    assert input_source_manifest["phase"] == "P4"
+    assert input_source_manifest["source"]["mode"] == "RGBA"
+    assert input_source_manifest["source"]["shared_state_alpha"] is True
+    assert input_source_manifest["source"]["canonical_state_cells_xyxy"] == {
+        "normal": [51, 187, 1437, 363],
+        "focus": [51, 448, 1437, 624],
+    }
+    assert sha256(input_source) == (
+        "4df36bc607a024ca0a2355f5d20ff985f61cbf3304073a65e33caa978c50cda0"
+    )
+    assert sha256(input_source) == input_source_manifest["source"]["sha256"]
+    assert input_source_manifest["source"]["pure_green_visible_pixels"] == 0
+    assert input_source_manifest["source"][
+        "heuristic_green_dominant_visible_pixels"
+    ] == 0
+    assert input_source_manifest["source"][
+        "transparent_rgb_nonzero_values"
+    ] == 0
+    assert input_source_manifest["user_acceptance"]["statement"] == (
+        "接受 CHAT.INPUT.DARK.V1.r3 attempt 4 进入 P4。"
+    )
+    assert input_source_manifest["provenance"]["imagegen_budget"] == {
+        "actual_calls": 4,
+        "maximum_calls": 5,
+        "process_errors": 4,
+        "unconsumed_calls_terminated_on_acceptance": 1,
+        "unconsumed_calls_transferable": False,
+    }
+    assert input_source_manifest["runtime_export_contract"]["status"] == (
+        "not-exported"
+    )
+    assert input_source_manifest["runtime_export_contract"]["phase"] == "P4"
+    assert input_source_manifest["runtime_export_contract"][
+        "whole_source_runtime_allowed"
+    ] is False
+    current_input_runtime = (
+        aeui / "Media" / "Chat" / "ChatInputAtlasV3.tga"
+    )
+    assert sha256(current_input_runtime) == input_source_manifest[
+        "runtime_export_contract"
+    ]["current_runtime_fallback"]["sha256"]
+    assert "ChatInput_Dark_V1" not in chat_source
+
     manifest_path = (
         ROOT
         / "assets"
