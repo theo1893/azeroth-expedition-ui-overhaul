@@ -6,8 +6,8 @@
 - 组件 ID：`CHAT.FRAME`、`CHAT.FRAME.LEFT`、`CHAT.TABS`、`CHAT.INPUT`、
   `CHAT.UNREAD`、`CHAT.TEXT`
 - 版本：`CHAT.CORE.V3 / runtime contract v1.19`；输入生产版本
-  `CHAT.INPUT.DARK.V1 / authorization-pending`
-- 子状态：核心 `runtime-exported`；输入候选 `simulation-confirmed`
+  `CHAT.INPUT.DARK.V1 / prompt-authorized`
+- 子状态：核心 `runtime-exported`；输入候选 `prompt-authorized`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 当前操作：固定 P4 source 已按全图比例确定性导出到 `1024²`
@@ -18,9 +18,11 @@
   最小提升。该 P4→P5 阶段 ImageGen `0` 次，不修改外部 ChatMOD 功能／配置。
   用户随后指出 V3 浅金输入纸带在暖黑书页上像现代进度条；
   `CHAT.INPUT.DARK.V1-SIM` 暖烟草抄写纸条本地几何模拟已于 `2026-08-03`
-  获得用户方向确认。稳定输入 Prompt 与完整生产正文现已按确认结果凝结，
-  等待独立生产授权；正式 TGA、Lua、EditBox 功能与 P5 状态均未改变，模拟
-  ImageGen `0/0`、生产 ImageGen `0/5`（预算尚未开启）
+  获得用户方向确认。稳定输入 Prompt 与完整生产正文现已按确认结果凝结；
+  用户又于 `2026-08-03` 明确授权固定 Image 1／2／3、冻结修复边界和最多
+  五次实际 ImageGen 调用，当前进入 attempt 1 前的 `prompt-authorized / P3`。
+  正式 TGA、Lua、EditBox 功能与 P5 状态均未改变，模拟 ImageGen `0/0`、
+  生产 ImageGen `0/5`、流程错误 `0`
 - 已凝结视觉方向：`CHAT-DARK-SIM-V1 / simulation-confirmed / P2` 的 B 方向
   已由 `CHAT.FRAME.FULL.V1.r1 / runtime-exported / P5` 实现；不再作为并行候选
 - 已退回生产批次：`CHAT.FRAME.PAPER.V1 / candidate-rejected / P3`；固定
@@ -1698,10 +1700,11 @@ python3 tools/build_chat_v3_runtime_assets.py
 
 - 用户反馈：Full V1 暖黑书体接入后，原 V3 浅金输入纸带在书页下沿形成过亮
   横条，容易被读成现代进度条；输入背景与正文底色关系需要重做。
-- 已确认模拟：`CHAT.INPUT.DARK.V1-SIM`；当前操作：`prepare`；生产版本：
-  `CHAT.INPUT.DARK.V1`；子状态：`simulation-confirmed / P2`。用户于
-  `2026-08-03` 明确接受该模拟方向。本节没有 ImageGen、外部上传、source
-  promotion、TGA 导出或 Lua 修改；该接受不能自动解释为生产授权。
+- 已确认模拟：`CHAT.INPUT.DARK.V1-SIM`；当前操作：`generate`；生产版本：
+  `CHAT.INPUT.DARK.V1`；子状态：`prompt-authorized / P3`。用户于
+  `2026-08-03` 先明确接受模拟方向，随后独立授权完整生产版本、固定参考、
+  `0/5` 预算和循环内 edit 边界。当前尚未调用 ImageGen、上传、promote source、
+  导出 TGA 或修改 Lua。
 - 现行正式 runtime 继续是 `ChatInputAtlasV3.tga`／`P5`。本模拟没有否定其
   normal／focus 状态、三段 UV 或功能，只为替换未来可见像素建立方向门禁。
 - provider：`pfUI.chat.editbox` 与 `ChatFrameEditBox`；adapter 精确几何为
@@ -1830,11 +1833,11 @@ python3 tools/build_chat_v3_runtime_assets.py
   配色极性、综合色重、Full V1 整合关系或三段式 runtime 几何时，必须回到
   新的本地模拟版本。只改变不影响可见构图的透明提取与确定性切片无需重做。
 
-### 正式生产合同（`CHAT.INPUT.DARK.V1`，待授权）
+### 正式生产合同（`CHAT.INPUT.DARK.V1`，已授权）
 
 - 固定执行器只允许 `imagegen-0-143-0`／`@openai/codex@0.143.0`；操作为
-  `generate`。当前实际 ImageGen 为 `0/5`，但预算尚未开启，也没有取得本版本
-  的上传、生成或循环内 edit 授权。
+  `generate`。用户已于 `2026-08-03` 开启本版本最多五次实际调用的预算；
+  当前实际 ImageGen 为 `0/5`、流程错误 `0`。
 - provider raw 画布固定为 `1536 × 1024 RGBA`，背景必须为完全平坦的
   `#00FF00`。对象恰为两条无字纸条：normal 固定 source cell
   `[51,187,1437,363]`，focus 固定 source cell `[51,448,1437,625]`；坐标为
@@ -1851,7 +1854,7 @@ python3 tools/build_chat_v3_runtime_assets.py
   `x=8/121/932/1016`。运行时仍使用左 `28px` cap、安静 stretch 中段和右
   `20px` cap，不改变 EditBox `380/480 × 25px`、`34/22px` 文字 inset 或
   normal／focus 交互所有权。
-- 固定上传参考与职责，均须用户在生产前按路径和 SHA 明确授权：
+- 固定上传参考与职责已经由用户按路径、顺序和 SHA 授权：
   - Image 1：`assets/locked/chat/聊天框视觉基准_v1.png`，SHA-256
     `90e30ba405a2b5cdc707cc229e56c4f64e51d0e4051f1e98dbcd2ec2ee70ee06`；
     最高的 Vanilla 年代、HUD 紧凑尺度、游戏内物件身份和综合色重权威；
@@ -1869,7 +1872,7 @@ python3 tools/build_chat_v3_runtime_assets.py
 ### 生产正文完整性预检
 
 - 复杂度：`states + assembly/stretch + atlas`。
-- 结论：`pass / production-ready / authorization-pending`。
+- 结论：`pass / production-ready / prompt-authorized`。
 
 | 门禁 | 执行正文中的证据 | 结论 |
 |---|---|---|
@@ -1885,7 +1888,7 @@ python3 tools/build_chat_v3_runtime_assets.py
 - 去冗余结论：只重复“两对象同构、纸张优先、安静中段、非进度条、精确格位、
   色键和动态内容排除”等高风险门禁；provenance 日期与历史过程留在 work。
 
-### 不可变自主修复边界（待授权）
+### 不可变自主修复边界（已授权）
 
 - 固定组件与对象：仅 `CHAT.INPUT`；normal／focus 两个无字状态，顺序不变。
 - 固定权威与输入：上述 Image 1／2／3 的路径、SHA、顺序和职责不变；首次为
@@ -1907,7 +1910,7 @@ python3 tools/build_chat_v3_runtime_assets.py
 - 必须重新授权：新增或替换任何上传、改变对象／状态数量、画布／格位、runtime
   几何、物件隐喻、综合色极性、Alpha 策略、允许的 edit 输入或禁止项。
 
-### 完整生产正文（`CHAT.INPUT.DARK.V1`，待授权）
+### 完整生产正文（`CHAT.INPUT.DARK.V1`，已授权；attempt 1 原样执行）
 
 ```text
 Create one production-ready bitmap sprite source for CHAT.INPUT in a World of
@@ -2057,13 +2060,33 @@ dark and clear without turning yellow; no line or highlight reads as a progress
 indicator; and no runtime content or neighboring UI is baked into the sheet.
 ```
 
-### 用户确认门禁
+### 精确生产授权记录
 
-- `CHAT.INPUT.DARK.V1-SIM` 的可见方向已由用户于 `2026-08-03` 确认；稳定
-  `CHAT.INPUT` Prompt、完整生产正文和自包含完整性预检均已更新。
-- 当前停在 `simulation-confirmed / P2`。下一步需要用户独立确认：
-  `CHAT.INPUT.DARK.V1` 上述完整正文；固定 SHA 的 Image 1／2／3 上传；最多
-  `5` 次实际 ImageGen 调用；流程错误不计额度；以及同一循环紧邻前次输出
-  只在冻结边界内作为 Image 4 edit 输入的权限。
-- 未取得该明确授权前不得启动固定执行器，不得上传三张参考，不得建立 raw、
-  source、TGA 或 Lua 改动。现行 V3 runtime 与核心 r1.19 P5 保持不变。
+- 授权日期：`2026-08-03`；授权版本：`CHAT.INPUT.DARK.V1`；对应模拟：
+  `CHAT.INPUT.DARK.V1-SIM / confirmed`。
+- 固定上传：上述固定 SHA、固定顺序与固定职责的 Image 1／2／3。
+- 循环内 edit：仅允许同一循环紧邻前次输出作为 Image 4，且只能在冻结修复
+  边界内使用；其余图片一律不得上传。
+- 预算：最多 `5` 次实际 ImageGen generation／edit，含首次；当前 `0/5`。
+  流程错误没有候选图且没有 provider 生成证据时不占额度；当前 `0`。
+- 用户原文：
+
+> 确认授权 CHAT.INPUT.DARK.V1；允许上传固定 SHA 的 Image 1/2/3；允许同循环
+> 紧邻前次输出仅在冻结边界内作为 Image 4 edit 输入；最多 5 次实际 ImageGen
+> 调用，流程错误不占额度。
+
+- 下一门禁：提交本授权状态与上方完整正文，然后使用固定执行器执行 attempt 1；
+  每次实际输出都必须从对象身份开始完成全量审查、确定性真实排版和展示区域
+  门禁。任何候选内部通过后立即停止，不能自动进入 source 或 runtime。
+
+### `CHAT.INPUT.DARK.V1` 自主修复循环
+
+- 当前实际 ImageGen：`0/5`；流程错误：`0`；循环终态：`active`。
+- attempt 1 只上传固定 Image 1／2／3并执行上方正文。attempt 2–5 的完整
+  `.rN` 正文、前次失败证据和 edit／regenerate 决定必须在各自调用前提交。
+
+| 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
+|---:|---|---|---|---|---|---|---|
+
+| 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
+|---:|---|---|---|---|---|
