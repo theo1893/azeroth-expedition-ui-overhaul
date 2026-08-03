@@ -3,7 +3,7 @@
 ## 当前结论
 
 - 主模块视觉：已锁定。
-- 输入视觉生产：`CHAT.INPUT.DARK.V1.r2 / repair-ready / P3`。用户指出
+- 输入视觉生产：`CHAT.INPUT.DARK.V1.r3 / repair-ready / P3`。用户指出
   V3 浅金输入纸带在 Full V1 暖黑书页上会被读成现代进度条；已按真实
   `380 × 25px`、普通／聚焦两态、三段横向伸缩、`34/22px` 文字 inset，使用
   当前 Full V1 书框、V3 Tab 与真实聊天密度完成本地几何预演。候选把输入改为
@@ -12,11 +12,11 @@
   用户于 `2026-08-03` 明确接受 `CHAT.INPUT.DARK.V1-SIM`，并随后独立授权
   `CHAT.INPUT.DARK.V1` 完整正文、固定三张 SHA 参考、最多五次实际 ImageGen
   调用与循环内紧邻前次输出的冻结 edit 边界。完整性预检通过；模拟 ImageGen
-  `0/0`、生产 `2/5`、流程错误 `4`。attempt 2 已移除缝线、皮革卷和长导线，
-  共享 Alpha、`380×25/480×25` 真实排版及五场景展示区域通过；但中段仍铺满
-  重复卷曲压纹，纸面继续偏压花皮革，focus 又形成连续橙金上缘。完整 `.r2`
-  只保留两态轮廓、薄页叠、右侧纸角与暗色顺序，继续使用紧邻输出作 Image 4
-  edit。正式 V3 TGA／Lua 未改变。
+  `0/0`、生产 `3/5`、流程错误 `4`。attempt 3 的共享 Alpha、
+  `380×25/480×25` 真实排版和五场景展示区域仍通过，但重复卷曲压纹没有消失，
+  focus 连续上缘反而更亮；连续两次 edit 已被错误 Image 4 表面锚定。完整 `.r3`
+  不再上传 Image 4，只用固定 Image 1／2／3 从零 regenerate；组件、权威、画布、
+  atlas 和 runtime 合同不变。正式 V3 TGA／Lua 未改变。
 - 当前 runtime：`CHAT.FRAME.FULL.V1.r1 / runtime-exported / P5`，contract
   `1.19`。固定 P4 source 已按全图比例导出为 `1024²`
   `ChatBookFrameFullV1.tga`，九个 slice 只挂载唯一左框；五个最终 TGA 真实排版
@@ -181,7 +181,7 @@
 | `CHAT.FRAME`／`LEFT` | `P5` Full V1 / r1.19 | `ChatBookFrameFullV1.tga` 九宫格；唯一左侧实例；最终 atlas SHA `becb504f…25ae`；旧 V3 主框仅作回退 | `/reload` 检查主体、九宫格接缝、缩放、拖动和常用 UI Scale |
 | `CHAT.FRAME.RIGHT` | `P5` disabled-route | `single_chat_frame=1`；不分配资产 | 验证右框不显示且消息无丢失 |
 | `CHAT.TABS` | `P5` V3 / r1.19 | `92 × 30` 四状态 atlas；沿用既有 TabText、命中与 Scale 修正；r1.19 不修改 Tab 资产／几何 | 在新书本主体上复测 pfUI 解锁滚轮与全局 UI Scale |
-| `CHAT.INPUT` | runtime `P5` V3；候选 `P3` repair-ready | 正式仍为 V3 普通／聚焦两状态三段式 atlas；当前 `2/5`。attempt 2 的对象结构和真实排版通过，但低频纸材质与局部 focus 反馈失败；完整 `.r2` 在冻结边界内编辑紧邻 Image 4 | 提交 `.r2` 后执行 attempt 3，按同一确定性工具复核；runtime 仍待实机验证焦点、IME、输入历史 |
+| `CHAT.INPUT` | runtime `P5` V3；候选 `P3` repair-ready | 正式仍为 V3 普通／聚焦两状态三段式 atlas；当前 `3/5`。attempt 3 继续失败于重复压纹和连续 focus 上缘；完整 `.r3` 在冻结边界内切换为固定三图 regenerate | 提交 `.r3` 后执行 attempt 4，按同一确定性工具复核；runtime 仍待实机验证焦点、IME、输入历史 |
 | `CHAT.INPUT.LANGUAGE` | `P1` | 可选原生 Button 已映射 | 实机确认对象、尺寸和语言状态 |
 | `CHAT.UNREAD` | `P5` V3 | 独立 `ChatFrameNTabFlash` 覆盖 | 实机验证闪烁配置与选中清除 |
 | `CHAT.TEXT` | `P5` dark-paper palette / r1.19 | `380 × 248`／约 16 行；pfUI 配置字体、用户字号、无描边／无阴影、`3px` spacing、无额外背景层；Vanilla 明亮语义色，小队与团队分色；过暗未知色向白色最小提升 | 实机确认频道／职业／DPSMate 在暖黑纸面上的可读性与原版身份 |
@@ -244,8 +244,8 @@
 1. 用户已于 `2026-08-03` 接受 `CHAT.INPUT.DARK.V1-SIM`，并独立授权
    `CHAT.INPUT.DARK.V1`、固定 SHA 的 Image 1／2／3、最多 `5` 次实际 ImageGen、
    流程错误不计额度和冻结的 Image 4 edit 边界。授权正文已提交；当前
-   `2/5`、流程错误 `4`。attempt 2 内部失败；下一门禁是提交完整 `.r2`，用
-   紧邻输出作为 Image 4 执行 attempt 3，并在输出后完成同一全量审查。正式
+   `3/5`、流程错误 `4`。attempt 3 内部失败；下一门禁是提交完整 `.r3`，只用
+   固定 Image 1／2／3 regenerate attempt 4，并在输出后完成同一全量审查。正式
    source／TGA／Lua 在用户接受具体候选前保持不变。
 2. `CHAT.FRAME.FULL.V1.r1` 已完成 P4→P5：最终 TGA、九宫格 adapter、暖黑
    纸面文字色板、五场景真实排版和 display-region 均已验证；本阶段 ImageGen

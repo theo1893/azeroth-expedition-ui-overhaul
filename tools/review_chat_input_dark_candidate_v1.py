@@ -49,8 +49,9 @@ ATLAS_BOXES = {
     "normal": (8, 4, 1016, 124),
     "focus": (8, 132, 1016, 252),
 }
-OPAQUE_GREEN_SCORE = 160
-TRANSPARENT_GREEN_SCORE = 210
+MAX_OPAQUE_GREEN_SCORE = 160
+MIN_MATTE_TRANSITION = 40
+BACKGROUND_BORDER = 32
 RESAMPLE = Image.Resampling.LANCZOS
 
 
@@ -141,14 +142,30 @@ def derive_candidate_rgba(raw: Image.Image) -> tuple[Image.Image, dict[str, Any]
     blue = rgb[:, :, 2].astype(np.int16)
     score = green - np.maximum(red, blue)
 
+    border_values = np.concatenate(
+        (
+            score[:BACKGROUND_BORDER, :].ravel(),
+            score[-BACKGROUND_BORDER:, :].ravel(),
+            score[BACKGROUND_BORDER:-BACKGROUND_BORDER, :BACKGROUND_BORDER].ravel(),
+            score[BACKGROUND_BORDER:-BACKGROUND_BORDER, -BACKGROUND_BORDER:].ravel(),
+        )
+    )
+    transparent_green_score = int(border_values.min()) - 1
+    opaque_green_score = min(
+        MAX_OPAQUE_GREEN_SCORE,
+        transparent_green_score - MIN_MATTE_TRANSITION,
+    )
+    if transparent_green_score <= opaque_green_score:
+        raise ValueError("candidate green field has no usable matte transition")
+
     alpha = np.clip(
-        (TRANSPARENT_GREEN_SCORE - score)
-        * (255.0 / (TRANSPARENT_GREEN_SCORE - OPAQUE_GREEN_SCORE)),
+        (transparent_green_score - score)
+        * (255.0 / (transparent_green_score - opaque_green_score)),
         0,
         255,
     ).astype(np.uint8)
-    alpha[score <= OPAQUE_GREEN_SCORE] = 255
-    alpha[score >= TRANSPARENT_GREEN_SCORE] = 0
+    alpha[score <= opaque_green_score] = 255
+    alpha[score >= transparent_green_score] = 0
 
     # Candidate-self despill only. Brown object pixels already have R >= G and
     # are unchanged; green-mixed edge pixels are capped to their own R/B range.
@@ -169,8 +186,11 @@ def derive_candidate_rgba(raw: Image.Image) -> tuple[Image.Image, dict[str, Any]
 
     image = Image.fromarray(rgba, mode="RGBA")
     return image, {
-        "opaque_green_score": OPAQUE_GREEN_SCORE,
-        "transparent_green_score": TRANSPARENT_GREEN_SCORE,
+        "background_border_pixels": BACKGROUND_BORDER,
+        "background_score_min": int(border_values.min()),
+        "background_score_max": int(border_values.max()),
+        "opaque_green_score": opaque_green_score,
+        "transparent_green_score": transparent_green_score,
         "alpha_pixels": {
             "transparent": int((alpha == 0).sum()),
             "partial": int(((alpha > 0) & (alpha < 255)).sum()),

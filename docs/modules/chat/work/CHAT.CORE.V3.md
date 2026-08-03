@@ -6,7 +6,7 @@
 - 组件 ID：`CHAT.FRAME`、`CHAT.FRAME.LEFT`、`CHAT.TABS`、`CHAT.INPUT`、
   `CHAT.UNREAD`、`CHAT.TEXT`
 - 版本：`CHAT.CORE.V3 / runtime contract v1.19`；输入生产版本
-  `CHAT.INPUT.DARK.V1.r2 / repair-ready`
+  `CHAT.INPUT.DARK.V1.r3 / repair-ready`
 - 子状态：核心 `runtime-exported`；输入候选 `repair-ready`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
@@ -22,10 +22,12 @@
   用户又于 `2026-08-03` 明确授权固定 Image 1／2／3、冻结修复边界和最多
   五次实际 ImageGen 调用。attempt 1 已实际生成并完成审查；技术与真实排版
   通过，但材料身份首先失败。attempt 2 移除了缝线、皮革卷和长导线，却仍以
-  重复压纹表现中段，并保留连续橙金 focus 上缘；当前进入 `.r2 /
-  repair-ready / P3`。正式 TGA、Lua、EditBox 功能与 P5 状态均未改变，模拟
-  ImageGen `0/0`、生产 ImageGen `2/5`、流程错误 `4`；四个流程错误均无
-  候选图或 provider 生成证据
+  重复压纹表现中段，并保留连续橙金 focus 上缘；attempt 3 的紧邻 edit 又
+  保留同一压纹，并进一步强化连续 focus 上缘，证明连续 Image 4 edit 已被
+  错误表面锚定。当前进入 `.r3 / repair-ready / P3`，改为只使用固定
+  Image 1／2／3 从零 regenerate。正式 TGA、Lua、EditBox 功能与 P5 状态均
+  未改变，模拟 ImageGen `0/0`、生产 ImageGen `3/5`、流程错误 `4`；四个
+  流程错误均无候选图或 provider 生成证据
 - 已凝结视觉方向：`CHAT-DARK-SIM-V1 / simulation-confirmed / P2` 的 B 方向
   已由 `CHAT.FRAME.FULL.V1.r1 / runtime-exported / P5` 实现；不再作为并行候选
 - 已退回生产批次：`CHAT.FRAME.PAPER.V1 / candidate-rejected / P3`；固定
@@ -1703,11 +1705,12 @@ python3 tools/build_chat_v3_runtime_assets.py
 
 - 用户反馈：Full V1 暖黑书体接入后，原 V3 浅金输入纸带在书页下沿形成过亮
   横条，容易被读成现代进度条；输入背景与正文底色关系需要重做。
-- 已确认模拟：`CHAT.INPUT.DARK.V1-SIM`；当前操作：`repair`；生产版本：
-  `CHAT.INPUT.DARK.V1.r2`；子状态：`repair-ready / P3`。用户于
+- 已确认模拟：`CHAT.INPUT.DARK.V1-SIM`；当前操作：`regenerate`；生产版本：
+  `CHAT.INPUT.DARK.V1.r3`；子状态：`repair-ready / P3`。用户于
   `2026-08-03` 先明确接受模拟方向，随后独立授权完整生产版本、固定参考、
-  `0/5` 初始预算和循环内 edit 边界。attempt 1／2 已调用并计为 `2/5`；尚未
-  promote source、导出 TGA 或修改 Lua。
+  `0/5` 初始预算和循环内 edit 边界。attempt 1／2／3 已调用并计为 `3/5`；
+  attempt 3 证明连续 edit 被错误表面锚定，因此 attempt 4 不使用 Image 4，
+  只用固定 Image 1／2／3 从零重生成；尚未 promote source、导出 TGA 或修改 Lua。
 - 现行正式 runtime 继续是 `ChatInputAtlasV3.tga`／`P5`。本模拟没有否定其
   normal／focus 状态、三段 UV 或功能，只为替换未来可见像素建立方向门禁。
 - provider：`pfUI.chat.editbox` 与 `ChatFrameEditBox`；adapter 精确几何为
@@ -1840,7 +1843,7 @@ python3 tools/build_chat_v3_runtime_assets.py
 
 - 固定执行器只允许 `imagegen-0-143-0`／`@openai/codex@0.143.0`；操作为
   `generate/edit`。用户已于 `2026-08-03` 开启本版本最多五次实际调用的预算；
-  当前实际 ImageGen 为 `2/5`、流程错误 `4`。
+  当前实际 ImageGen 为 `3/5`、流程错误 `4`。
 - provider raw 画布固定为 `1536 × 1024 RGBA`，背景必须为完全平坦的
   `#00FF00`。对象恰为两条无字纸条：normal 固定 source cell
   `[51,187,1437,363]`，focus 固定 source cell `[51,448,1437,625]`；坐标为
@@ -2070,7 +2073,7 @@ indicator; and no runtime content or neighboring UI is baked into the sheet.
 - 固定上传：上述固定 SHA、固定顺序与固定职责的 Image 1／2／3。
 - 循环内 edit：仅允许同一循环紧邻前次输出作为 Image 4，且只能在冻结修复
   边界内使用；其余图片一律不得上传。
-- 预算：最多 `5` 次实际 ImageGen generation／edit，含首次；当前 `2/5`。
+- 预算：最多 `5` 次实际 ImageGen generation／edit，含首次；当前 `3/5`。
   流程错误没有候选图且没有 provider 生成证据时不占额度；当前 `4`。
 - 用户原文：
 
@@ -2078,14 +2081,14 @@ indicator; and no runtime content or neighboring UI is baked into the sheet.
 > 紧邻前次输出仅在冻结边界内作为 Image 4 edit 输入；最多 5 次实际 ImageGen
 > 调用，流程错误不占额度。
 
-- 下一门禁：提交 attempt 2 审查和下方完整 `.r2`，然后用紧邻输出作为 Image 4
-  执行 attempt 3；每次实际输出都必须从对象身份开始完成全量审查、确定性真实
+- 下一门禁：提交 attempt 3 审查和下方完整 `.r3`，然后只用固定 Image 1／2／3
+  regenerate attempt 4；每次实际输出都必须从对象身份开始完成全量审查、确定性真实
   排版和展示区域门禁。任何候选内部通过后立即停止，不能自动进入 source 或
   runtime。
 
 ### `CHAT.INPUT.DARK.V1` 自主修复循环
 
-- 当前实际 ImageGen：`2/5`；流程错误：`4`；循环终态：`active`。
+- 当前实际 ImageGen：`3/5`；流程错误：`4`；循环终态：`active`。
 - attempt 1 只上传固定 Image 1／2／3并执行上方正文。attempt 2–5 的完整
   `.rN` 正文、前次失败证据和 edit／regenerate 决定必须在各自调用前提交。
 
@@ -2093,6 +2096,7 @@ indicator; and no runtime content or neighboring UI is baked into the sheet.
 |---:|---|---|---|---|---|---|---|
 | 1 | `CHAT.INPUT.DARK.V1` / `284a168` | generate；固定 Image 1／2／3 | `019fc5dd-d5a9-7ba0-912d-7d08fe738824` | `generated/chat/core/CHAT.INPUT.DARK.V1/attempt-01/CHAT_INPUT_DARK_V1_attempt01_raw.png`；`f70fbd24…079b` | 材料／组件身份：整块缝线皮革槽，不是夹入页叠的烟草纸 | 只保留恰为两个无字长条、普通／聚焦顺序、长浅比例与暖暗综合色；完整 `.r1` 使用本输出作 Image 4 edit，重绘全部可见材料、端部、中段与 focus | 内部失败；计 `1/5`；未晋级 source/runtime |
 | 2 | `CHAT.INPUT.DARK.V1.r1` / `3832bcb` | edit；固定 Image 1／2／3＋紧邻 Image 4 | `019fc5e9-bb26-7601-acec-19869234acda` | `generated/chat/core/CHAT.INPUT.DARK.V1/attempt-02/CHAT_INPUT_DARK_V1_attempt02_raw.png`；`43396173…ab3c1` | 材料可读性／拉伸中段：重复卷曲压纹仍像压花皮革；focus 连续橙金上缘 | 保留两个状态、当前轮廓、薄页叠、右侧纸角、无缝线／长导线和暗色顺序；`.r2` 只把中段改为低频纸纤维并把 focus 高光限制为短段 | 内部失败；计 `2/5`；未晋级 source/runtime |
+| 3 | `CHAT.INPUT.DARK.V1.r2` / `756e433` | edit；固定 Image 1／2／3＋紧邻 Image 4 | `019fc5f0-d281-7fd1-9785-7e636e686ca3` | `generated/chat/core/CHAT.INPUT.DARK.V1/attempt-03/CHAT_INPUT_DARK_V1_attempt03_raw.png`；`3fa5948a…6095` | 修复服从度／材料可读性：重复卷曲压纹仍覆盖中段，focus 连续上缘反而更亮 | 两态数量、长浅比例、页叠、无缝线／长导线与暗色顺序可保留为书面约束，但不再保留 attempt 3 像素；`.r3` 只用固定 Image 1／2／3 从零 regenerate | 内部失败；计 `3/5`；未晋级 source/runtime |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
@@ -2600,3 +2604,251 @@ progress indicator; and no runtime content or neighboring UI is baked in.
   模拟图。
 - 下一门禁：提交本完整正文与审查记录后执行 attempt 3；实际输出计 `3/5`，
   然后再次运行同一全量审查。
+
+### `CHAT.INPUT.DARK.V1.r2` attempt 3 审查记录
+
+- 固定版本／session：`@openai/codex@0.143.0`；
+  `019fc5f0-d281-7fd1-9785-7e636e686ca3`。完整 `.r2`、固定
+  Image 1／2／3 与紧邻 attempt 2 raw Image 4 均出现在 child user block；
+  built-in `image_gen` 实际执行，因此累计 `3/5`。
+- 执行前 commit：`756e433d5518b6f4d908b935393a9894d453e1ed`；`.r2`
+  正文 SHA-256 `9b2d0b7a7bb48255d3d32343b48f97a1f5533c2a0e8341ec0c618a66c42a5594`。
+- raw：
+  `generated/chat/core/CHAT.INPUT.DARK.V1/attempt-03/CHAT_INPUT_DARK_V1_attempt03_raw.png`；
+  `1536 × 1024 RGB`；SHA-256
+  `3fa5948abc9cba165234228a8e5e9e3d82f19183630552e272c309bbd90a6095`。
+- 对象／runtime ownership：通过。画布仍只有 normal／focus 两条无字长条，
+  顺序正确；没有第三对象、文字、按钮、图标、光标、缝线、绑带或长导线。
+- 首个失败门禁——修复服从度／材料可读性：失败。两条写字面的整段中心仍
+  覆盖密集重复的卷曲、环状和压花颗粒；低频烟熏 rag paper 没有成为第一
+  识别。focus 的上缘还被画成比 attempt 2 更亮、更连续的橙金线，继续形成
+  进度条／现代输入框语义。attempt 2 与 attempt 3 连续出现同一失败，说明
+  Image 4 edit 正在锚定错误表面，不能再把 attempt 3 像素作为下一次基础。
+- 保留边界改为书面合同而非像素：保留恰为两态、NORMAL 在上、长浅比例、
+  两至三层薄页、右侧单一纸角、无缝线／长导线、暖暗状态顺序与全部 runtime
+  几何；attempt 4 不上传 Image 4，只用固定 Image 1／2／3 从零 regenerate。
+- candidate-self 色键审查第一次使用固定阈值时，把 provider 的偏暗绿底误作
+  部分前景，导致无效全画布 bbox。该本地 review error 没有调用 ImageGen，
+  不属于生产流程错误。工具随后只从 raw 自身 `32px` 外围估计绿幕范围：
+  background score min `193`、transparent threshold `192`、opaque threshold
+  `152`；没有修改对象像素、引用其他图片或改变生产合同。
+- 确定性工具：`tools/review_chat_input_dark_candidate_v1.py`，SHA-256
+  `b6b26041857c643dd18a6fb3fee736beeb9fc214818f576954126885ff6b8f3a`。
+  raw 对象带 bbox 为 normal `[102,207,1440,439]`、focus
+  `[102,578,1440,810]`；归一 source SHA-256
+  `326240d3d52b0345a618ab2fe94f4f7962d40a0456984c6935c65580dcff6aec`；
+  逻辑 atlas SHA-256
+  `da937438e3096c8a25eaee0274727ef5a3f4b9c8625c584c29a6c87844b5797f`。
+  两态逐像素最小 Alpha 相同；可见绿溢色为 `0`，透明 RGB 非零为 `0`。
+- 真实排版：`attempt-03.real-layout.png`，SHA-256
+  `e54129b6e6ac0a945aa7ff0fc737f621077232669b0ed20498f2fd4bc2d58735`；
+  metrics SHA-256
+  `ae549fdb4ff702f226cb3a019311368826ae32219962b90f308f1e5a54c9e22a`。
+  `380 × 25` 普通／聚焦、典型／最大消息和 `480 × 25` 扩展都使用候选
+  atlas；五场景 display-region `pass`、violations `0`，合同 SHA-256
+  `9e46561876c3333bebd26b7ca91a2b3faa5203e3be2881fc4a2da433a6d866f6`，
+  报告 SHA-256
+  `f61614cad9d1dc07b91b3abd19f1898f4dd6948d3f4dbc0a3fb8d33de9d6f267`。
+- 决策：`fail / regenerate`。技术归一与展示区域通过不能覆盖首个美术门禁；
+  attempt 3 未晋级 source、TGA 或 Lua。attempt 4 使用下方完整 `.r3`，只上传
+  用户已授权的固定 Image 1／2／3。
+
+### 完整修复正文（`CHAT.INPUT.DARK.V1.r3`；attempt 4）
+
+```text
+Generate one new production-ready bitmap sprite source for CHAT.INPUT in a
+World of Warcraft 1.18.1 Turtle WoW interface overhaul. Generate it from the
+three supplied reference images only. Do not edit, preserve, trace, or infer
+pixels from any previous CHAT.INPUT candidate. This is a 2004-era Vanilla
+MMORPG HUD asset, not a modern fantasy-game overlay.
+
+LOCKED ART DNA
+The written direction in this prompt is the governing project baseline. The
+asset belongs to one heavy battlefield journal carried through a long Azeroth
+expedition. Use the hand-painted low-resolution bitmap language of Vanilla-era
+World of Warcraft: compact in-game scale, broad readable material groups,
+slightly soft painted edges, tangible page thickness, restrained detail,
+asymmetric wear, and a functional silhouette. Use warm upper-left candle light,
+deep-walnut contact shadows, low-saturation warm-black and smoked-tobacco hues,
+and sparse muted warmth. The dark, weighty journey mood may evoke The Elder
+Scrolls V, but never borrow its minimalist menus, thin rules, floating text, or
+flat modern overlays. Paper must read before leather or metal.
+
+OUTPUT OBJECTS AND RUNTIME OWNERSHIP
+Create exactly two complete, separate, text-free horizontal writing slips on
+one sprite sheet, in this order:
+1. NORMAL chat-input background, above.
+2. FOCUS chat-input background, below.
+
+These are two visual states of one runtime EditBox, not two controls. Include no
+third object, retired status field, unread seal, button, icon, label, cursor,
+channel name, example text, language control, input history, hit area, complete
+book frame, neighboring UI, caption, number, ruler, crop guide, or presentation
+card. All live text, channel headers, caret, IME, focus, history, input events,
+and keyboard behavior remain runtime-owned and must not be baked into the image.
+
+AUTHORITY ORDER AND REFERENCE RESPONSIBILITIES
+The written baseline and Image 1 are the highest visual authority. Image 1
+governs Vanilla-era HUD identity, compact scale, aged fantasy illustration,
+battlefield-journal character, handmade paper identity, and overall visual
+weight. Translate those qualities into this small input component; do not copy
+complete frame pixels, text, controls, or scene content.
+
+Image 2 is subordinate and governs continuity with the accepted warm-black chat
+book: its smoky tobacco color family, matte fibrous paper, thin page-stack
+depth, deep-walnut contact occlusion, restrained wear scale, and warm upper-left
+lighting. Use it to make the input feel physically inserted into the same book.
+Do not copy its complete book frame, spine, seams, lacing, corner plate, metal,
+surrounding pixels, or broad rectangular reading field. Never reinterpret its
+dark paper as leather hide.
+
+Image 3 is structure-only authority for CHAT.INPUT: exactly two states, a long
+shallow in-game proportion, and restrained end-detail scale. Do not copy its
+bright yellow parchment, laced leather column, right binding, full-width line,
+complete edge treatment, retired third field, unread marker, color balance,
+background, or any pixels. The written material and color rules override its
+surface appearance. No previous candidate is supplied or authorized as an
+image reference for this generation.
+
+EXACT CANVAS AND SHEET LAYOUT
+Return exactly one 1536 by 1024 pixel, front-facing orthographic sprite sheet.
+Fill every non-object pixel with one perfectly flat, uniform chroma-key green
+#00FF00. Do not add perspective, floor, scene, vignette, gradient green,
+checkerboard, fake transparency, cast shadow outside the objects, or reflected
+green.
+
+Place the complete NORMAL object only inside x=51..1437 and y=187..363, using a
+top-left origin and exclusive right/bottom bounds. Place the complete FOCUS
+object only inside x=51..1437 and y=448..625. The canonical visible FOCUS object
+must fit within the first 176 rows, y=448..624; leave the final allowed lower row
+pure green. Treat both canonical cells as 1386 by 176 pixels. Keep at least 8
+pixels of clean #00FF00 around every visible edge inside each cell. Each object
+should occupy about 1320 to 1362 pixels in width and 136 to 160 pixels in height.
+Give both objects the same apparent bounds, baseline, aspect ratio, silhouette,
+and padding. Leave the rest of the canvas empty green.
+
+PHYSICAL OBJECT IDENTITY
+Each state is one narrow slip of soot-stained handmade rag paper tucked into the
+lower page stack of the chat book. It is not a framed panel. Build it from only:
+- one calm upper writing leaf of matte smoked-tobacco rag paper;
+- one or two slightly darker, very thin paper leaves visible beneath it;
+- a restrained deckled lower edge with broad hand-painted irregularity;
+- one soft attached contact shadow where the leaves tuck into the book;
+- optionally one small right-side paper dog-ear inside the fixed right end zone.
+
+The paper layers must remain shallow, flexible, and visibly page-like. Neither
+end may become a cap, post, handle, bracket, rolled column, leather binding, or
+separately framed ornament. Use no leather, stitching, thread, lacing, rope,
+knot, sewn perimeter, rivet, metal, brass, jewel, or hard structural border.
+Do not mirror wear or add a matching left dog-ear. Distinctive silhouette detail
+may exist only in the fixed end zones x=51..207 and x=1321..1437.
+
+MATTE RAG-PAPER SURFACE — PRIMARY FAILURE TO AVOID
+The broad upper writing leaf must look almost smooth at source scale and calm at
+25 UI pixels high. Its identity comes from porous matte absorption and page
+depth, not from surface ornament. Use only low-frequency features: broad cloudy
+soot absorption, a few long soft pulp fibers, faint directional brush variation,
+and sparse irregular stains with dissolved edges. Keep contrast low and leave
+large uninterrupted quiet areas.
+
+Across the stretchable center x=207..1321, use no repeating microtexture and no
+small repeated unit of any kind. Specifically forbid curls, loops, scrollwork,
+pebbles, scales, pores, embossed dots, tooled motifs, vein networks, crackle
+webs, squiggles, stamped grain, stippling, decorative filigree, repeated fibers,
+or leather-like granulation. Do not place a visible texture event smaller than
+about 32 source pixels if it repeats. Prefer no more than four to six broad,
+soft, low-contrast soot or pulp variations across the full width, separated by
+large quiet gaps. Do not draw a writing guide, underline, seam, crease, fold,
+tear, knot, hotspot, vertical marker, or hard-edged stain in the center.
+
+Edges are defined by the irregular paper cut, thin lower leaves, and attached
+contact shadow. Do not trace any full edge with a bright or dark line. Do not
+outline the object. The middle must remain quieter than both end zones and safe
+under live Chinese or English text after horizontal stretching.
+
+STATE CONTRACT
+NORMAL and FOCUS must share the same outer silhouette, Alpha shape, visible
+bounds, baseline, upper leaf, lower page layers, dog-ear if present, stretchable
+center, and padding. Use the same physical paper cut and layer positions for
+both states. Do not add, remove, move, lengthen, curl, bind, or outline anything
+between states. State change must never imply movement, resizing, filling, or
+progress.
+
+NORMAL is recessed and quiet. Center the matte smoked rag paper near #403024,
+with slightly deeper lower leaves, broad nearly invisible fibers, restrained
+broken edge catches, and a soft attached shadow. It should sit close to the
+warm-black reading page while remaining identifiable as a thin paper insertion.
+
+FOCUS remains dark, centered near #503A25. Change only the material response:
+a mild local lift in the broad paper pulp, a modestly deeper attached contact
+shadow, and at most two very short candle-warm catches confined to the fixed end
+zones. Each catch must be shorter than 90 source pixels and their combined
+length below 140 pixels, with large dark gaps between them. The entire
+stretchable center and at least 80 percent of every long horizontal edge must
+remain without warm highlight. Never connect highlights across the top, bottom,
+or sides. No full edge may become orange, yellow, gold, luminous, or sharper
+than NORMAL. Do not brighten the whole strip.
+
+RUNTIME ASSEMBLY AND TEXT SAFE AREA
+The two source cells will be deterministically normalized to 1008 by 120 pixel
+objects and placed in a 1024 by 256 runtime atlas at NORMAL x=8..1016,
+y=4..124 and FOCUS x=8..1016, y=132..252. Fixed atlas x cuts are 8, 121, 932,
+and 1016. Runtime assembly uses a 28 pixel left cap, a horizontally stretched
+quiet center, and a 20 pixel right cap.
+
+The final component is 380 by 25 UI pixels in a 440 by 320 chat book and 480 by
+25 UI pixels in a supported 540 by 420 chat book. Live text begins 34 pixels
+from the runtime left edge and ends 22 pixels before the right edge. Preserve a
+calm text corridor. Thin page depth and the optional right dog-ear must remain
+legible at 100-percent UI scale without one-pixel noise, sharp repeating marks,
+or a trough silhouette.
+
+CHROMA KEY AND OUTPUT CLEANLINESS
+Use only perfectly flat #00FF00 behind and between the objects. Maintain at least
+8 pixels of pure green isolation so a deterministic candidate-self matte can
+derive real transparency. Do not return near-green gradients, green edge spill,
+premultiplied dark halos, detached specks, external shadows, or extra debris.
+Both states must support one shared Alpha mask after bbox-fit normalization.
+
+FORBIDDEN MODERN OR INCORRECT READS
+No tooled or pebbled leather, repeated curled embossing, laced roll, leather
+input bar, stitched trough, bound ends, complete sewn perimeter, full-width
+guide, continuous highlight rim, bright underline, gold top edge, rounded
+rectangle, capsule, search field, glass panel, transparent black overlay,
+progress bar, health bar, loading fill, complete rectangular border, glossy
+bevel, web form, minimalist thin-line menu, black-leather dashboard,
+Diablo-style metal trough, bright golden scroll, symmetric ornamental plaque,
+tablet, detached flat slab, photorealistic antique, product render, typography,
+rune, crest, skull, horn, spike, jewel, glow, bloom, watermark, signature, or
+mirrored mechanical ornament.
+
+FINAL SELF-CHECK
+Before returning, verify all of the following: exact 1536 by 1024 canvas; one
+flat #00FF00 background; exactly two and only two text-free slips in the exact
+NORMAL-then-FOCUS allowances; identical bounds, silhouette, page anatomy,
+baseline, and padding; porous matte rag paper and thin page depth read before
+every other cue; no leather, stitching, lacing, metal, guide, or complete
+outline; the entire center is calm and free of repeated curls, embossed grain,
+pebbles, pores, and other micro-pattern; FOCUS has only optional short separated
+end-zone catches and no continuous warm edge; the center remains stretch-safe;
+no mark reads as a progress indicator; and no runtime content or neighboring UI
+is baked into the sheet.
+```
+
+### `.r3` 完整性与冻结边界审计
+
+- 完整性：`pass / self-contained / repair-ready`。正文独立包含全局／Chat 美术
+  DNA、恰为两对象／两状态、三张输入职责、从零生成决策、精确画布／cell、
+  纸页解剖、低频表面、状态差异、runtime／atlas／inset、色键、禁止项与自检；
+  不依赖 `.r2`、前次图或“同前”引用。
+- 不变项：组件、normal／focus 顺序、Image 1→2→3 的路径／SHA／职责、画布、
+  source allowance、atlas、切线、`28/20px` cap、`380/480 × 25px`、
+  `34/22px` inset、动态内容 ownership 与五次总预算均不变。
+- 可修项：只修 attempt 3 已证实的 edit 锚定、重复压纹、材料第一识别和连续
+  focus 上缘；保留轮廓、页叠、纸角、无缝线／长导线与暗色顺序作为文字合同，
+  不保留任何失败候选像素。
+- attempt 4 上传：只上传固定 Image 1／2／3；不上传 Image 4、attempt 1／2／3、
+  normalized、atlas、真实排版或 simulation。操作为 `regenerate`。
+- 下一门禁：提交本完整 `.r3` 后，以提交 hash 作为 attempt 4 执行前基线；
+  实际 provider 图计为 `4/5`，随后从对象身份开始运行同一全量审查。内部通过
+  立即停止并交用户接受；内部失败才允许在剩余一次额度内建立完整 `.r4`。
