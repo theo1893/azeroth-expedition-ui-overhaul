@@ -29,6 +29,7 @@ SCAFFOLD = (
     ROOT
     / "generated/chat/core/CHAT.TABS.DARK.V1/production-scaffold/CHAT_TABS_DARK_V1_scaffold.png"
 )
+DISPLAY_CONTRACT = ROOT / "tools/specs/chat_tabs_dark_sim_display_region_v1.json"
 
 CELLS: tuple[tuple[str, tuple[int, int, int, int]], ...] = (
     ("shelf", (64, 96, 1472, 232)),
@@ -45,6 +46,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("candidate", type=Path)
     parser.add_argument("output_dir", type=Path)
     parser.add_argument("--attempt", default="attempt-unknown")
+    parser.add_argument("--simulation-spec", type=Path, default=SIM_SPEC)
+    parser.add_argument("--scaffold", type=Path, default=SCAFFOLD)
+    parser.add_argument("--display-contract", type=Path, default=DISPLAY_CONTRACT)
+    parser.add_argument("--component", default="CHAT.TABS.DARK.V1")
     return parser.parse_args()
 
 
@@ -254,13 +259,17 @@ def build_candidate_frame(
     }
 
 
-def display_contract(attempt: str, preview_path: Path, metrics_path: Path) -> dict[str, Any]:
+def display_contract(
+    attempt: str,
+    preview_path: Path,
+    metrics_path: Path,
+    source_path: Path,
+    component: str,
+) -> dict[str, Any]:
     base = json.loads(
-        (ROOT / "tools/specs/chat_tabs_dark_sim_display_region_v1.json").read_text(
-            encoding="utf-8"
-        )
+        source_path.read_text(encoding="utf-8")
     )
-    base["component"] = f"CHAT.TABS.DARK.V1/{attempt}/candidate-review"
+    base["component"] = f"{component}/{attempt}/candidate-review"
     base["evidence"] = {
         "provider": "addon/pfUI/modules/chat.lua",
         "adapter": "addon/AzerothExpeditionUI/Modules/Chat.lua",
@@ -290,11 +299,14 @@ def main() -> None:
         raise ValueError(f"candidate must be 1536x1024, got {candidate.size}")
     if candidate.getchannel("A").getextrema()[0] != 0:
         raise ValueError("candidate must contain transparent pixels after chroma cleanup")
-    scaffold = Image.open(SCAFFOLD).convert("RGBA")
+    scaffold_path = resolve(args.scaffold)
+    scaffold = Image.open(scaffold_path).convert("RGBA")
     if scaffold.size != candidate.size:
         raise ValueError("production scaffold and candidate size mismatch")
 
-    spec = json.loads(SIM_SPEC.read_text(encoding="utf-8"))
+    simulation_spec = resolve(args.simulation_spec)
+    display_contract_source = resolve(args.display_contract)
+    spec = json.loads(simulation_spec.read_text(encoding="utf-8"))
     direction = json.loads(resolve(spec["direction_spec"]).read_text(encoding="utf-8"))
     frame_manifest = json.loads(resolve(spec["frame_runtime_manifest"]).read_text(encoding="utf-8"))
     input_manifest = json.loads(resolve(spec["input_runtime_manifest"]).read_text(encoding="utf-8"))
@@ -328,8 +340,9 @@ def main() -> None:
     for role, value in theme["palette"].items():
         palette.setdefault(role, value)
 
-    wanted = {"proposal-four-states-440", "proposal-expanded-540"}
-    scenarios = [item for item in spec["scenarios"] if item["id"] in wanted]
+    scenarios = [item for item in spec["scenarios"] if "states" in item]
+    if len(scenarios) != 2:
+        raise ValueError(f"expected exactly two candidate scenarios, got {len(scenarios)}")
     origins = ((20, 66), (500, 66))
     canvas = Image.new("RGBA", (1060, 510), layout.rgba("#111713FF"))
     layout.draw_world_backdrop(canvas)
@@ -407,7 +420,18 @@ def main() -> None:
     }
     metrics_path.write_text(json.dumps(metrics, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     contract_path.write_text(
-        json.dumps(display_contract(args.attempt, preview_path, metrics_path), ensure_ascii=False, indent=2) + "\n",
+        json.dumps(
+            display_contract(
+                args.attempt,
+                preview_path,
+                metrics_path,
+                display_contract_source,
+                args.component,
+            ),
+            ensure_ascii=False,
+            indent=2,
+        )
+        + "\n",
         encoding="utf-8",
     )
     print(preview_path)
