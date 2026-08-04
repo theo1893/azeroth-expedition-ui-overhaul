@@ -3172,11 +3172,19 @@ selected 变成浅羊皮纸牌或黄铜铭牌。
   `a97d9c5f…c673`、Image 4 `03774a0f…077d`；生成前模拟 PNG 永不上传。
 - attempt 2–5：只有在明确保留前次正确区域时，才允许紧邻前次输出作为
   Image 5 edit 输入；不得使用更早输出、拒绝版本或外部新增输入。
-- 实际生图预算：`0/5`；最坏总计 `5`；流程错误 `0`，无生成图且无 provider
+- 实际生图预算：`0/5`；最坏总计 `5`；流程错误 `1`，无生成图且无 provider
   生成证据时单列，不占额度。任何 attempt 客观通过后立即停止；内部通过不等于
   用户接受。
-- 执行前 commit：以包含本授权记录和精确正文的下一次 Git commit 为准，并在
-  attempt 1 执行记录中回填；未提交不得调用固定执行器。
+- 执行前 commit：`d8df8d1`；该提交包含本授权记录和下方精确正文。
+
+### `CHAT.TABS.DARK.V1` 自主修复循环
+
+- 当前实际 ImageGen：`0/5`；流程错误：`1`；循环终态：
+  `prompt-authorized / transport-repaired`。
+
+| 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
+|---:|---|---|---|---|---|
+| E1 | `CHAT.TABS.DARK.V1` / `d8df8d1` | 未创建 | 固定子进程输出 `Reading prompt from stdin...` 与 `No prompt provided via stdin.`；没有图片、provider result、上传完成或生成作业证据。固定 CLI `codex exec --help` 证明 `-i/--image <FILE>...` 是可变参数，末尾位置正文被最后一个 `-i` 吞作图片路径 | 不改正文、输入、顺序或输出合同；改为把同一已提交正文与独立 `Execution instruction` 从 stdin 传给固定 CLI，四张固定 SHA 图片仍通过 `-i` 上传 | 不占生图额度；仍为 `0/5`；同一正文重试一次 |
 
 ### 完整生产正文 `CHAT.TABS.DARK.V1`（已授权；attempt 1 原样执行）
 
