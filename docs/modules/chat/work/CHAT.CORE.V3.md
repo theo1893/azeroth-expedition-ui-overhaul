@@ -4442,7 +4442,7 @@ Final self-check before returning the image: exactly five and only five isolated
   source cell 外可见像素 `0`；shelf／normal／hover／selected／disabled 最小
   cell 边距依次为 `15/10/9/6/11px`，全部通过 4px 隔离。真实 `440 × 320`／
   `540 × 420` 排版为同目录 `review/candidate-real-layout.png`，SHA-256
-  `dafdb18edde9a70c65d54976b981f3ea1056dbc43340db93d82026e11734f489`；
+  `b893a5c19ad747d4bd842d163d9f3ad724f7972dc1799f3c3b2792c6d0babaac`；
   三场景 display-region `pass`、violations `0`，报告 SHA-256
   `75609e150d0c3d48d6cbea39876a710fb8bd499acb80eefffccbd342acd41768`。
 - 预演 B／对照供体：V2 attempt 5 keyed，固定 SHA
@@ -4452,7 +4452,7 @@ Final self-check before returning the image: exactly five and only five isolated
   SHA-256 `26a2bd6c91d360f521edcdcaf862926951831bc746a2a4f97442ae2df2958eeb`。
   source cell 外可见像素 `0`；五对象最小 cell 边距依次为
   `15/10/9/6/11px`，4px 隔离通过。真实排版 SHA-256
-  `035c8991d32fb19a9c9d0de7275c6554551be4d6646b6b1985f514e44954b08c`；
+  `1158caab4b1d66266b6432fb4a213a6866a71bf5ba23f4fd7ad572529faa9c13`；
   三场景 display-region `pass`、violations `0`，报告 SHA-256
   `e9154b402431abe1a7c38cd27043f795551b2fbd77c1b969b2107da86f0a76c8`。
 - 两个预演相对 scaffold exact polygon 均有诊断性 mask overflow；V2 scaffold

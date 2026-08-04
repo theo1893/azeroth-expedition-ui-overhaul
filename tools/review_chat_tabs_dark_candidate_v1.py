@@ -303,6 +303,7 @@ def main() -> None:
     scaffold = Image.open(scaffold_path).convert("RGBA")
     if scaffold.size != candidate.size:
         raise ValueError("production scaffold and candidate size mismatch")
+    cell_report = inspect_cells(candidate, scaffold)
 
     simulation_spec = resolve(args.simulation_spec)
     display_contract_source = resolve(args.display_contract)
@@ -377,16 +378,20 @@ def main() -> None:
         canvas.alpha_composite(frame, origin)
         evidence[scenario["id"]] = {"origin": list(origin), **scenario_evidence}
 
+    cell_note = (
+        "candidate pixels fit inside declared cells"
+        if cell_report["cell_contract_pass"]
+        else "candidate pixels clipped to declared cells for this preview"
+    )
     draw.text(
         (530, 497),
-        f"{args.attempt} · candidate pixels clipped to declared cells; dynamic text is runtime-only",
+        f"{args.attempt} · {cell_note}; dynamic text is runtime-only",
         font=fonts["note"],
         fill=layout.rgba("#D7C49AFF"),
         anchor="mm",
     )
     canvas.save(preview_path, format="PNG", optimize=False, compress_level=9)
 
-    cell_report = inspect_cells(candidate, scaffold)
     metrics = {
         "schema": "aeui-chat-tabs-dark-candidate-review-v1",
         "attempt": args.attempt,
