@@ -7,7 +7,7 @@
   `CHAT.UNREAD`、`CHAT.TEXT`
 - 版本：`CHAT.CORE.V3 / runtime contract v1.21`；输入生产版本
   `CHAT.INPUT.DARK.V1.r3 attempt 4 / runtime-exported`；Tab 替换方向
-  `CHAT.TABS.DARK.V1.r3 / repair-prepared`
+  `CHAT.TABS.DARK.V1.r4 / repair-prepared`
 - 子状态：核心 `runtime-exported`；输入 `runtime-exported / P5`；Tab 替换
   `repair-prepared / P3`
 - 项目阶段：`P5`
@@ -3172,21 +3172,22 @@ selected 变成浅羊皮纸牌或黄铜铭牌。
   `a97d9c5f…c673`、Image 4 `03774a0f…077d`；生成前模拟 PNG 永不上传。
 - attempt 2–5：只有在明确保留前次正确区域时，才允许紧邻前次输出作为
   Image 5 edit 输入；不得使用更早输出、拒绝版本或外部新增输入。
-- 实际生图预算：`3/5`；最坏总计 `5`；流程错误 `2`，无生成图且无 provider
+- 实际生图预算：`4/5`；最坏总计 `5`；流程错误 `2`，无生成图且无 provider
   生成证据时单列，不占额度。任何 attempt 客观通过后立即停止；内部通过不等于
   用户接受。
 - 执行前 commit：`d8df8d1`；该提交包含本授权记录和下方精确正文。
 
 ### `CHAT.TABS.DARK.V1` 自主修复循环
 
-- 当前实际 ImageGen：`3/5`；流程错误：`2`；循环终态：
-  `repair-prepared / cell-pass-strict-mask-edge-failed`。
+- 当前实际 ImageGen：`4/5`；流程错误：`2`；循环终态：
+  `repair-prepared / final-regenerate-ready`。
 
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
 | 1/5 | `CHAT.TABS.DARK.V1` / `b3a7852` | generate；固定 Image 1／2／3／4 | session `019fcace-7b01-7c13-a29a-3932e81da97e`／provider cache `ig_081d682ab380e3a0016a715bd7ea2c8191b8b5ad8d4906d223.png` | raw `generated/chat/core/CHAT.TABS.DARK.V1/attempt-01/CHAT_TABS_DARK_V1_attempt01_raw.png`／`8b873a7475d5ac46e09c731983269691c41f7f26d6dfeb2e08d26be27158bbe8`；keyed `…attempt01_keyed.png`／`1d721a9e60f08da9ab89f1bd57216edf9b582b5c49e70267a6a19fbac5c2c8f8` | 组件 cell／隔离合同：透明候选有 `17,910` 个可见像素位于五个声明 cell 之外；shelf 触底，四枚 Tab 均触底并触及／越过右侧；raw 绿幕也不是均匀 `#00FF00` | 保留五对象身份、深胡桃旧皮革、手绘厚度、短暖光、四态综合色重和低亮 shelf；不保留对象位置、尺寸、格位外像素或渐变绿幕。完整 `.r1` 使用紧邻 raw 作为 Image 5 edit，把五对象完整缩回内层绿色隔离区，不裁断端部／底缝 | 内部失败；计 `1/5`；未进入用户复审、source 或 runtime |
 | 2/5 | `CHAT.TABS.DARK.V1.r1` / `758335f` | edit；固定 Image 1／2／3／4 + 紧邻 attempt 1 raw Image 5 | session `019fcadd-e641-7611-b53c-0adb9a4f0bbf`／provider cache `ig_06e5b187b9e40f5c016a715fd12b2881919fed83df12f9044b.png` | raw `generated/chat/core/CHAT.TABS.DARK.V1/attempt-02/CHAT_TABS_DARK_V1_r1_attempt02_raw.png`／`0c82fb7ebdff8e46f76f735202cd4a03ddbd8fe33c227a620c7e8878c0d530e2`；keyed `…attempt02_keyed.png`／`4352735f10ebca6d7adeef91ee34da0e63cb3453e74121906fb8a3061a9fb259` | 同一 cell／隔离失败重复：对象虽缩小，但仍有 `54,203` 个可见像素在声明 cell 外；shelf 触底，四 Tab 仍触底并越过右侧，说明前次大轮廓 edit 锚定未解除 | 停止连续 edit；不上传 attempt 2。完整 `.r2` 只用固定 Image 1／2／3／4 regenerate，把 Image 4 的非绿色 polygon 作为逐像素唯一绘制 mask，Image 4 为绿色的像素必须保持纯绿 | 内部失败；计 `2/5`；未进入用户复审、source 或 runtime |
 | 3/5 | `CHAT.TABS.DARK.V1.r2` / `2b1a01d` | regenerate；固定 Image 1／2／3／4，无 Image 5 | session `019fcae5-7b4d-7821-ad93-50f848af382c`／provider cache `ig_033f7c278ec1fe6d016a7161c121fc81918b9169596100fd54.png` | raw `generated/chat/core/CHAT.TABS.DARK.V1/attempt-03/CHAT_TABS_DARK_V1_r2_attempt03_raw.png`／`51c9045d08f8fbcdbdbcce532d257925336868676647f94856a4a7541cc260ed`；keyed `…attempt03_keyed.png`／`343cbfd6a2373e87024da23a9f7f7c8dcce36ad59522fc405068dd377966b391` | 冻结 source cell 合同已经通过：cell 外像素 `0`，全部格位隔离通过；但 `.r2` 追加的逐像素 scaffold mask 仍有 `3,460` 个可见边缘像素位于 Image 4 非绿 mask 外 | 保留 attempt 3 全部合格材质、五对象、四态、位置节奏和运行时观感；完整 `.r3` 使用紧邻 raw Image 5，只把五个完整外轮廓等比内缩约 `2–4px` 并居中，禁止其他视觉重绘 | 内部失败；计 `3/5`；未进入用户复审、source 或 runtime |
+| 4/5 | `CHAT.TABS.DARK.V1.r3` / `c5e0a15` | edit；固定 Image 1／2／3／4 + 紧邻 attempt 3 raw Image 5 | session `019fcaef-337c-71b3-8292-dcef6a9b7df1`／provider cache `ig_08366a92bf4238f6016a71644251ec819199e37c59741356a0.png` | raw `generated/chat/core/CHAT.TABS.DARK.V1/attempt-04/CHAT_TABS_DARK_V1_r3_attempt04_raw.png`／`cf4227c9fffd2696531fa38b33e37faf784952f4b9d4116cd393067021203347`；keyed `…attempt04_keyed.png`／`c5836ad4436166f4cf8d016ddea383ee1f61907d92c46e88fdcb0e5c1322e71d` | edit 重新引入 cell 越界：`43,099` 个可见像素在声明 cell 外；shelf 触底，四 Tab 触底并越右；strict mask 外为 `88,660` | 彻底停止 edit，不把 attempt 4 或其他失败稿上传。最终 `.r4` 只用固定 Image 1／2／3／4 regenerate；回到不可变 source cell／至少 `4px` 隔离合同，以宽容 inner target bounds 表达，取消仅作为前次修复手段的逐像素 hard-mask 额外门槛 | 内部失败；计 `4/5`；未进入用户复审、source 或 runtime |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
@@ -3693,3 +3694,129 @@ inside its stated stricter target bound; no object is cropped; all other pixels 
 pure #00FF00; selected remains raised dark leather without pale paper; shelf has no
 continuous bright rail; no dynamic content; quiet stretch centers; upper-left warm light;
 Image 5's accepted material and state language are otherwise unchanged.
+
+### `CHAT.TABS.DARK.V1.r3` attempt 4 执行与审查记录
+
+- 日期：`2026-08-04`；固定执行器 session
+  `019fcaef-337c-71b3-8292-dcef6a9b7df1`；provider cache result
+  `ig_08366a92bf4238f6016a71644251ec819199e37c59741356a0.png`。完整 `.r3`、固定
+  Image 1／2／3／4 和紧邻 attempt 3 raw Image 5 均完整传入；无截断、递归或
+  revised prompt 报告。
+- raw：`1536 × 1024 RGB`，SHA-256
+  `cf4227c9fffd2696531fa38b33e37faf784952f4b9d4116cd393067021203347`；确定性
+  chroma 后 RGBA keyed SHA-256
+  `c5836ad4436166f4cf8d016ddea383ee1f61907d92c46e88fdcb0e5c1322e71d`；透明
+  `1,238,309`、半透明 `5,571`、不透明 `328,984`，可见 pure／dominant green
+  均为 `0`。
+- 五对象、材料、四态和邻接书框综合色感仍可辨，但首要 cell 门禁再次失败：
+  `43,099` 个可见像素在声明 cell 外；shelf bottom margin `0`；normal／hover／
+  selected／disabled 的 right／bottom margin 全为 `0`。Image 5 edit 把大轮廓
+  锚定重新带回，未执行 `.r3` target bounds；strict scaffold mask 外像素增至
+  `88,660`。
+- `100%` 真实排版：
+  `generated/chat/core/CHAT.TABS.DARK.V1/attempt-04/review/candidate-real-layout.png`，
+  SHA-256 `71df248488c1eab45fbc41ed50b3a2dd418461c2d3f5d0fb9beb224bd87314ae`；
+  当前书框／输入、`440 × 320` 和 `540 × 420` 动态排版本身仍可装配，但本预演
+  明确裁至声明 cell，不能恢复被截的 source 外缘。
+- metrics：同目录 `candidate-review.metrics.json`，SHA-256
+  `46bd8b2280d3d41603ac4c936d2de43f108e28a24d8e004335d63cee736124ed`；实际展示
+  区域报告 `display-region-report.json`，SHA-256
+  `0b4fff717f4979620ba5e365f8513b89b786d111273bdb8c89cf466f97fbef4e`；三个场景
+  `pass`、violations `0`，不替代 cell 失败。
+- 内部结论：`退回 / repair-prepared / P3`；实际 ImageGen `4/5`，流程错误
+  `2`，只余最终 `1` 次。不得进入用户复审、source 或 runtime。
+- `.r4` 最终策略：只用固定 Image 1／2／3／4 从零 regenerate，不上传任何
+  Image 5。Image 4 保持五对象位置／比例参考；验收回到原不可变合同：完整可见
+  像素必须位于声明 cell 并留至少 `4px` 隔离。用比 cell 内缩 `8–12px` 的宽容
+  target bounds 指导模型，不再把上次为解除锚定而增加的逐像素 hard-mask 当成
+  独立终态合同。对象、状态、Canvas、runtime、视觉权威、Alpha／色键和禁止项
+  全部不变。
+- `.r4` 完整正文：`6144` UTF-8 bytes，SHA-256
+  `7217f12ae73de60c5294579b2d905da7ad5cf9f841608ef47e82ca2480b74296`；执行前
+  commit：包含本记录与完整正文的下一次 Git commit。
+
+### 完整修复正文 `CHAT.TABS.DARK.V1.r4`（attempt 5；执行前必须原样传入）
+
+Generate one production master for the World of Warcraft Vanilla-era chat channel tabs
+and their shared shelf. This is a component sheet, not a screenshot and not a complete
+chat window. The only five visible objects are exactly one long horizontal leather tab
+shelf, then four isolated wordless leather index-tab states in this exact order: normal,
+hover, selected, disabled. Do not add any fifth tab, icon, label, rune, button, book frame,
+message, input bar, unread seal, or decorative control.
+
+Use Image 1 as the highest overall period and chat-module authority. Inherit its heavy,
+hand-painted 2004-era fantasy UI language and physical leather channel indexes on the
+lower-left field journal. Ignore combat content and unrelated UI. Use Image 2 only for
+hand-painted bitmap thickness, material separation, short highlights, contact shadows,
+and imperfect artisan edges. Ignore its giant symmetric frame, dragon, spikes, pale central
+parchment, full gold outline, and unrelated geometry. Use Image 3 only for the accepted
+chat book's dark-walnut leather, warm-black smoked-brown palette, restrained oxidized-brass
+temperature, wear scale, upper-left warm light, and matching visual weight. Do not copy or
+redraw its book body. Use Image 4 as the strict 1536 by 1024 technical layout scaffold for
+five separated locations, proportions, cell order, and the raised selected silhouette.
+Ignore its gray flat fills as art. No Image 5 is supplied or permitted.
+
+Keep the canvas exactly 1536 by 1024. The declared cells are shelf [64,96,1472,232],
+normal [64,560,384,716], hover [416,560,736,716], selected [768,560,1088,716], and
+disabled [1120,560,1440,716]. Keep each complete object, including antialiasing, contact
+shadow, stitches, folds, seams, highlights, and wear, inside these comfortable inner target
+bounds: shelf [76,108,1460,220], normal [76,572,372,704], hover [428,572,724,704],
+selected [780,568,1076,704], disabled [1132,572,1428,704]. Fill most of each inner target
+bound without crossing it. These targets leave at least 8 pixels of pure-green isolation
+inside every declared cell. Do not crop an object at a target edge, connect lower cells,
+or cast a shared shadow between them.
+
+Every canvas pixel outside the five complete objects must be uniform pure #00FF00 with no
+gradient, vignette, noise, texture, reflection, shared floor, or color variation. No visible
+pixel may cross a declared cell or touch the canvas edge. The five objects may use softly
+antialiased hand-painted edges, but all such pixels must remain inside their inner target
+bounds. Preserve each entire silhouette by drawing it small enough; never hide overflow
+through clipping.
+
+All four tabs are the same physical old-leather index tab in four interaction states. They
+share one external cell size, baseline, thickness, cap anatomy, quiet text center, and
+runtime hit geometry. Follow Image 4's squat, thick, slightly hand-irregular Vanilla WoW
+silhouette, not a flat rectangle, rounded web tab, pill, card, metal plaque, or Diablo
+altar ornament. Use deep walnut and smoke-brown leather with compressed dark edges, subtle
+pores, restrained touched-corner wear, a lower contact shadow contained inside each inner
+target, and only small dull oxidized-brass or warm-ochre accents. Lighting comes softly
+from the upper left. Keep every center wordless, low-frequency, and quiet enough for
+runtime text.
+
+Normal is the darkest active state and appears slightly recessed. Hover keeps the same
+complete silhouette and gains only one short local warm response; do not brighten the
+whole perimeter. Selected uses the raised third location, remains inside
+[780,568,1076,704], and has a stronger contained contact shadow plus one short muted warm
+highlight. It remains dark leather: no pale parchment, cream paper, broad gold plate, or
+continuous bright strip beneath it. Disabled keeps the full silhouette but is desaturated,
+lower-contrast, and has no active highlight. State differences remain legible after
+reduction to 92 by 30 pixels without glow, neon, or different runtime geometry.
+
+The shelf is one thin continuous dark-walnut leather support strip inside
+[76,108,1460,220]. Its ends may have small stitches or folds inside that target. Its long
+middle stays low-frequency and horizontally stretchable: no unique central buckle, rivet,
+tear, seam endpoint, symbol, or repeated high-contrast ornament. The upper edge may have
+only a few broken, short, low-energy warm catches. Never create a full-width pale page
+layer, bright gold rail, ruler line, modern progress-bar edge, or shadow outside the target.
+
+Keep left and right tab end-cap anatomy intact and roughly equal. Keep each middle stretch
+corridor free of unique stitch endpoints, tears, rivets, letters, icons, and directional
+highlights. Do not paint any character or placeholder glyph. Keep all seams, rounded
+corners, selected edges, and contact shadows inside the target bounds. Materials must read
+through hand-painted light, midtone, shadow, thickness, wear, and contact, not clean vector
+borders or uniform gradients.
+
+Use a low-saturation palette centered near dark walnut #251810, hover smoke-brown #302016,
+selected dark warm leather #422A1A, disabled near-black brown #17110D, shelf #17100C, and
+only small muted oxidized-brass accents near #A47A3F. Preserve aged, painted, slightly
+uneven Vanilla bitmap character. Do not create transparent black glass, modern HUD panels,
+thin gold web borders, full-frame bevels, mirror symmetry, glossy metal, photo-real
+antiques, skulls, demonic spikes, dragon ornaments, gemstones, glowing runes, or permanent
+magic light.
+
+Final self-check: canvas exactly 1536 by 1024; exactly one shelf and four wordless tabs in
+normal, hover, selected, disabled order; every complete visible object and edge effect is
+inside its stated inner target and therefore inside its declared cell with at least 8
+pure-green pixels of isolation; no object is cropped; all other pixels are uniform pure
+#00FF00; selected is raised dark leather without pale paper; shelf has no continuous bright
+rail; no dynamic content; quiet stretch centers; upper-left warm light.
