@@ -7,9 +7,9 @@
   `CHAT.UNREAD`、`CHAT.TEXT`
 - 版本：`CHAT.CORE.V3 / runtime contract v1.21`；输入生产版本
   `CHAT.INPUT.DARK.V1.r3 attempt 4 / runtime-exported`；Tab 替换方向
-  `CHAT.TABS.DARK.V1.r4 / repair-prepared`
+  `CHAT.TABS.DARK.V1.r2 attempt 3 / exception-candidate`
 - 子状态：核心 `runtime-exported`；输入 `runtime-exported / P5`；Tab 替换
-  `repair-prepared / P3`
+  `repair-budget-exhausted / user-review-required / P3`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 当前操作：Full V1 固定 P4 source 已按全图比例确定性导出到 `1024²`
@@ -3005,20 +3005,22 @@ is baked into the sheet.
   `ChatFrameNTab`／`ChatFrameNTabText`，后者对应
   `pfUI.chat.left.panelTop` 上的一枚连续承托 Texture；没有新增 Button、Tab、
   文字、配置入口或消息功能。
-- 生产版本：`CHAT.TABS.DARK.V1 / prompt-authorized`；
+- 生产版本：`CHAT.TABS.DARK.V1 / repair-budget-exhausted`；
   生成前模拟：`CHAT.TABS.DARK.SIM.V1 / simulation-confirmed`；项目现行 runtime 仍为
-  `CHAT.CORE.V3 1.21 / P5`，替换方向最高只到 `P2`。
-- 操作：`generate`。固定执行器为
+  `CHAT.CORE.V3 1.21 / P5`，替换候选停在 `P3`。
+- 操作：`generate/edit loop closed`。固定执行器为
   `imagegen-0-143-0 / @openai/codex@0.143.0`；模拟 ImageGen `0/0`，生产
-  `0/5`，四张固定 SHA 输入和冻结修复边界已获得精确授权，尚未执行 attempt 1。
+  `5/5`，流程错误 `2`。四张固定 SHA 输入和冻结修复边界均按授权执行；额度
+  已耗尽，不得执行 attempt 6。
 - 用户触发：`2026-08-04` 在实机观察到 Full V1 主框已经更新，但 Tab 仍偏浅；
   仓库审计确认实际加载的是 `ChatTabAtlasV3.tga`／`ChatTabShelfV3.tga`，不是
   原生 pfUI fallback。V3 Tab 于 `2026-07-29` 接入，未随 `2026-08-03` 的
   Full V1／Dark V1 更新重绘；selected 行含大面积浅纸层，承托带有贯穿亮边，
   且 adapter 使用 `SetVertexColor(1,1,1,1)` 原色显示。
-- 下一门禁：先把本授权版本提交到 Git，再由固定执行器执行 attempt 1；每个
-  countable 输出必须依次通过范围／物件身份、物理与图层、美术继承、cell／
-  状态、确定性装配、真实排版、display-region 和技术像素检查。
+- 下一门禁：用户审视 attempt 3 的确定性合同例外。只有用户明确允许忽略
+  `.r2` 临时增加的逐像素 scaffold hard-mask，并继续以原冻结 cell、至少
+  `4px` 隔离、真实排版和 display-region 为验收权威，attempt 3 才可进入 P4；
+  否则必须另开新版本与新授权。
 
 ### 美术基准继承与冲突裁决
 
@@ -3142,11 +3144,11 @@ selected 变成浅羊皮纸牌或黄铜铭牌。
   `generated/chat/core/CHAT.TABS.DARK.V1/production-scaffold/CHAT_TABS_DARK_V1_scaffold.png`，
   SHA `03774a0f…077d`。生成前模拟 PNG 不在上传范围。
 - 复杂度：`atlas + states + horizontal-three-slice + stretch`。
-- 结论：`pass as production-final-pending-authorization`。物件身份、五个逻辑
-  对象、四状态顺序、
-  Canvas／cell、端帽／安全区、输入职责、材料与反模式、色键和最终自检均已
-  明确；用户确认的深色皮革、无浅纸 selected、无连续亮带 shelf、抬升／短暖光／
-  接触阴影状态语义均已写入正文。完整性已重新审计，仍需单独生产授权。
+- 结论：`production-executed / repair-budget-exhausted`。物件身份、五个逻辑
+  对象、四状态顺序、Canvas／cell、端帽／安全区、输入职责、材料与反模式、
+  色键和最终自检均已明确；用户确认的深色皮革、无浅纸 selected、无连续亮带
+  shelf、抬升／短暖光／接触阴影状态语义均已写入并执行。生产授权已经消费
+  完毕，当前只等待候选例外决策。
 - 不可变修复边界：组件 ID、对象／状态数量、上述 Canvas／cell、四张输入
   职责、runtime `92 × 30`／`16px` caps、shelf `16px`、Alpha／色键、动态内容
   排除和五次实际 ImageGen 上限。边界内可强化材料、轮廓、短高光和状态差异；
@@ -3155,7 +3157,7 @@ selected 变成浅羊皮纸牌或黄铜铭牌。
   状态差异、色键或 cell 合同。新增输入、对象、状态、布局、Canvas、视觉方向
   或 runtime 几何必须停止并重新授权。
 - 单一生产正文预算：最多 `5` 次实际 ImageGen generation/edit，含首次；流程
-  错误单列且不占额度。当前为 `0/5`，没有授权。
+  错误单列且不占额度。当前为 `5/5`，流程错误 `2`，预算已耗尽。
 - 下方最终执行正文 UTF-8 body 为 `5584` bytes，SHA-256
   `b6a7b483964bf779eaa1cde9b4c47bc0b9484b8fe1b675a26edda8964b32a0bd`；生产授权
   必须指向该版本，授权后执行前提交，不得静默改写。
@@ -3172,15 +3174,15 @@ selected 变成浅羊皮纸牌或黄铜铭牌。
   `a97d9c5f…c673`、Image 4 `03774a0f…077d`；生成前模拟 PNG 永不上传。
 - attempt 2–5：只有在明确保留前次正确区域时，才允许紧邻前次输出作为
   Image 5 edit 输入；不得使用更早输出、拒绝版本或外部新增输入。
-- 实际生图预算：`4/5`；最坏总计 `5`；流程错误 `2`，无生成图且无 provider
+- 实际生图预算：`5/5`；最坏总计 `5`；流程错误 `2`，无生成图且无 provider
   生成证据时单列，不占额度。任何 attempt 客观通过后立即停止；内部通过不等于
   用户接受。
 - 执行前 commit：`d8df8d1`；该提交包含本授权记录和下方精确正文。
 
 ### `CHAT.TABS.DARK.V1` 自主修复循环
 
-- 当前实际 ImageGen：`4/5`；流程错误：`2`；循环终态：
-  `repair-prepared / final-regenerate-ready`。
+- 当前实际 ImageGen：`5/5`；流程错误：`2`；循环终态：
+  `repair-budget-exhausted / user-review-required`。不得生成 attempt 6。
 
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
@@ -3188,6 +3190,7 @@ selected 变成浅羊皮纸牌或黄铜铭牌。
 | 2/5 | `CHAT.TABS.DARK.V1.r1` / `758335f` | edit；固定 Image 1／2／3／4 + 紧邻 attempt 1 raw Image 5 | session `019fcadd-e641-7611-b53c-0adb9a4f0bbf`／provider cache `ig_06e5b187b9e40f5c016a715fd12b2881919fed83df12f9044b.png` | raw `generated/chat/core/CHAT.TABS.DARK.V1/attempt-02/CHAT_TABS_DARK_V1_r1_attempt02_raw.png`／`0c82fb7ebdff8e46f76f735202cd4a03ddbd8fe33c227a620c7e8878c0d530e2`；keyed `…attempt02_keyed.png`／`4352735f10ebca6d7adeef91ee34da0e63cb3453e74121906fb8a3061a9fb259` | 同一 cell／隔离失败重复：对象虽缩小，但仍有 `54,203` 个可见像素在声明 cell 外；shelf 触底，四 Tab 仍触底并越过右侧，说明前次大轮廓 edit 锚定未解除 | 停止连续 edit；不上传 attempt 2。完整 `.r2` 只用固定 Image 1／2／3／4 regenerate，把 Image 4 的非绿色 polygon 作为逐像素唯一绘制 mask，Image 4 为绿色的像素必须保持纯绿 | 内部失败；计 `2/5`；未进入用户复审、source 或 runtime |
 | 3/5 | `CHAT.TABS.DARK.V1.r2` / `2b1a01d` | regenerate；固定 Image 1／2／3／4，无 Image 5 | session `019fcae5-7b4d-7821-ad93-50f848af382c`／provider cache `ig_033f7c278ec1fe6d016a7161c121fc81918b9169596100fd54.png` | raw `generated/chat/core/CHAT.TABS.DARK.V1/attempt-03/CHAT_TABS_DARK_V1_r2_attempt03_raw.png`／`51c9045d08f8fbcdbdbcce532d257925336868676647f94856a4a7541cc260ed`；keyed `…attempt03_keyed.png`／`343cbfd6a2373e87024da23a9f7f7c8dcce36ad59522fc405068dd377966b391` | 冻结 source cell 合同已经通过：cell 外像素 `0`，全部格位隔离通过；但 `.r2` 追加的逐像素 scaffold mask 仍有 `3,460` 个可见边缘像素位于 Image 4 非绿 mask 外 | 保留 attempt 3 全部合格材质、五对象、四态、位置节奏和运行时观感；完整 `.r3` 使用紧邻 raw Image 5，只把五个完整外轮廓等比内缩约 `2–4px` 并居中，禁止其他视觉重绘 | 内部失败；计 `3/5`；未进入用户复审、source 或 runtime |
 | 4/5 | `CHAT.TABS.DARK.V1.r3` / `c5e0a15` | edit；固定 Image 1／2／3／4 + 紧邻 attempt 3 raw Image 5 | session `019fcaef-337c-71b3-8292-dcef6a9b7df1`／provider cache `ig_08366a92bf4238f6016a71644251ec819199e37c59741356a0.png` | raw `generated/chat/core/CHAT.TABS.DARK.V1/attempt-04/CHAT_TABS_DARK_V1_r3_attempt04_raw.png`／`cf4227c9fffd2696531fa38b33e37faf784952f4b9d4116cd393067021203347`；keyed `…attempt04_keyed.png`／`c5836ad4436166f4cf8d016ddea383ee1f61907d92c46e88fdcb0e5c1322e71d` | edit 重新引入 cell 越界：`43,099` 个可见像素在声明 cell 外；shelf 触底，四 Tab 触底并越右；strict mask 外为 `88,660` | 彻底停止 edit，不把 attempt 4 或其他失败稿上传。最终 `.r4` 只用固定 Image 1／2／3／4 regenerate；回到不可变 source cell／至少 `4px` 隔离合同，以宽容 inner target bounds 表达，取消仅作为前次修复手段的逐像素 hard-mask 额外门槛 | 内部失败；计 `4/5`；未进入用户复审、source 或 runtime |
+| 5/5 | `CHAT.TABS.DARK.V1.r4` / `34c749e` | regenerate；固定 Image 1／2／3／4，无 Image 5 | session `019fcaf7-9154-7932-bc4c-19a6889931db`／provider cache `ig_0a5bf47a8d46be2a016a716662975c819182fd140b4e4ec041.png` | raw `generated/chat/core/CHAT.TABS.DARK.V1/attempt-05/CHAT_TABS_DARK_V1_r4_attempt05_raw.png`／`d4558459b490357a355fa95355c84906e4af79a9d925366a07683f17de165649`；keyed `…attempt05_keyed.png`／`5c1dc039940a12be229fd2f2427f9588d74dcb5f9fc80cc1deb81e5f5f98d001` | source cell／隔离合同失败：`125,257` 个可见像素在声明 cell 外；shelf 触底；normal 触左／底，hover 触底，selected／disabled 触右／底；strict mask 外 `169,424` | 预算耗尽，停止全部调用。不得裁切失败稿晋级；回看五稿时仅 attempt 3 满足原冻结 cell 与运行时门禁，提名为需用户明确接受的确定性合同例外候选 | 内部失败；计 `5/5`；循环关闭，未进入 source 或 runtime |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
@@ -3820,3 +3823,56 @@ inside its stated inner target and therefore inside its declared cell with at le
 pure-green pixels of isolation; no object is cropped; all other pixels are uniform pure
 #00FF00; selected is raised dark leather without pale paper; shelf has no continuous bright
 rail; no dynamic content; quiet stretch centers; upper-left warm light.
+
+### `CHAT.TABS.DARK.V1.r4` attempt 5 执行与审查记录
+
+- 日期：`2026-08-04`；固定执行器 session
+  `019fcaf7-9154-7932-bc4c-19a6889931db`；provider cache result
+  `ig_0a5bf47a8d46be2a016a716662975c819182fd140b4e4ec041.png`。完整 `.r4` 与固定
+  Image 1／2／3／4 均完整传入；没有 Image 5、截断、递归或 revised prompt
+  报告。本次是授权内第 `5/5` 次实际 ImageGen。
+- raw：`1536 × 1024 RGB`，SHA-256
+  `d4558459b490357a355fa95355c84906e4af79a9d925366a07683f17de165649`；确定性
+  chroma 后 RGBA keyed SHA-256
+  `5c1dc039940a12be229fd2f2427f9588d74dcb5f9fc80cc1deb81e5f5f98d001`；透明
+  `1,231,600`、半透明 `14,019`、不透明 `327,245`。
+- 首要 source cell／隔离门禁失败：声明 cell 外可见像素 `125,257`，strict
+  scaffold mask 外 `169,424`。shelf margin 为 `12/68/11/0px`，触底；normal
+  为 `0/52/16/0px`，触左／底；hover 为 `4/52/7/0px`，触底；selected 为
+  `18/30/0/0px`，触右／底；disabled 为 `42/52/0/0px`，触右／底。五对象全部
+  被列为 isolation failure，不能通过裁切或忽略格位外像素晋级。
+- `100%` 真实排版：
+  `generated/chat/core/CHAT.TABS.DARK.V1/attempt-05/review/candidate-real-layout.png`，
+  SHA-256 `ba9149b28c2aaea76616bf152642062915fbe11e156e727ab8e5e7dd8da2f0f9`；
+  当前书框／输入、`440 × 320`／15 行与 `540 × 420`／22 行场景可装配，但预演
+  按声明 cell 裁取，不能修复 source 外缘缺失。
+- metrics：同目录 `candidate-review.metrics.json`，SHA-256
+  `fecb1025d3675954f3e8aef9453a7e7082033c09809f7a838a0e0dc0223bd99f`；实际展示
+  区域报告 `display-region-report.json`，SHA-256
+  `9c01a358c03241001926d9cbc786617884060e85966b65bb94fa1dc52e767e19`；三个场景
+  `pass`、violations `0`，不替代 source cell 失败。
+- 内部结论：`退回 / repair-budget-exhausted / P3`；实际 ImageGen `5/5`，流程
+  错误 `2`。授权批次关闭，不得执行 attempt 6；attempt 5 不进入用户候选、
+  source、TGA 或 runtime。
+
+### 循环终态与用户复审候选
+
+- 五次实际生成中，attempt 3 是唯一满足原冻结生产合同且可供用户审视的版本：
+  声明 cell 外可见像素 `0`；shelf／normal／hover／selected／disabled 的最小
+  边距分别为 `15/13/13/5/13px`，均达到至少 `4px` 隔离；对象身份、深胡桃旧
+  皮革、四态、无浅纸 selected、无连续亮带 shelf、真实 `440 × 320`／
+  `540 × 420` 排版和三个 display-region 场景全部通过。
+- attempt 3 没有被内部直接接受，因为 `.r2` 当次正文为修复前两稿的大轮廓锚定，
+  额外要求逐像素服从 Image 4 非绿 polygon hard-mask；其有 `3,460` 个抗锯齿／
+  外轮廓边缘像素超出该临时 mask，但这些像素全部仍位于原冻结 cell 内。该差异
+  不能由 Codex 静默豁免，只能由用户明确接受为确定性合同例外。
+- 待审 source 候选：
+  `generated/chat/core/CHAT.TABS.DARK.V1/attempt-03/CHAT_TABS_DARK_V1_r2_attempt03_keyed.png`，
+  SHA-256 `343cbfd6a2373e87024da23a9f7f7c8dcce36ad59522fc405068dd377966b391`。
+- 待审真实排版：
+  `generated/chat/core/CHAT.TABS.DARK.V1/attempt-03/review/candidate-real-layout.png`，
+  SHA-256 `7b79ac2b26061cea10999a522bccc1328870b656033e494f94d20416c63dc89a`。
+- 当前状态仅为 `exception-candidate / user-review-required / P3`。用户明确接受
+  上述例外后，下一步只执行 P4 source 固化与 provenance；在 P4 完成前不得导出
+  TGA 或修改 Lua。若用户不接受，则保留现行 V3 runtime，并以新版本、新正文、
+  新预算重新进入生成前模拟／授权门禁。
