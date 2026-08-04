@@ -25,6 +25,10 @@ import render_chat_input_dark_simulation_v1 as input_layout
 
 ROOT = Path(__file__).resolve().parents[1]
 SIM_SPEC = ROOT / "tools/specs/chat_tabs_dark_simulation_v1.json"
+SCAFFOLD = (
+    ROOT
+    / "generated/chat/core/CHAT.TABS.DARK.V1/production-scaffold/CHAT_TABS_DARK_V1_scaffold.png"
+)
 
 CELLS: tuple[tuple[str, tuple[int, int, int, int]], ...] = (
     ("shelf", (64, 96, 1472, 232)),
@@ -80,7 +84,7 @@ def alpha_metrics(image: Image.Image) -> dict[str, int]:
     }
 
 
-def inspect_cells(candidate: Image.Image) -> dict[str, Any]:
+def inspect_cells(candidate: Image.Image, scaffold: Image.Image) -> dict[str, Any]:
     alpha = candidate.getchannel("A")
     allowed = Image.new("L", candidate.size, 0)
     allowed_draw = ImageDraw.Draw(allowed)
@@ -115,6 +119,18 @@ def inspect_cells(candidate: Image.Image) -> dict[str, Any]:
 
     outside_alpha = ImageChops.multiply(alpha, ImageChops.invert(allowed))
     outside_visible = visible_count(outside_alpha)
+    scaffold_rgb = scaffold.convert("RGB")
+    scaffold_allowed = Image.new("L", scaffold.size, 0)
+    scaffold_pixels = scaffold_rgb.load()
+    scaffold_mask_pixels = scaffold_allowed.load()
+    for y in range(scaffold.height):
+        for x in range(scaffold.width):
+            if scaffold_pixels[x, y] != (0, 255, 0):
+                scaffold_mask_pixels[x, y] = 255
+    outside_scaffold_alpha = ImageChops.multiply(
+        alpha, ImageChops.invert(scaffold_allowed)
+    )
+    outside_scaffold_visible = visible_count(outside_scaffold_alpha)
     isolation_failures = [
         item["id"]
         for item in cell_reports
@@ -124,9 +140,11 @@ def inspect_cells(candidate: Image.Image) -> dict[str, Any]:
     return {
         "candidate_visible_bbox": list(alpha.getbbox()) if alpha.getbbox() else None,
         "outside_declared_cells_visible_pixels": outside_visible,
+        "outside_scaffold_mask_visible_pixels": outside_scaffold_visible,
         "cells": cell_reports,
         "isolation_failures": isolation_failures,
         "cell_contract_pass": outside_visible == 0 and not isolation_failures,
+        "strict_scaffold_mask_pass": outside_scaffold_visible == 0,
     }
 
 
@@ -272,6 +290,9 @@ def main() -> None:
         raise ValueError(f"candidate must be 1536x1024, got {candidate.size}")
     if candidate.getchannel("A").getextrema()[0] != 0:
         raise ValueError("candidate must contain transparent pixels after chroma cleanup")
+    scaffold = Image.open(SCAFFOLD).convert("RGBA")
+    if scaffold.size != candidate.size:
+        raise ValueError("production scaffold and candidate size mismatch")
 
     spec = json.loads(SIM_SPEC.read_text(encoding="utf-8"))
     direction = json.loads(resolve(spec["direction_spec"]).read_text(encoding="utf-8"))
@@ -352,7 +373,7 @@ def main() -> None:
     )
     canvas.save(preview_path, format="PNG", optimize=False, compress_level=9)
 
-    cell_report = inspect_cells(candidate)
+    cell_report = inspect_cells(candidate, scaffold)
     metrics = {
         "schema": "aeui-chat-tabs-dark-candidate-review-v1",
         "attempt": args.attempt,
@@ -381,6 +402,7 @@ def main() -> None:
             "frame_and_input": "current tracked runtime pixels",
             "dynamic_text": "representative runtime-only content",
             "clipping": "declared production cell bounds; overflow is measured and not silently retained",
+            "scaffold_mask": "production scaffold non-green pixels; exact-mask overflow is measured separately from the frozen cell contract",
         },
     }
     metrics_path.write_text(json.dumps(metrics, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
