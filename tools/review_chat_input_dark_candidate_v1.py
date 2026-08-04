@@ -135,7 +135,9 @@ def green_metrics(rgb: np.ndarray) -> dict[str, Any]:
     }
 
 
-def derive_candidate_rgba(raw: Image.Image) -> tuple[Image.Image, dict[str, Any]]:
+def derive_candidate_rgba(
+    raw: Image.Image, *, reject_border_outliers: bool = False
+) -> tuple[Image.Image, dict[str, Any]]:
     rgb = np.asarray(raw.convert("RGB"), dtype=np.uint8)
     red = rgb[:, :, 0].astype(np.int16)
     green = rgb[:, :, 1].astype(np.int16)
@@ -150,7 +152,20 @@ def derive_candidate_rgba(raw: Image.Image) -> tuple[Image.Image, dict[str, Any]
             score[BACKGROUND_BORDER:-BACKGROUND_BORDER, -BACKGROUND_BORDER:].ravel(),
         )
     )
-    transparent_green_score = int(border_values.min()) - 1
+    border_min = int(border_values.min())
+    border_percentile_1 = int(np.percentile(border_values, 1))
+    outlier_rejection_applied = (
+        reject_border_outliers and border_percentile_1 - border_min > 64
+    )
+    # When an object contaminates the outer strip, the 1st percentile estimates
+    # the green field while a half-transition safety offset keeps ordinary green
+    # variation fully transparent instead of turning it into canvas-wide haze.
+    background_reference = (
+        border_percentile_1 - MIN_MATTE_TRANSITION // 2
+        if outlier_rejection_applied
+        else border_min
+    )
+    transparent_green_score = background_reference - 1
     opaque_green_score = min(
         MAX_OPAQUE_GREEN_SCORE,
         transparent_green_score - MIN_MATTE_TRANSITION,
@@ -185,9 +200,9 @@ def derive_candidate_rgba(raw: Image.Image) -> tuple[Image.Image, dict[str, Any]
     rgba[~visible, :3] = 0
 
     image = Image.fromarray(rgba, mode="RGBA")
-    return image, {
+    metrics = {
         "background_border_pixels": BACKGROUND_BORDER,
-        "background_score_min": int(border_values.min()),
+        "background_score_min": border_min,
         "background_score_max": int(border_values.max()),
         "opaque_green_score": opaque_green_score,
         "transparent_green_score": transparent_green_score,
@@ -198,6 +213,16 @@ def derive_candidate_rgba(raw: Image.Image) -> tuple[Image.Image, dict[str, Any]
         },
         "raw_green": green_metrics(rgb),
     }
+    if reject_border_outliers:
+        metrics.update(
+            {
+                "background_score_percentile_1": border_percentile_1,
+                "background_score_reference": background_reference,
+                "border_outlier_rejection_requested": True,
+                "border_outlier_rejection_applied": outlier_rejection_applied,
+            }
+        )
+    return image, metrics
 
 
 def state_bbox(image: Image.Image, state: str) -> tuple[int, int, int, int]:

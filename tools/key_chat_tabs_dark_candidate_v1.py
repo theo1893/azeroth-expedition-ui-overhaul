@@ -26,6 +26,11 @@ def main() -> None:
     parser.add_argument("raw", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--metrics", type=Path, required=True)
+    parser.add_argument(
+        "--reject-border-outliers",
+        action="store_true",
+        help="Ignore a contaminated lowest 1%% of border scores when the gap exceeds 64.",
+    )
     args = parser.parse_args()
 
     raw_path = args.raw.resolve()
@@ -35,7 +40,9 @@ def main() -> None:
     if raw.size != (1536, 1024):
         raise ValueError(f"candidate must be 1536x1024, got {raw.size}")
 
-    keyed, matte = derive_candidate_rgba(raw)
+    keyed, matte = derive_candidate_rgba(
+        raw, reject_border_outliers=args.reject_border_outliers
+    )
     output_path.parent.mkdir(parents=True, exist_ok=True)
     metrics_path.parent.mkdir(parents=True, exist_ok=True)
     keyed.save(output_path, format="PNG", optimize=False, compress_level=9)
