@@ -108,12 +108,51 @@ V1、V2、V3、每次 attempt、review、audit、preview 或 revised prompt 分�
 | `revise` | 同一 work 的尝试表、完整 `.rN` 正文与边界复核 | 丢失旧版本 Git 证据；用修复名义改变合同 |
 | `reject` | work 的版本、原因、日期、主体；模块进度 | 创建 source 或 runtime |
 | `accept` | source、manifest、work、子模块基线、模块进度 | 把完整原型直接当 runtime |
-| `export` | exporter、UV/crop manifest、runtime、Lua/XML、tests、最终 atlas／adapter／provider 的展示区域复查、模块进度 | 自由重绘确定性导出结果；以背景覆盖代替内容安全 |
+| `export` | exporter、UV/crop manifest、runtime、Lua/XML/TOC、tests、最终 atlas／adapter／provider 的展示区域复查、fresh-checkout addon package 报告、模块进度 | 自由重绘确定性导出结果；以背景覆盖代替内容安全；把接入或补丁留给游戏设备 |
 | `game-validate` | 模块进度的场景、版本、交互与结论 | 无实机证据标 `P6` |
 | `close` | 精确保留／删除清单；四份长期文档与 manifest；清理提交 | `P6` 前清理或宽泛删除 |
 
 主模块阶段变化时，同一提交同步 `docs/PROGRESS.md` 与 `AGENTS.md` 顶部快照。
 只有跨模块美术基线真正改变时才更新 `docs/GLOBAL_ART_BASELINE.md`。
+
+## P5 本机插件接入与跨设备可用门禁
+
+`source-accepted` 之后的 export 必须在当前开发设备完成运行时接入，不得只交付
+母版、TGA 或一段待移植代码。目标是让另一台设备从 fresh checkout／`git pull`
+得到同一 `addon/` 后，无需继续开发即可直接安装：
+
+1. 游戏实际加载的媒体只写入所属 addon，通常是
+   `addon/AzerothExpeditionUI/Media/<Module>/`。`assets/source/`、`generated/`、
+   `.codex/` 与 `tools/` 只服务开发和复现，Lua／XML／TOC 不得在运行时引用。
+2. 同一提交完成 adapter、真实 provider／pfUI scoped bridge、状态／UV 映射、
+   fallback、TOC／XML／bootstrap 加载顺序和组件 smoke；不能要求目标设备再
+   应用 patch、复制单个临时文件或手工修改 pfUI。
+3. `addon/` 内所有运行时文件必须进入 Git，不得使用未跟踪文件、被忽略产物、
+   绝对本机路径、软链接、Junction 或 provider cache。路径大小写必须与磁盘和
+   TOC／XML 完全一致，保证 Windows 客户端可直接加载。
+4. runtime manifest 中指向 `addon/` 的每个文件必须存在并匹配 SHA-256；新增
+   AEUI `Core/*.lua`／`Modules/*.lua` 必须进入 TOC。依赖 addon 必须随仓库提供，
+   或在 handoff 中明确列入必须安装的已有依赖。
+5. 在选定 OS 解释器下运行：
+
+   ```text
+   conda run -n py312 python \
+     .codex/skills/run-aeui-asset-workflow/scripts/validate_addon_package.py \
+     /absolute/path/to/repository \
+     --report /absolute/path/to/generated/<module>/<batch>/addon-package-report.json
+   ```
+
+   macOS 必须仍使用 `py312`；其他系统遵守主 Skill 的解释器策略。报告 schema
+   为 `aeui-addon-package-report-v1`，必须 `status=pass` 且
+   `build_required_on_target_device=false`。
+
+6. 当前 work 与模块 `PROGRESS.md` 记录：deployable addon 目录、媒体、adapter、
+   provider bridge、TOC/bootstrap、fallback、manifest、验证命令和结果。handoff
+   必须明确说明目标设备只需拉取并把这些目录放入 `Interface/AddOns`，以及仍需
+   `/reload`／实机 P6 的部分。
+
+任一项失败时仍停在 P4/P5 修正态；即使贴图、Lua smoke 或 display-region
+单项通过，也不能称为 `runtime-exported`、跨设备已接入或远端可直接使用。
 
 ## `P6-C` 终态收口
 
@@ -165,10 +204,12 @@ tests 中；`work/` 不保留空占位文件。
    模块进度、manifest 或实现。
 3. 确认 `generated/` 仍被忽略。
 4. 先检测当前 OS，再运行 `git diff --check`、文档拓扑／链接测试、相关合同
-   测试与 Lua smoke。macOS 必须使用 `conda run -n py312 python` 执行所有
-   Python 脚本与 Skill validator，不得静默回退到系统 `python3`；Linux 使用
-   活跃项目环境的 `python3`，Windows PowerShell 优先 `py -3`，否则使用活跃
-   项目环境的 `python`。记录实际 `sys.executable` 与版本。
+   测试与 Lua smoke。任何 P5 export 还必须运行
+   `validate_addon_package.py`，并在文件全部 tracked／staged 后重新确认 fresh
+   checkout 门禁。macOS 必须使用 `conda run -n py312 python` 执行所有 Python
+   脚本与 Skill validator，不得静默回退到系统 `python3`；Linux 使用活跃项目
+   环境的 `python3`，Windows PowerShell 优先 `py -3`，否则使用活跃项目环境的
+   `python`。记录实际 `sys.executable` 与版本。
 5. 提交信息指出模块、批次和状态变化。
 6. 明确报告仅本机、已提交或已推送；除非用户要求，不自动 push。
 7. `P6-C` 使用独立清理提交，便于审阅与恢复。

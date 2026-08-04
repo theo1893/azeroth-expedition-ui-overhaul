@@ -19,7 +19,7 @@
 | `candidate-rejected` | 不晋级 | 用户否决，或第 5 次内部审查仍失败；日期与具体失败门禁 | work 尝试摘要、模块进度 | 用户审核后新版本或停止 |
 | `source-accepted` | `P4` | 用户明确接受具体候选 | `assets/source/`、manifest | runtime 合同与导出 |
 | `display-region-blocked` | `P5` 文件已导出但未合格 | 最终 atlas／adapter／provider 的实际展示区域报告失败 | 保留现有 runtime、修正合同／adapter／工具与 work | 重新导出并通过展示区域门禁 |
-| `runtime-exported` | `P5` | 确定性导出、UV/manifest、Lua/XML、静态测试；最终 atlas、adapter 与 provider 的实际展示区域报告通过 | addon runtime、工具、文档 | 目标客户端实机 |
+| `runtime-exported` | `P5` | 确定性导出、UV/manifest、Lua/XML/TOC、静态测试；最终 atlas、adapter 与 provider 的实际展示区域报告通过；fresh-checkout addon package 门禁通过，目标设备无需再生成、导出、打补丁或改代码 | addon runtime、工具、文档 | 目标客户端实机 |
 | `game-validated` | `P6` | Turtle WoW `1.18.1` 场景截图与交互证据 | 模块进度的验收记录 | 收口清单 |
 | `closure-planned` | `P6` | 最终保留集、精确删除集与共享依赖审计 | work 内临时计划 | 用户确认后执行清理与复测 |
 | `component-closed` | `P6-C` | work 与中间产物已清理；最终路径、链接与测试通过 | 四份模块长期文档、manifest 与最终产物 | 终态 |
@@ -102,8 +102,13 @@ provider 生成证据的目录、权限、CLI、递归、传输、上传、连�
 - `candidate-reviewed → source-accepted`：必须由用户明确接受具体候选。
 - `source-accepted → runtime-exported`：必须已知真实 Frame 几何、切片、UV、
   安全区、拉伸规则和状态映射，并以最终 atlas／adapter／provider 再次通过
-  实际展示区域门禁。已有导出首次补查失败时保留文件，但标记
-  `display-region-blocked`，不得进入 P6。
+  实际展示区域门禁。所有游戏加载文件必须已经位于 tracked／staged 的
+  `addon/`，TOC／XML／bootstrap、依赖顺序、精确大小写、pfUI scoped bridge、
+  fallback 与 manifest 哈希完整；`validate_addon_package.py` 必须证明 fresh
+  checkout 只复制对应 addon 目录即可使用，不依赖 `assets/source/`、
+  `generated/`、本机绝对路径、软链接、Junction、导出工具或远端手工开发。
+  已有导出首次补查失败时保留文件，但标记 `display-region-blocked`，不得进入
+  P6，也不得报告为可跨设备直接安装。
 - `runtime-exported → game-validated`：必须有目标客户端证据。
 - `game-validated → closure-planned`：必须验证最终 source、prompt、
   manifest、runtime、实现和 P6 证据，并列出精确保留／删除清单。

@@ -272,6 +272,36 @@ runtime 或生产输入。生成前模拟不能代替正式候选生成后的 `1
 - 尚未发生：runtime 切片、Lua/XML 接入、Turtle WoW 实机验证
 ```
 
+## P5 插件接入记录
+
+同一组件 work 在 P4→P5 时追加本节；模块 `PROGRESS.md` 只凝结最终路径和
+结论。Atlas 存在或 Lua smoke 通过都不能省略 fresh-checkout package 证据。
+
+```markdown
+- 状态：runtime-exported / P5 | P4/P5 blocked
+- deployable addon 目录：
+  - addon/pfUI
+  - addon/AzerothExpeditionUI
+- runtime 媒体／manifest／SHA：
+- adapter：<addon 内文件、真实对象、状态／UV>
+- provider／pfUI bridge：<addon 内文件、保留功能、作用域>
+- TOC／XML／bootstrap：<入口、顺序、依赖>
+- fallback：
+- 运行时外部依赖审查：不得引用 assets/source、generated、tools、绝对路径、
+  未跟踪文件、软链接或 Junction
+- addon package validator：
+  - 命令：
+  - 报告：generated/<module>/<batch>/addon-package-report.json
+  - schema：aeui-addon-package-report-v1
+  - status：pass | fail
+  - first violation：
+  - build_required_on_target_device：false
+- 组件 smoke／repository contract：
+- 目标设备操作：git pull 后只复制上述 addon 目录到 Interface/AddOns；不生成、
+  不导出、不打 patch、不修改 Lua/pfUI
+- 尚未发生：Turtle WoW /reload 与交互 P6
+```
+
 ## `P6-C` 收口计划
 
 先用本模板向用户展示，临时写入现有 work，不创建新的收口文档。执行后只把

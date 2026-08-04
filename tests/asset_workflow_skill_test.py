@@ -33,6 +33,7 @@ def main() -> None:
         SKILL / "references" / "record-templates.md",
         SKILL / "scripts" / "inspect_candidate.py",
         SKILL / "scripts" / "render_geometric_mockup.py",
+        SKILL / "scripts" / "validate_addon_package.py",
         SKILL / "scripts" / "validate_display_regions.py",
     )
     missing = [
@@ -99,6 +100,11 @@ def main() -> None:
             "display-region-gate.md",
             "Background coverage alone is insufficient",
             "`display-region-blocked`",
+            "fresh-checkout-installable addon runtime",
+            "validate_addon_package.py",
+            "Interface/AddOns",
+            "must not run an exporter, ImageGen, Python, a patch script",
+            "addon-package gate result",
             "23-row Quest Log asset",
             "sparse demo",
             "`P6-C / component-closed`",
@@ -129,6 +135,9 @@ def main() -> None:
             "`candidate-raw → candidate-reviewed`",
             "`candidate-reviewed → source-accepted`",
             "`source-accepted → runtime-exported`",
+            "fresh-checkout addon package",
+            "validate_addon_package.py",
+            "软链接、Junction",
             "`display-region-blocked`",
             "`runtime-exported → game-validated`",
             "`game-validated → closure-planned`",
@@ -284,6 +293,10 @@ def main() -> None:
             "中间失败只更新 work",
             "不得自动创建",
             "## `P6-C` 终态收口",
+            "## P5 本机插件接入与跨设备可用门禁",
+            "aeui-addon-package-report-v1",
+            "build_required_on_target_device=false",
+            "只需拉取并把这些目录放入 `Interface/AddOns`",
             "该组件的 work 文件",
             "不得对",
             "macOS 必须使用 `conda run -n py312 python`",
@@ -324,6 +337,10 @@ def main() -> None:
             "实际展示区域合同／报告",
             "provider 公式",
             "## 尝试摘要",
+            "## P5 插件接入记录",
+            "fresh-checkout package 证据",
+            "build_required_on_target_device：false",
+            "不修改 Lua/pfUI",
             "SUBMODULE_ART_BASELINES.md",
             "并删除 work",
         ),
@@ -340,6 +357,7 @@ def main() -> None:
             "preview it locally",
             "provider-to-art display regions",
             "five-generation review-repair workflow",
+            "fresh-checkout-installable addon package",
         ),
         "skill interface",
     )
@@ -384,6 +402,34 @@ def main() -> None:
     )
     assert display_help.returncode == 0, display_help.stderr
     assert "Validate exact UI display regions" in display_help.stdout
+
+    package_script = SKILL / "scripts" / "validate_addon_package.py"
+    compile(
+        package_script.read_text(encoding="utf-8"),
+        str(package_script),
+        "exec",
+    )
+    package_help = subprocess.run(
+        [sys.executable, str(package_script), "--help"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert package_help.returncode == 0, package_help.stderr
+    assert "Validate a fresh-checkout addon package" in package_help.stdout
+    package_result = subprocess.run(
+        [sys.executable, str(package_script), str(ROOT)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert package_result.returncode == 0, (
+        package_result.stdout + package_result.stderr
+    )
+    package_report = json.loads(package_result.stdout)
+    assert package_report["status"] == "pass"
+    assert package_report["build_required_on_target_device"] is False
+    assert package_report["violations"] == []
 
     passing_contract = {
         "schema": "aeui-display-region-contract-v1",
@@ -502,6 +548,8 @@ def main() -> None:
             "组件达到 `P6-C` 后必须删除",
             "run-aeui-asset-workflow",
             "imagegen-0-143-0",
+            "fresh-checkout",
+            "另一台设备不得再生成资产",
         ),
         "AGENTS workflow routing",
     )

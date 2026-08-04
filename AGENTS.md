@@ -20,7 +20,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 | 模块 | 当前状态 | 下一门禁 |
 |---|---|---|
 | pfUI／作用域接管 | scoped ownership `P5`；pfUI 公共绘制、全部未接管模块与配置页已恢复；模块 Initialize／Apply 已隔离失败，未实机 | Turtle WoW 验证 pfUI 全模块、Game Menu／`/pfui`、旧 SavedVariables 迁移及 Chat／Quest Log 隔离 |
-| 聊天 | 核心 runtime `1.21 / P5`。Full V1 主框、V3 Tab／未读保持；`CHAT.INPUT.DARK.V1.r3 attempt 4` 固定 source 已确定性导出为 `ChatInputDarkV1.tga`，最终 TGA SHA-256 `43cb9a01…766`，共同 Alpha、三段 UV、真实排版与五场景 display-region 通过。adapter 只替换输入三枚 slice 的媒体映射，真实 EditBox 行为不变；v1.21 移除 AEUI 暖黑纸面颜色映射和 pfUI／ChatMOD 输出 wrapper，客户端、职业、物品与插件颜色逐字节透传。V3 输入保留为 P6-C 前回退；Chat Copy／URL Copy 暂缓；右框及左右聊天信息 Panel 隐藏，小地图 Panel 保留 | 游戏设备可用时 `/reload` 验证 `chat-runtime=1.21`、`chat-color=classic-provider`、书框、输入 normal/focus 与全部交互、Tab、缩放、经典配色和右框消息回收 |
+| 聊天 | 核心 runtime `1.21 / P5`。Full V1 主框、V3 Tab／未读保持；`CHAT.INPUT.DARK.V1.r3 attempt 4` 固定 source 已确定性导出为 `ChatInputDarkV1.tga`，最终 TGA SHA-256 `43cb9a01…766`，共同 Alpha、三段 UV、真实排版与五场景 display-region 通过。adapter 只替换输入三枚 slice 的媒体映射，真实 EditBox 行为不变；v1.21 移除 AEUI 暖黑纸面颜色映射和 pfUI／ChatMOD 输出 wrapper，客户端、职业、物品与插件颜色逐字节透传。fresh-checkout addon package 静态门禁已通过，另一台设备无需生成、导出、打补丁或改代码。V3 输入保留为 P6-C 前回退；Chat Copy／URL Copy 暂缓；右框及左右聊天信息 Panel 隐藏，小地图 Panel 保留 | 游戏设备可用时 `/reload` 验证 `chat-runtime=1.21`、`chat-color=classic-provider`、书框、输入 normal/focus 与全部交互、Tab、缩放、经典配色和右框消息回收 |
 | 任务 | QL-A2 V4 书本主体保持；Quests `1.17`／Quest Visual Theme `1.6` 的 18 个 `246 × 18px` 活动行恢复 `pfUI.font_default` 的 `12px OUTLINE`，额外 shadow 清零。右页按最底动态对象重算 ScrollChild，奖励双列槽为 `108px`／名称 `64px`；滚轮和真实 ScrollFrame 保留。Quest Log 漆章 V1–V8 已否决；用户已确认 `QUEST-LOG-SEAL-ACTIONS-SIM-V9` 的详情页右上火漆与七个 `112×20px` 外侧短事务签方向，真实页边遮根，正文／奖励零占用，只产生 `48px` 右侧 outset。`QS-B1 V1` 已完成一枚无字 tab 母版、standard／danger 各四态 atlas 与七个独立代理 Button 的生产合同，当前 `simulation-confirmed / prompt-draft / 0/5`，未改 runtime、未隐藏 fallback。Tracker 继续批次提交与 `16px` 底部安全区，QT-A1 仍 `display-region-blocked` | 用户独立授权 `QS-B1 V1` 固定双输入、受限同循环 edit、确定性后处理与最多五次实际 ImageGen；游戏设备可用时再验证字体字重、长正文、0／1／2／4／6 奖励、菜单代理与放弃确认 |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |
@@ -124,6 +124,10 @@ references 是法律、来源或机器契约，不属于项目说明文档，不
   接入；若必须修改公共 API，必须证明对未接管模块的输出完全不变。
 - 每个模块必须可独立启用、禁用和回退。对象缺失或媒体失败时局部回退原生，
   不能阻止整个插件加载。
+- 任何 `P5` 导出都必须在当前开发设备完成 `addon/` 内的媒体、adapter、
+  pfUI scoped bridge 与 TOC／bootstrap 接入，并通过 Skill 的 fresh-checkout
+  addon package 门禁；另一台设备不得再生成资产、运行 exporter、应用补丁或
+  修改代码，只需拉取并安装对应 addon 目录。
 - Hook 后不得在维护循环中持续改写 Parent、Point、Width 或 Height。
 - 上游 pfUI 初始测试基线包含本机已有的 `pfUI.lua` 与 `libs/libtotem.lua`
   修改；嵌套 `.git` 未纳入。后续实质改写必须保留 MIT 版权和来源。

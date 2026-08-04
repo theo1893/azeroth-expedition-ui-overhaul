@@ -225,6 +225,40 @@
 [V3 runtime manifest](../../../assets/source/chat/v3/ChatV3_RuntimeManifest_v1.json)；
 [暖烟草输入 runtime manifest](../../../assets/source/chat/input-dark-v1/ChatInput_Dark_V1_RuntimeManifest_v1.json)。
 
+## 跨设备插件接入审计（2026-08-04）
+
+- Chat 的可部署接入链已经存在于当前分支，不需要在游戏设备重新开发：
+  `a7ba939` 建立 V3 runtime、AEUI TOC／bootstrap 和 pfUI 单书路由；
+  `501cac4` 接入 Full V1 主框；`5640716` 接入 Dark V1 输入；`06327bf`
+  移除 AEUI／pfUI 消息改色桥并恢复 classic-provider 透传。
+- 加载入口为
+  [`AzerothExpeditionUI.toc`](../../../addon/AzerothExpeditionUI/AzerothExpeditionUI.toc)：
+  `RequiredDeps: pfUI`，先加载 `Core\\Bootstrap.lua`，再加载
+  `Modules\\Chat.lua`。Bootstrap 提供媒体根、逐模块 `pcall` 隔离、延迟刷新
+  和 `/aeui status`；Chat adapter 当前自报 `1.21 / classic-provider`。
+- adapter 的五个真实媒体映射均在可部署 addon 内：Full V1 九宫格主框、V3
+  Tab atlas、V3 承托带、Dark V1 normal／focus 输入 atlas、V3 未读蜡封。
+  Full V1 TGA SHA-256 为 `becb504f…25ae`，Dark V1 TGA 为
+  `43cb9a01…766`；runtime manifests 对应文件和哈希已复核。
+- [`addon/pfUI/modules/chat.lua`](../../../addon/pfUI/modules/chat.lua) 保留聊天
+  数据、事件、历史和 SavedVariables，只实现 scoped single-journal route：
+  右框被关闭，拾取／经验／荣誉／声望／技能消息回收到 `ChatFrame1`，同时为
+  AEUI 管理的 Tab／TabText Region 保留布局所有权。左右聊天信息 Panel 由
+  AEUI Chat adapter 隐藏，小地图 Panel 不受影响。
+- fresh-checkout package validator：macOS 使用
+  `conda run -n py312 python` 运行
+  [validate_addon_package.py](../../../.codex/skills/run-aeui-asset-workflow/scripts/validate_addon_package.py)，
+  报告 `generated/chat/core/addon-package-report.json`，SHA-256
+  `8216aa78…ae36`；schema `aeui-addon-package-report-v1`，四个 addon、五份
+  TOC、`538` 个 tracked runtime 文件、`26` 条 manifest runtime 记录，
+  `status=pass`、violations `0`、`build_required_on_target_device=false`。
+  报告是可复现且被忽略的本地证据，不作为跨设备资产。
+- 静态结论：Chat 已满足新的 addon-package-ready P5 门禁。另一台设备只需
+  拉取仓库并把 `addon/pfUI` 与 `addon/AzerothExpeditionUI` 放入
+  `Interface/AddOns`；测试 Quest 时再一并安装 `addon/pfQuest` 与
+  `addon/pfQuest-turtle`。无需运行 ImageGen、exporter、Python、patch 或修改
+  Lua／pfUI。该结论不替代 Turtle WoW `/reload` 与交互 P6。
+
 ## 当前证据
 
 - [`build_chat_v3_runtime_assets.py`](../../../tools/build_chat_v3_runtime_assets.py)
@@ -236,6 +270,7 @@
 - [`chat_input_dark_runtime_test.py`](../../../tests/chat_input_dark_runtime_test.py)
 - [`chat_module_smoke.lua`](../../../tests/chat_module_smoke.lua)
 - [`pfui_expedition_contract_test.lua`](../../../tests/pfui_expedition_contract_test.lua)
+- [`validate_addon_package.py`](../../../.codex/skills/run-aeui-asset-workflow/scripts/validate_addon_package.py)
 - 当前 adapter：[`Modules/Chat.lua`](../../../addon/AzerothExpeditionUI/Modules/Chat.lua)
 - 活跃批次：
   [`work/CHAT.CORE.V3.md`](work/CHAT.CORE.V3.md)

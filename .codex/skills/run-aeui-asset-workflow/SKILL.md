@@ -1,6 +1,6 @@
 ---
 name: run-aeui-asset-workflow
-description: "Run the repository-specific Azeroth Expedition UI component-asset workflow with locked-baseline prompt provenance, self-contained ambiguity-audited prompts, a mandatory user-confirmed deterministic local geometric in-game preview before production, exact provider-to-art display-region conformance, compact per-component work files, art-language inheritance, and a bounded five-actual-generation autonomous production generate-review-repair loop whose workflow errors are tracked separately, from component contract and fixed ImageGen 0.143.0 production execution through explicit acceptance or rejection, source promotion, runtime export, module-progress synchronization, target-client validation, and post-P6 work-file cleanup. Use when simulating, generating, editing, reviewing, accepting, rejecting, promoting, exporting, validating, closing, or cleaning an AEUI component, or when the user asks to continue the next UI asset step."
+description: "Run the repository-specific Azeroth Expedition UI component-asset workflow with locked-baseline prompt provenance, self-contained ambiguity-audited prompts, a mandatory user-confirmed deterministic local geometric in-game preview before production, exact provider-to-art display-region conformance, compact per-component work files, art-language inheritance, and a bounded five-actual-generation autonomous production generate-review-repair loop whose workflow errors are tracked separately, from component contract and fixed ImageGen 0.143.0 production execution through explicit acceptance or rejection, source promotion, deterministic runtime export, fresh-checkout addon integration, module-progress synchronization, target-client validation, and post-P6 work-file cleanup. Use when simulating, generating, editing, reviewing, accepting, rejecting, promoting, exporting, integrating, validating, closing, or cleaning an AEUI component, or when the user asks to continue the next UI asset step."
 ---
 
 # AEUI Asset Workflow
@@ -140,7 +140,7 @@ Infer only the narrowest operation authorized by the user:
 | correct, revise, try again | `revise` | new versioned `P3` candidate |
 | reject, abandon this version | `reject` | recorded rejection; no source |
 | accept, lock this asset | `accept` | confirmed source at `P4` |
-| slice, atlas, integrate | `export` | tested runtime at `P5` |
+| slice, atlas, integrate | `export` | tested, fresh-checkout-installable addon runtime at `P5` |
 | validate in Turtle WoW | `game-validate` | `P6` only after real-client evidence |
 | finish, close, compact, clean completed work | `close` | `P6-C` after an approved cleanup plan |
 
@@ -182,23 +182,27 @@ operation.
 10. Do not copy anything into `assets/source/` without explicit user acceptance.
 11. Do not export runtime media until the accepted source, crop/UV contract, safe areas,
    stretch rules, and target Frame geometry are known.
-12. Do not call a preview “real layout” or treat runtime as P6-ready until the exact
-    display-region gate passes for empty, minimum, typical, maximum-density, and
-    supported-mode cases. Background coverage alone is insufficient.
-13. Do not mark `P6` without evidence from Turtle WoW `1.18.1`.
-14. Do not remove intermediate or superseded files before `P6`, a verified final keep set,
+12. Do not mark an export `runtime-exported / P5` until the runtime media, adapter and
+   provider changes are loaded from tracked files under `addon/`, the relevant TOC/XML
+   order is complete, and `validate_addon_package.py` proves a fresh checkout can be
+   copied into `Interface/AddOns` without generation, export, patching, or local links.
+13. Do not call a preview “real layout” or treat runtime as P6-ready until the exact
+   display-region gate passes for empty, minimum, typical, maximum-density, and
+   supported-mode cases. Background coverage alone is insufficient.
+14. Do not mark `P6` without evidence from Turtle WoW `1.18.1`.
+15. Do not remove intermediate or superseded files before `P6`, a verified final keep set,
    an exact cleanup inventory, and explicit user approval.
-15. A pre-production simulation version uses `0` ImageGen calls by contract. Render it
-    with a local deterministic script using simple geometric primitives, representative
-    real text, real object counts, and explicit non-authoritative placeholders. Local
-    rendering errors are ordinary tool errors, never image-generation attempts.
-16. Never consume more than five actual ImageGen generations or edits for one authorized
-    execution body. Count an attempt only when the fixed executor returns an image or a
-    provider result proves that generation/editing actually ran. An unusable generated
-    candidate still counts. A workflow, transport, wrapper, permission, prompt-transfer,
-    upload, or save-path error with no generated image and no provider-generation evidence
-    is recorded separately and does not consume the `0/5` image budget.
-17. Autonomous production repair may change only the repairable wording,
+16. A pre-production simulation version uses `0` ImageGen calls by contract. Render it
+   with a local deterministic script using simple geometric primitives, representative
+   real text, real object counts, and explicit non-authoritative placeholders. Local
+   rendering errors are ordinary tool errors, never image-generation attempts.
+17. Never consume more than five actual ImageGen generations or edits for one authorized
+   execution body. Count an attempt only when the fixed executor returns an image or a
+   provider result proves that generation/editing actually ran. An unusable generated
+   candidate still counts. A workflow, transport, wrapper, permission, prompt-transfer,
+   upload, or save-path error with no generated image and no provider-generation evidence
+   is recorded separately and does not consume the `0/5` image budget.
+18. Autonomous production repair may change only the repairable wording,
     edit/regenerate choice, and use of an earlier output from the same loop. It may not
     change component identity, object/state count, authority order, reference roles,
     canvas/runtime contract, forbidden content, or add a new external input without new
@@ -431,6 +435,37 @@ Use deterministic tools for crop, Alpha, scale, atlas, format conversion, and pr
 Store reproducible intermediates in `generated/`. Commit runtime media only with its
 manifest/UV mapping, Lua/XML ownership, tests, and documentation updates.
 
+An export is not complete when the atlas alone exists. In the same checkout:
+
+1. Write every game-loaded media file under the owning addon, normally
+   `addon/AzerothExpeditionUI/Media/<Module>/`; runtime Lua/XML/TOC must never load from
+   `assets/source/`, `generated/`, `.codex/`, or `tools/`.
+2. Connect the real adapter to the exported cells and states, preserve the provider's
+   nonvisual behavior and fallback, and include any narrowly scoped pfUI bridge change
+   under `addon/pfUI/`. Do not leave a patch or manual edit for the game device.
+3. Ensure the addon TOC/XML/bootstrap loads every new runtime file in exact case and in a
+   valid dependency order. Do not rely on a developer-machine symlink, Junction, ignored
+   file, absolute path, provider cache, or untracked export.
+4. Run the package gate with the selected OS interpreter, for example on macOS:
+
+   ```text
+   conda run -n py312 python \
+     .codex/skills/run-aeui-asset-workflow/scripts/validate_addon_package.py \
+     /absolute/path/to/repository \
+     --report /absolute/path/to/generated/<module>/<batch>/addon-package-report.json
+   ```
+
+5. Treat `addon/` as the deployable artifact. A fresh checkout on the target device must
+   need only `git pull` and copying/linking the required addon directories into
+   `Interface/AddOns`; it must not run an exporter, ImageGen, Python, a patch script, or
+   make a new Lua/pfUI edit before the game can load the completed work.
+
+The package report must be `pass`, every required runtime file must already be tracked or
+staged for the same commit, and component-specific smoke/contracts must pass before the
+state can become `runtime-exported / P5`. Record the exact addon directories, adapter,
+provider bridge, TOC/bootstrap entries, runtime manifests, report command/result, and
+fallback in the current work and module `PROGRESS.md`.
+
 Before treating P5 as P6-ready, repeat the display-region gate against the final atlas,
 adapter constants, live anchors, and provider layout formula. A new or inherited failure
 keeps the export at `display-region-blocked`; do not hide it behind a passing Lua smoke.
@@ -473,6 +508,8 @@ End each operation with:
 - the verdict or artifact paths;
 - the display-region contract/report path and hash, exact scenarios, result, and first
   failed region when applicable;
+- the addon-package gate result, exact deployable `addon/` directories, and whether a
+  fresh checkout requires any build, generation, patch, symlink, or remote-side code edit;
 - the first remaining gate;
 - for closure, the approved keep/delete inventory and final retained paths;
 - tests run, selected Python interpreter and version, and their results;

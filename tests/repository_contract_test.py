@@ -6,6 +6,8 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import subprocess
+import sys
 from pathlib import Path
 
 
@@ -211,6 +213,8 @@ def main() -> None:
     )
     assert "## RequiredDeps: pfUI" in aeui_toc
     assert "## Version: 0.6.0" in aeui_toc
+    assert "Core\\Bootstrap.lua" in aeui_toc
+    assert "Modules\\Chat.lua" in aeui_toc
     assert "Modules\\QuestVisualTheme.lua" in aeui_toc
     assert "Modules\\Quests.lua" in aeui_toc
     bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(encoding="utf-8")
@@ -760,6 +764,29 @@ def main() -> None:
     for markdown in ROOT.rglob("*.md"):
         if ".git" not in markdown.parts:
             assert_markdown_links(markdown)
+
+    addon_validator = (
+        ROOT
+        / ".codex"
+        / "skills"
+        / "run-aeui-asset-workflow"
+        / "scripts"
+        / "validate_addon_package.py"
+    )
+    validator_result = subprocess.run(
+        [sys.executable, str(addon_validator), str(ROOT)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert validator_result.returncode == 0, (
+        validator_result.stdout + validator_result.stderr
+    )
+    addon_report = json.loads(validator_result.stdout)
+    assert addon_report["schema"] == "aeui-addon-package-report-v1"
+    assert addon_report["status"] == "pass"
+    assert addon_report["build_required_on_target_device"] is False
+    assert addon_report["violations"] == []
 
     print("repository contract test passed")
 
