@@ -310,6 +310,31 @@ def main() -> int:
             "module-closed state must remove the entire work directory",
         )
 
+    handoff_root = root / "handoff"
+    handoff_dirs: list[Path] = []
+    if handoff_root.is_symlink():
+        handoff_dirs.append(handoff_root)
+    elif handoff_root.is_dir():
+        handoff_dirs = sorted(
+            path
+            for path in handoff_root.iterdir()
+            if component_matches_alias(path.name, aliases)
+        )
+    handoff_entries: list[str] = []
+    for handoff_dir in handoff_dirs:
+        if handoff_dir.is_dir() and not handoff_dir.is_symlink():
+            handoff_entries.extend(
+                repo_path(root, path) for path in handoff_dir.rglob("*")
+            )
+        else:
+            handoff_entries.append(repo_path(root, handoff_dir))
+        add_violation(
+            violations,
+            "HANDOFF_DATA_REMAINS",
+            repo_path(root, handoff_dir),
+            "module-closed state must remove the entire cross-device handoff",
+        )
+
     generated_roots = collect_generated_roots(root, aliases, explicit)
     for path in generated_roots:
         add_violation(
@@ -369,6 +394,11 @@ def main() -> int:
         "tracked_generated_files_remaining": sorted(tracked_owned),
         "work_directory_present": work_dir.exists() or work_dir.is_symlink(),
         "work_entries_remaining": work_entries,
+        "handoff_directory_present": bool(handoff_dirs),
+        "handoff_directories_remaining": [
+            repo_path(root, path) for path in handoff_dirs
+        ],
+        "handoff_entries_remaining": sorted(handoff_entries),
         "missing_durable_docs": missing_docs,
         "stale_generated_references": stale_references,
         "violations": violations,

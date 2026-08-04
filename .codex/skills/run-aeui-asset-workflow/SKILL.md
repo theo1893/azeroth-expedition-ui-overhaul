@@ -1,6 +1,6 @@
 ---
 name: run-aeui-asset-workflow
-description: "Run the repository-specific Azeroth Expedition UI asset workflow: map real pfUI, Blizzard, and provider components; inherit locked art baselines; build a user-confirmed deterministic local preview; prepare self-contained prompts for fixed ImageGen 0.143.0; execute a bounded five-actual-generation generate-review-repair loop with workflow errors counted separately; validate exact display regions; promote accepted source; export a fresh-checkout-installable addon; record P6 client validation; and close components or purge all module intermediates after whole-module acceptance. Use when preparing, simulating, generating, editing, reviewing, accepting, rejecting, exporting, integrating, validating, closing, or cleaning any AEUI component or module, including requests to continue the next UI asset step."
+description: "Run the repository-specific Azeroth Expedition UI asset workflow: map real pfUI, Blizzard, and provider components; inherit locked art baselines; build a user-confirmed deterministic local preview; prepare self-contained prompts for fixed ImageGen 0.143.0; execute a bounded five-actual-generation generate-review-repair loop with workflow errors counted separately; publish minimal validated cross-device checkpoints; validate exact display regions; promote accepted source; export a fresh-checkout-installable addon; record P6 client validation; and close components or purge all module intermediates after whole-module acceptance. Use when preparing, simulating, generating, editing, reviewing, accepting, rejecting, handing off, resuming, exporting, integrating, validating, closing, or cleaning any AEUI component or module, including requests to continue the next UI asset step."
 ---
 
 # AEUI Asset Workflow
@@ -29,11 +29,14 @@ machine. This skill orchestrates the work; it does not replace the repository's 
    revising any production／`.rN` execution body.
 8. Read [bounded-repair-loop.md](references/bounded-repair-loop.md) before any production
    generation or in-loop repair.
-9. Read [repository-sync.md](references/repository-sync.md) before changing any
+9. Read [cross-device-handoff.md](references/cross-device-handoff.md) before pausing,
+   committing, pushing, resuming, or transferring an active component whose next gate
+   depends on ignored pixels.
+10. Read [repository-sync.md](references/repository-sync.md) before changing any
    tracked file or advancing a phase.
-10. Read [record-templates.md](references/record-templates.md) when creating or
+11. Read [record-templates.md](references/record-templates.md) when creating or
    updating a production prompt or review record.
-11. For generation or image editing, additionally read
+12. For generation or image editing, additionally read
    `../imagegen-0-143-0/SKILL.md` and every reference that it requires.
 
 Repository documents remain authoritative if this skill and the current checkout
@@ -121,6 +124,15 @@ commit them before the next invocation. After loop exhaustion or user rejection,
 the terminal rejection in that file. Git history is the full archive; the current tree
 contains only the evidence needed for the next decision.
 
+When work will continue on another device and the next gate depends on exact ignored
+pixels, publish only the state-specific payloads under
+`handoff/<module>/<component>/` with
+`manage_cross_device_handoff.py`. Keep `generated/` ignored. The checkpoint is a
+temporary tracked transport layer, never visual authority, source, or runtime; replace
+it instead of accumulating versions and remove it as soon as the exact pixels are no
+longer required. Publish it only on a named short-lived collaboration branch, never the
+default branch; integrate only the later clean state without handoff history.
+
 When the component reaches `P6-C`, merge final stable visual clauses into
 `SUBMODULE_ART_BASELINES.md`, final object ownership into `SUBMODULES.md`, and final paths
 and validation into module `PROGRESS.md` and manifests. Then delete the component work file
@@ -131,9 +143,10 @@ When the user explicitly accepts the declared whole-module P6 scope, perform ter
 module cleanup in the same operation. Preserve only durable baselines, final source and
 manifests, deployable runtime/implementation/tests, licenses/shared dependencies, and a
 minimal durable P6 evidence set. Delete the entire `generated/<module>/` tree, every module
-work file, and every separately inventoried legacy module-only generated path. Module
-acceptance is standing authorization for these verified module-scoped intermediates; a
-shared or ambiguous path remains protected and blocks only that path pending direction.
+work file, `handoff/<module>/`, and every separately inventoried legacy module-only
+generated path. Module acceptance is standing authorization for these verified
+module-scoped intermediates; a shared or ambiguous path remains protected and blocks
+only that path pending direction.
 
 ## Select the operation
 
@@ -220,6 +233,11 @@ operation.
     change component identity, object/state count, authority order, reference roles,
     canvas/runtime contract, forbidden content, or add a new external input without new
     user authorization.
+19. Before handing an active component to another device, validate its exact
+    state-specific `handoff/<module>/<component>/` checkpoint. Do not claim that ignored
+    `generated/` paths will cross devices, and do not use handoff payloads as source or
+    addon runtime. Never publish temporary pixels on the default branch. Follow
+    [cross-device-handoff.md](references/cross-device-handoff.md).
 
 When a gate is blocked, state the missing evidence and perform any useful read-only
 inspection still in scope. Do not create plausible-looking placeholder controls.
@@ -309,6 +327,10 @@ simulation in `Review`.
    create a new simulation version. Purely technical decomposition, transparent
    extraction, or slicing changes that preserve the confirmed visible composition do not
    require a new simulation.
+
+If the operation pauses at `simulation-reviewed` for cross-device continuation, publish
+the exact `review-preview` and optional `review-zoom` checkpoint before push. Once the
+direction is confirmed and fully transcribed into the work file, remove that checkpoint.
 
 Simulation confirmation never accepts source pixels. The simulation cannot be copied,
 cropped, sliced, promoted, exported, or uploaded as a production edit/reference input.
@@ -407,6 +429,10 @@ under `generated/`. Neither kind of simulation is source art, but the pre-produc
 simulation confirms a visual direction while this post-candidate simulation validates
 the actual candidate at runtime geometry.
 
+If review will continue on another device, publish the exact `candidate` and
+`real-layout-preview` checkpoint, plus an optional `technical-preview`, before push. The
+checkpoint must identify the committed work version and remaining attempt budget.
+
 ## Revise or reject
 
 1. Lead with the verdict and the first failed gate.
@@ -427,6 +453,9 @@ the actual candidate at runtime geometry.
 
 Preserve the active work file while production is active. Do not preserve a forest of
 superseded prompt files in the current tree. Git history remains the historical archive.
+When the next action is a cross-device edit of the immediately preceding output, publish
+that exact file as `repair-prepared / edit-input`; a review-only candidate checkpoint is
+not implicit authorization to use its pixels as an edit input.
 
 ## Accept
 
@@ -440,7 +469,9 @@ simulation does not satisfy this requirement. Then:
    and forbidden runtime uses.
 3. Update the work file, source manifest, module `SUBMODULES.md`, and module
    `PROGRESS.md` in the same commit.
-4. Mark `P4`; do not imply that runtime slicing or game validation has happened.
+4. Remove the consumed component handoff after the accepted bytes and manifest are safely
+   present under `assets/source/`.
+5. Mark `P4`; do not imply that runtime slicing or game validation has happened.
 
 ## Export and game-validate
 
@@ -500,7 +531,8 @@ rules in [repository-sync.md](references/repository-sync.md).
    active locked baselines, third-party evidence, licenses, and user originals.
 3. Show the inventory to the user and obtain explicit approval before deletion.
 4. Remove the approved component-only simulations, raw/candidates/previews, work file,
-   obsolete references/tools, and duplicated process narration. Do not purge Git history.
+   component handoff, obsolete references/tools, and duplicated process narration. Do
+   not purge Git history.
 5. Compact the four durable module documents and manifests, run relevant tests and link
    checks, and mark `P6-C / component-closed` in the dedicated cleanup commit.
 
@@ -525,9 +557,10 @@ rules in [repository-sync.md](references/repository-sync.md).
    under the standing project rule. Do not ask for a second approval. If ownership remains
    ambiguous, stop only that target and request direction rather than broadening deletion.
 6. Remove the entire canonical `generated/<module>/` tree, all
-   `docs/modules/<module>/work/` data, every verified legacy module-only generated path,
-   and the other inventoried intermediates. Use exact literal paths with no unresolved
-   variables or globs; do not delete Git history or a shared parent directory.
+   `docs/modules/<module>/work/` data, `handoff/<module>/`, every verified legacy
+   module-only generated path, and the other inventoried intermediates. Use exact literal
+   paths with no unresolved variables or globs; do not delete Git history or a shared
+   parent directory.
 7. Run `validate_module_closure.py` with module aliases/legacy paths, the fresh-checkout
    addon package validator, all relevant runtime/repository tests, Markdown link checks,
    and `git diff --check`. The module-closure report schema is
@@ -553,6 +586,9 @@ End each operation with:
 - the addon-package gate result, exact deployable `addon/` directories, and whether a
   fresh checkout requires any build, generation, patch, symlink, or remote-side code edit;
 - the first remaining gate;
+- the cross-device checkpoint path/state, payload roles and hashes, validator result, and
+  whether it has been committed/pushed—or an explicit statement that no exact ignored
+  pixels are needed for continuation;
 - for component closure, the approved keep/delete inventory and final retained paths;
 - for module closure, the frozen acceptance scope, deleted canonical/legacy generated
   roots, protected shared exclusions, retained P6 evidence, and module-closure validator;

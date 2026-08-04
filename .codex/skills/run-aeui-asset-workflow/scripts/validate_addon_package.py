@@ -29,6 +29,7 @@ TEXT_SUFFIXES = {".lua", ".toc", ".xml"}
 FORBIDDEN_RUNTIME_REFERENCES = (
     "assets/source/",
     "generated/",
+    "handoff/",
     ".codex/",
     "tools/",
     "/users/",

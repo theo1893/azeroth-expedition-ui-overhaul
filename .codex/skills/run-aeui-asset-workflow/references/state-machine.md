@@ -10,21 +10,21 @@
 |---|---:|---|---|---|
 | `contract-draft` | `P0–P2` | 真实对象映射尚未完整 | 模块 `SUBMODULES.md`、`PROGRESS.md`、组件 work | 补齐组件合同 |
 | `prompt-draft` | `P1–P2` | 完整合同；锁定图到基线 Prompt 的 provenance；美术继承与冲突表；本地几何模拟规格、生产正文和自包含完整性预检；两者相互独立 | 单一组件 work、模块进度 | 本地确定性渲染模拟 |
-| `simulation-reviewed` | `P2` | 本地几何模拟图路径／SHA／脚本命令；ImageGen `0/0`；真实 Frame 比例、邻接 UI、信息密度与视觉方向的内部可读性检查；明确非权威范围 | work；被忽略的模拟图 | 用户确认或否决视觉方向 |
+| `simulation-reviewed` | `P2` | 本地几何模拟图路径／SHA／脚本命令；ImageGen `0/0`；真实 Frame 比例、邻接 UI、信息密度与视觉方向的内部可读性检查；明确非权威范围 | work；被忽略的模拟图；跨设备时最小 review handoff | 用户确认或否决视觉方向 |
 | `simulation-confirmed` | `P2` | 用户明确确认具体模拟版本；可见布局、材质层级、轮廓、配色、重量与整合结论已文字化并写回生产正文 | work、模块进度 | 用户授权最终生产版本 |
 | `prompt-authorized` | `P3` | 对应模拟已确认；用户看到并明确确认最终生产正文、不可变修复边界与五次实际生图预算；授权版本已提交 | work、模块进度 | 固定执行器第 1 次正式资产生图 |
 | `candidate-raw` | `P3` | 尝试编号、raw 路径、执行器与会话记录 | 被忽略的 `generated/`；work 执行记录 | 本次完整内部审查 |
-| `repair-prepared` | `P3` | 前次失败门禁、保留区域、完整 `.rN` 修复正文、边界复核、累计实际生图少于 5 次 | 同一 work 与 Git 历史 | 固定执行器下一次实际生图 |
-| `candidate-reviewed` | `P3` | 语义、结构、风格、装配和技术证据；`100%` runtime 尺寸、真实对象数量、现实信息密度和当前 accepted/runtime UI 的真实排版预演；实际展示区域报告通过 | 被忽略的预演／区域报告；review 记录 | 用户视觉复审 |
-| `candidate-rejected` | 不晋级 | 用户否决，或第 5 次内部审查仍失败；日期与具体失败门禁 | work 尝试摘要、模块进度 | 用户审核后新版本或停止 |
-| `source-accepted` | `P4` | 用户明确接受具体候选 | `assets/source/`、manifest | runtime 合同与导出 |
+| `repair-prepared` | `P3` | 前次失败门禁、保留区域、完整 `.rN` 修复正文、边界复核、累计实际生图少于 5 次 | 同一 work 与 Git 历史；跨设备 edit-input handoff | 固定执行器下一次实际生图 |
+| `candidate-reviewed` | `P3` | 语义、结构、风格、装配和技术证据；`100%` runtime 尺寸、真实对象数量、现实信息密度和当前 accepted/runtime UI 的真实排版预演；实际展示区域报告通过 | 被忽略的预演／区域报告；review 记录；跨设备候选 handoff | 用户视觉复审 |
+| `candidate-rejected` | 不晋级 | 用户否决，或第 5 次内部审查仍失败；日期与具体失败门禁 | work 尝试摘要、模块进度；需要异机复审时的候选 handoff | 用户审核后新版本或停止 |
+| `source-accepted` | `P4` | 用户明确接受具体候选；accepted source/manifest 已持久化且临时 handoff 已消费 | `assets/source/`、manifest | runtime 合同与导出 |
 | `display-region-blocked` | `P5` 文件已导出但未合格 | 最终 atlas／adapter／provider 的实际展示区域报告失败 | 保留现有 runtime、修正合同／adapter／工具与 work | 重新导出并通过展示区域门禁 |
 | `runtime-exported` | `P5` | 确定性导出、UV/manifest、Lua/XML/TOC、静态测试；最终 atlas、adapter 与 provider 的实际展示区域报告通过；fresh-checkout addon package 门禁通过，目标设备无需再生成、导出、打补丁或改代码 | addon runtime、工具、文档 | 目标客户端实机 |
 | `game-validated` | `P6` | Turtle WoW `1.18.1` 场景截图与交互证据 | 模块进度的验收记录 | 收口清单 |
 | `closure-planned` | `P6` | 最终保留集、精确删除集与共享依赖审计 | work 内临时计划 | 用户确认后执行清理与复测 |
 | `component-closed` | `P6-C` | work 与中间产物已清理；最终路径、链接与测试通过 | 四份模块长期文档、manifest 与最终产物 | 终态 |
 | `module-closure-planned` | `P6` | 用户明确接受的整模块范围；范围内全部组件 P6／已关闭；整模块保留集、canonical／legacy 删除集与共享依赖审计 | 现有 work 中的临时计划、模块进度 | 立即执行已授权的模块终局清理 |
-| `module-closed` | `P6-C` | 整个 `generated/<module>/`、全部模块 work 与已确认 legacy 中间数据清空；稳定事实凝结；模块关闭校验及相关测试通过 | 四份模块长期文档、最终 source／manifest、runtime／实现／tests 与最小 P6 证据 | 主模块终态 |
+| `module-closed` | `P6-C` | 整个 `generated/<module>/`、`handoff/<module>/`、全部模块 work 与已确认 legacy 中间数据清空；稳定事实凝结；模块关闭校验及相关测试通过 | 四份模块长期文档、最终 source／manifest、runtime／实现／tests 与最小 P6 证据 | 主模块终态 |
 
 ## 合法转换
 
@@ -87,6 +87,25 @@ provider 生成证据的目录、权限、CLI、递归、传输、上传、连�
 出现时先暂停诊断，不得借“不计数”无限重试。生成前模拟的本地脚本错误只记
 为普通渲染错误。任何正式候选通过全部内部门禁后立即结束生产循环。
 
+## 跨设备暂停／恢复门禁
+
+跨设备 handoff 不是新项目阶段，也不改变上述合法转换。它只把某个稳定状态
+下一门禁必需的 ignored 像素临时复制到 tracked 运输层。准备 push、换设备或
+移交时，如果下一步仍依赖同一像素，必须按
+[cross-device-handoff.md](cross-device-handoff.md) 发布并验证：
+
+- `simulation-reviewed`：`review-preview`，可选 `review-zoom`；
+- `candidate-reviewed`／`candidate-rejected`：`candidate` 与
+  `real-layout-preview`，可选 `technical-preview`；
+- `repair-prepared`：`edit-input`，可选两类 preview。
+
+发布前 work 必须 tracked、无 staged／unstaged 修改且已有 commit。接收设备
+必须验证 work SHA、payload SHA、状态 role、实际生图预算和 base commit 后，
+才能从 manifest 的 `next_gate` 继续。检查点最多 3 个 payload，不允许累计。
+模拟方向转写完成、候选进入 source、拒绝进入不复用像素的新版本、或新候选
+替换前次 edit 输入时，必须删除或替换旧检查点。检查点只能存在于具名短期协作
+分支，不能直接发布到默认分支；净结果进入默认分支时不得携带 handoff 历史。
+
 ## 不可跨越的门禁
 
 - `prompt-draft → simulation-reviewed`：必须先验证锁定视觉基准、对应原始
@@ -116,14 +135,16 @@ provider 生成证据的目录、权限、CLI、递归、传输、上传、连�
   accepted/runtime UI 的真实排版预演；稀疏样例与 contact sheet 不构成该
   门禁证据。预演 Frame 必须由真实 provider 布局公式计算，并通过
   `display-region-gate.md`；固定容量画布不能冒充实际实例。
-- `candidate-reviewed → source-accepted`：必须由用户明确接受具体候选。
+- `candidate-reviewed → source-accepted`：必须由用户明确接受具体候选。accepted
+  字节和 manifest 进入 `assets/source/` 后删除已消费的组件 handoff。
 - `source-accepted → runtime-exported`：必须已知真实 Frame 几何、切片、UV、
   安全区、拉伸规则和状态映射，并以最终 atlas／adapter／provider 再次通过
   实际展示区域门禁。所有游戏加载文件必须已经位于 tracked／staged 的
   `addon/`，TOC／XML／bootstrap、依赖顺序、精确大小写、pfUI scoped bridge、
   fallback 与 manifest 哈希完整；`validate_addon_package.py` 必须证明 fresh
   checkout 只复制对应 addon 目录即可使用，不依赖 `assets/source/`、
-  `generated/`、本机绝对路径、软链接、Junction、导出工具或远端手工开发。
+  `generated/`、`handoff/`、本机绝对路径、软链接、Junction、导出工具或远端
+  手工开发。
   已有导出首次补查失败时保留文件，但标记 `display-region-blocked`，不得进入
   P6，也不得报告为可跨设备直接安装。
 - `runtime-exported → game-validated`：必须有目标客户端证据。
@@ -137,10 +158,10 @@ provider 生成证据的目录、权限、CLI、递归、传输、上传、连�
   活跃 work。
 - `module-closure-planned → module-closed`：整模块验收已经构成 standing
   authorization，不再请求第二次批准。必须删除整个 canonical
-  `generated/<module>/`、全部模块 work 和精确识别的 legacy 模块中间路径；
-  共享／归属不明项必须排除。`validate_module_closure.py`、fresh-checkout addon
-  package、链接检查和全部相关测试必须通过，模块进度必须写入
-  `P6-C / module-closed`。
+  `generated/<module>/`、`handoff/<module>/`、全部模块 work 和精确识别的
+  legacy 模块中间路径；共享／归属不明项必须排除。
+  `validate_module_closure.py`、fresh-checkout addon package、链接检查和全部
+  相关测试必须通过，模块进度必须写入 `P6-C / module-closed`。
 
 ## 版本规则
 

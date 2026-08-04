@@ -21,7 +21,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 |---|---|---|
 | pfUI／作用域接管 | scoped ownership `P5`；pfUI 公共绘制、全部未接管模块与配置页已恢复；模块 Initialize／Apply 已隔离失败，未实机 | Turtle WoW 验证 pfUI 全模块、Game Menu／`/pfui`、旧 SavedVariables 迁移及 Chat／Quest Log 隔离 |
 | 聊天 | 核心 runtime `1.22 / P5`。Full V1 主框、Dark V2 Tab／承托带、Dark V1 输入与 V3 未读已在 addon 内接入；V3 Tab／承托带保留为 P6-C 前回退。Dark V2 固定 source `ChatTabs_Dark_V2_A.png` SHA `616f965b…a1e3c` 已确定性导出为 `ChatTabAtlasDarkV2.tga` SHA `3fb505fa…be0` 与 `ChatTabShelfDarkV2.tga` SHA `44c7f85c…fda`；只清理 source 的 `13` 个和 LANCZOS 新增的 `23` 个低 Alpha 绿边 RGB，Alpha 不变，最终绿溢色 `0`。最终真实排版覆盖 6 场景、violations `0`，fresh-checkout package `pass`、目标设备无需构建。v1.22 继续透传客户端／pfUI／ChatMOD 经典颜色；Chat Copy／URL Copy 暂缓，右框及左右聊天信息 Panel 隐藏，小地图 Panel 保留；本次 P4→P5 ImageGen `0`，原生产仍为 `5/5`，attempt 6 禁止 | 游戏设备可用时 `/reload`，确认 `chat-runtime=1.22`、四态 Tab、五 Tab 压缩、承托带、缩放／拖动、经典颜色及输入行为；通过前不得标记 P6 或清理回退／证据 |
-| 任务 | QL-A2 V4 书本主体保持；Quests `1.18`／Quest Visual Theme `1.6` 的 18 个 `246 × 18px` 活动行恢复 `pfUI.font_default` 的 `12px OUTLINE`。右页按最底动态对象重算 ScrollChild，并在 pfQuest 写入后执行有限两帧重排；奖励双列槽为 `108px`／名称 `64px`。已接受 QS-A1 漆章现以 `32px` 无鼠标 Texture 直接压在详情页右上纸面，旧悬空锚点已移除；原底部按钮继续 fail-open。V9 的七个 `112×20px` 外侧短事务签仍为 `QS-B1 V1 simulation-confirmed / prompt-draft / 0/5`，未生图、未接入。远端默认 `main` 仍停在 Quest runtime `1.16`，不能作为当前 P5 的实机结论。Tracker 继续批次提交与 `16px` 底部安全区，QT-A1 仍 `display-region-blocked` | 先把当前开发分支交付到测试设备并用 `/aeui status` 确认 `quest frame=1.18, theme=1.6, seal=detail-page-32`，再验证字体、长正文和 0／1／2／4／6 奖励；事务签另待用户独立授权 `QS-B1 V1` |
+| 任务 | QL-A2 V4 书本主体保持；Quests `1.18`／Quest Visual Theme `1.6` 的 18 个 `246 × 18px` 活动行恢复 `pfUI.font_default` 的 `12px OUTLINE`。右页按最底动态对象重算 ScrollChild，并在 pfQuest 写入后执行有限两帧重排；奖励双列槽为 `108px`／名称 `64px`。已接受 QS-A1 漆章现以 `32px` 无鼠标 Texture 直接压在详情页右上纸面，旧悬空锚点已移除；原底部按钮继续 fail-open。V9 的七个 `112×20px` 外侧短事务签仍为 `QS-B1 V1 simulation-confirmed / prompt-draft / 0/5`，未生图、未接入。Quest runtime `1.18` 已进入当前 `main`，但尚无该版本实机结论。Tracker 继续批次提交与 `16px` 底部安全区，QT-A1 仍 `display-region-blocked` | 游戏设备拉取当前 `main` 后用 `/aeui status` 确认 `quest frame=1.18, theme=1.6, seal=detail-page-32`，再验证字体、长正文和 0／1／2／4／6 奖励；事务签另待用户独立授权 `QS-B1 V1` |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |
 | 其他 UI | `P0–P2`，保持 pfUI 默认实现 | 逐模块建立四份长期文档，并仅登记目标模块的接管路由 |
@@ -91,6 +91,12 @@ docs/
 references 是法律、来源或机器契约，不属于项目说明文档，不在上表重复维护。
 `README.md` 只介绍项目，不承载开发规则、资产状态或工作流。
 
+`generated/` 是 ignored 本地中间区，不承担跨设备同步。只有下一门禁依赖同一
+份像素时，才临时提交 `handoff/<module>/<component>/` 的最小检查点；其状态、
+角色、大小、发布／恢复和清理规则只由资产工作流 Skill 定义。它不是文档树、
+视觉权威、source 或 addon runtime，只能存在于短期协作分支，不能进入默认
+分支历史。
+
 ## 文档职责
 
 - `GLOBAL_ART_BASELINE.md`：唯一跨模块美术 Prompt；包含时代语言、材料、
@@ -106,10 +112,11 @@ references 是法律、来源或机器契约，不属于项目说明文档，不
   记录。组件达到 `P6-C` 后必须删除；历史由 Git 保存。
 
 用户明确验收一个冻结的整模块 P6 范围后，必须按 Skill 立即完成模块终局
-收口：清空整个 `generated/<module>/`（tracked 与 ignored 均含）、全部该模块
-`work/`，以及经审计属于该模块的 legacy 中间路径；只保留四份长期文档、最终
-source／manifest、可直接安装的 addon runtime／实现／tests、许可证／共享依赖
-和最小 P6 实机证据，并通过 `validate_module_closure.py` 后标记
+收口：清空整个 `generated/<module>/`（tracked 与 ignored 均含）、
+`handoff/<module>/`、全部该模块 `work/`，以及经审计属于该模块的 legacy
+中间路径；只保留四份长期文档、最终 source／manifest、可直接安装的 addon
+runtime／实现／tests、许可证／共享依赖和最小 P6 实机证据，并通过
+`validate_module_closure.py` 后标记
 `P6-C / module-closed`。整模块验收即为已验证模块专属中间数据的清理授权；
 共享或归属不明路径不得删除。详细步骤只在 Skill 中维护。
 
@@ -177,8 +184,8 @@ Blizzard 或外部 provider 对象时，不生产“看起来像”的假控件�
 ```
 
 固定执行实现为 `@openai/codex@0.143.0`；禁止改用会话内建 imagegen。
-详细状态机、授权门禁、审查顺序、版本处理、仓库同步与 `P6-C` 清理规则只在
-Skill 中维护，本文件不复制流程。
+详细状态机、授权门禁、审查顺序、版本处理、跨设备 handoff、仓库同步与
+`P6-C` 清理规则只在 Skill 中维护，本文件不复制流程。
 
 任何代码或资产变更都要更新目标模块 `PROGRESS.md`；主模块阶段变化时再同步
 全局 `docs/PROGRESS.md` 与本文件顶部快照。提交前运行受影响测试与

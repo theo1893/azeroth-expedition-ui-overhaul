@@ -49,6 +49,25 @@
   与支持模式；pass／display-region-blocked；首个失败码>
 - 最终 source：
 
+## 跨设备 handoff（仅在下一门禁依赖精确 ignored 像素时存在）
+
+- 路径：`handoff/<module>/<component>/`
+- schema：`aeui-cross-device-handoff-v1`
+- 状态：simulation-reviewed | candidate-reviewed | candidate-rejected |
+  repair-prepared
+- work file／SHA：
+- base commit：
+- 短期协作分支：<不得为默认分支>
+- prompt 版本／下一门禁：
+- 实际生图预算：<used>/<limit>；流程错误：<n>
+- payload role／路径／SHA：
+- validator：<命令；aeui-cross-device-handoff-report-v1；pass／fail；
+  git_tracking_verified=true>
+- Git：local | staged | committed | pushed <branch/commit>
+- 默认分支集成：pending | clean squash/cherry-pick without handoff history
+- 消费条件：<模拟结论已转写／source accepted／新版本不再复用／替代检查点>
+- 非权威合同：不得成为视觉权威、source 或 addon runtime
+
 ## 美术基准继承
 
 ### 权威顺序
@@ -288,7 +307,7 @@ runtime 或生产输入。生成前模拟不能代替正式候选生成后的 `1
 - TOC／XML／bootstrap：<入口、顺序、依赖>
 - fallback：
 - 运行时外部依赖审查：不得引用 assets/source、generated、tools、绝对路径、
-  未跟踪文件、软链接或 Junction
+  handoff、未跟踪文件、软链接或 Junction
 - addon package validator：
   - 命令：
   - 报告：generated/<module>/<batch>/addon-package-report.json
@@ -318,6 +337,7 @@ runtime 或生产输入。生成前模拟不能代替正式候选生成后的 `1
   - implementation/tests：
 - 明确删除：
   - ignored generated：
+  - component handoff：
   - component work：
   - obsolete references/tools/previews：
   - duplicated process narration：
@@ -347,6 +367,7 @@ runtime 或生产输入。生成前模拟不能代替正式候选生成后的 `1
   - licenses／user originals／shared dependencies：
 - 全量删除：
   - canonical generated：generated/<module>/（整个根；tracked + ignored）
+  - cross-device handoff：handoff/<module>/（整个根）
   - module work：docs/modules/<module>/work/（全部内容和目录）
   - legacy generated aliases：
   - exact legacy generated paths：

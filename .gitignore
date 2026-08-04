@@ -19,3 +19,9 @@ archive/
 # must never enter Git. Whole-module closure removes generated/<module>/ in full plus every
 # explicitly audited module-only legacy path.
 /generated/
+
+# Cross-device continuation uses only a minimal, validated and intentionally tracked
+# handoff/<module>/<component>/ checkpoint. Never unignore generated/ for synchronization.
+# Interrupted publish transaction directories are local implementation details.
+/handoff/.stage-*/
+/handoff/.backup-*/

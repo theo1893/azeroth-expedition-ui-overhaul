@@ -122,6 +122,7 @@ def main() -> None:
         "imagegen-0-143-0",
         "P6-C",
         "清空整个 `generated/<module>/`",
+        "`handoff/<module>/`",
         "validate_module_closure.py",
         "8.1.0-aeui.4",
     ):
@@ -187,6 +188,46 @@ def main() -> None:
     gitignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
     assert "/generated/" in gitignore
     assert "new generated files" in gitignore
+    assert "/handoff/.stage-*/" in gitignore
+    ignored_generated = subprocess.run(
+        ["git", "-C", str(ROOT), "check-ignore", "-q", "generated/demo/file.png"],
+        check=False,
+    )
+    assert ignored_generated.returncode == 0, "generated/ must remain ignored"
+    ignored_handoff = subprocess.run(
+        [
+            "git",
+            "-C",
+            str(ROOT),
+            "check-ignore",
+            "-q",
+            "handoff/demo/component/manifest.json",
+        ],
+        check=False,
+    )
+    assert ignored_handoff.returncode == 1, "component handoff must be trackable"
+
+    handoff_validator = (
+        ROOT
+        / ".codex"
+        / "skills"
+        / "run-aeui-asset-workflow"
+        / "scripts"
+        / "manage_cross_device_handoff.py"
+    )
+    assert handoff_validator.is_file()
+    handoff_result = subprocess.run(
+        [sys.executable, str(handoff_validator), "validate", str(ROOT)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert handoff_result.returncode == 0, (
+        handoff_result.stdout + handoff_result.stderr
+    )
+    handoff_report = json.loads(handoff_result.stdout)
+    assert handoff_report["schema"] == "aeui-cross-device-handoff-report-v1"
+    assert handoff_report["status"] == "pass"
 
     chat_submodules = (
         docs / "modules" / "chat" / "SUBMODULES.md"

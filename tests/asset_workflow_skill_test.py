@@ -29,6 +29,7 @@ def main() -> None:
         SKILL / "references" / "display-region-gate.md",
         SKILL / "references" / "prompt-completeness.md",
         SKILL / "references" / "bounded-repair-loop.md",
+        SKILL / "references" / "cross-device-handoff.md",
         SKILL / "references" / "repository-sync.md",
         SKILL / "references" / "record-templates.md",
         SKILL / "scripts" / "inspect_candidate.py",
@@ -36,6 +37,7 @@ def main() -> None:
         SKILL / "scripts" / "validate_addon_package.py",
         SKILL / "scripts" / "validate_display_regions.py",
         SKILL / "scripts" / "validate_module_closure.py",
+        SKILL / "scripts" / "manage_cross_device_handoff.py",
     )
     missing = [
         path.relative_to(ROOT).as_posix()
@@ -114,6 +116,9 @@ def main() -> None:
             "Do not ask for a second approval",
             "validate_module_closure.py",
             "aeui-module-closure-report-v1",
+            "cross-device-handoff.md",
+            "manage_cross_device_handoff.py",
+            "`handoff/<module>/<component>/`",
         ),
         "asset workflow skill",
     )
@@ -171,6 +176,9 @@ def main() -> None:
             "现实信息密度",
             "稀疏样例与 contact sheet",
             "然后删除 work",
+            "## 跨设备暂停／恢复门禁",
+            "`repair-prepared`：`edit-input`",
+            "`handoff/<module>/`",
         ),
         "asset workflow state machine",
     )
@@ -321,6 +329,9 @@ def main() -> None:
             "不得静默回退到系统 `python3`",
             "Windows PowerShell 优先 `py -3`",
             "实际 `sys.executable` 与版本",
+            "`handoff/<module>/<component>/`",
+            "cross-device-handoff.md",
+            "| `handoff/resume` |",
         ),
         "repository sync",
     )
@@ -366,8 +377,41 @@ def main() -> None:
             "standing cleanup authorization",
             "aeui-module-closure-report-v1",
             "P6-C / module-closed",
+            "## 跨设备 handoff",
+            "aeui-cross-device-handoff-v1",
         ),
         "record templates",
+    )
+
+    cross_device = (
+        SKILL / "references" / "cross-device-handoff.md"
+    ).read_text(encoding="utf-8")
+    require(
+        cross_device,
+        (
+            "`generated/` 继续被 Git 忽略",
+            "`handoff/<module>/<component>/`",
+            "`simulation-reviewed`",
+            "`candidate-reviewed`",
+            "`candidate-rejected`",
+            "`repair-prepared`",
+            "最多 `3` 个 payload",
+            "单文件最多 `16 MiB`",
+            "合计最多 `32 MiB`",
+            "manage_cross_device_handoff.py",
+            "publish .",
+            "validate .",
+            "source_path",
+            "authoritative: false",
+            "may_be_runtime_input: false",
+            "replace_instead_of_accumulate: true",
+            "aeui-cross-device-handoff-report-v1",
+            "git_tracking_verified: true",
+            "UNTRACKED_CHECKPOINT_FILE",
+            "不能直接在 `main`、`master` 或 origin 默认分支",
+            "squash merge",
+        ),
+        "cross-device handoff reference",
     )
 
     interface = (SKILL / "agents" / "openai.yaml").read_text(encoding="utf-8")
@@ -376,8 +420,10 @@ def main() -> None:
         (
             'display_name: "AEUI 资产生成与审查"',
             "真实展示区门禁",
+            "跨设备检查点",
             'default_prompt: "Use $run-aeui-asset-workflow',
             "preview it locally",
+            "validated minimal cross-device checkpoint",
             "provider-to-art display regions",
             "five-generation review-repair workflow",
             "fresh-checkout-installable addon package",
@@ -455,6 +501,198 @@ def main() -> None:
     assert package_report["build_required_on_target_device"] is False
     assert package_report["violations"] == []
 
+    handoff_script = SKILL / "scripts" / "manage_cross_device_handoff.py"
+    compile(
+        handoff_script.read_text(encoding="utf-8"),
+        str(handoff_script),
+        "exec",
+    )
+    handoff_help = subprocess.run(
+        [sys.executable, str(handoff_script), "--help"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert handoff_help.returncode == 0, handoff_help.stderr
+    assert "minimal cross-device AEUI handoff checkpoints" in handoff_help.stdout
+
+    with tempfile.TemporaryDirectory() as temporary:
+        fixture = Path(temporary) / "repo"
+        work = fixture / "docs" / "modules" / "demo" / "work" / "DEMO.md"
+        generated = fixture / "generated" / "demo" / "batch"
+        work.parent.mkdir(parents=True)
+        generated.mkdir(parents=True)
+        work.write_text(
+            "# Demo\n\n- 子状态：candidate-reviewed\n",
+            encoding="utf-8",
+        )
+        (fixture / ".gitignore").write_text("/generated/\n", encoding="utf-8")
+        candidate = generated / "candidate.png"
+        preview = generated / "real-layout.png"
+        candidate.write_bytes(b"candidate")
+        preview.write_bytes(b"preview")
+        for command in (
+            ["git", "-C", str(fixture), "init", "-q"],
+            ["git", "-C", str(fixture), "config", "user.name", "AEUI Test"],
+            [
+                "git",
+                "-C",
+                str(fixture),
+                "config",
+                "user.email",
+                "aeui@example.invalid",
+            ],
+            ["git", "-C", str(fixture), "add", ".gitignore", "docs"],
+            ["git", "-C", str(fixture), "commit", "-qm", "fixture work"],
+        ):
+            subprocess.run(command, check=True, capture_output=True)
+
+        publish_command = [
+            sys.executable,
+            str(handoff_script),
+            "publish",
+            str(fixture),
+            "--module",
+            "demo",
+            "--component",
+            "DEMO.COMPONENT",
+            "--state",
+            "candidate-reviewed",
+            "--work-file",
+            "docs/modules/demo/work/DEMO.md",
+            "--prompt-version",
+            "DEMO.V1.r2",
+            "--next-gate",
+            "user visual review",
+            "--attempts-used",
+            "3",
+            "--attempt-limit",
+            "5",
+            "--process-errors",
+            "1",
+            "--payload",
+            "candidate=generated/demo/batch/candidate.png",
+            "--payload",
+            "real-layout-preview=generated/demo/batch/real-layout.png",
+        ]
+        protected_result = subprocess.run(
+            publish_command,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        assert protected_result.returncode == 2, protected_result.stdout
+        assert "protected branch" in protected_result.stderr
+        assert not (fixture / "handoff").exists()
+        subprocess.run(
+            ["git", "-C", str(fixture), "checkout", "-qb", "feature/demo"],
+            check=True,
+            capture_output=True,
+        )
+
+        publish_result = subprocess.run(
+            publish_command,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        assert publish_result.returncode == 0, (
+            publish_result.stdout + publish_result.stderr
+        )
+        publish_report = json.loads(publish_result.stdout)
+        assert publish_report["schema"] == "aeui-cross-device-handoff-report-v1"
+        assert publish_report["status"] == "pass"
+        assert publish_report["git_tracking_verified"] is False
+        assert publish_report["checkpoint_count"] == 1
+        assert publish_report["payload_count"] == 2
+
+        manifest_path = (
+            fixture / "handoff" / "demo" / "DEMO.COMPONENT" / "manifest.json"
+        )
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        assert manifest["schema"] == "aeui-cross-device-handoff-v1"
+        assert manifest["branch"] == "feature/demo"
+        assert manifest["contract"]["authoritative"] is False
+        assert manifest["attempt_budget"] == {
+            "used": 3,
+            "limit": 5,
+            "process_errors": 1,
+        }
+        untracked_result = subprocess.run(
+            [sys.executable, str(handoff_script), "validate", str(fixture)],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        assert untracked_result.returncode == 1, untracked_result.stderr
+        assert "UNTRACKED_CHECKPOINT_FILE" in untracked_result.stdout
+        subprocess.run(
+            ["git", "-C", str(fixture), "add", "handoff"],
+            check=True,
+            capture_output=True,
+        )
+        subprocess.run(
+            ["git", "-C", str(fixture), "commit", "-qm", "handoff checkpoint"],
+            check=True,
+            capture_output=True,
+        )
+
+        validate_result = subprocess.run(
+            [
+                sys.executable,
+                str(handoff_script),
+                "validate",
+                str(fixture),
+                "--module",
+                "demo",
+                "--component",
+                "DEMO.COMPONENT",
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        assert validate_result.returncode == 0, (
+            validate_result.stdout + validate_result.stderr
+        )
+        assert json.loads(validate_result.stdout)["git_tracking_verified"] is True
+
+        missing_result = subprocess.run(
+            [
+                sys.executable,
+                str(handoff_script),
+                "validate",
+                str(fixture),
+                "--module",
+                "demo",
+                "--component",
+                "MISSING",
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        assert missing_result.returncode == 1, missing_result.stderr
+        assert "FILTER_TARGET_MISSING" in missing_result.stdout
+
+        payload_path = (
+            fixture
+            / "handoff"
+            / "demo"
+            / "DEMO.COMPONENT"
+            / "payloads"
+            / "candidate.png"
+        )
+        payload_path.write_bytes(b"tampered")
+        tampered_result = subprocess.run(
+            [sys.executable, str(handoff_script), "validate", str(fixture)],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        assert tampered_result.returncode == 1, tampered_result.stderr
+        assert "PAYLOAD_HASH_MISMATCH" in tampered_result.stdout
+
     closure_script = SKILL / "scripts" / "validate_module_closure.py"
     compile(
         closure_script.read_text(encoding="utf-8"),
@@ -523,6 +761,9 @@ def main() -> None:
         work = module_dir / "work"
         work.mkdir()
         (work / "ACTIVE.md").write_text("# Active\n", encoding="utf-8")
+        handoff = fixture / "handoff" / "demo" / "DEMO.COMPONENT"
+        handoff.mkdir(parents=True)
+        (handoff / "manifest.json").write_text("{}\n", encoding="utf-8")
         (
             fixture
             / "assets"
@@ -548,6 +789,7 @@ def main() -> None:
         assert {
             "GENERATED_DATA_REMAINS",
             "WORK_DIRECTORY_REMAINS",
+            "HANDOFF_DATA_REMAINS",
             "STALE_GENERATED_REFERENCE",
         } <= violation_codes
 
@@ -671,6 +913,7 @@ def main() -> None:
             "fresh-checkout",
             "另一台设备不得再生成资产",
             "清空整个 `generated/<module>/`",
+            "`handoff/<module>/`",
             "validate_module_closure.py",
             "`P6-C / module-closed`",
         ),
