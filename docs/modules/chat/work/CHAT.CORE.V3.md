@@ -7,9 +7,9 @@
   `CHAT.UNREAD`、`CHAT.TEXT`
 - 版本：`CHAT.CORE.V3 / runtime contract v1.21`；输入生产版本
   `CHAT.INPUT.DARK.V1.r3 attempt 4 / runtime-exported`；Tab 替换方向
-  `CHAT.TABS.DARK.V1.r2 attempt 3 / exception-candidate`
+  `CHAT.TABS.DARK.V2 / simulation-reviewed`；V1 attempt 3 已由用户否决
 - 子状态：核心 `runtime-exported`；输入 `runtime-exported / P5`；Tab 替换
-  `repair-budget-exhausted / user-review-required / P3`
+  `simulation-reviewed / user-review-required / P2`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 当前操作：Full V1 固定 P4 source 已按全图比例确定性导出到 `1024²`
@@ -38,6 +38,15 @@
   焦点、光标、IME、历史、频道头、键盘事件和命中几何不变。旧 V3 输入 TGA
   仅作 P6-C 前回退。模拟 ImageGen `0/0`、生产 ImageGen `4/5`、P4→P5 导出
   ImageGen `0`、流程错误 `4`；四个流程错误均无候选图或 provider 生成证据
+- `2026-08-04`：用户否决 `CHAT.TABS.DARK.V1.r2 attempt 3` 的综合色观感，首个
+  失败门禁为轮廓／物件身份：四态被收敛成等高、等宽、直边、近似网页标签的
+  规整条块，深色材质本身不能补回旧 Tab 的手工物件感。该候选因此从
+  `exception-candidate` 转为 `candidate-rejected / user-rejected`，不再允许
+  接受例外、进入 P4 或作为后续 edit 输入。新建 `CHAT.TABS.DARK.V2`，只把
+  旧 V3 的斜梯形皮签、外撇端部、不完全平直缝线、夹页／承托物理关系作为
+  轮廓权威，同时保留已确认的深色收敛、无浅色 selected、无连续亮金 shelf、
+  `92 × 30px` 外接框和既有命中区。V2 已完成纯本地几何预演；未调用
+  ImageGen、未上传、未改 addon，等待用户方向复审。
 - 已凝结视觉方向：`CHAT-DARK-SIM-V1 / simulation-confirmed / P2` 的 B 方向
   已由 `CHAT.FRAME.FULL.V1.r1 / runtime-exported / P5` 实现；不再作为并行候选
 - 已退回生产批次：`CHAT.FRAME.PAPER.V1 / candidate-rejected / P3`；固定
@@ -3005,9 +3014,9 @@ is baked into the sheet.
   `ChatFrameNTab`／`ChatFrameNTabText`，后者对应
   `pfUI.chat.left.panelTop` 上的一枚连续承托 Texture；没有新增 Button、Tab、
   文字、配置入口或消息功能。
-- 生产版本：`CHAT.TABS.DARK.V1 / repair-budget-exhausted`；
-  生成前模拟：`CHAT.TABS.DARK.SIM.V1 / simulation-confirmed`；项目现行 runtime 仍为
-  `CHAT.CORE.V3 1.21 / P5`，替换候选停在 `P3`。
+- 历史生产版本：`CHAT.TABS.DARK.V1 / candidate-rejected / user-rejected`；
+  当前生成前模拟：`CHAT.TABS.DARK.SIM.V2 / simulation-reviewed`；项目现行
+  runtime 仍为 `CHAT.CORE.V3 1.21 / P5`，新替换方向停在 `P2`。
 - 操作：`generate/edit loop closed`。固定执行器为
   `imagegen-0-143-0 / @openai/codex@0.143.0`；模拟 ImageGen `0/0`，生产
   `5/5`，流程错误 `2`。四张固定 SHA 输入和冻结修复边界均按授权执行；额度
@@ -3017,10 +3026,12 @@ is baked into the sheet.
   原生 pfUI fallback。V3 Tab 于 `2026-07-29` 接入，未随 `2026-08-03` 的
   Full V1／Dark V1 更新重绘；selected 行含大面积浅纸层，承托带有贯穿亮边，
   且 adapter 使用 `SetVertexColor(1,1,1,1)` 原色显示。
-- 下一门禁：用户审视 attempt 3 的确定性合同例外。只有用户明确允许忽略
-  `.r2` 临时增加的逐像素 scaffold hard-mask，并继续以原冻结 cell、至少
-  `4px` 隔离、真实排版和 display-region 为验收权威，attempt 3 才可进入 P4；
-  否则必须另开新版本与新授权。
+- 用户否决：`2026-08-04` 明确指出 attempt 3 “太工整”，要求参考旧 Tab
+  样式。该反馈改变可见轮廓，已越出 V1 冻结修复边界；V1 授权与预算均关闭，
+  attempt 3 不得再晋级或用于 edit。
+- 下一门禁：用户审视 `CHAT.TABS.DARK.SIM.V2` 的本地真实排版预演。接受后才
+  重写 V2 完整生产 Prompt、建立新 scaffold／固定输入／`0/5` 预算，并另行
+  请求精确生产授权；不接受则仍只修改本地模拟。
 
 ### 美术基准继承与冲突裁决
 
@@ -3041,9 +3052,10 @@ is baked into the sheet.
 5. `assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_r1.png`，SHA-256
    `a97d9c5f…c673`：只作为当前邻接书体的深胡桃／暖黑烟褐材料与综合色重参考，
    不改变更高权威的时代语言，也不复制完整书框。
-6. `assets/source/chat/v3/ChatTabs_Master_v3.png` 仅保留历史几何／四状态证据。
-   用户的实机反馈否决其当前浅金综合色重，因此旧 selected 浅纸底、连续亮边、
-   高亮缝线和旧颜色不是必须继承内容。
+6. `assets/source/chat/v3/ChatTabs_Master_v3.png` 是 V2 的旧式轮廓／四状态物理
+   关系权威：继承略斜梯形、外撇下角、手工缝线误差、selected 在同一画布内
+   抬升并露出夹页层，以及 Tab 压在承托带前方的关系。用户的实机反馈仍否决
+   它的浅金综合色重，因此浅色 selected、大面积亮纸、连续亮边和旧颜色不继承。
 
 本批必须继承：厚旧皮革索引签首先像夹在书页上的实体物件；轮廓稍有手绘误差，
 左上暖光；普通态后退，hover 只有一段短暖边，selected 在同一外接框内略抬并
@@ -3872,7 +3884,55 @@ rail; no dynamic content; quiet stretch centers; upper-left warm light.
 - 待审真实排版：
   `generated/chat/core/CHAT.TABS.DARK.V1/attempt-03/review/candidate-real-layout.png`，
   SHA-256 `7b79ac2b26061cea10999a522bccc1328870b656033e494f94d20416c63dc89a`。
-- 当前状态仅为 `exception-candidate / user-review-required / P3`。用户明确接受
-  上述例外后，下一步只执行 P4 source 固化与 provenance；在 P4 完成前不得导出
-  TGA 或修改 Lua。若用户不接受，则保留现行 V3 runtime，并以新版本、新正文、
-  新预算重新进入生成前模拟／授权门禁。
+- 历史状态曾为 `exception-candidate / user-review-required / P3`；用户于
+  `2026-08-04` 明确否决其过于规整的轮廓，现已转为
+  `candidate-rejected / user-rejected / P3`。attempt 3 不得进入 P4、不得导出
+  TGA、不得修改 Lua，也不得作为 V2 的 edit 输入。现行 V3 runtime 保留。
+
+## `CHAT.TABS.DARK.V2` 旧式皮革索引签轮廓收敛
+
+### 否决边界与新方向
+
+- 用户原文：`不行. 这个tab的样式太工整了. 参考一下旧的tab样式`。
+- V1 第一个失败门禁：`silhouette / physical-object identity`。attempt 3 虽通过
+  cell、隔离、排版和展示区域，但四枚 Tab 的直边矩形、等高顶线、镜像端帽和
+  规则内框先被读成现代网页标签；这不是颜色或微纹理修复可以解决的问题。
+- V2 继承旧 V3 的物理语法而不复制旧像素：紧凑斜梯形皮革索引签、手切波动
+  顶边、向外踢出的下角、不等距缝线、单侧修补结、selected 在不改变外接框时
+  略抬并露出一小段被烟熏压暗的夹页层。四枚标签仍是同一造型家族，不变成
+  四个不同按钮。
+- 继续冻结：深胡桃／烟褐皮革为主，selected 不得出现大面积浅纸，shelf 不得
+  出现贯穿亮金线；runtime 每枚 `92 × 30px`、间距 `3px`、底部 `8px` 命中
+  扩展、shelf `frameWidth-60 × 16px @ TOPLEFT(30,18)` 均不变。动态文字仍由
+  runtime 居中绘制。
+- V2 尚未有生产 Prompt、scaffold、上传输入、ImageGen 预算或 source/runtime；
+  V1 的五次生成和两次流程错误不转移到 V2。
+
+### 生成前模拟 `CHAT.TABS.DARK.SIM.V2`
+
+- renderer：`tools/render_chat_tabs_dark_simulation_v1.py`；specification：
+  `tools/specs/chat_tabs_dark_simulation_v2.json`。macOS 使用已验证解释器
+  `/Users/yuanshiyao/miniconda3/envs/py312/bin/python`，Python `3.12.12`；命令：
+  `conda run -n py312 python tools/render_chat_tabs_dark_simulation_v1.py tools/specs/chat_tabs_dark_simulation_v2.json`。
+- 输出：
+  `generated/chat/core/CHAT.TABS.DARK.V2/simulation/CHAT-TABS-DARK-SIM-V2/chat_tabs_dark_sim_v2.png`，
+  `1620 × 570 RGBA`，SHA-256
+  `eeb1c2944ec3794fe462dc6d1812a13ae0c34a2c43508291f38043c8d66ecc86`；metrics
+  SHA-256 `c8f810fdda8f456004570078c571ec0012a51247e816673463598f77522ffc11`。
+  `/private/tmp` 独立重放得到同一 PNG SHA。
+- 三个真实实例：左侧使用当前 tracked V3 runtime，只作为旧式轮廓／物理关系
+  对照；中间为 V2 四状态 `440 × 320`；右侧为 V2 `540 × 420`／22 行扩展。
+  Full V1 主框、Dark V1 输入、真实中文排版和经典 provider 颜色都来自当前
+  tracked runtime。V2 Tab／shelf 只用本地 polygon／line／平面色表达方向。
+- display-region contract：
+  `tools/specs/chat_tabs_dark_sim_display_region_v2.json`；报告：
+  `generated/chat/core/CHAT.TABS.DARK.V2/simulation/CHAT-TABS-DARK-SIM-V2/display-region-report.json`，
+  SHA-256 `95e1c76a134d560e4f9eaaaf9541708f17724a6d902cdfb61407d88cfd090cfc`。
+  三场景全部 `pass`，violations `0`。
+- ImageGen：`0/0`；外部上传：`0`；addon／TGA／Lua／TOC／SavedVariables：未改。
+- 内部结论：`displayable / simulation-reviewed / P2`。本图只能让用户判断轮廓、
+  状态重量、Tab 与 shelf／主框的图层关系及真实尺度；polygon 边缘、平涂、
+  缝线像素、Alpha 和磨损不是最终美术证据，禁止进入 source/runtime 或作为
+  ImageGen 输入。
+- 下一门禁：等待用户明确接受或否决 `CHAT.TABS.DARK.SIM.V2`。接受只冻结上述
+  方向，不接受几何模拟像素；之后另写 V2 完整生产正文并重新请求授权。

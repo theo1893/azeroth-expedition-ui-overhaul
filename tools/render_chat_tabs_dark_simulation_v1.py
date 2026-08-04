@@ -165,6 +165,209 @@ def build_dark_tabs(
     return output, evidence
 
 
+def draw_old_v3_shelf(frame: Image.Image, frame_width: int, colors: dict[str, Any]) -> None:
+    """Draw a dark shelf with the layered, repaired profile of the accepted V3 tabs.
+
+    The geometry is intentionally simple and non-production.  It preserves the
+    runtime shelf box while making the physical construction legible: a thin,
+    uneven page stack rests on a worn leather binding instead of a straight UI
+    rail.
+    """
+    draw = ImageDraw.Draw(frame, "RGBA")
+    left, top, right, bottom = 30, 18, frame_width - 30, 34
+    draw.polygon(
+        [
+            (left + 3, top + 6),
+            (left + 11, top + 3),
+            (left + 58, top + 4),
+            (left + 112, top + 2),
+            (right - 92, top + 3),
+            (right - 22, top + 2),
+            (right - 4, top + 5),
+            (right, bottom - 1),
+            (right - 8, bottom + 1),
+            (left + 6, bottom),
+            (left, bottom - 3),
+        ],
+        fill=layout.rgba("#070503B8"),
+    )
+    # The dark leather binding is the structural mass.
+    draw.polygon(
+        [
+            (left + 1, top + 7),
+            (left + 8, top + 5),
+            (left + 72, top + 6),
+            (left + 126, top + 4),
+            (right - 132, top + 6),
+            (right - 46, top + 4),
+            (right - 7, top + 6),
+            (right, top + 10),
+            (right - 2, bottom - 2),
+            (right - 10, bottom),
+            (left + 7, bottom - 1),
+            (left, bottom - 4),
+        ],
+        fill=layout.rgba(colors["shelf_leather"]),
+        outline=layout.rgba(colors["shelf_edge"]),
+    )
+    # Two subdued, uneven page edges sit above the leather.  They are deliberately
+    # broken so the shelf cannot read as a continuous gold separator.
+    page_layers = (
+        (top + 2, colors["shelf_page_dark"], ((left + 10, left + 91), (left + 116, right - 105), (right - 83, right - 13))),
+        (top + 4, colors["shelf_page_light"], ((left + 17, left + 65), (left + 137, left + 206), (right - 142, right - 31))),
+    )
+    for y, color, segments in page_layers:
+        for index, (x0, x1) in enumerate(segments):
+            draw.line(
+                (x0, y + (index % 2), x1, y + ((index + 1) % 2)),
+                fill=layout.rgba(color),
+                width=1,
+            )
+    draw.line((left + 12, bottom - 3, right - 14, bottom - 2), fill=layout.rgba(colors["shelf_seam"]), width=1)
+    # Small hand repairs echo the old shelf ends without creating end monuments.
+    stitch = layout.rgba(colors["shelf_stitch"])
+    draw.line((left + 5, top + 9, left + 13, bottom - 3), fill=stitch, width=1)
+    draw.line((left + 13, top + 8, left + 6, bottom - 3), fill=stitch, width=1)
+    draw.line((right - 13, top + 8, right - 5, bottom - 3), fill=stitch, width=1)
+    draw.line((right - 5, top + 9, right - 13, bottom - 3), fill=stitch, width=1)
+
+
+def draw_old_v3_tab(
+    frame: Image.Image,
+    x: int,
+    state: str,
+    label: str,
+    font: Any,
+    colors: dict[str, Any],
+    variant: int,
+) -> dict[str, Any]:
+    """Draw a dark tab using the compact, skewed leather-index grammar of V3."""
+    draw = ImageDraw.Draw(frame, "RGBA")
+    style = colors["states"][state]
+    y = int(style["top"])
+    width = 92
+
+    # Every state keeps the 92x30 runtime canvas.  The visible leather is a
+    # hand-cut trapezoid with kicked-out lower corners and an uneven crown,
+    # rather than a rectangle inset into that canvas.
+    crown_shift = (0, 1, -1, 0)[variant % 4]
+    silhouette = [
+        (x + 3, y + 10),
+        (x + 8, y + 5),
+        (x + 17, y + 3),
+        (x + 35, y + 3 + crown_shift),
+        (x + 43, y + 1),
+        (x + 52, y + 3),
+        (x + 74, y + 2 - crown_shift),
+        (x + 84, y + 5),
+        (x + 88, y + 10),
+        (x + 87, y + 19),
+        (x + 91, y + 26),
+        (x + 86, y + 29),
+        (x + 78, y + 26),
+        (x + 15, y + 27),
+        (x + 9, y + 29),
+        (x + 1, y + 27),
+        (x + 5, y + 19),
+    ]
+    shadow = [(px + 1, py + 2) for px, py in silhouette]
+    draw.polygon(shadow, fill=layout.rgba("#060403C7"))
+
+    if state == "selected":
+        # A compressed smoked-page tongue restores the old lifted-bookmark
+        # construction without reintroducing the rejected pale paper state.
+        draw.polygon(
+            [
+                (x + 9, y + 22),
+                (x + 83, y + 22),
+                (x + 87, y + 27),
+                (x + 82, y + 29),
+                (x + 63, y + 28),
+                (x + 48, y + 29),
+                (x + 26, y + 28),
+                (x + 12, y + 29),
+                (x + 6, y + 27),
+            ],
+            fill=layout.rgba(style["page_underlay"]),
+            outline=layout.rgba(style["page_underlay_edge"]),
+        )
+
+    draw.polygon(silhouette, fill=layout.rgba(style["fill"]), outline=layout.rgba(style["outline"]))
+
+    seam = [
+        (x + 8, y + 11),
+        (x + 13, y + 7),
+        (x + 31, y + 6 + crown_shift),
+        (x + 43, y + 5),
+        (x + 55, y + 6),
+        (x + 79, y + 6 - crown_shift),
+        (x + 84, y + 10),
+        (x + 83, y + 19),
+        (x + 86, y + 24),
+        (x + 78, y + 23),
+        (x + 15, y + 24),
+        (x + 7, y + 25),
+        (x + 9, y + 18),
+        (x + 8, y + 11),
+    ]
+    draw.line(seam, fill=layout.rgba(style["seam"]), width=1, joint="curve")
+
+    # Sparse, deliberately uneven stitches.  Their varying length and spacing
+    # are part of the old tab language; they are not repeated machine dashes.
+    stitch_y = y + 6
+    stitches = ((15, 20), (25, 29), (36, 42), (49, 53), (61, 67), (73, 77))
+    for index, (sx0, sx1) in enumerate(stitches):
+        dy = (index + variant) % 2
+        draw.line((x + sx0, stitch_y + dy, x + sx1, stitch_y + 1 - dy), fill=layout.rgba(style["stitch"]), width=1)
+
+    # One laced repair alternates sides between cells, breaking cloned symmetry
+    # while remaining well outside the live text-safe center.
+    repair_x = x + (11 if variant % 2 == 0 else 80)
+    draw.line((repair_x - 3, y + 18, repair_x + 3, y + 25), fill=layout.rgba(style["stitch"]), width=1)
+    draw.line((repair_x + 3, y + 18, repair_x - 3, y + 25), fill=layout.rgba(style["stitch"]), width=1)
+
+    if style["glint"]:
+        glint_width = int(style["glint_width"])
+        center = x + width // 2 + (-2 if variant % 2 else 1)
+        draw.line(
+            (center - glint_width // 2, y + 4, center + glint_width // 2, y + 3),
+            fill=layout.rgba(style["glint"]),
+            width=1,
+        )
+
+    draw.text(
+        (x + width // 2, y + 17),
+        label,
+        font=font,
+        fill=layout.rgba(style["text"]),
+        anchor="mm",
+    )
+    return {
+        "state": state,
+        "visual_box": [x, 0, x + width, 34],
+        "hit_box": [x, 2, x + width, 40],
+        "visible_identity": "skewed hand-cut leather index with kicked corners",
+    }
+
+
+def build_old_v3_tabs(
+    book: Image.Image,
+    labels: list[str],
+    states: list[str],
+    tab_font: Any,
+    colors: dict[str, Any],
+) -> tuple[Image.Image, list[dict[str, Any]]]:
+    if len(labels) != 4 or len(states) != 4:
+        raise ValueError("simulation requires exactly four live tabs and four states")
+    output = book.copy()
+    draw_old_v3_shelf(output, output.width, colors)
+    evidence = []
+    for index, (label, state) in enumerate(zip(labels, states, strict=True)):
+        x = 30 + index * 95
+        evidence.append(draw_old_v3_tab(output, x, state, label, tab_font, colors, index))
+    return output, evidence
+
+
 def main() -> None:
     args = parse_args()
     spec_path = args.spec.resolve()
@@ -240,7 +443,7 @@ def main() -> None:
                 spec["runtime_tab_text"]["normal"],
             )
             tab_evidence = [{"state": "selected" if index == scenario["selected_tab"] else "normal"} for index in range(4)]
-        else:
+        elif scenario["tabs_mode"] == "geometric-dark":
             assembled, tab_evidence = build_dark_tabs(
                 book,
                 direction["tabs"],
@@ -248,6 +451,16 @@ def main() -> None:
                 tab_font,
                 spec["proposal"],
             )
+        elif scenario["tabs_mode"] == "geometric-old-v3-dark":
+            assembled, tab_evidence = build_old_v3_tabs(
+                book,
+                direction["tabs"],
+                scenario["states"],
+                tab_font,
+                spec["proposal"],
+            )
+        else:
+            raise ValueError(f"unsupported tabs_mode: {scenario['tabs_mode']}")
 
         messages = list(direction["messages"][: scenario["message_count"]])
         messages.extend(scenario.get("extra_messages", []))
