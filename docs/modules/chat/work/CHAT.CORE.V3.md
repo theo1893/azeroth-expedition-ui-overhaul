@@ -4164,7 +4164,7 @@ Final self-check before returning the image: exactly five and only five isolated
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
 | 1/5 | `CHAT.TABS.DARK.V2` / `19706f9`（执行 HEAD `a5196ae`） | generate；固定 Image 1／2／3／4 | session `019fcb68-8fee-79c0-b0d1-db978c62248d`／provider cache `ig_0d1defc3d27c45fd016a7183515d7081918e9c95bc850fe4bd.png` | raw `…attempt01_raw.png`／`3cd3a237569d92d995d604b53785fb2cff8f4a0303ad722d879874e2d7864ebe`；keyed `…attempt01_keyed.png`／`eb02fe7c1d25fc667c78827858cd938042bbc2f42952048291b8d6032e6b7ab4` | source cell／隔离：cell 外 `103677` 个可见像素；shelf 左／右／底触边，四 Tab 均触底且各有横向触边 | 保留五对象、旧式不规则皮签、材料、四态与真实排版；`.r1` 仅以紧邻 raw Image 5 做独立等比缩放／移位并清除原位残影 | 内部失败；计 `1/5` |
-| 2/5 | `CHAT.TABS.DARK.V2.r1` / `待修复提交` | edit；固定 Image 1／2／3／4 + 紧邻 attempt 1 raw Image 5 |  |  |  |  | `ready` |
+| 2/5 | `CHAT.TABS.DARK.V2.r1` / `327cbfb` | edit；固定 Image 1／2／3／4 + 紧邻 attempt 1 raw Image 5 |  |  |  |  | `ready` |
 | 3/5 | `CHAT.TABS.DARK.V2.r2` /  | edit／generate |  |  |  |  |  |
 | 4/5 | `CHAT.TABS.DARK.V2.r3` /  | edit／generate |  |  |  |  |  |
 | 5/5 | `CHAT.TABS.DARK.V2.r4` /  | edit／generate |  |  |  |  |  |
