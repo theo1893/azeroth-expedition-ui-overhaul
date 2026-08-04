@@ -3,7 +3,7 @@
 ## 当前结论
 
 - 主模块视觉：已锁定。
-- Tab 替换方向：`CHAT.TABS.DARK.V2 / simulation-reviewed / P2`。V1 固定
+- Tab 替换方向：`CHAT.TABS.DARK.V2 / simulation-confirmed / production-draft / P2`。V1 固定
   0.143.0 循环已耗尽 `5/5`，流程错误 `2`；attempt 3 虽是唯一通过原冻结
   cell、真实排版与展示区域的候选，但用户于 `2026-08-04` 否决其轮廓过于
   工整，四态首先像现代网页标签，因此已转为 `candidate-rejected`，不得进入
@@ -12,7 +12,12 @@
   无大面积浅纸 selected、无贯穿亮金 shelf。已用当前 Full V1 主框、Dark V1
   输入、真实消息密度和精确 `440 × 320`／`540 × 420` 布局完成纯本地几何
   对照预演；三场景 display-region `0` violations，ImageGen `0/0`、上传 `0`、
-  addon 未改。当前等待用户确认 V2 方向；runtime 仍加载 V3。
+  addon 未改。用户于 `2026-08-04` 在看到该具体预演后回复“继续”，确认旧式
+  不规则皮签、深胡桃烟褐、压暗 selected 夹页、无连续亮金 shelf、原尺寸和
+  层序方向；模拟像素未被接受。完整 V2 生产正文、四张固定输入职责、
+  `1536×1024` 五 cell、三段伸缩、安全区、色键和 `0/5` 修复包络已经通过
+  完整性预检；新技术 scaffold SHA 为 `f02fba2d…565a9`。当前等待独立生产
+  授权；尚未上传或调用 ImageGen，runtime 仍加载 V3。
 - 输入视觉生产：`CHAT.INPUT.DARK.V1.r3 attempt 4 / runtime-exported / P5`。用户指出
   V3 浅金输入纸带在 Full V1 暖黑书页上会被读成现代进度条；已按真实
   `380 × 25px`、普通／聚焦两态、三段横向伸缩、`34/22px` 文字 inset，使用
@@ -203,7 +208,7 @@
 |---|---:|---|---|
 | `CHAT.FRAME`／`LEFT` | `P5` Full V1 / r1.19 | `ChatBookFrameFullV1.tga` 九宫格；唯一左侧实例；最终 atlas SHA `becb504f…25ae`；旧 V3 主框仅作回退 | `/reload` 检查主体、九宫格接缝、缩放、拖动和常用 UI Scale |
 | `CHAT.FRAME.RIGHT` | `P5` disabled-route | `single_chat_frame=1`；不分配资产 | 验证右框不显示且消息无丢失 |
-| `CHAT.TABS` | 当前 runtime `P5` V3；替换 `P2` V2 simulation-reviewed | V1 attempt 3 已因轮廓过于工整由用户否决；V2 本地预演恢复旧式斜梯形皮签、外撇端部、手工缝线和压暗夹页层，保留 `92×30`／原命中区、深色 selected 与低亮 shelf；三场景 `0` violations，ImageGen `0/0`，runtime 未改 | 用户确认／否决 `CHAT.TABS.DARK.SIM.V2`；确认后才写 V2 生产正文、scaffold 与新授权 |
+| `CHAT.TABS` | 当前 runtime `P5` V3；替换 `P2` V2 simulation-confirmed／production-draft | V1 attempt 3 已由用户否决；用户已确认 V2 旧式斜梯形皮签、外撇端部、手工缝线、压暗夹页层及深色低亮 shelf 方向。完整生产正文、固定 Image 1–4、五 cell scaffold 与 `0/5` 包络已就绪；无上传、ImageGen `0/0`、runtime 未改 | 用户独立授权 `CHAT.TABS.DARK.V2` 固定四输入、受限 Image 5 edit 与最多五次实际 ImageGen；“继续”不等于生图授权 |
 | `CHAT.INPUT` | `P5` `CHAT.INPUT.DARK.V1` / r1.20 | `ChatInputDarkV1.tga` 普通／聚焦两状态三段式 atlas；固定 source SHA `4df36bc…cda0`，最终 TGA SHA `43cb9a01…766`，共享 Alpha、最终真实排版与五场景 `0` violations；旧 V3 atlas 仅作回退 | 实机验证 normal/focus、输入文字、光标、IME、频道头、历史、键盘事件与 `380/480px` 伸缩 |
 | `CHAT.INPUT.LANGUAGE` | `P1` | 可选原生 Button 已映射 | 实机确认对象、尺寸和语言状态 |
 | `CHAT.UNREAD` | `P5` V3 | 独立 `ChatFrameNTabFlash` 覆盖 | 实机验证闪烁配置与选中清除 |
@@ -305,16 +310,20 @@
 
 ### 当前优先门禁
 
-1. `CHAT.INPUT.DARK.V1.r3 attempt 4` 已完成确定性 P4→P5：固定 source、正式
+1. `CHAT.TABS.DARK.V2` 已完成模拟确认和生产正文完整性预检，固定 Image 1–4、
+   五 cell scaffold 与新 `0/5` 包络已就绪；下一门禁是用户独立授权该精确
+   正文、四张固定 SHA 输入、受限同循环 Image 5 edit 和最多五次实际
+   ImageGen。授权前不上传、不调用、不改 addon。
+2. `CHAT.INPUT.DARK.V1.r3 attempt 4` 已完成确定性 P4→P5：固定 source、正式
    `ChatInputDarkV1.tga`、三段 adapter、最终 TGA 真实排版、display-region 与
    静态合同均已通过；导出阶段 ImageGen `0` 次，原生产仍为 `4/5`、流程错误
    `4`，剩余一次永久停止且不转移。下一门禁是目标客户端实机验证输入焦点、
    光标、IME、频道头、历史、键盘事件以及 normal/focus 可辨识度。
-2. `CHAT.FRAME.FULL.V1.r1` 已完成 P4→P5：最终 TGA、九宫格 adapter、暖黑
+3. `CHAT.FRAME.FULL.V1.r1` 已完成 P4→P5：最终 TGA、九宫格 adapter、暖黑
    纸面、五场景真实排版和 display-region 均已验证；v1.21 另行移除消息改色
    wrapper 并恢复经典 provider 配色。本阶段 ImageGen
    `0` 次，原批次总计仍为 `2/5`，剩余三次终止且不转移。
-3. 游戏设备可用后仍需执行 Turtle WoW `1.18.1` `/reload` P6 门禁；当前不
+4. 游戏设备可用后仍需执行 Turtle WoW `1.18.1` `/reload` P6 门禁；当前不
    清理 source、runtime 证据或 V3 回退。
 
 ### 仍保留的 v1.21 实机门禁

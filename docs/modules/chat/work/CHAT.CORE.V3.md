@@ -7,9 +7,10 @@
   `CHAT.UNREAD`、`CHAT.TEXT`
 - 版本：`CHAT.CORE.V3 / runtime contract v1.21`；输入生产版本
   `CHAT.INPUT.DARK.V1.r3 attempt 4 / runtime-exported`；Tab 替换方向
-  `CHAT.TABS.DARK.V2 / simulation-reviewed`；V1 attempt 3 已由用户否决
+  `CHAT.TABS.DARK.V2 / simulation-confirmed / production-draft`；V1 attempt 3
+  已由用户否决
 - 子状态：核心 `runtime-exported`；输入 `runtime-exported / P5`；Tab 替换
-  `simulation-reviewed / user-review-required / P2`
+  `simulation-confirmed / production-authorization-required / P2`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 当前操作：Full V1 固定 P4 source 已按全图比例确定性导出到 `1024²`
@@ -3015,7 +3016,7 @@ is baked into the sheet.
   `pfUI.chat.left.panelTop` 上的一枚连续承托 Texture；没有新增 Button、Tab、
   文字、配置入口或消息功能。
 - 历史生产版本：`CHAT.TABS.DARK.V1 / candidate-rejected / user-rejected`；
-  当前生成前模拟：`CHAT.TABS.DARK.SIM.V2 / simulation-reviewed`；项目现行
+  当前生成前模拟：`CHAT.TABS.DARK.SIM.V2 / simulation-confirmed`；项目现行
   runtime 仍为 `CHAT.CORE.V3 1.21 / P5`，新替换方向停在 `P2`。
 - 操作：`generate/edit loop closed`。固定执行器为
   `imagegen-0-143-0 / @openai/codex@0.143.0`；模拟 ImageGen `0/0`，生产
@@ -3934,5 +3935,200 @@ rail; no dynamic content; quiet stretch centers; upper-left warm light.
   状态重量、Tab 与 shelf／主框的图层关系及真实尺度；polygon 边缘、平涂、
   缝线像素、Alpha 和磨损不是最终美术证据，禁止进入 source/runtime 或作为
   ImageGen 输入。
-- 下一门禁：等待用户明确接受或否决 `CHAT.TABS.DARK.SIM.V2`。接受只冻结上述
-  方向，不接受几何模拟像素；之后另写 V2 完整生产正文并重新请求授权。
+- 模拟展示时的门禁曾是用户确认／否决；用户已在本轮回复“继续”完成方向
+  确认。当前门禁改为下方精确 V2 生产正文的独立授权。
+
+### 用户方向确认
+
+- 具体模拟版本：`CHAT.TABS.DARK.SIM.V2`。
+- 用户结论／日期：`2026-08-04 / confirmed`；用户在看到左侧旧 V3 轮廓对照、
+  中间 `440 × 320` 四状态与右侧 `540 × 420` 扩展实例后回复“继续”。
+- 已冻结并写入生产正文的可见条款：Tab 必须首先像夹进战地旧书上沿的手切
+  皮革索引签；恢复旧 V3 的略斜梯形、外撇下角、不齐顶边、非机械缝线和
+  selected 夹页／承托关系；综合色仍为深胡桃烟褐，selected 只露少量压暗
+  夹页而非浅纸牌，shelf 不出现贯穿亮金线；四枚 `92 × 30px`、原间距、原
+  命中区和书框层序不变。
+- 未接受内容：模拟 polygon、平涂、字体栅格、缝线像素、Alpha、atlas 切片和
+  微观磨损；模拟 PNG 继续禁止裁切、晋级或上传为生产输入。
+- 确认失效条件：改回规整矩形牌、浅色 selected、连续亮金 shelf，或改变
+  Tab／shelf 的可见物件身份、综合色、尺寸、层序和交互状态语义时，必须重新
+  模拟。仅完善 source cell、色键和切片合同不使本确认失效。
+- 下一门禁已推进为：用户审视并独立授权下方精确
+  `CHAT.TABS.DARK.V2` 生产正文、四张固定输入、冻结修复边界和最多五次实际
+  ImageGen 调用。
+
+### V2 美术继承与固定输入职责
+
+权威顺序与组件级转译：
+
+1. `assets/locked/chat/聊天框视觉基准_v1.png`，SHA-256
+   `90e30ba405a2b5cdc707cc229e56c4f64e51d0e4051f1e98dbcd2ec2ee70ee06`，以及
+   `ART_BASELINE.md`／`SUBMODULE_ART_BASELINES.md`：最高时代、物件身份和
+   游戏内综合色权威。继承 2004 年前后香草二维手绘位图、紧凑索引签、粗厚
+   手工边、左上暖光和战地旧书关系；忽略图中其他战斗 HUD、角色、动作条、
+   地图、任务追踪和动态文字。
+2. `assets/locked/chat/聊天框独立艺术资源_v3.png`，SHA-256
+   `272528e6d89cc90e5cbb37dce4ae572ddf9de0402078cdcf0ed5804f734faab8`，及同一
+   Chat Prompt provenance：只继承二维位图实体厚度、材料切面、短促暖光、
+   手绘误差和磨损尺度；不继承巨型框、龙饰、尖冠、规则槽、镜像建筑和浅色
+   大纸面。本图不作为本次上传输入，其稳定 DNA 已完整写入正文。
+3. `docs/GLOBAL_ART_BASELINE.md`：香草原结构先于 overhaul 装饰；深胡桃旧
+   皮革、暖赭烟褐纸、少量氧化黄铜；禁止现代网页 Tab、玻璃、胶囊、精密
+   工业网格和暗黑 3 式黑铁尖冠。
+4. `SUBMODULES.md` 与当前 adapter：一枚可横向延展 shelf、四状态 Tab，固定
+   `92 × 30px`／`3px` 间距／`2px` 顶偏移／`8px` 底部命中扩展，shelf 为
+   `frameWidth-60 × 16px @ TOPLEFT(30,18)`；文字由 runtime 居中绘制。
+5. `assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_r1.png`，SHA-256
+   `a97d9c5fa055a119cd5ea7809bdaa51460cddb9674355efcec35f98f6cd2c673`：只提供
+   当前相邻书体的深胡桃皮革、暖黑烟褐、纤维／磨损尺度和左上暖光连续性；
+   不能提供 Tab 几何，也不能把完整书框画入 sheet。
+6. `assets/source/chat/v3/ChatTabs_Master_v3.png`，SHA-256
+   `8172d9d5145ac16ed23913fb7fbf75e626e0976d6bb33b27a555de4c55853023`：只提供
+   用户重新指定的旧式轮廓和物理关系——斜梯形、外撇下角、不齐缝线、
+   selected 抬起并露夹页、Tab 压在 shelf 前；忽略其浅色 selected、连续
+   金亮页边、旧综合色和过亮缝线。
+7. `CHAT_TABS_DARK_V2_scaffold.png`：只冻结 `1536 × 1024` canvas、五个逻辑
+   cell、对象顺序和纯绿隔离；灰阶、polygon、明暗和精确边缘没有美术权威。
+   V2 生成前模拟 PNG 不在上传范围。
+
+V1 attempt 1–5 全部只作为负面证据：尤其禁止 attempt 3 的四个规则直边矩形、
+完整内框、镜像端帽和机器式等距缝线。任何 V1 raw／keyed／review 图都不上传，
+也不得作为 V2 edit 输入。
+
+### V2 组件与 source／runtime 合同
+
+- 逻辑对象固定为五个：一枚 `CHAT.TAB_SHELF`；normal、hover、selected、
+  disabled 四枚无字 `CHAT.TABS` 状态。sheet 之外没有其他对象。
+- 源画布固定 `1536 × 1024 RGBA/RGB`，纯色键背景 `#00FF00`。cell：shelf
+  `[64,96,1472,232]`；normal `[64,560,384,716]`；hover
+  `[416,560,736,716]`；selected `[768,560,1088,716]`；disabled
+  `[1120,560,1440,716]`。每个对象必须完整留在自己的 cell，任何非绿像素
+  不得跨 cell；对象与 cell 边至少保留 `4px`，目标为 `8px` 以上。
+- 四个 Tab crop 均为 `320 × 156px`，确定性缩放为 `248 × 120px` 后装入
+  `512²` 四行 atlas，再以三段式绘制为 `92 × 30px`。约前／后各 `62px`
+  source 只承担端帽、外撇角、修补结和独特磨损；中间约 `196px` 必须低频、
+  无文字、无符号、无独特裂口或缝线终点并可横向延展。
+- 每个 Tab 的中央文字走廊保持平静：最终 runtime 水平各留 `6px`，文字区高
+  `18px`；高对比缝线、结、铆钉和裂口只放端帽。四态使用同一 `92 × 30px`
+  Button、文字中心和点击几何；selected 的抬升／夹页必须发生在不变画布内。
+- shelf crop 为 `1408 × 136px`，确定性缩放至 `1016 × 56px` 后装入
+  `1024 × 64px` atlas，在 runtime 横向延展为 `frameWidth-60 × 16px`。两端
+  可以有小型修补，中央必须低频连续且无唯一标记；不允许连续亮金导线。
+- z-order 固定：Full V1 主框在后，shelf 在其上，四枚 Tab 在 shelf 前，动态
+  TabText 最前；未读、正文和输入仍由现有独立对象持有。
+- Alpha 策略：生成时允许纯 `#00FF00` 色键；候选通过后只按候选自身像素做
+  确定性色键转 Alpha，全透明 RGB 清零。不得把 scaffold、模拟、旧 V3 或
+  Full V1 像素合成进候选。
+- 禁止烘焙：任何文字、频道名、图标、符号、未读标、书框、正文、输入条、
+  按钮、滚动／复制／语言控件、背景场景、标签或 sheet 说明。
+- fallback：P4/P5 前继续加载 `ChatTabAtlasV3.tga`／`ChatTabShelfV3.tga`；
+  本阶段不修改 Lua、TGA、TOC、pfUI、ChatMOD 或 SavedVariables。
+
+### V2 独立生产技术 scaffold（尚未上传）
+
+- specification：`tools/specs/chat_tabs_dark_production_scaffold_v2.json`；renderer：
+  `.codex/skills/run-aeui-asset-workflow/scripts/render_geometric_mockup.py`；macOS
+  命令：`conda run -n py312 python .codex/skills/run-aeui-asset-workflow/scripts/render_geometric_mockup.py tools/specs/chat_tabs_dark_production_scaffold_v2.json --repo-root .`。
+- 输出：
+  `generated/chat/core/CHAT.TABS.DARK.V2/production-scaffold/CHAT_TABS_DARK_V2_scaffold.png`，
+  `1536 × 1024 RGBA`，SHA-256
+  `f02fba2d8bf4bc3a7b117d1245a794d4288c81c54c3f93e50290e5fefd9565a9`。
+- 非绿像素全部位于五个声明 cell，cell 外为 `0`。scaffold bbox／cell 边距：
+  shelf `[80,110,1457,217]`，最小 `14px`；normal `[76,570,373,703]`，最小
+  `10px`；hover `[428,569,725,703]`，最小 `9px`；selected
+  `[780,566,1073,705]`，最小 `6px`；disabled `[1132,572,1429,705]`，最小
+  `11px`。这些 polygon 只表达不规则皮签与 selected 夹页的技术占位，不是
+  必须逐像素服从的 hard mask。
+- Python：`/Users/yuanshiyao/miniconda3/envs/py312/bin/python`，`3.12.12`。
+- ImageGen `0/0`；上传 `0`。只有用户授权下方精确正文后，scaffold 才可作为
+  固定 Image 4；V2 模拟 PNG 永不上传。
+
+### `CHAT.TABS.DARK.V2` 生产正文完整性预检
+
+- 复杂度：`atlas + four states + horizontal-three-slice + stretch`。
+- 结论：`pass / production-draft`。未知但执行必需的值：无。
+
+| 门禁 | 执行正文中的证据 | 结论 |
+|---|---|---|
+| 物件身份、精确范围、对象／状态数量与动态内容排除 | 首段与 inventory 固定为一条 shelf＋四态无字皮签，并逐项排除书框、文字、图标和其他控件 | pass |
+| 每张输入图的 inherit／ignore 职责与权威冲突 | Image 1–4 分别锁定时代身份、材料连续性、旧轮廓关系与技术 cell；每张均写明忽略项，文字基线优先 | pass |
+| 画布、格位、边距、方向、透视、尺度、光照与层序 | 精确 `1536×1024`、五 cell、纯绿隔离、正交前视、左上暖光及 shelf／Tab 层序全部显式 | pass |
+| 逐对象形态、材料、边缘、状态与相互关系 | shelf 与 normal／hover／selected／disabled 分段描述，selected 压暗夹页和旧式外撇轮廓可验证 | pass |
+| 文字安全区、裁切、拉伸、重复与接缝 | `320×156` Tab crop、`62/196/62px` 三段职责、runtime `6px/18px` 文字走廊与 shelf 低频中心均明确 | pass |
+| 美术 DNA、具体反模式、Alpha／色键与最终自检 | 香草手绘、深胡桃／烟褐、左上暖光、非机械误差、现代规则牌反模式及纯绿最终检查完整 | pass |
+
+- 去冗余结论：保留对象数、cell、旧式轮廓、状态语义、三段伸缩、纯绿色键和
+  规整网页牌反模式的高风险重复；删除 V1 逐次过程、commit 和用户情绪描述，
+  它们不进入执行正文。
+- 最终正文 UTF-8 body 为 `11075` bytes，SHA-256：
+  `14bce5c3f0b0d5ed931bc8bddcd68a5e50257c0e8f9e5a8455031b24e483392f`。授权必须指向该正文版本；
+  输入绝对路径、固定 SHA 复核和输出保存指令继续放在独立 execution
+  instruction，不改正文。
+
+### 完整生产正文 `CHAT.TABS.DARK.V2`（等待授权；attempt 1 必须原样执行）
+
+```text
+Create one production-ready modular 2D hand-painted sprite sheet for the channel tabs of a World of Warcraft Vanilla-era battlefield chat journal. This is a component sheet, not a screenshot, not a complete chat window, and not a presentation board. The only five visible objects are exactly: one long shared tab shelf, then four isolated wordless leather index-tab states in this exact order: normal, hover, selected, disabled. Do not add a fifth tab, a duplicate shelf, a book frame, a message area, an input strip, an unread marker, a button, an icon, a label, a rune, a caption, or any other object.
+
+The written art direction in this prompt is the highest authority. The first read must be a compact set of hand-cut leather channel indexes physically inserted into the upper page edge of a battered field journal from a 2004-era hand-painted fantasy MMORPG. They must feel made, repaired, and repeatedly handled inside Azeroth, not like modern dark UI tabs recolored brown. Use a flat orthographic front view, chunky low-resolution bitmap-minded painting, slightly coarse brush edges, controlled handmade error, clear material thickness, warm light from the upper left, low-saturation warm-brown contrast, and short contact shadows. The objects must remain readable when reduced to the real game sizes stated below.
+
+Image 1 is the highest supplied visual reference for period identity, compact HUD weight, and the physical relationship between a Vanilla-era chat book and its channel indexes. Inherit its 2004-era hand-painted bitmap language, restrained footprint, thick readable silhouettes, warm directional light, and the sense that the tabs belong to an in-world field journal. Ignore every character, combat scene, unit frame, action bar, map, quest tracker, message, label, and unrelated UI object in Image 1. Do not reproduce its complete screenshot or bake any runtime content.
+
+Image 2 is a lower-authority material-continuity reference for the currently accepted chat book. Inherit only its deep walnut worn leather, warm soot-brown paper, fibrous wear scale, subdued edge highlights, contact shadows, asymmetry, and upper-left light. Ignore its complete book silhouette, reading surface, binding, brass corner, page layout, alpha boundary, and canvas composition. Do not draw any part of the complete frame into this sheet, and do not treat Image 2 as higher visual authority than the written Vanilla-era baseline or Image 1.
+
+Image 3 is a lower-authority structural reference for the old tab language specifically requested by the user. Inherit only these physical and silhouette traits: compact slightly skewed trapezoidal leather index markers; mildly uneven hand-cut crowns; lower corners that kick outward instead of forming a clean rectangle; sparse imperfect stitching; a selected leather marker that lifts inside the same canvas and exposes a small page layer at its base; and a shared page-and-leather shelf sitting behind all tabs. Explicitly ignore Image 3's pale selected-page slab, bright golden continuous page edge, old light palette, over-bright seams, and any exact old pixel. Do not copy, crop, trace, or reconstruct Image 3 pixel-for-pixel.
+
+Image 4 is a technical scaffold only. It is authoritative for the 1536 x 1024 canvas, the five declared cells, their order, approximate occupancy, and pure-green separation. Its gray values, polygon edges, symmetry, lighting, and surface are not art references and must not appear in the final art. Keep every object completely inside its own cell, but replace the crude polygons with coherent hand-painted physical objects. Image 4 is not a pixel-perfect hard mask: preserve the cell contract and inner margins, not its exact polygon boundary.
+
+Use this material hierarchy. The tabs are primarily deep walnut worn leather near #28180E, with warmer handled planes around #442A19, structural dark-brown seams near #24170F, and restrained soot-dark recesses. The shelf combines a dark leather binding below with thin smoked warm-brown page layers above. The selected under-page tongue may use a subdued smoked ochre-brown around #674923, never pale cream, bright parchment, or gold. Stitching is aged thread or leather cord, not a continuous metal border. Oxidized brass around #80602D may appear only as a tiny repair accent and must occupy less than five percent of any tab. Highlights are short, matte, broken, and warm; no glossy gold, white rim light, neon, or full-length bright line.
+
+The shared shelf is one thin horizontal physical support behind the four tabs. It must read as an uneven dark stack of compressed page edges resting on a worn leather binding, with two or three low-contrast deckled layers, shallow contact shadow, and at most a small asymmetric stitch repair at each fixed end. It must not become a straight gold separator, a framed status bar, a row of four slots, a metal rail, or a second panel. Keep the long center low-frequency and horizontally stretchable: no unique knot, tear, rivet, seam endpoint, repeating dash pattern, or bright feature in the stretch center. Any distinctive repair belongs only near the fixed ends. The top edge may undulate softly, but it must remain thin and quiet at 16 runtime pixels.
+
+The four tab states are members of one handmade leather-index family. Their common underlying object is a compact skewed trapezoid with a softly uneven crown, clipped hand-cut shoulders, outward-kicked lower corners, a broad calm leather center, and a shallow attachment edge that visibly meets the shelf. Do not fill the rectangular source cell with a rectangular plaque. Do not use ruler-straight parallel top and bottom edges, mirrored bevels, perfectly matching end caps, a complete inset rectangular frame, evenly spaced machine stitches, repeated corner ornaments, or identical cloned wear. Controlled asymmetry must feel functional: vary stitch spacing, crown waviness, and one small repair from side to side while keeping all states recognizably the same physical tab family and preserving their common canvas, left and right limits, text center, and bottom baseline.
+
+Normal is recessed, dark, matte, and visually pressed into the shelf. It retains the full readable silhouette but has the lowest active contrast. Hover keeps the same geometry and material; add only one short candle-warm response along part of the upper or shoulder edge plus a slightly clearer contact plane. Do not light the complete perimeter. Selected remains a leather tab, not a parchment card or brass nameplate. Lift the leather body visually by about four to six runtime pixels inside the unchanged canvas, deepen the contact shadow where it crosses the shelf, and expose only a narrow two-to-three-runtime-pixel smoked page tongue at the base. That page tongue must be dark ochre-brown, irregular, compressed, and subordinate to the leather; it must never become the large pale paper slab seen in Image 3. Disabled keeps the common silhouette but is darker, lower-contrast, slightly desaturated, and still physically legible; do not erase it into a flat black rectangle.
+
+Live channel names are drawn later by the game. Keep every tab wordless and symbol-free. At final runtime each tab is 92 x 30 UI pixels, with a centered text region 18 pixels high and at least 6 pixels of horizontal safety on both sides. In each 320 x 156 source crop, keep the broad center quiet and low-frequency. Confine knots, crossed repairs, high-contrast stitches, sharp tears, rivets, and distinctive wear to the fixed end zones. Approximately the first 62 source pixels and last 62 source pixels are fixed end-cap territory; the middle approximately 196 source pixels must survive horizontal extension without duplicated details, visible seams, or a stretched ornament. Material texture may continue through the middle only as subtle non-directional low-frequency leather grain.
+
+Use this exact 1536 x 1024 sheet contract. The shelf cell is [64,96,1472,232]. The normal cell is [64,560,384,716]. The hover cell is [416,560,736,716]. The selected cell is [768,560,1088,716]. The disabled cell is [1120,560,1440,716]. The shelf crop is 1408 x 136 source pixels. Every tab crop is 320 x 156 source pixels. Keep every non-green object pixel inside its declared cell and leave at least 4 source pixels of perfectly pure green between the complete object and every cell edge; aim for 8 pixels or more. Do not let cast shadows, loose threads, highlights, antialiasing haze, or page fibers cross a cell boundary. Do not crop any kicked corner, stitch loop, selected page tongue, or shelf end.
+
+The exporter will scale each tab crop to a 248 x 120 logical atlas cell and render it at 92 x 30 UI pixels with fixed left and right three-slice caps. It will scale the shelf into a 1016 x 56 atlas strip and render it behind the tabs at frameWidth minus 60 by 16 UI pixels. Therefore all four states must share compatible external proportions, center alignment, and baseline; state switching must not appear to move the Button or its live text. The shelf must remain behind the tabs, and the selected tab must overlap it through contact and occlusion rather than through a glowing outline.
+
+Paint the objects in a restrained Vanilla-era raster style. Preserve deliberate brush variation and material-specific wear, but avoid photographic antique rendering, high-frequency noise, modern product-rendering polish, vector-clean edges, smooth web gradients, glass, translucent acrylic, rounded pills, dark translucent cards, thin gold web borders, modern dashboard panels, precision industrial grids, Diablo III black spikes, skulls, demonic horns, giant crests, dragon heads, gems, glowing runes, and Elder Scrolls-like minimalist black overlays. In particular, reject the failed modern-tab anatomy: four equal rectangular leather plates with straight edges, complete inner frames, mirrored ends, and machine-perfect stitching.
+
+Place the five complete objects on one perfectly flat, uniform chroma-key green background exactly #00FF00. The entire background outside the objects, including all cell gaps and canvas edges, must be the same exact #00FF00 with no gradient, checkerboard, texture, floor, vignette, ambient shadow, green haze, or presentation frame. Do not output fake transparency. Do not include captions, numbers, cell outlines, guides, or debug labels. Object edges may be naturally antialiased against the green for deterministic keying, but no visible green may contaminate the leather or page interiors.
+
+Final self-check before returning the image: exactly five and only five isolated wordless objects; one shelf plus normal, hover, selected, disabled in the declared cells and order; all objects complete and separated by pure green; tabs read first as irregular hand-cut leather book indexes rather than rectangular UI buttons; selected stays dark leather with only a narrow smoked page tongue; shelf has no continuous bright rail; text centers and three-slice middle zones remain quiet; no runtime text or unrelated UI is baked; canvas is exactly 1536 x 1024 on uniform #00FF00.
+```
+
+### V2 固定上传与生产授权边界
+
+- 等待授权的固定输入：
+  - Image 1：`assets/locked/chat/聊天框视觉基准_v1.png`，SHA
+    `90e30ba405a2b5cdc707cc229e56c4f64e51d0e4051f1e98dbcd2ec2ee70ee06`；
+  - Image 2：`assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_r1.png`，SHA
+    `a97d9c5fa055a119cd5ea7809bdaa51460cddb9674355efcec35f98f6cd2c673`；
+  - Image 3：`assets/source/chat/v3/ChatTabs_Master_v3.png`，SHA
+    `8172d9d5145ac16ed23913fb7fbf75e626e0976d6bb33b27a555de4c55853023`；
+  - Image 4：`generated/chat/core/CHAT.TABS.DARK.V2/production-scaffold/CHAT_TABS_DARK_V2_scaffold.png`，
+    SHA `f02fba2d8bf4bc3a7b117d1245a794d4288c81c54c3f93e50290e5fefd9565a9`。
+- 不可变修复边界：`CHAT.TABS`／`CHAT.TAB_SHELF`；五对象与顺序；上述四张
+  输入及职责；`1536 × 1024` canvas、五 cell、纯绿色键；source crop、
+  `92 × 30` Tab／`16px` shelf、三段式／文字安全区／z-order；旧式不规则
+  皮签方向、深胡桃烟褐、压暗 selected 夹页、无连续亮金 shelf；动态内容排除。
+- 允许自主修复：最多五次实际 ImageGen 中，可在完整自包含 `.rN` 正文里只
+  修复第一个失败门禁的物件解剖、手工轮廓、材料连续性、四态辨识、cell 内
+  缩放／隔离、纯绿色键或微观磨损；可在明确保留正确区域时使用同循环紧邻
+  前次输出作为 Image 5 edit 输入，否则只用固定 Image 1–4 regenerate。
+- 必须重新授权：新增／替换参考或上传图；使用更早／外部失败稿；改变对象数、
+  状态、顺序、视觉方向、画布、cell、runtime 尺寸、层序、三段式、Alpha
+  策略、provider 或允许烘焙内容。
+- 预算：`0/5` 次实际 ImageGen generation/edit，含首次；流程／传输／权限／
+  上传／落盘错误若没有图片且没有 provider 生成证据则单列，不占额度。同一
+  流程错误针对性修复一次后仍重复则暂停。任何候选完整内审通过立即停止；
+  attempt 5 仍失败则 `candidate-rejected / repair-budget-exhausted`。
+- 当前状态：`simulation-confirmed / production-draft / P2`。尚未上传、未调用
+  ImageGen、未创建 source／runtime、未修改 addon。
+- 精确授权门禁：用户需要明确授权 `CHAT.TABS.DARK.V2`、四张固定 SHA 输入、
+  同循环紧邻前次输出的 Image 5 edit 范围、最多五次实际调用，以及流程错误
+  不占调用额度；“继续”本身不构成该生产授权。
