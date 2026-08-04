@@ -4140,8 +4140,9 @@ Final self-check before returning the image: exactly five and only five isolated
   上传／落盘错误若没有图片且没有 provider 生成证据则单列，不占额度。同一
   流程错误针对性修复一次后仍重复则暂停。任何候选完整内审通过立即停止；
   attempt 5 仍失败则 `candidate-rejected / repair-budget-exhausted`。
-- 当前状态：`prompt-authorized / attempt-01-ready / P3`。授权记录提交前仍未上传、
-  未调用 ImageGen、未创建 source／runtime、未修改 addon。
+- 当前状态：`prompt-authorized / attempt-01-ready / P3`。授权正文与记录已由
+  commit `19706f9` 固定；仍未上传、未调用 ImageGen、未创建 source／runtime、
+  未修改 addon。
 - 下一门禁：先提交本授权记录与原样正文，再以固定 Image 1–4 执行 attempt 1；
   返回候选或 provider 生成证据才递增为 `1/5`，无生成证据的流程错误单列。
 
@@ -4149,7 +4150,7 @@ Final self-check before returning the image: exactly five and only five isolated
 
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
-| 1/5 | `CHAT.TABS.DARK.V2` / `待本次授权提交` | generate |  |  |  |  | `ready` |
+| 1/5 | `CHAT.TABS.DARK.V2` / `19706f9` | generate |  |  |  |  | `ready` |
 | 2/5 | `CHAT.TABS.DARK.V2.r1` /  | edit／generate |  |  |  |  |  |
 | 3/5 | `CHAT.TABS.DARK.V2.r2` /  | edit／generate |  |  |  |  |  |
 | 4/5 | `CHAT.TABS.DARK.V2.r3` /  | edit／generate |  |  |  |  |  |
