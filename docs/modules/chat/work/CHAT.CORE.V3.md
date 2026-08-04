@@ -7,10 +7,10 @@
   `CHAT.UNREAD`、`CHAT.TEXT`
 - 版本：`CHAT.CORE.V3 / runtime contract v1.21`；输入生产版本
   `CHAT.INPUT.DARK.V1.r3 attempt 4 / runtime-exported`；Tab 替换方向
-  `CHAT.TABS.DARK.V2 / simulation-confirmed / production-draft`；V1 attempt 3
+  `CHAT.TABS.DARK.V2 / prompt-authorized / production-ready`；V1 attempt 3
   已由用户否决
 - 子状态：核心 `runtime-exported`；输入 `runtime-exported / P5`；Tab 替换
-  `simulation-confirmed / production-authorization-required / P2`
+  `prompt-authorized / attempt-01-ready / P3`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 当前操作：Full V1 固定 P4 source 已按全图比例确定性导出到 `1024²`
@@ -47,7 +47,9 @@
   旧 V3 的斜梯形皮签、外撇端部、不完全平直缝线、夹页／承托物理关系作为
   轮廓权威，同时保留已确认的深色收敛、无浅色 selected、无连续亮金 shelf、
   `92 × 30px` 外接框和既有命中区。V2 已完成纯本地几何预演；未调用
-  ImageGen、未上传、未改 addon，等待用户方向复审。
+  ImageGen、未上传、未改 addon。用户已于 `2026-08-04` 精确授权 V2 正文、
+  固定 Image 1–4、受限紧邻 Image 5 edit 与最多五次实际调用；当前为执行前
+  `0/5`，下一步是固定执行器 attempt 1。
 - 已凝结视觉方向：`CHAT-DARK-SIM-V1 / simulation-confirmed / P2` 的 B 方向
   已由 `CHAT.FRAME.FULL.V1.r1 / runtime-exported / P5` 实现；不再作为并行候选
 - 已退回生产批次：`CHAT.FRAME.PAPER.V1 / candidate-rejected / P3`；固定
@@ -4065,7 +4067,7 @@ V1 attempt 1–5 全部只作为负面证据：尤其禁止 attempt 3 的四个�
   输入绝对路径、固定 SHA 复核和输出保存指令继续放在独立 execution
   instruction，不改正文。
 
-### 完整生产正文 `CHAT.TABS.DARK.V2`（等待授权；attempt 1 必须原样执行）
+### 完整生产正文 `CHAT.TABS.DARK.V2`（已授权；attempt 1 必须原样执行）
 
 ```text
 Create one production-ready modular 2D hand-painted sprite sheet for the channel tabs of a World of Warcraft Vanilla-era battlefield chat journal. This is a component sheet, not a screenshot, not a complete chat window, and not a presentation board. The only five visible objects are exactly: one long shared tab shelf, then four isolated wordless leather index-tab states in this exact order: normal, hover, selected, disabled. Do not add a fifth tab, a duplicate shelf, a book frame, a message area, an input strip, an unread marker, a button, an icon, a label, a rune, a caption, or any other object.
@@ -4103,7 +4105,7 @@ Final self-check before returning the image: exactly five and only five isolated
 
 ### V2 固定上传与生产授权边界
 
-- 等待授权的固定输入：
+- 已授权的固定输入：
   - Image 1：`assets/locked/chat/聊天框视觉基准_v1.png`，SHA
     `90e30ba405a2b5cdc707cc229e56c4f64e51d0e4051f1e98dbcd2ec2ee70ee06`；
   - Image 2：`assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_r1.png`，SHA
@@ -4112,6 +4114,17 @@ Final self-check before returning the image: exactly five and only five isolated
     `8172d9d5145ac16ed23913fb7fbf75e626e0976d6bb33b27a555de4c55853023`；
   - Image 4：`generated/chat/core/CHAT.TABS.DARK.V2/production-scaffold/CHAT_TABS_DARK_V2_scaffold.png`，
     SHA `f02fba2d8bf4bc3a7b117d1245a794d4288c81c54c3f93e50290e5fefd9565a9`。
+- 精确生产授权记录：
+  - 授权人／日期：用户，`2026-08-04`；授权版本：`CHAT.TABS.DARK.V2`；授权
+    正文 UTF-8 `11075` bytes，SHA-256
+    `14bce5c3f0b0d5ed931bc8bddcd68a5e50257c0e8f9e5a8455031b24e483392f`；
+  - 用户原文：`确认授权 CHAT.TABS.DARK.V2；允许每次上传固定 SHA 的 Image 1/2/3/4；允许同循环紧邻前次输出仅在冻结边界内作为 Image 5 edit 输入；最多 5 次实际 ImageGen 调用；流程错误不占额度。`
+  - 本次授权只允许固定 `imagegen-0-143-0`／`@openai/codex@0.143.0`；attempt 1
+    原样传输上述正文并只上传固定 Image 1–4。attempt 2–5 仅在冻结边界内、
+    明确保留正确区域时，才可把同循环紧邻前次输出作为 Image 5 edit 输入。
+  - 执行前复核：四张输入 SHA 与上表完全一致；macOS 使用
+    `/Users/yuanshiyao/miniconda3/envs/py312/bin/python`／Python `3.12.12`；
+    当前实际生图 `0/5`，流程错误 `0`。
 - 不可变修复边界：`CHAT.TABS`／`CHAT.TAB_SHELF`；五对象与顺序；上述四张
   输入及职责；`1536 × 1024` canvas、五 cell、纯绿色键；source crop、
   `92 × 30` Tab／`16px` shelf、三段式／文字安全区／z-order；旧式不规则
@@ -4127,8 +4140,23 @@ Final self-check before returning the image: exactly five and only five isolated
   上传／落盘错误若没有图片且没有 provider 生成证据则单列，不占额度。同一
   流程错误针对性修复一次后仍重复则暂停。任何候选完整内审通过立即停止；
   attempt 5 仍失败则 `candidate-rejected / repair-budget-exhausted`。
-- 当前状态：`simulation-confirmed / production-draft / P2`。尚未上传、未调用
-  ImageGen、未创建 source／runtime、未修改 addon。
-- 精确授权门禁：用户需要明确授权 `CHAT.TABS.DARK.V2`、四张固定 SHA 输入、
-  同循环紧邻前次输出的 Image 5 edit 范围、最多五次实际调用，以及流程错误
-  不占调用额度；“继续”本身不构成该生产授权。
+- 当前状态：`prompt-authorized / attempt-01-ready / P3`。授权记录提交前仍未上传、
+  未调用 ImageGen、未创建 source／runtime、未修改 addon。
+- 下一门禁：先提交本授权记录与原样正文，再以固定 Image 1–4 执行 attempt 1；
+  返回候选或 provider 生成证据才递增为 `1/5`，无生成证据的流程错误单列。
+
+### V2 自主修复循环
+
+| 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
+|---:|---|---|---|---|---|---|---|
+| 1/5 | `CHAT.TABS.DARK.V2` / `待本次授权提交` | generate |  |  |  |  | `ready` |
+| 2/5 | `CHAT.TABS.DARK.V2.r1` /  | edit／generate |  |  |  |  |  |
+| 3/5 | `CHAT.TABS.DARK.V2.r2` /  | edit／generate |  |  |  |  |  |
+| 4/5 | `CHAT.TABS.DARK.V2.r3` /  | edit／generate |  |  |  |  |  |
+| 5/5 | `CHAT.TABS.DARK.V2.r4` /  | edit／generate |  |  |  |  |  |
+
+| 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
+|---:|---|---|---|---|---|
+
+- 循环终态：`active / 0/5`；任何候选全部门禁通过即停止并进入
+  `candidate-reviewed / P3`，不自动创建 source 或修改 runtime。

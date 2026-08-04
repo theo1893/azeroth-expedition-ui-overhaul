@@ -310,10 +310,12 @@
 
 ### 当前优先门禁
 
-1. `CHAT.TABS.DARK.V2` 已完成模拟确认和生产正文完整性预检，固定 Image 1–4、
-   五 cell scaffold 与新 `0/5` 包络已就绪；下一门禁是用户独立授权该精确
-   正文、四张固定 SHA 输入、受限同循环 Image 5 edit 和最多五次实际
-   ImageGen。授权前不上传、不调用、不改 addon。
+1. `CHAT.TABS.DARK.V2` 已完成模拟确认、生产正文完整性预检和用户精确授权；
+   固定 Image 1–4、五 cell scaffold、受限同循环紧邻 Image 5 edit 与新
+   `0/5` 包络已锁定，正文 SHA-256 为 `14bce5c3…e483392f`。当前状态为
+   `prompt-authorized / attempt-01-ready / P3`；下一门禁是提交授权记录后由固定
+   `imagegen-0-143-0` 执行 attempt 1。候选或 provider 生成证据才计数，流程
+   错误不占额度；本阶段仍不改 addon。
 2. `CHAT.INPUT.DARK.V1.r3 attempt 4` 已完成确定性 P4→P5：固定 source、正式
    `ChatInputDarkV1.tga`、三段 adapter、最终 TGA 真实排版、display-region 与
    静态合同均已通过；导出阶段 ImageGen `0` 次，原生产仍为 `4/5`、流程错误
