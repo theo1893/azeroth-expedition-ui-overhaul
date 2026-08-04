@@ -1,0 +1,67 @@
+{
+  "schema": "aeui-chat-tabs-deterministic-fit-feasibility-v1",
+  "component": "CHAT.TABS.DARK.V2",
+  "status": "review-only / not-source / not-runtime",
+  "canvas": [1536, 1024],
+  "operation": "preserve-aspect deterministic resize and translation of complete keyed objects",
+  "resample": "Pillow LANCZOS",
+  "background": "true transparent RGBA with zero RGB where alpha is zero",
+  "donors": [
+    {
+      "id": "attempt-01",
+      "label": "V2 attempt 1 — stronger hand-cut silhouette",
+      "path": "generated/chat/core/CHAT.TABS.DARK.V2/attempt-01/CHAT_TABS_DARK_V2_attempt01_keyed.png",
+      "sha256": "eb02fe7c1d25fc667c78827858cd938042bbc2f42952048291b8d6032e6b7ab4"
+    },
+    {
+      "id": "attempt-05",
+      "label": "V2 attempt 5 — latest but more regular silhouette",
+      "path": "generated/chat/core/CHAT.TABS.DARK.V2/attempt-05/CHAT_TABS_DARK_V2_r4_attempt05_keyed.png",
+      "sha256": "fe4191cb2e3289581ef1663912ffd5bfbcb4c9bd264e26ea8a298afe26333ba1"
+    }
+  ],
+  "objects": [
+    {
+      "id": "shelf",
+      "search_region": [0, 0, 1536, 450],
+      "declared_cell": [64, 96, 1472, 232],
+      "target_box": [80, 110, 1457, 217],
+      "vertical_alignment": "center"
+    },
+    {
+      "id": "normal",
+      "search_region": [0, 450, 400, 1024],
+      "declared_cell": [64, 560, 384, 716],
+      "target_box": [76, 570, 373, 703],
+      "vertical_alignment": "bottom"
+    },
+    {
+      "id": "hover",
+      "search_region": [400, 450, 760, 1024],
+      "declared_cell": [416, 560, 736, 716],
+      "target_box": [428, 569, 725, 703],
+      "vertical_alignment": "bottom"
+    },
+    {
+      "id": "selected",
+      "search_region": [760, 450, 1110, 1024],
+      "declared_cell": [768, 560, 1088, 716],
+      "target_box": [780, 566, 1073, 705],
+      "vertical_alignment": "bottom"
+    },
+    {
+      "id": "disabled",
+      "search_region": [1110, 450, 1536, 1024],
+      "declared_cell": [1120, 560, 1440, 716],
+      "target_box": [1132, 572, 1429, 705],
+      "vertical_alignment": "bottom"
+    }
+  ],
+  "restrictions": [
+    "This operation is a feasibility review for a possible user-authorized contract exception.",
+    "The outputs remain rejected-candidate evidence and cannot enter assets/source, addon media, Lua, or P4/P5.",
+    "No failed candidate is promoted by this specification.",
+    "No pixels from one donor may be mixed with the other donor.",
+    "No repaint, crop-at-cell, content-aware fill, geometric redraw, or semantic correction is permitted."
+  ]
+}

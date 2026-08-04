@@ -182,9 +182,9 @@ local chatFile = assert(io.open(root .. "/addon/pfUI/modules/chat.lua", "rb"))
 local chatSource = chatFile:read("*a")
 chatFile:close()
 assert(
-  string.find(chatSource, "ApplyExpeditionMessagePalette", 1, true) and
-    string.find(chatSource, "chat:ApplyMessagePalette", 1, true),
-  "pfUI chat final output lacks the scoped AEUI palette bridge"
+  not string.find(chatSource, "ApplyExpeditionMessagePalette", 1, true) and
+    not string.find(chatSource, "chat:ApplyMessagePalette", 1, true),
+  "pfUI chat final output still routes through the retired AEUI palette bridge"
 )
 
 local menuFile = assert(io.open(

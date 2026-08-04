@@ -1,0 +1,124 @@
+{
+  "schema": "aeui.quest-log.seal-actions.simulation.v1",
+  "version": "QUEST-LOG-SEAL-ACTIONS-SIM-V7",
+  "support_type": "direct-detail-page-seal-right-action-list",
+  "canvas": [1536, 1024],
+  "inputs": {
+    "quest_log_shell": "assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png",
+    "seal_atlas": "addon/AzerothExpeditionUI/Media/Quests/QuestToolWaxSealStatesV1.tga",
+    "title_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf",
+    "body_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf"
+  },
+  "outputs": {
+    "board": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V7/quest_log_seal_actions_board_v7.png",
+    "report": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V7/quest_log_seal_actions_report_v7.json"
+  },
+  "presentation": {
+    "title": "任务详情页右上火漆与右侧事务列 · V7 本地几何预演",
+    "subtitle": "漆章直接压在详情页右上角纸面；不使用书签、包角或虚构封面。点击后七项事务在右页右侧向下展开，detail 不被替换。100% UI 像素，ImageGen 0/0。",
+    "left_label": "A · 收起：火漆直接印在详情页右上纸面",
+    "right_label": "B · 展开：右页右侧纵向事务列，详情不切换",
+    "interaction_contract": "交互合同：左键展开／收起右侧事务列；点选／点击书外／Esc 收起；所有动作只代理原 Button，放弃任务继续走原生确认框。",
+    "fail_open_note": "迁移完成前 fail-open：任一 provider 未捕获时旧按钮继续显示；Close、等级、追踪、在线与语言保持独立。",
+    "annotation_origin": [968, 758],
+    "annotation_title": "V7 页面落点与层级检查",
+    "annotations": [
+      "① 40×40 固定保留区位于 detail 右上角纸面",
+      "② 标题安全宽收至 188px，分隔线止于 x=560",
+      "③ 七项事务从漆章下方沿右页右侧纵向展开",
+      "④ 临时覆盖右侧正文，但不替换 detail 且避开奖励",
+      "⑤ 不新增书签、二级页面或大型浮层"
+    ],
+    "non_authoritative_note": "非权威：最终蜡与纸面接触阴影、右侧按钮四态、展开动画、Tooltip 与客户端字体。"
+  },
+  "frame": [676, 464],
+  "layout": {
+    "list": [64, 64, 246, 324],
+    "detail": [366, 64, 246, 324],
+    "detail_content": [376, 72, 224, 306],
+    "detail_title_safe": [376, 72, 188, 28],
+    "detail_body_safe": [376, 104, 224, 284],
+    "close": [636, 12, 22, 22],
+    "paper_interaction_surface": [350, 40, 278, 376],
+    "seal_reserved_corner": [572, 64, 40, 40],
+    "seal_visual": [576, 68, 32, 32],
+    "seal_hitbox": [572, 64, 40, 40],
+    "right_action_menu": [488, 108, 124, 186],
+    "menu": [488, 108, 124, 186],
+    "action_slots": [
+      [488, 108, 124, 24],
+      [488, 135, 124, 24],
+      [488, 162, 124, 24],
+      [488, 189, 124, 24],
+      [488, 216, 124, 24],
+      [488, 243, 124, 24],
+      [488, 270, 124, 24]
+    ],
+    "reward_slots": [
+      [376, 316, 108, 32],
+      [488, 316, 108, 32],
+      [376, 352, 108, 32],
+      [488, 352, 108, 32]
+    ]
+  },
+  "closeups": {
+    "closed_source": [536, 38, 92, 92],
+    "closed_destination": [44, 760, 280, 250],
+    "closed_label": "C · 真实落点：详情页右上角连续纸面",
+    "open_source": [470, 52, 158, 260],
+    "open_destination": [360, 760, 280, 250],
+    "open_label": "D · 展开态：七项事务沿右页右侧纵向出现"
+  },
+  "content": {
+    "quest_rows": 18,
+    "reward_slots": 4,
+    "menu_actions": [
+      "共享任务",
+      "收起详情",
+      "显示位置",
+      "隐藏位置",
+      "清理标记",
+      "重建标记",
+      "放弃任务"
+    ],
+    "always_separate": [
+      "QuestLogFrameCloseButton",
+      "QuestLogFrameLevelsCheckButton",
+      "QuestLogTrack",
+      "pfQuest.buttonOnline",
+      "pfQuest.buttonLanguage"
+    ],
+    "provider_proxies": [
+      "QuestFramePushQuestButton",
+      "QuestLogFrameExpandButton",
+      "pfQuest.buttonShow",
+      "pfQuest.buttonHide",
+      "pfQuest.buttonClean",
+      "pfQuest.buttonReset",
+      "QuestLogFrameAbandonButton"
+    ]
+  },
+  "interaction": {
+    "left_click": "toggle-right-side-action-list",
+    "outside_click_or_escape": "close-right-side-action-list",
+    "action_click": "proxy-original-provider-button-then-close-list",
+    "abandon": "preserve-native-confirmation",
+    "disabled": "mirror-provider-enabled-state",
+    "right_click": "reserved-for-quest-module-settings",
+    "fail_open": "keep-original-buttons-visible-until-all-proxies-exist"
+  },
+  "constraints": {
+    "imagegen_calls": 0,
+    "new_bitmap_assets": 0,
+    "seal_reuses_accepted_runtime_atlas": true,
+    "direct_wax_on_detail_parchment": true,
+    "seal_corner_is_reserved_from_dynamic_text": true,
+    "no_parchment_bookmark": true,
+    "no_brass_or_leather_support": true,
+    "no_secondary_page_or_popup_plane": true,
+    "detail_content_never_replaced": true,
+    "detail_scrollframe_geometry_unchanged": true,
+    "right_action_list_must_stay_inside_detail_and_above_rewards": true,
+    "bottom_action_buttons_hidden_only_after_proxy_parity": true
+  }
+}

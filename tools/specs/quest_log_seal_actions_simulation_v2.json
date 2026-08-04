@@ -1,0 +1,89 @@
+{
+  "schema": "aeui.quest-log.seal-actions.simulation.v1",
+  "version": "QUEST-LOG-SEAL-ACTIONS-SIM-V2",
+  "support_type": "parchment-seal-tag",
+  "canvas": [1536, 1024],
+  "inputs": {
+    "quest_log_shell": "assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png",
+    "seal_atlas": "addon/AzerothExpeditionUI/Media/Quests/QuestToolWaxSealStatesV1.tga",
+    "title_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf",
+    "body_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf"
+  },
+  "outputs": {
+    "board": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V2/quest_log_seal_actions_board_v2.png",
+    "report": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V2/quest_log_seal_actions_report_v2.json"
+  },
+  "presentation": {
+    "title": "任务日志羊皮纸火漆封签与事务菜单 · 本地几何预演",
+    "subtitle": "封签根部夹在右页层间，横跨封皮后伸出书外；火漆只压住封签宽头。右图为左键展开事务笺。100% UI 像素，ImageGen 0/0。"
+  },
+  "frame": [676, 464],
+  "layout": {
+    "list": [64, 64, 246, 324],
+    "detail": [366, 64, 246, 324],
+    "detail_content": [376, 72, 224, 306],
+    "close": [636, 12, 22, 22],
+    "page_exit": [603, 190, 34, 38],
+    "page_lip": [603, 190, 24, 36],
+    "document_tag": [614, 197, 80, 27],
+    "tag_head": [672, 189, 44, 44],
+    "seal_visual": [678, 195, 32, 32],
+    "seal_hitbox": [674, 191, 40, 40],
+    "menu": [468, 96, 190, 278],
+    "reward_slots": [
+      [376, 316, 108, 32],
+      [488, 316, 108, 32],
+      [376, 352, 108, 32],
+      [488, 352, 108, 32]
+    ]
+  },
+  "content": {
+    "quest_rows": 18,
+    "reward_slots": 4,
+    "menu_actions": [
+      "共享任务",
+      "收起详情",
+      "显示任务位置",
+      "隐藏任务位置",
+      "清理地图标记",
+      "重建地图标记",
+      "放弃任务"
+    ],
+    "always_separate": [
+      "QuestLogFrameCloseButton",
+      "QuestLogFrameLevelsCheckButton",
+      "QuestLogTrack",
+      "pfQuest.buttonOnline",
+      "pfQuest.buttonLanguage"
+    ],
+    "provider_proxies": [
+      "QuestFramePushQuestButton",
+      "QuestLogFrameExpandButton",
+      "pfQuest.buttonShow",
+      "pfQuest.buttonHide",
+      "pfQuest.buttonClean",
+      "pfQuest.buttonReset",
+      "QuestLogFrameAbandonButton"
+    ]
+  },
+  "interaction": {
+    "left_click": "toggle-menu",
+    "outside_click_or_escape": "close-menu",
+    "action_click": "proxy-original-provider-button-then-close",
+    "abandon": "preserve-native-confirmation",
+    "disabled": "mirror-provider-enabled-state",
+    "right_click": "reserved-for-quest-module-settings",
+    "fail_open": "keep-original-buttons-visible-until-all-proxies-exist"
+  },
+  "constraints": {
+    "imagegen_calls": 0,
+    "new_bitmap_assets": 0,
+    "seal_reuses_accepted_runtime_atlas": true,
+    "tag_and_menu_are_non_authoritative_geometry": true,
+    "menu_is_transient_and_may_cover_detail_only_while_open": true,
+    "seal_must_sit_on_exposed_tag_head": true,
+    "tag_root_must_be_occluded_by_page_lip": true,
+    "tag_must_cross_cover_without_being_fastened_to_frame": true,
+    "bottom_action_buttons_hidden_only_after_proxy_parity": true
+  }
+}

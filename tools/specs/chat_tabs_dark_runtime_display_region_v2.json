@@ -1,0 +1,112 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "CHAT.TABS.DARK.V2/runtime-v2",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, 100%-UI-pixels",
+  "evidence": {
+    "provider": "addon/pfUI/modules/chat.lua",
+    "adapter": "addon/AzerothExpeditionUI/Modules/Chat.lua",
+    "runtime_manifest": "assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_RuntimeManifest_v1.json",
+    "runtime_tab_atlas": "addon/AzerothExpeditionUI/Media/Chat/ChatTabAtlasDarkV2.tga",
+    "runtime_shelf_atlas": "addon/AzerothExpeditionUI/Media/Chat/ChatTabShelfDarkV2.tga",
+    "runtime_layout_spec": "tools/specs/chat_tabs_dark_runtime_preview_v2.json",
+    "runtime_layout": "generated/chat/core/CHAT.TABS.DARK.V2/runtime-v2/ChatTabsDarkV2_runtime_real_layout.png",
+    "runtime_metrics": "generated/chat/core/CHAT.TABS.DARK.V2/runtime-v2/ChatTabsDarkV2_runtime_real_layout.metrics.json",
+    "direction_only": false,
+    "final_runtime": true
+  },
+  "atlas": {
+    "size": [512, 512],
+    "visible_bbox": [4, 0, 252, 512],
+    "require_exact_visible_coverage": true,
+    "sampled_regions": [
+      {"id": "normal-state", "box": [4, 0, 252, 128]},
+      {"id": "hover-state", "box": [4, 128, 252, 256]},
+      {"id": "selected-state", "box": [4, 256, 252, 384]},
+      {"id": "disabled-state", "box": [4, 384, 252, 512]}
+    ]
+  },
+  "secondary_atlas": {
+    "id": "tab-shelf",
+    "size": [1024, 64],
+    "sampled_region": [0, 0, 1024, 64],
+    "visible_alpha_bbox": [14, 10, 1012, 53]
+  },
+  "nine_slice": {
+    "caps": {"left": 16, "right": 16, "top": 14, "bottom": 15},
+    "minimum_frame_size": [33, 30]
+  },
+  "scenarios": [
+    {
+      "id": "empty-440",
+      "frame": [440, 320],
+      "preview_frame": [440, 320],
+      "zones": {"tab-visual": [30, 0, 410, 34], "tab-hit": [30, 0, 410, 40], "tab-text": [30, 8, 410, 26], "shelf": [30, 18, 410, 34]},
+      "regions": [
+        {"id": "shelf.empty", "kind": "visual", "box": [30, 18, 410, 34], "zone": "shelf"},
+        {"id": "tab1.empty", "kind": "visual", "box": [30, 2, 122, 32], "zone": "tab-visual"},
+        {"id": "tab4.empty.hit", "kind": "hit", "box": [315, 2, 407, 40], "zone": "tab-hit"},
+        {"id": "tab4.empty.text", "kind": "text", "box": [321, 8, 401, 26], "zone": "tab-text"}
+      ]
+    },
+    {
+      "id": "minimum-440",
+      "frame": [440, 320],
+      "preview_frame": [440, 320],
+      "zones": {"tab-visual": [30, 0, 410, 34], "tab-hit": [30, 0, 410, 40], "tab-text": [30, 8, 410, 26], "shelf": [30, 18, 410, 34]},
+      "regions": [
+        {"id": "shelf.minimum", "kind": "visual", "box": [30, 18, 410, 34], "zone": "shelf"},
+        {"id": "tab1.selected", "kind": "visual", "box": [30, 2, 122, 32], "zone": "tab-visual"},
+        {"id": "tab2.hover", "kind": "visual", "box": [125, 2, 217, 32], "zone": "tab-visual"},
+        {"id": "tab4.disabled", "kind": "visual", "box": [315, 2, 407, 32], "zone": "tab-visual"},
+        {"id": "tab2.minimum.text", "kind": "text", "box": [131, 8, 211, 26], "zone": "tab-text"}
+      ]
+    },
+    {
+      "id": "typical-440",
+      "frame": [440, 320],
+      "preview_frame": [440, 320],
+      "zones": {"tab-visual": [30, 0, 410, 34], "tab-hit": [30, 0, 410, 40], "tab-text": [30, 8, 410, 26], "shelf": [30, 18, 410, 34]},
+      "regions": [
+        {"id": "shelf.typical", "kind": "visual", "box": [30, 18, 410, 34], "zone": "shelf"},
+        {"id": "tab1.typical", "kind": "visual", "box": [30, 2, 122, 32], "zone": "tab-visual"},
+        {"id": "tab4.typical.hit", "kind": "hit", "box": [315, 2, 407, 40], "zone": "tab-hit"},
+        {"id": "tab1.typical.text", "kind": "text", "box": [36, 8, 116, 26], "zone": "tab-text"}
+      ]
+    },
+    {
+      "id": "maximum-440",
+      "frame": [440, 320],
+      "preview_frame": [440, 320],
+      "zones": {"tab-visual": [30, 0, 410, 34], "tab-hit": [30, 0, 410, 40], "tab-text": [30, 8, 410, 26], "shelf": [30, 18, 410, 34]},
+      "regions": [
+        {"id": "shelf.maximum", "kind": "visual", "box": [30, 18, 410, 34], "zone": "shelf"},
+        {"id": "tab1.maximum", "kind": "visual", "box": [30, 2, 122, 32], "zone": "tab-visual"},
+        {"id": "tab4.maximum.hit", "kind": "hit", "box": [315, 2, 407, 40], "zone": "tab-hit"}
+      ]
+    },
+    {
+      "id": "expanded-540",
+      "frame": [540, 420],
+      "preview_frame": [540, 420],
+      "zones": {"tab-visual": [30, 0, 510, 34], "tab-hit": [30, 0, 510, 40], "tab-text": [30, 8, 510, 26], "shelf": [30, 18, 510, 34]},
+      "regions": [
+        {"id": "shelf.expanded", "kind": "visual", "box": [30, 18, 510, 34], "zone": "shelf"},
+        {"id": "tab1.expanded", "kind": "visual", "box": [30, 2, 122, 32], "zone": "tab-visual"},
+        {"id": "tab4.expanded.hit", "kind": "hit", "box": [315, 2, 407, 40], "zone": "tab-hit"}
+      ]
+    },
+    {
+      "id": "overflow-five-tabs-440",
+      "frame": [440, 320],
+      "preview_frame": [440, 320],
+      "zones": {"tab-visual": [30, 0, 410, 34], "tab-hit": [30, 0, 410, 40], "tab-text": [30, 8, 410, 26], "shelf": [30, 18, 410, 34]},
+      "regions": [
+        {"id": "shelf.overflow", "kind": "visual", "box": [30, 18, 410, 34], "zone": "shelf"},
+        {"id": "tab1.overflow", "kind": "visual", "box": [30, 2, 103, 32], "zone": "tab-visual"},
+        {"id": "tab5.overflow", "kind": "visual", "box": [334, 2, 407, 32], "zone": "tab-visual"},
+        {"id": "tab5.overflow.hit", "kind": "hit", "box": [334, 2, 407, 40], "zone": "tab-hit"},
+        {"id": "tab5.overflow.text", "kind": "text", "box": [340, 8, 401, 26], "zone": "tab-text"}
+      ]
+    }
+  ]
+}

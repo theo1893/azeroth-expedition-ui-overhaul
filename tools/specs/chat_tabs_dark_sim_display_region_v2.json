@@ -1,0 +1,68 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "CHAT.TABS.DARK.SIM.V2/direction-only",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, 100%-UI-pixels",
+  "evidence": {
+    "provider": "addon/pfUI/modules/chat.lua",
+    "adapter": "addon/AzerothExpeditionUI/Modules/Chat.lua",
+    "simulation_spec": "tools/specs/chat_tabs_dark_simulation_v2.json",
+    "simulation": "generated/chat/core/CHAT.TABS.DARK.V2/simulation/CHAT-TABS-DARK-SIM-V2/chat_tabs_dark_sim_v2.png",
+    "direction_only": true,
+    "final_runtime": false
+  },
+  "atlas": {
+    "size": [400, 30],
+    "visible_bbox": [0, 0, 400, 30],
+    "require_exact_visible_coverage": true,
+    "sampled_regions": [
+      {"id": "normal-logical-cell", "box": [0, 0, 100, 30]},
+      {"id": "hover-logical-cell", "box": [100, 0, 200, 30]},
+      {"id": "selected-logical-cell", "box": [200, 0, 300, 30]},
+      {"id": "disabled-logical-cell", "box": [300, 0, 400, 30]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 16, "right": 16, "top": 14, "bottom": 15},
+    "minimum_frame_size": [33, 30]
+  },
+  "scenarios": [
+    {
+      "id": "old-v3-reference-440",
+      "frame": [440, 320],
+      "preview_frame": [440, 320],
+      "zones": {"tab-visual": [30, 0, 410, 34], "tab-hit": [30, 0, 410, 40], "shelf": [30, 18, 410, 34]},
+      "regions": [
+        {"id": "shelf.reference", "kind": "visual", "box": [30, 18, 410, 34], "zone": "shelf"},
+        {"id": "tab1.reference", "kind": "visual", "box": [30, 0, 122, 34], "zone": "tab-visual"},
+        {"id": "tab4.reference.hit", "kind": "hit", "box": [315, 2, 407, 40], "zone": "tab-hit"}
+      ]
+    },
+    {
+      "id": "proposal-old-silhouette-440",
+      "frame": [440, 320],
+      "preview_frame": [440, 320],
+      "zones": {"tab-visual": [30, 0, 410, 34], "tab-hit": [30, 0, 410, 40], "shelf": [30, 18, 410, 34]},
+      "regions": [
+        {"id": "shelf.proposal", "kind": "visual", "box": [30, 18, 410, 34], "zone": "shelf"},
+        {"id": "tab1.selected", "kind": "visual", "box": [30, 0, 122, 34], "zone": "tab-visual"},
+        {"id": "tab2.hover", "kind": "visual", "box": [125, 0, 217, 34], "zone": "tab-visual"},
+        {"id": "tab3.normal", "kind": "visual", "box": [220, 0, 312, 34], "zone": "tab-visual"},
+        {"id": "tab4.disabled", "kind": "visual", "box": [315, 0, 407, 34], "zone": "tab-visual"},
+        {"id": "tab1.hit", "kind": "hit", "box": [30, 2, 122, 40], "zone": "tab-hit"},
+        {"id": "tab4.hit", "kind": "hit", "box": [315, 2, 407, 40], "zone": "tab-hit"}
+      ]
+    },
+    {
+      "id": "proposal-old-silhouette-expanded-540",
+      "frame": [540, 420],
+      "preview_frame": [540, 420],
+      "zones": {"tab-visual": [30, 0, 510, 34], "tab-hit": [30, 0, 510, 40], "shelf": [30, 18, 510, 34]},
+      "regions": [
+        {"id": "shelf.expanded", "kind": "visual", "box": [30, 18, 510, 34], "zone": "shelf"},
+        {"id": "tab1.expanded", "kind": "visual", "box": [30, 0, 122, 34], "zone": "tab-visual"},
+        {"id": "tab4.expanded", "kind": "visual", "box": [315, 0, 407, 34], "zone": "tab-visual"},
+        {"id": "tab4.expanded.hit", "kind": "hit", "box": [315, 2, 407, 40], "zone": "tab-hit"}
+      ]
+    }
+  ]
+}

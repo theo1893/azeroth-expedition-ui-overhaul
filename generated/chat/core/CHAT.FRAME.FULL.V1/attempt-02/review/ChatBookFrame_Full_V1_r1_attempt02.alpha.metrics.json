@@ -1,7 +1,7 @@
 {
   "schema": "aeui-chat-full-frame-alpha-cleanup-v1",
   "input": {
-    "path": "D:\\Git\\azeroth-expedition-ui-overhaul\\generated\\chat\\core\\CHAT.FRAME.FULL.V1\\attempt-02\\ChatBookFrame_Full_V1_r1_attempt02.provider-raw.png",
+    "path": "/Users/yuanshiyao/Documents/Codex/2026-07-28/new-chat/aeui-chat-edge-work/generated/chat/core/CHAT.FRAME.FULL.V1/attempt-02/ChatBookFrame_Full_V1_r1_attempt02.provider-raw.png",
     "sha256": "8275b815b19677fda2fe242b79a06557af90032e570841236cab41ec429917b5",
     "size": [
       1620,
@@ -10,8 +10,8 @@
     "mode": "RGB"
   },
   "output": {
-    "path": "D:\\Git\\azeroth-expedition-ui-overhaul\\generated\\chat\\core\\CHAT.FRAME.FULL.V1\\attempt-02\\review\\ChatBookFrame_Full_V1_r1_attempt02.transparent.png",
-    "sha256": "23981aca770e93335efc5df3e917a9b220fe800b08e9142a4d4579415a6af741",
+    "path": "/Users/yuanshiyao/Documents/Codex/2026-07-28/new-chat/aeui-chat-edge-work/generated/chat/core/CHAT.FRAME.FULL.V1/attempt-02/review/ChatBookFrame_Full_V1_r1_attempt02.transparent.png",
+    "sha256": "a97d9c5fa055a119cd5ea7809bdaa51460cddb9674355efcec35f98f6cd2c673",
     "size": [
       1608,
       978
@@ -25,7 +25,12 @@
     ],
     "opaque_pixels": 1325523,
     "partial_pixels": 23952,
-    "transparent_pixels": 223149
+    "transparent_pixels": 223149,
+    "visible_green_spill": {
+      "exact_00ff00": 0,
+      "heuristic_green_dominant": 0
+    },
+    "repaired_green_fringe_pixels": 95
   },
   "parameters": {
     "canvas": [

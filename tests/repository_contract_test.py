@@ -6,7 +6,8 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-import colorsys
+import subprocess
+import sys
 from pathlib import Path
 
 
@@ -120,6 +121,9 @@ def main() -> None:
         "run-aeui-asset-workflow",
         "imagegen-0-143-0",
         "P6-C",
+        "清空整个 `generated/<module>/`",
+        "`handoff/<module>/`",
+        "validate_module_closure.py",
         "8.1.0-aeui.4",
     ):
         assert required in agents, f"AGENTS.md missing {required}"
@@ -147,6 +151,17 @@ def main() -> None:
     assert "imagegen" not in global_progress.lower(), (
         "global progress must not duplicate generation workflow"
     )
+    assert "generated/<module>/" in global_progress
+    assert "关闭校验" in global_progress
+    closure_validator = (
+        ROOT
+        / ".codex"
+        / "skills"
+        / "run-aeui-asset-workflow"
+        / "scripts"
+        / "validate_module_closure.py"
+    )
+    assert closure_validator.is_file()
     for module in modules:
         module_dir = docs / "modules" / module
         art = (module_dir / "ART_BASELINE.md").read_text(encoding="utf-8")
@@ -159,6 +174,60 @@ def main() -> None:
         assert "ART_BASELINE.md" in sub_art
         assert "pfUI" in submodules
         assert "下一门禁" in progress or "下一步" in progress
+        if "P6-C / module-closed" in progress:
+            closure_result = subprocess.run(
+                [sys.executable, str(closure_validator), str(ROOT), module],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            assert closure_result.returncode == 0, (
+                closure_result.stdout + closure_result.stderr
+            )
+
+    gitignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
+    assert "/generated/" in gitignore
+    assert "new generated files" in gitignore
+    assert "/handoff/.stage-*/" in gitignore
+    ignored_generated = subprocess.run(
+        ["git", "-C", str(ROOT), "check-ignore", "-q", "generated/demo/file.png"],
+        check=False,
+    )
+    assert ignored_generated.returncode == 0, "generated/ must remain ignored"
+    ignored_handoff = subprocess.run(
+        [
+            "git",
+            "-C",
+            str(ROOT),
+            "check-ignore",
+            "-q",
+            "handoff/demo/component/manifest.json",
+        ],
+        check=False,
+    )
+    assert ignored_handoff.returncode == 1, "component handoff must be trackable"
+
+    handoff_validator = (
+        ROOT
+        / ".codex"
+        / "skills"
+        / "run-aeui-asset-workflow"
+        / "scripts"
+        / "manage_cross_device_handoff.py"
+    )
+    assert handoff_validator.is_file()
+    handoff_result = subprocess.run(
+        [sys.executable, str(handoff_validator), "validate", str(ROOT)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert handoff_result.returncode == 0, (
+        handoff_result.stdout + handoff_result.stderr
+    )
+    handoff_report = json.loads(handoff_result.stdout)
+    assert handoff_report["schema"] == "aeui-cross-device-handoff-report-v1"
+    assert handoff_report["status"] == "pass"
 
     chat_submodules = (
         docs / "modules" / "chat" / "SUBMODULES.md"
@@ -212,6 +281,8 @@ def main() -> None:
     )
     assert "## RequiredDeps: pfUI" in aeui_toc
     assert "## Version: 0.6.0" in aeui_toc
+    assert "Core\\Bootstrap.lua" in aeui_toc
+    assert "Modules\\Chat.lua" in aeui_toc
     assert "Modules\\QuestVisualTheme.lua" in aeui_toc
     assert "Modules\\Quests.lua" in aeui_toc
     bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(encoding="utf-8")
@@ -229,7 +300,7 @@ def main() -> None:
     quest_theme_source = (
         aeui / "Modules" / "QuestVisualTheme.lua"
     ).read_text(encoding="utf-8")
-    assert 'contract = "1.5"' in quest_theme_source
+    assert 'contract = "1.6"' in quest_theme_source
     assert "QuestLogShellV4" in quest_theme_source
     assert "QuestLogDirectoryMarksV1" in quest_theme_source
     assert "QuestTrackerPaperV1" in quest_theme_source
@@ -246,8 +317,10 @@ def main() -> None:
     quest_name_role = quest_theme_source.split(
         "questName = {", 1
     )[1].split("},", 1)[0]
+    assert "providerOwned = true" in quest_name_role
+    assert "NotoSansSC-Medium.ttf" in quest_name_role
     assert "size = 12" in quest_name_role
-    assert 'flags = ""' in quest_name_role
+    assert 'flags = "OUTLINE"' in quest_name_role
     for shared_ink in (
         "|cff24170f",
         "|cff062a22",
@@ -261,7 +334,7 @@ def main() -> None:
     ):
         assert shared_ink in quest_theme_source
 
-    assert 'Quests.runtimeContract = "1.16"' in quest_source
+    assert 'Quests.runtimeContract = "1.18"' in quest_source
     assert "ApplyTrackerProviderFont" in quest_source
     assert "ResolveQuestNameInk" in quest_source
     assert quest_source.count("ResolveQuestNameInk(") >= 3
@@ -292,6 +365,11 @@ def main() -> None:
     assert "CaptureAndHideNativeTextures" in quest_source
     assert "SuppressNativeRowSelection" in quest_source
     assert "ApplyDetailTextGeometry" in quest_source
+    assert "ApplyDetailRewardGeometry" in quest_source
+    assert "MeasureDetailContentHeight" in quest_source
+    assert "UpdateDetailScrollChildHeight" in quest_source
+    assert "rewardSlotWidth = 108" in quest_source
+    assert "rewardNameWidth = 64" in quest_source
     assert "HideCollapseAllButton" in quest_source
     assert "aeuiQuestCollapseSuppressed" in quest_source
     assert "StyleLeatherButton" in quest_source
@@ -400,7 +478,9 @@ def main() -> None:
     assert "SuppressChatInfoPanels" in chat_source
     assert "panels.minimap" not in chat_source
     assert "SuppressRightChat" in chat_source
-    assert 'Chat.runtimeContract = "1.19"' in chat_source
+    assert 'Chat.runtimeContract = "1.22"' in chat_source
+    assert 'Chat.colorContract = "classic-provider"' in chat_source
+    assert "ChatBookFrameFullV1" in chat_source
     assert "EnsureBookVisible" in chat_source
     assert 'owner:EnableDrawLayer("BACKGROUND")' in chat_source
     assert "InstallPfUIHooks" in chat_source
@@ -411,134 +491,38 @@ def main() -> None:
     assert "CHAT_TEXT_SHADOW_COLOR" in chat_source
     assert "CHAT_TEXT_SHADOW_COLOR = { 0, 0, 0, 0 }" in chat_source
     assert "CHAT_TEXT_SHADOW_OFFSET = { 0, 0 }" in chat_source
-    assert "CHAT_TEXT_PALETTE" in chat_source
-    assert "CHAT_BASE_COLOR_RULES" in chat_source
-    assert "CHAT_INLINE_COLOR_MAP" in chat_source
-    assert "AdaptUnknownInlineColor" in chat_source
-    assert "CHAT_INLINE_COLOR_TARGETS" in chat_source
-    assert "CHAT_INLINE_CONTRAST_TARGET = 4.8" in chat_source
+    assert "CHAT_TEXT_PALETTE" not in chat_source
+    assert "CHAT_BASE_COLOR_RULES" not in chat_source
+    assert "CHAT_INLINE_COLOR_MAP" not in chat_source
+    assert "AdaptUnknownInlineColor" not in chat_source
+    assert "CHAT_INLINE_COLOR_TARGETS" not in chat_source
+    assert "CHAT_INLINE_CONTRAST_TARGET" not in chat_source
+    assert "CHAT_INLINE_PAPER_COLOR" not in chat_source
     assert "StyleChatFrameText" in chat_source
-    assert "InstallMessageColorHook" in chat_source
-    assert "InstallChatMODFinalColorHook" in chat_source
-    assert "EnsureMessageColorHooks" in chat_source
-    assert "ApplyMessagePalette" in chat_source
+    assert "InstallMessageColorHook" not in chat_source
+    assert "InstallChatMODFinalColorHook" not in chat_source
+    assert "EnsureMessageColorHooks" not in chat_source
+    assert "ApplyMessagePalette" not in chat_source
     assert "GetMessageColorStatus" in chat_source
+    assert "return self.colorContract" in chat_source
     assert 'getglobal("S_AddMessage")' not in chat_source
-    assert "frame.ORG_AddMessage = wrapper" in chat_source
-    assert "frame:GetParent() == pfUI.chat.left" in chat_source
-    palette_scope = chat_source.split(
-        "function Chat:IsMessagePaletteManaged", 1
-    )[1].split("function Chat:ApplyMessagePalette", 1)[0]
-    assert "frame.pfCombatLog" not in palette_scope
-    assert "TransformBaseMessageColor" in chat_source
-    assert "NormalizeInlineMessageColors" in chat_source
-    for color_code in (
-        "ff33ccff",
-        "fff58cba",
-        "ffabd473",
-        "ff69ccf0",
-        "fffff569",
-        "ff0070dd",
-        "ffa335ee",
+    assert "frame.ORG_AddMessage = wrapper" not in chat_source
+    assert "TransformBaseMessageColor" not in chat_source
+    assert "NormalizeInlineMessageColors" not in chat_source
+    for obsolete_parchment_color in (
+        "ff4b3b2a",
+        "ff583243",
+        "ff354224",
+        "ff423f1b",
+        "ff333333",
+        "ff003d7a",
+        "ff22424e",
+        "ff413959",
+        "ff633004",
+        "ff592d2d",
+        "ff234020",
     ):
-        assert color_code in chat_source
-    for dark_paper_color in (
-        "ffc79c6e",
-        "fff58cba",
-        "ffabd473",
-        "fffff569",
-        "ffffffff",
-        "ff1684ed",
-        "ff69ccf0",
-        "ff9482c9",
-        "ffff7d0a",
-        "ffff8080",
-        "ff8cff80",
-    ):
-        assert dark_paper_color in chat_source
-    class_sources = (
-        "ffc79c6e",
-        "fff58cba",
-        "ffabd473",
-        "fffff569",
-        "ffffffff",
-        "ff0070de",
-        "ff69ccf0",
-        "ff9482c9",
-        "ffff7d0a",
-    )
-    class_targets = []
-    for source_color in class_sources:
-        match = re.search(
-            rf"{source_color}\s*=\s*\"ff([0-9a-f]{{6}})\"",
-            chat_source,
-        )
-        assert match, f"missing parchment class mapping for {source_color}"
-        class_targets.append(match.group(1))
-    assert len(set(class_targets)) == len(class_targets)
-    class_rgb = [
-        tuple(int(color[index:index + 2], 16) for index in (0, 2, 4))
-        for color in class_targets
-    ]
-    palette_rgb = {
-        name: (int(red), int(green), int(blue))
-        for name, red, green, blue in re.findall(
-            r"^\s*(say|channel|system|guild|party|raid|whisper|danger|emote)\s*="
-            r"\s*RGB8\((\d+),\s*(\d+),\s*(\d+)\)",
-            chat_source,
-            re.M,
-        )
-    }
-    assert palette_rgb == {
-        "say": (201, 185, 144),
-        "channel": (255, 192, 192),
-        "system": (255, 255, 0),
-        "guild": (64, 255, 64),
-        "party": (170, 170, 255),
-        "raid": (255, 127, 0),
-        "whisper": (255, 128, 255),
-        "danger": (255, 64, 64),
-        "emote": (255, 127, 63),
-    }
-
-    def relative_luminance(color: tuple[int, int, int]) -> float:
-        channels = []
-        for value in color:
-            encoded = value / 255
-            channels.append(
-                encoded / 12.92
-                if encoded <= 0.04045
-                else ((encoded + 0.055) / 1.055) ** 2.4
-            )
-        return (
-            0.2126 * channels[0]
-            + 0.7152 * channels[1]
-            + 0.0722 * channels[2]
-        )
-
-    class_source_rgb = [
-        tuple(int(color[index:index + 2], 16) for index in (2, 4, 6))
-        for color in class_sources
-    ]
-    for source, target in zip(class_source_rgb, class_rgb):
-        if max(source) == min(source):
-            assert max(target) == min(target)
-            continue
-        source_hue = colorsys.rgb_to_hsv(
-            *(channel / 255 for channel in source)
-        )[0]
-        target_hue = colorsys.rgb_to_hsv(
-            *(channel / 255 for channel in target)
-        )[0]
-        hue_delta = abs(source_hue - target_hue)
-        assert min(hue_delta, 1 - hue_delta) <= 0.01
-
-    assert palette_rgb["party"] != palette_rgb["raid"]
-    paper_luminance = relative_luminance((24, 18, 13))
-    for ink in class_rgb + list(palette_rgb.values()):
-        ink_luminance = relative_luminance(ink)
-        contrast = (ink_luminance + 0.05) / (paper_luminance + 0.05)
-        assert contrast >= 4.8
+        assert obsolete_parchment_color not in chat_source
     assert "NotoSansSC-Medium.ttf" not in chat_source
     assert "READING_WASH_COLOR" not in chat_source
     assert "Interface\\\\Buttons\\\\WHITE8X8" not in chat_source
@@ -557,13 +541,129 @@ def main() -> None:
     assert 'event == "UI_SCALE_CHANGED"' in chat_source
     assert 'text:SetJustifyV("MIDDLE")' in chat_source
     for texture in (
-        "ChatBookFrameDarkV1",
-        "ChatTabAtlasV3",
-        "ChatTabShelfV3",
-        "ChatInputAtlasDarkV1",
+        "ChatBookFrameFullV1",
+        "ChatTabAtlasDarkV2",
+        "ChatTabShelfDarkV2",
+        "ChatInputDarkV1",
         "ChatUnreadSealV3",
     ):
         assert texture in chat_source, f"chat adapter does not mount {texture}"
+    assert (aeui / "Media" / "Chat" / "ChatBookFrameV3.tga").is_file()
+
+    full_frame_manifest_path = (
+        ROOT
+        / "assets"
+        / "source"
+        / "chat"
+        / "frame-full-v1"
+        / "ChatBookFrame_Full_V1_RuntimeManifest_v1.json"
+    )
+    full_frame_manifest = json.loads(
+        full_frame_manifest_path.read_text(encoding="utf-8")
+    )
+    full_frame_runtime = (
+        aeui / "Media" / "Chat" / "ChatBookFrameFullV1.tga"
+    )
+    assert full_frame_manifest["runtime_contract"] == "1.19"
+    assert full_frame_manifest["status"] == "runtime-exported"
+    assert full_frame_manifest["single_chat_frame"] is True
+    assert full_frame_manifest["source"]["sha256"] == (
+        "a97d9c5fa055a119cd5ea7809bdaa51460cddb9674355efcec35f98f6cd2c673"
+    )
+    assert sha256(full_frame_runtime) == (
+        full_frame_manifest["runtime_export"]["sha256"]
+    )
+    assert full_frame_manifest["runtime_export"]["width"] == 1024
+    assert full_frame_manifest["runtime_export"]["height"] == 1024
+    assert full_frame_manifest["runtime_export"][
+        "visible_green_spill_pixels"
+    ] == 0
+    assert full_frame_manifest["adapter"]["texture_instances"] == 9
+    assert full_frame_manifest["adapter"]["right_frame_instances"] == 0
+
+    input_source_dir = (
+        ROOT / "assets" / "source" / "chat" / "input-dark-v1"
+    )
+    input_source_manifest = json.loads(
+        (
+            input_source_dir / "ChatInput_Dark_V1_SourceManifest_v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    input_source = input_source_dir / input_source_manifest["source"]["file"]
+    assert input_source_manifest["accepted_version"] == (
+        "CHAT.INPUT.DARK.V1.r3 attempt 4"
+    )
+    assert input_source_manifest["status"] == "runtime-exported"
+    assert input_source_manifest["phase"] == "P5"
+    assert input_source_manifest["source"]["mode"] == "RGBA"
+    assert input_source_manifest["source"]["shared_state_alpha"] is True
+    assert input_source_manifest["source"]["canonical_state_cells_xyxy"] == {
+        "normal": [51, 187, 1437, 363],
+        "focus": [51, 448, 1437, 624],
+    }
+    assert sha256(input_source) == (
+        "4df36bc607a024ca0a2355f5d20ff985f61cbf3304073a65e33caa978c50cda0"
+    )
+    assert sha256(input_source) == input_source_manifest["source"]["sha256"]
+    assert input_source_manifest["source"]["pure_green_visible_pixels"] == 0
+    assert input_source_manifest["source"][
+        "heuristic_green_dominant_visible_pixels"
+    ] == 0
+    assert input_source_manifest["source"][
+        "transparent_rgb_nonzero_values"
+    ] == 0
+    assert input_source_manifest["user_acceptance"]["statement"] == (
+        "接受 CHAT.INPUT.DARK.V1.r3 attempt 4 进入 P4。"
+    )
+    assert input_source_manifest["provenance"]["imagegen_budget"] == {
+        "actual_calls": 4,
+        "maximum_calls": 5,
+        "process_errors": 4,
+        "unconsumed_calls_terminated_on_acceptance": 1,
+        "unconsumed_calls_transferable": False,
+    }
+    assert input_source_manifest["runtime_export_contract"]["status"] == (
+        "runtime-exported"
+    )
+    assert input_source_manifest["runtime_export_contract"]["phase"] == "P5"
+    assert input_source_manifest["runtime_export_contract"]["version"] == "1.20"
+    assert input_source_manifest["runtime_export_contract"][
+        "whole_source_runtime_allowed"
+    ] is False
+    current_input_runtime = aeui / "Media" / "Chat" / "ChatInputDarkV1.tga"
+    assert sha256(current_input_runtime) == input_source_manifest[
+        "runtime_export_contract"
+    ]["runtime_atlas_sha256"]
+    assert (
+        aeui / "Media" / "Chat" / "ChatInputAtlasV3.tga"
+    ).is_file()
+    assert "ChatInputDarkV1" in chat_source
+
+    input_runtime_manifest = json.loads(
+        (
+            input_source_dir / "ChatInput_Dark_V1_RuntimeManifest_v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert input_runtime_manifest["runtime_contract"] == "1.20"
+    assert input_runtime_manifest["status"] == "runtime-exported"
+    assert input_runtime_manifest["phase"] == "P5"
+    assert input_runtime_manifest["source"]["sha256"] == sha256(input_source)
+    assert input_runtime_manifest["runtime_export"]["sha256"] == sha256(
+        current_input_runtime
+    )
+    assert input_runtime_manifest["runtime_export"][
+        "visible_green_spill_pixels"
+    ] == 0
+    assert input_runtime_manifest["runtime_export"][
+        "transparent_rgb_nonzero_values"
+    ] == 0
+    assert input_runtime_manifest["deterministic_export"][
+        "normal_focus_alpha_equal"
+    ] is True
+    assert input_runtime_manifest["deterministic_export"][
+        "atlas_x_pixels"
+    ] == [8, 121, 932, 1016]
+    assert input_runtime_manifest["adapter"]["texture_instances"] == 3
 
     manifest_path = (
         ROOT
@@ -624,46 +724,6 @@ def main() -> None:
             f"runtime hash changed without manifest update: {record['file']}"
         )
 
-    dark_manifest_path = (
-        ROOT
-        / "assets"
-        / "source"
-        / "chat"
-        / "dark-v1"
-        / "ChatDarkV1_RuntimeManifest_v1.json"
-    )
-    dark_manifest = json.loads(dark_manifest_path.read_text(encoding="utf-8"))
-    assert dark_manifest["runtime_contract"] == "1.19"
-    assert dark_manifest["status"] == "runtime-exported"
-    assert dark_manifest["single_chat_frame"] is True
-    assert dark_manifest["book"]["runtime_border"] == {
-        "left": 30,
-        "top": 28,
-        "right": 30,
-        "bottom": 28,
-    }
-    assert dark_manifest["book"]["content_safe_area"] == [30, 32, 410, 280]
-    assert dark_manifest["input"]["runtime"] == {
-        "size": [380, 25],
-        "left": 28,
-        "right": 20,
-    }
-    assert dark_manifest["input"]["focus_derivation"] == {
-        "source": "normal accepted pixels",
-        "red_percent": 110,
-        "green_percent": 108,
-        "blue_percent": 105,
-        "alpha": "unchanged",
-    }
-    assert dark_manifest["review"]["display_region"]["status"] == "pass"
-    assert dark_manifest["review"]["display_region"]["violation_count"] == 0
-    for record in dark_manifest["runtime_exports"].values():
-        runtime_path = ROOT / record["file"]
-        assert runtime_path.is_file(), f"missing runtime media {record['file']}"
-        assert sha256(runtime_path) == record["sha256"], (
-            f"dark runtime hash changed without manifest update: {record['file']}"
-        )
-
     imagegen_wrapper = (
         ROOT / ".codex" / "skills" / "imagegen-0-143-0" / "SKILL.md"
     ).read_text(encoding="utf-8")
@@ -689,8 +749,8 @@ def main() -> None:
     assert "ShouldUseSingleChatFrame" in expedition
 
     pfui_chat = (pfui / "modules" / "chat.lua").read_text(encoding="utf-8")
-    assert "ApplyExpeditionMessagePalette" in pfui_chat
-    assert "chat:ApplyMessagePalette" in pfui_chat
+    assert "ApplyExpeditionMessagePalette" not in pfui_chat
+    assert "chat:ApplyMessagePalette" not in pfui_chat
     assert "single-journal route" in pfui_chat
     assert "AddSecondaryMessagesTo(ChatFrame1)" in pfui_chat
     assert "not v.aeuiManaged" in pfui_chat
@@ -772,6 +832,29 @@ def main() -> None:
     for markdown in ROOT.rglob("*.md"):
         if ".git" not in markdown.parts:
             assert_markdown_links(markdown)
+
+    addon_validator = (
+        ROOT
+        / ".codex"
+        / "skills"
+        / "run-aeui-asset-workflow"
+        / "scripts"
+        / "validate_addon_package.py"
+    )
+    validator_result = subprocess.run(
+        [sys.executable, str(addon_validator), str(ROOT)],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert validator_result.returncode == 0, (
+        validator_result.stdout + validator_result.stderr
+    )
+    addon_report = json.loads(validator_result.stdout)
+    assert addon_report["schema"] == "aeui-addon-package-report-v1"
+    assert addon_report["status"] == "pass"
+    assert addon_report["build_required_on_target_device"] is False
+    assert addon_report["violations"] == []
 
     print("repository contract test passed")
 

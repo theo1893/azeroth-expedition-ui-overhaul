@@ -1,0 +1,94 @@
+{
+  "schema": "aeui-chat-tabs-dark-simulation-v2",
+  "version": "CHAT.TABS.DARK.SIM.V2",
+  "frame_runtime_manifest": "assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_RuntimeManifest_v1.json",
+  "input_runtime_manifest": "assets/source/chat/input-dark-v1/ChatInput_Dark_V1_RuntimeManifest_v1.json",
+  "v3_manifest": "assets/source/chat/v3/ChatV3_RuntimeManifest_v1.json",
+  "runtime_frame_atlas": "addon/AzerothExpeditionUI/Media/Chat/ChatBookFrameFullV1.tga",
+  "runtime_tabs_atlas": "addon/AzerothExpeditionUI/Media/Chat/ChatTabAtlasV3.tga",
+  "runtime_tab_shelf": "addon/AzerothExpeditionUI/Media/Chat/ChatTabShelfV3.tga",
+  "runtime_input_atlas": "addon/AzerothExpeditionUI/Media/Chat/ChatInputDarkV1.tga",
+  "direction_spec": "tools/specs/chat_dark_parchment_simulation_v1.json",
+  "canvas": [1620, 570],
+  "fonts": {
+    "body": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf", "size": 12},
+    "tab": {"path": "addon/AzerothExpeditionUI/Media/Fonts/LXGWWenKaiGB-Medium.ttf", "size": 14},
+    "input": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf", "size": 12},
+    "label": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf", "size": 16},
+    "note": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf", "size": 12}
+  },
+  "runtime_tab_text": {"selected": "#FFE09EFF", "normal": "#9F8257FF"},
+  "input_text": {"normal": "#D0BE9AFF", "focus": "#E1D0AAFF", "header": "#C59A54FF", "cursor": "#E0B568FF"},
+  "proposal": {
+    "shelf_leather": "#17100CFF",
+    "shelf_edge": "#3A281BFF",
+    "shelf_page_dark": "#49331FFF",
+    "shelf_page_light": "#71512DCC",
+    "shelf_seam": "#0C0806E8",
+    "shelf_stitch": "#73512CDA",
+    "states": {
+      "normal": {"top": 2, "fill": "#26180FFF", "outline": "#533820FF", "seam": "#160E09FF", "stitch": "#76532DCC", "glint": null, "glint_width": 0, "text": "#AD8C5EFF", "page_underlay": "#604424FF", "page_underlay_edge": "#2E1E12FF"},
+      "hover": {"top": 1, "fill": "#322015FF", "outline": "#6A4727FF", "seam": "#1A100AFF", "stitch": "#896238DD", "glint": "#9A6B35D8", "glint_width": 23, "text": "#C9A56DFF", "page_underlay": "#654827FF", "page_underlay_edge": "#332116FF"},
+      "selected": {"top": 0, "fill": "#442A19FF", "outline": "#76502CFF", "seam": "#1D110AFF", "stitch": "#A07742E6", "glint": "#B07D3DDA", "glint_width": 31, "text": "#E5C58BFF", "page_underlay": "#674923FF", "page_underlay_edge": "#342213FF"},
+      "disabled": {"top": 3, "fill": "#18110DFF", "outline": "#36271EFF", "seam": "#0D0A08FF", "stitch": "#4C4034A8", "glint": null, "glint_width": 0, "text": "#675A4BFF", "page_underlay": "#463521FF", "page_underlay_edge": "#221A13FF"}
+    }
+  },
+  "scenarios": [
+    {
+      "id": "old-v3-reference-440",
+      "label": "旧 V3 Tab：只作轮廓与物件关系参考",
+      "note": "梯形皮签 · 外撇端部 · 缝线手误 · selected 夹页层",
+      "origin": [30, 80],
+      "frame_size": [440, 320],
+      "tabs_mode": "runtime-v3",
+      "selected_tab": 0,
+      "message_count": 13,
+      "maximum_lines": 15,
+      "input_state": "focus",
+      "input_header": "小队：",
+      "input_text": "第一组就位，法师准备变羊。"
+    },
+    {
+      "id": "proposal-old-silhouette-440",
+      "label": "V2：旧式皮革索引签轮廓 + 深色收敛",
+      "note": "综合=选中 · 团队=悬停 · 个人=普通 · 拾取=禁用",
+      "origin": [510, 80],
+      "frame_size": [440, 320],
+      "tabs_mode": "geometric-old-v3-dark",
+      "states": ["selected", "hover", "normal", "disabled"],
+      "message_count": 13,
+      "maximum_lines": 15,
+      "input_state": "focus",
+      "input_header": "小队：",
+      "input_text": "第一组就位，法师准备变羊。"
+    },
+    {
+      "id": "proposal-old-silhouette-expanded-540",
+      "label": "V2：540×420 扩展窗口",
+      "note": "Tab 仍为 92×30；只让书页/皮革承托带横向延展",
+      "origin": [990, 80],
+      "frame_size": [540, 420],
+      "tabs_mode": "geometric-old-v3-dark",
+      "states": ["normal", "selected", "hover", "normal"],
+      "message_count": 13,
+      "maximum_lines": 22,
+      "input_state": "focus",
+      "input_header": "团队领袖：",
+      "input_text": "第二组进入房间，法师准备驱散，猎人误导主坦。",
+      "extra_messages": [
+        {"segments": [{"role": "time", "text": "[09:15]"}, {"role": "raid", "text": "[团]扩展窗口保持材质与安全边距。"}]},
+        {"segments": [{"role": "time", "text": "[09:15]"}, {"role": "party", "text": "[队]第一组就位。"}]},
+        {"segments": [{"role": "time", "text": "[09:15]"}, {"role": "guild", "text": "[公]补给已送达。"}]},
+        {"segments": [{"role": "time", "text": "[09:15]"}, {"role": "system", "text": "[系统]目标已更新。"}]},
+        {"segments": [{"role": "time", "text": "[09:16]"}, {"role": "raid", "text": "[团]第二组就位。"}]},
+        {"segments": [{"role": "time", "text": "[09:16]"}, {"role": "party", "text": "[队]准备开怪。"}]},
+        {"segments": [{"role": "time", "text": "[09:16]"}, {"role": "world", "text": "[世界]频道辨识检查。"}]},
+        {"segments": [{"role": "time", "text": "[09:16]"}, {"role": "whisper", "text": "[密]边距正常。"}]},
+        {"segments": [{"role": "time", "text": "[09:16]"}, {"role": "system", "text": "[系统]显示区域通过。"}]}
+      ]
+    }
+  ],
+  "footer": "生成前方向预演：V2 只恢复旧 Tab 的不规则皮签轮廓与夹页物理关系；保持深色、原尺寸和原命中区。几何像素不进入 source/runtime，也不作为 ImageGen 输入。",
+  "output": "generated/chat/core/CHAT.TABS.DARK.V2/simulation/CHAT-TABS-DARK-SIM-V2/chat_tabs_dark_sim_v2.png",
+  "metrics": "generated/chat/core/CHAT.TABS.DARK.V2/simulation/CHAT-TABS-DARK-SIM-V2/chat_tabs_dark_sim_v2.metrics.json"
+}

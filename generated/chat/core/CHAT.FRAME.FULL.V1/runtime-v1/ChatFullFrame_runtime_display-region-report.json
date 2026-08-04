@@ -1,0 +1,66 @@
+{
+  "schema": "aeui-display-region-report-v1",
+  "component": "CHAT.FRAME.FULL.V1.runtime-v1",
+  "status": "pass",
+  "summary": {
+    "scenario_count": 5,
+    "violation_count": 0,
+    "first_failure": null
+  },
+  "checks": [
+    {
+      "id": "atlas_sampling",
+      "sampled_area": 637952,
+      "visible_area": 637952,
+      "regions": 9
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "empty-default",
+      "frame": [
+        440,
+        320
+      ],
+      "status": "pass",
+      "violation_count": 0
+    },
+    {
+      "id": "minimum-one-line-focused-input",
+      "frame": [
+        440,
+        320
+      ],
+      "status": "pass",
+      "violation_count": 0
+    },
+    {
+      "id": "typical-fifteen-lines",
+      "frame": [
+        440,
+        320
+      ],
+      "status": "pass",
+      "violation_count": 0
+    },
+    {
+      "id": "maximum-sixteen-lines",
+      "frame": [
+        440,
+        320
+      ],
+      "status": "pass",
+      "violation_count": 0
+    },
+    {
+      "id": "supported-expanded",
+      "frame": [
+        540,
+        420
+      ],
+      "status": "pass",
+      "violation_count": 0
+    }
+  ],
+  "violations": []
+}

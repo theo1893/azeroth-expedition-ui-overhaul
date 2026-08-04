@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "module": "chat",
+  "batch": "CHAT.FRAME.FULL.V1",
+  "accepted_version": "CHAT.FRAME.FULL.V1.r1 attempt 2",
+  "runtime_contract": "1.19",
+  "status": "runtime-exported",
+  "single_chat_frame": true,
+  "source": {
+    "file": "assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_r1.png",
+    "sha256": "a97d9c5fa055a119cd5ea7809bdaa51460cddb9674355efcec35f98f6cd2c673",
+    "width": 1608,
+    "height": 978,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      24,
+      25,
+      1584,
+      952
+    ],
+    "transparent_pixels": 223149,
+    "partially_transparent_pixels": 23952,
+    "opaque_pixels": 1325523,
+    "pure_green_visible_pixels": 0,
+    "visible_green_spill_pixels": 0
+  },
+  "deterministic_export": {
+    "operation": "proportional whole-source LANCZOS resize to 1024x623; RGB clearing only for impossible dominant-green ringing at Alpha <=16; top-left placement on a transparent 1024x1024 atlas; and RGBA TGA serialization",
+    "foreign_source_pixels_mixed": false,
+    "redraw": false,
+    "low_alpha_ringing_cleanup": {
+      "cleared_pixel_count": 50,
+      "highest_affected_alpha": 13,
+      "alpha_limit": 16
+    },
+    "source_nine_slice_cuts": [
+      215,
+      100,
+      1485,
+      860
+    ],
+    "atlas_content_size": [
+      1024,
+      623
+    ],
+    "atlas_nine_slice_cuts": {
+      "left": 137,
+      "top": 64,
+      "right": 946,
+      "bottom": 548,
+      "content_bottom": 623
+    },
+    "normalized_uv": {
+      "left": 0.1337890625,
+      "right": 0.923828125,
+      "top": 0.0625,
+      "bottom_inner": 0.53515625,
+      "content_bottom": 0.6083984375
+    },
+    "runtime_caps_ltrb": [
+      30,
+      28,
+      30,
+      28
+    ],
+    "content_safe_insets_ltrb": [
+      30,
+      32,
+      30,
+      40
+    ],
+    "supported_frame_sizes": [
+      [
+        440,
+        320
+      ],
+      [
+        540,
+        420
+      ]
+    ]
+  },
+  "runtime_export": {
+    "file": "addon/AzerothExpeditionUI/Media/Chat/ChatBookFrameFullV1.tga",
+    "sha256": "becb504fb482cb37c0824e9b8705b4ad76d890a5cac024e83a3cce81517025ae",
+    "width": 1024,
+    "height": 1024,
+    "mode": "RGBA",
+    "logical_sampled_bbox": [
+      0,
+      0,
+      1024,
+      623
+    ],
+    "visible_bbox_exclusive": [
+      14,
+      14,
+      1010,
+      608
+    ],
+    "transparent_pixels": 500265,
+    "partially_transparent_pixels": 11921,
+    "opaque_pixels": 536390,
+    "pure_green_visible_pixels": 0,
+    "visible_green_spill_pixels": 0
+  },
+  "adapter": {
+    "file": "addon/AzerothExpeditionUI/Modules/Chat.lua",
+    "runtime_owner": "pfUI.chat.left / pfChatLeft",
+    "texture_instances": 9,
+    "right_frame_instances": 0,
+    "fallback": "retained ChatBookFrameV3.tga and native/pfUI behavior"
+  },
+  "text_readability": {
+    "paper_contrast_proxy_rgb": [
+      48,
+      36,
+      27
+    ],
+    "paper_proxy_role": "90th-percentile common reading-field luminance",
+    "inline_contrast_target": 4.8,
+    "palette_rgb": {
+      "say": [
+        201,
+        185,
+        144
+      ],
+      "channel": [
+        255,
+        192,
+        192
+      ],
+      "system": [
+        255,
+        255,
+        0
+      ],
+      "guild": [
+        64,
+        255,
+        64
+      ],
+      "party": [
+        170,
+        170,
+        255
+      ],
+      "raid": [
+        255,
+        127,
+        0
+      ],
+      "whisper": [
+        255,
+        128,
+        255
+      ],
+      "danger": [
+        255,
+        86,
+        86
+      ],
+      "emote": [
+        255,
+        127,
+        63
+      ]
+    },
+    "unknown_inline_rule": "preserve colors already meeting contrast; otherwise mix the minimum amount toward white until the target is reached",
+    "outline": false,
+    "shadow": false,
+    "glow": false
+  },
+  "review_artifacts": {
+    "atlas_png": "generated/chat/core/CHAT.FRAME.FULL.V1/runtime-v1/ChatBookFrameFullV1_RuntimeAtlas.png",
+    "assembled_440x320": "generated/chat/core/CHAT.FRAME.FULL.V1/runtime-v1/ChatBookFrameFullV1_440x320.png",
+    "assembled_540x420": "generated/chat/core/CHAT.FRAME.FULL.V1/runtime-v1/ChatBookFrameFullV1_540x420.png",
+    "real_layout_spec": "tools/specs/chat_full_frame_runtime_preview_v1.json",
+    "display_region_contract": "tools/specs/chat_full_frame_runtime_display_region_v1.json"
+  },
+  "forbidden_runtime_uses": [
+    "do not load the accepted 1608x978 source directly in game",
+    "do not use one stretched full-frame texture instead of nine slices",
+    "do not mix pixels from the V3 frame or rejected paper donor",
+    "do not bake tabs, text, input, unread, buttons or legacy panels",
+    "do not instantiate a right-side chat book"
+  ]
+}

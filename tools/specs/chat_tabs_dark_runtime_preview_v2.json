@@ -1,0 +1,126 @@
+{
+  "schema": "aeui-chat-tabs-dark-runtime-preview-v2",
+  "version": "CHAT.TABS.DARK.V2/runtime-v2",
+  "runtime_contract": "1.22",
+  "tabs_runtime_manifest": "assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_RuntimeManifest_v1.json",
+  "frame_runtime_manifest": "assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_RuntimeManifest_v1.json",
+  "input_runtime_manifest": "assets/source/chat/input-dark-v1/ChatInput_Dark_V1_RuntimeManifest_v1.json",
+  "runtime_frame_atlas": "addon/AzerothExpeditionUI/Media/Chat/ChatBookFrameFullV1.tga",
+  "runtime_tabs_atlas": "addon/AzerothExpeditionUI/Media/Chat/ChatTabAtlasDarkV2.tga",
+  "runtime_tab_shelf": "addon/AzerothExpeditionUI/Media/Chat/ChatTabShelfDarkV2.tga",
+  "runtime_input_atlas": "addon/AzerothExpeditionUI/Media/Chat/ChatInputDarkV1.tga",
+  "direction_spec": "tools/specs/chat_dark_parchment_simulation_v1.json",
+  "theme_id": "B-near-black-paper",
+  "canvas": [1600, 1400],
+  "fonts": {
+    "body": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf", "size": 12},
+    "tab": {"path": "addon/AzerothExpeditionUI/Media/Fonts/LXGWWenKaiGB-Medium.ttf", "size": 14},
+    "input": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf", "size": 12},
+    "label": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf", "size": 16},
+    "note": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf", "size": 12}
+  },
+  "tab_text": {
+    "normal": "#A98C61FF",
+    "hover": "#C6A66FFF",
+    "selected": "#FFE09EFF",
+    "disabled": "#66594AFF"
+  },
+  "input_text": {
+    "normal": "#D0BE9AFF",
+    "focus": "#E1D0AAFF",
+    "header": "#C59A54FF",
+    "cursor": "#E0B568FF"
+  },
+  "scenarios": [
+    {
+      "id": "empty-440",
+      "label": "空正文 · 440×320 · 四枚真实 Tab",
+      "origin": [30, 70],
+      "frame_size": [440, 320],
+      "states": ["selected", "normal", "normal", "normal"],
+      "message_count": 0,
+      "maximum_lines": 16,
+      "input_state": "normal",
+      "input_header": "",
+      "input_text": ""
+    },
+    {
+      "id": "minimum-440",
+      "label": "最小内容 · 440×320 · hover/disabled",
+      "origin": [510, 70],
+      "frame_size": [440, 320],
+      "states": ["selected", "hover", "normal", "disabled"],
+      "message_count": 1,
+      "maximum_lines": 16,
+      "input_state": "normal",
+      "input_header": "说：",
+      "input_text": "准备出发。"
+    },
+    {
+      "id": "typical-440",
+      "label": "典型 15 行 · 440×320 · 100%",
+      "origin": [990, 70],
+      "frame_size": [440, 320],
+      "states": ["selected", "hover", "normal", "disabled"],
+      "message_count": 13,
+      "maximum_lines": 15,
+      "input_state": "focus",
+      "input_header": "小队：",
+      "input_text": "第一组就位，法师准备变羊。"
+    },
+    {
+      "id": "maximum-440",
+      "label": "最大 16 行 · 440×320 · 四状态",
+      "origin": [30, 500],
+      "frame_size": [440, 320],
+      "states": ["selected", "hover", "normal", "disabled"],
+      "message_count": 13,
+      "maximum_lines": 16,
+      "input_state": "focus",
+      "input_header": "团队：",
+      "input_text": "第二组就位，保持频道切换。",
+      "extra_messages": [
+        {"segments": [{"role": "time", "text": "[09:15]"}, {"role": "raid", "text": "[团]第二组进入房间。"}]}
+      ]
+    },
+    {
+      "id": "expanded-540",
+      "label": "扩展窗口 · 540×420 · 22 行",
+      "origin": [510, 470],
+      "frame_size": [540, 420],
+      "states": ["normal", "selected", "hover", "normal"],
+      "message_count": 13,
+      "maximum_lines": 22,
+      "input_state": "focus",
+      "input_header": "团队领袖：",
+      "input_text": "第二组进入房间，法师准备驱散，猎人误导主坦。",
+      "extra_messages": [
+        {"segments": [{"role": "time", "text": "[09:15]"}, {"role": "raid", "text": "[团]扩展窗口保持材质与安全边距。"}]},
+        {"segments": [{"role": "time", "text": "[09:15]"}, {"role": "party", "text": "[队]第一组就位。"}]},
+        {"segments": [{"role": "time", "text": "[09:15]"}, {"role": "guild", "text": "[公]补给已送达。"}]},
+        {"segments": [{"role": "time", "text": "[09:15]"}, {"role": "system", "text": "[系统]目标已更新。"}]},
+        {"segments": [{"role": "time", "text": "[09:16]"}, {"role": "raid", "text": "[团]第二组就位。"}]},
+        {"segments": [{"role": "time", "text": "[09:16]"}, {"role": "party", "text": "[队]准备开怪。"}]},
+        {"segments": [{"role": "time", "text": "[09:16]"}, {"role": "world", "text": "[世界]频道辨识检查。"}]},
+        {"segments": [{"role": "time", "text": "[09:16]"}, {"role": "whisper", "text": "[密]边距正常。"}]},
+        {"segments": [{"role": "time", "text": "[09:16]"}, {"role": "system", "text": "[系统]显示区域通过。"}]}
+      ]
+    },
+    {
+      "id": "overflow-five-tabs-440",
+      "label": "五枚停靠 Tab · 440×320 · 等宽收缩",
+      "origin": [30, 960],
+      "frame_size": [440, 320],
+      "tabs": ["综合", "战斗", "密语", "拾取", "公会"],
+      "states": ["selected", "normal", "hover", "disabled", "normal"],
+      "message_count": 5,
+      "maximum_lines": 16,
+      "input_state": "normal",
+      "input_header": "",
+      "input_text": ""
+    }
+  ],
+  "footer": "最终 P5 离线排版：Tab 与承托带来自正式 Dark V2 TGA；文字和消息由 runtime 示例绘制，不在位图内。",
+  "output": "generated/chat/core/CHAT.TABS.DARK.V2/runtime-v2/ChatTabsDarkV2_runtime_real_layout.png",
+  "metrics": "generated/chat/core/CHAT.TABS.DARK.V2/runtime-v2/ChatTabsDarkV2_runtime_real_layout.metrics.json"
+}

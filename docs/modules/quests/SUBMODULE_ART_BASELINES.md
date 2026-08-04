@@ -48,8 +48,9 @@ ImageGen。
 底板。Turtle WoW 实机证明旧 23 行纯文字方案无法呈现锁定基准中的左页身份，
 因此 V2 使用十八行、每行 `246 × 18 UI px` 的真实 Button 窗口；隐藏页边
 scrollbar chrome 后使用完整左页宽度。全部任务名、地区名以及完成／地下城等
-状态 FontString 使用同一 `12px` 霞鹜文楷角色，不使用描边或文字阴影。
-动态色不得依赖描边补偿可读性：五档任务难度色在实机代表深纸面
+状态 FontString 继承 `pfUI.font_default` 的统一界面字体，固定 `12px` 并使用
+`OUTLINE` 提高深色纸面上的字重；不再强制霞鹜文楷。文字 shadow 仍清零，
+避免描边与额外投影叠成现代发光字。五档任务难度色在实机代表深纸面
 `#B08444` 上须保持约 `4.5:1` 或更高的正文对比，同时保留红／棕／赭／绿／
 灰的色相区分。任务类型使用深紫墨，完成／失败使用独立深绿／深红；禁止
 荧亮黄、发光色或与纸面明度接近的浅橄榄色。模板拆分与内联状态文字遵守
@@ -153,10 +154,11 @@ SHA-256
 [QS-A1_RuntimeManifest_v1.json](../../../assets/source/quests/qs-a1/QS-A1_RuntimeManifest_v1.json)：
 同一 Alpha 等比缩为 `60 × 58`，居中放入 normal／hover／pressed／disabled
 四个 `64 × 64` cell；hover 只暖亮，pressed 只压暗且未来交互锚点下移
-`1px`，disabled 只退灰，四态不重画轮廓。Quest Log 当前以 `28px` 外置于
-书体右上透明空间，Tracker 以 `34px` 位于顶部中央；两处当前均只使用 normal
-无鼠标 Texture。旧七个 provider Button 在 hub menu 取得一一功能等价前
-继续可见可用，不能为了纯净构图提前隐藏。
+`1px`，disabled 只退灰，四态不重画轮廓。Quest Log runtime `1.18` 以
+`32px` 显示 accepted QS-A1 漆章，并直接压在详情页右上纸面；`40px` 保留区
+不得承载标题、正文或奖励。Tracker 以 `34px` 位于顶部中央；两处当前均只
+使用 normal 无鼠标 Texture。旧七个 provider Button 在 hub menu 取得一一
+功能等价前继续可见可用，不能为了纯净构图提前隐藏。
 
 ## ScrollBar 与操作 Button
 
@@ -170,16 +172,28 @@ FauxScrollFrame offset、裁切、滚动范围或任务详情数据；也不以�
 牌匾或第二层框。等级与追踪控件复用已接受 QL-B1 开放墨圈／墨勾 atlas，
 不另造 checkbox 外壳。
 
-底部放弃／分享／退出与详情开合均保留真实 Button 和原脚本，使用程序化暗旧
-皮革搭扣：暖旧铜色上／左薄边、深色下／右阴影、克制 hover、压暗 pressed
-与退灰 disabled；文字由客户端绘制。不得增加整条底框、现代矩形按钮、细金框、
-常亮高光或烘焙文字。该轮只使用确定性运行时 Texture 色块，不调用 ImageGen，
-也不产生新的 bitmap 资产。
+底部放弃／分享／退出、详情开合与 pfQuest 四个地图操作在火漆事务菜单取得
+完整功能等价前仍保留真实 Button 和原脚本，使用程序化暗旧皮革搭扣作为
+fail-open fallback。目标交互只允许由火漆入口代理原 Button；不得复制任务
+业务逻辑、绕过放弃确认或在 provider 尚未捕获时提前隐藏 fallback。Quest Log
+入口只允许直接压在现有详情页右上纸面，不能附着书框、护轨、包角、虚构封面
+或悬空充当红色图标，也不得再增加书签承托。七项事务使用从详情页右边界向
+书外伸出的独立短书口事务签；真实页边遮住根部，任何按钮像素都不得进入书页
+内容区。每条固定为 `112×20px`，书外 outset 为 `48px`；轮廓只在
+外端轻微削角，不使用箭头尖端、逐项铆钉或明亮黄铜顶部高光。综合色限定为
+低饱和暗胡桃旧皮革、低对比旧铜色边线和暖旧文字；危险项只用克制酒红文字／
+边线，不整条染红。不得变成整张二级页面、现代弹出卡片、透明黑玻璃、细金框
+或图标矩阵。V9 已于 `2026-08-03` 通过方向确认；`QS-B1 V1` 将只生成一枚
+无字母版，由确定性 exporter 派生 standard／danger 各四态，七个 runtime
+Button 仍彼此独立。当前只到生产正文待授权，不得调用 ImageGen、建立 source
+或修改 runtime。
 
 ## 奖励槽与分隔
 
 奖励槽使用深皮革凹面、克制黄铜外沿和纸面接触阴影；物品图标、数量、名称与
-品质色均为 runtime。Quest Log 奖励只读，不提供 selected 状态。分区墨线为
+品质色均为 runtime。Quest Log 奖励只读，不提供 selected 状态。右页双列
+每格最大 `108px`，名称安全宽 `64px`；正文换行后必须按实际最底部可见对象
+重算 ScrollChild 高度，不能用固定 `324px` 内容高裁掉奖励。分区墨线为
 无命中的三段式短线，不切断整张右页。
 
 ## Quest Tracker

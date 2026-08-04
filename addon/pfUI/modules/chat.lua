@@ -782,31 +782,6 @@ pfUI:RegisterModule("chat", "vanilla:tbc", function ()
     SendWho("n-"..name)
   end
 
-  local function ApplyExpeditionMessagePalette(
-    frame,
-    text,
-    red,
-    green,
-    blue
-  )
-    local aeui = _G.AzerothExpeditionUI
-    local chat =
-      aeui and
-      aeui.modules and
-      aeui.modules.Chat
-    if chat and chat.ApplyMessagePalette then
-      return chat:ApplyMessagePalette(
-        frame,
-        text,
-        red,
-        green,
-        blue
-      )
-    end
-
-    return text, red, green, blue
-  end
-
   local function AddMessage(frame, text, a1, a2, a3, a4, a5)
     if not text then return end
 
@@ -920,13 +895,6 @@ pfUI:RegisterModule("chat", "vanilla:tbc", function ()
       end
     end
 
-    text, a1, a2, a3 = ApplyExpeditionMessagePalette(
-      frame,
-      text,
-      a1,
-      a2,
-      a3
-    )
     frame:HookAddMessage(text, a1, a2, a3, a4, a5)
   end
 

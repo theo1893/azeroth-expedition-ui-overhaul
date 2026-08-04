@@ -1,9 +1,10 @@
 local addon = AzerothExpeditionUI
 local Chat = {}
-Chat.runtimeContract = "1.19"
+Chat.runtimeContract = "1.22"
+Chat.colorContract = "classic-provider"
 
 local CHAT_MEDIA = addon.media.root .. "Chat\\"
-local BOOK_TEXTURE = CHAT_MEDIA .. "ChatBookFrameDarkV1"
+local BOOK_TEXTURE = CHAT_MEDIA .. "ChatBookFrameFullV1"
 local TAB_FONT =
   addon.media.root .. "Fonts\\LXGWWenKaiGB-Medium.ttf"
 
@@ -16,9 +17,9 @@ local BOOK_UV = {
 }
 
 local TEXTURES = {
-  tabs = CHAT_MEDIA .. "ChatTabAtlasV3",
-  tabShelf = CHAT_MEDIA .. "ChatTabShelfV3",
-  input = CHAT_MEDIA .. "ChatInputAtlasDarkV1",
+  tabs = CHAT_MEDIA .. "ChatTabAtlasDarkV2",
+  tabShelf = CHAT_MEDIA .. "ChatTabShelfDarkV2",
+  input = CHAT_MEDIA .. "ChatInputDarkV1",
   unread = CHAT_MEDIA .. "ChatUnreadSealV3",
 }
 
@@ -73,243 +74,6 @@ local CHAT_TEXT_DEFAULT_SIZE = 12
 local CHAT_TEXT_LINE_SPACING = 3
 local CHAT_TEXT_SHADOW_COLOR = { 0, 0, 0, 0 }
 local CHAT_TEXT_SHADOW_OFFSET = { 0, 0 }
-
-local function RGB8(red, green, blue)
-  return { red / 255, green / 255, blue / 255 }
-end
-
--- The accepted dark paper makes the familiar Vanilla channel hues readable
--- without collapsing them into similar dark inks. Party and raid intentionally
--- remain separate families; body text uses a warm paper-white instead of pure
--- white so long sessions remain comfortable.
-local CHAT_TEXT_PALETTE = {
-  say = RGB8(201, 185, 144),
-  channel = RGB8(255, 192, 192),
-  system = RGB8(255, 255, 0),
-  guild = RGB8(64, 255, 64),
-  party = RGB8(170, 170, 255),
-  raid = RGB8(255, 127, 0),
-  whisper = RGB8(255, 128, 255),
-  danger = RGB8(255, 64, 64),
-  emote = RGB8(255, 127, 63),
-}
-
-local CHAT_BASE_COLOR_RULES = {
-  {
-    target = "whisper",
-    types = {
-      "WHISPER", "WHISPER_INFORM", "REPLY",
-      "MONSTER_WHISPER", "MONSTER_BOSS_WHISPER",
-    },
-  },
-  {
-    target = "guild",
-    types = {
-      "GUILD", "OFFICER", "LOOT", "MONEY",
-      "COMBAT_XP_GAIN", "COMBAT_HONOR_GAIN",
-      "COMBAT_FACTION_CHANGE", "SKILL",
-    },
-  },
-  {
-    target = "party",
-    types = { "PARTY", "PARTY_LEADER" },
-  },
-  {
-    target = "raid",
-    types = {
-      "RAID", "RAID_LEADER",
-      "BATTLEGROUND", "BATTLEGROUND_LEADER",
-      "BATTLEGROUND_SYSTEM_ALLIANCE",
-    },
-  },
-  {
-    target = "danger",
-    types = {
-      "YELL", "RAID_WARNING", "ERROR", "MONSTER_YELL",
-      "MONSTER_BOSS_EMOTE", "BATTLEGROUND_SYSTEM_HORDE",
-    },
-  },
-  {
-    target = "emote",
-    types = { "EMOTE", "TEXT_EMOTE", "MONSTER_EMOTE" },
-  },
-  {
-    target = "system",
-    types = {
-      "SYSTEM", "IGNORED", "AFK", "DND", "FILTERED",
-      "CHANNEL_JOIN", "CHANNEL_LEAVE", "CHANNEL_LIST",
-      "CHANNEL_NOTICE", "CHANNEL_NOTICE_USER",
-      "BATTLEGROUND_SYSTEM_NEUTRAL", "OPENING",
-      "TRADESKILLS", "PET_INFO", "COMBAT_MISC_INFO",
-    },
-  },
-  {
-    target = "channel",
-    types = {
-      "CHANNEL", "CHANNEL1", "CHANNEL2", "CHANNEL3",
-      "CHANNEL4", "CHANNEL5", "CHANNEL6", "CHANNEL7",
-      "CHANNEL8", "CHANNEL9", "CHANNEL10",
-    },
-  },
-  {
-    target = "say",
-    types = { "SAY", "MONSTER_SAY" },
-  },
-}
-
--- Exact colors emitted by ChatMOD 1.1, pfUI's class tinting and Vanilla item
--- quality links. The dark paper can carry the familiar bright Vanilla hues;
--- only colors that would remain too dark are lifted to a nearby readable hue.
--- Payloads and global provider colors are never changed.
-local CHAT_INLINE_COLOR_MAP = {
-  -- ChatMOD timestamp, URL and generic accents.
-  ff33ccff = "ff33ccff",
-  ff00ffff = "ff33ccff",
-  ff00ccff = "ff33ccff",
-  ff66ffe6 = "ff66ffe6",
-  ff9999ee = "ffaaaaff",
-  ffff0000 = "ffff4040",
-  ffff1919 = "ffff4040",
-  ffff7f3f = "ffff7f3f",
-  ffffff00 = "ffffff00",
-  ffff9c00 = "ffff7f00",
-  ffff00ff = "ffff80ff",
-  ff10ff10 = "ff40ff40",
-  ff00ff00 = "ff1eff00",
-  ff3fbf3f = "ff40ff40",
-  ff0000ff = "ff1684ed",
-  ff006cff = "ff1684ed",
-  ffb2b2b2 = "ffb2b2b2",
-  ff7f7f7f = "ff999999",
-  ffa0a0a0 = "ffa0a0a0",
-  a0a0a0a0 = "a0c9b990",
-  fff86256 = "ffff8080",
-
-  -- DPSMate report accents seen in raid chat.
-  ffff8080 = "ffff8080",
-  ff8cff80 = "ff8cff80",
-
-  -- Nine familiar Vanilla class colors. Shaman blue is lifted slightly so it
-  -- clears the dark-paper contrast floor without changing its identity.
-  ffc79c6e = "ffc79c6e",
-  fff58cba = "fff58cba",
-  ffabd473 = "ffabd473",
-  fffff569 = "fffff569",
-  ffffffff = "ffffffff",
-  ff0070de = "ff1684ed",
-  ff69ccf0 = "ff69ccf0",
-  ff9482c9 = "ff9482c9",
-  ffff7d0a = "ffff7d0a",
-
-  -- Known Vanilla item-quality colors; links remain links and keep hue.
-  ff9d9d9d = "ff9d9d9d",
-  ff1eff00 = "ff1eff00",
-  ff0070dd = "ff3d9bff",
-  ffa335ee = "ffc768ff",
-  ffff8000 = "ffff9a2e",
-  ffe6cc80 = "ffe6cc80",
-}
-
-local CHAT_INLINE_CONTRAST_TARGET = 4.8
-local CHAT_INLINE_BACKGROUND_COLOR = { 24, 18, 13 }
-local CHAT_INLINE_COLOR_CACHE = {}
-local CHAT_INLINE_COLOR_TARGETS = {}
-
-for _, target in pairs(CHAT_INLINE_COLOR_MAP) do
-  CHAT_INLINE_COLOR_TARGETS[target] = true
-end
-
-local function LinearizeColorChannel(value)
-  local encoded = value / 255
-  if encoded <= 0.04045 then
-    return encoded / 12.92
-  end
-  return ((encoded + 0.055) / 1.055) ^ 2.4
-end
-
-local function RelativeLuminance(red, green, blue)
-  return
-    0.2126 * LinearizeColorChannel(red) +
-    0.7152 * LinearizeColorChannel(green) +
-    0.0722 * LinearizeColorChannel(blue)
-end
-
-local CHAT_INLINE_BACKGROUND_LUMINANCE = RelativeLuminance(
-  CHAT_INLINE_BACKGROUND_COLOR[1],
-  CHAT_INLINE_BACKGROUND_COLOR[2],
-  CHAT_INLINE_BACKGROUND_COLOR[3]
-)
-
-local function InlineContrast(red, green, blue)
-  local foreground = RelativeLuminance(red, green, blue)
-  if foreground >= CHAT_INLINE_BACKGROUND_LUMINANCE then
-    return
-      (foreground + 0.05) /
-      (CHAT_INLINE_BACKGROUND_LUMINANCE + 0.05)
-  end
-  return
-    (CHAT_INLINE_BACKGROUND_LUMINANCE + 0.05) /
-    (foreground + 0.05)
-end
-
--- Third-party addons can inject colors AEUI has never audited. Preserve colors
--- that already clear the dark-paper contrast floor. Unreadably dark values are
--- mixed only as far toward white as required; this retains the original hue as
--- far as possible while guaranteeing that arbitrary provider text is visible.
-local function AdaptUnknownInlineColor(color)
-  -- The provider chain can legitimately pass through more than one AEUI
-  -- bridge. Deterministic outputs are terminal and must not be adapted again.
-  if CHAT_INLINE_COLOR_TARGETS[color] then
-    return nil
-  end
-
-  local cached = CHAT_INLINE_COLOR_CACHE[color]
-  if cached ~= nil then
-    if cached then
-      return cached
-    end
-    return nil
-  end
-
-  local alpha = string.sub(color, 1, 2)
-  local red = tonumber(string.sub(color, 3, 4), 16)
-  local green = tonumber(string.sub(color, 5, 6), 16)
-  local blue = tonumber(string.sub(color, 7, 8), 16)
-  if not red or not green or not blue then
-    CHAT_INLINE_COLOR_CACHE[color] = false
-    return nil
-  end
-
-  if InlineContrast(red, green, blue) >= CHAT_INLINE_CONTRAST_TARGET then
-    CHAT_INLINE_COLOR_CACHE[color] = false
-    return nil
-  end
-
-  local lower = 0
-  local upper = 1
-  for _ = 1, 12 do
-    local amount = (lower + upper) / 2
-    local testRed = math.floor(red + (255 - red) * amount + 0.5)
-    local testGreen = math.floor(green + (255 - green) * amount + 0.5)
-    local testBlue = math.floor(blue + (255 - blue) * amount + 0.5)
-    if InlineContrast(testRed, testGreen, testBlue) >=
-      CHAT_INLINE_CONTRAST_TARGET
-    then
-      upper = amount
-    else
-      lower = amount
-    end
-  end
-
-  local replacement = alpha .. string.format(
-    "%02x%02x%02x",
-    math.floor(red + (255 - red) * upper + 0.5),
-    math.floor(green + (255 - green) * upper + 0.5),
-    math.floor(blue + (255 - blue) * upper + 0.5)
-  )
-  CHAT_INLINE_COLOR_CACHE[color] = replacement
-  return replacement
-end
 
 local function ConfigureBookSlice(
   owner,
@@ -1097,207 +861,11 @@ function Chat:StyleChatFrameText(frame, force)
   frame.aeuiTextStyleVersion = self.runtimeContract
 end
 
-function Chat:TransformBaseMessageColor(red, green, blue)
-  if type(ChatTypeInfo) ~= "table" then
-    return red, green, blue
-  end
-
-  for _, rule in ipairs(CHAT_BASE_COLOR_RULES) do
-    for _, chatType in ipairs(rule.types) do
-      local source = ChatTypeInfo[chatType]
-      if
-        source and
-        NearlyEqual(red, source.r) and
-        NearlyEqual(green, source.g) and
-        NearlyEqual(blue, source.b)
-      then
-        local target = CHAT_TEXT_PALETTE[rule.target]
-        return target[1], target[2], target[3]
-      end
-    end
-  end
-
-  return red, green, blue
-end
-
-function Chat:NormalizeInlineMessageColors(text)
-  if type(text) ~= "string" then
-    return text
-  end
-
-  return string.gsub(
-    text,
-    "|([cC])([0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]" ..
-      "[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])",
-    function(marker, color)
-      local normalizedColor = string.lower(color)
-      local replacement =
-        CHAT_INLINE_COLOR_MAP[normalizedColor] or
-        AdaptUnknownInlineColor(normalizedColor)
-      if replacement then
-        return "|c" .. replacement
-      end
-      return "|" .. marker .. color
-    end
-  )
-end
-
-function Chat:IsMessagePaletteManaged(frame)
-  return
-    frame and
-    frame.GetParent and
-    addon.db and
-    addon.db.chat and
-    addon.db.chat.enabled and
-    pfUI and
-    pfUI.chat and
-    frame:GetParent() == pfUI.chat.left
-end
-
-function Chat:ApplyMessagePalette(frame, text, red, green, blue)
-  if self:IsMessagePaletteManaged(frame) then
-    local originalText = text
-    local originalRed = red
-    local originalGreen = green
-    local originalBlue = blue
-
-    text = self:NormalizeInlineMessageColors(text)
-    red, green, blue =
-      self:TransformBaseMessageColor(red, green, blue)
-
-    self.messagePaletteCalls = (self.messagePaletteCalls or 0) + 1
-    frame.aeuiMessagePaletteCalls =
-      (frame.aeuiMessagePaletteCalls or 0) + 1
-    if
-      text ~= originalText or
-      red ~= originalRed or
-      green ~= originalGreen or
-      blue ~= originalBlue
-    then
-      self.messagePaletteMutations =
-        (self.messagePaletteMutations or 0) + 1
-      frame.aeuiMessagePaletteMutations =
-        (frame.aeuiMessagePaletteMutations or 0) + 1
-    end
-  end
-
-  return text, red, green, blue
-end
-
-function Chat:InstallChatMODFinalColorHook(frame)
-  if not frame or type(frame.ORG_AddMessage) ~= "function" then
-    return
-  end
-
-  if frame.ORG_AddMessage == frame.aeuiChatMODFinalColorWrapper then
-    frame.aeuiChatMODFinalColorVersion = self.runtimeContract
-    return
-  end
-
-  local providerAddMessage = frame.ORG_AddMessage
-  local wrapper = function(
-    self,
-    text,
-    red,
-    green,
-    blue,
-    alpha,
-    messageId
-  )
-    text, red, green, blue =
-      Chat:ApplyMessagePalette(self, text, red, green, blue)
-    return providerAddMessage(
-      self,
-      text,
-      red,
-      green,
-      blue,
-      alpha,
-      messageId
-    )
-  end
-
-  frame.aeuiChatMODFinalColorWrapper = wrapper
-  frame.ORG_AddMessage = wrapper
-  frame.aeuiChatMODFinalColorVersion = self.runtimeContract
-end
-
-function Chat:InstallMessageColorHook(frame)
-  self:InstallChatMODFinalColorHook(frame)
-
-  if
-    not frame or
-    frame.aeuiMessageColorHooked or
-    type(frame.HookAddMessage) ~= "function"
-  then
-    return
-  end
-
-  frame.aeuiProviderHookAddMessage = frame.HookAddMessage
-  frame.HookAddMessage = function(
-    self,
-    text,
-    red,
-    green,
-    blue,
-    alpha,
-    messageId
-  )
-    text, red, green, blue =
-      Chat:ApplyMessagePalette(self, text, red, green, blue)
-
-    return self:aeuiProviderHookAddMessage(
-      text,
-      red,
-      green,
-      blue,
-      alpha,
-      messageId
-    )
-  end
-  frame.aeuiMessageColorHooked = true
-  frame.aeuiMessageColorVersion = self.runtimeContract
-end
-
-function Chat:EnsureMessageColorHooks(owner)
-  for index = 1, NUM_CHAT_WINDOWS do
-    local frame = getglobal("ChatFrame" .. index)
-    if frame and frame.GetParent and frame:GetParent() == owner then
-      self:InstallMessageColorHook(frame)
-    end
-  end
-end
-
 function Chat:GetMessageColorStatus()
-  local managed = 0
-  local hooked = 0
-  local final = 0
-  local count = tonumber(NUM_CHAT_WINDOWS) or 0
-
-  for index = 1, count do
-    local frame = getglobal("ChatFrame" .. index)
-    if frame then
-      if self:IsMessagePaletteManaged(frame) then
-        managed = managed + 1
-      end
-      if frame.aeuiMessageColorHooked then
-        hooked = hooked + 1
-      end
-      if
-        frame.aeuiChatMODFinalColorWrapper and
-        frame.ORG_AddMessage == frame.aeuiChatMODFinalColorWrapper
-      then
-        final = final + 1
-      end
-    end
-  end
-
-  return
-    "m" .. managed ..
-    "/h" .. hooked ..
-    "/f" .. final ..
-    "/c" .. (self.messagePaletteCalls or 0) ..
-    "/x" .. (self.messagePaletteMutations or 0)
+  -- AEUI owns the book, typography and layout, but no longer touches message
+  -- colors. The client, pfUI and ChatMOD therefore remain the only authorities
+  -- for base RGB values and inline |cAARRGGBB sequences.
+  return self.colorContract
 end
 
 function Chat:LayoutTabPanel(owner, force)
@@ -1475,7 +1043,6 @@ function Chat:LayoutChatFrames(owner, force)
   for index = 1, NUM_CHAT_WINDOWS do
     local frame = getglobal("ChatFrame" .. index)
     if IsDockedIn(frame, owner) then
-      self:InstallMessageColorHook(frame)
       self:StyleChatFrameText(frame, force)
       if frame.SetSpacing then
         local spacing
@@ -1703,7 +1270,6 @@ function Chat:Maintain()
   end
 
   local owner = pfUI.chat.left
-  self:EnsureMessageColorHooks(owner)
   self:EnsureBookVisible(owner)
   self:ObserveOwnerScale(owner, true)
   if self.runtimeLayoutPending then

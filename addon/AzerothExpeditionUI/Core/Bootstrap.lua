@@ -203,6 +203,14 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       ", blizzard-skins=" ..
       (scopedRoute and "pfui-except-quest-log" or "pfui")
     )
+    if
+      addon.modules.Quests and
+      addon.modules.Quests.GetRuntimeStatus
+    then
+      addon:Print(
+        "quest " .. addon.modules.Quests:GetRuntimeStatus()
+      )
+    end
   else
     addon:Print("/aeui chat, /aeui quests, /aeui refresh, /aeui status")
   end

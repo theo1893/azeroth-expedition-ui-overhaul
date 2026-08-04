@@ -1,0 +1,119 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "CHAT.FRAME.FULL.V1.runtime-v1",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, 100%-UI-pixels",
+  "evidence": {
+    "provider": "addon/pfUI/modules/chat.lua",
+    "adapter": "addon/AzerothExpeditionUI/Modules/Chat.lua",
+    "runtime_exporter": "tools/build_chat_full_frame_v1_runtime.py",
+    "runtime_manifest": "assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_RuntimeManifest_v1.json",
+    "runtime_atlas": "addon/AzerothExpeditionUI/Media/Chat/ChatBookFrameFullV1.tga",
+    "runtime_preview_spec": "tools/specs/chat_full_frame_runtime_preview_v1.json",
+    "runtime_layout_metrics": "generated/chat/core/CHAT.FRAME.FULL.V1/runtime-v1/ChatFullFrame_runtime_real_layout_v1.metrics.json",
+    "direction_only": false
+  },
+  "atlas": {
+    "size": [1024, 1024],
+    "visible_bbox": [0, 0, 1024, 623],
+    "alpha_visible_bbox": [14, 14, 1010, 608],
+    "require_exact_visible_coverage": true,
+    "sampled_regions": [
+      {"id": "top-left", "box": [0, 0, 137, 64]},
+      {"id": "top", "box": [137, 0, 946, 64]},
+      {"id": "top-right", "box": [946, 0, 1024, 64]},
+      {"id": "left", "box": [0, 64, 137, 548]},
+      {"id": "center", "box": [137, 64, 946, 548]},
+      {"id": "right", "box": [946, 64, 1024, 548]},
+      {"id": "bottom-left", "box": [0, 548, 137, 623]},
+      {"id": "bottom", "box": [137, 548, 946, 623]},
+      {"id": "bottom-right", "box": [946, 548, 1024, 623]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 30, "right": 30, "top": 28, "bottom": 28},
+    "minimum_frame_size": [61, 57]
+  },
+  "scenarios": [
+    {
+      "id": "empty-default",
+      "frame": [440, 320],
+      "preview_frame": [440, 320],
+      "zones": {
+        "tabs": [30, 0, 410, 32],
+        "tab-hits": [30, 0, 410, 40],
+        "content": [30, 32, 410, 280],
+        "input": [30, 289, 410, 314]
+      },
+      "regions": [
+        {"id": "tabs.empty", "kind": "visual", "box": [30, 2, 407, 32], "zone": "tabs"},
+        {"id": "tab-hits.empty", "kind": "hit", "box": [30, 2, 407, 40], "zone": "tab-hits"}
+      ]
+    },
+    {
+      "id": "minimum-one-line-focused-input",
+      "frame": [440, 320],
+      "preview_frame": [440, 320],
+      "zones": {
+        "tabs": [30, 0, 410, 32],
+        "tab-hits": [30, 0, 410, 40],
+        "content": [30, 32, 410, 280],
+        "input": [30, 289, 410, 314]
+      },
+      "regions": [
+        {"id": "tabs.minimum", "kind": "visual", "box": [30, 2, 407, 32], "zone": "tabs"},
+        {"id": "tab-hits.minimum", "kind": "hit", "box": [30, 2, 407, 40], "zone": "tab-hits"},
+        {"id": "messages.minimum", "kind": "text", "box": [30, 42, 410, 57], "zone": "content"},
+        {"id": "input.focus", "kind": "hit", "box": [30, 289, 410, 314], "zone": "input"}
+      ]
+    },
+    {
+      "id": "typical-fifteen-lines",
+      "frame": [440, 320],
+      "preview_frame": [440, 320],
+      "zones": {
+        "tabs": [30, 0, 410, 32],
+        "tab-hits": [30, 0, 410, 40],
+        "content": [30, 32, 410, 280],
+        "input": [30, 289, 410, 314]
+      },
+      "regions": [
+        {"id": "tabs.typical", "kind": "visual", "box": [30, 2, 407, 32], "zone": "tabs"},
+        {"id": "tab-hits.typical", "kind": "hit", "box": [30, 2, 407, 40], "zone": "tab-hits"},
+        {"id": "messages.typical", "kind": "text", "box": [30, 42, 410, 267], "zone": "content"}
+      ]
+    },
+    {
+      "id": "maximum-sixteen-lines",
+      "frame": [440, 320],
+      "preview_frame": [440, 320],
+      "zones": {
+        "tabs": [30, 0, 410, 32],
+        "tab-hits": [30, 0, 410, 40],
+        "content": [30, 32, 410, 280],
+        "input": [30, 289, 410, 314]
+      },
+      "regions": [
+        {"id": "tabs.maximum", "kind": "visual", "box": [30, 2, 407, 32], "zone": "tabs"},
+        {"id": "tab-hits.maximum", "kind": "hit", "box": [30, 2, 407, 40], "zone": "tab-hits"},
+        {"id": "messages.maximum", "kind": "text", "box": [30, 42, 410, 280], "zone": "content"}
+      ]
+    },
+    {
+      "id": "supported-expanded",
+      "frame": [540, 420],
+      "preview_frame": [540, 420],
+      "zones": {
+        "tabs": [30, 0, 510, 32],
+        "tab-hits": [30, 0, 510, 40],
+        "content": [30, 32, 510, 380],
+        "input": [30, 389, 510, 414]
+      },
+      "regions": [
+        {"id": "tabs.expanded", "kind": "visual", "box": [30, 2, 407, 32], "zone": "tabs"},
+        {"id": "tab-hits.expanded", "kind": "hit", "box": [30, 2, 407, 40], "zone": "tab-hits"},
+        {"id": "messages.expanded", "kind": "text", "box": [30, 42, 510, 380], "zone": "content"},
+        {"id": "input.normal", "kind": "hit", "box": [30, 389, 510, 414], "zone": "input"}
+      ]
+    }
+  ]
+}

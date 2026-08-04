@@ -1,0 +1,211 @@
+{
+  "schema_version": 1,
+  "module": "chat",
+  "batch": "CHAT.FRAME.FULL.V1",
+  "component": "CHAT.FRAME",
+  "accepted_version": "CHAT.FRAME.FULL.V1.r1 attempt 2",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "accepted_on": "2026-08-03",
+  "source": {
+    "file": "ChatBookFrame_Full_V1_r1.png",
+    "sha256": "a97d9c5fa055a119cd5ea7809bdaa51460cddb9674355efcec35f98f6cd2c673",
+    "width": 1608,
+    "height": 978,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      24,
+      25,
+      1584,
+      952
+    ],
+    "transparent_margins_ltrb": [
+      24,
+      25,
+      24,
+      26
+    ],
+    "transparent_pixels": 223149,
+    "partially_transparent_pixels": 23952,
+    "opaque_pixels": 1325523,
+    "pure_green_visible_pixels": 0,
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "codex_package": "@openai/codex@0.143.0",
+    "generation_session": "019fc27e-f6fb-7d90-ac30-5fbdfef99c11",
+    "provider_result": "ig_0008a6d335a216a8016a6f3b35b41481919d0752e2d83926a4",
+    "generation_before_commit": "31d35c8",
+    "accepted_candidate_commit": "c910256092f606233ac65edcc3e3be7337a251fe",
+    "provider_raw": "generated/chat/core/CHAT.FRAME.FULL.V1/attempt-02/ChatBookFrame_Full_V1_r1_attempt02.provider-raw.png",
+    "provider_raw_sha256": "8275b815b19677fda2fe242b79a06557af90032e570841236cab41ec429917b5",
+    "accepted_candidate": "generated/chat/core/CHAT.FRAME.FULL.V1/attempt-02/review/ChatBookFrame_Full_V1_r1_attempt02.transparent.png",
+    "accepted_candidate_sha256": "a97d9c5fa055a119cd5ea7809bdaa51460cddb9674355efcec35f98f6cd2c673",
+    "prompt": "docs/modules/chat/work/CHAT.CORE.V3.md",
+    "prompt_sections": [
+      "整本书框生成前模拟与生产草案：CHAT.FRAME.FULL.V1",
+      "完整生产正文（已授权，必须原样执行）",
+      "CHAT.FRAME.FULL.V1.r1 完整修订正文"
+    ],
+    "module_prompt": "docs/modules/chat/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/chat/SUBMODULE_ART_BASELINES.md#chatframe",
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "locked_visual_references": [
+      "assets/locked/chat/聊天框视觉基准_v1.png",
+      "assets/locked/chat/聊天框独立艺术资源_v3.png"
+    ],
+    "generation_input": {
+      "file": "assets/source/chat/v3/ChatBookFrame_Master_v3.png",
+      "sha256": "f45cfe614dffd4cbc1e17b1af0f6c66b2100f530c353e3954956476b7cf05057",
+      "role": "high-weight structure, proportion and topology reference only; its old visible surface pixels are not part of the accepted result"
+    },
+    "deterministic_derivation": "Extract the single connected book from the provider RGB checkerboard using only attempt-02 pixels, fill enclosed neutral highlights, recover soft-edge RGB from candidate-local neighbours, scale the whole object to 0.975 on a 1608x978 transparent canvas, then replace RGB only for 95 low-alpha edge pixels from candidate-local neighbours; Alpha and opaque RGB remain unchanged.",
+    "deterministic_tool": {
+      "file": "tools/extract_chat_full_frame_candidate_v1.py",
+      "sha256": "24c19cc6ec7bc63b3fecd0ac4a7ba4b7f8e787f449ac6410fc7bd00b69cec7ae"
+    }
+  },
+  "user_acceptance": {
+    "statement": "接受 CHAT.FRAME.FULL.V1.r1 attempt 2 进入 P4。",
+    "scope": [
+      "promote only the exact transparent attempt-02 candidate to accepted source",
+      "record its fixed prompt, input, executor, session, result and deterministic cleanup provenance",
+      "freeze the remaining three ImageGen calls without consuming or transferring them"
+    ],
+    "not_authorized": [
+      "runtime TGA export",
+      "Lua or XML integration",
+      "P5 runtime-exported status",
+      "Turtle WoW game validation"
+    ]
+  },
+  "logical_components": [
+    {
+      "id": "CHAT.FRAME",
+      "state": "runtime-exported",
+      "runtime_owner": "pfUI.chat.left / pfChatLeft",
+      "runtime_instances": 1,
+      "content": "one complete empty battlefield old-book frame"
+    },
+    {
+      "id": "CHAT.FRAME.LEFT",
+      "state": "active runtime replacement",
+      "runtime_owner": "pfUI.chat.left / pfChatLeft"
+    },
+    {
+      "id": "CHAT.FRAME.RIGHT",
+      "state": "disabled",
+      "runtime_instances": 0,
+      "source_allocation": "none"
+    }
+  ],
+  "review_evidence": {
+    "real_layout_preview": "generated/chat/core/CHAT.FRAME.FULL.V1/attempt-02/review/ChatFullFrame_candidate_real_layout_v1.png",
+    "real_layout_preview_sha256": "3181c94b1dfa2288f45427ae60758bfef389a1f8dc9f45da432bd58ab6699b2d",
+    "real_layout_metrics_sha256": "4fd7c2bf4f4d647721901786c2976822c9774fb7c3913748a56558c088b9d46f",
+    "display_region_contract": "tools/specs/chat_full_frame_display_region_v1.json",
+    "display_region_contract_sha256": "00010e8b80412d17c01fc2ddff6fc565789c9707b2c7b913953c095f429505c0",
+    "display_region_report": "generated/chat/core/CHAT.FRAME.FULL.V1/attempt-02/review/CHAT.FRAME.FULL.V1.r1-attempt02.display-region-report.json",
+    "display_region_report_sha256": "cc4561e63fca73ccb9423dcad4dd82f0bffaf24165c8aa0fd70e1cf888b5dbc3",
+    "scenarios": [
+      "440x320 empty",
+      "440x320 minimum one line",
+      "440x320 typical 15 lines",
+      "440x320 maximum 16 lines",
+      "540x420 expanded 22 lines"
+    ],
+    "violations": 0,
+    "first_failure": null
+  },
+  "runtime_export_evidence": {
+    "exporter": "tools/build_chat_full_frame_v1_runtime.py",
+    "exporter_sha256": "1011f787af1da38b0ff16376ccafb9bc84f7e8c6c0a2e8dd99164aa1f27f9b53",
+    "renderer": "tools/render_chat_full_frame_runtime_v1.py",
+    "renderer_sha256": "abe395285820de4e8fa20fc5372bdae70672dbeafdda5785617a23835573d795",
+    "runtime_manifest": "ChatBookFrame_Full_V1_RuntimeManifest_v1.json",
+    "runtime_manifest_sha256": "29b0a01233036f9efd6800b8f2735c5c0e9977ec6bb725bc3a08c89dc33af321",
+    "runtime_atlas": "addon/AzerothExpeditionUI/Media/Chat/ChatBookFrameFullV1.tga",
+    "runtime_atlas_sha256": "becb504fb482cb37c0824e9b8705b4ad76d890a5cac024e83a3cce81517025ae",
+    "real_layout_preview": "generated/chat/core/CHAT.FRAME.FULL.V1/runtime-v1/ChatFullFrame_runtime_real_layout_v1.png",
+    "real_layout_preview_sha256": "45af5115e4db28759c604841708a58b4947fa47de23a6c912af04ac5222bebe1",
+    "real_layout_metrics": "generated/chat/core/CHAT.FRAME.FULL.V1/runtime-v1/ChatFullFrame_runtime_real_layout_v1.metrics.json",
+    "real_layout_metrics_sha256": "2a4a95eb5abd68ac62b75c1a43652449b96aca9dceb320cda4c80ef280b323a8",
+    "display_region_contract": "tools/specs/chat_full_frame_runtime_display_region_v1.json",
+    "display_region_contract_sha256": "adb11676fb9b53014757ba509a51e1d402e68a93a00c85d6407cae3c66a0d5e4",
+    "display_region_report": "generated/chat/core/CHAT.FRAME.FULL.V1/runtime-v1/ChatFullFrame_runtime_display-region-report.json",
+    "display_region_report_sha256": "8bd7c8680da4ff39b88677a8b4476f6bc0a37b5e7c8da4b9f5ccd03340830dc8",
+    "scenarios": 5,
+    "violations": 0,
+    "low_alpha_ringing_cleanup": {
+      "rgb_only": true,
+      "alpha_unchanged": true,
+      "cleared_pixel_count": 50,
+      "highest_affected_alpha": 13,
+      "runtime_visible_green_spill_pixels": 0
+    }
+  },
+  "runtime_transition": {
+    "instruction": "继续",
+    "date": "2026-08-03",
+    "scope": "deterministic P4-to-P5 export, adapter integration, final-runtime layout review and static validation",
+    "imagegen_calls": 0,
+    "not_claimed": [
+      "Turtle WoW target-client validation",
+      "P6",
+      "P6-C cleanup"
+    ]
+  },
+  "runtime_contract": {
+    "status": "runtime-exported",
+    "phase": "P5",
+    "version": "1.19",
+    "base_frame_ui_px": [
+      440,
+      320
+    ],
+    "expanded_frame_ui_px": [
+      540,
+      420
+    ],
+    "text_safe_rect_xyxy": [
+      30,
+      32,
+      410,
+      280
+    ],
+    "nine_slice_caps_ltrb": [
+      30,
+      28,
+      30,
+      28
+    ],
+    "exporter": "tools/build_chat_full_frame_v1_runtime.py",
+    "runtime_manifest": "assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_RuntimeManifest_v1.json",
+    "runtime_atlas": "addon/AzerothExpeditionUI/Media/Chat/ChatBookFrameFullV1.tga",
+    "runtime_atlas_sha256": "becb504fb482cb37c0824e9b8705b4ad76d890a5cac024e83a3cce81517025ae",
+    "crop_uv_status": "defined-and-validated",
+    "normalized_uv": {
+      "left": 0.1337890625,
+      "right": 0.923828125,
+      "top": 0.0625,
+      "bottom_inner": 0.53515625,
+      "content_bottom": 0.6083984375
+    },
+    "whole_source_runtime_allowed": false,
+    "display_region_status": "pass / 5 scenarios / 0 violations",
+    "right_frame_instances": 0,
+    "fallback_runtime": "addon/AzerothExpeditionUI/Media/Chat/ChatBookFrameV3.tga retained until P6-C",
+    "next_gate": "Turtle WoW 1.18.1 /reload validation before P6"
+  },
+  "forbidden_runtime_uses": [
+    "do not load the 1608x978 source master directly in Turtle WoW",
+    "do not treat this complete prototype as a single stretched runtime background",
+    "do not bake or crop tabs, tab labels, tab shelf, chat text, timestamps, input, unread state, buttons, icons, scrollbars, resize grips, language controls, popup menus or copy controls from this source",
+    "do not recreate guild, bag, latency, time, gold or other legacy information panels",
+    "do not instantiate or allocate art to a right-side chat frame",
+    "do not mix pixels from the previous V3 frame or rejected paper donor into the runtime export",
+    "do not claim P6 before Turtle WoW 1.18.1 target-client validation"
+  ]
+}

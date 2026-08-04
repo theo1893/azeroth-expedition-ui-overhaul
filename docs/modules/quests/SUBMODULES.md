@@ -37,7 +37,8 @@ fallback。NPC 对话仍没有获准生产资产。
 | `QUEST.LOG.COUNT` | `QuestLogQuestCount`；兼容 `QuestLogCount` | layout-only；使用纸面深墨文字，不新增外框 |
 | `QUEST.LOG.CLOSE` | `QuestLogFrameCloseButton` | 普通／悬停／按下／禁用 |
 | `QUEST.LOG.EMPTY` | `EmptyQuestLogFrame`、`QuestLogNoQuestsText` | 安静纸面，不生成空状态卡片 |
-| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，adapter-owned 无鼠标 `OVERLAY` Texture；有真实动作后才可原位升级为 Button | QS-A1 V1.r4 accepted；独立 `28 × 28` 工具／配置候选漆章，实际可见蜡体约 `26 × 25`；盒 `[600,-18,28,28]`；采样 `QuestToolWaxSealStatesV1.tga` normal cell。必须与任务书可见 Alpha 完全分离，不得出现在翻页、纸页或书封上，不得烘焙进 SHELL，也不得冒充 `QUEST.LOG.STATE.SEAL` |
+| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，adapter-owned 无鼠标 `OVERLAY` Texture | runtime `1.18` 复用已接受的 QS-A1 V1.r4 四态 atlas，将 `32×32px` 漆章直接压在详情页右上纸面 `[576,68,32,32]`；`40×40px` 保留区为 `[572,64,40,40]`，不遮标题、正文或奖励。它目前只承担可见焦点，不接收鼠标；`QS-B1 V1` 只继续门禁未来的真实 Button、事务签菜单和旧按钮迁移，不再门禁漆章本身的位置 |
+| `QUEST.LOG.CHROME.SEAL.SUPPORT` | V9 无 runtime 对象 | 用户明确要求火漆直接印在详情页纸面；不得再创建书签、包角、皮革／黄铜承托或额外 Texture。最终只允许漆章自身与纸面接触阴影 |
 
 支持 `closed`、`empty`、`list-only`、`dual-page` 与 `selected`。离线参考为
 `676 × 464 UI px`，物理中心线 `x=338`；左右物理纸页近 1:1，可见宽度差
@@ -45,12 +46,20 @@ fallback。NPC 对话仍没有获准生产资产。
 `list-only` 只隐藏右页动态内容，完整书体保持 `676 × 464`，不得缩成
 `340px` 半本书。
 
-`QUEST.LOG.CHROME.SEAL` 的 runtime 锚点位于书本右上方的透明 UI 空间，
-与 `676 × 464` SHELL 的可见 Alpha 重叠像素必须为 `0`；顶部 visual
-outset 为 `18px`。`QuestLogFrame` 仍由原生固定 UIPanel 布局管理，不为该
-无鼠标 Texture 新增拖动或位置保存；目标客户端必须复核最小分辨率／UI scale
-下的 `18px` 顶缘安全距。该对象不能因为实现方便重新落到右下页角、翻页区、
-封皮、包角或装订结构上。
+runtime `1.17` 及更早的锚点位于书本右上方透明空间并产生 `18px` 顶部
+outset，用户已判定其“浮在空中”；runtime `1.18` 已移除该锚点。随后
+V1–V6 的外沿皮革、羊皮封签、下缘长书签、detail
+替换、黄铜包角和页内右侧菜单方向也依次被否决。V8 首次满足书外展开，却因
+`136×24px` 尖头、逐项铆钉、亮黄铜与 `72px` 外伸过重而继续否决。当前 V9
+只保留用户明确指定的物理关系：
+火漆直接压在右侧详情页右上纸面；标题与分隔线为其保留 `40×40px` 区域。
+点击后七项事务作为真实独立 Button 从 detail 右边界 `x=612` 向书外伸出，
+真实页边 mask 遮住根部；不得进入书页内容区或覆盖正文／奖励。打开态允许
+`48px` 右侧 outset，并在屏幕右缘不足时整体左移后恢复。每条只允许
+`112×20px` 的短书口事务签、低对比暗胡桃／旧铜色边线；禁止箭头尖端、逐项
+铆钉、明亮顶部高光和整条危险色。用户已于 `2026-08-03` 确认 V9 可见方向；
+当前 `QS-B1 V1` 只到 `prompt-draft`，尚未获正式生产授权；因此页上漆章仍为
+无鼠标 Texture，runtime 继续保留全部原按钮作为 fail-open fallback。
 
 ## Quest Log 纸页与中央装订
 
@@ -100,12 +109,13 @@ adapter 不再创建、挂载或刷新酒红色书签，也不再包装任务行
 脚本。原生整行选择高亮仍保持透明抑制；目录文字继续从 `x>=18` 起，以维持
 QL-B1 墨记及未来状态槽的安全区。
 
-runtime `1.16` 已落实用户确认的 V2 阅读密度：`QUESTS_DISPLAYED = 18`，
+runtime `1.18` 已落实用户确认的 V2 阅读密度：`QUESTS_DISPLAYED = 18`，
 活动窗口使用 `QuestLogTitle1..18`，每条 `246 × 18 UI px`、纵向步进
 `18px`，总占高 `324px`。左右页 scrollbar chrome 均隐藏后，活动行使用
 完整 `246px` 左页安全宽度；动态文字从 `x=18` 起，安全宽度 `226px`。
-任务名、地区名以及模板可能拆出的完成／地下城等状态 FontString 统一使用
-LXGW WenKai `12px`、空 flags、透明 shadow。`QuestLogTitle19..23` 继续创建以
+任务名、地区名以及模板可能拆出的完成／地下城等状态 FontString 统一继承
+`pfUI.font_default`、固定 `12px`、使用 `OUTLINE` 并清零额外 shadow。
+`QuestLogTitle19..23` 继续创建以
 兼容 provider，但不删除、不改写脚本并保持隐藏；缺少 adapter 时仍回退
 pfUI。完整资源与排版历史合同见
 [work/QUEST.LOG.LEFTPAGE.md](work/QUEST.LOG.LEFTPAGE.md)。
@@ -153,11 +163,12 @@ QL-B0／B1 当前 runtime 已接入
 保留 `12 × 12` 箭头和 `10 × 10` 墨圈；任务行只挂载箭头，墨圈继续供顶部
 等级／追踪 CheckButton 使用。覆盖 Texture 不接收鼠标；
 原 `QuestLogTitleN` Button、脚本、滚动、选择和追踪数据均保持。字体仅按
-模块基线把主标题设为 Noto Serif SC、任务及状态行设为 `12px` 霞鹜文楷，
-空 flags 且清除 shadow，仍需实机加载验证。QL-B2 的 `BORDER` Texture 挂载与三态脚本已从
+模块基线把主标题设为 Noto Serif SC、任务及状态行恢复为
+`pfUI.font_default` 的 `12px OUTLINE`，并清除额外 shadow，仍需实机加载
+验证。QL-B2 的 `BORDER` Texture 挂载与三态脚本已从
 runtime contract `1.5` 起移除；资产文件不删除，运行时一律隐藏。当前
-Quests runtime contract 已升至 `1.16`；任务名难度色及完成／失败／类型提示
-统一读取 Quest Visual Theme `1.5` 的高对比深墨，模板拆分 FontString 与
+Quests runtime contract 已升至 `1.18`；任务名难度色及完成／失败／类型提示
+统一读取 Quest Visual Theme `1.6` 的高对比深墨，模板拆分 FontString 与
 标题后的内联色码均在 provider 最终刷新后归一化。
 
 QL-B0 V2 的 `LIST.INSET` 已在四次候选审查后由用户移出范围，不建立 source、
@@ -189,12 +200,15 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 | `QUEST.LOG.DETAIL.OBJECTIVES` | 目标 FontString 集 | layout-only |
 | `QUEST.LOG.DETAIL.REWARD_TEXT` | 奖励文字 FontString 集 | layout-only |
 | `QUEST.LOG.DETAIL.DIVIDER` | adapter 非交互 Texture | 可横向三段式短墨线 |
-| `QUEST.LOG.REWARD.SLOT` | `QuestLogItem1..MAX_NUM_ITEMS` | 普通／悬停／按下／禁用；图标动态，无 selected |
+| `QUEST.LOG.REWARD.SLOT` | `QuestLogItem1..MAX_NUM_ITEMS` | 普通／悬停／按下／禁用；图标动态，无 selected；runtime `1.18` 将双列单格收敛为 `108px`，名称安全宽 `64px`，并在 provider 写入后进行最多两帧的有限重排 |
 | `QUEST.LOG.TRACK` | `QuestLogTrack`、`QuestLogTrackTracking` | 复用 QL-B1 开放墨圈／墨勾 atlas；保留原状态控制 |
-| `QUEST.LOG.ACTION.ABANDON` | `QuestLogFrameAbandonButton` | 程序化暗皮革搭扣四状态，文字动态，原脚本不变 |
-| `QUEST.LOG.ACTION.SHARE` | `QuestFramePushQuestButton`；兼容名需探测 | 同族程序化暗皮革搭扣四状态，原脚本不变 |
-| `QUEST.LOG.ACTION.EXIT` | `QuestFrameExitButton`；兼容 `QuestLogFrameCancelButton` | 同族程序化暗皮革搭扣四状态，原脚本不变 |
-| `QUEST.LOG.DETAIL.TOGGLE` | pfUI `QuestLogFrameExpandButton`；缺失时可创建真实 Button | 加入底部暗皮革控件行，动态左右文字，pfUI 箭头贴图隐藏 |
+| `QUEST.LOG.ACTION.ABANDON` | `QuestLogFrameAbandonButton` | 当前程序化暗皮革 fallback；目标事务菜单只代理原 OnClick，必须保留原生确认 |
+| `QUEST.LOG.ACTION.SHARE` | `QuestFramePushQuestButton`；兼容名需探测 | 当前程序化暗皮革 fallback；目标事务菜单代理原 Button |
+| `QUEST.LOG.ACTION.EXIT` | `QuestFrameExitButton`；兼容 `QuestLogFrameCancelButton` | 目标视觉不重复收纳；右上真实 Close 保持独立，fallback 在迁移验收前继续存在 |
+| `QUEST.LOG.DETAIL.TOGGLE` | pfUI `QuestLogFrameExpandButton`；缺失时可创建真实 Button | 当前底部 fallback；目标事务菜单代理同一动态开合行为 |
+| `QUEST.LOG.ACTION.SEAL_MENU` | planned adapter-owned 右页外侧短书口事务签 Button 列；未接入 | V9 已确认：分享、详情开合、pfQuest 四个地图操作与放弃共七个独立 Button；左键切换，动作／书外点击／Esc 收起，禁用态镜像 provider。七个 `112×20px` Button 位于 `[612,112,112,158]`，和 detail 右边界排他相切并向书外伸出；真实页边 mask `[604,102,24,180]` 遮住根部，正文／奖励零占用，不画整块二级弹窗；无尖头、逐项铆钉和亮黄铜高光。`QS-B1 V1` 当前 `prompt-draft / 0/5` |
+| `QUEST.LOG.ACTION.SEAL_MENU.TAB.BASE` | 七个 Button 共用的无字 Texture 皮肤；不拥有点击 | 只生成一枚固定 `112×20px` 暗胡桃旧皮革母版；确定性 atlas 为 standard／danger 各 normal、hover、pressed、disabled 四态。共享媒体不合并七个 Button，不烘焙标签、图标、enabled、Tooltip 或业务状态 |
+| `QUEST.LOG.ACTION.SEAL_MENU.PAGE_EDGE_MASK` | adapter-owned 无鼠标 Texture，复用 QL-A1 shell 右页边像素 | `[604,102,24,180]`，晚于七个 Button 绘制并只遮住每条左侧 `16px` 根部；不得新增 ImageGen 资产，不得进入文字安全区或接管鼠标 |
 | `QUEST.LOG.LEVELS` | pfUI `QuestLogFrameLevelsCheckButton` | 复用 QL-B1 开放墨圈／墨勾 atlas；保留原脚本与文字 |
 | `QUEST.LOG.PFQUEST.ONLINE` | `pfQuest.buttonOnline`／`pfQuestOnline` | `72 × 16`，右页顶部固定工具行；动态 ID 与原 OnClick 不变 |
 | `QUEST.LOG.PFQUEST.LANGUAGE` | `pfQuest.buttonLanguage`／`pfQuestLanguage` | `86 × 16`，与 ONLINE 同行；动态语言、下拉与原 OnUpdate／OnClick 不变 |
@@ -209,6 +223,12 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 `OnMouseWheel`：右页以 `28 UI px` 在真实 range 内限位，左页按原生
 `QUESTLOG_QUEST_HEIGHT`（缺失时 `18px`）推进一个逻辑行。隐藏视觉不删除
 ScrollFrame、offset、裁切或数据。
+
+runtime `1.18` 在把普通正文收敛为 `214px`、目标收敛为 `204px` 后，遍历
+当前可见的标题、正文、目标、奖励文字、`QuestLogItemN` 与附加奖励 Frame，
+以最底部对象加 `12px` 余量重算 ScrollChild 高度（最低 `324px`、保护上限
+`4096px`），随后调用真实 `UpdateScrollChildRect()`。因此长文本重新换行后
+奖励不会再被旧固定内容高裁掉；鼠标滚轮仍使用真实动态 range。
 
 pfQuest 在加载后会替换 `QuestLog_Update`、
 `QuestLog_UpdateQuestDetails` 和 `QuestLogFrame` 的 `OnShow`，并在详情

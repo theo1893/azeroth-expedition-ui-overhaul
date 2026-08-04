@@ -1,6 +1,6 @@
 ---
 name: run-aeui-asset-workflow
-description: "Run the repository-specific Azeroth Expedition UI component-asset workflow with locked-baseline prompt provenance, self-contained ambiguity-audited prompts, a mandatory user-confirmed deterministic local geometric in-game preview before production, exact provider-to-art display-region conformance, compact per-component work files, art-language inheritance, and a bounded five-actual-generation autonomous production generate-review-repair loop whose workflow errors are tracked separately, from component contract and fixed ImageGen 0.143.0 production execution through explicit acceptance or rejection, source promotion, runtime export, module-progress synchronization, target-client validation, and post-P6 work-file cleanup. Use when simulating, generating, editing, reviewing, accepting, rejecting, promoting, exporting, validating, closing, or cleaning an AEUI component, or when the user asks to continue the next UI asset step."
+description: "Run the repository-specific Azeroth Expedition UI asset workflow: map real pfUI, Blizzard, and provider components; inherit locked art baselines; build a user-confirmed deterministic local preview; prepare self-contained prompts for fixed ImageGen 0.143.0; execute a bounded five-actual-generation generate-review-repair loop with workflow errors counted separately; publish minimal validated cross-device checkpoints; validate exact display regions; promote accepted source; export a fresh-checkout-installable addon; record P6 client validation; and close components or purge all module intermediates after whole-module acceptance. Use when preparing, simulating, generating, editing, reviewing, accepting, rejecting, handing off, resuming, exporting, integrating, validating, closing, or cleaning any AEUI component or module, including requests to continue the next UI asset step."
 ---
 
 # AEUI Asset Workflow
@@ -29,11 +29,14 @@ machine. This skill orchestrates the work; it does not replace the repository's 
    revising any production／`.rN` execution body.
 8. Read [bounded-repair-loop.md](references/bounded-repair-loop.md) before any production
    generation or in-loop repair.
-9. Read [repository-sync.md](references/repository-sync.md) before changing any
+9. Read [cross-device-handoff.md](references/cross-device-handoff.md) before pausing,
+   committing, pushing, resuming, or transferring an active component whose next gate
+   depends on ignored pixels.
+10. Read [repository-sync.md](references/repository-sync.md) before changing any
    tracked file or advancing a phase.
-10. Read [record-templates.md](references/record-templates.md) when creating or
+11. Read [record-templates.md](references/record-templates.md) when creating or
    updating a production prompt or review record.
-11. For generation or image editing, additionally read
+12. For generation or image editing, additionally read
    `../imagegen-0-143-0/SKILL.md` and every reference that it requires.
 
 Repository documents remain authoritative if this skill and the current checkout
@@ -121,11 +124,29 @@ commit them before the next invocation. After loop exhaustion or user rejection,
 the terminal rejection in that file. Git history is the full archive; the current tree
 contains only the evidence needed for the next decision.
 
+When work will continue on another device and the next gate depends on exact ignored
+pixels, publish only the state-specific payloads under
+`handoff/<module>/<component>/` with
+`manage_cross_device_handoff.py`. Keep `generated/` ignored. The checkpoint is a
+temporary tracked transport layer, never visual authority, source, or runtime; replace
+it instead of accumulating versions and remove it as soon as the exact pixels are no
+longer required. Publish it only on a named short-lived collaboration branch, never the
+default branch; integrate only the later clean state without handoff history.
+
 When the component reaches `P6-C`, merge final stable visual clauses into
 `SUBMODULE_ART_BASELINES.md`, final object ownership into `SUBMODULES.md`, and final paths
 and validation into module `PROGRESS.md` and manifests. Then delete the component work file
 and ignored generated directory. Never keep an empty `work/` directory by adding placeholder
 files.
+
+When the user explicitly accepts the declared whole-module P6 scope, perform terminal
+module cleanup in the same operation. Preserve only durable baselines, final source and
+manifests, deployable runtime/implementation/tests, licenses/shared dependencies, and a
+minimal durable P6 evidence set. Delete the entire `generated/<module>/` tree, every module
+work file, `handoff/<module>/`, and every separately inventoried legacy module-only
+generated path. Module acceptance is standing authorization for these verified
+module-scoped intermediates; a shared or ambiguous path remains protected and blocks
+only that path pending direction.
 
 ## Select the operation
 
@@ -140,9 +161,9 @@ Infer only the narrowest operation authorized by the user:
 | correct, revise, try again | `revise` | new versioned `P3` candidate |
 | reject, abandon this version | `reject` | recorded rejection; no source |
 | accept, lock this asset | `accept` | confirmed source at `P4` |
-| slice, atlas, integrate | `export` | tested runtime at `P5` |
+| slice, atlas, integrate | `export` | tested, fresh-checkout-installable addon runtime at `P5` |
 | validate in Turtle WoW | `game-validate` | `P6` only after real-client evidence |
-| finish, close, compact, clean completed work | `close` | `P6-C` after an approved cleanup plan |
+| finish, close, compact, clean completed work | `close` | component or whole-module `P6-C` after the applicable cleanup gate |
 
 “Continue” means proceed through the next unblocked gate shown by module progress. If a
 pre-production preview is missing, build the deterministic local geometric simulation,
@@ -151,8 +172,10 @@ gate is production prompt authorization, stop after presenting the exact version
 production body, its repair envelope, and its five-call budget. “Continue” or “next step”
 alone never authorizes ImageGen. Explicit production authorization covers its bounded
 in-scope repair attempts, but never means silently accepting a candidate, promoting a
-source, inventing missing runtime geometry, or deleting intermediates. User confirmation
-of the local simulation, production generation, and closure remain separate decisions.
+source, inventing missing runtime geometry, or deleting intermediates. Local simulation,
+production generation, source acceptance, and component cleanup remain separate decisions.
+Explicit acceptance of a declared whole-module P6 scope is the trigger for the mandatory
+module cleanup defined below; do not request a redundant second deletion approval.
 
 If the user asks only for an assessment, stay read-only. If the user explicitly asks to
 generate, revise, accept, or export, perform the normal repository writes for that
@@ -182,27 +205,39 @@ operation.
 10. Do not copy anything into `assets/source/` without explicit user acceptance.
 11. Do not export runtime media until the accepted source, crop/UV contract, safe areas,
    stretch rules, and target Frame geometry are known.
-12. Do not call a preview “real layout” or treat runtime as P6-ready until the exact
-    display-region gate passes for empty, minimum, typical, maximum-density, and
-    supported-mode cases. Background coverage alone is insufficient.
-13. Do not mark `P6` without evidence from Turtle WoW `1.18.1`.
-14. Do not remove intermediate or superseded files before `P6`, a verified final keep set,
-   an exact cleanup inventory, and explicit user approval.
-15. A pre-production simulation version uses `0` ImageGen calls by contract. Render it
-    with a local deterministic script using simple geometric primitives, representative
-    real text, real object counts, and explicit non-authoritative placeholders. Local
-    rendering errors are ordinary tool errors, never image-generation attempts.
-16. Never consume more than five actual ImageGen generations or edits for one authorized
-    execution body. Count an attempt only when the fixed executor returns an image or a
-    provider result proves that generation/editing actually ran. An unusable generated
-    candidate still counts. A workflow, transport, wrapper, permission, prompt-transfer,
-    upload, or save-path error with no generated image and no provider-generation evidence
-    is recorded separately and does not consume the `0/5` image budget.
-17. Autonomous production repair may change only the repairable wording,
+12. Do not mark an export `runtime-exported / P5` until the runtime media, adapter and
+   provider changes are loaded from tracked files under `addon/`, the relevant TOC/XML
+   order is complete, and `validate_addon_package.py` proves a fresh checkout can be
+   copied into `Interface/AddOns` without generation, export, patching, or local links.
+13. Do not call a preview “real layout” or treat runtime as P6-ready until the exact
+   display-region gate passes for empty, minimum, typical, maximum-density, and
+   supported-mode cases. Background coverage alone is insufficient.
+14. Do not mark `P6` without evidence from Turtle WoW `1.18.1`.
+15. Do not remove intermediate or superseded files before `P6`, a verified final keep set,
+   and an exact cleanup inventory. Component-only cleanup still requires explicit approval
+   of that inventory. Explicit acceptance of the declared whole-module P6 scope, together
+   with the repository standing rule, authorizes mandatory removal of verified module-only
+   intermediates without a second approval; never include shared or ambiguous paths.
+16. A pre-production simulation version uses `0` ImageGen calls by contract. Render it
+   with a local deterministic script using simple geometric primitives, representative
+   real text, real object counts, and explicit non-authoritative placeholders. Local
+   rendering errors are ordinary tool errors, never image-generation attempts.
+17. Never consume more than five actual ImageGen generations or edits for one authorized
+   execution body. Count an attempt only when the fixed executor returns an image or a
+   provider result proves that generation/editing actually ran. An unusable generated
+   candidate still counts. A workflow, transport, wrapper, permission, prompt-transfer,
+   upload, or save-path error with no generated image and no provider-generation evidence
+   is recorded separately and does not consume the `0/5` image budget.
+18. Autonomous production repair may change only the repairable wording,
     edit/regenerate choice, and use of an earlier output from the same loop. It may not
     change component identity, object/state count, authority order, reference roles,
     canvas/runtime contract, forbidden content, or add a new external input without new
     user authorization.
+19. Before handing an active component to another device, validate its exact
+    state-specific `handoff/<module>/<component>/` checkpoint. Do not claim that ignored
+    `generated/` paths will cross devices, and do not use handoff payloads as source or
+    addon runtime. Never publish temporary pixels on the default branch. Follow
+    [cross-device-handoff.md](references/cross-device-handoff.md).
 
 When a gate is blocked, state the missing evidence and perform any useful read-only
 inspection still in scope. Do not create plausible-looking placeholder controls.
@@ -292,6 +327,10 @@ simulation in `Review`.
    create a new simulation version. Purely technical decomposition, transparent
    extraction, or slicing changes that preserve the confirmed visible composition do not
    require a new simulation.
+
+If the operation pauses at `simulation-reviewed` for cross-device continuation, publish
+the exact `review-preview` and optional `review-zoom` checkpoint before push. Once the
+direction is confirmed and fully transcribed into the work file, remove that checkpoint.
 
 Simulation confirmation never accepts source pixels. The simulation cannot be copied,
 cropped, sliced, promoted, exported, or uploaded as a production edit/reference input.
@@ -390,6 +429,10 @@ under `generated/`. Neither kind of simulation is source art, but the pre-produc
 simulation confirms a visual direction while this post-candidate simulation validates
 the actual candidate at runtime geometry.
 
+If review will continue on another device, publish the exact `candidate` and
+`real-layout-preview` checkpoint, plus an optional `technical-preview`, before push. The
+checkpoint must identify the committed work version and remaining attempt budget.
+
 ## Revise or reject
 
 1. Lead with the verdict and the first failed gate.
@@ -410,6 +453,9 @@ the actual candidate at runtime geometry.
 
 Preserve the active work file while production is active. Do not preserve a forest of
 superseded prompt files in the current tree. Git history remains the historical archive.
+When the next action is a cross-device edit of the immediately preceding output, publish
+that exact file as `repair-prepared / edit-input`; a review-only candidate checkpoint is
+not implicit authorization to use its pixels as an edit input.
 
 ## Accept
 
@@ -423,13 +469,46 @@ simulation does not satisfy this requirement. Then:
    and forbidden runtime uses.
 3. Update the work file, source manifest, module `SUBMODULES.md`, and module
    `PROGRESS.md` in the same commit.
-4. Mark `P4`; do not imply that runtime slicing or game validation has happened.
+4. Remove the consumed component handoff after the accepted bytes and manifest are safely
+   present under `assets/source/`.
+5. Mark `P4`; do not imply that runtime slicing or game validation has happened.
 
 ## Export and game-validate
 
 Use deterministic tools for crop, Alpha, scale, atlas, format conversion, and preview.
 Store reproducible intermediates in `generated/`. Commit runtime media only with its
 manifest/UV mapping, Lua/XML ownership, tests, and documentation updates.
+
+An export is not complete when the atlas alone exists. In the same checkout:
+
+1. Write every game-loaded media file under the owning addon, normally
+   `addon/AzerothExpeditionUI/Media/<Module>/`; runtime Lua/XML/TOC must never load from
+   `assets/source/`, `generated/`, `.codex/`, or `tools/`.
+2. Connect the real adapter to the exported cells and states, preserve the provider's
+   nonvisual behavior and fallback, and include any narrowly scoped pfUI bridge change
+   under `addon/pfUI/`. Do not leave a patch or manual edit for the game device.
+3. Ensure the addon TOC/XML/bootstrap loads every new runtime file in exact case and in a
+   valid dependency order. Do not rely on a developer-machine symlink, Junction, ignored
+   file, absolute path, provider cache, or untracked export.
+4. Run the package gate with the selected OS interpreter, for example on macOS:
+
+   ```text
+   conda run -n py312 python \
+     .codex/skills/run-aeui-asset-workflow/scripts/validate_addon_package.py \
+     /absolute/path/to/repository \
+     --report /absolute/path/to/generated/<module>/<batch>/addon-package-report.json
+   ```
+
+5. Treat `addon/` as the deployable artifact. A fresh checkout on the target device must
+   need only `git pull` and copying/linking the required addon directories into
+   `Interface/AddOns`; it must not run an exporter, ImageGen, Python, a patch script, or
+   make a new Lua/pfUI edit before the game can load the completed work.
+
+The package report must be `pass`, every required runtime file must already be tracked or
+staged for the same commit, and component-specific smoke/contracts must pass before the
+state can become `runtime-exported / P5`. Record the exact addon directories, adapter,
+provider bridge, TOC/bootstrap entries, runtime manifests, report command/result, and
+fallback in the current work and module `PROGRESS.md`.
 
 Before treating P5 as P6-ready, repeat the display-region gate against the final atlas,
 adapter constants, live anchors, and provider layout formula. A new or inherited failure
@@ -441,23 +520,54 @@ text safety, layering, fallback, and unaffected nonvisual behavior.
 
 ## Close after P6
 
-Treat `P6` as fully accepted in game but not yet repository-closed. Read the terminal
-cleanup rules in [repository-sync.md](references/repository-sync.md), then:
+Treat `P6` as accepted in game but not yet repository-closed. Read the terminal cleanup
+rules in [repository-sync.md](references/repository-sync.md).
 
-1. Verify the final prompt provenance, accepted source and manifest, deterministic
-   exporter, runtime media/manifest, implementation, and P6 evidence.
-2. Produce an exact component-scoped keep/delete inventory. Exclude shared assets, shared
-   tools, active locked baselines, third-party evidence, licenses, and user originals.
+### Close one accepted component
+
+1. Verify final prompt provenance, accepted source/manifest, deterministic exporter,
+   runtime media/manifest, implementation, tests, and P6 evidence.
+2. Produce an exact component-scoped keep/delete inventory. Exclude shared assets/tools,
+   active locked baselines, third-party evidence, licenses, and user originals.
 3. Show the inventory to the user and obtain explicit approval before deletion.
-4. Remove ignored raw/candidates/previews, all pre-production simulations, the component
-   work file, obsolete component-only references/tools, and duplicated process narration
-   approved in the plan. Do not purge Git history.
-5. Compact `SUBMODULES.md`, `SUBMODULE_ART_BASELINES.md`, module `PROGRESS.md`, and
-   manifests to final contracts, final paths, final validation, and one concise closure
-   result.
-6. Run all relevant tests and confirm the checkout contains no dangling links or
-   references to deleted files.
-7. Mark `P6-C / component-closed` only in the same dedicated cleanup commit.
+4. Remove the approved component-only simulations, raw/candidates/previews, work file,
+   component handoff, obsolete references/tools, and duplicated process narration. Do
+   not purge Git history.
+5. Compact the four durable module documents and manifests, run relevant tests and link
+   checks, and mark `P6-C / component-closed` in the dedicated cleanup commit.
+
+### Close a fully accepted module
+
+1. Freeze the declared module acceptance scope in module `PROGRESS.md`. Every included
+   component must have real Turtle WoW P6 evidence or already be `component-closed`;
+   intentionally excluded/deferred contracts remain concise durable facts, not active work.
+2. Verify the final keep set. If the only P6 evidence is under `generated/`, promote the
+   minimal accepted screenshots/records to `assets/references/<module>/p6/` with hashes
+   before cleanup. Preserve final source/manifests, deterministic exporters needed to
+   reproduce runtime, deployable addon code/media, tests, licenses, user originals, and
+   genuine shared dependencies.
+3. Condense all stable facts into the module's four durable documents and final manifests.
+   No active component work may remain after module closure.
+4. Build an exact ownership inventory for the canonical `generated/<module>/` tree, every
+   module work file, obsolete module-only references/tools/caches, and legacy generated
+   paths outside the canonical tree. New generated outputs outside
+   `generated/<module>/` are forbidden. Resolve legacy ownership with component IDs,
+   paths, hashes, Git history, and references; exclude every shared or ambiguous target.
+5. The explicit whole-module P6 acceptance authorizes this verified module-only delete set
+   under the standing project rule. Do not ask for a second approval. If ownership remains
+   ambiguous, stop only that target and request direction rather than broadening deletion.
+6. Remove the entire canonical `generated/<module>/` tree, all
+   `docs/modules/<module>/work/` data, `handoff/<module>/`, every verified legacy
+   module-only generated path, and the other inventoried intermediates. Use exact literal
+   paths with no unresolved variables or globs; do not delete Git history or a shared
+   parent directory.
+7. Run `validate_module_closure.py` with module aliases/legacy paths, the fresh-checkout
+   addon package validator, all relevant runtime/repository tests, Markdown link checks,
+   and `git diff --check`. The module-closure report schema is
+   `aeui-module-closure-report-v1` and must return `status=pass`.
+8. Record the frozen scope, minimal durable P6 evidence, retained paths, validator command,
+   aliases/legacy paths and pass result in module `PROGRESS.md`; mark
+   `P6-C / module-closed` only in the same dedicated cleanup commit.
 
 ## Handoff
 
@@ -473,8 +583,15 @@ End each operation with:
 - the verdict or artifact paths;
 - the display-region contract/report path and hash, exact scenarios, result, and first
   failed region when applicable;
+- the addon-package gate result, exact deployable `addon/` directories, and whether a
+  fresh checkout requires any build, generation, patch, symlink, or remote-side code edit;
 - the first remaining gate;
-- for closure, the approved keep/delete inventory and final retained paths;
+- the cross-device checkpoint path/state, payload roles and hashes, validator result, and
+  whether it has been committed/pushed—or an explicit statement that no exact ignored
+  pixels are needed for continuation;
+- for component closure, the approved keep/delete inventory and final retained paths;
+- for module closure, the frozen acceptance scope, deleted canonical/legacy generated
+  roots, protected shared exclusions, retained P6 evidence, and module-closure validator;
 - tests run, selected Python interpreter and version, and their results;
 - whether files are only local, committed, synchronized, or pushed.
 

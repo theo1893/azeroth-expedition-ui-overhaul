@@ -19,7 +19,7 @@
 - 子状态：prompt-draft | simulation-reviewed | simulation-confirmed |
   prompt-authorized | candidate-raw | repair-prepared |
   candidate-reviewed | candidate-rejected | source-accepted | closure-planned |
-  component-closed
+  component-closed | module-closure-planned | module-closed
 - 项目阶段：P0–P6-C
 - 固定执行器：imagegen-0-143-0 / @openai/codex@0.143.0
 - 操作：simulate | generate | edit
@@ -48,6 +48,25 @@
 - 实际展示区域合同／报告：<合同路径；报告路径／SHA；空／最小／典型／最大
   与支持模式；pass／display-region-blocked；首个失败码>
 - 最终 source：
+
+## 跨设备 handoff（仅在下一门禁依赖精确 ignored 像素时存在）
+
+- 路径：`handoff/<module>/<component>/`
+- schema：`aeui-cross-device-handoff-v1`
+- 状态：simulation-reviewed | candidate-reviewed | candidate-rejected |
+  repair-prepared
+- work file／SHA：
+- base commit：
+- 短期协作分支：<不得为默认分支>
+- prompt 版本／下一门禁：
+- 实际生图预算：<used>/<limit>；流程错误：<n>
+- payload role／路径／SHA：
+- validator：<命令；aeui-cross-device-handoff-report-v1；pass／fail；
+  git_tracking_verified=true>
+- Git：local | staged | committed | pushed <branch/commit>
+- 默认分支集成：pending | clean squash/cherry-pick without handoff history
+- 消费条件：<模拟结论已转写／source accepted／新版本不再复用／替代检查点>
+- 非权威合同：不得成为视觉权威、source 或 addon runtime
 
 ## 美术基准继承
 
@@ -272,7 +291,37 @@ runtime 或生产输入。生成前模拟不能代替正式候选生成后的 `1
 - 尚未发生：runtime 切片、Lua/XML 接入、Turtle WoW 实机验证
 ```
 
-## `P6-C` 收口计划
+## P5 插件接入记录
+
+同一组件 work 在 P4→P5 时追加本节；模块 `PROGRESS.md` 只凝结最终路径和
+结论。Atlas 存在或 Lua smoke 通过都不能省略 fresh-checkout package 证据。
+
+```markdown
+- 状态：runtime-exported / P5 | P4/P5 blocked
+- deployable addon 目录：
+  - addon/pfUI
+  - addon/AzerothExpeditionUI
+- runtime 媒体／manifest／SHA：
+- adapter：<addon 内文件、真实对象、状态／UV>
+- provider／pfUI bridge：<addon 内文件、保留功能、作用域>
+- TOC／XML／bootstrap：<入口、顺序、依赖>
+- fallback：
+- 运行时外部依赖审查：不得引用 assets/source、generated、tools、绝对路径、
+  handoff、未跟踪文件、软链接或 Junction
+- addon package validator：
+  - 命令：
+  - 报告：generated/<module>/<batch>/addon-package-report.json
+  - schema：aeui-addon-package-report-v1
+  - status：pass | fail
+  - first violation：
+  - build_required_on_target_device：false
+- 组件 smoke／repository contract：
+- 目标设备操作：git pull 后只复制上述 addon 目录到 Interface/AddOns；不生成、
+  不导出、不打 patch、不修改 Lua/pfUI
+- 尚未发生：Turtle WoW /reload 与交互 P6
+```
+
+## 单组件 `P6-C` 收口计划
 
 先用本模板向用户展示，临时写入现有 work，不创建新的收口文档。执行后只把
 精简结果写入 `SUBMODULES.md`、`SUBMODULE_ART_BASELINES.md`、模块
@@ -288,6 +337,7 @@ runtime 或生产输入。生成前模拟不能代替正式候选生成后的 `1
   - implementation/tests：
 - 明确删除：
   - ignored generated：
+  - component handoff：
   - component work：
   - obsolete references/tools/previews：
   - duplicated process narration：
@@ -295,4 +345,44 @@ runtime 或生产输入。生成前模拟不能代替正式候选生成后的 `1
 - 用户确认：
 - 清理后链接与测试：
 - 关闭日期与状态：P6-C / component-closed
+```
+
+## 整模块 `P6-C` 终局收口
+
+用户明确验收冻结的整模块 P6 范围后使用。本计划可临时写入任一现存 work；
+执行后删除全部模块 work，只把下面的稳定结论凝结到模块 `PROGRESS.md`、其余
+三份长期模块文档和最终 manifests。整模块验收已构成 verified module-only
+中间数据的 standing cleanup authorization，不再请求第二次批准。
+
+```markdown
+- 模块：
+- 模块验收范围：<逐组件／明确排除项；范围内均 P6 或 component-closed>
+- 整模块 P6 验收人／日期：
+- P6 实机证据：
+  - <迁出 generated 后的 assets/references/<module>/p6/ 路径／SHA／场景>
+- 最终保留：
+  - 四份长期模块文档：
+  - accepted source／manifest：
+  - deterministic exporter／runtime／implementation／tests：
+  - licenses／user originals／shared dependencies：
+- 全量删除：
+  - canonical generated：generated/<module>/（整个根；tracked + ignored）
+  - cross-device handoff：handoff/<module>/（整个根）
+  - module work：docs/modules/<module>/work/（全部内容和目录）
+  - legacy generated aliases：
+  - exact legacy generated paths：
+  - obsolete module-only references／tools／caches／previews：
+  - duplicated process narration／stale generated references：
+- 保护且排除清理的共享／归属不明路径：
+- 授权依据：explicit whole-module P6 acceptance + standing project cleanup rule
+- module closure validator：
+  - 命令：<validate_module_closure.py；列出全部 --generated-alias 和
+    --legacy-generated-path>
+  - 临时报告：<generated/<module>/ 之外的临时路径；提交前删除>
+  - schema：aeui-module-closure-report-v1
+  - status：pass | fail
+  - first violation：
+- fresh-checkout addon package／runtime tests／repository tests／links／diff-check：
+- 模块 PROGRESS 最终标记：P6-C / module-closed
+- 独立清理 commit：
 ```

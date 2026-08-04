@@ -6,7 +6,7 @@ local media = addon.media.root
 -- book versus field note), while all shared materials, typography roles and
 -- semantic ink colors live here so a later art revision has one entry point.
 addon.questVisualTheme = {
-  contract = "1.5",
+  contract = "1.6",
   media = {
     questLogShell = media .. "Quests\\QuestLogShellV4",
     directoryMarks = media .. "Quests\\QuestLogDirectoryMarksV1",
@@ -20,9 +20,14 @@ addon.questVisualTheme = {
       flags = "OUTLINE",
     },
     questName = {
-      path = media .. "Fonts\\LXGWWenKaiGB-Medium.ttf",
+      -- Quest names follow the same pfUI standard face used by the rest of
+      -- the live interface. The bundled Noto Sans face is only a fallback for
+      -- unusual load orders where pfUI has not resolved font_default yet.
+      providerOwned = true,
+      path = media .. "Fonts\\NotoSansSC-Medium.ttf",
+      fallbackPath = media .. "Fonts\\NotoSansSC-Medium.ttf",
       size = 12,
-      flags = "",
+      flags = "OUTLINE",
     },
     trackerQuestName = {
       providerOwned = true,

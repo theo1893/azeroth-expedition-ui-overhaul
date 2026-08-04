@@ -20,8 +20,8 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 | 模块 | 当前状态 | 下一门禁 |
 |---|---|---|
 | pfUI／作用域接管 | scoped ownership `P5`；pfUI 公共绘制、全部未接管模块与配置页已恢复；模块 Initialize／Apply 已隔离失败，未实机 | Turtle WoW 验证 pfUI 全模块、Game Menu／`/pfui`、旧 SavedVariables 迁移及 Chat／Quest Log 隔离 |
-| 聊天 | 核心 V3 runtime `1.19 / P5`；Dark V1 完整暖黑书体与输入栏已接入，V3 Tab／承托带／未读继续复用；书本九宫格可自愈。受管正文沿用 pfUI 配置字体，移除描边、文字阴影与矩形压光层，保留 `3px` 行距；三层颜色桥只以左书 Parent 判定作用域。频道与九职业恢复暗纸上的 Vanilla 高辨识色，团队焦橙／小队蓝紫独立；未知暗色低于 `4.8:1` 时提升到门限，已清楚的颜色与链接载荷保持。Chat Copy／URL Copy 暂缓；单一左框、右框及左右聊天信息 Panel 隐藏，小地图 Panel 保留 | Turtle WoW 重载后确认 `chat-runtime=1.19`，重点检查暗纸／输入聚焦态、团队／小队、九职业原色识别和 DPSMate 红绿报告，同时确认 `chat-color c/x` 增长、旧字体、书外 Frame 与小地图 Panel |
-| 任务 | QL-A2 V4 书本主体保持；Quests `1.16`／Quest Visual Theme `1.5` 将左页恢复为 18 个 `246 × 18px` 活动行，全部任务／完成／地下城文字统一为 `12px` 霞鹜文楷、无描边和 shadow；行末追踪圈及左右页 scrollbar chrome 隐藏，两个真实 ScrollFrame 保留并支持滚轮。Quest Log 与 Tracker 共用一套高对比深墨难度色；任务类型使用深紫墨，完成／失败使用独立深绿／深红，模板拆分 FontString 与标题后的内联色码均由 adapter 归一化。Tracker 仍整批提交主题、宽度及 `16px` 底部安全区，左侧 `button.icon` 隐藏且旧统一字体保留。QL-B2 资产保留但隐藏；QT-A1 仍为 `P5 runtime-exported-temporary / display-region-blocked`，旧七工具按钮可见可用 | Turtle WoW `/reload` 验证左页深墨对比、五档难度辨识和任务类型不再荧黄，并比较同一任务在日志／Tracker 的颜色；再连续接受／放弃任务验证批次稳定 |
+| 聊天 | 核心 runtime `1.22 / P5`。Full V1 主框、Dark V2 Tab／承托带、Dark V1 输入与 V3 未读已在 addon 内接入；V3 Tab／承托带保留为 P6-C 前回退。Dark V2 固定 source `ChatTabs_Dark_V2_A.png` SHA `616f965b…a1e3c` 已确定性导出为 `ChatTabAtlasDarkV2.tga` SHA `3fb505fa…be0` 与 `ChatTabShelfDarkV2.tga` SHA `44c7f85c…fda`；只清理 source 的 `13` 个和 LANCZOS 新增的 `23` 个低 Alpha 绿边 RGB，Alpha 不变，最终绿溢色 `0`。最终真实排版覆盖 6 场景、violations `0`，fresh-checkout package `pass`、目标设备无需构建。v1.22 继续透传客户端／pfUI／ChatMOD 经典颜色；Chat Copy／URL Copy 暂缓，右框及左右聊天信息 Panel 隐藏，小地图 Panel 保留；本次 P4→P5 ImageGen `0`，原生产仍为 `5/5`，attempt 6 禁止 | 游戏设备可用时 `/reload`，确认 `chat-runtime=1.22`、四态 Tab、五 Tab 压缩、承托带、缩放／拖动、经典颜色及输入行为；通过前不得标记 P6 或清理回退／证据 |
+| 任务 | QL-A2 V4 书本主体保持；Quests `1.18`／Quest Visual Theme `1.6` 的 18 个 `246 × 18px` 活动行恢复 `pfUI.font_default` 的 `12px OUTLINE`。右页按最底动态对象重算 ScrollChild，并在 pfQuest 写入后执行有限两帧重排；奖励双列槽为 `108px`／名称 `64px`。已接受 QS-A1 漆章现以 `32px` 无鼠标 Texture 直接压在详情页右上纸面，旧悬空锚点已移除；原底部按钮继续 fail-open。V9 的七个 `112×20px` 外侧短事务签仍为 `QS-B1 V1 simulation-confirmed / prompt-draft / 0/5`，未生图、未接入。Quest runtime `1.18` 已进入当前 `main`，但尚无该版本实机结论。Tracker 继续批次提交与 `16px` 底部安全区，QT-A1 仍 `display-region-blocked` | 游戏设备拉取当前 `main` 后用 `/aeui status` 确认 `quest frame=1.18, theme=1.6, seal=detail-page-32`，再验证字体、长正文和 0／1／2／4／6 奖励；事务签另待用户独立授权 `QS-B1 V1` |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |
 | 其他 UI | `P0–P2`，保持 pfUI 默认实现 | 逐模块建立四份长期文档，并仅登记目标模块的接管路由 |
@@ -91,6 +91,12 @@ docs/
 references 是法律、来源或机器契约，不属于项目说明文档，不在上表重复维护。
 `README.md` 只介绍项目，不承载开发规则、资产状态或工作流。
 
+`generated/` 是 ignored 本地中间区，不承担跨设备同步。只有下一门禁依赖同一
+份像素时，才临时提交 `handoff/<module>/<component>/` 的最小检查点；其状态、
+角色、大小、发布／恢复和清理规则只由资产工作流 Skill 定义。它不是文档树、
+视觉权威、source 或 addon runtime，只能存在于短期协作分支，不能进入默认
+分支历史。
+
 ## 文档职责
 
 - `GLOBAL_ART_BASELINE.md`：唯一跨模块美术 Prompt；包含时代语言、材料、
@@ -104,6 +110,15 @@ references 是法律、来源或机器契约，不属于项目说明文档，不
 - `PROGRESS.md`：该主模块的资产、代码、测试、阶段和下一步唯一详细事实。
 - `work/*.md`：尚未完成组件的当前合同、当前可执行 Prompt、尝试摘要与审查
   记录。组件达到 `P6-C` 后必须删除；历史由 Git 保存。
+
+用户明确验收一个冻结的整模块 P6 范围后，必须按 Skill 立即完成模块终局
+收口：清空整个 `generated/<module>/`（tracked 与 ignored 均含）、
+`handoff/<module>/`、全部该模块 `work/`，以及经审计属于该模块的 legacy
+中间路径；只保留四份长期文档、最终 source／manifest、可直接安装的 addon
+runtime／实现／tests、许可证／共享依赖和最小 P6 实机证据，并通过
+`validate_module_closure.py` 后标记
+`P6-C / module-closed`。整模块验收即为已验证模块专属中间数据的清理授权；
+共享或归属不明路径不得删除。详细步骤只在 Skill 中维护。
 
 新增主模块时一次性建立四份长期文档，并把索引与状态同时写入本文件和全局
 进度。不得新增第二套路线图、决策日志、审计报告、媒体清单或独立 Prompt
@@ -124,6 +139,10 @@ references 是法律、来源或机器契约，不属于项目说明文档，不
   接入；若必须修改公共 API，必须证明对未接管模块的输出完全不变。
 - 每个模块必须可独立启用、禁用和回退。对象缺失或媒体失败时局部回退原生，
   不能阻止整个插件加载。
+- 任何 `P5` 导出都必须在当前开发设备完成 `addon/` 内的媒体、adapter、
+  pfUI scoped bridge 与 TOC／bootstrap 接入，并通过 Skill 的 fresh-checkout
+  addon package 门禁；另一台设备不得再生成资产、运行 exporter、应用补丁或
+  修改代码，只需拉取并安装对应 addon 目录。
 - Hook 后不得在维护循环中持续改写 Parent、Point、Width 或 Height。
 - 上游 pfUI 初始测试基线包含本机已有的 `pfUI.lua` 与 `libs/libtotem.lua`
   修改；嵌套 `.git` 未纳入。后续实质改写必须保留 MIT 版权和来源。
@@ -151,8 +170,8 @@ Blizzard 或外部 provider 对象时，不生产“看起来像”的假控件�
 
 ## 工作流入口
 
-所有组件资产的准备、生成、审查、修订、接受、导出、实机验证和完成后清理，
-必须使用：
+所有组件资产的准备、生成、审查、修订、接受、导出、实机验证、组件收口和
+整模块验收后的中间数据清理，必须使用：
 
 ```text
 .codex/skills/run-aeui-asset-workflow/SKILL.md
@@ -165,8 +184,8 @@ Blizzard 或外部 provider 对象时，不生产“看起来像”的假控件�
 ```
 
 固定执行实现为 `@openai/codex@0.143.0`；禁止改用会话内建 imagegen。
-详细状态机、授权门禁、审查顺序、版本处理、仓库同步与 `P6-C` 清理规则只在
-Skill 中维护，本文件不复制流程。
+详细状态机、授权门禁、审查顺序、版本处理、跨设备 handoff、仓库同步与
+`P6-C` 清理规则只在 Skill 中维护，本文件不复制流程。
 
 任何代码或资产变更都要更新目标模块 `PROGRESS.md`；主模块阶段变化时再同步
 全局 `docs/PROGRESS.md` 与本文件顶部快照。提交前运行受影响测试与

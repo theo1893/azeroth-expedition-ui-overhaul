@@ -1,0 +1,146 @@
+{
+  "schema": "aeui.quest-log.seal-actions.simulation.v1",
+  "version": "QUEST-LOG-SEAL-ACTIONS-SIM-V3",
+  "support_type": "page-layered-parchment-seal-tag",
+  "canvas": [1536, 1024],
+  "inputs": {
+    "quest_log_shell": "assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png",
+    "seal_atlas": "addon/AzerothExpeditionUI/Media/Quests/QuestToolWaxSealStatesV1.tga",
+    "title_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf",
+    "body_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf"
+  },
+  "outputs": {
+    "board": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V3/quest_log_seal_actions_board_v3.png",
+    "report": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V3/quest_log_seal_actions_report_v3.json"
+  },
+  "presentation": {
+    "title": "任务日志书页夹层火漆封签与事务签 · V3 本地几何预演",
+    "subtitle": "封签是一整张柔性羊皮纸：根部被右页真实像素压住，末端伸出书外承载火漆；展开态由同一张纸向书内摊开。100% UI 像素，ImageGen 0/0。"
+  },
+  "frame": [676, 464],
+  "layout": {
+    "list": [64, 64, 246, 324],
+    "detail": [366, 64, 246, 324],
+    "detail_content": [376, 72, 224, 306],
+    "close": [636, 12, 22, 22],
+    "document_tag_bbox": [608, 184, 112, 50],
+    "document_tag_polygon": [
+      [608, 188],
+      [624, 184],
+      [646, 190],
+      [665, 188],
+      [680, 193],
+      [690, 186],
+      [708, 189],
+      [718, 199],
+      [714, 222],
+      [706, 232],
+      [688, 231],
+      [680, 219],
+      [665, 211],
+      [646, 214],
+      [626, 208],
+      [608, 210]
+    ],
+    "tag_root_box": [608, 184, 27, 27],
+    "page_lip_source_box": [598, 176, 39, 54],
+    "page_lip_mask_polygon": [
+      [598, 176],
+      [628, 176],
+      [634, 184],
+      [630, 193],
+      [635, 202],
+      [631, 214],
+      [634, 230],
+      [598, 230]
+    ],
+    "page_lip_edge": [
+      [628, 177],
+      [633, 184],
+      [629, 193],
+      [634, 202],
+      [630, 214],
+      [633, 229]
+    ],
+    "tag_crease_lines": [
+      [[632, 190], [649, 196], [668, 194], [682, 199]],
+      [[632, 204], [649, 208], [666, 205], [681, 213]]
+    ],
+    "tag_terminal_fold": [
+      [704, 190],
+      [717, 199],
+      [713, 207],
+      [704, 203]
+    ],
+    "tag_head": [678, 184, 42, 50],
+    "seal_visual": [684, 196, 32, 32],
+    "seal_hitbox": [680, 192, 40, 40],
+    "menu": [438, 80, 218, 300],
+    "menu_connection_point": [688, 207],
+    "menu_connection_box": [650, 184, 42, 48],
+    "reward_slots": [
+      [376, 316, 108, 32],
+      [488, 316, 108, 32],
+      [376, 352, 108, 32],
+      [488, 352, 108, 32]
+    ]
+  },
+  "closeups": {
+    "closed_source": [580, 158, 150, 100],
+    "closed_destination": [44, 738, 426, 276],
+    "open_source": [430, 68, 296, 184],
+    "open_destination": [500, 738, 444, 276]
+  },
+  "content": {
+    "quest_rows": 18,
+    "reward_slots": 4,
+    "menu_actions": [
+      "共享任务",
+      "收起详情",
+      "显示任务位置",
+      "隐藏任务位置",
+      "清理地图标记",
+      "重建地图标记",
+      "放弃任务"
+    ],
+    "always_separate": [
+      "QuestLogFrameCloseButton",
+      "QuestLogFrameLevelsCheckButton",
+      "QuestLogTrack",
+      "pfQuest.buttonOnline",
+      "pfQuest.buttonLanguage"
+    ],
+    "provider_proxies": [
+      "QuestFramePushQuestButton",
+      "QuestLogFrameExpandButton",
+      "pfQuest.buttonShow",
+      "pfQuest.buttonHide",
+      "pfQuest.buttonClean",
+      "pfQuest.buttonReset",
+      "QuestLogFrameAbandonButton"
+    ]
+  },
+  "interaction": {
+    "left_click": "toggle-menu",
+    "outside_click_or_escape": "close-menu",
+    "action_click": "proxy-original-provider-button-then-close",
+    "abandon": "preserve-native-confirmation",
+    "disabled": "mirror-provider-enabled-state",
+    "right_click": "reserved-for-quest-module-settings",
+    "fail_open": "keep-original-buttons-visible-until-all-proxies-exist"
+  },
+  "constraints": {
+    "imagegen_calls": 0,
+    "new_bitmap_assets": 0,
+    "seal_reuses_accepted_runtime_atlas": true,
+    "tag_and_menu_are_non_authoritative_geometry": true,
+    "page_lip_reuses_shell_pixels": true,
+    "tag_is_one_continuous_sheet": true,
+    "menu_is_same_sheet_unfold": true,
+    "menu_is_transient_and_may_cover_detail_only_while_open": true,
+    "seal_must_sit_on_exposed_tag_terminal": true,
+    "tag_root_must_be_occluded_by_real_page_pixels": true,
+    "tag_must_cross_cover_without_being_fastened_to_frame": true,
+    "bottom_action_buttons_hidden_only_after_proxy_parity": true
+  }
+}

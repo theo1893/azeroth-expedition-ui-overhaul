@@ -1,0 +1,321 @@
+{
+  "schema_version": 1,
+  "module": "chat",
+  "batch": "CHAT.INPUT.DARK.V1",
+  "component": "CHAT.INPUT",
+  "accepted_version": "CHAT.INPUT.DARK.V1.r3 attempt 4",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "accepted_on": "2026-08-03",
+  "source": {
+    "file": "ChatInput_Dark_V1_r3.png",
+    "sha256": "4df36bc607a024ca0a2355f5d20ff985f61cbf3304073a65e33caa978c50cda0",
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      72,
+      198,
+      1416,
+      613
+    ],
+    "transparent_pixels": 1190188,
+    "partially_transparent_pixels": 16616,
+    "opaque_pixels": 366060,
+    "pure_green_visible_pixels": 0,
+    "heuristic_green_dominant_visible_pixels": 0,
+    "transparent_rgb_nonzero_values": 0,
+    "shared_state_alpha": true,
+    "canonical_state_cells_xyxy": {
+      "normal": [
+        51,
+        187,
+        1437,
+        363
+      ],
+      "focus": [
+        51,
+        448,
+        1437,
+        624
+      ]
+    },
+    "state_visible_bboxes_xyxy": {
+      "normal": [
+        72,
+        198,
+        1416,
+        352
+      ],
+      "focus": [
+        72,
+        459,
+        1416,
+        613
+      ]
+    },
+    "normalized_object_size": [
+      1344,
+      154
+    ]
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "codex_package": "@openai/codex@0.143.0",
+    "generation_session": "019fc5fd-c995-7f50-94af-5ab05aaba66d",
+    "provider_result": "ig_093073d7aed26787016a702047bcd48191a71c9dbbf2bce523",
+    "generation_before_commit": "880ed275f6550935b23843bdd4c2092a191fdd7a",
+    "provider_raw": "generated/chat/core/CHAT.INPUT.DARK.V1/attempt-04/CHAT_INPUT_DARK_V1_attempt04_raw.png",
+    "provider_raw_sha256": "6caa441c135de0761fcc797a59b00b11a0dd8cf8b325289d3ae29fb1c12f2518",
+    "accepted_candidate": "generated/chat/core/CHAT.INPUT.DARK.V1/attempt-04/review/attempt-04.normalized-source.png",
+    "accepted_candidate_sha256": "4df36bc607a024ca0a2355f5d20ff985f61cbf3304073a65e33caa978c50cda0",
+    "production_prompt": "docs/modules/chat/work/CHAT.CORE.V3.md",
+    "production_prompt_section": "完整修复正文（CHAT.INPUT.DARK.V1.r3；attempt 4）",
+    "production_prompt_sha256": "1ef8bd520244f1494aaa1208898b74dc1192bdffc5057478f85aeb1cb9a1fecf",
+    "production_prompt_characters": 10914,
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/chat/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/chat/SUBMODULE_ART_BASELINES.md#chatinput",
+    "historical_prompt": {
+      "git_commit": "73da6c5",
+      "path": "prompts/chat/聊天框模块化资源_执行提示词_v3.md",
+      "role": "historical V3 input-object and compact-control provenance; the r3 written contract overrides its bright-paper surface direction"
+    },
+    "locked_visual_references": [
+      {
+        "image": 1,
+        "file": "assets/locked/chat/聊天框视觉基准_v1.png",
+        "sha256": "90e30ba405a2b5cdc707cc229e56c4f64e51d0e4051f1e98dbcd2ec2ee70ee06",
+        "role": "highest visual authority for Vanilla-era HUD identity, compact scale, handmade paper identity and overall weight"
+      },
+      {
+        "image": 2,
+        "file": "assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_r1.png",
+        "sha256": "a97d9c5fa055a119cd5ea7809bdaa51460cddb9674355efcec35f98f6cd2c673",
+        "role": "subordinate direct material continuity for the accepted warm-black chat book"
+      },
+      {
+        "image": 3,
+        "file": "assets/source/chat/v3/ChatControls_Master_v3.png",
+        "sha256": "de0e5c66753ab59be1448f75f0843b37265c98f104381f3529314f494ac52968",
+        "role": "structure-only authority for two states, long shallow proportion and restrained end-detail scale"
+      }
+    ],
+    "deterministic_derivation": "Use attempt-04 pixels only. Estimate the near-green matte from the raw image's 32-pixel outer border, isolate the normal and focus object bands, proportionally bbox-fit each complete object to 1344x154 within its canonical 1386x176 cell, take the per-pixel minimum of the aligned state Alpha masks, apply that shared Alpha to both states, and clear RGB wherever Alpha is zero. No simulation, V3 source, Full V1 source or rejected-candidate pixels are copied into the accepted source.",
+    "deterministic_tool": {
+      "file": "tools/review_chat_input_dark_candidate_v1.py",
+      "sha256": "b6b26041857c643dd18a6fb3fee736beeb9fc214818f576954126885ff6b8f3a"
+    },
+    "matte_evidence": {
+      "background_border_pixels": 32,
+      "background_score_min": 219,
+      "background_score_max": 247,
+      "opaque_threshold": 160,
+      "transparent_threshold": 218,
+      "raw_visible_bboxes_xyxy": {
+        "normal": [
+          81,
+          230,
+          1455,
+          450
+        ],
+        "focus": [
+          81,
+          567,
+          1455,
+          787
+        ]
+      },
+      "pre_intersection_alpha_difference_pixels": 7206
+    },
+    "imagegen_budget": {
+      "actual_calls": 4,
+      "maximum_calls": 5,
+      "process_errors": 4,
+      "unconsumed_calls_terminated_on_acceptance": 1,
+      "unconsumed_calls_transferable": false
+    }
+  },
+  "user_acceptance": {
+    "statement": "接受 CHAT.INPUT.DARK.V1.r3 attempt 4 进入 P4。",
+    "scope": [
+      "promote only the exact deterministic transparent attempt-04 candidate to the tracked P4 source",
+      "record the fixed prompt, references, executor, session, result, deterministic normalization and review evidence",
+      "stop the repair loop and permanently leave attempt 5 unconsumed and non-transferable"
+    ],
+    "not_authorized": [
+      "runtime TGA export",
+      "Lua, XML, pfUI or ChatMOD integration changes",
+      "P5 runtime-exported status",
+      "Turtle WoW target-client validation",
+      "P6 or P6-C cleanup"
+    ]
+  },
+  "logical_components": [
+    {
+      "id": "CHAT.INPUT",
+      "state": "runtime-exported",
+      "runtime_owner": "pfUI.chat.editbox / ChatFrameEditBox",
+      "runtime_instances": 1,
+      "states": [
+        "normal",
+        "focus"
+      ],
+      "state_geometry_identical": true,
+      "shared_alpha": true,
+      "runtime_asset": "addon/AzerothExpeditionUI/Media/Chat/ChatInputDarkV1.tga",
+      "dynamic_runtime_content": [
+        "input text",
+        "channel header",
+        "caret",
+        "IME",
+        "focus",
+        "history",
+        "keyboard events"
+      ]
+    }
+  ],
+  "review_evidence": {
+    "metrics": "generated/chat/core/CHAT.INPUT.DARK.V1/attempt-04/review/attempt-04.metrics.json",
+    "metrics_sha256": "91a752476a73aaa430e7d28e0b17536323beb6c483f8e26bbbc0e1918837ea2e",
+    "logical_atlas": "generated/chat/core/CHAT.INPUT.DARK.V1/attempt-04/review/attempt-04.logical-atlas.png",
+    "logical_atlas_sha256": "8e2a6437b332fe28a34d8eb1d5b48f78073a3238e6b9826108e2f96650edca79",
+    "real_layout_preview": "generated/chat/core/CHAT.INPUT.DARK.V1/attempt-04/review/attempt-04.real-layout.png",
+    "real_layout_preview_sha256": "64e2ac242954eee68fc9cdb9730500a3b35d8c19c0b2595eed7a9622e5223749",
+    "display_region_contract": "generated/chat/core/CHAT.INPUT.DARK.V1/attempt-04/review/display-region-contract.json",
+    "display_region_contract_sha256": "9dc11cd490cc9d7bd8067d547ef013210344e3299cdaaf7fa74fd4fb5a9c16b7",
+    "display_region_report": "generated/chat/core/CHAT.INPUT.DARK.V1/attempt-04/review/display-region-report.json",
+    "display_region_report_sha256": "a399e7ffa584aec0ce40214b871546b61728b92a699a13a4b4a8d4f6a62cfc52",
+    "scenario_count": 5,
+    "violations": 0,
+    "first_failure": null,
+    "deterministic_replay_equal_artifacts": [
+      "normalized_source",
+      "logical_atlas",
+      "real_layout"
+    ],
+    "path_sensitive_json_excluded_from_replay_hash_equality": true
+  },
+  "runtime_export_evidence": {
+    "exporter": "tools/build_chat_input_dark_v1_runtime.py",
+    "exporter_sha256": "398bb63546f25a66046c89a41f97e166a8ca299e79c86f68b5e4f9fd39c55bbf",
+    "renderer": "tools/render_chat_input_dark_runtime_v1.py",
+    "renderer_sha256": "180a37ace87b3b453ebcf5d34564100021ee7330c26e8c6c92a9ce5262a78dfb",
+    "runtime_manifest": "ChatInput_Dark_V1_RuntimeManifest_v1.json",
+    "runtime_manifest_sha256": "b93c4d3ee38cd16500a3ac632fe3dc2fa15ddcebe536d602a2f793f6e300bbd8",
+    "runtime_atlas": "addon/AzerothExpeditionUI/Media/Chat/ChatInputDarkV1.tga",
+    "runtime_atlas_sha256": "43cb9a0173a2f0cf05b43bb01b13a7e2aa8853feb26d4f62ec7b399610f47666",
+    "runtime_atlas_png_sha256": "8e2a6437b332fe28a34d8eb1d5b48f78073a3238e6b9826108e2f96650edca79",
+    "review_logical_atlas_pixel_equal": true,
+    "real_layout_spec": "tools/specs/chat_input_dark_runtime_preview_v1.json",
+    "real_layout_spec_sha256": "4b7526f6e4693edfe215fc8068129f55777f378e96342ad5d799fc6d1907f7c1",
+    "real_layout_preview": "generated/chat/core/CHAT.INPUT.DARK.V1/runtime-v1/ChatInputDarkV1_runtime_real_layout.png",
+    "real_layout_preview_sha256": "d53c57fb3a37686ed380aef3c116746abe2b03ed51ccd2778e3a3a9de58d1240",
+    "real_layout_metrics": "generated/chat/core/CHAT.INPUT.DARK.V1/runtime-v1/ChatInputDarkV1_runtime_real_layout.metrics.json",
+    "real_layout_metrics_sha256": "32427089eca7c0618c35fd2d7f3949e348f298874d6f157759231f57a4e713e0",
+    "display_region_contract": "tools/specs/chat_input_dark_runtime_display_region_v1.json",
+    "display_region_contract_sha256": "fe3ac2cbf19ce42d926b722917b4e98c1c28ed5b0fc6ba168e3e642e5215c7ae",
+    "display_region_report": "generated/chat/core/CHAT.INPUT.DARK.V1/runtime-v1/ChatInputDarkV1_runtime_display-region-report.json",
+    "display_region_report_sha256": "132dbd3c2d1a17bbfbbf63f5409f2e1025efec095d9b4ecbe4039535800198fc",
+    "scenarios": 5,
+    "violations": 0,
+    "first_failure": null,
+    "normal_focus_alpha_equal": true,
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0
+  },
+  "runtime_transition": {
+    "instruction": "继续",
+    "date": "2026-08-03",
+    "scope": "deterministic P4-to-P5 export, adapter texture integration, final-runtime layout review and static validation",
+    "imagegen_calls": 0,
+    "preserved_behavior": [
+      "input focus and activation",
+      "caret and dynamic text",
+      "IME",
+      "channel header",
+      "AltArrowKey and input history",
+      "keyboard events and hit geometry"
+    ],
+    "not_claimed": [
+      "Turtle WoW target-client validation",
+      "P6",
+      "P6-C cleanup"
+    ]
+  },
+  "runtime_export_contract": {
+    "status": "runtime-exported",
+    "phase": "P5",
+    "version": "1.20",
+    "exporter": "tools/build_chat_input_dark_v1_runtime.py",
+    "runtime_manifest": "assets/source/chat/input-dark-v1/ChatInput_Dark_V1_RuntimeManifest_v1.json",
+    "runtime_atlas": "addon/AzerothExpeditionUI/Media/Chat/ChatInputDarkV1.tga",
+    "runtime_atlas_sha256": "43cb9a0173a2f0cf05b43bb01b13a7e2aa8853feb26d4f62ec7b399610f47666",
+    "crop_uv_status": "defined-and-validated",
+    "runtime_atlas_size": [
+      1024,
+      256
+    ],
+    "state_boxes_xyxy": {
+      "normal": [
+        8,
+        4,
+        1016,
+        124
+      ],
+      "focus": [
+        8,
+        132,
+        1016,
+        252
+      ]
+    },
+    "x_cuts": [
+      8,
+      121,
+      932,
+      1016
+    ],
+    "runtime_caps_left_right": [
+      28,
+      20
+    ],
+    "runtime_sizes": [
+      [
+        380,
+        25
+      ],
+      [
+        480,
+        25
+      ]
+    ],
+    "text_insets_left_right": [
+      34,
+      22
+    ],
+    "whole_source_runtime_allowed": false,
+    "normal_focus_alpha_equal": true,
+    "display_region_status": "pass / 5 scenarios / 0 violations",
+    "fallback_runtime": {
+      "file": "addon/AzerothExpeditionUI/Media/Chat/ChatInputAtlasV3.tga",
+      "sha256": "0b613e1b2050090b76527db18ab69943e9bdbbdfa61edf4e2dd0bfe9a081646a",
+      "status": "retained until P6-C"
+    },
+    "next_gate": "Turtle WoW 1.18.1 /reload validation of visual states, focus, caret, IME, history and keyboard behavior before P6"
+  },
+  "forbidden_runtime_uses": [
+    "do not load or stretch the 1536x1024 source master directly in Turtle WoW",
+    "do not treat the review-only logical atlas as a formal runtime export",
+    "do not use the raw near-green provider image as source or runtime media",
+    "do not crop or bake input text, channel headers, caret, IME, language controls, history or keyboard behavior",
+    "do not reuse this source as CHAT.FRAME, CHAT.TABS, CHAT.UNREAD, CHAT.INPUT.LANGUAGE or a legacy information panel",
+    "do not claim P6 or target-client validation from deterministic P5 export"
+  ],
+  "cleanup_gate": {
+    "status": "not-authorized",
+    "required_phase": "P6-C",
+    "generated_intermediates_retained": true,
+    "rule": "Generated attempts and review evidence remain until target-client P6 acceptance, an exact cleanup inventory, and explicit user approval."
+  }
+}

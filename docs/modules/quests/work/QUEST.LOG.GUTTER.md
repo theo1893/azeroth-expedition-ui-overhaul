@@ -228,3 +228,34 @@ SHA／Alpha／UV 记录和预演。
 
 QL-A2 在实机前保持本 work。后续 QL-B／QL-C／QL-D 交互资产仍需各自的
 组件合同、Prompt 与验收，不能因为背景已接入而标记完成。
+
+## `2026-08-03` runtime `1.17` 详情裁切修复
+
+- 用户实机反馈右页详情未完整展示，奖励会被裁。根因是 runtime `1.3+` 将
+  正文宽度收敛为 `214px` 后产生更多换行，但只保证 ScrollChild 最低
+  `324px`，没有根据重新排版后的最底部对象更新真实滚动范围；原生双列奖励
+  槽宽度也超过当前 `224px` ScrollChild 安静区。
+- runtime `1.17` 保持 SHELL、ScrollFrame、原任务数据和 provider 锚点，
+  仅把 `QuestLogItem1..MAX_NUM_ITEMS` 收敛为每格 `108px`、名称 `64px`，并在
+  每次 `QuestLog_UpdateQuestDetails` 后遍历当前可见标题、正文、目标、奖励
+  文字、奖励 Button 与附加奖励 Frame。目标 ScrollChild 高度等于最底对象
+  加 `12px`，最低 `324px`、保护上限 `4096px`，随后调用真实
+  `UpdateScrollChildRect()`。
+- Lua smoke 使用 `512px` 代表性动态内容高、四个显示奖励槽和 `188px` 真实
+  range，验证宽度、内容高、滚轮限位和 provider late-load 后重施几何；通过。
+- 这只修正布局／滚动合同，不接受 QL-D 最终奖励槽美术，也不能替代 Turtle
+  WoW 中 0／1／2／4／6 奖励、长中文正文与 UI scale 的实机 P6 证据。
+
+## `2026-08-04` runtime `1.18` 有限重排
+
+- 另一台设备仍出现旧裁切；远端审计确认其可获取的默认 `origin/main` 停在
+  runtime `1.16`，尚未包含 `1.17` 的动态内容高度修复。
+- 当前分支升至 `1.18`，并覆盖 pfQuest 在刷新函数返回后才稳定中文换行、奖励
+  锚点或附加金额／经验 Frame 的情况：每次 Quest Log 详情刷新后安排最多两次
+  下一帧重排，完成后立即清除 `OnUpdate` 待办，不形成长期几何争夺。
+- 测量继续优先使用真实可见对象，并额外纳入 `QuestLogMoneyFrame`、
+  `QuestLogRewardMoneyFrame`、`QuestLogRequiredMoneyFrame` 与
+  `QuestLogXPFrame`；最终仍以最底对象加 `12px` 确定 ScrollChild 高度。
+- Lua smoke 覆盖连续两帧高度变化与第三帧不再执行；`/aeui status` 会报告
+  当前 detail scroll range。仍须在目标客户端覆盖长中文正文和
+  0／1／2／4／6 奖励，才能进入 P6。

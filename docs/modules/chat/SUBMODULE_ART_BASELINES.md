@@ -13,11 +13,20 @@ ImageGen 调用记录。
 不可拉伸细节只放在角和边。不得包含 Tab、输入、未读、滚动按钮、文字或
 legacy 信息底栏。
 
-当前已接受源：
-[ChatBookFrame_Dark_Master_v1.png](../../../assets/source/chat/dark-v1/ChatBookFrame_Dark_Master_v1.png)。
-V3 亮纸源保留为本地回退，不再由当前 runtime 挂载。
-`CHAT.FRAME.LEFT` 是唯一运行时实例。`CHAT.FRAME.RIGHT` 已按产品决策隐藏，
-不得为它复制、镜像或重新生成第二本书。
+已接受的暖黑完整书体替换源：
+[ChatBookFrame_Full_V1_r1.png](../../../assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_r1.png)，
+对应
+[source manifest](../../../assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_SourceManifest_v1.json)。
+它在 `2026-08-03` 以 `CHAT.FRAME.FULL.V1.r1 attempt 2` 进入 `P4`，并已按
+runtime contract `1.19` 确定性导出进入 `P5`：中央阅读面
+为不透明暖黑烟熏纤维纸，页叠由近黑褐过渡到烟草褐，深胡桃皮革、低饱和
+氧化黄铜、接触阴影、非镜像磨损和左上暖光必须读作同一个连续旧书物件；禁止
+用亮金纸圈、中心 donor、旧像素 mask 或规则压纹皮革替代纸张身份。
+
+现行 runtime 使用 `ChatBookFrameFullV1.tga` 的九宫格；旧
+`ChatBookFrameV3.tga` 只作为 P6-C 前的回退资产保留。`CHAT.FRAME.LEFT` 是
+唯一运行时实例。`CHAT.FRAME.RIGHT` 已按产品决策隐藏，不得为它复制、镜像
+或重新生成第二本书。
 
 ## `CHAT.TABS`
 
@@ -29,19 +38,65 @@ V3 亮纸源保留为本地回退，不再由当前 runtime 挂载。
 不得因状态切换变成贴近皮革底色的黑褐字。不得做成网页 Tab、矩形卡片、
 胶囊按钮或独立金属牌。
 
-已接受源：
-[ChatTabs_Master_v3.png](../../../assets/source/chat/v3/ChatTabs_Master_v3.png)。
+已接受的现行深色源：
+[ChatTabs_Dark_V2_A.png](../../../assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_A.png)，
+对应
+[source manifest](../../../assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_SourceManifest_v1.json)
+与
+[runtime manifest](../../../assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_RuntimeManifest_v1.json)。
+用户于 `2026-08-04` 接受方案 A 的固定 donor、等比 transform 与输出 SHA
+合同例外；唯一 `1536 × 1024 RGBA` source SHA-256 为
+`616f965bb850605bcb67a98f60660feee35d80f8b95bc2b35ad72487df9a1e3c`。
+它保留旧式斜梯形、外撇端部、非完全平直缝线、selected 夹页和低亮承托带，
+不得重新规整为网页标签。
+
+该 source 已在 runtime contract `1.22` 确定性导出：四态
+`ChatTabAtlasDarkV2.tga` 为 `512 × 512`、SHA-256
+`3fb505fad8760b0547fa3748dc7ad8c7bc885643734b90e70eab6c4d52189be0`；承托带
+`ChatTabShelfDarkV2.tga` 为 `1024 × 64`、SHA-256
+`44c7f85c66850593817e76604a75a8ee02fb3887ba06af4c4065999f0f5bcfda`。
+exporter 只清零 source 中 `13` 个与 LANCZOS 重采样新增 `23` 个低 Alpha
+绿边像素的 RGB，Alpha 逐像素不变；最终可见绿溢色与透明区脏 RGB 均为 `0`。
+`92 × 30px` 四态与五 Tab 压缩场景使用真实文字和现行书框完成六场景审查，
+display-region violations `0`。`ChatTabs_Master_v3.png`、
+`ChatTabAtlasV3.tga` 与 `ChatTabShelfV3.tga` 只作为结构 provenance 和 P6-C
+前运行时回退保留，不是现行可见方向。
 
 ## `CHAT.INPUT`
 
-生成普通与聚焦两个无字深胡桃输入带状态，几何完全相同，均由左右端帽和可
-横向延展的安静中段组成。普通状态保持暗哑皮革／纸带与细金属压边；聚焦状态
-只增加局部暖色提亮。不得出现搜索图标、现代边框或发光。
+生成普通与聚焦两个无字“暖烟草抄写纸条”状态。它首先读作从暖黑战地日志
+下沿页叠中夹入的一张狭长书写纸，而不是独立面板：两至三层薄烟熏纸、轻微
+毛边、短折页、低频纸纤维与页叠接触暗部共同形成厚度。两态
+外接轮廓、Alpha、基线、左右端帽、三段切线和点击几何完全相同；固定左端帽
+为 `28px`，右端帽为 `20px`，所有折页、撕口、线结和页角只可落在端帽内，
+中段必须安静并可横向延展。动态文字走廊从左侧 `34px` 开始、在右侧
+`22px` 前结束，位图不得烘焙文字、光标、频道头、语言控件或输入历史。
 
-已接受源：
-[ChatInputStrip_Dark_Master_v1.png](../../../assets/source/chat/dark-v1/ChatInputStrip_Dark_Master_v1.png)。
-该 source 提供普通态；聚焦态只由 exporter 对相同像素执行固定
-`R/G/B=110%/108%/105%` 暖色提升，Alpha 与几何不变。
+普通态以 `#403024` 附近的暖烟草纸后退到正文暖黑纸面；聚焦态保持同一深色
+材料，只在 `#503A25` 附近轻微前移，并增加纸浆局部响应、一至两处短烛暖反光
+与接触阴影；不得添加写字导线表达焦点。不得整体发黄，不得出现全宽高光、
+完整矩形描边、搜索图标、胶囊、
+透明黑玻璃、现代黑色输入框、发光、进度条、血条或金色滚动条。
+
+已接受的暖烟草输入源：
+[ChatInput_Dark_V1_r3.png](../../../assets/source/chat/input-dark-v1/ChatInput_Dark_V1_r3.png)，
+对应
+[source manifest](../../../assets/source/chat/input-dark-v1/ChatInput_Dark_V1_SourceManifest_v1.json)。
+用户于 `2026-08-03` 接受 `CHAT.INPUT.DARK.V1.r3 attempt 4` 进入 `P4`；该源是
+只用候选自身像素完成近绿幕转 Alpha、等比 bbox-fit、两态逐像素共同 Alpha 与
+透明 RGB 清零后的精确 `1536 × 1024 RGBA` 结果，SHA-256
+`4df36bc607a024ca0a2355f5d20ff985f61cbf3304073a65e33caa978c50cda0`。
+它包含 normal／focus 两条薄烟熏 rag-paper 纸条，不包含文字、光标、频道头、
+语言控件或历史。该 source 已由确定性 exporter 按固定 cell、共享 Alpha、
+`8/121/932/1016` 三段切线导出为 `1024 × 256`
+`ChatInputDarkV1.tga`，并在 runtime contract `1.20` 接入；最终 TGA 的空、最小、
+典型 15 行、最大 16 行与 `540 × 420`／22 行五场景 display-region 均为
+`0` violations，因此当前为 `P5`，仍待 Turtle WoW 实机验证。
+
+[ChatControls_Master_v3.png](../../../assets/source/chat/v3/ChatControls_Master_v3.png)
+及 `ChatInputAtlasV3.tga` 只作为 P6-C 前的结构与运行时回退保留；浅金输入像素
+不再是现行可见综合色方向。切换只替换三枚 slice 的贴图源，不改变真实
+EditBox 的输入、焦点、光标、IME、历史、频道头、键盘事件或命中几何。
 
 ## `CHAT.UNREAD`
 
@@ -49,28 +104,24 @@ V3 亮纸源保留为本地回退，不再由当前 runtime 挂载。
 清楚，反馈依靠厚度、裂纹和短高光，不包含数字、感叹号、红点气泡或常亮光。
 它只能覆盖真实 `ChatFrameNTabFlash` 语义，不能改变 Tab 排列。
 
-已接受源仍为 V3
-[ChatControls_Master_v3.png](../../../assets/source/chat/v3/ChatControls_Master_v3.png)；
-Dark V1 不修改未读资产。
+已接受源同 `CHAT.INPUT`。
 
 ## `CHAT.TEXT`
 
 不生成新增位图。正文恢复并沿用 pfUI 当前配置的客户端字体，保留用户字号，
 在 12px 基线下使用 `3px` 额外行距；移除全方向 `OUTLINE` 并把文字阴影设为
 透明、零偏移，不允许复制出第二层字形。正文安全区不得增加连续压光、半透明
-色块、边框或逐行底色，必须直接保留书页纹理。受管聊天框的最终显示入口使用
-统一暗纸语义色板必须优先继承 Vanilla 原色相：说话暖纸白、公共频道浅粉、
-系统黄、公会绿、小队蓝紫、团队焦橙、密语洋红、警告红、表情橙；小队与团队
-不得合并。香草九职业使用各自原始 RGB，战士保持棕褐／青铜而非铁锈红，
-牧师保持白色，其他七职业同样不得换到陌生色域；萨满蓝只为通过暗纸对比
-轻微提亮。在代表书页色 `#18120D` 上以 `4.8:1` 作为基础频道／职业静态
-对比下限，不使用发光、描边或阴影补偿。
+色块、边框或逐行底色，必须直接保留书页纹理。受管聊天框只接管版式与字体
+呈现，不接管消息颜色。目标客户端的 `ChatTypeInfo`、pfUI 和 ChatMOD 1.1 是
+经典配色的唯一运行时权威；说话、频道、系统、公会、小队、团队、密语、
+警告、表情、九职业、物品品质、等级、URL、时间戳及未知第三方
+`|cAARRGGBB` 均逐字节透传。AEUI 不安装消息颜色 wrapper，不做白名单映射、
+对比度提亮、压暗或全局色表写入。
 
-经审计的 ChatMOD 1.1、pfUI 与原生精确颜色码使用确定性目标值；未知第三方
-`|cAARRGGBB` 若低于 `4.8:1`，只向白色提升到刚好通过并尽量保留色相，Alpha
-保持；已经足够清楚的未知色必须原样保留。消息内容和 `|H...|h` 链接载荷始终原样
-转发，不得写全局 `ChatTypeInfo` 或外部插件配置。霞鹜文楷只用于短频道签，
-不用于长聊天正文。
+消息参数、Alpha、内容和 `|H...|h` 链接载荷始终原样转发；不得改外部插件
+配置或 SavedVariables。纸面可读性只通过书页材质、字号、行距和无描边字体
+合同处理；若个别第三方颜色仍偏暗，记录为未来显式可选的无障碍功能。霞鹜
+文楷只用于短频道签，不用于长聊天正文。
 
 ## 尚未锁定的真实控件
 
@@ -92,8 +143,35 @@ Dark V1 不修改未读资产。
 ## 接受资产 provenance
 
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`。
-- 接受日期：`2026-07-29`。
+- V3 接受日期：`2026-07-29`；暖黑完整书体替换源与暖烟草输入源接受日期：
+  `2026-08-03`；Dark V2 Tab 方案 A source 与 P5 runtime 接受日期：
+  `2026-08-04`。
 - V3 主框源尺寸：`1608 × 978` RGBA。
+- 暖黑完整书体替换源尺寸：`1608 × 978` RGBA；SHA-256
+  `a97d9c5fa055a119cd5ea7809bdaa51460cddb9674355efcec35f98f6cd2c673`；
+  固定 session `019fc27e-f6fb-7d90-ac30-5fbdfef99c11`，provider result
+  `ig_0008a6d335a216a8016a6f3b35b41481919d0752e2d83926a4`；实际 ImageGen
+  `2/5` 后通过，剩余三次终止且不转移。
+- 暖黑 runtime：`ChatBookFrameFullV1.tga`，`1024 × 1024` RGBA，SHA-256
+  `becb504fb482cb37c0824e9b8705b4ad76d890a5cac024e83a3cce81517025ae`；
+  九宫格和五场景最终 TGA 展示区域门禁为 `0` violations。
+- 暖烟草输入源：`ChatInput_Dark_V1_r3.png`，`1536 × 1024` RGBA，SHA-256
+  `4df36bc607a024ca0a2355f5d20ff985f61cbf3304073a65e33caa978c50cda0`；
+  固定 session `019fc5fd-c995-7f50-94af-5ab05aaba66d`，provider result
+  `ig_093073d7aed26787016a702047bcd48191a71c9dbbf2bce523`；实际 ImageGen
+  `4/5` 后通过并进入 `P4`，剩余一次终止且不转移。确定性 P4→P5 导出没有
+  ImageGen 调用；现行 `ChatInputDarkV1.tga` 为 `1024 × 256` RGBA，SHA-256
+  `43cb9a0173a2f0cf05b43bb01b13a7e2aa8853feb26d4f62ec7b399610f47666`，其
+  RGBA 像素与 P4 审查逻辑 atlas 完全一致；五场景最终展示区域为
+  `0` violations。旧 `ChatInputAtlasV3.tga` 保留到 P6-C。
+- Dark V2 Tab source：`ChatTabs_Dark_V2_A.png`，`1536 × 1024` RGBA，
+  SHA-256 `616f965bb850605bcb67a98f60660feee35d80f8b95bc2b35ad72487df9a1e3c`；
+  原生产 ImageGen `5/5`、流程错误 `0`，用户接受的确定性方案 A 与 P4→P5
+  导出均没有新增 ImageGen。现行 atlas／shelf SHA-256 分别为
+  `3fb505fad8760b0547fa3748dc7ad8c7bc885643734b90e70eab6c4d52189be0`／
+  `44c7f85c66850593817e76604a75a8ee02fb3887ba06af4c4065999f0f5bcfda`；
+  source `13`＋重采样 `23` 个低 Alpha 绿边像素只清 RGB，Alpha 不变；六场景
+  display-region `0` violations。原批次 attempt 6 永久禁止。
 - V3 Tab 源尺寸：`1774 × 887` RGBA。
 - V3 控件源尺寸：`1536 × 1024` RGBA。
 - V3 source 接受时的 `440 × 320` 合成验证使用 `380 × 236` 正文安全区；
@@ -103,8 +181,3 @@ Dark V1 不修改未读资产。
   挂载。
 - 历史完整执行正文与失败尝试保留在 Git 历史；当前树以本文件、确认源资产
   和模块进度为准。
-- Dark V1 接受日期：`2026-08-03`；主框由固定执行器 attempt 2 的完整书体
-  候选整体晋级，只清除 `alpha <= 1` 的不可见色键残留；输入 strip 从同步的
-  固定候选无重绘转为 RGBA source。精确 SHA、session、provenance gap 与
-  runtime 依赖见
-  [ChatDarkV1_SourceManifest_v1.json](../../../assets/source/chat/dark-v1/ChatDarkV1_SourceManifest_v1.json)。

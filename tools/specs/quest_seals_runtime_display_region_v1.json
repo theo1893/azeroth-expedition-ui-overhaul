@@ -11,11 +11,15 @@
   "quest_log": {
     "provider": "QuestLogFrame",
     "frame": [676, 464],
-    "texture_box_xywh": [600, -18, 28, 28],
-    "visible_content_goal": [26, 26],
+    "placement": "direct-detail-page",
+    "texture_box_xywh": [576, 68, 32, 32],
+    "reserved_corner_xywh": [572, 64, 40, 40],
+    "detail_page_xywh": [366, 64, 246, 324],
+    "detail_title_safe_xywh": [376, 72, 188, 28],
+    "visible_content_goal": [30, 29],
     "shell_runtime": "addon/AzerothExpeditionUI/Media/Quests/QuestLogShellV4.tga",
     "shell_texcoord": [0.0, 0.66015625, 0.0, 0.90625],
-    "shell_visible_alpha_overlap_max_pixels": 0,
+    "shell_visible_alpha_overlap_min_pixels": 900,
     "hit_region_count": 0
   },
   "tracker": {
@@ -46,7 +50,8 @@
   "forbidden": [
     "hide, disable, reparent or replace any provider toolbar Button before hub-menu parity",
     "move quest rows or change the provider height formula",
-    "place the Quest Log seal on a page, page turn, cover, corner or binding",
+    "place the Quest Log seal outside its reserved upper-right detail-page corner or over dynamic title/body text",
+    "add a bookmark, cover, metal corner or other support beneath the Quest Log seal",
     "treat the tool seal as quest complete or failed state",
     "load the 1024x1024 source directly in the client"
   ]

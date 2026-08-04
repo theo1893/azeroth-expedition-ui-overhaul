@@ -452,8 +452,8 @@ assert(
   "book texture coordinate does not match the runtime asset"
 )
 assert(
-  left.aeuiBookSlices.center.texture:find("ChatBookFrameDarkV1"),
-  "dark chat book texture was not mounted"
+  left.aeuiBookSlices.center.texture:find("ChatBookFrameFullV1"),
+  "accepted warm-black chat book texture was not mounted"
 )
 assert(
   not left.aeuiReadingWash or
@@ -465,14 +465,14 @@ assert(
 )
 assert(
   left.enabledDrawLayer == "BACKGROUND" and
-    left.aeuiBookRuntimeVersion == "1.19",
+    left.aeuiBookRuntimeVersion == "1.22",
   "chat book background layer or runtime marker was not restored"
 )
 left.aeuiBookSlices.center:SetTexture(nil)
 left.aeuiBookRuntimeVersion = nil
 AzerothExpeditionUI.modules.Chat:Maintain()
 assert(
-  left.aeuiBookSlices.center.texture:find("ChatBookFrameDarkV1") and
+  left.aeuiBookSlices.center.texture:find("ChatBookFrameFullV1") and
     left.aeuiBookRecoveredAt,
   "chat maintenance did not recover stripped book textures"
 )
@@ -480,7 +480,7 @@ assert(#ChatFrame1.points == 2, "docked chat frame was not inset")
 assert(
   ChatFrame1:GetSpacing() == 3 and
     ChatFrame1.aeuiTextLineSpacing == 3 and
-    ChatFrame1.aeuiTextMetricsVersion == "1.19",
+    ChatFrame1.aeuiTextMetricsVersion == "1.22",
   "chat text did not receive the relaxed line-height contract"
 )
 assert(
@@ -491,7 +491,7 @@ assert(
     ChatFrame1.shadowColor[4] == 0 and
     ChatFrame1.shadowOffset[1] == 0 and
     ChatFrame1.shadowOffset[2] == 0 and
-    ChatFrame1.aeuiTextStyleVersion == "1.19",
+    ChatFrame1.aeuiTextStyleVersion == "1.22",
   "chat text did not restore the provider-owned comfort typography"
 )
 local channelMessage =
@@ -507,59 +507,31 @@ local channelResult = ChatFrame1:HookAddMessage(
 assert(
   channelResult == "delivered" and
     ChatFrame1.lastDeliveredMessage[1] == channelMessage and
-    ChatFrame1.lastDeliveredMessage[2] == 1 and
-    ChatFrame1.lastDeliveredMessage[3] == 192 / 255 and
-    ChatFrame1.lastDeliveredMessage[4] == 192 / 255 and
+    ChatFrame1.lastDeliveredMessage[2] == ChatTypeInfo.CHANNEL.r and
+    ChatFrame1.lastDeliveredMessage[3] == ChatTypeInfo.CHANNEL.g and
+    ChatFrame1.lastDeliveredMessage[4] == ChatTypeInfo.CHANNEL.b and
     ChatFrame1.lastDeliveredMessage[5] == 1 and
     ChatFrame1.lastDeliveredMessage[6] == 17,
-  "managed public channel color was not mapped to body ink"
+  "classic public channel color did not pass through unchanged"
 )
 assert(
   ChatTypeInfo.CHANNEL.r == 1.00 and
     ChatTypeInfo.CHANNEL.g == 0.75 and
     ChatTypeInfo.CHANNEL.b == 0.75,
-  "managed public channel mapping mutated the global channel color"
-)
-ChatFrame1.isDocked = nil
-ChatFrame1:HookAddMessage(
-  "transient dock flag",
-  ChatTypeInfo.CHANNEL.r,
-  ChatTypeInfo.CHANNEL.g,
-  ChatTypeInfo.CHANNEL.b,
-  1,
-  171
-)
-assert(
-  ChatFrame1.lastDeliveredMessage[2] == 1 and
-    ChatFrame1.lastDeliveredMessage[3] == 192 / 255 and
-    ChatFrame1.lastDeliveredMessage[4] == 192 / 255,
-  "transient isDocked state disabled the managed palette"
-)
-ChatFrame1.isDocked = true
-ChatFrame1:HookAddMessage("system", 1, 1, 0, 1, 18)
-assert(
-  ChatFrame1.lastDeliveredMessage[1] == "system" and
-    ChatFrame1.lastDeliveredMessage[2] == 1 and
-    ChatFrame1.lastDeliveredMessage[3] == 1 and
-    ChatFrame1.lastDeliveredMessage[4] == 0,
-  "managed system color was not mapped to metadata ink"
+  "AEUI mutated the global channel color"
 )
 
 local semanticColorCases = {
-  { "say", ChatTypeInfo.SAY, { 201, 185, 144 } },
-  { "guild", ChatTypeInfo.GUILD, { 64, 255, 64 } },
-  { "party", ChatTypeInfo.PARTY, { 170, 170, 255 } },
-  { "raid", ChatTypeInfo.RAID, { 255, 127, 0 } },
-  { "whisper", ChatTypeInfo.WHISPER, { 255, 128, 255 } },
-  { "yell", ChatTypeInfo.YELL, { 255, 64, 64 } },
-}
-local semanticColorsSeen = {
-  ["255:192:192"] = true,
-  ["255:255:0"] = true,
+  { "say", ChatTypeInfo.SAY },
+  { "guild", ChatTypeInfo.GUILD },
+  { "party", ChatTypeInfo.PARTY },
+  { "raid", ChatTypeInfo.RAID },
+  { "whisper", ChatTypeInfo.WHISPER },
+  { "yell", ChatTypeInfo.YELL },
+  { "system", ChatTypeInfo.SYSTEM },
 }
 for index, colorCase in ipairs(semanticColorCases) do
   local source = colorCase[2]
-  local expected = colorCase[3]
   ChatFrame1:HookAddMessage(
     colorCase[1],
     source.r,
@@ -569,18 +541,11 @@ for index, colorCase in ipairs(semanticColorCases) do
     180 + index
   )
   assert(
-    ChatFrame1.lastDeliveredMessage[2] == expected[1] / 255 and
-      ChatFrame1.lastDeliveredMessage[3] == expected[2] / 255 and
-      ChatFrame1.lastDeliveredMessage[4] == expected[3] / 255,
-    "semantic channel color did not retain a distinct parchment hue"
+    ChatFrame1.lastDeliveredMessage[2] == source.r and
+      ChatFrame1.lastDeliveredMessage[3] == source.g and
+      ChatFrame1.lastDeliveredMessage[4] == source.b,
+    "provider-owned classic semantic color was changed"
   )
-  local colorKey =
-    expected[1] .. ":" .. expected[2] .. ":" .. expected[3]
-  assert(
-    not semanticColorsSeen[colorKey],
-    "semantic channel colors collapsed onto the same ink"
-  )
-  semanticColorsSeen[colorKey] = true
 end
 ChatFrame1:HookAddMessage("custom", 0.12, 0.23, 0.34, 1, 18)
 assert(
@@ -588,7 +553,7 @@ assert(
     ChatFrame1.lastDeliveredMessage[2] == 0.12 and
     ChatFrame1.lastDeliveredMessage[3] == 0.23 and
     ChatFrame1.lastDeliveredMessage[4] == 0.34,
-  "unknown base message color was changed by the whitelist"
+  "custom provider base color was changed"
 )
 
 local enhancedMessage =
@@ -606,83 +571,25 @@ ChatFrame1:HookAddMessage(
   1,
   181
 )
-local normalizedMessage = ChatFrame1.lastDeliveredMessage[1]
 assert(
-  string.find(normalizedMessage, "|cff33ccff", 1, true) and
-    string.find(normalizedMessage, "|cfff58cba", 1, true) and
-    string.find(normalizedMessage, "|cffff4040", 1, true) and
-    string.find(normalizedMessage, "|cff3d9bff", 1, true) and
-    string.find(normalizedMessage, "|cffaaaaff", 1, true) and
-    string.find(normalizedMessage, "|cff6f8498", 1, true) and
-    string.find(normalizedMessage, "|Hezc:copy", 1, true) and
-    string.find(normalizedMessage, "|Hplayer:Paladin", 1, true) and
-    string.find(normalizedMessage, "|Hitem:1:0:0:0", 1, true) and
-    string.find(normalizedMessage, "|Href:www.example.com", 1, true),
-  "dark-paper ChatMOD and link colors were not normalized without changing links"
+  ChatFrame1.lastDeliveredMessage[1] == enhancedMessage,
+  "ChatMOD, class, item, URL or custom inline colors were rewritten"
 )
 assert(
-  not string.find(normalizedMessage, "ff1919", 1, true) and
-    not string.find(normalizedMessage, "0070dd", 1, true) and
-    not string.find(normalizedMessage, "9999ee", 1, true) and
-    not string.find(normalizedMessage, "123456", 1, true),
-  "low-contrast inline colors survived the dark-paper whitelist"
+  not AzerothExpeditionUI.modules.Chat.ApplyMessagePalette and
+    not AzerothExpeditionUI.modules.Chat.NormalizeInlineMessageColors and
+    not AzerothExpeditionUI.modules.Chat.TransformBaseMessageColor,
+  "retired AEUI message color rewriting API remained active"
 )
 
-local classColorCases = {
-  { "ffc79c6e", "ffc79c6e" },
-  { "fff58cba", "fff58cba" },
-  { "ffabd473", "ffabd473" },
-  { "fffff569", "fffff569" },
-  { "ffffffff", "ffffffff" },
-  { "ff0070de", "ff1684ed" },
-  { "ff69ccf0", "ff69ccf0" },
-  { "ff9482c9", "ff9482c9" },
-  { "ffff7d0a", "ffff7d0a" },
-}
-local classColorsSeen = {}
-for _, colorCase in ipairs(classColorCases) do
-  local normalized =
-    AzerothExpeditionUI.modules.Chat:NormalizeInlineMessageColors(
-      "|c" .. colorCase[1] .. "class|r"
-    )
-  assert(
-    normalized == "|c" .. colorCase[2] .. "class|r",
-    "class color did not map to its expected parchment ink"
-  )
-  assert(
-    not classColorsSeen[colorCase[2]],
-    "two class colors collapsed onto the same parchment ink"
-  )
-  classColorsSeen[colorCase[2]] = true
-end
-
-local adaptiveMessage =
-  AzerothExpeditionUI.modules.Chat:NormalizeInlineMessageColors(
-    "|cffffcc44bright gold|r" ..
-    "|cfff0a0f0bright pink|r" ..
-    "|cff223344dark custom|r" ..
-    "|cffff8080damage|r" ..
-    "|cff8cff80healing|r"
-  )
-assert(
-  string.find(adaptiveMessage, "|cffffcc44", 1, true) and
-    string.find(adaptiveMessage, "|cfff0a0f0", 1, true) and
-    string.find(adaptiveMessage, "|cff78838d", 1, true) and
-    string.find(adaptiveMessage, "|cffff8080", 1, true) and
-    string.find(adaptiveMessage, "|cff8cff80", 1, true),
-  "dark unknown colors were not lifted while readable colors stayed stable"
-)
-
--- ChatMOD can capture the native sink before pfUI installs HookAddMessage.
--- In that order it injects bright inline colors after AEUI's first wrapper,
--- then calls ORG_AddMessage directly. The maintenance pass must discover and
--- wrap that true final sink without changing ChatMOD itself.
+-- Both supported ChatMOD load orders must retain their native final sinks.
 function S_AddMessage(
   self,
   text,
   red,
   green,
   blue,
+  alpha,
   messageId
 )
   local injected =
@@ -694,23 +601,23 @@ function S_AddMessage(
     red,
     green,
     blue,
+    alpha,
     messageId
   )
 end
 
-ChatFrame3.ORG_AddMessage = ChatFrame3.aeuiProviderHookAddMessage
-ChatFrame3.aeuiProviderHookAddMessage = function(...)
-  return S_AddMessage(...)
-end
+ChatFrame3.ORG_AddMessage = ChatFrame3.HookAddMessage
+local chatMODFinalSink = ChatFrame3.ORG_AddMessage
+ChatFrame3.AddMessage = S_AddMessage
 AzerothExpeditionUI.modules.Chat:Maintain()
-local chatMODFinalWrapper = ChatFrame3.ORG_AddMessage
 AzerothExpeditionUI.modules.Chat:Maintain()
 assert(
-  ChatFrame3.ORG_AddMessage == chatMODFinalWrapper and
-    ChatFrame3.aeuiChatMODFinalColorVersion == "1.19",
-  "ChatMOD final color hook was missing or installed more than once"
+  ChatFrame3.ORG_AddMessage == chatMODFinalSink and
+    not ChatFrame3.aeuiChatMODFinalColorWrapper and
+    not ChatFrame3.aeuiMessageColorHooked,
+  "AEUI wrapped the ChatMOD provider sink"
 )
-ChatFrame3:HookAddMessage(
+ChatFrame3:AddMessage(
   "late ChatMOD order",
   ChatTypeInfo.CHANNEL.r,
   ChatTypeInfo.CHANNEL.g,
@@ -721,7 +628,7 @@ ChatFrame3:HookAddMessage(
 assert(
   string.find(
     ChatFrame3.lastDeliveredMessage[1],
-    "|cff33ccff",
+    "|CFF33CCFF",
     1,
     true
   ) and
@@ -731,25 +638,23 @@ assert(
       1,
       true
     ) and
-    ChatFrame3.lastDeliveredMessage[2] == 1 and
-    ChatFrame3.lastDeliveredMessage[3] == 192 / 255 and
-    ChatFrame3.lastDeliveredMessage[4] == 192 / 255,
-  "colors injected after the pfUI hook bypassed the parchment palette"
+    ChatFrame3.lastDeliveredMessage[2] == 255 / 255 and
+    ChatFrame3.lastDeliveredMessage[3] == 0.75 and
+    ChatFrame3.lastDeliveredMessage[4] == 0.75,
+  "ChatMOD colors changed in the native-sink load order"
 )
 
--- The opposite load order is also valid: ChatMOD can call back through the
--- already wrapped pfUI path. Frame 4 also models HookAddMessage appearing
--- after AEUI's first layout pass, which the maintenance pass must discover.
 assert(
   not ChatFrame4.aeuiMessageColorHooked,
-  "late provider unexpectedly had an AEUI color hook"
+  "late provider started with an AEUI color hook"
 )
 ChatFrame4.HookAddMessage = ChatFrame4.testProviderAddMessage
+local lateProviderSink = ChatFrame4.HookAddMessage
 AzerothExpeditionUI.modules.Chat:Maintain()
 assert(
-  ChatFrame4.aeuiMessageColorHooked and
-    ChatFrame4.aeuiMessageColorVersion == "1.19",
-  "late HookAddMessage provider was not discovered"
+  ChatFrame4.HookAddMessage == lateProviderSink and
+    not ChatFrame4.aeuiMessageColorHooked,
+  "AEUI wrapped a late pfUI provider sink"
 )
 ChatFrame4.ORG_AddMessage = ChatFrame4.HookAddMessage
 ChatFrame4.AddMessage = S_AddMessage
@@ -765,7 +670,7 @@ ChatFrame4:AddMessage(
 assert(
   string.find(
     ChatFrame4.lastDeliveredMessage[1],
-    "|cff33ccff",
+    "|CFF33CCFF",
     1,
     true
   ) and
@@ -775,9 +680,11 @@ assert(
       1,
       true
     ) and
-    ChatFrame4.lastDeliveredMessage[2] == 1 and
-    ChatFrame4.aeuiChatMODFinalColorVersion == "1.19",
-  "ChatMOD post-pfUI load order did not retain the parchment palette"
+    ChatFrame4.lastDeliveredMessage[2] == 255 / 255 and
+    ChatFrame4.lastDeliveredMessage[3] == 0.75 and
+    ChatFrame4.lastDeliveredMessage[4] == 0.75 and
+    not ChatFrame4.aeuiChatMODFinalColorWrapper,
+  "ChatMOD colors changed in the late-provider load order"
 )
 
 ChatFrame2.pfCombatLog = true
@@ -790,11 +697,11 @@ ChatFrame2:HookAddMessage(
   182
 )
 assert(
-  ChatFrame2.lastDeliveredMessage[1] == "|cff33ccffcombat|r" and
-    ChatFrame2.lastDeliveredMessage[2] == 1 and
-    ChatFrame2.lastDeliveredMessage[3] == 192 / 255 and
-    ChatFrame2.lastDeliveredMessage[4] == 192 / 255,
-  "left-book frame classified as combat log bypassed the managed palette"
+  ChatFrame2.lastDeliveredMessage[1] == "|CFF33CCFFcombat|r" and
+    ChatFrame2.lastDeliveredMessage[2] == 255 / 255 and
+    ChatFrame2.lastDeliveredMessage[3] == 0.75 and
+    ChatFrame2.lastDeliveredMessage[4] == 0.75,
+  "combat-log provider colors were changed"
 )
 ChatFrame2.pfCombatLog = nil
 AzerothExpeditionUI.db.chat.enabled = false
@@ -810,7 +717,7 @@ assert(
   ChatFrame1.lastDeliveredMessage[2] == 1.00 and
     ChatFrame1.lastDeliveredMessage[3] == 0.75 and
     ChatFrame1.lastDeliveredMessage[4] == 0.75,
-  "disabled AEUI Chat retained its display-only channel mapping"
+  "disabled AEUI Chat changed provider colors"
 )
 AzerothExpeditionUI.db.chat.enabled = true
 FCF_SetChatWindowFontSize(ChatFrame1, 14)
@@ -847,8 +754,8 @@ assert(not panel.left.aeuiPanelTexture, "retired panel art was still created")
 assert(#ChatFrame1Tab.points == 1, "pfUI chat tab anchor was not preserved")
 assert(ChatFrame1Tab.aeuiStateTexture, "chat tab state texture was not applied")
 assert(
-  ChatFrame1Tab.aeuiStateTexture.texture:find("ChatTabAtlasV3"),
-  "V3 chat tab atlas was not applied"
+  ChatFrame1Tab.aeuiStateTexture.texture:find("ChatTabAtlasDarkV2"),
+  "accepted Dark V2 chat tab atlas was not applied"
 )
 assert(
   ChatFrame1Tab.aeuiVisualState == "selected",
@@ -910,12 +817,6 @@ assert(
   ChatFrameEditBox.aeuiInputState == "normal",
   "chat input did not start in its normal state"
 )
-assert(
-  ChatFrameEditBox.aeuiInputSlices.center.texture:find(
-    "ChatInputAtlasDarkV1"
-  ),
-  "dark chat input atlas was not mounted"
-)
 assert(refreshCount >= 1, "pfUI chat refresh was not retained")
 
 local chatModule = AzerothExpeditionUI.modules.Chat
@@ -957,12 +858,12 @@ assert(
   "status command did not report the scoped route"
 )
 assert(
-  string.find(statusMessage, "chat-runtime=1.19", 1, true),
+  string.find(statusMessage, "chat-runtime=1.22", 1, true),
   "status command did not report the chat runtime contract"
 )
 assert(
-  string.find(statusMessage, "chat-color=m4/h4/f2/c", 1, true),
-  "status command did not report the chat color hook diagnostics: " ..
+  string.find(statusMessage, "chat-color=classic-provider", 1, true),
+  "status command did not report the classic provider color contract: " ..
     statusMessage
 )
 assert(

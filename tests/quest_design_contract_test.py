@@ -46,6 +46,90 @@ def main() -> None:
     seals_work = (
         QUESTS / "work" / "QUEST.SEALS.md"
     ).read_text(encoding="utf-8")
+    seal_actions_sim_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v1.json"
+    )
+    seal_actions_sim_spec = json.loads(
+        seal_actions_sim_spec_path.read_text(encoding="utf-8")
+    )
+    seal_actions_sim_v2_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v2.json"
+    )
+    seal_actions_sim_v2_spec = json.loads(
+        seal_actions_sim_v2_spec_path.read_text(encoding="utf-8")
+    )
+    seal_actions_sim_v3_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v3.json"
+    )
+    seal_actions_sim_v3_spec = json.loads(
+        seal_actions_sim_v3_spec_path.read_text(encoding="utf-8")
+    )
+    seal_actions_sim_v4_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v4.json"
+    )
+    seal_actions_sim_v4_spec = json.loads(
+        seal_actions_sim_v4_spec_path.read_text(encoding="utf-8")
+    )
+    seal_actions_sim_v5_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v5.json"
+    )
+    seal_actions_sim_v5_spec = json.loads(
+        seal_actions_sim_v5_spec_path.read_text(encoding="utf-8")
+    )
+    seal_actions_sim_v6_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v6.json"
+    )
+    seal_actions_sim_v6_spec = json.loads(
+        seal_actions_sim_v6_spec_path.read_text(encoding="utf-8")
+    )
+    seal_actions_sim_v7_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v7.json"
+    )
+    seal_actions_sim_v7_spec = json.loads(
+        seal_actions_sim_v7_spec_path.read_text(encoding="utf-8")
+    )
+    seal_actions_sim_v8_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v8.json"
+    )
+    seal_actions_sim_v8_spec = json.loads(
+        seal_actions_sim_v8_spec_path.read_text(encoding="utf-8")
+    )
+    seal_actions_sim_v9_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v9.json"
+    )
+    seal_actions_sim_v9_spec = json.loads(
+        seal_actions_sim_v9_spec_path.read_text(encoding="utf-8")
+    )
+    seal_actions_sim_renderer = (
+        ROOT / "tools" / "render_quest_log_seal_actions_simulation_v1.py"
+    )
     tracker_sim_spec_path = (
         ROOT / "tools" / "specs" / "quest_tracker_simulation_v2.json"
     )
@@ -204,7 +288,13 @@ def main() -> None:
             "`QUEST.LOG.ACTION.ABANDON`",
             "`QUEST.LOG.ACTION.SHARE`",
             "`QUEST.LOG.ACTION.EXIT`",
-            "程序化暗皮革搭扣四状态",
+            "`QUEST.LOG.ACTION.SEAL_MENU`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.TAB.BASE`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.PAGE_EDGE_MASK`",
+            "当前程序化暗皮革 fallback",
+            "双列单格收敛为 `108px`",
+            "名称安全宽 `64px`",
+            "UpdateScrollChildRect()",
             "`QUEST.DIALOG.QUEST.SHELL`",
             "`QUEST.DIALOG.GOSSIP.SHELL`",
             "`QUEST.DIALOG.QUEST.PORTRAIT`",
@@ -592,7 +682,7 @@ def main() -> None:
         (
             "Quest Log／Tracker 共用漆章",
             "`QS-A1 V1.r4`",
-            "`runtime-exported / P5`",
+            "`simulation-confirmed / prompt-draft / awaiting-production-authorization`",
             "QuestToolWaxSeal_Master_v1.png",
             "QS-A1_SourceManifest_v1.json",
             "QS-A1_RuntimeManifest_v1.json",
@@ -605,6 +695,7 @@ def main() -> None:
             "SetClampRectInsets",
             "旧七个 provider Button",
             "`5/5`",
+            "QS-B1 当前实际生图：`0/5`",
             "流程错误：`0`",
             "不得进入 `P6`",
         ),
@@ -1707,9 +1798,13 @@ def main() -> None:
         for state in seal_states.values()
     )
     assert seal_runtime_manifest["display_region"]["status"] == "pass"
+    assert seal_runtime_manifest["runtime_contract"] == "1.1"
     assert seal_runtime_manifest["layout_contract"]["quest_log"][
         "box_xywh"
-    ] == [600, -18, 28, 28]
+    ] == [576, 68, 32, 32]
+    assert seal_runtime_manifest["layout_contract"]["quest_log"][
+        "reserved_corner_xywh"
+    ] == [572, 64, 40, 40]
     assert seal_runtime_manifest["layout_contract"]["tracker"][
         "top_clamp_inset"
     ] == 18
@@ -1726,6 +1821,490 @@ def main() -> None:
         seal_builder.read_text(encoding="utf-8"),
         str(seal_builder),
         "exec",
+    )
+    compile(
+        seal_actions_sim_renderer.read_text(encoding="utf-8"),
+        str(seal_actions_sim_renderer),
+        "exec",
+    )
+    assert seal_actions_sim_spec["version"] == (
+        "QUEST-LOG-SEAL-ACTIONS-SIM-V1"
+    )
+    assert seal_actions_sim_spec["frame"] == [676, 464]
+    assert seal_actions_sim_spec["layout"]["list"] == [64, 64, 246, 324]
+    assert seal_actions_sim_spec["layout"]["detail"] == [366, 64, 246, 324]
+    assert seal_actions_sim_spec["layout"]["seal_visual"] == [
+        665,
+        194,
+        32,
+        32,
+    ]
+    assert seal_actions_sim_spec["layout"]["seal_hitbox"] == [
+        659,
+        190,
+        40,
+        40,
+    ]
+    assert len(seal_actions_sim_spec["content"]["menu_actions"]) == 7
+    assert seal_actions_sim_spec["constraints"]["imagegen_calls"] == 0
+    assert seal_actions_sim_spec["interaction"]["fail_open"] == (
+        "keep-original-buttons-visible-until-all-proxies-exist"
+    )
+    assert seal_actions_sim_v2_spec["version"] == (
+        "QUEST-LOG-SEAL-ACTIONS-SIM-V2"
+    )
+    assert seal_actions_sim_v2_spec["support_type"] == (
+        "parchment-seal-tag"
+    )
+    assert seal_actions_sim_v2_spec["frame"] == [676, 464]
+    assert seal_actions_sim_v2_spec["layout"]["page_exit"] == [
+        603,
+        190,
+        34,
+        38,
+    ]
+    assert seal_actions_sim_v2_spec["layout"]["document_tag"] == [
+        614,
+        197,
+        80,
+        27,
+    ]
+    assert seal_actions_sim_v2_spec["layout"]["tag_head"] == [
+        672,
+        189,
+        44,
+        44,
+    ]
+    assert seal_actions_sim_v2_spec["layout"]["seal_visual"] == [
+        678,
+        195,
+        32,
+        32,
+    ]
+    assert len(seal_actions_sim_v2_spec["content"]["menu_actions"]) == 7
+    assert seal_actions_sim_v2_spec["constraints"]["imagegen_calls"] == 0
+    assert seal_actions_sim_v2_spec["constraints"][
+        "tag_root_must_be_occluded_by_page_lip"
+    ]
+    assert seal_actions_sim_v2_spec["interaction"]["fail_open"] == (
+        "keep-original-buttons-visible-until-all-proxies-exist"
+    )
+    assert seal_actions_sim_v3_spec["version"] == (
+        "QUEST-LOG-SEAL-ACTIONS-SIM-V3"
+    )
+    assert seal_actions_sim_v3_spec["support_type"] == (
+        "page-layered-parchment-seal-tag"
+    )
+    assert seal_actions_sim_v3_spec["frame"] == [676, 464]
+    assert seal_actions_sim_v3_spec["layout"][
+        "page_lip_source_box"
+    ] == [598, 176, 39, 54]
+    assert seal_actions_sim_v3_spec["layout"]["tag_root_box"] == [
+        608,
+        184,
+        27,
+        27,
+    ]
+    assert seal_actions_sim_v3_spec["layout"][
+        "document_tag_bbox"
+    ] == [608, 184, 112, 50]
+    assert seal_actions_sim_v3_spec["layout"][
+        "menu_connection_box"
+    ] == [650, 184, 42, 48]
+    assert seal_actions_sim_v3_spec["layout"]["seal_visual"] == [
+        684,
+        196,
+        32,
+        32,
+    ]
+    assert len(seal_actions_sim_v3_spec["content"]["menu_actions"]) == 7
+    assert seal_actions_sim_v3_spec["constraints"]["imagegen_calls"] == 0
+    assert seal_actions_sim_v3_spec["constraints"][
+        "page_lip_reuses_shell_pixels"
+    ]
+    assert seal_actions_sim_v3_spec["constraints"][
+        "tag_is_one_continuous_sheet"
+    ]
+    assert seal_actions_sim_v3_spec["constraints"][
+        "menu_is_same_sheet_unfold"
+    ]
+    assert seal_actions_sim_v4_spec["version"] == (
+        "QUEST-LOG-SEAL-ACTIONS-SIM-V4"
+    )
+    assert seal_actions_sim_v4_spec["support_type"] == (
+        "bottom-page-layered-parchment-bookmark"
+    )
+    assert seal_actions_sim_v4_spec["frame"] == [676, 464]
+    assert seal_actions_sim_v4_spec["layout"][
+        "page_lip_source_box"
+    ] == [512, 384, 88, 38]
+    assert seal_actions_sim_v4_spec["layout"]["tag_root_box"] == [
+        540,
+        385,
+        26,
+        25,
+    ]
+    assert seal_actions_sim_v4_spec["layout"][
+        "document_tag_bbox"
+    ] == [529, 385, 50, 125]
+    assert seal_actions_sim_v4_spec["layout"][
+        "menu_connection_box"
+    ] == [532, 382, 41, 48]
+    assert seal_actions_sim_v4_spec["layout"]["seal_visual"] == [
+        537,
+        474,
+        32,
+        32,
+    ]
+    assert len(seal_actions_sim_v4_spec["content"]["menu_actions"]) == 7
+    assert seal_actions_sim_v4_spec["constraints"]["imagegen_calls"] == 0
+    assert seal_actions_sim_v4_spec["constraints"]["bookmark_is_vertical"]
+    assert seal_actions_sim_v4_spec["constraints"][
+        "bookmark_root_is_at_detail_lower_edge"
+    ]
+    assert seal_actions_sim_v4_spec["constraints"][
+        "menu_unfolds_upward_from_bottom"
+    ]
+    reward_bottom = max(
+        box[1] + box[3]
+        for box in seal_actions_sim_v4_spec["layout"]["reward_slots"]
+    )
+    assert seal_actions_sim_v4_spec["layout"]["tag_root_box"][1] >= (
+        reward_bottom
+    )
+    assert seal_actions_sim_v5_spec["version"] == (
+        "QUEST-LOG-SEAL-ACTIONS-SIM-V5"
+    )
+    assert seal_actions_sim_v5_spec["support_type"] == (
+        "short-bottom-bookmark-same-page-menu"
+    )
+    assert seal_actions_sim_v5_spec["frame"] == [676, 464]
+    assert seal_actions_sim_v5_spec["visible_book_bottom_y"] == 432
+    assert seal_actions_sim_v5_spec["layout"][
+        "page_lip_source_box"
+    ] == [530, 384, 72, 30]
+    assert seal_actions_sim_v5_spec["layout"]["tag_root_box"] == [
+        555,
+        390,
+        26,
+        20,
+    ]
+    assert seal_actions_sim_v5_spec["layout"][
+        "document_tag_bbox"
+    ] == [546, 390, 46, 78]
+    assert seal_actions_sim_v5_spec["layout"]["menu"] == (
+        seal_actions_sim_v5_spec["layout"]["detail"]
+    )
+    assert seal_actions_sim_v5_spec["layout"]["seal_visual"] == [
+        554,
+        434,
+        32,
+        32,
+    ]
+    assert len(seal_actions_sim_v5_spec["content"]["menu_actions"]) == 7
+    assert seal_actions_sim_v5_spec["constraints"]["imagegen_calls"] == 0
+    assert seal_actions_sim_v5_spec["constraints"][
+        "bookmark_visible_length_is_short"
+    ]
+    assert seal_actions_sim_v5_spec["constraints"][
+        "menu_reuses_existing_detail_page_surface"
+    ]
+    assert seal_actions_sim_v5_spec["constraints"][
+        "menu_has_no_secondary_paper_or_popup_plane"
+    ]
+    assert seal_actions_sim_v6_spec["version"] == (
+        "QUEST-LOG-SEAL-ACTIONS-SIM-V6"
+    )
+    assert seal_actions_sim_v6_spec["support_type"] == (
+        "brass-corner-seal-bottom-action-rail"
+    )
+    assert seal_actions_sim_v6_spec["layout"]["seal_visual"] == [
+        636,
+        388,
+        32,
+        32,
+    ]
+    assert len(seal_actions_sim_v6_spec["layout"]["action_slots"]) == 7
+    assert seal_actions_sim_v6_spec["constraints"]["imagegen_calls"] == 0
+    assert seal_actions_sim_v7_spec["version"] == (
+        "QUEST-LOG-SEAL-ACTIONS-SIM-V7"
+    )
+    assert seal_actions_sim_v7_spec["support_type"] == (
+        "direct-detail-page-seal-right-action-list"
+    )
+    assert seal_actions_sim_v7_spec["frame"] == [676, 464]
+    assert seal_actions_sim_v7_spec["layout"]["seal_reserved_corner"] == [
+        572,
+        64,
+        40,
+        40,
+    ]
+    assert seal_actions_sim_v7_spec["layout"]["seal_visual"] == [
+        576,
+        68,
+        32,
+        32,
+    ]
+    assert seal_actions_sim_v7_spec["layout"]["detail_title_safe"] == [
+        376,
+        72,
+        188,
+        28,
+    ]
+    assert seal_actions_sim_v7_spec["layout"]["right_action_menu"] == [
+        488,
+        108,
+        124,
+        186,
+    ]
+    assert len(seal_actions_sim_v7_spec["layout"]["action_slots"]) == 7
+    assert seal_actions_sim_v7_spec["layout"]["action_slots"][-1][1] + (
+        seal_actions_sim_v7_spec["layout"]["action_slots"][-1][3]
+    ) <= seal_actions_sim_v7_spec["layout"]["reward_slots"][0][1]
+    assert seal_actions_sim_v7_spec["constraints"]["imagegen_calls"] == 0
+    assert seal_actions_sim_v7_spec["constraints"][
+        "direct_wax_on_detail_parchment"
+    ]
+    assert seal_actions_sim_v7_spec["constraints"][
+        "no_secondary_page_or_popup_plane"
+    ]
+    assert seal_actions_sim_v8_spec["version"] == (
+        "QUEST-LOG-SEAL-ACTIONS-SIM-V8"
+    )
+    assert seal_actions_sim_v8_spec["support_type"] == (
+        "direct-detail-page-seal-exterior-ledger-tabs"
+    )
+    assert seal_actions_sim_v8_spec["frame"] == [676, 464]
+    assert seal_actions_sim_v8_spec["right_outset"] == 72
+    assert seal_actions_sim_v8_spec["layout"]["seal_visual"] == [
+        576,
+        68,
+        32,
+        32,
+    ]
+    assert seal_actions_sim_v8_spec["layout"][
+        "exterior_action_menu"
+    ] == [612, 108, 136, 186]
+    assert seal_actions_sim_v8_spec["layout"]["page_edge_mask"] == [
+        604,
+        96,
+        24,
+        210,
+    ]
+    assert len(seal_actions_sim_v8_spec["layout"]["action_slots"]) == 7
+    assert seal_actions_sim_v8_spec["layout"][
+        "exterior_action_menu"
+    ][0] == sum(
+        (
+            seal_actions_sim_v8_spec["layout"]["detail"][0],
+            seal_actions_sim_v8_spec["layout"]["detail"][2],
+        )
+    )
+    assert seal_actions_sim_v8_spec["constraints"]["imagegen_calls"] == 0
+    assert seal_actions_sim_v8_spec["constraints"][
+        "tabs_must_not_occupy_detail_page"
+    ]
+    assert seal_actions_sim_v8_spec["constraints"][
+        "each_action_is_an_independent_button"
+    ]
+    assert seal_actions_sim_v9_spec["version"] == (
+        "QUEST-LOG-SEAL-ACTIONS-SIM-V9"
+    )
+    assert seal_actions_sim_v9_spec["support_type"] == (
+        "direct-detail-page-seal-exterior-ledger-tabs"
+    )
+    assert seal_actions_sim_v9_spec["tab_style"] == (
+        "restrained-archival-index-v1"
+    )
+    assert seal_actions_sim_v9_spec["frame"] == [676, 464]
+    assert seal_actions_sim_v9_spec["right_outset"] == 48
+    assert seal_actions_sim_v9_spec["layout"]["seal_visual"] == [
+        576,
+        68,
+        32,
+        32,
+    ]
+    assert seal_actions_sim_v9_spec["layout"][
+        "exterior_action_menu"
+    ] == [612, 112, 112, 158]
+    assert seal_actions_sim_v9_spec["layout"]["page_edge_mask"] == [
+        604,
+        102,
+        24,
+        180,
+    ]
+    assert len(seal_actions_sim_v9_spec["layout"]["action_slots"]) == 7
+    assert all(
+        slot[2:] == [112, 20]
+        for slot in seal_actions_sim_v9_spec["layout"]["action_slots"]
+    )
+    assert seal_actions_sim_v9_spec["layout"][
+        "exterior_action_menu"
+    ][0] == sum(
+        (
+            seal_actions_sim_v9_spec["layout"]["detail"][0],
+            seal_actions_sim_v9_spec["layout"]["detail"][2],
+        )
+    )
+    assert seal_actions_sim_v9_spec["constraints"]["imagegen_calls"] == 0
+    assert seal_actions_sim_v9_spec["constraints"][
+        "tabs_must_not_occupy_detail_page"
+    ]
+    assert seal_actions_sim_v9_spec["constraints"][
+        "each_action_is_an_independent_button"
+    ]
+    assert seal_actions_sim_v9_spec["constraints"][
+        "no_arrowheads_or_per_tab_rivets"
+    ]
+    assert seal_actions_sim_v9_spec["constraints"][
+        "danger_uses_accent_only"
+    ]
+    require(
+        seals_work,
+        (
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V1",
+            "simulation-reviewed / P2 / superseded-before-confirmation",
+            "QuestFramePushQuestButton",
+            "QuestLogFrameExpandButton",
+            "pfQuest.buttonShow",
+            "pfQuest.buttonHide",
+            "pfQuest.buttonClean",
+            "pfQuest.buttonReset",
+            "QuestLogFrameAbandonButton",
+            "fail-open",
+            "ImageGen：`0/0`",
+        ),
+        "Quest Log seal action simulation work",
+    )
+    require(
+        seals_work,
+        (
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V2",
+            "羊皮纸火漆封签",
+            "superseded-before-confirmation",
+            "page_exit=[603,190,34,38]",
+            "document_tag=[614,197,80,27]",
+            "tag_head=[672,189,44,44]",
+            "seal_visual=[678,195,32,32]",
+            "a61ac0e3624831103cd9d1db31ffc07a0e55e21dc720b143c9c79196771c8f42",
+            "082f4585bcec49244b1ac16a985177520badc6eec0b0ae166254964cc2e8ba1e",
+            "ImageGen：`0/0`",
+            "用户结论：`user-rejected`",
+        ),
+        "Quest Log parchment seal-tag simulation work",
+    )
+    require(
+        seals_work,
+        (
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V3",
+            "书页夹层火漆封签",
+            "page_lip_source_box=[598,176,39,54]",
+            "tag_root_box=[608,184,27,27]",
+            "document_tag_bbox=[608,184,112,50]",
+            "menu_connection_box=[650,184,42,48]",
+            "seal_visual=[684,196,32,32]",
+            "86642cfdfaeae0326bc7917769b34f7de2b063cc272dce3d879b6be33ef71310",
+            "aec599e88fafb01b317354708b9c43f5fa2872de6c0ec4e24e767e9c39c547ae",
+            "ImageGen：`0/0`",
+            "用户结论：`user-rejected`",
+        ),
+        "Quest Log page-layered seal-tag simulation work",
+    )
+    require(
+        seals_work,
+        (
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V4",
+            "右页下缘竖向火漆书签",
+            "page_lip_source_box=[512,384,88,38]",
+            "tag_root_box=[540,385,26,25]",
+            "document_tag_bbox=[529,385,50,125]",
+            "menu_connection_box=[532,382,41,48]",
+            "seal_visual=[537,474,32,32]",
+            "386d625e67c1a0eae6dfda07cc7c4213d65aa992c91ab1f25752311a5b7ecd20",
+            "874f240d5eaf12bb47fbe2db9428372897288068880d6ff6568471674d3241c7",
+            "ImageGen：`0/0`",
+            "用户结论：`user-rejected`",
+        ),
+        "Quest Log bottom bookmark seal simulation work",
+    )
+    require(
+        seals_work,
+        (
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V5",
+            "短火漆书签与同页事务模式",
+            "page_lip_source_box=[530,384,72,30]",
+            "tag_root_box=[555,390,26,20]",
+            "document_tag_bbox=[546,390,46,78]",
+            "menu=[366,64,246,324]",
+            "seal_visual=[554,434,32,32]",
+            "ef4010a3b6d36350f5bb231cfac5df1fd96e4630a00639f15e586ff765421961",
+            "fc62895116ad8d0b5ea1f769e1a3afed681d33b6252210dcc01ed317c59ca9ff",
+            "ImageGen：`0/0`",
+            "用户结论：`user-rejected`",
+        ),
+        "Quest Log short bookmark same-page simulation work",
+    )
+    require(
+        seals_work,
+        (
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V6",
+            "包角漆章与下沿事务轨",
+            "user-redirected-before-review",
+            "fcc62bf3eca59e660649ca57adac6843662c77f454d9c910a5eb71b7762f8f3d",
+            "56788f4374ece88a1e758b226bb2317b9e7523ee5a013b3ca89d921bd2f109f3",
+            "ImageGen：`0/0`",
+        ),
+        "Quest Log brass-corner seal simulation work",
+    )
+    require(
+        seals_work,
+        (
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V7",
+            "详情页右上火漆与右侧事务列",
+            "seal_visual=[576,68,32,32]",
+            "right_action_menu=[488,108,124,186]",
+            "ec69f8112ae451c39b07910c8483fe705024b55c7ceef90cce18ae459167d41d",
+            "e98e721e8d2005a765bde8ec95cc0576ed1c8cf092bd19285ff27de9dd1e741f",
+            "ImageGen：`0/0`",
+            "用户结论：`user-rejected`",
+        ),
+        "Quest Log detail-page seal right-action-list simulation work",
+    )
+    require(
+        seals_work,
+        (
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V8",
+            "详情页火漆与外侧卷宗索引签",
+            "exterior_action_menu=[612,108,136,186]",
+            "page_edge_mask=[604,96,24,210]",
+            "928714893d9f3234dfea7cc497f95f666bd03e2f37aa309862754a41c3ea9279",
+            "72e001d2ed5bff88ca0fd39e763aa457fdeae33b92ece9dd08f5a404c62b62fd",
+            "ImageGen：`0/0`",
+            "用户结论：`user-rejected / 2026-08-03`",
+        ),
+        "Quest Log exterior ledger-tab simulation work",
+    )
+    require(
+        seals_work,
+        (
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V9",
+            "详情页火漆与克制型书口事务签",
+            "exterior_action_menu=[612,112,112,158]",
+            "page_edge_mask=[604,102,24,180]",
+            "d639e13a539942550c34e1cc2400b9b11c5374279be606324f09fe57bea6d839",
+            "58ddce681b587a7124e856b227b0929f771fc50c2c17a80994bfe4cb9f7c4718",
+            "ImageGen：`0/0`",
+            "用户结论：`confirmed / 2026-08-03`",
+            "`QS-B1 V1`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.TAB.BASE`",
+            "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
+            "91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5",
+            "standard normal／hover／pressed／disabled",
+            "danger normal／hover／pressed／disabled",
+            "exactly one object",
+            "当前实际生图：`0/5`",
+        ),
+        "Quest Log restrained exterior docket-tab simulation work",
     )
 
     quest_adapter = (
@@ -1745,7 +2324,7 @@ def main() -> None:
     require(
         quest_theme,
         (
-            'contract = "1.5"',
+            'contract = "1.6"',
             "QuestLogShellV4",
             "QuestLogDirectoryMarksV1",
             "QuestTrackerPaperV1",
@@ -1773,7 +2352,7 @@ def main() -> None:
     require(
         quest_adapter,
         (
-            'Quests.runtimeContract = "1.16"',
+            'Quests.runtimeContract = "1.18"',
             "ApplyTrackerProviderFont",
             "ResolveQuestNameInk",
             "ApplyDirectoryTypography",
@@ -1819,6 +2398,11 @@ def main() -> None:
             "QuestLogDetailScrollFrameScrollBar",
             "EnableMouseWheel(true)",
             "ApplyDetailTextGeometry",
+            "ApplyDetailRewardGeometry",
+            "MeasureDetailContentHeight",
+            "UpdateDetailScrollChildHeight",
+            "rewardSlotWidth = 108",
+            "rewardNameWidth = 64",
             "QuestLogHighlightFrame",
             "LAYOUT.detail.contentWidth",
             "QuestLogFrameExpandButton",

@@ -1,0 +1,122 @@
+{
+  "schema": "aeui.quest-log.seal-actions.simulation.v1",
+  "version": "QUEST-LOG-SEAL-ACTIONS-SIM-V6",
+  "support_type": "brass-corner-seal-bottom-action-rail",
+  "canvas": [1536, 1024],
+  "inputs": {
+    "quest_log_shell": "assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png",
+    "seal_atlas": "addon/AzerothExpeditionUI/Media/Quests/QuestToolWaxSealStatesV1.tga",
+    "title_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf",
+    "body_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf"
+  },
+  "outputs": {
+    "board": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V6/quest_log_seal_actions_board_v6.png",
+    "report": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V6/quest_log_seal_actions_report_v6.json"
+  },
+  "presentation": {
+    "title": "任务日志黄铜包角漆章与下沿事务轨 · V6 本地几何预演",
+    "subtitle": "不再虚构右下皮革封面，也不改写 detail。关闭态只在真实黄铜包角保留漆章；点击后七项事务沿现有书本下沿展开。100% UI 像素，ImageGen 0/0。",
+    "left_label": "A · 收起：右下真实黄铜包角漆章",
+    "right_label": "B · 展开：下沿事务轨，右页保持任务详情",
+    "interaction_contract": "交互合同：左键展开／收起下沿事务轨；点选／点击书外／Esc 收起；所有动作只代理原 Button，放弃任务继续走原生确认框。",
+    "fail_open_note": "迁移完成前 fail-open：任一 provider 未捕获时旧按钮继续显示；Close、等级、追踪、在线与语言保持独立。",
+    "annotation_origin": [968, 758],
+    "annotation_title": "V6 真实区域与层级检查",
+    "annotations": [
+      "① 右页静态余量仅左16／上24／右16／下28px",
+      "② 40px 命中盒无法避开滚动 detail 并留在纸上",
+      "③ 漆章只落在现有右下黄铜包角，不虚构皮革",
+      "④ 七项事务只占现有下沿，右页详情与奖励不变",
+      "⑤ 不新增书签、二级页面或大型浮层"
+    ],
+    "non_authoritative_note": "非权威：最终黄铜封印座笔触、按钮四态、展开动画、Tooltip 与客户端字体。"
+  },
+  "frame": [676, 464],
+  "layout": {
+    "list": [64, 64, 246, 324],
+    "detail": [366, 64, 246, 324],
+    "detail_content": [376, 72, 224, 306],
+    "close": [636, 12, 22, 22],
+    "paper_interaction_surface": [350, 40, 278, 376],
+    "brass_corner": [628, 370, 48, 64],
+    "seal_socket": [632, 384, 40, 40],
+    "seal_visual": [636, 388, 32, 32],
+    "seal_hitbox": [632, 384, 40, 40],
+    "action_rail": [104, 426, 500, 28],
+    "menu": [104, 426, 500, 28],
+    "action_slots": [
+      [111, 429, 66, 22],
+      [181, 429, 66, 22],
+      [251, 429, 66, 22],
+      [321, 429, 66, 22],
+      [391, 429, 66, 22],
+      [461, 429, 66, 22],
+      [531, 429, 66, 22]
+    ],
+    "reward_slots": [
+      [376, 316, 108, 32],
+      [488, 316, 108, 32],
+      [376, 352, 108, 32],
+      [488, 352, 108, 32]
+    ]
+  },
+  "closeups": {
+    "closed_source": [600, 350, 76, 92],
+    "closed_destination": [44, 760, 280, 250],
+    "closed_label": "C · 真实落点：右下黄铜包角，不是皮革封面",
+    "open_source": [94, 416, 530, 48],
+    "open_destination": [360, 760, 570, 150],
+    "open_label": "D · 展开态：事务按钮只沿既有书本下沿出现"
+  },
+  "content": {
+    "quest_rows": 18,
+    "reward_slots": 4,
+    "menu_actions": [
+      "共享任务",
+      "收起详情",
+      "显示位置",
+      "隐藏位置",
+      "清理标记",
+      "重建标记",
+      "放弃任务"
+    ],
+    "always_separate": [
+      "QuestLogFrameCloseButton",
+      "QuestLogFrameLevelsCheckButton",
+      "QuestLogTrack",
+      "pfQuest.buttonOnline",
+      "pfQuest.buttonLanguage"
+    ],
+    "provider_proxies": [
+      "QuestFramePushQuestButton",
+      "QuestLogFrameExpandButton",
+      "pfQuest.buttonShow",
+      "pfQuest.buttonHide",
+      "pfQuest.buttonClean",
+      "pfQuest.buttonReset",
+      "QuestLogFrameAbandonButton"
+    ]
+  },
+  "interaction": {
+    "left_click": "toggle-bottom-action-rail",
+    "outside_click_or_escape": "close-bottom-action-rail",
+    "action_click": "proxy-original-provider-button-then-close-rail",
+    "abandon": "preserve-native-confirmation",
+    "disabled": "mirror-provider-enabled-state",
+    "right_click": "reserved-for-quest-module-settings",
+    "fail_open": "keep-original-buttons-visible-until-all-proxies-exist"
+  },
+  "constraints": {
+    "imagegen_calls": 0,
+    "new_bitmap_assets": 0,
+    "seal_reuses_accepted_runtime_atlas": true,
+    "socket_and_action_rail_are_non_authoritative_geometry": true,
+    "no_parchment_bookmark": true,
+    "no_secondary_page_or_popup_plane": true,
+    "detail_content_never_replaced": true,
+    "detail_scrollframe_geometry_unchanged": true,
+    "seal_must_stay_on_existing_brass_corner": true,
+    "action_rail_must_stay_on_existing_lower_binding": true,
+    "bottom_action_buttons_hidden_only_after_proxy_parity": true
+  }
+}

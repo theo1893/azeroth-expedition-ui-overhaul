@@ -60,14 +60,20 @@
       "id": "QUEST.LOG.CHROME.SEAL",
       "runtime_object": "QuestLogFrame adapter-owned Texture",
       "box_xywh": [
-        600,
-        -18,
-        28,
-        28
+        576,
+        68,
+        32,
+        32
+      ],
+      "reserved_corner_xywh": [
+        572,
+        64,
+        40,
+        40
       ],
       "visible_content_goal": [
-        26,
-        26
+        30,
+        29
       ],
       "mouse": false
     },
@@ -130,7 +136,7 @@
   },
   "runtime_exports": [
     {
-      "contract": "QS-A1 V1.r4 / 1.0",
+      "contract": "QS-A1 V1.r4 / 1.1",
       "manifest": "QS-A1_RuntimeManifest_v1.json",
       "file": "addon/AzerothExpeditionUI/Media/Quests/QuestToolWaxSealStatesV1.tga",
       "sha256": "f113e670f1b61be1a50e3cfa16dfce95a2b0d159fc35d986a9b2e1d314a72902",

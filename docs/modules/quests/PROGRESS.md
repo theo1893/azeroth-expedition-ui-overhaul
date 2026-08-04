@@ -10,13 +10,47 @@
   后加载替换 Quest Log 刷新入口、再次调用 `QuestLogTitleButton_Resize`，
   并把六个 provider 控件塞入详情 ScrollChild；`pfQuest-turtle` 只扩展
   数据，没有独立 UI 写入。
-- AEUI Quests runtime contract 已升至 `1.16`；其中 Quest Log provider
-  兼容子合同保持 `1.7`：在 provider 最终刷新后以
+- `2026-08-04` 远端分支审计确认：默认 `origin/main` 仍只有 Quests runtime
+  `1.16`／Theme `1.5`，与另一台设备观察到的旧字体、裁切详情和缺少页上火漆
+  完全吻合；当前开发分支的 Quests runtime 已升至 `1.18`、共享主题为 `1.6`。
+  任务列表不再强制霞鹜文楷，改为继承 `pfUI.font_default` 的统一界面字体、
+  `12px OUTLINE` 并清除额外 shadow，修复“字体与其他模块不一致／文字过细”。
+  右页在 `214px` 正文和 `204px` 目标重新换行后，会以最底部真实动态对象
+  重算 ScrollChild 高度并调用 `UpdateScrollChildRect()`；奖励双列槽收敛为
+  `108px`、名称安全宽 `64px`。为覆盖 pfQuest 晚一帧写入中文换行与奖励锚点，
+  刷新后新增最多两帧、完成即停止的有限重排；这不是维护型几何循环。Lua smoke
+  已覆盖字体、四个奖励槽、两帧动态内容高与滚动范围；仍待目标客户端验证。
+- 同日用户否决 Quest Log 漆章的旧顶部悬空锚点，并要求把底部分享／放弃等
+  功能收纳到漆章。V1–V4 先后因外沿承托语义、伪页唇、错误横向方位、过长
+  书签和大型二级纸面被否决；V5 虽收短书签，却把 detail 变成事务内容模式，
+  用户明确否决“detail 变成二级功能页面”。V6 以右下黄铜包角和底部事务轨
+  作为区域审查备选，但用户立即指定漆章必须直接印在详情页右上角书页上，
+  且点击后的功能必须在书页右侧展示，因此 V6 未成为候选方向。V7 把七项
+  事务放在右页内部右侧，虽不替换 detail，却仍占据／遮挡书页正文，用户明确
+  要求功能必须从书页右边外侧展开、完全不占书页空间。
+  `QUEST-LOG-SEAL-ACTIONS-SIM-V8` 首次实现 detail／奖励零占用，但用户认为
+  `136×24px` 尖头、逐项铆钉／亮黄铜、整条酒红危险项和 `72px` 外伸仍过重，
+  已标记 `user-rejected`。当前 `QUEST-LOG-SEAL-ACTIONS-SIM-V9` 保留同一
+  QS-A1 火漆 `seal_visual=[576,68,32,32]` 与
+  `[572,64,40,40]` 命中／保留区，七个 provider 代理仍从 detail 排他右边界
+  `x=612` 向书外伸出，但收敛为七条 `112×20px` 短书口事务签，整体
+  `exterior_action_menu=[612,112,112,158]`。真实 QL-A1 页边
+  `[604,102,24,180]` 遮住根部；无尖头、逐项铆钉或明亮顶部高光，放弃项只
+  用低饱和酒红文字／边线。打开态只声明 `48px` 右侧 outset，机器展示区域
+  `25/25` 通过。ImageGen `0/0`；用户于 `2026-08-03` 回复“进入下一步”，
+  明确确认 V9 的可见方向。当前已形成 `QS-B1 V1` 单一无字事务签母版、
+  standard／danger 各四态确定性 atlas 和七个独立 Button 的完整合同与生产
+  正文，状态为 `simulation-confirmed / prompt-draft / 0/5`，等待独立生产
+  授权。runtime `1.18` 已把已接受的 QS-A1 漆章以 `32px` 无鼠标 Texture
+  放到详情页右上纸面；该位置修复不依赖新资产。菜单尚未接入，也未隐藏任何
+  旧按钮。
+- AEUI Quest Log provider 兼容子合同保持 `1.7`：在 provider 最终刷新后以
   事件驱动方式恢复 18 条列表行与右页正文安全区，将 online／language 搬至
   右页固定顶部工具行，将 show／hide／clean／reset 搬至右页固定底部四格；
   所有 provider OnClick／OnUpdate、显隐、禁用、ID 和数据行为保持。没有使用
   维护型 `OnUpdate` 几何争夺；late-load 与幂等 smoke 已通过，仍待实机。
-- `2026-08-01` 共享主题已升至 `Quest Visual Theme 1.5`。Quest Log 的卷宗书体与
+- `2026-08-01` 共享主题建立为 `Quest Visual Theme 1.5`，当前已由上方
+  `2026-08-03` 的 Theme `1.6` 字体修订覆盖。Quest Log 的卷宗书体与
   pfQuest Tracker 的行军便笺仍保留不同物件轮廓，但两者的媒体入口、标题／
   任务名字体角色、正文墨色、五档任务难度色、完成／进行中／未完成／失败色和
   皮革按钮色现只由
@@ -33,7 +67,7 @@
   adapter 同时处理模板拆出的 `Tag`／`Complete` FontString 与任务标题后的
   内联颜色码，避免原生荧亮黄绕过共享主题。
 - `2026-08-01` 最新 Quest Log 实机图暴露左页字体描边、字号、状态提示、
-  行末追踪圈、滚动条以及跨面板颜色六项问题。runtime `1.16` 现将活动窗口
+  行末追踪圈、滚动条以及跨面板颜色六项问题。runtime `1.16` 当时将活动窗口
   固定为 `QuestLogTitle1..18` 的 `246 × 18px` 行盒，文字安全区 `226px`；
   任务名、地区名和模板拆出的完成／地下城等 FontString 全部使用 `12px`
   霞鹜文楷、空 flags、透明／零偏移 shadow。`QuestLogTitle19..23` 继续创建
@@ -41,7 +75,9 @@
   左右页 scrollbar chrome 均隐藏并禁用鼠标，真实 ScrollFrame／Slider／
   FauxScrollFrame offset 保留，通过页面滚轮到达首尾。Quest Log 和 Tracker
   的任务名都调用 `ResolveQuestNameInk`；完成、失败、地下城与进度只着色各自
-  状态提示，不再把整个任务名染成另一种颜色。无新位图、无 ImageGen。
+  状态提示，不再把整个任务名染成另一种颜色。该次“霞鹜文楷／空 flags”
+  字体决定已被当前 runtime `1.18` 明确覆盖；其他布局和语义色
+  结论继续有效。无新位图、无 ImageGen。
 - `2026-08-01` 用户根据最新 Tracker 实机截图明确要求隐藏每个任务左侧的
   彩色点／问号，并移除任务名的黑色阴影感。runtime `1.13` 只隐藏真实
   `button.icon` Texture，保留 `button.node`、Button、命中区和全部脚本；
@@ -49,7 +85,8 @@
   共享主题新增独立 `trackerQuestName` 字体角色，flags 为空并同时清零
   FontString shadow。用户随后要求任务名换回旧的统一字体；runtime `1.14`
   因此不再覆盖 Tracker 的字体路径，优先读取 `pfUI.font_default`，保留 provider
-  当前动态字号，仅将 flags 置空。Quest Log 的 `questName` 角色不受影响。
+  当前动态字号，仅将 flags 置空。Quest Log 的 `questName` 角色当时不受
+  影响，后于 `2026-08-03` 独立恢复为同一 `pfUI.font_default`。
 - `2026-08-01` 实机确认接受／放弃任务触发 pfQuest `Reset()` 时，旧 adapter
   会在 provider 逐条重建期间反复提交主题和宽度，且最后一条目标会进入
   `16px` 撕裂底边。runtime `1.12+` 现把逐条回调合并为一次批次提交，并按
@@ -102,7 +139,9 @@
   `f113e670f1b61be1a50e3cfa16dfce95a2b0d159fc35d986a9b2e1d314a72902`。
   Quest Log `28px` 与 Tracker `34px` 无鼠标 Texture 已接入，Tracker 追加
   `18px` top clamp inset；三种宽度展示区域与 Lua smoke 通过，当前为
-  `runtime-exported / P5`。功能等价完成前 runtime 不隐藏旧按钮；`130px`
+  `runtime-exported / P5`。其中 Quest Log 顶部悬空位置已于 `2026-08-03`
+  被用户否决，accepted 漆章美术与 atlas 不受影响。功能等价完成前 runtime
+  不隐藏旧按钮；`130px`
   下的旧按钮覆盖属于已记录的过渡层序，仍待实机。
 - 用户于 `2026-07-30` 将 Quest Log 选为当前首要大面积 UI；地图与角色因
   实机对象几何尚未完成，继续保持后续顺位。
@@ -137,7 +176,7 @@
   23 行，以 `15px` 行高／`14px` 步进占用 `323px`；实机已确认这种密度
   和仅有小墨记／书签的资产范围不足以形成可感知的左页改造。用户确认 V2
   改为 `QUESTS_DISPLAYED = 18`、`18px` 步进，总占高 `324px`；runtime
-  `1.16` 在隐藏页边 scrollbar 后进一步把每行扩到完整 `246px`，文字安全宽
+  `1.18` 在隐藏页边 scrollbar 后进一步把每行扩到完整 `246px`，文字安全宽
   `226px`。
 - `QL-B0 V2`：新的 [左页卷宗目录 work](work/QUEST.LOG.LEFTPAGE.md)
   已于 `2026-07-30` 获用户明确授权。A attempt 1–4 已由固定
@@ -172,14 +211,15 @@
   改写成通过。透明母版、source/runtime manifest、`64 × 16` TGA、确定性
   exporter 和 adapter 已 tracked，当前为 `runtime-exported / P5`；固定
   执行器仍是 `5/5` 且接受后没有新增调用。
-- `QL-B0／B1 runtime`：Quests runtime contract 已升至 `1.16`。继续创建／
+- `QL-B0／B1 runtime`：Quests runtime contract 已升至 `1.18`。继续创建／
   复用 `QuestLogTitle1..23` 以兼容 provider，但只显示 `1..18`，使用
   `246 × 18` 行盒／`18px` 步进和真实滚动偏移。地区箭头仍由
   `GetQuestLogTitle` 驱动；任务行追踪圈全部隐藏，追踪数据和 Shift 点击行为
   保留。覆盖 Texture 不接管点击；原行脚本、选择、滚动与 SavedVariables 保留。实机发现的
   `QuestLogHighlightFrame` 与行内 highlight／pushed 旧选择视觉
-  已在每次刷新后透明抑制。主标题使用 Noto Serif SC，
-  任务与状态行使用 `12px` 无描边霞鹜文楷。V2 阅读密度现已进入 runtime。
+  已在每次刷新后透明抑制。主标题使用 Noto Serif SC，任务与状态行恢复为
+  `pfUI.font_default` 的 `12px OUTLINE` 并清除额外 shadow。V2 阅读密度现已
+  进入 runtime。
 - QL-B1 真实排版预演：`676 × 464`／100% runtime，使用当前 QL-A2
   shell、全部 23 行、代表性中文任务内容与四态分布，SHA-256
   `c0e5bdffc5ce09872c0da0709a3269245ef424f4dde03335d59ded335dc5fdd5`。
@@ -201,7 +241,7 @@
   隐藏酒红书签，因此 source、manifest、exporter 与 TGA 均保留，但 adapter
   runtime contract `1.6` 不再引用 atlas、不创建 `BORDER` Texture，也不再
   包装任务行 hover／pressed／click 脚本；原生整行选择高亮继续透明抑制。
-- `QL-C runtime`：adapter runtime contract `1.7` 已完成第一批书本外控件
+- `QL-C runtime`：provider 兼容子合同 `1.7` 已完成第一批书本外控件
   和 pfQuest Quest Log 兼容。
   Collapse All 真实 Button 与 pfUI `+`／`-` 子控件已完整隐藏、禁用且阻止
   外部 `Show()` 回生；任务计数改为深墨字体；等级／追踪控件复用 QL-B1
@@ -211,7 +251,8 @@
   接收鼠标，详情页本体追加 `28px` 步进、按真实范围限位的鼠标滚轮；左页
   列表滚动条不受影响。pfQuest 六个控件已按真实 Button 粒度归位，后加载
   全局函数和 Frame `OnShow` 替换均有事件驱动恢复。Lua 5.0 语法与 smoke
-  已通过，尚待 Turtle WoW 实机。
+  已通过，尚待 Turtle WoW 实机。旧底部按钮现同时承担事务菜单完成前的
+  fail-open fallback；`QS-B1 V1` 未完成七项代理等价前不隐藏。
 - `QL-B3`：三类真实语义已拆为三个固定并列槽，类型／计时／状态可同时出现。
   [QL-B3 work](work/QUEST.LOG.STATUS.md) 已形成 A／B／C 三段完整
   生产正文：分别生成四类类型压印、单枚沙漏和同一蜡封的完整／破裂两态。
@@ -258,8 +299,8 @@
 | `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P5 runtime-exported` | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；内部失败与 `5/5` 事实保留 | Turtle WoW 验证 TGA、四态切换、字体和 fallback |
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 asset-retained / runtime-hidden` | 用户接受的 source、manifest、`128 × 16` TGA、exporter 与历史证据全部保留；`2026-07-31` 起 adapter 不再挂载或包装任务行脚本 | 暂缓；只有用户重新确认后才恢复 runtime |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
-| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated` | contract `1.7` 保留既有控件方案；新增 pfQuest late-load 兼容，在最终刷新后恢复列表／详情几何，并将六个真实 provider Button 分配到右页固定工具行和底部行；Lua smoke 通过 | 在 pfQuest／pfQuest-turtle 同时启用时实机复核排版、点击和滚动 |
-| `QL-D` | 奖励槽、分隔与文字安全区 | `P1–P2` | Quest Log 奖励只读，无 selected | 实机奖励数量与尺寸 |
+| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu `P2 simulation-confirmed / prompt-draft` | 既有 late-load 兼容和原 Button fallback 保留；V1–V8 已否决，V9 已确认。`QS-B1 V1` 只生成一枚无字暗胡桃事务签母版，七项仍为独立 `112×20px` Button，页内零占用且只产生 `48px` outset | 用户独立授权 `QS-B1 V1`、固定 Image 1／2、受限 Image 3 edit、确定性后处理与最多 `5` 次实际调用；候选通过后再做 P4/P5 与实机代理验证 |
+| `QL-D` | 奖励槽、分隔与文字安全区 | geometry `P5 runtime-integrated`；final art `P1–P2` | runtime `1.18` 已把双列槽收敛为 `108px`／名称 `64px`，按真实最底对象重算 ScrollChild，并在 provider 写入后执行最多两帧的有限重排；奖励只读，无 selected | 实机覆盖 0／1／2／4／6 奖励和长中文正文；最终槽美术另行确认 |
 
 QL-A1 manifest 记录：
 
@@ -303,7 +344,8 @@ timer 或 failed 资产：provider 没有可用的公开状态来源。本项目
 
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
-| `QS-A1` | `QUEST.LOG.CHROME.SEAL` 与 `QUEST.TRACKER.HUB.SEAL` 共用母版；Tracker hub menu 只定义功能迁移边界 | `P5 runtime-exported / 5/5` | [source／runtime manifest 与接受记录](work/QUEST.SEALS.md) 已固化；Turtle WoW 验证两处锚点、TGA、clamp、旧七按钮层序与交互 |
+| `QS-A1` | Quest Log／Tracker 共用漆章母版 | `P5 runtime-exported / page-placement-integrated / 5/5` | source／四态 atlas 保持 accepted；Quest Log runtime `1.18` 直接使用 `32px` 页上 Texture，Tracker 不受影响；没有重开美术或 ImageGen | Turtle WoW 验证页上位置、TGA 方向与标题／正文安全区 |
+| `QS-B1` | Quest Log 七项外侧事务签、真实漆章 Button 与共用无字 tab 母版 | `P2 simulation-confirmed / prompt-draft / 0/5` | V9 已确认：七个独立 `112×20px` Button、`48px` outset、真实页边遮根；生产正文按全局／任务基线重写并完成完整性预检。页上 Texture placement 已由 runtime `1.18` 独立实现 | 用户明确授权 `QS-B1 V1` 最终正文、固定 Image 1／2、受限同循环 Image 3 edit、确定性后处理和最多五次实际调用；授权前不生图、不实现菜单、不隐藏 fallback |
 
 QS-A1 当前事实：
 
@@ -315,7 +357,7 @@ QS-A1 当前事实：
   `addon/AzerothExpeditionUI/Media/Quests/QuestToolWaxSealStatesV1.tga`。
 - 最终展示区域合同：
   `tools/specs/quest_seals_runtime_display_region_v1.json`；ignored 报告 SHA-256
-  `2f027e5459148da600835653e481f42ac535b2c1a2d44e1e43ad456587d2a97c`，
+  `7d84d0beb391a850f5ec84f46dd1f61230574bd105f449cd415cc3030f96e3bb`，
   Quest Log 与 Tracker `130／230／330px` 均 `pass`。最窄宽度下旧
   `search` 覆盖漆章右下部且 `giver／clean` 各触及 `1px`，但 Button 仍在
   父级装饰 Texture 上方并保留脚本、鼠标、Tooltip 与显隐。
@@ -334,7 +376,7 @@ QT-A1 临时 runtime 事实：
   `c6b1f64034fa69f01709403e592c3350445c9a6739f4b559242be48831666c61`；
 - exporter：`tools/build_quest_tracker_paper_v1.py`；九宫格 cap 为
   左／右 `14px`、上 `12px`、下 `16px`；
-- adapter：`Quests.lua` runtime contract `1.16`。纸面为九个无鼠标
+- adapter：`Quests.lua` runtime contract `1.18`。纸面为九个无鼠标
   `BACKGROUND` Texture；provider 黑色 panel／行矩形隐藏，动态文字、图标、
   七工具 Button、模式、Tooltip、点击、拖动和 SavedVariables 保持。provider
   条目回调只置 dirty，tracker 下一次自身更新统一提交主题、宽度和
@@ -462,28 +504,46 @@ QT-A1 临时 runtime 事实：
 
 ## 下一步
 
-QS-A1 V1.r4 已完成 P4／P5，当前没有新的离线生成门禁。下一步是在游戏设备
-同时启用 pfQuest／pfQuest-turtle 后验证：Quest Log 外置 `28px` 漆章不接触
-书体且不被屏幕顶缘裁切；Tracker `34px` 漆章在 `130／230／330px` 居中、
-底边接 `y=16`；`SetClampRectInsets` 分支、拖动与位置恢复有效；旧七个
-provider Button 仍可见、可点、Tooltip／模式状态不丢失；TGA 方向、Alpha
-边缘与 UI scale 正确。通过前 [QS-A1 work](work/QUEST.SEALS.md) 保留，不能
-进入 P6／P6-C，也不能隐藏旧 icon。Tracker hub menu 必须先完成七项功能
-等价，旧 icon 才能在 runtime 隐藏。
+当前首要门禁是把含 Quests runtime `1.18`／Theme `1.6` 的当前开发分支交付
+到游戏设备，并用 `/aeui status` 确认输出包含
+`quest frame=1.18 theme=1.6 seal=detail-page-32`。V9 已确认的
+可见方向现已转写为：只生成一枚无字、无图标、近矩形浅削角的暗胡桃旧皮革
+事务签母版；七个 `112×20px` Button 仍独立代理七项原功能；确定性 atlas
+包含 standard／danger 各 normal、hover、pressed、disabled 四态；真实页边
+继续遮住左侧 `16px` 根部，detail／奖励零占用，展开只产生 `48px` outset。
+固定生产输入为任务详情锁定图和受限邻接职责的 QL-A1 source；V9 模拟像素、
+漆章和旧失败稿均不得上传。页上漆章位置已用既有资产在 runtime `1.18` 实现；
+QS-B1 获授权前 ImageGen 保持 `0/5`，不实现菜单，也不隐藏放弃／分享／退出／
+详情与 pfQuest 四按钮。候选通过后
+仍必须一一代理原 Button、镜像禁用态、保留放弃确认，并在任一 provider 未
+捕获时 fail-open。
+
+Quest Log 的字体／奖励裁切修复已经进入 runtime `1.18`，下一次游戏设备验证
+同时启用 pfQuest／pfQuest-turtle，覆盖：18 行字体与字重；长中文正文滚动到
+完整奖励；0／1／2／4／6 奖励双列；provider 后加载；鼠标滚轮动态范围。旧
+顶部悬空漆章位置不再作为待接受方向。
+
+Tracker `34px` 漆章仍按既有合同在 `130／230／330px` 居中，继续等待实机
+验证 `SetClampRectInsets`、拖动恢复、TGA 方向与旧七按钮层序。Tracker hub
+menu 仍是另一独立范围，不能用本次 Quest Log 菜单授权替代。
 
 QL-A2 保持 [runtime work](work/QUEST.LOG.GUTTER.md)，不得进入 `P6`／清理。
 Quest Log 静态兼容已完成，下一门禁是在游戏设备同时启用 pfQuest 与
 pfQuest-turtle 后验证：
 
 - 18 条活动任务行在滚动、地区展开和等级重写后仍保持 `246 × 18` 行盒、
-  `226px` 文字安全区和 `12px` 无描边／shadow 字体；`19..23` 不闪回，
+  `226px` 文字安全区和 `pfUI.font_default` 的 `12px OUTLINE`，额外 shadow
+  为零；`19..23` 不闪回，
   完成／地下城提示使用同一字体，且原点击／Shift 追踪行为不变；
-- online／language 始终位于右页顶部工具行，show／hide／clean／reset
-  始终位于右页底部四格，六个 provider 控件的点击、OnUpdate、显隐和禁用
-  都保持；
+- online／language 始终位于右页顶部工具行；在事务菜单接入前
+  show／hide／clean／reset 仍位于右页底部四格，六个 provider 控件的点击、
+  OnUpdate、显隐和禁用都保持；
 - 确认 Collapse All 在两种场景都不可见、不可点击且不会被外部 `Show()`
   恢复；
-- 底部放弃／共享／退出／详情按钮的普通、悬停、按下、禁用与原脚本；
+- 菜单接入前底部放弃／共享／退出／详情按钮继续可用；接入后逐项验证菜单代理
+  与 fail-open fallback，放弃必须继续出现原生确认；
+- 长正文换行后 ScrollChild 动态高度不留空尾、不截断奖励，0／1／2／4／6
+  奖励的 `108px` 双列槽均完整位于右页；
 - 左右页滚动条始终不显示，长任务列表与正文仍可用鼠标滚轮滚到首尾；
 - 任务行右侧不出现原生／AEUI 追踪圈，不出现酒红书签或旧整行浅色高亮；
 - 同一任务在 Quest Log 与 Tracker 的任务名难度墨色一致，五档色在左页不再
