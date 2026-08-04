@@ -16,11 +16,14 @@
 | 综合色感／结构锁定图 | `assets/locked/<module>/` | tracked |
 | 结构／故障参考 | `assets/references/<module>/` | tracked only while required |
 | 用户接受的透明母版 | `assets/source/<module>/<component>/` | tracked |
-| 生成前模拟、raw、失败稿、透明候选、候选真实排版预演 | `generated/<module>/...` | ignored |
+| 生成前模拟、raw、失败稿、透明候选、候选真实排版预演 | `generated/<module>/...` | ignored；整模块 `P6-C` 时整树删除 |
 | 运行时媒体 | `addon/AzerothExpeditionUI/Media/<Module>/` | tracked |
 
 `addon/` 只承载运行时文件与必须随包分发的许可证，不加入 Markdown。
 仓库根 `README.md` 只介绍项目。文档索引与当前总体快照只放 `AGENTS.md`。
+所有新中间产物必须进入 canonical `generated/<module>/`；不得再创建
+`generated/chat_*`、`generated/verification/<module>-*` 等模块别名根。历史遗留
+路径在模块终局收口时按明确所有权逐项删除。
 
 ## 四份长期模块文档
 
@@ -110,7 +113,7 @@ V1、V2、V3、每次 attempt、review、audit、preview 或 revised prompt 分�
 | `accept` | source、manifest、work、子模块基线、模块进度 | 把完整原型直接当 runtime |
 | `export` | exporter、UV/crop manifest、runtime、Lua/XML/TOC、tests、最终 atlas／adapter／provider 的展示区域复查、fresh-checkout addon package 报告、模块进度 | 自由重绘确定性导出结果；以背景覆盖代替内容安全；把接入或补丁留给游戏设备 |
 | `game-validate` | 模块进度的场景、版本、交互与结论 | 无实机证据标 `P6` |
-| `close` | 精确保留／删除清单；四份长期文档与 manifest；清理提交 | `P6` 前清理或宽泛删除 |
+| `close` | 精确保留／删除清单；四份长期文档与 manifest；组件或整模块清理提交；整模块关闭校验 | `P6` 前清理、遗留活跃 work 或删除共享／归属不明路径 |
 
 主模块阶段变化时，同一提交同步 `docs/PROGRESS.md` 与 `AGENTS.md` 顶部快照。
 只有跨模块美术基线真正改变时才更新 `docs/GLOBAL_ART_BASELINE.md`。
@@ -156,31 +159,84 @@ V1、V2、V3、每次 attempt、review、audit、preview 或 revised prompt 分�
 
 ## `P6-C` 终态收口
 
-`P6` 表示游戏内完全验收，`P6-C` 表示仓库完成收口。收口清单临时写在现有
-work 中并交给用户确认，不创建新的 closure 文档。
+`P6` 表示游戏内验收，`P6-C` 表示仓库完成收口。收口计划临时写在现有 work，
+不创建新的 closure Markdown。单组件关闭和整模块关闭是两个不同终态。
 
-保留：
+### 单组件关闭
 
-- 最终稳定美术条款，凝结到 `SUBMODULE_ART_BASELINES.md`。
-- 最终对象、状态、几何、UV 与回退，凝结到 `SUBMODULES.md` 和 manifest。
-- 用户接受的 source、manifest、deterministic exporter、runtime、实现与 tests。
-- 模块 `PROGRESS.md` 中最小的 P6 证据、最终路径、关闭日期和 `P6-C`。
-- 仍被其他组件引用的锁定图、共享资产、工具、许可证和用户原始文件。
+组件到达 P6 后，列出精确 keep/delete 清单并由用户明确确认；再删除该组件的
+模拟、raw、失败候选、透明中间图、contact sheet、真实排版预演、debug／临时
+atlas、该组件的 work 文件和仅服务该组件的过时引用／工具。凝结稳定事实并标记
+`P6-C / component-closed`。其他未完成组件的 work 与中间数据不受影响。
 
-删除：
+### 整模块关闭
 
-- 该组件 `generated/` 下的生成前模拟、raw、失败图、透明中间图、contact
-  sheet、候选真实排版预演、debug 输出与临时 atlas。
-- 该组件的 work 文件。
-- 已被最终实现取代且仅服务该组件的实验脚本、故障参考与预演。
-- 长期文档中重复的尝试流水、过期下一步和过程叙述。
+用户明确验收一个冻结的整模块 P6 范围后，必须立即进入模块终局清理；该验收
+与本项目 standing rule 已构成 verified module-only 中间数据的删除授权，无需
+再索取第二次批准。执行顺序固定为：
 
-删除 tracked 文件时使用明确路径，完整历史由 Git 保存。删除 ignored 输出时
-只操作已验证的组件目录，优先移入废纸篓。不得对 `generated/<module>/`、
-`assets/`、`docs/modules/` 或仓库根执行宽泛递归删除。
+1. 在模块 `PROGRESS.md` 写明“模块验收范围”和最小“P6 实机证据”。范围内每个
+   组件必须已有实机证据或已 `component-closed`。暂缓／排除项只保留为稳定
+   合同；删除其活跃 work 和候选，未来恢复时重新建 work。
+2. 验证最终 keep set，并先把必须长期保留、目前却位于 `generated/` 的少量 P6
+   截图／记录迁到 `assets/references/<module>/p6/`，记录 SHA。`generated/` 不能
+   充当最终证据库。
+3. 把最终 Prompt／provenance、对象／状态／几何／UV／回退、运行时路径与验收
+   结论凝结到四份长期模块文档和最终 manifest；移除逐次尝试流水、过期下一步
+   和过程叙述。
+4. 审计 canonical `generated/<module>/`、全部模块 work、模块专属 cache／预演／
+   脚本／故障参考，以及 canonical 之外的 legacy generated 路径。用组件 ID、
+   文件引用、SHA 与 Git 历史证明归属；共享或归属不明路径必须排除并单独请求
+   裁决，不能推定为模块专属。
+5. 清空整个 `generated/<module>/`，包括 tracked 与 ignored 数据；删除全部
+   `docs/modules/<module>/work/` 内容和目录、已验证的 legacy 模块中间路径及
+   其他确定的模块专属中间数据。使用经过校验的字面路径，不使用未解析变量、
+   通配符或共享父目录。完整历史由 Git 保留，ignored 数据优先移入废纸篓。
+6. 运行模块关闭校验、fresh-checkout addon package、相关 runtime／repository
+   tests、Markdown links 与 `git diff --check`。在模块 `PROGRESS.md` 写入
+   `P6-C / module-closed`、关闭日期、保留路径、aliases／legacy 路径和校验结果，
+   并使用独立清理提交。
 
-收口后该组件只出现在四份长期模块文档、最终 manifest、runtime、实现与
-tests 中；`work/` 不保留空占位文件。
+模块终局保留集仅包括：
+
+- 四份长期模块文档中的最终稳定合同与最小 P6 结论；
+- 用户接受的 `assets/source/<module>/`、最终 manifest、仍需的 deterministic
+  exporter、deployable runtime、实现与 tests；
+- `assets/references/<module>/p6/` 中最小且已哈希的最终实机证据；
+- 活跃锁定基准、许可证、用户原始文件和确实由其他模块引用的共享资产／工具。
+
+模块终局删除集至少包括：
+
+- 整个 canonical `generated/<module>/`，无论文件 tracked、ignored、隐藏或为
+  本地 cache；
+- 全部模块 `work/` 数据和空目录；
+- canonical 外经审计属于该模块的旧 generated 根／文件；
+- 已被最终实现取代且只服务该模块的模拟器、实验脚本、debug／验证副本和故障
+  参考；
+- 长期文档中指向上述中间路径的 live Markdown links，以及 manifests 中仍生效的
+  中间路径字段。
+
+关闭校验是只读命令，不负责删除。macOS 示例：
+
+```text
+conda run -n py312 python \
+  .codex/skills/run-aeui-asset-workflow/scripts/validate_module_closure.py \
+  /absolute/path/to/repository <module> \
+  --generated-alias <legacy-token> \
+  --legacy-generated-path generated/<exact-legacy-path> \
+  --report /private/tmp/aeui-<module>-closure-report.json
+```
+
+报告 schema 为 `aeui-module-closure-report-v1`，必须 `status=pass`。临时报告在
+提交结论后删除，不放回 `generated/<module>/`。关闭校验至少证明：四份长期
+文档存在；模块进度有验收范围、P6 证据和 `P6-C / module-closed`；整个 work
+目录不存在；canonical／声明的 legacy／alias generated 数据及 Git index 条目
+均不存在；长期模块文档不再包含指向 `generated/` 的 live links，manifests
+不再保留 `generated/` 路径字段。纯文本关闭清单可记录已经删除的字面路径。
+
+除已明确验收的整模块 canonical 根外，任何阶段都不得对 `generated/`、
+`assets/`、`docs/modules/` 或仓库根执行宽泛递归删除。收口后不保留空
+`work/` 占位目录。
 
 ## Source manifest 最低字段
 
@@ -212,7 +268,9 @@ tests 中；`work/` 不保留空占位文件。
    `python`。记录实际 `sys.executable` 与版本。
 5. 提交信息指出模块、批次和状态变化。
 6. 明确报告仅本机、已提交或已推送；除非用户要求，不自动 push。
-7. `P6-C` 使用独立清理提交，便于审阅与恢复。
+7. `P6-C` 使用独立清理提交，便于审阅与恢复。整模块关闭还必须在提交前运行
+   `validate_module_closure.py`；明确的整模块 P6 验收即授权 verified
+   module-only delete set，不再请求第二次批准。
 
 ## 回退
 

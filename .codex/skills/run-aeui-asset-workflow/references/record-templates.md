@@ -19,7 +19,7 @@
 - 子状态：prompt-draft | simulation-reviewed | simulation-confirmed |
   prompt-authorized | candidate-raw | repair-prepared |
   candidate-reviewed | candidate-rejected | source-accepted | closure-planned |
-  component-closed
+  component-closed | module-closure-planned | module-closed
 - 项目阶段：P0–P6-C
 - 固定执行器：imagegen-0-143-0 / @openai/codex@0.143.0
 - 操作：simulate | generate | edit
@@ -302,7 +302,7 @@ runtime 或生产输入。生成前模拟不能代替正式候选生成后的 `1
 - 尚未发生：Turtle WoW /reload 与交互 P6
 ```
 
-## `P6-C` 收口计划
+## 单组件 `P6-C` 收口计划
 
 先用本模板向用户展示，临时写入现有 work，不创建新的收口文档。执行后只把
 精简结果写入 `SUBMODULES.md`、`SUBMODULE_ART_BASELINES.md`、模块
@@ -325,4 +325,43 @@ runtime 或生产输入。生成前模拟不能代替正式候选生成后的 `1
 - 用户确认：
 - 清理后链接与测试：
 - 关闭日期与状态：P6-C / component-closed
+```
+
+## 整模块 `P6-C` 终局收口
+
+用户明确验收冻结的整模块 P6 范围后使用。本计划可临时写入任一现存 work；
+执行后删除全部模块 work，只把下面的稳定结论凝结到模块 `PROGRESS.md`、其余
+三份长期模块文档和最终 manifests。整模块验收已构成 verified module-only
+中间数据的 standing cleanup authorization，不再请求第二次批准。
+
+```markdown
+- 模块：
+- 模块验收范围：<逐组件／明确排除项；范围内均 P6 或 component-closed>
+- 整模块 P6 验收人／日期：
+- P6 实机证据：
+  - <迁出 generated 后的 assets/references/<module>/p6/ 路径／SHA／场景>
+- 最终保留：
+  - 四份长期模块文档：
+  - accepted source／manifest：
+  - deterministic exporter／runtime／implementation／tests：
+  - licenses／user originals／shared dependencies：
+- 全量删除：
+  - canonical generated：generated/<module>/（整个根；tracked + ignored）
+  - module work：docs/modules/<module>/work/（全部内容和目录）
+  - legacy generated aliases：
+  - exact legacy generated paths：
+  - obsolete module-only references／tools／caches／previews：
+  - duplicated process narration／stale generated references：
+- 保护且排除清理的共享／归属不明路径：
+- 授权依据：explicit whole-module P6 acceptance + standing project cleanup rule
+- module closure validator：
+  - 命令：<validate_module_closure.py；列出全部 --generated-alias 和
+    --legacy-generated-path>
+  - 临时报告：<generated/<module>/ 之外的临时路径；提交前删除>
+  - schema：aeui-module-closure-report-v1
+  - status：pass | fail
+  - first violation：
+- fresh-checkout addon package／runtime tests／repository tests／links／diff-check：
+- 模块 PROGRESS 最终标记：P6-C / module-closed
+- 独立清理 commit：
 ```

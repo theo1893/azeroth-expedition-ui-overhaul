@@ -35,6 +35,7 @@ def main() -> None:
         SKILL / "scripts" / "render_geometric_mockup.py",
         SKILL / "scripts" / "validate_addon_package.py",
         SKILL / "scripts" / "validate_display_regions.py",
+        SKILL / "scripts" / "validate_module_closure.py",
     )
     missing = [
         path.relative_to(ROOT).as_posix()
@@ -108,6 +109,11 @@ def main() -> None:
             "23-row Quest Log asset",
             "sparse demo",
             "`P6-C / component-closed`",
+            "`P6-C / module-closed`",
+            "Remove the entire canonical `generated/<module>/` tree",
+            "Do not ask for a second approval",
+            "validate_module_closure.py",
+            "aeui-module-closure-report-v1",
         ),
         "asset workflow skill",
     )
@@ -142,6 +148,11 @@ def main() -> None:
             "`runtime-exported → game-validated`",
             "`game-validated → closure-planned`",
             "`closure-planned → component-closed`",
+            "`module-closure-planned`",
+            "`module-closed`",
+            "explicit whole-module P6 acceptance",
+            "整个 canonical",
+            "validate_module_closure.py",
             "`repair-prepared`",
             "授权的生产执行正文最多产生",
             "`5` 次实际 ImageGen 生图／修图",
@@ -298,6 +309,13 @@ def main() -> None:
             "build_required_on_target_device=false",
             "只需拉取并把这些目录放入 `Interface/AddOns`",
             "该组件的 work 文件",
+            "### 整模块关闭",
+            "清空整个 `generated/<module>/`",
+            "tracked 与 ignored",
+            "standing rule",
+            "aeui-module-closure-report-v1",
+            "validate_module_closure.py",
+            "P6-C / module-closed",
             "不得对",
             "macOS 必须使用 `conda run -n py312 python`",
             "不得静默回退到系统 `python3`",
@@ -343,6 +361,11 @@ def main() -> None:
             "不修改 Lua/pfUI",
             "SUBMODULE_ART_BASELINES.md",
             "并删除 work",
+            "## 整模块 `P6-C` 终局收口",
+            "canonical generated：generated/<module>/（整个根；tracked + ignored）",
+            "standing cleanup authorization",
+            "aeui-module-closure-report-v1",
+            "P6-C / module-closed",
         ),
         "record templates",
     )
@@ -358,6 +381,7 @@ def main() -> None:
             "provider-to-art display regions",
             "five-generation review-repair workflow",
             "fresh-checkout-installable addon package",
+            "purge module intermediates after whole-module P6 acceptance",
         ),
         "skill interface",
     )
@@ -430,6 +454,102 @@ def main() -> None:
     assert package_report["status"] == "pass"
     assert package_report["build_required_on_target_device"] is False
     assert package_report["violations"] == []
+
+    closure_script = SKILL / "scripts" / "validate_module_closure.py"
+    compile(
+        closure_script.read_text(encoding="utf-8"),
+        str(closure_script),
+        "exec",
+    )
+    closure_help = subprocess.run(
+        [sys.executable, str(closure_script), "--help"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert closure_help.returncode == 0, closure_help.stderr
+    assert "terminal AEUI module cleanup" in closure_help.stdout
+
+    with tempfile.TemporaryDirectory() as temporary:
+        fixture = Path(temporary) / "repo"
+        module_dir = fixture / "docs" / "modules" / "demo"
+        module_dir.mkdir(parents=True)
+        (fixture / "assets" / "source" / "demo").mkdir(parents=True)
+        (fixture / "AGENTS.md").write_text("# Fixture\n", encoding="utf-8")
+        (fixture / "docs" / "PROGRESS.md").write_text(
+            "# Fixture progress\n",
+            encoding="utf-8",
+        )
+        for name in (
+            "SUBMODULES.md",
+            "ART_BASELINE.md",
+            "SUBMODULE_ART_BASELINES.md",
+        ):
+            (module_dir / name).write_text(f"# {name}\n", encoding="utf-8")
+        (module_dir / "PROGRESS.md").write_text(
+            "# Demo\n\n"
+            "- 模块验收范围：DEMO.ALL\n"
+            "- P6 实机证据：assets/references/demo/p6/final.png / abc\n"
+            "- 关闭状态：P6-C / module-closed\n",
+            encoding="utf-8",
+        )
+        subprocess.run(
+            ["git", "-C", str(fixture), "init", "-q"],
+            check=True,
+            capture_output=True,
+        )
+        subprocess.run(
+            ["git", "-C", str(fixture), "add", "."],
+            check=True,
+            capture_output=True,
+        )
+        closure_pass = subprocess.run(
+            [sys.executable, str(closure_script), str(fixture), "demo"],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        assert closure_pass.returncode == 0, (
+            closure_pass.stdout + closure_pass.stderr
+        )
+        closure_pass_report = json.loads(closure_pass.stdout)
+        assert closure_pass_report["schema"] == "aeui-module-closure-report-v1"
+        assert closure_pass_report["status"] == "pass"
+        assert closure_pass_report["violations"] == []
+
+        generated = fixture / "generated" / "demo"
+        generated.mkdir(parents=True)
+        (generated / "candidate.png").write_bytes(b"candidate")
+        work = module_dir / "work"
+        work.mkdir()
+        (work / "ACTIVE.md").write_text("# Active\n", encoding="utf-8")
+        (
+            fixture
+            / "assets"
+            / "source"
+            / "demo"
+            / "Demo_SourceManifest.json"
+        ).write_text(
+            json.dumps({"candidate": "generated/demo/candidate.png"}),
+            encoding="utf-8",
+        )
+        closure_fail = subprocess.run(
+            [sys.executable, str(closure_script), str(fixture), "demo"],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        assert closure_fail.returncode == 1, closure_fail.stderr
+        closure_fail_report = json.loads(closure_fail.stdout)
+        assert closure_fail_report["status"] == "fail"
+        violation_codes = {
+            record["code"] for record in closure_fail_report["violations"]
+        }
+        assert {
+            "GENERATED_DATA_REMAINS",
+            "WORK_DIRECTORY_REMAINS",
+            "STALE_GENERATED_REFERENCE",
+        } <= violation_codes
 
     passing_contract = {
         "schema": "aeui-display-region-contract-v1",
@@ -550,6 +670,9 @@ def main() -> None:
             "imagegen-0-143-0",
             "fresh-checkout",
             "另一台设备不得再生成资产",
+            "清空整个 `generated/<module>/`",
+            "validate_module_closure.py",
+            "`P6-C / module-closed`",
         ),
         "AGENTS workflow routing",
     )

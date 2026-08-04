@@ -1,6 +1,6 @@
 ---
 name: run-aeui-asset-workflow
-description: "Run the repository-specific Azeroth Expedition UI component-asset workflow with locked-baseline prompt provenance, self-contained ambiguity-audited prompts, a mandatory user-confirmed deterministic local geometric in-game preview before production, exact provider-to-art display-region conformance, compact per-component work files, art-language inheritance, and a bounded five-actual-generation autonomous production generate-review-repair loop whose workflow errors are tracked separately, from component contract and fixed ImageGen 0.143.0 production execution through explicit acceptance or rejection, source promotion, deterministic runtime export, fresh-checkout addon integration, module-progress synchronization, target-client validation, and post-P6 work-file cleanup. Use when simulating, generating, editing, reviewing, accepting, rejecting, promoting, exporting, integrating, validating, closing, or cleaning an AEUI component, or when the user asks to continue the next UI asset step."
+description: "Run the repository-specific Azeroth Expedition UI asset workflow: map real pfUI, Blizzard, and provider components; inherit locked art baselines; build a user-confirmed deterministic local preview; prepare self-contained prompts for fixed ImageGen 0.143.0; execute a bounded five-actual-generation generate-review-repair loop with workflow errors counted separately; validate exact display regions; promote accepted source; export a fresh-checkout-installable addon; record P6 client validation; and close components or purge all module intermediates after whole-module acceptance. Use when preparing, simulating, generating, editing, reviewing, accepting, rejecting, exporting, integrating, validating, closing, or cleaning any AEUI component or module, including requests to continue the next UI asset step."
 ---
 
 # AEUI Asset Workflow
@@ -127,6 +127,14 @@ and validation into module `PROGRESS.md` and manifests. Then delete the componen
 and ignored generated directory. Never keep an empty `work/` directory by adding placeholder
 files.
 
+When the user explicitly accepts the declared whole-module P6 scope, perform terminal
+module cleanup in the same operation. Preserve only durable baselines, final source and
+manifests, deployable runtime/implementation/tests, licenses/shared dependencies, and a
+minimal durable P6 evidence set. Delete the entire `generated/<module>/` tree, every module
+work file, and every separately inventoried legacy module-only generated path. Module
+acceptance is standing authorization for these verified module-scoped intermediates; a
+shared or ambiguous path remains protected and blocks only that path pending direction.
+
 ## Select the operation
 
 Infer only the narrowest operation authorized by the user:
@@ -142,7 +150,7 @@ Infer only the narrowest operation authorized by the user:
 | accept, lock this asset | `accept` | confirmed source at `P4` |
 | slice, atlas, integrate | `export` | tested, fresh-checkout-installable addon runtime at `P5` |
 | validate in Turtle WoW | `game-validate` | `P6` only after real-client evidence |
-| finish, close, compact, clean completed work | `close` | `P6-C` after an approved cleanup plan |
+| finish, close, compact, clean completed work | `close` | component or whole-module `P6-C` after the applicable cleanup gate |
 
 “Continue” means proceed through the next unblocked gate shown by module progress. If a
 pre-production preview is missing, build the deterministic local geometric simulation,
@@ -151,8 +159,10 @@ gate is production prompt authorization, stop after presenting the exact version
 production body, its repair envelope, and its five-call budget. “Continue” or “next step”
 alone never authorizes ImageGen. Explicit production authorization covers its bounded
 in-scope repair attempts, but never means silently accepting a candidate, promoting a
-source, inventing missing runtime geometry, or deleting intermediates. User confirmation
-of the local simulation, production generation, and closure remain separate decisions.
+source, inventing missing runtime geometry, or deleting intermediates. Local simulation,
+production generation, source acceptance, and component cleanup remain separate decisions.
+Explicit acceptance of a declared whole-module P6 scope is the trigger for the mandatory
+module cleanup defined below; do not request a redundant second deletion approval.
 
 If the user asks only for an assessment, stay read-only. If the user explicitly asks to
 generate, revise, accept, or export, perform the normal repository writes for that
@@ -191,7 +201,10 @@ operation.
    supported-mode cases. Background coverage alone is insufficient.
 14. Do not mark `P6` without evidence from Turtle WoW `1.18.1`.
 15. Do not remove intermediate or superseded files before `P6`, a verified final keep set,
-   an exact cleanup inventory, and explicit user approval.
+   and an exact cleanup inventory. Component-only cleanup still requires explicit approval
+   of that inventory. Explicit acceptance of the declared whole-module P6 scope, together
+   with the repository standing rule, authorizes mandatory removal of verified module-only
+   intermediates without a second approval; never include shared or ambiguous paths.
 16. A pre-production simulation version uses `0` ImageGen calls by contract. Render it
    with a local deterministic script using simple geometric primitives, representative
    real text, real object counts, and explicit non-authoritative placeholders. Local
@@ -476,23 +489,52 @@ text safety, layering, fallback, and unaffected nonvisual behavior.
 
 ## Close after P6
 
-Treat `P6` as fully accepted in game but not yet repository-closed. Read the terminal
-cleanup rules in [repository-sync.md](references/repository-sync.md), then:
+Treat `P6` as accepted in game but not yet repository-closed. Read the terminal cleanup
+rules in [repository-sync.md](references/repository-sync.md).
 
-1. Verify the final prompt provenance, accepted source and manifest, deterministic
-   exporter, runtime media/manifest, implementation, and P6 evidence.
-2. Produce an exact component-scoped keep/delete inventory. Exclude shared assets, shared
-   tools, active locked baselines, third-party evidence, licenses, and user originals.
+### Close one accepted component
+
+1. Verify final prompt provenance, accepted source/manifest, deterministic exporter,
+   runtime media/manifest, implementation, tests, and P6 evidence.
+2. Produce an exact component-scoped keep/delete inventory. Exclude shared assets/tools,
+   active locked baselines, third-party evidence, licenses, and user originals.
 3. Show the inventory to the user and obtain explicit approval before deletion.
-4. Remove ignored raw/candidates/previews, all pre-production simulations, the component
-   work file, obsolete component-only references/tools, and duplicated process narration
-   approved in the plan. Do not purge Git history.
-5. Compact `SUBMODULES.md`, `SUBMODULE_ART_BASELINES.md`, module `PROGRESS.md`, and
-   manifests to final contracts, final paths, final validation, and one concise closure
-   result.
-6. Run all relevant tests and confirm the checkout contains no dangling links or
-   references to deleted files.
-7. Mark `P6-C / component-closed` only in the same dedicated cleanup commit.
+4. Remove the approved component-only simulations, raw/candidates/previews, work file,
+   obsolete references/tools, and duplicated process narration. Do not purge Git history.
+5. Compact the four durable module documents and manifests, run relevant tests and link
+   checks, and mark `P6-C / component-closed` in the dedicated cleanup commit.
+
+### Close a fully accepted module
+
+1. Freeze the declared module acceptance scope in module `PROGRESS.md`. Every included
+   component must have real Turtle WoW P6 evidence or already be `component-closed`;
+   intentionally excluded/deferred contracts remain concise durable facts, not active work.
+2. Verify the final keep set. If the only P6 evidence is under `generated/`, promote the
+   minimal accepted screenshots/records to `assets/references/<module>/p6/` with hashes
+   before cleanup. Preserve final source/manifests, deterministic exporters needed to
+   reproduce runtime, deployable addon code/media, tests, licenses, user originals, and
+   genuine shared dependencies.
+3. Condense all stable facts into the module's four durable documents and final manifests.
+   No active component work may remain after module closure.
+4. Build an exact ownership inventory for the canonical `generated/<module>/` tree, every
+   module work file, obsolete module-only references/tools/caches, and legacy generated
+   paths outside the canonical tree. New generated outputs outside
+   `generated/<module>/` are forbidden. Resolve legacy ownership with component IDs,
+   paths, hashes, Git history, and references; exclude every shared or ambiguous target.
+5. The explicit whole-module P6 acceptance authorizes this verified module-only delete set
+   under the standing project rule. Do not ask for a second approval. If ownership remains
+   ambiguous, stop only that target and request direction rather than broadening deletion.
+6. Remove the entire canonical `generated/<module>/` tree, all
+   `docs/modules/<module>/work/` data, every verified legacy module-only generated path,
+   and the other inventoried intermediates. Use exact literal paths with no unresolved
+   variables or globs; do not delete Git history or a shared parent directory.
+7. Run `validate_module_closure.py` with module aliases/legacy paths, the fresh-checkout
+   addon package validator, all relevant runtime/repository tests, Markdown link checks,
+   and `git diff --check`. The module-closure report schema is
+   `aeui-module-closure-report-v1` and must return `status=pass`.
+8. Record the frozen scope, minimal durable P6 evidence, retained paths, validator command,
+   aliases/legacy paths and pass result in module `PROGRESS.md`; mark
+   `P6-C / module-closed` only in the same dedicated cleanup commit.
 
 ## Handoff
 
@@ -511,7 +553,9 @@ End each operation with:
 - the addon-package gate result, exact deployable `addon/` directories, and whether a
   fresh checkout requires any build, generation, patch, symlink, or remote-side code edit;
 - the first remaining gate;
-- for closure, the approved keep/delete inventory and final retained paths;
+- for component closure, the approved keep/delete inventory and final retained paths;
+- for module closure, the frozen acceptance scope, deleted canonical/legacy generated
+  roots, protected shared exclusions, retained P6 evidence, and module-closure validator;
 - tests run, selected Python interpreter and version, and their results;
 - whether files are only local, committed, synchronized, or pushed.
 

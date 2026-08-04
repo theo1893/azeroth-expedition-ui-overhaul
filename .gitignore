@@ -14,14 +14,8 @@ archive/
 *.zip
 *.log
 
-# Local generation and review evidence for the accepted CHAT.INPUT dark-paper source.
-# The tracked P4 source lives in assets/source/chat/input-dark-v1/; these intermediates
-# remain ignored and are retained locally until the explicit P6-C cleanup gate.
-/generated/chat/core/CHAT.INPUT.DARK.V1/
-
-# Regenerable Quest Log seal-placement/menu simulation evidence. The tracked
-# spec and renderer reproduce these files until the interaction is accepted.
-/generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V*/
-
-# Reproducible fresh-checkout addon-package gate reports are local test evidence.
-/generated/**/addon-package-report.json
+# All generated material is local, reproducible intermediate evidence. Existing legacy
+# tracked files remain visible until their owning module reaches P6-C; new generated files
+# must never enter Git. Whole-module closure removes generated/<module>/ in full plus every
+# explicitly audited module-only legacy path.
+/generated/

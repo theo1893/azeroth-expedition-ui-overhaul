@@ -121,6 +121,8 @@ def main() -> None:
         "run-aeui-asset-workflow",
         "imagegen-0-143-0",
         "P6-C",
+        "清空整个 `generated/<module>/`",
+        "validate_module_closure.py",
         "8.1.0-aeui.4",
     ):
         assert required in agents, f"AGENTS.md missing {required}"
@@ -148,6 +150,17 @@ def main() -> None:
     assert "imagegen" not in global_progress.lower(), (
         "global progress must not duplicate generation workflow"
     )
+    assert "generated/<module>/" in global_progress
+    assert "关闭校验" in global_progress
+    closure_validator = (
+        ROOT
+        / ".codex"
+        / "skills"
+        / "run-aeui-asset-workflow"
+        / "scripts"
+        / "validate_module_closure.py"
+    )
+    assert closure_validator.is_file()
     for module in modules:
         module_dir = docs / "modules" / module
         art = (module_dir / "ART_BASELINE.md").read_text(encoding="utf-8")
@@ -160,6 +173,20 @@ def main() -> None:
         assert "ART_BASELINE.md" in sub_art
         assert "pfUI" in submodules
         assert "下一门禁" in progress or "下一步" in progress
+        if "P6-C / module-closed" in progress:
+            closure_result = subprocess.run(
+                [sys.executable, str(closure_validator), str(ROOT), module],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            assert closure_result.returncode == 0, (
+                closure_result.stdout + closure_result.stderr
+            )
+
+    gitignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
+    assert "/generated/" in gitignore
+    assert "new generated files" in gitignore
 
     chat_submodules = (
         docs / "modules" / "chat" / "SUBMODULES.md"

@@ -23,6 +23,8 @@
 | `game-validated` | `P6` | Turtle WoW `1.18.1` 场景截图与交互证据 | 模块进度的验收记录 | 收口清单 |
 | `closure-planned` | `P6` | 最终保留集、精确删除集与共享依赖审计 | work 内临时计划 | 用户确认后执行清理与复测 |
 | `component-closed` | `P6-C` | work 与中间产物已清理；最终路径、链接与测试通过 | 四份模块长期文档、manifest 与最终产物 | 终态 |
+| `module-closure-planned` | `P6` | 用户明确接受的整模块范围；范围内全部组件 P6／已关闭；整模块保留集、canonical／legacy 删除集与共享依赖审计 | 现有 work 中的临时计划、模块进度 | 立即执行已授权的模块终局清理 |
+| `module-closed` | `P6-C` | 整个 `generated/<module>/`、全部模块 work 与已确认 legacy 中间数据清空；稳定事实凝结；模块关闭校验及相关测试通过 | 四份模块长期文档、最终 source／manifest、runtime／实现／tests 与最小 P6 证据 | 主模块终态 |
 
 ## 合法转换
 
@@ -57,6 +59,21 @@ candidate-reviewed → user rejection → candidate-rejected → new prompt vers
 runtime-exported → static/game failure → corrected exporter/runtime, remain P4/P5
 display-region-blocked → corrected geometry/export → runtime-exported
 ```
+
+整模块终局转换独立于单组件收口：
+
+```text
+all accepted-scope components game-validated or component-closed
+  → explicit whole-module P6 acceptance
+  → module-closure-planned
+  → module-closed
+```
+
+整模块 P6 验收必须在模块 `PROGRESS.md` 冻结验收范围。暂缓／排除项可以作为
+四份长期文档中的稳定合同继续存在，但不能留下活跃 work、模拟、候选或其他
+中间数据；未来恢复时重新建立 work。用户对该范围的明确验收即为已验证模块
+专属中间数据的终局清理授权，不再增加第二次删除确认。共享或归属不明路径
+始终排除，只阻塞该路径并等待用户裁决。
 
 生成前模拟固定为本地确定性几何渲染，实际 ImageGen 为 `0/0`，没有上传范围、
 provider session 或独立生图预算，也不进入正式资产自主修复循环。一个明确
@@ -114,6 +131,16 @@ provider 生成证据的目录、权限、CLI、递归、传输、上传、连�
   manifest、runtime、实现和 P6 证据，并列出精确保留／删除清单。
 - `closure-planned → component-closed`：必须获得用户对清单的明确确认，完成
   清理、链接检查和全量相关测试；不得用通配符删除共享目录。
+- `explicit whole-module P6 acceptance → module-closure-planned`：模块进度必须
+  冻结明确验收范围；范围内每个组件都有 P6 实机证据或已
+  `component-closed`。所有暂缓／排除项必须凝结为稳定合同，不得继续拥有
+  活跃 work。
+- `module-closure-planned → module-closed`：整模块验收已经构成 standing
+  authorization，不再请求第二次批准。必须删除整个 canonical
+  `generated/<module>/`、全部模块 work 和精确识别的 legacy 模块中间路径；
+  共享／归属不明项必须排除。`validate_module_closure.py`、fresh-checkout addon
+  package、链接检查和全部相关测试必须通过，模块进度必须写入
+  `P6-C / module-closed`。
 
 ## 版本规则
 
@@ -142,3 +169,6 @@ provider 生成证据的目录、权限、CLI、递归、传输、上传、连�
 10. `assets/source/` 中的派生母版不能在新提示词中被提升为高于
    `assets/locked/` 与其原始提示词 provenance 的视觉权威；发现权威倒置时
    必须退回 `prompt-draft`。
+11. 单组件 `component-closed` 不代表主模块已关闭。只有整模块验收范围明确、
+    全部模块 work 和 canonical／legacy 中间数据均清理且关闭校验通过时，才能
+    写入 `P6-C / module-closed`。

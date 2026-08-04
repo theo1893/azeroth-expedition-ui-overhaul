@@ -1,4 +1,4 @@
 interface:
   display_name: "AEUI 资产生成与审查"
-  short_description: "以本地预演、真实展示区门禁、五次生图闭环和可安装插件收口资产"
-  default_prompt: "Use $run-aeui-asset-workflow to define an AEUI component, preview it locally, verify exact provider-to-art display regions, run the authorized five-generation review-repair workflow, and finish P5 as a fresh-checkout-installable addon package."
+  short_description: "以本地预演、真实展示区门禁、五次生图闭环、可安装插件与整模块清理收口资产"
+  default_prompt: "Use $run-aeui-asset-workflow to define an AEUI component, preview it locally, verify exact provider-to-art display regions, run the authorized five-generation review-repair workflow, finish P5 as a fresh-checkout-installable addon package, and purge module intermediates after whole-module P6 acceptance."
