@@ -3,6 +3,19 @@
 ## 当前结论
 
 - 主模块视觉：已锁定。
+- Tab 替换方向：`CHAT.TABS.DARK.SIM.V1 / simulation-confirmed / P2`。实机反馈与
+  runtime 审计确认当前显示的是较早 V3 Tab／承托带，而非原生 fallback；其
+  selected 浅纸层和连续亮边没有随 Full V1／Dark V1 收敛。现已用当前 tracked
+  书框、输入、真实消息密度和精确 `440 × 320`／`540 × 420` 几何完成纯本地
+  对照预演：候选保持四枚 `92 × 30px` 皮革索引签及原命中区，只把 normal／
+  hover／selected／disabled 收敛为深胡桃烟熏皮革，selected 不再使用浅纸底，
+  shelf 不再使用贯穿亮带。三个 display-region 场景 `0` violations。用户于
+  `2026-08-04` 明确接受该模拟所表达的深胡桃烟熏皮革、无浅纸 selected、无
+  连续亮带 shelf、抬升／短暖光／接触阴影四状态方向；模拟 ImageGen `0/0`、
+  无上传、runtime 未改。最终 `CHAT.TABS.DARK.V1` 正文已重审；用户随后明确
+  授权四张固定 SHA 输入、同循环紧邻前次输出的受限 Image 5 edit、冻结修复
+  边界与最多五次实际 ImageGen。当前 `prompt-authorized / P3 / 0/5`，下一门禁
+  是提交精确正文后执行固定 0.143.0 attempt 1。
 - 输入视觉生产：`CHAT.INPUT.DARK.V1.r3 attempt 4 / runtime-exported / P5`。用户指出
   V3 浅金输入纸带在 Full V1 暖黑书页上会被读成现代进度条；已按真实
   `380 × 25px`、普通／聚焦两态、三段横向伸缩、`34/22px` 文字 inset，使用
@@ -193,7 +206,7 @@
 |---|---:|---|---|
 | `CHAT.FRAME`／`LEFT` | `P5` Full V1 / r1.19 | `ChatBookFrameFullV1.tga` 九宫格；唯一左侧实例；最终 atlas SHA `becb504f…25ae`；旧 V3 主框仅作回退 | `/reload` 检查主体、九宫格接缝、缩放、拖动和常用 UI Scale |
 | `CHAT.FRAME.RIGHT` | `P5` disabled-route | `single_chat_frame=1`；不分配资产 | 验证右框不显示且消息无丢失 |
-| `CHAT.TABS` | `P5` V3 / r1.21 aggregate | `92 × 30` 四状态 atlas；沿用既有 TabText、命中与 Scale 修正；输入替换不修改 Tab 资产／几何 | 在新书本主体上复测 pfUI 解锁滚轮与全局 UI Scale |
+| `CHAT.TABS` | 当前 runtime `P5` V3；替换 `P3` prompt-authorized | 用户已确认模拟并授权 `CHAT.TABS.DARK.V1` 固定四输入、受限 Image 5 edit 与最多五次实际 ImageGen；当前 `0/5`，现行 addon 仍加载 V3，几何与功能未改 | 提交精确正文后执行固定 0.143.0 attempt 1，并进入自主审查／修复循环 |
 | `CHAT.INPUT` | `P5` `CHAT.INPUT.DARK.V1` / r1.20 | `ChatInputDarkV1.tga` 普通／聚焦两状态三段式 atlas；固定 source SHA `4df36bc…cda0`，最终 TGA SHA `43cb9a01…766`，共享 Alpha、最终真实排版与五场景 `0` violations；旧 V3 atlas 仅作回退 | 实机验证 normal/focus、输入文字、光标、IME、频道头、历史、键盘事件与 `380/480px` 伸缩 |
 | `CHAT.INPUT.LANGUAGE` | `P1` | 可选原生 Button 已映射 | 实机确认对象、尺寸和语言状态 |
 | `CHAT.UNREAD` | `P5` V3 | 独立 `ChatFrameNTabFlash` 覆盖 | 实机验证闪烁配置与选中清除 |

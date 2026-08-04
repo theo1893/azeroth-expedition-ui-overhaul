@@ -6,8 +6,10 @@
 - 组件 ID：`CHAT.FRAME`、`CHAT.FRAME.LEFT`、`CHAT.TABS`、`CHAT.INPUT`、
   `CHAT.UNREAD`、`CHAT.TEXT`
 - 版本：`CHAT.CORE.V3 / runtime contract v1.21`；输入生产版本
-  `CHAT.INPUT.DARK.V1.r3 attempt 4 / runtime-exported`
-- 子状态：核心 `runtime-exported`；输入 `runtime-exported / P5`
+  `CHAT.INPUT.DARK.V1.r3 attempt 4 / runtime-exported`；Tab 替换方向
+  `CHAT.TABS.DARK.V1 / prompt-authorized`
+- 子状态：核心 `runtime-exported`；输入 `runtime-exported / P5`；Tab 替换
+  `prompt-authorized / P3`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 当前操作：Full V1 固定 P4 source 已按全图比例确定性导出到 `1024²`
@@ -2994,3 +2996,261 @@ is baked into the sheet.
   证据保留到 P6-C；没有清理授权。下一门禁是在 Turtle WoW `1.18.1` 实机
   `/reload` 后确认 `/aeui status` 为 `chat-runtime=1.20`，并逐项验证 normal／
   focus、文字、光标、IME、频道头、输入历史、键盘事件和常用 UI Scale。
+
+## `CHAT.TABS.DARK.V1` 深色皮革索引签替换
+
+### 元数据与当前门禁
+
+- 组件 ID：`CHAT.TABS`、`CHAT.TAB_SHELF`。前者对应四状态
+  `ChatFrameNTab`／`ChatFrameNTabText`，后者对应
+  `pfUI.chat.left.panelTop` 上的一枚连续承托 Texture；没有新增 Button、Tab、
+  文字、配置入口或消息功能。
+- 生产版本：`CHAT.TABS.DARK.V1 / prompt-authorized`；
+  生成前模拟：`CHAT.TABS.DARK.SIM.V1 / simulation-confirmed`；项目现行 runtime 仍为
+  `CHAT.CORE.V3 1.21 / P5`，替换方向最高只到 `P2`。
+- 操作：`generate`。固定执行器为
+  `imagegen-0-143-0 / @openai/codex@0.143.0`；模拟 ImageGen `0/0`，生产
+  `0/5`，四张固定 SHA 输入和冻结修复边界已获得精确授权，尚未执行 attempt 1。
+- 用户触发：`2026-08-04` 在实机观察到 Full V1 主框已经更新，但 Tab 仍偏浅；
+  仓库审计确认实际加载的是 `ChatTabAtlasV3.tga`／`ChatTabShelfV3.tga`，不是
+  原生 pfUI fallback。V3 Tab 于 `2026-07-29` 接入，未随 `2026-08-03` 的
+  Full V1／Dark V1 更新重绘；selected 行含大面积浅纸层，承托带有贯穿亮边，
+  且 adapter 使用 `SetVertexColor(1,1,1,1)` 原色显示。
+- 下一门禁：先把本授权版本提交到 Git，再由固定执行器执行 attempt 1；每个
+  countable 输出必须依次通过范围／物件身份、物理与图层、美术继承、cell／
+  状态、确定性装配、真实排版、display-region 和技术像素检查。
+
+### 美术基准继承与冲突裁决
+
+权威顺序：
+
+1. `assets/locked/chat/聊天框视觉基准_v1.png`，SHA-256
+   `90e30ba4…ee06`，与 `ART_BASELINE.md`／`SUBMODULE_ART_BASELINES.md`：
+   香草时代手绘厚重感、左下战地旧书、深皮革索引签和有限暖金响应。
+2. `assets/locked/chat/聊天框独立艺术资源_v3.png`，SHA-256
+   `272528e6…aab8`：二维位图的实体厚度、材料切面、短促高光与手工误差；其中
+   巨型对称框、龙饰、尖冠、整圈亮金和浅色大纸面不属于本组件。
+3. `docs/GLOBAL_ART_BASELINE.md`、Chat 主／子模块 Prompt：2004 年前后香草
+   轮廓，低饱和烟褐、深胡桃旧皮革、暗哑氧化黄铜，禁止网页 Tab、胶囊、
+   现代卡片、半透明黑玻璃和连续细金线。
+4. `SUBMODULES.md` 与当前 adapter：四枚 `92 × 30px` Tab、`3px` 间距、
+   `2px` 顶部偏移、`16px` 承托带、`18px` 承托带偏移、底部 `8px` 命中扩展，
+   四状态同一 Button 几何，文字由 runtime 居中绘制。
+5. `assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_r1.png`，SHA-256
+   `a97d9c5f…c673`：只作为当前邻接书体的深胡桃／暖黑烟褐材料与综合色重参考，
+   不改变更高权威的时代语言，也不复制完整书框。
+6. `assets/source/chat/v3/ChatTabs_Master_v3.png` 仅保留历史几何／四状态证据。
+   用户的实机反馈否决其当前浅金综合色重，因此旧 selected 浅纸底、连续亮边、
+   高亮缝线和旧颜色不是必须继承内容。
+
+本批必须继承：厚旧皮革索引签首先像夹在书页上的实体物件；轮廓稍有手绘误差，
+左上暖光；普通态后退，hover 只有一段短暖边，selected 在同一外接框内略抬并
+以接触阴影压住承托带，disabled 降低对比。所有状态仍以皮革为主体，不能把
+selected 变成浅羊皮纸牌或黄铜铭牌。
+
+明确排除：TabText、频道名、未读蜡封、主框、正文、输入条、滚动／复制／语言／
+菜单按钮、图标、状态文字和任何功能性符号。它们继续由各自 runtime 对象持有。
+
+### 组件与生产拆分合同
+
+- 逻辑对象：一枚可横向延展的 `CHAT.TAB_SHELF`；一枚
+  `CHAT.TABS` 四状态 atlas，顺序固定为 normal／hover／selected／disabled。
+  物理上允许同一透明母版承载五个隔离对象，但 exporter 必须分别裁出 shelf 与
+  四个状态，不能把五者烘焙成整张聊天框背景。
+- runtime 不变：每枚 Tab `92 × 30px`，横向三段式端帽 `16/16px`；四状态外接
+  几何、Button、文字锚点和命中区相同。shelf 装配为 `frameWidth-60 × 16px`，
+  `TOPLEFT(30,18)`；它在 Tab 后、主框上，不能覆盖 TabText 或正文。
+- 生产画布草案：`1536 × 1024 RGBA`。shelf crop
+  `[64,96,1472,232]`；四状态 crop 依次为
+  `[64,560,384,716]`、`[416,560,736,716]`、
+  `[768,560,1088,716]`、`[1120,560,1440,716]`。对象之间和画布边缘保持纯色键
+  隔离，任何对象不得跨 cell。
+- 四枚 Tab crop 各 `320 × 156px`，确定性缩放为 `248 × 120px` 后装入现有
+  `512²` 四行 atlas。约前后各 `62px` source 只承担固定端帽装饰；中间区域
+  低频、无独特缝线终点／裂口／铆钉，可水平延展。文字安全区必须安静、无字、
+  无符号、无高对比花纹。
+- shelf crop 确定性缩放为 `1016 × 56px` 并装入 `1024 × 64px` atlas；两端可有
+  小型接缝，中央必须低频可伸缩。顶部允许不规则暗边与分段极短反光，但禁止
+  贯穿全宽的浅纸条或金色导线。
+- Alpha 策略：正式候选允许固定纯绿背景，后处理只按候选自身色键确定性清理，
+  全透明 RGB 清零；不得把生成前模拟像素、旧 V3 Tab 像素或 Full V1 书框像素
+  合成进候选。动态内容禁止烘焙。
+- fallback：生产、接受或导出任一门禁前失败时继续加载当前 V3 Tab／shelf；
+  本阶段完全不修改 Lua、TGA、TOC、pfUI 或 SavedVariables。
+
+### 生成前模拟 `CHAT.TABS.DARK.SIM.V1`
+
+- renderer：`tools/render_chat_tabs_dark_simulation_v1.py`；specification：
+  `tools/specs/chat_tabs_dark_simulation_v1.json`。macOS 命令：
+  `conda run -n py312 python tools/render_chat_tabs_dark_simulation_v1.py tools/specs/chat_tabs_dark_simulation_v1.json`。
+- Python：`/Users/yuanshiyao/miniconda3/envs/py312/bin/python`，`3.12.12`。
+- 输出：
+  `generated/chat/core/CHAT.TABS.DARK.V1/simulation/CHAT-TABS-DARK-SIM-V1/chat_tabs_dark_sim_v1.png`，
+  `1620 × 570 RGBA`，SHA-256 `331499f0…d9a`；metrics SHA-256
+  `d9665adf…0c89`。独立 `/private/tmp` 重放得到相同 PNG SHA。
+- 三个精确实例：当前 V3 `440 × 320` 对照；候选四状态同屏
+  `440 × 320`；候选 `540 × 420`／22 行扩展窗口。书框、输入 TGA、经典
+  provider 颜色和动态真实排版来自当前 tracked runtime；候选 shelf／Tab 是
+  纯本地 polygon、line 和平面配色。
+- 状态节奏：normal `#251810` 后退；hover `#302016` 加一段短暖边；selected
+  `#422A1A` 在同一画布内上抬并以短 `#A47A3F` 边光／底部接触暗部识别；
+  disabled `#17110D`。shelf `#17100C`，顶部亮边被打断且能在 `380/480px`
+  宽度下保持低能量。
+- display-region contract：
+  `tools/specs/chat_tabs_dark_sim_display_region_v1.json`；报告：
+  `generated/chat/core/CHAT.TABS.DARK.V1/simulation/CHAT-TABS-DARK-SIM-V1/display-region-report.json`，
+  SHA-256 `72639957…3c9`。三个场景、四个逻辑 state cell、Tab visual、底部扩展
+  hit box 与 shelf 区域全部 `pass`，violations `0`。
+- ImageGen：`0/0`；外部上传：无；正式预算：未开启。
+- 本地错误：SE1 为 Full V1 palette 无 `body` 键导致 `KeyError: 'body'`，已用
+  已接受 B-near-black-paper 方向色板补齐未声明角色；SE2 为 `/private/tmp`
+  重放 metrics 路径调用 `relative_to(ROOT)` 失败，已改为 repo-relative／absolute
+  双路径显示。两者都没有 provider 或生成图片证据，不属于生产流程错误。
+- 内部结论：`displayable / simulation-reviewed`。真实比例、四枚真实对象、
+  15／22 行密度、邻接新 UI、z-order、全部交互状态、伸缩宽度和综合色重足以
+  供用户判断；没有把几何模拟误判为最终笔触、Alpha、接缝或微纹理证明。
+- 用户方向结论：`2026-08-04 / confirmed`。用户明确回复“接受”，确认
+  `CHAT.TABS.DARK.SIM.V1` 所表达的深胡桃／烟熏皮革主体、selected 不出现浅纸
+  底、shelf 不出现连续亮带、四状态只用抬升／短暖光／接触阴影区分，以及
+  `440 × 320`／`540 × 420` 下保持现有布局、尺寸和综合色重。
+- 确认只冻结上述可见条款，不接受模拟像素。polygon、平涂、字体栅格、磨损、
+  缝线、Alpha、精确 atlas 切片和最终手绘纹理继续属于非权威简化。模拟 PNG
+  禁止进入 source／runtime、禁止裁切／切片／
+  晋级，也禁止作为正式 ImageGen edit／reference 输入。
+- 确认失效条件：后续改变材料层级、selected 物件身份、shelf 亮度节奏或整体
+  重量时，必须返回 `prompt-draft` 并重新模拟。
+
+### 独立生产技术 scaffold（尚未上传）
+
+- specification：`tools/specs/chat_tabs_dark_production_scaffold_v1.json`；由通用
+  本地几何 renderer 生成，不读取或复制模拟像素。
+- 输出：
+  `generated/chat/core/CHAT.TABS.DARK.V1/production-scaffold/CHAT_TABS_DARK_V1_scaffold.png`，
+  `1536 × 1024 RGBA`，SHA-256 `03774a0f…077d`。它只冻结一条 shelf 与四个
+  state cell 的位置、外接轮廓和纯绿色键背景；灰阶、明暗和 polygon 边缘没有
+  美术权威。
+- 用户已确认模拟方向，但仍须看过最终正文并明确授权固定 SHA 上传后，该
+  scaffold 才能作为正式 Image 4；本阶段没有上传，也不得把模拟 PNG 替代它。
+
+### 生产正文完整性预检
+
+- 计划固定输入（尚未授权、未上传）：Image 1
+  `assets/locked/chat/聊天框视觉基准_v1.png`，SHA `90e30ba4…ee06`；Image 2
+  `assets/locked/chat/聊天框独立艺术资源_v3.png`，SHA `272528e6…aab8`；
+  Image 3 `assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_r1.png`，SHA
+  `a97d9c5f…c673`；Image 4
+  `generated/chat/core/CHAT.TABS.DARK.V1/production-scaffold/CHAT_TABS_DARK_V1_scaffold.png`，
+  SHA `03774a0f…077d`。生成前模拟 PNG 不在上传范围。
+- 复杂度：`atlas + states + horizontal-three-slice + stretch`。
+- 结论：`pass as production-final-pending-authorization`。物件身份、五个逻辑
+  对象、四状态顺序、
+  Canvas／cell、端帽／安全区、输入职责、材料与反模式、色键和最终自检均已
+  明确；用户确认的深色皮革、无浅纸 selected、无连续亮带 shelf、抬升／短暖光／
+  接触阴影状态语义均已写入正文。完整性已重新审计，仍需单独生产授权。
+- 不可变修复边界：组件 ID、对象／状态数量、上述 Canvas／cell、四张输入
+  职责、runtime `92 × 30`／`16px` caps、shelf `16px`、Alpha／色键、动态内容
+  排除和五次实际 ImageGen 上限。边界内可强化材料、轮廓、短高光和状态差异；
+  后续建议授权：每次可重新上传四张固定 SHA 输入；attempt 2–5 仅可把同一循环
+  紧邻前次输出作为 Image 5 edit 输入，并且只修复冻结边界内的材料、轮廓、
+  状态差异、色键或 cell 合同。新增输入、对象、状态、布局、Canvas、视觉方向
+  或 runtime 几何必须停止并重新授权。
+- 单一生产正文预算：最多 `5` 次实际 ImageGen generation/edit，含首次；流程
+  错误单列且不占额度。当前为 `0/5`，没有授权。
+- 下方最终执行正文 UTF-8 body 为 `5584` bytes，SHA-256
+  `b6a7b483964bf779eaa1cde9b4c47bc0b9484b8fe1b675a26edda8964b32a0bd`；生产授权
+  必须指向该版本，授权后执行前提交，不得静默改写。
+
+### 精确生产授权记录
+
+- 授权人／日期：用户，`2026-08-04`。
+- 用户原文：`确认授权 CHAT.TABS.DARK.V1；允许每次上传固定 SHA 的 Image 1/2/3/4；允许同循环紧邻前次输出仅在冻结边界内作为 Image 5 edit 输入；最多 5 次实际 ImageGen 调用；流程错误不占额度。`
+- 授权正文：下方 SHA-256
+  `b6a7b483964bf779eaa1cde9b4c47bc0b9484b8fe1b675a26edda8964b32a0bd` 的完整
+  `CHAT.TABS.DARK.V1` body；执行时必须原样传入，输入角色与保存位置只放在独立
+  `Execution instruction`。
+- 每次固定上传：Image 1 `90e30ba4…ee06`、Image 2 `272528e6…aab8`、Image 3
+  `a97d9c5f…c673`、Image 4 `03774a0f…077d`；生成前模拟 PNG 永不上传。
+- attempt 2–5：只有在明确保留前次正确区域时，才允许紧邻前次输出作为
+  Image 5 edit 输入；不得使用更早输出、拒绝版本或外部新增输入。
+- 实际生图预算：`0/5`；最坏总计 `5`；流程错误 `0`，无生成图且无 provider
+  生成证据时单列，不占额度。任何 attempt 客观通过后立即停止；内部通过不等于
+  用户接受。
+- 执行前 commit：以包含本授权记录和精确正文的下一次 Git commit 为准，并在
+  attempt 1 执行记录中回填；未提交不得调用固定执行器。
+
+### 完整生产正文 `CHAT.TABS.DARK.V1`（已授权；attempt 1 原样执行）
+
+Create one transparent production master for the World of Warcraft Vanilla-era chat
+channel tabs and their shared shelf. This is a component sheet, not a screenshot and not
+a complete chat window. The only five visible objects are: one long horizontal leather
+tab shelf, then four isolated wordless leather index-tab states in this exact order:
+normal, hover, selected, disabled. Do not add any fifth tab, icon, label, rune, button,
+book frame, message, input bar, unread seal, or decorative control.
+
+Use Image 1 as the highest overall period and chat-module authority: retain the heavy,
+hand-painted 2004-era fantasy UI language and the physical leather channel indexes visible
+on the lower-left field journal. Ignore all combat scene content and every unrelated UI
+module. Use Image 2 only for the same hand-painted bitmap thickness, material separation,
+short highlights, contact shadows, and imperfect artisan edges. Ignore its giant symmetric
+frame, dragon, spikes, pale central parchment, full gold outline, and all geometry unrelated
+to a small leather tab or shelf. Use Image 3 only for the current accepted chat book's dark
+walnut leather, warm-black smoked-brown palette, restrained oxidized brass temperature,
+wear scale, top-left warm light, and the visual weight that these tabs must match. Do not
+copy or redraw its book body. Use Image 4 as a strict technical scaffold: preserve its
+1536 by 1024 canvas, pure-green background, five separated object locations, cell order,
+outer bounds, and raised selected silhouette. Completely ignore its grayscale fills and
+flat polygon rendering. The scaffold has no artistic authority.
+
+Keep the canvas exactly 1536 by 1024. Keep the background uniformly pure #00FF00 with no
+gradient, shadow, noise, texture, or green reflection outside the five objects. Place the
+shelf only inside [64,96,1472,232]. Place normal only inside [64,560,384,716], hover only
+inside [416,560,736,716], selected only inside [768,560,1088,716], and disabled only inside
+[1120,560,1440,716]. Keep every cell isolated by untouched pure-green gaps. No visible
+pixel may cross a cell boundary or touch the canvas edge.
+
+All four tabs are the same physical old-leather index tab seen in four interaction states.
+They share one external crop, baseline, thickness, cap anatomy, text-safe center, and
+runtime hit geometry. Their silhouette is a squat, thick, slightly hand-irregular Vanilla
+WoW index tab, not a flat rectangle, rounded web tab, pill, card, metal plaque, or Diablo
+altar ornament. Use deep walnut and smoke-brown leather with darker compressed edges,
+subtle pores, restrained wear at touched corners, a clear lower contact shadow, and only
+small dull oxidized-brass or warm ochre accents. Lighting comes softly from the upper left.
+The center remains wordless and quiet enough for runtime text.
+
+Normal is the darkest active state and appears slightly recessed behind the shelf. Hover
+keeps the same silhouette and gains only one short, local warm edge response; do not brighten
+the whole perimeter. Selected rises slightly inside the same crop and presses naturally in
+front of the shelf with a stronger contact shadow and one short muted warm highlight. It
+must remain dark leather: do not place pale parchment, cream paper, a broad gold plate, or a
+continuous bright strip beneath it. Disabled keeps the full readable silhouette but is
+desaturated, lower-contrast, and has no active highlight. State differences must remain
+legible after reduction to 92 by 30 pixels without using glow or neon.
+
+The shelf is one thin, continuous, dark-walnut leather support strip viewed from the same
+angle and light as the tabs. Its ends may contain small stitches or folds. Its long middle
+must stay low-frequency and horizontally stretchable: no unique central buckle, rivet,
+tear, seam endpoint, symbol, or repeated high-contrast ornament. The upper edge may have a
+few broken, short, low-energy warm catches, but never a full-width pale page layer, bright
+gold rail, ruler line, or modern progress-bar edge.
+
+Within each tab cell, reserve approximately the leftmost and rightmost 62 source pixels for
+fixed end-cap anatomy. Keep the middle stretch corridor low-frequency and free of unique
+stitch endpoints, tears, rivets, letters, icons, and directional highlights. Keep the
+runtime text corridor visually quiet; do not paint any character or placeholder glyph.
+Materials must read through hand-painted light, midtone, shadow, thickness, wear, and
+contact—not through clean vector borders or uniform gradients.
+
+Use a low-saturation palette centered near dark walnut #251810, hover smoke-brown #302016,
+selected dark warm leather #422A1A, disabled near-black brown #17110D, shelf #17100C, and
+muted oxidized-brass highlights no brighter in area than a few short edge segments near
+#A47A3F. These values describe palette roles, not flat fills. Preserve the aged, painted,
+slightly uneven Vanilla bitmap character. Do not create transparent black glass, modern
+HUD panels, sharp thin gold web borders, full-frame bevels, mirror symmetry, glossy metal,
+photo-real antiques, skulls, demonic spikes, dragon ornaments, gemstones, glowing runes,
+or permanent magic light.
+
+Final self-check: exactly one shelf plus exactly four wordless state tabs; correct order and
+separate cells; selected is dark leather without any pale paper underside; shelf has no
+continuous bright rail; no dynamic content; quiet stretch centers; top-left warm light;
+pure-green background remains perfectly uniform outside the five objects; no object crosses
+its declared bounds.
