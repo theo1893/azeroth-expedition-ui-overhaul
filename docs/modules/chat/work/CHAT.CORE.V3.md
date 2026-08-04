@@ -7,10 +7,10 @@
   `CHAT.UNREAD`、`CHAT.TEXT`
 - 版本：`CHAT.CORE.V3 / runtime contract v1.21`；输入生产版本
   `CHAT.INPUT.DARK.V1.r3 attempt 4 / runtime-exported`；Tab 替换方向
-  `CHAT.TABS.DARK.V2.r1 / repair-prepared / attempt-02-ready`；V1 attempt 3
+  `CHAT.TABS.DARK.V2.r2 / repair-prepared / attempt-03-ready`；V1 attempt 3
   已由用户否决
 - 子状态：核心 `runtime-exported`；输入 `runtime-exported / P5`；Tab 替换
-  `repair-prepared / 1/5 / P3`
+  `repair-prepared / 2/5 / P3`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 当前操作：Full V1 固定 P4 source 已按全图比例确定性导出到 `1024²`
@@ -50,8 +50,9 @@
   ImageGen、未上传、未改 addon。用户已于 `2026-08-04` 精确授权 V2 正文、
   固定 Image 1–4、受限紧邻 Image 5 edit 与最多五次实际调用。attempt 1 已
   生成并完成全量审查：视觉方向与真实排版成立，但五对象均越过 source cell，
-  首个失败门禁为 cell／隔离。当前累计 `1/5`，完整 `.r1` 已只针对该门禁准备
-  attempt 2 edit；addon 仍未修改。
+  首个失败门禁为 cell／隔离。attempt 2 紧邻 edit 重复同一失败且 cell 外像素
+  增加，故停止 edit 策略。当前累计 `2/5`，完整 `.r2` 只用固定 Image 1–4
+  regenerate，并把全局位置／最大 bbox 提升为首要空间约束；addon 仍未修改。
 - 已凝结视觉方向：`CHAT-DARK-SIM-V1 / simulation-confirmed / P2` 的 B 方向
   已由 `CHAT.FRAME.FULL.V1.r1 / runtime-exported / P5` 实现；不再作为并行候选
 - 已退回生产批次：`CHAT.FRAME.PAPER.V1 / candidate-rejected / P3`；固定
@@ -4074,11 +4075,18 @@ V1 attempt 1–5 全部只作为负面证据：尤其禁止 attempt 3 的四个�
   已授权紧邻 Image 5 的保留职责、五个 inner target containment box、原位置
   残影清理和空间修复自检，没有改变对象、状态、输入权威、Canvas、cell、
   runtime、综合色方向、Alpha、z-order 或动态内容排除。
+- attempt 2 紧邻 edit 重复同一 source cell／隔离失败，因此按工作流更换策略。
+  当前完整、自包含 `CHAT.TABS.DARK.V2.r2` regenerate 正文为 `13845` UTF-8
+  bytes，SHA-256
+  `0191a1e8ce96ba7a236ac98c6bf81f583d77d889155927344203da1435a7cc96`。它移除
+  Image 5，只上传原固定 Image 1–4；将 Image 4 的全局中心／最大 bbox 职责、
+  五个 inner target、最大尺寸和 y 终止线写成首要空间门禁，同时保持全部原
+  对象、状态、视觉方向、Canvas、cell、runtime、Alpha 与动态内容排除。
 
-### 完整生产正文 `CHAT.TABS.DARK.V2.r1`（冻结边界内完整修复正文；attempt 2）
+### 完整生产正文 `CHAT.TABS.DARK.V2.r2`（冻结边界内完整修复正文；attempt 3）
 
 ```text
-Edit Image 5 into one production-ready modular 2D hand-painted sprite sheet for the channel tabs of a World of Warcraft Vanilla-era battlefield chat journal. This is a bounded spatial repair of the immediately previous candidate, not a new visual direction. Preserve its accepted five-object art, material family, handmade silhouettes, state relationships, lighting, and wear; repair only object scale, placement, cell isolation, vacated green background, and any edge pixels required by that spatial correction. This is a component sheet, not a screenshot, not a complete chat window, and not a presentation board. The only five visible objects are exactly: one long shared tab shelf, then four isolated wordless leather index-tab states in this exact order: normal, hover, selected, disabled. Do not add a fifth tab, a duplicate shelf, a book frame, a message area, an input strip, an unread marker, a button, an icon, a label, a rune, a caption, or any other object.
+Create one production-ready modular 2D hand-painted sprite sheet for the channel tabs of a World of Warcraft Vanilla-era battlefield chat journal. This is a clean regenerate from the four fixed authorities, not an edit of any earlier candidate. The first production priority is exact global placement, maximum visible bounding size, and pure-green isolation inside the five declared cells; the visual direction, object inventory, material family, handmade silhouette family, state relationships, lighting, and wear remain frozen. This is a component sheet, not a screenshot, not a complete chat window, and not a presentation board. The only five visible objects are exactly: one long shared tab shelf, then four isolated wordless leather index-tab states in this exact order: normal, hover, selected, disabled. Do not add a fifth tab, a duplicate shelf, a book frame, a message area, an input strip, an unread marker, a button, an icon, a label, a rune, a caption, or any other object.
 
 The written art direction in this prompt is the highest authority. The first read must be a compact set of hand-cut leather channel indexes physically inserted into the upper page edge of a battered field journal from a 2004-era hand-painted fantasy MMORPG. They must feel made, repaired, and repeatedly handled inside Azeroth, not like modern dark UI tabs recolored brown. Use a flat orthographic front view, chunky low-resolution bitmap-minded painting, slightly coarse brush edges, controlled handmade error, clear material thickness, warm light from the upper left, low-saturation warm-brown contrast, and short contact shadows. The objects must remain readable when reduced to the real game sizes stated below.
 
@@ -4088,9 +4096,7 @@ Image 2 is a lower-authority material-continuity reference for the currently acc
 
 Image 3 is a lower-authority structural reference for the old tab language specifically requested by the user. Inherit only these physical and silhouette traits: compact slightly skewed trapezoidal leather index markers; mildly uneven hand-cut crowns; lower corners that kick outward instead of forming a clean rectangle; sparse imperfect stitching; a selected leather marker that lifts inside the same canvas and exposes a small page layer at its base; and a shared page-and-leather shelf sitting behind all tabs. Explicitly ignore Image 3's pale selected-page slab, bright golden continuous page edge, old light palette, over-bright seams, and any exact old pixel. Do not copy, crop, trace, or reconstruct Image 3 pixel-for-pixel.
 
-Image 4 is a technical scaffold only. It is authoritative for the 1536 x 1024 canvas, the five declared cells, their order, approximate occupancy, and pure-green separation. Its gray values, polygon edges, symmetry, lighting, and surface are not art references and must not appear in the final art. Keep every object completely inside its own cell, but replace the crude polygons with coherent hand-painted physical objects. Image 4 is not a pixel-perfect hard mask: preserve the cell contract and inner margins, not its exact polygon boundary.
-
-Image 5 is the immediately previous output and the sole edit target. Preserve its correct visible art: the one dark layered shelf; the four coherent deep-walnut hand-cut leather tabs; their mildly uneven crowns, kicked lower corners, sparse repair stitching, short warm upper-left response, selected smoked under-page tongue, disabled recession, and non-modern material rendering. Do not redesign, restyle, simplify, sharpen, add ornament, change state semantics, or turn the tabs back into regular rectangles. Treat each of the five isolated objects as its own rigid painted sprite: uniformly scale it down as needed and translate it into its declared inner target, retaining its proportions and complete silhouette. Remove every old object, shadow, fringe, or thread pixel from its former position and replace all vacated pixels with the same flat green background. Do not crop the Image 5 objects at cell edges and do not keep a ghost, duplicate, or residual shadow outside the repaired objects.
+Image 4 is a technical scaffold only. It is authoritative for the 1536 x 1024 canvas, the five declared cells, their order, global x-y placement, maximum overall visible bounding sizes, and pure-green separation. Copy its global object centers and approximate outer occupancy before painting any detail. Its gray values, polygon edges, symmetry, lighting, and surface are not art references and must not appear in the final art. Keep every object completely inside its own inner containment rectangle, but replace the crude polygons with coherent hand-painted physical objects. Image 4 is not a pixel-perfect shape mask: preserve its global placement, maximum scale, cell contract, and inner margins, not its exact polygon boundary. Images 1–3 may guide art and physical identity but must never override Image 4's sheet placement and maximum size.
 
 Use this material hierarchy. The tabs are primarily deep walnut worn leather near #28180E, with warmer handled planes around #442A19, structural dark-brown seams near #24170F, and restrained soot-dark recesses. The shelf combines a dark leather binding below with thin smoked warm-brown page layers above. The selected under-page tongue may use a subdued smoked ochre-brown around #674923, never pale cream, bright parchment, or gold. Stitching is aged thread or leather cord, not a continuous metal border. Oxidized brass around #80602D may appear only as a tiny repair accent and must occupy less than five percent of any tab. Highlights are short, matte, broken, and warm; no glossy gold, white rim light, neon, or full-length bright line.
 
@@ -4104,7 +4110,9 @@ Live channel names are drawn later by the game. Keep every tab wordless and symb
 
 Use this exact 1536 x 1024 sheet contract. The shelf cell is [64,96,1472,232]. The normal cell is [64,560,384,716]. The hover cell is [416,560,736,716]. The selected cell is [768,560,1088,716]. The disabled cell is [1120,560,1440,716]. The shelf crop is 1408 x 136 source pixels. Every tab crop is 320 x 156 source pixels. Keep every non-green object pixel inside its declared cell and leave at least 4 source pixels of perfectly pure green between the complete object and every cell edge; aim for 8 pixels or more. Do not let cast shadows, loose threads, highlights, antialiasing haze, or page fibers cross a cell boundary. Do not crop any kicked corner, stitch loop, selected page tongue, or shelf end.
 
-For this repair, contain the complete visible bounding box of each object, including antialiasing, cast shadow, loose thread, page fiber, and highlight, inside these right-and-bottom-exclusive inner target limits: shelf [80,110,1457,217]; normal [76,570,373,703]; hover [428,569,725,703]; selected [780,566,1073,705]; disabled [1132,572,1429,705]. These target limits are containment rectangles, not shape masks: keep Image 5's irregular physical contours and transparent-looking green cutouts rather than filling the rectangles. No non-green pixel may exist outside the five declared cells. In particular, move the shelf upward so its leather binding and page stack both fit completely above y=217; move and uniformly reduce all four tabs so their bottom stitches, kicked corners, selected page tongue, and shadows finish above their target bottom limits. Keep the common tab center, left-right proportions, and bottom baseline compatible across states.
+For this repair, contain the complete visible bounding box of each object, including antialiasing, cast shadow, loose thread, page fiber, and highlight, inside these right-and-bottom-exclusive inner target limits: shelf [80,110,1457,217]; normal [76,570,373,703]; hover [428,569,725,703]; selected [780,566,1073,705]; disabled [1132,572,1429,705]. These target limits are containment rectangles, not shape masks: keep the required irregular physical contours and green cutouts rather than filling the rectangles. No non-green pixel may exist outside the five declared cells. In particular, place the shelf so its leather binding and page stack both fit completely above y=217; size and place all four tabs so their bottom stitches, kicked corners, selected page tongue, and shadows finish above their target bottom limits. Keep the common tab center, left-right proportions, and bottom baseline compatible across states.
+
+Treat those inner targets as hard maximum bounding boxes and leave extra green rather than enlarging an object. The shelf target center is approximately (768,163) with maximum visible size 1377 x 107 source pixels; it must sit around y=163, never around y=240, and every visible shelf pixel must finish above y=217. The normal target center is approximately (224,636), hover (576,636), selected (926,635), and disabled (1280,638). Their respective maximum visible sizes are 297 x 133, 297 x 134, 293 x 139, and 297 x 133 source pixels. No tab may extend to y=716 or below; normal, hover, and disabled must finish above y=703, selected above y=705. If a kicked corner, stitch loop, page tongue, or shadow would exceed a limit, uniformly reduce the entire corresponding object while keeping its center; never crop it and never push it downward. Do not draw cell rectangles, target boxes, coordinates, or guides.
 
 The exporter will scale each tab crop to a 248 x 120 logical atlas cell and render it at 92 x 30 UI pixels with fixed left and right three-slice caps. It will scale the shelf into a 1016 x 56 atlas strip and render it behind the tabs at frameWidth minus 60 by 16 UI pixels. Therefore all four states must share compatible external proportions, center alignment, and baseline; state switching must not appear to move the Button or its live text. The shelf must remain behind the tabs, and the selected tab must overlap it through contact and occlusion rather than through a glowing outline.
 
@@ -4112,7 +4120,7 @@ Paint the objects in a restrained Vanilla-era raster style. Preserve deliberate 
 
 Place the five complete objects on one perfectly flat, uniform chroma-key green background exactly #00FF00. The entire background outside the objects, including all cell gaps and canvas edges, must be the same exact #00FF00 with no gradient, checkerboard, texture, floor, vignette, ambient shadow, green haze, or presentation frame. Do not output fake transparency. Do not include captions, numbers, cell outlines, guides, or debug labels. Object edges may be naturally antialiased against the green for deterministic keying, but no visible green may contaminate the leather or page interiors.
 
-Final self-check before returning the image: exactly five and only five isolated wordless objects; one shelf plus normal, hover, selected, disabled in the declared cells and order; every complete visible bounding box is inside its stated inner target limit with pure-green isolation and no old-position residue; all objects remain complete rather than clipped; tabs retain Image 5's irregular hand-cut leather-book-index art rather than becoming rectangular UI buttons; selected stays dark leather with only a narrow smoked page tongue; shelf has no continuous bright rail; text centers and three-slice middle zones remain quiet; no runtime text or unrelated UI is baked; canvas is exactly 1536 x 1024 on uniform #00FF00.
+Final self-check before returning the image: exactly five and only five isolated wordless objects; one shelf plus normal, hover, selected, disabled in the declared cells and order; every complete visible bounding box is inside its stated inner target limit and maximum size with pure-green isolation; the shelf is centered near y=163 and fully above y=217; all four tabs end above their stated target bottoms rather than touching y=716; all objects remain complete rather than clipped; tabs read as irregular hand-cut leather book indexes rather than rectangular UI buttons; selected stays dark leather with only a narrow smoked page tongue; shelf has no continuous bright rail; text centers and three-slice middle zones remain quiet; no runtime text or unrelated UI is baked; canvas is exactly 1536 x 1024 on uniform #00FF00.
 ```
 
 ### V2 固定上传与生产授权边界
@@ -4148,31 +4156,31 @@ Final self-check before returning the image: exactly five and only five isolated
 - 必须重新授权：新增／替换参考或上传图；使用更早／外部失败稿；改变对象数、
   状态、顺序、视觉方向、画布、cell、runtime 尺寸、层序、三段式、Alpha
   策略、provider 或允许烘焙内容。
-- 预算：当前 `1/5` 次实际 ImageGen generation/edit，含首次；流程／传输／权限／
+- 预算：当前 `2/5` 次实际 ImageGen generation/edit，含首次；流程／传输／权限／
   上传／落盘错误若没有图片且没有 provider 生成证据则单列，不占额度。同一
   流程错误针对性修复一次后仍重复则暂停。任何候选完整内审通过立即停止；
   attempt 5 仍失败则 `candidate-rejected / repair-budget-exhausted`。
-- 当前状态：`repair-prepared / attempt-02-ready / P3`。原授权正文与记录由
-  commit `19706f9` 固定；attempt 1 已完整审查但未进入 source／runtime，addon
-  未修改。
-- 下一门禁：提交 attempt 1 失败记录与上述完整 `.r1`，再上传固定 Image 1–4
-  和紧邻 attempt 1 raw Image 5 执行一次 bounded edit。只有新候选或 provider
-  生成证据才递增为 `2/5`。
+- 当前状态：`repair-prepared / attempt-03-ready / P3`。原授权正文与记录由
+  commit `19706f9` 固定；attempt 1／2 均完整审查但未进入 source／runtime，
+  addon 未修改。
+- 下一门禁：提交 attempt 2 失败记录与上述完整 `.r2`，再只上传固定 Image 1–4
+  regenerate。只有新候选或 provider 生成证据才递增为 `3/5`；不得上传任何
+  V2 attempt raw 作为 Image 5。
 
 ### V2 自主修复循环
 
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
 | 1/5 | `CHAT.TABS.DARK.V2` / `19706f9`（执行 HEAD `a5196ae`） | generate；固定 Image 1／2／3／4 | session `019fcb68-8fee-79c0-b0d1-db978c62248d`／provider cache `ig_0d1defc3d27c45fd016a7183515d7081918e9c95bc850fe4bd.png` | raw `…attempt01_raw.png`／`3cd3a237569d92d995d604b53785fb2cff8f4a0303ad722d879874e2d7864ebe`；keyed `…attempt01_keyed.png`／`eb02fe7c1d25fc667c78827858cd938042bbc2f42952048291b8d6032e6b7ab4` | source cell／隔离：cell 外 `103677` 个可见像素；shelf 左／右／底触边，四 Tab 均触底且各有横向触边 | 保留五对象、旧式不规则皮签、材料、四态与真实排版；`.r1` 仅以紧邻 raw Image 5 做独立等比缩放／移位并清除原位残影 | 内部失败；计 `1/5` |
-| 2/5 | `CHAT.TABS.DARK.V2.r1` / `327cbfb` | edit；固定 Image 1／2／3／4 + 紧邻 attempt 1 raw Image 5 |  |  |  |  | `ready` |
-| 3/5 | `CHAT.TABS.DARK.V2.r2` /  | edit／generate |  |  |  |  |  |
+| 2/5 | `CHAT.TABS.DARK.V2.r1` / `327cbfb`（执行 HEAD `8357997`） | edit；固定 Image 1／2／3／4 + 紧邻 attempt 1 raw Image 5 | session `019fcb76-619a-7cb2-8aa7-f754fd6f979d`／provider cache `ig_0179ddfc1c4cbcb6016a7186d9cb5c81918324999f7e0368bd.png` | raw `…r1_attempt02_raw.png`／`fe49337c8381b85532e676072c464caeee41c8a69d9a5ac7fe4e880dfe849373`；keyed `…r1_attempt02_keyed.png`／`c116fba1ad26a2dbf0b1e1f10b78c0c920139e474d1c0895b78c63ee8fd0df7c` | 同一 source cell／隔离失败：cell 外增至 `107236`；shelf 左／右／底触边，四 Tab 仍触底并各有横向触边 | 停止 edit，不上传 attempt 2；`.r2` 只用固定 Image 1–4 regenerate，以全局中心／最大 bbox 为首要约束 | 内部失败；计 `2/5` |
+| 3/5 | `CHAT.TABS.DARK.V2.r2` / `待修复提交` | regenerate；固定 Image 1／2／3／4，无 Image 5 |  |  |  |  | `ready` |
 | 4/5 | `CHAT.TABS.DARK.V2.r3` /  | edit／generate |  |  |  |  |  |
 | 5/5 | `CHAT.TABS.DARK.V2.r4` /  | edit／generate |  |  |  |  |  |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
 
-- 循环终态：`active / 1/5 / repair-prepared`；任何候选全部门禁通过即停止并进入
+- 循环终态：`active / 2/5 / repair-prepared`；任何候选全部门禁通过即停止并进入
   `candidate-reviewed / P3`，不自动创建 source 或修改 runtime。
 
 ### `CHAT.TABS.DARK.V2` attempt 1 执行与审查记录
@@ -4232,3 +4240,41 @@ Final self-check before returning the image: exactly five and only five isolated
   用户复审、P4 source 或 runtime。正确视觉区域清晰可保留，因此按用户授权
   只把本轮紧邻 raw 作为 Image 5 edit；完整 `.r1` 的 SHA 如上，下一次执行前
   必须先提交本记录、两项确定性审查工具变更和 `.r1`。
+
+### `CHAT.TABS.DARK.V2.r1` attempt 2 执行与审查记录
+
+- 日期：`2026-08-04`；固定执行器／model／reasoning 与 attempt 1 相同；session
+  与 provider cache result 如上表。child 完整回显 `.r1` 和 Image 1–5 的绝对
+  路径；Image 5 精确为紧邻 attempt 1 raw，SHA
+  `3cd3a237…e2d7864ebe`，没有上传更早或外部失败稿。未报告 revised prompt，
+  provider 明确完成一次 edit；累计 `2/5`，流程错误仍为 `0`。
+- raw：`generated/chat/core/CHAT.TABS.DARK.V2/attempt-02/CHAT_TABS_DARK_V2_r1_attempt02_raw.png`，
+  `1536 × 1024 RGB`，SHA-256
+  `fe49337c8381b85532e676072c464caeee41c8a69d9a5ac7fe4e880dfe849373`；
+  exact `#00FF00` 为 `0`。candidate-self key 后 RGBA SHA-256
+  `c116fba1ad26a2dbf0b1e1f10b78c0c920139e474d1c0895b78c63ee8fd0df7c`；
+  background score min `212`，transparent threshold `211`，opaque threshold
+  `160`，透明 `1269287`、半透明 `1789`、不透明 `301788`，透明 RGB 清零。
+- 范围／身份、语义／物理、透视／图层、美术方向与四态：仍为恰好五个无字
+  对象，旧式不规则皮革索引签、selected 压暗夹页、深胡桃烟褐和低亮 shelf
+  均保持；无现代规则牌、浅纸 selected 或烘焙动态内容。edit 对局部皮纹／缝线
+  有轻微再解释，但没有越出冻结方向。上述门禁 `pass`。
+- source cell／隔离：同一第一门禁再次 `fail`，且没有改善。keyed 全局可见 bbox
+  `[38,196,1498,737]`；cell 外可见像素由 `103677` 增至 `107236`。shelf 仍为
+  left `0`／right `0`／bottom `0`；normal left／bottom 触边；hover left／right／
+  bottom 触边；selected right／bottom 触边；disabled right／bottom 触边。原本
+  要求 shelf 全部高于 `y=217`，候选仍延伸到约 `y=288`；四 Tab 仍延伸至约
+  `y=737`。因此不能继续使用相同 Image 5 edit 策略。
+- 真实排版：同一确定性工具重新从 attempt 2 keyed 生成
+  `generated/chat/core/CHAT.TABS.DARK.V2/attempt-02/review/candidate-real-layout.png`，
+  SHA-256 `cfc21e2b2d03eb40598676d3f075644ddfc27ef6fac39960f28fe099e89014fb`；
+  `440 × 320`／15 行与 `540 × 420`／22 行仍可读，但同样只显示按 cell 裁切的
+  非合格装配。metrics SHA-256
+  `e8f4b7ddf3a5f0d68a0950b7f9bfabebf76e0618081e1bfb3de035db6c7f9038`；
+  display-region report SHA-256
+  `b4e29e3c4402030b92e6c14bb268468d8aba78631cb2a3ed9af83b68a6cde119`，
+  三场景 pass／violations `0`，仍不能替代 source 门禁。
+- 结论：`internal fail / repair`。相同首要失败连续两次出现，必须改变修复策略；
+  attempt 2 不进入用户复审、source、runtime，也不再作为 Image 5。完整 `.r2`
+  只用原固定 Image 1–4 从零 regenerate，先满足全局位置／最大 bbox／隔离，再
+  复核既有视觉门禁；下一次调用前提交本记录与 `.r2`。
