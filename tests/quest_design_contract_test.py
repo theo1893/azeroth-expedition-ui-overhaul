@@ -1798,9 +1798,13 @@ def main() -> None:
         for state in seal_states.values()
     )
     assert seal_runtime_manifest["display_region"]["status"] == "pass"
+    assert seal_runtime_manifest["runtime_contract"] == "1.1"
     assert seal_runtime_manifest["layout_contract"]["quest_log"][
         "box_xywh"
-    ] == [600, -18, 28, 28]
+    ] == [576, 68, 32, 32]
+    assert seal_runtime_manifest["layout_contract"]["quest_log"][
+        "reserved_corner_xywh"
+    ] == [572, 64, 40, 40]
     assert seal_runtime_manifest["layout_contract"]["tracker"][
         "top_clamp_inset"
     ] == 18
@@ -2348,7 +2352,7 @@ def main() -> None:
     require(
         quest_adapter,
         (
-            'Quests.runtimeContract = "1.17"',
+            'Quests.runtimeContract = "1.18"',
             "ApplyTrackerProviderFont",
             "ResolveQuestNameInk",
             "ApplyDirectoryTypography",

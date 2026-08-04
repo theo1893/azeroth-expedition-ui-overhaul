@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local Quests = {}
-Quests.runtimeContract = "1.17"
+Quests.runtimeContract = "1.18"
 
 local THEME = addon.questVisualTheme
 local SHELL_TEXTURE = THEME.media.questLogShell
@@ -160,7 +160,7 @@ local TRACKER_PAPER = {
 }
 
 local QUEST_SEAL = {
-  contract = "1.0",
+  contract = "1.1",
   topOutset = 18,
   states = {
     normal = { 0, 0.25, 0, 1 },
@@ -169,10 +169,10 @@ local QUEST_SEAL = {
     disabled = { 0.75, 1, 0, 1 },
   },
   questLog = {
-    width = 28,
-    height = 28,
-    left = 600,
-    top = -18,
+    width = 32,
+    height = 32,
+    left = 576,
+    top = 68,
   },
   tracker = {
     width = 34,
@@ -622,6 +622,56 @@ function Quests:Initialize()
     end
   end)
   self:InstallGlobalHooks()
+end
+
+function Quests:ScheduleQuestLogReflow(passes)
+  local requested = tonumber(passes) or 2
+  if requested < 1 then
+    requested = 1
+  end
+  local pending = tonumber(self.questLogReflowPasses) or 0
+  if requested > pending then
+    self.questLogReflowPasses = requested
+  end
+  if self.driver and self.driver.SetScript then
+    self.driver:SetScript("OnUpdate", function()
+      Quests:RunDeferredQuestLogReflow()
+    end)
+  end
+end
+
+-- FontString wrapping and reward anchors are not guaranteed to expose their
+-- final screen coordinates in the same frame that pfQuest writes translated
+-- text. Reconcile the live rows and detail child for two frames, then stop.
+-- This is deliberately finite and never becomes a geometry maintenance loop.
+function Quests:RunDeferredQuestLogReflow()
+  local pending = tonumber(self.questLogReflowPasses) or 0
+  if pending < 1 then
+    self.questLogReflowPasses = nil
+    if self.driver and self.driver.SetScript then
+      self.driver:SetScript("OnUpdate", nil)
+    end
+    return
+  end
+
+  self.questLogReflowPasses = pending - 1
+  if
+    addon.db and
+    addon.db.quests.enabled and
+    QuestLogFrame
+  then
+    self:UpdateDirectoryRows()
+    self:ApplyPfQuestQuestLogCompatibility()
+    self:ApplyDetailTextGeometry(true)
+    self:UpdateActionButtonStates()
+  end
+
+  if self.questLogReflowPasses < 1 then
+    self.questLogReflowPasses = nil
+    if self.driver and self.driver.SetScript then
+      self.driver:SetScript("OnUpdate", nil)
+    end
+  end
 end
 
 local function GetPfQuestTracker()
@@ -1318,6 +1368,7 @@ function Quests:InstallGlobalHooks()
         Quests:UpdateDirectoryRows()
         Quests:ApplyPfQuestQuestLogCompatibility()
         Quests:UpdateActionButtonStates()
+        Quests:ScheduleQuestLogReflow(2)
       end
     )
   end
@@ -2505,11 +2556,18 @@ local DETAIL_MEASURE_FRAME_NAMES = {
   "QuestLogSpellLearnFrame",
   "QuestLogPlayerTitleFrame",
   "QuestLogHonorFrame",
+  "QuestLogMoneyFrame",
+  "QuestLogRewardMoneyFrame",
+  "QuestLogRequiredMoneyFrame",
+  "QuestLogXPFrame",
 }
 
 local function IsVisibleDetailObject(object)
   if not object then
     return false
+  end
+  if object.IsVisible then
+    return object:IsVisible()
   end
   if object.IsShown then
     return object:IsShown()
@@ -2683,7 +2741,7 @@ function Quests:ApplyDetailTextTheme()
   end
 end
 
-function Quests:ApplyDetailTextGeometry()
+function Quests:ApplyDetailTextGeometry(skipDeferred)
   if QuestLogDetailScrollChildFrame then
     if QuestLogDetailScrollChildFrame.SetWidth then
       QuestLogDetailScrollChildFrame:SetWidth(
@@ -2714,6 +2772,9 @@ function Quests:ApplyDetailTextGeometry()
 
   self:HideDetailScrollbar()
   self:InstallDetailMouseWheel()
+  if not skipDeferred then
+    self:ScheduleQuestLogReflow(2)
+  end
 end
 
 function Quests:EnsureShell(frame)
@@ -3095,6 +3156,47 @@ function Quests:EnsureDetailToggle(frame)
   end
 
   self:UpdateDetailToggle()
+end
+
+function Quests:GetRuntimeStatus()
+  local frame = QuestLogFrame
+  local frameContract =
+    frame and frame.aeuiQuestRuntimeContract or "unapplied"
+  local themeContract =
+    frame and frame.aeuiQuestVisualThemeContract or "unapplied"
+
+  local seal = frame and frame.aeuiQuestChromeSeal
+  local sealStatus = "missing"
+  if seal then
+    if seal.IsShown and not seal:IsShown() then
+      sealStatus = "hidden"
+    else
+      sealStatus = "detail-page-32"
+    end
+  end
+
+  local fontPath = "unavailable"
+  local row = _G["QuestLogTitle1"]
+  local text = row and row.GetFontString and row:GetFontString()
+  if text and text.GetFont then
+    fontPath = text:GetFont() or fontPath
+  end
+
+  local scrollRange = "unavailable"
+  if
+    QuestLogDetailScrollFrame and
+    QuestLogDetailScrollFrame.GetVerticalScrollRange
+  then
+    scrollRange =
+      tostring(QuestLogDetailScrollFrame:GetVerticalScrollRange() or 0)
+  end
+
+  return
+    "frame=" .. tostring(frameContract) ..
+    ", theme=" .. tostring(themeContract) ..
+    ", seal=" .. tostring(sealStatus) ..
+    ", font=" .. tostring(fontPath) ..
+    ", detail-range=" .. tostring(scrollRange)
 end
 
 function Quests:Apply()

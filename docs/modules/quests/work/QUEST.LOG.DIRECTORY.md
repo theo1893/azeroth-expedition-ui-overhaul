@@ -516,6 +516,17 @@ UI 或文字。任何一项不满足都不要输出。
   行末圈／scrollbar／19..23 不回生，以及同一任务跨 Quest Log／Tracker 的
   名称颜色一致。
 
+## `2026-08-04` runtime `1.18` 字体恢复验证
+
+- 另一台设备报告左页仍使用不同字体；远端审计确认默认 `origin/main` 仍为
+  Quests runtime `1.16`／Theme `1.5`，该版本确实会把任务行强制为霞鹜文楷。
+- 当前分支 runtime `1.18` 在 provider 刷新后继续恢复全部活动行与模板拆分
+  FontString 为 `pfUI.font_default`、`12px OUTLINE`、零额外 shadow，并通过
+  最多两次下一帧有限重排覆盖 pfQuest 的晚写入；待办完成后停止，不常驻改写。
+- `/aeui status` 会返回实际解析到的 Quest frame、theme 和 font 路径。目标
+  客户端只有在看到 `quest frame=1.18 theme=1.6` 且 font 指向 pfUI 默认字体后，
+  才能把画面作为本版 P5 验收证据。
+
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |

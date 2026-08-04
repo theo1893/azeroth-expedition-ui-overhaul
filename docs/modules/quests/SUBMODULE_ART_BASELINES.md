@@ -154,11 +154,11 @@ SHA-256
 [QS-A1_RuntimeManifest_v1.json](../../../assets/source/quests/qs-a1/QS-A1_RuntimeManifest_v1.json)：
 同一 Alpha 等比缩为 `60 × 58`，居中放入 normal／hover／pressed／disabled
 四个 `64 × 64` cell；hover 只暖亮，pressed 只压暗且未来交互锚点下移
-`1px`，disabled 只退灰，四态不重画轮廓。Quest Log runtime 仍以 `28px`
-外置于书体右上透明空间作为待替换 fallback；用户已确认的 V9 将 `32px` 漆章
-直接压在详情页右上纸面。Tracker 以 `34px` 位于顶部中央；两处当前均只使用 normal
-无鼠标 Texture。旧七个 provider Button 在 hub menu 取得一一功能等价前
-继续可见可用，不能为了纯净构图提前隐藏。
+`1px`，disabled 只退灰，四态不重画轮廓。Quest Log runtime `1.18` 以
+`32px` 显示 accepted QS-A1 漆章，并直接压在详情页右上纸面；`40px` 保留区
+不得承载标题、正文或奖励。Tracker 以 `34px` 位于顶部中央；两处当前均只
+使用 normal 无鼠标 Texture。旧七个 provider Button 在 hub menu 取得一一
+功能等价前继续可见可用，不能为了纯净构图提前隐藏。
 
 ## ScrollBar 与操作 Button
 

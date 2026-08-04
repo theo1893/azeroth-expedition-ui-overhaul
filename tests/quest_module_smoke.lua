@@ -594,7 +594,7 @@ AzerothExpeditionUI:Refresh()
 assert(QuestLogFrame:GetWidth() == 676, "quest shell width was not applied")
 assert(QuestLogFrame:GetHeight() == 464, "quest shell height was not applied")
 assert(
-  QuestLogFrame.aeuiQuestRuntimeContract == "1.17",
+  QuestLogFrame.aeuiQuestRuntimeContract == "1.18",
   "quest runtime contract was not recorded"
 )
 assert(
@@ -624,8 +624,8 @@ assert(
 )
 assert(
   QuestLogFrame.aeuiQuestChromeSeal.layer == "OVERLAY" and
-    QuestLogFrame.aeuiQuestChromeSeal:GetWidth() == 28 and
-    QuestLogFrame.aeuiQuestChromeSeal:GetHeight() == 28 and
+    QuestLogFrame.aeuiQuestChromeSeal:GetWidth() == 32 and
+    QuestLogFrame.aeuiQuestChromeSeal:GetHeight() == 32 and
     QuestLogFrame.aeuiQuestChromeSeal.texcoord[1] == 0 and
     QuestLogFrame.aeuiQuestChromeSeal.texcoord[2] == 0.25,
   "Quest Log tool seal does not use the accepted normal cell"
@@ -633,11 +633,11 @@ assert(
 local sealPoint, sealRelative, sealRelativePoint, sealX, sealY =
   QuestLogFrame.aeuiQuestChromeSeal:GetPoint()
 assert(
-  sealPoint == "TOPLEFT" and
+    sealPoint == "TOPLEFT" and
     sealRelative == QuestLogFrame and
     sealRelativePoint == "TOPLEFT" and
-    sealX == 600 and sealY == 18,
-  "Quest Log tool seal escaped its external transparent-space box"
+    sealX == 576 and sealY == -68,
+  "Quest Log tool seal escaped its reserved detail-page corner"
 )
 
 for _, nativeTexture in ipairs({
@@ -1556,6 +1556,55 @@ assert(
   providerDetailCalls == 1 and
     QuestLogQuestDescription:GetWidth() == 214,
   "late pfQuest detail update escaped the right-page text geometry"
+)
+
+-- Simulate provider writes that settle after the hooked update returns. AEUI
+-- may reconcile two following frames, but must stop rather than maintain the
+-- geometry forever.
+QuestLogTitle1.fontString:SetFont("provider-late.ttf", 9, "")
+QuestLogQuestDescription:SetWidth(300)
+QuestLogItem6.screenBottom = 140
+local deferredReflow =
+  AzerothExpeditionUIQuestDriver:GetScript("OnUpdate")
+deferredReflow()
+assert(
+  QuestLogTitle1.fontString.font[1] == "pfui-font.ttf" and
+    QuestLogTitle1.fontString.font[2] == 12 and
+    QuestLogTitle1.fontString.font[3] == "OUTLINE" and
+    QuestLogQuestDescription:GetWidth() == 214 and
+    QuestLogDetailScrollChildFrame:GetHeight() == 572,
+  "first deferred Quest Log reconciliation missed late provider layout"
+)
+
+QuestLogTitle1.fontString:SetFont("provider-later.ttf", 8, "")
+QuestLogItem6.screenBottom = 130
+deferredReflow()
+assert(
+  QuestLogTitle1.fontString.font[1] == "pfui-font.ttf" and
+    QuestLogTitle1.fontString.font[2] == 12 and
+    QuestLogTitle1.fontString.font[3] == "OUTLINE" and
+    QuestLogDetailScrollChildFrame:GetHeight() == 582 and
+    AzerothExpeditionUI.modules.Quests.questLogReflowPasses == nil and
+    AzerothExpeditionUIQuestDriver:GetScript("OnUpdate") == nil,
+  "second deferred Quest Log reconciliation did not settle and stop"
+)
+local detailRectCallsAfterReflow =
+  QuestLogDetailScrollFrame.updateScrollChildRectCalls
+deferredReflow()
+assert(
+  QuestLogDetailScrollFrame.updateScrollChildRectCalls ==
+    detailRectCallsAfterReflow,
+  "Quest Log deferred reconciliation became a maintenance loop"
+)
+
+local runtimeStatus =
+  AzerothExpeditionUI.modules.Quests:GetRuntimeStatus()
+assert(
+  runtimeStatus:find("frame=1.18", 1, true) and
+    runtimeStatus:find("theme=1.6", 1, true) and
+    runtimeStatus:find("seal=detail-page-32", 1, true) and
+    runtimeStatus:find("font=pfui-font.ttf", 1, true),
+  "Quest runtime status cannot distinguish applied and stale deployments"
 )
 
 QuestLogFrame:GetScript("OnShow")()

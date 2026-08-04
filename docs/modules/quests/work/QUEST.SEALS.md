@@ -7,8 +7,8 @@
   `2026-08-03` 被用户否决，Tracker 方向仍有效
 - 当前已确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V9`
 - 当前生产正文：`QS-B1 V1`
-- 项目阶段：漆章美术／atlas `P5`；Quest Log placement／menu `P2`
-- 当前子状态：QS-A1 `runtime-exported / placement-invalidated`；QS-B1
+- 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu `P2`
+- 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1
   `simulation-confirmed / prompt-draft / awaiting-production-authorization`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
@@ -27,7 +27,9 @@
 - 用户于 `2026-07-31` 接受 `QS-A1 V1.r4` 的运行时视觉，并明确授权
   确定性色键、透明 RGB 清零与 `1024²` 归一化例外进入 P4／P5。不得再执行
   ImageGen。漆章物件美术和 atlas 不重开；Quest Log 旧锚点已失效，新的承载
-  与事务菜单先等待本地模拟确认。V1 的外沿皮革承托已被物理语义复核淘汰；
+  与事务菜单先等待本地模拟确认。runtime `1.18` 已按确认方向只修正既有
+  Texture 的页上位置；QS-B1 仍独立门禁真实 Button 和事务菜单。V1 的外沿
+  皮革承托已被物理语义复核淘汰；
   V2 因伪页唇、硬质按钮轮廓与断开的弹窗语义被用户否决；V3 虽改用真实
   shell 页缘和单张纸，却把“右页下方”误解成图层下方，仍从右侧中段横向
   伸出。V4 改为从 detail 下缘竖直夹入，但书签过长，展开态又新增一张大纸，
@@ -64,8 +66,9 @@
   disabled 使用同一 `60 × 58` Alpha；hover 只暖亮，pressed 只压暗并为未来
   Button 保留 runtime `1px` 下移合同，disabled 只退灰。当前两处都是无鼠标
   normal Texture，不伪造交互。
-- Quest Log 使用 `[600,-18,28,28]`，与书体可见 Alpha 重叠 `0`；Tracker
-  使用居中 `34 × 34`、顶部 outset `18px`，并通过 feature-detect
+- Quest Log runtime `1.18` 使用 `[576,68,32,32]`，直接与详情页纸面相接，
+  并把 `[572,64,40,40]` 保留为无标题／正文／奖励区域；Tracker 使用居中
+  `34 × 34`、顶部 outset `18px`，并通过 feature-detect
   `SetClampRectInsets` 补足顶缘限位。`130／230／330px` 均不进入列表区。
 - 最窄 `130px` 下，旧 `search` icon 覆盖漆章右下部，`giver／clean` 各触及
   `1px` 边条；这是功能迁移前的显式过渡层序。漆章在父 Frame 的 ARTWORK，
@@ -74,7 +77,7 @@
 - 最终展示区域合同：
   `tools/specs/quest_seals_runtime_display_region_v1.json`；ignored 机器报告
   SHA-256
-  `2f027e5459148da600835653e481f42ac535b2c1a2d44e1e43ad456587d2a97c`，
+  `7d84d0beb391a850f5ec84f46dd1f61230574bd105f449cd415cc3030f96e3bb`，
   Quest Log 与三种 Tracker 宽度均为 `pass`。真实排版使用最终 atlas 和
   当前旧按钮层序重新生成；不替代目标客户端验证。
 - P4／P5 后新增实际 ImageGen：`0`。当前不得进入 `P6`，也不得清理 work
@@ -84,10 +87,10 @@
 
 | ID | 当前对象 | 目标合同 |
 |---|---|---|
-| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前仍是 `[600,-18,28,28]` 无鼠标 Texture | QS-A1 V1.r4 美术保持 accepted；V1–V8 placement／menu 已否决。V9 已确认把 `32px` 漆章直接压在详情页右上纸面 `[576,68,32,32]`，命中／保留区 `[572,64,40,40]`；须等 QS-B1 代理完整后接入 |
+| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，runtime `1.18` 为 `[576,68,32,32]` 无鼠标 Texture | QS-A1 V1.r4 美术保持 accepted；`32px` 漆章直接压在详情页右上纸面，保留区 `[572,64,40,40]`。QS-B1 完成前不把它伪装成可点击 Button |
 | `QUEST.LOG.CHROME.SEAL.SUPPORT` | 无 runtime 对象 | V9 明确不创建书签、包角、皮革／黄铜承托；只允许漆章自身接触阴影落在现有右页纸面 |
 | `QUEST.LOG.CHROME.SEAL.MENU` | 尚无 runtime 对象 | V9 已确认：七个独立短书口事务签 Button 从 detail 右边界 `x=612` 向书外伸出，整体 `[612,112,112,158]`；真实页边 mask `[604,102,24,180]` 遮住根部，正文／奖励零占用。QS-B1 只生成一枚无字共用母版并确定性派生八态；功能等价前旧按钮保持 fail-open |
-| `QUEST.TRACKER.HUB.SEAL` | 尚无 runtime 对象 | adapter-owned `34 × 34` 顶部中央漆章；宽度 `W` 时 `x=floor((W-34)/2)`、`y=-18`，底边恰好落在 provider `16px` 工具条／列表起点，不移动任务内容 |
+| `QUEST.TRACKER.HUB.SEAL` | adapter-owned 无鼠标 Texture，已由临时 tracker runtime 挂载 | `34 × 34` 顶部中央漆章；宽度 `W` 时 `x=floor((W-34)/2)`、`y=-18`，底边恰好落在 provider `16px` 工具条／列表起点，不移动任务内容 |
 | `QUEST.TRACKER.HUB.MENU` | 尚无对象 | 未来独立交互批次；漆章点击后承载七项 provider 行为。本模拟不绘制、不实现，也不把它当成已有 Button |
 
 Tracker 纸面仍严格等于 live `pfQuestMapTracker`，四边 paper outset 都是
@@ -1405,8 +1408,22 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
   文字和一像素边缘提示危险。
 - 确认未接受：模拟像素、最终笔触、Alpha、切片、客户端字体栅格、Tooltip、
   动画或屏幕 clamp 实现。模拟图不得成为正式生产输入。
-- 下一门禁：用户审查并明确授权 `QS-B1 V1` 最终生产正文、冻结修复边界与
-  最多五次实际 ImageGen 调用；授权前不修改 runtime、不隐藏旧按钮、不生图。
+- 下一门禁：在目标客户端验证 runtime `1.18` 的页上位置；事务签菜单仍需用户
+  独立授权 `QS-B1 V1` 最终生产正文、冻结修复边界与最多五次实际 ImageGen
+  调用。授权前不实现菜单、不隐藏旧按钮、不生图。
+
+### `2026-08-04` runtime `1.18` 页上位置修复
+
+- 另一台设备报告“详情没有火漆”；远端审计同时确认默认 `origin/main` 仍停在
+  Quests runtime `1.16`／Theme `1.5`，没有当前分支的字体、详情和 V9 页上位置。
+- 根据已确认的 V9 几何，runtime `1.18` 直接复用 accepted QS-A1 atlas，把
+  无鼠标 Texture 从旧悬空 `[600,-18,28,28]` 移到详情页纸面
+  `[576,68,32,32]`；没有新增、修图或重新解释美术资产，ImageGen `0/0`。
+- 这次只解耦视觉 placement，不预先实现 QS-B1：漆章仍不接收鼠标，七项事务签
+  尚不存在，底部与 pfQuest 原 Button 全部保持 fail-open。
+- `/aeui status` 现在报告实际 Quest frame／theme／seal／font／detail scroll
+  range；测试设备必须先确认 `quest frame=1.18 theme=1.6 seal=detail-page-32`，
+  再判断 P5 的三项视觉修复是否生效。
 
 ## Quest Log 克制型书口事务签 — `QS-B1 V1`
 

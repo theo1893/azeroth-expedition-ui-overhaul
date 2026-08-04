@@ -293,7 +293,7 @@ def main() -> None:
     ):
         assert shared_ink in quest_theme_source
 
-    assert 'Quests.runtimeContract = "1.17"' in quest_source
+    assert 'Quests.runtimeContract = "1.18"' in quest_source
     assert "ApplyTrackerProviderFont" in quest_source
     assert "ResolveQuestNameInk" in quest_source
     assert quest_source.count("ResolveQuestNameInk(") >= 3

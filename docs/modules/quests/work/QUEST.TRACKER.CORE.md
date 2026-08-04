@@ -45,8 +45,8 @@
   / SHA-256
   `c6b1f64034fa69f01709403e592c3350445c9a6739f4b559242be48831666c61`
 - exporter／adapter：`tools/build_quest_tracker_paper_v1.py` /
-  `addon/AzerothExpeditionUI/Modules/Quests.lua` runtime contract `1.16`；
-  `Quest Visual Theme 1.5`
+  `addon/AzerothExpeditionUI/Modules/Quests.lua` runtime contract `1.18`；
+  `Quest Visual Theme 1.6`
 - 实际展示区域合同：
   `tools/specs/quest_tracker_display_region_v1.json`
 - 展示区域报告：
@@ -1180,7 +1180,7 @@ source-layout compositing、进一步内缩和背景替换。
   `pfQuestMapTracker` 上创建九个 `BACKGROUND` Texture；固定 cap 为
   左／右 `14px`、上 `12px`、下 `16px`，中心随 provider 的动态
   `130..330px` 宽度和内容高度拉伸。provider 黑色 panel Texture 和每行
-  半透明矩形被隐藏；当前 runtime `1.16` 进一步按用户裁决隐藏节点图标并
+  半透明矩形被隐藏；当前 runtime `1.18` 进一步按用户裁决隐藏节点图标并
   统一 Quest Log／Tracker 高对比深墨任务名难度色；动态
   文字、目标、七工具 Button、Tooltip、
   点击、拖动、模式与 SavedVariables 均保持原对象／脚本。
@@ -1441,7 +1441,7 @@ quest design contract、repository contract、asset workflow skill contract
 provider `OnUpdate` 保留和刷新幂等。但实际展示区域门禁明确失败，当前保持
 `P5 / display-region-blocked`，不能直接进入 Turtle WoW P6 验收。用户已
 否决 `QT-GEO V1` 外置端帽，`QT-GEO V2` 已按无外置书框的直接纸面方向完成
-本地预演。当前 runtime `1.16` 继续保留批次提交、底部安全区、条目 icon
+本地预演。当前 runtime `1.18` 继续保留批次提交、底部安全区、条目 icon
 隐藏及 Tracker 任务名旧统一字体／无描边／shadow，并把 Tracker 任务名与
 Quest Log 任务名收敛到同一个 `ResolveQuestNameInk` 难度色入口；完成率仍是
 独立状态墨色。下一门禁是 Turtle WoW 比较同一任务的跨面板名称颜色，并验证

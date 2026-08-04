@@ -245,3 +245,17 @@ QL-A2 在实机前保持本 work。后续 QL-B／QL-C／QL-D 交互资产仍需�
   range，验证宽度、内容高、滚轮限位和 provider late-load 后重施几何；通过。
 - 这只修正布局／滚动合同，不接受 QL-D 最终奖励槽美术，也不能替代 Turtle
   WoW 中 0／1／2／4／6 奖励、长中文正文与 UI scale 的实机 P6 证据。
+
+## `2026-08-04` runtime `1.18` 有限重排
+
+- 另一台设备仍出现旧裁切；远端审计确认其可获取的默认 `origin/main` 停在
+  runtime `1.16`，尚未包含 `1.17` 的动态内容高度修复。
+- 当前分支升至 `1.18`，并覆盖 pfQuest 在刷新函数返回后才稳定中文换行、奖励
+  锚点或附加金额／经验 Frame 的情况：每次 Quest Log 详情刷新后安排最多两次
+  下一帧重排，完成后立即清除 `OnUpdate` 待办，不形成长期几何争夺。
+- 测量继续优先使用真实可见对象，并额外纳入 `QuestLogMoneyFrame`、
+  `QuestLogRewardMoneyFrame`、`QuestLogRequiredMoneyFrame` 与
+  `QuestLogXPFrame`；最终仍以最底对象加 `12px` 确定 ScrollChild 高度。
+- Lua smoke 覆盖连续两帧高度变化与第三帧不再执行；`/aeui status` 会报告
+  当前 detail scroll range。仍须在目标客户端覆盖长中文正文和
+  0／1／2／4／6 奖励，才能进入 P6。

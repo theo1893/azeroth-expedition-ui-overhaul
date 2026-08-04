@@ -22,7 +22,7 @@
 |---|---|---:|---|---|
 | Core／pfUI | `api/expedition.lua`、`pfUI.lua`、作用域接管路由 | `P5` | pfUI `8.1.0-aeui.4` 已恢复公共绘制、原始默认值、全部未接管模块／skins 与配置入口；仅 Chat 辅助模块和 Quest Log skin 显式让渡；旧全局回退 SavedVariables 一次迁移 | 实机覆盖 Game Menu／`/pfui`、全模块加载、旧 SavedVariables、单模块失败隔离与第三方兼容 |
 | Chat | `modules/chat.lua` + AEUI Chat adapter | 核心 `P5` / r1.22；Tab 替换 `P5` | Full V1 主框九宫格、右框回收、Dark V2 四态 Tab／承托带、Dark V1 输入及 V3 未读已在 addon 内接入；V3 Tab／承托带保留为回退。Dark V2 固定 source SHA `616f965b…a1e3c` 确定性导出为 atlas `3fb505fa…be0` 与 shelf `44c7f85c…fda`；RGB-only 清理 source `13`＋LANCZOS `23` 个低 Alpha 绿边像素，Alpha 不变，最终绿溢色 `0`。六个最终真实排版场景、display-region 和 fresh-checkout package 均通过；目标设备无需构建。v1.22 保持经典 provider 配色 | 游戏设备可用时 `/reload`，验证 `chat-runtime=1.22`、四态／五 Tab 压缩、承托带、缩放、输入与经典颜色；通过前保持 P5 |
-| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P5` | Quest Log 主体保持 QL-A2 V4；Quests `1.17`／Theme `1.6` 将 18 行任务文字恢复为 `pfUI.font_default` 的 `12px OUTLINE`，并按最底动态对象重算右页 ScrollChild；奖励双列槽收敛为 `108px`／名称 `64px`。V1–V8 已否决，V9 的页上漆章、七个 `112×20px` 外侧短事务签、真实页边遮根、detail／奖励零占用与 `48px` outset 已获方向确认。`QS-B1 V1` 已形成单一无字母版、standard／danger 各四态 atlas 和七个独立代理 Button 的完整生产合同，当前 `P2 simulation-confirmed / prompt-draft / 0/5`，未接入也未隐藏原 Button。pfQuest tracker 临时纸面仍 `display-region-blocked` | 用户独立授权 `QS-B1 V1` 固定 Image 1／2、受限同循环 Image 3 edit、确定性后处理与最多五次实际调用；实机再验证字体、奖励、pfQuest 后加载、菜单代理和 fail-open |
+| Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P5` | Quest Log 主体保持 QL-A2 V4；Quests `1.18`／Theme `1.6` 将 18 行任务文字恢复为 `pfUI.font_default` 的 `12px OUTLINE`，按最底动态对象重算右页 ScrollChild，并为 pfQuest 的晚一帧中文换行／奖励锚点增加有限两帧重排。QS-A1 已接受漆章现在以 `32px` 无鼠标 Texture 直接落在详情页右上纸面；旧底部按钮仍 fail-open。V9 七个 `112×20px` 外侧事务签仍为 `QS-B1 V1 P2 simulation-confirmed / prompt-draft / 0/5`。`2026-08-04` 远端审计确认默认 `main` 只含 Quest runtime `1.16`／Theme `1.5`，与另一设备观察到的旧字体、旧详情裁切和无页上火漆完全一致，不能据此判定当前分支 P5 通过或失败。pfQuest tracker 临时纸面仍 `display-region-blocked` | 将当前分支交付到测试设备，并用 `/aeui status` 确认 frame `1.18`／theme `1.6`／seal `detail-page-32` 后复测字体和 0／1／2／4／6 奖励；QS-B1 生图继续等待独立授权 |
 | Map | `map.lua`、`minimap.lua`、`addonbuttons.lua` 等 | `P2` | 羊皮地图卷与黄铜罗盘已锁定 | 实机对象审计和组件级合同 |
 | Character | `character.lua`、`inspect.lua`、`dressup.lua` | `P2` | 香草同构角色面板已锁定 | 实机几何与装备槽／属性／页签拆分 |
 
@@ -49,10 +49,10 @@
 
 - 项目接管：pfUI `chat` 行为与 AEUI V3 单一左侧战地旧书视觉；AEUI
   QL-A2 V4 任务日志固定书体与安全区、QL-B0 18 行可读目录、QL-B1
-  地区箭头，以及 Quests `1.17`（QL-C 子合同 `1.7`）的 pfQuest 后加载
-  布局兼容。QS-A1 共用漆章仍以 Quest Log `28px`、Tracker `34px` 无鼠标
-  Texture 接入，但 Quest Log 旧悬空位置已标为待替换；新侧边承载／事务菜单
-  只完成本地模拟。Tracker 顶缘 clamp 增加 `18px`，旧七按钮继续可见可用。QL-B2 三态
+  地区箭头，以及 Quests `1.18`（QL-C 子合同 `1.7`）的 pfQuest 后加载
+  布局兼容。QS-A1 共用漆章以 Quest Log 详情页右上 `32px`、Tracker 顶部
+  `34px` 无鼠标 Texture 接入；Quest Log 旧悬空位置已移除，事务菜单仍只完成
+  本地模拟。Tracker 顶缘 clamp 增加 `18px`，旧七按钮继续可见可用。QL-B2 三态
   选择书签资产保留但 runtime 隐藏；QL-B0 V2 内框、地区条与任务条底板路线
   均已撤销。pfQuest tracker 使用临时大纸面 runtime，保留 provider 的全部
   动态内容与交互；当前因展示区域失败等待无边界 direct-paper 方向确认。

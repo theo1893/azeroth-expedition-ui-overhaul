@@ -354,6 +354,65 @@ def intersection_area(
     return width * height
 
 
+def contains_xywh(outer: list[int], inner: list[int]) -> bool:
+    ox, oy, ow, oh = outer
+    ix, iy, iw, ih = inner
+    return (
+        ix >= ox
+        and iy >= oy
+        and ix + iw <= ox + ow
+        and iy + ih <= oy + oh
+    )
+
+
+def intersects_xywh(first: list[int], second: list[int]) -> bool:
+    fx, fy, fw, fh = first
+    sx, sy, sw, sh = second
+    return not (
+        fx + fw <= sx
+        or sx + sw <= fx
+        or fy + fh <= sy
+        or sy + sh <= fy
+    )
+
+
+def visible_runtime_shell_alpha_overlap(
+    shell_path: Path,
+    texcoord: list[float],
+    frame_size: list[int],
+    box: list[int],
+    threshold: int,
+) -> int:
+    """Measure against the same cropped UV region the WoW client renders."""
+    with Image.open(shell_path) as opened:
+        shell = opened.convert("RGBA")
+    left, right, top, bottom = texcoord
+    crop = (
+        round(left * shell.width),
+        round(top * shell.height),
+        round(right * shell.width),
+        round(bottom * shell.height),
+    )
+    visible = shell.crop(crop).resize(
+        (int(frame_size[0]), int(frame_size[1])),
+        Image.Resampling.LANCZOS,
+    )
+    alpha = visible.getchannel("A")
+    x, y, width, height = box
+    box_left = max(0, int(x))
+    box_top = max(0, int(y))
+    box_right = min(visible.width, int(x + width))
+    box_bottom = min(visible.height, int(y + height))
+    if box_left >= box_right or box_top >= box_bottom:
+        return 0
+    return sum(
+        1
+        for py in range(box_top, box_bottom)
+        for px in range(box_left, box_right)
+        if alpha.getpixel((px, py)) > threshold
+    )
+
+
 def overlay_provider_icons(
     image: Image.Image,
     module: Any,
@@ -386,6 +445,27 @@ def render_previews(atlas: Image.Image) -> None:
         (ROOT / "tools" / "specs" / "quest_seals_simulation_v2.json").read_text(
             encoding="utf-8"
         )
+    )
+    display_contract = json.loads(
+        DISPLAY_CONTRACT.read_text(encoding="utf-8")
+    )
+    quest_log = display_contract["quest_log"]
+    spec["quest_log"]["seal"].update(
+        {
+            "box": quest_log["texture_box_xywh"],
+            "placement_contract": "direct-detail-page",
+            "annotation": "32×32 独立 Texture\\n直接压在详情页右上纸面",
+            "future_owner": (
+                "same reserved-corner adapter Button after QS-B1 parity"
+            ),
+        }
+    )
+    spec["constraints"].update(
+        {
+            "quest_log_seal_visual_outsets": [0, 0, 0, 0],
+            "quest_log_screen_safe_top_margin_required": 0,
+            "quest_log_seal_must_not_overlap_visible_book": False,
+        }
     )
     spec["version"] = "QS-A1 V1.r4 accepted runtime"
     module.render_ingame(ROOT, spec, REAL_LAYOUT_PREVIEW)
@@ -437,14 +517,12 @@ def build_display_report(
     records: dict[str, dict[str, Any]],
 ) -> dict[str, Any]:
     spec = json.loads(DISPLAY_CONTRACT.read_text(encoding="utf-8"))
-    module = load_simulation_module()
     quest_log = spec["quest_log"]
     ql_box = quest_log["texture_box_xywh"]
-    shell_overlap = module.visible_shell_alpha_overlap(
-        ROOT,
-        quest_log["shell_runtime"],
-        quest_log["frame"][0],
-        quest_log["frame"][1],
+    shell_overlap = visible_runtime_shell_alpha_overlap(
+        ROOT / quest_log["shell_runtime"],
+        quest_log["shell_texcoord"],
+        quest_log["frame"],
         ql_box,
         8,
     )
@@ -492,7 +570,17 @@ def build_display_report(
         ),
         "quest_log_shell_alpha_overlap_pixels": shell_overlap,
         "quest_log_shell_alpha_overlap_pass": shell_overlap
-        <= quest_log["shell_visible_alpha_overlap_max_pixels"],
+        >= quest_log["shell_visible_alpha_overlap_min_pixels"],
+        "quest_log_seal_inside_reserved_corner": contains_xywh(
+            quest_log["reserved_corner_xywh"], ql_box
+        ),
+        "quest_log_reserved_corner_inside_detail_page": contains_xywh(
+            quest_log["detail_page_xywh"],
+            quest_log["reserved_corner_xywh"],
+        ),
+        "quest_log_seal_avoids_title_safe_area": not intersects_xywh(
+            ql_box, quest_log["detail_title_safe_xywh"]
+        ),
         "tracker_geometry_pass": all(
             item["horizontally_centered"]
             and item["bottom_aligns_with_list_start"]
@@ -607,8 +695,9 @@ def source_manifest(
             {
                 "id": "QUEST.LOG.CHROME.SEAL",
                 "runtime_object": "QuestLogFrame adapter-owned Texture",
-                "box_xywh": [600, -18, 28, 28],
-                "visible_content_goal": [26, 26],
+                "box_xywh": [576, 68, 32, 32],
+                "reserved_corner_xywh": [572, 64, 40, 40],
+                "visible_content_goal": [30, 29],
                 "mouse": False,
             },
             {
@@ -658,7 +747,7 @@ def source_manifest(
         },
         "runtime_exports": [
             {
-                "contract": "QS-A1 V1.r4 / 1.0",
+                "contract": "QS-A1 V1.r4 / 1.1",
                 "manifest": RUNTIME_MANIFEST.name,
                 "file": display_path(RUNTIME),
                 "sha256": sha256(RUNTIME),
@@ -679,7 +768,7 @@ def runtime_manifest(
         "schema_version": 1,
         "batch": "QS-A1",
         "version": "V1.r4",
-        "runtime_contract": "1.0",
+        "runtime_contract": "1.1",
         "status": "runtime-exported",
         "source": {
             "file": display_path(SOURCE),
@@ -723,9 +812,10 @@ def runtime_manifest(
         "layout_contract": {
             "quest_log": {
                 "object": "QuestLogFrame.aeuiQuestChromeSeal",
-                "box_xywh": [600, -18, 28, 28],
+                "box_xywh": [576, 68, 32, 32],
+                "reserved_corner_xywh": [572, 64, 40, 40],
                 "texcoord_state": "normal full 64x64 cell",
-                "visible_content_goal": [26, 26],
+                "visible_content_goal": [30, 29],
                 "mouse": False,
             },
             "tracker": {

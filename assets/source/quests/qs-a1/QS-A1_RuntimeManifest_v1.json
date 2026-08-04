@@ -2,7 +2,7 @@
   "schema_version": 1,
   "batch": "QS-A1",
   "version": "V1.r4",
-  "runtime_contract": "1.0",
+  "runtime_contract": "1.1",
   "status": "runtime-exported",
   "source": {
     "file": "assets/source/quests/qs-a1/QuestToolWaxSeal_Master_v1.png",
@@ -185,15 +185,21 @@
     "quest_log": {
       "object": "QuestLogFrame.aeuiQuestChromeSeal",
       "box_xywh": [
-        600,
-        -18,
-        28,
-        28
+        576,
+        68,
+        32,
+        32
+      ],
+      "reserved_corner_xywh": [
+        572,
+        64,
+        40,
+        40
       ],
       "texcoord_state": "normal full 64x64 cell",
       "visible_content_goal": [
-        26,
-        26
+        30,
+        29
       ],
       "mouse": false
     },
@@ -213,7 +219,7 @@
     "status": "pass",
     "contract": "tools/specs/quest_seals_runtime_display_region_v1.json",
     "report": "generated/quests/QUEST-SEALS/QS-A1-V1/accepted-runtime/QS-A1_V1_r4_runtime_display_region.json",
-    "report_sha256": "2f027e5459148da600835653e481f42ac535b2c1a2d44e1e43ad456587d2a97c",
+    "report_sha256": "7d84d0beb391a850f5ec84f46dd1f61230574bd105f449cd415cc3030f96e3bb",
     "scenarios": [
       "QuestLogFrame",
       "tracker-130",
@@ -233,7 +239,7 @@
     },
     "real_layout_preview": {
       "file": "generated/quests/QUEST-SEALS/QS-A1-V1/accepted-runtime/QS-A1_V1_r4_runtime_real_layout.png",
-      "sha256": "741f8859ac7d16362c11196dbc97be54130f49351a85c2d38506daaf765dc940",
+      "sha256": "dc20595e1d7f4f69a8fc642189c9895a69cba9961a52b37e2eed98dbdd0ca241",
       "size": [
         1536,
         1024
