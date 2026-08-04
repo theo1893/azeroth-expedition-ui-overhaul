@@ -4419,3 +4419,54 @@ Final self-check before returning the image: exactly five and only five isolated
   实际 ImageGen `5/5`，流程错误 `0`；不得执行 attempt 6。attempt 5 不进入
   P4、不创建 source、不导出 TGA、不修改 Lua／addon。现行 V3 Tab／shelf 继续
   作为 runtime；后续若继续需新的用户授权或明确的确定性合同例外。
+
+### V2 确定性重排合同例外可行性预演
+
+- 触发／日期：用户回复“下一步”／`2026-08-04`。按资产工作流只推进当前
+  未阻塞的 review 门禁；这不是新一轮生成授权，也不授权从失败候选建立 source。
+- 操作边界：`review-only deterministic affine feasibility`。从每张 keyed 候选的
+  五个互不相交 search region 中提取完整可见 bbox；每个对象只做保持宽高比的
+  LANCZOS 等比缩放、水平居中、shelf 垂直居中／四态底对齐，以及全透明 RGB
+  清零。没有裁至 cell、重绘、内容感知补全、对象混合、状态修改或像素生成。
+- specification：`tools/specs/chat_tabs_dark_exception_feasibility_v1.json`，
+  SHA-256 `35381efb30b8ed7414bec42a324f0a12879a22f005170a55db61a35aa7cc313e`；
+  renderer：`tools/repack_chat_tabs_exception_feasibility_v1.py`，SHA-256
+  `f8d58a56fcffc63bf8350e9d80ac6e7f97647a963d9981f3b78d9d01632112fb`。
+  macOS 使用 `conda run -n py312 python`；ImageGen `0` 次，外部上传 `0`。
+- 预演 A／建议供体：V2 attempt 1 keyed，固定 SHA
+  `eb02fe7c1d25fc667c78827858cd938042bbc2f42952048291b8d6032e6b7ab4`。
+  它在五稿中保留了更明显的斜梯形、外撇下角、手切顶边和 selected 窄夹页；
+  重排结果
+  `generated/chat/core/CHAT.TABS.DARK.V2/exception-feasibility-v1/attempt-01/repacked-candidate.png`，
+  SHA-256 `616f965bb850605bcb67a98f60660feee35d80f8b95bc2b35ad72487df9a1e3c`。
+  source cell 外可见像素 `0`；shelf／normal／hover／selected／disabled 最小
+  cell 边距依次为 `15/10/9/6/11px`，全部通过 4px 隔离。真实 `440 × 320`／
+  `540 × 420` 排版为同目录 `review/candidate-real-layout.png`，SHA-256
+  `dafdb18edde9a70c65d54976b981f3ea1056dbc43340db93d82026e11734f489`；
+  三场景 display-region `pass`、violations `0`，报告 SHA-256
+  `75609e150d0c3d48d6cbea39876a710fb8bd499acb80eefffccbd342acd41768`。
+- 预演 B／对照供体：V2 attempt 5 keyed，固定 SHA
+  `fe4191cb2e3289581ef1663912ffd5bfbcb4c9bd264e26ea8a298afe26333ba1`。
+  它是最新视觉，但规则内框、近等宽形和机器式缝线更明显；重排结果
+  `generated/chat/core/CHAT.TABS.DARK.V2/exception-feasibility-v1/attempt-05/repacked-candidate.png`，
+  SHA-256 `26a2bd6c91d360f521edcdcaf862926951831bc746a2a4f97442ae2df2958eeb`。
+  source cell 外可见像素 `0`；五对象最小 cell 边距依次为
+  `15/10/9/6/11px`，4px 隔离通过。真实排版 SHA-256
+  `035c8991d32fb19a9c9d0de7275c6554551be4d6646b6b1985f514e44954b08c`；
+  三场景 display-region `pass`、violations `0`，报告 SHA-256
+  `e9154b402431abe1a7c38cd27043f795551b2fbd77c1b969b2107da86f0a76c8`。
+- 两个预演相对 scaffold exact polygon 均有诊断性 mask overflow；V2 scaffold
+  在冻结合同中只负责全局 cell、最大尺度与隔离，并明确不是逐像素 hard mask，
+  因此该值不属于 source cell 门禁，也没有被静默当成 source 接受。
+- 确定性复核：在独立 `/private/tmp` 输出目录重跑 renderer 与两个真实排版，
+  两张 repacked PNG 和两张 real-layout PNG 的 SHA 均与上述结果逐字节一致。
+- 内部视觉结论：两案都证明“生成内容本身可被确定性装入真实 cell／atlas／
+  三段式／排版”，因此历史失败的主要技术原因确为 provider 不服从坐标，而非
+  runtime 区域不足。A 的旧式手切物件身份明显优于 B，推荐 A；B 仅保留为对照。
+- 当前状态不变：`candidate-rejected / exception-feasibility-reviewed / P3`。
+  两张 repacked 图仍是被忽略的 review evidence，`promotion_allowed=false`；
+  没有创建 `assets/source`、TGA、Lua 或 addon 变更，现行 V3 runtime 保持。
+- 下一门禁：用户审视 A／B 的真实排版。若明确接受 A 或 B 的精确确定性重排
+  合同例外，才为该固定 donor、固定 transform、固定输出 SHA 建立 P4 source
+  provenance；若两案均不接受，则另行建立新批次模拟、完整 Prompt 与独立
+  ImageGen 授权。无论何种选择都不得执行原批次 attempt 6。
