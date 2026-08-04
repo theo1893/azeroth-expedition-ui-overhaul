@@ -7,10 +7,10 @@
   `CHAT.UNREAD`、`CHAT.TEXT`
 - 版本：`CHAT.CORE.V3 / runtime contract v1.21`；输入生产版本
   `CHAT.INPUT.DARK.V1.r3 attempt 4 / runtime-exported`；Tab 替换方向
-  `CHAT.TABS.DARK.V2.r4 / candidate-rejected / repair-budget-exhausted`；V1
-  attempt 3 已由用户否决
+  `CHAT.TABS.DARK.V2 deterministic re-layout exception A / source-accepted`；V1
+  attempt 3 已由用户否决，V2 原生成预算已耗尽
 - 子状态：核心 `runtime-exported`；输入 `runtime-exported / P5`；Tab 替换
-  `candidate-rejected / 5/5 / P3`
+  `source-accepted / P4`，当前 runtime 仍为 V3
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 当前操作：Full V1 固定 P4 source 已按全图比例确定性导出到 `1024²`
@@ -57,6 +57,14 @@
   约束 attempt 4；该稿仍下沉越界，且旧式轮廓继续退化。当前累计 `4/5`；最终
   `.r4` 仅把紧邻 attempt 4 作为 Image 5，逐对象执行已测量 source→target
   affine transform 与清残影，不再抽象重生；addon 仍未修改。
+- `2026-08-04`：V2 五次生产耗尽后，用户审视方案 A／B 的确定性重排真实排版，
+  明确回复“接受方案 A 的确定性重排合同例外进入 P4”。只把 attempt 1 keyed
+  donor `eb02fe7c…b7ab4` 按固定 specification／renderer 等比重排后的精确
+  `1536 × 1024 RGBA` 输出 `616f965b…a1e3c` 晋级为 tracked source：
+  `assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_A.png`。五对象均完整位于
+  source cell，最小边距 `6px`，三场景 display-region violations `0`。P4
+  接受不授权 TGA、atlas、Lua、TOC、pfUI 或 addon 接入；当前仍加载 V3 Tab／
+  shelf，原批次 attempt 6 永久禁止。
 - 已凝结视觉方向：`CHAT-DARK-SIM-V1 / simulation-confirmed / P2` 的 B 方向
   已由 `CHAT.FRAME.FULL.V1.r1 / runtime-exported / P5` 实现；不再作为并行候选
 - 已退回生产批次：`CHAT.FRAME.PAPER.V1 / candidate-rejected / P3`；固定
@@ -100,10 +108,12 @@
   - [`ChatControls_Master_v3.png`](../../../../assets/source/chat/v3/ChatControls_Master_v3.png)
   - [`ChatBookFrame_Full_V1_r1.png`](../../../../assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_r1.png)
   - [`ChatInput_Dark_V1_r3.png`](../../../../assets/source/chat/input-dark-v1/ChatInput_Dark_V1_r3.png)
+  - [`ChatTabs_Dark_V2_A.png`](../../../../assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_A.png)
 - source manifest：
   [`ChatV3_SourceManifest_v1.json`](../../../../assets/source/chat/v3/ChatV3_SourceManifest_v1.json)；
   [`ChatBookFrame_Full_V1_SourceManifest_v1.json`](../../../../assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_SourceManifest_v1.json)；
-  [`ChatInput_Dark_V1_SourceManifest_v1.json`](../../../../assets/source/chat/input-dark-v1/ChatInput_Dark_V1_SourceManifest_v1.json)
+  [`ChatInput_Dark_V1_SourceManifest_v1.json`](../../../../assets/source/chat/input-dark-v1/ChatInput_Dark_V1_SourceManifest_v1.json)；
+  [`ChatTabs_Dark_V2_SourceManifest_v1.json`](../../../../assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_SourceManifest_v1.json)
 - runtime manifest：
   [`ChatV3_RuntimeManifest_v1.json`](../../../../assets/source/chat/v3/ChatV3_RuntimeManifest_v1.json)
 
@@ -4470,3 +4480,42 @@ Final self-check before returning the image: exactly five and only five isolated
   合同例外，才为该固定 donor、固定 transform、固定输出 SHA 建立 P4 source
   provenance；若两案均不接受，则另行建立新批次模拟、完整 Prompt 与独立
   ImageGen 授权。无论何种选择都不得执行原批次 attempt 6。
+
+### V2 方案 A 确定性合同例外用户接受记录
+
+- 用户原文／日期：`接受方案 A 的确定性重排合同例外进入 P4`／`2026-08-04`。
+- 接受对象：固定 attempt 1 keyed donor SHA-256
+  `eb02fe7c1d25fc667c78827858cd938042bbc2f42952048291b8d6032e6b7ab4`；固定
+  specification `tools/specs/chat_tabs_dark_exception_feasibility_v1.json`，SHA
+  `35381efb30b8ed7414bec42a324f0a12879a22f005170a55db61a35aa7cc313e`；固定
+  renderer `tools/repack_chat_tabs_exception_feasibility_v1.py`，SHA
+  `f8d58a56fcffc63bf8350e9d80ac6e7f97647a963d9981f3b78d9d01632112fb`。
+- 唯一 P4 source：
+  [`ChatTabs_Dark_V2_A.png`](../../../../assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_A.png)，
+  `1536 × 1024 RGBA`，SHA-256
+  `616f965bb850605bcb67a98f60660feee35d80f8b95bc2b35ad72487df9a1e3c`；它与
+  用户看到的方案 A repacked candidate 逐字节相同，没有混合 B、scaffold、
+  模拟、旧 V3 或其他失败稿像素。
+- provenance manifest：
+  [`ChatTabs_Dark_V2_SourceManifest_v1.json`](../../../../assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_SourceManifest_v1.json)。
+  它冻结原始 prompt SHA、0.143.0 session／provider cache、raw／keyed donor、
+  五对象 source→target bbox、review／display-region 证据和用户例外范围。
+- source 技术证据：透明／半透明／不透明像素为
+  `1327364/17084/228416`；透明 RGB 非零值 `0`；声明 cell 外可见像素 `0`；
+  shelf／normal／hover／selected／disabled 均不触边，最小边距 `6px`。
+  精确接受稿保留 `13` 个 `alpha=1..6` 的低透明 green-dominant edge pixels，
+  以维持接受 SHA；未来 P5 exporter 必须只清理这些像素的 RGB、Alpha 不变，
+  并证明最终 atlas 可见绿溢色为 `0`。
+- 真实排版：方案 A `440 × 320`／`540 × 420` 预演 SHA-256
+  `b893a5c19ad747d4bd842d163d9f3ad724f7972dc1799f3c3b2792c6d0babaac`；
+  display-region 报告 SHA-256
+  `75609e150d0c3d48d6cbea39876a710fb8bd499acb80eefffccbd342acd41768`，
+  三场景 `pass`、violations `0`、first failure `null`。
+- 状态：`source-accepted / P4`。原生产 ImageGen 终态仍为 `5/5`，流程错误
+  `0`，attempt 6 禁止；本次 accept ImageGen `0`、上传 `0`。
+- 未授权：runtime TGA／atlas、Lua／XML／TOC、pfUI／addon 接入、替换现行
+  V3 Tab／shelf、P5、Turtle WoW P6 或任何 P6-C 清理。
+- 下一门禁：单独执行确定性 P4→P5 export：从该 tracked source 生成四态
+  `512²` atlas 与 `1024 × 64` shelf、执行 RGB-only 低 Alpha despill、接入
+  adapter 并保留 V3 fallback，再以最终 TGA 重跑真实排版、display-region、
+  Lua／repository contracts 和 fresh-checkout addon package 门禁。

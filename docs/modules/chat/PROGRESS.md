@@ -3,7 +3,7 @@
 ## 当前结论
 
 - 主模块视觉：已锁定。
-- Tab 替换方向：`CHAT.TABS.DARK.V2 / candidate-rejected / exception-feasibility-reviewed / P3`。
+- Tab 替换方向：`CHAT.TABS.DARK.V2 / source-accepted / P4`。
   V1 attempt 3 已因轮廓过于工整由用户否决；V2 随后按已确认的旧 V3 斜梯形
   皮签、外撇端部、手工缝线误差、压暗 selected 夹页和深色低亮 shelf 方向，
   使用固定 Image 1–4 与受限紧邻 Image 5 edit 完成固定 0.143.0 自主循环。
@@ -17,8 +17,13 @@
   可行性预演：两案 source cell 外像素均为 `0`、五对象 4px 隔离和三场景
   display-region 均通过，证明可在不重绘情况下装入真实 atlas；attempt 1 的
   手切斜梯形与外撇端部明显优于仍偏规整的 attempt 5，作为推荐 A。两案都仍是
-  review evidence，当前继续加载 V3 Tab／shelf；下一门禁是用户选择 A／B 的
-  精确确定性合同例外，或另行授权新批次。
+  review evidence。用户于 `2026-08-04` 明确接受方案 A 的固定 donor、固定
+  等比变换与固定输出 SHA 合同例外进入 P4；精确母版已保存为
+  `assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_A.png`，SHA-256
+  `616f965b…a1e3c`，并建立 source manifest。它与用户看到的方案 A 逐字节
+  相同，source cell 外像素 `0`、最小边距 `6px`；本次接受没有 ImageGen、
+  TGA、Lua 或 addon 变更，当前继续加载 V3 Tab／shelf。下一门禁为单独的
+  确定性 P4→P5 atlas／shelf 导出、adapter 接入和最终 package 门禁。
 - 输入视觉生产：`CHAT.INPUT.DARK.V1.r3 attempt 4 / runtime-exported / P5`。用户指出
   V3 浅金输入纸带在 Full V1 暖黑书页上会被读成现代进度条；已按真实
   `380 × 25px`、普通／聚焦两态、三段横向伸缩、`34/22px` 文字 inset，使用
@@ -209,7 +214,7 @@
 |---|---:|---|---|
 | `CHAT.FRAME`／`LEFT` | `P5` Full V1 / r1.19 | `ChatBookFrameFullV1.tga` 九宫格；唯一左侧实例；最终 atlas SHA `becb504f…25ae`；旧 V3 主框仅作回退 | `/reload` 检查主体、九宫格接缝、缩放、拖动和常用 UI Scale |
 | `CHAT.FRAME.RIGHT` | `P5` disabled-route | `single_chat_frame=1`；不分配资产 | 验证右框不显示且消息无丢失 |
-| `CHAT.TABS` | 当前 runtime `P5` V3；替换 `P3` V2 candidate-rejected／exception-feasibility-reviewed | 原 0.143.0 循环 `5/5`、流程错误 `0`；另以 ImageGen `0` 对 attempt 1／5 做固定等比重排预演，两案 source cell 外 `0`、4px 隔离与三场景 display-region 均通过；A=attempt 1 的旧式手切轮廓更好，B=attempt 5 仍偏规整；无 source／runtime／addon 变更 | 禁止 attempt 6；用户审视并明确接受 A／B 的固定 donor＋transform＋输出 SHA 合同例外，或另行授权新批次 |
+| `CHAT.TABS` | 当前 runtime `P5` V3；替换 source `P4` V2-A accepted | 用户已接受方案 A 的固定等比重排合同例外；tracked source `ChatTabs_Dark_V2_A.png` SHA `616f965b…a1e3c`，五对象 source cell 外 `0`、最小边距 `6px`、三场景 display-region `0` violations；原生产 `5/5`、流程错误 `0`，本次 accept ImageGen `0`；runtime／addon 尚未改 | 确定性导出四态 `512²` atlas 与 `1024×64` shelf，RGB-only 清理 13 个 alpha≤6 绿边像素，接入 adapter、复核最终真实排版／display-region／package gate；禁止 attempt 6 |
 | `CHAT.INPUT` | `P5` `CHAT.INPUT.DARK.V1` / r1.20 | `ChatInputDarkV1.tga` 普通／聚焦两状态三段式 atlas；固定 source SHA `4df36bc…cda0`，最终 TGA SHA `43cb9a01…766`，共享 Alpha、最终真实排版与五场景 `0` violations；旧 V3 atlas 仅作回退 | 实机验证 normal/focus、输入文字、光标、IME、频道头、历史、键盘事件与 `380/480px` 伸缩 |
 | `CHAT.INPUT.LANGUAGE` | `P1` | 可选原生 Button 已映射 | 实机确认对象、尺寸和语言状态 |
 | `CHAT.UNREAD` | `P5` V3 | 独立 `ChatFrameNTabFlash` 覆盖 | 实机验证闪烁配置与选中清除 |
@@ -236,7 +241,8 @@
 
 源资产与 provenance：
 [V3 source manifest](../../../assets/source/chat/v3/ChatV3_SourceManifest_v1.json)；
-[暖烟草输入 source manifest](../../../assets/source/chat/input-dark-v1/ChatInput_Dark_V1_SourceManifest_v1.json)。
+[暖烟草输入 source manifest](../../../assets/source/chat/input-dark-v1/ChatInput_Dark_V1_SourceManifest_v1.json)；
+[V2-A Tab source manifest](../../../assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_SourceManifest_v1.json)。
 裁切、UV、画布和 runtime SHA：
 [V3 runtime manifest](../../../assets/source/chat/v3/ChatV3_RuntimeManifest_v1.json)；
 [暖烟草输入 runtime manifest](../../../assets/source/chat/input-dark-v1/ChatInput_Dark_V1_RuntimeManifest_v1.json)。
@@ -311,14 +317,15 @@
 
 ### 当前优先门禁
 
-1. `CHAT.TABS.DARK.V2` 原固定 0.143.0 循环已以 `5/5`、流程错误 `0` 耗尽；
-   禁止 attempt 6。现已对固定 attempt 1／5 keyed 候选完成 ImageGen `0` 的
-   确定性等比重排可行性预演，两案 source cell 外像素 `0`、五对象 4px 隔离、
-   `440×320/540×420` 真实排版与三场景 display-region 全部通过。推荐 A=
-   attempt 1，因其手切斜梯形、外撇下角和 selected 窄夹页更接近确认方向；
-   B=attempt 5 仍偏规整。两案均未进入 P4，现行 V3 runtime 保持且 addon 未改。
-   下一门禁是用户明确接受 A／B 的固定 donor＋transform＋输出 SHA 合同例外，
-   或另行授权全新批次。
+1. `CHAT.TABS.DARK.V2` 方案 A 的固定 donor＋等比 transform＋输出 SHA 已由用户
+   明确接受为 `source-accepted / P4`。tracked source 为
+   `assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_A.png`，SHA
+   `616f965b…a1e3c`；五对象 cell 外 `0`、最小边距 `6px`，三场景
+   display-region `0` violations。原生产仍为 `5/5`、流程错误 `0`，attempt 6
+   禁止；本次接受 ImageGen `0`，现行 V3 runtime 与 addon 未改。下一门禁是
+   独立确定性 P4→P5：生成四态 atlas／shelf、RGB-only 清理 13 个 alpha≤6
+   绿边像素、接入 adapter 并保留 V3 fallback，再通过最终真实排版、
+   display-region、Lua／repository contracts 与 fresh-checkout package gate。
 2. `CHAT.INPUT.DARK.V1.r3 attempt 4` 已完成确定性 P4→P5：固定 source、正式
    `ChatInputDarkV1.tga`、三段 adapter、最终 TGA 真实排版、display-region 与
    静态合同均已通过；导出阶段 ImageGen `0` 次，原生产仍为 `4/5`、流程错误

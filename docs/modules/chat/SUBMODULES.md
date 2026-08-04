@@ -24,7 +24,7 @@
 | `CHAT.FRAME` | 左侧物理资产合同 | 空战地旧书九宫格；`CHAT.FRAME.FULL.V1.r1 attempt 2` 已导出为 `ChatBookFrameFullV1.tga`，runtime `1.19 / P5` | 不含 Tab、文字、输入、滚动或固定槽；`1608 × 978` source 不得整图直接加载或拉伸 |
 | `CHAT.FRAME.LEFT` | `pfUI.chat.left`／`pfChatLeft` | `CHAT.FRAME` 的唯一运行时实例；九个 texture slice 使用新 Full V1 atlas，旧 V3 主框只作 P6-C 前回退 | 保留移动、尺寸和左侧停靠行为 |
 | `CHAT.FRAME.RIGHT` | `pfUI.chat.right`／`pfChatRight` | 明确停用的兼容对象；`C.chat.right.enable=0` | 强制隐藏，不分配 AEUI 资产；源码保留以便关闭 overhaul 后对照 |
-| `CHAT.TABS` | `pfUI.chat.left.panelTop`、左侧 `ChatFrameNTab`／`ChatFrameNTabText` | 连续承托带；普通／悬停／选中／禁用 Tab，各自三段式；运行时文字居中 | 普通布局事件后按需恢复共同几何；`pfChatLeft.OnMove` 中检测真实局部 Scale 边沿并立即强制重放一次，现有维护节拍只检测 EffectiveScale 边沿作为全局缩放兜底；登录后只做一次延迟终局装配；普通状态维护只换 UV |
+| `CHAT.TABS` | `pfUI.chat.left.panelTop`、左侧 `ChatFrameNTab`／`ChatFrameNTabText` | 连续承托带；普通／悬停／选中／禁用 Tab，各自三段式；运行时文字居中；`CHAT.TABS.DARK.V2` 方案 A 的固定等比重排母版已 `source-accepted / P4`，当前游戏仍加载 V3 atlas／shelf，等待独立 P5 导出 | 普通布局事件后按需恢复共同几何；`pfChatLeft.OnMove` 中检测真实局部 Scale 边沿并立即强制重放一次，现有维护节拍只检测 EffectiveScale 边沿作为全局缩放兜底；登录后只做一次延迟终局装配；普通状态维护只换 UV；P4 source 不得整图加载 |
 | `CHAT.UNREAD` | `ChatFrameNTabFlash` | 蜡封或布结显示／隐藏 | 独立覆盖，不参与 Tab 排列 |
 | `CHAT.INPUT` | `pfUI.chat.editbox`、`ChatFrameEditBox` | 普通／聚焦暖烟草抄写纸条，各自左／中／右；`CHAT.INPUT.DARK.V1.r3 attempt 4` 已确定性导出为 `ChatInputDarkV1.tga`，runtime `1.20 / P5` | 两状态几何与 Alpha 完全相同；不烘焙输入文字；只替换三枚 slice 可见像素，真实 EditBox 行为保持；V3 atlas 保留到 P6-C |
 | `CHAT.INPUT.LANGUAGE` | 可选 `ChatFrameEditBoxLanguage` | 普通／悬停／按下／禁用／当前语言 | 独立 Button，不画进输入纸带 |

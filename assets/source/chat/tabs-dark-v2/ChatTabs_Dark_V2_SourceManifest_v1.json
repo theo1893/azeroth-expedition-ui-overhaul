@@ -1,0 +1,242 @@
+{
+  "schema_version": 1,
+  "module": "chat",
+  "batch": "CHAT.TABS.DARK.V2",
+  "component": "CHAT.TABS / CHAT.TAB_SHELF",
+  "accepted_version": "CHAT.TABS.DARK.V2 deterministic re-layout exception A",
+  "status": "source-accepted",
+  "phase": "P4",
+  "accepted_on": "2026-08-04",
+  "source": {
+    "file": "ChatTabs_Dark_V2_A.png",
+    "sha256": "616f965bb850605bcb67a98f60660feee35d80f8b95bc2b35ad72487df9a1e3c",
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      80,
+      118,
+      1457,
+      705
+    ],
+    "transparent_pixels": 1327364,
+    "partially_transparent_pixels": 17084,
+    "opaque_pixels": 228416,
+    "transparent_rgb_nonzero_values": 0,
+    "exact_green_visible_pixels": 7,
+    "exact_green_visible_alpha_min_max": [
+      1,
+      1
+    ],
+    "heuristic_green_dominant_visible_pixels": 13,
+    "heuristic_green_dominant_alpha_min_max": [
+      1,
+      6
+    ],
+    "green_edge_policy": "Preserved in the P4 source so its bytes remain identical to the explicitly accepted candidate. A future P5 exporter must clear RGB only for the 13 detected green-dominant pixels at alpha 1..6, preserve Alpha and all other source pixels, and prove zero visible green spill in the runtime atlases."
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "codex_package": "@openai/codex@0.143.0",
+    "generation_session": "019fcb68-8fee-79c0-b0d1-db978c62248d",
+    "provider_cache_result": "ig_0d1defc3d27c45fd016a7183515d7081918e9c95bc850fe4bd.png",
+    "authorized_prompt_commit": "19706f9",
+    "generation_execution_head": "a5196ae",
+    "provider_raw": "generated/chat/core/CHAT.TABS.DARK.V2/attempt-01/CHAT_TABS_DARK_V2_attempt01_raw.png",
+    "provider_raw_sha256": "3cd3a237569d92d995d604b53785fb2cff8f4a0303ad722d879874e2d7864ebe",
+    "keyed_donor": "generated/chat/core/CHAT.TABS.DARK.V2/attempt-01/CHAT_TABS_DARK_V2_attempt01_keyed.png",
+    "keyed_donor_sha256": "eb02fe7c1d25fc667c78827858cd938042bbc2f42952048291b8d6032e6b7ab4",
+    "accepted_candidate": "generated/chat/core/CHAT.TABS.DARK.V2/exception-feasibility-v1/attempt-01/repacked-candidate.png",
+    "accepted_candidate_sha256": "616f965bb850605bcb67a98f60660feee35d80f8b95bc2b35ad72487df9a1e3c",
+    "production_prompt": "docs/modules/chat/work/CHAT.CORE.V3.md",
+    "production_prompt_section": "CHAT.TABS.DARK.V2 complete production body used for attempt 1",
+    "production_prompt_sha256": "14bce5c3f0b0d5ed931bc8bddcd68a5e50257c0e8f9e5a8455031b24e483392f",
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/chat/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/chat/SUBMODULE_ART_BASELINES.md#chattabs",
+    "historical_prompt": {
+      "git_commit": "73da6c5",
+      "path": "prompts/chat/聊天框模块化资源_执行提示词_v3.md",
+      "role": "Historical Vanilla-era tab object and compact index-marker provenance; the V2 written contract overrides its pale selected state and bright shelf."
+    },
+    "locked_visual_references": [
+      {
+        "file": "assets/locked/chat/聊天框视觉基准_v1.png",
+        "sha256": "90e30ba405a2b5cdc707cc229e56c4f64e51d0e4051f1e98dbcd2ec2ee70ee06",
+        "role": "Highest period identity, compact HUD weight and physical field-journal tab authority."
+      },
+      {
+        "file": "assets/source/chat/frame-full-v1/ChatBookFrame_Full_V1_r1.png",
+        "sha256": "a97d9c5fa055a119cd5ea7809bdaa51460cddb9674355efcec35f98f6cd2c673",
+        "role": "Subordinate material continuity for dark walnut leather, warm soot-brown paper, wear scale and upper-left light."
+      },
+      {
+        "file": "assets/source/chat/v3/ChatTabs_Master_v3.png",
+        "sha256": "8172d9d5145ac16ed23913fb7fbf75e626e0976d6bb33b27a555de4c55853023",
+        "role": "Structure-only authority for the old skewed silhouette, kicked lower corners, selected lift and tab-over-shelf relationship; pale paper and bright old palette are excluded."
+      }
+    ],
+    "deterministic_exception": {
+      "status": "explicitly-user-authorized",
+      "operation": "Extract each complete object from its non-overlapping search region, preserve aspect ratio, resize with Pillow LANCZOS, center horizontally, vertically center the shelf, bottom-align all tab states, composite onto a clean transparent 1536x1024 canvas, and clear RGB only where Alpha is zero.",
+      "specification": "tools/specs/chat_tabs_dark_exception_feasibility_v1.json",
+      "specification_sha256": "35381efb30b8ed7414bec42a324f0a12879a22f005170a55db61a35aa7cc313e",
+      "tool": "tools/repack_chat_tabs_exception_feasibility_v1.py",
+      "tool_sha256": "f8d58a56fcffc63bf8350e9d80ac6e7f97647a963d9981f3b78d9d01632112fb",
+      "exception_review_commits": [
+        "65a122a",
+        "33963fe"
+      ],
+      "mixed_donor_pixels": false,
+      "repainted_pixels": false,
+      "cropped_at_declared_cells": false,
+      "deterministic_replay_byte_equal": true,
+      "objects": [
+        {
+          "id": "shelf",
+          "source_visible_bbox_xyxy": [38, 197, 1498, 292],
+          "declared_cell_xyxy": [64, 96, 1472, 232],
+          "target_box_xyxy": [80, 110, 1457, 217],
+          "fitted_visible_bbox_xyxy": [80, 118, 1457, 208],
+          "vertical_alignment": "center"
+        },
+        {
+          "id": "normal",
+          "source_visible_bbox_xyxy": [57, 577, 377, 732],
+          "declared_cell_xyxy": [64, 560, 384, 716],
+          "target_box_xyxy": [76, 570, 373, 703],
+          "fitted_visible_bbox_xyxy": [87, 570, 362, 703],
+          "vertical_alignment": "bottom"
+        },
+        {
+          "id": "hover",
+          "source_visible_bbox_xyxy": [416, 577, 736, 733],
+          "declared_cell_xyxy": [416, 560, 736, 716],
+          "target_box_xyxy": [428, 569, 725, 703],
+          "fitted_visible_bbox_xyxy": [439, 569, 714, 703],
+          "vertical_alignment": "bottom"
+        },
+        {
+          "id": "selected",
+          "source_visible_bbox_xyxy": [768, 561, 1101, 734],
+          "declared_cell_xyxy": [768, 560, 1088, 716],
+          "target_box_xyxy": [780, 566, 1073, 705],
+          "fitted_visible_bbox_xyxy": [792, 566, 1060, 705],
+          "vertical_alignment": "bottom"
+        },
+        {
+          "id": "disabled",
+          "source_visible_bbox_xyxy": [1137, 576, 1469, 733],
+          "declared_cell_xyxy": [1120, 560, 1440, 716],
+          "target_box_xyxy": [1132, 572, 1429, 705],
+          "fitted_visible_bbox_xyxy": [1140, 572, 1421, 705],
+          "vertical_alignment": "bottom"
+        }
+      ]
+    },
+    "imagegen_budget": {
+      "actual_calls": 5,
+      "maximum_calls": 5,
+      "process_errors": 0,
+      "remaining_calls": 0,
+      "attempt_6_allowed": false
+    }
+  },
+  "user_acceptance": {
+    "statement": "接受方案 A 的确定性重排合同例外进入 P4",
+    "scope": [
+      "Accept only the attempt-01 keyed donor with SHA eb02fe7c1d25fc667c78827858cd938042bbc2f42952048291b8d6032e6b7ab4.",
+      "Accept only the deterministic transformation recorded by tools/specs/chat_tabs_dark_exception_feasibility_v1.json.",
+      "Promote only the byte-identical RGBA output with SHA 616f965bb850605bcb67a98f60660feee35d80f8b95bc2b35ad72487df9a1e3c to tracked P4 source.",
+      "Record the contract exception, original generation, transform, review and display-region provenance."
+    ],
+    "not_authorized": [
+      "runtime TGA or atlas export",
+      "Lua, XML, TOC or pfUI integration changes",
+      "replacement of the currently loaded V3 tab or shelf runtime",
+      "P5 runtime-exported status",
+      "Turtle WoW target-client validation",
+      "P6 or P6-C cleanup"
+    ]
+  },
+  "logical_components": [
+    {
+      "id": "CHAT.TAB_SHELF",
+      "source_cell_xyxy": [64, 96, 1472, 232],
+      "states": ["static"],
+      "runtime_owner": "pfUI.chat.left.panelTop support texture",
+      "runtime_instances": 1,
+      "runtime_target_ui_px": [380, 16],
+      "stretch": "horizontal; fixed ends and low-frequency center"
+    },
+    {
+      "id": "CHAT.TABS",
+      "source_cells_xyxy": {
+        "normal": [64, 560, 384, 716],
+        "hover": [416, 560, 736, 716],
+        "selected": [768, 560, 1088, 716],
+        "disabled": [1120, 560, 1440, 716]
+      },
+      "states": ["normal", "hover", "selected", "disabled"],
+      "runtime_owner": "left ChatFrameNTab textures; ChatFrameNTabText remains runtime-owned",
+      "runtime_instances": 4,
+      "runtime_target_ui_px": [92, 30],
+      "stretch": "horizontal three-slice with 16px runtime left and right caps"
+    }
+  ],
+  "review_evidence": {
+    "repack_metrics": "generated/chat/core/CHAT.TABS.DARK.V2/exception-feasibility-v1/attempt-01/repack.metrics.json",
+    "repack_metrics_sha256": "b856966131565c1cf98c4bb105e6f6d17516ebbd8a70fb1095090a3bc0308741",
+    "candidate_metrics": "generated/chat/core/CHAT.TABS.DARK.V2/exception-feasibility-v1/attempt-01/review/candidate-review.metrics.json",
+    "candidate_metrics_sha256": "c1926d9d2ffe381e727c44ae7f67d3be64cbfd81e570649b6770025d1dc56677",
+    "real_layout_preview": "generated/chat/core/CHAT.TABS.DARK.V2/exception-feasibility-v1/attempt-01/review/candidate-real-layout.png",
+    "real_layout_preview_sha256": "b893a5c19ad747d4bd842d163d9f3ad724f7972dc1799f3c3b2792c6d0babaac",
+    "display_region_contract": "generated/chat/core/CHAT.TABS.DARK.V2/exception-feasibility-v1/attempt-01/review/display-region-contract.json",
+    "display_region_contract_sha256": "5839b9f5e33af07435fc32d9cd62c3e004a2b3c8ce6ed09cdcd2aa51e7a5ce2d",
+    "display_region_report": "generated/chat/core/CHAT.TABS.DARK.V2/exception-feasibility-v1/attempt-01/review/display-region-report.json",
+    "display_region_report_sha256": "75609e150d0c3d48d6cbea39876a710fb8bd499acb80eefffccbd342acd41768",
+    "scenario_count": 3,
+    "scenarios": [
+      "440x320 four-state representative layout",
+      "540x420 expanded layout",
+      "old V3 reference region contract inherited from the confirmed simulation"
+    ],
+    "outside_declared_cells_visible_pixels": 0,
+    "minimum_cell_margin_pixels": 6,
+    "display_region_violations": 0,
+    "first_failure": null,
+    "review_tool": "tools/review_chat_tabs_dark_candidate_v1.py",
+    "review_tool_sha256": "7ebe370dc7c3202f8e1a36371a0dbecb4dcb13b1c6bf206d049a320c2a2cf047"
+  },
+  "export_contract": {
+    "status": "defined / not-exported",
+    "phase": "P4",
+    "tab_runtime_atlas_target": [512, 512],
+    "tab_logical_state_size": [248, 120],
+    "tab_state_rows": [0, 1, 2, 3],
+    "tab_runtime_size_ui_px": [92, 30],
+    "tab_runtime_caps_left_right_ui_px": [16, 16],
+    "shelf_runtime_atlas_target": [1024, 64],
+    "shelf_logical_object_size": [1016, 56],
+    "shelf_runtime_height_ui_px": 16,
+    "runtime_adapter_status": "not changed; current ChatTabAtlasV3.tga and ChatTabShelfV3.tga remain loaded",
+    "required_before_p5": [
+      "deterministic source-to-atlas exporter",
+      "RGB-only cleanup of the 13 alpha-1..6 green-dominant edge pixels with Alpha unchanged",
+      "final TGA/PNG pixel and state-cell verification",
+      "final 440x320 and 540x420 real-layout review from runtime atlases",
+      "final display-region pass using atlas, adapter and provider constants",
+      "adapter texture mapping with V3 fallback retained",
+      "Lua and repository contracts",
+      "fresh-checkout addon package validator pass"
+    ]
+  },
+  "forbidden_runtime_uses": [
+    "do not load the 1536x1024 source master directly in Turtle WoW",
+    "do not treat the five-object sheet as one runtime background",
+    "do not bake ChatFrameNTabText, channel names, unread state, frame, messages, input, buttons, icons or other dynamic content from this source",
+    "do not change tab Button geometry, hit boxes, provider events, SavedVariables or nonvisual chat behavior",
+    "do not replace the current V3 runtime before a deterministic P5 export and package gate pass",
+    "do not claim P5, P6 or P6-C from this P4 acceptance"
+  ]
+}
