@@ -7,10 +7,10 @@
   `CHAT.UNREAD`、`CHAT.TEXT`
 - 版本：`CHAT.CORE.V3 / runtime contract v1.21`；输入生产版本
   `CHAT.INPUT.DARK.V1.r3 attempt 4 / runtime-exported`；Tab 替换方向
-  `CHAT.TABS.DARK.V2.r4 / repair-prepared / attempt-05-ready`；V1 attempt 3
-  已由用户否决
+  `CHAT.TABS.DARK.V2.r4 / candidate-rejected / repair-budget-exhausted`；V1
+  attempt 3 已由用户否决
 - 子状态：核心 `runtime-exported`；输入 `runtime-exported / P5`；Tab 替换
-  `repair-prepared / 4/5 / P3`
+  `candidate-rejected / 5/5 / P3`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 当前操作：Full V1 固定 P4 source 已按全图比例确定性导出到 `1024²`
@@ -4178,16 +4178,16 @@ Final self-check before returning the image: exactly five and only five isolated
 - 必须重新授权：新增／替换参考或上传图；使用更早／外部失败稿；改变对象数、
   状态、顺序、视觉方向、画布、cell、runtime 尺寸、层序、三段式、Alpha
   策略、provider 或允许烘焙内容。
-- 预算：当前 `4/5` 次实际 ImageGen generation/edit，含首次；流程／传输／权限／
+- 预算终态：`5/5` 次实际 ImageGen generation/edit，含首次；流程／传输／权限／
   上传／落盘错误若没有图片且没有 provider 生成证据则单列，不占额度。同一
-  流程错误针对性修复一次后仍重复则暂停。任何候选完整内审通过立即停止；
-  attempt 5 仍失败则 `candidate-rejected / repair-budget-exhausted`。
-- 当前状态：`repair-prepared / attempt-05-ready / P3`。原授权正文与记录由
-  commit `19706f9` 固定；attempt 1–4 均完整审查但未进入 source／runtime，
-  addon 未修改。
-- 下一门禁：提交 attempt 4 失败记录与上述完整 `.r4`，再上传固定 Image 1–4
-  和紧邻 attempt 4 raw Image 5 执行最终 measured affine edit。只有新候选或
-  provider 生成证据才递增为 `5/5`；失败后必须停止，不能执行 attempt 6。
+  流程错误针对性修复一次后仍重复则暂停。本批次五次均有 provider 图片证据，
+  流程错误为 `0`；attempt 5 仍未通过 source cell／隔离门禁，故预算关闭。
+- 当前状态：`candidate-rejected / repair-budget-exhausted / P3`。原授权正文与
+  记录由 commit `19706f9` 固定；attempt 1–5 均完整审查但未进入 source／
+  runtime，addon 未修改，现行 V3 Tab／shelf 保持。
+- 下一门禁：不得执行 attempt 6。若继续 V2，需由用户另行选择并授权新批次，
+  或明确接受某一视觉稿的确定性重排作为 source 合同例外；真实排版 pass 不能
+  替代本批次失败的 source cell／4px 隔离门禁。
 
 ### V2 自主修复循环
 
@@ -4197,13 +4197,14 @@ Final self-check before returning the image: exactly five and only five isolated
 | 2/5 | `CHAT.TABS.DARK.V2.r1` / `327cbfb`（执行 HEAD `8357997`） | edit；固定 Image 1／2／3／4 + 紧邻 attempt 1 raw Image 5 | session `019fcb76-619a-7cb2-8aa7-f754fd6f979d`／provider cache `ig_0179ddfc1c4cbcb6016a7186d9cb5c81918324999f7e0368bd.png` | raw `…r1_attempt02_raw.png`／`fe49337c8381b85532e676072c464caeee41c8a69d9a5ac7fe4e880dfe849373`；keyed `…r1_attempt02_keyed.png`／`c116fba1ad26a2dbf0b1e1f10b78c0c920139e474d1c0895b78c63ee8fd0df7c` | 同一 source cell／隔离失败：cell 外增至 `107236`；shelf 左／右／底触边，四 Tab 仍触底并各有横向触边 | 停止 edit，不上传 attempt 2；`.r2` 只用固定 Image 1–4 regenerate，以全局中心／最大 bbox 为首要约束 | 内部失败；计 `2/5` |
 | 3/5 | `CHAT.TABS.DARK.V2.r2` / `6b53077`（执行 HEAD `d411a38`） | regenerate；固定 Image 1／2／3／4，无 Image 5 | session `019fcb82-006f-7912-a9c3-4e44f51ff237`／provider cache `ig_0bec1ffd2ce57961016a7189d15c1c8191a3e1f24afea8d1cd.png` | raw `…r2_attempt03_raw.png`／`5802f92a83580c31d260e0bb21a34eb1636853e7d85e9ebdd771c73946bec28b`；keyed `…r2_attempt03_keyed.png`／`e39cef64f0247c306b32a0ce99b60b7db3176bc771b52860d0cb0ed6cf82790a` | source cell／隔离仍失败：cell 外 `141237`，五对象触底／横向触边；轮廓与 shelf stretch center 另有退化 | 不保留 attempt 3、不作 edit；`.r3` 仍 fixed Image 1–4 regenerate，改用保守 occupancy／纯绿带 | 内部失败；计 `3/5` |
 | 4/5 | `CHAT.TABS.DARK.V2.r3` / `3c8fa41`（执行 HEAD `ebdcad9`） | regenerate；固定 Image 1／2／3／4，无 Image 5 | session `019fcb94-7fb9-7d50-8338-948e13618ee1`／provider cache `ig_000b3cf6be3c85b5016a718e8ecf3c819184cd19b8bc575a84.png` | raw `…r3_attempt04_raw.png`／`b07efd4105e552b0aa3f91041bd7fb60332beef97d2133ff400fb02851f6b654`；keyed `…r3_attempt04_keyed.png`／`24d1853614c235780d276c46f3afaad62e030acfe1a74d6ca9687a35b4a548cb` | source cell／隔离仍失败：cell 外 `91375`；五对象仍触底／横向触边，旧式轮廓继续规整化 | 紧邻 attempt 4 仅作为最终 Image 5；`.r4` 不再抽象重生，逐对象执行实测 affine transform／清残影 | 内部失败；计 `4/5` |
-| 5/5 | `CHAT.TABS.DARK.V2.r4` / `318b439` | edit；固定 Image 1／2／3／4 + 紧邻 attempt 4 raw Image 5 |  |  |  |  | `ready` |
+| 5/5 | `CHAT.TABS.DARK.V2.r4` / `318b439`（执行 HEAD `3016c20`） | edit；固定 Image 1／2／3／4 + 紧邻 attempt 4 raw Image 5 | session `019fcba3-b4d6-7d31-8633-c87d77742884`／provider cache `ig_0efa766b930dbf05016a71927bfbc081918667f52444b83003.png` | raw `…r4_attempt05_raw.png`／`9dd402838c6397eb6cc0859d16461138ee1398fc90e4f56d3e3425f42ae76bc6`；keyed `…r4_attempt05_keyed.png`／`fe4191cb2e3289581ef1663912ffd5bfbcb4c9bd264e26ea8a298afe26333ba1` | source cell／隔离仍失败：cell 外 `98555`；shelf 几乎整体落在本 cell 下方，五对象均触及至少一个 4px 隔离边界 | 五对象、深胡桃烟褐、selected 夹页和真实排版可读性仍成立；但几何没有按 measured transform 落位，轮廓仍偏规整；预算耗尽，不再修复 | 内部失败；计 `5/5`；`repair-budget-exhausted` |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
 
-- 循环终态：`active / 4/5 / repair-prepared`；任何候选全部门禁通过即停止并进入
-  `candidate-reviewed / P3`，不自动创建 source 或修改 runtime。
+- 循环终态：`candidate-rejected / 5/5 / repair-budget-exhausted / P3`；流程
+  错误 `0`。没有候选通过全部门禁，不创建 source、不导出 runtime、不修改
+  addon，且不得执行 attempt 6。
 
 ### `CHAT.TABS.DARK.V2` attempt 1 执行与审查记录
 
@@ -4376,3 +4377,45 @@ Final self-check before returning the image: exactly five and only five isolated
   使用紧邻 attempt 4 raw 作为授权 Image 5，完整 `.r4` 精确把上述五个 source
   bbox affine 映射到 cell 内 target bbox，并擦除旧位置。attempt 5 后无论通过
   或失败都立即停止；失败则 `repair-budget-exhausted`。
+
+### `CHAT.TABS.DARK.V2.r4` attempt 5 执行与审查记录
+
+- 日期：`2026-08-04`；固定执行器／model／reasoning 与前次相同；session 与
+  provider cache result 如上表。child 完整回显 `.r4`、固定 Image 1–4 和紧邻
+  attempt 4 raw Image 5；Image 5 SHA 为 `b07efd41…f6b654`，没有上传更早或
+  外部失败稿。provider 明确完成一次 edit 并落盘；图片落盘后的 model cache
+  refresh timeout 不影响 provider 结果，不计流程错误。累计实际 ImageGen
+  `5/5`，生产流程错误终态 `0`。
+- raw：`generated/chat/core/CHAT.TABS.DARK.V2/attempt-05/CHAT_TABS_DARK_V2_r4_attempt05_raw.png`，
+  `1536 × 1024 RGB`，SHA-256
+  `9dd402838c6397eb6cc0859d16461138ee1398fc90e4f56d3e3425f42ae76bc6`；
+  exact `#00FF00` 为 `0`。默认 candidate-self key 使用 background score min
+  `209`、transparent threshold `208`、opaque threshold `160`；keyed RGBA
+  SHA-256 `fe4191cb2e3289581ef1663912ffd5bfbcb4c9bd264e26ea8a298afe26333ba1`，
+  透明 `1325209`、半透明 `1700`、不透明 `245955`，透明 RGB 清零；key
+  metrics SHA-256 `f4f97e4aecadce23be51deacb2d6291b45a40873cc0cf5dc777c8392298589f2`。
+- 范围／身份：仍恰为一枚 shelf 和 normal／hover／selected／disabled 四枚
+  无字对象，没有书框、文字、图标、输入、未读或其他烘焙内容，`pass`。深胡桃
+  烟褐、左上暖光、selected 的压暗夹页与同族四态关系仍可读；但四枚标签仍有
+  近等宽、规则缝线和完整内框倾向，手切误差弱于已确认模拟，属于 source
+  几何失败之后的第二视觉失败，不能作为 V2 合格稿。
+- source cell／隔离第一门禁仍 `fail`。keyed 全局可见 bbox
+  `[80,228,1453,718]`，声明 cell 外可见像素 `98555`。shelf 实际从约
+  `y=228` 开始，声明 shelf cell `[64,96,1472,232]` 内只剩 `121` 个可见像素，
+  主体几乎全部落在 cell 下方；normal bottom margin `1px`，hover right／bottom
+  margin `1px`，selected right／bottom margin `0px`，disabled right／bottom
+  margin `1px`。五对象全部触及至少一个 4px 隔离边界，measured affine edit
+  没有按目标位置执行，不能直接裁取或进入 atlas。
+- 真实排版：确定性 review 仍只按声明 cell 裁切候选，输出
+  `generated/chat/core/CHAT.TABS.DARK.V2/attempt-05/review/candidate-real-layout.png`，
+  SHA-256 `924c4f4e8aa2796a1a7a67f1f380b5f26c30ed11209ae5bf3cce9aa4e8af8ce9`；
+  metrics SHA-256 `309b754e449937f463f7744c71d3cd421e9e4a6a911770458f365f7e223e1939`。
+  `440 × 320`／15 行和 `540 × 420`／22 行三场景 display-region 仍为 pass、
+  violations `0`；报告 SHA-256
+  `e8f2346634df65877710bf2bb152ca291305c626494b46643f545ea029e0a38f`。
+  该 pass 只证明运行时 Frame／hit／文字区域公式，预演已经裁去越界像素，不能
+  解除 source cell／隔离失败。
+- 结论：`internal fail / candidate-rejected / repair-budget-exhausted / P3`。
+  实际 ImageGen `5/5`，流程错误 `0`；不得执行 attempt 6。attempt 5 不进入
+  P4、不创建 source、不导出 TGA、不修改 Lua／addon。现行 V3 Tab／shelf 继续
+  作为 runtime；后续若继续需新的用户授权或明确的确定性合同例外。

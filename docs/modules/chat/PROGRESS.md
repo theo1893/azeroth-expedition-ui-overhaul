@@ -3,21 +3,17 @@
 ## 当前结论
 
 - 主模块视觉：已锁定。
-- Tab 替换方向：`CHAT.TABS.DARK.V2 / simulation-confirmed / production-draft / P2`。V1 固定
-  0.143.0 循环已耗尽 `5/5`，流程错误 `2`；attempt 3 虽是唯一通过原冻结
-  cell、真实排版与展示区域的候选，但用户于 `2026-08-04` 否决其轮廓过于
-  工整，四态首先像现代网页标签，因此已转为 `candidate-rejected`，不得进入
-  P4 或作为 edit 输入。V2 改以旧 V3 的斜梯形皮签、外撇端部、手工缝线误差、
-  selected 夹页层和 Tab／承托带物理关系为轮廓权威，同时保留深胡桃烟褐、
-  无大面积浅纸 selected、无贯穿亮金 shelf。已用当前 Full V1 主框、Dark V1
-  输入、真实消息密度和精确 `440 × 320`／`540 × 420` 布局完成纯本地几何
-  对照预演；三场景 display-region `0` violations，ImageGen `0/0`、上传 `0`、
-  addon 未改。用户于 `2026-08-04` 在看到该具体预演后回复“继续”，确认旧式
-  不规则皮签、深胡桃烟褐、压暗 selected 夹页、无连续亮金 shelf、原尺寸和
-  层序方向；模拟像素未被接受。完整 V2 生产正文、四张固定输入职责、
-  `1536×1024` 五 cell、三段伸缩、安全区、色键和 `0/5` 修复包络已经通过
-  完整性预检；新技术 scaffold SHA 为 `f02fba2d…565a9`。当前等待独立生产
-  授权；尚未上传或调用 ImageGen，runtime 仍加载 V3。
+- Tab 替换方向：`CHAT.TABS.DARK.V2 / candidate-rejected / repair-budget-exhausted / P3`。
+  V1 attempt 3 已因轮廓过于工整由用户否决；V2 随后按已确认的旧 V3 斜梯形
+  皮签、外撇端部、手工缝线误差、压暗 selected 夹页和深色低亮 shelf 方向，
+  使用固定 Image 1–4 与受限紧邻 Image 5 edit 完成固定 0.143.0 自主循环。
+  实际 ImageGen `5/5`，流程错误 `0`，五次均有 provider 图片证据。attempt 5
+  raw／keyed SHA 分别为 `9dd40283…ae76bc6`／`fe4191cb…6333ba1`；对象身份、
+  深胡桃烟褐和三场景真实排版仍可读，display-region `0` violations，但 source
+  cell 外仍有 `98555` 个可见像素：shelf 几乎整体落在自身 cell 下方，五对象
+  全部触及至少一个 4px 隔离边界；标签轮廓仍偏规整。因此没有候选进入 P4，
+  不创建 source、不导出 runtime、不修改 addon，禁止 attempt 6。当前继续加载
+  V3 Tab／shelf；若继续 V2，需用户另行授权新批次或明确接受确定性合同例外。
 - 输入视觉生产：`CHAT.INPUT.DARK.V1.r3 attempt 4 / runtime-exported / P5`。用户指出
   V3 浅金输入纸带在 Full V1 暖黑书页上会被读成现代进度条；已按真实
   `380 × 25px`、普通／聚焦两态、三段横向伸缩、`34/22px` 文字 inset，使用
@@ -208,7 +204,7 @@
 |---|---:|---|---|
 | `CHAT.FRAME`／`LEFT` | `P5` Full V1 / r1.19 | `ChatBookFrameFullV1.tga` 九宫格；唯一左侧实例；最终 atlas SHA `becb504f…25ae`；旧 V3 主框仅作回退 | `/reload` 检查主体、九宫格接缝、缩放、拖动和常用 UI Scale |
 | `CHAT.FRAME.RIGHT` | `P5` disabled-route | `single_chat_frame=1`；不分配资产 | 验证右框不显示且消息无丢失 |
-| `CHAT.TABS` | 当前 runtime `P5` V3；替换 `P2` V2 simulation-confirmed／production-draft | V1 attempt 3 已由用户否决；用户已确认 V2 旧式斜梯形皮签、外撇端部、手工缝线、压暗夹页层及深色低亮 shelf 方向。完整生产正文、固定 Image 1–4、五 cell scaffold 与 `0/5` 包络已就绪；无上传、ImageGen `0/0`、runtime 未改 | 用户独立授权 `CHAT.TABS.DARK.V2` 固定四输入、受限 Image 5 edit 与最多五次实际 ImageGen；“继续”不等于生图授权 |
+| `CHAT.TABS` | 当前 runtime `P5` V3；替换 `P3` V2 candidate-rejected／repair-budget-exhausted | V2 固定 0.143.0 循环 `5/5`、流程错误 `0`；attempt 5 身份／材料与真实排版可读，但 source cell 外 `98555` 像素、五对象隔离失败且轮廓仍偏规整；无 source／runtime／addon 变更 | 禁止 attempt 6；用户选择重新授权新批次，或明确授权某一视觉稿的确定性重排合同例外 |
 | `CHAT.INPUT` | `P5` `CHAT.INPUT.DARK.V1` / r1.20 | `ChatInputDarkV1.tga` 普通／聚焦两状态三段式 atlas；固定 source SHA `4df36bc…cda0`，最终 TGA SHA `43cb9a01…766`，共享 Alpha、最终真实排版与五场景 `0` violations；旧 V3 atlas 仅作回退 | 实机验证 normal/focus、输入文字、光标、IME、频道头、历史、键盘事件与 `380/480px` 伸缩 |
 | `CHAT.INPUT.LANGUAGE` | `P1` | 可选原生 Button 已映射 | 实机确认对象、尺寸和语言状态 |
 | `CHAT.UNREAD` | `P5` V3 | 独立 `ChatFrameNTabFlash` 覆盖 | 实机验证闪烁配置与选中清除 |
@@ -310,12 +306,12 @@
 
 ### 当前优先门禁
 
-1. `CHAT.TABS.DARK.V2` 已完成模拟确认、生产正文完整性预检和用户精确授权；
-   固定 Image 1–4、五 cell scaffold、受限同循环紧邻 Image 5 edit 与新
-   `0/5` 包络已锁定，正文 SHA-256 为 `14bce5c3…e483392f`。当前状态为
-   `prompt-authorized / attempt-01-ready / P3`；下一门禁是提交授权记录后由固定
-   `imagegen-0-143-0` 执行 attempt 1。候选或 provider 生成证据才计数，流程
-   错误不占额度；本阶段仍不改 addon。
+1. `CHAT.TABS.DARK.V2` 已按精确授权完成固定 0.143.0 五次循环；终态为
+   `candidate-rejected / repair-budget-exhausted / P3`，实际 ImageGen `5/5`、
+   流程错误 `0`。attempt 5 的真实排版与 display-region 通过，但 source cell／
+   4px 隔离失败且视觉仍偏规整，不能进入 P4。禁止 attempt 6；下一门禁是用户
+   决定重新授权新批次，或明确授权某一视觉稿的确定性重排合同例外。现行 V3
+   runtime 保持，本阶段没有 addon 变更。
 2. `CHAT.INPUT.DARK.V1.r3 attempt 4` 已完成确定性 P4→P5：固定 source、正式
    `ChatInputDarkV1.tga`、三段 adapter、最终 TGA 真实排版、display-region 与
    静态合同均已通过；导出阶段 ImageGen `0` 次，原生产仍为 `4/5`、流程错误
