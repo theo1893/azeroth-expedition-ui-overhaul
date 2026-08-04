@@ -37,6 +37,9 @@ def main() -> None:
     status_work = (
         QUESTS / "work" / "QUEST.LOG.STATUS.md"
     ).read_text(encoding="utf-8")
+    rewards_work = (
+        QUESTS / "work" / "QUEST.LOG.REWARDS.md"
+    ).read_text(encoding="utf-8")
     leftpage_work = (
         QUESTS / "work" / "QUEST.LOG.LEFTPAGE.md"
     ).read_text(encoding="utf-8")
@@ -46,6 +49,28 @@ def main() -> None:
     seals_work = (
         QUESTS / "work" / "QUEST.SEALS.md"
     ).read_text(encoding="utf-8")
+    reward_sim_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_reward_slots_simulation_v1.json"
+    )
+    reward_sim_spec = json.loads(
+        reward_sim_spec_path.read_text(encoding="utf-8")
+    )
+    reward_display_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_reward_slots_sim_display_region_v1.json"
+    )
+    reward_display_spec = json.loads(
+        reward_display_spec_path.read_text(encoding="utf-8")
+    )
+    reward_sim_renderer_path = (
+        ROOT / "tools" / "render_quest_log_reward_slots_simulation_v1.py"
+    )
+    reward_sim_renderer = reward_sim_renderer_path.read_text(encoding="utf-8")
     seal_actions_sim_spec_path = (
         ROOT
         / "tools"
@@ -292,7 +317,7 @@ def main() -> None:
             "`QUEST.LOG.ACTION.SEAL_MENU.TAB.BASE`",
             "`QUEST.LOG.ACTION.SEAL_MENU.PAGE_EDGE_MASK`",
             "当前程序化暗皮革 fallback",
-            "双列单格收敛为 `108px`",
+            "`108×41px` 双列锚点",
             "名称安全宽 `64px`",
             "UpdateScrollChildRect()",
             "`QUEST.DIALOG.QUEST.SHELL`",
@@ -1314,6 +1339,81 @@ def main() -> None:
     assert "/Users/" not in status_work
     assert status_work.count("## 最终执行正文 — QL-B3-") == 3
 
+    require(
+        rewards_work,
+        (
+            "QL-D Quest Log 奖励槽 V1",
+            "`simulation-proposed / awaiting-user-confirmation`",
+            "几何 `P5 runtime-integrated`；最终美术 `P2`",
+            "当前实际 ImageGen 调用：`0/0`",
+            "`QUEST.LOG.REWARD.SLOT`",
+            "`108 × 41 UI px`",
+            "名称安全宽 `64px`",
+            "两列间隔",
+            "同行间隔",
+            "runtime `1.25`",
+            "Quest Visual Theme `1.8`",
+            "quest_log_reward_slots_simulation_v1.json",
+            "render_quest_log_reward_slots_simulation_v1.py",
+            "72be6792c80aab4485013205bc57314d2633c93baab0ba5960104f13925a6f1a",
+            "430bf6e76d75a6dad928004b22636905a52ee8bdccf4af5a862d895d3957e235",
+            "quest_log_reward_slots_sim_display_region_v1.json",
+            "0／1／2／4／6",
+            "violations `0`",
+            "确认不等于生成授权",
+        ),
+        "active QL-D reward-slot work",
+    )
+    assert "/Users/" not in rewards_work
+    assert reward_sim_spec["schema"] == (
+        "aeui.quest-log.reward-slots.simulation.v1"
+    )
+    assert reward_sim_spec["state"] == (
+        "simulation-proposed / awaiting-user-confirmation"
+    )
+    assert reward_sim_spec["layout"]["detail_content"] == [376, 72, 224, 306]
+    assert reward_sim_spec["layout"]["reward_slot_size"] == [108, 41]
+    assert reward_sim_spec["layout"]["reward_name_safe_width"] == 64
+    assert reward_sim_spec["layout"]["reward_column_gap"] == 8
+    assert reward_sim_spec["layout"]["reward_row_gap"] == 4
+    assert reward_sim_spec["constraints"]["imagegen_calls"] == 0
+    assert reward_sim_spec["constraints"]["new_runtime_bitmap_assets"] == 0
+    assert reward_sim_spec["constraints"]["counts_covered_by_display_contract"] == [
+        0,
+        1,
+        2,
+        4,
+        6,
+    ]
+    assert len(reward_sim_spec["content"]["items"]) == 6
+    assert reward_display_spec["schema"] == "aeui-display-region-contract-v1"
+    assert reward_display_spec["atlas"]["size"] == [432, 41]
+    assert [scenario["id"] for scenario in reward_display_spec["scenarios"]] == [
+        "zero-rewards",
+        "one-reward",
+        "two-rewards",
+        "four-rewards",
+        "six-rewards",
+    ]
+    require(
+        reward_sim_renderer,
+        (
+            "draw_reward_slot",
+            "reward_boxes",
+            "validate_geometry",
+            "reward column gap mismatch",
+            "reward row gap mismatch",
+            "imagegen_calls",
+            "user-visible-direction-confirmation",
+        ),
+        "QL-D deterministic simulation renderer",
+    )
+    compile(
+        reward_sim_renderer,
+        str(reward_sim_renderer_path),
+        "exec",
+    )
+
     status_review_tool = (
         ROOT / "tools" / "review_quest_log_status_candidate_v1.py"
     )
@@ -2324,7 +2424,7 @@ def main() -> None:
     require(
         quest_theme,
         (
-            'contract = "1.6"',
+            'contract = "1.8"',
             "QuestLogShellV4",
             "QuestLogDirectoryMarksV1",
             "QuestTrackerPaperV1",
@@ -2352,11 +2452,25 @@ def main() -> None:
     require(
         quest_adapter,
         (
-            'Quests.runtimeContract = "1.18"',
+            'Quests.runtimeContract = "1.25"',
             "ApplyTrackerProviderFont",
             "ResolveQuestNameInk",
             "ApplyDirectoryTypography",
+            "DETAIL_INLINE_MONEY_TEXT_NAMES",
+            '"QuestLogSpacerFrame"',
+            "LayoutRewardGroup",
+            "AnchorRewardHeading",
+            "ReadQuestLogRewardMoney",
+            "EnsureRewardSlotContainer",
+            "SuppressRewardSurface",
+            "CountVisibleRewardItems",
+            "GetRewardGroupTopGap",
+            "native-container-acyclic-visible-fallback-gap-8",
             "NormalizeDirectoryInlineStatus",
+            "ResolveRenderedDirectoryTagInk",
+            "LockDirectoryTagInk",
+            "RestoreDirectoryTagInk",
+            '"questLogTitleLeave"',
             "ResolveDirectoryStatusInks",
             "pfUI.font_default",
             "addon.questVisualTheme",
@@ -2402,6 +2516,10 @@ def main() -> None:
             "MeasureDetailContentHeight",
             "UpdateDetailScrollChildHeight",
             "rewardSlotWidth = 108",
+            "rewardSlotHeight = 41",
+            "rewardColumnGap = 8",
+            "rewardRowGap = 4",
+            "rewardSectionGap = 5",
             "rewardNameWidth = 64",
             "QuestLogHighlightFrame",
             "LAYOUT.detail.contentWidth",

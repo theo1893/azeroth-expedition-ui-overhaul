@@ -527,6 +527,31 @@ UI 或文字。任何一项不满足都不要输出。
   客户端只有在看到 `quest frame=1.18 theme=1.6` 且 font 指向 pfUI 默认字体后，
   才能把画面作为本版 P5 验收证据。
 
+## `2026-08-04` runtime `1.19` 无描边修复
+
+- 最新实机截图确认 runtime `1.18` 的 `12px OUTLINE` 在任务纸面形成粗黑阴影，
+  中文笔画被描边吞没；这不是额外 shadow 回生，而是主题 flags 本身造成。
+- Theme `1.7` 保持 `pfUI.font_default`、`12px` 和既有语义墨色，但把任务名与
+  拆分状态 FontString 的 flags 置空，并继续把 shadow color／offset 清零。
+  provider 后写入仍由原有最多两帧有限重排恢复，不新增维护循环。
+- Lua smoke 已覆盖 18 条活动行、模板拆分状态、pfQuest online 文本和晚写入
+  FontString 均为无描边／零 shadow。下一份实机证据必须先确认
+  `quest frame=1.19 theme=1.7`。
+
+## `2026-08-04` runtime `1.22` 类型标签写入锁
+
+- runtime `1.20`／`1.21` 对内联标签与 `QuestLogTitleNTag` 做过刷新后的单次
+  着色，但实机证明原生选中、悬停／离开或 pfQuest 的更晚写入仍会把
+  （团队／精英／地下城）恢复成难度色。
+- runtime `1.22` 以屏幕上真实、非空的 Tag FontString 为权威，在它自身的
+  `SetTextColor` 上安装事件驱动语义锁；普通刷新、选中、悬停／离开及 provider
+  后写都只能落回任务类型深紫。锁不轮询、不改写行 Button 的原生难度色
+  `r/g/b`，内联半角／全角括号标签继续由显式色码处理。
+- `/aeui status` 新增 `tag=semantic-setter-lock`。下一份实机证据必须同时看到
+  `quest frame=1.22 theme=1.8`，并复测普通、选中、悬停、离开四种状态。
+- 随后的 runtime `1.22` 实机截图已确认左页类型文字颜色修复；runtime `1.23`
+  原样保留该锁，本轮不再改动已验证的类型色实现。
+
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |

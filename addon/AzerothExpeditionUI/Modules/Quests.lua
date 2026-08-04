@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local Quests = {}
-Quests.runtimeContract = "1.18"
+Quests.runtimeContract = "1.25"
 
 local THEME = addon.questVisualTheme
 local SHELL_TEXTURE = THEME.media.questLogShell
@@ -39,7 +39,16 @@ local LAYOUT = {
     textWidth = 214,
     objectiveWidth = 204,
     rewardSlotWidth = 108,
+    rewardSlotHeight = 41,
     rewardNameWidth = 64,
+    rewardColumnGap = 8,
+    rewardRowGap = 4,
+    rewardIconSize = 33,
+    rewardContentInset = 4,
+    rewardNameGap = 4,
+    rewardHeaderGap = 5,
+    rewardLabelHeight = 14,
+    rewardSectionGap = 5,
     contentBottomPadding = 12,
     contentMaxHeight = 4096,
   },
@@ -53,6 +62,35 @@ local LAYOUT = {
   actionWidth = 78,
   actionHeight = 22,
   actionGap = 5,
+}
+
+-- Quest Log is scoped to AEUI, so pfUI's Quest Log skin (and its item.backdrop)
+-- is intentionally not loaded. Build a small adapter-owned visual container
+-- around each real Blizzard reward Button instead of styling a frame that does
+-- not exist on the scoped runtime path. The container is programmatic fallback
+-- art only; it keeps every live icon, count, name, tooltip and click handler.
+local REWARD_CONTAINER = {
+  backdrop = {
+    bgFile = "Interface\\BUTTONS\\WHITE8X8",
+    edgeFile = "Interface\\BUTTONS\\WHITE8X8",
+    tile = false,
+    tileSize = 0,
+    edgeSize = 1,
+    insets = {
+      left = 1,
+      right = 1,
+      top = 1,
+      bottom = 1,
+    },
+  },
+  normal = {
+    background = { 0.36, 0.22, 0.08, 0.20 },
+    border = { 0.31, 0.17, 0.06, 0.72 },
+  },
+  hover = {
+    background = { 0.44, 0.29, 0.11, 0.28 },
+    border = { 0.50, 0.31, 0.12, 0.90 },
+  },
 }
 
 local DIRECTORY = {
@@ -336,6 +374,16 @@ local function ApplyThemeFont(text, font, fallbackSize)
   end
 end
 
+local function ApplyThemeFontFixed(text, font)
+  if not text or not text.SetFont or not font then
+    return
+  end
+  local path = ResolveThemeFontPath(font)
+  if path and font.size then
+    text:SetFont(path, font.size, font.flags or "")
+  end
+end
+
 local function ApplyTrackerProviderFont(text)
   if not text or not text.SetFont then
     return
@@ -389,6 +437,144 @@ local DIRECTORY_TEXT_SUFFIXES = {
   "Complete",
 }
 
+local function HasVisibleDirectoryText(text)
+  if not text or not text.GetText then
+    return false
+  end
+  local value = text:GetText()
+  return value and string.find(value, "%S") and true or false
+end
+
+local function ContainsDirectoryToken(value, token)
+  if not value or not token then
+    return false
+  end
+  local rendered = tostring(token)
+  return rendered ~= "" and
+    string.find(value, rendered, 1, true) and
+    true or false
+end
+
+local function ResolveRenderedDirectoryTagInk(
+  text,
+  questTypeColor,
+  completionColor
+)
+  if not HasVisibleDirectoryText(text) then
+    return nil
+  end
+
+  local value = text:GetText()
+  if ContainsDirectoryToken(value, FAILED) then
+    return THEME.ink.failed
+  end
+  if ContainsDirectoryToken(value, COMPLETE) then
+    return completionColor or THEME.ink.complete
+  end
+
+  -- QuestLogTitleNTag is the rendered source of truth. Turtle/pfQuest can
+  -- show a localized type label even when the API tag used by the adapter is
+  -- absent or differs from that label, so every other non-empty Tag uses the
+  -- stable quest-type ink instead of inheriting the quest difficulty colour.
+  return questTypeColor or THEME.ink.questType
+end
+
+local function CollectDirectoryTagTexts(row)
+  local texts = {}
+  local seen = {}
+  local function Add(text)
+    if text and text.SetTextColor and not seen[text] then
+      seen[text] = true
+      table.insert(texts, text)
+    end
+  end
+
+  if row and row.GetName then
+    local name = row:GetName()
+    if name then
+      Add(_G[name .. "Tag"])
+      Add(_G[name .. "QuestTag"])
+    end
+  end
+  if row then
+    Add(row.tag)
+    Add(row.questTag)
+  end
+  if row and row.GetRegions then
+    for _, region in ipairs({ row:GetRegions() }) do
+      local regionName =
+        region and region.GetName and region:GetName()
+      if
+        regionName and
+        string.find(string.lower(regionName), "tag", 1, true)
+      then
+        Add(region)
+      end
+    end
+  end
+  return texts
+end
+
+local function LockDirectoryTagInk(text, color)
+  if not text or not text.SetTextColor then
+    return
+  end
+  if not color then
+    text.aeuiQuestSemanticInk = nil
+    return
+  end
+
+  -- Native QuestLog_Update, selection, hover and late providers all write
+  -- directly to this same FontString. A one-shot SetTextColor therefore loses
+  -- to whichever writer runs last. Wrap the real FontString setter so every
+  -- later write is constrained to its current semantic ink without polling.
+  if text.SetTextColor ~= text.aeuiQuestSemanticInkLock then
+    local downstream = text.SetTextColor
+    local lock = function(self, red, green, blue, alpha)
+      local semantic = self.aeuiQuestSemanticInk
+      if semantic then
+        return downstream(
+          self,
+          semantic[1],
+          semantic[2],
+          semantic[3],
+          semantic[4]
+        )
+      end
+      return downstream(self, red, green, blue, alpha)
+    end
+    text.aeuiQuestSemanticInkSetter = downstream
+    text.aeuiQuestSemanticInkLock = lock
+    text.SetTextColor = lock
+  end
+
+  text.aeuiQuestSemanticInk = color
+  text:SetTextColor(color[1], color[2], color[3], color[4])
+end
+
+local function RestoreDirectoryTagInk(row)
+  if not row or not row.GetName then
+    return
+  end
+  local applied
+  for _, text in ipairs(CollectDirectoryTagTexts(row)) do
+    local color = ResolveRenderedDirectoryTagInk(
+      text,
+      row.aeuiQuestTypeColor,
+      row.aeuiQuestCompletionColor
+    )
+    if color then
+      LockDirectoryTagInk(text, color)
+      applied = color
+    else
+      LockDirectoryTagInk(text, nil)
+    end
+  end
+
+  row.aeuiQuestRenderedTagColor = applied
+  row.aeuiQuestTagInkLocked = applied and true or nil
+end
+
 -- Turtle's QuestLogTitle template variants may expose completion and type
 -- labels either through the Button's main FontString or as sibling regions.
 -- Restyle every real text region after the provider update so those labels do
@@ -402,6 +588,9 @@ local function ApplyDirectoryTypography(
   if not row then
     return
   end
+
+  row.aeuiQuestTypeColor = questTypeColor
+  row.aeuiQuestCompletionColor = completionColor
 
   ApplyDirectoryFontString(row)
   local mainText
@@ -437,7 +626,11 @@ local function ApplyDirectoryTypography(
         if text and text ~= mainText then
           local color = statusColor
           if suffix == "Tag" or suffix == "QuestTag" then
-            color = questTypeColor or statusColor
+            color = ResolveRenderedDirectoryTagInk(
+              text,
+              questTypeColor,
+              completionColor
+            )
           elseif suffix == "Complete" then
             color = completionColor or statusColor
           end
@@ -448,6 +641,7 @@ local function ApplyDirectoryTypography(
       end
     end
   end
+  RestoreDirectoryTagInk(row)
 end
 
 local function ResolveDirectoryStatusInks(questTag, isComplete)
@@ -474,12 +668,50 @@ end
 -- quest title so provider-owned level and title text keep the shared
 -- difficulty ink. A localized questTag in that suffix receives quest-type ink;
 -- completion/failure suffixes retain their own semantic ink.
+local function FindInlineParenthetical(value, startAt)
+  local asciiStart = string.find(value, "(", startAt or 1, true)
+  local wideStart = string.find(value, "（", startAt or 1, true)
+  local openAt
+  local closeToken
+  if asciiStart and (not wideStart or asciiStart < wideStart) then
+    openAt = asciiStart
+    closeToken = ")"
+  elseif wideStart then
+    openAt = wideStart
+    closeToken = "）"
+  end
+  if not openAt then
+    return nil
+  end
+  local closeAt = string.find(value, closeToken, openAt + 1, true)
+  if not closeAt then
+    return nil
+  end
+  return openAt, closeAt + string.len(closeToken) - 1
+end
+
+local function ApplyInlineInk(value, first, last, color, baseColor)
+  if not first or not last or not color or not color.code then
+    return value
+  end
+  local reset =
+    (baseColor and baseColor.code) or THEME.ink.body.code
+  return
+    string.sub(value, 1, first - 1) ..
+    color.code ..
+    string.sub(value, first, last) ..
+    reset ..
+    string.sub(value, last + 1)
+end
+
 local function NormalizeDirectoryInlineStatus(
   text,
   title,
   questTag,
   statusColor,
-  questTypeColor
+  questTypeColor,
+  completionColor,
+  baseColor
 )
   if
     not text or
@@ -503,22 +735,70 @@ local function NormalizeDirectoryInlineStatus(
 
   local prefix = string.sub(value, 1, titleEnd)
   local suffix = string.sub(value, titleEnd + 1)
-  local inlineColor = statusColor
-  if
-    questTypeColor and
-    questTag and
-    string.find(suffix, questTag, 1, true)
-  then
-    inlineColor = questTypeColor
-  end
+  -- Turtle templates do not consistently expose the localized type label as
+  -- a sibling FontString, and some omit an opening color escape entirely.
+  -- Remove provider escapes first, then inject semantic ink around the real
+  -- rendered parenthetical label instead of merely replacing existing codes.
   local normalized = string.gsub(
     suffix,
     "|[cC]%x%x%x%x%x%x%x%x",
-    inlineColor.code
+    ""
   )
-  if normalized ~= suffix then
-    text:SetText(prefix .. normalized)
+  normalized = string.gsub(normalized, "|[rR]", "")
+
+  local firstStart, firstEnd = FindInlineParenthetical(normalized, 1)
+  local secondStart, secondEnd
+  if firstEnd then
+    secondStart, secondEnd =
+      FindInlineParenthetical(normalized, firstEnd + 1)
   end
+
+  if questTypeColor then
+    if not firstStart and questTag then
+      local renderedTag = tostring(questTag)
+      firstStart, firstEnd =
+        string.find(normalized, renderedTag, 1, true)
+    end
+    if firstStart then
+      if completionColor and secondStart then
+        normalized = ApplyInlineInk(
+          normalized,
+          secondStart,
+          secondEnd,
+          completionColor,
+          baseColor
+        )
+      end
+      normalized = ApplyInlineInk(
+        normalized,
+        firstStart,
+        firstEnd,
+        questTypeColor,
+        baseColor
+      )
+    elseif normalized ~= "" then
+      normalized =
+        questTypeColor.code ..
+        normalized ..
+        ((baseColor and baseColor.code) or THEME.ink.body.code)
+    end
+  elseif statusColor then
+    if firstStart then
+      normalized = ApplyInlineInk(
+        normalized,
+        firstStart,
+        firstEnd,
+        statusColor,
+        baseColor
+      )
+    elseif normalized ~= "" then
+      normalized =
+        statusColor.code ..
+        normalized ..
+        ((baseColor and baseColor.code) or THEME.ink.body.code)
+    end
+  end
+  text:SetText(prefix .. normalized)
 end
 
 local function MapDifficultyInk(red, green, blue)
@@ -1381,6 +1661,26 @@ function Quests:InstallGlobalHooks()
       "questLogDetails",
       function()
         Quests:ApplyDetailTextGeometry()
+      end
+    )
+  end
+
+  if type(QuestLogTitleButton_OnEnter) == "function" then
+    self:InstallGlobalPostHook(
+      "QuestLogTitleButton_OnEnter",
+      "questLogTitleEnter",
+      function(row)
+        RestoreDirectoryTagInk(row or this)
+      end
+    )
+  end
+
+  if type(QuestLogTitleButton_OnLeave) == "function" then
+    self:InstallGlobalPostHook(
+      "QuestLogTitleButton_OnLeave",
+      "questLogTitleLeave",
+      function(row)
+        RestoreDirectoryTagInk(row or this)
       end
     )
   end
@@ -2503,7 +2803,9 @@ function Quests:UpdateDirectoryRows()
           title,
           questTag,
           statusColor,
-          questTypeColor
+          questTypeColor,
+          completionColor,
+          rowColor
         )
 
         if title and isHeader and toggle then
@@ -2536,9 +2838,33 @@ local DETAIL_TEXT_NAMES = {
   "QuestLogHonorFrameHonorReceiveText",
 }
 
+-- These strings own wrapped blocks inside the right-page reading column.
+-- Keep the two inline money labels out of this list: Blizzard anchors the
+-- corresponding MoneyFrame to the label's RIGHT edge, so forcing a full
+-- column width pushes the amount beyond the ScrollChild and clips it.
+local DETAIL_WRAPPED_TEXT_NAMES = {
+  "QuestLogQuestTitle",
+  "QuestLogObjectivesText",
+  "QuestLogDescriptionTitle",
+  "QuestLogQuestDescription",
+  "QuestLogRewardTitleText",
+  "QuestLogItemChooseText",
+  "QuestLogSpellLearnText",
+  "QuestLogPlayerTitleText",
+  "QuestLogHonorFrameHonorReceiveText",
+}
+
+local DETAIL_INLINE_MONEY_TEXT_NAMES = {
+  "QuestLogItemReceiveText",
+  "QuestLogRequiredMoneyText",
+}
+
 local DETAIL_HEADING_TEXT_NAMES = {
   "QuestLogDescriptionTitle",
   "QuestLogRewardTitleText",
+}
+
+local DETAIL_LABEL_TEXT_NAMES = {
   "QuestLogItemChooseText",
   "QuestLogItemReceiveText",
   "QuestLogSpellLearnText",
@@ -2560,6 +2886,9 @@ local DETAIL_MEASURE_FRAME_NAMES = {
   "QuestLogRewardMoneyFrame",
   "QuestLogRequiredMoneyFrame",
   "QuestLogXPFrame",
+  -- Blizzard moves this 25px spacer below whichever dynamic detail object
+  -- was shown last. It is the native authoritative end-of-content marker.
+  "QuestLogSpacerFrame",
 }
 
 local function IsVisibleDetailObject(object)
@@ -2609,18 +2938,657 @@ local function CollectDetailMeasureObjects()
   return objects
 end
 
-local function ApplyDetailRewardGeometry()
-  local rewardCount = tonumber(MAX_NUM_ITEMS) or 6
-  for index = 1, rewardCount do
-    local item = _G["QuestLogItem" .. index]
-    if item and item.SetWidth then
-      item:SetWidth(LAYOUT.detail.rewardSlotWidth)
+local function ReadQuestLogRewardCount(name)
+  local callback = _G[name]
+  if type(callback) ~= "function" then
+    return 0
+  end
+  local value = math.floor(tonumber(callback()) or 0)
+  return math.max(0, value)
+end
+
+local function HasQuestLogRewardSpell()
+  if type(GetQuestLogRewardSpell) ~= "function" then
+    return false
+  end
+  return GetQuestLogRewardSpell() and true or false
+end
+
+local function ReadQuestLogRewardMoney()
+  if type(GetQuestLogRewardMoney) ~= "function" then
+    return 0
+  end
+  return math.max(0, tonumber(GetQuestLogRewardMoney()) or 0)
+end
+
+local function AnchorRewardHeading(heading, previous)
+  if
+    not previous or
+    not IsVisibleDetailObject(heading)
+  then
+    return false
+  end
+  SetSinglePoint(
+    heading,
+    "TOPLEFT",
+    previous,
+    "BOTTOMLEFT",
+    0,
+    -LAYOUT.detail.rewardSectionGap
+  )
+  return true
+end
+
+local function IsRewardGeometryManaged(item)
+  return
+    item and
+    item.aeuiRewardGeometryContract and
+    addon.db and
+    addon.db.quests and
+    addon.db.quests.enabled
+end
+
+local function IsRewardVisualManaged(item)
+  return
+    item and
+    item.aeuiRewardContainer and
+    addon.db and
+    addon.db.quests and
+    addon.db.quests.enabled
+end
+
+local function ApplyRewardGeometryContract(item)
+  local contract = item and item.aeuiRewardGeometryContract
+  local methods = item and item.aeuiRewardGeometryMethods
+  if not contract or not methods then
+    return false
+  end
+
+  item.aeuiRewardGeometryWriting = true
+  methods.clearAllPoints(item)
+  methods.setWidth(item, contract.width)
+  methods.setHeight(item, contract.height)
+  methods.setPoint(
+    item,
+    contract.point,
+    contract.relativeTo,
+    contract.relativePoint,
+    contract.x,
+    contract.y
+  )
+  item.aeuiRewardGeometryWriting = nil
+  return true
+end
+
+local function InstallRewardGeometryLock(item)
+  if
+    not item or
+    not item.ClearAllPoints or
+    not item.SetPoint or
+    not item.SetWidth or
+    not item.SetHeight
+  then
+    return false
+  end
+
+  local locks = item.aeuiRewardGeometryLocks
+  if
+    locks and
+    item.ClearAllPoints == locks.clearAllPoints and
+    item.SetPoint == locks.setPoint and
+    item.SetWidth == locks.setWidth and
+    item.SetHeight == locks.setHeight
+  then
+    return true
+  end
+
+  local previousMethods = item.aeuiRewardGeometryMethods
+  local previousLocks = locks
+  local function ResolveMethod(current, previousLock, previousMethod, hidden)
+    if hidden then
+      return hidden
     end
+    if previousLock and current == previousLock then
+      return previousMethod
+    end
+    return current
+  end
+
+  local methods = {
+    clearAllPoints = ResolveMethod(
+      item.ClearAllPoints,
+      previousLocks and previousLocks.clearAllPoints,
+      previousMethods and previousMethods.clearAllPoints,
+      item.HiddenClearAllPoints
+    ),
+    setPoint = ResolveMethod(
+      item.SetPoint,
+      previousLocks and previousLocks.setPoint,
+      previousMethods and previousMethods.setPoint,
+      item.HiddenSetPoint
+    ),
+    setWidth = ResolveMethod(
+      item.SetWidth,
+      previousLocks and previousLocks.setWidth,
+      previousMethods and previousMethods.setWidth
+    ),
+    setHeight = ResolveMethod(
+      item.SetHeight,
+      previousLocks and previousLocks.setHeight,
+      previousMethods and previousMethods.setHeight
+    ),
+    setAllPoints = ResolveMethod(
+      item.SetAllPoints,
+      previousLocks and previousLocks.setAllPoints,
+      previousMethods and previousMethods.setAllPoints,
+      item.HiddenSetAllPoints
+    ),
+  }
+  if
+    not methods.clearAllPoints or
+    not methods.setPoint or
+    not methods.setWidth or
+    not methods.setHeight
+  then
+    return false
+  end
+
+  locks = {}
+  locks.clearAllPoints = function(self)
+    if self.aeuiRewardGeometryWriting or not IsRewardGeometryManaged(self) then
+      return methods.clearAllPoints(self)
+    end
+    return ApplyRewardGeometryContract(self)
+  end
+  locks.setPoint = function(self, point, relativeTo, relativePoint, x, y)
+    if self.aeuiRewardGeometryWriting or not IsRewardGeometryManaged(self) then
+      return methods.setPoint(
+        self,
+        point,
+        relativeTo,
+        relativePoint,
+        x,
+        y
+      )
+    end
+    return ApplyRewardGeometryContract(self)
+  end
+  locks.setWidth = function(self, width)
+    if self.aeuiRewardGeometryWriting or not IsRewardGeometryManaged(self) then
+      return methods.setWidth(self, width)
+    end
+    return ApplyRewardGeometryContract(self)
+  end
+  locks.setHeight = function(self, height)
+    if self.aeuiRewardGeometryWriting or not IsRewardGeometryManaged(self) then
+      return methods.setHeight(self, height)
+    end
+    return ApplyRewardGeometryContract(self)
+  end
+  if methods.setAllPoints then
+    locks.setAllPoints = function(self, relativeTo)
+      if self.aeuiRewardGeometryWriting or not IsRewardGeometryManaged(self) then
+        return methods.setAllPoints(self, relativeTo)
+      end
+      return ApplyRewardGeometryContract(self)
+    end
+  end
+
+  item.aeuiRewardGeometryMethods = methods
+  item.aeuiRewardGeometryLocks = locks
+  item.ClearAllPoints = locks.clearAllPoints
+  item.SetPoint = locks.setPoint
+  item.SetWidth = locks.setWidth
+  item.SetHeight = locks.setHeight
+  if locks.setAllPoints then
+    item.SetAllPoints = locks.setAllPoints
+  end
+  item.aeuiRewardGeometrySetterLock = locks.setPoint
+  return true
+end
+
+local function PrepareRewardSlotGeometry(item)
+  if not InstallRewardGeometryLock(item) then
+    SetSize(
+      item,
+      LAYOUT.detail.rewardSlotWidth,
+      LAYOUT.detail.rewardSlotHeight
+    )
+    return
+  end
+
+  local contract = item.aeuiRewardGeometryContract
+  if contract then
+    contract.width = LAYOUT.detail.rewardSlotWidth
+    contract.height = LAYOUT.detail.rewardSlotHeight
+    ApplyRewardGeometryContract(item)
+    return
+  end
+
+  local methods = item.aeuiRewardGeometryMethods
+  methods.setWidth(item, LAYOUT.detail.rewardSlotWidth)
+  methods.setHeight(item, LAYOUT.detail.rewardSlotHeight)
+end
+
+local function SetRewardSlotGeometry(
+  item,
+  point,
+  relativeTo,
+  relativePoint,
+  x,
+  y
+)
+  if not item then
+    return
+  end
+  if not InstallRewardGeometryLock(item) then
+    SetSize(
+      item,
+      LAYOUT.detail.rewardSlotWidth,
+      LAYOUT.detail.rewardSlotHeight
+    )
+    SetSinglePoint(item, point, relativeTo, relativePoint, x, y)
+    return
+  end
+
+  item.aeuiRewardGeometryContract = {
+    width = LAYOUT.detail.rewardSlotWidth,
+    height = LAYOUT.detail.rewardSlotHeight,
+    point = point,
+    relativeTo = relativeTo,
+    relativePoint = relativePoint,
+    x = x,
+    y = y,
+  }
+  ApplyRewardGeometryContract(item)
+end
+
+local function SetRewardContainerState(item, state)
+  local container = item and item.aeuiRewardContainer
+  local colors = REWARD_CONTAINER[state] or REWARD_CONTAINER.normal
+  if not container or not colors then
+    return
+  end
+  if container.SetBackdropColor then
+    container:SetBackdropColor(
+      colors.background[1],
+      colors.background[2],
+      colors.background[3],
+      colors.background[4]
+    )
+  end
+  if container.SetBackdropBorderColor then
+    container:SetBackdropBorderColor(
+      colors.border[1],
+      colors.border[2],
+      colors.border[3],
+      colors.border[4]
+    )
+  end
+end
+
+local function SuppressRewardSurface(surface, item)
+  if not surface then
+    return
+  end
+
+  surface.aeuiRewardManagedItem = item
+  if surface.Show and surface.Show ~= surface.aeuiRewardSurfaceShowLock then
+    local downstream = surface.Show
+    local lock = function(self)
+      downstream(self)
+      if
+        IsRewardVisualManaged(self.aeuiRewardManagedItem) and
+        self.Hide
+      then
+        self:Hide()
+      end
+    end
+    surface.aeuiRewardSurfaceShowDownstream = downstream
+    surface.aeuiRewardSurfaceShowLock = lock
+    surface.Show = lock
+  end
+
+  if surface.Hide then
+    surface:Hide()
+  elseif surface.SetAlpha then
+    surface:SetAlpha(0)
+  end
+end
+
+local function IsRewardStateTexture(item, region)
+  if not item or not region then
+    return false
+  end
+  local callbacks = {
+    "GetNormalTexture",
+    "GetHighlightTexture",
+    "GetPushedTexture",
+    "GetDisabledTexture",
+    "GetCheckedTexture",
+  }
+  for _, callbackName in ipairs(callbacks) do
+    local callback = item[callbackName]
+    if callback and callback(item) == region then
+      return true
+    end
+  end
+  return false
+end
+
+local function SuppressNativeRewardTextures(item, icon)
+  if not item or not item.GetRegions then
+    return
+  end
+  if not item.aeuiRewardNativeTextures then
+    item.aeuiRewardNativeTextures = {}
+    local regions = { item:GetRegions() }
+    for _, region in ipairs(regions) do
+      if
+        IsTexture(region) and
+        region ~= icon and
+        not IsRewardStateTexture(item, region)
+      then
+        table.insert(item.aeuiRewardNativeTextures, region)
+      end
+    end
+  end
+  for _, region in ipairs(item.aeuiRewardNativeTextures) do
+    SuppressRewardSurface(region, item)
+  end
+end
+
+local function EnsureRewardSlotContainer(item, index)
+  if not item then
+    return nil
+  end
+
+  local objectName = "QuestLogItem" .. index
+  local icon = _G[objectName .. "IconTexture"]
+  local count = _G[objectName .. "Count"]
+  local name = _G[objectName .. "Name"]
+  local nativeNameFrame = _G[objectName .. "NameFrame"]
+  local container = item.aeuiRewardContainer
+  if not container then
+    container = CreateFrame("Frame", nil, item)
+    container.aeuiQuestManaged = true
+    if container.EnableMouse then
+      container:EnableMouse(false)
+    end
+    item.aeuiRewardContainer = container
+  end
+
+  if
+    container.SetFrameLevel and
+    item.GetFrameLevel
+  then
+    container:SetFrameLevel(item:GetFrameLevel() + 1)
+  end
+  container:ClearAllPoints()
+  container:SetPoint("TOPLEFT", item, "TOPLEFT", 0, 0)
+  container:SetPoint("BOTTOMRIGHT", item, "BOTTOMRIGHT", 0, 0)
+  if container.SetBackdrop then
+    container:SetBackdrop(REWARD_CONTAINER.backdrop)
+  end
+  if container.Show then
+    container:Show()
+  end
+  SetRewardContainerState(item, "normal")
+
+  if icon then
+    if icon.SetParent then
+      icon:SetParent(container)
+    end
+    SetSize(
+      icon,
+      LAYOUT.detail.rewardIconSize,
+      LAYOUT.detail.rewardIconSize
+    )
+    SetSinglePoint(
+      icon,
+      "LEFT",
+      container,
+      "LEFT",
+      LAYOUT.detail.rewardContentInset,
+      0
+    )
+    if icon.SetTexCoord then
+      icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+    end
+    if icon.SetDrawLayer then
+      icon:SetDrawLayer("OVERLAY")
+    end
+  end
+
+  if count then
+    if count.SetParent then
+      count:SetParent(container)
+    end
+    if icon then
+      SetSinglePoint(
+        count,
+        "BOTTOMRIGHT",
+        icon,
+        "BOTTOMRIGHT",
+        -1,
+        1
+      )
+    end
+    if count.SetDrawLayer then
+      count:SetDrawLayer("OVERLAY")
+    end
+  end
+
+  if name then
+    if name.SetParent then
+      name:SetParent(container)
+    end
+    if icon then
+      SetSinglePoint(
+        name,
+        "LEFT",
+        icon,
+        "RIGHT",
+        LAYOUT.detail.rewardNameGap,
+        0
+      )
+    end
+    if name.SetWidth then
+      name:SetWidth(LAYOUT.detail.rewardNameWidth)
+    end
+    if name.SetJustifyH then
+      name:SetJustifyH("LEFT")
+    end
+    if name.SetDrawLayer then
+      name:SetDrawLayer("OVERLAY")
+    end
+  end
+
+  -- Scoped ownership skips pfUI's Quest Log skin, so the live client normally
+  -- reaches this branch with Blizzard's QuestLogItemNNameFrame and no
+  -- item.backdrop. Suppress both possible provider surfaces after moving the
+  -- dynamic regions into the AEUI container. The Show lock prevents a late
+  -- native/provider refresh from restoring either obsolete card face.
+  SuppressRewardSurface(nativeNameFrame, item)
+  SuppressNativeRewardTextures(item, icon)
+  SuppressRewardSurface(item.backdrop, item)
+  SuppressRewardSurface(item.backdrop_border, item)
+
+  AppendScript(
+    item,
+    "OnEnter",
+    "aeuiRewardContainerEnterHook",
+    function()
+      SetRewardContainerState(item, "hover")
+    end
+  )
+  AppendScript(
+    item,
+    "OnLeave",
+    "aeuiRewardContainerLeaveHook",
+    function()
+      SetRewardContainerState(item, "normal")
+    end
+  )
+  return container
+end
+
+local function GetRewardGroupTopGap(heading)
+  local labelHeight = LAYOUT.detail.rewardLabelHeight
+  if heading and heading.GetHeight then
+    labelHeight = math.max(
+      labelHeight,
+      math.floor(tonumber(heading:GetHeight()) or 0)
+    )
+  end
+  return
+    LAYOUT.detail.rewardSectionGap +
+    labelHeight +
+    LAYOUT.detail.rewardHeaderGap
+end
+
+local function LayoutRewardGroup(firstIndex, count, anchor, heading)
+  if not anchor or count <= 0 then
+    return nil
+  end
+  local lastRowLeft
+  for position = 1, count do
+    local index = firstIndex + position - 1
+    local item = _G["QuestLogItem" .. index]
+    if item then
+      if position == 1 then
+        SetRewardSlotGeometry(
+          item,
+          "TOPLEFT",
+          anchor,
+          "BOTTOMLEFT",
+          0,
+          -GetRewardGroupTopGap(heading)
+        )
+      elseif position == math.floor(position / 2) * 2 then
+        SetRewardSlotGeometry(
+          item,
+          "TOPLEFT",
+          _G["QuestLogItem" .. (index - 1)],
+          "TOPRIGHT",
+          LAYOUT.detail.rewardColumnGap,
+          0
+        )
+      else
+        SetRewardSlotGeometry(
+          item,
+          "TOPLEFT",
+          _G["QuestLogItem" .. (index - 2)],
+          "BOTTOMLEFT",
+          0,
+          -LAYOUT.detail.rewardRowGap
+        )
+      end
+      if position ~= math.floor(position / 2) * 2 then
+        lastRowLeft = item
+      end
+    end
+  end
+  return lastRowLeft
+end
+
+local function CountVisibleRewardItems(itemCeiling)
+  local count = 0
+  for index = 1, itemCeiling do
+    local item = _G["QuestLogItem" .. index]
+    if not IsVisibleDetailObject(item) then
+      break
+    end
+    count = index
+  end
+  return count
+end
+
+local function ApplyDetailRewardGeometry()
+  local itemCeiling = tonumber(MAX_NUM_ITEMS) or 6
+  for index = 1, itemCeiling do
+    local item = _G["QuestLogItem" .. index]
+    PrepareRewardSlotGeometry(item)
+    EnsureRewardSlotContainer(item, index)
 
     local name = _G["QuestLogItem" .. index .. "Name"]
     if name and name.SetWidth then
       name:SetWidth(LAYOUT.detail.rewardNameWidth)
     end
+    ApplyThemeFontFixed(name, THEME.fonts.detailBody)
+    -- Keep the provider's live item-quality colour; only replace the hard to
+    -- read face, outline and shadow.
+    ClearTextShadow(name)
+  end
+
+  local choiceCount = math.min(
+    itemCeiling,
+    ReadQuestLogRewardCount("GetNumQuestLogChoices")
+  )
+  local spellCount = HasQuestLogRewardSpell() and 1 or 0
+  if choiceCount + spellCount > itemCeiling then
+    spellCount = 0
+  end
+  local rewardCount = math.min(
+    itemCeiling - choiceCount - spellCount,
+    ReadQuestLogRewardCount("GetNumQuestLogRewards")
+  )
+
+  -- Some 1.12-compatible providers update the real QuestLogItem Buttons but
+  -- report zero through the stock count functions during their late refresh.
+  -- Never leave those visible Buttons on stale native anchors: when every API
+  -- count is zero, use the actual visible contiguous item range as the final
+  -- layout authority and the visible native section label to classify it.
+  if choiceCount + spellCount + rewardCount == 0 then
+    local visibleCount = CountVisibleRewardItems(itemCeiling)
+    if visibleCount > 0 then
+      if IsVisibleDetailObject(QuestLogItemChooseText) then
+        choiceCount = visibleCount
+      elseif IsVisibleDetailObject(QuestLogSpellLearnText) then
+        spellCount = 1
+        rewardCount = math.max(0, visibleCount - 1)
+      else
+        rewardCount = visibleCount
+      end
+    end
+  end
+
+  local previous = QuestLogRewardTitleText
+  if choiceCount > 0 then
+    local choiceAnchor = previous
+    AnchorRewardHeading(QuestLogItemChooseText, choiceAnchor)
+    previous =
+      LayoutRewardGroup(
+        1,
+        choiceCount,
+        choiceAnchor,
+        QuestLogItemChooseText
+      ) or
+      previous
+  end
+  if spellCount == 1 then
+    local spellAnchor = previous
+    AnchorRewardHeading(QuestLogSpellLearnText, spellAnchor)
+    previous =
+      LayoutRewardGroup(
+        choiceCount + 1,
+        1,
+        spellAnchor,
+        QuestLogSpellLearnText
+      ) or
+      previous
+  end
+  local rewardAnchor = previous
+  if rewardCount > 0 or ReadQuestLogRewardMoney() > 0 then
+    AnchorRewardHeading(QuestLogItemReceiveText, rewardAnchor)
+  end
+  if rewardCount > 0 then
+    LayoutRewardGroup(
+      choiceCount + spellCount + 1,
+      rewardCount,
+      rewardAnchor,
+      QuestLogItemReceiveText
+    )
   end
 end
 
@@ -2695,19 +3663,27 @@ end
 
 function Quests:ApplyDetailTextTheme()
   local questTitle = QuestLogQuestTitle
-  ApplyThemeFont(questTitle, THEME.fonts.questName, 13)
+  ApplyThemeFontFixed(questTitle, THEME.fonts.detailHeading)
   SetTextColor(questTitle, THEME.ink.section)
   ClearTextShadow(questTitle)
 
   for _, name in ipairs(DETAIL_HEADING_TEXT_NAMES) do
     local text = _G[name]
-    ApplyThemeFont(text, THEME.fonts.panelTitle, 12)
+    ApplyThemeFontFixed(text, THEME.fonts.detailHeading)
+    SetTextColor(text, THEME.ink.section)
+    ClearTextShadow(text)
+  end
+
+  for _, name in ipairs(DETAIL_LABEL_TEXT_NAMES) do
+    local text = _G[name]
+    ApplyThemeFontFixed(text, THEME.fonts.detailBody)
     SetTextColor(text, THEME.ink.section)
     ClearTextShadow(text)
   end
 
   for _, name in ipairs(DETAIL_BODY_TEXT_NAMES) do
     local text = _G[name]
+    ApplyThemeFontFixed(text, THEME.fonts.detailBody)
     SetTextColor(text, THEME.ink.body)
     ClearTextShadow(text)
   end
@@ -2736,6 +3712,7 @@ function Quests:ApplyDetailTextTheme()
     if done then
       color = THEME.ink.complete
     end
+    ApplyThemeFontFixed(objective, THEME.fonts.detailBody)
     SetTextColor(objective, color)
     ClearTextShadow(objective)
   end
@@ -2750,10 +3727,19 @@ function Quests:ApplyDetailTextGeometry(skipDeferred)
     end
   end
 
-  for _, name in ipairs(DETAIL_TEXT_NAMES) do
+  for _, name in ipairs(DETAIL_WRAPPED_TEXT_NAMES) do
     local text = _G[name]
     if text and text.SetWidth then
       text:SetWidth(LAYOUT.detail.textWidth)
+    end
+  end
+
+  for _, name in ipairs(DETAIL_INLINE_MONEY_TEXT_NAMES) do
+    local text = _G[name]
+    if text and text.SetWidth then
+      -- FontString width 0 restores Blizzard's intrinsic text width. The
+      -- adjacent MoneyFrame then remains inside the 224px content column.
+      text:SetWidth(0)
     end
   end
 
@@ -3195,6 +4181,8 @@ function Quests:GetRuntimeStatus()
     "frame=" .. tostring(frameContract) ..
     ", theme=" .. tostring(themeContract) ..
     ", seal=" .. tostring(sealStatus) ..
+    ", tag=semantic-setter-lock" ..
+    ", reward=native-container-acyclic-visible-fallback-gap-8" ..
     ", font=" .. tostring(fontPath) ..
     ", detail-range=" .. tostring(scrollRange)
 end
@@ -3221,6 +4209,9 @@ function Quests:Apply()
   self:UpdateDetailToggle()
   QuestLogFrame.aeuiQuestRuntimeContract = self.runtimeContract
   QuestLogFrame.aeuiQuestVisualThemeContract = THEME.contract
+  QuestLogFrame.aeuiQuestTagInkContract = "semantic-setter-lock"
+  QuestLogFrame.aeuiQuestRewardLayoutContract =
+    "native-container-acyclic-visible-fallback-gap-8"
 end
 
 addon:RegisterModule("Quests", Quests)

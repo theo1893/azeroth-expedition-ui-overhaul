@@ -27,7 +27,7 @@
 - 用户于 `2026-07-31` 接受 `QS-A1 V1.r4` 的运行时视觉，并明确授权
   确定性色键、透明 RGB 清零与 `1024²` 归一化例外进入 P4／P5。不得再执行
   ImageGen。漆章物件美术和 atlas 不重开；Quest Log 旧锚点已失效，新的承载
-  与事务菜单先等待本地模拟确认。runtime `1.18` 已按确认方向只修正既有
+  与事务菜单先等待本地模拟确认。当前 runtime `1.19` 继续按确认方向只使用既有
   Texture 的页上位置；QS-B1 仍独立门禁真实 Button 和事务菜单。V1 的外沿
   皮革承托已被物理语义复核淘汰；
   V2 因伪页唇、硬质按钮轮廓与断开的弹窗语义被用户否决；V3 虽改用真实
@@ -66,7 +66,7 @@
   disabled 使用同一 `60 × 58` Alpha；hover 只暖亮，pressed 只压暗并为未来
   Button 保留 runtime `1px` 下移合同，disabled 只退灰。当前两处都是无鼠标
   normal Texture，不伪造交互。
-- Quest Log runtime `1.18` 使用 `[576,68,32,32]`，直接与详情页纸面相接，
+- 当前 Quest Log runtime `1.19` 使用 `[576,68,32,32]`，直接与详情页纸面相接，
   并把 `[572,64,40,40]` 保留为无标题／正文／奖励区域；Tracker 使用居中
   `34 × 34`、顶部 outset `18px`，并通过 feature-detect
   `SetClampRectInsets` 补足顶缘限位。`130／230／330px` 均不进入列表区。
@@ -87,7 +87,7 @@
 
 | ID | 当前对象 | 目标合同 |
 |---|---|---|
-| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，runtime `1.18` 为 `[576,68,32,32]` 无鼠标 Texture | QS-A1 V1.r4 美术保持 accepted；`32px` 漆章直接压在详情页右上纸面，保留区 `[572,64,40,40]`。QS-B1 完成前不把它伪装成可点击 Button |
+| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前 runtime `1.19` 为 `[576,68,32,32]` 无鼠标 Texture | QS-A1 V1.r4 美术保持 accepted；`32px` 漆章直接压在详情页右上纸面，保留区 `[572,64,40,40]`。QS-B1 完成前不把它伪装成可点击 Button |
 | `QUEST.LOG.CHROME.SEAL.SUPPORT` | 无 runtime 对象 | V9 明确不创建书签、包角、皮革／黄铜承托；只允许漆章自身接触阴影落在现有右页纸面 |
 | `QUEST.LOG.CHROME.SEAL.MENU` | 尚无 runtime 对象 | V9 已确认：七个独立短书口事务签 Button 从 detail 右边界 `x=612` 向书外伸出，整体 `[612,112,112,158]`；真实页边 mask `[604,102,24,180]` 遮住根部，正文／奖励零占用。QS-B1 只生成一枚无字共用母版并确定性派生八态；功能等价前旧按钮保持 fail-open |
 | `QUEST.TRACKER.HUB.SEAL` | adapter-owned 无鼠标 Texture，已由临时 tracker runtime 挂载 | `34 × 34` 顶部中央漆章；宽度 `W` 时 `x=floor((W-34)/2)`、`y=-18`，底边恰好落在 provider `16px` 工具条／列表起点，不移动任务内容 |
@@ -1408,7 +1408,7 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
   文字和一像素边缘提示危险。
 - 确认未接受：模拟像素、最终笔触、Alpha、切片、客户端字体栅格、Tooltip、
   动画或屏幕 clamp 实现。模拟图不得成为正式生产输入。
-- 下一门禁：在目标客户端验证 runtime `1.18` 的页上位置；事务签菜单仍需用户
+- 下一门禁：在目标客户端验证当前 runtime `1.19` 的页上位置；事务签菜单仍需用户
   独立授权 `QS-B1 V1` 最终生产正文、冻结修复边界与最多五次实际 ImageGen
   调用。授权前不实现菜单、不隐藏旧按钮、不生图。
 
@@ -1422,7 +1422,7 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 - 这次只解耦视觉 placement，不预先实现 QS-B1：漆章仍不接收鼠标，七项事务签
   尚不存在，底部与 pfQuest 原 Button 全部保持 fail-open。
 - `/aeui status` 现在报告实际 Quest frame／theme／seal／font／detail scroll
-  range；测试设备必须先确认 `quest frame=1.18 theme=1.6 seal=detail-page-32`，
+  range；当前测试设备必须先确认 `quest frame=1.19 theme=1.7 seal=detail-page-32`，
   再判断 P5 的三项视觉修复是否生效。
 
 ## Quest Log 克制型书口事务签 — `QS-B1 V1`

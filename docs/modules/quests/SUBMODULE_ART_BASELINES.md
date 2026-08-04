@@ -49,8 +49,9 @@ ImageGen。
 因此 V2 使用十八行、每行 `246 × 18 UI px` 的真实 Button 窗口；隐藏页边
 scrollbar chrome 后使用完整左页宽度。全部任务名、地区名以及完成／地下城等
 状态 FontString 继承 `pfUI.font_default` 的统一界面字体，固定 `12px` 并使用
-`OUTLINE` 提高深色纸面上的字重；不再强制霞鹜文楷。文字 shadow 仍清零，
-避免描边与额外投影叠成现代发光字。五档任务难度色在实机代表深纸面
+空 flags；不再强制霞鹜文楷，也不得用 `OUTLINE` 或 shadow 模拟字重。
+字体 shadow 颜色与偏移都清零，清晰度由字体本身和高对比深墨承担。五档任务
+难度色在实机代表深纸面
 `#B08444` 上须保持约 `4.5:1` 或更高的正文对比，同时保留红／棕／赭／绿／
 灰的色相区分。任务类型使用深紫墨，完成／失败使用独立深绿／深红；禁止
 荧亮黄、发光色或与纸面明度接近的浅橄榄色。模板拆分与内联状态文字遵守
@@ -154,7 +155,7 @@ SHA-256
 [QS-A1_RuntimeManifest_v1.json](../../../assets/source/quests/qs-a1/QS-A1_RuntimeManifest_v1.json)：
 同一 Alpha 等比缩为 `60 × 58`，居中放入 normal／hover／pressed／disabled
 四个 `64 × 64` cell；hover 只暖亮，pressed 只压暗且未来交互锚点下移
-`1px`，disabled 只退灰，四态不重画轮廓。Quest Log runtime `1.18` 以
+`1px`，disabled 只退灰，四态不重画轮廓。当前 Quest Log runtime `1.19` 以
 `32px` 显示 accepted QS-A1 漆章，并直接压在详情页右上纸面；`40px` 保留区
 不得承载标题、正文或奖励。Tracker 以 `34px` 位于顶部中央；两处当前均只
 使用 normal 无鼠标 Texture。旧七个 provider Button 在 hub menu 取得一一
@@ -193,7 +194,9 @@ Button 仍彼此独立。当前只到生产正文待授权，不得调用 ImageG
 奖励槽使用深皮革凹面、克制黄铜外沿和纸面接触阴影；物品图标、数量、名称与
 品质色均为 runtime。Quest Log 奖励只读，不提供 selected 状态。右页双列
 每格最大 `108px`，名称安全宽 `64px`；正文换行后必须按实际最底部可见对象
-重算 ScrollChild 高度，不能用固定 `324px` 内容高裁掉奖励。分区墨线为
+和原生 `QuestLogSpacerFrame` 末端哨兵重算 ScrollChild 高度，不能用固定
+`324px` 内容高裁掉奖励。内联“将得到／需要金钱”文字必须保持自动宽度，
+不得把锚在其右侧的金额 Frame 推出纸页。分区墨线为
 无命中的三段式短线，不切断整张右页。
 
 ## Quest Tracker

@@ -1,0 +1,61 @@
+{
+  "schema": "aeui.quest-log.reward-slots.simulation.v1",
+  "component": "QL-D/QUEST.LOG.REWARD.SLOT",
+  "state": "simulation-proposed / awaiting-user-confirmation",
+  "frame": [676, 464],
+  "inputs": {
+    "quest_log_shell": "addon/AzerothExpeditionUI/Media/Quests/QuestLogShellV4.tga",
+    "seal_atlas": "addon/AzerothExpeditionUI/Media/Quests/QuestToolWaxSealStatesV1.tga",
+    "title_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf",
+    "body_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf",
+    "locked_visual_provenance": "assets/locked/quests/任务详情面板_视觉基准_v1.png"
+  },
+  "outputs": {
+    "preview": "generated/quests/ql-d-reward-slots/simulation/V1/quest_log_reward_slots_sim_v1.png",
+    "review_2x": "generated/quests/ql-d-reward-slots/simulation/V1/quest_log_reward_slots_sim_v1_review_2x.png",
+    "report": "generated/quests/ql-d-reward-slots/simulation/V1/quest_log_reward_slots_sim_v1_report.json",
+    "display_region_report": "generated/quests/ql-d-reward-slots/simulation/V1/quest_log_reward_slots_display_region_report_v1.json"
+  },
+  "layout": {
+    "detail_page": [366, 64, 246, 324],
+    "detail_content": [376, 72, 224, 306],
+    "reward_slot_size": [108, 41],
+    "reward_name_safe_width": 64,
+    "reward_column_gap": 8,
+    "reward_row_gap": 4,
+    "reward_header_gap": 5,
+    "reward_origin": [376, 148]
+  },
+  "content": {
+    "items": [
+      {"name": "断风者", "count": 1, "state": "normal"},
+      {"name": "舞动之藤", "count": 1, "state": "hover"},
+      {"name": "蛛丝护腕", "count": 2, "state": "normal"},
+      {"name": "黑铁战锤", "count": 1, "state": "pressed"},
+      {"name": "秘银护符", "count": 1, "state": "normal"},
+      {"name": "强效药剂", "count": 5, "state": "disabled"}
+    ]
+  },
+  "art_direction": {
+    "identity": "a shallow archival reward docket embedded in the parchment page",
+    "materials": "dark old leather rim, subdued oxidized brass edge, recessed icon well, quiet parchment name field, narrow page-contact shadow",
+    "states": ["normal", "hover", "pressed", "disabled"],
+    "selected_state": false,
+    "dynamic_runtime_content": ["item icon", "item count", "item name", "quality colour", "tooltip", "click scripts"],
+    "forbidden": [
+      "flat black or grey pfUI card",
+      "modern rounded web card",
+      "baked item icon, count, name or quality colour",
+      "glow, glass, neon, gradient HUD chrome",
+      "selected state for read-only Quest Log rewards"
+    ]
+  },
+  "constraints": {
+    "imagegen_calls": 0,
+    "new_runtime_bitmap_assets": 0,
+    "direction_only": true,
+    "simulation_pixels_are_not_source": true,
+    "provider_button_and_scripts_preserved": true,
+    "counts_covered_by_display_contract": [0, 1, 2, 4, 6]
+  }
+}

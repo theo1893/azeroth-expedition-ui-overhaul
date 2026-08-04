@@ -49,8 +49,13 @@ function Object:SetTexture(...)
 end
 function Object:SetTexCoord(...) self.texcoord = { ... } end
 function Object:SetVertexColor(...) self.vertexColor = { ... } end
+function Object:SetBackdrop(value) self.backdropDefinition = value end
 function Object:SetBackdropColor(...) self.backdropColor = { ... } end
 function Object:SetBackdropBorderColor(...) self.borderColor = { ... } end
+function Object:SetDrawLayer(value) self.layer = value end
+function Object:SetJustifyH(value) self.justifyH = value end
+function Object:SetFrameLevel(value) self.frameLevel = value end
+function Object:GetFrameLevel() return self.frameLevel or 0 end
 function Object:SetAlpha(value) self.alpha = value end
 function Object:SetText(value)
   self.text = value
@@ -97,7 +102,42 @@ function Object:GetClampRectInsets()
   return 0, 0, 0, 0
 end
 function Object:ClearAllPoints() self.points = {} end
-function Object:SetPoint(...) table.insert(self.points, { ... }) end
+local function DependsOn(object, target, seen)
+  if object == target then
+    return true
+  end
+  if type(object) ~= "table" then
+    return false
+  end
+  seen = seen or {}
+  if seen[object] then
+    return false
+  end
+  seen[object] = true
+  for _, point in ipairs(object.points or {}) do
+    local relative = point[2]
+    if type(relative) == "string" then
+      relative = _G[relative]
+    end
+    if DependsOn(relative, target, seen) then
+      return true
+    end
+  end
+  return false
+end
+function Object:SetPoint(...)
+  local point = { ... }
+  local relative = point[2]
+  if type(relative) == "string" then
+    relative = _G[relative]
+  end
+  assert(
+    not DependsOn(relative, self),
+    (self.name or "<unnamed>") ..
+      ":SetPoint would create an anchor dependency cycle"
+  )
+  table.insert(self.points, point)
+end
 function Object:GetPoint(index)
   local point = self.points[index or 1]
   if point then
@@ -271,6 +311,30 @@ function QuestLog_OnShow()
   questLogShowCalls = questLogShowCalls + 1
 end
 
+local questLogTitleGlobalEnterCalls = 0
+function QuestLogTitleButton_OnEnter()
+  questLogTitleGlobalEnterCalls =
+    questLogTitleGlobalEnterCalls + 1
+  if this and this.GetName then
+    local tag = _G[this:GetName() .. "Tag"]
+    if tag then
+      tag:SetTextColor(1, 1, 0, 1)
+    end
+  end
+end
+
+local questLogTitleGlobalLeaveCalls = 0
+function QuestLogTitleButton_OnLeave()
+  questLogTitleGlobalLeaveCalls =
+    questLogTitleGlobalLeaveCalls + 1
+  if this and this.GetName then
+    local tag = _G[this:GetName() .. "Tag"]
+    if tag then
+      tag:SetTextColor(this.r, this.g, this.b, 1)
+    end
+  end
+end
+
 local detailUpdateCalls = 0
 function QuestLog_UpdateQuestDetails()
   detailUpdateCalls = detailUpdateCalls + 1
@@ -291,6 +355,9 @@ local questEntries = {
   { "达隆郡的战斗", 60, nil, false, nil, nil },
   { "冬泉谷", 0, nil, true, true, nil },
   { "完成的地下城任务", 60, "Dungeon", false, nil, 1 },
+  { "本地化精英任务", 60, "Elite", false, nil, nil },
+  { "本地化团队任务", 60, "Raid", false, nil, nil },
+  { "无 API 标签任务", 60, nil, false, nil, nil },
 }
 function GetNumQuestLogEntries()
   return table.getn(questEntries)
@@ -459,6 +526,21 @@ for index = 1, MAX_OBJECTIVES do
   objective:SetWidth(260)
 end
 MAX_NUM_ITEMS = 6
+local questLogChoiceCount = 2
+local questLogRewardCount = 2
+local questLogHasRewardSpell = false
+function GetNumQuestLogChoices()
+  return questLogChoiceCount
+end
+function GetNumQuestLogRewards()
+  return questLogRewardCount
+end
+function GetQuestLogRewardSpell()
+  if questLogHasRewardSpell then
+    return "spell-texture", "奖励法术", false
+  end
+  return nil
+end
 for index = 1, MAX_NUM_ITEMS do
   local item = CreateFrame(
     "Button",
@@ -466,14 +548,41 @@ for index = 1, MAX_NUM_ITEMS do
     QuestLogDetailScrollChildFrame
   )
   item:SetWidth(142)
+  local icon = NewObject(
+    "QuestLogItem" .. index .. "IconTexture",
+    item,
+    "Texture"
+  )
+  table.insert(item.regions, icon)
+  local nativeNameFrame = NewObject(
+    "QuestLogItem" .. index .. "NameFrame",
+    item,
+    "Texture"
+  )
+  nativeNameFrame:SetTexture("native-quest-item-name-frame")
+  table.insert(item.regions, nativeNameFrame)
+  NewObject(
+    "QuestLogItem" .. index .. "Count",
+    item,
+    "FontString"
+  )
   local itemName = NewObject(
     "QuestLogItem" .. index .. "Name",
     item,
     "FontString"
   )
   itemName:SetWidth(90)
+  itemName:SetTextColor(0.64, 0.21, 0.93, 1)
 end
 QuestLogItem6.screenBottom = 200
+QuestLogSpacerFrame =
+  CreateFrame(
+    "Frame",
+    "QuestLogSpacerFrame",
+    QuestLogDetailScrollChildFrame
+  )
+QuestLogSpacerFrame:SetHeight(25)
+QuestLogSpacerFrame.screenBottom = 175
 
 local detailOnHideCalls = 0
 local detailOnShowCalls = 0
@@ -523,7 +632,7 @@ local originalQuestRowMouseUp = function()
   originalQuestRowMouseUpCalls =
     originalQuestRowMouseUpCalls + 1
 end
-for index = 1, 6 do
+for index = 1, 8 do
   local row = CreateFrame(
     "Button",
     "QuestLogTitle" .. index,
@@ -542,6 +651,20 @@ QuestLogTitle5:SetText(
     questEntries[5][1] ..
     " |cffffff00(Dungeon)|r"
 )
+QuestLogTitle5.r, QuestLogTitle5.g, QuestLogTitle5.b = 1, 0.82, 0
+QuestLogTitle6:SetText(
+  " [60+] " ..
+    questEntries[6][1] ..
+    " |cffffff00(精英)|r"
+)
+QuestLogTitle7:SetText(
+  " [60+] " ..
+    questEntries[7][1] ..
+    " |cff00ff00（团队）|r"
+)
+QuestLogTitle8:SetText(
+  " [60+] " .. questEntries[8][1]
+)
 local questLogTitle5Tag =
   NewObject("QuestLogTitle5Tag", QuestLogTitle5, "FontString")
 questLogTitle5Tag:SetText("(Dungeon)")
@@ -550,6 +673,11 @@ questLogTitle5Tag:SetFont("NativeSmall.ttf", 9, "OUTLINE")
 questLogTitle5Tag:SetShadowColor(0, 0, 0, 1)
 questLogTitle5Tag:SetShadowOffset(1, -1)
 table.insert(QuestLogTitle5.regions, questLogTitle5Tag)
+local questLogTitle8Tag =
+  NewObject("QuestLogTitle8Tag", QuestLogTitle8, "FontString")
+questLogTitle8Tag:SetText("(地下城)")
+questLogTitle8Tag:SetTextColor(0, 1, 0, 1)
+table.insert(QuestLogTitle8.regions, questLogTitle8Tag)
 
 QuestLogFrameAbandonButton =
   CreateFrame("Button", "QuestLogFrameAbandonButton", QuestLogFrame)
@@ -594,11 +722,11 @@ AzerothExpeditionUI:Refresh()
 assert(QuestLogFrame:GetWidth() == 676, "quest shell width was not applied")
 assert(QuestLogFrame:GetHeight() == 464, "quest shell height was not applied")
 assert(
-  QuestLogFrame.aeuiQuestRuntimeContract == "1.18",
+  QuestLogFrame.aeuiQuestRuntimeContract == "1.25",
   "quest runtime contract was not recorded"
 )
 assert(
-  QuestLogFrame.aeuiQuestVisualThemeContract == "1.6",
+  QuestLogFrame.aeuiQuestVisualThemeContract == "1.8",
   "Quest Log did not consume the shared visual theme"
 )
 assert(QuestLogFrame.aeuiQuestShell, "quest shell texture was not created")
@@ -661,11 +789,11 @@ assert(QuestLogDetailScrollFrame:GetWidth() == 246)
 assert(QuestLogDetailScrollFrame:GetHeight() == 324)
 assert(QuestLogDetailScrollChildFrame:GetWidth() == 224)
 assert(
-  QuestLogDetailScrollChildFrame:GetHeight() == 512,
+  QuestLogDetailScrollChildFrame:GetHeight() == 537,
   "rewrapped detail content did not extend the real scroll child"
 )
 assert(
-  QuestLogDetailScrollFrame:GetVerticalScrollRange() == 188 and
+  QuestLogDetailScrollFrame:GetVerticalScrollRange() == 213 and
     QuestLogDetailScrollFrame.updateScrollChildRectCalls > 0,
   "detail scroll range was not rebuilt from the measured content height"
 )
@@ -676,8 +804,6 @@ for _, name in ipairs({
   "QuestLogQuestDescription",
   "QuestLogRewardTitleText",
   "QuestLogItemChooseText",
-  "QuestLogItemReceiveText",
-  "QuestLogRequiredMoneyText",
   "QuestLogSpellLearnText",
   "QuestLogPlayerTitleText",
   "QuestLogHonorFrameHonorReceiveText",
@@ -687,6 +813,11 @@ for _, name in ipairs({
     name .. " exceeded the right-page text safe area"
   )
 end
+assert(
+  QuestLogItemReceiveText:GetWidth() == 0 and
+    QuestLogRequiredMoneyText:GetWidth() == 0,
+  "inline money labels pushed their anchored amount frames outside the page"
+)
 for index = 1, MAX_OBJECTIVES do
   assert(
     _G["QuestLogObjective" .. index]:GetWidth() == 204,
@@ -694,12 +825,276 @@ for index = 1, MAX_OBJECTIVES do
   )
 end
 for index = 1, MAX_NUM_ITEMS do
+  local item = _G["QuestLogItem" .. index]
+  local container = item.aeuiRewardContainer
+  local icon = _G["QuestLogItem" .. index .. "IconTexture"]
+  local count = _G["QuestLogItem" .. index .. "Count"]
+  local name = _G["QuestLogItem" .. index .. "Name"]
+  local nativeNameFrame =
+    _G["QuestLogItem" .. index .. "NameFrame"]
+  local containerPoint, containerRelative, containerRelativePoint,
+    containerX, containerY = container:GetPoint(1)
+  local containerPoint2, containerRelative2, containerRelativePoint2,
+    containerX2, containerY2 = container:GetPoint(2)
+  local iconPoint, iconRelative, iconRelativePoint, iconX, iconY =
+    icon:GetPoint()
+  local namePoint, nameRelative, nameRelativePoint, nameX, nameY =
+    name:GetPoint()
   assert(
-    _G["QuestLogItem" .. index]:GetWidth() == 108 and
-      _G["QuestLogItem" .. index .. "Name"]:GetWidth() == 64,
+    item:GetWidth() == 108 and
+      item:GetHeight() == 41 and
+      name:GetWidth() == 64,
     "reward slot escaped the right-page two-column safe area"
   )
+  assert(
+    name.font[1] ==
+      "pfui-font.ttf" and
+      name.font[2] == 12 and
+      name.font[3] == "" and
+      name.shadowColor[4] == 0 and
+      name.textColor[1] == 0.64,
+    "reward name did not use the readable detail font"
+  )
+  assert(
+    item.backdrop == nil and
+      container and container.mouseEnabled == false and
+      container.backdropDefinition.edgeSize == 1 and
+      container.backdropColor[4] == 0.20 and
+      container.borderColor[4] == 0.72 and
+      container:GetFrameLevel() == item:GetFrameLevel() + 1 and
+      table.getn(container.points) == 2 and
+      containerPoint == "TOPLEFT" and
+      containerRelative == item and
+      containerRelativePoint == "TOPLEFT" and
+      containerX == 0 and containerY == 0 and
+      containerPoint2 == "BOTTOMRIGHT" and
+      containerRelative2 == item and
+      containerRelativePoint2 == "BOTTOMRIGHT" and
+      containerX2 == 0 and containerY2 == 0,
+    "adapter-owned reward container did not replace the absent pfUI backdrop"
+  )
+  assert(
+    icon.parent == container and count.parent == container and
+      name.parent == container and
+      icon:GetWidth() == 33 and icon:GetHeight() == 33 and
+      iconPoint == "LEFT" and iconRelative == container and
+      iconRelativePoint == "LEFT" and iconX == 4 and iconY == 0 and
+      namePoint == "LEFT" and nameRelative == icon and
+      nameRelativePoint == "RIGHT" and nameX == 4 and nameY == 0 and
+      name.justifyH == "LEFT" and
+      not nativeNameFrame:IsShown(),
+    "native reward regions were not moved into the AEUI container"
+  )
+  nativeNameFrame:Show()
+  assert(
+    not nativeNameFrame:IsShown() and
+      nativeNameFrame.aeuiRewardSurfaceShowLock == nativeNameFrame.Show,
+    "late native refresh restored the obsolete reward name frame"
+  )
 end
+QuestLogItem1:GetScript("OnEnter")()
+assert(
+  QuestLogItem1.aeuiRewardContainer.borderColor[4] == 0.90,
+  "reward container did not preserve a visible hover state"
+)
+QuestLogItem1:GetScript("OnLeave")()
+assert(
+  QuestLogItem1.aeuiRewardContainer.borderColor[4] == 0.72,
+  "reward container hover state did not restore"
+)
+local point, relative, relativePoint, x, y = QuestLogItem1:GetPoint()
+local headingPoint, headingRelative, headingRelativePoint,
+  headingX, headingY = QuestLogItemChooseText:GetPoint()
+assert(
+  headingPoint == "TOPLEFT" and
+    headingRelative == QuestLogRewardTitleText and
+    headingRelativePoint == "BOTTOMLEFT" and
+    headingX == 0 and headingY == -5,
+  "choice heading retained a provider-dependent reward anchor"
+)
+assert(
+  point == "TOPLEFT" and relative == QuestLogRewardTitleText and
+    relativePoint == "BOTTOMLEFT" and x == 0 and y == -24 and
+    not DependsOn(QuestLogItem1, QuestLogItemChooseText),
+  "first choice reward retained a circular heading dependency"
+)
+point, relative, relativePoint, x, y = QuestLogItem2:GetPoint()
+assert(
+  point == "TOPLEFT" and relative == QuestLogItem1 and
+    relativePoint == "TOPRIGHT" and x == 8 and y == 0,
+  "choice reward columns overlapped or escaped the 224px page"
+)
+QuestLogItem2:ClearAllPoints()
+QuestLogItem2:SetPoint(
+  "TOPLEFT",
+  QuestLogItem1,
+  "TOPRIGHT",
+  -8,
+  0
+)
+QuestLogItem2:SetWidth(116)
+QuestLogItem2:SetHeight(35)
+point, relative, relativePoint, x, y = QuestLogItem2:GetPoint()
+assert(
+  point == "TOPLEFT" and relative == QuestLogItem1 and
+    relativePoint == "TOPRIGHT" and x == 8 and y == 0 and
+    QuestLogItem2:GetWidth() == 108 and
+    QuestLogItem2:GetHeight() == 41 and
+    QuestLogItem2.aeuiRewardGeometrySetterLock ==
+      QuestLogItem2.SetPoint,
+  "late provider geometry write removed the reward-card gap"
+)
+
+questLogChoiceCount = 0
+questLogRewardCount = 0
+QuestLogItemChooseText:Show()
+QuestLogSpellLearnText:Hide()
+QuestLogItemReceiveText:Hide()
+for index = 1, MAX_NUM_ITEMS do
+  if index <= 3 then
+    _G["QuestLogItem" .. index]:Show()
+  else
+    _G["QuestLogItem" .. index]:Hide()
+  end
+end
+AzerothExpeditionUI.modules.Quests:ApplyDetailTextGeometry(true)
+point, relative, relativePoint, x, y = QuestLogItem2:GetPoint()
+assert(
+  point == "TOPLEFT" and relative == QuestLogItem1 and
+    relativePoint == "TOPRIGHT" and x == 8 and y == 0,
+  "visible-item fallback did not retain the second reward column gap"
+)
+point, relative, relativePoint, x, y = QuestLogItem3:GetPoint()
+assert(
+  point == "TOPLEFT" and relative == QuestLogItem1 and
+    relativePoint == "BOTTOMLEFT" and x == 0 and y == -4,
+  "visible-item fallback left a third reward on stale native anchors"
+)
+
+questLogChoiceCount = 2
+questLogRewardCount = 2
+QuestLogSpellLearnText:Show()
+QuestLogItemReceiveText:Show()
+for index = 1, MAX_NUM_ITEMS do
+  _G["QuestLogItem" .. index]:Show()
+end
+AzerothExpeditionUI.modules.Quests:ApplyDetailTextGeometry(true)
+point, relative, relativePoint, x, y = QuestLogItem3:GetPoint()
+headingPoint, headingRelative, headingRelativePoint,
+  headingX, headingY = QuestLogItemReceiveText:GetPoint()
+assert(
+  headingPoint == "TOPLEFT" and headingRelative == QuestLogItem1 and
+    headingRelativePoint == "BOTTOMLEFT" and
+    headingX == 0 and headingY == -5,
+  "mandatory reward heading did not follow the left edge of the choice group"
+)
+assert(
+  point == "TOPLEFT" and relative == QuestLogItem1 and
+    relativePoint == "BOTTOMLEFT" and x == 0 and y == -24 and
+    not DependsOn(QuestLogItem3, QuestLogItemReceiveText),
+  "mandatory reward retained a circular receive-heading dependency"
+)
+QuestLogItemReceiveText:ClearAllPoints()
+local nativeReceiveAnchorOk, nativeReceiveAnchorError = pcall(function()
+  QuestLogItemReceiveText:SetPoint(
+    "TOPLEFT",
+    QuestLogItem3,
+    "BOTTOMLEFT",
+    0,
+    -5
+  )
+end)
+assert(
+  nativeReceiveAnchorOk,
+  "native QuestFrame receive-heading refresh formed an anchor cycle: " ..
+    tostring(nativeReceiveAnchorError)
+)
+AzerothExpeditionUI.modules.Quests:ApplyDetailTextGeometry(true)
+point, relative, relativePoint, x, y = QuestLogItem4:GetPoint()
+assert(
+  point == "TOPLEFT" and relative == QuestLogItem3 and
+    relativePoint == "TOPRIGHT" and x == 8 and y == 0,
+  "mandatory reward columns did not keep their explicit gap"
+)
+for _, name in ipairs({
+  "QuestLogQuestTitle",
+  "QuestLogDescriptionTitle",
+  "QuestLogRewardTitleText",
+}) do
+  assert(
+    _G[name].font[1]:find("NotoSerifSC%-SemiBold%.ttf$") and
+      _G[name].font[2] == 14 and _G[name].font[3] == "" and
+      _G[name].shadowColor[4] == 0,
+    name .. " retained the outlined, hard-to-read detail heading font"
+  )
+end
+for _, name in ipairs({
+  "QuestLogObjectivesText",
+  "QuestLogQuestDescription",
+  "QuestLogItemChooseText",
+  "QuestLogItemReceiveText",
+  "QuestLogRequiredMoneyText",
+}) do
+  assert(
+    _G[name].font[1] == "pfui-font.ttf" and
+      _G[name].font[2] == 12 and _G[name].font[3] == "" and
+      _G[name].shadowColor[4] == 0,
+    name .. " did not use the readable, shadow-free detail body font"
+  )
+end
+questLogChoiceCount = 0
+questLogRewardCount = 6
+AzerothExpeditionUI.modules.Quests:ApplyDetailTextGeometry(true)
+point, relative, relativePoint, x, y = QuestLogItem3:GetPoint()
+assert(
+  relative == QuestLogItem1 and relativePoint == "BOTTOMLEFT" and
+    x == 0 and y == -4,
+  "third reward did not advance to the second non-overlapping row"
+)
+point, relative, relativePoint, x, y = QuestLogItem6:GetPoint()
+assert(
+  relative == QuestLogItem5 and relativePoint == "TOPRIGHT" and
+    x == 8 and y == 0,
+  "six-reward maximum density did not preserve the two-column gap"
+)
+questLogChoiceCount = 2
+questLogRewardCount = 2
+questLogHasRewardSpell = true
+AzerothExpeditionUI.modules.Quests:ApplyDetailTextGeometry(true)
+headingPoint, headingRelative, headingRelativePoint,
+  headingX, headingY = QuestLogSpellLearnText:GetPoint()
+assert(
+  headingRelative == QuestLogItem1 and
+    headingRelativePoint == "BOTTOMLEFT" and
+    headingX == 0 and headingY == -5,
+  "spell reward heading drifted to the right column after two choices"
+)
+point, relative, relativePoint, x, y = QuestLogItem3:GetPoint()
+assert(
+  relative == QuestLogItem1 and
+    relativePoint == "BOTTOMLEFT" and x == 0 and y == -24 and
+    not DependsOn(QuestLogItem3, QuestLogSpellLearnText),
+  "spell reward item retained a circular heading dependency"
+)
+headingPoint, headingRelative, headingRelativePoint,
+  headingX, headingY = QuestLogItemReceiveText:GetPoint()
+assert(
+  headingRelative == QuestLogItem3 and
+    headingRelativePoint == "BOTTOMLEFT" and
+    headingX == 0 and headingY == -5,
+  "mandatory reward heading overlapped the spell reward group"
+)
+point, relative, relativePoint, x, y = QuestLogItem4:GetPoint()
+assert(
+  relative == QuestLogItem3 and
+    relativePoint == "BOTTOMLEFT" and x == 0 and y == -24 and
+    not DependsOn(QuestLogItem4, QuestLogItemReceiveText),
+  "mandatory reward retained a receive-heading dependency after a spell"
+)
+questLogHasRewardSpell = false
+questLogChoiceCount = 2
+questLogRewardCount = 2
+AzerothExpeditionUI.modules.Quests:ApplyDetailTextGeometry(true)
 local countPoint, countRelative, countRelativePoint, countX, countY =
   QuestLogQuestCount:GetPoint()
 assert(
@@ -860,12 +1255,12 @@ for index = 1, 18 do
   )
   assert(
     row.font[1] == "pfui-font.ttf" and
-      row.font[2] == 12 and row.font[3] == "OUTLINE" and
+      row.font[2] == 12 and row.font[3] == "" and
       row.fontString.font[1] == "pfui-font.ttf" and
       row.fontString.font[2] == 12 and
-      row.fontString.font[3] == "OUTLINE" and
+      row.fontString.font[3] == "" and
       row.fontString.shadowColor[4] == 0,
-    "quest row did not restore the shared, heavier pfUI typography"
+    "quest row did not restore the clear, shadow-free pfUI typography"
   )
   assert(
     not _G["QuestLogTitle" .. index .. "Check"]:IsShown(),
@@ -879,13 +1274,71 @@ end
 assert(
   questLogTitle5Tag.font[1] == "pfui-font.ttf" and
     questLogTitle5Tag.font[2] == 12 and
-    questLogTitle5Tag.font[3] == "OUTLINE" and
+    questLogTitle5Tag.font[3] == "" and
     questLogTitle5Tag.shadowColor[4] == 0 and
     questLogTitle5Tag.textColor[1] == 0.184 and
     QuestLogTitle5.fontString:GetText():find(
       "|cff2f1236%(Dungeon%)"
     ),
   "completion or dungeon status text escaped the shared quest-row font"
+)
+assert(
+  QuestLogTitle6.fontString:GetText():find(
+    "|cff2f1236%(精英%)"
+  ) and
+    not QuestLogTitle6.fontString:GetText():find("|cffffff00", 1, true),
+  "localized inline quest type kept the provider's luminous color"
+)
+assert(
+  QuestLogTitle7.fontString:GetText():find(
+    "|cff2f1236（团队）"
+  ) and
+    not QuestLogTitle7.fontString:GetText():find("|cff00ff00", 1, true),
+  "full-width localized quest type kept the provider's luminous color"
+)
+assert(
+  questLogTitle8Tag.textColor[1] == 0.184 and
+    questLogTitle8Tag.textColor[2] == 0.071 and
+    questLogTitle8Tag.textColor[3] == 0.212,
+  "rendered quest Tag inherited difficulty colour when the API tag was nil"
+)
+assert(
+  QuestLogTitle5.r == 1 and
+    QuestLogTitle5.g == 0.82 and
+    QuestLogTitle5.b == 0 and
+    questLogTitle5Tag.aeuiQuestSemanticInkLock ==
+      questLogTitle5Tag.SetTextColor,
+  "semantic Tag lock repurposed native quest difficulty fields"
+)
+questLogTitle5Tag:SetTextColor(0, 1, 0, 1)
+assert(
+  questLogTitle5Tag.textColor[1] == 0.184 and
+    questLogTitle5Tag.textColor[2] == 0.071 and
+    questLogTitle5Tag.textColor[3] == 0.212,
+  "late provider color write bypassed the semantic Tag setter lock"
+)
+this = QuestLogTitle5
+QuestLogTitleButton_OnEnter()
+this = nil
+assert(
+  questLogTitleGlobalEnterCalls == 1 and
+    questLogTitle5Tag.textColor[1] == 0.184 and
+    questLogTitle5Tag.textColor[2] == 0.071 and
+    questLogTitle5Tag.textColor[3] == 0.212,
+  "native tag hover escaped the semantic quest-type ink"
+)
+this = QuestLogTitle5
+QuestLogTitleButton_OnLeave()
+this = nil
+assert(
+  questLogTitleGlobalLeaveCalls == 1 and
+    questLogTitle5Tag.textColor[1] == 0.184 and
+    questLogTitle5Tag.textColor[2] == 0.071 and
+    questLogTitle5Tag.textColor[3] == 0.212 and
+    QuestLogTitle5.r == 1 and
+    QuestLogTitle5.g == 0.82 and
+    QuestLogTitle5.b == 0,
+  "native tag leave restored the quest difficulty colour"
 )
 assert(
   QuestLogHighlightFrame.alpha == 0,
@@ -953,7 +1406,7 @@ end
 assert(
   QuestLogTitle1.font[1] == "pfui-font.ttf" and
     QuestLogTitle1.font[2] == 12 and
-    QuestLogTitle1.font[3] == "OUTLINE",
+    QuestLogTitle1.font[3] == "",
   "quest row font does not match the readable module baseline"
 )
 assert(
@@ -1029,7 +1482,7 @@ assert(
 )
 detailWheel(-10)
 assert(
-  QuestLogDetailScrollFrame:GetVerticalScroll() == 188,
+  QuestLogDetailScrollFrame:GetVerticalScroll() == 213,
   "detail mouse wheel did not clamp to the scroll range"
 )
 detailWheel(10)
@@ -1327,8 +1780,8 @@ assert(
   "temporary tracker paper runtime contract was not recorded"
 )
 assert(
-  pfQuestMapTracker.aeuiQuestVisualThemeContract == "1.6" and
-    providerTrackerButton.aeuiQuestVisualThemeContract == "1.6",
+  pfQuestMapTracker.aeuiQuestVisualThemeContract == "1.8" and
+    providerTrackerButton.aeuiQuestVisualThemeContract == "1.8",
   "pfQuest Tracker did not consume the shared visual theme"
 )
 assert(
@@ -1360,7 +1813,7 @@ assert(
 )
 assert(
   not providerTrackerButton.icon:IsShown() and
-    providerTrackerButton.aeuiQuestEntryIconThemeContract == "1.6",
+    providerTrackerButton.aeuiQuestEntryIconThemeContract == "1.8",
   "tracker entry color dot/question-mark texture remained visible"
 )
 assert(
@@ -1541,7 +1994,7 @@ assert(
     pfQuest.buttonOnline:GetWidth() == 72 and
     pfQuest.buttonOnline:GetHeight() == 16 and
     pfQuest.buttonOnline.txt.font[1] == "pfui-font.ttf" and
-    pfQuest.buttonOnline.txt.font[3] == "OUTLINE",
+    pfQuest.buttonOnline.txt.font[3] == "",
   "pfQuest online control still overlapped the scrolling quest title"
 )
 assert(
@@ -1570,7 +2023,7 @@ deferredReflow()
 assert(
   QuestLogTitle1.fontString.font[1] == "pfui-font.ttf" and
     QuestLogTitle1.fontString.font[2] == 12 and
-    QuestLogTitle1.fontString.font[3] == "OUTLINE" and
+    QuestLogTitle1.fontString.font[3] == "" and
     QuestLogQuestDescription:GetWidth() == 214 and
     QuestLogDetailScrollChildFrame:GetHeight() == 572,
   "first deferred Quest Log reconciliation missed late provider layout"
@@ -1582,7 +2035,7 @@ deferredReflow()
 assert(
   QuestLogTitle1.fontString.font[1] == "pfui-font.ttf" and
     QuestLogTitle1.fontString.font[2] == 12 and
-    QuestLogTitle1.fontString.font[3] == "OUTLINE" and
+    QuestLogTitle1.fontString.font[3] == "" and
     QuestLogDetailScrollChildFrame:GetHeight() == 582 and
     AzerothExpeditionUI.modules.Quests.questLogReflowPasses == nil and
     AzerothExpeditionUIQuestDriver:GetScript("OnUpdate") == nil,
@@ -1600,9 +2053,15 @@ assert(
 local runtimeStatus =
   AzerothExpeditionUI.modules.Quests:GetRuntimeStatus()
 assert(
-  runtimeStatus:find("frame=1.18", 1, true) and
-    runtimeStatus:find("theme=1.6", 1, true) and
+  runtimeStatus:find("frame=1.25", 1, true) and
+    runtimeStatus:find("theme=1.8", 1, true) and
     runtimeStatus:find("seal=detail-page-32", 1, true) and
+    runtimeStatus:find("tag=semantic-setter-lock", 1, true) and
+    runtimeStatus:find(
+      "reward=native-container-acyclic-visible-fallback-gap-8",
+      1,
+      true
+    ) and
     runtimeStatus:find("font=pfui-font.ttf", 1, true),
   "Quest runtime status cannot distinguish applied and stale deployments"
 )

@@ -300,7 +300,7 @@ def main() -> None:
     quest_theme_source = (
         aeui / "Modules" / "QuestVisualTheme.lua"
     ).read_text(encoding="utf-8")
-    assert 'contract = "1.6"' in quest_theme_source
+    assert 'contract = "1.8"' in quest_theme_source
     assert "QuestLogShellV4" in quest_theme_source
     assert "QuestLogDirectoryMarksV1" in quest_theme_source
     assert "QuestTrackerPaperV1" in quest_theme_source
@@ -320,7 +320,20 @@ def main() -> None:
     assert "providerOwned = true" in quest_name_role
     assert "NotoSansSC-Medium.ttf" in quest_name_role
     assert "size = 12" in quest_name_role
-    assert 'flags = "OUTLINE"' in quest_name_role
+    assert 'flags = ""' in quest_name_role
+    detail_body_role = quest_theme_source.split(
+        "detailBody = {", 1
+    )[1].split("},", 1)[0]
+    assert "providerOwned = true" in detail_body_role
+    assert "NotoSansSC-Medium.ttf" in detail_body_role
+    assert "size = 12" in detail_body_role
+    assert 'flags = ""' in detail_body_role
+    detail_heading_role = quest_theme_source.split(
+        "detailHeading = {", 1
+    )[1].split("},", 1)[0]
+    assert "NotoSerifSC-SemiBold.ttf" in detail_heading_role
+    assert "size = 14" in detail_heading_role
+    assert 'flags = ""' in detail_heading_role
     for shared_ink in (
         "|cff24170f",
         "|cff062a22",
@@ -334,12 +347,18 @@ def main() -> None:
     ):
         assert shared_ink in quest_theme_source
 
-    assert 'Quests.runtimeContract = "1.18"' in quest_source
+    assert 'Quests.runtimeContract = "1.25"' in quest_source
     assert "ApplyTrackerProviderFont" in quest_source
     assert "ResolveQuestNameInk" in quest_source
     assert quest_source.count("ResolveQuestNameInk(") >= 3
     assert "ApplyDirectoryTypography" in quest_source
     assert "NormalizeDirectoryInlineStatus" in quest_source
+    assert "ResolveRenderedDirectoryTagInk" in quest_source
+    assert "LockDirectoryTagInk" in quest_source
+    assert "aeuiQuestSemanticInkLock" in quest_source
+    assert "RestoreDirectoryTagInk" in quest_source
+    assert '"questLogTitleEnter"' in quest_source
+    assert '"questLogTitleLeave"' in quest_source
     assert "ResolveDirectoryStatusInks" in quest_source
     assert "pfUI.font_default" in quest_source
     assert "addon.questVisualTheme" in quest_source
@@ -368,7 +387,37 @@ def main() -> None:
     assert "ApplyDetailRewardGeometry" in quest_source
     assert "MeasureDetailContentHeight" in quest_source
     assert "UpdateDetailScrollChildHeight" in quest_source
+    assert "DETAIL_INLINE_MONEY_TEXT_NAMES" in quest_source
+    assert '"QuestLogSpacerFrame"' in quest_source
     assert "rewardSlotWidth = 108" in quest_source
+    assert "rewardSlotHeight = 41" in quest_source
+    assert "rewardColumnGap = 8" in quest_source
+    assert "rewardRowGap = 4" in quest_source
+    assert "rewardLabelHeight = 14" in quest_source
+    assert "rewardSectionGap = 5" in quest_source
+    assert "LayoutRewardGroup" in quest_source
+    assert "GetRewardGroupTopGap" in quest_source
+    assert (
+        "LayoutRewardGroup(firstIndex, count, anchor, heading)"
+        in quest_source
+    )
+    assert "AnchorRewardHeading" in quest_source
+    assert "ReadQuestLogRewardMoney" in quest_source
+    assert "EnsureRewardSlotContainer" in quest_source
+    assert "REWARD_CONTAINER" in quest_source
+    assert "SuppressRewardSurface" in quest_source
+    assert "SuppressNativeRewardTextures" in quest_source
+    assert "CountVisibleRewardItems" in quest_source
+    assert "InstallRewardGeometryLock" in quest_source
+    assert "SetRewardSlotGeometry" in quest_source
+    assert "aeuiRewardGeometrySetterLock" in quest_source
+    assert (
+        "native-container-acyclic-visible-fallback-gap-8"
+        in quest_source
+    )
+    assert 'rewardIconSize = 33' in quest_source
+    assert 'rewardContentInset = 4' in quest_source
+    assert 'local nativeNameFrame = _G[objectName .. "NameFrame"]' in quest_source
     assert "rewardNameWidth = 64" in quest_source
     assert "HideCollapseAllButton" in quest_source
     assert "aeuiQuestCollapseSuppressed" in quest_source

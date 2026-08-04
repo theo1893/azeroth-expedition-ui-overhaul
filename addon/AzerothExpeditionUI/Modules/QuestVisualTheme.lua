@@ -6,7 +6,7 @@ local media = addon.media.root
 -- book versus field note), while all shared materials, typography roles and
 -- semantic ink colors live here so a later art revision has one entry point.
 addon.questVisualTheme = {
-  contract = "1.6",
+  contract = "1.8",
   media = {
     questLogShell = media .. "Quests\\QuestLogShellV4",
     directoryMarks = media .. "Quests\\QuestLogDirectoryMarksV1",
@@ -27,7 +27,21 @@ addon.questVisualTheme = {
       path = media .. "Fonts\\NotoSansSC-Medium.ttf",
       fallbackPath = media .. "Fonts\\NotoSansSC-Medium.ttf",
       size = 12,
-      flags = "OUTLINE",
+      flags = "",
+    },
+    detailHeading = {
+      path = media .. "Fonts\\NotoSerifSC-SemiBold.ttf",
+      size = 14,
+      flags = "",
+    },
+    detailBody = {
+      -- Long Chinese reading text follows the same high-legibility client
+      -- face as the live interface instead of Blizzard's outlined QuestFont.
+      providerOwned = true,
+      path = media .. "Fonts\\NotoSansSC-Medium.ttf",
+      fallbackPath = media .. "Fonts\\NotoSansSC-Medium.ttf",
+      size = 12,
+      flags = "",
     },
     trackerQuestName = {
       providerOwned = true,

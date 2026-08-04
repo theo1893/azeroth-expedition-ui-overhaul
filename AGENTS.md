@@ -21,7 +21,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 |---|---|---|
 | pfUI／作用域接管 | scoped ownership `P5`；pfUI 公共绘制、全部未接管模块与配置页已恢复；模块 Initialize／Apply 已隔离失败，未实机 | Turtle WoW 验证 pfUI 全模块、Game Menu／`/pfui`、旧 SavedVariables 迁移及 Chat／Quest Log 隔离 |
 | 聊天 | 核心 runtime `1.22 / P5`。Full V1 主框、Dark V2 Tab／承托带、Dark V1 输入与 V3 未读已在 addon 内接入；V3 Tab／承托带保留为 P6-C 前回退。Dark V2 固定 source `ChatTabs_Dark_V2_A.png` SHA `616f965b…a1e3c` 已确定性导出为 `ChatTabAtlasDarkV2.tga` SHA `3fb505fa…be0` 与 `ChatTabShelfDarkV2.tga` SHA `44c7f85c…fda`；只清理 source 的 `13` 个和 LANCZOS 新增的 `23` 个低 Alpha 绿边 RGB，Alpha 不变，最终绿溢色 `0`。最终真实排版覆盖 6 场景、violations `0`，fresh-checkout package `pass`、目标设备无需构建。v1.22 继续透传客户端／pfUI／ChatMOD 经典颜色；Chat Copy／URL Copy 暂缓，右框及左右聊天信息 Panel 隐藏，小地图 Panel 保留；本次 P4→P5 ImageGen `0`，原生产仍为 `5/5`，attempt 6 禁止 | 游戏设备可用时 `/reload`，确认 `chat-runtime=1.22`、四态 Tab、五 Tab 压缩、承托带、缩放／拖动、经典颜色及输入行为；通过前不得标记 P6 或清理回退／证据 |
-| 任务 | QL-A2 V4 书本主体保持；Quests `1.18`／Quest Visual Theme `1.6` 的 18 个 `246 × 18px` 活动行恢复 `pfUI.font_default` 的 `12px OUTLINE`。右页按最底动态对象重算 ScrollChild，并在 pfQuest 写入后执行有限两帧重排；奖励双列槽为 `108px`／名称 `64px`。已接受 QS-A1 漆章现以 `32px` 无鼠标 Texture 直接压在详情页右上纸面，旧悬空锚点已移除；原底部按钮继续 fail-open。V9 的七个 `112×20px` 外侧短事务签仍为 `QS-B1 V1 simulation-confirmed / prompt-draft / 0/5`，未生图、未接入。Quest runtime `1.18` 已进入当前 `main`，但尚无该版本实机结论。Tracker 继续批次提交与 `16px` 底部安全区，QT-A1 仍 `display-region-blocked` | 游戏设备拉取当前 `main` 后用 `/aeui status` 确认 `quest frame=1.18, theme=1.6, seal=detail-page-32`，再验证字体、长正文和 0／1／2／4／6 奖励；事务签另待用户独立授权 `QS-B1 V1` |
+| 任务 | QL-A2 V4 书本主体保持；Quests `1.25`／Quest Visual Theme `1.8` 保留已获实机确认的 `QuestLogTitleNTag.SetTextColor` 语义锁。作用域路径不会加载 pfUI Quest Log skin，runtime 为真实 `QuestLogItemN` 创建无鼠标的 adapter-owned 暖纸容器，迁入动态图标／数量／名称并隐藏原生 `NameFrame`。实机暴露 runtime `1.24` 会让奖励项依赖分组标题，而原生随后反向锚定标题，形成 `QuestLogItemReceiveText ↔ QuestLogItem3` 环；`1.25` 改为所有奖励项只依赖奖励总标题或上一组奖励项，保持 `108×41px`、`8px` 列距、`4px` 行距及真实可见 Button 兜底。金额与 ScrollChild 动态末端保持，右页字体无 outline／shadow。`QL-D V1` 正式容器方向模拟仍为 0／1／2／4／6 `5/5 pass`、ImageGen `0/0`，等待用户确认；QS-A1／QS-B1 与 Tracker 状态不变 | 游戏设备用 `/aeui status` 确认 `quest frame=1.25, theme=1.8, seal=detail-page-32, tag=semantic-setter-lock, reward=native-container-acyclic-visible-fallback-gap-8`，复测错误不再出现，并覆盖 2／3／4／6 个奖励的真实空隙、换行与原生名牌不回显；再确认 QL-D 正式容器方向，未经独立授权不生图 |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |
 | 其他 UI | `P0–P2`，保持 pfUI 默认实现 | 逐模块建立四份长期文档，并仅登记目标模块的接管路由 |
@@ -70,6 +70,7 @@ docs/
 - [当前 QL-B1 目录墨记工作文件](docs/modules/quests/work/QUEST.LOG.DIRECTORY.md)
 - [当前 QL-B2 选择书签工作文件](docs/modules/quests/work/QUEST.LOG.SELECTION.md)
 - [当前 QL-B3 类型／计时／状态章工作文件](docs/modules/quests/work/QUEST.LOG.STATUS.md)
+- [当前 QL-D 奖励槽工作文件](docs/modules/quests/work/QUEST.LOG.REWARDS.md)
 - [当前 pfQuest Tracker 核心工作文件](docs/modules/quests/work/QUEST.TRACKER.CORE.md)
 - [当前 Quest Log／Tracker 共用漆章工作文件](docs/modules/quests/work/QUEST.SEALS.md)
 

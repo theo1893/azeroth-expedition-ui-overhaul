@@ -259,3 +259,19 @@ QL-A2 在实机前保持本 work。后续 QL-B／QL-C／QL-D 交互资产仍需�
 - Lua smoke 覆盖连续两帧高度变化与第三帧不再执行；`/aeui status` 会报告
   当前 detail scroll range。仍须在目标客户端覆盖长中文正文和
   0／1／2／4／6 奖励，才能进入 P6。
+
+## `2026-08-04` runtime `1.19` 金额与内容末端修复
+
+- 最新实机截图中“你还将得到”右侧只剩最右一小段金额。对照 WoW `1.12.1`
+  原始 `QuestLogFrame.xml` 后确认：`QuestLogMoneyFrame` 与
+  `QuestLogRequiredMoneyFrame` 分别锚在对应标签的右侧 `15px`；runtime `1.18`
+  把这两个行内标签强制成 `214px`，因此金额被推出 `224px` ScrollChild。
+- runtime `1.19` 只给真正需要换行的正文设置 `214px`，把
+  `QuestLogItemReceiveText`／`QuestLogRequiredMoneyText` 恢复为原生
+  `SetWidth(0)` 自适应宽度，使右侧 MoneyFrame 保持在可见区内。
+- 原生 `QuestLogSpacerFrame` 是 `QuestFrame_SetAsLastShown()` 放在最后一个动态
+  奖励下方的 `25px` 内容末端标记；测量现显式纳入该 Frame，再加既有 `12px`
+  底部安全区。Lua smoke 的对应内容高为 `537px`、滚动范围为 `213px`，并继续
+  验证两帧后停止。
+- 下一门禁是在目标客户端确认两处金额完整显示、长正文与 0／1／2／4／6 奖励
+  可滚到末端；状态必须先显示 `quest frame=1.19 theme=1.7`。
