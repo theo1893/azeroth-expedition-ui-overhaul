@@ -1,0 +1,459 @@
+{
+  "schema_version": 1,
+  "module": "chat",
+  "batch": "CHAT.TABS.DARK.V2",
+  "component": "CHAT.TABS / CHAT.TAB_SHELF",
+  "accepted_version": "CHAT.TABS.DARK.V2 deterministic re-layout exception A",
+  "runtime_contract": "1.22",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "source": {
+    "file": "assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_A.png",
+    "source_manifest": "assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_SourceManifest_v1.json",
+    "sha256": "616f965bb850605bcb67a98f60660feee35d80f8b95bc2b35ad72487df9a1e3c",
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      80,
+      118,
+      1457,
+      705
+    ],
+    "transparent_pixels": 1327364,
+    "partially_transparent_pixels": 17084,
+    "opaque_pixels": 228416,
+    "exact_green_visible_pixels": 7,
+    "visible_green_spill_pixels": 13,
+    "transparent_rgb_nonzero_values": 0,
+    "outside_declared_cells_visible_pixels": 0,
+    "minimum_cell_margin_pixels": 6,
+    "cells": {
+      "shelf": {
+        "box_xyxy": [
+          64,
+          96,
+          1472,
+          232
+        ],
+        "visible_bbox_local_exclusive": [
+          16,
+          22,
+          1393,
+          112
+        ],
+        "margins_ltrb": [
+          16,
+          22,
+          15,
+          24
+        ]
+      },
+      "normal": {
+        "box_xyxy": [
+          64,
+          560,
+          384,
+          716
+        ],
+        "visible_bbox_local_exclusive": [
+          23,
+          10,
+          298,
+          143
+        ],
+        "margins_ltrb": [
+          23,
+          10,
+          22,
+          13
+        ]
+      },
+      "hover": {
+        "box_xyxy": [
+          416,
+          560,
+          736,
+          716
+        ],
+        "visible_bbox_local_exclusive": [
+          23,
+          9,
+          298,
+          143
+        ],
+        "margins_ltrb": [
+          23,
+          9,
+          22,
+          13
+        ]
+      },
+      "selected": {
+        "box_xyxy": [
+          768,
+          560,
+          1088,
+          716
+        ],
+        "visible_bbox_local_exclusive": [
+          24,
+          6,
+          292,
+          145
+        ],
+        "margins_ltrb": [
+          24,
+          6,
+          28,
+          11
+        ]
+      },
+      "disabled": {
+        "box_xyxy": [
+          1120,
+          560,
+          1440,
+          716
+        ],
+        "visible_bbox_local_exclusive": [
+          20,
+          12,
+          301,
+          145
+        ],
+        "margins_ltrb": [
+          20,
+          12,
+          19,
+          11
+        ]
+      }
+    }
+  },
+  "deterministic_export": {
+    "operation": "validate the exact accepted P4 sheet; clear RGB only on its thirteen alpha-1..6 green-dominant edge pixels while preserving Alpha; crop five complete declared cells; LANCZOS-resample four states to 248x120 and the shelf to 1016x56; clear RGB only on any new low-alpha green-dominant LANCZOS ringing while preserving Alpha; clear fully transparent RGB; place into fixed power-of-two atlases; serialize RGBA TGA",
+    "foreign_source_pixels_mixed": false,
+    "redraw": false,
+    "text_unread_or_behavior_baked": false,
+    "source_cells_xyxy": {
+      "shelf": [
+        64,
+        96,
+        1472,
+        232
+      ],
+      "normal": [
+        64,
+        560,
+        384,
+        716
+      ],
+      "hover": [
+        416,
+        560,
+        736,
+        716
+      ],
+      "selected": [
+        768,
+        560,
+        1088,
+        716
+      ],
+      "disabled": [
+        1120,
+        560,
+        1440,
+        716
+      ]
+    },
+    "tab_atlas_state_boxes_xyxy": {
+      "normal": [
+        4,
+        4,
+        252,
+        124
+      ],
+      "hover": [
+        4,
+        132,
+        252,
+        252
+      ],
+      "selected": [
+        4,
+        260,
+        252,
+        380
+      ],
+      "disabled": [
+        4,
+        388,
+        252,
+        508
+      ]
+    },
+    "tab_atlas_x_pixels": [
+      4,
+      52,
+      204,
+      252
+    ],
+    "normalized_x_uv": [
+      0.0078125,
+      0.1015625,
+      0.3984375,
+      0.4921875
+    ],
+    "normalized_state_y_uv": {
+      "normal": [
+        0.0,
+        0.25
+      ],
+      "hover": [
+        0.25,
+        0.5
+      ],
+      "selected": [
+        0.5,
+        0.75
+      ],
+      "disabled": [
+        0.75,
+        1.0
+      ]
+    },
+    "runtime_caps_lr": [
+      16,
+      16
+    ],
+    "runtime_tab_size": [
+      92,
+      30
+    ],
+    "runtime_tab_gap": 3,
+    "runtime_tab_top_offset": 2,
+    "runtime_hit_bottom_extension": 8,
+    "runtime_text_safe_inset": 6,
+    "runtime_text_height": 18,
+    "shelf_atlas_box_xyxy": [
+      4,
+      4,
+      1020,
+      60
+    ],
+    "runtime_shelf_height": 16,
+    "runtime_shelf_top_offset": 18,
+    "supported_frame_sizes": [
+      [
+        440,
+        320
+      ],
+      [
+        540,
+        420
+      ]
+    ],
+    "source_cleanup": {
+      "rgb_only_cleared_pixels": 13,
+      "affected_alpha_min_max": [
+        1,
+        6
+      ],
+      "alpha_difference_pixels": 0,
+      "post_cleanup": {
+        "exact_green_visible_pixels": 0,
+        "visible_green_spill_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      }
+    },
+    "state_cleanup": {
+      "normal": {
+        "lanczos_green_ringing_cleanup": {
+          "rgb_only_cleared_pixels": 0,
+          "affected_alpha_min_max": null,
+          "alpha_difference_pixels": 0
+        },
+        "transparent_rgb_values_cleared": 129,
+        "exact_green_visible_pixels": 0,
+        "visible_green_spill_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "hover": {
+        "lanczos_green_ringing_cleanup": {
+          "rgb_only_cleared_pixels": 11,
+          "affected_alpha_min_max": [
+            2,
+            7
+          ],
+          "alpha_difference_pixels": 0
+        },
+        "transparent_rgb_values_cleared": 157,
+        "exact_green_visible_pixels": 0,
+        "visible_green_spill_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "selected": {
+        "lanczos_green_ringing_cleanup": {
+          "rgb_only_cleared_pixels": 0,
+          "affected_alpha_min_max": null,
+          "alpha_difference_pixels": 0
+        },
+        "transparent_rgb_values_cleared": 148,
+        "exact_green_visible_pixels": 0,
+        "visible_green_spill_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "disabled": {
+        "lanczos_green_ringing_cleanup": {
+          "rgb_only_cleared_pixels": 4,
+          "affected_alpha_min_max": [
+            1,
+            7
+          ],
+          "alpha_difference_pixels": 0
+        },
+        "transparent_rgb_values_cleared": 73,
+        "exact_green_visible_pixels": 0,
+        "visible_green_spill_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      }
+    },
+    "tab_atlas_transparent_rgb_values_cleared": 0,
+    "shelf_cleanup": {
+      "lanczos_green_ringing_cleanup": {
+        "rgb_only_cleared_pixels": 8,
+        "affected_alpha_min_max": [
+          1,
+          34
+        ],
+        "alpha_difference_pixels": 0
+      },
+      "transparent_rgb_values_cleared": 977,
+      "exact_green_visible_pixels": 0,
+      "visible_green_spill_pixels": 0,
+      "transparent_rgb_nonzero_values": 0
+    },
+    "shelf_atlas_transparent_rgb_values_cleared": 0
+  },
+  "runtime_exports": {
+    "tabs": {
+      "file": "addon/AzerothExpeditionUI/Media/Chat/ChatTabAtlasDarkV2.tga",
+      "sha256": "3fb505fad8760b0547fa3748dc7ad8c7bc885643734b90e70eab6c4d52189be0",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "logical_sampled_bbox": [
+        4,
+        0,
+        252,
+        512
+      ],
+      "visible_bbox_exclusive": [
+        17,
+        9,
+        240,
+        502
+      ],
+      "transparent_pixels": 182603,
+      "partially_transparent_pixels": 8447,
+      "opaque_pixels": 71094,
+      "exact_green_visible_pixels": 0,
+      "visible_green_spill_pixels": 0,
+      "transparent_rgb_nonzero_values": 0
+    },
+    "shelf": {
+      "file": "addon/AzerothExpeditionUI/Media/Chat/ChatTabShelfDarkV2.tga",
+      "sha256": "44c7f85c66850593817e76604a75a8ee02fb3887ba06af4c4065999f0f5bcfda",
+      "width": 1024,
+      "height": 64,
+      "mode": "RGBA",
+      "logical_sampled_bbox": [
+        0,
+        0,
+        1024,
+        64
+      ],
+      "visible_bbox_exclusive": [
+        14,
+        10,
+        1012,
+        53
+      ],
+      "transparent_pixels": 29289,
+      "partially_transparent_pixels": 6487,
+      "opaque_pixels": 29760,
+      "exact_green_visible_pixels": 0,
+      "visible_green_spill_pixels": 0,
+      "transparent_rgb_nonzero_values": 0
+    }
+  },
+  "adapter": {
+    "file": "addon/AzerothExpeditionUI/Modules/Chat.lua",
+    "provider": [
+      "pfUI.chat.left.panelTop",
+      "left ChatFrameNTab",
+      "left ChatFrameNTabText"
+    ],
+    "runtime_owner": "one shelf Texture plus three visual Texture slices per visible tab",
+    "states": [
+      "normal",
+      "hover",
+      "selected",
+      "disabled"
+    ],
+    "preserved_behavior": [
+      "tab Button geometry and click handling",
+      "docking and selection",
+      "runtime-owned localized tab text",
+      "native flash semantics through the independent unread seal",
+      "hover, disabled and selected state selection",
+      "one-shot startup and scale-edge reflow",
+      "SavedVariables and all chat message behavior"
+    ],
+    "fallback": [
+      "addon/AzerothExpeditionUI/Media/Chat/ChatTabAtlasV3.tga",
+      "addon/AzerothExpeditionUI/Media/Chat/ChatTabShelfV3.tga"
+    ]
+  },
+  "review_artifacts": {
+    "tab_atlas_png": "generated/chat/core/CHAT.TABS.DARK.V2/runtime-v2/ChatTabAtlasDarkV2_RuntimeAtlas.png",
+    "shelf_atlas_png": "generated/chat/core/CHAT.TABS.DARK.V2/runtime-v2/ChatTabShelfDarkV2_RuntimeAtlas.png",
+    "four_state_strip": "generated/chat/core/CHAT.TABS.DARK.V2/runtime-v2/ChatTabsDarkV2_four_states_100pct.png",
+    "real_layout_spec": "tools/specs/chat_tabs_dark_runtime_preview_v2.json",
+    "display_region_contract": "tools/specs/chat_tabs_dark_runtime_display_region_v2.json",
+    "real_layout": {
+      "file": "generated/chat/core/CHAT.TABS.DARK.V2/runtime-v2/ChatTabsDarkV2_runtime_real_layout.png",
+      "status": "present",
+      "sha256": "3656c24fcd2c9c2b17bb5d358d44d60c23e4b9c4783cc1153f86408b27181ccf"
+    },
+    "real_layout_metrics": {
+      "file": "generated/chat/core/CHAT.TABS.DARK.V2/runtime-v2/ChatTabsDarkV2_runtime_real_layout.metrics.json",
+      "status": "present",
+      "sha256": "fc29f5830b8efd19362da112ffa61e4c5079c819fbafe061ba48c9f70cd3c956"
+    },
+    "display_region_report": {
+      "file": "generated/chat/core/CHAT.TABS.DARK.V2/runtime-v2/ChatTabsDarkV2_runtime_display-region-report.json",
+      "status": "present",
+      "sha256": "e2405edb309dd6fe86c5070c33b636c3357d5f2a4a854ca9f8f0a29b2d34d5e1"
+    }
+  },
+  "addon_package_gate": {
+    "file": "generated/chat/core/CHAT.TABS.DARK.V2/runtime-v2/addon-package-report.json",
+    "status": "present",
+    "sha256": "8803b1228f58f9734d1bdea5b0106d53207186a3a283396998235b2777258f67",
+    "schema": "aeui-addon-package-report-v1",
+    "package_status": "pass",
+    "build_required_on_target_device": false,
+    "violations": []
+  },
+  "forbidden_runtime_uses": [
+    "do not load the accepted 1536x1024 source sheet directly in game",
+    "do not display the five-object sheet as one background",
+    "do not stretch a complete state instead of the three horizontal slices",
+    "do not bake tab text, unread state, channel names, buttons or chat content",
+    "do not change tab Button geometry, hit boxes, events, SavedVariables or nonvisual behavior",
+    "do not delete the V3 tab and shelf fallback before P6-C"
+  ]
+}

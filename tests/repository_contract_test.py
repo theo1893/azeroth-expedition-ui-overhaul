@@ -437,7 +437,7 @@ def main() -> None:
     assert "SuppressChatInfoPanels" in chat_source
     assert "panels.minimap" not in chat_source
     assert "SuppressRightChat" in chat_source
-    assert 'Chat.runtimeContract = "1.21"' in chat_source
+    assert 'Chat.runtimeContract = "1.22"' in chat_source
     assert 'Chat.colorContract = "classic-provider"' in chat_source
     assert "ChatBookFrameFullV1" in chat_source
     assert "EnsureBookVisible" in chat_source
@@ -501,8 +501,8 @@ def main() -> None:
     assert 'text:SetJustifyV("MIDDLE")' in chat_source
     for texture in (
         "ChatBookFrameFullV1",
-        "ChatTabAtlasV3",
-        "ChatTabShelfV3",
+        "ChatTabAtlasDarkV2",
+        "ChatTabShelfDarkV2",
         "ChatInputDarkV1",
         "ChatUnreadSealV3",
     ):

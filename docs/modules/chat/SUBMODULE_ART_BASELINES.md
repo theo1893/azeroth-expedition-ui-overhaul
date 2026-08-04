@@ -38,8 +38,29 @@ runtime contract `1.19` 确定性导出进入 `P5`：中央阅读面
 不得因状态切换变成贴近皮革底色的黑褐字。不得做成网页 Tab、矩形卡片、
 胶囊按钮或独立金属牌。
 
-已接受源：
-[ChatTabs_Master_v3.png](../../../assets/source/chat/v3/ChatTabs_Master_v3.png)。
+已接受的现行深色源：
+[ChatTabs_Dark_V2_A.png](../../../assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_A.png)，
+对应
+[source manifest](../../../assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_SourceManifest_v1.json)
+与
+[runtime manifest](../../../assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_RuntimeManifest_v1.json)。
+用户于 `2026-08-04` 接受方案 A 的固定 donor、等比 transform 与输出 SHA
+合同例外；唯一 `1536 × 1024 RGBA` source SHA-256 为
+`616f965bb850605bcb67a98f60660feee35d80f8b95bc2b35ad72487df9a1e3c`。
+它保留旧式斜梯形、外撇端部、非完全平直缝线、selected 夹页和低亮承托带，
+不得重新规整为网页标签。
+
+该 source 已在 runtime contract `1.22` 确定性导出：四态
+`ChatTabAtlasDarkV2.tga` 为 `512 × 512`、SHA-256
+`3fb505fad8760b0547fa3748dc7ad8c7bc885643734b90e70eab6c4d52189be0`；承托带
+`ChatTabShelfDarkV2.tga` 为 `1024 × 64`、SHA-256
+`44c7f85c66850593817e76604a75a8ee02fb3887ba06af4c4065999f0f5bcfda`。
+exporter 只清零 source 中 `13` 个与 LANCZOS 重采样新增 `23` 个低 Alpha
+绿边像素的 RGB，Alpha 逐像素不变；最终可见绿溢色与透明区脏 RGB 均为 `0`。
+`92 × 30px` 四态与五 Tab 压缩场景使用真实文字和现行书框完成六场景审查，
+display-region violations `0`。`ChatTabs_Master_v3.png`、
+`ChatTabAtlasV3.tga` 与 `ChatTabShelfV3.tga` 只作为结构 provenance 和 P6-C
+前运行时回退保留，不是现行可见方向。
 
 ## `CHAT.INPUT`
 
@@ -123,7 +144,8 @@ EditBox 的输入、焦点、光标、IME、历史、频道头、键盘事件或
 
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`。
 - V3 接受日期：`2026-07-29`；暖黑完整书体替换源与暖烟草输入源接受日期：
-  `2026-08-03`。
+  `2026-08-03`；Dark V2 Tab 方案 A source 与 P5 runtime 接受日期：
+  `2026-08-04`。
 - V3 主框源尺寸：`1608 × 978` RGBA。
 - 暖黑完整书体替换源尺寸：`1608 × 978` RGBA；SHA-256
   `a97d9c5fa055a119cd5ea7809bdaa51460cddb9674355efcec35f98f6cd2c673`；
@@ -142,6 +164,14 @@ EditBox 的输入、焦点、光标、IME、历史、频道头、键盘事件或
   `43cb9a0173a2f0cf05b43bb01b13a7e2aa8853feb26d4f62ec7b399610f47666`，其
   RGBA 像素与 P4 审查逻辑 atlas 完全一致；五场景最终展示区域为
   `0` violations。旧 `ChatInputAtlasV3.tga` 保留到 P6-C。
+- Dark V2 Tab source：`ChatTabs_Dark_V2_A.png`，`1536 × 1024` RGBA，
+  SHA-256 `616f965bb850605bcb67a98f60660feee35d80f8b95bc2b35ad72487df9a1e3c`；
+  原生产 ImageGen `5/5`、流程错误 `0`，用户接受的确定性方案 A 与 P4→P5
+  导出均没有新增 ImageGen。现行 atlas／shelf SHA-256 分别为
+  `3fb505fad8760b0547fa3748dc7ad8c7bc885643734b90e70eab6c4d52189be0`／
+  `44c7f85c66850593817e76604a75a8ee02fb3887ba06af4c4065999f0f5bcfda`；
+  source `13`＋重采样 `23` 个低 Alpha 绿边像素只清 RGB，Alpha 不变；六场景
+  display-region `0` violations。原批次 attempt 6 永久禁止。
 - V3 Tab 源尺寸：`1774 × 887` RGBA。
 - V3 控件源尺寸：`1536 × 1024` RGBA。
 - V3 source 接受时的 `440 × 320` 合成验证使用 `380 × 236` 正文安全区；

@@ -465,7 +465,7 @@ assert(
 )
 assert(
   left.enabledDrawLayer == "BACKGROUND" and
-    left.aeuiBookRuntimeVersion == "1.21",
+    left.aeuiBookRuntimeVersion == "1.22",
   "chat book background layer or runtime marker was not restored"
 )
 left.aeuiBookSlices.center:SetTexture(nil)
@@ -480,7 +480,7 @@ assert(#ChatFrame1.points == 2, "docked chat frame was not inset")
 assert(
   ChatFrame1:GetSpacing() == 3 and
     ChatFrame1.aeuiTextLineSpacing == 3 and
-    ChatFrame1.aeuiTextMetricsVersion == "1.21",
+    ChatFrame1.aeuiTextMetricsVersion == "1.22",
   "chat text did not receive the relaxed line-height contract"
 )
 assert(
@@ -491,7 +491,7 @@ assert(
     ChatFrame1.shadowColor[4] == 0 and
     ChatFrame1.shadowOffset[1] == 0 and
     ChatFrame1.shadowOffset[2] == 0 and
-    ChatFrame1.aeuiTextStyleVersion == "1.21",
+    ChatFrame1.aeuiTextStyleVersion == "1.22",
   "chat text did not restore the provider-owned comfort typography"
 )
 local channelMessage =
@@ -754,8 +754,8 @@ assert(not panel.left.aeuiPanelTexture, "retired panel art was still created")
 assert(#ChatFrame1Tab.points == 1, "pfUI chat tab anchor was not preserved")
 assert(ChatFrame1Tab.aeuiStateTexture, "chat tab state texture was not applied")
 assert(
-  ChatFrame1Tab.aeuiStateTexture.texture:find("ChatTabAtlasV3"),
-  "V3 chat tab atlas was not applied"
+  ChatFrame1Tab.aeuiStateTexture.texture:find("ChatTabAtlasDarkV2"),
+  "accepted Dark V2 chat tab atlas was not applied"
 )
 assert(
   ChatFrame1Tab.aeuiVisualState == "selected",
@@ -858,7 +858,7 @@ assert(
   "status command did not report the scoped route"
 )
 assert(
-  string.find(statusMessage, "chat-runtime=1.21", 1, true),
+  string.find(statusMessage, "chat-runtime=1.22", 1, true),
   "status command did not report the chat runtime contract"
 )
 assert(

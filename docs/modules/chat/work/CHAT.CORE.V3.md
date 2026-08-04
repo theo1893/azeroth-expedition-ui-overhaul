@@ -5,17 +5,18 @@
 - 模块：Chat
 - 组件 ID：`CHAT.FRAME`、`CHAT.FRAME.LEFT`、`CHAT.TABS`、`CHAT.INPUT`、
   `CHAT.UNREAD`、`CHAT.TEXT`
-- 版本：`CHAT.CORE.V3 / runtime contract v1.21`；输入生产版本
+- 版本：`CHAT.CORE.V3 / runtime contract v1.22`；输入生产版本
   `CHAT.INPUT.DARK.V1.r3 attempt 4 / runtime-exported`；Tab 替换方向
-  `CHAT.TABS.DARK.V2 deterministic re-layout exception A / source-accepted`；V1
+  `CHAT.TABS.DARK.V2 deterministic re-layout exception A / runtime-exported`；V1
   attempt 3 已由用户否决，V2 原生成预算已耗尽
 - 子状态：核心 `runtime-exported`；输入 `runtime-exported / P5`；Tab 替换
-  `source-accepted / P4`，当前 runtime 仍为 V3
+  `runtime-exported / P5`，V3 atlas／shelf 仅作 P6-C 前回退
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 当前操作：Full V1 固定 P4 source 已按全图比例确定性导出到 `1024²`
-  `ChatBookFrameFullV1.tga`，通过九个 slice 接管唯一左框；V3 Tab、承托带和
-  未读继续复用。保留 pfUI 配置字体、无描边／阴影、`3px` 行距、压光层退役
+  `ChatBookFrameFullV1.tga`，通过九个 slice 接管唯一左框；Dark V2 四态 Tab
+  atlas 与承托带已在 contract `1.22` 接入，V3 未读继续复用。保留 pfUI 配置
+  字体、无描边／阴影、`3px` 行距、压光层退役
   与书本自愈；v1.21 移除 AEUI 的基础 RGB、内嵌八位色、pfUI 输出桥和 ChatMOD
   `ORG_AddMessage` wrapper，客户端／pfUI／ChatMOD 成为经典配色的唯一权威。
   该代码收敛阶段 ImageGen `0` 次，不修改外部 ChatMOD 功能／配置。
@@ -63,8 +64,11 @@
   `1536 × 1024 RGBA` 输出 `616f965b…a1e3c` 晋级为 tracked source：
   `assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_A.png`。五对象均完整位于
   source cell，最小边距 `6px`，三场景 display-region violations `0`。P4
-  接受不授权 TGA、atlas、Lua、TOC、pfUI 或 addon 接入；当前仍加载 V3 Tab／
-  shelf，原批次 attempt 6 永久禁止。
+  接受时尚未授权 TGA、atlas、Lua、TOC、pfUI 或 addon 接入；原批次 attempt 6
+  永久禁止。随后用户回复“下一步”，单独推进确定性 P4→P5：从该 source 导出
+  `ChatTabAtlasDarkV2.tga`／`ChatTabShelfDarkV2.tga`，仅执行可审计 RGB-only
+  低 Alpha despill，接入 adapter contract `1.22`，并通过六场景真实排版、
+  display-region、静态合同与 fresh-checkout package gate。该阶段 ImageGen `0`。
 - 已凝结视觉方向：`CHAT-DARK-SIM-V1 / simulation-confirmed / P2` 的 B 方向
   已由 `CHAT.FRAME.FULL.V1.r1 / runtime-exported / P5` 实现；不再作为并行候选
 - 已退回生产批次：`CHAT.FRAME.PAPER.V1 / candidate-rejected / P3`；固定
@@ -115,7 +119,8 @@
   [`ChatInput_Dark_V1_SourceManifest_v1.json`](../../../../assets/source/chat/input-dark-v1/ChatInput_Dark_V1_SourceManifest_v1.json)；
   [`ChatTabs_Dark_V2_SourceManifest_v1.json`](../../../../assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_SourceManifest_v1.json)
 - runtime manifest：
-  [`ChatV3_RuntimeManifest_v1.json`](../../../../assets/source/chat/v3/ChatV3_RuntimeManifest_v1.json)
+  [`ChatV3_RuntimeManifest_v1.json`](../../../../assets/source/chat/v3/ChatV3_RuntimeManifest_v1.json)；
+  [`ChatTabs_Dark_V2_RuntimeManifest_v1.json`](../../../../assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_RuntimeManifest_v1.json)
 
 ## 美术基准继承
 
@@ -1620,7 +1625,7 @@ python3 tools/build_chat_v3_runtime_assets.py
   区分度不足被用户退回。v1.16 也因战士／牧师发灰和频道扫读不足被用户退回；
   v1.18 随后取代已被实机退回的 v1.17；该结论现已由 Full V1 contract
   v1.19 取代。下一次具备游戏设备时必须让实际 AddOn 目录加载当前仓库并
-  `/reload`，以 `/aeui status` 的 `chat-runtime=1.21` 与
+  `/reload`，以 `/aeui status` 的 `chat-runtime=1.22` 与
   `chat-color=classic-provider` 为加载证据；任何 AEUI 消息颜色 wrapper 或
   计数都不应再出现。
   尚无 v1.19 实机通过结论。
@@ -1742,6 +1747,7 @@ python3 tools/build_chat_v3_runtime_assets.py
 | Full V1 runtime contract v1.19 | 新暖黑主框九宫格；V3 交互邻件；Vanilla 暖黑纸面色板；低对比色最小提亮；五场景最终 TGA 门禁 | `runtime-exported / P5`，静态回归与 display-region 通过；整体版本已由 v1.20 取代 | 随 v1.20 一并实机验证书框、频道／职业色、Tab、缩放与右框消息回收 |
 | Dark Input runtime contract v1.20 | 固定 P4 source 确定性导出；normal／focus 共同 Alpha；三段 UV 与 EditBox 行为不变；五场景最终 TGA 门禁 | `runtime-exported / P5`，静态回归与 display-region 通过 | `/reload` 确认 `chat-runtime=1.20`、输入 normal／focus、文字、光标、IME、历史与键盘行为 |
 | Classic color runtime contract v1.21 | 输入与书框资源不变；移除 AEUI 色板、对比度适配、pfUI 直桥及 ChatMOD／Frame wrapper；基础 RGB、内嵌色、Alpha 和链接载荷完全透传 | `runtime-corrected / P5`，静态回归与既有 display-region 几何合同待重放 | `/reload` 确认 `chat-runtime=1.21`、`chat-color=classic-provider`，并比较经典频道／职业／物品／插件色 |
+| Dark V2 Tab runtime contract v1.22 | 固定 P4 source 确定性导出四态 atlas／shelf；RGB-only 低 Alpha despill；Tab、文字、命中区、布局事件和 provider 行为不变；六场景最终 TGA 门禁 | `runtime-exported / P5`，静态回归、display-region 与 fresh-checkout package 通过 | `/reload` 确认 `chat-runtime=1.22`、四态、五 Tab 压缩、承托带、缩放与 `chat-color=classic-provider` |
 
 ## `CHAT.INPUT.DARK.V1` 暖烟草抄写纸条
 
@@ -4513,9 +4519,92 @@ Final self-check before returning the image: exactly five and only five isolated
   三场景 `pass`、violations `0`、first failure `null`。
 - 状态：`source-accepted / P4`。原生产 ImageGen 终态仍为 `5/5`，流程错误
   `0`，attempt 6 禁止；本次 accept ImageGen `0`、上传 `0`。
-- 未授权：runtime TGA／atlas、Lua／XML／TOC、pfUI／addon 接入、替换现行
-  V3 Tab／shelf、P5、Turtle WoW P6 或任何 P6-C 清理。
-- 下一门禁：单独执行确定性 P4→P5 export：从该 tracked source 生成四态
+- 当时未授权：runtime TGA／atlas、Lua／XML／TOC、pfUI／addon 接入、替换现行
+  V3 Tab／shelf、P5、Turtle WoW P6 或任何 P6-C 清理；其中 P4→P5 随后的用户
+  “下一步”已在下节单独执行，P6／P6-C 仍未授权或完成。
+- 当时的下一门禁：单独执行确定性 P4→P5 export：从该 tracked source 生成四态
   `512²` atlas 与 `1024 × 64` shelf、执行 RGB-only 低 Alpha despill、接入
   adapter 并保留 V3 fallback，再以最终 TGA 重跑真实排版、display-region、
   Lua／repository contracts 和 fresh-checkout addon package 门禁。
+
+## `CHAT.TABS.DARK.V2` P5 插件接入记录
+
+- 日期／触发：`2026-08-04`；用户接受方案 A 进入 P4 后回复“下一步”。本节只
+  执行已接受 source 的确定性 P4→P5 导出、运行时接入与验证，没有调用或上传
+  ImageGen，也没有修改 `addon/pfUI/`。
+- 状态：`runtime-exported / P5`；Chat aggregate runtime contract `1.22`。
+  Turtle WoW 尚未实机验证，因此不得标记 P6 或执行 P6-C 清理。
+- 唯一 source：
+  [`ChatTabs_Dark_V2_A.png`](../../../../assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_A.png)，
+  `1536 × 1024 RGBA`，SHA-256
+  `616f965bb850605bcb67a98f60660feee35d80f8b95bc2b35ad72487df9a1e3c`。
+  固定 canonical cells 为 shelf `[64,96,1472,232]`、normal
+  `[64,560,384,716]`、hover `[416,560,736,716]`、selected
+  `[768,560,1088,716]`、disabled `[1120,560,1440,716]`；cell 外可见像素
+  `0`，最小边距 `6px`。
+- exporter：
+  [`build_chat_tabs_dark_v2_runtime.py`](../../../../tools/build_chat_tabs_dark_v2_runtime.py)，
+  SHA-256 `1696e2e5656742a8438df3971c98d8174916427140747bf4ac25c7797b31cd2e`。
+  它先只清零 source 中精确 `13` 个 `alpha=1..6` 绿优势边缘像素的 RGB；
+  LANCZOS 重采样后再只清零新出现的 `23` 个低 Alpha 绿振铃像素 RGB
+  （normal／hover／selected／disabled／shelf 为 `0/11/0/4/8`）。两步 Alpha
+  diff 都为 `0`；最终可见绿溢色与透明区脏 RGB 均为 `0`。
+- 正式媒体：
+  [`ChatTabAtlasDarkV2.tga`](../../../../addon/AzerothExpeditionUI/Media/Chat/ChatTabAtlasDarkV2.tga)
+  为 `512 × 512 RGBA`，SHA-256
+  `3fb505fad8760b0547fa3748dc7ad8c7bc885643734b90e70eab6c4d52189be0`；
+  [`ChatTabShelfDarkV2.tga`](../../../../addon/AzerothExpeditionUI/Media/Chat/ChatTabShelfDarkV2.tga)
+  为 `1024 × 64 RGBA`，SHA-256
+  `44c7f85c66850593817e76604a75a8ee02fb3887ba06af4c4065999f0f5bcfda`。
+  atlas 四行顺序固定 normal／hover／selected／disabled，每态 art 为
+  `248 × 120`，三段 X cuts 为 `4/52/204/252`；运行时仍为 `92 × 30px`，左右
+  cap `16/16px`、间距 `3px`、顶部 `2px`、底部命中扩展 `8px`。shelf art 为
+  `[4,4,1020,60]`，运行时高 `16px`、顶部 `18px`。
+- runtime manifest：
+  [`ChatTabs_Dark_V2_RuntimeManifest_v1.json`](../../../../assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_RuntimeManifest_v1.json)，
+  SHA-256 `af2cb160412d48a51b7d0c185267a5b9148b550fc059547b4430f545641256ac`；
+  source manifest 同步记录 exporter、TGA、展示区域与 package 证据。
+- adapter：
+  [`Modules/Chat.lua`](../../../../addon/AzerothExpeditionUI/Modules/Chat.lua)
+  只把 Tab atlas／shelf 媒体路径切到 Dark V2，并把 aggregate contract 更新到
+  `1.22`。normal／hover／selected／disabled UV、`ChatFrameNTabText`、命中区、
+  Tab 切换、拖动、缩放、自愈与布局事件公式不变；TOC／Bootstrap 已加载该
+  adapter，TGA 通过媒体路径直接寻址，无需新增 TOC 行。V3 atlas／shelf 继续
+  tracked，作为 P6-C 前 fail-safe fallback。
+- 最终真实排版：spec
+  [`chat_tabs_dark_runtime_preview_v2.json`](../../../../tools/specs/chat_tabs_dark_runtime_preview_v2.json)
+  SHA-256 `7ea589aca61fd50ca696147b225d593996eba767044917161a3c9caf2d3174d5`；
+  renderer
+  [`render_chat_tabs_dark_runtime_v2.py`](../../../../tools/render_chat_tabs_dark_runtime_v2.py)
+  SHA-256 `f0997003f7a496dcfad905de43a129d415b7ad6e1a7ec3c64bc9e8b01b84fc30`。
+  被忽略的 evidence
+  `generated/chat/core/CHAT.TABS.DARK.V2/runtime-v2/ChatTabsDarkV2_runtime_real_layout.png`
+  SHA-256 `3656c24fcd2c9c2b17bb5d358d44d60c23e4b9c4783cc1153f86408b27181ccf`；
+  metrics SHA-256
+  `fc29f5830b8efd19362da112ffa61e4c5079c819fbafe061ba48c9f70cd3c956`。
+- display-region：contract
+  [`chat_tabs_dark_runtime_display_region_v2.json`](../../../../tools/specs/chat_tabs_dark_runtime_display_region_v2.json)
+  SHA-256 `471474d947ecfd09f7ee02c956a4bac611032f7037e21790da54c38509eb8e96`。
+  空、最小、典型 15 行、最大 16 行、`540 × 420`／22 行扩展及 `440 × 320`
+  五 Tab 压缩共六场景全部 `pass`，violations `0`、first failure `null`；报告
+  SHA-256 `e2405edb309dd6fe86c5070c33b636c3357d5f2a4a854ca9f8f0a29b2d34d5e1`。
+- 静态验证：
+  [`chat_tabs_dark_runtime_test.py`](../../../../tests/chat_tabs_dark_runtime_test.py)
+  固定 source、逐字节重建、cleanup 计数、manifest、四态、`92px`／`73px`
+  布局、shelf、display report 与 adapter；同时通过 Chat input／full-frame
+  runtime tests、Lua Chat smoke、pfUI expedition contract、repository contract、
+  asset-workflow contract 与 `git diff --check`。
+- fresh-checkout package：被忽略报告
+  `generated/chat/core/CHAT.TABS.DARK.V2/runtime-v2/addon-package-report.json`，
+  SHA-256 `8803b1228f58f9734d1bdea5b0106d53207186a3a283396998235b2777258f67`；
+  `status=pass`、violations `0`、tracked addon files `540`、manifest runtime
+  records `30`、`build_required_on_target_device=false`。另一台设备只需拉取并
+  复制 `addon/pfUI` 与 `addon/AzerothExpeditionUI` 到 `Interface/AddOns`，无需
+  ImageGen、Python、exporter、patch 或远端二次开发。
+- 调用账本：Dark V2 原生产仍为实际 ImageGen `5/5`、流程错误 `0`；方案 A
+  接受与本次 P4→P5 均为 ImageGen `0`、上传 `0`。attempt 6 永久禁止，额度
+  不重置也不转移。
+- 下一门禁：目标设备 `/reload`，确认 `/aeui status` 为
+  `chat-runtime=1.22`／`chat-color=classic-provider`，再验证四态、selected
+  夹页、五 Tab 压缩、文字居中、承托带、主体命中、拖动、局部／全局 Scale、
+  未读、输入、经典颜色和右框消息回收。

@@ -209,8 +209,9 @@
     "review_tool_sha256": "7ebe370dc7c3202f8e1a36371a0dbecb4dcb13b1c6bf206d049a320c2a2cf047"
   },
   "export_contract": {
-    "status": "defined / not-exported",
-    "phase": "P4",
+    "status": "runtime-exported",
+    "phase": "P5",
+    "runtime_contract": "1.22",
     "tab_runtime_atlas_target": [512, 512],
     "tab_logical_state_size": [248, 120],
     "tab_state_rows": [0, 1, 2, 3],
@@ -219,16 +220,53 @@
     "shelf_runtime_atlas_target": [1024, 64],
     "shelf_logical_object_size": [1016, 56],
     "shelf_runtime_height_ui_px": 16,
-    "runtime_adapter_status": "not changed; current ChatTabAtlasV3.tga and ChatTabShelfV3.tga remain loaded",
-    "required_before_p5": [
-      "deterministic source-to-atlas exporter",
-      "RGB-only cleanup of the 13 alpha-1..6 green-dominant edge pixels with Alpha unchanged",
-      "final TGA/PNG pixel and state-cell verification",
-      "final 440x320 and 540x420 real-layout review from runtime atlases",
-      "final display-region pass using atlas, adapter and provider constants",
-      "adapter texture mapping with V3 fallback retained",
-      "Lua and repository contracts",
-      "fresh-checkout addon package validator pass"
+    "exporter": {
+      "file": "tools/build_chat_tabs_dark_v2_runtime.py",
+      "sha256": "1696e2e5656742a8438df3971c98d8174916427140747bf4ac25c7797b31cd2e"
+    },
+    "runtime_manifest": {
+      "file": "assets/source/chat/tabs-dark-v2/ChatTabs_Dark_V2_RuntimeManifest_v1.json",
+      "sha256": "af2cb160412d48a51b7d0c185267a5b9148b550fc059547b4430f545641256ac"
+    },
+    "runtime_exports": {
+      "tabs": {
+        "file": "addon/AzerothExpeditionUI/Media/Chat/ChatTabAtlasDarkV2.tga",
+        "sha256": "3fb505fad8760b0547fa3748dc7ad8c7bc885643734b90e70eab6c4d52189be0"
+      },
+      "shelf": {
+        "file": "addon/AzerothExpeditionUI/Media/Chat/ChatTabShelfDarkV2.tga",
+        "sha256": "44c7f85c66850593817e76604a75a8ee02fb3887ba06af4c4065999f0f5bcfda"
+      }
+    },
+    "rgb_only_cleanup": {
+      "accepted_source_pixels": 13,
+      "accepted_source_alpha_min_max": [1, 6],
+      "lanczos_ringing_pixels": 23,
+      "alpha_difference_pixels": 0,
+      "final_tab_visible_green_spill_pixels": 0,
+      "final_shelf_visible_green_spill_pixels": 0
+    },
+    "runtime_adapter_status": "addon/AzerothExpeditionUI/Modules/Chat.lua loads Dark V2 tab and shelf textures; V3 TGA files remain tracked fallback",
+    "display_region": {
+      "contract": "tools/specs/chat_tabs_dark_runtime_display_region_v2.json",
+      "report": "generated/chat/core/CHAT.TABS.DARK.V2/runtime-v2/ChatTabsDarkV2_runtime_display-region-report.json",
+      "report_sha256": "e2405edb309dd6fe86c5070c33b636c3357d5f2a4a854ca9f8f0a29b2d34d5e1",
+      "scenario_count": 6,
+      "violations": 0,
+      "first_failure": null
+    },
+    "addon_package_gate": {
+      "report": "generated/chat/core/CHAT.TABS.DARK.V2/runtime-v2/addon-package-report.json",
+      "report_sha256": "8803b1228f58f9734d1bdea5b0106d53207186a3a283396998235b2777258f67",
+      "status": "pass",
+      "build_required_on_target_device": false
+    },
+    "required_before_p6": [
+      "Turtle WoW 1.18.1 /reload with chat-runtime=1.22",
+      "normal, hover, selected and disabled visual-state verification",
+      "four-tab and overflow-tab geometry, localized text centering and hit-region verification",
+      "shelf continuity at 440x320, 540x420 and supported UI Scale values",
+      "unchanged docking, selection, unread, chat message and input behavior"
     ]
   },
   "forbidden_runtime_uses": [
@@ -236,7 +274,7 @@
     "do not treat the five-object sheet as one runtime background",
     "do not bake ChatFrameNTabText, channel names, unread state, frame, messages, input, buttons, icons or other dynamic content from this source",
     "do not change tab Button geometry, hit boxes, provider events, SavedVariables or nonvisual chat behavior",
-    "do not replace the current V3 runtime before a deterministic P5 export and package gate pass",
-    "do not claim P5, P6 or P6-C from this P4 acceptance"
+    "do not delete the V3 tab and shelf runtime fallback before P6-C",
+    "do not claim P6 or P6-C without Turtle WoW 1.18.1 evidence"
   ]
 }
