@@ -3172,19 +3172,20 @@ selected 变成浅羊皮纸牌或黄铜铭牌。
   `a97d9c5f…c673`、Image 4 `03774a0f…077d`；生成前模拟 PNG 永不上传。
 - attempt 2–5：只有在明确保留前次正确区域时，才允许紧邻前次输出作为
   Image 5 edit 输入；不得使用更早输出、拒绝版本或外部新增输入。
-- 实际生图预算：`0/5`；最坏总计 `5`；流程错误 `1`，无生成图且无 provider
+- 实际生图预算：`0/5`；最坏总计 `5`；流程错误 `2`，无生成图且无 provider
   生成证据时单列，不占额度。任何 attempt 客观通过后立即停止；内部通过不等于
   用户接受。
 - 执行前 commit：`d8df8d1`；该提交包含本授权记录和下方精确正文。
 
 ### `CHAT.TABS.DARK.V1` 自主修复循环
 
-- 当前实际 ImageGen：`0/5`；流程错误：`1`；循环终态：
-  `prompt-authorized / transport-repaired`。
+- 当前实际 ImageGen：`0/5`；流程错误：`2`；循环终态：
+  `prompt-authorized / executor-isolation-repaired`。
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
 | E1 | `CHAT.TABS.DARK.V1` / `d8df8d1` | 未创建 | 固定子进程输出 `Reading prompt from stdin...` 与 `No prompt provided via stdin.`；没有图片、provider result、上传完成或生成作业证据。固定 CLI `codex exec --help` 证明 `-i/--image <FILE>...` 是可变参数，末尾位置正文被最后一个 `-i` 吞作图片路径 | 不改正文、输入、顺序或输出合同；改为把同一已提交正文与独立 `Execution instruction` 从 stdin 传给固定 CLI，四张固定 SHA 图片仍通过 `-i` 上传 | 不占生图额度；仍为 `0/5`；同一正文重试一次 |
+| E2 | `CHAT.TABS.DARK.V1` / `56e2055` | `019fcaca-f250-7312-91c4-869f25332f78` | stdin 已完整传入正文，但调用缺少执行器触发前缀与隔离条款；固定子进程在仓库工作目录重新读取同名 wrapper，随后因只读 sandbox 无法创建临时 workspace，最终明确报告 `No ImageGen call ran`；没有图片或 provider result | 不改正文、输入、顺序或输出合同；按仓库固定 Skill 创建空临时工作目录及 `generated/`，使用 `-C <temp> -s workspace-write`，在正文前恢复 `$imagegen` 触发词，并在独立 `Execution instruction` 禁止读取 wrapper、禁止启动 `codex`／`npx` 子进程，要求直接使用当前 0.143.0 内置 `image_gen` | 不占生图额度；仍为 `0/5`；以同一正文重试一次 |
 
 ### 完整生产正文 `CHAT.TABS.DARK.V1`（已授权；attempt 1 原样执行）
 
