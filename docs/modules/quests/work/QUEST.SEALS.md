@@ -7,10 +7,9 @@
   `2026-08-03` 被用户否决，Tracker 方向仍有效
 - 当前已确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V9`
 - 当前生产正文：`QS-B1 V1`
-- 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu `P2`
+- 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu `P3`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1
-  `simulation-confirmed / interaction-confirmed / prompt-draft /
-  awaiting-production-authorization`
+  `simulation-confirmed / interaction-confirmed / prompt-authorized / 0/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -43,8 +42,9 @@
   `48px` 外伸，并移除箭头、逐项铆钉和明亮顶部高光。用户于
   `2026-08-03` 回复“进入下一步”，明确确认 V9 可见方向；确认只冻结下述
   文字化布局与综合色结论，不接受模拟像素。当前已准备 `QS-B1 V1` 生产正文，
-  `QS-B1-INTERACTION V1` 已于 `2026-08-05` 获用户明确接受；当前下一门禁为
-  独立请求 `QS-B1 V1` 的正式 ImageGen 授权。
+  `QS-B1-INTERACTION V1` 已于 `2026-08-05` 获用户明确接受；`QS-B1 V1`
+  也已于 `2026-08-05` 获独立正式生产授权。当前下一门禁为使用已提交的完整
+  正文与固定 Image 1／2 执行 attempt 1。
   旧 Quest Log／Tracker provider Button 在各自菜单功能等价前继续可见可用。
 
 ## 用户接受与 P4／P5 固化
@@ -1566,11 +1566,11 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 
 - 日期：`2026-08-03`
 - 组件：`QUEST.LOG.ACTION.SEAL_MENU.TAB.BASE`
-- 子状态：`simulation-confirmed / interaction-confirmed / prompt-draft /
-  awaiting-production-authorization`
-- 项目阶段：`P2`
+- 子状态：`simulation-confirmed / interaction-confirmed / prompt-authorized /
+  0/5`
+- 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
-- 操作：`prepare`；授权前实际 ImageGen：`0/5`
+- 操作：`generate`；授权后、首次执行前实际 ImageGen：`0/5`
 - 生成前模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V9`，本地确定性几何，ImageGen
   `0/0`；board／report SHA 见上节。
 - 多执行正文最坏实际生图数：`5`；流程错误不占生图额度。
@@ -1796,12 +1796,18 @@ border; dark-walnut leather remains legible when reduced to 112 x 20 px.
 
 ### 当前门禁
 
+- 当前状态：`prompt-authorized / P3 / 0/5`。
 - 当前实际生图：`0/5`；流程错误：`0`。
 - 尚未发生：ImageGen 调用、raw、透明候选、真实排版候选、source、manifest、
   runtime atlas、Lua/XML 接入或旧按钮隐藏。
 - `QS-B1-INTERACTION V1` 已由用户于 `2026-08-05` 确认；该确认没有授权
   ImageGen、Lua 接入或旧按钮隐藏。
-- 当前所需生产授权原文：`确认授权 QS-B1 V1；允许每次上传固定 SHA 的 Image 1/2，
+- `QS-B1 V1` 已由用户于 `2026-08-05` 以以下原文独立授权：`确认授权 QS-B1
+  V1；允许每次上传固定 SHA 的 Image 1/2，
   允许同循环紧邻前次输出仅在冻结边界内作为 Image 3 edit 输入；最多 5 次实际
   ImageGen 调用，流程错误不占额度；允许按合同执行确定性边缘连通色键、透明
   RGB 清零与等比 bbox-fit。`
+- 本授权只允许上述固定生产正文、固定 SHA 的 Image 1／2、受限同循环 Image 3
+  edit、最多五次实际调用与合同内确定性后处理；不授权 source 晋级、P4／P5、
+  Lua 接入或旧按钮隐藏。
+- 当前下一门禁：提交本授权状态后，使用 `QS-B1 V1` 原样正文执行 attempt 1。

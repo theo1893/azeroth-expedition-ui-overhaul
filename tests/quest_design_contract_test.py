@@ -708,7 +708,7 @@ def main() -> None:
         (
             "Quest Log／Tracker 共用漆章",
             "`QS-A1 V1.r4`",
-            "`simulation-confirmed / interaction-confirmed / prompt-draft /",
+            "`simulation-confirmed / interaction-confirmed / prompt-authorized / 0/5`",
             "QuestToolWaxSeal_Master_v1.png",
             "QS-A1_SourceManifest_v1.json",
             "QS-A1_RuntimeManifest_v1.json",
@@ -2407,7 +2407,8 @@ def main() -> None:
             "exactly one object",
             "当前实际生图：`0/5`",
             "`QS-B1-INTERACTION V1`",
-            "interaction-confirmed / P2 / awaiting-production-authorization",
+            "`QS-B1 V1` 已由用户于 `2026-08-05` 以以下原文独立授权",
+            "prompt-authorized / P3 / 0/5",
             "用户回复“接受”",
             "`FALLBACK`",
             "`CLOSED`",
