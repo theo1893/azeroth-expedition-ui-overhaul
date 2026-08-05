@@ -16,18 +16,18 @@
 - 当前已确认模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A`；用户于
   `2026-08-05` 回复“不走figma, 直接下一步”，确认将 ImageGen 布面 donor
   与确定性精确轮廓／Alpha mask 分离的可见方向
-- 最近一次已执行生产正文：`QS-B1 V4-A.r4 / attempt 5`；V4-A 循环已耗尽，
-  其后已执行 `QS-B1 V5-A / attempt 1`；当前下一正文为 `QS-B1 V5-A.r1`
+- 最近一次已执行生产正文：`QS-B1 V5-A.r1 / attempt 2`；当前下一正文为
+  `QS-B1 V5-A.r2`
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A
-  `internal-rejected / repair-prepared / P3 / production 1/5`
+  `internal-rejected / repair-prepared / P3 / production 2/5`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
   `simulation-confirmed / V3-A repair-budget-exhausted / V3-B gated / P3`；V1 保持
   `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`；
   QS-B1 V4-A `candidate-rejected / repair-budget-exhausted / P3 / 5/5`；
-  QS-B1 V5-A `internal-rejected / repair-prepared / P3 / production 1/5`
+  QS-B1 V5-A `internal-rejected / repair-prepared / P3 / production 2/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -37,8 +37,9 @@
   授权顺序门禁未执行 V3-B）
 - QS-B1 V4-A ImageGen：`5/5`；流程错误 `1`；五次均有 provider 图片证据；
   第五稿为本轮最佳视觉但比例误差 `7.287%`，禁止 attempt 6
-- QS-B1 V5-A 模拟 ImageGen：`0/0`；production `1/5`；attempt 1 技术／排版
-  通过但因均匀细微纹和中央 crop 两道横贯整宽折痕被内部退回；V14 只用
+- QS-B1 V5-A 模拟 ImageGen：`0/0`；production `2/5`；attempt 1／2 技术／
+  排版均通过，但 attempt 2 edit 仍以更规则的卷曲织纹和横贯 crop 折痕重复
+  同一美术失败；attempt 3 改为固定 Image 1／2 regenerate。V14 只用
   本地平面几何预演 donor／crop／mask／composite 分工，用户确认不接受其中
   任何模拟像素
 - QS-B1 历史流程错误：V1 `1`、V2 `3`、V3 `0`、V4-A `1`。均按“无生成证据才不占
@@ -5736,6 +5737,7 @@ bright color, modern styling, or extra object.
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
 | `1/5` | `QS-B1 V5-A` / `87903e8` | `generate`；固定 Image 1／2 | child session `019fd242-8cb6-7a22-b110-763fbc8f66b7`；result `ig_072c3f1feddefde3016a73446255608191bf9f1dbc559f5c5c.png` | `attempt-01/QS-B1-V5-A.attempt-01.raw.png`；`1254×1254 RGB`；SHA `c313ca608921189396b9c72c10bbfbe10be8c2c30373a92d1f05016dd966c45f`；composite SHA `b64cce638e1f8f7ec86b0bce0baca3006e534b9899989ae282ae9acdf6e5e9b9` | `美术一致性／STYLE LOCK`：全幅仍有均匀细颗粒、毡皮／旧皮式微纹；中央固定 crop 内两道亮折痕均横贯整宽，第二道进入 `y=400±8` 安静带 | 保留全幅单一不透明布面、正交 square、暗烟熏胡桃综合色与宽幅大明暗；attempt 2 仅把本稿作为 Image 3，局部重绘微纹、圆斑和中央 crop 两道折面，固定 Image 1／2 不变 | `internal-rejected / 1/5 / repair-prepared` |
+| `2/5` | `QS-B1 V5-A.r1` / `cee911f` | `edit`；固定 Image 1／2＋attempt 1 raw Image 3 | child session `019fd25a-b613-76b1-a261-7283d11d7cb0`；result `ig_0e43b77fb0420fbe016a734b4bf508819181f5b7d77b66ee07.png` | `attempt-02/QS-B1-V5-A.attempt-02.raw.png`；`1254×1254 RGB`；SHA `7ca5117006ce6d5712f30deb5d785f25013394bb7add85ad5d9aaf00023cdca9`；composite SHA `00d3fd1f6e44de0b6f93b140a04ed0b69fdf1717ad8ce05befebcb3e2663d736` | 同一 `美术一致性／STYLE LOCK`：细纹被改成全幅规则重复的卷曲／编织微图案，褶皱增至多道，crop 仍有横贯亮带 | 不保留 attempt 2 像素；相同首要失败已连续出现，attempt 3 改变策略，只上传固定 Image 1／2 regenerate，用坐标化无纹理中心区约束代替 Image 3 edit | `internal-rejected / 2/5 / repair-prepared` |
 
 #### Attempt 1 执行一致性与确定性证据
 
@@ -5925,6 +5927,183 @@ modern styling, or extra object.
 - 下一次实际调用前必须提交本节与 attempt 1 完整记录；若 attempt 2 仍在同一
   首要失败上退回，下一次必须改变修复策略，不能复用同一正文抽卡。
 
+#### Attempt 2 执行与审查
+
+- 固定 child `@openai/codex@0.143.0`，执行前 commit
+  `cee911f7376ea8a90c7c033c244f69bf903dbbd8`；完整 r1 正文 `7307` 字符、UTF-8
+  SHA `1787c6abd82ff62a11b5c16c23dcf1c9890c2f3680c53bbb37cc439c9bdef361`。
+  child `user` block 完整显示固定 Image 1／2 与唯一 Image 3 attempt 1 raw，输入
+  SHA 和职责与冻结记录一致。session
+  `019fd25a-b613-76b1-a261-7283d11d7cb0`，result
+  `ig_0e43b77fb0420fbe016a734b4bf508819181f5b7d77b66ee07.png`。
+- child 在 provider 图片已完成后首次递归枚举 `$CODEX_HOME` 时遇到
+  `.sandbox-secrets` 读取拒绝，随后直接从本 session `generated_images` 目录原样
+  复制成功并 exit `0`。该落盘恢复发生在生成后，只对应同一 result，不是额外
+  调用或“无候选流程错误”；production 现为 `2/5`，流程错误仍为 `0`。
+- raw `1254×1254 RGB`、SHA
+  `7ca5117006ce6d5712f30deb5d785f25013394bb7add85ad5d9aaf00023cdca9`；
+  composite `128×696 RGBA`、SHA
+  `00d3fd1f6e44de0b6f93b140a04ed0b69fdf1717ad8ce05befebcb3e2663d736`；
+  runtime review master SHA
+  `4db79da521447c2df2a4adb1d70748918459eaf82e9553d4838fc880c2d9fa05`。
+  reviewer report SHA
+  `d976eb07dfbcaa2c9c1287b58c35b4218f776cd1ee05d76fde33295c09bd4a4a`，
+  automated `18/18 pass`、六态布局 `29/29 pass`；real-layout SHA
+  `e3b8b048037cd69ffe1c22ae29a5c314ca19b629b39f17e128982d6e39ef1bf8`；
+  display-region report SHA
+  `f8208e0386f803ecb29fde635565aadda03185efabd774e7acdf90f7de59c9b0`，
+  `6/6 pass`、violations `0`。
+- 范围、square、正交、全不透明单一布面、固定 crop／mask、Alpha、双钝缺口、
+  runtime、动态 prefix＋tail、六态命中与奖励距离继续通过；暗烟熏胡桃综合色、
+  左上暖光和材料重量也仍可作为文字方向。
+- 第一失败仍是 `美术一致性／STYLE LOCK`，且比 attempt 1 更严重：整张 raw
+  铺满规则重复的卷曲／编织状微图案，明确呈 procedural textile wallpaper；
+  宽亮褶皱数量超过允许的 `2–3`，固定 crop 下半仍存在横贯整宽的亮折面。它没有
+  达成短局部折面和八条安静带的综合色要求。
+- 相同首要失败连续两稿出现，禁止继续用相同 Image 3 edit 策略。attempt 2 像素
+  不保留；attempt 3 只从固定 Image 1／2 regenerate，并把“完全无纹理的中心
+  paint-only 区”“两道侧区宽折”“两个坐标化局部 dim plane”写成新的完整 r2，
+  不改变任何冻结合同。
+
+### QS-B1 V5-A.r2 完整修复执行正文
+
+```text
+Create one new production material-donor bitmap for a Turtle WoW 1.18.1,
+Interface 11200 quest-log overhaul. Generate it from the fixed visual
+authorities only; do not edit or preserve any previous generated candidate.
+This output is NOT a ribbon sprite and NOT a finished UI object. It is only an
+edge-to-edge continuous painted cloth surface. A tracked deterministic crop
+and alpha mask will later create the exact narrow substrate silhouette. Do not
+draw, imply, or reserve an outer ribbon contour.
+
+REFERENCE AUTHORITY AND FILTERING
+Image 1 is the highest visual authority. Inherit only its circa-2004 vanilla
+World of Warcraft low-resolution 2D hand-painted bitmap language, broad
+readable value planes, substantial material weight, muted Azeroth expedition
+palette, restrained upper-left warm light, sparse wear, and deliberately
+nonmodern finish. Ignore its book, pages, leather, brass, wax seal, ribbons,
+buttons, reward slots, text, icons, and complete composition.
+
+Image 2 is a secondary accepted-adjacency reference. Inherit only its dark
+walnut temperature, coarse paint scale, softened edge handling, upper-left
+light direction, and restrained wear density. Ignore and do not reproduce its
+book, page gutter, spine, leather frame, brass, transparency, silhouette, or
+pixels. If the references conflict, Image 1 and the Azeroth quest-ledger
+baseline win. Neither reference authorizes copying an object or composition.
+There is no Image 3 in this regenerate operation. Previous donors are negative
+evidence only and must not be uploaded, copied, or visually preserved.
+
+CANVAS AND OWNERSHIP
+Return one square RGB bitmap filled edge to edge by one continuous opaque cloth
+surface. There is no background and no separate object: every canvas pixel is
+cloth. Keep the view flat, orthographic, front-facing, evenly scaled, and free
+of perspective. This is a painted material board, not a hanging drapery scene.
+Do not add transparency, green screen, checkerboard, vignette, frame, border,
+isolated strip, banner outline, torn silhouette, cast shadow, contact shadow,
+floating fibers, or detached fragments. The downstream deterministic compiler
+will normalize the whole square on both axes together to 1024 x 1024, then crop
+the fixed central rectangle [448,164,576,860], exactly 128 x 696 pixels. Do not
+draw a guide, border, highlight, seam, column, or compositional frame around
+that rectangle.
+
+PAINT-ONLY MATERIAL LANGUAGE
+Paint heavy, soft, old expedition-guild oath linen using only broad matte color
+and value shapes. The surface must read as a circa-2004 hand-painted game
+bitmap, never as a textile photograph or generated fabric texture. At 100%
+source scale there is no small repeated surface information at all: no visible
+thread, weave, loop, curl, pore, speckle, stipple, nap, grain, scratch field,
+embossed pattern, noise, or fiber carpet. Do not simulate cloth by repeating a
+micro-pattern. Cloth identity comes only from weight, two broad folds, softened
+painted transitions, and a few large diffuse age stains.
+
+COLOR AND VALUE MASSES
+Use low-saturation smoke-aged charcoal brown, dark walnut, and deep umber. Use
+exactly three broad irregular value masses over the square: one dominant dark
+middle mass, one deeper shadow mass, and one restrained dim warm mass. Each
+mass spans hundreds of normalized pixels and blends with coarse painted edges.
+The brightest plane is only modestly lighter than the base. Never use bright
+ochre, gold, orange, ivory, cream, yellow edging, saturated red, a bright rim,
+or a full-height highlight.
+
+LARGE FOLDS AND STAINS
+Paint exactly two broad low-frequency folds on the whole 1024 x 1024 normalized
+composition. Keep one fold in the left side area x = 48..408 and one fold in
+the right side area x = 616..992. Each fold is a single wide soft change over
+hundreds of pixels, not a ridge repeated in parallel. Both folds fade out before
+x = 432 and x = 592 respectively, so neither crosses or touches the future
+central crop. Do not add a third fold, layered drapery arcs, sagging bands,
+parallel ridges, or cross-width fold lines. Add exactly four large, diffuse,
+asymmetric, noncircular age stains, each low contrast and at least 140 normalized
+pixels across. Keep every stain edge soft; no round blotch or action-sized mark.
+
+CENTRAL CROP AS A QUIET PAINTED ZONE
+Across normalized x = 432..591 and y = 148..876, make a plain matte painted
+zone with no microtexture, weave, speckle, loop, curl, grain, stain edge, broad
+fold ridge, or repeating detail. It may contain only the three very broad value
+masses plus the two explicitly allowed local dim planes below. This quiet zone
+is wider than the actual crop x = 448..575 so the fixed crop receives a safety
+margin.
+
+Inside the actual central crop x = 448..575, paint exactly two short, broad,
+broken dim local planes. Plane A occupies approximately x = 462..512 and
+y = 244..264. Plane B occupies approximately x = 510..558 and y = 686..706.
+Each plane is less than half the crop width, has a soft interrupted interior,
+fades to the surrounding base before every edge of its approximate box, and is
+only slightly lighter or darker than its surroundings. Neither plane is a fold
+ridge, stripe, seam, hem, row, stain edge, button plate, or cross-width contrast
+boundary. Do not add any other localized horizontal plane inside the crop.
+
+FUTURE CROP SAFETY
+Within the normalized 1024 x 1024 composition, keep y = 212, 300, 388, 476,
+564, 652, 740, and 828, plus at least 8 pixels above and below each row, quiet
+and continuous across x = 448..575. No fold boundary, horizontal highlight,
+stain edge, crack, seam, hem, row, repeated cell, contrast jump, or action-sized
+mark may occur in any safety band. Do not create a 22-pixel runtime rhythm or
+seven stacked sections. The central crop must read as one continuous painted
+material from top to bottom.
+
+STYLE LOCK
+Make an original chunky hand-painted bitmap surface compatible with a 2004-era
+vanilla WoW Azeroth expedition ledger. Preserve broad readable painting,
+material weight, restrained wear, softened coarse brush transitions, and
+low-resolution clarity. It must not look photorealistic, scanned, airbrushed,
+vector-clean, procedural, mobile-toolbar-like, modern flat UI, Diablo-3-like,
+Skyrim-minimalist, Warhammer, gothic sci-fi, ceremonial military regalia, or a
+generic modern fantasy ribbon.
+
+STRICT EXCLUSIONS
+No previous donor, outer silhouette, narrow ribbon object, banner, pennant,
+fishtail, notch, fringe, tassel, hem, green background, alpha, wax, seal, stamp,
+icon, motif, rune, glyph, text, letter, number, button, state, card, tile,
+divider, book, page, spine, leather, metal, brass, rivet, jewel, skull, eagle,
+aquila, weapon, chain, popup, panel, paper shadow, glow, glass, photographic
+burlap, visible weave, textile scan, uniform microtexture, loop pattern, curl
+pattern, fuzzy nap, leather pores, stone grain, repeated grain, dense scratches,
+round stains, layered drapery arcs, cross-width band, full-height bright stripe,
+gold, orange, ivory, saturated red, or extra object.
+
+BEFORE RETURNING, VERIFY IN ORDER
+One square RGB image; every pixel belongs to one continuous opaque cloth
+surface; flat orthographic painted material board; no object boundary or
+background; dark low-saturation smoked-brown palette; exactly three broad value
+masses; exactly two broad side folds that never enter x = 432..591; exactly four
+large diffuse noncircular stains; central x = 432..591 contains no microtexture
+or broad fold ridge; exactly two short broken dim local planes at the declared
+central coordinates; all eight future crop rows quiet; no visible or implied
+repeating surface pattern, threads, weave, loops, curls, grain, round blotch,
+icon, text, wax, book, shadow, bright color, modern styling, or extra object.
+```
+
+### V5-A.r2 修复边界复核与下一调用
+
+- 子状态：`repair-prepared / P3 / 2/5`。attempt 3 改为 `generate`，只上传固定
+  Image 1／2；attempt 1／2 raw、composite、review、runtime 与模拟均不得上传。
+- r2 把同一授权内的美术禁项转为“paint-only、无任何小尺度重复信息、两道侧区
+  宽折、中心坐标化局部 dim plane”；不改变视觉综合色、对象身份、参考职责、
+  canvas、crop、mask、runtime、prefix＋tail、provider／Button 或展示合同。
+- 本记录和完整 r2 必须提交后才能调用 attempt 3。若 regenerate 仍失败，必须按
+  新稿重新完整审查；剩余预算不能改变冻结边界。
+
 ### 本门禁验证
 
 - 本次 production 授权冻结使用 Windows workspace Python
@@ -5957,10 +6136,10 @@ modern styling, or extra object.
 
 ### 当前停止点
 
-- 当前为 `internal-rejected / repair-prepared / P3 / production 1/5`。attempt 1
-  已完成固定 child、deterministic composite、真实六态和 display-region 审查；
-  技术／几何通过，但 uniform microtexture 与两道 cross-width crop 折面阻塞美术
-  门禁。没有 source、manifest、runtime 或 addon 修改。
-- 下一门禁是在本记录与完整 `QS-B1 V5-A.r1` commit 后，固定 Image 1／2 并把
-  attempt 1 raw 作为唯一 Image 3 执行 attempt 2 edit；随后从 raw 开始重新执行
-  完整审查。内部通过只交用户复审；不得自动晋级 P4。
+- 当前为 `internal-rejected / repair-prepared / P3 / production 2/5`。attempt 1／2
+  都完成 deterministic composite、真实六态和 display-region；技术／几何均过，
+  但 attempt 2 仍以更规则的卷曲织纹和横贯 crop 折面重复同一美术失败。没有
+  source、manifest、runtime 或 addon 修改。
+- 下一门禁是在本记录与完整 `QS-B1 V5-A.r2` commit 后，只用固定 Image 1／2
+  regenerate attempt 3；随后从 raw 开始重新执行完整审查。内部通过只交用户
+  复审；不得自动晋级 P4。
