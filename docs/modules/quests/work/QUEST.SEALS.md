@@ -6,15 +6,15 @@
 - 已确认历史模拟：`QUEST-SEALS-SIM-V2`；其 Quest Log 顶部悬空位置已于
   `2026-08-03` 被用户否决，Tracker 方向仍有效
 - 当前已确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V9`
-- 当前生产正文：`QS-B1 V1`
+- 当前生产正文：`QS-B1 V1.r1`
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu `P3`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1
-  `prompt-authorized / production-loop-ready`
+  `attempt-01-rejected-internal / repair-prepared`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
-- QS-B1 当前实际生图：`0/5`
-- 流程错误：`1`
+- QS-B1 当前实际生图：`1/5`
+- 流程错误：`2`
 - tracked source：
   `assets/source/quests/qs-a1/QuestToolWaxSeal_Master_v1.png`，SHA-256
   `377dcdc141ee5487884bfc99dbfd82013a8c4d7cb7200a4414feebb81d72ab75`。
@@ -1432,10 +1432,10 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 - 方向确认日期：`2026-08-03`
 - 正式生产授权：`2026-08-05`
 - 组件：`QUEST.LOG.ACTION.SEAL_MENU.TAB.BASE`
-- 子状态：`prompt-authorized / production-loop-ready`
+- 子状态：`attempt-01-rejected-internal / repair-prepared`
 - 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
-- 操作：`generate`；当前实际 ImageGen：`0/5`
+- 操作：`generate / bounded edit`；当前实际 ImageGen：`1/5`
 - 生成前模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V9`，本地确定性几何，ImageGen
   `0/0`；board／report SHA 见上节。
 - 多执行正文最坏实际生图数：`5`；流程错误不占生图额度。
@@ -1654,20 +1654,170 @@ border; dark-walnut leather remains legible when reduced to 112 x 20 px.
   生成证据的流程错误不占额度。同一流程错误针对性修复一次后若复现即暂停；
   任一候选完整内审通过即停止，第五次仍失败则停止等待用户审核。
 
+### Attempt 01 — `QS-B1 V1.r1`
+
+- 日期：`2026-08-05`
+- 结论：`attempt-01-rejected-internal / edit-immediate-raw / continue / 1/5`
+- 固定执行器：`@openai/codex@0.143.0`；model `gpt-5.5`；reasoning
+  `medium`；session `019fd1dd-a08d-7a22-ba4d-abd34bdab844`；执行前 repo
+  commit `10323d7`。
+- 操作：`generate`；上传严格为固定 Image 1／2，SHA-256 分别为
+  `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd` 与
+  `91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5`；
+  Image 3 未上传。完整 `79` 行执行正文 SHA-256
+  `9810861d310ddd85fc1a7d81a9312036604bb0fe190cb367d1aefd15ff5077c4`，
+  子进程打印的 user block 已逐段包含完整正文与分离执行指令。
+- untouched raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V1/attempt-01/raw/QS-B1-V1.r1.png`，
+  `1254×1254 RGB`，SHA-256
+  `f6d22998b5dc8f7c921763970d925aeaac2a91d419fe8ef49c1ce54853aa12b3`。
+- 流程错误 02：provider 已完成且只完成一次生成后，固定子进程首次缓存复制命令
+  误用 PowerShell 只读变量 `$HOME`；同一子进程只把循环变量改为
+  `$codexHome` 后复制同一 provider 输出成功，没有再次调用 ImageGen。因此本次
+  仍只计 `1` 次实际生图，流程错误累计 `2`。
+- 专用确定性审查器：`tools/review_quest_log_action_tab_candidate_v1.py`；展示区域
+  合同：`tools/specs/quest_log_action_tabs_candidate_display_region_v1.json`。
+  edge-connected key、透明 RGB 清零、等比 bbox-fit 与临时八态 atlas 都只形成
+  ignored review，不是 source 或 runtime。
+- 机器源合同：`fail`。raw 可见 bbox `[82,482,1187,766]`、
+  `1105×284`、比例 `3.890845:1`，而允许范围为 `5.45..5.75`；raw canvas
+  `1254²` 而非 `1024²`；边缘连通背景有 `3464` 种 RGB，纯 `#00FF00` 比例
+  `0.0`；等比 fit 后只得到 `545×140` source 可见区，临时 runtime normal
+  只有 `78×20px`，不能覆盖 `112×20px` 视觉盒。单一连通物件、四边未裁切和
+  透明 RGB 清零通过。
+- 几何／展示区域：`pass`。closed `676×464`、open `724×464`、right clamp
+  `740×464` 三场景 `0` violation；七个 `112×20px` 命中盒、`48px` outset、
+  detail／reward 零覆盖、真实页边遮根 `16px` 与 `8px` 右缘 clamp 均通过。
+  display report SHA-256
+  `ecd1c5cea82830069ce329a49ef054f1f7f087e3730cfa484b884a53b2bf233c`。
+- 完整审查图：review sheet SHA-256
+  `6b20fca7733d957ba59fbad92ca15962827fd11d3f7595059d3f43ab6a05ecde`；
+  真实排版 board SHA-256
+  `d9f7afd07ce1a4307b214042877a16bac41232fe7bf2d08c73674c740a05d3a3`；
+  geometry debug SHA-256
+  `5bcc1b6720239f1ed4b64cb6bb79557a77084688cb76cfb1e57760a60f11ecab`；
+  metrics SHA-256
+  `1b789d701f1f1e60c596b7f55fe6598ca7e34e4a6555c7d7751dc4bf6c262b10`。
+- 人工视觉复核：单一无字暗胡桃事务签、平直安静左根、无书／漆章／图标／铆钉
+  等身份项通过；综合色可继续继承。失败项是整体过厚而不能等比占满 runtime、
+  右端圆角／厚斜面过强、整张表面布满写实压花式细碎纹理、文字安全区不安静，
+  上下边形成连续高亮描边，均偏离香草年代两三块大明暗切面与克制断续旧铜边迹。
+- 修复策略：主体身份正确且失败均在已授权的比例、手绘边缘、皮革综合色、磨损
+  密度、旧铜边迹与纯绿背景范围内，attempt 2 使用固定 Image 1／2，并只把本次
+  untouched raw 作为紧邻 Image 3 edit 输入；不上传 keyed／normalized／atlas／
+  排版图或 V9 模拟图。
+- r1 完整修复正文：`93` 行、`6477` UTF-8 bytes，SHA-256
+  `501d7ac07676639dc47948c3afbba5eff0e8f7e5f1bba541bfc3668e635f8455`。
+
+### 完整修复执行正文 — `QS-B1 V1.r1`
+
+Edit the immediately previous Image 3 into one isolated 2D hand-painted bitmap
+UI object for a vanilla-era World of Warcraft quest log: one short horizontal
+guild-ledger transaction index tab made primarily from aged dark-walnut leather.
+This remains only the reusable, text-free base skin. At runtime it will skin
+exactly seven separate 112 x 20 px Button objects that proxy Share Quest, Detail
+Toggle, Show Location, Hide Location, Clean Marks, Reset Marks, and Abandon
+Quest. The game owns every label, icon, enabled state, tooltip, click handler,
+and native abandon confirmation. Return exactly one corrected normal-state base
+tab, not seven tabs, not a menu, and not any state variants.
+
+Reference authority and edit scope:
+1. Image 1 is still the highest visual authority. Inherit its circa-2004 vanilla
+   WoW low-resolution hand-painted bitmap language, broad readable value planes,
+   warm upper-left light, muted warm expedition palette, clear material
+   separation, and sparse edge wear. Ignore its book composition, parchment,
+   plaques, compass, wax seals, ribbons, text, buttons, rivets, bright gold
+   ornaments, and all complete layouts.
+2. Image 2 remains a secondary adjacency reference only. Inherit only the
+   accepted quest book's dark-walnut hue, soft painted edge scale, upper-left
+   light, and restrained wear. Ignore its book silhouette, parchment, spine,
+   stitches, brass corners, transparent surroundings, and reusable pixels.
+3. Image 3 is the untouched immediate output from attempt 1, SHA-256
+   f6d22998b5dc8f7c921763970d925aeaac2a91d419fe8ef49c1ce54853aa12b3.
+   Preserve only what it already got right: exactly one horizontal dark-walnut
+   leather object, a straight calm left root, no baked text or icon, no rivet,
+   no book, no wax seal, and no separate ornament. Correct its canvas,
+   background, aspect, outer-end shape, value structure, surface frequency,
+   wear, and edge trace exactly as specified below. Do not preserve its wrong
+   thickness or procedural microtexture. If references conflict, Image 1 and
+   the vanilla hand-painted rules win; Image 2 only tunes adjacency and Image 3
+   only freezes the correct identity and calm left-root structure.
+
+Mandatory repair of measured attempt-1 failures: Image 3 was 1254 x 1254 with a
+non-uniform green field, and its visible object was 1105 x 284, only 3.890845:1.
+Do not merely crop or rescale that thick shape. Repaint the object itself into a
+much longer, thinner 5.6:1 docket tab so its silhouette naturally occupies the
+required 784 x 140 box and remains substantial at 112 x 20 px. Remove the dense
+embossed crosshatch, leather-photo grain, small repetitive scratches, and
+continuous bright top and bottom outline. Replace them with only two or three
+broad hand-painted value planes, a short broken warm highlight near the upper
+left, and a very thin discontinuous low-contrast oxidized-brass-colored trace
+restricted mainly to part of the lower edge and far outer end. Make the far
+right end nearly square with only shallow two-to-three percent corner chamfers;
+remove the current rounded web-button end and deep beveled cap.
+
+Canvas and occupancy: output an exact 1024 x 1024 RGB bitmap. Every pixel outside
+the object must be the same literal RGB value #00FF00, including all four
+corners and all empty margins. There must be no gradient, texture, vignette,
+checkerboard, haze, green variation, color spill, or cast shadow in the
+background. Place the one object horizontally, unrotated, centered in visible
+bbox [120,442,904,582], exactly 784 x 140 px and 5.6:1. Keep every visible object
+pixel inside that box with empty pure green space on all four sides. Use a
+straight-on orthographic front view with no perspective tilt or foreshortening.
+The runtime will reduce this object seven-to-one to exactly 112 x 20 px; do not
+design it for stretching, tiling, mirroring, or nine-slicing.
+
+Silhouette and construction: paint a quiet heavy handcrafted near-rectangle,
+not a modern rounded rectangle. The long top and bottom edges are mostly
+parallel with only one-to-two percent coarse hand-painted irregularity. Keep the
+leftmost 112 source pixels straight, plain, unornamented, and structurally calm
+because the first 16 runtime pixels sit behind the real book-page edge. Keep the
+far right nearly square; its last 42 source pixels contain only shallow chamfers
+and sparse wear. It must not form a rounded pill, point, arrow, chevron, notch,
+fishtail, bookmark tail, or folder tab. Show restrained thickness using one
+broad dark-walnut face, one narrow deeper-brown lower edge, and one short broken
+upper-left highlight. No deep beveled frame and no perimeter ridge.
+
+Material and text-safe quietness: use low-saturation smoked dark-walnut leather,
+deep umber shadow, and only the restrained broken edge trace described above.
+The leather must look coarsely hand-painted for a small 2004 UI sprite, not
+photographic, embossed, procedural, crosshatched, or vector-clean. Concentrate a
+few broad scuffs only near the far outer end and lower edge. Source coordinates
+[246,449,806,575] are a quiet future text-safe region: keep them free of seam,
+ornament, emblem, high-contrast scratch, grain cluster, highlight, or metallic
+line. At 112 x 20 px the face must remain broad, calm, legible, and subordinate
+to the accepted book and wax seal.
+
+Strict exclusions: no book, page, parchment, paper strip, ribbon, strap, wax,
+seal, menu panel, button stack, frame, text, letters, numerals, glyphs, icons,
+compass, quill, emblem, rune, stitching, holes, rivets, studs, buckles, hinges,
+embossing, photo leather grain, dense crosshatch, bright gold trim, complete
+metallic border, continuous bright outline, symmetrical flourish, glow, glass,
+translucent black, neon, gemstone, skull, spike, Diablo-style altar,
+Skyrim-style minimalist overlay, rounded pill, capsule, arrowhead, pointed
+bookmark, shadow, or loose pixels outside the object.
+
+Before returning, verify all of the following against the actual output: exactly
+one object and one normal state; no baked dynamic content; exact 1024 x 1024 RGB
+canvas; every exterior pixel identical #00FF00; visible bbox exactly
+[120,442,904,582], 784 x 140 and 5.6:1; straight quiet left root; near-square
+shallow-chamfered right end; no rounded cap; only two or three broad painted
+value planes; quiet text-safe center; no dense grain or continuous bright
+border; and a full-width substantial leather tab when reduced to 112 x 20 px.
+
 ### 当前门禁
 
-- 当前实际生图：`0/5`；流程错误：`1`。
+- 当前实际生图：`1/5`；流程错误：`2`。
 - `2026-08-05` 流程错误 01：首次本地执行正文 SHA 预检误用了当前
   PowerShell／.NET 不支持的静态 `SHA256.HashData`；没有启动固定子进程、没有
   provider 生成证据或 raw，因此不占实际生图额度。紧邻针对性修复改用
-  `SHA256.Create().ComputeHash` 后通过：正文 `79` 行、`5430` UTF-8 bytes，
-  SHA-256 `9810861d310ddd85fc1a7d81a9312036604bb0fe190cb367d1aefd15ff5077c4`。
-- 尚未发生：ImageGen 调用、raw、透明候选、真实排版候选、source、manifest、
-  runtime atlas、Lua/XML 接入或旧按钮隐藏。
+  `SHA256.Create().ComputeHash` 后通过。
 - 已获用户授权原文（`2026-08-05`）：`确认授权 QS-B1 V1；允许每次上传固定 SHA 的 Image 1/2，
   允许同循环紧邻前次输出仅在冻结边界内作为 Image 3 edit 输入；最多 5 次实际
   ImageGen 调用，流程错误不占额度；允许按合同执行确定性边缘连通色键、透明
   RGB 清零与等比 bbox-fit。`
-- 下一步：提交本次授权状态与完全自包含的执行正文；提交通过后使用固定
-  `@openai/codex@0.143.0` 执行 attempt 1，并在任何后续调用前完成该候选的
-  全量审查、真实排版和展示区域验证。
+- 尚未建立：accepted source、manifest、runtime atlas、Lua/XML 接入或旧按钮
+  隐藏。attempt 1 的所有派生文件仍只属 ignored review。
+- 下一步：提交 attempt 1 全量审查、专用审查器／展示区域合同与上述完全自包含
+  修复正文；提交通过后，attempt 2 固定上传 Image 1／2 和且仅和紧邻 untouched
+  raw `QS-B1-V1.r1.png` 作为 Image 3 edit 输入。

@@ -1,0 +1,104 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "QUEST.LOG.ACTION.SEAL_MENU.TAB.BASE.QS-B1-V1-CANDIDATE",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, 100%-UI-pixels",
+  "evidence": {
+    "provider": "addon/pfUI/modules/questlog.lua",
+    "adapter": "addon/AzerothExpeditionUI/Modules/QuestLog.lua",
+    "simulation_spec": "tools/specs/quest_log_seal_actions_simulation_v9.json",
+    "candidate_reviewer": "tools/review_quest_log_action_tab_candidate_v1.py",
+    "fixed_sprite": true,
+    "nine_slice_used": false,
+    "final_runtime": false
+  },
+  "atlas": {
+    "size": [1024, 32],
+    "visible_bbox": [8, 6, 1016, 26],
+    "require_exact_visible_coverage": false,
+    "sampled_regions": [
+      {"id": "standard.normal", "box": [8, 6, 120, 26]},
+      {"id": "standard.hover", "box": [136, 6, 248, 26]},
+      {"id": "standard.pressed", "box": [264, 6, 376, 26]},
+      {"id": "standard.disabled", "box": [392, 6, 504, 26]},
+      {"id": "danger.normal", "box": [520, 6, 632, 26]},
+      {"id": "danger.hover", "box": [648, 6, 760, 26]},
+      {"id": "danger.pressed", "box": [776, 6, 888, 26]},
+      {"id": "danger.disabled", "box": [904, 6, 1016, 26]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 1, "right": 1, "top": 1, "bottom": 1},
+    "minimum_frame_size": [3, 3]
+  },
+  "scenarios": [
+    {
+      "id": "closed-676x464",
+      "frame": [676, 464],
+      "preview_frame": [676, 464],
+      "zones": {
+        "detail": [366, 64, 612, 388],
+        "seal-hit": [572, 64, 612, 104],
+        "reward": [376, 316, 596, 384]
+      },
+      "regions": [
+        {"id": "detail.closed", "kind": "content", "box": [366, 64, 612, 388], "zone": "detail"},
+        {"id": "seal.closed.visual", "kind": "visual", "box": [576, 68, 608, 100], "zone": "seal-hit"},
+        {"id": "reward.closed", "kind": "content", "box": [376, 316, 596, 384], "zone": "reward"}
+      ]
+    },
+    {
+      "id": "open-724x464",
+      "frame": [724, 464],
+      "preview_frame": [724, 464],
+      "zones": {
+        "detail": [366, 64, 612, 388],
+        "seal-hit": [572, 64, 612, 104],
+        "action-1": [612, 112, 724, 132],
+        "action-2": [612, 134, 724, 154],
+        "action-3": [612, 159, 724, 179],
+        "action-4": [612, 181, 724, 201],
+        "action-5": [612, 203, 724, 223],
+        "action-6": [612, 225, 724, 245],
+        "action-7": [612, 250, 724, 270],
+        "page-edge": [604, 102, 628, 282],
+        "reward": [376, 316, 596, 384]
+      },
+      "regions": [
+        {"id": "detail.open", "kind": "content", "box": [366, 64, 612, 388], "zone": "detail"},
+        {"id": "seal.open.visual", "kind": "visual", "box": [576, 68, 608, 100], "zone": "seal-hit"},
+        {"id": "action1.hit", "kind": "hit", "box": [612, 112, 724, 132], "zone": "action-1"},
+        {"id": "action2.hit", "kind": "hit", "box": [612, 134, 724, 154], "zone": "action-2"},
+        {"id": "action3.hit", "kind": "hit", "box": [612, 159, 724, 179], "zone": "action-3"},
+        {"id": "action4.hit", "kind": "hit", "box": [612, 181, 724, 201], "zone": "action-4"},
+        {"id": "action5.hit", "kind": "hit", "box": [612, 203, 724, 223], "zone": "action-5"},
+        {"id": "action6.hit", "kind": "hit", "box": [612, 225, 724, 245], "zone": "action-6"},
+        {"id": "action7.hit", "kind": "hit", "box": [612, 250, 724, 270], "zone": "action-7"},
+        {"id": "page-edge.mask", "kind": "occlusion", "box": [604, 102, 628, 282], "zone": "page-edge"},
+        {"id": "reward.open", "kind": "content", "box": [376, 316, 596, 384], "zone": "reward"}
+      ]
+    },
+    {
+      "id": "right-edge-clamp-740x464",
+      "frame": [740, 464],
+      "preview_frame": [740, 464],
+      "initial_origin_x": 16,
+      "clamped_origin_x": 8,
+      "screen_safe_right": 732,
+      "shortfall": 8,
+      "zones": {
+        "detail": [374, 64, 620, 388],
+        "seal-hit": [580, 64, 620, 104],
+        "action-menu": [620, 112, 732, 270],
+        "page-edge": [612, 102, 636, 282],
+        "reward": [384, 316, 604, 384]
+      },
+      "regions": [
+        {"id": "detail.clamped", "kind": "content", "box": [374, 64, 620, 388], "zone": "detail"},
+        {"id": "seal.clamped.visual", "kind": "visual", "box": [584, 68, 616, 100], "zone": "seal-hit"},
+        {"id": "action-menu.clamped", "kind": "hit", "box": [620, 112, 732, 270], "zone": "action-menu"},
+        {"id": "page-edge.clamped", "kind": "occlusion", "box": [612, 102, 636, 282], "zone": "page-edge"},
+        {"id": "reward.clamped", "kind": "content", "box": [384, 316, 604, 384], "zone": "reward"}
+      ]
+    }
+  ]
+}

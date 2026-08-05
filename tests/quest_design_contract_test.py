@@ -155,6 +155,19 @@ def main() -> None:
     seal_actions_sim_renderer = (
         ROOT / "tools" / "render_quest_log_seal_actions_simulation_v1.py"
     )
+    action_tab_reviewer_path = (
+        ROOT / "tools" / "review_quest_log_action_tab_candidate_v1.py"
+    )
+    action_tab_reviewer = action_tab_reviewer_path.read_text(encoding="utf-8")
+    action_tab_display_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_action_tabs_candidate_display_region_v1.json"
+    )
+    action_tab_display_spec = json.loads(
+        action_tab_display_spec_path.read_text(encoding="utf-8")
+    )
     tracker_sim_spec_path = (
         ROOT / "tools" / "specs" / "quest_tracker_simulation_v2.json"
     )
@@ -707,7 +720,7 @@ def main() -> None:
         (
             "Quest Log／Tracker 共用漆章",
             "`QS-A1 V1.r4`",
-            "`prompt-authorized / production-loop-ready`",
+            "`attempt-01-rejected-internal / repair-prepared`",
             "QuestToolWaxSeal_Master_v1.png",
             "QS-A1_SourceManifest_v1.json",
             "QS-A1_RuntimeManifest_v1.json",
@@ -720,8 +733,8 @@ def main() -> None:
             "SetClampRectInsets",
             "旧七个 provider Button",
             "`5/5`",
-            "QS-B1 当前实际生图：`0/5`",
-            "流程错误：`1`",
+            "QS-B1 当前实际生图：`1/5`",
+            "流程错误：`2`",
             "不得进入 `P6`",
         ),
         "accepted QS-A1 work",
@@ -2402,10 +2415,34 @@ def main() -> None:
             "standard normal／hover／pressed／disabled",
             "danger normal／hover／pressed／disabled",
             "exactly one object",
-            "当前实际生图：`0/5`",
+            "当前实际生图：`1/5`",
+            "f6d22998b5dc8f7c921763970d925aeaac2a91d419fe8ef49c1ce54853aa12b3",
+            "review_quest_log_action_tab_candidate_v1.py",
+            "quest_log_action_tabs_candidate_display_region_v1.json",
+            "### 完整修复执行正文 — `QS-B1 V1.r1`",
         ),
         "Quest Log restrained exterior docket-tab simulation work",
     )
+    require(
+        action_tab_reviewer,
+        (
+            "edge_connected_chroma_key",
+            "fit_to_target",
+            "make_atlas",
+            "render_scenario",
+            "right_clamp_formula_is_8px",
+            "pending-external-validator",
+        ),
+        "QS-B1 candidate reviewer",
+    )
+    assert action_tab_display_spec["schema"] == (
+        "aeui-display-region-contract-v1"
+    )
+    assert action_tab_display_spec["atlas"]["size"] == [1024, 32]
+    assert len(action_tab_display_spec["atlas"]["sampled_regions"]) == 8
+    assert [
+        scenario["frame"] for scenario in action_tab_display_spec["scenarios"]
+    ] == [[676, 464], [724, 464], [740, 464]]
 
     quest_adapter = (
         ROOT

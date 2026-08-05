@@ -111,10 +111,13 @@
   明确确认 V9 的可见方向。当前已形成 `QS-B1 V1` 单一无字事务签母版、
   standard／danger 各四态确定性 atlas 和七个独立 Button 的完整合同与生产
   正文；用户于 `2026-08-05` 明确授权固定 Image 1／2、受限紧邻 Image 3 edit、
-  合同内确定性后处理及最多五次实际调用，状态进入
-  `prompt-authorized / P3 / 0/5`。首次正文 SHA 预检因当前 .NET 不支持静态
-  `SHA256.HashData` 记流程错误 `1`，兼容改用 `ComputeHash` 后通过且没有启动
-  provider，因此不占额度。当前 runtime `1.25` 继续把已接受的 QS-A1
+  合同内确定性后处理及最多五次实际调用。attempt 1 已用固定执行器与固定
+  Image 1／2 完成，当前 `P3 / 1/5`、流程错误 `2`；raw 为 `1254² RGB`，
+  可见比例 `3.890845:1`，渐变绿背景有 `3464` 种 RGB，等比装配后只有
+  `78×20px`，并有写实细碎压花纹理、连续亮边与过圆右端，故内部拒绝。专用
+  审查器的三种展示场景 `0` violation，七命中盒、页边遮根、detail／reward
+  零覆盖和右缘 clamp 通过；已准备只编辑紧邻 raw 的完全自包含 r1 修复正文。
+  当前 runtime `1.25` 继续把已接受的 QS-A1
   漆章以 `32px` 无鼠标 Texture 放到详情页右上纸面；该位置修复不依赖新资产。
   菜单尚未接入，也未隐藏任何旧按钮。
 - AEUI Quest Log provider 兼容子合同保持 `1.7`：在 provider 最终刷新后以
@@ -373,7 +376,7 @@
 | `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P5 runtime-exported` | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；内部失败与 `5/5` 事实保留 | Turtle WoW 验证 TGA、四态切换、字体和 fallback |
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 asset-retained / runtime-hidden` | 用户接受的 source、manifest、`128 × 16` TGA、exporter 与历史证据全部保留；`2026-07-31` 起 adapter 不再挂载或包装任务行脚本 | 暂缓；只有用户重新确认后才恢复 runtime |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
-| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu `P3 prompt-authorized / 0/5` | 既有 late-load 兼容和原 Button fallback 保留；V1–V8 已否决，V9 已确认。`QS-B1 V1` 只生成一枚无字暗胡桃事务签母版，七项仍为独立 `112×20px` Button，页内零占用且只产生 `48px` outset；`2026-08-05` 已获正式生产授权 | 提交已授权正文后执行 attempt 1；每次调用后先完成全量审查、真实排版和展示区域验证，候选通过后再等待用户接受并做 P4/P5 |
+| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu `P3 attempt-01-rejected / repair-prepared / 1/5` | 既有 late-load 兼容和原 Button fallback 保留；V1–V8 已否决，V9 已确认。attempt 1 的几何／展示区域通过，但 raw 比例 `3.890845:1`、装配后仅 `78×20px`，背景与笔触失败；专用审查器和 r1 完整修复正文已形成 | 提交 attempt 1 审查与 r1 后，attempt 2 只以固定 Image 1／2 加紧邻 raw Image 3 edit；通过后再等待用户接受并做 P4/P5 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | geometry `P5 runtime-integrated`；final art `P2 simulation-proposed` | runtime `1.25` 保持真实 Button 的 `108×41px` 双列／`64px` 名称／`8px` 列距／`4px` 行距、setter 锁、无鼠标程序化容器、原生 `NameFrame` 抑制和可见数量兜底。所有奖励项只依赖奖励总标题或上一组奖励项，不再依赖三个分组标题，消除原生 `QuestLogItemReceiveText` 反向锚定造成的 FrameXML 环。Theme `1.8` 奖励文字无描边。V1 模拟 0／1／2／4／6 `5/5 pass`、ImageGen `0/0`；奖励只读，无 selected | 先实机确认 FrameXML 锚点错误消失，再验证 2／3／4／6 奖励的稳定空隙、换行、原生名牌不回显且无裁切；然后确认正式容器方向，确认不等于生产授权 |
 
 QL-A1 manifest 记录：
@@ -419,7 +422,7 @@ timer 或 failed 资产：provider 没有可用的公开状态来源。本项目
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
 | `QS-A1` | Quest Log／Tracker 共用漆章母版 | `P5 runtime-exported / page-placement-integrated / 5/5` | source／四态 atlas 保持 accepted；当前 Quest Log runtime `1.25` 直接使用 `32px` 页上 Texture，Tracker 不受影响；没有重开美术或 ImageGen | Turtle WoW 验证页上位置、TGA 方向与标题／正文安全区 |
-| `QS-B1` | Quest Log 七项外侧事务签、真实漆章 Button 与共用无字 tab 母版 | `P3 prompt-authorized / 0/5`；流程错误 `1` | V9 已确认：七个独立 `112×20px` Button、`48px` outset、真实页边遮根；生产正文按全局／任务基线重写并完成完整性预检。用户于 `2026-08-05` 授权固定 Image 1／2、受限同循环 Image 3 edit、确定性后处理和最多五次实际调用；本地 SHA API 兼容错误没有启动 provider、不占额度；页上 Texture placement 已由 runtime `1.25` 独立实现 | 执行 attempt 1；通过前不实现菜单、不隐藏 fallback，通过后仍须用户接受才进入 P4/P5 |
+| `QS-B1` | Quest Log 七项外侧事务签、真实漆章 Button 与共用无字 tab 母版 | `P3 attempt-01-rejected-internal / repair-prepared / 1/5`；流程错误 `2` | attempt 1 保留正确的单物件、暗胡桃身份与安静左根，但 canvas／背景／比例、细碎写实纹理、连续亮边和圆端失败；三场景展示区域 `0` violation。r1 冻结正确项，只修已授权的比例、纯绿、手绘明暗、磨损、边迹与右端 | 提交审查器、展示区域合同、attempt 1 记录和 r1；attempt 2 固定 Image 1／2，并仅加紧邻 untouched raw 为 Image 3 edit；通过前不接入 runtime |
 
 QS-A1 当前事实：
 
@@ -591,9 +594,11 @@ provider 刷新后的可见空隙、第三项换行及原生 NameFrame 不回显
 继续遮住左侧 `16px` 根部，detail／奖励零占用，展开只产生 `48px` outset。
 固定生产输入为任务详情锁定图和受限邻接职责的 QL-A1 source；V9 模拟像素、
 漆章和旧失败稿均不得上传。页上漆章位置继续由既有资产在 runtime `1.25` 实现；
-QS-B1 已于 `2026-08-05` 获正式生产授权，当前 `P3 / 0/5`；先提交完全自包含的
-执行正文，再按固定执行器进行 attempt 1。生产循环期间仍不实现菜单，也不隐藏
-放弃／分享／退出／详情与 pfQuest 四按钮。候选通过并获用户接受后
+QS-B1 已于 `2026-08-05` 获正式生产授权。attempt 1 当前为
+`P3 / rejected-internal / 1/5`、流程错误 `2`：展示区域通过，canvas／纯绿背景／
+比例和笔触失败；已准备仅编辑紧邻 raw 的 r1 完整正文。提交审查记录与 r1 后
+执行 attempt 2。生产循环期间仍不实现菜单，也不隐藏放弃／分享／退出／详情与
+pfQuest 四按钮。候选通过并获用户接受后
 仍必须一一代理原 Button、镜像禁用态、保留放弃确认，并在任一 provider 未
 捕获时 fail-open。
 
