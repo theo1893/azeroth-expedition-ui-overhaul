@@ -1,0 +1,145 @@
+{
+  "schema": "aeui.quest-log.seal-layered-actions.simulation.v1",
+  "version": "QUEST-LOG-SEAL-SUBSTRATE-SIM-V13",
+  "design_batch": "QS-B1 V4-A",
+  "support_type": "scroll-child-wax-pinned-dark-irregular-substrate-independent-motifs",
+  "canvas": [2200, 1220],
+  "inputs": {
+    "quest_log_shell": "assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png",
+    "seal_atlas": "addon/AzerothExpeditionUI/Media/Quests/QuestToolWaxSealStatesV1.tga",
+    "title_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf",
+    "body_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf"
+  },
+  "outputs": {
+    "board": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-SUBSTRATE-SIM-V13/quest_log_seal_substrate_board_v13.png",
+    "zoom": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-SUBSTRATE-SIM-V13/quest_log_seal_substrate_zoom_v13.png",
+    "report": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-SUBSTRATE-SIM-V13/quest_log_seal_substrate_report_v13.json",
+    "display_region_report": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-SUBSTRATE-SIM-V13/display-region-report-v13.json"
+  },
+  "presentation": {
+    "title": "QS-B1 V4-A · 暗色厚重旧誓约布底 · V13 本地几何预演",
+    "subtitle": "只修正 V3-A 被否决的综合色与切口：整体压暗、降饱和、轮廓改为少量宽幅不对称偏移，尾端仅保留两处不等宽钝缺口。真实任务书、火漆、动态长度与滚动关系不变。ImageGen 0/0。",
+    "zoom_title": "QS-B1 V4-A · 布底综合色 / 轮廓 / 动态长度检查",
+    "zoom_subtitle": "像素放大只用于检查综合色重量、火漆下根部、非周期侧边和尾端粗切口；纹章仍是非权威几何占位。",
+    "zoom_notes": [
+      "主体比 V12 暗，低饱和烟熏棕灰；不使用金黄、橙亮或全长高光",
+      "左右边只出现少量宽幅、互不镜像的偏移；不按 22px 功能节距重复",
+      "尾端是两处不等宽钝缺口，不使用整齐锯齿、流苏或对称鱼尾",
+      "中央亮面分成短而宽的暗赭块，不形成贯穿全高的明亮竖带",
+      "7 / 5 / 3 项均从同一最大母版取前缀并接同一尾端，隐藏后无空槽"
+    ],
+    "footer_lines": [
+      "V4-A 只重开空白布底美术：一张最大长度母版，runtime 取前缀并接尾端；七纹章仍是独立 Button 资源，当前仅作几何占位。",
+      "确认范围：暗色低饱和重量、非周期手裁侧边、两处粗钝尾缺口、断续宽面明暗。非权威：最终纤维、磨损、Alpha、纹章笔触与四态。ImageGen 0/0。"
+    ],
+    "origins": [[28,112], [750,112], [1472,112], [28,696], [750,696], [1472,696]]
+  },
+  "visual_mockup": {
+    "substrate_variant": "v4-dark-irregular",
+    "canonical_master_size": [32,174],
+    "dynamic_assembly": "prefix-plus-tail-from-one-master",
+    "tail_notch_count": 2,
+    "palette": {
+      "base": [70,56,43,255],
+      "light_plane": [93,73,52,255],
+      "shadow_plane": [38,31,26,255],
+      "stain": [45,34,28,255]
+    },
+    "silhouette_points": [
+      [3,4], [7,2], [11,3], [15,1], [20,2], [25,1], [29,4],
+      [30,14], [29,31], [31,47], [30,65], [30,83], [28,102], [30,119], [29,139], [30,155], [29,166],
+      [29,169], [26,168], [23,172], [20,173], [17,170], [14,171], [11,174], [7,172], [3,173], [2,168],
+      [2,153], [1,136], [3,118], [2,99], [1,81], [3,63], [2,43], [1,26], [3,11]
+    ],
+    "edge_control_points": [
+      [30,14], [29,31], [31,47], [30,65], [30,83], [28,102], [30,119], [29,139], [30,155], [29,166],
+      [2,153], [1,136], [3,118], [2,99], [1,81], [3,63], [2,43], [1,26], [3,11]
+    ],
+    "surface_primitives": [
+      {"kind":"polygon", "points":[[0,0],[14,0],[13,30],[10,54],[12,78],[9,108],[11,137],[7,174],[0,174]], "fill":[93,73,52,82]},
+      {"kind":"polygon", "points":[[22,0],[32,0],[32,174],[24,174],[25,145],[22,118],[25,92],[23,66],[26,38]], "fill":[38,31,26,98]},
+      {"kind":"polygon", "points":[[10,18],[18,13],[20,31],[17,47],[12,61],[8,50]], "fill":[105,83,59,24]},
+      {"kind":"polygon", "points":[[11,91],[19,84],[22,99],[18,116],[13,126],[9,113]], "fill":[101,79,57,22]},
+      {"kind":"polygon", "points":[[3,48],[13,44],[18,61],[15,82],[7,88],[2,69]], "fill":[38,30,25,28]},
+      {"kind":"polygon", "points":[[16,116],[28,122],[31,148],[22,158],[14,143]], "fill":[42,32,27,30]},
+      {"kind":"polygon", "points":[[0,138],[8,143],[10,163],[4,169],[0,159]], "fill":[48,36,29,24]},
+      {"kind":"polygon", "points":[[4,0],[12,0],[10,7],[5,9]], "fill":[38,31,27,48]},
+      {"kind":"polygon", "points":[[17,0],[30,1],[28,8],[21,6]], "fill":[43,34,29,42]},
+      {"kind":"line", "points":[[2,48],[2,61]], "width":1, "fill":[99,77,54,46]},
+      {"kind":"line", "points":[[29,103],[29,118]], "width":1, "fill":[29,25,22,60]},
+      {"kind":"line", "points":[[3,145],[2,158]], "width":1, "fill":[84,65,47,34]},
+      {"kind":"polygon", "points":[[1,164],[31,164],[30,174],[2,174]], "fill":[35,29,25,28]}
+    ]
+  },
+  "frame": [676,464],
+  "content": {"quest_rows":18, "reward_slots":4},
+  "layout": {
+    "list":[64,64,246,324],
+    "detail_viewport":[366,64,246,324],
+    "detail_scroll_child":[366,64,246,560],
+    "detail_body_origin":[10,8],
+    "detail_body_width":214,
+    "detail_indented_width":204,
+    "legacy_unconstrained_width":224,
+    "close":[636,12,22,22],
+    "seal_hitbox_content":[206,0,40,40],
+    "seal_visual_content":[210,4,32,32],
+    "substrate_root_content":[210,30,32,12],
+    "substrate_body_origin_content":[210,42],
+    "action_slot_size":[32,22],
+    "substrate_tail_size":[32,8],
+    "reward_slots_content":[[10,236,108,41],[122,236,108,41],[10,281,108,41],[122,281,108,41]]
+  },
+  "actions": [
+    {"id":"share", "label":"共享任务", "provider":"QuestFramePushQuestButton", "motif":"paired-quills"},
+    {"id":"detail", "label":"收起详情", "provider":"QuestLogFrameExpandButton", "motif":"folded-ledger-leaf"},
+    {"id":"show", "label":"显示位置", "provider":"pfQuest.buttonShow", "motif":"open-compass"},
+    {"id":"hide", "label":"隐藏位置", "provider":"pfQuest.buttonHide", "motif":"veiled-compass"},
+    {"id":"clean", "label":"清理标记", "provider":"pfQuest.buttonClean", "motif":"swept-map-lines"},
+    {"id":"reset", "label":"重建标记", "provider":"pfQuest.buttonReset", "motif":"returning-route-knot"},
+    {"id":"abandon", "label":"放弃任务", "provider":"QuestLogFrameAbandonButton", "motif":"snapped-contract-cord"}
+  ],
+  "states": [
+    {"id":"closed-top", "label":"A · 收起：暗色布根被火漆压住", "menu_open":false, "scroll_offset":0, "visible_actions":["share","detail","show","hide","clean","reset","abandon"], "disabled_actions":[], "hover_action":null, "expected_enabled_actions":0},
+    {"id":"open-all-seven", "label":"B · 全显 7 项：暗色重量与尾端粗切口", "menu_open":true, "scroll_offset":0, "visible_actions":["share","detail","show","hide","clean","reset","abandon"], "disabled_actions":[], "hover_action":"show", "expected_enabled_actions":7},
+    {"id":"open-filtered-five", "label":"C · 隐藏 2 项：同一母版前缀缩短，无空洞", "menu_open":true, "scroll_offset":0, "visible_actions":["share","detail","show","reset","abandon"], "disabled_actions":[], "hover_action":"detail", "expected_enabled_actions":5},
+    {"id":"open-filtered-three-disabled", "label":"D · 仅显 3 项：disabled 留位，布底继续缩短", "menu_open":true, "scroll_offset":0, "visible_actions":["share","show","abandon"], "disabled_actions":["show"], "hover_action":null, "expected_enabled_actions":2},
+    {"id":"filtered-five-partial-scroll", "label":"E · 5 项 / scroll 52：首项部分裁切不命中", "menu_open":true, "scroll_offset":52, "visible_actions":["share","detail","show","reset","abandon"], "disabled_actions":["reset"], "hover_action":null, "expected_enabled_actions":3},
+    {"id":"filtered-five-fully-scrolled-out", "label":"F · 5 项 / scroll 208：漆章与菜单完全滚出", "menu_open":true, "scroll_offset":208, "visible_actions":["share","detail","show","reset","abandon"], "disabled_actions":[], "hover_action":null, "expected_enabled_actions":0}
+  ],
+  "interaction": {
+    "seal_parent":"QuestLogDetailScrollChild",
+    "substrate_parent":"QuestLogDetailScrollChild",
+    "motif_button_parent":"QuestLogDetailScrollChild",
+    "left_click":"toggle-layered-ribbon",
+    "hidden":"remove-provider-row-and-compact-visible-order",
+    "disabled":"keep-row-in-flow-and-mirror-provider-disabled-state",
+    "outside_click_or_escape":"close-layered-ribbon",
+    "action_click":"proxy-original-provider-button-then-close-ribbon",
+    "abandon":"preserve-native-confirmation",
+    "scroll_clipping":"disable-any-action-hitbox-not-fully-inside-detail-viewport",
+    "fail_open":"keep-original-buttons-visible-until-all-proxies-exist"
+  },
+  "constraints": {
+    "imagegen_calls":0,
+    "new_bitmap_assets":0,
+    "seal_reuses_accepted_runtime_atlas":true,
+    "substrate_is_visual_only_and_receives_no_mouse":true,
+    "substrate_uses_root_body_variants_and_tail":true,
+    "body_variants_are_seamless_and_not_function_owned":true,
+    "motifs_are_seven_independent_transparent_assets":true,
+    "each_visible_action_is_an_independent_button":true,
+    "hidden_actions_compact_without_blank_slots":true,
+    "disabled_actions_remain_in_flow":true,
+    "background_height_tracks_visible_action_count":true,
+    "no_motif_is_baked_into_background":true,
+    "no_action_owns_a_cloth_background_slice":true,
+    "no_horizontal_slot_seams_or_card_frames":true,
+    "no_page_reflow_or_permanent_text_narrowing":true,
+    "open_overlay_is_temporary":true,
+    "maximum_ribbon_ends_32px_before_rewards":true,
+    "no_outer_book_frame_or_right_outset":true,
+    "bottom_action_buttons_hidden_only_after_proxy_parity":true,
+    "art_direction":"dark low-saturation smoked oath cloth; sparse broad asymmetric edge deviations; two unequal blunt tail notches; broken low-frequency light planes; no gold, orange highlight, sawtooth fringe, periodic 22px defects, full-height bright stripe, or dense microtexture"
+  }
+}

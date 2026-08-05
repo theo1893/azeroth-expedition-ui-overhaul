@@ -4553,3 +4553,104 @@ semantic readability; all seven remain recognizable in separate 32 x 22 cells.
   因此 V3-B 不得执行。当前等待用户审查失败证据并决定是否另立新版本／新
   策略；不创建 source／manifest／exporter／runtime，不修改 addon，也不隐藏
   旧按钮。
+
+## V3-A 用户否决与 V4-A 暗色非规则布底预演 — `2026-08-05`
+
+### 否决结论与边界
+
+- 用户对 V3-A 五次失败证据的明确结论：`条带切口太整齐了，而且颜色太亮了，
+  显得很轻浮`。V3-A 因而补充标记为
+  `candidate-rejected / repair-budget-exhausted / user-rejected / 5/5`；
+  attempt 1–5 全部只保留为负面证据，不得成为 source、runtime、V4
+  reference 或 edit input。
+- V12 已确认的真实对象与交互拓扑不撤销：ScrollChild 所有权、页上火漆、
+  一张动态空白布底、七张独立透明纹章、七个独立 Button、hidden 收拢、
+  disabled 留位、部分滚动禁用 hitbox、完全滚出、奖励前 `32px` 留白和
+  fail-open 均保持。
+- V3-B 仍为 `0/5` 且不得执行。V3 联合授权不自动授权新的 V4-A 可见方向；
+  V4-A 模拟确认后仍须形成并展示新的完整生产正文，再获得独立五次实际
+  ImageGen 授权。
+
+### 生成前模拟合同
+
+- 组件／版本：`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX / QS-B1 V4-A /`
+  `QUEST-LOG-SEAL-SUBSTRATE-SIM-V13`。
+- 子状态：`simulation-reviewed / P2 / awaiting-user-confirmation`；操作
+  `simulate`；ImageGen `0/0`；上传 `0`；本地渲染错误 `0`；production
+  ImageGen `0/0` 且尚无新预算。
+- 最高视觉权威：
+  `assets/locked/quests/任务详情面板_视觉基准_v1.png`
+  (`03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`)；
+  只读继承香草时代手绘年代感、大块明暗、厚重材料与克制磨损。
+- 当前 accepted/runtime 邻接：
+  `assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png`
+  (`91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5`)
+  与 `addon/AzerothExpeditionUI/Media/Quests/QuestToolWaxSealStatesV1.tga`
+  (`f113e670f1b61be1a50e3cfa16dfce95a2b0d159fc35d986a9b2e1d314a72902`)；
+  两者只作为真实排版邻接 UI，不被复制为新 source。
+- 真实 Frame：`676×464px`；detail viewport `[366,64,246,324]`；火漆视觉
+  `[210,4,32,32]`；布根 `[210,30,32,12]`；动作从内容 y=`42` 起，每项
+  `32×22px`；tail `32×8px`；奖励首行 y=`236`。覆盖 closed、7／5／3 项、
+  disabled、scroll `52` 与 scroll `208` 六个场景，并保留 18 行任务与四个
+  `108×41px` 奖励槽。
+- 动态装配：本地模拟先构造唯一 `32×174px` 最大母版；open 时只取
+  `12 + visible_count × 22px` 前缀，再接同一母版底部 `8px` tail；closed
+  只取前 `12px`。不得按动作数重新绘制不同背景，也不得产生功能所有权或
+  `22px` 周期缺陷。
+
+### V4-A 可见方向
+
+- 主体从 V3-A 的暖亮赭布压到低饱和烟熏深旧棕：平面角色为主体
+  `[70,56,43]`、次亮 `[93,73,52]`、阴影 `[38,31,26]`、污渍
+  `[45,34,28]`。禁止金黄、橙亮、象牙白、全长亮边或庆典式鲜亮色。
+- 左右侧边只由少量宽幅、互不镜像的偏移构成；控制点避开 `22px` 动作切线，
+  不使用机器直边、等距波浪、锯齿、流苏或周期缺口。
+- 尾端只有两处不等宽、粗钝的上收缺口；不使用规则锯齿、同长排穗、深 V、
+  对称鱼尾或现代 ribbon 切口。
+- 上根在火漆下形成轻微不对称压皱；中央亮面只出现两个短而宽的暗赭块，
+  不形成贯穿全高的明亮竖带；磨损只落在少量边缘／尾端位置，中央保持哑光、
+  安静、厚重。
+- 本地纹章仍是 V12 的简单几何占位，只用于确认布底与七个独立 Button 的
+  实际层序、对比和动态长度；其最终形态、笔触、Alpha 与四态不在 V13 确认范围。
+
+### 模拟执行、内审与证据
+
+- tracked renderer：
+  `tools/render_quest_log_seal_layered_actions_simulation_v2.py`，SHA-256
+  `4fc1df9833b0a60f54e6ceccf03646e7002c8bc0fcf647eafe117f10e4fb1c4b`。
+- tracked specification：
+  `tools/specs/quest_log_seal_substrate_simulation_v13.json`，SHA-256
+  `dd5d13cf7b23f18fa9525377f6b03422370b1bbd8274c02174b4692b7e377969`。
+- tracked display-region contract：
+  `tools/specs/quest_log_seal_actions_simulation_v13_display_region.json`，
+  SHA-256
+  `9fd5070eda48cb9f1e98b3b745173de7bdbb034093d3aa7f60a5d83879ee364d`。
+- macOS 命令：
+  `conda run -n py312 python tools/render_quest_log_seal_layered_actions_simulation_v2.py tools/specs/quest_log_seal_substrate_simulation_v13.json --repo-root .`。
+  解释器 `/Users/yuanshiyao/miniconda3/envs/py312/bin/python`，Python
+  `3.12.12`。
+- 真实排版 board：
+  `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-SUBSTRATE-SIM-V13/quest_log_seal_substrate_board_v13.png`，
+  SHA-256 `f38ae81031f5ff50f3d0fcaa20b94a2316f39df1317f2a1d87c362a86ee735d1`。
+- 轮廓／综合色 zoom：同目录 `quest_log_seal_substrate_zoom_v13.png`，SHA-256
+  `78aa2d8ce58271b6c43bfac9c5ebe516d3c7009162a2cd3cafd7f665208c4ba8`。
+- simulation report：同目录 `quest_log_seal_substrate_report_v13.json`，
+  SHA-256 `b6680f3e49cf00c42a1aa659a95237bd7a2df22a661f6dfb5f534a17d46c7138`；
+  `40/40 pass / displayable`。
+- display-region report：同目录 `display-region-report-v13.json`，SHA-256
+  `66b8396546c3383c65c2a6eb2506b410fddbd58002c9ad742266a0813a8e4cfa`；
+  `6/6 pass`、violations `0`。
+- 内部首轮先发现“大块高对比椭圆污渍可能误读成独立按钮底板、亮面仍偏赭亮”，
+  随即在同一 0-ImageGen 模拟版本内改为更暗、更低对比的跨段宽面阴影后重渲染；
+  最终 V13 不含 action-sized stain plate。该修正没有调用 provider，也没有
+  产生 production attempt。
+- 内部结论：`displayable`。可据此确认真实比例、页面位置、暗色重量、侧边／
+  尾端轮廓、火漆压根关系、动态长度、对象密度、层序与滚动观感；不能据此
+  接受最终纤维、手绘微纹、边缘 Alpha、切片接缝、纹章笔触、四态或客户端混合。
+- 禁止用途：board／zoom／report 全部位于 ignored `generated/`；不得进入
+  `assets/source/`、addon、裁切／切片、runtime，也不得作为未来 ImageGen
+  reference 或 edit input。当前可由 tracked renderer／spec 确定性重建，
+  不创建跨设备 `handoff/`。
+- 用户方向结论：`pending`。下一门禁仅为用户确认或否决具体 V13 可见方向；
+  未确认前不得准备授权态 production、调用 ImageGen、执行 V3-B、创建 source、
+  导出 runtime、修改 addon 或隐藏旧按钮。

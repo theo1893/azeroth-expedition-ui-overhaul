@@ -1,0 +1,140 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "QS-B1/QUEST.LOG.ACTION.SEAL_MENU/SIM.V13/dark-irregular-substrate-direction-only",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, 100%-UI-pixels",
+  "evidence": {
+    "provider": "QuestLogDetailScrollFrame + QuestLogDetailScrollChild",
+    "adapter": "addon/AzerothExpeditionUI/Modules/Quests.lua",
+    "simulation_spec": "tools/specs/quest_log_seal_substrate_simulation_v13.json",
+    "simulation": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-SUBSTRATE-SIM-V13/quest_log_seal_substrate_board_v13.png",
+    "background_ownership": "visual-only dark irregular prefix + tail from one canonical master; no action motif baked in",
+    "motif_ownership": "seven independent transparent source assets and seven independent runtime Buttons; atlas packing does not merge ownership",
+    "direction_only": true,
+    "final_runtime": false
+  },
+  "atlas": {
+    "size": [224, 22],
+    "visible_bbox": [0, 0, 224, 22],
+    "require_exact_visible_coverage": true,
+    "sampled_regions": [
+      {"id": "motif.share", "box": [0, 0, 32, 22]},
+      {"id": "motif.detail", "box": [32, 0, 64, 22]},
+      {"id": "motif.show", "box": [64, 0, 96, 22]},
+      {"id": "motif.hide", "box": [96, 0, 128, 22]},
+      {"id": "motif.clean", "box": [128, 0, 160, 22]},
+      {"id": "motif.reset", "box": [160, 0, 192, 22]},
+      {"id": "motif.abandon", "box": [192, 0, 224, 22]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 1, "right": 1, "top": 1, "bottom": 1},
+    "minimum_frame_size": [3, 3]
+  },
+  "scenarios": [
+    {
+      "id": "closed-top",
+      "frame": [246, 324],
+      "preview_frame": [246, 324],
+      "zones": {"detail-viewport": [0, 0, 246, 324]},
+      "regions": [
+        {"id": "seal.hitbox", "kind": "button", "box": [206, 0, 246, 40], "zone": "detail-viewport"},
+        {"id": "substrate.root.visible", "kind": "texture", "box": [210, 36, 242, 42], "zone": "detail-viewport"},
+        {"id": "reward.1", "kind": "button", "box": [10, 236, 118, 277], "zone": "detail-viewport"},
+        {"id": "reward.2", "kind": "button", "box": [122, 236, 230, 277], "zone": "detail-viewport"},
+        {"id": "reward.3", "kind": "button", "box": [10, 281, 118, 322], "zone": "detail-viewport"},
+        {"id": "reward.4", "kind": "button", "box": [122, 281, 230, 322], "zone": "detail-viewport"}
+      ]
+    },
+    {
+      "id": "open-all-seven",
+      "frame": [246, 324],
+      "preview_frame": [246, 324],
+      "zones": {"detail-viewport": [0, 0, 246, 324]},
+      "regions": [
+        {"id": "seal.hitbox", "kind": "button", "box": [206, 0, 246, 40], "zone": "detail-viewport"},
+        {"id": "substrate.full", "kind": "texture", "box": [210, 30, 242, 204], "zone": "detail-viewport"},
+        {"id": "action.share", "kind": "button", "box": [210, 42, 242, 64], "zone": "detail-viewport"},
+        {"id": "action.detail", "kind": "button", "box": [210, 64, 242, 86], "zone": "detail-viewport"},
+        {"id": "action.show", "kind": "button", "box": [210, 86, 242, 108], "zone": "detail-viewport"},
+        {"id": "action.hide", "kind": "button", "box": [210, 108, 242, 130], "zone": "detail-viewport"},
+        {"id": "action.clean", "kind": "button", "box": [210, 130, 242, 152], "zone": "detail-viewport"},
+        {"id": "action.reset", "kind": "button", "box": [210, 152, 242, 174], "zone": "detail-viewport"},
+        {"id": "action.abandon", "kind": "button", "box": [210, 174, 242, 196], "zone": "detail-viewport"},
+        {"id": "substrate.tail", "kind": "texture", "box": [210, 196, 242, 204], "zone": "detail-viewport"},
+        {"id": "reward.1", "kind": "button", "box": [10, 236, 118, 277], "zone": "detail-viewport"},
+        {"id": "reward.2", "kind": "button", "box": [122, 236, 230, 277], "zone": "detail-viewport"},
+        {"id": "reward.3", "kind": "button", "box": [10, 281, 118, 322], "zone": "detail-viewport"},
+        {"id": "reward.4", "kind": "button", "box": [122, 281, 230, 322], "zone": "detail-viewport"}
+      ]
+    },
+    {
+      "id": "open-filtered-five",
+      "frame": [246, 324],
+      "preview_frame": [246, 324],
+      "zones": {"detail-viewport": [0, 0, 246, 324]},
+      "regions": [
+        {"id": "seal.hitbox", "kind": "button", "box": [206, 0, 246, 40], "zone": "detail-viewport"},
+        {"id": "substrate.compact-five", "kind": "texture", "box": [210, 30, 242, 160], "zone": "detail-viewport"},
+        {"id": "action.share", "kind": "button", "box": [210, 42, 242, 64], "zone": "detail-viewport"},
+        {"id": "action.detail", "kind": "button", "box": [210, 64, 242, 86], "zone": "detail-viewport"},
+        {"id": "action.show", "kind": "button", "box": [210, 86, 242, 108], "zone": "detail-viewport"},
+        {"id": "action.reset", "kind": "button", "box": [210, 108, 242, 130], "zone": "detail-viewport"},
+        {"id": "action.abandon", "kind": "button", "box": [210, 130, 242, 152], "zone": "detail-viewport"},
+        {"id": "substrate.tail", "kind": "texture", "box": [210, 152, 242, 160], "zone": "detail-viewport"},
+        {"id": "reward.1", "kind": "button", "box": [10, 236, 118, 277], "zone": "detail-viewport"},
+        {"id": "reward.2", "kind": "button", "box": [122, 236, 230, 277], "zone": "detail-viewport"},
+        {"id": "reward.3", "kind": "button", "box": [10, 281, 118, 322], "zone": "detail-viewport"},
+        {"id": "reward.4", "kind": "button", "box": [122, 281, 230, 322], "zone": "detail-viewport"}
+      ]
+    },
+    {
+      "id": "open-filtered-three-disabled",
+      "frame": [246, 324],
+      "preview_frame": [246, 324],
+      "zones": {"detail-viewport": [0, 0, 246, 324]},
+      "regions": [
+        {"id": "seal.hitbox", "kind": "button", "box": [206, 0, 246, 40], "zone": "detail-viewport"},
+        {"id": "substrate.compact-three", "kind": "texture", "box": [210, 30, 242, 116], "zone": "detail-viewport"},
+        {"id": "action.share", "kind": "button", "box": [210, 42, 242, 64], "zone": "detail-viewport"},
+        {"id": "action.show.disabled", "kind": "disabled-button", "box": [210, 64, 242, 86], "zone": "detail-viewport"},
+        {"id": "action.abandon", "kind": "button", "box": [210, 86, 242, 108], "zone": "detail-viewport"},
+        {"id": "substrate.tail", "kind": "texture", "box": [210, 108, 242, 116], "zone": "detail-viewport"},
+        {"id": "reward.1", "kind": "button", "box": [10, 236, 118, 277], "zone": "detail-viewport"},
+        {"id": "reward.2", "kind": "button", "box": [122, 236, 230, 277], "zone": "detail-viewport"},
+        {"id": "reward.3", "kind": "button", "box": [10, 281, 118, 322], "zone": "detail-viewport"},
+        {"id": "reward.4", "kind": "button", "box": [122, 281, 230, 322], "zone": "detail-viewport"}
+      ]
+    },
+    {
+      "id": "filtered-five-partial-scroll",
+      "frame": [246, 324],
+      "preview_frame": [246, 324],
+      "zones": {"detail-viewport": [0, 0, 246, 324]},
+      "regions": [
+        {"id": "substrate.partial", "kind": "texture", "box": [210, 0, 242, 108], "zone": "detail-viewport"},
+        {"id": "action.share.visible-disabled", "kind": "texture", "box": [210, 0, 242, 12], "zone": "detail-viewport"},
+        {"id": "action.detail", "kind": "button", "box": [210, 12, 242, 34], "zone": "detail-viewport"},
+        {"id": "action.show", "kind": "button", "box": [210, 34, 242, 56], "zone": "detail-viewport"},
+        {"id": "action.reset.disabled", "kind": "disabled-button", "box": [210, 56, 242, 78], "zone": "detail-viewport"},
+        {"id": "action.abandon", "kind": "button", "box": [210, 78, 242, 100], "zone": "detail-viewport"},
+        {"id": "substrate.tail", "kind": "texture", "box": [210, 100, 242, 108], "zone": "detail-viewport"},
+        {"id": "reward.1", "kind": "button", "box": [10, 184, 118, 225], "zone": "detail-viewport"},
+        {"id": "reward.2", "kind": "button", "box": [122, 184, 230, 225], "zone": "detail-viewport"},
+        {"id": "reward.3", "kind": "button", "box": [10, 229, 118, 270], "zone": "detail-viewport"},
+        {"id": "reward.4", "kind": "button", "box": [122, 229, 230, 270], "zone": "detail-viewport"}
+      ]
+    },
+    {
+      "id": "filtered-five-fully-scrolled-out",
+      "frame": [246, 324],
+      "preview_frame": [246, 324],
+      "zones": {"detail-viewport": [0, 0, 246, 324]},
+      "regions": [
+        {"id": "reward.1", "kind": "button", "box": [10, 28, 118, 69], "zone": "detail-viewport"},
+        {"id": "reward.2", "kind": "button", "box": [122, 28, 230, 69], "zone": "detail-viewport"},
+        {"id": "reward.3", "kind": "button", "box": [10, 73, 118, 114], "zone": "detail-viewport"},
+        {"id": "reward.4", "kind": "button", "box": [122, 73, 230, 114], "zone": "detail-viewport"}
+      ]
+    }
+  ]
+}

@@ -82,8 +82,9 @@ V10 的页外索引签在确认前被用户明确改向，现为
 所有权完全分开；用户于 `2026-08-05` 回复“可以”，确认 V12 的动态收拢、
 ScrollChild 裁切、正文／奖励不重排和分层方向。生产实现进一步以一条连续
 最大长度空白母版的动态 prefix＋tail 代替重复 body variant；七格纹章工作表
-必须在 P4 拆成七张独立 RGBA source。V3-A／V3-B 完整正文均已准备，各自
-ImageGen `0/5`，当前等待最坏合计 `10` 次的独立生产授权。
+必须在 P4 拆成七张独立 RGBA source。生产尝试、候选否决和当前模拟门禁只在
+模块 `PROGRESS.md` 与唯一 `work/QUEST.SEALS.md` 维护；本对象合同本身不把
+未接受候选写成 source／runtime，代理等价完成前始终保留旧按钮 fail-open。
 
 ## Quest Log 纸页与中央装订
 

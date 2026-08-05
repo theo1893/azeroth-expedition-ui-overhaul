@@ -215,6 +215,33 @@ def main() -> None:
     seal_actions_sim_v12_renderer = (
         seal_actions_sim_v12_renderer_path.read_text(encoding="utf-8")
     )
+    seal_substrate_sim_v13_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_substrate_simulation_v13.json"
+    )
+    seal_substrate_sim_v13_spec = json.loads(
+        seal_substrate_sim_v13_spec_path.read_text(encoding="utf-8")
+    )
+    seal_substrate_sim_v13_display_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v13_display_region.json"
+    )
+    seal_substrate_sim_v13_display = json.loads(
+        seal_substrate_sim_v13_display_path.read_text(encoding="utf-8")
+    )
+    seal_substrate_sim_v13_renderer_path = (
+        ROOT / "tools" / "render_quest_log_seal_layered_actions_simulation_v2.py"
+    )
+    assert seal_substrate_sim_v13_renderer_path.is_file(), (
+        seal_substrate_sim_v13_renderer_path
+    )
+    seal_substrate_sim_v13_renderer = (
+        seal_substrate_sim_v13_renderer_path.read_text(encoding="utf-8")
+    )
     seal_actions_sim_renderer = (
         ROOT / "tools" / "render_quest_log_seal_actions_simulation_v1.py"
     )
@@ -397,10 +424,9 @@ def main() -> None:
             "`QUEST.LOG.ACTION.SHARE`",
             "`QUEST.LOG.ACTION.EXIT`",
             "`QUEST.LOG.ACTION.SEAL_MENU`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX`",
             "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.ROOT`",
-            "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY.VARIANT_A`",
-            "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY.VARIANT_B`",
-            "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY.VARIANT_C`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY`",
             "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.TAIL`",
             "`QUEST.LOG.ACTION.SEAL_MENU.MOTIF.SHARE`",
             "`QUEST.LOG.ACTION.SEAL_MENU.MOTIF.DETAIL`",
@@ -417,8 +443,8 @@ def main() -> None:
             "`QUEST.LOG.ACTION.SEAL_MENU.BUTTON.RESET`",
             "`QUEST.LOG.ACTION.SEAL_MENU.BUTTON.ABANDON`",
             "`QUEST.LOG.ACTION.SEAL_MENU.PAGE_EDGE_MASK`",
-            "用户接受 V3 模拟前不得生图、导出、接入或隐藏旧按钮",
-            "V2 在 `4/5` 后因质感工整和单图所有权错误被用户取代",
+            "不含纹章、文字或状态",
+            "不得出现 variant 循环",
             "当前程序化暗皮革 fallback",
             "`108×41px` 双列锚点",
             "名称安全宽 `64px`",
@@ -826,8 +852,9 @@ def main() -> None:
             "SetClampRectInsets",
             "旧七个 provider Button",
             "`5/5`",
-            "QS-B1 当前实际生图：`5/5`",
-            "QS-B1 流程错误：`1`",
+            "QS-B1 V3 ImageGen：V3-A `5/5`、V3-B `0/5`",
+            "QS-B1 历史流程错误：V1 `1`、V2 `3`；V3 `0`",
+            "QUEST-LOG-SEAL-SUBSTRATE-SIM-V13",
             "不得进入 `P6`",
         ),
         "accepted QS-A1 work",
@@ -2755,10 +2782,9 @@ def main() -> None:
         submodules,
         (
             "QUEST-LOG-SEAL-ACTIONS-SIM-V12 / QS-B1 V3",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX`",
             "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.ROOT`",
-            "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY.VARIANT_A`",
-            "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY.VARIANT_B`",
-            "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY.VARIANT_C`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY`",
             "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.TAIL`",
             "`QUEST.LOG.ACTION.SEAL_MENU.MOTIF.SHARE`",
             "`QUEST.LOG.ACTION.SEAL_MENU.MOTIF.ABANDON`",
@@ -2766,7 +2792,7 @@ def main() -> None:
             "`QUEST.LOG.ACTION.SEAL_MENU.BUTTON.ABANDON`",
             "七张独立透明纹章",
             "ScrollChild",
-            "用户接受 V3 模拟前不得生图、导出、接入或隐藏旧按钮",
+            "不得出现 variant 循环",
         ),
         "QS-B1 V12 layered component ownership",
     )
@@ -2928,6 +2954,35 @@ def main() -> None:
         ),
         "QS-B1 V12 layered deterministic renderer",
     )
+    assert seal_substrate_sim_v13_spec["version"] == (
+        "QUEST-LOG-SEAL-SUBSTRATE-SIM-V13"
+    )
+    assert seal_substrate_sim_v13_spec["design_batch"] == "QS-B1 V4-A"
+    v13_mockup = seal_substrate_sim_v13_spec["visual_mockup"]
+    assert v13_mockup["canonical_master_size"] == [32, 174]
+    assert v13_mockup["dynamic_assembly"] == (
+        "prefix-plus-tail-from-one-master"
+    )
+    assert v13_mockup["tail_notch_count"] == 2
+    assert max(v13_mockup["palette"]["base"][:3]) <= 90
+    assert max(v13_mockup["palette"]["light_plane"][:3]) <= 120
+    assert all(
+        point[1] % 22 != 0
+        for point in v13_mockup["edge_control_points"]
+        if point[1] not in (0, 174)
+    )
+    assert len(seal_substrate_sim_v13_display["scenarios"]) == 6
+    require(
+        seal_substrate_sim_v13_renderer,
+        (
+            "def substrate_master_v4(",
+            "def render_zoom_board(",
+            '"v4-dark-irregular"',
+            '"v4_tail_has_two_unequal_coarse_notches"',
+            '"imagegen": {"calls": 0, "uploads": 0}',
+        ),
+        "QS-B1 V13 dark substrate deterministic renderer",
+    )
     require(
         seals_work,
         (
@@ -2961,8 +3016,8 @@ def main() -> None:
         (
             "背景和七枚纹章烘焙进一张连续母版",
             "第\n`4/5` 次后明确改向",
-            "三个不属于任何功能的无缝 body variant",
-            "七个\n功能各有一张透明纹章 source",
+            "连续最大长度空白布母版",
+            "七个功能各有一张透明纹章\nsource",
             "非周期污渍",
             "独立 `±1px` 视觉重心",
             "hidden 项从 visible order 中移除",
