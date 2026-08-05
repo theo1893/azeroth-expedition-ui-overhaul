@@ -5059,3 +5059,130 @@ rhythm, bright color, modern banner geometry, or extra object.
 - r1 只把授权内可修复项量化：`1:5.4375` 细长比例、顶边最大 `8px` 浅压褶、
   两个尾缺口均浅于 `18px`、无全幅可见织纹、无横向亮带和圆形动作斑。
 - 下一次执行前必须提交本节；attempt 2 若返回候选则累计 `2/5`。
+
+#### Attempt 2 执行与审查
+
+- 正文／执行前 commit：`QS-B1 V4-A.r1 / aae767c`；操作 `generate`；固定
+  Image 1／2，无 Image 3。child session
+  `019fd169-707b-7642-a2e5-6130e64d2c68`；cache result
+  `ig_09dc5dbe070ef2cd016a730cb68e2081919029d1385611a43d.png`。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V4-A/attempt-02/QS-B1-V4-A.r1.attempt-02.raw.png`；
+  `1254×1254 RGB`；SHA
+  `fd15d4c27f6050fd7faf6e6824bab0c9f641b966f8df2edef6b04d6bfb85e271`。
+  child 只读 sandbox 仍不能直接复制，但 parent 原样复制同一 cache 文件；不
+  追加调用或流程错误。
+- 第一失败门禁仍为 `组件合同／bbox`：同轴归一后可见对象 `296×964px`，
+  aspect `0.307054` 对目标 `0.183908`，误差 `66.961%`；不得执行 `≤1%`
+  bbox-fit。runtime 可见 bbox 仅 `[0,32,32,141]`，root／tail 与一条后段切线
+  无布面覆盖；自动检查 `5/9 pass`。
+- 视觉失败：尽管双缺口数量和综合色方向成立，两处缺口仍被画成深而窄的尖齿
+  间隙；主体仍有满幅摄影式细密织纹，顶部和中段出现大面积近写实折光，不是
+  香草 UI 的三块粗手绘色面。对象仍被自动放大为占画布近三成宽、九成四高的
+  近景旗帜。
+- 真实排版 SHA
+  `64399082ae4ef4935cee8a6c8c58b5d83f0be75681b91c92fc188e2ef64661b1`；
+  交互／动态收拢公式 `26/26 pass`，但候选像素只覆盖目标中段。display-region
+  报告 SHA
+  `a3fc86bfc5b7fda914acaeca595089c8cfa81e2a863736759f8c47a97cf45ea1`，
+  `6/6 pass`、violations `0`；仍只证明冻结几何。
+- 结论：`internal-rejected / 2/5`。连续两次相同首要失败后改变策略：不把
+  attempt 2 作为 Image 3；V4-A.r2 从固定 Image 1／2 regenerate，缩短叙述并
+  把对象明确成技术 sprite sheet 上的极窄 2D atlas strip，以画布百分比和大块
+  平涂约束优先于材料形容词。
+
+### QS-B1 V4-A.r2 完整修复执行正文
+
+```text
+Generate one isolated 2D bitmap sprite for a 2004-era vanilla World of Warcraft
+quest-log UI. This is a technical sprite-sheet asset, not a scene, illustration,
+product photograph, banner presentation, or close-up. Draw exactly one blank,
+very narrow, vertical strip of old dark oath cloth. It will sit below a separate
+wax seal, but do not draw the seal or any other object.
+
+OUTPUT GEOMETRY — highest priority:
+- Exact 1024 x 1024 RGB canvas.
+- Uniform solid #00FF00 technical chroma field everywhere outside the cloth.
+- Exactly one connected cloth object, centered, orthographic, vertical and flat.
+- Exact visible bbox [448,164,576,860]: x 448 through 575 and y 164 through 859.
+- Exact visible size 128 x 696. Height is 5.4375 times width.
+- The cloth occupies only 12.5% of canvas width and 68% of canvas height.
+- Leave huge pure-green margins: 448 px left, 448 px right, 164 px top and
+  164 px bottom. Do not zoom in, enlarge the object, fill the canvas, shorten it,
+  make a normal wide banner, or leave unused space inside the declared bbox.
+- Visible cloth reaches all four bbox limits while never crossing them. No cast
+  shadow, floor, page, haze, loose fragment or green spill.
+
+REFERENCE ROLES:
+Image 1 is the highest visual authority. Inherit only its circa-2004 vanilla WoW
+coarse hand-painted bitmap language, broad readable value shapes, heavy material
+weight, muted expedition palette, upper-left light and sparse wear. Ignore its
+book, pages, leather, brass, wax, ribbons, compass, buttons, rewards, text and
+composition. Image 2 is secondary adjacency only: inherit dark-walnut color
+temperature, broad paint scale, softly painted edges and restrained wear. Ignore
+its book, spine, pages, brass, transparency, silhouette and pixels. If they
+conflict, Image 1 wins.
+
+PAINTED SURFACE:
+This is a flat hand-painted UI sprite, not photographed fabric. Use exactly three
+large low-frequency painted value shapes: dominant charcoal-brown, deeper umber
+shadow, and one restrained dim walnut plane. Use exactly two short broad broken
+dim fold planes; neither crosses the full width and neither forms a horizontal
+bar. Add two or three broad shadow folds and three to six large diffuse irregular
+low-contrast stains spanning more than one future action band. Stains are not
+circles, ovals, badges or buttons. Keep the central 70% calm, matte and low-detail.
+At source scale show no individual threads, weave, burlap pattern, curly fibers,
+uniform grain, repeated scratches, textile scan, micro-noise or photographic
+texture. A few coarse painted edge nicks are allowed; dense fiber detail is not.
+Palette is low-saturation smoke-aged charcoal brown, dark walnut and deep umber.
+No gold, bright ochre, orange, ivory, cream, bright rim, saturated red or glow.
+
+SILHOUETTE:
+Keep the strip extremely narrow and mostly vertical. Across the full height use
+only four to six broad slow asymmetric side deviations, each 4 to 8 px deep and
+spanning a large vertical distance. Left and right never mirror. No periodic
+wave, sawtooth, scallop, fringe, repeated tear, straight machine edge, action-row
+rhythm or wide banner flare.
+
+The top reaches y=164 and is nearly horizontal. It has one small asymmetric
+compressed fold no deeper than 6 px. No centered U, hammock sag, rolled hem or
+symmetrical arch.
+
+The bottom reaches y=859. Cut exactly two shallow unequal blunt upward notches
+inside the final 32 px tail zone: one broad notch around local x 26..44 and
+8..12 px deep, and one differently sized notch around local x 82..104 and
+5..8 px deep. Their inner ends are blunt and softly irregular, never pointed.
+Keep broad cloth lobes between and beside them. No third notch, deep V, sharp
+tooth, long prong, sawtooth, tassel, symmetrical fishtail or detached thread.
+
+DYNAMIC CROP SAFETY:
+The sprite reduces to 32 x 174. Local y 0..47 is the root, the next seven bands
+are each 88 source pixels, and local y 664..695 is the shared tail. Future source
+cut rows are absolute y 212, 300, 388, 476, 564, 652, 740 and 828. Keep at least
+8 px above and below each row quiet and continuous: no seam, row, guide, edge
+step, crack, horizontal fold, cross-width highlight, stain boundary or silhouette
+event. This is one continuous strip, never stacked cells.
+
+COMPONENT EXCLUSIONS:
+No wax, seal, icon, motif, glyph, rune, text, number, button, hit area, state,
+card, tile, divider, page, book, spine, leather, metal, brass, rivet, jewel,
+skull, eagle, chain, popup, side panel, shadow, glow, glass, modern flat UI,
+Diablo-3 ornament, Skyrim minimalism, Warhammer or sci-fi regalia. It owns no
+function and contains no dynamic content.
+
+FINAL CHECK: exact 1024 square RGB; one object; exact 128 x 696 bbox and huge
+green margins; 1:5.4375 extremely slender proportion; dark matte three-shape
+hand painting with no visible weave; exactly two short broken dim fold planes;
+four to six broad nonperiodic side deviations; nearly straight asymmetric top;
+exactly two shallow unequal blunt tail notches inside the final 32 px; all eight
+crop rows quiet; no extra object, bright color, photography, icon, text or wax.
+```
+
+### V4-A.r2 执行决定
+
+- 操作：`generate`；固定 Image 1／2；不上传 attempt 2 或任何旧候选作为
+  Image 3。
+- 对象数、参考职责、画布、bbox、暗色材料、动态切片、双钝缺口、禁止内容与
+  后处理合同不变。r2 只改变冻结边界内的表达优先级：先声明技术 sprite sheet
+  及 `12.5%×68%` 画布占比，再以更少材料形容词约束三块二维平涂。
+- 下一次执行前提交本节；attempt 3 若返回候选则累计 `3/5`。
