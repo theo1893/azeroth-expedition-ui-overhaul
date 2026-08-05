@@ -11,8 +11,8 @@
   `QUEST-LOG-SEAL-ACTIONS-SIM-V11 / QS-B1 V2`
 - 当前已确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V12 / QS-B1 V3`；用户于
   `2026-08-05` 回复“可以”
-- 最近一次已执行生产正文：`QS-B1 V3-A / attempt 1`；当前已准备
-  `QS-B1 V3-A.r1`
+- 最近一次已执行生产正文：`QS-B1 V3-A.r1 / attempt 2`；当前已准备
+  `QS-B1 V3-A.r2`
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3
   `repair-prepared / execution-in-progress / P3`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
@@ -24,7 +24,7 @@
 - QS-A1 正式 ImageGen：`5/5`
 - QS-B1 V1 ImageGen：`5/5`（已耗尽并由用户否决）
 - QS-B1 V2 ImageGen：`4/5`（第 5 次未调用；旧授权不得转用于 V3）
-- QS-B1 V3 ImageGen：V3-A `1/5`、V3-B `0/5`（已获联合授权；固定先 A 后 B，
+- QS-B1 V3 ImageGen：V3-A `2/5`、V3-B `0/5`（已获联合授权；固定先 A 后 B，
   A 内部通过后才执行 B）
 - QS-B1 历史流程错误：V1 `1`、V2 `3`；V3 `0`。均按“无生成证据才不占
   额度”记录
@@ -3842,7 +3842,7 @@ V3-B；V3-B 的 ImageGen 输入也不得包含 V3-A 候选，V3-A 只可在本�
 - 固定上传：每段各自合同中的固定 SHA Image 1／2；Image 3 只允许为同段、
   紧邻前次输出且仍处于冻结修复边界内的 edit input。不得跨段上传候选，
   不得上传模拟、旧失败稿、review 派生图、runtime atlas 或 addon 截图。
-- 实际生图预算：V3-A `1/5`；V3-B `0/5`；最坏 `10`。无图片且无 provider
+- 实际生图预算：V3-A `2/5`；V3-B `0/5`；最坏 `10`。无图片且无 provider
   result／生成作业证据的流程错误不占额度，但须单独记录。
 - 确定性范围：只限合同中的归一化、边缘连通色键、透明 RGB 清零、等比
   bbox-fit、V3-A prefix／tail crop、V3-B 独立 cell 拆分、四态派生、atlas
@@ -3856,7 +3856,7 @@ V3-B；V3-B 的 ImageGen 输入也不得包含 V3-A 候选，V3-A 只可在本�
 ### 元数据、固定输入与产物合同
 
 - 版本：`QS-B1 V3-A`。
-- 状态：`repair-prepared / 1/5 / execution-in-progress`。
+- 状态：`repair-prepared / 2/5 / execution-in-progress`。
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`。
 - Image 1（最高视觉权威）：
   `assets/locked/quests/任务详情面板_视觉基准_v1.png`，SHA-256
@@ -3967,24 +3967,65 @@ exporter 只在候选通过物件／材料／纹理门禁后执行：边缘连�
 |---:|---|---|---|---|---|---|---|
 | `1/5` | `QS-B1 V3-A` / `1d7a9f2` | generate；固定 Image 1／2 | `019fd0fb-be3b-7290-90f3-5676326e7382` | `attempt-01` / `4fc5c208…16ab` | 美术一致性：照片式全幅微织纹；另有 `50.97%` 宽高比误差 | 保留单一空白布、暖赭综合色与短 tail；紧邻 Image 3 edit，重绘比例／低频表面／切带 | `internal-rejected / repair-prepared` |
 
-### 完整修复执行正文 — `QS-B1 V3-A.r1`
+### V3-A attempt 2 执行与审查 — `2026-08-05`
 
-Edit Image 3 as the immediately previous candidate inside the frozen QS-B1
-V3-A contract. Image 3 already has the correct identity of exactly one isolated,
-connected, blank, front-facing warm-ochre cloth strip, with no motif, text, wax,
-book, state, button, or second object. Preserve that object identity, the muted
-warm expedition palette, the single continuous vertical material direction,
-and the restrained short-frayed tail. Do not preserve Image 3's failed canvas
-occupancy, overly wide silhouette, dense photographic burlap microtexture,
-near-machine-cut long edges, or missing top and bottom runtime coverage.
+- 执行前 commit：`7ded993`；执行完整 `QS-B1 V3-A.r1`。固定 Image 1／2
+  SHA 不变，并上传 attempt 1 raw (`4fc5c208…16ab`) 作为同段紧邻唯一
+  Image 3；child 完整回显正文和三图职责，无截断或 revised prompt。
+- fixed child／provider result：
+  `019fd106-5813-74d3-be0d-45c7d0a3598f`；明确只调用一次 ImageGen。child
+  只读复制失败后，父流程复制同一 provider 字节到本次 attempt；仍计一次
+  实际修图，不另记无生成证据流程错误。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V3-A/attempt-02/raw/QS-B1-V3-A.attempt-02.png`；
+  `1254×1254 RGB`；SHA-256
+  `5bfb32ef85f153ecb62d8c6d489602a349b93fd3d2ffdac553be5a0404f37b3b`。
+- 确定性检查：同轴归一化后恰好一个连通物件；bbox
+  `[403,114,619,916]`、`216×802`、宽高比 `0.269327`。相对目标误差
+  `46.45%`，只比 attempt 1 的 `50.97%` 改善 `4.52` 个百分点；等比 fit
+  仍只有 `128×475`、可见 `[448,274,576,749]`。runtime 可见 bbox 仅
+  `[0,25,32,149]`；root、tail 与首末切点仍为空，四种动态 tail 接合均无
+  可比较重叠像素。
+- 第一失败门禁仍为 `4. 美术一致性`。attempt 2 没有重绘掉全幅微纹，反而把
+  内部变成更一致、更清晰的细小卷曲线圈／程序化纤维墙纸；在实际尺寸仍读作
+  规则现代纹理带，不是香草魔兽手绘旧布。轮廓顶部仍水平裁齐，长边仍近机器
+  直切。该首要失败已连续两次出现。
+- 次要客观失败仍为 bbox／动态裁取。自动技术检查继续 `5/9 pass`；真实
+  Quest Log 公式 `26/26 pass`，display-region 六场景 `6/6 pass`、violations
+  `0`，但候选自身仍不能覆盖真实 prefix／tail 像素。
+- review：`attempt-02/review/QS-B1-V3-A.attempt-02.review.json`
+  (`8c55dbe3…31de`)；真实排版 `QS-B1-V3-A.attempt-02.real-layout.png`
+  (`ca22921b…741e`)；display-region report
+  `QS-B1-V3-A.attempt-02.display-region-report.json` (`66b5004b…6024`)；contact
+  sheet `QS-B1-V3-A.attempt-02.contact-sheet.png` (`a15a642d…cec7`)。
+- 保留区域：单一、空白、连续、正面布条；无误生功能内容；暖赭综合色、短
+  frayed tail 与一条连续垂直材质方向仍正确。
+- 下一决策：`regenerate`。按“相同首要失败连续出现必须改变策略”，attempt 3
+  禁止上传 attempt 2 或其他 Image 3，只使用固定 Image 1／2 从零重生。新正文
+  把轮廓直接定义为高宽 `5.4375:1` 的极窄长条，并禁止任何可见的连续线圈、
+  逐像素纤维、全幅 crosshatch／burlap；cloth 身份只能由宽面明暗、极少数
+  粗纤维组、柔软折面和手裁边缘表达。
+- 结论：`internal-rejected / repair-prepared / 2/5`；不得进入 V3-B、用户复审、
+  P4、source、runtime 或 addon。
 
-This must be a structural repaint, not a cosmetic overlay. After a uniform
-square-canvas normalization to 1024 x 1024, Image 3 measured 246 x 886 with an
-aspect of 0.2777, about 51 percent too wide; proportional fitting produced only
-128 x 461 and left the root and tail empty. Rebuild the strip so its normalized
-visible bbox is exactly [448,164,576,860], exactly 128 x 696, aspect 0.1839.
-Repaint the whole cloth surface from broad low-frequency hand-painted value
-planes. Do not leave the failed fine all-over weave visible beneath new folds.
+| `2/5` | `QS-B1 V3-A.r1` / `7ded993` | edit；固定 Image 1／2＋attempt 1 Image 3 | `019fd106-5813-74d3-be0d-45c7d0a3598f` | `attempt-02` / `5bfb32ef…7b3b` | 同一美术失败：全幅规则卷曲纤维；宽高比误差 `46.45%` | 保留单物件身份；改变策略，只用 Image 1／2 regenerate | `internal-rejected / repair-prepared` |
+
+### 完整修复执行正文 — `QS-B1 V3-A.r2`
+
+Regenerate from Image 1 and Image 2 only inside the frozen QS-B1 V3-A contract.
+Do not use, imitate, continue, or reconstruct either previous V3-A candidate.
+Both previous candidates repeated the same wrong strategy: a roughly 3.6-to-1
+height-to-width strip covered by dense, uniform, small curled fibre lines. Start
+from a clean composition and use a visibly much narrower 5.4375-to-1 height-to-
+width silhouette. The result must be a low-resolution hand-painted WoW bitmap,
+not a rendered fabric sample.
+
+The cloth surface must be newly painted from broad shapes. Linen identity comes
+from two or three broad value planes, a few soft long folds, sparse stains, the
+soft hand-cut silhouette and at most a few broad fibre groups. It must not come
+from repeated thread loops, curly lines, crosshatch, woven cells, pores, grain,
+noise or any other all-over microtexture. Do not blur a dense texture; omit that
+texture family entirely.
 
 Create exactly one isolated, connected, completely blank vertical guild oath-
 linen substrate for a circa-2004 vanilla World of Warcraft quest-log interface.
@@ -4017,17 +4058,9 @@ Reference authority and filtering:
    exact runtime book. Ignore the complete book silhouette, paper, spine,
    stitches, page gutter, brass corners, transparent surroundings, and every
    directly reusable pixel.
-3. Image 3 is the immediately previous V3-A raw candidate and only a constrained
-   edit base. Preserve only its correct one-object blank-cloth identity, warm
-   muted color family, front-facing orientation, continuous vertical material
-   direction, and short restrained tail. Explicitly discard and repaint its
-   0.2777 over-wide silhouette, 128 x 461 fit result, dense photographic burlap
-   grain, uniformly tiny fibre curls, straight manufactured long edges, and the
-   transparent root and tail produced by that failed proportion.
 If the references conflict, Image 1 plus the Azeroth quest-ledger baseline wins.
-Image 2 may only tune adjacency. Image 3 may only preserve the frozen correct
-identity listed above and never overrides the target geometry or art baseline.
-Do not copy any complete object or layout from Image 1 or Image 2.
+Image 2 may only tune adjacency. Do not copy any complete object or layout from
+either reference. There is no Image 3 in this regenerate attempt.
 
 Canvas and occupancy are mandatory. Output an exact 1024 x 1024 RGB bitmap.
 Every pixel outside the one cloth object must be uniform solid #00FF00, with no
@@ -4037,9 +4070,11 @@ orthographic front view with no tilt or foreshortening. Its exact visible bbox
 is [448,164,576,860], exactly 128 x 696 pixels, centered at x=512. Leave 448
 pixels of green at both sides and 164 pixels at top and bottom. Do not enlarge
 the cloth to fill the canvas. The visible width divided by visible height must
-be 0.1839, not Image 3's failed 0.2777. It will be reduced exactly four-to-one
-into a 32 x 174 pixel canonical runtime master, with visible cloth reaching the
-first and last runtime rows rather than floating inside transparent padding.
+be exactly 0.1839; equivalently, the strip is 5.4375 times as tall as it is wide.
+It must look conspicuously narrower and longer than a common banner or fabric
+sample. It will be reduced exactly four-to-one into a 32 x 174 pixel canonical
+runtime master, with visible cloth reaching the first and last runtime rows
+rather than floating inside transparent padding.
 
 Use this invisible construction anatomy without drawing any guide or boundary:
 - root [448,164,576,212], 128 x 48 pixels;
@@ -4072,14 +4107,13 @@ asymmetric. Left and right wear must not mirror. No stain, fibre knot, edge nick
 fold, highlight, or shadow may repeat at the 88-source-pixel / 22-runtime-pixel
 action rhythm.
 
-Image 3 fails this gate because dense small fibre curls and uniform all-over
-grain cover almost every interior pixel. Remove that texture family completely.
-At source scale, use only a few broad vertical fibre groups separated by quiet
-painted cloth planes; individual thread detail must disappear rather than form
-a continuous photographic burlap field. The largest visible changes must be
-the broad value planes, soft folds and irregular stains, not micro-grain. Do not
-solve this by blurring Image 3 while retaining its same uniform texture, and do
-not paint new folds on top of the failed weave. Repaint the base material.
+At source scale, use only a few broad vertical fibre groups separated by large
+quiet painted cloth planes. Do not draw individual thread curls, loops, tiny
+worms, woven cells or a continuous photographic burlap field anywhere on the
+strip. The largest visible changes must be the broad value planes, soft folds
+and irregular stains, never micro-grain. Most of the central surface should read
+as calm hand-painted cloth at a glance, with sparse coarse fibre suggestions
+only near selected folds or worn edges.
 
 Protect every possible dynamic cutoff. Within eight source pixels above and
 below y=212, 300, 388, 476, 564, 652, 740, and 828, draw no strong horizontal
@@ -4119,11 +4153,11 @@ tail proportions; no visible internal segmentation; no motif, text, function,
 state, wax, book, or icon; broad low-frequency asymmetrical folds and stains;
 no periodic weave or repeated defect; calm but textured dynamic cut bands;
 hand-cut edges that are irregular but not noisy; the cloth remains substantial
-and natural at 32 x 174 and at every 12 + N*22 visible prefix length. Finally
-compare against Image 3 and reject the edit if the strip is still close to
-0.2777 aspect, if any top or bottom transparent padding remains inside the
-target bbox, or if fine uniform burlap grain still dominates the broad painted
-surface.
+and natural at 32 x 174 and at every 12 + N*22 visible prefix length. Reject the
+result if the silhouette is not visibly 5.4375 times as tall as it is wide, if
+any top or bottom transparent padding remains inside the target bbox, or if any
+fine uniform weave, curled fibre field or procedural grain dominates the broad
+painted surface.
 
 ### V3-A 自主修复与候选审查边界
 
@@ -4367,8 +4401,9 @@ semantic readability; all seven remain recognizable in separate 32 x 22 cells.
   tail crop、四态派生、atlas 打包、metrics、
   实际展示区域检查和“真实排版＋新 UI”预演。它们不得修复语义、材料、构图、
   图案或不工整程度的失败。
-- 当前 ImageGen：V3-A `1/5`；V3-B `0/5`；流程错误 `0`；V3-A 固定 Image 1／2
-  已上传一次，attempt 2 允许追加同段紧邻 attempt 1 raw 作为唯一 Image 3。
+- 当前 ImageGen：V3-A `2/5`；V3-B `0/5`；流程错误 `0`。attempt 2 已按授权
+  上传固定 Image 1／2 与同段紧邻 attempt 1 raw；同一首要失败连续出现，故
+  attempt 3 改为只上传固定 Image 1／2 regenerate，不再上传 Image 3。
 - 当前门禁：联合生产授权已于 `2026-08-05` 获得。先执行 V3-A 的最多五次
   实际生图／修复循环；V3-A 内部通过后才进入 V3-B。任一内部通过都只达到
   `candidate-reviewed / P3`，仍不创建 source／manifest／exporter／runtime，
