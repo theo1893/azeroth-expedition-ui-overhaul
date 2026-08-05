@@ -16,18 +16,18 @@
 - 当前已确认模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A`；用户于
   `2026-08-05` 回复“不走figma, 直接下一步”，确认将 ImageGen 布面 donor
   与确定性精确轮廓／Alpha mask 分离的可见方向
-- 最近一次已执行生产正文：`QS-B1 V5-A.r1 / attempt 2`；当前下一正文为
-  `QS-B1 V5-A.r2`
+- 最近一次已执行生产正文：`QS-B1 V5-A.r2 / attempt 3`；当前下一正文为
+  `QS-B1 V5-A.r3`
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A
-  `internal-rejected / repair-prepared / P3 / production 2/5`
+  `internal-rejected / repair-prepared / P3 / production 3/5`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
   `simulation-confirmed / V3-A repair-budget-exhausted / V3-B gated / P3`；V1 保持
   `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`；
   QS-B1 V4-A `candidate-rejected / repair-budget-exhausted / P3 / 5/5`；
-  QS-B1 V5-A `internal-rejected / repair-prepared / P3 / production 2/5`
+  QS-B1 V5-A `internal-rejected / repair-prepared / P3 / production 3/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -37,9 +37,10 @@
   授权顺序门禁未执行 V3-B）
 - QS-B1 V4-A ImageGen：`5/5`；流程错误 `1`；五次均有 provider 图片证据；
   第五稿为本轮最佳视觉但比例误差 `7.287%`，禁止 attempt 6
-- QS-B1 V5-A 模拟 ImageGen：`0/0`；production `2/5`；attempt 1／2 技术／
-  排版均通过，但 attempt 2 edit 仍以更规则的卷曲织纹和横贯 crop 折痕重复
-  同一美术失败；attempt 3 改为固定 Image 1／2 regenerate。V14 只用
+- QS-B1 V5-A 模拟 ImageGen：`0/0`；production `3/5`；attempt 1／2 技术／
+  排版均通过但美术失败；attempt 3 regenerate 已消除规则微纹和多重垂褶，
+  技术／排版／展示区也全过，只剩两个局部 plane 横贯 crop。attempt 4 固定
+  Image 1／2，并仅用紧邻 attempt 3 raw 作受限 Image 3 edit。V14 只用
   本地平面几何预演 donor／crop／mask／composite 分工，用户确认不接受其中
   任何模拟像素
 - QS-B1 历史流程错误：V1 `1`、V2 `3`、V3 `0`、V4-A `1`。均按“无生成证据才不占
@@ -5738,6 +5739,7 @@ bright color, modern styling, or extra object.
 |---:|---|---|---|---|---|---|---|
 | `1/5` | `QS-B1 V5-A` / `87903e8` | `generate`；固定 Image 1／2 | child session `019fd242-8cb6-7a22-b110-763fbc8f66b7`；result `ig_072c3f1feddefde3016a73446255608191bf9f1dbc559f5c5c.png` | `attempt-01/QS-B1-V5-A.attempt-01.raw.png`；`1254×1254 RGB`；SHA `c313ca608921189396b9c72c10bbfbe10be8c2c30373a92d1f05016dd966c45f`；composite SHA `b64cce638e1f8f7ec86b0bce0baca3006e534b9899989ae282ae9acdf6e5e9b9` | `美术一致性／STYLE LOCK`：全幅仍有均匀细颗粒、毡皮／旧皮式微纹；中央固定 crop 内两道亮折痕均横贯整宽，第二道进入 `y=400±8` 安静带 | 保留全幅单一不透明布面、正交 square、暗烟熏胡桃综合色与宽幅大明暗；attempt 2 仅把本稿作为 Image 3，局部重绘微纹、圆斑和中央 crop 两道折面，固定 Image 1／2 不变 | `internal-rejected / 1/5 / repair-prepared` |
 | `2/5` | `QS-B1 V5-A.r1` / `cee911f` | `edit`；固定 Image 1／2＋attempt 1 raw Image 3 | child session `019fd25a-b613-76b1-a261-7283d11d7cb0`；result `ig_0e43b77fb0420fbe016a734b4bf508819181f5b7d77b66ee07.png` | `attempt-02/QS-B1-V5-A.attempt-02.raw.png`；`1254×1254 RGB`；SHA `7ca5117006ce6d5712f30deb5d785f25013394bb7add85ad5d9aaf00023cdca9`；composite SHA `00d3fd1f6e44de0b6f93b140a04ed0b69fdf1717ad8ce05befebcb3e2663d736` | 同一 `美术一致性／STYLE LOCK`：细纹被改成全幅规则重复的卷曲／编织微图案，褶皱增至多道，crop 仍有横贯亮带 | 不保留 attempt 2 像素；相同首要失败已连续出现，attempt 3 改变策略，只上传固定 Image 1／2 regenerate，用坐标化无纹理中心区约束代替 Image 3 edit | `internal-rejected / 2/5 / repair-prepared` |
+| `3/5` | `QS-B1 V5-A.r2` / `79492f0` | `generate`；固定 Image 1／2，无 Image 3 | child session `019fd269-f89a-71d0-80c1-a1a0d43f7ac7`；result `ig_0cb7a53f8e02d243016a734e75abe481919ae891b494117576.png` | `attempt-03/QS-B1-V5-A.attempt-03.raw.png`；`1254×1254 RGB`；SHA `12c2e3f2f346b9196c7a74043a532a95811ee82c00b156b937751353ee679c4d`；composite SHA `0d83940a6d0e59e475212388ab349ea81dc13ccd0a2b6ae321de2ef6c6094a4b` | `美术一致性／固定 crop`：全幅已成为正确的低频宽面旧布，规则微纹和多重垂褶消失；但两道本应短、断、局部的 dim plane 均延伸为横贯 `128px` crop 的亮带，仍读成分段接缝 | 保留 attempt 3 的 square 单布面、综合色、三大明暗、两道外侧宽折、低频手绘表面和安静中心；attempt 4 仅以本稿作 Image 3，擦除两道横贯延伸并把它们收回冻结局部盒内 | `internal-rejected / 3/5 / repair-prepared` |
 
 #### Attempt 1 执行一致性与确定性证据
 
@@ -6136,10 +6138,210 @@ icon, text, wax, book, shadow, bright color, modern styling, or extra object.
 
 ### 当前停止点
 
-- 当前为 `internal-rejected / repair-prepared / P3 / production 2/5`。attempt 1／2
-  都完成 deterministic composite、真实六态和 display-region；技术／几何均过，
-  但 attempt 2 仍以更规则的卷曲织纹和横贯 crop 折面重复同一美术失败。没有
-  source、manifest、runtime 或 addon 修改。
-- 下一门禁是在本记录与完整 `QS-B1 V5-A.r2` commit 后，只用固定 Image 1／2
-  regenerate attempt 3；随后从 raw 开始重新执行完整审查。内部通过只交用户
-  复审；不得自动晋级 P4。
+- 当前为 `internal-rejected / repair-prepared / P3 / production 3/5`。attempt 3
+  已改变前两稿失败策略并通过全部技术／几何门禁；没有 source、manifest、
+  runtime 或 addon 修改。
+- 下一门禁是在下方 attempt 3 审查记录与完整 `QS-B1 V5-A.r3` commit 后，固定
+  Image 1／2，并把紧邻 attempt 3 raw 作为唯一 Image 3 执行一次受限 edit；
+  随后从 raw 开始重新执行完整审查。内部通过只交用户复审；不得自动晋级 P4。
+
+### V5-A attempt 3 执行与完整审查
+
+- 正文／执行前 commit：`QS-B1 V5-A.r2 / 79492f0b0fa4276ffd500f7fe45762a1633268f9`；
+  操作 `generate`，只上传固定 Image 1／2，不上传 Image 3。完整正文 `7800`
+  字符，UTF-8 SHA-256
+  `7ce540dce79619ba19cceca8565c2b6d707ea6ee48176267ff7f866a1af26aaa`。
+- 固定执行器 child session
+  `019fd269-f89a-71d0-80c1-a1a0d43f7ac7`；provider／cache result
+  `ig_0cb7a53f8e02d243016a734e75abe481919ae891b494117576.png`。provider 已返回
+  图片，因此计入第 `3/5` 次实际调用。child 在图片生成后广搜 cache 时遇到
+  `.sandbox-secrets` 权限告警，随后直接从该 session 的 `generated_images` 复制
+  同一 result 并正常退出；有候选、有 result ID，故不是“无生成证据”的流程
+  错误。V5-A 流程错误仍为 `0`。
+- 未改动 provider raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V5-A/attempt-03/QS-B1-V5-A.attempt-03.raw.png`，
+  `1254×1254 RGB`，SHA-256
+  `12c2e3f2f346b9196c7a74043a532a95811ee82c00b156b937751353ee679c4d`；
+  session result 与仓库 ignored copy 的 SHA 完全一致。
+- 确定性 reviewer 使用 whole-square isotropic LANCZOS 归一化、固定 crop
+  `[448,164,576,860]`、tracked V14 polygon `4×` mask、透明 RGB 清零与
+  `32×174` runtime review。composite SHA
+  `0d83940a6d0e59e475212388ab349ea81dc13ccd0a2b6ae321de2ef6c6094a4b`；
+  runtime review SHA
+  `9981b05e3a85320b958eec3640ae1522d82ac7adc234a35d35c1716797889b64`；
+  review JSON SHA
+  `2fc5222e21fe696eb18c84b5e736594136768ba6e7cc0842cd8032de1857463f`。
+- 技术／装配：automated `18/18 pass`、真实六态布局 `29/29 pass`。composite
+  为精确 `128×696 RGBA` 单连通对象，visible bbox 精确，Alpha／透明 RGB、
+  两处不等宽钝浅尾缺口、八条动态 cut band、prefix＋tail、hidden／disabled／
+  ScrollChild 与 `32px` 奖励间距均通过。
+- display-region：六张精确 `246×324` 详情页 preview 全部通过；report
+  `6/6 pass`、violations `0`，SHA
+  `e60044b1ab00d416b5a9ca9ca778f828276123daf4360f087382bd04eac3d9dd`；
+  real-layout SHA
+  `6432b15d693f06c51e6d9fa76be57219bd973283b556466deae6771f1938c13a`。
+- 范围／身份：通过。全幅是单一 edge-to-edge 不透明暗旧布面，没有 ribbon
+  外轮廓、背景、书、蜡、文字、纹章、Button 或额外对象。
+- 美术进展：前两稿的规则颗粒／卷曲织纹、多重垂褶和圆形动作斑已经消失；
+  attempt 3 的综合色、三块大明暗、左右两道外侧宽折、低频厚布重量与中央安静
+  区均正确，证明 r2 的 paint-only 策略有效。
+- 第一失败门禁仍为 `美术一致性／固定 crop`。本应分别收在 normalized
+  `x=462..512, y=244..264` 与 `x=510..558, y=686..706` 的两道短、断、局部
+  dim plane，实际都向左右延伸并横贯固定 crop 的完整 `128px` 宽度；在
+  composite／runtime 中读成两道分段接缝。它们没有破坏八条 cut band 的自动
+  阈值，却违反已冻结的“不到半宽、四边提前消失、不得为 stripe／seam／row”
+  美术合同，因此技术 pass 不能覆盖该失败。
+- 修复决定：attempt 3 是有效、单一、全幅且整体方向正确的 donor；失败只位于
+  冻结中央 corridor 内两道横向延伸，满足紧邻 Image 3 edit 前置条件。attempt 4
+  固定 Image 1／2，并只上传 attempt 3 raw SHA
+  `12c2e3f2…79c4d` 为 Image 3；保留其余全部正确区域，只将两道 plane 外溢重绘
+  回周围 matte base，并把允许的局部痕迹收回两个冻结盒内。
+
+### QS-B1 V5-A.r3 完整修复执行正文
+
+```text
+Edit Image 3 into one corrected production material-donor bitmap for a Turtle
+WoW 1.18.1, Interface 11200 quest-log overhaul. This is a tightly bounded
+repair of the immediately preceding QS-B1 V5-A donor. Preserve its correct
+single full-frame cloth identity, palette, broad value structure, side folds,
+coarse hand-painted finish, and quiet central field. Change only the two
+horizontal extensions described below. Do not redesign the material and do
+not create a ribbon sprite or finished UI object.
+
+REFERENCE AUTHORITY AND FILTERING
+Image 1 is the highest visual authority. Inherit only its circa-2004 vanilla
+World of Warcraft low-resolution 2D hand-painted bitmap language, broad
+readable value planes, substantial material weight, muted Azeroth expedition
+palette, restrained upper-left warm light, sparse wear, and deliberately
+nonmodern finish. Ignore its book, pages, leather, brass, wax seal, ribbons,
+buttons, reward slots, text, icons, and complete composition.
+
+Image 2 is a secondary accepted-adjacency reference. Inherit only its dark
+walnut temperature, coarse paint scale, softened edge handling, upper-left
+light direction, and restrained wear density. Ignore and do not reproduce its
+book, page gutter, spine, leather frame, brass, transparency, silhouette, or
+pixels. If references conflict, Image 1 and the Azeroth quest-ledger baseline
+win. Neither Image 1 nor Image 2 authorizes copying an object or composition.
+
+Image 3 is the immediately preceding donor and the only edit identity input.
+Preserve its square, edge-to-edge, fully opaque single cloth surface; flat
+orthographic front view; smoke-aged charcoal-brown, dark-walnut and deep-umber
+palette; exactly three broad irregular value masses; exactly two wide soft
+folds confined to the left and right side areas; four large diffuse asymmetric
+age stains; absence of small repeating texture; and broad quiet central field.
+Image 3 is not higher visual authority than Image 1. Do not preserve its two
+cross-width horizontal bright bands. No other previous candidate, simulation,
+composite, runtime preview, or generated image is an input or authority.
+
+CANVAS AND DOWNSTREAM CONTRACT
+Return one square RGB bitmap filled edge to edge by one continuous opaque cloth
+surface. There is no background and no separate object: every canvas pixel is
+cloth. Keep the view flat, orthographic, front-facing, evenly scaled, and free
+of perspective. This is a painted material board, not hanging drapery. Do not
+add transparency, green screen, checkerboard, vignette, frame, border, isolated
+strip, banner outline, torn silhouette, cast shadow, contact shadow, floating
+fibers, or detached fragments.
+
+The tracked deterministic compiler will normalize the whole square on both
+axes together to 1024 x 1024 with LANCZOS, then crop [448,164,576,860], exactly
+128 x 696 pixels. A tracked V14 polygon mask built at 4x will exclusively own
+the final narrow outline, alpha, and two blunt unequal tail notches; transparent
+RGB will be cleared to zero. Do not draw, imply, outline, shade, or reserve that
+future silhouette. Do not draw a guide, border, highlight, seam, column, or
+compositional frame around the crop.
+
+PRESERVE THE CORRECT MATERIAL
+Keep Image 3's heavy soft old expedition-guild oath linen rendered only with
+broad matte painted color and value shapes. Preserve its chunky 2004-era game
+bitmap reading, three broad masses, broad side folds, restrained upper-left
+warm light, low saturation, material weight, and sparse diffuse wear. Preserve
+the correct absence of visible thread, weave, loop, curl, pore, speckle,
+stipple, nap, grain, scratch field, embossed pattern, procedural noise, fiber
+carpet, repeated ridges, round blotches, and layered drapery arcs. Do not add a
+new fold, stain, lighting event, texture family, bright color, or object.
+
+BOUNDED CENTRAL REPAIR
+Use normalized 1024 x 1024 coordinates for this instruction. The future crop is
+x = 448..575 and y = 164..859. In Image 3, two intended local dim planes have
+incorrectly extended left and right across nearly the full crop width, reading
+as horizontal bright stripes. Repair only their horizontal spill and their
+stripe-like continuity.
+
+For the upper event, repaint the corridor x = 448..575, y = 228..280 back into
+the surrounding matte base everywhere except a small irregular remnant inside
+x = 462..512, y = 244..264. That remnant must be less than half the crop width,
+soft, broken into an interrupted broad patch, only slightly lighter or darker
+than its surroundings, and fully faded before all four sides of that local box.
+
+For the lower event, repaint the corridor x = 448..575, y = 670..722 back into
+the surrounding matte base everywhere except a small irregular remnant inside
+x = 510..558, y = 686..706. That remnant must likewise be less than half the
+crop width, soft, interrupted, low contrast, and fully faded before all four
+sides of its box.
+
+On both repairs, sample and continue the adjacent matte paint so there is no
+visible cloning edge, blur stripe, color step, seam, hem, ridge, row, divider,
+stain edge, or cross-width contrast boundary. The two remnants are diffuse
+local value patches, not folds and not deliberate separators. Do not move them,
+join them, lengthen them, mirror them, sharpen them, or add a third localized
+horizontal event. Preserve Image 3 outside these two repair corridors.
+
+CENTRAL QUIET FIELD AND CUT SAFETY
+Across normalized x = 432..591 and y = 148..876, preserve a plain matte painted
+zone with no microtexture, weave, speckle, loop, curl, grain, stain edge, broad
+fold ridge, repeated detail, or action-sized mark. It may contain only the three
+very broad inherited value masses plus the two repaired local dim remnants.
+Keep y = 212, 300, 388, 476, 564, 652, 740, and 828, plus at least 8 pixels above
+and below each row, quiet and continuous across x = 448..575. No fold boundary,
+horizontal highlight, stain edge, crack, seam, hem, row, repeated cell, contrast
+jump, or action-sized mark may occur in any safety band. Do not create a
+22-pixel runtime rhythm or seven stacked sections. The crop must read as one
+continuous painted material from top to bottom.
+
+COLOR, STYLE, AND ERA LOCK
+Retain Image 3's low-saturation smoke-aged charcoal brown, dark walnut, and deep
+umber. The brightest plane stays only modestly lighter than the base. Preserve
+broad readable painting, material weight, softened coarse brush transitions,
+restrained wear, and low-resolution clarity compatible with a circa-2004
+vanilla WoW Azeroth expedition ledger. It must not look photorealistic, scanned,
+airbrushed, vector-clean, procedural, mobile-toolbar-like, modern flat UI,
+Diablo-3-like, Skyrim-minimalist, Warhammer, gothic sci-fi, ceremonial military
+regalia, or a generic modern fantasy ribbon.
+
+STRICT EXCLUSIONS
+No outer silhouette, narrow ribbon object, banner, pennant, fishtail, notch,
+fringe, tassel, hem, background, green field, alpha, wax, seal, stamp, icon,
+motif, rune, glyph, text, letter, number, button, state, card, tile, divider,
+book, page, spine, leather, metal, brass, rivet, jewel, skull, eagle, aquila,
+weapon, chain, popup, panel, paper shadow, glow, glass, photographic burlap,
+visible weave, textile scan, uniform microtexture, loop pattern, curl pattern,
+fuzzy nap, leather pores, stone grain, repeated grain, dense scratches, round
+stains, layered drapery arcs, cross-width band, full-height bright stripe, gold,
+orange, ivory, saturated red, modern styling, or extra object.
+
+BEFORE RETURNING, VERIFY IN ORDER
+One square RGB image; every pixel is one continuous opaque cloth surface; the
+overall correct Image 3 material remains unchanged; no object boundary or
+background; dark low-saturation smoked-brown palette; exactly three broad value
+masses; exactly two broad side folds outside x = 432..591; exactly four large
+diffuse noncircular stains; no small repeating surface information; upper band
+spill fully erased outside x = 462..512, y = 244..264; lower band spill fully
+erased outside x = 510..558, y = 686..706; each surviving local remnant is
+shorter than half the crop width, broken, soft, low contrast, and faded on all
+sides; no cross-width stripe or seam remains; all eight future cut rows are
+quiet; no new fold, stain, texture, icon, text, wax, book, shadow, bright color,
+modern styling, or extra object.
+```
+
+### V5-A.r3 修复边界复核与下一调用
+
+- 子状态：`repair-prepared / P3 / 3/5`。attempt 4 为 `edit`：Image 1／2 路径、
+  顺序与 SHA 保持授权值；唯一 Image 3 是紧邻 attempt 3 raw，SHA
+  `12c2e3f2…79c4d`。不得上传 attempt 1／2、composite、runtime、review、模拟或
+  其他候选。
+- r3 只删除 attempt 3 中两个冻结局部 dim plane 的左右横贯外溢，并把保留痕迹收回
+  两个既定坐标盒；不改变综合色、单布面身份、三大 value mass、两道外侧宽折、
+  四处大污迹、crop／mask、Alpha、runtime、prefix＋tail、Button 或展示合同。
+- 本记录和完整 r3 必须提交后才能调用 attempt 4。若 edit 完整通过即停并提交
+  `candidate-reviewed / P3` 给用户复审；若仍失败，最多只剩一次实际调用，且
+  必须先按新稿记录首要失败与完整下一正文。禁止 attempt 6。
