@@ -341,6 +341,110 @@ def draw_exterior_ledger_tabs(
         x += ox
         y += oy
         is_danger = index == len(labels) - 1
+        if tab_style == "irregular-docket-slips-v2":
+            # The Button containers remain regular and independently owned,
+            # while their visible skins read as quiet, hand-cut archival slips.
+            # Unequal lengths and coarse torn ends break the modern card-stack
+            # rhythm without introducing a second page or popup backing.
+            vx, vy, vwidth, vheight = spec["layout"][
+                "action_visible_slips"
+            ][index]
+            vx += ox
+            vy += oy
+            top_jitter = (0, 1, 0, 1, 0, 1, 0)[index]
+            bottom_jitter = (1, 0, 1, 0, 1, 0, 1)[index]
+            q1 = vx + vwidth // 4
+            q2 = vx + vwidth // 2
+            q3 = vx + (vwidth * 3) // 4
+            shadow = [
+                (vx + 2, vy + 4),
+                (vx + vwidth - 1, vy + 3),
+                (vx + vwidth + 1, vy + 7),
+                (vx + vwidth - 1, vy + vheight - 1),
+                (vx + 13, vy + vheight + 1),
+                (vx + 1, vy + vheight - 3),
+            ]
+            draw.polygon(shadow, fill=(25, 15, 11, 118))
+            body = [
+                (vx, vy + 3),
+                (vx + 12, vy + 1 + top_jitter),
+                (q1, vy + 2),
+                (q2, vy + 1 + bottom_jitter),
+                (q3, vy + 3 - top_jitter),
+                (vx + vwidth - 1, vy + 2),
+                (vx + vwidth - 1, vy + 5),
+                (vx + vwidth - 3, vy + 7),
+                (vx + vwidth, vy + 9),
+                (vx + vwidth - 2, vy + 11),
+                (vx + vwidth - 1, vy + vheight - 2),
+                (q3, vy + vheight - 1 - bottom_jitter),
+                (q2, vy + vheight - 3 + top_jitter),
+                (q1, vy + vheight - 1 - top_jitter),
+                (vx + 15, vy + vheight - 2 - bottom_jitter),
+                (vx, vy + vheight - 4),
+            ]
+            paper_fills = (
+                (108, 79, 48, 248),
+                (97, 71, 43, 248),
+                (114, 83, 49, 248),
+                (101, 75, 45, 248),
+                (110, 78, 46, 248),
+                (95, 70, 42, 248),
+                (100, 72, 43, 250),
+            )
+            draw.polygon(body, fill=paper_fills[index])
+
+            # Two broad value decisions are enough at 100% UI size.  They are
+            # deliberately incomplete, so no continuous bevel or border is
+            # implied around the slip.
+            draw.line(
+                (vx + 19, vy + 4, vx + 40, vy + 4),
+                fill=(194, 145, 79, 42),
+                width=1,
+            )
+            draw.line(
+                (
+                    vx + vwidth - 31,
+                    vy + 3 + top_jitter,
+                    vx + vwidth - 17,
+                    vy + 3 + top_jitter,
+                ),
+                fill=(183, 132, 71, 34),
+                width=1,
+            )
+            draw.line(
+                (
+                    vx + 22,
+                    vy + vheight - 3,
+                    vx + 43,
+                    vy + vheight - 3,
+                ),
+                fill=(42, 27, 18, 48),
+                width=1,
+            )
+            if index in (1, 4):
+                draw.line(
+                    (
+                        vx + vwidth - 11,
+                        vy + 6,
+                        vx + vwidth - 6,
+                        vy + 8,
+                    ),
+                    fill=(76, 49, 28, 70),
+                    width=1,
+                )
+
+            tx, ty, tw, th = text_boxes[index]
+            draw.text(
+                (ox + tx + tw / 2, oy + ty + th / 2),
+                labels[index],
+                font=fonts["small"],
+                fill=(207, 178, 119, 255)
+                if not is_danger
+                else (183, 112, 96, 255),
+                anchor="mm",
+            )
+            continue
         if tab_style == "restrained-archival-index-v1":
             # A short, quiet book-edge index: no arrowhead, repeated rivet or
             # bright brass highlight.  The shallow clipped outer corners keep
@@ -1516,10 +1620,75 @@ def main() -> None:
                     ),
                 }
             )
+        if spec.get("tab_style") == "irregular-docket-slips-v2":
+            visible_slips = layout["action_visible_slips"]
+            visible_widths = [box[2] for box in visible_slips]
+            support_checks.update(
+                {
+                    "docket_slip_style_declared": True,
+                    "seven_independent_visible_slips": (
+                        len(visible_slips) == 7
+                    ),
+                    "visible_slips_inside_button_containers": all(
+                        contains(slot, visible)
+                        for slot, visible in zip(
+                            layout["action_slots"], visible_slips
+                        )
+                    ),
+                    "text_safe_boxes_inside_visible_slips": all(
+                        contains(visible, safe)
+                        for visible, safe in zip(
+                            visible_slips,
+                            layout["action_text_safe"],
+                        )
+                    ),
+                    "visible_slips_do_not_fill_regular_containers": all(
+                        visible[2] < slot[2]
+                        for slot, visible in zip(
+                            layout["action_slots"], visible_slips
+                        )
+                    ),
+                    "visible_slip_lengths_are_deliberately_varied": (
+                        len(set(visible_widths)) >= 5
+                        and max(visible_widths) - min(visible_widths) >= 12
+                    ),
+                    "page_edge_mask_occludes_every_visible_root": all(
+                        intersects(layout["page_edge_mask"], box)
+                        for box in visible_slips
+                    ),
+                    "docket_slips_keep_restrained_right_outset": (
+                        spec["right_outset"] <= 48
+                    ),
+                    "docket_slips_have_no_shared_popup_backing": (
+                        spec["constraints"].get(
+                            "no_shared_menu_backing"
+                        )
+                        is True
+                    ),
+                    "docket_slips_have_no_full_outline_or_bevel": (
+                        spec["constraints"].get(
+                            "no_full_outline_or_bevel"
+                        )
+                        is True
+                    ),
+                    "danger_slip_uses_ink_accent_only": (
+                        spec["constraints"].get(
+                            "danger_uses_ink_accent_only"
+                        )
+                        is True
+                    ),
+                }
+            )
         if spec.get("tab_style") == "restrained-archival-index-v1":
             support_non_authoritative = [
                 "final restrained leather texture, low-contrast edge and state art",
                 "runtime page-edge root mask and staggered slide motion",
+                "screen-right clamp shift and live provider enabled-state feedback",
+            ]
+        elif spec.get("tab_style") == "irregular-docket-slips-v2":
+            support_non_authoritative = [
+                "final hand-painted docket-slip fibers, torn edges and state art",
+                "runtime page-edge root mask and immediate open/close feedback",
                 "screen-right clamp shift and live provider enabled-state feedback",
             ]
         else:

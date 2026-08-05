@@ -1,0 +1,154 @@
+{
+  "schema": "aeui.quest-log.seal-actions.simulation.v1",
+  "version": "QUEST-LOG-SEAL-ACTIONS-SIM-V10",
+  "design_batch": "QS-B1 V2",
+  "support_type": "direct-detail-page-seal-exterior-ledger-tabs",
+  "tab_style": "irregular-docket-slips-v2",
+  "canvas": [1660, 1024],
+  "right_outset": 48,
+  "inputs": {
+    "quest_log_shell": "assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png",
+    "seal_atlas": "addon/AzerothExpeditionUI/Media/Quests/QuestToolWaxSealStatesV1.tga",
+    "title_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf",
+    "body_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf"
+  },
+  "outputs": {
+    "board": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V10/quest_log_seal_actions_board_v10.png",
+    "report": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V10/quest_log_seal_actions_report_v10.json"
+  },
+  "presentation": {
+    "title": "QS-B1 V2 · 页上火漆与旧卷宗索引签 · V10 本地几何预演",
+    "subtitle": "保留火漆位置、七个真实 Button 与书页外展开；把整齐皮革按钮改成不等长、无完整边框的旧卷宗索引签。真实任务排版，100% UI 像素，ImageGen 0/0。",
+    "left_origin": [35, 150],
+    "right_origin": [860, 150],
+    "left_label": "A · 收起：详情页右上仍只保留火漆",
+    "right_label": "B · 展开：七枚旧卷宗索引签从真实页边露出",
+    "interaction_contract": "交互合同不变：火漆左键展开／收起；七个独立 Button 只代理原 provider；点选／点击书外／Esc 收起；放弃任务继续走原生确认框。",
+    "fail_open_note": "迁移完成前 fail-open：任一 provider 未捕获时旧按钮继续显示；右侧仍只声明 48px outset，靠近屏幕右缘时整体左移并在收起后恢复。",
+    "annotation_origin": [720, 758],
+    "annotation_title": "V2 可见语言改向",
+    "annotations": [
+      "① 七项仍是七个真实 Button，不合并成功能背景图",
+      "② 可见签条长度有节奏地错开，取消整齐卡片列",
+      "③ 无完整描边、黄铜高光、圆角、铆钉或箭头端帽",
+      "④ 材质改为烟熏旧卷宗纸／粗布感，文字仍由游戏绘制",
+      "⑤ 放弃任务只改变墨色；页边遮根与正文零占用不变"
+    ],
+    "non_authoritative_note": "非权威：最终纸纤维、毛边、四态反馈、客户端字体、Tooltip 与开合动画；本图不是生产或 edit 输入。"
+  },
+  "frame": [676, 464],
+  "layout": {
+    "list": [64, 64, 246, 324],
+    "detail": [366, 64, 246, 324],
+    "detail_content": [376, 72, 224, 306],
+    "detail_title_safe": [376, 72, 188, 28],
+    "close": [636, 12, 22, 22],
+    "paper_interaction_surface": [350, 40, 278, 376],
+    "seal_reserved_corner": [572, 64, 40, 40],
+    "seal_visual": [576, 68, 32, 32],
+    "seal_hitbox": [572, 64, 40, 40],
+    "exterior_action_menu": [612, 112, 112, 158],
+    "menu": [612, 112, 112, 158],
+    "action_slots": [
+      [612, 112, 112, 20],
+      [612, 134, 112, 20],
+      [612, 159, 112, 20],
+      [612, 181, 112, 20],
+      [612, 203, 112, 20],
+      [612, 225, 112, 20],
+      [612, 250, 112, 20]
+    ],
+    "action_visible_slips": [
+      [612, 113, 99, 18],
+      [612, 134, 94, 19],
+      [612, 160, 108, 18],
+      [612, 181, 101, 19],
+      [612, 204, 96, 18],
+      [612, 225, 105, 19],
+      [612, 251, 98, 18]
+    ],
+    "action_text_safe": [
+      [630, 113, 75, 18],
+      [630, 135, 70, 17],
+      [630, 160, 84, 18],
+      [630, 182, 77, 17],
+      [630, 204, 72, 18],
+      [630, 226, 81, 17],
+      [630, 251, 74, 18]
+    ],
+    "page_edge_mask": [604, 102, 24, 180],
+    "reward_slots": [
+      [376, 316, 108, 32],
+      [488, 316, 108, 32],
+      [376, 352, 108, 32],
+      [488, 352, 108, 32]
+    ]
+  },
+  "closeups": {
+    "closed_source": [536, 38, 92, 92],
+    "closed_destination": [44, 760, 280, 250],
+    "closed_label": "C · 收起态：火漆仍直接压在详情页右上纸面",
+    "open_source": [596, 102, 128, 180],
+    "open_destination": [360, 760, 320, 250],
+    "open_label": "D · 书口层级：索引签根部被真实页边遮住"
+  },
+  "content": {
+    "quest_rows": 18,
+    "reward_slots": 4,
+    "menu_actions": [
+      "共享任务",
+      "收起详情",
+      "显示位置",
+      "隐藏位置",
+      "清理标记",
+      "重建标记",
+      "放弃任务"
+    ],
+    "always_separate": [
+      "QuestLogFrameCloseButton",
+      "QuestLogFrameLevelsCheckButton",
+      "QuestLogTrack",
+      "pfQuest.buttonOnline",
+      "pfQuest.buttonLanguage"
+    ],
+    "provider_proxies": [
+      "QuestFramePushQuestButton",
+      "QuestLogFrameExpandButton",
+      "pfQuest.buttonShow",
+      "pfQuest.buttonHide",
+      "pfQuest.buttonClean",
+      "pfQuest.buttonReset",
+      "QuestLogFrameAbandonButton"
+    ]
+  },
+  "interaction": {
+    "left_click": "toggle-exterior-docket-slips",
+    "outside_click_or_escape": "close-exterior-docket-slips",
+    "action_click": "proxy-original-provider-button-then-close-slips",
+    "abandon": "preserve-native-confirmation",
+    "disabled": "mirror-provider-enabled-state",
+    "right_click": "reserved-for-quest-module-settings",
+    "screen_right_clamp": "shift-whole-quest-log-left-by-shortfall-and-restore-on-close",
+    "fail_open": "keep-original-buttons-visible-until-all-proxies-exist"
+  },
+  "constraints": {
+    "imagegen_calls": 0,
+    "new_bitmap_assets": 0,
+    "seal_reuses_accepted_runtime_atlas": true,
+    "direct_wax_on_detail_parchment": true,
+    "seal_corner_is_reserved_from_dynamic_text": true,
+    "tabs_begin_at_detail_right_edge": true,
+    "tabs_must_not_occupy_detail_page": true,
+    "page_edge_mask_reuses_accepted_shell_pixels": true,
+    "no_single_popup_panel": true,
+    "no_shared_menu_backing": true,
+    "each_action_is_an_independent_button": true,
+    "visible_skin_is_owned_per_button": true,
+    "no_full_outline_or_bevel": true,
+    "no_arrowheads_or_per_tab_rivets": true,
+    "danger_uses_ink_accent_only": true,
+    "detail_content_never_replaced": true,
+    "detail_scrollframe_geometry_unchanged": true,
+    "bottom_action_buttons_hidden_only_after_proxy_parity": true
+  }
+}

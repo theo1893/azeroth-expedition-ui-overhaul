@@ -5,15 +5,18 @@
 - 当前接受版本：`QS-A1 V1.r4`
 - 已确认历史模拟：`QUEST-SEALS-SIM-V2`；其 Quest Log 顶部悬空位置已于
   `2026-08-03` 被用户否决，Tracker 方向仍有效
-- 当前已确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V9`
-- 当前生产正文：`QS-B1 V1.r4`
-- 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu `P3`
-- 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1
+- 当前已确认历史模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V9`
+- 当前待确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V10 / QS-B1 V2`
+- 最近一次生产正文：`QS-B1 V1.r4`（已否决）
+- 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V2 `P2`
+- 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
+  `simulation-reviewed / awaiting-user-confirmation / P2`；V1 保持
   `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
 - QS-B1 当前实际生图：`5/5`
+- QS-B1 V2 ImageGen：`0/0`
 - QS-B1 流程错误：`1`（E1 未进入生成器，不占生图额度）
 - tracked source：
   `assets/source/quests/qs-a1/QuestToolWaxSeal_Master_v1.png`，SHA-256
@@ -47,7 +50,9 @@
   attempt 5 因 `6.1347:1` 超宽比例、`112×18px` 等比可见区、均匀压纹和
   连续亮边先被内部退回，随后又被用户以“不可接受”明确否决。V1 全部候选
   只能作为负面证据，不得成为 source、runtime、确定性几何例外或后续 edit
-  输入。若继续，必须从新的 V2 本地确定性模拟重新开始；不得执行 attempt 6。
+  输入。新的 V2 已以 `QUEST-LOG-SEAL-ACTIONS-SIM-V10` 完成本地确定性预演，
+  当前只等待用户判断其具体可见方向；不得执行 attempt 6，也不得把“继续”解释为
+  V2 生产授权。
   旧 Quest Log／Tracker provider Button 在各自菜单功能等价前继续可见可用。
 
 ## 用户接受与 P4／P5 固化
@@ -2560,3 +2565,51 @@ silhouette height by the quantified amount.
   `0/0`。用户确认新模拟并独立授权完整 V2 生产正文前不得生图。
 - 跨设备：当前继续只依赖 tracked 文本，不依赖任何被否决的 ignored 像素，
   因而不创建 `handoff/`。
+
+## QS-B1 V2 旧卷宗索引签预演 — `QUEST-LOG-SEAL-ACTIONS-SIM-V10`
+
+- 日期：`2026-08-05`。
+- 状态：`simulation-reviewed / awaiting-user-confirmation / P2`。
+- 触发条件：用户明确否决 `QS-B1 V1.r4 / attempt 5` 后回复“继续”。本节点只
+  允许新的确定性生成前模拟，不构成 ImageGen、上传、source 晋级、runtime
+  接入或隐藏旧按钮的授权。
+- 目标不是修饰 V1 的矩形皮革母版，而是重新定义菜单物件身份：七项改为从
+  真实右页边缘露出的七枚“公会旧卷宗索引签”。每枚仍由一个独立真实 Button
+  拥有；没有一张共享 popup 底板，也没有把七项烘焙进单张背景图。
+- 保留的交互与结构：页上 QS-A1 火漆仍为 `[576,68,32,32]`，保留／命中区仍为
+  `[572,64,40,40]`；七个 provider、原生放弃确认、Esc／书外收起、右缘 clamp、
+  原子 fail-open、右上 Close 独立及 detail／奖励零占用均不变。
+- 真实 Button 容器继续使用七个 `112×20px` 槽；模拟中的可见签条分别为
+  `99／94／108／101／96／105／98px` 宽、`18..19px` 高。它们共用被真实页边
+  mask 覆盖的内侧根部，但书外长度、上下毛边和末端断口有克制错落，取消七个
+  等长矩形造成的现代卡片节奏。
+- 可见语言：烟熏旧档案纸／粗布综合色、宽而低频的明暗块、无完整描边／bevel、
+  无黄铜顶线、圆角、箭头、铆钉或独立危险色底板；`放弃任务` 只改为低饱和
+  酒红墨色。最终文字仍由游戏 FontString 绘制，模拟没有把文字烘焙进资产。
+- 真实内容密度：两侧均使用当前 `676×464px` QL-A1／QL-A2 书体、18 行任务、
+  完整详情、4 个奖励槽和 7 个真实功能文案；右侧展开仍只声明 `48px` outset。
+- 本地检查：`31/31 pass`，report status `displayable`；内部复审确认无共享
+  二级页面、无正文／奖励覆盖、七个独立组件和页边遮根均成立。最终手绘纤维、
+  毛边、四态反馈、Tooltip、客户端字体与开合反馈仍为非权威范围。
+- 渲染环境：macOS `Darwin`；
+  `/Users/yuanshiyao/miniconda3/envs/py312/bin/python`，Python `3.12.12`。
+- tracked renderer：
+  `tools/render_quest_log_seal_actions_simulation_v1.py`，SHA-256
+  `3b9d7ac8fa1c4e4a74e3f96cf6c891ea4510d72c53afebcb4523fd5359550f32`。
+- tracked spec：
+  `tools/specs/quest_log_seal_actions_simulation_v10.json`，SHA-256
+  `69a5bedb50970cac22d764ad164fcf7ec3da2a3b0a5e89fbcd5fec53acac9834`。
+- ignored board：
+  `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V10/quest_log_seal_actions_board_v10.png`，
+  SHA-256
+  `33e681dd3bb4f18f7537198472d136a0b504173a8bfd48b943383748cd9bfffb`。
+- ignored report：
+  `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V10/quest_log_seal_actions_report_v10.json`，
+  SHA-256
+  `31c6afbc7f2feeb07bf37524ad32f9c1624f2d076ef9ac32385eaf8f5b07be3c`。
+- ImageGen：`0/0`；上传：`0`；本地流程错误：`0`。V1 attempt 1–5 没有作为
+  图片输入、edit input、综合色权威或几何来源。
+- 跨设备：board／report 可由 tracked renderer、spec 与既有 tracked 输入完全
+  重建，不需要临时 `handoff/`。
+- 下一门禁：用户确认或否决这张具体 V10 预演。只有确认后才允许重写完整
+  `QS-B1 V2` 生产正文并请求新的独立生成授权；当前不得调用 ImageGen。

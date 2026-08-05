@@ -152,6 +152,15 @@ def main() -> None:
     seal_actions_sim_v9_spec = json.loads(
         seal_actions_sim_v9_spec_path.read_text(encoding="utf-8")
     )
+    seal_actions_sim_v10_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v10.json"
+    )
+    seal_actions_sim_v10_spec = json.loads(
+        seal_actions_sim_v10_spec_path.read_text(encoding="utf-8")
+    )
     seal_actions_sim_renderer = (
         ROOT / "tools" / "render_quest_log_seal_actions_simulation_v1.py"
     )
@@ -2286,6 +2295,68 @@ def main() -> None:
     assert seal_actions_sim_v9_spec["constraints"][
         "danger_uses_accent_only"
     ]
+    assert seal_actions_sim_v10_spec["version"] == (
+        "QUEST-LOG-SEAL-ACTIONS-SIM-V10"
+    )
+    assert seal_actions_sim_v10_spec["design_batch"] == "QS-B1 V2"
+    assert seal_actions_sim_v10_spec["support_type"] == (
+        "direct-detail-page-seal-exterior-ledger-tabs"
+    )
+    assert seal_actions_sim_v10_spec["tab_style"] == (
+        "irregular-docket-slips-v2"
+    )
+    assert seal_actions_sim_v10_spec["frame"] == [676, 464]
+    assert seal_actions_sim_v10_spec["right_outset"] == 48
+    assert seal_actions_sim_v10_spec["layout"]["seal_visual"] == [
+        576,
+        68,
+        32,
+        32,
+    ]
+    assert seal_actions_sim_v10_spec["layout"][
+        "exterior_action_menu"
+    ] == [612, 112, 112, 158]
+    assert seal_actions_sim_v10_spec["layout"][
+        "page_edge_mask"
+    ] == [604, 102, 24, 180]
+    v10_slots = seal_actions_sim_v10_spec["layout"]["action_slots"]
+    v10_visible = seal_actions_sim_v10_spec["layout"][
+        "action_visible_slips"
+    ]
+    assert len(v10_slots) == len(v10_visible) == 7
+    assert all(slot[2:] == [112, 20] for slot in v10_slots)
+    assert [box[2] for box in v10_visible] == [
+        99,
+        94,
+        108,
+        101,
+        96,
+        105,
+        98,
+    ]
+    assert all(
+        slot[0] <= visible[0]
+        and slot[1] <= visible[1]
+        and visible[0] + visible[2] <= slot[0] + slot[2]
+        and visible[1] + visible[3] <= slot[1] + slot[3]
+        for slot, visible in zip(v10_slots, v10_visible)
+    )
+    assert seal_actions_sim_v10_spec["constraints"]["imagegen_calls"] == 0
+    assert seal_actions_sim_v10_spec["constraints"][
+        "each_action_is_an_independent_button"
+    ]
+    assert seal_actions_sim_v10_spec["constraints"][
+        "visible_skin_is_owned_per_button"
+    ]
+    assert seal_actions_sim_v10_spec["constraints"][
+        "no_shared_menu_backing"
+    ]
+    assert seal_actions_sim_v10_spec["constraints"][
+        "no_full_outline_or_bevel"
+    ]
+    assert seal_actions_sim_v10_spec["constraints"][
+        "danger_uses_ink_accent_only"
+    ]
     require(
         seals_work,
         (
@@ -2465,6 +2536,46 @@ def main() -> None:
             "右上 Close",
         ),
         "Quest Log restrained exterior docket-tab simulation work",
+    )
+    require(
+        seals_work,
+        (
+            "QS-B1 V2 旧卷宗索引签预演",
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V10",
+            "`simulation-reviewed / awaiting-user-confirmation / P2`",
+            "99／94／108／101／96／105／98px",
+            "`31/31 pass`",
+            "3b9d7ac8fa1c4e4a74e3f96cf6c891ea4510d72c53afebcb4523fd5359550f32",
+            "69a5bedb50970cac22d764ad164fcf7ec3da2a3b0a5e89fbcd5fec53acac9834",
+            "33e681dd3bb4f18f7537198472d136a0b504173a8bfd48b943383748cd9bfffb",
+            "31c6afbc7f2feeb07bf37524ad32f9c1624f2d076ef9ac32385eaf8f5b07be3c",
+            "ImageGen：`0/0`",
+            "本地流程错误：`0`",
+            "V1 attempt 1–5",
+            "不需要临时 `handoff/`",
+            "当前不得调用 ImageGen",
+        ),
+        "QS-B1 V2 deterministic pre-production simulation work",
+    )
+    require(
+        progress,
+        (
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V10 / QS-B1 V2",
+            "P2 simulation-reviewed / awaiting-user-confirmation",
+            "`31/31 pass`",
+            "ImageGen `0/0`",
+        ),
+        "QS-B1 V2 progress",
+    )
+    require(
+        submodules,
+        (
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V10 / QS-B1 V2",
+            "七个 Button 容器保持 `112×20px`",
+            "每个真实 Button 独立拥有的无字可见 Texture",
+            "确认前未授权 source、runtime 或菜单接入",
+        ),
+        "QS-B1 V2 component ownership",
     )
 
     quest_adapter = (
