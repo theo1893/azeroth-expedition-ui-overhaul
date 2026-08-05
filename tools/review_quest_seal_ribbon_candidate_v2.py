@@ -167,11 +167,35 @@ def proportional_fit(
     if bbox is None:
         raise ValueError("candidate has no visible object after chroma key")
     crop = clear_transparent_rgb(keyed.crop(bbox))
-    ratio = min(TARGET_SIZE[0] / crop.width, TARGET_SIZE[1] / crop.height)
-    size = (
-        max(1, round(crop.width * ratio)),
-        max(1, round(crop.height * ratio)),
-    )
+    # Evaluate both proportional edge fits after integer raster rounding.  A
+    # height-led scale may round to the same legal target width even when its
+    # unrounded width is a fraction above it; rejecting that case would waste
+    # one full source row despite requiring neither crop nor deliberate
+    # non-uniform scaling.  Choose the largest rounded result that still fits.
+    fit_candidates: list[tuple[int, float, tuple[int, int], str]] = []
+    for axis, candidate_ratio in (
+        ("width", TARGET_SIZE[0] / crop.width),
+        ("height", TARGET_SIZE[1] / crop.height),
+    ):
+        candidate_size = (
+            max(1, round(crop.width * candidate_ratio)),
+            max(1, round(crop.height * candidate_ratio)),
+        )
+        if (
+            candidate_size[0] <= TARGET_SIZE[0]
+            and candidate_size[1] <= TARGET_SIZE[1]
+        ):
+            fit_candidates.append(
+                (
+                    candidate_size[0] * candidate_size[1],
+                    candidate_ratio,
+                    candidate_size,
+                    axis,
+                )
+            )
+    if not fit_candidates:
+        raise ValueError("no proportional integer bbox fit remains inside target")
+    _, ratio, size, fit_axis = max(fit_candidates, key=lambda value: value[0])
     resized = clear_transparent_rgb(crop.resize(size, RESAMPLE))
     normalized = Image.new("RGBA", CANVAS, (0, 0, 0, 0))
     paste = (
@@ -190,6 +214,7 @@ def proportional_fit(
         "target_visible_aspect": target_ratio,
         "relative_aspect_error": abs(source_ratio / target_ratio - 1.0),
         "normalization_scale": ratio,
+        "normalization_fit_axis": fit_axis,
         "normalized_object_size": list(size),
         "normalized_visible_bbox_exclusive": list(visible or ()),
         "target_bbox_exclusive": list(TARGET_BBOX),

@@ -2732,8 +2732,8 @@ silhouette height by the quantified amount.
 - 日期：`2026-08-05`。
 - 状态：`repair-prepared / P3`。
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`。
-- 本版本实际 ImageGen：`3/5`；图片上传：`7`（固定参考 `6`＋紧邻 edit
-  input `1`）；流程错误：`3`。这是新的 V2
+- 本版本实际 ImageGen：`4/5`；图片上传：`10`（固定参考 `8`＋紧邻 edit
+  input `2`）；流程错误：`3`。这是新的 V2
   预算，不能续用或覆盖已耗尽的 V1 `5/5`。
 - 用户生产授权：`2026-08-05`。用户原文：`确认授权 QS-B1 V2；允许每次上传
   固定 SHA 的 Image 1/2，允许同循环紧邻前次输出仅在冻结边界内作为 Image 3
@@ -3554,3 +3554,159 @@ motif remains complete and readable in its own isolated 32 x 22 runtime slice.
 - 当前累计 `3/5`；成功返回后为 `4/5`。一次 provider call 后立即复制并停止，
   不允许 child 自检或追加生成。若第 4 张仍失败，最后一次必须再次改变策略；
   不得重复相同正文抽卡。
+
+### attempt 4 执行与完整审查
+
+| 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
+|---|---|---|---|---|---|---|---|
+| `4/5` | `QS-B1 V2.r3` / `0a35e1d` | edit；固定 Image 1／2；attempt 3 raw 为唯一 Image 3 | fixed child `019fd07d-54f2-7221-ab7a-fda047d14b97`；严格一张，正常退出 `0` | `generated/quests/QS-B1-V2/attempt-04/raw/QS-B1-V2.attempt-04.png`；`214a30a0afd769590c32f17b2d65c4778a0f4bbb683565e28f36eb83ced99ac4` | 组件 safe box：整数感知等比 fit 后 bbox 已精确 `128×696`，其余结构／展示门禁通过；但 action 1、2、3、6、7 仍有明显 broad-ink 进入各段上下禁入带，action 2 还包含来自 action 1 的跨片残笔 | 冻结当前精确轮廓／bbox、九片连续性、亚麻、综合色、root／tail 与全部禁项；最后 attempt 5 不再移动轮廓，改为清除七区旧墨迹后，在更小 `64×40` 中央内框分别重绘七个纹章 | `internal-rejected / repair-prepared` |
+
+- raw 尺寸／模式：`1254×1254 RGB`；边缘连通色键后 bbox
+  `[520,58,729,1192]`，即 `209×1134`、aspect `0.184303`，相对目标误差
+  `0.21%`。整数感知等比 fit 以高度为比例，`209×1134 → 128×696`；两个轴
+  来自同一比例后分别按像素四舍五入，既不越过 `128×696`，也不裁切、不逐轴
+  指定不同设计比例。normalized bbox 精确 `[448,164,576,860]`。
+- reviewer 已从“总取连续最小比例”修正为“分别评估 width／height 等比比例，
+  在整数四舍五入后仍不越界的候选中选择最大占用”。attempt 1–3 不因此伪通过；
+  attempt 4 的 height-led 候选正好成为 `128×696`。这是流程错误修正，不调用
+  provider，不计额度。
+- 当前技术审查 `11/12`：仅 `all_action_motifs_stay_inside_vertical_safe_boxes`
+  失败。action 1–7 broad-ink 越界比例约为 `15.9% / 51.7% / 6.5% / 0% /
+  2.2% / 5.9% / 7.2%`；action 4／5 已通过，但整条母版必须七段全部通过。
+- 真实排版：
+  `generated/quests/QS-B1-V2/attempt-04/review/QS-B1-V2.attempt-04.real-layout.png`，
+  SHA-256 `f719c565e5aa57d65498d315ec7aa8460bef189b4de7afbf3c17ea82b4278e30`；
+  frame、信息密度、奖励、四滚动态、命中数、综合色均正确。阻断只来自真实
+  Button 切片中的跨区墨迹，不能因其在整条 32px 宽预演中不明显而忽略。
+- Image 3 资格：attempt 4 是紧邻候选且除局部墨迹外全部冻结结构、美术与技术
+  门禁正确。最后一次 edit 允许清除／重绘安全区内纹章，但不得改变轮廓、bbox、
+  亚麻纹理、root、tail、九区 owner、滚动关系或综合色。
+
+### 完整修复执行正文 — `QS-B1 V2.r4`
+
+Edit Image 3, the immediate prior candidate, as a surgical ink-only repair.
+Images 1 and 2 remain fixed style references. Image 3's cloth object is now
+accepted and frozen: preserve its exact connected silhouette, current height
+and width, exact centered position, root, tail, outer edges, continuous weave,
+warm ochre / umber palette, upper-left lighting, wear, and green-field layout.
+Do not make the ribbon narrower, wider, taller, shorter, or differently placed.
+Do not redesign or regenerate the cloth. The only permitted visible changes are
+removing all seven current heraldic ink motifs and repainting exactly seven
+smaller complete motifs at seven isolated centers.
+
+First, cleanly remove every current dark or wine motif pixel from all seven
+action regions, including every fragment that crosses a horizontal slice
+boundary. Restore the exposed locations with the same surrounding continuous
+linen weave and broad value plane, without creating erased rectangles, blank
+stripes, blur patches, horizontal seams, or changes to the cloth silhouette.
+In particular, remove the tied-quill fragment currently entering action 2 and
+all route / cord fragments near neighboring bands. Preserve no old out-of-box
+ink. This erase-and-repaint strategy replaces the prior attempt's incremental
+scaling strategy.
+
+Then repaint exactly seven compact heraldic motifs, one per action, and place
+every identifying stroke entirely inside these stricter 64 x 40 absolute boxes
+on the final 1024 canvas:
+- action 1 paired quills: [480,236,544,276], center (512,256);
+- action 2 folded ledger leaf: [480,324,544,364], center (512,344);
+- action 3 open guild compass: [480,412,544,452], center (512,432);
+- action 4 veiled guild compass: [480,500,544,540], center (512,520);
+- action 5 three swept map trails: [480,588,544,628], center (512,608);
+- action 6 returning route knot: [480,676,544,716], center (512,696);
+- action 7 snapped contract cord: [480,764,544,804], center (512,784).
+The maximum visible motif size is 64 x 40 source pixels, or 16 x 10 runtime
+pixels. Keep at least 24 completely ink-free linen pixels above and below each
+motif before its 88-pixel action boundary, and at least 32 ink-free linen pixels
+to the left and right. No feather, knot, scroll corner, compass point, diagonal
+veil, trail dot, route curve, loop, cord end, break accent, dark antialias pixel
+or wine antialias pixel may leave its listed box.
+
+Do not treat the seven boxes as visible cards. They are invisible placement
+constraints only. Paint no box edge, guide, horizontal rule, cleaned rectangle,
+patch, seam, shadow, stitch or backing behind a motif. The same continuous
+linen texture must remain visible between all symbols. Each runtime Button is
+created later by slicing; the image itself remains one unbroken oath cloth.
+
+The frozen seven meanings and order are:
+1. two short paired quills tied by one very compact binding knot for Share;
+2. one compact folded ledger leaf for Detail Toggle;
+3. one compact open four-point guild compass for Show Location;
+4. the same compact compass crossed by one short quiet diagonal veil for Hide;
+5. three compact swept cartographic trail lines for Clean Marks;
+6. one compact winding route returning into one small knot for Reset Marks;
+7. one compact snapped contract cord with a small central break for Abandon.
+Simplify interior strokes as needed to remain readable within 64 x 40: use a
+few broad hand-painted shapes rather than many fine lines. Preserve near-black
+guild ink for motifs 1–6. Only motif 7 uses restrained low-saturation dark-wine
+ink. Do not add any eighth motif, letters, numerals, runes, faction symbols,
+skulls, aquilas, double-headed eagles, Imperial marks, science-fiction hardware
+or another franchise's icon.
+
+Reference authority:
+1. Image 1 is highest style authority. Inherit only the circa-2004 vanilla WoW
+   2D hand-painted bitmap language, broad low-frequency paint, substantial
+   irregular edges, muted ochre / smoked-brown palette, short warm upper-left
+   light, tactile separation and sparse wear. Ignore its book, parchment,
+   leather, straps, compass, wax, bookmarks, brass, rivets, text, buttons and
+   full composition.
+2. Image 2 is adjacency-only. Inherit only accepted quest-book temperature,
+   paint scale, edge softness, light direction and restrained wear. Ignore its
+   silhouette, pages, spine, stitches, gutter, corners, transparency and pixels.
+3. Image 3 is the frozen object authority. Preserve its complete cloth pixels,
+   silhouette, bbox, root, tail, continuous texture and palette. Ignore and
+   replace only its existing seven motifs and all leaked ink fragments.
+Image 1 plus the Azeroth quest-ledger baseline resolves style; Image 2 only
+tunes adjacency; Image 3 controls the frozen physical object.
+
+Frozen canvas and silhouette contract: exact 1024 x 1024 RGB bitmap; exactly
+one straight-on connected ribbon; uniform solid #00FF00 everywhere outside;
+no gradient, texture, checkerboard, haze, vignette, glow, spill, cast shadow or
+loose pixel. Preserve the exact visible bbox [448,164,576,860], 128 x 696,
+centered at x = 512. Preserve 448 pixels of green left/right and 164 pixels
+top/bottom. Preserve the exact width:height 0.183908 and the existing ribbon's
+current height-led equal-ratio fit. No crop, stretch, shift, rotation,
+perspective, enlargement or reduction.
+
+Frozen anatomy:
+- plain root [448,164,576,212], 128 x 48, no motif;
+- action 1 [448,212,576,300], 128 x 88;
+- action 2 [448,300,576,388], 128 x 88;
+- action 3 [448,388,576,476], 128 x 88;
+- action 4 [448,476,576,564], 128 x 88;
+- action 5 [448,564,576,652], 128 x 88;
+- action 6 [448,652,576,740], 128 x 88;
+- action 7 [448,740,576,828], 128 x 88;
+- short tail [448,828,576,860], 128 x 32, no motif.
+Preserve all nine physically continuous zones and the current seamless
+reconstruction. Root and tail receive no ink. The existing wax seal is not in
+this image and must not be generated.
+
+Frozen material and style: Image 3's heavy flexible aged coarse-woven linen,
+smoked warm ochre, muted old brown, deep umber edge, broad upper-left light and
+few painterly fiber groups. Do not convert it to parchment, leather, metal,
+photographic burlap, vector art, glossy modern UI, Diablo, minimalist Skyrim,
+Warhammer, mobile toolbar, web buttons or generic fantasy icons. No wax, book,
+page, bookmark, frame, popup, backing, text, cursor, state variants, extra
+object, detached decoration, visible guides, internal card seams, metal
+dividers, repeated sections or altered action ownership.
+
+Before returning, verify in this order: the cloth silhouette and bbox are
+pixel-for-pixel conceptually unchanged; exactly seven old motifs were removed
+without erased patches; exactly seven new motifs exist; each entire motif and
+all antialias ink lie inside its own listed 64 x 40 box; at least 24 pixels of
+ink-free linen remain above and below every motif; no ink crosses any cut line;
+the seven meanings and order are correct; only motif 7 is wine; root and tail
+remain unmarked; no separator or prohibited object appears; each isolated
+32 x 22 runtime action slice contains one complete readable motif and no part
+of another motif.
+
+### V2.r4 最终调用边界
+
+- attempt 5 上传固定 Image 1／2，再把 attempt 4 raw（SHA-256
+  `214a30a0afd769590c32f17b2d65c4778a0f4bbb683565e28f36eb83ced99ac4`）
+  作为唯一 Image 3。不得上传任何其他图片。
+- 本次只允许 ink-only erase／repaint。轮廓、bbox、root、tail、材质、综合色、
+  九区、V11 runtime 与全部禁项冻结；不得再次改 aspect 或布局。
+- 当前累计 `4/5`；返回即为 `5/5`。一次 provider call 后立即复制并停止。若
+  第 5 张仍有任一客观门禁失败，必须标记
+  `candidate-rejected / repair-budget-exhausted` 并停止等待用户审核；禁止第 6 次。
