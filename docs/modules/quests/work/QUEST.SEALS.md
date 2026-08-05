@@ -16,18 +16,18 @@
 - 当前已确认模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A`；用户于
   `2026-08-05` 回复“不走figma, 直接下一步”，确认将 ImageGen 布面 donor
   与确定性精确轮廓／Alpha mask 分离的可见方向
-- 最近一次已执行生产正文：`QS-B1 V5-A.r2 / attempt 3`；当前下一正文为
-  `QS-B1 V5-A.r3`
+- 最近一次已执行生产正文：`QS-B1 V5-A.r3 / attempt 4`；当前无下一执行正文，
+  循环已按内部完整通过提前停止
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A
-  `internal-rejected / repair-prepared / P3 / production 3/5`
+  `candidate-reviewed / awaiting-user-acceptance / P3 / production 4/5`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
   `simulation-confirmed / V3-A repair-budget-exhausted / V3-B gated / P3`；V1 保持
   `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`；
   QS-B1 V4-A `candidate-rejected / repair-budget-exhausted / P3 / 5/5`；
-  QS-B1 V5-A `internal-rejected / repair-prepared / P3 / production 3/5`
+  QS-B1 V5-A `candidate-reviewed / awaiting-user-acceptance / P3 / production 4/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -37,14 +37,14 @@
   授权顺序门禁未执行 V3-B）
 - QS-B1 V4-A ImageGen：`5/5`；流程错误 `1`；五次均有 provider 图片证据；
   第五稿为本轮最佳视觉但比例误差 `7.287%`，禁止 attempt 6
-- QS-B1 V5-A 模拟 ImageGen：`0/0`；production `3/5`；attempt 1／2 技术／
-  排版均通过但美术失败；attempt 3 regenerate 已消除规则微纹和多重垂褶，
-  技术／排版／展示区也全过，只剩两个局部 plane 横贯 crop。attempt 4 固定
-  Image 1／2，并仅用紧邻 attempt 3 raw 作受限 Image 3 edit。V14 只用
+- QS-B1 V5-A 模拟 ImageGen：`0/0`；production `4/5`；流程错误 `1`。attempt 4
+  使用固定 Image 1／2＋紧邻 attempt 3 raw 受限 edit，已移除两个局部 plane
+  的横贯外溢；自动 `18/18`、六态 `29/29`、展示区 `6/6` 且内部美术审查通过，
+  因此提前停止，attempt 5 未调用。V14 只用
   本地平面几何预演 donor／crop／mask／composite 分工，用户确认不接受其中
   任何模拟像素
-- QS-B1 历史流程错误：V1 `1`、V2 `3`、V3 `0`、V4-A `1`。均按“无生成证据才不占
-  额度”记录
+- QS-B1 历史流程错误：V1 `1`、V2 `3`、V3 `0`、V4-A `1`、V5-A `1`。均按
+  “无生成证据才不占额度”记录
 - tracked source：
   `assets/source/quests/qs-a1/QuestToolWaxSeal_Master_v1.png`，SHA-256
   `377dcdc141ee5487884bfc99dbfd82013a8c4d7cb7200a4414feebb81d72ab75`。
@@ -5735,11 +5735,16 @@ bright color, modern styling, or extra object.
 
 ### V5-A 正式生成与审查记录
 
+| 流程错误 | 正文版本／执行前 commit | session／result | 错误与无生成证据 | 针对性修复 | 结论 |
+|---:|---|---|---|---|---|
+| `E1` | `QS-B1 V5-A.r3` / `1c6b12b` | 无 child session／无 provider result | 首次 attempt 4 启动在 `npx` 读取 `C:\Users\西奥\AppData\Local\npm-cache\_cacache\tmp` 时以 `EPERM` 退出；child 未启动，空 `generated/` 中无图片，也无 provider 作业证据 | 保持已提交 r3 正文、三张输入、顺序、SHA 与 fixed `0.143.0` 不变，仅允许 `npx` 访问既有缓存与生成服务后重试 | 无生成证据的流程错误，不占额度；实际计数仍为 `3/5` |
+
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
 | `1/5` | `QS-B1 V5-A` / `87903e8` | `generate`；固定 Image 1／2 | child session `019fd242-8cb6-7a22-b110-763fbc8f66b7`；result `ig_072c3f1feddefde3016a73446255608191bf9f1dbc559f5c5c.png` | `attempt-01/QS-B1-V5-A.attempt-01.raw.png`；`1254×1254 RGB`；SHA `c313ca608921189396b9c72c10bbfbe10be8c2c30373a92d1f05016dd966c45f`；composite SHA `b64cce638e1f8f7ec86b0bce0baca3006e534b9899989ae282ae9acdf6e5e9b9` | `美术一致性／STYLE LOCK`：全幅仍有均匀细颗粒、毡皮／旧皮式微纹；中央固定 crop 内两道亮折痕均横贯整宽，第二道进入 `y=400±8` 安静带 | 保留全幅单一不透明布面、正交 square、暗烟熏胡桃综合色与宽幅大明暗；attempt 2 仅把本稿作为 Image 3，局部重绘微纹、圆斑和中央 crop 两道折面，固定 Image 1／2 不变 | `internal-rejected / 1/5 / repair-prepared` |
 | `2/5` | `QS-B1 V5-A.r1` / `cee911f` | `edit`；固定 Image 1／2＋attempt 1 raw Image 3 | child session `019fd25a-b613-76b1-a261-7283d11d7cb0`；result `ig_0e43b77fb0420fbe016a734b4bf508819181f5b7d77b66ee07.png` | `attempt-02/QS-B1-V5-A.attempt-02.raw.png`；`1254×1254 RGB`；SHA `7ca5117006ce6d5712f30deb5d785f25013394bb7add85ad5d9aaf00023cdca9`；composite SHA `00d3fd1f6e44de0b6f93b140a04ed0b69fdf1717ad8ce05befebcb3e2663d736` | 同一 `美术一致性／STYLE LOCK`：细纹被改成全幅规则重复的卷曲／编织微图案，褶皱增至多道，crop 仍有横贯亮带 | 不保留 attempt 2 像素；相同首要失败已连续出现，attempt 3 改变策略，只上传固定 Image 1／2 regenerate，用坐标化无纹理中心区约束代替 Image 3 edit | `internal-rejected / 2/5 / repair-prepared` |
 | `3/5` | `QS-B1 V5-A.r2` / `79492f0` | `generate`；固定 Image 1／2，无 Image 3 | child session `019fd269-f89a-71d0-80c1-a1a0d43f7ac7`；result `ig_0cb7a53f8e02d243016a734e75abe481919ae891b494117576.png` | `attempt-03/QS-B1-V5-A.attempt-03.raw.png`；`1254×1254 RGB`；SHA `12c2e3f2f346b9196c7a74043a532a95811ee82c00b156b937751353ee679c4d`；composite SHA `0d83940a6d0e59e475212388ab349ea81dc13ccd0a2b6ae321de2ef6c6094a4b` | `美术一致性／固定 crop`：全幅已成为正确的低频宽面旧布，规则微纹和多重垂褶消失；但两道本应短、断、局部的 dim plane 均延伸为横贯 `128px` crop 的亮带，仍读成分段接缝 | 保留 attempt 3 的 square 单布面、综合色、三大明暗、两道外侧宽折、低频手绘表面和安静中心；attempt 4 仅以本稿作 Image 3，擦除两道横贯延伸并把它们收回冻结局部盒内 | `internal-rejected / 3/5 / repair-prepared` |
+| `4/5` | `QS-B1 V5-A.r3` / `1c6b12b` | `edit`；固定 Image 1／2＋attempt 3 raw Image 3 | child session `019fd280-29b2-7be0-add6-f601f2e391d3`；result `ig_035225c26a2a6a2e016a73541a34fc8191b106a0260947befe.png` | `attempt-04/QS-B1-V5-A.attempt-04.raw.png`；`1254×1254 RGB`；SHA `c9ffcc8f1e19977ff10abdeeb9d0f7554cfab02c99768b83c219516d54a9beb1`；composite SHA `6b3207f15d961cbef7471399c9bfb725b475385ce9e66648fc435a9e28111d9c` | 无；scope→style→assembly／pixel 完整内审通过。两道横贯亮带已移除，没有引入对象、轮廓、规则织纹、横缝或 cut-band 失败 | 按“完整通过即停”保留本 composite 为待用户验收候选；attempt 5 未调用，不写 source／runtime | `candidate-reviewed / awaiting-user-acceptance / P3 / 4/5` |
 
 #### Attempt 1 执行一致性与确定性证据
 
@@ -6345,3 +6350,67 @@ modern styling, or extra object.
 - 本记录和完整 r3 必须提交后才能调用 attempt 4。若 edit 完整通过即停并提交
   `candidate-reviewed / P3` 给用户复审；若仍失败，最多只剩一次实际调用，且
   必须先按新稿记录首要失败与完整下一正文。禁止 attempt 6。
+
+### V5-A attempt 4 执行与终局内审
+
+- 正文／执行前 commit：`QS-B1 V5-A.r3 / 1c6b12b178f355ee484005147e30f770def56e22`；
+  操作 `edit`。输入顺序精确为固定 Image 1 SHA `03dc589a…53bd`、固定 Image 2
+  SHA `91f9fece…edd5`、紧邻 attempt 3 raw Image 3 SHA `12c2e3f2…79c4d`；没有
+  上传 attempt 1／2、composite、runtime、review、模拟或其他图片。
+- 完整正文 `8464` 字符，UTF-8 SHA-256
+  `0cf326a54cab55330e9d99df8f05912910a16f79150d26b46d56707e3ff168b2`。fixed child
+  打印的 `user` block 从首句到 `BEFORE RETURNING` 与独立 execution instruction
+  均完整，没有首行截断，也没有启动另一个 `codex`／`npx` 子进程。
+- 首次启动在 child／provider 前因 npm cache `EPERM` 退出；无 session、result、
+  图片或 provider 作业，已单列为 V5-A 流程错误 `E1`，不占额度。保持同一已
+  提交正文和输入不变后重试成功。
+- 固定执行器 child session
+  `019fd280-29b2-7be0-add6-f601f2e391d3`；provider／cache result
+  `ig_035225c26a2a6a2e016a73541a34fc8191b106a0260947befe.png`。图片已返回，故计入
+  第 `4/5` 次实际调用。child 在生成后广搜 cache 遇到 `.sandbox-secrets` 读取
+  告警，随后直接从该 session 的 `generated_images` 复制同一 result 并退出 `0`；
+  生成证据与目标图片均已存在，这不是额外流程错误或额外调用。
+- 未改动 provider raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V5-A/attempt-04/QS-B1-V5-A.attempt-04.raw.png`，
+  `1254×1254 RGB`，SHA-256
+  `c9ffcc8f1e19977ff10abdeeb9d0f7554cfab02c99768b83c219516d54a9beb1`；cache、child
+  temp copy 与项目 ignored raw 三者 SHA 完全一致。
+- 确定性 reviewer：whole-square isotropic LANCZOS → `1024²`；固定 crop
+  `[448,164,576,860]` → `128×696`；tracked V14 polygon `4×` mask；透明 RGB
+  清零；`32×174` runtime review。composite SHA
+  `6b3207f15d961cbef7471399c9bfb725b475385ce9e66648fc435a9e28111d9c`；runtime
+  review SHA `a62d66568cfe02f9db11607e5be5eec46f275917de1b85e5a2e694d922a1769f`；
+  review JSON SHA `cee37f93b04122568778cb38dfc53442fd1085cb56cf13d46f948502ad878ad3`。
+- scope／对象：通过。raw 仍为单一 edge-to-edge 不透明旧布面；没有背景、ribbon
+  外轮廓、书、纸、蜡、文字、纹章、Button、阴影或额外对象。deterministic mask
+  继续独占外轮廓、Alpha 与双钝缺口。
+- style／材质：通过。attempt 3 的暗烟熏胡桃综合色、三块低频大明暗、左右外侧
+  宽折、上左暖光、厚重手绘布面与中央安静区保持；前两稿的规则颗粒／卷曲织纹、
+  多重垂褶和圆斑没有回归。runtime 高频残差由 attempt 3 的 `1.6911` 降至
+  `1.5746`，没有引入扫描织物、程序纹理或现代扁平材质。
+- 冻结局部修复：通过。attempt 3 中两道横贯 `128px` crop 的亮带已被周围 matte
+  base 吸收，只留下不形成 stripe／seam／row 的极弱局部综合色变化；composite
+  从顶至尾读成一张连续旧布。八条 future cut band 均安静、连续并有布面。
+- assembly／pixel：automated `18/18 pass`、真实六态布局 `29/29 pass`；精确
+  `128×696 RGBA` 单连通对象、visible bbox、Alpha、透明 RGB、两处不等宽钝浅
+  缺口、prefix＋tail、hidden／disabled、partial／full scroll 与奖励间距全部通过。
+- display-region：六张精确 `246×324` detail preview 全部通过；report
+  `6/6 pass`、violations `0`，SHA
+  `0209a069b1cff4af2475e011814552282af12202c2078854fe57afc06c867981`；真实六态
+  layout SHA `8b277e8b5b5e5c12e2d300203ac080dcb3873d75080382248f2ac9f44b55fbb0`。
+- 结论：attempt 4 在 scope→style→assembly／pixel 顺序中没有剩余内部失败，
+  因而按授权合同立即停止生成；attempt 5 未调用。候选最高只到
+  `candidate-reviewed / awaiting-user-acceptance / P3 / 4/5`，等待用户审视具体
+  composite 与真实六态。该内部通过不等于用户接受、P4、source／manifest、
+  exporter／atlas、runtime／addon 接入或隐藏旧按钮。
+
+### V5-A 当前停止点
+
+- production 实际调用 `4/5`；流程错误 `1`；attempt 5 未调用，attempt 6 永久
+  禁止。当前完整通过候选是 attempt 4 deterministic composite SHA
+  `6b3207f15d96…11d9c`，不是 raw donor。
+- 当前没有 source、manifest、runtime、atlas 或 addon 修改；旧放弃／分享／退出／
+  详情与 pfQuest 四按钮继续 fail-open。没有 handoff，也没有 push。
+- 下一门禁只有用户对 attempt 4 composite 的明确接受或拒绝。明确接受前不得
+  promotion；若用户拒绝，只有在其反馈仍位于原冻结修复边界时，才可先形成新的
+  完整正文与 commit 后决定是否使用尚未调用的 attempt 5。
