@@ -13,17 +13,18 @@
   `2026-08-05` 回复“可以”
 - 最近一次已执行生产正文：`QS-B1 V2.r3`；`V2.r4` 已准备但禁止执行
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3
-  `production-prompts-prepared / awaiting-production-authorization / P3`
+  `prompt-authorized / execution-in-progress / P3`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
-  `simulation-confirmed / prompt-prepared / P3`；V1 保持
+  `simulation-confirmed / prompt-authorized / P3`；V1 保持
   `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
 - QS-B1 V1 ImageGen：`5/5`（已耗尽并由用户否决）
 - QS-B1 V2 ImageGen：`4/5`（第 5 次未调用；旧授权不得转用于 V3）
-- QS-B1 V3 ImageGen：V3-A `0/5`、V3-B `0/5`（正文已准备；尚无生产授权）
+- QS-B1 V3 ImageGen：V3-A `0/5`、V3-B `0/5`（已获联合授权；固定先 A 后 B，
+  A 内部通过后才执行 B）
 - QS-B1 历史流程错误：V1 `1`、V2 `3`；V3 `0`。均按“无生成证据才不占
   额度”记录
 - tracked source：
@@ -3789,8 +3790,8 @@ ImageGen 输入。用户确认 V3 结构和模拟方向后，才可分别准备�
 
 - 用户确认原文：`可以`。
 - 确认对象：`QUEST-LOG-SEAL-ACTIONS-SIM-V12 / QS-B1 V3`。
-- 当前状态：`simulation-confirmed / production-prompts-prepared / P3 /
-  awaiting-production-authorization`。
+- 当前状态：`simulation-confirmed / prompt-authorized / P3 /
+  execution-in-progress`。
 - 本次确认冻结：空白旧布背景与七个功能纹章分层；七个纹章分别归属于七个
   独立 Button；hidden 项无空洞收拢；disabled 项留位但不命中；漆章、背景和
   Button 均留在 `QuestLogDetailScrollChild`，随正文滚动并被真实 viewport
@@ -3830,12 +3831,31 @@ V3-B；V3-B 的 ImageGen 输入也不得包含 V3-A 候选，V3-A 只可在本�
 预演中作为相邻背景使用。两段最坏合计 `10` 次实际 ImageGen 调用；流程错误
 只有在没有图片、provider result 或生成作业证据时才不占额度。
 
+### V3 联合生产授权 — `2026-08-05`
+
+- 用户授权原文：`确认授权 QS-B1 V3-A 与 V3-B；按顺序先执行 V3-A、通过后再执行 V3-B；允许每段上传合同中的固定 SHA Image 1/2，并允许同段紧邻前次输出仅在冻结边界内作为 Image 3 edit 输入；每段最多 5 次实际 ImageGen 调用，最坏合计 10 次，流程错误不占额度；允许执行合同内的确定性归一化、色键、独立拆分、四态派生及真实排版预演。`
+- 授权执行器：只使用 `imagegen-0-143-0 / @openai/codex@0.143.0`；不得改用
+  会话内建 imagegen。
+- 执行顺序：先 `QS-B1 V3-A`；只有其全部内部门禁通过并停止在
+  `candidate-reviewed / P3` 后，才开始 `QS-B1 V3-B`。
+- 固定上传：每段各自合同中的固定 SHA Image 1／2；Image 3 只允许为同段、
+  紧邻前次输出且仍处于冻结修复边界内的 edit input。不得跨段上传候选，
+  不得上传模拟、旧失败稿、review 派生图、runtime atlas 或 addon 截图。
+- 实际生图预算：V3-A `0/5`；V3-B `0/5`；最坏 `10`。无图片且无 provider
+  result／生成作业证据的流程错误不占额度，但须单独记录。
+- 确定性范围：只限合同中的归一化、边缘连通色键、透明 RGB 清零、等比
+  bbox-fit、V3-A prefix／tail crop、V3-B 独立 cell 拆分、四态派生、atlas
+  装配、metrics、实际展示区域检查与真实排版预演；不得借此修复语义、材料、
+  构图或纹章身份。
+- 本授权不接受任何尚未生成的候选，不授权 P4 source／manifest、P5 runtime／
+  addon 接入，也不授权隐藏旧按钮。
+
 ## QS-B1 V3-A — 动态空白旧布母版 production preparation
 
 ### 元数据、固定输入与产物合同
 
 - 版本：`QS-B1 V3-A`。
-- 状态：`prompt-prepared / 0/5 / awaiting-explicit-authorization`。
+- 状态：`prompt-authorized / 0/5 / execution-pending`。
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`。
 - Image 1（最高视觉权威）：
   `assets/locked/quests/任务详情面板_视觉基准_v1.png`，SHA-256
@@ -4023,7 +4043,7 @@ and natural at 32 x 174 and at every 12 + N*22 visible prefix length.
 ### 元数据、固定输入与产物合同
 
 - 版本：`QS-B1 V3-B`。
-- 状态：`prompt-prepared / 0/5 / awaiting-explicit-authorization`。
+- 状态：`prompt-authorized / 0/5 / gated-by-v3a-internal-pass`。
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`。
 - Image 1（最高视觉权威）：
   `assets/locked/quests/任务详情面板_视觉基准_v1.png`，SHA-256
@@ -4243,6 +4263,7 @@ semantic readability; all seven remain recognizable in separate 32 x 22 cells.
   实际展示区域检查和“真实排版＋新 UI”预演。它们不得修复语义、材料、构图、
   图案或不工整程度的失败。
 - 当前 ImageGen：V3-A `0/5`；V3-B `0/5`；流程错误 `0`；上传 `0`。
-- 当前门禁：只等待用户对上述两个完整执行正文、固定输入、冻结 edit 边界、
-  每段五次／最坏十次和确定性后处理作明确生产授权。授权前不调用 ImageGen，
-  不创建 source／manifest／exporter／runtime，不修改 addon，也不隐藏旧按钮。
+- 当前门禁：联合生产授权已于 `2026-08-05` 获得。先执行 V3-A 的最多五次
+  实际生图／修复循环；V3-A 内部通过后才进入 V3-B。任一内部通过都只达到
+  `candidate-reviewed / P3`，仍不创建 source／manifest／exporter／runtime，
+  不修改 addon，也不隐藏旧按钮，直至用户明确接受具体候选并另行授权 P4。
