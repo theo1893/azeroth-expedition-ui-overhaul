@@ -7,17 +7,18 @@
   `2026-08-03` 被用户否决，Tracker 方向仍有效
 - 当前已确认历史模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V9`
 - 已被用户改向的模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V10 / QS-B1 V2`
-- 当前待确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V11 / QS-B1 V2`
+- 当前已确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V11 / QS-B1 V2`
 - 最近一次生产正文：`QS-B1 V1.r4`（已否决）
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V2 `P2`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
-  `simulation-reviewed / awaiting-user-confirmation / P2`（V11）；V1 保持
+  `simulation-confirmed / production-prompt-prepared / awaiting-production-authorization / P2`
+  （V11）；V1 保持
   `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
 - QS-B1 当前实际生图：`5/5`
-- QS-B1 V2 ImageGen：`0/0`
+- QS-B1 V2 ImageGen：`0/5`（未授权、未调用）
 - QS-B1 流程错误：`1`（E1 未进入生成器，不占生图额度）
 - tracked source：
   `assets/source/quests/qs-a1/QuestToolWaxSeal_Master_v1.png`，SHA-256
@@ -53,8 +54,10 @@
   只能作为负面证据，不得成为 source、runtime、确定性几何例外或后续 edit
   输入。V10 的页外索引签随后被用户用“ScrollChild 内固定火漆＋向下授印
   绶带”明确改向，未获得确认。新的 V11 已按该物理关系完成四状态本地确定性
-  预演，当前只等待用户判断具体可见方向；不得执行 attempt 6，也不得把
-  “按这个做”解释为 V2 生产授权或 runtime 接入授权。
+  预演。用户于 `2026-08-05` 在上一轮明确说明“若接受 V11 可见方向，下一步
+  重写完整生产提示词并单独请求正式生图授权”的上下文中回复“继续”，因此
+  V11 可见方向已确认；该回复只授权生产准备，不是 V2 生图、上传、source
+  晋级或 runtime 接入授权。不得执行 V1 attempt 6。
   旧 Quest Log／Tracker provider Button 在各自菜单功能等价前继续可见可用。
 
 ## 用户接受与 P4／P5 固化
@@ -99,9 +102,9 @@
 
 | ID | 当前对象 | 目标合同 |
 |---|---|---|
-| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前 runtime `1.25` 为 `[576,68,32,32]` 无鼠标 Texture | QS-A1 V1.r4 美术保持 accepted；当前 P5 位置不变。V11 提议在 parity 成立后把未来 `40×40px` Button 改挂到 `QuestLogDetailScrollChild` 的内容坐标 `[206,0,40,40]`，其视觉 `[210,4,32,32]` 在 scroll `0` 时仍等于 Frame 坐标 `[576,68,32,32]`，随后随正文滚动并由真实 viewport 裁切；确认前不改 runtime |
+| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前 runtime `1.25` 为 `[576,68,32,32]` 无鼠标 Texture | QS-A1 V1.r4 美术保持 accepted；当前 P5 位置不变。V11 已确认在 parity 成立后把未来 `40×40px` Button 改挂到 `QuestLogDetailScrollChild` 的内容坐标 `[206,0,40,40]`，其视觉 `[210,4,32,32]` 在 scroll `0` 时仍等于 Frame 坐标 `[576,68,32,32]`，随后随正文滚动并由真实 viewport 裁切；独立生产授权与 parity 前不改 runtime |
 | `QUEST.LOG.CHROME.SEAL.SUPPORT` | 当前无 runtime 对象 | 不创建书框、包角、皮革／黄铜承托或页外书签。V11 的 `6px` 折叠根属于下方授印绶带，不是另一个悬空支架；收起时只在蜡体下露出 `6px`，并与火漆处于同一 ScrollChild |
-| `QUEST.LOG.CHROME.SEAL.MENU` | 尚无 runtime 对象 | V11 提议为 `32×22px` 的七段纵向连续绶带：每段仍是一个独立真实 Button／独立图案皮肤，分别代理原 provider；没有共享 popup 背景，也不允许用一张绶带位图代替七个命中区。展开只临时覆盖正文最右 `14..24px`，不缩窄／重排正文；尾端在 `108×41px` 奖励槽前保留 `32px`。漆章、根、七段与尾端共同滚动；被部分裁切的段不保留完整隐藏 hitbox，完全滚出后命中数必须为 `0`。功能等价前旧八控件继续原子 fail-open |
+| `QUEST.LOG.CHROME.SEAL.MENU` | 尚无 runtime 对象 | V11 已确认使用 `32×22px` 的七段纵向连续绶带：每段仍是一个独立真实 Button／独立图案皮肤，分别代理原 provider；没有共享 popup 背景，也不允许用一张绶带位图代替七个命中区。V2 source 可用一条连续 normal 母版保障纤维与明暗连续，但 exporter 必须切为 root、七个 action、tail。展开只临时覆盖正文最右 `14..24px`，不缩窄／重排正文；尾端在 `108×41px` 奖励槽前保留 `32px`。漆章、根、七段与尾端共同滚动；被部分裁切的段不保留完整隐藏 hitbox，完全滚出后命中数必须为 `0`。功能等价前旧八控件继续原子 fail-open |
 | `QUEST.TRACKER.HUB.SEAL` | adapter-owned 无鼠标 Texture，已由临时 tracker runtime 挂载 | `34 × 34` 顶部中央漆章；宽度 `W` 时 `x=floor((W-34)/2)`、`y=-18`，底边恰好落在 provider `16px` 工具条／列表起点，不移动任务内容 |
 | `QUEST.TRACKER.HUB.MENU` | 尚无对象 | 未来独立交互批次；漆章点击后承载七项 provider 行为。本模拟不绘制、不实现，也不把它当成已有 Button |
 
@@ -2624,7 +2627,7 @@ silhouette height by the quantified amount.
 ### 元数据与用户指向
 
 - 日期：`2026-08-05`。
-- 状态：`simulation-reviewed / awaiting-user-confirmation / P2`。
+- 状态：`simulation-confirmed / P2`。
 - 用户指向：火漆固定在任务详情滚动内容的右上角；它随任务正文向上滚动并
   消失。点击后向下展开一条带七个纹章点击区的绶带，语义参考动力甲授印绶带
   的“蜡封压住垂直誓约带”，但必须转译为艾泽拉斯远征公会卷宗，禁止骷髅、
@@ -2654,8 +2657,9 @@ silhouette height by the quantified amount.
   放弃任务。可见图案分别采用双羽笔／结约、折页、公会罗盘、遮蔽罗盘、
   清扫地图线、回环路线结和断裂契约线；它们是整段纹章式墨迹，不是现代
   微型 icon。动态动作名保留给 GameTooltip／provider，不烘焙进位图。
-- 材料为烟熏旧羊皮或粗织公会誓约布，综合色使用暖赭、旧棕、深乌墨与只在
-  放弃段出现的克制暗酒红。保持香草魔兽低分辨率二维手绘、粗略不规则边、
+- 材料冻结为粗织、做旧的远征公会誓约亚麻布，不再在羊皮与布之间摇摆；
+  综合色使用烟熏暖赭、旧棕、深乌墨与只在放弃段出现的克制暗酒红。保持
+  香草魔兽低分辨率二维手绘、粗略不规则边、
   大块明暗和左上暖光；禁止规则卡片列、完整金框、圆角 pill、玻璃、霓虹、
   现代 dropdown、暗黑式金属祭坛或照片级布料。
 
@@ -2708,12 +2712,269 @@ silhouette height by the quantified amount.
 - ImageGen：`0/0`；上传：`0`；新 bitmap source/runtime：`0`。board／report
   可由 tracked renderer、spec 和既有 accepted/runtime 输入确定性重建，
   当前不需要 `handoff/`。
-- 内部结论：`pass-for-user-review`。真实 Frame、18 行、四个 `108×41px`
+- 内部结论：`user-confirmed-visible-direction`。真实 Frame、18 行、四个 `108×41px`
   奖励、七段独立 Button、ScrollChild 层序、临时正文覆盖、奖励避让、部分
   裁切和完全滚出都可读且满足几何合同。
 - 非权威：最终羊皮／粗布纤维、手绘毛边、production Alpha、atlas、四态、
   Tooltip、客户端字体和 1.12 ScrollFrame 的鼠标裁切实现。模拟像素不得成为
   source、runtime、裁切／切片或正式 ImageGen 输入。
-- 下一门禁：用户确认或否决具体 V11 可见方向。只有确认后才重写完整
-  `QS-B1 V2` 生产正文，并另行请求固定输入、不可变修复边界和最多五次实际
-  ImageGen 的独立授权；当前不得生图或接入菜单。
+- 用户确认：`2026-08-05`；在明确的“确认 V11 后只准备生产正文、仍需另行
+  请求正式生图授权”上下文中回复“继续”。确认冻结 ScrollChild 内层序、
+  七段比例、滚动裁切、正文临时覆盖和奖励避让；不接受模拟像素为 source。
+- 下一门禁：用户独立授权下节完整 `QS-B1 V2` 生产正文、固定 Image 1／2、
+  不可变修复边界和最多五次实际 ImageGen 调用；当前不得生图、上传、导出
+  source／atlas、修改 addon 或隐藏旧按钮。
+
+## QS-B1 V2 页内公会授印绶带母版 — production preparation
+
+### 元数据、固定输入与当前边界
+
+- 日期：`2026-08-05`。
+- 状态：`simulation-confirmed / production-prompt-prepared /
+  awaiting-production-authorization / P2`。
+- 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`。
+- 本版本实际 ImageGen：`0/5`；上传：`0`；流程错误：`0`。这是新的 V2
+  预算，不能续用或覆盖已耗尽的 V1 `5/5`。
+- Image 1（最高美术权威）：
+  `assets/locked/quests/任务详情面板_视觉基准_v1.png`，SHA-256
+  `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`。
+- Image 2（受限邻接参考）：
+  `assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png`，SHA-256
+  `91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5`。
+- V11 几何模拟、V1 attempt 1–5、V10、QS-A1 漆章 atlas 均不上传。QS-A1
+  只作为 runtime 中已经存在并压住绶带根部的相邻物件，不让模型重复生成。
+- 计划 accepted source：
+  `assets/source/quests/qs-b1/QuestLogSealRibbon_Master_v2.png`；计划 source
+  manifest：`assets/source/quests/qs-b1/QS-B1-V2_SourceManifest_v1.json`。
+- 计划 exporter：`tools/build_quest_log_seal_ribbon_v2.py`；计划 runtime：
+  `addon/AzerothExpeditionUI/Media/Quests/QuestLogSealRibbonStatesV2.tga`；
+  计划 runtime manifest：
+  `assets/source/quests/qs-b1/QS-B1-V2_RuntimeManifest_v1.json`。上述文件当前
+  均不存在，也不在本生产准备节点创建。
+
+### 组件粒度、源画布与切片合同
+
+- 生成对象为一条物理连续的、无火漆的纵向公会誓约亚麻绶带 normal 母版。
+  连续母版只解决纤维、边缘和明暗跨段连续性；runtime 所有权仍严格拆成九个
+  区域：无鼠标根部、七个独立 Button 分段、无鼠标尾端。禁止把整条母版作为
+  一个大命中区，也禁止把七项功能合并成一张不可分割的背景。
+- raw 目标为精确 `1024×1024 RGB`，画布外底色统一 `#00FF00`。唯一物件的
+  目标可见 bbox 为 `[448,164,576,860]`，即 `128×696px`；正面正投影、无
+  旋转、无透视，计划按 `4:1` 缩为 `32×174px` runtime master。
+- 九个源区域固定为：root `[448,164,576,212]`（`128×48`）；action 1
+  `[448,212,576,300]`；action 2 `[448,300,576,388]`；action 3
+  `[448,388,576,476]`；action 4 `[448,476,576,564]`；action 5
+  `[448,564,576,652]`；action 6 `[448,652,576,740]`；action 7
+  `[448,740,576,828]`（七段各 `128×88`）；tail
+  `[448,828,576,860]`（`128×32`）。重组时九片边缘必须无缝恢复成同一物件。
+- 每个 action 的图案安全区相对该段为 `[16,12,112,76]`，即 runtime
+  `[4,3,28,19]`；不得让识别图案、强高光、裂口或高对比磨损跨越切片线。
+  root 顶部 runtime `6px` 将被既有 QS-A1 火漆遮住；root 不画图案。tail
+  只允许克制的浅分叉或毛边，不接收鼠标。
+- 七段边界每隔源 `88px`／runtime `22px`。边界只用极浅折痕、墨迹留白或
+  织物受压变化帮助分区，不能出现七张卡片、独立描边、缝隙、bevel、金属
+  隔条或重复铆钉。整条左右外缘和跨段光照必须连续。
+
+### 确定性状态 atlas 与候选展示合同
+
+- exporter 先按固定九区切片。七个 action 的 normal 来自 accepted source；
+  hover 保持同一 Alpha／轮廓，只轻微暖亮；pressed 保持同一 Alpha／轮廓，
+  只轻微压暗且 Button 在 runtime 右下移动 `1px`；disabled 保持同一 Alpha／
+  轮廓，只退灰降对比。root 与 tail 只导出 normal。
+- runtime atlas 固定为 `512×256`。七个 action 分别占一列，四态占四行；每格
+  `64×32px`，行序 normal／hover／pressed／disabled。每格可见 action
+  `32×22px` 居中于 `[column*64+16,row*32+5,32,22]`（`xywh`）。root cell
+  `[0,128,64,32]`，可见 `[16,138,32,12]`；tail cell `[64,128,64,32]`，
+  可见 `[80,140,32,8]`；其他区域透明，格间 padding 不进入 UV 采样。
+- 只允许边缘连通的纯绿色键、透明 RGB 清零，以及候选已通过物件身份、材料、
+  九区比例和图案门禁后，对完整 bbox 作一次等比 fit 到 `128×696px`。禁止
+  非等比拉伸、裁切、逐段移动、图案重定位、边界 surgery、补画或用后处理
+  伪造正确组件结构。任一区域高度错误、切片线错位或图案越出安全区都直接
+  退回生成循环。
+- 每次候选都必须用该候选而非几何占位图临时切片、派生四态并装入真实
+  `676×464px` Quest Log 排版：18 条任务、代表性中文详情、四个真实
+  `108×41px` 奖励槽、七段独立 Button。展示 closed／open／scroll 52
+  部分裁切／scroll 208 完全滚出，并验证命中区、正文不重排、奖励 `32px`
+  避让、图案在 `32×22px` 下可辨和状态反馈。稀疏 contact sheet 不能替代
+  真实排版预演。
+
+### 生产正文完整性预检
+
+- 复杂度：`one connected normal master + 9 deterministic slices + 7 independent
+  runtime Buttons + deterministic 4-state action atlas`。
+- 结论：`pass`。
+
+| 门禁 | 执行正文中的证据 | 结论 |
+|---|---|---|
+| 世界内物件身份、对象／状态数量 | 连续的艾泽拉斯公会誓约亚麻绶带；一件 normal 母版、九区、七个动作段；无火漆／书／文字 | pass |
+| Image 1／2 inherit、ignore 与冲突裁决 | 分别声明最高年代／笔触权威和受限邻接职责；列出忽略项；Image 1＋任务基线胜出 | pass |
+| Canvas、bbox、方向、尺度、光照与层序 | `1024²`、`128×696`、竖直正投影、左上暖光、root 位于既有火漆下 | pass |
+| 解剖、材料、边缘、状态和跨片关系 | 粗织旧亚麻、连续外缘／光照、九区尺寸、四态由 exporter 派生 | pass |
+| safe area、crop、stretch、repeat 与 seam | 每段 `[16,12,112,76]`、禁止裁切／非等比／平铺、固定切片线与无缝重组 | pass |
+| 全局／Quest 美术 DNA 与反模式 | 香草二维手绘、大块低频明暗、克制暖旧综合色；排除现代按钮栈、照片布料和其他 IP 符号 | pass |
+| Alpha／色键与最终自检 | 统一 `#00FF00`、边缘连通色键、透明 RGB 清零、object／bbox／九区／禁项复核 | pass |
+
+- 未知但执行必需的值：`无`。
+- 去冗余结论：只在开头、技术排除和最终自检重复“一个连续物件但九区切片”、
+  “无火漆／文字／书”和精确 bbox／区段三个最高风险门禁；历史否决过程不进入
+  执行正文。
+
+### 最终执行正文 — `QS-B1 V2`
+
+Create exactly one isolated, connected vertical guild oath-ribbon master for a
+circa-2004 vanilla World of Warcraft quest-log interface. It is one continuous
+physical strip of aged coarse-woven linen, pinned beneath an existing wax seal
+at runtime. The wax seal is not part of this image. Generate only the ribbon's
+normal-state master: one plain root, exactly seven equal action bands, and one
+short tail, all physically continuous. A deterministic exporter will slice the
+master into exactly nine owned components: one noninteractive root texture,
+seven separate real Button textures, and one noninteractive tail texture. Do
+not render a screen, book, page, wax seal, menu panel, button stack, labels, or
+state variants. Do not merge the future seven hit regions into one runtime
+object.
+
+The seven action bands have fixed meanings from top to bottom, expressed only
+as broad heraldic ink motifs suitable for a tiny Azeroth guild warrant:
+1. two compact paired quills joined by a small binding knot for Share Quest;
+2. one folded ledger leaf for Detail Toggle;
+3. an open guild compass for Show Location;
+4. the same guild compass crossed by one quiet diagonal veil stroke for Hide
+   Location;
+5. three swept cartographic trail lines for Clean Marks;
+6. one winding route returning into a compact knot for Reset Marks;
+7. one snapped contract cord with a small central break for Abandon Quest.
+These are hand-painted heraldic marks, not modern interface icons. Draw no
+letters, words, numerals, tooltips, runes, faction logos, skulls, aquilas,
+double-headed eagles, Imperial insignia, science-fiction hardware, or symbols
+copied from another franchise. Only the seventh motif may use a restrained,
+low-saturation dark-wine ink; its linen body must remain the same as all other
+bands.
+
+Reference authority and filtering:
+1. Image 1 is the highest visual authority. Inherit its circa-2004 vanilla WoW
+   low-resolution 2D hand-painted language, broad low-frequency value planes,
+   slightly irregular substantial edges, muted ochre and smoked-brown palette,
+   short warm upper-left light, tactile material separation, and sparse
+   concentrated wear. Ignore its complete open-book composition, parchment
+   pages, leather plaques and straps, compass, wax seal, bookmarks, brass
+   corners, rivets, text, buttons, and complete UI layout.
+2. Image 2 is an adjacency reference only. Inherit only the accepted quest
+   book's local color temperature, paint scale, edge softness, upper-left light
+   direction, and restrained wear so the ribbon belongs beside that book.
+   Ignore its complete book silhouette, pages, spine, stitches, page gutter,
+   brass corners, transparency, and every directly reusable pixel.
+If the references conflict, Image 1 plus the vanilla Azeroth quest-ledger rules
+wins. Image 2 may only tune local adjacency. Do not imitate a modern Diablo
+panel, a minimalist Skyrim overlay, or Warhammer iconography; the physical idea
+is only "wax pins a vertical oath strip," translated completely into an
+Azeroth expedition-guild document.
+
+Canvas and exact occupancy: output an exact 1024 x 1024 RGB bitmap. Every pixel
+outside the one ribbon must be uniform solid #00FF00, with no gradient,
+checkerboard, texture, haze, vignette, color spill, cast shadow, or loose
+pixels. Place the full connected ribbon vertically, unrotated, in a straight-on
+orthographic front view with no tilt or foreshortening. Its exact visible bbox
+is [448,164,576,860], 128 x 696 pixels. Keep the entire object inside that bbox
+and leave green clearance on every side. It will be reduced exactly four-to-one
+to a 32 x 174 pixel runtime master; design no detail that depends on stretching,
+tiling, mirroring, or nine-slicing.
+
+The exact vertical anatomy inside that bbox is mandatory:
+- plain root: [448,164,576,212], 128 x 48 pixels;
+- action band 1: [448,212,576,300], 128 x 88 pixels;
+- action band 2: [448,300,576,388], 128 x 88 pixels;
+- action band 3: [448,388,576,476], 128 x 88 pixels;
+- action band 4: [448,476,576,564], 128 x 88 pixels;
+- action band 5: [448,564,576,652], 128 x 88 pixels;
+- action band 6: [448,652,576,740], 128 x 88 pixels;
+- action band 7: [448,740,576,828], 128 x 88 pixels;
+- short tail: [448,828,576,860], 128 x 32 pixels.
+The top 24 source pixels of the root, equal to 6 runtime pixels, will sit under
+the existing wax seal. Keep the root plain and calm, with no motif. Give the
+tail only a shallow restrained fork or a few broad frayed fibers; do not make a
+long pointed bookmark tail.
+
+Construction and seams: this is one continuous woven object, not nine separate
+cards. Its left and right cloth edges, weave direction, broad shadow plane, and
+upper-left illumination must continue naturally through all nine slice zones.
+At each 88-pixel action boundary, use only a very shallow fold, a narrow quiet
+ink break, or subtle compression of the weave. Every boundary must remain
+perfectly reconstructable when adjacent slices touch: no gaps, detached pieces,
+individual rectangular outlines, bevels, metal separators, repeated rivets,
+or independent shadows. Keep high-contrast fibers, tears, scratches, and bright
+highlights away from every slice boundary.
+
+Motif placement is exact: inside each action band, keep the complete heraldic
+motif within relative safe box [16,12,112,76], 96 x 64 source pixels. Center it
+optically and make it readable after reduction to the runtime safe box
+[4,3,28,19], 24 x 16 pixels. No motif stroke, identifying shape, dark-wine mark,
+tear, or high-contrast wear may cross a band boundary. Preserve visible linen
+around every motif. The marks should feel painted or stamped into an old guild
+oath cloth with slightly softened pigment edges, never embossed as metallic
+badges and never placed inside modern icon tiles.
+
+Material and paint treatment: use one heavy but flexible strip of aged coarse-
+woven linen oath cloth, not parchment, leather, metal, or photographic fabric.
+Use smoked warm ochre, muted old brown, deep umber shadow, near-black guild ink,
+and only the restrained dark-wine ink on motif seven. Describe the weave with a
+few broad painterly fiber groups and two or three large value planes, not dense
+procedural microtexture. Use a short warm upper-left highlight and a slightly
+deeper lower-right edge. Let the silhouette vary only subtly like a hand-cut
+cloth strip; retain enough visual mass to read at 32 pixels wide. Wear should
+be sparse and concentrated near the lower tail and a few outer-edge locations.
+
+Style lock: the result must look like an original low-resolution bitmap sprite
+painted for a 2004-era vanilla World of Warcraft interface: warm, substantial,
+slightly irregular, magical without glow, and subordinate to an open quest
+ledger. It must not look vector-clean, photorealistic, procedural, glossy,
+minimalist, or like a vertical set of modern web buttons. Avoid thin perfect
+outlines, rounded rectangles, pills, card gaps, uniform embossing, tiny line
+icons, bright gold trim, polished brass frames, leather button plates, glass,
+translucent black, neon, gemstones, spikes, skulls, altars, futuristic metal,
+and high-frequency fabric noise.
+
+Strict exclusions: no wax or seal; no book, cover, page, parchment strip,
+bookmark, leather strap, frame, popup, backdrop, second surface, or scenery; no
+text, letters, numbers, labels, tooltips, UI cursor, or state labels; no separate
+hover, pressed, disabled, selected, or danger-state copies; no cast shadow or
+detached decoration outside the ribbon; no crop, rotation, perspective,
+stretching, repetition, mirrored sections, or disconnected action pieces.
+
+Before returning the image, verify all of the following: exactly one connected
+vertical linen ribbon and no other object; exact 1024 x 1024 canvas; uniform
+#00FF00 outside it; exact [448,164,576,860] visible bbox; one 48-pixel root,
+seven and only seven equal 88-pixel action bands in the stated order, and one
+32-pixel tail; every motif remains fully inside its exact safe box; all slice
+boundaries reconstruct seamlessly; the root has no motif; only motif seven has
+restrained dark-wine ink; no wax, book, text, modern button cards, metallic
+frames, photo fabric, or non-Azeroth franchise symbols; the object remains
+legible when reduced to 32 x 174 pixels and each motif remains legible within a
+32 x 22 pixel action slice.
+
+### 自主修复循环与独立授权边界
+
+- 不可变修复边界：V11 已确认的 ScrollChild 位置／层序／滚动裁切；一条连续
+  normal 母版与九区切片；七个独立 Button 和顺序；固定 Image 1／2 及权威
+  职责；`1024²`、`128×696`、九区坐标、图案安全区、粗织旧亚麻材料、七个
+  纹章语义、色键／Alpha 策略、四态确定性导出与全部禁止项。
+- attempt 1 只上传固定 SHA 的 Image 1／2。attempt 2–5 仍必须上传相同顺序、
+  相同 SHA 的 Image 1／2；只有紧邻前次候选的物件身份、九区结构和综合色
+  已正确，且失败能在冻结边界内局部修复时，才允许额外把该前次输出作为
+  Image 3 edit input。否则使用固定 Image 1／2 regenerate。
+- 允许的自主修复仅包括：纯绿背景／bbox／居中、低频布料笔触、轮廓轻微
+  不规则度、综合色与对比、局部磨损密度、分段边界克制度、图案辨识度和
+  安全区内位置，以及删除误生的文字、火漆、现代卡片边、金属件或其他禁项。
+- 禁止把 V1 attempt 1–5、V10、V11 模拟、QS-A1 漆章或非紧邻候选作为图片
+  输入；禁止改变材料、对象数量、九区尺寸、纹章顺序、runtime owner、滚动
+  关系，或用裁切／非等比／逐段搬移／补画规避生成失败。上述改变必须重新
+  模拟并获得用户新授权。
+- 最多 `5` 次实际 ImageGen generation／edit，含首次。没有生成候选、没有
+  provider 生成证据的上传／transport／流程错误不占生图额度；同类流程错误
+  针对性修复一次后若复现即暂停。任一候选通过完整内审就立即停止；第五次
+  仍不通过则停止等待用户审核。
+- 每次调用后都必须先做结构／综合色／反模式内审，再执行确定性色键、临时
+  切片／四态和真实排版预演。只有最终候选由用户接受后，才可进入 P4 source
+  固化、manifest、exporter、atlas 与 addon P5 接入。
+- 本节目前只是待授权的完整合同。用户必须明确授权 `QS-B1 V2`、固定 Image
+  1／2、同循环紧邻 Image 3 edit 边界和最多五次实际调用；在该独立授权之前，
+  ImageGen、上传、source／runtime 写入、addon 修改和旧按钮隐藏均为 `0`。

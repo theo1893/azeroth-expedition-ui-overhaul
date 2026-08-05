@@ -43,7 +43,7 @@ bug 和显示问题均已修复。该实机结论覆盖活动的 QL-A2 V4 书体
 | `QUEST.LOG.COUNT` | `QuestLogQuestCount`；兼容 `QuestLogCount` | layout-only；使用纸面深墨文字，不新增外框 |
 | `QUEST.LOG.CLOSE` | `QuestLogFrameCloseButton` | 普通／悬停／按下／禁用 |
 | `QUEST.LOG.EMPTY` | `EmptyQuestLogFrame`、`QuestLogNoQuestsText` | 安静纸面，不生成空状态卡片 |
-| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前为 adapter-owned 无鼠标 `OVERLAY` Texture | runtime `1.25` 复用已接受的 QS-A1 V1.r4 atlas，将 `32×32px` 漆章放在 Frame 坐标 `[576,68,32,32]`；`40×40px` 保留区为 `[572,64,40,40]`。V11 提议在未来菜单 parity 成立后把真实 Button 改挂到 `QuestLogDetailScrollChild` 内容坐标 `[206,0,40,40]`，视觉 `[210,4,32,32]` 在 scroll `0` 时仍落在同一 Frame 像素，随后随正文滚动／裁切。V11 确认前不改当前 runtime |
+| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前为 adapter-owned 无鼠标 `OVERLAY` Texture | runtime `1.25` 复用已接受的 QS-A1 V1.r4 atlas，将 `32×32px` 漆章放在 Frame 坐标 `[576,68,32,32]`；`40×40px` 保留区为 `[572,64,40,40]`。V11 已确认未来菜单 parity 成立后把真实 Button 改挂到 `QuestLogDetailScrollChild` 内容坐标 `[206,0,40,40]`，视觉 `[210,4,32,32]` 在 scroll `0` 时仍落在同一 Frame 像素，随后随正文滚动／裁切。生产授权与 parity 前不改当前 runtime |
 | `QUEST.LOG.CHROME.SEAL.SUPPORT` | 当前无 runtime 对象 | 不创建书签、包角、皮革／黄铜承托、外框或页外 Texture。V11 的短折叠根属于 `QUEST.LOG.ACTION.SEAL_MENU.RIBBON.ROOT`，收起时仅在火漆下露 `6px`，不作为独立悬空支架 |
 
 支持 `closed`、`empty`、`list-only`、`dual-page` 与 `selected`。离线参考为
@@ -77,11 +77,12 @@ V1–V6 的外沿皮革、羊皮封签、下缘长书签、detail
 保留全部原按钮作为 fail-open fallback；生产授权不等于菜单接入授权。
 V10 的页外索引签在确认前被用户明确改向，现为
 `user-superseded-before-confirmation`。当前
-`QUEST-LOG-SEAL-ACTIONS-SIM-V11 / QS-B1 V2` 已完成四状态本地确定性预演：
+`QUEST-LOG-SEAL-ACTIONS-SIM-V11 / QS-B1 V2` 已完成并获用户确认的四状态本地确定性预演：
 火漆、`6px` 折叠根、七个 `32×22px` 独立分段和短尾端都属于详情
 ScrollChild；展开临时覆盖正文最右 `14..24px` 但不重排，尾端在真实
 `108×41px` 奖励槽前 `32px` 停止，并随内容部分／完全滚出。模拟报告
-`21/21 pass`、display-region `4/4 pass`、ImageGen `0/0`，仍待用户确认。
+`21/21 pass`、display-region `4/4 pass`；完整生产正文已准备，新预算 ImageGen
+`0/5`，仍待独立生图授权。
 
 ## Quest Log 纸页与中央装订
 
@@ -229,7 +230,7 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 | `QUEST.LOG.ACTION.SHARE` | `QuestFramePushQuestButton`；兼容名需探测 | 当前程序化暗皮革 fallback；目标事务菜单代理原 Button |
 | `QUEST.LOG.ACTION.EXIT` | `QuestFrameExitButton`；兼容 `QuestLogFrameCancelButton` | 目标视觉不重复收纳；右上真实 Close 保持独立，fallback 在迁移验收前继续存在 |
 | `QUEST.LOG.DETAIL.TOGGLE` | pfUI `QuestLogFrameExpandButton`；缺失时可创建真实 Button | 当前底部 fallback；目标事务菜单代理同一动态开合行为 |
-| `QUEST.LOG.ACTION.SEAL_MENU` | planned adapter-owned `QuestLogDetailScrollChild` 子树；未接入 | V11 为当前待确认方向：非模态即时开合；漆章、根、七段和尾端随详情内容滚动并由真实 `[366,64,246,324]` viewport 裁切；不创建页外 outset、popup 背板或第二纸面，也不改变正文 `214px`／缩进 `204px`。七段仍是七个独立真实 Button，只代理源 Button、镜像 disabled、保留原生放弃确认与右上 Close；任一 parity 缺失时全部旧入口原子 fail-open。V1 候选和 V10 页外索引签均不得复用；确认前无 source、runtime 或旧按钮隐藏 |
+| `QUEST.LOG.ACTION.SEAL_MENU` | planned adapter-owned `QuestLogDetailScrollChild` 子树；未接入 | V11 已确认：非模态即时开合；漆章、根、七段和尾端随详情内容滚动并由真实 `[366,64,246,324]` viewport 裁切；不创建页外 outset、popup 背板或第二纸面，也不改变正文 `214px`／缩进 `204px`。V2 source 计划用一条连续 normal 母版确定性切为 root＋七个独立 action＋tail，但七段 runtime 仍是七个独立真实 Button，只代理源 Button、镜像 disabled、保留原生放弃确认与右上 Close；任一 parity 缺失时全部旧入口原子 fail-open。V1 候选和 V10 页外索引签均不得复用；独立生图授权前无 source、runtime 或旧按钮隐藏 |
 | `QUEST.LOG.ACTION.SEAL_MENU.RIBBON.ROOT` | planned adapter-owned 无鼠标 Texture | 内容坐标 `[210,30,32,12]`，先于漆章绘制；收起态只有蜡体下方 `6px` 可见。它只表达蜡封压住绶带的物理层序，不是书签、包角或独立承托 |
 | `QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.SHARE` | planned 独立 Button；代理 `QuestFramePushQuestButton` | `[210,42,32,22]`；双羽笔／结约纹章；normal／hover／pressed／disabled 独立状态，不烘焙文字 |
 | `QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.DETAIL` | planned 独立 Button；代理 `QuestLogFrameExpandButton` | `[210,64,32,22]`；折页纹章；动态“展开／收起详情”留给 Tooltip／provider |
