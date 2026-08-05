@@ -721,7 +721,7 @@ def main() -> None:
             "旧七个 provider Button",
             "`5/5`",
             "QS-B1 当前实际生图：`0/5`",
-            "流程错误：`0`",
+            "流程错误：`1`",
             "不得进入 `P6`",
         ),
         "accepted QS-A1 work",

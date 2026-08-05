@@ -14,7 +14,7 @@
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
 - QS-B1 当前实际生图：`0/5`
-- 流程错误：`0`
+- 流程错误：`1`
 - tracked source：
   `assets/source/quests/qs-a1/QuestToolWaxSeal_Master_v1.png`，SHA-256
   `377dcdc141ee5487884bfc99dbfd82013a8c4d7cb7200a4414feebb81d72ab75`。
@@ -1656,7 +1656,12 @@ border; dark-walnut leather remains legible when reduced to 112 x 20 px.
 
 ### 当前门禁
 
-- 当前实际生图：`0/5`；流程错误：`0`。
+- 当前实际生图：`0/5`；流程错误：`1`。
+- `2026-08-05` 流程错误 01：首次本地执行正文 SHA 预检误用了当前
+  PowerShell／.NET 不支持的静态 `SHA256.HashData`；没有启动固定子进程、没有
+  provider 生成证据或 raw，因此不占实际生图额度。紧邻针对性修复改用
+  `SHA256.Create().ComputeHash` 后通过：正文 `79` 行、`5430` UTF-8 bytes，
+  SHA-256 `9810861d310ddd85fc1a7d81a9312036604bb0fe190cb367d1aefd15ff5077c4`。
 - 尚未发生：ImageGen 调用、raw、透明候选、真实排版候选、source、manifest、
   runtime atlas、Lua/XML 接入或旧按钮隐藏。
 - 已获用户授权原文（`2026-08-05`）：`确认授权 QS-B1 V1；允许每次上传固定 SHA 的 Image 1/2，

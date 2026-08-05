@@ -112,7 +112,9 @@
   standard／danger 各四态确定性 atlas 和七个独立 Button 的完整合同与生产
   正文；用户于 `2026-08-05` 明确授权固定 Image 1／2、受限紧邻 Image 3 edit、
   合同内确定性后处理及最多五次实际调用，状态进入
-  `prompt-authorized / P3 / 0/5`。当前 runtime `1.25` 继续把已接受的 QS-A1
+  `prompt-authorized / P3 / 0/5`。首次正文 SHA 预检因当前 .NET 不支持静态
+  `SHA256.HashData` 记流程错误 `1`，兼容改用 `ComputeHash` 后通过且没有启动
+  provider，因此不占额度。当前 runtime `1.25` 继续把已接受的 QS-A1
   漆章以 `32px` 无鼠标 Texture 放到详情页右上纸面；该位置修复不依赖新资产。
   菜单尚未接入，也未隐藏任何旧按钮。
 - AEUI Quest Log provider 兼容子合同保持 `1.7`：在 provider 最终刷新后以
@@ -417,7 +419,7 @@ timer 或 failed 资产：provider 没有可用的公开状态来源。本项目
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
 | `QS-A1` | Quest Log／Tracker 共用漆章母版 | `P5 runtime-exported / page-placement-integrated / 5/5` | source／四态 atlas 保持 accepted；当前 Quest Log runtime `1.25` 直接使用 `32px` 页上 Texture，Tracker 不受影响；没有重开美术或 ImageGen | Turtle WoW 验证页上位置、TGA 方向与标题／正文安全区 |
-| `QS-B1` | Quest Log 七项外侧事务签、真实漆章 Button 与共用无字 tab 母版 | `P3 prompt-authorized / 0/5` | V9 已确认：七个独立 `112×20px` Button、`48px` outset、真实页边遮根；生产正文按全局／任务基线重写并完成完整性预检。用户于 `2026-08-05` 授权固定 Image 1／2、受限同循环 Image 3 edit、确定性后处理和最多五次实际调用；页上 Texture placement 已由 runtime `1.25` 独立实现 | 提交授权状态后执行 attempt 1；通过前不实现菜单、不隐藏 fallback，通过后仍须用户接受才进入 P4/P5 |
+| `QS-B1` | Quest Log 七项外侧事务签、真实漆章 Button 与共用无字 tab 母版 | `P3 prompt-authorized / 0/5`；流程错误 `1` | V9 已确认：七个独立 `112×20px` Button、`48px` outset、真实页边遮根；生产正文按全局／任务基线重写并完成完整性预检。用户于 `2026-08-05` 授权固定 Image 1／2、受限同循环 Image 3 edit、确定性后处理和最多五次实际调用；本地 SHA API 兼容错误没有启动 provider、不占额度；页上 Texture placement 已由 runtime `1.25` 独立实现 | 执行 attempt 1；通过前不实现菜单、不隐藏 fallback，通过后仍须用户接受才进入 P4/P5 |
 
 QS-A1 当前事实：
 
