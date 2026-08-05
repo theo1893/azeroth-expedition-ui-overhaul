@@ -2732,7 +2732,7 @@ silhouette height by the quantified amount.
 - 日期：`2026-08-05`。
 - 状态：`repair-prepared / P3`。
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`。
-- 本版本实际 ImageGen：`1/5`；固定参考上传：`2`；流程错误：`1`。这是新的 V2
+- 本版本实际 ImageGen：`2/5`；固定参考上传：`4`；流程错误：`3`。这是新的 V2
   预算，不能续用或覆盖已耗尽的 V1 `5/5`。
 - 用户生产授权：`2026-08-05`。用户原文：`确认授权 QS-B1 V2；允许每次上传
   固定 SHA 的 Image 1/2，允许同循环紧邻前次输出仅在冻结边界内作为 Image 3
@@ -3174,3 +3174,200 @@ legible at 32 x 174 pixels and every action motif at 32 x 22 pixels.
   真实排版合同；所有禁项。
 - attempt 2 返回后仍从语义／物理结构开始完整审查，并使用候选本身重新生成
   真实排版。通过即停；失败才在剩余 `3` 次额度内制定下一份完整正文。
+
+### attempt 2 执行与完整审查
+
+| 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
+|---|---|---|---|---|---|---|---|
+| `2/5` | `QS-B1 V2.r1` / `bb29988` | regenerate；固定 Image 1／2；无 Image 3 | fixed child `019fd067-eccb-7671-aa39-6de87caa11f4`；provider 返回一张有效图片；复制后因阻止 child 擅自追加第二次生成而由父流程中止，wrapper 退出 `130` | `generated/quests/QS-B1-V2/attempt-02/raw/QS-B1-V2.attempt-02.png`；`fade05990d46671983f931fc2c7e14531d4928c93a4ebb3a87f8046fa9f1fc2a` | bbox／固定九区：raw 可见 `246×1140`、宽高比 `0.2158`，仍比目标 `0.1839` 宽 `17.3%`；等比 fit 后只有 `128×593`，固定 root／tail 为空，不能无缝恢复 `128×696` 九区母版 | 保留连续无横缝亚麻条、空白挂根、七个正确顺序纹章、短毛边尾、暖赭综合色、无火漆／书／文字；这些已满足 Image 3 身份／结构／综合色前置条件，attempt 3 可把本稿作为紧邻 Image 3，仅重绘 bbox 比例、上下占比和九区落位 | `internal-rejected / repair-prepared` |
+
+- raw 尺寸／模式：`1254×1254 RGB`；边缘连通色键后 bbox
+  `[500,59,746,1199]`。第 1 张的七卡横缝已经消失，root／七纹章／tail 的物件
+  语义在 raw 中成立；失败已从“物件解剖错误”收敛为可编辑的几何落位错误。
+- 技术审查 `7/11`。固定九区中 action 1–7 均有可见像素，但 root 与 tail 为
+  `0`；综合色、正视层序、七纹章顺序、第四色键隔离和真实 ScrollChild 裁切均
+  可保留。没有通过裁切、非等比后处理、逐段搬移或补画伪造通过。
+- 真实排版：
+  `generated/quests/QS-B1-V2/attempt-02/review/QS-B1-V2.attempt-02.real-layout.png`，
+  SHA-256 `3cd5310624edadb1f551d6be11b22319553455c28f495c51d842473feac17ba3`；
+  使用真实 `676×464` Frame、`246×324` detail viewport、18 行任务、四个
+  `108×41` 奖励槽及四个滚动场景。运行时综合色和纹章可辨性良好，但空 root／
+  tail 与错位切片仍是客观阻断，不能因整图观感较好而进入用户复审。
+- 本次新增流程错误 `2`，均发生在图片已返回后，不增加生图计数：fixed child
+  临时 Python 缺少 Pillow，机械验证失败一次；随后 child 违反 wrapper 意图，
+  提议自行追加一次 regenerate。父流程在第二次 provider 调用前发送中断；该
+  session 的 generated-images 目录经核对只有一张 PNG。attempt 3 wrapper 将
+  明确要求“一次生成后不审查、不修复、不重试，复制并立即停止”。
+- Image 3 资格：attempt 2 是紧邻候选；已有一件连续物件、可识别 plain root、
+  七个正确顺序动作区、short tail、正确材质／综合色与全部禁项控制。失败只在
+  冻结合同内允许修复的 bbox／居中／九区比例，因此允许作为 attempt 3 的
+  Image 3 edit input。禁止上传 attempt 1、V1、V10、V11 或 QS-A1。
+
+### 完整修复执行正文 — `QS-B1 V2.r2`
+
+Edit Image 3 as the immediate prior candidate. Do not replace it with a new
+unrelated design. Images 1 and 2 remain the fixed higher-authority style
+references; Image 3 supplies only the approved object identity, current cloth
+painting, current seven motifs, current continuous seam-free construction, and
+current warm ochre / umber palette. Preserve those successful properties. Fix
+only the frozen geometry and allocation failure described below. Return one
+normal-state master and no state variants.
+
+The result is exactly one isolated, connected vertical Azeroth expedition-
+guild oath ribbon for a circa-2004 vanilla World of Warcraft quest-log UI. It
+is one heavy yet flexible strip of aged coarse-woven linen that will sit under
+an existing wax seal at runtime. The wax seal is not part of the image. Its
+nine vertically contiguous construction zones are one plain noninteractive
+root, exactly seven equal action bands, and one short noninteractive tail. A
+deterministic exporter will cut them into nine separately owned textures and
+seven real Button hit regions. Do not draw the future hit regions as cards,
+panels, outlines, gaps, or stitched pockets.
+
+Preserve from Image 3 without redesign: one straight-on connected cloth strip;
+the unmarked linen above the first motif; no horizontal cross seams; the same
+broad hand-cut left and right outer edges; the seven existing motif identities
+and exact order; near-black ink for motifs 1–6; restrained dark-wine ink only
+for motif 7; the short lower fray; muted warm ochre linen, deep umber edge and
+upper-left warm light; no wax, book, page, text, labels, metal, other object or
+scenery. Keep Image 3's motif drawing vocabulary, but repaint their positions
+only as required to put each entire motif inside its exact action safe box.
+
+Correct Image 3's measurable failure. Its current visible aspect is about
+0.2158, which is 17.3 percent too wide. Redraw the same cloth noticeably
+narrower so its final width:height is exactly 128:696 = 0.183908; equivalently,
+the height is exactly 5.4375 times the width. If its height were held constant,
+the width would need to be about 85.24 percent of Image 3's current width. This
+is an instruction to repaint the silhouette and weave coherently, not to apply
+a visible digital squash. The resulting motifs must retain natural proportions
+and legibility. Do not keep the current broad bookmark proportion.
+
+Also correct Image 3's vertical allocation. The empty root currently occupies
+too much of the strip and the lower empty fray is too tall. Reallocate the same
+continuous object by these exact percentages of its visible height, with no
+drawn guides or separators:
+- plain root: 0.00% through 6.90% of ribbon height;
+- action 1: 6.90% through 19.54%; motif center near 13.22%;
+- action 2: 19.54% through 32.18%; motif center near 25.86%;
+- action 3: 32.18% through 44.83%; motif center near 38.51%;
+- action 4: 44.83% through 57.47%; motif center near 51.15%;
+- action 5: 57.47% through 70.11%; motif center near 63.79%;
+- action 6: 70.11% through 82.76%; motif center near 76.44%;
+- action 7: 82.76% through 95.40%; motif center near 89.08%;
+- short tail: 95.40% through 100.00% of ribbon height.
+Shorten the plain root so motif 1 begins sooner; shorten the post-motif lower
+fray so it is only the final 4.60 percent. Keep all seven action allocations
+equal. Do not add visible horizontal rules to show those percentages.
+
+The seven fixed action meanings remain, top to bottom:
+1. paired quills tied by a compact binding knot for Share Quest;
+2. one folded ledger leaf for Detail Toggle;
+3. an open guild compass for Show Location;
+4. the same compass crossed by one quiet diagonal veil stroke for Hide
+   Location;
+5. three swept cartographic trail lines for Clean Marks;
+6. one winding route returning into a compact knot for Reset Marks;
+7. one snapped contract cord with a small central break for Abandon Quest.
+Preserve the successful motifs from Image 3, including their hand-painted
+softened pigment character. Do not add letters, numerals, runes, faction logos,
+skulls, aquilas, double-headed eagles, Imperial insignia, science-fiction
+hardware, or another franchise's symbols.
+
+Reference authority remains unchanged:
+1. Image 1 is the highest visual authority. Inherit only its circa-2004 vanilla
+   WoW low-resolution 2D hand-painted language, broad low-frequency value
+   planes, substantial slightly irregular edges, muted ochre / smoked-brown
+   palette, short warm upper-left light, tactile material separation, and
+   sparse concentrated wear. Ignore its open-book composition, parchment
+   pages, leather, straps, compass, wax, bookmarks, brass, rivets, text,
+   buttons, and complete UI.
+2. Image 2 is adjacency-only authority. Inherit only the accepted quest book's
+   local temperature, paint scale, edge softness, light direction, and
+   restrained wear. Ignore its silhouette, pages, spine, stitches, gutter,
+   corners, transparency, and directly reusable pixels.
+3. Image 3 is edit identity authority only. Preserve its one connected linen
+   object, current palette, seam-free continuity and seven motifs. Ignore its
+   green-field gradient, excessive canvas occupancy, 0.2158 aspect, overlong
+   plain top and overlong lower fray. Do not preserve those failures.
+If references conflict, Image 1 plus the vanilla Azeroth quest-ledger baseline
+wins, then Image 2 for adjacency, while Image 3 wins only for the specifically
+preserved object identity and motif painting.
+
+Canvas and occupancy are exact. Output a 1024 x 1024 RGB bitmap. Every pixel
+outside the one ribbon is uniform solid #00FF00, with no gradient, texture,
+checkerboard, haze, vignette, glow, spill, cast shadow, or loose pixels. Place
+the object unrotated in straight-on orthographic front view. Its exact visible
+bbox is [448,164,576,860], exactly 128 x 696 pixels. The ribbon occupies only
+12.5 percent of canvas width and 67.97 percent of canvas height. Leave exactly
+448 pixels of green at both left and right and 164 pixels at both top and
+bottom. Do not let the object nearly fill the canvas as Image 3 did. Keep it
+centered at x = 512. It must survive one exact four-to-one reduction into a
+32 x 174 pixel runtime master without stretching, tiling, or mirroring.
+
+The fixed pixel anatomy within that bbox is mandatory and corresponds exactly
+to the percentage allocation above:
+- root [448,164,576,212], 128 x 48 pixels;
+- action 1 [448,212,576,300], 128 x 88 pixels;
+- action 2 [448,300,576,388], 128 x 88 pixels;
+- action 3 [448,388,576,476], 128 x 88 pixels;
+- action 4 [448,476,576,564], 128 x 88 pixels;
+- action 5 [448,564,576,652], 128 x 88 pixels;
+- action 6 [448,652,576,740], 128 x 88 pixels;
+- action 7 [448,740,576,828], 128 x 88 pixels;
+- tail [448,828,576,860], 128 x 32 pixels.
+The top 24 pixels of root will be hidden by the existing runtime wax seal. Keep
+all 48 root pixels visibly continuous and completely motif-free. Keep all 32
+tail pixels visibly continuous; use only a shallow, restrained fray or fork.
+
+Internal slice lines must remain visually absent, preserving Image 3's
+successful continuous surface. No full-width horizontal seam, stitch line,
+dark rule, ridge, bevel, gap, metal divider, repeated shadow, seven square
+patches, or card stack. The same cloth edges, vertical weave, broad light plane,
+and lower-right edge shadow flow continuously through all nine zones. Separate
+motifs with calm linen breathing room rather than boundaries. High-contrast
+wear, tears and fibers stay away from all internal cut coordinates.
+
+Inside each 128 x 88 action zone, keep the complete corresponding motif within
+relative safe box [16,12,112,76], 96 x 64 pixels. After reduction this becomes
+[4,3,28,19] within a 32 x 22 Button. Center every motif optically. No stroke,
+identifying shape, dark-wine mark, tear or high-contrast wear crosses a zone
+boundary. Keep quiet visible cloth around every motif. Preserve broad irregular
+brush-stamped marks and softened pigment edges. Do not turn them into vector
+icons, embossed badges or modern square icon tiles.
+
+Material and style lock: one aged coarse-woven linen strip, never parchment,
+leather, metal or photographic fabric. Retain Image 3's smoked warm ochre,
+muted old brown, deep umber edge, near-black guild ink and restrained wine
+accent. Use a few broad painterly fiber groups and two or three large value
+planes, not dense procedural microtexture. Keep the short warm upper-left light
+and substantial 2004-era vanilla WoW bitmap weight. It must not become clean
+vector art, photoreal burlap, glossy modern UI, a Diablo panel, minimalist
+Skyrim overlay, Warhammer emblem, mobile toolbar, web button stack, or generic
+fantasy asset.
+
+Strict exclusions: no wax; no book, cover, page, parchment, bookmark, leather,
+frame, popup, backdrop, second surface or scenery; no text, labels, cursor or
+state names; no hover, pressed, disabled, selected or danger copies; no extra
+object, cast shadow, detached decoration or visible guide; no crop, rotation,
+perspective, repeated or mirrored section; no disconnected action pieces; no
+horizontal seams, cards or square panels; no omitted root or tail; no changed
+motif order; no extra eighth action.
+
+Before returning, verify: one connected object; exact 1024 x 1024 RGB canvas;
+uniform #00FF00 outside; exact [448,164,576,860] bbox; exact 0.183908 aspect;
+root 6.90%, seven equal actions 12.64% each, tail 4.60%; motif centers near the
+listed percentages; plain root and short tail both visibly present; no internal
+seams; all seven motifs complete and within safe boxes; only motif seven uses
+wine; no prohibited object or modern style; readable as 32 x 174 master and
+seven 32 x 22 action slices.
+
+### V2.r2 调用边界
+
+- attempt 3 上传固定 Image 1／2，再把 attempt 2 raw（SHA-256
+  `fade05990d46671983f931fc2c7e14531d4928c93a4ebb3a87f8046fa9f1fc2a`）
+  作为唯一 Image 3；三张图的职责已在正文中完整声明。不得上传其他图片。
+- 本次操作是冻结边界内 edit：只修 bbox／居中、整体宽高比、root／action／tail
+  高度占比和安全区落位；保留物件身份、综合色、连续无横缝表面和七纹章。
+- 当前累计 `2/5`；成功返回一张新图后为 `3/5`。wrapper 必须在一次 generation
+  后复制原图并立即停止；禁止 child 自审后追加 regenerate 或 edit。
+- 返回后重新执行完整语义、结构、技术、真实排版与展示区域审查。通过即停；
+  失败才在剩余 `2` 次额度内改变修复策略。
