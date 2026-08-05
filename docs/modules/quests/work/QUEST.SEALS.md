@@ -13,20 +13,22 @@
   `2026-08-05` 回复“可以”
 - 当前已确认布底模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V13 / QS-B1 V4-A`；
   用户于 `2026-08-05` 回复“接受, 用这一套试试效果”
-- 当前待用户确认模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A`；
-  将 ImageGen 布面 donor 与确定性精确轮廓／Alpha mask 分离
+- 当前已确认模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A`；用户于
+  `2026-08-05` 回复“不走figma, 直接下一步”，确认将 ImageGen 布面 donor
+  与确定性精确轮廓／Alpha mask 分离的可见方向
 - 最近一次已执行生产正文：`QS-B1 V4-A.r4 / attempt 5`；V4-A 循环已耗尽，
   当前无下一修复正文
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A
-  `simulation-reviewed / P2 / awaiting-user-confirmation`
+  `simulation-confirmed / P2 / awaiting-production-authorization`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
   `simulation-confirmed / V3-A repair-budget-exhausted / V3-B gated / P3`；V1 保持
   `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`；
   QS-B1 V4-A `candidate-rejected / repair-budget-exhausted / P3 / 5/5`；
-  QS-B1 V5-A `simulation-reviewed / P2 / production-not-authorized`
+  QS-B1 V5-A `simulation-confirmed / P2 / prompt-prepared /
+  production-not-authorized`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -36,8 +38,9 @@
   授权顺序门禁未执行 V3-B）
 - QS-B1 V4-A ImageGen：`5/5`；流程错误 `1`；五次均有 provider 图片证据；
   第五稿为本轮最佳视觉但比例误差 `7.287%`，禁止 attempt 6
-- QS-B1 V5-A 模拟 ImageGen：`0/0`；production `0` 次且未授权；V14 只用
-  本地平面几何预演 donor／crop／mask／composite 分工
+- QS-B1 V5-A 模拟 ImageGen：`0/0`；production `0/5` 且未授权；V14 只用
+  本地平面几何预演 donor／crop／mask／composite 分工，用户确认不接受其中
+  任何模拟像素
 - QS-B1 历史流程错误：V1 `1`、V2 `3`、V3 `0`、V4-A `1`。均按“无生成证据才不占
   额度”记录
 - tracked source：
@@ -5458,9 +5461,10 @@ photography, weave, extra object, icon, text, wax or bright color.
   修改授权。
 - 新版本为 `QS-B1 V5-A`；组件仍只有
   `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX`。当前子状态：
-  `simulation-reviewed / P2 / awaiting-user-confirmation`；操作 `simulate`；
-  本地 ImageGen `0/0`、上传 `0`、生产实际调用 `0`。未来最多五次只是下方
-  草案上限，用户明确授权前没有可消费的生产额度。
+  `simulation-confirmed / P2 / prompt-prepared /
+  awaiting-production-authorization`；操作 `prepare`；本地 ImageGen `0/0`、
+  上传 `0`、生产实际调用 `0/5`。最多五次只是下方待授权上限，用户明确授权
+  前没有可消费的生产额度。
 - V4-A 证明生成模型可以接近暗色、厚重、非周期宽边和双钝缺口方向，却无法在
   五次内同时满足精确 `128:696` 外形。V5-A 因而拆分职责：ImageGen 只负责
   连续旧布表面；tracked deterministic crop／mask 只负责精确外轮廓、Alpha、
@@ -5532,6 +5536,29 @@ photography, weave, extra object, icon, text, wax or bright color.
   board、构造图和报告都位于 ignored `generated/`，不得作为 source、runtime、
   addon 媒体或未来 ImageGen 输入。
 
+### V14 用户方向确认 — `2026-08-05`
+
+- 用户回复原文：“不走figma, 直接下一步”。该回复发生在 V14 六态真实排版、
+  donor／crop／mask 构造图和设计审查已经呈现之后，因此按资产工作流记为对
+  `QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A` 可见方向的确认。
+- 当前推进为 `simulation-confirmed / P2`。这次确认只冻结下列文字化方向，
+  不接受 V14 模拟像素，也不授权 ImageGen、上传、确定性 source 晋级、P4／P5、
+  Lua／addon 接入或隐藏旧 provider Button：
+  1. ImageGen 未来只负责全画幅、全不透明、连续暗旧亚麻布 donor；固定中央裁片
+     与 tracked deterministic mask 独占精确 `128×696` 轮廓、Alpha 和两处
+     不等宽粗钝浅缺口；用户最终审查对象是 composite，不是 raw donor。
+  2. 综合色保持低饱和烟熏深旧棕、暗胡桃和深褐阴影，以宽而低频、非周期的
+     大明暗面和克制污渍构成；不出现明亮轻浮、连续微织纹、规则动作格或现代
+     工具栏质感。
+  3. V12／V13 已冻结的 ScrollChild 层序、页上火漆、动态 prefix＋tail、七张
+     独立纹章、七个独立 Button、hidden 收拢、disabled 留位、部分滚动命中、
+     完全滚出、奖励前 `32px` 留白和原子 fail-open 全部保持。
+  4. V14 的 donor、construction、board 与报告继续只是可重建的 ignored
+     方向证据，禁止成为 source、runtime 或 ImageGen 输入。
+- 下一门禁是用户独立授权下方最终 `QS-B1 V5-A` production 正文、固定
+  Image 1／2、确定性 crop／mask 例外、同循环紧邻前稿的受限 Image 3 edit
+  输入，以及最多五次实际 ImageGen 调用。
+
 ### 固定参考与裁决顺序
 
 1. `Image 1`：`assets/locked/quests/任务详情面板_视觉基准_v1.png`，SHA-256
@@ -5547,7 +5574,7 @@ photography, weave, extra object, icon, text, wax or bright color.
    全部排除。V13／V14 模拟、V1–V4-A 失败候选、runtime atlas、review 图与
    addon 截图均不得上传。
 
-### QS-B1 V5-A 完整 production prompt 草案
+### QS-B1 V5-A 最终 production prompt — 待独立授权
 
 ```text
 Create one production material-donor bitmap for a Turtle WoW 1.18.1,
@@ -5643,7 +5670,11 @@ rows quiet; no threads, weave, repeating cells, icon, text, wax, book, shadow,
 bright color, modern styling, or extra object.
 ```
 
-### Prompt 完整性预审
+### Prompt 完整性复审
+
+- 结论：`pass / prompt-prepared`。V14 用户确认没有改变对象、屏幕构图、材质
+  层级、综合色或参考职责；确认条款已经逐项存在于下方最终正文和冻结修复
+  边界中。未知但执行必需的值：无。
 
 | 检查项 | V5-A 结论 |
 |---|---|
@@ -5656,7 +5687,7 @@ bright color, modern styling, or extra object.
 | 可审查性 | donor 与 composite 分开审查；只有 composite 可获接受，mask bbox、notch 数、crop、runtime 尺寸和 display-region 均可机器验证 |
 | 不确定项 | 最终 donor 笔触、缩小后的边缘 Alpha 与客户端混合仍需候选和实机验证；V14 不替代这些门禁 |
 
-### 最多五次草案循环、修复边界与停止条件
+### 最多五次生产循环、修复边界与停止条件
 
 - 本节尚未获生产授权。若用户未来明确授权，attempt 1 固定上传上述 Image 1／2，
   使用 `imagegen-0-143-0` 内固定 `@openai/codex@0.143.0` 的 `generate`；
@@ -5686,12 +5717,26 @@ bright color, modern styling, or extra object.
   fail-open 行为不变。
 - `git diff --check`：pass。generated V14 像素仍由 `/generated/` ignore 规则
   排除，当前不建立 handoff，也不推送。
+- V14 用户确认后的 Windows 复核：系统 `py -3` 不可用；最终统一选用 Codex
+  workspace Python
+  `C:\Users\西奥\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe`
+  `3.12.13` 重新执行全部 Python 门禁。renderer 仍为 `46/46 pass`，board／
+  construction SHA 分别精确复现
+  `a416c71d…67cb0`／`f85578fa…8c5d8`；本机 JSON report SHA 分别为
+  `6a43e5f7…7eb`／`4f05958e…61ed`，语义结果仍为 `displayable` 与
+  display-region `6/6 pass`、violations `0`。Quest design、repository、
+  asset-workflow contract、`py_compile` 与 Lua smoke 全部 pass。
 
 ### 当前停止点
 
-- 当前最高允许结果是 `simulation-reviewed / P2 / awaiting-user-confirmation`。
-  下一门禁是用户审视 V14 的真实任务书 board 与 donor／mask 构造图，明确接受、
-  否决或要求修改 V5-A 可见方向。
-- 即使用户接受 V14，也只把状态推进到 `simulation-confirmed / P2`；之后必须把
-  本节完整 production 正文、固定两图、确定性 mask 例外和最多五次实际调用
-  边界再次呈现并获得独立明确授权，才可进入 `prompt-authorized / P3`。
+- 当前最高允许结果是 `simulation-confirmed / P2 / prompt-prepared /
+  awaiting-production-authorization`。V14 方向已确认，最终 production 正文
+  与 Prompt 完整性复审均已冻结；本次没有 ImageGen、上传、source、runtime
+  或 addon 修改。
+- 下一门禁必须由用户独立明确授权：`QS-B1 V5-A` 最终 production prompt；
+  固定 SHA 的 Image 1／2；square raw 同轴归一化、固定
+  `[448,164,576,860]` crop、V14 polygon `4×` mask、透明 RGB 清零与精确
+  `128×696 RGBA` composite；同循环紧邻前稿仅在上述冻结边界内可作为唯一
+  Image 3 edit 输入；最多 `5` 次实际 ImageGen 调用，流程错误另计。
+- 获得该独立授权前保持 production `0/5`，不得调用固定执行器、创建 source／
+  manifest／exporter／runtime、修改 addon 或隐藏旧 provider Button。

@@ -3045,11 +3045,13 @@ def main() -> None:
         seals_work,
         (
             "QS-B1 V5-A 布面供体＋确定性轮廓蒙版",
-            "simulation-reviewed / P2 / awaiting-user-confirmation",
+            "simulation-confirmed / P2",
+            "awaiting-production-authorization",
+            "不走figma, 直接下一步",
             "ImageGen 只负责\n  连续旧布表面",
             "固定裁片",
             "accepted source",
-            "QS-B1 V5-A 完整 production prompt 草案",
+            "QS-B1 V5-A 最终 production prompt — 待独立授权",
             "This output is NOT a ribbon sprite",
             "[448,164,576,860]",
             "exactly two short, broad, broken dim fold planes",
@@ -3058,15 +3060,15 @@ def main() -> None:
             "禁止 attempt 6",
             "production-not-authorized",
         ),
-        "QS-B1 V5-A pre-generation simulation and prompt gate",
+        "QS-B1 V5-A confirmed simulation and production authorization gate",
     )
     require(
         progress,
         (
             "QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A",
             "ImageGen 全幅布面 donor＋确定性 `128×696` crop／mask",
-            "simulation-reviewed / P2",
-            "production 未授权",
+            "simulation-confirmed / P2",
+            "production 保持 `0/5` 且未授权",
         ),
         "QS-B1 V5-A progress gate",
     )
