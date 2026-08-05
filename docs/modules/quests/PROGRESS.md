@@ -181,11 +181,14 @@
   偏移，尾端只保留两处不等宽钝缺口，亮面改成断续宽块；7／5／3 项仍从同一
   `32×174px` 最大母版取前缀并接同一 tail。真实排版与结构检查 `40/40 pass`，
   display-region `6/6 pass`、violations `0`，ImageGen `0/0`。用户于
-  `2026-08-05` 回复“接受, 用这一套试试效果”，当前为
-  `prompt-authorized / P3`；
+  `2026-08-05` 回复“接受, 用这一套试试效果”；
   V13 像素不是 source、runtime 或未来 ImageGen 输入。V4-A 完整 production
   prompt、固定 Image 1／2、最多五次实际调用与冻结修复边界已完成审计并于
-  `2026-08-05` 获用户明确授权，正式 ImageGen 仍为 `0/5`。
+  `2026-08-05` 获用户明确授权。五次实际 ImageGen 已执行并耗尽，流程错误
+  `1`；attempt 5 为本轮最佳综合色和形制，但 raw `176×892px` 相对目标
+  `128:696` 的比例误差 `7.287%`，超过授权 `≤1%`，同轴等比只能形成
+  `128×649px`。自动检查 `5/9`，真实排版 `26/26`、display-region `6/6`
+  通过；终态为 `candidate-rejected / repair-budget-exhausted / P3 / 5/5`。
   runtime `1.25` 继续把已接受的 QS-A1 漆章以 `32px` 无鼠标 Texture 放到
   详情页右上纸面；菜单尚未接入，也未隐藏任何旧按钮。
 - AEUI Quest Log provider 兼容子合同保持 `1.7`：在 provider 最终刷新后以

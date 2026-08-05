@@ -224,11 +224,12 @@ atlas，但不得合并 UV、Button 或 manifest ID，也不得把纹章重新�
 确认 V12 的 V3 几何、层序、动态收拢和分层资产方向；模拟像素仍非 source 或
 ImageGen 输入。V3-A 五次候选随后因连续微纹、比例误差、规则切口与亮色轻浮
 被否决；V3-B 未执行。用户于 `2026-08-05` 又确认 V13 的暗色、非周期宽边与
-双钝缺口 V4-A 方向；V13 像素仍非 source 或 ImageGen 输入。V4-A 空白背景
-production prompt 已准备，当前必须等待固定输入、同段 edit 边界与最多五次
-实际调用的独立授权；授权前不得生图、上传、导出、接入或隐藏旧按钮。V1、V2、
-V3 失败候选和 V10–V13 模拟均不得成为 V4 edit input、source、runtime 或
-确定性美术例外。
+双钝缺口 V4-A 方向；V13 像素仍非 source 或 ImageGen 输入。V4-A 随后在
+固定 Image 1／2 与冻结边界内执行至 `5/5`；第五稿的暗色宽面、非周期边和
+双缺口最接近 V13，但 raw `176×892px` 相对目标比例误差仍为 `7.287%`，超过
+授权 `≤1%`，因此为 `candidate-rejected / repair-budget-exhausted / P3`。
+它不构成新的稳定 source 美术基线；V1、V2、V3、V4-A 失败候选和 V10–V13
+模拟均不得成为后续 edit input、source、runtime 或未授权的确定性美术例外。
 `QS-B1 V1` 的五次候选仍保持历史结论：用户于 `2026-08-05` 明确判定“不可接受”，
 不得成为 V2 edit input；该结论不会因 V3 改向而重写。
 

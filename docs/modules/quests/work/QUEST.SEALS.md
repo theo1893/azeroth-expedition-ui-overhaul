@@ -13,15 +13,16 @@
   `2026-08-05` 回复“可以”
 - 当前已确认布底模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V13 / QS-B1 V4-A`；
   用户于 `2026-08-05` 回复“接受, 用这一套试试效果”
-- 最近一次已执行生产正文：`QS-B1 V3-A.r4 / attempt 5`；V3-A 循环已耗尽，
+- 最近一次已执行生产正文：`QS-B1 V4-A.r4 / attempt 5`；V4-A 循环已耗尽，
   当前无下一修复正文
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
-  `prompt-authorized / P3`
+  `candidate-rejected / repair-budget-exhausted / P3`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
   `simulation-confirmed / V3-A repair-budget-exhausted / V3-B gated / P3`；V1 保持
-  `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`
+  `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`；
+  QS-B1 V4-A `candidate-rejected / repair-budget-exhausted / P3 / 5/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -29,9 +30,9 @@
 - QS-B1 V2 ImageGen：`4/5`（第 5 次未调用；旧授权不得转用于 V3）
 - QS-B1 V3 ImageGen：V3-A `5/5`、V3-B `0/5`（V3-A 未内部通过，故按联合
   授权顺序门禁未执行 V3-B）
-- QS-B1 V4-A ImageGen：`0/5`；流程错误 `1`；生成前上传／provider job `0`；
-  用户已授权，等待同一 production 正文的 transport retry
-- QS-B1 历史流程错误：V1 `1`、V2 `3`；V3 `0`。均按“无生成证据才不占
+- QS-B1 V4-A ImageGen：`5/5`；流程错误 `1`；五次均有 provider 图片证据；
+  第五稿为本轮最佳视觉但比例误差 `7.287%`，禁止 attempt 6
+- QS-B1 历史流程错误：V1 `1`、V2 `3`、V3 `0`、V4-A `1`。均按“无生成证据才不占
   额度”记录
 - tracked source：
   `assets/source/quests/qs-a1/QuestToolWaxSeal_Master_v1.png`，SHA-256
@@ -4876,14 +4877,14 @@ rhythm, bright color, modern ribbon geometry, or extra object.
   edit 输入；最多 5 次实际 ImageGen 调用，流程错误不占额度；允许按合同执行
   同轴 1024² 归一化、边缘连通色键、透明 RGB 清零及纵横比误差 ≤1% 的等比
   bbox-fit。`
-- 当前子状态：`prompt-authorized / P3`。授权严格对应上方逐字 production 正文、
+- 授权时子状态：`prompt-authorized / P3`。授权严格对应上方逐字 production 正文、
   两张固定 SHA 参考、冻结修复边界和最多 `5` 次实际调用；V13 模拟像素、V3-A
   失败稿、其他 reference 与跨段候选仍禁止上传。
-- production 当前为 `0/5`，流程错误 `1`。授权版本已由 commit `6cbf715`
-  固定；下一门禁为以完全相同正文与固定 Image 1／2 进行一次 transport retry。
+- production 最终为 `5/5`，流程错误 `1`。授权版本由 commit `6cbf715`
+  固定，五稿均有 provider 图片证据；最终门禁与结果见下方 attempt 记录。
 - 授权允许生成与内部审查到 `candidate-reviewed / P3`，但不等于用户接受 source。
-  循环通过前不创建 source、manifest、exporter 或 runtime，不修改 addon，
-  不隐藏或代理旧按钮，也不执行 V3-B。
+  本循环未通过，因此没有创建 source、manifest、exporter 或 runtime，没有
+  修改 addon、隐藏或代理旧按钮，也没有执行 V3-B。
 
 ### V4-A 正式生成与流程错误记录
 
@@ -5393,3 +5394,50 @@ photography, weave, extra object, icon, text, wax or bright color.
 - 下一次执行前提交本节。attempt 5 若返回候选即累计 `5/5`；若仍有任一客观
   失败，必须停止为 `candidate-rejected / repair-budget-exhausted`，禁止
   attempt 6。
+
+#### Attempt 5 执行、真实排版与终止审查
+
+- 正文／执行前 commit：`QS-B1 V4-A.r4 / 3d16cfa`；操作 `generate`；固定
+  Image 1／2，未上传 attempt 4 或其他候选作为 Image 3。固定
+  `@openai/codex@0.143.0` child session：
+  `019fd17b-35fe-7d01-ba81-cfd857a8129e`；cache result：
+  `ig_07168aa87bdeb136016a73119ae26081918e66a91bcded0089.png`。
+- child 在实际生成后因只读工作目录不能直接写入指定路径；parent 从该 child
+  的原始 cache 精确回收同一 PNG，没有再次调用 provider。raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V4-A/attempt-05/QS-B1-V4-A.r4.attempt-05.raw.png`，
+  `1254×1254 RGB`，SHA-256
+  `e2c3a3d46ddbf4a2de63fcd1bb3c1f271c93d04e3dbcb3c658a82e037d6a1b19`。
+  这是第五次实际 ImageGen，不是流程错误；V4-A 最终计数 `5/5`、流程错误
+  `1`。
+- 第一失败门禁为冻结的 `组件合同／bbox`。边缘连通色键后 raw 可见对象为
+  `176×892px`，aspect `0.197309` 对目标 `0.183908`，相对误差
+  `7.287%`，超过用户授权的 `≤1%`。同轴等比 bbox-fit 只能得到
+  `128×649px`，不能无变形填满 `128×696px`；runtime 可见 bbox 为
+  `[0,3,32,171]`，并非 `[0,0,32,174]`，尾部动态切线也没有全宽布面。
+  自动检查 `5/9 pass`，第一机器失败为
+  `normalized_visible_bbox_exactly_128x696`。
+- 综合色和形制是本轮五稿中最接近 V13 的一稿：单连通暗色窄布、低饱和烟熏
+  旧棕、安静宽面、轻微非周期侧边、近水平顶部和两处不等宽尾缺口均成立；
+  没有额外纹章、Button、文字、火漆或横贯式明亮分段。它可作为用户判断下一
+  版本方向的 review evidence，但技术合同失败，不能成为 source、runtime、
+  bbox-fit 例外或插件接入。
+- 真实排版：
+  `generated/quests/QUEST-SEALS/QS-B1-V4-A/attempt-05/review/QS-B1-V4-A.r4.attempt-05.real-layout.png`，
+  SHA-256
+  `8608743b3670ec2c32c9cd12b969f8079c9ad2594ef125906a3d8a7e02d86103`；
+  七项／五项／三项禁用／部分滚动／全部滚出等六场景的动态几何
+  `26/26 pass`。display-region report SHA-256
+  `54bbe35787acce5519f8fc94877a4425285d8198ca8170aceba807ebe9df8856`，
+  `6/6 pass`、violations `0`。这些结果只证明现有 viewport、滚动、收拢和
+  命中合同，不能推翻 source 比例失败。
+- 技术审查记录：
+  `generated/quests/QUEST-SEALS/QS-B1-V4-A/attempt-05/review/QS-B1-V4-A.r4.attempt-05.review.json`，
+  SHA-256
+  `5b0e862af1fd7a6f97617ebd03422168d596ac023da0e221b3084f83997a3234`；
+  contact sheet SHA-256
+  `07337001658c9bdac44db7f26609f9f04ef20c4a133526e81e2b4702f1b46b9c`。
+- 循环终态：`candidate-rejected / repair-budget-exhausted / P3 / 5/5`。
+  剩余额度 `0`，禁止 attempt 6；不执行 V3-B，不创建 source／manifest／
+  exporter／runtime，不修改 addon，也不隐藏旧 provider Button。下一门禁是
+  用户基于第五稿决定另开 V5、显式授权新的确定性比例合同例外，或暂停该背景；
+  任一选择都不能在本授权内自动继续。
