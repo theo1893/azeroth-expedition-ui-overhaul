@@ -14,7 +14,7 @@
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
 - QS-B1 当前实际生图：`0/5`
-- 流程错误：`0`
+- QS-B1 流程错误：`1`（E1 未进入生成器，不占生图额度）
 - tracked source：
   `assets/source/quests/qs-a1/QuestToolWaxSeal_Master_v1.png`，SHA-256
   `377dcdc141ee5487884bfc99dbfd82013a8c4d7cb7200a4414feebb81d72ab75`。
@@ -1797,7 +1797,7 @@ border; dark-walnut leather remains legible when reduced to 112 x 20 px.
 ### 当前门禁
 
 - 当前状态：`prompt-authorized / P3 / 0/5`。
-- 当前实际生图：`0/5`；流程错误：`0`。
+- 当前实际生图：`0/5`；流程错误：`1`。
 - 尚未发生：ImageGen 调用、raw、透明候选、真实排版候选、source、manifest、
   runtime atlas、Lua/XML 接入或旧按钮隐藏。
 - `QS-B1-INTERACTION V1` 已由用户于 `2026-08-05` 确认；该确认没有授权
@@ -1810,4 +1810,11 @@ border; dark-walnut leather remains legible when reduced to 112 x 20 px.
 - 本授权只允许上述固定生产正文、固定 SHA 的 Image 1／2、受限同循环 Image 3
   edit、最多五次实际调用与合同内确定性后处理；不授权 source 晋级、P4／P5、
   Lua 接入或旧按钮隐藏。
-- 当前下一门禁：提交本授权状态后，使用 `QS-B1 V1` 原样正文执行 attempt 1。
+- 当前下一门禁：按 E1 的单一 transport 修复，在最后一个 `--image` 参数后加入
+  CLI 选项终止符 `--`，使用同一已提交正文与同一 Image 1／2 重试 attempt 1。
+
+### QS-B1 流程错误记录
+
+| 流程错误 | 正文版本／commit | wrapper chunk | 错误与无生成证据 | 针对性修复 | 结论 |
+|---:|---|---|---|---|---|
+| E1 | `QS-B1 V1` / `65f83d5` | `37ebfe` | 固定 CLI 在 `1.85s` 内退出 `1`，仅输出 `Reading prompt from stdin... No prompt provided via stdin.`；没有输出文件、provider result 或生成作业证据。诊断确认 shell 实际构造了单一 `5665` 字节 prompt 参数，但 0.143.0 的 `--image <FILE>...` 把其继续解析为图片参数，导致位置 prompt 缺失 | 只在最后一个固定 Image 2 后增加参数终止符 `--`；正文、输入顺序、SHA、输出路径与授权边界均不变 | pre-generation transport error；不占额度，仍为 `0/5` |
