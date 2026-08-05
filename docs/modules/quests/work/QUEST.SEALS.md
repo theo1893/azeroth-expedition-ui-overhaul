@@ -9,7 +9,8 @@
 - 当前生产正文：`QS-B1 V1`
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu `P2`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1
-  `simulation-confirmed / interaction-contract-draft / prompt-draft`
+  `simulation-confirmed / interaction-confirmed / prompt-draft /
+  awaiting-production-authorization`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -42,8 +43,8 @@
   `48px` 外伸，并移除箭头、逐项铆钉和明亮顶部高光。用户于
   `2026-08-03` 回复“进入下一步”，明确确认 V9 可见方向；确认只冻结下述
   文字化布局与综合色结论，不接受模拟像素。当前已准备 `QS-B1 V1` 生产正文，
-  并新增 `QS-B1-INTERACTION V1` 待确认交互草案；先确认交互，再独立请求正式
-  ImageGen 授权。
+  `QS-B1-INTERACTION V1` 已于 `2026-08-05` 获用户明确接受；当前下一门禁为
+  独立请求 `QS-B1 V1` 的正式 ImageGen 授权。
   旧 Quest Log／Tracker provider Button 在各自菜单功能等价前继续可见可用。
 
 ## 用户接受与 P4／P5 固化
@@ -90,7 +91,7 @@
 |---|---|---|
 | `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前 runtime `1.19` 为 `[576,68,32,32]` 无鼠标 Texture | QS-A1 V1.r4 美术保持 accepted；`32px` 漆章直接压在详情页右上纸面，保留区 `[572,64,40,40]`。QS-B1 完成前不把它伪装成可点击 Button |
 | `QUEST.LOG.CHROME.SEAL.SUPPORT` | 无 runtime 对象 | V9 明确不创建书签、包角、皮革／黄铜承托；只允许漆章自身接触阴影落在现有右页纸面 |
-| `QUEST.LOG.CHROME.SEAL.MENU` | 尚无 runtime 对象 | V9 已确认：七个独立短书口事务签 Texture 从 detail 右边界 `x=612` 向书外伸出，整体 `[612,112,112,158]`；真实页边 mask `[604,102,24,180]` 遮住根部，正文／奖励零占用。`QS-B1-INTERACTION V1` 待确认：每条只在未遮住的右侧 `96×20px` 接收鼠标，七项通过源 Button `:Click()` 委托，功能等价前旧八控件原子 fail-open。QS-B1 只生成一枚无字共用母版并确定性派生八态 |
+| `QUEST.LOG.CHROME.SEAL.MENU` | 尚无 runtime 对象 | V9 与 `QS-B1-INTERACTION V1` 均已确认：七个独立短书口事务签 Texture 从 detail 右边界 `x=612` 向书外伸出，整体 `[612,112,112,158]`；真实页边 mask `[604,102,24,180]` 遮住根部，正文／奖励零占用。每条只在未遮住的右侧 `96×20px` 接收鼠标，七项通过源 Button `:Click()` 委托，功能等价前旧八控件原子 fail-open。QS-B1 只生成一枚无字共用母版并确定性派生八态 |
 | `QUEST.TRACKER.HUB.SEAL` | adapter-owned 无鼠标 Texture，已由临时 tracker runtime 挂载 | `34 × 34` 顶部中央漆章；宽度 `W` 时 `x=floor((W-34)/2)`、`y=-18`，底边恰好落在 provider `16px` 工具条／列表起点，不移动任务内容 |
 | `QUEST.TRACKER.HUB.MENU` | 尚无对象 | 未来独立交互批次；漆章点击后承载七项 provider 行为。本模拟不绘制、不实现，也不把它当成已有 Button |
 
@@ -1432,7 +1433,7 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 
 - 日期：`2026-08-05`
 - 操作：`prepare`
-- 子状态：`interaction-contract-draft / P2 / awaiting-user-confirmation`
+- 子状态：`interaction-confirmed / P2 / awaiting-production-authorization`
 - 复用的已确认视觉：`QUEST-LOG-SEAL-ACTIONS-SIM-V9`；本合同不改变火漆、
   七条事务签、页边遮根、`48px` outset 或 detail／reward 零占用，因此不创建
   新的视觉模拟版本。
@@ -1549,13 +1550,15 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 
 ### 当前结论与下一门禁
 
-- 当前结论：`proposed-for-user-review`。这是交互合同草案，不是 runtime 实现，
-  也不代表用户已接受。
-- 本合同相对 V9 唯一新的可见观感是“即时展开、无滑入动画”和打开期间火漆
-  使用 pressed 视觉；其余是不可见的命中、委托与回退边界。
-- 下一门禁：用户确认或修订 `QS-B1-INTERACTION V1`。确认后才把合同冻结为
-  QS-B1 runtime 验收依据；正式事务签资产仍需对 `QS-B1 V1` 生产正文另行明确
-  授权，确认交互不等于授权 ImageGen 或 Lua 接入。
+- 用户结论与日期：`confirmed / 2026-08-05`；用户回复“接受”。
+- 已冻结为 QS-B1 runtime 验收依据：非模态一级菜单、即时展开且无滑入动画、
+  打开期间火漆使用 pressed 视觉、七条可见 Texture／右侧真实命中区分离、
+  七项先收起再通过源 Button `:Click("LeftButton")` 委托、原生放弃确认、
+  事件驱动 enabled 同步、无全屏挡板和旧八控件原子 fail-open。
+- 本次接受只确认交互合同，不接受任何新 source 像素，不授权 ImageGen，
+  不授权 Lua 接入，也不授权提前隐藏旧按钮。
+- 下一门禁：用户独立授权 `QS-B1 V1` 最终生产正文、固定输入、冻结修复边界
+  与最多五次实际 ImageGen 调用。
 
 ## Quest Log 克制型书口事务签 — `QS-B1 V1`
 
@@ -1563,8 +1566,8 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 
 - 日期：`2026-08-03`
 - 组件：`QUEST.LOG.ACTION.SEAL_MENU.TAB.BASE`
-- 子状态：`simulation-confirmed / interaction-contract-draft / prompt-draft /
-  awaiting-interaction-confirmation`
+- 子状态：`simulation-confirmed / interaction-confirmed / prompt-draft /
+  awaiting-production-authorization`
 - 项目阶段：`P2`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
 - 操作：`prepare`；授权前实际 ImageGen：`0/5`
@@ -1629,7 +1632,7 @@ Image 2 是已接受的派生空书母版，不能反向覆盖 Image 1 的香草
   mask 复用现有 shell 像素，不生产新的 ImageGen 资产。
 - 收起态只显示漆章；展开态显示七个 Button。具体状态、收起触发、enabled
   同步、源 Button `:Click()` 委托、原生放弃确认和 fail-open 以
-  `QS-B1-INTERACTION V1` 为当前待确认合同；右键只保留为未来配置入口，
+  已确认的 `QS-B1-INTERACTION V1` 为合同；右键只保留为未来配置入口，
   本批不实现新业务逻辑。
 - 任一 provider 未捕获、状态无法镜像或 atlas 缺失时，全部旧按钮保持可见
   可用，事务菜单不接管鼠标；只有七项功能等价同时成立后才隐藏 fallback。
@@ -1796,8 +1799,9 @@ border; dark-walnut leather remains legible when reduced to 112 x 20 px.
 - 当前实际生图：`0/5`；流程错误：`0`。
 - 尚未发生：ImageGen 调用、raw、透明候选、真实排版候选、source、manifest、
   runtime atlas、Lua/XML 接入或旧按钮隐藏。
-- 首先需要用户确认或修订 `QS-B1-INTERACTION V1`；该确认不授权 ImageGen。
-- 交互确认后的生产授权原文：`确认授权 QS-B1 V1；允许每次上传固定 SHA 的 Image 1/2，
+- `QS-B1-INTERACTION V1` 已由用户于 `2026-08-05` 确认；该确认没有授权
+  ImageGen、Lua 接入或旧按钮隐藏。
+- 当前所需生产授权原文：`确认授权 QS-B1 V1；允许每次上传固定 SHA 的 Image 1/2，
   允许同循环紧邻前次输出仅在冻结边界内作为 Image 3 edit 输入；最多 5 次实际
   ImageGen 调用，流程错误不占额度；允许按合同执行确定性边缘连通色键、透明
   RGB 清零与等比 bbox-fit。`
