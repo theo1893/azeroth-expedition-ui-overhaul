@@ -188,6 +188,33 @@ def main() -> None:
     seal_actions_sim_v11_renderer = (
         seal_actions_sim_v11_renderer_path.read_text(encoding="utf-8")
     )
+    seal_actions_sim_v12_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_layered_actions_simulation_v12.json"
+    )
+    seal_actions_sim_v12_spec = json.loads(
+        seal_actions_sim_v12_spec_path.read_text(encoding="utf-8")
+    )
+    seal_actions_sim_v12_display_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v12_display_region.json"
+    )
+    seal_actions_sim_v12_display = json.loads(
+        seal_actions_sim_v12_display_path.read_text(encoding="utf-8")
+    )
+    seal_actions_sim_v12_renderer_path = (
+        ROOT / "tools" / "render_quest_log_seal_layered_actions_simulation_v1.py"
+    )
+    assert seal_actions_sim_v12_renderer_path.is_file(), (
+        seal_actions_sim_v12_renderer_path
+    )
+    seal_actions_sim_v12_renderer = (
+        seal_actions_sim_v12_renderer_path.read_text(encoding="utf-8")
+    )
     seal_actions_sim_renderer = (
         ROOT / "tools" / "render_quest_log_seal_actions_simulation_v1.py"
     )
@@ -370,18 +397,28 @@ def main() -> None:
             "`QUEST.LOG.ACTION.SHARE`",
             "`QUEST.LOG.ACTION.EXIT`",
             "`QUEST.LOG.ACTION.SEAL_MENU`",
-            "`QUEST.LOG.ACTION.SEAL_MENU.RIBBON.ROOT`",
-            "`QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.SHARE`",
-            "`QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.DETAIL`",
-            "`QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.SHOW`",
-            "`QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.HIDE`",
-            "`QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.CLEAN`",
-            "`QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.RESET`",
-            "`QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.ABANDON`",
-            "`QUEST.LOG.ACTION.SEAL_MENU.RIBBON.TAIL`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.ROOT`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY.VARIANT_A`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY.VARIANT_B`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY.VARIANT_C`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.TAIL`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.MOTIF.SHARE`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.MOTIF.DETAIL`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.MOTIF.SHOW`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.MOTIF.HIDE`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.MOTIF.CLEAN`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.MOTIF.RESET`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.MOTIF.ABANDON`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.BUTTON.SHARE`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.BUTTON.DETAIL`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.BUTTON.SHOW`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.BUTTON.HIDE`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.BUTTON.CLEAN`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.BUTTON.RESET`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.BUTTON.ABANDON`",
             "`QUEST.LOG.ACTION.SEAL_MENU.PAGE_EDGE_MASK`",
-            "用户接受具体候选前无 source、runtime 或旧按钮隐藏",
-            "V1 候选和 V10 页外索引签均不得复用",
+            "用户接受 V3 模拟前不得生图、导出、接入或隐藏旧按钮",
+            "V2 在 `4/5` 后因质感工整和单图所有权错误被用户取代",
             "当前程序化暗皮革 fallback",
             "`108×41px` 双列锚点",
             "名称安全宽 `64px`",
@@ -2717,16 +2754,21 @@ def main() -> None:
     require(
         submodules,
         (
-            "QUEST-LOG-SEAL-ACTIONS-SIM-V11 / QS-B1 V2",
-            "`QUEST.LOG.ACTION.SEAL_MENU.RIBBON.ROOT`",
-            "`QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.SHARE`",
-            "`QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.ABANDON`",
-            "`QUEST.LOG.ACTION.SEAL_MENU.RIBBON.TAIL`",
-            "七个独立真实 Button",
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V12 / QS-B1 V3",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.ROOT`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY.VARIANT_A`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY.VARIANT_B`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY.VARIANT_C`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.TAIL`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.MOTIF.SHARE`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.MOTIF.ABANDON`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.BUTTON.SHARE`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.BUTTON.ABANDON`",
+            "七张独立透明纹章",
             "ScrollChild",
-            "用户接受具体候选前无 source、runtime 或旧按钮隐藏",
+            "用户接受 V3 模拟前不得生图、导出、接入或隐藏旧按钮",
         ),
-        "QS-B1 V11 component ownership",
+        "QS-B1 V12 layered component ownership",
     )
     require(
         seals_work,
@@ -2797,6 +2839,135 @@ def main() -> None:
             "candidate-rejected / repair-budget-exhausted",
         ),
         "QS-B1 V2 complete production prompt and authorization boundary",
+    )
+
+    assert seal_actions_sim_v12_spec["schema"] == (
+        "aeui.quest-log.seal-layered-actions.simulation.v1"
+    )
+    assert seal_actions_sim_v12_spec["version"] == (
+        "QUEST-LOG-SEAL-ACTIONS-SIM-V12"
+    )
+    assert seal_actions_sim_v12_spec["design_batch"] == "QS-B1 V3"
+    assert seal_actions_sim_v12_spec["frame"] == [676, 464]
+    assert seal_actions_sim_v12_spec["content"] == {
+        "quest_rows": 18,
+        "reward_slots": 4,
+    }
+    assert seal_actions_sim_v12_spec["layout"]["detail_viewport"] == [
+        366,
+        64,
+        246,
+        324,
+    ]
+    assert [item["id"] for item in seal_actions_sim_v12_spec["actions"]] == [
+        "share",
+        "detail",
+        "show",
+        "hide",
+        "clean",
+        "reset",
+        "abandon",
+    ]
+    v12_states = {
+        item["id"]: item for item in seal_actions_sim_v12_spec["states"]
+    }
+    assert len(v12_states["open-all-seven"]["visible_actions"]) == 7
+    assert v12_states["open-filtered-five"]["visible_actions"] == [
+        "share",
+        "detail",
+        "show",
+        "reset",
+        "abandon",
+    ]
+    assert v12_states["open-filtered-three-disabled"]["visible_actions"] == [
+        "share",
+        "show",
+        "abandon",
+    ]
+    assert v12_states["open-filtered-three-disabled"]["disabled_actions"] == [
+        "show"
+    ]
+    assert v12_states["filtered-five-partial-scroll"]["scroll_offset"] == 52
+    assert v12_states["filtered-five-fully-scrolled-out"]["scroll_offset"] == 208
+    v12_constraints = seal_actions_sim_v12_spec["constraints"]
+    assert v12_constraints["imagegen_calls"] == 0
+    assert v12_constraints["substrate_is_visual_only_and_receives_no_mouse"]
+    assert v12_constraints["substrate_uses_root_body_variants_and_tail"]
+    assert v12_constraints["body_variants_are_seamless_and_not_function_owned"]
+    assert v12_constraints["motifs_are_seven_independent_transparent_assets"]
+    assert v12_constraints["hidden_actions_compact_without_blank_slots"]
+    assert v12_constraints["disabled_actions_remain_in_flow"]
+    assert v12_constraints["no_motif_is_baked_into_background"]
+    assert v12_constraints["no_action_owns_a_cloth_background_slice"]
+
+    assert seal_actions_sim_v12_display["schema"] == (
+        "aeui-display-region-contract-v1"
+    )
+    assert len(seal_actions_sim_v12_display["scenarios"]) == 6
+    assert [
+        item["id"]
+        for item in seal_actions_sim_v12_display["atlas"]["sampled_regions"]
+    ] == [
+        "motif.share",
+        "motif.detail",
+        "motif.show",
+        "motif.hide",
+        "motif.clean",
+        "motif.reset",
+        "motif.abandon",
+    ]
+    require(
+        seal_actions_sim_v12_renderer,
+        (
+            "def substrate_art(",
+            "def motif_art(",
+            "def action_boxes(",
+            '"hidden_reflow": "compact-visible-order"',
+            '"disabled_reflow": "remain-in-flow"',
+            '"imagegen": {"calls": 0, "uploads": 0}',
+        ),
+        "QS-B1 V12 layered deterministic renderer",
+    )
+    require(
+        seals_work,
+        (
+            "QS-B1 V2 用户终止与 V3 分层改向",
+            "user-superseded-before-attempt-5 / 4/5",
+            "attempt 5 **没有调用**",
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V12",
+            "动态空白旧布底＋七个独立透明纹章",
+            "本地几何与交互检查 `35/35 pass`",
+            "`6/6 pass`、violations `0`",
+            "`hidden` 从 visible order 中移除",
+            "disabled",
+            "纹章重新烘焙进背景",
+            "未来\nImageGen 输入",
+        ),
+        "QS-B1 V2 terminal record and V3 simulation gate",
+    )
+    require(
+        progress,
+        (
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V12 / QS-B1 V3",
+            "candidate-rejected / user-superseded-before-attempt-5 / 4/5",
+            "`35/35 pass`",
+            "display-region `6/6 pass`",
+            "ImageGen `0/0`",
+        ),
+        "QS-B1 V3 progress",
+    )
+    require(
+        sub_art,
+        (
+            "背景和七枚纹章烘焙进一张连续母版",
+            "第\n`4/5` 次后明确改向",
+            "三个不属于任何功能的无缝 body variant",
+            "七个\n功能各有一张透明纹章 source",
+            "非周期污渍",
+            "独立 `±1px` 视觉重心",
+            "hidden 项从 visible order 中移除",
+        ),
+        "QS-B1 V3 art and ownership baseline",
     )
 
     quest_adapter = (

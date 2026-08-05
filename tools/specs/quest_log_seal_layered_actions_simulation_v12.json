@@ -1,0 +1,163 @@
+{
+  "schema": "aeui.quest-log.seal-layered-actions.simulation.v1",
+  "version": "QUEST-LOG-SEAL-ACTIONS-SIM-V12",
+  "design_batch": "QS-B1 V3",
+  "support_type": "scroll-child-wax-pinned-dynamic-substrate-independent-motifs",
+  "canvas": [2200, 1220],
+  "inputs": {
+    "quest_log_shell": "assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png",
+    "seal_atlas": "addon/AzerothExpeditionUI/Media/Quests/QuestToolWaxSealStatesV1.tga",
+    "title_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf",
+    "body_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf"
+  },
+  "outputs": {
+    "board": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V12/quest_log_seal_layered_actions_board_v12.png",
+    "report": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V12/quest_log_seal_layered_actions_report_v12.json",
+    "display_region_report": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V12/display-region-report-v12.json"
+  },
+  "presentation": {
+    "title": "QS-B1 V3 · 动态旧布底 + 七个独立手工印墨纹章 · V12 几何预演",
+    "subtitle": "背景只表达一条连续旧布，root / seamless body variants / tail 随可见功能数拼接；纹章是七张独立透明资源与七个独立 Button。隐藏即收拢，disabled 留位。ImageGen 0/0。",
+    "origins": [
+      [28, 112],
+      [750, 112],
+      [1472, 112],
+      [28, 696],
+      [750, 696],
+      [1472, 696]
+    ]
+  },
+  "frame": [676, 464],
+  "content": {
+    "quest_rows": 18,
+    "reward_slots": 4
+  },
+  "layout": {
+    "list": [64, 64, 246, 324],
+    "detail_viewport": [366, 64, 246, 324],
+    "detail_scroll_child": [366, 64, 246, 560],
+    "detail_body_origin": [10, 8],
+    "detail_body_width": 214,
+    "detail_indented_width": 204,
+    "legacy_unconstrained_width": 224,
+    "close": [636, 12, 22, 22],
+    "seal_hitbox_content": [206, 0, 40, 40],
+    "seal_visual_content": [210, 4, 32, 32],
+    "substrate_root_content": [210, 30, 32, 12],
+    "substrate_body_origin_content": [210, 42],
+    "action_slot_size": [32, 22],
+    "substrate_tail_size": [32, 8],
+    "reward_slots_content": [
+      [10, 236, 108, 41],
+      [122, 236, 108, 41],
+      [10, 281, 108, 41],
+      [122, 281, 108, 41]
+    ]
+  },
+  "actions": [
+    {"id": "share", "label": "共享任务", "provider": "QuestFramePushQuestButton", "motif": "paired-quills"},
+    {"id": "detail", "label": "收起详情", "provider": "QuestLogFrameExpandButton", "motif": "folded-ledger-leaf"},
+    {"id": "show", "label": "显示位置", "provider": "pfQuest.buttonShow", "motif": "open-compass"},
+    {"id": "hide", "label": "隐藏位置", "provider": "pfQuest.buttonHide", "motif": "veiled-compass"},
+    {"id": "clean", "label": "清理标记", "provider": "pfQuest.buttonClean", "motif": "swept-map-lines"},
+    {"id": "reset", "label": "重建标记", "provider": "pfQuest.buttonReset", "motif": "returning-route-knot"},
+    {"id": "abandon", "label": "放弃任务", "provider": "QuestLogFrameAbandonButton", "motif": "snapped-contract-cord"}
+  ],
+  "states": [
+    {
+      "id": "closed-top",
+      "label": "A · 收起：只有火漆与被压住的 6px 空白布根",
+      "menu_open": false,
+      "scroll_offset": 0,
+      "visible_actions": ["share", "detail", "show", "hide", "clean", "reset", "abandon"],
+      "disabled_actions": [],
+      "hover_action": null,
+      "expected_enabled_actions": 0
+    },
+    {
+      "id": "open-all-seven",
+      "label": "B · 全显 7 项：空白布底连续，七纹章独立叠放",
+      "menu_open": true,
+      "scroll_offset": 0,
+      "visible_actions": ["share", "detail", "show", "hide", "clean", "reset", "abandon"],
+      "disabled_actions": [],
+      "hover_action": "show",
+      "expected_enabled_actions": 7
+    },
+    {
+      "id": "open-filtered-five",
+      "label": "C · 隐藏 2 项：hide / clean 消失，其余无空洞收拢",
+      "menu_open": true,
+      "scroll_offset": 0,
+      "visible_actions": ["share", "detail", "show", "reset", "abandon"],
+      "disabled_actions": [],
+      "hover_action": "detail",
+      "expected_enabled_actions": 5
+    },
+    {
+      "id": "open-filtered-three-disabled",
+      "label": "D · 仅显 3 项：show disabled 留位，背景继续缩短",
+      "menu_open": true,
+      "scroll_offset": 0,
+      "visible_actions": ["share", "show", "abandon"],
+      "disabled_actions": ["show"],
+      "hover_action": null,
+      "expected_enabled_actions": 2
+    },
+    {
+      "id": "filtered-five-partial-scroll",
+      "label": "E · 5 项 / scroll 52：首项被裁切，隐藏命中区仍禁用",
+      "menu_open": true,
+      "scroll_offset": 52,
+      "visible_actions": ["share", "detail", "show", "reset", "abandon"],
+      "disabled_actions": ["reset"],
+      "hover_action": null,
+      "expected_enabled_actions": 3
+    },
+    {
+      "id": "filtered-five-fully-scrolled-out",
+      "label": "F · 5 项 / scroll 208：漆章、背景、纹章、命中区全滚出",
+      "menu_open": true,
+      "scroll_offset": 208,
+      "visible_actions": ["share", "detail", "show", "reset", "abandon"],
+      "disabled_actions": [],
+      "hover_action": null,
+      "expected_enabled_actions": 0
+    }
+  ],
+  "interaction": {
+    "seal_parent": "QuestLogDetailScrollChild",
+    "substrate_parent": "QuestLogDetailScrollChild",
+    "motif_button_parent": "QuestLogDetailScrollChild",
+    "left_click": "toggle-layered-ribbon",
+    "hidden": "remove-provider-row-and-compact-visible-order",
+    "disabled": "keep-row-in-flow-and-mirror-provider-disabled-state",
+    "outside_click_or_escape": "close-layered-ribbon",
+    "action_click": "proxy-original-provider-button-then-close-ribbon",
+    "abandon": "preserve-native-confirmation",
+    "scroll_clipping": "disable-any-action-hitbox-not-fully-inside-detail-viewport",
+    "fail_open": "keep-original-buttons-visible-until-all-proxies-exist"
+  },
+  "constraints": {
+    "imagegen_calls": 0,
+    "new_bitmap_assets": 0,
+    "seal_reuses_accepted_runtime_atlas": true,
+    "substrate_is_visual_only_and_receives_no_mouse": true,
+    "substrate_uses_root_body_variants_and_tail": true,
+    "body_variants_are_seamless_and_not_function_owned": true,
+    "motifs_are_seven_independent_transparent_assets": true,
+    "each_visible_action_is_an_independent_button": true,
+    "hidden_actions_compact_without_blank_slots": true,
+    "disabled_actions_remain_in_flow": true,
+    "background_height_tracks_visible_action_count": true,
+    "no_motif_is_baked_into_background": true,
+    "no_action_owns_a_cloth_background_slice": true,
+    "no_horizontal_slot_seams_or_card_frames": true,
+    "no_page_reflow_or_permanent_text_narrowing": true,
+    "open_overlay_is_temporary": true,
+    "maximum_ribbon_ends_32px_before_rewards": true,
+    "no_outer_book_frame_or_right_outset": true,
+    "bottom_action_buttons_hidden_only_after_proxy_parity": true,
+    "art_direction": "broad low-frequency folds and stains, irregular hand-cut edges, sparse wear, imperfect stamped ink, controlled per-motif offset; no dense procedural wallpaper texture or precise icon column"
+  }
+}

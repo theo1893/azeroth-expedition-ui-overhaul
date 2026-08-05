@@ -231,16 +231,26 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 | `QUEST.LOG.ACTION.SHARE` | `QuestFramePushQuestButton`；兼容名需探测 | 当前程序化暗皮革 fallback；目标事务菜单代理原 Button |
 | `QUEST.LOG.ACTION.EXIT` | `QuestFrameExitButton`；兼容 `QuestLogFrameCancelButton` | 目标视觉不重复收纳；右上真实 Close 保持独立，fallback 在迁移验收前继续存在 |
 | `QUEST.LOG.DETAIL.TOGGLE` | pfUI `QuestLogFrameExpandButton`；缺失时可创建真实 Button | 当前底部 fallback；目标事务菜单代理同一动态开合行为 |
-| `QUEST.LOG.ACTION.SEAL_MENU` | planned adapter-owned `QuestLogDetailScrollChild` 子树；未接入 | V11 已确认：非模态即时开合；漆章、根、七段和尾端随详情内容滚动并由真实 `[366,64,246,324]` viewport 裁切；不创建页外 outset、popup 背板或第二纸面，也不改变正文 `214px`／缩进 `204px`。V2 source 计划用一条连续 normal 母版确定性切为 root＋七个独立 action＋tail，但七段 runtime 仍是七个独立真实 Button，只代理源 Button、镜像 disabled、保留原生放弃确认与右上 Close；任一 parity 缺失时全部旧入口原子 fail-open。V1 候选和 V10 页外索引签均不得复用；当前已获生图授权，但用户接受具体候选前无 source、runtime 或旧按钮隐藏 |
-| `QUEST.LOG.ACTION.SEAL_MENU.RIBBON.ROOT` | planned adapter-owned 无鼠标 Texture | 内容坐标 `[210,30,32,12]`，先于漆章绘制；收起态只有蜡体下方 `6px` 可见。它只表达蜡封压住绶带的物理层序，不是书签、包角或独立承托 |
-| `QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.SHARE` | planned 独立 Button；代理 `QuestFramePushQuestButton` | `[210,42,32,22]`；双羽笔／结约纹章；normal／hover／pressed／disabled 独立状态，不烘焙文字 |
-| `QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.DETAIL` | planned 独立 Button；代理 `QuestLogFrameExpandButton` | `[210,64,32,22]`；折页纹章；动态“展开／收起详情”留给 Tooltip／provider |
-| `QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.SHOW` | planned 独立 Button；代理 `pfQuest.buttonShow` | `[210,86,32,22]`；开放公会罗盘纹章 |
-| `QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.HIDE` | planned 独立 Button；代理 `pfQuest.buttonHide` | `[210,108,32,22]`；遮蔽罗盘纹章 |
-| `QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.CLEAN` | planned 独立 Button；代理 `pfQuest.buttonClean` | `[210,130,32,22]`；清扫地图线纹章 |
-| `QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.RESET` | planned 独立 Button；代理 `pfQuest.buttonReset` | `[210,152,32,22]`；回环路线结纹章 |
-| `QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.ABANDON` | planned 独立 Button；代理 `QuestLogFrameAbandonButton` | `[210,174,32,22]`；断裂契约线，只使用克制暗酒红墨；点击仍进入原生确认 |
-| `QUEST.LOG.ACTION.SEAL_MENU.RIBBON.TAIL` | planned adapter-owned 无鼠标 Texture | `[210,196,32,8]`；克制毛边／分叉只收尾，不接收鼠标。尾端 y=`204`，与首行奖励 y=`236` 保持 `32px` 空隙 |
+| `QUEST.LOG.ACTION.SEAL_MENU` | planned adapter-owned `QuestLogDetailScrollChild` 子树；未接入 | `QUEST-LOG-SEAL-ACTIONS-SIM-V12 / QS-B1 V3` 待用户确认：非模态即时开合；漆章、动态空白布底、七张独立透明纹章与七个独立 Button 随详情内容滚动并由真实 `[366,64,246,324]` viewport 裁切。不创建页外 outset、popup 背板或第二纸面，也不改变正文 `214px`／缩进 `204px`。隐藏 provider 时 visible order 无空洞收拢，disabled provider 留位但不响应；任一代理 parity 缺失时全部旧入口原子 fail-open。V2 在 `4/5` 后因质感工整和单图所有权错误被用户取代；attempt 5 未调用。用户接受 V3 模拟前不得生图、导出、接入或隐藏旧按钮 |
+| `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.ROOT` | planned adapter-owned 无鼠标 Texture | 内容坐标 `[210,30,32,12]`，先于漆章绘制；收起态只有蜡体下方 `6px` 可见。只表达火漆压住连续旧布的物理层序，不含纹章、状态或功能所有权 |
+| `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY.VARIANT_A` | planned adapter-owned 无鼠标 Texture | `32×22px` 无缝布身变体；由布局器按 visible order 数量重复／交错装配，不属于任何 action。低频褶皱与缺陷不得在 `22px` 节距形成横格 |
+| `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY.VARIANT_B` | planned adapter-owned 无鼠标 Texture | 与 A 共用上下无缝边界但污渍／边缘偏移不同；不得含功能墨迹或接收鼠标 |
+| `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY.VARIANT_C` | planned adapter-owned 无鼠标 Texture | 与 A／B 连续装配，用于打断机械重复；不得成为 hover／pressed 状态承载 |
+| `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.TAIL` | planned adapter-owned 无鼠标 Texture | `32×8px` 克制毛边收尾；动态 y=`42 + visible_count × 22`。七项全显时 y=`196`、与首行奖励 y=`236` 保持 `32px` 空隙；隐藏项后随背景上移 |
+| `QUEST.LOG.ACTION.SEAL_MENU.MOTIF.SHARE` | planned 独立透明 source／可打包 atlas UV | 双羽笔／结约；只含不完全着墨的纹章与透明背景，不含布底、文字或状态 |
+| `QUEST.LOG.ACTION.SEAL_MENU.MOTIF.DETAIL` | planned 独立透明 source／可打包 atlas UV | 折页；动态“展开／收起详情”由 Tooltip／provider 表达，不把文字烘焙进图 |
+| `QUEST.LOG.ACTION.SEAL_MENU.MOTIF.SHOW` | planned 独立透明 source／可打包 atlas UV | 开放公会罗盘；与 HIDE 是不同独立资源，不共享含背景的切片 |
+| `QUEST.LOG.ACTION.SEAL_MENU.MOTIF.HIDE` | planned 独立透明 source／可打包 atlas UV | 遮蔽罗盘；全部墨迹限制在本纹章安全区内 |
+| `QUEST.LOG.ACTION.SEAL_MENU.MOTIF.CLEAN` | planned 独立透明 source／可打包 atlas UV | 三道清扫地图线；不得连接相邻纹章或背景缺陷 |
+| `QUEST.LOG.ACTION.SEAL_MENU.MOTIF.RESET` | planned 独立透明 source／可打包 atlas UV | 回环路线结；不得与 CLEAN 合并成一张动态图 |
+| `QUEST.LOG.ACTION.SEAL_MENU.MOTIF.ABANDON` | planned 独立透明 source／可打包 atlas UV | 断裂契约线；唯一使用克制暗酒红墨，仍保留原生放弃确认 |
+| `QUEST.LOG.ACTION.SEAL_MENU.BUTTON.SHARE` | planned 独立 Button；代理 `QuestFramePushQuestButton` | `32×22px`；在当前 visible order 中动态取行，叠放独立 SHARE motif；状态由同一 normal source 确定性派生 |
+| `QUEST.LOG.ACTION.SEAL_MENU.BUTTON.DETAIL` | planned 独立 Button；代理 `QuestLogFrameExpandButton` | `32×22px`；动态取行并叠放 DETAIL motif |
+| `QUEST.LOG.ACTION.SEAL_MENU.BUTTON.SHOW` | planned 独立 Button；代理 `pfQuest.buttonShow` | provider 隐藏时从排列移除；disabled 时留位、退色并禁用命中 |
+| `QUEST.LOG.ACTION.SEAL_MENU.BUTTON.HIDE` | planned 独立 Button；代理 `pfQuest.buttonHide` | provider 隐藏时从排列移除；不得遗留空白布格 |
+| `QUEST.LOG.ACTION.SEAL_MENU.BUTTON.CLEAN` | planned 独立 Button；代理 `pfQuest.buttonClean` | provider 隐藏时从排列移除；不得改变其他 Button 的功能所有权 |
+| `QUEST.LOG.ACTION.SEAL_MENU.BUTTON.RESET` | planned 独立 Button；代理 `pfQuest.buttonReset` | 动态取行；镜像 provider enabled／disabled 与 Tooltip |
+| `QUEST.LOG.ACTION.SEAL_MENU.BUTTON.ABANDON` | planned 独立 Button；代理 `QuestLogFrameAbandonButton` | 动态取行；点击仍进入原生确认。只让纹章使用暗酒红，不把整段背景染红 |
 | `QUEST.LOG.ACTION.SEAL_MENU.PAGE_EDGE_MASK` | 无 runtime；V9／V10 superseded proposal | V11 不再从页外展开，故不创建／复用 `[604,102,24,180]` 页边遮根 mask；该旧 ID 只保留为明确废止的兼容记录，不得进入新资产或 adapter |
 | `QUEST.LOG.LEVELS` | pfUI `QuestLogFrameLevelsCheckButton` | 复用 QL-B1 开放墨圈／墨勾 atlas；保留原脚本与文字 |
 | `QUEST.LOG.PFQUEST.ONLINE` | `pfQuest.buttonOnline`／`pfQuestOnline` | `72 × 16`，右页顶部固定工具行；动态 ID 与原 OnClick 不变 |

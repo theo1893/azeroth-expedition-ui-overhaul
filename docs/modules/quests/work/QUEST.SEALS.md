@@ -7,18 +7,22 @@
   `2026-08-03` 被用户否决，Tracker 方向仍有效
 - 当前已确认历史模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V9`
 - 已被用户改向的模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V10 / QS-B1 V2`
-- 当前已确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V11 / QS-B1 V2`
-- 最近一次生产正文：`QS-B1 V1.r4`（已否决）
-- 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V2 `P2`
+- 当前已确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V11 / QS-B1 V2`；该版本的
+  单张绶带资产方案已被后续用户反馈取代
+- 当前待确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V12 / QS-B1 V3`
+- 最近一次已执行生产正文：`QS-B1 V2.r3`；`V2.r4` 已准备但禁止执行
+- 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3
+  `simulation-rendered / awaiting-user-confirmation / P2`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
-  `prompt-authorized / P3`
-  （V11）；V1 保持
+  `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
+  `layered-simulation-rendered / P2`；V1 保持
   `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
 - QS-B1 当前实际生图：`5/5`
-- QS-B1 V2 ImageGen：`0/5`（已授权、未调用）
+- QS-B1 V2 ImageGen：`4/5`（第 5 次未调用；旧授权不得转用于 V3）
+- QS-B1 V3 ImageGen：`0/0`（只有本地几何模拟；尚无生产授权）
 - QS-B1 流程错误：`1`（E1 未进入生成器，不占生图额度）
 - tracked source：
   `assets/source/quests/qs-a1/QuestToolWaxSeal_Master_v1.png`，SHA-256
@@ -3710,3 +3714,66 @@ of another motif.
 - 当前累计 `4/5`；返回即为 `5/5`。一次 provider call 后立即复制并停止。若
   第 5 张仍有任一客观门禁失败，必须标记
   `candidate-rejected / repair-budget-exhausted` 并停止等待用户审核；禁止第 6 次。
+
+## QS-B1 V2 用户终止与 V3 分层改向 — `2026-08-05`
+
+用户在 V2 attempt 4 的真实排版方向上提出两个根本问题：其一，绶带质感差且
+过于工整；其二，把背景与七项功能纹章烘焙在一张纵向图内，无法按配置隐藏
+任意功能。用户明确要求功能资源单独出图，再叠到一条背景上。该反馈改变资产
+所有权，不属于 V2.r4 的 ink-only 冻结修复边界，因此：
+
+- `QS-B1 V2` 终止为
+  `candidate-rejected / user-superseded-before-attempt-5 / 4/5`；
+- `QS-B1 V2.r4` 只保留为历史未执行正文，attempt 5 **没有调用**，也不得再
+  调用；V2 既有授权与剩余一次额度不转移给 V3；
+- attempt 1–4 均不得成为 V3 source、runtime、纹理参考或 Image 3 edit 输入；
+- V2 没有 source、atlas、addon 菜单接入或旧按钮隐藏，当前 fail-open 不变。
+
+## QS-B1 V3：动态空白旧布底＋七个独立透明纹章
+
+- 当前模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V12`；状态
+  `simulation-rendered / awaiting-user-confirmation / P2`。
+- spec：
+  `tools/specs/quest_log_seal_layered_actions_simulation_v12.json`；renderer：
+  `tools/render_quest_log_seal_layered_actions_simulation_v1.py`。
+- 真实排版模拟：
+  `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V12/quest_log_seal_layered_actions_board_v12.png`；
+  本地几何与交互检查 `35/35 pass`，ImageGen `0/0`。
+- 展示区域合同：
+  `tools/specs/quest_log_seal_actions_simulation_v12_display_region.json`；覆盖
+  收起、七项全显、隐藏两项、仅三项且一项 disabled、部分滚动和完全滚出六个
+  场景，`6/6 pass`、violations `0`。
+
+### V3 资产所有权
+
+1. 背景只表达一条连续的旧亚麻布，不含任何功能图案、文字、状态或命中区。
+   它由无鼠标 `root`、不属于任何功能的无缝 `body variants` 与无鼠标 `tail`
+   组成；运行时按可见功能数拼成一个连续背景。该拆分只服务动态长度，视觉上
+   不得出现横向接缝、卡片格或重复模块。
+2. 共享、详情开合、显示位置、隐藏位置、清理标记、重置标记与放弃任务必须
+   各有一张独立透明 normal 纹章母版。七张 source 可在 runtime 中确定性打包
+   atlas，但必须保留独立 UV、manifest ID 和真实 Button 所有权；不得把任何
+   纹章重新烘焙进背景。
+3. `hidden` 从 visible order 中移除并使后续 Button 与背景无空洞收拢；
+   `disabled` 保留在排列中，使用派生退色态且不接收点击；hover／pressed／
+   disabled 由 accepted normal 母版确定性派生，不重新生成七套轮廓。
+4. 漆章、背景和七个 Button 仍属于 `QuestLogDetailScrollChild`，共同随正文
+   滚动并由 `[366,64,246,324]` viewport 裁切；部分露出的 Button 禁用完整
+   hitbox，完全滚出时命中数为零。正文与奖励不重排。
+
+### V3 质感与“不工整”可检查条款
+
+- 背景使用宽而低频的褶皱、综合色块和不对称污渍；左右手裁边缘只做少量、
+  非周期性的偏移。磨损集中在少数受力点，不能铺满均匀颗粒、程序化织纹、
+  压花壁纸或全长等亮边。
+- 各 body variant 的明暗与纤维走向连续，但缺陷位置不得按 `22px` 功能节距
+  重复；拼接后不能读出七格、水平分区或复制粘贴的相同斑点。
+- 七个纹章使用不完全着墨的公会印墨：轮廓有克制缺口、边缘轻微渗化、线宽
+  不完全一致，并在各自 `32×22px` Button 内采用独立的 `±1px` 视觉重心偏移；
+  禁止七枚同尺寸、同中心、同笔压的精确图标柱，也禁止现代矢量 icon。
+- 不规则不是随机噪点或破坏可读性：每个纹章的语义轮廓必须在运行时尺寸下
+  完整可辨，全部可见墨迹仍留在自己的透明资源安全区内。
+
+V12 模拟像素只验证几何、层序与动态策略，不是 source、runtime 或未来
+ImageGen 输入。用户确认 V3 结构和模拟方向后，才可分别准备“空白动态背景”与
+“七个透明纹章”生产合同，并重新请求独立的正式生图／上传授权。
