@@ -5186,3 +5186,108 @@ crop rows quiet; no extra object, bright color, photography, icon, text or wax.
   后处理合同不变。r2 只改变冻结边界内的表达优先级：先声明技术 sprite sheet
   及 `12.5%×68%` 画布占比，再以更少材料形容词约束三块二维平涂。
 - 下一次执行前提交本节；attempt 3 若返回候选则累计 `3/5`。
+
+#### Attempt 3 执行与审查
+
+- 正文／执行前 commit：`QS-B1 V4-A.r2 / aec6845`；固定 Image 1／2，
+  `generate`，无 Image 3。child session
+  `019fd16f-2f9d-7e61-96e3-4dff4331d68b`；cache result
+  `ig_000991899a0b1567016a730e2f596481918685bec7e23cf0e9.png`。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V4-A/attempt-03/QS-B1-V4-A.r2.attempt-03.raw.png`；
+  `1254×1254 RGB`；SHA
+  `74cb222c5d17e107ef25db269da05e79bc8a5638408f332e0828433baac4f22b`。
+- 第一失败门禁仍为 `组件合同／bbox`，但策略已显著改善：同轴归一后可见
+  `206×855px`，aspect `0.240936` 对目标 `0.183908`，误差从 `66.961%`
+  降至 `31.009%`；仍远超 `≤1%`，不得 bbox-fit。runtime bbox
+  `[0,18,32,156]`，root 和 tail 仍为空；自动检查 `5/9 pass`。
+- 美术：综合色、低频大块手绘和中央安静度已明显接近 V13；没有额外对象或
+  满幅摄影织纹。仍失败的可见细节为：右上角被画成独立翻折纸角，物理上不属于
+  柔软布根；两处尾缺口变成边缘过于光滑、接近规则半圆的冲孔；两段斜亮面
+  仍偏强。对象占画布约 `20.1%×83.5%`，没有达到 `12.5%×68%`。
+- 真实排版 SHA
+  `911c81f84e64fcb8af5271b7e6b460d93e25957a69348965b324cd61bc63a056`；
+  几何 `26/26 pass`。display-region 报告 SHA
+  `8fc79d4db18b6b480a1e0c2634f95a8464f91c156db42bed7aaf1a3787fc9a19`，
+  `6/6 pass`、violations `0`；候选仍未覆盖完整 root／tail，不能用户复审。
+- 结论：`internal-rejected / 3/5`。比例仍不是轻微偏差，故不上传 attempt 3
+  作为 edit input。V4-A.r3 保持固定两张参考 regenerate；继续沿用有效的
+  “技术 sprite／平涂”策略，但把正文压缩到高风险合同并明确禁止折角、平滑
+  U 孔和自动近景构图。
+
+### QS-B1 V4-A.r3 完整修复执行正文
+
+```text
+Create one small technical UI sprite on a green-screen atlas sheet. This is not
+a scene, close-up, banner presentation, photograph, paper strip or illustration.
+
+HARD GEOMETRY — obey literally:
+Output 1024 x 1024 RGB. Background is uniform solid #00FF00. Draw exactly one
+connected, flat, vertical dark-cloth oath strip. Its exact visible bbox is
+[448,164,576,860], width 128 and height 696, ratio 1:5.4375. It occupies only
+one eighth of canvas width and about two thirds of canvas height. Keep 448 px
+pure green on both left and right and 164 px pure green above and below. Do not
+zoom in or make an aesthetically framed hero object. Do not make it wider than
+128 or taller than 696. Cloth pixels touch all four bbox limits and never cross
+them. One object only, orthographic, unrotated, no perspective, cast shadow,
+page, floor, haze, fragments or green spill.
+
+The object is only a narrow flexible strip of smoke-aged expedition-guild oath
+linen. It is not a wide flag, normal banner, paper bookmark, leather panel or
+scroll. The top is nearly straight with one tiny asymmetric compressed cloth
+wrinkle no deeper than 6 px. No folded corner, dog-ear, rolled edge, centered U,
+hammock sag or symmetrical arch.
+
+The bottom reaches y=859. Inside only the final 32 px, cut exactly two unequal
+shallow blunt irregular bites upward: one about 16..22 px wide and 8..12 px
+deep, the other about 20..28 px wide and 5..8 px deep. They are coarse hand-cut
+indentations with flattened irregular inner ends, not smooth semicircular U
+holes and not pointed V cuts. Keep broad heavy lobes. No third notch, sharp
+tooth, deep V, sawtooth, tassel, fishtail, long prong or detached thread.
+
+Use only four to six broad slow side deviations, 4..8 px deep, distributed
+nonperiodically over the full height. Left and right are asymmetric. No one-
+defect-per-row rhythm, scallop, fringe, repeated tear, exact mirror or flare.
+
+ART STYLE:
+Image 1 is highest authority for 2004-era vanilla WoW coarse 2D hand painting,
+broad readable value shapes, material weight, muted expedition color, upper-
+left light and sparse wear. Ignore its book, pages, leather, metal, wax, text,
+buttons and composition. Image 2 is secondary only for dark-walnut temperature,
+broad paint scale, soft painted edge and restrained wear. Ignore its book,
+spine, pages, brass, transparency, silhouette and pixels. Image 1 wins conflicts.
+
+Paint the cloth as exactly three large low-frequency matte shapes: charcoal-
+brown base, deep umber shadow, and one dim walnut plane. Add exactly two short,
+broad, broken, low-contrast fold planes. They do not cross the width, do not
+touch crop rows and do not look like diagonal slashes. Add 3..6 large diffuse
+irregular low-contrast stains. Keep the central 70% quiet and low-detail. This
+is a hand-painted bitmap sprite, never photographed fabric: no visible threads,
+weave, burlap, textile scan, repeated curls, uniform grain, micro-noise, dense
+scratches, bright rim, gold, orange, ivory, saturated red or glow.
+
+DYNAMIC CROP SAFETY:
+The source reduces to 32 x 174. Keep absolute y rows 212, 300, 388, 476, 564,
+652, 740 and 828, plus 8 px above and below each, visually continuous and quiet.
+No seam, guide, cell, edge step, crack, stain boundary, horizontal fold,
+cross-width highlight or silhouette event there. The final 32 px is the shared
+tail. This is one continuous material, never stacked action cells.
+
+No wax, seal, icon, motif, rune, glyph, text, number, button, state, card, tile,
+divider, book, page, spine, leather, metal, jewel, skull, eagle, chain, popup,
+side panel, modern flat UI, Diablo, Skyrim, Warhammer or sci-fi element.
+
+FINAL CHECK: 1024 square RGB; one object; exact bbox 128 x 696 at the declared
+coordinates; huge green margins; unusually slender 1:5.4375 shape; no folded
+corner; exactly two shallow unequal coarse blunt tail bites; four to six broad
+nonperiodic side deviations; three matte hand-painted value shapes; two dim
+broken folds; no photography, weave, bright stripe, extra object, icon or text;
+all eight crop rows quiet.
+```
+
+### V4-A.r3 执行决定
+
+- 操作 `generate`；固定 Image 1／2；attempt 3 不作为 Image 3。
+- 冻结合同不变。r3 只在授权修复范围内删减会触发“近景 banner／摄影织物”的
+  叙述噪声，并显式排除 attempt 3 新出现的 folded corner／smooth U hole。
+- 下一次执行前提交本节；attempt 4 若返回候选则累计 `4/5`。
