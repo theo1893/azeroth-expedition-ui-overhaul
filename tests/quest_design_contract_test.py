@@ -2987,7 +2987,7 @@ def main() -> None:
         seals_work,
         (
             "接受, 用这一套试试效果",
-            "simulation-confirmed / prompt-prepared / awaiting-production-authorization / P2",
+            "menu V4-A\n  `prompt-authorized / P3`",
             "QS-B1 V4-A ImageGen：`0/5`",
             "QS-B1 V4-A 暗色非规则动态空白布底",
             "`prompt-prepared / awaiting-production-authorization / P2`",
@@ -3000,17 +3000,19 @@ def main() -> None:
             "production ImageGen `0/5`",
             "纵横比相对 `128:696` 的误差不超过 `1%`",
             "display-region 必须 `6/6`、violations `0`",
-            "V13 的方向接受只授权把上述正文收敛到可执行状态",
+            "确认授权 QS-B1 V4-A",
+            "当前子状态：`prompt-authorized / P3`",
+            "固定 `imagegen-0-143-0 / @openai/codex@0.143.0` 执行 attempt 1",
         ),
         "QS-B1 V4-A accepted simulation and production authorization gate",
     )
     require(
         progress,
         (
-            "simulation-confirmed / prompt-prepared / P2 / awaiting-production-authorization",
+            "`prompt-authorized / P3`",
             "V4-A 完整 production",
             "ImageGen 仍为 `0/5`",
-            "用户独立授权 V4-A",
+            "获用户独立生产授权",
         ),
         "QS-B1 V4-A progress gate",
     )

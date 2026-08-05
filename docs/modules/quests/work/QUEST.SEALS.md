@@ -17,7 +17,7 @@
   当前无下一修复正文
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
-  `simulation-confirmed / prompt-prepared / awaiting-production-authorization / P2`
+  `prompt-authorized / P3`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
   `simulation-confirmed / V3-A repair-budget-exhausted / V3-B gated / P3`；V1 保持
@@ -29,7 +29,8 @@
 - QS-B1 V2 ImageGen：`4/5`（第 5 次未调用；旧授权不得转用于 V3）
 - QS-B1 V3 ImageGen：V3-A `5/5`、V3-B `0/5`（V3-A 未内部通过，故按联合
   授权顺序门禁未执行 V3-B）
-- QS-B1 V4-A ImageGen：`0/5`；流程错误 `0`；上传 `0`；当前未授权，禁止调用
+- QS-B1 V4-A ImageGen：`0/5`；流程错误 `0`；上传 `0`；用户已授权，等待固定
+  执行器 attempt 1
 - QS-B1 历史流程错误：V1 `1`、V2 `3`；V3 `0`。均按“无生成证据才不占
   额度”记录
 - tracked source：
@@ -4868,12 +4869,18 @@ rhythm, bright color, modern ribbon geometry, or extra object.
   `108×41px` 奖励槽、真实字体与当前 QS-A1 火漆。结构／排版报告必须全过，
   display-region 必须 `6/6`、violations `0`。
 
-### 当前授权门禁
+### 用户正式生产授权与执行门禁
 
-- V13 的方向接受只授权把上述正文收敛到可执行状态，不授权上传或调用 ImageGen。
-- 下一步必须由用户明确授权 `QS-B1 V4-A`、固定 Image 1／2、同循环紧邻前次
-  输出仅在冻结边界内作为 Image 3 edit、最多五次**实际** ImageGen 调用、
-  流程错误不占额度，以及上述确定性色键／透明 RGB 清零／`1024²` 归一化／
-  `≤1%` bbox-fit 合同。
-- 在该授权出现前：production `0/5`，不调用 ImageGen，不创建 source、manifest、
-  exporter 或 runtime，不修改 addon，不隐藏或代理旧按钮，不执行 V3-B。
+- 用户于 `2026-08-05` 明确授权原文：`确认授权 QS-B1 V4-A；允许每次上传固定
+  SHA 的 Image 1/2，允许同循环紧邻前次输出仅在冻结修复边界内作为 Image 3
+  edit 输入；最多 5 次实际 ImageGen 调用，流程错误不占额度；允许按合同执行
+  同轴 1024² 归一化、边缘连通色键、透明 RGB 清零及纵横比误差 ≤1% 的等比
+  bbox-fit。`
+- 当前子状态：`prompt-authorized / P3`。授权严格对应上方逐字 production 正文、
+  两张固定 SHA 参考、冻结修复边界和最多 `5` 次实际调用；V13 模拟像素、V3-A
+  失败稿、其他 reference 与跨段候选仍禁止上传。
+- production 当前为 `0/5`，流程错误 `0`。下一门禁为把本授权版本提交为执行前
+  Git 快照，再以固定 `imagegen-0-143-0 / @openai/codex@0.143.0` 执行 attempt 1。
+- 授权允许生成与内部审查到 `candidate-reviewed / P3`，但不等于用户接受 source。
+  循环通过前不创建 source、manifest、exporter 或 runtime，不修改 addon，
+  不隐藏或代理旧按钮，也不执行 V3-B。
