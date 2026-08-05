@@ -29,8 +29,8 @@
 - QS-B1 V2 ImageGen：`4/5`（第 5 次未调用；旧授权不得转用于 V3）
 - QS-B1 V3 ImageGen：V3-A `5/5`、V3-B `0/5`（V3-A 未内部通过，故按联合
   授权顺序门禁未执行 V3-B）
-- QS-B1 V4-A ImageGen：`0/5`；流程错误 `0`；上传 `0`；用户已授权，等待固定
-  执行器 attempt 1
+- QS-B1 V4-A ImageGen：`0/5`；流程错误 `1`；生成前上传／provider job `0`；
+  用户已授权，等待同一 production 正文的 transport retry
 - QS-B1 历史流程错误：V1 `1`、V2 `3`；V3 `0`。均按“无生成证据才不占
   额度”记录
 - tracked source：
@@ -4879,8 +4879,18 @@ rhythm, bright color, modern ribbon geometry, or extra object.
 - 当前子状态：`prompt-authorized / P3`。授权严格对应上方逐字 production 正文、
   两张固定 SHA 参考、冻结修复边界和最多 `5` 次实际调用；V13 模拟像素、V3-A
   失败稿、其他 reference 与跨段候选仍禁止上传。
-- production 当前为 `0/5`，流程错误 `0`。下一门禁为把本授权版本提交为执行前
-  Git 快照，再以固定 `imagegen-0-143-0 / @openai/codex@0.143.0` 执行 attempt 1。
+- production 当前为 `0/5`，流程错误 `1`。授权版本已由 commit `6cbf715`
+  固定；下一门禁为以完全相同正文与固定 Image 1／2 进行一次 transport retry。
 - 授权允许生成与内部审查到 `candidate-reviewed / P3`，但不等于用户接受 source。
   循环通过前不创建 source、manifest、exporter 或 runtime，不修改 addon，
   不隐藏或代理旧按钮，也不执行 V3-B。
+
+### V4-A 正式生成与流程错误记录
+
+| 流程错误 | 正文版本／执行前 commit | session／result | 错误与无生成证据 | 针对性修复 | 结论 |
+|---:|---|---|---|---|---|
+| `E1` | `QS-B1 V4-A` / `6cbf715` | 无 child session／无 provider result | 固定 0.143.0 CLI 在 provider 前返回 `Reading prompt from stdin...`／`No prompt provided via stdin.`；`attempt-01/` 为空，没有候选图、结果 ID 或生成作业证据 | `codex exec -i` 的 `<FILE>...` 参数吞掉了末尾 prompt；保持正文、Image 1／2、顺序、SHA 与输出目录不变，只在最后一个 `-i` 后加入标准 `--` 参数分隔符 | 流程错误，不占额度；仍为 `0/5` |
+
+| 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
+|---:|---|---|---|---|---|---|---|
+| `1/5` | `QS-B1 V4-A` / `6cbf715` | `generate` | pending | pending | pending | 固定 Image 1／2；E1 transport retry 不改变正文 | pending |

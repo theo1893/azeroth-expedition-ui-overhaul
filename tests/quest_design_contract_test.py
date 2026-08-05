@@ -3002,7 +3002,11 @@ def main() -> None:
             "display-region 必须 `6/6`、violations `0`",
             "确认授权 QS-B1 V4-A",
             "当前子状态：`prompt-authorized / P3`",
-            "固定 `imagegen-0-143-0 / @openai/codex@0.143.0` 执行 attempt 1",
+            "完全相同正文与固定 Image 1／2 进行一次 transport retry",
+            "流程错误 `1`",
+            "No prompt provided via stdin.",
+            "只在最后一个 `-i` 后加入标准 `--` 参数分隔符",
+            "流程错误，不占额度；仍为 `0/5`",
         ),
         "QS-B1 V4-A accepted simulation and production authorization gate",
     )
