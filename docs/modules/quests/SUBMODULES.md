@@ -81,8 +81,9 @@ V10 的页外索引签在确认前被用户明确改向，现为
 火漆、`6px` 折叠根、七个 `32×22px` 独立分段和短尾端都属于详情
 ScrollChild；展开临时覆盖正文最右 `14..24px` 但不重排，尾端在真实
 `108×41px` 奖励槽前 `32px` 停止，并随内容部分／完全滚出。模拟报告
-`21/21 pass`、display-region `4/4 pass`；完整生产正文已准备，新预算 ImageGen
-`0/5`，仍待独立生图授权。
+`21/21 pass`、display-region `4/4 pass`；完整生产正文、固定 Image 1／2、
+紧邻 Image 3 edit 边界与最多五次实际调用已于 `2026-08-05` 获独立授权，
+新预算 ImageGen `0/5`。
 
 ## Quest Log 纸页与中央装订
 
@@ -230,7 +231,7 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 | `QUEST.LOG.ACTION.SHARE` | `QuestFramePushQuestButton`；兼容名需探测 | 当前程序化暗皮革 fallback；目标事务菜单代理原 Button |
 | `QUEST.LOG.ACTION.EXIT` | `QuestFrameExitButton`；兼容 `QuestLogFrameCancelButton` | 目标视觉不重复收纳；右上真实 Close 保持独立，fallback 在迁移验收前继续存在 |
 | `QUEST.LOG.DETAIL.TOGGLE` | pfUI `QuestLogFrameExpandButton`；缺失时可创建真实 Button | 当前底部 fallback；目标事务菜单代理同一动态开合行为 |
-| `QUEST.LOG.ACTION.SEAL_MENU` | planned adapter-owned `QuestLogDetailScrollChild` 子树；未接入 | V11 已确认：非模态即时开合；漆章、根、七段和尾端随详情内容滚动并由真实 `[366,64,246,324]` viewport 裁切；不创建页外 outset、popup 背板或第二纸面，也不改变正文 `214px`／缩进 `204px`。V2 source 计划用一条连续 normal 母版确定性切为 root＋七个独立 action＋tail，但七段 runtime 仍是七个独立真实 Button，只代理源 Button、镜像 disabled、保留原生放弃确认与右上 Close；任一 parity 缺失时全部旧入口原子 fail-open。V1 候选和 V10 页外索引签均不得复用；独立生图授权前无 source、runtime 或旧按钮隐藏 |
+| `QUEST.LOG.ACTION.SEAL_MENU` | planned adapter-owned `QuestLogDetailScrollChild` 子树；未接入 | V11 已确认：非模态即时开合；漆章、根、七段和尾端随详情内容滚动并由真实 `[366,64,246,324]` viewport 裁切；不创建页外 outset、popup 背板或第二纸面，也不改变正文 `214px`／缩进 `204px`。V2 source 计划用一条连续 normal 母版确定性切为 root＋七个独立 action＋tail，但七段 runtime 仍是七个独立真实 Button，只代理源 Button、镜像 disabled、保留原生放弃确认与右上 Close；任一 parity 缺失时全部旧入口原子 fail-open。V1 候选和 V10 页外索引签均不得复用；当前已获生图授权，但用户接受具体候选前无 source、runtime 或旧按钮隐藏 |
 | `QUEST.LOG.ACTION.SEAL_MENU.RIBBON.ROOT` | planned adapter-owned 无鼠标 Texture | 内容坐标 `[210,30,32,12]`，先于漆章绘制；收起态只有蜡体下方 `6px` 可见。它只表达蜡封压住绶带的物理层序，不是书签、包角或独立承托 |
 | `QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.SHARE` | planned 独立 Button；代理 `QuestFramePushQuestButton` | `[210,42,32,22]`；双羽笔／结约纹章；normal／hover／pressed／disabled 独立状态，不烘焙文字 |
 | `QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.DETAIL` | planned 独立 Button；代理 `QuestLogFrameExpandButton` | `[210,64,32,22]`；折页纹章；动态“展开／收起详情”留给 Tooltip／provider |

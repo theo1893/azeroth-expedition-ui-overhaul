@@ -11,14 +11,14 @@
 - 最近一次生产正文：`QS-B1 V1.r4`（已否决）
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V2 `P2`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
-  `simulation-confirmed / production-prompt-prepared / awaiting-production-authorization / P2`
+  `prompt-authorized / P3`
   （V11）；V1 保持
   `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
 - QS-B1 当前实际生图：`5/5`
-- QS-B1 V2 ImageGen：`0/5`（未授权、未调用）
+- QS-B1 V2 ImageGen：`0/5`（已授权、未调用）
 - QS-B1 流程错误：`1`（E1 未进入生成器，不占生图额度）
 - tracked source：
   `assets/source/quests/qs-a1/QuestToolWaxSeal_Master_v1.png`，SHA-256
@@ -2730,11 +2730,15 @@ silhouette height by the quantified amount.
 ### 元数据、固定输入与当前边界
 
 - 日期：`2026-08-05`。
-- 状态：`simulation-confirmed / production-prompt-prepared /
-  awaiting-production-authorization / P2`。
+- 状态：`prompt-authorized / P3`。
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`。
 - 本版本实际 ImageGen：`0/5`；上传：`0`；流程错误：`0`。这是新的 V2
   预算，不能续用或覆盖已耗尽的 V1 `5/5`。
+- 用户生产授权：`2026-08-05`。用户原文：`确认授权 QS-B1 V2；允许每次上传
+  固定 SHA 的 Image 1/2，允许同循环紧邻前次输出仅在冻结边界内作为 Image 3
+  edit 输入；最多 5 次实际 ImageGen 调用，流程错误不占额度；允许按合同执行
+  边缘连通色键、透明 RGB 清零、等比 bbox-fit、九区切片、四态派生与真实排版
+  预演。`
 - Image 1（最高美术权威）：
   `assets/locked/quests/任务详情面板_视觉基准_v1.png`，SHA-256
   `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`。
@@ -2975,6 +2979,7 @@ legible when reduced to 32 x 174 pixels and each motif remains legible within a
 - 每次调用后都必须先做结构／综合色／反模式内审，再执行确定性色键、临时
   切片／四态和真实排版预演。只有最终候选由用户接受后，才可进入 P4 source
   固化、manifest、exporter、atlas 与 addon P5 接入。
-- 本节目前只是待授权的完整合同。用户必须明确授权 `QS-B1 V2`、固定 Image
-  1／2、同循环紧邻 Image 3 edit 边界和最多五次实际调用；在该独立授权之前，
-  ImageGen、上传、source／runtime 写入、addon 修改和旧按钮隐藏均为 `0`。
+- 本节完整合同已按上述用户原文获得独立授权。下一门禁是把本次
+  `prompt-authorized` 状态先提交，再用固定 Image 1／2 原样执行 attempt 1；
+  候选通过内部审查也只到 `candidate-reviewed / P3`。用户明确接受具体候选前，
+  source／runtime 写入、addon 修改和旧按钮隐藏仍为 `0`。

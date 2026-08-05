@@ -416,7 +416,7 @@
 | `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P6 game-validated / user-confirmed`（当前活动 runtime） | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；`2026-08-05` 用户确认 18 行字体、无描边／零 shadow、类型墨色和活动地区箭头显示通过。隐藏的行末追踪圈不在验收范围 | 保留至组件／整模块收口；不再生图 |
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 asset-retained / runtime-hidden` | 用户接受的 source、manifest、`128 × 16` TGA、exporter 与历史证据全部保留；`2026-07-31` 起 adapter 不再挂载或包装任务行脚本 | 暂缓；只有用户重新确认后才恢复 runtime |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
-| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu V2 `P2 simulation-confirmed / production-prompt-prepared / awaiting-production-authorization` | V1 保持 `candidate-rejected / user-rejected / repair-budget-exhausted / 5/5`；V10 已被用户改向。V11 用 ScrollChild 内火漆压住七段公会授印绶带，覆盖 closed／open／部分裁切／完全滚出，`21/21 pass`、display-region `4/4 pass`；完整 V2 正文冻结连续母版、九区切片与七个独立 Button，新预算 ImageGen `0/5` | 用户独立授权固定 Image 1／2、紧邻 edit 边界与最多五次实际调用；此前旧按钮继续 fail-open，不生图、不上传、不导出、不接入菜单 |
+| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu V2 `P3 prompt-authorized` | V1 保持 `candidate-rejected / user-rejected / repair-budget-exhausted / 5/5`；V10 已被用户改向。V11 用 ScrollChild 内火漆压住七段公会授印绶带，覆盖 closed／open／部分裁切／完全滚出，`21/21 pass`、display-region `4/4 pass`；完整 V2 正文冻结连续母版、九区切片与七个独立 Button，固定 Image 1／2 与五次循环已于 `2026-08-05` 获授权，新预算 ImageGen `0/5` | 提交授权状态后执行固定执行器 attempt 1；内部通过前旧按钮继续 fail-open，不导出、不接入菜单 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | current geometry／fallback `P6 game-validated`；final art `P2 simulation-proposed` | runtime `1.25` 保持真实 Button 的 `108×41px` 双列／`64px` 名称／`8px` 列距／`4px` 行距、setter 锁、无鼠标程序化容器、原生 `NameFrame` 抑制和可见数量兜底。所有奖励项只依赖奖励总标题或上一组奖励项，不再依赖三个分组标题，消除原生 `QuestLogItemReceiveText` 反向锚定造成的 FrameXML 环；`2026-08-05` 用户确认当前右页 bug 与显示修复通过。Theme `1.8` 奖励文字无描边。V1 模拟 0／1／2／4／6 `5/5 pass`、ImageGen `0/0`；奖励只读，无 selected | 确认最终容器美术方向；确认不等于生产授权 |
 
 QL-A1 manifest 记录：
@@ -462,7 +462,7 @@ timer 或 failed 资产：provider 没有可用的公开状态来源。本项目
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
 | `QS-A1` | Quest Log／Tracker 共用漆章母版 | `P5 runtime-exported / page-placement-integrated / 5/5` | source／四态 atlas 保持 accepted；当前 Quest Log runtime `1.25` 直接使用 `32px` 页上 Texture，Tracker 不受影响；没有重开美术或 ImageGen | Turtle WoW 验证页上位置、TGA 方向与标题／正文安全区 |
-| `QS-B1` | Quest Log ScrollChild 内火漆 Button、折叠根、七段事务绶带与尾端 | V2 `P2 simulation-confirmed / production-prompt-prepared / awaiting-production-authorization`；ImageGen `0/5` | V1 仍为 `user-rejected / repair-budget-exhausted / 5/5`；V10 为 `user-superseded-before-confirmation`。V11 已确认，保留七个独立 provider 代理并取消页外 outset／遮根 mask／共享底板；V2 正文以一条连续粗织誓约亚麻母版确定性切为 root＋七个 `32×22px` Button＋tail，随正文滚动裁切；`21/21 pass`、display-region `4/4 pass` | 用户独立授权固定 Image 1／2、同循环紧邻 Image 3 edit 与最多五次实际调用；当前不生图、不上传、不导出、不接入 |
+| `QS-B1` | Quest Log ScrollChild 内火漆 Button、折叠根、七段事务绶带与尾端 | V2 `P3 prompt-authorized`；ImageGen `0/5` | V1 仍为 `user-rejected / repair-budget-exhausted / 5/5`；V10 为 `user-superseded-before-confirmation`。V11 已确认；V2 正文以一条连续粗织誓约亚麻母版确定性切为 root＋七个 `32×22px` Button＋tail，随正文滚动裁切；固定 Image 1／2、紧邻 Image 3 edit、五次实际调用及确定性后处理已于 `2026-08-05` 获明确授权 | 提交授权状态后执行 attempt 1；最多五次内自主 review／repair，通过即停。用户接受候选前不晋级 source、不导出、不接入 |
 
 QS-A1 当前事实：
 
