@@ -223,6 +223,24 @@ def slice_and_derive(
 ) -> tuple[dict[str, dict[str, Image.Image]], list[dict[str, Any]]]:
     sprites: dict[str, dict[str, Image.Image]] = {}
     metrics: list[dict[str, Any]] = []
+    normalized_array = np.asarray(normalized.convert("RGBA"))
+    normalized_rgb = normalized_array[:, :, :3].astype(np.float32)
+    normalized_luma = (
+        0.2126 * normalized_rgb[:, :, 0]
+        + 0.7152 * normalized_rgb[:, :, 1]
+        + 0.0722 * normalized_rgb[:, :, 2]
+    )
+    # A small morphological opening removes isolated dark weave flecks while
+    # retaining the broad heraldic strokes.  This is diagnostic only; it never
+    # changes candidate pixels or the exported review sprites.
+    dark_mask = (
+        (normalized_array[:, :, 3] > 128) & (normalized_luma < 70)
+    ).astype(np.uint8) * 255
+    broad_dark = np.asarray(
+        Image.fromarray(dark_mask, "L")
+        .filter(ImageFilter.MinFilter(3))
+        .filter(ImageFilter.MaxFilter(3))
+    ) > 0
     for name, box, runtime_size in ZONES:
         zone = clear_transparent_rgb(normalized.crop(box))
         alpha = np.asarray(zone)[:, :, 3]
@@ -234,17 +252,43 @@ def slice_and_derive(
             state: derive_state(normal, state) for state in STATE_ORDER
         }
         runtime_alpha = np.asarray(normal)[:, :, 3]
-        metrics.append(
-            {
-                "name": name,
-                "source_box_exclusive": list(box),
-                "runtime_size": list(runtime_size),
-                "source_alpha_coverage": source_coverage,
-                "source_top_edge_coverage": top_coverage,
-                "source_bottom_edge_coverage": bottom_coverage,
-                "runtime_visible_pixels": int((runtime_alpha > 0).sum()),
-            }
-        )
+        item: dict[str, Any] = {
+            "name": name,
+            "source_box_exclusive": list(box),
+            "runtime_size": list(runtime_size),
+            "source_alpha_coverage": source_coverage,
+            "source_top_edge_coverage": top_coverage,
+            "source_bottom_edge_coverage": bottom_coverage,
+            "runtime_visible_pixels": int((runtime_alpha > 0).sum()),
+        }
+        if name.startswith("action-"):
+            x0, y0, x1, y1 = box
+            ink = broad_dark[y0:y1, x0:x1].copy()
+            ink[:, :16] = False
+            ink[:, 112:] = False
+            ys, xs = np.where(ink)
+            total = int(ink.sum())
+            outside = int(ink[:12].sum() + ink[76:].sum())
+            item.update(
+                {
+                    "diagnostic_broad_ink_bbox_relative": (
+                        [
+                            int(xs.min()),
+                            int(ys.min()),
+                            int(xs.max() + 1),
+                            int(ys.max() + 1),
+                        ]
+                        if len(xs)
+                        else []
+                    ),
+                    "diagnostic_broad_ink_pixels": total,
+                    "diagnostic_broad_ink_outside_vertical_safe_pixels": outside,
+                    "diagnostic_broad_ink_outside_vertical_safe_ratio": (
+                        outside / total if total else 1.0
+                    ),
+                }
+            )
+        metrics.append(item)
     return sprites, metrics
 
 
@@ -446,6 +490,16 @@ def render_contact_sheet(
             fill=(139, 69, 52, 220),
             width=1,
         )
+        draw.rectangle(
+            (
+                nx + (box[0] + 16) // 2,
+                ny + (box[1] + 12) // 2,
+                nx + (box[0] + 112) // 2,
+                ny + (box[1] + 76) // 2,
+            ),
+            outline=(75, 205, 212, 220),
+            width=1,
+        )
     draw.text((580, 603), "B · 1024² normalized + fixed nine-zone grid", font=body, fill=(219, 183, 116, 255))
 
     atlas_preview = atlas.resize((512, atlas.height * 4), Image.Resampling.NEAREST)
@@ -503,6 +557,14 @@ def main() -> None:
         and lower["source_top_edge_coverage"] >= 0.75
         for upper, lower in zip(zone_metrics, zone_metrics[1:])
     )
+    action_metrics = [
+        item for item in zone_metrics if item["name"].startswith("action-")
+    ]
+    motifs_inside_safe_boxes = all(
+        item["diagnostic_broad_ink_pixels"] > 0
+        and item["diagnostic_broad_ink_outside_vertical_safe_ratio"] <= 0.05
+        for item in action_metrics
+    )
     checks = {
         "normalized_canvas_is_1024_square": normalized.size == CANVAS,
         "normalized_transparent_rgb_is_zero": bool(
@@ -521,6 +583,7 @@ def main() -> None:
         <= 0.01,
         "all_nine_runtime_zones_have_visible_pixels": zone_nonempty,
         "cloth_is_continuous_across_all_zone_boundaries": internal_boundaries_connected,
+        "all_action_motifs_stay_inside_vertical_safe_boxes": motifs_inside_safe_boxes,
         "runtime_zone_dimensions_match_v11": all(
             item["runtime_size"] == list(runtime_size)
             for item, (_, _, runtime_size) in zip(zone_metrics, ZONES)
