@@ -6,14 +6,14 @@
 - 已确认历史模拟：`QUEST-SEALS-SIM-V2`；其 Quest Log 顶部悬空位置已于
   `2026-08-03` 被用户否决，Tracker 方向仍有效
 - 当前已确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V9`
-- 当前生产正文：`QS-B1 V1`
+- 当前生产正文：`QS-B1 V1.r1`
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu `P3`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1
-  `simulation-confirmed / interaction-confirmed / prompt-authorized / 0/5`
+  `internal-rejected / repair-prepared / P3 / 1/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
-- QS-B1 当前实际生图：`0/5`
+- QS-B1 当前实际生图：`1/5`
 - QS-B1 流程错误：`1`（E1 未进入生成器，不占生图额度）
 - tracked source：
   `assets/source/quests/qs-a1/QuestToolWaxSeal_Master_v1.png`，SHA-256
@@ -43,8 +43,10 @@
   `2026-08-03` 回复“进入下一步”，明确确认 V9 可见方向；确认只冻结下述
   文字化布局与综合色结论，不接受模拟像素。当前已准备 `QS-B1 V1` 生产正文，
   `QS-B1-INTERACTION V1` 已于 `2026-08-05` 获用户明确接受；`QS-B1 V1`
-  也已于 `2026-08-05` 获独立正式生产授权。当前下一门禁为使用已提交的完整
-  正文与固定 Image 1／2 执行 attempt 1。
+  也已于 `2026-08-05` 获独立正式生产授权。attempt 1 已实际生成并完成技术、
+  100% UI 像素和综合色复审，但因 `4.3636:1` 短粗比例、完整亮铜内外框、
+  过圆外端及现代微纹理而退回。当前下一门禁为提交完整 `QS-B1 V1.r1` 后，
+  仍只上传固定 Image 1／2、以 regenerate 执行 attempt 2。
   旧 Quest Log／Tracker provider Button 在各自菜单功能等价前继续可见可用。
 
 ## 用户接受与 P4／P5 固化
@@ -1566,11 +1568,10 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 
 - 日期：`2026-08-03`
 - 组件：`QUEST.LOG.ACTION.SEAL_MENU.TAB.BASE`
-- 子状态：`simulation-confirmed / interaction-confirmed / prompt-authorized /
-  0/5`
+- 子状态：`internal-rejected / repair-prepared / 1/5`
 - 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
-- 操作：`generate`；授权后、首次执行前实际 ImageGen：`0/5`
+- 操作：下一次为 `generate`；当前实际 ImageGen：`1/5`
 - 生成前模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V9`，本地确定性几何，ImageGen
   `0/0`；board／report SHA 见上节。
 - 多执行正文最坏实际生图数：`5`；流程错误不占生图额度。
@@ -1796,9 +1797,10 @@ border; dark-walnut leather remains legible when reduced to 112 x 20 px.
 
 ### 当前门禁
 
-- 当前状态：`prompt-authorized / P3 / 0/5`。
-- 当前实际生图：`0/5`；流程错误：`1`。
-- 尚未发生：ImageGen 调用、raw、透明候选、真实排版候选、source、manifest、
+- 当前状态：`internal-rejected / repair-prepared / P3 / 1/5`。
+- 当前实际生图：`1/5`；流程错误：`1`。
+- 已发生：attempt 1 raw、确定性透明审查件、临时八态 atlas、真实排版与右缘
+  clamp 预演；均只存在于 ignored `generated/`。尚未发生：source、manifest、
   runtime atlas、Lua/XML 接入或旧按钮隐藏。
 - `QS-B1-INTERACTION V1` 已由用户于 `2026-08-05` 确认；该确认没有授权
   ImageGen、Lua 接入或旧按钮隐藏。
@@ -1810,11 +1812,185 @@ border; dark-walnut leather remains legible when reduced to 112 x 20 px.
 - 本授权只允许上述固定生产正文、固定 SHA 的 Image 1／2、受限同循环 Image 3
   edit、最多五次实际调用与合同内确定性后处理；不授权 source 晋级、P4／P5、
   Lua 接入或旧按钮隐藏。
-- 当前下一门禁：按 E1 的单一 transport 修复，在最后一个 `--image` 参数后加入
-  CLI 选项终止符 `--`，使用同一已提交正文与同一 Image 1／2 重试 attempt 1。
+- 当前下一门禁：提交 attempt 1 退回证据与完整 `QS-B1 V1.r1` 后，使用固定
+  Image 1／2、不给 Image 3，以 regenerate 执行 attempt 2。
 
 ### QS-B1 流程错误记录
 
 | 流程错误 | 正文版本／commit | wrapper chunk | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
 | E1 | `QS-B1 V1` / `65f83d5` | `37ebfe` | 固定 CLI 在 `1.85s` 内退出 `1`，仅输出 `Reading prompt from stdin... No prompt provided via stdin.`；没有输出文件、provider result 或生成作业证据。诊断确认 shell 实际构造了单一 `5665` 字节 prompt 参数，但 0.143.0 的 `--image <FILE>...` 把其继续解析为图片参数，导致位置 prompt 缺失 | 只在最后一个固定 Image 2 后增加参数终止符 `--`；正文、输入顺序、SHA、输出路径与授权边界均不变 | pre-generation transport error；不占额度，仍为 `0/5` |
+
+### QS-B1 自主修复循环
+
+| 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
+|---:|---|---|---|---|---|---|---|
+| 1/5 | `QS-B1 V1` / `00bb6df` | generate；固定 Image 1／2；无 Image 3 | `019fcfbf-2e24-7d30-a01c-18c7bd5fa4fc`；固定 child 明确报告已生成，退出 `0` | `generated/quests/QUEST-SEALS/QS-B1-V1/attempt-01/raw/QS-B1-V1.attempt-01.png`；`f85cb9fca759f38e4318e0b4503402d9afa33ab9a44357e1acf6d40c7bcf2ee2` | 轮廓／比例合同：raw 可见 bbox `1056×242`、`4.3636:1`，不在 `5.45..5.75`；等比缩小后的 runtime-visible `87×20px`，无法填满固定 `112×20px` 可见槽 | 保留单对象、无文字／图标／书／火漆／铆钉、水平正视、暗胡桃主体和已通过的七槽装配；完整亮铜框、过圆外端、密集微纹理与全局 bevel 需要整体重生，因此 attempt 2 不上传 Image 3 | `internal-rejected / repair-prepared` |
+
+### Attempt 1 执行与完整复审
+
+- 日期：`2026-08-05`。
+- 固定输入：Image 1
+  `assets/locked/quests/任务详情面板_视觉基准_v1.png`
+  `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`；
+  Image 2
+  `assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png`
+  `91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5`；
+  没有 Image 3。
+- prompt 传输：执行器逐字显示完整 `QS-B1 V1`；没有段落丢失或 revised
+  prompt 报告。child 的只读工作区使生成文件先落到同 session 的
+  `.codex/generated_images`，父流程只做 bit-identical copy；仓库 raw SHA
+  如上。
+- raw：`1254×1254 RGB`；边缘连通背景 `1,319,050` 像素、`3,496`
+  种 RGB、纯 `#00FF00` 比例 `0`；可见 bbox
+  `[107,500,1163,742]`，比例 `4.3636:1`。
+- 确定性审查器：
+  `tools/review_quest_log_action_tab_candidate_v1.py`。只执行边缘连通色键、
+  透明 RGB 清零、等比 bbox-fit、临时八态和真实排版；没有非等比变形或重绘。
+- 归一化审查件：
+  `generated/quests/QUEST-SEALS/QS-B1-V1/attempt-01/review/QS-B1-V1.attempt-01.normalized-review.png`，
+  `1024² RGBA`，SHA
+  `e88f45b9ac0699a9e659b4d346483b424be5c48bb266398bed3fd7d149599f66`；
+  bbox `[207,442,818,582]`、`611×140`，透明 RGB 全零，可见纯绿与绿色
+  优势像素均为 `0`。其 `87×20px` 运行时可见 bbox 证明原图比例不能靠
+  合法等比 fit 补成 `112×20px`。
+- 接触表：
+  `generated/quests/QUEST-SEALS/QS-B1-V1/attempt-01/review/QS-B1-V1.attempt-01.contact-sheet.png`，
+  SHA `f9498daf14750521c3abdd187d7c1a39b9611bf1ae24b60bdd08fa62c0d33ea3`。
+- 100% 真实排版：
+  `generated/quests/QUEST-SEALS/QS-B1-V1/attempt-01/review/QS-B1-V1.attempt-01.real-layout.png`，
+  SHA `a567a7bb3a951d9c461a87ec9c8b5c4ad2b57c2b7ab0c21c62c519a67d6e4002`；
+  使用当前 QL-A1 书体、18 行任务、代表性长详情、四个奖励槽、七个真实中文
+  标签及 normal／hover／pressed／disabled／danger 分布。
+- 右缘 clamp：
+  `generated/quests/QUEST-SEALS/QS-B1-V1/attempt-01/review/QS-B1-V1.attempt-01.right-clamp.png`，
+  SHA `31246f82bad56dbaacec381a42cb3b5574d63f00bf81f3f99ee9cb949a5d0012`；
+  `1024px` 屏幕中展开宽 `724px`，整书左移后最右边保持 `8px`。
+- display-region：七槽、页边遮根、`96×20px` hit、文字安全区、detail／
+  reward 零覆盖、Close 避让和右侧 `48px` outset 共 `25/25 pass`。这只
+  证明布局合同，没有把母版美术判为通过。
+- 视觉第一失败：近矩形比例退化为短粗 `4.3636:1`，左根也有明显圆角，
+  右端形成大半径圆帽和多层沟槽，物件更像现代 bevel button，而不是
+  `5.6:1` 的长薄书口卷宗签。
+- 视觉次要失败：上、下、右形成连续高对比铜金内外框；整个表面充满均匀
+  高频皮纹和锐利反光，缺少香草魔兽的大块手绘明暗切面与克制磨损。综合色
+  过红、过亮、过精细，抢过任务书和火漆焦点。
+- 已通过并必须保留：恰好一个对象；无文字、图标、书、纸页、火漆、铆钉或
+  状态组；水平正视；暗胡桃皮革主体与底部厚度可读；七个独立 Button 的真实
+  排版、页边 mask、命中盒和功能所有权没有改变。
+- 修复决策：`regenerate`。失败覆盖全局比例、两端、表面频率、边框和
+  光照，不能冻结一个正确主体后做局部 edit；attempt 2 固定上传 Image 1／2，
+  不上传 attempt 1 作为 Image 3。
+- source／runtime：无；不得晋级或接入。
+
+### 下一完整执行正文 — `QS-B1 V1.r1`
+
+Create exactly one new isolated 2D hand-painted bitmap UI object for a
+vanilla-era World of Warcraft quest log: one long, thin, text-free guild-ledger
+transaction index tab made primarily from aged dark-walnut leather. This is one
+normal-state reusable base skin, not a complete menu and not a finished modern
+button. At runtime the same base will be reduced to a visible 112 x 20 px texture
+for exactly seven separate proxy Button objects. Each runtime Button uses only
+the rightmost visible 96 x 20 px as its mouse hit region; the leftmost 16 x 20 px
+texture root extends under the real book-page edge and never receives mouse
+input. The seven proxy functions are Share Quest, Detail Toggle, Show Location,
+Hide Location, Clean Marks, Reset Marks, and Abandon Quest. The game owns all
+labels, icons, enabled states, tooltips, click logic, and native abandon
+confirmation. Render exactly one tab and no other object. Do not draw seven
+tabs, a menu, a book, a wax seal, any text, any icon, or any state variants.
+
+Reference authority and filtering:
+1. Image 1 is the highest visual authority. Inherit its circa-2004 vanilla WoW
+   low-resolution hand-painted bitmap language, broad readable value planes,
+   warm upper-left light, muted warm expedition palette, heavy but restrained
+   material separation, and sparse edge wear. Ignore its complete book layout,
+   parchment pages, long leather plaques, compass, wax seals, ribbons, text,
+   buttons, rivets, bright gold ornaments, and all complete UI compositions.
+2. Image 2 is a secondary adjacency reference only. Inherit only the current
+   accepted quest book's smoked dark-walnut hue, soft hand-painted edge scale,
+   upper-left light direction, and restrained wear so this small tab belongs
+   beside that exact book. Ignore its complete book silhouette, parchment,
+   spine, stitches, brass corners, transparent surroundings, and all directly
+   reusable pixels. If the references conflict, Image 1 plus the vanilla
+   hand-painted rules wins; Image 2 may only tune local color and paint scale.
+
+Canvas and exact occupancy: output an exact 1024 x 1024 RGB bitmap. Every pixel
+outside the object must be one uniform solid #00FF00 chroma-key background, with
+no gradient, noise, texture, vignette, checkerboard, haze, color spill, floor,
+reflection, contact shadow, or cast shadow. The visible object must be a long
+thin 5.6:1 shape occupying target bbox [120,442,904,582], exactly 784 x 140 px.
+Its left visible edge begins at x=120, its right visible edge ends at x=904, its
+top edge is at y=442, and its bottom edge is at y=582. Keep it horizontal,
+unrotated, centered, and fully separated from the green background. Use a
+straight-on orthographic front view with no perspective tilt and essentially no
+foreshortening. The source must read as 112 x 20 when reduced seven-to-one. Do
+not shorten it into a 4:1 or 4.5:1 button, and do not add internal green padding
+that would make the visible runtime object narrower than 112 px.
+
+Silhouette and physical construction: make a quiet, heavy, handcrafted long
+near-rectangle, never a rounded web control. The long top and bottom edges are
+mostly parallel with only one-to-two percent broad hand-painted irregularity.
+The left root edge is a plain vertical cut with zero corner radius and no cap,
+because the first 16 runtime pixels disappear under the real page edge. The
+right outer end is also fundamentally vertical and near-square. Its only corner
+treatment is a very shallow chamfer no larger than three percent of the source
+height; do not make a semicircular end, rounded cap, capsule, pill, arch, point,
+arrow, chevron, notch, fishtail, or bookmark tail. Give the leather restrained
+thickness using one broad dark-walnut face, one narrow deep-umber lower edge,
+and one short broken warm upper-left paint stroke. The object must not have a
+recessed center panel, raised perimeter rail, double bevel, inner groove, or
+button-like inset face.
+
+Material frequency and edge treatment: use only two or three broad hand-painted
+value planes. The face is low-saturation smoked dark walnut, darker and quieter
+than bright red-brown polished leather. Do not fill it with uniform fine grain,
+cross-hatching, procedural pores, embossed texture, photorealistic leather, or
+many tiny highlights. Use at most three or four broad low-contrast scuffs,
+concentrated near the far outer end and lower edge, each large enough to survive
+the reduction to 112 x 20. Preserve a broad quiet center for runtime labels.
+
+There must be no complete outline around the object. Do not draw a continuous
+gold, copper, brass, orange, or bright leather border; do not draw an inner and
+outer frame; do not draw a luminous top rim. Oxidized-brass color may appear
+only as two or three very short, broken, dim binding flecks along parts of the
+lower edge and far right edge. Their combined length must be less than one
+quarter of the perimeter, their brightness must not exceed the restrained
+leather mid-highlight, and they must never connect into a frame, cap, plaque,
+groove, or polished trim. Edge contrast must remain subordinate to the paper
+book and wax seal.
+
+Runtime-safe regions: keep source coordinates [246,449,806,575] quiet and free
+of seams, emblems, high-contrast scratches, bright highlights, or ornament so
+dynamic labels remain readable. The first 112 source pixels of the visible
+object form a straight, plain hidden root. The last 42 source pixels contain
+only the shallow corner chamfers and sparse low-contrast wear. Do not bake any
+runtime text, icon, glyph, enabled state, Tooltip, danger state, selection state,
+or click affordance into this base image. The asset is fixed-size; it will not
+be stretched, tiled, mirrored, repeated, or nine-sliced.
+
+Style lock: paint this as a small sprite made for a 2004-era vanilla WoW
+interface. Use coarse deliberate brush decisions, broad readable shapes, a warm
+muted Azeroth expedition palette, tangible but simple leather thickness, sparse
+wear, and modest upper-left light. It must feel like a physical archival docket
+tab stored inside the accepted quest journal, not a modern UI component placed
+on top of it. It must remain subordinate to the book page and red wax seal. It
+must not look photorealistic, vector-clean, procedural, uniformly textured,
+glossy, precision-machined, Diablo-3-like, or like a modern brown web button.
+
+Strict exclusions: no book, page, parchment, paper strip, ribbon, strap, wax,
+seal, menu panel, button stack, frame, text, letters, numerals, glyphs, icons,
+compass, quill, emblem, rune, stitching, holes, rivets, studs, buckles, hinges,
+embossing, inset panel, recessed groove, double bevel, continuous metallic
+outline, bright gold trim, symmetrical flourish, glow, glass, translucent
+black, neon, gemstone, skull, spike, altar, rounded pill, capsule, arrowhead,
+pointed bookmark, cast shadow, contact shadow, or loose pixels outside the
+single object.
+
+Before returning the image, verify all of the following: exactly one object and
+one normal state; exact 1024 x 1024 RGB canvas; one uniform #00FF00 background;
+visible bbox exactly 784 x 140 at [120,442,904,582]; visible aspect exactly
+5.6:1; straight square-cut left root; near-square right end with only tiny
+chamfers; no rounded cap; no inner groove or double bevel; no complete bright
+border; no fine procedural leather grain; no text, icon, rivet, book, page,
+seal, menu, or state variants. At 112 x 20 it must read as a long restrained
+archival leather docket tab, never as a short modern beveled button.

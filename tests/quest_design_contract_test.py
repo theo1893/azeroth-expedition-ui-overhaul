@@ -155,6 +155,26 @@ def main() -> None:
     seal_actions_sim_renderer = (
         ROOT / "tools" / "render_quest_log_seal_actions_simulation_v1.py"
     )
+    action_tab_reviewer_path = (
+        ROOT / "tools" / "review_quest_log_action_tab_candidate_v1.py"
+    )
+    assert action_tab_reviewer_path.is_file(), action_tab_reviewer_path
+    action_tab_reviewer = action_tab_reviewer_path.read_text(encoding="utf-8")
+    require(
+        action_tab_reviewer,
+        (
+            "edge_connected_chroma_key",
+            "clear_edge_connected_green",
+            "TARGET_SIZE = (784, 140)",
+            "RUNTIME_SIZE = (112, 20)",
+            "ATLAS_SIZE = (1024, 32)",
+            "runtime_visible_bbox",
+            "layout_geometry_25_of_25",
+            "right-clamp.png",
+            "quest_log_seal_actions_simulation_v9.json",
+        ),
+        "QS-B1 deterministic candidate reviewer",
+    )
     tracker_sim_spec_path = (
         ROOT / "tools" / "specs" / "quest_tracker_simulation_v2.json"
     )
@@ -708,7 +728,7 @@ def main() -> None:
         (
             "Quest Log／Tracker 共用漆章",
             "`QS-A1 V1.r4`",
-            "`simulation-confirmed / interaction-confirmed / prompt-authorized / 0/5`",
+            "`internal-rejected / repair-prepared / P3 / 1/5`",
             "QuestToolWaxSeal_Master_v1.png",
             "QS-A1_SourceManifest_v1.json",
             "QS-A1_RuntimeManifest_v1.json",
@@ -721,7 +741,7 @@ def main() -> None:
             "SetClampRectInsets",
             "旧七个 provider Button",
             "`5/5`",
-            "QS-B1 当前实际生图：`0/5`",
+            "QS-B1 当前实际生图：`1/5`",
             "QS-B1 流程错误：`1`",
             "不得进入 `P6`",
         ),
@@ -2405,10 +2425,13 @@ def main() -> None:
             "standard normal／hover／pressed／disabled",
             "danger normal／hover／pressed／disabled",
             "exactly one object",
-            "当前实际生图：`0/5`",
+            "当前实际生图：`1/5`",
             "`QS-B1-INTERACTION V1`",
             "`QS-B1 V1` 已由用户于 `2026-08-05` 以以下原文独立授权",
-            "prompt-authorized / P3 / 0/5",
+            "internal-rejected / repair-prepared / P3 / 1/5",
+            "QS-B1 V1.r1",
+            "4.3636:1",
+            "runtime-visible `87×20px`",
             "Reading prompt from stdin... No prompt provided via stdin.",
             "pre-generation transport error",
             "用户回复“接受”",
