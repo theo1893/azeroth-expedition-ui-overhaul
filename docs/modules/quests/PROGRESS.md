@@ -121,7 +121,7 @@
   `96×20px` 可见区命中与原子 fail-open 已于 `2026-08-05` 获用户确认；同日
   用户又独立授权 `QS-B1 V1` 完整正文、固定 Image 1／2、受限同循环 Image 3
   edit、最多五次实际调用与合同内确定性后处理。状态为
-  `internal-rejected / repair-prepared / P3 / 3/5`。
+  `internal-rejected / repair-prepared / P3 / 4/5`。
   首次 transport 因 0.143.0 可变长 `--image` 吞入位置 prompt 而在生成前退出，
   无图片或 provider result，记为流程错误 `1`、不占额度；下一门禁是在 Image 2
   后加入 `--` 终止符，以同一正文重试 attempt 1。重试已生成，但原图比例仅
@@ -133,7 +133,11 @@
   作为 Image 3 edit target，压薄轮廓并打断顶部／右端连续高光。attempt 3
   已把比例推进到 `5.1456:1`、runtime-visible `103×20px`，排版视觉明显接近
   目标，但仍低于冻结的 `5.45` 下限；同时重新出现均匀微纹和中央斜向擦痕。
-  已准备完整 `QS-B1 V1.r3`，只对 attempt 3 再做约 `8%` 压薄与低频重绘。runtime `1.25` 继续把已接受的 QS-A1 漆章以 `32px` 无鼠标 Texture
+  已准备完整 `QS-B1 V1.r3`，只对 attempt 3 再做约 `8%` 压薄与低频重绘。
+  attempt 4 只从 `5.1456` 改到 `5.1707:1`，同一首要失败连续出现，因此最终
+  attempt 5 改变策略：不再泛化“压薄重绘”，而是对 attempt 4 做精确轮廓
+  surgery，保留 `1060px` 宽并把 `205px` 高裁减／重绘到 `187..191px`。
+  runtime `1.25` 继续把已接受的 QS-A1 漆章以 `32px` 无鼠标 Texture
   放到详情页右上纸面；该位置修复不依赖新资产。菜单尚未接入，也未隐藏任何
   旧按钮。
 - AEUI Quest Log provider 兼容子合同保持 `1.7`：在 provider 最终刷新后以
@@ -395,7 +399,7 @@
 | `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P6 game-validated / user-confirmed`（当前活动 runtime） | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；`2026-08-05` 用户确认 18 行字体、无描边／零 shadow、类型墨色和活动地区箭头显示通过。隐藏的行末追踪圈不在验收范围 | 保留至组件／整模块收口；不再生图 |
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 asset-retained / runtime-hidden` | 用户接受的 source、manifest、`128 × 16` TGA、exporter 与历史证据全部保留；`2026-07-31` 起 adapter 不再挂载或包装任务行脚本 | 暂缓；只有用户重新确认后才恢复 runtime |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
-| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu `P3 repair-prepared / 3/5` | attempt 3 已把比例推进至 `5.1456:1`、runtime-visible `103×20px`，七槽几何继续 `25/25 pass`，排版重量接近目标；仍低于比例下限，并有均匀微纹／中央擦痕 | 完整 `QS-B1 V1.r3` 固定 Image 1／2，仅以 attempt 3 为 Image 3，执行 attempt 4 |
+| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu `P3 repair-prepared / 4/5` | attempt 4 仍是 `1060×205`、`5.1707:1`、runtime-visible `103×20px`；七槽几何 `25/25 pass`，runtime 视觉可读，但客观比例门禁连续失败 | 最终 V1.r4 对 attempt 4 做定量轮廓 surgery；attempt 5 后无论结果都停止循环 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | current geometry／fallback `P6 game-validated`；final art `P2 simulation-proposed` | runtime `1.25` 保持真实 Button 的 `108×41px` 双列／`64px` 名称／`8px` 列距／`4px` 行距、setter 锁、无鼠标程序化容器、原生 `NameFrame` 抑制和可见数量兜底。所有奖励项只依赖奖励总标题或上一组奖励项，不再依赖三个分组标题，消除原生 `QuestLogItemReceiveText` 反向锚定造成的 FrameXML 环；`2026-08-05` 用户确认当前右页 bug 与显示修复通过。Theme `1.8` 奖励文字无描边。V1 模拟 0／1／2／4／6 `5/5 pass`、ImageGen `0/0`；奖励只读，无 selected | 确认最终容器美术方向；确认不等于生产授权 |
 
 QL-A1 manifest 记录：
@@ -441,7 +445,7 @@ timer 或 failed 资产：provider 没有可用的公开状态来源。本项目
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
 | `QS-A1` | Quest Log／Tracker 共用漆章母版 | `P5 runtime-exported / page-placement-integrated / 5/5` | source／四态 atlas 保持 accepted；当前 Quest Log runtime `1.25` 直接使用 `32px` 页上 Texture，Tracker 不受影响；没有重开美术或 ImageGen | Turtle WoW 验证页上位置、TGA 方向与标题／正文安全区 |
-| `QS-B1` | Quest Log 七项外侧事务签、真实漆章 Button 与共用无字 tab 母版 | `P3 internal-rejected / repair-prepared / 3/5`；process errors `1` | attempt 3 保留了单对象、直切左根、近方外端和克制边线，把 raw 比例改善为 `1060×206`、`5.1456:1`，合法 runtime-visible 达 `103×20px`；真实排版几何仍 `25/25 pass`。但比例尚差约 `8%`，均匀微纹和中央斜擦痕违反安静内容区 | 完整 `QS-B1 V1.r3` 只以 attempt 3 为 Image 3，固定 Image 1／2，执行 attempt 4；压薄并降低表面频率 |
+| `QS-B1` | Quest Log 七项外侧事务签、真实漆章 Button 与共用无字 tab 母版 | `P3 internal-rejected / repair-prepared / 4/5`；process errors `1` | attempt 4 保留正确对象与排版，但 raw `1060×205`、`5.1707:1`，只比 attempt 3 改善 `0.0251`；合法 runtime-visible 仍 `103×20px`。同一首要比例失败已重复，不能再用同一种泛化重绘策略 | 最终 `QS-B1 V1.r4` 只以 attempt 4 为 Image 3，明确保留宽度并把高度定量改为 `187..191px`；第 5 次后停止 |
 
 QS-A1 当前事实：
 
@@ -615,7 +619,8 @@ QL-A2、当前活动左页 runtime 与 QL-D 当前几何／fallback 的实机门
 通过。attempt 2 已明显改善材料、内框与端部，但比例仍为 `4.2851:1`、运行时
 仅 `86×20px`；attempt 3 已推进至 `5.1456:1`／`103×20px`，但尚未达到
 `5.45` 下限，并出现均匀微纹／中央擦痕。下一步使用完整 `QS-B1 V1.r3`，
-固定 Image 1／2，并只把 attempt 3 作为 Image 3 edit target 执行 attempt 4。候选与功能等价
+固定 Image 1／2，并只把 attempt 3 作为 Image 3 edit target 执行 attempt 4。
+attempt 4 仍为 `5.1707:1`，因此最终 attempt 5 改用定量轮廓 surgery；之后不再调用。候选与功能等价
 均通过前不实现菜单，也不隐藏放弃／分享／退出／详情与 pfQuest 四按钮。
 候选通过后的 runtime 仍必须按已确认交互合同一一代理原 Button、镜像禁用态、
 保留放弃确认，并在任一 provider 未捕获时原子 fail-open。
