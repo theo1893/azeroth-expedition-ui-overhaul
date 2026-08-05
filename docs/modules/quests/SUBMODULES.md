@@ -43,8 +43,8 @@ bug 和显示问题均已修复。该实机结论覆盖活动的 QL-A2 V4 书体
 | `QUEST.LOG.COUNT` | `QuestLogQuestCount`；兼容 `QuestLogCount` | layout-only；使用纸面深墨文字，不新增外框 |
 | `QUEST.LOG.CLOSE` | `QuestLogFrameCloseButton` | 普通／悬停／按下／禁用 |
 | `QUEST.LOG.EMPTY` | `EmptyQuestLogFrame`、`QuestLogNoQuestsText` | 安静纸面，不生成空状态卡片 |
-| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，adapter-owned 无鼠标 `OVERLAY` Texture | runtime `1.25` 复用已接受的 QS-A1 V1.r4 四态 atlas，将 `32×32px` 漆章直接压在详情页右上纸面 `[576,68,32,32]`；`40×40px` 保留区为 `[572,64,40,40]`，不遮标题、正文或奖励。它目前只承担可见焦点，不接收鼠标；`QS-B1 V1` 只继续门禁未来的真实 Button、事务签菜单和旧按钮迁移，不再门禁漆章本身的位置 |
-| `QUEST.LOG.CHROME.SEAL.SUPPORT` | V9 无 runtime 对象 | 用户明确要求火漆直接印在详情页纸面；不得再创建书签、包角、皮革／黄铜承托或额外 Texture。最终只允许漆章自身与纸面接触阴影 |
+| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前为 adapter-owned 无鼠标 `OVERLAY` Texture | runtime `1.25` 复用已接受的 QS-A1 V1.r4 atlas，将 `32×32px` 漆章放在 Frame 坐标 `[576,68,32,32]`；`40×40px` 保留区为 `[572,64,40,40]`。V11 提议在未来菜单 parity 成立后把真实 Button 改挂到 `QuestLogDetailScrollChild` 内容坐标 `[206,0,40,40]`，视觉 `[210,4,32,32]` 在 scroll `0` 时仍落在同一 Frame 像素，随后随正文滚动／裁切。V11 确认前不改当前 runtime |
+| `QUEST.LOG.CHROME.SEAL.SUPPORT` | 当前无 runtime 对象 | 不创建书签、包角、皮革／黄铜承托、外框或页外 Texture。V11 的短折叠根属于 `QUEST.LOG.ACTION.SEAL_MENU.RIBBON.ROOT`，收起时仅在火漆下露 `6px`，不作为独立悬空支架 |
 
 支持 `closed`、`empty`、`list-only`、`dual-page` 与 `selected`。离线参考为
 `676 × 464 UI px`，物理中心线 `x=338`；左右物理纸页近 1:1，可见宽度差
@@ -56,14 +56,14 @@ runtime `1.17` 及更早的锚点位于书本右上方透明空间并产生 `18p
 outset，用户已判定其“浮在空中”；runtime `1.25` 继续保持该锚点已移除。随后
 V1–V6 的外沿皮革、羊皮封签、下缘长书签、detail
 替换、黄铜包角和页内右侧菜单方向也依次被否决。V8 首次满足书外展开，却因
-`136×24px` 尖头、逐项铆钉、亮黄铜与 `72px` 外伸过重而继续否决。当前 V9
-只保留用户明确指定的物理关系：
+`136×24px` 尖头、逐项铆钉、亮黄铜与 `72px` 外伸过重而继续否决。V9 曾冻结
+的历史物理关系为：
 火漆直接压在右侧详情页右上纸面；标题与分隔线为其保留 `40×40px` 区域。
 点击后七项事务作为真实独立 Button 从 detail 右边界 `x=612` 向书外伸出，
 真实页边 mask 遮住根部；不得进入书页内容区或覆盖正文／奖励。打开态允许
 `48px` 右侧 outset，并在屏幕右缘不足时整体左移后恢复。每条只允许
 `112×20px` 的短书口事务签、低对比暗胡桃／旧铜色边线；禁止箭头尖端、逐项
-铆钉、明亮顶部高光和整条危险色。用户已于 `2026-08-03` 确认 V9 可见方向；
+铆钉、明亮顶部高光和整条危险色。用户于 `2026-08-03` 确认过 V9 可见方向；
 `QS-B1-INTERACTION V1` 已于 `2026-08-05` 获用户确认；`QS-B1 V1` 同日已获
 固定输入、五次实际调用与确定性后处理的正式生产授权。attempt 1 已因短粗
 比例、连续亮边、过圆端部与现代微纹理内部退回；attempt 2 已修正后面三项，
@@ -74,10 +74,14 @@ V1–V6 的外沿皮革、羊皮封签、下缘长书签、detail
 `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`；
 用户于 `2026-08-05` 明确回复“不可接受”。V1 候选不得通过几何例外晋级，
 也不得成为后续 edit 输入。页上漆章仍为无鼠标 Texture，runtime 继续
-保留全部原按钮作为 fail-open fallback；生产授权不等于菜单接入授权。当前
-`QUEST-LOG-SEAL-ACTIONS-SIM-V10 / QS-B1 V2` 已完成本地确定性预演：七个
-真实 Button 容器不变，可见皮肤改为不等长、无共享底板和完整描边／bevel 的
-烟熏旧卷宗索引签；`31/31 pass`、ImageGen `0/0`，仍待用户确认。
+保留全部原按钮作为 fail-open fallback；生产授权不等于菜单接入授权。
+V10 的页外索引签在确认前被用户明确改向，现为
+`user-superseded-before-confirmation`。当前
+`QUEST-LOG-SEAL-ACTIONS-SIM-V11 / QS-B1 V2` 已完成四状态本地确定性预演：
+火漆、`6px` 折叠根、七个 `32×22px` 独立分段和短尾端都属于详情
+ScrollChild；展开临时覆盖正文最右 `14..24px` 但不重排，尾端在真实
+`108×41px` 奖励槽前 `32px` 停止，并随内容部分／完全滚出。模拟报告
+`21/21 pass`、display-region `4/4 pass`、ImageGen `0/0`，仍待用户确认。
 
 ## Quest Log 纸页与中央装订
 
@@ -225,9 +229,17 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 | `QUEST.LOG.ACTION.SHARE` | `QuestFramePushQuestButton`；兼容名需探测 | 当前程序化暗皮革 fallback；目标事务菜单代理原 Button |
 | `QUEST.LOG.ACTION.EXIT` | `QuestFrameExitButton`；兼容 `QuestLogFrameCancelButton` | 目标视觉不重复收纳；右上真实 Close 保持独立，fallback 在迁移验收前继续存在 |
 | `QUEST.LOG.DETAIL.TOGGLE` | pfUI `QuestLogFrameExpandButton`；缺失时可创建真实 Button | 当前底部 fallback；目标事务菜单代理同一动态开合行为 |
-| `QUEST.LOG.ACTION.SEAL_MENU` | planned adapter-owned 右页外侧旧卷宗索引签 Button 列；未接入 | V9 的非模态开合、七个独立真实 Button、源 Button 委托、disabled 镜像、原生放弃确认、页边遮根、正文／奖励零占用、Esc／空白收起与原子 fail-open 仍是交互参考；右上 Close 独立。`QS-B1 V1.r4` 保持 `user-rejected / repair-budget-exhausted / 5/5`，V1 的现代矩形皮革按钮观感、全部候选像素与几何例外均不得复用。V10 为 V2 待确认模拟：七个 Button 容器保持 `112×20px`，可见签条不等长、无共享 popup 底板／完整描边／bevel／箭头／铆钉，危险项只改墨色；确认前未授权 source、runtime 或菜单接入 |
-| `QUEST.LOG.ACTION.SEAL_MENU.TAB.BASE` | 每个真实 Button 独立拥有的无字可见 Texture；不拥有点击 | 当前没有 accepted source。V1 的共用固定暗胡桃矩形母版不得复用。V10 暂定七枚同族但不等长的烟熏旧卷宗索引签，避免一个重复底图形成现代卡片列；若用户确认，V2 生产资产必须逐项映射七个 Button，并分别提供与真实 normal／hover／pressed／disabled 对应的状态，不得合并交互、烘焙文字／图标／Tooltip 或复制业务逻辑 |
-| `QUEST.LOG.ACTION.SEAL_MENU.PAGE_EDGE_MASK` | adapter-owned 无鼠标 Texture，复用 QL-A1 shell 右页边像素 | `[604,102,24,180]`，晚于七个 Button 绘制并只遮住每条左侧 `16px` 根部；不得新增 ImageGen 资产，不得进入文字安全区或接管鼠标 |
+| `QUEST.LOG.ACTION.SEAL_MENU` | planned adapter-owned `QuestLogDetailScrollChild` 子树；未接入 | V11 为当前待确认方向：非模态即时开合；漆章、根、七段和尾端随详情内容滚动并由真实 `[366,64,246,324]` viewport 裁切；不创建页外 outset、popup 背板或第二纸面，也不改变正文 `214px`／缩进 `204px`。七段仍是七个独立真实 Button，只代理源 Button、镜像 disabled、保留原生放弃确认与右上 Close；任一 parity 缺失时全部旧入口原子 fail-open。V1 候选和 V10 页外索引签均不得复用；确认前无 source、runtime 或旧按钮隐藏 |
+| `QUEST.LOG.ACTION.SEAL_MENU.RIBBON.ROOT` | planned adapter-owned 无鼠标 Texture | 内容坐标 `[210,30,32,12]`，先于漆章绘制；收起态只有蜡体下方 `6px` 可见。它只表达蜡封压住绶带的物理层序，不是书签、包角或独立承托 |
+| `QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.SHARE` | planned 独立 Button；代理 `QuestFramePushQuestButton` | `[210,42,32,22]`；双羽笔／结约纹章；normal／hover／pressed／disabled 独立状态，不烘焙文字 |
+| `QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.DETAIL` | planned 独立 Button；代理 `QuestLogFrameExpandButton` | `[210,64,32,22]`；折页纹章；动态“展开／收起详情”留给 Tooltip／provider |
+| `QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.SHOW` | planned 独立 Button；代理 `pfQuest.buttonShow` | `[210,86,32,22]`；开放公会罗盘纹章 |
+| `QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.HIDE` | planned 独立 Button；代理 `pfQuest.buttonHide` | `[210,108,32,22]`；遮蔽罗盘纹章 |
+| `QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.CLEAN` | planned 独立 Button；代理 `pfQuest.buttonClean` | `[210,130,32,22]`；清扫地图线纹章 |
+| `QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.RESET` | planned 独立 Button；代理 `pfQuest.buttonReset` | `[210,152,32,22]`；回环路线结纹章 |
+| `QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.ABANDON` | planned 独立 Button；代理 `QuestLogFrameAbandonButton` | `[210,174,32,22]`；断裂契约线，只使用克制暗酒红墨；点击仍进入原生确认 |
+| `QUEST.LOG.ACTION.SEAL_MENU.RIBBON.TAIL` | planned adapter-owned 无鼠标 Texture | `[210,196,32,8]`；克制毛边／分叉只收尾，不接收鼠标。尾端 y=`204`，与首行奖励 y=`236` 保持 `32px` 空隙 |
+| `QUEST.LOG.ACTION.SEAL_MENU.PAGE_EDGE_MASK` | 无 runtime；V9／V10 superseded proposal | V11 不再从页外展开，故不创建／复用 `[604,102,24,180]` 页边遮根 mask；该旧 ID 只保留为明确废止的兼容记录，不得进入新资产或 adapter |
 | `QUEST.LOG.LEVELS` | pfUI `QuestLogFrameLevelsCheckButton` | 复用 QL-B1 开放墨圈／墨勾 atlas；保留原脚本与文字 |
 | `QUEST.LOG.PFQUEST.ONLINE` | `pfQuest.buttonOnline`／`pfQuestOnline` | `72 × 16`，右页顶部固定工具行；动态 ID 与原 OnClick 不变 |
 | `QUEST.LOG.PFQUEST.LANGUAGE` | `pfQuest.buttonLanguage`／`pfQuestLanguage` | `86 × 16`，与 ONLINE 同行；动态语言、下拉与原 OnUpdate／OnClick 不变 |

@@ -161,6 +161,33 @@ def main() -> None:
     seal_actions_sim_v10_spec = json.loads(
         seal_actions_sim_v10_spec_path.read_text(encoding="utf-8")
     )
+    seal_actions_sim_v11_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v11.json"
+    )
+    seal_actions_sim_v11_spec = json.loads(
+        seal_actions_sim_v11_spec_path.read_text(encoding="utf-8")
+    )
+    seal_actions_sim_v11_display_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_actions_simulation_v11_display_region.json"
+    )
+    seal_actions_sim_v11_display = json.loads(
+        seal_actions_sim_v11_display_path.read_text(encoding="utf-8")
+    )
+    seal_actions_sim_v11_renderer_path = (
+        ROOT / "tools" / "render_quest_log_seal_ribbon_simulation_v1.py"
+    )
+    assert seal_actions_sim_v11_renderer_path.is_file(), (
+        seal_actions_sim_v11_renderer_path
+    )
+    seal_actions_sim_v11_renderer = (
+        seal_actions_sim_v11_renderer_path.read_text(encoding="utf-8")
+    )
     seal_actions_sim_renderer = (
         ROOT / "tools" / "render_quest_log_seal_actions_simulation_v1.py"
     )
@@ -343,10 +370,18 @@ def main() -> None:
             "`QUEST.LOG.ACTION.SHARE`",
             "`QUEST.LOG.ACTION.EXIT`",
             "`QUEST.LOG.ACTION.SEAL_MENU`",
-            "`QUEST.LOG.ACTION.SEAL_MENU.TAB.BASE`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.RIBBON.ROOT`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.SHARE`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.DETAIL`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.SHOW`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.HIDE`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.CLEAN`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.RESET`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.ABANDON`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.RIBBON.TAIL`",
             "`QUEST.LOG.ACTION.SEAL_MENU.PAGE_EDGE_MASK`",
-            "当前没有 accepted source",
-            "V1 的现代矩形皮革按钮观感",
+            "确认前无 source、runtime 或旧按钮隐藏",
+            "V1 候选和 V10 页外索引签均不得复用",
             "当前程序化暗皮革 fallback",
             "`108×41px` 双列锚点",
             "名称安全宽 `64px`",
@@ -2357,6 +2392,98 @@ def main() -> None:
     assert seal_actions_sim_v10_spec["constraints"][
         "danger_uses_ink_accent_only"
     ]
+    assert seal_actions_sim_v11_spec["version"] == (
+        "QUEST-LOG-SEAL-ACTIONS-SIM-V11"
+    )
+    assert seal_actions_sim_v11_spec["design_batch"] == "QS-B1 V2"
+    assert seal_actions_sim_v11_spec["support_type"] == (
+        "scroll-child-wax-pinned-action-ribbon"
+    )
+    assert seal_actions_sim_v11_spec["ribbon_style"] == (
+        "azeroth-guild-warrant-ribbon-v1"
+    )
+    assert seal_actions_sim_v11_spec["frame"] == [676, 464]
+    v11_layout = seal_actions_sim_v11_spec["layout"]
+    assert v11_layout["detail_viewport"] == [366, 64, 246, 324]
+    assert v11_layout["detail_scroll_child"] == [366, 64, 246, 560]
+    assert v11_layout["detail_body_width"] == 214
+    assert v11_layout["detail_indented_width"] == 204
+    assert v11_layout["seal_hitbox_content"] == [206, 0, 40, 40]
+    assert v11_layout["seal_visual_content"] == [210, 4, 32, 32]
+    assert v11_layout["ribbon_root_content"] == [210, 30, 32, 12]
+    v11_segments = v11_layout["ribbon_action_segments_content"]
+    assert len(v11_segments) == 7
+    assert all(segment[2:] == [32, 22] for segment in v11_segments)
+    assert all(
+        left[1] + left[3] == right[1]
+        for left, right in zip(v11_segments, v11_segments[1:])
+    )
+    assert v11_layout["ribbon_tail_content"] == [210, 196, 32, 8]
+    assert len(v11_layout["reward_slots_content"]) == 4
+    assert all(
+        reward[2:] == [108, 41]
+        for reward in v11_layout["reward_slots_content"]
+    )
+    assert min(
+        reward[1] for reward in v11_layout["reward_slots_content"]
+    ) - (
+        v11_layout["ribbon_tail_content"][1]
+        + v11_layout["ribbon_tail_content"][3]
+    ) == 32
+    assert [state["scroll_offset"] for state in seal_actions_sim_v11_spec["states"]] == [
+        0,
+        0,
+        52,
+        208,
+    ]
+    assert [
+        state["expected_enabled_actions"]
+        for state in seal_actions_sim_v11_spec["states"]
+    ] == [0, 7, 6, 0]
+    assert len(seal_actions_sim_v11_spec["content"]["provider_proxies"]) == 7
+    assert len(seal_actions_sim_v11_spec["content"]["motifs"]) == 7
+    assert seal_actions_sim_v11_spec["interaction"]["seal_parent"] == (
+        "QuestLogDetailScrollChild"
+    )
+    assert seal_actions_sim_v11_spec["interaction"]["ribbon_parent"] == (
+        "QuestLogDetailScrollChild"
+    )
+    assert seal_actions_sim_v11_spec["constraints"]["imagegen_calls"] == 0
+    assert seal_actions_sim_v11_spec["constraints"][
+        "each_action_is_an_independent_button"
+    ]
+    assert seal_actions_sim_v11_spec["constraints"][
+        "no_single_ribbon_bitmap_for_seven_hit_regions"
+    ]
+    assert seal_actions_sim_v11_spec["constraints"][
+        "no_page_reflow_or_permanent_text_narrowing"
+    ]
+    assert seal_actions_sim_v11_spec["constraints"][
+        "ribbon_ends_before_rewards"
+    ]
+    assert seal_actions_sim_v11_display["schema"] == (
+        "aeui-display-region-contract-v1"
+    )
+    assert len(seal_actions_sim_v11_display["scenarios"]) == 4
+    assert all(
+        scenario["frame"] == [246, 324]
+        and scenario["preview_frame"] == [246, 324]
+        for scenario in seal_actions_sim_v11_display["scenarios"]
+    )
+    require(
+        seal_actions_sim_v11_renderer,
+        (
+            "draw_ribbon_root",
+            "draw_ribbon_segment",
+            "draw_ribbon_tail",
+            "state_metrics",
+            "partial_scroll_disables_first_clipped_action",
+            "fully_scrolled_out_has_zero_action_hitboxes",
+            "temporary_body_overlay_px",
+            '"calls": 0',
+        ),
+        "QS-B1 V11 deterministic scroll-ribbon renderer",
+    )
     require(
         seals_work,
         (
@@ -2542,7 +2669,7 @@ def main() -> None:
         (
             "QS-B1 V2 旧卷宗索引签预演",
             "QUEST-LOG-SEAL-ACTIONS-SIM-V10",
-            "`simulation-reviewed / awaiting-user-confirmation / P2`",
+            "`user-superseded-before-confirmation / P2`",
             "99／94／108／101／96／105／98px",
             "`31/31 pass`",
             "3b9d7ac8fa1c4e4a74e3f96cf6c891ea4510d72c53afebcb4523fd5359550f32",
@@ -2553,29 +2680,53 @@ def main() -> None:
             "本地流程错误：`0`",
             "V1 attempt 1–5",
             "不需要临时 `handoff/`",
-            "当前不得调用 ImageGen",
+            "V10 尚未获得确认",
         ),
-        "QS-B1 V2 deterministic pre-production simulation work",
+        "QS-B1 V10 superseded deterministic simulation work",
+    )
+    require(
+        seals_work,
+        (
+            "QS-B1 V2 页内火漆授印绶带预演",
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V11",
+            "`simulation-reviewed / awaiting-user-confirmation / P2`",
+            "QuestLogDetailScrollChild",
+            "`32×22px`",
+            "`14..24px`",
+            "`108×41px`",
+            "open / scroll 52",
+            "open / scroll 208",
+            "`21/21 pass`",
+            "`4/4` 场景",
+            "f720f4f84de42ab3addfd600658a57f06206944e8a72436a1d839d3140fda13c",
+            "ImageGen：`0/0`",
+            "当前不得生图或接入菜单",
+        ),
+        "QS-B1 V11 deterministic pre-production simulation work",
     )
     require(
         progress,
         (
-            "QUEST-LOG-SEAL-ACTIONS-SIM-V10 / QS-B1 V2",
-            "P2 simulation-reviewed / awaiting-user-confirmation",
-            "`31/31 pass`",
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V11 / QS-B1 V2",
+            "`21/21 pass`",
+            "display-region `4/4 pass`",
             "ImageGen `0/0`",
         ),
-        "QS-B1 V2 progress",
+        "QS-B1 V11 progress",
     )
     require(
         submodules,
         (
-            "QUEST-LOG-SEAL-ACTIONS-SIM-V10 / QS-B1 V2",
-            "七个 Button 容器保持 `112×20px`",
-            "每个真实 Button 独立拥有的无字可见 Texture",
-            "确认前未授权 source、runtime 或菜单接入",
+            "QUEST-LOG-SEAL-ACTIONS-SIM-V11 / QS-B1 V2",
+            "`QUEST.LOG.ACTION.SEAL_MENU.RIBBON.ROOT`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.SHARE`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.SEGMENT.ABANDON`",
+            "`QUEST.LOG.ACTION.SEAL_MENU.RIBBON.TAIL`",
+            "七个独立真实 Button",
+            "ScrollChild",
+            "确认前无 source、runtime 或旧按钮隐藏",
         ),
-        "QS-B1 V2 component ownership",
+        "QS-B1 V11 component ownership",
     )
 
     quest_adapter = (

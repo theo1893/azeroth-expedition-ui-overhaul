@@ -1,0 +1,149 @@
+{
+  "schema": "aeui.quest-log.seal-actions.simulation.v2",
+  "version": "QUEST-LOG-SEAL-ACTIONS-SIM-V11",
+  "design_batch": "QS-B1 V2",
+  "support_type": "scroll-child-wax-pinned-action-ribbon",
+  "ribbon_style": "azeroth-guild-warrant-ribbon-v1",
+  "canvas": [1520, 1220],
+  "inputs": {
+    "quest_log_shell": "assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png",
+    "seal_atlas": "addon/AzerothExpeditionUI/Media/Quests/QuestToolWaxSealStatesV1.tga",
+    "title_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf",
+    "body_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf"
+  },
+  "outputs": {
+    "board": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V11/quest_log_seal_actions_board_v11.png",
+    "report": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V11/quest_log_seal_actions_report_v11.json",
+    "display_region_report": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V11/display-region-report-v11.json"
+  },
+  "presentation": {
+    "title": "QS-B1 V2 · 页内火漆授印绶带 · V11 本地几何预演",
+    "subtitle": "火漆和七段绶带都属于右页 ScrollChild：不改变正文宽度，展开时临时覆盖最右侧，随后与任务内容一起滚动并被真实 viewport 裁切。100% UI 像素，ImageGen 0/0。",
+    "origins": [
+      [35, 112],
+      [805, 112],
+      [35, 660],
+      [805, 660]
+    ]
+  },
+  "frame": [676, 464],
+  "layout": {
+    "list": [64, 64, 246, 324],
+    "detail_viewport": [366, 64, 246, 324],
+    "detail_scroll_child": [366, 64, 246, 560],
+    "detail_body_origin": [10, 8],
+    "detail_body_width": 214,
+    "detail_indented_width": 204,
+    "legacy_unconstrained_width": 224,
+    "close": [636, 12, 22, 22],
+    "seal_hitbox_content": [206, 0, 40, 40],
+    "seal_visual_content": [210, 4, 32, 32],
+    "ribbon_root_content": [210, 30, 32, 12],
+    "ribbon_action_segments_content": [
+      [210, 42, 32, 22],
+      [210, 64, 32, 22],
+      [210, 86, 32, 22],
+      [210, 108, 32, 22],
+      [210, 130, 32, 22],
+      [210, 152, 32, 22],
+      [210, 174, 32, 22]
+    ],
+    "ribbon_tail_content": [210, 196, 32, 8],
+    "reward_slots_content": [
+      [10, 236, 108, 41],
+      [122, 236, 108, 41],
+      [10, 281, 108, 41],
+      [122, 281, 108, 41]
+    ]
+  },
+  "states": [
+    {
+      "id": "closed-top",
+      "label": "A · 收起 / scroll 0：火漆下只露 6px 折叠绶带根",
+      "menu_open": false,
+      "scroll_offset": 0,
+      "expected_enabled_actions": 0
+    },
+    {
+      "id": "open-top",
+      "label": "B · 展开 / scroll 0：七段独立 Button，正文不重排",
+      "menu_open": true,
+      "scroll_offset": 0,
+      "expected_enabled_actions": 7
+    },
+    {
+      "id": "open-partial-scroll",
+      "label": "C · 展开 / scroll 52：首段被裁切并禁用隐藏命中区",
+      "menu_open": true,
+      "scroll_offset": 52,
+      "expected_enabled_actions": 6
+    },
+    {
+      "id": "open-fully-scrolled-out",
+      "label": "D · 展开 / scroll 208：漆章与绶带完全滚出，0 个命中区",
+      "menu_open": true,
+      "scroll_offset": 208,
+      "expected_enabled_actions": 0
+    }
+  ],
+  "content": {
+    "quest_rows": 18,
+    "reward_slots": 4,
+    "menu_actions": [
+      "共享任务",
+      "收起详情",
+      "显示位置",
+      "隐藏位置",
+      "清理标记",
+      "重建标记",
+      "放弃任务"
+    ],
+    "provider_proxies": [
+      "QuestFramePushQuestButton",
+      "QuestLogFrameExpandButton",
+      "pfQuest.buttonShow",
+      "pfQuest.buttonHide",
+      "pfQuest.buttonClean",
+      "pfQuest.buttonReset",
+      "QuestLogFrameAbandonButton"
+    ],
+    "motifs": [
+      "paired-quills",
+      "folded-ledger-page",
+      "open-compass",
+      "veiled-compass",
+      "swept-map-lines",
+      "returning-route-knot",
+      "severed-contract-thread"
+    ]
+  },
+  "interaction": {
+    "seal_parent": "QuestLogDetailScrollChild",
+    "ribbon_parent": "QuestLogDetailScrollChild",
+    "left_click": "toggle-wax-pinned-ribbon",
+    "outside_click_or_escape": "close-wax-pinned-ribbon",
+    "action_click": "proxy-original-provider-button-then-close-ribbon",
+    "abandon": "preserve-native-confirmation",
+    "disabled": "mirror-provider-enabled-state",
+    "scroll_clipping": "disable-any-action-hitbox-that-is-not-fully-inside-detail-viewport",
+    "fail_open": "keep-original-buttons-visible-until-all-proxies-exist"
+  },
+  "constraints": {
+    "imagegen_calls": 0,
+    "new_bitmap_assets": 0,
+    "seal_reuses_accepted_runtime_atlas": true,
+    "seal_and_ribbon_scroll_with_detail_content": true,
+    "seal_and_ribbon_clip_to_real_detail_viewport": true,
+    "closed_root_visible_below_seal_px": 6,
+    "each_action_is_an_independent_button": true,
+    "each_action_owns_a_distinct_motif_skin": true,
+    "no_single_ribbon_bitmap_for_seven_hit_regions": true,
+    "no_shared_popup_backing": true,
+    "no_page_reflow_or_permanent_text_narrowing": true,
+    "open_overlay_is_temporary": true,
+    "ribbon_ends_before_rewards": true,
+    "no_outer_book_frame_or_right_outset": true,
+    "no_warhammer_skull_aquila_or_imperium_symbols": true,
+    "bottom_action_buttons_hidden_only_after_proxy_parity": true
+  }
+}

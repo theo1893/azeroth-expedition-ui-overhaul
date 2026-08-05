@@ -6,11 +6,12 @@
 - 已确认历史模拟：`QUEST-SEALS-SIM-V2`；其 Quest Log 顶部悬空位置已于
   `2026-08-03` 被用户否决，Tracker 方向仍有效
 - 当前已确认历史模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V9`
-- 当前待确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V10 / QS-B1 V2`
+- 已被用户改向的模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V10 / QS-B1 V2`
+- 当前待确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V11 / QS-B1 V2`
 - 最近一次生产正文：`QS-B1 V1.r4`（已否决）
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V2 `P2`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
-  `simulation-reviewed / awaiting-user-confirmation / P2`；V1 保持
+  `simulation-reviewed / awaiting-user-confirmation / P2`（V11）；V1 保持
   `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
@@ -30,7 +31,7 @@
 - 用户于 `2026-07-31` 接受 `QS-A1 V1.r4` 的运行时视觉，并明确授权
   确定性色键、透明 RGB 清零与 `1024²` 归一化例外进入 P4／P5。不得再执行
   ImageGen。漆章物件美术和 atlas 不重开；Quest Log 旧锚点已失效，新的承载
-  与事务菜单先等待本地模拟确认。当前 runtime `1.19` 继续按确认方向只使用既有
+  与事务菜单先等待本地模拟确认。当前 runtime `1.25` 继续按确认方向只使用既有
   Texture 的页上位置；QS-B1 仍独立门禁真实 Button 和事务菜单。V1 的外沿
   皮革承托已被物理语义复核淘汰；
   V2 因伪页唇、硬质按钮轮廓与断开的弹窗语义被用户否决；V3 虽改用真实
@@ -50,9 +51,10 @@
   attempt 5 因 `6.1347:1` 超宽比例、`112×18px` 等比可见区、均匀压纹和
   连续亮边先被内部退回，随后又被用户以“不可接受”明确否决。V1 全部候选
   只能作为负面证据，不得成为 source、runtime、确定性几何例外或后续 edit
-  输入。新的 V2 已以 `QUEST-LOG-SEAL-ACTIONS-SIM-V10` 完成本地确定性预演，
-  当前只等待用户判断其具体可见方向；不得执行 attempt 6，也不得把“继续”解释为
-  V2 生产授权。
+  输入。V10 的页外索引签随后被用户用“ScrollChild 内固定火漆＋向下授印
+  绶带”明确改向，未获得确认。新的 V11 已按该物理关系完成四状态本地确定性
+  预演，当前只等待用户判断具体可见方向；不得执行 attempt 6，也不得把
+  “按这个做”解释为 V2 生产授权或 runtime 接入授权。
   旧 Quest Log／Tracker provider Button 在各自菜单功能等价前继续可见可用。
 
 ## 用户接受与 P4／P5 固化
@@ -97,9 +99,9 @@
 
 | ID | 当前对象 | 目标合同 |
 |---|---|---|
-| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前 runtime `1.19` 为 `[576,68,32,32]` 无鼠标 Texture | QS-A1 V1.r4 美术保持 accepted；`32px` 漆章直接压在详情页右上纸面，保留区 `[572,64,40,40]`。QS-B1 完成前不把它伪装成可点击 Button |
-| `QUEST.LOG.CHROME.SEAL.SUPPORT` | 无 runtime 对象 | V9 明确不创建书签、包角、皮革／黄铜承托；只允许漆章自身接触阴影落在现有右页纸面 |
-| `QUEST.LOG.CHROME.SEAL.MENU` | 尚无 runtime 对象 | V9 与 `QS-B1-INTERACTION V1` 均已确认：七个独立短书口事务签 Texture 从 detail 右边界 `x=612` 向书外伸出，整体 `[612,112,112,158]`；真实页边 mask `[604,102,24,180]` 遮住根部，正文／奖励零占用。每条只在未遮住的右侧 `96×20px` 接收鼠标，七项通过源 Button `:Click()` 委托，功能等价前旧八控件原子 fail-open。QS-B1 只生成一枚无字共用母版并确定性派生八态 |
+| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前 runtime `1.25` 为 `[576,68,32,32]` 无鼠标 Texture | QS-A1 V1.r4 美术保持 accepted；当前 P5 位置不变。V11 提议在 parity 成立后把未来 `40×40px` Button 改挂到 `QuestLogDetailScrollChild` 的内容坐标 `[206,0,40,40]`，其视觉 `[210,4,32,32]` 在 scroll `0` 时仍等于 Frame 坐标 `[576,68,32,32]`，随后随正文滚动并由真实 viewport 裁切；确认前不改 runtime |
+| `QUEST.LOG.CHROME.SEAL.SUPPORT` | 当前无 runtime 对象 | 不创建书框、包角、皮革／黄铜承托或页外书签。V11 的 `6px` 折叠根属于下方授印绶带，不是另一个悬空支架；收起时只在蜡体下露出 `6px`，并与火漆处于同一 ScrollChild |
+| `QUEST.LOG.CHROME.SEAL.MENU` | 尚无 runtime 对象 | V11 提议为 `32×22px` 的七段纵向连续绶带：每段仍是一个独立真实 Button／独立图案皮肤，分别代理原 provider；没有共享 popup 背景，也不允许用一张绶带位图代替七个命中区。展开只临时覆盖正文最右 `14..24px`，不缩窄／重排正文；尾端在 `108×41px` 奖励槽前保留 `32px`。漆章、根、七段与尾端共同滚动；被部分裁切的段不保留完整隐藏 hitbox，完全滚出后命中数必须为 `0`。功能等价前旧八控件继续原子 fail-open |
 | `QUEST.TRACKER.HUB.SEAL` | adapter-owned 无鼠标 Texture，已由临时 tracker runtime 挂载 | `34 × 34` 顶部中央漆章；宽度 `W` 时 `x=floor((W-34)/2)`、`y=-18`，底边恰好落在 provider `16px` 工具条／列表起点，不移动任务内容 |
 | `QUEST.TRACKER.HUB.MENU` | 尚无对象 | 未来独立交互批次；漆章点击后承载七项 provider 行为。本模拟不绘制、不实现，也不把它当成已有 Button |
 
@@ -2569,7 +2571,7 @@ silhouette height by the quantified amount.
 ## QS-B1 V2 旧卷宗索引签预演 — `QUEST-LOG-SEAL-ACTIONS-SIM-V10`
 
 - 日期：`2026-08-05`。
-- 状态：`simulation-reviewed / awaiting-user-confirmation / P2`。
+- 状态：`user-superseded-before-confirmation / P2`。
 - 触发条件：用户明确否决 `QS-B1 V1.r4 / attempt 5` 后回复“继续”。本节点只
   允许新的确定性生成前模拟，不构成 ImageGen、上传、source 晋级、runtime
   接入或隐藏旧按钮的授权。
@@ -2611,5 +2613,107 @@ silhouette height by the quantified amount.
   图片输入、edit input、综合色权威或几何来源。
 - 跨设备：board／report 可由 tracked renderer、spec 与既有 tracked 输入完全
   重建，不需要临时 `handoff/`。
-- 下一门禁：用户确认或否决这张具体 V10 预演。只有确认后才允许重写完整
-  `QS-B1 V2` 生产正文并请求新的独立生成授权；当前不得调用 ImageGen。
+- 用户改向：V10 尚未获得确认时，用户提出火漆应固定在详情 ScrollChild 的
+  右上内容坐标，点击后向下展开一条类似誓约／授印绶带的七段菜单，并允许它
+  与任务内容一起滚动、裁切和消失。该物件隐喻、布局、层序和占用关系发生
+  实质变化，故 V10 不得继续作为待确认版本，也不得成为 source、runtime、
+  edit input 或 V11 像素来源。
+
+## QS-B1 V2 页内火漆授印绶带预演 — `QUEST-LOG-SEAL-ACTIONS-SIM-V11`
+
+### 元数据与用户指向
+
+- 日期：`2026-08-05`。
+- 状态：`simulation-reviewed / awaiting-user-confirmation / P2`。
+- 用户指向：火漆固定在任务详情滚动内容的右上角；它随任务正文向上滚动并
+  消失。点击后向下展开一条带七个纹章点击区的绶带，语义参考动力甲授印绶带
+  的“蜡封压住垂直誓约带”，但必须转译为艾泽拉斯远征公会卷宗，禁止骷髅、
+  双头鹰、帝国徽记、科幻金属和直接复制战锤符号。用户随后回复“按这个做”。
+- 本节点只执行本地确定性几何模拟、文档与合同更新。它不构成 ImageGen、
+  上传、source 晋级、runtime 接入、旧按钮隐藏或新生产预算授权。
+- V10 状态改为 `user-superseded-before-confirmation`。V1 attempt 1–5 仍是
+  负面证据，未作为 V11 图片、edit、综合色或几何输入。
+
+### 物件、组件与视觉合同
+
+- `QUEST.LOG.CHROME.SEAL` 的未来 Button 与绶带都挂在
+  `QuestLogDetailScrollChild`，而不是 `QuestLogFrame` 或 viewport 固定层。
+  内容坐标命中盒 `[206,0,40,40]`、可见蜡体 `[210,4,32,32]`；scroll `0`
+  时仍映射到既有 Frame 坐标 `[572,64,40,40]`／`[576,68,32,32]`，不让当前
+  页上位置突然跳动。
+- 收起态只在火漆下方露出 `6px` 的折叠绶带根，明确表达“绶带被蜡压住”，
+  又不形成新的书签、包角、外框或悬空红色 icon。层序为详情文字／奖励 →
+  绶带根／分段／尾端 → QS-A1 火漆；蜡体永远在根部上方。
+- 展开态由七个相接的 `32×22px` 分段组成，内容坐标依次为
+  `[210,42,32,22]`、`[210,64,32,22]`、`[210,86,32,22]`、
+  `[210,108,32,22]`、`[210,130,32,22]`、`[210,152,32,22]`、
+  `[210,174,32,22]`；尾端 `[210,196,32,8]`。七段视觉上形成连续的窄幅
+  公会授印绶带，但每段必须仍由一个独立真实 Button、独立状态和独立图案
+  皮肤拥有；禁止以一张整绶带背景代替七个点击对象。
+- 七段依次映射共享、详情开合、显示位置、隐藏位置、清理标记、重建标记、
+  放弃任务。可见图案分别采用双羽笔／结约、折页、公会罗盘、遮蔽罗盘、
+  清扫地图线、回环路线结和断裂契约线；它们是整段纹章式墨迹，不是现代
+  微型 icon。动态动作名保留给 GameTooltip／provider，不烘焙进位图。
+- 材料为烟熏旧羊皮或粗织公会誓约布，综合色使用暖赭、旧棕、深乌墨与只在
+  放弃段出现的克制暗酒红。保持香草魔兽低分辨率二维手绘、粗略不规则边、
+  大块明暗和左上暖光；禁止规则卡片列、完整金框、圆角 pill、玻璃、霓虹、
+  现代 dropdown、暗黑式金属祭坛或照片级布料。
+
+### 真实展示区域与滚动合同
+
+- 真实基础 Frame `676×464`；右页 `QuestLogDetailScrollFrame` viewport
+  `[366,64,246,324]`，模拟 ScrollChild `[366,64,246,560]`。列表仍为 18 行，
+  奖励仍为四个真实 `108×41px` 双列槽；没有新增页外 outset、第二张纸、
+  popup 背板、书框或右缘 clamp。
+- 正文正常宽度 `214px`、缩进目标宽 `204px` 均不改变。展开绶带位于详情
+  局部 `x=210..242`，只临时覆盖正常正文右缘 `14px`，对旧／未约束到
+  `224px` 的行最多覆盖 `24px`；不永久缩窄、不绕排、不重排。菜单在动作、
+  再次点蜡、空白点击或 Esc 后收起。
+- 绶带尾端内容 y=`204`，首行奖励 y=`236`，中间保留 `32px`；因此不会与
+  四个奖励 Button 同时占用相同垂直区域。奖励行距继续为 `4px`。
+- 四个真实状态：A `closed / scroll 0`，动作命中数 `0`；B
+  `open / scroll 0`，七段全部可见可点；C `open / scroll 52`，第一段只剩
+  `12px` 可见且不得保留完整隐藏 hitbox，另外六段可点；D
+  `open / scroll 208`，火漆、根、七段和尾端全部滚出，动作命中数必须为 `0`。
+  ScrollFrame 裁切不仅作用于 Texture，也必须约束 Button 命中；runtime 若
+  无法可靠裁切部分 hitbox，保守禁用任何未完整落入 viewport 的段。
+- 交互所有权不变：七项只通过源 Button `:Click("LeftButton")` 委托；放弃
+  继续走原生确认；右上 Close 独立；parity 不完整时全部旧入口原子 fail-open。
+
+### 本地模拟、复现与内审
+
+- specification：
+  `tools/specs/quest_log_seal_actions_simulation_v11.json`，SHA-256
+  `6a396c80d742fb0e9b31e9df245f50358a35891f12382b9f4fa40da5a5ab559e`。
+- display-region contract：
+  `tools/specs/quest_log_seal_actions_simulation_v11_display_region.json`，
+  SHA-256
+  `b7f44a4003a2cff5e7d8bcc7e4d8733dbc1fe065c02b72fcfb87ea8f6b57cacf`。
+- renderer：`tools/render_quest_log_seal_ribbon_simulation_v1.py`，SHA-256
+  `9763f4bc1231b17bb10b316d825bcb924a04bec5fbba3bcf036058fcb705b084`。
+- macOS 命令：
+  `conda run -n py312 python tools/render_quest_log_seal_ribbon_simulation_v1.py tools/specs/quest_log_seal_actions_simulation_v11.json --repo-root .`。
+  实际解释器 `/Users/yuanshiyao/miniconda3/envs/py312/bin/python`，Python
+  `3.12.12`；本地渲染错误 `0`。
+- board：
+  `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-ACTIONS-SIM-V11/quest_log_seal_actions_board_v11.png`，
+  `1520×1220 RGBA`，SHA-256
+  `f720f4f84de42ab3addfd600658a57f06206944e8a72436a1d839d3140fda13c`。
+- 模拟 report：同目录 `quest_log_seal_actions_report_v11.json`，SHA-256
+  `b738ecef1e1acb3cbd06ad8961a8ef82912863a9af996479fc5042adaeaf79ae`；
+  `21/21 pass`、status `displayable`。
+- display-region report：同目录 `display-region-report-v11.json`，SHA-256
+  `65f801f566daf8327b23b36291a1cb03955184eb32edc39074ddb7084cc72e80`；
+  `4/4` 场景、violations `0`、status `pass`。
+- ImageGen：`0/0`；上传：`0`；新 bitmap source/runtime：`0`。board／report
+  可由 tracked renderer、spec 和既有 accepted/runtime 输入确定性重建，
+  当前不需要 `handoff/`。
+- 内部结论：`pass-for-user-review`。真实 Frame、18 行、四个 `108×41px`
+  奖励、七段独立 Button、ScrollChild 层序、临时正文覆盖、奖励避让、部分
+  裁切和完全滚出都可读且满足几何合同。
+- 非权威：最终羊皮／粗布纤维、手绘毛边、production Alpha、atlas、四态、
+  Tooltip、客户端字体和 1.12 ScrollFrame 的鼠标裁切实现。模拟像素不得成为
+  source、runtime、裁切／切片或正式 ImageGen 输入。
+- 下一门禁：用户确认或否决具体 V11 可见方向。只有确认后才重写完整
+  `QS-B1 V2` 生产正文，并另行请求固定输入、不可变修复边界和最多五次实际
+  ImageGen 的独立授权；当前不得生图或接入菜单。
