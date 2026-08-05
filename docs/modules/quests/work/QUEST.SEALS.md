@@ -9,11 +9,11 @@
 - 当前生产正文：`QS-B1 V1.r4`
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu `P3`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1
-  `internal-rejected / repair-prepared / P3 / 4/5`
+  `candidate-rejected / repair-budget-exhausted / P3 / 5/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
-- QS-B1 当前实际生图：`4/5`
+- QS-B1 当前实际生图：`5/5`
 - QS-B1 流程错误：`1`（E1 未进入生成器，不占生图额度）
 - tracked source：
   `assets/source/quests/qs-a1/QuestToolWaxSeal_Master_v1.png`，SHA-256
@@ -1797,8 +1797,8 @@ border; dark-walnut leather remains legible when reduced to 112 x 20 px.
 
 ### 当前门禁
 
-- 当前状态：`internal-rejected / repair-prepared / P3 / 4/5`。
-- 当前实际生图：`4/5`；流程错误：`1`。
+- 当前状态：`candidate-rejected / repair-budget-exhausted / P3 / 5/5`。
+- 当前实际生图：`5/5`；流程错误：`1`。
 - 已发生：attempt 1 raw、确定性透明审查件、临时八态 atlas、真实排版与右缘
   clamp 预演；均只存在于 ignored `generated/`。尚未发生：source、manifest、
   runtime atlas、Lua/XML 接入或旧按钮隐藏。
@@ -1812,9 +1812,9 @@ border; dark-walnut leather remains legible when reduced to 112 x 20 px.
 - 本授权只允许上述固定生产正文、固定 SHA 的 Image 1／2、受限同循环 Image 3
   edit、最多五次实际调用与合同内确定性后处理；不授权 source 晋级、P4／P5、
   Lua 接入或旧按钮隐藏。
-- 当前下一门禁：提交 attempt 4 退回证据与完整 `QS-B1 V1.r4` 后，固定上传
-  Image 1／2，并只把紧邻 attempt 4 raw 作为 Image 3 edit target 执行最终
-  attempt 5；若仍失败立即停止。
+- 当前下一门禁：五次循环已耗尽，禁止执行 attempt 6。等待用户审视 attempt 5
+  的真实排版，并决定是以新版本重新授权，还是对某个现有候选明确授权新的
+  确定性几何例外；两者都不包含在本次授权内。
 
 ### QS-B1 流程错误记录
 
@@ -2474,3 +2474,67 @@ transparent horizontal gutters at 112 x 20; no new objects, text, icon, rivet,
 book, page, seal, menu, complete border, continuous highlight, or state
 variants. Preserve the accepted dark-walnut identity while changing the
 silhouette height by the quantified amount.
+
+### Attempt 5 执行、完整复审与循环终态
+
+- 日期：`2026-08-05`；执行前 commit `1e84d16`。
+- 实际输入：固定 Image 1
+  `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`、
+  Image 2
+  `91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5`；
+  紧邻 attempt 4 raw
+  `53079531d3b4d6ad50bfa3c16b00057f3233e38ffaaafe50d81da03d6849ae5e`
+  是唯一 Image 3；无其他上传。
+- 固定执行器 session：
+  `019fcfd8-d153-7603-b59f-0ee2a979662d`；完整 `QS-B1 V1.r4` 共
+  `7604` 字符／`114` 行已由 child 逐字显示，无截断或 revised prompt。
+  ImageGen 返回图片并退出 `0`，正式计为 `5/5`。模型缓存字段警告发生在
+  已正常启动的固定 child 内，没有阻止 provider 生成，不新增流程错误。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V1/attempt-05/raw/QS-B1-V1.attempt-05.png`，
+  SHA `259a5d713e9872f99e91dcb0e8dc39f04f8f5c252ac2e12d416e9baca667751b`；
+  child 临时输出、同 session cache 与仓库 raw 三份 SHA 完全一致。
+  原图为 `1388×1133 RGB`；边缘连通背景 `1,344,453` 像素、`3,285`
+  种 RGB、精确 `#00FF00` 像素为 `0`。可见 bbox
+  `[102,470,1286,663]`、`1184×193`，比例 `6.1347:1`。
+- attempt 5 确实把高度降到请求区间附近，但把已冻结的可见宽度从
+  `1060px` 擅自扩到 `1184px`，增加 `124px`／约 `11.7%`；因此没有得到
+  要求的 `5.55..5.67:1`，也越过长期硬门禁 `5.45..5.75` 的上限。
+- 合同内确定性处理只执行边缘连通色键、透明 RGB 清零和等比 bbox-fit。
+  归一化审查件 SHA
+  `eca28df94f59fe3c38cd66e4ac08231312d218a5929216a950bc678010220fcc`，
+  `1024² RGBA`、bbox `[120,448,904,576]`、`784×128`；透明 RGB 与可见
+  绿色残留均为 `0`。通用 inspector 再次确认同一 bbox、`100,231`
+  可见像素和零 green spill。
+- 等比缩到固定 `112×20px` Texture 后，实际不透明可见 bbox 仅
+  `[0,1,112,19]`，即 `112×18px`，上下各留下约一行透明空白。授权的
+  bbox-fit 不允许非等比纵向拉伸、裁掉横向端部或补画像素，因此不能把该失败
+  伪装成合格的满槽资产。
+- 接触表 SHA：
+  `1f00f10113361ccfac34c3e600e8a01f8642f35076815bc6671d06bb6877434e`；
+  真实排版 SHA：
+  `d42b276361907e2c0b30bf62f3d2ebf4c1a1f3205c7e98d5576e7a0218487e30`；
+  右缘 clamp SHA：
+  `7ea015fc879aba41bd8d52a8b94f79ebd32980d56765bc02c16d1cd23d373aa9`；
+  layout report SHA：
+  `a7e2ef34fc595ebe7d74845b6aad79bd4ef79493868d662d00fe52960ed8800c`。
+  七项真实标签、18 行任务、详情、四奖励槽、页边遮根和右缘 clamp 仍为
+  `25/25 pass`；这只证明布局，不覆盖母版资产失败。
+- 美术复审：单对象、直切左根、近方右端、暗胡桃综合色和真实标签可读性均
+  保留；但全表面均匀压纹再次增强，顶部形成接近全长的亮铜线，右端也形成
+  连续亮边，仍偏向现代 bevel button。即使忽略比例，这些也没有完整满足
+  “低频宽笔触、无连续高光／完整边框”的香草风格合同。
+- 第一个失败门禁：`raw_aspect_within_5_45_to_5_75 = false`，实测
+  `6.1347 > 5.75`。次级视觉失败为均匀微纹与连续顶部／右端亮边。
+- 结论：`candidate-rejected`。
+- 否决人：`internal-review`。
+- 尝试次数：`5/5`；流程错误：`1`。
+- 循环终态：`repair-budget-exhausted`。不得执行第六次 ImageGen。
+- 本版本保留内容：V9 外侧七槽布局、页边遮根、真实 `96×20px` hitbox、
+  右缘 clamp、源 Button 代理合同、页上 QS-A1 火漆位置，以及候选的单对象、
+  暗胡桃、直切根部和近方端部方向。
+- 下一版本必须改变：必须由用户选择并重新授权新的边界。可选方向是重开一个
+  新生产版本，或针对已存在候选明确允许一种能填满 `112×20px` 的非等比／
+  裁切几何合同；当前授权只允许等比 bbox-fit，不能代替该决定。
+- 本版本无 tracked source、source manifest、runtime atlas、Lua/XML 菜单接入
+  或旧按钮隐藏；当前 addon 继续使用全部 fail-open fallback。
