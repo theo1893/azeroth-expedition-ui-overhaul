@@ -9,7 +9,7 @@
 - 当前生产正文：`QS-B1 V1`
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu `P2`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1
-  `simulation-confirmed / prompt-draft / awaiting-production-authorization`
+  `simulation-confirmed / interaction-contract-draft / prompt-draft`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -42,7 +42,8 @@
   `48px` 外伸，并移除箭头、逐项铆钉和明亮顶部高光。用户于
   `2026-08-03` 回复“进入下一步”，明确确认 V9 可见方向；确认只冻结下述
   文字化布局与综合色结论，不接受模拟像素。当前已准备 `QS-B1 V1` 生产正文，
-  尚未获得正式 ImageGen 授权。
+  并新增 `QS-B1-INTERACTION V1` 待确认交互草案；先确认交互，再独立请求正式
+  ImageGen 授权。
   旧 Quest Log／Tracker provider Button 在各自菜单功能等价前继续可见可用。
 
 ## 用户接受与 P4／P5 固化
@@ -89,7 +90,7 @@
 |---|---|---|
 | `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前 runtime `1.19` 为 `[576,68,32,32]` 无鼠标 Texture | QS-A1 V1.r4 美术保持 accepted；`32px` 漆章直接压在详情页右上纸面，保留区 `[572,64,40,40]`。QS-B1 完成前不把它伪装成可点击 Button |
 | `QUEST.LOG.CHROME.SEAL.SUPPORT` | 无 runtime 对象 | V9 明确不创建书签、包角、皮革／黄铜承托；只允许漆章自身接触阴影落在现有右页纸面 |
-| `QUEST.LOG.CHROME.SEAL.MENU` | 尚无 runtime 对象 | V9 已确认：七个独立短书口事务签 Button 从 detail 右边界 `x=612` 向书外伸出，整体 `[612,112,112,158]`；真实页边 mask `[604,102,24,180]` 遮住根部，正文／奖励零占用。QS-B1 只生成一枚无字共用母版并确定性派生八态；功能等价前旧按钮保持 fail-open |
+| `QUEST.LOG.CHROME.SEAL.MENU` | 尚无 runtime 对象 | V9 已确认：七个独立短书口事务签 Texture 从 detail 右边界 `x=612` 向书外伸出，整体 `[612,112,112,158]`；真实页边 mask `[604,102,24,180]` 遮住根部，正文／奖励零占用。`QS-B1-INTERACTION V1` 待确认：每条只在未遮住的右侧 `96×20px` 接收鼠标，七项通过源 Button `:Click()` 委托，功能等价前旧八控件原子 fail-open。QS-B1 只生成一枚无字共用母版并确定性派生八态 |
 | `QUEST.TRACKER.HUB.SEAL` | adapter-owned 无鼠标 Texture，已由临时 tracker runtime 挂载 | `34 × 34` 顶部中央漆章；宽度 `W` 时 `x=floor((W-34)/2)`、`y=-18`，底边恰好落在 provider `16px` 工具条／列表起点，不移动任务内容 |
 | `QUEST.TRACKER.HUB.MENU` | 尚无对象 | 未来独立交互批次；漆章点击后承载七项 provider 行为。本模拟不绘制、不实现，也不把它当成已有 Button |
 
@@ -1425,16 +1426,148 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
   range；当前测试设备必须先确认 `quest frame=1.19 theme=1.7 seal=detail-page-32`，
   再判断 P5 的三项视觉修复是否生效。
 
+## Quest Log 火漆点击行为 — `QS-B1-INTERACTION V1`
+
+### 元数据与范围
+
+- 日期：`2026-08-05`
+- 操作：`prepare`
+- 子状态：`interaction-contract-draft / P2 / awaiting-user-confirmation`
+- 复用的已确认视觉：`QUEST-LOG-SEAL-ACTIONS-SIM-V9`；本合同不改变火漆、
+  七条事务签、页边遮根、`48px` outset 或 detail／reward 零占用，因此不创建
+  新的视觉模拟版本。
+- ImageGen：`0/0`；上传：无；新增 source／runtime：`0`。
+- 本轮只定义点击、展开、状态同步、动作委托、收起与 fail-open；不生图，
+  不实现 Lua，不隐藏现有按钮，也不改变原生／pfQuest 业务逻辑。
+
+### 交互原则
+
+- 火漆是任务书的一级“事务入口”，不是配置弹窗、二级详情页或模态窗口。
+  左键只在 `CLOSED` 与 `OPEN` 之间切换；右键在 V1 不注册，保留给未来独立
+  配置范围。
+- V1 采用即时展开／收起，不使用抽屉缓动、逐条飞入、弹性缩放、发光或声音。
+  唯一运动反馈是 Button 原生按下时的 `1px` 右下位移；菜单打开期间火漆固定
+  使用既有 pressed 视觉，作为克制的“已开启”反馈。
+- 菜单始终是七个独立 Button，不创建整块弹窗、子页面或第二本纸页；详情正文、
+  奖励与滚动区域从不切换为事务内容。
+- 菜单是非模态的。不得建立全屏透明挡板，也不得吞掉玩家对世界或其他插件的
+  第一次点击。
+
+### 可见盒、命中盒与层序
+
+- 火漆视觉仍为 `[576,68,32,32]`；真实 Button 命中盒为
+  `[572,64,40,40]`。命中盒完全落在 V9 已冻结的 `40×40px` 保留区内。
+- 七条 Texture 的可见盒仍为 V9 的七个 `112×20px` 槽，从 `x=612` 开始。
+  交互 Button 命中盒改为各槽右侧可见的 `[628,y,96,20]`：左侧 `16px` 根部
+  只由 Texture 延伸到真实页边之下，不接收鼠标。由此点击纸页边缘不会误触
+  被遮住的按钮根部；文字安全区 `[630,y+1,80,18]` 完全位于命中盒内。
+- 层序保持：QL-A1 shell → detail／reward → 七条事务签 Texture 与 Button →
+  无鼠标页边 mask → 火漆 Button。页边 mask 和装饰 Texture 都不接收鼠标。
+- 菜单展开时若屏幕右侧不足，先保存任务书当前锚点，再按
+  `max(0, frameRight + 48 - (screenRight - 8))` 只做一次临时左移；收起、
+  Quest Log 隐藏或进入 fallback 时原样恢复。不得用常驻 `OnUpdate` 争夺几何。
+
+### 状态机
+
+| 状态 | 可见／交互 | 进入条件 | 离开条件 |
+|---|---|---|---|
+| `FALLBACK` | QS-A1 火漆保持普通无鼠标 Texture；旧八个底部／右页按钮全部可见可用 | 七个代理源、右上 Close、委托能力或静态媒体门禁任一不完整 | 全部 parity 条件成立并重新 Apply |
+| `CLOSED` | 火漆为可点击 Button；七条事务签隐藏；旧八个 fallback 被抑制，右上 Close 保留 | parity 成立后的默认态；Quest Log 每次重新打开也从此态开始 | 左键火漆进入 `OPEN`；provider 失配进入 `FALLBACK` |
+| `OPEN` | 七项同时出现；火漆保持 pressed；标签和 enabled 已从源对象同步 | 从 `CLOSED` 左键火漆 | 第二次点火漆、Esc、任务选择变化、detail 显隐变化、Quest Log 隐藏、世界点击、任务书空白点击或动作委托 |
+| `DISPATCH` | 菜单已先收起并恢复临时位移；不显示 busy／spinner | 点击一个 enabled 事务项 | 调用对应源 Button 的 `:Click("LeftButton")` 后回到 `CLOSED`；源失效或调用失败立即进入 `FALLBACK` |
+
+状态不写入 SavedVariables；登录、`/reload` 和每次重新打开任务书都从
+`CLOSED` 或 `FALLBACK` 开始，不恢复上次展开态。
+
+### 七项行为与标签
+
+顺序和分组保持 V9，不增加二级菜单：
+
+| 顺序 | 代理源 | 展示标签 | 点击结果 |
+|---:|---|---|---|
+| 1 | `QuestFramePushQuestButton` | 镜像源 Button 当前文字 | 先收起，再由源 Button 执行共享 |
+| 2 | `QuestLogFrameExpandButton` | adapter 根据真实 detail 状态显示“收起详情”／“展开详情”；不显示原箭头字符 | 先收起，再调用同一 toggle Button |
+| 3 | `pfQuest.buttonShow` | 镜像 pfQuest 本地化文字 | 先收起，再调用 pfQuest 显示位置逻辑 |
+| 4 | `pfQuest.buttonHide` | 镜像 pfQuest 本地化文字 | 先收起，再调用 pfQuest 隐藏当前任务位置逻辑 |
+| 5 | `pfQuest.buttonClean` | 镜像 pfQuest 本地化文字 | 先收起，再调用 pfQuest 清理全部 PFQUEST 节点逻辑 |
+| 6 | `pfQuest.buttonReset` | 镜像 pfQuest 本地化文字；不得误改名为仅“重建当前标记” | 先收起，再调用 `pfQuest:ResetAll()` 的既有全量刷新逻辑 |
+| 7 | `QuestLogFrameAbandonButton` | 镜像源 Button 当前文字；仅文字／短边使用克制酒红危险色 | 先收起，再调用原 Button；原生放弃确认框成为唯一后续层 |
+
+- 除 detail toggle 的可读动态标签外，adapter 不硬编码、不翻译也不改写源行为
+  语义。V1 不增加 Tooltip；七项都有可见文字，且不得以错误的 `this` 上下文
+  手工执行源 `OnEnter／OnLeave`。
+- 代理只允许调用源 Button 的 `:Click("LeftButton")`；不得复制 OnClick 函数
+  正文，也不得直接取出 `GetScript("OnClick")` 后调用，因为 pfQuest／Vanilla
+  脚本可能依赖 1.12 的 `this／arg1` 事件上下文。
+- 点击 disabled 项不触发动作且菜单保持打开。enabled 状态在打开前、
+  `QuestLog_Update`、`QuestLog_UpdateQuestDetails`、EmptyQuestLog 显隐、任务
+  选择变化以及每次委托后事件驱动同步；不得用常驻轮询维护。
+- 没有选中可执行任务时，分享、显示、隐藏、放弃及原生禁用项保持 disabled；
+  火漆菜单本身仍可打开，使 pfQuest 的 Clean／Reset 等全局动作继续可达。
+  detail 被收起时火漆仍留在现有右页纸面位置，条目文字变为“展开详情”，避免
+  隐藏旧 toggle 后失去重新展开入口。
+
+### 收起规则与非模态边界
+
+- 保证收起：再次点火漆、点击任一 enabled 动作、Esc、Quest Log 关闭／隐藏、
+  detail 显隐变化、任务选择变化、点击 WorldFrame 或任务书未被子控件占用的
+  空白区域。
+- Esc 只隐藏具名的 seal-menu Frame，不关闭整个 Quest Log；原 Quest Log 的
+  下一次 Esc 行为仍由客户端处理。
+- 不承诺拦截所有第三方 UI Frame 的点击。V1 不通过全屏 mouse catcher 伪造
+  “任意位置 click-away”；这避免菜单变成模态层并吞掉其他插件的第一次点击。
+- Show Map 等会打开／切换其他页面的动作一律先收起菜单，再交给源 Button，
+  因而不会在新页面上遗留悬空事务签。
+- 放弃确认被取消时菜单保持收起；玩家需要时重新点击火漆。AEUI 不在确认框
+  之后自动重开菜单，也不创建第二个确认层。
+
+### parity、旧按钮迁移与 fail-open
+
+- 原子 parity 条件：七个源 Button 全部存在；每个源对象都保留真实 OnClick
+  且支持 `:Click()`；detail toggle 已存在或由 AEUI 按既有合同创建；右上 Close
+  可见可用；七项标签可解析；静态 addon package 含 QS-A1 与未来 QS-B1 atlas。
+- parity 未全部成立时不做“部分菜单”：火漆不接管鼠标，分享／详情／放弃、
+  pfQuest Show／Hide／Clean／Reset 以及底部 Exit fallback 全部原样保留。
+- parity 全部成立后才同时抑制旧八个控件。Exit 不进入七项菜单，因为右上真实
+  Close 已承担同一关闭职责；若右上 Close 缺失，则 parity 不成立，底部 Exit
+  也不得隐藏。
+- 被抑制的源 Button 仍保留脚本、enabled 状态和程序化 `:Click()` 能力；adapter
+  只移除它们的视觉／鼠标入口。任一源在运行中失效时，菜单立即关闭、临时位移
+  恢复、火漆退回装饰 Texture，并一次性恢复全部旧入口。
+- late-load 只通过既有 Quest Log／pfQuest 刷新钩子重新评估；不新增维护型
+  `OnUpdate`。`/aeui status` 的未来合同必须区分 `fallback／closed／open` 与
+  parity 第一失败项，便于目标设备诊断。
+
+### 未来 runtime 验收矩阵
+
+进入 P5 前至少自动验证：无任务／无选择、普通选中任务、detail 收起后重新
+展开、pfQuest 后加载、pfQuest 四控件缺一、Show Map 页面切换、Clean／Reset、
+共享 disabled／enabled、放弃确认取消／确认、Esc 两阶段收起、WorldFrame 点击、
+右缘 `8px` clamp、UI scale 变化、Quest Log 关闭重开，以及所有降级路径恢复
+旧八个入口。真实客户端还必须验证标签字体、命中盒不越过页边、没有双重点击、
+原生确认只出现一次、原 Button 业务效果与迁移前一致。
+
+### 当前结论与下一门禁
+
+- 当前结论：`proposed-for-user-review`。这是交互合同草案，不是 runtime 实现，
+  也不代表用户已接受。
+- 本合同相对 V9 唯一新的可见观感是“即时展开、无滑入动画”和打开期间火漆
+  使用 pressed 视觉；其余是不可见的命中、委托与回退边界。
+- 下一门禁：用户确认或修订 `QS-B1-INTERACTION V1`。确认后才把合同冻结为
+  QS-B1 runtime 验收依据；正式事务签资产仍需对 `QS-B1 V1` 生产正文另行明确
+  授权，确认交互不等于授权 ImageGen 或 Lua 接入。
+
 ## Quest Log 克制型书口事务签 — `QS-B1 V1`
 
 ### 元数据
 
 - 日期：`2026-08-03`
 - 组件：`QUEST.LOG.ACTION.SEAL_MENU.TAB.BASE`
-- 子状态：`simulation-confirmed / prompt-draft / awaiting-production-authorization`
+- 子状态：`simulation-confirmed / interaction-contract-draft / prompt-draft /
+  awaiting-interaction-confirmation`
 - 项目阶段：`P2`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
-- 操作：`generate`；授权前实际 ImageGen：`0/5`
+- 操作：`prepare`；授权前实际 ImageGen：`0/5`
 - 生成前模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V9`，本地确定性几何，ImageGen
   `0/0`；board／report SHA 见上节。
 - 多执行正文最坏实际生图数：`5`；流程错误不占生图额度。
@@ -1482,19 +1615,21 @@ Image 2 是已接受的派生空书母版，不能反向覆盖 Image 1 的香草
   `pfQuest.buttonShow`、`pfQuest.buttonHide`、`pfQuest.buttonClean`、
   `pfQuest.buttonReset`、`QuestLogFrameAbandonButton`。动态中文标签、enabled、
   Tooltip、detail 开合文本和放弃确认全部由 runtime／原 provider 持有。
-- 每个 Button 的可见／命中盒固定为 `112×20px`；七个槽固定为
+- 每条 Texture 的可见盒固定为 `112×20px`；七个槽固定为
   `[612,112,112,20]`、`[612,134,112,20]`、`[612,159,112,20]`、
   `[612,181,112,20]`、`[612,203,112,20]`、`[612,225,112,20]`、
   `[612,250,112,20]`。菜单包络为 `[612,112,112,158]`，基础 Frame
-  `676×464`，书外 outset `48px`。
+  `676×464`，书外 outset `48px`。交互 Button 命中盒只使用每条右侧可见
+  `[628,y,96,20]`；Texture 左侧 `16px` 延伸根部被页边遮住且不接收鼠标。
 - 单条相对文字安全区为 `[18,1,80,18]`（`xywh`）；左侧 `16px` 是被真实
   页边遮住的安静根部，最右约 `6px` 只承担轻微削角和外缘磨损。任何文字、
   图标或识别装饰都不得进入源资产。
 - 层序固定：QL-A1 shell → detail／奖励 → 七个 Button Texture → 无鼠标的
   QL-A1 真实页边 mask `[604,102,24,180]` → 已接受 QS-A1 漆章 Button。
   mask 复用现有 shell 像素，不生产新的 ImageGen 资产。
-- 收起态只显示漆章；展开态显示七个 Button。点击动作、点击书外或 Esc 收起；
-  disabled 镜像 provider；放弃继续走原生确认。右键只保留为未来配置入口，
+- 收起态只显示漆章；展开态显示七个 Button。具体状态、收起触发、enabled
+  同步、源 Button `:Click()` 委托、原生放弃确认和 fail-open 以
+  `QS-B1-INTERACTION V1` 为当前待确认合同；右键只保留为未来配置入口，
   本批不实现新业务逻辑。
 - 任一 provider 未捕获、状态无法镜像或 atlas 缺失时，全部旧按钮保持可见
   可用，事务菜单不接管鼠标；只有七项功能等价同时成立后才隐藏 fallback。
@@ -1553,12 +1688,15 @@ Image 2 是已接受的派生空书母版，不能反向覆盖 Image 1 的香草
 Create one isolated 2D hand-painted bitmap UI object for a vanilla-era World of
 Warcraft quest log: one short horizontal guild-ledger transaction index tab made
 primarily from aged dark-walnut leather. This is only the reusable, text-free
-base skin. At runtime it will skin exactly seven separate 112 x 20 px Button
-objects that proxy Share Quest, Detail Toggle, Show Location, Hide Location,
-Clean Marks, Reset Marks, and Abandon Quest. The game owns all labels, icons,
-enabled states, tooltips, click logic, and the native abandon confirmation. Do
-not draw seven tabs, a menu, a book, a wax seal, any text, any icon, or any state
-variants. Render exactly one normal-state base tab.
+base skin. At runtime it will provide the 112 x 20 px visible texture for exactly
+seven separate proxy Button objects; each Button uses only the rightmost visible
+96 x 20 px as its mouse hit region while the left 16 px texture root extends
+under the real page edge and never receives mouse input. The seven proxies cover
+Share Quest, Detail Toggle, Show Location, Hide Location, Clean Marks, Reset
+Marks, and Abandon Quest. The game owns all labels, icons, enabled states,
+tooltips, click logic, and the native abandon confirmation. Do not draw seven
+tabs, a menu, a book, a wax seal, any text, any icon, or any state variants.
+Render exactly one normal-state base tab.
 
 Reference authority and filtering:
 1. Image 1 is the highest visual authority. Inherit its circa-2004 vanilla WoW
@@ -1633,9 +1771,9 @@ border; dark-walnut leather remains legible when reduced to 112 x 20 px.
 ### 自主修复循环与授权边界
 
 - 不可变修复边界：`QS-B1 V1` 组件身份；单一母版对象；固定 Image 1／2 及
-  权威职责；`1024²`／`784×140`／水平正投影；七个独立 Button、固定顺序与
-  `112×20px` 几何；八态确定性导出；页边遮根；色键／Alpha 策略；全部禁止
-  烘焙与反模式。
+  权威职责；`1024²`／`784×140`／水平正投影；七个独立 Button、固定顺序、
+  `112×20px` 可见 Texture 与右侧 `96×20px` 命中几何；八态确定性导出；
+  页边遮根；色键／Alpha 策略；全部禁止烘焙与反模式。
 - 允许的 attempt 2–5 自主修复：在同一正文边界内修正 bbox／居中／纯绿背景、
   轻微轮廓比例、手绘边缘、皮革综合色、明暗对比、磨损密度、旧铜边迹亮度，
   或删除误生的文字、铆钉、尖头和装饰。只有前次物件身份与主体结构正确且
@@ -1658,7 +1796,8 @@ border; dark-walnut leather remains legible when reduced to 112 x 20 px.
 - 当前实际生图：`0/5`；流程错误：`0`。
 - 尚未发生：ImageGen 调用、raw、透明候选、真实排版候选、source、manifest、
   runtime atlas、Lua/XML 接入或旧按钮隐藏。
-- 所需用户授权原文：`确认授权 QS-B1 V1；允许每次上传固定 SHA 的 Image 1/2，
+- 首先需要用户确认或修订 `QS-B1-INTERACTION V1`；该确认不授权 ImageGen。
+- 交互确认后的生产授权原文：`确认授权 QS-B1 V1；允许每次上传固定 SHA 的 Image 1/2，
   允许同循环紧邻前次输出仅在冻结边界内作为 Image 3 edit 输入；最多 5 次实际
   ImageGen 调用，流程错误不占额度；允许按合同执行确定性边缘连通色键、透明
   RGB 清零与等比 bbox-fit。`
