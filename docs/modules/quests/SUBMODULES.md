@@ -71,7 +71,9 @@ V1–V6 的外沿皮革、羊皮封签、下缘长书签、detail
 微纹／中央擦痕；attempt 4 仍为 `5.1707:1`；attempt 5 又扩宽为
 `1184×193px`、`6.1347:1`，等比 runtime-visible 仅 `112×18px`，并保留
 均匀压纹／连续亮边。当前为
-`candidate-rejected / repair-budget-exhausted / P3 / 5/5`。页上漆章仍为无鼠标 Texture，runtime 继续
+`candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`；
+用户于 `2026-08-05` 明确回复“不可接受”。V1 候选不得通过几何例外晋级，
+也不得成为后续 edit 输入。页上漆章仍为无鼠标 Texture，runtime 继续
 保留全部原按钮作为 fail-open fallback；生产授权不等于菜单接入授权。
 
 ## Quest Log 纸页与中央装订
@@ -220,8 +222,8 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 | `QUEST.LOG.ACTION.SHARE` | `QuestFramePushQuestButton`；兼容名需探测 | 当前程序化暗皮革 fallback；目标事务菜单代理原 Button |
 | `QUEST.LOG.ACTION.EXIT` | `QuestFrameExitButton`；兼容 `QuestLogFrameCancelButton` | 目标视觉不重复收纳；右上真实 Close 保持独立，fallback 在迁移验收前继续存在 |
 | `QUEST.LOG.DETAIL.TOGGLE` | pfUI `QuestLogFrameExpandButton`；缺失时可创建真实 Button | 当前底部 fallback；目标事务菜单代理同一动态开合行为 |
-| `QUEST.LOG.ACTION.SEAL_MENU` | planned adapter-owned 右页外侧短书口事务签 Button 列；未接入 | V9 可见方向与 `QS-B1-INTERACTION V1` 均已确认：非模态一级菜单、左键即时开合、无滑入动画；七项先收起再以源 Button `:Click("LeftButton")` 委托，disabled 事件驱动镜像，放弃只走原生确认。七条可见 Texture 为 `[612,112,112,158]` 内的独立 `112×20px` 槽，真实命中只用各条 `[628,y,96,20]`，被页边遮住的左根不接收鼠标；Esc、任务／detail 变化、Quest Log 隐藏、WorldFrame 或书本空白点击收起，不使用全屏挡板。全部 parity 成立前旧八控件原子 fail-open；右上 Close 独立。正文／奖励零占用，不画二级弹窗。`QS-B1 V1.r4` 已终止为 `candidate-rejected / repair-budget-exhausted / P3 / 5/5`；禁止 attempt 6，未授权 source 晋级或菜单接入 |
-| `QUEST.LOG.ACTION.SEAL_MENU.TAB.BASE` | 七个 Button 共用的无字 Texture 皮肤；不拥有点击 | 只生成一枚固定 `112×20px` 暗胡桃旧皮革母版；确定性 atlas 为 standard／danger 各 normal、hover、pressed、disabled 四态。共享媒体不合并七个 Button，不烘焙标签、图标、enabled、Tooltip 或业务状态 |
+| `QUEST.LOG.ACTION.SEAL_MENU` | planned adapter-owned 右页外侧短书口事务签 Button 列；未接入 | V9 的非模态开合、七个独立真实 Button、源 Button 委托、disabled 镜像、原生放弃确认、页边遮根、正文／奖励零占用、Esc／空白收起与原子 fail-open 仍是交互参考；右上 Close 独立。`QS-B1 V1.r4` 已终止为 `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`，用户明确回复“不可接受”。V1 的现代矩形皮革按钮观感、全部候选像素与几何例外均不得复用；禁止 attempt 6。继续时必须先以本地确定性模拟重新确认 V2 的可见材质、轮廓、重复节奏和视觉重量，再独立授权生产；当前未授权 source 晋级或菜单接入 |
+| `QUEST.LOG.ACTION.SEAL_MENU.TAB.BASE` | 七个 Button 可共用的无字 Texture 皮肤；不拥有点击 | 当前没有 accepted source。V1 的固定 `112×20px` 暗胡桃矩形皮革母版已被用户否决，不得成为 V2 默认材质或 edit 输入；V2 必须先重新模拟可见物件身份、轮廓与重复节奏。无论新方向如何，共享媒体都不能合并七个真实 Button，也不能烘焙标签、图标、enabled、Tooltip 或业务状态；状态资产仍需与 Button 状态逐格映射 |
 | `QUEST.LOG.ACTION.SEAL_MENU.PAGE_EDGE_MASK` | adapter-owned 无鼠标 Texture，复用 QL-A1 shell 右页边像素 | `[604,102,24,180]`，晚于七个 Button 绘制并只遮住每条左侧 `16px` 根部；不得新增 ImageGen 资产，不得进入文字安全区或接管鼠标 |
 | `QUEST.LOG.LEVELS` | pfUI `QuestLogFrameLevelsCheckButton` | 复用 QL-B1 开放墨圈／墨勾 atlas；保留原脚本与文字 |
 | `QUEST.LOG.PFQUEST.ONLINE` | `pfQuest.buttonOnline`／`pfQuestOnline` | `72 × 16`，右页顶部固定工具行；动态 ID 与原 OnClick 不变 |

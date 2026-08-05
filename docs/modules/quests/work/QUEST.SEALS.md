@@ -9,7 +9,7 @@
 - 当前生产正文：`QS-B1 V1.r4`
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu `P3`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1
-  `candidate-rejected / repair-budget-exhausted / P3 / 5/5`
+  `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -41,12 +41,13 @@
   V9 保留外侧展开与七个真实 Button，只收敛为 `112×20px` 的短书口事务签、
   `48px` 外伸，并移除箭头、逐项铆钉和明亮顶部高光。用户于
   `2026-08-03` 回复“进入下一步”，明确确认 V9 可见方向；确认只冻结下述
-  文字化布局与综合色结论，不接受模拟像素。当前已准备 `QS-B1 V1` 生产正文，
+  文字化布局与综合色结论，不接受模拟像素。随后完成 `QS-B1 V1` 生产正文，
   `QS-B1-INTERACTION V1` 已于 `2026-08-05` 获用户明确接受；`QS-B1 V1`
-  也已于 `2026-08-05` 获独立正式生产授权。attempt 1 已实际生成并完成技术、
-  100% UI 像素和综合色复审，但因 `4.3636:1` 短粗比例、完整亮铜内外框、
-  过圆外端及现代微纹理而退回。当前下一门禁为提交完整 `QS-B1 V1.r1` 后，
-  仍只上传固定 Image 1／2、以 regenerate 执行 attempt 2。
+  也已于 `2026-08-05` 获独立正式生产授权。五次实际生成均已执行；最终
+  attempt 5 因 `6.1347:1` 超宽比例、`112×18px` 等比可见区、均匀压纹和
+  连续亮边先被内部退回，随后又被用户以“不可接受”明确否决。V1 全部候选
+  只能作为负面证据，不得成为 source、runtime、确定性几何例外或后续 edit
+  输入。若继续，必须从新的 V2 本地确定性模拟重新开始；不得执行 attempt 6。
   旧 Quest Log／Tracker provider Button 在各自菜单功能等价前继续可见可用。
 
 ## 用户接受与 P4／P5 固化
@@ -1797,7 +1798,7 @@ border; dark-walnut leather remains legible when reduced to 112 x 20 px.
 
 ### 当前门禁
 
-- 当前状态：`candidate-rejected / repair-budget-exhausted / P3 / 5/5`。
+- 当前状态：`candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`。
 - 当前实际生图：`5/5`；流程错误：`1`。
 - 已发生：attempt 1 raw、确定性透明审查件、临时八态 atlas、真实排版与右缘
   clamp 预演；均只存在于 ignored `generated/`。尚未发生：source、manifest、
@@ -1812,9 +1813,9 @@ border; dark-walnut leather remains legible when reduced to 112 x 20 px.
 - 本授权只允许上述固定生产正文、固定 SHA 的 Image 1／2、受限同循环 Image 3
   edit、最多五次实际调用与合同内确定性后处理；不授权 source 晋级、P4／P5、
   Lua 接入或旧按钮隐藏。
-- 当前下一门禁：五次循环已耗尽，禁止执行 attempt 6。等待用户审视 attempt 5
-  的真实排版，并决定是以新版本重新授权，还是对某个现有候选明确授权新的
-  确定性几何例外；两者都不包含在本次授权内。
+- 当前下一门禁：V1 已被用户否决，禁止执行 attempt 6，也不再提出非等比／
+  裁切例外。若用户要求继续，先建立 `QS-B1 V2` 的本地确定性模拟，重新确认
+  可见菜单方向；之后再准备新的完整生产正文和独立五次预算。
 
 ### QS-B1 流程错误记录
 
@@ -2538,3 +2539,24 @@ silhouette height by the quantified amount.
   裁切几何合同；当前授权只允许等比 bbox-fit，不能代替该决定。
 - 本版本无 tracked source、source manifest、runtime atlas、Lua/XML 菜单接入
   或旧按钮隐藏；当前 addon 继续使用全部 fail-open fallback。
+
+### 用户复审结论
+
+- 日期：`2026-08-05`。
+- 用户原文：`不可接受`。
+- 复审对象：`QS-B1 V1.r4 / attempt 5` 的候选原貌、技术接触表与当前
+  QL-A1／QL-A2 书体中的七项真实排版预演。
+- 用户结论：`user-rejected`；V1 保持
+  `candidate-rejected / repair-budget-exhausted / P3 / 5/5`，不得晋级 P4。
+- 用户没有接受 attempt 5 的运行时视觉，也没有授权用非等比拉伸、裁切、
+  补画或其他确定性合同例外绕过该结论。
+- attempt 1–5 全部只保留为负面证据；下一版本不得上传其中任何一张，也不得
+  将其作为 edit input、综合色权威、source 或 runtime。
+- 已确认的 V9 外侧展开、七个真实 Button、源 Button 委托、页边遮根与
+  fail-open 交互合同没有被本句自动撤销；但最终菜单的可见材质、轮廓、重复
+  节奏与视觉重量必须在 `QS-B1 V2` 中重新模拟并由用户重新确认，不能直接
+  沿用 V1 候选的七条现代矩形皮革按钮观感。
+- 当前下一门禁：`QS-B1 V2 / prompt-draft` 的本地确定性模拟；ImageGen
+  `0/0`。用户确认新模拟并独立授权完整 V2 生产正文前不得生图。
+- 跨设备：当前继续只依赖 tracked 文本，不依赖任何被否决的 ignored 像素，
+  因而不创建 `handoff/`。
