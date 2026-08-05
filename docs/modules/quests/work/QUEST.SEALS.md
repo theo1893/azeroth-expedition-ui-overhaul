@@ -11,21 +11,21 @@
   `QUEST-LOG-SEAL-ACTIONS-SIM-V11 / QS-B1 V2`
 - 当前已确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V12 / QS-B1 V3`；用户于
   `2026-08-05` 回复“可以”
-- 最近一次已执行生产正文：`QS-B1 V3-A.r3 / attempt 4`；当前已准备
-  `QS-B1 V3-A.r4`
-- 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3
-  `repair-prepared / execution-in-progress / P3`
+- 最近一次已执行生产正文：`QS-B1 V3-A.r4 / attempt 5`；V3-A 循环已耗尽，
+  当前无下一修复正文
+- 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
+  `internal-rejected / repair-budget-exhausted / user-review-required / P3`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
-  `simulation-confirmed / repair-prepared / P3`；V1 保持
+  `simulation-confirmed / V3-A repair-budget-exhausted / V3-B gated / P3`；V1 保持
   `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
 - QS-B1 V1 ImageGen：`5/5`（已耗尽并由用户否决）
 - QS-B1 V2 ImageGen：`4/5`（第 5 次未调用；旧授权不得转用于 V3）
-- QS-B1 V3 ImageGen：V3-A `4/5`、V3-B `0/5`（已获联合授权；固定先 A 后 B，
-  A 内部通过后才执行 B）
+- QS-B1 V3 ImageGen：V3-A `5/5`、V3-B `0/5`（V3-A 未内部通过，故按联合
+  授权顺序门禁未执行 V3-B）
 - QS-B1 历史流程错误：V1 `1`、V2 `3`；V3 `0`。均按“无生成证据才不占
   额度”记录
 - tracked source：
@@ -3791,8 +3791,8 @@ ImageGen 输入。用户确认 V3 结构和模拟方向后，才可分别准备�
 
 - 用户确认原文：`可以`。
 - 确认对象：`QUEST-LOG-SEAL-ACTIONS-SIM-V12 / QS-B1 V3`。
-- 当前状态：`simulation-confirmed / prompt-authorized / P3 /
-  execution-in-progress`。
+- 当前状态：`simulation-confirmed / P3 / V3-A repair-budget-exhausted /
+  V3-B gated / user-review-required`。
 - 本次确认冻结：空白旧布背景与七个功能纹章分层；七个纹章分别归属于七个
   独立 Button；hidden 项无空洞收拢；disabled 项留位但不命中；漆章、背景和
   Button 均留在 `QuestLogDetailScrollChild`，随正文滚动并被真实 viewport
@@ -3842,7 +3842,7 @@ V3-B；V3-B 的 ImageGen 输入也不得包含 V3-A 候选，V3-A 只可在本�
 - 固定上传：每段各自合同中的固定 SHA Image 1／2；Image 3 只允许为同段、
   紧邻前次输出且仍处于冻结修复边界内的 edit input。不得跨段上传候选，
   不得上传模拟、旧失败稿、review 派生图、runtime atlas 或 addon 截图。
-- 实际生图预算：V3-A `4/5`；V3-B `0/5`；最坏 `10`。无图片且无 provider
+- 实际生图预算：V3-A `5/5`；V3-B `0/5`；最坏 `10`。无图片且无 provider
   result／生成作业证据的流程错误不占额度，但须单独记录。
 - 确定性范围：只限合同中的归一化、边缘连通色键、透明 RGB 清零、等比
   bbox-fit、V3-A prefix／tail crop、V3-B 独立 cell 拆分、四态派生、atlas
@@ -3856,7 +3856,7 @@ V3-B；V3-B 的 ImageGen 输入也不得包含 V3-A 候选，V3-A 只可在本�
 ### 元数据、固定输入与产物合同
 
 - 版本：`QS-B1 V3-A`。
-- 状态：`repair-prepared / 4/5 / execution-in-progress`。
+- 状态：`internal-rejected / repair-budget-exhausted / 5/5 / user-review-required`。
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`。
 - Image 1（最高视觉权威）：
   `assets/locked/quests/任务详情面板_视觉基准_v1.png`，SHA-256
@@ -4264,6 +4264,45 @@ any top or bottom transparent padding remains inside the target bbox, or if any
 fine uniform weave, curled fibre field or procedural grain dominates the broad
 painted surface.
 
+### V3-A attempt 5 执行与终止审查 — `2026-08-05`
+
+- 执行前 commit：`7e1428a`；执行完整 `QS-B1 V3-A.r4`，按授权上传固定 SHA
+  Image 1／2 与紧邻 attempt 4 raw 作为唯一 Image 3。child 完整回显正文，
+  只进行一次 edit，无自审、重试、revised prompt 或第二次生图。
+- fixed child／provider：session
+  `019fd11d-158c-7f92-b4d3-0a1ed346075a`；provider 文件／result 证据
+  `ig_07201257e617a935016a72f930f6948191b289b38e451f6673`。provider 原图由
+  父流程复制同一字节到 attempt 路径；child read-only 未执行目标路径
+  placement，但生成证据完整，不记流程错误，实际调用累计 `5/5`。
+- raw：`attempt-05/raw/QS-B1-V3-A.attempt-05.png`；`1254×1254 RGB`；
+  SHA-256 `db4d8d1fc8995a127f36869641b9fd6c52eac95895fceb921b740551d9bd5e07`。
+- 确定性检查：一个连通物件；归一化 raw bbox `[434,44,589,979]`、
+  `155×935`、宽高比 `0.165775`，相对目标误差 `9.86%`。宽度比 attempt 4
+  增加 `9px`，但仍未达到约 `172px`；等比 fit 为 `115×696`、可见
+  `[454,164,569,860]`，比目标宽度少 `13px`。runtime 可见 bbox 覆盖完整
+  `32×174`，八个 cut band 均有布料；N=1／3／5／7 tail 接合重叠为
+  `28 / 28 / 30 / 30px`，平均 RGB 跳变约
+  `23.50 / 18.35 / 21.64 / 2.77`。
+- 第一失败门禁仍为 `4. 美术一致性`：raw 全幅仍覆盖连续卷曲细纹／迷宫状
+  微纹，且比 attempt 4 更清晰；这直接违反 source 级“宽面手绘、无规则
+  织纹／程序化微纹”合同。真实排版缩小后褶皱、综合色和视觉重量可读，但
+  缩小后的弱化不能替 source 合同豁免。次要客观失败为实际宽度仍偏窄。
+- 自动技术检查 `7/9 pass`；布局公式 `26/26 pass`；display-region
+  `6/6 pass`、violations `0`。真实排版覆盖 closed、7／5／3 项、disabled、
+  scroll `52`／`208`，显示 candidate 本身；V3-B 纹章仍是非权威本地占位。
+- review：`attempt-05/review/QS-B1-V3-A.attempt-05.review.json`
+  (`325da6a2…f57f`)；真实排版 `QS-B1-V3-A.attempt-05.real-layout.png`
+  (`aa18238f…40cc`)；display-region report
+  `QS-B1-V3-A.attempt-05.display-region-report.json` (`e997cd11…c66f`)；contact
+  sheet `QS-B1-V3-A.attempt-05.contact-sheet.png` (`b258c48c…0546`)。
+- 终止决策：V3-A 五次实际 ImageGen 已耗尽且仍未完整通过。不得继续修复，
+  不得把 attempt 4／5 的 runtime 观感自行解释为通过，不得执行 V3-B，也不得
+  进入用户候选接受、P4、source、runtime、atlas、addon 或旧按钮隐藏。
+- 结论：`internal-rejected / repair-budget-exhausted / 5/5 /
+  user-review-required`。下一步必须等待用户对失败证据与新策略作出明确决定。
+
+| `5/5` | `QS-B1 V3-A.r4` / `7e1428a` | edit；固定 Image 1／2＋attempt 4 Image 3 | `019fd11d-158c-7f92-b4d3-0a1ed346075a` / `ig_07201257…6673` | `attempt-05` / `db4d8d1f…5e07` | 连续卷曲微纹仍失败；宽高比误差 `9.86%` | 额度耗尽，停止；V3-B 保持门禁 | `internal-rejected / repair-budget-exhausted / user-review-required` |
+
 ### V3-A 自主修复与候选审查边界
 
 - attempt 1 固定上传 V3-A Image 1／2。attempt 2–5 继续上传同路径、同顺序、
@@ -4506,11 +4545,11 @@ semantic readability; all seven remain recognizable in separate 32 x 22 cells.
   tail crop、四态派生、atlas 打包、metrics、
   实际展示区域检查和“真实排版＋新 UI”预演。它们不得修复语义、材料、构图、
   图案或不工整程度的失败。
-- 当前 ImageGen：V3-A `4/5`；V3-B `0/5`；流程错误 `0`。attempt 4 已上传
-  固定 Image 1／2 与同段紧邻 attempt 3 raw；其高度、动态切点与 tail 接合
-  已成立，但轮廓收窄过量且连续微纹仍失败。attempt 5 允许追加同段紧邻
-  attempt 4 raw 作为唯一 Image 3，做最后一次受限宽度／表面 edit。
-- 当前门禁：联合生产授权已于 `2026-08-05` 获得。先执行 V3-A 的最多五次
-  实际生图／修复循环；V3-A 内部通过后才进入 V3-B。任一内部通过都只达到
-  `candidate-reviewed / P3`，仍不创建 source／manifest／exporter／runtime，
-  不修改 addon，也不隐藏旧按钮，直至用户明确接受具体候选并另行授权 P4。
+- 当前 ImageGen：V3-A `5/5`；V3-B `0/5`；流程错误 `0`。attempt 5 已上传
+  固定 Image 1／2 与同段紧邻 attempt 4 raw；动态切点、tail 接合与真实展示
+  几何通过，但连续微纹和实际宽度仍未满足合同，V3-A 以
+  `internal-rejected / repair-budget-exhausted` 终止。
+- 当前门禁：联合生产授权要求 V3-A 内部通过后才进入 V3-B；该条件未成立，
+  因此 V3-B 不得执行。当前等待用户审查失败证据并决定是否另立新版本／新
+  策略；不创建 source／manifest／exporter／runtime，不修改 addon，也不隐藏
+  旧按钮。
