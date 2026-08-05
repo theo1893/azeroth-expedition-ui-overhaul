@@ -1,0 +1,92 @@
+{
+  "schema": "aeui.quest-log.seal-material-mask.simulation.v1",
+  "base_spec": "tools/specs/quest_log_seal_substrate_simulation_v13.json",
+  "version": "QUEST-LOG-SEAL-SUBSTRATE-SIM-V14",
+  "design_batch": "QS-B1 V5-A",
+  "support_type": "scroll-child-wax-pinned-imagegen-surface-donor-deterministic-mask-independent-motifs",
+  "outputs": {
+    "board": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-SUBSTRATE-SIM-V14/quest_log_seal_substrate_board_v14.png",
+    "zoom": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-SUBSTRATE-SIM-V14/quest_log_seal_substrate_construction_v14.png",
+    "report": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-SUBSTRATE-SIM-V14/quest_log_seal_substrate_report_v14.json",
+    "display_region_contract": "tools/specs/quest_log_seal_actions_simulation_v13_display_region.json",
+    "display_region_report": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-SUBSTRATE-SIM-V14/display-region-report-v14.json"
+  },
+  "presentation": {
+    "title": "QS-B1 V5-A · 布面供体 + 精确蒙版 · V14 本地几何预演",
+    "subtitle": "可见方向仍沿用已确认的暗色厚重旧誓约布；变化只在资产职责：ImageGen 未来只提供连续布面，固定蒙版负责 128×696 轮廓、Alpha 与双钝缺口。真实任务书、火漆、动态长度和滚动关系不变。ImageGen 0/0。",
+    "zoom_title": "QS-B1 V5-A · 供体 / 固定裁片 / 确定性蒙版 / 合成 source",
+    "zoom_subtitle": "这是一张几何分工图，不是最终材质预言：生成模型不再承担精确细长外形；最终接受对象将是经用户审查的合成 source，而不是 raw 布面供体。",
+    "zoom_notes": [
+      "ImageGen 只生成 1024² 全幅连续暗旧布面，不生成条带外轮廓、绿色背景或 Alpha",
+      "固定中央裁片为 [448,164,576,860]，精确 128×696；禁止 bbox-fit 与非等比拉伸",
+      "确定性蒙版独占外轮廓、恰好两处不等宽粗钝尾缺口和透明边缘",
+      "合成后精确等比缩为 32×174；7 / 5 / 3 项仍取同一母版前缀并接同一 tail",
+      "所有七个纹章仍是独立透明资源与独立 Button，本图只用几何占位"
+    ],
+    "footer_lines": [
+      "V5-A 只改变空白布底 source 的生产方式：布面像素来自 ImageGen donor，精确轮廓和 Alpha 来自 tracked deterministic mask；不改变七纹章、Button 或 provider 功能所有权。",
+      "确认范围：运行时轮廓、综合色重量、蒙版与布面合成后的观感、动态长度和真实展示区。非权威：最终纤维、污渍笔触、边缘抗锯齿、纹章与四态。ImageGen 0/0。"
+    ]
+  },
+  "visual_mockup": {
+    "_replace": true,
+    "substrate_variant": "v5-deterministic-mask",
+    "source_strategy": "imagegen-full-frame-material-donor-plus-deterministic-mask",
+    "donor_normalized_canvas": [1024, 1024],
+    "donor_crop": [448, 164, 576, 860],
+    "canonical_source_size": [128, 696],
+    "deterministic_visible_bbox": [0, 0, 128, 696],
+    "canonical_master_size": [32, 174],
+    "dynamic_assembly": "prefix-plus-tail-from-one-master",
+    "tail_notch_count": 2,
+    "quiet_crop_rows_source": [48, 136, 224, 312, 400, 488, 576, 664],
+    "palette": {
+      "base": [68, 55, 43, 255],
+      "light_plane": [91, 72, 53, 255],
+      "shadow_plane": [37, 30, 25, 255],
+      "stain": [44, 34, 28, 255]
+    },
+    "mask_polygon_source": [
+      [16, 4], [31, 0], [49, 3], [66, 1], [85, 4], [103, 2], [119, 5],
+      [124, 22], [122, 90], [127, 150], [125, 203], [121, 270], [126, 354],
+      [123, 438], [127, 524], [124, 610], [124, 650], [123, 670],
+      [122, 684], [116, 695], [103, 694],
+      [97, 691], [92, 687], [86, 691], [78, 695],
+      [64, 694], [56, 695],
+      [50, 690], [43, 684], [34, 686], [27, 694],
+      [14, 695], [4, 689], [3, 674],
+      [3, 640], [4, 600], [0, 536], [5, 450], [2, 368], [0, 278],
+      [6, 194], [1, 106], [5, 68], [3, 22]
+    ],
+    "edge_control_points_source": [
+      [124, 22], [122, 90], [127, 150], [125, 203], [121, 270],
+      [126, 354], [123, 438], [127, 524], [124, 610], [124, 650],
+      [3, 640], [4, 600], [0, 536], [5, 450], [2, 368], [0, 278],
+      [6, 194], [1, 106], [5, 68], [3, 22]
+    ],
+    "source_surface_primitives": [
+      {"kind": "polygon", "points": [[0,0],[58,0],[56,122],[43,232],[50,344],[37,464],[46,566],[28,696],[0,696]], "fill": [91,72,53,82]},
+      {"kind": "polygon", "points": [[88,0],[128,0],[128,696],[95,696],[101,580],[89,470],[100,366],[92,258],[106,146]], "fill": [37,30,25,104]},
+      {"kind": "polygon", "points": [[32,70],[73,52],[82,116],[68,174],[44,216],[25,176]], "fill": [104,82,60,24]},
+      {"kind": "polygon", "points": [[38,356],[77,332],[88,396],[72,462],[50,510],[30,452]], "fill": [101,79,58,22]},
+      {"kind": "polygon", "points": [[4,178],[54,162],[80,242],[61,326],[26,344],[0,270]], "fill": [37,29,24,30]},
+      {"kind": "polygon", "points": [[65,454],[116,478],[128,584],[91,632],[55,572]], "fill": [42,32,27,32]},
+      {"kind": "polygon", "points": [[0,548],[34,568],[43,662],[15,686],[0,638]], "fill": [47,36,29,25]},
+      {"kind": "polygon", "points": [[15,0],[48,0],[41,31],[20,39]], "fill": [36,30,26,48]},
+      {"kind": "polygon", "points": [[69,0],[121,4],[113,34],[84,25]], "fill": [42,33,28,42]},
+      {"kind": "line", "points": [[9,186],[8,244]], "width": 3, "fill": [96,75,53,38]},
+      {"kind": "line", "points": [[118,410],[116,468]], "width": 3, "fill": [28,24,21,56]},
+      {"kind": "line", "points": [[12,590],[8,642]], "width": 3, "fill": [82,63,46,32]}
+    ]
+  },
+  "constraints": {
+    "imagegen_calls": 0,
+    "new_bitmap_assets": 0,
+    "imagegen_owns_surface_only": true,
+    "deterministic_mask_owns_silhouette_and_alpha": true,
+    "no_bbox_fit_or_anisotropic_resize": true,
+    "accepted_candidate_is_composite_not_raw_donor": true,
+    "simulation_is_geometry_only": true,
+    "v4_failed_pixels_are_not_inputs": true
+  }
+}

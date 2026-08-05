@@ -242,6 +242,15 @@ def main() -> None:
     seal_substrate_sim_v13_renderer = (
         seal_substrate_sim_v13_renderer_path.read_text(encoding="utf-8")
     )
+    seal_substrate_sim_v14_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_substrate_simulation_v14.json"
+    )
+    seal_substrate_sim_v14_spec = json.loads(
+        seal_substrate_sim_v14_spec_path.read_text(encoding="utf-8")
+    )
     seal_actions_sim_renderer = (
         ROOT / "tools" / "render_quest_log_seal_actions_simulation_v1.py"
     )
@@ -2982,6 +2991,84 @@ def main() -> None:
             '"imagegen": {"calls": 0, "uploads": 0}',
         ),
         "QS-B1 V13 dark substrate deterministic renderer",
+    )
+    assert seal_substrate_sim_v14_spec["version"] == (
+        "QUEST-LOG-SEAL-SUBSTRATE-SIM-V14"
+    )
+    assert seal_substrate_sim_v14_spec["design_batch"] == "QS-B1 V5-A"
+    assert seal_substrate_sim_v14_spec["base_spec"] == (
+        "tools/specs/quest_log_seal_substrate_simulation_v13.json"
+    )
+    v14_mockup = seal_substrate_sim_v14_spec["visual_mockup"]
+    assert v14_mockup["source_strategy"] == (
+        "imagegen-full-frame-material-donor-plus-deterministic-mask"
+    )
+    assert v14_mockup["donor_normalized_canvas"] == [1024, 1024]
+    assert v14_mockup["donor_crop"] == [448, 164, 576, 860]
+    assert v14_mockup["canonical_source_size"] == [128, 696]
+    assert v14_mockup["deterministic_visible_bbox"] == [0, 0, 128, 696]
+    assert v14_mockup["canonical_master_size"] == [32, 174]
+    assert v14_mockup["dynamic_assembly"] == (
+        "prefix-plus-tail-from-one-master"
+    )
+    assert v14_mockup["tail_notch_count"] == 2
+    mask_points = v14_mockup["mask_polygon_source"]
+    assert min(point[0] for point in mask_points) == 0
+    assert max(point[0] for point in mask_points) == 127
+    assert min(point[1] for point in mask_points) == 0
+    assert max(point[1] for point in mask_points) == 695
+    assert all(
+        abs(point[1] - row) > 8
+        for point in v14_mockup["edge_control_points_source"]
+        for row in v14_mockup["quiet_crop_rows_source"]
+    )
+    v14_constraints = seal_substrate_sim_v14_spec["constraints"]
+    assert v14_constraints["imagegen_calls"] == 0
+    assert v14_constraints["imagegen_owns_surface_only"]
+    assert v14_constraints["deterministic_mask_owns_silhouette_and_alpha"]
+    assert v14_constraints["no_bbox_fit_or_anisotropic_resize"]
+    assert v14_constraints["accepted_candidate_is_composite_not_raw_donor"]
+    require(
+        seal_substrate_sim_v13_renderer,
+        (
+            "def load_simulation_spec(",
+            "def substrate_source_v5(",
+            "def substrate_master_v5(",
+            "def render_v5_zoom_board(",
+            '"v5-deterministic-mask"',
+            '"v5_mask_visible_bbox_is_exact"',
+            '"imagegen": "full-frame continuous cloth surface donor only"',
+        ),
+        "QS-B1 V14 donor/mask deterministic renderer",
+    )
+    require(
+        seals_work,
+        (
+            "QS-B1 V5-A 布面供体＋确定性轮廓蒙版",
+            "simulation-reviewed / P2 / awaiting-user-confirmation",
+            "ImageGen 只负责\n  连续旧布表面",
+            "固定裁片",
+            "accepted source",
+            "QS-B1 V5-A 完整 production prompt 草案",
+            "This output is NOT a ribbon sprite",
+            "[448,164,576,860]",
+            "exactly two short, broad, broken dim fold planes",
+            "No outer silhouette, narrow ribbon object",
+            "流程错误单列且不占额度",
+            "禁止 attempt 6",
+            "production-not-authorized",
+        ),
+        "QS-B1 V5-A pre-generation simulation and prompt gate",
+    )
+    require(
+        progress,
+        (
+            "QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A",
+            "ImageGen 全幅布面 donor＋确定性 `128×696` crop／mask",
+            "simulation-reviewed / P2",
+            "production 未授权",
+        ),
+        "QS-B1 V5-A progress gate",
     )
     require(
         seals_work,

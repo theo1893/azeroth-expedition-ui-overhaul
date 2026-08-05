@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render QS-B1 layered action simulations, including V4 dark substrate review."""
+"""Render QS-B1 layered action simulations, including V4/V5 substrate review."""
 
 from __future__ import annotations
 
@@ -64,6 +64,35 @@ def load_base_module(root: Path) -> Any:
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def deep_merge(base: dict[str, Any], overlay: dict[str, Any]) -> dict[str, Any]:
+    """Merge a compact simulation overlay without mutating its frozen base."""
+    merged = dict(base)
+    for key, value in overlay.items():
+        if key == "base_spec":
+            continue
+        if isinstance(value, dict) and value.get("_replace") is True:
+            merged[key] = {
+                child_key: child_value
+                for child_key, child_value in value.items()
+                if child_key != "_replace"
+            }
+            continue
+        if isinstance(value, dict) and isinstance(merged.get(key), dict):
+            merged[key] = deep_merge(merged[key], value)
+        else:
+            merged[key] = value
+    return merged
+
+
+def load_simulation_spec(path: Path, root: Path) -> dict[str, Any]:
+    overlay = json.loads(path.read_text(encoding="utf-8"))
+    base_path = overlay.get("base_spec")
+    if not base_path:
+        return overlay
+    base = json.loads(resolve(root, base_path).read_text(encoding="utf-8"))
+    return deep_merge(base, overlay)
 
 
 def intersection(left: list[int], right: list[int]) -> list[int] | None:
@@ -195,16 +224,52 @@ def substrate_master_v4(spec: dict[str, Any]) -> Image.Image:
     return art
 
 
+def substrate_source_v5(
+    spec: dict[str, Any],
+    *,
+    apply_mask: bool,
+) -> Image.Image:
+    """Build the geometry-only 128x696 donor crop used by the V5 simulation."""
+    mockup = spec["visual_mockup"]
+    width, height = mockup["canonical_source_size"]
+    art = Image.new("RGBA", (width, height), tuple(mockup["palette"]["base"]))
+    draw = ImageDraw.Draw(art, "RGBA")
+    for primitive in mockup["source_surface_primitives"]:
+        draw_flat_primitive(draw, primitive)
+    if not apply_mask:
+        return art
+
+    mask = Image.new("L", (width, height), 0)
+    ImageDraw.Draw(mask).polygon(
+        [tuple(point) for point in mockup["mask_polygon_source"]],
+        fill=255,
+    )
+    art.putalpha(mask)
+    return art
+
+
+def substrate_master_v5(spec: dict[str, Any]) -> Image.Image:
+    """Apply the exact deterministic silhouette, then reduce to 32x174."""
+    source = substrate_source_v5(spec, apply_mask=True)
+    size = tuple(spec["visual_mockup"]["canonical_master_size"])
+    return source.resize(size, Image.Resampling.LANCZOS)
+
+
 def substrate_art(
     spec: dict[str, Any],
     visible_count: int,
     menu_open: bool,
 ) -> Image.Image:
     """Compose the current visible length from one canonical source master."""
-    if spec.get("visual_mockup", {}).get("substrate_variant") != "v4-dark-irregular":
+    variant = spec.get("visual_mockup", {}).get("substrate_variant")
+    if variant not in ("v4-dark-irregular", "v5-deterministic-mask"):
         return substrate_art_v3(visible_count, menu_open)
 
-    master = substrate_master_v4(spec)
+    master = (
+        substrate_master_v5(spec)
+        if variant == "v5-deterministic-mask"
+        else substrate_master_v4(spec)
+    )
     root_height = spec["layout"]["substrate_root_content"][3]
     action_height = spec["layout"]["action_slot_size"][1]
     tail_height = spec["layout"]["substrate_tail_size"][1]
@@ -462,6 +527,138 @@ def layered_substrate_art(spec: dict[str, Any], visible_count: int) -> Image.Ima
     return art
 
 
+def donor_canvas_preview_v5(spec: dict[str, Any]) -> Image.Image:
+    """Represent the future full-frame material donor with flat local geometry."""
+    palette = spec["visual_mockup"]["palette"]
+    image = Image.new("RGBA", (320, 320), tuple(palette["base"]))
+    draw = ImageDraw.Draw(image, "RGBA")
+    draw.polygon(
+        [(0, 0), (178, 0), (150, 92), (190, 177), (133, 320), (0, 320)],
+        fill=tuple(palette["light_plane"][:3] + [92]),
+    )
+    draw.polygon(
+        [(214, 0), (320, 0), (320, 320), (190, 320), (230, 222), (199, 121)],
+        fill=tuple(palette["shadow_plane"][:3] + [112]),
+    )
+    draw.polygon(
+        [(76, 79), (241, 44), (265, 115), (183, 151), (84, 135)],
+        fill=tuple(palette["stain"][:3] + [52]),
+    )
+    draw.polygon(
+        [(34, 216), (186, 181), (267, 258), (219, 306), (69, 289)],
+        fill=tuple(palette["stain"][:3] + [38]),
+    )
+    return image
+
+
+def render_v5_zoom_board(
+    root: Path,
+    spec: dict[str, Any],
+    fonts: dict[str, ImageFont.FreeTypeFont],
+    zoom_output: str,
+) -> Path:
+    """Explain the V5 donor/mask split without implying final production texture."""
+    canvas = Image.new("RGBA", (1800, 1080), BOARD)
+    draw = ImageDraw.Draw(canvas, "RGBA")
+    draw.rectangle((0, 86, canvas.width, canvas.height), fill=BOARD_LOWER)
+    draw.text(
+        (30, 20),
+        spec["presentation"]["zoom_title"],
+        font=fonts["board_title"],
+        fill=(231, 202, 145, 255),
+    )
+    draw.text(
+        (30, 52),
+        spec["presentation"]["zoom_subtitle"],
+        font=fonts["board_body"],
+        fill=(194, 166, 113, 255),
+    )
+
+    labels = [
+        (40, "A · ImageGen 全幅布面供体（模拟）"),
+        (420, "B · 固定中央裁片"),
+        (570, "C · 确定性轮廓蒙版"),
+        (720, "D · 合成 source"),
+        (870, "E · 叠放纹章"),
+        (1040, "F · 同母版动态长度"),
+    ]
+    for x, label in labels:
+        draw.text((x, 108), label, font=fonts["board_body"], fill=(229, 197, 135, 255))
+
+    donor = donor_canvas_preview_v5(spec)
+    canvas.alpha_composite(donor, (40, 148))
+    crop = spec["visual_mockup"]["donor_crop"]
+    crop_box = tuple(round(value * 320 / 1024) for value in crop)
+    crop_box = (
+        40 + crop_box[0],
+        148 + crop_box[1],
+        40 + crop_box[2],
+        148 + crop_box[3],
+    )
+    draw.rectangle(crop_box, outline=(231, 202, 145, 255), width=3)
+    draw.text(
+        (40, 482),
+        "供体只负责连续布面；不负责外轮廓、Alpha 或比例",
+        font=fonts["board_small"],
+        fill=(202, 173, 115, 255),
+    )
+
+    unmasked = substrate_source_v5(spec, apply_mask=False)
+    composite = substrate_source_v5(spec, apply_mask=True)
+    display_size = (96, 522)
+    canvas.alpha_composite(unmasked.resize(display_size, Image.Resampling.BILINEAR), (435, 148))
+
+    mask_view = Image.new("RGBA", composite.size, (31, 34, 32, 255))
+    white = Image.new("RGBA", composite.size, (224, 215, 190, 255))
+    white.putalpha(composite.getchannel("A"))
+    mask_view.alpha_composite(white)
+    canvas.alpha_composite(mask_view.resize(display_size, Image.Resampling.NEAREST), (585, 148))
+    canvas.alpha_composite(composite.resize(display_size, Image.Resampling.BILINEAR), (735, 148))
+
+    layered = layered_substrate_art(spec, 7)
+    canvas.alpha_composite(layered.resize(display_size, Image.Resampling.NEAREST), (885, 148))
+
+    for index, count in enumerate((7, 5, 3)):
+        art = layered_substrate_art(spec, count)
+        scaled = art.resize((96, art.height * 3), Image.Resampling.NEAREST)
+        x = 1040 + index * 150
+        canvas.alpha_composite(scaled, (x, 148))
+        draw.text(
+            (x + 30, 166 + scaled.height),
+            f"{count} 项",
+            font=fonts["board_small"],
+            fill=(208, 177, 117, 255),
+        )
+
+    palette = spec["visual_mockup"]["palette"]
+    palette_items = [
+        ("主体：烟熏深旧棕", palette["base"]),
+        ("次亮面：暗赭灰棕", palette["light_plane"]),
+        ("阴影：深棕灰", palette["shadow_plane"]),
+        ("污渍：炭化旧棕", palette["stain"]),
+    ]
+    draw.text((40, 744), "综合色角色（平面占位，非最终材质）", font=fonts["board_body"], fill=(229, 197, 135, 255))
+    for index, (label, color) in enumerate(palette_items):
+        y = 782 + index * 48
+        draw.rectangle((40, y, 92, y + 30), fill=tuple(color), outline=(42, 31, 24, 255), width=2)
+        draw.text((108, y + 6), label, font=fonts["board_small"], fill=(208, 177, 117, 255))
+
+    notes = spec["presentation"]["zoom_notes"]
+    for index, note in enumerate(notes):
+        draw.text((430, 744 + index * 36), f"· {note}", font=fonts["board_small"], fill=(202, 173, 115, 255))
+    draw.text(
+        (30, 1036),
+        "非权威：最终布面笔触、纤维、污渍、缩小后的边缘 Alpha、纹章和四态；本图不得成为 source / runtime / ImageGen 输入。",
+        font=fonts["board_small"],
+        fill=(174, 146, 96, 255),
+    )
+
+    zoom_path = resolve(root, zoom_output)
+    zoom_path.parent.mkdir(parents=True, exist_ok=True)
+    canvas.save(zoom_path, "PNG")
+    return zoom_path
+
+
 def render_zoom_board(
     root: Path,
     spec: dict[str, Any],
@@ -470,6 +667,8 @@ def render_zoom_board(
     zoom_output = spec["outputs"].get("zoom")
     if not zoom_output:
         return None
+    if spec.get("visual_mockup", {}).get("substrate_variant") == "v5-deterministic-mask":
+        return render_v5_zoom_board(root, spec, fonts, zoom_output)
 
     canvas = Image.new("RGBA", (1600, 980), BOARD)
     draw = ImageDraw.Draw(canvas, "RGBA")
@@ -541,7 +740,7 @@ def render_zoom_board(
 def main() -> None:
     args = parse_args()
     root = args.repo_root.resolve()
-    spec = json.loads(args.spec.read_text(encoding="utf-8"))
+    spec = load_simulation_spec(args.spec, root)
     base = load_base_module(root)
     title_path = resolve(root, spec["inputs"]["title_font"])
     body_path = resolve(root, spec["inputs"]["body_font"])
@@ -655,6 +854,33 @@ def main() -> None:
                 ),
             }
         )
+    if spec.get("visual_mockup", {}).get("substrate_variant") == "v5-deterministic-mask":
+        mockup = spec["visual_mockup"]
+        source = substrate_source_v5(spec, apply_mask=True)
+        source_alpha = source.getchannel("A")
+        quiet_rows = mockup["quiet_crop_rows_source"]
+        checks.update(
+            {
+                "v5_imagegen_owns_surface_only": spec["constraints"]["imagegen_owns_surface_only"],
+                "v5_deterministic_mask_owns_silhouette_and_alpha": spec["constraints"]["deterministic_mask_owns_silhouette_and_alpha"],
+                "v5_no_bbox_fit_or_anisotropic_resize": spec["constraints"]["no_bbox_fit_or_anisotropic_resize"],
+                "v5_normalized_donor_is_1024_square": mockup["donor_normalized_canvas"] == [1024, 1024],
+                "v5_fixed_crop_is_exactly_128x696": (
+                    mockup["donor_crop"][2] - mockup["donor_crop"][0] == 128
+                    and mockup["donor_crop"][3] - mockup["donor_crop"][1] == 696
+                ),
+                "v5_source_canvas_is_exactly_128x696": source.size == (128, 696),
+                "v5_mask_visible_bbox_is_exact": source_alpha.getbbox() == (0, 0, 128, 696),
+                "v5_runtime_master_is_exactly_32x174": substrate_master_v5(spec).size == (32, 174),
+                "v5_tail_has_exactly_two_unequal_blunt_notches": mockup["tail_notch_count"] == 2,
+                "v5_edge_controls_avoid_crop_rows": all(
+                    abs(point[1] - row) > 8
+                    for point in mockup["edge_control_points_source"]
+                    for row in quiet_rows
+                ),
+                "v5_retains_one_prefix_plus_tail_master": mockup["dynamic_assembly"] == "prefix-plus-tail-from-one-master",
+            }
+        )
     report = {
         "schema": "aeui.quest-log.seal-layered-actions.simulation-report.v1",
         "version": spec["version"],
@@ -700,6 +926,29 @@ def main() -> None:
             "simulation is not source, runtime, addon art, or future ImageGen input"
         ]
     }
+    if spec.get("visual_mockup", {}).get("substrate_variant") == "v5-deterministic-mask":
+        report["asset_ownership"]["visual_substrate"] = [
+            "one-canonical-master",
+            "dynamic-prefix-crop",
+            "shared-tail-crop",
+        ]
+        report["asset_ownership"]["source_construction"] = {
+            "imagegen": "full-frame continuous cloth surface donor only",
+            "deterministic_crop": spec["visual_mockup"]["donor_crop"],
+            "deterministic_mask": "owns exact 128x696 silhouette and alpha",
+            "accepted_candidate": "reviewed composite, never the raw donor alone",
+        }
+        report["non_authoritative"].insert(
+            0,
+            "the simulated donor surface is flat geometry and does not predict final ImageGen microtexture",
+        )
+        report["non_authoritative"] = [
+            value.replace(
+                "final substrate folds, stains, edge wear and seamless body variants",
+                "final substrate folds, stains, edge wear and crop-row blending",
+            )
+            for value in report["non_authoritative"]
+        ]
     report_path = resolve(root, spec["outputs"]["report"])
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))

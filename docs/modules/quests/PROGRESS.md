@@ -189,6 +189,12 @@
   `128:696` 的比例误差 `7.287%`，超过授权 `≤1%`，同轴等比只能形成
   `128×649px`。自动检查 `5/9`，真实排版 `26/26`、display-region `6/6`
   通过；终态为 `candidate-rejected / repair-budget-exhausted / P3 / 5/5`。
+  当前已进入 `QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A` 生成前门禁：
+  ImageGen 未来只负责全幅连续暗旧布面 donor，固定中央裁片和 tracked mask
+  独占精确 `128×696` 轮廓、Alpha 与双钝缺口。V14 用真实 Quest Log 六态完成
+  `46/46 pass`，继承未变化的展示区合同后仍为 `6/6 pass`、violations `0`，
+  ImageGen `0/0`；当前 `simulation-reviewed / P2 / awaiting-user-confirmation`，
+  production 未授权。
   runtime `1.25` 继续把已接受的 QS-A1 漆章以 `32px` 无鼠标 Texture 放到
   详情页右上纸面；菜单尚未接入，也未隐藏任何旧按钮。
 - AEUI Quest Log provider 兼容子合同保持 `1.7`：在 provider 最终刷新后以
@@ -450,7 +456,7 @@
 | `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P6 game-validated / user-confirmed`（当前活动 runtime） | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；`2026-08-05` 用户确认 18 行字体、无描边／零 shadow、类型墨色和活动地区箭头显示通过。隐藏的行末追踪圈不在验收范围 | 保留至组件／整模块收口；不再生图 |
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 asset-retained / runtime-hidden` | 用户接受的 source、manifest、`128 × 16` TGA、exporter 与历史证据全部保留；`2026-07-31` 起 adapter 不再挂载或包装任务行脚本 | 暂缓；只有用户重新确认后才恢复 runtime |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
-| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu V4-A `P3 prompt-authorized` | V1 保持 `candidate-rejected / user-rejected / repair-budget-exhausted / 5/5`。V2 在 `4/5` 后被单图无法隐藏功能取代。V12 将背景与七纹章／七 Button 分层并获用户确认。V3-A `5/5` 的布局／展示区通过，但连续微纹、`9.86%` 比例误差和用户指出的整齐切口／亮色轻浮感使其最终 `user-rejected`；V3-B 保持 `0/5`。V13 以真实 Quest Log 对 V4-A 暗色、非周期侧边、两处粗钝尾缺口和同母版动态长度完成 `40/40`、display-region `6/6`、ImageGen `0/0`，并获用户方向确认；完整 production prompt、固定输入与五次修复合同已于 `2026-08-05` 获授权，正式调用 `0/5` | 提交授权正文后以固定执行器启动 V4-A attempt 1；旧按钮继续 fail-open，不导出、不接入菜单 |
+| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu V5-A `P2 simulation-reviewed` | V1／V3-A／V4-A 均保持各自失败终态；V4-A `5/5` 最佳稿仍因 `7.287%` 比例误差失败，禁止 attempt 6。V12 的背景／七纹章／七 Button 拓扑与 V13 暗色非周期双钝缺口方向继续冻结。V14 不改屏幕结构，只把 source 生产拆为 ImageGen 全幅布面 donor＋确定性 `128×696` crop／mask；真实六态 `46/46`、display-region `6/6`、ImageGen `0/0` | 用户确认或修改 V14 可见方向；确认后仍须独立授权 V5-A production。旧按钮继续 fail-open，不导出、不接入菜单 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | current geometry／fallback `P6 game-validated`；final art `P2 simulation-proposed` | runtime `1.25` 保持真实 Button 的 `108×41px` 双列／`64px` 名称／`8px` 列距／`4px` 行距、setter 锁、无鼠标程序化容器、原生 `NameFrame` 抑制和可见数量兜底。所有奖励项只依赖奖励总标题或上一组奖励项，不再依赖三个分组标题，消除原生 `QuestLogItemReceiveText` 反向锚定造成的 FrameXML 环；`2026-08-05` 用户确认当前右页 bug 与显示修复通过。Theme `1.8` 奖励文字无描边。V1 模拟 0／1／2／4／6 `5/5 pass`、ImageGen `0/0`；奖励只读，无 selected | 确认最终容器美术方向；确认不等于生产授权 |
 
 QL-A1 manifest 记录：
@@ -496,7 +502,7 @@ timer 或 failed 资产：provider 没有可用的公开状态来源。本项目
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
 | `QS-A1` | Quest Log／Tracker 共用漆章母版 | `P5 runtime-exported / page-placement-integrated / 5/5` | source／四态 atlas 保持 accepted；当前 Quest Log runtime `1.25` 直接使用 `32px` 页上 Texture，Tracker 不受影响；没有重开美术或 ImageGen | Turtle WoW 验证页上位置、TGA 方向与标题／正文安全区 |
-| `QS-B1` | Quest Log ScrollChild 内火漆 Button、动态空白布底、七张独立纹章与七个代理 Button | V4-A `P3 prompt-authorized / 0/5`；V3-A `user-rejected / 5/5`；V3-B `0/5` | V12 冻结 ScrollChild、分层所有权、hidden／disabled 与滚动合同。V3-A 五稿最终因连续微纹、比例误差和用户指出的“切口整齐、综合色太亮轻浮”被否决。V13 只重开空白布底综合色／轮廓：暗色烟熏旧棕、少量非周期侧边、两处不等宽钝尾缺口、断续宽面明暗；真实排版 `40/40`、display-region `6/6`、ImageGen `0/0`，用户已确认方向。V4-A 完整 production prompt、固定 Image 1／2、同循环 edit 边界与最多五次实际调用已于 `2026-08-05` 获用户授权 | 执行固定 0.143.0 attempt 1；内部通过前不晋级 source、不导出、不接入 |
+| `QS-B1` | Quest Log ScrollChild 内火漆 Button、动态空白布底、七张独立纹章与七个代理 Button | V5-A `simulation-reviewed / P2`；V4-A `repair-budget-exhausted / 5/5`；V3-B `0/5` | V12 冻结 ScrollChild、分层所有权、hidden／disabled 与滚动合同；V13 暗色烟熏旧棕、非周期宽边和两处不等宽钝缺口方向已确认。V4-A 五稿均无 source。V14 将美术 donor 与精确轮廓／Alpha mask 分责，保持同一 `32×174` prefix＋tail 和七个独立 Button；本地 `46/46`、展示区 `6/6`、ImageGen `0/0`。完整 V5-A production 草案已写入 work，但尚未授权 | 用户审视 V14 真实排版与构造图；确认后另行请求固定 Image 1／2、mask 例外和最多五次实际调用授权 |
 
 QS-A1 当前事实：
 
@@ -681,13 +687,22 @@ V13 继续使用 V12 的真实 ScrollChild 几何、一张最大母版前缀＋t
 独立纹章与七个 Button；真实排版 `40/40 pass`、display-region `6/6 pass`，
 ImageGen `0/0`。用户于 `2026-08-05` 已确认 V13 可见方向；完整 V4-A
 production 正文、固定 Image 1／2、同循环 edit 边界、确定性后处理与最多五次
-实际 ImageGen 调用合同已于 `2026-08-05` 获用户独立生产授权，正式计数仍为
-`0/5`。提交执行前正文后调用固定执行器；内部通过前不创建
-source／manifest／exporter／atlas、不接入菜单，
-不隐藏放弃／分享／退出／详情与 pfQuest 四按钮。未来具体候选仍须经过物件、材料、组件
-粒度、实际展示区域和“真实排版＋新 UI”预演，并由用户明确接受后才能进入
-P4／P5。后续 runtime 仍必须按已确认交互合同一一代理原 Button、
-镜像禁用态、保留放弃确认，并在任一 provider 未捕获时原子 fail-open。
+实际 ImageGen 调用合同已于 `2026-08-05` 获用户独立生产授权，并执行至
+`5/5`。第五稿的暗色宽面方向最好，但精确比例仍误差 `7.287%`，V4-A 已以
+`candidate-rejected / repair-budget-exhausted` 终止。
+
+当前下一门禁为 `QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A`。它不改变
+V12／V13 的屏幕结构或综合色，只把 source 生产拆为“ImageGen 全画幅连续布面
+donor”和“tracked 固定 crop／deterministic mask”。mask 独占精确
+`128×696` 外轮廓、Alpha 与两处双钝缺口，accepted 对象必须是组合后的
+composite，不是 raw donor。V14 六态真实排版 `46/46 pass`、继承展示区合同
+`6/6 pass`、ImageGen `0/0`；当前等待用户确认可见方向，production 没有授权。
+确认模拟后仍须独立授权固定 Image 1／2、mask 后处理和最多五次实际调用。
+任何候选都必须经过材料、组件粒度、真实展示区和“真实排版＋新 UI”预演，
+并由用户明确接受 composite 后才能进入 P4／P5。后续 runtime 仍必须一一代理
+原 Button、镜像禁用态、保留放弃确认，并在任一 provider 未捕获时原子
+fail-open；当前不创建 source／manifest／exporter／atlas、不接入菜单，也不
+隐藏放弃／分享／退出／详情或 pfQuest 四按钮。
 
 [QL-D V1 奖励槽方向](work/QUEST.LOG.REWARDS.md) 仍是独立开放视觉门禁，
 不被 QS-B1 的确认或授权自动覆盖。

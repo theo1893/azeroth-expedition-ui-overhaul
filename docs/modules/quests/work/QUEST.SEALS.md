@@ -13,16 +13,20 @@
   `2026-08-05` 回复“可以”
 - 当前已确认布底模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V13 / QS-B1 V4-A`；
   用户于 `2026-08-05` 回复“接受, 用这一套试试效果”
+- 当前待用户确认模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A`；
+  将 ImageGen 布面 donor 与确定性精确轮廓／Alpha mask 分离
 - 最近一次已执行生产正文：`QS-B1 V4-A.r4 / attempt 5`；V4-A 循环已耗尽，
   当前无下一修复正文
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
-  `candidate-rejected / repair-budget-exhausted / P3`
+  `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A
+  `simulation-reviewed / P2 / awaiting-user-confirmation`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
   `simulation-confirmed / V3-A repair-budget-exhausted / V3-B gated / P3`；V1 保持
   `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`；
-  QS-B1 V4-A `candidate-rejected / repair-budget-exhausted / P3 / 5/5`
+  QS-B1 V4-A `candidate-rejected / repair-budget-exhausted / P3 / 5/5`；
+  QS-B1 V5-A `simulation-reviewed / P2 / production-not-authorized`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -32,6 +36,8 @@
   授权顺序门禁未执行 V3-B）
 - QS-B1 V4-A ImageGen：`5/5`；流程错误 `1`；五次均有 provider 图片证据；
   第五稿为本轮最佳视觉但比例误差 `7.287%`，禁止 attempt 6
+- QS-B1 V5-A 模拟 ImageGen：`0/0`；production `0` 次且未授权；V14 只用
+  本地平面几何预演 donor／crop／mask／composite 分工
 - QS-B1 历史流程错误：V1 `1`、V2 `3`、V3 `0`、V4-A `1`。均按“无生成证据才不占
   额度”记录
 - tracked source：
@@ -5441,3 +5447,251 @@ photography, weave, extra object, icon, text, wax or bright color.
   exporter／runtime，不修改 addon，也不隐藏旧 provider Button。下一门禁是
   用户基于第五稿决定另开 V5、显式授权新的确定性比例合同例外，或暂停该背景；
   任一选择都不能在本授权内自动继续。
+
+## QS-B1 V5-A 布面供体＋确定性轮廓蒙版 — `2026-08-05`
+
+### 重开原因、范围与当前门禁
+
+- 用户在 V4-A `5/5` 已耗尽、第五稿美术方向最接近 V13 但精确比例仍失败的
+  上下文中回复“进入下一步”。按项目工作流，这只进入新的生成前模拟与 Prompt
+  草案门禁，不构成生产生图、上传、确定性 source 例外、P4／P5 或 addon
+  修改授权。
+- 新版本为 `QS-B1 V5-A`；组件仍只有
+  `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX`。当前子状态：
+  `simulation-reviewed / P2 / awaiting-user-confirmation`；操作 `simulate`；
+  本地 ImageGen `0/0`、上传 `0`、生产实际调用 `0`。未来最多五次只是下方
+  草案上限，用户明确授权前没有可消费的生产额度。
+- V4-A 证明生成模型可以接近暗色、厚重、非周期宽边和双钝缺口方向，却无法在
+  五次内同时满足精确 `128:696` 外形。V5-A 因而拆分职责：ImageGen 只负责
+  连续旧布表面；tracked deterministic crop／mask 只负责精确外轮廓、Alpha、
+  两处尾缺口和 source／runtime 比例。它不是把失败稿强行 bbox-fit，也不把
+  V13 模拟或 V4-A raw 变成 source。
+- V12 已确认的 ScrollChild、页上火漆、七张独立纹章、七个独立 Button、
+  hidden 收拢、disabled 留位、部分滚动命中、奖励前 `32px` 留白和原子
+  fail-open 全部冻结。V5-A 不修改这些对象，也不执行 V3-B。
+
+### V5-A source 构造与所有权合同
+
+1. **布面供体**：固定 `imagegen-0-143-0` 未来只生成一张全画幅、全不透明、
+   正交的暗色旧亚麻布材料板。raw 不包含条带外轮廓、绿色背景、Alpha、火漆、
+   纹章、按钮、书页或投影，也不直接成为 accepted source。
+2. **同轴归一化**：provider raw 必须为正方形 RGB／RGBA；若为固定执行器常见
+   的 `1254²`，只允许整张同轴 LANCZOS 归一化到 `1024² RGB`。非正方形、
+   裁边或需要非等比修复的 raw 直接失败。
+3. **固定裁片**：从归一化 donor 精确裁取 `[448,164,576,860]`，得到
+   `128×696px` 连续布面。禁止内容感知重排、bbox-fit、补边、横向／纵向独立
+   拉伸或依候选改变裁片。
+4. **确定性蒙版**：唯一轮廓由
+   `tools/specs/quest_log_seal_substrate_simulation_v14.json` 中
+   `mask_polygon_source` 持有；mask 的可见 bbox 固定为 `[0,0,128,696]`，
+   左右边使用少量非周期宽幅偏移，尾部恰好两处不等宽粗钝浅缺口。正式构建时
+   以 `4×` 坐标栅格生成同一 polygon，再 LANCZOS 缩回 `128×696` 形成边缘
+   Alpha；全透明像素 RGB 清零。不得人工改画 donor 的内部美术。
+5. **候选与 source**：进入用户审查的是“固定 donor crop＋固定 mask”的
+   `128×696 RGBA` 合成候选；raw donor 单独通过不等于候选通过。只有用户明确
+   接受合成候选后，才允许把它晋级为 tracked source，并在 manifest 同时记录
+   raw、归一化规则、裁片、mask spec／SHA 和 composite SHA。
+6. **runtime**：accepted composite 只允许精确等比缩为 `32×174px`；收起态
+   取前 `32×12px`，展开态取 `12 + visible_count×22px` 连续前缀，再接同一
+   母版最后 `32×8px` tail。七项全显仍结束于 content y=`204`，与奖励 y=`236`
+   保持 `32px`。不平铺、不重画不同长度、不让任何 action 持有背景切片。
+
+### V14 生成前几何预演与实际展示区
+
+- 模拟版本：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A`。它复用当前
+  accepted Quest Log shell 和 QS-A1 runtime 漆章作为邻接 UI，只用本地平面
+  几何表达 donor／crop／mask／composite 的职责分离；不调用 provider。
+- tracked renderer：
+  `tools/render_quest_log_seal_layered_actions_simulation_v2.py`，SHA-256
+  `2f5c8f55ba2876ea96f6ad25910c92bed0852f77939e53af3ea8d25fc7adfa33`；
+  tracked spec：`tools/specs/quest_log_seal_substrate_simulation_v14.json`，
+  SHA-256 `23068fe82b7bb4554447f6be20d2097019c1cf42291f0e90a19b72be4432de67`。
+  macOS 使用
+  `/Users/yuanshiyao/miniconda3/envs/py312/bin/python`，Python `3.12.12`，命令：
+  `conda run -n py312 python tools/render_quest_log_seal_layered_actions_simulation_v2.py tools/specs/quest_log_seal_substrate_simulation_v14.json --repo-root .`。
+- 真实排版 board：
+  `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-SUBSTRATE-SIM-V14/quest_log_seal_substrate_board_v14.png`，SHA-256
+  `a416c71df73aad3177222f7ac7e6f180066d5e51b809bd81a7b1522f76f67cb0`；
+  构造分工图：同目录 `quest_log_seal_substrate_construction_v14.png`，SHA-256
+  `f85578fa0b3baac741cd8f998079f1f552d07e0c4139c61148afcf0678c8c5d8`。
+- simulation report：同目录 `quest_log_seal_substrate_report_v14.json`，当前
+  SHA-256 `422d9782e2f5f17cb4ea20ec848fe167de862d6d7d12bb5688e99b4ad30b0f6b`，
+  `46/46 pass / displayable`。六种状态继续覆盖 closed、7／5／3 项、disabled、
+  scroll `52` 和 scroll `208`；最大／五项／三项背景高分别为
+  `174／130／86px`，奖励间隙为 `32／76／120px`。
+- 因 V5-A 没有改变 Frame、atlas、Button、visible order 或滚动几何，展示区
+  直接继承并重新执行已冻结的
+  `tools/specs/quest_log_seal_actions_simulation_v13_display_region.json`；报告写到
+  V14 目录 `display-region-report-v14.json`，为 `6/6 pass`、violations `0`。
+  report SHA-256
+  `66b8396546c3383c65c2a6eb2506b410fddbd58002c9ad742266a0813a8e4cfa`。
+  该复用只表达几何完全相同，不把 V13 模拟像素带入 V5-A。
+- 内审结论：`displayable`。V14 可确认合成后的综合色重量、轮廓、火漆压根、
+  动态长度、正文覆盖、奖励间距、滚动裁切与对象层序；不能确认最终 donor
+  纤维／污渍笔触、source 边缘抗锯齿、缩小后的客户端混合、七纹章或四态。
+  board、构造图和报告都位于 ignored `generated/`，不得作为 source、runtime、
+  addon 媒体或未来 ImageGen 输入。
+
+### 固定参考与裁决顺序
+
+1. `Image 1`：`assets/locked/quests/任务详情面板_视觉基准_v1.png`，SHA-256
+   `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`；
+   最高权威，只继承 2004 年前后香草魔兽二维手绘年代、大块明暗、实体重量、
+   左上暖光、低饱和远征综合色和克制磨损。
+2. `Image 2`：`assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png`，
+   SHA-256
+   `91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5`；
+   只作当前 accepted 邻接 UI 的综合色、笔触尺度、边缘软硬和磨损密度参考。
+3. 冲突时依次服从 Image 1、全局／Quests 主模块基线、QS-B1 子模块基线，
+   最后才是 Image 2。两图中的书、页、皮革、黄铜、火漆、按钮、文字和构图
+   全部排除。V13／V14 模拟、V1–V4-A 失败候选、runtime atlas、review 图与
+   addon 截图均不得上传。
+
+### QS-B1 V5-A 完整 production prompt 草案
+
+```text
+Create one production material-donor bitmap for a Turtle WoW 1.18.1,
+Interface 11200 quest-log overhaul. This output is NOT a ribbon sprite and NOT
+a finished UI object. It is only an edge-to-edge continuous painted cloth
+surface. A tracked deterministic crop and alpha mask will later create the
+exact narrow substrate silhouette. Do not draw, imply, or reserve an outer
+ribbon contour.
+
+REFERENCE AUTHORITY AND FILTERING
+Image 1 is the highest visual authority. Inherit only its circa-2004 vanilla
+World of Warcraft low-resolution 2D hand-painted bitmap language, broad
+readable value planes, substantial material weight, muted Azeroth expedition
+palette, restrained upper-left warm light, sparse wear, and deliberately
+nonmodern finish. Ignore its book, pages, leather, brass, wax seal, ribbons,
+buttons, reward slots, text, icons, and complete composition.
+
+Image 2 is a secondary accepted-adjacency reference. Inherit only its dark
+walnut temperature, coarse paint scale, softened edge handling, upper-left
+light direction, and restrained wear density. Ignore and do not reproduce its
+book, page gutter, spine, leather frame, brass, transparency, silhouette, or
+pixels. If the references conflict, Image 1 and the Azeroth quest-ledger
+baseline win. Neither reference authorizes copying an object or composition.
+
+CANVAS AND OWNERSHIP
+Return one square RGB bitmap filled edge to edge by one continuous opaque cloth
+surface. There is no background and no separate object: every canvas pixel is
+cloth. Keep the view flat, orthographic, front-facing, evenly scaled, and free
+of perspective. Do not add transparency, green screen, checkerboard, vignette,
+frame, border, isolated strip, banner outline, torn silhouette, cast shadow,
+contact shadow, floating fibers, or detached fragments. The downstream
+deterministic compiler will normalize the whole square on both axes together
+to 1024 x 1024. It will then crop the fixed central rectangle
+[448,164,576,860], exactly 128 x 696 pixels. Do not draw a guide, border,
+highlight, seam, column, or compositional frame around that rectangle.
+
+MATERIAL AND COLOR
+Paint heavy, soft, old expedition-guild oath linen in low-saturation smoke-aged
+charcoal brown, dark walnut, and deep umber. It is a quiet material accent for
+an old quest ledger, not a ceremonial banner. Use one dominant dark middle
+mass, one deeper shadow mass, and one restrained dim warm mass, all broad and
+irregular and all continuing beyond the future crop. The brightest cloth plane
+is only modestly lighter than the base. Never use bright ochre, gold, orange,
+ivory, cream, yellow edging, saturated red, a bright rim, or a full-height
+highlight.
+
+SURFACE ORGANIZATION
+Build the entire square from broad hand-painted value planes rather than
+visible threads. Add two or three broad low-frequency folds and three to six
+large, diffuse, noncircular age stains. Across the future central crop, include
+exactly two short, broad, broken dim fold planes at different heights; neither
+may cross the full crop width, touch both future side edges, connect into a
+vertical stripe, or read as a button plate. Keep the central crop calm, matte,
+heavy, and readable behind future independent ink motifs. Use only sparse
+coarse fiber suggestions at a few stressed areas; do not resolve individual
+threads.
+
+FUTURE CROP SAFETY
+Within the normalized 1024 x 1024 composition, keep y = 212, 300, 388, 476,
+564, 652, 740, and 828, plus at least 8 pixels above and below each row, quiet
+and continuous across the central crop x = 448..575. No strong fold boundary,
+horizontal highlight, stain edge, crack, seam, hem, row, repeated cell,
+contrast jump, or action-sized mark may occur in those safety bands. Do not
+create a 22-pixel runtime rhythm or seven stacked sections. The crop must read
+as one continuous material from top to bottom.
+
+STYLE LOCK
+Make an original coarse hand-painted bitmap surface compatible with a
+2004-era vanilla WoW Azeroth expedition ledger. Preserve chunky readable
+painting, material weight, restrained wear, and low-resolution clarity. It
+must not look photorealistic, scanned, vector-clean, procedural, mobile-
+toolbar-like, modern flat UI, Diablo-3-like, Skyrim-minimalist, Warhammer,
+gothic sci-fi, ceremonial military regalia, or a generic modern fantasy
+ribbon.
+
+STRICT EXCLUSIONS
+No outer silhouette, narrow ribbon object, banner, pennant, fishtail, notch,
+fringe, tassel, hem, green background, alpha, wax, seal, stamp, icon, motif,
+rune, glyph, text, letter, number, button, state, card, tile, divider, book,
+page, spine, leather, metal, brass, rivet, jewel, skull, eagle, aquila, weapon,
+chain, popup, panel, paper shadow, glow, glass, photographic burlap, visible
+weave, textile scan, uniform microtexture, repeated curl, procedural grain,
+dense scratches, regular stains, cross-width band, full-height bright stripe,
+gold, orange, ivory, saturated red, or extra object.
+
+BEFORE RETURNING, VERIFY IN ORDER
+One square RGB image; every pixel belongs to one continuous opaque cloth
+surface; flat orthographic front view; no object boundary or background; dark
+low-saturation smoked-brown palette; exactly three broad value masses; two or
+three broad folds; three to six diffuse noncircular stains; exactly two short
+broken dim fold planes inside the future central crop; all eight future crop
+rows quiet; no threads, weave, repeating cells, icon, text, wax, book, shadow,
+bright color, modern styling, or extra object.
+```
+
+### Prompt 完整性预审
+
+| 检查项 | V5-A 结论 |
+|---|---|
+| 全局／模块基线融合 | 正文显式写入香草年代二维手绘、大块明暗、材料重量、左上暖光、低饱和艾泽拉斯远征卷宗和现代／暗黑／Skyrim／战锤禁项 |
+| 参考职责与冲突 | Image 1 最高、Image 2 只作邻接；书页、火漆、黄铜、按钮和完整构图均明确过滤 |
+| 组件粒度 | ImageGen 只拥有 full-frame 布面 donor；deterministic mask 独占轮廓／Alpha；纹章、Button、状态和功能全部排除 |
+| 尺寸与后处理 | square raw → 同轴 `1024²` → 固定 `[448,164,576,860]` crop → 固定 `128×696` mask → `32×174` runtime；无 bbox-fit 或非等比缩放 |
+| 动态展示 | root／七段容量／tail、八条安静切线、真实 `246×324` viewport、六种滚动／显隐状态和奖励距离均可验证 |
+| 用户否决闭环 | 明亮轻浮、规则切口、连续微织纹、单图绑定功能和精确比例失败已分别转为暗色宽面、mask 轮廓、低频 donor、独立纹章和职责拆分 |
+| 可审查性 | donor 与 composite 分开审查；只有 composite 可获接受，mask bbox、notch 数、crop、runtime 尺寸和 display-region 均可机器验证 |
+| 不确定项 | 最终 donor 笔触、缩小后的边缘 Alpha 与客户端混合仍需候选和实机验证；V14 不替代这些门禁 |
+
+### 最多五次草案循环、修复边界与停止条件
+
+- 本节尚未获生产授权。若用户未来明确授权，attempt 1 固定上传上述 Image 1／2，
+  使用 `imagegen-0-143-0` 内固定 `@openai/codex@0.143.0` 的 `generate`；
+  attempt 2–5 继续使用同顺序、同 SHA 的 Image 1／2。只有紧邻前稿仍是全幅
+  单一暗旧布面、总体画笔／综合色正确，失败仅为局部过亮、微纹过密、污渍／
+  折痕过强、中央裁片不够安静或少量误生禁项时，才允许把它作为唯一 Image 3
+  edit input；否则从固定 Image 1／2 regenerate。
+- V13／V14 模拟、V1–V4-A raw、真实排版、review 图、runtime 或其他段候选
+  永远不得作为输入。不得在循环内改变 donor／mask 职责、裁片、polygon、对象
+  拓扑、综合色方向、固定参考、执行器或显示区。
+- 每次只要存在 provider 生成证据就计一次实际 ImageGen；上传错误、工具错误、
+  超时且无生成证据等流程错误单列且不占额度。完整候选提前通过即停止；第五次
+  仍失败则 `repair-budget-exhausted`，禁止 attempt 6。
+- 每个 countable output 的固定审查顺序：raw 正方形／全幅单材质 → 同轴
+  `1024²` → 固定 crop 的美术／八条安静带 → fixed mask composite 的对象数、
+  bbox、Alpha 与双缺口 → `32×174` runtime／prefix＋tail → 六态真实排版 →
+  display-region `6/6` → 用户审查 composite。任一步失败即不创建 source、
+  manifest、exporter、runtime，不修改 addon，也不隐藏旧按钮。
+
+### 本门禁验证
+
+- `conda run -n py312 python tests/quest_design_contract_test.py`：pass。
+- `conda run -n py312 python tests/repository_contract_test.py`：pass。
+- `conda run -n py312 python tests/asset_workflow_skill_test.py`：pass。
+- `conda run -n py312 python -m py_compile tools/render_quest_log_seal_layered_actions_simulation_v2.py tests/quest_design_contract_test.py`：pass。
+- `lua tests/quest_module_smoke.lua .`：pass；V5-A 未修改 Lua／addon，旧菜单
+  fail-open 行为不变。
+- `git diff --check`：pass。generated V14 像素仍由 `/generated/` ignore 规则
+  排除，当前不建立 handoff，也不推送。
+
+### 当前停止点
+
+- 当前最高允许结果是 `simulation-reviewed / P2 / awaiting-user-confirmation`。
+  下一门禁是用户审视 V14 的真实任务书 board 与 donor／mask 构造图，明确接受、
+  否决或要求修改 V5-A 可见方向。
+- 即使用户接受 V14，也只把状态推进到 `simulation-confirmed / P2`；之后必须把
+  本节完整 production 正文、固定两图、确定性 mask 例外和最多五次实际调用
+  边界再次呈现并获得独立明确授权，才可进入 `prompt-authorized / P3`。
