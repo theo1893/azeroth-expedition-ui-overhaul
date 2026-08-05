@@ -7,13 +7,14 @@
   `QUEST.LOG.SHELL`、`QUEST.LOG.LIST.PAPER`、
   `QUEST.LOG.DETAIL.PAPER` 与 `QUEST.LOG.GUTTER.*`
 - 版本：`QL-A2 V4`
-- 子状态：`runtime-exported`
-- 项目阶段：`P5`
+- 子状态：`game-validated / user-confirmed`
+- 项目阶段：`P6`
 - 操作：`deterministic-export / static-integration`
 - 固定执行器：V4 不调用 ImageGen；`0/0`
 - 当前结论：停止 V3.3 的独立页沟小件生成，改为从已接受的 QL-A1 空卷宗
   source 做确定性、固定尺寸的运行时结构导出；静态测试已通过。用户于
-  `2026-07-31` 接受当前游戏内书本主体，不再增加第二层框或列表底板
+  `2026-07-31` 接受当前游戏内书本主体，不再增加第二层框或列表底板；并于
+  `2026-08-05` 实机确认当前左页与右页的既有 bug 和显示问题均已修复
 - 用户授权：`2026-07-30` 确认 QL-A1 单一静态背景、`676 × 464`、
   list-only 不缩窄书体、`GUTTER.*` 静态归属，以及继续执行导出与接入
 - 目标客户端：Turtle WoW `1.18.1`／Interface `11200`
@@ -208,26 +209,29 @@ SHA／Alpha／UV 记录和预演。
 
 ## 审查记录
 
-- 结论：`通过`静态导出与接入门禁；等待实机。
-- 子状态／阶段：`runtime-exported / P5`。
+- 结论：静态导出、接入和当前 Quest Log 左右页实机显示门禁均通过。
+- 子状态／阶段：`game-validated / P6 / user-confirmed`。
 - 已通过：source provenance、物件身份、目标尺寸可读性、动态内容排除、
   交互组件独立性、确定性重建、TGA／UV／manifest 一致性与 Lua smoke。
 - 运行时处理：原生／pfUI 真实控件在背景上方继续绘制和接收交互；静态
   Texture 不包含点击区。list-only 只改变右页动态可见性，Frame 始终
   `676 × 464`。
-- 下一门禁：Turtle WoW `1.18.1` 实机验证方向、裁切、中文换行、按钮命中、
-  empty／dual-page／list-only 与 SavedVariables；未达 `P6`，不清理 work
-  或 ignored 中间产物。
+- 实机证据：用户于 `2026-08-05` 明确确认当前 Quest 左页与右页的 bug 和
+  显示均已修复；仓库未新增或虚构截图文件。该结论只关闭当前 Quest Log
+  左右页范围，不覆盖 Tracker、事务菜单、NPC 对话或整模块收口。
+- 下一门禁：QL-A2 已到 `P6`；在组件关闭清单获确认或整模块验收前继续保留
+  work 与 ignored 中间产物，不提前执行 P6-C 清理。
 
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一门禁 |
 |---|---|---|---|
 | QL-A2 V3.3 | 三段各 `5/5`，合计 `15/15`；原尺寸复核纠正 B3 语义误判 | `candidate-rejected / repair-budget-exhausted` | 不挽救或晋级任何 V3.3 输出 |
-| QL-A2 V4 | QL-A1 accepted source → `1024 × 512` TGA；固定执行器 `0/0`；runtime SHA `1b6b21cd…` | `runtime-exported / P5` | Turtle WoW 实机验收 |
+| QL-A2 V4 | QL-A1 accepted source → `1024 × 512` TGA；固定执行器 `0/0`；runtime SHA `1b6b21cd…`；`2026-08-05` 用户实机确认 | `game-validated / P6` | 组件／整模块收口前保留 work；不扩展到未完成范围 |
 
-QL-A2 在实机前保持本 work。后续 QL-B／QL-C／QL-D 交互资产仍需各自的
-组件合同、Prompt 与验收，不能因为背景已接入而标记完成。
+QL-A2 已通过当前实机范围，但在组件 P6-C 清单获确认或整模块验收前保持本
+work。后续 QL-B／QL-C／QL-D 未完成资产仍需各自的组件合同、Prompt 与验收，
+不能因为背景已进入 P6 而标记整个 Quests 模块完成。
 
 ## `2026-08-03` runtime `1.17` 详情裁切修复
 

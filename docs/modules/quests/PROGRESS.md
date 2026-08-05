@@ -3,6 +3,13 @@
 ## 当前结论
 
 - Quest Log 主视觉：已锁定。
+- 用户于 `2026-08-05` 在 Turtle WoW 中确认当前 Quest Log 左页与右页的既有
+  bug 和显示问题均已修复。活动范围中的 QL-A2 V4 书体、18 行左页字体／
+  无描边／类型墨色，以及 Quests `1.25`／Theme `1.8` 的右页金额、动态
+  ScrollChild、奖励无循环锚点、间隔／换行和原生 `NameFrame` 抑制记为
+  `game-validated / P6 / user-confirmed`。本轮没有新增截图文件，文档只记录
+  用户给出的实机结论；QL-D 最终美术、QS-B1、Tracker、QL-B3 和 NPC 对话
+  不在此次验收范围。
 - 用户于 `2026-07-31` 接受当前游戏内书本主体，并明确要求停止增加列表内框、
   地区条或任务条底板；后续只处理书本外的真实控件与交互反馈。
 - `2026-07-31` 已完成魔改版 `pfQuest 7.0.1` 与
@@ -236,13 +243,15 @@
   attempt 3–5 仍是多圈交叠、装饰性绳结和横向杆状尾端，第一失败门禁是
   语义／物理，不只是尺寸／位置。三段均为
   `candidate-rejected / repair-budget-exhausted`，无任何候选可晋级。
-- `QL-A2 V4`：`runtime-exported / P5`。用户于 `2026-07-30` 确认 QL-A1
+- `QL-A2 V4`：`game-validated / P6 / user-confirmed`。用户于 `2026-07-30` 确认 QL-A1
   单一静态背景、`676 × 464`、list-only 不缩窄书体和 `GUTTER.*` 静态
   归属。确定性 exporter 已生成 `1024 × 512` TGA 与 runtime manifest；
   AEUI adapter 把它挂在 `QuestLogFrame` 的非交互背景层，隐藏原生装饰
   Texture，但保留动态文字、列表、详情、原操作 Button、脚本和
   SavedVariables。缺少详情切换时只创建真实 Button。任务行、两套
-  ScrollBar、按钮状态、奖励槽与状态覆盖的最终美术仍属于 QL-B/C/D。
+  ScrollBar、按钮状态、奖励槽与状态覆盖的最终美术仍属于 QL-B/C/D。用户于
+  `2026-08-05` 进一步确认当前左右页 bug 与显示修复通过；这不替代其余批次
+  各自的验收。
 - `QL-B`：已完成目录对象与状态来源复核。旧 P5／V1 runtime 曾保留 pfUI
   23 行，以 `15px` 行高／`14px` 步进占用 `323px`；实机已确认这种密度
   和仅有小墨记／书签的资产范围不足以形成可感知的左页改造。用户确认 V2
@@ -280,8 +289,9 @@
   用户随后于 `2026-07-30` 明确接受 V1.r3 的运行时视觉，并允许用确定性逐格
   裁切、等比缩放、居中与 Alpha 规则进入 P4/P5；该决定不把内部失败门禁
   改写成通过。透明母版、source/runtime manifest、`64 × 16` TGA、确定性
-  exporter 和 adapter 已 tracked，当前为 `runtime-exported / P5`；固定
-  执行器仍是 `5/5` 且接受后没有新增调用。
+  exporter 和 adapter 已 tracked；`2026-08-05` 用户确认当前活动左页字体、
+  无描边／类型墨色与地区箭头显示通过，因此活动 runtime 为
+  `game-validated / P6`。固定执行器仍是 `5/5` 且接受后没有新增调用。
 - `QL-B0／B1 runtime`：Quests runtime contract 已升至 `1.25`。继续创建／
   复用 `QuestLogTitle1..23` 以兼容 provider，但只显示 `1..18`，使用
   `246 × 18` 行盒／`18px` 步进和真实滚动偏移。地区箭头仍由
@@ -365,13 +375,13 @@
 | 批次 | 子模块 | 阶段 | 当前事实 | 下一门禁 |
 |---|---|---:|---|---|
 | `QL-A1` | `QUEST.LOG.SHELL` 结构母版 | `P4` | [透明 source](../../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png) 已接受；原始 PNG 不直接加载，只允许 QL-A2 V4 确定性全幅导出 | Turtle WoW 中复核最终显示 |
-| `QL-A2` | 静态空卷宗结构与页沟 | `P5` V4 runtime-exported | V3.3 `15/15` 已终止；V4 已从 QL-A1 source 导出 `676 × 464` 显示区／`1024 × 512` TGA，固定执行器 `0/0`，Lua smoke 通过 | Turtle WoW 验证纹理方向、裁切、命中与 list-only |
+| `QL-A2` | 静态空卷宗结构与页沟 | `P6 game-validated / user-confirmed` | V3.3 `15/15` 已终止；V4 已从 QL-A1 source 导出 `676 × 464` 显示区／`1024 × 512` TGA，固定执行器 `0/0`，Lua smoke 通过；`2026-08-05` 用户确认左右页当前显示与 bug 修复通过 | 保留至组件／整模块收口；不扩展到未完成范围 |
 | `QL-B0` | 左页列表几何；内框、地区条与任务条底板均已撤销 | V1 `P5 fallback`；V2 `P3 user-rejected / scope-removed` | A 在 `4/5` 后由用户移出范围；B `5/5` 耗尽后也于 `2026-07-31` 被用户移出范围；均无 source/runtime，见 [work](work/QUEST.LOG.LEFTPAGE.md) | 保持当前连续书页，不再增加框或底板 |
-| `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P5 runtime-exported` | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；内部失败与 `5/5` 事实保留 | Turtle WoW 验证 TGA、四态切换、字体和 fallback |
+| `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P6 game-validated / user-confirmed`（当前活动 runtime） | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；`2026-08-05` 用户确认 18 行字体、无描边／零 shadow、类型墨色和活动地区箭头显示通过。隐藏的行末追踪圈不在验收范围 | 保留至组件／整模块收口；不再生图 |
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 asset-retained / runtime-hidden` | 用户接受的 source、manifest、`128 × 16` TGA、exporter 与历史证据全部保留；`2026-07-31` 起 adapter 不再挂载或包装任务行脚本 | 暂缓；只有用户重新确认后才恢复 runtime |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
 | `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu `P2 simulation-confirmed / prompt-draft` | 既有 late-load 兼容和原 Button fallback 保留；V1–V8 已否决，V9 已确认。`QS-B1 V1` 只生成一枚无字暗胡桃事务签母版，七项仍为独立 `112×20px` Button，页内零占用且只产生 `48px` outset | 用户独立授权 `QS-B1 V1`、固定 Image 1／2、受限 Image 3 edit、确定性后处理与最多 `5` 次实际调用；候选通过后再做 P4/P5 与实机代理验证 |
-| `QL-D` | 奖励槽、分隔与文字安全区 | geometry `P5 runtime-integrated`；final art `P2 simulation-proposed` | runtime `1.25` 保持真实 Button 的 `108×41px` 双列／`64px` 名称／`8px` 列距／`4px` 行距、setter 锁、无鼠标程序化容器、原生 `NameFrame` 抑制和可见数量兜底。所有奖励项只依赖奖励总标题或上一组奖励项，不再依赖三个分组标题，消除原生 `QuestLogItemReceiveText` 反向锚定造成的 FrameXML 环。Theme `1.8` 奖励文字无描边。V1 模拟 0／1／2／4／6 `5/5 pass`、ImageGen `0/0`；奖励只读，无 selected | 先实机确认 FrameXML 锚点错误消失，再验证 2／3／4／6 奖励的稳定空隙、换行、原生名牌不回显且无裁切；然后确认正式容器方向，确认不等于生产授权 |
+| `QL-D` | 奖励槽、分隔与文字安全区 | current geometry／fallback `P6 game-validated`；final art `P2 simulation-proposed` | runtime `1.25` 保持真实 Button 的 `108×41px` 双列／`64px` 名称／`8px` 列距／`4px` 行距、setter 锁、无鼠标程序化容器、原生 `NameFrame` 抑制和可见数量兜底。所有奖励项只依赖奖励总标题或上一组奖励项，不再依赖三个分组标题，消除原生 `QuestLogItemReceiveText` 反向锚定造成的 FrameXML 环；`2026-08-05` 用户确认当前右页 bug 与显示修复通过。Theme `1.8` 奖励文字无描边。V1 模拟 0／1／2／4／6 `5/5 pass`、ImageGen `0/0`；奖励只读，无 selected | 确认最终容器美术方向；确认不等于生产授权 |
 
 QL-A1 manifest 记录：
 
@@ -575,12 +585,9 @@ QT-A1 临时 runtime 事实：
 
 ## 下一步
 
-当前首要门禁是把含 Quests runtime `1.25`／Theme `1.8` 的当前开发分支交付
-到游戏设备，并用
-`/aeui status` 确认输出包含
-`quest frame=1.25 theme=1.8 seal=detail-page-32 tag=semantic-setter-lock reward=native-container-acyclic-visible-fallback-gap-8`；左页类型色已由实机截图确认，现先确认
-`QuestLogItemReceiveText:SetPoint()` 依赖环错误消失，再验证 2／3／4／6 个奖励在
-provider 刷新后的可见空隙、第三项换行及原生 NameFrame 不回显，然后确认
+用户于 `2026-08-05` 已确认当前 Quest Log 左右页 bug 与显示修复通过；
+QL-A2、当前活动左页 runtime 与 QL-D 当前几何／fallback 的实机门禁不再是
+开放项。下一项 Quest Log 视觉门禁是确认
 [QL-D V1 奖励槽方向](work/QUEST.LOG.REWARDS.md)。V9 已确认的
 可见方向现已转写为：只生成一枚无字、无图标、近矩形浅削角的暗胡桃旧皮革
 事务签母版；七个 `112×20px` Button 仍独立代理七项原功能；确定性 atlas
@@ -593,21 +600,18 @@ QS-B1 获授权前 ImageGen 保持 `0/5`，不实现菜单，也不隐藏放弃�
 仍必须一一代理原 Button、镜像禁用态、保留放弃确认，并在任一 provider 未
 捕获时 fail-open。
 
-Quest Log 的类型色、详情字体、金额、奖励容器／锚点与内容末端裁切修复已经进入
-runtime `1.25`／Theme `1.8`，下一次游戏设备验证同时启用
-pfQuest／pfQuest-turtle，覆盖：18 行无描边字体及本地化类型色；两处金额
-完整显示；长中文正文滚动到完整奖励；0／1／2／3／4／6 奖励双列；provider
-后加载；鼠标滚轮动态范围。QL-D V1 正式容器尚未生产，当前暖纸 fallback
-不代表最终美术。旧
-顶部悬空漆章位置不再作为待接受方向。
+Quest Log 的类型色、详情字体、金额、奖励容器／锚点与内容末端裁切修复已经
+进入 runtime `1.25`／Theme `1.8`，并由本次用户实机结论确认。QL-D V1
+正式容器尚未生产，当前暖纸 fallback 不代表最终美术；旧顶部悬空漆章位置
+不再作为待接受方向。
 
 Tracker `34px` 漆章仍按既有合同在 `130／230／330px` 居中，继续等待实机
 验证 `SetClampRectInsets`、拖动恢复、TGA 方向与旧七按钮层序。Tracker hub
 menu 仍是另一独立范围，不能用本次 Quest Log 菜单授权替代。
 
-QL-A2 保持 [runtime work](work/QUEST.LOG.GUTTER.md)，不得进入 `P6`／清理。
-Quest Log 静态兼容已完成，下一门禁是在游戏设备同时启用 pfQuest 与
-pfQuest-turtle 后验证：
+QL-A2 保持 [runtime work](work/QUEST.LOG.GUTTER.md)，当前活动范围已进入
+`P6 user-confirmed`，但尚未规划 P6-C 清理。以下条目从开放门禁转为后续
+回归清单；QS-B1 接入或 Quest Log runtime 再变化时仍需复测：
 
 - 18 条活动任务行在滚动、地区展开和等级重写后仍保持 `246 × 18` 行盒、
   `226px` 文字安全区和 `pfUI.font_default` 的 `12px`、空 flags、零 shadow；
@@ -661,7 +665,7 @@ QL-B0 V2 的内框与两类底板均已由用户移出范围，不再等待 sour
 QL-B3-A／B／C V1 已获明确授权；当前
 A 已按五次上限停止。等待用户决定是否授权 attempt 4／5 的确定性色键合同
 例外、改变 source 策略重开 A，或拒绝现有视觉。决定前不执行 B／C、
-不晋级 source／runtime。QL-A2／B1 当前 runtime 继续等待后续实机复核。
+不晋级 source／runtime。QL-A2／B1 当前活动 runtime 已获本轮用户实机确认。
 每个 countable output 后必须完成真实排版内审与边界内自主修复。不得继续
 调用 QL-B2 V1 ImageGen。QL-B1 的旧计数保留为当时流程的历史事实，不作为
 新口径先例。

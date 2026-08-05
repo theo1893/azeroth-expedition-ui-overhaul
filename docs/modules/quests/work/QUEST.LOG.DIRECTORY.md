@@ -7,8 +7,8 @@
   - `QUEST.LOG.REGION.TOGGLE`
   - `QUEST.LOG.LIST.CHECK`
 - 版本：`QL-B1 V1`。
-- 子状态：`runtime-exported`。
-- 项目阶段：`P5`。
+- 子状态：`game-validated / user-confirmed`。
+- 项目阶段：`P6`（当前活动 runtime 范围）。
 - 固定执行器：`imagegen-0-143-0` /
   `@openai/codex@0.143.0`。
 - 操作：`deterministic-export / runtime-integration`；ImageGen attempt 1–5
@@ -21,6 +21,9 @@
   最多 `5` 次固定 `imagegen-0-143-0` 调用。
 - 用户接受：`2026-07-30` 明确接受 `QL-B1 V1.r3` 的运行时视觉，并允许按
   已声明的确定性逐格裁切、等比缩放、居中与 Alpha 规则进入 `P4/P5`。
+- 实机确认：`2026-08-05` 用户确认 Quest 左页的既有 bug 和显示问题均已
+  修复；覆盖当前 18 行字体、无描边／零 shadow、类型墨色和活动地区箭头。
+  runtime 已隐藏的行末追踪圈与酒红选择书签不属于此次验收范围。
 - 锁定视觉基准：
   - Image 1：
     `assets/locked/quests/任务详情面板_视觉基准_v1.png`
@@ -80,8 +83,8 @@ QL-B 目录状态按运行时语义和物件尺度拆分：
 
 | 批次 | 组件 | 当前状态 |
 |---|---|---|
-| `QL-B0` | 23 个真实 `QuestLogTitleN` 的创建、排布、文字安全区和状态刷新 | 已接入 adapter，`P5`，等待实机 |
-| `QL-B1` | 地区展开／收起墨箭头；未追踪／已追踪墨圈 | V1.r3 `runtime-exported / P5` |
+| `QL-B0` | 当前 18 个活动 `QuestLogTitleN` 的创建、排布、文字安全区和状态刷新；`19..23` 只作 provider 兼容 | `2026-08-05` 用户实机确认当前活动布局与字体；`P6` |
+| `QL-B1` | 地区展开／收起墨箭头；accepted 圈资产由当前 runtime 隐藏／受限复用 | V1.r3 当前活动范围 `game-validated / P6` |
 | `QL-B2` | 当前任务暗酒红窄织物书签及其交互状态 | 等待 QL-B1 视觉尺度确认 |
 | `QL-B3` | Elite／Dungeon／Raid／PvP 类型章、Timed 沙漏章、Complete／Failed 蜡封 | 等待 QL-B1 视觉尺度确认 |
 
@@ -482,15 +485,17 @@ UI 或文字。任何一项不满足都不要输出。
   “像素级同源”“源安全盒”和“raw 精确纯绿”作为 P4 阻塞项的内部裁决；
   透明母版无可见绿色残留，允许以确定性逐格裁切、等比缩放、居中与 Alpha
   清理解决源占用差异。该接受不声称失败门禁已经客观通过。
-- 当前结论：`runtime-exported / P5`。P4 source、确定性 exporter、
+- 当前结论：`game-validated / P6 / user-confirmed`（当前活动 runtime）。P4 source、确定性 exporter、
   `64 × 16` TGA、UV manifest、23 行 adapter、字体和 Lua／Python 静态
   测试已形成；不再调用 ImageGen。
 - 真实排版：100% runtime 预演已覆盖全部 23 个行槽、代表性中文任务内容、
   四种状态分布、QL-A2 最新卷宗背景及实际层序；箭头、空圈与墨勾在密集排版
   下仍可辨，未侵入右侧 `22px` 滚动区。该预演不是 Turtle WoW 证据。
-- 下一门禁：Turtle WoW `1.18.1` 实机验证 TGA 方向／过滤、字体加载、
-  `QuestLogTitle1..23` 文字基线、1px 行重叠命中、滚动偏移、展开／收起、
-  追踪状态刷新、原生回退和非视觉行为。
+- 实机结论：用户于 `2026-08-05` 确认 Quest 左页既有 bug 与显示均已修复；
+  当前 18 行字体、无描边／零 shadow、类型墨色和活动地区箭头门禁关闭。
+  runtime 已隐藏的行末追踪圈及酒红书签不在本次验收范围。
+- 下一门禁：组件／整模块收口前保留本 work；未来修改左页 runtime 时用上述
+  条目作为回归清单，不再调用本版本 ImageGen。
 
 ## 2026-08-01 runtime 呈现覆盖
 
@@ -512,9 +517,10 @@ UI 或文字。任何一项不满足都不要输出。
   压为高对比深墨，并把任务类型／完成／失败分别归一化为深紫／深绿／深红；
   adapter 同时处理模板拆分 FontString 和标题后的内联色码。该覆盖没有修改
   source、atlas、manifest 或 provider 行为，也没有调用 ImageGen。
-- 新门禁：Turtle WoW 验证 18 行实际基线、状态 FontString、长列表滚轮首尾、
-  行末圈／scrollbar／19..23 不回生，以及同一任务跨 Quest Log／Tracker 的
-  名称颜色一致。
+- 当时的新门禁：Turtle WoW 验证 18 行实际基线、状态 FontString、长列表
+  滚轮首尾、行末圈／scrollbar／19..23 不回生，以及同一任务跨 Quest Log／
+  Tracker 的名称颜色一致；当前左页 bug／显示范围已由 `2026-08-05` 用户
+  实机结论关闭，Tracker 独立门禁仍保留。
 
 ## `2026-08-04` runtime `1.18` 字体恢复验证
 
@@ -559,4 +565,4 @@ UI 或文字。任何一项不满足都不要输出。
 | `QL-B1 V1` | commit `13edad9`；session `019fb1d9-0792-7110-8156-2aed5644d5c7`；无输出 | transport-error；`1/5` 已消耗 | 不改美术正文；修复子进程写入环境 |
 | `QL-B1 V1.r1` | commits `6fdf109`／`453450d`；outer session `019fb1dc-57c5-77a0-b3ce-a884d61e0c99`；observed nested `019fb1dc-58df-7a43-83d0-97d674a5229a`；无输出 | executor-recursion；attempt 2／3 均计入 | 不改美术正文；禁止当前固定进程二次委托 |
 | `QL-B1 V1.r2` | commit `21871a0`；session `019fb1e0-9914-74f2-ab21-a3af62713f58`；raw `cc14b469…`；transparent `79e5bf71…` | rejected：状态同源、平面墨迹、画布、占用与色键失败 | 以本稿为 Image 3 做最后一次冻结边界内 edit |
-| `QL-B1 V1.r3` | commit `f99d17a`；session `019fb1e8-db9a-7010-86d1-98008548e4d6`；transparent/source `719445d1…`；runtime `e734bbf5…`；真实排版 `c0e5bdff…` | internal rejected；用户接受运行时视觉；`runtime-exported / P5` | Turtle WoW 实机验证，不再生图 |
+| `QL-B1 V1.r3` | commit `f99d17a`；session `019fb1e8-db9a-7010-86d1-98008548e4d6`；transparent/source `719445d1…`；runtime `e734bbf5…`；真实排版 `c0e5bdff…`；`2026-08-05` 用户实机确认 | internal rejected；用户接受运行时视觉；当前活动范围 `game-validated / P6` | 组件／整模块收口前保留 work；不再生图 |

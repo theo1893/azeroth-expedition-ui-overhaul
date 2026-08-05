@@ -28,6 +28,12 @@ bbox 与原生色键失败成为 `candidate-rejected / repair-budget-exhausted`�
 半透明行矩形。QT-A2 七工具 Button 保持 `scope-deferred` 与 provider
 fallback。NPC 对话仍没有获准生产资产。
 
+用户于 `2026-08-05` 在 Turtle WoW 中确认当前 Quest Log 左页与右页的既有
+bug 和显示问题均已修复。该实机结论覆盖活动的 QL-A2 V4 书体、18 行左页
+字体／无描边／类型墨色，以及 runtime `1.25`／Theme `1.8` 的右页金额、
+动态内容末端、奖励锚点／间隔／换行与原生 `NameFrame` 抑制；不改变下方
+仍处于模拟、暂缓或未接入状态的 Tracker、QS-B1、QL-B3 与 NPC 对话合同。
+
 ## Quest Log 顶层
 
 | ID | 真实对象 | 状态／资产合同 |
@@ -201,7 +207,7 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 | `QUEST.LOG.DETAIL.OBJECTIVES` | 目标 FontString 集 | layout-only |
 | `QUEST.LOG.DETAIL.REWARD_TEXT` | 奖励文字 FontString 集 | Theme `1.8`：标题 `14px`，标签 `12px`，均无 outline／shadow |
 | `QUEST.LOG.DETAIL.DIVIDER` | adapter 非交互 Texture | 可横向三段式短墨线 |
-| `QUEST.LOG.REWARD.SLOT` | `QuestLogItem1..MAX_NUM_ITEMS`；原生 `IconTexture／Count／Name／NameFrame`；adapter-owned `aeuiRewardContainer` | 普通／悬停／按下／禁用；图标动态，无 selected；runtime `1.25` 按选择／法术／固定奖励重建 `108×41px` 双列锚点，名称安全宽 `64px`、Button 列距 `8px`、行距 `4px`，并保留真实 Button 的几何 setter 锁。作用域路径不会加载 pfUI Quest Log skin，故不依赖不存在的 `item.backdrop`：无鼠标暖纸程序化容器接收真实图标／数量／名称，原生 `NameFrame` 被隐藏且晚到 `Show()` 受锁；数量 API 全为零时按真实可见 Button 兜底。所有奖励项只锚到奖励总标题或上一组奖励项，绝不锚到 `ItemChoose／SpellLearn／ItemReceive` 分组标题，允许原生 FrameXML 反向定位标题而不形成依赖环。正式资产前该容器只属 fallback；`QL-D V1` 当前 `simulation-proposed / awaiting-user-confirmation / ImageGen 0/0` |
+| `QUEST.LOG.REWARD.SLOT` | `QuestLogItem1..MAX_NUM_ITEMS`；原生 `IconTexture／Count／Name／NameFrame`；adapter-owned `aeuiRewardContainer` | 普通／悬停／按下／禁用；图标动态，无 selected；runtime `1.25` 按选择／法术／固定奖励重建 `108×41px` 双列锚点，名称安全宽 `64px`、Button 列距 `8px`、行距 `4px`，并保留真实 Button 的几何 setter 锁。作用域路径不会加载 pfUI Quest Log skin，故不依赖不存在的 `item.backdrop`：无鼠标暖纸程序化容器接收真实图标／数量／名称，原生 `NameFrame` 被隐藏且晚到 `Show()` 受锁；数量 API 全为零时按真实可见 Button 兜底。所有奖励项只锚到奖励总标题或上一组奖励项，绝不锚到 `ItemChoose／SpellLearn／ItemReceive` 分组标题，允许原生 FrameXML 反向定位标题而不形成依赖环。该当前几何／fallback 已于 `2026-08-05` 获用户实机确认；最终位图仍未生产，`QL-D V1` 保持 `simulation-proposed / awaiting-user-confirmation / ImageGen 0/0` |
 | `QUEST.LOG.TRACK` | `QuestLogTrack`、`QuestLogTrackTracking` | 复用 QL-B1 开放墨圈／墨勾 atlas；保留原状态控制 |
 | `QUEST.LOG.ACTION.ABANDON` | `QuestLogFrameAbandonButton` | 当前程序化暗皮革 fallback；目标事务菜单只代理原 OnClick，必须保留原生确认 |
 | `QUEST.LOG.ACTION.SHARE` | `QuestFramePushQuestButton`；兼容名需探测 | 当前程序化暗皮革 fallback；目标事务菜单代理原 Button |

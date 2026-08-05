@@ -6,13 +6,17 @@
 - 批次：`QL-D V1`。
 - 组件 ID：`QUEST.LOG.REWARD.SLOT`。
 - 子状态：`simulation-proposed / awaiting-user-confirmation`。
-- 项目阶段：几何 `P5 runtime-integrated`；最终美术 `P2`。
+- 项目阶段：当前几何／fallback `P6 game-validated`；最终美术 `P2`。
 - 固定执行器：若后续获得独立生产授权，只允许
   `imagegen-0-143-0`／`@openai/codex@0.143.0`。
 - 当前实际 ImageGen 调用：`0/0`；本轮没有生产授权、没有 source、没有
   runtime 位图。
 - 用户问题来源：`2026-08-04` 实机截图确认多奖励重叠／末端裁切、详情与奖励
   字体难读，以及 pfUI 平面黑灰奖励卡片过于现代。
+- 实机修复确认：`2026-08-05` 用户确认 Quest 右页的既有 bug 和显示问题均已
+  修复；覆盖 FrameXML 锚点错误、奖励间隔／换行、详情末端及原生 NameFrame
+  回显。该确认接受当前运行时几何和 fallback 表现，不等于确认 QL-D V1
+  最终奖励槽美术方向或授权 ImageGen。
 
 ## 美术基准继承
 
@@ -155,8 +159,10 @@
 - 自动几何：0／1／2／4／6 五场景全部通过，违规 `0`。
 - 本地目视：六格均落在右页纸面，图标／数量／名称可辨，normal／hover／
   pressed／disabled 有克制差异；容器没有烘焙动态内容。
-- 未完成审查：用户可见方向、最终小尺寸纹理、正式四态 atlas、Turtle WoW
-  UV／层序／鼠标／Tooltip 与长正文末端仍未验证。
+- 实机审查：用户于 `2026-08-05` 确认当前右页 bug 与显示均已修复，当前
+  几何／fallback 进入 `P6 game-validated`。仓库没有新增或虚构本轮截图路径。
+- 未完成审查：QL-D V1 用户可见方向、最终小尺寸纹理与正式四态 atlas；这些
+  尚未生产，因此不属于本次当前 fallback 的实机验收。
 
 ## 尝试摘要
 
@@ -166,12 +172,8 @@
 
 ## 下一门禁
 
-先在游戏设备确认 runtime `1.25` 及
-`reward=native-container-acyclic-visible-fallback-gap-8`：先确认 FrameXML
-依赖环错误消失；同排两个 adapter-owned 容器之间必须出现稳定可见空隙，原生
-`NameFrame` 不得恢复，3／4／6 奖励不得
-重叠或被详情末端裁切。通过后再等待用户确认
-V1 的可见方向：是否接受“深色旧皮革浅削角外框 + 左侧黄铜图标凹槽 + 右侧
+当前 runtime 几何／fallback 的实机门禁已经通过。下一门禁是用户确认 V1 的
+可见方向：是否接受“深色旧皮革浅削角外框 + 左侧黄铜图标凹槽 + 右侧
 羊皮纸名称面”，取代当前平面黑灰卡片。确认前不得形成正式生成正文、请求
 ImageGen 授权、建立 source／atlas 或接入新位图。
 
