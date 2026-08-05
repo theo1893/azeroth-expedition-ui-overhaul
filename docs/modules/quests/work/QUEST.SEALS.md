@@ -7,9 +7,9 @@
   `2026-08-03` 被用户否决，Tracker 方向仍有效
 - 当前已确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V9`
 - 当前生产正文：`QS-B1 V1`
-- 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu `P2`
+- 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu `P3`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1
-  `simulation-confirmed / prompt-draft / awaiting-production-authorization`
+  `prompt-authorized / production-loop-ready`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -41,8 +41,9 @@
   V9 保留外侧展开与七个真实 Button，只收敛为 `112×20px` 的短书口事务签、
   `48px` 外伸，并移除箭头、逐项铆钉和明亮顶部高光。用户于
   `2026-08-03` 回复“进入下一步”，明确确认 V9 可见方向；确认只冻结下述
-  文字化布局与综合色结论，不接受模拟像素。当前已准备 `QS-B1 V1` 生产正文，
-  尚未获得正式 ImageGen 授权。
+  文字化布局与综合色结论，不接受模拟像素。`QS-B1 V1` 生产正文已完成；用户于
+  `2026-08-05` 明确授权固定 Image 1／2、受限紧邻 Image 3 edit、最多五次实际
+  ImageGen 调用及合同内确定性后处理，正式生产循环进入 `P3 / 0/5`。
   旧 Quest Log／Tracker provider Button 在各自菜单功能等价前继续可见可用。
 
 ## 用户接受与 P4／P5 固化
@@ -1408,9 +1409,8 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
   文字和一像素边缘提示危险。
 - 确认未接受：模拟像素、最终笔触、Alpha、切片、客户端字体栅格、Tooltip、
   动画或屏幕 clamp 实现。模拟图不得成为正式生产输入。
-- 下一门禁：在目标客户端验证当前 runtime `1.19` 的页上位置；事务签菜单仍需用户
-  独立授权 `QS-B1 V1` 最终生产正文、冻结修复边界与最多五次实际 ImageGen
-  调用。授权前不实现菜单、不隐藏旧按钮、不生图。
+- 下一门禁：先提交 `QS-B1 V1` 已授权正文与冻结边界，再按固定执行器进行
+  attempt 1。候选通过并经用户接受前不实现菜单、不隐藏旧按钮。
 
 ### `2026-08-04` runtime `1.18` 页上位置修复
 
@@ -1429,12 +1429,13 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 
 ### 元数据
 
-- 日期：`2026-08-03`
+- 方向确认日期：`2026-08-03`
+- 正式生产授权：`2026-08-05`
 - 组件：`QUEST.LOG.ACTION.SEAL_MENU.TAB.BASE`
-- 子状态：`simulation-confirmed / prompt-draft / awaiting-production-authorization`
-- 项目阶段：`P2`
+- 子状态：`prompt-authorized / production-loop-ready`
+- 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
-- 操作：`generate`；授权前实际 ImageGen：`0/5`
+- 操作：`generate`；当前实际 ImageGen：`0/5`
 - 生成前模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V9`，本地确定性几何，ImageGen
   `0/0`；board／report SHA 见上节。
 - 多执行正文最坏实际生图数：`5`；流程错误不占生图额度。
@@ -1658,7 +1659,10 @@ border; dark-walnut leather remains legible when reduced to 112 x 20 px.
 - 当前实际生图：`0/5`；流程错误：`0`。
 - 尚未发生：ImageGen 调用、raw、透明候选、真实排版候选、source、manifest、
   runtime atlas、Lua/XML 接入或旧按钮隐藏。
-- 所需用户授权原文：`确认授权 QS-B1 V1；允许每次上传固定 SHA 的 Image 1/2，
+- 已获用户授权原文（`2026-08-05`）：`确认授权 QS-B1 V1；允许每次上传固定 SHA 的 Image 1/2，
   允许同循环紧邻前次输出仅在冻结边界内作为 Image 3 edit 输入；最多 5 次实际
   ImageGen 调用，流程错误不占额度；允许按合同执行确定性边缘连通色键、透明
   RGB 清零与等比 bbox-fit。`
+- 下一步：提交本次授权状态与完全自包含的执行正文；提交通过后使用固定
+  `@openai/codex@0.143.0` 执行 attempt 1，并在任何后续调用前完成该候选的
+  全量审查、真实排版和展示区域验证。

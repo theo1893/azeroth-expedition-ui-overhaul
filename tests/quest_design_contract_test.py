@@ -707,7 +707,7 @@ def main() -> None:
         (
             "Quest Log／Tracker 共用漆章",
             "`QS-A1 V1.r4`",
-            "`simulation-confirmed / prompt-draft / awaiting-production-authorization`",
+            "`prompt-authorized / production-loop-ready`",
             "QuestToolWaxSeal_Master_v1.png",
             "QS-A1_SourceManifest_v1.json",
             "QS-A1_RuntimeManifest_v1.json",

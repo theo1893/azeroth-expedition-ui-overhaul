@@ -186,8 +186,9 @@ fail-open fallback。目标交互只允许由火漆入口代理原 Button；不�
 边线，不整条染红。不得变成整张二级页面、现代弹出卡片、透明黑玻璃、细金框
 或图标矩阵。V9 已于 `2026-08-03` 通过方向确认；`QS-B1 V1` 将只生成一枚
 无字母版，由确定性 exporter 派生 standard／danger 各四态，七个 runtime
-Button 仍彼此独立。当前只到生产正文待授权，不得调用 ImageGen、建立 source
-或修改 runtime。
+Button 仍彼此独立。用户于 `2026-08-05` 授权固定输入、受限紧邻 edit、合同内
+确定性后处理及最多五次实际调用，当前 `prompt-authorized / P3 / 0/5`；候选
+未经用户接受前不得建立 source、runtime atlas 或修改 runtime。
 
 ## 奖励槽与分隔
 
