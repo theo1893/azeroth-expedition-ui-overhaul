@@ -66,8 +66,8 @@ V1–V6 的外沿皮革、羊皮封签、下缘长书签、detail
 铆钉、明亮顶部高光和整条危险色。用户已于 `2026-08-03` 确认 V9 可见方向；
 `QS-B1-INTERACTION V1` 已于 `2026-08-05` 获用户确认；`QS-B1 V1` 同日已获
 固定输入、五次实际调用与确定性后处理的正式生产授权。attempt 1 已因短粗
-比例、连续亮边、过圆端部与现代微纹理内部退回，当前为
-`repair-prepared / P3 / 1/5`。页上漆章仍为无鼠标 Texture，runtime 继续
+比例、连续亮边、过圆端部与现代微纹理内部退回；attempt 2 已修正后面三项，
+但比例仍为 `4.2851:1`，当前为 `repair-prepared / P3 / 2/5`。页上漆章仍为无鼠标 Texture，runtime 继续
 保留全部原按钮作为 fail-open fallback；生产授权不等于菜单接入授权。
 
 ## Quest Log 纸页与中央装订
@@ -216,7 +216,7 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 | `QUEST.LOG.ACTION.SHARE` | `QuestFramePushQuestButton`；兼容名需探测 | 当前程序化暗皮革 fallback；目标事务菜单代理原 Button |
 | `QUEST.LOG.ACTION.EXIT` | `QuestFrameExitButton`；兼容 `QuestLogFrameCancelButton` | 目标视觉不重复收纳；右上真实 Close 保持独立，fallback 在迁移验收前继续存在 |
 | `QUEST.LOG.DETAIL.TOGGLE` | pfUI `QuestLogFrameExpandButton`；缺失时可创建真实 Button | 当前底部 fallback；目标事务菜单代理同一动态开合行为 |
-| `QUEST.LOG.ACTION.SEAL_MENU` | planned adapter-owned 右页外侧短书口事务签 Button 列；未接入 | V9 可见方向与 `QS-B1-INTERACTION V1` 均已确认：非模态一级菜单、左键即时开合、无滑入动画；七项先收起再以源 Button `:Click("LeftButton")` 委托，disabled 事件驱动镜像，放弃只走原生确认。七条可见 Texture 为 `[612,112,112,158]` 内的独立 `112×20px` 槽，真实命中只用各条 `[628,y,96,20]`，被页边遮住的左根不接收鼠标；Esc、任务／detail 变化、Quest Log 隐藏、WorldFrame 或书本空白点击收起，不使用全屏挡板。全部 parity 成立前旧八控件原子 fail-open；右上 Close 独立。正文／奖励零占用，不画二级弹窗。`QS-B1 V1.r1` 当前 `repair-prepared / P3 / 1/5`；未授权 source 晋级或菜单接入 |
+| `QUEST.LOG.ACTION.SEAL_MENU` | planned adapter-owned 右页外侧短书口事务签 Button 列；未接入 | V9 可见方向与 `QS-B1-INTERACTION V1` 均已确认：非模态一级菜单、左键即时开合、无滑入动画；七项先收起再以源 Button `:Click("LeftButton")` 委托，disabled 事件驱动镜像，放弃只走原生确认。七条可见 Texture 为 `[612,112,112,158]` 内的独立 `112×20px` 槽，真实命中只用各条 `[628,y,96,20]`，被页边遮住的左根不接收鼠标；Esc、任务／detail 变化、Quest Log 隐藏、WorldFrame 或书本空白点击收起，不使用全屏挡板。全部 parity 成立前旧八控件原子 fail-open；右上 Close 独立。正文／奖励零占用，不画二级弹窗。`QS-B1 V1.r2` 当前 `repair-prepared / P3 / 2/5`；未授权 source 晋级或菜单接入 |
 | `QUEST.LOG.ACTION.SEAL_MENU.TAB.BASE` | 七个 Button 共用的无字 Texture 皮肤；不拥有点击 | 只生成一枚固定 `112×20px` 暗胡桃旧皮革母版；确定性 atlas 为 standard／danger 各 normal、hover、pressed、disabled 四态。共享媒体不合并七个 Button，不烘焙标签、图标、enabled、Tooltip 或业务状态 |
 | `QUEST.LOG.ACTION.SEAL_MENU.PAGE_EDGE_MASK` | adapter-owned 无鼠标 Texture，复用 QL-A1 shell 右页边像素 | `[604,102,24,180]`，晚于七个 Button 绘制并只遮住每条左侧 `16px` 根部；不得新增 ImageGen 资产，不得进入文字安全区或接管鼠标 |
 | `QUEST.LOG.LEVELS` | pfUI `QuestLogFrameLevelsCheckButton` | 复用 QL-B1 开放墨圈／墨勾 atlas；保留原脚本与文字 |

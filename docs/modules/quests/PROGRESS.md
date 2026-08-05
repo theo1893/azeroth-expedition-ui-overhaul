@@ -121,13 +121,16 @@
   `96×20px` 可见区命中与原子 fail-open 已于 `2026-08-05` 获用户确认；同日
   用户又独立授权 `QS-B1 V1` 完整正文、固定 Image 1／2、受限同循环 Image 3
   edit、最多五次实际调用与合同内确定性后处理。状态为
-  `internal-rejected / repair-prepared / P3 / 1/5`。
+  `internal-rejected / repair-prepared / P3 / 2/5`。
   首次 transport 因 0.143.0 可变长 `--image` 吞入位置 prompt 而在生成前退出，
   无图片或 provider result，记为流程错误 `1`、不占额度；下一门禁是在 Image 2
   后加入 `--` 终止符，以同一正文重试 attempt 1。重试已生成，但原图比例仅
   `4.3636:1`，完整亮铜框、过圆外端和密集现代皮纹同时违背合同；确定性审查虽
   证明七槽、18 行、四奖励、右缘 clamp 几何成立，仍不能修复结构与美术失败。
-  已准备完整 `QS-B1 V1.r1`，下一次 regenerate 不上传 Image 3。runtime `1.25` 继续把已接受的 QS-A1 漆章以 `32px` 无鼠标 Texture
+  V1.r1 regenerate 明显修复了内框、圆帽和过亮边，但比例反而为
+  `4.2851:1`，运行时仍仅 `86×20px`；完整排版继续证明其视觉方向比 attempt 1
+  收敛，但固定槽合同仍失败。已准备完整 `QS-B1 V1.r2`，下一次只把 attempt 2
+  作为 Image 3 edit target，压薄轮廓并打断顶部／右端连续高光。runtime `1.25` 继续把已接受的 QS-A1 漆章以 `32px` 无鼠标 Texture
   放到详情页右上纸面；该位置修复不依赖新资产。菜单尚未接入，也未隐藏任何
   旧按钮。
 - AEUI Quest Log provider 兼容子合同保持 `1.7`：在 provider 最终刷新后以
@@ -389,7 +392,7 @@
 | `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P6 game-validated / user-confirmed`（当前活动 runtime） | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；`2026-08-05` 用户确认 18 行字体、无描边／零 shadow、类型墨色和活动地区箭头显示通过。隐藏的行末追踪圈不在验收范围 | 保留至组件／整模块收口；不再生图 |
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 asset-retained / runtime-hidden` | 用户接受的 source、manifest、`128 × 16` TGA、exporter 与历史证据全部保留；`2026-07-31` 起 adapter 不再挂载或包装任务行脚本 | 暂缓；只有用户重新确认后才恢复 runtime |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
-| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu `P3 repair-prepared / 1/5` | 既有 late-load 兼容和原 Button fallback 保留；V1–V8 已否决，V9 及 `QS-B1-INTERACTION V1` 已确认。QS-B1 只生成一枚无字暗胡桃事务签母版，七项仍为独立 Button；attempt 1 几何装配 `25/25 pass`，但母版比例／端部／边框／微纹理退回；E1 为生成前 transport error，不占额度 | 使用完整 `QS-B1 V1.r1`、固定 Image 1／2、无 Image 3 regenerate attempt 2；候选通过后再请求 P4/P5 |
+| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu `P3 repair-prepared / 2/5` | 既有 late-load 兼容和原 Button fallback 保留。attempt 2 已修正 attempt 1 的完整亮框、圆帽和综合色，七槽几何仍 `25/25 pass`；但 raw `4.2851:1`、runtime-visible `86×20px`，连续顶边／右端高光仍偏强 | 使用完整 `QS-B1 V1.r2`，固定 Image 1／2，并仅以 attempt 2 为 Image 3 edit target 执行 attempt 3 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | current geometry／fallback `P6 game-validated`；final art `P2 simulation-proposed` | runtime `1.25` 保持真实 Button 的 `108×41px` 双列／`64px` 名称／`8px` 列距／`4px` 行距、setter 锁、无鼠标程序化容器、原生 `NameFrame` 抑制和可见数量兜底。所有奖励项只依赖奖励总标题或上一组奖励项，不再依赖三个分组标题，消除原生 `QuestLogItemReceiveText` 反向锚定造成的 FrameXML 环；`2026-08-05` 用户确认当前右页 bug 与显示修复通过。Theme `1.8` 奖励文字无描边。V1 模拟 0／1／2／4／6 `5/5 pass`、ImageGen `0/0`；奖励只读，无 selected | 确认最终容器美术方向；确认不等于生产授权 |
 
 QL-A1 manifest 记录：
@@ -435,7 +438,7 @@ timer 或 failed 资产：provider 没有可用的公开状态来源。本项目
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
 | `QS-A1` | Quest Log／Tracker 共用漆章母版 | `P5 runtime-exported / page-placement-integrated / 5/5` | source／四态 atlas 保持 accepted；当前 Quest Log runtime `1.25` 直接使用 `32px` 页上 Texture，Tracker 不受影响；没有重开美术或 ImageGen | Turtle WoW 验证页上位置、TGA 方向与标题／正文安全区 |
-| `QS-B1` | Quest Log 七项外侧事务签、真实漆章 Button 与共用无字 tab 母版 | `P3 internal-rejected / repair-prepared / 1/5`；process errors `1` | V9 可见方向与交互合同均已确认。attempt 1 是单一无字暗胡桃对象且真实排版几何 `25/25 pass`，但 raw `1254²`、背景非纯色、可见 bbox `1056×242`（`4.3636:1`）、运行时只占 `87×20px`；完整亮铜内外框、过圆外端、密集微纹理和强 3D bevel 偏现代，无法由确定性后处理补救。页上漆章仍由 runtime `1.25` 独立实现 | 已形成完整 `QS-B1 V1.r1`；固定 Image 1／2、无 Image 3 regenerate attempt 2，保留单对象／无动态内容与已通过几何 |
+| `QS-B1` | Quest Log 七项外侧事务签、真实漆章 Button 与共用无字 tab 母版 | `P3 internal-rejected / repair-prepared / 2/5`；process errors `1` | attempt 2 是单一无字暗胡桃对象，左根直切、外端近方、无内框且综合色明显改善；真实排版几何继续 `25/25 pass`。但 raw bbox `1067×249`（`4.2851:1`），合法等比导出只形成 `86×20px`，仍不能满足 `112×20px`；顶边与右端连续高光需进一步打断。页上漆章仍由 runtime `1.25` 独立实现 | 完整 `QS-B1 V1.r2` 以 attempt 2 为唯一 Image 3 edit target，固定 Image 1／2，执行 attempt 3；冻结已改善的材料与端部 |
 
 QS-A1 当前事实：
 
@@ -606,8 +609,9 @@ QL-A2、当前活动左页 runtime 与 QL-D 当前几何／fallback 的实机门
 漆章和旧失败稿均不得上传。页上漆章位置继续由既有资产在 runtime `1.25` 实现；
 `QS-B1-INTERACTION V1` 已于 `2026-08-05` 获用户确认；`QS-B1 V1` 同日已获
 独立生产授权。ImageGen 当前为 `1/5`，流程错误 `1`；attempt 1 的真实排版几何
-通过，但母版比例、端部、连续亮边与现代微纹理退回。下一步使用完整
-`QS-B1 V1.r1` 和固定 Image 1／2 regenerate attempt 2，不上传 Image 3。候选与功能等价
+通过。attempt 2 已明显改善材料、内框与端部，但比例仍为 `4.2851:1`、运行时
+仅 `86×20px`。下一步使用完整 `QS-B1 V1.r2`，固定 Image 1／2，并只把
+attempt 2 作为 Image 3 edit target 执行 attempt 3。候选与功能等价
 均通过前不实现菜单，也不隐藏放弃／分享／退出／详情与 pfQuest 四按钮。
 候选通过后的 runtime 仍必须按已确认交互合同一一代理原 Button、镜像禁用态、
 保留放弃确认，并在任一 provider 未捕获时原子 fail-open。
