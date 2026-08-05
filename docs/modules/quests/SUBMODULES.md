@@ -76,14 +76,14 @@ V1–V6 的外沿皮革、羊皮封签、下缘长书签、detail
 也不得成为后续 edit 输入。页上漆章仍为无鼠标 Texture，runtime 继续
 保留全部原按钮作为 fail-open fallback；生产授权不等于菜单接入授权。
 V10 的页外索引签在确认前被用户明确改向，现为
-`user-superseded-before-confirmation`。当前
-`QUEST-LOG-SEAL-ACTIONS-SIM-V11 / QS-B1 V2` 已完成并获用户确认的四状态本地确定性预演：
-火漆、`6px` 折叠根、七个 `32×22px` 独立分段和短尾端都属于详情
-ScrollChild；展开临时覆盖正文最右 `14..24px` 但不重排，尾端在真实
-`108×41px` 奖励槽前 `32px` 停止，并随内容部分／完全滚出。模拟报告
-`21/21 pass`、display-region `4/4 pass`；完整生产正文、固定 Image 1／2、
-紧邻 Image 3 edit 边界与最多五次实际调用已于 `2026-08-05` 获独立授权，
-新预算 ImageGen `0/5`。
+`user-superseded-before-confirmation`。V2 在四次实际生成后仍因低质、过度工整
+且把七功能烘焙进同一布条而由用户终止，attempt 5 未调用。当前
+`QUEST-LOG-SEAL-ACTIONS-SIM-V12 / QS-B1 V3` 已把背景、七纹章和七 Button
+所有权完全分开；用户于 `2026-08-05` 回复“可以”，确认 V12 的动态收拢、
+ScrollChild 裁切、正文／奖励不重排和分层方向。生产实现进一步以一条连续
+最大长度空白母版的动态 prefix＋tail 代替重复 body variant；七格纹章工作表
+必须在 P4 拆成七张独立 RGBA source。V3-A／V3-B 完整正文均已准备，各自
+ImageGen `0/5`，当前等待最坏合计 `10` 次的独立生产授权。
 
 ## Quest Log 纸页与中央装订
 
@@ -231,12 +231,11 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 | `QUEST.LOG.ACTION.SHARE` | `QuestFramePushQuestButton`；兼容名需探测 | 当前程序化暗皮革 fallback；目标事务菜单代理原 Button |
 | `QUEST.LOG.ACTION.EXIT` | `QuestFrameExitButton`；兼容 `QuestLogFrameCancelButton` | 目标视觉不重复收纳；右上真实 Close 保持独立，fallback 在迁移验收前继续存在 |
 | `QUEST.LOG.DETAIL.TOGGLE` | pfUI `QuestLogFrameExpandButton`；缺失时可创建真实 Button | 当前底部 fallback；目标事务菜单代理同一动态开合行为 |
-| `QUEST.LOG.ACTION.SEAL_MENU` | planned adapter-owned `QuestLogDetailScrollChild` 子树；未接入 | `QUEST-LOG-SEAL-ACTIONS-SIM-V12 / QS-B1 V3` 待用户确认：非模态即时开合；漆章、动态空白布底、七张独立透明纹章与七个独立 Button 随详情内容滚动并由真实 `[366,64,246,324]` viewport 裁切。不创建页外 outset、popup 背板或第二纸面，也不改变正文 `214px`／缩进 `204px`。隐藏 provider 时 visible order 无空洞收拢，disabled provider 留位但不响应；任一代理 parity 缺失时全部旧入口原子 fail-open。V2 在 `4/5` 后因质感工整和单图所有权错误被用户取代；attempt 5 未调用。用户接受 V3 模拟前不得生图、导出、接入或隐藏旧按钮 |
-| `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.ROOT` | planned adapter-owned 无鼠标 Texture | 内容坐标 `[210,30,32,12]`，先于漆章绘制；收起态只有蜡体下方 `6px` 可见。只表达火漆压住连续旧布的物理层序，不含纹章、状态或功能所有权 |
-| `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY.VARIANT_A` | planned adapter-owned 无鼠标 Texture | `32×22px` 无缝布身变体；由布局器按 visible order 数量重复／交错装配，不属于任何 action。低频褶皱与缺陷不得在 `22px` 节距形成横格 |
-| `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY.VARIANT_B` | planned adapter-owned 无鼠标 Texture | 与 A 共用上下无缝边界但污渍／边缘偏移不同；不得含功能墨迹或接收鼠标 |
-| `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY.VARIANT_C` | planned adapter-owned 无鼠标 Texture | 与 A／B 连续装配，用于打断机械重复；不得成为 hover／pressed 状态承载 |
-| `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.TAIL` | planned adapter-owned 无鼠标 Texture | `32×8px` 克制毛边收尾；动态 y=`42 + visible_count × 22`。七项全显时 y=`196`、与首行奖励 y=`236` 保持 `32px` 空隙；隐藏项后随背景上移 |
+| `QUEST.LOG.ACTION.SEAL_MENU` | planned adapter-owned `QuestLogDetailScrollChild` 子树；未接入 | `QUEST-LOG-SEAL-ACTIONS-SIM-V12 / QS-B1 V3` 已于 `2026-08-05` 获方向确认：非模态即时开合；漆章、动态空白布底、七张独立透明纹章与七个独立 Button 随详情内容滚动并由真实 `[366,64,246,324]` viewport 裁切。不创建页外 outset、popup 背板或第二纸面，也不改变正文 `214px`／缩进 `204px`。hidden 无空洞收拢，disabled 留位但不响应；任一代理 parity 缺失时全部旧入口原子 fail-open。V3-A／V3-B prompt 已准备，正式生产授权前不得生图、导出、接入或隐藏旧按钮 |
+| `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX` | planned adapter-owned 无鼠标 Texture；一张连续 source | source 为 `128×696px` 空白连续旧布；runtime 最大前缀为 `32×166px`，内容坐标从 `[210,30]` 起。按 `visible_count` 只显示前 `12 + count×22px`，不平铺、不重复、不属于任何 action，也不含纹章、文字或状态 |
+| `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.ROOT` | `SUBSTRATE.MAX` 的逻辑 UV 子区；无独立 source | 前 `32×12px`；收起态只显示此区，蜡体压住顶部 `6px`。该 ID 只表达层序与 crop，不再生成一张重复布片 |
+| `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY` | `SUBSTRATE.MAX` 的动态前缀子区；无独立 source | 最多七个 `32×22px` 容量段；只按 visible count 增长。源美术在全长连续、非周期，切点附近无强横折；不得出现 variant 循环、卡片格或功能所有权 |
+| `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.TAIL` | 同一 accepted source 的确定性 tail crop；无鼠标 Texture | `32×8px` 克制毛边收尾；动态 y=`42 + visible_count × 22`，紧接当前前缀。七项全显时 y=`196`、与首行奖励 y=`236` 保持 `32px` 空隙；隐藏项后随背景上移 |
 | `QUEST.LOG.ACTION.SEAL_MENU.MOTIF.SHARE` | planned 独立透明 source／可打包 atlas UV | 双羽笔／结约；只含不完全着墨的纹章与透明背景，不含布底、文字或状态 |
 | `QUEST.LOG.ACTION.SEAL_MENU.MOTIF.DETAIL` | planned 独立透明 source／可打包 atlas UV | 折页；动态“展开／收起详情”由 Tooltip／provider 表达，不把文字烘焙进图 |
 | `QUEST.LOG.ACTION.SEAL_MENU.MOTIF.SHOW` | planned 独立透明 source／可打包 atlas UV | 开放公会罗盘；与 HIDE 是不同独立资源，不共享含背景的切片 |

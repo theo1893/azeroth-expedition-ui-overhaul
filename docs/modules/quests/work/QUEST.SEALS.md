@@ -7,23 +7,25 @@
   `2026-08-03` 被用户否决，Tracker 方向仍有效
 - 当前已确认历史模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V9`
 - 已被用户改向的模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V10 / QS-B1 V2`
-- 当前已确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V11 / QS-B1 V2`；该版本的
-  单张绶带资产方案已被后续用户反馈取代
-- 当前待确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V12 / QS-B1 V3`
+- 已确认但资产拓扑被取代的模拟：
+  `QUEST-LOG-SEAL-ACTIONS-SIM-V11 / QS-B1 V2`
+- 当前已确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V12 / QS-B1 V3`；用户于
+  `2026-08-05` 回复“可以”
 - 最近一次已执行生产正文：`QS-B1 V2.r3`；`V2.r4` 已准备但禁止执行
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3
-  `simulation-rendered / awaiting-user-confirmation / P2`
+  `production-prompts-prepared / awaiting-production-authorization / P3`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
-  `layered-simulation-rendered / P2`；V1 保持
+  `simulation-confirmed / prompt-prepared / P3`；V1 保持
   `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
-- QS-B1 当前实际生图：`5/5`
+- QS-B1 V1 ImageGen：`5/5`（已耗尽并由用户否决）
 - QS-B1 V2 ImageGen：`4/5`（第 5 次未调用；旧授权不得转用于 V3）
-- QS-B1 V3 ImageGen：`0/0`（只有本地几何模拟；尚无生产授权）
-- QS-B1 流程错误：`1`（E1 未进入生成器，不占生图额度）
+- QS-B1 V3 ImageGen：V3-A `0/5`、V3-B `0/5`（正文已准备；尚无生产授权）
+- QS-B1 历史流程错误：V1 `1`、V2 `3`；V3 `0`。均按“无生成证据才不占
+  额度”记录
 - tracked source：
   `assets/source/quests/qs-a1/QuestToolWaxSeal_Master_v1.png`，SHA-256
   `377dcdc141ee5487884bfc99dbfd82013a8c4d7cb7200a4414feebb81d72ab75`。
@@ -60,8 +62,13 @@
   绶带”明确改向，未获得确认。新的 V11 已按该物理关系完成四状态本地确定性
   预演。用户于 `2026-08-05` 在上一轮明确说明“若接受 V11 可见方向，下一步
   重写完整生产提示词并单独请求正式生图授权”的上下文中回复“继续”，因此
-  V11 可见方向已确认；该回复只授权生产准备，不是 V2 生图、上传、source
-  晋级或 runtime 接入授权。不得执行 V1 attempt 6。
+  V11 可见方向已确认；其后 V2 实际生成至 `4/5`，用户以质感差、过度工整和
+  单图无法独立隐藏功能为由终止 V2，attempt 5 没有调用。V12 将背景、七张
+  透明纹章和七个 Button 所有权分开，用户于 `2026-08-05` 回复“可以”确认
+  方向。正式生产进一步用一条连续最大长度空白母版的动态 prefix＋tail 避免
+  重复接缝，并把七格印墨工作表在 P4 拆成七张独立 RGBA source。V3-A／V3-B
+  完整正文已准备，但当前没有 ImageGen、上传、source 晋级或 runtime 接入
+  授权。不得执行 V1 attempt 6 或 V2 attempt 5。
   旧 Quest Log／Tracker provider Button 在各自菜单功能等价前继续可见可用。
 
 ## 用户接受与 P4／P5 固化
@@ -106,9 +113,9 @@
 
 | ID | 当前对象 | 目标合同 |
 |---|---|---|
-| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前 runtime `1.25` 为 `[576,68,32,32]` 无鼠标 Texture | QS-A1 V1.r4 美术保持 accepted；当前 P5 位置不变。V11 已确认在 parity 成立后把未来 `40×40px` Button 改挂到 `QuestLogDetailScrollChild` 的内容坐标 `[206,0,40,40]`，其视觉 `[210,4,32,32]` 在 scroll `0` 时仍等于 Frame 坐标 `[576,68,32,32]`，随后随正文滚动并由真实 viewport 裁切；独立生产授权与 parity 前不改 runtime |
-| `QUEST.LOG.CHROME.SEAL.SUPPORT` | 当前无 runtime 对象 | 不创建书框、包角、皮革／黄铜承托或页外书签。V11 的 `6px` 折叠根属于下方授印绶带，不是另一个悬空支架；收起时只在蜡体下露出 `6px`，并与火漆处于同一 ScrollChild |
-| `QUEST.LOG.CHROME.SEAL.MENU` | 尚无 runtime 对象 | V11 已确认使用 `32×22px` 的七段纵向连续绶带：每段仍是一个独立真实 Button／独立图案皮肤，分别代理原 provider；没有共享 popup 背景，也不允许用一张绶带位图代替七个命中区。V2 source 可用一条连续 normal 母版保障纤维与明暗连续，但 exporter 必须切为 root、七个 action、tail。展开只临时覆盖正文最右 `14..24px`，不缩窄／重排正文；尾端在 `108×41px` 奖励槽前保留 `32px`。漆章、根、七段与尾端共同滚动；被部分裁切的段不保留完整隐藏 hitbox，完全滚出后命中数必须为 `0`。功能等价前旧八控件继续原子 fail-open |
+| `QUEST.LOG.CHROME.SEAL` | `QuestLogFrame.aeuiQuestChromeSeal`，当前 runtime `1.25` 为 `[576,68,32,32]` 无鼠标 Texture | QS-A1 V1.r4 美术保持 accepted；当前 P5 位置不变。V12 已确认在 parity 成立后把未来 `40×40px` Button 改挂到 `QuestLogDetailScrollChild` 的内容坐标 `[206,0,40,40]`，其视觉 `[210,4,32,32]` 在 scroll `0` 时仍等于 Frame 坐标 `[576,68,32,32]`，随后随正文滚动并由真实 viewport 裁切；V3 具体候选接受、P4／P5 授权与 parity 前不改 runtime |
+| `QUEST.LOG.CHROME.SEAL.SUPPORT` | 当前无 runtime 对象 | 不创建书框、包角、皮革／黄铜承托或页外书签。V12 的空白 root 属于下方动态旧布背景，不是另一个悬空支架；收起时只在蜡体下露出 `6px`，并与火漆处于同一 ScrollChild。生产上 root 是连续 `SUBSTRATE.MAX` 的首段 UV，不生成独立重复布片 |
+| `QUEST.LOG.CHROME.SEAL.MENU` | 尚无 runtime 对象 | V12 已确认：视觉背景是一条无功能所有权的动态空白旧布，生产上由连续 max master 的前缀＋tail 构成；七个 `32×22px` 行分别叠放七张独立透明纹章，并各由一个真实 Button 代理原 provider。不得把纹章烘焙回背景、合并 UV／manifest ID／hitbox 或使用共享大命中区。hidden 无空洞收拢，disabled 留位；展开只临时覆盖正文最右 `14..24px`，不缩窄／重排正文；尾端在 `108×41px` 奖励槽前保留 `32px`。漆章、背景、纹章和 Button 共同滚动；部分裁切项不保留完整隐藏 hitbox，完全滚出后命中数为 `0`。功能等价前旧八控件继续原子 fail-open |
 | `QUEST.TRACKER.HUB.SEAL` | adapter-owned 无鼠标 Texture，已由临时 tracker runtime 挂载 | `34 × 34` 顶部中央漆章；宽度 `W` 时 `x=floor((W-34)/2)`、`y=-18`，底边恰好落在 provider `16px` 工具条／列表起点，不移动任务内容 |
 | `QUEST.TRACKER.HUB.MENU` | 尚无对象 | 未来独立交互批次；漆章点击后承载七项 provider 行为。本模拟不绘制、不实现，也不把它当成已有 Button |
 
@@ -3777,3 +3784,465 @@ of another motif.
 V12 模拟像素只验证几何、层序与动态策略，不是 source、runtime 或未来
 ImageGen 输入。用户确认 V3 结构和模拟方向后，才可分别准备“空白动态背景”与
 “七个透明纹章”生产合同，并重新请求独立的正式生图／上传授权。
+
+## V12 用户确认与 V3 生产拓扑收敛 — `2026-08-05`
+
+- 用户确认原文：`可以`。
+- 确认对象：`QUEST-LOG-SEAL-ACTIONS-SIM-V12 / QS-B1 V3`。
+- 当前状态：`simulation-confirmed / production-prompts-prepared / P3 /
+  awaiting-production-authorization`。
+- 本次确认冻结：空白旧布背景与七个功能纹章分层；七个纹章分别归属于七个
+  独立 Button；hidden 项无空洞收拢；disabled 项留位但不命中；漆章、背景和
+  Button 均留在 `QuestLogDetailScrollChild`，随正文滚动并被真实 viewport
+  裁切；正文与奖励不重排；旧入口在 parity 完整前继续原子 fail-open。
+- 本次确认没有接受 V12 模拟像素、最终布料笔触、最终纹章像素、Alpha、状态
+  atlas、Tooltip、动画或客户端裁切实现；V12 board／report 仍不得上传给
+  ImageGen，也不得晋级 source／runtime。
+
+### 生产拓扑的无视觉变化收敛
+
+V12 用 `root + seamless body variants + tail` 验证动态长度。正式生产将其
+收敛为更直接、也更符合用户“一条背景”要求的同视觉实现：
+
+1. ImageGen 只生成一条完全空白、最大七项长度的连续旧亚麻布母版；其内部仍
+   按 `root 48px + 7 × body 88px + tail 32px` 保留确定性装配坐标，但不画
+   分段线，也不生成三个重复布片。
+2. exporter 从同一连续母版取得 `root + 7 段 body capacity` 的最大前缀和
+   独立 tail cap。runtime 按 `visible_count` 只显示前
+   `12 + visible_count × 22px`，再把 `32×8px` tail 接到当前末端。背景没有
+   action ID、纹章、状态或命中区。
+3. 该实现不改变 V12 的任何屏幕坐标、可见高度、奖励前 `32px` 留白、滚动
+   裁切或交互语义；它只消除 body variant 重复、跨片接缝和 `22px` 周期。
+   因而不需要新的几何模拟版本。
+4. 七个纹章由另一执行正文生成。provider 可返回一张固定七格的隔离工作表，
+   但 P4 必须把七格导出为七张独立 tracked RGBA source、七个 manifest ID
+   和七个独立 UV；工作表本身绝不作为 runtime 背景或单一菜单对象加载。
+
+### 两个独立生产执行体
+
+| 执行体 | 生成对象 | 固定输入 | 最多实际调用 | P4 所有权 |
+|---|---|---|---:|---|
+| `QS-B1 V3-A` | 一条无纹章、无功能含义的连续动态旧布母版 | Image 1 任务详情锁定图；Image 2 QL-A1 accepted shell | `5` | 一张 substrate source；runtime 最大前缀＋tail |
+| `QS-B1 V3-B` | 七格互相隔离的 normal 印墨纹章工作表 | Image 1 任务详情锁定图；Image 2 QL-B1 accepted directory marks | `5` | 七张独立 motif source；runtime 七列四态 atlas |
+
+执行顺序固定为 V3-A 后 V3-B。V3-A 未取得可接受候选时停止，不提前执行
+V3-B；V3-B 的 ImageGen 输入也不得包含 V3-A 候选，V3-A 只可在本地真实排版
+预演中作为相邻背景使用。两段最坏合计 `10` 次实际 ImageGen 调用；流程错误
+只有在没有图片、provider result 或生成作业证据时才不占额度。
+
+## QS-B1 V3-A — 动态空白旧布母版 production preparation
+
+### 元数据、固定输入与产物合同
+
+- 版本：`QS-B1 V3-A`。
+- 状态：`prompt-prepared / 0/5 / awaiting-explicit-authorization`。
+- 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`。
+- Image 1（最高视觉权威）：
+  `assets/locked/quests/任务详情面板_视觉基准_v1.png`，SHA-256
+  `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`。
+- Image 2（受限邻接权威）：
+  `assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png`，SHA-256
+  `91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5`。
+- planned source：
+  `assets/source/quests/qs-b1/QuestLogSealMenuSubstrate_Master_v3.png`。
+- planned source manifest：
+  `assets/source/quests/qs-b1/QS-B1-V3A_SourceManifest_v1.json`。
+- planned runtime atlas：
+  `addon/AzerothExpeditionUI/Media/Quests/QuestLogSealMenuSubstrateV3.tga`。
+- planned shared exporter：`tools/build_quest_log_seal_menu_v3.py`；任何文件只在
+  具体候选经用户接受并授权 P4 后创建。
+
+唯一生成对象是一条正面正投影的连续空白亚麻布。canonical accepted source
+为 `1024×1024 RGBA`，可见 bbox `[448,164,576,860]`、`128×696px`。
+内部逻辑比例为 root `128×48`、七段无功能 body capacity 各 `128×88`、tail
+`128×32`；这些是裁取坐标，不得在画面上形成横线、格子、相同折痕或重复斑点。
+
+exporter 只在候选通过物件／材料／纹理门禁后执行：边缘连通色键、透明 RGB
+清零、完整 bbox 等比 fit 到 `128×696px`，不得裁边、非等比拉伸、旋转、镜像、
+补画或局部搬移。runtime atlas 计划为 `128×256 RGBA TGA`：最大前缀
+`32×166px` 放在透明安全区 `[16,0,48,166]`；tail `32×8px` 放在
+`[80,0,112,8]`。runtime 用 UV 裁取前
+`12 + visible_count × 22px`，tail 紧接当前末端；closed 只显示 root，open
+才显示 tail。该 prefix／tail crop 不改变 source 像素。
+
+### 完整性预检
+
+- 复杂度：`one continuous blank master + deterministic prefix crop + tail cap`。
+- 结论：`pass`。
+
+| 门禁 | 正文证据 | 结论 |
+|---|---|---|
+| 物件、数量与所有权 | exactly one blank oath-linen strip；无 motif／文字／状态／命中区 | pass |
+| 两张参考的 inherit／ignore／冲突顺序 | Image 1 裁决年代与笔触；Image 2 只裁决相邻综合色与绘制尺度 | pass |
+| Canvas、bbox、方向、尺度和光照 | `1024²`、`[448,164,576,860]`、正面正投影、左上短暖光 | pass |
+| 动态分解与裁取安全 | root／七段 capacity／tail 坐标完整；切线附近无强横向特征 | pass |
+| “不工整”材料条款 | 低频不对称褶皱、非周期污渍、少数受力磨损、手裁边缘 | pass |
+| 反模式与动态内容排除 | 禁止重复 22px 缺陷、程序化织纹、压花壁纸、现代按钮、所有功能图案 | pass |
+| 色键、导出与真实排版 | 固定 chroma／bbox-fit 边界；候选必须进入 7／5／3 项与滚动态真实排版 | pass |
+
+未知但执行必需的值：`无`。
+
+### 最终执行正文 — `QS-B1 V3-A`
+
+Create exactly one isolated, connected, completely blank vertical guild oath-
+linen substrate for a circa-2004 vanilla World of Warcraft quest-log interface.
+This is the noninteractive physical cloth beneath an already existing wax seal
+and beneath seven separately generated heraldic motif Buttons. Generate only
+the cloth. It owns no function, no hit region, no text, no motif, and no UI
+state. Do not generate the wax seal, any heraldry, any icon, any label, any
+button, any book page, or a finished screen.
+
+Runtime ownership is strict. A deterministic exporter will use the top of this
+single continuous master as a variable-height visual-only prefix and will use
+its short bottom tail as a separate visual-only cap. The visible prefix becomes
+12 + 22 times the current number of visible actions at runtime; hidden actions
+compact the length with no empty slot. Seven independent transparent motifs and
+seven independent real Buttons are overlaid later. Therefore the cloth must not
+contain any semantic mark, action-sized panel, state cue, hover cue, disabled
+cue, danger cue, label, or invisible-looking ornament that implies a function.
+
+Reference authority and filtering:
+1. Image 1 is the highest visual authority. Inherit its circa-2004 vanilla WoW
+   low-resolution 2D hand-painted bitmap language, substantial slightly
+   irregular contours, broad readable light/midtone/shadow planes, muted warm
+   ochre and smoked-brown expedition palette, short warm upper-left light,
+   tangible material weight, and sparse concentrated wear. Ignore its complete
+   open-book composition, parchment pages, leather plaques, compass, wax seal,
+   ribbons, text, buttons, reward slots, brass corners, and full layout.
+2. Image 2 is a secondary adjacency reference only. Inherit only the accepted
+   quest journal's local color temperature, paint scale, edge softness, upper-
+   left light direction, and restrained aging so the cloth belongs inside that
+   exact runtime book. Ignore the complete book silhouette, paper, spine,
+   stitches, page gutter, brass corners, transparent surroundings, and every
+   directly reusable pixel.
+If the references conflict, Image 1 plus the Azeroth quest-ledger baseline wins.
+Image 2 may only tune adjacency. Do not copy any complete object or layout from
+either reference.
+
+Canvas and occupancy are mandatory. Output an exact 1024 x 1024 RGB bitmap.
+Every pixel outside the one cloth object must be uniform solid #00FF00, with no
+gradient, checkerboard, texture, haze, vignette, glow, reflection, cast shadow,
+color spill, floor, or loose pixel. Place the cloth unrotated in a straight-on
+orthographic front view with no tilt or foreshortening. Its exact visible bbox
+is [448,164,576,860], exactly 128 x 696 pixels, centered at x=512. Leave 448
+pixels of green at both sides and 164 pixels at top and bottom. Do not enlarge
+the cloth to fill the canvas. It will be reduced exactly four-to-one into a
+32 x 174 pixel canonical runtime master.
+
+Use this invisible construction anatomy without drawing any guide or boundary:
+- root [448,164,576,212], 128 x 48 pixels;
+- seven consecutive body-capacity zones, each 128 x 88 pixels, at y ranges
+  212..300, 300..388, 388..476, 476..564, 564..652, 652..740, and 740..828;
+- short tail [448,828,576,860], 128 x 32 pixels.
+The top 24 source pixels of the root will be covered by the existing wax seal.
+The seven body ranges are only deterministic crop coordinates, not seven
+objects and not seven cards. The tail will be detached by the exporter and
+placed after the currently visible prefix; keep its upper attachment calm and
+materially compatible with every body cutoff. Give the tail only a shallow,
+restrained hand-frayed end, never a long point, deep V, fishtail, banner, or
+bookmark silhouette.
+
+Physical construction: paint one heavy yet flexible strip of aged expedition-
+guild oath linen. It must feel materially thicker and more substantial than a
+flat paper strip, but it is cloth, not leather, parchment, metal, stone, or
+photographic burlap. Keep one continuous vertical fibre direction and one
+continuous broad lighting logic from root through body to tail. The left and
+right edges are hand cut with restrained nonmatching deviations: a few broad
+one-to-three-pixel runtime-scale inward or outward changes, never a mirrored
+wave, sawtooth, scallop, repeated notch, or torn net.
+
+Texture and irregularity are the primary quality gate. Build the surface from
+two or three broad low-frequency value planes, two to four long but asymmetrical
+soft folds, three to six irregular smoked stains of different size and spacing,
+and only a few concentrated wear points near outer edges and the tail. Let one
+fold fade out before another begins. Keep defect positions nonperiodic and
+asymmetric. Left and right wear must not mirror. No stain, fibre knot, edge nick,
+fold, highlight, or shadow may repeat at the 88-source-pixel / 22-runtime-pixel
+action rhythm.
+
+Protect every possible dynamic cutoff. Within eight source pixels above and
+below y=212, 300, 388, 476, 564, 652, 740, and 828, draw no strong horizontal
+crease, tear, dark rule, bright line, stain edge, or silhouette step that would
+expose the runtime crop. These quiet cut bands must still share the surrounding
+cloth texture and must not read as pale blank stripes. The tail's top eight
+source pixels use the same restrained average ochre-brown body value so the
+moving butt joint remains quiet without creating a new border.
+
+Material palette: smoked warm ochre, muted old brown, deep umber lower-right
+edge, and one short restrained warm upper-left response. Highlights stay warm
+and dull, never ivory-white, orange-gold, metallic, or glossy. Shadows remain
+painted broad shapes, not ambient-occlusion grooves. Show a few broad fibre
+groups only where they help cloth identity. Do not cover the surface in uniform
+crosshatch, tiny weave cells, pores, repeated grain, sharp realistic threads,
+embossing, or procedural noise.
+
+Style lock: the result must read as an original small bitmap sprite painted for
+a 2004-era vanilla WoW interface: warm, heavy, handmade, slightly imperfect,
+magical without glow, and fully subordinate to the accepted quest book and wax
+seal. It must not look vector-clean, photorealistic, uniformly distressed,
+precision-cut, modern, minimalist, Diablo-3-like, Skyrim-overlay-like, Warhammer,
+mobile-toolbar-like, or like a decorative wallpaper strip.
+
+Strict exclusions: no motif, ink mark, emblem, rune, compass, quill, contract,
+map line, text, letter, number, label, Tooltip, button, hit area, icon cell,
+horizontal divider, card boundary, stitched cross seam, metal separator, rivet,
+state copy, selection, glow, glass, translucent black, neon, gold frame, wax,
+seal, book, page, cover, bookmark, leather strap, popup, scenery, cast shadow,
+detached decoration, repeated 22-pixel defect, full-length straight highlight,
+mirror symmetry, crop, rotation, perspective, or second object.
+
+Before returning, verify in order: exactly one connected blank cloth and no
+other object; exact 1024 x 1024 canvas and uniform #00FF00 exterior; exact
+[448,164,576,860] bbox; correct root / seven invisible capacity ranges / short
+tail proportions; no visible internal segmentation; no motif, text, function,
+state, wax, book, or icon; broad low-frequency asymmetrical folds and stains;
+no periodic weave or repeated defect; calm but textured dynamic cut bands;
+hand-cut edges that are irregular but not noisy; the cloth remains substantial
+and natural at 32 x 174 and at every 12 + N*22 visible prefix length.
+
+### V3-A 自主修复与候选审查边界
+
+- attempt 1 固定上传 V3-A Image 1／2。attempt 2–5 继续上传同路径、同顺序、
+  同 SHA 的 Image 1／2；只有紧邻候选仍是单一空白连续亚麻布、综合色和主要
+  解剖正确，失败仅限于 bbox、综合色、纹理频率、边缘克制度或局部禁项时，
+  才可将该候选作为同段唯一 Image 3 edit input。否则 regenerate。
+- 允许自主修复：bbox／居中／纯绿、低频褶皱与污渍分布、边缘不对称、磨损
+  密度、综合色／对比、tail 克制度，以及删除误生纹章、文字、横格、亮边、
+  规则织纹或现代装饰。不得增加其他参考或改变 V12 几何／所有权。
+- 每个候选先审查单物件、空白语义、材料与非周期性，再做确定性色键和等比
+  bbox-fit；随后必须用候选本身装入真实 Quest Log，展示 closed、7／5／3 项、
+  N=1／3／5／7 tail 接合、scroll 52 和 scroll 208。实际展示区域与命中合同
+  仍须全部通过，稀疏接触表不能代替真实排版。
+- V2 attempt 1–4、V1 attempt 1–5、V10／V11／V12 模拟图、QS-A1 漆章和任何
+  review 派生图都不得上传或成为 edit input。
+- 最多 `5` 次实际 ImageGen generation／edit。没有生成证据的流程错误不占
+  额度；候选完整通过即停止，第五次仍失败则停止等待用户审核。
+
+## QS-B1 V3-B — 七个独立透明印墨纹章 production preparation
+
+### 元数据、固定输入与产物合同
+
+- 版本：`QS-B1 V3-B`。
+- 状态：`prompt-prepared / 0/5 / awaiting-explicit-authorization`。
+- 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`。
+- Image 1（最高视觉权威）：
+  `assets/locked/quests/任务详情面板_视觉基准_v1.png`，SHA-256
+  `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`。
+- Image 2（受限小尺寸墨记参考）：
+  `assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`，SHA-256
+  `719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`。
+- planned independent sources：
+  `QuestLogSealMenuMotif_Share_v3.png`、`_Detail_v3.png`、`_Show_v3.png`、
+  `_Hide_v3.png`、`_Clean_v3.png`、`_Reset_v3.png`、`_Abandon_v3.png`，均位于
+  `assets/source/quests/qs-b1/`；七个文件必须有独立 SHA、logical ID 与
+  acceptance 记录。
+- planned source manifest：
+  `assets/source/quests/qs-b1/QS-B1-V3B_SourceManifest_v1.json`。
+- planned runtime atlas：
+  `addon/AzerothExpeditionUI/Media/Quests/QuestLogSealMenuMotifStatesV3.tga`。
+
+provider 输出是一张固定七格隔离工作表，目的只是用一次循环保持同批印墨语言。
+P4 不保留它作为单一功能资产：exporter 按固定 cell 提取七格，分别色键、清零
+透明 RGB、等比 fit，再写成七张独立 RGBA source。不得把一格的像素、Alpha、
+状态或 UV 合并给另一格；任意功能隐藏只移除自己的 Button／UV。
+raw 只有在方形画布上才可进入固定 cell 审查；若 provider 返回非 `1024²` 的
+方形图，只允许先对整张方形画布做一次同轴等比归一化到 `1024²`。非方形 raw
+直接退回生成循环，不允许分别拉伸 x／y 来套进 cell。
+
+runtime atlas 固定 `256×128 RGBA TGA`：列 0..6 依次为 share、detail、show、
+hide、clean、reset、abandon，列 7 保持透明；每列宽 `32px`。四态使用
+`32px` 行节距，行序 normal／hover／pressed／disabled；每格真实可见区为
+`[column*32,row*32+5,32,22]`。hover 只轻微暖亮；pressed 只压暗并由 Button
+整体右下移 `1px`；disabled 只退灰降对比。四态必须保持同一 Alpha／轮廓，
+不得重新生成。
+
+### 固定工作表坐标
+
+画布 `1024×1024`，八个不可见 cell 为：
+
+| cell | 逻辑纹章 | cell `xyxy` | 最大安全盒 `xyxy` | 目标视觉中心 |
+|---:|---|---|---|---|
+| 1 | share／双羽笔结约 | `[32,160,256,384]` | `[64,208,224,336]` | `(144,264)` |
+| 2 | detail／折页 | `[272,160,496,384]` | `[304,208,464,336]` | `(392,272)` |
+| 3 | show／开放罗盘 | `[512,160,736,384]` | `[544,208,704,336]` | `(616,272)` |
+| 4 | hide／遮蔽罗盘 | `[752,160,976,384]` | `[784,208,944,336]` | `(864,280)` |
+| 5 | clean／清扫地图线 | `[32,608,256,832]` | `[64,656,224,784]` | `(152,712)` |
+| 6 | reset／回环路线结 | `[272,608,496,832]` | `[304,656,464,784]` | `(376,728)` |
+| 7 | abandon／断裂契约线 | `[512,608,736,832]` | `[544,656,704,784]` | `(624,720)` |
+| 8 | 必须为空 | `[752,608,976,832]` | — | — |
+
+每格外与每个纹章之间均为同一纯绿背景；cell／safe box 只是坐标合同，不得画
+框、分隔线、编号或底板。建议 source 可见尺寸分别约为 `144×96`、`112×112`、
+`112×112`、`128×112`、`144×80`、`136×96`、`128×72px`，全部只是等比
+上限；差异用于避免七枚同尺寸／同中心的现代图标柱。
+
+### 完整性预检
+
+- 复杂度：`seven isolated normal motifs -> seven independent RGBA sources ->
+  deterministic four-state atlas`。
+- 结论：`pass`。
+
+| 门禁 | 正文证据 | 结论 |
+|---|---|---|
+| 数量、身份与独立所有权 | exactly seven logical isolated motifs；固定 cell、语义、顺序；P4 七张 source | pass |
+| 参考权威与过滤 | Image 1 裁决年代／综合色；Image 2 只裁决小尺寸墨迹笔触并忽略既有箭头／勾形 | pass |
+| Canvas、cell、安全盒和视觉偏移 | `1024²`、4×2 隔离布局、cell 8 空、七个不同中心／尺寸 | pass |
+| 纹章解剖、综合色与可读性 | 七个明确 Azeroth 公会文书语义；1–6 深墨、7 暗酒红 | pass |
+| 不完全着墨但非噪声 | 克制缺墨、轻微渗化、非恒定线宽；禁止散点、断裂身份和矢量精确度 | pass |
+| 动态内容／背景／状态排除 | 无布底、蜡、文字、卡片、状态副本；状态由 exporter 派生 | pass |
+| 独立导出、真实排版和实际显示区 | 固定 cell 提取为七文件；必须叠到 V3-A 候选并做真实 UI／滚动审查 | pass |
+
+未知但执行必需的值：`无`。
+
+### 最终执行正文 — `QS-B1 V3-B`
+
+Create one exact seven-cell source worksheet containing exactly seven isolated
+normal-state heraldic ink motifs for a circa-2004 vanilla World of Warcraft
+quest-log interface. These are seven independent transparent runtime resources,
+temporarily arranged on one chroma-key worksheet only for consistent generation.
+They will be split into seven separately tracked RGBA source files, seven
+independent atlas UVs, and seven independent real Button objects. Generate no
+shared cloth, no background ribbon, no wax seal, no button plates, no text, and
+no interaction-state copies.
+
+The seven motifs and their fixed meanings are:
+1. Share Quest: two short paired quills joined by one compact binding knot;
+2. Detail Toggle: one compact folded guild-ledger leaf;
+3. Show Location: one open, simple four-point expedition-guild compass;
+4. Hide Location: the related compass crossed by one short quiet diagonal veil;
+5. Clean Marks: three broad swept cartographic trail lines, visibly clearing;
+6. Reset Marks: one winding route returning into one compact route knot;
+7. Abandon Quest: one snapped contract cord with a clear small central break.
+These are Azeroth expedition-guild warrant marks, not modern UI icons. Do not
+add letters, words, numerals, runes, faction logos, skulls, aquilas, double-
+headed eagles, Imperial insignia, science-fiction hardware, or any symbol copied
+from another franchise.
+
+Reference authority and filtering:
+1. Image 1 is the highest visual authority. Inherit its circa-2004 vanilla WoW
+   low-resolution 2D hand-painted bitmap language, broad readable shapes,
+   substantial slightly irregular contours, muted warm expedition palette,
+   restrained upper-left light logic, sparse wear, and nonmodern material
+   weight. Ignore its complete book, pages, leather plaques, compass object,
+   wax seal, ribbons, text, buttons, reward slots, brass, and full composition.
+2. Image 2 is a secondary small-scale ink-mark reference only. Inherit only its
+   accepted runtime-size stroke economy, softened painted edge scale, broad
+   dark-ink massing, and ability to remain legible when reduced. Ignore its
+   existing arrow, circle, check-mark silhouettes, its 2x2 source grid, exact
+   positions, transparency, and all directly reusable pixels. Do not copy or
+   rotate any existing directory mark into the new motifs.
+If the references conflict, Image 1 plus the Azeroth quest-ledger baseline wins.
+Image 2 may only tune small-scale stroke handling.
+
+Canvas contract: output an exact 1024 x 1024 RGB bitmap. Every pixel outside
+the seven ink motifs must be the same uniform solid #00FF00, with no gradient,
+texture, paper, cloth, haze, vignette, checkerboard, glow, contact shadow, color
+spill, cell background, or loose speck. The worksheet has an invisible 4 by 2
+layout. Draw no guides, boxes, dividers, labels, numbers, captions, or frames.
+
+Place exactly one motif in each of the following first seven invisible cells;
+the eighth cell must remain completely empty green:
+- cell 1 [32,160,256,384], share motif, all pixels inside safe box
+  [64,208,224,336], optical center (144,264), approximate maximum 144 x 96;
+- cell 2 [272,160,496,384], detail motif, safe box [304,208,464,336],
+  optical center (392,272), approximate maximum 112 x 112;
+- cell 3 [512,160,736,384], show motif, safe box [544,208,704,336],
+  optical center (616,272), approximate maximum 112 x 112;
+- cell 4 [752,160,976,384], hide motif, safe box [784,208,944,336],
+  optical center (864,280), approximate maximum 128 x 112;
+- cell 5 [32,608,256,832], clean motif, safe box [64,656,224,784],
+  optical center (152,712), approximate maximum 144 x 80;
+- cell 6 [272,608,496,832], reset motif, safe box [304,656,464,784],
+  optical center (376,728), approximate maximum 136 x 96;
+- cell 7 [512,608,736,832], abandon motif, safe box [544,656,704,784],
+  optical center (624,720), approximate maximum 128 x 72;
+- cell 8 [752,608,976,832] contains nothing at all.
+Every antialias pixel, pigment bleed, gap edge, feather tip, cord end, trail end,
+compass point, veil stroke and route loop must remain inside its own safe box.
+No motif may touch or imply another cell.
+
+Paint treatment: each motif is a direct imperfect guild-ink transfer, not an
+embossed badge, metal emblem, carved stamp tool, or icon inside a tile. Use a
+few broad hand-painted strokes with subtly softened pigment edges. Vary line
+width within each mark by a restrained amount. Give each motif one to three
+small controlled missing-ink interruptions and one or two slightly heavier
+pigment pools at plausible stroke turns. Missing ink may roughen an edge but
+must never sever the defining silhouette or make the function ambiguous.
+Pigment bleed stays within two to four source pixels and does not form a glow.
+
+Motifs 1 through 6 use near-black smoked guild ink with a deep umber-brown bias,
+not pure digital black. Motif 7 alone uses restrained low-saturation dark-wine
+ink; it must not become bright red, glowing, bloody, or a full danger panel.
+There is no light source on the ink itself, no bevel, rim light, metallic shine,
+drop shadow, outer glow, or white highlight.
+
+Deliberate irregularity: honor the seven different optical centers and different
+maximum sizes above. Do not mechanically center all seven at identical x/y,
+scale them to the same box, use the same stroke pressure, or align every upper
+and lower edge into a perfect icon column. The variation is controlled and
+handmade, not random: no dust field, splatter cloud, disconnected filler dots,
+unreadable scribble, or excessive distress. Each identity must remain complete
+when proportionally reduced into its own 32 x 22 runtime Button, with a target
+visible size of roughly 14..18 pixels wide and 9..14 pixels high.
+
+Style lock: these must look like seven original low-resolution bitmap marks
+painted for a 2004-era vanilla WoW guild ledger: warm, substantial, economical,
+slightly imperfect, magical without glow, and materially compatible with the
+accepted quest book and blank oath linen. They must not look vector-clean,
+font-glyph-like, photorealistic, procedural, corporate, uniformly stamped,
+mobile-toolbar-like, Diablo-3-like, Skyrim-minimalist, Warhammer, or generic
+modern fantasy icons.
+
+Strict exclusions: no cloth, ribbon, parchment, leather, book, page, wax, seal,
+button face, card, circle badge, square tile, metallic frame, gold outline,
+rivet, label, letter, number, Tooltip, state name, hover, pressed, disabled,
+selected, separate danger background, cast shadow, contact shadow, glow, glass,
+translucent black, neon, gemstone, skull, spike, altar, sci-fi hardware, visible
+cell guide, eighth motif, repeated copy, mirrored copy, or object outside its
+declared safe box.
+
+Before returning, verify in order: exact 1024 x 1024 canvas; uniform #00FF00
+outside the motifs; exactly seven logical motifs, one in each of cells 1..7,
+and a completely empty eighth cell; fixed meaning and order; every visible and
+antialias pixel inside its own safe box; no cloth,
+wax, text, plate, state copy, guide, or extra object; motifs 1..6 use deep smoked
+ink and only motif 7 uses dark wine; seven sizes, centers and stroke rhythms are
+deliberately nonidentical; controlled missing ink and bleed do not damage
+semantic readability; all seven remain recognizable in separate 32 x 22 cells.
+
+### V3-B 自主修复与候选审查边界
+
+- attempt 1 固定上传 V3-B Image 1／2。attempt 2–5 继续上传同顺序、同 SHA 的
+  Image 1／2；只有紧邻工作表保持七个 cell 各一枚逻辑纹章、固定语义／cell 和总体
+  印墨语言，失败仅在个别 safe box、笔触、综合色、辨识或禁项时，才可将其
+  作为同段唯一 Image 3 edit input。对象数、语义或多格结构失真则 regenerate。
+- 允许自主修复：纯绿、cell 占用、安全盒、个别纹章比例／视觉中心、线宽、
+  缺墨／渗化克制度、小尺寸辨识、第四色彩，以及删除误生底板、文字、蜡、
+  第八图案、散点或现代图标细节。不得改变七个逻辑 ID／顺序或引用新图片。
+- 候选先按固定 cell 生成七张临时透明文件并检查对象数／safe box，再缩到各自
+  真实 `32×22px` Button。V3-A 若已通过，则必须把这七张候选叠到 V3-A 的
+  真实候选布底；否则不得用 V12 几何像素冒充最终综合色。预演覆盖 7／5／3
+  visible、一个 disabled、scroll 52 和 scroll 208，并使用真实 Quest Log
+  字体、正文、四奖励槽、QS-A1 火漆和 runtime 层序。
+- V3-A 候选只用于本地排版，不上传给 V3-B ImageGen。V1／V2 候选、V10／V11／
+  V12 模拟、QS-A1 漆章、QL-B1 runtime atlas 和任何 review 派生图均不得作为
+  额外图片输入；V3-B 的 Image 2 只能是固定 QL-B1 accepted source。
+- 最多 `5` 次实际 ImageGen generation／edit。没有生成证据的流程错误不占
+  额度；候选完整通过即停止，第五次仍失败则停止等待用户审核。
+
+## V3 联合授权边界与当前门禁
+
+- V3-A 与 V3-B 是两个独立执行体，各自最多 `5` 次实际 ImageGen 调用，最坏
+  合计 `10` 次；某段通过即停止该段，不为耗满额度继续抽卡。
+- 每段只允许各自固定 Image 1／2，以及同段紧邻前次候选在冻结边界内作为
+  Image 3。禁止跨段候选作为 ImageGen 输入，禁止上传模拟图、旧失败稿、
+  normalized review、真实排版图、runtime atlas 或 addon 截图。
+- 合同内确定性后处理只包括：边缘连通色键、透明 RGB 清零、方形画布的同轴
+  等比 `1024²` 归一化、等比 bbox-fit、V3-B 固定 cell 拆分、V3-A prefix／
+  tail crop、四态派生、atlas 打包、metrics、
+  实际展示区域检查和“真实排版＋新 UI”预演。它们不得修复语义、材料、构图、
+  图案或不工整程度的失败。
+- 当前 ImageGen：V3-A `0/5`；V3-B `0/5`；流程错误 `0`；上传 `0`。
+- 当前门禁：只等待用户对上述两个完整执行正文、固定输入、冻结 edit 边界、
+  每段五次／最坏十次和确定性后处理作明确生产授权。授权前不调用 ImageGen，
+  不创建 source／manifest／exporter／runtime，不修改 addon，也不隐藏旧按钮。

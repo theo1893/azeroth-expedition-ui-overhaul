@@ -160,14 +160,19 @@
   `candidate-rejected / user-superseded-before-attempt-5 / 4/5`；attempt 5
   未调用，旧授权不转移。
 - 当前 `QUEST-LOG-SEAL-ACTIONS-SIM-V12 / QS-B1 V3` 已把资产拆为动态空白
-  root／三个 seamless body variant／tail 背景，以及七张独立透明纹章与七个
-  独立 Button。hidden 项会移除并无空洞收拢，disabled 项留位但不命中；六个
-  真实排版场景覆盖 7／5／3 项、部分滚动与完全滚出，本地检查 `35/35 pass`，
-  display-region `6/6 pass`、violations `0`、ImageGen `0/0`。V12 当前为
-  `simulation-rendered / awaiting-user-confirmation / P2`；模拟像素不作为
-  source、runtime 或后续 ImageGen 输入。runtime `1.25` 继续把已接受的 QS-A1
-  漆章以 `32px` 无鼠标 Texture 放到详情页右上纸面；菜单尚未接入，也未隐藏
-  任何旧按钮。
+  背景，以及七张独立透明纹章与七个独立 Button。hidden 项会移除并无空洞
+  收拢，disabled 项留位但不命中；六个真实排版场景覆盖 7／5／3 项、部分滚动
+  与完全滚出，本地检查 `35/35 pass`，display-region `6/6 pass`、violations
+  `0`、ImageGen `0/0`。用户于 `2026-08-05` 回复“可以”，V12 已记为
+  `simulation-confirmed / P2`；模拟像素仍不作为 source、runtime 或后续
+  ImageGen 输入。生产拓扑在不改变 V12 屏幕几何的前提下进一步收敛为一条
+  连续的最大长度空白布母版：runtime 按可见项数裁取前缀并接独立 tail，从
+  根源消除三段重复、横缝和 `22px` 周期。七纹章则由固定七格工作表生成，
+  P4 必须拆为七张独立 tracked RGBA source。V3-A／V3-B 完整正文、固定输入、
+  edit 边界和各 `5` 次／最坏 `10` 次预算已准备，当前为
+  `production-prompts-prepared / P3 / awaiting-production-authorization`。
+  runtime `1.25` 继续把已接受的 QS-A1 漆章以 `32px` 无鼠标 Texture 放到
+  详情页右上纸面；菜单尚未接入，也未隐藏任何旧按钮。
 - AEUI Quest Log provider 兼容子合同保持 `1.7`：在 provider 最终刷新后以
   事件驱动方式恢复 18 条列表行与右页正文安全区，将 online／language 搬至
   右页固定顶部工具行，将 show／hide／clean／reset 搬至右页固定底部四格；
@@ -427,7 +432,7 @@
 | `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P6 game-validated / user-confirmed`（当前活动 runtime） | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；`2026-08-05` 用户确认 18 行字体、无描边／零 shadow、类型墨色和活动地区箭头显示通过。隐藏的行末追踪圈不在验收范围 | 保留至组件／整模块收口；不再生图 |
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 asset-retained / runtime-hidden` | 用户接受的 source、manifest、`128 × 16` TGA、exporter 与历史证据全部保留；`2026-07-31` 起 adapter 不再挂载或包装任务行脚本 | 暂缓；只有用户重新确认后才恢复 runtime |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
-| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu V3 `P2 awaiting-user-confirmation` | V1 保持 `candidate-rejected / user-rejected / repair-budget-exhausted / 5/5`。V2 执行至 `4/5` 后被用户以质感工整和单图无法隐藏功能明确取代，attempt 5 未调用。V12 将背景拆为无功能含义的动态 root／body variants／tail，将七项拆为七张独立透明纹章与七个独立 Button；7／5／3 项、disabled、部分裁切与完全滚出为 `35/35 pass`，display-region `6/6 pass`，ImageGen `0/0` | 用户确认 V12 的分层结构与可见方向；确认后分别写背景和七纹章生产合同并重新请求授权。旧按钮继续 fail-open，不导出、不接入菜单 |
+| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu V3 `P3 awaiting-production-authorization` | V1 保持 `candidate-rejected / user-rejected / repair-budget-exhausted / 5/5`。V2 执行至 `4/5` 后被用户以质感工整和单图无法隐藏功能明确取代，attempt 5 未调用。V12 将背景与七纹章／七 Button 分层；7／5／3 项、disabled、部分裁切与完全滚出为 `35/35 pass`，display-region `6/6 pass`，ImageGen `0/0`，并于 `2026-08-05` 获用户确认。生产实现以连续最大长度空白母版的动态 prefix＋tail 取代重复 body variant；V3-A／V3-B 完整生产合同已准备 | 独立授权 V3-A／V3-B 固定输入、同段 edit 边界、各 `5` 次／最坏 `10` 次实际调用。旧按钮继续 fail-open，不导出、不接入菜单 |
 | `QL-D` | 奖励槽、分隔与文字安全区 | current geometry／fallback `P6 game-validated`；final art `P2 simulation-proposed` | runtime `1.25` 保持真实 Button 的 `108×41px` 双列／`64px` 名称／`8px` 列距／`4px` 行距、setter 锁、无鼠标程序化容器、原生 `NameFrame` 抑制和可见数量兜底。所有奖励项只依赖奖励总标题或上一组奖励项，不再依赖三个分组标题，消除原生 `QuestLogItemReceiveText` 反向锚定造成的 FrameXML 环；`2026-08-05` 用户确认当前右页 bug 与显示修复通过。Theme `1.8` 奖励文字无描边。V1 模拟 0／1／2／4／6 `5/5 pass`、ImageGen `0/0`；奖励只读，无 selected | 确认最终容器美术方向；确认不等于生产授权 |
 
 QL-A1 manifest 记录：
@@ -473,7 +478,7 @@ timer 或 failed 资产：provider 没有可用的公开状态来源。本项目
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
 | `QS-A1` | Quest Log／Tracker 共用漆章母版 | `P5 runtime-exported / page-placement-integrated / 5/5` | source／四态 atlas 保持 accepted；当前 Quest Log runtime `1.25` 直接使用 `32px` 页上 Texture，Tracker 不受影响；没有重开美术或 ImageGen | Turtle WoW 验证页上位置、TGA 方向与标题／正文安全区 |
-| `QS-B1` | Quest Log ScrollChild 内火漆 Button、动态空白布底、七张独立纹章与七个代理 Button | V3 `P2 simulation-rendered / awaiting-user-confirmation`；ImageGen `0/0` | V1 为 `user-rejected / 5/5`；V2 为 `user-superseded-before-attempt-5 / 4/5`，未调用 attempt 5。V12 保留 V11 的滚动物理关系，但以无鼠标 root／三个无缝 body variant／tail 形成动态背景，七张透明 motif 独立叠放；hidden 无空洞收拢、disabled 留位，`35/35` 与 display-region `6/6` 通过 | 用户确认 V12；确认前不生图。确认后分别冻结背景与七纹章提示词并请求新的固定执行器授权；具体候选获用户接受前不晋级 source、不导出、不接入 |
+| `QS-B1` | Quest Log ScrollChild 内火漆 Button、动态空白布底、七张独立纹章与七个代理 Button | V3 `P3 production-prompts-prepared / awaiting-production-authorization`；ImageGen `0/5 + 0/5` | V1 为 `user-rejected / 5/5`；V2 为 `user-superseded-before-attempt-5 / 4/5`，未调用 attempt 5。V12 保留 V11 的滚动物理关系并把背景／纹章所有权分开；hidden 无空洞收拢、disabled 留位，`35/35` 与 display-region `6/6` 通过，用户于 `2026-08-05` 回复“可以”。生产实现以一条连续空白 max master 的动态 prefix＋tail 避免重复接缝；七格工作表在 P4 拆为七张独立 RGBA source | 独立授权 `QS-B1 V3-A`／`V3-B`；每段最多 `5` 次，最坏合计 `10`，流程错误不占额度。具体候选获用户接受前不晋级 source、不导出、不接入 |
 
 QS-A1 当前事实：
 
@@ -634,27 +639,28 @@ QT-A1 临时 runtime 事实：
 
 用户于 `2026-08-05` 已确认当前 Quest Log 左右页 bug 与显示修复通过；
 QL-A2、当前活动左页 runtime 与 QL-D 当前几何／fallback 的实机门禁不再是
-开放项。下一项 Quest Log 视觉门禁是确认
-[QL-D V1 奖励槽方向](work/QUEST.LOG.REWARDS.md)。V9 已确认的
-可见方向现已转写为：只生成一枚无字、无图标、近矩形浅削角的暗胡桃旧皮革
-事务签母版；七个 `112×20px` Button 仍独立代理七项原功能；确定性 atlas
-包含 standard／danger 各 normal、hover、pressed、disabled 四态；真实页边
-继续遮住左侧 `16px` 根部，detail／奖励零占用，展开只产生 `48px` outset。
-固定生产输入为任务详情锁定图和受限邻接职责的 QL-A1 source；V9 模拟像素、
-漆章和旧失败稿均不得上传。页上漆章位置继续由既有资产在 runtime `1.25` 实现；
-`QS-B1-INTERACTION V1` 已于 `2026-08-05` 获用户确认；`QS-B1 V1` 同日已获
-独立生产授权。ImageGen 已执行 `5/5`，流程错误 `1`；attempt 1 的真实排版几何
-通过。attempt 2 已明显改善材料、内框与端部，但比例仍为 `4.2851:1`、运行时
-仅 `86×20px`；attempt 3 已推进至 `5.1456:1`／`103×20px`，但尚未达到
-`5.45` 下限，并出现均匀微纹／中央擦痕；attempt 4 仍为 `5.1707:1`。
-最终 attempt 5 改用定量轮廓 surgery，却把宽度扩为 `1184px`，最终
-`6.1347:1`／runtime-visible `112×18px`，超过比例上限并保留均匀压纹／连续
-亮边。循环已终止为 `candidate-rejected / repair-budget-exhausted`，随后用户又
-明确回复“不可接受”，使 V1 成为 `user-rejected`。V1 候选不得通过非等比／
-裁切例外晋级，也不得成为 V2 edit input。候选与功能等价均通过前不实现菜单，
-也不隐藏放弃／分享／退出／详情与 pfQuest 四按钮。
-候选通过后的 runtime 仍必须按已确认交互合同一一代理原 Button、镜像禁用态、
-保留放弃确认，并在任一 provider 未捕获时原子 fail-open。
+开放项。当前 Quest Log 的下一门禁是 `QS-B1 V3` 正式生产授权：用户已于
+`2026-08-05` 回复“可以”，确认 V12 的“动态空白背景＋七张独立透明纹章＋
+七个独立 Button”方向；V12 模拟像素仍不属于 source 或 ImageGen 输入。
+
+生产合同现拆成两个执行体。`QS-B1 V3-A` 生成一条无纹章、无功能所有权的
+连续最大长度旧亚麻布母版，固定上传任务详情锁定图和 QL-A1 accepted shell；
+runtime 只裁取 `12 + visible_count × 22px` 前缀并接独立 tail，避免重复布片、
+横缝和 `22px` 周期。`QS-B1 V3-B` 生成七格隔离印墨工作表，固定上传同一
+任务详情锁定图和 QL-B1 accepted directory-marks source；P4 必须拆成七张
+独立 RGBA source、七个 manifest ID 和七个 UV，工作表不作为单一菜单资产。
+两段各最多 `5` 次实际 ImageGen 调用，最坏合计 `10` 次；流程错误没有生成
+证据时不占额度。执行顺序固定 A 后 B；每段只允许同段紧邻候选在冻结边界内
+作为 Image 3，禁止 V1／V2 候选和 V10／V11／V12 模拟图。
+
+当前仍不生图、不上传、不创建 source／manifest／exporter／atlas、不接入菜单、
+也不隐藏放弃／分享／退出／详情与 pfQuest 四按钮。具体候选必须经过物件、
+材料、组件粒度、实际展示区域和“真实排版＋新 UI”预演，并由用户明确接受后
+才能进入 P4／P5。后续 runtime 仍必须按已确认交互合同一一代理原 Button、
+镜像禁用态、保留放弃确认，并在任一 provider 未捕获时原子 fail-open。
+
+[QL-D V1 奖励槽方向](work/QUEST.LOG.REWARDS.md) 仍是独立开放视觉门禁，
+不被 QS-B1 的确认或授权自动覆盖。
 
 Quest Log 的类型色、详情字体、金额、奖励容器／锚点与内容末端裁切修复已经
 进入 runtime `1.25`／Theme `1.8`，并由本次用户实机结论确认。QL-D V1
