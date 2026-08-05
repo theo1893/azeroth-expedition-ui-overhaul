@@ -11,10 +11,13 @@
   `QUEST-LOG-SEAL-ACTIONS-SIM-V11 / QS-B1 V2`
 - 当前已确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V12 / QS-B1 V3`；用户于
   `2026-08-05` 回复“可以”
+- 当前已确认布底模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V13 / QS-B1 V4-A`；
+  用户于 `2026-08-05` 回复“接受, 用这一套试试效果”
 - 最近一次已执行生产正文：`QS-B1 V3-A.r4 / attempt 5`；V3-A 循环已耗尽，
   当前无下一修复正文
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
-  `internal-rejected / repair-budget-exhausted / user-review-required / P3`
+  `user-rejected / repair-budget-exhausted / P3`；menu V4-A
+  `simulation-confirmed / prompt-prepared / awaiting-production-authorization / P2`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
   `simulation-confirmed / V3-A repair-budget-exhausted / V3-B gated / P3`；V1 保持
@@ -26,6 +29,7 @@
 - QS-B1 V2 ImageGen：`4/5`（第 5 次未调用；旧授权不得转用于 V3）
 - QS-B1 V3 ImageGen：V3-A `5/5`、V3-B `0/5`（V3-A 未内部通过，故按联合
   授权顺序门禁未执行 V3-B）
+- QS-B1 V4-A ImageGen：`0/5`；流程错误 `0`；上传 `0`；当前未授权，禁止调用
 - QS-B1 历史流程错误：V1 `1`、V2 `3`；V3 `0`。均按“无生成证据才不占
   额度”记录
 - tracked source：
@@ -4651,6 +4655,225 @@ semantic readability; all seven remain recognizable in separate 32 x 22 cells.
   `assets/source/`、addon、裁切／切片、runtime，也不得作为未来 ImageGen
   reference 或 edit input。当前可由 tracked renderer／spec 确定性重建，
   不创建跨设备 `handoff/`。
-- 用户方向结论：`pending`。下一门禁仅为用户确认或否决具体 V13 可见方向；
-  未确认前不得准备授权态 production、调用 ImageGen、执行 V3-B、创建 source、
-  导出 runtime、修改 addon 或隐藏旧按钮。
+- 用户方向结论：`accepted / simulation-confirmed / P2`。用户于
+  `2026-08-05` 回复“接受, 用这一套试试效果”，确认 V13 可见方向中的低饱和
+  烟熏深旧棕、少量非周期宽幅侧边、两处不等宽粗钝尾缺口、断续宽面暗光、
+  哑光安静中央和既有动态长度。确认不接受模拟像素，也不覆盖最终纤维、边缘
+  Alpha、切片接缝或客户端混合门禁。
+- 下一门禁改为展示下方 `QS-B1 V4-A` 完整 production 正文、固定输入、确定性
+  后处理和最多五次实际 ImageGen 调用边界，并取得独立明确授权。授权前不得
+  调用 ImageGen、执行 V3-B、创建 source／manifest／exporter、导出 runtime、
+  修改 addon 或隐藏旧按钮。
+
+## QS-B1 V4-A 暗色非规则动态空白布底 — production preparation
+
+### 状态与唯一范围
+
+- 组件：`QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX`；版本：`QS-B1 V4-A`。
+- 状态：`prompt-prepared / awaiting-production-authorization / P2`；计划操作：
+  `generate`；固定执行器：`imagegen-0-143-0`，其内部必须固定使用
+  `@openai/codex@0.143.0` 的 imagegen 路径，禁止替换为原生或其他版本生图能力。
+- 当前计数：production ImageGen `0/5`；流程错误 `0`；上传 `0`。V13 本地模拟
+  另记 `0/0`，不占正式额度。
+- 只生产一条无鼠标、无功能语义、无纹章的连续最大长度 normal 布底母版。
+  七张独立纹章、七个 Button、状态派生、Tooltip、功能代理和交互不属于本段。
+- V12 已确认的 ScrollChild 拓扑、visible-order 收拢、disabled 留位、滚动裁切、
+  奖励安全距离与原子 fail-open 全部冻结；本段不得修改 Lua、addon 或 provider。
+
+### 固定输入与权威顺序
+
+1. `Image 1`：`assets/locked/quests/任务详情面板_视觉基准_v1.png`，SHA-256
+   `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`。
+   它是最高权威，只继承 2004 年前后香草魔兽二维手绘年代感、大块明暗、材料
+   重量、克制磨损、低分辨率可读性与左上暖光。
+2. `Image 2`：`assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png`，
+   SHA-256
+   `91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5`。
+   它只作相邻已接受 UI 的综合色、画笔尺度、边缘软硬、左上光向与磨损密度参考。
+3. attempt 1 不上传 `Image 3`。attempt 2–5 只有在下述冻结修复边界内，才允许
+   同一循环紧邻前次 raw output 作为唯一 `Image 3` edit input。
+
+若两张参考冲突，以 Image 1 和 Quest 主模块／全局基线为准。不得上传 V13
+模拟图、V3-A 五张失败稿、QS-A1 漆章、纹章占位、runtime atlas、review 图、
+真实排版 board 或 addon 截图。Image 1／2 中的书、页、书脊、黄铜、火漆、
+按钮、文字和完整构图均不是可复制对象。
+
+### 组件与显示区域合同
+
+- 输出画布：精确 `1024×1024 RGB`；物件外每个像素必须为统一纯
+  `#00FF00`，无渐变、纹理、雾、暗角、接触影、溢色或游离碎屑。
+- 唯一物件必须保持竖直、正交、未旋转、完整可见，精确占据 bbox
+  `[448,164,576,860]`，即 `128×696px`。不得裁切、透视、镜像或横向拉伸。
+- source 内部逻辑区仅用于后续裁切，不得画出分隔：root
+  `[448,164,576,212]`，七段潜在容量依次为 `128×88px`，y 边界
+  `212／300／388／476／564／652／740／828`，tail
+  `[448,828,576,860]`。
+- runtime 等比缩为 `32×174px`。收起态只显示 root `32×12px`；展开态取
+  `12 + visible_count × 22px` 的连续前缀，再紧接同一母版底部 `32×8px`
+  tail。任何潜在切点前后 `±8 source px` 都必须安静连续。
+- 真实 Quest Log 保持 `676×464px`；detail viewport `[366,64,246,324]`；
+  content seal `[210,4,32,32]`；布根 `[210,30,32,12]`；动作槽
+  `32×22px`；奖励从内容 y=`236` 开始。七项全显时 tail 结束于 y=`204`，
+  与奖励保持 `32px` 空隙。
+
+### 最终完整 production prompt（执行时逐字使用）
+
+```text
+Create one production-ready raster source asset for a Turtle WoW 1.18.1
+Interface 11200 quest-log overhaul. This is only the continuous blank cloth
+substrate hanging beneath an existing wax seal inside the right-page scrolling
+content. It owns no function and receives no mouse input. Do not draw any wax
+seal, icon, motif, text, button, state, book, page, frame, popup, or menu panel.
+
+Reference authority and filtering:
+1. Image 1 is the highest visual authority. Inherit only its circa-2004 vanilla
+   World of Warcraft low-resolution 2D hand-painted bitmap language, broad
+   readable value planes, substantial material weight, muted expedition color,
+   restrained upper-left light, sparse wear, and deliberately nonmodern finish.
+   Ignore its complete book, pages, leather, brass, wax seal, ribbons, compass,
+   buttons, reward slots, text, and full composition.
+2. Image 2 is a secondary accepted-adjacency reference. Inherit only its local
+   dark-walnut color temperature, coarse paint scale, softened edge handling,
+   upper-left light direction, and restrained wear density. Ignore and do not
+   reproduce its book, pages, spine, brass, transparency, silhouette, or pixels.
+If the references conflict, Image 1 and the Azeroth quest-ledger baseline win.
+Neither reference authorizes copying an object or composition.
+
+Canvas and object contract: output an exact 1024 x 1024 RGB bitmap. Draw exactly
+one connected, vertical, orthographic, unrotated blank cloth object. Its exact
+visible bounding box is [448,164,576,860], width 128 and height 696 pixels. The
+entire object must be visible. Every pixel outside it is the same uniform solid
+#00FF00 with no gradient, paper, cloth, haze, vignette, checkerboard, glow,
+contact shadow, color spill, loose fiber, or separate fragment. Do not crop,
+mirror, tilt, bend it in perspective, or stretch one axis independently.
+
+The object is a dark, low-saturation, smoke-aged expedition-guild oath linen:
+charcoal brown, dark walnut, and deep umber. It must feel heavy, soft, old,
+matte, and used, never festive or decorative. Do not use bright ochre, gold,
+orange, ivory, cream, yellow edging, saturated red, or a long bright highlight.
+The brightest cloth plane is only modestly lighter than the base. Build the
+surface from exactly three broad value masses: a dominant dark middle mass, a
+deeper shadow mass, and a restrained dim warm plane. Add exactly two short,
+broad, broken dim highlight or fold planes at different heights. They must not
+join into a full-height stripe. Add two or three broad low-frequency shadow
+folds and three to six large, low-contrast age stains that cross future action
+bands. No stain may look like an action-sized oval, button plate, card, badge,
+or repeating cell.
+
+The cloth identity comes from broad folds, subtle edge thickness, sparse coarse
+fiber clusters at a few stressed edges, and restrained hand-painted wear. Keep
+the center quiet, matte, heavy, and readable behind future independent ink
+motifs. Do not fill the surface with photographic burlap, uniform weave,
+procedural grain, embossed wallpaper, repeated curls, micro-noise, evenly
+spaced scratches, or dense distressed texture. There is no cast shadow because
+this source will be composited onto a page at runtime.
+
+Silhouette contract: use only four to six broad side deviations over the full
+696-pixel height. Left and right sides are controlled but asymmetric and never
+mirror each other. Each deviation is a slow hand-cut change, approximately
+4 to 12 source pixels in amplitude, not a small tooth. Do not align changes to
+the future horizontal cut rows. Do not make straight machine edges, periodic
+waves, scallops, sawteeth, fringe, tassels, repeated tears, or a one-defect-per-
+action rhythm. At the top, make one slight asymmetric compressed fold and a
+small amount of coarse fray that can plausibly sit under an existing wax seal;
+do not form a smooth symmetric arch or a second object.
+
+The bottom tail contains exactly two unequal coarse blunt upward notches: one
+smaller and shallower, the other wider but still shallow. The remaining bottom
+forms a few broad heavy cloth lobes. The two notches are visibly different and
+hand-cut, not mirrored or evenly spaced. Do not add a third notch, tiny teeth,
+regular sawtooth, equal tassels, a deep V, a symmetrical fishtail, a clean
+modern ribbon cut, or detached strands.
+
+Hidden runtime crop contract: the source will later be reduced proportionally
+to 32 x 174 pixels. Its top 48 source pixels are a 32 x 12 runtime root. The
+next seven possible capacity bands are each 88 source pixels high, corresponding
+to seven 32 x 22 runtime action slots. The final 32 source pixels are one shared
+32 x 8 runtime tail. Do not draw guides, seams, rows, boxes, horizontal hems,
+fold breaks, edge steps, highlights, cracks, stains, or silhouette events on or
+near y = 212, 300, 388, 476, 564, 652, 740, or 828. Keep at least eight source
+pixels above and below every listed y coordinate visually continuous and quiet.
+The upper boundary of the final tail must blend plausibly after any one of the
+seven possible prefix endpoints. The source is one continuous material, never
+seven stacked cells.
+
+Style lock: an original coarse hand-painted bitmap asset for a 2004-era vanilla
+WoW Azeroth expedition ledger. It is materially compatible with an old quest
+book but remains a distinct dark cloth accent. It must not look vector-clean,
+photorealistic, procedural, mobile-toolbar-like, modern flat UI, Diablo-3-like,
+Skyrim-minimalist, Warhammer, gothic sci-fi, ceremonial military regalia, or a
+generic modern fantasy ribbon.
+
+Strict exclusions: no wax, seal, stamp, icon, motif, rune, glyph, text, letter,
+number, button face, hit region, card, tile, divider, row, state, hover, pressed,
+disabled, selected, Tooltip, book, page, spine, leather frame, metal, brass,
+rivet, jewel, skull, eagle, aquila, weapon, chain, popup, side panel, paper
+shadow, cast shadow, glow, glass, translucent black, photographic fiber field,
+uniform microtexture, repeating curl, periodic edge damage, action-sized stain,
+bright gold, bright orange, ivory, deep V tail, symmetrical fishtail, equal
+tassels, more or fewer than exactly two blunt upward tail notches, detached
+fiber, green spill, or object outside the declared bounding box.
+
+Before returning, verify in order: exact 1024 x 1024 RGB canvas; exactly one
+connected vertical object; exact [448,164,576,860] visible bounding box; uniform
+#00FF00 everywhere outside it; dark low-saturation smoked-brown palette; exactly
+three broad value masses; exactly two short broken dim highlight planes; only a
+few broad nonperiodic asymmetric side deviations; exactly two unequal coarse
+blunt upward tail notches; quiet continuity around all eight future crop rows;
+no motif, button, wax, text, book, cast shadow, microtexture, periodic 22-pixel
+rhythm, bright color, modern ribbon geometry, or extra object.
+```
+
+### Prompt 完整性审计
+
+| 检查项 | 结论 |
+|---|---|
+| 基线融合 | 已在正文显式写入香草时代、二维手绘、大块明暗、厚重材料、综合色与禁用现代／暗黑／战锤语言；不是只依赖外部引用 |
+| 引用优先级 | Image 1 为最高权威，Image 2 仅作邻接综合色和笔触尺度；冲突规则明确 |
+| 组件粒度／所有权 | 只生成空白布底；纹章、Button、交互、状态、文字和火漆全部排除 |
+| 画布／bbox／对象数 | `1024² RGB`、纯绿、单连通对象、精确 `128×696px` bbox 均已固定 |
+| 动态切片／展示区 | root、七容量段、tail、八条安静切线、真实 viewport 和奖励距离均已量化 |
+| 用户否决闭环 | 明亮轻浮、规则切口、整段微纹、动作格底板已逐项转成正向限制与严格禁项 |
+| 可审查性 | 三块明暗、两段暗亮面、4–6 个宽侧偏移、恰好两处不等钝缺口均可计数 |
+| 不确定项 | 最终手绘纤维与边缘 Alpha 必须由候选、缩小图、真实排版和客户端门禁验证，不由模拟替代 |
+
+### 最多五次自主修复与确定性后处理合同
+
+- attempt 1 固定上传 Image 1／2，执行 `generate`。attempt 2–5 仍固定同顺序、
+  同 SHA 的 Image 1／2；只有紧邻候选仍是一条单连通布底、总体材料／光向／
+  纵向结构正确，失败仅属于以下冻结边界时，才可把它作为唯一 Image 3 执行
+  edit：轻微 bbox／比例偏差、残余过密微纹、侧边不够宽或仍过于规律、恰好
+  两处尾缺口的粗钝／不等程度、污渍／亮面过强、少量误生禁项或纯绿污染。
+- 若候选改变对象数、生成纹章／书页／按钮、材料方向变亮、出现严重透视、
+  主轮廓完全错误、缺口数不是可局部修复的两处，或需要改写拓扑，则不上传该
+  候选，下一次从固定 Image 1／2 regenerate。
+- 每次存在 provider 生成证据才计入一次实际 ImageGen 调用；上传失败、工具错误、
+  超时且无生成证据等流程错误单独记录，不占五次额度。候选完整通过即提前停止；
+  第五次仍失败则停止并等待用户审核，禁止 attempt 6。
+- 冻结项：组件 ID、单物件所有权、Image 1／2、执行器版本、画布、bbox、source／
+  runtime 纵向比例、root／七容量段／tail、纯绿策略、动态 prefix＋tail、暗色
+  材料方向、恰好两处不等粗钝缺口、禁止内容和真实展示场景。新增输入、改变
+  对象数／拓扑／材料方向／画布／provider 映射时必须重新授权。
+- 允许的确定性处理仅为：provider 若返回同轴正方形但非 `1024²`，可等比归一
+  到 `1024²`；执行边缘连通纯绿色键并把透明像素 RGB 清零；若完整单物件的
+  bbox 纵横比相对 `128:696` 的误差不超过 `1%`，可整体等比 bbox-fit 到目标
+  中心，整数舍入除外。超过 `1%`、需要非等比拉伸、裁切、补画、局部搬移、
+  数字修纹或轮廓手术时一律退回修复循环。
+- 通过候选才可确定性导出 source、最大 runtime、prefix／tail crop、metrics
+  和 manifest；这些动作仍以用户接受候选进入 P4 为前提，当前不得预先创建。
+- 每稿必须先检查单物件、纯绿、bbox、综合色、三块明暗、两段暗亮面、4–6 个
+  宽侧偏移、两处不等钝缺口、安静切线、缩到 `32×174px` 的材料可读性和接缝。
+  然后用真实 Quest Log 排版覆盖 closed、7、5、3（含一个 disabled）、
+  scroll `52`、scroll `208` 六场景；保持 18 行任务、长详情、四个
+  `108×41px` 奖励槽、真实字体与当前 QS-A1 火漆。结构／排版报告必须全过，
+  display-region 必须 `6/6`、violations `0`。
+
+### 当前授权门禁
+
+- V13 的方向接受只授权把上述正文收敛到可执行状态，不授权上传或调用 ImageGen。
+- 下一步必须由用户明确授权 `QS-B1 V4-A`、固定 Image 1／2、同循环紧邻前次
+  输出仅在冻结边界内作为 Image 3 edit、最多五次**实际** ImageGen 调用、
+  流程错误不占额度，以及上述确定性色键／透明 RGB 清零／`1024²` 归一化／
+  `≤1%` bbox-fit 合同。
+- 在该授权出现前：production `0/5`，不调用 ImageGen，不创建 source、manifest、
+  exporter 或 runtime，不修改 addon，不隐藏或代理旧按钮，不执行 V3-B。

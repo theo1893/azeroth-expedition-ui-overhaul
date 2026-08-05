@@ -2986,6 +2986,58 @@ def main() -> None:
     require(
         seals_work,
         (
+            "接受, 用这一套试试效果",
+            "simulation-confirmed / prompt-prepared / awaiting-production-authorization / P2",
+            "QS-B1 V4-A ImageGen：`0/5`",
+            "QS-B1 V4-A 暗色非规则动态空白布底",
+            "`prompt-prepared / awaiting-production-authorization / P2`",
+            "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
+            "91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5",
+            "@openai/codex@0.143.0",
+            "exactly two unequal coarse blunt upward notches",
+            "Do not fill the surface with photographic burlap, uniform weave",
+            "y = 212, 300, 388, 476, 564, 652, 740, or 828",
+            "production ImageGen `0/5`",
+            "纵横比相对 `128:696` 的误差不超过 `1%`",
+            "display-region 必须 `6/6`、violations `0`",
+            "V13 的方向接受只授权把上述正文收敛到可执行状态",
+        ),
+        "QS-B1 V4-A accepted simulation and production authorization gate",
+    )
+    require(
+        progress,
+        (
+            "simulation-confirmed / prompt-prepared / P2 / awaiting-production-authorization",
+            "V4-A 完整 production",
+            "ImageGen 仍为 `0/5`",
+            "用户独立授权 V4-A",
+        ),
+        "QS-B1 V4-A progress gate",
+    )
+    require(
+        sub_art,
+        (
+            "低饱和烟熏深旧棕",
+            "三块大明暗",
+            "两段断续暗亮面",
+            "尾端恰好\n两处不等宽、粗钝、浅上收缺口",
+            "V13 的暗色、非周期宽边与\n双钝缺口 V4-A 方向",
+        ),
+        "QS-B1 V4-A stable art baseline",
+    )
+    require(
+        submodules,
+        (
+            "QUEST-LOG-SEAL-SUBSTRATE-SIM-V13 / QS-B1 V4-A",
+            "runtime 最大母版为 `32×174px`",
+            "综合色为低饱和烟熏深旧棕",
+            "尾端恰好两处不等宽、粗钝、浅上收缺口",
+        ),
+        "QS-B1 V4-A component ownership",
+    )
+    require(
+        seals_work,
+        (
             "QS-B1 V2 用户终止与 V3 分层改向",
             "user-superseded-before-attempt-5 / 4/5",
             "attempt 5 **没有调用**",

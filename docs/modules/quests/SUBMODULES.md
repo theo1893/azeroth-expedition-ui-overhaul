@@ -232,11 +232,11 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 | `QUEST.LOG.ACTION.SHARE` | `QuestFramePushQuestButton`；兼容名需探测 | 当前程序化暗皮革 fallback；目标事务菜单代理原 Button |
 | `QUEST.LOG.ACTION.EXIT` | `QuestFrameExitButton`；兼容 `QuestLogFrameCancelButton` | 目标视觉不重复收纳；右上真实 Close 保持独立，fallback 在迁移验收前继续存在 |
 | `QUEST.LOG.DETAIL.TOGGLE` | pfUI `QuestLogFrameExpandButton`；缺失时可创建真实 Button | 当前底部 fallback；目标事务菜单代理同一动态开合行为 |
-| `QUEST.LOG.ACTION.SEAL_MENU` | planned adapter-owned `QuestLogDetailScrollChild` 子树；未接入 | `QUEST-LOG-SEAL-ACTIONS-SIM-V12 / QS-B1 V3` 已于 `2026-08-05` 获方向确认：非模态即时开合；漆章、动态空白布底、七张独立透明纹章与七个独立 Button 随详情内容滚动并由真实 `[366,64,246,324]` viewport 裁切。不创建页外 outset、popup 背板或第二纸面，也不改变正文 `214px`／缩进 `204px`。hidden 无空洞收拢，disabled 留位但不响应；任一代理 parity 缺失时全部旧入口原子 fail-open。V3-A／V3-B prompt 已准备，正式生产授权前不得生图、导出、接入或隐藏旧按钮 |
-| `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX` | planned adapter-owned 无鼠标 Texture；一张连续 source | source 为 `128×696px` 空白连续旧布；runtime 最大前缀为 `32×166px`，内容坐标从 `[210,30]` 起。按 `visible_count` 只显示前 `12 + count×22px`，不平铺、不重复、不属于任何 action，也不含纹章、文字或状态 |
+| `QUEST.LOG.ACTION.SEAL_MENU` | planned adapter-owned `QuestLogDetailScrollChild` 子树；未接入 | `QUEST-LOG-SEAL-ACTIONS-SIM-V12` 已于 `2026-08-05` 获拓扑方向确认：非模态即时开合；漆章、动态空白布底、七张独立透明纹章与七个独立 Button 随详情内容滚动并由真实 `[366,64,246,324]` viewport 裁切。不创建页外 outset、popup 背板或第二纸面，也不改变正文 `214px`／缩进 `204px`。hidden 无空洞收拢，disabled 留位但不响应；任一代理 parity 缺失时全部旧入口原子 fail-open。`QUEST-LOG-SEAL-SUBSTRATE-SIM-V13 / QS-B1 V4-A` 的暗色非规则布底方向也已确认，完整 prompt 已准备；独立正式生产授权前不得生图、导出、接入或隐藏旧按钮 |
+| `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX` | planned adapter-owned 无鼠标 Texture；一张连续 source | 目标 source 为 `128×696px` 空白连续暗色旧布；runtime 最大母版为 `32×174px`，其中前缀最大 `32×166px`、tail `32×8px`，内容坐标从 `[210,30]` 起。按 `visible_count` 只显示前 `12 + count×22px` 并接同一 tail，不平铺、不重复、不属于任何 action，也不含纹章、文字或状态。综合色为低饱和烟熏深旧棕，侧边只有少量非周期宽幅偏移；不得出现规则动作格节奏 |
 | `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.ROOT` | `SUBSTRATE.MAX` 的逻辑 UV 子区；无独立 source | 前 `32×12px`；收起态只显示此区，蜡体压住顶部 `6px`。该 ID 只表达层序与 crop，不再生成一张重复布片 |
 | `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY` | `SUBSTRATE.MAX` 的动态前缀子区；无独立 source | 最多七个 `32×22px` 容量段；只按 visible count 增长。源美术在全长连续、非周期，切点附近无强横折；不得出现 variant 循环、卡片格或功能所有权 |
-| `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.TAIL` | 同一 accepted source 的确定性 tail crop；无鼠标 Texture | `32×8px` 克制毛边收尾；动态 y=`42 + visible_count × 22`，紧接当前前缀。七项全显时 y=`196`、与首行奖励 y=`236` 保持 `32px` 空隙；隐藏项后随背景上移 |
+| `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.TAIL` | 同一 accepted source 的确定性 tail crop；无鼠标 Texture | `32×8px` 尾端恰好两处不等宽、粗钝、浅上收缺口；禁止规则锯齿、同长排穗、深 V 或对称鱼尾。动态 y=`42 + visible_count × 22`，紧接当前前缀。七项全显时 y=`196`、与首行奖励 y=`236` 保持 `32px` 空隙；隐藏项后随背景上移 |
 | `QUEST.LOG.ACTION.SEAL_MENU.MOTIF.SHARE` | planned 独立透明 source／可打包 atlas UV | 双羽笔／结约；只含不完全着墨的纹章与透明背景，不含布底、文字或状态 |
 | `QUEST.LOG.ACTION.SEAL_MENU.MOTIF.DETAIL` | planned 独立透明 source／可打包 atlas UV | 折页；动态“展开／收起详情”由 Tooltip／provider 表达，不把文字烘焙进图 |
 | `QUEST.LOG.ACTION.SEAL_MENU.MOTIF.SHOW` | planned 独立透明 source／可打包 atlas UV | 开放公会罗盘；与 HIDE 是不同独立资源，不共享含背景的切片 |
