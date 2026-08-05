@@ -4893,4 +4893,169 @@ rhythm, bright color, modern ribbon geometry, or extra object.
 
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
-| `1/5` | `QS-B1 V4-A` / `6cbf715` | `generate` | pending | pending | pending | 固定 Image 1／2；E1 transport retry 不改变正文 | pending |
+| `1/5` | `QS-B1 V4-A` / `6cbf715` | `generate` | child session `019fd163-9fff-7152-aa3c-81334d3b9784`；cache result `ig_0b34145253fd2717016a730b3ccc988191b5bbe69bb43aa202.png` | `attempt-01/QS-B1-V4-A.attempt-01.raw.png`；`1254×1254 RGB`；SHA `3fdc52c3a061e2d6337ff37cfea31ecdc09543b1ef61ecf817164d29d789e97f` | `组件合同／bbox`：同轴归一后可见对象 `264×850px`，aspect `0.310588` 对目标 `0.183908`，误差 `68.882%`，远超 `≤1%`；禁止 bbox-fit | 单连通暗布身份与综合色方向可保留为文字判断；不保留像素。材质同时出现摄影式连续织纹，顶边为近对称吊床弧，尾部一处为过深尖 V，并有横向亮带／圆斑。下一稿固定 Image 1／2 regenerate，不上传本稿 Image 3 | `internal-rejected / 1/5` |
+
+#### Attempt 1 审查证据
+
+- raw 由 child cache 原样复制；child 自身只读 sandbox 的落盘失败发生在生成后，
+  不额外增加实际调用，也不改变 raw。当前正式计数 `1/5`，流程错误仍为 `1`。
+- 技术 review：
+  `generated/quests/QUEST-SEALS/QS-B1-V4-A/attempt-01/review/QS-B1-V4-A.attempt-01.review.json`；
+  自动检查 `5/9 pass`，第一失败
+  `normalized_visible_bbox_exactly_128x696`；runtime 可见 bbox 只有
+  `[0,33,32,141]`，八条切线中 root、尾部与一条中段没有布面覆盖。
+- 真实排版：同目录 `QS-B1-V4-A.attempt-01.real-layout.png`，SHA
+  `f64f3f23cdee6d6b9cc7ec5f030adb31d4deb0c4aae872757dfa7118c40e4a6a`；
+  六场景交互／收拢几何 `26/26 pass`，但错误比例导致布底只占目标中段，不能
+  作为可见候选。展示区域几何报告 SHA
+  `afe8705c1f4ba942ff86e5b606300e8cce706fb470fa95e1e83f96d9c4925cf2`，
+  `6/6 pass`、violations `0`；该结果只证明冻结 viewport／Button 公式，不
+  推翻 source bbox 与美术失败。
+- 视觉／物理：单条暗色布身份和无额外对象成立；顶边却形成近对称下垂弧，
+  不是火漆下的轻微不对称压褶。两处尾缺口中左缺口狭长且过深、尖锐，违反
+  “浅、粗、钝”；全幅密集摄影织纹与重复卷曲微噪声违反香草时代粗颗粒二维
+  手绘条款。至少三条横向亮带容易在动态 prefix 连接时读成分段接缝。
+- 修复决策：不使用 edit。`68.882%` 比例误差和摄影式表面都不属于允许保留
+  像素的轻微局部失败；attempt 2 只上传同 SHA Image 1／2，以完整 V4-A.r1
+  从锁定权威 regenerate。
+
+### QS-B1 V4-A.r1 完整修复执行正文
+
+```text
+Create one production-ready raster source asset for a Turtle WoW 1.18.1
+Interface 11200 quest-log overhaul. Generate only the continuous blank cloth
+substrate that hangs beneath an existing wax seal inside the right-page
+scrolling content. This substrate is visual-only, owns no function, and receives
+no mouse input. Draw no wax seal, icon, motif, text, button, state, book, page,
+frame, popup, side panel, menu plate, or other object.
+
+Reference authority and filtering:
+1. Image 1 is the highest visual authority. Inherit only its circa-2004 vanilla
+   World of Warcraft low-resolution 2D hand-painted bitmap language, broad
+   readable value planes, substantial material weight, muted expedition color,
+   restrained upper-left light, sparse wear, and deliberately nonmodern finish.
+   Ignore its complete book, pages, leather, brass, wax seal, ribbons, compass,
+   buttons, reward slots, text, and full composition.
+2. Image 2 is a secondary accepted-adjacency reference. Inherit only its local
+   dark-walnut color temperature, coarse paint scale, softened painted edge,
+   upper-left light direction, and restrained wear density. Ignore and do not
+   reproduce its book, pages, spine, brass, transparency, silhouette, or pixels.
+If the references conflict, Image 1 and the Azeroth quest-ledger baseline win.
+Neither reference authorizes copying an object or composition.
+
+Canvas and exact slender geometry: output an exact 1024 x 1024 RGB bitmap.
+Draw exactly one connected, vertical, orthographic, unrotated cloth object. Its
+exact visible bounding box is [448,164,576,860], exactly 128 pixels wide and
+696 pixels high. The height is exactly 5.4375 times the width. This is a very
+slender vertical oath strip, not a conventional 1:3 banner. Visible cloth must
+reach x=448, x=575, y=164, and y=859 while remaining entirely inside that box.
+Do not return a wider or shorter object and do not leave unused vertical space
+inside the declared box. The entire object must be visible. Every pixel outside
+it is the same uniform solid #00FF00 with no gradient, paper, cloth, haze,
+vignette, checkerboard, glow, contact shadow, color spill, loose fiber, or
+separate fragment. Do not crop, mirror, tilt, bend it in perspective, or stretch
+one axis independently.
+
+The object is dark, low-saturation, smoke-aged expedition-guild oath linen:
+charcoal brown, dark walnut, and deep umber. It feels heavy, soft, old, matte,
+and used, never festive or decorative. Do not use bright ochre, gold, orange,
+ivory, cream, yellow edging, saturated red, or a long bright highlight. The
+brightest cloth plane is only modestly lighter than the base. Paint exactly
+three broad low-frequency value masses: one dominant dark middle mass, one
+deeper shadow mass, and one restrained dim warm mass. Add exactly two short,
+broad, broken dim fold planes at different heights. Each is an irregular local
+plane, not a stripe across the width, and the two never join vertically. Add
+two or three broad low-frequency shadow folds and three to six large diffuse,
+low-contrast age stains crossing future action bands. Stains are irregular and
+soft, never circular spots, action-sized ovals, button plates, cards, badges,
+rows, or repeating cells.
+
+This must be visibly a coarse 2004-era hand-painted bitmap, not a photographed
+piece of fabric. Describe cloth with broad brush masses, subtle edge thickness,
+and only a few sparse coarse fiber clusters at stressed outer edges. At source
+scale there is no individually resolved weave, no all-over thread field, no
+burlap photograph, no repeated curly fibers, and no uniform grain. Keep the
+central seventy percent matte, calm, heavy, and low-detail so future independent
+ink motifs remain readable. Do not fill the surface with photographic burlap,
+uniform weave, procedural grain, embossed wallpaper, repeated curls,
+micro-noise, evenly spaced scratches, dense distress, or a textile scan. There
+is no cast shadow because this source will be composited onto a page at runtime.
+
+Side silhouette: use only four to six broad deviations over the full 696-pixel
+height. Left and right sides are controlled but asymmetric and never mirror
+each other. Each deviation is a slow hand-cut change about 4 to 10 source
+pixels in amplitude and spans a large vertical distance. Do not align a side
+change to any future action row. Do not make straight machine edges, periodic
+waves, scallops, sawteeth, fringe, tassels, repeated tears, or one defect per
+action. The strip must remain slender and mostly vertical, without swelling
+into a wide banner.
+
+Top silhouette: the top reaches y=164 and remains nearly horizontal. Give it
+one slight asymmetric compressed fold under the future wax seal, with a total
+vertical sag no deeper than 8 source pixels, plus one or two restrained coarse
+edge irregularities. It must never form a centered U, hammock curve, smooth
+symmetrical arch, rolled hem, hanging sleeve, or second object.
+
+Bottom silhouette: the tail reaches y=859 and contains exactly two unequal,
+shallow, coarse, blunt upward notches. The first notch is broader and about
+10 to 16 source pixels deep; the second is narrower and about 6 to 10 pixels
+deep. Both have blunt or softly irregular inner ends, never sharp points. They
+are visibly unequal, asymmetrically placed, and separated by broad heavy cloth
+lobes. No notch may exceed 18 source pixels in depth. Do not add a third notch,
+tiny teeth, a deep or narrow V, regular sawtooth, equal tassels, symmetrical
+fishtail, clean modern ribbon cut, long hanging prong, or detached strand.
+
+Hidden runtime crop contract: the source will later be reduced proportionally
+to 32 x 174 pixels. Its top 48 source pixels are a 32 x 12 runtime root. The
+next seven possible capacity bands are each 88 source pixels high and correspond
+to seven 32 x 22 runtime action slots. The final 32 source pixels are one shared
+32 x 8 runtime tail. Do not draw guides, seams, rows, boxes, horizontal hems,
+cross-width light bars, fold breaks, edge steps, cracks, stains, or silhouette
+events on or near y = 212, 300, 388, 476, 564, 652, 740, or 828. Keep at least
+eight source pixels above and below every listed y coordinate visually
+continuous and quiet. No bright fold may cross one of these rows. The upper
+boundary of the final tail must blend plausibly after any one of the seven
+possible prefix endpoints. The source is one continuous material, never seven
+stacked cells.
+
+Style lock: an original coarse hand-painted bitmap asset for a 2004-era vanilla
+WoW Azeroth expedition ledger. It is materially compatible with an old quest
+book but remains a distinct dark cloth accent. It must not look vector-clean,
+photorealistic, procedurally textured, mobile-toolbar-like, modern flat UI,
+Diablo-3-like, Skyrim-minimalist, Warhammer, gothic sci-fi, ceremonial military
+regalia, or a generic modern fantasy banner.
+
+Strict exclusions: no wax, seal, stamp, icon, motif, rune, glyph, text, letter,
+number, button face, hit region, card, tile, divider, row, state, hover, pressed,
+disabled, selected, Tooltip, book, page, spine, leather frame, metal, brass,
+rivet, jewel, skull, eagle, aquila, weapon, chain, popup, side panel, paper
+shadow, cast shadow, glow, glass, translucent black, photographed fabric,
+visible weave, uniform microtexture, repeated curl, periodic edge damage,
+action-sized or circular stain, horizontal light bar, bright gold, bright
+orange, ivory, centered U-shaped top, deep or sharp V notch, symmetrical
+fishtail, equal tassels, more or fewer than exactly two blunt upward tail
+notches, detached fiber, green spill, or object outside the declared box.
+
+Before returning, verify in order: exact 1024 x 1024 RGB canvas; exactly one
+connected orthographic object; exact [448,164,576,860] visible bounding box;
+exact 128:696 or 1:5.4375 slender proportion; uniform #00FF00 everywhere
+outside; dark low-saturation smoked-brown palette; broad hand-painted masses
+with no visible weave; exactly three broad value masses; exactly two short
+broken dim fold planes and no cross-width light bar; only four to six broad
+nonperiodic asymmetric side deviations; a nearly horizontal asymmetric top
+with no centered U; exactly two unequal shallow coarse blunt tail notches, both
+under 18 pixels deep; quiet continuity around all eight future crop rows; no
+motif, button, wax, text, book, cast shadow, microtexture, periodic 22-pixel
+rhythm, bright color, modern banner geometry, or extra object.
+```
+
+### V4-A.r1 执行决定
+
+- 操作：`generate`，不使用 attempt 1 作为 Image 3；固定上传与授权相同 SHA 的
+  Image 1／2，顺序不变。
+- 冻结项未变：单一 substrate、`1024² RGB`、目标 bbox、root／七容量段／tail、
+  动态 prefix＋tail、纯绿色键、暗色材料、双钝缺口、禁止纹章／Button／文字／
+  火漆和最多五次实际调用。
+- r1 只把授权内可修复项量化：`1:5.4375` 细长比例、顶边最大 `8px` 浅压褶、
+  两个尾缺口均浅于 `18px`、无全幅可见织纹、无横向亮带和圆形动作斑。
+- 下一次执行前必须提交本节；attempt 2 若返回候选则累计 `2/5`。
