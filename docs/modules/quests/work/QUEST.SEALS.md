@@ -5291,3 +5291,105 @@ all eight crop rows quiet.
 - 冻结合同不变。r3 只在授权修复范围内删减会触发“近景 banner／摄影织物”的
   叙述噪声，并显式排除 attempt 3 新出现的 folded corner／smooth U hole。
 - 下一次执行前提交本节；attempt 4 若返回候选则累计 `4/5`。
+
+#### Attempt 4 执行与审查
+
+- 正文／执行前 commit：`QS-B1 V4-A.r3 / 6f7adc6`；固定 Image 1／2，
+  `generate`，无 Image 3。child session
+  `019fd175-0f3d-7553-8e32-53df867a828b`；cache result
+  `ig_075e70f7e94a807c016a730fb08f7c81919de5669056cb669c.png`。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V4-A/attempt-04/QS-B1-V4-A.r3.attempt-04.raw.png`；
+  `1254×1254 RGB`；SHA
+  `a3c611463bf7050e2ccc2f304f0ce4989a0730be6723f1f625495581468dd396`。
+- 第一失败门禁仍为 `组件合同／bbox`：可见对象 `218×920px`，aspect
+  `0.236957` 对目标 `0.183908`，误差 `28.845%`，不得 bbox-fit。runtime
+  bbox `[0,17,32,157]`；root／tail 仍空；自动检查 `5/9 pass`。
+- 美术：低饱和暗色、低频表面和单对象成立，顶角折页已消失；但三条明显横向
+  弧形亮带横贯主体，直接违反动态切线的安静连续性。尾端虽有两处缺口，仍是
+  过于光滑的半圆 U 孔，并在最底部形成规则三瓣。侧边出现接近等距的内收／外
+  鼓节奏，整体仍像程序化长条旗。
+- 真实排版 SHA
+  `fc28a1ea376c139a9e3a987402f33beeae1f71658785f9a0bd9bdeb7ef2c7af9`；
+  几何 `26/26 pass`。display-region 报告 SHA
+  `555585db09806f68be4970743ae454bafacdc2a642ffeebada9b45d0faa8cdaf`，
+  `6/6 pass`、violations `0`；仍不能补救 source 缺失 root／tail。
+- 结论：`internal-rejected / 4/5`。比例偏差仍不属于可 edit 的轻微错误，故
+  attempt 4 不作为 Image 3。最后的 V4-A.r4 保持固定两张参考 regenerate，
+  用逐扫描线宽度、负空间占比和局部非横贯亮面重新表达同一合同。
+
+### QS-B1 V4-A.r4 完整修复执行正文
+
+```text
+Generate one very small, isolated technical sprite. Do not compose a hero image.
+
+EXACT PIXEL CONTRACT:
+The output is 1024 x 1024 RGB. Every background pixel is uniform #00FF00.
+There is exactly one connected flat dark-cloth strip and nothing else. Its only
+visible pixels are inside [448,164,576,860]. Exact visible size is 128 x 696,
+ratio 1:5.4375. It touches x=448, x=575, y=164 and y=859, never crosses them.
+At every horizontal scanline the cloth is no wider than 128 pixels; most rows
+are 112..124 pixels wide. At least 87.5% of every row outside the bbox remains
+pure green. The green negative space must visually dominate the image. Keep
+448 px green left and right and 164 px green top and bottom. Do not zoom, crop,
+enlarge, shorten, widen, rotate, add perspective or optimize the framing.
+
+The one object is an unusually narrow flexible oath-cloth cord, not a normal
+banner, flag, page, bookmark, leather panel or scroll. It is orthographic and
+has no shadow. Top edge is nearly straight with only one asymmetric 4..6 px
+cloth compression. No folded corner, dog-ear, roll, centered U or arch.
+
+Bottom edge reaches y=859 and has exactly two unequal shallow coarse blunt
+upward notches, both fully inside y=828..859. Notch A is 18..24 px wide and
+8..11 px deep. Notch B is 12..18 px wide and 5..7 px deep. Their inner edges
+are slightly flattened and hand-cut, never smooth semicircles and never pointed
+V shapes. Keep unequal broad lobes around them. No third notch, regular three-
+lobe rhythm, deep cut, tooth, tassel, fishtail, prong or detached thread.
+
+Sides stay mostly vertical. Use four to six broad asymmetric nonperiodic changes
+of only 4..8 px, each spanning a large height. No evenly spaced waist bulges,
+mirroring, scallops, sawteeth, fringe, repeated tears or action-row rhythm.
+
+VISUAL AUTHORITY:
+Image 1 is highest authority only for 2004-era vanilla WoW coarse 2D hand-
+painted bitmap shapes, muted expedition color, heavy material, upper-left light
+and sparse wear. Ignore its book, page, wax, leather, metal, icons, text,
+controls and composition. Image 2 is secondary only for dark-walnut temperature,
+broad paint scale, softly painted edge and restrained wear. Ignore its book,
+spine, brass, transparency, silhouette and pixels. Image 1 wins conflicts.
+
+Paint exactly three broad matte value masses: charcoal-brown base, deep umber
+shadow and one dim walnut plane. Add exactly two short, local, broken dim fold
+marks: one confined to the upper-left quarter, one confined to the lower-right
+quarter. Neither reaches both side edges, neither is an arc or slash, and
+neither forms a horizontal band. Add 3..6 broad diffuse noncircular stains.
+Keep the center calm and low-detail. It is a coarse hand-painted UI bitmap, not
+photographic fabric: no threads, weave, burlap, textile scan, repeated curls,
+uniform grain, micro-noise, dense scratches, cross-width highlight, bright rim,
+gold, orange, ivory, saturated red or glow.
+
+RUNTIME CROP SAFETY:
+The source reduces to 32 x 174. Keep y=212,300,388,476,564,652,740,828 and
+8 pixels above/below each row quiet: no seam, guide, cell, edge step, crack,
+stain boundary, fold band, highlight or silhouette event. Final 32 px is the
+shared tail. This is one continuous strip, never stacked cells.
+
+Exclude wax, seal, icon, motif, rune, glyph, text, number, button, state, card,
+tile, divider, book, page, leather, metal, jewel, popup, side panel, shadow,
+modern UI, Diablo, Skyrim, Warhammer and sci-fi objects.
+
+Verify: one object only; exact 128 x 696 bbox; green negative space dominates;
+no row wider than 128; extremely slender 1:5.4375; no folded corner; exactly two
+unequal shallow blunt irregular notches; nonperiodic sides; three broad painted
+masses; two local dim folds with no cross-width band; all crop rows quiet; no
+photography, weave, extra object, icon, text, wax or bright color.
+```
+
+### V4-A.r4 最后一次执行决定
+
+- 操作 `generate`；固定 Image 1／2；attempt 4 不作为 Image 3。
+- r4 没有改变 bbox、对象、材料、切片、Alpha、参考职责或禁项，只用逐扫描线
+  语言强化既有 `128×696px` 合同，并把两段亮面限制为不触边的局部暗笔触。
+- 下一次执行前提交本节。attempt 5 若返回候选即累计 `5/5`；若仍有任一客观
+  失败，必须停止为 `candidate-rejected / repair-budget-exhausted`，禁止
+  attempt 6。
