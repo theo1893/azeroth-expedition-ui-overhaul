@@ -251,6 +251,17 @@ def main() -> None:
     seal_substrate_sim_v14_spec = json.loads(
         seal_substrate_sim_v14_spec_path.read_text(encoding="utf-8")
     )
+    seal_substrate_v5_candidate_reviewer_path = (
+        ROOT
+        / "tools"
+        / "review_quest_seal_menu_substrate_donor_candidate_v1.py"
+    )
+    assert seal_substrate_v5_candidate_reviewer_path.is_file(), (
+        seal_substrate_v5_candidate_reviewer_path
+    )
+    seal_substrate_v5_candidate_reviewer = (
+        seal_substrate_v5_candidate_reviewer_path.read_text(encoding="utf-8")
+    )
     seal_actions_sim_renderer = (
         ROOT / "tools" / "render_quest_log_seal_actions_simulation_v1.py"
     )
@@ -3042,33 +3053,53 @@ def main() -> None:
         "QS-B1 V14 donor/mask deterministic renderer",
     )
     require(
+        seal_substrate_v5_candidate_reviewer,
+        (
+            "NORMALIZED_SIZE = (1024, 1024)",
+            "MASK_SCALE = 4",
+            "def build_mask(",
+            'mockup["donor_crop"]',
+            "whole-square isotropic LANCZOS",
+            "def clear_transparent_rgb(",
+            "def render_real_layout(",
+            '"exact_detail_previews": previews',
+            '"visible_bbox": [0, 0, 128, 696]',
+            '"source_written": False',
+            '"addon_changed": False',
+        ),
+        "QS-B1 V5-A deterministic donor candidate reviewer",
+    )
+    require(
         seals_work,
         (
             "QS-B1 V5-A 布面供体＋确定性轮廓蒙版",
-            "simulation-confirmed / P2",
-            "awaiting-production-authorization",
+            "prompt-authorized / P3 / production 0/5",
             "不走figma, 直接下一步",
             "ImageGen 只负责\n  连续旧布表面",
             "固定裁片",
             "accepted source",
-            "QS-B1 V5-A 最终 production prompt — 待独立授权",
+            "QS-B1 V5-A 最终 production prompt — 已授权冻结",
             "This output is NOT a ribbon sprite",
             "[448,164,576,860]",
             "exactly two short, broad, broken dim fold planes",
             "No outer silhouette, narrow ribbon object",
             "流程错误单列且不占额度",
             "禁止 attempt 6",
-            "production-not-authorized",
+            "V5-A 正式 production 授权与执行冻结点",
+            "确认授权 QS-B1 V5-A 最终 production 正文",
+            "review_quest_seal_menu_substrate_donor_candidate_v1.py",
+            "最高只到\n  `candidate-reviewed / P3`",
         ),
-        "QS-B1 V5-A confirmed simulation and production authorization gate",
+        "QS-B1 V5-A production authorization gate",
     )
     require(
         progress,
         (
             "QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A",
             "ImageGen 全幅布面 donor＋确定性 `128×696` crop／mask",
-            "simulation-confirmed / P2",
-            "production 保持 `0/5` 且未授权",
+            "prompt-authorized / P3 / production 0/5",
+            "固定 reviewer 已跟踪",
+            "attempt 1 并完成 candidate reviewer",
         ),
         "QS-B1 V5-A progress gate",
     )

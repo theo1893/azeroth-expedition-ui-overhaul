@@ -21,14 +21,13 @@
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A
-  `simulation-confirmed / P2 / awaiting-production-authorization`
+  `prompt-authorized / P3 / production 0/5`
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
   `simulation-confirmed / V3-A repair-budget-exhausted / V3-B gated / P3`；V1 保持
   `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`；
   QS-B1 V4-A `candidate-rejected / repair-budget-exhausted / P3 / 5/5`；
-  QS-B1 V5-A `simulation-confirmed / P2 / prompt-prepared /
-  production-not-authorized`
+  QS-B1 V5-A `prompt-authorized / P3 / production 0/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -38,7 +37,7 @@
   授权顺序门禁未执行 V3-B）
 - QS-B1 V4-A ImageGen：`5/5`；流程错误 `1`；五次均有 provider 图片证据；
   第五稿为本轮最佳视觉但比例误差 `7.287%`，禁止 attempt 6
-- QS-B1 V5-A 模拟 ImageGen：`0/0`；production `0/5` 且未授权；V14 只用
+- QS-B1 V5-A 模拟 ImageGen：`0/0`；production `0/5`，已授权但尚未调用；V14 只用
   本地平面几何预演 donor／crop／mask／composite 分工，用户确认不接受其中
   任何模拟像素
 - QS-B1 历史流程错误：V1 `1`、V2 `3`、V3 `0`、V4-A `1`。均按“无生成证据才不占
@@ -5460,11 +5459,11 @@ photography, weave, extra object, icon, text, wax or bright color.
   草案门禁，不构成生产生图、上传、确定性 source 例外、P4／P5 或 addon
   修改授权。
 - 新版本为 `QS-B1 V5-A`；组件仍只有
-  `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX`。当前子状态：
+  `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX`。授权前子状态为
   `simulation-confirmed / P2 / prompt-prepared /
-  awaiting-production-authorization`；操作 `prepare`；本地 ImageGen `0/0`、
-  上传 `0`、生产实际调用 `0/5`。最多五次只是下方待授权上限，用户明确授权
-  前没有可消费的生产额度。
+  awaiting-production-authorization`；用户现已把它推进为
+  `prompt-authorized / P3`。操作 `generate`；本地 ImageGen `0/0`、上传 `0`、
+  生产实际调用 `0/5`。
 - V4-A 证明生成模型可以接近暗色、厚重、非周期宽边和双钝缺口方向，却无法在
   五次内同时满足精确 `128:696` 外形。V5-A 因而拆分职责：ImageGen 只负责
   连续旧布表面；tracked deterministic crop／mask 只负责精确外轮廓、Alpha、
@@ -5574,7 +5573,7 @@ photography, weave, extra object, icon, text, wax or bright color.
    全部排除。V13／V14 模拟、V1–V4-A 失败候选、runtime atlas、review 图与
    addon 截图均不得上传。
 
-### QS-B1 V5-A 最终 production prompt — 待独立授权
+### QS-B1 V5-A 最终 production prompt — 已授权冻结
 
 ```text
 Create one production material-donor bitmap for a Turtle WoW 1.18.1,
@@ -5689,8 +5688,8 @@ bright color, modern styling, or extra object.
 
 ### 最多五次生产循环、修复边界与停止条件
 
-- 本节尚未获生产授权。若用户未来明确授权，attempt 1 固定上传上述 Image 1／2，
-  使用 `imagegen-0-143-0` 内固定 `@openai/codex@0.143.0` 的 `generate`；
+- 本节已获生产授权。attempt 1 固定上传上述 Image 1／2，使用
+  `imagegen-0-143-0` 内固定 `@openai/codex@0.143.0` 的 `generate`；
   attempt 2–5 继续使用同顺序、同 SHA 的 Image 1／2。只有紧邻前稿仍是全幅
   单一暗旧布面、总体画笔／综合色正确，失败仅为局部过亮、微纹过密、污渍／
   折痕过强、中央裁片不够安静或少量误生禁项时，才允许把它作为唯一 Image 3
@@ -5707,8 +5706,42 @@ bright color, modern styling, or extra object.
   display-region `6/6` → 用户审查 composite。任一步失败即不创建 source、
   manifest、exporter、runtime，不修改 addon，也不隐藏旧按钮。
 
+### V5-A 正式 production 授权与执行冻结点 — `2026-08-05`
+
+- 用户明确授权原文：`确认授权 QS-B1 V5-A 最终 production 正文、固定
+  Image 1/2、确定性 crop/mask 合同、受限同循环 Image 3 edit，以及最多 5 次
+  实际 ImageGen 调用。`
+- 授权严格对应上方逐字 `QS-B1 V5-A` production 正文、两张固定 SHA 参考、
+  square raw 同轴 `1024²` LANCZOS、固定 `[448,164,576,860]` crop、V14 polygon
+  `4×` mask、透明 RGB 清零、受限紧邻前稿 Image 3 edit 与最多 `5` 次实际
+  ImageGen。不得加入 V13／V14 模拟、V1–V4-A 失败稿或其他 reference。
+- 当前子状态：`prompt-authorized / P3`；production `0/5`；流程错误 `0`；上传
+  尚未发生。授权允许固定执行器完成生成、确定性合成和内部审查，最高只到
+  `candidate-reviewed / P3`；不等于接受 composite、晋级 source、创建 manifest、
+  导出 runtime、修改 addon 或隐藏旧 provider Button。
+- tracked deterministic reviewer：
+  `tools/review_quest_seal_menu_substrate_donor_candidate_v1.py`。它只执行 whole-square
+  同轴归一化、固定 crop、V14 `4×` polygon mask、透明 RGB 清零、`32×174`
+  等比缩小、prefix＋tail 六态真实排版和候选 display-region 合同；raw 保持原样，
+  所有输出只进入 ignored `generated/`。候选展示区合同把 composite 精确可见区
+  记为 `[0,0,128,696]`，并为六态分别生成真实 `246×324px` detail preview。
+- 本授权与 reviewer 的执行前冻结点必须先形成 Git commit；attempt 1 的记录将
+  填入该 commit、固定 child session／result、raw/composite SHA、完整审查和
+  display-region 报告。任何内部失败在 attempt 1–4 后必须先提交完整 `.rN`
+  正文再继续；通过即停，第 5 次失败即耗尽，禁止 attempt 6。
+
 ### 本门禁验证
 
+- 本次 production 授权冻结使用 Windows workspace Python
+  `C:\Users\西奥\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe`
+  `3.12.13`。V5-A reviewer 先以非生产、非方形锁定图做 plumbing smoke：预期仅
+  `raw_canvas_is_square` 失败，其余确定性检查 `17/18`、六态布局 `29/29`；生成的
+  candidate display-region 合同为 `6/6 pass`、violations `0`。该 smoke 没有
+  provider、上传或 ImageGen，临时 ignored 输出已删除，不占 production `0/5`。
+- 当前 `tests/quest_design_contract_test.py`、`tests/repository_contract_test.py`、
+  `tests/asset_workflow_skill_test.py`、V5-A reviewer／V14 renderer／Quest test
+  `py_compile` 与 `lua tests/quest_module_smoke.lua .` 全部 pass；
+  `git diff --check` pass。
 - `conda run -n py312 python tests/quest_design_contract_test.py`：pass。
 - `conda run -n py312 python tests/repository_contract_test.py`：pass。
 - `conda run -n py312 python tests/asset_workflow_skill_test.py`：pass。
@@ -5729,14 +5762,9 @@ bright color, modern styling, or extra object.
 
 ### 当前停止点
 
-- 当前最高允许结果是 `simulation-confirmed / P2 / prompt-prepared /
-  awaiting-production-authorization`。V14 方向已确认，最终 production 正文
-  与 Prompt 完整性复审均已冻结；本次没有 ImageGen、上传、source、runtime
-  或 addon 修改。
-- 下一门禁必须由用户独立明确授权：`QS-B1 V5-A` 最终 production prompt；
-  固定 SHA 的 Image 1／2；square raw 同轴归一化、固定
-  `[448,164,576,860]` crop、V14 polygon `4×` mask、透明 RGB 清零与精确
-  `128×696 RGBA` composite；同循环紧邻前稿仅在上述冻结边界内可作为唯一
-  Image 3 edit 输入；最多 `5` 次实际 ImageGen 调用，流程错误另计。
-- 获得该独立授权前保持 production `0/5`，不得调用固定执行器、创建 source／
-  manifest／exporter／runtime、修改 addon 或隐藏旧 provider Button。
+- 当前为 `prompt-authorized / P3 / production 0/5`。V14 方向、最终 production
+  正文、固定 Image 1／2、确定性 crop／mask 与修复边界均已冻结；尚未调用
+  ImageGen、上传参考或生成候选，也没有 source、runtime 或 addon 修改。
+- 下一门禁是在本授权版本 commit 后调用固定 `@openai/codex@0.143.0` 执行
+  attempt 1，然后按 raw → crop → composite → runtime → 六态真实排版 →
+  display-region 的固定顺序完整审查。内部通过只交用户复审；不得自动晋级 P4。
