@@ -2730,9 +2730,9 @@ silhouette height by the quantified amount.
 ### 元数据、固定输入与当前边界
 
 - 日期：`2026-08-05`。
-- 状态：`prompt-authorized / P3`。
+- 状态：`repair-prepared / P3`。
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`。
-- 本版本实际 ImageGen：`0/5`；上传：`0`；流程错误：`0`。这是新的 V2
+- 本版本实际 ImageGen：`1/5`；固定参考上传：`2`；流程错误：`1`。这是新的 V2
   预算，不能续用或覆盖已耗尽的 V1 `5/5`。
 - 用户生产授权：`2026-08-05`。用户原文：`确认授权 QS-B1 V2；允许每次上传
   固定 SHA 的 Image 1/2，允许同循环紧邻前次输出仅在冻结边界内作为 Image 3
@@ -2983,3 +2983,194 @@ legible when reduced to 32 x 174 pixels and each motif remains legible within a
   `prompt-authorized` 状态先提交，再用固定 Image 1／2 原样执行 attempt 1；
   候选通过内部审查也只到 `candidate-reviewed / P3`。用户明确接受具体候选前，
   source／runtime 写入、addon 修改和旧按钮隐藏仍为 `0`。
+
+### attempt 1 执行与完整审查
+
+| 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
+|---|---|---|---|---|---|---|---|
+| `1/5` | `QS-B1 V2` / `c73d30c` | generate；固定 Image 1／2；无 Image 3 | fixed child `019fd057-94bc-7972-96ef-1037c1a347ac`；返回有效图片，退出 `0` | `generated/quests/QS-B1-V2/attempt-01/raw/QS-B1-V2.attempt-01.png`；`55814b16aa520e55894dbec7bf89c5cb6f1b18d39dae4548234f7b64e2bf4622` | 语义／物理解剖：没有独立 plain root 和 short tail，七个图案区被强横缝分成卡片栈；raw 可见 `309×1150`、纵条宽高比 `0.2687`，比目标 `0.1839` 宽 `46.1%`，等比 fit 后只能得到 `128×476` 而非 `128×696` | 保留单一连续亚麻物件、暖赭／深褐综合色、正视方向、七个纹章语义与顺序、无火漆／书／文字；九区结构不正确，故禁止上传本稿为 Image 3，attempt 2 仅固定 Image 1／2 regenerate | `internal-rejected / repair-prepared` |
+
+- raw 尺寸／模式：`1254×1254 RGB`；边缘连通色键后 bbox
+  `[473,54,782,1204]`。背景只有 `1` 个精确 `#00FF00` 像素，但允许的边缘
+  连通色键能隔离主体；这不是本次第一失败门禁。
+- 确定性审查只对 ignored 副本执行边缘连通色键、透明 RGB 清零、等比
+  bbox-fit、固定九区切片与四态派生。技术检查 `7/11`；root／tail 无可见像素，
+  九片无法无缝恢复为合同物件。没有裁切、非等比拉伸、逐段移动、补画或写入
+  source／runtime／addon。
+- 真实排版：
+  `generated/quests/QS-B1-V2/attempt-01/review/QS-B1-V2.attempt-01.real-layout.png`，
+  SHA-256 `2b11a5a3f4c08988734ca9f43f1f4c5d60bee13d8aa60e8a94e7c3a1f128a151`；
+  使用真实 `676×464` Frame、`246×324` detail viewport、18 行任务、四个
+  `108×41` 奖励槽及 closed／open／scroll 52／scroll 208 四态。几何裁切与
+  命中数量仍通过，但候选切片视觉失败，不能进入用户复审。
+- 审查流程错误 `1`：首次本地 reviewer 因 NumPy-backed Pillow image 为只读，
+  洪泛标记未落盘；没有调用 provider，也没有产生新图片，因此不计生图额度。
+  reviewer 已改为在洪泛前脱离只读 buffer，同一 raw 重审成功；该错误没有复现。
+- 本次不能使用 Image 3：虽然对象身份、七纹章与综合色正确，但独立 root／tail
+  和准确九区结构不正确，不满足用户授权的 edit-input 前置条件。V2.r1 必须
+  只上传固定 SHA、固定顺序的 Image 1／2。
+
+### 完整修复执行正文 — `QS-B1 V2.r1`
+
+This is a fresh regenerate, not an edit. Use only Image 1 and Image 2 in their
+fixed order. Do not use, imitate, or infer geometry from any previous generated
+ribbon candidate. Create exactly one isolated, connected vertical guild
+oath-ribbon normal-state master for a circa-2004 vanilla World of Warcraft
+quest-log interface. The single physical strip is aged coarse-woven linen and
+will be pinned beneath an already existing wax seal at runtime. The wax seal is
+not part of this image. The master has exactly nine vertically contiguous
+construction zones: one visibly plain root, exactly seven equal action bands,
+and one visibly short tail. A deterministic exporter will slice those nine
+zones into one noninteractive root texture, seven separate real Button
+textures, and one noninteractive tail texture. Generate no screen, book, page,
+seal, frame, popup, labels, state variants, or other objects.
+
+Correct the prior failure at the silhouette and anatomy level. The complete
+ribbon must be extremely narrow and tall: its overall height is exactly 5.4375
+times its width, or width:height = 128:696 = 0.183908. Do not make a broad
+bookmark, banner, column of square plaques, or stack of icon cards. Each action
+band is wider than it is tall, width:height = 128:88 = 1.4545, and all seven
+bands share that same invisible allocation. The plain root is only 48 pixels
+tall; the short tail is only 32 pixels tall. Root and tail must both be visibly
+present as distinct portions of the same continuous strip even though no dark
+divider outlines them. The seven action regions are construction slices, not
+seven separately sewn pockets.
+
+The seven action bands have fixed meanings from top to bottom, expressed only
+as broad, softened heraldic ink motifs made for a tiny Azeroth guild warrant:
+1. two compact paired quills joined by a small binding knot for Share Quest;
+2. one folded ledger leaf for Detail Toggle;
+3. an open guild compass for Show Location;
+4. the same guild compass crossed by one quiet diagonal veil stroke for Hide
+   Location;
+5. three swept cartographic trail lines for Clean Marks;
+6. one winding route returning into a compact knot for Reset Marks;
+7. one snapped contract cord with a small central break for Abandon Quest.
+These are hand-painted heraldic marks, not modern interface icons. Draw no
+letters, words, numerals, tooltips, runes, faction logos, skulls, aquilas,
+double-headed eagles, Imperial insignia, science-fiction hardware, or symbols
+copied from another franchise. Only motif seven may use restrained,
+low-saturation dark-wine ink. Its linen remains identical to the other zones.
+
+Reference authority and filtering are mandatory:
+1. Image 1 is the highest visual authority. Inherit its circa-2004 vanilla WoW
+   low-resolution 2D hand-painted language, broad low-frequency value planes,
+   substantial slightly irregular edges, muted ochre and smoked-brown palette,
+   short warm upper-left light, tactile material separation, and sparse
+   concentrated wear. Ignore its complete open-book composition, parchment
+   pages, leather plaques and straps, compass, wax seal, bookmarks, brass
+   corners, rivets, text, buttons, and complete UI layout.
+2. Image 2 is an adjacency reference only. Inherit only the accepted quest
+   book's local color temperature, paint scale, edge softness, upper-left light
+   direction, and restrained wear. Ignore its complete book silhouette, pages,
+   spine, stitches, page gutter, brass corners, transparency, and every directly
+   reusable pixel.
+If references conflict, Image 1 plus the vanilla Azeroth quest-ledger rules
+wins. Image 2 only tunes local adjacency. Do not imitate modern Diablo panels,
+minimalist Skyrim overlays, Warhammer iconography, web UI, or a vertical mobile
+toolbar. The physical idea is only an old guild oath cloth pinned by wax,
+translated fully into Azeroth.
+
+Canvas and exact occupancy are mandatory. Output an exact 1024 x 1024 RGB
+bitmap. Every pixel outside the one ribbon is uniform solid #00FF00, with no
+gradient, checkerboard, texture, haze, vignette, colored glow, spill, cast
+shadow, or loose pixel. Place the ribbon unrotated in a straight-on orthographic
+front view with no tilt or foreshortening. Its exact visible bbox is
+[448,164,576,860], exactly 128 x 696 pixels. In percentage terms, the ribbon is
+only 12.5 percent of the canvas width, spans 67.97 percent of the canvas height,
+and is centered on x = 512. The green left clearance is 448 pixels and the
+green right clearance is 448 pixels. The top clearance is 164 pixels and the
+bottom clearance is 164 pixels. Do not enlarge the strip to fill the canvas.
+It will be reduced exactly four-to-one into a 32 x 174 pixel runtime master.
+
+Before painting texture, use one invisible construction rectangle of exactly
+128 x 696 pixels and allocate its height without drawing guides:
+- plain root [448,164,576,212], exactly 128 x 48 pixels;
+- action band 1 [448,212,576,300], exactly 128 x 88 pixels;
+- action band 2 [448,300,576,388], exactly 128 x 88 pixels;
+- action band 3 [448,388,576,476], exactly 128 x 88 pixels;
+- action band 4 [448,476,576,564], exactly 128 x 88 pixels;
+- action band 5 [448,564,576,652], exactly 128 x 88 pixels;
+- action band 6 [448,652,576,740], exactly 128 x 88 pixels;
+- action band 7 [448,740,576,828], exactly 128 x 88 pixels;
+- short tail [448,828,576,860], exactly 128 x 32 pixels.
+The top 24 source pixels of the root will sit under the existing wax seal. The
+root must remain unmarked, calm, and continuous with the first action band.
+Give the tail only a shallow restrained fork or several broad frayed fibers.
+The tail must not become a long V-shaped banner, pointed bookmark, or eighth
+action band.
+
+The nine regions must be legible through their contents and allocated space,
+not through panel borders. Draw no full-width horizontal seam, stitched cross
+seam, dark rule, raised ridge, bevel, gap, outline, metal divider, or repeated
+shadow at any internal boundary. In particular, do not build seven square cloth
+cards sewn together. Let the same left and right outer cloth edges, vertical
+weave direction, broad shadow plane, and upper-left light flow continuously
+from root through all seven actions into tail. Internal slice lines should be
+visually absent. Separate motifs only with calm linen breathing room. A barely
+perceptible broad change of cloth pressure may exist away from the exact cut
+line, but it must not read as a horizontal divider after reduction.
+
+Motif placement is exact. Inside each 128 x 88 action band, keep its complete
+heraldic motif within relative safe box [16,12,112,76], 96 x 64 source pixels.
+Center it optically and make it readable after reduction to runtime safe box
+[4,3,28,19], 24 x 16 pixels. No motif stroke, identifying shape, dark-wine
+accent, tear, fiber highlight, or high-contrast wear may cross a slice
+boundary. Keep visible quiet linen around each motif. Use broad irregular
+brush-stamped shapes and softened pigment edges, never precise black vector
+outlines, embossed badges, square icon tiles, or identical modern pictogram
+frames.
+
+Material and paint treatment: use one heavy yet flexible aged coarse-woven
+linen oath cloth, not parchment, leather, metal, or photographic fabric. Use
+smoked warm ochre, muted old brown, deep umber shadow, near-black guild ink, and
+only the restrained dark-wine ink on motif seven. Describe weave with a few
+broad painterly fiber groups and two or three large value planes. Do not cover
+the entire strip with sharp procedural crosshatch or uniform high-frequency
+microtexture. Use a short warm upper-left highlight and a slightly deeper
+lower-right edge. Let the narrow silhouette vary only subtly like hand-cut
+cloth while preserving sufficient visual mass at 32 pixels wide. Concentrate
+sparse wear near the short tail and a few outer-edge points, never on cut lines.
+
+Style lock: the result must read as an original low-resolution bitmap sprite
+painted for a 2004-era vanilla World of Warcraft interface. It is warm,
+substantial, slightly irregular, magical without glow, and subordinate to the
+accepted open quest ledger. It must not look vector-clean, photorealistic,
+procedural, glossy, minimalist, or like a vertical set of modern web buttons.
+Avoid thin perfect outlines, rounded rectangles, pills, card gaps, uniform
+embossing, tiny technical line icons, bright gold trim, polished brass frames,
+leather button plates, glass, translucent black, neon, gemstones, spikes,
+skulls, altars, futuristic metal, dense realistic burlap, and modern icon-grid
+rhythm.
+
+Strict exclusions: no wax or seal; no book, cover, page, parchment strip,
+bookmark, leather strap, frame, popup, backdrop, second surface, scenery, or
+visible construction guide; no text, letters, numbers, labels, tooltips, UI
+cursor, or state labels; no separate hover, pressed, disabled, selected, or
+danger-state copies; no cast shadow or detached decoration outside the ribbon;
+no crop, rotation, perspective, stretching, repetition, mirrored sections, or
+disconnected action pieces; no plain-root omission; no short-tail omission; no
+horizontal card seams; no seven-square-panel stack.
+
+Before returning the image, verify in this order: exactly one connected
+vertical linen strip and no other object; exact 1024 x 1024 canvas and uniform
+#00FF00 outside it; exact [448,164,576,860] bbox; the object is 5.4375 times
+taller than wide rather than a broad bookmark; one visible unmarked 48-pixel
+root; seven and only seven 88-pixel action allocations; one visible 32-pixel
+short tail; all nine regions remain physically continuous with no horizontal
+card seams; every motif is in its safe box and follows the specified order;
+only motif seven uses restrained dark-wine; no wax, book, text, modern cards,
+metal frame, photographic fabric, or non-Azeroth symbol; the whole master is
+legible at 32 x 174 pixels and every action motif at 32 x 22 pixels.
+
+### V2.r1 调用边界
+
+- attempt 2 仍使用用户已授权的固定执行器、同顺序 Image 1／2 与最多 `5` 次
+  实际调用总上限；本次调用前累计 `1/5`，成功返回候选后为 `2/5`。
+- 不上传 attempt 1：其九区结构失败，不满足 Image 3 edit 前置条件；本次操作
+  明确为 `regenerate`。
+- 冻结不变：V11 ScrollChild 几何／层序／裁切；九区尺寸；七 Button owner 与
+  顺序；粗织旧亚麻身份；七纹章语义；全局与 Quest 美术基线；色键、四态与
+  真实排版合同；所有禁项。
+- attempt 2 返回后仍从语义／物理结构开始完整审查，并使用候选本身重新生成
+  真实排版。通过即停；失败才在剩余 `3` 次额度内制定下一份完整正文。
