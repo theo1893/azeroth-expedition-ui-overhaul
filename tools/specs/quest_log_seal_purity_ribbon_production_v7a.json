@@ -2,7 +2,7 @@
   "schema": "aeui.quest-log.seal-purity-ribbon.production-contract.v1",
   "version": "QS-B1 V7-A",
   "component": "QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX",
-  "status": "prompt-authorized",
+  "status": "repair-prepared",
   "authorization": {
     "authorized": true,
     "date": "2026-08-06",
@@ -21,7 +21,7 @@
     "skill": "imagegen-0-143-0",
     "package": "@openai/codex@0.143.0",
     "actual_generation_limit": 5,
-    "current_actual_generations": 0,
+    "current_actual_generations": 1,
     "process_errors": 0,
     "process_errors_consume_generation_budget": false,
     "authorized": true
@@ -54,6 +54,24 @@
       "any Warhammer image or downloaded web pixel"
     ]
   },
+  "attempt_history": [
+    {
+      "attempt": 1,
+      "mode": "fresh-generate-with-fixed-image-1-and-image-2-only",
+      "repo_commit_before_generation": "d96c7bc",
+      "fixed_child_session_id": "019fd6c3-9919-7880-bd06-4c4dd95dc356",
+      "prompt_sha256": "83cd06869f7f2432dac6193433b3f0feb05dadd2868f9485c1c810badfa7aad9",
+      "raw_sha256": "5db0c14af577c1e3aee230a47c8e2475a7517e441d99efd3f59ebe7f10804ea4",
+      "raw_size": [1254, 1254],
+      "raw_mode": "RGB",
+      "technical_checks": "13/13 pass",
+      "layout_checks": "29/29 pass",
+      "display_region_checks": "6/6 pass",
+      "first_failed_gate": "art-inheritance-and-crop-safe-material-composition",
+      "decision": "internal-rejected; fresh-regenerate; do-not-upload-attempt-1-as-image-3",
+      "reason": "the fixed crop is dominant gold-orange, contains a full-height vertical seam or fold system, and uses dense uniform photographic or procedural weave instead of broad low-frequency 2004-era hand-painted smoked old-bone planes"
+    }
+  ],
   "provider_output": {
     "identity": "one edge-to-edge square RGB material donor, not a finished ribbon or UI object",
     "required_aspect": 1.0,
@@ -135,5 +153,5 @@
     "fallback": "all existing provider Buttons remain visible and functional until full proxy parity"
   },
   "prompt_location": "docs/modules/quests/work/QUEST.SEALS.md#qs-b1-v7-a-final-production-body",
-  "next_gate": "execute attempt 1 with the committed production body and fixed Image 1/2 only; no Image 3"
+  "next_gate": "execute attempt 2 with the complete committed V7-A.r1 repair body and fixed Image 1/2 only; do not upload attempt 1 as Image 3"
 }

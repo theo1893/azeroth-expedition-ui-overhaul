@@ -299,7 +299,21 @@ def main() -> None:
     assert hashlib.sha256(
         seal_purity_ribbon_v7a_production_path.read_bytes()
     ).hexdigest() == (
-        "89b24fc18109593b28f40b750fea96da6f65e323c1fcc3832bfd8aeed9b39192"
+        "b9c81296a62b83064f82a2a43d154c9800875f6b15421ffe9e8393328762c6eb"
+    )
+    seal_purity_ribbon_v7a_reviewer_path = (
+        ROOT / "tools" / "review_quest_seal_purity_ribbon_candidate_v1.py"
+    )
+    assert seal_purity_ribbon_v7a_reviewer_path.is_file(), (
+        seal_purity_ribbon_v7a_reviewer_path
+    )
+    assert hashlib.sha256(
+        seal_purity_ribbon_v7a_reviewer_path.read_bytes()
+    ).hexdigest() == (
+        "73945f339253d6bda3e4d1710fc8f956e4ef1f7ed0990063c889ea307ebfaa2b"
+    )
+    seal_purity_ribbon_v7a_reviewer = (
+        seal_purity_ribbon_v7a_reviewer_path.read_text(encoding="utf-8")
     )
     seal_substrate_v5_candidate_reviewer_path = (
         ROOT
@@ -3269,7 +3283,7 @@ def main() -> None:
         "QS-B1 V17 wax-over-carrier simulation renderer",
     )
     assert seal_purity_ribbon_v7a_production["version"] == "QS-B1 V7-A"
-    assert seal_purity_ribbon_v7a_production["status"] == "prompt-authorized"
+    assert seal_purity_ribbon_v7a_production["status"] == "repair-prepared"
     v7a_authorization = seal_purity_ribbon_v7a_production["authorization"]
     assert v7a_authorization["authorized"]
     assert v7a_authorization["date"] == "2026-08-06"
@@ -3290,8 +3304,20 @@ def main() -> None:
     assert v7a_executor["skill"] == "imagegen-0-143-0"
     assert v7a_executor["package"] == "@openai/codex@0.143.0"
     assert v7a_executor["actual_generation_limit"] == 5
-    assert v7a_executor["current_actual_generations"] == 0
+    assert v7a_executor["current_actual_generations"] == 1
     assert v7a_executor["authorized"]
+    v7a_history = seal_purity_ribbon_v7a_production["attempt_history"]
+    assert len(v7a_history) == 1
+    assert v7a_history[0]["attempt"] == 1
+    assert v7a_history[0]["technical_checks"] == "13/13 pass"
+    assert v7a_history[0]["layout_checks"] == "29/29 pass"
+    assert v7a_history[0]["display_region_checks"] == "6/6 pass"
+    assert v7a_history[0]["first_failed_gate"] == (
+        "art-inheritance-and-crop-safe-material-composition"
+    )
+    assert "do-not-upload-attempt-1-as-image-3" in (
+        v7a_history[0]["decision"]
+    )
     v7a_inputs = seal_purity_ribbon_v7a_production["fixed_inputs"]
     assert [item["index"] for item in v7a_inputs] == [1, 2]
     assert [item["sha256"] for item in v7a_inputs] == [
@@ -3325,14 +3351,27 @@ def main() -> None:
         "page_reflow"
     ]
     require(
+        seal_purity_ribbon_v7a_reviewer,
+        (
+            "whole-square isotropic LANCZOS",
+            "fixed V7-A crop size changed",
+            "accepted QS-A1 wax SHA-256 changed",
+            "factor = 1.0 - 0.16 * (contact_array / 255.0)",
+            "rgba[mask_array == 0, :3] = 0",
+            "all_real_layout_geometry_checks_pass",
+        ),
+        "QS-B1 V7-A deterministic candidate reviewer",
+    )
+    require(
         seals_work,
         (
             "V17 用户方向结论 — confirmed / 2026-08-06",
-            "prompt-authorized / P3 / production 0/5",
+            "repair-prepared / P3 / production 1/5",
             "QS-B1 V7-A final production body",
-            "prompt-authorized / P3 / actual ImageGen 0/5",
+            "repair-prepared / P3 / actual ImageGen 1/5",
             "1ff46804cb5c5dddd47c56fea2c65c50c22e392c82179b53c5d251af1a65584c",
             "89b24fc18109593b28f40b750fea96da6f65e323c1fcc3832bfd8aeed9b39192",
+            "b9c81296a62b83064f82a2a43d154c9800875f6b15421ffe9e8393328762c6eb",
             "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
             "3b5c2ca6c1e69c74db5c64978cde351596ece6369d339b7125aee43904eb7d86",
             "Create exactly one edge-to-edge square orthographic hand-painted material donor",
@@ -3342,11 +3381,16 @@ def main() -> None:
             "固定 crop `[448,128,576,896]`",
             "1.0 - 0.16 × (accepted_wax_alpha / 255)",
             "pass / no execution-critical unknowns",
-            "当前实际 ImageGen：`0/5 authorized`",
+            "当前实际 ImageGen：`1/5 repair-prepared`",
             "V7-A 独立生产授权记录",
             "授权前正文与机器合同固定于 commit `8a267b6`",
+            "QS-B1 V7-A attempt 1 execution and internal rejection",
+            "art-inheritance-and-crop-safe-material-composition",
+            "QS-B1 V7-A.r1 complete production Prompt — attempt 2 fresh repair",
+            "DARKER SMOKED OLD-BONE PALETTE",
+            "BROAD HAND-PAINTED SURFACE, NOT PHOTOGRAPHIC WEAVE",
         ),
-        "QS-B1 V17 confirmation and V7-A production authorization",
+        "QS-B1 V17 confirmation, V7-A production, and attempt-1 repair",
     )
     require(
         seals_work,

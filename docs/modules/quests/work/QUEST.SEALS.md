@@ -26,7 +26,7 @@
   火漆与载体纵向重叠 `24px`，载体名义宽 `26px`、收起态露出 `4px`，使用
   烟熏旧骨褐挺质誓约纸／亚麻和约五个不等距尖锐尾点；本地 `42/42 pass`、
   展示区 `6/6 pass`、ImageGen `0/0`，当前
-  `prompt-authorized / P3 / production 0/5`；用户于 `2026-08-06` 先回复
+  `repair-prepared / P3 / production 1/5`；用户于 `2026-08-06` 先回复
   “确认”接受 V17 方向，随后独立授权 V7-A 最终 production 正文
 - 当前已确认布底模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V13 / QS-B1 V4-A`；
   用户于 `2026-08-05` 回复“接受, 用这一套试试效果”
@@ -38,7 +38,9 @@
   `turn.completed`，因此实际生图已达 `5/5`
 - 当前 production 正文：`QS-B1 V7-A final production` 已由用户于
   `2026-08-06` 独立授权；授权前正文固定于 commit `8a267b6`。当前实际
-  ImageGen `0/5`、流程错误 `0`；attempt 1 只允许固定 Image 1／2，无 Image 3
+  ImageGen `1/5`、流程错误 `0`；attempt 1 已因偏金橙、全高纵缝和均匀
+  照片式织纹内部退回；attempt 2 使用完整 `V7-A.r1` 正文，只上传固定
+  Image 1／2 fresh regenerate，不上传 attempt 1
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
@@ -46,7 +48,7 @@
   `candidate-rejected / repair-budget-exhausted / P3 / simulation ImageGen 0/0 /
   production 5/5`；menu V6 motifs `user-superseded / P3-history / simulation
   ImageGen 0/0 / production 28/35 complete`；menu V7-A
-  `prompt-authorized / P3 / ImageGen 0/5`；runtime
+  `repair-prepared / P3 / ImageGen 1/5`；runtime
   尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
@@ -58,7 +60,7 @@
   production 5/5 / repair-budget-exhausted`；V6 motifs
   `V6-A／B／C user-superseded / V6-D／E／F／G repair-budget-exhausted /
   P3-history / production 28/35 complete`；V7-A
-  `prompt-authorized / P3 / ImageGen 0/5 / process errors 0`
+  `repair-prepared / P3 / ImageGen 1/5 / process errors 0`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -74,9 +76,10 @@
   因此提前停止，attempt 5 未调用。V14 只用
   本地平面几何预演 donor／crop／mask／composite 分工，用户确认不接受其中
   任何模拟像素
-- QS-B1 V7-A 模拟 ImageGen：`0/0`；production `0/5 authorized`；流程错误
-  `0`。授权前正文 commit `8a267b6`；attempt 1 只上传固定 Image 1／2，无
-  Image 3
+- QS-B1 V7-A 模拟 ImageGen：`0/0`；production `1/5 repair-prepared`；流程
+  错误 `0`。授权前正文 commit `8a267b6`；attempt 1 只上传固定 Image 1／2，
+  无 Image 3，已内部退回；attempt 2 继续只上传固定 Image 1／2 fresh
+  regenerate，不使用失败稿作为 Image 3
 - QS-B1 V5-B 模拟 ImageGen：`0/0`；production `5/5`；流程错误 `7`。E1
   在 provider 启动前因两个 `-i` 后缺少显式 `--` 参数分隔符而返回
   `Reading prompt from stdin... / No prompt provided via stdin.`；无图片、无
@@ -12127,15 +12130,17 @@ previous V6 candidate or Image-2 shape was copied.
 
 ### QS-B1 V7-A final production body
 
-状态：`prompt-authorized / P3 / actual ImageGen 0/5`。本批只生成
+状态：`repair-prepared / P3 / actual ImageGen 1/5`。本批只生成
 一张连续材质 donor；ImageGen 不拥有细长轮廓、Alpha、尾端、火漆、纹章、
 Button 或状态。机器合同：
 `tools/specs/quest_log_seal_purity_ribbon_production_v7a.json`。用户看到的
 pre-authorization 合同 SHA-256 为
 `1ff46804cb5c5dddd47c56fea2c65c50c22e392c82179b53c5d251af1a65584c`；只追加
-授权元数据后的当前机器合同 SHA-256 为
-`89b24fc18109593b28f40b750fea96da6f65e323c1fcc3832bfd8aeed9b39192`。创作正文、
-固定输入职责与确定性合同均未改变。
+授权元数据后的授权快照 SHA-256 为
+`89b24fc18109593b28f40b750fea96da6f65e323c1fcc3832bfd8aeed9b39192`；追加
+attempt 1 账本与 repair gate 后的当前机器合同 SHA-256 为
+`b9c81296a62b83064f82a2a43d154c9800875f6b15421ffe9e8393328762c6eb`。固定输入
+职责、确定性装配合同与用户授权边界均未改变。
 
 #### 固定输入与职责
 
@@ -12283,7 +12288,7 @@ pre-authorization 合同 SHA-256 为
 
 #### 自主修复边界与预算
 
-- 当前实际 ImageGen：`0/5 authorized`；流程错误 `0`。
+- 当前实际 ImageGen：`1/5 repair-prepared`；流程错误 `0`。
 - 授权后单一 V7-A 正文最多 `5` 次实际 ImageGen generation／edit，含首次；
   任一内部完整通过即停。无图片且无 provider 生成证据的流程错误单列，不占
   生图额度，也不重置计数。
@@ -12301,13 +12306,180 @@ pre-authorization 合同 SHA-256 为
 
 ### V7-A 独立生产授权记录
 
-- 当前子状态：`prompt-authorized / P3 / actual ImageGen 0/5`。
+- 当前子状态：`repair-prepared / P3 / actual ImageGen 1/5`。
 - 用户于 `2026-08-06` 在看到完整正文后授权以下原文：
 
   > 确认授权 QS-B1 V7-A final production；允许每次上传固定 SHA 的 Image 1/2，attempt 1 无 Image 3；允许同循环紧邻前次输出仅在冻结修复边界内作为 Image 3 edit 输入；最多 5 次实际 ImageGen 调用，流程错误不占额度；允许按合同执行 1024² 归一化、固定 [448,128,576,896] crop、tracked 128×768 mask、QS-A1 Alpha 接触压暗、透明 RGB 清零、32×192 runtime 与六场景真实排版预演。
 
 - 授权前正文与机器合同固定于 commit `8a267b6`；固定 Image 1／2 与 QS-A1
-  source SHA 已于执行前复核一致。下一门禁是 attempt 1：只上传固定 Image 1／2，
-  无 Image 3；使用 `imagegen-0-143-0 / @openai/codex@0.143.0`。
+  source SHA 已于执行前复核一致。attempt 1 已内部退回；下一门禁是已提交的
+  `V7-A.r1 / attempt 2`：只上传固定 Image 1／2，禁止 Image 3；继续使用
+  `imagegen-0-143-0 / @openai/codex@0.143.0`。
 - 无跨设备精确像素需求：V17 已由 tracked spec／renderer 可重建，方向已完整
   文字化；不创建 handoff。现有 V5-A source 与全部旧 Button fail-open 保持。
+
+### QS-B1 V7-A attempt 1 execution and internal rejection
+
+- 执行前 commit：`d96c7bc`；完整正文：`QS-B1 V7-A final production`；
+  fixed Image 1／2 fresh generate，无 Image 3。child prompt SHA-256
+  `83cd06869f7f2432dac6193433b3f0feb05dadd2868f9485c1c810badfa7aad9`。
+- fixed child：`@openai/codex@0.143.0`，session
+  `019fd6c3-9919-7880-bd06-4c4dd95dc356`；内建 ImageGen 返回一张图片，计入
+  V7-A `1/5`；流程错误 `0`。
+- raw：`generated/quests/QUEST-SEALS/QS-B1-V7-A/attempt-01/raw.png`；
+  `1254×1254 RGB`；SHA-256
+  `5db0c14af577c1e3aee230a47c8e2475a7517e441d99efd3f59ebe7f10804ea4`。
+- 确定性技术门禁：`13/13 pass`；真实排版几何：`29/29 pass`；display-region：
+  `6/6 pass`、violations `0`。review JSON SHA-256
+  `6c2687fc7e30291e8350b704ac79e6cd8ed51c874153428145fcf1780f772a8a`；
+  display report SHA-256
+  `71727963836a73cc57a98163b45094d48bdad9a0f9415d93e86b134e54160b63`；
+  real-layout SHA-256
+  `5792fe490cc6de6df3ebe7b0e785d54feaa976b719b98c029107c0acb8c09977`。
+- 固定 crop `[448,128,576,896]` 为 `128×768`；综合色均值
+  `[145.02,109.12,53.67]`，明显偏金黄／橙褐，高于已确认的烟熏旧骨褐主色；
+  high-frequency luma residual `8.11`。crop 与 `32×192` 运行时都存在连续
+  纵向接缝／折线和均匀细密的照片式或程序式麻布微纹，破坏三至五块宽阔
+  手绘明暗面的 2004 年代位图语言。
+- 第一失败门禁：`art-inheritance-and-crop-safe-material-composition`。技术
+  crop、tracked mask、QS-A1 Alpha 接触压暗、透明 RGB 清零、动态收短、
+  七 Button 和六场景装配都正确，但它们不能抵消材质美术失败。
+- 结论：`internal-rejected / repair-prepared / P3 / 1/5`。没有可冻结的正确
+  材质区；attempt 2 必须 fresh regenerate，只上传固定 Image 1／2，不上传、
+  不编辑、不复用 attempt 1。没有写入 source、runtime、atlas 或 addon。
+
+### QS-B1 V7-A.r1 complete production Prompt — attempt 2 fresh repair
+
+状态：`repair-prepared / authorized-by-bounded-loop`。这是 attempt 2 的完整、
+自包含执行正文。它保持用户授权的 V7-A 组件、固定输入、deterministic crop、
+mask、接触压暗、runtime 和真实排版边界，只加强 attempt 1 首个失败门禁。
+attempt 2 只上传固定 Image 1／2；禁止上传 attempt 1 作为 Image 3。
+
+> Create exactly one edge-to-edge square orthographic hand-painted material donor for
+> the narrow oath carrier of an Azeroth expedition guild wax seal. The output is only
+> one continuous material field. It is not a finished ribbon, purity-seal object, UI
+> button, prop, fabric sample photographed in a studio, or complete interface. Fill
+> the entire square with one coherent, matte, moderately stiff aged hybrid dominated
+> by compressed vellum with only sparse coarse-linen fibres. Do not draw an exterior
+> background, transparent area, isolated silhouette, torn outline, wax, contact
+> shadow, stamp, emblem, icon, writing, rune, border, hole, button, or state.
+>
+> This is a fresh regeneration. Use only Image 1 and Image 2 as the fixed references
+> described below. Do not upload, inspect, edit, trace, imitate, or reuse any pixel,
+> crop, seam, weave, colour identity, or composition from V7-A attempt 1 or any earlier
+> generated candidate.
+>
+> IMAGE AUTHORITY AND INHERITANCE
+>
+> Image 1 is the highest visual authority. Inherit its circa-2004 vanilla World of
+> Warcraft two-dimensional hand-painted bitmap language: three to five broad readable
+> light, middle, and shadow masses; slightly imperfect manual brushwork; subdued warm
+> upper-left illumination; muted expedition-document colour; substantial material
+> weight; and coarse, selectively placed wear that survives low-resolution display.
+> Ignore the complete open book, page geometry, leather cover, brass parts, wax,
+> bookmarks, text, buttons, rewards, and every finished-object silhouette in Image 1.
+>
+> Image 2 is secondary and material-only. Inherit only its quiet field-document age,
+> a few sparse broad grey-brown handling stains, restrained broken fibre cues, and
+> long-used expedition-record character. Ignore the tracker shape, leather strap,
+> compass, quill, rivets, layered pages, text, buttons, and rectangular layout. If the
+> references conflict, Image 1 controls painting era, broad value grouping, palette,
+> upper-left light, material weight, and non-photographic finish. Image 2 contributes
+> only sparse low-frequency ageing and occasional broken fibres.
+>
+> FIXED CROP-SAFE COMPOSITION
+>
+> The whole square is one uninterrupted flat material surface. A deterministic process
+> will isotropically normalize the returned square to 1024 by 1024, then use only x 448
+> through 576 and y 128 through 896. Treat this central 128 by 768 extraction band as
+> the most important region of the image. It must be calm, seamless, representative,
+> and useful from top to bottom. Broad painted masses must cross both sides of this
+> band; the band must never coincide with a boundary between masses.
+>
+> Place no vertical seam, centre crease, fold, stitched join, fabric panel boundary,
+> gutter, lengthwise cord, full-height fibre bundle, dark column, bright column, or
+> colour transition anywhere through that crop. Place no horizontal seam, folded hem,
+> join, band, row, action-slot rhythm, or abrupt value step through it. Do not divide
+> the canvas into panels, strips, squares, lanes, folds, tiles, or woven sections. Do
+> not mirror the left and right halves. Do not create a central spotlight, focal stain,
+> hole, symbol, full-height gradient, repeated 22-pixel rhythm, or periodic weave. When
+> the fixed crop is reduced to 32 by 192, it must still read as one old hand-painted
+> material plane, never as a vertically striped or folded ribbon.
+>
+> DARKER SMOKED OLD-BONE PALETTE
+>
+> The first read must be muted smoked old-bone umber: an aged field-document brown with
+> grey in it, not yellow, mustard, ochre-gold, orange, honey, caramel, tan fabric, or
+> bright parchment. Across the important central crop, keep the dominant visual colour
+> close to RGB [96,78,54] through [116,94,64]. Use broad shadowed compressed areas near
+> RGB [52,40,30] through [70,54,39], a small amount of faded warm old-bone no brighter
+> than RGB [132,106,72], and a few quiet grey-brown stains. Bright warm pixels above
+> about RGB [140,112,76] must be rare accents, never the dominant field. Avoid the
+> previous gold-orange family around RGB [145,109,54]. Keep saturation low and the
+> value range substantial but restrained. It must not read as clean beige paper,
+> golden cloth, orange burlap, yellow suede, near-black leather, or polished wood.
+>
+> BROAD HAND-PAINTED SURFACE, NOT PHOTOGRAPHIC WEAVE
+>
+> Construct the entire square from only three to five large asymmetric matte value
+> regions. Each region should span roughly one quarter to one half of the canvas and
+> blend through broken hand-painted transitions rather than straight boundaries. Add
+> only two to four broad, interrupted compression marks and only a few blunt grey-brown
+> handling stains. Reserve large quiet areas. The centre extraction band must contain
+> broad low-frequency variation, not dense detail.
+>
+> Linen is only a sparse secondary cue. Show at most a few coarse broken fibre bundles
+> in the whole square. Every fibre cue must be broad enough for an old game bitmap,
+> irregularly spaced, softly hand-painted, and stop or dissolve quickly. No fibre,
+> crease, scratch, or compression mark may run more than about one quarter of the
+> canvas height. Do not cover the surface with fine threads, tight crosshatching,
+> uniform nubs, tiny curls, all-over grain, repeated loops, regular warp and weft,
+> photographic burlap, canvas, felt fuzz, procedural noise, embossed pores, leather
+> grain, or wallpaper texture. At thumbnail size, the image must still show broad
+> painted planes rather than a noisy textile photograph.
+>
+> MATERIAL WEIGHT AND LIGHT
+>
+> Make the material visibly firmer and more compressed than soft cloth, felt, velvet,
+> or a hanging celebration ribbon. Compressed vellum controls the surface; coarse linen
+> appears only as sparse embedded fibres. The donor should plausibly become a narrow
+> medieval Azeroth guild oath strip beneath a heavy wax seal, but it remains an empty
+> material field with no finished outline.
+>
+> Render orthographically with no perspective, thickness, cast shadow, edge lighting,
+> or studio setup. Use Image 1's subdued upper-left warmth only as wide, broken painted
+> masses. Never create a full-height highlight, full-height shadow, glossy streak,
+> centred light beam, rim light, bevel, metallic edge, relief, or 3D fold. The surface
+> is matte and hand-painted. Wear is old, sparse, blunt, and accumulated by handling;
+> no fresh cuts, dramatic cracks, holes, burned edges, blood, or luminous magic.
+>
+> STRICT EXCLUSIONS
+>
+> No object silhouette, ribbon outline, torn outer edge, pointed tail, sawteeth,
+> fishtail, fringe, tassel, wax, seal, medallion, emblem, motif, text, rune, prayer,
+> icon, button, state, border, frame, card, book, page edge, leather, wood, metal,
+> rivet, brass, transparent HUD glass, modern toolbar, Diablo III ornament, Skyrim
+> minimalism, neon, glow, chrome, satin, velvet, clean canvas, macro photograph,
+> photoreal material scan, procedural texture, repeating microtexture, tile, straight
+> seam, stitched join, centre crease, vertical fold, horizontal fold, full-canvas
+> directional stripe, perfect symmetry, or regular weave.
+>
+> Do not depict or copy Warhammer or any other franchise identity: no aquila,
+> double-headed eagle, skull, armour, devotional wording, prayer text, purity-seal
+> silhouette, science-fiction metal, heraldic badge, or religious insignia. Borrow no
+> copyrighted symbol or finished-object design. The result remains an original Azeroth
+> expedition-document material painted in the locked vanilla-era visual language.
+>
+> FINAL SELF-CHECK
+>
+> Confirm the output is exactly one square edge-to-edge matte material donor and
+> nothing else. Confirm the central x 448..576, y 128..896 region is intentionally calm
+> and seamless from top to bottom, with no vertical or horizontal join, no centre line,
+> no full-height value band, no fold system, and no periodic weave. Confirm its dominant
+> colour is subdued greyed smoked old-bone around RGB [96,78,54] to [116,94,64], not
+> the rejected gold-orange around [145,109,54]. Confirm the whole image uses only three
+> to five broad hand-painted value masses, large quiet areas, sparse short broken fibre
+> cues, and no dense photographic or procedural micrograin. Confirm there is no object
+> silhouette, transparency, wax, emblem, text, button, border, tail, torn outline,
+> cast shadow, bright cream, golden cloth, orange burlap, near-black leather, metallic
+> shine, modern HUD language, or Warhammer iconography.
