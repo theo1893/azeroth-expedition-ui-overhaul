@@ -3715,6 +3715,24 @@ def main() -> None:
         "QS-B1 V6-E exhausted stop and V6-F continuation gate",
     )
     require(
+        seals_work,
+        (
+            "QS-B1 V6-F attempt 1 execution and review",
+            "019fd61c-4f89-7320-959c-17d6e111e298",
+            "8142a8fdc474fd71efc63d92fd9612f98674677b9404735da3b3bef3b52423b3",
+            "bbox `[185,213,845,817]`",
+            "可见绿色\n  污染 `264`",
+            "median\n  `[214,170,94]`",
+            "字母 g／旋涡",
+            "internal-rejected / repair-prepared / P3 / 1/5",
+            "attempt 1 禁止作为 Image 3",
+            "QS-B1 V6-F.r1 complete production Prompt — repair-prepared / frozen",
+            "OPEN HAIRPIN ROUTE, NOT A SPIRAL",
+            "V6-F `1/5`、整批 `19/35`",
+        ),
+        "QS-B1 V6-F attempt 1 rejection and complete r1 repair gate",
+    )
+    require(
         seal_motifs_v5_candidate_reviewer,
         (
             "CANVAS = (1024, 1024)",
