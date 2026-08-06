@@ -3425,6 +3425,23 @@ def main() -> None:
         "QS-B1 V6-B attempt 1 rejection and complete r1 repair gate",
     )
     require(
+        seals_work,
+        (
+            "QS-B1 V6-B attempt 2 execution and internal pass",
+            "019fd599-d573-7993-88d8-eee403b9bffe",
+            "8f3f8a9d61bd2617f4ecf7737eb2e845d352d596bdf19cd0a497c634f90cec5c",
+            "bbox `[235,176,800,842]`",
+            "可见绿色污染 `0`",
+            "自动 `9/9 pass`",
+            "median `[88,47,18]`",
+            "display-region `6/6 pass`、violations `0`",
+            "candidate-reviewed / P3 / production 2/5 / internal-pass",
+            "V6-B attempt 3／4／5 不调用",
+            "进入 V6-C SHOW attempt 1",
+        ),
+        "QS-B1 V6-B internal candidate pass and sequential stop gate",
+    )
+    require(
         seal_motifs_v5_candidate_reviewer,
         (
             "CANVAS = (1024, 1024)",

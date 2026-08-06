@@ -8598,16 +8598,16 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 
 ### QS-B1 V6-A..G production authorization gate
 
-- 当前状态：V6-A `candidate-reviewed / P3`；V6-B `repair-prepared / P3`；
-  V6-C..G `prompt-authorized / P3`；
+- 当前状态：V6-A／B `candidate-reviewed / P3`；V6-C..G
+  `prompt-authorized / P3`；
   用户于 `2026-08-06` 授权整批顺序执行。
 - 固定输入：
   - Image 1：`assets/locked/quests/任务详情面板_视觉基准_v1.png`
     (`03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`)
   - Image 2：`assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
     (`719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`)
-- 当前计数：V6-A `3/5`、V6-B `1/5`、V6-C..G 各 `0/5`，合计 `4/35`；
-  V6-B attempt 1 已内部退回，当前准备 B.r1。送入提示词前的提取错误与旧 CLI 模型路由 400
+- 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C..G 各 `0/5`，合计 `5/35`；
+  V6-B attempt 2 已内部通过并按单段通过即停，下一段为 V6-C。送入提示词前的提取错误与旧 CLI 模型路由 400
   共 `2` 次流程错误，均未触发 ImageGen，依授权不占生图额度。
 - 用户授权原文：
 
@@ -8624,8 +8624,8 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 | body | 当前实际生图 | 流程错误 | 当前状态 | 下一动作 |
 | --- | ---: | ---: | --- | --- |
 | V6-A SHARE | 3/5 | 2 | candidate-reviewed / P3 | 单段通过即停；等待整批用户验收 |
-| V6-B DETAIL | 1/5 | 0 | repair-prepared | attempt 2 regenerate；固定 Image 1／2，无 Image 3 |
-| V6-C SHOW | 0/5 | 0 | prompt-authorized | 等待 B 结束 |
+| V6-B DETAIL | 2/5 | 0 | candidate-reviewed / P3 | 单段通过即停；等待整批用户验收 |
+| V6-C SHOW | 0/5 | 0 | prompt-authorized | attempt 1；固定 Image 1／2，无 Image 3 |
 | V6-D HIDE | 0/5 | 0 | prompt-authorized | 等待 C 结束 |
 | V6-E CLEAN | 0/5 | 0 | prompt-authorized | 等待 D 结束 |
 | V6-F RESET | 0/5 | 0 | prompt-authorized | 等待 E 结束 |
@@ -9088,3 +9088,39 @@ exterior pixel is uniform exact #00FF00. Confirm the glyph uses only broad flat 
 pigment patches near [105,69,35], [148,104,55], and [72,46,28], with no gold brightness,
 continuous texture, gradient, thickness, highlight, shadow, carrier, text, state,
 enclosed green pixel, or additional mark.
+
+### QS-B1 V6-B attempt 2 execution and internal pass
+
+- 执行前 commit：`aa71157`；完整正文版本：`QS-B1 V6-B.r1`；操作：fresh
+  regenerate。
+- 固定输入：Image 1／2；无 Image 3；提示词正文 `6666 bytes`、SHA-256
+  `0e02e8d18bf644d45ac12101afab96505eb71c78d6fe050a50ef3be3265bdf7d`；未上传或
+  复用 V6-A／B attempt 1 像素。
+- fixed child：`@openai/codex@0.143.0`、`gpt-5.5 / medium`；session
+  `019fd599-d573-7993-88d8-eee403b9bffe`；收到唯一实际图像并
+  `turn.completed`，计为 V6-B `2/5`、整批 `5/35`。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V6/V6-B/attempt-02/raw/QS-B1-V6-B.attempt-02.png`；
+  `1254×1254 RGB`；SHA-256
+  `8f3f8a9d61bd2617f4ecf7737eb2e845d352d596bdf19cd0a497c634f90cec5c`。
+- 确定性审查：归一化后可见 bbox `[235,176,800,842]`，位于 safe box
+  `[160,160,864,864]`；可见绿色污染 `0`；自动 `9/9 pass`，review JSON SHA
+  `9d63d7fd957fb158be601f962caeb9330a235c2d526afea03f8bab7a3c67aa08`。
+  颜色 median `[88,47,18]`、luma p50 `53.27`、chroma p50 `71`，是沉稳暗赭褐。
+- runtime 装配：等比 bbox-fit 为 `12×14px`，位于冻结 `[9,4,23,18]` content
+  box；四态确定性派生。technical board SHA
+  `f5dd11c3318a038a7d530696eff00e4610cdc53f73fff7e618c65b1f5ac36080`。
+- 真实排版：六场景图 `attempt-02.real-layout.png`，SHA
+  `6ceba198aadc0bfe53e87ed19e557475cd6ff3c0545a621c0f3897e2fea514f6`；
+  display-region `6/6 pass`、violations `0`，报告 SHA
+  `e3f8ab2df06fdd90506239aba469f4d97a539d74c9de6b78485ccd8be02888a1`。
+- 美术内审：实心暗赭账页、短折角与两条近色记录笔触在最终 `12×14px` 可辨；
+  边缘不规则、体量厚重，与暗旧布底和任务书页协调；无绿色空腔、金色线框、
+  现代透明文件结构或 runtime 可见的实体阴影。筛选、disabled、局部滚动与完全
+  滚出场景中的可见区和命中区正确。
+- 结论：`candidate-reviewed / P3 / production 2/5 / internal-pass`。依单段内部
+  通过即停，V6-B attempt 3／4／5 不调用。当前只保留 ignored generated 候选与
+  审查证据，不写 source、runtime、addon 或 accepted manifest；需待整批用户明确
+  接受后再进入 P4。
+- 下一动作：按授权顺序进入 V6-C SHOW attempt 1，只上传固定 Image 1／2，无
+  Image 3，且禁止复用 V6-A／B 像素。
