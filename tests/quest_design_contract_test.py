@@ -271,6 +271,17 @@ def main() -> None:
     seal_substrate_v5_candidate_reviewer = (
         seal_substrate_v5_candidate_reviewer_path.read_text(encoding="utf-8")
     )
+    seal_motifs_v5_candidate_reviewer_path = (
+        ROOT
+        / "tools"
+        / "review_quest_seal_menu_motifs_candidate_v1.py"
+    )
+    assert seal_motifs_v5_candidate_reviewer_path.is_file(), (
+        seal_motifs_v5_candidate_reviewer_path
+    )
+    seal_motifs_v5_candidate_reviewer = (
+        seal_motifs_v5_candidate_reviewer_path.read_text(encoding="utf-8")
+    )
     seal_actions_sim_renderer = (
         ROOT / "tools" / "render_quest_log_seal_actions_simulation_v1.py"
     )
@@ -3129,7 +3140,7 @@ def main() -> None:
             "V5-B 正式 production 授权冻结点",
             "确认授权 QS-B1 V5-B 最终 production 正文",
             "attempt 1 没有 Image 3",
-            "QS-B1 V5-B 模拟 ImageGen：`0/0`；production `0/5`；流程错误 `6`",
+            "QS-B1 V5-B 模拟 ImageGen：`0/0`；production `1/5`；流程错误 `6`",
             "V5-B 流程错误",
             "No prompt provided via stdin.",
             "最后一个 `-i` 后加入标准 `--` 参数分隔符",
@@ -3148,9 +3159,32 @@ def main() -> None:
             "CLI turn 提前结束流程错误，不占额度",
             "failed to warm remote plugin catalog cache",
             "execution-blocked / prompt-authorized / P3 / 0/5",
-            "不得继续盲重试",
+            "用户随后明确要求“重试”",
+            "019fd504-7d9a-7fc1-8c14-9c35edc605ba",
+            "08b150a62804c93f247e09041a7dfa4861515854c94854472fa58cf3a7f0a95e",
+            "9/12 pass",
+            "all_visible_pixels_stay_inside_safe_boxes",
+            "完整 V5-B.r1 production Prompt — attempt 2",
+            "NONNEGOTIABLE RENDERING MODE",
+            "attempt 2 必须只上传固定",
         ),
-        "QS-B1 V15 confirmation and V5-B authorized production gate",
+        "QS-B1 V15 confirmation and V5-B active production repair gate",
+    )
+    require(
+        seal_motifs_v5_candidate_reviewer,
+        (
+            "CANVAS = (1024, 1024)",
+            "ACTIONS:",
+            "edge_connected_chroma_key",
+            "all_visible_pixels_stay_inside_safe_boxes",
+            "eighth_cell_is_empty",
+            "write_display_region_contract",
+            "seven independent review-only transparent motif crops",
+            '"source_written": False',
+            '"runtime_written": False',
+            '"addon_changed": False',
+        ),
+        "QS-B1 V5-B deterministic candidate reviewer",
     )
     require(
         progress,

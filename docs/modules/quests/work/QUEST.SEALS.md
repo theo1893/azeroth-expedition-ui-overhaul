@@ -22,25 +22,26 @@
 - 当前已确认模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A`；用户于
   `2026-08-05` 回复“不走figma, 直接下一步”，确认将 ImageGen 布面 donor
   与确定性精确轮廓／Alpha mask 分离的可见方向
-- 最近一次已执行生产正文：`QS-B1 V5-A.r3 / attempt 4`；当前无下一执行正文，
-  循环已按内部完整通过提前停止
-- 当前已授权未执行正文：`QS-B1 V5-B`；用户于 `2026-08-06` 明确授权固定
-  Image 1／2、受限同循环 Image 3 edit、最多五次实际 ImageGen 和合同内
-  确定性后处理；当前 `execution-blocked / 0/5`
+- 最近一次已执行生产正文：`QS-B1 V5-B / attempt 1`；fixed child session
+  `019fd504-7d9a-7fc1-8c14-9c35edc605ba` 已返回图片并完成
+  `turn.completed`，因此计为实际生图 `1/5`
+- 当前下一执行正文：`QS-B1 V5-B.r1 / attempt 2`；使用固定 Image 1／2
+  fresh regenerate，不上传 attempt 1。用户原授权继续覆盖最多五次实际
+  ImageGen 和合同内确定性后处理；当前 `repair-prepared / 1/5`
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
   `source-accepted / P4 / production 4/5`；menu V5-B motifs
-  `prompt-authorized / execution-blocked / P3 / simulation ImageGen 0/0 /
-  production 0/5`；runtime 尚未完成
+  `repair-prepared / P3 / simulation ImageGen 0/0 / production 1/5`；runtime
+  尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
   `simulation-confirmed / V3-A repair-budget-exhausted / V3-B gated / P3`；V1 保持
   `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`；
   QS-B1 V4-A `candidate-rejected / repair-budget-exhausted / P3 / 5/5`；
   QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
-  `0/5 / gated`；V5-B motifs `prompt-authorized / execution-blocked / P3 /
-  simulation ImageGen 0/0 / production 0/5`
+  `0/5 / gated`；V5-B motifs `repair-prepared / P3 / simulation ImageGen 0/0 /
+  production 1/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -56,7 +57,7 @@
   因此提前停止，attempt 5 未调用。V14 只用
   本地平面几何预演 donor／crop／mask／composite 分工，用户确认不接受其中
   任何模拟像素
-- QS-B1 V5-B 模拟 ImageGen：`0/0`；production `0/5`；流程错误 `6`。E1
+- QS-B1 V5-B 模拟 ImageGen：`0/0`；production `1/5`；流程错误 `6`。E1
   在 provider 启动前因两个 `-i` 后缺少显式 `--` 参数分隔符而返回
   `Reading prompt from stdin... / No prompt provided via stdin.`；无图片、无
   provider result。E2 已启动固定 child session，但正文提取起点要求首句整行
@@ -69,7 +70,11 @@
   commentary 后结束，事件流没有 tool call 或 `turn.completed`，仍无文件。
   E6 对同一 session 的唯一恢复再次出现 remote plugin catalog 连接失败，
   没有 agent/tool/provider result 或文件。六次均不占实际生图额度；相同
-  工具发现错误已复现，按工作流停止重试
+  工具发现错误已复现，按工作流停止重试。用户随后明确要求“重试”；新的
+  fixed child 成功返回 attempt 1 raw。该候选七对象存在，但七格全部越出
+  safe box，第四色键空格仍有可见残留；目视还显示实体金属／纸页／绳索式
+  体积、高光和描边，而不是无底材的哑光矿物颜料授印。当前已进入
+  `V5-B.r1 / repair-prepared / 1/5`
 - QS-B1 历史流程错误：V1 `1`、V2 `3`、V3 `0`、V4-A `1`、V5-A `1`。均按
   “无生成证据才不占额度”记录
 - tracked source：
@@ -6830,12 +6835,12 @@ uniform exact #00FF00.
   `完整性审计` 标题边界提取、去除两标题后为 `6998 bytes`；传入参数正文
   SHA-256 `762930e574b4c3fdf0ec6898946e51742d61ccfd9ae09913e018e95035a1dc54`；
   首句已核对为 `Use Image 1 and Image 2 only as fixed visual references.`
-- 当前最高状态：`prompt-authorized / execution-blocked / P3 / 0/5`。固定
-  `@openai/codex@0.143.0` child 无法发现／调用内置 `image_gen`，attempt 1
-  尚未发生；在该执行路径恢复或用户另行授权改变路径前，不得继续盲重试。
-  恢复该路径后仍必须用上方英文正文逐字执行 attempt 1，再完成
-  范围、语义、风格、像素、四态与六场景真实排版审查。内部通过最高只到
-  `candidate-reviewed / P3`，不得自动写 source/runtime/addon。
+- 当前最高状态：`repair-prepared / P3 / 1/5`。用户明确要求重试后，固定
+  `@openai/codex@0.143.0` child 已恢复并产生 attempt 1；该候选未通过
+  safe-box、空格／绿残留与美术材料门禁。下方完整 `V5-B.r1` 正文已在同一
+  冻结修复边界内准备，attempt 2 必须 fresh regenerate 且只上传固定
+  Image 1／2。内部通过最高只到 `candidate-reviewed / P3`，不得自动写
+  source/runtime/addon。
 
 ### V5-B 流程错误
 
@@ -6847,3 +6852,234 @@ uniform exact #00FF00.
 | E4 | `QS-B1 V5-B` / `00641d6` | fixed child session `019fd4f6-0883-7701-99d4-299a3273c3cd` | 完整正文、固定输入、空临时 workdir 与 `workspace-write` 均正确；child 明确选择内置 `image_gen`，随后仅报告 remote plugin catalog 请求 `https://chatgpt.com/backend-api/ps/plugins/list` 发送失败。没有 tool call／provider result；`/private/tmp/aeui-qs-b1-v5b-attempt-01-FQ2jLB` 与项目 `attempt-01/` 均无文件 | 保持所有授权输入与正文不变；用固定 child 的结构化事件输出复核一次工具发现／调用，仍使用新的空临时目录。若同一 catalog／tool-discovery 错误再次出现且仍无生成证据，则按工作流暂停诊断，不再无限重试 | 网络／工具发现流程错误，不占额度；仍为 `0/5` |
 | E5 | `QS-B1 V5-B` / `839d44f` | fixed child session `019fd4f8-7c20-77d0-9aa0-cc8d0042ce02` | 新空目录和结构化 `--json` 启动成功，完整正文与 Image 1／2 均在 session 中；事件只有 `thread.started`、`turn.started` 和一条 commentary `agent_message`，rollout 没有 `image_gen` tool call、provider result、`turn.completed` 或其他错误，临时目录和项目目录均为空 | 不再 fresh launch；只对同一个 session 做一次 `codex exec resume` 传输恢复，明确要求立即继续既有请求并调用内置 `image_gen`，不得重写创意正文或启动新 child。若仍只返回 commentary，则固定 0.143.0 路径阻塞并停止 | CLI turn 提前结束流程错误，不占额度；仍为 `0/5` |
 | E6 | `QS-B1 V5-B` / `4e2b2d9` | resumed fixed child session `019fd4f8-7c20-77d0-9aa0-cc8d0042ce02` | `codex exec resume --json` 重新打开同一会话，随后再次报告 `failed to warm remote plugin catalog cache`：向 `https://chatgpt.com/backend-api/ps/plugins/list` 发送请求失败。事件只有 `thread.started`／`turn.started`，没有 agent completion、`image_gen` tool call、provider result 或图片 | 相同工具发现／网络错误已在一次针对性恢复后复现；按 bounded-loop 规则停止全部 fixed-child 重试，不切换当前会话原生生图或 API/CLI fallback，也不消耗实际预算 | `execution-blocked / prompt-authorized / P3 / 0/5`；等待固定 0.143.0 内置工具恢复或用户另行改变执行路径授权 |
+
+### QS-B1 V5-B attempt 1 执行与内部审查
+
+- 用户于 `2026-08-06` 明确要求“重试”；该指令只恢复既有固定执行路径，不
+  改变 V5-B 正文、输入、修复边界或五次实际生图预算。
+- 执行正文／前置 commit：`QS-B1 V5-B / 75877c9`；正文仍为上方 SHA
+  `762930e574b4c3fdf0ec6898946e51742d61ccfd9ae09913e018e95035a1dc54`。
+- fixed child session：`019fd504-7d9a-7fc1-8c14-9c35edc605ba`；事件流包含
+  图片生成声明、cache 图片、项目临时目录复制与 `turn.completed`，故这次
+  必须计为实际 ImageGen `1/5`。启动时另有
+  `failed to load models cache: missing field supports_reasoning_summaries`，但
+  它未阻止本次 provider 图片生成，不能记作非计数流程错误。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V5-B/attempt-01/quest_admin_emblems_worksheet_raw.png`；
+  `1254×1254 RGB`；SHA
+  `08b150a62804c93f247e09041a7dfa4861515854c94854472fa58cf3a7f0a95e`。
+- 专用确定性 reviewer：
+  `tools/review_quest_seal_menu_motifs_candidate_v1.py`。它只在 ignored
+  `generated/` 中执行同轴 `1024²` 归一化、边缘连通色键、透明 RGB 清零、
+  固定七格 review crop、等比 runtime bbox-fit、四态预演与真实排版；不写
+  source、runtime 或 addon。
+- 机器审查：`9/12 pass`；review JSON SHA
+  `3bee457931997bff0039e5aaeb9b5425eb7a9ff7f0ce90fcd538eb5b6be84006`。
+  第一失败门禁为 `all_visible_pixels_stay_inside_safe_boxes`：七格全部越界，
+  第一排尤其向下触碰 cell 底边；第四色键空格仍有 `270` 个可见残留像素；
+  SHARE／DETAIL／CLEAN／RESET 分别仍有 `45／48／29／8` 个可见绿色污染像素。
+- 真实排版：
+  `attempt-01.real-layout.png`，SHA
+  `b6f8352ce662ddbb9fc1fe4b1a0a42a4a76d89134a2dd39d96811185dab6a890`；
+  使用 accepted V5-A 布底、真实 `676×464` Quest Log、18 行、四奖励和六种
+  closed／7／5／3-disabled／partial-scroll／fully-out 状态。display-region
+  报告 SHA
+  `375f605dcce964d86b871963fbe7b331f5d0971f75b3d22083640c9134b494d2`，
+  `6/6 pass`、violations `0`；该通过只证明既有运行时几何，不挽救 source
+  safe box 或美术失败。
+- 语义／美术目视：七个功能大体可辨，但候选把 SHARE 画成完整立体羽笔、
+  DETAIL 画成有皮革般厚边和纸纹的实体页、SHOW／HIDE 画成独立金属罗盘刃、
+  CLEAN 画成带高光的实体条带、RESET 画成带圆形路点的现代地图路线、
+  ABANDON 画成有编织体积和高光的圆柱绳。普通六项还有深外描、明亮高光、
+  多明暗斜面和强综合色差，读取为金属／皮革物件，不是无底材、哑光、低饱和
+  的旧赭金矿物颜料授印。这是美术材料身份失败，不能靠色键或缩小修复。
+- 决策：`internal-rejected / repair-prepared / P3 / 1/5`。对象数与语义方向
+  继续冻结，但 attempt 1 像素不保留。因为 cell／safe box、时代风格和材料
+  身份均不正确，不满足 Image 3 使用前提；attempt 2 必须只上传固定
+  Image 1／2 fresh regenerate。
+
+### 完整 V5-B.r1 production Prompt — attempt 2
+
+Use Image 1 and Image 2 only as fixed visual references. Create one production
+worksheet containing exactly seven independent, small, flat hand-painted quest
+administration pigment emblems for a circa-2004 vanilla World of Warcraft UI
+overhaul. This is a bitmap sprite-source worksheet, not a scene, screenshot,
+complete interface, or presentation mockup.
+
+NONNEGOTIABLE RENDERING MODE
+
+Every emblem is a direct, flat, imperfect transfer of old guild pigment onto no
+visible backing at all. Paint a two-dimensional pigment mark that merely depicts
+the requested symbol. Do not render the depicted quills, ledger leaf, compass,
+trails, route, or cord as physical three-dimensional objects. There is no object
+thickness, bevel, rim, cast shadow, contact shadow, metallic face, paper surface,
+leather edge, cylindrical rope volume, polished highlight, or separate dark
+outline. Form comes from a compact flat silhouette, non-constant brush width,
+slight pigment-density variation, small missing-pigment breaks, and restrained
+soft bleed only. If any emblem looks like a collectible item, miniature prop,
+metal badge, parchment object, or modern rendered icon, it is wrong.
+
+REFERENCE AUTHORITY
+
+Image 1 is the highest visual authority. Inherit its old Azeroth
+expedition-ledger language: substantial but slightly irregular hand-painted
+contours, broad value grouping, muted warm color, sparse believable wear,
+upper-left warm-light logic in the surrounding UI, and the visual weight of a
+formal adventurers' guild record from vanilla World of Warcraft. Translate that
+weight into flat stamped pigment; do not copy its complete book, pages, leather
+frame, brass, compass ornaments, wax seal, ribbons, text, reward slots, buttons,
+or composition.
+
+Image 2 is a secondary micro-scale reference only. Inherit only its economical
+stroke count, softened hand-painted edges, and legibility when reduced to a tiny
+game UI mark. Do not copy, trace, rotate, recolor, or rearrange its triangles,
+circles, check mark, 2-by-2 layout, positions, transparency, or pixels.
+
+CANVAS, CELLS, AND HARD SAFE BOXES
+
+Render an exact square 1024 by 1024 RGB worksheet. Fill every pixel outside the
+seven pigment emblems with one perfectly uniform exact chroma-key green
+#00FF00. The green field has no gradient, vignette, noise, lighting, texture,
+shadow, contamination, or color variation. Do not add grid lines, labels,
+numbers, text, captions, frames, checkerboard, or a transparency preview.
+
+Use the following invisible 4-by-2 layout. The safe boxes are hard clipping
+boundaries, not approximate suggestions. Every visible pigment pixel,
+antialiasing pixel, soft bleed, worn fragment, and dense pigment pool must remain
+strictly inside its assigned safe box with green clearance to all four safe-box
+edges. No mark may touch a cell boundary. Keep the eighth cell entirely empty
+exact #00FF00.
+
+1 SHARE: cell [32,160,256,384], hard safe box [64,208,224,336], optical center
+near [144,264], maximum visual span about 144 by 96.
+2 DETAIL: cell [272,160,496,384], hard safe box [304,208,464,336], optical center
+near [392,272], maximum visual span about 112 by 112.
+3 SHOW: cell [512,160,736,384], hard safe box [544,208,704,336], optical center
+near [616,272], maximum visual span about 112 by 112.
+4 HIDE: cell [752,160,976,384], hard safe box [784,208,944,336], optical center
+near [864,280], maximum visual span about 128 by 112.
+5 CLEAN: cell [32,608,256,832], hard safe box [64,656,224,784], optical center
+near [152,712], maximum visual span about 144 by 80.
+6 RESET: cell [272,608,496,832], hard safe box [304,656,464,784], optical center
+near [376,728], maximum visual span about 136 by 96.
+7 ABANDON: cell [512,608,736,832], hard safe box [544,656,704,784], optical
+center near [624,720], maximum visual span about 128 by 72.
+8 EMPTY: cell [752,608,976,832], completely uniform exact #00FF00.
+
+SEVEN FLAT PIGMENT SYMBOLS
+
+SHARE is a compact flat pigment silhouette of two short broad old quills
+crossing at unequal angles and bound by one compact covenant knot. Suggest each
+feather with one broad mass and only two or three coarse edge notches. Do not
+render individual feather barbs, shafts with polished highlights, long needle
+tips, a scroll, handshake, share arrow, or two physical feather objects.
+
+DETAIL is one simplified flat guild-ledger-leaf mark with one short folded
+corner. Use a broad economical filled or broken-brush page silhouette. Do not
+render parchment grain, a thick page edge, curled leather-like corners, a
+bordered card, a modern file, envelope, application window, menu, or writing.
+
+SHOW is one unified flat four-direction expedition-guild compass mark. Four
+broad, slightly unequal blunt points surround one very small quiet center and
+read as one stamped symbol, not four separate metal arrowheads. No outer ring,
+letters, cartographic ticks, central gem, bevel, or glow.
+
+HIDE is an independently painted compass from the same flat pigment family,
+crossed by one short quiet partially worn diagonal veil stroke. The veil is a
+simple brush interruption, not a physical quill, plank, ribbon, or weapon. It
+must not resemble an eye slash, prohibition circle, close X, or modern
+visibility icon.
+
+CLEAN is three broad flat cartographic trail strokes fanning from one motion.
+Their lengths, curves, spacing, pigment density, and endpoints are unequal. They
+are brush trails, not raised ribbons or blades. No broom, speed lines, water
+waves, list, repeated chevrons, or mechanical parallel bars.
+
+RESET is one continuous winding flat expedition-route brushstroke returning to
+one compact irregular route knot. Keep the route visibly open rather than a
+perfect circle. Do not add waypoint discs, detached stones, arrowheads, gear
+teeth, a location pin, or a modern refresh symbol.
+
+ABANDON is one short substantial flat old-wine pigment silhouette of a contract
+cord snapped at the center, with a clear quiet gap and only a few coarse fibers
+at the broken ends. Suggest cord identity with two or three broad twists at
+most; do not render cylindrical braided rope, specular thread, depth shading,
+an X, trash can, skull, blood, weapon, or warning triangle.
+
+PIGMENT, COLOR, AND MICROSTRUCTURE
+
+The first six emblems use matte low-saturation aged ochre mineral guild pigment.
+Their dominant midtone should stay close to restrained earthy old ochre,
+approximately RGB 174,138,78 in role, with only small local density changes.
+They must remain visibly lighter than the smoked dark-brown cloth that will sit
+behind them in game, but they are not metallic gold, polished brass, bright
+yellow, orange, ivory, white, emissive, glowing, or celebratory. Do not create a
+bright top edge and dark bottom edge; do not model directional object lighting.
+
+ABANDON alone uses muted greyed dark old-wine pigment, approximately RGB
+156,72,61 in role. It is distinct from the ochre family but never bright red,
+blood-red, glossy, neon, or glowing. Do not tint the whole worksheet or any
+other emblem wine red.
+
+Use only a few broad hand-painted strokes per emblem. Allow non-constant line
+width, one to three controlled missing-pigment interruptions, one or two small
+denser pools at turns, and a restrained two-to-four source-pixel soft bleed.
+Keep density variation shallow enough that every mark still reads as one flat
+pigment transfer. No deep dark contour, inner rim, hard white highlight,
+material texture, engraved detail, feather micro-barbs, parchment grain,
+metal facets, woven rope microtexture, uniform noise, or repeated speckles.
+
+The seven emblems need small independent differences in size, optical center,
+angle, wear, and pressure while remaining inside their exact safe boxes. Do not
+regularize them into seven same-size, same-center, same-weight vector icons, but
+also do not enlarge any mark merely to fill its cell.
+
+ERA AND STYLE
+
+The result must feel native to a 2004-era Azeroth guild ledger: hand-painted 2D
+game UI sprite art, broad readable shapes, slightly irregular but substantial
+forms, low saturation, and quiet material weight. It must not resemble a modern
+flat HUD, mobile icon set, web toolbar, Diablo III ornament, Skyrim minimalist
+menu, Warhammer purity-seal iconography, photorealistic scan, procedural
+texture, contemporary high-resolution concept-art presentation, or a sheet of
+rendered inventory items.
+
+STRICT EXCLUSIONS
+
+No cloth strip, ribbon, parchment tag, page material, leather plate, wax, button
+face, border, card, frame, backing tile, circular medallion, brass mount, rivet,
+engraving plate, embossed badge, drop shadow, contact shadow, dark outline,
+bevel, inner glow, outer glow, specular highlight, glass, neon, chrome, 3D
+render, photographic fiber, uniform weave, repeated noise, perfect symmetry,
+mechanical line weight, or text. Do not join any two emblems with pigment,
+decoration, shadow, or a shared object. Do not paint green inside an emblem or
+tint pigment edges green.
+
+FINAL SELF-CHECK BEFORE OUTPUT
+
+Confirm there are exactly seven and only seven visible flat pigment emblems.
+Confirm each cell contains its requested semantic mark and the eighth cell is
+fully empty. Confirm every visible, antialiased, bled, and worn pigment pixel is
+strictly inside the stated hard safe box with green clearance. Confirm the first
+six read as matte muted aged-ochre pigment and only ABANDON is muted greyed dark
+wine. Confirm none reads as a physical feather, parchment item, metal compass,
+raised ribbon, waypoint route, cylindrical rope, badge, or rendered inventory
+object. Confirm there is no backing, text, copied Image-2 silhouette, modern icon
+shorthand, or another IP symbol. Confirm every remaining canvas pixel is one
+uniform exact #00FF00.
+
+### V5-B.r1 完整性与修复边界复核
+
+- 以上正文按两个三级标题边界提取、去除标题后为 `9701 bytes`；传入参数正文
+  SHA-256 `661c756c450eecf1c6a653335e3a8d49fef2775266f380ccced851cba078fa3f`；
+  首句已核对为 `Use Image 1 and Image 2 only as fixed visual references.`。
+- 本正文仍只包含七枚原功能纹章、第八空格、原固定 cell／safe box、六赭金一
+  酒红颜色角色、无载体与香草魔兽二维手绘语言；没有新增对象、状态、参考或
+  外部输入。
+- 修复只强化已授权的 safe-box 外溢、绿残留、笔画、颜料密度、对比和材料
+  身份门禁；不改变 V15 可见方向、七张独立 source／七 Button 所有权、画布、
+  runtime 几何或四态派生合同。
+- attempt 2 操作为 fresh regenerate；Image 1／2 SHA 与职责保持不变，明确不
+  上传 attempt 1、V15 模拟、V5-A 布底或历史候选。
+- 下一门禁：提交本完整正文后，以固定 `imagegen-0-143-0` 执行 attempt 2；
+  返回图片才把实际计数从 `1/5` 增加到 `2/5`。
