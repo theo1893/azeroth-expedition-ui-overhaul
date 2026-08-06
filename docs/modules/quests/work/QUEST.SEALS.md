@@ -8598,18 +8598,20 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 
 ### QS-B1 V6-A..G production authorization gate
 
-- 当前状态：V6-A／B／C `candidate-reviewed / P3`；V6-D..G
-  `prompt-authorized / P3`；
+- 当前状态：V6-A／B／C `candidate-reviewed / P3`；V6-D
+  `internal-rejected / repair-prepared / P3`；V6-E..G `prompt-authorized / P3`；
   用户于 `2026-08-06` 授权整批顺序执行。
 - 固定输入：
   - Image 1：`assets/locked/quests/任务详情面板_视觉基准_v1.png`
     (`03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`)
   - Image 2：`assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
     (`719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`)
-- 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C `3/5`、V6-D..G 各 `0/5`，
-  合计 `8/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外内部通过，下一段为
-  V6-D。送入提示词前的提取错误与旧 CLI 模型路由 400
-  共 `2` 次流程错误，均未触发 ImageGen，依授权不占生图额度。
+- 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C `3/5`、V6-D `1/5`、
+  V6-E..G 各 `0/5`，合计 `9/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
+  内部通过，V6-D attempt 1 已内部否决，下一次为 V6-D attempt 2 fresh
+  regenerate。送入提示词前的提取错误、旧 CLI 模型路由 400 与 V6-D provider
+  结果占位文件名首次落位失败共 `3` 次流程错误；均未新增 ImageGen，依授权不占
+  生图额度。
 - 用户授权原文：
 
 > 确认授权 QS-B1 V6-A/B/C/D/E/F/G 最终 production 正文；按 A→G 顺序执行；每段每次上传固定 SHA 的 Image 1/2，每段首次无 Image 3，仅允许同段紧邻前次输出在冻结修复边界内作为 Image 3 edit 输入；每段最多 5 次实际 ImageGen 调用，最坏合计 35 次，流程错误不占额度；单段内部通过即停，单段耗尽不阻止其他已授权独立段继续，禁止跨段复用像素；允许按合同执行同轴 1024² 归一化、边缘连通色键、透明 RGB 清零、等比 bbox-fit、七张独立 candidate/source、四态派生与真实排版预演。
@@ -8627,7 +8629,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 | V6-A SHARE | 3/5 | 2 | candidate-reviewed / P3 | 单段通过即停；等待整批用户验收 |
 | V6-B DETAIL | 2/5 | 0 | candidate-reviewed / P3 | 单段通过即停；等待整批用户验收 |
 | V6-C SHOW | 3/5 | 0 | candidate-reviewed / P3 | 单段通过即停；授权 bbox-fit 例外 |
-| V6-D HIDE | 0/5 | 0 | prompt-authorized | attempt 1；固定 Image 1／2，无 Image 3 |
+| V6-D HIDE | 1/5 | 1 | internal-rejected / repair-prepared / P3 | attempt 2 fresh；固定 Image 1／2，无 Image 3 |
 | V6-E CLEAN | 0/5 | 0 | prompt-authorized | 等待 D 结束 |
 | V6-F RESET | 0/5 | 0 | prompt-authorized | 等待 E 结束 |
 | V6-G ABANDON | 0/5 | 0 | prompt-authorized | 等待 F 结束 |
@@ -9459,3 +9461,171 @@ additional mark.
   accepted manifest；需待整批用户明确接受后进入 P4。
 - 下一动作：按授权顺序进入 V6-D HIDE attempt 1，只上传固定 Image 1／2，无
   Image 3，且禁止复用 V6-A／B／C 像素。
+
+### QS-B1 V6-D attempt 1 execution and review
+
+- 执行前 commit：`3e1cf0b`；完整正文版本：`QS-B1 V6-D`；操作：generate。
+- 固定输入：Image 1／2；无 Image 3；提示词正文 `4689 bytes`、SHA-256
+  `9ff24dafbd7a05ea58058a37fdd58dad0167c07ebab063761e766b09ce49e47f`；未上传或
+  复用 V6-A／B／C 的任何生成像素。
+- fixed child：`@openai/codex@0.143.0`、`gpt-5.5 / medium`；session
+  `019fd5c7-85eb-75d1-bbc5-204868cc953d`；收到唯一实际图像并
+  `turn.completed`，计为 V6-D `1/5`、整批 `9/35`。
+- 文件落位流程错误：child 首次把 provider 元数据占位名 `_image_id_.png` 当作
+  实际文件名，`cp` 返回 `No such file or directory`；随后在同一 provider 结果
+  目录解析到真实 PNG 并成功复制。该过程没有再次调用 ImageGen，记录为 V6-D
+  流程错误 `1`，不占生图额度。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V6/V6-D/attempt-01/raw/QS-B1-V6-D.attempt-01.png`；
+  `1254×1254 RGB`；SHA-256
+  `841ff0e130b2183c80a910e98d1fa288d6e605406d1a32d95d0e041e6a0df6b5`。
+- 确定性审查：同轴归一化后可见 bbox `[195,161,830,843]`，位于 safe box
+  `[160,160,864,864]`；可见绿色污染 `160`，自动 `8/9`，第一技术失败为
+  `visible_green_spill_is_zero`。review JSON SHA
+  `8714f1ee6f659d74acef486d0e2b8397f3f321bcbf727ffb16b2020326676ea1`。
+- 美术内审：median `[211,142,46]`、luma p50 `149.956`、chroma p50 `162`；
+  四个尖锐菱形方向块带明亮金色倒角、表面厚度和高光，整体是实体徽章而非旧公会
+  账册上的平面矿物颜料。斜向元素过细、过长且两端尖锐，读作一根武器或划伤；与
+  四尖结构组合后接近“被划掉的星形／禁止标记”，不满足克制的 HIDE 语义。
+- runtime 装配：确定性等比 fit 为 `13×14px`，位于冻结 content box
+  `[8,4,24,18]` 内；六场景 display-region `6/6 pass`、violations `0`，报告
+  SHA `a499603734c6692c413cb799ed9889b1ad52367ca677f49c83610c357a6be51e`；
+  真实排版 SHA `f8910f1b3f421c9c4daab6d0205ca4f098afca184f686802265ab13d65fcf247`。
+- 结论：`internal-rejected / repair-prepared / P3 / 1/5`。失败涉及颜色家族、材质
+  表达与关键轮廓，而不是可在原像素上进行的局部修补；attempt 1 禁止作为 Image 3。
+  attempt 2 必须 fresh regenerate，只上传固定 Image 1／2，禁止跨段像素。
+- 下一版必须保持：HIDE 功能语义、独立 normal-state 单对象、四向公会方向标加一条
+  短斜向遮蔽墨带、1024² RGB、精确绿色背景、safe box、无 carrier、runtime
+  content box 与全部动态内容排除。
+- 下一版只允许修复：把方向块改为短、宽、钝、不等的平面暗赭颜料块；把斜向元素
+  改为局限在中心区域的短粗磨损墨带；去除金属亮度、倒角、厚度、高光、尖端和绿色
+  边缘污染，并维持一个连通语义组件。
+
+### QS-B1 V6-D.r1 complete production Prompt — repair-prepared / frozen
+
+Use Image 1 and Image 2 only as fixed visual references. Freshly generate exactly one
+independent normal-state HIDE emblem for a circa-2004 vanilla World of Warcraft
+quest-log administration menu. This is a flat bitmap pigment sprite source, not a
+scene, screenshot, UI mockup, worksheet, atlas, button, ribbon, map, physical badge,
+metal object, inventory item, or complete interface. Do not use the preceding V6-D
+attempt or any V6-A, V6-B, or V6-C generated pixel as an input, identity reference,
+texture donor, tracing source, or edit source.
+
+REFERENCE AUTHORITY AND IMAGE ROLES
+
+Image 1 is the highest visual authority for the old Azeroth expedition-ledger language:
+heavy hand-painted masses, muted earth color, slight asymmetry, sparse wear, and the
+serious visual weight of a vanilla-era adventurers' guild record. Inherit only that
+era, weight, restrained palette, and handmade surface logic. Do not copy its book,
+pages, leather frame, brass, wax seal, ribbons, text, reward slots, buttons, compass
+ornaments, or composition.
+
+Image 2 is a secondary micro-scale reference only. Inherit only its economical stroke
+count, softened hand-painted perimeter, broad readable masses, and legibility after
+severe downscaling. Do not copy, trace, rotate, recolor, or rearrange any triangle,
+circle, check mark, 2-by-2 layout, position, transparency, or pixel from Image 2.
+
+The accepted SHOW object establishes only the abstract family rule that guild-direction
+marks use broad blunt unequal earthy pigment masses. It is not an image input and no
+pixel, wear pattern, silhouette, center, orientation, or texture from another V6 body
+may be reused. This HIDE emblem must be independently formed.
+
+CANVAS, COUNT, AND PLACEMENT
+
+Return one exact square 1024 by 1024 RGB image. Fill every pixel outside the emblem with
+one perfectly uniform exact chroma-key green #00FF00. The green field must have no
+gradient, lighter center, darker corners, texture, lighting, vignette, noise, shadow,
+paper, cloth, wax, metal, frame, guide, label, checkerboard, or transparency preview.
+There must be exactly one connected semantic emblem and no second mark.
+
+Center the complete emblem near [512,512]. Keep every pigment pixel, antialiasing pixel,
+soft bleed, and worn edge strictly inside safe box [160,160,864,864]. Target a complete
+visible span between 430 and 500 pixels wide and between 390 and 460 pixels high, with
+broad exact-green margin on every side. Use a direct orthographic front view with no
+perspective, thickness, modeled depth, or directional lighting.
+
+This source owns only one normal-state pigment emblem. It will later be extracted and
+isotropically bbox-fitted into content box [8,4,24,18] inside one 32 by 22 runtime
+Button. Do not draw the Button, carrier, backing tile, hover, pressed, disabled state,
+Tooltip, text, map, menu background, ribbon substrate, or provider logic.
+
+EMBLEM ANATOMY
+
+Construct one compact four-direction expedition-guild direction mark using four short,
+broad, blunt, slightly unequal pigment wedges joined to one small irregular central
+pool. The four outer ends must be truncated, rounded, or softly chipped rather than
+pointed. The north mass may be subtly longer; east and west must differ slightly in
+width and wear; south must be compact and blunt. Keep open exterior green channels
+between adjacent wedges. Do not add an outer ring, inner ring, compass casing, needle,
+letters, ticks, or map geometry.
+
+Across only the central sixty percent of that direction mark, lay one short, thick,
+irregular diagonal veil of deep umber pigment from lower-left toward upper-right. It is
+a coarse masking stroke laid over a guild record, not a slash symbol and not a physical
+strip. Give it two blunt softened ends, uneven width, and one or two broad old-ochre wear
+patches. The wear patches remain pigment colored; they are not green holes. The veil
+must cross the center and partially cover the roots of two or three wedges, but it must
+end well before the compass's outer tips. It must remain visibly shorter than both the
+full width and full height of the direction mark.
+
+Join the veil to the central pool with a broad pigment overlap so the compass and veil
+form one connected semantic component. The result should read as an old guild direction
+mark whose central instructions have been deliberately obscured, while enough of all
+four blunt directions remains visible to preserve the underlying identity. It must not
+read as an eye with a slash, prohibition sign, X, crossed weapons, spear, sword, quill,
+damaged star, modern visibility toggle, generic disabled icon, or star crossed out by a
+thin line.
+
+MATERIAL, COLOR, EDGE, AND ERA
+
+Render the entire emblem as a direct imperfect two- or three-pass woodblock or wax-
+stencil transfer of matte mineral pigment on an absent carrier. It is a flat painted
+sprite silhouette, not carved, embossed, cast, jeweled, beveled, metallic, modeled,
+photographic, or illuminated. Use only a few broad discrete pigment patches with no
+continuous gradients.
+
+Use a dominant dark muted umber-ochre near RGB [116,78,39] for the four direction
+masses, sparse aged ochre wear near RGB [145,98,48], and a deep smoked umber near RGB
+[72,45,26] for the center and diagonal veil. The median visible color must remain dark
+and earthy, approximately RGB [105,65,32] to [135,90,45], never bright gold. The deep
+veil must be darker than the directions but not black. No visible pixel may resemble
+bright yellow, orange, brass, polished gold, ivory, white, neon, or emissive light.
+
+Use a non-constant hand-printed perimeter, broad softened corners, slight asymmetry, a
+few coarse edge nicks, and restrained two-to-four normalized-source-pixel pigment bleed.
+All edge antialiasing must transition only through brown or ochre pigment values before
+meeting exact green. Do not tint any visible edge green. Keep internal wear as lighter
+ochre paint patches, never missing transparency or green. Any true missing-pigment notch
+must be open and connected to the exterior silhouette. The central pool, all four wedge
+bases, and the veil overlap must remain fully pigment colored with no enclosed green
+island, green crack, green center, isolated green speck, or green-tinted fringe.
+
+STRICT EXCLUSIONS
+
+No sharp diamond point, spearhead, arrowhead, four-point star, five-point star,
+crosshair, D-pad, separate keys, shuriken, sunburst, flower, gem, faceted badge,
+wind rose, outer circle, inner ring, prohibition ring, eye outline, eyelid, pupil,
+letters N/E/S/W, ticks, map grid, coordinates, needle, location pin, X, long slash,
+thin slash, sword, spear, axe, quill, crossed weapons, text, numbers, runes, physical
+compass casing, gold, brass, cloth, ribbon, wax, backing tile, button face, border,
+card, frame, medallion, rivet, bevel, cast shadow, drop shadow, contact shadow, ambient
+occlusion, glow, specular highlight, rim light, continuous gradient, photographic grain,
+glass, neon, chrome, 3D rendering, photorealism, perfect fourfold symmetry, vector-clean
+geometry, constant line weight, Diablo III ornament, Skyrim minimalist menu language,
+or Warhammer iconography. Do not place green inside the connected emblem or tint its
+edges green.
+
+FINAL SELF-CHECK
+
+Confirm the canvas contains exactly one connected HIDE pigment emblem and nothing else.
+Confirm it consists of four short broad blunt unequal direction wedges joined around a
+small solid deep-umber center plus one short thick worn diagonal masking stroke that
+crosses only the central sixty percent, has blunt ends, overlaps the center, and ends
+well before every outer direction tip. Confirm it reads as a deliberately obscured old
+guild direction record, not a sharp star, metal badge, eye-slash, prohibition sign, X,
+weapon, quill, modern visibility toggle, or copied shape. Confirm the visible span is
+430 to 500 pixels wide and 390 to 460 pixels high and all visible pixels stay strictly
+inside [160,160,864,864]. Confirm every exterior pixel is uniform exact #00FF00.
+Confirm the emblem uses only broad flat dark earthy pigment patches near [116,78,39],
+[145,98,48], and [72,45,26], with no gold brightness, bevel, thickness, highlight,
+shadow, carrier, text, state, enclosed green pixel, green fringe, or additional mark.

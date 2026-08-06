@@ -3500,6 +3500,28 @@ def main() -> None:
         "QS-B1 V6-C internal candidate pass with authorized bbox-fit gate",
     )
     require(
+        seals_work,
+        (
+            "QS-B1 V6-D attempt 1 execution and review",
+            "019fd5c7-85eb-75d1-bbc5-204868cc953d",
+            "841ff0e130b2183c80a910e98d1fa288d6e605406d1a32d95d0e041e6a0df6b5",
+            "bbox `[195,161,830,843]`",
+            "可见绿色污染 `160`",
+            "median `[211,142,46]`",
+            "明亮金色倒角",
+            "internal-rejected / repair-prepared / P3 / 1/5",
+            "attempt 1 禁止作为 Image 3",
+            "QS-B1 V6-D.r1 complete production Prompt — repair-prepared / frozen",
+            "four short,\nbroad, blunt, slightly unequal pigment wedges",
+            "Across only the central sixty percent",
+            "dominant dark muted umber-ochre near RGB [116,78,39]",
+            "No sharp diamond point, spearhead, arrowhead, four-point star",
+            "V6-D `1/5`、\n  V6-E..G 各 `0/5`",
+            "V6-D provider\n  结果占位文件名首次落位失败",
+        ),
+        "QS-B1 V6-D attempt 1 rejection and complete r1 repair gate",
+    )
+    require(
         seal_motifs_v5_candidate_reviewer,
         (
             "CANVAS = (1024, 1024)",
