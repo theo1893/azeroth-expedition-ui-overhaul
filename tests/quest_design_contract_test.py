@@ -3069,11 +3069,71 @@ def main() -> None:
         ),
         "QS-B1 V5-A deterministic donor candidate reviewer",
     )
+    qs_b1_source_path = (
+        ROOT
+        / "assets"
+        / "source"
+        / "quests"
+        / "qs-b1"
+        / "QuestLogSealMenuSubstrate_Master_v1.png"
+    )
+    qs_b1_source_manifest = json.loads(
+        qs_b1_source_path.with_name(
+            "QS-B1_SourceManifest_v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    qs_b1_source_bytes = qs_b1_source_path.read_bytes()
+    assert qs_b1_source_bytes[:8] == b"\x89PNG\r\n\x1a\n"
+    assert struct.unpack(">II", qs_b1_source_bytes[16:24]) == (128, 696)
+    assert hashlib.sha256(qs_b1_source_bytes).hexdigest() == (
+        "6b3207f15d961cbef7471399c9bfb725b475385ce9e66648fc435a9e28111d9c"
+    )
+    assert qs_b1_source_manifest["status"] == "accepted-source"
+    assert qs_b1_source_manifest["accepted_on"] == "2026-08-06"
+    assert qs_b1_source_manifest["source"]["width"] == 128
+    assert qs_b1_source_manifest["source"]["height"] == 696
+    assert qs_b1_source_manifest["source"]["mode"] == "RGBA"
+    assert qs_b1_source_manifest["source"][
+        "visible_bbox_exclusive"
+    ] == [0, 0, 128, 696]
+    assert qs_b1_source_manifest["source"][
+        "transparent_rgb_nonzero_values"
+    ] == 0
+    assert qs_b1_source_manifest["source"][
+        "visible_green_dominant_pixels"
+    ] == 0
+    assert qs_b1_source_manifest["provenance"][
+        "generation_session"
+    ] == "019fd280-29b2-7be0-add6-f601f2e391d3"
+    assert qs_b1_source_manifest["provenance"][
+        "actual_imagegen_calls"
+    ] == 4
+    assert qs_b1_source_manifest["provenance"][
+        "unused_calls_after_internal_pass"
+    ] == 1
+    assert qs_b1_source_manifest["deterministic_derivation"][
+        "crop_xyxy"
+    ] == [448, 164, 576, 860]
+    assert qs_b1_source_manifest["deterministic_derivation"][
+        "mask_scale"
+    ] == 4
+    assert qs_b1_source_manifest["user_acceptance"][
+        "exact_statement"
+    ] == "接受"
+    assert qs_b1_source_manifest["export_contract"]["status"] == (
+        "pending-runtime-export"
+    )
+    assert qs_b1_source_manifest["export_contract"][
+        "runtime_file"
+    ] is None
+    assert not (
+        ROOT / "handoff" / "quests" / "QS-B1-V5-A"
+    ).exists()
     require(
         seals_work,
         (
             "QS-B1 V5-A 布面供体＋确定性轮廓蒙版",
-            "candidate-reviewed / awaiting-user-acceptance / P3 / production 4/5",
+            "source-accepted / P4 / production 4/5",
             "不走figma, 直接下一步",
             "ImageGen 只负责\n  连续旧布表面",
             "固定裁片",
@@ -3133,22 +3193,29 @@ def main() -> None:
             "automated `18/18 pass`、真实六态布局 `29/29 pass`",
             "`6/6 pass`、violations `0`",
             "attempt 5 未调用",
-            "candidate-reviewed / awaiting-user-acceptance / P3 / 4/5",
+            "V5-A 用户接受与 P4 晋级",
+            "用户决定：`2026-08-06` 回复“接受”",
+            "assets/source/quests/qs-b1/QuestLogSealMenuSubstrate_Master_v1.png",
+            "跨设备检查点：`handoff/quests/QS-B1-V5-A/` 已在 accepted source 与 manifest",
+            "尚未发生：runtime 缩放／TGA 导出",
         ),
-        "QS-B1 V5-A attempt 4 terminal candidate review gate",
+        "QS-B1 V5-A source acceptance gate",
     )
     require(
         progress,
         (
             "QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A",
             "ImageGen 未来只负责全幅连续暗旧布面 donor",
-            "candidate-reviewed / awaiting-user-acceptance / P3 / production 4/5",
+            "source-accepted / P4 / production 4/5",
             "attempt 4\n以固定 Image 1／2＋紧邻 attempt 3 raw",
             "完整美术内审",
             "流程错误 `1`",
             "attempt 5 未调用",
+            "QuestLogSealMenuSubstrate_Master_v1.png",
+            "跨设备 handoff 已消费",
+            "此次接受只覆盖空白连续布底",
         ),
-        "QS-B1 V5-A attempt 4 progress gate",
+        "QS-B1 V5-A accepted source progress gate",
     )
     require(
         seals_work,
@@ -3244,12 +3311,14 @@ def main() -> None:
     require(
         submodules,
         (
-            "QUEST-LOG-SEAL-SUBSTRATE-SIM-V13 / QS-B1 V4-A",
-            "runtime 最大母版为 `32×174px`",
+            "V5-A attempt 4 composite 已于 `2026-08-06` 作为空白布底 source 接受",
+            "QuestLogSealMenuSubstrate_Master_v1.png",
+            "runtime 最大母版仍为 `32×174px`",
             "综合色为低饱和烟熏深旧棕",
             "尾端恰好两处不等宽、粗钝、浅上收缺口",
+            "当前 `source-accepted / P4`，尚未导出或挂载",
         ),
-        "QS-B1 V4-A component ownership",
+        "QS-B1 V5-A accepted substrate component ownership",
     )
     require(
         seals_work,

@@ -3,6 +3,8 @@
 - 已接受漆章批次：`QS-A1`
 - 当前事务签批次：`QS-B1`
 - 当前接受版本：`QS-A1 V1.r4`
+- 已接受布底版本：`QS-B1 V5-A.r3 / attempt 4 deterministic composite`；用户于
+  `2026-08-06` 回复“接受”
 - 已确认历史模拟：`QUEST-SEALS-SIM-V2`；其 Quest Log 顶部悬空位置已于
   `2026-08-03` 被用户否决，Tracker 方向仍有效
 - 当前已确认历史模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V9`
@@ -20,14 +22,15 @@
   循环已按内部完整通过提前停止
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
-  `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A
-  `candidate-reviewed / awaiting-user-acceptance / P3 / production 4/5`
+  `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
+  `source-accepted / P4 / production 4/5`；menu motifs/runtime 尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
   `simulation-confirmed / V3-A repair-budget-exhausted / V3-B gated / P3`；V1 保持
   `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`；
   QS-B1 V4-A `candidate-rejected / repair-budget-exhausted / P3 / 5/5`；
-  QS-B1 V5-A `candidate-reviewed / awaiting-user-acceptance / P3 / production 4/5`
+  QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
+  `0/5 / gated`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -48,6 +51,10 @@
 - tracked source：
   `assets/source/quests/qs-a1/QuestToolWaxSeal_Master_v1.png`，SHA-256
   `377dcdc141ee5487884bfc99dbfd82013a8c4d7cb7200a4414feebb81d72ab75`。
+- tracked QS-B1 substrate source：
+  `assets/source/quests/qs-b1/QuestLogSealMenuSubstrate_Master_v1.png`，SHA-256
+  `6b3207f15d961cbef7471399c9bfb725b475385ce9e66648fc435a9e28111d9c`；
+  manifest `assets/source/quests/qs-b1/QS-B1_SourceManifest_v1.json`。
 - runtime：`QuestToolWaxSealStatesV1.tga`，`256 × 64`、一行四个
   `64 × 64` cell，SHA-256
   `f113e670f1b61be1a50e3cfa16dfce95a2b0d159fc35d986a9b2e1d314a72902`。
@@ -6404,13 +6411,29 @@ modern styling, or extra object.
   composite 与真实六态。该内部通过不等于用户接受、P4、source／manifest、
   exporter／atlas、runtime／addon 接入或隐藏旧按钮。
 
-### V5-A 当前停止点
+### V5-A 用户接受与 P4 晋级
 
-- production 实际调用 `4/5`；流程错误 `1`；attempt 5 未调用，attempt 6 永久
-  禁止。当前完整通过候选是 attempt 4 deterministic composite SHA
-  `6b3207f15d96…11d9c`，不是 raw donor。
-- 当前没有 source、manifest、runtime、atlas 或 addon 修改；旧放弃／分享／退出／
-  详情与 pfQuest 四按钮继续 fail-open。没有 handoff，也没有 push。
-- 下一门禁只有用户对 attempt 4 composite 的明确接受或拒绝。明确接受前不得
-  promotion；若用户拒绝，只有在其反馈仍位于原冻结修复边界时，才可先形成新的
-  完整正文与 commit 后决定是否使用尚未调用的 attempt 5。
+- 用户决定：`2026-08-06` 回复“接受”。该回复直接对应上一门禁中展示的
+  `QS-B1 V5-A attempt 4 composite` 及其六态真实排版，因此是候选专属 source
+  接受，不是对 raw donor、七纹章、runtime、菜单接入或整模块的笼统验收。
+- 状态：`source-accepted / P4 / production 4/5`。流程错误 `1`；attempt 5 因
+  内部通过而未调用，attempt 6 永久禁止。接受对象精确为 `128×696 RGBA`
+  deterministic composite，SHA
+  `6b3207f15d961cbef7471399c9bfb725b475385ce9e66648fc435a9e28111d9c`，不是
+  `1254² RGB` raw donor。
+- tracked source：
+  `assets/source/quests/qs-b1/QuestLogSealMenuSubstrate_Master_v1.png`；source
+  manifest：`assets/source/quests/qs-b1/QS-B1_SourceManifest_v1.json`。source
+  bytes 与 handoff candidate SHA 完全一致；`128×696 RGBA`、visible bbox
+  `[0,0,128,696]`、透明／半透明／不透明像素 `3164／4866／81058`、透明 RGB
+  非零值 `0`、可见绿色残留 `0`。
+- 跨设备检查点：`handoff/quests/QS-B1-V5-A/` 已在 accepted source 与 manifest
+  安全写入后消费；原 candidate SHA 与六态 real-layout SHA 继续由 source
+  manifest 记录，不再把运输层当作 source 或 runtime。
+- 尚未发生：runtime 缩放／TGA 导出、runtime manifest、Lua／TOC 接入、七枚独立
+  纹章生产、七个代理 Button parity、旧按钮隐藏和 Turtle WoW 实机验证。旧放弃／
+  分享／退出／详情与 pfQuest 四按钮继续 fail-open。
+- 下一门禁：按 source manifest 确定性等比导出 `32×174` runtime master；同时
+  单独核对 V3-B 七纹章的有效生产授权／版本门禁。只有七纹章与七个代理 Button
+  全部等价、最终 atlas／adapter／provider 展示区和 fresh-checkout package 均
+  通过后，完整事务菜单才能进入 `runtime-exported / P5`。

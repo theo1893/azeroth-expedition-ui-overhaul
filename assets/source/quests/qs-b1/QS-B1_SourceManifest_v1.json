@@ -1,0 +1,214 @@
+{
+  "schema_version": 1,
+  "module": "quests",
+  "batch": "QS-B1 V5-A",
+  "component": "QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX",
+  "version": "V5-A.r3 / attempt 4 composite",
+  "status": "accepted-source",
+  "accepted_on": "2026-08-06",
+  "source": {
+    "file": "QuestLogSealMenuSubstrate_Master_v1.png",
+    "repository_path": "assets/source/quests/qs-b1/QuestLogSealMenuSubstrate_Master_v1.png",
+    "sha256": "6b3207f15d961cbef7471399c9bfb725b475385ce9e66648fc435a9e28111d9c",
+    "width": 128,
+    "height": 696,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      0,
+      0,
+      128,
+      696
+    ],
+    "transparent_pixels": 3164,
+    "partially_transparent_pixels": 4866,
+    "opaque_pixels": 81058,
+    "transparent_rgb_nonzero_values": 0,
+    "transparent_rgb_nonzero_pixels": 0,
+    "visible_exact_green_pixels": 0,
+    "visible_green_dominant_pixels": 0,
+    "connected_semantic_objects_above_alpha_8": 1
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "codex_package": "@openai/codex@0.143.0",
+    "generation_operation": "edit",
+    "generation_session": "019fd280-29b2-7be0-add6-f601f2e391d3",
+    "provider_result": "ig_035225c26a2a6a2e016a73541a34fc8191b106a0260947befe.png",
+    "prompt_version": "QS-B1 V5-A.r3",
+    "prompt_before_generation_commit": "1c6b12b178f355ee484005147e30f770def56e22",
+    "prompt_utf8_sha256": "0cf326a54cab55330e9d99df8f05912910a16f79150d26b46d56707e3ff168b2",
+    "prompt": "docs/modules/quests/work/QUEST.SEALS.md",
+    "prompt_section": "V5-A.r3 修复执行正文与 attempt 4 执行记录",
+    "raw_attempt": "generated/quests/QUEST-SEALS/QS-B1-V5-A/attempt-04/QS-B1-V5-A.attempt-04.raw.png",
+    "raw_attempt_sha256": "c9ffcc8f1e19977ff10abdeeb9d0f7554cfab02c99768b83c219516d54a9beb1",
+    "raw_attempt_size": [
+      1254,
+      1254
+    ],
+    "raw_attempt_mode": "RGB",
+    "accepted_candidate": "generated/quests/QUEST-SEALS/QS-B1-V5-A/attempt-04/review/QS-B1-V5-A.attempt-04.composite.png",
+    "accepted_candidate_sha256": "6b3207f15d961cbef7471399c9bfb725b475385ce9e66648fc435a9e28111d9c",
+    "cross_device_checkpoint": {
+      "branch": "codex/quest-seal-v5a",
+      "manifest_path": "handoff/quests/QS-B1-V5-A/manifest.json",
+      "candidate_role_sha256": "6b3207f15d961cbef7471399c9bfb725b475385ce9e66648fc435a9e28111d9c",
+      "real_layout_preview_sha256": "8b277e8b5b5e5c12e2d300203ac080dcb3873d75080382248f2ac9f44b55fbb0",
+      "consumed_by_source_acceptance": true,
+      "consumed_on": "2026-08-06"
+    },
+    "actual_imagegen_calls": 4,
+    "actual_imagegen_limit": 5,
+    "unused_calls_after_internal_pass": 1,
+    "process_errors_without_generation": 1
+  },
+  "visual_authority": {
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/quests/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/quests/SUBMODULE_ART_BASELINES.md#scrollbar-与操作-button",
+    "component_contract": "docs/modules/quests/SUBMODULES.md#quest-log-右页与操作",
+    "locked_references": [
+      {
+        "file": "assets/locked/quests/任务详情面板_视觉基准_v1.png",
+        "role": "Quest Log material, era, lighting and page-context authority; not a substrate silhouette or baked-control source"
+      },
+      {
+        "file": "assets/locked/quests/任务追踪面板_视觉基准_v1.png",
+        "role": "shared expedition-document wear and palette authority; not a Quest Log geometry source"
+      }
+    ],
+    "failed_candidates_are_authority": false,
+    "simulation_pixels_are_authority": false,
+    "raw_donor_is_accepted_source": false
+  },
+  "deterministic_derivation": {
+    "reviewer": "tools/review_quest_seal_menu_substrate_donor_candidate_v1.py",
+    "reviewer_sha256": "c29727ae9b5e2685f52f5dc803f1c237c549672682b14f0e19d9da6808367cbe",
+    "geometry_spec": "tools/specs/quest_log_seal_substrate_simulation_v14.json",
+    "geometry_spec_sha256": "23068fe82b7bb4554447f6be20d2097019c1cf42291f0e90a19b72be4432de67",
+    "normalization": "whole square RGB donor resized isotropically to 1024x1024 with Pillow LANCZOS",
+    "normalized_size": [
+      1024,
+      1024
+    ],
+    "crop_xyxy": [
+      448,
+      164,
+      576,
+      860
+    ],
+    "crop_size": [
+      128,
+      696
+    ],
+    "mask": "tracked V14 source polygon rasterized at 4x and reduced with Pillow LANCZOS",
+    "mask_scale": 4,
+    "mask_owns": [
+      "the complete accepted silhouette",
+      "all Alpha",
+      "the two unequal blunt shallow tail notches"
+    ],
+    "transparent_rgb_cleanup": "set RGB to zero only where Alpha equals zero",
+    "retouch_after_composition": false,
+    "bbox_fit": false,
+    "anisotropic_resize": false
+  },
+  "user_acceptance": {
+    "exact_statement": "接受",
+    "resolved_context": "The statement directly answered the candidate-specific gate for QS-B1 V5-A attempt 4 composite shown with its six-state real-layout preview.",
+    "accepted_scope": [
+      "the exact 128x696 RGBA attempt 4 deterministic composite",
+      "the dark, low-saturation, continuous old oath-cloth material",
+      "the tracked V14 silhouette, Alpha and two unequal blunt tail notches",
+      "the source-level prefix-plus-tail assembly contract"
+    ],
+    "not_accepted_by_this_statement": [
+      "the raw 1254x1254 RGB donor",
+      "any of the seven independent action motifs",
+      "runtime export or addon integration",
+      "hiding or replacing any provider action Button",
+      "Turtle WoW P6 validation"
+    ]
+  },
+  "logical_components": [
+    {
+      "id": "QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX",
+      "ownership": "one adapter-owned, mouse-disabled continuous background Texture",
+      "source_size": [
+        128,
+        696
+      ],
+      "intended_runtime_master_size": [
+        32,
+        174
+      ],
+      "content_origin_xy": [
+        210,
+        30
+      ]
+    },
+    {
+      "id": "QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.ROOT",
+      "ownership": "logical UV/crop region of the same accepted source; no independent source",
+      "intended_runtime_size": [
+        32,
+        12
+      ]
+    },
+    {
+      "id": "QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY",
+      "ownership": "dynamic prefix of the same accepted source; no repeated tile and no independent source",
+      "height_formula": "12 + visible_count * 22, visible_count in 0..7"
+    },
+    {
+      "id": "QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.TAIL",
+      "ownership": "fixed final 32x8 runtime crop from the same accepted source; no independent source",
+      "intended_runtime_size": [
+        32,
+        8
+      ],
+      "runtime_y_formula": "42 + visible_count * 22"
+    }
+  ],
+  "review": {
+    "semantic_and_scope": "pass",
+    "locked_art_inheritance": "pass",
+    "deterministic_assembly": "pass",
+    "automated_checks": "18/18 pass",
+    "real_layout_checks": "29/29 pass",
+    "display_region_checks": "6/6 pass",
+    "display_region_violations": 0,
+    "review_json_sha256": "cee37f93b04122568778cb38dfc53442fd1085cb56cf13d46f948502ad878ad3",
+    "display_region_report_sha256": "0209a069b1cff4af2475e011814552282af12202c2078854fe57afc06c867981",
+    "real_layout_preview_sha256": "8b277e8b5b5e5c12e2d300203ac080dcb3873d75080382248f2ac9f44b55fbb0",
+    "runtime_review_sha256": "a62d66568cfe02f9db11607e5be5eec46f275917de1b85e5a2e694d922a1769f",
+    "scenarios": [
+      "menu closed at scroll 0",
+      "7 actions open at scroll 0",
+      "5 visible actions with partial scroll",
+      "fully scrolled out",
+      "3 visible actions with one disabled action",
+      "7 actions open with reward-gap verification"
+    ]
+  },
+  "export_contract": {
+    "status": "pending-runtime-export",
+    "allowed": [
+      "proportional LANCZOS resize from 128x696 to the exact 32x174 runtime master",
+      "use the first 12 + visible_count * 22 runtime rows as one continuous prefix",
+      "append the fixed final 32x8 tail crop without repetition or redraw",
+      "zero RGB only where Alpha is fully transparent",
+      "convert the deterministic runtime result to a tracked client-loadable format"
+    ],
+    "forbidden_runtime_uses": [
+      "load the high-resolution PNG directly in Turtle WoW",
+      "stretch non-proportionally, mirror, rotate, tile, redraw or bbox-fit the source",
+      "bake any action motif, text, state, Button or hit region into this background",
+      "assign mouse input or action ownership to the substrate Texture",
+      "hide any old action Button before all seven independent motifs and proxy Buttons have parity",
+      "treat source acceptance as runtime export, addon integration or P6 validation"
+    ],
+    "runtime_manifest": null,
+    "runtime_file": null,
+    "adapter": null
+  }
+}

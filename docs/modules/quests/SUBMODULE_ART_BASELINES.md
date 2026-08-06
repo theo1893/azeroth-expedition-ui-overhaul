@@ -230,6 +230,17 @@ ImageGen 输入。V3-A 五次候选随后因连续微纹、比例误差、规则
 授权 `≤1%`，因此为 `candidate-rejected / repair-budget-exhausted / P3`。
 它不构成新的稳定 source 美术基线；V1、V2、V3、V4-A 失败候选和 V10–V13
 模拟均不得成为后续 edit input、source、runtime 或未授权的确定性美术例外。
+V5-A 改由 ImageGen 只提供全幅连续布面 donor，tracked V14 固定 crop／`4×`
+polygon mask 独占最终 `128×696` 轮廓、Alpha 与两处不等宽钝浅缺口。用户于
+`2026-08-06` 明确接受 attempt 4 deterministic composite；最终稳定空白布底
+source 为
+[QuestLogSealMenuSubstrate_Master_v1.png](../../../assets/source/quests/qs-b1/QuestLogSealMenuSubstrate_Master_v1.png)，
+SHA-256 `6b3207f15d96…11d9c`，manifest 为
+[QS-B1_SourceManifest_v1.json](../../../assets/source/quests/qs-b1/QS-B1_SourceManifest_v1.json)。
+它冻结低饱和烟熏深旧棕、三块低频明暗、外侧宽折、中央安静区、连续非周期
+布面和双钝缺口；不接受 raw donor，也不接受七枚功能纹章、Button、文字、
+状态或 runtime。后续只允许按 manifest 等比缩为 `32×174`，按动态前缀加固定
+tail 装配，不得 bbox-fit、非等比拉伸、平铺、镜像、重绘或把纹章烘焙回背景。
 `QS-B1 V1` 的五次候选仍保持历史结论：用户于 `2026-08-05` 明确判定“不可接受”，
 不得成为 V2 edit input；该结论不会因 V3 改向而重写。
 
