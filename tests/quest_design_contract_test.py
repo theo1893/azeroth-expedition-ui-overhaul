@@ -269,6 +269,24 @@ def main() -> None:
     seal_motifs_sim_v16_spec = json.loads(
         seal_motifs_sim_v16_spec_path.read_text(encoding="utf-8")
     )
+    seal_purity_ribbon_sim_v17_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_purity_ribbon_simulation_v17.json"
+    )
+    seal_purity_ribbon_sim_v17_spec = json.loads(
+        seal_purity_ribbon_sim_v17_spec_path.read_text(encoding="utf-8")
+    )
+    seal_purity_ribbon_sim_v17_display_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_purity_ribbon_simulation_v17_display_region.json"
+    )
+    seal_purity_ribbon_sim_v17_display = json.loads(
+        seal_purity_ribbon_sim_v17_display_path.read_text(encoding="utf-8")
+    )
     seal_substrate_v5_candidate_reviewer_path = (
         ROOT
         / "tools"
@@ -3179,6 +3197,63 @@ def main() -> None:
         ),
         "QS-B1 V16 seven single-object sources simulation renderer",
     )
+    assert seal_purity_ribbon_sim_v17_spec["version"] == (
+        "QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17"
+    )
+    assert seal_purity_ribbon_sim_v17_spec["design_batch"] == "QS-B1 V7-A"
+    assert seal_purity_ribbon_sim_v17_spec["visual_mockup"][
+        "substrate_variant"
+    ] == "v7-purity-ribbon"
+    assert seal_purity_ribbon_sim_v17_spec["layout"][
+        "substrate_root_content"
+    ] == [210, 12, 32, 28]
+    assert seal_purity_ribbon_sim_v17_spec["layout"][
+        "substrate_body_origin_content"
+    ] == [210, 36]
+    v17_mockup = seal_purity_ribbon_sim_v17_spec["visual_mockup"]
+    assert v17_mockup["visible_ribbon_nominal_width"] < 32
+    assert 4 <= v17_mockup["tail_point_count"] <= 6
+    assert v17_mockup["tail_profile"] == "asymmetric-sharp-irregular"
+    v17_constraints = seal_purity_ribbon_sim_v17_spec["constraints"]
+    assert v17_constraints["imagegen_calls"] == 0
+    assert v17_constraints["new_bitmap_assets"] == 0
+    assert v17_constraints["wax_is_drawn_after_and_above_the_carrier"]
+    assert v17_constraints["wax_overlaps_carrier_root_by_at_least_20px"]
+    assert v17_constraints["carrier_is_narrower_than_wax"]
+    assert v17_constraints["tail_is_asymmetric_sharp_and_nonperiodic"]
+    assert v17_constraints["purity_seal_reference_is_semantic_only"]
+    assert v17_constraints["no_warhammer_iconography_or_text"]
+    assert seal_purity_ribbon_sim_v17_display["schema"] == (
+        "aeui-display-region-contract-v1"
+    )
+    assert len(seal_purity_ribbon_sim_v17_display["scenarios"]) == 6
+    open_v17 = next(
+        scenario
+        for scenario in seal_purity_ribbon_sim_v17_display["scenarios"]
+        if scenario["id"] == "open-all-seven"
+    )
+    assert next(
+        region["box"]
+        for region in open_v17["regions"]
+        if region["id"] == "substrate.full"
+    ) == [210, 12, 242, 204]
+    assert next(
+        region["box"]
+        for region in open_v17["regions"]
+        if region["id"] == "substrate.tail"
+    ) == [210, 190, 242, 204]
+    require(
+        seal_substrate_sim_v13_renderer,
+        (
+            "def substrate_height_for_spec(",
+            '"v7-purity-ribbon"',
+            "def render_purity_ribbon_zoom_board(",
+            '"v17_wax_overlaps_carrier_root_by_at_least_20px"',
+            '"v17_tail_is_four_to_six_asymmetric_sharp_points"',
+            '"v17_reference_is_semantic_not_ip_copy"',
+        ),
+        "QS-B1 V17 wax-over-carrier simulation renderer",
+    )
     require(
         seals_work,
         (
@@ -3950,13 +4025,14 @@ def main() -> None:
     require(
         progress,
         (
-            "QUEST-LOG-SEAL-MOTIFS-SIM-V16",
-            "prompt-authorized / P3",
-            "production 0/35 authorized",
-            "V6-A..G",
-            "下一动作是 V6-A attempt 1",
+            "QS-B1 V6-A..G` 已完成授权批次",
+            "实际 ImageGen `28/35`、流程错误 `7`",
+            "QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17 / QS-B1 V7-A",
+            "相交 `24px`",
+            "真实排版\n  `42/42 pass`、展示区 `6/6 pass`、ImageGen `0/0`",
+            "awaiting-user-direction-confirmation",
         ),
-        "QS-B1 V16 current simulation and next gate",
+        "QS-B1 V6 closed production and V17 current simulation gate",
     )
     require(
         sub_art,
@@ -3971,7 +4047,6 @@ def main() -> None:
     require(
         submodules,
         (
-            "candidate-rejected / repair-budget-exhausted / P3 / 5/5",
             "MOTIF.SHARE",
             "哑光低饱和旧赭金矿物颜料",
             "MOTIF.ABANDON",
@@ -3982,12 +4057,26 @@ def main() -> None:
     require(
         submodules,
         (
-            "V6 七张独立 `1024²` 单对象 source",
-            "V16",
-            "prompt-authorized / P3 / production 0/35 authorized",
-            "下一动作是固定执行器从 V6-A attempt 1 开始",
+            "V6-A..G 授权批次已封闭",
+            "实际 ImageGen `28/35`、流程错误 `7`",
+            "QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17 / QS-B1 V7-A",
+            "相交 `24px`",
+            "尾端约五个不等距尖锐破口",
+            "确认前不得进入 production",
         ),
-        "QS-B1 V16 stable ownership update",
+        "QS-B1 V17 current component ownership",
+    )
+    require(
+        sub_art,
+        (
+            "火漆必须在层序、宽度和接触区上明确跨压载体",
+            "烟熏旧骨褐誓约纸／粗纤维亚麻混合物",
+            "约五个长短、深浅不一\n的尖锐撕裂点",
+            "禁止双钝缺口、等距锯齿、对称鱼尾和流苏",
+            "禁止战锤阵营符号、双头鹰、骷髅、经文或科幻金属",
+            "模拟像素和确切 RGB 不是稳定 source",
+        ),
+        "QS-B1 V7-A pending art-direction contract",
     )
     require(
         seal_substrate_v5_candidate_reviewer,
@@ -4248,14 +4337,15 @@ def main() -> None:
     require(
         submodules,
         (
-            "V5-A attempt 4 composite 已于 `2026-08-06` 作为空白布底 source 接受",
+            "V5-A accepted fallback",
             "QuestLogSealMenuSubstrate_Master_v1.png",
-            "runtime 最大母版仍为 `32×174px`",
-            "综合色为低饱和烟熏深旧棕",
-            "尾端恰好两处不等宽、粗钝、浅上收缺口",
-            "当前 `source-accepted / P4`，尚未导出或挂载",
+            "历史 runtime 合同为 `32×174px`",
+            "不得直接导出为目标菜单",
+            "最大 `32×192px` 的较窄挺质旧骨褐誓约载体",
+            "simulation-reviewed / P2 / ImageGen 0/0",
+            "没有 V7 target source、runtime 或 addon 接入",
         ),
-        "QS-B1 V5-A accepted substrate component ownership",
+        "QS-B1 V5-A fallback and V7-A pending substrate ownership",
     )
     require(
         seals_work,

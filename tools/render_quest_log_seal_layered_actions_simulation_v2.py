@@ -128,6 +128,28 @@ def substrate_height(visible_count: int, menu_open: bool) -> int:
     return 12 if not menu_open else 12 + visible_count * 22 + 8
 
 
+def substrate_height_for_spec(
+    spec: dict[str, Any],
+    visible_count: int,
+    menu_open: bool,
+) -> int:
+    """Return the visible carrier height for the active geometry contract."""
+    variant = spec.get("visual_mockup", {}).get("substrate_variant")
+    if variant == "v7-purity-ribbon":
+        body_offset = (
+            spec["layout"]["substrate_body_origin_content"][1]
+            - spec["layout"]["substrate_root_content"][1]
+        )
+        action_height = spec["layout"]["action_slot_size"][1]
+        tail_height = spec["layout"]["substrate_tail_size"][1]
+        return (
+            spec["visual_mockup"]["closed_root_visible_height"]
+            if not menu_open
+            else body_offset + visible_count * action_height + tail_height
+        )
+    return substrate_height(visible_count, menu_open)
+
+
 def substrate_art_v3(visible_count: int, menu_open: bool) -> Image.Image:
     """Original V12 visual strip retained for deterministic reproduction."""
     width = 32
@@ -280,7 +302,11 @@ def substrate_art(
 ) -> Image.Image:
     """Compose the current visible length from one canonical source master."""
     variant = spec.get("visual_mockup", {}).get("substrate_variant")
-    if variant not in ("v4-dark-irregular", "v5-deterministic-mask"):
+    if variant not in (
+        "v4-dark-irregular",
+        "v5-deterministic-mask",
+        "v7-purity-ribbon",
+    ):
         return substrate_art_v3(visible_count, menu_open)
 
     master = (
@@ -292,9 +318,20 @@ def substrate_art(
     action_height = spec["layout"]["action_slot_size"][1]
     tail_height = spec["layout"]["substrate_tail_size"][1]
     if not menu_open:
-        return master.crop((0, 0, master.width, root_height))
+        closed_height = (
+            spec["visual_mockup"].get("closed_root_visible_height", root_height)
+            if variant == "v7-purity-ribbon"
+            else root_height
+        )
+        return master.crop((0, 0, master.width, closed_height))
 
-    prefix_height = root_height + visible_count * action_height
+    prefix_height = (
+        spec["layout"]["substrate_body_origin_content"][1]
+        - spec["layout"]["substrate_root_content"][1]
+        + visible_count * action_height
+        if variant == "v7-purity-ribbon"
+        else root_height + visible_count * action_height
+    )
     output = Image.new(
         "RGBA",
         (master.width, prefix_height + tail_height),
@@ -511,7 +548,11 @@ def state_metrics(spec: dict[str, Any], state: dict[str, Any]) -> dict[str, Any]
             layout["substrate_root_content"][0],
             layout["substrate_root_content"][1],
             32,
-            substrate_height(len(state["visible_actions"]), state["menu_open"]),
+            substrate_height_for_spec(
+                spec,
+                len(state["visible_actions"]),
+                state["menu_open"],
+            ),
         ],
         offset,
     )
@@ -563,10 +604,14 @@ def contiguous(buttons: list[dict[str, Any]]) -> bool:
 
 def layered_substrate_art(spec: dict[str, Any], visible_count: int) -> Image.Image:
     art = substrate_art(spec, visible_count, True)
+    motif_y = (
+        spec["layout"]["substrate_body_origin_content"][1]
+        - spec["layout"]["substrate_root_content"][1]
+    )
     for index, action in enumerate(spec["actions"][:visible_count]):
         art.alpha_composite(
             motif_art(action["id"], "normal", spec),
-            (0, 12 + index * 22),
+            (0, motif_y + index * spec["layout"]["action_slot_size"][1]),
         )
     return art
 
@@ -703,16 +748,126 @@ def render_v5_zoom_board(
     return zoom_path
 
 
+def render_purity_ribbon_zoom_board(
+    root: Path,
+    spec: dict[str, Any],
+    fonts: dict[str, ImageFont.FreeTypeFont],
+    zoom_output: str,
+    seal: Image.Image,
+) -> Path:
+    """Show the wax-over-carrier relation and irregular torn tail at large scale."""
+    canvas = Image.new("RGBA", (1600, 980), BOARD)
+    draw = ImageDraw.Draw(canvas, "RGBA")
+    draw.rectangle((0, 86, canvas.width, canvas.height), fill=BOARD_LOWER)
+    draw.text(
+        (30, 20),
+        spec["presentation"]["zoom_title"],
+        font=fonts["board_title"],
+        fill=(231, 202, 145, 255),
+    )
+    draw.text(
+        (30, 52),
+        spec["presentation"]["zoom_subtitle"],
+        font=fonts["board_body"],
+        fill=(194, 166, 113, 255),
+    )
+
+    seal_32 = seal.resize((32, 32), Image.Resampling.LANCZOS)
+    root_y = spec["layout"]["substrate_root_content"][1]
+    seal_y = spec["layout"]["seal_visual_content"][1]
+
+    def assembled(menu_open: bool, count: int) -> Image.Image:
+        carrier = substrate_art(spec, count, menu_open)
+        height = max(root_y + carrier.height, seal_y + 32) + 2
+        image = Image.new("RGBA", (40, height), (0, 0, 0, 0))
+        image.alpha_composite(carrier, (4, root_y))
+        image.alpha_composite(seal_32, (4, seal_y))
+        return image
+
+    closed = assembled(False, 7)
+    open_full = assembled(True, 7)
+    top = open_full.crop((0, 0, 40, 64))
+    tail_height = spec["layout"]["substrate_tail_size"][1]
+    carrier = substrate_art(spec, 7, True)
+    tail = carrier.crop((0, carrier.height - tail_height - 4, 32, carrier.height))
+
+    draw.text((40, 112), "A · 收起态 8×：蜡体跨压载体根部", font=fonts["board_body"], fill=(229, 197, 135, 255))
+    canvas.alpha_composite(closed.resize((320, closed.height * 8), Image.Resampling.NEAREST), (40, 150))
+    draw.text((400, 112), "B · 展开上段 8×：同一 z-order", font=fonts["board_body"], fill=(229, 197, 135, 255))
+    canvas.alpha_composite(top.resize((320, 512), Image.Resampling.NEAREST), (400, 150))
+    draw.text((770, 112), "C · 尾端 12×：不等距尖锐破口", font=fonts["board_body"], fill=(229, 197, 135, 255))
+    draw.rectangle(
+        (754, 140, 1170, 390),
+        fill=BOARD,
+        outline=(112, 84, 51, 210),
+        width=2,
+    )
+    canvas.alpha_composite(
+        tail.resize((384, tail.height * 12), Image.Resampling.NEAREST),
+        (770, 158),
+    )
+
+    draw.text((40, 620), "固定物理层序", font=fonts["board_body"], fill=(229, 197, 135, 255))
+    layer_lines = [
+        "1. 右页纸面与动态正文",
+        "2. 誓约条带：根部先进入火漆下方",
+        "3. 根部压暗／压平接触区（属于条带，不含蜡像素）",
+        "4. QS-A1 火漆最后绘制并跨过条带两侧",
+        "5. 七枚纹章分别叠放，Button 与条带仍独立",
+    ]
+    for index, line in enumerate(layer_lines):
+        draw.text((40, 660 + index * 34), line, font=fonts["board_small"], fill=(202, 173, 115, 255))
+
+    palette = spec["visual_mockup"]["palette"]
+    draw.text((770, 420), "综合色角色（模拟色，不是最终材质像素）", font=fonts["board_body"], fill=(229, 197, 135, 255))
+    palette_items = [
+        ("烟熏旧骨褐主体", palette["base"]),
+        ("褪色暖赭受光面", palette["light_plane"]),
+        ("深乌棕压痕／边缘", palette["shadow_plane"]),
+        ("灰褐旧污渍", palette["stain"]),
+    ]
+    for index, (label, color) in enumerate(palette_items):
+        y = 464 + index * 48
+        draw.rectangle((770, y, 822, y + 30), fill=tuple(color), outline=(42, 31, 24, 255), width=2)
+        draw.text((838, y + 6), label, font=fonts["board_small"], fill=(208, 177, 117, 255))
+
+    notes = spec["presentation"]["zoom_notes"]
+    for index, note in enumerate(notes):
+        draw.text((770, 684 + index * 34), f"· {note}", font=fonts["board_small"], fill=(202, 173, 115, 255))
+    draw.text(
+        (30, 936),
+        "非权威：最终纸／布纤维、蜡体接触阴影、手绘破损、Alpha 与纹章正式像素；本图不得成为 source、runtime 或 ImageGen 输入。",
+        font=fonts["board_small"],
+        fill=(174, 146, 96, 255),
+    )
+
+    zoom_path = resolve(root, zoom_output)
+    zoom_path.parent.mkdir(parents=True, exist_ok=True)
+    canvas.save(zoom_path, "PNG")
+    return zoom_path
+
+
 def render_zoom_board(
     root: Path,
     spec: dict[str, Any],
     fonts: dict[str, ImageFont.FreeTypeFont],
+    seal: Image.Image | None = None,
 ) -> Path | None:
     zoom_output = spec["outputs"].get("zoom")
     if not zoom_output:
         return None
     if spec.get("visual_mockup", {}).get("substrate_variant") == "v5-deterministic-mask":
         return render_v5_zoom_board(root, spec, fonts, zoom_output)
+    if spec.get("visual_mockup", {}).get("substrate_variant") == "v7-purity-ribbon":
+        if seal is None:
+            raise ValueError("v7 purity-ribbon zoom requires the accepted wax seal")
+        return render_purity_ribbon_zoom_board(
+            root,
+            spec,
+            fonts,
+            zoom_output,
+            seal,
+        )
 
     canvas = Image.new("RGBA", (1600, 980), BOARD)
     draw = ImageDraw.Draw(canvas, "RGBA")
@@ -992,7 +1147,7 @@ def main() -> None:
     board_path = resolve(root, spec["outputs"]["board"])
     board_path.parent.mkdir(parents=True, exist_ok=True)
     canvas.save(board_path, "PNG")
-    zoom_path = render_zoom_board(root, spec, fonts)
+    zoom_path = render_zoom_board(root, spec, fonts, seal)
     source_topology_path = render_independent_source_topology(root, spec, fonts)
     display_contract_path = materialize_display_region_contract(root, spec)
 
@@ -1004,9 +1159,10 @@ def main() -> None:
     partial = by_id["filtered-five-partial-scroll"]
     full = by_id["filtered-five-fully-scrolled-out"]
     first_reward_y = min(box[1] for box in spec["layout"]["reward_slots_content"])
-    all_tail_end = tail_box(spec, spec["states"][1])[1] + 8
-    five_tail_end = tail_box(spec, spec["states"][2])[1] + 8
-    three_tail_end = tail_box(spec, spec["states"][3])[1] + 8
+    tail_height = spec["layout"]["substrate_tail_size"][1]
+    all_tail_end = tail_box(spec, spec["states"][1])[1] + tail_height
+    five_tail_end = tail_box(spec, spec["states"][2])[1] + tail_height
+    three_tail_end = tail_box(spec, spec["states"][3])[1] + tail_height
     checks = {
         "frame_is_676x464": spec["frame"] == [676, 464],
         "detail_viewport_is_real_246x324": spec["layout"]["detail_viewport"] == [366, 64, 246, 324],
@@ -1114,6 +1270,48 @@ def main() -> None:
                     ),
                 }
             )
+    if spec.get("visual_mockup", {}).get("substrate_variant") == "v7-purity-ribbon":
+        mockup = spec["visual_mockup"]
+        seal_box = spec["layout"]["seal_visual_content"]
+        root_box = spec["layout"]["substrate_root_content"]
+        wax_root_overlap = intersection(seal_box, root_box)
+        silhouette_x = [point[0] for point in mockup["silhouette_points"]]
+        checks.update(
+            {
+                "v17_wax_overlaps_carrier_root_by_at_least_20px": (
+                    wax_root_overlap is not None
+                    and wax_root_overlap[3] >= 20
+                    and wax_root_overlap[2] == 32
+                ),
+                "v17_carrier_is_visibly_narrower_than_wax": (
+                    max(silhouette_x) - min(silhouette_x)
+                    <= mockup["visible_ribbon_nominal_width"]
+                    < seal_box[2]
+                ),
+                "v17_tail_is_four_to_six_asymmetric_sharp_points": (
+                    4 <= mockup["tail_point_count"] <= 6
+                    and mockup["tail_profile"] == "asymmetric-sharp-irregular"
+                ),
+                "v17_root_contains_a_compressed_contact_zone": mockup[
+                    "root_contact_zone"
+                ]
+                == "darkened-flattened-fibres-under-wax-no-wax-pixels",
+                "v17_palette_is_muted_smoked_vellum": (
+                    max(mockup["palette"]["base"][:3]) <= 115
+                    and max(mockup["palette"]["light_plane"][:3]) <= 145
+                    and mockup["palette"]["base"][0]
+                    > mockup["palette"]["base"][2]
+                ),
+                "v17_uses_one_prefix_plus_tail_master": mockup[
+                    "dynamic_assembly"
+                ]
+                == "prefix-plus-tail-from-one-master",
+                "v17_reference_is_semantic_not_ip_copy": (
+                    spec["constraints"]["purity_seal_reference_is_semantic_only"]
+                    and spec["constraints"]["no_warhammer_iconography_or_text"]
+                ),
+            }
+        )
     production_sources = spec.get("production_sources")
     if production_sources:
         production_ids = [item["id"] for item in production_sources]
@@ -1255,6 +1453,29 @@ def main() -> None:
                 0,
                 "the seven motif shapes and simulated pigment pixels; only their visible palette direction is under review",
             )
+    if spec.get("visual_mockup", {}).get("substrate_variant") == "v7-purity-ribbon":
+        mockup = spec["visual_mockup"]
+        report["asset_ownership"]["visual_substrate"] = [
+            "one-new-stiff-fibrous-oath-carrier-master",
+            "dynamic-prefix-crop",
+            "shared-asymmetric-sharp-tail-crop",
+        ]
+        report["asset_ownership"]["physical_assembly"] = {
+            "wax": "existing accepted QS-A1 asset, drawn above the carrier",
+            "carrier_root": "begins behind the wax and owns only compressed fibre/contact shadow",
+            "vertical_overlap_px": intersection(
+                spec["layout"]["seal_visual_content"],
+                spec["layout"]["substrate_root_content"],
+            )[3],
+            "carrier_visible_width_px": mockup["visible_ribbon_nominal_width"],
+            "tail_profile": mockup["tail_profile"],
+        }
+        report["non_authoritative"] = [
+            "final stiff vellum/linen fibre, hand-painted wear, wax contact shadow and alpha",
+            "final seven independent motif pixels and their deterministic states",
+            "the local flat polygons and exact simulated RGB values",
+            "simulation is not source, runtime, addon art, or future ImageGen input",
+        ]
     if production_sources:
         report["asset_ownership"]["production_source_strategy"] = {
             "kind": "seven-independent-single-object-square-canvases",

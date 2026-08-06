@@ -1,0 +1,122 @@
+{
+  "schema": "aeui.quest-log.seal-purity-ribbon.simulation.v1",
+  "base_spec": "tools/specs/quest_log_seal_substrate_simulation_v13.json",
+  "version": "QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17",
+  "design_batch": "QS-B1 V7-A",
+  "support_type": "scroll-child-wax-overlapping-stiff-fibrous-oath-carrier-independent-motifs",
+  "outputs": {
+    "_replace": true,
+    "board": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17/quest_log_seal_purity_ribbon_board_v17.png",
+    "zoom": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17/quest_log_seal_purity_ribbon_zoom_v17.png",
+    "report": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17/quest_log_seal_purity_ribbon_report_v17.json",
+    "display_region_contract": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17/display-region-contract-v17.json",
+    "display_region_report": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17/display-region-report-v17.json"
+  },
+  "display_region": {
+    "template": "tools/specs/quest_log_seal_purity_ribbon_simulation_v17_display_region.json",
+    "output": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17/display-region-contract-v17.json",
+    "component": "QS-B1/QUEST.LOG.ACTION.SEAL_MENU/SIM.V17/wax-overlapping-stiff-fibrous-oath-carrier-direction-only",
+    "evidence": {
+      "simulation_spec": "tools/specs/quest_log_seal_purity_ribbon_simulation_v17.json",
+      "simulation": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17/quest_log_seal_purity_ribbon_board_v17.png",
+      "zoom": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17/quest_log_seal_purity_ribbon_zoom_v17.png",
+      "physical_assembly": "the accepted QS-A1 wax is drawn last and overlaps 24 UI pixels of a visibly narrower carrier root; the root owns only compressed fibre and contact shadow",
+      "reference_scope": "purity-seal physical grammar only: wax-over-strip, stiff aged carrier, asymmetric sharp torn tail; no Warhammer insignia, wording or faction identity",
+      "direction_only": true,
+      "final_runtime": false
+    }
+  },
+  "presentation": {
+    "title": "QS-B1 V7-A · 火漆跨压旧誓约条带 · V17 本地几何预演",
+    "subtitle": "保留七项独立 Button 与动态收拢，只重做承载关系：条带根部深入火漆下方 24px，火漆向两侧越出；载体改为烟熏旧骨褐的挺质纤维誓约纸／亚麻，末端为不等距尖锐破口。只借用纯洁印记的物理语法，不复制其符号。ImageGen 0/0。",
+    "zoom_title": "QS-B1 V7-A · 火漆压合 / 载体窄幅 / 非规则尖锐尾端",
+    "zoom_subtitle": "放大图只用于确认 z-order、重叠量、轮廓与综合色；最终纸／布纤维、蜡体接触阴影和手绘破损仍需正式资产生成。",
+    "zoom_notes": [
+      "火漆直径 32px，载体名义可见宽约 26px；两侧各有蜡体越出，不再像两个相邻图标",
+      "根部从 content y=12 开始，火漆覆盖至 y=36，纵向重叠 24px；载体先画、火漆后画",
+      "载体不是近黑软布，而是低饱和烟熏旧骨褐、略有挺度的粗纤维誓约纸／亚麻",
+      "末端约五个长短不一的尖点与深浅不同的撕口；禁止等距锯齿、对称鱼尾与流苏",
+      "七纹章仍是七张透明 source 与七个独立 Button；本图只用深乌棕／灰暗酒红几何占位"
+    ],
+    "footer_lines": [
+      "V17 保留 ScrollChild、七项独立按钮、hidden 收拢、disabled 留位、滚动裁切、正文不重排与奖励前 32px 安全距；只重开承载层与印记综合色。",
+      "可确认：火漆确实压住条带、条带窄幅与挺度、复古烟熏配色、尖锐不规则尾端。非权威：最终纤维、污渍、蜡影、Alpha、纹章正式像素与四态。ImageGen 0/0。"
+    ]
+  },
+  "visual_mockup": {
+    "_replace": true,
+    "substrate_variant": "v7-purity-ribbon",
+    "canonical_master_size": [32, 192],
+    "dynamic_assembly": "prefix-plus-tail-from-one-master",
+    "closed_root_visible_height": 28,
+    "visible_ribbon_nominal_width": 26,
+    "tail_point_count": 5,
+    "tail_profile": "asymmetric-sharp-irregular",
+    "root_contact_zone": "darkened-flattened-fibres-under-wax-no-wax-pixels",
+    "palette": {
+      "base": [108, 88, 61, 255],
+      "light_plane": [137, 111, 73, 255],
+      "shadow_plane": [58, 45, 33, 255],
+      "stain": [75, 57, 40, 255]
+    },
+    "motif_palette": {
+      "guild": {
+        "normal": [57, 40, 28, 246],
+        "hover": [76, 49, 28, 250],
+        "pressed": [42, 31, 23, 246],
+        "disabled": [91, 79, 65, 145]
+      },
+      "abandon": {
+        "normal": [103, 50, 46, 244],
+        "hover": [123, 59, 52, 250],
+        "pressed": [75, 38, 36, 246],
+        "disabled": [91, 79, 65, 145]
+      },
+      "hover_wash": [96, 58, 31, 24]
+    },
+    "silhouette_points": [
+      [6, 1], [12, 0], [18, 1], [25, 0], [28, 4],
+      [29, 18], [28, 35], [29, 57], [27, 79], [29, 103], [28, 126], [29, 149], [27, 171],
+      [28, 177], [29, 184], [25, 182], [22, 191], [18, 184], [14, 190], [11, 181], [7, 188], [4, 183], [3, 176],
+      [4, 158], [3, 137], [5, 115], [3, 93], [4, 70], [3, 48], [5, 27], [3, 9]
+    ],
+    "surface_primitives": [
+      {"kind": "polygon", "points": [[3,0],[16,0],[15,38],[12,73],[14,108],[10,145],[12,175],[7,192],[2,192],[2,0]], "fill": [137,111,73,78]},
+      {"kind": "polygon", "points": [[20,0],[30,0],[30,192],[22,192],[24,158],[21,126],[25,96],[22,61],[25,28]], "fill": [58,45,33,78]},
+      {"kind": "ellipse", "box": [2,-5,30,21], "fill": [47,34,26,104]},
+      {"kind": "polygon", "points": [[7,34],[23,29],[26,50],[20,70],[9,66],[5,49]], "fill": [149,119,77,30]},
+      {"kind": "polygon", "points": [[4,76],[19,70],[27,91],[21,113],[8,119],[3,99]], "fill": [71,52,38,38]},
+      {"kind": "polygon", "points": [[10,121],[27,128],[28,151],[19,166],[7,157]], "fill": [70,52,38,34]},
+      {"kind": "polygon", "points": [[3,163],[17,158],[27,177],[23,190],[8,187]], "fill": [141,108,68,26]},
+      {"kind": "line", "points": [[6,42],[5,65]], "width": 1, "fill": [153,121,76,48]},
+      {"kind": "line", "points": [[27,105],[25,128]], "width": 1, "fill": [44,34,27,58]},
+      {"kind": "line", "points": [[8,145],[6,169]], "width": 1, "fill": [159,123,75,34]},
+      {"kind": "polygon", "points": [[3,174],[29,174],[29,185],[25,182],[22,191],[18,184],[14,190],[11,181],[7,188],[4,183]], "fill": [55,42,31,34]}
+    ]
+  },
+  "layout": {
+    "substrate_root_content": [210, 12, 32, 28],
+    "substrate_body_origin_content": [210, 36],
+    "substrate_tail_size": [32, 14]
+  },
+  "states": [
+    {"id":"closed-top", "label":"A · 收起：火漆跨压 24px 根部，条带不再悬空", "menu_open":false, "scroll_offset":0, "visible_actions":["share","detail","show","hide","clean","reset","abandon"], "disabled_actions":[], "hover_action":null, "expected_enabled_actions":0},
+    {"id":"open-all-seven", "label":"B · 全显 7 项：烟熏旧骨褐载体 + 尖锐破口", "menu_open":true, "scroll_offset":0, "visible_actions":["share","detail","show","hide","clean","reset","abandon"], "disabled_actions":[], "hover_action":"show", "expected_enabled_actions":7},
+    {"id":"open-filtered-five", "label":"C · 隐藏 2 项：同一母版缩短，尖锐尾端上移", "menu_open":true, "scroll_offset":0, "visible_actions":["share","detail","show","reset","abandon"], "disabled_actions":[], "hover_action":"detail", "expected_enabled_actions":5},
+    {"id":"open-filtered-three-disabled", "label":"D · 仅显 3 项：disabled 留位，印记保持独立", "menu_open":true, "scroll_offset":0, "visible_actions":["share","show","abandon"], "disabled_actions":["show"], "hover_action":null, "expected_enabled_actions":2},
+    {"id":"filtered-five-partial-scroll", "label":"E · 5 项 / scroll 52：真实裁切，不留下隐形命中", "menu_open":true, "scroll_offset":52, "visible_actions":["share","detail","show","reset","abandon"], "disabled_actions":["reset"], "hover_action":null, "expected_enabled_actions":3},
+    {"id":"filtered-five-fully-scrolled-out", "label":"F · 5 项 / scroll 208：火漆、条带与命中全部滚出", "menu_open":true, "scroll_offset":208, "visible_actions":["share","detail","show","reset","abandon"], "disabled_actions":[], "hover_action":null, "expected_enabled_actions":0}
+  ],
+  "constraints": {
+    "imagegen_calls": 0,
+    "new_bitmap_assets": 0,
+    "purity_seal_reference_is_semantic_only": true,
+    "no_warhammer_iconography_or_text": true,
+    "wax_is_drawn_after_and_above_the_carrier": true,
+    "wax_overlaps_carrier_root_by_at_least_20px": true,
+    "carrier_is_narrower_than_wax": true,
+    "tail_is_asymmetric_sharp_and_nonperiodic": true,
+    "simulation_pixels_are_not_source_or_future_edit_input": true,
+    "art_direction": "Azeroth guild oath carrier using only the physical grammar of a purity seal: accepted dark-red wax visibly overlaps a narrower stiff fibrous smoked-vellum strip; muted old-bone umber, dark sepia marks, greyed wine danger mark, and five uneven sharp torn points; no near-black flat cloth, regular sawtooth, symmetric fishtail, tassels, Warhammer insignia, devotional wording, skulls, aquila, sci-fi metal, bright cream, gold glow, or modern icon column"
+  }
+}

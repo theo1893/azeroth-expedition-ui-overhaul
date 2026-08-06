@@ -17,11 +17,16 @@
   使用已接受 V5-A 深色布底，并冻结“普通六项使用克制旧赭金矿物颜料、放弃
   任务使用灰暗酒红”的综合色方向。用户于 `2026-08-06` 回复“接受”；几何
   纹章像素仍不构成 source
-- 当前已确认模拟：`QUEST-LOG-SEAL-MOTIFS-SIM-V16 / QS-B1 V6`；它不改
+- 已被新材质方向取代的确认模拟：`QUEST-LOG-SEAL-MOTIFS-SIM-V16 / QS-B1 V6`；它不改
   V15 的运行时可见方向，只把失败的 `4×2` 工作表改为七张独立 `1024²`
   单对象 production source。内部 `59/59 pass`、展示区 `6/6 pass`、ImageGen
   `0/0`；用户于 `2026-08-06` 回复“接受”，当前
-  `simulation-confirmed / production-draft / P2`
+  `user-superseded-by-V7-A-material-direction / P3-history`
+- 当前生成前模拟：`QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17 / QS-B1 V7-A`；
+  火漆与载体纵向重叠 `24px`，载体名义宽 `26px`、收起态露出 `4px`，使用
+  烟熏旧骨褐挺质誓约纸／亚麻和约五个不等距尖锐尾点；本地 `42/42 pass`、
+  展示区 `6/6 pass`、ImageGen `0/0`，当前
+  `simulation-reviewed / P2 / awaiting-user-direction-confirmation`
 - 当前已确认布底模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V13 / QS-B1 V4-A`；
   用户于 `2026-08-05` 回复“接受, 用这一套试试效果”
 - 当前已确认模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A`；用户于
@@ -30,17 +35,18 @@
 - 最近一次已执行生产正文：`QS-B1 V5-B.r4 / attempt 5`；fixed child session
   `019fd527-d402-7c00-8fd2-4d6d0ec932d4` 已返回图片并完成
   `turn.completed`，因此实际生图已达 `5/5`
-- 当前 production 正文：V6-A..G 七份单对象完整正文已由用户于
+- 最近一次 production 正文：V6-A..G 七份单对象完整正文已由用户于
   `2026-08-06` 以文末原文统一明确授权；A／B／C 已内部通过，D／E／F／G 已
-  耗尽；整批顺序执行结束，无活动 production 正文
+  耗尽；整批顺序执行结束。A／B／C 未获用户接受，整包已被 V7-A 可见材质
+  方向取代；当前无活动或已授权 production 正文
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
   `source-accepted / P4 / production 4/5`；menu V5-B motifs
   `candidate-rejected / repair-budget-exhausted / P3 / simulation ImageGen 0/0 /
-  production 5/5`；menu V6 motifs `batch-review-ready / P3 / simulation ImageGen
-  0/0 / production 28/35 complete`；runtime
-  尚未完成
+  production 5/5`；menu V6 motifs `user-superseded / P3-history / simulation
+  ImageGen 0/0 / production 28/35 complete`；menu V7-A
+  `simulation-reviewed / P2 / ImageGen 0/0`；runtime 尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
   `simulation-confirmed / V3-A repair-budget-exhausted / V3-B gated / P3`；V1 保持
@@ -49,8 +55,9 @@
   QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
   `0/5 / gated`；V5-B motifs `repair-prepared / P3 / simulation ImageGen 0/0 /
   production 5/5 / repair-budget-exhausted`；V6 motifs
-  `V6-A／B／C candidate-reviewed / V6-D／E／F／G repair-budget-exhausted / P3 /
-  production 28/35 complete`
+  `V6-A／B／C user-superseded / V6-D／E／F／G repair-budget-exhausted /
+  P3-history / production 28/35 complete`；V7-A
+  `simulation-reviewed / P2 / ImageGen 0/0`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -11975,3 +11982,213 @@ previous V6 candidate or Image-2 shape was copied.
 - promotion 仍冻结：`source_written=false`、`runtime_written=false`、
   `addon_changed=false`。必须先由用户接受 A／B／C 具体候选；D／E／F／G 如需
   继续，必须另开新方向与新授权，不得挪用本批未使用额度。
+
+## QS-B1 V6 用户复审与 V7-A 承载层重开
+
+### V6 用户复审结论 — 2026-08-06
+
+- 用户结论：整体功能结构、七项独立 Button、动态收拢和 ScrollChild 滚动
+  关系没有问题，但当前可见效果不通过：火漆没有读成“压住”条带；V5-A
+  近黑旧布的材料质量过低；尾端双钝缺口过于克制，需要更锋利、更不规则的
+  破口，并使用更复古的综合色。
+- 当前 V6 复审包因此不进入 P4。A／B／C 三个内部候选没有获得用户接受，现记为
+  `user-superseded-by-V7-A-material-direction / no-source / no-runtime`；D／E／F／G
+  继续保持各自 `repair-budget-exhausted`。V6 的 `28/35` 实际调用和 `7` 个
+  流程错误是封闭历史，未使用额度不转移到 V7。
+- 已接受的 V5-A source 与 manifest 不删除、不覆盖，也不把过去的明确接受
+  改写为失败；它保留为可恢复 fallback。但它的“近黑烟熏布＋双钝缺口”可见
+  方向已被用户这次要求取代，后续菜单不得直接把它导出为目标 runtime。
+- 继续保留：七个 provider 代理、一项一 Button／一纹章 source、hidden 无空洞
+  收拢、disabled 留位、部分裁切无完整 hitbox、完全滚出无 hitbox、正文不
+  重排、奖励前 `32px`、旧入口原子 fail-open。
+- 必须改变：承载物件、蜡／载体 overlap、载体综合色和尾端轮廓。该变化越过
+  V6 冻结修复边界，必须回到新的生成前模拟，不能以 V6 `.rN` 或 deterministic
+  recolor 冒充。
+
+### “纯洁印记”参考的边界
+
+- 只借用官方资料可以客观确认的物理语法：誓约／祈文载体通过蜡封固定，蜡体
+  位于载体上方；载体可读取为做旧 parchment／vellum。语义复核来源为
+  [Warhammer Community: The Anatomy of Power Armour](https://www.warhammer-community.com/en-gb/articles/Du2wvip7/the-anatomy-of-power-armour/)
+  与
+  [Warhammer Community: Staff Tackle the Space Marines of Leviathan](https://www.warhammer-community.com/en-gb/articles/AP3DV0Ri/warhammer-community-staff-tackle-the-space-marines-of-leviathan/)。
+  这些网页和其中像素不下载、不上传、不进入 source／runtime，也不成为高于
+  AEUI 锁定图的视觉权威。
+- 不复制任何战锤阵营符号、双头鹰、经文、骷髅、盔甲、科幻金属或宗教身份。
+  最终物件仍是 2004 年前后香草魔兽中的“艾泽拉斯远征公会誓约条带”。
+- 权威顺序不变：任务锁定图及其 Prompt → Quest／全局基线 → 真实组件合同 →
+  QS-A1 accepted 漆章的受限装配职责。失败 V6 像素与本地几何模拟均不是视觉
+  权威或未来 edit 输入。
+
+## QS-B1 V7-A 火漆跨压旧誓约条带 — V17 生成前模拟
+
+### 元数据与子状态
+
+- 版本：`QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17 / QS-B1 V7-A`
+- 子状态：`simulation-reviewed / P2 / awaiting-user-direction-confirmation`
+- 操作：`simulate`；方式：`deterministic-local-geometry`
+- ImageGen：`0/0`；上传：`0`；provider session：无；本地渲染错误：`0`
+- Python：macOS `conda run -n py312 python`；解释器
+  `/Users/yuanshiyao/miniconda3/envs/py312/bin/python`；版本 `3.12.12`
+- renderer：
+  `tools/render_quest_log_seal_layered_actions_simulation_v2.py`，SHA-256
+  `0daab458c682a65576906db56d608ef41a396b2e7de68f393f9046e71812a8bb`
+- specification：
+  `tools/specs/quest_log_seal_purity_ribbon_simulation_v17.json`，SHA-256
+  `76a4c973b2e50a5a3d9302e77ee7dc30f3e2f421754db492132140c099630414`
+- 命令：
+  `conda run -n py312 python tools/render_quest_log_seal_layered_actions_simulation_v2.py tools/specs/quest_log_seal_purity_ribbon_simulation_v17.json --repo-root .`
+- 真实排版 board：
+  `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17/quest_log_seal_purity_ribbon_board_v17.png`，SHA-256
+  `952906ee061e071ce826d6b8cd585ef09e2691c04ad1fadd0cda5f1cba368923`
+- 关系／尾端放大图：
+  `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17/quest_log_seal_purity_ribbon_zoom_v17.png`，SHA-256
+  `983168c4901fcdbdc84031b67d96a72342fbb1cf34538cd49e1afd789eecdaf8`
+- 模拟报告：
+  `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17/quest_log_seal_purity_ribbon_report_v17.json`，SHA-256
+  `7fcf35a099a7dc52796de52b09c71408f6b5566f1fa07056d5840f0e70135cd1`；
+  `42/42 pass`。
+- 展示区域 template：
+  `tools/specs/quest_log_seal_purity_ribbon_simulation_v17_display_region.json`，
+  SHA-256
+  `326a4ac838b1cb27690d0aecf096047464b46442a1e0b250aabeaa502302ef3d`。
+  生成合同 SHA-256
+  `c98968ef2adcb8f4491657c7d58e333eed59d32076abe35bb95cf3e6f5627687`；
+  报告 SHA-256
+  `1d90c383fc753a2c42530cbdb2c2e8fb1012318b16a206055dd4b4e8c5e441b0`；
+  六场景 `6/6 pass`、violations `0`。
+
+### 本地模拟规格与可见设计
+
+- 真实 Quest Log 保持 `676×464`；详情 viewport 仍为
+  `[366,64,246,324]`，十八行左页、真实正文、四个 `108×41px` 奖励槽和
+  七项 provider 顺序均不变。
+- QS-A1 漆章继续使用视觉 `[210,4,32,32]`／命中 `[206,0,40,40]`。新载体
+  root 从 `[210,12,32,28]` 开始，先绘制；火漆随后绘制。两者纵向相交
+  `24px`，收起态仍有 `4px` 条带末端从蜡体下方露出；载体名义可见宽约
+  `26px`，火漆在两侧越出，因此第一眼读取为“蜡封压住誓约条带”，不是两个
+  相邻 icon。
+- 展开态动作从 content `y=36` 起，以七个独立 `32×22px` Button 向下排列。
+  最大载体从 `y=12` 到 `204`，尾端 `14px`；第一奖励 `y=236`，保持精确
+  `32px` 安全距。五项／三项分别收短 `44px`／`88px`，同一尾端 crop 上移。
+- 载体不再是近黑软布，而是有一定挺度的粗纤维誓约纸／亚麻混合物：低饱和
+  烟熏旧骨褐主体、褪色暖赭宽受光面、深乌棕压痕／边缘、灰褐旧污渍。它比
+  右页纸面更暗、更窄，但不读成黑色工具条。
+- 尾端使用约五个长短不一的尖点和深浅不同的破口；禁止等距锯齿、同长排穗、
+  对称鱼尾、流苏或两个规则钝缺口。侧边仍只有低频手裁偏差，不按 `22px`
+  行节距重复。
+- 七枚功能纹章仍是独立透明对象；模拟暂用深乌棕普通印记和灰暗酒红放弃印记，
+  只让用户判断综合色角色。V6 像素没有上传、粘贴、裁切或变成 V17 的输入。
+- 层序固定为：右页／动态正文 → 新载体与根部受压区 → 七个独立纹章／Button
+  视觉 → QS-A1 火漆。实际 Button 命中仍来自七个真实 provider 代理，不由
+  载体或模拟图持有。
+
+### 内部审查
+
+- 语义／物理：`pass-for-user-review`。火漆和载体共享中心轴，24px 重叠、蜡体
+  双侧越出和后绘制层序共同证明压合，不再依赖一句“压住”描述。
+- 轮廓／综合色：`pass-for-user-review`。旧骨褐载体与暗酒红蜡体形成复古而
+  克制的材料区分；尾端在 `12×` 放大图中显示非等距尖锐破口，不再使用 V5-A
+  双钝缺口。
+- 组件合同：`pass`。七 Button 独立、hidden 收拢、disabled 留位、部分裁切
+  不命中、完全滚出零命中、正文不重排、奖励间距和 fail-open 均保持。
+- 展示区域：`pass / 6 of 6 / violations 0`。这只证明真实几何与裁切，不证明
+  最终纤维、Alpha、蜡影或客户端混合。
+- 非权威：本地 polygon、确切模拟 RGB、最终纸／布纤维、蜡体接触阴影、
+  手绘破损、七纹章正式像素、Alpha 与四态。模拟文件不得成为 source、runtime、
+  裁切来源或 ImageGen edit／reference 输入。
+
+### QS-B1 V7-A production-draft（未授权、不得执行）
+
+拟议生产只生成一张“连续材料 donor”，不让 ImageGen 决定细长轮廓、Alpha、
+蜡体或尾端。未来用户确认 V17 后，仍需看到并单独授权最终版本、固定输入和
+五次实际调用预算。
+
+拟议输入职责：
+
+1. Image 1：`assets/locked/quests/任务详情面板_视觉基准_v1.png`。最高职责为
+   香草时代二维手绘精度、任务卷宗综合色、左上暖光、材料厚度与磨损尺度；
+   忽略完整双页书、按钮、黄铜、书签、蜡封、文字和几何。
+2. Image 2：`assets/locked/quests/任务追踪面板_视觉基准_v1.png`。只继承旧纸／
+   粗纤维载体的低频污渍、边缘磨损和远征年代；忽略 tracker 外壳、皮带、
+   罗盘、羽毛笔、铆钉、叠页和长矩形轮廓。
+3. QS-A1 accepted 漆章不上传给 ImageGen。它只在本地确定性装配中提供
+   `32px` runtime Alpha／宽度和上层 z-order；V17 模拟与任何 V6 候选均不是
+   production 输入。
+
+完整 donor 执行正文草案：
+
+> Create one edge-to-edge orthographic hand-painted material field for an Azeroth
+> expedition guild oath carrier. The output contains material only. It is not a
+> ribbon silhouette, not a purity seal, not a UI button and not a finished prop.
+> Fill the entire square canvas continuously with a stiff, aged fibrous hybrid of
+> vellum and coarse linen suitable for a narrow vertical oath strip. There must be
+> no exterior background, no transparent area, no isolated object outline, no wax,
+> no stamp, no icon, no writing, no runes, no border, no holes and no cast shadow.
+>
+> Inherit from Image 1 the 2004-era World of Warcraft two-dimensional hand-painted
+> bitmap language, warm upper-left light, broad readable value planes, subdued
+> expedition-document palette and coarse low-resolution-friendly wear. Inherit from
+> Image 2 only the quiet fibrous document material, non-photographic ageing and
+> sparse irregular stains. Ignore every book, page layout, leather strap, brass part,
+> compass, quill, tracker silhouette, wax seal, text, button and decorative emblem in
+> both images.
+>
+> The material must feel moderately stiff and compressed rather than like soft black
+> cloth. Use a dominant muted smoked old-bone umber near RGB [96,78,54] to
+> [116,94,64], broad faded warm-ochre planes no brighter than RGB [145,118,78], deep
+> umber-brown pressure areas near RGB [52,40,30] to [70,54,39], and a few broad
+> grey-brown age stains. Keep the centre quiet enough for small dark stamped motifs.
+> Use three to five large asymmetric value regions across the whole field, a few
+> interrupted coarse fibres, sparse compression wear and non-periodic stains. The
+> field must remain continuous through the full canvas with no horizontal seam,
+> repeated 22-pixel rhythm, tile boundary, full-height highlight, centred gradient or
+> mirrored left/right pattern.
+>
+> Do not depict Warhammer or any other franchise identity: no aquila, skull, armour,
+> devotional text, prayer, parchment scroll silhouette, purity-seal outline or
+> science-fiction metal. Also exclude bright cream paper, clean beige canvas, near-
+> black fabric, saturated orange, gold glow, celebration ribbon, velvet, satin,
+> leather, burlap macro-photography, regular weave wallpaper, procedural micro-noise,
+> embossed pattern, vector precision, 3D bevel, photographic lighting, Diablo III
+> ornament or modern HUD styling.
+>
+> Final self-check: the whole square is one continuous matte smoked old-bone
+> vellum/linen material field with broad low-frequency hand-painted variation. There
+> is no object silhouette, exterior background, wax, emblem, text, button, border,
+> horizontal seam, periodic pattern, bright cream, black cloth, metallic shine,
+> Warhammer iconography or photographic fibre macro-detail.
+
+拟议确定性合成合同：
+
+- provider 输出统一同轴归一化为 `1024²`，固定中央 crop 为 `128×768`；禁止
+  bbox-fit、非等比拉伸、镜像或自由重绘。
+- tracked `4×` mask 独占最终 `128×768` source 的轮廓与 Alpha：名义可见宽
+  `104px`、body 起点 `96px`、五个不等距尖锐尾点、最大 runtime 等比
+  `32×192px`。ImageGen donor 不拥有尾端几何。
+- root 前 `112px` 额外接受由 QS-A1 Alpha 确定性投影形成的低对比压平／接触
+  暗化；只改变 donor RGB，不复制蜡像素，也不生成第二个鼠标对象。
+- runtime 仍以同一 source 的 `24px` body offset、`visible_count×22px`
+  prefix 和固定 `14px` tail 装配；收起态显示前 `28px`。纹章、文字、Button、
+  状态和蜡体不得烘焙进 source。
+
+生产正文完整性预检：`pass-for-draft`。物件身份、两张输入职责、输出范围、
+综合色、美术 DNA、禁项、donor 连续性、确定性 crop／mask／接触暗化、动态
+prefix＋tail 和禁止烘焙均已明确；最终 RGB 与可见方向仍以用户对 V17 的结论
+为准。拟议修复循环为 V7-A 单一正文最多 `5` 次实际 ImageGen 调用；流程错误
+单列。首次只允许 fresh generate；同一循环前次输出是否可作 edit 输入、固定
+SHA 和完整最终正文必须在用户另行授权时冻结。当前实际调用 `0/0`，不是
+`0/5 authorized`。
+
+### V17 用户方向门禁
+
+- 当前用户结论：`pending`。
+- 请确认的可见范围只有：火漆确实跨压条带、条带比火漆窄且略有挺度、烟熏
+  旧骨褐／深乌棕／灰暗酒红综合色、约五个不等距尖锐尾点，以及它在完整
+  Quest Log 六场景中的重量。
+- 确认不接受任何模拟像素，也不接受 V7-A donor Prompt、上传或生产预算。
+- 用户确认后：把具体可见条款冻结为 `simulation-confirmed`，完成 V7-A 最终
+  Prompt／mask 合同复核，再请求独立生产授权。用户否决时只重做本地几何
+  模拟，不调用 ImageGen。
+- source／runtime／addon：本次均未修改。现有 V5-A source 与全部旧 Button
+  fail-open 保持；无跨设备精确像素需求，因此不发布 handoff。
