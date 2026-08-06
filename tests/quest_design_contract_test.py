@@ -3129,7 +3129,7 @@ def main() -> None:
             "V5-B 正式 production 授权冻结点",
             "确认授权 QS-B1 V5-B 最终 production 正文",
             "attempt 1 没有 Image 3",
-            "QS-B1 V5-B 模拟 ImageGen：`0/0`；production `0/5`；流程错误 `2`",
+            "QS-B1 V5-B 模拟 ImageGen：`0/0`；production `0/5`；流程错误 `3`",
             "V5-B 流程错误",
             "No prompt provided via stdin.",
             "最后一个 `-i` 后加入标准 `--` 参数分隔符",
@@ -3137,6 +3137,9 @@ def main() -> None:
             "019fd4f1-ca45-7130-b6da-48e79d0abdf8",
             "6998 bytes",
             "762930e574b4c3fdf0ec6898946e51742d61ccfd9ae09913e018e95035a1dc54",
+            "019fd4f3-c53a-75f0-822b-dc71902bb780",
+            "codex exec -C <temp> -s workspace-write",
+            "禁止读取 wrapper 或再启动 `codex/npx`",
         ),
         "QS-B1 V15 confirmation and V5-B authorized production gate",
     )
