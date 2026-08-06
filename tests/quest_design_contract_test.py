@@ -3789,6 +3789,20 @@ def main() -> None:
         "QS-B1 V6-F attempt 4 freeze rejection and final fresh gate",
     )
     require(
+        seals_work,
+        (
+            "QS-B1 V6-F attempt 5 pre-generation flow error E1",
+            "8e19cec",
+            "a37ad7cbf84aff6d234809877aad96b0b141e78cbe5ace5a0d8f9ff873b910ba",
+            "npm error code EPERM",
+            "https://registry.npmjs.org/@openai%2fcodex failed",
+            "没有 child session、内建 `image_gen` tool call、provider result 或图片",
+            "全批流程错误第 `7` 次、F 段第 `1` 次",
+            "V6-F\n  仍为 `4/5`，整批仍为 `22/35`",
+        ),
+        "QS-B1 V6-F final-attempt non-counting npm flow error",
+    )
+    require(
         seal_motifs_v5_candidate_reviewer,
         (
             "CANVAS = (1024, 1024)",

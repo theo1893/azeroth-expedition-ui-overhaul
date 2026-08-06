@@ -8620,7 +8620,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
   但两个修复框外全部可见像素均发生综合色漂移，且替代末端成为过大的光滑椭圆
   胶囊，不满足冻结 edit 合同。下一次为 V6-F 最终 attempt 5；fresh generate，
   只上传固定 Image 1／2，无 Image 3，禁止复用 attempt 4 或任何跨段像素。
-  全批目前共 `6` 次流程错误，其中 E3 同时返回 provider 图片
+  全批目前共 `7` 次流程错误，其中 E3 同时返回 provider 图片
   并占用一次生图额度。
 - 用户授权原文：
 
@@ -8641,7 +8641,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 | V6-C SHOW | 3/5 | 0 | candidate-reviewed / P3 | 单段通过即停；授权 bbox-fit 例外 |
 | V6-D HIDE | 5/5 | 3 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
 | V6-E CLEAN | 5/5 | 1 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
-| V6-F RESET | 4/5 | 0 | internal-rejected / fresh-final-prepared / P3 | attempt 5 r4 fresh；固定 Image 1／2，无 Image 3 |
+| V6-F RESET | 4/5 | 1 | internal-rejected / fresh-final-prepared / P3 | attempt 5 E1 无生成；以相同 r4 正文重试，固定 Image 1／2，无 Image 3 |
 | V6-G ABANDON | 0/5 | 0 | prompt-authorized | 等待 F 结束 |
 
 ### QS-B1 V6-A attempt 1 execution and review
@@ -11149,6 +11149,23 @@ pixel, green fringe, or additional mark. Confirm every exterior pixel is exact u
 - 结论：`internal-rejected / fresh-final-prepared / P3 / 4/5`。attempt 4 违反
   冻结边界，不得进入验收，也不得作为最终 attempt 的 Image 3。attempt 5
   fresh generate，只上传固定 Image 1／2；不复用任何旧候选或跨段像素。
+
+### QS-B1 V6-F attempt 5 pre-generation flow error E1
+
+- 执行前 commit：`8e19cec`；完整正文版本：`QS-B1 V6-F.r4`；fixed Image 1／2，
+  无 Image 3；正文 `7596 bytes`、SHA-256
+  `a37ad7cbf84aff6d234809877aad96b0b141e78cbe5ace5a0d8f9ff873b910ba`。
+- 固定 child 尚未启动。`npx` 在解析 `@openai/codex@0.143.0` 时返回
+  `npm error code EPERM`、`npm error errno EPERM`、`FetchError: request to
+  https://registry.npmjs.org/@openai%2fcodex failed`，并报告无法写入
+  `/Users/yuanshiyao/.npm/_logs`。
+- 临时目录 `/private/tmp/aeui-qs-b1-v6f-attempt-05.a6Z99p` 的 `generated/`
+  为空；没有 child session、内建 `image_gen` tool call、provider result 或图片。
+  因此计为全批流程错误第 `7` 次、F 段第 `1` 次，不占实际生图额度；V6-F
+  仍为 `4/5`，整批仍为 `22/35`。
+- 恢复边界：只修复 npm 网络／沙箱权限；以相同冻结 commit、完全相同 r4 正文、
+  相同两个固定 SHA 输入和新的空临时目录重试。不得修改提示词、添加 Image 3、
+  复用候选或启动并发 provider 调用。
 
 ### QS-B1 V6-F.r4 complete production Prompt — fresh-final-prepared / frozen
 
