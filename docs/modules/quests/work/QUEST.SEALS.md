@@ -8604,8 +8604,9 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
     (`03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`)
   - Image 2：`assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
     (`719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`)
-- 当前计数：V6-A `1/5`，V6-B..G 各 `0/5`，合计 `1/35`；V6-A attempt 1
-  已内部退回，当前准备 r1。
+- 当前计数：V6-A `2/5`，V6-B..G 各 `0/5`，合计 `2/35`；V6-A attempt 1／2
+  均已内部退回，当前准备 r2。送入提示词前的提取错误与旧 CLI 模型路由 400
+  共 `2` 次流程错误，均未触发 ImageGen，依授权不占生图额度。
 - 用户授权原文：
 
 > 确认授权 QS-B1 V6-A/B/C/D/E/F/G 最终 production 正文；按 A→G 顺序执行；每段每次上传固定 SHA 的 Image 1/2，每段首次无 Image 3，仅允许同段紧邻前次输出在冻结修复边界内作为 Image 3 edit 输入；每段最多 5 次实际 ImageGen 调用，最坏合计 35 次，流程错误不占额度；单段内部通过即停，单段耗尽不阻止其他已授权独立段继续，禁止跨段复用像素；允许按合同执行同轴 1024² 归一化、边缘连通色键、透明 RGB 清零、等比 bbox-fit、七张独立 candidate/source、四态派生与真实排版预演。
@@ -8620,7 +8621,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 
 | body | 当前实际生图 | 流程错误 | 当前状态 | 下一动作 |
 | --- | ---: | ---: | --- | --- |
-| V6-A SHARE | 1/5 | 0 | repair-prepared | attempt 2 regenerate；无 Image 3 |
+| V6-A SHARE | 2/5 | 2 | repair-prepared | attempt 3 regenerate；无 Image 3 |
 | V6-B DETAIL | 0/5 | 0 | prompt-authorized | 等待 A 结束 |
 | V6-C SHOW | 0/5 | 0 | prompt-authorized | 等待 B 结束 |
 | V6-D HIDE | 0/5 | 0 | prompt-authorized | 等待 C 结束 |
@@ -8758,3 +8759,150 @@ visible or antialiased pixels stay inside [160,160,864,864]. Confirm all remaini
 are uniform exact #00FF00 with no gradient. Confirm the emblem is flat muted matte aged
 ochre mineral pigment with shallow broad value variation, no modeled shaft, thickness,
 highlight, shadow, carrier, text, state, enclosed green hole, or additional mark.
+
+### QS-B1 V6-A attempt 2 execution and review
+
+- 执行前 commit：`5ffa65b`；完整正文版本：`QS-B1 V6-A.r1`；操作：fresh
+  regenerate。
+- 固定输入：Image 1／2；无 Image 3；提示词正文 `6225 bytes`、SHA-256
+  `86ff2aecdf529349ee355cebe5b4b93007ee06b04205874c393e54ef04fa9a21`。
+- 生成前流程错误 `2` 次：第一次为本地 `awk` 标题分隔符解析失败，未创建 child
+  turn；第二次为旧 CLI 继承 `gpt-5.6-sol` 后在模型入口收到 HTTP 400，未调用
+  ImageGen。两者均无 provider 图像结果，依授权不计生图额度。随后严格按专用
+  skill 固定为 `gpt-5.5 / medium`。
+- fixed child：`@openai/codex@0.143.0`；session
+  `019fd587-b49b-7dd1-af7c-ace29f57eadd`；收到实际图像并 `turn.completed`，因此
+  计为 V6-A `2/5`、批次 `2/35`。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V6/V6-A/attempt-02/raw/QS-B1-V6-A.attempt-02.png`；
+  `1254×1254 RGB`；SHA-256
+  `fce2a9d6041849fd777847c13c3add58fc596dd1efa66d28c291dddd84d6e431`。
+- 确定性审查：同轴 LANCZOS 归一化为 `1024²` 后执行边缘连通色键与透明 RGB
+  清零。可见 bbox `[219,192,819,797]` 位于 safe box `[160,160,864,864]`，但
+  可见绿色污染 `316`，自动 `8/9`，第一技术失败为
+  `visible_green_spill_is_zero`。review JSON SHA
+  `6820c7f184fb7f6eb3791d44dc4de17452922ad288a6d1bd63093955401bd446`。
+- 语义／材料第一失败门禁：SHARE 的双羽笔身份可辨，但主体仍是明亮橙金色、
+  具有连续浮雕纹理、中央明暗塑形、实体羽轴和立体结扣的物体插画；不是旧任务
+  书页上的低饱和、无体积、少色块矿物颜料授印。颜色统计 median
+  `[206,149,63]`、luma p50 `154.841`、chroma p50 `142`，进一步证明它过亮、
+  过饱和且轻浮。
+- runtime 装配：等比 fit 为 `12×12px` 并位于冻结 `[7,5,25,17]` content box；
+  六场景真实排版 `attempt-02.real-layout.png`，SHA
+  `1ae7f58425159eef6a3eab179ad989e9d01ef9de6816f023456e19ea1902752a`；
+  display-region `6/6 pass`、`0` violations，报告 SHA
+  `1c3a79b81ea83ca9be11bbb1e0c13529a66595a18d0aef5daf252e654f03be90`。
+  这只证明装配几何，不覆盖材料、颜色或残色失败。
+- 结论：`internal-rejected / repair-prepared / P3 / 2/5`。身份方向虽接近，但
+  全局颜色、材质与三维塑形均错误，不属于可冻结的局部缺陷；禁止把 attempt 2
+  作为 Image 3。attempt 3 仍只上传固定 Image 1／2并 fresh regenerate。
+- 下一版必须保持：单一 SHARE 双旧羽笔＋紧凑结约语义、明显不等角、normal-only、
+  固定输入权威、1024²／`#00FF00`／safe box／runtime box、无 carrier 与全部禁项。
+- 下一版必须改变：把画法明确收敛为三色以内的旧木版／蜡版平面印记；主体色限定
+  为暗赭褐，不允许橙金、连续纹理、渐变、羽轴高光或立体结扣；绿色只能存在于
+  与画布边缘连通的外部底色，任何磨损一律用较浅赭色而非绿色镂空。
+
+### QS-B1 V6-A.r2 complete production Prompt — repair-prepared / frozen
+
+Use Image 1 and Image 2 only as fixed visual references. Create exactly one independent
+normal-state SHARE emblem for a circa-2004 vanilla World of Warcraft quest-log
+administration menu. This is a tiny two-dimensional woodblock-transfer pigment glyph,
+not a scene, screenshot, UI mockup, worksheet, atlas, button, ribbon, page, physical pair
+of quills, inventory object, or complete interface.
+
+REFERENCE AUTHORITY
+
+Image 1 is the highest visual authority. Inherit its old Azeroth expedition-ledger
+language: heavy hand-painted forms, muted earth color, slight asymmetry, sparse wear,
+and the serious visual weight of a vanilla-era adventurers' guild record. Translate
+those qualities into one small flat administrative pigment glyph only. Do not copy its
+book, pages, leather frame, brass, wax seal, ribbons, text, reward slots, buttons, or
+composition.
+
+Image 2 is a secondary micro-scale reference only. Inherit only its economical stroke
+count, softened hand-painted perimeter, and legibility after severe downscaling. Do not
+copy, trace, rotate, recolor, or rearrange any triangle, circle, check mark, 2-by-2
+layout, position, transparency, or pixel from Image 2.
+
+CANVAS, COUNT, AND PLACEMENT
+
+Render an exact square 1024 by 1024 RGB image. Fill every pixel outside the glyph with
+one perfectly uniform exact chroma-key green #00FF00. The green field must be a single
+flat RGB value with no gradient, lighter center, darker corner, texture, lighting,
+vignette, noise, shadow, paper, cloth, wax, metal, frame, guide, label, checkerboard, or
+transparency preview. There must be exactly one visible semantic glyph and no second
+mark. Keep every pigment pixel, antialiasing pixel, soft bleed, and worn edge strictly
+inside safe box [160,160,864,864]. Center the complete glyph near [512,512]. Keep its
+complete visible span no larger than 560 pixels wide by 360 pixels high; aim for about
+520 by 330 pixels, with broad exact-green margin on all four sides. Use a direct
+orthographic front view with no perspective.
+
+This source owns only one normal-state pigment glyph. It will later be extracted and
+isotropically fitted into content box [7,5,25,17] inside one 32 by 22 runtime Button.
+Do not draw the Button, hover, pressed, disabled state, Tooltip, text, or provider logic.
+
+EMBLEM ANATOMY
+
+Make one compact SHARE glyph formed by two simplified old guild quill signs crossing at
+visibly unequal angles and joined by one small dense covenant junction. Treat the quills
+as heraldic brush silhouettes, never as physical feathers. Each quill must consist of
+one short bowed wedge gesture plus only two or three broad blunt side lobes merged into
+the same continuous silhouette. Do not delineate a shaft, handle, spine, central rib,
+individual barbs, feather volume, bevel, or pointed realistic tip. Make the left quill
+shorter, lower, broader, and slightly more worn; make the right quill taller but still
+compact. Keep the crossing off-center and avoid a mechanically perfect X. The covenant
+junction is one small irregular dark pigment blot merging the two signs, not a rope,
+bow, knot object, medallion, wax seal, handshake, scroll, arrow, chain link, crest, or
+third object. At tiny size the whole glyph must read as one connected administrative
+mark for sharing a quest, not crossed weapons or two collectible items.
+
+STRICT FLAT-INK CONSTRUCTION
+
+Render the glyph like a worn two- or three-pass woodblock or wax-stencil transfer. Use
+only three flat, hard-bounded pigment values with no continuous shading:
+
+- dominant dark muted umber-ochre approximately RGB [116,78,39];
+- one slightly lighter dry-pigment ochre approximately RGB [142,99,52];
+- one sparse darker pooled umber approximately RGB [82,54,31].
+
+Keep every visible pigment color close to these dark earthy values. Do not use orange,
+gold, yellow, tan, ivory, white, bright highlights, saturated color, or any value that
+looks luminous. Do not create photographic surface grain, repeated micro-noise, leather
+texture, feather texture, carved texture, embossing, or material relief. Color changes
+must occur only as two or three broad irregular flat patches with clearly shallow value
+difference, never as a gradient, highlight, central ridge, rim light, cast shadow,
+contact shadow, ambient occlusion, bevel, thickness, or three-dimensional modeling.
+
+Use a non-constant hand-printed perimeter with a few coarse edge nicks and restrained
+two-to-four normalized-source-pixel pigment bleed. All internal wear must be painted in
+the lighter ochre value, not punched through to green. Any missing-pigment notch must be
+open and connected to the outer silhouette edge. The entire interior of the connected
+glyph must remain pigment colored: no enclosed green island, no isolated green speck,
+no green crack, no green-tinted antialiasing, and no green between overlapping parts at
+the crossing. The result must look like native 2004-era Azeroth ledger sprite art after
+downscaling, not a modern object icon.
+
+STRICT EXCLUSIONS
+
+No physical feather object, realistic quill, cylindrical shaft, wooden handle, central
+rib, individual feather barbs, modeled feather lobes, inventory item, rope knot, paper
+texture, cloth strip, ribbon, parchment tag, leather plate, wax, metal backing, button
+face, border, card, frame, circular medallion, rivet, bevel, cast shadow, drop shadow,
+contact shadow, ambient occlusion, inner or outer glow, specular highlight, bright
+central ridge, continuous gradient, orange-gold color, photographic grain, text,
+letters, numbers, runes, faction emblem, modern share symbol, crossed swords, perfect X,
+glass, neon, chrome, 3D rendering, photorealism, vector-clean symmetry, constant line
+weight, Diablo III ornament, Skyrim minimalist menu language, Warhammer purity-seal or
+imperial iconography. Do not place green inside the glyph or tint its edges green.
+
+FINAL SELF-CHECK
+
+Confirm the canvas contains exactly one compact SHARE pigment glyph and nothing else.
+Confirm it reads as two symbolic old-guild quill signs joined by one flat dark covenant
+blot, not two real feathers, crossed weapons, a perfect X, inventory objects, or a modern
+share icon. Confirm its span is no larger than 560 by 360 pixels and all visible pixels
+remain inside [160,160,864,864]. Confirm every exterior pixel is uniform exact #00FF00.
+Confirm the glyph uses only dark muted umber-ochre flat patches near [116,78,39],
+[142,99,52], and [82,54,31], with no orange-gold brightness, continuous texture,
+gradient, modeled shaft, object thickness, highlight, shadow, carrier, text, state,
+enclosed green pixel, or additional mark.

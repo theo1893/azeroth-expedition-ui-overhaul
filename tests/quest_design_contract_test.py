@@ -3368,6 +3368,26 @@ def main() -> None:
         "QS-B1 V6-A attempt 1 rejection and complete r1 repair gate",
     )
     require(
+        seals_work,
+        (
+            "QS-B1 V6-A attempt 2 execution and review",
+            "019fd587-b49b-7dd1-af7c-ace29f57eadd",
+            "fce2a9d6041849fd777847c13c3add58fc596dd1efa66d28c291dddd84d6e431",
+            "bbox `[219,192,819,797]`",
+            "可见绿色污染 `316`",
+            "median\n  `[206,149,63]`",
+            "internal-rejected / repair-prepared / P3 / 2/5",
+            "禁止把 attempt 2\n  作为 Image 3",
+            "QS-B1 V6-A.r2 complete production Prompt — repair-prepared / frozen",
+            "two-dimensional woodblock-transfer pigment glyph",
+            "no larger than 560 pixels wide by 360 pixels high",
+            "dominant dark muted umber-ochre approximately RGB [116,78,39]",
+            "The entire interior of the connected",
+            "glyph must remain pigment colored",
+        ),
+        "QS-B1 V6-A attempt 2 rejection and complete r2 repair gate",
+    )
+    require(
         seal_motifs_v5_candidate_reviewer,
         (
             "CANVAS = (1024, 1024)",
