@@ -8598,16 +8598,16 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 
 ### QS-B1 V6-A..G production authorization gate
 
-- 当前状态：V6-A／B `candidate-reviewed / P3`；V6-C..G
-  `prompt-authorized / P3`；
+- 当前状态：V6-A／B `candidate-reviewed / P3`；V6-C `repair-prepared / P3`；
+  V6-D..G `prompt-authorized / P3`；
   用户于 `2026-08-06` 授权整批顺序执行。
 - 固定输入：
   - Image 1：`assets/locked/quests/任务详情面板_视觉基准_v1.png`
     (`03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`)
   - Image 2：`assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
     (`719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`)
-- 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C..G 各 `0/5`，合计 `5/35`；
-  V6-B attempt 2 已内部通过并按单段通过即停，下一段为 V6-C。送入提示词前的提取错误与旧 CLI 模型路由 400
+- 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C `1/5`、V6-D..G 各 `0/5`，
+  合计 `6/35`；V6-C attempt 1 已内部退回，当前准备 C.r1。送入提示词前的提取错误与旧 CLI 模型路由 400
   共 `2` 次流程错误，均未触发 ImageGen，依授权不占生图额度。
 - 用户授权原文：
 
@@ -8625,7 +8625,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 | --- | ---: | ---: | --- | --- |
 | V6-A SHARE | 3/5 | 2 | candidate-reviewed / P3 | 单段通过即停；等待整批用户验收 |
 | V6-B DETAIL | 2/5 | 0 | candidate-reviewed / P3 | 单段通过即停；等待整批用户验收 |
-| V6-C SHOW | 0/5 | 0 | prompt-authorized | attempt 1；固定 Image 1／2，无 Image 3 |
+| V6-C SHOW | 1/5 | 0 | repair-prepared | attempt 2 regenerate；固定 Image 1／2，无 Image 3 |
 | V6-D HIDE | 0/5 | 0 | prompt-authorized | 等待 C 结束 |
 | V6-E CLEAN | 0/5 | 0 | prompt-authorized | 等待 D 结束 |
 | V6-F RESET | 0/5 | 0 | prompt-authorized | 等待 E 结束 |
@@ -9124,3 +9124,149 @@ enclosed green pixel, or additional mark.
   接受后再进入 P4。
 - 下一动作：按授权顺序进入 V6-C SHOW attempt 1，只上传固定 Image 1／2，无
   Image 3，且禁止复用 V6-A／B 像素。
+
+### QS-B1 V6-C attempt 1 execution and review
+
+- 执行前 commit：`f2d1662`；完整正文版本：`QS-B1 V6-C`；操作：generate。
+- 固定输入：Image 1／2；无 Image 3；提示词正文 `4595 bytes`、SHA-256
+  `7773848e54f031fd9e63db9a4669099b2bc29d5cf8317a2a71c0e411913be88c`；未上传或
+  复用 V6-A／B 像素。
+- fixed child：`@openai/codex@0.143.0`、`gpt-5.5 / medium`；session
+  `019fd5a6-0a3b-7b40-8d16-a19e63c82998`；收到唯一实际图像并
+  `turn.completed`，计为 V6-C `1/5`、整批 `6/35`。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V6/V6-C/attempt-01/raw/QS-B1-V6-C.attempt-01.png`；
+  `1254×1254 RGB`；SHA-256
+  `772425fc98efc3f8ff035ee8925a9f6b879fce9006a419e8b34a0e273a69ec16`。
+- 确定性审查：归一化后可见 bbox `[117,104,910,917]` 全向越出 safe box
+  `[160,160,864,864]`；可见绿色污染 `335`；自动 `7/9`，第一技术失败为
+  `visible_bbox_inside_safe_box`。review JSON SHA
+  `981518d5a6139cdc50bb0e833842cb768d3e660e41d860880b65f7991e49c20e`。
+- 语义／材料第一失败门禁：候选是亮金色、尖锐对称、带钻石切面和中心明暗塑形的
+  四尖星／金属徽章；不是四个短粗钝头的旧公会导航颜料笔触，也容易读成星形武器。
+  颜色 median `[222,164,40]`、luma p50 `167.153`、chroma p50 `173`，明显过亮、
+  过饱和和轻浮。
+- runtime 装配：等比 fit 为 `14×14px`，位于 `[9,4,23,18]`；六场景
+  display-region `6/6 pass`、violations `0`，报告 SHA
+  `5a54760479844ccb2ad95f15862e411c7bb3887c5cd7bb4f638f58ec10d471ae`。
+  这只证明装配几何，不覆盖 safe box、残色、语义或材料失败。真实排版 SHA
+  `77361f646aef2e68367e331a6925afbb1575986af2c1d5dbaec41e1abbc0b57e`。
+- 结论：`internal-rejected / repair-prepared / P3 / 1/5`。身份、颜色与年代语言
+  均未成立，禁止把 attempt 1 作为 Image 3；attempt 2 仍只上传固定 Image 1／2
+  并 fresh regenerate。
+- 下一版必须保持：SHOW 四方向导航语义、北向略占主导、无外环、固定输入权威、
+  normal-only、1024²／safe box／runtime box 及全部禁项。
+- 下一版必须改变：用四个短粗、钝头、不等长的暗赭木版笔触替代尖锐菱形；以一
+  个实心深褐中心墨池连接，不使用任何内部绿色负形；删除金色、连续纹理、金属切面、
+  对称星形、高光、阴影和实体厚度。
+
+### QS-B1 V6-C.r1 complete production Prompt — repair-prepared / frozen
+
+Use Image 1 and Image 2 only as fixed visual references. Create exactly one independent
+normal-state SHOW emblem for a circa-2004 vanilla World of Warcraft quest-log
+administration menu. This is a tiny two-dimensional woodblock-transfer pigment glyph,
+not a scene, screenshot, UI mockup, worksheet, atlas, button, ribbon, map, physical
+compass, metal badge, weapon, inventory object, or complete interface.
+
+REFERENCE AUTHORITY
+
+Image 1 is the highest visual authority. Inherit its old Azeroth expedition-ledger
+language: heavy hand-painted forms, muted earth color, slight asymmetry, sparse wear,
+and the serious weight of a vanilla-era adventurers' guild record. Translate those
+qualities into one small flat administrative pigment glyph only. Do not copy its book,
+pages, leather frame, brass, wax seal, ribbons, text, reward slots, buttons, compass
+ornaments, or composition.
+
+Image 2 is a secondary micro-scale reference only. Inherit only its economical stroke
+count, softened hand-painted perimeter, and legibility after severe downscaling. Do not
+copy, trace, rotate, recolor, or rearrange any triangle, circle, check mark, 2-by-2
+layout, position, transparency, or pixel from Image 2.
+
+CANVAS, COUNT, AND PLACEMENT
+
+Render an exact square 1024 by 1024 RGB image. Fill every pixel outside the glyph with
+one perfectly uniform exact chroma-key green #00FF00. The green field must be one flat
+RGB value with no gradient, lighter center, darker corner, texture, lighting, vignette,
+noise, shadow, paper, cloth, wax, metal, frame, guide, label, checkerboard, or
+transparency preview. There must be exactly one visible semantic glyph and no second
+mark. Keep every pigment pixel, antialiasing pixel, soft bleed, and worn edge strictly
+inside safe box [160,160,864,864]. Center the glyph near [512,512]. Keep its complete
+visible span between 400 and 480 pixels wide and between 400 and 480 pixels high, with
+broad exact-green margin on all four sides. Use a direct orthographic front view with
+no perspective.
+
+This source owns only one normal-state pigment glyph. It will later be extracted and
+isotropically fitted into content box [9,4,23,18] inside one 32 by 22 runtime Button.
+Do not draw the Button, hover, pressed, disabled state, Tooltip, text, map, or provider
+logic.
+
+EMBLEM ANATOMY
+
+Make one compact open four-direction expedition-guild navigation mark from four short,
+broad, blunt brush wedges joined to one small solid central pigment pool. The four
+wedges must be visibly unequal and handmade. The north wedge is only slightly longer
+and narrower than the others. The east wedge is shorter and broader; the west wedge is
+slightly tilted and worn; the south wedge is the shortest and ends in a flat chipped
+tip. Each outer end must be blunt, truncated, or rounded, never sharp. Use non-parallel
+sides and coarse asymmetrical edges. Keep small open exterior channels between adjacent
+wedges so the mark does not become a filled star, but every channel must connect freely
+to the outer green field.
+
+Join all four wedge bases into one compact deep-umber center pool. The center is a solid
+positive pigment blot, not a hole, negative center, ring, gem, boss, rivet, or compass
+housing. No green may be enclosed at the center. At tiny size the mark must read as an
+old guild direction marker for showing a quest on the map, while its blunt ends,
+unequal lengths, open corners, and hand-printed imbalance prevent a star, weapon,
+shuriken, crosshair, sunburst, flower, wind rose, or modern location icon reading.
+
+STRICT FLAT-PIGMENT CONSTRUCTION
+
+Render the glyph like a worn two- or three-pass woodblock or wax-stencil transfer. Use
+only three flat broad pigment values with no continuous shading:
+
+- four main wedges: dark muted umber-ochre approximately RGB [122,80,38];
+- sparse dry wear and one secondary broad patch: muted old ochre approximately
+  RGB [151,105,55];
+- small solid center pool and one or two pooled wedge bases: deep umber approximately
+  RGB [78,50,29].
+
+Keep every visible pigment color close to these dark earthy values. Do not use orange,
+gold, yellow, tan, ivory, white, bright highlights, saturated color, or any luminous
+value. Do not create photographic grain, repeated micro-noise, stone texture, carved
+texture, embossing, faceted surfaces, or material relief. Color changes may occur only
+as a few broad flat patches with shallow value difference, never as a gradient,
+highlight, central flare, ridge, rim light, cast shadow, contact shadow, ambient
+occlusion, bevel, thickness, or three-dimensional modeling.
+
+Use a non-constant hand-printed perimeter with a few coarse edge nicks and restrained
+two-to-four normalized-source-pixel pigment bleed. All internal wear must be painted in
+the lighter ochre value, never removed to green. Any missing-pigment notch must be open
+and connected to the outside silhouette edge. The center pool and all four wedge bases
+must remain pigment colored. No enclosed green island, green center, green crack,
+isolated green speck, or green-tinted antialiasing is allowed.
+
+STRICT EXCLUSIONS
+
+No sharp diamond point, spearhead, arrowhead, four-point star, crosshair, weapon,
+shuriken, sunburst, flower, gem, faceted badge, wind rose, outer circle, inner ring,
+letters N/E/S/W, ticks, map grid, coordinates, needle, location pin, eye, slash, text,
+numbers, runes, physical compass casing, gold, brass, cloth, ribbon, wax, backing tile,
+button face, border, card, frame, medallion, rivet, bevel, cast shadow, drop shadow,
+contact shadow, ambient occlusion, glow, specular highlight, continuous gradient,
+photographic grain, glass, neon, chrome, 3D rendering, photorealism, perfect fourfold
+symmetry, vector-clean geometry, constant line weight, Diablo III ornament, Skyrim
+minimalist menu language, or Warhammer iconography. Do not place green inside the glyph
+or tint its edges green.
+
+FINAL SELF-CHECK
+
+Confirm the canvas contains exactly one compact SHOW glyph and nothing else. Confirm it
+is four short broad blunt unequal direction wedges joined by one small solid deep-umber
+center pool, with the north wedge only subtly dominant and all four outer ends truncated
+or rounded. Confirm it does not read as a sharp star, weapon, crosshair, faceted badge,
+metal compass, or modern location icon. Confirm the visible span is 400 to 480 pixels in
+both dimensions and all visible pixels stay inside [160,160,864,864]. Confirm every
+exterior pixel is uniform exact #00FF00. Confirm the glyph uses only broad flat dark
+earthy pigment patches near [122,80,38], [151,105,55], and [78,50,29], with no gold
+brightness, continuous texture, gradient, thickness, highlight, shadow, carrier, text,
+state, enclosed green pixel, or additional mark.
