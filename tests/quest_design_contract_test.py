@@ -3879,6 +3879,26 @@ def main() -> None:
         "QS-B1 V6-G attempt 3 local thickness edit gate",
     )
     require(
+        seals_work,
+        (
+            "QS-B1 V6-G attempt 4 execution and review",
+            "019fd66c-e7bd-76e1-9efc-ea546b1533b0",
+            "be702d450ba0e922fc490b18078ab915ed24ce6ea8a3cbcd5b55d6719ca517d7",
+            "bbox `[57,398,970,622]`",
+            "左段变为 `[57,398,539,622]`",
+            "右段变为 `[580,474,970,615]`",
+            "可见绿色污染 `0`",
+            "median\n  `[107,23,37]`",
+            "等比 fit 为 `16×4px`",
+            "internal-rejected / fresh-final-prepared / P3 / 4/5",
+            "QS-B1 V6-G.r4 complete production Prompt — fresh-final-prepared / frozen",
+            "COMPACT HEAVY PLEDGE-STROKE, SNAPPED AT THE MIDDLE",
+            "source aspect outside 1.55 to 1.80",
+            "V6-G `4/5`、整批 `27/35`",
+        ),
+        "QS-B1 V6-G attempt 4 edit-contract rejection and final fresh gate",
+    )
+    require(
         seal_motifs_v5_candidate_reviewer,
         (
             "CANVAS = (1024, 1024)",

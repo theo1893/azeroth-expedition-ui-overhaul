@@ -32,14 +32,14 @@
   `turn.completed`，因此实际生图已达 `5/5`
 - 当前 production 正文：V6-A..G 七份单对象完整正文已由用户于
   `2026-08-06` 以文末原文统一明确授权；V6-D／E／F 已耗尽，当前执行正文为
-  `V6-G.r3 / edit-prepared / P3`
+  `V6-G.r4 / fresh-final-prepared / P3`
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
   `source-accepted / P4 / production 4/5`；menu V5-B motifs
   `candidate-rejected / repair-budget-exhausted / P3 / simulation ImageGen 0/0 /
-  production 5/5`；menu V6 motifs `V6-G edit-prepared / P3 / simulation
-  ImageGen 0/0 / production 26/35 authorized`；runtime
+  production 5/5`；menu V6 motifs `V6-G fresh-final-prepared / P3 / simulation
+  ImageGen 0/0 / production 27/35 authorized`；runtime
   尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
@@ -49,7 +49,7 @@
   QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
   `0/5 / gated`；V5-B motifs `repair-prepared / P3 / simulation ImageGen 0/0 /
   production 5/5 / repair-budget-exhausted`；V6 motifs
-  `V6-D／E／F repair-budget-exhausted / V6-G edit-prepared / P3 / production 26/35 authorized`
+  `V6-D／E／F repair-budget-exhausted / V6-G fresh-final-prepared / P3 / production 27/35 authorized`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -97,7 +97,7 @@
   审查展示区脚本首次误用
   `--output` 参数；改用 `--report` 后六场景通过，无新生图调用，单独计为
   流程错误且不改变 production 计数
-- QS-B1 V6 模拟 ImageGen：`0/0`；production `26/35`、已授权。七个独立
+- QS-B1 V6 模拟 ImageGen：`0/0`；production `27/35`、已授权。七个独立
   production body 各自最多 `5` 次实际 ImageGen，最坏合计 `35` 次；流程错误
   不占额度。V5-B 五张失败工作表不上传、不裁切、不作为 edit 或视觉权威
 - QS-B1 历史流程错误：V1 `1`、V2 `3`、V3 `0`、V4-A `1`、V5-A `1`。均按
@@ -8601,7 +8601,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 - 当前状态：V6-A／B／C `candidate-reviewed / P3`；V6-D／E
   `candidate-rejected / repair-budget-exhausted / P3`；V6-F
   `candidate-rejected / repair-budget-exhausted / P3`；V6-G
-  `internal-rejected / edit-prepared / P3`；
+  `internal-rejected / fresh-final-prepared / P3`；
   用户于 `2026-08-06` 授权整批顺序执行。
 - 固定输入：
   - Image 1：`assets/locked/quests/任务详情面板_视觉基准_v1.png`
@@ -8609,7 +8609,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
   - Image 2：`assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
     (`719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`)
 - 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C `3/5`、V6-D `5/5`、
-  V6-E `5/5`、V6-F `5/5`、V6-G `3/5`，合计 `26/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
+  V6-E `5/5`、V6-F `5/5`、V6-G `4/5`，合计 `27/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
   内部通过；V6-D attempt 5 仍有 9 个绿色污染像素，五次额度耗尽且不得执行
   attempt 6。V6-E attempt 1／2 均已内部否决；attempt 3 因提示词传输遗漏仍触发
   provider，故计入生图并否决；attempt 4 已用完整 r2 正文生成但因近方形构图与
@@ -8628,7 +8628,9 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
   明暗带，已内部否决。attempt 3 fresh，只上传固定 Image 1／2，无 Image 3，
   已得到正确的近水平断裂语义和克制颜色，但等比运行时只有 `16×3px`，断口与
   厚重感消失，已内部否决。attempt 4 上传固定 Image 1／2 与紧邻 attempt 3
-  Image 3，只在左右两段各自修复框内增加纵向厚度并强化断口，不改变轴线和间距。
+  Image 3；虽改善重量和断裂语义，却把冻结 x 范围扩张到 `[57,970]`，运行时仍
+  只有 `16×4px`，并提高综合色鲜艳度，已内部否决。attempt 5 是最终 fresh，
+  只上传固定 Image 1／2，无 Image 3；压缩总宽并提高纵横比。
   全批目前共 `7` 次流程错误，其中 E3 同时返回 provider 图片
   并占用一次生图额度。
 - 用户授权原文：
@@ -8651,7 +8653,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 | V6-D HIDE | 5/5 | 3 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
 | V6-E CLEAN | 5/5 | 1 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
 | V6-F RESET | 5/5 | 1 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
-| V6-G ABANDON | 3/5 | 0 | internal-rejected / edit-prepared / P3 | attempt 4 r3 edit；固定 Image 1／2＋紧邻 attempt 3 Image 3 |
+| V6-G ABANDON | 4/5 | 0 | internal-rejected / fresh-final-prepared / P3 | attempt 5 r4 fresh；固定 Image 1／2，无 Image 3 |
 
 ### QS-B1 V6-A attempt 1 execution and review
 
@@ -11775,3 +11777,148 @@ is no continuous gradient, violet highlight, physical rope texture, lighting,
 thickness, shadow, carrier, text, state, enclosed green, green fringe, or additional
 mark. Confirm every exterior pixel is exact uniform #00FF00 and no previous V6
 candidate or Image-2 shape has been copied.
+
+### QS-B1 V6-G attempt 4 execution and review
+
+- 执行前 commit：`df9ccb0`；完整正文版本：`QS-B1 V6-G.r3`；受限 edit；固定
+  Image 1／2，紧邻 attempt 3 raw 是唯一 Image 3；正文 `6350 bytes`、SHA-256
+  `eabcd618ad835c8d3d5e97e6037b290b9ae451ff621dbb62c01a7910e6f15865`。
+- fixed child：`@openai/codex@0.143.0`、`gpt-5.5 / medium`；session
+  `019fd66c-e7bd-76e1-9efc-ea546b1533b0`；内建 `image_gen` 恰好一次并返回图片，
+  计为 V6-G `4/5`、整批 `27/35`；无流程错误。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V6/V6-G/attempt-04/raw/QS-B1-V6-G.attempt-04.png`；
+  `1254×1254 RGB`；SHA-256
+  `be702d450ba0e922fc490b18078ab915ed24ce6ea8a3cbcd5b55d6719ca517d7`。
+- 技术：bbox `[57,398,970,622]`，超出 safe box；可见绿色污染 `0`；median
+  `[107,23,37]`；自动 `8/9`，仅 safe-box 项失败。review JSON SHA
+  `31cb0e310bc3b0356d71c033f62617a6243a1e28521c7c3d14abed14a748e435`；
+  technical board SHA
+  `3529e7baef95b43a2c73316e5d27d0f0e0a1fc7c23186ed15d379fe3b7afe8b9`。
+- 冻结审计：左段变为 `[57,398,539,622]`、右段变为 `[580,474,970,615]`；
+  相比冻结 `[117,451,544,612]`／`[585,513,916,606]`，两侧外缘分别漂移
+  `60px` 与 `54px`，整体宽度由 `799px` 增至 `913px`。这不是保持 x 范围的
+  纵向加厚，违反 r3 edit 合同。
+- 美术：源图断裂语义和笔触重量较 G3 清楚，中央间隙仍存在；但更宽的构图抵消
+  加厚收益，等比运行时仍只有 `16×4px`。综合色更鲜红且连续亮带更明显，也未
+  达成克制灰暗旧酒红方向。
+- runtime：等比 fit 为 `16×4px`，落入 `[8,9,24,13]`；显示区域 `6/6 pass`，
+  报告 SHA `403da2cef8443d2976ab2a7cc7cd756de9f51f9061688d64cdde29a947dfc399`；
+  真实排版 SHA
+  `b2da5ea798568102d39e0c85fd54725e43a04445906691492aa79416737d7b08`。
+- 结论：`internal-rejected / fresh-final-prepared / P3 / 4/5`。attempt 4 违反
+  edit 冻结边界，不得成为候选或下一次 Image 3。attempt 5 是最终 fresh，
+  只上传固定 Image 1／2；不复用任何旧 G 或跨段像素。
+
+### QS-B1 V6-G.r4 complete production Prompt — fresh-final-prepared / frozen
+
+Use Image 1 and Image 2 only as fixed visual references. Freshly generate exactly one
+independent normal-state ABANDON emblem for a circa-2004 vanilla World of Warcraft
+quest-log administration menu. This is the final authorized V6-G attempt. It is one
+flat bitmap pigment sprite source, not a scene, screenshot, UI mockup, worksheet,
+atlas, button, ribbon, physical rope, material sample, inventory item, or complete
+interface.
+
+Do not upload, inspect, edit, trace, imitate, or reuse V6-G attempts 1 through 4. Do not
+use any V6-A through V6-F generated pixel, silhouette, crop, texture, or identity
+reference. Build a fresh independent result from only the two fixed references and
+this complete text.
+
+REFERENCE AUTHORITY
+
+Image 1 supplies only old Azeroth expedition-ledger weight: substantial handmade
+masses, muted earth color, slight asymmetry, sparse wear, and serious vanilla-era guild
+craftsmanship. Do not copy its book, pages, leather, brass, wax, ribbons, text, slots,
+buttons, ornaments, or composition. Image 2 supplies only economical stroke count,
+softened handmade perimeter, and tiny-sprite legibility. Do not copy, trace, rotate,
+recolor, or rearrange its geometry, layout, transparency, or pixels.
+
+CANVAS, COUNT, AND REQUIRED ASPECT
+
+Return one exact square 1024 by 1024 RGB image. Fill every exterior pixel with perfectly
+uniform exact #00FF00. The green field has no texture, gradient, lighting, noise,
+shadow, paper, cloth, frame, guide, label, checkerboard, or transparency preview.
+
+Draw exactly one semantic ABANDON emblem made from exactly two separated pigment pieces
+of one snapped covenant pledge-stroke. Keep all visible and antialiased pixels inside
+[160,160,864,864]. Keep the combined emblem inside [245,330,785,700], no wider than
+540 pixels and between 300 and 360 pixels high. The combined visible aspect ratio must
+be 1.55 to 1.80. Center it near [515,525] with broad green margin. Use orthographic
+front view with no perspective, thickness, modeled depth, or lighting.
+
+This normal-state source will be edge-keyed and isotropically fitted into [8,7,24,16]
+of a 32 by 22 Button. Its required aspect must produce about 14 to 16 runtime pixels
+wide by 8 or 9 high. Draw no Button, carrier, backing, state, Tooltip, text, map, menu,
+ribbon substrate, or provider logic.
+
+COMPACT HEAVY PLEDGE-STROKE, SNAPPED AT THE MIDDLE
+
+Paint two compact, thick, unequal pieces that imply one shallow covenant line snapped
+across a diagonal central gap. They are broad pigment masses with one gentle bend each,
+not long thin ribbons, straps, dashes, or cords.
+
+1. Keep the left piece inside [255,350,485,660]. Start at a solid blunt lower-left
+   outer end near [275,610], pass one shallow bend near [360,535], and finish at the
+   inner broken face near [475,465]. Use non-constant body thickness 135 to 175 pixels.
+2. Keep the right piece inside [555,390,780,690]. Begin at the inner broken face near
+   [565,505], pass one flatter bend near [655,555], and finish at a shorter blunt outer
+   end near [755,635]. Use body thickness 125 to 165 pixels and different pressure.
+3. Preserve a completely empty diagonal center gap from x 485 to 555. The left break is
+   about 40 pixels higher than the right. The imagined centerline continues across the
+   gap as one interrupted shallow pledge-stroke.
+4. Each inner broken face has exactly two or three broad step-like tear notches, 30 to
+   50 pixels deep, facing the gap and visible after downscaling. They are blunt torn
+   steps, not fibers, spikes, arrowheads, claws, fingers, or teeth. Outer ends are
+   solid, blunt, unequal, and unfrayed.
+
+The pieces never touch, cross, overlap, point sharply, or leave their boxes. Their
+centerlines stay within about 25 degrees of horizontal. They do not form a peak, roof,
+caret, V, chevron, U, arch, horseshoe, broken ring, parentheses, moustache, wings, eye,
+halo, X, equals sign, pause bars, quotation marks, slash pair, wound, weapon, or warning
+mark. At runtime the first read is one heavy guild pledge-stroke visibly snapped in its
+middle, with both pieces and the gap clearly present.
+
+FLAT GREYED DARK OLD-WINE MINERAL PIGMENT
+
+Render both pieces as a direct imperfect transfer of matte low-saturation greyed dark
+old-wine mineral pigment on an absent carrier. It is flat paint, never physical rope,
+braid, leather thong, ribbon, blood, metal, raised paste, relief, or a photographed
+object.
+
+Use exactly three broad opaque value families: dominant old-wine near RGB [78,38,42],
+sparse worn-wine near RGB [99,51,52], and a few smoked brown-red pools near RGB
+[54,30,31]. Keep median visible color RGB [68,34,37] to [100,49,50]. No bright red,
+crimson glow, magenta, violet, pink, orange, metal, ivory, white, neon, or emission.
+
+Use only two to five large flat pigment regions per piece. No continuous shading,
+lengthwise highlight, center-to-edge lighting, rim, underside, cast shadow, bevel,
+thickness, photographic fiber, rope grain, repeated micro-texture, or specular detail.
+Use non-constant stamped edges, softened blunt corners, slight pressure variation, one
+coarse open edge nick per piece away from the break, and restrained bleed. Interior
+wear is opaque wine pigment, never green. No enclosed green hole, crack, isolated
+speck, or green-tinted antialiasing.
+
+STRICT EXCLUSIONS
+
+No object wider than 540 pixels, source aspect outside 1.55 to 1.80, long thin dash,
+steep diagonal, peak, roof, caret, V, chevron, symmetry, U, arch, horseshoe, broken
+circle, ring, parentheses, moustache, wings, eye, halo, X, cross, trash can, skull,
+blood, wound, weapon, slash pair, pause, quotations, equals, exclamation, warning,
+arrowhead, claw, fingers, physical rope, braid, paper, parchment, cloth, ribbon, wax,
+leather, metal backing, button, border, frame, medallion, bevel, shadow, glow, highlight,
+gradient, glass, neon, chrome, 3D, photorealism, procedural noise, perfect vector curves,
+constant line weight, Diablo III ornament, Skyrim minimalist language, or Warhammer
+iconography. Do not place green inside pigment or tint an edge green.
+
+FINAL SELF-CHECK
+
+Confirm exactly two compact unequal old-wine pieces form one snapped ABANDON pledge-
+stroke. Confirm the combined bbox is at most 540 pixels wide, 300 to 360 high, aspect
+1.55 to 1.80, yielding about 14–16 by 8–9 runtime pixels. Confirm the left piece stays
+inside [255,350,485,660], the right inside [555,390,780,690], and [485,555] stays empty.
+Confirm the break is visible and the mark does not read as dashes, pause, V, chevron,
+arch, ring, parentheses, X, wound, weapon, or warning. Confirm only broad flat matte
+greyed old-wine pigment exists, with no bright red, gradient, violet highlight,
+physical rope, lighting, thickness, shadow, carrier, text, state, enclosed green,
+green fringe, or extra mark. Confirm every exterior pixel is exact #00FF00 and no
+previous V6 candidate or Image-2 shape was copied.
