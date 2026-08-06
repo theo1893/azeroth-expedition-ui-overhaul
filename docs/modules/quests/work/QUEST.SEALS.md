@@ -39,7 +39,7 @@
   `source-accepted / P4 / production 4/5`；menu V5-B motifs
   `candidate-rejected / repair-budget-exhausted / P3 / simulation ImageGen 0/0 /
   production 5/5`；menu V6 motifs `repair-prepared / P3 / simulation ImageGen
-  0/0 / production 15/35 authorized`；runtime
+  0/0 / production 16/35 authorized`；runtime
   尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
@@ -49,7 +49,7 @@
   QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
   `0/5 / gated`；V5-B motifs `repair-prepared / P3 / simulation ImageGen 0/0 /
   production 5/5 / repair-budget-exhausted`；V6 motifs
-  `V6-E repair-prepared / P3 / production 15/35 authorized`
+  `V6-E repair-prepared / P3 / production 16/35 authorized`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -8608,10 +8608,12 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
   - Image 2：`assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
     (`719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`)
 - 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C `3/5`、V6-D `5/5`、
-  V6-E `2/5`、V6-F／G 各 `0/5`，合计 `15/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
+  V6-E `3/5`、V6-F／G 各 `0/5`，合计 `16/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
   内部通过；V6-D attempt 5 仍有 9 个绿色污染像素，五次额度耗尽且不得执行
-  attempt 6。V6-E attempt 1／2 均已内部否决，下一次为 V6-E attempt 3 fresh
-  regenerate。全批目前共 `5` 次流程错误；均未新增 ImageGen，依授权不占生图额度。
+  attempt 6。V6-E attempt 1／2 均已内部否决；attempt 3 因提示词传输遗漏仍触发
+  provider，故计入生图并否决。下一次为 V6-E attempt 4，以完全相同 V6-E.r2 正文
+  修正传输重试。全批目前共 `6` 次流程错误，其中 E3 同时返回 provider 图片并占用
+  一次生图额度。
 - 用户授权原文：
 
 > 确认授权 QS-B1 V6-A/B/C/D/E/F/G 最终 production 正文；按 A→G 顺序执行；每段每次上传固定 SHA 的 Image 1/2，每段首次无 Image 3，仅允许同段紧邻前次输出在冻结修复边界内作为 Image 3 edit 输入；每段最多 5 次实际 ImageGen 调用，最坏合计 35 次，流程错误不占额度；单段内部通过即停，单段耗尽不阻止其他已授权独立段继续，禁止跨段复用像素；允许按合同执行同轴 1024² 归一化、边缘连通色键、透明 RGB 清零、等比 bbox-fit、七张独立 candidate/source、四态派生与真实排版预演。
@@ -8630,7 +8632,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 | V6-B DETAIL | 2/5 | 0 | candidate-reviewed / P3 | 单段通过即停；等待整批用户验收 |
 | V6-C SHOW | 3/5 | 0 | candidate-reviewed / P3 | 单段通过即停；授权 bbox-fit 例外 |
 | V6-D HIDE | 5/5 | 3 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
-| V6-E CLEAN | 2/5 | 0 | internal-rejected / repair-prepared / P3 | attempt 3 fresh；固定 Image 1／2，无 Image 3 |
+| V6-E CLEAN | 3/5 | 1 | internal-rejected / repair-prepared / P3 | attempt 4 重试同一 r2；固定 Image 1／2，无 Image 3 |
 | V6-F RESET | 0/5 | 0 | prompt-authorized | 等待 E 结束 |
 | V6-G ABANDON | 0/5 | 0 | prompt-authorized | 等待 F 结束 |
 
@@ -10466,3 +10468,37 @@ leather, wood, cloth, metal, dense texture, gold brightness, shadow, carrier, te
 state, enclosed green pixel, green fringe, or additional mark. Confirm every exterior
 pixel is uniform exact #00FF00 and the result does not copy any Image-2 shape or any
 previous V6 generated pixel.
+
+### QS-B1 V6-E attempt 3 prompt-transport failure, generation, and rejection
+
+- 执行前 commit：`d33a8b8`；预期正文版本为 `QS-B1 V6-E.r2`，固定 Image 1／2
+  路径与 SHA 均正确，无 Image 3。预检正文为 `8131 bytes`、SHA-256
+  `9849fd88943d79c0f1151b4a7cb3bd0e19fa5c3596a4edaed46907d7736be80c`。
+- 传输错误：启动命令的 `awk` 表达式遗漏文档文件参数，fixed child 的回显
+  user block 只包含空 `$imagegen` 与独立 Execution instruction，没有任何 r2 正文。
+  session 为 `019fd605-e45e-70f2-a695-204e07828171`。该错误不是授权正文的修改，
+  但生成请求已不完整。
+- 计数：child 仍调用内建 `image_gen` 并返回 provider 图片，随后只读定位并原样
+  复制至临时 `generated/`。因此依固定计数合同，不能按“无 provider 证据”的普通
+  流程错误忽略，正式计为 V6-E `3/5`、整批 `16/35`；同时记 V6-E 流程错误 `1`、
+  全批流程错误 `6`。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V6/V6-E/attempt-03/raw/QS-B1-V6-E.attempt-03.png`；
+  `1509×1042 RGB`；SHA-256
+  `b5148670e9c277efd90a19c08c122c6f830e70c075ebd006e13fcf9bced4ee08`。
+- 技术审查：固定 reviewer 在任何归一化、色键或派生前即以
+  `ValueError: V6 independent raw must be square before normalization` 拒绝；raw
+  既非正方形，也没有要求的精确绿色单对象画布，因此不产生候选 review JSON、
+  四态或真实排版预演。
+- 美术内审：图片是完整双页任务书 UI，包含书页、皮革／金属书框、多个列表项、
+  漆章、按钮、装饰线和奖励区；它不是 CLEAN 单对象矿物墨记，违反对象数量、
+  carrier、画布、构图与动态排除合同，直接否决。
+- 结论：`internal-rejected / prompt-transport-error-with-provider-result / P3 / 3/5`。
+  attempt 3 不得作为 Image 3，也不得向 source、runtime、addon 或 accepted
+  manifest 写入任何像素。
+- 恢复边界：attempt 4 必须重试完全相同的 V6-E.r2 正文，正文仍为
+  `8131 bytes` 与 SHA
+  `9849fd88943d79c0f1151b4a7cb3bd0e19fa5c3596a4edaed46907d7736be80c`；只上传
+  固定 Image 1／2，无 Image 3。传输命令必须显式把文档路径交给提取器，且在启动
+  前再次断言 bytes／SHA，启动后核对 child user block 含完整首段与 FINAL
+  SELF-CHECK。除此以外不得改写正文、输入职责、冻结几何或执行器。

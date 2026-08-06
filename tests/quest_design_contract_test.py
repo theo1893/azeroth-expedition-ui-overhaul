@@ -3615,7 +3615,7 @@ def main() -> None:
             "不得执行 attempt 6",
             "进入 V6-E CLEAN attempt 1",
             "正式计为 V6-D `5/5`、整批 `13/35`",
-            "共 `5` 次流程错误",
+            "V6-D 流程错误 `3`、全批流程错误 `5`",
         ),
         "QS-B1 V6-D exhausted stop and V6-E continuation gate",
     )
@@ -3658,6 +3658,24 @@ def main() -> None:
             "V6-E `2/5`、整批 `15/35`",
         ),
         "QS-B1 V6-E attempt 2 rejection and complete r2 repair gate",
+    )
+    require(
+        seals_work,
+        (
+            "QS-B1 V6-E attempt 3 prompt-transport failure, generation, and rejection",
+            "019fd605-e45e-70f2-a695-204e07828171",
+            "user block 只包含空 `$imagegen`",
+            "b5148670e9c277efd90a19c08c122c6f830e70c075ebd006e13fcf9bced4ee08",
+            "1509×1042 RGB",
+            "V6 independent raw must be square before normalization",
+            "完整双页任务书 UI",
+            "计为 V6-E `3/5`、整批 `16/35`",
+            "V6-E 流程错误 `1`、\n  全批流程错误 `6`",
+            "不得作为 Image 3",
+            "attempt 4 必须重试完全相同的 V6-E.r2 正文",
+            "9849fd88943d79c0f1151b4a7cb3bd0e19fa5c3596a4edaed46907d7736be80c",
+        ),
+        "QS-B1 V6-E counted prompt-transport generation and frozen retry gate",
     )
     require(
         seal_motifs_v5_candidate_reviewer,
