@@ -228,9 +228,9 @@
   `QUEST-LOG-SEAL-MOTIFS-SIM-V16` 已在不改变 V15 外观的前提下完成本地真实
   排版与 source 隔离预演，自动 `59/59 pass`、展示区 `6/6 pass`、ImageGen
   `0/0`。用户于 `2026-08-06` 回复“接受”，确认七张独立单对象 source 拓扑；
-  当前 `simulation-confirmed / production-draft / P2 / production 0/35
-  not-authorized`。V6-A..G 七份完整正文、固定输入与独立修复边界已准备，等待
-  明确 production 授权；V5-B 失败像素不进入 V6。
+  用户同日独立授权 V6-A..G 最终 production 正文、固定输入、同段 edit 边界与
+  逐段五次预算；当前 `prompt-authorized / P3 / production 0/35 authorized`，
+  下一动作是 V6-A attempt 1。V5-B 失败像素不进入 V6。
   runtime `1.25` 继续把已接受的 QS-A1 漆章以 `32px` 无鼠标 Texture 放到
   详情页右上纸面；菜单尚未接入，也未隐藏任何旧按钮。
 - AEUI Quest Log provider 兼容子合同保持 `1.7`：在 provider 最终刷新后以
@@ -492,7 +492,7 @@
 | `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P6 game-validated / user-confirmed`（当前活动 runtime） | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；`2026-08-05` 用户确认 18 行字体、无描边／零 shadow、类型墨色和活动地区箭头显示通过。隐藏的行末追踪圈不在验收范围 | 保留至组件／整模块收口；不再生图 |
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 asset-retained / runtime-hidden` | 用户接受的 source、manifest、`128 × 16` TGA、exporter 与历史证据全部保留；`2026-07-31` 起 adapter 不再挂载或包装任务行脚本 | 暂缓；只有用户重新确认后才恢复 runtime |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
-| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu substrate V5-A `P4 source-accepted / 4/5`；motifs V6 `P2 simulation-confirmed / production-draft / 0/35 not-authorized` | V1／V3-A／V4-A／V5-B 保持各自失败终态。V5-A attempt 4 已接受。用户接受 V16 七张单对象 source 拓扑；自动 `59/59`、展示区 `6/6`，无 ImageGen。V6-A..G 七份完整正文与修复边界已准备；纹章 source 与菜单 runtime 尚未完成 | 用户明确授权 V6-A..G 七段 production 正文及逐段 `5` 次／最坏 `35` 次预算。七项代理 parity 前旧按钮继续 fail-open |
+| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu substrate V5-A `P4 source-accepted / 4/5`；motifs V6 `P3 prompt-authorized / 0/35 authorized` | V1／V3-A／V4-A／V5-B 保持各自失败终态。V5-A attempt 4 已接受。用户接受 V16 七张单对象 source 拓扑并授权 V6-A..G 最终正文；模拟自动 `59/59`、展示区 `6/6`，无 ImageGen。纹章 source 与菜单 runtime 尚未完成 | 固定执行器按 A→G 执行；先运行 V6-A attempt 1。七项代理 parity 前旧按钮继续 fail-open |
 | `QL-D` | 奖励槽、分隔与文字安全区 | current geometry／fallback `P6 game-validated`；final art `P2 simulation-proposed` | runtime `1.25` 保持真实 Button 的 `108×41px` 双列／`64px` 名称／`8px` 列距／`4px` 行距、setter 锁、无鼠标程序化容器、原生 `NameFrame` 抑制和可见数量兜底。所有奖励项只依赖奖励总标题或上一组奖励项，不再依赖三个分组标题，消除原生 `QuestLogItemReceiveText` 反向锚定造成的 FrameXML 环；`2026-08-05` 用户确认当前右页 bug 与显示修复通过。Theme `1.8` 奖励文字无描边。V1 模拟 0／1／2／4／6 `5/5 pass`、ImageGen `0/0`；奖励只读，无 selected | 确认最终容器美术方向；确认不等于生产授权 |
 
 QL-A1 manifest 记录：
@@ -538,7 +538,7 @@ timer 或 failed 资产：provider 没有可用的公开状态来源。本项目
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
 | `QS-A1` | Quest Log／Tracker 共用漆章母版 | `P5 runtime-exported / page-placement-integrated / 5/5` | source／四态 atlas 保持 accepted；当前 Quest Log runtime `1.25` 直接使用 `32px` 页上 Texture，Tracker 不受影响；没有重开美术或 ImageGen | Turtle WoW 验证页上位置、TGA 方向与标题／正文安全区 |
-| `QS-B1` | Quest Log ScrollChild 内火漆 Button、动态空白布底、七张独立纹章与七个代理 Button | V5-A substrate `source-accepted / P4 / 4/5`；V6 motifs `simulation-confirmed / production-draft / P2 / ImageGen 0/0 / production 0/35 not-authorized`；V5-B `repair-budget-exhausted / 5/5` | 用户接受 V5-A、V15 综合色与 V16 七张单对象 source 拓扑。accepted UI 六场景真实排版与七对象隔离 `59/59`、展示区 `6/6`。V6-A..G 七份完整正文与独立修复边界已准备；无纹章 source/runtime，未接入菜单 | 用户明确授权 V6-A..G 七段 production 正文与逐段 `5` 次／最坏 `35` 次预算。V5-B 禁止 attempt 6，旧按钮继续 fail-open |
+| `QS-B1` | Quest Log ScrollChild 内火漆 Button、动态空白布底、七张独立纹章与七个代理 Button | V5-A substrate `source-accepted / P4 / 4/5`；V6 motifs `prompt-authorized / P3 / ImageGen 0/0 / production 0/35 authorized`；V5-B `repair-budget-exhausted / 5/5` | 用户接受 V5-A、V15 综合色与 V16 七张单对象 source 拓扑，并已授权 V6-A..G 七段最终正文。accepted UI 六场景真实排版与七对象隔离 `59/59`、展示区 `6/6`。无纹章 source/runtime，未接入菜单 | 固定执行器按 A→G 执行；先运行 V6-A attempt 1。V5-B 禁止 attempt 6，旧按钮继续 fail-open |
 
 QS-A1 当前事实：
 
@@ -768,10 +768,11 @@ attempt 6。用户已选择七张单对象 source 新版本；V16 已把 SHARE�
 SHOW／HIDE／CLEAN／RESET／ABANDON 分成七个独立 `1024²` production body，
 同时用 accepted V5-A 布底完成原六场景真实排版，自动 `59/59 pass`、展示区
 `6/6 pass`、ImageGen `0/0`。用户于 `2026-08-06` 回复“接受”，因此当前为
-`simulation-confirmed / production-draft / P2`。V6-A..G 七份完整、自包含正文、
-固定 Image 1／2、同段 edit 边界与修复合同已经准备；七段仍均未授权，每段
-最多 `5` 次，最坏合计 `35` 次，流程错误不占额度。下一门禁是用户明确授权
-七份正文与预算；授权前不得生成。后续 runtime 若重开仍必须按
+`simulation-confirmed`。V6-A..G 七份完整、自包含正文、固定 Image 1／2、
+同段 edit 边界与修复合同随后由用户于 `2026-08-06` 以原文明确授权；当前为
+`prompt-authorized / P3 / production 0/35 authorized`。每段最多 `5` 次，最坏
+合计 `35` 次，流程错误不占额度；固定执行器从 V6-A attempt 1 开始。后续
+runtime 若重开仍必须按
 manifest 确定性导出 `32×174` 布底，并一一代理原 Button、镜像
 禁用态、保留放弃确认，并在任一 provider 未捕获时原子 fail-open；七纹章和
 七项代理 parity 完成前不接入菜单，也不隐藏放弃／分享／退出／详情或 pfQuest

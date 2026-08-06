@@ -3256,14 +3256,14 @@ def main() -> None:
         (
             "QS-B1 V6 七张单对象纹章 source — V16 生成前模拟",
             "QUEST-LOG-SEAL-MOTIFS-SIM-V16 / QS-B1 V6",
-            "simulation-confirmed / production-draft / P2",
+            "prompt-authorized / P3",
             "59/59 pass",
             "七个独立 production body 合同",
             "V5-B 的五张失败工作表",
-            "`0/35 not-authorized`",
+            "`0/35 authorized`",
             "confirmed / 2026-08-06",
             "V16 确认本身仍",
-            "不授权任何 ImageGen 调用",
+            "不构成该授权",
         ),
         "QS-B1 V16 seven independent source simulation gate",
     )
@@ -3271,13 +3271,13 @@ def main() -> None:
         seals_work,
         (
             "QS-B1 V6-A..G 最终 production preparation",
-            "QS-B1 V6-A SHARE final production Prompt — awaiting authorization",
-            "QS-B1 V6-B DETAIL final production Prompt — awaiting authorization",
-            "QS-B1 V6-C SHOW final production Prompt — awaiting authorization",
-            "QS-B1 V6-D HIDE final production Prompt — awaiting authorization",
-            "QS-B1 V6-E CLEAN final production Prompt — awaiting authorization",
-            "QS-B1 V6-F RESET final production Prompt — awaiting authorization",
-            "QS-B1 V6-G ABANDON final production Prompt — awaiting authorization",
+            "QS-B1 V6-A SHARE final production Prompt — authorized / frozen",
+            "QS-B1 V6-B DETAIL final production Prompt — authorized / frozen",
+            "QS-B1 V6-C SHOW final production Prompt — authorized / frozen",
+            "QS-B1 V6-D HIDE final production Prompt — authorized / frozen",
+            "QS-B1 V6-E CLEAN final production Prompt — authorized / frozen",
+            "QS-B1 V6-F RESET final production Prompt — authorized / frozen",
+            "QS-B1 V6-G ABANDON final production Prompt — authorized / frozen",
             "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
             "719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44",
             "safe box [160,160,864,864]",
@@ -3295,7 +3295,7 @@ def main() -> None:
         "## QS-B1 V6-A..G 最终 production preparation", 1
     )[1].split("### QS-B1 V6-A..G prompt completeness audit", 1)[0]
     for required_heading in (
-        "final production Prompt — awaiting authorization",
+        "final production Prompt — authorized / frozen",
         "REFERENCE AUTHORITY",
         "CANVAS, COUNT, AND PLACEMENT",
         "EMBLEM ANATOMY",
@@ -3353,10 +3353,10 @@ def main() -> None:
         progress,
         (
             "QUEST-LOG-SEAL-MOTIFS-SIM-V16",
-            "simulation-confirmed / production-draft / P2",
-            "production 0/35 not-authorized",
+            "prompt-authorized / P3",
+            "production 0/35 authorized",
             "V6-A..G",
-            "等待\n  明确 production 授权",
+            "下一动作是 V6-A attempt 1",
         ),
         "QS-B1 V16 current simulation and next gate",
     )
@@ -3386,8 +3386,8 @@ def main() -> None:
         (
             "V6 七张独立 `1024²` 单对象 source",
             "V16",
-            "simulation-confirmed / production-draft / P2 / production 0/35 not-authorized",
-            "下一门禁是用户明确授权七段 production 正文与预算",
+            "prompt-authorized / P3 / production 0/35 authorized",
+            "下一动作是固定执行器从 V6-A attempt 1 开始",
         ),
         "QS-B1 V16 stable ownership update",
     )

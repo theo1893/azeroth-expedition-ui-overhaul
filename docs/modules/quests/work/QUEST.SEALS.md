@@ -30,15 +30,16 @@
 - 最近一次已执行生产正文：`QS-B1 V5-B.r4 / attempt 5`；fixed child session
   `019fd527-d402-7c00-8fd2-4d6d0ec932d4` 已返回图片并完成
   `turn.completed`，因此实际生图已达 `5/5`
-- 当前 production 正文：V6-A..G 七份单对象完整正文已准备，等待统一明确
-  授权。V16 的“接受”只确认生产拓扑，不构成任何 ImageGen 调用授权
+- 当前 production 正文：V6-A..G 七份单对象完整正文已由用户于
+  `2026-08-06` 以文末原文统一明确授权；当前为 `prompt-authorized / P3`，
+  七段均尚未调用
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
   `source-accepted / P4 / production 4/5`；menu V5-B motifs
   `candidate-rejected / repair-budget-exhausted / P3 / simulation ImageGen 0/0 /
-  production 5/5`；menu V6 motifs `simulation-confirmed / production-draft / P2 / simulation ImageGen
-  0/0 / production 0/35 not-authorized`；runtime
+  production 5/5`；menu V6 motifs `prompt-authorized / P3 / simulation ImageGen
+  0/0 / production 0/35 authorized`；runtime
   尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
@@ -48,7 +49,7 @@
   QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
   `0/5 / gated`；V5-B motifs `repair-prepared / P3 / simulation ImageGen 0/0 /
   production 5/5 / repair-budget-exhausted`；V6 motifs
-  `simulation-confirmed / production-draft / P2 / production not-authorized`
+  `prompt-authorized / P3 / production 0/35 authorized`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -7842,11 +7843,11 @@ pigment with no material volume. Confirm all other pixels are exact #00FF00.
 - 用户于 `2026-08-06` 选择建议方案：另开 V6，把七枚纹章分成七张独立
   single-object source 分别生成。该选择授权本地合同与模拟准备，不等于正式
   ImageGen 授权。
-- 当前状态：`simulation-confirmed / production-draft / P2`；固定正式执行器仍为
-  `imagegen-0-143-0 / @openai/codex@0.143.0`，但本阶段未启动 provider。
+- 当前状态：`prompt-authorized / P3`；固定正式执行器为
+  `imagegen-0-143-0 / @openai/codex@0.143.0`，尚未启动 provider。
 - 模拟版本：`QUEST-LOG-SEAL-MOTIFS-SIM-V16 / QS-B1 V6`。
 - 模拟 ImageGen：`0/0`；上传 `0`；本地渲染错误 `0`；production
-  `0/35 not-authorized`。
+  `0/35 authorized`。
 - V5-B 的五张失败工作表和所有派生 crop 全部保留为历史失败证据，但不得成为
   V6 Image 3、source、runtime、裁切输入或视觉权威。V6 首次生成时每段都没有
   edit 输入。
@@ -7904,8 +7905,8 @@ pigment with no material volume. Confirm all other pixels are exact #00FF00.
   打包到计划 `256×128` runtime atlas；七个 `32×22px` Button、provider 映射、
   hidden 收拢、disabled 留位、滚动裁切和旧按钮 fail-open 均不改变。
 - 每个 body 的实际 ImageGen 上限独立为 `5` 次、含首次；流程错误不占额度。
-  七段最坏合计 `35` 次。当前七段均 `0/5` 且未授权；未来必须先提交七份完整、
-  自包含、逐对象 production Prompt，再由用户明确授权其输入、edit 边界和预算。
+  七段最坏合计 `35` 次。当前七段均 `0/5`；七份完整、自包含、逐对象正文已
+  提交，并已由用户明确授权其输入、edit 边界和预算。
 
 ### V16 本地模拟合同
 
@@ -7953,7 +7954,7 @@ pigment with no material volume. Confirm all other pixels are exact #00FF00.
 - 内部结论：`displayable / simulation-confirmed / P2`。真实结构、对象所有权、
   动态收拢、滚动和奖励间距成立；V16 绿色画布中的几何纹章仍明显是非权威
   placeholder，不能据此评价最终纹章美术质量。
-- 未发生：ImageGen、参考上传、production Prompt 授权、候选、source、atlas、
+- 未发生：ImageGen、参考上传、候选、source、atlas、
   addon 或 provider 代理接入。旧按钮继续原子 fail-open。
 
 ### V16 用户方向门禁
@@ -7970,9 +7971,9 @@ pigment with no material volume. Confirm all other pixels are exact #00FF00.
   V5-A 深色布底、V12 菜单位置与动态长度；七个纹章分别拥有单对象 source、
   修复循环和验收，不改变 ScrollChild 裁切、正文不重排、奖励间距或 provider
   Button 所有权。
-- 下一门禁：用户查看并明确授权下方 `V6-A..G` 七份最终 production 正文、
-  固定输入、同段 edit 边界和逐段 `5` 次／最坏 `35` 次预算。V16 确认本身仍
-  不授权任何 ImageGen 调用。
+- 后续独立门禁已通过：用户于 `2026-08-06` 明确授权下方 `V6-A..G` 七份最终
+  production 正文、固定输入、同段 edit 边界和逐段 `5` 次／最坏 `35` 次预算。
+  V16 确认本身仍不构成该授权；当前下一动作是 V6-A attempt 1。
 
 ## QS-B1 V6-A..G 最终 production preparation
 
@@ -7996,7 +7997,7 @@ pigment with no material volume. Confirm all other pixels are exact #00FF00.
   同段紧邻前稿只有在对象身份、综合色与年代语言正确、仅剩局部修复时才可作为
   Image 3 edit。禁止跨段复用 raw 或候选像素。
 
-### QS-B1 V6-A SHARE final production Prompt — awaiting authorization
+### QS-B1 V6-A SHARE final production Prompt — authorized / frozen
 
 Use Image 1 and Image 2 only as fixed visual references. Create exactly one independent
 normal-state SHARE emblem for a circa-2004 vanilla World of Warcraft quest-log
@@ -8072,7 +8073,7 @@ inside [160,160,864,864]; all remaining pixels are uniform exact #00FF00; the pi
 muted matte aged ochre and not metal; there is no backing object, text, state, shadow,
 copied Image-2 shape, modern share arrow, or additional mark.
 
-### QS-B1 V6-B DETAIL final production Prompt — awaiting authorization
+### QS-B1 V6-B DETAIL final production Prompt — authorized / frozen
 
 Use Image 1 and Image 2 only as fixed visual references. Create exactly one independent
 normal-state DETAIL emblem for a circa-2004 vanilla World of Warcraft quest-log
@@ -8149,7 +8150,7 @@ abstract record strokes; all visible and antialiased pixels stay inside
 matte aged ochre pigment rather than a physical page or metal object; there is no text,
 button, state, shadow, modern file icon, copied Image-2 shape, or additional mark.
 
-### QS-B1 V6-C SHOW final production Prompt — awaiting authorization
+### QS-B1 V6-C SHOW final production Prompt — authorized / frozen
 
 Use Image 1 and Image 2 only as fixed visual references. Create exactly one independent
 normal-state SHOW emblem for a circa-2004 vanilla World of Warcraft quest-log
@@ -8229,7 +8230,7 @@ remaining pixels are uniform exact #00FF00; the mark is muted matte aged ochre p
 and not metal; it does not read as a star, weapon, crosshair, modern location icon, or
 copied Image-2 shape; there is no backing, text, state, shadow, or additional mark.
 
-### QS-B1 V6-D HIDE final production Prompt — awaiting authorization
+### QS-B1 V6-D HIDE final production Prompt — authorized / frozen
 
 Use Image 1 and Image 2 only as fixed visual references. Create exactly one independent
 normal-state HIDE emblem for a circa-2004 vanilla World of Warcraft quest-log
@@ -8310,7 +8311,7 @@ and not metal; it does not read as a prohibition sign, X, eye-slash, weapon, mod
 visibility icon, or copied Image-2 shape; there is no backing, text, state, shadow, or
 additional mark.
 
-### QS-B1 V6-E CLEAN final production Prompt — awaiting authorization
+### QS-B1 V6-E CLEAN final production Prompt — authorized / frozen
 
 Use Image 1 and Image 2 only as fixed visual references. Create exactly one independent
 normal-state CLEAN emblem for a circa-2004 vanilla World of Warcraft quest-log
@@ -8389,7 +8390,7 @@ the strokes are muted matte aged ochre pigment and not metal; they do not read a
 Wi-Fi, menu bars, speed lines, broom, claw, or copied Image-2 shapes; there is no backing,
 text, state, shadow, or unrelated additional mark.
 
-### QS-B1 V6-F RESET final production Prompt — awaiting authorization
+### QS-B1 V6-F RESET final production Prompt — authorized / frozen
 
 Use Image 1 and Image 2 only as fixed visual references. Create exactly one independent
 normal-state RESET emblem for a circa-2004 vanilla World of Warcraft quest-log
@@ -8470,7 +8471,7 @@ matte aged ochre pigment and not metal; it does not read as refresh, undo, repla
 spinner, C, spiral, gear, or copied Image-2 shape; there is no backing, text, state,
 shadow, detached dot, or additional mark.
 
-### QS-B1 V6-G ABANDON final production Prompt — awaiting authorization
+### QS-B1 V6-G ABANDON final production Prompt — authorized / frozen
 
 Use Image 1 and Image 2 only as fixed visual references. Create exactly one independent
 normal-state ABANDON emblem for a circa-2004 vanilla World of Warcraft quest-log
@@ -8596,13 +8597,31 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 
 ### QS-B1 V6-A..G production authorization gate
 
-- 当前状态：`simulation-confirmed / production-draft / P2`。
+- 当前状态：`prompt-authorized / P3`；用户于 `2026-08-06` 授权。
 - 固定输入：
   - Image 1：`assets/locked/quests/任务详情面板_视觉基准_v1.png`
     (`03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`)
   - Image 2：`assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
     (`719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`)
-- 当前计数：V6-A..G 各 `0/5`，合计 `0/35`；尚未获得 production 授权，未调用生图。
-- 进入执行所需的精确授权文本：
+- 当前计数：V6-A..G 各 `0/5`，合计 `0/35`；已获 production 授权，尚未调用生图。
+- 用户授权原文：
 
 > 确认授权 QS-B1 V6-A/B/C/D/E/F/G 最终 production 正文；按 A→G 顺序执行；每段每次上传固定 SHA 的 Image 1/2，每段首次无 Image 3，仅允许同段紧邻前次输出在冻结修复边界内作为 Image 3 edit 输入；每段最多 5 次实际 ImageGen 调用，最坏合计 35 次，流程错误不占额度；单段内部通过即停，单段耗尽不阻止其他已授权独立段继续，禁止跨段复用像素；允许按合同执行同轴 1024² 归一化、边缘连通色键、透明 RGB 清零、等比 bbox-fit、七张独立 candidate/source、四态派生与真实排版预演。
+
+### QS-B1 V6-A..G production execution ledger
+
+- 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`；禁止会话内建生图。
+- 执行顺序：`A → B → C → D → E → F → G`；任一单段内部通过即停止该段。
+- attempt 1 固定输入：Image 1／2；同段 Image 3 只允许在合同冻结边界内使用。
+- 在用户接受具体候选前，所有 raw、透明候选与真实排版只位于 ignored
+  `generated/quests/QUEST-SEALS/QS-B1-V6/`；不写 source、runtime 或 addon。
+
+| body | 当前实际生图 | 流程错误 | 当前状态 | 下一动作 |
+| --- | ---: | ---: | --- | --- |
+| V6-A SHARE | 0/5 | 0 | prompt-authorized | attempt 1 generate |
+| V6-B DETAIL | 0/5 | 0 | prompt-authorized | 等待 A 结束 |
+| V6-C SHOW | 0/5 | 0 | prompt-authorized | 等待 B 结束 |
+| V6-D HIDE | 0/5 | 0 | prompt-authorized | 等待 C 结束 |
+| V6-E CLEAN | 0/5 | 0 | prompt-authorized | 等待 D 结束 |
+| V6-F RESET | 0/5 | 0 | prompt-authorized | 等待 E 结束 |
+| V6-G ABANDON | 0/5 | 0 | prompt-authorized | 等待 F 结束 |
