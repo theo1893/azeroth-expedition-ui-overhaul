@@ -8606,8 +8606,8 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
     (`03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`)
   - Image 2：`assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
     (`719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`)
-- 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C `1/5`、V6-D..G 各 `0/5`，
-  合计 `6/35`；V6-C attempt 1 已内部退回，当前准备 C.r1。送入提示词前的提取错误与旧 CLI 模型路由 400
+- 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C `2/5`、V6-D..G 各 `0/5`，
+  合计 `7/35`；V6-C attempt 2 已内部退回，当前准备 C.r2 局部 edit。送入提示词前的提取错误与旧 CLI 模型路由 400
   共 `2` 次流程错误，均未触发 ImageGen，依授权不占生图额度。
 - 用户授权原文：
 
@@ -8625,7 +8625,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 | --- | ---: | ---: | --- | --- |
 | V6-A SHARE | 3/5 | 2 | candidate-reviewed / P3 | 单段通过即停；等待整批用户验收 |
 | V6-B DETAIL | 2/5 | 0 | candidate-reviewed / P3 | 单段通过即停；等待整批用户验收 |
-| V6-C SHOW | 1/5 | 0 | repair-prepared | attempt 2 regenerate；固定 Image 1／2，无 Image 3 |
+| V6-C SHOW | 2/5 | 0 | repair-prepared | attempt 3 edit；固定 Image 1／2＋紧邻 attempt 2 Image 3 |
 | V6-D HIDE | 0/5 | 0 | prompt-authorized | 等待 C 结束 |
 | V6-E CLEAN | 0/5 | 0 | prompt-authorized | 等待 D 结束 |
 | V6-F RESET | 0/5 | 0 | prompt-authorized | 等待 E 结束 |
@@ -9270,3 +9270,150 @@ exterior pixel is uniform exact #00FF00. Confirm the glyph uses only broad flat 
 earthy pigment patches near [122,80,38], [151,105,55], and [78,50,29], with no gold
 brightness, continuous texture, gradient, thickness, highlight, shadow, carrier, text,
 state, enclosed green pixel, or additional mark.
+
+### QS-B1 V6-C attempt 2 execution and review
+
+- 执行前 commit：`99c8231`；完整正文版本：`QS-B1 V6-C.r1`；操作：fresh
+  regenerate。
+- 固定输入：Image 1／2；无 Image 3；提示词正文 `6712 bytes`、SHA-256
+  `2a54a4e5b9191bd80d513ee8ac8e1a4bc1ddbe198d25e27a17d86b119856c782`；未上传或
+  复用 V6-A／B／C attempt 1 像素。
+- fixed child：`@openai/codex@0.143.0`、`gpt-5.5 / medium`；session
+  `019fd5b0-da65-7861-a2ab-2fe98871652a`；收到唯一实际图像并
+  `turn.completed`，计为 V6-C `2/5`、整批 `7/35`。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V6/V6-C/attempt-02/raw/QS-B1-V6-C.attempt-02.png`；
+  `1254×1254 RGB`；SHA-256
+  `61e144845b8c8b2e2d6409d60625f9abe7db98a40867fc76651390b455fdeed9`。
+- 确定性审查：归一化后可见 bbox `[153,135,867,845]`，左／上／右轻微越出
+  safe box `[160,160,864,864]`；可见绿色污染 `0`；自动 `8/9`，第一技术失败为
+  `visible_bbox_inside_safe_box`。review JSON SHA
+  `dd2c9f62e56c6fc5f14fff7a4f655d9ae3fb03c9788d95e05a3711c7bb0d3414`。
+- 美术内审：暗赭色、钝头梯形、粗糙边缘与不等磨损方向正确，颜色 median
+  `[100,53,21]`、luma p50 `60.61`、chroma p50 `79`；但四个方向块与中心墨池
+  之间存在四道完整绿色断缝，形成五个互不连接的对象，runtime 更像现代 D-pad
+  的独立按键。中心墨池另有连续径向明暗，应压平为实心深褐颜料块。
+- runtime 装配：等比 fit 为 `14×14px`，位于 `[9,4,23,18]`；六场景
+  display-region `6/6 pass`、violations `0`，报告 SHA
+  `d62c25dd7a88c06183b2ba656680881ce3e4b3806ccfb091b66c689e1bc9f175`。
+  真实排版 SHA `0eace3050f18a66e93311d8cdbfe95b8d2d59ce86b8cbf92fcd34cc4169f4b23`。
+- 结论：`internal-rejected / repair-prepared / P3 / 2/5`。身份、颜色家族与年代
+  语言已成立；失败仅限中心四条连接缝、中心渐变与整体 safe-box 尺寸，属于同段
+  冻结修复边界。attempt 3 允许上传固定 Image 1／2，并把本次 raw 以固定 SHA
+  作为 Image 3 edit 输入；禁止改用其他稿、禁止跨段像素。
+- 下一版必须保持：四个现有钝头方向块的相对方位、暗赭色家族、手工磨损、无外环、
+  normal-only、固定输入权威与全部禁项。
+- 下一版只允许改变：将整枚现有标记围绕中心等比缩小约 `10%` 并重新居中，使
+  全可见 bbox 严格位于 safe box；用四条短粗深褐颜料桥连接各方向块根部与中心；
+  将中心改为无渐变的小型不规则实心墨池。相邻方向之间的外部绿色通道仍保持向
+  画布边缘敞开。
+
+### QS-B1 V6-C.r2 complete production Prompt — repair-prepared / frozen edit
+
+Use Image 1, Image 2, and Image 3 with the authority and repair boundaries below. Edit
+exactly one independent normal-state SHOW emblem for a circa-2004 vanilla World of
+Warcraft quest-log administration menu. This is a constrained correction of one tiny
+two-dimensional woodblock-transfer pigment glyph, not a new scene, screenshot, UI
+mockup, worksheet, atlas, button, ribbon, map, physical compass, metal badge, weapon,
+inventory object, or complete interface.
+
+REFERENCE AUTHORITY AND IMAGE ROLES
+
+Image 1 is the highest visual authority for the old Azeroth expedition-ledger language:
+heavy hand-painted forms, muted earth color, slight asymmetry, sparse wear, and the
+serious weight of a vanilla-era adventurers' guild record. Do not copy its book, pages,
+leather frame, brass, wax seal, ribbons, text, reward slots, buttons, compass ornaments,
+or composition.
+
+Image 2 is a secondary micro-scale reference only. Inherit only its economical stroke
+count, softened hand-painted perimeter, and legibility after severe downscaling. Do not
+copy, trace, rotate, recolor, or rearrange any triangle, circle, check mark, 2-by-2
+layout, position, transparency, or pixel from Image 2.
+
+Image 3 is the immediately preceding V6-C attempt 2 raw image with fixed SHA-256
+61e144845b8c8b2e2d6409d60625f9abe7db98a40867fc76651390b455fdeed9. It is the only
+edit-identity input. Preserve its four blunt direction wedges, their unequal relative
+orientation, dark umber-ochre family, broad handmade massing, and irregular worn outer
+edges. Do not reuse any pixel or motif from V6-A, V6-B, or another segment. Do not
+redesign the icon into a different compass, star, crosshair, D-pad, or location mark.
+
+CANVAS, COUNT, AND PLACEMENT
+
+Return one exact square 1024 by 1024 RGB image. Fill every pixel outside the repaired
+glyph with one perfectly uniform exact chroma-key green #00FF00. The green field must
+be one flat RGB value with no gradient, lighter center, darker corner, texture,
+lighting, vignette, noise, shadow, paper, cloth, wax, metal, frame, guide, label,
+checkerboard, or transparency preview. There must be exactly one connected semantic
+glyph and no second mark.
+
+Uniformly scale the complete Image-3 mark down by approximately 10 percent around its
+own center and recenter it near [512,512]. Do not stretch it. Keep every pigment pixel,
+antialiasing pixel, soft bleed, and worn edge strictly inside safe box
+[160,160,864,864]. Target a complete visible span around 430 by 430 pixels. Leave broad
+exact-green margin on all four sides. Use the same direct orthographic front view.
+
+This source owns only one normal-state pigment glyph. It will later be extracted and
+isotropically fitted into content box [9,4,23,18] inside one 32 by 22 runtime Button.
+Do not draw the Button, hover, pressed, disabled state, Tooltip, text, map, or provider
+logic.
+
+FROZEN REPAIR OPERATION
+
+Preserve the exterior silhouette and internal wear pattern of all four Image-3 wedges
+except for the uniform scale and recentering above. Preserve the north wedge as subtly
+dominant, the east wedge shorter and broader, the west wedge slightly tilted and worn,
+and the south wedge shortest with a chipped blunt end. Preserve the existing open green
+channels between adjacent wedges; those diagonal channels must remain connected to the
+outer green field.
+
+Repair only the four small radial gaps between each wedge base and the center. Extend a
+short, thick, irregular deep-umber pigment bridge from each wedge base into one central
+pool. Each bridge must be visibly narrower than its wedge and only long enough to close
+the current gap. The four bridges and the center must make all five existing masses one
+single connected pigment component. Do not create four separate bars, a plus sign, a
+perfect cross, an outer ring, or a filled four-point star.
+
+Replace the current round gradient center with one smaller irregular solid deep-umber
+pigment pool. The pool must have one broad flat value near RGB [78,50,29], with at most
+one close flat patch; no radial gradient, highlight, shadow, boss, gem, rivet, hole, or
+green center. The bridge roots may share this deep-umber value. Do not change the outer
+wedge color family: retain broad flat dark umber-ochre near [122,80,38] with sparse old
+ochre wear near [151,105,55].
+
+FLAT-PIGMENT AND GREEN-INTEGRITY RULES
+
+Keep the repaired mark as a worn two- or three-pass woodblock or wax-stencil transfer.
+No new photographic grain, repeated micro-noise, stone texture, carved texture,
+embossing, faceted surface, continuous gradient, highlight, central flare, ridge, rim
+light, cast shadow, contact shadow, ambient occlusion, bevel, thickness, or
+three-dimensional modeling. All internal wear is lighter ochre pigment, never green.
+Any missing-pigment notch must remain open to the outside silhouette. After bridging,
+the center pool, four bridges, and all four wedge bases must remain pigment colored. No
+enclosed green island, green center, green crack, isolated green speck, or green-tinted
+antialiasing is allowed.
+
+STRICT EXCLUSIONS
+
+No sharp diamond point, spearhead, arrowhead, four-point star, crosshair, D-pad,
+separate keys, weapon, shuriken, sunburst, flower, gem, faceted badge, wind rose, outer
+circle, inner ring, letters N/E/S/W, ticks, map grid, coordinates, needle, location pin,
+eye, slash, text, numbers, runes, physical compass casing, gold, brass, cloth, ribbon,
+wax, backing tile, button face, border, card, frame, medallion, rivet, bevel, cast shadow,
+drop shadow, contact shadow, ambient occlusion, glow, specular highlight, continuous
+gradient, glass, neon, chrome, 3D rendering, photorealism, perfect fourfold symmetry,
+vector-clean geometry, constant line weight, Diablo III ornament, Skyrim minimalist
+menu language, or Warhammer iconography. Do not place green inside the connected glyph
+or tint its edges green.
+
+FINAL SELF-CHECK
+
+Confirm the result contains exactly one connected SHOW pigment glyph and nothing else.
+Confirm the four preserved blunt unequal Image-3 wedges are joined to one smaller flat
+deep-umber center by exactly four short thick irregular pigment bridges, while the four
+diagonal exterior channels remain open to the outer green field. Confirm it no longer
+looks like five separate D-pad keys and does not become a sharp star, weapon, crosshair,
+faceted badge, metal compass, or modern location icon. Confirm the uniformly scaled and
+centered visible bbox stays strictly inside [160,160,864,864] with a target span near
+430 by 430 pixels. Confirm every exterior pixel is uniform exact #00FF00. Confirm there
+is no center gradient, highlight, shadow, carrier, text, state, enclosed green pixel, or
+additional mark.

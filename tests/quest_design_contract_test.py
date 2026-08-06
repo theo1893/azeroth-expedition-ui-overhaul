@@ -3462,6 +3462,26 @@ def main() -> None:
         "QS-B1 V6-C attempt 1 rejection and complete r1 repair gate",
     )
     require(
+        seals_work,
+        (
+            "QS-B1 V6-C attempt 2 execution and review",
+            "019fd5b0-da65-7861-a2ab-2fe98871652a",
+            "61e144845b8c8b2e2d6409d60625f9abe7db98a40867fc76651390b455fdeed9",
+            "bbox `[153,135,867,845]`",
+            "可见绿色污染 `0`",
+            "自动 `8/9`",
+            "五个互不连接的对象",
+            "internal-rejected / repair-prepared / P3 / 2/5",
+            "QS-B1 V6-C.r2 complete production Prompt — repair-prepared / frozen edit",
+            "only",
+            "edit-identity input",
+            "Uniformly scale the complete Image-3 mark down",
+            "exactly four short thick irregular pigment bridges",
+            "No sharp diamond point, spearhead, arrowhead, four-point star, crosshair, D-pad",
+        ),
+        "QS-B1 V6-C attempt 2 local edit repair gate",
+    )
+    require(
         seal_motifs_v5_candidate_reviewer,
         (
             "CANVAS = (1024, 1024)",
