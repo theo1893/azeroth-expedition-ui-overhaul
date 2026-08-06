@@ -299,7 +299,7 @@ def main() -> None:
     assert hashlib.sha256(
         seal_purity_ribbon_v7a_production_path.read_bytes()
     ).hexdigest() == (
-        "6e3abd5eb3637a81617b045739fc92cd41f86efb9c6ace34020ce4bb9acbf71d"
+        "deff9fa7c5974b0670ba2a8eda552f2ae192b61e1b3abf58cd59b85da7c600b6"
     )
     seal_purity_ribbon_v7a_reviewer_path = (
         ROOT / "tools" / "review_quest_seal_purity_ribbon_candidate_v1.py"
@@ -3304,11 +3304,11 @@ def main() -> None:
     assert v7a_executor["skill"] == "imagegen-0-143-0"
     assert v7a_executor["package"] == "@openai/codex@0.143.0"
     assert v7a_executor["actual_generation_limit"] == 5
-    assert v7a_executor["current_actual_generations"] == 3
+    assert v7a_executor["current_actual_generations"] == 4
     assert v7a_executor["process_errors"] == 1
     assert v7a_executor["authorized"]
     v7a_history = seal_purity_ribbon_v7a_production["attempt_history"]
-    assert len(v7a_history) == 3
+    assert len(v7a_history) == 4
     assert v7a_history[0]["attempt"] == 1
     assert v7a_history[0]["technical_checks"] == "13/13 pass"
     assert v7a_history[0]["layout_checks"] == "29/29 pass"
@@ -3343,6 +3343,14 @@ def main() -> None:
     )
     assert "immediately-preceding-attempt-3-as-image-3" in (
         v7a_history[2]["decision"]
+    )
+    assert v7a_history[3]["attempt"] == 4
+    assert v7a_history[3]["first_failed_gate"] == (
+        "edit-did-not-remove-repeating-embossed-loop-geometry"
+    )
+    assert "final-fresh-regenerate" in v7a_history[3]["decision"]
+    assert "do-not-upload-any-prior-v7a-attempt-as-image-3" in (
+        v7a_history[3]["decision"]
     )
     v7a_process_errors = seal_purity_ribbon_v7a_production[
         "process_error_history"
@@ -3398,14 +3406,15 @@ def main() -> None:
         seals_work,
         (
             "V17 用户方向结论 — confirmed / 2026-08-06",
-            "repair-prepared / P3 / production 3/5",
+            "repair-prepared / P3 / production 4/5",
             "QS-B1 V7-A final production body",
-            "repair-prepared / P3 / actual ImageGen 3/5",
+            "repair-prepared / P3 / actual ImageGen 4/5",
             "1ff46804cb5c5dddd47c56fea2c65c50c22e392c82179b53c5d251af1a65584c",
             "89b24fc18109593b28f40b750fea96da6f65e323c1fcc3832bfd8aeed9b39192",
             "b9c81296a62b83064f82a2a43d154c9800875f6b15421ffe9e8393328762c6eb",
             "b8f6c8b5360c5c8c036a77bc75e5ac91268f42d5fdf4a1df71c65e55a8cc32ce",
             "6e3abd5eb3637a81617b045739fc92cd41f86efb9c6ace34020ce4bb9acbf71d",
+            "deff9fa7c5974b0670ba2a8eda552f2ae192b61e1b3abf58cd59b85da7c600b6",
             "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
             "3b5c2ca6c1e69c74db5c64978cde351596ece6369d339b7125aee43904eb7d86",
             "Create exactly one edge-to-edge square orthographic hand-painted material donor",
@@ -3415,7 +3424,7 @@ def main() -> None:
             "固定 crop `[448,128,576,896]`",
             "1.0 - 0.16 × (accepted_wax_alpha / 255)",
             "pass / no execution-critical unknowns",
-            "当前实际 ImageGen：`3/5 repair-prepared`",
+            "当前实际 ImageGen：`4/5 repair-prepared`",
             "V7-A 独立生产授权记录",
             "授权前正文与机器合同固定于 commit `8a267b6`",
             "QS-B1 V7-A attempt 1 execution and internal rejection",
@@ -3433,6 +3442,11 @@ def main() -> None:
             "QS-B1 V7-A.r3 complete production Prompt — attempt 4 local flattening edit",
             "COMPLETE REMOVAL OF REGULAR MICROTEXTURE",
             "PALETTE AND MATERIAL WEIGHT — PRESERVE",
+            "QS-B1 V7-A attempt 4 execution and internal rejection",
+            "edit-did-not-remove-repeating-embossed-loop-geometry",
+            "QS-B1 V7-A.r4 complete production Prompt — final attempt 5 fresh regenerate",
+            "THIS IS A PAINTED FIELD, NOT A TEXTURE",
+            "No visible detail smaller than about 48 pixels",
         ),
         "QS-B1 V17 confirmation, V7-A production, and attempt-1 repair",
     )

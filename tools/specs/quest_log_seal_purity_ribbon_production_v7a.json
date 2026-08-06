@@ -21,7 +21,7 @@
     "skill": "imagegen-0-143-0",
     "package": "@openai/codex@0.143.0",
     "actual_generation_limit": 5,
-    "current_actual_generations": 3,
+    "current_actual_generations": 4,
     "process_errors": 1,
     "process_errors_consume_generation_budget": false,
     "authorized": true
@@ -119,6 +119,25 @@
       "preserved_region": "the whole edge-to-edge broad-value topology, seamless crop, and now-correct greyed smoked old-bone palette",
       "decision": "internal-rejected; edit-repair; upload-only-immediately-preceding-attempt-3-as-image-3",
       "reason": "colour and low-frequency structure now pass, but the whole donor contains a visibly regular repeating embossed-loop micro-pattern rather than sparse manual fibres and quiet painted planes"
+    },
+    {
+      "attempt": 4,
+      "mode": "local-edit-with-fixed-image-1-image-2-and-immediately-preceding-attempt-3-as-image-3",
+      "repo_commit_before_generation": "2f067d9",
+      "fixed_child_session_id": "019fd6eb-0c6b-7b73-9b36-4e204d0b8a0c",
+      "prompt_sha256": "217aa7d029ff931f1b1c5334e287d7548a93c3732f6af106469a7512fe3961b7",
+      "raw_sha256": "22e2aafb208c85d52d575a58fe3babdb93362fc7c082b135f1b5ee367d86c786",
+      "raw_size": [1254, 1254],
+      "raw_mode": "RGB",
+      "technical_checks": "13/13 pass",
+      "layout_checks": "29/29 pass",
+      "display_region_checks": "6/6 pass",
+      "fixed_crop_mean_rgb": [96.55, 79.77, 56.05],
+      "fixed_crop_high_frequency_luma_residual": 1.82,
+      "first_failed_gate": "edit-did-not-remove-repeating-embossed-loop-geometry",
+      "preserved_region": "none for the final provider input; attempt 4 remains the best fallback review evidence but its pixels may not be reused",
+      "decision": "internal-rejected; final-fresh-regenerate; do-not-upload-any-prior-v7a-attempt-as-image-3",
+      "reason": "the edit lowered contrast and numeric residual but visibly retained the same repeated loop geometry across the source and fixed crop, so another local edit would entrench the defect"
     }
   ],
   "provider_output": {
@@ -202,5 +221,5 @@
     "fallback": "all existing provider Buttons remain visible and functional until full proxy parity"
   },
   "prompt_location": "docs/modules/quests/work/QUEST.SEALS.md#qs-b1-v7-a-final-production-body",
-  "next_gate": "execute attempt 4 with the complete committed V7-A.r3 local flattening body, fixed Image 1/2, and only the immediately preceding attempt-3 raw as Image 3"
+  "next_gate": "execute final attempt 5 as a fresh regenerate with the complete committed V7-A.r4 body and fixed Image 1/2 only; no Image 3 and no prior V7-A pixels"
 }
