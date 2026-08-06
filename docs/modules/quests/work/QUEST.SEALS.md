@@ -26,8 +26,8 @@
   火漆与载体纵向重叠 `24px`，载体名义宽 `26px`、收起态露出 `4px`，使用
   烟熏旧骨褐挺质誓约纸／亚麻和约五个不等距尖锐尾点；本地 `42/42 pass`、
   展示区 `6/6 pass`、ImageGen `0/0`，当前
-  `simulation-confirmed / P2 / awaiting-production-authorization`；用户于
-  `2026-08-06` 回复“确认”
+  `prompt-authorized / P3 / production 0/5`；用户于 `2026-08-06` 先回复
+  “确认”接受 V17 方向，随后独立授权 V7-A 最终 production 正文
 - 当前已确认布底模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V13 / QS-B1 V4-A`；
   用户于 `2026-08-05` 回复“接受, 用这一套试试效果”
 - 当前已确认模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A`；用户于
@@ -36,10 +36,9 @@
 - 最近一次已执行生产正文：`QS-B1 V5-B.r4 / attempt 5`；fixed child session
   `019fd527-d402-7c00-8fd2-4d6d0ec932d4` 已返回图片并完成
   `turn.completed`，因此实际生图已达 `5/5`
-- 最近一次 production 正文：V6-A..G 七份单对象完整正文已由用户于
-  `2026-08-06` 以文末原文统一明确授权；A／B／C 已内部通过，D／E／F／G 已
-  耗尽；整批顺序执行结束。A／B／C 未获用户接受，整包已被 V7-A 可见材质
-  方向取代；当前无活动或已授权 production 正文
+- 当前 production 正文：`QS-B1 V7-A final production` 已由用户于
+  `2026-08-06` 独立授权；授权前正文固定于 commit `8a267b6`。当前实际
+  ImageGen `0/5`、流程错误 `0`；attempt 1 只允许固定 Image 1／2，无 Image 3
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
@@ -47,7 +46,7 @@
   `candidate-rejected / repair-budget-exhausted / P3 / simulation ImageGen 0/0 /
   production 5/5`；menu V6 motifs `user-superseded / P3-history / simulation
   ImageGen 0/0 / production 28/35 complete`；menu V7-A
-  `simulation-confirmed / production-prepared / P2 / ImageGen 0/0`；runtime
+  `prompt-authorized / P3 / ImageGen 0/5`；runtime
   尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
@@ -59,7 +58,7 @@
   production 5/5 / repair-budget-exhausted`；V6 motifs
   `V6-A／B／C user-superseded / V6-D／E／F／G repair-budget-exhausted /
   P3-history / production 28/35 complete`；V7-A
-  `simulation-confirmed / production-prepared / P2 / ImageGen 0/0`
+  `prompt-authorized / P3 / ImageGen 0/5 / process errors 0`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -75,6 +74,9 @@
   因此提前停止，attempt 5 未调用。V14 只用
   本地平面几何预演 donor／crop／mask／composite 分工，用户确认不接受其中
   任何模拟像素
+- QS-B1 V7-A 模拟 ImageGen：`0/0`；production `0/5 authorized`；流程错误
+  `0`。授权前正文 commit `8a267b6`；attempt 1 只上传固定 Image 1／2，无
+  Image 3
 - QS-B1 V5-B 模拟 ImageGen：`0/0`；production `5/5`；流程错误 `7`。E1
   在 provider 启动前因两个 `-i` 后缺少显式 `--` 参数分隔符而返回
   `Reading prompt from stdin... / No prompt provided via stdin.`；无图片、无
@@ -1478,7 +1480,7 @@ Image 3。不得上传本地色键图、归一化图、排版图或模拟图。
 ### 元数据
 
 - 日期：`2026-08-03`
-- 子状态：`simulation-confirmed / P2 / awaiting-production-authorization`
+- 子状态：`simulation-confirmed / P2`；对应 production 已在后续独立门禁中授权
 - 操作：`simulate`；方式：`deterministic-local-geometry`
 - ImageGen：`0/0`；上传：无；新增 bitmap source/runtime：`0`
 - Python：macOS `conda run -n py312 python`；实际解释器
@@ -12104,7 +12106,7 @@ previous V6 candidate or Image-2 shape was copied.
 
 - 用户原文：`确认`。
 - 具体版本：`QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17 / QS-B1 V7-A`。
-- 状态：`simulation-confirmed / P2 / awaiting-production-authorization`。
+- 状态：`simulation-confirmed / P2`；production 授权记录见本节末。
 - 确认的布局与层序：火漆、载体、七纹章与七个 Button 共同属于
   `QuestLogDetailScrollChild`；载体先绘，QS-A1 火漆最后绘制并与载体纵向
   相交 `24px`；载体名义宽约 `26px`、火漆 `32px`，两侧越出；正文、奖励和
@@ -12125,11 +12127,15 @@ previous V6 candidate or Image-2 shape was copied.
 
 ### QS-B1 V7-A final production body
 
-状态：`production-prepared / not-authorized / actual ImageGen 0/0`。本批只生成
+状态：`prompt-authorized / P3 / actual ImageGen 0/5`。本批只生成
 一张连续材质 donor；ImageGen 不拥有细长轮廓、Alpha、尾端、火漆、纹章、
 Button 或状态。机器合同：
-`tools/specs/quest_log_seal_purity_ribbon_production_v7a.json`，SHA-256
-`1ff46804cb5c5dddd47c56fea2c65c50c22e392c82179b53c5d251af1a65584c`。
+`tools/specs/quest_log_seal_purity_ribbon_production_v7a.json`。用户看到的
+pre-authorization 合同 SHA-256 为
+`1ff46804cb5c5dddd47c56fea2c65c50c22e392c82179b53c5d251af1a65584c`；只追加
+授权元数据后的当前机器合同 SHA-256 为
+`89b24fc18109593b28f40b750fea96da6f65e323c1fcc3832bfd8aeed9b39192`。创作正文、
+固定输入职责与确定性合同均未改变。
 
 #### 固定输入与职责
 
@@ -12277,7 +12283,7 @@ Button 或状态。机器合同：
 
 #### 自主修复边界与预算
 
-- 当前实际 ImageGen：`0/0`；尚未授权，不是 `0/5 authorized`。
+- 当前实际 ImageGen：`0/5 authorized`；流程错误 `0`。
 - 授权后单一 V7-A 正文最多 `5` 次实际 ImageGen generation／edit，含首次；
   任一内部完整通过即停。无图片且无 provider 生成证据的流程错误单列，不占
   生图额度，也不重置计数。
@@ -12293,13 +12299,15 @@ Button 或状态。机器合同：
   `32×192px` runtime、七项独立 Button、六场景展示区、禁用／隐藏／滚动合同
   与五次上限。任何变化必须返回新模拟或新授权。
 
-### V7-A 独立生产授权门禁
+### V7-A 独立生产授权记录
 
-- 当前子状态：`simulation-confirmed / production-prepared / P2`。
-- 下一门禁：用户必须在看到上述完整正文后，独立授权 `QS-B1 V7-A`、固定
-  SHA 的 Image 1／2、同循环紧邻前次输出的受限 Image 3 edit、确定性
-  `1024² → 128×768 → 32×192` 合同和最多 `5` 次实际 ImageGen 调用。
-- 授权前不得读取 `imagegen-0-143-0` 执行 Skill、不得上传图片、不得启动
-  provider、不得创建 `generated/.../attempt-01`，也不得改 source/runtime/addon。
+- 当前子状态：`prompt-authorized / P3 / actual ImageGen 0/5`。
+- 用户于 `2026-08-06` 在看到完整正文后授权以下原文：
+
+  > 确认授权 QS-B1 V7-A final production；允许每次上传固定 SHA 的 Image 1/2，attempt 1 无 Image 3；允许同循环紧邻前次输出仅在冻结修复边界内作为 Image 3 edit 输入；最多 5 次实际 ImageGen 调用，流程错误不占额度；允许按合同执行 1024² 归一化、固定 [448,128,576,896] crop、tracked 128×768 mask、QS-A1 Alpha 接触压暗、透明 RGB 清零、32×192 runtime 与六场景真实排版预演。
+
+- 授权前正文与机器合同固定于 commit `8a267b6`；固定 Image 1／2 与 QS-A1
+  source SHA 已于执行前复核一致。下一门禁是 attempt 1：只上传固定 Image 1／2，
+  无 Image 3；使用 `imagegen-0-143-0 / @openai/codex@0.143.0`。
 - 无跨设备精确像素需求：V17 已由 tracked spec／renderer 可重建，方向已完整
   文字化；不创建 handoff。现有 V5-A source 与全部旧 Button fail-open 保持。

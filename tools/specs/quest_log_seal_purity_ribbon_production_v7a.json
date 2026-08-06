@@ -2,7 +2,14 @@
   "schema": "aeui.quest-log.seal-purity-ribbon.production-contract.v1",
   "version": "QS-B1 V7-A",
   "component": "QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX",
-  "status": "simulation-confirmed-prompt-prepared-not-authorized",
+  "status": "prompt-authorized",
+  "authorization": {
+    "authorized": true,
+    "date": "2026-08-06",
+    "authorized_contract_commit": "8a267b6",
+    "preauthorization_contract_sha256": "1ff46804cb5c5dddd47c56fea2c65c50c22e392c82179b53c5d251af1a65584c",
+    "user_text": "确认授权 QS-B1 V7-A final production；允许每次上传固定 SHA 的 Image 1/2，attempt 1 无 Image 3；允许同循环紧邻前次输出仅在冻结修复边界内作为 Image 3 edit 输入；最多 5 次实际 ImageGen 调用，流程错误不占额度；允许按合同执行 1024² 归一化、固定 [448,128,576,896] crop、tracked 128×768 mask、QS-A1 Alpha 接触压暗、透明 RGB 清零、32×192 runtime 与六场景真实排版预演。"
+  },
   "confirmed_simulation": {
     "version": "QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17",
     "specification": "tools/specs/quest_log_seal_purity_ribbon_simulation_v17.json",
@@ -17,7 +24,7 @@
     "current_actual_generations": 0,
     "process_errors": 0,
     "process_errors_consume_generation_budget": false,
-    "authorized": false
+    "authorized": true
   },
   "fixed_inputs": [
     {
@@ -128,5 +135,5 @@
     "fallback": "all existing provider Buttons remain visible and functional until full proxy parity"
   },
   "prompt_location": "docs/modules/quests/work/QUEST.SEALS.md#qs-b1-v7-a-final-production-body",
-  "next_gate": "user must separately authorize this exact V7-A body, fixed Image 1/2 roles, optional same-loop Image 3 edit policy, deterministic contract, and at most five actual ImageGen calls"
+  "next_gate": "execute attempt 1 with the committed production body and fixed Image 1/2 only; no Image 3"
 }

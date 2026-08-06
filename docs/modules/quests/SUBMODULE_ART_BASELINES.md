@@ -253,8 +253,9 @@ tail 装配，不得 bbox-fit、非等比拉伸、平铺、镜像、重绘或把
 `QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17` 的新综合色、装配和尖锐非周期尾端
 方向。该确认只冻结文字化可见条款；模拟像素和确切 RGB 不是稳定 source。
 V7-A production 必须只生成连续材质 donor，由 tracked `128×768` mask 独占
-轮廓／Alpha，并由 accepted QS-A1 Alpha 确定性形成接触压暗；独立生产授权前
-不得覆盖 V5-A bytes、生成新资产或修改 runtime。
+轮廓／Alpha，并由 accepted QS-A1 Alpha 确定性形成接触压暗。用户随后于
+`2026-08-06` 独立授权该最终正文与最多五次实际 ImageGen 调用；当前候选获
+明确接受前不得覆盖 V5-A bytes 或修改 runtime。
 用户于 `2026-08-06` 回复“接受”，确认 V15 在该 accepted 深布上采用“普通
 六项旧赭金矿物颜料＋放弃项灰暗酒红”的综合色方向。该确认只冻结上述颜色
 角色、低饱和厚重感与四态关系；V15 本地几何纹章像素、确切 RGB、边缘、

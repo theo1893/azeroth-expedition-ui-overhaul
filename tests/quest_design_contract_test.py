@@ -299,7 +299,7 @@ def main() -> None:
     assert hashlib.sha256(
         seal_purity_ribbon_v7a_production_path.read_bytes()
     ).hexdigest() == (
-        "1ff46804cb5c5dddd47c56fea2c65c50c22e392c82179b53c5d251af1a65584c"
+        "89b24fc18109593b28f40b750fea96da6f65e323c1fcc3832bfd8aeed9b39192"
     )
     seal_substrate_v5_candidate_reviewer_path = (
         ROOT
@@ -3269,9 +3269,15 @@ def main() -> None:
         "QS-B1 V17 wax-over-carrier simulation renderer",
     )
     assert seal_purity_ribbon_v7a_production["version"] == "QS-B1 V7-A"
-    assert seal_purity_ribbon_v7a_production["status"] == (
-        "simulation-confirmed-prompt-prepared-not-authorized"
+    assert seal_purity_ribbon_v7a_production["status"] == "prompt-authorized"
+    v7a_authorization = seal_purity_ribbon_v7a_production["authorization"]
+    assert v7a_authorization["authorized"]
+    assert v7a_authorization["date"] == "2026-08-06"
+    assert v7a_authorization["authorized_contract_commit"] == "8a267b6"
+    assert v7a_authorization["preauthorization_contract_sha256"] == (
+        "1ff46804cb5c5dddd47c56fea2c65c50c22e392c82179b53c5d251af1a65584c"
     )
+    assert "attempt 1 无 Image 3" in v7a_authorization["user_text"]
     confirmed_v17 = seal_purity_ribbon_v7a_production[
         "confirmed_simulation"
     ]
@@ -3285,7 +3291,7 @@ def main() -> None:
     assert v7a_executor["package"] == "@openai/codex@0.143.0"
     assert v7a_executor["actual_generation_limit"] == 5
     assert v7a_executor["current_actual_generations"] == 0
-    assert not v7a_executor["authorized"]
+    assert v7a_executor["authorized"]
     v7a_inputs = seal_purity_ribbon_v7a_production["fixed_inputs"]
     assert [item["index"] for item in v7a_inputs] == [1, 2]
     assert [item["sha256"] for item in v7a_inputs] == [
@@ -3322,10 +3328,11 @@ def main() -> None:
         seals_work,
         (
             "V17 用户方向结论 — confirmed / 2026-08-06",
-            "simulation-confirmed / P2 / awaiting-production-authorization",
+            "prompt-authorized / P3 / production 0/5",
             "QS-B1 V7-A final production body",
-            "production-prepared / not-authorized / actual ImageGen 0/0",
+            "prompt-authorized / P3 / actual ImageGen 0/5",
             "1ff46804cb5c5dddd47c56fea2c65c50c22e392c82179b53c5d251af1a65584c",
+            "89b24fc18109593b28f40b750fea96da6f65e323c1fcc3832bfd8aeed9b39192",
             "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
             "3b5c2ca6c1e69c74db5c64978cde351596ece6369d339b7125aee43904eb7d86",
             "Create exactly one edge-to-edge square orthographic hand-painted material donor",
@@ -3335,10 +3342,11 @@ def main() -> None:
             "固定 crop `[448,128,576,896]`",
             "1.0 - 0.16 × (accepted_wax_alpha / 255)",
             "pass / no execution-critical unknowns",
-            "尚未授权，不是 `0/5 authorized`",
-            "V7-A 独立生产授权门禁",
+            "当前实际 ImageGen：`0/5 authorized`",
+            "V7-A 独立生产授权记录",
+            "授权前正文与机器合同固定于 commit `8a267b6`",
         ),
-        "QS-B1 V17 confirmation and V7-A final production preparation",
+        "QS-B1 V17 confirmation and V7-A production authorization",
     )
     require(
         seals_work,
@@ -4116,10 +4124,10 @@ def main() -> None:
             "QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17 / QS-B1 V7-A",
             "相交 `24px`",
             "真实排版\n  `42/42 pass`、展示区 `6/6 pass`、ImageGen `0/0`",
-            "simulation-confirmed / production-prepared / P2",
-            "下一门禁是独立生产授权",
+            "prompt-authorized / P3 / ImageGen 0/5 / process errors 0",
+            "下一门禁是固定 Image 1／2 的 attempt 1",
         ),
-        "QS-B1 V6 closed production and V7-A authorization gate",
+        "QS-B1 V6 closed production and V7-A authorized execution gate",
     )
     require(
         sub_art,
@@ -4149,8 +4157,8 @@ def main() -> None:
             "QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17 / QS-B1 V7-A",
             "相交 `24px`",
             "尾端约五个不等距尖锐破口",
-            "simulation-confirmed / production-prepared / P2",
-            "下一门禁是用户独立授权最终 production 正文与五次上限",
+            "prompt-authorized / P3 / ImageGen 0/5 / process errors 0",
+            "下一门禁是固定输入 attempt 1 与完整内审",
         ),
         "QS-B1 V7-A current component ownership",
     )
@@ -4165,6 +4173,7 @@ def main() -> None:
             "模拟像素和确切 RGB 不是稳定 source",
             "用户于 `2026-08-06` 回复“确认”",
             "tracked `128×768` mask 独占",
+            "独立授权该最终正文与最多五次实际 ImageGen 调用",
         ),
         "QS-B1 V7-A confirmed art-direction contract",
     )
@@ -4432,10 +4441,10 @@ def main() -> None:
             "历史 runtime 合同为 `32×174px`",
             "不得直接导出为目标菜单",
             "最大 `32×192px` 的较窄挺质旧骨褐誓约载体",
-            "simulation-confirmed / production-prepared / P2 / ImageGen 0/0",
+            "prompt-authorized / P3 / ImageGen 0/5",
             "没有 V7 target source、runtime 或 addon 接入",
         ),
-        "QS-B1 V5-A fallback and V7-A pending substrate ownership",
+        "QS-B1 V5-A fallback and V7-A authorized substrate ownership",
     )
     require(
         seals_work,
