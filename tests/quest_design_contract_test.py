@@ -3539,9 +3539,30 @@ def main() -> None:
             "near [607,609]",
             "near [360,705]",
             "Do not invent a fifth repair zone",
-            "V6-D `2/5`、\n  V6-E..G 各 `0/5`",
+            "计为 V6-D `2/5`、整批 `10/35`",
         ),
         "QS-B1 V6-D attempt 2 local green cleanup edit gate",
+    )
+    require(
+        seals_work,
+        (
+            "QS-B1 V6-D attempt 3 execution and review",
+            "019fd5d8-4ae9-7111-a803-f374776874a7",
+            "b0e91e52b402c724d8be5085bddec2d7925b35008ddef470fba3b2c5d6255698",
+            "bbox `[222,204,817,808]`",
+            "绿色污染由 `20` 降至 `12`",
+            "median\n  `[101,35,8]`",
+            "右上墨带末端\n  `[713,361,715,364]`",
+            "左下墨带末端 `[344,631,347,634]`",
+            "internal-rejected / repair-prepared / P3 / 3/5",
+            "QS-B1 V6-D.r3 complete production Prompt — repair-prepared / frozen edit",
+            "only\nedit-identity input",
+            "ONLY ALLOWED REPAIR: TWO TINY GREEN CLUSTERS",
+            "five pixels at the upper-right",
+            "seven pixels at the lower-left",
+            "V6-D `3/5`、\n  V6-E..G 各 `0/5`",
+        ),
+        "QS-B1 V6-D attempt 3 two-cluster cleanup edit gate",
     )
     require(
         seal_motifs_v5_candidate_reviewer,

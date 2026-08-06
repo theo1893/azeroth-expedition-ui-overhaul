@@ -8606,10 +8606,10 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
     (`03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`)
   - Image 2：`assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
     (`719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`)
-- 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C `3/5`、V6-D `2/5`、
-  V6-E..G 各 `0/5`，合计 `10/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
-  内部通过，V6-D attempt 2 已建立正确身份、配色与年代语言但因 20 个封闭绿色
-  像素内部否决，下一次为 V6-D attempt 3 frozen edit
+- 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C `3/5`、V6-D `3/5`、
+  V6-E..G 各 `0/5`，合计 `11/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
+  内部通过，V6-D attempt 3 保持正确身份并把绿色污染由 20 降至 12，但仍未清零，
+  下一次为 V6-D attempt 4 frozen edit
   regenerate。送入提示词前的提取错误、旧 CLI 模型路由 400 与 V6-D provider
   结果占位文件名首次落位失败共 `3` 次流程错误；均未新增 ImageGen，依授权不占
   生图额度。
@@ -8630,7 +8630,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 | V6-A SHARE | 3/5 | 2 | candidate-reviewed / P3 | 单段通过即停；等待整批用户验收 |
 | V6-B DETAIL | 2/5 | 0 | candidate-reviewed / P3 | 单段通过即停；等待整批用户验收 |
 | V6-C SHOW | 3/5 | 0 | candidate-reviewed / P3 | 单段通过即停；授权 bbox-fit 例外 |
-| V6-D HIDE | 2/5 | 1 | internal-rejected / repair-prepared / P3 | attempt 3 edit；固定 Image 1／2＋attempt 2 Image 3 |
+| V6-D HIDE | 3/5 | 1 | internal-rejected / repair-prepared / P3 | attempt 4 edit；固定 Image 1／2＋attempt 3 Image 3 |
 | V6-E CLEAN | 0/5 | 0 | prompt-authorized | 等待 D 结束 |
 | V6-F RESET | 0/5 | 0 | prompt-authorized | 等待 E 结束 |
 | V6-G ABANDON | 0/5 | 0 | prompt-authorized | 等待 F 结束 |
@@ -9786,3 +9786,157 @@ uniform exact #00FF00 exterior field connected to a canvas edge. Confirm all vis
 pixels stay strictly inside [160,160,864,864]. Confirm there is exactly one connected
 emblem, no additional mark, no carrier, text, state, bevel, highlight, shadow, metal,
 gold, eye-slash, prohibition sign, X, weapon, modern visibility toggle, or redesign.
+
+### QS-B1 V6-D attempt 3 execution and review
+
+- 执行前 commit：`500d586`；完整正文版本：`QS-B1 V6-D.r2`；操作：edit。
+- 固定输入：Image 1／2；Image 3 仅为紧邻 attempt 2 raw，固定 SHA
+  `cd44ae6e34837b08f2b3119f0f11a719348cf897d2c88133e4b7c87d0a59b680`；提示词
+  正文 `7386 bytes`、SHA-256
+  `e1475109f3c50eae6feb78ab22df534924a0c4d0ddab567db6e704368a937328`；未上传或
+  复用任何跨段像素。
+- fixed child：`@openai/codex@0.143.0`、`gpt-5.5 / medium`；session
+  `019fd5d8-4ae9-7111-a803-f374776874a7`；完整正文和三图职责已逐字回显，收到
+  唯一实际编辑结果并 `turn.completed`，计为 V6-D `3/5`、整批 `11/35`；本次
+  没有新增流程错误。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V6/V6-D/attempt-03/raw/QS-B1-V6-D.attempt-03.png`；
+  `1254×1254 RGB`；SHA-256
+  `b0e91e52b402c724d8be5085bddec2d7925b35008ddef470fba3b2c5d6255698`。
+- 确定性审查：归一化后可见 bbox `[222,204,817,808]`，完整位于 safe box；
+  可见绿色污染由 `20` 降至 `12`，自动仍为 `8/9`，唯一技术失败继续是
+  `visible_green_spill_is_zero`。剩余像素已收敛为两簇：右上墨带末端
+  `[713,361,715,364]` 共 5px，左下墨带末端 `[344,631,347,634]` 共 7px。
+  review JSON SHA `52595700c989cfee6a06b5370261b2b969d8becb8ee99f8f2de4b45ae66856f6`。
+- 美术内审：主体构图、钝头方向块、粗短遮蔽墨带和磨损分布保持成立；median
+  `[101,35,8]`、luma p50 `46.875`、chroma p50 `96`，比 attempt 2 略暗但仍在
+  深赭矿物颜料范围，不产生黑色现代符号或身份漂移。真实排版的微缩轮廓保持清楚。
+- runtime 装配：等比 fit 为 `14×14px`，位于冻结 `[8,4,24,18]` content box；
+  六场景 display-region `6/6 pass`、violations `0`，报告 SHA
+  `4bcf5abbf8e485d378874f4dbdc3b4b3390f8870347990d114da41af327dccb4`；真实排版
+  SHA `5fc72cebbc49d34a4bd09e125c754d5a807b413c3511c1e4f01c24a5a4d1f4e0`。
+- 结论：`internal-rejected / repair-prepared / P3 / 3/5`。缺陷进一步收敛且仍严格
+  局限于两处墨带末端绿色小簇，满足继续使用同段紧邻 Image 3 的冻结 edit 条件。
+  attempt 4 只允许上传固定 Image 1／2 与 attempt 3 raw；禁止上传更早稿或跨段像素。
+- 下一版必须保持：attempt 3 的完整主体、颜色、深浅、磨损、轮廓、位置、尺度、
+  两端形态和所有冻结禁项。
+- 下一版只允许改变：用相邻的深褐墨带颜料覆盖右上 5px 与左下 7px 绿色小簇；
+  不得修改任何其他区域。
+
+### QS-B1 V6-D.r3 complete production Prompt — repair-prepared / frozen edit
+
+Use Image 1, Image 2, and Image 3 with the authority and frozen repair boundaries below.
+Edit exactly one independent normal-state HIDE emblem for a circa-2004 vanilla World of
+Warcraft quest-log administration menu. This is the second surgical cleanup of an
+already correct flat bitmap pigment sprite. It is not a new generation, redesign,
+scene, screenshot, UI mockup, worksheet, atlas, button, ribbon, map, physical badge,
+metal object, inventory item, or complete interface.
+
+REFERENCE AUTHORITY AND IMAGE ROLES
+
+Image 1 remains the highest era authority: inherit only the heavy handmade old-Azeroth
+ledger weight, muted earth palette, sparse believable wear, and circa-2004 visual
+language. Do not copy its book, pages, leather, brass, wax, ribbons, text, reward slots,
+buttons, compass ornaments, or composition.
+
+Image 2 remains a secondary micro-scale reference only for economical stroke count,
+soft hand-painted edges, broad readable masses, and tiny-sprite legibility. Do not copy,
+trace, rotate, recolor, or rearrange any triangle, circle, check mark, 2-by-2 layout,
+position, transparency, or pixel from Image 2.
+
+Image 3 is the immediately preceding V6-D attempt 3 raw image with fixed SHA-256
+b0e91e52b402c724d8be5085bddec2d7925b35008ddef470fba3b2c5d6255698. It is the only
+edit-identity input. Preserve every established aspect of its HIDE emblem: the four
+blunt unequal direction masses, center, short thick lower-left-to-upper-right masking
+stroke, complete silhouette, position, scale, deep umber-ochre palette, value groups,
+wear distribution, softened perimeter, and flat pigment rendering. Do not use or
+reproduce any pixel from V6-A, V6-B, V6-C, V6-D attempt 1 or 2, or another segment.
+
+CANVAS, COUNT, AND PLACEMENT
+
+Return one exact square 1024 by 1024 RGB image. Preserve Image 3 at exactly the same
+position, scale, orientation, and composition. Preserve its normalized visible bbox
+relationship of approximately [222,204,817,808], strictly inside safe box
+[160,160,864,864]. Do not translate, rotate, stretch, crop, enlarge, shrink, mirror,
+recenter, or recompose it. Use the same direct orthographic front view.
+
+Preserve the broad edge-connected exterior field as one perfectly uniform exact
+chroma-key green #00FF00. It must remain connected to all four canvas edges and have no
+gradient, texture, lighting, vignette, noise, shadow, carrier, guide, label,
+checkerboard, or transparency preview. There must remain exactly one connected semantic
+emblem and no additional mark.
+
+This source owns only one normal-state pigment emblem. It will later be extracted and
+isotropically bbox-fitted into content box [8,4,24,18] inside one 32 by 22 runtime
+Button. Do not draw the Button, backing tile, hover, pressed, disabled state, Tooltip,
+text, map, menu background, ribbon substrate, or provider logic.
+
+FROZEN IDENTITY, MATERIAL, AND COLOR
+
+Preserve every valid Image-3 pigment pixel and visual relationship outside the two
+explicit repair boxes below. Keep the existing broad flat-topped north direction mass,
+unequal rounded east and west masses, compact rounded south mass, center overlap, and
+open exterior channels between directions. Keep the current short thick diagonal
+masking stroke, blunt brushy ends, uneven width, central overlap, deep smoked-umber
+value, and old-ochre wear patches. Keep the current dark mineral-pigment median family
+near RGB [101,35,8], its few broad discrete values, coarse wear, handmade asymmetry,
+softened edges, and non-metallic two-dimensional appearance.
+
+Do not add or remove any direction mass, alter the center, lengthen or shorten the
+masking stroke, change its width, move either brush end, move wear, flatten valid wear,
+or modify the existing silhouette. Do not brighten, darken, recolor, sharpen, blur,
+retexture, or relight the emblem. No gold, orange brightness, white, black, highlight,
+bevel, depth, shadow, rim light, photographic relief, or new texture.
+
+ONLY ALLOWED REPAIR: TWO TINY GREEN CLUSTERS
+
+After whole-square 1024 normalization, exactly twelve green-like defect pixels remain,
+all on the dark masking stroke and nowhere else. Repair only these two tiny clusters:
+
+1. five pixels at the upper-right masking-stroke end within normalized box
+   [713,361,715,364], at coordinates (713,361), (714,361), (713,362), (714,362),
+   and (714,363);
+2. seven pixels at the lower-left masking-stroke end within normalized box
+   [344,631,347,634], at coordinates (345,631), (346,631), (344,632), (345,632),
+   (346,632), (344,633), and (345,633).
+
+Overpaint each listed pixel and only the minimum immediately adjacent antialiasing area
+with the same opaque deep smoked-umber pigment already touching that location. The two
+micro repairs must merge invisibly into the existing masking stroke. They must not read
+as fresh dots, plugs, jewels, holes, bright wear, or new texture. Use no green and leave
+no green-tinted antialiasing at either repaired brush end.
+
+Do not alter the edge-connected green background beyond those two enclosed/local defect
+clusters. Do not fill the open channels between direction masses. Do not change any
+other pigment pixel, contour, wear patch, brush end, wedge, center, color block,
+position, scale, or texture. Do not invent any other repair. After repair, every
+green-like pixel must belong only to the exterior #00FF00 field connected to a canvas
+edge. No enclosed green island, green crack, isolated green speck, green center, or
+green-tinted visible fringe may remain.
+
+STRICT EXCLUSIONS
+
+No redesign, new compass, sharp diamond point, spearhead, arrowhead, four-point star,
+five-point star, crosshair, D-pad, separate keys, shuriken, sunburst, flower, gem,
+faceted badge, wind rose, outer circle, inner ring, prohibition ring, eye outline,
+eyelid, pupil, letters, ticks, map grid, coordinates, needle, location pin, X, long
+slash, thin slash, sword, spear, axe, quill, crossed weapons, text, numbers, runes,
+physical compass casing, gold, brass, cloth, ribbon, wax, backing tile, button face,
+border, card, frame, medallion, rivet, bevel, cast shadow, drop shadow, contact shadow,
+ambient occlusion, glow, specular highlight, rim light, continuous gradient,
+photographic grain, glass, neon, chrome, 3D rendering, photorealism, perfect symmetry,
+vector-clean geometry, Diablo III ornament, Skyrim minimalist menu language, or
+Warhammer iconography.
+
+FINAL SELF-CHECK
+
+Confirm Image 3's HIDE identity, silhouette, placement, scale, four blunt unequal
+direction masses, short thick central masking stroke, dark earthy palette, exact wear
+distribution, and flat hand-printed character remain unchanged outside the two tiny
+repair boxes. Confirm all twelve listed green-like pixels have been replaced by matching
+deep smoked-umber pigment and no green fringe remains at either brush end. Confirm every
+remaining green pixel is part of the uniform exact #00FF00 exterior connected to a
+canvas edge. Confirm all visible pixels stay strictly inside [160,160,864,864]. Confirm
+there is exactly one connected emblem, no additional mark, no carrier, text, state,
+bevel, highlight, shadow, metal, gold, eye-slash, prohibition sign, X, weapon, modern
+visibility toggle, or redesign.
