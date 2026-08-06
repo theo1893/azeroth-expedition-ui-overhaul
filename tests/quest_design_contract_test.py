@@ -3560,9 +3560,30 @@ def main() -> None:
             "ONLY ALLOWED REPAIR: TWO TINY GREEN CLUSTERS",
             "five pixels at the upper-right",
             "seven pixels at the lower-left",
-            "V6-D `3/5`、\n  V6-E..G 各 `0/5`",
+            "计为 V6-D `3/5`、整批 `11/35`",
         ),
         "QS-B1 V6-D attempt 3 two-cluster cleanup edit gate",
+    )
+    require(
+        seals_work,
+        (
+            "QS-B1 V6-D attempt 4 execution and review",
+            "019fd5de-78a1-7661-af36-73f89e214e7c",
+            "e5cb30bf52425378b45bd33dd202a738494ed9cfb5c709e354ed6f42159a9955",
+            "bbox `[215,194,833,823]`",
+            "绿色污染由 `12` 反增至 `22`",
+            "median `[87,27,10]`",
+            "[725,356,727,359]` 6px",
+            "[341,632,351,643]` 13px",
+            "internal-rejected / repair-prepared / P3 / 4/5",
+            "QS-B1 V6-D.r4 complete production Prompt — repair-prepared / frozen final edit",
+            "only\nedit-identity input",
+            "HARD FREEZE OUTSIDE FOUR REPAIR BOXES",
+            "ONLY ALLOWED REPAIR: FOUR MICRO INPAINT BOXES",
+            "twenty-two green-like defect pixels",
+            "V6-D `4/5`、\n  V6-E..G 各 `0/5`",
+        ),
+        "QS-B1 V6-D attempt 4 final four-box edit gate",
     )
     require(
         seal_motifs_v5_candidate_reviewer,
