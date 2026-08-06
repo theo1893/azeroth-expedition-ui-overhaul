@@ -3821,6 +3821,25 @@ def main() -> None:
         "QS-B1 V6-F exhausted stop and V6-G continuation gate",
     )
     require(
+        seals_work,
+        (
+            "QS-B1 V6-G attempt 1 execution and review",
+            "019fd654-a892-7171-a116-9bb3ead07e7e",
+            "6adbb3c8243de4ee69b16d06ca0766f23327831cfaab0145d6756b28240870d9",
+            "bbox `[105,337,912,688]`",
+            "可见绿色污染 `0`",
+            "median `[92,31,35]`",
+            "圆环／马蹄",
+            "internal-rejected / repair-prepared / P3 / 1/5",
+            "attempt 1 禁止作为 Image 3",
+            "QS-B1 V6-G.r1 complete production Prompt — repair-prepared / frozen",
+            "ASYMMETRIC OFFSET SNAPPED COVENANT LINE",
+            "No bilateral symmetry, U, arch, horseshoe, broken circle, broken ring",
+            "V6-G `1/5`、整批 `24/35`",
+        ),
+        "QS-B1 V6-G attempt 1 rejection and complete r1 repair gate",
+    )
+    require(
         seal_motifs_v5_candidate_reviewer,
         (
             "CANVAS = (1024, 1024)",
