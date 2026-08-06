@@ -7070,8 +7070,9 @@ uniform exact #00FF00.
 
 ### V5-B.r1 完整性与修复边界复核
 
-- 以上正文按两个三级标题边界提取、去除标题后为 `9701 bytes`；传入参数正文
-  SHA-256 `661c756c450eecf1c6a653335e3a8d49fef2775266f380ccced851cba078fa3f`；
+- 以上正文按两个三级标题边界提取、去除标题并按既有 shell 位置参数传输语义
+  去除尾随换行后为 `9699 bytes`；传入参数正文 SHA-256
+  `fe44d9fde78dd9755ef39d7e1f067210b1520357067dd3a9953f148ab2e5e50b`；
   首句已核对为 `Use Image 1 and Image 2 only as fixed visual references.`。
 - 本正文仍只包含七枚原功能纹章、第八空格、原固定 cell／safe box、六赭金一
   酒红颜色角色、无载体与香草魔兽二维手绘语言；没有新增对象、状态、参考或
