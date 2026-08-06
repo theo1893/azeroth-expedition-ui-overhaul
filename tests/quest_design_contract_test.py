@@ -299,7 +299,7 @@ def main() -> None:
     assert hashlib.sha256(
         seal_purity_ribbon_v7a_production_path.read_bytes()
     ).hexdigest() == (
-        "deff9fa7c5974b0670ba2a8eda552f2ae192b61e1b3abf58cd59b85da7c600b6"
+        "26d69badaa2b78f7bc92d2115c5ad7c26880d9f58ff7d45a1b95ce964e5ea195"
     )
     seal_purity_ribbon_v7a_reviewer_path = (
         ROOT / "tools" / "review_quest_seal_purity_ribbon_candidate_v1.py"
@@ -3283,7 +3283,7 @@ def main() -> None:
         "QS-B1 V17 wax-over-carrier simulation renderer",
     )
     assert seal_purity_ribbon_v7a_production["version"] == "QS-B1 V7-A"
-    assert seal_purity_ribbon_v7a_production["status"] == "repair-prepared"
+    assert seal_purity_ribbon_v7a_production["status"] == "candidate-reviewed"
     v7a_authorization = seal_purity_ribbon_v7a_production["authorization"]
     assert v7a_authorization["authorized"]
     assert v7a_authorization["date"] == "2026-08-06"
@@ -3304,11 +3304,11 @@ def main() -> None:
     assert v7a_executor["skill"] == "imagegen-0-143-0"
     assert v7a_executor["package"] == "@openai/codex@0.143.0"
     assert v7a_executor["actual_generation_limit"] == 5
-    assert v7a_executor["current_actual_generations"] == 4
+    assert v7a_executor["current_actual_generations"] == 5
     assert v7a_executor["process_errors"] == 1
     assert v7a_executor["authorized"]
     v7a_history = seal_purity_ribbon_v7a_production["attempt_history"]
-    assert len(v7a_history) == 4
+    assert len(v7a_history) == 5
     assert v7a_history[0]["attempt"] == 1
     assert v7a_history[0]["technical_checks"] == "13/13 pass"
     assert v7a_history[0]["layout_checks"] == "29/29 pass"
@@ -3352,6 +3352,28 @@ def main() -> None:
     assert "do-not-upload-any-prior-v7a-attempt-as-image-3" in (
         v7a_history[3]["decision"]
     )
+    assert v7a_history[4]["attempt"] == 5
+    assert v7a_history[4]["mode"] == (
+        "final-fresh-generate-with-fixed-image-1-and-image-2-only"
+    )
+    assert v7a_history[4]["repo_commit_before_generation"] == "b025656"
+    assert v7a_history[4]["technical_checks"] == "13/13 pass"
+    assert v7a_history[4]["layout_checks"] == "29/29 pass"
+    assert v7a_history[4]["display_region_checks"] == "6/6 pass"
+    assert v7a_history[4]["first_failed_gate"] is None
+    assert "no-attempt-6" in v7a_history[4]["decision"]
+    v7a_candidate_gate = seal_purity_ribbon_v7a_production[
+        "candidate_gate"
+    ]
+    assert v7a_candidate_gate["status"] == "candidate-reviewed"
+    assert v7a_candidate_gate["attempt"] == 5
+    assert v7a_candidate_gate["raw_sha256"] == (
+        "604faa9e6cdaedf7c6ba1fbbca8d4232b9ae50a4fe21aaff46d59cb0f3583c9b"
+    )
+    assert not v7a_candidate_gate["source_written"]
+    assert not v7a_candidate_gate["runtime_written"]
+    assert not v7a_candidate_gate["addon_changed"]
+    assert v7a_candidate_gate["requires_explicit_user_acceptance"]
     v7a_process_errors = seal_purity_ribbon_v7a_production[
         "process_error_history"
     ]
@@ -3406,15 +3428,16 @@ def main() -> None:
         seals_work,
         (
             "V17 用户方向结论 — confirmed / 2026-08-06",
-            "repair-prepared / P3 / production 4/5",
+            "candidate-reviewed / P3 / production 5/5",
             "QS-B1 V7-A final production body",
-            "repair-prepared / P3 / actual ImageGen 4/5",
+            "candidate-reviewed / P3 / actual ImageGen 5/5",
             "1ff46804cb5c5dddd47c56fea2c65c50c22e392c82179b53c5d251af1a65584c",
             "89b24fc18109593b28f40b750fea96da6f65e323c1fcc3832bfd8aeed9b39192",
             "b9c81296a62b83064f82a2a43d154c9800875f6b15421ffe9e8393328762c6eb",
             "b8f6c8b5360c5c8c036a77bc75e5ac91268f42d5fdf4a1df71c65e55a8cc32ce",
             "6e3abd5eb3637a81617b045739fc92cd41f86efb9c6ace34020ce4bb9acbf71d",
             "deff9fa7c5974b0670ba2a8eda552f2ae192b61e1b3abf58cd59b85da7c600b6",
+            "26d69badaa2b78f7bc92d2115c5ad7c26880d9f58ff7d45a1b95ce964e5ea195",
             "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
             "3b5c2ca6c1e69c74db5c64978cde351596ece6369d339b7125aee43904eb7d86",
             "Create exactly one edge-to-edge square orthographic hand-painted material donor",
@@ -3424,7 +3447,7 @@ def main() -> None:
             "固定 crop `[448,128,576,896]`",
             "1.0 - 0.16 × (accepted_wax_alpha / 255)",
             "pass / no execution-critical unknowns",
-            "当前实际 ImageGen：`4/5 repair-prepared`",
+            "当前实际 ImageGen：`5/5 candidate-reviewed`",
             "V7-A 独立生产授权记录",
             "授权前正文与机器合同固定于 commit `8a267b6`",
             "QS-B1 V7-A attempt 1 execution and internal rejection",
@@ -3447,6 +3470,10 @@ def main() -> None:
             "QS-B1 V7-A.r4 complete production Prompt — final attempt 5 fresh regenerate",
             "THIS IS A PAINTED FIELD, NOT A TEXTURE",
             "No visible detail smaller than about 48 pixels",
+            "QS-B1 V7-A attempt 5 execution and internal pass",
+            "candidate-reviewed / internal-pass / P3 / production 5/5",
+            "604faa9e6cdaedf7c6ba1fbbca8d4232b9ae50a4fe21aaff46d59cb0f3583c9b",
+            "1d098be709b3ee48ea7af7238dd254b451e2bfeb653cfd26ce5b5539bf6af887",
         ),
         "QS-B1 V17 confirmation, V7-A production, and attempt-1 repair",
     )
@@ -4226,8 +4253,8 @@ def main() -> None:
             "QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17 / QS-B1 V7-A",
             "相交 `24px`",
             "真实排版\n  `42/42 pass`、展示区 `6/6 pass`、ImageGen `0/0`",
-            "prompt-authorized / P3 / ImageGen 0/5 / process errors 0",
-            "下一门禁是固定 Image 1／2 的 attempt 1",
+            "candidate-reviewed / P3 / ImageGen 5/5 / process errors 1",
+            "下一门禁是用户明确接受或拒绝 attempt 5",
         ),
         "QS-B1 V6 closed production and V7-A authorized execution gate",
     )
@@ -4259,8 +4286,8 @@ def main() -> None:
             "QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17 / QS-B1 V7-A",
             "相交 `24px`",
             "尾端约五个不等距尖锐破口",
-            "prompt-authorized / P3 / ImageGen 0/5 / process errors 0",
-            "下一门禁是固定输入 attempt 1 与完整内审",
+            "candidate-reviewed / P3",
+            "下一门禁是用户明确接受或拒绝 attempt 5",
         ),
         "QS-B1 V7-A current component ownership",
     )
@@ -4543,7 +4570,7 @@ def main() -> None:
             "历史 runtime 合同为 `32×174px`",
             "不得直接导出为目标菜单",
             "最大 `32×192px` 的较窄挺质旧骨褐誓约载体",
-            "prompt-authorized / P3 / ImageGen 0/5",
+            "candidate-reviewed / P3 / ImageGen 5/5",
             "没有 V7 target source、runtime 或 addon 接入",
         ),
         "QS-B1 V5-A fallback and V7-A authorized substrate ownership",

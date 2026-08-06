@@ -26,7 +26,7 @@
   火漆与载体纵向重叠 `24px`，载体名义宽 `26px`、收起态露出 `4px`，使用
   烟熏旧骨褐挺质誓约纸／亚麻和约五个不等距尖锐尾点；本地 `42/42 pass`、
   展示区 `6/6 pass`、ImageGen `0/0`，当前
-  `repair-prepared / P3 / production 4/5`；用户于 `2026-08-06` 先回复
+  `candidate-reviewed / P3 / production 5/5`；用户于 `2026-08-06` 先回复
   “确认”接受 V17 方向，随后独立授权 V7-A 最终 production 正文
 - 当前已确认布底模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V13 / QS-B1 V4-A`；
   用户于 `2026-08-05` 回复“接受, 用这一套试试效果”
@@ -38,9 +38,9 @@
   `turn.completed`，因此实际生图已达 `5/5`
 - 当前 production 正文：`QS-B1 V7-A final production` 已由用户于
   `2026-08-06` 独立授权；授权前正文固定于 commit `8a267b6`。当前实际
-  ImageGen `4/5`、流程错误 `1`；attempt 4 降低了压纹对比度但未移除其
-  重复几何，因此仍内部退回。最终 attempt 5 使用完整 `V7-A.r4` 正文，
-  只上传固定 Image 1／2 fresh regenerate，无 Image 3、无任何旧 V7-A 像素
+  ImageGen `5/5`、流程错误 `1`；最终 attempt 5 以固定 Image 1／2 fresh
+  regenerate 后内部通过，当前等待用户复审；不得 attempt 6，未写
+  source／runtime／addon
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
@@ -48,7 +48,7 @@
   `candidate-rejected / repair-budget-exhausted / P3 / simulation ImageGen 0/0 /
   production 5/5`；menu V6 motifs `user-superseded / P3-history / simulation
   ImageGen 0/0 / production 28/35 complete`；menu V7-A
-  `repair-prepared / P3 / ImageGen 4/5`；runtime
+  `candidate-reviewed / P3 / ImageGen 5/5`；runtime
   尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
@@ -60,7 +60,7 @@
   production 5/5 / repair-budget-exhausted`；V6 motifs
   `V6-A／B／C user-superseded / V6-D／E／F／G repair-budget-exhausted /
   P3-history / production 28/35 complete`；V7-A
-  `repair-prepared / P3 / ImageGen 4/5 / process errors 1`
+  `candidate-reviewed / P3 / ImageGen 5/5 / process errors 1`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -76,12 +76,13 @@
   因此提前停止，attempt 5 未调用。V14 只用
   本地平面几何预演 donor／crop／mask／composite 分工，用户确认不接受其中
   任何模拟像素
-- QS-B1 V7-A 模拟 ImageGen：`0/0`；production `4/5 repair-prepared`；流程
+- QS-B1 V7-A 模拟 ImageGen：`0/0`；production `5/5 candidate-reviewed`；流程
   错误 `1`。授权前正文 commit `8a267b6`；attempt 1 与 attempt 2 都只上传
   固定 Image 1／2 fresh generate，均已内部退回。attempt 3 以紧邻 attempt 2
   为 Image 3 修正了配色，但规则压纹未通过；attempt 4 的局部 edit 仍保留
   同一压纹几何。最终 attempt 5 只上传固定 Image 1／2 fresh regenerate，
-  禁止任何旧候选作为 Image 3
+  中央 crop、综合色、低频手绘面与六场景运行时内部通过；不得 attempt 6，
+  等待用户接受具体候选
 - QS-B1 V5-B 模拟 ImageGen：`0/0`；production `5/5`；流程错误 `7`。E1
   在 provider 启动前因两个 `-i` 后缺少显式 `--` 参数分隔符而返回
   `Reading prompt from stdin... / No prompt provided via stdin.`；无图片、无
@@ -12132,7 +12133,7 @@ previous V6 candidate or Image-2 shape was copied.
 
 ### QS-B1 V7-A final production body
 
-状态：`repair-prepared / P3 / actual ImageGen 4/5`。本批只生成
+状态：`candidate-reviewed / P3 / actual ImageGen 5/5`。本批只生成
 一张连续材质 donor；ImageGen 不拥有细长轮廓、Alpha、尾端、火漆、纹章、
 Button 或状态。机器合同：
 `tools/specs/quest_log_seal_purity_ribbon_production_v7a.json`。用户看到的
@@ -12148,7 +12149,9 @@ attempt 2 与一次不计额度的 npm 流程错误后，当前机器合同 SHA-
 合同 SHA-256 为
 `6e3abd5eb3637a81617b045739fc92cd41f86efb9c6ace34020ce4bb9acbf71d`。
 追加 attempt 4 后的当前机器合同 SHA-256 为
-`deff9fa7c5974b0670ba2a8eda552f2ae192b61e1b3abf58cd59b85da7c600b6`。
+`deff9fa7c5974b0670ba2a8eda552f2ae192b61e1b3abf58cd59b85da7c600b6`；追加
+attempt 5、内部通过结论与 candidate gate 后的当前机器合同 SHA-256 为
+`26d69badaa2b78f7bc92d2115c5ad7c26880d9f58ff7d45a1b95ce964e5ea195`。
 
 #### 固定输入与职责
 
@@ -12296,7 +12299,8 @@ attempt 2 与一次不计额度的 npm 流程错误后，当前机器合同 SHA-
 
 #### 自主修复边界与预算
 
-- 当前实际 ImageGen：`4/5 repair-prepared`；流程错误 `1`。
+- 当前实际 ImageGen：`5/5 candidate-reviewed`；流程错误 `1`。attempt 5 已完整
+  通过内部门禁，因此依“通过即停”结束本循环；不存在 attempt 6。
 - 授权后单一 V7-A 正文最多 `5` 次实际 ImageGen generation／edit，含首次；
   任一内部完整通过即停。无图片且无 provider 生成证据的流程错误单列，不占
   生图额度，也不重置计数。
@@ -12314,16 +12318,17 @@ attempt 2 与一次不计额度的 npm 流程错误后，当前机器合同 SHA-
 
 ### V7-A 独立生产授权记录
 
-- 当前子状态：`repair-prepared / P3 / actual ImageGen 4/5`。
+- 当前子状态：`candidate-reviewed / P3 / actual ImageGen 5/5`。
 - 用户于 `2026-08-06` 在看到完整正文后授权以下原文：
 
   > 确认授权 QS-B1 V7-A final production；允许每次上传固定 SHA 的 Image 1/2，attempt 1 无 Image 3；允许同循环紧邻前次输出仅在冻结修复边界内作为 Image 3 edit 输入；最多 5 次实际 ImageGen 调用，流程错误不占额度；允许按合同执行 1024² 归一化、固定 [448,128,576,896] crop、tracked 128×768 mask、QS-A1 Alpha 接触压暗、透明 RGB 清零、32×192 runtime 与六场景真实排版预演。
 
 - 授权前正文与机器合同固定于 commit `8a267b6`；固定 Image 1／2 与 QS-A1
-  source SHA 已于执行前复核一致。attempt 1／2／3／4 已内部退回；下一门禁
-  是已提交的最终 `V7-A.r4 / attempt 5`：只上传固定 Image 1／2 fresh
-  regenerate，禁止 Image 3；继续使用
-  `imagegen-0-143-0 / @openai/codex@0.143.0`。
+  source SHA 已于每次执行前复核一致。attempt 1／2／3／4 已内部退回；最终
+  `V7-A.r4 / attempt 5` 只上传固定 Image 1／2 fresh regenerate，无 Image 3，
+  已通过全部内部门禁并停止于 `5/5`。下一门禁是用户审视 attempt 5 的真实排版
+  并明确接受或拒绝；接受前不写 source／runtime、不接入 addon，不存在
+  attempt 6。
 - 无跨设备精确像素需求：V17 已由 tracked spec／renderer 可重建，方向已完整
   文字化；不创建 handoff。现有 V5-A source 与全部旧 Button fail-open 保持。
 
@@ -12987,3 +12992,39 @@ Image 3。目标是生成“手绘综合色与大色块 donor”，不是任何�
 > old-bone near RGB [102,85,62], not gold, orange, caramel, bright beige, or near-black.
 > Confirm there is no object, silhouette, transparency, wax, emblem, text, button,
 > border, tail, cast shadow, modern HUD language, or Warhammer iconography.
+
+### QS-B1 V7-A attempt 5 execution and internal pass
+
+- 执行前 commit：`b025656`；完整正文：`QS-B1 V7-A.r4`。本次是最终 fresh
+  generate，只上传固定 SHA 的 Image 1／2，不上传 Image 3，也不读取或复用
+  attempt 1–4 的任何像素。child prompt SHA-256
+  `bd8b12a6ac621dfe59f40e2f11540513b67f4cfd46666e01b804f6f4369c28f0`。
+- fixed child：`@openai/codex@0.143.0`，session
+  `019fd6fc-1701-7a61-b576-3f5d9600135c`；内建 ImageGen 返回一张图片，计入
+  V7-A `5/5`；累计流程错误仍为 `1`。
+- raw：`generated/quests/QUEST-SEALS/QS-B1-V7-A/attempt-05/raw.png`；
+  `1254×1254 RGB`；SHA-256
+  `604faa9e6cdaedf7c6ba1fbbca8d4232b9ae50a4fe21aaff46d59cb0f3583c9b`。
+- 已按已授权合同执行同轴 `1024²` 归一化、固定
+  `[448,128,576,896]` crop、tracked `128×768` mask、QS-A1 Alpha 接触压暗、
+  透明 RGB 清零、`32×192px` runtime review master 与六场景真实排版。技术门禁
+  `13/13 pass`；真实排版几何 `29/29 pass`；display-region `6/6 pass`、
+  violations `0`。
+- review JSON SHA-256
+  `57cb900aaf65e582099505277fc9805615bb2a5de12a0fb760f82c99520dd270`；
+  display report SHA-256
+  `72d480d219c69686f0adfa1b3117d06f887db29b070e0ed46626a058137b2559`；
+  real-layout SHA-256
+  `1d098be709b3ee48ea7af7238dd254b451e2bfeb653cfd26ce5b5539bf6af887`；
+  composite SHA-256
+  `168f527fffa09beb281c7e0bbca6076dcd00e7f827febb6cce9a853f461e05b8`；
+  runtime review master SHA-256
+  `12a4a24b785641c55a0caae0737f1b151459e5fc039ae067aa7f41552dd06740`。
+- fixed crop 均值 `[107.91,86.73,50.80]`、luma std `9.62`、最大相邻列／行
+  跳变 `0.48／1.32`、high-frequency residual `1.64`。结果由少量宽阔手绘明暗
+  面构成，中央 crop 连续安静，无接缝、条带或此前规则环状压纹。综合色比目标
+  略暖、略偏旧赭，但在 `32×192px` 运行时读取为灰暗旧誓约文书，而非明亮金布。
+- 结论：`candidate-reviewed / internal-pass / P3 / production 5/5`。依“内部完整
+  通过即停”，本批在第 5 次结束，不存在 attempt 6。当前候选仅位于 ignored
+  `generated/`；尚未写入 source／runtime／atlas，尚未接入 addon。下一门禁是
+  用户对上述具体 attempt 5 真实排版的明确接受或拒绝。

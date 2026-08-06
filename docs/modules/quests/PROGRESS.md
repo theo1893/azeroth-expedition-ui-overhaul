@@ -10,12 +10,15 @@
   `QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17 / QS-B1 V7-A`：漆章后绘并与较窄
   旧骨褐誓约条带相交 `24px`，尾端改为约五个不等距尖锐破口；真实排版
   `42/42 pass`、展示区 `6/6 pass`、ImageGen `0/0`。用户于 `2026-08-06`
-  回复“确认”，随后独立授权 V7-A 最终 production 正文；状态为
-  `prompt-authorized / P3 / ImageGen 0/5 / process errors 0`。
+  回复“确认”，随后独立授权 V7-A 最终 production 正文。bounded loop 已完成
+  `5/5` 次实际 ImageGen，另有 `1` 次不计额度流程错误；attempt 5 fresh
+  regenerate 通过 `13/13` 技术、`29/29` 真实排版和 `6/6` 展示区门禁，状态为
+  `candidate-reviewed / P3 / ImageGen 5/5 / process errors 1`。
   最终单 donor 正文、固定 Image 1／2、`128×768` mask、QS-A1 Alpha 接触
   压暗及 `32×192px` runtime 合同已完成完整性审计；授权正文固定于 commit
-  `8a267b6`，下一门禁是固定 Image 1／2 的 attempt 1 与完整内部审查。
-  当前不改 source、runtime 或 addon。V5-A accepted source 仅保留为可恢复
+  `8a267b6`；最终候选 raw SHA 为 `604faa9e…583c9b`，六场景真实排版 SHA 为
+  `1d098be7…6af887`。下一门禁是用户明确接受或拒绝 attempt 5，不存在
+  attempt 6。当前不改 source、runtime 或 addon。V5-A accepted source 仅保留为可恢复
   fallback，旧功能按钮继续原子 fail-open。
 - 用户于 `2026-08-05` 在 Turtle WoW 中确认当前 Quest Log 左页与右页的既有
   bug 和显示问题均已修复。活动范围中的 QL-A2 V4 书体、18 行左页字体／
@@ -247,7 +250,8 @@
   只形成内部候选且未获用户接受，D／E／F／G 各自耗尽。用户保留七张独立
   source 拓扑，但取代其近黑布、双钝缺口和火漆悬浮方向；当前执行入口已切换
   为 `QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17 / QS-B1 V7-A`；用户于
-  `2026-08-06` 确认方向，当前等待独立生产授权。
+  `2026-08-06` 确认方向并独立授权生产。V7-A 已停止于 attempt 5 的内部通过
+  候选；当前等待用户复审该候选。
   V5-B 失败像素不进入 V6 或 V7。
   runtime `1.25` 继续把已接受的 QS-A1 漆章以 `32px` 无鼠标 Texture 放到
   详情页右上纸面；菜单尚未接入，也未隐藏任何旧按钮。
@@ -510,7 +514,7 @@
 | `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P6 game-validated / user-confirmed`（当前活动 runtime） | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；`2026-08-05` 用户确认 18 行字体、无描边／零 shadow、类型墨色和活动地区箭头显示通过。隐藏的行末追踪圈不在验收范围 | 保留至组件／整模块收口；不再生图 |
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 asset-retained / runtime-hidden` | 用户接受的 source、manifest、`128 × 16` TGA、exporter 与历史证据全部保留；`2026-07-31` 起 adapter 不再挂载或包装任务行脚本 | 暂缓；只有用户重新确认后才恢复 runtime |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
-| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；QS-B1 V7-A `P3 prompt-authorized / ImageGen 0/5` | V6 授权批次已结束：ImageGen `28/35`、流程错误 `7`；A／B／C 未获用户接受，D／E／F／G 各自耗尽。用户保留七项独立代理结构但否决 V5-A 可见承载方向，并于 `2026-08-06` 确认 V17 火漆跨压旧骨褐誓约条带与不等距尖锐破口、随后独立授权 V7-A 最终 donor 正文。固定输入和确定性合同已审计；当前 ImageGen `0/5`、流程错误 `0`，无新 source/runtime/addon | 固定 Image 1／2 执行 attempt 1；七项代理 parity 前旧按钮继续 fail-open |
+| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；QS-B1 V7-A `candidate-reviewed / P3 / ImageGen 5/5` | V6 授权批次已结束。用户保留七项独立代理结构但否决旧承载方向，并于 `2026-08-06` 确认 V17 后授权 V7-A。V7-A attempt 5 fresh regenerate 通过 `13/13` 技术、`29/29` 真实排版与 `6/6` 展示区；流程错误 `1` 不占额度。无新 source/runtime/addon | 用户明确接受或拒绝 attempt 5；七项代理 parity 前旧按钮继续 fail-open |
 | `QL-D` | 奖励槽、分隔与文字安全区 | current geometry／fallback `P6 game-validated`；final art `P2 simulation-proposed` | runtime `1.25` 保持真实 Button 的 `108×41px` 双列／`64px` 名称／`8px` 列距／`4px` 行距、setter 锁、无鼠标程序化容器、原生 `NameFrame` 抑制和可见数量兜底。所有奖励项只依赖奖励总标题或上一组奖励项，不再依赖三个分组标题，消除原生 `QuestLogItemReceiveText` 反向锚定造成的 FrameXML 环；`2026-08-05` 用户确认当前右页 bug 与显示修复通过。Theme `1.8` 奖励文字无描边。V1 模拟 0／1／2／4／6 `5/5 pass`、ImageGen `0/0`；奖励只读，无 selected | 确认最终容器美术方向；确认不等于生产授权 |
 
 QL-A1 manifest 记录：
@@ -556,7 +560,7 @@ timer 或 failed 资产：provider 没有可用的公开状态来源。本项目
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
 | `QS-A1` | Quest Log／Tracker 共用漆章母版 | `P5 runtime-exported / page-placement-integrated / 5/5` | source／四态 atlas 保持 accepted；当前 Quest Log runtime `1.25` 直接使用 `32px` 页上 Texture，Tracker 不受影响；没有重开美术或 ImageGen | Turtle WoW 验证页上位置、TGA 方向与标题／正文安全区 |
-| `QS-B1` | Quest Log ScrollChild 内火漆 Button、动态承载条、七张独立纹章与七个代理 Button | V7-A `prompt-authorized / P3 / ImageGen 0/5 / process errors 0`；V6 closed `28/35`；V5-A source retained as fallback | 用户于 `2026-08-06` 确认 V17 的 `24px` 漆章／载体相交、较窄烟熏旧骨褐誓约条带和约五个不等距尖锐破口，并独立授权最终单 donor 正文、固定 Image 1／2、受限同循环 edit 与确定性 mask／接触／runtime 合同。授权正文固定于 commit `8a267b6`；无新 source/runtime，菜单未接入 | 执行 attempt 1 与 generate→review→repair bounded loop；旧按钮继续 fail-open |
+| `QS-B1` | Quest Log ScrollChild 内火漆 Button、动态承载条、七张独立纹章与七个代理 Button | V7-A `candidate-reviewed / P3 / ImageGen 5/5 / process errors 1`；V6 closed `28/35`；V5-A source retained as fallback | 用户于 `2026-08-06` 确认 V17 并授权最终单 donor 与确定性装配合同。attempt 5 fresh regenerate 的 raw SHA `604faa9e…583c9b`、六场景真实排版 SHA `1d098be7…6af887`；`13/13`、`29/29`、`6/6` 全通过。尚无新 source/runtime，菜单未接入 | 用户明确接受或拒绝 attempt 5；接受前不进入 P4/P5，旧按钮继续 fail-open |
 
 QS-A1 当前事实：
 
@@ -715,7 +719,7 @@ QT-A1 临时 runtime 事实：
 
 ## 下一步
 
-当前唯一 QS-B1 门禁是执行已授权的 `QS-B1 V7-A` bounded production loop。
+当前唯一 QS-B1 门禁是用户复审 `QS-B1 V7-A attempt 5`。
 用户已于 `2026-08-06` 确认
 `QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17` 可见方向；本地模拟证明漆章跨压
 载体、七项功能独立、动态收拢、滚动裁切、正文零重排和奖励前 `32px` 安全距，
@@ -723,9 +727,11 @@ QT-A1 临时 runtime 事实：
 vellum-linen 材质 donor；固定 Image 1／2、受限同循环 Image 3、`1024²`
 归一化、固定 `[448,128,576,896]` crop、tracked `128×768` mask、QS-A1 Alpha
 接触压暗、`32×192px` runtime 和最多 `5` 次实际 ImageGen 上限均已完整审计。
-用户随后独立授权该正文；当前 ImageGen `0/5`、流程错误 `0`，attempt 1 只上传
-固定 Image 1／2。候选获用户明确接受前不改 source/runtime/addon；V5-A source
-与旧按钮保留 fail-open。
+用户随后独立授权该正文；bounded loop 已完成 ImageGen `5/5`、流程错误 `1`
+（不占额度）。attempt 5 仅上传固定 Image 1／2 fresh regenerate，已通过
+`13/13` 技术、`29/29` 真实排版与 `6/6` 展示区，当前为
+`candidate-reviewed / P3`。候选获用户明确接受前不改 source/runtime/addon；
+不存在 attempt 6；V5-A source 与旧按钮保留 fail-open。
 
 以下为封闭历史，不再作为当前执行入口：
 

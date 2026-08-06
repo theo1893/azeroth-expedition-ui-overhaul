@@ -2,7 +2,7 @@
   "schema": "aeui.quest-log.seal-purity-ribbon.production-contract.v1",
   "version": "QS-B1 V7-A",
   "component": "QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX",
-  "status": "repair-prepared",
+  "status": "candidate-reviewed",
   "authorization": {
     "authorized": true,
     "date": "2026-08-06",
@@ -21,7 +21,7 @@
     "skill": "imagegen-0-143-0",
     "package": "@openai/codex@0.143.0",
     "actual_generation_limit": 5,
-    "current_actual_generations": 4,
+    "current_actual_generations": 5,
     "process_errors": 1,
     "process_errors_consume_generation_budget": false,
     "authorized": true
@@ -138,8 +138,41 @@
       "preserved_region": "none for the final provider input; attempt 4 remains the best fallback review evidence but its pixels may not be reused",
       "decision": "internal-rejected; final-fresh-regenerate; do-not-upload-any-prior-v7a-attempt-as-image-3",
       "reason": "the edit lowered contrast and numeric residual but visibly retained the same repeated loop geometry across the source and fixed crop, so another local edit would entrench the defect"
+    },
+    {
+      "attempt": 5,
+      "mode": "final-fresh-generate-with-fixed-image-1-and-image-2-only",
+      "repo_commit_before_generation": "b025656",
+      "fixed_child_session_id": "019fd6fc-1701-7a61-b576-3f5d9600135c",
+      "prompt_sha256": "bd8b12a6ac621dfe59f40e2f11540513b67f4cfd46666e01b804f6f4369c28f0",
+      "raw_sha256": "604faa9e6cdaedf7c6ba1fbbca8d4232b9ae50a4fe21aaff46d59cb0f3583c9b",
+      "raw_size": [1254, 1254],
+      "raw_mode": "RGB",
+      "technical_checks": "13/13 pass",
+      "layout_checks": "29/29 pass",
+      "display_region_checks": "6/6 pass",
+      "fixed_crop_mean_rgb": [107.91, 86.73, 50.80],
+      "fixed_crop_high_frequency_luma_residual": 1.64,
+      "first_failed_gate": null,
+      "preserved_region": "not applicable; this was a fresh regenerate from fixed Image 1/2 only",
+      "decision": "candidate-reviewed; internal-pass; stop-at-5-of-5; no-attempt-6",
+      "reason": "the fixed crop is seamless, broad and quiet; previous loop geometry is absent; the slightly warmer old-ochre bias remains muted and reads as an aged oath document at 32x192 runtime rather than bright gold fabric"
     }
   ],
+  "candidate_gate": {
+    "status": "candidate-reviewed",
+    "attempt": 5,
+    "raw_sha256": "604faa9e6cdaedf7c6ba1fbbca8d4232b9ae50a4fe21aaff46d59cb0f3583c9b",
+    "review_sha256": "57cb900aaf65e582099505277fc9805615bb2a5de12a0fb760f82c99520dd270",
+    "display_region_report_sha256": "72d480d219c69686f0adfa1b3117d06f887db29b070e0ed46626a058137b2559",
+    "real_layout_sha256": "1d098be709b3ee48ea7af7238dd254b451e2bfeb653cfd26ce5b5539bf6af887",
+    "composite_sha256": "168f527fffa09beb281c7e0bbca6076dcd00e7f827febb6cce9a853f461e05b8",
+    "runtime_review_sha256": "12a4a24b785641c55a0caae0737f1b151459e5fc039ae067aa7f41552dd06740",
+    "source_written": false,
+    "runtime_written": false,
+    "addon_changed": false,
+    "requires_explicit_user_acceptance": true
+  },
   "provider_output": {
     "identity": "one edge-to-edge square RGB material donor, not a finished ribbon or UI object",
     "required_aspect": 1.0,
@@ -221,5 +254,5 @@
     "fallback": "all existing provider Buttons remain visible and functional until full proxy parity"
   },
   "prompt_location": "docs/modules/quests/work/QUEST.SEALS.md#qs-b1-v7-a-final-production-body",
-  "next_gate": "execute final attempt 5 as a fresh regenerate with the complete committed V7-A.r4 body and fixed Image 1/2 only; no Image 3 and no prior V7-A pixels"
+  "next_gate": "show attempt-5 candidate and six-scenario real-layout preview to the user; require explicit acceptance before any source, runtime, addon, or handoff promotion; attempt 6 is forbidden"
 }
