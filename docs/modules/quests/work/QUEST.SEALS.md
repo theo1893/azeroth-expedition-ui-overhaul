@@ -22,17 +22,17 @@
 - 当前已确认模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A`；用户于
   `2026-08-05` 回复“不走figma, 直接下一步”，确认将 ImageGen 布面 donor
   与确定性精确轮廓／Alpha mask 分离的可见方向
-- 最近一次已执行生产正文：`QS-B1 V5-B.r1 / attempt 2`；fixed child session
-  `019fd511-0865-7740-9702-fe3a7302142d` 已返回图片并完成
-  `turn.completed`，因此累计实际生图 `2/5`
-- 当前下一执行正文：`QS-B1 V5-B.r2 / attempt 3`；使用固定 Image 1／2
-  fresh regenerate，不上传 attempt 1／2。用户原授权继续覆盖最多五次实际
-  ImageGen 和合同内确定性后处理；当前 `repair-prepared / 2/5`
+- 最近一次已执行生产正文：`QS-B1 V5-B.r2 / attempt 3`；fixed child session
+  `019fd518-7330-7032-b2b4-7bef3def2c64` 已返回图片并完成
+  `turn.completed`，因此累计实际生图 `3/5`
+- 当前下一执行正文：`QS-B1 V5-B.r3 / attempt 4`；使用固定 Image 1／2
+  fresh regenerate，不上传 attempt 1／2／3。用户原授权继续覆盖最多五次
+  实际 ImageGen 和合同内确定性后处理；当前 `repair-prepared / 3/5`
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
   `source-accepted / P4 / production 4/5`；menu V5-B motifs
-  `repair-prepared / P3 / simulation ImageGen 0/0 / production 2/5`；runtime
+  `repair-prepared / P3 / simulation ImageGen 0/0 / production 3/5`；runtime
   尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
@@ -41,7 +41,7 @@
   QS-B1 V4-A `candidate-rejected / repair-budget-exhausted / P3 / 5/5`；
   QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
   `0/5 / gated`；V5-B motifs `repair-prepared / P3 / simulation ImageGen 0/0 /
-  production 2/5`
+  production 3/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -57,7 +57,7 @@
   因此提前停止，attempt 5 未调用。V14 只用
   本地平面几何预演 donor／crop／mask／composite 分工，用户确认不接受其中
   任何模拟像素
-- QS-B1 V5-B 模拟 ImageGen：`0/0`；production `2/5`；流程错误 `7`。E1
+- QS-B1 V5-B 模拟 ImageGen：`0/0`；production `3/5`；流程错误 `7`。E1
   在 provider 启动前因两个 `-i` 后缺少显式 `--` 参数分隔符而返回
   `Reading prompt from stdin... / No prompt provided via stdin.`；无图片、无
   provider result。E2 已启动固定 child session，但正文提取起点要求首句整行
@@ -77,7 +77,10 @@
   `V5-B.r1 / repair-prepared / 1/5`。attempt 2 已明显修正为平面颜料，但七格
   仍全部越出 safe box，第八空格有 `7363` 个可见像素，DETAIL／SHOW／RESET／
   ABANDON 仍分别误读为现代文件、四刃武器、S 形笔画和编织绳；当前进入
-  `V5-B.r2 / repair-prepared / 2/5`。E7 为审查展示区脚本首次误用
+  `V5-B.r2 / repair-prepared / 2/5`。attempt 3 已把第八空格修到 `0` 可见
+  像素并把自动门禁提升到 `10/12`，但两排纵向锚点错误导致七格仍全部被
+  固定 cell 裁断，DETAIL 含假文字且 RESET 成为现代撤销箭头；当前进入
+  `V5-B.r3 / repair-prepared / 3/5`。E7 为审查展示区脚本首次误用
   `--output` 参数；改用 `--report` 后六场景通过，无新生图调用，单独计为
   流程错误且不改变 production 计数
 - QS-B1 历史流程错误：V1 `1`、V2 `3`、V3 `0`、V4-A `1`、V5-A `1`。均按
@@ -7347,3 +7350,241 @@ pixel is one uniform exact #00FF00.
 - 以上正文必须在提交后重新按标题边界提取，记录 shell 传输后的精确 bytes、
   SHA 与首句，随后才可执行 attempt 3。返回图片才把实际计数从 `2/5` 增加到
   `3/5`。
+
+### QS-B1 V5-B attempt 3 执行与内部审查
+
+- 执行正文／前置 commit：`QS-B1 V5-B.r2 / db7bf39`；实际传输正文
+  `11498 bytes`，SHA
+  `ade1424474350bb3cc5d9849018575409c8c4fcf942581970b16f348e7b4f0b6`。
+- fixed child session：`019fd518-7330-7032-b2b4-7bef3def2c64`；provider 图片、
+  原样复制与 `turn.completed` 完整，累计实际 ImageGen `3/5`。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V5-B/attempt-03/quest_admin_pigment_emblems_worksheet_raw.png`；
+  `1254×1254 RGB`；SHA
+  `987c5b4ddc8615262aad8cbf5c19d589fc70cac93756779eea1d2783d948e35a`。
+- 机器审查：`10/12 pass`；review JSON SHA
+  `4bd75f674104742e66f948a7994b4bbad3fc707e28e4f490b06d1a6df6a240a5`。
+  第八空格已为 `0` 可见像素；但七项仍全部
+  `inside_safe_box=false`，SHARE／SHOW／HIDE／CLEAN／ABANDON 各有
+  `10／117／1／15／17` 个 visible green spill。
+- 位置诊断：provider 把上排视觉中心放在画布约 `35..36%` 高度，固定目标为
+  `26.5%`；把下排放在约 `64..66%`，固定目标为 `70.5%`。上排全部向下越过
+  cell 底边，下排 CLEAN／RESET 向上越过 cell 顶边；review crop 因而截断
+  SHARE 羽根、SHOW／HIDE 南向点和下排上缘。外列同时向中间收拢，第一列约
+  `18%` 而非 `14%`，第四色键约 `80%` 而非 `84.4%`。
+- 色彩诊断：普通六项中位约 `RGB 130..140 / 90..98 / 50..57`，已不再亮金，
+  但比 V15 冻结的旧赭棕稍暗；ABANDON `148/71/64` 接近目标。
+- 语义／美术：平面颜料身份继续成立，CLEAN 与 ABANDON 方向可保留；DETAIL
+  仍有多条假文字且轮廓像现代文件；SHOW 中央封闭绿洞且近似罗盘武器；HIDE
+  斜笔过长；RESET 直接成为现代逆时针撤销箭头，违反无箭头合同。SHARE 结
+  形成封闭绿洞。
+- 真实排版：`attempt-03.real-layout.png`，SHA
+  `6807e9373b8b83f5ae341405a10d4bd560239e324b0157a90f01b37a6e64752f`；
+  展示区报告 SHA
+  `95e0538185b567f370f1b964afcc7fe4921ef8867a25f4d8db9e2109a22da223`，
+  `6/6 pass`。运行时图标仍因 source crop 截断，不可晋级。
+- 决策：`internal-rejected / repair-prepared / P3 / 3/5`。cell 仍错误，不
+  满足 Image 3 前提；attempt 4 继续只上传固定 Image 1／2 fresh regenerate。
+
+### 完整 V5-B.r3 production Prompt — attempt 4
+
+Use Image 1 and Image 2 only as fixed visual references. Create one production
+worksheet containing exactly seven independent tiny flat hand-painted quest
+administration pigment emblems for a circa-2004 vanilla World of Warcraft UI
+overhaul. This is a bitmap sprite-source worksheet, not a scene, screenshot,
+complete interface, inventory sheet, presentation mockup, or modern icon set.
+
+ABSOLUTE PRIORITY: PERCENTAGE ANCHORS AND SMALL BOUNDING BOXES
+
+The exact row and column anchors below override any aesthetically balanced icon
+sheet convention. Do not use default rows near one-third and two-thirds of the
+canvas. The first row must be centered at exactly 26.5 percent of total canvas
+height. The second row must be centered at exactly 70.5 percent of total canvas
+height. This intentionally leaves a very large empty green gap between rows.
+
+Column centers are not the common evenly inset 20/40/60/80 percent arrangement.
+Use exactly 14.0, 37.5, 61.0, and 84.4 percent of total canvas width for the four
+top-row centers. Use exactly 14.0, 37.5, and 61.0 percent for the three bottom
+marks. Keep the bottom-right quadrant entirely empty.
+
+Each emblem must be conspicuously small: normally only 6 to 8 percent of total
+canvas width and 4 to 6 percent of total canvas height. No emblem may exceed 9
+percent of canvas width or 7 percent of canvas height. Large unused exact-green
+margins around every mark are mandatory. If necessary, make the artwork smaller
+and simpler; never move a row toward the center or enlarge a mark to balance the
+composition.
+
+NONNEGOTIABLE FLAT-PIGMENT MODE
+
+Every emblem is a direct two-dimensional transfer of old guild pigment onto no
+visible backing. Depict each symbol only as a compact matte paint silhouette.
+There is no object thickness, bevel, rim, cast or contact shadow, metallic face,
+paper surface, leather edge, cylindrical rope volume, polished highlight,
+separate dark outline, or directional object lighting. Form comes only from a
+few broad strokes, non-constant brush width, restrained same-pigment density
+changes, and a quiet dry-brush edge.
+
+Never create an enclosed green hole or green cutout anywhere inside an emblem.
+All knots, compass centers, cord bodies, and closed-looking intersections must
+be filled with pigment. Wear must be a darker or lighter shade of the same
+pigment, never exposed green. Do not leave green-tinted antialiasing inside or
+along a visible edge. If a mark reads as a physical prop, badge, parchment item,
+metal weapon, or rendered toolbar icon, it is wrong.
+
+REFERENCE AUTHORITY
+
+Image 1 is the highest visual authority. Inherit its old Azeroth expedition
+ledger language: substantial yet imperfect hand-painted contours, broad value
+grouping, muted warm color, sparse believable wear, and the solemn weight of a
+formal adventurers' guild record from vanilla World of Warcraft. Translate that
+weight into flat stamped pigment only. Do not copy its complete book, pages,
+leather, brass, compass ornaments, wax, ribbons, text, reward slots, buttons,
+lighting scene, or composition.
+
+Image 2 is a secondary micro-scale reference only. Inherit its economical
+stroke count, softened hand-painted edges, and legibility at tiny in-game size.
+Do not copy or rearrange its triangles, circles, check mark, 2-by-2 layout,
+positions, transparency, or pixels.
+
+CANVAS, CELLS, AND HARD SAFE BOXES
+
+Render an exact square 1024 by 1024 RGB worksheet. Fill every pixel outside the
+seven pigment emblems with one perfectly uniform exact chroma-key green
+#00FF00. The field has no gradient, vignette, noise, texture, shadow, color
+variation, grid, label, number, text, frame, checkerboard, or transparency
+preview.
+
+The following invisible safe boxes are hard clipping boundaries. Every visible
+pigment, antialiasing, dry-brush edge, dense pool, and worn pixel must remain
+strictly inside its assigned box, with at least 16 pixels of pure green to all
+four safe-box edges. Never touch a cell boundary.
+
+1 SHARE: cell [32,160,256,384], safe box [64,208,224,336], center [143,271],
+target bbox about 78 by 62, absolute maximum 92 by 70.
+2 DETAIL: cell [272,160,496,384], safe box [304,208,464,336], center [384,271],
+target bbox about 62 by 68, absolute maximum 76 by 76.
+3 SHOW: cell [512,160,736,384], safe box [544,208,704,336], center [625,271],
+target bbox about 70 by 68, absolute maximum 82 by 76.
+4 HIDE: cell [752,160,976,384], safe box [784,208,944,336], center [864,271],
+target bbox about 76 by 68, absolute maximum 88 by 76.
+5 CLEAN: cell [32,608,256,832], safe box [64,656,224,784], center [143,722],
+target bbox about 82 by 42, absolute maximum 94 by 52.
+6 RESET: cell [272,608,496,832], safe box [304,656,464,784], center [384,722],
+target bbox about 76 by 50, absolute maximum 88 by 60.
+7 ABANDON: cell [512,608,736,832], safe box [544,656,704,784], center [625,722],
+target bbox for both ends together about 82 by 36, absolute maximum 94 by 46.
+8 EMPTY: cell [752,608,976,832], completely uniform exact #00FF00.
+
+SEVEN SPECIFIC PIGMENT SYMBOLS
+
+SHARE is one compact flat pigment mark of two short broad old quills crossing
+at unequal angles and held by one solid irregular covenant dab. The dab is not
+a loop and contains no hole. Each feather is one broad mass with at most two
+coarse edge notches and a short blunt shaft. No individual barbs, long tips,
+polished shafts, scroll, handshake, modern share arrow, or rendered feather
+props.
+
+DETAIL is one slightly skewed old guild-ledger-leaf pigment silhouette with one
+short uneven folded corner. Its face is blank: absolutely no horizontal lines,
+writing, glyphs, rows, fake text, menu marks, or inner list. It must not be a
+perfect modern document rectangle. No application icon, envelope, bordered
+card, parchment texture, thick page edge, or curled leather corner.
+
+SHOW is one old cartographer's four-direction expedition compass-rose pigment
+mark, not a weapon. It has one longest blunt north point, a shorter south point,
+and two broader shorter unequal side points around one solid pigment center.
+There is no center hole. Use only those four main directions; no extra diagonal
+blades. No ring, letters, ticks, gem, bevel, throwing-star symmetry, glow, or
+detached arrowheads.
+
+HIDE is a separately painted four-direction compass from the same family with
+one short narrow partially worn diagonal pigment stroke over only its center.
+The compass remains dominant. The stroke is at most half the compass width and
+is not a long quill, pair of bands, plank, ribbon, weapon, eye slash,
+prohibition circle, X, or modern visibility icon. Fill all intersections; no
+green center hole.
+
+CLEAN is exactly three broad compact cartographic trail strokes fanning from
+one gesture. Their lengths, curves, spacing, density, and endpoints are unequal.
+They are flat paint trails, not ribbons, blades, a broom, speed lines, waves,
+list, repeated chevrons, or mechanical bars. No green distress holes.
+
+RESET is one arrowless open returning expedition route. Paint a low, imperfect
+open teardrop-shaped loop whose two blunt ends nearly meet near one compact
+irregular route-knot dab. One side doubles back slightly so the route reads as a
+journey returning to its record. Both ends are rounded and blunt. There is
+absolutely no arrowhead, triangular end, pointed hook, clockwise/anticlockwise
+arrow, undo icon, refresh icon, perfect circular ring, letter C, letter S,
+waypoint disc, gear, or location pin.
+
+ABANDON is one compact flat old-wine pigment symbol of a contract cord snapped
+at the center. Both short blunt fragments stay together inside cell 7 with one
+quiet central gap. Each is a broad simple silhouette with at most two shallow
+diagonal cord hints and a few coarse broken fibers. No enclosed green holes,
+cylindrical shading, braid volume, specular thread, far-separated end, bow-tie,
+X, trash can, skull, blood, weapon, or warning triangle.
+
+PIGMENT COLOR AND MICROSTRUCTURE
+
+The first six emblems use matte low-saturation aged ochre-brown mineral guild
+pigment, centered in role near RGB 158,124,76. It is dusty warm brown-ochre,
+lighter than attempt-dark umber but far duller than yellow-gold. It must remain
+readable on smoked dark-brown cloth without becoming metallic gold, polished
+brass, bright yellow, orange, ivory, white, emissive, glowing, or celebratory.
+No bright top edge, modeled dark bottom, or deep contour.
+
+ABANDON alone uses muted greyed dark old-wine pigment near RGB 148,76,68. It is
+dusty and brown-grey, never bright scarlet, blood-red, glossy, neon, or glowing.
+
+Use only a few broad strokes, shallow same-pigment density variation,
+non-constant width, one or two denser pools, and restrained dry-brush edges.
+Every worn area remains pigment-colored. No green holes, deep outline, white
+highlight, engraved detail, feather micro-barbs, parchment grain, metal facets,
+woven-rope texture, uniform noise, repeated speckles, or high-frequency wear.
+
+ERA AND STYLE
+
+The result must feel native to a 2004-era Azeroth guild ledger: hand-painted 2D
+game UI sprite art, tiny broad readable shapes, slightly irregular substantial
+forms, low saturation, and quiet weight. It must not resemble a modern flat
+HUD, mobile icon set, web toolbar, Diablo III ornament, Skyrim minimalist menu,
+Warhammer purity-seal language, photorealistic scan, procedural texture,
+contemporary concept-art sheet, or rendered inventory objects.
+
+STRICT EXCLUSIONS
+
+No cloth, ribbon, parchment tag, page material, leather plate, wax, button face,
+border, card, frame, backing tile, medallion, brass mount, rivet, engraving
+plate, badge, drop shadow, contact shadow, dark outline, bevel, glow, specular
+highlight, glass, neon, chrome, 3D render, photographic fiber, perfect symmetry,
+mechanical line weight, or text. Do not join emblems, place pigment outside a
+safe box, put anything in cell 8, or paint green inside a mark.
+
+FINAL SELF-CHECK BEFORE OUTPUT
+
+Confirm exactly seven tiny emblems exist and cell 8 is fully empty. Confirm row
+centers are 26.5 and 70.5 percent of canvas height, not one-third/two-thirds.
+Confirm column centers are 14.0, 37.5, 61.0, and 84.4 percent. Confirm every bbox
+is below its absolute maximum and surrounded by at least 16 pixels of pure
+green inside its safe box. Confirm there are no enclosed green holes. Confirm
+DETAIL is blank, SHOW has four directions and a filled center, HIDE uses one
+short stroke, RESET has no arrowhead and is not an undo/refresh icon, and both
+ABANDON fragments remain compact in cell 7. Confirm the first six are muted
+ochre-brown and only ABANDON is old wine. Confirm every other canvas pixel is
+one uniform exact #00FF00.
+
+### V5-B.r3 完整性与修复边界复核
+
+- 以上正文按两个三级标题边界提取、去除标题并按既有 shell 位置参数传输语义
+  去除尾随换行后为 `10618 bytes`；传入参数正文 SHA-256
+  `f70a3ddc4e19423a3b48b71f80092ae03a2748d917cee6932408194fa068c19b`；
+  首句已核对为 `Use Image 1 and Image 2 only as fixed visual references.`。
+- 本正文只修复已冻结七项中的行列锚点、bbox、绿洞、综合色与已量化语义；
+  没有新增对象、功能、状态、参考或载体。
+- 继续冻结七张独立 source、四态派生、accepted V5-A 布底、runtime 几何和
+  香草魔兽旧公会账簿语言。百分比只是同一 fixed cell／safe-box 的补充表达，
+  不改变布局合同。
+- attempt 4 必须 fresh regenerate；只上传固定 Image 1／2，不上传 attempt
+  1／2／3、V15、V5-A 布底或历史候选。
+- 提交前须按标题边界提取并记录传输正文 bytes／SHA／首句；返回图片才把
+  production 从 `3/5` 增加到 `4/5`。
