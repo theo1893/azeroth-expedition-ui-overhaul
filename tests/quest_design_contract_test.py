@@ -3614,10 +3614,30 @@ def main() -> None:
             "candidate-rejected / repair-budget-exhausted / P3 / production 5/5",
             "不得执行 attempt 6",
             "进入 V6-E CLEAN attempt 1",
-            "V6-D `5/5`、\n  V6-E..G 各 `0/5`",
+            "正式计为 V6-D `5/5`、整批 `13/35`",
             "共 `5` 次流程错误",
         ),
         "QS-B1 V6-D exhausted stop and V6-E continuation gate",
+    )
+    require(
+        seals_work,
+        (
+            "QS-B1 V6-E attempt 1 execution and review",
+            "019fd5f2-cf80-7be1-9c2c-35686dbc9fad",
+            "187dd5aeae3d25e86ae4b9861590ee7707153613921d4633acfc10de87bd4db8",
+            "bbox `[178,279,859,751]`",
+            "可见绿色\n  污染 `556`",
+            "median `[178,136,60]`",
+            "明亮赭金",
+            "internal-rejected / repair-prepared / P3 / 1/5",
+            "attempt 1 禁止作为 Image 3",
+            "QS-B1 V6-E.r1 complete production Prompt — repair-prepared / frozen",
+            "exactly three separate\nshort broad blunt unequal cartographic trail strokes",
+            "dominant dark muted umber-ochre near RGB [112,72,35]",
+            "No broom, brush object, wind, waves, water, speed line",
+            "V6-E `1/5`、V6-F／G 各 `0/5`",
+        ),
+        "QS-B1 V6-E attempt 1 rejection and complete r1 repair gate",
     )
     require(
         seal_motifs_v5_candidate_reviewer,
