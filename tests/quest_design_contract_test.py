@@ -3899,6 +3899,28 @@ def main() -> None:
         "QS-B1 V6-G attempt 4 edit-contract rejection and final fresh gate",
     )
     require(
+        seals_work,
+        (
+            "QS-B1 V6-G attempt 5 execution, review, and exhausted stop",
+            "019fd678-0998-7ec1-8fa6-89b7c73d126f",
+            "488a003aa71eeab42bc8a8a988410a2e7b50e50b5520007a48573870d7cbcb3b",
+            "bbox `[98,397,945,659]`",
+            "`847×262`、aspect `3.233`",
+            "可见绿色污染 `0`",
+            "median `[89,25,33]`",
+            "等比 fit 为 `16×5px`",
+            "candidate-rejected / repair-budget-exhausted / P3 / 5/5",
+            "整批最终 `28/35`",
+            "G 段与整批授权执行均结束",
+            "QS-B1 V6 A–G production completion summary",
+            "实际 ImageGen：`28/35`；流程错误：`7`",
+            "source_written=false",
+            "runtime_written=false",
+            "addon_changed=false",
+        ),
+        "QS-B1 V6-G exhausted stop and batch completion gate",
+    )
+    require(
         seal_motifs_v5_candidate_reviewer,
         (
             "CANVAS = (1024, 1024)",

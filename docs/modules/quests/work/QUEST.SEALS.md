@@ -31,15 +31,15 @@
   `019fd527-d402-7c00-8fd2-4d6d0ec932d4` 已返回图片并完成
   `turn.completed`，因此实际生图已达 `5/5`
 - 当前 production 正文：V6-A..G 七份单对象完整正文已由用户于
-  `2026-08-06` 以文末原文统一明确授权；V6-D／E／F 已耗尽，当前执行正文为
-  `V6-G.r4 / fresh-final-prepared / P3`
+  `2026-08-06` 以文末原文统一明确授权；A／B／C 已内部通过，D／E／F／G 已
+  耗尽；整批顺序执行结束，无活动 production 正文
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
   `source-accepted / P4 / production 4/5`；menu V5-B motifs
   `candidate-rejected / repair-budget-exhausted / P3 / simulation ImageGen 0/0 /
-  production 5/5`；menu V6 motifs `V6-G fresh-final-prepared / P3 / simulation
-  ImageGen 0/0 / production 27/35 authorized`；runtime
+  production 5/5`；menu V6 motifs `batch-review-ready / P3 / simulation ImageGen
+  0/0 / production 28/35 complete`；runtime
   尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
@@ -49,7 +49,8 @@
   QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
   `0/5 / gated`；V5-B motifs `repair-prepared / P3 / simulation ImageGen 0/0 /
   production 5/5 / repair-budget-exhausted`；V6 motifs
-  `V6-D／E／F repair-budget-exhausted / V6-G fresh-final-prepared / P3 / production 27/35 authorized`
+  `V6-A／B／C candidate-reviewed / V6-D／E／F／G repair-budget-exhausted / P3 /
+  production 28/35 complete`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -97,7 +98,7 @@
   审查展示区脚本首次误用
   `--output` 参数；改用 `--report` 后六场景通过，无新生图调用，单独计为
   流程错误且不改变 production 计数
-- QS-B1 V6 模拟 ImageGen：`0/0`；production `27/35`、已授权。七个独立
+- QS-B1 V6 模拟 ImageGen：`0/0`；production `28/35`、整批执行结束。七个独立
   production body 各自最多 `5` 次实际 ImageGen，最坏合计 `35` 次；流程错误
   不占额度。V5-B 五张失败工作表不上传、不裁切、不作为 edit 或视觉权威
 - QS-B1 历史流程错误：V1 `1`、V2 `3`、V3 `0`、V4-A `1`、V5-A `1`。均按
@@ -8601,7 +8602,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 - 当前状态：V6-A／B／C `candidate-reviewed / P3`；V6-D／E
   `candidate-rejected / repair-budget-exhausted / P3`；V6-F
   `candidate-rejected / repair-budget-exhausted / P3`；V6-G
-  `internal-rejected / fresh-final-prepared / P3`；
+  `candidate-rejected / repair-budget-exhausted / P3`；
   用户于 `2026-08-06` 授权整批顺序执行。
 - 固定输入：
   - Image 1：`assets/locked/quests/任务详情面板_视觉基准_v1.png`
@@ -8609,7 +8610,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
   - Image 2：`assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
     (`719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`)
 - 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C `3/5`、V6-D `5/5`、
-  V6-E `5/5`、V6-F `5/5`、V6-G `4/5`，合计 `27/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
+  V6-E `5/5`、V6-F `5/5`、V6-G `5/5`，合计 `28/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
   内部通过；V6-D attempt 5 仍有 9 个绿色污染像素，五次额度耗尽且不得执行
   attempt 6。V6-E attempt 1／2 均已内部否决；attempt 3 因提示词传输遗漏仍触发
   provider，故计入生图并否决；attempt 4 已用完整 r2 正文生成但因近方形构图与
@@ -8629,8 +8630,10 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
   已得到正确的近水平断裂语义和克制颜色，但等比运行时只有 `16×3px`，断口与
   厚重感消失，已内部否决。attempt 4 上传固定 Image 1／2 与紧邻 attempt 3
   Image 3；虽改善重量和断裂语义，却把冻结 x 范围扩张到 `[57,970]`，运行时仍
-  只有 `16×4px`，并提高综合色鲜艳度，已内部否决。attempt 5 是最终 fresh，
-  只上传固定 Image 1／2，无 Image 3；压缩总宽并提高纵横比。
+  只有 `16×4px`，并提高综合色鲜艳度，已内部否决。attempt 5 final fresh 仍得到
+  `847×262`、aspect `3.233` 与 `16×5px`，违反紧凑比例并呈实体断带质感；G 段
+  `5/5` 已耗尽且不得 attempt 6。整批不再调用 ImageGen，等待用户审查 A／B／C
+  候选并决定 D／E／F／G 是否另开新方向。
   全批目前共 `7` 次流程错误，其中 E3 同时返回 provider 图片
   并占用一次生图额度。
 - 用户授权原文：
@@ -8653,7 +8656,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 | V6-D HIDE | 5/5 | 3 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
 | V6-E CLEAN | 5/5 | 1 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
 | V6-F RESET | 5/5 | 1 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
-| V6-G ABANDON | 4/5 | 0 | internal-rejected / fresh-final-prepared / P3 | attempt 5 r4 fresh；固定 Image 1／2，无 Image 3 |
+| V6-G ABANDON | 5/5 | 0 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
 
 ### QS-B1 V6-A attempt 1 execution and review
 
@@ -11922,3 +11925,53 @@ greyed old-wine pigment exists, with no bright red, gradient, violet highlight,
 physical rope, lighting, thickness, shadow, carrier, text, state, enclosed green,
 green fringe, or extra mark. Confirm every exterior pixel is exact #00FF00 and no
 previous V6 candidate or Image-2 shape was copied.
+
+### QS-B1 V6-G attempt 5 execution, review, and exhausted stop
+
+- 执行前 commit：`7c6eb1c`；完整正文版本：`QS-B1 V6-G.r4`；final fresh
+  regenerate；固定 Image 1／2，无 Image 3；正文 `6906 bytes`、SHA-256
+  `b118fc8f504c36ab15ec19a138ec2f0328191cbf072a4168160e319713875641`。
+- fixed child：`@openai/codex@0.143.0`、`gpt-5.5 / medium`；session
+  `019fd678-0998-7ec1-8fa6-89b7c73d126f`；内建 `image_gen` 恰好一次并返回图片，
+  计为 V6-G `5/5`、整批最终 `28/35`；无流程错误。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V6/V6-G/attempt-05/raw/QS-B1-V6-G.attempt-05.png`；
+  `1254×1254 RGB`；SHA-256
+  `488a003aa71eeab42bc8a8a988410a2e7b50e50b5520007a48573870d7cbcb3b`。
+- 技术：bbox `[98,397,945,659]`，即 `847×262`、aspect `3.233`；超出 safe
+  box，宽度超过冻结上限 `540px`，高度低于 `300px`，比例不在 `1.55–1.80`。
+  可见绿色污染 `0`；median `[89,25,33]`；自动 `8/9`，review JSON SHA
+  `f21588f0c7abb1050de9a0b98b69e198fd74256ec6fae980f4d265486731b92f`；
+  technical board SHA
+  `803c75c04e34138235ea449c8ede6f8952a15a3fc8e5b1d1e68e5861ff6570aa`。
+- 美术：两段不等长、中央断口和灰暗酒红方向存在；但对象仍是横向过长的实体
+  断带，连续暗亮面和厚带轮廓强于平面矿物授印。等比缩到 `16×5px` 后，粗断口
+  退化成两段红色带块，未达到冻结 `14–16×8–9px` 的厚重可辨目标。
+- runtime：等比 fit 为 `16×5px`，落入 `[8,9,24,14]`；显示区域 `6/6 pass`，
+  报告 SHA `a31ff4e9f419ec502eded048d73b337f712fa77123252306ba00712370c80ca6`；
+  真实排版 SHA
+  `d4e12d9041ea9113806d74abd6299c78899d361689c1d35c5be23055522f49bd`。
+- 结论：`candidate-rejected / repair-budget-exhausted / P3 / 5/5`。不得执行
+  attempt 6；不得写入 source、runtime 或 addon。G 段与整批授权执行均结束。
+
+### QS-B1 V6 A–G production completion summary
+
+- 实际 ImageGen：`28/35`；流程错误：`7`。未使用的 `7` 次来自 A／B／C 的
+  单段内部通过即停，不可转移给已耗尽的 D／E／F／G。
+- 当前只存在三个待用户验收的内部候选；其余四段没有合法候选：
+
+| body | 终态 | review candidate / evidence |
+| --- | --- | --- |
+| V6-A SHARE | `candidate-reviewed / P3 / 3/5` | `V6-A/attempt-03`；raw `c57c3eac…2deb`；真实排版 `71930bde…5bab` |
+| V6-B DETAIL | `candidate-reviewed / P3 / 2/5` | `V6-B/attempt-02`；raw `8f3f8a9d…ec5c`；真实排版 `6ceba198…14f6` |
+| V6-C SHOW | `candidate-reviewed / P3 / 3/5` | `V6-C/attempt-03`；raw `af709d4b…39a2`；真实排版 `1467608f…7190`；使用已授权 bbox-fit 例外 |
+| V6-D HIDE | `candidate-rejected / repair-budget-exhausted / P3 / 5/5` | 无合法候选；不得 attempt 6 |
+| V6-E CLEAN | `candidate-rejected / repair-budget-exhausted / P3 / 5/5` | 无合法候选；不得 attempt 6 |
+| V6-F RESET | `candidate-rejected / repair-budget-exhausted / P3 / 5/5` | 无合法候选；不得 attempt 6 |
+| V6-G ABANDON | `candidate-rejected / repair-budget-exhausted / P3 / 5/5` | 无合法候选；不得 attempt 6 |
+
+- 整批所有真实排版均使用真实 Quest Log 几何、真实字体与真实文本；每次最终
+  display-region 均为 `6/6 pass`。这只证明装配区域合同，不覆盖失败段的美术语义。
+- promotion 仍冻结：`source_written=false`、`runtime_written=false`、
+  `addon_changed=false`。必须先由用户接受 A／B／C 具体候选；D／E／F／G 如需
+  继续，必须另开新方向与新授权，不得挪用本批未使用额度。
