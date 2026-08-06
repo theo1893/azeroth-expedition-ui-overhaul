@@ -17,6 +17,10 @@
   使用已接受 V5-A 深色布底，并冻结“普通六项使用克制旧赭金矿物颜料、放弃
   任务使用灰暗酒红”的综合色方向。用户于 `2026-08-06` 回复“接受”；几何
   纹章像素仍不构成 source
+- 当前待用户确认模拟：`QUEST-LOG-SEAL-MOTIFS-SIM-V16 / QS-B1 V6`；它不改
+  V15 的运行时可见方向，只把失败的 `4×2` 工作表改为七张独立 `1024²`
+  单对象 production source。内部 `59/59 pass`、展示区 `6/6 pass`、ImageGen
+  `0/0`；当前 `simulation-reviewed / P2`
 - 当前已确认布底模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V13 / QS-B1 V4-A`；
   用户于 `2026-08-05` 回复“接受, 用这一套试试效果”
 - 当前已确认模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A`；用户于
@@ -25,15 +29,16 @@
 - 最近一次已执行生产正文：`QS-B1 V5-B.r4 / attempt 5`；fixed child session
   `019fd527-d402-7c00-8fd2-4d6d0ec932d4` 已返回图片并完成
   `turn.completed`，因此实际生图已达 `5/5`
-- 当前无下一执行正文：五次上限已耗尽；当前
-  `candidate-rejected / repair-budget-exhausted / P3 / 5/5`，等待用户决定新的
-  source 策略、确定性合同例外或另开版本
+- 当前无 production 执行正文：V5-B 五次上限已耗尽；用户已选择另开 V6
+  七张单对象 source。V16 本地模拟已完成，等待用户确认具体模拟版本；该确认
+  不构成七段 production 授权
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
   `source-accepted / P4 / production 4/5`；menu V5-B motifs
   `candidate-rejected / repair-budget-exhausted / P3 / simulation ImageGen 0/0 /
-  production 5/5`；runtime
+  production 5/5`；menu V6 motifs `simulation-reviewed / P2 / simulation ImageGen
+  0/0 / production 0/35 not-authorized`；runtime
   尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
@@ -42,7 +47,8 @@
   QS-B1 V4-A `candidate-rejected / repair-budget-exhausted / P3 / 5/5`；
   QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
   `0/5 / gated`；V5-B motifs `repair-prepared / P3 / simulation ImageGen 0/0 /
-  production 5/5 / repair-budget-exhausted`
+  production 5/5 / repair-budget-exhausted`；V6 motifs
+  `simulation-reviewed / P2 / production not-authorized`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -90,6 +96,9 @@
   审查展示区脚本首次误用
   `--output` 参数；改用 `--report` 后六场景通过，无新生图调用，单独计为
   流程错误且不改变 production 计数
+- QS-B1 V6 模拟 ImageGen：`0/0`；production `0/35`、尚未授权。七个独立
+  production body 各自最多 `5` 次实际 ImageGen，最坏合计 `35` 次；流程错误
+  不占额度。V5-B 五张失败工作表不上传、不裁切、不作为 edit 或视觉权威
 - QS-B1 历史流程错误：V1 `1`、V2 `3`、V3 `0`、V4-A `1`、V5-A `1`。均按
   “无生成证据才不占额度”记录
 - tracked source：
@@ -7825,3 +7834,137 @@ pigment with no material volume. Confirm all other pixels are exact #00FF00.
   下一步需要新的用户选择：允许按全画布连通域重新分配并逐项确定性裁切的
   source 合同例外，或用七张单对象 source 重新开一个新版本／新预算，或放弃
   本次纹章方案。当前授权不能自动延伸到任何一种选择。
+
+## QS-B1 V6 七张单对象纹章 source — V16 生成前模拟
+
+### 元数据与重开边界
+
+- 用户于 `2026-08-06` 选择建议方案：另开 V6，把七枚纹章分成七张独立
+  single-object source 分别生成。该选择授权本地合同与模拟准备，不等于正式
+  ImageGen 授权。
+- 当前状态：`simulation-reviewed / P2`；固定正式执行器仍为
+  `imagegen-0-143-0 / @openai/codex@0.143.0`，但本阶段未启动 provider。
+- 模拟版本：`QUEST-LOG-SEAL-MOTIFS-SIM-V16 / QS-B1 V6`。
+- 模拟 ImageGen：`0/0`；上传 `0`；本地渲染错误 `0`；production
+  `0/35 not-authorized`。
+- V5-B 的五张失败工作表和所有派生 crop 全部保留为历史失败证据，但不得成为
+  V6 Image 3、source、runtime、裁切输入或视觉权威。V6 首次生成时每段都没有
+  edit 输入。
+- 可见方向不重开：继续继承用户已确认的 V15 综合色、已接受 V5-A 深色布底、
+  V12 动态收拢与 ScrollChild 交互。V6 只改变 source 生产拓扑。
+
+### 美术基准继承与输入职责
+
+1. 最高视觉权威仍为
+   `assets/locked/quests/任务详情面板_视觉基准_v1.png`，SHA
+   `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`；
+   provenance 为 `docs/modules/quests/ART_BASELINE.md` 与
+   `docs/modules/quests/SUBMODULE_ART_BASELINES.md`。逐对象 production Prompt
+   必须继承其香草魔兽二维手绘时代感、厚实略不规则轮廓、低饱和暖旧色、少量
+   宽明暗面和公会卷宗气质；不得复制整本书、纸页、皮革框、黄铜、火漆、正文、
+   奖励槽或完整构图。
+2. 次级小尺寸结构参考仍为
+   `assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`，SHA
+   `719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`；
+   只继承有限笔画数、柔化手绘边和缩小辨识力，不复制其中三角、圆圈、勾、
+   `2×2` 排列或像素。
+3. 已接受 V5-A 布底
+   `assets/source/quests/qs-b1/QuestLogSealMenuSubstrate_Master_v1.png`，SHA
+   `6b3207f15d961cbef7471399c9bfb725b475385ce9e66648fc435a9e28111d9c`，
+   只在本地真实排版中作为最新 accepted UI；未来不得上传给 ImageGen，避免把
+   布面、缝线或轮廓烘焙进纹章。
+4. 全局继承 `docs/GLOBAL_ART_BASELINE.md`：香草时代手绘位图、粗厚略不规则
+   轮廓、低饱和、上左暖光逻辑与安静内容区；排除现代 flat HUD、网页 icon
+   集、均匀线宽、发光金属、Diablo III、Skyrim 极简菜单和 Warhammer 纯洁印
+   iconography。
+
+### 七个独立 production body 合同
+
+| body | 对象 | 单张生成画布 | 生产对象 | runtime content box |
+|---|---|---|---|---|
+| `QS-B1 V6-A` | `SHARE` 双旧羽笔／结约 | `1024×1024 RGB`，只允许 1 枚纹章 | `QuestLogSealMenuMotif_Share_v6.png` | `[7,5,25,17]` |
+| `QS-B1 V6-B` | `DETAIL` 公会卷宗折页 | 同上 | `QuestLogSealMenuMotif_Detail_v6.png` | `[9,4,23,18]` |
+| `QS-B1 V6-C` | `SHOW` 开放四向公会罗盘 | 同上 | `QuestLogSealMenuMotif_Show_v6.png` | `[9,4,23,18]` |
+| `QS-B1 V6-D` | `HIDE` 遮蔽四向公会罗盘 | 同上 | `QuestLogSealMenuMotif_Hide_v6.png` | `[8,4,24,18]` |
+| `QS-B1 V6-E` | `CLEAN` 三道清扫地图线 | 同上 | `QuestLogSealMenuMotif_Clean_v6.png` | `[7,6,25,16]` |
+| `QS-B1 V6-F` | `RESET` 回环远征路线结 | 同上 | `QuestLogSealMenuMotif_Reset_v6.png` | `[7,5,24,17]` |
+| `QS-B1 V6-G` | `ABANDON` 中央断裂契约绳 | 同上 | `QuestLogSealMenuMotif_Abandon_v6.png` | `[8,7,24,16]` |
+
+- 每张 source 画布只存在一个连通语义对象和均匀 `#00FF00` 色键背景；不再有
+  worksheet 行、列、第八空格、邻格、跨格污染或固定 cell crop。
+- 每个对象分别拥有 raw、候选、透明 source、文件名、SHA、manifest ID、
+  内审和用户结论。一个对象失败不能污染或阻塞已经接受的其他 source。
+- 七张生产画布都使用 `[160,160,864,864]` 宽松安全盒，只约束完整可见像素远离
+  画布边缘；对象接受后才允许边缘连通色键、透明 RGB 清零和等比 visible-bbox
+  fit。bbox-fit 只把完整对象缩入上表 runtime content box，不负责恢复裁断像素。
+- 第一至第六项继续使用 V15 已确认的哑光低饱和旧赭金矿物颜料；只有
+  `ABANDON` 使用灰暗退饱和旧酒红。颜料直接授印、无布／纸／金属底材、无阴影、
+  无文字、无现代图标载体。
+- 七张 accepted normal source 才可确定性派生 hover／pressed／disabled，并
+  打包到计划 `256×128` runtime atlas；七个 `32×22px` Button、provider 映射、
+  hidden 收拢、disabled 留位、滚动裁切和旧按钮 fail-open 均不改变。
+- 每个 body 的实际 ImageGen 上限独立为 `5` 次、含首次；流程错误不占额度。
+  七段最坏合计 `35` 次。当前七段均 `0/5` 且未授权；未来必须先提交七份完整、
+  自包含、逐对象 production Prompt，再由用户明确授权其输入、edit 边界和预算。
+
+### V16 本地模拟合同
+
+- 目标：证明“七张单对象 source → 七张独立透明纹章 → 七个独立 Button”能在
+  不改变已确认 V15 外观的前提下装回真实 Quest Log。
+- 真实 Frame：`676×464 UI px`；详情 viewport `[366,64,246,324]`；ScrollChild
+  `246×560`；漆章 hitbox 内容坐标 `[206,0,40,40]`；菜单 action slot
+  `32×22px`；奖励仍从内容 `y=236` 起。
+- 当前邻接 UI：QL-A2 已接受任务书 shell、QS-A1 已接受火漆 atlas、QS-B1 V5-A
+  accepted substrate；任务名、正文、目标、奖励和状态均使用真实排版动态内容。
+- 六场景：收起、七项全显、隐藏两项后的五项收拢、三项含 disabled、部分滚动、
+  完全滚出。正文不重排；七项全显尾端距奖励 `32px`；disabled 不命中；部分
+  裁切对象不命中；完全滚出后菜单与命中区均消失。
+- 纹章几何只用本地多边形、线、椭圆和 V15 平面综合色占位；绿色单对象画布只
+  说明 source 隔离，不预测生产笔触。所有模拟像素不得作为 source、runtime、
+  crop、edit 或 ImageGen reference。
+
+### V16 模拟执行与内部检查
+
+- OS／解释器：macOS；
+  `/Users/yuanshiyao/miniconda3/envs/py312/bin/python`；Python `3.12.12`。
+- specification：
+  `tools/specs/quest_log_seal_independent_motifs_simulation_v16.json`，SHA
+  `9ec012fab6c224628c793c985845ac88e8fb46c02b5bcb8e93bfec4efacd0a54`。
+- renderer：`tools/render_quest_log_seal_layered_actions_simulation_v2.py`，SHA
+  `78b662a8b7677d7ddd48178224dd037771fb7839af12e50cfac56e2545b04ff4`。
+- 命令：
+
+  `conda run -n py312 python tools/render_quest_log_seal_layered_actions_simulation_v2.py tools/specs/quest_log_seal_independent_motifs_simulation_v16.json --repo-root /Users/yuanshiyao/Documents/Codex/2026-07-28/new-chat/aeui-chat-input-sim`
+
+- 真实排版板：
+  `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-MOTIFS-SIM-V16/quest_log_seal_motifs_board_v16.png`，
+  SHA `9f9197918afe1d37d6618791bda743fbe10fff813aa5f773c0fc78c3a0406778`。
+- 单对象 source／装配板：
+  `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-MOTIFS-SIM-V16/quest_log_seal_independent_sources_v16.png`，
+  SHA `df8e67b510b9232c3fc64821d4735142a0477abd52c3b3a86c938586a82aefb6`。
+- 自动报告：同目录 `quest_log_seal_motifs_report_v16.json`，SHA
+  `7ae3a4f6ad6b4ae695587abd97824284ec1a3a2b0c3a9d0a430dffad9d87ad81`；
+  `59/59 pass`、`status=displayable`、ImageGen `0/0`。
+- 展示区：同目录 `display-region-contract-v16.json`，SHA
+  `4a868cc48f280478df9b3c2b3f351b9d83bbb8c7ce0f8f3ade19469d9a48ece0`；
+  `display-region-report-v16.json`，SHA
+  `06da23db38df12434845d1c8b1538c50c895ed6ad45dc95ac7e7ca35880d7606`；
+  六场景 `6/6 pass`、`0` violations。
+- 内部结论：`displayable / simulation-reviewed / P2`。真实结构、对象所有权、
+  动态收拢、滚动和奖励间距成立；V16 绿色画布中的几何纹章仍明显是非权威
+  placeholder，不能据此评价最终纹章美术质量。
+- 未发生：ImageGen、参考上传、production Prompt 授权、候选、source、atlas、
+  addon 或 provider 代理接入。旧按钮继续原子 fail-open。
+
+### V16 用户方向门禁
+
+- 当前用户结论：`pending`。
+- 需要确认的唯一新方向：是否接受“七张独立 `1024²` 单对象 source，分别生成、
+  分别修复、分别验收，最后装回相同 V15 菜单”的生产拓扑。
+- 已经冻结且无需重新评审：V15 综合色、V5-A 布底、V12 菜单位置／动态长度、
+  ScrollChild 裁切、正文不重排、奖励间距和七个 provider Button 所有权。
+- 刻意不确认：本地几何纹章造型、绿色画布像素、笔触、缺墨、磨损、渗化、
+  Alpha、最终 RGB 与四态。
+- 用户明确确认具体 `V16` 后，下一步才是为 `V6-A..G` 写七份完整 production
+  Prompt 和紧凑完整性预检，并展示逐段 `5` 次／最坏 `35` 次的独立正式授权
+  正文。V16 确认本身不授权任何 ImageGen 调用。

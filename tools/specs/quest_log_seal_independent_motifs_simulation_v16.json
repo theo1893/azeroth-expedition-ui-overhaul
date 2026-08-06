@@ -1,0 +1,126 @@
+{
+  "schema": "aeui.quest-log.seal-motifs.independent-source-simulation.v1",
+  "base_spec": "tools/specs/quest_log_seal_motifs_simulation_v15.json",
+  "version": "QUEST-LOG-SEAL-MOTIFS-SIM-V16",
+  "design_batch": "QS-B1 V6",
+  "support_type": "accepted-dark-substrate-with-seven-independent-single-object-production-sources",
+  "outputs": {
+    "_replace": true,
+    "board": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-MOTIFS-SIM-V16/quest_log_seal_motifs_board_v16.png",
+    "source_topology": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-MOTIFS-SIM-V16/quest_log_seal_independent_sources_v16.png",
+    "report": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-MOTIFS-SIM-V16/quest_log_seal_motifs_report_v16.json",
+    "display_region_contract": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-MOTIFS-SIM-V16/display-region-contract-v16.json",
+    "display_region_report": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-MOTIFS-SIM-V16/display-region-report-v16.json"
+  },
+  "display_region": {
+    "template": "tools/specs/quest_log_seal_actions_simulation_v13_display_region.json",
+    "output": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-MOTIFS-SIM-V16/display-region-contract-v16.json",
+    "component": "QS-B1/QUEST.LOG.ACTION.SEAL_MENU/SIM.V16/seven-independent-single-object-sources-direction-only",
+    "evidence": {
+      "simulation_spec": "tools/specs/quest_log_seal_independent_motifs_simulation_v16.json",
+      "simulation": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-MOTIFS-SIM-V16/quest_log_seal_motifs_board_v16.png",
+      "source_topology": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-MOTIFS-SIM-V16/quest_log_seal_independent_sources_v16.png",
+      "background_ownership": "the exact accepted V5-A source reduced proportionally to one 32x174 visual-only master; dynamic prefix plus fixed tail; no motif baked in",
+      "motif_ownership": "seven separate future 1024-square single-object generation bodies, seven accepted transparent sources, and seven independent runtime Buttons",
+      "direction_only": true,
+      "final_runtime": false
+    }
+  },
+  "presentation": {
+    "title": "QS-B1 V6 · 七张单对象纹章 source · V16 真实排版预演",
+    "subtitle": "运行时视觉严格沿用已确认 V15：accepted 深色布底、六枚旧赭金颜料纹章与一枚灰暗酒红纹章。变化只在生产拓扑：每张 1024² 画布只生成一个对象，不再要求模型服从工作表行列。ImageGen 0/0。",
+    "source_topology_title": "QS-B1 V6 · 单对象 source 隔离与运行时装配 · V16",
+    "source_topology_subtitle": "七张画布彼此独立；每张只允许一个语义纹章。色键、透明提取与 bbox-fit 仍在用户接受候选后确定性执行，最后叠到同一 accepted V5-A 布底。",
+    "footer_lines": [
+      "V16 不改变已确认菜单外观、位置、动态收拢、disabled、滚动裁切或奖励间距；只把失败的 4×2 worksheet 改为七个单对象 production body。",
+      "可确认：七对象独立所有权、真实 32×22 装配和 V15 色彩角色。非权威：本地几何纹章、最终笔触、缺墨、渗化、Alpha 与四态。ImageGen 0/0。"
+    ]
+  },
+  "visual_mockup": {
+    "source_strategy": "seven-independent-single-object-square-canvases"
+  },
+  "production_sources": [
+    {
+      "id": "share",
+      "body": "QS-B1 V6-A",
+      "source_canvas": [1024, 1024],
+      "safe_box": [160, 160, 864, 864],
+      "suggested_max_span": [576, 384],
+      "runtime_content_box": [7, 5, 25, 17],
+      "planned_source": "QuestLogSealMenuMotif_Share_v6.png"
+    },
+    {
+      "id": "detail",
+      "body": "QS-B1 V6-B",
+      "source_canvas": [1024, 1024],
+      "safe_box": [160, 160, 864, 864],
+      "suggested_max_span": [448, 448],
+      "runtime_content_box": [9, 4, 23, 18],
+      "planned_source": "QuestLogSealMenuMotif_Detail_v6.png"
+    },
+    {
+      "id": "show",
+      "body": "QS-B1 V6-C",
+      "source_canvas": [1024, 1024],
+      "safe_box": [160, 160, 864, 864],
+      "suggested_max_span": [448, 448],
+      "runtime_content_box": [9, 4, 23, 18],
+      "planned_source": "QuestLogSealMenuMotif_Show_v6.png"
+    },
+    {
+      "id": "hide",
+      "body": "QS-B1 V6-D",
+      "source_canvas": [1024, 1024],
+      "safe_box": [160, 160, 864, 864],
+      "suggested_max_span": [512, 448],
+      "runtime_content_box": [8, 4, 24, 18],
+      "planned_source": "QuestLogSealMenuMotif_Hide_v6.png"
+    },
+    {
+      "id": "clean",
+      "body": "QS-B1 V6-E",
+      "source_canvas": [1024, 1024],
+      "safe_box": [160, 160, 864, 864],
+      "suggested_max_span": [576, 320],
+      "runtime_content_box": [7, 6, 25, 16],
+      "planned_source": "QuestLogSealMenuMotif_Clean_v6.png"
+    },
+    {
+      "id": "reset",
+      "body": "QS-B1 V6-F",
+      "source_canvas": [1024, 1024],
+      "safe_box": [160, 160, 864, 864],
+      "suggested_max_span": [544, 384],
+      "runtime_content_box": [7, 5, 24, 17],
+      "planned_source": "QuestLogSealMenuMotif_Reset_v6.png"
+    },
+    {
+      "id": "abandon",
+      "body": "QS-B1 V6-G",
+      "source_canvas": [1024, 1024],
+      "safe_box": [160, 160, 864, 864],
+      "suggested_max_span": [512, 288],
+      "runtime_content_box": [8, 7, 24, 16],
+      "planned_source": "QuestLogSealMenuMotif_Abandon_v6.png"
+    }
+  ],
+  "production_budget": {
+    "authorized": false,
+    "bodies": 7,
+    "actual_imagegen_calls_per_body": 5,
+    "worst_case_actual_imagegen_calls": 35,
+    "current_actual_imagegen_calls": 0,
+    "process_errors_do_not_consume_calls": true
+  },
+  "constraints": {
+    "imagegen_calls": 0,
+    "new_bitmap_assets": 0,
+    "simulation_pixels_are_not_source_or_future_edit_input": true,
+    "runtime_visible_direction_is_unchanged_from_confirmed_v15": true,
+    "one_semantic_object_per_future_generation_body": true,
+    "one_source_file_and_sha_per_semantic_object": true,
+    "no_multi_object_worksheet": true,
+    "v5b_failed_pixels_are_not_inputs": true,
+    "production_is_not_authorized_by_simulation_confirmation": true
+  }
+}

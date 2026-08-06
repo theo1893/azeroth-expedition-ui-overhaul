@@ -781,6 +781,145 @@ def render_zoom_board(
     return zoom_path
 
 
+def render_independent_source_topology(
+    root: Path,
+    spec: dict[str, Any],
+    fonts: dict[str, ImageFont.FreeTypeFont],
+) -> Path | None:
+    """Preview seven isolated source bodies and their unchanged runtime assembly."""
+    output_value = spec["outputs"].get("source_topology")
+    sources = spec.get("production_sources")
+    if not output_value or not sources:
+        return None
+
+    canvas = Image.new("RGBA", (2200, 1180), BOARD)
+    draw = ImageDraw.Draw(canvas, "RGBA")
+    draw.rectangle((0, 92, canvas.width, canvas.height), fill=BOARD_LOWER)
+    draw.text(
+        (30, 20),
+        spec["presentation"]["source_topology_title"],
+        font=fonts["board_title"],
+        fill=(237, 201, 128, 255),
+    )
+    draw.text(
+        (30, 54),
+        spec["presentation"]["source_topology_subtitle"],
+        font=fonts["board_body"],
+        fill=(203, 173, 113, 255),
+    )
+
+    action_by_id = {item["id"]: item for item in spec["actions"]}
+    card_width = 280
+    card_gap = 25
+    card_x0 = 35
+    card_y0 = 122
+    source_size = 210
+    for index, source in enumerate(sources):
+        x = card_x0 + index * (card_width + card_gap)
+        action_id = source["id"]
+        action = action_by_id[action_id]
+        draw.rounded_rectangle(
+            (x, card_y0, x + card_width, card_y0 + 356),
+            radius=8,
+            fill=(47, 38, 31, 255),
+            outline=(119, 88, 50, 210),
+            width=2,
+        )
+        draw.text(
+            (x + 16, card_y0 + 14),
+            f"{source['body']} · {action_id.upper()}",
+            font=fonts["board_body"],
+            fill=(235, 199, 129, 255),
+        )
+        source_x = x + (card_width - source_size) // 2
+        source_y = card_y0 + 52
+        draw.rectangle(
+            (source_x, source_y, source_x + source_size, source_y + source_size),
+            fill=(0, 255, 0, 255),
+            outline=(24, 28, 25, 255),
+            width=2,
+        )
+        motif = motif_art(action_id, "normal", spec).resize(
+            (128, 88), Image.Resampling.NEAREST
+        )
+        canvas.alpha_composite(
+            motif,
+            (source_x + (source_size - 128) // 2, source_y + (source_size - 88) // 2),
+        )
+        draw.text(
+            (x + 16, card_y0 + 276),
+            "独立 1024² · 只含 1 对象",
+            font=fonts["board_small"],
+            fill=(205, 172, 111, 255),
+        )
+        draw.text(
+            (x + 16, card_y0 + 301),
+            f"→ 32×22 Button / {action['label']}",
+            font=fonts["board_small"],
+            fill=(187, 157, 103, 255),
+        )
+        draw.text(
+            (x + 16, card_y0 + 326),
+            f"bbox-fit {source['runtime_content_box']}",
+            font=fonts["board_small"],
+            fill=(164, 137, 91, 255),
+        )
+
+    draw.text(
+        (40, 520),
+        "确定性装配（仍使用 accepted V5-A 布底；以下本地几何纹章不构成生产像素）",
+        font=fonts["board_body"],
+        fill=(235, 199, 129, 255),
+    )
+    for index, count in enumerate((7, 5, 3)):
+        art = layered_substrate_art(spec, count)
+        scaled = art.resize((96, art.height * 3), Image.Resampling.NEAREST)
+        x = 90 + index * 220
+        canvas.alpha_composite(scaled, (x, 566))
+        draw.text(
+            (x + 28, 578 + scaled.height),
+            f"{count} 项",
+            font=fonts["board_small"],
+            fill=(205, 172, 111, 255),
+        )
+
+    notes = [
+        "每个 production body 只允许一个语义对象；不再存在 row、column、第八空格或跨格裁断。",
+        "每个对象分别形成 raw、透明 candidate、source、SHA 与验收记录；任一对象失败不污染其他六个。",
+        "七张 source 接受后才确定性派生 normal / hover / pressed / disabled，并打包 runtime atlas。",
+        "菜单外观与 V15 相同：hidden 收拢、disabled 留位、滚动裁切、正文不重排、奖励间距不变。",
+        "V5-B 的五张失败工作表全部排除，不上传、不裁切、不作为 edit 或视觉权威。",
+    ]
+    for index, note in enumerate(notes):
+        draw.text(
+            (850, 560 + index * 52),
+            f"· {note}",
+            font=fonts["board_body"],
+            fill=(205, 172, 111, 255),
+        )
+    budget = spec["production_budget"]
+    draw.text(
+        (850, 838),
+        (
+            f"生产预算尚未授权：7 个独立正文，各最多 {budget['actual_imagegen_calls_per_body']} 次实际 ImageGen；"
+            f"最坏合计 {budget['worst_case_actual_imagegen_calls']} 次。流程错误不占额度。"
+        ),
+        font=fonts["board_body"],
+        fill=(222, 180, 108, 255),
+    )
+    draw.text(
+        (30, 1138),
+        "非权威：绿色画布中的几何纹章、具体边缘、磨损、缺墨、渗化、Alpha 和最终 RGB；本图不得成为 source、runtime 或 ImageGen 输入。ImageGen 0/0。",
+        font=fonts["board_small"],
+        fill=(174, 146, 96, 255),
+    )
+
+    output = resolve(root, output_value)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    canvas.save(output, "PNG")
+    return output
+
+
 def materialize_display_region_contract(
     root: Path,
     spec: dict[str, Any],
@@ -854,6 +993,7 @@ def main() -> None:
     board_path.parent.mkdir(parents=True, exist_ok=True)
     canvas.save(board_path, "PNG")
     zoom_path = render_zoom_board(root, spec, fonts)
+    source_topology_path = render_independent_source_topology(root, spec, fonts)
     display_contract_path = materialize_display_region_contract(root, spec)
 
     by_id = {item["id"]: item for item in metrics}
@@ -974,6 +1114,35 @@ def main() -> None:
                     ),
                 }
             )
+    production_sources = spec.get("production_sources")
+    if production_sources:
+        production_ids = [item["id"] for item in production_sources]
+        action_ids = [item["id"] for item in spec["actions"]]
+        planned_sources = [item["planned_source"] for item in production_sources]
+        budget = spec["production_budget"]
+        checks.update(
+            {
+                "v16_has_exactly_seven_independent_production_sources": len(production_sources) == 7,
+                "v16_source_ids_match_runtime_action_order": production_ids == action_ids,
+                "v16_each_source_canvas_is_1024_square": all(
+                    item["source_canvas"] == [1024, 1024]
+                    for item in production_sources
+                ),
+                "v16_each_body_owns_one_unique_source": (
+                    len({item["body"] for item in production_sources}) == 7
+                    and len(set(planned_sources)) == 7
+                ),
+                "v16_has_no_multi_object_worksheet": spec["constraints"]["no_multi_object_worksheet"],
+                "v16_v5b_failed_pixels_are_not_inputs": spec["constraints"]["v5b_failed_pixels_are_not_inputs"],
+                "v16_production_is_not_authorized": not budget["authorized"],
+                "v16_worst_case_budget_is_35_actual_calls": (
+                    budget["bodies"] == 7
+                    and budget["actual_imagegen_calls_per_body"] == 5
+                    and budget["worst_case_actual_imagegen_calls"] == 35
+                    and budget["current_actual_imagegen_calls"] == 0
+                ),
+            }
+        )
     report = {
         "schema": "aeui.quest-log.seal-layered-actions.simulation-report.v1",
         "version": spec["version"],
@@ -1016,6 +1185,14 @@ def main() -> None:
         "zoom": (
             {"path": spec["outputs"]["zoom"], "sha256": sha256(zoom_path)}
             if zoom_path is not None
+            else None
+        ),
+        "source_topology": (
+            {
+                "path": spec["outputs"]["source_topology"],
+                "sha256": sha256(source_topology_path),
+            }
+            if source_topology_path is not None
             else None
         ),
         "imagegen": {"calls": 0, "uploads": 0},
@@ -1078,6 +1255,25 @@ def main() -> None:
                 0,
                 "the seven motif shapes and simulated pigment pixels; only their visible palette direction is under review",
             )
+    if production_sources:
+        report["asset_ownership"]["production_source_strategy"] = {
+            "kind": "seven-independent-single-object-square-canvases",
+            "production_authorized": False,
+            "failed_v5b_pixels_are_inputs": False,
+            "bodies": [
+                {
+                    "id": item["id"],
+                    "body": item["body"],
+                    "planned_source": item["planned_source"],
+                    "source_canvas": item["source_canvas"],
+                    "runtime_content_box": item["runtime_content_box"],
+                }
+                for item in production_sources
+            ],
+            "worst_case_actual_imagegen_calls": spec["production_budget"][
+                "worst_case_actual_imagegen_calls"
+            ],
+        }
     report_path = resolve(root, spec["outputs"]["report"])
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))

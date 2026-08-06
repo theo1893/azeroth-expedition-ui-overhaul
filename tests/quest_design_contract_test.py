@@ -260,6 +260,15 @@ def main() -> None:
     seal_motifs_sim_v15_spec = json.loads(
         seal_motifs_sim_v15_spec_path.read_text(encoding="utf-8")
     )
+    seal_motifs_sim_v16_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_independent_motifs_simulation_v16.json"
+    )
+    seal_motifs_sim_v16_spec = json.loads(
+        seal_motifs_sim_v16_spec_path.read_text(encoding="utf-8")
+    )
     seal_substrate_v5_candidate_reviewer_path = (
         ROOT
         / "tools"
@@ -3115,6 +3124,50 @@ def main() -> None:
         ),
         "QS-B1 V15 accepted-substrate motif-palette renderer",
     )
+    assert seal_motifs_sim_v16_spec["version"] == (
+        "QUEST-LOG-SEAL-MOTIFS-SIM-V16"
+    )
+    assert seal_motifs_sim_v16_spec["design_batch"] == "QS-B1 V6"
+    assert seal_motifs_sim_v16_spec["base_spec"] == (
+        "tools/specs/quest_log_seal_motifs_simulation_v15.json"
+    )
+    v16_sources = seal_motifs_sim_v16_spec["production_sources"]
+    assert [item["id"] for item in v16_sources] == [
+        "share",
+        "detail",
+        "show",
+        "hide",
+        "clean",
+        "reset",
+        "abandon",
+    ]
+    assert len({item["body"] for item in v16_sources}) == 7
+    assert len({item["planned_source"] for item in v16_sources}) == 7
+    assert all(item["source_canvas"] == [1024, 1024] for item in v16_sources)
+    v16_budget = seal_motifs_sim_v16_spec["production_budget"]
+    assert not v16_budget["authorized"]
+    assert v16_budget["bodies"] == 7
+    assert v16_budget["actual_imagegen_calls_per_body"] == 5
+    assert v16_budget["worst_case_actual_imagegen_calls"] == 35
+    assert v16_budget["current_actual_imagegen_calls"] == 0
+    v16_constraints = seal_motifs_sim_v16_spec["constraints"]
+    assert v16_constraints["imagegen_calls"] == 0
+    assert v16_constraints["one_semantic_object_per_future_generation_body"]
+    assert v16_constraints["no_multi_object_worksheet"]
+    assert v16_constraints["v5b_failed_pixels_are_not_inputs"]
+    assert v16_constraints["production_is_not_authorized_by_simulation_confirmation"]
+    require(
+        seal_substrate_sim_v13_renderer,
+        (
+            "def render_independent_source_topology(",
+            '"v16_has_exactly_seven_independent_production_sources"',
+            '"v16_each_source_canvas_is_1024_square"',
+            '"v16_v5b_failed_pixels_are_not_inputs"',
+            '"v16_worst_case_budget_is_35_actual_calls"',
+            '"production_source_strategy"',
+        ),
+        "QS-B1 V16 seven single-object sources simulation renderer",
+    )
     require(
         seals_work,
         (
@@ -3199,6 +3252,21 @@ def main() -> None:
         "QS-B1 V15 confirmation and V5-B active production repair gate",
     )
     require(
+        seals_work,
+        (
+            "QS-B1 V6 七张单对象纹章 source — V16 生成前模拟",
+            "QUEST-LOG-SEAL-MOTIFS-SIM-V16 / QS-B1 V6",
+            "simulation-reviewed / P2",
+            "59/59 pass",
+            "七个独立 production body 合同",
+            "V5-B 的五张失败工作表",
+            "`0/35 not-authorized`",
+            "用户明确确认具体 `V16` 后",
+            "V16 确认本身不授权任何 ImageGen 调用",
+        ),
+        "QS-B1 V16 seven independent source simulation gate",
+    )
+    require(
         seal_motifs_v5_candidate_reviewer,
         (
             "CANVAS = (1024, 1024)",
@@ -3226,6 +3294,17 @@ def main() -> None:
         "QS-B1 V15 accepted direction and exhausted V5-B production gate",
     )
     require(
+        progress,
+        (
+            "QUEST-LOG-SEAL-MOTIFS-SIM-V16",
+            "simulation-reviewed / P2",
+            "production 0/35 not-authorized",
+            "用户确认具体 V16",
+            "V6-A..G",
+        ),
+        "QS-B1 V16 current simulation and next gate",
+    )
+    require(
         sub_art,
         (
             "普通六项使用哑光、低饱和的旧赭金矿物公会颜料",
@@ -3245,6 +3324,15 @@ def main() -> None:
             "灰暗、退饱和的旧酒红颜料",
         ),
         "QS-B1 V15 motif component ownership",
+    )
+    require(
+        submodules,
+        (
+            "V6 七张独立 `1024²` 单对象 source",
+            "V16",
+            "simulation-reviewed / P2 / production 0/35 not-authorized",
+        ),
+        "QS-B1 V16 stable ownership update",
     )
     require(
         seal_substrate_v5_candidate_reviewer,
