@@ -3751,6 +3751,25 @@ def main() -> None:
         "QS-B1 V6-F attempt 2 rejection and complete r2 repair gate",
     )
     require(
+        seals_work,
+        (
+            "QS-B1 V6-F attempt 3 execution and review",
+            "019fd631-accb-73b0-9510-936ef404b0e1",
+            "9cef1b91e42c97ab3b76224a166452367e795699d860ac2907f478c67176c876",
+            "bbox `[86,239,940,780]`",
+            "可见绿色污染 `26`",
+            "median `[121,59,25]`",
+            "左向 undo 箭头",
+            "internal-rejected / edit-prepared / P3 / 3/5",
+            "QS-B1 V6-F.r3 complete production Prompt — edit-prepared / frozen",
+            "HARD FREEZE OUTSIDE TWO REPAIR BOXES",
+            "Inside normalized [410,520,690,770]",
+            "Inside normalized [278,369,294,386]",
+            "V6-F `3/5`、整批 `21/35`",
+        ),
+        "QS-B1 V6-F attempt 3 local edit gate",
+    )
+    require(
         seal_motifs_v5_candidate_reviewer,
         (
             "CANVAS = (1024, 1024)",

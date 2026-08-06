@@ -32,14 +32,14 @@
   `turn.completed`，因此实际生图已达 `5/5`
 - 当前 production 正文：V6-A..G 七份单对象完整正文已由用户于
   `2026-08-06` 以文末原文统一明确授权；V6-E 已耗尽，当前执行正文为
-  `V6-F.r2 / repair-prepared / P3`
+  `V6-F.r3 / edit-prepared / P3`
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
   `source-accepted / P4 / production 4/5`；menu V5-B motifs
   `candidate-rejected / repair-budget-exhausted / P3 / simulation ImageGen 0/0 /
   production 5/5`；menu V6 motifs `repair-prepared / P3 / simulation ImageGen
-  0/0 / production 20/35 authorized`；runtime
+  0/0 / production 21/35 authorized`；runtime
   尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
@@ -49,7 +49,7 @@
   QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
   `0/5 / gated`；V5-B motifs `repair-prepared / P3 / simulation ImageGen 0/0 /
   production 5/5 / repair-budget-exhausted`；V6 motifs
-  `V6-E repair-budget-exhausted / V6-F repair-prepared / P3 / production 20/35 authorized`
+  `V6-E repair-budget-exhausted / V6-F edit-prepared / P3 / production 21/35 authorized`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -8608,14 +8608,16 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
   - Image 2：`assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
     (`719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`)
 - 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C `3/5`、V6-D `5/5`、
-  V6-E `5/5`、V6-F `2/5`、V6-G `0/5`，合计 `20/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
+  V6-E `5/5`、V6-F `3/5`、V6-G `0/5`，合计 `21/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
   内部通过；V6-D attempt 5 仍有 9 个绿色污染像素，五次额度耗尽且不得执行
   attempt 6。V6-E attempt 1／2 均已内部否决；attempt 3 因提示词传输遗漏仍触发
   provider，故计入生图并否决；attempt 4 已用完整 r2 正文生成但因近方形构图与
   微缩语义失败而否决；attempt 5 虽达到 18×9，但仍读成三条菜单横栏，E 段额度
   已耗尽且不得执行 attempt 6。V6-F attempt 1 已因金色螺旋／字母 g 身份与绿色
   污染否决；attempt 2 又因问号／C／耳机形轮廓否决。下一次为 V6-F attempt 3
-  fresh，只上传固定 Image 1／2，无 Image 3。
+  fresh，只上传固定 Image 1／2，无 Image 3。attempt 3 的主体路线可保留，但末端
+  成为左向 undo 箭头并有 26px 绿色污染；下一次为 V6-F attempt 4，上传固定
+  Image 1／2 与紧邻 attempt 3 Image 3，只在两个冻结修复框内 edit。
   全批目前共 `6` 次流程错误，其中 E3 同时返回 provider 图片
   并占用一次生图额度。
 - 用户授权原文：
@@ -8637,7 +8639,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 | V6-C SHOW | 3/5 | 0 | candidate-reviewed / P3 | 单段通过即停；授权 bbox-fit 例外 |
 | V6-D HIDE | 5/5 | 3 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
 | V6-E CLEAN | 5/5 | 1 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
-| V6-F RESET | 2/5 | 0 | internal-rejected / repair-prepared / P3 | attempt 3 fresh r2；固定 Image 1／2，无 Image 3 |
+| V6-F RESET | 3/5 | 0 | internal-rejected / edit-prepared / P3 | attempt 4 r3 edit；固定 Image 1／2＋紧邻 attempt 3 Image 3 |
 | V6-G ABANDON | 0/5 | 0 | prompt-authorized | 等待 F 结束 |
 
 ### QS-B1 V6-A attempt 1 execution and review
@@ -10822,6 +10824,117 @@ pixels are exact uniform #00FF00. Confirm only flat muted dark-earth pigment is 
 with no bright gold, lighting, thickness, material object, carrier, text, state,
 detached dot, enclosed green pixel, green fringe, or additional mark. Confirm no
 previous V6 or Image-2 pixel or shape has been copied.
+
+### QS-B1 V6-F attempt 3 execution and review
+
+- 执行前 commit：`e415bae`；正文 `QS-B1 V6-F.r2`；fresh regenerate；固定
+  Image 1／2，无 Image 3；正文 `6976 bytes`、SHA-256
+  `265fa6f78acf5c5a9a9a3e02bf07fe238f97855bb2854b27ed791f9c4a3cafa9`。
+- fixed child session `019fd631-accb-73b0-9510-936ef404b0e1`；内建 `image_gen`
+  恰好一次，计为 V6-F `3/5`、整批 `21/35`；无流程错误。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V6/V6-F/attempt-03/raw/QS-B1-V6-F.attempt-03.png`；
+  `1254×1254 RGB`；SHA-256
+  `9cef1b91e42c97ab3b76224a166452367e795699d860ac2907f478c67176c876`。
+- 技术：bbox `[86,239,940,780]`；可见绿色污染 `26`，集中于 normalized
+  `[283,374,289,381]`；自动 `7/9`，safe-box 与 spill 两项失败。review JSON SHA
+  `3d06bf9ad637acbec550aa875691b5eb259adf39e7956aaf22817a471a7f1d94`。
+- 美术：median `[121,59,25]`，暗赭颜料和粗折线路线已可保留；但返回末端扩张成
+  大型左向 undo 箭头，真实 `17×11px` 下优先读成撤销箭头，而不是非指向性的路线
+  结。其余主体不需重画。
+- runtime：`17×11px` 落入 `[7,5,24,17]`；显示区域 `6/6 pass`，报告 SHA
+  `265d9d20483a26a2e1b4d86cbf5f4e49750966f1437dc19d0b283c11881c1c82`；真实排版
+  SHA `a9ca28d09af884e99e9340d8912cadd55c7e7fb30902fc645da8d5484c0e8a7c`。
+- 结论：`internal-rejected / edit-prepared / P3 / 3/5`。主体路线身份、配色与材质
+  可冻结，箭头末端和一处绿色污染均有明确局部边界；attempt 4 允许使用紧邻
+  attempt 3 作为 Image 3，仅在下方两个 repair box 内 edit。
+
+### QS-B1 V6-F.r3 complete production Prompt — edit-prepared / frozen
+
+Use Image 1 and Image 2 only as fixed style references. Use Image 3 as the sole pixel
+identity and edit source. Edit the existing V6-F attempt 3 RESET emblem; do not freshly
+redesign, replace, trace from another segment, or re-render the whole object. The goal
+is one surgical terminal repair plus one tiny pigment cleanup for a circa-2004 vanilla
+World of Warcraft quest-log administration glyph.
+
+IMAGE ROLES
+
+Image 1 supplies only old Azeroth expedition-ledger era, visual weight, restrained
+earth palette, and handmade surface logic. Image 2 supplies only micro-scale economy
+and tiny-sprite legibility. Do not copy pixels or shapes from either. Image 3 is the
+authoritative current RESET source: preserve its canvas, connected route, four coarse
+bends, overall silhouette, placement, scale, dark umber-ochre palette, wear patches,
+edge character, and all exterior green except inside the two repair boxes below.
+
+CANVAS AND NORMALIZATION
+
+Return one exact square 1024 by 1024 RGB image on perfectly uniform exact #00FF00
+exterior. Interpret all coordinates below after whole-square proportional normalization
+of Image 3 to 1024 by 1024. Preserve one connected pigment emblem and no other object.
+This source remains one normal state for isotropic fit into [7,5,24,17] of a 32 by 22
+Button; draw no carrier, UI, state, text, Tooltip, map, or backing.
+
+HARD FREEZE OUTSIDE TWO REPAIR BOXES
+
+Do not alter any visible or background pixel outside these two normalized boxes:
+
+1. terminal repair box [410,520,690,770], corresponding approximately to raw Image-3
+   box [502,637,845,943];
+2. green cleanup box [278,369,294,386], corresponding approximately to raw Image-3 box
+   [340,452,360,473].
+
+Outside those boxes preserve Image 3 exactly in identity and appearance: no route
+movement, width change, recolor, texture change, edge cleanup, scaling, recentering,
+rotation, new wear, removed wear, or background change. Do not modify the upper route,
+left blunt start, right hairpin shoulder, or any other V6 segment.
+
+REPAIR 1: REMOVE THE ARROWHEAD AND FORM A ROUTE KNOT
+
+Inside normalized [410,520,690,770], remove the current large left-pointing triangular
+arrowhead completely. Preserve the incoming route connection entering this box from
+the right. Replace only the arrowhead terminal with one short, dense, oblong,
+asymmetric cartographic overlap-knot centered near [560,650], about 145 pixels wide by
+90 pixels high. It must remain connected to the incoming route at its right side.
+
+The new terminal has two unequal blunt lobes and one shallow open side notch, like a
+route briefly doubling alongside itself. It has no directional point, triangular flare,
+chevron, arrow shaft, circular disk, detached dot, lollipop bulb, eye, buckle, gem, or
+medallion. Keep every corner rounded-blunt and irregular. The knot interior remains
+fully opaque pigment with no enclosed green. Match Image 3's adjacent dark umber-ochre,
+broad wear patches, matte flat transfer, softened hand-stamped edge, and lack of
+lighting. Do not extend the replacement outside the repair box.
+
+REPAIR 2: REMOVE THE 26 GREEN DEFECT PIXELS
+
+Inside normalized [278,369,294,386], inpaint only the tiny green-like defect cluster
+whose exact visible coordinates are (285,374), (286,374), (284,375), (285,375),
+(286,375), (287,375), (284,376), (285,376), (286,376), (287,376), (288,376),
+(283,377), (284,377), (285,377), (286,377), (287,377), (283,378), (284,378),
+(285,378), (286,378), (287,378), (283,379), (284,379), (285,379), (286,379), and
+(284,380). Replace them with the opaque local dark umber pigment immediately around
+the cluster. A maximum one-pixel blend may remove green fringe. Do not alter the outer
+route silhouette in this box.
+
+STRICT EXCLUSIONS
+
+No global redraw, fresh route, changed geometry outside the boxes, arrowhead, arrow,
+undo icon, refresh icon, chevron, triangle, circular knot, detached dot, question mark,
+C, g, 9, headphones, spiral, coil, snake, gear, clock, bright gold, metal, parchment,
+leather, rope, bevel, highlight, shadow, gradient, carrier, button, frame, text, state,
+or additional mark. No green may remain inside visible pigment and no new green fringe
+may be created.
+
+FINAL SELF-CHECK
+
+Confirm Image 3 is visually unchanged outside normalized [410,520,690,770] and
+[278,369,294,386]. Confirm the former left-pointing arrowhead is gone and replaced by
+one connected short oblong non-directional overlap-knot with no pointed or circular
+silhouette. Confirm all 26 listed green-like pixels are local opaque pigment and every
+remaining green pixel belongs only to the edge-connected exact #00FF00 exterior.
+Confirm the result remains one connected dark-earth RESET route with the original four
+coarse bends, left blunt start, right hairpin, open interior, scale, placement, wear,
+and flat vanilla-era pigment character, with no carrier, state, text, shadow, arrow,
+detached object, or cross-segment pixel.
 
 ### QS-B1 V6-E attempt 5 execution, review, and exhausted stop
 
