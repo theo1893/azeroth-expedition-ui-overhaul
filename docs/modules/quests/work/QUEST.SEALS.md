@@ -32,14 +32,14 @@
   `turn.completed`，因此实际生图已达 `5/5`
 - 当前 production 正文：V6-A..G 七份单对象完整正文已由用户于
   `2026-08-06` 以文末原文统一明确授权；V6-D／E／F 已耗尽，当前执行正文为
-  `V6-G.r2 / repair-prepared / P3`
+  `V6-G.r3 / edit-prepared / P3`
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
   `source-accepted / P4 / production 4/5`；menu V5-B motifs
   `candidate-rejected / repair-budget-exhausted / P3 / simulation ImageGen 0/0 /
-  production 5/5`；menu V6 motifs `V6-G repair-prepared / P3 / simulation
-  ImageGen 0/0 / production 25/35 authorized`；runtime
+  production 5/5`；menu V6 motifs `V6-G edit-prepared / P3 / simulation
+  ImageGen 0/0 / production 26/35 authorized`；runtime
   尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
@@ -49,7 +49,7 @@
   QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
   `0/5 / gated`；V5-B motifs `repair-prepared / P3 / simulation ImageGen 0/0 /
   production 5/5 / repair-budget-exhausted`；V6 motifs
-  `V6-D／E／F repair-budget-exhausted / V6-G repair-prepared / P3 / production 25/35 authorized`
+  `V6-D／E／F repair-budget-exhausted / V6-G edit-prepared / P3 / production 26/35 authorized`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -97,7 +97,7 @@
   审查展示区脚本首次误用
   `--output` 参数；改用 `--report` 后六场景通过，无新生图调用，单独计为
   流程错误且不改变 production 计数
-- QS-B1 V6 模拟 ImageGen：`0/0`；production `25/35`、已授权。七个独立
+- QS-B1 V6 模拟 ImageGen：`0/0`；production `26/35`、已授权。七个独立
   production body 各自最多 `5` 次实际 ImageGen，最坏合计 `35` 次；流程错误
   不占额度。V5-B 五张失败工作表不上传、不裁切、不作为 edit 或视觉权威
 - QS-B1 历史流程错误：V1 `1`、V2 `3`、V3 `0`、V4-A `1`、V5-A `1`。均按
@@ -8601,7 +8601,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 - 当前状态：V6-A／B／C `candidate-reviewed / P3`；V6-D／E
   `candidate-rejected / repair-budget-exhausted / P3`；V6-F
   `candidate-rejected / repair-budget-exhausted / P3`；V6-G
-  `internal-rejected / repair-prepared / P3`；
+  `internal-rejected / edit-prepared / P3`；
   用户于 `2026-08-06` 授权整批顺序执行。
 - 固定输入：
   - Image 1：`assets/locked/quests/任务详情面板_视觉基准_v1.png`
@@ -8609,7 +8609,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
   - Image 2：`assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
     (`719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`)
 - 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C `3/5`、V6-D `5/5`、
-  V6-E `5/5`、V6-F `5/5`、V6-G `2/5`，合计 `25/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
+  V6-E `5/5`、V6-F `5/5`、V6-G `3/5`，合计 `26/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
   内部通过；V6-D attempt 5 仍有 9 个绿色污染像素，五次额度耗尽且不得执行
   attempt 6。V6-E attempt 1／2 均已内部否决；attempt 3 因提示词传输遗漏仍触发
   provider，故计入生图并否决；attempt 4 已用完整 r2 正文生成但因近方形构图与
@@ -8626,7 +8626,9 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
   马蹄语义和实体弧带质感被内部否决；attempt 2 fresh，只上传固定 Image 1／2，
   无 Image 3，虽打破镜像但在运行时形成 `^`／断裂人字形，且源图仍有连续紫红
   明暗带，已内部否决。attempt 3 fresh，只上传固定 Image 1／2，无 Image 3，
-  改为近水平的单条浅波契约线中段断开。
+  已得到正确的近水平断裂语义和克制颜色，但等比运行时只有 `16×3px`，断口与
+  厚重感消失，已内部否决。attempt 4 上传固定 Image 1／2 与紧邻 attempt 3
+  Image 3，只在左右两段各自修复框内增加纵向厚度并强化断口，不改变轴线和间距。
   全批目前共 `7` 次流程错误，其中 E3 同时返回 provider 图片
   并占用一次生图额度。
 - 用户授权原文：
@@ -8649,7 +8651,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 | V6-D HIDE | 5/5 | 3 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
 | V6-E CLEAN | 5/5 | 1 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
 | V6-F RESET | 5/5 | 1 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
-| V6-G ABANDON | 2/5 | 0 | internal-rejected / repair-prepared / P3 | attempt 3 r2 fresh；固定 Image 1／2，无 Image 3 |
+| V6-G ABANDON | 3/5 | 0 | internal-rejected / edit-prepared / P3 | attempt 4 r3 edit；固定 Image 1／2＋紧邻 attempt 3 Image 3 |
 
 ### QS-B1 V6-A attempt 1 execution and review
 
@@ -11477,6 +11479,144 @@ greyed dark old-wine pigment, and there is no physical rope texture, lighting,
 thickness, shadow, carrier, text, state, enclosed green, green fringe, or additional
 mark. Confirm every exterior pixel is exact uniform #00FF00 and no previous V6
 candidate or Image-2 shape has been copied.
+
+### QS-B1 V6-G attempt 3 execution and review
+
+- 执行前 commit：`cb9ddac`；完整正文版本：`QS-B1 V6-G.r2`；fresh generate；
+  固定 Image 1／2，无 Image 3；正文 `7809 bytes`、SHA-256
+  `884c2b3ccee9c3b696197b2df7bc8587dd73f9ee6c9200324ac28dae52db5b2d`。
+- fixed child：`@openai/codex@0.143.0`、`gpt-5.5 / medium`；session
+  `019fd661-1011-79e0-85aa-5cef64368417`；内建 `image_gen` 恰好一次并返回图片，
+  计为 V6-G `3/5`、整批 `26/35`；无流程错误。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V6/V6-G/attempt-03/raw/QS-B1-V6-G.attempt-03.png`；
+  `1254×1254 RGB`；SHA-256
+  `3cd687eafca5f9e5baebe518dda3e646cb21d932139e1523aa3e94c51be6844d`。
+- 技术：bbox `[117,451,916,612]`，超出原始 safe box；可见绿色污染 `0`；
+  median `[87,27,34]`；自动 `8/9`，仅 safe-box 项失败。review JSON SHA
+  `76058ba133904c8773ac5bc1855547a2b081a5d509fcdeca6c32f445d2ec614b`；
+  technical board SHA
+  `528cb699e224253405f01af97b8b97032253a160ac09cf6cbbf6cafebc2af888`。
+- 美术：近水平单条浅波在中间错位断开的身份已经成立，不再读成 V／拱顶；
+  左段 normalized bbox `[117,451,544,612]`，右段 `[585,513,916,606]`，两段
+  分离、轴线和断口均可冻结。问题是总高仅 `161px`；等比缩为 `16×3px` 后，
+  断口齿、曲率和重量全部压成两条细横杠，真实排版无法表达厚重断裂契约。
+- runtime：等比 fit 为 `16×3px`，落入 `[8,10,24,13]`；显示区域 `6/6 pass`，
+  报告 SHA `4fa200b7c5008dcb1ff34fee04b85f3f5bc8e4679e747f1870fa4cfb5c3d592e`；
+  真实排版 SHA
+  `16cd68e466fb5a088eed4b3cbd8e80d6623b4ac7b0a4235c8993f56035f34162`。
+- 结论：`internal-rejected / edit-prepared / P3 / 3/5`。语义、中心线、x 范围、
+  中央间距与综合色可冻结；attempt 4 允许使用紧邻 attempt 3 为唯一 Image 3，
+  只在左右两段各自修复框内增加纵向笔触厚度并扩大断口齿，不复用其他像素。
+
+### QS-B1 V6-G.r3 complete production Prompt — edit-prepared / frozen
+
+Use Image 1 and Image 2 only as fixed style references. Use Image 3 as the sole pixel
+identity and edit source. Edit the existing V6-G attempt 3 ABANDON emblem; do not
+freshly redesign, replace, recenter, rotate, or reconstruct it from another segment.
+The goal is one bounded thickness-and-break-readability repair for a circa-2004 vanilla
+World of Warcraft quest-log administration glyph.
+
+IMAGE ROLES
+
+Image 1 supplies only old Azeroth expedition-ledger weight, restrained earth palette,
+and handmade surface logic. Image 2 supplies only micro-scale economy and tiny-sprite
+legibility. Do not copy pixels or shapes from either. Image 3 is authoritative for the
+current ABANDON identity: one mostly horizontal shallow covenant line split into two
+unequal pieces, its exact left-to-right order, centerlines, x extents, diagonal central
+gap, blunt outer ends, old-wine color family, and flat pigment character.
+
+Do not use V6-G attempts 1 or 2, or any V6-A through V6-F candidate, as an edit source,
+texture donor, tracing source, or visual identity reference.
+
+CANVAS AND NORMALIZATION
+
+Return one exact square 1024 by 1024 RGB image on perfectly uniform exact #00FF00
+exterior. Interpret all coordinates after whole-square proportional normalization of
+Image 3 to 1024 by 1024. Preserve exactly two separated pigment pieces and no other
+object. This remains one normal-state ABANDON source for isotropic fit into
+[8,7,24,16] of a 32 by 22 Button; draw no carrier, UI, state, text, Tooltip, map, or
+backing.
+
+FROZEN IDENTITY AND TWO REPAIR BOXES
+
+Only visible pigment inside these two non-overlapping normalized repair boxes may be
+repainted:
+
+1. left-piece repair box [95,330,560,730];
+2. right-piece repair box [570,380,940,730].
+
+Do not place any pigment outside those boxes. Preserve exact-green exterior outside the
+boxes. Preserve the left piece's x extent [117,544], the right piece's x extent
+[585,916], and the empty central x corridor [544,585]. Do not extend either inner end
+into that corridor or move either outer end. Preserve each current centerline and
+shallow flow: left rises gently, right remains nearly level with a small lower offset.
+No new bend, steep diagonal, peak, V, arch, circle, or extra piece is allowed.
+
+REPAIR: DOUBLE VERTICAL WEIGHT WITHOUT CHANGING THE PATH
+
+Repaint each existing piece around its frozen centerline with a substantially heavier
+non-constant vertical stroke. The left piece should occupy an overall y span roughly
+[390,680] while following its current shallow rise. The right piece should occupy an
+overall y span roughly [420,700] while following its current lower, flatter flow. Aim
+for local body thickness around 145 to 190 pixels, varied coarsely by hand, so the
+combined visible bbox is about 799 pixels wide by 280 to 330 pixels high. After
+isotropic runtime fit the mark must occupy approximately 16 by 6 or 16 by 7 pixels,
+not 16 by 3.
+
+This is vertical thickening around the existing two centerlines, not whole-object
+scaling. Keep all x positions, horizontal lengths, the 41-pixel central x corridor,
+outer endpoint locations, and left-versus-right length difference. Do not connect the
+pieces. Do not turn them upward or downward into arms, parentheses, a roof, or a ring.
+
+At each inner broken end, enlarge the existing torn silhouette into exactly two or
+three broad chunky irregular teeth about 35 to 55 pixels deep. Teeth face the central
+gap and remain part of their own piece. They are blunt torn notches, not sharp
+arrowheads, claws, fingers, hair, or many fine fibers. Keep both outer ends solid,
+rounded-blunt, unequal, and unfrayed. At 16 by 6 or 7 pixels, the gap and at least one
+coarse broken-end step on each side must remain visible.
+
+FLAT OLD-WINE PIGMENT PRESERVATION
+
+Preserve Image 3's muted greyed dark old-wine family and approximate median. Repaint
+newly thickened areas using only three broad opaque value families: dominant old-wine
+near RGB [82,38,42], sparse broad worn-wine near RGB [104,51,52], and smoked brown-red
+near RGB [57,30,31]. Distribute two to five large flat patches per piece. Match adjacent
+edges without a seam.
+
+No continuous gradient, lengthwise highlight, purple or violet band, center-to-edge
+lighting, rim, dark underside, cast shadow, bevel, thickness, photographic fiber, rope
+grain, repeated micro-texture, or specular detail. Use non-constant stamped edges,
+softened blunt corners, slight asymmetry, one or two coarse open edge nicks away from
+the break, and restrained pigment bleed. Interior wear is opaque pigment, never green.
+Each piece remains fully opaque with no enclosed green hole, crack, isolated speck, or
+green-tinted antialiasing.
+
+STRICT EXCLUSIONS
+
+No horizontal movement, changed x extents, narrowed gap, connection between pieces,
+third piece, steep diagonal, peak, roof, caret, V, chevron, U, arch, horseshoe, broken
+circle, broken ring, parentheses, moustache, wings, eye, halo, X, cross, trash can,
+skull, blood, wound, weapon, sword, slash pair, pause, quotation marks, equals sign,
+warning sign, arrowhead, claw, fingers, physical rope, braid, paper, parchment, cloth,
+ribbon, wax, leather, metal backing, button face, border, frame, medallion, bevel, drop
+shadow, cast shadow, glow, highlight, continuous gradient, glass, neon, chrome, 3D
+rendering, photorealism, procedural noise, perfect vector curves, constant line weight,
+Diablo III ornament, Skyrim minimalist menu language, or Warhammer iconography. Do not
+place green inside either pigment piece or tint an edge green.
+
+FINAL SELF-CHECK
+
+Confirm exactly two unequal old-wine pieces preserve Image 3's x extents, shallow
+centerlines, empty [544,585] corridor, blunt outer ends, and snapped-line identity.
+Confirm only vertical body weight and coarse broken-end teeth changed inside the two
+repair boxes. Confirm the combined runtime fit is approximately 16 by 6 or 7 pixels,
+with a visible central gap and no reading as thin dashes, V, chevron, arch, ring,
+parentheses, X, pause, wound, or weapon. Confirm the material remains a few broad flat
+matte old-wine pigment regions with no gradient, violet highlight, physical rope,
+lighting, thickness, shadow, carrier, text, state, enclosed green, green fringe, or
+additional mark. Confirm all exterior pixels are exact uniform #00FF00 and no pixel
+from another V6 segment or older G attempt was introduced.
 
 ### QS-B1 V6-G attempt 2 execution and review
 
