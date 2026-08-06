@@ -3733,6 +3733,24 @@ def main() -> None:
         "QS-B1 V6-F attempt 1 rejection and complete r1 repair gate",
     )
     require(
+        seals_work,
+        (
+            "QS-B1 V6-F attempt 2 execution and review",
+            "019fd626-a043-7912-9b5f-d7c1826288e3",
+            "f19199c05a91c8b1239c4933fec9db9f19dad640b9a7c7211b27bc211531bc4f",
+            "bbox `[141,201,908,828]`",
+            "可见绿色污染 `0`",
+            "median `[123,60,21]`",
+            "问号／字母 C／耳机",
+            "internal-rejected / repair-prepared / P3 / 2/5",
+            "attempt 2 禁止作为 Image 3",
+            "QS-B1 V6-F.r2 complete production Prompt — repair-prepared / frozen",
+            "ANGULAR OPEN EXPEDITION ROUTE",
+            "V6-F `2/5`、整批 `20/35`",
+        ),
+        "QS-B1 V6-F attempt 2 rejection and complete r2 repair gate",
+    )
+    require(
         seal_motifs_v5_candidate_reviewer,
         (
             "CANVAS = (1024, 1024)",
