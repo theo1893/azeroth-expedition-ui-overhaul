@@ -287,6 +287,20 @@ def main() -> None:
     seal_purity_ribbon_sim_v17_display = json.loads(
         seal_purity_ribbon_sim_v17_display_path.read_text(encoding="utf-8")
     )
+    seal_purity_ribbon_v7a_production_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_purity_ribbon_production_v7a.json"
+    )
+    seal_purity_ribbon_v7a_production = json.loads(
+        seal_purity_ribbon_v7a_production_path.read_text(encoding="utf-8")
+    )
+    assert hashlib.sha256(
+        seal_purity_ribbon_v7a_production_path.read_bytes()
+    ).hexdigest() == (
+        "1ff46804cb5c5dddd47c56fea2c65c50c22e392c82179b53c5d251af1a65584c"
+    )
     seal_substrate_v5_candidate_reviewer_path = (
         ROOT
         / "tools"
@@ -3254,6 +3268,78 @@ def main() -> None:
         ),
         "QS-B1 V17 wax-over-carrier simulation renderer",
     )
+    assert seal_purity_ribbon_v7a_production["version"] == "QS-B1 V7-A"
+    assert seal_purity_ribbon_v7a_production["status"] == (
+        "simulation-confirmed-prompt-prepared-not-authorized"
+    )
+    confirmed_v17 = seal_purity_ribbon_v7a_production[
+        "confirmed_simulation"
+    ]
+    assert confirmed_v17["version"] == (
+        "QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17"
+    )
+    assert confirmed_v17["user_confirmation_date"] == "2026-08-06"
+    assert not confirmed_v17["simulation_pixels_are_inputs"]
+    v7a_executor = seal_purity_ribbon_v7a_production["executor"]
+    assert v7a_executor["skill"] == "imagegen-0-143-0"
+    assert v7a_executor["package"] == "@openai/codex@0.143.0"
+    assert v7a_executor["actual_generation_limit"] == 5
+    assert v7a_executor["current_actual_generations"] == 0
+    assert not v7a_executor["authorized"]
+    v7a_inputs = seal_purity_ribbon_v7a_production["fixed_inputs"]
+    assert [item["index"] for item in v7a_inputs] == [1, 2]
+    assert [item["sha256"] for item in v7a_inputs] == [
+        "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
+        "3b5c2ca6c1e69c74db5c64978cde351596ece6369d339b7125aee43904eb7d86",
+    ]
+    v7a_normalize = seal_purity_ribbon_v7a_production[
+        "deterministic_normalization"
+    ]
+    assert v7a_normalize["normalized_canvas"] == [1024, 1024]
+    assert v7a_normalize["fixed_crop"] == [448, 128, 576, 896]
+    assert v7a_normalize["candidate_source_size"] == [128, 768]
+    assert v7a_normalize["no_bbox_fit"]
+    assert v7a_normalize["no_anisotropic_resize"]
+    v7a_mask = seal_purity_ribbon_v7a_production["alpha_mask"]
+    assert v7a_mask["runtime_size"] == [32, 192]
+    assert v7a_mask["runtime_nominal_visible_width"] == 26
+    assert v7a_mask["runtime_body_origin_y"] == 24
+    assert v7a_mask["runtime_tail_height"] == 14
+    assert len(v7a_mask["points"]) == 31
+    assert v7a_mask["transparent_rgb_is_zero"]
+    v7a_contact = seal_purity_ribbon_v7a_production["wax_contact"]
+    assert v7a_contact["runtime_vertical_overlap"] == 24
+    assert v7a_contact["source_projection_offset"] == [0, -32]
+    assert not v7a_contact["uploaded_to_imagegen"]
+    assert v7a_contact["wax_pixels_are_never_copied_into_carrier_source"]
+    assert seal_purity_ribbon_v7a_production["runtime_assembly"][
+        "minimum_reward_gap"
+    ] == 32
+    assert not seal_purity_ribbon_v7a_production["runtime_assembly"][
+        "page_reflow"
+    ]
+    require(
+        seals_work,
+        (
+            "V17 用户方向结论 — confirmed / 2026-08-06",
+            "simulation-confirmed / P2 / awaiting-production-authorization",
+            "QS-B1 V7-A final production body",
+            "production-prepared / not-authorized / actual ImageGen 0/0",
+            "1ff46804cb5c5dddd47c56fea2c65c50c22e392c82179b53c5d251af1a65584c",
+            "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
+            "3b5c2ca6c1e69c74db5c64978cde351596ece6369d339b7125aee43904eb7d86",
+            "Create exactly one edge-to-edge square orthographic hand-painted material donor",
+            "CROP-SAFE MATERIAL COMPOSITION",
+            "HAND-PAINTED SURFACE STRUCTURE",
+            "STRICT EXCLUSIONS",
+            "固定 crop `[448,128,576,896]`",
+            "1.0 - 0.16 × (accepted_wax_alpha / 255)",
+            "pass / no execution-critical unknowns",
+            "尚未授权，不是 `0/5 authorized`",
+            "V7-A 独立生产授权门禁",
+        ),
+        "QS-B1 V17 confirmation and V7-A final production preparation",
+    )
     require(
         seals_work,
         (
@@ -4030,9 +4116,10 @@ def main() -> None:
             "QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17 / QS-B1 V7-A",
             "相交 `24px`",
             "真实排版\n  `42/42 pass`、展示区 `6/6 pass`、ImageGen `0/0`",
-            "awaiting-user-direction-confirmation",
+            "simulation-confirmed / production-prepared / P2",
+            "下一门禁是独立生产授权",
         ),
-        "QS-B1 V6 closed production and V17 current simulation gate",
+        "QS-B1 V6 closed production and V7-A authorization gate",
     )
     require(
         sub_art,
@@ -4062,9 +4149,10 @@ def main() -> None:
             "QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17 / QS-B1 V7-A",
             "相交 `24px`",
             "尾端约五个不等距尖锐破口",
-            "确认前不得进入 production",
+            "simulation-confirmed / production-prepared / P2",
+            "下一门禁是用户独立授权最终 production 正文与五次上限",
         ),
-        "QS-B1 V17 current component ownership",
+        "QS-B1 V7-A current component ownership",
     )
     require(
         sub_art,
@@ -4075,8 +4163,10 @@ def main() -> None:
             "禁止双钝缺口、等距锯齿、对称鱼尾和流苏",
             "禁止战锤阵营符号、双头鹰、骷髅、经文或科幻金属",
             "模拟像素和确切 RGB 不是稳定 source",
+            "用户于 `2026-08-06` 回复“确认”",
+            "tracked `128×768` mask 独占",
         ),
-        "QS-B1 V7-A pending art-direction contract",
+        "QS-B1 V7-A confirmed art-direction contract",
     )
     require(
         seal_substrate_v5_candidate_reviewer,
@@ -4342,7 +4432,7 @@ def main() -> None:
             "历史 runtime 合同为 `32×174px`",
             "不得直接导出为目标菜单",
             "最大 `32×192px` 的较窄挺质旧骨褐誓约载体",
-            "simulation-reviewed / P2 / ImageGen 0/0",
+            "simulation-confirmed / production-prepared / P2 / ImageGen 0/0",
             "没有 V7 target source、runtime 或 addon 接入",
         ),
         "QS-B1 V5-A fallback and V7-A pending substrate ownership",

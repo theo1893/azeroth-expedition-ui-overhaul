@@ -1,0 +1,132 @@
+{
+  "schema": "aeui.quest-log.seal-purity-ribbon.production-contract.v1",
+  "version": "QS-B1 V7-A",
+  "component": "QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX",
+  "status": "simulation-confirmed-prompt-prepared-not-authorized",
+  "confirmed_simulation": {
+    "version": "QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17",
+    "specification": "tools/specs/quest_log_seal_purity_ribbon_simulation_v17.json",
+    "specification_sha256": "76a4c973b2e50a5a3d9302e77ee7dc30f3e2f421754db492132140c099630414",
+    "user_confirmation_date": "2026-08-06",
+    "simulation_pixels_are_inputs": false
+  },
+  "executor": {
+    "skill": "imagegen-0-143-0",
+    "package": "@openai/codex@0.143.0",
+    "actual_generation_limit": 5,
+    "current_actual_generations": 0,
+    "process_errors": 0,
+    "process_errors_consume_generation_budget": false,
+    "authorized": false
+  },
+  "fixed_inputs": [
+    {
+      "index": 1,
+      "path": "assets/locked/quests/任务详情面板_视觉基准_v1.png",
+      "sha256": "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
+      "role": "highest visual authority for 2004-era World of Warcraft hand-painted bitmap language, broad value planes, upper-left warm light, quest-document palette, material weight, and wear scale",
+      "ignore": "the complete book, page geometry, text, buttons, brass, leather shell, wax, bookmarks, reward slots, and every finished-object silhouette"
+    },
+    {
+      "index": 2,
+      "path": "assets/locked/quests/任务追踪面板_视觉基准_v1.png",
+      "sha256": "3b5c2ca6c1e69c74db5c64978cde351596ece6369d339b7125aee43904eb7d86",
+      "role": "secondary material authority for quiet fibrous expedition-document ageing, sparse low-frequency stains, and coarse readable wear",
+      "ignore": "the tracker silhouette, leather strap, compass, quill, rivets, layered pages, buttons, text, and rectangular layout"
+    }
+  ],
+  "edit_policy": {
+    "attempt_1": "fresh-generate-with-fixed-image-1-and-image-2-only",
+    "attempts_2_to_5": "the immediately preceding output from this V7-A loop may be Image 3 only when preserving already-correct material regions and repairing within the frozen envelope",
+    "no_cross_version_pixels": true,
+    "forbidden_inputs": [
+      "all V6 candidates",
+      "V5-A accepted fallback substrate",
+      "V17 simulation board or zoom",
+      "QS-A1 wax pixels",
+      "any Warhammer image or downloaded web pixel"
+    ]
+  },
+  "provider_output": {
+    "identity": "one edge-to-edge square RGB material donor, not a finished ribbon or UI object",
+    "required_aspect": 1.0,
+    "aspect_tolerance": 0.01,
+    "required_content": "continuous matte smoked old-bone vellum and coarse-linen hybrid material across the whole square",
+    "forbidden_baked_content": [
+      "object silhouette",
+      "transparent exterior",
+      "wax",
+      "contact shadow",
+      "stamp or motif",
+      "text or runes",
+      "button or state",
+      "border or frame",
+      "tail geometry",
+      "horizontal seam or periodic action rhythm"
+    ]
+  },
+  "deterministic_normalization": {
+    "normalized_canvas": [1024, 1024],
+    "method": "whole-square isotropic LANCZOS; raw aspect outside tolerance fails",
+    "fixed_crop": [448, 128, 576, 896],
+    "candidate_source_size": [128, 768],
+    "candidate_mode": "RGBA",
+    "no_bbox_fit": true,
+    "no_anisotropic_resize": true,
+    "no_mirror": true,
+    "no_free_repaint": true
+  },
+  "alpha_mask": {
+    "owner": "tracked deterministic 4x polygon; ImageGen owns no silhouette or alpha",
+    "canvas": [128, 768],
+    "runtime_size": [32, 192],
+    "nominal_visible_width": 104,
+    "runtime_nominal_visible_width": 26,
+    "body_origin_y": 96,
+    "runtime_body_origin_y": 24,
+    "tail_height": 56,
+    "runtime_tail_height": 14,
+    "points": [
+      [24, 4], [48, 0], [72, 4], [100, 0], [112, 16],
+      [116, 72], [112, 140], [116, 228], [108, 316], [116, 412],
+      [112, 504], [116, 596], [108, 684], [112, 708], [116, 736],
+      [100, 728], [88, 764], [72, 736], [56, 760], [44, 724],
+      [28, 752], [16, 732], [12, 704], [16, 632], [12, 548],
+      [20, 460], [12, 372], [16, 280], [12, 192], [20, 108],
+      [12, 36]
+    ],
+    "tail_contract": "five visibly unequal sharp torn points with non-periodic depths; no regular sawtooth, symmetric fishtail, tassels, or blunt twin notches",
+    "transparent_rgb_is_zero": true
+  },
+  "wax_contact": {
+    "wax_source": "assets/source/quests/qs-a1/QuestToolWaxSeal_Master_v1.png",
+    "wax_source_sha256": "377dcdc141ee5487884bfc99dbfd82013a8c4d7cb7200a4414feebb81d72ab75",
+    "uploaded_to_imagegen": false,
+    "runtime_wax_size": [32, 32],
+    "runtime_offset_relative_to_carrier": [0, -8],
+    "runtime_vertical_overlap": 24,
+    "source_projection_size": [128, 128],
+    "source_projection_offset": [0, -32],
+    "rgb_multiplier": "1.0 - 0.16 * (accepted_wax_alpha / 255.0), applied only inside the carrier alpha mask",
+    "wax_pixels_are_never_copied_into_carrier_source": true,
+    "runtime_z_order": "page and dynamic text, carrier, seven independent motifs and Buttons, accepted QS-A1 wax last"
+  },
+  "runtime_assembly": {
+    "carrier_root_content": [210, 12, 32, 28],
+    "wax_visual_content": [210, 4, 32, 32],
+    "wax_hitbox_content": [206, 0, 40, 40],
+    "action_body_origin_content": [210, 36],
+    "action_slot_size": [32, 22],
+    "maximum_action_count": 7,
+    "maximum_carrier_end_y": 204,
+    "first_reward_y": 236,
+    "minimum_reward_gap": 32,
+    "hidden_policy": "remove from visible order and compact without holes",
+    "disabled_policy": "remain in visible order, visually muted, no enabled hitbox",
+    "scroll_policy": "carrier, wax, motifs, and Buttons share QuestLogDetailScrollChild clipping",
+    "page_reflow": false,
+    "fallback": "all existing provider Buttons remain visible and functional until full proxy parity"
+  },
+  "prompt_location": "docs/modules/quests/work/QUEST.SEALS.md#qs-b1-v7-a-final-production-body",
+  "next_gate": "user must separately authorize this exact V7-A body, fixed Image 1/2 roles, optional same-loop Image 3 edit policy, deterministic contract, and at most five actual ImageGen calls"
+}
