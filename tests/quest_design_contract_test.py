@@ -3482,6 +3482,24 @@ def main() -> None:
         "QS-B1 V6-C attempt 2 local edit repair gate",
     )
     require(
+        seals_work,
+        (
+            "QS-B1 V6-C attempt 3 execution and internal pass",
+            "019fd5bc-0011-78b1-9e15-ad57c5e0c1b8",
+            "af709d4b31bf291e6cced744604cce1f25649953335679a3b7ba0977447a39a2",
+            "bbox `[155,152,860,859]`",
+            "左侧\n  仅越 `5px`、顶部仅越 `8px`",
+            "可见绿色污染 `0`",
+            "四条短粗深褐桥",
+            "用户在整批授权中明确允许“等比 bbox-fit”",
+            "display-region `6/6 pass`、violations `0`",
+            "internal-pass with authorized\n  deterministic bbox-fit exception",
+            "V6-C attempt 4／5 不调用",
+            "进入 V6-D HIDE attempt 1",
+        ),
+        "QS-B1 V6-C internal candidate pass with authorized bbox-fit gate",
+    )
+    require(
         seal_motifs_v5_candidate_reviewer,
         (
             "CANVAS = (1024, 1024)",

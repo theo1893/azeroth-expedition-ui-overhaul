@@ -8598,16 +8598,17 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 
 ### QS-B1 V6-A..G production authorization gate
 
-- 当前状态：V6-A／B `candidate-reviewed / P3`；V6-C `repair-prepared / P3`；
-  V6-D..G `prompt-authorized / P3`；
+- 当前状态：V6-A／B／C `candidate-reviewed / P3`；V6-D..G
+  `prompt-authorized / P3`；
   用户于 `2026-08-06` 授权整批顺序执行。
 - 固定输入：
   - Image 1：`assets/locked/quests/任务详情面板_视觉基准_v1.png`
     (`03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`)
   - Image 2：`assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
     (`719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`)
-- 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C `2/5`、V6-D..G 各 `0/5`，
-  合计 `7/35`；V6-C attempt 2 已内部退回，当前准备 C.r2 局部 edit。送入提示词前的提取错误与旧 CLI 模型路由 400
+- 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C `3/5`、V6-D..G 各 `0/5`，
+  合计 `8/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外内部通过，下一段为
+  V6-D。送入提示词前的提取错误与旧 CLI 模型路由 400
   共 `2` 次流程错误，均未触发 ImageGen，依授权不占生图额度。
 - 用户授权原文：
 
@@ -8625,8 +8626,8 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 | --- | ---: | ---: | --- | --- |
 | V6-A SHARE | 3/5 | 2 | candidate-reviewed / P3 | 单段通过即停；等待整批用户验收 |
 | V6-B DETAIL | 2/5 | 0 | candidate-reviewed / P3 | 单段通过即停；等待整批用户验收 |
-| V6-C SHOW | 2/5 | 0 | repair-prepared | attempt 3 edit；固定 Image 1／2＋紧邻 attempt 2 Image 3 |
-| V6-D HIDE | 0/5 | 0 | prompt-authorized | 等待 C 结束 |
+| V6-C SHOW | 3/5 | 0 | candidate-reviewed / P3 | 单段通过即停；授权 bbox-fit 例外 |
+| V6-D HIDE | 0/5 | 0 | prompt-authorized | attempt 1；固定 Image 1／2，无 Image 3 |
 | V6-E CLEAN | 0/5 | 0 | prompt-authorized | 等待 D 结束 |
 | V6-F RESET | 0/5 | 0 | prompt-authorized | 等待 E 结束 |
 | V6-G ABANDON | 0/5 | 0 | prompt-authorized | 等待 F 结束 |
@@ -9417,3 +9418,44 @@ centered visible bbox stays strictly inside [160,160,864,864] with a target span
 430 by 430 pixels. Confirm every exterior pixel is uniform exact #00FF00. Confirm there
 is no center gradient, highlight, shadow, carrier, text, state, enclosed green pixel, or
 additional mark.
+
+### QS-B1 V6-C attempt 3 execution and internal pass
+
+- 执行前 commit：`f1f6136`；完整正文版本：`QS-B1 V6-C.r2`；操作：edit。
+- 固定输入：Image 1／2；Image 3 仅为紧邻 attempt 2 raw，固定 SHA
+  `61e144845b8c8b2e2d6409d60625f9abe7db98a40867fc76651390b455fdeed9`；提示词
+  正文 `6681 bytes`、SHA-256
+  `53b1c5d240c915fb8b4c4599997adf91458f911e2be7182c0729580662a1cfe8`；未上传或
+  复用任何跨段像素。
+- fixed child：`@openai/codex@0.143.0`、`gpt-5.5 / medium`；session
+  `019fd5bc-0011-78b1-9e15-ad57c5e0c1b8`；收到唯一实际编辑结果并
+  `turn.completed`，计为 V6-C `3/5`、整批 `8/35`。MCP transport 重试未阻止
+  provider 结果，不计流程错误。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V6/V6-C/attempt-03/raw/QS-B1-V6-C.attempt-03.png`；
+  `1254×1254 RGB`；SHA-256
+  `af709d4b31bf291e6cced744604cce1f25649953335679a3b7ba0977447a39a2`。
+- 确定性审查：归一化后可见 bbox `[155,152,860,859]`；可见绿色污染 `0`；
+  自动 `8/9`，唯一 raw-source 失败为 `visible_bbox_inside_safe_box`，其中左侧
+  仅越 `5px`、顶部仅越 `8px`。review JSON SHA
+  `aa8aa266e7d699852b154ad2e7f48614f4afffb02778f5c907ce3f860f042941`。
+- 冻结 edit 结果：四个钝头方向块已由四条短粗深褐桥连接到同一中心，形成单一
+  语义组件；绿色残留为零，方向块之间的对角外部通道仍向画布外连通。颜色 median
+  `[104,47,16]`、luma p50 `56.813`、chroma p50 `88`，保持暗赭公会授印语言。
+- runtime 与授权例外：用户在整批授权中明确允许“等比 bbox-fit”。确定性 fit 将
+  完整可见 bbox 等比缩成 `14×14px` 并落入冻结 `[9,4,23,18]` content box，不
+  裁切、不拉伸、不改变像素语义。四态 technical board SHA
+  `b034a362325f122dd2957065109ddf51cf8ec6acfe92bb173e41b8c26695d844`。
+- 真实排版：六场景图 `attempt-03.real-layout.png`，SHA
+  `1467608f354e0dfd55298c217295d442bd5bcf0b8b19dd664aab9f02a0b87190`；
+  display-region `6/6 pass`、violations `0`，报告 SHA
+  `87fa2646f33baac25ae8df31f2241d08a88662acfd917fd8f7d0774da5ccb6dc`。
+- 美术内审：最终 `14×14px` 读作一枚厚重、钝头、不完全对称的旧公会方向标；
+  不再是金色四尖星、五个独立 D-pad 键或现代定位符号。中心的高分辨率轻微色差
+  在 runtime 只形成宽像素深褐墨池，不产生金属高光或实体凸起。
+- 结论：`candidate-reviewed / P3 / production 3/5 / internal-pass with authorized
+  deterministic bbox-fit exception`。依单段通过即停，V6-C attempt 4／5 不调用。
+  当前只保留 ignored generated 候选与审查证据，不写 source、runtime、addon 或
+  accepted manifest；需待整批用户明确接受后进入 P4。
+- 下一动作：按授权顺序进入 V6-D HIDE attempt 1，只上传固定 Image 1／2，无
+  Image 3，且禁止复用 V6-A／B／C 像素。
