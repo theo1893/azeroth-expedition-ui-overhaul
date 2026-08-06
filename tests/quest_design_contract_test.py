@@ -3803,6 +3803,24 @@ def main() -> None:
         "QS-B1 V6-F final-attempt non-counting npm flow error",
     )
     require(
+        seals_work,
+        (
+            "QS-B1 V6-F attempt 5 execution, review, and exhausted stop",
+            "019fd64f-8199-77c0-a542-85be1854d6df",
+            "828d5c08214143f639f86d8df220fa2bb26f79fa56580b342b8386e50df004a9",
+            "bbox `[169,211,856,800]`",
+            "可见绿色污染 `0`",
+            "median `[110,46,16]`",
+            "自动 `9/9 pass`",
+            "双翼箭头",
+            "candidate-rejected / repair-budget-exhausted / P3 / 5/5",
+            "不得执行 attempt 6",
+            "V6-F `5/5`、整批 `23/35`",
+            "继续 V6-G attempt 1",
+        ),
+        "QS-B1 V6-F exhausted stop and V6-G continuation gate",
+    )
+    require(
         seal_motifs_v5_candidate_reviewer,
         (
             "CANVAS = (1024, 1024)",

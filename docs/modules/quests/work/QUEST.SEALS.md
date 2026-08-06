@@ -31,15 +31,15 @@
   `019fd527-d402-7c00-8fd2-4d6d0ec932d4` 已返回图片并完成
   `turn.completed`，因此实际生图已达 `5/5`
 - 当前 production 正文：V6-A..G 七份单对象完整正文已由用户于
-  `2026-08-06` 以文末原文统一明确授权；V6-E 已耗尽，当前执行正文为
-  `V6-F.r4 / fresh-final-prepared / P3`
+  `2026-08-06` 以文末原文统一明确授权；V6-D／E／F 已耗尽，当前执行正文为
+  `V6-G / prompt-authorized / P3`
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
   `source-accepted / P4 / production 4/5`；menu V5-B motifs
   `candidate-rejected / repair-budget-exhausted / P3 / simulation ImageGen 0/0 /
-  production 5/5`；menu V6 motifs `repair-prepared / P3 / simulation ImageGen
-  0/0 / production 22/35 authorized`；runtime
+  production 5/5`；menu V6 motifs `V6-G prompt-authorized / P3 / simulation
+  ImageGen 0/0 / production 23/35 authorized`；runtime
   尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
@@ -49,7 +49,7 @@
   QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
   `0/5 / gated`；V5-B motifs `repair-prepared / P3 / simulation ImageGen 0/0 /
   production 5/5 / repair-budget-exhausted`；V6 motifs
-  `V6-E repair-budget-exhausted / V6-F fresh-final-prepared / P3 / production 22/35 authorized`
+  `V6-D／E／F repair-budget-exhausted / V6-G prompt-authorized / P3 / production 23/35 authorized`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -97,7 +97,7 @@
   审查展示区脚本首次误用
   `--output` 参数；改用 `--report` 后六场景通过，无新生图调用，单独计为
   流程错误且不改变 production 计数
-- QS-B1 V6 模拟 ImageGen：`0/0`；production `22/35`、已授权。七个独立
+- QS-B1 V6 模拟 ImageGen：`0/0`；production `23/35`、已授权。七个独立
   production body 各自最多 `5` 次实际 ImageGen，最坏合计 `35` 次；流程错误
   不占额度。V5-B 五张失败工作表不上传、不裁切、不作为 edit 或视觉权威
 - QS-B1 历史流程错误：V1 `1`、V2 `3`、V3 `0`、V4-A `1`、V5-A `1`。均按
@@ -8600,7 +8600,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 
 - 当前状态：V6-A／B／C `candidate-reviewed / P3`；V6-D／E
   `candidate-rejected / repair-budget-exhausted / P3`；V6-F
-  `internal-rejected / fresh-final-prepared / P3`；V6-G `prompt-authorized / P3`；
+  `candidate-rejected / repair-budget-exhausted / P3`；V6-G `prompt-authorized / P3`；
   用户于 `2026-08-06` 授权整批顺序执行。
 - 固定输入：
   - Image 1：`assets/locked/quests/任务详情面板_视觉基准_v1.png`
@@ -8608,7 +8608,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
   - Image 2：`assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
     (`719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`)
 - 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C `3/5`、V6-D `5/5`、
-  V6-E `5/5`、V6-F `4/5`、V6-G `0/5`，合计 `22/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
+  V6-E `5/5`、V6-F `5/5`、V6-G `0/5`，合计 `23/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
   内部通过；V6-D attempt 5 仍有 9 个绿色污染像素，五次额度耗尽且不得执行
   attempt 6。V6-E attempt 1／2 均已内部否决；attempt 3 因提示词传输遗漏仍触发
   provider，故计入生图并否决；attempt 4 已用完整 r2 正文生成但因近方形构图与
@@ -8618,8 +8618,10 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
   fresh，只上传固定 Image 1／2，无 Image 3。attempt 3 的主体路线可保留，但末端
   成为左向 undo 箭头并有 26px 绿色污染；attempt 4 虽消除了箭头与绿色污染，
   但两个修复框外全部可见像素均发生综合色漂移，且替代末端成为过大的光滑椭圆
-  胶囊，不满足冻结 edit 合同。下一次为 V6-F 最终 attempt 5；fresh generate，
-  只上传固定 Image 1／2，无 Image 3，禁止复用 attempt 4 或任何跨段像素。
+  胶囊，不满足冻结 edit 合同。V6-F attempt 5 自动门禁 `9/9`、展示 `6/6`，
+  但终端形成明确双翼箭头，运行时仍优先读成现代回返／撤销符号；F 段 `5/5`
+  已耗尽且不得 attempt 6。下一步进入独立 V6-G attempt 1，只上传固定 Image 1／2，
+  无 Image 3，禁止复用任何旧候选或跨段像素。
   全批目前共 `7` 次流程错误，其中 E3 同时返回 provider 图片
   并占用一次生图额度。
 - 用户授权原文：
@@ -8641,8 +8643,8 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 | V6-C SHOW | 3/5 | 0 | candidate-reviewed / P3 | 单段通过即停；授权 bbox-fit 例外 |
 | V6-D HIDE | 5/5 | 3 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
 | V6-E CLEAN | 5/5 | 1 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
-| V6-F RESET | 4/5 | 1 | internal-rejected / fresh-final-prepared / P3 | attempt 5 E1 无生成；以相同 r4 正文重试，固定 Image 1／2，无 Image 3 |
-| V6-G ABANDON | 0/5 | 0 | prompt-authorized | 等待 F 结束 |
+| V6-F RESET | 5/5 | 1 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
+| V6-G ABANDON | 0/5 | 0 | prompt-authorized / P3 | attempt 1；固定 Image 1／2，无 Image 3 |
 
 ### QS-B1 V6-A attempt 1 execution and review
 
@@ -11166,6 +11168,36 @@ pixel, green fringe, or additional mark. Confirm every exterior pixel is exact u
 - 恢复边界：只修复 npm 网络／沙箱权限；以相同冻结 commit、完全相同 r4 正文、
   相同两个固定 SHA 输入和新的空临时目录重试。不得修改提示词、添加 Image 3、
   复用候选或启动并发 provider 调用。
+
+### QS-B1 V6-F attempt 5 execution, review, and exhausted stop
+
+- 重试执行前 commit：`b824759`；完整正文仍为 `QS-B1 V6-F.r4`；fresh
+  regenerate；固定 Image 1／2，无 Image 3；正文 `7596 bytes`、SHA-256
+  `a37ad7cbf84aff6d234809877aad96b0b141e78cbe5ace5a0d8f9ff873b910ba`；
+  child user block 已完整回显正文与 FINAL SELF-CHECK。
+- fixed child：`@openai/codex@0.143.0`、`gpt-5.5 / medium`；session
+  `019fd64f-8199-77c0-a542-85be1854d6df`；内建 `image_gen` 恰好一次并返回图片，
+  计为 V6-F `5/5`、整批 `23/35`；此前 npm E1 仍只计流程错误。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V6/V6-F/attempt-05/raw/QS-B1-V6-F.attempt-05.png`；
+  `1254×1254 RGB`；SHA-256
+  `828d5c08214143f639f86d8df220fa2bb26f79fa56580b342b8386e50df004a9`。
+- 技术：bbox `[169,211,856,800]`，完整位于 safe box；可见绿色污染 `0`；
+  median `[110,46,16]`；自动 `9/9 pass`；review JSON SHA
+  `13fa83ad369d944ea525aed592eb81620d3338e517f47db83dab62c687e1c995`；
+  technical board SHA
+  `a437b706a0b698db7507f333392aabe0ae1c1ecf6bf4ac11b898405a868ef7c3`。
+- 美术：轮廓虽为单一连通折线路线，却在右下末端形成尺寸显著的双翼箭头；上方
+  长边、右侧回折与箭头共同形成近封闭的现代回返／撤销符号。大图还出现连续明暗
+  建模和高频磨损，超过“少量平面矿物颜料色块”的冻结范围。`14×12px` normal
+  下箭头仍是第一语义，不是无方向性的旧地图路线结。
+- runtime：等比 fit 为 `14×12px`，落入 `[8,5,22,17]`；显示区域 `6/6 pass`，
+  报告 SHA `0bd6a595b04ead909f30de5be89402f469b009f9eb37847eb3475e4213684474`；
+  真实排版 SHA
+  `68eeb69e3dd7e65d8429984b25ba78ee125c8c2b93da4a95f5903756af9264fe`。
+- 结论：`candidate-rejected / repair-budget-exhausted / P3 / 5/5`。自动门禁通过
+  不能覆盖语义与材质失败；不得执行 attempt 6，不得将 attempt 5 写入 source、
+  runtime 或 addon，也不得将其像素传给 V6-G。依整批授权继续 V6-G attempt 1。
 
 ### QS-B1 V6-F.r4 complete production Prompt — fresh-final-prepared / frozen
 
