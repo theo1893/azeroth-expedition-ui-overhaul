@@ -217,13 +217,14 @@
   `2026-08-06` 在明确“接受只确认综合色、正式生成仍需独立授权”的门禁下
   回复“接受”，因此六项哑光低饱和旧赭金矿物颜料与放弃项灰暗酒红已成为
   稳定方向；本地几何纹章像素仍非 source 或 edit input。V5-B 完整自包含
-  production Prompt 已重写并通过完整性审计，当前为
-  `prompt-authorized / execution-blocked / P3 / production 0/5`；用户于
+  production Prompt 已重写并通过完整性审计；用户于
   `2026-08-06` 明确授权
   固定 Image 1／2、受限同循环 Image 3 edit、最多五次实际调用和合同内
-  确定性后处理。六次无生成流程错误后，固定 child 的 remote plugin catalog
-  请求在一次 session resume 中再次失败；没有 `image_gen` tool call、
-  provider result 或图片，故实际额度仍完整为 `0/5`。尚未拆图、导出或改 addon。
+  确定性后处理。用户随后要求重试，固定 child 已恢复并执行五次 countable
+  generation；终稿自动 `10/12`，但只有 ABANDON 位于 safe box，其他六项仍因
+  行锚点错误被固定 cell crop 截断，RESET 另有 `44` 个绿残留。当前为
+  `candidate-rejected / repair-budget-exhausted / P3 / production 5/5`；无纹章
+  source、runtime 或 addon 改动。
   runtime `1.25` 继续把已接受的 QS-A1 漆章以 `32px` 无鼠标 Texture 放到
   详情页右上纸面；菜单尚未接入，也未隐藏任何旧按钮。
 - AEUI Quest Log provider 兼容子合同保持 `1.7`：在 provider 最终刷新后以
@@ -485,7 +486,7 @@
 | `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P6 game-validated / user-confirmed`（当前活动 runtime） | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；`2026-08-05` 用户确认 18 行字体、无描边／零 shadow、类型墨色和活动地区箭头显示通过。隐藏的行末追踪圈不在验收范围 | 保留至组件／整模块收口；不再生图 |
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 asset-retained / runtime-hidden` | 用户接受的 source、manifest、`128 × 16` TGA、exporter 与历史证据全部保留；`2026-07-31` 起 adapter 不再挂载或包装任务行脚本 | 暂缓；只有用户重新确认后才恢复 runtime |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
-| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu substrate V5-A `P4 source-accepted / 4/5`；motifs V5-B `P3 prompt-authorized / execution-blocked / 0/5` | V1／V3-A／V4-A 均保持各自失败终态。V5-A attempt 4 已接受。用户已接受 V15 综合色并独立授权 V5-B；但固定 0.143.0 child 的内置工具发现连续失败，六次流程错误均无生成证据，实际额度仍为 `0/5`。纹章 source 与菜单 runtime 尚未完成 | 恢复固定 0.143.0 内置 `image_gen`／plugin catalog 后逐字执行 attempt 1；或等待用户另行改变执行路径授权。七项代理 parity 前旧按钮继续 fail-open |
+| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu substrate V5-A `P4 source-accepted / 4/5`；motifs V5-B `P3 candidate-rejected / repair-budget-exhausted / 5/5` | V1／V3-A／V4-A 均保持各自失败终态。V5-A attempt 4 已接受。V5-B 五次均返回 provider 图片；终稿 `10/12`，第八格为空、ABANDON 合格，但其余六项仍越出 safe box 并被固定 crop 截断。纹章 source 与菜单 runtime 尚未完成 | 等待用户选择全画布连通域确定性裁切例外、七张单对象 source 新版本／新预算，或放弃纹章方案。七项代理 parity 前旧按钮继续 fail-open |
 | `QL-D` | 奖励槽、分隔与文字安全区 | current geometry／fallback `P6 game-validated`；final art `P2 simulation-proposed` | runtime `1.25` 保持真实 Button 的 `108×41px` 双列／`64px` 名称／`8px` 列距／`4px` 行距、setter 锁、无鼠标程序化容器、原生 `NameFrame` 抑制和可见数量兜底。所有奖励项只依赖奖励总标题或上一组奖励项，不再依赖三个分组标题，消除原生 `QuestLogItemReceiveText` 反向锚定造成的 FrameXML 环；`2026-08-05` 用户确认当前右页 bug 与显示修复通过。Theme `1.8` 奖励文字无描边。V1 模拟 0／1／2／4／6 `5/5 pass`、ImageGen `0/0`；奖励只读，无 selected | 确认最终容器美术方向；确认不等于生产授权 |
 
 QL-A1 manifest 记录：
@@ -531,7 +532,7 @@ timer 或 failed 资产：provider 没有可用的公开状态来源。本项目
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
 | `QS-A1` | Quest Log／Tracker 共用漆章母版 | `P5 runtime-exported / page-placement-integrated / 5/5` | source／四态 atlas 保持 accepted；当前 Quest Log runtime `1.25` 直接使用 `32px` 页上 Texture，Tracker 不受影响；没有重开美术或 ImageGen | Turtle WoW 验证页上位置、TGA 方向与标题／正文安全区 |
-| `QS-B1` | Quest Log ScrollChild 内火漆 Button、动态空白布底、七张独立纹章与七个代理 Button | V5-A substrate `source-accepted / P4 / 4/5`；V5-B motifs `prompt-authorized / execution-blocked / P3 / production 0/5`；V3-B motifs `0/5 gated` | 用户于 `2026-08-06` 接受 V5-A attempt 4、V15 综合色并独立授权 V5-B。固定 0.143.0 child 已验证完整正文、固定输入、空临时目录和防递归说明，但 remote plugin catalog／内置工具发现经 session resume 后仍失败；六次流程错误无生成证据，预算未消耗。无纹章 source/runtime | 等待固定 0.143.0 内置工具恢复，或用户另行授权不同执行路径；恢复后从 attempt 1／`0/5` 开始 |
+| `QS-B1` | Quest Log ScrollChild 内火漆 Button、动态空白布底、七张独立纹章与七个代理 Button | V5-A substrate `source-accepted / P4 / 4/5`；V5-B motifs `candidate-rejected / repair-budget-exhausted / P3 / production 5/5`；V3-B motifs `0/5 gated` | 用户接受 V5-A attempt 4 与 V15 综合色并授权 V5-B。五次 countable generation 全部完成；终稿第八格与 ABANDON 通过，但其余六项行锚点／safe-box 失败，RESET 另有 `44` 绿残留。无纹章 source/runtime，未接入菜单 | 等待用户选择确定性连通域裁切合同例外、七张单对象 source 新版本／新预算，或放弃；禁止 attempt 6 |
 
 QS-A1 当前事实：
 
@@ -745,20 +746,20 @@ accepted 布底上也缺少可读对比，故不能直接执行。新的
 低饱和旧赭金矿物颜料与放弃项灰暗酒红的综合色方向；几何纹章仍只是本地
 占位，不属于 source 或未来 edit input。完整、自包含的 V5-B production
 Prompt、七格 safe box、七张独立 source、四态 atlas 与五次自主修复边界已
-准备并通过完整性审计，当前为
-`prompt-authorized / execution-blocked / P3 / production 0/5`。用户于
+准备并通过完整性审计。用户于
 `2026-08-06` 已独立授权
 V5-B 最终 production 正文、每次固定 Image 1／2、同循环紧邻前稿的受限
 Image 3 edit，以及最多五次实际 ImageGen 调用；流程错误无图片证据时不占
 额度。
 
-固定 0.143.0 child 已出现六次无生成流程错误：参数分隔、正文提取和 wrapper
-递归均已确定性修正；最终阻塞是 remote plugin catalog／内置 `image_gen`
-工具发现，在同一 session resume 后仍复现。不存在 tool call、provider result
-或图片，故实际次数仍为 `0/5`。下一门禁是该固定路径恢复，或用户另行授权
-改变执行路径；不得继续盲重试。恢复后才逐字执行 attempt 1，并在每个
-countable 输出后完成语义、美术、像素、四态与六场景真实排版审查。后续
-runtime 仍必须按
+固定 0.143.0 child 的六次无生成流程错误已在用户明确“重试”后恢复。V5-B
+随后完成五次实际 generation，每次都在失败记录和下一完整正文提交后继续，
+最终达到 `5/5`。attempt 5 已修正底排四槽并清空第八格，综合色回到平面两色
+颜料；但自动仍为 `10/12`：仅 ABANDON 位于 safe box，其他六项持续被模型
+放在错误纵向行位并被固定 cell crop 截断，RESET 有 `44` 个封闭绿像素。
+因此终态为 `candidate-rejected / repair-budget-exhausted / P3 / 5/5`，禁止
+attempt 6。下一门禁是用户选择全画布连通域确定性裁切合同例外、七张单对象
+source 的新版本／新预算，或放弃纹章方案。后续 runtime 若重开仍必须按
 manifest 确定性导出 `32×174` 布底，并一一代理原 Button、镜像
 禁用态、保留放弃确认，并在任一 provider 未捕获时原子 fail-open；七纹章和
 七项代理 parity 完成前不接入菜单，也不隐藏放弃／分享／退出／详情或 pfQuest

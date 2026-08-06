@@ -3140,7 +3140,7 @@ def main() -> None:
             "V5-B 正式 production 授权冻结点",
             "确认授权 QS-B1 V5-B 最终 production 正文",
             "attempt 1 没有 Image 3",
-            "QS-B1 V5-B 模拟 ImageGen：`0/0`；production `4/5`；流程错误 `7`",
+            "QS-B1 V5-B 模拟 ImageGen：`0/0`；production `5/5`；流程错误 `7`",
             "V5-B 流程错误",
             "No prompt provided via stdin.",
             "最后一个 `-i` 后加入标准 `--` 参数分隔符",
@@ -3189,6 +3189,12 @@ def main() -> None:
             "The bottom row still has four equal placement slots",
             "No mark may exceed 5.5 percent",
             "这是 `5/5` 最后一次实际调用",
+            "019fd527-d402-7c00-8fd2-4d6d0ec932d4",
+            "0084d2e19eeb93d75d38044f6acdd0d9903645b876631c76edad1f6afc00747e",
+            "ABANDON 是唯一",
+            "RESET 另有 `44` 个 visible green spill",
+            "candidate-rejected / repair-budget-exhausted / P3 / 5/5",
+            "不存在 attempt 6",
         ),
         "QS-B1 V15 confirmation and V5-B active production repair gate",
     )
@@ -3213,11 +3219,11 @@ def main() -> None:
         (
             "QUEST-LOG-SEAL-MOTIFS-SIM-V15 / QS-B1 V5-B",
             "旧赭金矿物颜料与放弃项灰暗酒红",
-            "prompt-authorized / execution-blocked / P3 / production 0/5",
-            "production 0/5",
-            "逐字执行 attempt 1",
+            "candidate-rejected / repair-budget-exhausted / P3 / production 5/5",
+            "自动仍为 `10/12`",
+            "禁止\nattempt 6",
         ),
-        "QS-B1 V15 accepted direction and production authorization gate",
+        "QS-B1 V15 accepted direction and exhausted V5-B production gate",
     )
     require(
         sub_art,
@@ -3232,7 +3238,7 @@ def main() -> None:
     require(
         submodules,
         (
-            "当前 `prompt-authorized / execution-blocked / P3 / 0/5`",
+            "candidate-rejected / repair-budget-exhausted / P3 / 5/5",
             "MOTIF.SHARE",
             "哑光低饱和旧赭金矿物颜料",
             "MOTIF.ABANDON",

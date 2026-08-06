@@ -22,17 +22,18 @@
 - 当前已确认模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A`；用户于
   `2026-08-05` 回复“不走figma, 直接下一步”，确认将 ImageGen 布面 donor
   与确定性精确轮廓／Alpha mask 分离的可见方向
-- 最近一次已执行生产正文：`QS-B1 V5-B.r3 / attempt 4`；fixed child session
-  `019fd51f-a58a-7d52-85ed-ba4ebf3b1e1e` 已返回图片并完成
-  `turn.completed`，因此累计实际生图 `4/5`
-- 当前下一执行正文：`QS-B1 V5-B.r4 / attempt 5`；使用固定 Image 1／2
-  fresh regenerate，不上传 attempt 1／2／3／4。用户原授权继续覆盖最多五次
-  实际 ImageGen 和合同内确定性后处理；当前 `repair-prepared / 4/5`
+- 最近一次已执行生产正文：`QS-B1 V5-B.r4 / attempt 5`；fixed child session
+  `019fd527-d402-7c00-8fd2-4d6d0ec932d4` 已返回图片并完成
+  `turn.completed`，因此实际生图已达 `5/5`
+- 当前无下一执行正文：五次上限已耗尽；当前
+  `candidate-rejected / repair-budget-exhausted / P3 / 5/5`，等待用户决定新的
+  source 策略、确定性合同例外或另开版本
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
   `source-accepted / P4 / production 4/5`；menu V5-B motifs
-  `repair-prepared / P3 / simulation ImageGen 0/0 / production 4/5`；runtime
+  `candidate-rejected / repair-budget-exhausted / P3 / simulation ImageGen 0/0 /
+  production 5/5`；runtime
   尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
@@ -41,7 +42,7 @@
   QS-B1 V4-A `candidate-rejected / repair-budget-exhausted / P3 / 5/5`；
   QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
   `0/5 / gated`；V5-B motifs `repair-prepared / P3 / simulation ImageGen 0/0 /
-  production 4/5`
+  production 5/5 / repair-budget-exhausted`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -57,7 +58,7 @@
   因此提前停止，attempt 5 未调用。V14 只用
   本地平面几何预演 donor／crop／mask／composite 分工，用户确认不接受其中
   任何模拟像素
-- QS-B1 V5-B 模拟 ImageGen：`0/0`；production `4/5`；流程错误 `7`。E1
+- QS-B1 V5-B 模拟 ImageGen：`0/0`；production `5/5`；流程错误 `7`。E1
   在 provider 启动前因两个 `-i` 后缺少显式 `--` 参数分隔符而返回
   `Reading prompt from stdin... / No prompt provided via stdin.`；无图片、无
   provider result。E2 已启动固定 child session，但正文提取起点要求首句整行
@@ -83,7 +84,10 @@
   `V5-B.r3 / repair-prepared / 3/5`。attempt 4 虽将七项 green spill 全部降为
   `0`，却把底排按三等分重新居中，导致 RESET／ABANDON 跨格、第八格恢复为
   `5744` 个可见像素，且材料退化为大尺寸实体物件；当前进入最后的
-  `V5-B.r4 / repair-prepared / 4/5`。E7 为审查展示区脚本首次误用
+  `V5-B.r4 / repair-prepared / 4/5`。attempt 5 修正底排四槽并清空第八格，
+  但除 ABANDON 外其余六项仍越出 safe box，RESET 还有 `44` 个封闭绿像素；
+  终态为 `candidate-rejected / repair-budget-exhausted / P3 / 5/5`。E7 为
+  审查展示区脚本首次误用
   `--output` 参数；改用 `--report` 后六场景通过，无新生图调用，单独计为
   流程错误且不改变 production 计数
 - QS-B1 历史流程错误：V1 `1`、V2 `3`、V3 `0`、V4-A `1`、V5-A `1`。均按
@@ -7784,3 +7788,40 @@ pigment with no material volume. Confirm all other pixels are exact #00FF00.
   candidate。这是 `5/5` 最后一次实际调用，不存在 attempt 6。
 - 提交前按标题边界记录精确 bytes／SHA／首句；返回图片即将 production
   计为 `5/5`，之后无论是否通过都必须停止生成循环并完成终局审查。
+
+### QS-B1 V5-B attempt 5 执行与终局审查
+
+- 执行正文／前置 commit：`QS-B1 V5-B.r4 / 45955a2`；正文
+  `7755 bytes`，SHA
+  `13f4bbd07e38f3f15a8950cc770e1b612d04e2ae78a0e8413f64d058f3a838ac`。
+- fixed child session：`019fd527-d402-7c00-8fd2-4d6d0ec932d4`；provider 图片、
+  原样复制与 `turn.completed` 完整，实际 ImageGen 达到 `5/5`。不存在
+  attempt 6。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V5-B/attempt-05/quest_admin_pigment_emblems_worksheet_raw.png`；
+  `1254×1254 RGB`；SHA
+  `0084d2e19eeb93d75d38044f6acdd0d9903645b876631c76edad1f6afc00747e`。
+- 机器审查：`10/12 pass`；review JSON SHA
+  `5c40a86c6f59bd4c30dfccef2a03afbef540b3880fadd0d8c4d3278423647944`。
+  第八空格为 `0` 可见像素，底排已经按前 3 个四槽放置；ABANDON 是唯一
+  `inside_safe_box=true` 的纹章。SHARE／DETAIL／SHOW／HIDE／CLEAN／RESET
+  仍越界，RESET 另有 `44` 个 visible green spill。
+- 根因：固定 child 连续把两排收拢在画布约三分之一／三分之二高度；即使正文
+  把目标改写为像素、百分比、硬 safe box、巨大绿边和故意过小 bbox，仍未
+  稳定服从 `26.5%／70.5%` 行锚点。固定七格 crop 因而截断前六项。该问题
+  不能通过已授权 bbox-fit 修复，因为 bbox-fit 只能缩放 crop 后保留下来的
+  像素，不能恢复已在 cell 外被截断的部分。
+- 美术／语义：两色平面颜料身份已恢复，第八空格和 ABANDON 布局合格；但
+  DETAIL 仍过于规则，SHOW／HIDE 仍近似简化四芒星，RESET 是圆环加独立圆点，
+  与旧公会路线结语义仍有距离。即使放宽 safe-box，也不应直接晋级。
+- 真实排版：`attempt-05.real-layout.png`，SHA
+  `d0e3f4354824efb83d80d6f2dca905f9a2bd2ee7b9685fa9c33a9ea86f62c490`；
+  展示区报告 SHA
+  `5a7637694bbd1662acd3ea191688fa451a5fedc711316be29a1db40088ddd8f3`，
+  `6/6 pass`。这只证明既有 V5-A 布底、七 Button 几何、显隐／禁用／滚动
+  hitbox 合同；不证明被裁断纹章 source 合格。
+- 终局：`candidate-rejected / repair-budget-exhausted / P3 / 5/5`。不写
+  `assets/source`、runtime atlas、addon 或七代理菜单；旧按钮继续 fail-open。
+  下一步需要新的用户选择：允许按全画布连通域重新分配并逐项确定性裁切的
+  source 合同例外，或用七张单对象 source 重新开一个新版本／新预算，或放弃
+  本次纹章方案。当前授权不能自动延伸到任何一种选择。
