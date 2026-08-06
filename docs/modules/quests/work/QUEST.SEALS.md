@@ -8599,20 +8599,19 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 ### QS-B1 V6-A..G production authorization gate
 
 - 当前状态：V6-A／B／C `candidate-reviewed / P3`；V6-D
-  `internal-rejected / repair-prepared / P3`；V6-E..G `prompt-authorized / P3`；
+  `candidate-rejected / repair-budget-exhausted / P3`；V6-E..G
+  `prompt-authorized / P3`；
   用户于 `2026-08-06` 授权整批顺序执行。
 - 固定输入：
   - Image 1：`assets/locked/quests/任务详情面板_视觉基准_v1.png`
     (`03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`)
   - Image 2：`assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
     (`719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`)
-- 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C `3/5`、V6-D `4/5`、
-  V6-E..G 各 `0/5`，合计 `12/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
-  内部通过；V6-D attempt 4 的绿色污染由 12 反增至 22，仍未通过，下一次为
-  V6-D attempt 5 最后一次 frozen edit。其首次启动被 child 擅自改成本地像素脚本，
-  没有 provider 生成证据，已拒绝该本地产物并保持 `4/5`。送入提示词前的提取错误、
-  旧 CLI 模型路由 400、V6-D provider 结果占位文件名首次落位失败与本次错误共
-  `4` 次流程错误；均未新增 ImageGen，依授权不占生图额度。
+- 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C `3/5`、V6-D `5/5`、
+  V6-E..G 各 `0/5`，合计 `13/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
+  内部通过；V6-D attempt 5 仍有 9 个绿色污染像素，五次额度耗尽且不得执行
+  attempt 6。依“单段耗尽不阻止其他独立段”进入 V6-E CLEAN attempt 1。全批目前
+  共 `5` 次流程错误；均未新增 ImageGen，依授权不占生图额度。
 - 用户授权原文：
 
 > 确认授权 QS-B1 V6-A/B/C/D/E/F/G 最终 production 正文；按 A→G 顺序执行；每段每次上传固定 SHA 的 Image 1/2，每段首次无 Image 3，仅允许同段紧邻前次输出在冻结修复边界内作为 Image 3 edit 输入；每段最多 5 次实际 ImageGen 调用，最坏合计 35 次，流程错误不占额度；单段内部通过即停，单段耗尽不阻止其他已授权独立段继续，禁止跨段复用像素；允许按合同执行同轴 1024² 归一化、边缘连通色键、透明 RGB 清零、等比 bbox-fit、七张独立 candidate/source、四态派生与真实排版预演。
@@ -8630,8 +8629,8 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 | V6-A SHARE | 3/5 | 2 | candidate-reviewed / P3 | 单段通过即停；等待整批用户验收 |
 | V6-B DETAIL | 2/5 | 0 | candidate-reviewed / P3 | 单段通过即停；等待整批用户验收 |
 | V6-C SHOW | 3/5 | 0 | candidate-reviewed / P3 | 单段通过即停；授权 bbox-fit 例外 |
-| V6-D HIDE | 4/5 | 2 | internal-rejected / repair-prepared / P3 | attempt 5 retry；同一 r4 与固定 Image 1／2＋attempt 4 Image 3 |
-| V6-E CLEAN | 0/5 | 0 | prompt-authorized | 等待 D 结束 |
+| V6-D HIDE | 5/5 | 3 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
+| V6-E CLEAN | 0/5 | 0 | prompt-authorized | attempt 1；固定 Image 1／2，无 Image 3 |
 | V6-F RESET | 0/5 | 0 | prompt-authorized | 等待 E 结束 |
 | V6-G ABANDON | 0/5 | 0 | prompt-authorized | 等待 F 结束 |
 
@@ -10105,3 +10104,40 @@ or additional mark.
   与相同顺序；只强化独立 Execution instruction，明确禁止本地脚本、Pillow、sips、
   ImageMagick 或其他确定性修图，必须调用一次 fixed child 的内建 `image_gen`。提示词
   正文、修复框、SHA、像素语义与生图计数均不得改变。
+
+### QS-B1 V6-D attempt 5 execution, review, and exhausted stop
+
+- 重试执行前 commit：`aa968b2`；完整正文仍为 `QS-B1 V6-D.r4`，提示词正文
+  `6606 bytes`、SHA-256
+  `003f99a6893b3480a3819cf1fd01c17b27c7ba105e6b59b6aeb9d4953365dd9e`；固定
+  Image 1／2 与紧邻 attempt 4 Image 3 SHA 均未改变，未上传跨段像素。
+- fixed child：`@openai/codex@0.143.0`、`gpt-5.5 / medium`；session
+  `019fd5eb-38b7-7392-a7b3-461f6271e6fc`。强化后的 Execution instruction 明确
+  禁止本地修图并要求内建 `image_gen` 恰好一次；child 明确报告 built-in
+  `image_gen` completed，因此正式计为 V6-D `5/5`、整批 `13/35`。
+- 可恢复落位错误：child 因把“禁止本地修图”误扩展为禁止只读定位／复制，未输出
+  文件路径；父流程随后按 session ID 在只读 generated-image cache 找到同一 provider
+  PNG 并原样复制。记录为 V6-D 流程错误 `3`、全批流程错误 `5`，但不增加额外
+  ImageGen 调用。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V6/V6-D/attempt-05/raw/QS-B1-V6-D.attempt-05.png`；
+  `1254×1254 RGB`；SHA-256
+  `d03f436e5c631a2989e9a1a6206b23f9a20a958f9f471537bab79938aec634e0`。
+- 确定性审查：归一化后可见 bbox `[210,188,844,835]`，位于 safe box；可见绿色
+  污染由 attempt 4 的 22 降为 `9`，但未清零，自动 `8/9`，唯一技术失败仍为
+  `visible_green_spill_is_zero`。9px 全部集中在左下墨带末端附近：`[349,639]`
+  1px 与 `[340,646,343,650]` 8px。review JSON SHA
+  `dc5e186222e100b72c60bc4a1d2722629bbff49feb7f44967dab45c0a3ce9301`。
+- 美术内审：HIDE 身份、四个钝头方向块和中央粗短遮蔽墨带仍可读；但 median
+  `[70,22,7]`、luma p50 `30.977`，较 attempt 2／3 明显更暗，且完整 bbox 再次
+  发生重渲染漂移。attempt 2 是五稿中配色与重量最均衡的视觉候选，attempt 5 只在
+  绿色污染数量上最低；两者均未通过完整技术合同，任何一张都不得内部晋级。
+- runtime 装配：等比 fit 为 `14×14px`，位于冻结 `[8,4,24,18]` content box；
+  六场景 display-region `6/6 pass`、violations `0`，报告 SHA
+  `5ea95a044b36e50d83e2b855c3557182537d63953ea10cc64e37221987836454`；真实排版
+  SHA `0817eb4dd269fd92136d28f484faf9d1cb48556d8212e25df4952b1a5808c17b`。
+- 终态：`candidate-rejected / repair-budget-exhausted / P3 / production 5/5`。
+  不得执行 attempt 6，不写 source、runtime、addon 或 accepted manifest。保留
+  ignored generated 证据供用户后续决定是否授权确定性像素修补、合同例外或新版本。
+- 下一动作：依整批授权的独立段规则，进入 V6-E CLEAN attempt 1；只上传固定
+  Image 1／2，无 Image 3，禁止复用 V6-D 或其他段的任何候选像素。

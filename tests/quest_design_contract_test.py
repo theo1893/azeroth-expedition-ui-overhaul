@@ -3581,7 +3581,7 @@ def main() -> None:
             "HARD FREEZE OUTSIDE FOUR REPAIR BOXES",
             "ONLY ALLOWED REPAIR: FOUR MICRO INPAINT BOXES",
             "twenty-two green-like defect pixels",
-            "V6-D `4/5`、\n  V6-E..G 各 `0/5`",
+            "计为 V6-D `4/5`、整批 `12/35`",
         ),
         "QS-B1 V6-D attempt 4 final four-box edit gate",
     )
@@ -3597,9 +3597,27 @@ def main() -> None:
             "V6-D 保持 `4/5`",
             "流程错误由 `1` 增至 `2`",
             "必须调用一次 fixed child 的内建 `image_gen`",
-            "本次错误共\n  `4` 次流程错误",
         ),
         "QS-B1 V6-D attempt 5 non-counting local-script flow error",
+    )
+    require(
+        seals_work,
+        (
+            "QS-B1 V6-D attempt 5 execution, review, and exhausted stop",
+            "019fd5eb-38b7-7392-a7b3-461f6271e6fc",
+            "built-in\n  `image_gen` completed",
+            "d03f436e5c631a2989e9a1a6206b23f9a20a958f9f471537bab79938aec634e0",
+            "bbox `[210,188,844,835]`",
+            "污染由 attempt 4 的 22 降为 `9`",
+            "median\n  `[70,22,7]`",
+            "attempt 2 是五稿中配色与重量最均衡",
+            "candidate-rejected / repair-budget-exhausted / P3 / production 5/5",
+            "不得执行 attempt 6",
+            "进入 V6-E CLEAN attempt 1",
+            "V6-D `5/5`、\n  V6-E..G 各 `0/5`",
+            "共 `5` 次流程错误",
+        ),
+        "QS-B1 V6-D exhausted stop and V6-E continuation gate",
     )
     require(
         seal_motifs_v5_candidate_reviewer,
