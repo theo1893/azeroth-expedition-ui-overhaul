@@ -31,15 +31,15 @@
   `019fd527-d402-7c00-8fd2-4d6d0ec932d4` 已返回图片并完成
   `turn.completed`，因此实际生图已达 `5/5`
 - 当前 production 正文：V6-A..G 七份单对象完整正文已由用户于
-  `2026-08-06` 以文末原文统一明确授权；当前为 `prompt-authorized / P3`，
-  七段均尚未调用
+  `2026-08-06` 以文末原文统一明确授权；V6-A attempt 1 已退回，当前执行
+  正文为 `V6-A.r1 / repair-prepared / P3`
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
   `source-accepted / P4 / production 4/5`；menu V5-B motifs
   `candidate-rejected / repair-budget-exhausted / P3 / simulation ImageGen 0/0 /
-  production 5/5`；menu V6 motifs `prompt-authorized / P3 / simulation ImageGen
-  0/0 / production 0/35 authorized`；runtime
+  production 5/5`；menu V6 motifs `repair-prepared / P3 / simulation ImageGen
+  0/0 / production 1/35 authorized`；runtime
   尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
@@ -49,7 +49,7 @@
   QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
   `0/5 / gated`；V5-B motifs `repair-prepared / P3 / simulation ImageGen 0/0 /
   production 5/5 / repair-budget-exhausted`；V6 motifs
-  `prompt-authorized / P3 / production 0/35 authorized`
+  `V6-A repair-prepared / P3 / production 1/35 authorized`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -7843,11 +7843,11 @@ pigment with no material volume. Confirm all other pixels are exact #00FF00.
 - 用户于 `2026-08-06` 选择建议方案：另开 V6，把七枚纹章分成七张独立
   single-object source 分别生成。该选择授权本地合同与模拟准备，不等于正式
   ImageGen 授权。
-- 当前状态：`prompt-authorized / P3`；固定正式执行器为
-  `imagegen-0-143-0 / @openai/codex@0.143.0`，尚未启动 provider。
+- 当前状态：`V6-A repair-prepared / P3`；固定正式执行器为
+  `imagegen-0-143-0 / @openai/codex@0.143.0`。
 - 模拟版本：`QUEST-LOG-SEAL-MOTIFS-SIM-V16 / QS-B1 V6`。
-- 模拟 ImageGen：`0/0`；上传 `0`；本地渲染错误 `0`；production
-  `0/35 authorized`。
+- 模拟 ImageGen：`0/0`；本地渲染错误 `0`；production `1/35 authorized`；
+  V6-A `1/5`，其余六段 `0/5`。
 - V5-B 的五张失败工作表和所有派生 crop 全部保留为历史失败证据，但不得成为
   V6 Image 3、source、runtime、裁切输入或视觉权威。V6 首次生成时每段都没有
   edit 输入。
@@ -7905,8 +7905,8 @@ pigment with no material volume. Confirm all other pixels are exact #00FF00.
   打包到计划 `256×128` runtime atlas；七个 `32×22px` Button、provider 映射、
   hidden 收拢、disabled 留位、滚动裁切和旧按钮 fail-open 均不改变。
 - 每个 body 的实际 ImageGen 上限独立为 `5` 次、含首次；流程错误不占额度。
-  七段最坏合计 `35` 次。当前七段均 `0/5`；七份完整、自包含、逐对象正文已
-  提交，并已由用户明确授权其输入、edit 边界和预算。
+  七段最坏合计 `35` 次。V6-A 当前 `1/5`，其余六段 `0/5`；七份完整、自包含、
+  逐对象正文已提交，并已由用户明确授权其输入、edit 边界和预算。
 
 ### V16 本地模拟合同
 
@@ -8572,8 +8572,9 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 ### QS-B1 V6-A..G bounded production and repair envelope
 
 - 固定执行器：仅 `imagegen-0-143-0`；执行顺序固定为 `A → B → C → D → E → F → G`。
-- 七段是互不共享像素的独立正文；每段最多 `5` 次实际 ImageGen 调用，当前均为
-  `0/5`，最坏总计 `35` 次；上传、下载、解析、脚本、网络或工具错误不占调用额度。
+- 七段是互不共享像素的独立正文；每段最多 `5` 次实际 ImageGen 调用，当前
+  V6-A `1/5`、V6-B..G `0/5`，最坏总计 `35` 次；上传、下载、解析、脚本、
+  网络或工具错误不占调用额度。
 - 单段通过内部检查即停止该段；单段耗尽五次后记录为 exhausted 并等待人工审核，
   但不阻止其余已授权独立段继续执行。
 - 每段 attempt 1 只上传固定 SHA 的 Image 1/2；Image 3 仅可使用同段紧邻前一次
@@ -8603,7 +8604,8 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
     (`03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`)
   - Image 2：`assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
     (`719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`)
-- 当前计数：V6-A..G 各 `0/5`，合计 `0/35`；已获 production 授权，尚未调用生图。
+- 当前计数：V6-A `1/5`，V6-B..G 各 `0/5`，合计 `1/35`；V6-A attempt 1
+  已内部退回，当前准备 r1。
 - 用户授权原文：
 
 > 确认授权 QS-B1 V6-A/B/C/D/E/F/G 最终 production 正文；按 A→G 顺序执行；每段每次上传固定 SHA 的 Image 1/2，每段首次无 Image 3，仅允许同段紧邻前次输出在冻结修复边界内作为 Image 3 edit 输入；每段最多 5 次实际 ImageGen 调用，最坏合计 35 次，流程错误不占额度；单段内部通过即停，单段耗尽不阻止其他已授权独立段继续，禁止跨段复用像素；允许按合同执行同轴 1024² 归一化、边缘连通色键、透明 RGB 清零、等比 bbox-fit、七张独立 candidate/source、四态派生与真实排版预演。
@@ -8618,10 +8620,141 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 
 | body | 当前实际生图 | 流程错误 | 当前状态 | 下一动作 |
 | --- | ---: | ---: | --- | --- |
-| V6-A SHARE | 0/5 | 0 | prompt-authorized | attempt 1 generate |
+| V6-A SHARE | 1/5 | 0 | repair-prepared | attempt 2 regenerate；无 Image 3 |
 | V6-B DETAIL | 0/5 | 0 | prompt-authorized | 等待 A 结束 |
 | V6-C SHOW | 0/5 | 0 | prompt-authorized | 等待 B 结束 |
 | V6-D HIDE | 0/5 | 0 | prompt-authorized | 等待 C 结束 |
 | V6-E CLEAN | 0/5 | 0 | prompt-authorized | 等待 D 结束 |
 | V6-F RESET | 0/5 | 0 | prompt-authorized | 等待 E 结束 |
 | V6-G ABANDON | 0/5 | 0 | prompt-authorized | 等待 F 结束 |
+
+### QS-B1 V6-A attempt 1 execution and review
+
+- 执行前 commit：`1c0888f`；完整正文版本：`QS-B1 V6-A`；操作：generate。
+- 固定输入：Image 1／2；无 Image 3；提示词正文 `4535 bytes`、SHA-256
+  `046262c5e8c1b7698fb7b948c53725cc4f572534637223ec2e0750aba39774ec`。
+- fixed child：`@openai/codex@0.143.0`；session
+  `019fd57b-306b-7f70-80f9-cd5dd97c2cfc`；`turn.completed`，实际生图 `1/5`；
+  模型缓存字段和 plugin manifest 警告未阻止生成，不计流程错误。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V6/V6-A/attempt-01/raw/QS-B1-V6-A.attempt-01.png`；
+  `1254×1254 RGB`；SHA-256
+  `1156d694bc5a6d9d12841571bbd878c257b7b7d8422f5dbc8e9d02752211e354`。
+- 确定性审查：同轴 LANCZOS 归一化为 `1024²` 后执行边缘连通色键与透明 RGB
+  清零。可见 bbox `[153,147,887,839]` 越出冻结 safe box
+  `[160,160,864,864]`；封闭绿色残留 `275`，自动 `7/9`，第一技术失败为
+  `visible_bbox_inside_safe_box`。
+- 语义／材料第一失败门禁：候选是两支具实体厚度、羽轴、羽片高光与物体阴影
+  建模的实物羽毛笔，而不是无载体、无三维体积的哑光矿物颜料授印；明亮橙金
+  内部切面也偏离低饱和旧赭矿物色。左羽另有一个封闭绿色孔洞。
+- runtime 装配：等比 fit 为 `13×12px` 并位于冻结 `[7,5,25,17]` content box；
+  六场景真实排版路径 `attempt-01.real-layout.png`，SHA
+  `cd3d9ed40f3661e9065edb90479936d37bfd0a6cb3caef5a8125c615e87d64d1`；
+  display-region `6/6 pass`、报告 SHA
+  `4d3036a802f6efe8b0171f953f06d97181d86f87d03c5a97c2b3131fb85d3236`。
+  这只证明装配几何；不覆盖语义、材料、safe box 或残色失败。
+- 结论：`internal-rejected / repair-prepared / P3 / 1/5`。对象身份、颜色家族与
+  年代语言尚未正确，故禁止把 attempt 1 作为 Image 3；attempt 2 仍只上传固定
+  Image 1／2并 regenerate。
+- 下一版必须保持：SHARE 双旧羽笔＋紧凑结约语义、normal-only、固定输入权威、
+  1024²／`#00FF00`／safe box／runtime box、无 carrier 与全部禁项。
+- 下一版必须改变：把“实物羽毛笔”压平成少量宽笔触组成的单一哑光颜料徽记，
+  去掉羽轴高光、物体厚度、投影和封闭绿色孔；完整可见跨度不得超过
+  `576×384px`，边缘保持纯色键外底。
+
+### QS-B1 V6-A.r1 complete production Prompt — repair-prepared / frozen
+
+Use Image 1 and Image 2 only as fixed visual references. Create exactly one independent
+normal-state SHARE emblem for a circa-2004 vanilla World of Warcraft quest-log
+administration menu. This is one flat bitmap pigment sprite source, not a scene,
+screenshot, UI mockup, worksheet, atlas, button, ribbon, page, physical pair of quills,
+inventory object, or complete interface.
+
+REFERENCE AUTHORITY
+
+Image 1 is the highest visual authority. Inherit its old Azeroth expedition-ledger
+language: substantial but slightly irregular hand-painted shapes, a few broad value
+groups, muted warm age, sparse believable wear, and the visual weight of a formal
+adventurers' guild record from vanilla World of Warcraft. Translate those qualities into
+a tiny flat pigment insignia only. Do not copy its book, pages, leather frame, brass,
+wax seal, ribbons, text, reward slots, buttons, or composition.
+
+Image 2 is a secondary micro-scale reference only. Inherit only its economical stroke
+count, softened hand-painted edges, and tiny-sprite legibility. Do not copy, trace,
+rotate, recolor, or rearrange any triangle, circle, check mark, 2-by-2 layout, position,
+transparency, or pixel from Image 2.
+
+CANVAS, COUNT, AND PLACEMENT
+
+Render an exact square 1024 by 1024 RGB image. Fill every pixel outside the emblem with
+one perfectly uniform exact chroma-key green #00FF00. The green field must be a single
+flat RGB value with no gradient, lighter center, darker corners, texture, lighting,
+vignette, noise, shadow, paper, cloth, wax, metal, frame, guide, label, checkerboard, or
+transparency preview. There must be exactly one visible semantic emblem and no second
+mark. Keep every visible pigment pixel, antialiasing pixel, soft bleed, and worn edge
+strictly inside safe box [160,160,864,864]. Center the complete emblem near [512,512].
+The complete visible emblem must be no larger than 576 pixels wide by 384 pixels high;
+aim for approximately 540 by 350 pixels, leaving unmistakably broad uniform green margin
+on all four sides. Use a direct orthographic front view with no perspective depth.
+
+This source owns only one normal-state pigment emblem. It will later be extracted and
+isotropically fitted into content box [7,5,25,17] inside one 32 by 22 runtime Button.
+Do not draw the Button, hover, pressed, disabled state, Tooltip, text, or provider logic.
+
+EMBLEM ANATOMY
+
+Paint one compact heraldic ink-transfer symbol of two simplified old guild quills
+crossing at visibly unequal angles and bound where they meet by one compact covenant
+knot. The quills are symbolic pigment silhouettes, not depictions of physical feather
+objects. Construct each quill from only a few broad joined ochre pigment masses: a short
+slightly bowed central gesture and two or three coarse blunt feather lobes. Do not model
+separate shafts, cylindrical handles, feather volume, internal ribs, bevels, or long
+pointed tips. Make one quill slightly shorter, lower, and more worn than the other. Keep
+both tips within the compact silhouette. Paint the knot as one small dense irregular
+pigment junction at the crossing, not a three-dimensional tied rope, decorative bow,
+medallion, wax seal, handshake, scroll, share arrow, chain link, or heraldic crest. The
+two quills and knot must read immediately as one connected SHARE emblem at tiny size,
+while the unequal angles prevent a machine-perfect X or crossed-sword reading.
+
+FLAT PIGMENT MATERIAL, COLOR, EDGE, AND ERA
+
+This is a direct imperfect transfer of matte, low-saturation aged ochre mineral guild
+pigment onto an absent carrier. It must look like a flat hand-applied painted or stamped
+mark floating over the green extraction field, never like two actual feathers placed in
+front of a camera. Use one dominant muted earthy ochre family with at most three close,
+broad pigment values. Keep all value variation shallow and irregular: no central ridge,
+shaft highlight, rim light, cast shadow, contact shadow, ambient occlusion, carved edge,
+object thickness, orange-gold shine, polished brass, bright yellow, ivory, white,
+emission, glow, metal, or three-dimensional modeling.
+
+Use only a few broad hand-painted masses with non-constant width, softened imperfect
+outer edges, one or two denser pigment pools near the crossing, and restrained
+two-to-four normalized-source-pixel soft bleed. Any wear must be a shallow paler ochre
+scuff or an edge-connected missing-pigment notch open to the outside silhouette. Do not
+create any enclosed hole, enclosed green island, isolated green speck, or green-tinted
+antialiased edge inside the emblem. The result must feel like native 2004-era Azeroth
+guild-ledger sprite art after downscaling, not a modern illustrated object icon.
+
+STRICT EXCLUSIONS
+
+No physical feather object, realistic quill, cylindrical shaft, wooden handle, carved
+feather, volumetric feather lobes, inventory item, paper texture, cloth strip, ribbon,
+parchment tag, leather plate, wax, metal backing, button face, border, card, frame,
+circular medallion, rivet, bevel, cast shadow, drop shadow, contact shadow, inner or
+outer glow, specular highlight, bright central ridge, text, letters, numbers, runes,
+faction emblem, modern share symbol, crossed swords, perfect X, glass, neon, chrome, 3D
+rendering, photorealism, uniform procedural noise, perfect bilateral symmetry, constant
+vector line weight, Diablo III ornament, Skyrim minimalist menu language, Warhammer
+purity-seal or imperial iconography. Do not place green inside the pigment mark or tint
+its edges green.
+
+FINAL SELF-CHECK
+
+Confirm the canvas contains exactly one compact SHARE pigment emblem and nothing else;
+it reads as two simplified symbolic old-guild quill marks bound by one dense covenant
+knot, not as two physical feathers, crossed weapons, an X, inventory objects, or a modern
+share icon. Confirm the complete visible span is no larger than 576 by 384 pixels and all
+visible or antialiased pixels stay inside [160,160,864,864]. Confirm all remaining pixels
+are uniform exact #00FF00 with no gradient. Confirm the emblem is flat muted matte aged
+ochre mineral pigment with shallow broad value variation, no modeled shaft, thickness,
+highlight, shadow, carrier, text, state, enclosed green hole, or additional mark.

@@ -222,6 +222,8 @@ def render_real_layout(
     spec_path: Path,
     states: dict[str, dict[str, Image.Image]],
     output: Path,
+    board_title: str = "QS-B1 V5-B · production candidate real layout",
+    board_subtitle: str = "accepted V5-A substrate + seven candidate motifs · exact 676×464 Quest Log geometry",
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     renderer = load_module(
         root / "tools/render_quest_log_seal_layered_actions_simulation_v2.py",
@@ -261,8 +263,8 @@ def render_real_layout(
             fill=(67, 47, 32, 155),
             outline=(40, 28, 20, 180),
         )
-    draw.text((30, 22), "QS-B1 V5-B · production candidate real layout", font=fonts["board_title"], fill=(237, 201, 128, 255))
-    draw.text((30, 52), "accepted V5-A substrate + seven candidate motifs · exact 676×464 Quest Log geometry", font=fonts["board_body"], fill=(203, 173, 113, 255))
+    draw.text((30, 22), board_title, font=fonts["board_title"], fill=(237, 201, 128, 255))
+    draw.text((30, 52), board_subtitle, font=fonts["board_body"], fill=(203, 173, 113, 255))
     metrics: list[dict[str, Any]] = []
     for origin, scenario in zip(
         [tuple(value) for value in spec["presentation"]["origins"]],

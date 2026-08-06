@@ -291,6 +291,17 @@ def main() -> None:
     seal_motifs_v5_candidate_reviewer = (
         seal_motifs_v5_candidate_reviewer_path.read_text(encoding="utf-8")
     )
+    seal_motifs_v6_candidate_reviewer_path = (
+        ROOT
+        / "tools"
+        / "review_quest_seal_menu_independent_motif_candidate_v1.py"
+    )
+    assert seal_motifs_v6_candidate_reviewer_path.is_file(), (
+        seal_motifs_v6_candidate_reviewer_path
+    )
+    seal_motifs_v6_candidate_reviewer = (
+        seal_motifs_v6_candidate_reviewer_path.read_text(encoding="utf-8")
+    )
     seal_actions_sim_renderer = (
         ROOT / "tools" / "render_quest_log_seal_actions_simulation_v1.py"
     )
@@ -3260,7 +3271,7 @@ def main() -> None:
             "59/59 pass",
             "七个独立 production body 合同",
             "V5-B 的五张失败工作表",
-            "`0/35 authorized`",
+            "`1/35 authorized`",
             "confirmed / 2026-08-06",
             "V16 确认本身仍",
             "不构成该授权",
@@ -3284,7 +3295,7 @@ def main() -> None:
             "uniform exact #00FF00",
             "QS-B1 V6-A..G prompt completeness audit",
             "QS-B1 V6-A..G bounded production and repair envelope",
-            "V6-A..G 各 `0/5`，合计 `0/35`",
+            "V6-A `1/5`、V6-B..G `0/5`",
             "确认授权 QS-B1 V6-A/B/C/D/E/F/G 最终 production 正文",
             "单段耗尽不阻止其他已授权独立段继续",
             "禁止跨段复用像素",
@@ -3322,6 +3333,40 @@ def main() -> None:
         "content box [8,7,24,16]",
     ):
         assert expected_box in seals_work, f"missing V6 runtime contract: {expected_box}"
+    require(
+        seal_motifs_v6_candidate_reviewer,
+        (
+            "Review one QS-B1 V6 independent single-object motif candidate",
+            "edge_connected_chroma_key",
+            "whole-square proportional LANCZOS to 1024x1024",
+            "visible_bbox_inside_safe_box",
+            "visible_green_spill_is_zero",
+            "runtime_bbox_inside_content_box",
+            "one production candidate + six V16",
+            '"source_written": False',
+            '"runtime_written": False',
+            '"addon_changed": False',
+        ),
+        "QS-B1 V6 independent motif deterministic candidate reviewer",
+    )
+    require(
+        seals_work,
+        (
+            "QS-B1 V6-A attempt 1 execution and review",
+            "019fd57b-306b-7f70-80f9-cd5dd97c2cfc",
+            "1156d694bc5a6d9d12841571bbd878c257b7b7d8422f5dbc8e9d02752211e354",
+            "bbox `[153,147,887,839]`",
+            "封闭绿色残留 `275`",
+            "实物羽毛笔",
+            "internal-rejected / repair-prepared / P3 / 1/5",
+            "禁止把 attempt 1 作为 Image 3",
+            "QS-B1 V6-A.r1 complete production Prompt — repair-prepared / frozen",
+            "flat bitmap pigment sprite source",
+            "must be no larger than 576 pixels wide by 384 pixels high",
+            "create any enclosed hole",
+        ),
+        "QS-B1 V6-A attempt 1 rejection and complete r1 repair gate",
+    )
     require(
         seal_motifs_v5_candidate_reviewer,
         (
