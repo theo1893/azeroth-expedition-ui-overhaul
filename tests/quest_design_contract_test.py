@@ -251,6 +251,15 @@ def main() -> None:
     seal_substrate_sim_v14_spec = json.loads(
         seal_substrate_sim_v14_spec_path.read_text(encoding="utf-8")
     )
+    seal_motifs_sim_v15_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_motifs_simulation_v15.json"
+    )
+    seal_motifs_sim_v15_spec = json.loads(
+        seal_motifs_sim_v15_spec_path.read_text(encoding="utf-8")
+    )
     seal_substrate_v5_candidate_reviewer_path = (
         ROOT
         / "tools"
@@ -3051,6 +3060,73 @@ def main() -> None:
             '"imagegen": "full-frame continuous cloth surface donor only"',
         ),
         "QS-B1 V14 donor/mask deterministic renderer",
+    )
+    assert seal_motifs_sim_v15_spec["version"] == (
+        "QUEST-LOG-SEAL-MOTIFS-SIM-V15"
+    )
+    assert seal_motifs_sim_v15_spec["design_batch"] == "QS-B1 V5-B"
+    assert seal_motifs_sim_v15_spec["base_spec"] == (
+        "tools/specs/quest_log_seal_substrate_simulation_v14.json"
+    )
+    v15_mockup = seal_motifs_sim_v15_spec["visual_mockup"]
+    assert v15_mockup["accepted_substrate_source"] == (
+        "assets/source/quests/qs-b1/QuestLogSealMenuSubstrate_Master_v1.png"
+    )
+    assert v15_mockup["accepted_substrate_sha256"] == (
+        "6b3207f15d961cbef7471399c9bfb725b475385ce9e66648fc435a9e28111d9c"
+    )
+    motif_palette = v15_mockup["motif_palette"]
+    assert max(motif_palette["guild"]["normal"][:3]) <= 180
+    assert min(motif_palette["guild"]["normal"][:3]) > 68
+    assert motif_palette["abandon"]["normal"][0] > (
+        motif_palette["abandon"]["normal"][1]
+    )
+    assert motif_palette["abandon"]["normal"][0] > (
+        motif_palette["abandon"]["normal"][2]
+    )
+    assert seal_motifs_sim_v15_spec["constraints"]["imagegen_calls"] == 0
+    assert seal_motifs_sim_v15_spec["constraints"][
+        "simulation_pixels_are_not_source_or_future_edit_input"
+    ]
+    assert len(seal_motifs_sim_v15_spec["states"]) == 6
+    assert seal_motifs_sim_v15_spec["display_region"]["component"].startswith(
+        "QS-B1/QUEST.LOG.ACTION.SEAL_MENU/SIM.V15/"
+    )
+    require(
+        seal_substrate_sim_v13_renderer,
+        (
+            "accepted_substrate_source",
+            "accepted substrate SHA-256 does not match the V15 contract",
+            'get("motif_palette")',
+            "def materialize_display_region_contract(",
+            '"v15_uses_the_exact_accepted_substrate"',
+            '"v15_abandon_remains_muted_wine"',
+        ),
+        "QS-B1 V15 accepted-substrate motif-palette renderer",
+    )
+    require(
+        seals_work,
+        (
+            "QS-B1 V5-B 七枚独立纹章 — V15 生成前模拟",
+            "simulation-rendered / awaiting-user-confirmation / P2",
+            "旧 V3-B 的近黑公会印墨",
+            "QUEST-LOG-SEAL-MOTIFS-SIM-V15 / QS-B1 V5-B",
+            "51/51 pass",
+            "display-region `6/6 pass`",
+            "ImageGen\n  `0/0`",
+            "本次“继续”不构成该授权",
+        ),
+        "QS-B1 V15 user-visible simulation gate",
+    )
+    require(
+        progress,
+        (
+            "QUEST-LOG-SEAL-MOTIFS-SIM-V15 / QS-B1 V5-B",
+            "旧赭金浅颜料与放弃项灰暗酒红",
+            "simulation-rendered / awaiting-user-confirmation / P2",
+            "几何纹章只是本地占位",
+        ),
+        "QS-B1 V15 progress gate",
     )
     require(
         seal_substrate_v5_candidate_reviewer,

@@ -1,0 +1,124 @@
+{
+  "schema": "aeui.quest-log.seal-motifs.palette-simulation.v1",
+  "base_spec": "tools/specs/quest_log_seal_substrate_simulation_v14.json",
+  "version": "QUEST-LOG-SEAL-MOTIFS-SIM-V15",
+  "design_batch": "QS-B1 V5-B",
+  "support_type": "accepted-dark-substrate-with-seven-independent-muted-pigment-motifs",
+  "outputs": {
+    "_replace": true,
+    "board": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-MOTIFS-SIM-V15/quest_log_seal_motifs_board_v15.png",
+    "report": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-MOTIFS-SIM-V15/quest_log_seal_motifs_report_v15.json",
+    "display_region_contract": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-MOTIFS-SIM-V15/display-region-contract-v15.json",
+    "display_region_report": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-MOTIFS-SIM-V15/display-region-report-v15.json"
+  },
+  "display_region": {
+    "template": "tools/specs/quest_log_seal_actions_simulation_v13_display_region.json",
+    "output": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-MOTIFS-SIM-V15/display-region-contract-v15.json",
+    "component": "QS-B1/QUEST.LOG.ACTION.SEAL_MENU/SIM.V15/accepted-substrate-muted-motif-palette-direction-only",
+    "evidence": {
+      "simulation_spec": "tools/specs/quest_log_seal_motifs_simulation_v15.json",
+      "simulation": "generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-MOTIFS-SIM-V15/quest_log_seal_motifs_board_v15.png",
+      "background_ownership": "the exact accepted V5-A source reduced proportionally to one 32x174 visual-only master; dynamic prefix plus fixed tail; no motif baked in",
+      "motif_ownership": "seven independent transparent future sources and seven independent runtime Buttons; V15 pixels are geometry-only palette placeholders",
+      "direction_only": true,
+      "final_runtime": false
+    }
+  },
+  "presentation": {
+    "title": "QS-B1 V5-B · 已验收深色布底 + 七枚独立旧公会颜料纹章 · V15 真实排版预演",
+    "subtitle": "直接使用 V5-A accepted source 缩至 32×174；普通功能改用克制的旧赭金浅颜料，放弃任务保留暗酒红。只审综合色、可读性、hidden / disabled / scroll；纹章造型仍是本地几何占位。ImageGen 0/0。",
+    "footer_lines": [
+      "V15 的布底像素来自已接受 source；七个纹章仍保持七张独立透明资源和七个独立 Button，隐藏即收拢、disabled 留位、滚出即无命中。",
+      "本次只确认深布上的颜料方向：哑光旧赭金而非发光金属，放弃任务为灰暗酒红；几何纹章、缺损笔触、Alpha 与四态正式像素均不冻结。ImageGen 0/0。"
+    ]
+  },
+  "visual_mockup": {
+    "accepted_substrate_source": "assets/source/quests/qs-b1/QuestLogSealMenuSubstrate_Master_v1.png",
+    "accepted_substrate_sha256": "6b3207f15d961cbef7471399c9bfb725b475385ce9e66648fc435a9e28111d9c",
+    "motif_palette": {
+      "guild": {
+        "normal": [174, 138, 78, 244],
+        "hover": [198, 158, 92, 250],
+        "pressed": [136, 101, 57, 246],
+        "disabled": [116, 103, 82, 150]
+      },
+      "abandon": {
+        "normal": [156, 72, 61, 244],
+        "hover": [176, 84, 70, 250],
+        "pressed": [119, 49, 43, 246],
+        "disabled": [116, 103, 82, 150]
+      },
+      "hover_wash": [201, 154, 89, 24]
+    }
+  },
+  "states": [
+    {
+      "id": "closed-top",
+      "label": "A · 收起：只有 accepted 深色布根被火漆压住",
+      "menu_open": false,
+      "scroll_offset": 0,
+      "visible_actions": ["share", "detail", "show", "hide", "clean", "reset", "abandon"],
+      "disabled_actions": [],
+      "hover_action": null,
+      "expected_enabled_actions": 0
+    },
+    {
+      "id": "open-all-seven",
+      "label": "B · 全显 7 项：旧赭金正常态 / hover，末项暗酒红",
+      "menu_open": true,
+      "scroll_offset": 0,
+      "visible_actions": ["share", "detail", "show", "hide", "clean", "reset", "abandon"],
+      "disabled_actions": [],
+      "hover_action": "show",
+      "expected_enabled_actions": 7
+    },
+    {
+      "id": "open-filtered-five",
+      "label": "C · 隐藏 hide / clean：五枚独立纹章无空洞收拢",
+      "menu_open": true,
+      "scroll_offset": 0,
+      "visible_actions": ["share", "detail", "show", "reset", "abandon"],
+      "disabled_actions": [],
+      "hover_action": "detail",
+      "expected_enabled_actions": 5
+    },
+    {
+      "id": "open-filtered-three-disabled",
+      "label": "D · 仅显 3 项：show 退成灰褐 disabled，酒红仍可辨",
+      "menu_open": true,
+      "scroll_offset": 0,
+      "visible_actions": ["share", "show", "abandon"],
+      "disabled_actions": ["show"],
+      "hover_action": null,
+      "expected_enabled_actions": 2
+    },
+    {
+      "id": "filtered-five-partial-scroll",
+      "label": "E · 5 项 / scroll 52：真实裁切，reset disabled 不命中",
+      "menu_open": true,
+      "scroll_offset": 52,
+      "visible_actions": ["share", "detail", "show", "reset", "abandon"],
+      "disabled_actions": ["reset"],
+      "hover_action": null,
+      "expected_enabled_actions": 3
+    },
+    {
+      "id": "filtered-five-fully-scrolled-out",
+      "label": "F · 5 项 / scroll 208：漆章、布底、纹章与命中区全滚出",
+      "menu_open": true,
+      "scroll_offset": 208,
+      "visible_actions": ["share", "detail", "show", "reset", "abandon"],
+      "disabled_actions": [],
+      "hover_action": null,
+      "expected_enabled_actions": 0
+    }
+  ],
+  "constraints": {
+    "imagegen_calls": 0,
+    "new_bitmap_assets": 0,
+    "accepted_substrate_is_adjacent_runtime_context_only": true,
+    "simulation_pixels_are_not_source_or_future_edit_input": true,
+    "motif_palette_direction_requires_user_confirmation": true,
+    "old_v3_b_near_black_palette_is_not_reused": true
+  }
+}

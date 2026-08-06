@@ -13,6 +13,9 @@
   `QUEST-LOG-SEAL-ACTIONS-SIM-V11 / QS-B1 V2`
 - 当前已确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V12 / QS-B1 V3`；用户于
   `2026-08-05` 回复“可以”
+- 当前待用户确认模拟：`QUEST-LOG-SEAL-MOTIFS-SIM-V15 / QS-B1 V5-B`；它直接
+  使用已接受 V5-A 深色布底，只提议七纹章改用克制旧赭金浅颜料、放弃任务用
+  灰暗酒红；几何纹章像素不构成 source
 - 当前已确认布底模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V13 / QS-B1 V4-A`；
   用户于 `2026-08-05` 回复“接受, 用这一套试试效果”
 - 当前已确认模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A`；用户于
@@ -23,14 +26,17 @@
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
-  `source-accepted / P4 / production 4/5`；menu motifs/runtime 尚未完成
+  `source-accepted / P4 / production 4/5`；menu V5-B motifs
+  `simulation-rendered / awaiting-user-confirmation / P2 / ImageGen 0/0`；runtime
+  尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
   `simulation-confirmed / V3-A repair-budget-exhausted / V3-B gated / P3`；V1 保持
   `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`；
   QS-B1 V4-A `candidate-rejected / repair-budget-exhausted / P3 / 5/5`；
   QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
-  `0/5 / gated`
+  `0/5 / gated`；V5-B motifs `simulation-rendered / awaiting-user-confirmation /
+  P2 / ImageGen 0/0`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -6437,3 +6443,58 @@ modern styling, or extra object.
   单独核对 V3-B 七纹章的有效生产授权／版本门禁。只有七纹章与七个代理 Button
   全部等价、最终 atlas／adapter／provider 展示区和 fresh-checkout package 均
   通过后，完整事务菜单才能进入 `runtime-exported / P5`。
+
+## QS-B1 V5-B 七枚独立纹章 — V15 生成前模拟
+
+### 重开原因与门禁
+
+- 旧 `QS-B1 V3-B` 联合授权明确要求 V3-A 先内部通过；V3-A 实际以 `5/5`
+  失败终止，所以 V3-B 保持 `0/5 / gated`，不能由“继续”或 V5-A 布底验收
+  自动解锁。
+- 旧 V3-B 的近黑公会印墨是为较浅布底准备。V5-A 已接受 source 的主体是低
+  明度烟熏深棕；把近黑纹章叠上去后，真实 `32×22px` 行内对比不足。因此本轮
+  建立新版本 `QS-B1 V5-B`，先只复核深布上的颜料角色，不沿用旧 V3-B 的可
+  执行正文或授权。
+- 当前状态：`simulation-rendered / awaiting-user-confirmation / P2`；ImageGen
+  `0/0`、上传 `0`。没有 production Prompt 授权、source 晋级、runtime 导出、
+  addon 修改或旧 provider Button 隐藏。
+
+### V15 可见方向
+
+- 模拟版本：`QUEST-LOG-SEAL-MOTIFS-SIM-V15 / QS-B1 V5-B`。背景直接读取已
+  接受的
+  `assets/source/quests/qs-b1/QuestLogSealMenuSubstrate_Master_v1.png`，SHA
+  `6b3207f1…11d9c`，按既有合同等比预览为 `32×174px`；不再用 V14 平面几何
+  假布底代替。
+- 普通六项使用哑光、低饱和的旧赭金矿物颜料，而非高亮金属金、发光黄或现代
+  图标白；normal `RGBA 174/138/78/244`，hover 只克制暖亮，pressed 只压暗并
+  下移 `1px`，disabled 退为灰褐。放弃任务单独使用灰暗酒红
+  `RGBA 156/72/61/244`，不把整条布底染红。
+- 七个功能仍是七张未来独立透明 source 和七个独立 `32×22px` Button；隐藏项
+  从 visible order 收拢，disabled 留位但不命中。当前几何纹章只是本地简单
+  占位，用于判断综合色与可读性；其轮廓、缺墨、渗化、Alpha 与正式四态像素
+  均不冻结，也不得成为 source 或后续 ImageGen edit 输入。
+- 真实排版覆盖收起、七项全显、五项收拢、三项含 disabled、部分滚动和完全滚
+  出六种状态。自动合同 `51/51 pass`；V15 专属 display-region `6/6 pass`、
+  violations `0`；七项全显尾端与首个奖励槽仍保留 `32px`。
+
+### 证据与下一步
+
+- 规格：`tools/specs/quest_log_seal_motifs_simulation_v15.json`，SHA
+  `108a97e16d2510867af41781b99583b96d53491ca81b3aa195b2b8ca942d52a2`。
+- 确定性模拟器：`tools/render_quest_log_seal_layered_actions_simulation_v2.py`，
+  SHA `e7291ed9dcae303aa1eb988dc3bb6de38c63ab9190b1214856e44e1eb0cf4e56`；已支持
+  递归 overlay、accepted substrate 精确 SHA 校验、显式纹章综合色合同和 V15
+  展示区证据重绑定。
+- ignored board：
+  `generated/quests/QUEST-SEALS/simulation/QUEST-LOG-SEAL-MOTIFS-SIM-V15/quest_log_seal_motifs_board_v15.png`，
+  SHA `14e2c0fc15234b00d5fbcbc445255f5062f0124332174f96f2c5fa2e72410441`。
+- ignored 机器报告 SHA
+  `8e7b87664528eca2e41492676266dbb76a5da31d88ab8debc5b0a1f35377a0e5`；V15
+  display contract／report SHA 分别为
+  `2051e1ec93c56b1698257639ee306a63c578ad0d9d028cc146a17b73d1ec037d`／
+  `3319e4a634f7c35e4ebd52ac3409c8e1854ddcc2becc30869ffd243c56c4b947`。
+- 下一门禁只问用户是否接受 V15 的“深烟棕 accepted 布底＋克制旧赭金六项＋
+  灰暗酒红放弃项”综合色方向。接受后才重写完整 `QS-B1 V5-B` production
+  Prompt，并另行请求固定输入、每次上传、同循环 edit 边界和最多五次实际
+  ImageGen 调用授权；本次“继续”不构成该授权。

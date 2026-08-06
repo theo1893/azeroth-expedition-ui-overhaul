@@ -91,7 +91,9 @@ def load_simulation_spec(path: Path, root: Path) -> dict[str, Any]:
     base_path = overlay.get("base_spec")
     if not base_path:
         return overlay
-    base = json.loads(resolve(root, base_path).read_text(encoding="utf-8"))
+    # Resolve the whole overlay chain so a focused simulation may inherit the
+    # already-frozen geometry and material contract without copying it again.
+    base = load_simulation_spec(resolve(root, base_path), root)
     return deep_merge(base, overlay)
 
 
@@ -231,6 +233,22 @@ def substrate_source_v5(
 ) -> Image.Image:
     """Build the geometry-only 128x696 donor crop used by the V5 simulation."""
     mockup = spec["visual_mockup"]
+    accepted_source = mockup.get("accepted_substrate_source")
+    if accepted_source:
+        root = Path(spec["_repo_root"])
+        source_path = resolve(root, accepted_source)
+        expected_sha = mockup.get("accepted_substrate_sha256")
+        if expected_sha and sha256(source_path) != expected_sha:
+            raise ValueError("accepted substrate SHA-256 does not match the V15 contract")
+        with Image.open(source_path) as opened:
+            if opened.mode != "RGBA":
+                raise ValueError("accepted substrate must remain RGBA")
+            source = opened.copy()
+        if source.size != tuple(mockup["canonical_source_size"]):
+            raise ValueError("accepted substrate must remain exactly 128x696")
+        # The accepted source already owns the deterministic silhouette and Alpha.
+        # V15 therefore uses the same pixels for both code paths and never redraws it.
+        return source
     width, height = mockup["canonical_source_size"]
     art = Image.new("RGBA", (width, height), tuple(mockup["palette"]["base"]))
     draw = ImageDraw.Draw(art, "RGBA")
@@ -300,23 +318,43 @@ def draw_imperfect_line(
     draw.line(points, fill=color, width=width)
 
 
-def motif_art(action_id: str, state: str) -> Image.Image:
+def motif_art(
+    action_id: str,
+    state: str,
+    spec: dict[str, Any] | None = None,
+) -> Image.Image:
     image = Image.new("RGBA", (32, 22), (0, 0, 0, 0))
     draw = ImageDraw.Draw(image, "RGBA")
     dx, dy = MOTIF_OFFSETS[action_id]
     cx, cy = 16 + dx, 11 + dy
-    if state == "disabled":
-        color = DISABLED
-    elif action_id == "abandon":
-        color = WINE
-    elif state == "hover":
-        color = (73, 39, 20, 250)
-        draw.ellipse((cx - 9, cy - 7, cx + 9, cy + 7), fill=(212, 145, 63, 22))
-    elif state == "pressed":
-        color = (38, 21, 15, 245)
-        cy += 1
+    palette = (
+        spec.get("visual_mockup", {}).get("motif_palette")
+        if spec is not None
+        else None
+    )
+    if palette:
+        family = palette["abandon"] if action_id == "abandon" else palette["guild"]
+        color = tuple(family[state])
+        if state == "hover":
+            draw.ellipse(
+                (cx - 9, cy - 7, cx + 9, cy + 7),
+                fill=tuple(palette["hover_wash"]),
+            )
+        elif state == "pressed":
+            cy += 1
     else:
-        color = INK
+        if state == "disabled":
+            color = DISABLED
+        elif action_id == "abandon":
+            color = WINE
+        elif state == "hover":
+            color = (73, 39, 20, 250)
+            draw.ellipse((cx - 9, cy - 7, cx + 9, cy + 7), fill=(212, 145, 63, 22))
+        elif state == "pressed":
+            color = (38, 21, 15, 245)
+            cy += 1
+        else:
+            color = INK
 
     if action_id == "share":
         draw.polygon([(cx - 1, cy + 2), (cx - 8, cy - 5), (cx - 5, cy + 4)], fill=color)
@@ -432,7 +470,10 @@ def draw_detail_content(
                 visual_state = "hover"
             else:
                 visual_state = "normal"
-            content.alpha_composite(motif_art(action_id, visual_state), (item["box"][0], item["box"][1]))
+            content.alpha_composite(
+                motif_art(action_id, visual_state, spec),
+                (item["box"][0], item["box"][1]),
+            )
 
     sx, sy, sw, sh = layout["seal_visual_content"]
     content.alpha_composite(seal.resize((sw, sh), Image.Resampling.LANCZOS), (sx, sy))
@@ -523,7 +564,10 @@ def contiguous(buttons: list[dict[str, Any]]) -> bool:
 def layered_substrate_art(spec: dict[str, Any], visible_count: int) -> Image.Image:
     art = substrate_art(spec, visible_count, True)
     for index, action in enumerate(spec["actions"][:visible_count]):
-        art.alpha_composite(motif_art(action["id"], "normal"), (0, 12 + index * 22))
+        art.alpha_composite(
+            motif_art(action["id"], "normal", spec),
+            (0, 12 + index * 22),
+        )
     return art
 
 
@@ -737,10 +781,33 @@ def render_zoom_board(
     return zoom_path
 
 
+def materialize_display_region_contract(
+    root: Path,
+    spec: dict[str, Any],
+) -> Path | None:
+    """Rebind a frozen geometry contract to the current visual simulation."""
+    config = spec.get("display_region")
+    if not config:
+        return None
+    template = json.loads(
+        resolve(root, config["template"]).read_text(encoding="utf-8")
+    )
+    template["component"] = config["component"]
+    template["evidence"].update(config["evidence"])
+    output = resolve(root, config["output"])
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(
+        json.dumps(template, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    return output
+
+
 def main() -> None:
     args = parse_args()
     root = args.repo_root.resolve()
     spec = load_simulation_spec(args.spec, root)
+    spec["_repo_root"] = str(root)
     base = load_base_module(root)
     title_path = resolve(root, spec["inputs"]["title_font"])
     body_path = resolve(root, spec["inputs"]["body_font"])
@@ -787,6 +854,7 @@ def main() -> None:
     board_path.parent.mkdir(parents=True, exist_ok=True)
     canvas.save(board_path, "PNG")
     zoom_path = render_zoom_board(root, spec, fonts)
+    display_contract_path = materialize_display_region_contract(root, spec)
 
     by_id = {item["id"]: item for item in metrics}
     closed = by_id["closed-top"]
@@ -881,6 +949,31 @@ def main() -> None:
                 "v5_retains_one_prefix_plus_tail_master": mockup["dynamic_assembly"] == "prefix-plus-tail-from-one-master",
             }
         )
+        if mockup.get("accepted_substrate_source"):
+            accepted_path = resolve(root, mockup["accepted_substrate_source"])
+            palette = mockup.get("motif_palette", {})
+            checks.update(
+                {
+                    "v15_uses_the_exact_accepted_substrate": sha256(accepted_path)
+                    == mockup["accepted_substrate_sha256"],
+                    "v15_motifs_use_a_separate_palette_contract": bool(palette),
+                    "v15_guild_normal_is_lighter_than_the_substrate": min(
+                        palette["guild"]["normal"][:3]
+                    )
+                    > max(mockup["palette"]["base"][:3]),
+                    "v15_guild_normal_remains_muted": max(
+                        palette["guild"]["normal"][:3]
+                    )
+                    <= 180,
+                    "v15_abandon_remains_muted_wine": (
+                        palette["abandon"]["normal"][0]
+                        > palette["abandon"]["normal"][1]
+                        and palette["abandon"]["normal"][0]
+                        > palette["abandon"]["normal"][2]
+                        and max(palette["abandon"]["normal"][:3]) <= 165
+                    ),
+                }
+            )
     report = {
         "schema": "aeui.quest-log.seal-layered-actions.simulation-report.v1",
         "version": spec["version"],
@@ -912,6 +1005,14 @@ def main() -> None:
             "seal_atlas": {"path": spec["inputs"]["seal_atlas"], "sha256": sha256(resolve(root, spec["inputs"]["seal_atlas"]))},
         },
         "board": {"path": spec["outputs"]["board"], "sha256": sha256(board_path)},
+        "display_region_contract": (
+            {
+                "path": spec["display_region"]["output"],
+                "sha256": sha256(display_contract_path),
+            }
+            if display_contract_path is not None
+            else None
+        ),
         "zoom": (
             {"path": spec["outputs"]["zoom"], "sha256": sha256(zoom_path)}
             if zoom_path is not None
@@ -949,6 +1050,34 @@ def main() -> None:
             )
             for value in report["non_authoritative"]
         ]
+        if spec["visual_mockup"].get("accepted_substrate_source"):
+            accepted_path = resolve(
+                root,
+                spec["visual_mockup"]["accepted_substrate_source"],
+            )
+            report["inputs"]["accepted_substrate"] = {
+                "path": spec["visual_mockup"]["accepted_substrate_source"],
+                "sha256": sha256(accepted_path),
+                "source_size": list(source.size),
+                "runtime_preview_size": list(substrate_master_v5(spec).size),
+            }
+            report["asset_ownership"]["motif_palette"] = spec[
+                "visual_mockup"
+            ]["motif_palette"]
+            report["non_authoritative"] = [
+                value
+                for value in report["non_authoritative"]
+                if value
+                not in {
+                    "final seven transparent stamped-ink motif masters",
+                    "the simulated donor surface is flat geometry and does not predict final ImageGen microtexture",
+                    "final substrate folds, stains, edge wear and crop-row blending",
+                }
+            ]
+            report["non_authoritative"].insert(
+                0,
+                "the seven motif shapes and simulated pigment pixels; only their visible palette direction is under review",
+            )
     report_path = resolve(root, spec["outputs"]["report"])
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
