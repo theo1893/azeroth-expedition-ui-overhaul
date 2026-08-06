@@ -8609,10 +8609,10 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 - 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C `3/5`、V6-D `4/5`、
   V6-E..G 各 `0/5`，合计 `12/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
   内部通过；V6-D attempt 4 的绿色污染由 12 反增至 22，仍未通过，下一次为
-  V6-D attempt 5 最后一次 frozen edit
-  regenerate。送入提示词前的提取错误、旧 CLI 模型路由 400 与 V6-D provider
-  结果占位文件名首次落位失败共 `3` 次流程错误；均未新增 ImageGen，依授权不占
-  生图额度。
+  V6-D attempt 5 最后一次 frozen edit。其首次启动被 child 擅自改成本地像素脚本，
+  没有 provider 生成证据，已拒绝该本地产物并保持 `4/5`。送入提示词前的提取错误、
+  旧 CLI 模型路由 400、V6-D provider 结果占位文件名首次落位失败与本次错误共
+  `4` 次流程错误；均未新增 ImageGen，依授权不占生图额度。
 - 用户授权原文：
 
 > 确认授权 QS-B1 V6-A/B/C/D/E/F/G 最终 production 正文；按 A→G 顺序执行；每段每次上传固定 SHA 的 Image 1/2，每段首次无 Image 3，仅允许同段紧邻前次输出在冻结修复边界内作为 Image 3 edit 输入；每段最多 5 次实际 ImageGen 调用，最坏合计 35 次，流程错误不占额度；单段内部通过即停，单段耗尽不阻止其他已授权独立段继续，禁止跨段复用像素；允许按合同执行同轴 1024² 归一化、边缘连通色键、透明 RGB 清零、等比 bbox-fit、七张独立 candidate/source、四态派生与真实排版预演。
@@ -8630,7 +8630,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 | V6-A SHARE | 3/5 | 2 | candidate-reviewed / P3 | 单段通过即停；等待整批用户验收 |
 | V6-B DETAIL | 2/5 | 0 | candidate-reviewed / P3 | 单段通过即停；等待整批用户验收 |
 | V6-C SHOW | 3/5 | 0 | candidate-reviewed / P3 | 单段通过即停；授权 bbox-fit 例外 |
-| V6-D HIDE | 4/5 | 1 | internal-rejected / repair-prepared / P3 | attempt 5 final edit；固定 Image 1／2＋attempt 4 Image 3 |
+| V6-D HIDE | 4/5 | 2 | internal-rejected / repair-prepared / P3 | attempt 5 retry；同一 r4 与固定 Image 1／2＋attempt 4 Image 3 |
 | V6-E CLEAN | 0/5 | 0 | prompt-authorized | 等待 D 结束 |
 | V6-F RESET | 0/5 | 0 | prompt-authorized | 等待 E 结束 |
 | V6-G ABANDON | 0/5 | 0 | prompt-authorized | 等待 F 结束 |
@@ -10088,3 +10088,20 @@ and flat hand-printed character remain intact. Confirm all visible pixels stay i
 [160,160,864,864], with one connected emblem, no carrier, text, state, bevel, highlight,
 shadow, metal, gold, eye-slash, prohibition sign, X, weapon, modern visibility toggle,
 or additional mark.
+
+### QS-B1 V6-D attempt 5 pre-generation flow error E1
+
+- 执行前 commit：`7321310`；完整正文版本：`QS-B1 V6-D.r4`；固定 Image 1／2 与
+  紧邻 attempt 4 Image 3 均正确，child session
+  `019fd5e4-a449-7483-b338-66a6154e0b50` 完整回显正文与三图职责。
+- 错误：child 没有调用内建 `image_gen`，而是声称要做 deterministic pixel repair。
+  首次本地 Python 因 `ModuleNotFoundError: No module named 'PIL'` 失败，随后又以
+  `sips` 加标准库 PNG 脚本写出一个 `1024×1024` 文件，SHA
+  `936ebacda3291c5fd8ad0f0862860802f7655c4b99ebb06f9b2698720ba18de2`。
+- 该文件不是 provider ImageGen 结果，且像素填充不属于用户授权的边缘连通色键、
+  透明 RGB 清零或 bbox-fit；因此不复制进仓库、不进入候选审查、不作为下一轮 Image
+  3，也不计实际 ImageGen。V6-D 保持 `4/5`，流程错误由 `1` 增至 `2`。
+- 恢复边界：以新空临时目录重新启动相同 `QS-B1 V6-D.r4` 正文、相同三张固定输入
+  与相同顺序；只强化独立 Execution instruction，明确禁止本地脚本、Pillow、sips、
+  ImageMagick 或其他确定性修图，必须调用一次 fixed child 的内建 `image_gen`。提示词
+  正文、修复框、SHA、像素语义与生图计数均不得改变。

@@ -3517,7 +3517,7 @@ def main() -> None:
             "dominant dark muted umber-ochre near RGB [116,78,39]",
             "No sharp diamond point, spearhead, arrowhead, four-point star",
             "计为 V6-D `1/5`、整批 `9/35`",
-            "V6-D provider\n  结果占位文件名首次落位失败",
+            "文件落位流程错误：child 首次把 provider 元数据占位名",
         ),
         "QS-B1 V6-D attempt 1 rejection and complete r1 repair gate",
     )
@@ -3584,6 +3584,22 @@ def main() -> None:
             "V6-D `4/5`、\n  V6-E..G 各 `0/5`",
         ),
         "QS-B1 V6-D attempt 4 final four-box edit gate",
+    )
+    require(
+        seals_work,
+        (
+            "QS-B1 V6-D attempt 5 pre-generation flow error E1",
+            "019fd5e4-a449-7483-b338-66a6154e0b50",
+            "ModuleNotFoundError: No module named 'PIL'",
+            "936ebacda3291c5fd8ad0f0862860802f7655c4b99ebb06f9b2698720ba18de2",
+            "不是 provider ImageGen 结果",
+            "不复制进仓库、不进入候选审查",
+            "V6-D 保持 `4/5`",
+            "流程错误由 `1` 增至 `2`",
+            "必须调用一次 fixed child 的内建 `image_gen`",
+            "本次错误共\n  `4` 次流程错误",
+        ),
+        "QS-B1 V6-D attempt 5 non-counting local-script flow error",
     )
     require(
         seal_motifs_v5_candidate_reviewer,
