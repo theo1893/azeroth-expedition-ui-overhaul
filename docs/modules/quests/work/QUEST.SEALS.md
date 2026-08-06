@@ -8598,15 +8598,16 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 
 ### QS-B1 V6-A..G production authorization gate
 
-- 当前状态：V6-A `candidate-reviewed / P3`；V6-B..G `prompt-authorized / P3`；
+- 当前状态：V6-A `candidate-reviewed / P3`；V6-B `repair-prepared / P3`；
+  V6-C..G `prompt-authorized / P3`；
   用户于 `2026-08-06` 授权整批顺序执行。
 - 固定输入：
   - Image 1：`assets/locked/quests/任务详情面板_视觉基准_v1.png`
     (`03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`)
   - Image 2：`assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
     (`719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`)
-- 当前计数：V6-A `3/5`，V6-B..G 各 `0/5`，合计 `3/35`；V6-A attempt 3
-  已内部通过并按单段通过即停，下一段为 V6-B。送入提示词前的提取错误与旧 CLI 模型路由 400
+- 当前计数：V6-A `3/5`、V6-B `1/5`、V6-C..G 各 `0/5`，合计 `4/35`；
+  V6-B attempt 1 已内部退回，当前准备 B.r1。送入提示词前的提取错误与旧 CLI 模型路由 400
   共 `2` 次流程错误，均未触发 ImageGen，依授权不占生图额度。
 - 用户授权原文：
 
@@ -8623,7 +8624,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 | body | 当前实际生图 | 流程错误 | 当前状态 | 下一动作 |
 | --- | ---: | ---: | --- | --- |
 | V6-A SHARE | 3/5 | 2 | candidate-reviewed / P3 | 单段通过即停；等待整批用户验收 |
-| V6-B DETAIL | 0/5 | 0 | prompt-authorized | attempt 1；固定 Image 1／2，无 Image 3 |
+| V6-B DETAIL | 1/5 | 0 | repair-prepared | attempt 2 regenerate；固定 Image 1／2，无 Image 3 |
 | V6-C SHOW | 0/5 | 0 | prompt-authorized | 等待 B 结束 |
 | V6-D HIDE | 0/5 | 0 | prompt-authorized | 等待 C 结束 |
 | V6-E CLEAN | 0/5 | 0 | prompt-authorized | 等待 D 结束 |
@@ -8944,3 +8945,146 @@ enclosed green pixel, or additional mark.
   由用户明确接受后再进入 P4。
 - 下一动作：按授权顺序进入 V6-B DETAIL attempt 1，只上传固定 Image 1／2，无
   Image 3，且禁止复用 V6-A 像素。
+
+### QS-B1 V6-B attempt 1 execution and review
+
+- 执行前 commit：`4962847`；完整正文版本：`QS-B1 V6-B`；操作：generate。
+- 固定输入：Image 1／2；无 Image 3；提示词正文 `4586 bytes`、SHA-256
+  `e23d4ffeaa2516f2c6df8c61e27f2a54754df858987dbc99e9ee0339b480e72a`；未上传或
+  复用 V6-A 像素。
+- fixed child：`@openai/codex@0.143.0`、`gpt-5.5 / medium`；session
+  `019fd593-536b-7891-bbff-2f17a6b4660c`；收到唯一实际图像并
+  `turn.completed`，计为 V6-B `1/5`、整批 `4/35`。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V6/V6-B/attempt-01/raw/QS-B1-V6-B.attempt-01.png`；
+  `1254×1254 RGB`；SHA-256
+  `2a4f1f03eafe2076b1d7c0c894bfb8aba9b835cf760da6bda74290475c787249`。
+- 确定性审查：归一化后可见 bbox `[257,146,773,859]` 同时越过 safe box 的上、
+  下边；outline 内部的大块绿色与折角绿色孔均未和外底连通，可见绿色污染
+  `175333`。自动 `7/9`，第一技术失败为 `visible_bbox_inside_safe_box`；review
+  JSON SHA `8b8d291ad798c43de3689970d95117ec3eaeb0a6d891a55af697010647765b6d`。
+- 语义／材料第一失败门禁：候选是亮金色、有厚度、倒角、高光和阴影的现代空心
+  文件图标；不是实心旧公会账页的扁平颜料授印。两条“记录”也像现代菜单横线，
+  绿色空腔在最终 `10×14px` runtime 仍形成荧光实心区域，完全不可用。颜色 median
+  `[41,233,13]` 由封闭绿色主导。
+- runtime 装配：几何上等比 fit 为 `10×14px`，位于 `[9,4,23,18]`；六场景
+  display-region `6/6 pass`、violations `0`，报告 SHA
+  `36fa1e3fa2de038fda363c75c4737ca1e1778a2085f52cc4fbec3cf1bc8e7e84`。
+  这只证明装配公式，不覆盖 safe box、残色、语义或材料失败。真实排版 SHA
+  `a2579d48e43791208e510f921151b387d95b0b6f22d6cab752153c903872bf39`。
+- 结论：`internal-rejected / repair-prepared / P3 / 1/5`。对象身份、颜色家族与
+  年代语言均未成立，禁止把 attempt 1 作为 Image 3；attempt 2 仍只上传固定
+  Image 1／2并 fresh regenerate。
+- 下一版必须保持：DETAIL 单一账页＋一处短折角＋至多两条记录笔触语义、固定
+  输入权威、normal-only、1024²／safe box／runtime box 及全部禁项。
+- 下一版必须改变：由“金色空心文件轮廓”改成一块完整实心暗赭褐账页剪影；折角
+  和两条记录都作为覆盖在实心底色上的近色平面颜料块，任何内部区域不得显示绿色；
+  删除连续纹理、浮雕、倒角、高光、阴影和现代文件几何。
+
+### QS-B1 V6-B.r1 complete production Prompt — repair-prepared / frozen
+
+Use Image 1 and Image 2 only as fixed visual references. Create exactly one independent
+normal-state DETAIL emblem for a circa-2004 vanilla World of Warcraft quest-log
+administration menu. This is a tiny two-dimensional woodblock-transfer pigment glyph,
+not a scene, screenshot, UI mockup, worksheet, atlas, button, ribbon, page material,
+physical document, inventory object, or complete interface.
+
+REFERENCE AUTHORITY
+
+Image 1 is the highest visual authority. Inherit its old Azeroth expedition-ledger
+language: heavy hand-painted forms, muted earth color, slight asymmetry, sparse wear,
+and the serious weight of a vanilla-era adventurers' guild record. Translate those
+qualities into one small flat administrative pigment glyph only. Do not copy its book,
+pages, leather frame, brass, wax seal, ribbons, text, reward slots, buttons, or
+composition.
+
+Image 2 is a secondary micro-scale reference only. Inherit only its economical stroke
+count, softened hand-painted perimeter, and legibility after severe downscaling. Do not
+copy, trace, rotate, recolor, or rearrange any triangle, circle, check mark, 2-by-2
+layout, position, transparency, or pixel from Image 2.
+
+CANVAS, COUNT, AND PLACEMENT
+
+Render an exact square 1024 by 1024 RGB image. Fill every pixel outside the glyph with
+one perfectly uniform exact chroma-key green #00FF00. The green field must be one flat
+RGB value with no gradient, lighter center, darker corner, texture, lighting, vignette,
+noise, shadow, paper, cloth, wax, metal, frame, guide, label, checkerboard, or
+transparency preview. There must be exactly one visible semantic glyph and no second
+mark. Keep every pigment pixel, antialiasing pixel, soft bleed, and worn edge strictly
+inside safe box [160,160,864,864]. Center the glyph near [512,512]. Keep its complete
+visible span between 400 and 480 pixels wide and between 420 and 500 pixels high, with
+broad exact-green margin on all four sides. Use a direct orthographic front view with
+no perspective.
+
+This source owns only one normal-state pigment glyph. It will later be extracted and
+isotropically fitted into content box [9,4,23,18] inside one 32 by 22 runtime Button.
+Do not draw the Button, hover, pressed, disabled state, Tooltip, text, or provider logic.
+
+EMBLEM ANATOMY
+
+Make one compact solid guild-ledger leaf silhouette. The entire leaf body must be filled
+with pigment from edge to edge; it is not an outline and has no transparent or green
+interior. Give the silhouette a broad near-rectangular body with subtly unequal sides,
+slightly softened corners, and one short clipped turn at the upper-right corner. The
+upper-right turn is an integrated change in the outer silhouette plus one small darker
+flat pigment patch laid over the solid body. It is not a cut-out, green hole, separate
+triangle, lifted paper flap, bevel, or physical fold.
+
+Place exactly two short thick irregular horizontal record strokes on top of the solid
+leaf body. Paint them in the lighter muted ochre value; they are positive pigment marks,
+not gaps, writing, list bullets, or green holes. Make the upper stroke slightly longer
+and the lower stroke slightly shorter and offset. Preserve generous solid dark pigment
+around them. At tiny size the result must read as one old guild record leaf, while its
+weight, asymmetry, filled body, and rough perimeter prevent a modern file, browser,
+application-window, hamburger-menu, clipboard, envelope, or stacked-document reading.
+
+STRICT FLAT-PIGMENT CONSTRUCTION
+
+Render the glyph like a worn two- or three-pass woodblock or wax-stencil transfer. Use
+only three flat broad pigment values with no continuous shading:
+
+- solid body: dark muted umber-ochre approximately RGB [105,69,35];
+- two record strokes and sparse dry wear: muted old ochre approximately RGB [148,104,55];
+- small folded-corner patch and one or two pooled edges: deep umber approximately
+  RGB [72,46,28].
+
+Keep every visible pigment color close to these dark earthy values. Do not use orange,
+gold, yellow, tan, ivory, white, bright highlights, saturated color, or any luminous
+value. Do not create photographic grain, repeated micro-noise, paper texture, carved
+texture, embossing, or material relief. Color changes may occur only as a few broad flat
+patches with shallow value difference, never as a gradient, highlight, central ridge,
+rim light, cast shadow, contact shadow, ambient occlusion, bevel, thickness, or
+three-dimensional modeling.
+
+Use a non-constant hand-printed perimeter with a few coarse edge nicks and restrained
+two-to-four normalized-source-pixel pigment bleed. All internal wear must be painted in
+the lighter ochre value, never removed to green. Any missing-pigment notch must be open
+and connected to the outside silhouette edge. The complete interior of the ledger leaf,
+including behind and around both record strokes and the folded-corner patch, must remain
+pigment colored. No enclosed green island, green window, green crack, isolated green
+speck, green-tinted antialiasing, or green fold hole is allowed.
+
+STRICT EXCLUSIONS
+
+No hollow outline, green interior, physical sheet, literal paper fill, page texture,
+modern file icon, browser or application window, clipboard, envelope, hamburger menu,
+stacked documents, list bullets, separate folded triangle, paper flap, cloth, ribbon,
+wax, leather, metal backing, button face, border, card, frame, medallion, rivet, bevel,
+cast shadow, drop shadow, contact shadow, ambient occlusion, glow, specular highlight,
+continuous gradient, orange-gold color, photographic grain, text, letters, numbers,
+runes, glass, neon, chrome, 3D rendering, photorealism, vector-clean symmetry, perfect
+rectangle, constant line weight, Diablo III ornament, Skyrim minimalist menu language,
+or Warhammer iconography. Do not place green inside the glyph or tint its edges green.
+
+FINAL SELF-CHECK
+
+Confirm the canvas contains exactly one compact DETAIL glyph and nothing else. Confirm
+it is one completely solid dark umber-ochre guild-ledger leaf, with one integrated short
+upper-right turn and exactly two lighter positive record strokes painted on top. Confirm
+there is no hollow outline, transparent interior, green window, physical paper, modern
+file icon, or lifted fold. Confirm the visible span is 400 to 480 pixels wide and 420 to
+500 pixels high, and all visible pixels stay inside [160,160,864,864]. Confirm every
+exterior pixel is uniform exact #00FF00. Confirm the glyph uses only broad flat earthy
+pigment patches near [105,69,35], [148,104,55], and [72,46,28], with no gold brightness,
+continuous texture, gradient, thickness, highlight, shadow, carrier, text, state,
+enclosed green pixel, or additional mark.

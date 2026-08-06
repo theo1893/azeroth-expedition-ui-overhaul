@@ -3406,6 +3406,25 @@ def main() -> None:
         "QS-B1 V6-A internal candidate pass and sequential stop gate",
     )
     require(
+        seals_work,
+        (
+            "QS-B1 V6-B attempt 1 execution and review",
+            "019fd593-536b-7891-bbff-2f17a6b4660c",
+            "2a4f1f03eafe2076b1d7c0c894bfb8aba9b835cf760da6bda74290475c787249",
+            "bbox `[257,146,773,859]`",
+            "可见绿色污染\n  `175333`",
+            "现代空心\n  文件图标",
+            "internal-rejected / repair-prepared / P3 / 1/5",
+            "禁止把 attempt 1 作为 Image 3",
+            "QS-B1 V6-B.r1 complete production Prompt — repair-prepared / frozen",
+            "compact solid guild-ledger leaf silhouette",
+            "exactly two short thick irregular horizontal record strokes",
+            "No hollow outline, green interior",
+            "between 400 and 480 pixels wide",
+        ),
+        "QS-B1 V6-B attempt 1 rejection and complete r1 repair gate",
+    )
+    require(
         seal_motifs_v5_candidate_reviewer,
         (
             "CANVAS = (1024, 1024)",
