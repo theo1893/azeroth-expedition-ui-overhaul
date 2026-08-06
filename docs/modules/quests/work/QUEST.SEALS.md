@@ -24,21 +24,23 @@
   与确定性精确轮廓／Alpha mask 分离的可见方向
 - 最近一次已执行生产正文：`QS-B1 V5-A.r3 / attempt 4`；当前无下一执行正文，
   循环已按内部完整通过提前停止
+- 当前已授权未执行正文：`QS-B1 V5-B`；用户于 `2026-08-06` 明确授权固定
+  Image 1／2、受限同循环 Image 3 edit、最多五次实际 ImageGen 和合同内
+  确定性后处理；当前 `0/5`
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
   `source-accepted / P4 / production 4/5`；menu V5-B motifs
-  `simulation-confirmed / prompt-prepared / awaiting-production-authorization / P2 /
-  simulation ImageGen 0/0 / production 0/5`；runtime 尚未完成
+  `prompt-authorized / P3 / simulation ImageGen 0/0 / production 0/5`；runtime
+  尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
   `simulation-confirmed / V3-A repair-budget-exhausted / V3-B gated / P3`；V1 保持
   `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`；
   QS-B1 V4-A `candidate-rejected / repair-budget-exhausted / P3 / 5/5`；
   QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
-  `0/5 / gated`；V5-B motifs `simulation-confirmed / prompt-prepared /
-  awaiting-production-authorization / P2 / simulation ImageGen 0/0 / production
-  0/5`
+  `0/5 / gated`；V5-B motifs `prompt-authorized / P3 / simulation ImageGen 0/0 /
+  production 0/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -6457,9 +6459,8 @@ modern styling, or extra object.
   明度烟熏深棕；把近黑纹章叠上去后，真实 `32×22px` 行内对比不足。因此本轮
   建立新版本 `QS-B1 V5-B`，先只复核深布上的颜料角色，不沿用旧 V3-B 的可
   执行正文或授权。
-- 当前状态：`simulation-confirmed / prompt-prepared /
-  awaiting-production-authorization / P2`；模拟 ImageGen `0/0`、正式生产
-  `0/5`、上传 `0`。没有 production Prompt 授权、source 晋级、runtime 导出、
+- 当前状态：`prompt-authorized / P3`；模拟 ImageGen `0/0`、正式生产 `0/5`、
+  上传 `0`。production Prompt 已获独立授权；尚无 source 晋级、runtime 导出、
   addon 修改或旧 provider Button 隐藏。
 
 ### V15 可见方向
@@ -6514,17 +6515,16 @@ modern styling, or extra object.
 - 未冻结的像素：V15 本地几何纹章、边缘、缺墨、渗化、Alpha、确切 RGB、
   纹章尺寸与偏心值均只是非权威占位。它们不得成为 source、runtime、
   ImageGen 输入或 edit identity。
-- 当前状态：`simulation-confirmed / prompt-prepared /
-  awaiting-production-authorization / P2`；模拟 ImageGen `0/0`，正式生产
-  `0/5`，上传 `0`。本次回复不授权调用、上传、确定性拆图、source 晋级、
-  runtime 导出、addon 修改或隐藏旧 provider Button。
+- V15 方向确认本身不授权生产；用户随后于 `2026-08-06` 另行授权本节完整
+  V5-B 正文。当前 `prompt-authorized / P3 / production 0/5`；尚无 source
+  晋级、runtime 导出、addon 修改或旧 provider Button 隐藏。
 
 ## QS-B1 V5-B 七枚独立旧赭金／酒红纹章 — production preparation
 
 ### 元数据与固定输入
 
 - 执行器：仅 `imagegen-0-143-0 / @openai/codex@0.143.0`。
-- 当前门禁：`prompt-prepared / awaiting-production-authorization / P2`。
+- 当前门禁：`prompt-authorized / P3 / production 0/5`。
   旧 `QS-B1 V3-B` 的联合授权仍因 V3-A 失败而 gated，不得复用；V5-A
   布底接受也不构成 V5-B 生产授权。
 - 固定 Image 1：
@@ -6615,7 +6615,7 @@ modern styling, or extra object.
 7. `ABANDON`：一根粗短契约绳在中央明确断开，两端有极少量粗糙散纤，中心
    留出安静缺口。不得使用 X、垃圾桶、骷髅、血迹、武器或警告三角。
 
-### 完整 production Prompt — 未授权
+### 完整 production Prompt — 已授权冻结
 
 Use Image 1 and Image 2 only as fixed visual references. Create one production
 worksheet containing exactly seven independent, small, hand-painted quest
@@ -6760,8 +6760,9 @@ uniform exact #00FF00.
 | 反模式与 IP 隔离 | 现代 HUD、暗黑、天际、战锤、金属／发光／载体均排除 |
 | 最终自检 | 数量、位置、综合色、safe box、空格、禁项均显式列出 |
 
-结论：production 正文自包含并通过 Prompt 完整性审计；它仍是
-`prompt-prepared`，不是 `prompt-authorized`。
+结论：production 正文自包含并通过 Prompt 完整性审计；用户已于
+`2026-08-06` 明确授权，当前为 `prompt-authorized / P3 / 0/5`。下方英文
+正文作为执行正文冻结，首次调用必须逐字使用。
 
 ### 五次自主修复边界与审查
 
@@ -6784,15 +6785,32 @@ uniform exact #00FF00.
   奖励前 `32px` 空隙、hidden 收拢、disabled 留位不命中、滚动裁切／hitbox
   一致；任何 provider parity 缺失时旧按钮继续原子 fail-open。
 
-### 独立生产授权门禁
+### V5-B 正式 production 授权冻结点
 
-下一步只接受对上述**完整正文**和固定调用边界的明确授权。可接受的授权原文：
+- 用户授权日期：`2026-08-06`。
+- 用户授权原文：
 
-`确认授权 QS-B1 V5-B 最终 production 正文；允许每次上传固定 SHA 的 Image
-1/2，允许同循环紧邻前次输出仅在冻结修复边界内作为 Image 3 edit 输入；最多
-5 次实际 ImageGen 调用，流程错误不占额度；允许按合同执行同轴 1024²
-归一化、固定七格拆分、边缘连通色键、透明 RGB 清零、等比 bbox-fit、七张
-独立 source、四态派生与真实排版预演。`
+  `确认授权 QS-B1 V5-B 最终 production 正文；允许每次上传固定 SHA 的 Image
+  1/2，允许同循环紧邻前次输出仅在冻结修复边界内作为 Image 3 edit 输入；最多
+  5 次实际 ImageGen 调用，流程错误不占额度；允许按合同执行同轴 1024²
+  归一化、固定七格拆分、边缘连通色键、透明 RGB 清零、等比 bbox-fit、七张
+  独立 source、四态派生与真实排版预演。`
 
-在收到这段或等价的明确授权前，不调用 ImageGen、不上传图片、不写 source、
-不导出 runtime、不改 addon，也不隐藏任何旧 provider Button。
+- 授权时固定输入：
+  - Image 1：
+    `assets/locked/quests/任务详情面板_视觉基准_v1.png`，SHA
+    `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`；
+  - Image 2：
+    `assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`，SHA
+    `719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`；
+  - attempt 1 没有 Image 3；V15 模拟和 V5-A 布底都不上传。
+- 执行环境：Darwin；`/Users/yuanshiyao/miniconda3/envs/py312/bin/python`；
+  Python `3.12.12`；固定执行器
+  `imagegen-0-143-0 / @openai/codex@0.143.0`。
+- 计划 raw 根：
+  `generated/quests/QUEST-SEALS/QS-B1-V5-B/`；attempt 1 写入
+  `attempt-01/`，不得覆盖其他版本。
+- 当前计数：实际 ImageGen `0/5`；流程错误 `0`；上传 `0`。
+- 当前最高状态：`prompt-authorized / P3`。下一步是用上方英文正文逐字执行
+  attempt 1，然后完成范围、语义、风格、像素、四态与六场景真实排版审查。
+  内部通过只到 `candidate-reviewed / P3`，不得自动写 source/runtime/addon。

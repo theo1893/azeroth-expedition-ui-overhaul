@@ -3115,8 +3115,7 @@ def main() -> None:
             "ImageGen\n  `0/0`",
             "V15 用户方向确认 — 2026-08-06",
             "该回复精确确认",
-            "simulation-confirmed / prompt-prepared /",
-            "awaiting-production-authorization / P2",
+            "prompt-authorized / P3 / production 0/5",
             "QS-B1 V5-B 七枚独立旧赭金／酒红纹章 — production preparation",
             "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
             "719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44",
@@ -3125,20 +3124,23 @@ def main() -> None:
             "exactly seven independent",
             "matte, low-saturation aged ochre mineral",
             "muted, greyed, dark old-wine pigment",
-            "prompt-prepared`，不是 `prompt-authorized",
+            "完整 production Prompt — 已授权冻结",
+            "prompt-authorized / P3 / 0/5",
+            "V5-B 正式 production 授权冻结点",
             "确认授权 QS-B1 V5-B 最终 production 正文",
-            "不调用 ImageGen、不上传图片、不写 source",
+            "attempt 1 没有 Image 3",
+            "实际 ImageGen `0/5`；流程错误 `0`",
         ),
-        "QS-B1 V15 confirmation and V5-B prepared production gate",
+        "QS-B1 V15 confirmation and V5-B authorized production gate",
     )
     require(
         progress,
         (
             "QUEST-LOG-SEAL-MOTIFS-SIM-V15 / QS-B1 V5-B",
             "旧赭金矿物颜料与放弃项灰暗酒红",
-            "simulation-confirmed / prompt-prepared / awaiting-production-authorization",
+            "prompt-authorized / P3 / production 0/5",
             "production 0/5",
-            "用户独立授权 V5-B 最终 production 正文",
+            "逐字执行 attempt 1",
         ),
         "QS-B1 V15 accepted direction and production authorization gate",
     )
@@ -3155,7 +3157,7 @@ def main() -> None:
     require(
         submodules,
         (
-            "V5-B 已到 `prompt-prepared / awaiting-production-authorization`",
+            "当前 `prompt-authorized / P3 / 0/5`",
             "MOTIF.SHARE",
             "哑光低饱和旧赭金矿物颜料",
             "MOTIF.ABANDON",
