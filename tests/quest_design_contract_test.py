@@ -3256,16 +3256,72 @@ def main() -> None:
         (
             "QS-B1 V6 七张单对象纹章 source — V16 生成前模拟",
             "QUEST-LOG-SEAL-MOTIFS-SIM-V16 / QS-B1 V6",
-            "simulation-reviewed / P2",
+            "simulation-confirmed / production-draft / P2",
             "59/59 pass",
             "七个独立 production body 合同",
             "V5-B 的五张失败工作表",
             "`0/35 not-authorized`",
-            "用户明确确认具体 `V16` 后",
-            "V16 确认本身不授权任何 ImageGen 调用",
+            "confirmed / 2026-08-06",
+            "V16 确认本身仍",
+            "不授权任何 ImageGen 调用",
         ),
         "QS-B1 V16 seven independent source simulation gate",
     )
+    require(
+        seals_work,
+        (
+            "QS-B1 V6-A..G 最终 production preparation",
+            "QS-B1 V6-A SHARE final production Prompt — awaiting authorization",
+            "QS-B1 V6-B DETAIL final production Prompt — awaiting authorization",
+            "QS-B1 V6-C SHOW final production Prompt — awaiting authorization",
+            "QS-B1 V6-D HIDE final production Prompt — awaiting authorization",
+            "QS-B1 V6-E CLEAN final production Prompt — awaiting authorization",
+            "QS-B1 V6-F RESET final production Prompt — awaiting authorization",
+            "QS-B1 V6-G ABANDON final production Prompt — awaiting authorization",
+            "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
+            "719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44",
+            "safe box [160,160,864,864]",
+            "uniform exact #00FF00",
+            "QS-B1 V6-A..G prompt completeness audit",
+            "QS-B1 V6-A..G bounded production and repair envelope",
+            "V6-A..G 各 `0/5`，合计 `0/35`",
+            "确认授权 QS-B1 V6-A/B/C/D/E/F/G 最终 production 正文",
+            "单段耗尽不阻止其他已授权独立段继续",
+            "禁止跨段复用像素",
+        ),
+        "QS-B1 V6 seven complete production prompts and authorization gate",
+    )
+    v6_prompt_section = seals_work.split(
+        "## QS-B1 V6-A..G 最终 production preparation", 1
+    )[1].split("### QS-B1 V6-A..G prompt completeness audit", 1)[0]
+    for required_heading in (
+        "final production Prompt — awaiting authorization",
+        "REFERENCE AUTHORITY",
+        "CANVAS, COUNT, AND PLACEMENT",
+        "EMBLEM ANATOMY",
+        "MATERIAL, COLOR, EDGE, AND ERA",
+        "STRICT EXCLUSIONS",
+        "FINAL SELF-CHECK",
+    ):
+        assert v6_prompt_section.count(required_heading) == 7, (
+            f"V6 prompt bodies must each contain {required_heading!r}"
+        )
+    assert v6_prompt_section.count(
+        "Use Image 1 and Image 2 only as fixed visual references."
+    ) == 7
+    assert v6_prompt_section.count("exact square 1024 by 1024 RGB image") == 7
+    v6_prompt_flat = " ".join(v6_prompt_section.split())
+    assert v6_prompt_flat.count("safe box [160,160,864,864]") == 7
+    assert v6_prompt_flat.count("inside [160,160,864,864]") == 7
+    for expected_box in (
+        "content box [7,5,25,17]",
+        "content box [9,4,23,18]",
+        "content box [8,4,24,18]",
+        "content box [7,6,25,16]",
+        "content box [7,5,24,17]",
+        "content box [8,7,24,16]",
+    ):
+        assert expected_box in seals_work, f"missing V6 runtime contract: {expected_box}"
     require(
         seal_motifs_v5_candidate_reviewer,
         (
@@ -3297,10 +3353,10 @@ def main() -> None:
         progress,
         (
             "QUEST-LOG-SEAL-MOTIFS-SIM-V16",
-            "simulation-reviewed / P2",
+            "simulation-confirmed / production-draft / P2",
             "production 0/35 not-authorized",
-            "用户确认具体 V16",
             "V6-A..G",
+            "等待\n  明确 production 授权",
         ),
         "QS-B1 V16 current simulation and next gate",
     )
@@ -3330,7 +3386,8 @@ def main() -> None:
         (
             "V6 七张独立 `1024²` 单对象 source",
             "V16",
-            "simulation-reviewed / P2 / production 0/35 not-authorized",
+            "simulation-confirmed / production-draft / P2 / production 0/35 not-authorized",
+            "下一门禁是用户明确授权七段 production 正文与预算",
         ),
         "QS-B1 V16 stable ownership update",
     )

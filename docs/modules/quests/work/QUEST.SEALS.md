@@ -17,10 +17,11 @@
   使用已接受 V5-A 深色布底，并冻结“普通六项使用克制旧赭金矿物颜料、放弃
   任务使用灰暗酒红”的综合色方向。用户于 `2026-08-06` 回复“接受”；几何
   纹章像素仍不构成 source
-- 当前待用户确认模拟：`QUEST-LOG-SEAL-MOTIFS-SIM-V16 / QS-B1 V6`；它不改
+- 当前已确认模拟：`QUEST-LOG-SEAL-MOTIFS-SIM-V16 / QS-B1 V6`；它不改
   V15 的运行时可见方向，只把失败的 `4×2` 工作表改为七张独立 `1024²`
   单对象 production source。内部 `59/59 pass`、展示区 `6/6 pass`、ImageGen
-  `0/0`；当前 `simulation-reviewed / P2`
+  `0/0`；用户于 `2026-08-06` 回复“接受”，当前
+  `simulation-confirmed / production-draft / P2`
 - 当前已确认布底模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V13 / QS-B1 V4-A`；
   用户于 `2026-08-05` 回复“接受, 用这一套试试效果”
 - 当前已确认模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A`；用户于
@@ -29,15 +30,14 @@
 - 最近一次已执行生产正文：`QS-B1 V5-B.r4 / attempt 5`；fixed child session
   `019fd527-d402-7c00-8fd2-4d6d0ec932d4` 已返回图片并完成
   `turn.completed`，因此实际生图已达 `5/5`
-- 当前无 production 执行正文：V5-B 五次上限已耗尽；用户已选择另开 V6
-  七张单对象 source。V16 本地模拟已完成，等待用户确认具体模拟版本；该确认
-  不构成七段 production 授权
+- 当前 production 正文：V6-A..G 七份单对象完整正文已准备，等待统一明确
+  授权。V16 的“接受”只确认生产拓扑，不构成任何 ImageGen 调用授权
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
   `source-accepted / P4 / production 4/5`；menu V5-B motifs
   `candidate-rejected / repair-budget-exhausted / P3 / simulation ImageGen 0/0 /
-  production 5/5`；menu V6 motifs `simulation-reviewed / P2 / simulation ImageGen
+  production 5/5`；menu V6 motifs `simulation-confirmed / production-draft / P2 / simulation ImageGen
   0/0 / production 0/35 not-authorized`；runtime
   尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
@@ -48,7 +48,7 @@
   QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
   `0/5 / gated`；V5-B motifs `repair-prepared / P3 / simulation ImageGen 0/0 /
   production 5/5 / repair-budget-exhausted`；V6 motifs
-  `simulation-reviewed / P2 / production not-authorized`
+  `simulation-confirmed / production-draft / P2 / production not-authorized`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -7842,7 +7842,7 @@ pigment with no material volume. Confirm all other pixels are exact #00FF00.
 - 用户于 `2026-08-06` 选择建议方案：另开 V6，把七枚纹章分成七张独立
   single-object source 分别生成。该选择授权本地合同与模拟准备，不等于正式
   ImageGen 授权。
-- 当前状态：`simulation-reviewed / P2`；固定正式执行器仍为
+- 当前状态：`simulation-confirmed / production-draft / P2`；固定正式执行器仍为
   `imagegen-0-143-0 / @openai/codex@0.143.0`，但本阶段未启动 provider。
 - 模拟版本：`QUEST-LOG-SEAL-MOTIFS-SIM-V16 / QS-B1 V6`。
 - 模拟 ImageGen：`0/0`；上传 `0`；本地渲染错误 `0`；production
@@ -7950,7 +7950,7 @@ pigment with no material volume. Confirm all other pixels are exact #00FF00.
   `display-region-report-v16.json`，SHA
   `06da23db38df12434845d1c8b1538c50c895ed6ad45dc95ac7e7ca35880d7606`；
   六场景 `6/6 pass`、`0` violations。
-- 内部结论：`displayable / simulation-reviewed / P2`。真实结构、对象所有权、
+- 内部结论：`displayable / simulation-confirmed / P2`。真实结构、对象所有权、
   动态收拢、滚动和奖励间距成立；V16 绿色画布中的几何纹章仍明显是非权威
   placeholder，不能据此评价最终纹章美术质量。
 - 未发生：ImageGen、参考上传、production Prompt 授权、候选、source、atlas、
@@ -7958,13 +7958,651 @@ pigment with no material volume. Confirm all other pixels are exact #00FF00.
 
 ### V16 用户方向门禁
 
-- 当前用户结论：`pending`。
+- 当前用户结论：`confirmed / 2026-08-06`；用户在明确“接受后才准备七份完整
+  production Prompt，仍需独立生产授权”的门禁下回复“接受”。
 - 需要确认的唯一新方向：是否接受“七张独立 `1024²` 单对象 source，分别生成、
   分别修复、分别验收，最后装回相同 V15 菜单”的生产拓扑。
 - 已经冻结且无需重新评审：V15 综合色、V5-A 布底、V12 菜单位置／动态长度、
   ScrollChild 裁切、正文不重排、奖励间距和七个 provider Button 所有权。
 - 刻意不确认：本地几何纹章造型、绿色画布像素、笔触、缺墨、磨损、渗化、
   Alpha、最终 RGB 与四态。
-- 用户明确确认具体 `V16` 后，下一步才是为 `V6-A..G` 写七份完整 production
-  Prompt 和紧凑完整性预检，并展示逐段 `5` 次／最坏 `35` 次的独立正式授权
-  正文。V16 确认本身不授权任何 ImageGen 调用。
+- 已确认并写入 production 的可见条款：保持 V15 六赭金一酒红的颜色角色、
+  V5-A 深色布底、V12 菜单位置与动态长度；七个纹章分别拥有单对象 source、
+  修复循环和验收，不改变 ScrollChild 裁切、正文不重排、奖励间距或 provider
+  Button 所有权。
+- 下一门禁：用户查看并明确授权下方 `V6-A..G` 七份最终 production 正文、
+  固定输入、同段 edit 边界和逐段 `5` 次／最坏 `35` 次预算。V16 确认本身仍
+  不授权任何 ImageGen 调用。
+
+## QS-B1 V6-A..G 最终 production preparation
+
+### 固定输入、执行顺序与非输入
+
+- 固定 Image 1：
+  assets/locked/quests/任务详情面板_视觉基准_v1.png，SHA-256
+  03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd。
+  它是全部七段的最高视觉权威，只提供 2004 年前后香草魔兽二维手绘年代、
+  公会卷宗气质、轮廓重量、低饱和暖旧色、宽明暗面与磨损尺度。
+- 固定 Image 2：
+  assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png，SHA-256
+  719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44。
+  它只是小尺寸笔画经济、柔化边缘与缩小辨识力参考；不得复制、描摹、旋转、
+  改色或重排其中三角、圆圈、勾、2×2 布局、位置或像素。
+- V5-A accepted 布底、V15／V16 模拟板、V5-B 五张失败工作表、旧 V3／V4
+  候选和其他历史输出全部不上传。accepted 布底只在候选返回后的本地真实排版
+  中作为邻接 UI。
+- 执行顺序为 V6-A SHARE → V6-B DETAIL → V6-C SHOW → V6-D HIDE →
+  V6-E CLEAN → V6-F RESET → V6-G ABANDON。每段首次只上传固定 Image 1／2；
+  同段紧邻前稿只有在对象身份、综合色与年代语言正确、仅剩局部修复时才可作为
+  Image 3 edit。禁止跨段复用 raw 或候选像素。
+
+### QS-B1 V6-A SHARE final production Prompt — awaiting authorization
+
+Use Image 1 and Image 2 only as fixed visual references. Create exactly one independent
+normal-state SHARE emblem for a circa-2004 vanilla World of Warcraft quest-log
+administration menu. This is one bitmap sprite source, not a scene, screenshot, UI
+mockup, worksheet, atlas, button, ribbon, page, or complete interface.
+
+REFERENCE AUTHORITY
+
+Image 1 is the highest visual authority. Inherit its old Azeroth expedition-ledger
+language: substantial but slightly irregular hand-painted forms, a few broad value
+groups, muted warm age, sparse believable wear, and the visual weight of a formal
+adventurers' guild record from vanilla World of Warcraft. Do not copy its book, pages,
+leather frame, brass, wax seal, ribbons, text, reward slots, buttons, or composition.
+
+Image 2 is a secondary micro-scale reference only. Inherit only its economical stroke
+count, softened hand-painted edges, and tiny-sprite legibility. Do not copy, trace,
+rotate, recolor, or rearrange any triangle, circle, check mark, 2-by-2 layout, position,
+transparency, or pixel from Image 2.
+
+CANVAS, COUNT, AND PLACEMENT
+
+Render an exact square 1024 by 1024 RGB image. Fill every pixel outside the emblem with
+one perfectly uniform exact chroma-key green #00FF00, with no gradient, texture,
+lighting, vignette, noise, shadow, paper, cloth, wax, metal, frame, guide, label,
+checkerboard, or transparency preview. There must be exactly one visible object and no
+second mark. Keep every visible pigment pixel, antialiasing pixel, soft bleed, and worn
+interruption inside safe box [160,160,864,864]. Center the complete emblem near
+[512,512], with a target visible span around 576 by 384 pixels and ample green margin on
+all sides. Use a direct orthographic front view with no perspective depth.
+
+This source owns only one normal-state pigment emblem. It will later be extracted and
+isotropically fitted into content box [7,5,25,17] inside one 32 by 22 runtime Button.
+Do not draw the Button, hover, pressed, disabled state, Tooltip, text, or provider logic.
+
+EMBLEM ANATOMY
+
+Paint two short, broad old guild quills crossing at visibly unequal angles and bound
+where they meet by one compact covenant knot. Each feather mass must be simplified into
+a few coarse, joined lobes that remain readable near 18 by 12 runtime pixels. Make one
+quill slightly shorter and more worn than the other. Their shafts are stout and
+slightly bowed, not long needles; their tips end inside the compact silhouette. The knot
+is a small dense pigment junction, not a decorative bow, medallion, wax seal, handshake,
+scroll, share arrow, chain link, or heraldic crest. The two quills and knot must read as
+one connected semantic emblem.
+
+MATERIAL, COLOR, EDGE, AND ERA
+
+The emblem is a direct imperfect transfer of matte, low-saturation aged ochre mineral
+guild pigment, visibly lighter than the accepted smoked dark-brown cloth used later in
+game but still earthy, restrained, heavy, and old. It is not gold, polished brass,
+bright yellow, orange, ivory, white, emissive, glowing, metallic, or three-dimensional.
+Use only a few broad hand-painted strokes, non-constant width, slightly softened edges,
+one to three controlled missing-pigment interruptions, one or two denser pigment pools
+at bends or the knot, and restrained two-to-four normalized-source-pixel soft bleed.
+Keep the main silhouette immediate after downscaling. The mark must feel like native
+2004-era Azeroth guild-ledger sprite art, not a modern icon.
+
+STRICT EXCLUSIONS
+
+No physical feather object, paper texture, cloth strip, ribbon, parchment tag, leather
+plate, wax, metal backing, button face, border, card, frame, circular medallion, rivet,
+bevel, drop shadow, cast shadow, inner or outer glow, specular highlight, text, letters,
+numbers, runes, faction emblem, modern share symbol, glass, neon, chrome, 3D rendering,
+photorealism, uniform procedural noise, perfect bilateral symmetry, constant vector line
+weight, Diablo III ornament, Skyrim minimalist menu language, Warhammer purity-seal or
+imperial iconography. Do not place green inside the pigment mark or tint its edges green.
+
+FINAL SELF-CHECK
+
+Confirm the canvas contains exactly one and only one connected SHARE emblem; it is two
+short unequal broad quills plus one compact knot; all visible and antialiased pixels stay
+inside [160,160,864,864]; all remaining pixels are uniform exact #00FF00; the pigment is
+muted matte aged ochre and not metal; there is no backing object, text, state, shadow,
+copied Image-2 shape, modern share arrow, or additional mark.
+
+### QS-B1 V6-B DETAIL final production Prompt — awaiting authorization
+
+Use Image 1 and Image 2 only as fixed visual references. Create exactly one independent
+normal-state DETAIL emblem for a circa-2004 vanilla World of Warcraft quest-log
+administration menu. This is one bitmap sprite source, not a scene, screenshot, UI
+mockup, worksheet, atlas, button, ribbon, page material, or complete interface.
+
+REFERENCE AUTHORITY
+
+Image 1 is the highest visual authority. Inherit its old Azeroth expedition-ledger
+language: substantial but slightly irregular hand-painted forms, a few broad value
+groups, muted warm age, sparse believable wear, and the visual weight of a formal
+adventurers' guild record from vanilla World of Warcraft. Do not copy its book, pages,
+leather frame, brass, wax seal, ribbons, text, reward slots, buttons, or composition.
+
+Image 2 is a secondary micro-scale reference only. Inherit only its economical stroke
+count, softened hand-painted edges, and tiny-sprite legibility. Do not copy, trace,
+rotate, recolor, or rearrange any triangle, circle, check mark, 2-by-2 layout, position,
+transparency, or pixel from Image 2.
+
+CANVAS, COUNT, AND PLACEMENT
+
+Render an exact square 1024 by 1024 RGB image. Fill every pixel outside the emblem with
+one perfectly uniform exact chroma-key green #00FF00, with no gradient, texture,
+lighting, vignette, noise, shadow, paper, cloth, wax, metal, frame, guide, label,
+checkerboard, or transparency preview. There must be exactly one visible object and no
+second mark. Keep every visible pigment pixel, antialiasing pixel, soft bleed, and worn
+interruption inside safe box [160,160,864,864]. Center the complete emblem near
+[512,512], with a target visible span around 448 by 448 pixels and ample green margin.
+Use a direct orthographic front view with no perspective depth.
+
+This source owns only one normal-state pigment emblem. It will later be extracted and
+isotropically fitted into content box [9,4,23,18] inside one 32 by 22 runtime Button.
+Do not draw the Button, hover, pressed, disabled state, Tooltip, text, or provider logic.
+
+EMBLEM ANATOMY
+
+Paint one simplified formal guild-ledger leaf as a pigment symbol: a broad, slightly
+irregular near-rectangular page outline with subtly unequal side lengths and one short
+folded upper corner. The fold must be a small integrated turn in the outline, not a
+separate triangle. Add at most two short, thick, uneven internal record strokes to make
+the object read as a quest detail leaf at tiny size; they are abstract pigment strokes,
+not writing. Keep the leaf substantial and compact. It must not resemble a modern file,
+application window, envelope, hamburger menu, browser panel, clipboard, card, stacked
+documents, literal paper object, or icon containing text.
+
+MATERIAL, COLOR, EDGE, AND ERA
+
+The emblem is a direct imperfect transfer of matte, low-saturation aged ochre mineral
+guild pigment, visibly lighter than the accepted smoked dark-brown cloth used later in
+game but still earthy, restrained, heavy, and old. It is not actual parchment, gold,
+brass, bright yellow, orange, ivory, white, emissive, glowing, metallic, beveled, or
+three-dimensional. Use a few broad hand-painted strokes, non-constant width, slightly
+softened edges, one to three controlled missing-pigment interruptions, one or two denser
+pigment pools at corners, and restrained two-to-four normalized-source-pixel soft bleed.
+The silhouette must remain legible around 14 by 14 runtime pixels. Preserve visible
+handmade imbalance instead of perfect office-icon geometry.
+
+STRICT EXCLUSIONS
+
+No physical sheet material, paper fill, page texture, cloth, ribbon, wax, leather,
+metal backing, button face, border, card, frame, medallion, rivet, bevel, drop shadow,
+cast shadow, glow, specular highlight, text, letters, numbers, runes, list bullets,
+modern document glyph, glass, neon, chrome, 3D rendering, photorealism, procedural noise,
+perfect rectangle, perfect symmetry, constant vector line weight, Diablo III ornament,
+Skyrim minimalist menu language, Warhammer iconography. Do not place green inside the
+pigment mark or tint its edges green.
+
+FINAL SELF-CHECK
+
+Confirm the canvas contains exactly one and only one DETAIL emblem; it is one compact
+irregular guild-ledger leaf with one integrated short folded corner and no more than two
+abstract record strokes; all visible and antialiased pixels stay inside
+[160,160,864,864]; all remaining pixels are uniform exact #00FF00; the mark is muted
+matte aged ochre pigment rather than a physical page or metal object; there is no text,
+button, state, shadow, modern file icon, copied Image-2 shape, or additional mark.
+
+### QS-B1 V6-C SHOW final production Prompt — awaiting authorization
+
+Use Image 1 and Image 2 only as fixed visual references. Create exactly one independent
+normal-state SHOW emblem for a circa-2004 vanilla World of Warcraft quest-log
+administration menu. This is one bitmap sprite source, not a scene, screenshot, UI
+mockup, worksheet, atlas, button, ribbon, map, or complete interface.
+
+REFERENCE AUTHORITY
+
+Image 1 is the highest visual authority. Inherit its old Azeroth expedition-ledger
+language: substantial but slightly irregular hand-painted forms, a few broad value
+groups, muted warm age, sparse believable wear, and the visual weight of a formal
+adventurers' guild record from vanilla World of Warcraft. Do not copy its book, pages,
+leather frame, brass, wax seal, ribbons, text, reward slots, buttons, compass ornaments,
+or composition.
+
+Image 2 is a secondary micro-scale reference only. Inherit only its economical stroke
+count, softened hand-painted edges, and tiny-sprite legibility. Do not copy, trace,
+rotate, recolor, or rearrange any triangle, circle, check mark, 2-by-2 layout, position,
+transparency, or pixel from Image 2.
+
+CANVAS, COUNT, AND PLACEMENT
+
+Render an exact square 1024 by 1024 RGB image. Fill every pixel outside the emblem with
+one perfectly uniform exact chroma-key green #00FF00, with no gradient, texture,
+lighting, vignette, noise, shadow, paper, cloth, wax, metal, frame, guide, label,
+checkerboard, or transparency preview. There must be exactly one visible object and no
+second mark. Keep every visible pigment pixel, antialiasing pixel, soft bleed, and worn
+interruption inside safe box [160,160,864,864]. Center the complete emblem near
+[512,512], with a target visible span around 448 by 448 pixels and ample green margin.
+Use a direct orthographic front view with no perspective depth.
+
+This source owns only one normal-state pigment emblem. It will later be extracted and
+isotropically fitted into content box [9,4,23,18] inside one 32 by 22 runtime Button.
+Do not draw the Button, hover, pressed, disabled state, Tooltip, text, map, or provider
+logic.
+
+EMBLEM ANATOMY
+
+Paint one open four-direction expedition-guild compass as a pigment mark. Use four broad,
+coarse, blunt cardinal points around one very small quiet negative center. Make the four
+points visibly related but slightly unequal in length, width, angle, wear, and pigment
+density. Their bases join into one compact connected hub without forming a ring. Keep
+the north point subtly dominant for orientation, but avoid precision. The emblem must
+read as an old guild navigation mark at about 14 by 14 runtime pixels. It is not a star,
+weapon, shuriken, crosshair, sunburst, flower, gem, wind rose, metallic compass object,
+or modern location icon.
+
+MATERIAL, COLOR, EDGE, AND ERA
+
+The emblem is a direct imperfect transfer of matte, low-saturation aged ochre mineral
+guild pigment, visibly lighter than the accepted smoked dark-brown cloth used later in
+game but still earthy, restrained, heavy, and old. It is not gold, polished brass,
+bright yellow, orange, ivory, white, emissive, glowing, metallic, or three-dimensional.
+Use a few broad hand-painted strokes, non-constant width, slightly softened edges, one
+to three controlled missing-pigment interruptions, one or two denser pigment pools near
+the hub, and restrained two-to-four normalized-source-pixel soft bleed. Avoid sharp,
+machine-perfect points and exact radial repetition. The result must feel native to a
+2004-era Azeroth guild ledger.
+
+STRICT EXCLUSIONS
+
+No outer circle, inner ring, letters N/E/S/W, ticks, map grid, coordinates, needle,
+arrowhead, location pin, eye, slash, text, numbers, runes, physical compass casing,
+brass, cloth, ribbon, wax, backing tile, button face, border, card, frame, medallion,
+rivet, bevel, drop shadow, cast shadow, glow, specular highlight, glass, neon, chrome,
+3D rendering, photorealism, uniform procedural noise, perfect fourfold symmetry,
+constant vector line weight, Diablo III ornament, Skyrim minimalist menu language,
+Warhammer iconography. Do not place green inside the pigment mark or tint its edges
+green.
+
+FINAL SELF-CHECK
+
+Confirm the canvas contains exactly one and only one SHOW emblem; it is four broad,
+blunt, slightly unequal cardinal points joined around one very small quiet center with
+no outer ring; all visible and antialiased pixels stay inside [160,160,864,864]; all
+remaining pixels are uniform exact #00FF00; the mark is muted matte aged ochre pigment
+and not metal; it does not read as a star, weapon, crosshair, modern location icon, or
+copied Image-2 shape; there is no backing, text, state, shadow, or additional mark.
+
+### QS-B1 V6-D HIDE final production Prompt — awaiting authorization
+
+Use Image 1 and Image 2 only as fixed visual references. Create exactly one independent
+normal-state HIDE emblem for a circa-2004 vanilla World of Warcraft quest-log
+administration menu. This is one bitmap sprite source, not a scene, screenshot, UI
+mockup, worksheet, atlas, button, ribbon, map, or complete interface.
+
+REFERENCE AUTHORITY
+
+Image 1 is the highest visual authority. Inherit its old Azeroth expedition-ledger
+language: substantial but slightly irregular hand-painted forms, a few broad value
+groups, muted warm age, sparse believable wear, and the visual weight of a formal
+adventurers' guild record from vanilla World of Warcraft. Do not copy its book, pages,
+leather frame, brass, wax seal, ribbons, text, reward slots, buttons, compass ornaments,
+or composition.
+
+Image 2 is a secondary micro-scale reference only. Inherit only its economical stroke
+count, softened hand-painted edges, and tiny-sprite legibility. Do not copy, trace,
+rotate, recolor, or rearrange any triangle, circle, check mark, 2-by-2 layout, position,
+transparency, or pixel from Image 2.
+
+CANVAS, COUNT, AND PLACEMENT
+
+Render an exact square 1024 by 1024 RGB image. Fill every pixel outside the emblem with
+one perfectly uniform exact chroma-key green #00FF00, with no gradient, texture,
+lighting, vignette, noise, shadow, paper, cloth, wax, metal, frame, guide, label,
+checkerboard, or transparency preview. There must be exactly one visible object and no
+second mark. Keep every visible pigment pixel, antialiasing pixel, soft bleed, and worn
+interruption inside safe box [160,160,864,864]. Center the complete emblem near
+[512,512], with a target visible span around 512 by 448 pixels and ample green margin.
+Use a direct orthographic front view with no perspective depth.
+
+This source owns only one normal-state pigment emblem. It will later be extracted and
+isotropically fitted into content box [8,4,24,18] inside one 32 by 22 runtime Button.
+Do not draw the Button, hover, pressed, disabled state, Tooltip, text, map, or provider
+logic.
+
+EMBLEM ANATOMY
+
+Paint an independently formed four-direction expedition-guild compass from the same
+visual family as SHOW: four broad, blunt, slightly unequal cardinal points joined around
+one very small quiet center, with no outer ring. Across that compass place one short,
+quiet, partially worn diagonal veil stroke from lower-left toward upper-right. The veil
+must stay within the compact compass span, retain two or three missing-pigment breaks,
+and leave enough of all four directions visible for the underlying object to remain
+readable. Integrate compass and veil into one connected semantic HIDE mark. It must not
+look like an eye with a slash, prohibition sign, close X, crossed swords, damaged star,
+weapon, modern visibility toggle, or generic disabled icon.
+
+MATERIAL, COLOR, EDGE, AND ERA
+
+The emblem is a direct imperfect transfer of matte, low-saturation aged ochre mineral
+guild pigment, visibly lighter than the accepted smoked dark-brown cloth used later in
+game but still earthy, restrained, heavy, and old. It is not gold, brass, bright yellow,
+orange, ivory, white, emissive, glowing, metallic, or three-dimensional. Use a few broad
+hand-painted strokes, non-constant width, softened edges, controlled missing pigment,
+one or two denser pools near the hub or veil ends, and restrained two-to-four
+normalized-source-pixel soft bleed. Avoid sharp machine-perfect points, exact symmetry,
+and a mechanically straight slash. The result must feel native to a 2004-era Azeroth
+guild ledger.
+
+STRICT EXCLUSIONS
+
+No outer circle, prohibition ring, eye outline, letters, ticks, map grid, coordinates,
+needle, arrowhead, X, text, numbers, runes, physical compass casing, brass, cloth,
+ribbon, wax, backing tile, button face, border, card, frame, medallion, rivet, bevel,
+drop shadow, cast shadow, glow, specular highlight, glass, neon, chrome, 3D rendering,
+photorealism, procedural noise, perfect fourfold symmetry, constant vector line weight,
+Diablo III ornament, Skyrim minimalist menu language, Warhammer iconography. Do not
+place green inside the pigment mark or tint its edges green.
+
+FINAL SELF-CHECK
+
+Confirm the canvas contains exactly one and only one HIDE emblem; it is one irregular
+four-direction guild compass plus one short worn diagonal veil, with no outer circle or
+eye anatomy; all visible and antialiased pixels stay inside [160,160,864,864]; all
+remaining pixels are uniform exact #00FF00; the mark is muted matte aged ochre pigment
+and not metal; it does not read as a prohibition sign, X, eye-slash, weapon, modern
+visibility icon, or copied Image-2 shape; there is no backing, text, state, shadow, or
+additional mark.
+
+### QS-B1 V6-E CLEAN final production Prompt — awaiting authorization
+
+Use Image 1 and Image 2 only as fixed visual references. Create exactly one independent
+normal-state CLEAN emblem for a circa-2004 vanilla World of Warcraft quest-log
+administration menu. This is one bitmap sprite source, not a scene, screenshot, UI
+mockup, worksheet, atlas, button, ribbon, map, or complete interface.
+
+REFERENCE AUTHORITY
+
+Image 1 is the highest visual authority. Inherit its old Azeroth expedition-ledger
+language: substantial but slightly irregular hand-painted forms, a few broad value
+groups, muted warm age, sparse believable wear, and the visual weight of a formal
+adventurers' guild record from vanilla World of Warcraft. Do not copy its book, pages,
+leather frame, brass, wax seal, ribbons, text, reward slots, buttons, or composition.
+
+Image 2 is a secondary micro-scale reference only. Inherit only its economical stroke
+count, softened hand-painted edges, and tiny-sprite legibility. Do not copy, trace,
+rotate, recolor, or rearrange any triangle, circle, check mark, 2-by-2 layout, position,
+transparency, or pixel from Image 2.
+
+CANVAS, COUNT, AND PLACEMENT
+
+Render an exact square 1024 by 1024 RGB image. Fill every pixel outside the emblem with
+one perfectly uniform exact chroma-key green #00FF00, with no gradient, texture,
+lighting, vignette, noise, shadow, paper, cloth, wax, metal, frame, guide, label,
+checkerboard, or transparency preview. There must be exactly one visible semantic emblem
+and no unrelated second mark. Keep every visible pigment pixel, antialiasing pixel, soft
+bleed, and worn interruption inside safe box [160,160,864,864]. Center the complete
+emblem near [512,512], with a target visible span around 576 by 320 pixels and ample
+green margin. Use a direct orthographic front view with no perspective depth.
+
+This source owns only one normal-state pigment emblem. It will later be extracted and
+isotropically fitted into content box [7,6,25,16] inside one 32 by 22 runtime Button.
+Do not draw the Button, hover, pressed, disabled state, Tooltip, text, map, or provider
+logic.
+
+EMBLEM ANATOMY
+
+Paint three swept cartographic trail strokes fanning outward from one compact shared
+motion origin. The three trails are separate pigment strokes but together form one
+semantic emblem. Give them visibly unequal lengths, curves, spacing, thickness, pigment
+density, and endpoints. Let the upper trail bend slightly upward, the middle travel
+more directly, and the lower settle downward, while preserving a coherent left-to-right
+sweeping motion. Use blunt hand-painted ends and one or two small worn gaps. It must read
+as old map routes being cleared away, not as a broom, waves, wind, speed lines, claw
+marks, list, menu, Wi-Fi symbol, or three mechanical parallel bars.
+
+MATERIAL, COLOR, EDGE, AND ERA
+
+The emblem is a direct imperfect transfer of matte, low-saturation aged ochre mineral
+guild pigment, visibly lighter than the accepted smoked dark-brown cloth used later in
+game but still earthy, restrained, heavy, and old. It is not gold, brass, bright yellow,
+orange, ivory, white, emissive, glowing, metallic, or three-dimensional. Use only three
+broad non-constant hand-painted strokes, softened edges, one to three controlled
+missing-pigment interruptions across the set, one or two denser pools at bends, and
+restrained two-to-four normalized-source-pixel soft bleed. Preserve handmade rhythm and
+avoid equal line weights or equal spacing. The silhouette must remain readable around
+18 by 10 runtime pixels and feel native to a 2004-era Azeroth guild ledger.
+
+STRICT EXCLUSIONS
+
+No broom, brush object, waves, water, wind symbol, claw, speed streak, menu bars,
+horizontal list, Wi-Fi arcs, arrowheads, map grid, text, letters, numbers, runes,
+physical trail material, paper, cloth, ribbon, wax, metal backing, button face, border,
+card, frame, medallion, rivet, bevel, drop shadow, cast shadow, glow, specular highlight,
+glass, neon, chrome, 3D rendering, photorealism, repeated procedural noise, three equal
+parallel lines, perfect symmetry, constant vector line weight, Diablo III ornament,
+Skyrim minimalist menu language, Warhammer iconography. Do not place green inside the
+pigment strokes or tint their edges green.
+
+FINAL SELF-CHECK
+
+Confirm the canvas contains exactly one CLEAN emblem made from exactly three intentionally
+unequal swept map-trail strokes sharing one motion origin; all visible and antialiased
+pixels stay inside [160,160,864,864]; all remaining pixels are uniform exact #00FF00;
+the strokes are muted matte aged ochre pigment and not metal; they do not read as waves,
+Wi-Fi, menu bars, speed lines, broom, claw, or copied Image-2 shapes; there is no backing,
+text, state, shadow, or unrelated additional mark.
+
+### QS-B1 V6-F RESET final production Prompt — awaiting authorization
+
+Use Image 1 and Image 2 only as fixed visual references. Create exactly one independent
+normal-state RESET emblem for a circa-2004 vanilla World of Warcraft quest-log
+administration menu. This is one bitmap sprite source, not a scene, screenshot, UI
+mockup, worksheet, atlas, button, ribbon, map, or complete interface.
+
+REFERENCE AUTHORITY
+
+Image 1 is the highest visual authority. Inherit its old Azeroth expedition-ledger
+language: substantial but slightly irregular hand-painted forms, a few broad value
+groups, muted warm age, sparse believable wear, and the visual weight of a formal
+adventurers' guild record from vanilla World of Warcraft. Do not copy its book, pages,
+leather frame, brass, wax seal, ribbons, text, reward slots, buttons, compass ornaments,
+or composition.
+
+Image 2 is a secondary micro-scale reference only. Inherit only its economical stroke
+count, softened hand-painted edges, and tiny-sprite legibility. Do not copy, trace,
+rotate, recolor, or rearrange any triangle, circle, check mark, 2-by-2 layout, position,
+transparency, or pixel from Image 2.
+
+CANVAS, COUNT, AND PLACEMENT
+
+Render an exact square 1024 by 1024 RGB image. Fill every pixel outside the emblem with
+one perfectly uniform exact chroma-key green #00FF00, with no gradient, texture,
+lighting, vignette, noise, shadow, paper, cloth, wax, metal, frame, guide, label,
+checkerboard, or transparency preview. There must be exactly one visible object and no
+second mark. Keep every visible pigment pixel, antialiasing pixel, soft bleed, and worn
+interruption inside safe box [160,160,864,864]. Center the complete emblem near
+[512,512], with a target visible span around 544 by 384 pixels and ample green margin.
+Use a direct orthographic front view with no perspective depth.
+
+This source owns only one normal-state pigment emblem. It will later be extracted and
+isotropically fitted into content box [7,5,24,17] inside one 32 by 22 runtime Button.
+Do not draw the Button, hover, pressed, disabled state, Tooltip, text, map, or provider
+logic.
+
+EMBLEM ANATOMY
+
+Paint one winding expedition route that bends back toward one compact route knot. Begin
+with a stout uneven trail, curve it through an open horseshoe-like return, and let its
+returning end meet or nearly meet a small dense knot offset from the geometric center.
+The path must remain visibly open and asymmetrical; no segment may terminate in an
+arrowhead. Use one connected old-map mark with a clear beginning, return motion, and
+compact destination knot. The knot is part of the route, not a detached dot. It must
+read as rebuilding a guild expedition route, not as a standard refresh, undo, replay,
+loading spinner, power symbol, circular arrow, letter C, snake, spiral, gear, or clock.
+
+MATERIAL, COLOR, EDGE, AND ERA
+
+The emblem is a direct imperfect transfer of matte, low-saturation aged ochre mineral
+guild pigment, visibly lighter than the accepted smoked dark-brown cloth used later in
+game but still earthy, restrained, heavy, and old. It is not gold, brass, bright yellow,
+orange, ivory, white, emissive, glowing, metallic, or three-dimensional. Use one broad
+non-constant route stroke, softened edges, one or two controlled missing-pigment
+interruptions that do not sever the route, one denser pool at the knot, and restrained
+two-to-four normalized-source-pixel soft bleed. Preserve asymmetry and an irregular open
+loop; the silhouette must remain readable around 17 by 12 runtime pixels and feel
+native to a 2004-era Azeroth guild ledger.
+
+STRICT EXCLUSIONS
+
+No arrowhead of any kind, complete circle, standard refresh arrow, undo arrow, replay
+triangle, spiral, letter C, loading ring, power symbol, gear teeth, clock, snake, map
+grid, text, letters, numbers, runes, paper, cloth, ribbon, wax, metal backing, button
+face, border, card, frame, medallion, rivet, bevel, drop shadow, cast shadow, glow,
+specular highlight, glass, neon, chrome, 3D rendering, photorealism, procedural noise,
+perfect symmetry, constant vector line weight, Diablo III ornament, Skyrim minimalist
+menu language, Warhammer iconography. Do not place green inside the pigment mark or tint
+its edges green.
+
+FINAL SELF-CHECK
+
+Confirm the canvas contains exactly one and only one RESET emblem; it is one connected
+asymmetric winding expedition route returning to an integrated compact route knot, with
+an open loop and absolutely no arrowhead; all visible and antialiased pixels stay inside
+[160,160,864,864]; all remaining pixels are uniform exact #00FF00; the mark is muted
+matte aged ochre pigment and not metal; it does not read as refresh, undo, replay,
+spinner, C, spiral, gear, or copied Image-2 shape; there is no backing, text, state,
+shadow, detached dot, or additional mark.
+
+### QS-B1 V6-G ABANDON final production Prompt — awaiting authorization
+
+Use Image 1 and Image 2 only as fixed visual references. Create exactly one independent
+normal-state ABANDON emblem for a circa-2004 vanilla World of Warcraft quest-log
+administration menu. This is one bitmap sprite source, not a scene, screenshot, UI
+mockup, worksheet, atlas, button, ribbon, physical rope, or complete interface.
+
+REFERENCE AUTHORITY
+
+Image 1 is the highest visual authority. Inherit its old Azeroth expedition-ledger
+language: substantial but slightly irregular hand-painted forms, a few broad value
+groups, muted warm age, sparse believable wear, and the visual weight of a formal
+adventurers' guild record from vanilla World of Warcraft. Do not copy its book, pages,
+leather frame, brass, wax seal, ribbons, text, reward slots, buttons, or composition.
+
+Image 2 is a secondary micro-scale reference only. Inherit only its economical stroke
+count, softened hand-painted edges, and tiny-sprite legibility. Do not copy, trace,
+rotate, recolor, or rearrange any triangle, circle, check mark, 2-by-2 layout, position,
+transparency, or pixel from Image 2.
+
+CANVAS, COUNT, AND PLACEMENT
+
+Render an exact square 1024 by 1024 RGB image. Fill every pixel outside the emblem with
+one perfectly uniform exact chroma-key green #00FF00, with no gradient, texture,
+lighting, vignette, noise, shadow, paper, cloth, wax, metal, frame, guide, label,
+checkerboard, or transparency preview. There must be exactly one semantic emblem made
+from two separated halves of one snapped cord and no unrelated mark. Keep every visible
+pigment pixel, antialiasing pixel, soft bleed, and worn interruption inside safe box
+[160,160,864,864]. Center the combined emblem near [512,512], with a target visible span
+around 512 by 288 pixels and ample green margin. Use a direct orthographic front view
+with no perspective depth.
+
+This source owns only one normal-state pigment emblem. It will later be extracted and
+isotropically fitted into content box [8,7,24,16] inside one 32 by 22 runtime Button.
+Do not draw the Button, hover, pressed, disabled state, Tooltip, text, map, or provider
+logic.
+
+EMBLEM ANATOMY
+
+Paint one symbolic mark made from the two separated halves of a short, substantial
+covenant cord snapped at the center. Form each cord half from a coarse, slightly bowed
+pigment stroke aimed toward a calm central gap. Give the two inner broken ends only a
+few large frayed fibers, while keeping the outer ends blunt. Make the halves visibly
+unequal in angle, length, wear, and pressure. They must never cross, touch, or form an X.
+The result must read as a severed guild obligation, not as physical rope, a wound,
+weapon, slash pair, pause mark, quotation marks, equals sign, or warning symbol.
+
+MATERIAL, COLOR, EDGE, AND ERA
+
+The emblem is a direct imperfect transfer of matte, low-saturation greyed dark old-wine
+mineral pigment. It is deliberately distinct from the six aged-ochre utility emblems,
+yet remains restrained, earthy, heavy, and old. It is not bright red, blood red,
+magenta, neon, emissive, glowing, wet, metallic, or three-dimensional. Use two broad
+non-constant hand-painted strokes with softened edges, one to three controlled
+missing-pigment interruptions away from the break, denser pools at one or two bends,
+and restrained two-to-four normalized-source-pixel soft bleed. Preserve a quiet central
+gap and tiny-size readability around 16 by 9 runtime pixels. The result must feel native
+to a 2004-era Azeroth guild ledger.
+
+STRICT EXCLUSIONS
+
+No X, cross, trash can, skull, blood, wound, weapon, sword, broken chain, warning sign,
+exclamation mark, pause symbol, quotation marks, equals sign, physical rope, braid,
+paper, cloth, ribbon, wax, metal backing, button face, border, card, frame, medallion,
+rivet, bevel, drop shadow, cast shadow, glow, specular highlight, glass, neon, chrome,
+3D rendering, photorealism, procedural noise, perfect symmetry, constant vector line
+weight, Diablo III ornament, Skyrim minimalist menu language, or Warhammer iconography.
+Do not place green inside either pigment half or tint its edges green.
+
+FINAL SELF-CHECK
+
+Confirm the canvas contains exactly one semantic ABANDON emblem made from exactly two
+unequal separated halves of one snapped covenant cord; the halves have a calm central
+gap and never touch, cross, or form an X; all visible and antialiased pixels stay inside
+[160,160,864,864]; all remaining pixels are uniform exact #00FF00; the mark is muted
+matte greyed dark old-wine pigment and not blood, metal, or physical rope; it does not
+read as a wound, weapon, slash pair, pause, quotation marks, equals sign, warning, or
+copied Image-2 shape; there is no backing, text, state, shadow, or additional mark.
+
+### QS-B1 V6-A..G prompt completeness audit
+
+| body | 独立对象 / normal state | 专属语义 | runtime content box | prompt 结论 |
+| --- | --- | --- | --- | --- |
+| V6-A SHARE | 单一墨记 | 分岔远征路线 | `[7,5,25,17]` / `32×22` | pass |
+| V6-B DETAIL | 单一墨记 | 展开的档案页角 | `[9,4,23,18]` / `32×22` | pass |
+| V6-C SHOW | 单一墨记 | 四向远征罗盘 | `[9,4,23,18]` / `32×22` | pass |
+| V6-D HIDE | 单一墨记 | 罗盘与磨损遮痕 | `[8,4,24,18]` / `32×22` | pass |
+| V6-E CLEAN | 三笔构成的单一语义墨记 | 被扫开的地图路线 | `[7,6,25,16]` / `32×22` | pass |
+| V6-F RESET | 单一连通墨记 | 回返路线与路线结 | `[7,5,24,17]` / `32×22` | pass |
+| V6-G ABANDON | 两半构成的单一语义墨记 | 断开的盟约绳记 | `[8,7,24,16]` / `32×22` | pass |
+
+七段正文均为独立、完整、可单独提交的 production prompt；没有依赖“同上”或
+隐含上下文。每段都明确了唯一对象与 normal state、两张固定参考图的权限顺序、
+1024² RGB 画布、精确 `#00FF00` 外底色、`[160,160,864,864]` 安全框、目标跨度、
+运行时 content box、语义结构、材质与时代、颜色、微缩可读性、严格排除项和最终
+self-check。所有正文都禁止 carrier、按钮底板、文字、状态图、阴影和完整 UI；
+不要求拉伸、平铺、重复或无缝拼接，后处理只允许保持纵横比的 bbox-fit。
+
+### QS-B1 V6-A..G bounded production and repair envelope
+
+- 固定执行器：仅 `imagegen-0-143-0`；执行顺序固定为 `A → B → C → D → E → F → G`。
+- 七段是互不共享像素的独立正文；每段最多 `5` 次实际 ImageGen 调用，当前均为
+  `0/5`，最坏总计 `35` 次；上传、下载、解析、脚本、网络或工具错误不占调用额度。
+- 单段通过内部检查即停止该段；单段耗尽五次后记录为 exhausted 并等待人工审核，
+  但不阻止其余已授权独立段继续执行。
+- 每段 attempt 1 只上传固定 SHA 的 Image 1/2；Image 3 仅可使用同段紧邻前一次
+  输出，并且仅当语义、颜色家族与时代已经正确、缺陷严格局限在冻结修复边界内时
+  才可作为 edit 输入。
+- 禁止跨段复用任何生成像素；禁止上传 V5-A substrate、V5-B 失败正文、V15/V16
+  模拟图或更早失败候选作为参考。
+- 冻结不可变项：功能语义、normal state、固定参考图及其 authority、1024² RGB、
+  `#00FF00`、安全框、每段专属 anatomy、颜色家族、无 carrier、runtime content box。
+- 循环内允许修复项仅限：对象居中与尺度、笔画粗细与不规则度、磨损密度、断口或
+  间距清晰度、边缘绿色污染、禁用细节的局部去除，以及不会改变语义的微小轮廓修复。
+- 若需要改变对象身份、构图语义、参考图、颜色家族、状态数量、载体结构或任何
+  冻结项，必须停止并重新获得授权。
+- 每次候选先进行整张 1024² 源图审核；候选通过后才允许确定性执行：边缘连通色键、
+  透明 RGB 清零、保持纵横比的 bbox-fit、七张独立 candidate/source、四态派生，
+  以及使用真实字体、真实文本和新 UI 的真实排版预演。
+- 预演必须复核 V16 的六类显示区域：默认列表、多行拥挤、缺失可选 provider、
+  hover/pressed、Tooltip、滚动到菜单消失；任何一项越界或遮挡正文都不得进入验收。
+- 在最终视觉与真实排版预演获得用户接受前，不改 source/runtime/addon，不宣称实机
+  验证完成。
+
+### QS-B1 V6-A..G production authorization gate
+
+- 当前状态：`simulation-confirmed / production-draft / P2`。
+- 固定输入：
+  - Image 1：`assets/locked/quests/任务详情面板_视觉基准_v1.png`
+    (`03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`)
+  - Image 2：`assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
+    (`719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`)
+- 当前计数：V6-A..G 各 `0/5`，合计 `0/35`；尚未获得 production 授权，未调用生图。
+- 进入执行所需的精确授权文本：
+
+> 确认授权 QS-B1 V6-A/B/C/D/E/F/G 最终 production 正文；按 A→G 顺序执行；每段每次上传固定 SHA 的 Image 1/2，每段首次无 Image 3，仅允许同段紧邻前次输出在冻结修复边界内作为 Image 3 edit 输入；每段最多 5 次实际 ImageGen 调用，最坏合计 35 次，流程错误不占额度；单段内部通过即停，单段耗尽不阻止其他已授权独立段继续，禁止跨段复用像素；允许按合同执行同轴 1024² 归一化、边缘连通色键、透明 RGB 清零、等比 bbox-fit、七张独立 candidate/source、四态派生与真实排版预演。
