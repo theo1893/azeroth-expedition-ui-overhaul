@@ -56,6 +56,10 @@
   因此提前停止，attempt 5 未调用。V14 只用
   本地平面几何预演 donor／crop／mask／composite 分工，用户确认不接受其中
   任何模拟像素
+- QS-B1 V5-B 模拟 ImageGen：`0/0`；production `0/5`；流程错误 `1`。E1
+  在 provider 启动前因两个 `-i` 后缺少显式 `--` 参数分隔符而返回
+  `Reading prompt from stdin... / No prompt provided via stdin.`；无图片、无
+  provider result，不占实际生图额度
 - QS-B1 历史流程错误：V1 `1`、V2 `3`、V3 `0`、V4-A `1`、V5-A `1`。均按
   “无生成证据才不占额度”记录
 - tracked source：
@@ -6810,7 +6814,14 @@ uniform exact #00FF00.
 - 计划 raw 根：
   `generated/quests/QUEST-SEALS/QS-B1-V5-B/`；attempt 1 写入
   `attempt-01/`，不得覆盖其他版本。
-- 当前计数：实际 ImageGen `0/5`；流程错误 `0`；上传 `0`。
+- 当前计数：实际 ImageGen `0/5`；流程错误 `1`；已尝试上传固定 Image 1／2
+  一次，但进程在生成前失败且无 provider 生成证据。
 - 当前最高状态：`prompt-authorized / P3`。下一步是用上方英文正文逐字执行
   attempt 1，然后完成范围、语义、风格、像素、四态与六场景真实排版审查。
   内部通过只到 `candidate-reviewed / P3`，不得自动写 source/runtime/addon。
+
+### V5-B 流程错误
+
+| 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
+|---:|---|---|---|---|---|
+| E1 | `QS-B1 V5-B` / `e65c7c1` | 无 provider session/result | 固定 child 在上传参数解析阶段输出 `Reading prompt from stdin...` 与 `No prompt provided via stdin.` 后以 `1` 退出；`attempt-01/` 无任何文件，无法证明生成作业启动 | 保持两张固定输入、顺序、SHA 与已授权正文完全不变；只在最后一个 `-i` 后加入标准 `--` 参数分隔符，再把完整正文作为单一位置参数传入 | 流程错误，不占额度；仍为 `0/5` |
