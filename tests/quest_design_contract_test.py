@@ -3108,25 +3108,60 @@ def main() -> None:
         seals_work,
         (
             "QS-B1 V5-B 七枚独立纹章 — V15 生成前模拟",
-            "simulation-rendered / awaiting-user-confirmation / P2",
             "旧 V3-B 的近黑公会印墨",
             "QUEST-LOG-SEAL-MOTIFS-SIM-V15 / QS-B1 V5-B",
             "51/51 pass",
             "display-region `6/6 pass`",
             "ImageGen\n  `0/0`",
-            "本次“继续”不构成该授权",
+            "V15 用户方向确认 — 2026-08-06",
+            "该回复精确确认",
+            "simulation-confirmed / prompt-prepared /",
+            "awaiting-production-authorization / P2",
+            "QS-B1 V5-B 七枚独立旧赭金／酒红纹章 — production preparation",
+            "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
+            "719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44",
+            "已接受 V5-A 布底不上传给 ImageGen",
+            "Use Image 1 and Image 2 only as fixed visual references.",
+            "exactly seven independent",
+            "matte, low-saturation aged ochre mineral",
+            "muted, greyed, dark old-wine pigment",
+            "prompt-prepared`，不是 `prompt-authorized",
+            "确认授权 QS-B1 V5-B 最终 production 正文",
+            "不调用 ImageGen、不上传图片、不写 source",
         ),
-        "QS-B1 V15 user-visible simulation gate",
+        "QS-B1 V15 confirmation and V5-B prepared production gate",
     )
     require(
         progress,
         (
             "QUEST-LOG-SEAL-MOTIFS-SIM-V15 / QS-B1 V5-B",
-            "旧赭金浅颜料与放弃项灰暗酒红",
-            "simulation-rendered / awaiting-user-confirmation / P2",
-            "几何纹章只是本地占位",
+            "旧赭金矿物颜料与放弃项灰暗酒红",
+            "simulation-confirmed / prompt-prepared / awaiting-production-authorization",
+            "production 0/5",
+            "用户独立授权 V5-B 最终 production 正文",
         ),
-        "QS-B1 V15 progress gate",
+        "QS-B1 V15 accepted direction and production authorization gate",
+    )
+    require(
+        sub_art,
+        (
+            "普通六项使用哑光、低饱和的旧赭金矿物公会颜料",
+            "只有放弃任务使用灰暗、退饱和的旧酒红",
+            "用户于 `2026-08-06` 回复“接受”",
+            "V15 本地几何纹章像素",
+        ),
+        "QS-B1 V15 stable motif palette baseline",
+    )
+    require(
+        submodules,
+        (
+            "V5-B 已到 `prompt-prepared / awaiting-production-authorization`",
+            "MOTIF.SHARE",
+            "哑光低饱和旧赭金矿物颜料",
+            "MOTIF.ABANDON",
+            "灰暗、退饱和的旧酒红颜料",
+        ),
+        "QS-B1 V15 motif component ownership",
     )
     require(
         seal_substrate_v5_candidate_reviewer,

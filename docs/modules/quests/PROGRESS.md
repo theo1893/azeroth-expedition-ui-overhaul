@@ -213,6 +213,13 @@
   `source-accepted / P4 / 4/5`；流程错误仍为 `1`，按通过即停保留 attempt 5
   未调用。tracked source 与 manifest 已写入 `assets/source/quests/qs-b1/`，
   跨设备 handoff 已消费；尚无 runtime 或 addon 改动。
+  V15 随后直接使用该 accepted source 完成六态真实排版。用户于
+  `2026-08-06` 在明确“接受只确认综合色、正式生成仍需独立授权”的门禁下
+  回复“接受”，因此六项哑光低饱和旧赭金矿物颜料与放弃项灰暗酒红已成为
+  稳定方向；本地几何纹章像素仍非 source 或 edit input。V5-B 完整自包含
+  production Prompt 已重写并通过完整性审计，当前为
+  `simulation-confirmed / prompt-prepared / awaiting-production-authorization /
+  P2 / production 0/5`；尚未调用、上传、拆图、导出或改 addon。
   runtime `1.25` 继续把已接受的 QS-A1 漆章以 `32px` 无鼠标 Texture 放到
   详情页右上纸面；菜单尚未接入，也未隐藏任何旧按钮。
 - AEUI Quest Log provider 兼容子合同保持 `1.7`：在 provider 最终刷新后以
@@ -474,7 +481,7 @@
 | `QL-B1` | 地区展开／收起、追踪开／关四枚墨记 | `P6 game-validated / user-confirmed`（当前活动 runtime） | 用户接受 V1.r3；[source manifest](../../../assets/source/quests/ql-b1/QL-B1_SourceManifest_v1.json)、[runtime manifest](../../../assets/source/quests/ql-b1/QL-B1_RuntimeManifest_v1.json)、`64 × 16` TGA、exporter 与真实排版预演已完成；`2026-08-05` 用户确认 18 行字体、无描边／零 shadow、类型墨色和活动地区箭头显示通过。隐藏的行末追踪圈不在验收范围 | 保留至组件／整模块收口；不再生图 |
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 asset-retained / runtime-hidden` | 用户接受的 source、manifest、`128 × 16` TGA、exporter 与历史证据全部保留；`2026-07-31` 起 adapter 不再挂载或包装任务行脚本 | 暂缓；只有用户重新确认后才恢复 runtime |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
-| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu substrate V5-A `P4 source-accepted / 4/5`；motifs V5-B `P2 simulation-rendered / awaiting-user-confirmation` | V1／V3-A／V4-A 均保持各自失败终态。V5-A attempt 4 已通过自动 `18/18`、六态 `29/29`、展示区 `6/6` 与完整美术内审，并于 `2026-08-06` 获用户接受；source／manifest 已 tracked，attempt 5 未调用。V15 已用该真实 source 预演旧赭金六项与灰暗酒红放弃项，自动 `51/51`、展示区 `6/6`；纹章像素与菜单 runtime 尚未完成 | 用户确认或否决 V15 综合色；确认后另写 V5-B production Prompt 并请求独立授权。七项代理 parity 前旧按钮继续 fail-open |
+| `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；seal-menu substrate V5-A `P4 source-accepted / 4/5`；motifs V5-B `P2 simulation-confirmed / prompt-prepared / awaiting-production-authorization / 0/5` | V1／V3-A／V4-A 均保持各自失败终态。V5-A attempt 4 已通过自动 `18/18`、六态 `29/29`、展示区 `6/6` 与完整美术内审，并于 `2026-08-06` 获用户接受；source／manifest 已 tracked，attempt 5 未调用。同日用户接受 V15 的六项旧赭金矿物颜料与灰暗酒红放弃项综合色；几何纹章像素仍非 source。V5-B 完整 production Prompt 已准备，纹章 source 与菜单 runtime 尚未完成 | 用户独立授权 V5-B 完整 production 正文及最多五次实际调用。七项代理 parity 前旧按钮继续 fail-open |
 | `QL-D` | 奖励槽、分隔与文字安全区 | current geometry／fallback `P6 game-validated`；final art `P2 simulation-proposed` | runtime `1.25` 保持真实 Button 的 `108×41px` 双列／`64px` 名称／`8px` 列距／`4px` 行距、setter 锁、无鼠标程序化容器、原生 `NameFrame` 抑制和可见数量兜底。所有奖励项只依赖奖励总标题或上一组奖励项，不再依赖三个分组标题，消除原生 `QuestLogItemReceiveText` 反向锚定造成的 FrameXML 环；`2026-08-05` 用户确认当前右页 bug 与显示修复通过。Theme `1.8` 奖励文字无描边。V1 模拟 0／1／2／4／6 `5/5 pass`、ImageGen `0/0`；奖励只读，无 selected | 确认最终容器美术方向；确认不等于生产授权 |
 
 QL-A1 manifest 记录：
@@ -520,7 +527,7 @@ timer 或 failed 资产：provider 没有可用的公开状态来源。本项目
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
 | `QS-A1` | Quest Log／Tracker 共用漆章母版 | `P5 runtime-exported / page-placement-integrated / 5/5` | source／四态 atlas 保持 accepted；当前 Quest Log runtime `1.25` 直接使用 `32px` 页上 Texture，Tracker 不受影响；没有重开美术或 ImageGen | Turtle WoW 验证页上位置、TGA 方向与标题／正文安全区 |
-| `QS-B1` | Quest Log ScrollChild 内火漆 Button、动态空白布底、七张独立纹章与七个代理 Button | V5-A substrate `source-accepted / P4 / 4/5`；V5-B motifs `simulation-rendered / awaiting-user-confirmation / P2 / ImageGen 0/0`；V3-B motifs `0/5 gated` | 用户于 `2026-08-06` 接受 V5-A attempt 4；tracked source [`QuestLogSealMenuSubstrate_Master_v1.png`](../../../assets/source/quests/qs-b1/QuestLogSealMenuSubstrate_Master_v1.png) SHA `6b3207f1…11d9c` 与 [manifest](../../../assets/source/quests/qs-b1/QS-B1_SourceManifest_v1.json) 已建立。V15 直接使用该 source，在真实六态排版中提议六项克制旧赭金与放弃项灰暗酒红；`51/51`、display `6/6`，纹章几何仍是非权威占位。无 runtime | 用户确认／否决 V15 综合色；确认后重写 V5-B 完整生产 Prompt 并另行授权，随后才处理导出、代理 parity 与菜单接入 |
+| `QS-B1` | Quest Log ScrollChild 内火漆 Button、动态空白布底、七张独立纹章与七个代理 Button | V5-A substrate `source-accepted / P4 / 4/5`；V5-B motifs `simulation-confirmed / prompt-prepared / awaiting-production-authorization / P2 / production 0/5`；V3-B motifs `0/5 gated` | 用户于 `2026-08-06` 接受 V5-A attempt 4；tracked source [`QuestLogSealMenuSubstrate_Master_v1.png`](../../../assets/source/quests/qs-b1/QuestLogSealMenuSubstrate_Master_v1.png) SHA `6b3207f1…11d9c` 与 [manifest](../../../assets/source/quests/qs-b1/QS-B1_SourceManifest_v1.json) 已建立。同日用户接受 V15 的六项克制旧赭金矿物颜料与放弃项灰暗酒红综合色；`51/51`、display `6/6`，几何仍为非权威占位。完整 V5-B production Prompt 已准备；无纹章 source/runtime | 用户独立授权 V5-B 最终 production 正文、固定 Image 1／2、受限 Image 3 edit 和最多五次实际调用；之后才执行循环、候选真实排版与用户验收 |
 
 QS-A1 当前事实：
 
@@ -728,13 +735,19 @@ raw donor、七枚独立纹章、runtime 或菜单接入。
 旧 V3-B 授权要求 V3-A 先通过，而 V3-A 已失败；其近黑印墨放在 V5-A 深色
 accepted 布底上也缺少可读对比，故不能直接执行。新的
 `QUEST-LOG-SEAL-MOTIFS-SIM-V15 / QS-B1 V5-B` 已直接使用 accepted source 在
-真实六态排版中提议六项哑光旧赭金浅颜料与放弃项灰暗酒红；本地自动
-`51/51 pass`、V15 display-region `6/6 pass`、ImageGen `0/0`。当前为
-`simulation-rendered / awaiting-user-confirmation / P2`；几何纹章只是本地占位，
-不属于 source 或未来 edit input。
+真实六态排版中提议六项哑光旧赭金矿物颜料与放弃项灰暗酒红；本地自动
+`51/51 pass`、V15 display-region `6/6 pass`、ImageGen `0/0`。用户于
+`2026-08-06` 在独立生产授权尚未开放的上下文中回复“接受”，确认六项哑光
+低饱和旧赭金矿物颜料与放弃项灰暗酒红的综合色方向；几何纹章仍只是本地
+占位，不属于 source 或未来 edit input。完整、自包含的 V5-B production
+Prompt、七格 safe box、七张独立 source、四态 atlas 与五次自主修复边界已
+准备并通过完整性审计，当前为
+`simulation-confirmed / prompt-prepared / awaiting-production-authorization /
+P2 / production 0/5`。
 
-下一门禁是用户确认或否决 V15 综合色方向；确认后才重写完整 V5-B production
-Prompt 并另行请求最多五次实际 ImageGen 调用授权。后续 runtime 仍必须按
+下一门禁是用户独立授权 V5-B 最终 production 正文、每次固定 Image 1／2、
+同循环紧邻前稿的受限 Image 3 edit，以及最多五次实际 ImageGen 调用；流程
+错误无图片证据时不占额度。授权前不得上传或调用。后续 runtime 仍必须按
 manifest 确定性导出 `32×174` 布底，并一一代理原 Button、镜像
 禁用态、保留放弃确认，并在任一 provider 未捕获时原子 fail-open；七纹章和
 七项代理 parity 完成前不接入菜单，也不隐藏放弃／分享／退出／详情或 pfQuest

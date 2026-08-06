@@ -13,9 +13,10 @@
   `QUEST-LOG-SEAL-ACTIONS-SIM-V11 / QS-B1 V2`
 - 当前已确认模拟：`QUEST-LOG-SEAL-ACTIONS-SIM-V12 / QS-B1 V3`；用户于
   `2026-08-05` 回复“可以”
-- 当前待用户确认模拟：`QUEST-LOG-SEAL-MOTIFS-SIM-V15 / QS-B1 V5-B`；它直接
-  使用已接受 V5-A 深色布底，只提议七纹章改用克制旧赭金浅颜料、放弃任务用
-  灰暗酒红；几何纹章像素不构成 source
+- 当前已确认模拟：`QUEST-LOG-SEAL-MOTIFS-SIM-V15 / QS-B1 V5-B`；它直接
+  使用已接受 V5-A 深色布底，并冻结“普通六项使用克制旧赭金矿物颜料、放弃
+  任务使用灰暗酒红”的综合色方向。用户于 `2026-08-06` 回复“接受”；几何
+  纹章像素仍不构成 source
 - 当前已确认布底模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V13 / QS-B1 V4-A`；
   用户于 `2026-08-05` 回复“接受, 用这一套试试效果”
 - 当前已确认模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A`；用户于
@@ -27,16 +28,17 @@
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
   `source-accepted / P4 / production 4/5`；menu V5-B motifs
-  `simulation-rendered / awaiting-user-confirmation / P2 / ImageGen 0/0`；runtime
-  尚未完成
+  `simulation-confirmed / prompt-prepared / awaiting-production-authorization / P2 /
+  simulation ImageGen 0/0 / production 0/5`；runtime 尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
   `simulation-confirmed / V3-A repair-budget-exhausted / V3-B gated / P3`；V1 保持
   `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`；
   QS-B1 V4-A `candidate-rejected / repair-budget-exhausted / P3 / 5/5`；
   QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
-  `0/5 / gated`；V5-B motifs `simulation-rendered / awaiting-user-confirmation /
-  P2 / ImageGen 0/0`
+  `0/5 / gated`；V5-B motifs `simulation-confirmed / prompt-prepared /
+  awaiting-production-authorization / P2 / simulation ImageGen 0/0 / production
+  0/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -6455,8 +6457,9 @@ modern styling, or extra object.
   明度烟熏深棕；把近黑纹章叠上去后，真实 `32×22px` 行内对比不足。因此本轮
   建立新版本 `QS-B1 V5-B`，先只复核深布上的颜料角色，不沿用旧 V3-B 的可
   执行正文或授权。
-- 当前状态：`simulation-rendered / awaiting-user-confirmation / P2`；ImageGen
-  `0/0`、上传 `0`。没有 production Prompt 授权、source 晋级、runtime 导出、
+- 当前状态：`simulation-confirmed / prompt-prepared /
+  awaiting-production-authorization / P2`；模拟 ImageGen `0/0`、正式生产
+  `0/5`、上传 `0`。没有 production Prompt 授权、source 晋级、runtime 导出、
   addon 修改或旧 provider Button 隐藏。
 
 ### V15 可见方向
@@ -6494,7 +6497,302 @@ modern styling, or extra object.
   display contract／report SHA 分别为
   `2051e1ec93c56b1698257639ee306a63c578ad0d9d028cc146a17b73d1ec037d`／
   `3319e4a634f7c35e4ebd52ac3409c8e1854ddcc2becc30869ffd243c56c4b947`。
-- 下一门禁只问用户是否接受 V15 的“深烟棕 accepted 布底＋克制旧赭金六项＋
-  灰暗酒红放弃项”综合色方向。接受后才重写完整 `QS-B1 V5-B` production
-  Prompt，并另行请求固定输入、每次上传、同循环 edit 边界和最多五次实际
-  ImageGen 调用授权；本次“继续”不构成该授权。
+- 该综合色门禁已由用户于 `2026-08-06` 回复“接受”而关闭；下节记录接受
+  边界。新的下一门禁是对重写后的完整 `QS-B1 V5-B` production Prompt、
+  固定输入、每次上传、同循环 edit 边界和最多五次实际 ImageGen 调用进行
+  独立授权；本次“接受”不构成该生产授权。
+
+### V15 用户方向确认 — 2026-08-06
+
+- 用户在已展示 V15 综合色板、明确说明“接受后才准备 production Prompt，仍需
+  独立生图授权”的门禁下回复：`接受`。该回复精确确认
+  `QUEST-LOG-SEAL-MOTIFS-SIM-V15 / QS-B1 V5-B` 的综合色方向。
+- 已冻结的可见条款：已接受 V5-A 低明度烟熏深棕布底保持不变；普通六项采用
+  哑光、低饱和、显著高于深布但仍厚重克制的旧赭金矿物公会颜料；放弃任务
+  单独采用灰暗、退饱和的旧酒红颜料；hover 只克制暖亮，pressed 只压暗并
+  在 Button 层下移 `1px`，disabled 退为灰褐并保留排列位置。
+- 未冻结的像素：V15 本地几何纹章、边缘、缺墨、渗化、Alpha、确切 RGB、
+  纹章尺寸与偏心值均只是非权威占位。它们不得成为 source、runtime、
+  ImageGen 输入或 edit identity。
+- 当前状态：`simulation-confirmed / prompt-prepared /
+  awaiting-production-authorization / P2`；模拟 ImageGen `0/0`，正式生产
+  `0/5`，上传 `0`。本次回复不授权调用、上传、确定性拆图、source 晋级、
+  runtime 导出、addon 修改或隐藏旧 provider Button。
+
+## QS-B1 V5-B 七枚独立旧赭金／酒红纹章 — production preparation
+
+### 元数据与固定输入
+
+- 执行器：仅 `imagegen-0-143-0 / @openai/codex@0.143.0`。
+- 当前门禁：`prompt-prepared / awaiting-production-authorization / P2`。
+  旧 `QS-B1 V3-B` 的联合授权仍因 V3-A 失败而 gated，不得复用；V5-A
+  布底接受也不构成 V5-B 生产授权。
+- 固定 Image 1：
+  `assets/locked/quests/任务详情面板_视觉基准_v1.png`，SHA-256
+  `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`。
+  它是时代、香草魔兽二维手绘、轮廓重量、综合色和任务卷宗气质的最高视觉
+  权威；只继承笔触与时代语言，不复制整本书、纸页、皮革框、黄铜、火漆、
+  书签、正文、奖励槽或完整构图。
+- 固定 Image 2：
+  `assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`，
+  SHA-256
+  `719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`。
+  它只提供小尺寸手绘墨记的笔画经济、边缘柔度和缩小时的辨识方式；严禁复制、
+  旋转、描摹或改色复用其中三角、圆圈、勾、2×2 排列、位置或像素。
+- 已接受 V5-A 布底不上传给 ImageGen：
+  `QuestLogSealMenuSubstrate_Master_v1.png`，SHA
+  `6b3207f15d961cbef7471399c9bfb725b475385ce9e66648fc435a9e28111d9c`，
+  仅在本地真实排版审查中作为相邻 UI 与综合色背景。这样避免把布底、缝线或
+  轮廓烘焙进独立纹章，也避免它越级成为生成风格权威。
+- Image 3 只可在已获独立授权后的同一五次循环中使用：必须是紧邻前一次 raw
+  工作表，且只能修复下述冻结边界内的问题。首次生成没有 Image 3；不得上传
+  V15 模拟板、V5-A 布底、旧 V3/V4 失败候选或其他历史输出。
+
+### 组件、画布与拆分合同
+
+- 输出是一张供后处理的 normal-state 纹章工作表，不是游戏截图、完整 UI、
+  菜单背景、布条、纸张、按钮或 atlas。
+- 精确目标画布为 `1024×1024 RGB`。纹章以外全部为均匀、无渐变、无噪声、
+  无阴影的精确色键绿 `#00FF00`。画布逻辑上为 `4×2`，只放七枚彼此完全
+  分离的纹章；第八格必须完全为色键绿。不得绘制格线、标题、编号、文字、
+  Tooltip、说明、边框、底材或透明棋盘。
+- Cell 与 safe box 均使用 `[x0,y0,x1,y1]`、右下开区间；所有可见颜料、
+  抗锯齿与渗化必须完整留在本格 safe box 内：
+
+| 顺序／ID | cell | safe box | 视觉中心／建议最大跨度 |
+|---|---|---|---|
+| 1 `SHARE` | `[32,160,256,384]` | `[64,208,224,336]` | `(144,264)`／约 `144×96` |
+| 2 `DETAIL` | `[272,160,496,384]` | `[304,208,464,336]` | `(392,272)`／约 `112×112` |
+| 3 `SHOW` | `[512,160,736,384]` | `[544,208,704,336]` | `(616,272)`／约 `112×112` |
+| 4 `HIDE` | `[752,160,976,384]` | `[784,208,944,336]` | `(864,280)`／约 `128×112` |
+| 5 `CLEAN` | `[32,608,256,832]` | `[64,656,224,784]` | `(152,712)`／约 `144×80` |
+| 6 `RESET` | `[272,608,496,832]` | `[304,656,464,784]` | `(376,728)`／约 `136×96` |
+| 7 `ABANDON` | `[512,608,736,832]` | `[544,656,704,784]` | `(624,720)`／约 `128×72` |
+| 8 empty | `[752,608,976,832]` | N/A | 完全 `#00FF00` |
+
+- P4 只有在用户接受具体候选后才允许执行。届时先把方形 raw 同轴等比归一化
+  到 `1024²`，再做边缘连通色键与透明 RGB 清零；随后按上述七个 `224×224`
+  cell 精确拆成七张独立 `224×224 RGBA` normal source。每张必须有独立文件、
+  manifest ID、SHA 与验收结果，工作表不得作为单一 runtime 资产。
+- 计划 source 名：
+  `QuestLogSealMenuMotif_Share_v5.png`、
+  `QuestLogSealMenuMotif_Detail_v5.png`、
+  `QuestLogSealMenuMotif_Show_v5.png`、
+  `QuestLogSealMenuMotif_Hide_v5.png`、
+  `QuestLogSealMenuMotif_Clean_v5.png`、
+  `QuestLogSealMenuMotif_Reset_v5.png`、
+  `QuestLogSealMenuMotif_Abandon_v5.png`；计划 manifest：
+  `assets/source/quests/qs-b1/QS-B1-V5B_SourceManifest_v1.json`。
+- 候选真实排版只做等比 visible-bbox fit，不裁切、不重画、不非等比拉伸。
+  七枚 normal 在各自 `32×22px` Button 内的最大 content box 依次为
+  `[7,5,25,17]`、`[9,4,23,18]`、`[9,4,23,18]`、`[8,4,24,18]`、
+  `[7,6,25,16]`、`[7,5,24,17]`、`[8,7,24,16]`。这些差异保留独立视觉
+  重心，禁止整理成同尺寸、同中心、同笔压的现代 icon 柱。
+- 计划 runtime atlas：
+  `addon/AzerothExpeditionUI/Media/Quests/QuestLogSealMenuMotifStatesV5.tga`，
+  `256×128 RGBA`。列 `0..6` 依次对应七项，列 `7` 全透明；四个 `32px`
+  高行依次 normal／hover／pressed／disabled，每格只在本行
+  `y=5..26` 的 `32×22px` 可见区内出现纹章。四态均从同一 accepted normal
+  source 确定性派生：hover 只向 V15 暖赭／暖酒红目标克制提亮，pressed
+  只压暗且 Button 运行时下移右移 `1px`，disabled 只退灰降对比；不得改变
+  轮廓身份、补齐缺墨或新增光晕。
+
+### 七枚纹章的语义解剖
+
+1. `SHARE`：两支短而宽的旧羽笔，以不完全对称角度交叠，并由一个紧凑结约
+   绳结束住。羽片只保留能在 `18×12px` 左右读清的粗形，不画长针尖、细密
+   羽枝、卷轴、握手或分享箭头。
+2. `DETAIL`：一张单独的公会卷宗折页，主体是宽而简化的纸页轮廓，只有一个
+   短小翻折角。不得像现代文件、信封、窗口、汉堡菜单或带文字的文档图标。
+3. `SHOW`：开放的四向远征公会罗盘，四个略不等长的粗钝方向尖围绕一个很小
+   的安静中心；无外圈、无字母、无发光、无精密制图刻度。
+4. `HIDE`：与 SHOW 同家族但为独立资源的四向罗盘，上覆一条短、克制、略有
+   缺墨的斜向遮蔽笔画。不得读成眼睛斜杠、禁用圆圈、关闭叉或现代可见性 icon。
+5. `CLEAN`：三道被扫开的地图路径墨线，长度、弧度和间距略不一致，由同一
+   起势向外散开。不得画扫帚、速度线、波纹、列表或三条机械平行线。
+6. `RESET`：一条弯折的远征路线回到一个紧凑路线结；回环不闭合成标准圆，
+   无箭头尖、无齿轮、无现代刷新符号。
+7. `ABANDON`：一根粗短契约绳在中央明确断开，两端有极少量粗糙散纤，中心
+   留出安静缺口。不得使用 X、垃圾桶、骷髅、血迹、武器或警告三角。
+
+### 完整 production Prompt — 未授权
+
+Use Image 1 and Image 2 only as fixed visual references. Create one production
+worksheet containing exactly seven independent, small, hand-painted quest
+administration emblems for a circa-2004 vanilla World of Warcraft UI overhaul.
+This is a bitmap sprite-source worksheet, not a scene, not a screenshot, not a
+complete interface, and not a presentation mockup.
+
+REFERENCE AUTHORITY
+
+Image 1 is the highest visual authority. Inherit its old Azeroth expedition-ledger
+language: substantial but slightly irregular hand-painted contours, a few broad
+value planes, muted warm materials, sparse believable wear, upper-left warm light
+logic, and the visual weight of a formal adventurers' guild record from vanilla
+World of Warcraft. Do not copy its complete book, pages, leather frame, brass,
+compass ornaments, wax seal, ribbons, text, reward slots, buttons, or composition.
+
+Image 2 is a secondary micro-scale reference only. Inherit only its economical
+stroke count, softened hand-painted edges, and ability to remain legible when
+reduced to a tiny game UI mark. Do not copy, trace, rotate, recolor, or rearrange
+its triangles, circles, check mark, 2-by-2 layout, positions, transparency, or
+pixels.
+
+CANVAS AND OBJECT COUNT
+
+Render an exact square 1024 by 1024 RGB worksheet. Fill every pixel outside the
+seven emblems with one perfectly uniform chroma-key green, exact #00FF00: no
+gradient, texture, lighting, vignette, noise, shadow, cast shadow, contact shadow,
+paper, cloth, wax, metal, frame, cell guide, label, number, caption, text,
+checkerboard, or transparency preview.
+
+Use an invisible 4-by-2 layout. Place exactly one emblem in each of the first
+seven cells and leave the eighth cell completely empty green. Keep every visible
+pigment pixel, antialiasing pixel, soft bleed, and worn interruption inside its
+assigned safe box:
+
+1 SHARE: cell [32,160,256,384], safe box [64,208,224,336], optical center near
+[144,264], maximum visual span about 144 by 96.
+2 DETAIL: cell [272,160,496,384], safe box [304,208,464,336], optical center near
+[392,272], maximum visual span about 112 by 112.
+3 SHOW: cell [512,160,736,384], safe box [544,208,704,336], optical center near
+[616,272], maximum visual span about 112 by 112.
+4 HIDE: cell [752,160,976,384], safe box [784,208,944,336], optical center near
+[864,280], maximum visual span about 128 by 112.
+5 CLEAN: cell [32,608,256,832], safe box [64,656,224,784], optical center near
+[152,712], maximum visual span about 144 by 80.
+6 RESET: cell [272,608,496,832], safe box [304,656,464,784], optical center near
+[376,728], maximum visual span about 136 by 96.
+7 ABANDON: cell [512,608,736,832], safe box [544,656,704,784], optical center near
+[624,720], maximum visual span about 128 by 72.
+8 EMPTY: cell [752,608,976,832], completely #00FF00.
+
+EMBLEM ANATOMY
+
+SHARE is two short, broad old quills crossing at unequal angles and bound by one
+compact covenant knot. Keep the feather masses coarse enough to read at about
+18 by 12 runtime pixels. No long needle tips, fine feather barbs, scroll, handshake,
+or share arrow.
+
+DETAIL is one simplified guild-ledger leaf with one short folded corner. It is an
+old physical record leaf, not a modern file, envelope, application window, menu,
+or document icon, and it contains no writing.
+
+SHOW is an open four-direction expedition-guild compass: four broad, slightly
+unequal blunt points around one very small quiet center. No outer ring, letters,
+precise cartographic ticks, gem, or glow.
+
+HIDE is an independently painted compass from the same family, crossed by one
+short, quiet, partially worn diagonal veil stroke. It must not resemble an eye
+with a slash, a prohibition circle, a close X, or a modern visibility icon.
+
+CLEAN is three swept cartographic trail strokes fanning from one motion. Their
+lengths, curves, spacing, pigment density, and endpoints are intentionally
+unequal. No broom, speed lines, water waves, list, or three mechanical parallel
+bars.
+
+RESET is a winding expedition route returning to one compact route knot. The
+route is not a perfect closed circle and has no arrowhead, gear, or modern refresh
+symbol.
+
+ABANDON is one short, substantial contract cord snapped at the center, with a
+clear quiet gap and only a few coarse fibers at the two broken ends. No X, trash
+can, skull, blood, weapon, or warning triangle.
+
+MATERIAL, COLOR, AND ERA
+
+Paint all seven as direct, imperfect guild-pigment transfers with no physical
+backing object. The first six use a matte, low-saturation aged ochre mineral
+pigment: visibly lighter than the accepted smoked dark-brown cloth that will sit
+behind them in game, but still restrained, earthy, heavy, and old. It is not
+metallic gold, polished brass, bright yellow, orange, ivory, white, emissive,
+glowing, or celebratory. ABANDON alone uses a muted, greyed, dark old-wine pigment:
+clearly distinct from the ochre family but never bright red, blood-red, neon, or
+glowing.
+
+Each emblem uses only a few broad hand-painted strokes, non-constant line width,
+slightly softened edges, one to three controlled missing-pigment interruptions,
+one or two small denser pigment pools at turns, and a restrained two-to-four
+source-pixel soft bleed. Keep the main silhouette immediately readable after
+downscaling. The seven emblems must have small independent differences in size,
+center of gravity, angle, wear, and pressure. Do not regularize them into seven
+same-size, same-center, same-weight vector icons.
+
+The result must feel native to a 2004-era Azeroth guild ledger: hand-painted 2D
+game UI sprite art, broad value grouping, slightly irregular but substantial
+forms, low saturation, and quiet material weight. It must not resemble a modern
+flat HUD, mobile icon set, web toolbar, Diablo III ornament, Skyrim minimalist
+menu, Warhammer purity-seal iconography, photorealistic scan, procedural texture,
+or contemporary high-resolution concept-art presentation.
+
+STRICT EXCLUSIONS
+
+No cloth strip, ribbon, parchment tag, page, leather plate, wax, button face,
+border, card, frame, backing tile, circular medallion, brass mount, rivet,
+engraving plate, embossed badge, drop shadow, bevel, inner glow, outer glow,
+specular highlight, glass, neon, chrome, 3D render, photographic fiber, uniform
+weave, repeated noise, perfect symmetry, mechanical line weight, or text. Do not
+join any two emblems with pigment, decoration, shadow, or a shared object. Do not
+paint green inside an emblem or tint the pigment edges green.
+
+FINAL SELF-CHECK BEFORE OUTPUT
+
+Confirm there are exactly seven and only seven visible emblems; each assigned
+cell contains exactly its requested semantic emblem; the eighth cell is fully
+empty; every visible and antialiased pixel stays inside its safe box; the first
+six are muted matte aged ochre mineral pigment; only ABANDON is muted greyed dark
+wine; no emblem includes a backing object, text, modern icon shorthand, copied
+Image-2 silhouette, or another IP's symbol; all remaining canvas pixels are one
+uniform exact #00FF00.
+
+### 完整性审计
+
+| 检查项 | 结论 |
+|---|---|
+| 对象身份／数量／顺序 | `7` 枚独立纹章＋第八空格，已逐项定义 |
+| 输入角色与冲突优先级 | Image 1 时代权威、Image 2 小尺寸笔触参考、布底只做本地排版，已定义 |
+| 画布／cell／safe box／空区 | `1024²`、七格坐标、第八格空、精确绿底，已定义 |
+| 每个对象的语义解剖 | SHARE／DETAIL／SHOW／HIDE／CLEAN／RESET／ABANDON 已逐项定义 |
+| 全局与 Quest 基线继承 | 2004 香草魔兽、公会卷宗、厚重二维手绘、低饱和，已写入正文 |
+| V15 确认综合色 | 六项旧赭金矿物颜料、放弃项灰暗酒红，已写入正文 |
+| Alpha／色键／独立 source | 生成绿底；P4 才做边缘连通色键、透明 RGB 清零和七张拆分 |
+| runtime 粒度与四态 | 七 source／七 ID／七 Button／七 UV，四态确定性派生，已定义 |
+| 反模式与 IP 隔离 | 现代 HUD、暗黑、天际、战锤、金属／发光／载体均排除 |
+| 最终自检 | 数量、位置、综合色、safe box、空格、禁项均显式列出 |
+
+结论：production 正文自包含并通过 Prompt 完整性审计；它仍是
+`prompt-prepared`，不是 `prompt-authorized`。
+
+### 五次自主修复边界与审查
+
+- 获得独立授权后，最多执行 `5` 次**实际产生图片证据**的 ImageGen 调用；
+  provider／上传／CLI／文件处理等流程错误若没有图片证据，单独记录且不占
+  生图额度。任何内部通过立即停止；五次仍未通过才停下等待用户审核；禁止
+  attempt 6。
+- 每次都重新上传固定 SHA 的 Image 1／2。只有紧邻前稿满足“对象数、cell、
+  语义身份、时代风格与综合色均已正确，只剩局部笔画／边缘／污染问题”时，
+  才可把它作为 Image 3 edit identity；否则 fresh regenerate，不上传前稿。
+- 冻结不动：七个功能身份、七格顺序、cell／safe box、第八格空、六赭金一
+  酒红的颜色角色、无载体、无文字、香草魔兽二维手绘语言。允许自修复：
+  单枚笔画粗细、缺墨数量、局部渗化、颜料密度、视觉中心、safe-box 外溢、
+  绿边污染、对象遗漏／多出，以及在既定颜色角色内的对比度。
+- 每稿按 `scope → style → assembly/pixel → real-layout display-region`
+  顺序审查。自动阶段只到 `candidate-reviewed / P3`；用户明确接受具体候选
+  后才能进入 P4，随后才可拆七张 source、派生四态、导出 atlas 和改 addon。
+- 真实排版必须使用已接受 V5-A source 与客户端动态文字，覆盖收起、七项全显、
+  五项收拢、三项含 disabled、部分滚动、完全滚出六态。必须保持正文不重排、
+  奖励前 `32px` 空隙、hidden 收拢、disabled 留位不命中、滚动裁切／hitbox
+  一致；任何 provider parity 缺失时旧按钮继续原子 fail-open。
+
+### 独立生产授权门禁
+
+下一步只接受对上述**完整正文**和固定调用边界的明确授权。可接受的授权原文：
+
+`确认授权 QS-B1 V5-B 最终 production 正文；允许每次上传固定 SHA 的 Image
+1/2，允许同循环紧邻前次输出仅在冻结修复边界内作为 Image 3 edit 输入；最多
+5 次实际 ImageGen 调用，流程错误不占额度；允许按合同执行同轴 1024²
+归一化、固定七格拆分、边缘连通色键、透明 RGB 清零、等比 bbox-fit、七张
+独立 source、四态派生与真实排版预演。`
+
+在收到这段或等价的明确授权前，不调用 ImageGen、不上传图片、不写 source、
+不导出 runtime、不改 addon，也不隐藏任何旧 provider Button。
