@@ -3770,6 +3770,25 @@ def main() -> None:
         "QS-B1 V6-F attempt 3 local edit gate",
     )
     require(
+        seals_work,
+        (
+            "QS-B1 V6-F attempt 4 execution and review",
+            "019fd641-e81b-74a0-8f49-af4bec06925b",
+            "37b95d2965f28795ee21e39d9fd6e41a92f5e55a47cb0c7eca770a30eb988b11",
+            "bbox `[86,239,940,779]`",
+            "可见绿色污染 `0`",
+            "mask 异或 `1246`px",
+            "158250",
+            "internal-rejected / fresh-final-prepared / P3 / 4/5",
+            "attempt 4 违反\n  冻结边界",
+            "QS-B1 V6-F.r4 complete production Prompt — fresh-final-prepared / frozen",
+            "OPEN ANGULAR OUT-AND-BACK EXPEDITION ROUTE",
+            "Do not upload, inspect, edit, trace, imitate, or reuse V6-F attempts 1 through 4",
+            "V6-F `4/5`、整批 `22/35`",
+        ),
+        "QS-B1 V6-F attempt 4 freeze rejection and final fresh gate",
+    )
+    require(
         seal_motifs_v5_candidate_reviewer,
         (
             "CANVAS = (1024, 1024)",

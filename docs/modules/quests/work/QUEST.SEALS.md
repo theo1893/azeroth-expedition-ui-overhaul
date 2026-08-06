@@ -32,14 +32,14 @@
   `turn.completed`，因此实际生图已达 `5/5`
 - 当前 production 正文：V6-A..G 七份单对象完整正文已由用户于
   `2026-08-06` 以文末原文统一明确授权；V6-E 已耗尽，当前执行正文为
-  `V6-F.r3 / edit-prepared / P3`
+  `V6-F.r4 / fresh-final-prepared / P3`
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
   `source-accepted / P4 / production 4/5`；menu V5-B motifs
   `candidate-rejected / repair-budget-exhausted / P3 / simulation ImageGen 0/0 /
   production 5/5`；menu V6 motifs `repair-prepared / P3 / simulation ImageGen
-  0/0 / production 21/35 authorized`；runtime
+  0/0 / production 22/35 authorized`；runtime
   尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
@@ -49,7 +49,7 @@
   QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
   `0/5 / gated`；V5-B motifs `repair-prepared / P3 / simulation ImageGen 0/0 /
   production 5/5 / repair-budget-exhausted`；V6 motifs
-  `V6-E repair-budget-exhausted / V6-F edit-prepared / P3 / production 21/35 authorized`
+  `V6-E repair-budget-exhausted / V6-F fresh-final-prepared / P3 / production 22/35 authorized`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -97,7 +97,7 @@
   审查展示区脚本首次误用
   `--output` 参数；改用 `--report` 后六场景通过，无新生图调用，单独计为
   流程错误且不改变 production 计数
-- QS-B1 V6 模拟 ImageGen：`0/0`；production `0/35`、尚未授权。七个独立
+- QS-B1 V6 模拟 ImageGen：`0/0`；production `22/35`、已授权。七个独立
   production body 各自最多 `5` 次实际 ImageGen，最坏合计 `35` 次；流程错误
   不占额度。V5-B 五张失败工作表不上传、不裁切、不作为 edit 或视觉权威
 - QS-B1 历史流程错误：V1 `1`、V2 `3`、V3 `0`、V4-A `1`、V5-A `1`。均按
@@ -8600,7 +8600,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 
 - 当前状态：V6-A／B／C `candidate-reviewed / P3`；V6-D／E
   `candidate-rejected / repair-budget-exhausted / P3`；V6-F
-  `internal-rejected / repair-prepared / P3`；V6-G `prompt-authorized / P3`；
+  `internal-rejected / fresh-final-prepared / P3`；V6-G `prompt-authorized / P3`；
   用户于 `2026-08-06` 授权整批顺序执行。
 - 固定输入：
   - Image 1：`assets/locked/quests/任务详情面板_视觉基准_v1.png`
@@ -8608,7 +8608,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
   - Image 2：`assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
     (`719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`)
 - 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C `3/5`、V6-D `5/5`、
-  V6-E `5/5`、V6-F `3/5`、V6-G `0/5`，合计 `21/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
+  V6-E `5/5`、V6-F `4/5`、V6-G `0/5`，合计 `22/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
   内部通过；V6-D attempt 5 仍有 9 个绿色污染像素，五次额度耗尽且不得执行
   attempt 6。V6-E attempt 1／2 均已内部否决；attempt 3 因提示词传输遗漏仍触发
   provider，故计入生图并否决；attempt 4 已用完整 r2 正文生成但因近方形构图与
@@ -8616,8 +8616,10 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
   已耗尽且不得执行 attempt 6。V6-F attempt 1 已因金色螺旋／字母 g 身份与绿色
   污染否决；attempt 2 又因问号／C／耳机形轮廓否决。下一次为 V6-F attempt 3
   fresh，只上传固定 Image 1／2，无 Image 3。attempt 3 的主体路线可保留，但末端
-  成为左向 undo 箭头并有 26px 绿色污染；下一次为 V6-F attempt 4，上传固定
-  Image 1／2 与紧邻 attempt 3 Image 3，只在两个冻结修复框内 edit。
+  成为左向 undo 箭头并有 26px 绿色污染；attempt 4 虽消除了箭头与绿色污染，
+  但两个修复框外全部可见像素均发生综合色漂移，且替代末端成为过大的光滑椭圆
+  胶囊，不满足冻结 edit 合同。下一次为 V6-F 最终 attempt 5；fresh generate，
+  只上传固定 Image 1／2，无 Image 3，禁止复用 attempt 4 或任何跨段像素。
   全批目前共 `6` 次流程错误，其中 E3 同时返回 provider 图片
   并占用一次生图额度。
 - 用户授权原文：
@@ -8639,7 +8641,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 | V6-C SHOW | 3/5 | 0 | candidate-reviewed / P3 | 单段通过即停；授权 bbox-fit 例外 |
 | V6-D HIDE | 5/5 | 3 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
 | V6-E CLEAN | 5/5 | 1 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
-| V6-F RESET | 3/5 | 0 | internal-rejected / edit-prepared / P3 | attempt 4 r3 edit；固定 Image 1／2＋紧邻 attempt 3 Image 3 |
+| V6-F RESET | 4/5 | 0 | internal-rejected / fresh-final-prepared / P3 | attempt 5 r4 fresh；固定 Image 1／2，无 Image 3 |
 | V6-G ABANDON | 0/5 | 0 | prompt-authorized | 等待 F 结束 |
 
 ### QS-B1 V6-A attempt 1 execution and review
@@ -11117,3 +11119,156 @@ uses only broad flat muted dark-earth pigment regions, with no bright gold, parc
 texture, lighting, thickness, shadow, carrier, text, state, detached dot, enclosed green
 pixel, green fringe, or additional mark. Confirm every exterior pixel is exact uniform
 #00FF00 and no previous V6 or Image-2 pixel or shape has been copied.
+
+### QS-B1 V6-F attempt 4 execution and review
+
+- 执行前 commit：`3888a2a`；正文 `QS-B1 V6-F.r3`；受限 edit；固定 Image 1／2，
+  紧邻 attempt 3 raw 是唯一 Image 3；正文 `4921 bytes`、SHA-256
+  `a7cd5fa5fd29782fc080865483c6ac026c41daea71f7b73f026f540a6c92aef0`。
+- fixed child session `019fd641-e81b-74a0-8f49-af4bec06925b`；内建 `image_gen`
+  恰好一次，计为 V6-F `4/5`、整批 `22/35`；无流程错误。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V6/V6-F/attempt-04/raw/QS-B1-V6-F.attempt-04.png`；
+  `1254×1254 RGB`；SHA-256
+  `37b95d2965f28795ee21e39d9fd6e41a92f5e55a47cb0c7eca770a30eb988b11`。
+- 技术：bbox `[86,239,940,779]`；可见绿色污染 `0`；自动 `8/9`，仅原始
+  safe-box 项失败，可在候选通过后按已授权 bbox-fit 合同处理。review JSON SHA
+  `3b6c710b4f6ad3699d6171bba94c44105862a5cc4a6a73e5e30481564052fe7b`；
+  technical board SHA
+  `62d46059c8586ccc942acd6513317025d312d3efc437a27b35c9efaf65eef7cf`。
+- 冻结审计：两个允许修复框之外共有 `158250` 个可见 union 像素，其中
+  `158250` 个 RGBA 均与 attempt 3 不同；mask 异或 `1246`px；可见区域平均
+  RGB channel delta `9.326`、P95 `19`。综合色也由 median `[121,59,25]`
+  漂移为 `[123,43,19]`。因此不是仅在两个框内的 surgical edit。
+- 美术：左向箭头和 26px 绿色缺陷确已消失；但新的下方末端成为过大的规则
+  光滑椭圆胶囊，缺少短小、不对称、双钝瓣与浅开口路线结结构。真实 `17×11px`
+  不再优先读成 undo，却仍读成圆头回环／棒棒糖式末端。
+- runtime：`17×11px` 落入 `[7,5,24,17]`；显示区域 `6/6 pass`，报告 SHA
+  `0f32f5bca257bad4450fbfa43921d72e3fabae29d780cd151dfbf7beb8057e56`；真实排版
+  SHA `ffb242ece43f96972855df738909f8bda7bba7bdaf847551db88dd0ec0e776ad`。
+- 结论：`internal-rejected / fresh-final-prepared / P3 / 4/5`。attempt 4 违反
+  冻结边界，不得进入验收，也不得作为最终 attempt 的 Image 3。attempt 5
+  fresh generate，只上传固定 Image 1／2；不复用任何旧候选或跨段像素。
+
+### QS-B1 V6-F.r4 complete production Prompt — fresh-final-prepared / frozen
+
+Use Image 1 and Image 2 only as fixed visual references. Freshly generate exactly one
+independent normal-state RESET emblem for a circa-2004 vanilla World of Warcraft
+quest-log administration menu. This is the final authorized V6-F attempt. It is one
+flat bitmap pigment sprite source, not a scene, screenshot, UI mockup, worksheet,
+atlas, button, ribbon, map, physical object, material sample, inventory item, or
+complete interface.
+
+Do not upload, inspect, edit, trace, imitate, or reuse V6-F attempts 1 through 4. Do not
+use any V6-A, V6-B, V6-C, V6-D, V6-E, or V6-G generated pixel, silhouette, crop,
+texture, or identity reference. The result must be a fresh independent construction
+guided only by the two fixed references and the complete text below.
+
+REFERENCE AUTHORITY
+
+Image 1 is the highest visual authority only for old Azeroth expedition-ledger weight:
+substantial hand-painted masses, muted earth color, slight asymmetry, sparse believable
+wear, and serious vanilla-era craftsmanship. Do not copy its book, pages, leather,
+brass, wax seal, ribbons, text, slots, buttons, ornaments, or composition.
+
+Image 2 is a secondary micro-scale reference only. Inherit economical stroke count,
+broad readable silhouette, softened handmade perimeter, and legibility after severe
+downscaling. Do not copy, trace, rotate, recolor, or rearrange any of its triangles,
+circles, checks, layouts, locations, transparency, or pixels.
+
+CANVAS, COUNT, AND PLACEMENT
+
+Return one exact square 1024 by 1024 RGB image. Fill every exterior pixel with one
+perfectly uniform exact chroma-key green #00FF00. The green field has no gradient,
+lighting, texture, vignette, noise, shadow, paper, cloth, wax, metal, frame, guide,
+label, checkerboard, or transparency preview. Draw exactly one connected RESET pigment
+emblem and no detached second object.
+
+Keep every visible pigment, antialiasing pixel, soft bleed, and edge nick strictly
+inside hard safe box [160,160,864,864]. Place the complete emblem inside target
+envelope [230,320,800,700], approximately 570 pixels wide by 380 pixels high, with a
+wide horizontal silhouette. Leave broad exact-green margin. Use direct orthographic
+front view with no perspective, thickness, modeled depth, or directional lighting.
+
+This source owns one normal-state pigment emblem only. It will later be edge-keyed and
+isotropically bbox-fitted into [7,5,24,17] of a 32 by 22 runtime Button. Do not draw
+that Button, carrier, backing tile, hover, pressed, disabled state, Tooltip, text, map,
+menu background, ribbon substrate, or provider logic.
+
+OPEN ANGULAR OUT-AND-BACK EXPEDITION ROUTE
+
+Paint one connected stout route made from five coarse handmade directional runs. It is
+an old cartographer's out-and-back expedition path whose return finishes in a small
+integrated route knot. It must be an open irregular zigzag, never a loop or modern
+navigation icon. Follow this spatial construction:
+
+1. Begin with one wide blunt irregular start near [270,650]. Travel upward to the first
+   hard softened bend near [315,465].
+2. Travel diagonally up-right to a second bend near [475,350].
+3. Travel broadly right and slightly down to a third bend near [730,415].
+4. Double back diagonally down-left to a fourth bend near [650,560]. This returning
+   run remains clearly separated from the earlier upper run by at least 105 pixels of
+   green; it does not trace a parallel ring wall.
+5. Finish leftward and slightly downward in one short integrated overlap-knot centered
+   near [555,625]. The knot is attached to the route, about 125 by 78 pixels, with two
+   unequal blunt lobes and one shallow notch open to the exterior. It is not a dot,
+   disk, bulb, medallion, eye, buckle, or arrowhead.
+
+The silhouette must remain fully open. It encloses no negative-space island and forms
+no C-shaped bowl, ring, hairpin loop, circle, spiral, coil, hook, question mark, letter,
+or digit. Runs do not cross. There is no triangular directional point anywhere. The
+wide blunt start and small two-lobed terminal knot are visually different, while the
+whole mark remains one connected pigment mass.
+
+Use a broad non-constant route width of roughly 58 to 86 normalized pixels. Vary it
+coarsely by hand. Make each bend blunt, weighty, and slightly irregular rather than a
+smooth vector arc. At final runtime size the essential read must be “old expedition
+route returning to a compact route-knot,” not undo, refresh, replay, location pin,
+question mark, headphones, letter C, lowercase g, numeral 9, snake, spiral, loading
+spinner, power symbol, gear, clock, or arrow.
+
+FLAT MINERAL PIGMENT, COLOR, AND EDGE
+
+Render the route as a direct imperfect two- or three-pass transfer of matte mineral
+guild pigment on an absent carrier. It is flat paint, never parchment, leather, rope,
+metal, raised paste, embossed material, carved relief, or a physical trail object.
+
+Use dominant muted dark umber-ochre near RGB [118,70,31], sparse broad worn ochre near
+RGB [145,92,43], and a few smoked-umber pools near RGB [76,42,23]. Keep median visible
+color approximately RGB [102,55,25] to [135,82,39]. No bright yellow, bright orange,
+polished gold, brass, ivory, white, neon, emissive light, or gray modern icon color.
+
+Use only a few broad opaque pigment regions. No continuous gradient, center-to-edge
+lighting, highlight, rim, dark underside, cast shadow, bevel, thickness, photographic
+grain, fibers, or repeated micro-texture. Use non-constant hand-stamped edges, softened
+blunt corners, slight asymmetry, a few coarse open edge nicks, and restrained pigment
+bleed. Internal wear is always lighter opaque ochre, never background green. Every
+interior pixel remains pigment colored. Any missing-pigment notch must open directly
+to the exterior silhouette. No enclosed green island, hole, crack, isolated speck, or
+green-tinted antialiasing is allowed.
+
+STRICT EXCLUSIONS
+
+No complete or partial ring, enclosed loop, hairpin loop, circle, spiral, coil, letter
+C, lowercase g, numeral 9, question mark, headphones, snake, standard reset icon,
+refresh arrow, undo arrow, replay triangle, arrowhead, chevron, loading ring, power
+symbol, gear teeth, clock, compass rose, central disk, detached dot, smooth oval bulb,
+lollipop terminal, map grid, text, letters, numbers, runes, parchment, paper, leather,
+cloth, ribbon, wax, metal backing, button face, border, card, frame, medallion, rivet,
+bevel, cast shadow, drop shadow, ambient occlusion, glow, highlight, continuous
+gradient, glass, neon, chrome, 3D rendering, photorealism, procedural noise, perfect
+symmetry, constant vector weight, Diablo III ornament, Skyrim minimalist menu language,
+or Warhammer iconography. Do not place green inside pigment or tint an edge green.
+
+FINAL SELF-CHECK
+
+Confirm exactly one connected RESET route exists with one blunt lower-left start, five
+coarse open runs, four blunt bends, and one attached small asymmetric two-lobed terminal
+knot. Confirm the silhouette contains no enclosed negative-space island, loop, circle,
+C-shaped bowl, spiral, smooth oval bulb, directional point, or detached object. Confirm
+it cannot read as undo, refresh, replay, arrow, question mark, headphones, C, g, 9,
+snake, spinner, power, gear, or clock at 17 by 11 pixels. Confirm every visible pixel
+stays inside [230,320,800,700], uses broad flat muted dark-earth pigment only, and has
+no bright gold, material thickness, lighting, shadow, carrier, text, state, enclosed
+green pixel, green fringe, or additional mark. Confirm every exterior pixel is exact
+uniform #00FF00 and no previous V6 candidate or Image-2 shape has been copied.
