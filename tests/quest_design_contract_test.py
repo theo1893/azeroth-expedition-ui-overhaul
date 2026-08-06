@@ -299,7 +299,7 @@ def main() -> None:
     assert hashlib.sha256(
         seal_purity_ribbon_v7a_production_path.read_bytes()
     ).hexdigest() == (
-        "b9c81296a62b83064f82a2a43d154c9800875f6b15421ffe9e8393328762c6eb"
+        "b8f6c8b5360c5c8c036a77bc75e5ac91268f42d5fdf4a1df71c65e55a8cc32ce"
     )
     seal_purity_ribbon_v7a_reviewer_path = (
         ROOT / "tools" / "review_quest_seal_purity_ribbon_candidate_v1.py"
@@ -3304,10 +3304,11 @@ def main() -> None:
     assert v7a_executor["skill"] == "imagegen-0-143-0"
     assert v7a_executor["package"] == "@openai/codex@0.143.0"
     assert v7a_executor["actual_generation_limit"] == 5
-    assert v7a_executor["current_actual_generations"] == 1
+    assert v7a_executor["current_actual_generations"] == 2
+    assert v7a_executor["process_errors"] == 1
     assert v7a_executor["authorized"]
     v7a_history = seal_purity_ribbon_v7a_production["attempt_history"]
-    assert len(v7a_history) == 1
+    assert len(v7a_history) == 2
     assert v7a_history[0]["attempt"] == 1
     assert v7a_history[0]["technical_checks"] == "13/13 pass"
     assert v7a_history[0]["layout_checks"] == "29/29 pass"
@@ -3318,6 +3319,25 @@ def main() -> None:
     assert "do-not-upload-attempt-1-as-image-3" in (
         v7a_history[0]["decision"]
     )
+    assert v7a_history[1]["attempt"] == 2
+    assert v7a_history[1]["fixed_crop_mean_rgb"] == [
+        141.16,
+        106.76,
+        57.52,
+    ]
+    assert v7a_history[1]["fixed_crop_high_frequency_luma_residual"] == 5.08
+    assert v7a_history[1]["first_failed_gate"] == (
+        "muted-smoked-old-bone-palette-and-hand-painted-surface-scale"
+    )
+    assert "immediately-preceding-attempt-2-as-image-3" in (
+        v7a_history[1]["decision"]
+    )
+    v7a_process_errors = seal_purity_ribbon_v7a_production[
+        "process_error_history"
+    ]
+    assert len(v7a_process_errors) == 1
+    assert not v7a_process_errors[0]["provider_generation_evidence"]
+    assert not v7a_process_errors[0]["consumed_generation_budget"]
     v7a_inputs = seal_purity_ribbon_v7a_production["fixed_inputs"]
     assert [item["index"] for item in v7a_inputs] == [1, 2]
     assert [item["sha256"] for item in v7a_inputs] == [
@@ -3366,12 +3386,13 @@ def main() -> None:
         seals_work,
         (
             "V17 用户方向结论 — confirmed / 2026-08-06",
-            "repair-prepared / P3 / production 1/5",
+            "repair-prepared / P3 / production 2/5",
             "QS-B1 V7-A final production body",
-            "repair-prepared / P3 / actual ImageGen 1/5",
+            "repair-prepared / P3 / actual ImageGen 2/5",
             "1ff46804cb5c5dddd47c56fea2c65c50c22e392c82179b53c5d251af1a65584c",
             "89b24fc18109593b28f40b750fea96da6f65e323c1fcc3832bfd8aeed9b39192",
             "b9c81296a62b83064f82a2a43d154c9800875f6b15421ffe9e8393328762c6eb",
+            "b8f6c8b5360c5c8c036a77bc75e5ac91268f42d5fdf4a1df71c65e55a8cc32ce",
             "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
             "3b5c2ca6c1e69c74db5c64978cde351596ece6369d339b7125aee43904eb7d86",
             "Create exactly one edge-to-edge square orthographic hand-painted material donor",
@@ -3381,7 +3402,7 @@ def main() -> None:
             "固定 crop `[448,128,576,896]`",
             "1.0 - 0.16 × (accepted_wax_alpha / 255)",
             "pass / no execution-critical unknowns",
-            "当前实际 ImageGen：`1/5 repair-prepared`",
+            "当前实际 ImageGen：`2/5 repair-prepared`",
             "V7-A 独立生产授权记录",
             "授权前正文与机器合同固定于 commit `8a267b6`",
             "QS-B1 V7-A attempt 1 execution and internal rejection",
@@ -3389,6 +3410,11 @@ def main() -> None:
             "QS-B1 V7-A.r1 complete production Prompt — attempt 2 fresh repair",
             "DARKER SMOKED OLD-BONE PALETTE",
             "BROAD HAND-PAINTED SURFACE, NOT PHOTOGRAPHIC WEAVE",
+            "QS-B1 V7-A attempt 2 execution and internal rejection",
+            "muted-smoked-old-bone-palette-and-hand-painted-surface-scale",
+            "QS-B1 V7-A.r2 complete production Prompt — attempt 3 local edit",
+            "TARGET PALETTE — GREYED, DARKER, AND LESS SATURATED",
+            "REPAINT MICROGRAIN INTO BROAD MANUAL PLANES",
         ),
         "QS-B1 V17 confirmation, V7-A production, and attempt-1 repair",
     )
