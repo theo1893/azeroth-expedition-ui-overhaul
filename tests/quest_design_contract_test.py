@@ -3698,6 +3698,23 @@ def main() -> None:
         "QS-B1 V6-E attempt 4 rejection and final r3 repair gate",
     )
     require(
+        seals_work,
+        (
+            "QS-B1 V6-E attempt 5 execution, review, and exhausted stop",
+            "019fd614-253c-7b71-adea-0eaaad77f617",
+            "6f85cef0c106ab8efa769b3d08c3fed87780d58262eaa8b211412af4a4ac9eb9",
+            "bbox `[115,316,922,725]`",
+            "median `[99,47,13]`",
+            "`18×9px`",
+            "三条菜单横栏",
+            "candidate-rejected / repair-budget-exhausted / P3 / production 5/5",
+            "不得执行 attempt 6",
+            "进入 V6-F RESET attempt 1",
+            "V6-E `5/5`、整批 `18/35`",
+        ),
+        "QS-B1 V6-E exhausted stop and V6-F continuation gate",
+    )
+    require(
         seal_motifs_v5_candidate_reviewer,
         (
             "CANVAS = (1024, 1024)",
