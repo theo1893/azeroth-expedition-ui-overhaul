@@ -3516,10 +3516,32 @@ def main() -> None:
             "Across only the central sixty percent",
             "dominant dark muted umber-ochre near RGB [116,78,39]",
             "No sharp diamond point, spearhead, arrowhead, four-point star",
-            "V6-D `1/5`、\n  V6-E..G 各 `0/5`",
+            "计为 V6-D `1/5`、整批 `9/35`",
             "V6-D provider\n  结果占位文件名首次落位失败",
         ),
         "QS-B1 V6-D attempt 1 rejection and complete r1 repair gate",
+    )
+    require(
+        seals_work,
+        (
+            "QS-B1 V6-D attempt 2 execution and review",
+            "019fd5d0-5cb0-7ec1-b065-2423ab9535c6",
+            "cd44ae6e34837b08f2b3119f0f11a719348cf897d2c88133e4b7c87d0a59b680",
+            "bbox `[222,204,818,808]`",
+            "可见绿色污染 `20`",
+            "median `[106,55,21]`",
+            "右上墨带末端",
+            "internal-rejected / repair-prepared / P3 / 2/5",
+            "QS-B1 V6-D.r2 complete production Prompt — repair-prepared / frozen edit",
+            "only\nedit-identity input",
+            "ONLY ALLOWED REPAIR",
+            "near normalized box [717,362,720,366]",
+            "near [607,609]",
+            "near [360,705]",
+            "Do not invent a fifth repair zone",
+            "V6-D `2/5`、\n  V6-E..G 各 `0/5`",
+        ),
+        "QS-B1 V6-D attempt 2 local green cleanup edit gate",
     )
     require(
         seal_motifs_v5_candidate_reviewer,
