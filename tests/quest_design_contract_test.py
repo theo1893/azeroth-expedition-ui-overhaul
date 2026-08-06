@@ -3678,6 +3678,26 @@ def main() -> None:
         "QS-B1 V6-E counted prompt-transport generation and frozen retry gate",
     )
     require(
+        seals_work,
+        (
+            "QS-B1 V6-E attempt 4 execution and review",
+            "019fd60c-7742-79d3-a4df-42da211168cc",
+            "dc10437ba22797a639df9f63556133012ec4766a66caec3a9b7b292d948c8a76",
+            "bbox `[128,147,920,897]`",
+            "visible_green_spill_is_zero",
+            "median `[102,50,26]`",
+            "`792×750px`",
+            "`11×10px`",
+            "internal-rejected / repair-prepared / P3 / 4/5",
+            "attempt 4 禁止作为 Image 3",
+            "QS-B1 V6-E.r3 complete production Prompt — repair-prepared / frozen",
+            "WIDE-AND-SHALLOW SILHOUETTE IS THE PRIMARY CONTRACT",
+            "visible width-to-height ratio must remain between 2.20 and 2.70",
+            "V6-E `4/5`、整批 `17/35`",
+        ),
+        "QS-B1 V6-E attempt 4 rejection and final r3 repair gate",
+    )
+    require(
         seal_motifs_v5_candidate_reviewer,
         (
             "CANVAS = (1024, 1024)",

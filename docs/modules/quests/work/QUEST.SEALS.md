@@ -32,14 +32,14 @@
   `turn.completed`，因此实际生图已达 `5/5`
 - 当前 production 正文：V6-A..G 七份单对象完整正文已由用户于
   `2026-08-06` 以文末原文统一明确授权；当前执行正文为
-  `V6-E.r2 / repair-prepared / P3`
+  `V6-E.r3 / repair-prepared / P3`
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
   `source-accepted / P4 / production 4/5`；menu V5-B motifs
   `candidate-rejected / repair-budget-exhausted / P3 / simulation ImageGen 0/0 /
   production 5/5`；menu V6 motifs `repair-prepared / P3 / simulation ImageGen
-  0/0 / production 16/35 authorized`；runtime
+  0/0 / production 17/35 authorized`；runtime
   尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
@@ -49,7 +49,7 @@
   QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
   `0/5 / gated`；V5-B motifs `repair-prepared / P3 / simulation ImageGen 0/0 /
   production 5/5 / repair-budget-exhausted`；V6 motifs
-  `V6-E repair-prepared / P3 / production 16/35 authorized`
+  `V6-E repair-prepared / P3 / production 17/35 authorized`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -8608,12 +8608,12 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
   - Image 2：`assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
     (`719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`)
 - 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C `3/5`、V6-D `5/5`、
-  V6-E `3/5`、V6-F／G 各 `0/5`，合计 `16/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
+  V6-E `4/5`、V6-F／G 各 `0/5`，合计 `17/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
   内部通过；V6-D attempt 5 仍有 9 个绿色污染像素，五次额度耗尽且不得执行
   attempt 6。V6-E attempt 1／2 均已内部否决；attempt 3 因提示词传输遗漏仍触发
-  provider，故计入生图并否决。下一次为 V6-E attempt 4，以完全相同 V6-E.r2 正文
-  修正传输重试。全批目前共 `6` 次流程错误，其中 E3 同时返回 provider 图片并占用
-  一次生图额度。
+  provider，故计入生图并否决；attempt 4 已用完整 r2 正文生成但因近方形构图与
+  微缩语义失败而否决。下一次为 V6-E attempt 5 fresh，使用完整 V6-E.r3 正文。
+  全批目前共 `6` 次流程错误，其中 E3 同时返回 provider 图片并占用一次生图额度。
 - 用户授权原文：
 
 > 确认授权 QS-B1 V6-A/B/C/D/E/F/G 最终 production 正文；按 A→G 顺序执行；每段每次上传固定 SHA 的 Image 1/2，每段首次无 Image 3，仅允许同段紧邻前次输出在冻结修复边界内作为 Image 3 edit 输入；每段最多 5 次实际 ImageGen 调用，最坏合计 35 次，流程错误不占额度；单段内部通过即停，单段耗尽不阻止其他已授权独立段继续，禁止跨段复用像素；允许按合同执行同轴 1024² 归一化、边缘连通色键、透明 RGB 清零、等比 bbox-fit、七张独立 candidate/source、四态派生与真实排版预演。
@@ -8632,7 +8632,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 | V6-B DETAIL | 2/5 | 0 | candidate-reviewed / P3 | 单段通过即停；等待整批用户验收 |
 | V6-C SHOW | 3/5 | 0 | candidate-reviewed / P3 | 单段通过即停；授权 bbox-fit 例外 |
 | V6-D HIDE | 5/5 | 3 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
-| V6-E CLEAN | 3/5 | 1 | internal-rejected / repair-prepared / P3 | attempt 4 重试同一 r2；固定 Image 1／2，无 Image 3 |
+| V6-E CLEAN | 4/5 | 1 | internal-rejected / repair-prepared / P3 | attempt 5 fresh r3；固定 Image 1／2，无 Image 3 |
 | V6-F RESET | 0/5 | 0 | prompt-authorized | 等待 E 结束 |
 | V6-G ABANDON | 0/5 | 0 | prompt-authorized | 等待 F 结束 |
 
@@ -10502,3 +10502,169 @@ previous V6 generated pixel.
   固定 Image 1／2，无 Image 3。传输命令必须显式把文档路径交给提取器，且在启动
   前再次断言 bytes／SHA，启动后核对 child user block 含完整首段与 FINAL
   SELF-CHECK。除此以外不得改写正文、输入职责、冻结几何或执行器。
+
+### QS-B1 V6-E attempt 4 execution and review
+
+- 执行前 commit：`c3e5625`；完整正文版本：`QS-B1 V6-E.r2`；操作：fresh
+  regenerate。固定输入为 Image 1／2；无 Image 3；提示词正文 `8131 bytes`、
+  SHA-256 `9849fd88943d79c0f1151b4a7cb3bd0e19fa5c3596a4edaed46907d7736be80c`。
+  child user block 已核对包含完整首段、全部正文与 FINAL SELF-CHECK；未上传或
+  复用任何旧 V6 候选像素。
+- fixed child：`@openai/codex@0.143.0`、`gpt-5.5 / medium`；session
+  `019fd60c-7742-79d3-a4df-42da211168cc`；内建 `image_gen` 恰好调用一次并将
+  provider 文件原样复制至临时 generated，计为 V6-E `4/5`、整批 `17/35`；
+  本次无新增流程错误。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V6/V6-E/attempt-04/raw/QS-B1-V6-E.attempt-04.png`；
+  `1254×1254 RGB`；SHA-256
+  `dc10437ba22797a639df9f63556133012ec4766a66caec3a9b7b292d948c8a76`。
+- 确定性审查：归一化后可见 bbox `[128,147,920,897]`，比 safe box 分别向左／
+  上／右／下溢出 `32／13／56／33px`；可见绿色污染 `0`，自动 `8/9`，唯一技术
+  失败为 `visible_bbox_inside_safe_box`。review JSON SHA
+  `125dbe3016bcbedabb94b3c8e54669e3649fdaf560ce35e7eb982e5562a2312f`。
+- 美术内审：median `[102,50,26]`，暗土色与三笔数量成立，三条方向也比 E2 更有
+  差异；但可见 bbox 达 `792×750px`，宽高接近 1:1，完全背离宽而矮的按钮图标。
+  三笔仍有中心到边缘的连续明暗，且上／下笔倾斜过强，整体更像折返箭头、三片
+  大刷痕或返回手势；不再是横向清扫地图线。
+- runtime 装配：等比 fit 仅为 `11×10px`，位于冻结 `[7,6,25,16]` content box；
+  微缩后上／下斜笔与中间横笔挤成近似返回箭头或三横栏。六场景 display-region
+  `6/6 pass`、violations `0`，报告 SHA
+  `e5b378b1e548fe0793a2ac6bffada9ef8c78bcb1091aee00a72967e739deb070`；真实排版
+  SHA `81f38456db952fe00c570c23ad6f476ee875db22a5b6cae67b0be79784eac48d`。
+- 结论：`internal-rejected / repair-prepared / P3 / 4/5`。尺度、宽高比、笔势和
+  材质仍是全局问题，不允许在冻结局部 edit 中修复；attempt 4 禁止作为 Image 3。
+  attempt 5 为 E 段最后一次实际 ImageGen，必须 fresh regenerate，只上传固定
+  Image 1／2；无论通过或失败，E 段之后都必须停止。
+- 下一版必须保持：CLEAN 三笔单语义、深色平面矿物颜料、normal state、1024²
+  RGB、精确绿色背景、safe box、无 carrier、runtime content box 与动态排除。
+- 下一版只允许修复：以 `2.20–2.70:1` 的宽矮完整 silhouette 为第一合同；把三笔
+  限定在中央横向窄带内，降低倾角，保留不同节奏但杜绝返回箭头；移除全部连续
+  光照和大面积表面渐变，使 18×8 微缩仍为三道被扫开的旧地图路线。
+
+### QS-B1 V6-E.r3 complete production Prompt — repair-prepared / frozen
+
+Use Image 1 and Image 2 only as fixed visual references. Freshly generate exactly one
+independent normal-state CLEAN emblem for a circa-2004 vanilla World of Warcraft
+quest-log administration menu. This is one wide, shallow, flat bitmap pigment glyph,
+not a scene, screenshot, UI mockup, worksheet, atlas, button, ribbon, map, physical
+object, material sample, inventory item, or complete interface. Do not use V6-E attempt
+1, 2, 3, or 4, or any V6-A, V6-B, V6-C, or V6-D generated pixel as an input, edit
+source, tracing source, texture donor, or identity reference.
+
+REFERENCE AUTHORITY
+
+Image 1 is the highest authority only for the old Azeroth expedition-ledger language:
+heavy hand-painted masses, restrained earth color, slight asymmetry, sparse believable
+wear, and vanilla-era seriousness. Do not copy its book, pages, leather, brass, wax,
+ribbons, text, buttons, compass ornaments, or composition.
+
+Image 2 is a secondary micro-scale reference only. Inherit only economical stroke
+count, broad readable silhouette, softened handmade perimeter, and survival after
+severe downscaling. Do not copy, trace, rotate, recolor, or rearrange any triangle,
+circle, check mark, 2-by-2 layout, location, transparency, or pixel from Image 2.
+
+CANVAS AND OBJECT COUNT
+
+Return one exact square 1024 by 1024 RGB image. Fill every pixel outside the emblem with
+one perfectly uniform exact chroma-key green #00FF00. The green field has no gradient,
+texture, lighting, vignette, noise, shadow, paper, cloth, wax, metal, frame, guide,
+label, checkerboard, or transparency preview. Draw exactly one semantic CLEAN emblem,
+made from exactly three separate pigment marks, and no other mark.
+
+This source owns only the normal-state glyph. It will later be edge-keyed and
+isotropically bbox-fitted into content box [7,6,25,16] inside a 32 by 22 runtime Button.
+Do not draw that Button, a carrier, backing tile, hover, pressed, disabled state,
+Tooltip, text, map, menu background, ribbon substrate, or provider logic.
+
+WIDE-AND-SHALLOW SILHOUETTE IS THE PRIMARY CONTRACT
+
+Keep every visible pigment pixel strictly inside hard safe box [160,160,864,864]. Place
+the whole emblem inside the central horizontal band [200,380,824,644]. Do not draw this
+band. Target a visible width from 560 to 624 pixels and a visible height from 220 to 264
+pixels. The complete visible width-to-height ratio must remain between 2.20 and 2.70.
+Keep broad exact-green empty space above, below, left, and right. Do not enlarge the
+glyph to fill the square. Do not rotate the whole emblem. Use direct orthographic front
+view with no thickness, perspective, or directional lighting.
+
+Before returning the image, imagine proportionally fitting the visible bbox into an
+18-by-10-pixel box. The result should use approximately 18 pixels of width and only 7
+or 8 pixels of height, leaving vertical breathing room. A near-square, tall, 11-by-10,
+14-by-10, arrow-shaped, or vertically fanned result fails this contract.
+
+THREE-MARK CLEAN ANATOMY
+
+Paint exactly three separated, broad, blunt old cartographic route marks. They form one
+administrative CLEAN glyph: three heavy trail lines have been swept sideways off an
+expedition ledger. They are flat pigment imprints on an absent carrier, never physical
+strips or brush objects.
+
+Use this approximate placement while keeping all edges irregular:
+
+- upper mark: starts near [238,448], stays mostly horizontal, rises only 25 to 38 pixels
+  across its run, and ends bluntly near x=680; thickness about 52 to 64 pixels;
+- middle mark: starts near [216,510], is the longest, runs toward x=816 with one shallow
+  sag no deeper than 22 pixels, and ends in a wide chipped blunt patch; thickness about
+  58 to 70 pixels;
+- lower mark: starts near [250,572], is shortest, descends only 28 to 42 pixels, and ends
+  bluntly around x=640; thickness about 54 to 68 pixels.
+
+Keep their left starts in one loose vertical action band without connecting them. Keep
+unequal green gaps between marks. The upper, middle, and lower marks must have different
+lengths, widths, bends, density, start offsets, and blunt endpoints, but all remain
+predominantly horizontal. No end may taper to a point. Use coarse silhouette changes
+at 12-to-30-pixel scale, not hairline scratches or bristles.
+
+Do not form a left-pointing arrow, return arrow, chevron, fan, claw, or triangular mass.
+Do not use steep diagonals, smooth concentric curves, equal spacing, equal lengths,
+parallel menu bars, one shared tangent, a connected handle, a pointed apex, hooked ends,
+or curled ends. At 18-by-8 scale the three marks must remain a long shallow trio with
+visibly unequal rhythms, not a hamburger menu or motion-lines symbol.
+
+FLAT MINERAL PIGMENT
+
+Construct every mark from only two or three broad opaque flat color regions, like a
+coarse two-pass woodblock or wax-stencil transfer. Use a dominant dark muted umber-ochre
+near RGB [106,67,34], a few large old-ochre worn patches near RGB [130,84,43], and a few
+broad deep smoked-umber pools near RGB [72,43,25]. Keep the median visible color between
+RGB [94,57,29] and [120,77,40]. No bright yellow, orange, polished gold, brass, ivory,
+white, neon, or emissive pixel.
+
+There is no material surface and no light source. Use no continuous gradient, radial or
+linear shading, bright rim, dark underside, highlight, shadow, bevel, thickness, raised
+paint, grain field, fibers, cracks, leather texture, wood texture, cloth texture, dense
+speckle, or photographic distress. Large flat pigment patches may vary color without
+following a light direction. The silhouette must read as stamped pigment, not an
+object, strip, plank, bark, ribbon, blade, or wet brush stroke.
+
+Use non-constant hand-stamped edges, softened blunt corners, slight asymmetry, and a few
+coarse open edge nicks. Internal wear is a flat lighter ochre patch, never background
+green. Every mark interior stays pigment colored. Any missing-pigment notch must be open
+to the exterior. No enclosed green island, hole, crack, isolated speck, or green-tinted
+antialiasing is allowed. Edge antialiasing transitions through brown before exact green.
+
+STRICT EXCLUSIONS
+
+No full interface, book, page, leather strip, wood strip, plank, bark, cloth strip,
+ribbon, physical brush stroke, broom, brush object, wind, waves, water, speed streak,
+claw, feather, blade, fan, arrow, return arrow, chevron, pointed apex, hamburger menu,
+horizontal list, Wi-Fi, map grid, route arrow, text, letters, numbers, runes, wax, metal
+backing, button face, border, card, frame, medallion, rivet, bevel, cast shadow, drop
+shadow, ambient occlusion, glow, highlight, continuous gradient, photographic grain,
+repeated procedural noise, glass, neon, chrome, 3D rendering, photorealism, perfect
+symmetry, constant vector line weight, Diablo III ornament, Skyrim minimalist menu
+language, or Warhammer iconography. Do not place green inside pigment or tint an edge
+green.
+
+FINAL SELF-CHECK
+
+Confirm one and only one CLEAN glyph exists, made from exactly three separate wide,
+shallow, blunt, predominantly horizontal pigment marks. Confirm the complete visible
+bbox stays inside [200,380,824,644], spans 560–624 by 220–264 pixels, and has ratio
+2.20–2.70:1. Confirm an imagined proportional runtime result is about 18×7 or 18×8,
+never near-square or arrow-shaped. Confirm upper rises slightly, middle sags slightly,
+and lower descends slightly, without steep diagonals, menu-bar regularity, connected
+origin, pointed ends, or returning-arrow silhouette. Confirm only broad flat dark earthy
+color regions are present, with no continuous lighting, gradient, thickness, leather,
+wood, cloth, brush-object material, shadow, carrier, text, state, enclosed green pixel,
+green fringe, or additional mark. Confirm every exterior pixel is uniform exact
+#00FF00 and no previous V6 or Image-2 pixel or shape has been copied.
