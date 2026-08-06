@@ -26,21 +26,21 @@
   循环已按内部完整通过提前停止
 - 当前已授权未执行正文：`QS-B1 V5-B`；用户于 `2026-08-06` 明确授权固定
   Image 1／2、受限同循环 Image 3 edit、最多五次实际 ImageGen 和合同内
-  确定性后处理；当前 `0/5`
+  确定性后处理；当前 `execution-blocked / 0/5`
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
   `source-accepted / P4 / production 4/5`；menu V5-B motifs
-  `prompt-authorized / P3 / simulation ImageGen 0/0 / production 0/5`；runtime
-  尚未完成
+  `prompt-authorized / execution-blocked / P3 / simulation ImageGen 0/0 /
+  production 0/5`；runtime 尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
   `simulation-confirmed / V3-A repair-budget-exhausted / V3-B gated / P3`；V1 保持
   `candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`；
   QS-B1 V4-A `candidate-rejected / repair-budget-exhausted / P3 / 5/5`；
   QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
-  `0/5 / gated`；V5-B motifs `prompt-authorized / P3 / simulation ImageGen 0/0 /
-  production 0/5`
+  `0/5 / gated`；V5-B motifs `prompt-authorized / execution-blocked / P3 /
+  simulation ImageGen 0/0 / production 0/5`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -56,7 +56,7 @@
   因此提前停止，attempt 5 未调用。V14 只用
   本地平面几何预演 donor／crop／mask／composite 分工，用户确认不接受其中
   任何模拟像素
-- QS-B1 V5-B 模拟 ImageGen：`0/0`；production `0/5`；流程错误 `5`。E1
+- QS-B1 V5-B 模拟 ImageGen：`0/0`；production `0/5`；流程错误 `6`。E1
   在 provider 启动前因两个 `-i` 后缺少显式 `--` 参数分隔符而返回
   `Reading prompt from stdin... / No prompt provided via stdin.`；无图片、无
   provider result。E2 已启动固定 child session，但正文提取起点要求首句整行
@@ -67,7 +67,9 @@
   调用前远端插件目录连接失败，只输出执行意图；临时目录与 attempt 目录均无
   文件。E5 的结构化复核不再出现 catalog 警告，但 session 在第一条
   commentary 后结束，事件流没有 tool call 或 `turn.completed`，仍无文件。
-  五次均不占实际生图额度
+  E6 对同一 session 的唯一恢复再次出现 remote plugin catalog 连接失败，
+  没有 agent/tool/provider result 或文件。六次均不占实际生图额度；相同
+  工具发现错误已复现，按工作流停止重试
 - QS-B1 历史流程错误：V1 `1`、V2 `3`、V3 `0`、V4-A `1`、V5-A `1`。均按
   “无生成证据才不占额度”记录
 - tracked source：
@@ -6822,15 +6824,18 @@ uniform exact #00FF00.
 - 计划 raw 根：
   `generated/quests/QUEST-SEALS/QS-B1-V5-B/`；attempt 1 写入
   `attempt-01/`，不得覆盖其他版本。
-- 当前计数：实际 ImageGen `0/5`；流程错误 `5`；五次均在生成前失败且无
+- 当前计数：实际 ImageGen `0/5`；流程错误 `6`；六次均在生成前失败且无
   provider 生成证据。
 - 授权正文参数预检：按 `完整 production Prompt — 已授权冻结` 与
   `完整性审计` 标题边界提取、去除两标题后为 `6998 bytes`；传入参数正文
   SHA-256 `762930e574b4c3fdf0ec6898946e51742d61ccfd9ae09913e018e95035a1dc54`；
   首句已核对为 `Use Image 1 and Image 2 only as fixed visual references.`
-- 当前最高状态：`prompt-authorized / P3`。下一步是用上方英文正文逐字执行
-  attempt 1，然后完成范围、语义、风格、像素、四态与六场景真实排版审查。
-  内部通过只到 `candidate-reviewed / P3`，不得自动写 source/runtime/addon。
+- 当前最高状态：`prompt-authorized / execution-blocked / P3 / 0/5`。固定
+  `@openai/codex@0.143.0` child 无法发现／调用内置 `image_gen`，attempt 1
+  尚未发生；在该执行路径恢复或用户另行授权改变路径前，不得继续盲重试。
+  恢复该路径后仍必须用上方英文正文逐字执行 attempt 1，再完成
+  范围、语义、风格、像素、四态与六场景真实排版审查。内部通过最高只到
+  `candidate-reviewed / P3`，不得自动写 source/runtime/addon。
 
 ### V5-B 流程错误
 
@@ -6841,3 +6846,4 @@ uniform exact #00FF00.
 | E3 | `QS-B1 V5-B` / `df982e1` | fixed child session `019fd4f3-c53a-75f0-822b-dc71902bb780` | child 的 `user` block 已包含完整授权正文和固定输入映射，但工作目录仍是仓库；它重新读取 `.codex/skills/imagegen-0-143-0/SKILL.md` 并说明准备再次运行 fixed child，未出现内置 `image_gen` tool call、provider result 或图片，`attempt-01/` 仍为空 | 遵循仓库 wrapper 的防递归合同：创建空临时工作目录及其 `generated/`，用 `codex exec -C <temp> -s workspace-write`；Execution instruction 明确当前 child 已是 `@openai/codex@0.143.0`、必须只用内置 `image_gen`、禁止读取 wrapper 或再启动 `codex/npx`。授权正文与 Image 1／2 不变 | wrapper-recursion 流程错误，不占额度；仍为 `0/5` |
 | E4 | `QS-B1 V5-B` / `00641d6` | fixed child session `019fd4f6-0883-7701-99d4-299a3273c3cd` | 完整正文、固定输入、空临时 workdir 与 `workspace-write` 均正确；child 明确选择内置 `image_gen`，随后仅报告 remote plugin catalog 请求 `https://chatgpt.com/backend-api/ps/plugins/list` 发送失败。没有 tool call／provider result；`/private/tmp/aeui-qs-b1-v5b-attempt-01-FQ2jLB` 与项目 `attempt-01/` 均无文件 | 保持所有授权输入与正文不变；用固定 child 的结构化事件输出复核一次工具发现／调用，仍使用新的空临时目录。若同一 catalog／tool-discovery 错误再次出现且仍无生成证据，则按工作流暂停诊断，不再无限重试 | 网络／工具发现流程错误，不占额度；仍为 `0/5` |
 | E5 | `QS-B1 V5-B` / `839d44f` | fixed child session `019fd4f8-7c20-77d0-9aa0-cc8d0042ce02` | 新空目录和结构化 `--json` 启动成功，完整正文与 Image 1／2 均在 session 中；事件只有 `thread.started`、`turn.started` 和一条 commentary `agent_message`，rollout 没有 `image_gen` tool call、provider result、`turn.completed` 或其他错误，临时目录和项目目录均为空 | 不再 fresh launch；只对同一个 session 做一次 `codex exec resume` 传输恢复，明确要求立即继续既有请求并调用内置 `image_gen`，不得重写创意正文或启动新 child。若仍只返回 commentary，则固定 0.143.0 路径阻塞并停止 | CLI turn 提前结束流程错误，不占额度；仍为 `0/5` |
+| E6 | `QS-B1 V5-B` / `4e2b2d9` | resumed fixed child session `019fd4f8-7c20-77d0-9aa0-cc8d0042ce02` | `codex exec resume --json` 重新打开同一会话，随后再次报告 `failed to warm remote plugin catalog cache`：向 `https://chatgpt.com/backend-api/ps/plugins/list` 发送请求失败。事件只有 `thread.started`／`turn.started`，没有 agent completion、`image_gen` tool call、provider result 或图片 | 相同工具发现／网络错误已在一次针对性恢复后复现；按 bounded-loop 规则停止全部 fixed-child 重试，不切换当前会话原生生图或 API/CLI fallback，也不消耗实际预算 | `execution-blocked / prompt-authorized / P3 / 0/5`；等待固定 0.143.0 内置工具恢复或用户另行改变执行路径授权 |

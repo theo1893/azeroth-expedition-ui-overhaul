@@ -3129,7 +3129,7 @@ def main() -> None:
             "V5-B 正式 production 授权冻结点",
             "确认授权 QS-B1 V5-B 最终 production 正文",
             "attempt 1 没有 Image 3",
-            "QS-B1 V5-B 模拟 ImageGen：`0/0`；production `0/5`；流程错误 `5`",
+            "QS-B1 V5-B 模拟 ImageGen：`0/0`；production `0/5`；流程错误 `6`",
             "V5-B 流程错误",
             "No prompt provided via stdin.",
             "最后一个 `-i` 后加入标准 `--` 参数分隔符",
@@ -3146,6 +3146,9 @@ def main() -> None:
             "019fd4f8-7c20-77d0-9aa0-cc8d0042ce02",
             "codex exec resume",
             "CLI turn 提前结束流程错误，不占额度",
+            "failed to warm remote plugin catalog cache",
+            "execution-blocked / prompt-authorized / P3 / 0/5",
+            "不得继续盲重试",
         ),
         "QS-B1 V15 confirmation and V5-B authorized production gate",
     )
@@ -3154,7 +3157,7 @@ def main() -> None:
         (
             "QUEST-LOG-SEAL-MOTIFS-SIM-V15 / QS-B1 V5-B",
             "旧赭金矿物颜料与放弃项灰暗酒红",
-            "prompt-authorized / P3 / production 0/5",
+            "prompt-authorized / execution-blocked / P3 / production 0/5",
             "production 0/5",
             "逐字执行 attempt 1",
         ),
@@ -3173,7 +3176,7 @@ def main() -> None:
     require(
         submodules,
         (
-            "当前 `prompt-authorized / P3 / 0/5`",
+            "当前 `prompt-authorized / execution-blocked / P3 / 0/5`",
             "MOTIF.SHARE",
             "哑光低饱和旧赭金矿物颜料",
             "MOTIF.ABANDON",
