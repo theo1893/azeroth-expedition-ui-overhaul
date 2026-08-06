@@ -56,10 +56,12 @@
   因此提前停止，attempt 5 未调用。V14 只用
   本地平面几何预演 donor／crop／mask／composite 分工，用户确认不接受其中
   任何模拟像素
-- QS-B1 V5-B 模拟 ImageGen：`0/0`；production `0/5`；流程错误 `1`。E1
+- QS-B1 V5-B 模拟 ImageGen：`0/0`；production `0/5`；流程错误 `2`。E1
   在 provider 启动前因两个 `-i` 后缺少显式 `--` 参数分隔符而返回
   `Reading prompt from stdin... / No prompt provided via stdin.`；无图片、无
-  provider result，不占实际生图额度
+  provider result。E2 已启动固定 child session，但正文提取起点要求首句整行
+  精确匹配，导致只传入空 `$imagegen` 与执行说明；同样无 tool/provider
+  result 和图片。两次均不占实际生图额度
 - QS-B1 历史流程错误：V1 `1`、V2 `3`、V3 `0`、V4-A `1`、V5-A `1`。均按
   “无生成证据才不占额度”记录
 - tracked source：
@@ -6814,8 +6816,12 @@ uniform exact #00FF00.
 - 计划 raw 根：
   `generated/quests/QUEST-SEALS/QS-B1-V5-B/`；attempt 1 写入
   `attempt-01/`，不得覆盖其他版本。
-- 当前计数：实际 ImageGen `0/5`；流程错误 `1`；已尝试上传固定 Image 1／2
-  一次，但进程在生成前失败且无 provider 生成证据。
+- 当前计数：实际 ImageGen `0/5`；流程错误 `2`；两次均在生成前失败且无
+  provider 生成证据。
+- 授权正文参数预检：按 `完整 production Prompt — 已授权冻结` 与
+  `完整性审计` 标题边界提取、去除两标题后为 `6998 bytes`；传入参数正文
+  SHA-256 `762930e574b4c3fdf0ec6898946e51742d61ccfd9ae09913e018e95035a1dc54`；
+  首句已核对为 `Use Image 1 and Image 2 only as fixed visual references.`
 - 当前最高状态：`prompt-authorized / P3`。下一步是用上方英文正文逐字执行
   attempt 1，然后完成范围、语义、风格、像素、四态与六场景真实排版审查。
   内部通过只到 `candidate-reviewed / P3`，不得自动写 source/runtime/addon。
@@ -6825,3 +6831,4 @@ uniform exact #00FF00.
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
 | E1 | `QS-B1 V5-B` / `e65c7c1` | 无 provider session/result | 固定 child 在上传参数解析阶段输出 `Reading prompt from stdin...` 与 `No prompt provided via stdin.` 后以 `1` 退出；`attempt-01/` 无任何文件，无法证明生成作业启动 | 保持两张固定输入、顺序、SHA 与已授权正文完全不变；只在最后一个 `-i` 后加入标准 `--` 参数分隔符，再把完整正文作为单一位置参数传入 | 流程错误，不占额度；仍为 `0/5` |
+| E2 | `QS-B1 V5-B` / `00fd1c9` | fixed child session `019fd4f1-ca45-7130-b6da-48e79d0abdf8` | `--` 已生效，但正文提取表达式要求首句在句号后立即结束；实际首行仍有 `Create one production`，故 child 收到的用户正文只有空 `$imagegen` 与 Execution instruction。输出只有“将生成”的 commentary，无 ImageGen tool/provider result；`attempt-01/` 仍无文件 | 改按已授权 Prompt 标题到完整性审计标题提取，并在调用前断言非空、`6998 bytes`、SHA `762930e5…a1dc54` 与首句正确；其他输入和正文不变 | 流程错误，不占额度；仍为 `0/5` |
