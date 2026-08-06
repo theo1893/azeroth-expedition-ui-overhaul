@@ -31,15 +31,15 @@
   `019fd527-d402-7c00-8fd2-4d6d0ec932d4` 已返回图片并完成
   `turn.completed`，因此实际生图已达 `5/5`
 - 当前 production 正文：V6-A..G 七份单对象完整正文已由用户于
-  `2026-08-06` 以文末原文统一明确授权；V6-A attempt 1 已退回，当前执行
-  正文为 `V6-A.r1 / repair-prepared / P3`
+  `2026-08-06` 以文末原文统一明确授权；当前执行正文为
+  `V6-E.r2 / repair-prepared / P3`
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
   `source-accepted / P4 / production 4/5`；menu V5-B motifs
   `candidate-rejected / repair-budget-exhausted / P3 / simulation ImageGen 0/0 /
   production 5/5`；menu V6 motifs `repair-prepared / P3 / simulation ImageGen
-  0/0 / production 1/35 authorized`；runtime
+  0/0 / production 15/35 authorized`；runtime
   尚未完成
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
@@ -49,7 +49,7 @@
   QS-B1 V5-A substrate `source-accepted / P4 / production 4/5`；V3-B motifs
   `0/5 / gated`；V5-B motifs `repair-prepared / P3 / simulation ImageGen 0/0 /
   production 5/5 / repair-budget-exhausted`；V6 motifs
-  `V6-A repair-prepared / P3 / production 1/35 authorized`
+  `V6-E repair-prepared / P3 / production 15/35 authorized`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -8608,9 +8608,9 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
   - Image 2：`assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png`
     (`719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44`)
 - 当前计数：V6-A `3/5`、V6-B `2/5`、V6-C `3/5`、V6-D `5/5`、
-  V6-E `1/5`、V6-F／G 各 `0/5`，合计 `14/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
+  V6-E `2/5`、V6-F／G 各 `0/5`，合计 `15/35`；V6-C attempt 3 已按授权 bbox-fit 合同例外
   内部通过；V6-D attempt 5 仍有 9 个绿色污染像素，五次额度耗尽且不得执行
-  attempt 6。V6-E attempt 1 已内部否决，下一次为 V6-E attempt 2 fresh
+  attempt 6。V6-E attempt 1／2 均已内部否决，下一次为 V6-E attempt 3 fresh
   regenerate。全批目前共 `5` 次流程错误；均未新增 ImageGen，依授权不占生图额度。
 - 用户授权原文：
 
@@ -8630,7 +8630,7 @@ self-check。所有正文都禁止 carrier、按钮底板、文字、状态图�
 | V6-B DETAIL | 2/5 | 0 | candidate-reviewed / P3 | 单段通过即停；等待整批用户验收 |
 | V6-C SHOW | 3/5 | 0 | candidate-reviewed / P3 | 单段通过即停；授权 bbox-fit 例外 |
 | V6-D HIDE | 5/5 | 3 | candidate-rejected / repair-budget-exhausted / P3 | 不得 attempt 6；等待用户后续处置 |
-| V6-E CLEAN | 1/5 | 0 | internal-rejected / repair-prepared / P3 | attempt 2 fresh；固定 Image 1／2，无 Image 3 |
+| V6-E CLEAN | 2/5 | 0 | internal-rejected / repair-prepared / P3 | attempt 3 fresh；固定 Image 1／2，无 Image 3 |
 | V6-F RESET | 0/5 | 0 | prompt-authorized | 等待 E 结束 |
 | V6-G ABANDON | 0/5 | 0 | prompt-authorized | 等待 F 结束 |
 
@@ -10297,3 +10297,172 @@ Confirm all three strokes use only broad flat dark earthy pigment patches near
 highlight, shadow, carrier, text, state, enclosed green pixel, green fringe, or
 additional mark. Confirm the emblem does not read as wind, waves, speed lines, claw,
 feathers, blades, fan, menu bars, Wi-Fi, arrow, broom, or copied Image-2 shapes.
+
+### QS-B1 V6-E attempt 2 execution and review
+
+- 执行前 commit：`f92bb90`；完整正文版本：`QS-B1 V6-E.r1`；操作：fresh
+  regenerate。固定输入为 Image 1／2；无 Image 3；提示词正文 `7522 bytes`、
+  SHA-256 `0a0dbe0b91167291584c91ff5bf4d0d7926ef3d412467112a20c5b3f2f65fcc0`；
+  未上传或复用 V6-A..D 或 E attempt 1 的任何候选像素。
+- fixed child：`@openai/codex@0.143.0`、`gpt-5.5 / medium`；session
+  `019fd5fb-7e45-7ff0-b5c3-f93f90646758`；完整正文与两图职责已逐字回显，内建
+  `image_gen` 恰好调用一次并成功原样落位，计为 V6-E `2/5`、整批 `15/35`；
+  本次没有新增流程错误。
+- raw：
+  `generated/quests/QUEST-SEALS/QS-B1-V6/V6-E/attempt-02/raw/QS-B1-V6-E.attempt-02.png`；
+  `1254×1254 RGB`；SHA-256
+  `fd8d04aec4415c7fceac84cfc51ee64f406a36e4c589600bc1e7a4e1b1a8d79c`。
+- 确定性审查：归一化后可见 bbox `[146,242,879,783]`，左侧越 safe box `14px`、
+  右侧越 `15px`；可见绿色污染 `0`，自动 `8/9`，唯一技术失败为
+  `visible_bbox_inside_safe_box`。该几何溢出可由用户已授权的等比 bbox-fit 合同例外
+  处理，但不覆盖下述美术失败。review JSON SHA
+  `b08bbd2d21a3cfc06f56698f6086ec62a314f61aec4f4bb1b8b645c0ca0726a9`。
+- 美术内审：颜色已压暗至 median `[100,50,6]`，luma p50 `57.313`，且三条数量、
+  大致长短关系与钝端成立；但完整 bbox 达 `733×541px`，远大于正文目标，三条起点
+  没有形成紧凑的共同动作区。连续明暗、边缘亮线、表面斑驳和实体厚度使其更像
+  三条有厚度的旧皮革／木片，而不是印在不存在载体上的平面矿物墨迹。缩到真实
+  `14×10px` 后主要剩三条近水平深色栏，容易读成菜单横线，清理地图路线的语义
+  不足。
+- runtime 装配：确定性等比 fit 为 `14×10px`，位于冻结 `[7,6,25,16]` content
+  box；六场景 display-region `6/6 pass`、violations `0`，报告 SHA
+  `e16367b1961ce962a2174ee901191349da9339b817ce99e835b116535d0e7135`；真实排版
+  SHA `50af4ac7bd36448aea3cfdbb02b868935618e7b11821fab2056a0a0c5e9e8bde`。
+- 结论：`internal-rejected / repair-prepared / P3 / 2/5`。问题同时涉及尺度、
+  轮廓、起点关系与材质，不属于冻结局部 edit；attempt 2 禁止作为 Image 3。
+  attempt 3 必须 fresh regenerate，只上传固定 Image 1／2，禁止跨段像素。
+- 下一版必须保持：CLEAN 功能语义、恰好三条独立且构成单一语义的地图清扫墨记、
+  normal state、1024² RGB、精确绿色背景、safe box、无 carrier、runtime content
+  box 与所有动态排除。
+- 下一版只允许修复：把三条压成指定中央工作框内的扁平不规则 stamp-blots；每条
+  使用少量离散暗土色颜料块，移除皮革／木片实体感、连续光照、亮边和细密纹理；
+  强化三条的不同方向、节奏与钝端，使 18×10 微缩仍不是三条菜单横线。
+
+### QS-B1 V6-E.r2 complete production Prompt — repair-prepared / frozen
+
+Use Image 1 and Image 2 only as fixed visual references. Freshly generate exactly one
+independent normal-state CLEAN emblem for a circa-2004 vanilla World of Warcraft
+quest-log administration menu. This is a small flat bitmap pigment sprite source, not
+a scene, screenshot, UI mockup, worksheet, atlas, button, ribbon, map, physical object,
+material sample, inventory item, or complete interface. Do not use V6-E attempt 1,
+V6-E attempt 2, or any V6-A, V6-B, V6-C, or V6-D generated pixel as an input, edit
+source, tracing source, texture donor, or identity reference.
+
+REFERENCE AUTHORITY AND IMAGE ROLES
+
+Image 1 is the highest visual authority for the old Azeroth expedition-ledger language:
+heavy hand-painted masses, muted earth color, slight asymmetry, sparse believable wear,
+and the serious weight of a vanilla-era adventurers' guild record. Inherit only that
+era, weight, restrained palette, and handmade surface logic. Do not copy its book,
+pages, leather frame, brass, wax seal, ribbons, text, reward slots, buttons, compass
+ornaments, or composition.
+
+Image 2 is a secondary micro-scale reference only. Inherit only its economical stroke
+count, broad readable silhouettes, softened handmade perimeter, and legibility after
+severe downscaling. Do not copy, trace, rotate, recolor, or rearrange any triangle,
+circle, check mark, 2-by-2 layout, position, transparency, or pixel from Image 2.
+
+CANVAS, COUNT, AND EXACT WORKING ENVELOPE
+
+Return one exact square 1024 by 1024 RGB image. Fill every pixel outside the emblem with
+one perfectly uniform exact chroma-key green #00FF00. The green field must have no
+gradient, lighting, texture, vignette, noise, shadow, paper, cloth, wax, metal, frame,
+guide, label, checkerboard, or transparency preview. There must be exactly one semantic
+CLEAN emblem, built from exactly three separated pigment strokes, and no unrelated
+mark.
+
+Keep every visible pigment, antialiasing pixel, soft bleed, and edge nick strictly
+inside hard safe box [160,160,864,864]. More specifically, place the complete emblem
+inside the smaller target envelope [280,365,744,655], approximately 464 pixels wide by
+290 pixels high. Do not fill that rectangle and do not draw it; it is placement data
+only. Center the visual mass near [512,510]. Leave broad exact-green margin on every
+side. Use direct orthographic front view with no perspective, thickness, modeled depth,
+or directional lighting.
+
+This source owns only one normal-state pigment emblem. It will later be extracted and
+isotropically bbox-fitted into content box [7,6,25,16] inside one 32 by 22 runtime
+Button. Do not draw the Button, carrier, backing tile, hover, pressed, disabled state,
+Tooltip, text, map, menu background, ribbon substrate, or provider logic.
+
+EMBLEM ANATOMY: THREE FLAT IRREGULAR STAMP-BLOTS
+
+Paint exactly three separate broad cartographic route marks as one CLEAN sign. Treat
+them as three flat, blunt, irregular stamp-blots of matte mineral pigment floating on
+the chroma field. They are painted marks only. NEVER PHYSICAL STRIPS: no leather, wood,
+cloth, ribbon, plank, bark, metal blade, raised paste, embossed body, bevel, thickness,
+fold, curled end, object edge, or surface lighting.
+
+Align the three left starts within a narrow shared x-band from about x=292 to x=330,
+but keep green separation between them. Do not connect them into a handle or point.
+Their shapes must diverge immediately so they cannot read as three parallel menu bars:
+
+- upper mark: begins around y=420, moves right and noticeably upward, has one broad
+  uneven shoulder, then stops at about x=655 with a wide chipped blunt end;
+- middle mark: begins around y=500, moves right with a shallow sag and one asymmetric
+  belly, reaches about x=735, and ends in a broad squared-off ragged patch;
+- lower mark: begins around y=575, drops diagonally down-right early, remains the
+  shortest, stops around x=600, and has the widest irregular blunt terminal patch.
+
+Keep each mark approximately 58 to 76 pixels thick, with coarse silhouette changes at
+a scale of 12 to 35 pixels rather than hairline texture. Preserve wide uneven green gaps
+between marks. Their lengths, slopes, widths, bends, gaps, pigment density, start
+offsets, and endpoints must be visibly different. No mark may taper to a point. Do not
+make smooth arcs, repeated curves, equal spacing, equal lengths, a neat fan, a single
+shared tangent, or three horizontal bars.
+
+At an imagined 18-by-10-pixel downscale, the upper rising stroke, long sagging middle
+stroke, and short descending lower stroke must remain three distinct chunky gestures.
+If the result resembles a hamburger menu, speed lines, wind, waves, feathers, blades,
+claw scratches, Wi-Fi, an arrow, a broom, or a brush object, change the silhouettes
+before returning the image.
+
+FLAT PIGMENT CONSTRUCTION, COLOR, AND EDGE
+
+Build each mark from only two or three broad opaque color regions, like a coarse
+two-pass woodblock stamp. At least 80 percent of the visible area should use one flat
+dominant dark muted umber-ochre near RGB [108,68,33]. Add only a few large irregular
+old-ochre wear patches near RGB [132,86,42] and a few broad deep smoked-umber pools near
+RGB [74,43,23]. Keep the median visible color between RGB [96,58,28] and [122,78,39].
+No visible pixel may resemble bright yellow, bright orange, polished gold, brass,
+ivory, white, neon, or emissive light.
+
+There is no material surface to render. Use no continuous gradient, no center-to-edge
+shading, no bright rim, no dark cast underside, no highlight, no shadow, no grain field,
+no repeated speckle, no fibers, no cracks, and no dense photographic distress. A few
+large flat pigment variations may cross the interior without following an imagined
+light direction. The marks must look printed, not carved or photographed.
+
+Use non-constant hand-stamped perimeters, softened blunt corners, slight asymmetry, and
+a few coarse open edge nicks. Internal wear is always a flat lighter ochre patch, never
+background green. The interior of every mark remains fully pigment colored. Any true
+missing-pigment notch must be open and connected to the exterior silhouette. No
+enclosed green island, green hole, green crack, isolated green speck, or green-tinted
+antialiasing is allowed. All edge antialiasing transitions through brown pigment before
+meeting exact green.
+
+STRICT EXCLUSIONS
+
+No leather strips, wood strips, planks, bark, cloth strips, ribbon, raised paint,
+physical material sample, broom, brush object, wind, waves, water, speed lines, motion
+streaks, claw, feathers, blades, fan, arrowhead, back arrow, pointed shared apex, three
+equal parallel lines, hamburger menu, horizontal list, Wi-Fi arcs, route arrow, map
+grid, text, letters, numbers, runes, paper, wax, metal backing, button face, border,
+card, frame, medallion, rivet, bevel, cast shadow, drop shadow, contact shadow, ambient
+occlusion, glow, specular highlight, rim light, continuous gradient, photographic
+grain, repeated procedural noise, glass, neon, chrome, 3D rendering, photorealism,
+perfect symmetry, constant vector line weight, Diablo III ornament, Skyrim minimalist
+menu language, or Warhammer iconography. Do not place green inside a pigment mark or
+tint an edge green.
+
+FINAL SELF-CHECK
+
+Confirm the canvas contains exactly one CLEAN emblem made from exactly three separated
+flat irregular stamp-blots, with no physical carrier or material-strip appearance.
+Confirm the full emblem stays inside [280,365,744,655], and therefore inside hard safe
+box [160,160,864,864]. Confirm upper rises, middle sags, and lower descends, with clearly
+different lengths and chunky blunt endings; at 18-by-10 scale they must not become
+three horizontal menu bars or speed lines. Confirm the marks use only a few broad flat
+dark earthy color regions, with no continuous lighting, edge highlight, thickness,
+leather, wood, cloth, metal, dense texture, gold brightness, shadow, carrier, text,
+state, enclosed green pixel, green fringe, or additional mark. Confirm every exterior
+pixel is uniform exact #00FF00 and the result does not copy any Image-2 shape or any
+previous V6 generated pixel.

@@ -3635,9 +3635,29 @@ def main() -> None:
             "exactly three separate\nshort broad blunt unequal cartographic trail strokes",
             "dominant dark muted umber-ochre near RGB [112,72,35]",
             "No broom, brush object, wind, waves, water, speed line",
-            "V6-E `1/5`、V6-F／G 各 `0/5`",
+            "计为 V6-E `1/5`、整批 `14/35`",
         ),
         "QS-B1 V6-E attempt 1 rejection and complete r1 repair gate",
+    )
+    require(
+        seals_work,
+        (
+            "QS-B1 V6-E attempt 2 execution and review",
+            "019fd5fb-7e45-7ff0-b5c3-f93f90646758",
+            "fd8d04aec4415c7fceac84cfc51ee64f406a36e4c589600bc1e7a4e1b1a8d79c",
+            "bbox `[146,242,879,783]`",
+            "可见绿色污染 `0`",
+            "median `[100,50,6]`",
+            "三条有厚度的旧皮革／木片",
+            "缩到真实\n  `14×10px`",
+            "internal-rejected / repair-prepared / P3 / 2/5",
+            "attempt 2 禁止作为 Image 3",
+            "QS-B1 V6-E.r2 complete production Prompt — repair-prepared / frozen",
+            "EMBLEM ANATOMY: THREE FLAT IRREGULAR STAMP-BLOTS",
+            "NEVER PHYSICAL STRIPS",
+            "V6-E `2/5`、整批 `15/35`",
+        ),
+        "QS-B1 V6-E attempt 2 rejection and complete r2 repair gate",
     )
     require(
         seal_motifs_v5_candidate_reviewer,
