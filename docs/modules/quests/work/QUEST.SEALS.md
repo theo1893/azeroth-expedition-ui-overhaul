@@ -56,7 +56,7 @@
   因此提前停止，attempt 5 未调用。V14 只用
   本地平面几何预演 donor／crop／mask／composite 分工，用户确认不接受其中
   任何模拟像素
-- QS-B1 V5-B 模拟 ImageGen：`0/0`；production `0/5`；流程错误 `4`。E1
+- QS-B1 V5-B 模拟 ImageGen：`0/0`；production `0/5`；流程错误 `5`。E1
   在 provider 启动前因两个 `-i` 后缺少显式 `--` 参数分隔符而返回
   `Reading prompt from stdin... / No prompt provided via stdin.`；无图片、无
   provider result。E2 已启动固定 child session，但正文提取起点要求首句整行
@@ -65,7 +65,9 @@
   重新发现并读取同名 wrapper，未调用其内置 `image_gen` 就停止；同样无
   tool/provider result 和图片。E4 已按防递归合同进入空临时目录，但内置工具
   调用前远端插件目录连接失败，只输出执行意图；临时目录与 attempt 目录均无
-  文件。四次均不占实际生图额度
+  文件。E5 的结构化复核不再出现 catalog 警告，但 session 在第一条
+  commentary 后结束，事件流没有 tool call 或 `turn.completed`，仍无文件。
+  五次均不占实际生图额度
 - QS-B1 历史流程错误：V1 `1`、V2 `3`、V3 `0`、V4-A `1`、V5-A `1`。均按
   “无生成证据才不占额度”记录
 - tracked source：
@@ -6820,7 +6822,7 @@ uniform exact #00FF00.
 - 计划 raw 根：
   `generated/quests/QUEST-SEALS/QS-B1-V5-B/`；attempt 1 写入
   `attempt-01/`，不得覆盖其他版本。
-- 当前计数：实际 ImageGen `0/5`；流程错误 `4`；四次均在生成前失败且无
+- 当前计数：实际 ImageGen `0/5`；流程错误 `5`；五次均在生成前失败且无
   provider 生成证据。
 - 授权正文参数预检：按 `完整 production Prompt — 已授权冻结` 与
   `完整性审计` 标题边界提取、去除两标题后为 `6998 bytes`；传入参数正文
@@ -6838,3 +6840,4 @@ uniform exact #00FF00.
 | E2 | `QS-B1 V5-B` / `00fd1c9` | fixed child session `019fd4f1-ca45-7130-b6da-48e79d0abdf8` | `--` 已生效，但正文提取表达式要求首句在句号后立即结束；实际首行仍有 `Create one production`，故 child 收到的用户正文只有空 `$imagegen` 与 Execution instruction。输出只有“将生成”的 commentary，无 ImageGen tool/provider result；`attempt-01/` 仍无文件 | 改按已授权 Prompt 标题到完整性审计标题提取，并在调用前断言非空、`6998 bytes`、SHA `762930e5…a1dc54` 与首句正确；其他输入和正文不变 | 流程错误，不占额度；仍为 `0/5` |
 | E3 | `QS-B1 V5-B` / `df982e1` | fixed child session `019fd4f3-c53a-75f0-822b-dc71902bb780` | child 的 `user` block 已包含完整授权正文和固定输入映射，但工作目录仍是仓库；它重新读取 `.codex/skills/imagegen-0-143-0/SKILL.md` 并说明准备再次运行 fixed child，未出现内置 `image_gen` tool call、provider result 或图片，`attempt-01/` 仍为空 | 遵循仓库 wrapper 的防递归合同：创建空临时工作目录及其 `generated/`，用 `codex exec -C <temp> -s workspace-write`；Execution instruction 明确当前 child 已是 `@openai/codex@0.143.0`、必须只用内置 `image_gen`、禁止读取 wrapper 或再启动 `codex/npx`。授权正文与 Image 1／2 不变 | wrapper-recursion 流程错误，不占额度；仍为 `0/5` |
 | E4 | `QS-B1 V5-B` / `00641d6` | fixed child session `019fd4f6-0883-7701-99d4-299a3273c3cd` | 完整正文、固定输入、空临时 workdir 与 `workspace-write` 均正确；child 明确选择内置 `image_gen`，随后仅报告 remote plugin catalog 请求 `https://chatgpt.com/backend-api/ps/plugins/list` 发送失败。没有 tool call／provider result；`/private/tmp/aeui-qs-b1-v5b-attempt-01-FQ2jLB` 与项目 `attempt-01/` 均无文件 | 保持所有授权输入与正文不变；用固定 child 的结构化事件输出复核一次工具发现／调用，仍使用新的空临时目录。若同一 catalog／tool-discovery 错误再次出现且仍无生成证据，则按工作流暂停诊断，不再无限重试 | 网络／工具发现流程错误，不占额度；仍为 `0/5` |
+| E5 | `QS-B1 V5-B` / `839d44f` | fixed child session `019fd4f8-7c20-77d0-9aa0-cc8d0042ce02` | 新空目录和结构化 `--json` 启动成功，完整正文与 Image 1／2 均在 session 中；事件只有 `thread.started`、`turn.started` 和一条 commentary `agent_message`，rollout 没有 `image_gen` tool call、provider result、`turn.completed` 或其他错误，临时目录和项目目录均为空 | 不再 fresh launch；只对同一个 session 做一次 `codex exec resume` 传输恢复，明确要求立即继续既有请求并调用内置 `image_gen`，不得重写创意正文或启动新 child。若仍只返回 commentary，则固定 0.143.0 路径阻塞并停止 | CLI turn 提前结束流程错误，不占额度；仍为 `0/5` |

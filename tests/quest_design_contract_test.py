@@ -3129,7 +3129,7 @@ def main() -> None:
             "V5-B 正式 production 授权冻结点",
             "确认授权 QS-B1 V5-B 最终 production 正文",
             "attempt 1 没有 Image 3",
-            "QS-B1 V5-B 模拟 ImageGen：`0/0`；production `0/5`；流程错误 `4`",
+            "QS-B1 V5-B 模拟 ImageGen：`0/0`；production `0/5`；流程错误 `5`",
             "V5-B 流程错误",
             "No prompt provided via stdin.",
             "最后一个 `-i` 后加入标准 `--` 参数分隔符",
@@ -3143,6 +3143,9 @@ def main() -> None:
             "019fd4f6-0883-7701-99d4-299a3273c3cd",
             "remote plugin catalog",
             "网络／工具发现流程错误，不占额度",
+            "019fd4f8-7c20-77d0-9aa0-cc8d0042ce02",
+            "codex exec resume",
+            "CLI turn 提前结束流程错误，不占额度",
         ),
         "QS-B1 V15 confirmation and V5-B authorized production gate",
     )
