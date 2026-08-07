@@ -19,11 +19,24 @@
   压暗及 `32×192px` runtime 合同已完成完整性审计；授权正文固定于 commit
   `8a267b6`；最终候选 raw SHA 为 `604faa9e…583c9b`，accepted source／composite
   SHA 为 `168f527f…05b8`，六场景真实排版 SHA 为 `1d098be7…6af887`。
-  确定性 exporter 已生成 `32×192` TGA SHA `db620778…c615`；Quests `1.26`／
-  Theme `1.9` 将闭合 `28px` 载体根部与 QS-A1 火漆挂入
+  确定性 exporter 已生成 `32×192` TGA SHA `db620778…c615`；Quests `1.27`／
+  Theme `1.10` 将闭合 `28px` 载体根部与 QS-A1 火漆挂入
   `QuestLogDetailScrollChildFrame`。7／5／3 连续前缀与 `14px` tail 公式已实现并
   通过 Lua smoke，但七纹章未验收，菜单保持 inactive。不存在 attempt 6；V5-A
   accepted source 仅保留为历史 fallback，旧功能按钮继续原子 fail-open。
+- QL-D V3 五次 production 循环仍按授权在 `5/5` 停止；用户随后明确回复
+  `使用第4稿`，选定 attempt-04 canonical SHA `816aeedd…47c5` 及其已展示的
+  `108×41px` runtime 视觉。原 keyed aspect `2.7694524496` 超过 `2.69`、技术
+  `18/19` 的事实继续保留，只作一次性用户选稿例外；没有非等比拉伸、裁可见
+  像素或第六次 ImageGen。exact source 与 manifest 已进入
+  `assets/source/quests/ql-d/`；确定性 exporter 生成四态 `512×64` TGA SHA
+  `cda1ef21…cd56`，与用户审阅的临时 atlas 像素完全一致。最终 0／1／2／4／6
+  真实排版 board SHA `86a941c8…db4f` 与原 attempt-04 board 相同；runtime
+  display-region `5/5 pass`、violations `0`。Quests `1.27`／Theme `1.10` 已在
+  既有 `aeuiRewardContainer` 接入四态 UV，保留真实 Button／Tooltip／provider
+  脚本、动态图标／数量／名称、`108×41px`、`8px` 列距和无循环锚点；pressed
+  仅移动容器及真实子内容 `1px`。当前为
+  `runtime-exported / addon-integrated / P5`，下一门禁是 Turtle WoW P6 验证。
 - 用户于 `2026-08-05` 在 Turtle WoW 中确认当前 Quest Log 左页与右页的既有
   bug 和显示问题均已修复。活动范围中的 QL-A2 V4 书体、18 行左页字体／
   无描边／类型墨色，以及 Quests `1.25`／Theme `1.8` 的右页金额、动态
@@ -86,20 +99,20 @@
   三处非镜像黄铜和真实排版均成立，但 aspect `2.53723` 低于 `2.58` 下限。
   五次 actual ImageGen 已耗尽；没有晋级 source/runtime，也没有接入 addon。
   用户随后明确否决 V2 的最终可见体系：规则闭合外框即使做旧仍“太规整、
-  过于现代”。V2 因而封闭为历史，不再等待 aspect 例外。当前 `QL-D V3`
+  过于现代”。V2 因而封闭为历史，不再等待 aspect 例外。`QL-D V3`
   以本地几何稿提出“粗裁深皮革图标补片压住撕边羊皮纸装备签，以三处不等
   手扎和错位暗铜痕连接”的新方向；真实 `108×41px`、两列、safe area 与
-  provider 不变，0／1／2／4／6 display `5/5 pass`，ImageGen `0/0`，状态为
-  `candidate-rejected / P3 / production 5/5 / repair-budget-exhausted`。attempt 5
+  provider 不变，0／1／2／4／6 display `5/5 pass`，ImageGen `0/0`。五次循环
+  最初停止于 `candidate-rejected / P3 / production 5/5 / repair-budget-exhausted`；attempt 5
   的 safe Alpha、四态与真实排版通过，但 technical `18/19`：aspect `2.81899`
   超过上限，且满版微纹／规则内嵌皮革轮廓另行失败。
   用户于 `2026-08-07` 以 `QL-D-SIM-V3` 确认该可见方向；完整 production
   正文、固定 Image 1／2、单枚 normal、四态 atlas、五次修复边界和候选真实
   排版合同已通过完整性预检；用户于 `2026-08-07` 逐字授权 V3 production、
   固定 Image 1／2、受限同循环 Image 3、最多五次实际调用与合同内确定性处理。
-  当前 `5/5`、流程错误 `2`，额度耗尽；无 source/runtime/addon 改动，继续
-  使用实机验证的程序化 fallback。下一步等待用户决定新批次、合同例外或
-  保留 fallback；禁止自动第六次调用。
+  循环结束时为 `5/5`、流程错误 `2`，没有自动晋级；随后用户已按本节顶部
+  记录明确选择 attempt 4 并完成 P4/P5。实际生图计数仍为 `5/5`，禁止自动
+  第六次调用。
 - 用户随后以新实机图明确否决上述两项修复结论：同一页的团队／精英／地下城
   Tag 仍同时出现深紫、荧黄和绿色，两个奖励 backdrop 仍视觉相接。复核原生
   `QuestLogFrame.lua` 与 pfUI skin 后确认了两个遗漏：`QuestLogTitleNTag`
@@ -292,7 +305,7 @@
   `2026-08-06` 确认方向并独立授权生产。V7-A 已停止于 attempt 5 的内部通过，
   并于 `2026-08-07` 获用户接受后完成 source/runtime 与 addon 接入。
   V5-B 失败像素不进入 V6 或 V7。
-  runtime `1.26` 把 accepted V7-A `28px` 闭合载体根部与 QS-A1 `32px` 漆章
+  runtime `1.27` 把 accepted V7-A `28px` 闭合载体根部与 QS-A1 `32px` 漆章
   共同放入详情 ScrollChild；完整菜单尚未启用，也未隐藏任何旧按钮。
 - AEUI Quest Log provider 兼容子合同保持 `1.7`：在 provider 最终刷新后以
   事件驱动方式恢复 18 条列表行与右页正文安全区，将 online／language 搬至
@@ -554,7 +567,7 @@
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 asset-retained / runtime-hidden` | 用户接受的 source、manifest、`128 × 16` TGA、exporter 与历史证据全部保留；`2026-07-31` 起 adapter 不再挂载或包装任务行脚本 | 暂缓；只有用户重新确认后才恢复 runtime |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
 | `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；QS-B1 V7-A substrate `P5 / ImageGen 5/5` | 用户于 `2026-08-07` 接受 V7-A attempt 5。source SHA `168f527f…05b8`、`32×192` runtime SHA `db620778…c615` 已接入 ScrollChild 闭合 root；技术 `13/13`、真实排版 `29/29`、display `6/6`。七纹章／代理未完成，菜单 inactive，旧按钮 fail-open | P6 验证闭合跨压；另行完成七项代理 parity 后才启用菜单 |
-| `QL-D` | 奖励槽、分隔与文字安全区 | current geometry／fallback `P6 game-validated`；V3 final art `P3 repair-budget-exhausted` | V3 attempt 5 的 icon/name Alpha `100%/100%`、四态和 display `5/5` 通过；technical `18/19`，aspect `2.81899` 超过 `2.69`，满版微纹与规则内嵌皮革轮廓另行失败。当前 `5/5`、流程错误 `2`；无 source/runtime/addon 接入，继续使用程序化 fallback | 等待用户选择新批次、明确合同例外或保留 fallback；禁止自动第六次生图 |
+| `QL-D` | 奖励槽、分隔与文字安全区 | current geometry／旧 fallback `P6 game-validated`；V3 attempt 4 final art `P5 runtime-exported / addon-integrated` | V3 循环按 `5/5` 耗尽后，用户明确“使用第4稿”。attempt 4 原 technical `18/19`、aspect `2.76945` 保持历史事实，只作一次性选稿例外；exact source SHA `816aeedd…47c5`、四态 atlas SHA `cda1ef21…cd56` 已接入 Quests `1.27`／Theme `1.10`。正式真实排版与已审阅 board SHA `86a941c8…db4f` 完全一致；display `5/5 pass`。真实 Button、动态内容和双列几何不变 | Turtle WoW 验证 TGA 方向、四态、pressed `1px`、safe area、0／1／2／4／6 排版和长详情滚动；禁止第六次生图 |
 
 QL-A1 manifest 记录：
 
@@ -598,7 +611,7 @@ timer 或 failed 资产：provider 没有可用的公开状态来源。本项目
 
 | 批次 | 范围 | 阶段 | 下一门禁 |
 |---|---|---:|---|
-| `QS-A1` | Quest Log／Tracker 共用漆章母版 | `P5 runtime-exported / scroll-child-placement-integrated / 5/5` | source／四态 atlas 保持 accepted；当前 Quest Log runtime `1.26` 直接使用 ScrollChild 内 `32px` 页上 Texture，并后绘在 V7-A 载体上；Tracker 不受影响 | Turtle WoW 验证物理跨压、TGA 方向与滚动裁切 |
+| `QS-A1` | Quest Log／Tracker 共用漆章母版 | `P5 runtime-exported / scroll-child-placement-integrated / 5/5` | source／四态 atlas 保持 accepted；当前 Quest Log runtime `1.27` 直接使用 ScrollChild 内 `32px` 页上 Texture，并后绘在 V7-A 载体上；Tracker 不受影响 | Turtle WoW 验证物理跨压、TGA 方向与滚动裁切 |
 | `QS-B1` | Quest Log ScrollChild 内火漆、动态承载条、七张独立纹章与七个代理 Button | V7-A substrate `P5 runtime-exported / addon-integrated / ImageGen 5/5 / process errors 1`；motifs/proxies `P3 incomplete`；V5-A retained fallback | 用户于 `2026-08-07` 接受 attempt 5。source `QuestLogSealPurityRibbon_Master_v1.png` SHA `168f527f…05b8` 已确定性导出 `QuestLogSealPurityRibbonV1.tga` SHA `db620778…c615`；六场景 `29/29`、display `6/6`。闭合 root 已接入，7／5／3 公式仅为 smoke-tested readiness；菜单 inactive，旧按钮继续 fail-open | P6 验证闭合载体；另行生产／验收七纹章并完成代理 parity 后才启用菜单 |
 
 QS-A1 当前事实：
@@ -761,7 +774,7 @@ QT-A1 临时 runtime 事实：
 QS-B1 V7-A attempt 5 已于 `2026-08-07` 获用户明确接受并完成 P4/P5。
 accepted `128×768 RGBA` source SHA `168f527f…05b8` 通过固定 exporter 等比缩为
 `32×192 RGBA` TGA SHA `db620778…c615`，透明 RGB 与绿溢色均为 `0`；最终
-display-region `6/6 pass`、violations `0`。Quests `1.26`／Theme `1.9` 的当前
+display-region `6/6 pass`、violations `0`。Quests `1.27`／Theme `1.10` 的当前
 live 状态只显示闭合 `28px` 载体根部，QS-A1 火漆作为独立 OVERLAY 后绘；两者
 共享真实 `QuestLogDetailScrollChildFrame`，因此会随任务正文滚动并由 viewport
 裁切。下一门禁是在 Turtle WoW 验证物理跨压、TGA 方向和滚动行为。
@@ -862,18 +875,13 @@ Image 1／2、受限同循环 Image 3、最多五次实际调用和确定性处�
 QS-B1 的确认替代，也不包含 P4/P5 晋级或 addon 接入。五次循环结束后用户
 明确否决 V2 的规则／现代感，因此该授权现只保留为历史 provenance。
 
-Quest Log 的类型色、详情字体、金额、奖励容器／锚点与内容末端裁切修复已经
-进入 runtime `1.25`／Theme `1.8`，并由本次用户实机结论确认。当前暖纸
-fallback 不代表最终美术。QL-D V2 停在 `5/5` 历史失败；QL-D V3 已由用户以
-`QL-D-SIM-V3` 确认，处于
-`candidate-rejected / P3 / production 5/5 / process errors 2 / repair-budget-exhausted`。
-本地稿保持真实排版和 safe area，只把外观改成粗裁皮革补片、撕边纸签、
-不等手扎与错位暗铜痕。完整 production 正文和确定性合同已写入唯一 work；
-用户已于 `2026-08-07` 独立授权固定正文与五次修复边界；attempt 5 因比例
-`2.81899` 超过硬上限而拒绝，且重新出现满版微纹／规则内嵌皮革轮廓。五次
-额度已耗尽；下一步等待用户决定，不得自动调用第六次。
-在具体候选获用户接受前不得晋级 source／runtime 或接入 addon。旧顶部悬空
-漆章位置不再作为待接受方向。
+Quest Log 的类型色、详情字体、金额、奖励容器／锚点与内容末端裁切修复已由
+用户实机确认；QL-D V2 保持 `5/5` 历史失败。QL-D V3 的五次 production 也按
+合同在 `5/5` 停止，随后用户明确选择 attempt 4。其 exact source、四态 atlas、
+manifest、正式真实排版和 Quests `1.27`／Theme `1.10` 接入均已完成；原 aspect
+失败只获得该具体稿的一次性用户例外，不扩展为自动门禁规则。当前为
+`P5 runtime-exported / addon-integrated / awaiting-game-validation`；不得调用
+第六次 ImageGen。旧顶部悬空漆章位置不再作为待接受方向。
 
 Tracker `34px` 漆章仍按既有合同在 `130／230／330px` 居中，继续等待实机
 验证 `SetClampRectInsets`、拖动恢复、TGA 方向与旧七按钮层序。Tracker hub

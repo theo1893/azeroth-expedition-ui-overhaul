@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "module": "quests",
+  "batch": "QL-D V3",
+  "component": "QUEST.LOG.REWARD.SLOT",
+  "version": "V3.r3 / attempt 4 / user-selected",
+  "status": "accepted-source",
+  "accepted_on": "2026-08-07",
+  "source": {
+    "file": "QuestLogRewardSlot_Master_v1.png",
+    "repository_path": "assets/source/quests/ql-d/QuestLogRewardSlot_Master_v1.png",
+    "sha256": "816aeedd3ea8a890b5d6d39da2ce10771509afadfcfa92025024b736384347c5",
+    "width": 1080,
+    "height": 410,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      20,
+      16,
+      1060,
+      392
+    ],
+    "visible_size": [
+      1040,
+      376
+    ],
+    "visible_aspect": 2.765957446808511,
+    "transparent_pixels": 76811,
+    "partially_transparent_pixels": 6865,
+    "opaque_pixels": 359124,
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "codex_package": "@openai/codex@0.143.0",
+    "fixed_child_session_id": "019fda82-fe09-7ca3-af7f-f9c33bbb02b7",
+    "generation_before_commit": "94f366b",
+    "prompt_version": "QL-D V3.r3",
+    "prompt_sha256": "deba614615e6e768840fbea8d3354345e614e76123df6535e6ab2be67f122d51",
+    "prompt": "docs/modules/quests/work/QUEST.LOG.REWARDS.md",
+    "provider_raw": "generated/quests/ql-d-reward-slots/production/V3/attempt-04/raw/ql-d-v3-attempt-04.provider-native-01.png",
+    "provider_raw_sha256": "8be3575aaf35965081734a539485c2811a30956a32a786a91ec64911981b7d2c",
+    "accepted_candidate": "generated/quests/ql-d-reward-slots/production/V3/attempt-04/review/ql-d-v3-attempt-04.canonical-review.png",
+    "accepted_candidate_sha256": "816aeedd3ea8a890b5d6d39da2ce10771509afadfcfa92025024b736384347c5",
+    "promotion_tool": "tools/promote_quest_log_reward_slot_v1.py",
+    "promotion": "byte-exact copy after SHA, 1080x410 RGBA, Alpha bbox, green-spill and transparent-RGB validation",
+    "actual_imagegen_calls_in_loop": 5,
+    "additional_imagegen_calls_after_selection": 0
+  },
+  "visual_authority": {
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/quests/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/quests/SUBMODULE_ART_BASELINES.md#奖励槽与分隔",
+    "component_contract": "docs/modules/quests/SUBMODULES.md",
+    "production_contract": "tools/specs/quest_log_reward_slot_production_v3.json",
+    "failed_candidates_are_authority": false,
+    "simulation_pixels_are_authority": false
+  },
+  "accepted_contract_exception": {
+    "type": "one-time user-selected visible-aspect exception",
+    "original_allowed_keyed_aspect": [
+      2.58,
+      2.69
+    ],
+    "attempt_04_keyed_aspect": 2.7694524495677233,
+    "attempt_04_canonical_visible_aspect": 2.765957446808511,
+    "original_technical_result": "18/19; keyed aspect failed",
+    "accepted_operation": "retain the reviewed proportional canonical fit and its exact 108x41 appearance",
+    "non_uniform_stretch": false,
+    "visible_pixel_crop": false,
+    "redraw": false,
+    "rotation": null,
+    "mirror": false,
+    "historical_gate_rewritten_as_pass": false
+  },
+  "user_acceptance": {
+    "exact_statement": "使用第4稿",
+    "context": "The immediately preceding handoff stated that choosing attempt 4 would record an explicit aspect exception and promote that exact reviewed candidate through P4/P5.",
+    "scope": [
+      "the exact QL-D V3 attempt-04 canonical candidate with SHA-256 816aeedd3ea8a890b5d6d39da2ce10771509afadfcfa92025024b736384347c5",
+      "the exact proportional 108x41 runtime appearance shown in the attempt-04 real-layout preview",
+      "the documented one-time visible-aspect exception without representing the original 18/19 review as a pass",
+      "tracked P4 source promotion, deterministic four-state export and addon integration without another ImageGen call"
+    ]
+  },
+  "logical_components": [
+    {
+      "id": "QUEST.LOG.REWARD.SLOT",
+      "runtime_objects": "QuestLogItem1..MAX_NUM_ITEMS",
+      "generated_state": "normal",
+      "runtime_states": [
+        "normal",
+        "hover",
+        "pressed",
+        "disabled"
+      ],
+      "runtime_display_size": [
+        108,
+        41
+      ],
+      "icon_safe_xyxy": [
+        4,
+        4,
+        37,
+        37
+      ],
+      "name_safe_xyxy": [
+        41,
+        4,
+        105,
+        37
+      ],
+      "dynamic_content_owned_by_game": [
+        "item icon",
+        "quantity",
+        "localized item name",
+        "item-quality colour",
+        "tooltip",
+        "click behavior"
+      ]
+    }
+  ],
+  "review": {
+    "runtime_visual_accepted": true,
+    "semantic_and_physical_identity": "pass",
+    "perspective_and_layer_order": "pass",
+    "broad_low_frequency_2004_era_art_baseline": "pass",
+    "icon_safe_alpha_coverage": 0.9991919191919192,
+    "name_safe_alpha_coverage": 0.9997443181818181,
+    "derived_four_states": "pass",
+    "real_layout_scenarios": "5/5 pass",
+    "baked_live_content": false,
+    "prior_internal_result": "candidate-rejected; technical 18/19",
+    "acceptance_override": "The user selected attempt 4 after the five-call loop exhausted. Only the visible-aspect gate is excepted; all recorded generation and review facts remain unchanged."
+  },
+  "export_contract": {
+    "status": "runtime-exported",
+    "operation": "resize the entire accepted 1080x410 canonical source proportionally to 108x41, derive four RGB states with frozen formulas while preserving identical Alpha, place them in fixed 128x64 cells and write a 512x64 RGBA TGA atlas",
+    "runtime_atlas_size": [
+      512,
+      64
+    ],
+    "runtime_cell_size": [
+      128,
+      64
+    ],
+    "runtime_content_xyxy_in_cell": [
+      10,
+      11,
+      118,
+      52
+    ],
+    "runtime_cell_order": [
+      "normal",
+      "hover",
+      "pressed",
+      "disabled"
+    ],
+    "runtime_file": "addon/AzerothExpeditionUI/Media/Quests/QuestLogRewardSlotStatesV1.tga",
+    "adapter": "addon/AzerothExpeditionUI/Modules/Quests.lua",
+    "allowed": [
+      "uniform LANCZOS resize of the entire accepted canonical source to 108x41",
+      "the exact frozen hover, pressed and disabled RGB formulas",
+      "pixel-identical Alpha across all four states",
+      "transparent atlas padding, transparent RGB cleanup and RGBA TGA conversion",
+      "one-pixel down-right movement of the adapter-owned visual container and all live child content while pressed"
+    ],
+    "forbidden": [
+      "non-uniform stretch, visible-pixel crop, redraw, rotation or mirroring",
+      "load the 1080x410 source directly in Turtle WoW",
+      "bake icons, quantities, names, quality colours or tooltips into the atlas",
+      "replace QuestLogItem Buttons, hitboxes, scripts or provider data",
+      "add a selected state or a maintenance OnUpdate loop"
+    ]
+  },
+  "runtime_exports": [
+    {
+      "contract": "QL-D V3.r3 attempt-04 user-selected / 1.0",
+      "manifest": "QL-D_RuntimeManifest_v1.json",
+      "file": "addon/AzerothExpeditionUI/Media/Quests/QuestLogRewardSlotStatesV1.tga",
+      "sha256": "cda1ef21d618e148229d05415ffb8ea9d1539b801e2f260833cccab0ef28cd56",
+      "atlas_size": [
+        512,
+        64
+      ],
+      "cell_size": [
+        128,
+        64
+      ],
+      "content_size": [
+        108,
+        41
+      ]
+    }
+  ]
+}

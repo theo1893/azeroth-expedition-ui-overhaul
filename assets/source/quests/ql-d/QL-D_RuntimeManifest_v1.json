@@ -1,0 +1,301 @@
+{
+  "schema_version": 1,
+  "module": "quests",
+  "batch": "QL-D V3",
+  "version": "V3.r3 / attempt 4 / user-selected",
+  "runtime_contract": "1.0",
+  "status": "runtime-exported",
+  "source": {
+    "file": "assets/source/quests/ql-d/QuestLogRewardSlot_Master_v1.png",
+    "sha256": "816aeedd3ea8a890b5d6d39da2ce10771509afadfcfa92025024b736384347c5",
+    "width": 1080,
+    "height": 410,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      20,
+      16,
+      1060,
+      392
+    ],
+    "visible_aspect": 2.765957446808511,
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0,
+    "transparent_pixels": 76811,
+    "partially_transparent_pixels": 6865,
+    "opaque_pixels": 359124
+  },
+  "accepted_contract_exception": {
+    "original_allowed_keyed_aspect": [
+      2.58,
+      2.69
+    ],
+    "attempt_04_keyed_aspect": 2.7694524495677233,
+    "historical_generation_result": "18/19; aspect failed",
+    "runtime_operation": "uniformly resize the complete accepted canonical canvas; do not stretch or crop visible pixels",
+    "historical_gate_rewritten_as_pass": false
+  },
+  "transform": {
+    "operation": "uniform full-canvas 1080x410 to 108x41 LANCZOS resize, frozen RGB state derivation and fixed atlas packing",
+    "resample": "Pillow Image.Resampling.LANCZOS",
+    "source_canvas_resize": [
+      108,
+      41
+    ],
+    "non_uniform_stretch": false,
+    "visible_pixel_crop": false,
+    "rotation": null,
+    "mirror": false,
+    "state_order": [
+      "normal",
+      "hover",
+      "pressed",
+      "disabled"
+    ],
+    "alpha_identical_across_states": true,
+    "hover_rgb": {
+      "r": "min(255, rint(1.04R + 4))",
+      "g": "min(255, rint(1.03G + 3))",
+      "b": "min(255, rint(1.01B + 1))"
+    },
+    "pressed_rgb": {
+      "r": "rint(0.82R)",
+      "g": "rint(0.80G)",
+      "b": "rint(0.78B)"
+    },
+    "disabled_rgb": {
+      "l": "rint(0.299R + 0.587G + 0.114B)",
+      "channel": "rint(0.30C + 0.50L)"
+    },
+    "atlas_size": [
+      512,
+      64
+    ],
+    "cell_size": [
+      128,
+      64
+    ],
+    "content_xyxy_in_cell": [
+      10,
+      11,
+      118,
+      52
+    ],
+    "states": {
+      "normal": {
+        "runtime_cell_xyxy": [
+          0,
+          0,
+          128,
+          64
+        ],
+        "runtime_content_xyxy": [
+          10,
+          11,
+          118,
+          52
+        ],
+        "runtime_display_size": [
+          108,
+          41
+        ],
+        "pixel_sha256": "d51bffefc3701f026ed237c0e33729b83b546f211170a232b354d1cb9d9929ef",
+        "texcoord": {
+          "left": 0.01953125,
+          "right": 0.23046875,
+          "top": 0.171875,
+          "bottom": 0.8125
+        }
+      },
+      "hover": {
+        "runtime_cell_xyxy": [
+          128,
+          0,
+          256,
+          64
+        ],
+        "runtime_content_xyxy": [
+          138,
+          11,
+          246,
+          52
+        ],
+        "runtime_display_size": [
+          108,
+          41
+        ],
+        "pixel_sha256": "cb89f6e0908d0f4c657d2f8c112fc35c67a8e3c2379eccb607d3ed6ea5507b90",
+        "texcoord": {
+          "left": 0.26953125,
+          "right": 0.48046875,
+          "top": 0.171875,
+          "bottom": 0.8125
+        }
+      },
+      "pressed": {
+        "runtime_cell_xyxy": [
+          256,
+          0,
+          384,
+          64
+        ],
+        "runtime_content_xyxy": [
+          266,
+          11,
+          374,
+          52
+        ],
+        "runtime_display_size": [
+          108,
+          41
+        ],
+        "pixel_sha256": "dc61b9043d995adcd7a9d5878cd76fe8c67831a072e1af06a745c607749c599b",
+        "texcoord": {
+          "left": 0.51953125,
+          "right": 0.73046875,
+          "top": 0.171875,
+          "bottom": 0.8125
+        }
+      },
+      "disabled": {
+        "runtime_cell_xyxy": [
+          384,
+          0,
+          512,
+          64
+        ],
+        "runtime_content_xyxy": [
+          394,
+          11,
+          502,
+          52
+        ],
+        "runtime_display_size": [
+          108,
+          41
+        ],
+        "pixel_sha256": "8c70e9f5035e818cc35d1d5fbe22c99890c050149677746786d084087e44ec4f",
+        "texcoord": {
+          "left": 0.76953125,
+          "right": 0.98046875,
+          "top": 0.171875,
+          "bottom": 0.8125
+        }
+      }
+    }
+  },
+  "runtime": {
+    "file": "addon/AzerothExpeditionUI/Media/Quests/QuestLogRewardSlotStatesV1.tga",
+    "sha256": "cda1ef21d618e148229d05415ffb8ea9d1539b801e2f260833cccab0ef28cd56",
+    "pixel_sha256": "3b538eb8d28b9b4bfa11e7497013f1ed8d8a141d15c52d1b7447fee51df50a90",
+    "width": 512,
+    "height": 64,
+    "mode": "RGBA",
+    "tga_header": {
+      "image_type": 2,
+      "width": 512,
+      "height": 64,
+      "bits_per_pixel": 32,
+      "descriptor": 8,
+      "top_origin": false
+    },
+    "visible_bbox_exclusive": [
+      10,
+      11,
+      502,
+      52
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0,
+    "transparent_pixels": 16632,
+    "partially_transparent_pixels": 3316,
+    "opaque_pixels": 12820
+  },
+  "historical_preview_equivalence": {
+    "attempt_04_temporary_atlas": "generated/quests/ql-d-reward-slots/production/V3/attempt-04/review/ql-d-v3-attempt-04.temporary-state-atlas.png",
+    "attempt_04_temporary_atlas_sha256": "55ba76e9630b9d582bbd95f6d9486a816cd3939213b8d8d26a8d5b15e1a22b68",
+    "expected_pixel_sha256": "3b538eb8d28b9b4bfa11e7497013f1ed8d8a141d15c52d1b7447fee51df50a90",
+    "exported_pixel_sha256": "3b538eb8d28b9b4bfa11e7497013f1ed8d8a141d15c52d1b7447fee51df50a90",
+    "pixel_identical": true,
+    "fresh_checkout_dependency": false
+  },
+  "simulation": {
+    "atlas_preview": {
+      "file": "generated/quests/ql-d-reward-slots/runtime/V1/QuestLogRewardSlotStatesV1.png",
+      "sha256": "55ba76e9630b9d582bbd95f6d9486a816cd3939213b8d8d26a8d5b15e1a22b68",
+      "size": [
+        512,
+        64
+      ]
+    },
+    "real_layout_board": {
+      "file": "generated/quests/ql-d-reward-slots/runtime/V1/ql-d-v3-attempt-04-accepted.real-layout-board.png",
+      "sha256": "86a941c8ad6e79b41ca1da04251ab46145e6590940bf9fa31c3147ea60a1db4f",
+      "size": [
+        1424,
+        1590
+      ],
+      "scenarios": [
+        0,
+        1,
+        2,
+        4,
+        6
+      ],
+      "checks_passed": true,
+      "rendered_from_exported_atlas": true,
+      "runtime_scale_percent": 100
+    },
+    "display_region": {
+      "contract": "tools/specs/quest_log_reward_slot_runtime_display_region_v1.json",
+      "report": "generated/quests/ql-d-reward-slots/runtime/V1/display-region-report.json",
+      "report_sha256": "ea839dc6c4bc01cf856fc41e5a65a449fddf683f1fd85961905c00e5d3e4569d",
+      "status": "pass",
+      "scenario_count": 5,
+      "violation_count": 0,
+      "first_failure": null
+    }
+  },
+  "layout_contract": {
+    "runtime_objects": "QuestLogItem1..MAX_NUM_ITEMS",
+    "button_size": [
+      108,
+      41
+    ],
+    "icon_safe_xyxy": [
+      4,
+      4,
+      37,
+      37
+    ],
+    "name_safe_xyxy": [
+      41,
+      4,
+      105,
+      37
+    ],
+    "name_safe_width": 64,
+    "column_gap": 8,
+    "row_gap": 4,
+    "scenario_reward_counts": [
+      0,
+      1,
+      2,
+      4,
+      6
+    ]
+  },
+  "ownership": {
+    "visual_container": "adapter-owned mouse-inert child Frame and BACKGROUND Texture",
+    "live_content": "provider QuestLogItem icon, count and name are reparented above the visual container without changing their values",
+    "button": "QuestLogItem Button retains hitbox, tooltip, click scripts and provider behavior",
+    "pressed_offset": "move the visual container and its live children one UI pixel down-right; do not move the QuestLogItem hitbox"
+  },
+  "implementation": {
+    "exporter": "tools/build_quest_log_reward_slot_v1.py",
+    "adapter": "addon/AzerothExpeditionUI/Modules/Quests.lua",
+    "theme": "addon/AzerothExpeditionUI/Modules/QuestVisualTheme.lua",
+    "source_manifest": "assets/source/quests/ql-d/QL-D_SourceManifest_v1.json",
+    "imagegen_calls_after_acceptance": 0,
+    "game_validated": false
+  }
+}

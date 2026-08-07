@@ -1,12 +1,13 @@
-# QL-D Quest Log 奖励槽（当前 V3；V2 历史）
+# QL-D Quest Log 奖励槽（V3 attempt 4 已选用；V2 历史）
 
 ## 元数据
 
 - 模块：Quests／Quest Log 右页。
 - 当前批次：`QL-D V3`；`QL-D V2` 作为已封闭失败历史保留在本文件。
 - 组件 ID：`QUEST.LOG.REWARD.SLOT`。
-- 当前子状态：`candidate-rejected / P3 / production 5/5 / repair-budget-exhausted`。
-- 项目阶段：当前几何／fallback `P6 game-validated`；V3 最终美术 `P3`。
+- 当前子状态：`runtime-exported / addon-integrated / P5 / awaiting-game-validation`。
+- 项目阶段：当前几何／旧 fallback `P6 game-validated`；V3 attempt 4 最终美术
+  `P5`，尚未获得 Turtle WoW 实机验收。
 - 固定执行器：V3 production 只允许
   `imagegen-0-143-0`／`@openai/codex@0.143.0`；attempt 1／2／3／4／5 已由固定版本完成。
 - V3 生成前模拟 ImageGen：`0/0`；production 预算为最多 `5` 次实际 ImageGen
@@ -17,6 +18,11 @@
   “太规整、过于现代”，要求改为手绘／潦草相关元素并加强 RPG 沉浸感。
   该指示开启 V3 视觉版本；用户随后以 `QL-D-SIM-V3` 明确确认本地几何稿。
   该确认只接受下述可见方向，不构成 ImageGen、P4 或 P5 授权。
+- 五次 V3 production 循环耗尽后，用户于 `2026-08-07` 明确回复
+  `使用第4稿`。该回复选定 exact attempt-04 canonical SHA
+  `816aeedd…47c5` 与其已展示的 `108×41px` 运行时外观，并按紧邻交付说明
+  接受一次性 aspect 合同例外进入 P4/P5；原始 `18/19` 与 keyed aspect
+  `2.7694524496` 继续作为历史失败事实，不重写为通过，也不使用非等比压缩。
 - 生产授权：用户于 `2026-08-07` 明确回复：
   `确认授权 QL-D V3；允许每次上传固定 SHA 的 Image 1/2，允许同循环紧邻前次输出仅在冻结修复边界内作为 Image 3 edit 输入；最多 5 次实际 ImageGen 调用，流程错误不占额度；允许按合同执行正方形归一化、边缘连通色键、透明 RGB 清零、等比 bbox-fit、四态派生、atlas packing 与真实排版预演。`
   该授权只开放本文件 SHA 已冻结的 V3 正文与修复边界，不包含 P4 接受、P5
@@ -145,6 +151,11 @@
   outline、无 shadow。
 - 正式槽资产尚未确认前，runtime `1.25` 的 adapter-owned 容器只使用低透明
   暖纸底和深赭／旧黄铜边；它是可回退的程序化临时视觉，不是最终 source。
+- runtime `1.27`／Theme `1.10` 已把 accepted attempt 4 的四态 atlas
+  `QuestLogRewardSlotStatesV1.tga` 接入同一个 adapter-owned 容器；真实 icon／
+  count／name 继续位于其上，Button 命中、Tooltip、provider 脚本、双列锚点和
+  ScrollChild 测量不变。状态优先级为 disabled ＞ pressed ＞ hover ＞ normal；
+  pressed 只把容器及其真实子内容下移右移 `1px`，不移动 Button 命中区。
 
 ## V3 当前手绘军需装备签确定性本地模拟
 
@@ -320,7 +331,7 @@ V1 在 Windows 上形成的具体像素已被 V2 当前邻接 UI 预演取代；
 - tracked production contract：
   [`quest_log_reward_slot_production_v3.json`](../../../../tools/specs/quest_log_reward_slot_production_v3.json)，
   SHA-256
-  `17c63d3c8723ccb302a85d3b9406f130089234adf754a731f6f8398b103cb70f`；
+  `25b8adb9a7c36bd60affe6b275fb28605767ab3b284457989a30c60af0b62a05`；
   当前 `authorized=true`；授权前合同 SHA-256 为
   `98797a4c4753518c5dce0a4b2e639c2d70d1d8b8eb67ad3f323c683be3adb7d3`。
 - 候选展示区域 template：
@@ -337,10 +348,10 @@ V1 在 Windows 上形成的具体像素已被 V2 当前邻接 UI 预演取代；
 - attempt 1 只按 Image 1／Image 2 顺序上传本文件固定 SHA。不得上传
   `QL-D-SIM-V3` 像素、V2 候选、实机截图、QS-A1／QS-B1 或其他外部输入。
 - ImageGen 只生成恰好一枚 `normal` 空容器母件，不生成 atlas、状态表、多个
-  槽或整段奖励栏。计划 source 为
-  `assets/source/quests/ql-d/QuestLogRewardSlot_Master_v1.png`；计划 runtime 为
-  `addon/AzerothExpeditionUI/Media/Quests/QuestLogRewardSlotStatesV1.tga`；
-  用户接受正式候选前二者都不得创建。
+  槽或整段奖励栏。accepted source 为
+  `assets/source/quests/ql-d/QuestLogRewardSlot_Master_v1.png`；accepted runtime 为
+  `addon/AzerothExpeditionUI/Media/Quests/QuestLogRewardSlotStatesV1.tga`；二者均
+  已在用户选定 attempt 4 后创建并受 tracked manifest 约束。
 - raw 目标为 `1024×1024 RGB`，外部纯 `#00FF00`，单物件目标可见 bbox
   `[72,345,952,679]`，`880×334px`、约 `2.635:1`。provider 只在返回正方形时
   允许同轴等比归一到 `1024²`；非正方形直接失败。边缘连通色键、软去绿和
@@ -1243,11 +1254,55 @@ all-over texture, enclosing frame, symmetric cadence or baked live content.
   Alpha 均为 `1.0`，四态 Alpha、透明 RGB、真实排版和展示区域成立。目视另见
   两材料满版对角／交叉微纹，以及环绕左侧皮革补片的近连续亮纸唇与暗轮廓，
   使其读成规则内嵌板，偏离 V3 已确认的克制潦草方向。
-- 终止结论：本稿比例错误与全局纹理／轮廓失败均要求 fresh regenerate；前稿
-  不能作为 Image 3，非等比拉伸、裁主体、确定性重绘或自动选择 earlier
-  candidate 均被合同禁止。五次实际 ImageGen 已耗尽，未生成 source/runtime，
-  未修改 addon；下一步必须等待用户决定是否接受某一硬合同例外、重新授权新
-  批次，或继续保留当前已经实机验证的程序化暖纸 fallback。
+- 循环终止时结论：本稿比例错误与全局纹理／轮廓失败均要求 fresh regenerate；
+  前稿不能自动成为 Image 3，非等比拉伸、裁主体、确定性重绘或自动选择 earlier
+  candidate 均被合同禁止。五次实际 ImageGen 因此正确停止，未自动晋级任何
+  source/runtime。随后由用户独立作出的 attempt 4 选稿与一次性比例例外见下节；
+  它不反向修改上述自动审查结论。
+
+## V3 attempt 4 用户选稿与 P4/P5
+
+- 用户原文：`使用第4稿`。紧邻交付语境已明确说明会“保留第 4 稿现有等比外观，
+  不伪造原比例门禁通过；以一次性比例例外记录后，按已经预演过的 108×41
+  运行时效果接入”。因此本次选择只接受 exact attempt-04，不构成任意 earlier
+  candidate 自动晋级规则。
+- 历史事实保持不变：provider raw SHA `8be3575a…d2c`；keyed bbox `961×347`、
+  aspect `2.7694524496`，原允许区间 `2.58..2.69`，技术仍记 `18/19`。
+  接受的 deterministic canonical 为 `1080×410 RGBA`、SHA
+  `816aeedd3ea8a890b5d6d39da2ce10771509afadfcfa92025024b736384347c5`；
+  visible bbox `[20,16,1060,392]`。没有非等比 stretch、可见像素 crop、旋转、
+  镜像或重绘。
+- P4 source：
+  `assets/source/quests/ql-d/QuestLogRewardSlot_Master_v1.png`，SHA
+  `816aeedd…47c5`；source manifest：
+  `assets/source/quests/ql-d/QL-D_SourceManifest_v1.json`，SHA
+  `bb87c558…b69cf`。promotion tool 会先校验 exact SHA／尺寸／Alpha bbox／
+  绿溢色／透明 RGB，再作 byte-exact 晋级；source 已存在时可在 fresh checkout
+  独立校验，不依赖 ignored candidate。
+- P5 exporter：`tools/build_quest_log_reward_slot_v1.py`，SHA
+  `45ec46e0…f7dca`。它只把完整 canonical canvas 以 LANCZOS 等比缩至
+  `108×41px`，按冻结公式派生 normal／hover／pressed／disabled，保持四态
+  Alpha 逐像素相同，并装入 `512×64` atlas 的四个 `128×64` cell。没有新增
+  ImageGen 调用。
+- runtime：
+  `addon/AzerothExpeditionUI/Media/Quests/QuestLogRewardSlotStatesV1.tga`，
+  SHA `cda1ef21…cd56`；runtime manifest：
+  `assets/source/quests/ql-d/QL-D_RuntimeManifest_v1.json`，SHA
+  `057127d8…60f6`。正式 atlas 与 attempt-04 临时 atlas 像素完全一致；PNG
+  SHA 均为 `55ba76e9…22b68`。
+- 最终真实排版由正式 atlas 重建，0／1／2／4／6 五场景全部通过；board SHA
+  `86a941c8ad6e79b41ca1da04251ab46145e6590940bf9fa31c3147ea60a1db4f`，
+  与用户先前看到的 attempt-04 board 完全一致。最终展示区域合同为
+  `tools/specs/quest_log_reward_slot_runtime_display_region_v1.json`，SHA
+  `e33c443d…088b`；report `5/5 pass`、violations `0`、first failure `null`。
+- addon 接入：Quest Theme `1.10` 增加 `rewardSlotStates`；Quests `1.27`
+  在既有 `aeuiRewardContainer` 内挂一张 mouse-inert BACKGROUND Texture，切换
+  四个固定 UV。真实 icon／count／name、品质色、Tooltip、Button hitbox／脚本、
+  `108×41px` 几何锁、`8px` 列距、`4px` 行距和无循环锚点合同全部保留；媒体
+  合同缺失时仍保留程序化 fallback 路径，不新增维护型 OnUpdate。
+- 当前阶段：`P5 runtime-exported / addon-integrated`。P6 只等待 Turtle WoW
+  实机确认 TGA 方向、四态、pressed `1px` 联动、文字／图标 safe area、两列
+  间隔和长详情滚动；在用户完成 P6 验收前不得清理 QL-D 中间数据。
 
 ## V2 历史最终执行正文
 
@@ -2078,13 +2133,14 @@ heavy vanilla-WoW material hierarchy remains readable at 108 x 41.
 | `QL-D V3 attempt 1` | 固定 Image 1／2 fresh generate；完整 V3 正文 | `1` | `candidate-rejected`：technical `17/19`，aspect `2.57143`、visible green；display `5/5`；微型摊书／等距缝圈／密集交叉纹理；无 Image 3 资格 |
 | `QL-D V3 attempt 2` | 固定 Image 1／2 fresh regenerate；完整 V3.r1 正文 | `1` | `candidate-rejected`：soft despill 后 technical `19/19`、aspect `2.66022`、display `5/5`；满版压纹／交叉纹理、周期纸边与装饰性中结；无 Image 3 资格 |
 | `QL-D V3 attempt 3` | 固定 Image 1／2 fresh regenerate；完整 V3.r2 正文 | `1` | `candidate-rejected`：technical `16/19`、aspect `2.48947`、icon/name Alpha `96.27%/96.85%`；display `5/5`；美术基线通过但几何无 Image 3 资格 |
-| `QL-D V3 attempt 4` | 固定 Image 1／2 fresh regenerate；完整 V3.r3 正文 | `1` | `candidate-rejected`：technical `18/19`、aspect `2.76945`；icon/name Alpha `99.92%/99.97%`、四态与 display `5/5`；美术通过但全局比例无 Image 3 资格 |
+| `QL-D V3 attempt 4` | 固定 Image 1／2 fresh regenerate；完整 V3.r3 正文 | `1` | 自动审查历史为 `candidate-rejected`：technical `18/19`、aspect `2.76945`；icon/name Alpha `99.92%/99.97%`、四态与 display `5/5`。循环耗尽后用户明确“使用第4稿”，以一次性 aspect 例外选定 exact runtime 视觉；现为 `P5 runtime-exported / addon-integrated`，原 `18/19` 不重写 |
 | `QL-D V3 attempt 5` | 固定 Image 1／2 final fresh regenerate；完整 V3.r4 正文 | `1` | `candidate-rejected / repair-budget-exhausted`：technical `18/19`、aspect `2.81899`；safe Alpha `100%/100%`、display `5/5`；满版微纹与规则内嵌轮廓另行失败 |
 
 ## 下一门禁
 
-`QL-D-SIM-V3` 已确认，`QL-D V3` production 正文与五次修复边界已于
-`2026-08-07` 获用户逐字授权。attempt 1／2／3／4／5 均已完成并拒绝，额度
-`5/5` 耗尽；当前门禁为用户决策。不得创建 source／runtime、修改 addon、
-自动选择 earlier candidate、对失败稿非等比变形或发起第六次 ImageGen。
-在新决策前，游戏继续使用已实机验证的程序化暖纸 fallback。
+`QL-D-SIM-V3` 与五次 production 历史均已冻结；实际 ImageGen 额度保持
+`5/5`，不得发起第六次调用。用户已明确选定 attempt 4；exact source、四态
+atlas、最终真实排版与 Quests `1.27` addon 接入均完成，当前门禁为
+`P6 Turtle WoW game validation`。需确认 TGA 方向、normal／hover／pressed／
+disabled、pressed `1px` 联动、动态 icon／count／name safe area、0／1／2／4／6
+奖励排版及长详情滚动。用户实机确认前不标记 P6，也不清理本组件 generated。

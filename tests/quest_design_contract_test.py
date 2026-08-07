@@ -85,6 +85,49 @@ def main() -> None:
     reward_candidate_display_spec = json.loads(
         reward_candidate_display_spec_path.read_text(encoding="utf-8")
     )
+    reward_runtime_display_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_reward_slot_runtime_display_region_v1.json"
+    )
+    reward_runtime_display_spec = json.loads(
+        reward_runtime_display_spec_path.read_text(encoding="utf-8")
+    )
+    reward_source_path = (
+        ROOT
+        / "assets"
+        / "source"
+        / "quests"
+        / "ql-d"
+        / "QuestLogRewardSlot_Master_v1.png"
+    )
+    reward_source_manifest_path = reward_source_path.with_name(
+        "QL-D_SourceManifest_v1.json"
+    )
+    reward_source_manifest = json.loads(
+        reward_source_manifest_path.read_text(encoding="utf-8")
+    )
+    reward_runtime_manifest_path = reward_source_path.with_name(
+        "QL-D_RuntimeManifest_v1.json"
+    )
+    reward_runtime_manifest = json.loads(
+        reward_runtime_manifest_path.read_text(encoding="utf-8")
+    )
+    reward_runtime_path = (
+        ROOT
+        / "addon"
+        / "AzerothExpeditionUI"
+        / "Media"
+        / "Quests"
+        / "QuestLogRewardSlotStatesV1.tga"
+    )
+    reward_exporter_path = ROOT / "tools" / "build_quest_log_reward_slot_v1.py"
+    reward_exporter = reward_exporter_path.read_text(encoding="utf-8")
+    reward_promotion_path = (
+        ROOT / "tools" / "promote_quest_log_reward_slot_v1.py"
+    )
+    reward_promotion = reward_promotion_path.read_text(encoding="utf-8")
     reward_sim_renderer_path = (
         ROOT / "tools" / "render_quest_log_reward_slots_simulation_v3.py"
     )
@@ -592,7 +635,7 @@ def main() -> None:
             "不含纹章、文字或状态",
             "不得出现 variant 循环",
             "当前程序化暗皮革 fallback",
-            "`108×41px` 双列锚点",
+            "`108×41px`",
             "名称安全宽 `64px`",
             "UpdateScrollChildRect()",
             "`QUEST.DIALOG.QUEST.SHELL`",
@@ -1622,9 +1665,11 @@ def main() -> None:
     require(
         rewards_work,
         (
-            "QL-D Quest Log 奖励槽（当前 V3；V2 历史）",
-            "`candidate-rejected / P3 / production 5/5 / repair-budget-exhausted`",
-            "当前几何／fallback `P6 game-validated`；V3 最终美术 `P3`",
+            "QL-D Quest Log 奖励槽（V3 attempt 4 已选用；V2 历史）",
+            "`runtime-exported / addon-integrated / P5 / awaiting-game-validation`",
+            "当前几何／旧 fallback `P6 game-validated`",
+            "`使用第4稿`",
+            "一次性 aspect 合同例外",
             "`2026-08-05`",
             "V3 生成前模拟 ImageGen：`0/0`",
             "当前 `5/5`",
@@ -1654,6 +1699,7 @@ def main() -> None:
             "normal／hover／pressed／disabled",
             "quest_log_reward_slot_production_v3.json",
             "quest_log_reward_slot_candidate_display_region_v3.json",
+            "quest_log_reward_slot_runtime_display_region_v1.json",
             "1949e47ced5b292bd896071c6c8233275767f3c36e4667de5d16401404597dbf",
             "5/5 pass",
             "cfba1824d5aa7bad94c359eff6639727d4c1fedec419c9233eb299b10c313382",
@@ -1674,6 +1720,11 @@ def main() -> None:
             "72 pixels of untouched green at both left and right sides",
             "da637c8f0e11fc5a15b55c58389b95024f4ef84cbf61dd3ba0bfbaeed3b242c5",
             "## V3 自主修复循环与授权边界",
+            "## V3 attempt 4 用户选稿与 P4/P5",
+            "816aeedd3ea8a890b5d6d39da2ce10771509afadfcfa92025024b736384347c5",
+            "cda1ef21",
+            "Quests `1.27`",
+            "Theme `1.10`",
             "authorized=true",
         ),
         "active QL-D reward-slot work",
@@ -1716,7 +1767,7 @@ def main() -> None:
         "aeui.quest-log.reward-slot.production-review.v3"
     )
     assert reward_production_spec["status"] == (
-        "candidate-rejected-repair-budget-exhausted"
+        "user-selected-attempt-04-runtime-exported"
     )
     assert reward_production_spec["authorization"]["authorized"] is True
     assert reward_production_spec["executor"]["authorized"] is True
@@ -1763,15 +1814,24 @@ def main() -> None:
         "previous_output_as_image_3": False,
         "next_attempt": None,
     }
+    assert reward_production_spec["user_selection"]["selected_attempt"] == 4
+    assert reward_production_spec["user_selection"]["exact_statement"] == (
+        "使用第4稿"
+    )
+    assert reward_production_spec["user_selection"]["contract_exception"][
+        "historical_technical_result_rewritten_as_pass"
+    ] is False
     assert reward_production_spec["terminal"] == {
-        "status": "candidate-rejected-repair-budget-exhausted",
+        "status": "user-selected-attempt-04-runtime-exported",
         "actual_imagegen_calls": 5,
         "process_errors": 2,
         "eligible_for_image_3": False,
-        "source_written": False,
-        "runtime_written": False,
-        "addon_changed": False,
-        "requires_user_decision": True,
+        "selected_attempt": 4,
+        "source_written": True,
+        "runtime_written": True,
+        "addon_changed": True,
+        "requires_user_decision": False,
+        "requires_turtle_wow_validation": True,
     }
     assert reward_production_spec["candidate"]["runtime_size"] == [108, 41]
     assert reward_production_spec["candidate"]["object_count"] == 1
@@ -1787,6 +1847,15 @@ def main() -> None:
     assert reward_candidate_display_spec["evidence"]["production_contract"].endswith(
         "quest_log_reward_slot_production_v3.json"
     )
+    assert reward_runtime_display_spec["schema"] == (
+        "aeui-display-region-contract-v1"
+    )
+    assert reward_runtime_display_spec["evidence"]["final_runtime"] is True
+    assert reward_runtime_display_spec["atlas"]["size"] == [512, 64]
+    assert [
+        region["id"]
+        for region in reward_runtime_display_spec["atlas"]["sampled_regions"]
+    ] == ["normal", "hover", "pressed", "disabled"]
     assert reward_display_spec["schema"] == "aeui-display-region-contract-v1"
     assert reward_display_spec["atlas"]["size"] == [432, 41]
     assert [scenario["id"] for scenario in reward_display_spec["scenarios"]] == [
@@ -1834,6 +1903,73 @@ def main() -> None:
         str(reward_sim_renderer_path),
         "exec",
     )
+
+    reward_source_bytes = reward_source_path.read_bytes()
+    assert hashlib.sha256(reward_source_bytes).hexdigest() == (
+        "816aeedd3ea8a890b5d6d39da2ce10771509afadfcfa92025024b736384347c5"
+    )
+    assert reward_source_bytes[:8] == b"\x89PNG\r\n\x1a\n"
+    assert struct.unpack(">II", reward_source_bytes[16:24]) == (1080, 410)
+    assert reward_source_manifest["status"] == "accepted-source"
+    assert reward_source_manifest["accepted_contract_exception"][
+        "historical_gate_rewritten_as_pass"
+    ] is False
+    assert reward_source_manifest["user_acceptance"]["exact_statement"] == (
+        "使用第4稿"
+    )
+    assert reward_source_manifest["export_contract"]["status"] == (
+        "runtime-exported"
+    )
+
+    reward_runtime_bytes = reward_runtime_path.read_bytes()
+    assert hashlib.sha256(reward_runtime_bytes).hexdigest() == (
+        "cda1ef21d618e148229d05415ffb8ea9d1539b801e2f260833cccab0ef28cd56"
+    )
+    assert reward_runtime_bytes[2] == 2
+    assert struct.unpack("<HH", reward_runtime_bytes[12:16]) == (512, 64)
+    assert reward_runtime_bytes[16] == 32
+    assert reward_runtime_manifest["status"] == "runtime-exported"
+    assert reward_runtime_manifest["transform"][
+        "alpha_identical_across_states"
+    ] is True
+    assert reward_runtime_manifest["historical_preview_equivalence"][
+        "pixel_identical"
+    ] is True
+    assert reward_runtime_manifest["simulation"]["display_region"]["status"] == (
+        "pass"
+    )
+    assert reward_runtime_manifest["simulation"]["display_region"][
+        "violation_count"
+    ] == 0
+    assert reward_runtime_manifest["simulation"]["real_layout_board"][
+        "rendered_from_exported_atlas"
+    ] is True
+    require(
+        reward_exporter,
+        (
+            "EXPECTED_SOURCE_SHA256",
+            "reviewer.derive_states",
+            "reviewer.build_atlas",
+            "runtime_states_from_atlas",
+            "render_layout_board",
+            "run_display_validator",
+            "ImageChops.difference",
+            "historical_gate_rewritten_as_pass",
+        ),
+        "QL-D deterministic exporter",
+    )
+    compile(reward_exporter, str(reward_exporter_path), "exec")
+    require(
+        reward_promotion,
+        (
+            "EXPECTED_SHA256",
+            "shutil.copyfile",
+            "already promoted",
+            "visible bbox changed",
+        ),
+        "QL-D exact source promotion",
+    )
+    compile(reward_promotion, str(reward_promotion_path), "exec")
 
     status_review_tool = (
         ROOT / "tools" / "review_quest_log_status_candidate_v1.py"
@@ -4898,12 +5034,13 @@ def main() -> None:
     require(
         quest_theme,
         (
-            'contract = "1.9"',
+            'contract = "1.10"',
             "QuestLogShellV4",
             "QuestLogDirectoryMarksV1",
             "QuestTrackerPaperV1",
             "QuestToolWaxSealStatesV1",
             "QuestLogSealPurityRibbonV1",
+            "QuestLogRewardSlotStatesV1",
             "LXGWWenKaiGB-Medium.ttf",
             "NotoSerifSC-SemiBold.ttf",
             "difficulty",
@@ -4927,7 +5064,7 @@ def main() -> None:
     require(
         quest_adapter,
         (
-            'Quests.runtimeContract = "1.26"',
+            'Quests.runtimeContract = "1.27"',
             "ApplyTrackerProviderFont",
             "ResolveQuestNameInk",
             "ApplyDirectoryTypography",
@@ -4937,10 +5074,11 @@ def main() -> None:
             "AnchorRewardHeading",
             "ReadQuestLogRewardMoney",
             "EnsureRewardSlotContainer",
+            "InstallRewardStateMethodHooks",
             "SuppressRewardSurface",
             "CountVisibleRewardItems",
             "GetRewardGroupTopGap",
-            "native-container-acyclic-visible-fallback-gap-8",
+            "atlas-v1-native-content-acyclic-gap-8",
             "NormalizeDirectoryInlineStatus",
             "ResolveRenderedDirectoryTagInk",
             "LockDirectoryTagInk",

@@ -13054,7 +13054,7 @@ Image 3。目标是生成“手绘综合色与大色块 donor”，不是任何�
 - 最终 display-region 合同
   `tools/specs/quest_log_seal_purity_ribbon_runtime_v1_display_region.json` 为
   `6/6 pass`、violations `0`；真实排版复跑 `29/29 pass`。
-- Quests runtime `1.26`／Theme `1.9` 将 carrier body／tail 以 `ARTWORK`、QS-A1
+- Quests runtime `1.27`／Theme `1.10` 将 carrier body／tail 以 `ARTWORK`、QS-A1
   火漆以 `OVERLAY` 挂在 `QuestLogDetailScrollChildFrame`。live 闭合态只显示
   前 `28px` root；7／5／3 项连续 prefix＋末 `14px` tail 公式已 smoke-tested，
   但未暴露点击入口。

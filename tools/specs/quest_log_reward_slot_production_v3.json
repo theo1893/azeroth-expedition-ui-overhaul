@@ -2,7 +2,7 @@
   "schema": "aeui.quest-log.reward-slot.production-review.v3",
   "version": "QL-D V3",
   "component": "QUEST.LOG.REWARD.SLOT",
-  "status": "candidate-rejected-repair-budget-exhausted",
+  "status": "user-selected-attempt-04-runtime-exported",
   "authorization": {
     "authorized": true,
     "date": "2026-08-07",
@@ -307,20 +307,52 @@
     "previous_output_as_image_3": false,
     "next_attempt": null
   },
+  "user_selection": {
+    "date": "2026-08-07",
+    "exact_statement": "使用第4稿",
+    "selected_attempt": 4,
+    "selected_canonical_path": "generated/quests/ql-d-reward-slots/production/V3/attempt-04/review/ql-d-v3-attempt-04.canonical-review.png",
+    "selected_canonical_sha256": "816aeedd3ea8a890b5d6d39da2ce10771509afadfcfa92025024b736384347c5",
+    "accepted_runtime_preview_path": "generated/quests/ql-d-reward-slots/production/V3/attempt-04/review/ql-d-v3-attempt-04.real-layout-board.png",
+    "accepted_runtime_preview_sha256": "86a941c8ad6e79b41ca1da04251ab46145e6590940bf9fa31c3147ea60a1db4f",
+    "contract_exception": {
+      "type": "one-time visible-aspect exception",
+      "keyed_aspect": 2.7694524495677233,
+      "original_allowed_range": [2.58, 2.69],
+      "operation": "preserve the exact proportional canonical fit and reviewed 108x41 runtime appearance",
+      "non_uniform_stretch": false,
+      "visible_pixel_crop": false,
+      "historical_technical_result_rewritten_as_pass": false
+    },
+    "scope": [
+      "promote the exact attempt-04 canonical candidate as tracked P4 source",
+      "derive the frozen four states and atlas without another ImageGen call",
+      "integrate the atlas into the existing QuestLogItem adapter without changing provider behavior"
+    ]
+  },
   "terminal": {
-    "status": "candidate-rejected-repair-budget-exhausted",
+    "status": "user-selected-attempt-04-runtime-exported",
     "actual_imagegen_calls": 5,
     "process_errors": 2,
     "eligible_for_image_3": false,
-    "source_written": false,
-    "runtime_written": false,
-    "addon_changed": false,
-    "requires_user_decision": true
+    "selected_attempt": 4,
+    "source_written": true,
+    "runtime_written": true,
+    "addon_changed": true,
+    "requires_user_decision": false,
+    "requires_turtle_wow_validation": true
   },
   "promotion": {
     "candidate_outputs_remain_under_generated": true,
     "source_written_before_user_acceptance": false,
     "runtime_written_before_user_acceptance": false,
-    "addon_changed_before_user_acceptance": false
+    "addon_changed_before_user_acceptance": false,
+    "source": "assets/source/quests/ql-d/QuestLogRewardSlot_Master_v1.png",
+    "source_manifest": "assets/source/quests/ql-d/QL-D_SourceManifest_v1.json",
+    "runtime": "addon/AzerothExpeditionUI/Media/Quests/QuestLogRewardSlotStatesV1.tga",
+    "runtime_manifest": "assets/source/quests/ql-d/QL-D_RuntimeManifest_v1.json",
+    "exporter": "tools/build_quest_log_reward_slot_v1.py",
+    "adapter": "addon/AzerothExpeditionUI/Modules/Quests.lua",
+    "runtime_display_contract": "tools/specs/quest_log_reward_slot_runtime_display_region_v1.json"
   }
 }

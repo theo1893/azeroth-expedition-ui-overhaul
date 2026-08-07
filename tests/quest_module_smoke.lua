@@ -722,12 +722,17 @@ AzerothExpeditionUI:Refresh()
 assert(QuestLogFrame:GetWidth() == 676, "quest shell width was not applied")
 assert(QuestLogFrame:GetHeight() == 464, "quest shell height was not applied")
 assert(
-  QuestLogFrame.aeuiQuestRuntimeContract == "1.26",
+  QuestLogFrame.aeuiQuestRuntimeContract == "1.27",
   "quest runtime contract was not recorded"
 )
 assert(
-  QuestLogFrame.aeuiQuestVisualThemeContract == "1.9",
+  QuestLogFrame.aeuiQuestVisualThemeContract == "1.10",
   "Quest Log did not consume the shared visual theme"
+)
+assert(
+  QuestLogFrame.aeuiQuestRewardLayoutContract ==
+    "atlas-v1-native-content-acyclic-gap-8",
+  "Quest Log did not record the accepted reward-slot runtime contract"
 )
 assert(QuestLogFrame.aeuiQuestShell, "quest shell texture was not created")
 assert(
@@ -927,8 +932,20 @@ for index = 1, MAX_NUM_ITEMS do
     item.backdrop == nil and
       container and container.mouseEnabled == false and
       container.backdropDefinition.edgeSize == 1 and
-      container.backdropColor[4] == 0.20 and
-      container.borderColor[4] == 0.72 and
+      container.backdropColor[4] == 0 and
+      container.borderColor[4] == 0 and
+      container.aeuiRewardTexture and
+      container.aeuiRewardTexture.texture:find(
+        "QuestLogRewardSlotStatesV1"
+      ) and
+      container.aeuiRewardTexture.layer == "BACKGROUND" and
+      container.aeuiRewardTexture.allPoints == container and
+      container.aeuiRewardTexture.texcoord[1] == 0.01953125 and
+      container.aeuiRewardTexture.texcoord[2] == 0.23046875 and
+      container.aeuiRewardTexture.texcoord[3] == 0.171875 and
+      container.aeuiRewardTexture.texcoord[4] == 0.8125 and
+      container.aeuiRewardState == "normal" and
+      container.aeuiRewardTextureContract == "1.0" and
       container:GetFrameLevel() == item:GetFrameLevel() + 1 and
       table.getn(container.points) == 2 and
       containerPoint == "TOPLEFT" and
@@ -962,13 +979,45 @@ for index = 1, MAX_NUM_ITEMS do
 end
 QuestLogItem1:GetScript("OnEnter")()
 assert(
-  QuestLogItem1.aeuiRewardContainer.borderColor[4] == 0.90,
-  "reward container did not preserve a visible hover state"
+  QuestLogItem1.aeuiRewardContainer.aeuiRewardState == "hover" and
+    QuestLogItem1.aeuiRewardContainer.aeuiRewardTexture.texcoord[1] ==
+      0.26953125,
+  "reward slot atlas did not expose its hover state"
+)
+QuestLogItem1:GetScript("OnMouseDown")("LeftButton")
+local pressedPoint, _, _, pressedX, pressedY =
+  QuestLogItem1.aeuiRewardContainer:GetPoint(1)
+assert(
+  QuestLogItem1.aeuiRewardContainer.aeuiRewardState == "pressed" and
+    QuestLogItem1.aeuiRewardContainer.aeuiRewardTexture.texcoord[1] ==
+      0.51953125 and
+    pressedPoint == "TOPLEFT" and pressedX == 1 and pressedY == -1,
+  "reward slot pressed state did not move the visual container and children"
+)
+QuestLogItem1:GetScript("OnMouseUp")("LeftButton")
+assert(
+  QuestLogItem1.aeuiRewardContainer.aeuiRewardState == "hover" and
+    QuestLogItem1.aeuiRewardContainer:GetPoint(1) == "TOPLEFT",
+  "reward slot mouse-up did not restore the hovered visual"
 )
 QuestLogItem1:GetScript("OnLeave")()
 assert(
-  QuestLogItem1.aeuiRewardContainer.borderColor[4] == 0.72,
-  "reward container hover state did not restore"
+  QuestLogItem1.aeuiRewardContainer.aeuiRewardState == "normal" and
+    QuestLogItem1.aeuiRewardContainer.aeuiRewardTexture.texcoord[1] ==
+      0.01953125,
+  "reward slot hover state did not restore"
+)
+QuestLogItem1:Disable()
+assert(
+  QuestLogItem1.aeuiRewardContainer.aeuiRewardState == "disabled" and
+    QuestLogItem1.aeuiRewardContainer.aeuiRewardTexture.texcoord[1] ==
+      0.76953125,
+  "reward slot atlas did not expose its disabled state"
+)
+QuestLogItem1:Enable()
+assert(
+  QuestLogItem1.aeuiRewardContainer.aeuiRewardState == "normal",
+  "reward slot enable method did not restore the normal state"
 )
 local point, relative, relativePoint, x, y = QuestLogItem1:GetPoint()
 local headingPoint, headingRelative, headingRelativePoint,
@@ -1848,8 +1897,8 @@ assert(
   "temporary tracker paper runtime contract was not recorded"
 )
 assert(
-  pfQuestMapTracker.aeuiQuestVisualThemeContract == "1.9" and
-    providerTrackerButton.aeuiQuestVisualThemeContract == "1.9",
+  pfQuestMapTracker.aeuiQuestVisualThemeContract == "1.10" and
+    providerTrackerButton.aeuiQuestVisualThemeContract == "1.10",
   "pfQuest Tracker did not consume the shared visual theme"
 )
 assert(
@@ -1881,7 +1930,7 @@ assert(
 )
 assert(
   not providerTrackerButton.icon:IsShown() and
-    providerTrackerButton.aeuiQuestEntryIconThemeContract == "1.9",
+    providerTrackerButton.aeuiQuestEntryIconThemeContract == "1.10",
   "tracker entry color dot/question-mark texture remained visible"
 )
 assert(
@@ -2121,14 +2170,14 @@ assert(
 local runtimeStatus =
   AzerothExpeditionUI.modules.Quests:GetRuntimeStatus()
 assert(
-  runtimeStatus:find("frame=1.26", 1, true) and
-    runtimeStatus:find("theme=1.9", 1, true) and
+  runtimeStatus:find("frame=1.27", 1, true) and
+    runtimeStatus:find("theme=1.10", 1, true) and
     runtimeStatus:find("seal=detail-page-32", 1, true) and
     runtimeStatus:find("carrier=collapsed-root-28", 1, true) and
     runtimeStatus:find("seal-menu=inactive-provider-buttons-live", 1, true) and
     runtimeStatus:find("tag=semantic-setter-lock", 1, true) and
     runtimeStatus:find(
-      "reward=native-container-acyclic-visible-fallback-gap-8",
+      "reward=atlas-v1-native-content-acyclic-gap-8",
       1,
       true
     ) and

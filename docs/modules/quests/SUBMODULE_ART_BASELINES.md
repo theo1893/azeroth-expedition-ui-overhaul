@@ -301,6 +301,16 @@ Alpha，只有 normal 由 ImageGen 生成。该确认只冻结可见文字条款
 像素、exact RGB、最终笔触或 Alpha；版本、授权、计数和审查只在
 [work/QUEST.LOG.REWARDS.md](work/QUEST.LOG.REWARDS.md) 维护。
 
+五次 V3 循环耗尽后，用户于 `2026-08-07` 明确选择第 4 稿。当前稳定 P4
+source 因而冻结为 `QuestLogRewardSlot_Master_v1.png`（SHA
+`816aeedd…47c5`）：粗裁深胡桃皮革补片压在低频烟熏纸签之上，接缝为不等
+手扎与暗固定痕，整体比规则闭合框更潦草、更接近香草年代手绘装备签。该稿的
+keyed aspect `2.7694524496` 超过原 `2.69` 上限，按一次性用户选稿例外保留
+已经审阅的等比 `108×41px` 外观；禁止以此例外普遍放宽后续组件比例，也禁止
+把原技术 `18/19` 改写为通过。四态必须从 exact source 按 manifest 公式派生，
+Alpha 相同；不得非等比压缩、裁可见像素、重绘或把 live icon／count／name／
+品质色烘焙进容器。
+
 ## Quest Tracker
 
 provider 已锁定为 `pfQuest 7.0.1` 的 `pfQuestMapTracker`。稳定视觉基线

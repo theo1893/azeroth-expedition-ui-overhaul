@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local Quests = {}
-Quests.runtimeContract = "1.26"
+Quests.runtimeContract = "1.27"
 
 local THEME = addon.questVisualTheme
 local SHELL_TEXTURE = THEME.media.questLogShell
@@ -9,6 +9,7 @@ local QUEST_TITLE_FONT = THEME.fonts.panelTitle.path
 local TRACKER_PAPER_TEXTURE = THEME.media.trackerPaper
 local QUEST_SEAL_TEXTURE = THEME.media.toolSeal
 local QUEST_SEAL_CARRIER_TEXTURE = THEME.media.sealMenuCarrier
+local REWARD_SLOT_TEXTURE = THEME.media.rewardSlotStates
 
 local SHELL = {
   width = 676,
@@ -68,8 +69,9 @@ local LAYOUT = {
 -- Quest Log is scoped to AEUI, so pfUI's Quest Log skin (and its item.backdrop)
 -- is intentionally not loaded. Build a small adapter-owned visual container
 -- around each real Blizzard reward Button instead of styling a frame that does
--- not exist on the scoped runtime path. The container is programmatic fallback
--- art only; it keeps every live icon, count, name, tooltip and click handler.
+-- not exist on the scoped runtime path. The accepted atlas is mounted inside
+-- that container; programmatic paper remains the media-contract fallback. Every
+-- live icon, count, name, tooltip and click handler stays provider-owned.
 local REWARD_CONTAINER = {
   backdrop = {
     bgFile = "Interface\\BUTTONS\\WHITE8X8",
@@ -91,6 +93,44 @@ local REWARD_CONTAINER = {
   hover = {
     background = { 0.44, 0.29, 0.11, 0.28 },
     border = { 0.50, 0.31, 0.12, 0.90 },
+  },
+  pressed = {
+    background = { 0.24, 0.14, 0.05, 0.28 },
+    border = { 0.25, 0.13, 0.05, 0.88 },
+  },
+  disabled = {
+    background = { 0.18, 0.15, 0.11, 0.20 },
+    border = { 0.25, 0.22, 0.18, 0.58 },
+  },
+}
+
+local REWARD_SLOT = {
+  contract = "1.0",
+  states = {
+    normal = {
+      0.01953125,
+      0.23046875,
+      0.171875,
+      0.8125,
+    },
+    hover = {
+      0.26953125,
+      0.48046875,
+      0.171875,
+      0.8125,
+    },
+    pressed = {
+      0.51953125,
+      0.73046875,
+      0.171875,
+      0.8125,
+    },
+    disabled = {
+      0.76953125,
+      0.98046875,
+      0.171875,
+      0.8125,
+    },
   },
 }
 
@@ -3226,13 +3266,67 @@ local function SetRewardSlotGeometry(
   ApplyRewardGeometryContract(item)
 end
 
-local function SetRewardContainerState(item, state)
+local function ResolveRewardContainerState(item)
+  if
+    item and
+    item.IsEnabled and
+    not item:IsEnabled()
+  then
+    return "disabled"
+  end
+  if item and item.aeuiRewardPressed then
+    return "pressed"
+  end
+  if item and item.aeuiRewardHovered then
+    return "hover"
+  end
+  return "normal"
+end
+
+local function PlaceRewardContainer(item, pressed)
   local container = item and item.aeuiRewardContainer
+  if not container then
+    return
+  end
+  local offset = pressed and 1 or 0
+  container:ClearAllPoints()
+  container:SetPoint(
+    "TOPLEFT",
+    item,
+    "TOPLEFT",
+    offset,
+    -offset
+  )
+  container:SetPoint(
+    "BOTTOMRIGHT",
+    item,
+    "BOTTOMRIGHT",
+    offset,
+    -offset
+  )
+end
+
+local function SetRewardContainerState(item, requestedState)
+  local container = item and item.aeuiRewardContainer
+  local state = requestedState or ResolveRewardContainerState(item)
   local colors = REWARD_CONTAINER[state] or REWARD_CONTAINER.normal
   if not container or not colors then
     return
   end
-  if container.SetBackdropColor then
+  local texture = container.aeuiRewardTexture
+  local coordinates = REWARD_SLOT.states[state] or REWARD_SLOT.states.normal
+  if texture and coordinates then
+    texture:SetTexCoord(
+      coordinates[1],
+      coordinates[2],
+      coordinates[3],
+      coordinates[4]
+    )
+    texture:Show()
+  end
+  if container.SetBackdropColor and texture then
+    container:SetBackdropColor(0, 0, 0, 0)
+  elseif container.SetBackdropColor then
     container:SetBackdropColor(
       colors.background[1],
       colors.background[2],
@@ -3240,13 +3334,51 @@ local function SetRewardContainerState(item, state)
       colors.background[4]
     )
   end
-  if container.SetBackdropBorderColor then
+  if container.SetBackdropBorderColor and texture then
+    container:SetBackdropBorderColor(0, 0, 0, 0)
+  elseif container.SetBackdropBorderColor then
     container:SetBackdropBorderColor(
       colors.border[1],
       colors.border[2],
       colors.border[3],
       colors.border[4]
     )
+  end
+  PlaceRewardContainer(item, state == "pressed")
+  container.aeuiRewardState = state
+  container.aeuiRewardTextureContract =
+    texture and REWARD_SLOT.contract or "fallback"
+end
+
+local function InstallRewardStateMethodHooks(item)
+  if not item then
+    return
+  end
+  if
+    item.Disable and
+    item.Disable ~= item.aeuiRewardDisableHook
+  then
+    local downstream = item.Disable
+    local hook = function(self)
+      downstream(self)
+      SetRewardContainerState(self)
+    end
+    item.aeuiRewardDisableDownstream = downstream
+    item.aeuiRewardDisableHook = hook
+    item.Disable = hook
+  end
+  if
+    item.Enable and
+    item.Enable ~= item.aeuiRewardEnableHook
+  then
+    local downstream = item.Enable
+    local hook = function(self)
+      downstream(self)
+      SetRewardContainerState(self)
+    end
+    item.aeuiRewardEnableDownstream = downstream
+    item.aeuiRewardEnableHook = hook
+    item.Enable = hook
   end
 end
 
@@ -3347,16 +3479,26 @@ local function EnsureRewardSlotContainer(item, index)
   then
     container:SetFrameLevel(item:GetFrameLevel() + 1)
   end
-  container:ClearAllPoints()
-  container:SetPoint("TOPLEFT", item, "TOPLEFT", 0, 0)
-  container:SetPoint("BOTTOMRIGHT", item, "BOTTOMRIGHT", 0, 0)
+  PlaceRewardContainer(item, false)
   if container.SetBackdrop then
     container:SetBackdrop(REWARD_CONTAINER.backdrop)
+  end
+  if
+    REWARD_SLOT_TEXTURE and
+    not container.aeuiRewardTexture and
+    container.CreateTexture
+  then
+    local texture = container:CreateTexture(nil, "BACKGROUND")
+    texture.aeuiQuestManaged = true
+    texture:SetTexture(REWARD_SLOT_TEXTURE)
+    texture:SetAllPoints(container)
+    container.aeuiRewardTexture = texture
   end
   if container.Show then
     container:Show()
   end
-  SetRewardContainerState(item, "normal")
+  InstallRewardStateMethodHooks(item)
+  SetRewardContainerState(item)
 
   if icon then
     if icon.SetParent then
@@ -3442,7 +3584,8 @@ local function EnsureRewardSlotContainer(item, index)
     "OnEnter",
     "aeuiRewardContainerEnterHook",
     function()
-      SetRewardContainerState(item, "hover")
+      item.aeuiRewardHovered = true
+      SetRewardContainerState(item)
     end
   )
   AppendScript(
@@ -3450,7 +3593,33 @@ local function EnsureRewardSlotContainer(item, index)
     "OnLeave",
     "aeuiRewardContainerLeaveHook",
     function()
-      SetRewardContainerState(item, "normal")
+      item.aeuiRewardHovered = nil
+      item.aeuiRewardPressed = nil
+      SetRewardContainerState(item)
+    end
+  )
+  AppendScript(
+    item,
+    "OnMouseDown",
+    "aeuiRewardContainerMouseDownHook",
+    function(buttonName)
+      local mouseButton = buttonName or arg1
+      if not mouseButton or mouseButton == "LeftButton" then
+        item.aeuiRewardPressed = true
+        SetRewardContainerState(item)
+      end
+    end
+  )
+  AppendScript(
+    item,
+    "OnMouseUp",
+    "aeuiRewardContainerMouseUpHook",
+    function(buttonName)
+      local mouseButton = buttonName or arg1
+      if not mouseButton or mouseButton == "LeftButton" then
+        item.aeuiRewardPressed = nil
+        SetRewardContainerState(item)
+      end
     end
   )
   return container
@@ -4352,7 +4521,7 @@ function Quests:GetRuntimeStatus()
     ", carrier=" .. tostring(carrierStatus) ..
     ", seal-menu=inactive-provider-buttons-live" ..
     ", tag=semantic-setter-lock" ..
-    ", reward=native-container-acyclic-visible-fallback-gap-8" ..
+    ", reward=atlas-v1-native-content-acyclic-gap-8" ..
     ", font=" .. tostring(fontPath) ..
     ", detail-range=" .. tostring(scrollRange)
 end
@@ -4381,7 +4550,7 @@ function Quests:Apply()
   QuestLogFrame.aeuiQuestVisualThemeContract = THEME.contract
   QuestLogFrame.aeuiQuestTagInkContract = "semantic-setter-lock"
   QuestLogFrame.aeuiQuestRewardLayoutContract =
-    "native-container-acyclic-visible-fallback-gap-8"
+    "atlas-v1-native-content-acyclic-gap-8"
 end
 
 addon:RegisterModule("Quests", Quests)

@@ -221,18 +221,18 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 | `QUEST.LOG.DETAIL.SCROLL.THUMB` | 对应 ThumbTexture | 视觉隐藏 |
 | `QUEST.LOG.DETAIL.SCROLL.UP` | 对应 ScrollUpButton，需 feature-detect | 视觉隐藏且不接收鼠标 |
 | `QUEST.LOG.DETAIL.SCROLL.DOWN` | 对应 ScrollDownButton，需 feature-detect | 视觉隐藏且不接收鼠标 |
-| `QUEST.LOG.DETAIL.TITLE` | ScrollChild 标题 FontString，需实机确认名 | Theme `1.9`：Noto Serif SC `14px`，无 outline／shadow |
-| `QUEST.LOG.DETAIL.DESCRIPTION` | 叙述 FontString 集 | Theme `1.9`：`pfUI.font_default` `12px`，无 outline／shadow |
+| `QUEST.LOG.DETAIL.TITLE` | ScrollChild 标题 FontString，需实机确认名 | Theme `1.10`：Noto Serif SC `14px`，无 outline／shadow |
+| `QUEST.LOG.DETAIL.DESCRIPTION` | 叙述 FontString 集 | Theme `1.10`：`pfUI.font_default` `12px`，无 outline／shadow |
 | `QUEST.LOG.DETAIL.OBJECTIVES` | 目标 FontString 集 | layout-only |
-| `QUEST.LOG.DETAIL.REWARD_TEXT` | 奖励文字 FontString 集 | Theme `1.9`：标题 `14px`，标签 `12px`，均无 outline／shadow |
+| `QUEST.LOG.DETAIL.REWARD_TEXT` | 奖励文字 FontString 集 | Theme `1.10`：标题 `14px`，标签 `12px`，均无 outline／shadow |
 | `QUEST.LOG.DETAIL.DIVIDER` | adapter 非交互 Texture | 可横向三段式短墨线 |
-| `QUEST.LOG.REWARD.SLOT` | `QuestLogItem1..MAX_NUM_ITEMS`；原生 `IconTexture／Count／Name／NameFrame`；adapter-owned `aeuiRewardContainer` | 普通／悬停／按下／禁用；图标动态，无 selected；runtime `1.26` 重建 `108×41px` 双列锚点，名称安全宽 `64px`，保持 `8px` 列距／`4px` 行距与 fail-open。V3 attempt 5 的 safe Alpha、四态和 display `5/5` 通过；technical `18/19`，aspect `2.81899` 超过 `2.69`，且满版微纹／规则内嵌皮革轮廓另行失败。当前 `candidate-rejected / P3 / 5/5 / repair-budget-exhausted`；没有 source/runtime 或 addon 接入，继续保留程序化 fallback |
+| `QUEST.LOG.REWARD.SLOT` | `QuestLogItem1..MAX_NUM_ITEMS`；原生 `IconTexture／Count／Name／NameFrame`；adapter-owned `aeuiRewardContainer` | 普通／悬停／按下／禁用；图标动态，无 selected。用户在 V3 `5/5` 循环耗尽后明确选择 attempt 4，并接受其 keyed aspect `2.76945` 的一次性合同例外；原技术仍记 `18/19`。exact canonical SHA `816aeedd…47c5` 已晋级 source，正式 `512×64` 四态 atlas SHA `cda1ef21…cd56` 已由 runtime `1.27`／Theme `1.10` 接入。真实 Button、Tooltip、品质色与 provider 脚本保持；`108×41px`、名称安全宽 `64px`、`8px` 列距／`4px` 行距不变；pressed 只移动 adapter 容器及真实子内容 `1px`，不移动命中区。当前 `P5 runtime-exported / addon-integrated`，等待实机 P6 |
 | `QUEST.LOG.TRACK` | `QuestLogTrack`、`QuestLogTrackTracking` | 复用 QL-B1 开放墨圈／墨勾 atlas；保留原状态控制 |
 | `QUEST.LOG.ACTION.ABANDON` | `QuestLogFrameAbandonButton` | 当前程序化暗皮革 fallback；目标事务菜单只代理原 OnClick，必须保留原生确认 |
 | `QUEST.LOG.ACTION.SHARE` | `QuestFramePushQuestButton`；兼容名需探测 | 当前程序化暗皮革 fallback；目标事务菜单代理原 Button |
 | `QUEST.LOG.ACTION.EXIT` | `QuestFrameExitButton`；兼容 `QuestLogFrameCancelButton` | 目标视觉不重复收纳；右上真实 Close 保持独立，fallback 在迁移验收前继续存在 |
 | `QUEST.LOG.DETAIL.TOGGLE` | pfUI `QuestLogFrameExpandButton`；缺失时可创建真实 Button | 当前底部 fallback；目标事务菜单代理同一动态开合行为 |
-| `QUEST.LOG.ACTION.SEAL_MENU` | adapter-owned `QuestLogDetailScrollChildFrame` 子树；载体／火漆已接入，交互未启用 | 用户于 `2026-08-07` 接受 V7-A attempt 5 并授权 P4/P5。Quests `1.26` 将 carrier body／tail 以 `ARTWORK`、QS-A1 火漆以 `OVERLAY` 共同挂在真实 ScrollChild，随正文滚动并由 `[366,64,246,324]` viewport 裁切。当前 live 仅显示闭合载体根部与火漆；7／5／3 公式已实现但无用户可达入口，菜单保持 inactive。七张独立透明纹章与七个代理 Button 未验收，因此不创建 seal hitbox、不隐藏旧入口，全部 Blizzard／pfQuest 功能继续原子 fail-open |
+| `QUEST.LOG.ACTION.SEAL_MENU` | adapter-owned `QuestLogDetailScrollChildFrame` 子树；载体／火漆已接入，交互未启用 | 用户于 `2026-08-07` 接受 V7-A attempt 5 并授权 P4/P5。Quests `1.27` 将 carrier body／tail 以 `ARTWORK`、QS-A1 火漆以 `OVERLAY` 共同挂在真实 ScrollChild，随正文滚动并由 `[366,64,246,324]` viewport 裁切。当前 live 仅显示闭合载体根部与火漆；7／5／3 公式已实现但无用户可达入口，菜单保持 inactive。七张独立透明纹章与七个代理 Button 未验收，因此不创建 seal hitbox、不隐藏旧入口，全部 Blizzard／pfQuest 功能继续原子 fail-open |
 | `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX` | adapter-owned 无鼠标 Texture；一张连续 source | accepted V7-A source [`QuestLogSealPurityRibbon_Master_v1.png`](../../../assets/source/quests/qs-b1/QuestLogSealPurityRibbon_Master_v1.png) 为 `128×768 RGBA`、SHA `168f527f…05b8`；source／runtime manifest 分别为 [`QS-B1-V7A_SourceManifest_v1.json`](../../../assets/source/quests/qs-b1/QS-B1-V7A_SourceManifest_v1.json) 与 [`QS-B1-V7A_RuntimeManifest_v1.json`](../../../assets/source/quests/qs-b1/QS-B1-V7A_RuntimeManifest_v1.json)。确定性等比导出 [`32×192` TGA](../../../addon/AzerothExpeditionUI/Media/Quests/QuestLogSealPurityRibbonV1.tga) SHA `db620778…c615`，不 bbox-fit／平铺／镜像／重绘；载体不含纹章、文字或状态。V5-A dark-cloth source [`QuestLogSealMenuSubstrate_Master_v1.png`](../../../assets/source/quests/qs-b1/QuestLogSealMenuSubstrate_Master_v1.png) 与 manifest 仍作为历史 fallback 保留，但 addon 不加载 |
 | `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.ROOT` | `SUBSTRATE.MAX` 的逻辑 UV 子区；无独立 source | 闭合态采样前 `32×28px`，锚于 ScrollChild content `[210,12,32,28]`；QS-A1 火漆位于 `[210,4,32,32]` 并以独立 OVERLAY 后绘，形成 `24px` 纵向相交。该 Texture 无鼠标且不持有功能 |
 | `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY` | `SUBSTRATE.MAX` 的动态前缀子区；无独立 source | 最多七个 `32×22px` 容量段；只按 visible count 增长。源美术在全长连续、非周期，切点附近无强横折；不得出现 variant 循环、卡片格或功能所有权 |

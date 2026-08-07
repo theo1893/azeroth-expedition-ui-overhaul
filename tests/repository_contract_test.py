@@ -300,12 +300,13 @@ def main() -> None:
     quest_theme_source = (
         aeui / "Modules" / "QuestVisualTheme.lua"
     ).read_text(encoding="utf-8")
-    assert 'contract = "1.9"' in quest_theme_source
+    assert 'contract = "1.10"' in quest_theme_source
     assert "QuestLogShellV4" in quest_theme_source
     assert "QuestLogDirectoryMarksV1" in quest_theme_source
     assert "QuestTrackerPaperV1" in quest_theme_source
     assert "QuestToolWaxSealStatesV1" in quest_theme_source
     assert "QuestLogSealPurityRibbonV1" in quest_theme_source
+    assert "QuestLogRewardSlotStatesV1" in quest_theme_source
     assert "NotoSerifSC-SemiBold.ttf" in quest_theme_source
     assert "LXGWWenKaiGB-Medium.ttf" in quest_theme_source
     assert "providerPanelHeight = 16" in quest_theme_source
@@ -348,7 +349,7 @@ def main() -> None:
     ):
         assert shared_ink in quest_theme_source
 
-    assert 'Quests.runtimeContract = "1.26"' in quest_source
+    assert 'Quests.runtimeContract = "1.27"' in quest_source
     assert "ApplyTrackerProviderFont" in quest_source
     assert "ResolveQuestNameInk" in quest_source
     assert quest_source.count("ResolveQuestNameInk(") >= 3
@@ -409,6 +410,14 @@ def main() -> None:
     assert "ReadQuestLogRewardMoney" in quest_source
     assert "EnsureRewardSlotContainer" in quest_source
     assert "REWARD_CONTAINER" in quest_source
+    assert "REWARD_SLOT_TEXTURE" in quest_source
+    assert 'contract = "1.0"' in quest_source
+    assert "ResolveRewardContainerState" in quest_source
+    assert "PlaceRewardContainer" in quest_source
+    assert "InstallRewardStateMethodHooks" in quest_source
+    assert "aeuiRewardTexture" in quest_source
+    assert "aeuiRewardContainerMouseDownHook" in quest_source
+    assert "aeuiRewardContainerMouseUpHook" in quest_source
     assert "SuppressRewardSurface" in quest_source
     assert "SuppressNativeRewardTextures" in quest_source
     assert "CountVisibleRewardItems" in quest_source
@@ -416,8 +425,15 @@ def main() -> None:
     assert "SetRewardSlotGeometry" in quest_source
     assert "aeuiRewardGeometrySetterLock" in quest_source
     assert (
-        "native-container-acyclic-visible-fallback-gap-8"
+        "atlas-v1-native-content-acyclic-gap-8"
         in quest_source
+    )
+    reward_slot_runtime = (
+        aeui / "Media" / "Quests" / "QuestLogRewardSlotStatesV1.tga"
+    )
+    assert reward_slot_runtime.is_file()
+    assert sha256(reward_slot_runtime) == (
+        "cda1ef21d618e148229d05415ffb8ea9d1539b801e2f260833cccab0ef28cd56"
     )
     assert 'rewardIconSize = 33' in quest_source
     assert 'rewardContentInset = 4' in quest_source
