@@ -1709,7 +1709,11 @@ def main() -> None:
     assert reward_production_spec["executor"]["simulation_confirmed"] is True
     assert reward_production_spec["executor"]["maximum_actual_imagegen_calls"] == 5
     assert reward_production_spec["executor"]["current_actual_imagegen_calls"] == 0
-    assert reward_production_spec["executor"]["process_errors"] == 0
+    assert reward_production_spec["executor"]["process_errors"] == 1
+    assert len(reward_production_spec["process_error_history"]) == 1
+    assert not reward_production_spec["process_error_history"][0][
+        "provider_generation_evidence"
+    ]
     assert reward_production_spec["candidate"]["runtime_size"] == [108, 41]
     assert reward_production_spec["candidate"]["object_count"] == 1
     assert reward_production_spec["candidate"]["generated_state"] == "normal"

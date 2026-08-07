@@ -10,7 +10,7 @@
 - 固定执行器：V3 production 只允许
   `imagegen-0-143-0`／`@openai/codex@0.143.0`；已授权但尚未调用。
 - V3 生成前模拟 ImageGen：`0/0`；production 预算为最多 `5` 次实际 ImageGen
-  generation／edit，当前 `0/5`、已授权，流程错误 `0`。V2
+  generation／edit，当前 `0/5`、已授权，流程错误 `1`。V2
   历史 production 为 `5/5` actual ImageGen，五稿均未晋级，且不会转作 V3
   edit input、source 或 runtime 位图。
 - 当前请求：用户于 `2026-08-07` 在 V2 五次循环结束后明确否决其可见风格：
@@ -320,7 +320,7 @@ V1 在 Windows 上形成的具体像素已被 V2 当前邻接 UI 预演取代；
 - tracked production contract：
   [`quest_log_reward_slot_production_v3.json`](../../../../tools/specs/quest_log_reward_slot_production_v3.json)，
   SHA-256
-  `8380f367e9c7b016ef2e2590d77cf72d1f145f2e378ce981fab7aa40949c3520`；
+  `17c63d3c8723ccb302a85d3b9406f130089234adf754a731f6f8398b103cb70f`；
   当前 `authorized=true`；授权前合同 SHA-256 为
   `98797a4c4753518c5dce0a4b2e639c2d70d1d8b8eb67ad3f323c683be3adb7d3`。
 - 候选展示区域 template：
@@ -537,7 +537,7 @@ uniform reduction to 108 x 41 pixels.
 - 新增／替换参考、上传模拟或旧失败稿、改变对象／状态数量、视觉隐喻、层序、
   画布、runtime 几何、safe area、provider、Alpha／atlas 策略或允许烘焙任何
   动态内容，都超出冻结边界并必须重新授权。
-- 当前 `0/5`，流程错误 `0`，已获用户逐字授权。本授权状态与完整正文必须先
+- 当前 `0/5`，流程错误 `1`，已获用户逐字授权。本授权状态与完整正文必须先
   提交；attempt 1 只在该提交完成后调用固定执行器。
 
 ## V3 生产授权记录
@@ -554,6 +554,20 @@ uniform reduction to 108 x 41 pixels.
   最多五次实际 ImageGen，流程错误不占额度；确定性后处理仅限本文件所列合同。
 - 不包含：自动接受候选、写入 `assets/source/`、导出 runtime、修改 addon、
   Turtle WoW 实机验收或组件清理。
+
+## V3 生产循环
+
+| 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
+|---:|---|---|---|---|---|---|---|
+| `1/5` | `QL-D V3`／`b9cfd8c` | fixed Image 1／2 fresh generate | pending | pending | pending | pending | 尚未发生 countable output |
+
+| 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
+|---:|---|---|---|---|---|
+| `E1` | `QL-D V3`／`b9cfd8c` | fixed child 未创建 thread／result | 0.143.0 CLI 输出 `Reading prompt from stdin...` 与 `No prompt provided via stdin.` 后以 code `1` 退出；attempt-01 目录无文件，没有 thread、provider result、image tool call 或图片 | 保持相同已提交 prompt 与 Image 1／2；只在固定 Image 2 后加入 CLI 参数终止符 `--`，避免可变长 image option 吞掉位置 prompt | process error；不占实际 ImageGen，当前仍 `0/5` |
+
+- `E1` 只改变 transport，不创建 `.rN`，不修改 production prompt body；重试仍以
+  SHA-256 `cfba1824d5aa7bad94c359eff6639727d4c1fedec419c9233eb299b10c313382`
+  执行 attempt 1。
 
 ## V2 历史最终执行正文
 

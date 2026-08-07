@@ -16,7 +16,7 @@
     "simulation_confirmed": true,
     "maximum_actual_imagegen_calls": 5,
     "current_actual_imagegen_calls": 0,
-    "process_errors": 0,
+    "process_errors": 1,
     "process_errors_count_toward_budget": false
   },
   "simulation": {
@@ -146,6 +146,18 @@
       "modern HUD language"
     ]
   },
+  "process_error_history": [
+    {
+      "id": "E1",
+      "before_attempt": 1,
+      "stage": "fixed-child-cli-argument-parse-before-thread-start",
+      "error": "Reading prompt from stdin; No prompt provided via stdin.",
+      "provider_generation_evidence": false,
+      "output_image": false,
+      "consumed_generation_budget": false,
+      "resolution": "retry the identical committed QL-D V3 body with -- after fixed Image 2 so the positional prompt is not consumed by the variadic image option"
+    }
+  ],
   "promotion": {
     "candidate_outputs_remain_under_generated": true,
     "source_written_before_user_acceptance": false,
