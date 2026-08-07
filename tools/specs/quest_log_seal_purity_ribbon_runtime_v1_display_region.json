@@ -1,0 +1,92 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "QS-B1/QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX/V7-A/runtime-v1",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, 100%-UI-pixels",
+  "evidence": {
+    "provider": "QuestLogDetailScrollFrame + QuestLogDetailScrollChildFrame",
+    "adapter": "addon/AzerothExpeditionUI/Modules/Quests.lua",
+    "runtime": "addon/AzerothExpeditionUI/Media/Quests/QuestLogSealPurityRibbonV1.tga",
+    "background_ownership": "one adapter-owned mouse-inert 32x192 carrier master sampled as a continuous prefix plus its own 14px tail",
+    "wax_ownership": "accepted QS-A1 remains a separate OVERLAY Texture above the carrier",
+    "menu_activation": false,
+    "menu_activation_reason": "seven independent action motifs and proxy parity are not yet accepted; existing provider Buttons remain visible and functional",
+    "final_runtime": true
+  },
+  "atlas": {
+    "size": [32, 192],
+    "visible_bbox": [0, 0, 32, 192],
+    "require_exact_visible_coverage": true,
+    "sampled_regions": [
+      {"id": "carrier.master", "box": [0, 0, 32, 192]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 1, "right": 1, "top": 1, "bottom": 1},
+    "minimum_frame_size": [3, 3]
+  },
+  "scenarios": [
+    {
+      "id": "closed-top-live",
+      "frame": [246, 324],
+      "preview_frame": [246, 324],
+      "zones": {"detail-viewport": [0, 0, 246, 324]},
+      "regions": [
+        {"id": "wax.visual", "kind": "texture", "box": [210, 4, 242, 36], "zone": "detail-viewport"},
+        {"id": "carrier.root.under-wax", "kind": "texture", "box": [210, 12, 242, 40], "zone": "detail-viewport"},
+        {"id": "reward.1", "kind": "button", "box": [10, 236, 118, 277], "zone": "detail-viewport"},
+        {"id": "reward.2", "kind": "button", "box": [122, 236, 230, 277], "zone": "detail-viewport"}
+      ]
+    },
+    {
+      "id": "open-all-seven-formula-ready",
+      "frame": [246, 324],
+      "preview_frame": [246, 324],
+      "zones": {"detail-viewport": [0, 0, 246, 324]},
+      "regions": [
+        {"id": "carrier.full", "kind": "texture", "box": [210, 12, 242, 204], "zone": "detail-viewport"},
+        {"id": "reward.1", "kind": "button", "box": [10, 236, 118, 277], "zone": "detail-viewport"},
+        {"id": "reward.2", "kind": "button", "box": [122, 236, 230, 277], "zone": "detail-viewport"}
+      ]
+    },
+    {
+      "id": "open-filtered-five-formula-ready",
+      "frame": [246, 324],
+      "preview_frame": [246, 324],
+      "zones": {"detail-viewport": [0, 0, 246, 324]},
+      "regions": [
+        {"id": "carrier.compact-five", "kind": "texture", "box": [210, 12, 242, 160], "zone": "detail-viewport"},
+        {"id": "reward.1", "kind": "button", "box": [10, 236, 118, 277], "zone": "detail-viewport"}
+      ]
+    },
+    {
+      "id": "open-filtered-three-formula-ready",
+      "frame": [246, 324],
+      "preview_frame": [246, 324],
+      "zones": {"detail-viewport": [0, 0, 246, 324]},
+      "regions": [
+        {"id": "carrier.compact-three", "kind": "texture", "box": [210, 12, 242, 116], "zone": "detail-viewport"},
+        {"id": "reward.1", "kind": "button", "box": [10, 236, 118, 277], "zone": "detail-viewport"}
+      ]
+    },
+    {
+      "id": "filtered-five-partial-scroll",
+      "frame": [246, 324],
+      "preview_frame": [246, 324],
+      "zones": {"detail-viewport": [0, 0, 246, 324]},
+      "regions": [
+        {"id": "carrier.partial", "kind": "texture", "box": [210, 0, 242, 108], "zone": "detail-viewport"},
+        {"id": "reward.1", "kind": "button", "box": [10, 184, 118, 225], "zone": "detail-viewport"}
+      ]
+    },
+    {
+      "id": "filtered-five-fully-scrolled-out",
+      "frame": [246, 324],
+      "preview_frame": [246, 324],
+      "zones": {"detail-viewport": [0, 0, 246, 324]},
+      "regions": [
+        {"id": "reward.1", "kind": "button", "box": [10, 28, 118, 69], "zone": "detail-viewport"},
+        {"id": "reward.2", "kind": "button", "box": [122, 28, 230, 69], "zone": "detail-viewport"}
+      ]
+    }
+  ]
+}

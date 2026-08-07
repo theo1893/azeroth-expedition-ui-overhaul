@@ -2,13 +2,22 @@
   "schema": "aeui.quest-log.seal-purity-ribbon.production-contract.v1",
   "version": "QS-B1 V7-A",
   "component": "QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX",
-  "status": "candidate-reviewed",
+  "status": "runtime-exported",
   "authorization": {
     "authorized": true,
     "date": "2026-08-06",
     "authorized_contract_commit": "8a267b6",
     "preauthorization_contract_sha256": "1ff46804cb5c5dddd47c56fea2c65c50c22e392c82179b53c5d251af1a65584c",
     "user_text": "确认授权 QS-B1 V7-A final production；允许每次上传固定 SHA 的 Image 1/2，attempt 1 无 Image 3；允许同循环紧邻前次输出仅在冻结修复边界内作为 Image 3 edit 输入；最多 5 次实际 ImageGen 调用，流程错误不占额度；允许按合同执行 1024² 归一化、固定 [448,128,576,896] crop、tracked 128×768 mask、QS-A1 Alpha 接触压暗、透明 RGB 清零、32×192 runtime 与六场景真实排版预演。"
+  },
+  "user_acceptance": {
+    "accepted": true,
+    "date": "2026-08-07",
+    "exact_statement": "接受 QS-B1 V7-A attempt 5 的运行时视觉，并授权进入 P4/P5；允许按已授权确定性合同生成 source/runtime 并接入 addon。",
+    "attempt": 5,
+    "accepted_composite_sha256": "168f527fffa09beb281c7e0bbca6076dcd00e7f827febb6cce9a853f461e05b8",
+    "accepted_runtime_review_sha256": "12a4a24b785641c55a0caae0737f1b151459e5fc039ae067aa7f41552dd06740",
+    "scope": "source promotion, deterministic 32x192 runtime export, collapsed carrier integration beneath QS-A1 wax; no seven-motif acceptance or menu activation"
   },
   "confirmed_simulation": {
     "version": "QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17",
@@ -160,7 +169,7 @@
     }
   ],
   "candidate_gate": {
-    "status": "candidate-reviewed",
+    "status": "accepted-source-runtime-exported",
     "attempt": 5,
     "raw_sha256": "604faa9e6cdaedf7c6ba1fbbca8d4232b9ae50a4fe21aaff46d59cb0f3583c9b",
     "review_sha256": "57cb900aaf65e582099505277fc9805615bb2a5de12a0fb760f82c99520dd270",
@@ -168,10 +177,10 @@
     "real_layout_sha256": "1d098be709b3ee48ea7af7238dd254b451e2bfeb653cfd26ce5b5539bf6af887",
     "composite_sha256": "168f527fffa09beb281c7e0bbca6076dcd00e7f827febb6cce9a853f461e05b8",
     "runtime_review_sha256": "12a4a24b785641c55a0caae0737f1b151459e5fc039ae067aa7f41552dd06740",
-    "source_written": false,
-    "runtime_written": false,
-    "addon_changed": false,
-    "requires_explicit_user_acceptance": true
+    "source_written": true,
+    "runtime_written": true,
+    "addon_changed": true,
+    "requires_explicit_user_acceptance": false
   },
   "provider_output": {
     "identity": "one edge-to-edge square RGB material donor, not a finished ribbon or UI object",
@@ -253,6 +262,28 @@
     "page_reflow": false,
     "fallback": "all existing provider Buttons remain visible and functional until full proxy parity"
   },
+  "p4_p5": {
+    "status": "runtime-exported-addon-integrated",
+    "source": {
+      "file": "assets/source/quests/qs-b1/QuestLogSealPurityRibbon_Master_v1.png",
+      "sha256": "168f527fffa09beb281c7e0bbca6076dcd00e7f827febb6cce9a853f461e05b8",
+      "manifest": "assets/source/quests/qs-b1/QS-B1-V7A_SourceManifest_v1.json"
+    },
+    "runtime": {
+      "file": "addon/AzerothExpeditionUI/Media/Quests/QuestLogSealPurityRibbonV1.tga",
+      "sha256": "db62077870b7954d7f43faf6680a57e2f8f2a2d053ecffc7cb06f7b18a32c615",
+      "size": [32, 192],
+      "manifest": "assets/source/quests/qs-b1/QS-B1-V7A_RuntimeManifest_v1.json"
+    },
+    "exporter": "tools/build_quest_seal_purity_ribbon_v1.py",
+    "display_region_contract": "tools/specs/quest_log_seal_purity_ribbon_runtime_v1_display_region.json",
+    "display_region_status": "6/6 pass; 0 violations",
+    "addon_adapter": "addon/AzerothExpeditionUI/Modules/Quests.lua",
+    "live_state": "collapsed 28px carrier root under accepted QS-A1 wax, owned by QuestLogDetailScrollChildFrame",
+    "formula_ready_only": "open 7/5/3 prefix-plus-tail assembly is implemented and smoke-tested but is not user-accessible",
+    "provider_fallback": "all old Blizzard and pfQuest action Buttons remain visible and functional",
+    "cross_device_handoff_required": false
+  },
   "prompt_location": "docs/modules/quests/work/QUEST.SEALS.md#qs-b1-v7-a-final-production-body",
-  "next_gate": "show attempt-5 candidate and six-scenario real-layout preview to the user; require explicit acceptance before any source, runtime, addon, or handoff promotion; attempt 6 is forbidden"
+  "next_gate": "P6 Turtle WoW validation of collapsed wax-to-carrier contact, scroll clipping and TGA orientation; separately generate and accept seven independent motifs before enabling the menu or replacing provider Buttons"
 }

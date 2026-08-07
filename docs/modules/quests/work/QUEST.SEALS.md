@@ -22,12 +22,13 @@
   单对象 production source。内部 `59/59 pass`、展示区 `6/6 pass`、ImageGen
   `0/0`；用户于 `2026-08-06` 回复“接受”，当前
   `user-superseded-by-V7-A-material-direction / P3-history`
-- 当前已确认生成前模拟：`QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17 / QS-B1 V7-A`；
+- 已确认并完成 P4/P5 的生成前模拟：`QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17 / QS-B1 V7-A`；
   火漆与载体纵向重叠 `24px`，载体名义宽 `26px`、收起态露出 `4px`，使用
   烟熏旧骨褐挺质誓约纸／亚麻和约五个不等距尖锐尾点；本地 `42/42 pass`、
-  展示区 `6/6 pass`、ImageGen `0/0`，当前
-  `candidate-reviewed / P3 / production 5/5`；用户于 `2026-08-06` 先回复
-  “确认”接受 V17 方向，随后独立授权 V7-A 最终 production 正文
+  展示区 `6/6 pass`、ImageGen `0/0`；用户于 `2026-08-06` 先回复“确认”接受
+  V17 方向，随后独立授权 V7-A 最终 production 正文，并于 `2026-08-07`
+  接受 attempt 5 运行时视觉与 P4/P5 接入；当前 substrate
+  `runtime-exported / addon-integrated / P5 / production 5/5`
 - 当前已确认布底模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V13 / QS-B1 V4-A`；
   用户于 `2026-08-05` 回复“接受, 用这一套试试效果”
 - 当前已确认模拟：`QUEST-LOG-SEAL-SUBSTRATE-SIM-V14 / QS-B1 V5-A`；用户于
@@ -39,8 +40,10 @@
 - 当前 production 正文：`QS-B1 V7-A final production` 已由用户于
   `2026-08-06` 独立授权；授权前正文固定于 commit `8a267b6`。当前实际
   ImageGen `5/5`、流程错误 `1`；最终 attempt 5 以固定 Image 1／2 fresh
-  regenerate 后内部通过，当前等待用户复审；不得 attempt 6，未写
-  source／runtime／addon
+  regenerate 后内部通过，并于 `2026-08-07` 获用户接受。exact source 已写入
+  `assets/source/quests/qs-b1/QuestLogSealPurityRibbon_Master_v1.png`，runtime
+  已写入 `addon/AzerothExpeditionUI/Media/Quests/QuestLogSealPurityRibbonV1.tga`
+  并接入 addon；不得 attempt 6
 - 项目阶段：漆章美术／atlas／Quest Log placement `P5`；menu V3-A
   `user-rejected / repair-budget-exhausted / P3`；menu V4-A
   `candidate-rejected / repair-budget-exhausted / P3`；menu V5-A substrate
@@ -48,8 +51,8 @@
   `candidate-rejected / repair-budget-exhausted / P3 / simulation ImageGen 0/0 /
   production 5/5`；menu V6 motifs `user-superseded / P3-history / simulation
   ImageGen 0/0 / production 28/35 complete`；menu V7-A
-  `candidate-reviewed / P3 / ImageGen 5/5`；runtime
-  尚未完成
+  substrate `runtime-exported / addon-integrated / P5 / ImageGen 5/5`；七纹章／
+  代理 Button 尚未完成，menu inactive
 - 当前子状态：QS-A1 `runtime-exported / page-placement-integrated`；QS-B1 V2
   `user-superseded-before-attempt-5 / P3 / 4/5`；QS-B1 V3
   `simulation-confirmed / V3-A repair-budget-exhausted / V3-B gated / P3`；V1 保持
@@ -60,7 +63,8 @@
   production 5/5 / repair-budget-exhausted`；V6 motifs
   `V6-A／B／C user-superseded / V6-D／E／F／G repair-budget-exhausted /
   P3-history / production 28/35 complete`；V7-A
-  `candidate-reviewed / P3 / ImageGen 5/5 / process errors 1`
+  substrate `runtime-exported / addon-integrated / P5 / ImageGen 5/5 / process
+  errors 1`；motifs/proxies `P3 incomplete`
 - 固定执行器：`imagegen-0-143-0`
 - 模拟 ImageGen：`0/0`
 - QS-A1 正式 ImageGen：`5/5`
@@ -12133,7 +12137,7 @@ previous V6 candidate or Image-2 shape was copied.
 
 ### QS-B1 V7-A final production body
 
-状态：`candidate-reviewed / P3 / actual ImageGen 5/5`。本批只生成
+状态：`runtime-exported / addon-integrated / P5 / actual ImageGen 5/5`。本批只生成
 一张连续材质 donor；ImageGen 不拥有细长轮廓、Alpha、尾端、火漆、纹章、
 Button 或状态。机器合同：
 `tools/specs/quest_log_seal_purity_ribbon_production_v7a.json`。用户看到的
@@ -12151,7 +12155,9 @@ attempt 2 与一次不计额度的 npm 流程错误后，当前机器合同 SHA-
 追加 attempt 4 后的当前机器合同 SHA-256 为
 `deff9fa7c5974b0670ba2a8eda552f2ae192b61e1b3abf58cd59b85da7c600b6`；追加
 attempt 5、内部通过结论与 candidate gate 后的当前机器合同 SHA-256 为
-`26d69badaa2b78f7bc92d2115c5ad7c26880d9f58ff7d45a1b95ce964e5ea195`。
+`26d69badaa2b78f7bc92d2115c5ad7c26880d9f58ff7d45a1b95ce964e5ea195`；追加用户
+接受、source/runtime 与 addon 接入记录后的当前机器合同 SHA-256 为
+`feb289a651613f6a38a8ccb3e0eb35b411fa708e93b22686e3e568ac316b1bf9`。
 
 #### 固定输入与职责
 
@@ -12318,7 +12324,8 @@ attempt 5、内部通过结论与 candidate gate 后的当前机器合同 SHA-25
 
 ### V7-A 独立生产授权记录
 
-- 当前子状态：`candidate-reviewed / P3 / actual ImageGen 5/5`。
+- 当前子状态：substrate `runtime-exported / addon-integrated / P5 / actual
+  ImageGen 5/5`；motifs/proxies `P3 incomplete`。
 - 用户于 `2026-08-06` 在看到完整正文后授权以下原文：
 
   > 确认授权 QS-B1 V7-A final production；允许每次上传固定 SHA 的 Image 1/2，attempt 1 无 Image 3；允许同循环紧邻前次输出仅在冻结修复边界内作为 Image 3 edit 输入；最多 5 次实际 ImageGen 调用，流程错误不占额度；允许按合同执行 1024² 归一化、固定 [448,128,576,896] crop、tracked 128×768 mask、QS-A1 Alpha 接触压暗、透明 RGB 清零、32×192 runtime 与六场景真实排版预演。
@@ -12326,9 +12333,12 @@ attempt 5、内部通过结论与 candidate gate 后的当前机器合同 SHA-25
 - 授权前正文与机器合同固定于 commit `8a267b6`；固定 Image 1／2 与 QS-A1
   source SHA 已于每次执行前复核一致。attempt 1／2／3／4 已内部退回；最终
   `V7-A.r4 / attempt 5` 只上传固定 Image 1／2 fresh regenerate，无 Image 3，
-  已通过全部内部门禁并停止于 `5/5`。下一门禁是用户审视 attempt 5 的真实排版
-  并明确接受或拒绝；接受前不写 source／runtime、不接入 addon，不存在
-  attempt 6。
+  已通过全部内部门禁并停止于 `5/5`。用户于 `2026-08-07` 接受以下原文：
+
+  > 接受 QS-B1 V7-A attempt 5 的运行时视觉，并授权进入 P4/P5；允许按已授权确定性合同生成 source/runtime 并接入 addon。
+
+  该接受覆盖 exact composite、确定性 source/runtime 与闭合载体接入，不覆盖
+  七纹章、代理 Button、菜单点击或 P6；不存在 attempt 6。
 - 无跨设备精确像素需求：V17 已由 tracked spec／renderer 可重建，方向已完整
   文字化；不创建 handoff。现有 V5-A source 与全部旧 Button fail-open 保持。
 
@@ -13024,7 +13034,30 @@ Image 3。目标是生成“手绘综合色与大色块 donor”，不是任何�
   跳变 `0.48／1.32`、high-frequency residual `1.64`。结果由少量宽阔手绘明暗
   面构成，中央 crop 连续安静，无接缝、条带或此前规则环状压纹。综合色比目标
   略暖、略偏旧赭，但在 `32×192px` 运行时读取为灰暗旧誓约文书，而非明亮金布。
-- 结论：`candidate-reviewed / internal-pass / P3 / production 5/5`。依“内部完整
-  通过即停”，本批在第 5 次结束，不存在 attempt 6。当前候选仅位于 ignored
-  `generated/`；尚未写入 source／runtime／atlas，尚未接入 addon。下一门禁是
-  用户对上述具体 attempt 5 真实排版的明确接受或拒绝。
+- 当时结论：`candidate-reviewed / internal-pass / P3 / production 5/5`。依“内部
+  完整通过即停”，本批在第 5 次结束，不存在 attempt 6。
+
+### QS-B1 V7-A user acceptance, P4 export and P5 addon integration
+
+- 用户于 `2026-08-07` 明确接受 attempt 5 运行时视觉，并授权按既定确定性合同
+  生成 source/runtime 与接入 addon；原文见上方独立授权记录。
+- accepted candidate 以 exact SHA
+  `168f527fffa09beb281c7e0bbca6076dcd00e7f827febb6cce9a853f461e05b8`
+  byte-copy 晋级为
+  `assets/source/quests/qs-b1/QuestLogSealPurityRibbon_Master_v1.png`；source
+  manifest 为 `QS-B1-V7A_SourceManifest_v1.json`。
+- `tools/build_quest_seal_purity_ribbon_v1.py` 只执行整幅 `128×768 → 32×192`
+  Pillow LANCZOS 等比缩放、Alpha 0 的 RGB 清零与 RGBA TGA 转换；runtime
+  `QuestLogSealPurityRibbonV1.tga` SHA-256
+  `db62077870b7954d7f43faf6680a57e2f8f2a2d053ecffc7cb06f7b18a32c615`。
+  无 crop、bbox-fit、非等比拉伸、镜像、旋转、重绘或调色。
+- 最终 display-region 合同
+  `tools/specs/quest_log_seal_purity_ribbon_runtime_v1_display_region.json` 为
+  `6/6 pass`、violations `0`；真实排版复跑 `29/29 pass`。
+- Quests runtime `1.26`／Theme `1.9` 将 carrier body／tail 以 `ARTWORK`、QS-A1
+  火漆以 `OVERLAY` 挂在 `QuestLogDetailScrollChildFrame`。live 闭合态只显示
+  前 `28px` root；7／5／3 项连续 prefix＋末 `14px` tail 公式已 smoke-tested，
+  但未暴露点击入口。
+- 七张独立纹章和七个代理 Button 尚未接受，因此不创建 invisible hitbox，
+  不隐藏或禁用旧 Blizzard／pfQuest Button。下一门禁为 Turtle WoW 验证闭合
+  跨压、滚动裁切和 TGA 方向；完整菜单仍需独立 motif/proxy parity。

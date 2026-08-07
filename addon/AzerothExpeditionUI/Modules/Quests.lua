@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local Quests = {}
-Quests.runtimeContract = "1.25"
+Quests.runtimeContract = "1.26"
 
 local THEME = addon.questVisualTheme
 local SHELL_TEXTURE = THEME.media.questLogShell
@@ -8,6 +8,7 @@ local DIRECTORY_MARK_TEXTURE = THEME.media.directoryMarks
 local QUEST_TITLE_FONT = THEME.fonts.panelTitle.path
 local TRACKER_PAPER_TEXTURE = THEME.media.trackerPaper
 local QUEST_SEAL_TEXTURE = THEME.media.toolSeal
+local QUEST_SEAL_CARRIER_TEXTURE = THEME.media.sealMenuCarrier
 
 local SHELL = {
   width = 676,
@@ -198,7 +199,7 @@ local TRACKER_PAPER = {
 }
 
 local QUEST_SEAL = {
-  contract = "1.1",
+  contract = "1.2",
   topOutset = 18,
   states = {
     normal = { 0, 0.25, 0, 1 },
@@ -209,8 +210,21 @@ local QUEST_SEAL = {
   questLog = {
     width = 32,
     height = 32,
-    left = 576,
-    top = 68,
+    contentLeft = 210,
+    contentTop = 4,
+    fallbackLeft = 576,
+    fallbackTop = 68,
+  },
+  carrier = {
+    width = 32,
+    masterHeight = 192,
+    rootHeight = 28,
+    prefixBase = 24,
+    actionStep = 22,
+    tailHeight = 14,
+    maximumActions = 7,
+    contentLeft = 210,
+    contentTop = 12,
   },
   tracker = {
     width = 34,
@@ -995,6 +1009,15 @@ local function ConfigureQuestSealTexture(texture, state)
   )
   texture:SetVertexColor(1, 1, 1, 1)
   texture:Show()
+end
+
+local function ConfigureQuestSealCarrierTexture(texture)
+  if not texture then
+    return
+  end
+  texture.aeuiQuestManaged = true
+  texture:SetTexture(QUEST_SEAL_CARRIER_TEXTURE)
+  texture:SetVertexColor(1, 1, 1, 1)
 end
 
 function Quests:ApplyTrackerSealClampInset(tracker)
@@ -3800,9 +3823,54 @@ function Quests:EnsureQuestLogChromeSeal(frame)
   if not frame or not frame.CreateTexture then
     return
   end
-  if not frame.aeuiQuestChromeSeal then
-    frame.aeuiQuestChromeSeal = frame:CreateTexture(nil, "OVERLAY")
+
+  local content = QuestLogDetailScrollChildFrame
+  if not content or not content.CreateTexture then
+    -- Fail open for unusual provider load order. The accepted carrier requires
+    -- the real scroll child so that page scrolling and viewport clipping stay
+    -- truthful; the already accepted wax may keep its old frame fallback.
+    if not frame.aeuiQuestChromeSeal then
+      frame.aeuiQuestChromeSeal = frame:CreateTexture(nil, "OVERLAY")
+    end
+    local fallback = frame.aeuiQuestChromeSeal
+    ConfigureQuestSealTexture(fallback, "normal")
+    SetSize(
+      fallback,
+      QUEST_SEAL.questLog.width,
+      QUEST_SEAL.questLog.height
+    )
+    SetSinglePoint(
+      fallback,
+      "TOPLEFT",
+      frame,
+      "TOPLEFT",
+      QUEST_SEAL.questLog.fallbackLeft,
+      -QUEST_SEAL.questLog.fallbackTop
+    )
+    frame.aeuiQuestSealRuntimeContract = QUEST_SEAL.contract
+    frame.aeuiQuestSealCarrierStatus = "waiting-for-scroll-child"
+    return
   end
+
+  if not frame.aeuiQuestSealCarrierBody then
+    frame.aeuiQuestSealCarrierBody =
+      content:CreateTexture(nil, "ARTWORK")
+  end
+  if not frame.aeuiQuestSealCarrierTail then
+    frame.aeuiQuestSealCarrierTail =
+      content:CreateTexture(nil, "ARTWORK")
+  end
+  if
+    not frame.aeuiQuestChromeSeal or
+    frame.aeuiQuestChromeSeal.aeuiQuestSealContent ~= content
+  then
+    if frame.aeuiQuestChromeSeal and frame.aeuiQuestChromeSeal.Hide then
+      frame.aeuiQuestChromeSeal:Hide()
+    end
+    frame.aeuiQuestChromeSeal = content:CreateTexture(nil, "OVERLAY")
+    frame.aeuiQuestChromeSeal.aeuiQuestSealContent = content
+  end
+
   local texture = frame.aeuiQuestChromeSeal
   ConfigureQuestSealTexture(texture, "normal")
   SetSize(
@@ -3813,12 +3881,109 @@ function Quests:EnsureQuestLogChromeSeal(frame)
   SetSinglePoint(
     texture,
     "TOPLEFT",
-    frame,
+    content,
     "TOPLEFT",
-    QUEST_SEAL.questLog.left,
-    -QUEST_SEAL.questLog.top
+    QUEST_SEAL.questLog.contentLeft,
+    -QUEST_SEAL.questLog.contentTop
   )
+  self:UpdateQuestSealCarrier(frame, false, 0)
   frame.aeuiQuestSealRuntimeContract = QUEST_SEAL.contract
+  frame.aeuiQuestSealMenuInteractive = false
+end
+
+function Quests:UpdateQuestSealCarrier(frame, menuOpen, visibleCount)
+  if not frame then
+    return
+  end
+  local content = QuestLogDetailScrollChildFrame
+  local body = frame.aeuiQuestSealCarrierBody
+  local tail = frame.aeuiQuestSealCarrierTail
+  if not content or not body or not tail then
+    return
+  end
+
+  visibleCount = math.floor(tonumber(visibleCount) or 0)
+  visibleCount = math.max(
+    0,
+    math.min(QUEST_SEAL.carrier.maximumActions, visibleCount)
+  )
+  menuOpen = menuOpen and true or false
+
+  ConfigureQuestSealCarrierTexture(body)
+  SetSinglePoint(
+    body,
+    "TOPLEFT",
+    content,
+    "TOPLEFT",
+    QUEST_SEAL.carrier.contentLeft,
+    -QUEST_SEAL.carrier.contentTop
+  )
+
+  if not menuOpen then
+    SetSize(
+      body,
+      QUEST_SEAL.carrier.width,
+      QUEST_SEAL.carrier.rootHeight
+    )
+    body:SetTexCoord(
+      0,
+      1,
+      0,
+      QUEST_SEAL.carrier.rootHeight /
+        QUEST_SEAL.carrier.masterHeight
+    )
+    body:Show()
+    tail:Hide()
+    frame.aeuiQuestSealCarrierStatus = "collapsed-root-28"
+    frame.aeuiQuestSealCarrierVisibleCount = 0
+    frame.aeuiQuestSealCarrierHeight = QUEST_SEAL.carrier.rootHeight
+    return
+  end
+
+  local prefixHeight =
+    QUEST_SEAL.carrier.prefixBase +
+    visibleCount * QUEST_SEAL.carrier.actionStep
+  SetSize(body, QUEST_SEAL.carrier.width, prefixHeight)
+  body:SetTexCoord(
+    0,
+    1,
+    0,
+    prefixHeight / QUEST_SEAL.carrier.masterHeight
+  )
+  body:Show()
+
+  ConfigureQuestSealCarrierTexture(tail)
+  SetSize(
+    tail,
+    QUEST_SEAL.carrier.width,
+    QUEST_SEAL.carrier.tailHeight
+  )
+  tail:SetTexCoord(
+    0,
+    1,
+    (
+      QUEST_SEAL.carrier.masterHeight -
+      QUEST_SEAL.carrier.tailHeight
+    ) / QUEST_SEAL.carrier.masterHeight,
+    1
+  )
+  SetSinglePoint(
+    tail,
+    "TOPLEFT",
+    content,
+    "TOPLEFT",
+    QUEST_SEAL.carrier.contentLeft,
+    -(
+      QUEST_SEAL.carrier.contentTop +
+      prefixHeight
+    )
+  )
+  tail:Show()
+  frame.aeuiQuestSealCarrierStatus =
+    "formula-ready-open-" .. tostring(visibleCount)
+  frame.aeuiQuestSealCarrierVisibleCount = visibleCount
+  frame.aeuiQuestSealCarrierHeight =
+    prefixHeight + QUEST_SEAL.carrier.tailHeight
 end
 
 function Quests:ApplyControlVisuals()
@@ -4161,6 +4326,9 @@ function Quests:GetRuntimeStatus()
     end
   end
 
+  local carrierStatus =
+    frame and frame.aeuiQuestSealCarrierStatus or "missing"
+
   local fontPath = "unavailable"
   local row = _G["QuestLogTitle1"]
   local text = row and row.GetFontString and row:GetFontString()
@@ -4181,6 +4349,8 @@ function Quests:GetRuntimeStatus()
     "frame=" .. tostring(frameContract) ..
     ", theme=" .. tostring(themeContract) ..
     ", seal=" .. tostring(sealStatus) ..
+    ", carrier=" .. tostring(carrierStatus) ..
+    ", seal-menu=inactive-provider-buttons-live" ..
     ", tag=semantic-setter-lock" ..
     ", reward=native-container-acyclic-visible-fallback-gap-8" ..
     ", font=" .. tostring(fontPath) ..

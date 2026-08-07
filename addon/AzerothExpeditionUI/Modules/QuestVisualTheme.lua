@@ -6,12 +6,13 @@ local media = addon.media.root
 -- book versus field note), while all shared materials, typography roles and
 -- semantic ink colors live here so a later art revision has one entry point.
 addon.questVisualTheme = {
-  contract = "1.8",
+  contract = "1.9",
   media = {
     questLogShell = media .. "Quests\\QuestLogShellV4",
     directoryMarks = media .. "Quests\\QuestLogDirectoryMarksV1",
     trackerPaper = media .. "Quests\\QuestTrackerPaperV1",
     toolSeal = media .. "Quests\\QuestToolWaxSealStatesV1",
+    sealMenuCarrier = media .. "Quests\\QuestLogSealPurityRibbonV1",
   },
   fonts = {
     panelTitle = {

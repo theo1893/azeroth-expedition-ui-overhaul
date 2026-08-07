@@ -722,11 +722,11 @@ AzerothExpeditionUI:Refresh()
 assert(QuestLogFrame:GetWidth() == 676, "quest shell width was not applied")
 assert(QuestLogFrame:GetHeight() == 464, "quest shell height was not applied")
 assert(
-  QuestLogFrame.aeuiQuestRuntimeContract == "1.25",
+  QuestLogFrame.aeuiQuestRuntimeContract == "1.26",
   "quest runtime contract was not recorded"
 )
 assert(
-  QuestLogFrame.aeuiQuestVisualThemeContract == "1.8",
+  QuestLogFrame.aeuiQuestVisualThemeContract == "1.9",
   "Quest Log did not consume the shared visual theme"
 )
 assert(QuestLogFrame.aeuiQuestShell, "quest shell texture was not created")
@@ -752,6 +752,8 @@ assert(
 )
 assert(
   QuestLogFrame.aeuiQuestChromeSeal.layer == "OVERLAY" and
+    QuestLogFrame.aeuiQuestChromeSeal.parent ==
+      QuestLogDetailScrollChildFrame and
     QuestLogFrame.aeuiQuestChromeSeal:GetWidth() == 32 and
     QuestLogFrame.aeuiQuestChromeSeal:GetHeight() == 32 and
     QuestLogFrame.aeuiQuestChromeSeal.texcoord[1] == 0 and
@@ -762,10 +764,76 @@ local sealPoint, sealRelative, sealRelativePoint, sealX, sealY =
   QuestLogFrame.aeuiQuestChromeSeal:GetPoint()
 assert(
     sealPoint == "TOPLEFT" and
-    sealRelative == QuestLogFrame and
+    sealRelative == QuestLogDetailScrollChildFrame and
     sealRelativePoint == "TOPLEFT" and
-    sealX == 576 and sealY == -68,
-  "Quest Log tool seal escaped its reserved detail-page corner"
+    sealX == 210 and sealY == -4,
+  "Quest Log tool seal escaped its scroll-owned purity-ribbon root"
+)
+assert(
+  QuestLogFrame.aeuiQuestSealCarrierBody and
+    QuestLogFrame.aeuiQuestSealCarrierBody.parent ==
+      QuestLogDetailScrollChildFrame and
+    QuestLogFrame.aeuiQuestSealCarrierBody.layer == "ARTWORK" and
+    QuestLogFrame.aeuiQuestSealCarrierBody.texture:find(
+      "QuestLogSealPurityRibbonV1"
+    ) and
+    QuestLogFrame.aeuiQuestSealCarrierBody:GetWidth() == 32 and
+    QuestLogFrame.aeuiQuestSealCarrierBody:GetHeight() == 28 and
+    QuestLogFrame.aeuiQuestSealCarrierBody.texcoord[4] == 28 / 192 and
+    QuestLogFrame.aeuiQuestSealCarrierBody:IsShown(),
+  "accepted QS-B1 V7-A collapsed carrier root was not mounted"
+)
+assert(
+  QuestLogFrame.aeuiQuestSealCarrierTail and
+    QuestLogFrame.aeuiQuestSealCarrierTail.parent ==
+      QuestLogDetailScrollChildFrame and
+    not QuestLogFrame.aeuiQuestSealCarrierTail:IsShown() and
+    QuestLogFrame.aeuiQuestSealCarrierBody.mouseEnabled == nil and
+    QuestLogFrame.aeuiQuestSealCarrierTail.mouseEnabled == nil,
+  "closed carrier must remain mouse-inert and hide its detached tail"
+)
+assert(
+  QuestLogFrame.aeuiQuestSealCarrierStatus == "collapsed-root-28" and
+    QuestLogFrame.aeuiQuestSealCarrierHeight == 28 and
+    QuestLogFrame.aeuiQuestSealMenuInteractive == false,
+  "QS-B1 V7-A must fail open until seven action motifs reach parity"
+)
+
+local questsModule = AzerothExpeditionUI.modules.Quests
+questsModule:UpdateQuestSealCarrier(QuestLogFrame, true, 7)
+assert(
+  QuestLogFrame.aeuiQuestSealCarrierBody:GetHeight() == 178 and
+    QuestLogFrame.aeuiQuestSealCarrierBody.texcoord[4] == 178 / 192 and
+    QuestLogFrame.aeuiQuestSealCarrierTail:GetHeight() == 14 and
+    QuestLogFrame.aeuiQuestSealCarrierTail.texcoord[3] == 178 / 192 and
+    QuestLogFrame.aeuiQuestSealCarrierTail:IsShown() and
+    QuestLogFrame.aeuiQuestSealCarrierHeight == 192,
+  "seven-action carrier formula no longer consumes the full 32x192 master"
+)
+local _, tailSevenRelative, _, tailSevenX, tailSevenY =
+  QuestLogFrame.aeuiQuestSealCarrierTail:GetPoint()
+assert(
+  tailSevenRelative == QuestLogDetailScrollChildFrame and
+    tailSevenX == 210 and tailSevenY == -190,
+  "seven-action tail escaped its deterministic prefix endpoint"
+)
+questsModule:UpdateQuestSealCarrier(QuestLogFrame, true, 5)
+assert(
+  QuestLogFrame.aeuiQuestSealCarrierBody:GetHeight() == 134 and
+    QuestLogFrame.aeuiQuestSealCarrierHeight == 148,
+  "five-action carrier did not compact by two exact 22px slots"
+)
+questsModule:UpdateQuestSealCarrier(QuestLogFrame, true, 3)
+assert(
+  QuestLogFrame.aeuiQuestSealCarrierBody:GetHeight() == 90 and
+    QuestLogFrame.aeuiQuestSealCarrierHeight == 104,
+  "three-action carrier did not compact without holes"
+)
+questsModule:UpdateQuestSealCarrier(QuestLogFrame, false, 7)
+assert(
+  QuestLogFrame.aeuiQuestSealCarrierBody:GetHeight() == 28 and
+    not QuestLogFrame.aeuiQuestSealCarrierTail:IsShown(),
+  "closing the dormant carrier did not restore the accepted 28px root"
 )
 
 for _, nativeTexture in ipairs({
@@ -1780,8 +1848,8 @@ assert(
   "temporary tracker paper runtime contract was not recorded"
 )
 assert(
-  pfQuestMapTracker.aeuiQuestVisualThemeContract == "1.8" and
-    providerTrackerButton.aeuiQuestVisualThemeContract == "1.8",
+  pfQuestMapTracker.aeuiQuestVisualThemeContract == "1.9" and
+    providerTrackerButton.aeuiQuestVisualThemeContract == "1.9",
   "pfQuest Tracker did not consume the shared visual theme"
 )
 assert(
@@ -1813,7 +1881,7 @@ assert(
 )
 assert(
   not providerTrackerButton.icon:IsShown() and
-    providerTrackerButton.aeuiQuestEntryIconThemeContract == "1.8",
+    providerTrackerButton.aeuiQuestEntryIconThemeContract == "1.9",
   "tracker entry color dot/question-mark texture remained visible"
 )
 assert(
@@ -2053,9 +2121,11 @@ assert(
 local runtimeStatus =
   AzerothExpeditionUI.modules.Quests:GetRuntimeStatus()
 assert(
-  runtimeStatus:find("frame=1.25", 1, true) and
-    runtimeStatus:find("theme=1.8", 1, true) and
+  runtimeStatus:find("frame=1.26", 1, true) and
+    runtimeStatus:find("theme=1.9", 1, true) and
     runtimeStatus:find("seal=detail-page-32", 1, true) and
+    runtimeStatus:find("carrier=collapsed-root-28", 1, true) and
+    runtimeStatus:find("seal-menu=inactive-provider-buttons-live", 1, true) and
     runtimeStatus:find("tag=semantic-setter-lock", 1, true) and
     runtimeStatus:find(
       "reward=native-container-acyclic-visible-fallback-gap-8",

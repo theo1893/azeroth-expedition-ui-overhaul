@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "module": "quests",
+  "batch": "QS-B1 V7-A",
+  "component": "QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX",
+  "version": "V7-A / attempt 5",
+  "status": "accepted-source",
+  "accepted_on": "2026-08-07",
+  "source": {
+    "file": "QuestLogSealPurityRibbon_Master_v1.png",
+    "repository_path": "assets/source/quests/qs-b1/QuestLogSealPurityRibbon_Master_v1.png",
+    "sha256": "168f527fffa09beb281c7e0bbca6076dcd00e7f827febb6cce9a853f461e05b8",
+    "width": 128,
+    "height": 768,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [9, 0, 119, 767],
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0,
+    "transparent_pixels": 22666,
+    "partially_transparent_pixels": 5907,
+    "opaque_pixels": 69731
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "codex_package": "@openai/codex@0.143.0",
+    "fixed_child_session_id": "019fd6fc-1701-7a61-b576-3f5d9600135c",
+    "generation_operation": "fresh generation with fixed Image 1 and Image 2 only",
+    "generation_before_commit": "b025656",
+    "prompt_sha256": "bd8b12a6ac621dfe59f40e2f11540513b67f4cfd46666e01b804f6f4369c28f0",
+    "prompt": "docs/modules/quests/work/QUEST.SEALS.md",
+    "prompt_section": "QS-B1 V7-A final production body and attempt-5 record",
+    "provider_raw": "generated/quests/QUEST-SEALS/QS-B1-V7-A/attempt-05/raw.png",
+    "provider_raw_sha256": "604faa9e6cdaedf7c6ba1fbbca8d4232b9ae50a4fe21aaff46d59cb0f3583c9b",
+    "accepted_candidate": "generated/quests/QUEST-SEALS/QS-B1-V7-A/attempt-05/review/attempt-05.composite.png",
+    "accepted_candidate_sha256": "168f527fffa09beb281c7e0bbca6076dcd00e7f827febb6cce9a853f461e05b8",
+    "promotion": "byte-exact copy after exact SHA, 128x768 RGBA, bbox, Alpha, transparent-RGB and green-spill validation",
+    "actual_imagegen_calls": 5,
+    "actual_imagegen_limit": 5,
+    "process_errors_without_generation": 1
+  },
+  "visual_authority": {
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/quests/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/quests/SUBMODULE_ART_BASELINES.md#scrollbar-与操作-button",
+    "component_contract": "docs/modules/quests/SUBMODULES.md#quest-log-右页与操作",
+    "production_contract": "tools/specs/quest_log_seal_purity_ribbon_production_v7a.json",
+    "locked_references": [
+      {
+        "file": "assets/locked/quests/任务详情面板_视觉基准_v1.png",
+        "sha256": "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
+        "role": "primary 2004-era World of Warcraft hand-painted material, weight, lighting and wear authority"
+      },
+      {
+        "file": "assets/locked/quests/任务追踪面板_视觉基准_v1.png",
+        "sha256": "3b5c2ca6c1e69c74db5c64978cde351596ece6369d339b7125aee43904eb7d86",
+        "role": "secondary fibrous expedition-document ageing and quiet low-frequency surface authority"
+      }
+    ],
+    "failed_candidates_are_authority": false,
+    "simulation_pixels_are_authority": false,
+    "provider_raw_is_accepted_source": false
+  },
+  "deterministic_derivation": {
+    "reviewer": "tools/review_quest_seal_purity_ribbon_candidate_v1.py",
+    "exporter": "tools/build_quest_seal_purity_ribbon_v1.py",
+    "normalized_provider_canvas": [1024, 1024],
+    "fixed_crop_xyxy": [448, 128, 576, 896],
+    "fixed_crop_size": [128, 768],
+    "mask": "tracked 31-point polygon rasterized at 4x and reduced with Pillow LANCZOS",
+    "wax_contact": "QS-A1 Alpha-only multiplier 1.0 - 0.16 * alpha; no wax RGB copied",
+    "transparent_rgb_cleanup": "set RGB to zero only where Alpha equals zero",
+    "retouch_after_composition": false,
+    "bbox_fit": false,
+    "anisotropic_resize": false,
+    "mirror": false
+  },
+  "user_acceptance": {
+    "exact_statement": "接受 QS-B1 V7-A attempt 5 的运行时视觉，并授权进入 P4/P5；允许按已授权确定性合同生成 source/runtime 并接入 addon。",
+    "accepted_on": "2026-08-07",
+    "accepted_scope": [
+      "the exact attempt-05 128x768 deterministic composite",
+      "the reviewed 32x192 runtime appearance",
+      "durable source promotion, deterministic runtime export and addon integration",
+      "the collapsed carrier root behind the separately owned accepted QS-A1 wax"
+    ],
+    "not_accepted_by_this_statement": [
+      "any of the seven independent action motifs",
+      "an interactive seal menu or invisible proxy hitboxes",
+      "hiding, disabling or replacing any existing provider action Button",
+      "Turtle WoW P6 validation"
+    ]
+  },
+  "logical_components": [
+    {
+      "id": "QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX",
+      "ownership": "one adapter-owned mouse-inert continuous carrier Texture",
+      "source_size": [128, 768],
+      "runtime_master_size": [32, 192]
+    },
+    {
+      "id": "QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.ROOT",
+      "ownership": "first 28 rows of the same master; no independent source",
+      "runtime_box_xywh": [210, 12, 32, 28]
+    },
+    {
+      "id": "QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY",
+      "ownership": "dynamic continuous prefix; no tiling",
+      "height_formula": "24 + visible_count * 22, visible_count in 0..7"
+    },
+    {
+      "id": "QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.TAIL",
+      "ownership": "fixed final 14-row sample of the same master",
+      "runtime_size": [32, 14],
+      "runtime_y_formula": "36 + visible_count * 22"
+    }
+  ],
+  "review": {
+    "semantic_and_scope": "pass",
+    "locked_art_inheritance": "pass",
+    "automated_checks": "13/13 pass",
+    "real_layout_checks": "29/29 pass",
+    "display_region_checks": "6/6 pass",
+    "display_region_violations": 0,
+    "review_sha256": "57cb900aaf65e582099505277fc9805615bb2a5de12a0fb760f82c99520dd270",
+    "display_region_report_sha256": "72d480d219c69686f0adfa1b3117d06f887db29b070e0ed46626a058137b2559",
+    "real_layout_preview_sha256": "1d098be709b3ee48ea7af7238dd254b451e2bfeb653cfd26ce5b5539bf6af887",
+    "runtime_review_sha256": "12a4a24b785641c55a0caae0737f1b151459e5fc039ae067aa7f41552dd06740"
+  },
+  "export_contract": {
+    "status": "runtime-exported",
+    "operation": "resize the entire accepted 128x768 RGBA source proportionally to 32x192 with Pillow LANCZOS, zero RGB only where Alpha is zero, then write RGBA TGA",
+    "runtime_manifest": "QS-B1-V7A_RuntimeManifest_v1.json",
+    "runtime_file": "addon/AzerothExpeditionUI/Media/Quests/QuestLogSealPurityRibbonV1.tga",
+    "adapter": "addon/AzerothExpeditionUI/Modules/Quests.lua",
+    "forbidden_runtime_uses": [
+      "load the high-resolution PNG directly in Turtle WoW",
+      "crop, bbox-fit, stretch, mirror, rotate, tile, redraw or recolour the source",
+      "bake a motif, text, state, Button or hit region into the carrier",
+      "give the carrier mouse input",
+      "activate the menu or hide provider Buttons before seven-motif and proxy parity"
+    ]
+  },
+  "supersedes_for_target_direction": {
+    "source": "assets/source/quests/qs-b1/QuestLogSealMenuSubstrate_Master_v1.png",
+    "manifest": "assets/source/quests/qs-b1/QS-B1_SourceManifest_v1.json",
+    "policy": "retain as historical accepted fallback; do not load it in the current addon"
+  }
+}

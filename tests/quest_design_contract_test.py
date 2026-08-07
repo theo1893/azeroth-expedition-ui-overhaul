@@ -299,7 +299,23 @@ def main() -> None:
     assert hashlib.sha256(
         seal_purity_ribbon_v7a_production_path.read_bytes()
     ).hexdigest() == (
-        "26d69badaa2b78f7bc92d2115c5ad7c26880d9f58ff7d45a1b95ce964e5ea195"
+        "feb289a651613f6a38a8ccb3e0eb35b411fa708e93b22686e3e568ac316b1bf9"
+    )
+    seal_purity_ribbon_v7a_runtime_display_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_seal_purity_ribbon_runtime_v1_display_region.json"
+    )
+    seal_purity_ribbon_v7a_runtime_display = json.loads(
+        seal_purity_ribbon_v7a_runtime_display_path.read_text(
+            encoding="utf-8"
+        )
+    )
+    assert hashlib.sha256(
+        seal_purity_ribbon_v7a_runtime_display_path.read_bytes()
+    ).hexdigest() == (
+        "851ad6c6e7869af1057cfa134553bd3675b0efd59ab8874ca42d1cee340c6fe2"
     )
     seal_purity_ribbon_v7a_reviewer_path = (
         ROOT / "tools" / "review_quest_seal_purity_ribbon_candidate_v1.py"
@@ -3283,7 +3299,7 @@ def main() -> None:
         "QS-B1 V17 wax-over-carrier simulation renderer",
     )
     assert seal_purity_ribbon_v7a_production["version"] == "QS-B1 V7-A"
-    assert seal_purity_ribbon_v7a_production["status"] == "candidate-reviewed"
+    assert seal_purity_ribbon_v7a_production["status"] == "runtime-exported"
     v7a_authorization = seal_purity_ribbon_v7a_production["authorization"]
     assert v7a_authorization["authorized"]
     assert v7a_authorization["date"] == "2026-08-06"
@@ -3362,18 +3378,25 @@ def main() -> None:
     assert v7a_history[4]["display_region_checks"] == "6/6 pass"
     assert v7a_history[4]["first_failed_gate"] is None
     assert "no-attempt-6" in v7a_history[4]["decision"]
+    v7a_acceptance = seal_purity_ribbon_v7a_production["user_acceptance"]
+    assert v7a_acceptance["accepted"]
+    assert v7a_acceptance["date"] == "2026-08-07"
+    assert "进入 P4/P5" in v7a_acceptance["exact_statement"]
+    assert v7a_acceptance["accepted_composite_sha256"] == (
+        "168f527fffa09beb281c7e0bbca6076dcd00e7f827febb6cce9a853f461e05b8"
+    )
     v7a_candidate_gate = seal_purity_ribbon_v7a_production[
         "candidate_gate"
     ]
-    assert v7a_candidate_gate["status"] == "candidate-reviewed"
+    assert v7a_candidate_gate["status"] == "accepted-source-runtime-exported"
     assert v7a_candidate_gate["attempt"] == 5
     assert v7a_candidate_gate["raw_sha256"] == (
         "604faa9e6cdaedf7c6ba1fbbca8d4232b9ae50a4fe21aaff46d59cb0f3583c9b"
     )
-    assert not v7a_candidate_gate["source_written"]
-    assert not v7a_candidate_gate["runtime_written"]
-    assert not v7a_candidate_gate["addon_changed"]
-    assert v7a_candidate_gate["requires_explicit_user_acceptance"]
+    assert v7a_candidate_gate["source_written"]
+    assert v7a_candidate_gate["runtime_written"]
+    assert v7a_candidate_gate["addon_changed"]
+    assert not v7a_candidate_gate["requires_explicit_user_acceptance"]
     v7a_process_errors = seal_purity_ribbon_v7a_production[
         "process_error_history"
     ]
@@ -3412,6 +3435,79 @@ def main() -> None:
     assert not seal_purity_ribbon_v7a_production["runtime_assembly"][
         "page_reflow"
     ]
+    v7a_p4_p5 = seal_purity_ribbon_v7a_production["p4_p5"]
+    assert v7a_p4_p5["status"] == "runtime-exported-addon-integrated"
+    assert v7a_p4_p5["source"]["sha256"] == (
+        "168f527fffa09beb281c7e0bbca6076dcd00e7f827febb6cce9a853f461e05b8"
+    )
+    assert v7a_p4_p5["runtime"]["sha256"] == (
+        "db62077870b7954d7f43faf6680a57e2f8f2a2d053ecffc7cb06f7b18a32c615"
+    )
+    assert v7a_p4_p5["runtime"]["size"] == [32, 192]
+    assert not v7a_p4_p5["cross_device_handoff_required"]
+    assert seal_purity_ribbon_v7a_runtime_display["evidence"][
+        "final_runtime"
+    ]
+    assert not seal_purity_ribbon_v7a_runtime_display["evidence"][
+        "menu_activation"
+    ]
+    assert len(seal_purity_ribbon_v7a_runtime_display["scenarios"]) == 6
+
+    v7a_source_path = (
+        ROOT
+        / "assets"
+        / "source"
+        / "quests"
+        / "qs-b1"
+        / "QuestLogSealPurityRibbon_Master_v1.png"
+    )
+    v7a_source_manifest_path = v7a_source_path.with_name(
+        "QS-B1-V7A_SourceManifest_v1.json"
+    )
+    v7a_runtime_manifest_path = v7a_source_path.with_name(
+        "QS-B1-V7A_RuntimeManifest_v1.json"
+    )
+    v7a_runtime_path = (
+        ROOT
+        / "addon"
+        / "AzerothExpeditionUI"
+        / "Media"
+        / "Quests"
+        / "QuestLogSealPurityRibbonV1.tga"
+    )
+    v7a_exporter_path = ROOT / "tools" / "build_quest_seal_purity_ribbon_v1.py"
+    assert hashlib.sha256(v7a_source_path.read_bytes()).hexdigest() == (
+        "168f527fffa09beb281c7e0bbca6076dcd00e7f827febb6cce9a853f461e05b8"
+    )
+    assert struct.unpack(">II", v7a_source_path.read_bytes()[16:24]) == (
+        128,
+        768,
+    )
+    assert hashlib.sha256(v7a_runtime_path.read_bytes()).hexdigest() == (
+        "db62077870b7954d7f43faf6680a57e2f8f2a2d053ecffc7cb06f7b18a32c615"
+    )
+    v7a_tga = v7a_runtime_path.read_bytes()[:18]
+    assert v7a_tga[2] == 2
+    assert struct.unpack_from("<HH", v7a_tga, 12) == (32, 192)
+    assert v7a_tga[16] == 32
+    assert hashlib.sha256(v7a_exporter_path.read_bytes()).hexdigest() == (
+        "034a0e51c1eddfd813a81c4c7af04f6ea404bec1d4e67bfe5b3cb41b5feeede6"
+    )
+    v7a_source_manifest = json.loads(
+        v7a_source_manifest_path.read_text(encoding="utf-8")
+    )
+    v7a_runtime_manifest = json.loads(
+        v7a_runtime_manifest_path.read_text(encoding="utf-8")
+    )
+    assert v7a_source_manifest["status"] == "accepted-source"
+    assert "进入 P4/P5" in v7a_source_manifest["user_acceptance"][
+        "exact_statement"
+    ]
+    assert v7a_runtime_manifest["status"] == "runtime-exported"
+    assert v7a_runtime_manifest["runtime"]["sha256"] == (
+        "db62077870b7954d7f43faf6680a57e2f8f2a2d053ecffc7cb06f7b18a32c615"
+    )
+    assert not v7a_runtime_manifest["runtime_assembly"]["menu_active"]
     require(
         seal_purity_ribbon_v7a_reviewer,
         (
@@ -3428,9 +3524,9 @@ def main() -> None:
         seals_work,
         (
             "V17 用户方向结论 — confirmed / 2026-08-06",
-            "candidate-reviewed / P3 / production 5/5",
+            "runtime-exported / addon-integrated / P5 / production 5/5",
             "QS-B1 V7-A final production body",
-            "candidate-reviewed / P3 / actual ImageGen 5/5",
+            "runtime-exported / addon-integrated / P5 / actual ImageGen 5/5",
             "1ff46804cb5c5dddd47c56fea2c65c50c22e392c82179b53c5d251af1a65584c",
             "89b24fc18109593b28f40b750fea96da6f65e323c1fcc3832bfd8aeed9b39192",
             "b9c81296a62b83064f82a2a43d154c9800875f6b15421ffe9e8393328762c6eb",
@@ -3438,6 +3534,7 @@ def main() -> None:
             "6e3abd5eb3637a81617b045739fc92cd41f86efb9c6ace34020ce4bb9acbf71d",
             "deff9fa7c5974b0670ba2a8eda552f2ae192b61e1b3abf58cd59b85da7c600b6",
             "26d69badaa2b78f7bc92d2115c5ad7c26880d9f58ff7d45a1b95ce964e5ea195",
+            "feb289a651613f6a38a8ccb3e0eb35b411fa708e93b22686e3e568ac316b1bf9",
             "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
             "3b5c2ca6c1e69c74db5c64978cde351596ece6369d339b7125aee43904eb7d86",
             "Create exactly one edge-to-edge square orthographic hand-painted material donor",
@@ -3472,6 +3569,10 @@ def main() -> None:
             "No visible detail smaller than about 48 pixels",
             "QS-B1 V7-A attempt 5 execution and internal pass",
             "candidate-reviewed / internal-pass / P3 / production 5/5",
+            "QS-B1 V7-A user acceptance, P4 export and P5 addon integration",
+            "QuestLogSealPurityRibbon_Master_v1.png",
+            "QuestLogSealPurityRibbonV1.tga",
+            "menu inactive",
             "604faa9e6cdaedf7c6ba1fbbca8d4232b9ae50a4fe21aaff46d59cb0f3583c9b",
             "1d098be709b3ee48ea7af7238dd254b451e2bfeb653cfd26ce5b5539bf6af887",
         ),
@@ -4253,8 +4354,8 @@ def main() -> None:
             "QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17 / QS-B1 V7-A",
             "相交 `24px`",
             "真实排版\n  `42/42 pass`、展示区 `6/6 pass`、ImageGen `0/0`",
-            "candidate-reviewed / P3 / ImageGen 5/5 / process errors 1",
-            "下一门禁是用户明确接受或拒绝 attempt 5",
+            "runtime-exported / addon-integrated / P5 / ImageGen 5/5 / process errors 1",
+            "Turtle WoW 验证物理跨压、TGA 方向和滚动行为",
         ),
         "QS-B1 V6 closed production and V7-A authorized execution gate",
     )
@@ -4281,13 +4382,11 @@ def main() -> None:
     require(
         submodules,
         (
-            "V6-A..G 授权批次已封闭",
-            "实际 ImageGen `28/35`、流程错误 `7`",
-            "QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17 / QS-B1 V7-A",
-            "相交 `24px`",
-            "尾端约五个不等距尖锐破口",
-            "candidate-reviewed / P3",
-            "下一门禁是用户明确接受或拒绝 attempt 5",
+            "用户于 `2026-08-07` 接受 V7-A attempt 5",
+            "QuestLogSealPurityRibbon_Master_v1.png",
+            "QuestLogSealPurityRibbonV1.tga",
+            "七张独立透明纹章与七个代理 Button 未验收",
+            "不创建 seal hitbox",
         ),
         "QS-B1 V7-A current component ownership",
     )
@@ -4303,6 +4402,8 @@ def main() -> None:
             "用户于 `2026-08-06` 回复“确认”",
             "tracked `128×768` mask 独占",
             "独立授权该最终正文与最多五次实际 ImageGen 调用",
+            "`2026-08-07` 明确接受 attempt 5",
+            "QuestLogSealPurityRibbon_Master_v1.png",
         ),
         "QS-B1 V7-A confirmed art-direction contract",
     )
@@ -4565,15 +4666,14 @@ def main() -> None:
     require(
         submodules,
         (
-            "V5-A accepted fallback",
+            "V5-A dark-cloth source",
             "QuestLogSealMenuSubstrate_Master_v1.png",
-            "历史 runtime 合同为 `32×174px`",
-            "不得直接导出为目标菜单",
-            "最大 `32×192px` 的较窄挺质旧骨褐誓约载体",
-            "candidate-reviewed / P3 / ImageGen 5/5",
-            "没有 V7 target source、runtime 或 addon 接入",
+            "历史 fallback 保留",
+            "QuestLogSealPurityRibbon_Master_v1.png",
+            "`32×192` TGA",
+            "菜单保持 inactive",
         ),
-        "QS-B1 V5-A fallback and V7-A authorized substrate ownership",
+        "QS-B1 V5-A fallback and V7-A accepted substrate ownership",
     )
     require(
         seals_work,
@@ -4634,11 +4734,12 @@ def main() -> None:
     require(
         quest_theme,
         (
-            'contract = "1.8"',
+            'contract = "1.9"',
             "QuestLogShellV4",
             "QuestLogDirectoryMarksV1",
             "QuestTrackerPaperV1",
             "QuestToolWaxSealStatesV1",
+            "QuestLogSealPurityRibbonV1",
             "LXGWWenKaiGB-Medium.ttf",
             "NotoSerifSC-SemiBold.ttf",
             "difficulty",
@@ -4662,7 +4763,7 @@ def main() -> None:
     require(
         quest_adapter,
         (
-            'Quests.runtimeContract = "1.25"',
+            'Quests.runtimeContract = "1.26"',
             "ApplyTrackerProviderFont",
             "ResolveQuestNameInk",
             "ApplyDirectoryTypography",
@@ -4696,6 +4797,8 @@ def main() -> None:
             "aeuiQuestVisualThemeContract",
             "aeuiQuestPaperSlices",
             "EnsureQuestLogChromeSeal",
+            "UpdateQuestSealCarrier",
+            "inactive-provider-buttons-live",
             "EnsurePfQuestTrackerHubSeal",
             "SetClampRectInsets",
             "0.66015625",

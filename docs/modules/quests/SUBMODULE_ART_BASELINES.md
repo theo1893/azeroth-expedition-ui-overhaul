@@ -252,10 +252,18 @@ tail 装配，不得 bbox-fit、非等比拉伸、平铺、镜像、重绘或把
 用户于 `2026-08-06` 回复“确认”，接受
 `QUEST-LOG-SEAL-PURITY-RIBBON-SIM-V17` 的新综合色、装配和尖锐非周期尾端
 方向。该确认只冻结文字化可见条款；模拟像素和确切 RGB 不是稳定 source。
-V7-A production 必须只生成连续材质 donor，由 tracked `128×768` mask 独占
+V7-A production 只生成连续材质 donor，由 tracked `128×768` mask 独占
 轮廓／Alpha，并由 accepted QS-A1 Alpha 确定性形成接触压暗。用户随后于
-`2026-08-06` 独立授权该最终正文与最多五次实际 ImageGen 调用；当前候选获
-明确接受前不得覆盖 V5-A bytes 或修改 runtime。
+`2026-08-06` 独立授权该最终正文与最多五次实际 ImageGen 调用，并于
+`2026-08-07` 明确接受 attempt 5 的运行时视觉、source/runtime 导出与 addon
+接入。稳定 source 为
+[`QuestLogSealPurityRibbon_Master_v1.png`](../../../assets/source/quests/qs-b1/QuestLogSealPurityRibbon_Master_v1.png)，
+SHA-256 `168f527f…05b8`；它冻结较窄、略挺、灰暗旧骨褐誓约纸／粗纤维亚麻
+混合物的宽阔低频手绘面、不等距尖锐撕裂 tail，以及由 QS-A1 Alpha 形成但不
+复制蜡色的接触压暗。runtime 只允许整幅等比缩至 `32×192`、透明 RGB 清零与
+连续 prefix＋固定 `14px` tail 采样；禁止 bbox-fit、拉伸、平铺、镜像、重绘、
+烘焙纹章或给予载体鼠标。V5-A bytes 作为历史 fallback 保留，不再是当前目标
+方向；七枚功能纹章仍未形成稳定 source，不能从 V6 失败候选或模拟像素继承。
 用户于 `2026-08-06` 回复“接受”，确认 V15 在该 accepted 深布上采用“普通
 六项旧赭金矿物颜料＋放弃项灰暗酒红”的综合色方向。该确认只冻结上述颜色
 角色、低饱和厚重感与四态关系；V15 本地几何纹章像素、确切 RGB、边缘、

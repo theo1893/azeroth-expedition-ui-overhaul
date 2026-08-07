@@ -300,11 +300,12 @@ def main() -> None:
     quest_theme_source = (
         aeui / "Modules" / "QuestVisualTheme.lua"
     ).read_text(encoding="utf-8")
-    assert 'contract = "1.8"' in quest_theme_source
+    assert 'contract = "1.9"' in quest_theme_source
     assert "QuestLogShellV4" in quest_theme_source
     assert "QuestLogDirectoryMarksV1" in quest_theme_source
     assert "QuestTrackerPaperV1" in quest_theme_source
     assert "QuestToolWaxSealStatesV1" in quest_theme_source
+    assert "QuestLogSealPurityRibbonV1" in quest_theme_source
     assert "NotoSerifSC-SemiBold.ttf" in quest_theme_source
     assert "LXGWWenKaiGB-Medium.ttf" in quest_theme_source
     assert "providerPanelHeight = 16" in quest_theme_source
@@ -347,7 +348,7 @@ def main() -> None:
     ):
         assert shared_ink in quest_theme_source
 
-    assert 'Quests.runtimeContract = "1.25"' in quest_source
+    assert 'Quests.runtimeContract = "1.26"' in quest_source
     assert "ApplyTrackerProviderFont" in quest_source
     assert "ResolveQuestNameInk" in quest_source
     assert quest_source.count("ResolveQuestNameInk(") >= 3
@@ -373,6 +374,9 @@ def main() -> None:
     assert "aeuiQuestVisualThemeContract" in quest_source
     assert "ApplyPfQuestTrackerPaper" in quest_source
     assert "EnsureQuestLogChromeSeal" in quest_source
+    assert "UpdateQuestSealCarrier" in quest_source
+    assert "QuestLogDetailScrollChildFrame" in quest_source
+    assert "inactive-provider-buttons-live" in quest_source
     assert "EnsurePfQuestTrackerHubSeal" in quest_source
     assert "SetClampRectInsets" in quest_source
     assert "QuestLogSelectionBookmarkV1" not in quest_source
@@ -478,6 +482,28 @@ def main() -> None:
     assert seal_runtime_manifest["display_region"]["status"] == "pass"
     assert hashlib.sha256(seal_runtime.read_bytes()).hexdigest() == (
         seal_runtime_manifest["runtime"]["sha256"]
+    )
+    carrier_runtime = (
+        aeui
+        / "Media"
+        / "Quests"
+        / "QuestLogSealPurityRibbonV1.tga"
+    )
+    assert carrier_runtime.is_file()
+    carrier_runtime_manifest = json.loads(
+        (
+            ROOT
+            / "assets"
+            / "source"
+            / "quests"
+            / "qs-b1"
+            / "QS-B1-V7A_RuntimeManifest_v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert carrier_runtime_manifest["status"] == "runtime-exported"
+    assert not carrier_runtime_manifest["runtime_assembly"]["menu_active"]
+    assert hashlib.sha256(carrier_runtime.read_bytes()).hexdigest() == (
+        carrier_runtime_manifest["runtime"]["sha256"]
     )
 
     for toc_name in ("pfUI.toc", "pfUI-tbc.toc"):

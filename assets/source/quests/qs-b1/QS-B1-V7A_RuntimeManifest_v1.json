@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "module": "quests",
+  "batch": "QS-B1 V7-A",
+  "component": "QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX",
+  "version": "V7-A / runtime v1",
+  "runtime_contract": "1.2",
+  "status": "runtime-exported",
+  "source": {
+    "file": "assets/source/quests/qs-b1/QuestLogSealPurityRibbon_Master_v1.png",
+    "manifest": "assets/source/quests/qs-b1/QS-B1-V7A_SourceManifest_v1.json",
+    "sha256": "168f527fffa09beb281c7e0bbca6076dcd00e7f827febb6cce9a853f461e05b8",
+    "width": 128,
+    "height": 768,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [9, 0, 119, 767],
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0,
+    "transparent_pixels": 22666,
+    "partially_transparent_pixels": 5907,
+    "opaque_pixels": 69731
+  },
+  "transform": {
+    "operation": "one full-canvas proportional LANCZOS reduction from 128x768 to 32x192, transparent RGB zeroing and TGA conversion",
+    "resample": "Pillow Image.Resampling.LANCZOS",
+    "crop": null,
+    "bbox_fit": false,
+    "anisotropic_resize": false,
+    "mirror": false,
+    "rotation": null,
+    "retouch": false
+  },
+  "runtime": {
+    "file": "addon/AzerothExpeditionUI/Media/Quests/QuestLogSealPurityRibbonV1.tga",
+    "sha256": "db62077870b7954d7f43faf6680a57e2f8f2a2d053ecffc7cb06f7b18a32c615",
+    "width": 32,
+    "height": 192,
+    "mode": "RGBA",
+    "tga_header": {
+      "image_type": 2,
+      "width": 32,
+      "height": 192,
+      "bits_per_pixel": 32,
+      "descriptor": 8,
+      "top_origin": false
+    },
+    "visible_bbox_exclusive": [0, 0, 32, 192],
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0,
+    "transparent_pixels": 901,
+    "partially_transparent_pixels": 1396,
+    "opaque_pixels": 3847
+  },
+  "runtime_assembly": {
+    "parent": "QuestLogDetailScrollChildFrame",
+    "carrier_body_object": "QuestLogFrame.aeuiQuestSealCarrierBody",
+    "carrier_tail_object": "QuestLogFrame.aeuiQuestSealCarrierTail",
+    "wax_object": "QuestLogFrame.aeuiQuestChromeSeal",
+    "carrier_draw_layer": "ARTWORK",
+    "wax_draw_layer": "OVERLAY",
+    "carrier_root_content_xywh": [210, 12, 32, 28],
+    "wax_visual_content_xywh": [210, 4, 32, 32],
+    "action_body_origin_content": [210, 36],
+    "action_slot_size": [32, 22],
+    "maximum_action_count": 7,
+    "closed": {
+      "body_height": 28,
+      "body_texcoord": [0, 1, 0, 0.14583333333333334],
+      "tail_shown": false
+    },
+    "open_formula_ready": {
+      "prefix_height": "24 + visible_count * 22",
+      "body_texcoord_bottom": "prefix_height / 192",
+      "tail_source_rows": [178, 192],
+      "tail_texcoord": [0, 1, 0.9270833333333334, 1],
+      "tail_height": 14,
+      "total_height": "38 + visible_count * 22",
+      "seven": 192,
+      "five": 148,
+      "three": 104
+    },
+    "scroll_policy": "carrier and wax are children of QuestLogDetailScrollChildFrame and are clipped by QuestLogDetailScrollFrame",
+    "page_reflow": false,
+    "mouse": false,
+    "menu_active": false,
+    "fallback": "all existing Blizzard and pfQuest action Buttons remain visible and functional until seven independent motifs and proxy parity are accepted"
+  },
+  "display_region": {
+    "status": "pass",
+    "contract": "tools/specs/quest_log_seal_purity_ribbon_runtime_v1_display_region.json",
+    "contract_sha256": "851ad6c6e7869af1057cfa134553bd3675b0efd59ab8874ca42d1cee340c6fe2",
+    "report_sha256": "e36d989e7dd5e880801f5c7ce206dedf2ab8772ffc46126833ae3e4f042becc8",
+    "scenarios": 6,
+    "violations": 0
+  },
+  "exporter": {
+    "file": "tools/build_quest_seal_purity_ribbon_v1.py",
+    "sha256": "034a0e51c1eddfd813a81c4c7af04f6ea404bec1d4e67bfe5b3cb41b5feeede6",
+    "required_python": "macOS: conda environment py312",
+    "command": "conda run -n py312 python tools/build_quest_seal_purity_ribbon_v1.py --repo-root . --promote-from generated/quests/QUEST-SEALS/QS-B1-V7-A/attempt-05/review/attempt-05.composite.png --evidence-dir generated/quests/QUEST-SEALS/QS-B1-V7-A/accepted-runtime"
+  },
+  "acceptance": {
+    "accepted_on": "2026-08-07",
+    "exact_statement": "接受 QS-B1 V7-A attempt 5 的运行时视觉，并授权进入 P4/P5；允许按已授权确定性合同生成 source/runtime 并接入 addon。",
+    "p6_game_validation_pending": true
+  }
+}
