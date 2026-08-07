@@ -5,12 +5,12 @@
 - 模块：Quests／Quest Log 右页。
 - 当前批次：`QL-D V3`；`QL-D V2` 作为已封闭失败历史保留在本文件。
 - 组件 ID：`QUEST.LOG.REWARD.SLOT`。
-- 当前子状态：`candidate-rejected / P3 / production 2/5 / repairing`。
+- 当前子状态：`candidate-rejected / P3 / production 3/5 / repairing`。
 - 项目阶段：当前几何／fallback `P6 game-validated`；V3 最终美术 `P3`。
 - 固定执行器：V3 production 只允许
-  `imagegen-0-143-0`／`@openai/codex@0.143.0`；attempt 1／2 已由固定版本完成。
+  `imagegen-0-143-0`／`@openai/codex@0.143.0`；attempt 1／2／3 已由固定版本完成。
 - V3 生成前模拟 ImageGen：`0/0`；production 预算为最多 `5` 次实际 ImageGen
-  generation／edit，当前 `2/5`、已授权，流程错误 `2`。V2
+  generation／edit，当前 `3/5`、已授权，流程错误 `2`。V2
   历史 production 为 `5/5` actual ImageGen，五稿均未晋级，且不会转作 V3
   edit input、source 或 runtime 位图。
 - 当前请求：用户于 `2026-08-07` 在 V2 五次循环结束后明确否决其可见风格：
@@ -812,6 +812,161 @@ marks outside safe regions; both material faces are broad nearly plain painted
 planes with no all-over pattern; only a few non-periodic edge breaks; no frame,
 symmetric cadence or baked live content.
 
+### `QL-D V3.r3` production prompt
+
+Fresh-regenerate exactly one isolated production raster asset for Turtle WoW
+1.18.1 from fixed Image 1 and Image 2 only. Create one rough field-added
+quartermaster equipment docket hand-fastened into the formal Azeroth quest
+ledger. This is a completely fresh generation. Do not upload, edit, trace or
+reuse either previous candidate. Preserve only the written conclusions: the
+asset is one paper strip below one leather icon patch, uses broad nearly plain
+painted material planes, three practical unequal ties and two peripheral dark
+fasteners. Attempt 3's art direction is useful, but its 2.489:1 silhouette was
+far too tall and its deep edge cuts made both live safe areas incomplete.
+
+This one connected empty normal-state chassis is displayed at exactly 108 x 41
+UI pixels for one read-only `QuestLogItem` reward Button. The game owns the 33
+x 33 live item icon in runtime [4,4,37,37], quantity, dynamic item name in
+[41,4,105,37], item-quality colour, tooltip and click behavior. Draw exactly
+one empty object. Draw no second slot, reward group, state sheet, selected
+state, icon, placeholder, count, name, text, glyph, quality glow or tooltip.
+
+Image 1 together with the Azeroth Expedition global and Quest art baselines is
+the highest authority. Inherit only its circa-2004 vanilla World of Warcraft
+low-resolution 2D hand-painted bitmap language: thick imperfect contours,
+broad light/mid/shadow planes, physical material thickness, warm upper-left
+light, muted smoked ochre, umber, dark walnut and nearly blackened old bronze,
+restrained broad wear and world-used expedition weight. Ignore and do not copy
+its book, pages, rows, plaque, compass, seal, ribbons, buttons, text, icons,
+borders or layout. Image 2 is secondary adjacency calibration only: inherit
+accepted Quest Log parchment temperature, paint scale, edge softness, upper-
+left light, dark-walnut relationship and wear scale. Do not copy its book
+silhouette, pages, gutter, spine, stitches, brass corners, transparency or
+pixels. Image 1 plus the written baselines wins every conflict. Do not use
+simulation pixels, V2 assets, screenshots or any previous QL-D output.
+
+The direct result must be a square RGB bitmap, target exact 1024 x 1024. Every
+pixel outside the assembly is one uniform solid #00FF00 chroma key, with no
+gradient, vignette, haze, checkerboard, texture, green-tinted shadow or spill.
+Place exactly one unrotated horizontal connected assembly within full visible
+contract bbox [72,345,952,679], width 880, height 334, target 2.635:1 and
+accepted only from 2.58:1 through 2.69:1. It must look unmistakably long and
+low, significantly thinner vertically than the rejected attempt 3. Use a
+straight-on orthographic front view with no tilt, foreshortening, three-
+quarter angle, rotation, floating parts, stretch, tile, mirror or nine-slice.
+
+Use a two-envelope occupancy construction. The main opaque leather and paper
+faces must stay inside canvas [72,355,952,669], an 880 x 314 long-low body with
+about 2.80:1 body aspect. Only a few shallow torn fibres, short thickness
+planes and the neutral contact shadow may extend from that body into the outer
+contract margin [72,345,952,679]. Those small extensions must make the final
+measured visible bbox approximately 880 x 330 to 334, never taller than 341.
+No large peak, deep notch, knot tail or shadow may increase the total height.
+If the object seems visually too thin, keep it thin; do not thicken it.
+
+Treat [72,345,952,679] as a local 880 x 334 system. The complete local icon-
+safe rectangle [33,33,301,301] must be one fully opaque, quiet, continuous
+dark-leather plane. The complete local name-safe [334,33,856,301] must be one
+fully opaque, quiet, continuous smoked-parchment plane. Target 100 percent
+coverage for both; acceptance is at least 98 percent. No green, transparency,
+tear, cutout, notch, lash hole, fastener, knot tail, stain, highlight or shadow
+may enter either rectangle. Reserve local x=301..334 as the only connection
+zone. Do not place live-safe content near an uncertain silhouette edge.
+
+The asset is one improvised equipment docket, never a miniature book. There is
+no cover, facing-page pair, central gutter, spine, hinge, page turn, symmetric
+spread or binding row. The back layer is one long horizontal smoked warm-
+parchment name strip on the right. The front layer is one rough dark-walnut
+leather icon patch on the left, laid over the paper joint by two to three
+runtime pixels. The paper continues behind the patch. The materials are not
+equal coplanar panels.
+
+Keep the parchment face extremely simple: one quiet flat ochre midtone across
+at least eighty percent of its face, one broad warm upper-left wash, one broad
+darker lower-right wash and a narrow thickness plane. No visible fibre mesh,
+embossed swirls, crosshatch, weave, pebbling, crackle, flecks, repeated grain,
+scratch field or procedural noise. The future name area must be calmer than
+the accepted quest page.
+
+Make both long paper edges mostly straight. Allow only four very shallow
+asymmetrical events outside the safe rectangle: one upper nick no deeper than
+10 source pixels, one different upper soft rise no higher than 8 pixels, and
+two unequal lower breaks no deeper than 10 pixels. Each event is broad and
+separated by a long straight run. Absolutely no 20-to-40-pixel peak, deep V
+notch, bottom scallop, repeated wave, sawtooth or regular deckle. Keep the far-
+right top and bottom corners within the same shallow body band.
+
+Make the left leather patch a slightly irregular near-square occupying about
+the first 31 to 34 percent of total width, enough to fully cover local
+x=33..301 but not half the docket. Its top and bottom stay within the main
+body band. Use unequal corners and one shallow ragged overlap flap, but no deep
+concave cut. The icon-safe interior is a single uninterrupted soot-walnut
+plane with a short warm upper-left plane and deep-umber lower-right plane.
+Allow at most two broad peripheral wear strokes. No fibre network, crosshatch,
+embossed tooling, repeating grain, icon-well outline, quality border, inset
+square or emblem. It is a patch, not a book cover or framed icon slot.
+
+Show the physical overlap with a narrow irregular warm paper lip behind the
+leather joint and two short deep contact pockets. Do not draw a straight full-
+height divider, gutter or complete joint outline. Keep all joint detail inside
+local x=301..334 and out of both safe rectangles.
+
+Add exactly three compact practical hand-set lash marks in the joint. Use dark
+aged cord or leather, not bright brass. Make one short upper diagonal two-hole
+stitch, one off-centre compact single knot with two very short unequal tails,
+and one lower slanted stitch of a different length and thickness. All three
+must fit vertically within the main body band; no long hanging tail. The knot
+is not a bow, butterfly, rosette or symmetrical loop. Give the three unequal
+gaps, angles, lengths and silhouettes. No horizontal ring, even binding row or
+safe-region intrusion.
+
+Add exactly two tiny mismatched nearly blackened oxidized-bronze retention
+marks only in the peripheral paper margin outside safe rectangles: one crude
+mark above local y=33 and one different wedge below local y=301. They have
+unequal x positions, stay inset from far-right corners and fit inside the full
+height contract. Keep them dull and quieter than future text. No symmetric
+rivets, polished gold, jewellery, corner bracket, row or metal frame.
+
+Use broad low-frequency hand-painted decisions. At full 1024 source scale,
+both material faces are already nearly plain. Handmade irregularity exists
+only in four shallow edge events, a few peripheral dry-brush strokes, the
+overlap, three ties and two fasteners. At 108 x 41 the two materials and ties
+remain legible as a vanilla-WoW UI sprite. Do not rely on downsampling to hide
+pattern. Never become photorealistic, vector-clean, procedural, precision-
+industrial, scrapbook-like or a modern indie sketch card.
+
+Add one very narrow irregular soft neutral-brown contact shadow immediately
+below and right of the assembly. It is equivalent to one or two runtime
+pixels, fits entirely within the outer [72,345,952,679] envelope and never
+increases the total height beyond 334. It is not black, green, detached,
+floating or photorealistic. Preserve warm upper-left light and deeper lower-
+right contact.
+
+Strict exclusions: tall silhouette, aspect below 2.58, incomplete safe area,
+deep notch, large paper peak, long knot tail, repeated wavy perimeter, all-over
+texture, crosshatch, fibre mesh, embossing, weave, repeated grain, decorative
+bow, miniature book, cover, facing pages, spine, gutter, hinge, binding row,
+three equal loops, complete leather chassis, continuous leather frame,
+continuous brass or gold outline, enclosing rim, mirrored chamfers, equal
+corners, symmetric fasteners, precision inner border, modern HUD rail, rounded
+card, capsule, pill, sticky note, mobile label, scrapbook sticker, vector
+outline, glass, translucent black, neon, polished gold, gemstone, buckle, wax
+seal, ribbon, bookmark, compass, quill, rune, emblem, letters, numerals,
+glyphs, icon, item silhouette, quantity, quality colour, selection glow,
+multiple objects, full book, page frame, Diablo altar, skull, spike, demonic
+horn or Skyrim overlay.
+
+Before returning, measure the visible result rather than judging loosely.
+Verify: square RGB target 1024 x 1024; exactly one connected empty normal-state
+docket; pure uniform #00FF00 outside; main opaque faces inside
+[72,355,952,669]; every visible extension and shadow inside
+[72,345,952,679]; measured complete visible aspect 2.58..2.69 and visibly long-
+low; straight orthographic view; fully opaque local icon-safe
+[33,33,301,301] and name-safe [334,33,856,301]; one plain paper strip below one
+plain leather patch; exactly three compact practical unequal ties with no bow;
+exactly two peripheral mismatched dark marks; no deep cuts, repeated waves,
+all-over texture, enclosing frame, symmetric cadence or baked live content.
+
 ## V3 自主修复循环与授权边界
 
 - 不可变边界：`QUEST.LOG.REWARD.SLOT`；恰好一枚 normal 连通母件；固定
@@ -835,10 +990,10 @@ symmetric cadence or baked live content.
 - 新增／替换参考、上传模拟或旧失败稿、改变对象／状态数量、视觉隐喻、层序、
   画布、runtime 几何、safe area、provider、Alpha／atlas 策略或允许烘焙任何
   动态内容，都超出冻结边界并必须重新授权。
-- 当前 `2/5`，流程错误 `2`，已获用户逐字授权。attempt 2 已修复比例、摊书
-  身份、缝扎差异与绿边并达到技术 `19/19`，但满版压纹／交叉纹理、周期波浪
-  纸边与装饰性中结仍违反美术基线；`QL-D V3.r2` 完整 fresh-regenerate 正文
-  必须先提交，再以固定 Image 1／2 执行 attempt 3。
+- 当前 `3/5`，流程错误 `2`，已获用户逐字授权。attempt 3 已通过语义、层序与
+  美术基线，但 visible aspect `2.48947`、icon/name Alpha coverage
+  `96.27%/96.85%` 违反硬合同；`QL-D V3.r3` 完整 fresh-regenerate 正文必须
+  先提交，再以固定 Image 1／2 执行 attempt 4。
 
 ## V3 生产授权记录
 
@@ -861,6 +1016,7 @@ symmetric cadence or baked live content.
 |---:|---|---|---|---|---|---|---|
 | `1/5` | `QL-D V3`／`c4de846`（正文冻结于 `b9cfd8c`） | fixed Image 1／2 fresh generate | fixed child `019fda69-b975-72e1-b328-75eca6653c9f`；provider generation 完成 | `generated/quests/ql-d-reward-slots/production/V3/attempt-01/raw/ql-d-v3-attempt-01.provider-native.png`；SHA `e65aff18b5cf041d137026fe0a4b956ea69a960afad4d78b1cb7b8bc23be226e`；`1254² RGB` | 技术首失败 `keyed_aspect_is_2_58_to_2_69`：`2.5714285714`；另有 visible green；视觉首失败为微型摊书／书脊身份 | 真实排版 0／1／2／4／6 与 `17/19` 技术项可证明管线有效，但不得保留本稿像素；`QL-D V3.r1` 固定 Image 1／2 fresh regenerate，禁止 Image 3 | `candidate-rejected`；实际生图计 `1/5` |
 | `2/5` | `QL-D V3.r1`／`57c0003` | fixed Image 1／2 fresh regenerate；无 Image 3 | fixed child `019fda75-ce0c-77e2-822b-2613fcd475c0`；provider generation 完成 | `generated/quests/ql-d-reward-slots/production/V3/attempt-02/raw/ql-d-v3-attempt-02.provider-native-01.png`；SHA `ad3d82bdba14f5554c60344149cb92f2ffa3b070c8292b47858a24c1f9d3d623`；`1254² RGB` | 初审仅 18 个缝孔绿像素；授权 soft despill 后技术 `19/19`；视觉首失败为两材料满版程序化压纹／交叉纹理 | 身份、层序、`2.66022` aspect、安全区、综合色、三处差异缝扎、四态与 display `5/5` 成立；全局材质失败不在 Image 3 局部边界，V3.r2 固定 Image 1／2 fresh regenerate | `candidate-rejected`；实际生图计 `2/5` |
+| `3/5` | `QL-D V3.r2`／`52f58b8` | fixed Image 1／2 fresh regenerate；无 Image 3 | fixed child `019fda7d-5b25-7341-874f-49fcb8f2bd22`；provider generation 完成 | `generated/quests/ql-d-reward-slots/production/V3/attempt-03/raw/ql-d-v3-attempt-03.provider-native-01.png`；SHA `de65e84ea94b85e249b5d6a7bc01e8e3cc3d2dfb75293f7d43db1ec0faf1f682`；`1254² RGB` | `keyed_aspect_is_2_58_to_2_69`：`2.4894736842`；icon/name Alpha `0.96270/0.96845` | 语义、纸下皮上层序、近乎无纹理大色面、实用三扎、综合色和 display `5/5` 成立；错误比例与 safe anatomy 无 Image 3 资格，V3.r3 固定 Image 1／2 fresh regenerate | `candidate-rejected`；技术 `16/19`；实际生图计 `3/5` |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
@@ -896,6 +1052,18 @@ symmetric cadence or baked live content.
   两材料冻结为近乎无纹理的三值大色面，只允许少量非周期大破边；禁止 full-
   source 压纹、交叉纹理、连续波浪和装饰性蝴蝶结。attempt 3 只上传固定
   Image 1／2。
+- attempt 3 review：
+  `generated/quests/ql-d-reward-slots/production/V3/attempt-03/review/ql-d-v3-attempt-03.review.json`；
+  technical `16/19`、display `5/5 pass`。attempt 3 消除了上一稿的主要全局纹理
+  与周期边缘，美术基线通过；但 `946×380` keyed bbox 只有 `2.48947:1`，高度
+  驱动 fit 后两块冻结 safe area 出现透明侵入。soft despill 仅改 9 个 RGB，
+  不改变该几何结论。错误 aspect／safe anatomy 必须 fresh-regenerate。
+- 下一完整正文：`QL-D V3.r3`；body SHA-256
+  `deba614615e6e768840fbea8d3354345e614e76123df6535e6ab2be67f122d51`。它保留
+  attempt 3 的 plain broad-plane 方向，并新增双包络：主体面锁在
+  `[72,355,952,669]` 的 long-low body，只有浅纤维／厚度／阴影可进入外层
+  `[72,345,952,679]`；深缺口、长结尾和超过 `334px` 总高度均禁止。attempt 4
+  只上传固定 Image 1／2。
 
 ## V2 历史最终执行正文
 
@@ -1725,12 +1893,13 @@ heavy vanilla-WoW material hierarchy remains readable at 108 x 41.
 | `QL-D V2 attempt 5` | 固定 Image 1／2 fresh regenerate；完整 V2.r5 正文 | `1` | `internal-rejected / repair-budget-exhausted`：technical `18/19`，aspect `2.53723`；display `5/5` |
 | `QL-D V3 attempt 1` | 固定 Image 1／2 fresh generate；完整 V3 正文 | `1` | `candidate-rejected`：technical `17/19`，aspect `2.57143`、visible green；display `5/5`；微型摊书／等距缝圈／密集交叉纹理；无 Image 3 资格 |
 | `QL-D V3 attempt 2` | 固定 Image 1／2 fresh regenerate；完整 V3.r1 正文 | `1` | `candidate-rejected`：soft despill 后 technical `19/19`、aspect `2.66022`、display `5/5`；满版压纹／交叉纹理、周期纸边与装饰性中结；无 Image 3 资格 |
+| `QL-D V3 attempt 3` | 固定 Image 1／2 fresh regenerate；完整 V3.r2 正文 | `1` | `candidate-rejected`：technical `16/19`、aspect `2.48947`、icon/name Alpha `96.27%/96.85%`；display `5/5`；美术基线通过但几何无 Image 3 资格 |
 
 ## 下一门禁
 
 `QL-D-SIM-V3` 已确认，`QL-D V3` production 正文与五次修复边界已于
-`2026-08-07` 获用户逐字授权。attempt 1／2 已完成并拒绝；下一门禁是在完整
-`QL-D V3.r2` fresh-regenerate 正文提交后，只上传固定 Image 1／2 执行
-attempt 3，再从语义／物理结构开始完成全套内审、四态确定性装配和
+`2026-08-07` 获用户逐字授权。attempt 1／2／3 已完成并拒绝；下一门禁是在
+完整 `QL-D V3.r3` fresh-regenerate 正文提交后，只上传固定 Image 1／2 执行
+attempt 4，再从语义／物理结构开始完成全套内审、四态确定性装配和
 0／1／2／4／6 真实排版。当前仍不得创建 source／runtime、修改 addon 或把
 内部通过误写成用户接受。

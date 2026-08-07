@@ -15,7 +15,7 @@
     "authorized": true,
     "simulation_confirmed": true,
     "maximum_actual_imagegen_calls": 5,
-    "current_actual_imagegen_calls": 2,
+    "current_actual_imagegen_calls": 3,
     "process_errors": 2,
     "process_errors_count_toward_budget": false
   },
@@ -216,15 +216,42 @@
       "result": "candidate-rejected",
       "previous_output_image_3_eligible": false,
       "next_action": "fresh-regenerate from fixed Image 1/2 with QL-D V3.r2"
+    },
+    {
+      "attempt": 3,
+      "prompt_version": "QL-D V3.r2",
+      "prompt_body_sha256": "766f796cd9e5f70d7b395d43ec8475f661051c4dac5202fa6db4812892c9dc66",
+      "repo_commit_before_generation": "52f58b8",
+      "fixed_executor_session_id": "019fda7d-5b25-7341-874f-49fcb8f2bd22",
+      "inputs": [1, 2],
+      "raw_path": "generated/quests/ql-d-reward-slots/production/V3/attempt-03/raw/ql-d-v3-attempt-03.provider-native-01.png",
+      "raw_sha256": "de65e84ea94b85e249b5d6a7bc01e8e3cc3d2dfb75293f7d43db1ec0faf1f682",
+      "raw_size": [1254, 1254],
+      "technical_checks": "16/19 after authorized 9-pixel RGB-only soft despill",
+      "display_region": "5/5 pass",
+      "first_failure": "keyed_aspect_is_2_58_to_2_69",
+      "visible_aspect": 2.4894736842105263,
+      "additional_failures": [
+        "icon safe alpha coverage 0.9626997245 below 0.98",
+        "name safe alpha coverage 0.9684517045 below 0.98"
+      ],
+      "visual_passes": [
+        "semantic and physical identity",
+        "perspective and layer order",
+        "broad low-frequency art baseline"
+      ],
+      "result": "candidate-rejected",
+      "previous_output_image_3_eligible": false,
+      "next_action": "fresh-regenerate from fixed Image 1/2 with QL-D V3.r3"
     }
   ],
   "current_prompt": {
-    "version": "QL-D V3.r2",
-    "body_sha256": "766f796cd9e5f70d7b395d43ec8475f661051c4dac5202fa6db4812892c9dc66",
+    "version": "QL-D V3.r3",
+    "body_sha256": "deba614615e6e768840fbea8d3354345e614e76123df6535e6ab2be67f122d51",
     "operation": "fresh-regenerate",
     "inputs": [1, 2],
     "previous_output_as_image_3": false,
-    "next_attempt": 3
+    "next_attempt": 4
   },
   "promotion": {
     "candidate_outputs_remain_under_generated": true,

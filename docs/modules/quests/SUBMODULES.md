@@ -226,7 +226,7 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 | `QUEST.LOG.DETAIL.OBJECTIVES` | 目标 FontString 集 | layout-only |
 | `QUEST.LOG.DETAIL.REWARD_TEXT` | 奖励文字 FontString 集 | Theme `1.9`：标题 `14px`，标签 `12px`，均无 outline／shadow |
 | `QUEST.LOG.DETAIL.DIVIDER` | adapter 非交互 Texture | 可横向三段式短墨线 |
-| `QUEST.LOG.REWARD.SLOT` | `QuestLogItem1..MAX_NUM_ITEMS`；原生 `IconTexture／Count／Name／NameFrame`；adapter-owned `aeuiRewardContainer` | 普通／悬停／按下／禁用；图标动态，无 selected；runtime `1.26` 按选择／法术／固定奖励重建 `108×41px` 双列锚点，名称安全宽 `64px`、Button 列距 `8px`、行距 `4px`，并保留真实 Button 几何锁与无鼠标 fallback。V3 attempt 2 soft despill 后 technical `19/19`、display `5/5`、aspect `2.66022`；身份、纸下皮上层序与安全区通过，但满版压纹／交叉纹理、周期纸边与装饰性中结违反美术基线。当前 `candidate-rejected / P3 / 2/5 / repairing`；V3.r2 固定 Image 1／2 fresh regenerate；没有 source/runtime 或 addon 接入 |
+| `QUEST.LOG.REWARD.SLOT` | `QuestLogItem1..MAX_NUM_ITEMS`；原生 `IconTexture／Count／Name／NameFrame`；adapter-owned `aeuiRewardContainer` | 普通／悬停／按下／禁用；图标动态，无 selected；runtime `1.26` 重建 `108×41px` 双列锚点，名称安全宽 `64px`，保持 `8px` 列距／`4px` 行距与 fail-open。V3 attempt 3 的身份、层序和 plain broad-plane 美术通过；technical `16/19`，aspect `2.48947`、icon/name Alpha `96.27%/96.85%`。当前 `candidate-rejected / P3 / 3/5 / repairing`；V3.r3 固定 Image 1／2 fresh regenerate；没有 source/runtime 或 addon 接入 |
 | `QUEST.LOG.TRACK` | `QuestLogTrack`、`QuestLogTrackTracking` | 复用 QL-B1 开放墨圈／墨勾 atlas；保留原状态控制 |
 | `QUEST.LOG.ACTION.ABANDON` | `QuestLogFrameAbandonButton` | 当前程序化暗皮革 fallback；目标事务菜单只代理原 OnClick，必须保留原生确认 |
 | `QUEST.LOG.ACTION.SHARE` | `QuestFramePushQuestButton`；兼容名需探测 | 当前程序化暗皮革 fallback；目标事务菜单代理原 Button |
