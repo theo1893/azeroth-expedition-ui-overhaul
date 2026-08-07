@@ -5,16 +5,16 @@
 - 模块：Quests／Quest Log 右页。
 - 批次：`QL-D V2`。
 - 组件 ID：`QUEST.LOG.REWARD.SLOT`。
-- 子状态：`simulation-confirmed / production-draft / awaiting-production-authorization`。
-- 项目阶段：当前几何／fallback `P6 game-validated`；最终美术 `P2`。
-- 固定执行器：若后续获得独立生产授权，只允许
+- 子状态：`prompt-authorized / production-active`。
+- 项目阶段：当前几何／fallback `P6 game-validated`；最终美术 `P3`。
+- 固定执行器：本次已授权生产只允许
   `imagegen-0-143-0`／`@openai/codex@0.143.0`。
-- 生成前模拟 ImageGen：`0/0`；计划 production 预算为最多 `5` 次实际
-  ImageGen generation／edit，当前 `0/5`。本轮没有生产授权、没有上传、没有
-  source、没有 runtime 位图。
-- 当前请求：用户于 `2026-08-07` 要求为奖励适配框生成美术资源；随后以
-  `QL-D-SIM-V2` 明确确认当前 V2 可见方向。该确认只冻结下述物件身份、材料
-  层级、综合色和当前真实排版关系，不等于正式 ImageGen 授权。
+- 生成前模拟 ImageGen：`0/0`；production 预算为最多 `5` 次实际 ImageGen
+  generation／edit，当前 `0/5`。用户已授权生产；尚未上传、尚无 countable
+  output、source 或 runtime 位图。
+- 当前请求：用户于 `2026-08-07` 先以 `QL-D-SIM-V2` 明确确认当前 V2 可见
+  方向，随后逐字确认授权 `QL-D V2` 完整 production 正文、固定 Image 1／2、
+  受限同循环 Image 3、最多五次实际调用，以及下述确定性处理与真实排版预演。
 - 用户问题来源：`2026-08-04` 实机截图确认多奖励重叠／末端裁切、详情与奖励
   字体难读，以及 pfUI 平面黑灰奖励卡片过于现代。
 - 实机修复确认：`2026-08-05` 用户确认 Quest 右页的既有 bug 和显示问题均已
@@ -397,7 +397,7 @@ after reduction to 108 x 41 pixels.
   SHA 和职责；`1024²`／目标 bbox／水平正投影；`108×41px` runtime；图标／
   名称安全区；四态确定性派生；atlas cell／UV；真实 provider 映射；全部禁止
   烘焙和当前 `0／1／2／4／6` 展示区域合同。
-- 若用户另行授权，attempt 1 使用固定 Image 1／2 fresh generate。attempt 2–5
+- attempt 1 使用固定 Image 1／2 fresh generate。attempt 2–5
   仍固定上传同 SHA 的 Image 1／2；只有紧邻前稿保持单物件、正确两区解剖、
   基本比例／综合色／光向，且失败仅是局部边缘、黄铜连续度、纹理密度、纯绿
   背景或轻微安全区干扰时，才允许把该紧邻前稿作为唯一 Image 3 edit input。
@@ -409,10 +409,10 @@ after reduction to 108 x 41 pixels.
 - 新增／替换参考、上传模拟或截图、改变对象／状态数量、画布、视觉方向、
   安全区、runtime 几何、provider、Alpha／atlas 策略或允许任何动态内容烘焙，
   都必须停止并重新授权。
-- 授权后最多 `5` 次实际 ImageGen generation／edit，含首次；没有图片且没有
+- 本次授权最多 `5` 次实际 ImageGen generation／edit，含首次；没有图片且没有
   provider 生成证据的流程错误不占额度。任一候选完整通过即停止并交用户
-  复审；第五次仍失败则停止于 `repair-budget-exhausted`。当前尚未授权，
-  production 保持 `0/5`。
+  复审；第五次仍失败则停止于 `repair-budget-exhausted`。当前 production
+  已进入自主修复循环，开始时为 `0/5`。
 
 ## 执行记录
 
@@ -420,6 +420,12 @@ after reduction to 108 x 41 pixels.
   输入 SHA 和输出 SHA 已记录在上方。
 - 用户于 `2026-08-07` 以 `QL-D-SIM-V2` 确认具体模拟方向；随后只完成固定
   production 输入、source／atlas／四态／后处理／真实排版合同和逐字正文。
+- 用户随后明确回复：`确认授权 QL-D V2；允许每次上传固定 SHA 的 Image 1/2，
+  允许同循环紧邻前次输出仅在冻结修复边界内作为 Image 3 edit 输入；最多 5 次
+  实际 ImageGen 调用，流程错误不占额度；允许按合同执行正方形归一化、边缘
+  连通色键、透明 RGB 清零、等比 bbox-fit、四态派生、atlas packing 与真实
+  排版预演。` 该授权只开放已冻结正文，不开放换参考、改几何、接入 addon 或
+  提前晋级 source／runtime。
 - 实际生成／修图调用 `0/5`；流程错误 `0`；上传 `0`；没有候选、source、
   runtime atlas 或 addon 代码改动。
 
@@ -442,17 +448,13 @@ after reduction to 108 x 41 pixels.
 |---|---|---:|---|
 | `QL-D-SIM-V1` | 历史确定性本地模拟 | `0` | 由当前邻接 UI 的 V2 取代 |
 | `QL-D-SIM-V2` | 确定性本地模拟 | `0` | `simulation-confirmed / P2`；display-region `5/5 pass` |
-| `QL-D V2 production` | 固定 Image 1／2 的单物件 generate；尚未授权 | `0/5` | `production-draft / awaiting-production-authorization` |
+| `QL-D V2 production` | 固定 Image 1／2 的单物件 generate；已获逐字授权 | `0/5` | `prompt-authorized / production-active / P3` |
 
 ## 下一门禁
 
-当前 runtime 几何／fallback 的实机门禁和 V2 方向门禁都已通过。下一门禁是
-用户对上方完整 `QL-D V2` production 正文给予独立授权；建议授权范围固定为：
-每次上传上述固定 SHA 的 Image 1／2，attempt 1 不含 Image 3；同循环紧邻前稿
-只在冻结修复边界内可作为 Image 3 edit 输入；最多 `5` 次实际 ImageGen 调用，
-流程错误不占额度；允许执行正文列出的正方形归一化、边缘连通色键、透明 RGB
-清零、通过比例门禁后的等比 bbox-fit、四态派生、atlas packing 与真实排版／
-展示区域预演。
-
-取得该独立授权前不得调用 ImageGen、上传参考、建立 source／runtime、修改
-addon 或消耗 production 额度。方向确认不等于生成授权。
+当前 runtime 几何／fallback 的实机门禁、V2 方向门禁和独立 production 授权
+门禁都已通过。下一门禁是按最多五次实际调用执行 generate → review → retry
+自主循环；每个 countable output 都必须完成技术检查、四态临时 atlas、真实
+`0／1／2／4／6` 排版和 display-region 检查。内部完整通过即停止并交用户复审；
+第五次仍失败则停止等待用户决定。用户接受候选前不得晋级 source／runtime、
+修改 addon 或把生产授权误写成接入授权。
