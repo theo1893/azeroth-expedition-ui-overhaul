@@ -283,6 +283,13 @@ hidden／disabled／滚动合同。
 不得把锚在其右侧的金额 Frame 推出纸页。分区墨线为
 无命中的三段式短线，不切断整张右页。
 
+用户于 `2026-08-07` 确认 `QL-D-SIM-V2`：单个真实奖励 Button 对应一枚浅凹
+公会装备签槽，外层是深胡桃旧皮革浅削角边，黄铜仅作被磨损打断的暗哑边迹，
+左侧是安静深皮革图标凹槽，右侧是连续低对比羊皮纸名称面，下方只有窄纸面
+接触阴影。该确认不接受模拟像素或动态示例，也不授权 ImageGen；固定输入、
+safe area、四态确定性 atlas 与完整 production 正文只在
+[work/QUEST.LOG.REWARDS.md](work/QUEST.LOG.REWARDS.md) 维护。
+
 ## Quest Tracker
 
 provider 已锁定为 `pfQuest 7.0.1` 的 `pfQuestMapTracker`。稳定视觉基线

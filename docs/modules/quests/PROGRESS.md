@@ -64,8 +64,12 @@
   正式奖励槽资产确认前只使用 adapter-owned 低透明暖纸 fallback；QL-D V2
   已用当前 QuestLogShellV4、QS-B1 V7-A 闭合载体根和 QS-A1 火漆重建确定性
   真实排版模拟，0／1／2／4／6 五场景 display-region `5/5 pass`、violations
-  `0`、ImageGen `0/0`，当前等待用户确认“旧皮革外框＋被磨损打断的克制黄铜
-  图标凹槽＋羊皮纸名称面”可见方向。
+  `0`、ImageGen `0/0`。用户于 `2026-08-07` 以 `QL-D-SIM-V2` 确认“旧皮革
+  浅削角外框＋被磨损打断的克制黄铜边＋深皮革图标凹槽＋羊皮纸名称面＋窄
+  接触阴影”可见方向；模拟像素与动态示例不获接受。固定 Image 1／2、单枚
+  normal source、四态确定性 atlas、safe area、后处理与逐字 production 正文
+  已通过完整性预检，当前 `production-draft / awaiting-production-authorization / 0/5`；
+  尚未上传或调用 ImageGen。
 - 用户随后以新实机图明确否决上述两项修复结论：同一页的团队／精英／地下城
   Tag 仍同时出现深紫、荧黄和绿色，两个奖励 backdrop 仍视觉相接。复核原生
   `QuestLogFrame.lua` 与 pfUI skin 后确认了两个遗漏：`QuestLogTitleNTag`
@@ -520,7 +524,7 @@
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 asset-retained / runtime-hidden` | 用户接受的 source、manifest、`128 × 16` TGA、exporter 与历史证据全部保留；`2026-07-31` 起 adapter 不再挂载或包装任务行脚本 | 暂缓；只有用户重新确认后才恢复 runtime |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
 | `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；QS-B1 V7-A substrate `P5 / ImageGen 5/5` | 用户于 `2026-08-07` 接受 V7-A attempt 5。source SHA `168f527f…05b8`、`32×192` runtime SHA `db620778…c615` 已接入 ScrollChild 闭合 root；技术 `13/13`、真实排版 `29/29`、display `6/6`。七纹章／代理未完成，菜单 inactive，旧按钮 fail-open | P6 验证闭合跨压；另行完成七项代理 parity 后才启用菜单 |
-| `QL-D` | 奖励槽、分隔与文字安全区 | current geometry／fallback `P6 game-validated`；final art `P2 simulation-reviewed` | runtime `1.26` 保持真实 Button 的 `108×41px` 双列／`64px` 名称／`8px` 列距／`4px` 行距、setter 锁、无鼠标程序化容器、原生 `NameFrame` 抑制和可见数量兜底。所有奖励项只依赖奖励总标题或上一组奖励项，不再依赖三个分组标题，消除原生 `QuestLogItemReceiveText` 反向锚定造成的 FrameXML 环；`2026-08-05` 用户确认当前右页 bug 与显示修复通过。Theme `1.9` 奖励文字无描边。V2 以当前书体、闭合载体根与火漆预演 0／1／2／4／6，`5/5 pass`、ImageGen `0/0`；奖励只读，无 selected | 用户确认 V2 可见方向；确认后另行准备完整 production 正文与独立授权 |
+| `QL-D` | 奖励槽、分隔与文字安全区 | current geometry／fallback `P6 game-validated`；final art `P2 simulation-confirmed / production-draft` | runtime `1.26` 保持真实 Button 的 `108×41px` 双列／`64px` 名称／`8px` 列距／`4px` 行距、setter 锁、无鼠标程序化容器、原生 `NameFrame` 抑制和可见数量兜底。所有奖励项只依赖奖励总标题或上一组奖励项，不再依赖三个分组标题，消除原生 `QuestLogItemReceiveText` 反向锚定造成的 FrameXML 环；`2026-08-05` 用户确认当前右页 bug 与显示修复通过。Theme `1.9` 奖励文字无描边。V2 以当前书体、闭合载体根与火漆预演 0／1／2／4／6，`5/5 pass`、ImageGen `0/0`；用户于 `2026-08-07` 确认方向。单枚 normal source、四态 atlas 与固定输入完整正文已准备，production `0/5`；奖励只读，无 selected | 用户独立授权完整 `QL-D V2` production 正文、固定 Image 1／2、受限同循环 Image 3、最多五次实际调用与已列确定性后处理；授权前不生图 |
 
 QL-A1 manifest 记录：
 
@@ -822,13 +826,15 @@ manifest 确定性导出 `32×174` 布底，并一一代理原 Button、镜像
 七项代理 parity 完成前不接入菜单，也不隐藏放弃／分享／退出／详情或 pfQuest
 四按钮。
 
-[QL-D V2 奖励槽方向](work/QUEST.LOG.REWARDS.md) 仍是独立开放视觉门禁，
-不被 QS-B1 的确认或授权自动覆盖。
+[QL-D V2 奖励槽方向](work/QUEST.LOG.REWARDS.md) 已由用户于 `2026-08-07`
+以 `QL-D-SIM-V2` 确认；其 production 仍是独立授权门禁，不被 QS-B1 的确认
+或授权自动覆盖。
 
 Quest Log 的类型色、详情字体、金额、奖励容器／锚点与内容末端裁切修复已经
 进入 runtime `1.25`／Theme `1.8`，并由本次用户实机结论确认。QL-D V2
-正式容器尚未生产，当前暖纸 fallback 不代表最终美术；旧顶部悬空漆章位置
-不再作为待接受方向。
+正式容器尚未生产，当前暖纸 fallback 不代表最终美术；完整 production 正文
+现为 `awaiting-production-authorization / 0/5`，授权前不得上传、调用 ImageGen
+或接入 addon。旧顶部悬空漆章位置不再作为待接受方向。
 
 Tracker `34px` 漆章仍按既有合同在 `130／230／330px` 居中，继续等待实机
 验证 `SetClampRectInsets`、拖动恢复、TGA 方向与旧七按钮层序。Tracker hub
