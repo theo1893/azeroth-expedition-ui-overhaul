@@ -15,7 +15,7 @@
     "authorized": true,
     "simulation_confirmed": true,
     "maximum_actual_imagegen_calls": 5,
-    "current_actual_imagegen_calls": 3,
+    "current_actual_imagegen_calls": 4,
     "process_errors": 2,
     "process_errors_count_toward_budget": false
   },
@@ -243,15 +243,40 @@
       "result": "candidate-rejected",
       "previous_output_image_3_eligible": false,
       "next_action": "fresh-regenerate from fixed Image 1/2 with QL-D V3.r3"
+    },
+    {
+      "attempt": 4,
+      "prompt_version": "QL-D V3.r3",
+      "prompt_body_sha256": "deba614615e6e768840fbea8d3354345e614e76123df6535e6ab2be67f122d51",
+      "repo_commit_before_generation": "94f366b",
+      "fixed_executor_session_id": "019fda82-fe09-7ca3-af7f-f9c33bbb02b7",
+      "inputs": [1, 2],
+      "raw_path": "generated/quests/ql-d-reward-slots/production/V3/attempt-04/raw/ql-d-v3-attempt-04.provider-native-01.png",
+      "raw_sha256": "8be3575aaf35965081734a539485c2811a30956a32a786a91ec64911981b7d2c",
+      "raw_size": [1254, 1254],
+      "technical_checks": "18/19",
+      "display_region": "5/5 pass",
+      "first_failure": "keyed_aspect_is_2_58_to_2_69",
+      "visible_aspect": 2.7694524495677233,
+      "visual_passes": [
+        "semantic and physical identity",
+        "perspective and paper-under-leather layer order",
+        "broad low-frequency 2004-era art baseline",
+        "icon and name safe-region anatomy",
+        "derived four states and real-layout legibility"
+      ],
+      "result": "candidate-rejected",
+      "previous_output_image_3_eligible": false,
+      "next_action": "final fresh-regenerate from fixed Image 1/2 with QL-D V3.r4"
     }
   ],
   "current_prompt": {
-    "version": "QL-D V3.r3",
-    "body_sha256": "deba614615e6e768840fbea8d3354345e614e76123df6535e6ab2be67f122d51",
+    "version": "QL-D V3.r4",
+    "body_sha256": "da637c8f0e11fc5a15b55c58389b95024f4ef84cbf61dd3ba0bfbaeed3b242c5",
     "operation": "fresh-regenerate",
     "inputs": [1, 2],
     "previous_output_as_image_3": false,
-    "next_attempt": 4
+    "next_attempt": 5
   },
   "promotion": {
     "candidate_outputs_remain_under_generated": true,

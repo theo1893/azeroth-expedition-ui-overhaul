@@ -1623,11 +1623,11 @@ def main() -> None:
         rewards_work,
         (
             "QL-D Quest Log 奖励槽（当前 V3；V2 历史）",
-            "`candidate-rejected / P3 / production 3/5 / repairing`",
+            "`candidate-rejected / P3 / production 4/5 / repairing`",
             "当前几何／fallback `P6 game-validated`；V3 最终美术 `P3`",
             "`2026-08-05`",
             "V3 生成前模拟 ImageGen：`0/0`",
-            "当前 `3/5`",
+            "当前 `4/5`",
             "`QL-D-SIM-V3`",
             "`QUEST.LOG.REWARD.SLOT`",
             "`108 × 41 UI px`",
@@ -1670,6 +1670,9 @@ def main() -> None:
             "### `QL-D V3.r3` production prompt",
             "two-envelope occupancy construction",
             "deba614615e6e768840fbea8d3354345e614e76123df6535e6ab2be67f122d51",
+            "### `QL-D V3.r4` production prompt",
+            "72 pixels of untouched green at both left and right sides",
+            "da637c8f0e11fc5a15b55c58389b95024f4ef84cbf61dd3ba0bfbaeed3b242c5",
             "## V3 自主修复循环与授权边界",
             "authorized=true",
         ),
@@ -1717,13 +1720,13 @@ def main() -> None:
     assert reward_production_spec["executor"]["authorized"] is True
     assert reward_production_spec["executor"]["simulation_confirmed"] is True
     assert reward_production_spec["executor"]["maximum_actual_imagegen_calls"] == 5
-    assert reward_production_spec["executor"]["current_actual_imagegen_calls"] == 3
+    assert reward_production_spec["executor"]["current_actual_imagegen_calls"] == 4
     assert reward_production_spec["executor"]["process_errors"] == 2
     assert len(reward_production_spec["process_error_history"]) == 2
     assert not reward_production_spec["process_error_history"][0][
         "provider_generation_evidence"
     ]
-    assert len(reward_production_spec["attempt_history"]) == 3
+    assert len(reward_production_spec["attempt_history"]) == 4
     assert all(
         attempt["result"] == "candidate-rejected"
         for attempt in reward_production_spec["attempt_history"]
@@ -1738,13 +1741,19 @@ def main() -> None:
     assert reward_production_spec["attempt_history"][0][
         "previous_output_image_3_eligible"
     ] is False
+    assert reward_production_spec["attempt_history"][3][
+        "technical_checks"
+    ] == "18/19"
+    assert reward_production_spec["attempt_history"][3][
+        "visible_aspect"
+    ] == 2.7694524495677233
     assert reward_production_spec["current_prompt"] == {
-        "version": "QL-D V3.r3",
-        "body_sha256": "deba614615e6e768840fbea8d3354345e614e76123df6535e6ab2be67f122d51",
+        "version": "QL-D V3.r4",
+        "body_sha256": "da637c8f0e11fc5a15b55c58389b95024f4ef84cbf61dd3ba0bfbaeed3b242c5",
         "operation": "fresh-regenerate",
         "inputs": [1, 2],
         "previous_output_as_image_3": False,
-        "next_attempt": 4,
+        "next_attempt": 5,
     }
     assert reward_production_spec["candidate"]["runtime_size"] == [108, 41]
     assert reward_production_spec["candidate"]["object_count"] == 1
