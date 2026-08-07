@@ -5,13 +5,13 @@
 - 模块：Quests／Quest Log 右页。
 - 批次：`QL-D V2`。
 - 组件 ID：`QUEST.LOG.REWARD.SLOT`。
-- 子状态：`prompt-authorized / production-active`。
+- 子状态：`production-active / internal-rejected / retry-prepared`。
 - 项目阶段：当前几何／fallback `P6 game-validated`；最终美术 `P3`。
 - 固定执行器：本次已授权生产只允许
   `imagegen-0-143-0`／`@openai/codex@0.143.0`。
 - 生成前模拟 ImageGen：`0/0`；production 预算为最多 `5` 次实际 ImageGen
-  generation／edit，当前 `0/5`。用户已授权生产；尚未上传、尚无 countable
-  output、source 或 runtime 位图。
+  generation／edit，当前 `1/5`。attempt 1 已有 provider generation 证据并
+  计数；尚无合格候选、source 或 runtime 位图。
 - 当前请求：用户于 `2026-08-07` 先以 `QL-D-SIM-V2` 明确确认当前 V2 可见
   方向，随后逐字确认授权 `QL-D V2` 完整 production 正文、固定 Image 1／2、
   受限同循环 Image 3、最多五次实际调用，以及下述确定性处理与真实排版预演。
@@ -391,6 +391,111 @@ no baked icon, count, name, quality, text, selected state, book, seal, ribbon,
 continuous gold outline or modern rounded card; readable material hierarchy
 after reduction to 108 x 41 pixels.
 
+### `QL-D V2.r2` 最终 production prompt
+
+Fresh-regenerate exactly one isolated production raster asset for Turtle WoW
+1.18.1: one shallow, front-facing guild-archive equipment docket that serves
+as the empty visual chassis for one read-only `QuestLogItem` reward Button.
+This is attempt 2 after a rejected first generation. Do not reuse or imitate
+the rejected attempt. At runtime the object is displayed at exactly 108 x 41
+UI pixels. The live game draws a 33 x 33 item icon in [4,4,37,37], its quantity,
+and a dynamic item name in [41,4,105,37], while preserving item-quality colour,
+tooltip and click behavior. Draw only one empty normal-state chassis. Draw no
+other slot, reward section, state sheet, selected state, icon, number, name,
+quality glow, text or tooltip.
+
+Reference authority and filtering are strict. Image 1 plus the Azeroth
+quest-ledger art baseline is the highest authority. Inherit its circa-2004
+vanilla World of Warcraft low-resolution 2D hand-painted bitmap language,
+thick slightly irregular silhouette, broad readable light/mid/shadow planes,
+tangible material thickness, warm upper-left light, muted ochre, umber and old
+brass palette, restrained broad wear, and substantial expedition-archive
+weight. Ignore its complete book, pages, rows, plaque, compass, wax seal,
+ribbons, buttons, text, icons, page borders and layout. Image 2 is secondary
+adjacency calibration only: inherit its accepted parchment temperature,
+dark-walnut leather versus oxidized-brass relationship, paint scale, edge
+softness, upper-left light and wear scale. Do not copy its book shape, pages,
+spine, stitches, brass corners, transparency or pixels. When references
+conflict, Image 1 and the vanilla quest-ledger baseline win.
+
+The direct image_gen result itself must be a square RGB canvas. Target exact
+1024 x 1024. Do not return a landscape, portrait or nearly-square bitmap and do
+not rely on any later resize. Every pixel outside the object must be a single
+uniform solid #00FF00 chroma-key background, without gradient, vignette,
+checkerboard, haze, texture or spill. Place exactly one unrotated horizontal
+object fully inside visible target bbox [72,345,952,679], 880 x 334 pixels.
+The visible object must be approximately 2.635:1, within 2.58:1 to 2.69:1. Make
+it visibly taller relative to its width than the rejected panoramic 3.35:1
+rail. Include its narrow page-contact shadow inside the same bbox. Leave clean
+green on all four sides; never touch or crop an edge. Use a straight-on
+orthographic front view with no tilt, foreshortening or three-quarter angle.
+
+The silhouette is one substantial shallow archive fitting, not a modern card.
+Use a long near-rectangle with mostly straight sides, four small uneven shallow
+chamfers and slight hand-painted asymmetry. Avoid a perfect mirrored industrial
+frame. It must not become a rounded pill, capsule, web card, label tag, arrow,
+pointed bookmark, fishtail, ornate plaque or panoramic metal rail. Its aged
+low-saturation dark-walnut leather rim has a short warm upper-left light plane,
+a broad smoked-brown face and a narrow deep-umber lower/right shadow plane.
+Keep visible thickness but use coarse, broad painted value masses. Do not fill
+the leather with tiny embossed diamonds, woven lattice, repeating grain,
+micro-cracks, procedural noise or precision tooling.
+
+Oxidized brass is rare and subordinate. Use no more than four short, broken,
+low-contrast retaining traces distributed unevenly across selected outer-edge
+segments. Each trace must be visibly interrupted by wear and must end well
+before a corner. Do not connect the traces around corners. Never draw a full
+gold outline, continuous top or bottom rail, corner brackets, symmetric metal
+ornaments, rivet row, jewellery trim or bright polished highlight. At 108 x 41
+the viewer should read dark leather first, not gold framing.
+
+Build two integrated functional zones inside the same leather chassis. The
+left zone is a recessed square dark-leather icon well. In final 108 x 41
+proportions, the entire dynamic icon-safe [4,4,37,37] rectangle is flat, dark,
+quiet and unobstructed. Draw no icon, symbol, placeholder, quality border or
+emblem. Give it only one broad inner shadow and a restrained warm upper-left
+lip. Do not add dense stamping, mesh or miniature ornament inside this safe
+area. The right zone is one continuous smoked warm-parchment name field beneath
+the leather rim. The entire dynamic name-safe [41,4,105,37] rectangle is calm,
+continuous and low contrast with no seam, ruling, ornament, scratch, stain,
+glyph, printed line or bright central highlight. Use one or two broad hand-
+painted value drifts only. Do not use the rejected attempt's dense repeating
+parchment embossing. Separate the two zones with one shallow dark material
+joint, not a bright divider or independent modern card.
+
+Add a very narrow soft painted contact shadow immediately below and to the
+right, equal to only one or two runtime pixels and contained inside the object
+bbox. It should seat the fitting on the accepted quest page, not float as a
+black drop shadow. Maintain warm upper-left light and a deeper lower-right
+plane consistent with both references.
+
+Style lock: after reduction to 108 x 41, this must read as a coarse hand-
+painted sprite from a 2004-era vanilla WoW quest journal. Prefer broad low-
+frequency wear and readable material planes over detail. It must feel heavy,
+archival and slightly irregular while remaining subordinate to quest text and
+the dynamic icon. It must not look photorealistic, vector-clean, procedural,
+precision-industrial, Diablo-style, or like a contemporary brown HUD card.
+
+Strict exclusions: no full book, page, page frame, reward panel, multiple
+slots, wax seal, ribbon, bookmark, compass, quill, emblem, rune, text, letters,
+numerals, glyphs, icon, item silhouette, quantity, quality colour, selection
+glow, state variants, stitching, holes, rivet row, buckle, hinge, gemstone,
+bright gold, complete metallic border, connected corner trim, mirrored
+ornament, dense embossing, repeating weave, glass, translucent black, neon,
+skull, spike, horn, Diablo altar, Skyrim minimalist overlay, rounded modern
+card or cast shadow outside the object.
+
+Before returning, verify the direct provider bitmap is square RGB; target
+1024 x 1024; outside is uniform #00FF00; exactly one empty normal object is
+fully inside [72,345,952,679]; visible aspect is 2.58 to 2.69 rather than a
+panoramic rail; the view is orthographic; the dark-walnut silhouette is thick,
+slightly irregular and not perfectly mirrored; brass is limited to a few
+broken non-connecting accents; icon-safe [4,4,37,37] is dark and quiet;
+name-safe [41,4,105,37] is calm parchment; neither safe region contains dense
+microtexture; there is no baked dynamic content, full gold frame, modern card,
+or copied book element; and the material hierarchy remains readable at
+108 x 41 pixels.
+
 ### 自主修复循环与授权边界
 
 - 不可变边界：组件 ID；恰好一枚 normal 基础物件；固定 Image 1／2、顺序、
@@ -412,7 +517,8 @@ after reduction to 108 x 41 pixels.
 - 本次授权最多 `5` 次实际 ImageGen generation／edit，含首次；没有图片且没有
   provider 生成证据的流程错误不占额度。任一候选完整通过即停止并交用户
   复审；第五次仍失败则停止于 `repair-budget-exhausted`。当前 production
-  已进入自主修复循环，开始时为 `0/5`。
+  已进入自主修复循环；attempt 1 已计入 `1/5`，attempt 2 使用固定 Image 1／2
+  fresh regenerate，不上传 Image 3。
 
 ## 执行记录
 
@@ -426,8 +532,27 @@ after reduction to 108 x 41 pixels.
   连通色键、透明 RGB 清零、等比 bbox-fit、四态派生、atlas packing 与真实
   排版预演。` 该授权只开放已冻结正文，不开放换参考、改几何、接入 addon 或
   提前晋级 source／runtime。
-- 实际生成／修图调用 `0/5`；流程错误 `0`；上传 `0`；没有候选、source、
-  runtime atlas 或 addon 代码改动。
+- attempt 1 固定执行器 session：`019fda1b-cb5e-71f0-9c49-b3b753657d4c`；
+  prompt body SHA-256
+  `45e3362ab6c789eb32369eeae0b0d7162329a61a107b30d9cb77cba820153713`；
+  固定 Image 1／2 SHA 均匹配。provider native raw 为
+  `generated/quests/ql-d-reward-slots/production/V2/attempt-1/raw/ql-d-v2-attempt-1.provider-31.png`，
+  SHA-256
+  `d6a619eeb3a72f946afe3df4c8a4bc940d0abca4a2d290da20c85db9f707d3b4`。
+- attempt 1 provider raw 为 `1275×1233 RGB`，不满足“正方形输出才允许同轴
+  归一化”的硬门禁；边缘连通诊断 bbox 为 `[46,440,1228,793]`，宽高比
+  `3.3484419263:1`，也越出 `2.58..2.69`。背景 exact `#00FF00` 比例为 `0`，
+  但只有一个连通主物件。固定子进程随后自行做出的 `1024²` 非等比重排不是
+  授权候选，仅作为流程否决证据，禁止进入审查、edit 或晋级。
+- attempt 1 ignored review JSON SHA-256
+  `7282927fe27a777924980e6125731701af9862f7ea4b112a72791c87aa20368d`；
+  hard-reject sheet SHA-256
+  `cbb299c02715408117355ed49a59ba423869d344223090e7b2f422542f631db7`。
+- 本地收集器错误地从 stdout 收集了历史绝对图片路径；该错误发生在 provider
+  结果之后，不新增生图调用。收集器已限制为本次 Codex session 的 native
+  目录和本次空工作区 `generated/`，后续不再把历史文件误记为输出。
+- 实际生成／修图调用 `1/5`；流程错误 `0`；本地流程修复事件 `1`；没有合格
+  候选、source、runtime atlas 或 addon 代码改动。
 
 ## 审查记录
 
@@ -441,6 +566,16 @@ after reduction to 108 x 41 pixels.
   示例动态内容和 exact RGB 仍非权威。
 - 未完成审查：最终 ImageGen 候选、小尺寸纹理、正式四态 atlas、P5 addon
   接入与 P6 实机；这些尚未生产，不属于当前 fallback 的实机验收。
+- attempt 1 目视从头审查：对象身份为一枚两区奖励槽，正面层序基本清楚；但
+  provider 非正方形且物件 `3.3484:1` 过宽。黄铜在四角与上下沿形成近乎完整、
+  对称的珠宝式边框；皮革和两块安全区均有密集、重复的压纹／织纹，轮廓过于
+  精密工整，综合色更接近现代暗黑类 HUD。图标井与名称面虽存在，却不够安静，
+  不能承载 `33px` 动态图标和 `64px` 动态名称。技术硬门禁后未构造四态 atlas
+  或真实排版，避免用未授权非等比变形伪装通过。
+- attempt 1 不具备 Image 3 资格：基本比例和全局材料语言均错误，不是冻结
+  边界内的局部修复。attempt 2 必须固定 Image 1／2 fresh regenerate；完整
+  V2.r2 body 为 `102` 行，SHA-256
+  `261d2c834fa63964eb8c4a2a46e371abe5e5baf0885b9652f4c110fb1e3f6c36`。
 
 ## 尝试摘要
 
@@ -448,13 +583,14 @@ after reduction to 108 x 41 pixels.
 |---|---|---:|---|
 | `QL-D-SIM-V1` | 历史确定性本地模拟 | `0` | 由当前邻接 UI 的 V2 取代 |
 | `QL-D-SIM-V2` | 确定性本地模拟 | `0` | `simulation-confirmed / P2`；display-region `5/5 pass` |
-| `QL-D V2 production` | 固定 Image 1／2 的单物件 generate；已获逐字授权 | `0/5` | `prompt-authorized / production-active / P3` |
+| `QL-D V2 attempt 1` | 固定 Image 1／2 fresh generate | `1` | `internal-rejected`：non-square；aspect `3.3484`；现代精密外框／密集微纹；无 Image 3 资格 |
+| `QL-D V2 attempt 2` | 固定 Image 1／2 fresh regenerate；完整 V2.r2 正文 | `0` | `retry-prepared / P3` |
 
 ## 下一门禁
 
-当前 runtime 几何／fallback 的实机门禁、V2 方向门禁和独立 production 授权
-门禁都已通过。下一门禁是按最多五次实际调用执行 generate → review → retry
-自主循环；每个 countable output 都必须完成技术检查、四态临时 atlas、真实
-`0／1／2／4／6` 排版和 display-region 检查。内部完整通过即停止并交用户复审；
+attempt 1 已按技术与美术双重失败内部退回。下一门禁是从固定 Image 1／2 执行
+完整 `QL-D V2.r2` fresh regenerate；不上传 attempt 1。countable output 通过
+正方形、比例与物件身份硬门禁后，才构造四态临时 atlas、真实
+`0／1／2／4／6` 排版和 display-region。内部完整通过即停止并交用户复审；
 第五次仍失败则停止等待用户决定。用户接受候选前不得晋级 source／runtime、
 修改 addon 或把生产授权误写成接入授权。

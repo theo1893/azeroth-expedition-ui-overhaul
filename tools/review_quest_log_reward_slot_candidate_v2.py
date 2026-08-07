@@ -660,6 +660,128 @@ def render_contact_sheet(
     sheet.save(output, "PNG", optimize=False, compress_level=9)
 
 
+def write_non_square_rejection(
+    root: Path,
+    raw_path: Path,
+    raw: Image.Image,
+    output_dir: Path,
+    attempt: str,
+    repo_commit: str,
+    session_id: str,
+    reference_checks: dict[str, bool],
+    production_path: Path,
+) -> int:
+    keyed, key_metrics = edge_connected_chroma_key(raw.convert("RGB"))
+    bbox = alpha_bbox(keyed)
+    aspect = (
+        (bbox[2] - bbox[0]) / (bbox[3] - bbox[1]) if bbox else None
+    )
+    keyed_path = output_dir / f"{attempt}.diagnostic-transparent.png"
+    sheet_path = output_dir / f"{attempt}.hard-reject-sheet.png"
+    report_path = output_dir / f"{attempt}.review.json"
+    keyed.save(keyed_path, "PNG", optimize=False, compress_level=9)
+
+    sheet = Image.new("RGBA", (1320, 700), (28, 23, 19, 255))
+    draw = ImageDraw.Draw(sheet, "RGBA")
+    title = load_font(
+        resolve(
+            root,
+            "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf",
+        ),
+        25,
+    )
+    body = load_font(
+        resolve(root, "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf"),
+        18,
+    )
+    draw.text(
+        (36, 24),
+        f"QL-D V2 {attempt}｜硬门禁拒绝：provider 非正方形",
+        font=title,
+        fill=(226, 194, 139, 255),
+    )
+    raw_preview = raw.convert("RGBA")
+    raw_preview.thumbnail((600, 560), RESAMPLE)
+    keyed_preview = checkerboard((600, 560))
+    keyed_scaled = keyed.copy()
+    keyed_scaled.thumbnail((600, 560), RESAMPLE)
+    keyed_preview.alpha_composite(
+        keyed_scaled,
+        ((600 - keyed_scaled.width) // 2, (560 - keyed_scaled.height) // 2),
+    )
+    sheet.alpha_composite(raw_preview, (36, 86))
+    sheet.alpha_composite(keyed_preview, (684, 86))
+    draw.text((36, 654), f"raw {raw.width}×{raw.height}", font=body, fill=(211, 111, 91, 255))
+    draw.text(
+        (684, 654),
+        f"diagnostic bbox {bbox}; aspect {aspect:.4f}" if aspect else "no visible bbox",
+        font=body,
+        fill=(211, 111, 91, 255),
+    )
+    sheet.save(sheet_path, "PNG", optimize=False, compress_level=9)
+    report = {
+        "schema": "aeui.quest-log.reward-slot.candidate-review.v2",
+        "batch": "QL-D V2",
+        "attempt": attempt,
+        "repo_commit_before_generation": repo_commit,
+        "fixed_executor_session_id": session_id,
+        "raw": {
+            "path": display(root, raw_path),
+            "sha256": sha256(raw_path),
+            "size": list(raw.size),
+            "mode": raw.mode,
+        },
+        "contracts": {
+            "production": {
+                "path": display(root, production_path),
+                "sha256": sha256(production_path),
+            }
+        },
+        "key_metrics": key_metrics,
+        "diagnostic_bbox_exclusive": list(bbox or ()),
+        "diagnostic_aspect": aspect,
+        "technical_checks": {
+            **reference_checks,
+            "provider_raw_is_square": False,
+        },
+        "technical_status": "fail",
+        "first_technical_failure": "provider_raw_is_square",
+        "contract_stop_reason": (
+            "Non-square provider output must fail before authorized 1024-square "
+            "normalization, bbox-fit, four-state derivation, atlas packing, or "
+            "real-layout assembly."
+        ),
+        "visual_review": {
+            "semantic_and_physical": "pending",
+            "perspective_and_layers": "pending",
+            "art_baseline": "pending",
+            "component_and_states": "not-run-after-hard-gate",
+            "assembly_and_runtime_legibility": "not-run-after-hard-gate",
+        },
+        "outputs": {
+            "diagnostic_transparent": {
+                "path": display(root, keyed_path),
+                "sha256": sha256(keyed_path),
+            },
+            "hard_reject_sheet": {
+                "path": display(root, sheet_path),
+                "sha256": sha256(sheet_path),
+            },
+        },
+        "promotion": {
+            "source_written": False,
+            "runtime_written": False,
+            "addon_changed": False,
+        },
+    }
+    report_path.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+    return 1
+
+
 def build_display_contract(
     root: Path,
     template_path: Path,
@@ -708,6 +830,18 @@ def main() -> int:
 
     with Image.open(raw_path) as opened:
         raw = opened.copy()
+    if raw.width != raw.height:
+        return write_non_square_rejection(
+            root,
+            raw_path,
+            raw,
+            output_dir,
+            args.attempt,
+            args.repo_commit,
+            args.session_id,
+            reference_checks,
+            production_path,
+        )
     candidate = contract["candidate"]
     normalized = normalize_square(raw, tuple(candidate["normalized_canvas"]))
     keyed, key_metrics = edge_connected_chroma_key(normalized)

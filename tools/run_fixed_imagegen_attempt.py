@@ -80,22 +80,30 @@ def display(root: Path, path: Path) -> str:
         return str(resolved)
 
 
-def collect_images(workspace: Path, stdout: str) -> list[Path]:
-    candidates: set[Path] = set()
+def collect_images(
+    workspace: Path, stdout: str
+) -> tuple[list[Path], list[Path], str | None]:
+    provider_native: set[Path] = set()
+    child_saved: set[Path] = set()
     generated = workspace / "generated"
     if generated.exists():
         for path in generated.rglob("*"):
             if path.is_file() and path.suffix.lower() in IMAGE_SUFFIXES:
-                candidates.add(path.resolve())
-    for match in re.findall(
-        r"(?:^|[\s\(\[])(/[^^\s\)\]\"']+\.(?:png|webp|jpe?g))",
+                child_saved.add(path.resolve())
+    session_match = re.search(
+        r"^session id:\s*([0-9a-f-]+)\s*$",
         stdout,
         flags=re.IGNORECASE | re.MULTILINE,
-    ):
-        path = Path(match)
-        if path.is_file():
-            candidates.add(path.resolve())
-    return sorted(candidates, key=lambda item: (item.stat().st_mtime_ns, str(item)))
+    )
+    session_id = session_match.group(1) if session_match else None
+    if session_id:
+        native_dir = Path.home() / ".codex" / "generated_images" / session_id
+        if native_dir.exists():
+            for path in native_dir.rglob("*"):
+                if path.is_file() and path.suffix.lower() in IMAGE_SUFFIXES:
+                    provider_native.add(path.resolve())
+    order = lambda item: (item.stat().st_mtime_ns, str(item))
+    return sorted(provider_native, key=order), sorted(child_saved, key=order), session_id
 
 
 def main() -> int:
@@ -157,6 +165,8 @@ def main() -> int:
     instruction_lines.extend(
         [
             "Generate or edit exactly one bitmap according to the complete prompt above.",
+            "Do not resize, crop, key, composite, repaint, or otherwise post-process the direct image_gen output.",
+            "Copy the direct image_gen output byte-for-byte when placing it in the requested generated path.",
             f"Save the resulting bitmap under ./generated/{args.attempt}.png.",
             "Return the absolute saved path. Do not perform review or promotion.",
         ]
@@ -206,14 +216,28 @@ def main() -> int:
     stdout = "".join(output_lines)
     (output_dir / f"{args.attempt}.executor.log").write_text(stdout, encoding="utf-8")
 
-    provider_images = collect_images(workspace, stdout)
+    provider_images, child_images, codex_session_id = collect_images(workspace, stdout)
     copied: list[dict[str, Any]] = []
     for index, source in enumerate(provider_images, start=1):
         suffix = source.suffix.lower() if source.suffix.lower() in IMAGE_SUFFIXES else ".png"
-        target = output_dir / f"{args.attempt}.provider-{index:02d}{suffix}"
+        target = output_dir / f"{args.attempt}.provider-native-{index:02d}{suffix}"
         shutil.copy2(source, target)
         copied.append(
             {
+                "source_path": str(source),
+                "path": display(root, target),
+                "sha256": sha256(target),
+                "size_bytes": target.stat().st_size,
+            }
+        )
+    child_copied: list[dict[str, Any]] = []
+    for index, source in enumerate(child_images, start=1):
+        suffix = source.suffix.lower() if source.suffix.lower() in IMAGE_SUFFIXES else ".png"
+        target = output_dir / f"{args.attempt}.child-saved-{index:02d}{suffix}"
+        shutil.copy2(source, target)
+        child_copied.append(
+            {
+                "source_path": str(source),
                 "path": display(root, target),
                 "sha256": sha256(target),
                 "size_bytes": target.stat().st_size,
@@ -229,9 +253,12 @@ def main() -> int:
         "prompt_body_sha256": hashlib.sha256(body.encode("utf-8")).hexdigest(),
         "images": image_records,
         "process_return_code": return_code,
+        "codex_session_id": codex_session_id,
         "provider_outputs": copied,
         "provider_output_count": len(copied),
-        "countable_output": bool(copied),
+        "child_saved_outputs": child_copied,
+        "child_saved_output_count": len(child_copied),
+        "countable_output": bool(copied or child_copied),
         "temporary_workspace": str(workspace),
     }
     summary_path = output_dir / f"{args.attempt}.executor.json"
@@ -240,9 +267,9 @@ def main() -> int:
         encoding="utf-8",
     )
     print(json.dumps(summary, ensure_ascii=False, indent=2), flush=True)
-    if return_code != 0 and not copied:
+    if return_code != 0 and not (copied or child_copied):
         return return_code or 2
-    if not copied:
+    if not (copied or child_copied):
         return 3
     return 0
 
