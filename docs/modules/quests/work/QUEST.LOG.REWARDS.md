@@ -1,21 +1,24 @@
-# QL-D Quest Log 奖励槽 V1
+# QL-D Quest Log 奖励槽 V2
 
 ## 元数据
 
 - 模块：Quests／Quest Log 右页。
-- 批次：`QL-D V1`。
+- 批次：`QL-D V2`。
 - 组件 ID：`QUEST.LOG.REWARD.SLOT`。
-- 子状态：`simulation-proposed / awaiting-user-confirmation`。
+- 子状态：`simulation-reviewed / awaiting-user-confirmation`。
 - 项目阶段：当前几何／fallback `P6 game-validated`；最终美术 `P2`。
 - 固定执行器：若后续获得独立生产授权，只允许
   `imagegen-0-143-0`／`@openai/codex@0.143.0`。
 - 当前实际 ImageGen 调用：`0/0`；本轮没有生产授权、没有 source、没有
   runtime 位图。
+- 当前请求：用户于 `2026-08-07` 要求为奖励适配框生成美术资源。项目固定
+  工作流要求先确认真实排版方向，因此本轮先以当前 addon 邻接 UI 重建 V2
+  本地几何模拟；该请求不自动构成 V2 方向确认或正式 ImageGen 授权。
 - 用户问题来源：`2026-08-04` 实机截图确认多奖励重叠／末端裁切、详情与奖励
   字体难读，以及 pfUI 平面黑灰奖励卡片过于现代。
 - 实机修复确认：`2026-08-05` 用户确认 Quest 右页的既有 bug 和显示问题均已
   修复；覆盖 FrameXML 锚点错误、奖励间隔／换行、详情末端及原生 NameFrame
-  回显。该确认接受当前运行时几何和 fallback 表现，不等于确认 QL-D V1
+  回显。该确认接受当前运行时几何和 fallback 表现，不等于确认 QL-D V2
   最终奖励槽美术方向或授权 ImageGen。
 
 ## 美术基准继承
@@ -93,7 +96,7 @@
 - 正式槽资产尚未确认前，runtime `1.25` 的 adapter-owned 容器只使用低透明
   暖纸底和深赭／旧黄铜边；它是可回退的程序化临时视觉，不是最终 source。
 
-## V1 确定性本地模拟
+## V1 历史确定性本地模拟
 
 - 规格：
   [`quest_log_reward_slots_simulation_v1.json`](../../../../tools/specs/quest_log_reward_slots_simulation_v1.json)，
@@ -126,56 +129,105 @@
   addon runtime。当前分支可由 tracked spec／renderer 确定性重建，因此没有
   发布 handoff 检查点。
 
-## 展示区域门禁
+V1 在 Windows 上形成的具体像素已被 V2 当前邻接 UI 预演取代；V1 的物件方向
+与真实奖励几何仍保留为历史 provenance，不再作为当前用户确认对象。
+
+## V2 当前邻接 UI 确定性本地模拟
+
+- specification：
+  [`quest_log_reward_slots_simulation_v2.json`](../../../../tools/specs/quest_log_reward_slots_simulation_v2.json)，
+  SHA-256
+  `d03de08ee54597af0cbbaf7b0f467e14a59a6a9f29bf1fbc153d1b608ec91ebd`。
+- renderer：
+  [`render_quest_log_reward_slots_simulation_v2.py`](../../../../tools/render_quest_log_reward_slots_simulation_v2.py)，
+  SHA-256
+  `6934b3fb18207a5619f76786d557cd41aaa991af1cba7abcec41c61b5e231d69`；
+  它复用 V1 的简单几何奖励槽 renderer，只在最终合成中加入当前 accepted
+  `QuestLogSealPurityRibbonV1.tga` 闭合根部，并按真实 runtime 层序重新后绘
+  QS-A1 火漆。
+- 当前 accepted/runtime 邻接 UI：`QuestLogShellV4.tga`、QS-A1 normal 漆章、
+  QS-B1 V7-A `32×28px` 闭合载体根；层序为书体 → 奖励槽／动态示例内容 →
+  载体 `ARTWORK` → 火漆 `OVERLAY`。
+- Python：conda 环境 `py312` 的实际 `sys.executable` 已写入 ignored 模拟报告；
+  tracked 文档按跨设备规则只保留环境名。Python `3.12.12`，Pillow `12.0.0`；
+  OS 为 macOS／Darwin。
+- 复现命令：
+
+  ```text
+  conda run -n py312 python tools/render_quest_log_reward_slots_simulation_v2.py tools/specs/quest_log_reward_slots_simulation_v2.json --repo-root .
+  ```
+
+- ignored 输出：
+  - `generated/quests/ql-d-reward-slots/simulation/V2/quest_log_reward_slots_sim_v2.png`，
+    `676×464`，SHA-256
+    `687b9836c4342a3ede68e7544e764d67bffcecd2130d6f6cc1c632b0ffce9991`；
+  - `quest_log_reward_slots_sim_v2_review_2x.png`，`1352×928`，SHA-256
+    `c6457cb9e3cc2c4493450e2399f70170dd87ac3ddaca7b9feb4bcd1ee1d11c01`；
+  - 模拟报告 SHA-256
+    `c76ee0c62a7980bf39b92c90d11efe71929bf51ea0abc8378369d162010bff18`。
+- V2 继续提出“一枚真实奖励 Button 对应一枚浅凹公会装备签槽”：深胡桃
+  旧皮革浅削角外沿、被磨损打断的克制氧化黄铜边、左侧深皮革图标凹槽、
+  右侧安静羊皮纸名称面和窄纸面接触阴影。六格依次覆盖 normal、hover、
+  normal、pressed、normal、disabled；没有 selected。
+- 示例物品图标、数量、中文名称、品质色和金额都是 renderer 动态示意，不属于
+  未来容器资产。离线正文使用仓库 Noto Sans SC `12px` 近似中文客户端的
+  `pfUI.font_default` 尺度；字体像素和示例文案不属于方向确认范围。
+- ImageGen `0/0`，本地渲染错误 `0`。模拟可由 tracked spec／renderer
+  确定性重建，且当前没有换设备／push 请求，因此没有发布 handoff。
+
+## V2 展示区域门禁
 
 - 合同：
-  [`quest_log_reward_slots_sim_display_region_v1.json`](../../../../tools/specs/quest_log_reward_slots_sim_display_region_v1.json)，
+  [`quest_log_reward_slots_sim_display_region_v2.json`](../../../../tools/specs/quest_log_reward_slots_sim_display_region_v2.json)，
   SHA-256
-  `ac7d6dce4243c4b036b17ddf24b560411a7b25126c286a94c6da0fc21fa31f1d`。
+  `288673c9d5e6dbc16d75630f68a84bb7d5afa22c9b48631fedeb42f1fd81118e`。
 - 运行命令：
 
-  ```powershell
-  D:\Softwares\miniconda3\python.exe .codex\skills\run-aeui-asset-workflow\scripts\validate_display_regions.py tools\specs\quest_log_reward_slots_sim_display_region_v1.json --report generated\quests\ql-d-reward-slots\simulation\V1\quest_log_reward_slots_display_region_report_v1.json
+  ```text
+  conda run -n py312 python .codex/skills/run-aeui-asset-workflow/scripts/validate_display_regions.py tools/specs/quest_log_reward_slots_sim_display_region_v2.json --report generated/quests/ql-d-reward-slots/simulation/V2/quest_log_reward_slots_display_region_report_v2.json
   ```
 
 - 结果：`pass`；场景为 0／1／2／4／6 奖励，`5/5` 通过，violations `0`，
   first failure `null`。ignored 报告 SHA-256
-  `1d1861889095b90decbe57e2a645535b405a0ca2a7f2a529e5fd4b952ffd0bb5`。
+  `bfa64c2892232e2fe9d8cb442a4a22b359bb22d9a2ea3997d7b38d4e250945e4`。
 - 该结果只证明方向稿几何，不证明最终纹理、客户端 UV、交互或 P6 实机表现。
 
 ## 最终执行正文
 
-尚未形成。当前只有本地几何／材料方向模拟，用户尚未确认可见方向，也没有
-独立生产授权。确认前不得把模拟描述扩写成可执行 ImageGen 正文。
+尚未形成。当前只有 V2 本地几何／材料方向模拟，用户尚未确认可见方向，也
+没有独立生产授权。确认前不得把模拟描述扩写成可执行 ImageGen 正文。
 
 ## 执行记录
 
-- 本轮只运行 tracked renderer 与展示区域 validator；两次命令、解释器、输入
-  SHA 和输出 SHA 已记录在上方。
+- 本轮只运行 tracked V2 renderer 与展示区域 validator；两次命令、解释器、
+  输入 SHA 和输出 SHA 已记录在上方。
 - 实际生成／修图调用 `0`；流程错误 `0`；没有候选 source 或 runtime atlas。
 
 ## 审查记录
 
 - 自动几何：0／1／2／4／6 五场景全部通过，违规 `0`。
 - 本地目视：六格均落在右页纸面，图标／数量／名称可辨，normal／hover／
-  pressed／disabled 有克制差异；容器没有烘焙动态内容。
+  pressed／disabled 有克制差异；容器没有烘焙动态内容。当前 V7-A 闭合载体与
+  QS-A1 火漆按 addon 层序装配，未遮挡奖励标题或槽体。
 - 实机审查：用户于 `2026-08-05` 确认当前右页 bug 与显示均已修复，当前
   几何／fallback 进入 `P6 game-validated`。仓库没有新增或虚构本轮截图路径。
-- 未完成审查：QL-D V1 用户可见方向、最终小尺寸纹理与正式四态 atlas；这些
+- 未完成审查：QL-D V2 用户可见方向、最终小尺寸纹理与正式四态 atlas；这些
   尚未生产，因此不属于本次当前 fallback 的实机验收。
 
 ## 尝试摘要
 
 | 尝试 | 类型 | 实际生图 | 结果 |
 |---|---|---:|---|
-| `QL-D-SIM-V1` | 确定性本地模拟 | `0` | `simulation-proposed / awaiting-user-confirmation`；display-region `5/5 pass` |
+| `QL-D-SIM-V1` | 历史确定性本地模拟 | `0` | 由当前邻接 UI 的 V2 取代 |
+| `QL-D-SIM-V2` | 确定性本地模拟 | `0` | `simulation-reviewed / awaiting-user-confirmation`；display-region `5/5 pass` |
 
 ## 下一门禁
 
-当前 runtime 几何／fallback 的实机门禁已经通过。下一门禁是用户确认 V1 的
-可见方向：是否接受“深色旧皮革浅削角外框 + 左侧黄铜图标凹槽 + 右侧
-羊皮纸名称面”，取代当前平面黑灰卡片。确认前不得形成正式生成正文、请求
-ImageGen 授权、建立 source／atlas 或接入新位图。
+当前 runtime 几何／fallback 的实机门禁已经通过。下一门禁是用户确认 V2 的
+可见方向：是否接受“深色旧皮革浅削角外框 + 被磨损打断的克制氧化黄铜边 +
+左侧深皮革图标凹槽 + 右侧羊皮纸名称面”，取代当前程序化暖纸平面容器。
+确认前不得形成正式生成正文、请求 ImageGen 授权、建立 source／atlas 或接入
+新位图。
 
 若方向确认，下一步先冻结四态差异、最终 source／atlas 安全盒、固定上传与
 最多实际生成次数，再单独请求生产授权。确认不等于生成授权。

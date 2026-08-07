@@ -1,0 +1,87 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "QL-D/QUEST.LOG.REWARD.SLOT/SIM.V2/direction-only",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, 100%-UI-pixels",
+  "evidence": {
+    "provider": "QuestLogItem1..MAX_NUM_ITEMS",
+    "adapter": "addon/AzerothExpeditionUI/Modules/Quests.lua",
+    "simulation_spec": "tools/specs/quest_log_reward_slots_simulation_v2.json",
+    "simulation": "generated/quests/ql-d-reward-slots/simulation/V2/quest_log_reward_slots_sim_v2.png",
+    "adjacent_runtime": [
+      "addon/AzerothExpeditionUI/Media/Quests/QuestLogShellV4.tga",
+      "addon/AzerothExpeditionUI/Media/Quests/QuestToolWaxSealStatesV1.tga",
+      "addon/AzerothExpeditionUI/Media/Quests/QuestLogSealPurityRibbonV1.tga"
+    ],
+    "direction_only": true,
+    "final_runtime": false
+  },
+  "atlas": {
+    "size": [432, 41],
+    "visible_bbox": [0, 0, 432, 41],
+    "require_exact_visible_coverage": true,
+    "sampled_regions": [
+      {"id": "normal", "box": [0, 0, 108, 41]},
+      {"id": "hover", "box": [108, 0, 216, 41]},
+      {"id": "pressed", "box": [216, 0, 324, 41]},
+      {"id": "disabled", "box": [324, 0, 432, 41]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 1, "right": 1, "top": 1, "bottom": 1},
+    "minimum_frame_size": [3, 3]
+  },
+  "scenarios": [
+    {
+      "id": "zero-rewards",
+      "frame": [224, 324],
+      "preview_frame": [224, 324],
+      "zones": {"reward-safe": [0, 0, 224, 324]},
+      "regions": []
+    },
+    {
+      "id": "one-reward",
+      "frame": [224, 324],
+      "preview_frame": [224, 324],
+      "zones": {"reward-safe": [0, 0, 224, 324]},
+      "regions": [
+        {"id": "reward.1", "kind": "button", "box": [0, 0, 108, 41], "zone": "reward-safe"}
+      ]
+    },
+    {
+      "id": "two-rewards",
+      "frame": [224, 324],
+      "preview_frame": [224, 324],
+      "zones": {"reward-safe": [0, 0, 224, 324]},
+      "regions": [
+        {"id": "reward.1", "kind": "button", "box": [0, 0, 108, 41], "zone": "reward-safe"},
+        {"id": "reward.2", "kind": "button", "box": [116, 0, 224, 41], "zone": "reward-safe"}
+      ]
+    },
+    {
+      "id": "four-rewards",
+      "frame": [224, 324],
+      "preview_frame": [224, 324],
+      "zones": {"reward-safe": [0, 0, 224, 324]},
+      "regions": [
+        {"id": "reward.1", "kind": "button", "box": [0, 0, 108, 41], "zone": "reward-safe"},
+        {"id": "reward.2", "kind": "button", "box": [116, 0, 224, 41], "zone": "reward-safe"},
+        {"id": "reward.3", "kind": "button", "box": [0, 45, 108, 86], "zone": "reward-safe"},
+        {"id": "reward.4", "kind": "button", "box": [116, 45, 224, 86], "zone": "reward-safe"}
+      ]
+    },
+    {
+      "id": "six-rewards",
+      "frame": [224, 324],
+      "preview_frame": [224, 324],
+      "zones": {"reward-safe": [0, 0, 224, 324]},
+      "regions": [
+        {"id": "reward.1", "kind": "button", "box": [0, 0, 108, 41], "zone": "reward-safe"},
+        {"id": "reward.2", "kind": "button", "box": [116, 0, 224, 41], "zone": "reward-safe"},
+        {"id": "reward.3", "kind": "button", "box": [0, 45, 108, 86], "zone": "reward-safe"},
+        {"id": "reward.4", "kind": "button", "box": [116, 45, 224, 86], "zone": "reward-safe"},
+        {"id": "reward.5", "kind": "button", "box": [0, 90, 108, 131], "zone": "reward-safe"},
+        {"id": "reward.6", "kind": "button", "box": [116, 90, 224, 131], "zone": "reward-safe"}
+      ]
+    }
+  ]
+}
