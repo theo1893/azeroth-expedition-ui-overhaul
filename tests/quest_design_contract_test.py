@@ -1623,8 +1623,8 @@ def main() -> None:
         rewards_work,
         (
             "QL-D Quest Log 奖励槽（当前 V3；V2 历史）",
-            "`simulation-confirmed / production-draft / awaiting-production-authorization`",
-            "当前几何／fallback `P6 game-validated`；V3 最终美术 `P2`",
+            "`prompt-authorized / P3 / production 0/5`",
+            "当前几何／fallback `P6 game-validated`；V3 最终美术 `P3`",
             "`2026-08-05`",
             "V3 生成前模拟 ImageGen：`0/0`",
             "当前 `0/5`",
@@ -1662,7 +1662,7 @@ def main() -> None:
             "exactly three visible hand-set lash marks",
             "exactly two small, mismatched",
             "## V3 自主修复循环与授权边界",
-            "authorized=false",
+            "authorized=true",
         ),
         "active QL-D reward-slot work",
     )
@@ -1703,9 +1703,13 @@ def main() -> None:
     assert reward_production_spec["schema"] == (
         "aeui.quest-log.reward-slot.production-review.v3"
     )
-    assert reward_production_spec["executor"]["authorized"] is False
+    assert reward_production_spec["status"] == "prompt-authorized"
+    assert reward_production_spec["authorization"]["authorized"] is True
+    assert reward_production_spec["executor"]["authorized"] is True
     assert reward_production_spec["executor"]["simulation_confirmed"] is True
     assert reward_production_spec["executor"]["maximum_actual_imagegen_calls"] == 5
+    assert reward_production_spec["executor"]["current_actual_imagegen_calls"] == 0
+    assert reward_production_spec["executor"]["process_errors"] == 0
     assert reward_production_spec["candidate"]["runtime_size"] == [108, 41]
     assert reward_production_spec["candidate"]["object_count"] == 1
     assert reward_production_spec["candidate"]["generated_state"] == "normal"

@@ -2,12 +2,21 @@
   "schema": "aeui.quest-log.reward-slot.production-review.v3",
   "version": "QL-D V3",
   "component": "QUEST.LOG.REWARD.SLOT",
+  "status": "prompt-authorized",
+  "authorization": {
+    "authorized": true,
+    "date": "2026-08-07",
+    "preauthorization_contract_sha256": "98797a4c4753518c5dce0a4b2e639c2d70d1d8b8eb67ad3f323c683be3adb7d3",
+    "user_text": "确认授权 QL-D V3；允许每次上传固定 SHA 的 Image 1/2，允许同循环紧邻前次输出仅在冻结修复边界内作为 Image 3 edit 输入；最多 5 次实际 ImageGen 调用，流程错误不占额度；允许按合同执行正方形归一化、边缘连通色键、透明 RGB 清零、等比 bbox-fit、四态派生、atlas packing 与真实排版预演。"
+  },
   "executor": {
     "package": "@openai/codex@0.143.0",
     "skill": "imagegen-0-143-0",
-    "authorized": false,
+    "authorized": true,
     "simulation_confirmed": true,
     "maximum_actual_imagegen_calls": 5,
+    "current_actual_imagegen_calls": 0,
+    "process_errors": 0,
     "process_errors_count_toward_budget": false
   },
   "simulation": {

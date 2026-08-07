@@ -5,18 +5,22 @@
 - 模块：Quests／Quest Log 右页。
 - 当前批次：`QL-D V3`；`QL-D V2` 作为已封闭失败历史保留在本文件。
 - 组件 ID：`QUEST.LOG.REWARD.SLOT`。
-- 当前子状态：`simulation-confirmed / production-draft / awaiting-production-authorization`。
-- 项目阶段：当前几何／fallback `P6 game-validated`；V3 最终美术 `P2`。
-- 固定执行器：V3 production 若获独立授权，只允许
-  `imagegen-0-143-0`／`@openai/codex@0.143.0`；当前未调用。
+- 当前子状态：`prompt-authorized / P3 / production 0/5`。
+- 项目阶段：当前几何／fallback `P6 game-validated`；V3 最终美术 `P3`。
+- 固定执行器：V3 production 只允许
+  `imagegen-0-143-0`／`@openai/codex@0.143.0`；已授权但尚未调用。
 - V3 生成前模拟 ImageGen：`0/0`；production 预算为最多 `5` 次实际 ImageGen
-  generation／edit，当前 `0/5`、尚未授权，流程错误 `0`。V2
+  generation／edit，当前 `0/5`、已授权，流程错误 `0`。V2
   历史 production 为 `5/5` actual ImageGen，五稿均未晋级，且不会转作 V3
   edit input、source 或 runtime 位图。
 - 当前请求：用户于 `2026-08-07` 在 V2 五次循环结束后明确否决其可见风格：
   “太规整、过于现代”，要求改为手绘／潦草相关元素并加强 RPG 沉浸感。
   该指示开启 V3 视觉版本；用户随后以 `QL-D-SIM-V3` 明确确认本地几何稿。
   该确认只接受下述可见方向，不构成 ImageGen、P4 或 P5 授权。
+- 生产授权：用户于 `2026-08-07` 明确回复：
+  `确认授权 QL-D V3；允许每次上传固定 SHA 的 Image 1/2，允许同循环紧邻前次输出仅在冻结修复边界内作为 Image 3 edit 输入；最多 5 次实际 ImageGen 调用，流程错误不占额度；允许按合同执行正方形归一化、边缘连通色键、透明 RGB 清零、等比 bbox-fit、四态派生、atlas packing 与真实排版预演。`
+  该授权只开放本文件 SHA 已冻结的 V3 正文与修复边界，不包含 P4 接受、P5
+  导出、addon 接入、替换参考或改变组件合同。
 - 用户问题来源：`2026-08-04` 实机截图确认多奖励重叠／末端裁切、详情与奖励
   字体难读，以及 pfUI 平面黑灰奖励卡片过于现代。
 - 实机修复确认：`2026-08-05` 用户确认 Quest 右页的既有 bug 和显示问题均已
@@ -316,8 +320,9 @@ V1 在 Windows 上形成的具体像素已被 V2 当前邻接 UI 预演取代；
 - tracked production contract：
   [`quest_log_reward_slot_production_v3.json`](../../../../tools/specs/quest_log_reward_slot_production_v3.json)，
   SHA-256
-  `98797a4c4753518c5dce0a4b2e639c2d70d1d8b8eb67ad3f323c683be3adb7d3`；
-  当前 `authorized=false`，只在用户逐字授权后改为 true 并提交。
+  `8380f367e9c7b016ef2e2590d77cf72d1f145f2e378ce981fab7aa40949c3520`；
+  当前 `authorized=true`；授权前合同 SHA-256 为
+  `98797a4c4753518c5dce0a4b2e639c2d70d1d8b8eb67ad3f323c683be3adb7d3`。
 - 候选展示区域 template：
   [`quest_log_reward_slot_candidate_display_region_v3.json`](../../../../tools/specs/quest_log_reward_slot_candidate_display_region_v3.json)，
   SHA-256
@@ -532,8 +537,23 @@ uniform reduction to 108 x 41 pixels.
 - 新增／替换参考、上传模拟或旧失败稿、改变对象／状态数量、视觉隐喻、层序、
   画布、runtime 几何、safe area、provider、Alpha／atlas 策略或允许烘焙任何
   动态内容，都超出冻结边界并必须重新授权。
-- 当前 `0/5`，流程错误 `0`，尚未授权。授权正文必须先提交；在用户逐字授权
-  前不得调用 ImageGen。
+- 当前 `0/5`，流程错误 `0`，已获用户逐字授权。本授权状态与完整正文必须先
+  提交；attempt 1 只在该提交完成后调用固定执行器。
+
+## V3 生产授权记录
+
+- 授权日期：`2026-08-07`。
+- 授权版本：`QL-D V3`；production prompt body SHA-256
+  `cfba1824d5aa7bad94c359eff6639727d4c1fedec419c9233eb299b10c313382`。
+- 固定输入：Image 1 SHA
+  `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`；
+  Image 2 SHA
+  `91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5`。
+- 授权范围：attempt 1 固定 Image 1／2 fresh generate；attempt 2–5 仍固定
+  Image 1／2，并仅在本文件冻结条件满足时允许紧邻前稿作为 Image 3 edit。
+  最多五次实际 ImageGen，流程错误不占额度；确定性后处理仅限本文件所列合同。
+- 不包含：自动接受候选、写入 `assets/source/`、导出 runtime、修改 addon、
+  Turtle WoW 实机验收或组件清理。
 
 ## V2 历史最终执行正文
 
@@ -1364,10 +1384,8 @@ heavy vanilla-WoW material hierarchy remains readable at 108 x 41.
 
 ## 下一门禁
 
-`QL-D-SIM-V3` 已由用户确认并完整转写；production prompt、确定性合同与
-完整性预检已经形成。当前只等待用户独立授权 `QL-D V3` 正文、固定 SHA 的
-Image 1／2、受限同循环 Image 3、最多五次 actual ImageGen，以及已列出的
-正方形归一化、边缘连通色键、透明 RGB 清零、等比 bbox-fit、四态派生、atlas
-packing 与真实排版预演。授权前 production contract 保持 `authorized=false`，
-不得调用 ImageGen、创建 source／runtime、修改 addon 或把模拟确认误写成
-正式候选接受。
+`QL-D-SIM-V3` 已确认，`QL-D V3` production 正文与五次修复边界已于
+`2026-08-07` 获用户逐字授权。下一门禁是在当前授权状态提交后，以固定
+Image 1／2 和原样 prompt body 执行 attempt 1，并从语义／物理结构开始完成
+全套内审、四态确定性装配和 0／1／2／4／6 真实排版。当前仍不得创建
+source／runtime、修改 addon 或把内部通过误写成用户接受。
