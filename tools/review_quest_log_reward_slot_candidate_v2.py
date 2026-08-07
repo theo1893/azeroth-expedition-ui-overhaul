@@ -95,6 +95,39 @@ def clear_transparent_rgb(image: Image.Image) -> Image.Image:
     return Image.fromarray(rgba, "RGBA")
 
 
+def clear_edge_connected_green(image: Image.Image) -> tuple[Image.Image, int]:
+    """Clear only low-alpha green spill connected to transparency."""
+    rgba = np.asarray(image.convert("RGBA")).copy()
+    r = rgba[:, :, 0].astype(np.int16)
+    g = rgba[:, :, 1].astype(np.int16)
+    b = rgba[:, :, 2].astype(np.int16)
+    visible = rgba[:, :, 3] > 0
+    greenish = visible & (g - np.maximum(r, b) >= 10) & (g - b >= 5)
+    transparent = rgba[:, :, 3] == 0
+    passable = transparent | greenish | (visible & (rgba[:, :, 3] < 16))
+    flood = Image.fromarray(
+        np.where(passable, 0, 255).astype(np.uint8), "L"
+    ).copy()
+    width, height = image.size
+    for seed in (
+        (0, 0),
+        (width - 1, 0),
+        (0, height - 1),
+        (width - 1, height - 1),
+        (width // 2, 0),
+        (width // 2, height - 1),
+        (0, height // 2),
+        (width - 1, height // 2),
+    ):
+        if flood.getpixel(seed) == 0:
+            ImageDraw.floodfill(flood, seed, 128, thresh=0)
+    connected = np.asarray(flood) == 128
+    remove = connected & greenish
+    rgba[remove, 3] = 0
+    rgba[rgba[:, :, 3] == 0, :3] = 0
+    return Image.fromarray(rgba, "RGBA"), int(remove.sum())
+
+
 def normalize_square(raw: Image.Image, size: tuple[int, int]) -> Image.Image:
     if raw.width != raw.height:
         raise ValueError("QL-D V2 provider output must be square")
@@ -242,6 +275,7 @@ def fit_canonical(
     paste = (center[0] - size[0] // 2, center[1] - size[1] // 2)
     canvas.alpha_composite(resized, paste)
     canvas = clear_transparent_rgb(canvas)
+    canvas, cleared_spill = clear_edge_connected_green(canvas)
     fitted_bbox = alpha_bbox(canvas)
     return canvas, {
         "keyed_bbox_exclusive": list(bbox),
@@ -252,6 +286,7 @@ def fit_canonical(
         "fitted_size": list(size),
         "paste_xy": list(paste),
         "canonical_bbox_exclusive": list(fitted_bbox or ()),
+        "edge_connected_green_pixels_cleared_after_fit": cleared_spill,
     }
 
 
