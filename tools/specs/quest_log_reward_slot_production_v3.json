@@ -2,7 +2,7 @@
   "schema": "aeui.quest-log.reward-slot.production-review.v3",
   "version": "QL-D V3",
   "component": "QUEST.LOG.REWARD.SLOT",
-  "status": "prompt-authorized",
+  "status": "candidate-rejected-repairing",
   "authorization": {
     "authorized": true,
     "date": "2026-08-07",
@@ -15,7 +15,7 @@
     "authorized": true,
     "simulation_confirmed": true,
     "maximum_actual_imagegen_calls": 5,
-    "current_actual_imagegen_calls": 0,
+    "current_actual_imagegen_calls": 1,
     "process_errors": 1,
     "process_errors_count_toward_budget": false
   },
@@ -158,6 +158,41 @@
       "resolution": "retry the identical committed QL-D V3 body with -- after fixed Image 2 so the positional prompt is not consumed by the variadic image option"
     }
   ],
+  "attempt_history": [
+    {
+      "attempt": 1,
+      "prompt_version": "QL-D V3",
+      "prompt_body_sha256": "cfba1824d5aa7bad94c359eff6639727d4c1fedec419c9233eb299b10c313382",
+      "repo_commit_before_generation": "c4de846",
+      "fixed_executor_session_id": "019fda69-b975-72e1-b328-75eca6653c9f",
+      "inputs": [1, 2],
+      "raw_path": "generated/quests/ql-d-reward-slots/production/V3/attempt-01/raw/ql-d-v3-attempt-01.provider-native.png",
+      "raw_sha256": "e65aff18b5cf041d137026fe0a4b956ea69a960afad4d78b1cb7b8bc23be226e",
+      "raw_size": [1254, 1254],
+      "technical_checks": "17/19",
+      "display_region": "5/5 pass",
+      "first_failure": "keyed_aspect_is_2_58_to_2_69",
+      "visible_aspect": 2.5714285714285716,
+      "additional_failures": [
+        "visible green contamination",
+        "miniature open-book identity",
+        "three nearly equal horizontal lash loops",
+        "dense regular cross-hatched material texture",
+        "right-edge fasteners intrude into quiet name field"
+      ],
+      "result": "candidate-rejected",
+      "previous_output_image_3_eligible": false,
+      "next_action": "fresh-regenerate from fixed Image 1/2 with QL-D V3.r1"
+    }
+  ],
+  "current_prompt": {
+    "version": "QL-D V3.r1",
+    "body_sha256": "f65856e024882f35bbc031c9d5e2405772e7a6ee52e890a1b3873639c678235e",
+    "operation": "fresh-regenerate",
+    "inputs": [1, 2],
+    "previous_output_as_image_3": false,
+    "next_attempt": 2
+  },
   "promotion": {
     "candidate_outputs_remain_under_generated": true,
     "source_written_before_user_acceptance": false,

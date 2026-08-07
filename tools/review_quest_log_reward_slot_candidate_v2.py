@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Review one QL-D V2 reward-slot candidate without promoting it.
+"""Review one QL-D reward-slot candidate without promoting it.
 
 The provider raw is immutable. This reviewer applies only the authorized
 square normalization, edge-connected chroma key and despill, proportional
@@ -130,7 +130,7 @@ def clear_edge_connected_green(image: Image.Image) -> tuple[Image.Image, int]:
 
 def normalize_square(raw: Image.Image, size: tuple[int, int]) -> Image.Image:
     if raw.width != raw.height:
-        raise ValueError("QL-D V2 provider output must be square")
+        raise ValueError("QL-D provider output must be square")
     return raw.convert("RGB").resize(size, RESAMPLE)
 
 
@@ -633,6 +633,7 @@ def render_contact_sheet(
     atlas: Image.Image,
     layout_board: Path,
     output: Path,
+    batch: str,
     attempt: str,
     checks: dict[str, bool],
 ) -> None:
@@ -644,7 +645,7 @@ def render_contact_sheet(
     body_font = load_font(
         resolve(root, "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf"), 17
     )
-    draw.text((40, 24), f"QL-D V2 {attempt}｜候选审查（未晋级）", font=title_font, fill=(226, 194, 139, 255))
+    draw.text((40, 24), f"{batch} {attempt}｜候选审查（未晋级）", font=title_font, fill=(226, 194, 139, 255))
     labels = (
         (40, 76, "provider raw", raw),
         (470, 76, "1024² normalized", normalized),
@@ -705,6 +706,8 @@ def write_non_square_rejection(
     session_id: str,
     reference_checks: dict[str, bool],
     production_path: Path,
+    batch: str,
+    report_schema: str,
 ) -> int:
     keyed, key_metrics = edge_connected_chroma_key(raw.convert("RGB"))
     bbox = alpha_bbox(keyed)
@@ -731,7 +734,7 @@ def write_non_square_rejection(
     )
     draw.text(
         (36, 24),
-        f"QL-D V2 {attempt}｜硬门禁拒绝：provider 非正方形",
+        f"{batch} {attempt}｜硬门禁拒绝：provider 非正方形",
         font=title,
         fill=(226, 194, 139, 255),
     )
@@ -755,8 +758,8 @@ def write_non_square_rejection(
     )
     sheet.save(sheet_path, "PNG", optimize=False, compress_level=9)
     report = {
-        "schema": "aeui.quest-log.reward-slot.candidate-review.v2",
-        "batch": "QL-D V2",
+        "schema": report_schema,
+        "batch": batch,
         "attempt": attempt,
         "repo_commit_before_generation": repo_commit,
         "fixed_executor_session_id": session_id,
@@ -824,10 +827,13 @@ def build_display_contract(
     atlas_path: Path,
     layout: dict[str, Any],
     output: Path,
+    batch: str,
     attempt: str,
 ) -> dict[str, Any]:
     contract = json.loads(template_path.read_text(encoding="utf-8"))
-    contract["component"] = f"QL-D/QUEST.LOG.REWARD.SLOT/V2/{attempt}"
+    contract["component"] = (
+        f"QL-D/QUEST.LOG.REWARD.SLOT/{batch.removeprefix('QL-D ')}/{attempt}"
+    )
     contract["evidence"].update(
         {
             "candidate_raw": display(root, raw_path),
@@ -852,8 +858,13 @@ def main() -> int:
     production_path = resolve(root, args.production_contract)
     display_template_path = resolve(root, args.display_template)
     contract = json.loads(production_path.read_text(encoding="utf-8"))
-    if contract.get("version") != "QL-D V2" or not contract["executor"]["authorized"]:
-        raise ValueError("QL-D V2 production contract is not authorized")
+    batch = contract.get("version")
+    if batch not in {"QL-D V2", "QL-D V3"} or not contract["executor"]["authorized"]:
+        raise ValueError("QL-D production contract is unsupported or not authorized")
+    report_schema = (
+        "aeui.quest-log.reward-slot.candidate-review.v"
+        + batch.removeprefix("QL-D V")
+    )
     reference_checks: dict[str, bool] = {}
     for reference in contract["fixed_references"]:
         path = resolve(root, reference["path"])
@@ -876,6 +887,8 @@ def main() -> int:
             args.session_id,
             reference_checks,
             production_path,
+            batch,
+            report_schema,
         )
     candidate = contract["candidate"]
     normalized = normalize_square(raw, tuple(candidate["normalized_canvas"]))
@@ -928,6 +941,7 @@ def main() -> int:
         paths["atlas"],
         layout,
         paths["display_contract"],
+        batch,
         base,
     )
     validator = load_module(
@@ -1006,6 +1020,7 @@ def main() -> int:
         atlas,
         paths["layout_board"],
         paths["contact_sheet"],
+        batch,
         base,
         technical_checks,
     )
@@ -1013,8 +1028,8 @@ def main() -> int:
         (name for name, passed in technical_checks.items() if not passed), None
     )
     report = {
-        "schema": "aeui.quest-log.reward-slot.candidate-review.v2",
-        "batch": "QL-D V2",
+        "schema": report_schema,
+        "batch": batch,
         "attempt": base,
         "repo_commit_before_generation": args.repo_commit,
         "fixed_executor_session_id": args.session_id,

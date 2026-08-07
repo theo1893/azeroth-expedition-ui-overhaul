@@ -1623,11 +1623,11 @@ def main() -> None:
         rewards_work,
         (
             "QL-D Quest Log 奖励槽（当前 V3；V2 历史）",
-            "`prompt-authorized / P3 / production 0/5`",
+            "`candidate-rejected / P3 / production 1/5 / repairing`",
             "当前几何／fallback `P6 game-validated`；V3 最终美术 `P3`",
             "`2026-08-05`",
             "V3 生成前模拟 ImageGen：`0/0`",
-            "当前 `0/5`",
+            "当前 `1/5`",
             "`QL-D-SIM-V3`",
             "`QUEST.LOG.REWARD.SLOT`",
             "`108 × 41 UI px`",
@@ -1661,6 +1661,9 @@ def main() -> None:
             "one rough, field-added quartermaster equipment docket",
             "exactly three visible hand-set lash marks",
             "exactly two small, mismatched",
+            "### `QL-D V3.r1` production prompt",
+            "miniature-open-book identity",
+            "f65856e024882f35bbc031c9d5e2405772e7a6ee52e890a1b3873639c678235e",
             "## V3 自主修复循环与授权边界",
             "authorized=true",
         ),
@@ -1703,17 +1706,32 @@ def main() -> None:
     assert reward_production_spec["schema"] == (
         "aeui.quest-log.reward-slot.production-review.v3"
     )
-    assert reward_production_spec["status"] == "prompt-authorized"
+    assert reward_production_spec["status"] == "candidate-rejected-repairing"
     assert reward_production_spec["authorization"]["authorized"] is True
     assert reward_production_spec["executor"]["authorized"] is True
     assert reward_production_spec["executor"]["simulation_confirmed"] is True
     assert reward_production_spec["executor"]["maximum_actual_imagegen_calls"] == 5
-    assert reward_production_spec["executor"]["current_actual_imagegen_calls"] == 0
+    assert reward_production_spec["executor"]["current_actual_imagegen_calls"] == 1
     assert reward_production_spec["executor"]["process_errors"] == 1
     assert len(reward_production_spec["process_error_history"]) == 1
     assert not reward_production_spec["process_error_history"][0][
         "provider_generation_evidence"
     ]
+    assert len(reward_production_spec["attempt_history"]) == 1
+    assert reward_production_spec["attempt_history"][0]["result"] == (
+        "candidate-rejected"
+    )
+    assert reward_production_spec["attempt_history"][0][
+        "previous_output_image_3_eligible"
+    ] is False
+    assert reward_production_spec["current_prompt"] == {
+        "version": "QL-D V3.r1",
+        "body_sha256": "f65856e024882f35bbc031c9d5e2405772e7a6ee52e890a1b3873639c678235e",
+        "operation": "fresh-regenerate",
+        "inputs": [1, 2],
+        "previous_output_as_image_3": False,
+        "next_attempt": 2,
+    }
     assert reward_production_spec["candidate"]["runtime_size"] == [108, 41]
     assert reward_production_spec["candidate"]["object_count"] == 1
     assert reward_production_spec["candidate"]["generated_state"] == "normal"
