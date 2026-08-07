@@ -5,12 +5,12 @@
 - 模块：Quests／Quest Log 右页。
 - 批次：`QL-D V2`。
 - 组件 ID：`QUEST.LOG.REWARD.SLOT`。
-- 子状态：`production-active / internal-rejected / retry-prepared`。
+- 子状态：`production-paused / internal-rejected / repair-budget-exhausted`。
 - 项目阶段：当前几何／fallback `P6 game-validated`；最终美术 `P3`。
 - 固定执行器：本次已授权生产只允许
   `imagegen-0-143-0`／`@openai/codex@0.143.0`。
 - 生成前模拟 ImageGen：`0/0`；production 预算为最多 `5` 次实际 ImageGen
-  generation／edit，当前 `4/5`。attempt 1／2／3／4 均有 provider generation
+  generation／edit，当前 `5/5`。attempt 1／2／3／4／5 均有 provider generation
   证据并计数；尚无合格候选、source 或 runtime 位图。
 - 当前请求：用户于 `2026-08-07` 先以 `QL-D-SIM-V2` 明确确认当前 V2 可见
   方向，随后逐字确认授权 `QL-D V2` 完整 production 正文、固定 Image 1／2、
@@ -842,9 +842,9 @@ heavy vanilla-WoW material hierarchy remains readable at 108 x 41.
 - 本次授权最多 `5` 次实际 ImageGen generation／edit，含首次；没有图片且没有
   provider 生成证据的流程错误不占额度。任一候选完整通过即停止并交用户
   复审；第五次仍失败则停止于 `repair-budget-exhausted`。当前 production
-  已进入自主修复循环；attempt 1／2／3／4 已计入 `4/5`。attempt 4 aspect
-  `3.0153374233`，基本比例再次错误，故不上传 Image 3；attempt 5 使用固定
-  Image 1／2 fresh regenerate。
+  自主修复循环已结束；attempt 1／2／3／4／5 均有 provider output 并计入
+  `5/5`。attempt 5 aspect `2.5372340426` 仍越出硬门槛，当前必须停止于
+  `repair-budget-exhausted`，不得再调用 ImageGen。
 
 ## 执行记录
 
@@ -926,7 +926,24 @@ heavy vanilla-WoW material hierarchy remains readable at 108 x 41.
   `03e3190b6495bc8b8f042721c4246129e879be2a14bbc7f9ff542dedf8a7fc56`；
   real-layout board SHA-256
   `ebf4a3a7f52ce2dfb184691ce062d8e2860a0f6daaa3d1c683b61fa235a539ad`。
-- 实际生成／修图调用 `4/5`；流程错误 `0`；本地流程修复事件 `1`；没有合格
+- attempt 5 固定执行器请求 ID：`019fda3f-cf0a-7d4b-aee2-7c05b7d86c91`；
+  provider session：`019fda39-4597-79b2-9d3b-ffb0b210c8b8`；V2.r5 prompt
+  body SHA-256
+  `13a96904e1955165877baf4d6acfaccfadcfefb65c62dbbf92020a7c55a09faf`。
+  provider native 与 child-saved byte-for-byte 相同，raw SHA-256
+  `0305004681b660a6189048bd37c2dbbfe9c4498efa2dfe0fefa86260f6e69c58`，
+  `1254×1254 RGB`；本轮没有子进程后处理。
+- attempt 5 同轴归一化与边缘连通色键后只有一个主物件，bbox
+  `[34,310,988,686]`、size `954×376`、aspect `2.5372340426`。canonical
+  诊断等比预演为 `1002×395`、paste `[39,7]`；授权软去绿清理 `103px` 后
+  可见绿溢色为 `0`。技术 `18/19`，唯一失败为 aspect；真实排版几何全通过，
+  display-region `5/5 pass`、violations `0`。ignored review JSON SHA-256
+  `33c44a3574fed35aac3f1ad3c2dbd73e0b2faaf644dc3476b9ff5f6726420779`；
+  contact sheet SHA-256
+  `c7f3978ddd1e59a8b7d6dd583840df4f412b61bc460dd0f1d765b4b0ea8148f0`；
+  real-layout board SHA-256
+  `518579bcb1dc0d90a7ce5a873bdfb883e30d630315b8207b1c1013c358b32528`。
+- 实际生成／修图调用 `5/5`；流程错误 `0`；本地流程修复事件 `1`；没有合格
   候选、source、runtime atlas 或 addon 代码改动。
 
 ## 审查记录
@@ -986,6 +1003,16 @@ heavy vanilla-WoW material hierarchy remains readable at 108 x 41.
   height/width `0.374..0.382`、runtime `108×41` 栅格和粗厚上下承重带表达同一
   硬门槛，并把三处黄铜改为不同轴位置。完整正文为 `109` 行，SHA-256
   `13a96904e1955165877baf4d6acfaccfadcfefb65c62dbbf92020a7c55a09faf`。
+- attempt 5 从头目视：单物件、正投影和两区结构成立；粗厚上下皮革带恢复了
+  奖励槽的重量，左图标井约占三成，右名称面能承载动态文字；三段黄铜分别落在
+  左上、右侧竖边和下沿偏右，轴向不同且没有围成完整边框。相比 attempt 4，
+  密集规则压纹明显减少，主要剩宽阔手绘磨损面；五种真实排版的动态图标、数量、
+  品质色和名称均可辨。仍不能内部接受：`2.5372340426:1` 比合同下限
+  `2.58:1` 低约 `1.66%`，物件略偏高；黄铜亮度与外框工整度也仍需用户视觉
+  判断。确定性等比预演与 display `5/5` 只是诊断，不构成比例豁免。
+- attempt 5 是本授权的最后一次实际 ImageGen 调用。由于第一失败门禁仍为
+  aspect，状态锁为 `repair-budget-exhausted`；没有自动选择 earlier attempt、
+  没有非等比变形、没有 source/runtime 晋级，也没有 addon 改动。
 
 ## 尝试摘要
 
@@ -997,13 +1024,12 @@ heavy vanilla-WoW material hierarchy remains readable at 108 x 41.
 | `QL-D V2 attempt 2` | 固定 Image 1／2 fresh regenerate；完整 V2.r2 正文 | `1` | `internal-rejected`：technical `18/19`，aspect `3.0576`；display `5/5`；无 Image 3 资格 |
 | `QL-D V2 attempt 3` | 固定 Image 1／2 fresh regenerate；完整 V2.r3 正文 | `1` | `internal-rejected`：technical `18/19`，aspect `2.56085`；display `5/5`；无 Image 3 资格 |
 | `QL-D V2 attempt 4` | 固定 Image 1／2 fresh regenerate；完整 V2.r4 正文 | `1` | `internal-rejected`：technical `18/19`，aspect `3.01534`；display `5/5`；无 Image 3 资格 |
-| `QL-D V2 attempt 5` | 固定 Image 1／2 fresh regenerate；完整 V2.r5 正文 | `0` | `retry-prepared / P3` |
+| `QL-D V2 attempt 5` | 固定 Image 1／2 fresh regenerate；完整 V2.r5 正文 | `1` | `internal-rejected / repair-budget-exhausted`：technical `18/19`，aspect `2.53723`；display `5/5` |
 
 ## 下一门禁
 
-attempt 1／2／3／4 已内部退回。下一门禁是从固定 Image 1／2 执行完整
-`QL-D V2.r5` fresh regenerate；不上传前稿。countable output 通过
-正方形、比例与物件身份硬门禁后，才构造四态临时 atlas、真实
-`0／1／2／4／6` 排版和 display-region。内部完整通过即停止并交用户复审；
-第五次仍失败则停止等待用户决定。用户接受候选前不得晋级 source／runtime、
-修改 addon 或把生产授权误写成接入授权。
+attempt 1–5 均已内部退回，实际 ImageGen 预算 `5/5` 耗尽。下一门禁只能由
+用户决定：明确授权 attempt 5 aspect `2.5372340426` 的确定性合同例外并接受
+其运行时视觉，或另开新版本／新预算继续修复。获得新指示前不得再次调用
+ImageGen，不得把诊断 bbox-fit 当作通过，不得晋级 source／runtime、修改 addon
+或把生产授权误写成接入授权。

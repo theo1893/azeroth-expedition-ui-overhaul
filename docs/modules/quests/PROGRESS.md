@@ -70,7 +70,7 @@
   normal source、四态确定性 atlas、safe area、后处理与逐字 production 正文
   已通过完整性预检。用户随后逐字授权完整 `QL-D V2` production 正文、固定
   Image 1／2、受限同循环 Image 3、最多五次实际调用与既定确定性处理；当前
-  `production-active / internal-rejected / retry-prepared / P3 / 4/5`。
+  `production-paused / internal-rejected / repair-budget-exhausted / P3 / 5/5`。
   attempt 1 因 non-square、aspect `3.3484` 和现代精密微纹退回；attempt 2
   为 `1254²`，技术 `18/19`、display `5/5`，但 aspect `3.0576`，左图标井占宽
   仍不足且外框／微纹偏工整；attempt 3 同为技术 `18/19`、display `5/5`，
@@ -81,7 +81,10 @@
   attempt 4 同为技术 `18/19`、display `5/5`，但 aspect `3.01534` 再次过宽，
   上下承重带偏薄且源图压纹密集，因此同样无 Image 3 资格。V2.r5 已改以
   height/width `0.374..0.382`、runtime `108×41` 栅格和粗厚上下皮革带表达
-  比例；当前 `4/5`，固定 Image 1／2 fresh regenerate 待执行。
+  比例并完成固定 Image 1／2 fresh regenerate。attempt 5 为 `1254²`、技术
+  `18/19`、display `5/5`；粗厚承重带、两区层序、
+  三处非镜像黄铜和真实排版均成立，但 aspect `2.53723` 低于 `2.58` 下限。
+  五次 actual ImageGen 已耗尽；没有晋级 source/runtime，也没有接入 addon。
 - 用户随后以新实机图明确否决上述两项修复结论：同一页的团队／精英／地下城
   Tag 仍同时出现深紫、荧黄和绿色，两个奖励 backdrop 仍视觉相接。复核原生
   `QuestLogFrame.lua` 与 pfUI skin 后确认了两个遗漏：`QuestLogTitleNTag`
@@ -536,7 +539,7 @@
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 asset-retained / runtime-hidden` | 用户接受的 source、manifest、`128 × 16` TGA、exporter 与历史证据全部保留；`2026-07-31` 起 adapter 不再挂载或包装任务行脚本 | 暂缓；只有用户重新确认后才恢复 runtime |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
 | `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；QS-B1 V7-A substrate `P5 / ImageGen 5/5` | 用户于 `2026-08-07` 接受 V7-A attempt 5。source SHA `168f527f…05b8`、`32×192` runtime SHA `db620778…c615` 已接入 ScrollChild 闭合 root；技术 `13/13`、真实排版 `29/29`、display `6/6`。七纹章／代理未完成，菜单 inactive，旧按钮 fail-open | P6 验证闭合跨压；另行完成七项代理 parity 后才启用菜单 |
-| `QL-D` | 奖励槽、分隔与文字安全区 | current geometry／fallback `P6 game-validated`；final art `P3 production-active / retry-prepared` | runtime `1.26` 保持真实 Button 的 `108×41px` 双列／`64px` 名称／`8px` 列距／`4px` 行距、setter 锁、无鼠标程序化容器、原生 `NameFrame` 抑制和可见数量兜底。V2 方向与 production 正文均已授权。attempt 1 non-square／aspect `3.3484`；attempt 2 `1254²`、technical `18/19`、display `5/5`，但 aspect `3.0576`；attempt 3 `1254²`、technical `18/19`、display `5/5`，但 aspect `2.56085`；attempt 4 `1254²`、technical `18/19`、display `5/5`，但 aspect `3.01534` 且微纹偏密。四稿均内部退回且无 Image 3 资格。V2.r5 已改用 height/width `0.374..0.382`、runtime `108×41` 栅格和粗厚上下承重带。当前 production `4/5`；奖励只读，无 selected | 执行 attempt 5 fixed Image 1／2 fresh regenerate；未接受前不晋级 P4/P5 |
+| `QL-D` | 奖励槽、分隔与文字安全区 | current geometry／fallback `P6 game-validated`；final art `P3 repair-budget-exhausted` | runtime `1.26` 保持真实 Button 的 `108×41px` 双列／`64px` 名称／`8px` 列距／`4px` 行距、setter 锁、无鼠标程序化容器、原生 `NameFrame` 抑制和可见数量兜底。V2 方向与 production 正文均已授权。attempt 1–4 均内部退回；attempt 5 `1254²`、technical `18/19`、display `5/5`，两区、粗厚承重带和三处非镜像黄铜成立，但 aspect `2.53723` 低于下限。当前 `production-paused / internal-rejected / repair-budget-exhausted / 5/5`；奖励只读，无 selected；没有 source/runtime 或 addon 接入 | 等待用户明确接受 attempt 5 exact aspect 合同例外，或另开版本／预算；当前不得再调用 ImageGen |
 
 QL-A1 manifest 记录：
 
@@ -846,10 +849,10 @@ QS-B1 的确认替代，也不包含 P4/P5 晋级或 addon 接入。
 Quest Log 的类型色、详情字体、金额、奖励容器／锚点与内容末端裁切修复已经
 进入 runtime `1.25`／Theme `1.8`，并由本次用户实机结论确认。QL-D V2
 正式容器尚未生产，当前暖纸 fallback 不代表最终美术；完整 production 正文
-现为 `production-active / internal-rejected / retry-prepared / P3 / 4/5`。
-attempt 1／2／3／4 分别因 non-square／aspect `3.3484`、aspect `3.0576`、
-aspect `2.56085` 与 aspect `3.01534` 退回；V2.r5 使用固定 Image 1／2 fresh regenerate。自主循环内允许按固定合同调用 ImageGen，
-但用户接受候选前不得晋级 source／runtime 或接入 addon。旧顶部悬空漆章位置
+现为 `production-paused / internal-rejected / repair-budget-exhausted / P3 / 5/5`。
+attempt 1–4 已退回；attempt 5 为技术 `18/19`、display `5/5`，但 aspect
+`2.53723` 低于硬下限。自主循环已结束；用户明确选择 exact aspect 合同例外或
+另开版本／预算前不得再调用 ImageGen，也不得晋级 source／runtime 或接入 addon。旧顶部悬空漆章位置
 不再作为待接受方向。
 
 Tracker `34px` 漆章仍按既有合同在 `130／230／330px` 居中，继续等待实机
