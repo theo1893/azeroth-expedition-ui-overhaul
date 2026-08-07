@@ -305,6 +305,21 @@ def visible_green_metrics(image: Image.Image) -> dict[str, int]:
     }
 
 
+def soft_despill_visible_green(image: Image.Image) -> tuple[Image.Image, int]:
+    """Neutralize strong chroma-green RGB without changing geometry or alpha."""
+    rgba = np.asarray(image.convert("RGBA"), dtype=np.uint8).copy()
+    visible = rgba[:, :, 3] > 0
+    r = rgba[:, :, 0].astype(np.int16)
+    g = rgba[:, :, 1].astype(np.int16)
+    b = rgba[:, :, 2].astype(np.int16)
+    maximum = np.maximum(r, b)
+    dominant = visible & (g - maximum >= 35)
+    rgba[:, :, 1][dominant] = np.minimum(
+        rgba[:, :, 1][dominant], maximum[dominant] + 8
+    ).astype(np.uint8)
+    return clear_transparent_rgb(Image.fromarray(rgba, "RGBA")), int(dominant.sum())
+
+
 def region_metrics(
     image: Image.Image, box: tuple[int, int, int, int]
 ) -> dict[str, Any]:
@@ -903,6 +918,10 @@ def main() -> int:
         keyed,
         tuple(candidate["canonical_canvas"]),
         tuple(candidate["canonical_fit_box"]),
+    )
+    canonical, visible_green_despilled = soft_despill_visible_green(canonical)
+    fit_metrics["visible_green_pixels_soft_despilled_after_fit"] = (
+        visible_green_despilled
     )
     normal = clear_transparent_rgb(
         canonical.resize(tuple(candidate["runtime_size"]), RESAMPLE)

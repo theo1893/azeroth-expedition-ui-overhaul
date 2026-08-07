@@ -15,8 +15,8 @@
     "authorized": true,
     "simulation_confirmed": true,
     "maximum_actual_imagegen_calls": 5,
-    "current_actual_imagegen_calls": 1,
-    "process_errors": 1,
+    "current_actual_imagegen_calls": 2,
+    "process_errors": 2,
     "process_errors_count_toward_budget": false
   },
   "simulation": {
@@ -156,6 +156,16 @@
       "output_image": false,
       "consumed_generation_budget": false,
       "resolution": "retry the identical committed QL-D V3 body with -- after fixed Image 2 so the positional prompt is not consumed by the variadic image option"
+    },
+    {
+      "id": "E2",
+      "before_attempt": 2,
+      "stage": "sandboxed-npx-package-resolution-before-fixed-child-session",
+      "error": "npm registry access for @openai/codex was rejected with EPERM",
+      "provider_generation_evidence": false,
+      "output_image": false,
+      "consumed_generation_budget": false,
+      "resolution": "retry the identical committed QL-D V3.r1 body and fixed Image 1/2 with require_escalated network permission"
     }
   ],
   "attempt_history": [
@@ -183,15 +193,38 @@
       "result": "candidate-rejected",
       "previous_output_image_3_eligible": false,
       "next_action": "fresh-regenerate from fixed Image 1/2 with QL-D V3.r1"
+    },
+    {
+      "attempt": 2,
+      "prompt_version": "QL-D V3.r1",
+      "prompt_body_sha256": "f65856e024882f35bbc031c9d5e2405772e7a6ee52e890a1b3873639c678235e",
+      "repo_commit_before_generation": "57c0003",
+      "fixed_executor_session_id": "019fda75-ce0c-77e2-822b-2613fcd475c0",
+      "inputs": [1, 2],
+      "raw_path": "generated/quests/ql-d-reward-slots/production/V3/attempt-02/raw/ql-d-v3-attempt-02.provider-native-01.png",
+      "raw_sha256": "ad3d82bdba14f5554c60344149cb92f2ffa3b070c8292b47858a24c1f9d3d623",
+      "raw_size": [1254, 1254],
+      "technical_checks": "19/19 after authorized 18-pixel RGB-only soft despill",
+      "display_region": "5/5 pass",
+      "first_failure": "art_baseline_dense_all_over_microtexture",
+      "visible_aspect": 2.660220994475138,
+      "additional_failures": [
+        "dense all-over embossed or cross-hatched material texture",
+        "repeated long wavy paper perimeter",
+        "decorative bow-like middle bind"
+      ],
+      "result": "candidate-rejected",
+      "previous_output_image_3_eligible": false,
+      "next_action": "fresh-regenerate from fixed Image 1/2 with QL-D V3.r2"
     }
   ],
   "current_prompt": {
-    "version": "QL-D V3.r1",
-    "body_sha256": "f65856e024882f35bbc031c9d5e2405772e7a6ee52e890a1b3873639c678235e",
+    "version": "QL-D V3.r2",
+    "body_sha256": "766f796cd9e5f70d7b395d43ec8475f661051c4dac5202fa6db4812892c9dc66",
     "operation": "fresh-regenerate",
     "inputs": [1, 2],
     "previous_output_as_image_3": false,
-    "next_attempt": 2
+    "next_attempt": 3
   },
   "promotion": {
     "candidate_outputs_remain_under_generated": true,
