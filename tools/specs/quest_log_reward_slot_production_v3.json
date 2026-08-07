@@ -1,0 +1,146 @@
+{
+  "schema": "aeui.quest-log.reward-slot.production-review.v3",
+  "version": "QL-D V3",
+  "component": "QUEST.LOG.REWARD.SLOT",
+  "executor": {
+    "package": "@openai/codex@0.143.0",
+    "skill": "imagegen-0-143-0",
+    "authorized": false,
+    "simulation_confirmed": true,
+    "maximum_actual_imagegen_calls": 5,
+    "process_errors_count_toward_budget": false
+  },
+  "simulation": {
+    "version": "QL-D-SIM-V3",
+    "specification": "tools/specs/quest_log_reward_slots_simulation_v3.json",
+    "direction_board": "generated/quests/ql-d-reward-slots/simulation/V3/quest_log_reward_slots_sim_v3_direction_board.png",
+    "direction_board_sha256": "60072902c34eda1e5b1b8b7b42f2ccbf721753c06637988fb136230150df0482",
+    "confirmed_on": "2026-08-07",
+    "pixels_may_be_generation_input": false
+  },
+  "fixed_references": [
+    {
+      "image": 1,
+      "path": "assets/locked/quests/任务详情面板_视觉基准_v1.png",
+      "sha256": "03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd",
+      "role": "highest visual authority with global and Quest art baselines"
+    },
+    {
+      "image": 2,
+      "path": "assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png",
+      "sha256": "91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5",
+      "role": "secondary adjacency calibration only"
+    }
+  ],
+  "candidate": {
+    "object_count": 1,
+    "generated_state": "normal",
+    "normalized_canvas": [1024, 1024],
+    "raw_target_visible_bbox": [72, 345, 952, 679],
+    "allowed_visible_aspect": [2.58, 2.69],
+    "canonical_canvas": [1080, 410],
+    "canonical_fit_box": [20, 7, 1060, 402],
+    "icon_safe_xyxy": [40, 40, 370, 370],
+    "name_safe_xyxy": [410, 40, 1050, 370],
+    "runtime_size": [108, 41],
+    "outer_assembly_must_be_connected": true
+  },
+  "visual_contract": {
+    "identity": "one rough field-added quartermaster equipment docket hand-fastened into the formal Azeroth quest ledger",
+    "layers_back_to_front": [
+      "narrow lower-right page-contact shadow",
+      "rough-cut smoked parchment name docket",
+      "irregular dark-walnut leather icon patch overlapping the parchment joint",
+      "three unequal hand-set lash marks and two mismatched nearly-blackened bronze edge fasteners"
+    ],
+    "forbidden_enclosures": [
+      "continuous leather frame",
+      "continuous brass or gold outline",
+      "mirrored chamfers",
+      "precision rectangular inner border",
+      "modern HUD rail"
+    ],
+    "quiet_runtime_regions": {
+      "icon": [4, 4, 37, 37],
+      "name": [41, 4, 105, 37]
+    },
+    "roughness_scope": "outer silhouette, broken brush edges, material overlap, lash marks, peripheral wear and edge fasteners only",
+    "roughness_forbidden_in": "live icon and name safe regions"
+  },
+  "states": {
+    "order": ["normal", "hover", "pressed", "disabled"],
+    "alpha_must_match": true,
+    "hover_rgb": {
+      "r": "min(255, round(1.04R + 4))",
+      "g": "min(255, round(1.03G + 3))",
+      "b": "min(255, round(1.01B + 1))"
+    },
+    "pressed_rgb": {
+      "r": "round(0.82R)",
+      "g": "round(0.80G)",
+      "b": "round(0.78B)"
+    },
+    "disabled_rgb": {
+      "l": "round(0.299R + 0.587G + 0.114B)",
+      "channel": "round(0.30C + 0.50L)"
+    }
+  },
+  "atlas": {
+    "size": [512, 64],
+    "cell_size": [128, 64],
+    "content_xyxy_in_cell": [10, 11, 118, 52],
+    "sample_xyxy": {
+      "normal": [10, 11, 118, 52],
+      "hover": [138, 11, 246, 52],
+      "pressed": [266, 11, 374, 52],
+      "disabled": [394, 11, 502, 52]
+    }
+  },
+  "runtime_neighbours": {
+    "quest_log_shell": "addon/AzerothExpeditionUI/Media/Quests/QuestLogShellV4.tga",
+    "seal_atlas": "addon/AzerothExpeditionUI/Media/Quests/QuestToolWaxSealStatesV1.tga",
+    "seal_carrier": "addon/AzerothExpeditionUI/Media/Quests/QuestLogSealPurityRibbonV1.tga",
+    "title_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf",
+    "body_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf"
+  },
+  "layout": {
+    "frame": [676, 464],
+    "detail_page": [366, 64, 246, 324],
+    "detail_content": [376, 72, 224, 306],
+    "reward_origin": [376, 148],
+    "reward_slot_size": [108, 41],
+    "reward_name_safe_width": 64,
+    "reward_column_gap": 8,
+    "reward_row_gap": 4,
+    "reward_header_gap": 5,
+    "seal_visual": [576, 68, 32, 32],
+    "seal_carrier_root": [576, 76, 32, 28],
+    "scenarios": [0, 1, 2, 4, 6]
+  },
+  "repair_envelope": {
+    "attempt_1_inputs": [1, 2],
+    "later_attempt_fixed_inputs": [1, 2],
+    "previous_output_may_be_image_3_only_within_same_loop": true,
+    "edit_eligible_failures": [
+      "localized outer-edge regularity",
+      "localized material-contact ambiguity",
+      "localized fastener or lash-mark symmetry",
+      "minor safe-region interference",
+      "chroma-key edge contamination"
+    ],
+    "fresh_regenerate_failures": [
+      "wrong object identity",
+      "continuous enclosing frame",
+      "wrong material hierarchy",
+      "wrong perspective or aspect",
+      "wrong safe-region anatomy",
+      "modern HUD language"
+    ]
+  },
+  "promotion": {
+    "candidate_outputs_remain_under_generated": true,
+    "source_written_before_user_acceptance": false,
+    "runtime_written_before_user_acceptance": false,
+    "addon_changed_before_user_acceptance": false
+  }
+}

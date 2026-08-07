@@ -5,16 +5,18 @@
 - 模块：Quests／Quest Log 右页。
 - 当前批次：`QL-D V3`；`QL-D V2` 作为已封闭失败历史保留在本文件。
 - 组件 ID：`QUEST.LOG.REWARD.SLOT`。
-- 当前子状态：`simulation-proposed / awaiting-user-confirmation`。
+- 当前子状态：`simulation-confirmed / production-draft / awaiting-production-authorization`。
 - 项目阶段：当前几何／fallback `P6 game-validated`；V3 最终美术 `P2`。
-- 固定执行器：V3 当前只进行本地确定性几何模拟，尚未授权 production；未来
-  若获授权仍必须只使用 `imagegen-0-143-0`／`@openai/codex@0.143.0`。
-- V3 生成前模拟 ImageGen：`0/0`；production 预算 `0/0`，尚未授权。V2
+- 固定执行器：V3 production 若获独立授权，只允许
+  `imagegen-0-143-0`／`@openai/codex@0.143.0`；当前未调用。
+- V3 生成前模拟 ImageGen：`0/0`；production 预算为最多 `5` 次实际 ImageGen
+  generation／edit，当前 `0/5`、尚未授权，流程错误 `0`。V2
   历史 production 为 `5/5` actual ImageGen，五稿均未晋级，且不会转作 V3
   edit input、source 或 runtime 位图。
 - 当前请求：用户于 `2026-08-07` 在 V2 五次循环结束后明确否决其可见风格：
   “太规整、过于现代”，要求改为手绘／潦草相关元素并加强 RPG 沉浸感。
-  该指示开启 V3 视觉版本，不构成新的 ImageGen 或 P4／P5 授权。
+  该指示开启 V3 视觉版本；用户随后以 `QL-D-SIM-V3` 明确确认本地几何稿。
+  该确认只接受下述可见方向，不构成 ImageGen、P4 或 P5 授权。
 - 用户问题来源：`2026-08-04` 实机截图确认多奖励重叠／末端裁切、详情与奖励
   字体难读，以及 pfUI 平面黑灰奖励卡片过于现代。
 - 实机修复确认：`2026-08-05` 用户确认 Quest 右页的既有 bug 和显示问题均已
@@ -24,24 +26,65 @@
 
 ## 美术基准继承
 
-- 锁定视觉基准：
-  [`任务详情面板_视觉基准_v1.png`](../../../../assets/locked/quests/任务详情面板_视觉基准_v1.png)，
-  SHA-256
-  `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`。
-- 稳定 Prompt provenance：
-  [`ART_BASELINE.md`](../ART_BASELINE.md)、
-  [`SUBMODULE_ART_BASELINES.md`](../SUBMODULE_ART_BASELINES.md) 的“奖励槽与分隔”、
-  [`GLOBAL_ART_BASELINE.md`](../../../GLOBAL_ART_BASELINE.md)。
-- 当前邻接 runtime：
-  `addon/AzerothExpeditionUI/Media/Quests/QuestLogShellV4.tga`，SHA-256
-  `1b6b21cd3db74202051a2ceb8b5ba1d91ca7beb636accf247603edbc3cfeb40e`；
-  只提供已接受书页综合色、材料尺度与真实摆放环境。
-- 已接受漆章 atlas：
-  `addon/AzerothExpeditionUI/Media/Quests/QuestToolWaxSealStatesV1.tga`，SHA-256
-  `f113e670f1b61be1a50e3cfa16dfce95a2b0d159fc35d986a9b2e1d314a72902`；
-  只用于还原当前相邻页面，不属于奖励槽生成输入。
-- 用户实机截图只用于诊断 provider 输出、阅读密度、重叠与裁切；截图像素没有
-  进入模拟稿，也不得成为 source、Image 3 或修图输入。
+### 权威顺序
+
+1. `Image 1`：
+   [`任务详情面板_视觉基准_v1.png`](../../../../assets/locked/quests/任务详情面板_视觉基准_v1.png)，
+   SHA-256
+   `03dc589abad7187c478ec484cc6565f2c16d2ce52d2d6421251a4de6437453bd`；
+   与 [`ART_BASELINE.md`](../ART_BASELINE.md)、
+   [`SUBMODULE_ART_BASELINES.md`](../SUBMODULE_ART_BASELINES.md) 的“奖励槽与分隔”
+   及 [`GLOBAL_ART_BASELINE.md`](../../../GLOBAL_ART_BASELINE.md) 共同作为最高
+   视觉权威。
+2. 组件合同：本文件与 [`SUBMODULES.md`](../SUBMODULES.md) 决定真实对象、
+   `108×41px` 几何、状态、safe area、运行时内容所有权和禁止烘焙。
+3. `Image 2`：
+   [`QuestLogBookShell_Master_v1.png`](../../../../assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png)，
+   SHA-256
+   `91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5`；
+   只校准当前 accepted 书页的综合色温、绘制尺度、左上光向和邻接材料关系，
+   不得高于 Image 1 或复制书体像素。
+
+### 必须继承的视觉 DNA
+
+- 2004 年前后香草魔兽低分辨率二维手绘位图；粗厚、略有手工误差的轮廓；
+  大块可读的亮／中／暗面；左上暖光；低饱和暖赭、烟褐、深胡桃与几近熏黑的
+  暗铜综合色。
+- 任务簿是正式公会卷宗，但本奖励槽是军需官在长期使用中临时补入的装备签；
+  它可以比书体更潦草，却仍属于同一材料年代、磨损尺度和 RPG 世界内物件。
+- 材料必须以真实搭接、接触阴影和厚度区分：烟熏羊皮纸在下，粗裁旧皮革补片
+  压住左侧接缝，手扎线穿过连接处，旧铜只承担少量边缘固定。
+
+### 本批组件级转译
+
+- 单个真实 `QuestLogItem` Button 对应一个由两块材料组成、仍保持单一连通的
+  装备签：左侧皮革补片完整承载动态图标安全区，右侧撕边纸签完整承载动态
+  名称安全区。
+- 用户确认的“潦草”只进入外轮廓的非镜像起伏、断续干刷边、材料重叠、三处
+  长短／角度不等的手扎和两处错位暗铜固定痕；中央安全区保持宽阔低频色面。
+- 四个 runtime 状态共享同一 Alpha 轮廓；normal 是唯一生成物，hover／pressed／
+  disabled 由确定性 RGB 公式派生，避免四稿风格漂移。
+
+### 明确不继承
+
+- 不复制 Image 1 的完整双页书、任务行、标题牌、指南针、火漆、书签、按钮、
+  文字、图标、页框或布局；不复制 Image 2 的书体轮廓、页沟、针脚、包角、
+  透明 Alpha 或任何可直接复用像素。
+- `QuestLogShellV4.tga`、QS-A1 漆章与 QS-B1 载体只用于候选后的真实排版邻接，
+  不属于生成输入。V1／V2 模拟、V2 五张失败候选和用户实机截图只能提供负面
+  诊断，均不得上传、裁切、追摹、晋级或成为 Image 3。
+
+### 冲突审计
+
+- Quest 主书体强调较正式、近对称；用户对奖励槽要求更潦草。裁决为：书体
+  对称性不下放到奖励槽外框，奖励槽以“后补军需装备签”获得受控不规整；
+  综合色、光照、厚度和绘制年代仍服从 Quest／全局基线。
+- V2 曾要求浅削角完整皮革框，已被用户明确判定过于规整现代。V3 禁止任何
+  连续皮革／黄铜闭合框、镜像削角、等距铆钉、精密内框和规则轨道；不得把
+  V2 结构作为修复起点。
+- 潦草轮廓与动态内容安全发生冲突时，由组件合同裁决：外缘允许约一至两个
+  runtime 像素的非周期起伏，但 `[4,4,37,37]` 和 `[41,4,105,37]` 必须连续、
+  低对比且无装饰干扰。
 
 ## 组件合同
 
@@ -104,7 +147,7 @@
 - 规格：
   [`quest_log_reward_slots_simulation_v3.json`](../../../../tools/specs/quest_log_reward_slots_simulation_v3.json)，
   SHA-256
-  `6714657f0317a7ca8b36731b33c06b9ee36796dec4e82981abe6b8670d2d4ba3`。
+  `2c9526d82ce381d42bc3a50c551b6e6f3f95d4f1cef348dfa3b4bc575ffc64f0`。
 - renderer：
   [`render_quest_log_reward_slots_simulation_v3.py`](../../../../tools/render_quest_log_reward_slots_simulation_v3.py)，
   SHA-256
@@ -149,8 +192,17 @@
   纸签上下撕边、断续外缘、错位固定件和非镜像搭接；没有重新出现完整金属框。
   几何稿只能确认结构／密度／轮廓趋势，不能证明正式手绘纹理质量。
 - ImageGen `0/0`，本地流程错误 `0`，没有 source、runtime、atlas 或 addon
-  变化。当前只等待用户确认 `QL-D-SIM-V3` 可见方向；确认后才会把本节条款
-  融入新的完整 production prompt 并另行请求明确授权。
+  变化。
+- 用户方向结论：用户于 `2026-08-07` 以 `QL-D-SIM-V3` 明确确认该模拟版本。
+  确认并写回 production 的可见条款为：保留真实 `108×41px`／双列结构；
+  一块非镜像粗裁深皮革图标补片压住一张烟熏撕边羊皮纸名签；三处不等手扎
+  和两处错位、近熏黑暗铜固定痕只位于材料接缝／外缘；没有完整皮革或金属
+  闭合框、镜像削角与规则轨道；外缘潦草而 icon／name 安全区安静；综合色
+  继续服从当前 Quest Log。确认不接受几何模拟像素、exact RGB、最终笔触、
+  Alpha、切片或客户端混合。
+- 确认失效条件：改变“皮革补片压住撕边纸签”的物件隐喻、两区层序、综合色
+  重量、受控潦草范围、真实几何或状态观感时必须创建新模拟版本。单纯透明提取、
+  bbox-fit、四态派生与 atlas packing 不改变确认。
 
 ## V1 历史确定性本地模拟
 
@@ -259,11 +311,229 @@ V1 在 Windows 上形成的具体像素已被 V2 当前邻接 UI 预演取代；
 
 ## 最终执行正文
 
-`QL-D V3` 当前尚未形成或授权 production 正文。生成前模拟必须先取得用户
-方向确认；确认后再把全局／Quest 基线、固定 Image 职责、对象数量、动态内容
-排除、`1024²`／bbox、safe area、Alpha、四态 atlas、确定性后处理、真实排版和
-最多五次 actual ImageGen 循环写成一份完整可复制正文，并独立请求逐字授权。
-V2 的任何 prompt、失败 candidate 或授权均不得冒充 V3 最终执行正文。
+### V3 固定生产与 runtime 合同
+
+- tracked production contract：
+  [`quest_log_reward_slot_production_v3.json`](../../../../tools/specs/quest_log_reward_slot_production_v3.json)，
+  SHA-256
+  `98797a4c4753518c5dce0a4b2e639c2d70d1d8b8eb67ad3f323c683be3adb7d3`；
+  当前 `authorized=false`，只在用户逐字授权后改为 true 并提交。
+- 候选展示区域 template：
+  [`quest_log_reward_slot_candidate_display_region_v3.json`](../../../../tools/specs/quest_log_reward_slot_candidate_display_region_v3.json)，
+  SHA-256
+  `da647e55842a5c23687dbef7f37b0afbbf1b41f115260d8a58097a27f1283010`。
+- 授权前已使用 macOS `conda run -n py312 python` 对该 template 执行几何预检；
+  0／1／2／4／6 共 `5/5 pass`，violations `0`、first failure `null`。ignored
+  报告为
+  `generated/quests/ql-d-reward-slots/simulation/V3/quest_log_reward_slot_candidate_display_region_contract_v3_report.json`，
+  SHA-256
+  `1949e47ced5b292bd896071c6c8233275767f3c36e4667de5d16401404597dbf`。
+  该预检只证明合同几何内部一致，不代表尚不存在的正式纹理已通过审查。
+- attempt 1 只按 Image 1／Image 2 顺序上传本文件固定 SHA。不得上传
+  `QL-D-SIM-V3` 像素、V2 候选、实机截图、QS-A1／QS-B1 或其他外部输入。
+- ImageGen 只生成恰好一枚 `normal` 空容器母件，不生成 atlas、状态表、多个
+  槽或整段奖励栏。计划 source 为
+  `assets/source/quests/ql-d/QuestLogRewardSlot_Master_v1.png`；计划 runtime 为
+  `addon/AzerothExpeditionUI/Media/Quests/QuestLogRewardSlotStatesV1.tga`；
+  用户接受正式候选前二者都不得创建。
+- raw 目标为 `1024×1024 RGB`，外部纯 `#00FF00`，单物件目标可见 bbox
+  `[72,345,952,679]`，`880×334px`、约 `2.635:1`。provider 只在返回正方形时
+  允许同轴等比归一到 `1024²`；非正方形直接失败。边缘连通色键、软去绿和
+  透明 RGB 清零不得删除物件内部区域；可见 bbox aspect 必须为 `2.58..2.69`。
+- 合格 Alpha bbox 只允许一次等比 bbox-fit 到 `1080×410 RGBA` canonical
+  canvas 的 `[20,7,1060,402]`；禁止非等比拉伸、裁主体、镜像、旋转或重绘。
+  canonical 图标安全区 `[40,40,370,370]` 必须落在安静深皮革面，名称安全区
+  `[410,40,1050,370]` 必须落在连续低对比纸面；透明 RGB 全部为零。
+- canonical source 全幅 LANCZOS 等比缩至 `108×41px` normal。hover 在 Alpha
+  内使用 `R=min(255,round(1.04R+4))`、`G=min(255,round(1.03G+3))`、
+  `B=min(255,round(1.01B+1))`；pressed 使用
+  `round(0.82R／0.80G／0.78B)`；disabled 先计算
+  `L=round(0.299R+0.587G+0.114B)`，再逐通道
+  `round(0.30C+0.50L)`。四态 Alpha 必须逐像素相同。
+- runtime atlas 固定 `512×64 RGBA TGA`，四个 `128×64` cell 顺序为
+  normal／hover／pressed／disabled；每格 `108×41` 内容放在
+  `[cellX+10,11,cellX+118,52]`。采样区为 normal `[10,11,118,52]`、hover
+  `[138,11,246,52]`、pressed `[266,11,374,52]`、disabled
+  `[394,11,502,52]`，均按 atlas 像素右下排他换算 UV。
+- 候选每次都必须在当前 `QuestLogShellV4`、QS-B1 V7-A 闭合根和 QS-A1
+  漆章中，以真实动态图标、数量、品质色、中文名称重建 `0／1／2／4／6`
+  奖励场景；保持 `108×41px`、`8px` 列距、`4px` 行距、`64px` 名称宽和当前
+  ScrollChild 合同。展示区域 `5/5`、语义／结构／风格／技术审查全部通过后
+  才能结束内部循环交用户复审。
+
+### V3 生产正文完整性预检
+
+- 复杂度：`single connected normal object + deterministic four-state atlas + repeated runtime assembly`。
+- 结论：`pass`；未知但执行必需的值：`无`。
+
+| 门禁 | 执行正文中的证据 | 结论 |
+|---|---|---|
+| 物件身份、精确范围、对象／状态数量与动态内容排除 | 正文限定一枚由皮革补片与撕边纸签组成的 normal 空装备签；逐项排除 icon／count／name／quality／selected | pass |
+| 每张输入图 inherit／ignore 职责与冲突 | Image 1 为最高视觉职责，Image 2 只校准邻接；逐张列出禁止复制项，并声明用户 V3 改向覆盖 V2 完整框架 | pass |
+| Canvas、bounds、方向、透视、尺度、光照与层序 | `1024²`、`[72,345,952,679]`、正投影、左上暖光；shadow→paper→leather→lash／fastener 层序 | pass |
+| 逐对象形态、材料、边缘、状态与相互关系 | 纸签在下、皮革在上并搭接；三处不等手扎、两处错位暗铜；禁止连续闭合框与镜像节奏 | pass |
+| 安静区、裁切、拉伸、平铺、重复与接缝 | local `[33,33,301,301]`／`[334,33,856,301]`；只允许整体等比缩放，不 tile／stretch／nine-slice | pass |
+| 美术 DNA、反模式、色键与最终自检 | 香草年代、粗颗粒手绘、综合色、材料厚度、受控潦草、`#00FF00`、单连通物与 runtime 自检全部进入正文 | pass |
+
+- 去冗余结论：保留物件两区解剖、层序、safe area、非镜像边缘和禁止闭合框
+  的高风险重复；V2 过程、commit／session、用户情绪和无约束力“更史诗”不进入
+  执行正文。
+- V3 production prompt body SHA-256：
+  `cfba1824d5aa7bad94c359eff6639727d4c1fedec419c9233eb299b10c313382`。
+
+### `QL-D V3` production prompt
+
+Create exactly one isolated production raster asset for Turtle WoW 1.18.1:
+one rough, field-added quartermaster equipment docket hand-fastened into the
+formal Azeroth quest ledger. This one connected object is the empty visual
+chassis for a single read-only `QuestLogItem` reward Button. At runtime it is
+displayed at exactly 108 x 41 UI pixels. The live game owns the 33 x 33 item
+icon in [4,4,37,37], its quantity, the dynamic item name in [41,4,105,37],
+item-quality colour, tooltip and click behavior. Generate exactly one empty
+normal-state object. Do not generate multiple slots, a reward group, a state
+sheet, a selected state, an icon, placeholder symbol, count, item name,
+quality glow, text, glyph, tooltip or any other live content.
+
+Reference authority is strict. Image 1 together with the Azeroth Expedition
+and Quest art baselines is the highest visual authority. Inherit its circa-
+2004 vanilla World of Warcraft low-resolution 2D hand-painted bitmap language:
+thick slightly imperfect contours, broad readable light/mid/shadow planes,
+tangible material thickness, warm upper-left light, low-saturation smoked
+ochre, umber, dark-walnut and nearly blackened old-bronze colours, restrained
+broad wear and the weight of a world-used guild archive. Do not copy Image 1's
+complete book, pages, quest rows, title plaque, compass, wax seal, ribbons,
+buttons, text, icons, page borders or layout.
+
+Image 2 is secondary adjacency calibration only. Inherit only the accepted
+Quest Log page's parchment temperature, paint scale, edge softness, warm
+upper-left light, dark-walnut relationship and wear scale so this small docket
+belongs on that exact page. Do not copy its book silhouette, page outlines,
+spine, stitches, brass corners, transparency or any reusable pixels. If the
+references conflict, Image 1 plus the global and Quest baselines wins. The
+confirmed QL-D-SIM-V3 contributes only the verbal construction below; do not
+copy, trace, crop, upload or imitate its geometric pixels. Do not reuse any V2
+candidate or its complete enclosing frame.
+
+The direct image result must be an exact 1024 x 1024 RGB bitmap. Every pixel
+outside the object must be one uniform solid #00FF00 chroma-key background,
+with no gradient, vignette, checkerboard, haze, paper texture, shadow or colour
+spill. Place exactly one horizontal connected assembly, unrotated and fully
+inside visible target bbox [72,345,952,679], 880 x 334 pixels, approximately
+2.635:1 and accepted only within 2.58:1 to 2.69:1. Include the very narrow
+page-contact shadow inside this same bbox. Leave clean green around all four
+sides and touch no canvas edge. Use a straight-on orthographic front view with
+no perspective tilt, foreshortening, three-quarter angle, rotation or floating
+parts. Design for one uniform reduction to 108 x 41; never design for
+stretching, tiling, mirroring or nine-slicing.
+
+Treat the 880 x 334 visible bbox as a local coordinate system. The complete
+local icon-safe rectangle [33,33,301,301] must be one quiet, continuous dark-
+leather surface. The complete local name-safe rectangle [334,33,856,301] must
+be one quiet, continuous smoked-parchment surface. These correspond exactly to
+runtime [4,4,37,37] and [41,4,105,37]. Keep all rough cuts, lash punctures,
+fasteners, fibres, stains, highlights and edge breaks outside both safe
+rectangles. The narrow local x=301..334 joint is the only primary connection
+zone. Neither safe region may contain ruling, writing, symbols, miniature
+ornament, repeated grain, dense scratches or contrast that competes with live
+content.
+
+Build the object as a physical overlap of two materials, not as a frame. The
+back layer is one horizontal smoked warm-parchment name docket occupying the
+right side and extending beneath the joint. Its top and bottom outer margins
+are hand-torn or roughly hand-cut with non-periodic rises, shallow missing
+fibres and a few broad uneven breaks equivalent to about one or two runtime
+pixels. The tears must be organic and asymmetrical, never a repeating sawtooth,
+regular scallop, clean deckle template, rounded web card or sticky note. Its
+central name-safe area remains broad, flat and low contrast, with only one or
+two large painted value drifts. The parchment has a narrow lower-right
+thickness plane, not a rectangular ink outline or complete dark border.
+
+The front layer is one irregular dark-walnut leather icon patch on the left.
+It visibly overlaps the parchment at the joint by roughly two to three runtime
+pixels, proving that the leather is laid over the paper rather than drawn in
+the same plane. Its outer shape is a rough hand-cut near-square patch with
+unequal corners and non-mirrored edge wobble; it must fully support the square
+icon-safe region while avoiding a precision square frame. Use a short warm
+upper-left leather plane, a broad soot-walnut middle plane and a deep umber
+lower-right plane. The icon-safe interior is plain, dark and continuous. Do
+not draw an icon well outline, quality border, inset metal square, central
+emblem, embossed lattice or uniform tooling.
+
+Join the two materials with exactly three visible hand-set lash marks across
+the narrow seam. They must differ in length, angle, thickness and spacing: one
+short upper diagonal, one lower-offset middle bind and one compact lower bind.
+They physically pierce or cinch the overlapping materials and therefore share
+their perspective and contact shadows. They must not form a decorative stitch
+row, cross the live safe regions, repeat at equal intervals or appear printed
+on the surface. Add exactly two small, mismatched, nearly blackened oxidized-
+bronze edge fasteners attached to the peripheral material outside the safe
+regions: one shallow irregular fastener near an upper paper edge and one
+different wedge-like fastener on a lower edge. They are dull retention marks,
+not symmetric rivets, gold jewellery, corner brackets or a metal border.
+
+The accepted roughness is controlled and painterly. Put hand-made irregularity
+only in the outer silhouette, broken dry-brush edge strokes, material overlap,
+three lash marks, peripheral wear and two fasteners. Use broad low-frequency
+paint decisions that remain legible at 108 x 41. Do not create all-over fibre
+noise, dense crackle, repeated scratches, procedural grunge, pencil crosshatch,
+comic line art, a scrapbook cutout or a fashionable indie-game sketch card.
+The object must feel like a field repair made by an Azeroth quartermaster but
+painted by the same 2004-era UI artists as the formal Quest Log.
+
+Add only a very narrow, irregular soft contact shadow immediately below and to
+the right of the connected assembly, equivalent to one or two runtime pixels
+and entirely inside the target bbox. It must seat the object on the page and
+reinforce paper-under-leather overlap; it must not become a floating black
+drop shadow. Keep warm upper-left light, deeper lower-right contact and no
+photorealistic material rendering.
+
+Strict exclusions: no complete leather chassis around both zones, continuous
+leather border, continuous brass or gold outline, enclosing rectangular rim,
+mirrored chamfers, equal corners, symmetric fasteners, evenly spaced stitches,
+precision inner frame, modern HUD rail, modern rounded card, capsule, pill,
+mobile label, sticky note, scrapbook sticker, clean vector outline, glass,
+translucent black, neon, bright polished gold, gemstone, buckle, hinge, wax
+seal, ribbon, bookmark, compass, quill, rune, emblem, letters, numerals, glyphs,
+item silhouette, quantity, quality colour, selection glow, extra state,
+multiple objects, full book, page frame, Diablo-style altar, skull, spike,
+demonic horn or Skyrim-style minimalist overlay.
+
+Before returning, verify: exact square RGB target 1024 x 1024; one connected
+normal-state object only; uniform #00FF00 outside; full visible assembly and
+contact shadow inside [72,345,952,679]; aspect 2.58 to 2.69; straight
+orthographic view; paper is physically below and leather physically above at
+the joint; local icon-safe [33,33,301,301] is quiet dark leather; local
+name-safe [334,33,856,301] is quiet continuous parchment; exactly three unequal
+lash marks and exactly two mismatched peripheral dark-bronze fasteners; rough
+non-periodic outer edges but no complete frame, symmetric cadence, baked live
+content or dense noise; and the material hierarchy remains clear after
+uniform reduction to 108 x 41 pixels.
+
+## V3 自主修复循环与授权边界
+
+- 不可变边界：`QUEST.LOG.REWARD.SLOT`；恰好一枚 normal 连通母件；固定
+  Image 1／2、顺序、SHA、权威职责；`1024²`／bbox／aspect；正投影；
+  `108×41px`、safe area、四态派生、atlas cell／UV、真实 provider、动态内容
+  所有权、0／1／2／4／6 排版和全部禁止闭合框条款。
+- attempt 1 只上传固定 Image 1／2 fresh generate。attempt 2–5 仍上传相同
+  Image 1／2；只有紧邻前稿已经满足物件身份、纸下皮上层序、比例、视角、
+  safe area、综合色和光向，且失败仅限局部外缘仍太规则、局部接触不清、某一
+  缝扎／固定痕过对称、轻微安全区干扰或色键边缘时，才允许把该紧邻前稿作为
+  唯一 Image 3 edit input。出现完整框、错误材料层级、错误比例／透视、两区
+  解剖错误或现代 HUD 语言时必须固定 Image 1／2 fresh regenerate。
+- 允许确定性处理只有：正方形同轴 `1024²` 归一化、边缘连通色键／软去绿、
+  透明 RGB 清零、通过 aspect 后的一次等比 bbox-fit、canonical 装配、固定
+  四态 RGB 派生、atlas packing、metrics、真实排版与展示区域验证。不得用
+  非等比拉伸、裁主体、重绘或补结构伪装通过。
+- 本次拟授权最多 `5` 次实际 ImageGen generation／edit，含首次；流程错误
+  只有在没有图片且没有 provider generation 证据时单列且不占额度。任一候选
+  全部门禁通过即停止交用户复审；第 5 次仍失败则停止于
+  `candidate-rejected / repair-budget-exhausted`。
+- 新增／替换参考、上传模拟或旧失败稿、改变对象／状态数量、视觉隐喻、层序、
+  画布、runtime 几何、safe area、provider、Alpha／atlas 策略或允许烘焙任何
+  动态内容，都超出冻结边界并必须重新授权。
+- 当前 `0/5`，流程错误 `0`，尚未授权。授权正文必须先提交；在用户逐字授权
+  前不得调用 ImageGen。
 
 ## V2 历史最终执行正文
 
@@ -1094,10 +1364,10 @@ heavy vanilla-WoW material hierarchy remains readable at 108 x 41.
 
 ## 下一门禁
 
-当前门禁是用户审查 `QL-D-SIM-V3` 的“粗裁皮革补片＋撕边羊皮纸装备签＋
-三处不等手扎＋错位暗铜固定痕”方向。用户确认前不得写成稳定基线、不得调用
-ImageGen、不得晋级 source／runtime 或修改 addon。若方向确认，再创建 V3
-完整 production 正文，将全局／Quest 基线、固定参考职责、`1024²`／bbox、
-Alpha、四态 atlas、真实排版和最多五次 actual ImageGen 循环逐项写全并重新
-取得逐字授权。V2 attempt 5 的 aspect 例外入口已由用户本次改向取代，不再是
-当前推荐下一步。
+`QL-D-SIM-V3` 已由用户确认并完整转写；production prompt、确定性合同与
+完整性预检已经形成。当前只等待用户独立授权 `QL-D V3` 正文、固定 SHA 的
+Image 1／2、受限同循环 Image 3、最多五次 actual ImageGen，以及已列出的
+正方形归一化、边缘连通色键、透明 RGB 清零、等比 bbox-fit、四态派生、atlas
+packing 与真实排版预演。授权前 production contract 保持 `authorized=false`，
+不得调用 ImageGen、创建 source／runtime、修改 addon 或把模拟确认误写成
+正式候选接受。

@@ -67,6 +67,24 @@ def main() -> None:
     reward_display_spec = json.loads(
         reward_display_spec_path.read_text(encoding="utf-8")
     )
+    reward_production_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_reward_slot_production_v3.json"
+    )
+    reward_production_spec = json.loads(
+        reward_production_spec_path.read_text(encoding="utf-8")
+    )
+    reward_candidate_display_spec_path = (
+        ROOT
+        / "tools"
+        / "specs"
+        / "quest_log_reward_slot_candidate_display_region_v3.json"
+    )
+    reward_candidate_display_spec = json.loads(
+        reward_candidate_display_spec_path.read_text(encoding="utf-8")
+    )
     reward_sim_renderer_path = (
         ROOT / "tools" / "render_quest_log_reward_slots_simulation_v3.py"
     )
@@ -1605,11 +1623,11 @@ def main() -> None:
         rewards_work,
         (
             "QL-D Quest Log 奖励槽（当前 V3；V2 历史）",
-            "`simulation-proposed / awaiting-user-confirmation`",
+            "`simulation-confirmed / production-draft / awaiting-production-authorization`",
             "当前几何／fallback `P6 game-validated`；V3 最终美术 `P2`",
             "`2026-08-05`",
             "V3 生成前模拟 ImageGen：`0/0`",
-            "production 预算 `0/0`",
+            "当前 `0/5`",
             "`QL-D-SIM-V3`",
             "`QUEST.LOG.REWARD.SLOT`",
             "`108 × 41 UI px`",
@@ -1634,8 +1652,17 @@ def main() -> None:
             "[4,4,37,37]",
             "[41,4,105,37]",
             "normal／hover／pressed／disabled",
-            "用户确认前不得写成稳定基线",
-            "若获授权仍必须只使用",
+            "quest_log_reward_slot_production_v3.json",
+            "quest_log_reward_slot_candidate_display_region_v3.json",
+            "1949e47ced5b292bd896071c6c8233275767f3c36e4667de5d16401404597dbf",
+            "5/5 pass",
+            "cfba1824d5aa7bad94c359eff6639727d4c1fedec419c9233eb299b10c313382",
+            "### `QL-D V3` production prompt",
+            "one rough, field-added quartermaster equipment docket",
+            "exactly three visible hand-set lash marks",
+            "exactly two small, mismatched",
+            "## V3 自主修复循环与授权边界",
+            "authorized=false",
         ),
         "active QL-D reward-slot work",
     )
@@ -1644,7 +1671,7 @@ def main() -> None:
         "aeui.quest-log.reward-slots.simulation.v3"
     )
     assert reward_sim_spec["state"] == (
-        "simulation-proposed / awaiting-user-confirmation"
+        "simulation-confirmed / production-draft / awaiting-production-authorization"
     )
     assert reward_sim_spec["layout"]["detail_content"] == [376, 72, 224, 306]
     assert reward_sim_spec["layout"]["reward_slot_size"] == [108, 41]
@@ -1673,6 +1700,26 @@ def main() -> None:
         6,
     ]
     assert len(reward_sim_spec["content"]["items"]) == 6
+    assert reward_production_spec["schema"] == (
+        "aeui.quest-log.reward-slot.production-review.v3"
+    )
+    assert reward_production_spec["executor"]["authorized"] is False
+    assert reward_production_spec["executor"]["simulation_confirmed"] is True
+    assert reward_production_spec["executor"]["maximum_actual_imagegen_calls"] == 5
+    assert reward_production_spec["candidate"]["runtime_size"] == [108, 41]
+    assert reward_production_spec["candidate"]["object_count"] == 1
+    assert reward_production_spec["candidate"]["generated_state"] == "normal"
+    assert reward_production_spec["visual_contract"]["quiet_runtime_regions"] == {
+        "icon": [4, 4, 37, 37],
+        "name": [41, 4, 105, 37],
+    }
+    assert reward_production_spec["repair_envelope"]["attempt_1_inputs"] == [1, 2]
+    assert reward_candidate_display_spec["schema"] == (
+        "aeui-display-region-contract-v1"
+    )
+    assert reward_candidate_display_spec["evidence"]["production_contract"].endswith(
+        "quest_log_reward_slot_production_v3.json"
+    )
     assert reward_display_spec["schema"] == "aeui-display-region-contract-v1"
     assert reward_display_spec["atlas"]["size"] == [432, 41]
     assert [scenario["id"] for scenario in reward_display_spec["scenarios"]] == [

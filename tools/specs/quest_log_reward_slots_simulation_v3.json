@@ -1,7 +1,7 @@
 {
   "schema": "aeui.quest-log.reward-slots.simulation.v3",
   "component": "QL-D/QUEST.LOG.REWARD.SLOT",
-  "state": "simulation-proposed / awaiting-user-confirmation",
+  "state": "simulation-confirmed / production-draft / awaiting-production-authorization",
   "frame": [676, 464],
   "inputs": {
     "quest_log_shell": "addon/AzerothExpeditionUI/Media/Quests/QuestLogShellV4.tga",

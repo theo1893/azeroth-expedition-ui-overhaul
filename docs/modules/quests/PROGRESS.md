@@ -90,7 +90,10 @@
   以本地几何稿提出“粗裁深皮革图标补片压住撕边羊皮纸装备签，以三处不等
   手扎和错位暗铜痕连接”的新方向；真实 `108×41px`、两列、safe area 与
   provider 不变，0／1／2／4／6 display `5/5 pass`，ImageGen `0/0`，状态为
-  `simulation-proposed / awaiting-user-confirmation / P2`。
+  `simulation-confirmed / production-draft / awaiting-production-authorization / P2`。
+  用户于 `2026-08-07` 以 `QL-D-SIM-V3` 确认该可见方向；完整 production
+  正文、固定 Image 1／2、单枚 normal、四态 atlas、五次修复边界和候选真实
+  排版合同已通过完整性预检，当前 `0/5`、流程错误 `0`，仍未授权生成。
 - 用户随后以新实机图明确否决上述两项修复结论：同一页的团队／精英／地下城
   Tag 仍同时出现深紫、荧黄和绿色，两个奖励 backdrop 仍视觉相接。复核原生
   `QuestLogFrame.lua` 与 pfUI skin 后确认了两个遗漏：`QuestLogTitleNTag`
@@ -545,7 +548,7 @@
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 asset-retained / runtime-hidden` | 用户接受的 source、manifest、`128 × 16` TGA、exporter 与历史证据全部保留；`2026-07-31` 起 adapter 不再挂载或包装任务行脚本 | 暂缓；只有用户重新确认后才恢复 runtime |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
 | `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；QS-B1 V7-A substrate `P5 / ImageGen 5/5` | 用户于 `2026-08-07` 接受 V7-A attempt 5。source SHA `168f527f…05b8`、`32×192` runtime SHA `db620778…c615` 已接入 ScrollChild 闭合 root；技术 `13/13`、真实排版 `29/29`、display `6/6`。七纹章／代理未完成，菜单 inactive，旧按钮 fail-open | P6 验证闭合跨压；另行完成七项代理 parity 后才启用菜单 |
-| `QL-D` | 奖励槽、分隔与文字安全区 | current geometry／fallback `P6 game-validated`；V3 final art `P2 simulation-proposed` | runtime `1.26` 保持真实 Button 的 `108×41px` 双列／`64px` 名称／`8px` 列距／`4px` 行距、setter 锁、无鼠标程序化容器、原生 `NameFrame` 抑制和可见数量兜底。V2 `5/5` 未晋级且被用户以“太规整、过于现代”否决。V3 本地稿改为粗裁皮革补片＋撕边羊皮纸装备签＋不等手扎／错位暗铜痕；0／1／2／4／6 display `5/5`，ImageGen `0/0`。奖励只读，无 selected；没有 source/runtime 或 addon 接入 | 用户确认或退回 `QL-D-SIM-V3`；确认前不写 production prompt、不调用 ImageGen |
+| `QL-D` | 奖励槽、分隔与文字安全区 | current geometry／fallback `P6 game-validated`；V3 final art `P2 simulation-confirmed` | runtime `1.26` 保持真实 Button 的 `108×41px` 双列／`64px` 名称／`8px` 列距／`4px` 行距、setter 锁、无鼠标程序化容器、原生 `NameFrame` 抑制和可见数量兜底。V2 `5/5` 未晋级且被用户否决。用户已确认 `QL-D-SIM-V3` 的粗裁皮革补片＋撕边羊皮纸装备签＋三处不等手扎／两处错位暗铜痕；0／1／2／4／6 display `5/5`，ImageGen `0/0`。完整 production 正文和五次修复合同已通过预检，但未获授权；奖励只读，无 selected；没有 source/runtime 或 addon 接入 | 用户独立授权 `QL-D V3` production 正文、固定参考、受限 Image 3、最多五次 actual ImageGen 与确定性处理 |
 
 QL-A1 manifest 记录：
 
@@ -855,11 +858,13 @@ QS-B1 的确认替代，也不包含 P4/P5 晋级或 addon 接入。五次循环
 
 Quest Log 的类型色、详情字体、金额、奖励容器／锚点与内容末端裁切修复已经
 进入 runtime `1.25`／Theme `1.8`，并由本次用户实机结论确认。当前暖纸
-fallback 不代表最终美术。QL-D V2 停在 `5/5` 历史失败；新开的 QL-D V3
-处于 `simulation-proposed / awaiting-user-confirmation / P2 / ImageGen 0/0`。
+fallback 不代表最终美术。QL-D V2 停在 `5/5` 历史失败；QL-D V3 已由用户以
+`QL-D-SIM-V3` 确认，处于
+`simulation-confirmed / production-draft / awaiting-production-authorization / P2 / ImageGen 0/0`。
 本地稿保持真实排版和 safe area，只把外观改成粗裁皮革补片、撕边纸签、
-不等手扎与错位暗铜痕。用户确认该方向前不得形成 production 授权、晋级
-source／runtime 或接入 addon。旧顶部悬空漆章位置不再作为待接受方向。
+不等手扎与错位暗铜痕。完整 production 正文和确定性合同已写入唯一 work；
+用户独立授权前不得调用 ImageGen、晋级 source／runtime 或接入 addon。旧顶部
+悬空漆章位置不再作为待接受方向。
 
 Tracker `34px` 漆章仍按既有合同在 `130／230／330px` 居中，继续等待实机
 验证 `SetClampRectInsets`、拖动恢复、TGA 方向与旧七按钮层序。Tracker hub
