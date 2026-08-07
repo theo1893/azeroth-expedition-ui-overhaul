@@ -58,16 +58,11 @@ def extract_prompt(path: Path, heading: str) -> str:
         raise ValueError(f"prompt heading not found: {heading}") from error
     end = len(lines)
     for index in range(start + 1, len(lines)):
-        if lines[index].startswith("### "):
+        if lines[index].startswith(("## ", "### ")):
             end = index
             break
-    body_lines = lines[start + 1 : end]
-    while body_lines and body_lines[0] == "":
-        body_lines.pop(0)
-    while body_lines and body_lines[-1] == "":
-        body_lines.pop()
-    body = "\n".join(body_lines)
-    if not body:
+    body = "\n".join(lines[start + 1 : end]) + "\n"
+    if not body.strip():
         raise ValueError("tracked prompt body is empty")
     return body
 
