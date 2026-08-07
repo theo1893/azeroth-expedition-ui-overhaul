@@ -10,7 +10,7 @@
 - 固定执行器：本次已授权生产只允许
   `imagegen-0-143-0`／`@openai/codex@0.143.0`。
 - 生成前模拟 ImageGen：`0/0`；production 预算为最多 `5` 次实际 ImageGen
-  generation／edit，当前 `3/5`。attempt 1／2／3 均有 provider generation
+  generation／edit，当前 `4/5`。attempt 1／2／3／4 均有 provider generation
   证据并计数；尚无合格候选、source 或 runtime 位图。
 - 当前请求：用户于 `2026-08-07` 先以 `QL-D-SIM-V2` 明确确认当前 V2 可见
   方向，随后逐字确认授权 `QL-D V2` 完整 production 正文、固定 Image 1／2、
@@ -709,6 +709,118 @@ parchment; exactly three short asymmetric broken brass traces exist; there is
 no dense microtexture or dynamic content; view is orthographic; and the heavy
 vanilla-WoW material hierarchy remains legible at 108 x 41.
 
+### `QL-D V2.r5` 最终 production prompt
+
+Fresh-regenerate exactly one isolated production raster asset for Turtle WoW
+1.18.1: one shallow, front-facing guild-archive equipment docket used as the
+empty normal-state chassis of one read-only `QuestLogItem` reward Button. This
+is the fifth and final attempt in the authorized repair loop. Use only the two
+fixed reference images as visual inputs. Do not copy or edit pixels from any
+rejected candidate and do not rely on later cropping, stretching or structural
+repair. The live runtime object is exactly 108 x 41 UI pixels. The game owns
+the 33 x 33 item icon in [4,4,37,37], quantity, dynamic name in
+[41,4,105,37], item-quality colour, tooltip and click behavior. Draw only one
+empty normal chassis. Draw no second slot, reward group, selected state, state
+sheet, icon, placeholder, number, name, quality glow, text or tooltip.
+
+Image 1 plus its Azeroth quest-ledger language is the highest visual authority.
+Inherit circa-2004 vanilla World of Warcraft low-resolution 2D hand painting,
+a heavy slightly irregular silhouette, thick material depth, broad readable
+light/mid/shadow planes, warm upper-left light, muted ochre, umber, soot-brown
+and tarnished old brass, broad restrained wear and expedition-archive weight.
+Ignore its full book, pages, rows, plaque, compass, wax seal, ribbons, buttons,
+text, icons, borders and layout. Image 2 is secondary adjacency calibration
+only. Inherit its parchment temperature, dark-walnut leather and oxidized-
+brass relationship, paint scale, edge softness, light direction and broad wear
+scale. Ignore its book shape, pages, spine, stitches, brass corners,
+transparency and pixels. Image 1 and vanilla quest-ledger rules win conflicts.
+
+The direct image_gen result itself must be a square RGB bitmap, target exact
+1024 x 1024. Do not return a nearly-square, landscape or portrait canvas.
+Every pixel outside the one object must be one uniform solid #00FF00 without
+gradient, vignette, checkerboard, haze, texture or spill. Place exactly one
+horizontal object fully inside global canvas rectangle [72,345,952,679].
+Target outer visible width 870 to 880 pixels and outer visible height 330 to
+338 pixels. Height must be about thirty-eight percent of width: target
+height/width 0.379, accepted visual target 0.374 to 0.382. Equivalently,
+width/height must be 2.62 to 2.67, safely inside the contract range 2.58 to
+2.69. This is a moderately wide, visibly substantial fitting, not a thin 3:1
+rail. If it resembles a 3:1 banner, make it visibly taller before returning.
+Use nearly the full permitted vertical band. Leave clean green on all four
+sides. Use a straight orthographic front view with no rotation, tilt,
+foreshortening or three-quarter angle. Keep contact shadow inside the bbox.
+
+Treat the outer object as the runtime 108 x 41 grid enlarged uniformly. Keep
+outer top and bottom material bands each about four runtime pixels thick, not
+thin one-pixel rails. The left live icon-safe is a square 33 x 33 region at
+runtime [4,4,37,37]. The right live name-safe is a 64 x 33 region at runtime
+[41,4,105,37]. Preserve those exact proportions: one square quiet left well,
+a four-pixel-equivalent narrow joint, then one quiet right field whose clear
+interior is about 1.94 times as wide as it is high. The complete object remains
+108 x 41, never 108 x 35 and never a panoramic label. The icon well must
+occupy about thirty percent of total outer width and must visually determine
+the object's height. The right field must not expand enough to flatten the
+whole silhouette.
+
+Build one substantial dark-walnut leather chassis with mostly straight sides,
+small uneven shallow chamfers and restrained hand-painted asymmetry. Make the
+top and bottom leather bands visibly thick and weight-bearing. Use one short
+warm upper-left light plane, a broad smoked-brown face and one narrow deep-
+umber lower/right shadow plane. Use coarse broad brush masses. Do not make a
+rounded pill, capsule, web card, label tag, arrow, bookmark, fishtail, ornate
+plaque, thin banner rail, precision-industrial frame or perfectly mirrored
+enclosure.
+
+The left icon-safe well is flat, dark and quiet, with one broad inner shadow
+and restrained warm upper-left lip. It contains no emblem, symbol,
+placeholder, quality frame, stitch, mesh, crosshatch or miniature ornament.
+The right name-safe field is one continuous smoked warm parchment plane with
+only one broad value drift. It contains no seam, ruling, glyph, scratch,
+printed line, stain cluster, bright hotspot, crackle, embossed lattice,
+repeated fibre motif or all-over grain. Both safe regions must be dominated by
+large calm colour areas. Do not draw tiny repeated marks, tooling, micro-
+cracks or texture details smaller than roughly sixteen source pixels. At
+108 x 41, the chassis must support live content rather than become visual noise.
+
+Use exactly three short, dull, unequal oxidized-brass retaining traces. Put
+one on an upper-left straight segment, one on the outer right vertical edge,
+and one on a lower segment just right of centre, so their axes and positions
+cannot mirror each other. Each trace is isolated, worn and ends well before a
+corner. Never connect brass around a corner or form a top rail, bottom rail,
+complete outline, corner bracket, rivet row, jewellery trim or polished gold
+highlight. At runtime dark leather reads first, parchment second, brass third.
+
+Add only a narrow soft painted contact shadow directly below and to the right,
+equivalent to one or two runtime pixels and entirely inside the object bbox.
+It seats the fitting on the quest page without a floating black drop shadow.
+Maintain warm upper-left light and a deeper lower-right plane.
+
+Style lock: after uniform reduction to 108 x 41, this must look like a coarse
+hand-painted sprite authored for a 2004-era vanilla WoW quest journal. Use
+broad low-frequency wear, thick weight-bearing material bands and readable
+material planes. It must feel heavy, archival, slightly handmade and
+subordinate to dynamic content. It must not look photorealistic, vector-clean,
+procedural, precision-industrial, Diablo-style or like a modern brown HUD card.
+
+Strict exclusions: no full book, page, page frame, reward panel, multiple
+slots, wax seal, ribbon, bookmark, compass, quill, emblem, rune, letters,
+numerals, glyphs, icon, item silhouette, quantity, quality colour, selection
+glow, state variants, stitching, holes, rivet row, buckle, hinge, gemstone,
+bright gold, complete metallic border, corner metal, mirrored ornament, dense
+embossing, repeating weave, micro-cracks, glass, translucent black, neon,
+skull, spike, horn, Diablo altar, Skyrim overlay, modern rounded card, thin 3:1
+rail or shadow outside the object.
+
+Before returning, verify the direct bitmap is square RGB, target 1024 x 1024;
+outside is uniform #00FF00; exactly one object is fully inside
+[72,345,952,679]; height is visibly about 38% of width and aspect is 2.62 to
+2.67 rather than 3:1; runtime-equivalent top and bottom bands are each about
+four pixels thick; icon-safe is square and about thirty percent of total width;
+name-safe is calm parchment; exactly three short non-mirrored brass traces
+exist on upper-left, right-vertical and lower-right-of-centre segments; there
+is no dense microtexture or dynamic content; view is orthographic; and the
+heavy vanilla-WoW material hierarchy remains readable at 108 x 41.
+
 ### 自主修复循环与授权边界
 
 - 不可变边界：组件 ID；恰好一枚 normal 基础物件；固定 Image 1／2、顺序、
@@ -730,9 +842,9 @@ vanilla-WoW material hierarchy remains legible at 108 x 41.
 - 本次授权最多 `5` 次实际 ImageGen generation／edit，含首次；没有图片且没有
   provider 生成证据的流程错误不占额度。任一候选完整通过即停止并交用户
   复审；第五次仍失败则停止于 `repair-budget-exhausted`。当前 production
-  已进入自主修复循环；attempt 1／2／3 已计入 `3/5`。attempt 3 的基本身份、
-  两区结构和综合色正确，但 aspect `2.5608465608` 仍低于硬门槛，故不上传
-  Image 3；attempt 4 使用固定 Image 1／2 fresh regenerate。
+  已进入自主修复循环；attempt 1／2／3／4 已计入 `4/5`。attempt 4 aspect
+  `3.0153374233`，基本比例再次错误，故不上传 Image 3；attempt 5 使用固定
+  Image 1／2 fresh regenerate。
 
 ## 执行记录
 
@@ -797,7 +909,24 @@ vanilla-WoW material hierarchy remains legible at 108 x 41.
   `ef45447ac6e09963fb2ac8e95778c716d1212b06663fdb7d99253fac8e065723`；
   real-layout board SHA-256
   `5992e9e30cde31f5e714f9fb5da9cb0c2214af585d18a0b577c8d0804ee35315`。
-- 实际生成／修图调用 `3/5`；流程错误 `0`；本地流程修复事件 `1`；没有合格
+- attempt 4 固定执行器请求 ID：`019fda37-8b68-75a0-8d42-5cdd2b30bb9c`；
+  provider session：`019fda34-0d30-7653-9b64-74ff571fcb6e`；V2.r4 prompt
+  body SHA-256
+  `7750264cee9210c82bc96e54b2c95e9cdbe9774d2f37a418cb7c293276a587c5`。
+  provider native 与 child-saved byte-for-byte 相同，raw SHA-256
+  `898757bdb38db26d41179e3ddf8e1a5d87bd9c68a4fba4acb261e90feceeb1f8`，
+  `1254×1254 RGB`；本轮没有子进程后处理。
+- attempt 4 同轴归一化与边缘连通色键后只有一个主物件，bbox
+  `[21,350,1004,676]`、size `983×326`、aspect `3.0153374233`。canonical
+  诊断等比预演为 `1040×345`、paste `[20,32]`；授权软去绿清理 `55px` 后
+  可见绿溢色为 `0`。技术 `18/19`，唯一失败为 aspect；真实排版几何全通过，
+  display-region `5/5 pass`、violations `0`。ignored review JSON SHA-256
+  `ec188edf6c1ebe606528db35ef51a0e7aedf1a0b2a482aef9876b5d900e05cc6`；
+  contact sheet SHA-256
+  `03e3190b6495bc8b8f042721c4246129e879be2a14bbc7f9ff542dedf8a7fc56`；
+  real-layout board SHA-256
+  `ebf4a3a7f52ce2dfb184691ce062d8e2860a0f6daaa3d1c683b61fa235a539ad`。
+- 实际生成／修图调用 `4/5`；流程错误 `0`；本地流程修复事件 `1`；没有合格
   候选、source、runtime atlas 或 addon 代码改动。
 
 ## 审查记录
@@ -846,6 +975,17 @@ vanilla-WoW material hierarchy remains legible at 108 x 41.
   三成图标井、三段断续黄铜和低频材料面，并进一步禁止安全区微纹。完整正文
   为 `107` 行，SHA-256
   `7750264cee9210c82bc96e54b2c95e9cdbe9774d2f37a418cb7c293276a587c5`。
+- attempt 4 从头目视：单物件、正投影、两区身份和图标井占宽仍成立，三处黄铜
+  没有连成完整金属框，五种真实排版中的动态图标／数量／名称可辨。但
+  `3.0153374233:1` 已重新成为明显的横向轨道；上下皮革承重带过薄，导致
+  `108×41px` 内部垂直欠填。源图外框高度对称、边缘工整，皮革井和羊皮纸名称
+  面均覆盖密集重复压纹，综合色仍偏现代暗黑 HUD。aspect 是第一硬失败，后续
+  等比装配和 display 通过都不能掩盖它。
+- attempt 4 不具备 Image 3 资格，因为基本比例错误，不是冻结边界内的局部
+  修复。attempt 5 固定 Image 1／2 fresh regenerate；V2.r5 改用
+  height/width `0.374..0.382`、runtime `108×41` 栅格和粗厚上下承重带表达同一
+  硬门槛，并把三处黄铜改为不同轴位置。完整正文为 `109` 行，SHA-256
+  `13a96904e1955165877baf4d6acfaccfadcfefb65c62dbbf92020a7c55a09faf`。
 
 ## 尝试摘要
 
@@ -856,12 +996,13 @@ vanilla-WoW material hierarchy remains legible at 108 x 41.
 | `QL-D V2 attempt 1` | 固定 Image 1／2 fresh generate | `1` | `internal-rejected`：non-square；aspect `3.3484`；现代精密外框／密集微纹；无 Image 3 资格 |
 | `QL-D V2 attempt 2` | 固定 Image 1／2 fresh regenerate；完整 V2.r2 正文 | `1` | `internal-rejected`：technical `18/19`，aspect `3.0576`；display `5/5`；无 Image 3 资格 |
 | `QL-D V2 attempt 3` | 固定 Image 1／2 fresh regenerate；完整 V2.r3 正文 | `1` | `internal-rejected`：technical `18/19`，aspect `2.56085`；display `5/5`；无 Image 3 资格 |
-| `QL-D V2 attempt 4` | 固定 Image 1／2 fresh regenerate；完整 V2.r4 正文 | `0` | `retry-prepared / P3` |
+| `QL-D V2 attempt 4` | 固定 Image 1／2 fresh regenerate；完整 V2.r4 正文 | `1` | `internal-rejected`：technical `18/19`，aspect `3.01534`；display `5/5`；无 Image 3 资格 |
+| `QL-D V2 attempt 5` | 固定 Image 1／2 fresh regenerate；完整 V2.r5 正文 | `0` | `retry-prepared / P3` |
 
 ## 下一门禁
 
-attempt 1／2／3 已内部退回。下一门禁是从固定 Image 1／2 执行完整
-`QL-D V2.r4` fresh regenerate；不上传前稿。countable output 通过
+attempt 1／2／3／4 已内部退回。下一门禁是从固定 Image 1／2 执行完整
+`QL-D V2.r5` fresh regenerate；不上传前稿。countable output 通过
 正方形、比例与物件身份硬门禁后，才构造四态临时 atlas、真实
 `0／1／2／4／6` 排版和 display-region。内部完整通过即停止并交用户复审；
 第五次仍失败则停止等待用户决定。用户接受候选前不得晋级 source／runtime、
