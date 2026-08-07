@@ -2,7 +2,7 @@
   "schema": "aeui.quest-log.reward-slot.production-review.v3",
   "version": "QL-D V3",
   "component": "QUEST.LOG.REWARD.SLOT",
-  "status": "candidate-rejected-repairing",
+  "status": "candidate-rejected-repair-budget-exhausted",
   "authorization": {
     "authorized": true,
     "date": "2026-08-07",
@@ -15,7 +15,7 @@
     "authorized": true,
     "simulation_confirmed": true,
     "maximum_actual_imagegen_calls": 5,
-    "current_actual_imagegen_calls": 4,
+    "current_actual_imagegen_calls": 5,
     "process_errors": 2,
     "process_errors_count_toward_budget": false
   },
@@ -268,15 +268,54 @@
       "result": "candidate-rejected",
       "previous_output_image_3_eligible": false,
       "next_action": "final fresh-regenerate from fixed Image 1/2 with QL-D V3.r4"
+    },
+    {
+      "attempt": 5,
+      "prompt_version": "QL-D V3.r4",
+      "prompt_body_sha256": "da637c8f0e11fc5a15b55c58389b95024f4ef84cbf61dd3ba0bfbaeed3b242c5",
+      "repo_commit_before_generation": "8459b4a",
+      "fixed_executor_session_id": "019fda8b-30d8-7af0-b7c5-d9c5243533a6",
+      "inputs": [1, 2],
+      "raw_path": "generated/quests/ql-d-reward-slots/production/V3/attempt-05/raw/ql-d-v3-attempt-05.provider-native-01.png",
+      "raw_sha256": "8a34f6c801ae01278dc28e4b8d9c678c320bb534d5875e7a2aec1cb51722e57d",
+      "raw_size": [1254, 1254],
+      "technical_checks": "18/19",
+      "display_region": "5/5 pass",
+      "first_failure": "keyed_aspect_is_2_58_to_2_69",
+      "visible_aspect": 2.8189910979228485,
+      "additional_failures": [
+        "dense all-over diagonal and crosshatched microtexture on both material faces",
+        "near-continuous bright paper lip and dark contour enclose the leather as a regular inset panel",
+        "leather patch occupies roughly two fifths instead of about one third"
+      ],
+      "visual_passes": [
+        "one connected empty equipment docket identity",
+        "orthographic paper-under-leather layer order",
+        "icon and name safe-region alpha coverage 1.0",
+        "derived four states and real-layout legibility"
+      ],
+      "result": "candidate-rejected-repair-budget-exhausted",
+      "previous_output_image_3_eligible": false,
+      "next_action": "stop for user decision; no sixth call, source, runtime or addon change"
     }
   ],
   "current_prompt": {
     "version": "QL-D V3.r4",
     "body_sha256": "da637c8f0e11fc5a15b55c58389b95024f4ef84cbf61dd3ba0bfbaeed3b242c5",
-    "operation": "fresh-regenerate",
+    "operation": "executed-final-fresh-regenerate",
     "inputs": [1, 2],
     "previous_output_as_image_3": false,
-    "next_attempt": 5
+    "next_attempt": null
+  },
+  "terminal": {
+    "status": "candidate-rejected-repair-budget-exhausted",
+    "actual_imagegen_calls": 5,
+    "process_errors": 2,
+    "eligible_for_image_3": false,
+    "source_written": false,
+    "runtime_written": false,
+    "addon_changed": false,
+    "requires_user_decision": true
   },
   "promotion": {
     "candidate_outputs_remain_under_generated": true,

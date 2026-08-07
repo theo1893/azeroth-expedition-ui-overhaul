@@ -5,12 +5,12 @@
 - 模块：Quests／Quest Log 右页。
 - 当前批次：`QL-D V3`；`QL-D V2` 作为已封闭失败历史保留在本文件。
 - 组件 ID：`QUEST.LOG.REWARD.SLOT`。
-- 当前子状态：`candidate-rejected / P3 / production 4/5 / repairing`。
+- 当前子状态：`candidate-rejected / P3 / production 5/5 / repair-budget-exhausted`。
 - 项目阶段：当前几何／fallback `P6 game-validated`；V3 最终美术 `P3`。
 - 固定执行器：V3 production 只允许
-  `imagegen-0-143-0`／`@openai/codex@0.143.0`；attempt 1／2／3／4 已由固定版本完成。
+  `imagegen-0-143-0`／`@openai/codex@0.143.0`；attempt 1／2／3／4／5 已由固定版本完成。
 - V3 生成前模拟 ImageGen：`0/0`；production 预算为最多 `5` 次实际 ImageGen
-  generation／edit，当前 `4/5`、已授权，流程错误 `2`。V2
+  generation／edit，当前 `5/5`、已耗尽，流程错误 `2`。V2
   历史 production 为 `5/5` actual ImageGen，五稿均未晋级，且不会转作 V3
   edit input、source 或 runtime 位图。
 - 当前请求：用户于 `2026-08-07` 在 V2 五次循环结束后明确否决其可见风格：
@@ -1147,10 +1147,11 @@ all-over texture, enclosing frame, symmetric cadence or baked live content.
 - 新增／替换参考、上传模拟或旧失败稿、改变对象／状态数量、视觉隐喻、层序、
   画布、runtime 几何、safe area、provider、Alpha／atlas 策略或允许烘焙任何
   动态内容，都超出冻结边界并必须重新授权。
-- 当前 `4/5`，流程错误 `2`，已获用户逐字授权。attempt 4 已通过语义、层序、
-  美术基线、安全区、四态和 display `5/5`，但 visible aspect `2.76945` 超过
-  `2.69` 硬上限；错误比例没有 Image 3 资格。`QL-D V3.r4` 完整
-  fresh-regenerate 正文必须先提交，再以固定 Image 1／2 执行最终 attempt 5。
+- 当前 `5/5`，流程错误 `2`，授权额度已耗尽。attempt 5 的安全区、四态和
+  display `5/5` 通过，但 visible aspect `2.81899` 超过 `2.69` 硬上限；同时
+  两材料重新出现满版交叉微纹，皮革补片被连续亮纸唇／暗轮廓包成规则内嵌板。
+  错误比例与全局美术均要求 fresh regenerate，但第六次调用未获授权；状态
+  停止于 `candidate-rejected / repair-budget-exhausted`。
 
 ## V3 生产授权记录
 
@@ -1175,6 +1176,7 @@ all-over texture, enclosing frame, symmetric cadence or baked live content.
 | `2/5` | `QL-D V3.r1`／`57c0003` | fixed Image 1／2 fresh regenerate；无 Image 3 | fixed child `019fda75-ce0c-77e2-822b-2613fcd475c0`；provider generation 完成 | `generated/quests/ql-d-reward-slots/production/V3/attempt-02/raw/ql-d-v3-attempt-02.provider-native-01.png`；SHA `ad3d82bdba14f5554c60344149cb92f2ffa3b070c8292b47858a24c1f9d3d623`；`1254² RGB` | 初审仅 18 个缝孔绿像素；授权 soft despill 后技术 `19/19`；视觉首失败为两材料满版程序化压纹／交叉纹理 | 身份、层序、`2.66022` aspect、安全区、综合色、三处差异缝扎、四态与 display `5/5` 成立；全局材质失败不在 Image 3 局部边界，V3.r2 固定 Image 1／2 fresh regenerate | `candidate-rejected`；实际生图计 `2/5` |
 | `3/5` | `QL-D V3.r2`／`52f58b8` | fixed Image 1／2 fresh regenerate；无 Image 3 | fixed child `019fda7d-5b25-7341-874f-49fcb8f2bd22`；provider generation 完成 | `generated/quests/ql-d-reward-slots/production/V3/attempt-03/raw/ql-d-v3-attempt-03.provider-native-01.png`；SHA `de65e84ea94b85e249b5d6a7bc01e8e3cc3d2dfb75293f7d43db1ec0faf1f682`；`1254² RGB` | `keyed_aspect_is_2_58_to_2_69`：`2.4894736842`；icon/name Alpha `0.96270/0.96845` | 语义、纸下皮上层序、近乎无纹理大色面、实用三扎、综合色和 display `5/5` 成立；错误比例与 safe anatomy 无 Image 3 资格，V3.r3 固定 Image 1／2 fresh regenerate | `candidate-rejected`；技术 `16/19`；实际生图计 `3/5` |
 | `4/5` | `QL-D V3.r3`／`94f366b` | fixed Image 1／2 fresh regenerate；无 Image 3 | fixed child `019fda82-fe09-7ca3-af7f-f9c33bbb02b7`；provider generation 完成 | `generated/quests/ql-d-reward-slots/production/V3/attempt-04/raw/ql-d-v3-attempt-04.provider-native-01.png`；SHA `8be3575aaf35965081734a539485c2811a30956a32a786a91ec64911981b7d2c`；`1254² RGB` | `keyed_aspect_is_2_58_to_2_69`：`2.7694524496` | 语义、纸下皮上层序、低频手绘综合色、icon/name Alpha `99.92%/99.97%`、四态与 display `5/5` 均成立；全局比例过宽属于 fresh-regenerate，V3.r4 固定 Image 1／2，禁止 Image 3 | `candidate-rejected`；技术 `18/19`；实际生图计 `4/5` |
+| `5/5` | `QL-D V3.r4`／`8459b4a` | fixed Image 1／2 final fresh regenerate；无 Image 3 | fixed child `019fda8b-30d8-7af0-b7c5-d9c5243533a6`；provider generation 完成 | `generated/quests/ql-d-reward-slots/production/V3/attempt-05/raw/ql-d-v3-attempt-05.provider-native-01.png`；SHA `8a34f6c801ae01278dc28e4b8d9c678c320bb534d5875e7a2aec1cb51722e57d`；`1254² RGB` | `keyed_aspect_is_2_58_to_2_69`：`2.8189910979` | icon/name Alpha `100%/100%`、四态与 display `5/5` 通过；全局交叉微纹与规则内嵌皮革轮廓另行违反 V3 美术，且两类失败都不能确定性修复 | `candidate-rejected / repair-budget-exhausted`；技术 `18/19`；实际生图计 `5/5` |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
@@ -1234,6 +1236,18 @@ all-over texture, enclosing frame, symmetric cadence or baked live content.
   解剖、综合色与低频材料面，只把最终修复收敛到：左右至少 `72px` 纯绿留白、
   主体约 `880×325`、完整可见约 `880×334`、目标 `2.635:1` 且实测必须位于
   `2.58..2.69`。attempt 5 是最后一次实际调用，只上传固定 Image 1／2。
+- attempt 5 review：
+  `generated/quests/ql-d-reward-slots/production/V3/attempt-05/review/ql-d-v3-attempt-05.review.json`；
+  technical `18/19`、display `5/5 pass`。keyed bbox `950×337` 为
+  `2.8189910979:1`，未遵守 `72px` 左右留白和 `2.69` 硬上限；icon/name safe
+  Alpha 均为 `1.0`，四态 Alpha、透明 RGB、真实排版和展示区域成立。目视另见
+  两材料满版对角／交叉微纹，以及环绕左侧皮革补片的近连续亮纸唇与暗轮廓，
+  使其读成规则内嵌板，偏离 V3 已确认的克制潦草方向。
+- 终止结论：本稿比例错误与全局纹理／轮廓失败均要求 fresh regenerate；前稿
+  不能作为 Image 3，非等比拉伸、裁主体、确定性重绘或自动选择 earlier
+  candidate 均被合同禁止。五次实际 ImageGen 已耗尽，未生成 source/runtime，
+  未修改 addon；下一步必须等待用户决定是否接受某一硬合同例外、重新授权新
+  批次，或继续保留当前已经实机验证的程序化暖纸 fallback。
 
 ## V2 历史最终执行正文
 
@@ -2065,12 +2079,12 @@ heavy vanilla-WoW material hierarchy remains readable at 108 x 41.
 | `QL-D V3 attempt 2` | 固定 Image 1／2 fresh regenerate；完整 V3.r1 正文 | `1` | `candidate-rejected`：soft despill 后 technical `19/19`、aspect `2.66022`、display `5/5`；满版压纹／交叉纹理、周期纸边与装饰性中结；无 Image 3 资格 |
 | `QL-D V3 attempt 3` | 固定 Image 1／2 fresh regenerate；完整 V3.r2 正文 | `1` | `candidate-rejected`：technical `16/19`、aspect `2.48947`、icon/name Alpha `96.27%/96.85%`；display `5/5`；美术基线通过但几何无 Image 3 资格 |
 | `QL-D V3 attempt 4` | 固定 Image 1／2 fresh regenerate；完整 V3.r3 正文 | `1` | `candidate-rejected`：technical `18/19`、aspect `2.76945`；icon/name Alpha `99.92%/99.97%`、四态与 display `5/5`；美术通过但全局比例无 Image 3 资格 |
+| `QL-D V3 attempt 5` | 固定 Image 1／2 final fresh regenerate；完整 V3.r4 正文 | `1` | `candidate-rejected / repair-budget-exhausted`：technical `18/19`、aspect `2.81899`；safe Alpha `100%/100%`、display `5/5`；满版微纹与规则内嵌轮廓另行失败 |
 
 ## 下一门禁
 
 `QL-D-SIM-V3` 已确认，`QL-D V3` production 正文与五次修复边界已于
-`2026-08-07` 获用户逐字授权。attempt 1／2／3／4 已完成并拒绝；下一门禁是在
-完整 `QL-D V3.r4` fresh-regenerate 正文提交后，只上传固定 Image 1／2 执行
-最终 attempt 5，再从语义／物理结构开始完成全套内审、四态确定性装配和
-0／1／2／4／6 真实排版。当前仍不得创建 source／runtime、修改 addon 或把
-内部通过误写成用户接受。
+`2026-08-07` 获用户逐字授权。attempt 1／2／3／4／5 均已完成并拒绝，额度
+`5/5` 耗尽；当前门禁为用户决策。不得创建 source／runtime、修改 addon、
+自动选择 earlier candidate、对失败稿非等比变形或发起第六次 ImageGen。
+在新决策前，游戏继续使用已实机验证的程序化暖纸 fallback。

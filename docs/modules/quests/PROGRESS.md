@@ -90,14 +90,16 @@
   以本地几何稿提出“粗裁深皮革图标补片压住撕边羊皮纸装备签，以三处不等
   手扎和错位暗铜痕连接”的新方向；真实 `108×41px`、两列、safe area 与
   provider 不变，0／1／2／4／6 display `5/5 pass`，ImageGen `0/0`，状态为
-  `candidate-rejected / P3 / production 4/5 / repairing`。attempt 4 的美术、
-  层序、安全区与四态通过，但 technical `18/19`：aspect `2.76945` 超过上限。
+  `candidate-rejected / P3 / production 5/5 / repair-budget-exhausted`。attempt 5
+  的 safe Alpha、四态与真实排版通过，但 technical `18/19`：aspect `2.81899`
+  超过上限，且满版微纹／规则内嵌皮革轮廓另行失败。
   用户于 `2026-08-07` 以 `QL-D-SIM-V3` 确认该可见方向；完整 production
   正文、固定 Image 1／2、单枚 normal、四态 atlas、五次修复边界和候选真实
   排版合同已通过完整性预检；用户于 `2026-08-07` 逐字授权 V3 production、
   固定 Image 1／2、受限同循环 Image 3、最多五次实际调用与合同内确定性处理。
-  当前 `4/5`、流程错误 `2`；最终 `QL-D V3.r4` 固定 Image 1／2
-  fresh-regenerate 正文已冻结，下一步执行 attempt 5，禁止使用 Image 3。
+  当前 `5/5`、流程错误 `2`，额度耗尽；无 source/runtime/addon 改动，继续
+  使用实机验证的程序化 fallback。下一步等待用户决定新批次、合同例外或
+  保留 fallback；禁止自动第六次调用。
 - 用户随后以新实机图明确否决上述两项修复结论：同一页的团队／精英／地下城
   Tag 仍同时出现深紫、荧黄和绿色，两个奖励 backdrop 仍视觉相接。复核原生
   `QuestLogFrame.lua` 与 pfUI skin 后确认了两个遗漏：`QuestLogTitleNTag`
@@ -552,7 +554,7 @@
 | `QL-B2` | 当前任务暗酒红书签三状态 | `P5 asset-retained / runtime-hidden` | 用户接受的 source、manifest、`128 × 16` TGA、exporter 与历史证据全部保留；`2026-07-31` 起 adapter 不再挂载或包装任务行脚本 | 暂缓；只有用户重新确认后才恢复 runtime |
 | `QL-B3` | 类型、计时、完成／失败状态章 | `P3 repair-budget-exhausted` | [三段 V1 work](work/QUEST.LOG.STATUS.md) 已获授权；A `5/5` exhausted，B／C 各 `0/5` 并暂停 | 不阻塞 QL-B0 V2；等待用户以后决定 A 的色键例外／source 策略／视觉重开 |
 | `QL-C` | 两套 ScrollBar、关闭、Collapse All、操作、辅助按钮与 pfQuest 六控件兼容 | `P5 runtime-integrated`；QS-B1 V7-A substrate `P5 / ImageGen 5/5` | 用户于 `2026-08-07` 接受 V7-A attempt 5。source SHA `168f527f…05b8`、`32×192` runtime SHA `db620778…c615` 已接入 ScrollChild 闭合 root；技术 `13/13`、真实排版 `29/29`、display `6/6`。七纹章／代理未完成，菜单 inactive，旧按钮 fail-open | P6 验证闭合跨压；另行完成七项代理 parity 后才启用菜单 |
-| `QL-D` | 奖励槽、分隔与文字安全区 | current geometry／fallback `P6 game-validated`；V3 final art `P3 repairing` | V3 attempt 4 的身份、纸下皮上层序、plain broad-plane 美术、icon/name Alpha `99.92%/99.97%`、四态和 display `5/5` 通过；technical `18/19`，aspect `2.76945` 超过 `2.69`，且无 Image 3 资格。当前 `4/5`、流程错误 `2`；最终 V3.r4 以 `72px` 两侧留白和 `2.635:1` 实测目标锁定比例，只用固定 Image 1／2 fresh regenerate；无 source/runtime/addon 接入 | 固定执行器执行 V3.r4 最终 attempt 5；候选完成完整内审，内部通过即停，否则进入 budget-exhausted |
+| `QL-D` | 奖励槽、分隔与文字安全区 | current geometry／fallback `P6 game-validated`；V3 final art `P3 repair-budget-exhausted` | V3 attempt 5 的 icon/name Alpha `100%/100%`、四态和 display `5/5` 通过；technical `18/19`，aspect `2.81899` 超过 `2.69`，满版微纹与规则内嵌皮革轮廓另行失败。当前 `5/5`、流程错误 `2`；无 source/runtime/addon 接入，继续使用程序化 fallback | 等待用户选择新批次、明确合同例外或保留 fallback；禁止自动第六次生图 |
 
 QL-A1 manifest 记录：
 
@@ -864,12 +866,12 @@ Quest Log 的类型色、详情字体、金额、奖励容器／锚点与内容�
 进入 runtime `1.25`／Theme `1.8`，并由本次用户实机结论确认。当前暖纸
 fallback 不代表最终美术。QL-D V2 停在 `5/5` 历史失败；QL-D V3 已由用户以
 `QL-D-SIM-V3` 确认，处于
-`candidate-rejected / P3 / production 4/5 / process errors 2 / repairing`。
+`candidate-rejected / P3 / production 5/5 / process errors 2 / repair-budget-exhausted`。
 本地稿保持真实排版和 safe area，只把外观改成粗裁皮革补片、撕边纸签、
 不等手扎与错位暗铜痕。完整 production 正文和确定性合同已写入唯一 work；
-用户已于 `2026-08-07` 独立授权固定正文与五次修复边界；attempt 4 的美术、
-层序、安全区、四态与真实排版通过，但因比例 `2.76945` 超过硬上限而拒绝，
-下一步以完整 `QL-D V3.r4` 固定 Image 1／2 执行最终 attempt 5。
+用户已于 `2026-08-07` 独立授权固定正文与五次修复边界；attempt 5 因比例
+`2.81899` 超过硬上限而拒绝，且重新出现满版微纹／规则内嵌皮革轮廓。五次
+额度已耗尽；下一步等待用户决定，不得自动调用第六次。
 在具体候选获用户接受前不得晋级 source／runtime 或接入 addon。旧顶部悬空
 漆章位置不再作为待接受方向。
 
