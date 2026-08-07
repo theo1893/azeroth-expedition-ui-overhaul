@@ -53,7 +53,7 @@ def main() -> None:
         ROOT
         / "tools"
         / "specs"
-        / "quest_log_reward_slots_simulation_v2.json"
+        / "quest_log_reward_slots_simulation_v3.json"
     )
     reward_sim_spec = json.loads(
         reward_sim_spec_path.read_text(encoding="utf-8")
@@ -62,13 +62,13 @@ def main() -> None:
         ROOT
         / "tools"
         / "specs"
-        / "quest_log_reward_slots_sim_display_region_v2.json"
+        / "quest_log_reward_slots_sim_display_region_v3.json"
     )
     reward_display_spec = json.loads(
         reward_display_spec_path.read_text(encoding="utf-8")
     )
     reward_sim_renderer_path = (
-        ROOT / "tools" / "render_quest_log_reward_slots_simulation_v2.py"
+        ROOT / "tools" / "render_quest_log_reward_slots_simulation_v3.py"
     )
     reward_sim_renderer = reward_sim_renderer_path.read_text(encoding="utf-8")
     reward_sim_base_renderer_path = (
@@ -1604,13 +1604,13 @@ def main() -> None:
     require(
         rewards_work,
         (
-            "QL-D Quest Log 奖励槽 V2",
-            "`simulation-confirmed / production-draft / awaiting-production-authorization`",
-            "当前几何／fallback `P6 game-validated`；最终美术 `P2`",
+            "QL-D Quest Log 奖励槽（当前 V3；V2 历史）",
+            "`simulation-proposed / awaiting-user-confirmation`",
+            "当前几何／fallback `P6 game-validated`；V3 最终美术 `P2`",
             "`2026-08-05`",
-            "生成前模拟 ImageGen：`0/0`",
-            "当前 `0/5`",
-            "`QL-D-SIM-V2`",
+            "V3 生成前模拟 ImageGen：`0/0`",
+            "production 预算 `0/0`",
+            "`QL-D-SIM-V3`",
             "`QUEST.LOG.REWARD.SLOT`",
             "`108 × 41 UI px`",
             "名称安全宽 `64px`",
@@ -1618,14 +1618,15 @@ def main() -> None:
             "同行间隔",
             "runtime `1.25`",
             "Quest Visual Theme `1.8`",
-            "quest_log_reward_slots_simulation_v2.json",
-            "render_quest_log_reward_slots_simulation_v2.py",
-            "687b9836c4342a3ede68e7544e764d67bffcecd2130d6f6cc1c632b0ffce9991",
-            "c6457cb9e3cc2c4493450e2399f70170dd87ac3ddaca7b9feb4bcd1ee1d11c01",
-            "quest_log_reward_slots_sim_display_region_v2.json",
+            "quest_log_reward_slots_simulation_v3.json",
+            "render_quest_log_reward_slots_simulation_v3.py",
+            "fa05dca06ebb7aed9b691757907ba2b02ca5a15088967f8398ac811190d5528b",
+            "60072902c34eda1e5b1b8b7b42f2ccbf721753c06637988fb136230150df0482",
+            "quest_log_reward_slots_sim_display_region_v3.json",
             "QuestLogSealPurityRibbonV1.tga",
             "0／1／2／4／6",
             "violations `0`",
+            "## V2 历史最终执行正文",
             "### `QL-D V2` 最终 production prompt",
             "QuestLogRewardSlot_Master_v1.png",
             "QuestLogRewardSlotStatesV1.tga",
@@ -1633,14 +1634,14 @@ def main() -> None:
             "[4,4,37,37]",
             "[41,4,105,37]",
             "normal／hover／pressed／disabled",
-            "当前尚未授权",
-            "确认不等于生成授权",
+            "用户确认前不得写成稳定基线",
+            "若获授权仍必须只使用",
         ),
         "active QL-D reward-slot work",
     )
     assert "/Users/" not in rewards_work
     assert reward_sim_spec["schema"] == (
-        "aeui.quest-log.reward-slots.simulation.v2"
+        "aeui.quest-log.reward-slots.simulation.v3"
     )
     assert reward_sim_spec["state"] == (
         "simulation-proposed / awaiting-user-confirmation"
@@ -1648,6 +1649,8 @@ def main() -> None:
     assert reward_sim_spec["layout"]["detail_content"] == [376, 72, 224, 306]
     assert reward_sim_spec["layout"]["reward_slot_size"] == [108, 41]
     assert reward_sim_spec["layout"]["reward_name_safe_width"] == 64
+    assert reward_sim_spec["layout"]["reward_icon_safe"] == [4, 4, 37, 37]
+    assert reward_sim_spec["layout"]["reward_name_safe"] == [41, 4, 105, 37]
     assert reward_sim_spec["layout"]["reward_column_gap"] == 8
     assert reward_sim_spec["layout"]["reward_row_gap"] == 4
     assert reward_sim_spec["layout"]["seal_carrier_root"] == [
@@ -1661,6 +1664,7 @@ def main() -> None:
     )
     assert reward_sim_spec["constraints"]["imagegen_calls"] == 0
     assert reward_sim_spec["constraints"]["new_runtime_bitmap_assets"] == 0
+    assert reward_sim_spec["constraints"]["geometry_changed_from_v2"] is False
     assert reward_sim_spec["constraints"]["counts_covered_by_display_contract"] == [
         0,
         1,
@@ -1699,11 +1703,14 @@ def main() -> None:
     require(
         reward_sim_renderer,
         (
-            "compose_current_neighbours",
+            "draw_rough_reward_slot",
+            "compose_current_neighbours_and_board",
             "seal_carrier",
             "carrier_root",
             "image.alpha_composite",
             "current_runtime_neighbours",
+            "visual_delta_from_v2",
+            "direction_board",
             "sys_executable",
         ),
         "QL-D current-neighbour simulation renderer",

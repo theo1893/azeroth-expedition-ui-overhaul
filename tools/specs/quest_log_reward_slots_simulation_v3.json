@@ -1,0 +1,73 @@
+{
+  "schema": "aeui.quest-log.reward-slots.simulation.v3",
+  "component": "QL-D/QUEST.LOG.REWARD.SLOT",
+  "state": "simulation-proposed / awaiting-user-confirmation",
+  "frame": [676, 464],
+  "inputs": {
+    "quest_log_shell": "addon/AzerothExpeditionUI/Media/Quests/QuestLogShellV4.tga",
+    "seal_atlas": "addon/AzerothExpeditionUI/Media/Quests/QuestToolWaxSealStatesV1.tga",
+    "seal_carrier": "addon/AzerothExpeditionUI/Media/Quests/QuestLogSealPurityRibbonV1.tga",
+    "title_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf",
+    "body_font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf",
+    "locked_visual_provenance": "assets/locked/quests/任务详情面板_视觉基准_v1.png",
+    "accepted_adjacency_provenance": "assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png"
+  },
+  "outputs": {
+    "preview": "generated/quests/ql-d-reward-slots/simulation/V3/quest_log_reward_slots_sim_v3.png",
+    "review_2x": "generated/quests/ql-d-reward-slots/simulation/V3/quest_log_reward_slots_sim_v3_review_2x.png",
+    "direction_board": "generated/quests/ql-d-reward-slots/simulation/V3/quest_log_reward_slots_sim_v3_direction_board.png",
+    "report": "generated/quests/ql-d-reward-slots/simulation/V3/quest_log_reward_slots_sim_v3_report.json",
+    "display_region_report": "generated/quests/ql-d-reward-slots/simulation/V3/quest_log_reward_slots_display_region_report_v3.json"
+  },
+  "layout": {
+    "detail_page": [366, 64, 246, 324],
+    "detail_content": [376, 72, 224, 306],
+    "reward_slot_size": [108, 41],
+    "reward_icon_safe": [4, 4, 37, 37],
+    "reward_name_safe": [41, 4, 105, 37],
+    "reward_name_safe_width": 64,
+    "reward_column_gap": 8,
+    "reward_row_gap": 4,
+    "reward_header_gap": 5,
+    "reward_origin": [376, 148],
+    "seal_visual": [576, 68, 32, 32],
+    "seal_carrier_root": [576, 76, 32, 28]
+  },
+  "content": {
+    "items": [
+      {"name": "断风者", "count": 1, "state": "normal"},
+      {"name": "舞动之藤", "count": 1, "state": "hover"},
+      {"name": "蛛丝护腕", "count": 2, "state": "normal"},
+      {"name": "黑铁战锤", "count": 1, "state": "pressed"},
+      {"name": "秘银护符", "count": 1, "state": "normal"},
+      {"name": "强效药剂", "count": 5, "state": "disabled"}
+    ]
+  },
+  "art_direction": {
+    "identity": "a rough field-added quartermaster equipment docket hand-fastened into the formal Azeroth quest ledger",
+    "construction": "one irregular dark-leather icon patch overlaps one torn-edge smoked-parchment name docket; three unequal lash marks and two mismatched dull tacks join the materials without a continuous enclosure",
+    "brush_language": "coarse hand-painted broad value masses, broken off-axis edge strokes, controlled one-to-two runtime-pixel irregularity, no procedural microtexture",
+    "palette": "soot walnut, smoked ochre parchment, dry umber cord and almost-blackened old bronze",
+    "states": ["normal", "hover", "pressed", "disabled"],
+    "selected_state": false,
+    "dynamic_runtime_content": ["item icon", "item count", "item name", "quality colour", "tooltip", "click scripts"],
+    "forbidden": [
+      "continuous leather, brass or gold rectangle",
+      "mirrored chamfers, equal corners or precision-industrial symmetry",
+      "modern rounded web card, polished brown HUD rail or Diablo-style equipment frame",
+      "scrapbook sticker, sticky note, clean indie-game sketch card or photorealistic craft paper",
+      "baked item icon, count, name, quality colour or selected state",
+      "dense scratches, all-over fibre noise, tiny embossing, neon or glass"
+    ]
+  },
+  "constraints": {
+    "imagegen_calls": 0,
+    "new_runtime_bitmap_assets": 0,
+    "direction_only": true,
+    "simulation_pixels_are_not_source": true,
+    "provider_button_and_scripts_preserved": true,
+    "geometry_changed_from_v2": false,
+    "counts_covered_by_display_contract": [0, 1, 2, 4, 6],
+    "current_runtime_neighbours": ["QuestLogShellV4", "QS-A1 wax seal", "QS-B1 V7-A collapsed carrier root"]
+  }
+}

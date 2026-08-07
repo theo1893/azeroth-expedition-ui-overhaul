@@ -1,20 +1,20 @@
-# QL-D Quest Log 奖励槽 V2
+# QL-D Quest Log 奖励槽（当前 V3；V2 历史）
 
 ## 元数据
 
 - 模块：Quests／Quest Log 右页。
-- 批次：`QL-D V2`。
+- 当前批次：`QL-D V3`；`QL-D V2` 作为已封闭失败历史保留在本文件。
 - 组件 ID：`QUEST.LOG.REWARD.SLOT`。
-- 子状态：`production-paused / internal-rejected / repair-budget-exhausted`。
-- 项目阶段：当前几何／fallback `P6 game-validated`；最终美术 `P3`。
-- 固定执行器：本次已授权生产只允许
-  `imagegen-0-143-0`／`@openai/codex@0.143.0`。
-- 生成前模拟 ImageGen：`0/0`；production 预算为最多 `5` 次实际 ImageGen
-  generation／edit，当前 `5/5`。attempt 1／2／3／4／5 均有 provider generation
-  证据并计数；尚无合格候选、source 或 runtime 位图。
-- 当前请求：用户于 `2026-08-07` 先以 `QL-D-SIM-V2` 明确确认当前 V2 可见
-  方向，随后逐字确认授权 `QL-D V2` 完整 production 正文、固定 Image 1／2、
-  受限同循环 Image 3、最多五次实际调用，以及下述确定性处理与真实排版预演。
+- 当前子状态：`simulation-proposed / awaiting-user-confirmation`。
+- 项目阶段：当前几何／fallback `P6 game-validated`；V3 最终美术 `P2`。
+- 固定执行器：V3 当前只进行本地确定性几何模拟，尚未授权 production；未来
+  若获授权仍必须只使用 `imagegen-0-143-0`／`@openai/codex@0.143.0`。
+- V3 生成前模拟 ImageGen：`0/0`；production 预算 `0/0`，尚未授权。V2
+  历史 production 为 `5/5` actual ImageGen，五稿均未晋级，且不会转作 V3
+  edit input、source 或 runtime 位图。
+- 当前请求：用户于 `2026-08-07` 在 V2 五次循环结束后明确否决其可见风格：
+  “太规整、过于现代”，要求改为手绘／潦草相关元素并加强 RPG 沉浸感。
+  该指示开启 V3 视觉版本，不构成新的 ImageGen 或 P4／P5 授权。
 - 用户问题来源：`2026-08-04` 实机截图确认多奖励重叠／末端裁切、详情与奖励
   字体难读，以及 pfUI 平面黑灰奖励卡片过于现代。
 - 实机修复确认：`2026-08-05` 用户确认 Quest 右页的既有 bug 和显示问题均已
@@ -56,9 +56,11 @@
 - `QuestLogItemReceiveText`／`QuestLogRequiredMoneyText` 保持内在宽度，金额
   Frame 不得被推到 ScrollChild 外。详情末端按最底可见对象及原生
   `QuestLogSpacerFrame` 重算，不能固定为 `324px` 后裁掉奖励。
-- 正式位图如获确认，只能绘制容器材料：浅削角旧皮革边框、克制氧化黄铜边、
-  左侧深皮革图标凹槽、右侧安静羊皮纸名称面和窄接触阴影。图标、数量、名称、
-  品质色、状态文字和发光均不得烘焙。
+- V3 正式位图如获确认，只能绘制容器材料：一块非镜像、粗裁的深皮革图标补片
+  压住一张撕边烟熏羊皮纸装备签；两者仅由三处长短／角度不等的手工缝扎和
+  少量错位暗铜钉连接。取消完整皮革／金属闭合框、对称削角和规则轨道，但
+  `[4,4,37,37]` 图标安全区与 `[41,4,105,37]` 名称安全区必须保持连续安静。
+  图标、数量、名称、品质色、状态文字和发光均不得烘焙。
 - 任何媒体缺失时 fail-open 到当前暖纸色程序化 fallback；不能阻止奖励数据、
   鼠标或 Quest Log 加载。
 
@@ -96,6 +98,59 @@
   outline、无 shadow。
 - 正式槽资产尚未确认前，runtime `1.25` 的 adapter-owned 容器只使用低透明
   暖纸底和深赭／旧黄铜边；它是可回退的程序化临时视觉，不是最终 source。
+
+## V3 当前手绘军需装备签确定性本地模拟
+
+- 规格：
+  [`quest_log_reward_slots_simulation_v3.json`](../../../../tools/specs/quest_log_reward_slots_simulation_v3.json)，
+  SHA-256
+  `6714657f0317a7ca8b36731b33c06b9ee36796dec4e82981abe6b8670d2d4ba3`。
+- renderer：
+  [`render_quest_log_reward_slots_simulation_v3.py`](../../../../tools/render_quest_log_reward_slots_simulation_v3.py)，
+  SHA-256
+  `ad87dcc4048be5c32ff1366a1578e1cf6ded95608e235a8b7c8c8bddb200442a`。
+- 当前固定视觉职责仍来自锁定 Quest 详情基准与 accepted QuestLogBookShell；
+  V2 候选和模拟像素不作为 V3 上传参考或像素来源。V3 只在相同真实
+  `108×41px` Button 内改变可见材料组织，不改变 provider、交互、双列布局、
+  safe area、状态数或 ScrollChild 合同。
+- V3 隐喻为“军需官临时缝进正式任务卷宗的手写装备签”：左侧是不规则粗裁
+  深皮革图标补片，右侧是被它压住的烟熏撕边羊皮纸名签；交界处为三处不同
+  长度／角度的手扎线，外缘只保留两枚不匹配的暗哑旧铜固定痕。完整四边框、
+  镜像削角、连续黄铜线和精密内框全部移除。
+- “潦草”只作用于外轮廓、断续笔触、材料搭接、边缘磨损与固定件；图标／名称
+  安全区继续使用大块低频色面，禁止把潦草误解为密集划痕、满版纤维噪声、
+  手写占位字、现代独立游戏速写卡或剪贴簿贴纸。
+- Python：macOS 按项目规则使用 conda 环境 `py312`；Python `3.12.12`、
+  Pillow `12.0.0`。复现命令：
+
+  ```text
+  conda run -n py312 python tools/render_quest_log_reward_slots_simulation_v3.py tools/specs/quest_log_reward_slots_simulation_v3.json --repo-root .
+  ```
+
+- ignored 输出：
+  - `generated/quests/ql-d-reward-slots/simulation/V3/quest_log_reward_slots_sim_v3.png`，
+    `676×464`，SHA-256
+    `fa05dca06ebb7aed9b691757907ba2b02ca5a15088967f8398ac811190d5528b`；
+  - `quest_log_reward_slots_sim_v3_review_2x.png`，`1352×928`，SHA-256
+    `d494453ebee4f55c7cabf90dbf79c6d7dd95348fb5340c05cb323b936d6f3fc5`；
+  - `quest_log_reward_slots_sim_v3_direction_board.png`，`1400×900`，SHA-256
+    `60072902c34eda1e5b1b8b7b42f2ccbf721753c06637988fb136230150df0482`；
+  - 模拟报告 SHA-256
+    `6a03f5e66040199aa272410a9799dd64973882677258818dd96d5fb34e0d972a`。
+- 展示区域合同：
+  [`quest_log_reward_slots_sim_display_region_v3.json`](../../../../tools/specs/quest_log_reward_slots_sim_display_region_v3.json)，
+  SHA-256
+  `90aebf51405bb9d553ce108169790963145cf406d40264bfed576ab139836936`；
+  0／1／2／4／6 奖励 `5/5 pass`、violations `0`、first failure `null`。
+  ignored report SHA-256
+  `90d08e001deeeddd2e2d88ef75b46bdc23427c144b982b1ea8622f8a573a098a`。
+- 本地目视：真实书页内六格仍保持图标、数量和名称可读；四态不改变轮廓，
+  normal／hover／pressed／disabled 只作克制综合色变化。4× 放大明确显示
+  纸签上下撕边、断续外缘、错位固定件和非镜像搭接；没有重新出现完整金属框。
+  几何稿只能确认结构／密度／轮廓趋势，不能证明正式手绘纹理质量。
+- ImageGen `0/0`，本地流程错误 `0`，没有 source、runtime、atlas 或 addon
+  变化。当前只等待用户确认 `QL-D-SIM-V3` 可见方向；确认后才会把本节条款
+  融入新的完整 production prompt 并另行请求明确授权。
 
 ## V1 历史确定性本地模拟
 
@@ -181,6 +236,9 @@ V1 在 Windows 上形成的具体像素已被 V2 当前邻接 UI 预演取代；
   皮革图标凹槽；右侧为安静羊皮纸名称面；窄纸面接触阴影；当前 `108×41px`
   双列结构、页面综合色和相邻漆章／载体层序不变。示例图标、文字、品质色和
   模拟几何像素均未被接受为 source 或生产输入。
+- 后续结论：同日用户在五次 production 循环结束后明确判定该框架体系仍
+  “太规整、过于现代”，因此 V2 可见方向被 V3 重开覆盖。V2 的确认与授权只作
+  历史 provenance，不得继续作为当前 production 入口。
 
 ## V2 展示区域门禁
 
@@ -200,6 +258,14 @@ V1 在 Windows 上形成的具体像素已被 V2 当前邻接 UI 预演取代；
 - 该结果只证明方向稿几何，不证明最终纹理、客户端 UV、交互或 P6 实机表现。
 
 ## 最终执行正文
+
+`QL-D V3` 当前尚未形成或授权 production 正文。生成前模拟必须先取得用户
+方向确认；确认后再把全局／Quest 基线、固定 Image 职责、对象数量、动态内容
+排除、`1024²`／bbox、safe area、Alpha、四态 atlas、确定性后处理、真实排版和
+最多五次 actual ImageGen 循环写成一份完整可复制正文，并独立请求逐字授权。
+V2 的任何 prompt、失败 candidate 或授权均不得冒充 V3 最终执行正文。
+
+## V2 历史最终执行正文
 
 ### 固定生产输入与权威职责
 
@@ -1028,8 +1094,10 @@ heavy vanilla-WoW material hierarchy remains readable at 108 x 41.
 
 ## 下一门禁
 
-attempt 1–5 均已内部退回，实际 ImageGen 预算 `5/5` 耗尽。下一门禁只能由
-用户决定：明确授权 attempt 5 aspect `2.5372340426` 的确定性合同例外并接受
-其运行时视觉，或另开新版本／新预算继续修复。获得新指示前不得再次调用
-ImageGen，不得把诊断 bbox-fit 当作通过，不得晋级 source／runtime、修改 addon
-或把生产授权误写成接入授权。
+当前门禁是用户审查 `QL-D-SIM-V3` 的“粗裁皮革补片＋撕边羊皮纸装备签＋
+三处不等手扎＋错位暗铜固定痕”方向。用户确认前不得写成稳定基线、不得调用
+ImageGen、不得晋级 source／runtime 或修改 addon。若方向确认，再创建 V3
+完整 production 正文，将全局／Quest 基线、固定参考职责、`1024²`／bbox、
+Alpha、四态 atlas、真实排版和最多五次 actual ImageGen 循环逐项写全并重新
+取得逐字授权。V2 attempt 5 的 aspect 例外入口已由用户本次改向取代，不再是
+当前推荐下一步。
