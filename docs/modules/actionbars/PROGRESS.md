@@ -29,7 +29,8 @@
   生产正文；用户于 `2026-08-08` 明确授权该正文及最多五次实际生成／修复，
   当前进入 `P3 / prompt-authorized`。固定子进程在启动前因指定 Character V3
   锁定图缺少明确的外部 ImageGen 上传授权而被数据出境审查阻止；已记无生成、
-  不计预算的流程错误 `E1`。
+  不计预算的流程错误 `E1`。用户随后已明确授权把该指定锁定图上传至外部
+  ImageGen，`E1` 已解决；当前仍为 ImageGen `0/5`，可用同一正文重试。
 
 ## 已确定的设计决策
 
@@ -66,7 +67,7 @@
 | ID | 阶段 | 当前证据 | 下一门禁 |
 |---|---:|---|---|
 | `AB.RAIL` | `P2 / direction-locked` | pfUI `BarLayoutSize` 公式与用户确认的 V3 中下焦点；与逐槽资产分批 | `AB.SLOT` 后另写可伸缩 Rail 正文并测 border／scale 极值 |
-| `AB.SLOT` | `P3 / prompt-authorized` | Bar `1–10` 真按钮／backdrop、`18–48 UI` 图标范围、约 `90%` 图标覆盖区与 Character V3 材料继承已冻结；正文已获授权；pre-launch 数据出境审查形成非计数 `E1`，ImageGen `0/5` | 用户明确授权指定 Character V3 锁定图上传至外部 ImageGen；之后固定执行器重试 attempt 1 |
+| `AB.SLOT` | `P3 / prompt-authorized` | Bar `1–10` 真按钮／backdrop、`18–48 UI` 图标范围、约 `90%` 图标覆盖区与 Character V3 材料继承已冻结；正文、五次预算及指定锁定图外部上传均获授权；历史非计数 `E1`，ImageGen `0/5` | 固定 `@openai/codex@0.143.0` 以同一正文重试 attempt 1，并完成全量候选内审 |
 | `AB.SLOT.STATE` | `P2 / scoped` | highlight／active／equipped／icon tint／cooldown／按键动画的真实覆盖顺序已冻结 | 基底 source 接受后另写悬停／激活覆盖合同；不生产假 disabled cell |
 | `AB.ENDCAP.GRYPHON` | `P2 / direction-locked` | pfUI 左右端帽对象、64 UI 默认能力；用户确认的 V3 preset 默认关闭 | `AB.SLOT／RAIL` 后另行授权可选端帽正文 |
 | `AB.STANCE／PET` | `P1` | Bar `11／12` 与 provider 状态已审计 | 职业最少／最多数量和自动施法实机排版 |
@@ -97,13 +98,11 @@
 
 ## 下一门禁
 
-1. 用户明确授权将
-   `assets/locked/character/角色属性面板_香草同构收敛_风格确认_v3.png`
-   上传至外部 ImageGen，作为已授权 `AB.SLOT.BASE.V1` 的唯一 Image 1。
-2. 使用固定 `@openai/codex@0.143.0`，按已提交的完整正文重试 attempt 1。
-3. 对每次候选执行语义、组件、技术像素、`100%` runtime 真实排版与实际展示
+1. 使用固定 `@openai/codex@0.143.0`，按已提交的完整正文与已授权的唯一
+   Character V3 Image 1 重试 attempt 1。
+2. 对每次候选执行语义、组件、技术像素、`100%` runtime 真实排版与实际展示
    区域内审；任一候选通过即停止，失败才按第一门禁准备并提交完整 `.rN`。
-4. 基底 source 接受后，再分别准备 `AB.SLOT.STATE` 与 `AB.RAIL`；狮鹫、消耗品
+3. 基底 source 接受后，再分别准备 `AB.SLOT.STATE` 与 `AB.RAIL`；狮鹫、消耗品
    卷袋和饰品护套继续各自形成独立 source／atlas 合同并逐批授权。
-5. 正式候选接受后才允许登记 Action Bars 精确接管路由和 runtime adapter；
+4. 正式候选接受后才允许登记 Action Bars 精确接管路由和 runtime adapter；
    未接管 Bar 与第三方 provider 始终 fail-open。

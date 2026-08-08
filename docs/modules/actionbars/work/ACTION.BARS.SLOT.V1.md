@@ -23,6 +23,11 @@
   `SIM-V3 confirmed 2026-08-08`
 - 用户生产授权：`confirmed 2026-08-08`；“授权执行 AB.SLOT.BASE.V1，并同意
   最多 5 次实际生成/修复。”
+- 用户外部上传授权：`confirmed 2026-08-08`；“我授权将
+  assets/locked/character/角色属性面板*香草同构收敛*风格确认_v3.png 上传至
+  外部 ImageGen 服务，作为 AB.SLOT.BASE.V1 的 Image 1。”；该唯一匹配目标
+  已解析为仓库精确路径
+  `assets/locked/character/角色属性面板_香草同构收敛_风格确认_v3.png`
 - 自动修复预算：最多 `5` 次实际 ImageGen 生图／修图，含首次
 - 当前实际生图：`0/5`
 - 流程错误：`1`（`E1` 为固定子进程启动前的数据出境审查阻止；无候选、无
@@ -44,7 +49,7 @@
     普通动作槽
   - `docs/GLOBAL_ART_BASELINE.md`：香草时代、二维手绘、字体与反模式总约束
 - 次级参考：无；V3 模拟、旧模拟、provider 截图和本地 scaffold 均不得上传
-- raw：待授权后写入
+- raw：待 attempt 1 执行后写入
   `generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/attempt-01/`
 - 透明候选：待生成后仅在 ignored 审查副本上执行确定性色键
 - 重组预演：待候选通过 source 门禁后生成；本批无 atlas／九宫格
@@ -192,8 +197,8 @@
   `46/46 pass`、violations `0`
 - 内部结论：`displayable`
 - 用户结论：`SIM-V3 confirmed 2026-08-08`；若上述可见关系实质变化，确认失效
-- 下一门禁：用户明确授权指定 Character V3 锁定图上传至外部 ImageGen；之后
-  固定执行器以同一正文重试 attempt 1
+- 下一门禁：固定执行器以同一正文和已授权的 Character V3 Image 1 重试
+  attempt 1
 
 ## 生产正文完整性预检
 
@@ -260,7 +265,7 @@ Before returning the image, check all of the following: the canvas is exactly 10
 
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
-| `1/5` | `AB.SLOT.BASE.V1` / `a26355d` | generate | not launched | 无 | 无候选；见流程错误 `E1` | 同一正文，待外部上传明确授权后重试 | authorized / pending |
+| `1/5` | `AB.SLOT.BASE.V1` / `a26355d` | generate | not launched | 无 | 无候选；见已解决流程错误 `E1` | 同一正文与已授权 Image 1 重试 | authorized / ready |
 | `2/5` | `AB.SLOT.BASE.V1.r1` / not prepared | edit／generate |  |  |  |  | unavailable until attempt 1 review |
 | `3/5` | `AB.SLOT.BASE.V1.r2` / not prepared | edit／generate |  |  |  |  | unavailable |
 | `4/5` | `AB.SLOT.BASE.V1.r3` / not prepared | edit／generate |  |  |  |  | unavailable |
@@ -268,12 +273,12 @@ Before returning the image, check all of the following: the canvas is exactly 10
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
-| `E1` | `AB.SLOT.BASE.V1` / `a26355d` | 无；pre-launch approval rejection | 执行环境要求明确授权把指定 Character V3 锁定图上传至外部 ImageGen；固定子进程未启动，无图、无 provider 结果 | 请求该具体文件、具体外部用途的数据出境授权；获准后以同一正文重试 | 不占生图额度；`0/5` |
+| `E1` | `AB.SLOT.BASE.V1` / `a26355d` | 无；pre-launch approval rejection | 执行环境要求明确授权把指定 Character V3 锁定图上传至外部 ImageGen；固定子进程未启动，无图、无 provider 结果 | 用户已于 `2026-08-08` 明确授权该具体文件与用途；以同一正文重试 | 已解决；不占生图额度；`0/5` |
 
 ## 执行记录
 
-- 日期：`2026-08-08`；固定子进程未启动
-- 会话／结果 ID：无；pre-launch external-data approval rejection
+- 日期：`2026-08-08`；外部上传已授权，固定子进程尚未重试
+- 会话／结果 ID：无；历史 pre-launch external-data approval rejection 已解决
 - 实际输入绝对路径与职责：授权后固定为
   `D:\Git\azeroth-expedition-ui-overhaul\assets\locked\character\角色属性面板_香草同构收敛_风格确认_v3.png`，
   只承担正文声明的材料职责
@@ -282,7 +287,7 @@ Before returning the image, check all of the following: the canvas is exactly 10
 - Alpha／残色：无
 - 实际生图次数：`0/5`
 - 流程错误次数：`1`
-- 循环终态：`authority-blocked`
+- 循环终态：`prompt-authorized`
 
 ## 审查记录
 
@@ -296,11 +301,11 @@ Before returning the image, check all of the following: the canvas is exactly 10
 - 真实排版：V3 整体方向已确认；正式候选的逐按钮真实排版尚未执行。
 - 实际展示区域：合同已定义，报告待候选；当前不能标记 pass。
 - 技术像素：待生成。
-- 结论：`prompt-authorized / execution-blocked before generation`
+- 结论：`prompt-authorized / ready for fixed-executor retry`
 - 用户结论与日期：V3 `confirmed 2026-08-08`；生产正文与最多五次实际生成／
-  修复 `authorized 2026-08-08`；指定锁定图的外部 ImageGen 上传授权仍需明确
-- 下一门禁：用户明确授权将上述 Character V3 锁定图上传至外部 ImageGen；
-  之后以 `a26355d` 正文重试 attempt 1
+  修复 `authorized 2026-08-08`；指定锁定图的外部 ImageGen 上传
+  `authorized 2026-08-08`
+- 下一门禁：以 `a26355d` 正文和唯一已授权 Image 1 重试 attempt 1
 
 ## 尝试摘要
 
@@ -309,4 +314,4 @@ Before returning the image, check all of the following: the canvas is exactly 10
 | `SIM-V1` | deterministic PNG `fd5e1537…18d0`；display `9/9` | `user-rejected 2026-08-08` | 动作条上移；玩家／目标靠近并同基线 |
 | `SIM-V2` | PNG `943d6fac…e5d0`；display `9/9`；layout `20/20` | `user-revision-requested 2026-08-08` | 加入施法、攻击计时和 DoiteDPS；重排 Aura |
 | `SIM-V3` | PNG `b2761b67…c87e8`；新增 display `9/9`；layout `46/46`；V2 回归一致 | `user-confirmed 2026-08-08` | 不改变已确认布局；进入首批组件 Prompt 门禁 |
-| `AB.SLOT.BASE.V1` | 单物件正文完整性 `6/6 pass`；授权 commit `a26355d`；pre-launch `E1`；ImageGen `0/5` | `prompt-authorized / authority-blocked` | 明确授权指定锁定图向外部 ImageGen 上传；同一正文重试 |
+| `AB.SLOT.BASE.V1` | 单物件正文完整性 `6/6 pass`；授权 commit `a26355d`；pre-launch `E1` 已解决；ImageGen `0/5` | `prompt-authorized / ready` | 固定执行器以同一正文与唯一已授权 Image 1 重试 |
