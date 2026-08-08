@@ -1,0 +1,3762 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "AB.RAIL.V1/simulation-v1",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, pfUI UI units before UIParent and movable scale",
+  "evidence": {
+    "provider": "addon/pfUI/api/api.lua BarLayoutSize + BarButtonAnchor + CreateBackdrop; addon/pfUI/modules/actionbar.lua",
+    "layout_formula": "bar=(icon+2*border+spacing)*cols+spacing; rail target is the bar backdrop and therefore adds border on all four sides; merged bar1+bar6 spans two equal bar frames minus their anchored spacing and adds one outer backdrop",
+    "simulation_spec": "tools/specs/action_rail_v1_simulation.json",
+    "scene_simulation": "generated/actionbars/AB.RAIL/AB.RAIL.V1/simulation/AB-RAIL-SIM-V1/AB.RAIL.V1.sim-v1.png",
+    "layout_simulation": "generated/actionbars/AB.RAIL/AB.RAIL.V1/simulation/AB-RAIL-SIM-V1/AB.RAIL.V1.sim-v1.layouts.png",
+    "target": "1920x1080; UI scale 0.81269841269841; physical preview also applies each movable local scale",
+    "atlas_role": "planned 704x704 crop of a future single square stretch master; nine logical slices only; no source or runtime asset exists",
+    "dynamic_ownership": "icons, slots, keybinds, counts, cooldowns, range, OOM, pressed feedback, paging, drag, scale, visibility and hit regions remain provider-owned",
+    "final_runtime": false
+  },
+  "atlas": {
+    "size": [
+      704,
+      704
+    ],
+    "visible_bbox": [
+      0,
+      0,
+      704,
+      704
+    ],
+    "require_exact_visible_coverage": true,
+    "sampled_regions": [
+      {
+        "id": "planned.left-left",
+        "box": [
+          0,
+          0,
+          128,
+          128
+        ]
+      },
+      {
+        "id": "planned.left-center",
+        "box": [
+          128,
+          0,
+          576,
+          128
+        ]
+      },
+      {
+        "id": "planned.left-right",
+        "box": [
+          576,
+          0,
+          704,
+          128
+        ]
+      },
+      {
+        "id": "planned.center-left",
+        "box": [
+          0,
+          128,
+          128,
+          576
+        ]
+      },
+      {
+        "id": "planned.center-center",
+        "box": [
+          128,
+          128,
+          576,
+          576
+        ]
+      },
+      {
+        "id": "planned.center-right",
+        "box": [
+          576,
+          128,
+          704,
+          576
+        ]
+      },
+      {
+        "id": "planned.right-left",
+        "box": [
+          0,
+          576,
+          128,
+          704
+        ]
+      },
+      {
+        "id": "planned.right-center",
+        "box": [
+          128,
+          576,
+          576,
+          704
+        ]
+      },
+      {
+        "id": "planned.right-right",
+        "box": [
+          576,
+          576,
+          704,
+          704
+        ]
+      }
+    ]
+  },
+  "nine_slice": {
+    "caps": {
+      "left": 6,
+      "right": 6,
+      "top": 6,
+      "bottom": 6
+    },
+    "minimum_frame_size": [
+      13,
+      13
+    ]
+  },
+  "scenarios": [
+    {
+      "id": "single-minimum-1x1",
+      "frame": [
+        32,
+        32
+      ],
+      "preview_frame": [
+        32,
+        32
+      ],
+      "zones": {
+        "rail-target": [
+          0,
+          0,
+          32,
+          32
+        ],
+        "corner-1.ornament-safe": [
+          0,
+          0,
+          2,
+          2
+        ],
+        "corner-2.ornament-safe": [
+          30,
+          0,
+          32,
+          2
+        ],
+        "corner-3.ornament-safe": [
+          0,
+          30,
+          2,
+          32
+        ],
+        "corner-4.ornament-safe": [
+          30,
+          30,
+          32,
+          32
+        ],
+        "button-1.backdrop-safe": [
+          4,
+          4,
+          28,
+          28
+        ],
+        "button-1.hit-safe": [
+          6,
+          6,
+          26,
+          26
+        ]
+      },
+      "regions": [
+        {
+          "id": "corner-1.ornament",
+          "kind": "decoration",
+          "box": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "zone": "corner-1.ornament-safe"
+        },
+        {
+          "id": "corner-2.ornament",
+          "kind": "decoration",
+          "box": [
+            30,
+            0,
+            32,
+            2
+          ],
+          "zone": "corner-2.ornament-safe"
+        },
+        {
+          "id": "corner-3.ornament",
+          "kind": "decoration",
+          "box": [
+            0,
+            30,
+            2,
+            32
+          ],
+          "zone": "corner-3.ornament-safe"
+        },
+        {
+          "id": "corner-4.ornament",
+          "kind": "decoration",
+          "box": [
+            30,
+            30,
+            32,
+            32
+          ],
+          "zone": "corner-4.ornament-safe"
+        },
+        {
+          "id": "button-1.backdrop",
+          "kind": "texture",
+          "box": [
+            4,
+            4,
+            28,
+            28
+          ],
+          "zone": "button-1.backdrop-safe"
+        },
+        {
+          "id": "button-1.hit",
+          "kind": "button",
+          "box": [
+            6,
+            6,
+            26,
+            26
+          ],
+          "zone": "button-1.hit-safe"
+        }
+      ]
+    },
+    {
+      "id": "single-low-scale-border-extreme-1x1",
+      "frame": [
+        26,
+        26
+      ],
+      "preview_frame": [
+        26,
+        26
+      ],
+      "zones": {
+        "rail-target": [
+          0,
+          0,
+          26,
+          26
+        ],
+        "corner-1.ornament-safe": [
+          0,
+          0,
+          2,
+          2
+        ],
+        "corner-2.ornament-safe": [
+          24,
+          0,
+          26,
+          2
+        ],
+        "corner-3.ornament-safe": [
+          0,
+          24,
+          2,
+          26
+        ],
+        "corner-4.ornament-safe": [
+          24,
+          24,
+          26,
+          26
+        ],
+        "button-1.backdrop-safe": [
+          2,
+          2,
+          24,
+          24
+        ],
+        "button-1.hit-safe": [
+          3,
+          3,
+          23,
+          23
+        ]
+      },
+      "regions": [
+        {
+          "id": "corner-1.ornament",
+          "kind": "decoration",
+          "box": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "zone": "corner-1.ornament-safe"
+        },
+        {
+          "id": "corner-2.ornament",
+          "kind": "decoration",
+          "box": [
+            24,
+            0,
+            26,
+            2
+          ],
+          "zone": "corner-2.ornament-safe"
+        },
+        {
+          "id": "corner-3.ornament",
+          "kind": "decoration",
+          "box": [
+            0,
+            24,
+            2,
+            26
+          ],
+          "zone": "corner-3.ornament-safe"
+        },
+        {
+          "id": "corner-4.ornament",
+          "kind": "decoration",
+          "box": [
+            24,
+            24,
+            26,
+            26
+          ],
+          "zone": "corner-4.ornament-safe"
+        },
+        {
+          "id": "button-1.backdrop",
+          "kind": "texture",
+          "box": [
+            2,
+            2,
+            24,
+            24
+          ],
+          "zone": "button-1.backdrop-safe"
+        },
+        {
+          "id": "button-1.hit",
+          "kind": "button",
+          "box": [
+            3,
+            3,
+            23,
+            23
+          ],
+          "zone": "button-1.hit-safe"
+        }
+      ]
+    },
+    {
+      "id": "main-confirmed-12x1",
+      "frame": [
+        510,
+        48
+      ],
+      "preview_frame": [
+        510,
+        48
+      ],
+      "zones": {
+        "rail-target": [
+          0,
+          0,
+          510,
+          48
+        ],
+        "corner-1.ornament-safe": [
+          0,
+          0,
+          2,
+          2
+        ],
+        "corner-2.ornament-safe": [
+          508,
+          0,
+          510,
+          2
+        ],
+        "corner-3.ornament-safe": [
+          0,
+          46,
+          2,
+          48
+        ],
+        "corner-4.ornament-safe": [
+          508,
+          46,
+          510,
+          48
+        ],
+        "button-1.backdrop-safe": [
+          4,
+          4,
+          44,
+          44
+        ],
+        "button-1.hit-safe": [
+          6,
+          6,
+          42,
+          42
+        ],
+        "button-2.backdrop-safe": [
+          46,
+          4,
+          86,
+          44
+        ],
+        "button-2.hit-safe": [
+          48,
+          6,
+          84,
+          42
+        ],
+        "button-3.backdrop-safe": [
+          88,
+          4,
+          128,
+          44
+        ],
+        "button-3.hit-safe": [
+          90,
+          6,
+          126,
+          42
+        ],
+        "button-4.backdrop-safe": [
+          130,
+          4,
+          170,
+          44
+        ],
+        "button-4.hit-safe": [
+          132,
+          6,
+          168,
+          42
+        ],
+        "button-5.backdrop-safe": [
+          172,
+          4,
+          212,
+          44
+        ],
+        "button-5.hit-safe": [
+          174,
+          6,
+          210,
+          42
+        ],
+        "button-6.backdrop-safe": [
+          214,
+          4,
+          254,
+          44
+        ],
+        "button-6.hit-safe": [
+          216,
+          6,
+          252,
+          42
+        ],
+        "button-7.backdrop-safe": [
+          256,
+          4,
+          296,
+          44
+        ],
+        "button-7.hit-safe": [
+          258,
+          6,
+          294,
+          42
+        ],
+        "button-8.backdrop-safe": [
+          298,
+          4,
+          338,
+          44
+        ],
+        "button-8.hit-safe": [
+          300,
+          6,
+          336,
+          42
+        ],
+        "button-9.backdrop-safe": [
+          340,
+          4,
+          380,
+          44
+        ],
+        "button-9.hit-safe": [
+          342,
+          6,
+          378,
+          42
+        ],
+        "button-10.backdrop-safe": [
+          382,
+          4,
+          422,
+          44
+        ],
+        "button-10.hit-safe": [
+          384,
+          6,
+          420,
+          42
+        ],
+        "button-11.backdrop-safe": [
+          424,
+          4,
+          464,
+          44
+        ],
+        "button-11.hit-safe": [
+          426,
+          6,
+          462,
+          42
+        ],
+        "button-12.backdrop-safe": [
+          466,
+          4,
+          506,
+          44
+        ],
+        "button-12.hit-safe": [
+          468,
+          6,
+          504,
+          42
+        ]
+      },
+      "regions": [
+        {
+          "id": "corner-1.ornament",
+          "kind": "decoration",
+          "box": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "zone": "corner-1.ornament-safe"
+        },
+        {
+          "id": "corner-2.ornament",
+          "kind": "decoration",
+          "box": [
+            508,
+            0,
+            510,
+            2
+          ],
+          "zone": "corner-2.ornament-safe"
+        },
+        {
+          "id": "corner-3.ornament",
+          "kind": "decoration",
+          "box": [
+            0,
+            46,
+            2,
+            48
+          ],
+          "zone": "corner-3.ornament-safe"
+        },
+        {
+          "id": "corner-4.ornament",
+          "kind": "decoration",
+          "box": [
+            508,
+            46,
+            510,
+            48
+          ],
+          "zone": "corner-4.ornament-safe"
+        },
+        {
+          "id": "button-1.backdrop",
+          "kind": "texture",
+          "box": [
+            4,
+            4,
+            44,
+            44
+          ],
+          "zone": "button-1.backdrop-safe"
+        },
+        {
+          "id": "button-1.hit",
+          "kind": "button",
+          "box": [
+            6,
+            6,
+            42,
+            42
+          ],
+          "zone": "button-1.hit-safe"
+        },
+        {
+          "id": "button-2.backdrop",
+          "kind": "texture",
+          "box": [
+            46,
+            4,
+            86,
+            44
+          ],
+          "zone": "button-2.backdrop-safe"
+        },
+        {
+          "id": "button-2.hit",
+          "kind": "button",
+          "box": [
+            48,
+            6,
+            84,
+            42
+          ],
+          "zone": "button-2.hit-safe"
+        },
+        {
+          "id": "button-3.backdrop",
+          "kind": "texture",
+          "box": [
+            88,
+            4,
+            128,
+            44
+          ],
+          "zone": "button-3.backdrop-safe"
+        },
+        {
+          "id": "button-3.hit",
+          "kind": "button",
+          "box": [
+            90,
+            6,
+            126,
+            42
+          ],
+          "zone": "button-3.hit-safe"
+        },
+        {
+          "id": "button-4.backdrop",
+          "kind": "texture",
+          "box": [
+            130,
+            4,
+            170,
+            44
+          ],
+          "zone": "button-4.backdrop-safe"
+        },
+        {
+          "id": "button-4.hit",
+          "kind": "button",
+          "box": [
+            132,
+            6,
+            168,
+            42
+          ],
+          "zone": "button-4.hit-safe"
+        },
+        {
+          "id": "button-5.backdrop",
+          "kind": "texture",
+          "box": [
+            172,
+            4,
+            212,
+            44
+          ],
+          "zone": "button-5.backdrop-safe"
+        },
+        {
+          "id": "button-5.hit",
+          "kind": "button",
+          "box": [
+            174,
+            6,
+            210,
+            42
+          ],
+          "zone": "button-5.hit-safe"
+        },
+        {
+          "id": "button-6.backdrop",
+          "kind": "texture",
+          "box": [
+            214,
+            4,
+            254,
+            44
+          ],
+          "zone": "button-6.backdrop-safe"
+        },
+        {
+          "id": "button-6.hit",
+          "kind": "button",
+          "box": [
+            216,
+            6,
+            252,
+            42
+          ],
+          "zone": "button-6.hit-safe"
+        },
+        {
+          "id": "button-7.backdrop",
+          "kind": "texture",
+          "box": [
+            256,
+            4,
+            296,
+            44
+          ],
+          "zone": "button-7.backdrop-safe"
+        },
+        {
+          "id": "button-7.hit",
+          "kind": "button",
+          "box": [
+            258,
+            6,
+            294,
+            42
+          ],
+          "zone": "button-7.hit-safe"
+        },
+        {
+          "id": "button-8.backdrop",
+          "kind": "texture",
+          "box": [
+            298,
+            4,
+            338,
+            44
+          ],
+          "zone": "button-8.backdrop-safe"
+        },
+        {
+          "id": "button-8.hit",
+          "kind": "button",
+          "box": [
+            300,
+            6,
+            336,
+            42
+          ],
+          "zone": "button-8.hit-safe"
+        },
+        {
+          "id": "button-9.backdrop",
+          "kind": "texture",
+          "box": [
+            340,
+            4,
+            380,
+            44
+          ],
+          "zone": "button-9.backdrop-safe"
+        },
+        {
+          "id": "button-9.hit",
+          "kind": "button",
+          "box": [
+            342,
+            6,
+            378,
+            42
+          ],
+          "zone": "button-9.hit-safe"
+        },
+        {
+          "id": "button-10.backdrop",
+          "kind": "texture",
+          "box": [
+            382,
+            4,
+            422,
+            44
+          ],
+          "zone": "button-10.backdrop-safe"
+        },
+        {
+          "id": "button-10.hit",
+          "kind": "button",
+          "box": [
+            384,
+            6,
+            420,
+            42
+          ],
+          "zone": "button-10.hit-safe"
+        },
+        {
+          "id": "button-11.backdrop",
+          "kind": "texture",
+          "box": [
+            424,
+            4,
+            464,
+            44
+          ],
+          "zone": "button-11.backdrop-safe"
+        },
+        {
+          "id": "button-11.hit",
+          "kind": "button",
+          "box": [
+            426,
+            6,
+            462,
+            42
+          ],
+          "zone": "button-11.hit-safe"
+        },
+        {
+          "id": "button-12.backdrop",
+          "kind": "texture",
+          "box": [
+            466,
+            4,
+            506,
+            44
+          ],
+          "zone": "button-12.backdrop-safe"
+        },
+        {
+          "id": "button-12.hit",
+          "kind": "button",
+          "box": [
+            468,
+            6,
+            504,
+            42
+          ],
+          "zone": "button-12.hit-safe"
+        }
+      ]
+    },
+    {
+      "id": "compact-supported-6x2",
+      "frame": [
+        222,
+        78
+      ],
+      "preview_frame": [
+        222,
+        78
+      ],
+      "zones": {
+        "rail-target": [
+          0,
+          0,
+          222,
+          78
+        ],
+        "corner-1.ornament-safe": [
+          0,
+          0,
+          2,
+          2
+        ],
+        "corner-2.ornament-safe": [
+          220,
+          0,
+          222,
+          2
+        ],
+        "corner-3.ornament-safe": [
+          0,
+          76,
+          2,
+          78
+        ],
+        "corner-4.ornament-safe": [
+          220,
+          76,
+          222,
+          78
+        ],
+        "button-1.backdrop-safe": [
+          4,
+          4,
+          38,
+          38
+        ],
+        "button-1.hit-safe": [
+          6,
+          6,
+          36,
+          36
+        ],
+        "button-2.backdrop-safe": [
+          40,
+          4,
+          74,
+          38
+        ],
+        "button-2.hit-safe": [
+          42,
+          6,
+          72,
+          36
+        ],
+        "button-3.backdrop-safe": [
+          76,
+          4,
+          110,
+          38
+        ],
+        "button-3.hit-safe": [
+          78,
+          6,
+          108,
+          36
+        ],
+        "button-4.backdrop-safe": [
+          112,
+          4,
+          146,
+          38
+        ],
+        "button-4.hit-safe": [
+          114,
+          6,
+          144,
+          36
+        ],
+        "button-5.backdrop-safe": [
+          148,
+          4,
+          182,
+          38
+        ],
+        "button-5.hit-safe": [
+          150,
+          6,
+          180,
+          36
+        ],
+        "button-6.backdrop-safe": [
+          184,
+          4,
+          218,
+          38
+        ],
+        "button-6.hit-safe": [
+          186,
+          6,
+          216,
+          36
+        ],
+        "button-7.backdrop-safe": [
+          4,
+          40,
+          38,
+          74
+        ],
+        "button-7.hit-safe": [
+          6,
+          42,
+          36,
+          72
+        ],
+        "button-8.backdrop-safe": [
+          40,
+          40,
+          74,
+          74
+        ],
+        "button-8.hit-safe": [
+          42,
+          42,
+          72,
+          72
+        ],
+        "button-9.backdrop-safe": [
+          76,
+          40,
+          110,
+          74
+        ],
+        "button-9.hit-safe": [
+          78,
+          42,
+          108,
+          72
+        ],
+        "button-10.backdrop-safe": [
+          112,
+          40,
+          146,
+          74
+        ],
+        "button-10.hit-safe": [
+          114,
+          42,
+          144,
+          72
+        ],
+        "button-11.backdrop-safe": [
+          148,
+          40,
+          182,
+          74
+        ],
+        "button-11.hit-safe": [
+          150,
+          42,
+          180,
+          72
+        ],
+        "button-12.backdrop-safe": [
+          184,
+          40,
+          218,
+          74
+        ],
+        "button-12.hit-safe": [
+          186,
+          42,
+          216,
+          72
+        ]
+      },
+      "regions": [
+        {
+          "id": "corner-1.ornament",
+          "kind": "decoration",
+          "box": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "zone": "corner-1.ornament-safe"
+        },
+        {
+          "id": "corner-2.ornament",
+          "kind": "decoration",
+          "box": [
+            220,
+            0,
+            222,
+            2
+          ],
+          "zone": "corner-2.ornament-safe"
+        },
+        {
+          "id": "corner-3.ornament",
+          "kind": "decoration",
+          "box": [
+            0,
+            76,
+            2,
+            78
+          ],
+          "zone": "corner-3.ornament-safe"
+        },
+        {
+          "id": "corner-4.ornament",
+          "kind": "decoration",
+          "box": [
+            220,
+            76,
+            222,
+            78
+          ],
+          "zone": "corner-4.ornament-safe"
+        },
+        {
+          "id": "button-1.backdrop",
+          "kind": "texture",
+          "box": [
+            4,
+            4,
+            38,
+            38
+          ],
+          "zone": "button-1.backdrop-safe"
+        },
+        {
+          "id": "button-1.hit",
+          "kind": "button",
+          "box": [
+            6,
+            6,
+            36,
+            36
+          ],
+          "zone": "button-1.hit-safe"
+        },
+        {
+          "id": "button-2.backdrop",
+          "kind": "texture",
+          "box": [
+            40,
+            4,
+            74,
+            38
+          ],
+          "zone": "button-2.backdrop-safe"
+        },
+        {
+          "id": "button-2.hit",
+          "kind": "button",
+          "box": [
+            42,
+            6,
+            72,
+            36
+          ],
+          "zone": "button-2.hit-safe"
+        },
+        {
+          "id": "button-3.backdrop",
+          "kind": "texture",
+          "box": [
+            76,
+            4,
+            110,
+            38
+          ],
+          "zone": "button-3.backdrop-safe"
+        },
+        {
+          "id": "button-3.hit",
+          "kind": "button",
+          "box": [
+            78,
+            6,
+            108,
+            36
+          ],
+          "zone": "button-3.hit-safe"
+        },
+        {
+          "id": "button-4.backdrop",
+          "kind": "texture",
+          "box": [
+            112,
+            4,
+            146,
+            38
+          ],
+          "zone": "button-4.backdrop-safe"
+        },
+        {
+          "id": "button-4.hit",
+          "kind": "button",
+          "box": [
+            114,
+            6,
+            144,
+            36
+          ],
+          "zone": "button-4.hit-safe"
+        },
+        {
+          "id": "button-5.backdrop",
+          "kind": "texture",
+          "box": [
+            148,
+            4,
+            182,
+            38
+          ],
+          "zone": "button-5.backdrop-safe"
+        },
+        {
+          "id": "button-5.hit",
+          "kind": "button",
+          "box": [
+            150,
+            6,
+            180,
+            36
+          ],
+          "zone": "button-5.hit-safe"
+        },
+        {
+          "id": "button-6.backdrop",
+          "kind": "texture",
+          "box": [
+            184,
+            4,
+            218,
+            38
+          ],
+          "zone": "button-6.backdrop-safe"
+        },
+        {
+          "id": "button-6.hit",
+          "kind": "button",
+          "box": [
+            186,
+            6,
+            216,
+            36
+          ],
+          "zone": "button-6.hit-safe"
+        },
+        {
+          "id": "button-7.backdrop",
+          "kind": "texture",
+          "box": [
+            4,
+            40,
+            38,
+            74
+          ],
+          "zone": "button-7.backdrop-safe"
+        },
+        {
+          "id": "button-7.hit",
+          "kind": "button",
+          "box": [
+            6,
+            42,
+            36,
+            72
+          ],
+          "zone": "button-7.hit-safe"
+        },
+        {
+          "id": "button-8.backdrop",
+          "kind": "texture",
+          "box": [
+            40,
+            40,
+            74,
+            74
+          ],
+          "zone": "button-8.backdrop-safe"
+        },
+        {
+          "id": "button-8.hit",
+          "kind": "button",
+          "box": [
+            42,
+            42,
+            72,
+            72
+          ],
+          "zone": "button-8.hit-safe"
+        },
+        {
+          "id": "button-9.backdrop",
+          "kind": "texture",
+          "box": [
+            76,
+            40,
+            110,
+            74
+          ],
+          "zone": "button-9.backdrop-safe"
+        },
+        {
+          "id": "button-9.hit",
+          "kind": "button",
+          "box": [
+            78,
+            42,
+            108,
+            72
+          ],
+          "zone": "button-9.hit-safe"
+        },
+        {
+          "id": "button-10.backdrop",
+          "kind": "texture",
+          "box": [
+            112,
+            40,
+            146,
+            74
+          ],
+          "zone": "button-10.backdrop-safe"
+        },
+        {
+          "id": "button-10.hit",
+          "kind": "button",
+          "box": [
+            114,
+            42,
+            144,
+            72
+          ],
+          "zone": "button-10.hit-safe"
+        },
+        {
+          "id": "button-11.backdrop",
+          "kind": "texture",
+          "box": [
+            148,
+            40,
+            182,
+            74
+          ],
+          "zone": "button-11.backdrop-safe"
+        },
+        {
+          "id": "button-11.hit",
+          "kind": "button",
+          "box": [
+            150,
+            42,
+            180,
+            72
+          ],
+          "zone": "button-11.hit-safe"
+        },
+        {
+          "id": "button-12.backdrop",
+          "kind": "texture",
+          "box": [
+            184,
+            40,
+            218,
+            74
+          ],
+          "zone": "button-12.backdrop-safe"
+        },
+        {
+          "id": "button-12.hit",
+          "kind": "button",
+          "box": [
+            186,
+            42,
+            216,
+            72
+          ],
+          "zone": "button-12.hit-safe"
+        }
+      ]
+    },
+    {
+      "id": "auxiliary-supported-4x3",
+      "frame": [
+        142,
+        108
+      ],
+      "preview_frame": [
+        142,
+        108
+      ],
+      "zones": {
+        "rail-target": [
+          0,
+          0,
+          142,
+          108
+        ],
+        "corner-1.ornament-safe": [
+          0,
+          0,
+          2,
+          2
+        ],
+        "corner-2.ornament-safe": [
+          140,
+          0,
+          142,
+          2
+        ],
+        "corner-3.ornament-safe": [
+          0,
+          106,
+          2,
+          108
+        ],
+        "corner-4.ornament-safe": [
+          140,
+          106,
+          142,
+          108
+        ],
+        "button-1.backdrop-safe": [
+          4,
+          4,
+          36,
+          36
+        ],
+        "button-1.hit-safe": [
+          6,
+          6,
+          34,
+          34
+        ],
+        "button-2.backdrop-safe": [
+          38,
+          4,
+          70,
+          36
+        ],
+        "button-2.hit-safe": [
+          40,
+          6,
+          68,
+          34
+        ],
+        "button-3.backdrop-safe": [
+          72,
+          4,
+          104,
+          36
+        ],
+        "button-3.hit-safe": [
+          74,
+          6,
+          102,
+          34
+        ],
+        "button-4.backdrop-safe": [
+          106,
+          4,
+          138,
+          36
+        ],
+        "button-4.hit-safe": [
+          108,
+          6,
+          136,
+          34
+        ],
+        "button-5.backdrop-safe": [
+          4,
+          38,
+          36,
+          70
+        ],
+        "button-5.hit-safe": [
+          6,
+          40,
+          34,
+          68
+        ],
+        "button-6.backdrop-safe": [
+          38,
+          38,
+          70,
+          70
+        ],
+        "button-6.hit-safe": [
+          40,
+          40,
+          68,
+          68
+        ],
+        "button-7.backdrop-safe": [
+          72,
+          38,
+          104,
+          70
+        ],
+        "button-7.hit-safe": [
+          74,
+          40,
+          102,
+          68
+        ],
+        "button-8.backdrop-safe": [
+          106,
+          38,
+          138,
+          70
+        ],
+        "button-8.hit-safe": [
+          108,
+          40,
+          136,
+          68
+        ],
+        "button-9.backdrop-safe": [
+          4,
+          72,
+          36,
+          104
+        ],
+        "button-9.hit-safe": [
+          6,
+          74,
+          34,
+          102
+        ],
+        "button-10.backdrop-safe": [
+          38,
+          72,
+          70,
+          104
+        ],
+        "button-10.hit-safe": [
+          40,
+          74,
+          68,
+          102
+        ],
+        "button-11.backdrop-safe": [
+          72,
+          72,
+          104,
+          104
+        ],
+        "button-11.hit-safe": [
+          74,
+          74,
+          102,
+          102
+        ],
+        "button-12.backdrop-safe": [
+          106,
+          72,
+          138,
+          104
+        ],
+        "button-12.hit-safe": [
+          108,
+          74,
+          136,
+          102
+        ]
+      },
+      "regions": [
+        {
+          "id": "corner-1.ornament",
+          "kind": "decoration",
+          "box": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "zone": "corner-1.ornament-safe"
+        },
+        {
+          "id": "corner-2.ornament",
+          "kind": "decoration",
+          "box": [
+            140,
+            0,
+            142,
+            2
+          ],
+          "zone": "corner-2.ornament-safe"
+        },
+        {
+          "id": "corner-3.ornament",
+          "kind": "decoration",
+          "box": [
+            0,
+            106,
+            2,
+            108
+          ],
+          "zone": "corner-3.ornament-safe"
+        },
+        {
+          "id": "corner-4.ornament",
+          "kind": "decoration",
+          "box": [
+            140,
+            106,
+            142,
+            108
+          ],
+          "zone": "corner-4.ornament-safe"
+        },
+        {
+          "id": "button-1.backdrop",
+          "kind": "texture",
+          "box": [
+            4,
+            4,
+            36,
+            36
+          ],
+          "zone": "button-1.backdrop-safe"
+        },
+        {
+          "id": "button-1.hit",
+          "kind": "button",
+          "box": [
+            6,
+            6,
+            34,
+            34
+          ],
+          "zone": "button-1.hit-safe"
+        },
+        {
+          "id": "button-2.backdrop",
+          "kind": "texture",
+          "box": [
+            38,
+            4,
+            70,
+            36
+          ],
+          "zone": "button-2.backdrop-safe"
+        },
+        {
+          "id": "button-2.hit",
+          "kind": "button",
+          "box": [
+            40,
+            6,
+            68,
+            34
+          ],
+          "zone": "button-2.hit-safe"
+        },
+        {
+          "id": "button-3.backdrop",
+          "kind": "texture",
+          "box": [
+            72,
+            4,
+            104,
+            36
+          ],
+          "zone": "button-3.backdrop-safe"
+        },
+        {
+          "id": "button-3.hit",
+          "kind": "button",
+          "box": [
+            74,
+            6,
+            102,
+            34
+          ],
+          "zone": "button-3.hit-safe"
+        },
+        {
+          "id": "button-4.backdrop",
+          "kind": "texture",
+          "box": [
+            106,
+            4,
+            138,
+            36
+          ],
+          "zone": "button-4.backdrop-safe"
+        },
+        {
+          "id": "button-4.hit",
+          "kind": "button",
+          "box": [
+            108,
+            6,
+            136,
+            34
+          ],
+          "zone": "button-4.hit-safe"
+        },
+        {
+          "id": "button-5.backdrop",
+          "kind": "texture",
+          "box": [
+            4,
+            38,
+            36,
+            70
+          ],
+          "zone": "button-5.backdrop-safe"
+        },
+        {
+          "id": "button-5.hit",
+          "kind": "button",
+          "box": [
+            6,
+            40,
+            34,
+            68
+          ],
+          "zone": "button-5.hit-safe"
+        },
+        {
+          "id": "button-6.backdrop",
+          "kind": "texture",
+          "box": [
+            38,
+            38,
+            70,
+            70
+          ],
+          "zone": "button-6.backdrop-safe"
+        },
+        {
+          "id": "button-6.hit",
+          "kind": "button",
+          "box": [
+            40,
+            40,
+            68,
+            68
+          ],
+          "zone": "button-6.hit-safe"
+        },
+        {
+          "id": "button-7.backdrop",
+          "kind": "texture",
+          "box": [
+            72,
+            38,
+            104,
+            70
+          ],
+          "zone": "button-7.backdrop-safe"
+        },
+        {
+          "id": "button-7.hit",
+          "kind": "button",
+          "box": [
+            74,
+            40,
+            102,
+            68
+          ],
+          "zone": "button-7.hit-safe"
+        },
+        {
+          "id": "button-8.backdrop",
+          "kind": "texture",
+          "box": [
+            106,
+            38,
+            138,
+            70
+          ],
+          "zone": "button-8.backdrop-safe"
+        },
+        {
+          "id": "button-8.hit",
+          "kind": "button",
+          "box": [
+            108,
+            40,
+            136,
+            68
+          ],
+          "zone": "button-8.hit-safe"
+        },
+        {
+          "id": "button-9.backdrop",
+          "kind": "texture",
+          "box": [
+            4,
+            72,
+            36,
+            104
+          ],
+          "zone": "button-9.backdrop-safe"
+        },
+        {
+          "id": "button-9.hit",
+          "kind": "button",
+          "box": [
+            6,
+            74,
+            34,
+            102
+          ],
+          "zone": "button-9.hit-safe"
+        },
+        {
+          "id": "button-10.backdrop",
+          "kind": "texture",
+          "box": [
+            38,
+            72,
+            70,
+            104
+          ],
+          "zone": "button-10.backdrop-safe"
+        },
+        {
+          "id": "button-10.hit",
+          "kind": "button",
+          "box": [
+            40,
+            74,
+            68,
+            102
+          ],
+          "zone": "button-10.hit-safe"
+        },
+        {
+          "id": "button-11.backdrop",
+          "kind": "texture",
+          "box": [
+            72,
+            72,
+            104,
+            104
+          ],
+          "zone": "button-11.backdrop-safe"
+        },
+        {
+          "id": "button-11.hit",
+          "kind": "button",
+          "box": [
+            74,
+            74,
+            102,
+            102
+          ],
+          "zone": "button-11.hit-safe"
+        },
+        {
+          "id": "button-12.backdrop",
+          "kind": "texture",
+          "box": [
+            106,
+            72,
+            138,
+            104
+          ],
+          "zone": "button-12.backdrop-safe"
+        },
+        {
+          "id": "button-12.hit",
+          "kind": "button",
+          "box": [
+            108,
+            74,
+            136,
+            102
+          ],
+          "zone": "button-12.hit-safe"
+        }
+      ]
+    },
+    {
+      "id": "vertical-maximum-icon-1x12",
+      "frame": [
+        60,
+        654
+      ],
+      "preview_frame": [
+        60,
+        654
+      ],
+      "zones": {
+        "rail-target": [
+          0,
+          0,
+          60,
+          654
+        ],
+        "corner-1.ornament-safe": [
+          0,
+          0,
+          2,
+          2
+        ],
+        "corner-2.ornament-safe": [
+          58,
+          0,
+          60,
+          2
+        ],
+        "corner-3.ornament-safe": [
+          0,
+          652,
+          2,
+          654
+        ],
+        "corner-4.ornament-safe": [
+          58,
+          652,
+          60,
+          654
+        ],
+        "button-1.backdrop-safe": [
+          4,
+          4,
+          56,
+          56
+        ],
+        "button-1.hit-safe": [
+          6,
+          6,
+          54,
+          54
+        ],
+        "button-2.backdrop-safe": [
+          4,
+          58,
+          56,
+          110
+        ],
+        "button-2.hit-safe": [
+          6,
+          60,
+          54,
+          108
+        ],
+        "button-3.backdrop-safe": [
+          4,
+          112,
+          56,
+          164
+        ],
+        "button-3.hit-safe": [
+          6,
+          114,
+          54,
+          162
+        ],
+        "button-4.backdrop-safe": [
+          4,
+          166,
+          56,
+          218
+        ],
+        "button-4.hit-safe": [
+          6,
+          168,
+          54,
+          216
+        ],
+        "button-5.backdrop-safe": [
+          4,
+          220,
+          56,
+          272
+        ],
+        "button-5.hit-safe": [
+          6,
+          222,
+          54,
+          270
+        ],
+        "button-6.backdrop-safe": [
+          4,
+          274,
+          56,
+          326
+        ],
+        "button-6.hit-safe": [
+          6,
+          276,
+          54,
+          324
+        ],
+        "button-7.backdrop-safe": [
+          4,
+          328,
+          56,
+          380
+        ],
+        "button-7.hit-safe": [
+          6,
+          330,
+          54,
+          378
+        ],
+        "button-8.backdrop-safe": [
+          4,
+          382,
+          56,
+          434
+        ],
+        "button-8.hit-safe": [
+          6,
+          384,
+          54,
+          432
+        ],
+        "button-9.backdrop-safe": [
+          4,
+          436,
+          56,
+          488
+        ],
+        "button-9.hit-safe": [
+          6,
+          438,
+          54,
+          486
+        ],
+        "button-10.backdrop-safe": [
+          4,
+          490,
+          56,
+          542
+        ],
+        "button-10.hit-safe": [
+          6,
+          492,
+          54,
+          540
+        ],
+        "button-11.backdrop-safe": [
+          4,
+          544,
+          56,
+          596
+        ],
+        "button-11.hit-safe": [
+          6,
+          546,
+          54,
+          594
+        ],
+        "button-12.backdrop-safe": [
+          4,
+          598,
+          56,
+          650
+        ],
+        "button-12.hit-safe": [
+          6,
+          600,
+          54,
+          648
+        ]
+      },
+      "regions": [
+        {
+          "id": "corner-1.ornament",
+          "kind": "decoration",
+          "box": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "zone": "corner-1.ornament-safe"
+        },
+        {
+          "id": "corner-2.ornament",
+          "kind": "decoration",
+          "box": [
+            58,
+            0,
+            60,
+            2
+          ],
+          "zone": "corner-2.ornament-safe"
+        },
+        {
+          "id": "corner-3.ornament",
+          "kind": "decoration",
+          "box": [
+            0,
+            652,
+            2,
+            654
+          ],
+          "zone": "corner-3.ornament-safe"
+        },
+        {
+          "id": "corner-4.ornament",
+          "kind": "decoration",
+          "box": [
+            58,
+            652,
+            60,
+            654
+          ],
+          "zone": "corner-4.ornament-safe"
+        },
+        {
+          "id": "button-1.backdrop",
+          "kind": "texture",
+          "box": [
+            4,
+            4,
+            56,
+            56
+          ],
+          "zone": "button-1.backdrop-safe"
+        },
+        {
+          "id": "button-1.hit",
+          "kind": "button",
+          "box": [
+            6,
+            6,
+            54,
+            54
+          ],
+          "zone": "button-1.hit-safe"
+        },
+        {
+          "id": "button-2.backdrop",
+          "kind": "texture",
+          "box": [
+            4,
+            58,
+            56,
+            110
+          ],
+          "zone": "button-2.backdrop-safe"
+        },
+        {
+          "id": "button-2.hit",
+          "kind": "button",
+          "box": [
+            6,
+            60,
+            54,
+            108
+          ],
+          "zone": "button-2.hit-safe"
+        },
+        {
+          "id": "button-3.backdrop",
+          "kind": "texture",
+          "box": [
+            4,
+            112,
+            56,
+            164
+          ],
+          "zone": "button-3.backdrop-safe"
+        },
+        {
+          "id": "button-3.hit",
+          "kind": "button",
+          "box": [
+            6,
+            114,
+            54,
+            162
+          ],
+          "zone": "button-3.hit-safe"
+        },
+        {
+          "id": "button-4.backdrop",
+          "kind": "texture",
+          "box": [
+            4,
+            166,
+            56,
+            218
+          ],
+          "zone": "button-4.backdrop-safe"
+        },
+        {
+          "id": "button-4.hit",
+          "kind": "button",
+          "box": [
+            6,
+            168,
+            54,
+            216
+          ],
+          "zone": "button-4.hit-safe"
+        },
+        {
+          "id": "button-5.backdrop",
+          "kind": "texture",
+          "box": [
+            4,
+            220,
+            56,
+            272
+          ],
+          "zone": "button-5.backdrop-safe"
+        },
+        {
+          "id": "button-5.hit",
+          "kind": "button",
+          "box": [
+            6,
+            222,
+            54,
+            270
+          ],
+          "zone": "button-5.hit-safe"
+        },
+        {
+          "id": "button-6.backdrop",
+          "kind": "texture",
+          "box": [
+            4,
+            274,
+            56,
+            326
+          ],
+          "zone": "button-6.backdrop-safe"
+        },
+        {
+          "id": "button-6.hit",
+          "kind": "button",
+          "box": [
+            6,
+            276,
+            54,
+            324
+          ],
+          "zone": "button-6.hit-safe"
+        },
+        {
+          "id": "button-7.backdrop",
+          "kind": "texture",
+          "box": [
+            4,
+            328,
+            56,
+            380
+          ],
+          "zone": "button-7.backdrop-safe"
+        },
+        {
+          "id": "button-7.hit",
+          "kind": "button",
+          "box": [
+            6,
+            330,
+            54,
+            378
+          ],
+          "zone": "button-7.hit-safe"
+        },
+        {
+          "id": "button-8.backdrop",
+          "kind": "texture",
+          "box": [
+            4,
+            382,
+            56,
+            434
+          ],
+          "zone": "button-8.backdrop-safe"
+        },
+        {
+          "id": "button-8.hit",
+          "kind": "button",
+          "box": [
+            6,
+            384,
+            54,
+            432
+          ],
+          "zone": "button-8.hit-safe"
+        },
+        {
+          "id": "button-9.backdrop",
+          "kind": "texture",
+          "box": [
+            4,
+            436,
+            56,
+            488
+          ],
+          "zone": "button-9.backdrop-safe"
+        },
+        {
+          "id": "button-9.hit",
+          "kind": "button",
+          "box": [
+            6,
+            438,
+            54,
+            486
+          ],
+          "zone": "button-9.hit-safe"
+        },
+        {
+          "id": "button-10.backdrop",
+          "kind": "texture",
+          "box": [
+            4,
+            490,
+            56,
+            542
+          ],
+          "zone": "button-10.backdrop-safe"
+        },
+        {
+          "id": "button-10.hit",
+          "kind": "button",
+          "box": [
+            6,
+            492,
+            54,
+            540
+          ],
+          "zone": "button-10.hit-safe"
+        },
+        {
+          "id": "button-11.backdrop",
+          "kind": "texture",
+          "box": [
+            4,
+            544,
+            56,
+            596
+          ],
+          "zone": "button-11.backdrop-safe"
+        },
+        {
+          "id": "button-11.hit",
+          "kind": "button",
+          "box": [
+            6,
+            546,
+            54,
+            594
+          ],
+          "zone": "button-11.hit-safe"
+        },
+        {
+          "id": "button-12.backdrop",
+          "kind": "texture",
+          "box": [
+            4,
+            598,
+            56,
+            650
+          ],
+          "zone": "button-12.backdrop-safe"
+        },
+        {
+          "id": "button-12.hit",
+          "kind": "button",
+          "box": [
+            6,
+            600,
+            54,
+            648
+          ],
+          "zone": "button-12.hit-safe"
+        }
+      ]
+    },
+    {
+      "id": "high-border-spacing-scale-4x3",
+      "frame": [
+        302,
+        232
+      ],
+      "preview_frame": [
+        302,
+        232
+      ],
+      "zones": {
+        "rail-target": [
+          0,
+          0,
+          302,
+          232
+        ],
+        "corner-1.ornament-safe": [
+          0,
+          0,
+          2,
+          2
+        ],
+        "corner-2.ornament-safe": [
+          300,
+          0,
+          302,
+          2
+        ],
+        "corner-3.ornament-safe": [
+          0,
+          230,
+          2,
+          232
+        ],
+        "corner-4.ornament-safe": [
+          300,
+          230,
+          302,
+          232
+        ],
+        "button-1.backdrop-safe": [
+          17,
+          17,
+          75,
+          75
+        ],
+        "button-1.hit-safe": [
+          22,
+          22,
+          70,
+          70
+        ],
+        "button-2.backdrop-safe": [
+          87,
+          17,
+          145,
+          75
+        ],
+        "button-2.hit-safe": [
+          92,
+          22,
+          140,
+          70
+        ],
+        "button-3.backdrop-safe": [
+          157,
+          17,
+          215,
+          75
+        ],
+        "button-3.hit-safe": [
+          162,
+          22,
+          210,
+          70
+        ],
+        "button-4.backdrop-safe": [
+          227,
+          17,
+          285,
+          75
+        ],
+        "button-4.hit-safe": [
+          232,
+          22,
+          280,
+          70
+        ],
+        "button-5.backdrop-safe": [
+          17,
+          87,
+          75,
+          145
+        ],
+        "button-5.hit-safe": [
+          22,
+          92,
+          70,
+          140
+        ],
+        "button-6.backdrop-safe": [
+          87,
+          87,
+          145,
+          145
+        ],
+        "button-6.hit-safe": [
+          92,
+          92,
+          140,
+          140
+        ],
+        "button-7.backdrop-safe": [
+          157,
+          87,
+          215,
+          145
+        ],
+        "button-7.hit-safe": [
+          162,
+          92,
+          210,
+          140
+        ],
+        "button-8.backdrop-safe": [
+          227,
+          87,
+          285,
+          145
+        ],
+        "button-8.hit-safe": [
+          232,
+          92,
+          280,
+          140
+        ],
+        "button-9.backdrop-safe": [
+          17,
+          157,
+          75,
+          215
+        ],
+        "button-9.hit-safe": [
+          22,
+          162,
+          70,
+          210
+        ],
+        "button-10.backdrop-safe": [
+          87,
+          157,
+          145,
+          215
+        ],
+        "button-10.hit-safe": [
+          92,
+          162,
+          140,
+          210
+        ],
+        "button-11.backdrop-safe": [
+          157,
+          157,
+          215,
+          215
+        ],
+        "button-11.hit-safe": [
+          162,
+          162,
+          210,
+          210
+        ],
+        "button-12.backdrop-safe": [
+          227,
+          157,
+          285,
+          215
+        ],
+        "button-12.hit-safe": [
+          232,
+          162,
+          280,
+          210
+        ]
+      },
+      "regions": [
+        {
+          "id": "corner-1.ornament",
+          "kind": "decoration",
+          "box": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "zone": "corner-1.ornament-safe"
+        },
+        {
+          "id": "corner-2.ornament",
+          "kind": "decoration",
+          "box": [
+            300,
+            0,
+            302,
+            2
+          ],
+          "zone": "corner-2.ornament-safe"
+        },
+        {
+          "id": "corner-3.ornament",
+          "kind": "decoration",
+          "box": [
+            0,
+            230,
+            2,
+            232
+          ],
+          "zone": "corner-3.ornament-safe"
+        },
+        {
+          "id": "corner-4.ornament",
+          "kind": "decoration",
+          "box": [
+            300,
+            230,
+            302,
+            232
+          ],
+          "zone": "corner-4.ornament-safe"
+        },
+        {
+          "id": "button-1.backdrop",
+          "kind": "texture",
+          "box": [
+            17,
+            17,
+            75,
+            75
+          ],
+          "zone": "button-1.backdrop-safe"
+        },
+        {
+          "id": "button-1.hit",
+          "kind": "button",
+          "box": [
+            22,
+            22,
+            70,
+            70
+          ],
+          "zone": "button-1.hit-safe"
+        },
+        {
+          "id": "button-2.backdrop",
+          "kind": "texture",
+          "box": [
+            87,
+            17,
+            145,
+            75
+          ],
+          "zone": "button-2.backdrop-safe"
+        },
+        {
+          "id": "button-2.hit",
+          "kind": "button",
+          "box": [
+            92,
+            22,
+            140,
+            70
+          ],
+          "zone": "button-2.hit-safe"
+        },
+        {
+          "id": "button-3.backdrop",
+          "kind": "texture",
+          "box": [
+            157,
+            17,
+            215,
+            75
+          ],
+          "zone": "button-3.backdrop-safe"
+        },
+        {
+          "id": "button-3.hit",
+          "kind": "button",
+          "box": [
+            162,
+            22,
+            210,
+            70
+          ],
+          "zone": "button-3.hit-safe"
+        },
+        {
+          "id": "button-4.backdrop",
+          "kind": "texture",
+          "box": [
+            227,
+            17,
+            285,
+            75
+          ],
+          "zone": "button-4.backdrop-safe"
+        },
+        {
+          "id": "button-4.hit",
+          "kind": "button",
+          "box": [
+            232,
+            22,
+            280,
+            70
+          ],
+          "zone": "button-4.hit-safe"
+        },
+        {
+          "id": "button-5.backdrop",
+          "kind": "texture",
+          "box": [
+            17,
+            87,
+            75,
+            145
+          ],
+          "zone": "button-5.backdrop-safe"
+        },
+        {
+          "id": "button-5.hit",
+          "kind": "button",
+          "box": [
+            22,
+            92,
+            70,
+            140
+          ],
+          "zone": "button-5.hit-safe"
+        },
+        {
+          "id": "button-6.backdrop",
+          "kind": "texture",
+          "box": [
+            87,
+            87,
+            145,
+            145
+          ],
+          "zone": "button-6.backdrop-safe"
+        },
+        {
+          "id": "button-6.hit",
+          "kind": "button",
+          "box": [
+            92,
+            92,
+            140,
+            140
+          ],
+          "zone": "button-6.hit-safe"
+        },
+        {
+          "id": "button-7.backdrop",
+          "kind": "texture",
+          "box": [
+            157,
+            87,
+            215,
+            145
+          ],
+          "zone": "button-7.backdrop-safe"
+        },
+        {
+          "id": "button-7.hit",
+          "kind": "button",
+          "box": [
+            162,
+            92,
+            210,
+            140
+          ],
+          "zone": "button-7.hit-safe"
+        },
+        {
+          "id": "button-8.backdrop",
+          "kind": "texture",
+          "box": [
+            227,
+            87,
+            285,
+            145
+          ],
+          "zone": "button-8.backdrop-safe"
+        },
+        {
+          "id": "button-8.hit",
+          "kind": "button",
+          "box": [
+            232,
+            92,
+            280,
+            140
+          ],
+          "zone": "button-8.hit-safe"
+        },
+        {
+          "id": "button-9.backdrop",
+          "kind": "texture",
+          "box": [
+            17,
+            157,
+            75,
+            215
+          ],
+          "zone": "button-9.backdrop-safe"
+        },
+        {
+          "id": "button-9.hit",
+          "kind": "button",
+          "box": [
+            22,
+            162,
+            70,
+            210
+          ],
+          "zone": "button-9.hit-safe"
+        },
+        {
+          "id": "button-10.backdrop",
+          "kind": "texture",
+          "box": [
+            87,
+            157,
+            145,
+            215
+          ],
+          "zone": "button-10.backdrop-safe"
+        },
+        {
+          "id": "button-10.hit",
+          "kind": "button",
+          "box": [
+            92,
+            162,
+            140,
+            210
+          ],
+          "zone": "button-10.hit-safe"
+        },
+        {
+          "id": "button-11.backdrop",
+          "kind": "texture",
+          "box": [
+            157,
+            157,
+            215,
+            215
+          ],
+          "zone": "button-11.backdrop-safe"
+        },
+        {
+          "id": "button-11.hit",
+          "kind": "button",
+          "box": [
+            162,
+            162,
+            210,
+            210
+          ],
+          "zone": "button-11.hit-safe"
+        },
+        {
+          "id": "button-12.backdrop",
+          "kind": "texture",
+          "box": [
+            227,
+            157,
+            285,
+            215
+          ],
+          "zone": "button-12.backdrop-safe"
+        },
+        {
+          "id": "button-12.hit",
+          "kind": "button",
+          "box": [
+            232,
+            162,
+            280,
+            210
+          ],
+          "zone": "button-12.hit-safe"
+        }
+      ]
+    },
+    {
+      "id": "merged-main-top-12x1-pair",
+      "frame": [
+        510,
+        90
+      ],
+      "preview_frame": [
+        510,
+        90
+      ],
+      "zones": {
+        "rail-target": [
+          0,
+          0,
+          510,
+          90
+        ],
+        "corner-1.ornament-safe": [
+          0,
+          0,
+          2,
+          2
+        ],
+        "corner-2.ornament-safe": [
+          508,
+          0,
+          510,
+          2
+        ],
+        "corner-3.ornament-safe": [
+          0,
+          88,
+          2,
+          90
+        ],
+        "corner-4.ornament-safe": [
+          508,
+          88,
+          510,
+          90
+        ],
+        "button-1.backdrop-safe": [
+          4,
+          4,
+          44,
+          44
+        ],
+        "button-1.hit-safe": [
+          6,
+          6,
+          42,
+          42
+        ],
+        "button-2.backdrop-safe": [
+          46,
+          4,
+          86,
+          44
+        ],
+        "button-2.hit-safe": [
+          48,
+          6,
+          84,
+          42
+        ],
+        "button-3.backdrop-safe": [
+          88,
+          4,
+          128,
+          44
+        ],
+        "button-3.hit-safe": [
+          90,
+          6,
+          126,
+          42
+        ],
+        "button-4.backdrop-safe": [
+          130,
+          4,
+          170,
+          44
+        ],
+        "button-4.hit-safe": [
+          132,
+          6,
+          168,
+          42
+        ],
+        "button-5.backdrop-safe": [
+          172,
+          4,
+          212,
+          44
+        ],
+        "button-5.hit-safe": [
+          174,
+          6,
+          210,
+          42
+        ],
+        "button-6.backdrop-safe": [
+          214,
+          4,
+          254,
+          44
+        ],
+        "button-6.hit-safe": [
+          216,
+          6,
+          252,
+          42
+        ],
+        "button-7.backdrop-safe": [
+          256,
+          4,
+          296,
+          44
+        ],
+        "button-7.hit-safe": [
+          258,
+          6,
+          294,
+          42
+        ],
+        "button-8.backdrop-safe": [
+          298,
+          4,
+          338,
+          44
+        ],
+        "button-8.hit-safe": [
+          300,
+          6,
+          336,
+          42
+        ],
+        "button-9.backdrop-safe": [
+          340,
+          4,
+          380,
+          44
+        ],
+        "button-9.hit-safe": [
+          342,
+          6,
+          378,
+          42
+        ],
+        "button-10.backdrop-safe": [
+          382,
+          4,
+          422,
+          44
+        ],
+        "button-10.hit-safe": [
+          384,
+          6,
+          420,
+          42
+        ],
+        "button-11.backdrop-safe": [
+          424,
+          4,
+          464,
+          44
+        ],
+        "button-11.hit-safe": [
+          426,
+          6,
+          462,
+          42
+        ],
+        "button-12.backdrop-safe": [
+          466,
+          4,
+          506,
+          44
+        ],
+        "button-12.hit-safe": [
+          468,
+          6,
+          504,
+          42
+        ],
+        "button-13.backdrop-safe": [
+          4,
+          46,
+          44,
+          86
+        ],
+        "button-13.hit-safe": [
+          6,
+          48,
+          42,
+          84
+        ],
+        "button-14.backdrop-safe": [
+          46,
+          46,
+          86,
+          86
+        ],
+        "button-14.hit-safe": [
+          48,
+          48,
+          84,
+          84
+        ],
+        "button-15.backdrop-safe": [
+          88,
+          46,
+          128,
+          86
+        ],
+        "button-15.hit-safe": [
+          90,
+          48,
+          126,
+          84
+        ],
+        "button-16.backdrop-safe": [
+          130,
+          46,
+          170,
+          86
+        ],
+        "button-16.hit-safe": [
+          132,
+          48,
+          168,
+          84
+        ],
+        "button-17.backdrop-safe": [
+          172,
+          46,
+          212,
+          86
+        ],
+        "button-17.hit-safe": [
+          174,
+          48,
+          210,
+          84
+        ],
+        "button-18.backdrop-safe": [
+          214,
+          46,
+          254,
+          86
+        ],
+        "button-18.hit-safe": [
+          216,
+          48,
+          252,
+          84
+        ],
+        "button-19.backdrop-safe": [
+          256,
+          46,
+          296,
+          86
+        ],
+        "button-19.hit-safe": [
+          258,
+          48,
+          294,
+          84
+        ],
+        "button-20.backdrop-safe": [
+          298,
+          46,
+          338,
+          86
+        ],
+        "button-20.hit-safe": [
+          300,
+          48,
+          336,
+          84
+        ],
+        "button-21.backdrop-safe": [
+          340,
+          46,
+          380,
+          86
+        ],
+        "button-21.hit-safe": [
+          342,
+          48,
+          378,
+          84
+        ],
+        "button-22.backdrop-safe": [
+          382,
+          46,
+          422,
+          86
+        ],
+        "button-22.hit-safe": [
+          384,
+          48,
+          420,
+          84
+        ],
+        "button-23.backdrop-safe": [
+          424,
+          46,
+          464,
+          86
+        ],
+        "button-23.hit-safe": [
+          426,
+          48,
+          462,
+          84
+        ],
+        "button-24.backdrop-safe": [
+          466,
+          46,
+          506,
+          86
+        ],
+        "button-24.hit-safe": [
+          468,
+          48,
+          504,
+          84
+        ]
+      },
+      "regions": [
+        {
+          "id": "corner-1.ornament",
+          "kind": "decoration",
+          "box": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "zone": "corner-1.ornament-safe"
+        },
+        {
+          "id": "corner-2.ornament",
+          "kind": "decoration",
+          "box": [
+            508,
+            0,
+            510,
+            2
+          ],
+          "zone": "corner-2.ornament-safe"
+        },
+        {
+          "id": "corner-3.ornament",
+          "kind": "decoration",
+          "box": [
+            0,
+            88,
+            2,
+            90
+          ],
+          "zone": "corner-3.ornament-safe"
+        },
+        {
+          "id": "corner-4.ornament",
+          "kind": "decoration",
+          "box": [
+            508,
+            88,
+            510,
+            90
+          ],
+          "zone": "corner-4.ornament-safe"
+        },
+        {
+          "id": "button-1.backdrop",
+          "kind": "texture",
+          "box": [
+            4,
+            4,
+            44,
+            44
+          ],
+          "zone": "button-1.backdrop-safe"
+        },
+        {
+          "id": "button-1.hit",
+          "kind": "button",
+          "box": [
+            6,
+            6,
+            42,
+            42
+          ],
+          "zone": "button-1.hit-safe"
+        },
+        {
+          "id": "button-2.backdrop",
+          "kind": "texture",
+          "box": [
+            46,
+            4,
+            86,
+            44
+          ],
+          "zone": "button-2.backdrop-safe"
+        },
+        {
+          "id": "button-2.hit",
+          "kind": "button",
+          "box": [
+            48,
+            6,
+            84,
+            42
+          ],
+          "zone": "button-2.hit-safe"
+        },
+        {
+          "id": "button-3.backdrop",
+          "kind": "texture",
+          "box": [
+            88,
+            4,
+            128,
+            44
+          ],
+          "zone": "button-3.backdrop-safe"
+        },
+        {
+          "id": "button-3.hit",
+          "kind": "button",
+          "box": [
+            90,
+            6,
+            126,
+            42
+          ],
+          "zone": "button-3.hit-safe"
+        },
+        {
+          "id": "button-4.backdrop",
+          "kind": "texture",
+          "box": [
+            130,
+            4,
+            170,
+            44
+          ],
+          "zone": "button-4.backdrop-safe"
+        },
+        {
+          "id": "button-4.hit",
+          "kind": "button",
+          "box": [
+            132,
+            6,
+            168,
+            42
+          ],
+          "zone": "button-4.hit-safe"
+        },
+        {
+          "id": "button-5.backdrop",
+          "kind": "texture",
+          "box": [
+            172,
+            4,
+            212,
+            44
+          ],
+          "zone": "button-5.backdrop-safe"
+        },
+        {
+          "id": "button-5.hit",
+          "kind": "button",
+          "box": [
+            174,
+            6,
+            210,
+            42
+          ],
+          "zone": "button-5.hit-safe"
+        },
+        {
+          "id": "button-6.backdrop",
+          "kind": "texture",
+          "box": [
+            214,
+            4,
+            254,
+            44
+          ],
+          "zone": "button-6.backdrop-safe"
+        },
+        {
+          "id": "button-6.hit",
+          "kind": "button",
+          "box": [
+            216,
+            6,
+            252,
+            42
+          ],
+          "zone": "button-6.hit-safe"
+        },
+        {
+          "id": "button-7.backdrop",
+          "kind": "texture",
+          "box": [
+            256,
+            4,
+            296,
+            44
+          ],
+          "zone": "button-7.backdrop-safe"
+        },
+        {
+          "id": "button-7.hit",
+          "kind": "button",
+          "box": [
+            258,
+            6,
+            294,
+            42
+          ],
+          "zone": "button-7.hit-safe"
+        },
+        {
+          "id": "button-8.backdrop",
+          "kind": "texture",
+          "box": [
+            298,
+            4,
+            338,
+            44
+          ],
+          "zone": "button-8.backdrop-safe"
+        },
+        {
+          "id": "button-8.hit",
+          "kind": "button",
+          "box": [
+            300,
+            6,
+            336,
+            42
+          ],
+          "zone": "button-8.hit-safe"
+        },
+        {
+          "id": "button-9.backdrop",
+          "kind": "texture",
+          "box": [
+            340,
+            4,
+            380,
+            44
+          ],
+          "zone": "button-9.backdrop-safe"
+        },
+        {
+          "id": "button-9.hit",
+          "kind": "button",
+          "box": [
+            342,
+            6,
+            378,
+            42
+          ],
+          "zone": "button-9.hit-safe"
+        },
+        {
+          "id": "button-10.backdrop",
+          "kind": "texture",
+          "box": [
+            382,
+            4,
+            422,
+            44
+          ],
+          "zone": "button-10.backdrop-safe"
+        },
+        {
+          "id": "button-10.hit",
+          "kind": "button",
+          "box": [
+            384,
+            6,
+            420,
+            42
+          ],
+          "zone": "button-10.hit-safe"
+        },
+        {
+          "id": "button-11.backdrop",
+          "kind": "texture",
+          "box": [
+            424,
+            4,
+            464,
+            44
+          ],
+          "zone": "button-11.backdrop-safe"
+        },
+        {
+          "id": "button-11.hit",
+          "kind": "button",
+          "box": [
+            426,
+            6,
+            462,
+            42
+          ],
+          "zone": "button-11.hit-safe"
+        },
+        {
+          "id": "button-12.backdrop",
+          "kind": "texture",
+          "box": [
+            466,
+            4,
+            506,
+            44
+          ],
+          "zone": "button-12.backdrop-safe"
+        },
+        {
+          "id": "button-12.hit",
+          "kind": "button",
+          "box": [
+            468,
+            6,
+            504,
+            42
+          ],
+          "zone": "button-12.hit-safe"
+        },
+        {
+          "id": "button-13.backdrop",
+          "kind": "texture",
+          "box": [
+            4,
+            46,
+            44,
+            86
+          ],
+          "zone": "button-13.backdrop-safe"
+        },
+        {
+          "id": "button-13.hit",
+          "kind": "button",
+          "box": [
+            6,
+            48,
+            42,
+            84
+          ],
+          "zone": "button-13.hit-safe"
+        },
+        {
+          "id": "button-14.backdrop",
+          "kind": "texture",
+          "box": [
+            46,
+            46,
+            86,
+            86
+          ],
+          "zone": "button-14.backdrop-safe"
+        },
+        {
+          "id": "button-14.hit",
+          "kind": "button",
+          "box": [
+            48,
+            48,
+            84,
+            84
+          ],
+          "zone": "button-14.hit-safe"
+        },
+        {
+          "id": "button-15.backdrop",
+          "kind": "texture",
+          "box": [
+            88,
+            46,
+            128,
+            86
+          ],
+          "zone": "button-15.backdrop-safe"
+        },
+        {
+          "id": "button-15.hit",
+          "kind": "button",
+          "box": [
+            90,
+            48,
+            126,
+            84
+          ],
+          "zone": "button-15.hit-safe"
+        },
+        {
+          "id": "button-16.backdrop",
+          "kind": "texture",
+          "box": [
+            130,
+            46,
+            170,
+            86
+          ],
+          "zone": "button-16.backdrop-safe"
+        },
+        {
+          "id": "button-16.hit",
+          "kind": "button",
+          "box": [
+            132,
+            48,
+            168,
+            84
+          ],
+          "zone": "button-16.hit-safe"
+        },
+        {
+          "id": "button-17.backdrop",
+          "kind": "texture",
+          "box": [
+            172,
+            46,
+            212,
+            86
+          ],
+          "zone": "button-17.backdrop-safe"
+        },
+        {
+          "id": "button-17.hit",
+          "kind": "button",
+          "box": [
+            174,
+            48,
+            210,
+            84
+          ],
+          "zone": "button-17.hit-safe"
+        },
+        {
+          "id": "button-18.backdrop",
+          "kind": "texture",
+          "box": [
+            214,
+            46,
+            254,
+            86
+          ],
+          "zone": "button-18.backdrop-safe"
+        },
+        {
+          "id": "button-18.hit",
+          "kind": "button",
+          "box": [
+            216,
+            48,
+            252,
+            84
+          ],
+          "zone": "button-18.hit-safe"
+        },
+        {
+          "id": "button-19.backdrop",
+          "kind": "texture",
+          "box": [
+            256,
+            46,
+            296,
+            86
+          ],
+          "zone": "button-19.backdrop-safe"
+        },
+        {
+          "id": "button-19.hit",
+          "kind": "button",
+          "box": [
+            258,
+            48,
+            294,
+            84
+          ],
+          "zone": "button-19.hit-safe"
+        },
+        {
+          "id": "button-20.backdrop",
+          "kind": "texture",
+          "box": [
+            298,
+            46,
+            338,
+            86
+          ],
+          "zone": "button-20.backdrop-safe"
+        },
+        {
+          "id": "button-20.hit",
+          "kind": "button",
+          "box": [
+            300,
+            48,
+            336,
+            84
+          ],
+          "zone": "button-20.hit-safe"
+        },
+        {
+          "id": "button-21.backdrop",
+          "kind": "texture",
+          "box": [
+            340,
+            46,
+            380,
+            86
+          ],
+          "zone": "button-21.backdrop-safe"
+        },
+        {
+          "id": "button-21.hit",
+          "kind": "button",
+          "box": [
+            342,
+            48,
+            378,
+            84
+          ],
+          "zone": "button-21.hit-safe"
+        },
+        {
+          "id": "button-22.backdrop",
+          "kind": "texture",
+          "box": [
+            382,
+            46,
+            422,
+            86
+          ],
+          "zone": "button-22.backdrop-safe"
+        },
+        {
+          "id": "button-22.hit",
+          "kind": "button",
+          "box": [
+            384,
+            48,
+            420,
+            84
+          ],
+          "zone": "button-22.hit-safe"
+        },
+        {
+          "id": "button-23.backdrop",
+          "kind": "texture",
+          "box": [
+            424,
+            46,
+            464,
+            86
+          ],
+          "zone": "button-23.backdrop-safe"
+        },
+        {
+          "id": "button-23.hit",
+          "kind": "button",
+          "box": [
+            426,
+            48,
+            462,
+            84
+          ],
+          "zone": "button-23.hit-safe"
+        },
+        {
+          "id": "button-24.backdrop",
+          "kind": "texture",
+          "box": [
+            466,
+            46,
+            506,
+            86
+          ],
+          "zone": "button-24.backdrop-safe"
+        },
+        {
+          "id": "button-24.hit",
+          "kind": "button",
+          "box": [
+            468,
+            48,
+            504,
+            84
+          ],
+          "zone": "button-24.hit-safe"
+        }
+      ]
+    }
+  ]
+}

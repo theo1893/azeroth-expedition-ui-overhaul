@@ -1,0 +1,219 @@
+{
+  "schema": "aeui-action-rail-simulation-v1",
+  "version": "AB-RAIL-SIM-V1",
+  "component": "AB.RAIL.V1",
+  "self_path": "tools/specs/action_rail_v1_simulation.json",
+  "purpose": "deterministic non-production visual-direction and provider-geometry preview for one adaptive action-bar rail",
+  "base_scene_spec": "tools/specs/action_bars_core_simulation_v3.json",
+  "display_contract": "tools/specs/action_rail_v1_sim_display_region.json",
+  "outputs": {
+    "scene": "generated/actionbars/AB.RAIL/AB.RAIL.V1/simulation/AB-RAIL-SIM-V1/AB.RAIL.V1.sim-v1.png",
+    "layouts": "generated/actionbars/AB.RAIL/AB.RAIL.V1/simulation/AB-RAIL-SIM-V1/AB.RAIL.V1.sim-v1.layouts.png",
+    "layout_report": "generated/actionbars/AB.RAIL/AB.RAIL.V1/simulation/AB-RAIL-SIM-V1/layout-report.json",
+    "display_report": "generated/actionbars/AB.RAIL/AB.RAIL.V1/simulation/AB-RAIL-SIM-V1/display-region-report.json"
+  },
+  "target": {
+    "client": "Turtle WoW 1.18.1 / Interface 11200",
+    "resolution": [1920, 1080],
+    "ui_scale": 0.81269841269841,
+    "tested_icon_ui": [20, 48],
+    "tested_border_ui": [1, 5],
+    "tested_spacing_ui": [1, 12],
+    "tested_local_scale": [0.75, 1.5],
+    "note": "screen origins are physical pixels; provider frames are calculated in UI units, then multiplied by UI scale and the saved movable scale"
+  },
+  "imagegen": {"used": 0, "limit": 0},
+  "accepted_neighbor": {
+    "path": "addon/AzerothExpeditionUI/Media/ActionBars/ActionSlotBaseV1.tga",
+    "sha256": "5c49a1db452560251422060545625b311e182ef5b8689be996aeda005b8e23ca",
+    "role": "read-only current accepted/runtime neighbouring slot for layer-order and density judgement; never rail visual authority or production reference"
+  },
+  "locked_authority": {
+    "image_1": "assets/locked/character/角色属性面板_香草同构收敛_风格确认_v3.png",
+    "sha256": "b5c364482adaace09af9b5196d2e8d4f7ef79d3b21706e189d94c106ba6ec2ba",
+    "role": "highest visual authority for vanilla hand-painted material relationship, palette, directional light and restrained wear; pixels are not copied into this simulation"
+  },
+  "rail_contract": {
+    "logical_objects": 1,
+    "states": ["normal"],
+    "runtime_layer": "bar.backdrop or bar1.mergedBackdrop, below all slot backdrops and provider dynamic layers",
+    "runtime_cap_ui": 6,
+    "ornament_edge_ui": 2,
+    "minimum_frame_ui": [13, 13],
+    "source_canvas": [1024, 1024],
+    "source_mode": "RGB with exact #00FF00 chroma outside the one object",
+    "source_object_bbox": [160, 160, 864, 864],
+    "source_object_size": 704,
+    "source_cap_px": 128,
+    "source_stretch_center_canvas": [288, 288, 736, 736],
+    "source_stretch_center_size": 448,
+    "semantics": "one quiet square nine-slice master; deep walnut leather/wood core, narrow broken oxidized-brass outer edge, tiny corner fasteners, low-frequency stretch center",
+    "forbidden": [
+      "fixed twelve-slot plate or any baked grid",
+      "icons, text, keybinds, counts, cooldowns or interaction states",
+      "large endcaps, gryphons, stone plinth, black glass slab, paper or purple quality glow",
+      "bright continuous metal bevel, modern PBR, micro-scratches or high-frequency grain"
+    ]
+  },
+  "fonts": {
+    "title": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf", "size": 28},
+    "small": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf", "size": 15},
+    "tiny": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf", "size": 12}
+  },
+  "palette": {
+    "scene_sky_top": "#172620",
+    "scene_sky_bottom": "#20251e",
+    "rail": "#2c1d16",
+    "leather": "#3a271c",
+    "brass": "#80623d",
+    "parchment": "#c6ab76",
+    "ink": "#28190f",
+    "muted_ink": "#b7aa8b",
+    "label": "#e0c994",
+    "rail_contact": "#120c09",
+    "rail_core": "#312018",
+    "rail_center": "#291b15",
+    "rail_warm": "#725138",
+    "rail_pressure": "#120d0b",
+    "rail_brass": "#725937",
+    "rail_highlight": "#a17a48",
+    "rail_rivet": "#3e3125"
+  },
+  "scene_base_annotations": {
+    "title": "AB.RAIL.V1 · 自适应动作栏承托轨",
+    "subtitle": "Rail 只承担最低层连续材质；动作槽、冷却、距离红、按下反馈和命中区保持现有 provider 所有权",
+    "note": "本地确定性模拟 · 非 source / runtime · ImageGen 0/0",
+    "rules_title": "本次需要确认的视觉方向",
+    "rules": [
+      "深胡桃褐皮革／木芯，暗黄铜仅作断续窄外缘",
+      "不画固定格线；任意合法行列只改变外轮廓",
+      "横栏、竖栏、多行栏保持同一视觉厚度",
+      "四角装饰停在最外 2 UI，不进入按钮区域",
+      "主栏／副栏满足 pfUI 条件时合并为一块无中缝背景"
+    ]
+  },
+  "scene_annotation": {
+    "box": [1325, 945, 1878, 1021],
+    "title": "图层：Rail → accepted Slot → 动态图标／状态",
+    "body": "姿态栏仍显示 pfUI fallback 槽位；这是当前真实 scoped ownership，不提前扩大 AB.SLOT。"
+  },
+  "layout_board": {
+    "size": [1920, 1180],
+    "fill": "#101713",
+    "rail_study_box": [690, 920, 1370, 1008]
+  },
+  "scenarios": [
+    {
+      "id": "single-minimum-1x1",
+      "label": "1×1 · 20 UI · 当前最小基础实例",
+      "buttons": 1,
+      "cols": 1,
+      "rows": 1,
+      "icon_ui": 20,
+      "border_ui": 2,
+      "spacing_ui": 2,
+      "local_scale": 1.0,
+      "board_origin": [54, 158],
+      "inspection_zoom": 5,
+      "inspection_origin": [110, 132],
+      "states": ["normal"],
+      "keys": ["1"]
+    },
+    {
+      "id": "single-low-scale-border-extreme-1x1",
+      "label": "1×1 · border 1 · scale 0.75 极小检查",
+      "buttons": 1,
+      "cols": 1,
+      "rows": 1,
+      "icon_ui": 20,
+      "border_ui": 1,
+      "spacing_ui": 1,
+      "local_scale": 0.75,
+      "board_origin": [355, 158],
+      "inspection_zoom": 6,
+      "inspection_origin": [395, 132],
+      "states": ["cooldown"],
+      "keys": ["1"]
+    },
+    {
+      "id": "main-confirmed-12x1",
+      "label": "12×1 · V3 已确认主栏",
+      "buttons": 12,
+      "cols": 12,
+      "rows": 1,
+      "icon_ui": 36,
+      "border_ui": 2,
+      "spacing_ui": 2,
+      "local_scale": 1.2,
+      "board_origin": [54, 350]
+    },
+    {
+      "id": "compact-supported-6x2",
+      "label": "6×2 · 紧凑战斗栏",
+      "buttons": 12,
+      "cols": 6,
+      "rows": 2,
+      "icon_ui": 30,
+      "border_ui": 2,
+      "spacing_ui": 2,
+      "local_scale": 1.1,
+      "board_origin": [54, 502]
+    },
+    {
+      "id": "auxiliary-supported-4x3",
+      "label": "4×3 · 当前自由辅助栏",
+      "buttons": 12,
+      "cols": 4,
+      "rows": 3,
+      "icon_ui": 28,
+      "border_ui": 2,
+      "spacing_ui": 2,
+      "local_scale": 1.0,
+      "board_origin": [355, 502]
+    },
+    {
+      "id": "vertical-maximum-icon-1x12",
+      "label": "1×12 · 48 UI 最大图标竖栏",
+      "buttons": 12,
+      "cols": 1,
+      "rows": 12,
+      "icon_ui": 48,
+      "border_ui": 2,
+      "spacing_ui": 2,
+      "local_scale": 1.0,
+      "board_origin": [1660, 148]
+    },
+    {
+      "id": "high-border-spacing-scale-4x3",
+      "label": "4×3 · border 5 / spacing 12 / scale 1.5 极大检查",
+      "buttons": 12,
+      "cols": 4,
+      "rows": 3,
+      "icon_ui": 48,
+      "border_ui": 5,
+      "spacing_ui": 12,
+      "local_scale": 1.5,
+      "board_origin": [690, 570]
+    },
+    {
+      "id": "merged-main-top-12x1-pair",
+      "label": "pfUI Bar 1 + Bar 6 合并背景 · 无中缝",
+      "buttons": 12,
+      "cols": 12,
+      "rows": 1,
+      "icon_ui": 36,
+      "border_ui": 2,
+      "spacing_ui": 2,
+      "local_scale": 1.2,
+      "merged_pair": true,
+      "board_origin": [690, 350]
+    }
+  ],
+  "non_authoritative": [
+    "all locally drawn rail pixels, simplified brush texture, seams, alpha and corner details",
+    "the Character V3 locked image is not pasted into either simulation",
+    "accepted AB.SLOT pixels are read-only current runtime context and cannot become AB.RAIL authority",
+    "neighboring unit frames, cast bars, swing timers, DoiteDPS, consumables, trinkets and scene pixels remain placeholders or provider-owned",
+    "no simulation pixel may be cropped, sliced, promoted, exported, or used as an ImageGen input"
+  ]
+}

@@ -67,13 +67,20 @@
   不竞争其全局 hook；缺失时 fallback 只处理明确绑定的真实物品／装备槽。
 - 饰品更换菜单保留 provider 原功能并 fail-open；其候选层几何尚未锁定，不能
   与双槽主框一起提前生产。
+- `AB-RAIL-SIM-V1` 已于 `2026-08-08` 完成本地确定性渲染：Rail 映射到真实
+  `bar.backdrop`，独立栏在 Bar Frame 四周各外扩 border；Bar 1／6 满足 pfUI
+  原合并条件时改用单一外围 Rail，不产生内部中缝。等比例板覆盖 `1×1`、`12×1`、
+  `6×2`、`4×3`、`1×12`、图标 `20–48 UI`、border `1–5`、spacing `1–12`、scale
+  `0.75–1.5` 与合并双栏共 `8` 场景，display `8/8 pass`、violations `0`。
+  当前 accepted `AB.SLOT` 只作为模拟中的只读相邻 runtime，姿态栏仍保留 pfUI
+  fallback；本阶段 ImageGen `0/0`，没有 source、runtime、adapter 或游戏改动。
 
 ## 子模块状态
 
 | ID | 阶段 | 当前证据 | 下一门禁 |
 |---|---:|---|---|
-| `AB.RAIL` | `P2 / direction-locked` | pfUI `BarLayoutSize` 公式与用户确认的 V3 中下焦点；与逐槽资产分批 | `AB.SLOT` 后另写可伸缩 Rail 正文并测 border／scale 极值 |
-| `AB.SLOT` | `P6 / game-validated` | [source](../../../assets/source/actionbars/ab-slot/ActionSlotBase_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_RuntimeManifest_v1.json)／[P6 evidence](../../../assets/references/actionbars/p6/AB-SLOT-BASE-V1_P6Evidence_v1.json)；TGA `5c49a1db…23ca`、像素 `e527c038…c35c`、实机截图 `dc9615ac…4d5d`；Bar `1–10` scoped adapter，display `5/5`、package／P6 交互均 `pass` | 下一独立设计门禁为 `AB.RAIL` 本地确定性模拟；`AB.SLOT` 进入 `P6-C` 前另行展示精确保留／删除清单并取得用户批准 |
+| `AB.RAIL` | `P2 / simulation-reviewed` | [work](work/ACTION.BARS.RAIL.V1.md)；`AB-RAIL-SIM-V1` 战斗场景／等比例板；真实 backdrop 外扩、合并双栏、8 个独立场景均 pass；ImageGen `0/0` | 等待用户确认轻量胡桃褐／暗黄铜、无格线、横竖同厚与双栏无中缝方向；确认后另行请求生产正文、`5` 次预算与 Image 1 上传授权 |
+| `AB.SLOT` | `P6 / game-validated` | [source](../../../assets/source/actionbars/ab-slot/ActionSlotBase_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_RuntimeManifest_v1.json)／[P6 evidence](../../../assets/references/actionbars/p6/AB-SLOT-BASE-V1_P6Evidence_v1.json)；TGA `5c49a1db…23ca`、像素 `e527c038…c35c`、实机截图 `dc9615ac…4d5d`；Bar `1–10` scoped adapter，display `5/5`、package／P6 交互均 `pass` | 独立 Rail 模拟已完成；`AB.SLOT` 进入 `P6-C` 前另行展示精确保留／删除清单并取得用户批准 |
 | `AB.SLOT.STATE` | `P2 / scoped` | highlight／active／equipped／icon tint／cooldown／按键动画的真实覆盖顺序已冻结 | 基底 P6 已验证；如需独立换肤再写悬停／激活覆盖合同，不生产假 disabled cell |
 | `AB.ENDCAP.GRYPHON` | `P2 / direction-locked` | pfUI 左右端帽对象、64 UI 默认能力；用户确认的 V3 preset 默认关闭 | `AB.SLOT／RAIL` 后另行授权可选端帽正文 |
 | `AB.STANCE／PET` | `P1` | Bar `11／12` 与 provider 状态已审计 | 职业最少／最多数量和自动施法实机排版 |
@@ -101,6 +108,18 @@
 - V2 回归重渲染 SHA 仍为
   `943d6fac246f0ebc98ebf478519da05f18c3e8e35c4279b785034a4c5548e5d0`。
 - 模拟像素为非权威本地中间件，不能切片、晋级或作为 ImageGen 输入。
+- `AB.RAIL.V1` specification：`tools/specs/action_rail_v1_simulation.json`
+- `AB.RAIL.V1` 战斗场景：
+  `generated/actionbars/AB.RAIL/AB.RAIL.V1/simulation/AB-RAIL-SIM-V1/AB.RAIL.V1.sim-v1.png`
+  （SHA `123d1b4c…cde6`）
+- `AB.RAIL.V1` 等比例组合板：
+  `generated/actionbars/AB.RAIL/AB.RAIL.V1/simulation/AB-RAIL-SIM-V1/AB.RAIL.V1.sim-v1.layouts.png`
+  （SHA `a49088d1…e353`）
+- `AB.RAIL.V1` display-region 合同为
+  `tools/specs/action_rail_v1_sim_display_region.json`；`8/8 pass`、violations `0`；
+  精确布局报告所有九宫格中心、按钮包含、装饰避让和层序检查均 pass。
+- Rail 模拟像素同样只承担方向确认，不能切片、晋级、导出或作为 ImageGen 输入；
+  下一设备不依赖 ignored 像素，因此没有发布 handoff。
 
 ## 下一门禁
 
@@ -108,12 +127,17 @@
    `assets/references/actionbars/p6/AB-SLOT-BASE-V1_TurtleWoW_P6_2026-08-08.png`
    （SHA `dc9615ac…4d5d`）与同目录 P6 evidence JSON（SHA `73a8f942…0d0b`）；
    静态截图与用户交互确认的证明范围保持分离。
-2. 下一独立设计门禁是 `AB.RAIL.V1 prepare / simulate`：只做本地确定性几何，
-   覆盖 `1×1／12×1／6×2／4×3／1×12`、`20–48 UI`、自由行列、伸缩端部及与
-   当前已验收槽框的层序；此门禁不调用外部生成，也不继承 `AB.SLOT` 授权。
-3. `AB.SLOT` 若要进入 `P6-C`，必须先在现存 work 中向用户展示精确保留／删除
+2. `AB.RAIL.V1` 已达到 `simulation-reviewed / P2`。当前门禁是由用户确认
+   `AB-RAIL-SIM-V1` 的连续轻量承托、深胡桃褐主体、断续暗黄铜窄外缘、极少
+   四角紧固点、无固定格线、横／竖／多行同厚和合并双栏无中缝方向；确认只锁定
+   可见方向，不接受模拟像素，也不授权 ImageGen。
+3. 模拟方向确认后，先把确认条款冻结回 Rail production-draft，再单独请求
+   `AB.RAIL.V1` 最终生产正文、最多 `5` 次实际生成／修复预算，以及把指定
+   Character V3 锁定图作为 Image 1 上传到外部 ImageGen 的明确授权；不得复用
+   `AB.SLOT` 的生产或上传授权。
+4. `AB.SLOT` 若要进入 `P6-C`，必须先在现存 work 中向用户展示精确保留／删除
    inventory 并取得明确批准；当前不得清理该组件的 ignored `generated`、work
    或其他专属中间证据。
-4. `AB.SLOT.STATE`、狮鹫、消耗品卷袋和饰品护套继续各自形成独立合同并逐批
+5. `AB.SLOT.STATE`、狮鹫、消耗品卷袋和饰品护套继续各自形成独立合同并逐批
    授权。Bar `1–10` scoped visual adapter 不改变 pfUI 功能所有权；未登记 Bar
    与第三方 provider 始终 fail-open。
