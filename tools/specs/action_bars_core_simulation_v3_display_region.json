@@ -1,0 +1,121 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "ACTION-BARS-CORE/SIM.V3/combat-focus-neighbors",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, 100%-UI-units before UIParent scale",
+  "evidence": {
+    "provider": "addon/pfUI/modules/castbar.lua + addon/pfUI/modules/swingtimer.lua + installed DoiteDPS/UI.lua",
+    "layout_formula": "cast bars inherit their paired unit-frame width; swing timers use 200x12 UI with the offhand anchored 4 UI below; DoiteDPS uses its native 318x46 UI root, 46 UI ready slot and 34 UI forecast icons",
+    "simulation_spec": "tools/specs/action_bars_core_simulation_v3.json",
+    "simulation": "generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V3/action_bars_core_sim_v3.png",
+    "inherited_actionbar_contract": "tools/specs/action_bars_core_simulation_v2_display_region.json",
+    "target": "1920x1080; UI scale 0.81269841269841",
+    "atlas_role": "logical four-cell planning surface for simulation validation only; there is no source or runtime atlas",
+    "dynamic_ownership": "spell icons, names, timers, latency, interrupt state, swing progress, attack speed, recommendations, ETA, resource state and cooldowns remain provider-owned",
+    "final_runtime": false
+  },
+  "atlas": {
+    "size": [128, 32],
+    "visible_bbox": [0, 0, 128, 32],
+    "require_exact_visible_coverage": true,
+    "sampled_regions": [
+      {"id": "planned.cast-rail", "box": [0, 0, 32, 32]},
+      {"id": "planned.swing-rail", "box": [32, 0, 64, 32]},
+      {"id": "planned.qte-ready", "box": [64, 0, 96, 32]},
+      {"id": "planned.qte-forecast", "box": [96, 0, 128, 32]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 3, "right": 3, "top": 3, "bottom": 3},
+    "minimum_frame_size": [7, 7]
+  },
+  "scenarios": [
+    {
+      "id": "player-castbar-linked-280x22",
+      "frame": [280, 22],
+      "preview_frame": [280, 22],
+      "zones": {"dynamic-safe": [0, 0, 280, 22]},
+      "regions": [
+        {"id": "player.cast.icon", "kind": "icon", "box": [0, 0, 22, 22], "zone": "dynamic-safe"},
+        {"id": "player.cast.progress-text-timer", "kind": "status", "box": [24, 0, 280, 22], "zone": "dynamic-safe"}
+      ]
+    },
+    {
+      "id": "target-castbar-linked-280x22",
+      "frame": [280, 22],
+      "preview_frame": [280, 22],
+      "zones": {"dynamic-safe": [0, 0, 280, 22]},
+      "regions": [
+        {"id": "target.cast.icon", "kind": "icon", "box": [0, 0, 22, 22], "zone": "dynamic-safe"},
+        {"id": "target.cast.progress-text-timer", "kind": "status", "box": [24, 0, 280, 22], "zone": "dynamic-safe"}
+      ]
+    },
+    {
+      "id": "focus-castbar-optional-200x18",
+      "frame": [200, 18],
+      "preview_frame": [200, 18],
+      "zones": {"dynamic-safe": [0, 0, 200, 18]},
+      "regions": [
+        {"id": "focus.cast.icon", "kind": "icon", "box": [0, 0, 18, 18], "zone": "dynamic-safe"},
+        {"id": "focus.cast.progress-text-timer", "kind": "status", "box": [20, 0, 200, 18], "zone": "dynamic-safe"}
+      ]
+    },
+    {
+      "id": "swing-mainhand-200x12",
+      "frame": [200, 12],
+      "preview_frame": [200, 12],
+      "zones": {"timing-safe": [0, 0, 200, 12]},
+      "regions": [
+        {"id": "mainhand.progress-marker-text", "kind": "status", "box": [0, 0, 200, 12], "zone": "timing-safe"}
+      ]
+    },
+    {
+      "id": "swing-offhand-200x12",
+      "frame": [200, 12],
+      "preview_frame": [200, 12],
+      "zones": {"timing-safe": [0, 0, 200, 12]},
+      "regions": [
+        {"id": "offhand.progress-marker-text", "kind": "status", "box": [0, 0, 200, 12], "zone": "timing-safe"}
+      ]
+    },
+    {
+      "id": "swing-ranged-reuses-layer-200x12",
+      "frame": [200, 12],
+      "preview_frame": [200, 12],
+      "zones": {"timing-safe": [0, 0, 200, 12]},
+      "regions": [
+        {"id": "ranged.progress-warning-marker-text", "kind": "status", "box": [0, 0, 200, 12], "zone": "timing-safe"}
+      ]
+    },
+    {
+      "id": "doitedps-native-root-318x46",
+      "frame": [318, 46],
+      "preview_frame": [318, 46],
+      "zones": {"timeline-safe": [0, 0, 318, 46]},
+      "regions": [
+        {"id": "doitedps.ready-slot", "kind": "button", "box": [22, 0, 68, 46], "zone": "timeline-safe"},
+        {"id": "doitedps.forecast-travel", "kind": "timeline", "box": [70, 6, 311, 40], "zone": "timeline-safe"}
+      ]
+    },
+    {
+      "id": "doitedps-resource-root-178x22",
+      "frame": [178, 22],
+      "preview_frame": [178, 22],
+      "zones": {"resource-safe": [0, 0, 178, 22]},
+      "regions": [
+        {"id": "resource.01", "kind": "status", "box": [0, 0, 58, 22], "zone": "resource-safe"},
+        {"id": "resource.02", "kind": "status", "box": [58, 0, 116, 22], "zone": "resource-safe"},
+        {"id": "resource.03", "kind": "status", "box": [116, 0, 174, 22], "zone": "resource-safe"}
+      ]
+    },
+    {
+      "id": "doitedps-no-forecast-pending-state",
+      "frame": [318, 46],
+      "preview_frame": [318, 46],
+      "zones": {"timeline-safe": [0, 0, 318, 46]},
+      "regions": [
+        {"id": "doitedps.ready-slot.empty", "kind": "button", "box": [22, 0, 68, 46], "zone": "timeline-safe"},
+        {"id": "doitedps.pending-text", "kind": "text", "box": [70, 8, 286, 38], "zone": "timeline-safe"}
+      ]
+    }
+  ]
+}

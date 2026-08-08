@@ -42,6 +42,32 @@ def load_font(root: Path, definition: dict[str, Any]) -> ImageFont.FreeTypeFont:
     return ImageFont.truetype(str(path), int(definition["size"]))
 
 
+def merge_specs(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]:
+    """Recursively merge a compact revision spec over a tracked base spec."""
+    merged = dict(base)
+    for key, value in override.items():
+        if (
+            isinstance(value, dict)
+            and isinstance(merged.get(key), dict)
+        ):
+            merged[key] = merge_specs(merged[key], value)
+        else:
+            merged[key] = value
+    return merged
+
+
+def load_spec(path: Path, root: Path) -> dict[str, Any]:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    base_ref = data.pop("extends", None)
+    if not base_ref:
+        return data
+
+    base_path = Path(str(base_ref))
+    if not base_path.is_absolute():
+        base_path = root / base_path
+    return merge_specs(load_spec(base_path.resolve(), root), data)
+
+
 def draw_text(
     draw: ImageDraw.ImageDraw,
     xy: tuple[int, int],
@@ -277,6 +303,213 @@ def draw_unit_frame_v2(
     draw_aura_strip(draw, tuple(map(int, config["aura_origin"])), list(config.get("auras", [])), fonts)
 
 
+def draw_cast_bar(
+    draw: ImageDraw.ImageDraw,
+    config: dict[str, Any],
+    fonts: dict[str, ImageFont.FreeTypeFont],
+    palette: dict[str, str],
+) -> None:
+    x0, y0, x1, y1 = map(int, config["screen_box"])
+    height = y1 - y0
+    icon_width = height
+    icon_box = (x0, y0, x0 + icon_width, y1)
+    bar_box = (x0 + icon_width + 3, y0, x1, y1)
+    warning = bool(config.get("interruptible"))
+    outline = rgba("#9b5b45" if warning else palette["brass"])
+    fill = rgba(str(config.get("fill", "#8b6a3e")))
+
+    draw.rounded_rectangle(icon_box, radius=3, fill=rgba("#1a120e"), outline=outline, width=2)
+    draw.rectangle(
+        (icon_box[0] + 3, icon_box[1] + 3, icon_box[2] - 3, icon_box[3] - 3),
+        fill=rgba(str(config.get("icon_fill", "#4f5e42"))),
+    )
+    draw_glyph(
+        draw,
+        (icon_box[0] + 3, icon_box[1] + 3, icon_box[2] - 3, icon_box[3] - 3),
+        int(config.get("glyph", 2)),
+        rgba("#e0cf9a", 225),
+    )
+
+    draw.rounded_rectangle(bar_box, radius=3, fill=rgba("#17110e"), outline=outline, width=2)
+    inner = (bar_box[0] + 2, bar_box[1] + 2, bar_box[2] - 2, bar_box[3] - 2)
+    progress = max(0.0, min(1.0, float(config.get("progress", 0.5))))
+    progress_right = inner[0] + round((inner[2] - inner[0]) * progress)
+    draw.rectangle((inner[0], inner[1], progress_right, inner[3]), fill=fill)
+    draw.line(
+        (inner[0] + 1, inner[1] + 1, max(inner[0] + 1, progress_right - 1), inner[1] + 1),
+        fill=rgba("#d5bd83", 105),
+        width=1,
+    )
+
+    latency = max(0.0, min(1.0, float(config.get("latency", 0.0))))
+    if latency:
+        lag_left = inner[2] - round((inner[2] - inner[0]) * latency)
+        draw.rectangle((lag_left, inner[1], inner[2], inner[3]), fill=rgba("#9d352d", 115))
+
+    draw_text(
+        draw,
+        (bar_box[0] + 6, (bar_box[1] + bar_box[3]) // 2),
+        str(config.get("name", "")),
+        fonts["micro"],
+        rgba("#f3ead4"),
+        anchor="lm",
+        stroke=1,
+        stroke_fill=rgba("#050505"),
+    )
+    draw_text(
+        draw,
+        (bar_box[2] - 5, (bar_box[1] + bar_box[3]) // 2),
+        str(config.get("timer", "")),
+        fonts["micro"],
+        rgba("#f3ead4"),
+        anchor="rm",
+        stroke=1,
+        stroke_fill=rgba("#050505"),
+    )
+
+
+def indicator_box(
+    config: dict[str, Any],
+    ui_scale: float,
+) -> tuple[int, int, int, int]:
+    x, y = map(int, config["screen_origin"])
+    local_scale = float(config.get("scale", 1.0))
+    width = ui_px(config["width_ui"], ui_scale, local_scale)
+    height = ui_px(config["height_ui"], ui_scale, local_scale)
+    return x, y, x + width, y + height
+
+
+def draw_swing_timers(
+    draw: ImageDraw.ImageDraw,
+    config: dict[str, Any],
+    ui_scale: float,
+    fonts: dict[str, ImageFont.FreeTypeFont],
+    palette: dict[str, str],
+) -> None:
+    if config.get("label"):
+        draw_text(
+            draw,
+            tuple(map(int, config.get("label_origin", [960, 562]))),
+            str(config["label"]),
+            fonts["tiny"],
+            rgba(palette["label"]),
+            anchor="ms",
+            stroke=1,
+            stroke_fill=rgba("#080a08"),
+        )
+
+    for index, bar in enumerate(config.get("bars", [])):
+        x0, y0, x1, y1 = indicator_box(bar, ui_scale)
+        draw.rounded_rectangle((x0, y0, x1, y1), radius=2, fill=rgba("#16100d"), outline=rgba(palette["brass"]), width=1)
+        inner = (x0 + 2, y0 + 2, x1 - 2, y1 - 2)
+        progress = max(0.0, min(1.0, float(bar.get("progress", 0.5))))
+        right = inner[0] + round((inner[2] - inner[0]) * progress)
+        draw.rectangle((inner[0], inner[1], right, inner[3]), fill=rgba(str(bar.get("fill", "#85643c"))))
+        marker_x = max(inner[0], min(inner[2], right))
+        draw.line((marker_x, y0 - 2, marker_x, y1 + 2), fill=rgba("#ead49a"), width=2)
+        draw_text(
+            draw,
+            (x0 - 6, (y0 + y1) // 2),
+            str(bar.get("left_text", "")),
+            fonts["micro"],
+            rgba("#d8c8a5"),
+            anchor="rm",
+            stroke=1,
+            stroke_fill=rgba("#050505"),
+        )
+        draw_text(
+            draw,
+            (x1 + 6, (y0 + y1) // 2),
+            str(bar.get("right_text", "")),
+            fonts["micro"],
+            rgba("#d8c8a5"),
+            anchor="lm",
+            stroke=1,
+            stroke_fill=rgba("#050505"),
+        )
+
+
+def draw_doite_dps(
+    draw: ImageDraw.ImageDraw,
+    config: dict[str, Any],
+    ui_scale: float,
+    fonts: dict[str, ImageFont.FreeTypeFont],
+    palette: dict[str, str],
+) -> None:
+    x0, y0, x1, y1 = indicator_box(config, ui_scale)
+    local_scale = float(config.get("scale", 1.0))
+    hit_x = x0 + ui_px(config.get("hit_x_ui", 45), ui_scale, local_scale)
+    ready_size = ui_px(config.get("ready_slot_ui", 46), ui_scale, local_scale)
+    track_y = (y0 + y1) // 2
+
+    label_origin = tuple(map(int, config.get("label_origin", [960, y0 - 26])))
+    draw_text(
+        draw,
+        label_origin,
+        str(config.get("label", "DoiteDPS")),
+        fonts["tiny"],
+        rgba(palette["label"]),
+        anchor="ms",
+        stroke=1,
+        stroke_fill=rgba("#080a08"),
+    )
+
+    # Provider-owned blue/green semantics stay intact; the shell is only a
+    # low-weight placement cue for this non-production simulation.
+    draw.rounded_rectangle((x0, y0, x1, y1), radius=5, fill=rgba("#07101a", 210), outline=rgba("#6f6249", 175), width=1)
+    forecast_max_x = x0 + ui_px(config.get("forecast_max_x_ui", 294), ui_scale, local_scale)
+    draw.line((hit_x + ready_size // 2, track_y, forecast_max_x, track_y), fill=rgba("#345c7b", 190), width=2)
+
+    ready_box = (
+        hit_x - ready_size // 2,
+        track_y - ready_size // 2,
+        hit_x + ready_size // 2,
+        track_y + ready_size // 2,
+    )
+    draw.rounded_rectangle(ready_box, radius=5, fill=rgba("#07100d"), outline=rgba("#46d36b"), width=2)
+    current_box = (ready_box[0] + 4, ready_box[1] + 4, ready_box[2] - 4, ready_box[3] - 4)
+    draw.rectangle(current_box, fill=rgba("#38543e"), outline=rgba("#142119"), width=1)
+    draw_glyph(draw, current_box, 7, rgba("#d9e5bd", 230))
+
+    icon_size = ui_px(config.get("forecast_icon_ui", 34), ui_scale, local_scale)
+    for index, offset in enumerate(config.get("forecast_offsets_ui", [106, 166, 226, 286])):
+        center_x = x0 + ui_px(offset, ui_scale, local_scale)
+        box = (
+            center_x - icon_size // 2,
+            track_y - icon_size // 2,
+            center_x + icon_size // 2,
+            track_y + icon_size // 2,
+        )
+        draw.rounded_rectangle(box, radius=4, fill=rgba("#08111a"), outline=rgba("#6f9cc2", 205), width=2)
+        inner = (box[0] + 3, box[1] + 3, box[2] - 3, box[3] - 3)
+        fill_hex, glyph_hex = icon_palette(index + 4)
+        draw.rectangle(inner, fill=rgba(fill_hex), outline=rgba("#101923"), width=1)
+        draw_glyph(draw, inner, index + 10, rgba(glyph_hex, 220))
+
+    if config.get("show_resource", True):
+        resource_width = ui_px(config.get("resource_width_ui", 178), ui_scale, local_scale)
+        resource_height = ui_px(config.get("resource_height_ui", 22), ui_scale, local_scale)
+        gap = ui_px(config.get("resource_gap_ui", 2), ui_scale, local_scale)
+        resource_box = (x0, y0 - gap - resource_height, x0 + resource_width, y0 - gap)
+        draw.rounded_rectangle(resource_box, radius=4, fill=rgba("#07101a", 220), outline=rgba("#6f6249", 165), width=1)
+        cell_width = resource_width // 3
+        for index in range(3):
+            ix = resource_box[0] + index * cell_width + 4
+            iy = resource_box[1] + 3
+            icon = (ix, iy, ix + resource_height - 6, resource_box[3] - 3)
+            draw.rectangle(icon, fill=rgba(("#3e543d", "#594432", "#3a4f62")[index]), outline=rgba("#9b8155"), width=1)
+            draw_text(
+                draw,
+                (icon[2] + 4, (resource_box[1] + resource_box[3]) // 2),
+                ("OK", "2", "CD")[index],
+                fonts["micro"],
+                rgba("#d8e0d0"),
+                anchor="lm",
+                stroke=1,
+                stroke_fill=rgba("#050505"),
+            )
+
+
 def draw_placeholder_ui_v2(
     draw: ImageDraw.ImageDraw,
     fonts: dict[str, ImageFont.FreeTypeFont],
@@ -319,8 +552,18 @@ def draw_placeholder_ui_v2(
     draw.line((960, fy0 + 8, 960, fy0 + 25), fill=rgba("#c4a76b", 100), width=2)
     draw.line((960, fy1 - 25, 960, fy1 - 8), fill=rgba("#c4a76b", 100), width=2)
 
+    ui_scale = float(spec["target"]["ui_scale"])
+    if "doite_dps" in spec:
+        draw_doite_dps(draw, spec["doite_dps"], ui_scale, fonts, palette)
+    if "swing_timers" in spec:
+        draw_swing_timers(draw, spec["swing_timers"], ui_scale, fonts, palette)
+
     for frame in spec["unit_frames"]["frames"]:
         draw_unit_frame_v2(draw, frame, fonts, palette)
+
+    for castbar in spec.get("cast_bars", {}).get("bars", []):
+        if castbar.get("visible_in_simulation", True):
+            draw_cast_bar(draw, castbar, fonts, palette)
 
     cluster_label_origin = tuple(map(int, spec["unit_frames"].get("cluster_label_origin", [960, 735])))
     draw_text(
@@ -632,21 +875,29 @@ def validate_layout(spec: dict[str, Any]) -> dict[str, Any]:
         round((player[0] + target[2]) / 2),
     )
 
+    aura_top = min(
+        int(frame["aura_origin"][1])
+        for frame in spec["unit_frames"]["frames"]
+    )
     aura_bottom = max(
         int(frame["aura_origin"][1]) + 19
         for frame in spec["unit_frames"]["frames"]
     )
-    check("unit-frames.aura-bottom", int(contract["unit_frame_aura_bottom_y"]), aura_bottom)
+    if "unit_frame_aura_top_y" in contract:
+        check("unit-frames.aura-top", int(contract["unit_frame_aura_top_y"]), aura_top)
+    if "unit_frame_aura_bottom_y" in contract:
+        check("unit-frames.aura-bottom", int(contract["unit_frame_aura_bottom_y"]), aura_bottom)
 
     bars = {bar["id"]: bar for bar in spec["bars"]}
     main_x, main_y, main_w, main_h, main_button, _, _ = bar_geometry(bars["AB.BAR1.MAIN"], ui_scale)
     stance_x, stance_y, stance_w, _, _, _, _ = bar_geometry(bars["AB.BAR11.STANCE"], ui_scale)
     check("combat-bars.stance-top", int(contract["stance_top_y"]), stance_y)
-    check(
-        "combat-bars.aura-to-stance-clearance",
-        int(contract["aura_to_stance_clearance_px"]),
-        stance_y - aura_bottom,
-    )
+    if "aura_to_stance_clearance_px" in contract:
+        check(
+            "combat-bars.aura-to-stance-clearance",
+            int(contract["aura_to_stance_clearance_px"]),
+            stance_y - aura_bottom,
+        )
     check("combat-bars.main-top", int(contract["main_bar_top_y"]), main_y)
     check("combat-bars.main-bottom", int(contract["main_bar_bottom_y"]), main_y + main_h)
     check("combat-bars.main-center-x", int(contract["main_bar_center_x"]), round(main_x + main_w / 2))
@@ -678,6 +929,66 @@ def validate_layout(spec: dict[str, Any]) -> dict[str, Any]:
     check("profile-proposal.player-height", player[3] - player[1], proposed_height)
     check("profile-proposal.target-height", target[3] - target[1], proposed_height)
 
+    castbar_boxes: dict[str, list[int]] = {}
+    if "cast_bars" in spec:
+        castbar_boxes = {
+            item["id"]: list(map(int, item["screen_box"]))
+            for item in spec["cast_bars"].get("bars", [])
+            if item.get("visible_in_simulation", True)
+        }
+        player_cast = castbar_boxes["CAST.PLAYER"]
+        target_cast = castbar_boxes["CAST.TARGET"]
+        check("castbars.same-top", player_cast[1], target_cast[1])
+        check("castbars.same-bottom", player_cast[3], target_cast[3])
+        check("castbars.player-width-matches-frame", player[2] - player[0], player_cast[2] - player_cast[0])
+        check("castbars.target-width-matches-frame", target[2] - target[0], target_cast[2] - target_cast[0])
+        check("castbars.pair-inner-gap", int(contract["castbar_pair_inner_gap_px"]), target_cast[0] - player_cast[2])
+        check("castbars.top", int(contract["castbar_top_y"]), player_cast[1])
+        check("castbars.bottom", int(contract["castbar_bottom_y"]), player_cast[3])
+        check("castbars.height", int(contract["castbar_height_px"]), player_cast[3] - player_cast[1])
+        check("castbars.unitframe-gap", int(contract["unitframe_to_castbar_gap_px"]), player_cast[1] - player[3])
+        check("castbars.to-stance-clearance", int(contract["castbar_to_stance_clearance_px"]), stance_y - player_cast[3])
+
+    swing_boxes: dict[str, tuple[int, int, int, int]] = {}
+    if "swing_timers" in spec:
+        swing_boxes = {
+            item["id"]: indicator_box(item, ui_scale)
+            for item in spec["swing_timers"].get("bars", [])
+        }
+        main_swing = swing_boxes["SWING.MAINHAND"]
+        off_swing = swing_boxes["SWING.OFFHAND"]
+        check("swing.main-top", int(contract["swing_main_top_y"]), main_swing[1])
+        check("swing.pair-bottom", int(contract["swing_pair_bottom_y"]), off_swing[3])
+        check("swing.width", int(contract["swing_width_px"]), main_swing[2] - main_swing[0])
+        check("swing.height", int(contract["swing_height_px"]), main_swing[3] - main_swing[1])
+        check("swing.pair-gap", int(contract["swing_pair_gap_px"]), off_swing[1] - main_swing[3])
+        check("swing.main-center-x", int(contract["main_bar_center_x"]), round((main_swing[0] + main_swing[2]) / 2))
+        check("swing.offhand-center-x", int(contract["main_bar_center_x"]), round((off_swing[0] + off_swing[2]) / 2))
+        check("swing.to-aura-clearance", int(contract["swing_to_aura_clearance_px"]), aura_top - off_swing[3])
+
+    if "doite_dps" in spec:
+        doite_box = indicator_box(spec["doite_dps"], ui_scale)
+        check("doitedps.root-top", int(contract["doitedps_root_top_y"]), doite_box[1])
+        check("doitedps.root-bottom", int(contract["doitedps_root_bottom_y"]), doite_box[3])
+        check("doitedps.root-width", int(contract["doitedps_root_width_px"]), doite_box[2] - doite_box[0])
+        check("doitedps.root-height", int(contract["doitedps_root_height_px"]), doite_box[3] - doite_box[1])
+        check("doitedps.center-x", int(contract["main_bar_center_x"]), round((doite_box[0] + doite_box[2]) / 2))
+        if swing_boxes:
+            main_swing = swing_boxes["SWING.MAINHAND"]
+            check("doitedps.to-swing-clearance", int(contract["doitedps_to_swing_clearance_px"]), main_swing[1] - doite_box[3])
+
+    if castbar_boxes and swing_boxes and "doite_dps" in spec:
+        vertical_order = [
+            indicator_box(spec["doite_dps"], ui_scale)[1],
+            swing_boxes["SWING.MAINHAND"][1],
+            aura_top,
+            player[1],
+            castbar_boxes["CAST.PLAYER"][1],
+            stance_y,
+            main_y,
+        ]
+        check("combat-focus.strict-vertical-order", sorted(vertical_order), vertical_order)
+
     violations = [item["id"] for item in checks if not item["pass"]]
     return {
         "schema": "aeui-action-bars-layout-report-v1",
@@ -693,7 +1004,7 @@ def validate_layout(spec: dict[str, Any]) -> dict[str, Any]:
 def main() -> None:
     args = parse_args()
     root = args.repo_root.resolve()
-    spec = json.loads(args.spec.read_text(encoding="utf-8"))
+    spec = load_spec(args.spec.resolve(), root)
     canvas = spec["canvas"]
     image = Image.new("RGBA", (int(canvas["width"]), int(canvas["height"])), rgba(canvas["fill"]))
     draw = ImageDraw.Draw(image, "RGBA")

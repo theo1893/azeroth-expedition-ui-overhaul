@@ -1,6 +1,7 @@
 # Action Bars 子模块定义
 
-本文件定义动作条、姿态／宠物条，以及与战斗动作区相邻的消耗品和饰品栏。
+本文件定义动作条、姿态／宠物条，以及与战斗动作区相邻的施法／攻击读数、
+DoiteDPS、消耗品和饰品栏。
 美术见 [ART_BASELINE.md](ART_BASELINE.md)，状态见
 [PROGRESS.md](PROGRESS.md)。本模块只接管明确列出的对象；未登记的 pfUI、
 AutoBar、TrinketMenu 或 Blizzard 对象继续由原 provider 正常绘制和交互。
@@ -12,6 +13,8 @@ AutoBar、TrinketMenu 或 Blizzard 对象继续由原 provider 正常绘制和�
 | [`modules/actionbar.lua`](../../../addon/pfUI/modules/actionbar.lua) | `pfActionBarMain`、Paging、Right、Vertical、Left、Top、四个 stance page、`pfActionBarStances`、`pfActionBarPet`；真实 Action Button、分页、冷却、快捷键、数量、范围／法力／装备／宠物自动施法状态 | 保留为唯一动作与状态 provider；只做逐对象视觉 adapter 和一次性可选布局预设 |
 | [`modules/gryphons.lua`](../../../addon/pfUI/modules/gryphons.lua) | 左右端帽、纹理、尺寸、颜色、锚点与偏移 | 以后只在 `AB.ENDCAP.GRYPHON` 范围替换；窄栏或非横向布局可关闭 |
 | [`modules/hunterbar.lua`](../../../addon/pfUI/modules/hunterbar.lua) | 猎人近战／远程页切换与滞回 | 行为不改写；视觉随对应真实动作页更新 |
+| [`modules/castbar.lua`](../../../addon/pfUI/modules/castbar.lua) | `pfPlayerCastbar`、`pfTargetCastbar`、可选 `pfFocusCastbar`；图标、进度、法术名、计时、延迟与独立 mover | 保留为唯一施法数据／交互 provider；本模块只提出战斗焦点邻接位置与以后独立授权的细 Rail 外观 |
+| [`modules/swingtimer.lua`](../../../addon/pfUI/modules/swingtimer.lua) | `pfSwingTimerMainhand`、随主手锚定的 `pfSwingTimerOffhand`、独立 `pfSwingTimerRanged` 与可选 Range Indicator | 攻击识别、主副手／远程互斥、计时和 Marker 行为不改写；只做邻接布局与以后独立授权的细轨外观 |
 | [`api/api.lua`](../../../addon/pfUI/api/api.lua) | `BarLayoutSize`、`BarLayout`、`UpdateMovable` | 作为尺寸公式、排列与自由拖动权威 |
 | [`api/config.lua`](../../../addon/pfUI/api/config.lua) 与 [`modules/gui.lua`](../../../addon/pfUI/modules/gui.lua) | 每条 Bar 的启用、按钮数、图标尺寸、间距、行列、空槽、自动隐藏与战斗显示配置 | 保留并扩展外观入口，不强写用户 profile |
 
@@ -22,6 +25,9 @@ AutoBar、TrinketMenu 或 Blizzard 对象继续由原 provider 正常绘制和�
 - TrinketMenu：`TrinketMenu_MainFrame`、`TrinketMenu_Trinket0`（装备槽
   `13`）、`TrinketMenu_Trinket1`（装备槽 `14`）、候选饰品菜单、冷却与自动
   排队。
+- DoiteDPS：`DoiteDPSMainFrame` `318×46 UI`、`DoiteDPSTimelineTrack`、
+  `DoiteDPSReadySlot` `46 UI`、Forecast 图标 `34 UI` 与资源框 `178×22 UI`；
+  插件自身保存位置、scale、锁定、战斗显隐、推荐、ETA、资源和冷却。
 
 ## pfUI 十二条逻辑 Bar
 
@@ -52,6 +58,20 @@ pfUI 的合法矩形布局由按钮数因数决定；12 格支持 `12×1`、`6×
 | `AB.PET` | Bar `12` 的真实宠物按钮 | 保留攻击、跟随、停留、技能与自动施法反馈 |
 | `AB.MOVER` | pfUI unlock／`UpdateMovable` | 每个 Bar 独立移动、缩放、重置；视觉不得持续改写 Parent、Point、Width 或 Height |
 
+## 战斗焦点邻接对象
+
+这些对象加入同一推荐布局，但逻辑所有权不转移给动作条 adapter；任何视觉接管
+都必须以后按对象独立授权并 feature-detect，失败时保留 provider 原样。
+
+| ID | provider／真实对象 | 合同 |
+|---|---|---|
+| `AB.FOCUS.CASTBAR.PLAYER` | `pfPlayerCastbar` | 推荐紧贴玩家框下方并继承其宽度；保留法术图标、名称、计时与玩家延迟区；独立可移动 |
+| `AB.FOCUS.CASTBAR.TARGET` | `pfTargetCastbar` | 推荐紧贴目标框下方并继承其宽度；保留可打断／不可打断与目标施法信息；独立可移动 |
+| `AB.FOCUS.CASTBAR.FOCUS` | 可选 `pfFocusCastbar` | 继续跟随 Focus Frame，默认不进入中央玩家／目标双框；对象不存在时无占位 |
+| `AB.FOCUS.SWING.MELEE` | `pfSwingTimerMainhand`＋`pfSwingTimerOffhand` | `200×12 UI` 双细轨居中上下排列；副手仍跟随主手；文字、攻速与 Marker 动态 |
+| `AB.FOCUS.SWING.RANGED` | `pfSwingTimerRanged` | 复用同一中心计时层，不与近战双条组成第三条常驻栏；范围提示仍由 provider 管理 |
+| `AB.DOITEDPS.TIMELINE` | 可选 `DoiteDPSMainFrame` 及子 Frame | 保留原生 `318×46 UI` 比例、独立拖动／缩放／锁定／显隐与蓝绿状态语义；只允许一次性位置 preset 和以后可选的低重量外缘 |
+
 ## 消耗品卷袋
 
 | ID | provider／对象 | 合同 |
@@ -81,22 +101,29 @@ TrinketMenu 已经接管 `UseInventoryItem`、背包更新、装备更新与排�
 
 - `战斗甲板`：Bar 1 为屏幕中下部居中 `12×1` 主栏；Bar 6 为其上方 `12×1`
   副栏；姿态／宠物条独立位于上缘；消耗品卷袋在左，饰品双槽在右。目标设备
-  V2 主栏顶部为物理 `y=827`、Button 约 `39 px`、底边净空 `210 px`。
+  V3 沿用主栏物理 `y=827`、Button 约 `39 px`、底边净空 `210 px`。
 - `战斗视线邻接`：Player／Target 继续由 pfUI UnitFrame provider 所有；推荐
   preset 仅一次性把两者置于同一基线并收拢到目标设备 `80 px` 内缘间距，
   不由 Action Bars adapter 重画、重挂 Parent 或在维护循环中持续改位置。
+- `战斗信息纵栈`：目标设备物理顺序为 DoiteDPS `y=514–551`、近战攻击计时
+  `570–593`、双方外肩 Aura `612–631`、Player／Target `639–700`、双施法条
+  `708–728`、姿态 `y=744`、副栏 `y=783`、主栏 `y=827`。远程攻击计时复用
+  近战计时层；Focus 施法条跟随 Focus Frame，不加入中央双框。
 - `紧凑战斗`：主／副栏可改为 `6×2`；自适应 Rail 重新切片，狮鹫端帽缩小或
   隐藏，逻辑按钮数与分页不变。
 - `自由侧栏`：Bar 3／4／5 可保持 `4×3`、`6×2` 或竖排并独立移动；不因采用
   推荐预设而失去现有布局。
 - 预设只在用户明确点击应用时写入一次。默认读取并尊重现有 profile、位置、
-  scale、按钮数、行列、自动隐藏和空槽设置；V2 默认关闭狮鹫，unlock 时仍可
-  为足够宽的水平主栏单独开启。
+  scale、按钮数、行列、自动隐藏和空槽设置；V3 继续默认关闭狮鹫，unlock 时
+  仍可为足够宽的水平主栏单独开启。DoiteDPS 的锁定／战斗显隐／Forecast／资源／
+  冷却选项不由此 preset 改写。
 
 ## 功能不变量
 
 - 技能、宏、物品、宠物动作、分页、姿态、快捷键、数量、冷却、范围、法力、
   装备态、拖放、Tooltip 与右键语义继续由真实 provider 负责。
+- 施法识别、延迟、可打断状态、主／副手／远程攻击识别、DoiteDPS 推荐／ETA／
+  资源／冷却继续由各自 provider 负责；本模块不复制算法或制造假读数。
 - Bar 1、用户标记的战斗核心 Bar、消耗品核心口袋和两枚饰品在战斗中不得因
   mouseover 延迟而消失；非核心辅助栏才可选择脱战淡出。
 - 自动隐藏只能改变可见性／Alpha，不在维护循环中搬动或改尺寸。

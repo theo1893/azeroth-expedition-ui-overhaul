@@ -1,0 +1,215 @@
+{
+  "schema": "aeui-action-bars-simulation-v1",
+  "version": "ACTION-BARS-CORE-SIM-V3",
+  "extends": "tools/specs/action_bars_core_simulation_v2.json",
+  "purpose": "deterministic non-production combat-focus preview with cast bars, swing timers and DoiteDPS",
+  "output": "generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V3/action_bars_core_sim_v3.png",
+  "annotations": {
+    "title": "动作条 / 战斗焦点 V3 · 施法与攻击节奏",
+    "subtitle": "DoiteDPS、攻击计时、双方状态、施法条与技能冷却组成单一纵向扫视路径",
+    "note": "本地几何模拟 · 非 source / runtime · ImageGen 0/0",
+    "rules_title": "V3 战斗信息层级",
+    "rules": [
+      "DoiteDPS 318×46 UI 保持独立拖动、缩放与显隐",
+      "主／副手 200×12 UI 居中；远程计时复用同一层",
+      "玩家／目标施法条紧贴各自状态框，宽度严格对齐",
+      "Aura 外移到状态框上肩，不挤占施法与姿态间距",
+      "动作条、消耗品与饰品沿用 V2 高度和自由移动"
+    ]
+  },
+  "focus_field": {
+    "screen_box": [515, 474, 1315, 897],
+    "role": "non-runtime eye-path annotation around recommendations, timing, unit state, casting and actions"
+  },
+  "layout_contract": {
+    "unit_frame_baseline_y": 700,
+    "unit_frame_inner_gap_px": 80,
+    "unit_frame_outer_cluster_center_x": 960,
+    "unit_frame_aura_top_y": 612,
+    "unit_frame_aura_bottom_y": 631,
+    "stance_top_y": 744,
+    "aura_to_stance_clearance_px": 113,
+    "main_bar_top_y": 827,
+    "main_bar_bottom_y": 870,
+    "main_bar_center_x": 960,
+    "main_button_physical_px": 39,
+    "main_bar_bottom_clearance_px": 210,
+    "xp_rail_bottom_y": 882,
+    "castbar_top_y": 708,
+    "castbar_bottom_y": 728,
+    "castbar_height_px": 20,
+    "castbar_pair_inner_gap_px": 80,
+    "unitframe_to_castbar_gap_px": 8,
+    "castbar_to_stance_clearance_px": 16,
+    "swing_main_top_y": 570,
+    "swing_pair_bottom_y": 593,
+    "swing_width_px": 163,
+    "swing_height_px": 10,
+    "swing_pair_gap_px": 3,
+    "swing_to_aura_clearance_px": 19,
+    "doitedps_root_top_y": 514,
+    "doitedps_root_bottom_y": 551,
+    "doitedps_root_width_px": 258,
+    "doitedps_root_height_px": 37,
+    "doitedps_to_swing_clearance_px": 19,
+    "chat_overlap": false,
+    "recommended_profile_is_one_time_opt_in": true,
+    "runtime_change_in_this_simulation": false
+  },
+  "unit_frames": {
+    "provider": "pfUI pfPlayer and pfTarget; placement and density proposal only",
+    "cluster_label": "",
+    "cluster_label_origin": [960, 735],
+    "frames": [
+      {
+        "id": "UF.PLAYER.ADJACENCY",
+        "label": "",
+        "screen_box": [681, 639, 920, 700],
+        "portrait_side": "left",
+        "portrait_tint": "#39533f",
+        "name": "玩家名称",
+        "level": "Lv 60",
+        "health": 0.76,
+        "power": 0.64,
+        "health_text": "76% · 生命",
+        "health_color": "#657742",
+        "power_color": "#405f7c",
+        "aura_origin": [681, 612],
+        "auras": [
+          {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff", "count": "2"},
+          {"kind": "debuff"}, {"kind": "buff"}, {"kind": "buff"}
+        ]
+      },
+      {
+        "id": "UF.TARGET.ADJACENCY",
+        "label": "",
+        "screen_box": [1000, 639, 1239, 700],
+        "portrait_side": "right",
+        "portrait_tint": "#633b34",
+        "name": "目标名称",
+        "level": "Lv 62+",
+        "health": 0.58,
+        "power": 0.42,
+        "health_text": "58% · 目标生命",
+        "health_color": "#6f5038",
+        "power_color": "#4a4f65",
+        "aura_origin": [1101, 612],
+        "auras": [
+          {"kind": "debuff"}, {"kind": "debuff", "count": "3"}, {"kind": "debuff"},
+          {"kind": "buff"}, {"kind": "debuff"}, {"kind": "debuff"}
+        ]
+      }
+    ]
+  },
+  "cast_bars": {
+    "provider": "addon/pfUI/modules/castbar.lua; pfPlayerCastbar, pfTargetCastbar and optional pfFocusCastbar",
+    "profile_recommendation": {
+      "not_applied": true,
+      "player": {"width_ui": -1, "height_ui": 22, "anchor_policy": "below pfPlayer and match its width"},
+      "target": {"width_ui": -1, "height_ui": 22, "anchor_policy": "below pfTarget and match its width"},
+      "focus": {"width_ui": -1, "height_ui": 18, "anchor_policy": "remain below the optional focus frame outside the central pair"},
+      "position_note": "one-time opt-in preset; every cast bar remains independently movable through pfUI"
+    },
+    "bars": [
+      {
+        "id": "CAST.PLAYER",
+        "screen_box": [681, 708, 920, 728],
+        "name": "玩家施法",
+        "timer": "1.2",
+        "progress": 0.62,
+        "latency": 0.11,
+        "fill": "#766f43",
+        "icon_fill": "#48604a",
+        "glyph": 1
+      },
+      {
+        "id": "CAST.TARGET",
+        "screen_box": [1000, 708, 1239, 728],
+        "name": "目标施法 · 可打断",
+        "timer": "0.8",
+        "progress": 0.46,
+        "interruptible": true,
+        "fill": "#805143",
+        "icon_fill": "#65403a",
+        "glyph": 4
+      },
+      {
+        "id": "CAST.FOCUS.OPTIONAL",
+        "screen_box": [1488, 594, 1688, 612],
+        "visible_in_simulation": false,
+        "placement_policy": "follow the optional focus frame; do not compete with the central player/target pair"
+      }
+    ]
+  },
+  "swing_timers": {
+    "provider": "addon/pfUI/modules/swingtimer.lua; mainhand plus anchored offhand, with ranged replacing the same visual layer",
+    "label": "主／副手攻击节奏 · 远程计时复用此层",
+    "label_origin": [960, 566],
+    "profile_recommendation": {
+      "not_applied": true,
+      "width_ui": 200,
+      "height_ui": 12,
+      "center_x": 960,
+      "main_top_y": 570,
+      "ranged_policy": "same centered layer; never show a duplicate third bar beside melee timing"
+    },
+    "bars": [
+      {
+        "id": "SWING.MAINHAND",
+        "screen_origin": [879, 570],
+        "width_ui": 200,
+        "height_ui": 12,
+        "scale": 1.0,
+        "progress": 0.68,
+        "fill": "#806a3d",
+        "left_text": "主",
+        "right_text": "2.8"
+      },
+      {
+        "id": "SWING.OFFHAND",
+        "screen_origin": [879, 583],
+        "width_ui": 200,
+        "height_ui": 12,
+        "scale": 1.0,
+        "progress": 0.36,
+        "fill": "#635642",
+        "left_text": "副",
+        "right_text": "1.9"
+      }
+    ]
+  },
+  "doite_dps": {
+    "id": "AB.DOITEDPS.TIMELINE",
+    "provider": "DoiteDPSMainFrame / DoiteDPSTimelineTrack / DoiteDPSReadySlot",
+    "label": "DoiteDPS 推荐时间线 · 原生 318×46 UI · 独立拖动",
+    "label_origin": [960, 489],
+    "screen_origin": [831, 514],
+    "width_ui": 318,
+    "height_ui": 46,
+    "scale": 1.0,
+    "hit_x_ui": 45,
+    "ready_slot_ui": 46,
+    "forecast_icon_ui": 34,
+    "forecast_max_x_ui": 294,
+    "forecast_offsets_ui": [106, 166, 226, 286],
+    "show_resource": true,
+    "resource_width_ui": 178,
+    "resource_height_ui": 22,
+    "resource_gap_ui": 2,
+    "profile_recommendation": {
+      "not_applied": true,
+      "scale": 1.0,
+      "center_x": 960,
+      "root_top_y": 514,
+      "preserve": ["enabled", "locked", "showOnlyCombat", "showForecast", "showResource", "showCooldowns"],
+      "position_note": "feature-detect the installed provider; only offer a one-time placement preset and optional low-weight visual bridge"
+    }
+  },
+  "non_authoritative": [
+    "all flat colors, glyphs, texture detail, portraits, aura icons and neighboring UI pixels",
+    "unit-frame and castbar art remains provider-owned until its own scoped visual contract is accepted",
+    "DoiteDPS recommendations, icons, ETA, resource states and blue/green semantics remain entirely provider-owned",
+    "no simulation pixel may be cropped, sliced, promoted or used as ImageGen input",
+    "final alpha, atlas cells, seams, UV and state art remain unresolved"
+  ]
+}
