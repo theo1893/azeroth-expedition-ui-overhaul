@@ -4,7 +4,8 @@
 [全局美术基线](../../GLOBAL_ART_BASELINE.md)，槽体材料继承已锁定的
 [Character V3](../../../assets/locked/character/角色属性面板_香草同构收敛_风格确认_v3.png)
 及其 [Character 主模块 Prompt](../character/ART_BASELINE.md)。本 Prompt 显式
-继承全局 Prompt，但在本模块 V1 模拟获用户确认前不视为 `P2` 锁定。
+继承全局 Prompt，但在本模块当前 V2 模拟获用户确认前不视为 `P2` 锁定；V1
+贴底布局已于 `2026-08-08` 被用户否决。
 
 ## 主模块 Prompt
 

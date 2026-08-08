@@ -1,0 +1,199 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "ACTION-BARS-CORE/SIM.V2/lower-center-combat-focus",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, 100%-UI-units before UIParent scale",
+  "evidence": {
+    "provider": "addon/pfUI/modules/actionbar.lua + optional AutoBarFrame + optional TrinketMenu_MainFrame",
+    "layout_formula": "frame=(icon+2*border+spacing)*columns+spacing by the same formula for rows; button=(icon+2*border); first button inset=(border+spacing)",
+    "simulation_spec": "tools/specs/action_bars_core_simulation_v2.json",
+    "simulation": "generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V2/action_bars_core_sim_v2.png",
+    "target": "1920x1080; UI scale 0.81269841269841",
+    "atlas_role": "logical four-cell planning surface for simulation validation only; there is no source or runtime atlas",
+    "dynamic_ownership": "all icons, actions, keybinds, counts, macro names, cooldowns, range, resource, equipped, pet-autocast and item data remain provider-owned",
+    "final_runtime": false
+  },
+  "atlas": {
+    "size": [128, 32],
+    "visible_bbox": [0, 0, 128, 32],
+    "require_exact_visible_coverage": true,
+    "sampled_regions": [
+      {"id": "planned.action-slot", "box": [0, 0, 32, 32]},
+      {"id": "planned.consumable-pocket", "box": [32, 0, 64, 32]},
+      {"id": "planned.trinket-slot", "box": [64, 0, 96, 32]},
+      {"id": "planned.adaptive-rail", "box": [96, 0, 128, 32]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 6, "right": 6, "top": 6, "bottom": 6},
+    "minimum_frame_size": [13, 13]
+  },
+  "scenarios": [
+    {
+      "id": "main-12x1-icon36",
+      "frame": [506, 44],
+      "preview_frame": [506, 44],
+      "zones": {"button-safe": [0, 0, 506, 44]},
+      "regions": [
+        {"id": "action.01", "kind": "button", "box": [4, 4, 44, 44], "zone": "button-safe"},
+        {"id": "action.02", "kind": "button", "box": [46, 4, 86, 44], "zone": "button-safe"},
+        {"id": "action.03", "kind": "button", "box": [88, 4, 128, 44], "zone": "button-safe"},
+        {"id": "action.04", "kind": "button", "box": [130, 4, 170, 44], "zone": "button-safe"},
+        {"id": "action.05", "kind": "button", "box": [172, 4, 212, 44], "zone": "button-safe"},
+        {"id": "action.06", "kind": "button", "box": [214, 4, 254, 44], "zone": "button-safe"},
+        {"id": "action.07", "kind": "button", "box": [256, 4, 296, 44], "zone": "button-safe"},
+        {"id": "action.08", "kind": "button", "box": [298, 4, 338, 44], "zone": "button-safe"},
+        {"id": "action.09", "kind": "button", "box": [340, 4, 380, 44], "zone": "button-safe"},
+        {"id": "action.10", "kind": "button", "box": [382, 4, 422, 44], "zone": "button-safe"},
+        {"id": "action.11", "kind": "button", "box": [424, 4, 464, 44], "zone": "button-safe"},
+        {"id": "action.12", "kind": "button", "box": [466, 4, 506, 44], "zone": "button-safe"}
+      ]
+    },
+    {
+      "id": "main-6x2-icon36",
+      "frame": [254, 86],
+      "preview_frame": [254, 86],
+      "zones": {"button-safe": [0, 0, 254, 86]},
+      "regions": [
+        {"id": "action.01", "kind": "button", "box": [4, 4, 44, 44], "zone": "button-safe"},
+        {"id": "action.02", "kind": "button", "box": [46, 4, 86, 44], "zone": "button-safe"},
+        {"id": "action.03", "kind": "button", "box": [88, 4, 128, 44], "zone": "button-safe"},
+        {"id": "action.04", "kind": "button", "box": [130, 4, 170, 44], "zone": "button-safe"},
+        {"id": "action.05", "kind": "button", "box": [172, 4, 212, 44], "zone": "button-safe"},
+        {"id": "action.06", "kind": "button", "box": [214, 4, 254, 44], "zone": "button-safe"},
+        {"id": "action.07", "kind": "button", "box": [4, 46, 44, 86], "zone": "button-safe"},
+        {"id": "action.08", "kind": "button", "box": [46, 46, 86, 86], "zone": "button-safe"},
+        {"id": "action.09", "kind": "button", "box": [88, 46, 128, 86], "zone": "button-safe"},
+        {"id": "action.10", "kind": "button", "box": [130, 46, 170, 86], "zone": "button-safe"},
+        {"id": "action.11", "kind": "button", "box": [172, 46, 212, 86], "zone": "button-safe"},
+        {"id": "action.12", "kind": "button", "box": [214, 46, 254, 86], "zone": "button-safe"}
+      ]
+    },
+    {
+      "id": "auxiliary-4x3-icon28",
+      "frame": [138, 104],
+      "preview_frame": [138, 104],
+      "zones": {"button-safe": [0, 0, 138, 104]},
+      "regions": [
+        {"id": "action.01", "kind": "button", "box": [4, 4, 36, 36], "zone": "button-safe"},
+        {"id": "action.02", "kind": "button", "box": [38, 4, 70, 36], "zone": "button-safe"},
+        {"id": "action.03", "kind": "button", "box": [72, 4, 104, 36], "zone": "button-safe"},
+        {"id": "action.04", "kind": "button", "box": [106, 4, 138, 36], "zone": "button-safe"},
+        {"id": "action.05", "kind": "button", "box": [4, 38, 36, 70], "zone": "button-safe"},
+        {"id": "action.06", "kind": "button", "box": [38, 38, 70, 70], "zone": "button-safe"},
+        {"id": "action.07", "kind": "button", "box": [72, 38, 104, 70], "zone": "button-safe"},
+        {"id": "action.08", "kind": "button", "box": [106, 38, 138, 70], "zone": "button-safe"},
+        {"id": "action.09", "kind": "button", "box": [4, 72, 36, 104], "zone": "button-safe"},
+        {"id": "action.10", "kind": "button", "box": [38, 72, 70, 104], "zone": "button-safe"},
+        {"id": "action.11", "kind": "button", "box": [72, 72, 104, 104], "zone": "button-safe"},
+        {"id": "action.12", "kind": "button", "box": [106, 72, 138, 104], "zone": "button-safe"}
+      ]
+    },
+    {
+      "id": "stance-minimum-3x1-icon26",
+      "frame": [98, 34],
+      "preview_frame": [98, 34],
+      "zones": {"button-safe": [0, 0, 98, 34]},
+      "regions": [
+        {"id": "stance.01", "kind": "button", "box": [4, 4, 34, 34], "zone": "button-safe"},
+        {"id": "stance.02", "kind": "button", "box": [36, 4, 66, 34], "zone": "button-safe"},
+        {"id": "stance.03", "kind": "button", "box": [68, 4, 98, 34], "zone": "button-safe"}
+      ]
+    },
+    {
+      "id": "pet-maximum-10x1-icon26",
+      "frame": [322, 34],
+      "preview_frame": [322, 34],
+      "zones": {"button-safe": [0, 0, 322, 34]},
+      "regions": [
+        {"id": "pet.01", "kind": "button", "box": [4, 4, 34, 34], "zone": "button-safe"},
+        {"id": "pet.02", "kind": "button", "box": [36, 4, 66, 34], "zone": "button-safe"},
+        {"id": "pet.03", "kind": "button", "box": [68, 4, 98, 34], "zone": "button-safe"},
+        {"id": "pet.04", "kind": "button", "box": [100, 4, 130, 34], "zone": "button-safe"},
+        {"id": "pet.05", "kind": "button", "box": [132, 4, 162, 34], "zone": "button-safe"},
+        {"id": "pet.06", "kind": "button", "box": [164, 4, 194, 34], "zone": "button-safe"},
+        {"id": "pet.07", "kind": "button", "box": [196, 4, 226, 34], "zone": "button-safe"},
+        {"id": "pet.08", "kind": "button", "box": [228, 4, 258, 34], "zone": "button-safe"},
+        {"id": "pet.09", "kind": "button", "box": [260, 4, 290, 34], "zone": "button-safe"},
+        {"id": "pet.10", "kind": "button", "box": [292, 4, 322, 34], "zone": "button-safe"}
+      ]
+    },
+    {
+      "id": "consumables-empty-5x2-icon32",
+      "frame": [192, 78],
+      "preview_frame": [192, 78],
+      "zones": {"button-safe": [0, 0, 192, 78]},
+      "regions": [
+        {"id": "pocket.01.empty", "kind": "button", "box": [4, 4, 40, 40], "zone": "button-safe"},
+        {"id": "pocket.02.empty", "kind": "button", "box": [42, 4, 78, 40], "zone": "button-safe"},
+        {"id": "pocket.03.empty", "kind": "button", "box": [80, 4, 116, 40], "zone": "button-safe"},
+        {"id": "pocket.04.empty", "kind": "button", "box": [118, 4, 154, 40], "zone": "button-safe"},
+        {"id": "pocket.05.empty", "kind": "button", "box": [156, 4, 192, 40], "zone": "button-safe"},
+        {"id": "pocket.06.empty", "kind": "button", "box": [4, 42, 40, 78], "zone": "button-safe"},
+        {"id": "pocket.07.empty", "kind": "button", "box": [42, 42, 78, 78], "zone": "button-safe"},
+        {"id": "pocket.08.empty", "kind": "button", "box": [80, 42, 116, 78], "zone": "button-safe"},
+        {"id": "pocket.09.empty", "kind": "button", "box": [118, 42, 154, 78], "zone": "button-safe"},
+        {"id": "pocket.10.empty", "kind": "button", "box": [156, 42, 192, 78], "zone": "button-safe"}
+      ]
+    },
+    {
+      "id": "consumables-typical-5x2-icon32",
+      "frame": [192, 78],
+      "preview_frame": [192, 78],
+      "zones": {"button-safe": [0, 0, 192, 78]},
+      "regions": [
+        {"id": "pocket.01.healing", "kind": "button", "box": [4, 4, 40, 40], "zone": "button-safe"},
+        {"id": "pocket.02.resource", "kind": "button", "box": [42, 4, 78, 40], "zone": "button-safe"},
+        {"id": "pocket.03.emergency", "kind": "button", "box": [80, 4, 116, 40], "zone": "button-safe"},
+        {"id": "pocket.04.bandage", "kind": "button", "box": [118, 4, 154, 40], "zone": "button-safe"},
+        {"id": "pocket.05.food", "kind": "button", "box": [156, 4, 192, 40], "zone": "button-safe"},
+        {"id": "pocket.06.drink", "kind": "button", "box": [4, 42, 40, 78], "zone": "button-safe"},
+        {"id": "pocket.07.battle-elixir", "kind": "button", "box": [42, 42, 78, 78], "zone": "button-safe"},
+        {"id": "pocket.08.guardian-elixir", "kind": "button", "box": [80, 42, 116, 78], "zone": "button-safe"},
+        {"id": "pocket.09.flask-resistance", "kind": "button", "box": [118, 42, 154, 78], "zone": "button-safe"},
+        {"id": "pocket.10.class-utility", "kind": "button", "box": [156, 42, 192, 78], "zone": "button-safe"}
+      ]
+    },
+    {
+      "id": "consumables-provider-maximum-24-8x3-icon32",
+      "frame": [306, 116],
+      "preview_frame": [306, 116],
+      "zones": {"button-safe": [0, 0, 306, 116]},
+      "regions": [
+        {"id": "provider.01", "kind": "button", "box": [4, 4, 40, 40], "zone": "button-safe"},
+        {"id": "provider.02", "kind": "button", "box": [42, 4, 78, 40], "zone": "button-safe"},
+        {"id": "provider.03", "kind": "button", "box": [80, 4, 116, 40], "zone": "button-safe"},
+        {"id": "provider.04", "kind": "button", "box": [118, 4, 154, 40], "zone": "button-safe"},
+        {"id": "provider.05", "kind": "button", "box": [156, 4, 192, 40], "zone": "button-safe"},
+        {"id": "provider.06", "kind": "button", "box": [194, 4, 230, 40], "zone": "button-safe"},
+        {"id": "provider.07", "kind": "button", "box": [232, 4, 268, 40], "zone": "button-safe"},
+        {"id": "provider.08", "kind": "button", "box": [270, 4, 306, 40], "zone": "button-safe"},
+        {"id": "provider.09", "kind": "button", "box": [4, 42, 40, 78], "zone": "button-safe"},
+        {"id": "provider.10", "kind": "button", "box": [42, 42, 78, 78], "zone": "button-safe"},
+        {"id": "provider.11", "kind": "button", "box": [80, 42, 116, 78], "zone": "button-safe"},
+        {"id": "provider.12", "kind": "button", "box": [118, 42, 154, 78], "zone": "button-safe"},
+        {"id": "provider.13", "kind": "button", "box": [156, 42, 192, 78], "zone": "button-safe"},
+        {"id": "provider.14", "kind": "button", "box": [194, 42, 230, 78], "zone": "button-safe"},
+        {"id": "provider.15", "kind": "button", "box": [232, 42, 268, 78], "zone": "button-safe"},
+        {"id": "provider.16", "kind": "button", "box": [270, 42, 306, 78], "zone": "button-safe"},
+        {"id": "provider.17", "kind": "button", "box": [4, 80, 40, 116], "zone": "button-safe"},
+        {"id": "provider.18", "kind": "button", "box": [42, 80, 78, 116], "zone": "button-safe"},
+        {"id": "provider.19", "kind": "button", "box": [80, 80, 116, 116], "zone": "button-safe"},
+        {"id": "provider.20", "kind": "button", "box": [118, 80, 154, 116], "zone": "button-safe"},
+        {"id": "provider.21", "kind": "button", "box": [156, 80, 192, 116], "zone": "button-safe"},
+        {"id": "provider.22", "kind": "button", "box": [194, 80, 230, 116], "zone": "button-safe"},
+        {"id": "provider.23", "kind": "button", "box": [232, 80, 268, 116], "zone": "button-safe"},
+        {"id": "provider.24", "kind": "button", "box": [270, 80, 306, 116], "zone": "button-safe"}
+      ]
+    },
+    {
+      "id": "trinket-dock-2x1-icon36",
+      "frame": [86, 44],
+      "preview_frame": [86, 44],
+      "zones": {"button-safe": [0, 0, 86, 44]},
+      "regions": [
+        {"id": "inventory-slot.13", "kind": "button", "box": [4, 4, 44, 44], "zone": "button-safe"},
+        {"id": "inventory-slot.14", "kind": "button", "box": [46, 4, 86, 44], "zone": "button-safe"}
+      ]
+    }
+  ]
+}

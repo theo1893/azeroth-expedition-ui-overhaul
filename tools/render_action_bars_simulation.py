@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render the deterministic Action Bars V1 direction simulation.
+"""Render deterministic Action Bars direction simulations.
 
 This output is a non-production layout/material mockup. It deliberately uses
 flat geometry and abstract glyphs instead of game icons or generated assets.
@@ -20,6 +20,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("spec", type=Path)
     parser.add_argument("--repo-root", type=Path, default=Path.cwd())
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--layout-report", type=Path)
     return parser.parse_args()
 
 
@@ -107,7 +108,7 @@ def draw_scene(
     image.alpha_composite(overlay)
 
 
-def draw_placeholder_ui(
+def draw_placeholder_ui_v1(
     draw: ImageDraw.ImageDraw,
     fonts: dict[str, ImageFont.FreeTypeFont],
     palette: dict[str, str],
@@ -159,6 +160,179 @@ def draw_placeholder_ui(
     for index, note in enumerate(notes):
         draw.ellipse((1354, 94 + index * 27, 1362, 102 + index * 27), fill=rgba("#b18a4d"))
         draw_text(draw, (1372, 88 + index * 27), note, fonts["small"], rgba("#d4c5a1"))
+
+
+def draw_aura_strip(
+    draw: ImageDraw.ImageDraw,
+    origin: tuple[int, int],
+    auras: list[dict[str, Any]],
+    fonts: dict[str, ImageFont.FreeTypeFont],
+) -> None:
+    x, y = origin
+    size = 19
+    gap = 4
+    for index, aura in enumerate(auras):
+        ax = x + index * (size + gap)
+        kind = str(aura.get("kind", "buff"))
+        outer = "#8d6b3f" if kind == "buff" else "#7c463f"
+        inner = "#455b3e" if kind == "buff" else "#593333"
+        draw.rounded_rectangle(
+            (ax, y, ax + size, y + size),
+            radius=3,
+            fill=rgba("#17110d"),
+            outline=rgba(outer),
+            width=2,
+        )
+        draw.rectangle((ax + 3, y + 3, ax + size - 3, y + size - 3), fill=rgba(inner))
+        draw_glyph(draw, (ax + 3, y + 3, ax + size - 3, y + size - 3), index + 3, rgba("#dbc68e", 215))
+        if aura.get("count"):
+            draw_text(
+                draw,
+                (ax + size - 1, y + size),
+                str(aura["count"]),
+                fonts["micro"],
+                rgba("#f3e7c7"),
+                anchor="rd",
+                stroke=1,
+                stroke_fill=rgba("#050505"),
+            )
+
+
+def draw_unit_frame_v2(
+    draw: ImageDraw.ImageDraw,
+    config: dict[str, Any],
+    fonts: dict[str, ImageFont.FreeTypeFont],
+    palette: dict[str, str],
+) -> None:
+    x0, y0, x1, y1 = map(int, config["screen_box"])
+    portrait_side = str(config.get("portrait_side", "left"))
+    frame_fill = rgba("#342219", 242)
+    brass = rgba(palette["brass"])
+    muted = rgba(palette["muted_ink"])
+
+    draw.rounded_rectangle((x0, y0, x1, y1), radius=8, fill=frame_fill, outline=rgba("#21150f"), width=3)
+    draw.rounded_rectangle((x0 + 3, y0 + 3, x1 - 3, y1 - 3), radius=6, outline=brass, width=2)
+    draw.line((x0 + 9, y0 + 5, x1 - 9, y0 + 5), fill=rgba("#b18a52", 130), width=1)
+
+    portrait_width = 47
+    if portrait_side == "left":
+        portrait = (x0 + 7, y0 + 8, x0 + 7 + portrait_width, y1 - 8)
+        content_x0, content_x1 = portrait[2] + 7, x1 - 8
+    else:
+        portrait = (x1 - 7 - portrait_width, y0 + 8, x1 - 7, y1 - 8)
+        content_x0, content_x1 = x0 + 8, portrait[0] - 7
+
+    draw.rounded_rectangle(portrait, radius=5, fill=rgba("#171d18"), outline=rgba("#a17a45"), width=2)
+    px0, py0, px1, py1 = portrait
+    portrait_tint = rgba(str(config.get("portrait_tint", "#30483b")))
+    draw.ellipse((px0 + 11, py0 + 6, px1 - 11, py0 + 25), fill=portrait_tint)
+    draw.polygon(
+        [(px0 + 8, py1 - 5), ((px0 + px1) // 2, py0 + 20), (px1 - 8, py1 - 5)],
+        fill=portrait_tint,
+    )
+
+    draw_text(draw, (content_x0 + 1, y0 + 8), str(config["name"]), fonts["tiny"], rgba("#ead9ad"))
+    draw_text(
+        draw,
+        (content_x1 - 1, y0 + 9),
+        str(config.get("level", "")),
+        fonts["micro"],
+        muted,
+        anchor="ra",
+    )
+
+    health_box = (content_x0, y0 + 25, content_x1, y0 + 43)
+    power_box = (content_x0, y0 + 47, content_x1, y0 + 54)
+    draw.rectangle(health_box, fill=rgba("#11120e"), outline=rgba("#19100b"), width=1)
+    health = max(0.0, min(1.0, float(config.get("health", 1.0))))
+    health_right = health_box[0] + round((health_box[2] - health_box[0]) * health)
+    draw.rectangle((health_box[0] + 1, health_box[1] + 1, health_right, health_box[3] - 1), fill=rgba(str(config.get("health_color", "#657742"))))
+    draw.line((health_box[0] + 2, health_box[1] + 2, max(health_box[0] + 2, health_right - 2), health_box[1] + 2), fill=rgba("#aab878", 115), width=1)
+    power = max(0.0, min(1.0, float(config.get("power", 1.0))))
+    power_right = power_box[0] + round((power_box[2] - power_box[0]) * power)
+    draw.rectangle(power_box, fill=rgba("#101318"), outline=rgba("#19100b"), width=1)
+    draw.rectangle((power_box[0] + 1, power_box[1] + 1, power_right, power_box[3] - 1), fill=rgba(str(config.get("power_color", "#3e6280"))))
+    draw_text(
+        draw,
+        ((health_box[0] + health_box[2]) // 2, (health_box[1] + health_box[3]) // 2),
+        str(config.get("health_text", "")),
+        fonts["micro"],
+        rgba("#f2ead4"),
+        anchor="mm",
+        stroke=1,
+        stroke_fill=rgba("#050505"),
+    )
+
+    label_y = y0 - 12
+    draw_text(
+        draw,
+        ((x0 + x1) // 2, label_y),
+        str(config["label"]),
+        fonts["tiny"],
+        rgba(palette["label"]),
+        anchor="ms",
+        stroke=1,
+        stroke_fill=rgba("#080a08"),
+    )
+    draw_aura_strip(draw, tuple(map(int, config["aura_origin"])), list(config.get("auras", [])), fonts)
+
+
+def draw_placeholder_ui_v2(
+    draw: ImageDraw.ImageDraw,
+    fonts: dict[str, ImageFont.FreeTypeFont],
+    palette: dict[str, str],
+    spec: dict[str, Any],
+) -> None:
+    ink = rgba(palette["ink"])
+    muted = rgba(palette["muted_ink"])
+    brass = rgba(palette["brass"], 225)
+    parchment = rgba(palette["parchment"], 225)
+
+    # Existing chat and minimap remain quiet context, not redesign scope.
+    draw.rounded_rectangle((38, 824, 526, 1044), radius=10, fill=rgba("#0d1210", 175), outline=rgba("#59412c", 150), width=2)
+    for index, width in enumerate((370, 430, 330, 400, 285, 350)):
+        y = 858 + index * 25
+        draw.line((62, y, 62 + width, y), fill=rgba("#b8aa8c", 125), width=2)
+    draw_text(draw, (58, 839), "聊天框（现有 runtime 邻接占位）", fonts["tiny"], muted)
+
+    draw.ellipse((1670, 292, 1870, 492), fill=rgba("#101613", 220), outline=brass, width=4)
+    draw.ellipse((1690, 312, 1850, 472), fill=rgba("#304335", 215), outline=rgba("#5f4a32"), width=2)
+    draw.line((1770, 308, 1770, 326), fill=rgba("#d1b676"), width=4)
+    draw_text(draw, (1770, 502), "小地图（邻接占位）", fonts["tiny"], muted, anchor="ma")
+
+    annotations = spec["annotations"]
+    draw.rounded_rectangle((36, 32, 930, 174), radius=12, fill=parchment, outline=rgba("#6c4e2f"), width=3)
+    draw_text(draw, (62, 52), str(annotations["title"]), fonts["title"], ink)
+    draw_text(draw, (62, 94), str(annotations["subtitle"]), fonts["body"], ink)
+    draw_text(draw, (62, 126), str(annotations["note"]), fonts["small"], rgba("#6f251e"))
+
+    draw.rounded_rectangle((1270, 32, 1884, 250), radius=12, fill=rgba("#261a13", 225), outline=brass, width=3)
+    draw_text(draw, (1296, 52), str(annotations["rules_title"]), fonts["heading"], rgba("#ead7a4"))
+    for index, note in enumerate(annotations["rules"]):
+        draw.ellipse((1298, 94 + index * 27, 1306, 102 + index * 27), fill=rgba("#b18a4d"))
+        draw_text(draw, (1316, 88 + index * 27), str(note), fonts["small"], rgba("#d4c5a1"))
+
+    # A quiet focus bracket explains the intended eye path without becoming runtime art.
+    focus = tuple(map(int, spec["focus_field"]["screen_box"]))
+    draw.rounded_rectangle(focus, radius=18, outline=rgba("#8b7047", 72), width=2)
+    fx0, fy0, fx1, fy1 = focus
+    draw.line((960, fy0 + 8, 960, fy0 + 25), fill=rgba("#c4a76b", 100), width=2)
+    draw.line((960, fy1 - 25, 960, fy1 - 8), fill=rgba("#c4a76b", 100), width=2)
+
+    for frame in spec["unit_frames"]["frames"]:
+        draw_unit_frame_v2(draw, frame, fonts, palette)
+
+    cluster_label_origin = tuple(map(int, spec["unit_frames"].get("cluster_label_origin", [960, 735])))
+    draw_text(
+        draw,
+        cluster_label_origin,
+        str(spec["unit_frames"]["cluster_label"]),
+        fonts["micro"],
+        rgba(palette["label"]),
+        anchor="mm",
+        stroke=1,
+        stroke_fill=rgba("#080a08"),
+    )
 
 
 def frame_size_ui(bar: dict[str, Any]) -> tuple[int, int]:
@@ -423,6 +597,99 @@ def draw_trinkets(
     return shell
 
 
+def validate_layout(spec: dict[str, Any]) -> dict[str, Any]:
+    contract = spec.get("layout_contract")
+    if not contract:
+        return {
+            "schema": "aeui-action-bars-layout-report-v1",
+            "version": spec["version"],
+            "status": "not-applicable",
+            "checks": [],
+            "violations": [],
+        }
+
+    ui_scale = float(spec["target"]["ui_scale"])
+    checks: list[dict[str, Any]] = []
+
+    def check(identifier: str, expected: Any, actual: Any) -> None:
+        checks.append({
+            "id": identifier,
+            "expected": expected,
+            "actual": actual,
+            "pass": actual == expected,
+        })
+
+    frames = {frame["id"]: frame for frame in spec["unit_frames"]["frames"]}
+    player = list(map(int, frames["UF.PLAYER.ADJACENCY"]["screen_box"]))
+    target = list(map(int, frames["UF.TARGET.ADJACENCY"]["screen_box"]))
+    check("unit-frames.same-top", player[1], target[1])
+    check("unit-frames.same-baseline", int(contract["unit_frame_baseline_y"]), player[3])
+    check("unit-frames.target-baseline", int(contract["unit_frame_baseline_y"]), target[3])
+    check("unit-frames.inner-gap", int(contract["unit_frame_inner_gap_px"]), target[0] - player[2])
+    check(
+        "unit-frames.cluster-center-x",
+        int(contract["unit_frame_outer_cluster_center_x"]),
+        round((player[0] + target[2]) / 2),
+    )
+
+    aura_bottom = max(
+        int(frame["aura_origin"][1]) + 19
+        for frame in spec["unit_frames"]["frames"]
+    )
+    check("unit-frames.aura-bottom", int(contract["unit_frame_aura_bottom_y"]), aura_bottom)
+
+    bars = {bar["id"]: bar for bar in spec["bars"]}
+    main_x, main_y, main_w, main_h, main_button, _, _ = bar_geometry(bars["AB.BAR1.MAIN"], ui_scale)
+    stance_x, stance_y, stance_w, _, _, _, _ = bar_geometry(bars["AB.BAR11.STANCE"], ui_scale)
+    check("combat-bars.stance-top", int(contract["stance_top_y"]), stance_y)
+    check(
+        "combat-bars.aura-to-stance-clearance",
+        int(contract["aura_to_stance_clearance_px"]),
+        stance_y - aura_bottom,
+    )
+    check("combat-bars.main-top", int(contract["main_bar_top_y"]), main_y)
+    check("combat-bars.main-bottom", int(contract["main_bar_bottom_y"]), main_y + main_h)
+    check("combat-bars.main-center-x", int(contract["main_bar_center_x"]), round(main_x + main_w / 2))
+    check("combat-bars.stance-center-x", int(contract["main_bar_center_x"]), round(stance_x + stance_w / 2))
+    check("combat-bars.main-button-size", int(contract["main_button_physical_px"]), main_button)
+    check(
+        "combat-bars.main-bottom-clearance",
+        int(contract["main_bar_bottom_clearance_px"]),
+        int(spec["canvas"]["height"]) - (main_y + main_h),
+    )
+    check("combat-bars.xp-rail-bottom", int(contract["xp_rail_bottom_y"]), main_y + main_h + 12)
+
+    pouch_x, pouch_y, pouch_w, pouch_h, _, _, _ = bar_geometry(spec["consumables"], ui_scale)
+    pouch_shell = (pouch_x - 7, pouch_y - 9, pouch_x + pouch_w + 7, pouch_y + pouch_h + 8)
+    chat_box = (38, 824, 526, 1044)
+    pouch_chat_overlap = (
+        pouch_shell[0] < chat_box[2]
+        and pouch_shell[2] > chat_box[0]
+        and pouch_shell[1] < chat_box[3]
+        and pouch_shell[3] > chat_box[1]
+    )
+    check("adjacency.consumables-clear-chat", False, pouch_chat_overlap)
+
+    proposed = spec["unit_frames"]["profile_recommendation"]["proposed_shared"]
+    proposed_width = ui_px(proposed["width_ui"], ui_scale, proposed["scale"])
+    proposed_height = ui_px(proposed["height_ui"], ui_scale, proposed["scale"])
+    check("profile-proposal.player-width", player[2] - player[0], proposed_width)
+    check("profile-proposal.target-width", target[2] - target[0], proposed_width)
+    check("profile-proposal.player-height", player[3] - player[1], proposed_height)
+    check("profile-proposal.target-height", target[3] - target[1], proposed_height)
+
+    violations = [item["id"] for item in checks if not item["pass"]]
+    return {
+        "schema": "aeui-action-bars-layout-report-v1",
+        "version": spec["version"],
+        "target": spec["target"],
+        "status": "pass" if not violations else "fail",
+        "checks": checks,
+        "violations": violations,
+        "first_failure": violations[0] if violations else None,
+    }
+
+
 def main() -> None:
     args = parse_args()
     root = args.repo_root.resolve()
@@ -435,7 +702,10 @@ def main() -> None:
     ui_scale = float(spec["target"]["ui_scale"])
 
     draw_scene(image, draw, palette)
-    draw_placeholder_ui(draw, fonts, palette)
+    if "unit_frames" in spec:
+        draw_placeholder_ui_v2(draw, fonts, palette, spec)
+    else:
+        draw_placeholder_ui_v1(draw, fonts, palette)
     for bar in spec["bars"]:
         draw_bar(draw, bar, ui_scale, fonts, palette)
     draw_pouch(draw, spec["consumables"], ui_scale, fonts, palette)
@@ -454,6 +724,17 @@ def main() -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     image.convert("RGB").save(output, format="PNG", optimize=False, compress_level=9)
     print(output.resolve())
+
+    if args.layout_report:
+        report = validate_layout(spec)
+        report_path = args.layout_report
+        if not report_path.is_absolute():
+            report_path = root / report_path
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        print(report_path.resolve())
+        if report["status"] == "fail":
+            raise SystemExit(1)
 
 
 if __name__ == "__main__":

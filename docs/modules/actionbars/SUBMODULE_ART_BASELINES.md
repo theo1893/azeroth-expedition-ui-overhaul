@@ -72,5 +72,6 @@
 - Character V3 仅提供槽体材料、轮廓、暖光、磨损与状态克制程度；不继承角色
   窗口轮廓、属性纸面、装备压印或 Tabs。
 - 全局 Prompt 的经典技能格、成对狮鹫与炼金师皮革卷袋身份是模块结构权威。
-- `ACTION-BARS-CORE-SIM-V1` 只承担布局与综合色重确认，永远不能成为生产
-  source、runtime 或 ImageGen reference。
+- `ACTION-BARS-CORE-SIM-V1／V2` 只承担布局与综合色重确认，永远不能成为
+  production source、runtime 或 ImageGen reference；V1 的贴底布局已被用户
+  否决，V2 才是当前待确认方向。

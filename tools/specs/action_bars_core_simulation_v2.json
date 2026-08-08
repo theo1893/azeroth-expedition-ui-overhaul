@@ -1,0 +1,230 @@
+{
+  "schema": "aeui-action-bars-simulation-v1",
+  "version": "ACTION-BARS-CORE-SIM-V2",
+  "purpose": "deterministic non-production lower-center combat-focus layout preview",
+  "output": "generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V2/action_bars_core_sim_v2.png",
+  "canvas": {
+    "width": 1920,
+    "height": 1080,
+    "fill": "#111814"
+  },
+  "target": {
+    "client": "Turtle WoW 1.18.1 / Interface 11200",
+    "resolution": [1920, 1080],
+    "ui_scale": 0.81269841269841,
+    "coordinate_note": "screen origins are physical pixels; frame and button dimensions are derived from pfUI UI units times UI scale and local scale"
+  },
+  "fonts": {
+    "title": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf", "size": 28},
+    "heading": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf", "size": 21},
+    "body": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf", "size": 18},
+    "small": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf", "size": 15},
+    "tiny": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf", "size": 13},
+    "micro": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf", "size": 11}
+  },
+  "palette": {
+    "scene_sky_top": "#172620",
+    "scene_sky_bottom": "#20251e",
+    "rail": "#352218",
+    "leather": "#3a271c",
+    "brass": "#87673e",
+    "parchment": "#c6ab76",
+    "ink": "#28190f",
+    "muted_ink": "#b7aa8b",
+    "label": "#e0c994"
+  },
+  "annotations": {
+    "title": "动作条 / 随身栏 V2 · 中下战斗焦点",
+    "subtitle": "玩家与目标同基线收拢；主技能区上移，冷却与双方状态进入一次扫视",
+    "note": "本地几何模拟 · 非 source / runtime · ImageGen 0/0",
+    "rules_title": "本次改版的战斗视线",
+    "rules": [
+      "玩家／目标同高，内缘仅留 80 px",
+      "主栏按钮约 39 px，底边离屏幕 210 px",
+      "状态框 → 姿态 → 副栏 → 主栏形成纵向焦点",
+      "消耗品／饰品随核心区上移，仍可独立拖动",
+      "默认关闭主栏狮鹫，解锁时可选开启"
+    ]
+  },
+  "focus_field": {
+    "screen_box": [515, 608, 1315, 897],
+    "role": "non-runtime eye-path annotation around unit frames and combat bars"
+  },
+  "layout_contract": {
+    "unit_frame_baseline_y": 700,
+    "unit_frame_inner_gap_px": 80,
+    "unit_frame_outer_cluster_center_x": 960,
+    "unit_frame_aura_bottom_y": 726,
+    "stance_top_y": 744,
+    "aura_to_stance_clearance_px": 18,
+    "main_bar_top_y": 827,
+    "main_bar_bottom_y": 870,
+    "main_bar_center_x": 960,
+    "main_button_physical_px": 39,
+    "main_bar_bottom_clearance_px": 210,
+    "xp_rail_bottom_y": 882,
+    "chat_overlap": false,
+    "recommended_profile_is_one_time_opt_in": true,
+    "runtime_change_in_this_simulation": false
+  },
+  "unit_frames": {
+    "provider": "pfUI pfPlayer and pfTarget; placement and density proposal only",
+    "cluster_label": "内缘 80",
+    "cluster_label_origin": [960, 735],
+    "profile_recommendation": {
+      "not_applied": true,
+      "current": {
+        "player": {"width_ui": 200, "height_ui": 46, "scale": 0.9, "xpos_ui": -90, "ypos_ui": 133},
+        "target": {"width_ui": 200, "height_ui": 46, "scale": 0.9, "xpos_ui": 117, "ypos_ui": 197}
+      },
+      "proposed_shared": {"width_ui": 280, "height_ui": 72, "scale": 1.05, "ypos_ui": 468},
+      "proposed_player": {"anchor": "BOTTOMRIGHT", "xpos_ui": -49},
+      "proposed_target": {"anchor": "BOTTOMLEFT", "xpos_ui": 49},
+      "position_note": "recommended once-applied preset; never rewritten by a maintenance loop"
+    },
+    "frames": [
+      {
+        "id": "UF.PLAYER.ADJACENCY",
+        "label": "玩家状态框 · 同基线",
+        "screen_box": [681, 639, 920, 700],
+        "portrait_side": "left",
+        "portrait_tint": "#39533f",
+        "name": "玩家名称",
+        "level": "Lv 60",
+        "health": 0.76,
+        "power": 0.64,
+        "health_text": "76% · 生命",
+        "health_color": "#657742",
+        "power_color": "#405f7c",
+        "aura_origin": [681, 707],
+        "auras": [
+          {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff", "count": "2"},
+          {"kind": "debuff"}, {"kind": "buff"}, {"kind": "buff"}
+        ]
+      },
+      {
+        "id": "UF.TARGET.ADJACENCY",
+        "label": "目标状态框 · 同基线",
+        "screen_box": [1000, 639, 1239, 700],
+        "portrait_side": "right",
+        "portrait_tint": "#633b34",
+        "name": "目标名称",
+        "level": "Lv 62+",
+        "health": 0.58,
+        "power": 0.42,
+        "health_text": "58% · 目标生命",
+        "health_color": "#6f5038",
+        "power_color": "#4a4f65",
+        "aura_origin": [1101, 707],
+        "auras": [
+          {"kind": "debuff"}, {"kind": "debuff", "count": "3"}, {"kind": "debuff"},
+          {"kind": "buff"}, {"kind": "debuff"}, {"kind": "debuff"}
+        ]
+      }
+    ]
+  },
+  "bars": [
+    {
+      "id": "AB.BAR1.MAIN",
+      "provider": "pfActionBarMain / bar1",
+      "label": "",
+      "buttons": 12,
+      "cols": 12,
+      "rows": 1,
+      "icon_ui": 36,
+      "border_ui": 2,
+      "spacing_ui": 2,
+      "scale": 1.2,
+      "screen_origin": [713, 827],
+      "gryphons": false,
+      "states": ["active", "cooldown", "normal", "cooldown", "normal", "pressed", "cooldown", "normal", "range", "oom", "equipped", "normal"],
+      "keys": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "="],
+      "counts": ["", "", "", "", "", "", "", "", "", "", "", ""]
+    },
+    {
+      "id": "AB.BAR6.TOP",
+      "provider": "pfActionBarTop / bar6",
+      "label": "",
+      "buttons": 12,
+      "cols": 12,
+      "rows": 1,
+      "icon_ui": 30,
+      "border_ui": 2,
+      "spacing_ui": 2,
+      "scale": 1.1,
+      "screen_origin": [766, 783],
+      "gryphons": false,
+      "states": ["normal", "normal", "cooldown", "normal", "cooldown", "normal", "normal", "normal", "normal", "normal", "normal", "empty"],
+      "keys": ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S0", "", ""],
+      "counts": ["", "", "", "", "", "", "", "", "", "", "", ""]
+    },
+    {
+      "id": "AB.BAR11.STANCE",
+      "provider": "pfActionBarStances / bar11",
+      "label": "",
+      "buttons": 3,
+      "cols": 3,
+      "rows": 1,
+      "icon_ui": 26,
+      "border_ui": 2,
+      "spacing_ui": 2,
+      "scale": 1.0,
+      "screen_origin": [920, 744],
+      "gryphons": false,
+      "states": ["active", "normal", "normal"],
+      "keys": ["C1", "C2", "C3"],
+      "counts": ["", "", ""]
+    },
+    {
+      "id": "AB.BAR3.AUXILIARY",
+      "provider": "pfActionBarRight / bar3",
+      "label": "自由辅助栏 · 4×3 · 可独立拖动／淡出",
+      "buttons": 12,
+      "cols": 4,
+      "rows": 3,
+      "icon_ui": 28,
+      "border_ui": 2,
+      "spacing_ui": 2,
+      "scale": 1.0,
+      "screen_origin": [180, 628],
+      "gryphons": false,
+      "states": ["normal", "normal", "normal", "normal", "normal", "hover", "normal", "normal", "normal", "normal", "empty", "empty"],
+      "keys": ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "", "", ""],
+      "counts": ["", "", "", "", "", "", "", "", "", "", "", ""]
+    }
+  ],
+  "consumables": {
+    "id": "AB.CONSUMABLE.RACK",
+    "provider": "AutoBarFrame when present; AEUI pinned-item fallback otherwise",
+    "label": "炼金师卷袋 · 10 类 · 随核心区上移",
+    "buttons": 10,
+    "cols": 5,
+    "rows": 2,
+    "icon_ui": 32,
+    "border_ui": 2,
+    "spacing_ui": 2,
+    "scale": 1.05,
+    "screen_origin": [536, 780],
+    "states": ["normal", "normal", "cooldown", "normal", "normal", "normal", "hover", "normal", "normal", "empty"],
+    "counts": ["12", "8", "3", "20", "6", "4", "2", "5", "1", ""]
+  },
+  "trinkets": {
+    "id": "AB.TRINKET.DOCK",
+    "provider": "TrinketMenu_MainFrame slots 13 and 14 when present",
+    "label": "饰品双护套 · 装备槽 13 / 14",
+    "buttons": 2,
+    "cols": 2,
+    "rows": 1,
+    "icon_ui": 36,
+    "border_ui": 2,
+    "spacing_ui": 2,
+    "scale": 1.05,
+    "screen_origin": [1225, 827]
+  },
+  "non_authoritative": [
+    "all flat colors, glyphs, texture detail, portraits, aura icons and neighboring UI pixels",
+    "unit-frame art remains owned by the future Character or Unit Frames module; only placement and density are proposed here",
+    "no simulation pixel may be cropped, sliced, promoted or used as ImageGen input",
+    "final alpha, atlas cells, seams, UV and state art remain unresolved"
+  ]
+}
