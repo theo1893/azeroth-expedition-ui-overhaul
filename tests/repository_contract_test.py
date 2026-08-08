@@ -280,19 +280,68 @@ def main() -> None:
         encoding="utf-8-sig"
     )
     assert "## RequiredDeps: pfUI" in aeui_toc
-    assert "## Version: 0.6.0" in aeui_toc
+    assert "## Version: 0.7.0" in aeui_toc
     assert "Core\\Bootstrap.lua" in aeui_toc
+    assert "Modules\\ActionBars.lua" in aeui_toc
     assert "Modules\\Chat.lua" in aeui_toc
     assert "Modules\\QuestVisualTheme.lua" in aeui_toc
     assert "Modules\\Quests.lua" in aeui_toc
     bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(encoding="utf-8")
-    assert 'addon.version = "0.6.0"' in bootstrap
+    assert 'addon.version = "0.7.0"' in bootstrap
+    assert "actionbar-runtime=" in bootstrap
+    assert 'if command == "actionbars" then' in bootstrap
     assert "chat-runtime=" in bootstrap
     assert "chat-color=" in bootstrap
     assert "quest-runtime=" in bootstrap
     assert 'elseif command == "quests" then' in bootstrap
     assert "function addon:RunModuleMethod" in bootstrap
     assert "pcall(module[methodName], module)" in bootstrap
+
+    actionbars_source = (aeui / "Modules" / "ActionBars.lua").read_text(
+        encoding="utf-8"
+    )
+    assert 'ActionBars.runtimeContract = "1.0"' in actionbars_source
+    assert '"ActionBars\\\\ActionSlotBaseV1"' in actionbars_source
+    assert "ActionBars.firstBar = 1" in actionbars_source
+    assert "ActionBars.lastBar = 10" in actionbars_source
+    assert 'backdrop:CreateTexture(nil, "ARTWORK")' in actionbars_source
+    assert "texture:SetAllPoints(backdrop)" in actionbars_source
+    assert "texture:SetTexCoord(0, 1, 0, 1)" in actionbars_source
+    assert "button:SetParent" not in actionbars_source
+    assert "button:SetPoint" not in actionbars_source
+    assert "button:SetWidth" not in actionbars_source
+    assert "button:SetHeight" not in actionbars_source
+
+    actionbars_source_dir = ROOT / "assets" / "source" / "actionbars" / "ab-slot"
+    actionbars_manifest = json.loads(
+        (actionbars_source_dir / "AB-SLOT-BASE-V1_RuntimeManifest_v1.json")
+        .read_text(encoding="utf-8")
+    )
+    actionbars_master = actionbars_source_dir / "ActionSlotBase_Master_v1.png"
+    actionbars_runtime = (
+        aeui / "Media" / "ActionBars" / "ActionSlotBaseV1.tga"
+    )
+    assert actionbars_manifest["runtime_contract"] == "1.0"
+    assert actionbars_manifest["status"] == "runtime-exported"
+    assert actionbars_manifest["phase"] == "P5"
+    assert actionbars_manifest["source"]["sha256"] == sha256(actionbars_master)
+    assert actionbars_manifest["runtime_export"]["sha256"] == sha256(
+        actionbars_runtime
+    )
+    assert actionbars_manifest["runtime_export"][
+        "pixel_sha256"
+    ] == "e527c0382a7e7d727fa8a8cee10262cd99470d1ee0204ba8301a5f698c24c35c"
+    assert actionbars_manifest["runtime_export"][
+        "visible_green_spill_pixels"
+    ] == 0
+    assert actionbars_manifest["runtime_export"][
+        "transparent_rgb_nonzero_values"
+    ] == 0
+    assert actionbars_manifest["adapter"]["logical_bars"] == list(range(1, 11))
+    assert actionbars_manifest["adapter"]["excluded_provider_bars"] == [11, 12]
+    assert actionbars_manifest["deterministic_export"][
+        "imagegen_calls_after_acceptance"
+    ] == 0
 
     quest_source = (aeui / "Modules" / "Quests.lua").read_text(
         encoding="utf-8"

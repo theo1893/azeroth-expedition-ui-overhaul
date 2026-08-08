@@ -58,13 +58,20 @@ pfUI 的合法矩形布局由按钮数因数决定；12 格支持 `12×1`、`6×
 | `AB.PET` | Bar `12` 的真实宠物按钮 | 保留攻击、跟随、停留、技能与自动施法反馈 |
 | `AB.MOVER` | pfUI unlock／`UpdateMovable` | 每个 Bar 独立移动、缩放、重置；视觉不得持续改写 Parent、Point、Width 或 Height |
 
-`AB.SLOT.BASE.V1` 的已接受 P4 母版为
+`AB.SLOT.BASE.V1` 的已接受母版为
 [ActionSlotBase_Master_v1.png](../../../assets/source/actionbars/ab-slot/ActionSlotBase_Master_v1.png)，
 source manifest 为
 [AB-SLOT-BASE-V1_SourceManifest_v1.json](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_SourceManifest_v1.json)。
-该母版只对应 Bar `1–10` 的逐按钮 `backdrop` 普通／空槽基底；在独立 P5
-exporter 与 scoped adapter 完成前不得由客户端直接加载。图标、文字、冷却、
-状态覆盖、Button 脚本、命中区、分页、拖放和 SavedVariables 仍完全归 pfUI。
+P5 runtime manifest 为
+[AB-SLOT-BASE-V1_RuntimeManifest_v1.json](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_RuntimeManifest_v1.json)，
+客户端只加载
+[ActionSlotBaseV1.tga](../../../addon/AzerothExpeditionUI/Media/ActionBars/ActionSlotBaseV1.tga)
+与 [ActionBars.lua](../../../addon/AzerothExpeditionUI/Modules/ActionBars.lua)。adapter
+feature-detect `pfUI.bars[1..10][1..12]`，把单一 full-UV `ARTWORK` 子纹理挂在
+每个既有 `button.backdrop` 上；不加载 `1024²` source，不创建新 Button，也不
+覆盖原 backdrop。媒体缺失、对象缺失或 `/aeui actionbars` 关闭时，pfUI 原生
+backdrop 继续 fail-open。Bar `11／12` 明确排除；图标、文字、冷却、状态覆盖、
+Button 脚本、命中区、分页、拖放、位置、尺寸和 SavedVariables 仍完全归 pfUI。
 
 ## 战斗焦点邻接对象
 

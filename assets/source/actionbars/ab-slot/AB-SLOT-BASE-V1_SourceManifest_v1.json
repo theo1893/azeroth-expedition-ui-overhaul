@@ -4,9 +4,9 @@
   "batch": "AB.SLOT.BASE.V1",
   "component": "AB.SLOT",
   "accepted_version": "AB.SLOT.BASE.V1.r4 / attempt 5",
-  "status": "accepted-source",
-  "workflow_state": "source-accepted",
-  "project_phase": "P4",
+  "status": "runtime-exported",
+  "workflow_state": "runtime-exported",
+  "project_phase": "P5",
   "accepted_on": "2026-08-08",
   "source": {
     "file": "ActionSlotBase_Master_v1.png",
@@ -135,35 +135,79 @@
     "display_region_report_sha256": "f461808e63e7b9fcd2e69228dfc7818b0aa64408882b0684e0385421398a0c7d"
   },
   "export_contract": {
-    "status": "not-exported",
-    "authorization": "pending separate export instruction",
-    "exporter": null,
-    "runtime_file": null,
-    "planned_source_square_crop_exclusive": [
+    "status": "exported",
+    "authorization": "user instruction '进行下一步' on 2026-08-08",
+    "exporter": "tools/build_action_slot_base_v1_runtime.py",
+    "exporter_sha256": "940f91de5bdd50929c37323a049322de5815f07026da7e824566569a4ad3c212",
+    "runtime_file": "addon/AzerothExpeditionUI/Media/ActionBars/ActionSlotBaseV1.tga",
+    "runtime_sha256": "5c49a1db452560251422060545625b311e182ef5b8689be996aeda005b8e23ca",
+    "source_square_crop_exclusive": [
       200,
       200,
       824,
       824
     ],
-    "planned_runtime_size": [
+    "runtime_size": [
       128,
       128
     ],
-    "planned_sampling": "one straight-alpha texture sampled at full UV; no atlas and no nine-slice",
-    "planned_operation": "crop the declared 624x624 square around the complete accepted silhouette, proportionally resize once to 128x128, preserve straight Alpha, clear fully transparent RGB and export in a Turtle WoW-compatible tracked runtime format",
+    "resample": "Pillow Image.Resampling.LANCZOS",
+    "sampling": "one straight-alpha texture sampled at full UV; no atlas and no nine-slice",
+    "operation": "crop the declared 624x624 square, proportionally resize once to 128x128, preserve straight Alpha, clear fully transparent RGB, and export as a tracked 32-bit TGA",
+    "imagegen_calls_after_acceptance": 0,
     "allowed": [
-      "the declared square crop without removing any visible accepted pixel",
+      "the declared square crop without removing visible accepted pixels",
       "one proportional deterministic resize to 128x128",
       "fully transparent RGB zeroing without changing visible RGB or Alpha",
       "full-UV sampling beneath the live icon"
     ],
     "forbidden_runtime_uses": [
       "load the 1024x1024 source directly in Turtle WoW",
-      "redraw, rotate, mirror, non-uniformly stretch or recolor the accepted source",
+      "redraw, rotate, mirror, non-uniformly stretch or recolor the source",
       "derive fake disabled, range, mana, equipped, selected or cooldown cells",
       "bake icons, keybinds, counts, macro names, cooldowns or state colours",
       "replace provider Buttons, hit regions, scripts, paging, drag behavior or SavedVariables",
       "apply the source to stance, pet, AutoBar, TrinketMenu, castbar, swingtimer or DoiteDPS objects without their own contracts"
     ]
+  },
+  "runtime_exports": {
+    "action_slot_base_v1": {
+      "file": "addon/AzerothExpeditionUI/Media/ActionBars/ActionSlotBaseV1.tga",
+      "sha256": "5c49a1db452560251422060545625b311e182ef5b8689be996aeda005b8e23ca",
+      "width": 128,
+      "height": 128,
+      "mode": "RGBA",
+      "bits_per_pixel": 32,
+      "descriptor": 8,
+      "top_origin": false,
+      "pixel_sha256": "e527c0382a7e7d727fa8a8cee10262cd99470d1ee0204ba8301a5f698c24c35c",
+      "visible_bbox_exclusive": [
+        0,
+        0,
+        128,
+        128
+      ],
+      "visible_green_spill_pixels": 0,
+      "transparent_rgb_nonzero_values": 0,
+      "transparent_pixels": 0,
+      "partially_transparent_pixels": 973,
+      "opaque_pixels": 15411
+    }
+  },
+  "p5_validation": {
+    "display_region_contract": "tools/specs/action_slot_base_v1_runtime_display_region.json",
+    "display_region_contract_sha256": "2e7d850e517f5e8464024620a31b44d54bb2a538835cc2d9fe529297e8c513dd",
+    "display_region_report": "generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/runtime/V1/display-region-report.json",
+    "display_region_report_sha256": "7f14f7e77d807f9dcc93311f00d399d63f33f9279057f751b72164e1c6c29238",
+    "real_layout_scenarios": "5/5 pass",
+    "display_region_violations": 0,
+    "addon_package": {
+      "report": "generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/runtime/V1/addon-package-report.json",
+      "report_sha256": "ab88bc38e1b47d469c96795bd84c9a83f5966d144c44c8ea8491a412ddb07f5e",
+      "status": "pass",
+      "violations": 0,
+      "build_required_on_target_device": false
+    },
+    "game_validated": false
   }
 }

@@ -5,10 +5,10 @@
 - 模块：`actionbars`
 - 组件 ID：`AB.SLOT`
 - 版本：`AB.SLOT.BASE.V1`
-- 子状态：`source-accepted`
-- 项目阶段：`P4 / source-accepted`
+- 子状态：`runtime-exported`
+- 项目阶段：`P5 / runtime-exported`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
-- 操作：`generate`
+- 操作：`export`
 - 生成前模拟版本：`ACTION-BARS-CORE-SIM-V3`
 - 生成前模拟方式：`deterministic-local-geometry`
 - 模拟 ImageGen：`0/0`
@@ -475,10 +475,11 @@ Before returning the image, inspect it literally at full size and imagined 128 b
 - 用户结论与日期：V3 `confirmed 2026-08-08`；生产正文与最多五次实际生成／
   修复 `authorized 2026-08-08`；指定锁定图的外部 ImageGen 上传
   `authorized 2026-08-08`；exact attempt 5 `accepted 2026-08-08`
-- 当前结论：`source-accepted / P4`；ImageGen 仍为 `5/5`，不得 attempt 6
-- 下一门禁：另行执行 P4→P5 export；必须先建立确定性 `128×128` straight-alpha
-  runtime 导出、scoped adapter、最终 display-region 与 fresh-checkout addon
-  package 门禁。当前接受本身未授权 runtime 或其他组件资产
+- 当前结论：`runtime-exported / P5`；ImageGen 仍为 `5/5`，P4→P5 新增调用
+  `0`，不得 attempt 6
+- 下一门禁：Turtle WoW 实机验证 TGA 方向、真实图标／状态叠层、20–48 UI
+  尺寸、自由移动／缩放／显隐、Bar `11／12` 排除和关闭开关 fallback；通过前
+  不标记 P6，也不进入其他组件的生成循环
 
 ## 用户接受与 P4 晋级
 
@@ -502,6 +503,58 @@ Before returning the image, inspect it literally at full size and imagined 128 b
   `D:\Softwares\miniconda3\python.exe`，Python `3.13.5`
 - 当前状态：`source-accepted / P4`
 
+## P5 插件接入记录
+
+- 用户指令：`进行下一步`；日期 `2026-08-08`。按模块进度唯一下一门禁解释为
+  `AB.SLOT.BASE.V1` 的 P4→P5 确定性 export／integration；不授权新 ImageGen
+  或相邻组件生产。
+- 导出器：`tools/build_action_slot_base_v1_runtime.py`，SHA-256
+  `940f91de5bdd50929c37323a049322de5815f07026da7e824566569a4ad3c212`。
+  输入严格校验 source SHA、`1024² RGBA`、bbox `[200,202,824,822]`、绿色残留
+  与透明 RGB；执行固定 `[200,200,824,824)` crop、一次 Pillow LANCZOS
+  `624²→128²` 等比缩放，仅清零 Alpha `0` 像素的 RGB，不重绘、不锐化、不
+  旋转、不镜像、不调色。
+- runtime：
+  `addon/AzerothExpeditionUI/Media/ActionBars/ActionSlotBaseV1.tga`，
+  `128×128 RGBA`、32-bit、TGA descriptor `8`、bottom-origin，文件 SHA-256
+  `5c49a1db452560251422060545625b311e182ef5b8689be996aeda005b8e23ca`；
+  roundtrip 像素 SHA-256
+  `e527c0382a7e7d727fa8a8cee10262cd99470d1ee0204ba8301a5f698c24c35c`，
+  与已接受 attempt 5 runtime review 像素完全一致；bbox `[0,0,128,128]`、
+  partial `973`、opaque `15411`、可见强绿色 `0`、透明 RGB 非零 `0`。
+- manifest：
+  `assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_RuntimeManifest_v1.json`；
+  source manifest 同步为 `runtime-exported / P5`。full UV `0,1,0,1`，非 atlas、
+  非九宫格；P4→P5 ImageGen `0`，生产总数仍为 `5/5`。
+- adapter：`addon/AzerothExpeditionUI/Modules/ActionBars.lua`，runtime contract
+  `1.0`。仅 feature-detect `pfUI.bars[1..10]`，最多在 120 个既有
+  `button.backdrop` 上创建一次 `ARTWORK` 子纹理并复用；Bar `11` 姿态与 Bar
+  `12` 宠物明确排除。没有持续几何循环，不写 Parent／Point／Width／Height／
+  hit rect／script／paging／drag／SavedVariables；原 pfUI backdrop 永不移除，
+  对象或媒体失败时保留原样。
+- addon 接入：AEUI `0.7.0` TOC 加载 `Modules\\ActionBars.lua`；默认仅启用视觉
+  adapter，`/aeui actionbars` 可关闭并回退原 backdrop；`/aeui status` 报告
+  `actionbar-runtime=1.0` 和 provider／Bar／Button 计数。pfUI actionbar 仍是唯一
+  功能 provider，公共绘制入口与 ownership route 未修改。
+- 最终展示区域：静态合同
+  `tools/specs/action_slot_base_v1_runtime_display_region.json`，SHA-256
+  `2e7d850e517f5e8464024620a31b44d54bb2a538835cc2d9fe529297e8c513dd`；
+  由 roundtrip TGA 重建 `1×1／12×1／6×2／4×3／1×12` 五场景，Frame 分别
+  `23×23／493×43／195×66／112×85／46×528 px`，`5/5 pass`、violations
+  `0`。全屏周边 V3 仍只承担方向背景，槽像素才是最终 runtime。
+- 自动验证：`tests/actionbars_runtime_test.py`、
+  `tests/actionbars_module_smoke.lua`、`tests/repository_contract_test.py`；Lua
+  `5.4.6` smoke 证实只创建 120 个 Bar `1–10` 纹理、重复 Apply 不重复创建或
+  改几何、关闭时原 backdrop 保留、对象缺失 fail-open。fresh-checkout addon
+  package `pass`、violations `0`、`build_required_on_target_device=false`；报告
+  `generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/runtime/V1/addon-package-report.json`
+  SHA-256 `ab88bc38e1b47d469c96795bd84c9a83f5966d144c44c8ea8491a412ddb07f5e`。
+- Python：Windows 无 `py -3` launcher，整个操作固定使用
+  `D:\Softwares\miniconda3\python.exe`，Python `3.13.5`。
+- 目标设备交付：只拉取并复制 `addon/pfUI` 与 `addon/AzerothExpeditionUI`；不
+  运行 exporter、Python、patch 或手改 pfUI。当前 `game_validated=false`，保持
+  `P5`；实机通过前保留本 work 和 P5 证据。
+
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
@@ -513,4 +566,4 @@ Before returning the image, inspect it literally at full size and imagined 128 b
 | `AB.SLOT.BASE.V1.r1` | child `019fe073…ed1f`；raw `82542910…739d1`；display `5/5 pass` | `internal-rejected 2/5` | 参考图只继承配色关系；按原生 `64／128 px` sprite 粗粒度重绘；物件仅占 Canvas `60–61%` |
 | `AB.SLOT.BASE.V1.r2` | child `019fe07c…d91f`；raw `989bb567…3c08`；display `5/5 pass` | `internal-rejected 3/5` | 保持已通过的粗粒度手绘与占屏；完整 rim 从约 `10%` 收至 `5%`，安静区占物件约 `90%`，外轮廓严格正方居中 |
 | `AB.SLOT.BASE.V1.r3` | child `019fe085…640e`；raw `bef74f6f…e0027`；display `5/5 pass` | `internal-rejected 4/5` | 保持粗粒度中心；改用褐色主导的扁平 sprite 与最多两条边带，黄铜少于周长 `15%` 且不得亮黄；恢复 `60–61%` 占屏 |
-| `AB.SLOT.BASE.V1.r4` | child `019fe08a…acd7`；raw `0a0cae74…011b8`；canonical／source RGBA `6d4a4d16…7dc0`；display `5/5 pass` | `user-accepted / source-accepted / P4` | 另行执行确定性 runtime export 与 addon 接入；不得 attempt 6 |
+| `AB.SLOT.BASE.V1.r4` | child `019fe08a…acd7`；raw `0a0cae74…011b8`；canonical／source RGBA `6d4a4d16…7dc0`；runtime TGA `5c49a1db…23ca`；display `5/5 pass`；package `pass` | `user-accepted / runtime-exported / P5` | Turtle WoW 实机验证；不得 attempt 6 |

@@ -3,12 +3,16 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 
 addon.name = "AzerothExpeditionUI"
-addon.version = "0.6.0"
+addon.version = "0.7.0"
 addon.modules = addon.modules or {}
 addon.media = addon.media or {}
 addon.media.root = "Interface\\AddOns\\AzerothExpeditionUI\\Media\\"
 
 local defaults = {
+  actionbars = {
+    enabled = true,
+    artVersion = 1,
+  },
   chat = {
     enabled = true,
     minimumWidth = 440,
@@ -145,7 +149,16 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
   command = string.gsub(command, "^%s+", "")
   command = string.gsub(command, "%s+$", "")
 
-  if command == "chat" then
+  if command == "actionbars" then
+    AzerothExpeditionUIDB.actionbars.enabled =
+      not AzerothExpeditionUIDB.actionbars.enabled
+    addon:Print(
+      "action bar slot art " ..
+      (AzerothExpeditionUIDB.actionbars.enabled and "enabled" or "disabled") ..
+      "; reloading UI."
+    )
+    ReloadUI()
+  elseif command == "chat" then
     AzerothExpeditionUIDB.chat.enabled =
       not AzerothExpeditionUIDB.chat.enabled
     addon:Print(
@@ -183,6 +196,10 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       addon.modules.Quests and
       addon.modules.Quests.runtimeContract or
       "unknown"
+    local actionBarRuntime =
+      addon.modules.ActionBars and
+      addon.modules.ActionBars.runtimeContract or
+      "unknown"
     local chatColorStatus =
       addon.modules.Chat and
       addon.modules.Chat.GetMessageColorStatus and
@@ -190,6 +207,9 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       "unavailable"
     addon:Print(
       "version " .. addon.version ..
+      ", actionbars=" ..
+      (AzerothExpeditionUIDB.actionbars.enabled and "enabled" or "disabled") ..
+      ", actionbar-runtime=" .. tostring(actionBarRuntime) ..
       ", chat=" ..
       (AzerothExpeditionUIDB.chat.enabled and "enabled" or "disabled") ..
       ", chat-runtime=" .. tostring(chatRuntime) ..
@@ -204,6 +224,14 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       (scopedRoute and "pfui-except-quest-log" or "pfui")
     )
     if
+      addon.modules.ActionBars and
+      addon.modules.ActionBars.GetRuntimeStatus
+    then
+      addon:Print(
+        "actionbars " .. addon.modules.ActionBars:GetRuntimeStatus()
+      )
+    end
+    if
       addon.modules.Quests and
       addon.modules.Quests.GetRuntimeStatus
     then
@@ -212,6 +240,8 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       )
     end
   else
-    addon:Print("/aeui chat, /aeui quests, /aeui refresh, /aeui status")
+    addon:Print(
+      "/aeui actionbars, /aeui chat, /aeui quests, /aeui refresh, /aeui status"
+    )
   end
 end

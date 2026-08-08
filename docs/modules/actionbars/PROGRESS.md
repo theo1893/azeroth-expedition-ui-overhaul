@@ -25,12 +25,15 @@
   TrinketMenu；AutoBar 作为可选消耗品 provider，近期无活跃布局也不被强制
   启用。
 - `AB.SLOT.BASE.V1` 有界生产循环已在 `5/5` 停止；用户于 `2026-08-08` 明确
-  “接受 AB.SLOT.BASE.V1 第5稿”。exact canonical RGBA `6d4a4d16…7dc0` 已字节
-  完全一致地晋级为
-  `assets/source/actionbars/ab-slot/ActionSlotBase_Master_v1.png`，source manifest
-  同目录，当前为 `P4 / source-accepted`。五种精确展示场景 `1×1`、`12×1`、
-  `6×2`、`4×3`、`1×12` 仍为 `5/5 pass`、violations `0`。当前没有 runtime、
-  接管路由、SavedVariables 或 addon 变更；逐次记录仍只在唯一组件 work。
+  “接受 AB.SLOT.BASE.V1 第5稿”，随后以“进行下一步”授权 P4→P5。exact source
+  RGBA `6d4a4d16…7dc0` 已按冻结 `[200,200,824,824)` crop 确定性导出为
+  `128×128` 32-bit TGA `ActionSlotBaseV1.tga`，SHA `5c49a1db…23ca`，像素 SHA
+  `e527c038…c35c` 与已验收 attempt 5 runtime review 完全一致。AEUI `0.7.0`
+  的 `ActionBars` adapter 只在现有 pfUI Bar `1–10` 的逐按钮 `backdrop` 上创建
+  full-UV 子纹理；Bar `11／12`、按钮逻辑、动态图标／文字／状态、命中区、分页、
+  拖放、位置、scale 与 SavedVariables 均未接管。五种最终排版 `5/5 pass`、
+  violations `0`；Lua smoke、媒体／manifest 测试与 fresh-checkout package 均
+  `pass`，目标设备无需构建。当前为 `P5 / runtime-exported`，尚未实机。
 
 ## 已确定的设计决策
 
@@ -67,7 +70,7 @@
 | ID | 阶段 | 当前证据 | 下一门禁 |
 |---|---:|---|---|
 | `AB.RAIL` | `P2 / direction-locked` | pfUI `BarLayoutSize` 公式与用户确认的 V3 中下焦点；与逐槽资产分批 | `AB.SLOT` 后另写可伸缩 Rail 正文并测 border／scale 极值 |
-| `AB.SLOT` | `P4 / source-accepted` | [P4 source](../../../assets/source/actionbars/ab-slot/ActionSlotBase_Master_v1.png)／[manifest](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_SourceManifest_v1.json)，SHA `6d4a4d16…7dc0`；深褐主导、断续暗黄铜、低频安静中心；ImageGen `5/5` 已停止，无 runtime | 另行执行确定性 `128×128` runtime export、scoped adapter、最终 display-region 与 fresh-checkout addon package 门禁 |
+| `AB.SLOT` | `P5 / runtime-exported` | [source](../../../assets/source/actionbars/ab-slot/ActionSlotBase_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_RuntimeManifest_v1.json)；TGA `5c49a1db…23ca`、像素 `e527c038…c35c`；Bar `1–10` scoped adapter，display `5/5`、package `pass`，P4→P5 ImageGen `0` | Turtle WoW `/reload` 验证 TGA 方向、空槽／带图标边缘、20–48 UI 尺寸、自由移动／缩放／显隐、状态叠层、Bar `11／12` 不受影响及关闭开关 fail-open |
 | `AB.SLOT.STATE` | `P2 / scoped` | highlight／active／equipped／icon tint／cooldown／按键动画的真实覆盖顺序已冻结 | 基底 P5 export 验证后另写悬停／激活覆盖合同；不生产假 disabled cell |
 | `AB.ENDCAP.GRYPHON` | `P2 / direction-locked` | pfUI 左右端帽对象、64 UI 默认能力；用户确认的 V3 preset 默认关闭 | `AB.SLOT／RAIL` 后另行授权可选端帽正文 |
 | `AB.STANCE／PET` | `P1` | Bar `11／12` 与 provider 状态已审计 | 职业最少／最多数量和自动施法实机排版 |
@@ -98,13 +101,17 @@
 
 ## 下一门禁
 
-1. `AB.SLOT.BASE.V1` 已停在 `source-accepted / P4`。下一独立操作是按 manifest
-   冻结的 `[200,200,824,824)` square crop 建立确定性 `128×128` straight-alpha
-   runtime、scoped adapter 与 fallback；不得直接加载 `1024²` source。
-2. P5 只有在最终 atlas／adapter／provider display-region、相关 smoke 与
-   fresh-checkout addon package 全部通过后才能标记；目标设备不得再运行 exporter、
-   Python、patch 或手工修改 pfUI。
-3. 基底 P5 export 验证后，再分别准备 `AB.SLOT.STATE` 与 `AB.RAIL`；狮鹫、
+1. `AB.SLOT.BASE.V1` 已达到 `runtime-exported / P5`。下一门禁是 Turtle WoW
+   `1.18.1` `/reload`：确认 `actionbar-runtime=1.0`、TGA 上下方向、空槽与真实
+   图标边缘、冷却／range／OOM／equipped／active／highlight／按下状态、
+   `20–48 UI` 尺寸、`12×1／6×2／4×3／1×12`、自由移动／缩放／显隐及
+   `/aeui actionbars` 关闭后的 pfUI 原生 fallback。
+2. 实机必须同时确认 Bar `11` 姿态条与 Bar `12` 宠物条完全不出现本基底，
+   现有 profile、分页、拖放、命中区和 SavedVariables 不变。目标设备只需拉取并
+   安装 `addon/pfUI` 与 `addon/AzerothExpeditionUI`，不得运行 exporter、Python、
+   patch 或手工修改代码。
+3. 基底 P5 后可分别准备 `AB.SLOT.STATE` 与 `AB.RAIL`；狮鹫、
    消耗品卷袋和饰品护套继续各自形成独立 source／atlas 合同并逐批授权。
-4. `AB.SLOT` export 只允许登记 Bar `1–10` 的精确接管路由；未接管 Bar 与
-   第三方 provider 始终 fail-open，当前 P4 不改变任何运行时对象。
+4. 当前仅增加 Bar `1–10` 的 scoped visual adapter，不改变 pfUI actionbar 的
+   功能所有权；未登记 Bar 与第三方 provider 始终 fail-open。实机通过前不得
+   标记 P6 或清理组件 work／P5 证据。

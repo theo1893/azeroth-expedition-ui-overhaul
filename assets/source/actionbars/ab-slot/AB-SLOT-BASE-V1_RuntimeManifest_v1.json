@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "module": "actionbars",
+  "batch": "AB.SLOT.BASE.V1",
+  "version": "runtime-v1",
+  "runtime_contract": "1.0",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "source": {
+    "file": "assets/source/actionbars/ab-slot/ActionSlotBase_Master_v1.png",
+    "sha256": "6d4a4d16e9a9c11248f0c63636e916e462d5d64f548335f26252e19e0b787dc0",
+    "width": 1024,
+    "height": 1024,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      200,
+      202,
+      824,
+      822
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0,
+    "transparent_pixels": 661720,
+    "partially_transparent_pixels": 4876,
+    "opaque_pixels": 381980
+  },
+  "transform": {
+    "operation": "fixed square crop, one proportional LANCZOS resize, then zero RGB only where Alpha is fully transparent",
+    "source_crop_exclusive": [
+      200,
+      200,
+      824,
+      824
+    ],
+    "runtime_size": [
+      128,
+      128
+    ],
+    "resample": "Pillow Image.Resampling.LANCZOS",
+    "rotation": null,
+    "mirror": false,
+    "retouch": false,
+    "straight_alpha": true,
+    "texcoord": {
+      "left": 0.0,
+      "right": 1.0,
+      "top": 0.0,
+      "bottom": 1.0
+    }
+  },
+  "runtime_export": {
+    "file": "addon/AzerothExpeditionUI/Media/ActionBars/ActionSlotBaseV1.tga",
+    "sha256": "5c49a1db452560251422060545625b311e182ef5b8689be996aeda005b8e23ca",
+    "width": 128,
+    "height": 128,
+    "mode": "RGBA",
+    "bits_per_pixel": 32,
+    "descriptor": 8,
+    "top_origin": false,
+    "pixel_sha256": "e527c0382a7e7d727fa8a8cee10262cd99470d1ee0204ba8301a5f698c24c35c",
+    "visible_bbox_exclusive": [
+      0,
+      0,
+      128,
+      128
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0,
+    "transparent_pixels": 0,
+    "partially_transparent_pixels": 973,
+    "opaque_pixels": 15411
+  },
+  "deterministic_export": {
+    "exporter": "tools/build_action_slot_base_v1_runtime.py",
+    "exporter_sha256": "940f91de5bdd50929c37323a049322de5815f07026da7e824566569a4ad3c212",
+    "expected_runtime_pixel_sha256": "e527c0382a7e7d727fa8a8cee10262cd99470d1ee0204ba8301a5f698c24c35c",
+    "pixel_identical_to_accepted_attempt_05_runtime_review": true,
+    "imagegen_calls_after_acceptance": 0
+  },
+  "adapter": {
+    "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
+    "sha256": "4094956bcdf7e43adba065911c2e8114572454b109a8044c8e731bc2ba1b3af3",
+    "provider": "pfUI.bars and pfActionBar<BarName>Button1..12.backdrop",
+    "logical_bars": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "excluded_provider_bars": [
+      11,
+      12
+    ],
+    "maximum_texture_instances": 120,
+    "parent": "each existing provider button.backdrop",
+    "draw_layer": "ARTWORK on provider backdrop frame, beneath live button layers",
+    "fallback": "native pfUI backdrop remains and is never removed",
+    "geometry_writes_after_creation": false,
+    "provider_behavior_replaced": false
+  },
+  "provider_layers_preserved": [
+    "icon",
+    "equipped",
+    "cooldown",
+    "animation",
+    "highlight",
+    "active",
+    "macro",
+    "keybind",
+    "count",
+    "hit region",
+    "scripts",
+    "paging",
+    "drag behavior",
+    "SavedVariables"
+  ],
+  "display_evidence": {
+    "contract": "tools/specs/action_slot_base_v1_runtime_display_region.json",
+    "contract_sha256": "2e7d850e517f5e8464024620a31b44d54bb2a538835cc2d9fe529297e8c513dd",
+    "report": "generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/runtime/V1/display-region-report.json",
+    "report_sha256": "7f14f7e77d807f9dcc93311f00d399d63f33f9279057f751b72164e1c6c29238",
+    "runtime_master": "generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/runtime/V1/AB.SLOT.BASE.V1.runtime-v1.png",
+    "runtime_master_sha256": "2958f5e28621fd5cbc4e2d40da9b311f12e603dd58d8183f8758db463c50cbee",
+    "supported_layouts": "generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/runtime/V1/AB.SLOT.BASE.V1.runtime-v1.layouts.png",
+    "supported_layouts_sha256": "329b6fd28e5f46ff2f8bde522028f9513d89cfe3742e215b434fc87e5c929122",
+    "real_layout": "generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/runtime/V1/AB.SLOT.BASE.V1.runtime-v1.real-layout-1920x1080.png",
+    "real_layout_sha256": "18f92e5ef29bc0a8d95aae043eb8115c696b6e05ecd7eeaa4098dbe23f4d5b0e",
+    "scenario_ids": [
+      "single-minimum-1x1",
+      "main-confirmed-12x1",
+      "compact-supported-6x2",
+      "auxiliary-supported-4x3",
+      "vertical-maximum-1x12"
+    ],
+    "scenario_frames": {
+      "single-minimum-1x1": [
+        23,
+        23
+      ],
+      "main-confirmed-12x1": [
+        493,
+        43
+      ],
+      "compact-supported-6x2": [
+        195,
+        66
+      ],
+      "auxiliary-supported-4x3": [
+        112,
+        85
+      ],
+      "vertical-maximum-1x12": [
+        46,
+        528
+      ]
+    },
+    "full_screen_scope": "all V3 action-button bars except provider-owned AB.BAR11.STANCE",
+    "result": "5/5 pass",
+    "violations": 0,
+    "surrounding_pixels": "V3 direction simulation only; not runtime art or visual authority"
+  },
+  "package_validation": {
+    "report": "generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/runtime/V1/addon-package-report.json",
+    "report_sha256": "ab88bc38e1b47d469c96795bd84c9a83f5966d144c44c8ea8491a412ddb07f5e",
+    "status": "pass",
+    "violations": 0,
+    "build_required_on_target_device": false
+  },
+  "game_validation": {
+    "status": "pending",
+    "phase": "P6",
+    "target": "Turtle WoW 1.18.1 / Interface 11200"
+  }
+}
