@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "schema": "aeui-component-p6-evidence-v1",
+  "module": "actionbars",
+  "component": "AB.SLOT",
+  "batch": "AB.SLOT.BASE.V1",
+  "status": "game-validated",
+  "phase": "P6",
+  "validated_on": "2026-08-08",
+  "target": {
+    "client": "Turtle WoW 1.18.1",
+    "interface": 11200
+  },
+  "screenshot": {
+    "file": "assets/references/actionbars/p6/AB-SLOT-BASE-V1_TurtleWoW_P6_2026-08-08.png",
+    "sha256": "dc9615acbd36a32d61b241049a3089c6ae8db071ec66b5cc6a508f4eccae4d5d",
+    "width": 694,
+    "height": 156,
+    "mode": "RGB",
+    "format": "PNG",
+    "provenance": "byte-exact tracked copy of the screenshot supplied by the user in the P6 validation turn"
+  },
+  "user_validation": {
+    "exact_statements": [
+      "CD没问题. 距离红没问题. 按下反馈没问题",
+      "动作条功能验证通过"
+    ],
+    "explicit_checks": {
+      "cooldown": "pass",
+      "out_of_range_red": "pass",
+      "pressed_feedback": "pass",
+      "overall_actionbar_functionality": "pass"
+    },
+    "aggregate_checklist": {
+      "status": "pass",
+      "basis": "the user supplied the requested all-clear phrase in response to the previously enumerated P6 checklist",
+      "checks": [
+        "runtime contract 1.0 loaded after /reload",
+        "TGA orientation",
+        "empty-slot and live-icon edge treatment",
+        "cooldown, range, OOM, equipped, active, highlight and pressed provider layers",
+        "20-48 UI sizes and legal 12x1, 6x2, 4x3 and 1x12 layouts",
+        "free movement, scaling and visibility",
+        "Bar 11 stance and Bar 12 pet exclusion",
+        "/aeui actionbars native pfUI fallback",
+        "provider paging, drag, hit regions and SavedVariables remain functional"
+      ]
+    }
+  },
+  "visual_review": {
+    "status": "pass",
+    "checks": {
+      "real_client_capture": "pass",
+      "two_row_supported_layout": "pass",
+      "slot_art_orientation": "pass",
+      "live_icon_and_keybind_readability": "pass",
+      "visible_crop_or_overlap": "none",
+      "dynamic_content_baked_into_slot_art": "none observed"
+    },
+    "scope_note": "the still image establishes static geometry, orientation, layering and readability; transient state and interaction checks are established by the user's explicit validation"
+  },
+  "runtime": {
+    "source_manifest": "assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_SourceManifest_v1.json",
+    "source_file": "assets/source/actionbars/ab-slot/ActionSlotBase_Master_v1.png",
+    "source_sha256": "6d4a4d16e9a9c11248f0c63636e916e462d5d64f548335f26252e19e0b787dc0",
+    "runtime_manifest": "assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_RuntimeManifest_v1.json",
+    "runtime_file": "addon/AzerothExpeditionUI/Media/ActionBars/ActionSlotBaseV1.tga",
+    "runtime_sha256": "5c49a1db452560251422060545625b311e182ef5b8689be996aeda005b8e23ca",
+    "runtime_pixel_sha256": "e527c0382a7e7d727fa8a8cee10262cd99470d1ee0204ba8301a5f698c24c35c",
+    "runtime_contract": "1.0"
+  },
+  "production_budget": {
+    "actual_generations": 5,
+    "limit": 5,
+    "additional_generations_for_p6": 0,
+    "attempt_6_allowed": false
+  },
+  "closure": {
+    "status": "pending",
+    "next_phase": "P6-C",
+    "requires_exact_keep_delete_inventory_and_explicit_user_approval": true
+  }
+}

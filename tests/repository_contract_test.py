@@ -321,9 +321,17 @@ def main() -> None:
     actionbars_runtime = (
         aeui / "Media" / "ActionBars" / "ActionSlotBaseV1.tga"
     )
+    actionbars_p6_evidence = (
+        ROOT
+        / "assets/references/actionbars/p6/AB-SLOT-BASE-V1_P6Evidence_v1.json"
+    )
+    actionbars_p6_screenshot = (
+        ROOT
+        / "assets/references/actionbars/p6/AB-SLOT-BASE-V1_TurtleWoW_P6_2026-08-08.png"
+    )
     assert actionbars_manifest["runtime_contract"] == "1.0"
-    assert actionbars_manifest["status"] == "runtime-exported"
-    assert actionbars_manifest["phase"] == "P5"
+    assert actionbars_manifest["status"] == "game-validated"
+    assert actionbars_manifest["phase"] == "P6"
     assert actionbars_manifest["source"]["sha256"] == sha256(actionbars_master)
     assert actionbars_manifest["runtime_export"]["sha256"] == sha256(
         actionbars_runtime
@@ -342,6 +350,21 @@ def main() -> None:
     assert actionbars_manifest["deterministic_export"][
         "imagegen_calls_after_acceptance"
     ] == 0
+    assert actionbars_manifest["game_validation"]["status"] == "pass"
+    assert actionbars_manifest["game_validation"]["aggregate_p6_checklist"] == "pass"
+    assert actionbars_manifest["game_validation"][
+        "evidence_record_sha256"
+    ] == sha256(actionbars_p6_evidence)
+    assert actionbars_manifest["game_validation"]["screenshot_sha256"] == sha256(
+        actionbars_p6_screenshot
+    )
+    actionbars_p6 = json.loads(actionbars_p6_evidence.read_text(encoding="utf-8"))
+    assert actionbars_p6["schema"] == "aeui-component-p6-evidence-v1"
+    assert actionbars_p6["status"] == "game-validated"
+    assert actionbars_p6["screenshot"]["sha256"] == sha256(
+        actionbars_p6_screenshot
+    )
+    assert actionbars_p6["closure"]["status"] == "pending"
 
     quest_source = (aeui / "Modules" / "Quests.lua").read_text(
         encoding="utf-8"

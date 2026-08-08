@@ -5,10 +5,10 @@
 - 模块：`actionbars`
 - 组件 ID：`AB.SLOT`
 - 版本：`AB.SLOT.BASE.V1`
-- 子状态：`runtime-exported`
-- 项目阶段：`P5 / runtime-exported`
+- 子状态：`game-validated`
+- 项目阶段：`P6 / game-validated`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
-- 操作：`export`
+- 操作：`game-validate`
 - 生成前模拟版本：`ACTION-BARS-CORE-SIM-V3`
 - 生成前模拟方式：`deterministic-local-geometry`
 - 模拟 ImageGen：`0/0`
@@ -475,11 +475,10 @@ Before returning the image, inspect it literally at full size and imagined 128 b
 - 用户结论与日期：V3 `confirmed 2026-08-08`；生产正文与最多五次实际生成／
   修复 `authorized 2026-08-08`；指定锁定图的外部 ImageGen 上传
   `authorized 2026-08-08`；exact attempt 5 `accepted 2026-08-08`
-- 当前结论：`runtime-exported / P5`；ImageGen 仍为 `5/5`，P4→P5 新增调用
+- 当前结论：`game-validated / P6`；ImageGen 仍为 `5/5`，P5→P6 新增调用
   `0`，不得 attempt 6
-- 下一门禁：Turtle WoW 实机验证 TGA 方向、真实图标／状态叠层、20–48 UI
-  尺寸、自由移动／缩放／显隐、Bar `11／12` 排除和关闭开关 fallback；通过前
-  不标记 P6，也不进入其他组件的生成循环
+- 下一门禁：`AB.SLOT` 若要进入 `P6-C`，必须先展示精确保留／删除清单并取得
+  用户明确清理批准；该收口不阻塞下一独立组件 `AB.RAIL` 的本地确定性模拟
 
 ## 用户接受与 P4 晋级
 
@@ -552,8 +551,37 @@ Before returning the image, inspect it literally at full size and imagined 128 b
 - Python：Windows 无 `py -3` launcher，整个操作固定使用
   `D:\Softwares\miniconda3\python.exe`，Python `3.13.5`。
 - 目标设备交付：只拉取并复制 `addon/pfUI` 与 `addon/AzerothExpeditionUI`；不
-  运行 exporter、Python、patch 或手改 pfUI。当前 `game_validated=false`，保持
-  `P5`；实机通过前保留本 work 和 P5 证据。
+  运行 exporter、Python、patch 或手改 pfUI。该交付已由下方 P6 实机记录验证；
+  在单组件 `P6-C` 明确批准前保留本 work 和组件中间证据。
+
+## P6 Turtle WoW 实机验收记录
+
+- 日期／客户端：`2026-08-08`；Turtle WoW `1.18.1`，Interface `11200`。
+- 用户原文：`CD没问题. 距离红没问题. 按下反馈没问题`；
+  `动作条功能验证通过`。后一句是对上一轮完整 P6 清单约定的全项通过答复。
+- 最小长期截图：
+  `assets/references/actionbars/p6/AB-SLOT-BASE-V1_TurtleWoW_P6_2026-08-08.png`；
+  原附件字节完全复制，`694×156 RGB PNG`，SHA-256
+  `dc9615acbd36a32d61b241049a3089c6ae8db071ec66b5cc6a508f4eccae4d5d`。
+- 证据记录：
+  `assets/references/actionbars/p6/AB-SLOT-BASE-V1_P6Evidence_v1.json`，SHA-256
+  `73a8f942fe6812f994f0eeaae6a7e0254d3577535071ab6401fd4e9954b10d0b`。
+- 截图直接证明：真实客户端双排支持布局、槽框上下方向正确、动态图标与快捷键
+  层级清楚，未见槽框裁切、相互遮挡或把动态图标／文字烘焙进基底。
+- 交互证明来源：冷却、距离红与按下反馈由用户逐项明确确认；其余上一轮清单
+  （OOM／equipped／active／highlight、20–48 UI 与合法行列、自由移动／缩放／
+  显隐、Bar `11／12` 排除、`/aeui actionbars` 原生回退，以及 provider 的分页、
+  拖放、命中区和 SavedVariables）由用户按约定回复“动作条功能验证通过”确认。
+  单张静态截图不被误写为这些瞬态／交互项的独立证明。
+- 运行时结论：source SHA `6d4a4d16…7dc0`、TGA SHA `5c49a1db…23ca`、像素
+  SHA `e527c038…c35c` 与 runtime contract `1.0` 不变；P5→P6 无代码、媒体或
+  provider 行为变更，新增外部生成 `0`，生产预算仍为 `5/5`。
+- 当前状态：`game-validated / P6`。尚未执行单组件 `P6-C`；必须另行给出精确
+  keep／delete inventory 并取得用户明确批准，才可清理 ignored `generated`、
+  本 work 或其他组件专属中间文件。
+- 下一工作门禁：可开始 `AB.RAIL.V1` 的 `prepare / simulate`，先用本地确定性
+  几何验证 `1×1／12×1／6×2／4×3／1×12`、20–48 UI、自由行列与伸缩边界；
+  此阶段 ImageGen `0/0`，不得沿用 `AB.SLOT` 的生产授权。
 
 ## 尝试摘要
 
@@ -566,4 +594,4 @@ Before returning the image, inspect it literally at full size and imagined 128 b
 | `AB.SLOT.BASE.V1.r1` | child `019fe073…ed1f`；raw `82542910…739d1`；display `5/5 pass` | `internal-rejected 2/5` | 参考图只继承配色关系；按原生 `64／128 px` sprite 粗粒度重绘；物件仅占 Canvas `60–61%` |
 | `AB.SLOT.BASE.V1.r2` | child `019fe07c…d91f`；raw `989bb567…3c08`；display `5/5 pass` | `internal-rejected 3/5` | 保持已通过的粗粒度手绘与占屏；完整 rim 从约 `10%` 收至 `5%`，安静区占物件约 `90%`，外轮廓严格正方居中 |
 | `AB.SLOT.BASE.V1.r3` | child `019fe085…640e`；raw `bef74f6f…e0027`；display `5/5 pass` | `internal-rejected 4/5` | 保持粗粒度中心；改用褐色主导的扁平 sprite 与最多两条边带，黄铜少于周长 `15%` 且不得亮黄；恢复 `60–61%` 占屏 |
-| `AB.SLOT.BASE.V1.r4` | child `019fe08a…acd7`；raw `0a0cae74…011b8`；canonical／source RGBA `6d4a4d16…7dc0`；runtime TGA `5c49a1db…23ca`；display `5/5 pass`；package `pass` | `user-accepted / runtime-exported / P5` | Turtle WoW 实机验证；不得 attempt 6 |
+| `AB.SLOT.BASE.V1.r4` | child `019fe08a…acd7`；raw `0a0cae74…011b8`；canonical／source RGBA `6d4a4d16…7dc0`；runtime TGA `5c49a1db…23ca`；display `5/5 pass`；package `pass`；P6 screenshot `dc9615ac…4d5d` | `user-accepted / game-validated / P6` | 可准备 `AB.RAIL` 本地模拟；`AB.SLOT` 收口须另获精确清理批准；不得 attempt 6 |

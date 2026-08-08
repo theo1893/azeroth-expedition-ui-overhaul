@@ -35,6 +35,14 @@ def main() -> None:
     runtime_manifest_path = ROOT / builder.RUNTIME_MANIFEST_REL
     contract_path = ROOT / builder.DISPLAY_CONTRACT_REL
     adapter_path = ROOT / builder.ADAPTER_REL
+    p6_evidence_path = (
+        ROOT
+        / "assets/references/actionbars/p6/AB-SLOT-BASE-V1_P6Evidence_v1.json"
+    )
+    p6_screenshot_path = (
+        ROOT
+        / "assets/references/actionbars/p6/AB-SLOT-BASE-V1_TurtleWoW_P6_2026-08-08.png"
+    )
 
     source = builder.validate_source(source_path)
     rebuilt = builder.build_runtime(source)
@@ -55,9 +63,10 @@ def main() -> None:
         runtime_manifest_path.read_text(encoding="utf-8")
     )
     source_manifest = json.loads(source_manifest_path.read_text(encoding="utf-8"))
+    p6_evidence = json.loads(p6_evidence_path.read_text(encoding="utf-8"))
     assert runtime_manifest["runtime_contract"] == "1.0"
-    assert runtime_manifest["status"] == "runtime-exported"
-    assert runtime_manifest["phase"] == "P5"
+    assert runtime_manifest["status"] == "game-validated"
+    assert runtime_manifest["phase"] == "P6"
     assert runtime_manifest["source"]["sha256"] == sha256(source_path)
     runtime_record = runtime_manifest["runtime_export"]
     assert runtime_record["file"] == builder.RUNTIME_REL.as_posix()
@@ -86,15 +95,21 @@ def main() -> None:
     assert runtime_manifest["adapter"]["logical_bars"] == list(range(1, 11))
     assert runtime_manifest["adapter"]["excluded_provider_bars"] == [11, 12]
     assert runtime_manifest["adapter"]["provider_behavior_replaced"] is False
-    assert runtime_manifest["game_validation"]["status"] == "pending"
+    game_validation = runtime_manifest["game_validation"]
+    assert game_validation["status"] == "pass"
+    assert game_validation["phase"] == "P6"
+    assert game_validation["aggregate_p6_checklist"] == "pass"
+    assert game_validation["additional_imagegen_calls"] == 0
+    assert game_validation["evidence_record_sha256"] == sha256(p6_evidence_path)
+    assert game_validation["screenshot_sha256"] == sha256(p6_screenshot_path)
     assert runtime_manifest["deterministic_export"]["exporter_sha256"] == sha256(
         ROOT / "tools/build_action_slot_base_v1_runtime.py"
     )
     assert runtime_manifest["adapter"]["sha256"] == sha256(adapter_path)
 
-    assert source_manifest["status"] == "runtime-exported"
-    assert source_manifest["workflow_state"] == "runtime-exported"
-    assert source_manifest["project_phase"] == "P5"
+    assert source_manifest["status"] == "game-validated"
+    assert source_manifest["workflow_state"] == "game-validated"
+    assert source_manifest["project_phase"] == "P6"
     assert source_manifest["export_contract"]["status"] == "exported"
     assert source_manifest["export_contract"][
         "imagegen_calls_after_acceptance"
@@ -102,6 +117,32 @@ def main() -> None:
     assert source_manifest["runtime_exports"]["action_slot_base_v1"][
         "sha256"
     ] == sha256(runtime_path)
+    assert source_manifest["p5_validation"]["game_validated"] is True
+    assert source_manifest["p6_validation"]["status"] == "pass"
+    assert source_manifest["p6_validation"][
+        "evidence_record_sha256"
+    ] == sha256(p6_evidence_path)
+    assert source_manifest["p6_validation"]["screenshot_sha256"] == sha256(
+        p6_screenshot_path
+    )
+
+    assert p6_evidence["schema"] == "aeui-component-p6-evidence-v1"
+    assert p6_evidence["status"] == "game-validated"
+    assert p6_evidence["phase"] == "P6"
+    assert p6_evidence["screenshot"]["sha256"] == sha256(p6_screenshot_path)
+    assert p6_evidence["user_validation"]["explicit_checks"] == {
+        "cooldown": "pass",
+        "out_of_range_red": "pass",
+        "pressed_feedback": "pass",
+        "overall_actionbar_functionality": "pass",
+    }
+    assert p6_evidence["user_validation"]["aggregate_checklist"]["status"] == "pass"
+    assert p6_evidence["production_budget"]["additional_generations_for_p6"] == 0
+    assert p6_evidence["production_budget"]["attempt_6_allowed"] is False
+    with Image.open(p6_screenshot_path) as opened:
+        assert opened.size == (694, 156)
+        assert opened.mode == "RGB"
+        assert opened.format == "PNG"
 
     contract = json.loads(contract_path.read_text(encoding="utf-8"))
     assert contract["component"] == "AB.SLOT.BASE.V1/runtime-v1"

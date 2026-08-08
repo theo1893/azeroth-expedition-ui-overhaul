@@ -33,7 +33,10 @@
   full-UV 子纹理；Bar `11／12`、按钮逻辑、动态图标／文字／状态、命中区、分页、
   拖放、位置、scale 与 SavedVariables 均未接管。五种最终排版 `5/5 pass`、
   violations `0`；Lua smoke、媒体／manifest 测试与 fresh-checkout package 均
-  `pass`，目标设备无需构建。当前为 `P5 / runtime-exported`，尚未实机。
+  `pass`，目标设备无需构建。用户随后提供 Turtle WoW 实机截图
+  `dc9615ac…4d5d`，明确确认“CD没问题. 距离红没问题. 按下反馈没问题”与
+  “动作条功能验证通过”；截图静态层级和完整交互清单分开取证。当前为
+  `P6 / game-validated`，P5→P6 新增外部生成 `0`，尚未执行单组件 `P6-C`。
 
 ## 已确定的设计决策
 
@@ -70,8 +73,8 @@
 | ID | 阶段 | 当前证据 | 下一门禁 |
 |---|---:|---|---|
 | `AB.RAIL` | `P2 / direction-locked` | pfUI `BarLayoutSize` 公式与用户确认的 V3 中下焦点；与逐槽资产分批 | `AB.SLOT` 后另写可伸缩 Rail 正文并测 border／scale 极值 |
-| `AB.SLOT` | `P5 / runtime-exported` | [source](../../../assets/source/actionbars/ab-slot/ActionSlotBase_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_RuntimeManifest_v1.json)；TGA `5c49a1db…23ca`、像素 `e527c038…c35c`；Bar `1–10` scoped adapter，display `5/5`、package `pass`，P4→P5 ImageGen `0` | Turtle WoW `/reload` 验证 TGA 方向、空槽／带图标边缘、20–48 UI 尺寸、自由移动／缩放／显隐、状态叠层、Bar `11／12` 不受影响及关闭开关 fail-open |
-| `AB.SLOT.STATE` | `P2 / scoped` | highlight／active／equipped／icon tint／cooldown／按键动画的真实覆盖顺序已冻结 | 基底 P5 export 验证后另写悬停／激活覆盖合同；不生产假 disabled cell |
+| `AB.SLOT` | `P6 / game-validated` | [source](../../../assets/source/actionbars/ab-slot/ActionSlotBase_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_RuntimeManifest_v1.json)／[P6 evidence](../../../assets/references/actionbars/p6/AB-SLOT-BASE-V1_P6Evidence_v1.json)；TGA `5c49a1db…23ca`、像素 `e527c038…c35c`、实机截图 `dc9615ac…4d5d`；Bar `1–10` scoped adapter，display `5/5`、package／P6 交互均 `pass` | 下一独立设计门禁为 `AB.RAIL` 本地确定性模拟；`AB.SLOT` 进入 `P6-C` 前另行展示精确保留／删除清单并取得用户批准 |
+| `AB.SLOT.STATE` | `P2 / scoped` | highlight／active／equipped／icon tint／cooldown／按键动画的真实覆盖顺序已冻结 | 基底 P6 已验证；如需独立换肤再写悬停／激活覆盖合同，不生产假 disabled cell |
 | `AB.ENDCAP.GRYPHON` | `P2 / direction-locked` | pfUI 左右端帽对象、64 UI 默认能力；用户确认的 V3 preset 默认关闭 | `AB.SLOT／RAIL` 后另行授权可选端帽正文 |
 | `AB.STANCE／PET` | `P1` | Bar `11／12` 与 provider 状态已审计 | 职业最少／最多数量和自动施法实机排版 |
 | `AB.CONSUMABLE.RACK／POCKET` | `P2 / direction-locked` | AutoBar 1–24 真按钮与用户确认的 `5×2` 上移实例 | `AB.SLOT／RAIL` 后冻结 popup 支持上限并另行授权 |
@@ -101,17 +104,16 @@
 
 ## 下一门禁
 
-1. `AB.SLOT.BASE.V1` 已达到 `runtime-exported / P5`。下一门禁是 Turtle WoW
-   `1.18.1` `/reload`：确认 `actionbar-runtime=1.0`、TGA 上下方向、空槽与真实
-   图标边缘、冷却／range／OOM／equipped／active／highlight／按下状态、
-   `20–48 UI` 尺寸、`12×1／6×2／4×3／1×12`、自由移动／缩放／显隐及
-   `/aeui actionbars` 关闭后的 pfUI 原生 fallback。
-2. 实机必须同时确认 Bar `11` 姿态条与 Bar `12` 宠物条完全不出现本基底，
-   现有 profile、分页、拖放、命中区和 SavedVariables 不变。目标设备只需拉取并
-   安装 `addon/pfUI` 与 `addon/AzerothExpeditionUI`，不得运行 exporter、Python、
-   patch 或手工修改代码。
-3. 基底 P5 后可分别准备 `AB.SLOT.STATE` 与 `AB.RAIL`；狮鹫、
-   消耗品卷袋和饰品护套继续各自形成独立 source／atlas 合同并逐批授权。
-4. 当前仅增加 Bar `1–10` 的 scoped visual adapter，不改变 pfUI actionbar 的
-   功能所有权；未登记 Bar 与第三方 provider 始终 fail-open。实机通过前不得
-   标记 P6 或清理组件 work／P5 证据。
+1. `AB.SLOT.BASE.V1` 已达到 `game-validated / P6`。长期证据为
+   `assets/references/actionbars/p6/AB-SLOT-BASE-V1_TurtleWoW_P6_2026-08-08.png`
+   （SHA `dc9615ac…4d5d`）与同目录 P6 evidence JSON（SHA `73a8f942…0d0b`）；
+   静态截图与用户交互确认的证明范围保持分离。
+2. 下一独立设计门禁是 `AB.RAIL.V1 prepare / simulate`：只做本地确定性几何，
+   覆盖 `1×1／12×1／6×2／4×3／1×12`、`20–48 UI`、自由行列、伸缩端部及与
+   当前已验收槽框的层序；此门禁不调用外部生成，也不继承 `AB.SLOT` 授权。
+3. `AB.SLOT` 若要进入 `P6-C`，必须先在现存 work 中向用户展示精确保留／删除
+   inventory 并取得明确批准；当前不得清理该组件的 ignored `generated`、work
+   或其他专属中间证据。
+4. `AB.SLOT.STATE`、狮鹫、消耗品卷袋和饰品护套继续各自形成独立合同并逐批
+   授权。Bar `1–10` scoped visual adapter 不改变 pfUI 功能所有权；未登记 Bar
+   与第三方 provider 始终 fail-open。

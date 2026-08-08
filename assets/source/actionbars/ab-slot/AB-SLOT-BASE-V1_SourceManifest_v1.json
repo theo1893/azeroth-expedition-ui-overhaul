@@ -4,9 +4,9 @@
   "batch": "AB.SLOT.BASE.V1",
   "component": "AB.SLOT",
   "accepted_version": "AB.SLOT.BASE.V1.r4 / attempt 5",
-  "status": "runtime-exported",
-  "workflow_state": "runtime-exported",
-  "project_phase": "P5",
+  "status": "game-validated",
+  "workflow_state": "game-validated",
+  "project_phase": "P6",
   "accepted_on": "2026-08-08",
   "source": {
     "file": "ActionSlotBase_Master_v1.png",
@@ -208,6 +208,34 @@
       "violations": 0,
       "build_required_on_target_device": false
     },
-    "game_validated": false
+    "game_validated": true
+  },
+  "p6_validation": {
+    "status": "pass",
+    "validated_on": "2026-08-08",
+    "target": "Turtle WoW 1.18.1 / Interface 11200",
+    "evidence_record": "assets/references/actionbars/p6/AB-SLOT-BASE-V1_P6Evidence_v1.json",
+    "evidence_record_sha256": "73a8f942fe6812f994f0eeaae6a7e0254d3577535071ab6401fd4e9954b10d0b",
+    "screenshot": "assets/references/actionbars/p6/AB-SLOT-BASE-V1_TurtleWoW_P6_2026-08-08.png",
+    "screenshot_sha256": "dc9615acbd36a32d61b241049a3089c6ae8db071ec66b5cc6a508f4eccae4d5d",
+    "screenshot_size": [
+      694,
+      156
+    ],
+    "screenshot_mode": "RGB",
+    "user_statements": [
+      "CD没问题. 距离红没问题. 按下反馈没问题",
+      "动作条功能验证通过"
+    ],
+    "explicit_interaction_checks": {
+      "cooldown": "pass",
+      "out_of_range_red": "pass",
+      "pressed_feedback": "pass",
+      "overall_actionbar_functionality": "pass"
+    },
+    "aggregate_p6_checklist": "pass",
+    "visual_review": "pass",
+    "additional_imagegen_calls": 0,
+    "component_closure": "pending exact keep/delete inventory and explicit user approval"
   }
 }
