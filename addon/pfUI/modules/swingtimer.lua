@@ -29,6 +29,7 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
     playerGUID = nil,
     swingThrottle = 0,
     onSwingCache = {},
+    speedSyncUntil = nil,
   }
 
   -- Ranged spell IDs
@@ -412,6 +413,43 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
     S.raSpeed = (rs and rs > 0) and rs or 0
   end
 
+  -- Attack-speed auras can be applied or removed after AUTO_ATTACK_SELF for
+  -- the same white hit. Rescale the active interval by completed percentage so
+  -- Flurry's first affected swing is hasted and the swing after its last charge
+  -- immediately returns to normal speed.
+  local function ResyncActiveWeaponSpeeds()
+    local oldMhSpeed, oldOhSpeed = S.mhSpeed, S.ohSpeed
+    local oldMhMax, oldOhMax = S.mhTimerMax, S.ohTimerMax
+    UpdateWeaponSpeeds()
+
+    if S.mhActive and oldMhMax and oldMhMax > 0
+      and S.mhSpeed > 0
+      and math.abs(S.mhSpeed - oldMhSpeed) > 0.001 then
+      local remainingFraction = S.mhTimer / oldMhMax
+      if remainingFraction < 0 then remainingFraction = 0 end
+      if remainingFraction > 1 then remainingFraction = 1 end
+      S.mhTimerMax = S.mhSpeed
+      S.mhTimer = S.mhSpeed * remainingFraction
+    end
+
+    if S.ohActive and oldOhMax and oldOhMax > 0
+      and S.ohSpeed > 0
+      and math.abs(S.ohSpeed - oldOhSpeed) > 0.001 then
+      local remainingFraction = S.ohTimer / oldOhMax
+      if remainingFraction < 0 then remainingFraction = 0 end
+      if remainingFraction > 1 then remainingFraction = 1 end
+      S.ohTimerMax = S.ohSpeed
+      S.ohTimer = S.ohSpeed * remainingFraction
+    end
+  end
+
+  local function QueueWeaponSpeedSync()
+    ResyncActiveWeaponSpeeds()
+    -- Poll briefly as a guard against clients that dispatch the aura event one
+    -- frame before UnitAttackSpeed exposes the new value.
+    S.speedSyncUntil = GetTime() + 0.20
+  end
+
   -- Reset MH countdown to full speed (server confirmed swing)
   local function ResetMH()
     if S.mhFrozenAt then
@@ -535,6 +573,13 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
     if S.swingThrottle < swingDelay then return end
     local delta = S.swingThrottle
     S.swingThrottle = 0
+
+    if S.speedSyncUntil then
+      ResyncActiveWeaponSpeeds()
+      if GetTime() >= S.speedSyncUntil then
+        S.speedSyncUntil = nil
+      end
+    end
 
     -- (out-of-combat hide handled naturally when timers expire)
 
@@ -825,6 +870,8 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
   events:RegisterEvent("UNIT_INVENTORY_CHANGED")
   events:RegisterEvent("PLAYER_REGEN_DISABLED")
   events:RegisterEvent("PLAYER_REGEN_ENABLED")
+  events:RegisterEvent("UNIT_ATTACK_SPEED")
+  events:RegisterEvent("PLAYER_AURAS_CHANGED")
   events:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
   events:RegisterEvent("UNIT_DIED")
   events:RegisterEvent("SPELL_QUEUE_EVENT")
@@ -930,6 +977,13 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
       isHunter  = (class == "HUNTER")   -- 添加这一行										
       UpdateWeaponSpeeds()
       RebuildQueueSlotCache()
+
+    elseif event == "UNIT_ATTACK_SPEED"
+      or event == "PLAYER_AURAS_CHANGED" then
+      if event == "UNIT_ATTACK_SPEED" and arg1 and arg1 ~= "player" then
+        return
+      end
+      QueueWeaponSpeedSync()
 
     elseif event == "UNIT_INVENTORY_CHANGED" then
       if arg1 and arg1 ~= "player" then return end
