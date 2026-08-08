@@ -51,8 +51,8 @@ pfUI 的合法矩形布局由按钮数因数决定；12 格支持 `12×1`、`6×
 | ID | 真实对象 | 合同 |
 |---|---|---|
 | `AB.RAIL` | 每个已启用 `pfActionBar*` Frame | 自适应九宫格／短连接件；尺寸严格来自 provider 公式；不包含图标、文字或状态 |
-| `AB.SLOT` | `pfActionButton1..N` 及对应多栏按钮 | 同几何普通／悬停／按下／激活／禁用底座；真实图标、快捷键、数量、宏名和冷却保持动态 |
-| `AB.SLOT.STATE` | pfUI highlight、checked、equipped、unusable、range、OOM、cooldown | 独立 runtime 覆盖；不得将职业色、红／蓝状态或冷却烘焙进槽底 |
+| `AB.SLOT` | Bar `1–10` 的 `pfActionBar<BarName>Button1..12` 及其逐按钮 `backdrop` | 单一普通／空槽基底；贴合 provider 的 `icon_size + 2×border` 外框，真实图标、快捷键、数量、宏名和冷却保持动态 |
+| `AB.SLOT.STATE` | `f.highlight`、`f.active`、`f.equipped`、`f.icon` 顶点色、`f.cd` 与按键动画 | 悬停和按键按下复用 highlight／动画，当前技能使用 active；装备、不可用、range、OOM 与 cooldown 独立动态。不得虚构 disabled Button cell 或把职业色、红／蓝／绿状态烘焙进基底 |
 | `AB.ENDCAP.GRYPHON` | `pfGryphonLeft`、`pfGryphonRight` | 成对香草狮鹫端帽；仅装饰、不吃点击；水平主栏宽度不足或用户关闭时不显示 |
 | `AB.STANCE` | Bar `11` 的真实形态按钮 | 较小但保持可读；不生成不存在的职业形态 |
 | `AB.PET` | Bar `12` 的真实宠物按钮 | 保留攻击、跟随、停留、技能与自动施法反馈 |

@@ -22,7 +22,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 | pfUI／作用域接管 | scoped ownership `P5`；pfUI 公共绘制、全部未接管模块与配置页已恢复；模块 Initialize／Apply 已隔离失败，未实机 | Turtle WoW 验证 pfUI 全模块、Game Menu／`/pfui`、旧 SavedVariables 迁移及 Chat／Quest Log 隔离 |
 | 聊天 | 核心 runtime `1.22 / P5`。Full V1 主框、Dark V2 Tab／承托带、Dark V1 输入与 V3 未读已在 addon 内接入；V3 Tab／承托带保留为 P6-C 前回退。Dark V2 固定 source `ChatTabs_Dark_V2_A.png` SHA `616f965b…a1e3c` 已确定性导出为 `ChatTabAtlasDarkV2.tga` SHA `3fb505fa…be0` 与 `ChatTabShelfDarkV2.tga` SHA `44c7f85c…fda`；只清理 source 的 `13` 个和 LANCZOS 新增的 `23` 个低 Alpha 绿边 RGB，Alpha 不变，最终绿溢色 `0`。最终真实排版覆盖 6 场景、violations `0`，fresh-checkout package `pass`、目标设备无需构建。v1.22 继续透传客户端／pfUI／ChatMOD 经典颜色；Chat Copy／URL Copy 暂缓，右框及左右聊天信息 Panel 隐藏，小地图 Panel 保留；本次 P4→P5 ImageGen `0`，原生产仍为 `5/5`，attempt 6 禁止 | 游戏设备可用时 `/reload`，确认 `chat-runtime=1.22`、四态 Tab、五 Tab 压缩、承托带、缩放／拖动、经典颜色及输入行为；通过前不得标记 P6 或清理回退／证据 |
 | 任务 | 用户于 `2026-08-05` 实机确认 Quest Log 左右页 bug 与显示问题已修复；该活动范围保持 `P6 user-confirmed`。QS-B1 V7-A 为 `P5`。QL-D V3 五次循环耗尽后，用户明确“使用第4稿”：以一次性 aspect 例外接受 exact canonical SHA `816aeedd…47c5`，原 keyed aspect `2.76945`／technical `18/19` 仍保留。正式四态 atlas SHA `cda1ef21…cd56` 已由 Quests `1.27`／Theme `1.10` 接入既有奖励适配层；atlas 与 0／1／2／4／6 真实排版均和已审阅第4稿像素完全一致，display `5/5 pass`。当前 `P5 runtime-exported / addon-integrated`。真实 Button／Tooltip／动态图标／文字和几何未替换。七枚独立功能纹章仍未验收，菜单不响应，旧 Blizzard／pfQuest 按钮继续 fail-open；Tracker 与 NPC Quest／Gossip 不变 | Turtle WoW 验证 QL-D TGA 方向、四态、pressed `1px`、safe area、双列排版和长详情滚动；不得第六次生图。另验证闭合态火漆跨压与滚动裁切；七纹章与代理 parity 完成后才可启用事务菜单或隐藏旧按钮 |
-| 动作条／随身栏 | pfUI 十二条 Bar、Castbar、SwingTimer、真实状态与目标设备 profile 已完成 `P1` 审计。用户否决贴底 V1 后，V2 已把约 `39px` 主技能格上移并把玩家／目标框收拢为 `80px` 内缘；用户继续要求纳入施法、攻击和 DoiteDPS，`ACTION-BARS-CORE-SIM-V3` 现形成 DoiteDPS → 攻击计时 → Aura／双框 → 双施法条 → 动作栏的纵向焦点。新增 display `9/9`、布局 `46/46 pass`，V2 像素回归一致；TrinketMenu／AutoBar／DoiteDPS 只做可选 feature-detect，ImageGen `0/5`，无 runtime 或 SavedVariables 写入 | 用户确认 V3 的 DoiteDPS、攻击条、Aura 外肩、双施法条与动作区总体层级；确认前不锁定 `P2`、不生成正式资产 |
+| 动作条／随身栏 | `ACTION-BARS-CORE-SIM-V3` 已于 `2026-08-08` 获用户确认，锁定 DoiteDPS → 攻击计时 → Aura／双框 → 双施法条 → 动作栏纵向焦点，状态 `P2 / simulation-confirmed`。display `9/9`、布局 `46/46 pass`，V2 像素回归一致；TrinketMenu／AutoBar／DoiteDPS 只做可选 feature-detect。首批 `AB.SLOT.BASE.V1` 已按真实 pfUI 基底／状态层拆分并形成 production Prompt 草案；ImageGen `0/5`，无 runtime 或 SavedVariables 写入 | 用户明确授权 `AB.SLOT.BASE.V1` 完整正文及最多五次实际生成／修复；“继续”本身不授权 ImageGen |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |
 | 其他 UI | `P0–P2`，保持 pfUI 默认实现 | 逐模块建立四份长期文档，并仅登记目标模块的接管路由 |
@@ -95,7 +95,7 @@ docs/
 - [主模块美术基线 Prompt](docs/modules/actionbars/ART_BASELINE.md)
 - [子模块美术基线 Prompt](docs/modules/actionbars/SUBMODULE_ART_BASELINES.md)
 - [详细进度](docs/modules/actionbars/PROGRESS.md)
-- [当前核心 V3 工作文件](docs/modules/actionbars/work/ACTION.BARS.CORE.V3.md)
+- [当前 AB.SLOT 基底 V1 工作文件](docs/modules/actionbars/work/ACTION.BARS.SLOT.V1.md)
 
 `NOTICE.md`、第三方 `SOURCE.md`、许可证、JSON manifest 和 Skill
 references 是法律、来源或机器契约，不属于项目说明文档，不在上表重复维护。

@@ -1,12 +1,13 @@
 # Action Bars 主模块美术基线 Prompt
 
-状态：方向草案；Action Bars 自有锁定图尚未形成。当前最高视觉依据为
+状态：`P2 / user-confirmed 2026-08-08`；Action Bars 自有锁定图尚未形成。
+当前最高视觉依据为
 [全局美术基线](../../GLOBAL_ART_BASELINE.md)，槽体材料继承已锁定的
 [Character V3](../../../assets/locked/character/角色属性面板_香草同构收敛_风格确认_v3.png)
 及其 [Character 主模块 Prompt](../character/ART_BASELINE.md)。本 Prompt 显式
-继承全局 Prompt，但在本模块当前 V3 模拟获用户确认前不视为 `P2` 锁定；V1
-贴底布局已于 `2026-08-08` 被用户否决，V2 又因未覆盖施法、攻击与 DoiteDPS
-完整战斗信息链而进入修订。
+继承全局 Prompt。用户已确认 `ACTION-BARS-CORE-SIM-V3` 的完整纵向战斗焦点，
+因此模块视觉与结构方向锁定为 `P2`；V1 贴底布局与缺少完整战斗信息链的 V2
+不再是可恢复方向。
 
 ## 主模块 Prompt
 
@@ -58,8 +59,9 @@ Bar 1 可使用左右成对的香草狮鹫端帽：旧黄铜骨架、深褐羽�
 
 ## 生产边界
 
-当前方向模拟只确认布局、物件隐喻、材料层级、配色与综合色重；它不是 source、
-runtime 或 ImageGen 输入。正式生产必须按 [SUBMODULES.md](SUBMODULES.md)
-拆分 `AB.RAIL`、`AB.SLOT`、狮鹫、消耗品卷袋、口袋、饰品护套和候选菜单；
-施法条、攻击条或 DoiteDPS 若需要视觉 adapter，也必须各自按真实 provider 尺寸、
-动态状态和 fail-open 边界另行授权。
+已确认的 V3 模拟只锁定布局、物件隐喻、材料层级、配色与综合色重；它不是
+source、runtime 或 ImageGen 输入。正式生产必须按
+[SUBMODULES.md](SUBMODULES.md) 拆分 `AB.SLOT` 基底、`AB.SLOT.STATE` 覆盖、
+`AB.RAIL`、狮鹫、消耗品卷袋、口袋、饰品护套和候选菜单。首批只准备
+`AB.SLOT.BASE.V1` 单物件基底；施法条、攻击条或 DoiteDPS 若需要视觉 adapter，
+也必须各自按真实 provider 尺寸、动态状态和 fail-open 边界另行授权。

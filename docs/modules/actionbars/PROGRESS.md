@@ -6,8 +6,8 @@
   当前目标设备 profile 已完成 `P1` 审计。
 - 用户于 `2026-08-08` 否决 `ACTION-BARS-CORE-SIM-V1` 的贴底动作条和分散、
   不同基线单位框；V2 完成上移与收拢后，用户继续要求纳入施法条、攻击条及
-  DoiteDPS。`ACTION-BARS-CORE-SIM-V3` 已完成本地确定性改版，状态为
-  `simulation-reviewed`，用户结论待确认，因此模块尚未锁定 `P2`。
+  DoiteDPS。用户已于 `2026-08-08` 以“依照这个设计继续进行”确认
+  `ACTION-BARS-CORE-SIM-V3`，模块状态现为 `simulation-confirmed / P2`。
 - 推荐方向仍是“自适应远征战斗甲板＋炼金卷袋＋饰品双护套”，V3 在 V2
   中下战斗焦点上增加单一纵向信息栈：DoiteDPS → 攻击计时 → Aura／双方状态 →
   双施法条 → 姿态／技能栏。这是用户主动应用的一次性 preset，不由维护循环
@@ -25,7 +25,8 @@
   TrinketMenu；AutoBar 作为可选消耗品 provider，近期无活跃布局也不被强制
   启用。
 - 当前实际 ImageGen：`0/5`；没有正式候选、source、runtime、接管路由或
-  addon 变更。
+  addon 变更。首批 `AB.SLOT.BASE.V1` 已拆成单一普通／空槽基底并完成正式
+  生产正文草案；本次“继续”只推进到正文授权门禁，不构成 ImageGen 授权。
 
 ## 已确定的设计决策
 
@@ -47,6 +48,11 @@
   脱战淡出或 mouseover。
 - 自适应 Rail 与逐槽边框分离。V3 推荐 preset 默认关闭狮鹫以减轻中央重量；
   狮鹫仍可在 unlock 中为合法水平主栏开启，过窄／竖向布局自动关闭。
+- Bar `1–10` 的逐槽基底与状态覆盖分离：基底只映射
+  `pfActionBar<BarName>Button1..12.backdrop`；`f.highlight`、`f.active`、
+  `f.equipped`、`f.icon` 顶点色、`f.cd` 和既有按键动画继续表达悬停、当前技能、
+  装备、不可用／距离／法力、冷却与按下。pfUI 没有独立 disabled Button cell，
+  不为其生产假状态。
 - AutoBar／TrinketMenu 存在时只做 feature-detect 视觉桥接，不复制其数据表、
   不竞争其全局 hook；缺失时 fallback 只处理明确绑定的真实物品／装备槽。
 - 饰品更换菜单保留 provider 原功能并 fail-open；其候选层几何尚未锁定，不能
@@ -56,16 +62,17 @@
 
 | ID | 阶段 | 当前证据 | 下一门禁 |
 |---|---:|---|---|
-| `AB.RAIL` | `P1 / simulation-reviewed` | pfUI `BarLayoutSize` 公式与 V3 中下焦点预演 | 用户确认自适应 Rail 的综合色重；再测 border／scale 极值 |
-| `AB.SLOT／STATE` | `P1 / simulation-reviewed` | 真实 Action Button 状态已审计；Character V3 材料继承 | 冻结图标安全区、四态 atlas 与 runtime 覆盖顺序 |
-| `AB.ENDCAP.GRYPHON` | `P1 / simulation-reviewed` | pfUI 左右端帽对象、64 UI 默认能力；V3 preset 默认关闭 | 用户确认默认无狮鹫、unlock 可选开启的规则 |
+| `AB.RAIL` | `P2 / direction-locked` | pfUI `BarLayoutSize` 公式与用户确认的 V3 中下焦点；与逐槽资产分批 | `AB.SLOT` 后另写可伸缩 Rail 正文并测 border／scale 极值 |
+| `AB.SLOT` | `P2 / prompt-draft` | Bar `1–10` 真按钮／backdrop、`18–48 UI` 图标范围、约 `90%` 图标覆盖区与 Character V3 材料继承已冻结；`AB.SLOT.BASE.V1` 正文完整性预检通过 | 用户明确授权该版本正文及最多五次修复预算 |
+| `AB.SLOT.STATE` | `P2 / scoped` | highlight／active／equipped／icon tint／cooldown／按键动画的真实覆盖顺序已冻结 | 基底 source 接受后另写悬停／激活覆盖合同；不生产假 disabled cell |
+| `AB.ENDCAP.GRYPHON` | `P2 / direction-locked` | pfUI 左右端帽对象、64 UI 默认能力；用户确认的 V3 preset 默认关闭 | `AB.SLOT／RAIL` 后另行授权可选端帽正文 |
 | `AB.STANCE／PET` | `P1` | Bar `11／12` 与 provider 状态已审计 | 职业最少／最多数量和自动施法实机排版 |
-| `AB.CONSUMABLE.RACK／POCKET` | `P1 / simulation-reviewed` | AutoBar 1–24 真按钮与 V3 沿用的 `5×2` 上移实例 | 用户确认卷袋位置／隐喻；再冻结 popup 支持上限 |
-| `AB.TRINKET.DOCK` | `P1 / simulation-reviewed` | TrinketMenu 槽 `13／14` 与 V3 沿用的上移实例 | 用户确认双护套位置和重量 |
+| `AB.CONSUMABLE.RACK／POCKET` | `P2 / direction-locked` | AutoBar 1–24 真按钮与用户确认的 `5×2` 上移实例 | `AB.SLOT／RAIL` 后冻结 popup 支持上限并另行授权 |
+| `AB.TRINKET.DOCK` | `P2 / direction-locked` | TrinketMenu 槽 `13／14` 与用户确认的上移双护套实例 | 另行编写双护套正文；候选菜单继续独立 |
 | `AB.TRINKET.MENU` | `P1` | provider 已证实可换装／排队 | 记录 0／典型／最大候选数、方向和战斗限制 |
-| `AB.FOCUS.CASTBAR` | `P1 / simulation-reviewed` | 玩家／目标／Focus 真实对象、继承宽度、图标／文字／计时／延迟已审计；V3 双框下沿实例 | 用户确认双条贴框高度；以后独立决定是否只布局或另做细 Rail 换肤 |
-| `AB.FOCUS.SWING` | `P1 / simulation-reviewed` | 主手／副手／ranged 真实对象及 `200×12 UI` 已审计；V3 中心双细轨 | 用户确认攻击计时高度与 ranged 复用；实机验证近战／远程切换 |
-| `AB.DOITEDPS.TIMELINE` | `P1 / simulation-reviewed` | 已安装 provider 的 `318×46 UI` 根 Frame、Ready／Forecast／资源及 mover 设置已审计 | 用户确认中心落位；以后仅 feature-detect 位置 preset 或独立换肤合同 |
+| `AB.FOCUS.CASTBAR` | `P2 / direction-locked` | 玩家／目标／Focus 真实对象与用户确认的 V3 双框下沿实例 | 以后独立决定只做一次性布局 preset 或另授权细 Rail 换肤 |
+| `AB.FOCUS.SWING` | `P2 / direction-locked` | 主手／副手／ranged 真对象、`200×12 UI` 与用户确认的中心双细轨 | 实机验证近战／远程复用；若换肤则另立合同 |
+| `AB.DOITEDPS.TIMELINE` | `P2 / direction-locked` | 已安装 provider 的 `318×46 UI` 根 Frame及用户确认的中心落位 | 以后只做 feature-detect 一次性位置 preset 或独立换肤合同 |
 | `AB.MOVER／CONFIG` | `P1` | pfUI `UpdateMovable` 与 unlock 已审计 | 设计只在 unlock 出现的把手和一次性预设入口 |
 
 ## 当前方向预演
@@ -87,11 +94,11 @@
 
 ## 下一门禁
 
-1. 用户确认或继续修订 `ACTION-BARS-CORE-SIM-V3` 的 DoiteDPS、攻击计时、
-   Aura 外肩、双施法条、玩家／目标框、动作栏和左右随身栏组成的纵向战斗焦点。
-2. 确认后把可见条款写回主／子模块 Prompt，模块才进入 `P2`；若布局或隐喻
-   变化则先出新的 `0` 次 ImageGen 模拟。
-3. 分批完成 `AB.SLOT＋RAIL`、狮鹫、消耗品卷袋、饰品护套的 source／atlas
-   合同；每批生产正文另行取得授权。
+1. 用户明确授权 `AB.SLOT.BASE.V1` 的完整执行正文、固定 Character V3 输入及
+   最多 `5` 次实际 ImageGen 生成／修复预算；“继续”本身不授权生图。
+2. 授权后才使用固定 `@openai/codex@0.143.0` 执行首稿并按第一失败门禁做有界
+   修复；每次实际生成前提交该次完整正文，任一候选通过即停止。
+3. 基底 source 接受后，再分别准备 `AB.SLOT.STATE` 与 `AB.RAIL`；狮鹫、消耗品
+   卷袋和饰品护套继续各自形成独立 source／atlas 合同并逐批授权。
 4. 正式候选接受后才允许登记 Action Bars 精确接管路由和 runtime adapter；
    未接管 Bar 与第三方 provider 始终 fail-open。
