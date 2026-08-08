@@ -1,0 +1,77 @@
+{
+  "schema": "aeui-action-slot-candidate-review-spec-v1",
+  "component": "AB.SLOT.BASE.V1",
+  "target": {
+    "screen": [1920, 1080],
+    "ui_scale": 0.81269841269841,
+    "simulation": "generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V3/action_bars_core_sim_v3.png",
+    "simulation_spec": "tools/specs/action_bars_core_simulation_v3.json"
+  },
+  "runtime_texture": {
+    "size": [128, 128],
+    "sampling": "full UV",
+    "candidate_role": "review-only deterministic whole-object normalization; never source or runtime"
+  },
+  "scenarios": [
+    {
+      "id": "single-minimum-1x1",
+      "buttons": 1,
+      "cols": 1,
+      "rows": 1,
+      "icon_ui": 20,
+      "border_ui": 2,
+      "spacing_ui": 2,
+      "local_scale": 1.0,
+      "states": ["empty"],
+      "keys": [""]
+    },
+    {
+      "id": "main-confirmed-12x1",
+      "buttons": 12,
+      "cols": 12,
+      "rows": 1,
+      "icon_ui": 36,
+      "border_ui": 2,
+      "spacing_ui": 2,
+      "local_scale": 1.2,
+      "states": ["active", "cooldown", "normal", "cooldown", "normal", "pressed", "cooldown", "normal", "range", "oom", "equipped", "normal"],
+      "keys": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "="]
+    },
+    {
+      "id": "compact-supported-6x2",
+      "buttons": 12,
+      "cols": 6,
+      "rows": 2,
+      "icon_ui": 30,
+      "border_ui": 2,
+      "spacing_ui": 2,
+      "local_scale": 1.1,
+      "states": ["active", "normal", "cooldown", "range", "normal", "equipped", "normal", "oom", "normal", "cooldown", "hover", "empty"],
+      "keys": ["1", "2", "3", "4", "5", "6", "S1", "S2", "S3", "S4", "S5", ""]
+    },
+    {
+      "id": "auxiliary-supported-4x3",
+      "buttons": 12,
+      "cols": 4,
+      "rows": 3,
+      "icon_ui": 28,
+      "border_ui": 2,
+      "spacing_ui": 2,
+      "local_scale": 1.0,
+      "states": ["normal", "normal", "normal", "normal", "normal", "hover", "normal", "cooldown", "range", "oom", "empty", "empty"],
+      "keys": ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "", ""]
+    },
+    {
+      "id": "vertical-maximum-1x12",
+      "buttons": 12,
+      "cols": 1,
+      "rows": 12,
+      "icon_ui": 48,
+      "border_ui": 2,
+      "spacing_ui": 2,
+      "local_scale": 1.0,
+      "states": ["active", "normal", "cooldown", "normal", "equipped", "range", "normal", "oom", "hover", "cooldown", "normal", "empty"],
+      "keys": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", ""]
+    }
+  ]
+}
