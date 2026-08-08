@@ -7,7 +7,7 @@
 - 工作版本：`AB-RAIL-SIM-V1`
 - 子状态：`simulation-confirmed`
 - 项目阶段：`P2`
-- 固定生产执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`；本阶段未加载、未调用
+- 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`；本阶段未加载、未调用，正式生产也不得改用其他执行器
 - 当前操作：`prepare`；记录模拟确认并冻结最终生产正文，尚未执行
 - 生成前模拟方式：`deterministic-local-geometry`
 - 模拟 ImageGen：`0/0`
@@ -296,6 +296,20 @@ Before returning the image, inspect every requirement literally: the file is exa
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
 | 无 | — | — | — | — | `0` |
+
+## 执行记录
+
+- 日期：`2026-08-08`
+- 本阶段仅执行本地确定性模拟与 display-region 校验；ImageGen `0/0`，没有
+  外部上传、候选、source、runtime 或 adapter 改动。
+- 正式 `AB.RAIL.V1` 仍为 `0/5`，等待独立生产／预算与 Image 1 上传授权。
+
+## 尝试摘要
+
+| 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
+|---|---|---|---|
+| `AB-RAIL-SIM-V1` | scene `123d1b4c…cde6`；layouts `a49088d1…e353`；display `8/8` | `user-confirmed / P2` | 不改变已确认方向；生产仍待独立授权 |
+| `AB.RAIL.V1` | ImageGen `0/5` | `not-executed` | 授权前不得生成 |
 
 ## 审查记录
 

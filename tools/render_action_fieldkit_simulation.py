@@ -134,6 +134,58 @@ def autobar_rack_geometry(config: dict[str, Any], padding: int = 6) -> dict[str,
     }
 
 
+def autobar_grouped_rack_geometry(config: dict[str, Any]) -> dict[str, Any]:
+    """Return a 24-button rack plus non-interactive type labels and seams.
+
+    AutoBar still owns one uniform button grid.  The extra geometry lives
+    outside the hit boxes and only explains the three contiguous slot ranges.
+    """
+
+    body = autobar_rack_geometry(config)
+    columns = int(config["columns"])
+    label_width = int(config.get("group_label_width_ui", 40))
+    label_gap = int(config.get("group_label_gap_ui", 2))
+    label_height = int(config.get("group_label_height_ui", 20))
+    body_offset = label_width + label_gap
+    step = 39
+    labels: list[list[int]] = []
+    dividers: list[list[int]] = []
+    groups = list(config.get("groups", []))
+
+    shifted_buttons = [
+        [box[0] + body_offset, box[1], box[2] + body_offset, box[3]]
+        for box in body["buttons"]
+    ]
+    for index, group in enumerate(groups):
+        first_slot = int(group["start"]) - 1
+        first_row = first_slot // columns
+        label_top = max(0, 4 + first_row * step)
+        labels.append([0, label_top, label_width, label_top + label_height])
+        if index < len(groups) - 1:
+            rows_in_group = math.ceil(int(group["count"]) / columns)
+            divider_top = 3 + (first_row + rows_in_group) * step
+            dividers.append(
+                [body_offset + 6, divider_top, body_offset + body["frame"][0] - 6, divider_top + 3]
+            )
+
+    return {
+        **body,
+        "frame": [body_offset + body["frame"][0], body["frame"][1]],
+        "body_frame": [body_offset, 0, body_offset + body["frame"][0], body["frame"][1]],
+        "cluster": [
+            body["cluster"][0] + body_offset,
+            body["cluster"][1],
+            body["cluster"][2] + body_offset,
+            body["cluster"][3],
+        ],
+        "buttons": shifted_buttons,
+        "group_labels": labels,
+        "group_dividers": dividers,
+        "groups": groups,
+        "body_offset": body_offset,
+    }
+
+
 def autobar_popup_geometry(config: dict[str, Any], padding: int = 4) -> dict[str, Any]:
     count = int(config["count"])
     direction = str(config["direction"])
@@ -248,6 +300,84 @@ def draw_rack(
     return frame
 
 
+def draw_grouped_rack(
+    image: Image.Image,
+    origin: tuple[int, int],
+    config: dict[str, Any],
+    factor: float,
+    fonts: dict[str, ImageFont.FreeTypeFont],
+    palette: dict[str, str],
+    *,
+    label: str = "",
+) -> dict[str, Any]:
+    geometry = autobar_grouped_rack_geometry(config)
+    x, y = origin
+    draw = ImageDraw.Draw(image, "RGBA")
+    body_raw = geometry["body_frame"]
+    body = offset_box(scale_box(body_raw, factor), x, y)
+    full = (x, y, x + round(geometry["frame"][0] * factor), y + round(geometry["frame"][1] * factor))
+
+    draw.rounded_rectangle(
+        body,
+        radius=max(7, round(10 * factor)),
+        fill=core.rgba(palette["pouch_leather"], 244),
+        outline=core.rgba(palette["pouch_dark"]),
+        width=max(2, round(3 * factor)),
+    )
+    draw.rounded_rectangle(
+        (body[0] + 3, body[1] + 3, body[2] - 3, body[3] - 3),
+        radius=max(5, round(8 * factor)),
+        outline=core.rgba(palette["pouch_fold"]),
+        width=max(1, round(2 * factor)),
+    )
+    band_height = max(5, round(8 * factor))
+    draw.rectangle(
+        (body[0] + round(8 * factor), body[1] - band_height // 2, body[2] - round(8 * factor), body[1] + band_height),
+        fill=core.rgba(palette["pouch_fold"]),
+        outline=core.rgba(palette["quiet_brass"], 150),
+        width=1,
+    )
+
+    for raw_box in geometry["group_dividers"]:
+        divider = offset_box(scale_box(raw_box, factor), x, y)
+        draw.rectangle(divider, fill=core.rgba(palette["pouch_dark"], 230))
+        draw.line((divider[0], divider[1], divider[2], divider[1]), fill=core.rgba(palette["quiet_brass"], 120), width=1)
+
+    label_boxes: list[tuple[int, int, int, int]] = []
+    for group, raw_box in zip(geometry["groups"], geometry["group_labels"]):
+        tab = offset_box(scale_box(raw_box, factor), x, y)
+        label_boxes.append(tab)
+        draw.rounded_rectangle(
+            tab,
+            radius=max(3, round(5 * factor)),
+            fill=core.rgba(palette["pouch_leather"], 245),
+            outline=core.rgba(palette["pouch_dark"]),
+            width=max(1, round(2 * factor)),
+        )
+        draw.line(
+            (tab[0] + 3, tab[1] + 2, tab[2] - 3, tab[1] + 2),
+            fill=core.rgba(palette["quiet_brass"], 170),
+            width=1,
+        )
+        text(draw, ((tab[0] + tab[2]) // 2, (tab[1] + tab[3]) // 2 + 1), str(group["label"]), fonts["micro"], palette["label"], anchor="mm")
+
+    for index, raw_box in enumerate(geometry["buttons"]):
+        box = offset_box(scale_box(raw_box, factor), x, y)
+        draw_item_button(
+            draw,
+            box,
+            index,
+            fonts,
+            palette,
+            kind="consumable",
+            cooldown=index in {1, 6, 10, 18},
+            count=("" if index in {3, 11, 19, 23} else str((index * 3 + 5) % 21 + 1)),
+        )
+    if label:
+        text(draw, ((body[0] + body[2]) // 2, full[1] - max(10, round(11 * factor))), label, fonts["tiny"], palette["label"], anchor="ms")
+    return {"full": full, "body": body, "labels": label_boxes}
+
+
 def draw_popup(
     image: Image.Image,
     origin: tuple[int, int],
@@ -316,21 +446,24 @@ def draw_trinket_menu(
     return frame
 
 
-def draw_scene(root: Path, spec: dict[str, Any], output: Path) -> dict[str, list[int]]:
+def draw_scene(root: Path, spec: dict[str, Any], output: Path) -> dict[str, Any]:
     base = core.load_spec(resolve(root, spec["base_scene_spec"]).resolve(), root)
-    base["annotations"] = {
-        "title": "动作栏 / 随身栏 · 饰品与消耗品 V1",
-        "subtitle": "两侧独立随身装备，不挤压中央技能冷却视线",
-        "note": "本地几何模拟 · 非 source / runtime · ImageGen 0/0",
-        "rules_title": "本次要确认",
-        "rules": [
-            "TrinketMenu 双槽保留原插件比例与交互",
-            "候选饰品沿当前右侧 / 向上方式展开",
-            "AutoBar 只做可选 5×2 预设，不自动启用",
-            "两套栏位独立拖动、缩放、显隐与回退",
-            "图标、数量、冷却、排队和 Tooltip 全动态",
-        ],
-    }
+    base["annotations"] = spec.get(
+        "scene_annotations",
+        {
+            "title": "动作栏 / 随身栏 · 饰品与消耗品 V1",
+            "subtitle": "两侧独立随身装备，不挤压中央技能冷却视线",
+            "note": "本地几何模拟 · 非 source / runtime · ImageGen 0/0",
+            "rules_title": "本次要确认",
+            "rules": [
+                "TrinketMenu 双槽保留原插件比例与交互",
+                "候选饰品沿当前右侧 / 向上方式展开",
+                "AutoBar 只做可选 5×2 预设，不自动启用",
+                "两套栏位独立拖动、缩放、显隐与回退",
+                "图标、数量、冷却、排队和 Tooltip 全动态",
+            ],
+        },
+    )
     canvas = base["canvas"]
     image = Image.new("RGBA", (int(canvas["width"]), int(canvas["height"])), core.rgba(canvas["fill"]))
     draw = ImageDraw.Draw(image, "RGBA")
@@ -350,7 +483,41 @@ def draw_scene(root: Path, spec: dict[str, Any], output: Path) -> dict[str, list
 
     consumable = spec["scene"]["consumable"]
     rack_factor = ui_scale * float(consumable["local_scale"])
-    rack = draw_rack(image, tuple(consumable["origin_px"]), {"count": consumable["buttons"], "columns": consumable["columns"], "rows": consumable["rows"]}, rack_factor, fonts, palette, label=consumable["label"])
+    rack_config = {
+        "count": consumable["buttons"],
+        "columns": consumable["columns"],
+        "rows": consumable["rows"],
+        "groups": consumable.get("groups", []),
+        "group_label_width_ui": consumable.get("group_label_width_ui", 40),
+        "group_label_gap_ui": consumable.get("group_label_gap_ui", 2),
+        "group_label_height_ui": consumable.get("group_label_height_ui", 20),
+    }
+    grouped = bool(rack_config["groups"])
+    if grouped:
+        rack_parts = draw_grouped_rack(
+            image,
+            tuple(consumable["origin_px"]),
+            rack_config,
+            rack_factor,
+            fonts,
+            palette,
+            label=consumable["label"],
+        )
+        rack = rack_parts["full"]
+        rack_body = rack_parts["body"]
+        rack_labels = rack_parts["labels"]
+    else:
+        rack = draw_rack(
+            image,
+            tuple(consumable["origin_px"]),
+            rack_config,
+            rack_factor,
+            fonts,
+            palette,
+            label=consumable["label"],
+        )
+        rack_body = rack
+        rack_labels = []
 
     trinket = spec["scene"]["trinket"]
     main_factor = ui_scale * float(trinket["main_scale"])
@@ -365,7 +532,13 @@ def draw_scene(root: Path, spec: dict[str, Any], output: Path) -> dict[str, list
 
     output.parent.mkdir(parents=True, exist_ok=True)
     image.convert("RGB").save(output, format="PNG", optimize=False, compress_level=9)
-    return {"actionbar": spec["scene"]["actionbar_box_px"], "consumable": list(rack), "trinket": list(dock)}
+    return {
+        "actionbar": spec["scene"]["actionbar_box_px"],
+        "consumable": list(rack),
+        "consumable_body": list(rack_body),
+        "consumable_labels": [list(box) for box in rack_labels],
+        "trinket": list(dock),
+    }
 
 
 def panel(draw: ImageDraw.ImageDraw, box: tuple[int, int, int, int], title_value: str, fonts: dict[str, ImageFont.FreeTypeFont]) -> None:
@@ -420,26 +593,58 @@ def draw_states_board(root: Path, spec: dict[str, Any], output: Path) -> None:
     text(draw, (618, 940), "合法极宽：30 列 → 1212×52 UI", fonts["tiny"], "#bdae8d", anchor="mm")
 
     # AutoBar optional recommendation and provider limits.
-    text(draw, (1005, 220), "建议预设：10 个真实分类按钮，5×2，36 UI，间隔 3 UI；只在用户主动应用时启用", fonts["small"], "#d8c49a")
-    draw_rack(image, (1015, 285), {"count": 10, "columns": 5, "rows": 2}, 1.55, fonts, palette, label="炼金师卷袋 · 不烘焙瓶子或类别")
-    text(draw, (1015, 454), "可见按钮簇 192×75 UI；自适应外壳 204×87 UI", fonts["tiny"], "#bdae8d")
+    if str(spec["version"]) == "AB-FIELDKIT-SIM-V2":
+        text(draw, (1005, 220), "修订建议：完整 24 个类别槽，4×6；每两行一组，仍由 AutoBar 选择真实物品", fonts["small"], "#d8c49a")
+        grouped_config = {
+            "count": 24,
+            "columns": 4,
+            "rows": 6,
+            "groups": spec["consumable_contract"]["recommended_profile"]["groups"],
+            "group_label_width_ui": 40,
+            "group_label_gap_ui": 2,
+            "group_label_height_ui": 20,
+        }
+        draw_grouped_rack(image, (1015, 278), grouped_config, 1.25, fonts, palette, label="24 类随身卷袋 · 三组各 8 格")
+        text(draw, (1298, 268), "应急", fonts["small"], "#e1c995")
+        text(draw, (1298, 302), "生命 / 资源 / 双恢复 / 绷带", fonts["tiny"], "#bdae8d")
+        text(draw, (1298, 330), "解毒 / 行动 / 机动 / 场景", fonts["tiny"], "#bdae8d")
+        text(draw, (1298, 384), "增益", fonts["small"], "#e1c995")
+        text(draw, (1298, 418), "战斗药剂 / 守护药剂 / 元素防护 / 卷轴", fonts["tiny"], "#bdae8d")
+        text(draw, (1298, 446), "食物 / 饮料 / 增益食物 / 合剂手动", fonts["tiny"], "#bdae8d")
+        text(draw, (1298, 500), "工具", fonts["small"], "#e1c995")
+        text(draw, (1298, 534), "武器强化 / 职业用品 / 炉石 / 坐骑", fonts["tiny"], "#bdae8d")
+        text(draw, (1298, 562), "工程 / 钓鱼 / 战场事件 / 任务物品", fonts["tiny"], "#bdae8d")
+        text(draw, (1005, 622), "标签与分隔线不接收鼠标；配置不匹配该预设时隐藏标签，退回单一自适应外壳。", fonts["tiny"], "#bdae8d")
 
-    text(draw, (1005, 510), "弹出层：复用独立薄皮口袋，不依赖 AutoBarPopupFrame 的 72×72 初始尺寸", fonts["small"], "#d8c49a")
-    popup_box = draw_popup(image, (1040, 560), {"count": 6, "direction": "TOP"}, 1.1, fonts, palette)
-    text(draw, (popup_box[2] + 24, popup_box[1] + 16), "代表 6 项", fonts["tiny"], "#bdae8d")
-    text(draw, (popup_box[2] + 24, popup_box[1] + 42), "最大 12 项", fonts["tiny"], "#bdae8d")
-    text(draw, (popup_box[2] + 24, popup_box[1] + 68), "上下左右均由 provider 决定", fonts["tiny"], "#bdae8d")
+        text(draw, (1005, 684), "分类内候选仍用原生 popup：每个主槽悬停后最多 12 个真实物品，上下左右展开", fonts["small"], "#d8c49a")
+        popup_box = draw_popup(image, (1030, 730), {"count": 6, "direction": "RIGHT"}, 0.90, fonts, palette)
+        text(draw, (popup_box[0], popup_box[3] + 24), "代表 6 项；最大 12 项；不使用固定大面板", fonts["tiny"], "#bdae8d")
 
-    text(draw, (1005, 865), "已保存但当前未启用的 24×1 布局（容量检查，不是推荐默认）", fonts["small"], "#d8c49a")
-    draw_rack(image, (1015, 915), {"count": 24, "columns": 24, "rows": 1}, 0.70, fonts, palette)
-    text(draw, (1015, 1000), "同一外壳还支持 1×24；adapter 只跟随真实按钮边界，不重写分类与位置。", fonts["tiny"], "#bdae8d")
+        text(draw, (1005, 875), "兼容而非推荐：原 5×2、24×1、1×24 与用户自定义行列继续有效", fonts["small"], "#d8c49a")
+        draw_rack(image, (1015, 930), {"count": 10, "columns": 5, "rows": 2}, 0.80, fonts, palette, label="5×2 紧凑模式")
+        draw_rack(image, (1235, 948), {"count": 24, "columns": 24, "rows": 1}, 0.45, fonts, palette, label="24×1 容量模式")
+        text(draw, (1015, 1050), "AutoBar 当前仍未启用；分类预设只在用户主动应用时写入一次，并保留恢复入口。", fonts["tiny"], "#bdae8d")
+    else:
+        text(draw, (1005, 220), "建议预设：10 个真实分类按钮，5×2，36 UI，间隔 3 UI；只在用户主动应用时启用", fonts["small"], "#d8c49a")
+        draw_rack(image, (1015, 285), {"count": 10, "columns": 5, "rows": 2}, 1.55, fonts, palette, label="炼金师卷袋 · 不烘焙瓶子或类别")
+        text(draw, (1015, 454), "可见按钮簇 192×75 UI；自适应外壳 204×87 UI", fonts["tiny"], "#bdae8d")
+
+        text(draw, (1005, 510), "弹出层：复用独立薄皮口袋，不依赖 AutoBarPopupFrame 的 72×72 初始尺寸", fonts["small"], "#d8c49a")
+        popup_box = draw_popup(image, (1040, 560), {"count": 6, "direction": "TOP"}, 1.1, fonts, palette)
+        text(draw, (popup_box[2] + 24, popup_box[1] + 16), "代表 6 项", fonts["tiny"], "#bdae8d")
+        text(draw, (popup_box[2] + 24, popup_box[1] + 42), "最大 12 项", fonts["tiny"], "#bdae8d")
+        text(draw, (popup_box[2] + 24, popup_box[1] + 68), "上下左右均由 provider 决定", fonts["tiny"], "#bdae8d")
+
+        text(draw, (1005, 865), "已保存但当前未启用的 24×1 布局（容量检查，不是推荐默认）", fonts["small"], "#d8c49a")
+        draw_rack(image, (1015, 915), {"count": 24, "columns": 24, "rows": 1}, 0.70, fonts, palette)
+        text(draw, (1015, 1000), "同一外壳还支持 1×24；adapter 只跟随真实按钮边界，不重写分类与位置。", fonts["tiny"], "#bdae8d")
 
     text(draw, (960, 1173), "本地几何模拟 · ImageGen 0/0 · 不得作为 source、runtime 或外部生成输入", fonts["small"], "#b49c70", anchor="mm")
     output.parent.mkdir(parents=True, exist_ok=True)
     image.convert("RGB").save(output, format="PNG", optimize=False, compress_level=9)
 
 
-def validate(spec: dict[str, Any], scene_boxes: dict[str, list[int]]) -> dict[str, Any]:
+def validate(spec: dict[str, Any], scene_boxes: dict[str, Any]) -> dict[str, Any]:
     checks: list[dict[str, Any]] = []
 
     def check(identifier: str, passed: bool, **details: Any) -> None:
@@ -448,12 +653,23 @@ def validate(spec: dict[str, Any], scene_boxes: dict[str, list[int]]) -> dict[st
     contract = spec["scene"]["clearance_px"]
     actionbar = scene_boxes["actionbar"]
     rack = scene_boxes["consumable"]
+    rack_body = scene_boxes["consumable_body"]
+    rack_labels = scene_boxes["consumable_labels"]
     dock = scene_boxes["trinket"]
-    check("scene.consumable-left-of-actionbar", rack[2] <= actionbar[0], rack=rack, actionbar=actionbar)
-    check("scene.consumable-clearance", actionbar[0] - rack[2] == int(contract["consumable_to_main"]), actual=actionbar[0] - rack[2])
+    if rack_labels:
+        player_left = int(contract["player_frame_left"])
+        chat = contract["chat_box"]
+        check("scene.consumable-body-left-of-player", rack_body[2] <= player_left, rack_body=rack_body, player_left=player_left)
+        check("scene.consumable-body-player-clearance", player_left - rack_body[2] == int(contract["consumable_body_to_player"]), actual=player_left - rack_body[2])
+        check("scene.consumable-body-chat-clearance", rack_body[0] - int(chat[2]) == int(contract["chat_to_consumable_body"]), actual=rack_body[0] - int(chat[2]))
+        check("scene.group-labels-clear-chat", all(box[3] <= int(chat[1]) or not boxes_overlap(box, chat) for box in rack_labels), labels=rack_labels, chat=chat)
+        check("scene.consumable-body-main-clearance", actionbar[0] - rack_body[2] == int(contract["consumable_body_to_main"]), actual=actionbar[0] - rack_body[2])
+    else:
+        check("scene.consumable-left-of-actionbar", rack[2] <= actionbar[0], rack=rack, actionbar=actionbar)
+        check("scene.consumable-clearance", actionbar[0] - rack[2] == int(contract["consumable_to_main"]), actual=actionbar[0] - rack[2])
     check("scene.trinket-right-of-actionbar", dock[0] >= actionbar[2], trinket=dock, actionbar=actionbar)
     check("scene.trinket-clearance", dock[0] - actionbar[2] == int(contract["main_to_trinket"]), actual=dock[0] - actionbar[2])
-    check("scene.shared-bottom-consumable", rack[3] == int(contract["shared_bottom_y"]), actual=rack[3])
+    check("scene.shared-bottom-consumable", rack_body[3] == int(contract["shared_bottom_y"]), actual=rack_body[3])
     check("scene.shared-bottom-trinket", dock[3] == int(contract["shared_bottom_y"]), actual=dock[3])
 
     for scenario in spec["trinket_scenarios"]:
@@ -478,11 +694,29 @@ def validate(spec: dict[str, Any], scene_boxes: dict[str, list[int]]) -> dict[st
 
     for scenario in spec["consumable_scenarios"]:
         identifier = str(scenario["id"])
-        geometry = autobar_rack_geometry(scenario) if scenario["kind"] == "rack" else autobar_popup_geometry(scenario)
+        if scenario["kind"] == "grouped-rack":
+            geometry = autobar_grouped_rack_geometry(scenario)
+        elif scenario["kind"] == "rack":
+            geometry = autobar_rack_geometry(scenario)
+        else:
+            geometry = autobar_popup_geometry(scenario)
         frame_box = [0, 0, *geometry["frame"]]
         check(f"{identifier}.count", len(geometry["buttons"]) == int(scenario["count"]), actual=len(geometry["buttons"]))
         check(f"{identifier}.buttons-contained", all(contains(frame_box, box) for box in geometry["buttons"]))
         check(f"{identifier}.no-button-overlap", all(not boxes_overlap(first, second) for index, first in enumerate(geometry["buttons"]) for second in geometry["buttons"][index + 1:]))
+        if scenario["kind"] == "grouped-rack":
+            groups = geometry["groups"]
+            slot_ranges = [
+                list(range(int(group["start"]), int(group["start"]) + int(group["count"])))
+                for group in groups
+            ]
+            flattened = [slot for slot_range in slot_ranges for slot in slot_range]
+            check(f"{identifier}.three-groups", len(groups) == 3, actual=len(groups))
+            check(f"{identifier}.eight-slots-per-group", all(len(slot_range) == 8 for slot_range in slot_ranges), ranges=slot_ranges)
+            check(f"{identifier}.groups-cover-1-24", flattened == list(range(1, 25)), actual=flattened)
+            check(f"{identifier}.labels-contained", all(contains(frame_box, box) for box in geometry["group_labels"]))
+            check(f"{identifier}.labels-clear-buttons", all(not boxes_overlap(label, button) for label in geometry["group_labels"] for button in geometry["buttons"]))
+            check(f"{identifier}.two-divider-seams", len(geometry["group_dividers"]) == 2, actual=len(geometry["group_dividers"]))
 
     check("provider.trinket-enabled", spec["current_device"]["trinket_menu"]["enabled_for_current_character"] is True)
     check("provider.autobar-remains-disabled", spec["current_device"]["auto_bar"]["enabled_for_current_character"] is False)

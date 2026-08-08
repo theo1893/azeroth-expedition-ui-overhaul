@@ -24,14 +24,15 @@
 - 目标客户端另已安装 TrinketMenu 与 AutoBar。饰品桥接优先保留正在使用的
   TrinketMenu；当前角色明确启用 TrinketMenu、禁用 AutoBar，因此 AutoBar
   只作为可选消耗品 provider，不被强制启用。
-- `AB.FIELDKIT.V1` 已完成 provider 级审计与本地确定性模拟。TrinketMenu 主栏
-  严格为水平 `92×52 UI`／垂直 `52×92 UI`、两枚 `36×36 UI` 已装备 Button、
-  `18×18 UI` Queue inset；候选为 `0–30` 个 `36 UI` Button、步距 `40 UI`，
-  当前配置四列、右侧停靠并向上增长。AutoBar 为 `1–24` 个主 Button 和最多
-  `12` 个四向线性 popup Button；推荐 `5×2` 只是一键可选预设。场景与状态板
-  已覆盖 `15` 个真实显示场景，display `15/15 pass`、布局 `60/60 pass`、
+- `AB.FIELDKIT.V1` 已完成 provider 级审计与第二版本地确定性模拟。TrinketMenu
+  主栏严格为水平 `92×52 UI`／垂直 `52×92 UI`、两枚 `36×36 UI` 已装备
+  Button、`18×18 UI` Queue inset；候选为 `0–30` 个 `36 UI` Button、步距
+  `40 UI`，当前配置四列、右侧停靠并向上增长。用户明确指出 V1 的 `5×2`
+  消耗品容量不足并要求按类型分组；V2 改用 AutoBar 完整 `24` 个主 Button 的
+  `4×6`，连续 `1–8／9–16／17–24` 分为应急／增益／工具，分类内仍由最多
+  `12` 个四向 popup 展开真实物品。display `16/16 pass`、布局 `72/72 pass`、
   violations `0`、ImageGen `0/0`；当前为 `simulation-reviewed / P2`，等待用户
-  对 `AB-FIELDKIT-SIM-V1` 的方向结论。
+  对 `AB-FIELDKIT-SIM-V2` 的方向结论。
 - `AB.SLOT.BASE.V1` 有界生产循环已在 `5/5` 停止；用户于 `2026-08-08` 明确
   “接受 AB.SLOT.BASE.V1 第5稿”，随后以“进行下一步”授权 P4→P5。exact source
   RGBA `6d4a4d16…7dc0` 已按冻结 `[200,200,824,824)` crop 确定性导出为
@@ -56,7 +57,7 @@
 - 保留 pfUI 全部 `1–12` Bar；视觉必须适配 `12×1`、`6×2`、`4×3`、竖栏、
   姿态与宠物条，不把用户锁进一种格数或行数。
 - 推荐战斗预设只在用户主动应用时写入一次：主栏 `12×1 / 36 UI`，副栏
-  `12×1 / 30 UI`，姿态条独立，消耗品 `5×2`，饰品 `2×1`，辅助栏可保留
+  `12×1 / 30 UI`，姿态条独立，消耗品 `4×6 / 24 类 / 三组`，饰品 `2×1`，辅助栏可保留
   `4×3`；V3 沿用主栏 `scale=1.2`、副栏 `scale=1.1`，中心均为物理 `x=960`。
 - V3 邻接建议把 pfUI Player／Target 统一为 `280×72 UI / scale 1.05 / y=468`，
   玩家 `x=-49`、目标 `x=49`，得到物理同基线和 `80 px` 内缘间距；Action Bars
@@ -85,8 +86,14 @@
   三十列极宽为 `1212×52 UI`。左键换入槽 `13`、右键换入槽 `14`、战斗 Queue、
   八种停靠、独立 scale／方向／拖动均不改写。
 - AutoBar 的视觉外壳跟随真实 Button 边界，而不是直接相信 `AutoBarFrame`
-  边界；推荐 `5×2` 可见簇 `192×75 UI`、外壳 `204×87 UI`。Popup 使用逐 Button
-  薄口袋与 `3 UI` 短连接带，不生成固定整张背景。
+  边界；推荐 `4×6` 可见簇 `153×231 UI`、主体外壳 `165×243 UI`，三枚
+  `40×20 UI` 非交互标题皮签使完整视觉边界为 `207×243 UI`。分组签名不匹配
+  即隐藏标题与分隔；Popup 使用逐 Button 薄口袋与 `3 UI` 短连接带，不生成
+  固定整张背景。
+- 推荐分类只重排 AutoBar 已有类别 ID；职业资源／用品按职业 profile 选取。
+  已审计版本没有独立 `FLASK` 类别；每个主槽原生允许最多 `16` 个类别字符串或
+  数字 item ID，因此“合剂手动”只由用户在 AutoBar 配置中拖入真实物品，AEUI
+  不按名称猜测。
 - `AB-RAIL-SIM-V1` 已于 `2026-08-08` 完成本地确定性渲染：Rail 映射到真实
   `bar.backdrop`，独立栏在 Bar Frame 四周各外扩 border；Bar 1／6 满足 pfUI
   原合并条件时改用单一外围 Rail，不产生内部中缝。等比例板覆盖 `1×1`、`12×1`、
@@ -106,9 +113,10 @@
 | `AB.SLOT.STATE` | `P2 / scoped` | highlight／active／equipped／icon tint／cooldown／按键动画的真实覆盖顺序已冻结 | 基底 P6 已验证；如需独立换肤再写悬停／激活覆盖合同，不生产假 disabled cell |
 | `AB.ENDCAP.GRYPHON` | `P2 / direction-locked` | pfUI 左右端帽对象、64 UI 默认能力；用户确认的 V3 preset 默认关闭 | `AB.SLOT／RAIL` 后另行授权可选端帽正文 |
 | `AB.STANCE／PET` | `P1` | Bar `11／12` 与 provider 状态已审计 | 职业最少／最多数量和自动施法实机排版 |
-| `AB.CONSUMABLE.RACK／POCKET／POPUP` | `P2 / simulation-reviewed` | [work](work/ACTION.BARS.FIELDKIT.V1.md)；AutoBar `1–24` 主 Button、`1–12` popup、真实边界公式与可选 `5×2` 实例；当前 provider disabled；display 全场景 pass，ImageGen `0/0` | 用户接受或修订 `AB-FIELDKIT-SIM-V1`；确认前不启用 AutoBar、不执行 `AB.CONSUMABLE.KIT.V1` |
-| `AB.TRINKET.DOCK` | `P2 / simulation-reviewed` | [work](work/ACTION.BARS.FIELDKIT.V1.md)；现用 TrinketMenu 的 `92×52／52×92 UI` 双槽、Queue、当前 scale／方向及左右各 `16 px` 战斗甲板邻接均已模拟 | 用户接受或修订 `AB-FIELDKIT-SIM-V1`；确认前不执行 `AB.TRINKET.KIT.V1` |
-| `AB.TRINKET.MENU` | `P2 / simulation-reviewed` | provider `0／1／8／30`、自动／手动列数、横竖方向、最大三十列、停靠与战斗 Queue 已冻结；display 全场景 pass | 与双槽方向一起等待用户确认；生产与外部上传另行授权 |
+| `AB.CONSUMABLE.RACK／POCKET／POPUP` | `P2 / simulation-reviewed` | [work](work/ACTION.BARS.FIELDKIT.V1.md)；V1 `5×2` 已按用户要求修订；V2 使用 AutoBar `24` 主 Button 的 `4×6` 满容量布局及 `1–12` popup，主体 `165×243 UI`；当前 provider disabled；display 全场景 pass，ImageGen `0/0` | 用户接受或修订 `AB-FIELDKIT-SIM-V2`；确认前不启用 AutoBar、不执行 `AB.CONSUMABLE.KIT.V1` |
+| `AB.CONSUMABLE.GROUP` | `P2 / simulation-reviewed` | 推荐 profile 的 `1–8／9–16／17–24` 对应应急／增益／工具；三枚标题皮签与两条分隔均不接收鼠标；签名失配自动退回无标签外壳；AutoBar 无原生 `FLASK` 类别，合剂只走 provider 原生的手动物品 ID | 与 V2 一起等待用户方向确认；确认前不写 profile、不创建 runtime FontString |
+| `AB.TRINKET.DOCK` | `P2 / simulation-reviewed` | [work](work/ACTION.BARS.FIELDKIT.V1.md)；现用 TrinketMenu 的 `92×52／52×92 UI` 双槽、Queue、当前 scale／方向与主栏右侧 `16 px` 邻接均已模拟；V2 未改变饰品方向 | 与 Field Kit V2 一起等待用户确认；确认前不执行 `AB.TRINKET.KIT.V1` |
+| `AB.TRINKET.MENU` | `P2 / simulation-reviewed` | provider `0／1／8／30`、自动／手动列数、横竖方向、最大三十列、停靠与战斗 Queue 已冻结；display 全场景 pass；V2 未改变 | 与双槽方向一起等待用户确认；生产与外部上传另行授权 |
 | `AB.FOCUS.CASTBAR` | `P2 / direction-locked` | 玩家／目标／Focus 真实对象与用户确认的 V3 双框下沿实例 | 以后独立决定只做一次性布局 preset 或另授权细 Rail 换肤 |
 | `AB.FOCUS.SWING` | `P2 / direction-locked` | 主手／副手／ranged 真对象、`200×12 UI` 与用户确认的中心双细轨 | 实机验证近战／远程复用；若换肤则另立合同 |
 | `AB.DOITEDPS.TIMELINE` | `P2 / direction-locked` | 已安装 provider 的 `318×46 UI` 根 Frame及用户确认的中心落位 | 以后只做 feature-detect 一次性位置 preset 或独立换肤合同 |
@@ -143,17 +151,19 @@
 - Rail 模拟像素同样只承担方向确认，不能切片、晋级、导出或作为 ImageGen 输入；
   用户已于 `2026-08-08` 接受 `AB-RAIL-SIM-V1`，但没有接受这些像素；下一设备
   只依赖已跟踪的文字化确认与冻结正文，因此没有发布 handoff。
-- `AB.FIELDKIT.V1` specification：
-  `tools/specs/action_fieldkit_v1_simulation.json`。
+- `AB.FIELDKIT.V1` 当前 specification：
+  `tools/specs/action_fieldkit_v2_simulation.json`。
 - 战斗场景：
-  `generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/simulation/AB-FIELDKIT-SIM-V1/AB.FIELDKIT.V1.sim-v1.scene.png`
-  （SHA `91a596b9…dce`）；provider 状态板：同目录
-  `AB.FIELDKIT.V1.sim-v1.provider-states.png`（SHA `64a39772…927`）。
-- display 合同：`tools/specs/action_fieldkit_v1_sim_display_region.json`；
-  `15/15 pass`、violations `0`。精确布局报告 `60/60 pass`、violations `0`；
+  `generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/simulation/AB-FIELDKIT-SIM-V2/AB.FIELDKIT.V1.sim-v2.scene.png`
+  （SHA `9fe4d159…164d`）；provider 状态板：同目录
+  `AB.FIELDKIT.V1.sim-v2.provider-states.png`（SHA `16a90762…f467`）。
+- display 合同：`tools/specs/action_fieldkit_v2_sim_display_region.json`；
+  `16/16 pass`、violations `0`。精确布局报告 `72/72 pass`、violations `0`；
   ImageGen `0/0`，没有上传、source、runtime、adapter、SavedVariables 或游戏改动。
+- V1 两张模拟仍可由旧 specification 确定性重建且 SHA 不变；其 `5×2` 推荐已因
+  用户容量／分组要求进入修订，不再是当前方向。
 - Field Kit 模拟像素只承担方向确认，不能切片、晋级、导出或作为 ImageGen
-  输入；当前等待用户对具体 `AB-FIELDKIT-SIM-V1` 作出接受／修订结论。
+  输入；当前等待用户对具体 `AB-FIELDKIT-SIM-V2` 作出接受／修订结论。
 
 ## 下一门禁
 
@@ -162,7 +172,7 @@
    （SHA `dc9615ac…4d5d`）与同目录 P6 evidence JSON（SHA `73a8f942…0d0b`）；
    静态截图与用户交互确认的证明范围保持分离。
 2. `AB.FIELDKIT.V1` 已达到 `simulation-reviewed / P2`。下一门禁是用户明确
-   接受或修订 `AB-FIELDKIT-SIM-V1` 的两张本地模拟；确认只冻结工作文件中列出的
+   接受或修订 `AB-FIELDKIT-SIM-V2` 的两张本地模拟；确认只冻结工作文件中列出的
    布局、材料层级、轮廓、配色、视觉重量、整合与状态印象，不接受模拟像素。
    确认前不得启用 AutoBar、改变 TrinketMenu 保存值或执行 production。
 3. 若 Field Kit 方向确认，分别冻结 `AB.TRINKET.KIT.V1` 与

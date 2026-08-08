@@ -92,14 +92,21 @@ Button 脚本、命中区、分页、拖放、位置、尺寸和 SavedVariables 
 
 | ID | provider／对象 | 合同 |
 |---|---|---|
-| `AB.CONSUMABLE.RACK` | 已加载并自行显示的 `AutoBarFrame`＋`AutoBarFrameButton1..24` | 推荐一次性 `5×2 / 36 UI / gap 3 UI`，但支持 `1–24` 个真实 Button 与合法行列。因 `alignButtons` 可把子 Button 放到 `AutoBarFrame` 边界外，装饰 Frame 必须在配置变化时读取真实可见 Button 边界；不得持续重写位置／尺寸，也不得启用当前禁用的 provider |
+| `AB.CONSUMABLE.RACK` | 已加载并自行显示的 `AutoBarFrame`＋`AutoBarFrameButton1..24` | 推荐一次性满容量 `4×6 / 24 Button / 36 UI / gap 3 UI`，同时支持 `1–24` 个真实 Button 与合法行列。推荐按钮簇外壳为 `165×243 UI`。因 `alignButtons` 可把子 Button 放到 `AutoBarFrame` 边界外，装饰 Frame 必须在配置变化时读取真实可见 Button 边界；不得持续重写位置／尺寸，也不得启用当前禁用的 provider |
+| `AB.CONSUMABLE.GROUP` | 推荐 profile 的连续槽段 `1–8／9–16／17–24`；三个非交互标题 Frame／FontString 与两条底层分隔带 | 只在 Button 数、`4×6` 行列与分组 profile 签名全部匹配时显示“应急／增益／工具”；每组两行八格。标题位于命中盒外，分隔带只占两组之间既有 `3 UI` gap，不接收鼠标。任一配置不匹配即隐藏标题／分隔，退回单一自适应外壳，不能给用户自定义类别贴错标签 |
 | `AB.CONSUMABLE.POCKET` | `AutoBarFrameButton1..24` | 显示 provider 选出的真实物品图标、数量、冷却、可用性和 Tooltip；槽底不含物品图标、名称或类别。V1 不创建自有 fallback Button |
 | `AB.CONSUMABLE.POPUP` | `AutoBarPopupFrame_Button1..12` | 复用每个真实候选 Button 的薄口袋与 `3 UI` 短连接带，支持上下左右线性增长；不得把 XML 初始 `72×72 UI` Frame 当作实际弹出边界，不复制分类表或重挂 `PickupContainerItem` |
 
-推荐十类是战斗布局预设，不是硬编码物品分类：治疗、资源、复原／应急、绷带、
-食物、饮料、战斗药剂、防护药剂、合剂／抗性、职业或工程工具。AutoBar 的真实
-类别与用户配置优先。AutoBar 缺失／禁用时 V1 不显示；以后若建立 AEUI 钉选
-fallback，必须另立功能合同，且不得凭名称猜测未知消耗品。
+推荐 profile 使用 AutoBar 现有类别 ID 组成三个八格槽段：`应急` 放生命／职业
+资源／双恢复／绷带／解毒／行动／机动；`增益` 放战斗药剂／守护药剂／元素
+防护／卷轴／食物／饮料／增益食物／合剂手动；`工具` 放武器强化／职业用品／
+炉石／坐骑／工程／钓鱼／战场事件／任务物品。职业资源和职业用品按
+`AutoBarProfile.<CLASS>` 选取，不相关类别不写入。已审计的 AutoBar `1.31`
+没有独立 `FLASK` 类别；但每个主槽原生允许最多 `16` 个类别字符串或数字 item
+ID，配置页也能把背包物品拖入槽位。因此“合剂手动”只接受用户通过 AutoBar
+配置拖入的真实合剂 item ID，不凭名称猜测。此 profile 只在用户主动应用时写入一次，
+AutoBar 的真实类别、物品顺序和用户后续配置始终优先；缺失／禁用时 V1 不显示。
+以后若建立 AEUI 钉选 fallback，必须另立功能合同。
 
 ## 饰品双槽
 
@@ -118,8 +125,10 @@ TrinketMenu 已经接管 `UseInventoryItem`、背包更新、装备更新与排�
 ## 推荐布局而非强制布局
 
 - `战斗甲板`：Bar 1 为屏幕中下部居中 `12×1` 主栏；Bar 6 为其上方 `12×1`
-  副栏；姿态／宠物条独立位于上缘；消耗品卷袋在左，饰品双槽在右。目标设备
-  V3 沿用主栏物理 `y=827`、Button 约 `39 px`、底边净空 `210 px`。
+  副栏；姿态／宠物条独立位于上缘；满容量消耗品卷袋以 `4×6` 竖向置于左侧，
+  饰品双槽在右。目标设备 V3 沿用主栏物理 `y=827`、Button 约 `39 px`、底边
+  净空 `210 px`；卷袋主体为物理 `[531,673,665,870]`，与聊天框右缘净空
+  `5 px`、与玩家框左缘净空 `16 px`，三枚标题皮签均在聊天框 `y=824` 上缘前结束。
 - `战斗视线邻接`：Player／Target 继续由 pfUI UnitFrame provider 所有；推荐
   preset 仅一次性把两者置于同一基线并收拢到目标设备 `80 px` 内缘间距，
   不由 Action Bars adapter 重画、重挂 Parent 或在维护循环中持续改位置。

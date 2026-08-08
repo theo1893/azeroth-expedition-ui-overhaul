@@ -1,0 +1,313 @@
+{
+  "schema": "aeui-action-fieldkit-simulation-v1",
+  "version": "AB-FIELDKIT-SIM-V2",
+  "batch": "AB.FIELDKIT.V1",
+  "operation": "simulate",
+  "purpose": "deterministic non-production preview of a full-capacity, type-grouped AutoBar field kit beside the accepted lower-center combat layout",
+  "base_scene_spec": "tools/specs/action_bars_core_simulation_v3.json",
+  "imagegen": {
+    "used": 0,
+    "limit": 0
+  },
+  "outputs": {
+    "scene": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/simulation/AB-FIELDKIT-SIM-V2/AB.FIELDKIT.V1.sim-v2.scene.png",
+    "states": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/simulation/AB-FIELDKIT-SIM-V2/AB.FIELDKIT.V1.sim-v2.provider-states.png",
+    "layout_report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/simulation/AB-FIELDKIT-SIM-V2/layout-report.json",
+    "display_report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/simulation/AB-FIELDKIT-SIM-V2/display-region-report.json"
+  },
+  "target": {
+    "client": "Turtle WoW 1.18.1 / Interface 11200",
+    "resolution": [1920, 1080],
+    "ui_scale": 0.81269841269841,
+    "coordinate_note": "scene origins use physical pixels; provider geometry and scenario boards use UI units before UIParent and provider-local scale"
+  },
+  "scene_annotations": {
+    "title": "动作栏 / 随身栏 · 分组式满容量卷袋 V2",
+    "subtitle": "24 个类别槽按应急、增益、工具分组；分类内候选仍由 AutoBar 展开",
+    "note": "本地几何模拟 · 非 source / runtime · ImageGen 0/0",
+    "rules_title": "本次要确认",
+    "rules": [
+      "消耗品由 5×2 修订为完整 4×6 / 24 类",
+      "每两行八格组成应急、增益、工具一组",
+      "分组标签与分隔线不接收鼠标、不覆盖按钮",
+      "分类不匹配预设时隐藏标签并退回单一外壳",
+      "AutoBar 仍不自动启用；饰品设计保持 V1 结论"
+    ]
+  },
+  "current_device": {
+    "trinket_menu": {
+      "installed": true,
+      "enabled_for_current_character": true,
+      "provider_version": "3.3 Turtle custom",
+      "main_orientation": "HORIZONTAL",
+      "main_scale": 0.9043710231781006,
+      "menu_orientation": "VERTICAL",
+      "menu_scale": 1.0,
+      "set_columns": true,
+      "columns": 4,
+      "main_dock": "BOTTOMRIGHT",
+      "menu_dock": "BOTTOMLEFT",
+      "keep_docked": true,
+      "keep_open": false,
+      "menu_on_shift": false,
+      "locked": false,
+      "cooldown_count": true,
+      "large_cooldown": true,
+      "show_hotkeys": false,
+      "candidate_count_note": "not observable from SavedVariables; simulation counts are exact provider-supported instances, not a claim about the currently bagged count"
+    },
+    "auto_bar": {
+      "installed": true,
+      "enabled_for_current_character": false,
+      "provider_version": "1.31",
+      "saved_rows": 1,
+      "saved_columns": 24,
+      "saved_button_width_ui": 36,
+      "saved_button_height_ui": 36,
+      "saved_gapping_ui": 3,
+      "saved_align_buttons": 5,
+      "saved_popup_direction": "TOP",
+      "saved_frame_locked": true,
+      "activation_policy": "never enable or rewrite the provider without an explicit user action"
+    }
+  },
+  "locked_authority": {
+    "image": "assets/locked/character/角色属性面板_香草同构收敛_风格确认_v3.png",
+    "sha256": "b5c364482adaace09af9b5196d2e8d4f7ef79d3b21706e189d94c106ba6ec2ba",
+    "role": "read-only material and visual-DNA authority; no pixels are pasted, traced, transformed or uploaded",
+    "accepted_action_slot": {
+      "path": "addon/AzerothExpeditionUI/Media/ActionBars/ActionSlotBaseV1.tga",
+      "sha256": "5c49a1db452560251422060545625b311e182ef5b8689be996aeda005b8e23ca",
+      "role": "read-only neighboring runtime identity; lower authority than the locked Character V3 baseline and not an ImageGen input"
+    }
+  },
+  "palette": {
+    "scene_sky_top": "#172620",
+    "scene_sky_bottom": "#20251e",
+    "rail": "#352218",
+    "leather": "#3a271c",
+    "brass": "#87673e",
+    "parchment": "#c6ab76",
+    "ink": "#28190f",
+    "muted_ink": "#b7aa8b",
+    "label": "#e0c994",
+    "pouch_leather": "#563522",
+    "pouch_fold": "#745037",
+    "pouch_dark": "#24150f",
+    "trinket_leather": "#302019",
+    "trinket_insert": "#443025",
+    "quiet_brass": "#8a6840",
+    "warm_edge": "#c09155",
+    "queue": "#c09a52"
+  },
+  "scene": {
+    "actionbar_box_px": [713, 827, 1207, 870],
+    "placement_policy": "one-time opt-in recommendation only; both provider roots remain independently movable and scalable",
+    "consumable": {
+      "origin_px": [497, 673],
+      "buttons": 24,
+      "columns": 4,
+      "rows": 6,
+      "button_width_ui": 36,
+      "button_height_ui": 36,
+      "gapping_ui": 3,
+      "group_label_width_ui": 40,
+      "group_label_gap_ui": 2,
+      "group_label_height_ui": 20,
+      "groups": [
+        {"id": "emergency", "label": "应急", "start": 1, "count": 8},
+        {"id": "buffs", "label": "增益", "start": 9, "count": 8},
+        {"id": "utility", "label": "工具", "start": 17, "count": 8}
+      ],
+      "local_scale": 1.0,
+      "show_popup": false,
+      "label": "可选 AutoBar · 24 类 / 三组"
+    },
+    "trinket": {
+      "origin_px": [1223, 832],
+      "main_orientation": "HORIZONTAL",
+      "main_scale": 0.9043710231781006,
+      "menu_orientation": "VERTICAL",
+      "menu_scale": 1.0,
+      "menu_count": 8,
+      "set_columns": true,
+      "columns": 4,
+      "show_menu": false,
+      "label": "现用 TrinketMenu · 双槽护套"
+    },
+    "clearance_px": {
+      "chat_box": [38, 824, 526, 1044],
+      "player_frame_left": 681,
+      "chat_to_consumable_body": 5,
+      "consumable_body_to_player": 16,
+      "consumable_body_to_main": 48,
+      "main_to_trinket": 16,
+      "shared_bottom_y": 870
+    }
+  },
+  "trinket_contract": {
+    "provider": "TrinketMenu 3.3",
+    "main_frame": "TrinketMenu_MainFrame",
+    "main_buttons": ["TrinketMenu_Trinket0", "TrinketMenu_Trinket1"],
+    "inventory_slots": [13, 14],
+    "main_frame_horizontal_ui": [92, 52],
+    "main_frame_vertical_ui": [52, 92],
+    "button_ui": [36, 36],
+    "main_padding_ui": 8,
+    "main_gap_ui": 4,
+    "queue_overlay_ui": [18, 18],
+    "queue_offset_from_button_top_left_ui": [-2, -2],
+    "menu_frame": "TrinketMenu_MenuFrame",
+    "menu_buttons": "TrinketMenu_Menu1..30",
+    "max_candidates": 30,
+    "menu_step_ui": 40,
+    "menu_frame_formula_vertical": "width=12+columns*40; height=12+ceil(count/columns)*40",
+    "menu_frame_formula_horizontal": "width=12+ceil(count/columns)*40; height=12+columns*40",
+    "automatic_columns": {
+      "1-4": 1,
+      "5-12": 2,
+      "13-18": 3,
+      "19-24": 4,
+      "25-30": 5
+    },
+    "configured_columns_range": [1, 30],
+    "current_dock_offset_ui_unlocked": [-4, 0],
+    "behavior_preserved": [
+      "left click a candidate targets inventory slot 13",
+      "right click a candidate targets inventory slot 14",
+      "combat swaps queue and complete after leaving combat",
+      "18x18 queue icon remains provider-owned",
+      "main and menu keep independent drag, scale and orientation controls",
+      "cooldowns, cooldown text, icons, tooltips and SavedVariables remain provider-owned"
+    ]
+  },
+  "consumable_contract": {
+    "provider": "AutoBar 1.31 when explicitly enabled",
+    "frame": "AutoBarFrame",
+    "buttons": "AutoBarFrameButton1..24",
+    "popup_frame": "AutoBarPopupFrame",
+    "popup_buttons": "AutoBarPopupFrame_Button1..12",
+    "max_buttons": 24,
+    "max_popup_buttons": 12,
+    "button_ui": [36, 36],
+    "gapping_ui": 3,
+    "provider_frame_formula": "width=displayedColumns*(buttonWidth+gapping)+1; height=displayedRows*(buttonHeight+gapping)+1",
+    "visible_cluster_formula": "width=buttonWidth+(displayedColumns-1)*(buttonWidth+gapping); height=buttonHeight+(displayedRows-1)*(buttonHeight+gapping)",
+    "rack_visual_padding_ui": 6,
+    "group_label_geometry_ui": {"width": 40, "gap_to_body": 2, "height": 20},
+    "popup_layout": "one-dimensional chain from the hovered base button in TOP, BOTTOM, LEFT or RIGHT direction; the base item may hide one of the twelve provider buttons",
+    "recommended_profile": {
+      "apply_only_on_explicit_user_action": true,
+      "buttons": 24,
+      "columns": 4,
+      "rows": 6,
+      "button_width_ui": 36,
+      "button_height_ui": 36,
+      "gapping_ui": 3,
+      "popup_direction": "TOP",
+      "body_frame_ui": [165, 243],
+      "full_visual_frame_with_labels_ui": [207, 243],
+      "groups": [
+        {"id": "emergency", "label": "应急", "start": 1, "count": 8},
+        {"id": "buffs", "label": "增益", "start": 9, "count": 8},
+        {"id": "utility", "label": "工具", "start": 17, "count": 8}
+      ]
+    },
+    "group_profile": [
+      {
+        "id": "emergency",
+        "label": "应急",
+        "slot_range": [1, 8],
+        "slots": [
+          {"slot": 1, "label": "生命药水", "categories": ["HEALPOTIONS", "PVP_HEALPOTIONS", "ALTERAC_HEAL"]},
+          {"slot": 2, "label": "生命道具", "categories": ["HEALTHSTONE", "WHIPPER_ROOT"]},
+          {"slot": 3, "label": "职业资源", "categories_by_class": {"mana": ["RUNES", "MANAPOTIONS", "PVP_MANAPOTIONS", "ALTERAC_MANA", "MANASTONE", "TEAS"], "warrior": ["RAGEPOTIONS"], "rogue": ["ENERGYPOTIONS"]}},
+          {"slot": 4, "label": "双恢复", "categories": ["REJUVENATION_POTIONS", "NIGHT_DRAGONS_BREATH", "UNGORO_RESTORE"]},
+          {"slot": 5, "label": "绷带", "categories": ["BANDAGES", "ALTERAC_BANDAGES", "WARSONG_BANDAGES", "ARATHI_BANDAGES"]},
+          {"slot": 6, "label": "解毒", "categories": ["ANTI_VENOM"]},
+          {"slot": 7, "label": "行动", "categories": ["ACTION_POTIONS", "PROTECTION_DAMAGE"]},
+          {"slot": 8, "label": "机动", "categories": ["SWIFTNESSPOTIONS", "ZANZA"]}
+        ]
+      },
+      {
+        "id": "buffs",
+        "label": "增益",
+        "slot_range": [9, 16],
+        "slots": [
+          {"slot": 9, "label": "战斗药剂", "categories": ["POTION_AGILITY", "POTION_STRENGTH", "POTION_SPELLPOWER", "BUFF_ATTACKPOWER", "BUFF_ATTACKSPEED"]},
+          {"slot": 10, "label": "守护药剂", "categories": ["POTION_FORTITUDE", "POTION_INTELLECT", "POTION_WISDOM", "POTION_DEFENSE", "POTION_TROLL", "BUFF_DODGE"]},
+          {"slot": 11, "label": "元素防护", "categories": ["PROTECTION_ARCANE", "PROTECTION_FIRE", "PROTECTION_FROST", "PROTECTION_NATURE", "PROTECTION_SHADOW", "PROTECTION_SPELLS", "PROTECTION_HOLY"]},
+          {"slot": 12, "label": "卷轴", "categories": ["SCROLL_AGILITY", "SCROLL_INTELLECT", "SCROLL_PROTECTION", "SCROLL_SPIRIT", "SCROLL_STAMINA", "SCROLL_STRENGTH"]},
+          {"slot": 13, "label": "食物", "categories": ["FOOD", "FOOD_PERCENT", "FOOD_CONJURED"]},
+          {"slot": 14, "label": "饮料", "categories": ["WATER", "WATER_PERCENT", "WATER_CONJURED", "WATER_SPIRIT"]},
+          {"slot": 15, "label": "增益食物", "categories": ["FOOD_STAMINA", "FOOD_AGILITY", "FOOD_MANAREGEN", "FOOD_HPREGEN", "FOOD_STRENGTH", "FOOD_INTELLIGENCE", "FOOD_SPELLPOWER", "DRINK_STAMINA", "FOOD_WATER"]},
+          {"slot": 16, "label": "合剂手动", "categories": [], "provider_entries": "numeric item IDs received through AutoBarConfigSlot drag-and-drop", "max_entries": 16, "provider_gap": "AutoBar 1.31 has no audited built-in FLASK category; only user-selected provider item IDs may populate this slot"}
+        ]
+      },
+      {
+        "id": "utility",
+        "label": "工具",
+        "slot_range": [17, 24],
+        "slots": [
+          {"slot": 17, "label": "武器强化", "categories": ["SHARPENINGSTONES", "WEIGHTSTONE", "MANA_OIL", "WIZARD_OIL"]},
+          {"slot": 18, "label": "职业用品", "categories_by_class": {"rogue": ["POISON-WOUND", "POISON-CRIPPLING", "POISON-AGITATING", "POISON-MINDNUMBING", "POISON-CORROSIVE", "POISON-DEADLY", "POISON-INSTANT", "POISON-DISSOLVENT"], "hunter": ["FOOD_PET_BREAD", "FOOD_PET_CHEESE", "FOOD_PET_FISH", "FOOD_PET_FRUIT", "FOOD_PET_FUNGUS", "FOOD_PET_MEAT", "ARROWS", "BULLETS"], "warlock": ["SOULSHARDS"]}},
+          {"slot": 19, "label": "炉石", "categories": ["HEARTHSTONE"]},
+          {"slot": 20, "label": "坐骑", "categories": ["MOUNTS_TROLL", "MOUNTS_ORC", "MOUNTS_UNDEAD", "MOUNTS_TAUREN", "MOUNTS_HUMAN", "MOUNTS_NIGHTELF", "MOUNTS_DWARF", "MOUNTS_GNOME", "MOUNTS_SPECIAL", "MOUNTS_QIRAJI"]},
+          {"slot": 21, "label": "工程", "categories": ["EXPLOSIVES"]},
+          {"slot": 22, "label": "钓鱼", "categories": ["FISHINGITEMS"]},
+          {"slot": 23, "label": "战场事件", "categories": ["HOURGLASS_SAND", "BATTLE_STANDARD", "BATTLE_STANDARD_AV"]},
+          {"slot": 24, "label": "任务物品", "categories": ["QUESTUSEITEMS", "QUESTSTARTITEMS"]}
+        ]
+      }
+    ],
+    "grouping_policy": [
+      "the three labels describe contiguous slot ranges only after the user applies this exact profile",
+      "the visual bridge never classifies items by localized names and never copies AutoBar category data",
+      "AutoBar slots may contain category strings or numeric item IDs, up to the provider limit of sixteen entries; the flask slot uses only user-dragged numeric item IDs",
+      "class-aware categories are selected from AutoBarProfile for the active class; irrelevant class categories are omitted",
+      "when button count, columns, rows or profile signature differs, group labels and divider seams hide and the adaptive ungrouped rack remains",
+      "the provider remains the sole owner of item choice, popup ordering, category icons, counts, cooldowns and tooltips"
+    ],
+    "behavior_preserved": [
+      "provider categories and current item selection",
+      "bag slots, counts, cooldowns, availability and tooltips",
+      "popup hover and optional shift behavior",
+      "drag handle, locking, docking and SavedVariables",
+      "disabled provider remains disabled"
+    ]
+  },
+  "trinket_scenarios": [
+    {"id": "main-horizontal-current-scale", "kind": "main", "orientation": "HORIZONTAL", "scale": 0.9043710231781006, "queue_slots": [0]},
+    {"id": "main-vertical-supported", "kind": "main", "orientation": "VERTICAL", "scale": 1.0, "queue_slots": [1]},
+    {"id": "menu-empty-hidden", "kind": "menu", "count": 0, "orientation": "VERTICAL", "set_columns": true, "columns": 4},
+    {"id": "menu-current-columns-one", "kind": "menu", "count": 1, "orientation": "VERTICAL", "set_columns": true, "columns": 4},
+    {"id": "menu-current-columns-eight", "kind": "menu", "count": 8, "orientation": "VERTICAL", "set_columns": true, "columns": 4},
+    {"id": "menu-current-columns-maximum", "kind": "menu", "count": 30, "orientation": "VERTICAL", "set_columns": true, "columns": 4},
+    {"id": "menu-auto-maximum", "kind": "menu", "count": 30, "orientation": "VERTICAL", "set_columns": false, "columns": 5},
+    {"id": "menu-horizontal-eight", "kind": "menu", "count": 8, "orientation": "HORIZONTAL", "set_columns": true, "columns": 4},
+    {"id": "menu-configured-columns-thirty", "kind": "menu", "count": 30, "orientation": "VERTICAL", "set_columns": true, "columns": 30}
+  ],
+  "consumable_scenarios": [
+    {"id": "rack-minimum-1x1", "kind": "rack", "count": 1, "columns": 1, "rows": 1},
+    {"id": "rack-compact-5x2", "kind": "rack", "count": 10, "columns": 5, "rows": 2},
+    {"id": "rack-recommended-grouped-4x6", "kind": "grouped-rack", "count": 24, "columns": 4, "rows": 6, "groups": [
+      {"id": "emergency", "label": "应急", "start": 1, "count": 8},
+      {"id": "buffs", "label": "增益", "start": 9, "count": 8},
+      {"id": "utility", "label": "工具", "start": 17, "count": 8}
+    ]},
+    {"id": "rack-saved-disabled-24x1", "kind": "rack", "count": 24, "columns": 24, "rows": 1},
+    {"id": "rack-maximum-1x24", "kind": "rack", "count": 24, "columns": 1, "rows": 24},
+    {"id": "popup-top-six", "kind": "popup", "count": 6, "direction": "TOP"},
+    {"id": "popup-right-maximum", "kind": "popup", "count": 12, "direction": "RIGHT"}
+  ],
+  "non_authoritative": [
+    "all flat simulated leather folds, stitches, clasps, icons, cooldowns, labels and queue glyphs",
+    "the optional AutoBar rack is not active on the current character and the simulation does not enable it",
+    "the type labels are proposed runtime FontStrings and do not claim the current saved profile already matches the preset",
+    "the provider has no audited built-in FLASK category; the manual flask slot remains empty unless the user drags real flask item IDs into it through AutoBar configuration",
+    "the eight-candidate TrinketMenu scene is a representative exact provider instance, not a claim about the current bag count",
+    "the recommended left and right placements are one-time opt-in positions and never overwrite current SavedVariables by default",
+    "no simulation pixel may be cropped, sliced, promoted, exported, uploaded or used as an ImageGen input",
+    "final Alpha, atlas cells, seams, nine-slice caps, brushwork and runtime adapter details remain unresolved"
+  ]
+}
