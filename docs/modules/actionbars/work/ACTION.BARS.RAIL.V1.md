@@ -5,10 +5,10 @@
 - 模块：`actionbars`
 - 组件 ID：`AB.RAIL.V1`
 - 工作版本：`AB-RAIL-SIM-V1`
-- 子状态：`simulation-reviewed`
+- 子状态：`simulation-confirmed`
 - 项目阶段：`P2`
 - 固定生产执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`；本阶段未加载、未调用
-- 当前操作：`simulate`
+- 当前操作：`prepare`；记录模拟确认并冻结最终生产正文，尚未执行
 - 生成前模拟方式：`deterministic-local-geometry`
 - 模拟 ImageGen：`0/0`
 - 模拟脚本：`tools/render_action_rail_simulation.py`，SHA-256
@@ -24,7 +24,8 @@
   - 等比例组合：
     `generated/actionbars/AB.RAIL/AB.RAIL.V1/simulation/AB-RAIL-SIM-V1/AB.RAIL.V1.sim-v1.layouts.png`
     ／`a49088d18d7bbb8bda49e0932d0a4d0152f7807fccf5562f6058164b6e67e353`
-- 模拟用户结论：`pending`
+- 模拟用户结论：`confirmed`；`2026-08-08`，用户原话：
+  “接受 AB-RAIL-SIM-V1”
 - 后续生产自动修复预算：最多 `5` 次实际 ImageGen 生图／修图，含首次；尚未授权
 - 当前实际生图：`0/5`
 - 流程错误：`0`
@@ -211,21 +212,27 @@
 ### 用户方向结论
 
 - 具体模拟版本：`AB-RAIL-SIM-V1`
-- 用户结论与日期：`pending`
-- 待确认并写回生产正文的可见条款：连续轻量承托轨；深胡桃褐主体；断续暗黄铜
-  窄外缘；四角极少紧固点；中心安静；无固定格线；横／竖／多行同厚；合并双栏
-  无中缝；Rail 位于 accepted Slot 之下。
+- 用户结论与日期：`confirmed / 2026-08-08`；用户原话：
+  “接受 AB-RAIL-SIM-V1”。
+- 已确认并写回 `AB.RAIL.V1` 最终生产正文的可见条款：连续轻量承托轨；深胡桃褐
+  主体；断续暗黄铜窄外缘；四角极少紧固点；中心安静；无固定格线；横／竖／
+  多行同厚；Bar 1／6 合并双栏为一块外围 Rail 且无内部中缝；Rail 位于已接受
+  Slot 与 provider 动态内容之下。
+- 确认边界：只接受上述文字化视觉方向，不接受模拟像素；模拟图仍不得复制、
+  裁切、切片、晋级、导出，或作为正式生产 edit／reference 输入。
 - 拒绝时必须改变：按用户指出的可见布局、物件隐喻、材料层级、配色、视觉重量
   或整合关系制作下一模拟版本；不进入生产循环。
 - 确认失效条件：上述任一可见关系发生实质变化。
-- 下一门禁：用户确认本地模拟方向；确认后先冻结可见条款，再单独请求
-  `AB.RAIL.V1` 最终生产正文、五次预算及指定 Image 1 外部上传授权。
+- 下一门禁：用户另行授权已冻结的 `AB.RAIL.V1` 最终生产正文与最多五次实际
+  生成／修复预算，并明确授权把指定 Character V3 锁定图作为 Image 1 上传至
+  外部 ImageGen 服务；两项授权齐全前不得执行。
 
 ## 生产正文完整性预检
 
 - 复杂度：`single-object / nine-slice / stretch`
-- 结论：`pass as production-draft`；不得执行，原因是模拟尚未获用户确认且没有
-  本组件生产／上传授权。
+- 结论：`pass as final AB.RAIL.V1 production body`；`AB-RAIL-SIM-V1` 已获用户
+  确认，全部确认条款已冻结进正文；不得执行，原因是尚无本组件生产／预算授权，
+  也没有指定 Image 1 的外部上传授权。
 
 | 门禁 | 执行正文中的证据 | 结论 |
 |---|---|---|
@@ -241,7 +248,7 @@
 - 去冗余结论：只保留会改变对象、画布、拉伸安全区、材料关系与反模式的条款；
   不把模拟像素描述成可复制目标。
 
-## 最终执行正文（production-draft，未授权）
+## 最终执行正文（`AB.RAIL.V1`，冻结待授权）
 
 ```text
 Create one production bitmap asset for Azeroth Expedition UI, component AB.RAIL.V1: exactly one reusable normal-state square nine-slice master for the background rail beneath a pfUI action bar. It is a lightweight expedition equipment support that stretches around an arbitrary legal action-bar frame. It is not a complete action bar, not a fixed twelve-slot plate, not an action-button base, not an icon, not a state atlas, not a presentation board, and not a mock game screenshot.
@@ -252,7 +259,7 @@ Create a brand-new exact 1024 by 1024 RGB canvas. Use one perfectly flat, unifor
 
 The cropped 704-by-704 object will be divided deterministically at x and y coordinates 0, 128, 576, and 704. Therefore the four corner cells are 128 by 128, the horizontal edge cells are 448 by 128, the vertical edge cells are 128 by 448, and the center cell is 448 by 448. On the full canvas, the strict two-axis stretch center is [288,288,736,736). Keep that entire center low-frequency, quiet, and free of any unique mark. Keep every non-stretchable corner decision within the four 128-by-128 corner cells. Along each edge cell, use only broad nearly uniform material bands that can stretch along that edge without revealing a repeated motif, seam, rivet chain, directional scratch, or focal highlight. Do not draw the slice boundaries or any guide.
 
-Build one coherent, lightly weighted expedition rail from outside to inside: a compact smoke-black contact edge; a shallow deep-walnut leather or dark-wood support body; one narrow, broken, muted dark-oxidized-brass line near the true outer perimeter; and a quiet smoke-brown center field. The brown material must remain dominant. Brass is only a functional trace and a few short ochre value breaks, never a bright continuous bezel, double bevel, full metal plate, jewelry frame, or gold ornament. Put at most one tiny dark fastener near each true outer corner, contained within the outermost approximately 48 source pixels of the object; omit a fastener rather than enlarging it. Do not place fasteners anywhere along the stretchable edges or center. Keep the complete visible border thickness consistent on all four sides so the same slices read equally on horizontal bars, vertical bars, 6-by-2 bars, 4-by-3 bars, one-button bars, and a merged two-row bar.
+Build one coherent, lightly weighted expedition rail from outside to inside: a compact smoke-black contact edge; a shallow deep-walnut leather or dark-wood support body; one narrow, broken, muted dark-oxidized-brass line near the true outer perimeter; and a quiet smoke-brown center field. The brown material must remain dominant. Brass is only a functional trace and a few short ochre value breaks, never a bright continuous bezel, double bevel, full metal plate, jewelry frame, or gold ornament. Put at most one tiny dark fastener near each true outer corner, contained within the outermost approximately 48 source pixels of the object; omit a fastener rather than enlarging it. Do not place fasteners anywhere along the stretchable edges or center. Keep the complete visible border thickness consistent on all four sides so the same slices read equally on horizontal bars, vertical bars, 6-by-2 bars, 4-by-3 bars, one-button bars, and a merged two-row bar. When assembled around merged pfUI Bar 1 and Bar 6, it must read as one uninterrupted outer rail with no internal horizontal seam. At runtime this rail remains the lowest visual layer beneath separate accepted action-slot backdrops and all provider-drawn icons, text, cooldowns, and interaction states.
 
 The center and stretchable edge bands must use only a few broad matte hand-painted value masses. Avoid realistic grain, pores, dense fibers, crack networks, micro-scratches, precision seams, stitches, embossed marks, long specular lines, glossy highlights, machined symmetry, smooth PBR gradients, or any detail that would smear when stretched. The upper-left warmth should be short and broken. The lower-right pressure should be dark and restrained. The master must remain visually subordinate when displayed as a runtime rail with 6 UI-unit caps behind live action-slot backdrops at icon sizes from 20 to 48 UI units and movable scales from 0.75 to 1.5.
 
@@ -284,7 +291,7 @@ Before returning the image, inspect every requirement literally: the file is exa
 
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
-| `0/5` | 未授权 | — | — | — | — | 等待模拟方向确认与独立生产／上传授权 | `simulation-reviewed` |
+| `0/5` | `AB.RAIL.V1` 冻结待授权 | — | — | — | — | 等待独立生产／预算授权与指定 Image 1 外部上传授权 | `simulation-confirmed` |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
@@ -294,8 +301,10 @@ Before returning the image, inspect every requirement literally: the file is exa
 
 - 语义／物理：pass for simulation；读作连续轻量承托轨，不冒充固定槽板。
 - 透视／图层：pass；正面、无透视，Rail 始终在槽位与动态层之下。
-- 美术一致性：displayable；胡桃褐主导、暗黄铜克制，需由用户确认方向，不能把
-  本地 primitives 当成最终笔触。
+- 美术一致性：方向已由用户确认；胡桃褐主导、暗黄铜克制，但本地 primitives
+  仍不代表最终笔触、材料微纹理或 Alpha。
 - 组件合同：`8/8 pass`、violations `0`；合并双栏无内部 Rail 中缝。
 - 动态内容：全部由 provider／accepted runtime 模拟层承担，Rail 本身为零。
-- 当前结论：`simulation-reviewed / P2`；不得生成、导出、接入 addon 或晋级 P3。
+- 用户结论：`2026-08-08` 接受 `AB-RAIL-SIM-V1`；只确认文字化可见方向。
+- 当前结论：`simulation-confirmed / P2`；`AB.RAIL.V1` 最终正文已冻结。生产／
+  预算授权与 Image 1 外部上传授权齐全前，不得生成、导出、接入 addon 或晋级 P3。

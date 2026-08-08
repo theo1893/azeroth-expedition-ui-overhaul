@@ -37,6 +37,11 @@
   `dc9615ac…4d5d`，明确确认“CD没问题. 距离红没问题. 按下反馈没问题”与
   “动作条功能验证通过”；截图静态层级和完整交互清单分开取证。当前为
   `P6 / game-validated`，P5→P6 新增外部生成 `0`，尚未执行单组件 `P6-C`。
+- 用户于 `2026-08-08` 明确“接受 AB-RAIL-SIM-V1”。该结论只冻结 Rail 的
+  连续轻量承托、深胡桃褐主体、断续暗黄铜窄外缘、极少四角紧固点、安静中心、
+  无固定格线、横／竖／多行同厚、Bar 1／6 合并无内部中缝，以及位于已接受
+  Slot／provider 动态层之下的可见方向；模拟像素没有被接受为 source、runtime
+  或生产输入。`AB.RAIL.V1` 当前为 `simulation-confirmed / P2`。
 
 ## 已确定的设计决策
 
@@ -74,12 +79,14 @@
   `0.75–1.5` 与合并双栏共 `8` 场景，display `8/8 pass`、violations `0`。
   当前 accepted `AB.SLOT` 只作为模拟中的只读相邻 runtime，姿态栏仍保留 pfUI
   fallback；本阶段 ImageGen `0/0`，没有 source、runtime、adapter 或游戏改动。
+  用户已接受该具体模拟版本，确认条款已冻结进 `AB.RAIL.V1` 最终生产正文；
+  正文、五次预算及指定 Image 1 外部上传仍待独立授权。
 
 ## 子模块状态
 
 | ID | 阶段 | 当前证据 | 下一门禁 |
 |---|---:|---|---|
-| `AB.RAIL` | `P2 / simulation-reviewed` | [work](work/ACTION.BARS.RAIL.V1.md)；`AB-RAIL-SIM-V1` 战斗场景／等比例板；真实 backdrop 外扩、合并双栏、8 个独立场景均 pass；ImageGen `0/0` | 等待用户确认轻量胡桃褐／暗黄铜、无格线、横竖同厚与双栏无中缝方向；确认后另行请求生产正文、`5` 次预算与 Image 1 上传授权 |
+| `AB.RAIL` | `P2 / simulation-confirmed` | [work](work/ACTION.BARS.RAIL.V1.md)；用户于 `2026-08-08` 接受 `AB-RAIL-SIM-V1`；真实 backdrop 外扩、合并双栏、8 个独立场景均 pass；确认方向已写入冻结的 `AB.RAIL.V1` 正文；ImageGen `0/0` | 另行取得 `AB.RAIL.V1` 最终正文与最多 `5` 次实际生成／修复授权，以及指定 Character V3 作为 Image 1 的外部上传授权 |
 | `AB.SLOT` | `P6 / game-validated` | [source](../../../assets/source/actionbars/ab-slot/ActionSlotBase_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_RuntimeManifest_v1.json)／[P6 evidence](../../../assets/references/actionbars/p6/AB-SLOT-BASE-V1_P6Evidence_v1.json)；TGA `5c49a1db…23ca`、像素 `e527c038…c35c`、实机截图 `dc9615ac…4d5d`；Bar `1–10` scoped adapter，display `5/5`、package／P6 交互均 `pass` | 独立 Rail 模拟已完成；`AB.SLOT` 进入 `P6-C` 前另行展示精确保留／删除清单并取得用户批准 |
 | `AB.SLOT.STATE` | `P2 / scoped` | highlight／active／equipped／icon tint／cooldown／按键动画的真实覆盖顺序已冻结 | 基底 P6 已验证；如需独立换肤再写悬停／激活覆盖合同，不生产假 disabled cell |
 | `AB.ENDCAP.GRYPHON` | `P2 / direction-locked` | pfUI 左右端帽对象、64 UI 默认能力；用户确认的 V3 preset 默认关闭 | `AB.SLOT／RAIL` 后另行授权可选端帽正文 |
@@ -119,7 +126,8 @@
   `tools/specs/action_rail_v1_sim_display_region.json`；`8/8 pass`、violations `0`；
   精确布局报告所有九宫格中心、按钮包含、装饰避让和层序检查均 pass。
 - Rail 模拟像素同样只承担方向确认，不能切片、晋级、导出或作为 ImageGen 输入；
-  下一设备不依赖 ignored 像素，因此没有发布 handoff。
+  用户已于 `2026-08-08` 接受 `AB-RAIL-SIM-V1`，但没有接受这些像素；下一设备
+  只依赖已跟踪的文字化确认与冻结正文，因此没有发布 handoff。
 
 ## 下一门禁
 
@@ -127,14 +135,14 @@
    `assets/references/actionbars/p6/AB-SLOT-BASE-V1_TurtleWoW_P6_2026-08-08.png`
    （SHA `dc9615ac…4d5d`）与同目录 P6 evidence JSON（SHA `73a8f942…0d0b`）；
    静态截图与用户交互确认的证明范围保持分离。
-2. `AB.RAIL.V1` 已达到 `simulation-reviewed / P2`。当前门禁是由用户确认
-   `AB-RAIL-SIM-V1` 的连续轻量承托、深胡桃褐主体、断续暗黄铜窄外缘、极少
-   四角紧固点、无固定格线、横／竖／多行同厚和合并双栏无中缝方向；确认只锁定
-   可见方向，不接受模拟像素，也不授权 ImageGen。
-3. 模拟方向确认后，先把确认条款冻结回 Rail production-draft，再单独请求
-   `AB.RAIL.V1` 最终生产正文、最多 `5` 次实际生成／修复预算，以及把指定
-   Character V3 锁定图作为 Image 1 上传到外部 ImageGen 的明确授权；不得复用
-   `AB.SLOT` 的生产或上传授权。
+2. `AB.RAIL.V1` 已达到 `simulation-confirmed / P2`。用户对
+   `AB-RAIL-SIM-V1` 的确认只锁定已文字化的可见方向，不接受模拟像素，也不
+   授权 ImageGen；任何实质改变布局、物件隐喻、材料层级、配色、视觉重量或
+   整合关系的修订都会使本次确认失效。
+3. 已确认条款已冻结回 `AB.RAIL.V1` 最终生产正文。下一门禁是单独取得该正文与
+   最多 `5` 次实际生成／修复预算的授权，以及把指定 Character V3 锁定图作为
+   Image 1 上传到外部 ImageGen 的明确授权；不得复用 `AB.SLOT` 的生产或上传
+   授权。两项齐全并把已授权正文提交前，不得调用固定执行器或晋级 P3。
 4. `AB.SLOT` 若要进入 `P6-C`，必须先在现存 work 中向用户展示精确保留／删除
    inventory 并取得明确批准；当前不得清理该组件的 ignored `generated`、work
    或其他专属中间证据。
