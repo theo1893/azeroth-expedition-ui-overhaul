@@ -24,11 +24,12 @@
 - 目标客户端另已安装 TrinketMenu 与 AutoBar。饰品桥接优先保留正在使用的
   TrinketMenu；AutoBar 作为可选消耗品 provider，近期无活跃布局也不被强制
   启用。
-- `AB.SLOT.BASE.V1` 的有界生产循环已启动；逐次 ImageGen 计数、session、失败
-  门禁与当前 `.rN` 只由组件 work 维护，模块进度不复制尝试流水。当前仍没有
-  accepted source、runtime、接管路由或 addon 变更。候选统一由
-  `tools/review_action_slot_base_candidate_v1.py` 按 provider 公式生成 `1×1`、
-  `12×1`、`6×2`、`4×3`、`1×12` 五种精确展示场景并执行 display-region 门禁。
+- `AB.SLOT.BASE.V1` 有界生产循环已在 `5/5` 停止；attempt 5 的 exact canonical
+  RGBA `6d4a4d16…7dc0` 已通过语义、物理、透视／图层、美术、组件、装配、技术
+  像素及真实排版内审，当前为 `P3 / candidate-reviewed`。五种精确展示场景
+  `1×1`、`12×1`、`6×2`、`4×3`、`1×12` 的 display-region 为 `5/5 pass`、
+  violations `0`。逐次记录仍只在唯一组件 work；用户接受前没有 accepted source、
+  manifest、runtime、接管路由或 addon 变更。
 
 ## 已确定的设计决策
 
@@ -65,7 +66,7 @@
 | ID | 阶段 | 当前证据 | 下一门禁 |
 |---|---:|---|---|
 | `AB.RAIL` | `P2 / direction-locked` | pfUI `BarLayoutSize` 公式与用户确认的 V3 中下焦点；与逐槽资产分批 | `AB.SLOT` 后另写可伸缩 Rail 正文并测 border／scale 极值 |
-| `AB.SLOT` | `P3 / production-loop-active` | Bar `1–10` 真按钮／backdrop、`18–48 UI` 图标范围、约 `90%` 图标覆盖区与 Character V3 材料继承已冻结；正文、五次预算及指定锁定图外部上传均获授权；精确尝试状态见唯一 work | 按 work 中已提交的当前版本继续固定执行器循环；全门禁通过即停止，最迟 attempt 5 停止 |
+| `AB.SLOT` | `P3 / candidate-reviewed` | attempt 5 exact canonical RGBA `6d4a4d16…7dc0`；深褐主导、断续暗黄铜、低频安静中心；真实排版 `5/5 pass`、violations `0`；ImageGen `5/5` 已停止，无 source/runtime | 用户复审该 exact canonical；接受后晋级 source／export，拒绝则停留记录且不得 attempt 6 |
 | `AB.SLOT.STATE` | `P2 / scoped` | highlight／active／equipped／icon tint／cooldown／按键动画的真实覆盖顺序已冻结 | 基底 source 接受后另写悬停／激活覆盖合同；不生产假 disabled cell |
 | `AB.ENDCAP.GRYPHON` | `P2 / direction-locked` | pfUI 左右端帽对象、64 UI 默认能力；用户确认的 V3 preset 默认关闭 | `AB.SLOT／RAIL` 后另行授权可选端帽正文 |
 | `AB.STANCE／PET` | `P1` | Bar `11／12` 与 provider 状态已审计 | 职业最少／最多数量和自动施法实机排版 |
@@ -96,10 +97,10 @@
 
 ## 下一门禁
 
-1. 按唯一组件 work 中已提交的当前 production／`.rN` 正文继续固定
-   `@openai/codex@0.143.0` 有界循环，不在本文件复制逐次 attempt。
-2. 对每次候选执行语义、组件、技术像素、`100%` runtime 真实排版与实际展示
-   区域内审；任一候选通过即停止，失败才按第一门禁准备并提交完整 `.rN`。
+1. 用户复审 attempt 5 exact canonical RGBA `6d4a4d16…7dc0` 及目标设备真实排版；
+   当前只处于 `candidate-reviewed`，不得提前晋级 source/runtime。
+2. 用户接受后，才按资产工作流建立正式 source／manifest、确定性导出与精确
+   Action Bars 接管；用户拒绝则记录结论并停止，既有 `5/5` 授权不含 attempt 6。
 3. 基底 source 接受后，再分别准备 `AB.SLOT.STATE` 与 `AB.RAIL`；狮鹫、消耗品
    卷袋和饰品护套继续各自形成独立 source／atlas 合同并逐批授权。
 4. 正式候选接受后才允许登记 Action Bars 精确接管路由和 runtime adapter；

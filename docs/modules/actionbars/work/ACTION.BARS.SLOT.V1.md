@@ -5,8 +5,8 @@
 - 模块：`actionbars`
 - 组件 ID：`AB.SLOT`
 - 版本：`AB.SLOT.BASE.V1`
-- 子状态：`repair-prepared`
-- 项目阶段：`P3 / production-loop-active`
+- 子状态：`candidate-reviewed`
+- 项目阶段：`P3 / candidate-reviewed`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
 - 操作：`generate`
 - 生成前模拟版本：`ACTION-BARS-CORE-SIM-V3`
@@ -29,7 +29,7 @@
   已解析为仓库精确路径
   `assets/locked/character/角色属性面板_香草同构收敛_风格确认_v3.png`
 - 自动修复预算：最多 `5` 次实际 ImageGen 生图／修图，含首次
-- 当前实际生图：`4/5`
+- 当前实际生图：`5/5`；预算已用尽，不得自动执行 attempt 6
 - 流程错误：`2`（`E1` 为固定子进程启动前的数据出境审查阻止；`E2` 为
   attempt 2 生成完成后的本地色键脚本参数错误；二者均未产生额外 provider
   生成，不占生图额度）
@@ -51,37 +51,37 @@
   - `docs/GLOBAL_ART_BASELINE.md`：香草时代、二维手绘、字体与反模式总约束
 - 次级参考：无；V3 模拟、旧模拟、provider 截图和本地 scaffold 均不得上传
 - raw：
-  `generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/attempt-04/AB.SLOT.BASE.V1.r3.raw.png`，
-  SHA-256 `bef74f6f3038741834865e065a1b11ce9f5b2a284c0493d7153f9861e74e0027`
+  `generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/attempt-05/AB.SLOT.BASE.V1.r4.raw.png`，
+  SHA-256 `0a0cae74fbb48bf233037425b0b58e080e5ea322aa677361de1925a6001011b8`
 - 透明候选：仅供审查的确定性色键副本
-  `generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/attempt-04/AB.SLOT.BASE.V1.r3.transparent-review.png`，
-  SHA-256 `00086bcd7b0fd0ddb50c9164185f0b6e376d5c630365d5ba295b04fd8a43846f`
+  `generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/attempt-05/AB.SLOT.BASE.V1.r4.transparent-review-t20.png`，
+  SHA-256 `e9089484d86c7f8af21266ed18ecc18672375e4c3afdd6562b54661453fd532d`
 - 确定性归一审查：只执行 crop、Alpha、等比缩放、居中与精确色键复合；不重绘、
   不锐化、不是 source/runtime。`1024² RGBA` SHA-256
-  `e337f8b2d99c777c942cb68f7264fd611e5444a751cdf45bd7165b9cba6d9153`；
+  `6d4a4d16e9a9c11248f0c63636e916e462d5d64f548335f26252e19e0b787dc0`；
   `1024² RGB #00FF00` SHA-256
-  `72c270d7fcfa5d41b8a2bf0c03f748f794cebf1a61d4560ad7fc88aad183d2ad`
+  `f42d013451dffcb0a133497b485dcf5e9323dba8d3b2edc65649ae7f8b922c81`
 - 重组预演：本批无 atlas／九宫格；只建立 `128×128` 全物件 review master，
-  SHA-256 `358ca428598896d0bc8908c7ee20652fe92e1cb627874f7d476b735e2aac22dd`，
+  SHA-256 `2958f5e28621fd5cbc4e2d40da9b311f12e603dd58d8183f8758db463c50cbee`，
   不得作为 source/runtime
-- 真实排版预演：attempt 4 已覆盖 `1×1`、`12×1`、`6×2`、`4×3`、`1×12`；
+- 真实排版预演：attempt 5 已覆盖 `1×1`、`12×1`、`6×2`、`4×3`、`1×12`；
   目标设备全屏 `1920×1080` 预演 SHA-256
-  `72fc9a1136808aee7fddf00fcf6da704b0dd1d25853b8f5c310669c7bb9abe41`；
+  `94c35f94a8d1d07f5fb1ed9f011c851e70341119c77f4a0f426899118cdf7756`；
   五模式板 SHA-256
-  `cd2bf2c8cecbca0347671294ab7cd61f8d8c6ce1c837ae9eb94162bb64faed50`。
+  `39da034257eda4c8380e8a25f7a036e3a8a8a808793b1a9c3b06e4696df96820`。
   候选像素只用于 `AB.SLOT` base，动态图标／文字／状态为确定性 provider 内容；
   周边 V3 是已确认方向模拟，仍非权威 runtime 像素
-- 实际展示区域合同／报告：attempt 4 合同 SHA-256
-  `dff66472e5adc234fa29c960c09af0e765064fee767773912b92c38b1211dd3e`；
+- 实际展示区域合同／报告：attempt 5 合同 SHA-256
+  `1c8432fb7ce1630d26fc30cc1101a44dd142d6a81c65298aa77f470ba2b3139d`；
   报告 SHA-256 `f461808e63e7b9fcd2e69228dfc7818b0aa64408882b0684e0385421398a0c7d`，
   `5/5 pass`、violations `0`
 - 最终 source：无
 
 ## 跨设备 handoff
 
-- 不建立。最后一次继续采用从锁定 Image 1 重新生成的 `.r4`，不把 attempt 1–4
-  像素作为 edit input；下一门禁只依赖已提交正文，不依赖 ignored 像素。不得把
-  V3 模拟复制进 `handoff/`。
+- 不建立。本轮用户复审在当前设备直接查看 ignored 的 attempt 5 确定候选；默认
+  分支不得提交短期 handoff。若之后必须转交另一设备复审，需先按资产工作流在
+  短期协作分支发布同一像素的最小检查点；不得把 V3 模拟复制进 `handoff/`。
 
 ## 美术基准继承
 
@@ -287,7 +287,7 @@ Before returning the image, check all of the following: the canvas is exactly 10
 | `2/5` | `AB.SLOT.BASE.V1.r1` / `9e1e82f` | generate | child session `019fe073-f5ba-7033-b9be-58d9be04ed1f` | raw `82542910…739d1` | 门禁 4／美术一致性：仍为写实 PBR 双倒角与精密金属高光 | 保持更安静的中央值域、单物件、正面、无动态内容；从固定 Image 1 regenerate，把参考限制为配色关系并按低分辨率 sprite 粗粒度重绘 | internal-rejected |
 | `3/5` | `AB.SLOT.BASE.V1.r2` / `34f03cb` | generate | child session `019fe07c-84d3-7750-8a99-01107a4ad91f` | raw `989bb567…3c08` | 门禁 5／组件合同：粗粒度手绘已通过，但外圈约占物件 `10%`，侵入目标 `5%` 安静区，且略纵长 | 保持低分辨率块面、综合色、单物件、接近正确的占屏与无动态内容；从固定 Image 1 regenerate，把完整 rim 减半并严格正方居中 | internal-rejected |
 | `4/5` | `AB.SLOT.BASE.V1.r3` / `864987a` | generate | child session `019fe085-1944-7d73-8f03-2d13062d640e` | raw `bef74f6f…e0027` | 门禁 4／美术一致性：黄铜回退为高饱和亮金且几乎环绕全周，成为主视觉 | 保持粗粒度块面、平静中心、单物件与无动态内容；从固定 Image 1 regenerate，改用褐色主导的扁平 sprite／最多两条可见边带策略 | internal-rejected |
-| `5/5` | `AB.SLOT.BASE.V1.r4` / execution commit pending | generate |  |  |  |  | repair-prepared / final attempt |
+| `5/5` | `AB.SLOT.BASE.V1.r4` / `882c5fb` | generate | child session `019fe08a-b8e8-7db1-a286-b507bc74acd7` | raw `0a0cae74…011b8` | 无；确定性 canonical 审查通过全部门禁 | 保留褐色主导、低频安静中心、断续暗黄铜、单物件和正方居中；停止生成并交用户复审 exact canonical | `candidate-reviewed / P3` |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
@@ -406,26 +406,28 @@ Before returning the image, inspect it literally at full size and imagined 128 b
 
 - 日期：`2026-08-08`
 - 会话／结果 ID：fixed child session
-  `019fe085-1944-7d73-8f03-2d13062d640e`；provider cache result
-  `ig_059624c970c0c38b016a76ead53db08191a25a445ba7e091a1.png`
-- 实际输入绝对路径与职责：attempt 4 仍只上传
+  `019fe08a-b8e8-7db1-a286-b507bc74acd7`；provider cache result
+  `ig_0628ea921d87290a016a76ec4138488191be112946bf47f1e7.png`
+- 实际输入绝对路径与职责：attempt 5 仍只上传
   `D:\Git\azeroth-expedition-ui-overhaul\assets\locked\character\角色属性面板_香草同构收敛_风格确认_v3.png`，
   只承担正文声明的材料职责
 - imagegen 报告的 revised prompt：未另行报告；child 打印的完整 `user` 正文
-  `7031` 字符，UTF-8 SHA-256
-  `f8502f66c0a62fe2f423c25f9385a723dca2ad360ba52f23523625255845f411`，
+  `6695` 字符，UTF-8 SHA-256
+  `cda4edaf9a8e8f2ea63f4ad47e30554e26425d1f9db8c815fe2afab4515267d9`，
   无截断、无 wrapper 递归
 - 输出尺寸／模式／SHA-256：`1254×1254 RGB PNG`／
-  `bef74f6f3038741834865e065a1b11ce9f5b2a284c0493d7153f9861e74e0027`；
+  `0a0cae74fbb48bf233037425b0b58e080e5ea322aa677361de1925a6001011b8`；
   provider cache、child copy 与本地 raw 三者一致
-- Alpha／残色：raw 无 Alpha；边界自动采样为 `#03FA08` 而非精确
-  `#00FF00`。仅供审查使用固定
-  `remove_chroma_key.py --auto-key border --soft-matte --transparent-threshold 12
-  --opaque-threshold 96 --spill-cleanup`；透明 `643230`、partial `4357`、
-  opaque `924929`，可见强绿色残留 `0`
-- 实际生图次数：`4/5`
+- Alpha／残色：raw 无 Alpha；边界自动采样为 `#03FA05` 而非精确
+  `#00FF00`。首次 threshold `12` 副本仍有 `2` 个极低 Alpha 边缘像素使 bbox
+  触边；不调用 provider，仅把同一确定性色键的 transparent threshold 收紧为
+  `20` 后重跑。最终仅供审查使用固定
+  `remove_chroma_key.py --auto-key border --soft-matte --transparent-threshold 20
+  --opaque-threshold 96 --spill-cleanup` 的同算法参数族；透明 `796469`、partial
+  `3510`、opaque `772537`，可见 bbox `[181,176,1065,1054]`，强绿色残留 `0`
+- 实际生图次数：`5/5`；预算已耗尽，不得 attempt 6
 - 流程错误次数：`2`
-- 循环终态：`repair-prepared`
+- 循环终态：`candidate-reviewed / P3`
 
 ## 审查记录
 
@@ -433,37 +435,45 @@ Before returning the image, inspect it literally at full size and imagined 128 b
   状态、Rail 或相邻组件。物件内外和凹面关系成立。
 - 透视／图层：通过。正交前视、共享左上光；候选只承担 icon 下方 base。动态
   icon、cooldown、highlight、active、equipped、range、OOM 与按下均由预演层覆盖。
-- 美术一致性：退回且为第一失败门禁。粗粒度块面与低频中心仍在，但黄铜回退
-  为高饱和亮金，几乎连续包围四边并形成明亮角块；厚重外圈与金属成为空槽和
-  小尺寸重复时的主视觉，违反“暗氧化黄铜、短促高光、动作槽轻量化”条款。
-- 对象／状态合同：单物件／单 normal base 与无假 disabled cell 通过；次要失败
-  是 rim 仍远厚于 `5%`，金属／暗影侵入安静区。归一安静区
-  `stddev 21.4645／HF 3.0260／luma 0–228`，比 attempt 3 更差。
-- 装配／尺寸：raw 为 `1254²` 而非 `1024²`。透明审查 bbox
-  `[146,142,1110,1113]`，归一为 `[119,116,906,909]`，回退到约 `77%` 占屏并
-  严重超出安全盒。只做 crop／Alpha／等比缩放／居中的 canonical review 为
-  `[202,200,822,824]`，完整落入安全盒；review master 只用于排版，不是
-  source/runtime，不能修复可见边框比例。
+- 美术一致性：通过。深褐旧皮／胡桃色为主，暗黄铜只以顶边、左边、角部和底边
+  的断续短段出现；无连续亮金环、PBR 双倒角或现代仪表板质感。低频块面、左上
+  暖光与右下暗压和 Character V3 的材料 DNA 一致，同时在动作槽尺度保持轻量。
+- 对象／状态合同：通过。单物件／单 normal base、无假 disabled cell；完整 rim
+  已收为细窄暗木／旧皮边带，中央保持安静并给动态图标让位。canonical 安静区
+  `[232,232,792,792)` 的 luma `stddev 2.9659`、HF mean `0.5018`、extrema
+  `8–154`，未见高对比纹章、铆钉或烘焙状态。
+- 装配／尺寸：provider raw 仍为 `1254²`，其透明审查 bbox
+  `[181,176,1065,1054]`，按 `1024²` 归一为 `[148,144,870,861]`；保留为未经
+  隐藏的 provider provenance。只做 crop／Alpha／等比缩放／居中的 exact
+  canonical review 为 `1024² RGBA`、bbox `[200,202,824,822]`，长宽差小于
+  `1%` 且完整落入安全盒；该副本和 `128²` master 均只用于复审，不是
+  source/runtime。
 - 真实排版：脚本 `tools/review_action_slot_base_candidate_v1.py`（SHA-256
   `52425da8290724793a683d75efea926713b98d7abcf8a87797198b3ed0b43d63`）与 spec
-  `9fd73383…798f4`；候选审查报告 `3b58d6c9…254ad`。全屏 `1920×1080` 与五种
+  `9fd73383…798f4`；候选审查报告 `6b0e4799…c037`。全屏 `1920×1080` 与五种
   exact provider 场景均已目视；`20／26／30／39／42 px` 外框中图标、键位、
-  cooldown 与状态可放置，candidate rim 没有扩大 hit rect。周边 V3 仍是明确
-  非权威方向模拟。
-- 实际展示区域：生成合同 `dff66472…1dd3e`；报告 `f461808e…a0c7d`，
-  `1×1／12×1／6×2／4×3／1×12` 共 `5/5 pass`、violations `0`；这只证明
-  Frame、full UV、动态图标安全区和 hit rect 几何，不抵消美术／raw 合同失败。
-- 技术像素：provider raw 固定为 `1254² RGB`，背景透明审查区 `0/643230`
-  为精确 `#00FF00`，抽样中位 `#03FA08`；只供审查的确定性 canonical 输出已为
-  `1024² RGB`、安全盒通过、背景 `663370/663370` 精确 `#00FF00`，且透明版强绿
-  残留 `0`。该技术归一不改变绘画，不能抵消 rim／安静区合同失败。
-- 结论：`internal-rejected / repair-prepared / P3`；不得进入用户候选复审，
-  不得创建 source/runtime。
+  cooldown 与状态可放置；空槽安静、带图标时边框退为支持层，candidate rim
+  没有扩大 hit rect。周边 V3 仍是明确非权威方向模拟。
+- 实际展示区域：生成合同 `1c8432fb…3139d`；报告 `f461808e…a0c7d`，
+  `1×1／12×1／6×2／4×3／1×12` 共 `5/5 pass`、violations `0`；Frame、full UV、
+  动态图标安全区和 hit rect 均一致。
+- 技术像素：provider raw 的非精确尺寸与近绿色背景均保留在 provenance；只供
+  审查的确定性 canonical 输出为精确 `1024² RGB`，背景透明区
+  `661720/661720` 为 `#00FF00`，RGBA 版 strong green spill `0`。canonical
+  SHA 分别为 `f42d0134…2c81` 与 `6d4a4d16…7dc0`；归一过程不重绘、不锐化、
+  不改变可见构图。
+- 审查顺序：Prompt／传输 → scope／identity → physical logic → perspective／
+  layering → art consistency → component／state → crop／assembly → technical，
+  全部通过；通过后立即停止有界循环。
+- 结论：`candidate-reviewed / P3`；exact canonical 候选可交用户复审，但在用户
+  明确接受前不得创建 source、manifest、runtime 或接管路由。
 - 用户结论与日期：V3 `confirmed 2026-08-08`；生产正文与最多五次实际生成／
   修复 `authorized 2026-08-08`；指定锁定图的外部 ImageGen 上传
   `authorized 2026-08-08`
-- 下一门禁：提交完整 `AB.SLOT.BASE.V1.r4`，以唯一已授权 Image 1 regenerate
-  最终 attempt 5；不得上传 attempt 1–4 或 V3 模拟
+- 下一门禁：用户复审 SHA-256
+  `6d4a4d16e9a9c11248f0c63636e916e462d5d64f548335f26252e19e0b787dc0`
+  的 exact canonical attempt 5。接受后才晋级 source／export；拒绝则记录结论并
+  停止，因为 `5/5` 已耗尽，除非用户另行明确授权新预算，否则不得 attempt 6
 
 ## 尝试摘要
 
@@ -476,4 +486,4 @@ Before returning the image, inspect it literally at full size and imagined 128 b
 | `AB.SLOT.BASE.V1.r1` | child `019fe073…ed1f`；raw `82542910…739d1`；display `5/5 pass` | `internal-rejected 2/5` | 参考图只继承配色关系；按原生 `64／128 px` sprite 粗粒度重绘；物件仅占 Canvas `60–61%` |
 | `AB.SLOT.BASE.V1.r2` | child `019fe07c…d91f`；raw `989bb567…3c08`；display `5/5 pass` | `internal-rejected 3/5` | 保持已通过的粗粒度手绘与占屏；完整 rim 从约 `10%` 收至 `5%`，安静区占物件约 `90%`，外轮廓严格正方居中 |
 | `AB.SLOT.BASE.V1.r3` | child `019fe085…640e`；raw `bef74f6f…e0027`；display `5/5 pass` | `internal-rejected 4/5` | 保持粗粒度中心；改用褐色主导的扁平 sprite 与最多两条边带，黄铜少于周长 `15%` 且不得亮黄；恢复 `60–61%` 占屏 |
-| `AB.SLOT.BASE.V1.r4` | 完整自包含 regenerate 正文；唯一输入仍为 Character V3 | `repair-prepared / final` | 执行前提交；attempt 5 全量内审后强制停止 |
+| `AB.SLOT.BASE.V1.r4` | child `019fe08a…acd7`；raw `0a0cae74…011b8`；canonical RGBA `6d4a4d16…7dc0`；display `5/5 pass` | `candidate-reviewed 5/5 / P3` | 用户复审 exact canonical；接受后晋级 source，拒绝则停止且不得 attempt 6 |
