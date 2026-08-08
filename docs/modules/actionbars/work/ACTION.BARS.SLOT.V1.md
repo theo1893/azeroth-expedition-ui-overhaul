@@ -29,7 +29,7 @@
   已解析为仓库精确路径
   `assets/locked/character/角色属性面板_香草同构收敛_风格确认_v3.png`
 - 自动修复预算：最多 `5` 次实际 ImageGen 生图／修图，含首次
-- 当前实际生图：`2/5`
+- 当前实际生图：`3/5`
 - 流程错误：`2`（`E1` 为固定子进程启动前的数据出境审查阻止；`E2` 为
   attempt 2 生成完成后的本地色键脚本参数错误；二者均未产生额外 provider
   生成，不占生图额度）
@@ -51,30 +51,35 @@
   - `docs/GLOBAL_ART_BASELINE.md`：香草时代、二维手绘、字体与反模式总约束
 - 次级参考：无；V3 模拟、旧模拟、provider 截图和本地 scaffold 均不得上传
 - raw：
-  `generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/attempt-02/AB.SLOT.BASE.V1.r1.raw.png`，
-  SHA-256 `8254291031002975dae0ed84f7e0475e4f5266cca0203509b65929dcef3739d1`
+  `generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/attempt-03/AB.SLOT.BASE.V1.r2.raw.png`，
+  SHA-256 `989bb56762e7c5318507d14c4b86aa164e017632d0782bf40ac52f3720c33c08`
 - 透明候选：仅供审查的确定性色键副本
-  `generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/attempt-02/AB.SLOT.BASE.V1.r1.transparent-review.png`，
-  SHA-256 `35b623adc9fa9f9d479c8907f5ce736b2c16e82dda42dd3d0b1fe5d0fcb3b839`
+  `generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/attempt-03/AB.SLOT.BASE.V1.r2.transparent-review.png`，
+  SHA-256 `192477aebba15db20a37ac95880de083359d7332f46de8229b1d0aebb11e5fed`
+- 确定性归一审查：只执行 crop、Alpha、等比缩放、居中与精确色键复合；不重绘、
+  不锐化、不是 source/runtime。`1024² RGBA` SHA-256
+  `6b82c962ac36f7b959c80c158c270e6f4d429ba8a929fb672dbfca45e94427c3`；
+  `1024² RGB #00FF00` SHA-256
+  `b6652b4532bba37e8a42797ef786e4c013017fddac717cbf391cffd8ad49d74c`
 - 重组预演：本批无 atlas／九宫格；只建立 `128×128` 全物件 review master，
-  SHA-256 `c70fbc5ccb0ed106009791fbea7df015c12cb9f34d7708542700063501cc6857`，
+  SHA-256 `76bd1edd7668ca0da93c89f207543c8b3b003fd08fc5ca02be00e2bed5672b6f`，
   不得作为 source/runtime
-- 真实排版预演：attempt 2 已覆盖 `1×1`、`12×1`、`6×2`、`4×3`、`1×12`；
+- 真实排版预演：attempt 3 已覆盖 `1×1`、`12×1`、`6×2`、`4×3`、`1×12`；
   目标设备全屏 `1920×1080` 预演 SHA-256
-  `937efca672b832a46aab4c906e3abbcf0e1b231680ebc8608c2e3b6b52d1a87b`；
+  `59e2ed1581ffb43858a21f4be22a813e13f6712ec606ae0000ff56cc3af2c031`；
   五模式板 SHA-256
-  `09f1981f41dfa84c600ad1cc1a6825056152236ca1bc46a4db76831299a1737c`。
+  `210c56cb0fbd56add1eaa35682ec203d94c6340aaf9c9270a47eab3efbc6b45c`。
   候选像素只用于 `AB.SLOT` base，动态图标／文字／状态为确定性 provider 内容；
   周边 V3 是已确认方向模拟，仍非权威 runtime 像素
-- 实际展示区域合同／报告：attempt 2 合同 SHA-256
-  `99bebf39c21d87da0caad7513ccfaee88bf14db3b0ece8eebfc6a103c92fa5a8`；
+- 实际展示区域合同／报告：attempt 3 合同 SHA-256
+  `8c17db9698ba046ef6f1dec0519af6ae00b40b151502a4919ef4ef7be7511c0e`；
   报告 SHA-256 `f461808e63e7b9fcd2e69228dfc7818b0aa64408882b0684e0385421398a0c7d`，
   `5/5 pass`、violations `0`
 - 最终 source：无
 
 ## 跨设备 handoff
 
-- 不建立。下一次继续采用从锁定 Image 1 重新生成的 `.r2`，不把 attempt 1／2
+- 不建立。下一次继续采用从锁定 Image 1 重新生成的 `.r3`，不把 attempt 1–3
   像素作为 edit input；下一门禁只依赖已提交正文，不依赖 ignored 像素。不得把
   V3 模拟复制进 `handoff/`。
 
@@ -280,8 +285,8 @@ Before returning the image, check all of the following: the canvas is exactly 10
 |---:|---|---|---|---|---|---|---|
 | `1/5` | `AB.SLOT.BASE.V1` / `a26355d` | generate | child session `019fe064-635a-7581-b0f4-457269bb675c` | raw `518f8cf7…41e87` | 门禁 4／美术一致性：PBR／现代倒角与高频写实皮纹 | 保持单物件、正面、居中、无动态内容与深胡桃／暗黄铜色系；从 Image 1 regenerate，缩小物件、简化笔触并修正 Canvas／色键 | internal-rejected |
 | `2/5` | `AB.SLOT.BASE.V1.r1` / `9e1e82f` | generate | child session `019fe073-f5ba-7033-b9be-58d9be04ed1f` | raw `82542910…739d1` | 门禁 4／美术一致性：仍为写实 PBR 双倒角与精密金属高光 | 保持更安静的中央值域、单物件、正面、无动态内容；从固定 Image 1 regenerate，把参考限制为配色关系并按低分辨率 sprite 粗粒度重绘 | internal-rejected |
-| `3/5` | `AB.SLOT.BASE.V1.r2` / execution commit pending | generate |  |  |  |  | repair-prepared |
-| `4/5` | `AB.SLOT.BASE.V1.r3` / not prepared | edit／generate |  |  |  |  | unavailable |
+| `3/5` | `AB.SLOT.BASE.V1.r2` / `34f03cb` | generate | child session `019fe07c-84d3-7750-8a99-01107a4ad91f` | raw `989bb567…3c08` | 门禁 5／组件合同：粗粒度手绘已通过，但外圈约占物件 `10%`，侵入目标 `5%` 安静区，且略纵长 | 保持低分辨率块面、综合色、单物件、接近正确的占屏与无动态内容；从固定 Image 1 regenerate，把完整 rim 减半并严格正方居中 | internal-rejected |
+| `4/5` | `AB.SLOT.BASE.V1.r3` / execution commit pending | generate |  |  |  |  | repair-prepared |
 | `5/5` | `AB.SLOT.BASE.V1.r4` / not prepared | edit／generate |  |  |  |  | unavailable |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
@@ -341,28 +346,56 @@ Outside the one slot, use one perfectly flat, uniform, pixel-level exact #00FF00
 Before returning the image, inspect it literally at both full size and imagined 128 by 128 size: the file is exactly 1024 by 1024 RGB; there is exactly one centered front-facing square base; the complete silhouette occupies only 60 to 61 percent of the canvas and fits inside [192,192,832,832), aiming at [200,200,824,824); the strict [232,232,792,792) center is nearly flat and blank; the complete border is only about 32 source pixels per side; there is one broken muted painted brass lip rather than continuous bright double bevels; all texture decisions are coarse vanilla-era sprite brush shapes rather than realistic micro-material; no dynamic content or neighboring component is present; no PBR, glossy, machined, gothic, stone, jewel, neon, glass, photorealistic, or modern-dashboard language appears; and every background pixel outside the object is the same exact #00FF00.
 ```
 
+## 修复执行正文 — `AB.SLOT.BASE.V1.r3`
+
+以下为 attempt 3 完整审查后、同一授权边界内的自包含重新生成正文。仍只使用
+已授权 Character V3 作为 Image 1；三个失败候选只提供文字化审查证据，不作为
+图片输入。执行前必须先提交本版本。
+
+```text
+Create one production bitmap asset for Azeroth Expedition UI, component AB.SLOT.BASE.V1.r3: exactly one reusable normal/empty base for one ordinary pfUI action button. This is a fresh regeneration from the locked visual authority, not an edit. It is one compact, understated square action-slot border with a shallow empty center that will sit behind a live spell or item icon. It is not an inventory icon, not a complete action bar, not a rail, not a state atlas, not a presentation board, and not a mock game screenshot.
+
+Image 1 is the locked Character V3 visual authority only for the palette relationship and directional value logic: deep walnut, smoke brown, a restrained amount of muted dark brass, low saturation, short warm emphasis near the upper left, darker pressure toward the lower right, handmade age, and vanilla-era mood. Do not inherit Image 1's realistic rendering fidelity, leather grain, micro-scratches, polished metal, continuous highlights, thick panel frame, equipment-slot construction, purple glow, character, icons, paper, wood panels, text, numbers, tabs, buttons, layout, proportions, or 1254 canvas. Treat Image 1 as a palette swatch, never as a texture sample. The action-slot must be visually much lighter and simpler than the panel.
+
+Use the already-established low-resolution art direction described here: construct the object from broad matte painted value clusters, coarse controlled brush shapes, and slightly irregular hand-cut edges, as though the final sprite were authored directly at 64 by 64 or 128 by 128 pixels. Keep this practical old-game sprite character. Do not regress to photorealistic leather, fine pores, realistic fibers, dense grain, scratches, cracks, smooth PBR shading, glossy highlights, precision-machined symmetry, embossed depth, vector-clean geometry, or modern engine bevels. At 1024 review size, no material mark should be finer than a shape that remains readable at 128 by 128. Use only a few large low-frequency value masses per material.
+
+Create a brand-new exact 1024 by 1024 RGB canvas. Place exactly one front-facing square action-slot base at the exact center with no perspective, camera depth, or tilt. The complete visible silhouette must be truly square: equal width and height within one percent, not a portrait rectangle. Aim at the right-and-bottom-exclusive outer box [200,200,824,824), exactly about 624 by 624 pixels, with equal green margins on all four sides. Keep every visible antialiasing, paint, wear, and compact contact pixel inside [192,192,832,832). A normalized visible box near [209,185,815,813] is close in width but is a known failure because its top is too high and its height exceeds its width by about four percent. Move the object down to exact center, make it square, preserve the approximately 60 to 61 percent canvas occupancy, and do not enlarge or crop it.
+
+The decisive repair is the border proportion. The strict quiet icon-cover zone [232,232,792,792) is 560 by 560 pixels and must remain entirely inside the shallow center without any border, highlight, material transition, or hard shadow entering it. Relative to the approximately 624-pixel outer square, that center occupies about 90 percent of the object's width and height. Therefore the complete rim from the outer silhouette to the quiet center is only about 32 source pixels, or about five percent of the object's width, on every side. Do not make a 60-to-80-pixel rim, a broad segmented outer leather belt, or a center that occupies only about 80 percent of the object.
+
+Fit all physical transitions inside that narrow 32-pixel band. From outside to inside use: a three-to-four-pixel dark contact edge contained within the silhouette; roughly twelve-to-fourteen pixels of deep-walnut backing; one single six-to-eight-pixel broken muted-ochre dark-brass lip; and a short six-to-eight-pixel dark inner pressure step. These are approximate painted widths, but their combined visible thickness must never exceed the 32-pixel band. The brass must read as roughly one texel at the final 128 by 128 size. Use only two or three short, dim ochre dabs near the upper-left corner and upper edge; do not trace the full perimeter with a bright line. Do not add a second metal line, double bevel, frame-within-a-frame, thick picture frame, jewelry border, full metal plate, rivets, gems, runes, emblems, badges, filigree, chains, wings, claws, scrollwork, stitches, or repeated motifs. Keep corners compact, square, softly clipped, and hand-painted without protruding ornament.
+
+Fill the complete [232,232,792,792) quiet zone with an intentionally blank-looking deep smoke-brown recess. Use only two or three broad matte value masses with very low contrast. Do not place a diagonal lighting sweep or a center vignette across it. Do not add leather texture, grain network, scratches, pores, cracks, creases, embossing, symbols, seams, holes, glow, edge line, highlight, or focal detail. The empty base should feel intentionally incomplete by itself because the live icon covers this area. At the confirmed main-bar size of about 39 physical pixels, only a subtle two-to-four-pixel support should remain visible around the icon, while the icon, keybind, count, and cooldown stay dominant.
+
+Do not bake any spell icon, item icon, class symbol, hotkey, count, macro name, cooldown sweep, timer, text, number, range-red state, mana-blue state, unusable-gray state, equipped-green state, selected class color, hover glow, active glow, pressed displacement, disabled state, rail, gryphon, consumable pocket, trinket, unit frame, cast bar, swing timer, or DoiteDPS content into this asset. This output contains only the one normal/empty base.
+
+Outside the one slot, use one perfectly flat, uniform, pixel-level exact #00FF00 chroma-key background across all four edges and all surrounding space. Do not use near-green values such as #03FA04, #03F903, #02FA02, or #02F902. The green background must have no gradient, texture, noise, checkerboard, transparency simulation, haze, bloom, floor, shadow, border, or alternate green. Do not allow green spill into the painted object and do not place green patina inside it.
+
+Before returning the image, inspect it literally at full size and imagined 128 by 128 size: the file is exactly 1024 by 1024 RGB; there is exactly one centered front-facing square base; width and height match within one percent; the complete silhouette fits inside [192,192,832,832), aiming at [200,200,824,824); the strict [232,232,792,792) center is fully quiet and occupies about 90 percent of the object; every border transition fits inside the 32-pixel band; the brass is one short broken muted painted lip rather than a continuous bright or double bevel; the coarse low-resolution vanilla sprite treatment is retained; no dynamic content or neighboring component is present; no PBR, glossy, machined, gothic, stone, jewel, neon, glass, photorealistic, or modern-dashboard language appears; and every background pixel outside the object is the same exact #00FF00.
+```
+
 ## 执行记录
 
 - 日期：`2026-08-08`
 - 会话／结果 ID：fixed child session
-  `019fe073-f5ba-7033-b9be-58d9be04ed1f`；provider cache result
-  `ig_056a834ff0b68cb8016a76e67e98c88191b6e81025df674a36.png`
-- 实际输入绝对路径与职责：attempt 2 仍只上传
+  `019fe07c-84d3-7750-8a99-01107a4ad91f`；provider cache result
+  `ig_0b0c99bae543b36f016a76e89b92e08191ae8c76bae597ffa0.png`
+- 实际输入绝对路径与职责：attempt 3 仍只上传
   `D:\Git\azeroth-expedition-ui-overhaul\assets\locked\character\角色属性面板_香草同构收敛_风格确认_v3.png`，
   只承担正文声明的材料职责
 - imagegen 报告的 revised prompt：未另行报告；child 打印的完整 `user` 正文
-  `6629` 字符，UTF-8 SHA-256
-  `34f843dadfda131d3c871135fed2aaf17cf1dc3954f138f069cfe177f34de5d0`，
+  `6677` 字符，UTF-8 SHA-256
+  `d70f05a04677178977a793784126c1157156029e9a212c6406c63e7897588092`，
   无截断、无 wrapper 递归
 - 输出尺寸／模式／SHA-256：`1254×1254 RGB PNG`／
-  `8254291031002975dae0ed84f7e0475e4f5266cca0203509b65929dcef3739d1`；
+  `989bb56762e7c5318507d14c4b86aa164e017632d0782bf40ac52f3720c33c08`；
   provider cache、child copy 与本地 raw 三者一致
-- Alpha／残色：raw 无 Alpha；边界自动采样为 `#03F903` 而非精确
+- Alpha／残色：raw 无 Alpha；边界自动采样为 `#03FA04` 而非精确
   `#00FF00`。仅供审查使用固定
   `remove_chroma_key.py --auto-key border --soft-matte --transparent-threshold 12
-  --opaque-threshold 96 --spill-cleanup`；透明 `756056`、partial `5633`、
-  opaque `810827`，可见强绿色残留 `0`
-- 实际生图次数：`2/5`
+  --opaque-threshold 96 --spill-cleanup`；透明 `1003478`、partial `4911`、
+  opaque `564127`，可见强绿色残留 `0`
+- 实际生图次数：`3/5`
 - 流程错误次数：`2`
 - 循环终态：`repair-prepared`
 
@@ -372,35 +405,38 @@ Before returning the image, inspect it literally at both full size and imagined 
   状态、Rail 或相邻组件。物件内外和凹面关系成立。
 - 透视／图层：通过。正交前视、共享左上光；候选只承担 icon 下方 base。动态
   icon、cooldown、highlight、active、equipped、range、OOM 与按下均由预演层覆盖。
-- 美术一致性：退回且仍为第一失败门禁。深胡桃／暗金配色关系通过，中央值域
-  比 attempt 1 安静；但连续明亮双倒角、闭合精密黄铜线、写实皮革微表面和
-  平滑材质渐变仍明显呈 PBR／现代 UI 引擎材质，不像低分辨率香草二维手绘。
-- 对象／状态合同：单物件／单 normal base 数量通过；无假 disabled cell。外轮廓
-  native `901×910`，略偏纵长；中央安静度数值从 attempt 1 的
-  `stddev 8.3275／HF 4.6046` 改善至 `5.0896／2.1401`，但仍有写实纹理。
+- 美术一致性：通过。深胡桃／烟褐／暗金关系保持，笔触已改为低分辨率粗粒度
+  块面、断续高光和受控手绘边；没有 attempt 1／2 的精密 PBR 双倒角。在五种
+  runtime 尺寸下材料不压过动态图标。
+- 对象／状态合同：退回且为第一失败门禁。单物件／单 normal base 与无假
+  disabled cell 通过；但完整 rim 约占物件宽度 `10%`，接近合同 `5%` 的两倍，
+  明亮上／左折线及材料过渡侵入 `[232,232,792,792)` 安静区。归一安静区
+  `stddev 14.5967／HF 2.2341／luma 0–218`，证明不是严格低对比中心。
 - 装配／尺寸：raw 为 `1254²` 而非 `1024²`。透明审查 bbox
-  `[179,163,1080,1073]`，归一到 `1024` 为 `[146,133,882,876]`，仍超出
-  `[192,192,832,832)`且没有按 `.r1` 缩小；review master 只用于排版，不是
-  source/runtime。
+  `[256,226,998,996]`，归一为 `[209,185,815,813]`；宽度占屏已经接近目标，
+  但顶部越过 containment `7 px` 且高度比宽度大约 `4%`。只做 crop／Alpha／
+  等比缩放／居中的 canonical review 为 `[212,200,813,824]`，完整落入安全盒；
+  review master 只用于排版，不是 source/runtime。
 - 真实排版：脚本 `tools/review_action_slot_base_candidate_v1.py`（SHA-256
-  `52e5950137d421eda2da8dd39cf81dd88f15861277eb7d62855941a2e1178b85`）与 spec
-  `95df9c98…7fdf6`；候选审查报告 `cbe85f78…02ee5`。全屏 `1920×1080` 与五种
+  `52425da8290724793a683d75efea926713b98d7abcf8a87797198b3ed0b43d63`）与 spec
+  `9fd73383…798f4`；候选审查报告 `fa8b975b…7dc49`。全屏 `1920×1080` 与五种
   exact provider 场景均已目视；`20／26／30／39／42 px` 外框中图标、键位、
   cooldown 与状态可放置，candidate rim 没有扩大 hit rect。周边 V3 仍是明确
   非权威方向模拟。
-- 实际展示区域：生成合同 `99bebf39…fa5a8`；报告 `f461808e…a0c7d`，
+- 实际展示区域：生成合同 `8c17db96…11c0e`；报告 `f461808e…a0c7d`，
   `1×1／12×1／6×2／4×3／1×12` 共 `5/5 pass`、violations `0`；这只证明
   Frame、full UV、动态图标安全区和 hit rect 几何，不抵消美术／raw 合同失败。
-- 技术像素：raw 尺寸失败；背景透明审查区 `0/756056` 像素为精确
-  `#00FF00`，抽样中位 `#02F902` 且存在变化，色键失败；归一安全盒失败。raw RGB
-  与单物件居中通过；透明审查副本强绿残留 `0` 只服务 review，不可晋级。
+- 技术像素：provider raw 固定为 `1254² RGB`，背景透明审查区 `0/1003478`
+  为精确 `#00FF00`，抽样中位 `#03FA04`；只供审查的确定性 canonical 输出已为
+  `1024² RGB`、安全盒通过、背景 `674769/674769` 精确 `#00FF00`，且透明版强绿
+  残留 `0`。该技术归一不改变绘画，不能抵消 rim／安静区合同失败。
 - 结论：`internal-rejected / repair-prepared / P3`；不得进入用户候选复审，
   不得创建 source/runtime。
 - 用户结论与日期：V3 `confirmed 2026-08-08`；生产正文与最多五次实际生成／
   修复 `authorized 2026-08-08`；指定锁定图的外部 ImageGen 上传
   `authorized 2026-08-08`
-- 下一门禁：提交完整 `AB.SLOT.BASE.V1.r2`，以唯一已授权 Image 1 regenerate
-  attempt 3；不得上传 attempt 1／2 或 V3 模拟
+- 下一门禁：提交完整 `AB.SLOT.BASE.V1.r3`，以唯一已授权 Image 1 regenerate
+  attempt 4；不得上传 attempt 1–3 或 V3 模拟
 
 ## 尝试摘要
 
@@ -411,4 +447,5 @@ Before returning the image, inspect it literally at both full size and imagined 
 | `SIM-V3` | PNG `b2761b67…c87e8`；新增 display `9/9`；layout `46/46`；V2 回归一致 | `user-confirmed 2026-08-08` | 不改变已确认布局；进入首批组件 Prompt 门禁 |
 | `AB.SLOT.BASE.V1` | child `019fe064…675c`；raw `518f8cf7…41e87`；display `5/5 pass` | `internal-rejected 1/5` | 改为香草二维手绘低频材质；去连续 PBR 倒角和写实皮纹；精确 `1024²`、缩小约 `15%`、纯 `#00FF00` |
 | `AB.SLOT.BASE.V1.r1` | child `019fe073…ed1f`；raw `82542910…739d1`；display `5/5 pass` | `internal-rejected 2/5` | 参考图只继承配色关系；按原生 `64／128 px` sprite 粗粒度重绘；物件仅占 Canvas `60–61%` |
-| `AB.SLOT.BASE.V1.r2` | 完整自包含 regenerate 正文；唯一输入仍为 Character V3 | `repair-prepared` | 执行前提交；attempt 3 全量内审 |
+| `AB.SLOT.BASE.V1.r2` | child `019fe07c…d91f`；raw `989bb567…3c08`；display `5/5 pass` | `internal-rejected 3/5` | 保持已通过的粗粒度手绘与占屏；完整 rim 从约 `10%` 收至 `5%`，安静区占物件约 `90%`，外轮廓严格正方居中 |
+| `AB.SLOT.BASE.V1.r3` | 完整自包含 regenerate 正文；唯一输入仍为 Character V3 | `repair-prepared` | 执行前提交；attempt 4 全量内审 |

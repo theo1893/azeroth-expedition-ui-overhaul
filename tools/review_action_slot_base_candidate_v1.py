@@ -146,6 +146,41 @@ def make_runtime_master(
     return runtime, visible, crop_box
 
 
+def make_canonical_review(
+    transparent: Image.Image,
+    review_spec: dict[str, Any],
+    transparent_output: Path,
+    chroma_output: Path,
+) -> tuple[Image.Image, Image.Image, tuple[int, int, int, int]]:
+    """Normalize only canvas, scale, centering, Alpha and chroma for review.
+
+    This deliberately performs no painting, retouching, sharpening or geometry
+    distortion.  Both files remain ignored review artifacts and cannot become
+    accepted source or runtime before the user acceptance gate.
+    """
+
+    canvas_size = tuple(int(value) for value in review_spec["canvas"])
+    target = tuple(int(value) for value in review_spec["target_object_box"])
+    background = tuple(int(value) for value in review_spec["background_rgb"])
+    visible = alpha_bbox(transparent)
+    crop = transparent.crop(visible)
+    target_width = target[2] - target[0]
+    target_height = target[3] - target[1]
+    scale = min(target_width / crop.width, target_height / crop.height)
+    width = max(1, min(target_width, round(crop.width * scale)))
+    height = max(1, min(target_height, round(crop.height * scale)))
+    normalized = crop.resize((width, height), Image.Resampling.LANCZOS)
+    left = round((canvas_size[0] - width) / 2)
+    top = round((canvas_size[1] - height) / 2)
+    canonical = Image.new("RGBA", canvas_size, (0, 0, 0, 0))
+    canonical.alpha_composite(normalized, (left, top))
+    canonical.save(transparent_output)
+    chroma = Image.new("RGB", canvas_size, background)
+    chroma.paste(canonical.convert("RGB"), (0, 0), canonical.getchannel("A"))
+    chroma.save(chroma_output)
+    return canonical, chroma, alpha_bbox(canonical)
+
+
 def icon_palette(index: int) -> tuple[tuple[int, int, int, int], tuple[int, int, int, int]]:
     palettes = (
         ((55, 83, 54, 255), (192, 163, 80, 255)),
@@ -437,8 +472,16 @@ def main() -> None:
     if raw.size != transparent.size:
         raise ValueError("raw and transparent review candidates must share dimensions")
 
+    canonical_transparent_path = output_dir / f"AB.SLOT.BASE.V1.{args.attempt}.canonical-transparent-review.png"
+    canonical_chroma_path = output_dir / f"AB.SLOT.BASE.V1.{args.attempt}.canonical-chroma-review.png"
+    canonical_transparent, canonical_chroma, canonical_visible_bbox = make_canonical_review(
+        transparent,
+        spec["canonical_review"],
+        canonical_transparent_path,
+        canonical_chroma_path,
+    )
     runtime_path = output_dir / f"AB.SLOT.BASE.V1.{args.attempt}.runtime-master-review.png"
-    runtime, visible_bbox, crop_box = make_runtime_master(transparent, runtime_path)
+    runtime, runtime_visible_bbox, crop_box = make_runtime_master(canonical_transparent, runtime_path)
     ui_scale = float(spec["target"]["ui_scale"])
 
     layouts_dir = output_dir / "layouts"
@@ -471,7 +514,10 @@ def main() -> None:
     contract_path = output_dir / "display-region-contract.json"
     contract_path.write_text(json.dumps(contract, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
-    normalized_visible = normalized_box(visible_bbox, raw.size)
+    provider_visible_bbox = alpha_bbox(transparent)
+    normalized_provider_visible = normalized_box(provider_visible_bbox, raw.size)
+    containment = list(spec["canonical_review"]["containment_box"])
+    canonical_background = background_metrics(canonical_chroma, canonical_transparent)
     report = {
         "schema": "aeui-action-slot-candidate-review-v1",
         "component": spec["component"],
@@ -488,25 +534,50 @@ def main() -> None:
             "path": str(transparent_path),
             "sha256": sha256(transparent_path),
             "size": list(transparent.size),
-            "visible_bbox": list(visible_bbox),
-            "normalized_1024_visible_bbox": normalized_visible,
+            "visible_bbox": list(provider_visible_bbox),
+            "normalized_1024_visible_bbox": normalized_provider_visible,
             "background": background_metrics(raw, transparent),
         },
+        "canonical_review_only": {
+            "role": spec["canonical_review"]["role"],
+            "transparent": {
+                "path": str(canonical_transparent_path),
+                "sha256": sha256(canonical_transparent_path),
+                "size": list(canonical_transparent.size),
+                "visible_bbox": list(canonical_visible_bbox),
+            },
+            "chroma": {
+                "path": str(canonical_chroma_path),
+                "sha256": sha256(canonical_chroma_path),
+                "size": list(canonical_chroma.size),
+                "mode": canonical_chroma.mode,
+                "background": canonical_background,
+            },
+        },
         "contract_checks": {
-            "exact_1024_rgb_canvas": raw.size == (1024, 1024) and raw.mode == "RGB",
-            "visible_bbox_inside_192_192_832_832_after_1024_normalization": (
-                normalized_visible[0] >= 192
-                and normalized_visible[1] >= 192
-                and normalized_visible[2] <= 832
-                and normalized_visible[3] <= 832
+            "provider_raw_exact_1024_rgb_canvas": raw.size == (1024, 1024) and raw.mode == "RGB",
+            "provider_visible_bbox_inside_192_192_832_832_after_1024_normalization": (
+                normalized_provider_visible[0] >= 192
+                and normalized_provider_visible[1] >= 192
+                and normalized_provider_visible[2] <= 832
+                and normalized_provider_visible[3] <= 832
             ),
-            "quiet_zone": quiet_zone_metrics(raw),
+            "canonical_exact_1024_rgb_canvas": canonical_chroma.size == (1024, 1024) and canonical_chroma.mode == "RGB",
+            "canonical_visible_bbox_inside_containment": (
+                canonical_visible_bbox[0] >= containment[0]
+                and canonical_visible_bbox[1] >= containment[1]
+                and canonical_visible_bbox[2] <= containment[2]
+                and canonical_visible_bbox[3] <= containment[3]
+            ),
+            "canonical_pixel_level_exact_background": canonical_background["pixel_level_exact_background"],
+            "quiet_zone": quiet_zone_metrics(canonical_chroma),
         },
         "runtime_master_review_only": {
             "path": str(runtime_path),
             "sha256": sha256(runtime_path),
             "size": list(runtime.size),
             "visible_bbox": list(alpha_bbox(runtime)),
+            "canonical_source_visible_bbox": list(runtime_visible_bbox),
             "source_square_crop": list(crop_box),
         },
         "real_layout": {

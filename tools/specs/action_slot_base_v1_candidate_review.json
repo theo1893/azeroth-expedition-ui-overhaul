@@ -12,6 +12,14 @@
     "sampling": "full UV",
     "candidate_role": "review-only deterministic whole-object normalization; never source or runtime"
   },
+  "canonical_review": {
+    "canvas": [1024, 1024],
+    "containment_box": [192, 192, 832, 832],
+    "target_object_box": [200, 200, 824, 824],
+    "quiet_zone": [232, 232, 792, 792],
+    "background_rgb": [0, 255, 0],
+    "role": "deterministic crop, alpha cleanup and proportional normalization for review only; never accepted source or runtime"
+  },
   "scenarios": [
     {
       "id": "single-minimum-1x1",
