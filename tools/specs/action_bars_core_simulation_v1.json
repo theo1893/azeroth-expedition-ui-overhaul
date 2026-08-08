@@ -1,0 +1,139 @@
+{
+  "schema": "aeui-action-bars-simulation-v1",
+  "version": "ACTION-BARS-CORE-SIM-V1",
+  "purpose": "deterministic non-production layout and material-direction preview",
+  "output": "generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V1/action_bars_core_sim_v1.png",
+  "canvas": {
+    "width": 1920,
+    "height": 1080,
+    "fill": "#111814"
+  },
+  "target": {
+    "client": "Turtle WoW 1.18.1 / Interface 11200",
+    "resolution": [1920, 1080],
+    "ui_scale": 0.81269841269841,
+    "coordinate_note": "screen origins are physical pixels; frame and button dimensions are derived from pfUI UI units times UI scale and local scale"
+  },
+  "fonts": {
+    "title": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf", "size": 28},
+    "heading": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf", "size": 21},
+    "body": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf", "size": 18},
+    "small": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf", "size": 15},
+    "tiny": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf", "size": 13},
+    "micro": {"path": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf", "size": 11}
+  },
+  "palette": {
+    "scene_sky_top": "#172620",
+    "scene_sky_bottom": "#20251e",
+    "rail": "#352218",
+    "leather": "#3a271c",
+    "brass": "#87673e",
+    "parchment": "#c6ab76",
+    "ink": "#28190f",
+    "muted_ink": "#b7aa8b",
+    "label": "#e0c994"
+  },
+  "bars": [
+    {
+      "id": "AB.BAR1.MAIN",
+      "provider": "pfActionBarMain / bar1",
+      "label": "",
+      "buttons": 12,
+      "cols": 12,
+      "rows": 1,
+      "icon_ui": 36,
+      "border_ui": 2,
+      "spacing_ui": 2,
+      "scale": 1.0,
+      "screen_origin": [754, 1004],
+      "gryphons": true,
+      "states": ["active", "normal", "hover", "normal", "normal", "pressed", "cooldown", "normal", "range", "oom", "equipped", "normal"],
+      "keys": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "="],
+      "counts": ["", "", "", "", "", "", "", "", "", "", "", ""]
+    },
+    {
+      "id": "AB.BAR6.TOP",
+      "provider": "pfActionBarTop / bar6",
+      "label": "",
+      "buttons": 12,
+      "cols": 12,
+      "rows": 1,
+      "icon_ui": 30,
+      "border_ui": 2,
+      "spacing_ui": 2,
+      "scale": 1.0,
+      "screen_origin": [784, 966],
+      "gryphons": false,
+      "states": ["normal", "normal", "normal", "normal", "cooldown", "normal", "normal", "normal", "normal", "normal", "normal", "empty"],
+      "keys": ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S0", "", ""],
+      "counts": ["", "", "", "", "", "", "", "", "", "", "", ""]
+    },
+    {
+      "id": "AB.BAR11.STANCE",
+      "provider": "pfActionBarStances / bar11",
+      "label": "中心战斗栈 · 姿态 3＋副栏 12＋主栏 12 · 战斗常显",
+      "buttons": 3,
+      "cols": 3,
+      "rows": 1,
+      "icon_ui": 26,
+      "border_ui": 2,
+      "spacing_ui": 2,
+      "scale": 1.0,
+      "screen_origin": [784, 929],
+      "gryphons": false,
+      "states": ["active", "normal", "normal"],
+      "keys": ["C1", "C2", "C3"],
+      "counts": ["", "", ""]
+    },
+    {
+      "id": "AB.BAR3.AUXILIARY",
+      "provider": "pfActionBarRight / bar3",
+      "label": "自由辅助栏 · 4×3 · 可独立拖动／淡出",
+      "buttons": 12,
+      "cols": 4,
+      "rows": 3,
+      "icon_ui": 28,
+      "border_ui": 2,
+      "spacing_ui": 2,
+      "scale": 1.0,
+      "screen_origin": [180, 628],
+      "gryphons": false,
+      "states": ["normal", "normal", "normal", "normal", "normal", "hover", "normal", "normal", "normal", "normal", "empty", "empty"],
+      "keys": ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "", "", ""],
+      "counts": ["", "", "", "", "", "", "", "", "", "", "", ""]
+    }
+  ],
+  "consumables": {
+    "id": "AB.CONSUMABLE.RACK",
+    "provider": "AutoBarFrame when present; AEUI pinned-item fallback otherwise",
+    "label": "炼金师卷袋 · 推荐 10 类 · 真实物品／数量／冷却",
+    "buttons": 10,
+    "cols": 5,
+    "rows": 2,
+    "icon_ui": 32,
+    "border_ui": 2,
+    "spacing_ui": 2,
+    "scale": 1.0,
+    "screen_origin": [576, 977],
+    "states": ["normal", "normal", "cooldown", "normal", "normal", "normal", "hover", "normal", "normal", "empty"],
+    "counts": ["12", "8", "3", "20", "6", "4", "2", "5", "1", ""]
+  },
+  "trinkets": {
+    "id": "AB.TRINKET.DOCK",
+    "provider": "TrinketMenu_MainFrame slots 13 and 14 when present",
+    "label": "饰品双护套 · 装备槽 13 / 14",
+    "buttons": 2,
+    "cols": 2,
+    "rows": 1,
+    "icon_ui": 36,
+    "border_ui": 2,
+    "spacing_ui": 2,
+    "scale": 1.0,
+    "screen_origin": [1187, 1004]
+  },
+  "non_authoritative": [
+    "all flat colors, glyphs, texture detail, gryphon anatomy and neighboring UI pixels",
+    "no simulation pixel may be cropped, sliced, promoted or used as ImageGen input",
+    "final alpha, atlas cells, seams, UV and state art remain unresolved"
+  ]
+}
