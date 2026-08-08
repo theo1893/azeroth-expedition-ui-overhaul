@@ -22,6 +22,14 @@
 Button cell，不得为其虚构一格。范围红、法力蓝、不可用灰、装备绿与冷却遮罩
 继续由 `f.icon`、`f.equipped` 与 `f.cd` 动态提供。
 
+用户于 `2026-08-08` 接受 `AB.SLOT.BASE.V1` 第 5 稿；正式 P4 母版为
+[ActionSlotBase_Master_v1.png](../../../assets/source/actionbars/ab-slot/ActionSlotBase_Master_v1.png)，
+SHA-256 `6d4a4d16…7dc0`。稳定视觉条款为：深褐旧皮／胡桃色主导，暗黄铜只形成
+稀少断续短段；中央保持低频、低对比和无焦点细节；完整轮廓正方、边带轻薄，
+缩至约 `19–42` 物理像素时仍退居动态图标之后。该派生 source 低于 Character V3
+锁定图及本 Prompt 的视觉权威，只能作为普通／空槽基底；不得反向定义 Rail、
+状态覆盖、姿态／宠物、消耗品、饰品或战斗读数的造型。
+
 ## `AB.ENDCAP.GRYPHON`
 
 生成左右镜像的一对香草狮鹫动作栏端帽。轮廓紧凑，羽片由深褐旧皮／暗金

@@ -1,0 +1,169 @@
+{
+  "schema_version": 1,
+  "module": "actionbars",
+  "batch": "AB.SLOT.BASE.V1",
+  "component": "AB.SLOT",
+  "accepted_version": "AB.SLOT.BASE.V1.r4 / attempt 5",
+  "status": "accepted-source",
+  "workflow_state": "source-accepted",
+  "project_phase": "P4",
+  "accepted_on": "2026-08-08",
+  "source": {
+    "file": "ActionSlotBase_Master_v1.png",
+    "repository_path": "assets/source/actionbars/ab-slot/ActionSlotBase_Master_v1.png",
+    "sha256": "6d4a4d16e9a9c11248f0c63636e916e462d5d64f548335f26252e19e0b787dc0",
+    "width": 1024,
+    "height": 1024,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      200,
+      202,
+      824,
+      822
+    ],
+    "visible_size": [
+      624,
+      620
+    ],
+    "transparent_pixels": 661720,
+    "partially_transparent_pixels": 4876,
+    "opaque_pixels": 381980,
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "codex_package": "@openai/codex@0.143.0",
+    "fixed_child_session_id": "019fe08a-b8e8-7db1-a286-b507bc74acd7",
+    "provider_cache_result": "ig_0628ea921d87290a016a76ec4138488191be112946bf47f1e7.png",
+    "generation_before_commit": "882c5fb96d259e58d5a7387082e35f770f4ac992",
+    "candidate_review_commit": "1f913ddb2d94f5e2d5cc2c17a1f7156c69226d13",
+    "prompt_version": "AB.SLOT.BASE.V1.r4",
+    "prompt_sha256": "cda4edaf9a8e8f2ea63f4ad47e30554e26425d1f9db8c815fe2afab4515267d9",
+    "prompt": "docs/modules/actionbars/work/ACTION.BARS.SLOT.V1.md",
+    "prompt_section": "修复执行正文 — AB.SLOT.BASE.V1.r4",
+    "provider_raw": "generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/attempt-05/AB.SLOT.BASE.V1.r4.raw.png",
+    "provider_raw_sha256": "0a0cae74fbb48bf233037425b0b58e080e5ea322aa677361de1925a6001011b8",
+    "transparent_review": "generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/attempt-05/AB.SLOT.BASE.V1.r4.transparent-review-t20.png",
+    "transparent_review_sha256": "e9089484d86c7f8af21266ed18ecc18672375e4c3afdd6562b54661453fd532d",
+    "accepted_candidate": "generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/attempt-05/review/AB.SLOT.BASE.V1.attempt-05.canonical-transparent-review.png",
+    "accepted_candidate_sha256": "6d4a4d16e9a9c11248f0c63636e916e462d5d64f548335f26252e19e0b787dc0",
+    "candidate_review_report": "generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/attempt-05/review/candidate-review.json",
+    "candidate_review_report_sha256": "6b0e4799c40f4720c288b4227065bef533364042bcf55d688fbb2e272238c037",
+    "review_tool": "tools/review_action_slot_base_candidate_v1.py",
+    "review_tool_sha256": "52425da8290724793a683d75efea926713b98d7abcf8a87797198b3ed0b43d63",
+    "review_spec": "tools/specs/action_slot_base_v1_candidate_review.json",
+    "review_spec_sha256": "9fd73383fc30c0d40ff5202c6741469621c8a1051165007e90df4a034e3798f4",
+    "promotion": "byte-exact copy of the explicitly accepted canonical RGBA candidate after SHA-256, dimensions, Alpha, visible-bbox, green-spill and transparent-RGB validation",
+    "actual_imagegen_calls_in_loop": 5,
+    "process_errors_without_generation": 2,
+    "additional_imagegen_calls_after_acceptance": 0
+  },
+  "visual_authority": {
+    "locked_reference": "assets/locked/character/角色属性面板_香草同构收敛_风格确认_v3.png",
+    "locked_reference_sha256": "b5c364482adaace09af9b5196d2e8d4f7ef79d3b21706e189d94c106ba6ec2ba",
+    "locked_reference_role": "material palette, low-saturation vanilla brush language, upper-left warmth, lower-right pressure and wear scale only",
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "upstream_module_prompt": "docs/modules/character/ART_BASELINE.md",
+    "upstream_submodule_prompt": "docs/modules/character/SUBMODULE_ART_BASELINES.md",
+    "upstream_submodule_section": "CHAR.SLOT",
+    "module_prompt": "docs/modules/actionbars/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/actionbars/SUBMODULE_ART_BASELINES.md",
+    "submodule_prompt_section": "AB.SLOT",
+    "component_contract": "docs/modules/actionbars/SUBMODULES.md",
+    "component_contract_section": "AB.SLOT",
+    "accepted_source_is_lower_authority_than_locked_reference": true,
+    "failed_candidates_are_authority": false,
+    "simulation_pixels_are_authority": false
+  },
+  "user_acceptance": {
+    "exact_statement": "接受 AB.SLOT.BASE.V1 第5稿",
+    "accepted_candidate_sha256": "6d4a4d16e9a9c11248f0c63636e916e462d5d64f548335f26252e19e0b787dc0",
+    "scope": [
+      "promote the exact reviewed attempt-05 canonical RGBA bytes as the AB.SLOT normal/empty base source",
+      "record the accepted source and provenance at P4",
+      "preserve all pfUI dynamic icons, text, cooldowns, states and hit regions outside the source bitmap"
+    ],
+    "not_authorized_by_acceptance_alone": [
+      "runtime export or addon integration",
+      "a new ImageGen attempt",
+      "AB.SLOT.STATE, AB.RAIL, gryphon, consumable, trinket, castbar, swingtimer or DoiteDPS assets"
+    ]
+  },
+  "logical_components": [
+    {
+      "id": "AB.SLOT",
+      "generated_state": "normal/empty base",
+      "runtime_objects": "pfActionBar<BarName>Button1..12.backdrop for logical Bars 1-10",
+      "runtime_layer": "below f.icon",
+      "runtime_dynamic_layers_preserved": [
+        "f.icon",
+        "f.equipped",
+        "f.cd",
+        "f.animation",
+        "f.highlight",
+        "f.active",
+        "f.macro",
+        "f.keybind",
+        "f.count"
+      ],
+      "provider_geometry": "icon_size + 2*border; full texture UV; user-controlled bar count, rows, columns and scale remain unchanged",
+      "dynamic_content_owned_by_provider": [
+        "spell or item icon",
+        "hotkey",
+        "count",
+        "macro name",
+        "cooldown",
+        "range, mana and unusable tint",
+        "equipped state",
+        "hover, active and pressed feedback",
+        "tooltip, drag and click behavior"
+      ]
+    }
+  ],
+  "review": {
+    "source_visual_accepted": true,
+    "semantic_and_physical_identity": "pass",
+    "perspective_and_layer_order": "pass",
+    "locked_baseline_art_inheritance": "pass",
+    "component_and_state_contract": "pass",
+    "canonical_canvas_and_containment": "pass",
+    "baked_live_content": false,
+    "real_layout_scenarios": "5/5 pass",
+    "display_region_violations": 0,
+    "display_region_contract_sha256": "1c8432fb7ce1630d26fc30cc1101a44dd142d6a81c65298aa77f470ba2b3139d",
+    "display_region_report_sha256": "f461808e63e7b9fcd2e69228dfc7818b0aa64408882b0684e0385421398a0c7d"
+  },
+  "export_contract": {
+    "status": "not-exported",
+    "authorization": "pending separate export instruction",
+    "exporter": null,
+    "runtime_file": null,
+    "planned_source_square_crop_exclusive": [
+      200,
+      200,
+      824,
+      824
+    ],
+    "planned_runtime_size": [
+      128,
+      128
+    ],
+    "planned_sampling": "one straight-alpha texture sampled at full UV; no atlas and no nine-slice",
+    "planned_operation": "crop the declared 624x624 square around the complete accepted silhouette, proportionally resize once to 128x128, preserve straight Alpha, clear fully transparent RGB and export in a Turtle WoW-compatible tracked runtime format",
+    "allowed": [
+      "the declared square crop without removing any visible accepted pixel",
+      "one proportional deterministic resize to 128x128",
+      "fully transparent RGB zeroing without changing visible RGB or Alpha",
+      "full-UV sampling beneath the live icon"
+    ],
+    "forbidden_runtime_uses": [
+      "load the 1024x1024 source directly in Turtle WoW",
+      "redraw, rotate, mirror, non-uniformly stretch or recolor the accepted source",
+      "derive fake disabled, range, mana, equipped, selected or cooldown cells",
+      "bake icons, keybinds, counts, macro names, cooldowns or state colours",
+      "replace provider Buttons, hit regions, scripts, paging, drag behavior or SavedVariables",
+      "apply the source to stance, pet, AutoBar, TrinketMenu, castbar, swingtimer or DoiteDPS objects without their own contracts"
+    ]
+  }
+}

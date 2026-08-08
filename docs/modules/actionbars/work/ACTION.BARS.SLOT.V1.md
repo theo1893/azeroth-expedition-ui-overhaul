@@ -5,8 +5,8 @@
 - 模块：`actionbars`
 - 组件 ID：`AB.SLOT`
 - 版本：`AB.SLOT.BASE.V1`
-- 子状态：`candidate-reviewed`
-- 项目阶段：`P3 / candidate-reviewed`
+- 子状态：`source-accepted`
+- 项目阶段：`P4 / source-accepted`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
 - 操作：`generate`
 - 生成前模拟版本：`ACTION-BARS-CORE-SIM-V3`
@@ -56,8 +56,8 @@
 - 透明候选：仅供审查的确定性色键副本
   `generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/attempt-05/AB.SLOT.BASE.V1.r4.transparent-review-t20.png`，
   SHA-256 `e9089484d86c7f8af21266ed18ecc18672375e4c3afdd6562b54661453fd532d`
-- 确定性归一审查：只执行 crop、Alpha、等比缩放、居中与精确色键复合；不重绘、
-  不锐化、不是 source/runtime。`1024² RGBA` SHA-256
+- 确定性归一候选：只执行 crop、Alpha、等比缩放、居中与精确色键复合；不重绘、
+  不锐化。用户接受后仅将该 `1024² RGBA` exact bytes 晋级为 P4 source；SHA-256
   `6d4a4d16e9a9c11248f0c63636e916e462d5d64f548335f26252e19e0b787dc0`；
   `1024² RGB #00FF00` SHA-256
   `f42d013451dffcb0a133497b485dcf5e9323dba8d3b2edc65649ae7f8b922c81`
@@ -75,13 +75,17 @@
   `1c8432fb7ce1630d26fc30cc1101a44dd142d6a81c65298aa77f470ba2b3139d`；
   报告 SHA-256 `f461808e63e7b9fcd2e69228dfc7818b0aa64408882b0684e0385421398a0c7d`，
   `5/5 pass`、violations `0`
-- 最终 source：无
+- 最终 source：
+  `assets/source/actionbars/ab-slot/ActionSlotBase_Master_v1.png`，SHA-256
+  `6d4a4d16e9a9c11248f0c63636e916e462d5d64f548335f26252e19e0b787dc0`；
+  manifest：
+  `assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_SourceManifest_v1.json`
 
 ## 跨设备 handoff
 
-- 不建立。本轮用户复审在当前设备直接查看 ignored 的 attempt 5 确定候选；默认
-  分支不得提交短期 handoff。若之后必须转交另一设备复审，需先按资产工作流在
-  短期协作分支发布同一像素的最小检查点；不得把 V3 模拟复制进 `handoff/`。
+- 不建立。用户已接受 attempt 5，exact bytes 与 manifest 已进入 tracked
+  `assets/source/`，下一门禁不再依赖 ignored 候选；本组件也从未建立可消费的
+  handoff。不得把 V3 模拟复制进 `handoff/`。
 
 ## 美术基准继承
 
@@ -155,8 +159,8 @@
   低细节底色，但不得有高对比纹样、铆钉、铭文或任何动态内容。该区在运行时
   由真实 `f.icon` 覆盖。
 - 拉伸、裁切、UV：本批是单一方形等比缩放，不作九宫格、不平铺、不组成
-  atlas。候选接受后，确定性 exporter 以完整可见 bbox 的最长边构造正方 crop，
-  保持比例和中心，导出单张 `128×128` straight-alpha 运行时纹理并采样全 UV；
+  atlas。后续 P4→P5 操作中，确定性 exporter 才可以完整可见 bbox 的最长边构造
+  正方 crop，保持比例和中心，导出单张 `128×128` straight-alpha 运行时纹理并采样全 UV；
   不裁掉阴影、边唇或角部。
 - Alpha／色键：raw 外部背景必须为像素级统一 `#00FF00`；以后只从画布边缘
   提取连通色键、转 straight Alpha 并把全透明 RGB 清零。物件内部禁止绿色
@@ -215,8 +219,9 @@
   `46/46 pass`、violations `0`
 - 内部结论：`displayable`
 - 用户结论：`SIM-V3 confirmed 2026-08-08`；若上述可见关系实质变化，确认失效
-- 下一门禁：提交完整 `AB.SLOT.BASE.V1.r1` 后，固定执行器从唯一已授权
-  Character V3 Image 1 重新生成 attempt 2
+- 当时的生产入口：提交完整 `AB.SLOT.BASE.V1.r1` 后，固定执行器从唯一已授权
+  Character V3 Image 1 重新生成 attempt 2；该历史入口已由后续 attempt 5 与 P4
+  接受结论取代
 
 ## 生产正文完整性预检
 
@@ -427,7 +432,7 @@ Before returning the image, inspect it literally at full size and imagined 128 b
   `3510`、opaque `772537`，可见 bbox `[181,176,1065,1054]`，强绿色残留 `0`
 - 实际生图次数：`5/5`；预算已耗尽，不得 attempt 6
 - 流程错误次数：`2`
-- 循环终态：`candidate-reviewed / P3`
+- 生成循环终态（用户接受前）：`candidate-reviewed / P3`
 
 ## 审查记录
 
@@ -465,15 +470,37 @@ Before returning the image, inspect it literally at full size and imagined 128 b
 - 审查顺序：Prompt／传输 → scope／identity → physical logic → perspective／
   layering → art consistency → component／state → crop／assembly → technical，
   全部通过；通过后立即停止有界循环。
-- 结论：`candidate-reviewed / P3`；exact canonical 候选可交用户复审，但在用户
-  明确接受前不得创建 source、manifest、runtime 或接管路由。
+- 内审结论：`candidate-reviewed / P3`；exact canonical 候选通过后停止生成，
+  未在用户接受前创建 source、manifest、runtime 或接管路由。
 - 用户结论与日期：V3 `confirmed 2026-08-08`；生产正文与最多五次实际生成／
   修复 `authorized 2026-08-08`；指定锁定图的外部 ImageGen 上传
-  `authorized 2026-08-08`
-- 下一门禁：用户复审 SHA-256
+  `authorized 2026-08-08`；exact attempt 5 `accepted 2026-08-08`
+- 当前结论：`source-accepted / P4`；ImageGen 仍为 `5/5`，不得 attempt 6
+- 下一门禁：另行执行 P4→P5 export；必须先建立确定性 `128×128` straight-alpha
+  runtime 导出、scoped adapter、最终 display-region 与 fresh-checkout addon
+  package 门禁。当前接受本身未授权 runtime 或其他组件资产
+
+## 用户接受与 P4 晋级
+
+- 用户原文：`接受 AB.SLOT.BASE.V1 第5稿`
+- 接受日期：`2026-08-08`
+- 接受对象：attempt 5 exact canonical RGBA，SHA-256
   `6d4a4d16e9a9c11248f0c63636e916e462d5d64f548335f26252e19e0b787dc0`
-  的 exact canonical attempt 5。接受后才晋级 source／export；拒绝则记录结论并
-  停止，因为 `5/5` 已耗尽，除非用户另行明确授权新预算，否则不得 attempt 6
+- 晋级方式：字节完全一致地复制到
+  `assets/source/actionbars/ab-slot/ActionSlotBase_Master_v1.png`；未重绘、未锐化、
+  未重新采样，candidate 与 source SHA 完全一致
+- source 技术证据：`1024×1024 RGBA`；可见 bbox `[200,202,824,822]`；透明
+  `661720`、partial `4876`、opaque `381980`；可见强绿色残留 `0`；全透明
+  RGB 非零 `0`
+- source manifest：
+  `assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_SourceManifest_v1.json`
+- source 逻辑映射：仅 Bar `1–10` 的逐按钮 `backdrop` normal／empty base；
+  动态图标、文字、冷却、状态、命中区与交互继续由 pfUI provider 持有
+- 未发生：runtime resize／TGA、Lua／XML／TOC、pfUI bridge、SavedVariables、
+  P5 addon package 或 Turtle WoW 实机验证
+- Python：Windows 无 `py -3` launcher，按工作流回退
+  `D:\Softwares\miniconda3\python.exe`，Python `3.13.5`
+- 当前状态：`source-accepted / P4`
 
 ## 尝试摘要
 
@@ -486,4 +513,4 @@ Before returning the image, inspect it literally at full size and imagined 128 b
 | `AB.SLOT.BASE.V1.r1` | child `019fe073…ed1f`；raw `82542910…739d1`；display `5/5 pass` | `internal-rejected 2/5` | 参考图只继承配色关系；按原生 `64／128 px` sprite 粗粒度重绘；物件仅占 Canvas `60–61%` |
 | `AB.SLOT.BASE.V1.r2` | child `019fe07c…d91f`；raw `989bb567…3c08`；display `5/5 pass` | `internal-rejected 3/5` | 保持已通过的粗粒度手绘与占屏；完整 rim 从约 `10%` 收至 `5%`，安静区占物件约 `90%`，外轮廓严格正方居中 |
 | `AB.SLOT.BASE.V1.r3` | child `019fe085…640e`；raw `bef74f6f…e0027`；display `5/5 pass` | `internal-rejected 4/5` | 保持粗粒度中心；改用褐色主导的扁平 sprite 与最多两条边带，黄铜少于周长 `15%` 且不得亮黄；恢复 `60–61%` 占屏 |
-| `AB.SLOT.BASE.V1.r4` | child `019fe08a…acd7`；raw `0a0cae74…011b8`；canonical RGBA `6d4a4d16…7dc0`；display `5/5 pass` | `candidate-reviewed 5/5 / P3` | 用户复审 exact canonical；接受后晋级 source，拒绝则停止且不得 attempt 6 |
+| `AB.SLOT.BASE.V1.r4` | child `019fe08a…acd7`；raw `0a0cae74…011b8`；canonical／source RGBA `6d4a4d16…7dc0`；display `5/5 pass` | `user-accepted / source-accepted / P4` | 另行执行确定性 runtime export 与 addon 接入；不得 attempt 6 |

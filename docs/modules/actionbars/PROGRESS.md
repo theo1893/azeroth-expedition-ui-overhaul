@@ -24,12 +24,13 @@
 - 目标客户端另已安装 TrinketMenu 与 AutoBar。饰品桥接优先保留正在使用的
   TrinketMenu；AutoBar 作为可选消耗品 provider，近期无活跃布局也不被强制
   启用。
-- `AB.SLOT.BASE.V1` 有界生产循环已在 `5/5` 停止；attempt 5 的 exact canonical
-  RGBA `6d4a4d16…7dc0` 已通过语义、物理、透视／图层、美术、组件、装配、技术
-  像素及真实排版内审，当前为 `P3 / candidate-reviewed`。五种精确展示场景
-  `1×1`、`12×1`、`6×2`、`4×3`、`1×12` 的 display-region 为 `5/5 pass`、
-  violations `0`。逐次记录仍只在唯一组件 work；用户接受前没有 accepted source、
-  manifest、runtime、接管路由或 addon 变更。
+- `AB.SLOT.BASE.V1` 有界生产循环已在 `5/5` 停止；用户于 `2026-08-08` 明确
+  “接受 AB.SLOT.BASE.V1 第5稿”。exact canonical RGBA `6d4a4d16…7dc0` 已字节
+  完全一致地晋级为
+  `assets/source/actionbars/ab-slot/ActionSlotBase_Master_v1.png`，source manifest
+  同目录，当前为 `P4 / source-accepted`。五种精确展示场景 `1×1`、`12×1`、
+  `6×2`、`4×3`、`1×12` 仍为 `5/5 pass`、violations `0`。当前没有 runtime、
+  接管路由、SavedVariables 或 addon 变更；逐次记录仍只在唯一组件 work。
 
 ## 已确定的设计决策
 
@@ -66,8 +67,8 @@
 | ID | 阶段 | 当前证据 | 下一门禁 |
 |---|---:|---|---|
 | `AB.RAIL` | `P2 / direction-locked` | pfUI `BarLayoutSize` 公式与用户确认的 V3 中下焦点；与逐槽资产分批 | `AB.SLOT` 后另写可伸缩 Rail 正文并测 border／scale 极值 |
-| `AB.SLOT` | `P3 / candidate-reviewed` | attempt 5 exact canonical RGBA `6d4a4d16…7dc0`；深褐主导、断续暗黄铜、低频安静中心；真实排版 `5/5 pass`、violations `0`；ImageGen `5/5` 已停止，无 source/runtime | 用户复审该 exact canonical；接受后晋级 source／export，拒绝则停留记录且不得 attempt 6 |
-| `AB.SLOT.STATE` | `P2 / scoped` | highlight／active／equipped／icon tint／cooldown／按键动画的真实覆盖顺序已冻结 | 基底 source 接受后另写悬停／激活覆盖合同；不生产假 disabled cell |
+| `AB.SLOT` | `P4 / source-accepted` | [P4 source](../../../assets/source/actionbars/ab-slot/ActionSlotBase_Master_v1.png)／[manifest](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_SourceManifest_v1.json)，SHA `6d4a4d16…7dc0`；深褐主导、断续暗黄铜、低频安静中心；ImageGen `5/5` 已停止，无 runtime | 另行执行确定性 `128×128` runtime export、scoped adapter、最终 display-region 与 fresh-checkout addon package 门禁 |
+| `AB.SLOT.STATE` | `P2 / scoped` | highlight／active／equipped／icon tint／cooldown／按键动画的真实覆盖顺序已冻结 | 基底 P5 export 验证后另写悬停／激活覆盖合同；不生产假 disabled cell |
 | `AB.ENDCAP.GRYPHON` | `P2 / direction-locked` | pfUI 左右端帽对象、64 UI 默认能力；用户确认的 V3 preset 默认关闭 | `AB.SLOT／RAIL` 后另行授权可选端帽正文 |
 | `AB.STANCE／PET` | `P1` | Bar `11／12` 与 provider 状态已审计 | 职业最少／最多数量和自动施法实机排版 |
 | `AB.CONSUMABLE.RACK／POCKET` | `P2 / direction-locked` | AutoBar 1–24 真按钮与用户确认的 `5×2` 上移实例 | `AB.SLOT／RAIL` 后冻结 popup 支持上限并另行授权 |
@@ -97,11 +98,13 @@
 
 ## 下一门禁
 
-1. 用户复审 attempt 5 exact canonical RGBA `6d4a4d16…7dc0` 及目标设备真实排版；
-   当前只处于 `candidate-reviewed`，不得提前晋级 source/runtime。
-2. 用户接受后，才按资产工作流建立正式 source／manifest、确定性导出与精确
-   Action Bars 接管；用户拒绝则记录结论并停止，既有 `5/5` 授权不含 attempt 6。
-3. 基底 source 接受后，再分别准备 `AB.SLOT.STATE` 与 `AB.RAIL`；狮鹫、消耗品
-   卷袋和饰品护套继续各自形成独立 source／atlas 合同并逐批授权。
-4. 正式候选接受后才允许登记 Action Bars 精确接管路由和 runtime adapter；
-   未接管 Bar 与第三方 provider 始终 fail-open。
+1. `AB.SLOT.BASE.V1` 已停在 `source-accepted / P4`。下一独立操作是按 manifest
+   冻结的 `[200,200,824,824)` square crop 建立确定性 `128×128` straight-alpha
+   runtime、scoped adapter 与 fallback；不得直接加载 `1024²` source。
+2. P5 只有在最终 atlas／adapter／provider display-region、相关 smoke 与
+   fresh-checkout addon package 全部通过后才能标记；目标设备不得再运行 exporter、
+   Python、patch 或手工修改 pfUI。
+3. 基底 P5 export 验证后，再分别准备 `AB.SLOT.STATE` 与 `AB.RAIL`；狮鹫、
+   消耗品卷袋和饰品护套继续各自形成独立 source／atlas 合同并逐批授权。
+4. `AB.SLOT` export 只允许登记 Bar `1–10` 的精确接管路由；未接管 Bar 与
+   第三方 provider 始终 fail-open，当前 P4 不改变任何运行时对象。
