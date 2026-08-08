@@ -1,0 +1,174 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "AB.FIELDKIT.V1/simulation-v1",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, provider UI units before UIParent and provider-local scale",
+  "evidence": {
+    "provider": "installed TrinketMenu 3.3 TrinketMenu.lua/XML + installed AutoBar 1.31 Core.lua/XML",
+    "layout_formula": "TrinketMenu main is exactly 92x52 or 52x92 UI with two 36x36 buttons; its menu is 12+columns*40 by 12+ceil(count/columns)*40 in VERTICAL mode and transposed in HORIZONTAL mode. AutoBar buttons are 36x36 with 3 UI gapping; the visual rack follows the live button extent because alignButtons may place children outside AutoBarFrame.",
+    "simulation_spec": "tools/specs/action_fieldkit_v1_simulation.json",
+    "scene_simulation": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/simulation/AB-FIELDKIT-SIM-V1/AB.FIELDKIT.V1.sim-v1.scene.png",
+    "state_simulation": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/simulation/AB-FIELDKIT-SIM-V1/AB.FIELDKIT.V1.sim-v1.provider-states.png",
+    "target": "1920x1080; UI scale 0.81269841269841; TrinketMenu main scale 0.9043710231781006; menu scale 1.0",
+    "atlas_role": "four-cell production planning surface only; no source or runtime atlas exists at this gate",
+    "dynamic_ownership": "all item icons, counts, cooldowns, cooldown text, equipped state, queued trinkets, bag slots, category selection, tooltips and click behavior remain provider-owned",
+    "autobar_activation": "installed but disabled for the current character; this contract does not enable it",
+    "final_runtime": false
+  },
+  "atlas": {
+    "size": [256, 64],
+    "visible_bbox": [0, 0, 256, 64],
+    "require_exact_visible_coverage": true,
+    "sampled_regions": [
+      {"id": "planned.trinket-equipped-sheath", "box": [0, 0, 64, 64]},
+      {"id": "planned.trinket-candidate-pocket", "box": [64, 0, 128, 64]},
+      {"id": "planned.consumable-pocket", "box": [128, 0, 192, 64]},
+      {"id": "planned.adaptive-frame-and-connector", "box": [192, 0, 256, 64]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 4, "right": 4, "top": 4, "bottom": 4},
+    "minimum_frame_size": [9, 9]
+  },
+  "scenarios": [
+    {
+      "id": "trinket-main-horizontal-92x52",
+      "frame": [92, 52],
+      "preview_frame": [92, 52],
+      "zones": {"dynamic-safe": [6, 6, 86, 46]},
+      "regions": [
+        {"id": "slot13.hit-and-icon", "kind": "button", "box": [8, 8, 44, 44], "zone": "dynamic-safe"},
+        {"id": "slot14.hit-and-icon", "kind": "button", "box": [48, 8, 84, 44], "zone": "dynamic-safe"},
+        {"id": "slot13.queue", "kind": "status", "box": [6, 6, 24, 24], "zone": "dynamic-safe"},
+        {"id": "slot14.queue", "kind": "status", "box": [46, 6, 64, 24], "zone": "dynamic-safe"}
+      ]
+    },
+    {
+      "id": "trinket-main-vertical-52x92",
+      "frame": [52, 92],
+      "preview_frame": [52, 92],
+      "zones": {"dynamic-safe": [6, 6, 46, 86]},
+      "regions": [
+        {"id": "slot13.hit-and-icon", "kind": "button", "box": [8, 8, 44, 44], "zone": "dynamic-safe"},
+        {"id": "slot14.hit-and-icon", "kind": "button", "box": [8, 48, 44, 84], "zone": "dynamic-safe"},
+        {"id": "slot13.queue", "kind": "status", "box": [6, 6, 24, 24], "zone": "dynamic-safe"},
+        {"id": "slot14.queue", "kind": "status", "box": [6, 46, 24, 64], "zone": "dynamic-safe"}
+      ]
+    },
+    {
+      "id": "trinket-menu-zero-hidden",
+      "frame": [52, 91],
+      "preview_frame": [52, 91],
+      "visibility": false,
+      "zones": {"hidden-frame": [0, 0, 52, 91]},
+      "regions": []
+    },
+    {
+      "id": "trinket-menu-current-four-columns-one",
+      "frame": [172, 52],
+      "preview_frame": [172, 52],
+      "zones": {"dynamic-safe": [6, 6, 166, 46]},
+      "regions": [
+        {"id": "candidate1.hit-and-icon", "kind": "button", "box": [8, 8, 44, 44], "zone": "dynamic-safe"}
+      ]
+    },
+    {
+      "id": "trinket-menu-current-four-columns-eight",
+      "frame": [172, 92],
+      "preview_frame": [172, 92],
+      "zones": {"dynamic-safe": [6, 6, 166, 86]},
+      "regions": [
+        {"id": "candidates1-8.hit-cluster", "kind": "button-cluster", "box": [8, 8, 164, 84], "zone": "dynamic-safe"}
+      ]
+    },
+    {
+      "id": "trinket-menu-current-four-columns-thirty",
+      "frame": [172, 332],
+      "preview_frame": [172, 332],
+      "zones": {"dynamic-safe": [6, 6, 166, 326]},
+      "regions": [
+        {"id": "candidates1-30.hit-cluster", "kind": "button-cluster", "box": [8, 8, 164, 324], "zone": "dynamic-safe"}
+      ]
+    },
+    {
+      "id": "trinket-menu-auto-five-columns-thirty",
+      "frame": [212, 252],
+      "preview_frame": [212, 252],
+      "zones": {"dynamic-safe": [6, 6, 206, 246]},
+      "regions": [
+        {"id": "candidates1-30.hit-cluster", "kind": "button-cluster", "box": [8, 8, 204, 244], "zone": "dynamic-safe"}
+      ]
+    },
+    {
+      "id": "trinket-menu-horizontal-four-columns-eight",
+      "frame": [92, 172],
+      "preview_frame": [92, 172],
+      "zones": {"dynamic-safe": [6, 6, 86, 166]},
+      "regions": [
+        {"id": "candidates1-8.hit-cluster", "kind": "button-cluster", "box": [8, 8, 84, 164], "zone": "dynamic-safe"}
+      ]
+    },
+    {
+      "id": "trinket-menu-configured-thirty-columns",
+      "frame": [1212, 52],
+      "preview_frame": [1212, 52],
+      "zones": {"dynamic-safe": [6, 6, 1206, 46]},
+      "regions": [
+        {"id": "candidates1-30.hit-cluster", "kind": "button-cluster", "box": [8, 8, 1204, 44], "zone": "dynamic-safe"}
+      ]
+    },
+    {
+      "id": "autobar-rack-minimum-1x1",
+      "frame": [48, 48],
+      "preview_frame": [48, 48],
+      "zones": {"dynamic-safe": [6, 6, 42, 42]},
+      "regions": [
+        {"id": "button1.hit-and-icon", "kind": "button", "box": [6, 6, 42, 42], "zone": "dynamic-safe"}
+      ]
+    },
+    {
+      "id": "autobar-rack-recommended-5x2",
+      "frame": [204, 87],
+      "preview_frame": [204, 87],
+      "zones": {"dynamic-safe": [6, 6, 198, 81]},
+      "regions": [
+        {"id": "buttons1-10.hit-cluster", "kind": "button-cluster", "box": [6, 6, 198, 81], "zone": "dynamic-safe"}
+      ]
+    },
+    {
+      "id": "autobar-rack-maximum-24x1",
+      "frame": [945, 48],
+      "preview_frame": [945, 48],
+      "zones": {"dynamic-safe": [6, 6, 939, 42]},
+      "regions": [
+        {"id": "buttons1-24.hit-cluster", "kind": "button-cluster", "box": [6, 6, 939, 42], "zone": "dynamic-safe"}
+      ]
+    },
+    {
+      "id": "autobar-rack-maximum-1x24",
+      "frame": [48, 945],
+      "preview_frame": [48, 945],
+      "zones": {"dynamic-safe": [6, 6, 42, 939]},
+      "regions": [
+        {"id": "buttons1-24.hit-cluster", "kind": "button-cluster", "box": [6, 6, 42, 939], "zone": "dynamic-safe"}
+      ]
+    },
+    {
+      "id": "autobar-popup-top-six",
+      "frame": [44, 239],
+      "preview_frame": [44, 239],
+      "zones": {"dynamic-safe": [4, 4, 40, 235]},
+      "regions": [
+        {"id": "popup1-6.hit-cluster", "kind": "button-cluster", "box": [4, 4, 40, 235], "zone": "dynamic-safe"}
+      ]
+    },
+    {
+      "id": "autobar-popup-right-twelve",
+      "frame": [473, 44],
+      "preview_frame": [473, 44],
+      "zones": {"dynamic-safe": [4, 4, 469, 40]},
+      "regions": [
+        {"id": "popup1-12.hit-cluster", "kind": "button-cluster", "box": [4, 4, 469, 40], "zone": "dynamic-safe"}
+      ]
+    }
+  ]
+}

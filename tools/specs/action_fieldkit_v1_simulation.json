@@ -1,0 +1,218 @@
+{
+  "schema": "aeui-action-fieldkit-simulation-v1",
+  "version": "AB-FIELDKIT-SIM-V1",
+  "batch": "AB.FIELDKIT.V1",
+  "operation": "simulate",
+  "purpose": "deterministic non-production preview of the provider-backed trinket and consumable field kit around the accepted lower-center action-bar layout",
+  "base_scene_spec": "tools/specs/action_bars_core_simulation_v3.json",
+  "imagegen": {
+    "used": 0,
+    "limit": 0
+  },
+  "outputs": {
+    "scene": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/simulation/AB-FIELDKIT-SIM-V1/AB.FIELDKIT.V1.sim-v1.scene.png",
+    "states": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/simulation/AB-FIELDKIT-SIM-V1/AB.FIELDKIT.V1.sim-v1.provider-states.png",
+    "layout_report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/simulation/AB-FIELDKIT-SIM-V1/layout-report.json",
+    "display_report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/simulation/AB-FIELDKIT-SIM-V1/display-region-report.json"
+  },
+  "target": {
+    "client": "Turtle WoW 1.18.1 / Interface 11200",
+    "resolution": [1920, 1080],
+    "ui_scale": 0.81269841269841,
+    "coordinate_note": "scene origins use physical pixels; provider geometry and scenario boards use UI units before UIParent and provider-local scale"
+  },
+  "current_device": {
+    "trinket_menu": {
+      "installed": true,
+      "enabled_for_current_character": true,
+      "provider_version": "3.3 Turtle custom",
+      "main_orientation": "HORIZONTAL",
+      "main_scale": 0.9043710231781006,
+      "menu_orientation": "VERTICAL",
+      "menu_scale": 1.0,
+      "set_columns": true,
+      "columns": 4,
+      "main_dock": "BOTTOMRIGHT",
+      "menu_dock": "BOTTOMLEFT",
+      "keep_docked": true,
+      "keep_open": false,
+      "menu_on_shift": false,
+      "locked": false,
+      "cooldown_count": true,
+      "large_cooldown": true,
+      "show_hotkeys": false,
+      "candidate_count_note": "not observable from SavedVariables; simulation counts are exact provider-supported instances, not a claim about the currently bagged count"
+    },
+    "auto_bar": {
+      "installed": true,
+      "enabled_for_current_character": false,
+      "provider_version": "1.31",
+      "saved_rows": 1,
+      "saved_columns": 24,
+      "saved_button_width_ui": 36,
+      "saved_button_height_ui": 36,
+      "saved_gapping_ui": 3,
+      "saved_align_buttons": 5,
+      "saved_popup_direction": "TOP",
+      "saved_frame_locked": true,
+      "activation_policy": "never enable or rewrite the provider without an explicit user action"
+    }
+  },
+  "locked_authority": {
+    "image": "assets/locked/character/角色属性面板_香草同构收敛_风格确认_v3.png",
+    "sha256": "b5c364482adaace09af9b5196d2e8d4f7ef79d3b21706e189d94c106ba6ec2ba",
+    "role": "read-only material and visual-DNA authority; no pixels are pasted, traced, transformed or uploaded",
+    "accepted_action_slot": {
+      "path": "addon/AzerothExpeditionUI/Media/ActionBars/ActionSlotBaseV1.tga",
+      "sha256": "5c49a1db452560251422060545625b311e182ef5b8689be996aeda005b8e23ca",
+      "role": "read-only neighboring runtime identity; lower authority than the locked Character V3 baseline and not an ImageGen input"
+    }
+  },
+  "palette": {
+    "scene_sky_top": "#172620",
+    "scene_sky_bottom": "#20251e",
+    "rail": "#352218",
+    "leather": "#3a271c",
+    "brass": "#87673e",
+    "parchment": "#c6ab76",
+    "ink": "#28190f",
+    "muted_ink": "#b7aa8b",
+    "label": "#e0c994",
+    "pouch_leather": "#563522",
+    "pouch_fold": "#745037",
+    "pouch_dark": "#24150f",
+    "trinket_leather": "#302019",
+    "trinket_insert": "#443025",
+    "quiet_brass": "#8a6840",
+    "warm_edge": "#c09155",
+    "queue": "#c09a52"
+  },
+  "scene": {
+    "actionbar_box_px": [713, 827, 1207, 870],
+    "placement_policy": "one-time opt-in recommendation only; both provider roots remain independently movable and scalable",
+    "consumable": {
+      "origin_px": [531, 799],
+      "buttons": 10,
+      "columns": 5,
+      "rows": 2,
+      "button_width_ui": 36,
+      "button_height_ui": 36,
+      "gapping_ui": 3,
+      "local_scale": 1.0,
+      "show_popup": false,
+      "label": "可选 AutoBar · 5×2 随身卷袋"
+    },
+    "trinket": {
+      "origin_px": [1223, 832],
+      "main_orientation": "HORIZONTAL",
+      "main_scale": 0.9043710231781006,
+      "menu_orientation": "VERTICAL",
+      "menu_scale": 1.0,
+      "menu_count": 8,
+      "set_columns": true,
+      "columns": 4,
+      "show_menu": false,
+      "label": "现用 TrinketMenu · 双槽护套"
+    },
+    "clearance_px": {
+      "consumable_to_main": 16,
+      "main_to_trinket": 16,
+      "shared_bottom_y": 870
+    }
+  },
+  "trinket_contract": {
+    "provider": "TrinketMenu 3.3",
+    "main_frame": "TrinketMenu_MainFrame",
+    "main_buttons": ["TrinketMenu_Trinket0", "TrinketMenu_Trinket1"],
+    "inventory_slots": [13, 14],
+    "main_frame_horizontal_ui": [92, 52],
+    "main_frame_vertical_ui": [52, 92],
+    "button_ui": [36, 36],
+    "main_padding_ui": 8,
+    "main_gap_ui": 4,
+    "queue_overlay_ui": [18, 18],
+    "queue_offset_from_button_top_left_ui": [-2, -2],
+    "menu_frame": "TrinketMenu_MenuFrame",
+    "menu_buttons": "TrinketMenu_Menu1..30",
+    "max_candidates": 30,
+    "menu_step_ui": 40,
+    "menu_frame_formula_vertical": "width=12+columns*40; height=12+ceil(count/columns)*40",
+    "menu_frame_formula_horizontal": "width=12+ceil(count/columns)*40; height=12+columns*40",
+    "automatic_columns": {
+      "1-4": 1,
+      "5-12": 2,
+      "13-18": 3,
+      "19-24": 4,
+      "25-30": 5
+    },
+    "configured_columns_range": [1, 30],
+    "current_dock_offset_ui_unlocked": [-4, 0],
+    "behavior_preserved": [
+      "left click a candidate targets inventory slot 13",
+      "right click a candidate targets inventory slot 14",
+      "combat swaps queue and complete after leaving combat",
+      "18x18 queue icon remains provider-owned",
+      "main and menu keep independent drag, scale and orientation controls",
+      "cooldowns, cooldown text, icons, tooltips and SavedVariables remain provider-owned"
+    ]
+  },
+  "consumable_contract": {
+    "provider": "AutoBar 1.31 when explicitly enabled",
+    "frame": "AutoBarFrame",
+    "buttons": "AutoBarFrameButton1..24",
+    "popup_frame": "AutoBarPopupFrame",
+    "popup_buttons": "AutoBarPopupFrame_Button1..12",
+    "max_buttons": 24,
+    "max_popup_buttons": 12,
+    "button_ui": [36, 36],
+    "gapping_ui": 3,
+    "provider_frame_formula": "width=displayedColumns*(buttonWidth+gapping)+1; height=displayedRows*(buttonHeight+gapping)+1",
+    "visible_cluster_formula": "width=buttonWidth+(displayedColumns-1)*(buttonWidth+gapping); height=buttonHeight+(displayedRows-1)*(buttonHeight+gapping)",
+    "rack_visual_padding_ui": 6,
+    "popup_layout": "one-dimensional chain from the hovered base button in TOP, BOTTOM, LEFT or RIGHT direction; the base item may hide one of the twelve provider buttons",
+    "recommended_profile": {
+      "apply_only_on_explicit_user_action": true,
+      "buttons": 10,
+      "columns": 5,
+      "rows": 2,
+      "button_width_ui": 36,
+      "button_height_ui": 36,
+      "gapping_ui": 3,
+      "popup_direction": "TOP"
+    },
+    "behavior_preserved": [
+      "provider categories and current item selection",
+      "bag slots, counts, cooldowns, availability and tooltips",
+      "popup hover and optional shift behavior",
+      "drag handle, locking, docking and SavedVariables",
+      "disabled provider remains disabled"
+    ]
+  },
+  "trinket_scenarios": [
+    {"id": "main-horizontal-current-scale", "kind": "main", "orientation": "HORIZONTAL", "scale": 0.9043710231781006, "queue_slots": [0]},
+    {"id": "main-vertical-supported", "kind": "main", "orientation": "VERTICAL", "scale": 1.0, "queue_slots": [1]},
+    {"id": "menu-empty-hidden", "kind": "menu", "count": 0, "orientation": "VERTICAL", "set_columns": true, "columns": 4},
+    {"id": "menu-current-columns-one", "kind": "menu", "count": 1, "orientation": "VERTICAL", "set_columns": true, "columns": 4},
+    {"id": "menu-current-columns-eight", "kind": "menu", "count": 8, "orientation": "VERTICAL", "set_columns": true, "columns": 4},
+    {"id": "menu-current-columns-maximum", "kind": "menu", "count": 30, "orientation": "VERTICAL", "set_columns": true, "columns": 4},
+    {"id": "menu-auto-maximum", "kind": "menu", "count": 30, "orientation": "VERTICAL", "set_columns": false, "columns": 5},
+    {"id": "menu-horizontal-eight", "kind": "menu", "count": 8, "orientation": "HORIZONTAL", "set_columns": true, "columns": 4},
+    {"id": "menu-configured-columns-thirty", "kind": "menu", "count": 30, "orientation": "VERTICAL", "set_columns": true, "columns": 30}
+  ],
+  "consumable_scenarios": [
+    {"id": "rack-minimum-1x1", "kind": "rack", "count": 1, "columns": 1, "rows": 1},
+    {"id": "rack-recommended-5x2", "kind": "rack", "count": 10, "columns": 5, "rows": 2},
+    {"id": "rack-saved-disabled-24x1", "kind": "rack", "count": 24, "columns": 24, "rows": 1},
+    {"id": "rack-maximum-1x24", "kind": "rack", "count": 24, "columns": 1, "rows": 24},
+    {"id": "popup-top-six", "kind": "popup", "count": 6, "direction": "TOP"},
+    {"id": "popup-right-maximum", "kind": "popup", "count": 12, "direction": "RIGHT"}
+  ],
+  "non_authoritative": [
+    "all flat simulated leather folds, stitches, clasps, icons, cooldowns and queue glyphs",
+    "the optional AutoBar rack is not active on the current character and the simulation does not enable it",
+    "the eight-candidate TrinketMenu scene is a representative exact provider instance, not a claim about the current bag count",
+    "the recommended left and right placements are one-time opt-in positions and never overwrite current SavedVariables by default",
+    "no simulation pixel may be cropped, sliced, promoted, exported, uploaded or used as an ImageGen input",
+    "final Alpha, atlas cells, seams, nine-slice caps, brushwork and runtime adapter details remain unresolved"
+  ]
+}

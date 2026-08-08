@@ -7,6 +7,9 @@
 - 子组件实机几何、production Prompt、透明 source 与 runtime：未开始。
 - 当前运行时：Character、Inspect 与 DressUp 恢复 pfUI 默认 skins；AEUI 尚未
   接管任何 Character 对象。
+- 用户于 `2026-08-08` 明确暂停角色面板 overhaul，当前优先级转回动作栏的
+  饰品／消耗品 Field Kit。暂停不改变 `P2` 锁定视觉、不授权生产／runtime、
+  不删除 Character 资产或中间证据；恢复前只保留现状。
 
 ## 子模块状态
 
@@ -28,7 +31,10 @@
 - 底部四装备槽、五个彩色数值格。
 - 宽紫品质框、连续外发光和过暗模型背景。
 
-## 下一步
+## 暂停与恢复门禁
+
+- 当前状态：`paused by user / P2 preserved`。
+- 只有用户明确恢复 Character overhaul 后，才继续以下步骤。
 
 1. 在 Turtle WoW 记录 `CharacterFrame`、PaperDoll、全部装备槽、模型、
    属性、Tabs、下拉、关闭与旋转对象的尺寸、锚点、层级和状态。

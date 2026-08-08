@@ -20,11 +20,12 @@ AutoBar、TrinketMenu 或 Blizzard 对象继续由原 provider 正常绘制和�
 
 目标客户端还证实存在以下可选 provider；它们不是仓库依赖，也不复制其实现：
 
-- AutoBar `1.31`：`AutoBarFrame`、`AutoBarFrameButton1..24`、真实背包物品、
-  数量、冷却、分类弹出与拖动。
-- TrinketMenu：`TrinketMenu_MainFrame`、`TrinketMenu_Trinket0`（装备槽
-  `13`）、`TrinketMenu_Trinket1`（装备槽 `14`）、候选饰品菜单、冷却与自动
-  排队。
+- AutoBar `1.31`：`AutoBarFrame`、`AutoBarFrameButton1..24`、
+  `AutoBarPopupFrame_Button1..12`、真实背包物品、数量、冷却、四向线性分类弹出
+  与独立拖动把手。该插件已安装但在当前角色上禁用，项目不得自动启用。
+- TrinketMenu `3.3`：`TrinketMenu_MainFrame`、`TrinketMenu_Trinket0`（装备槽
+  `13`）、`TrinketMenu_Trinket1`（装备槽 `14`）、`TrinketMenu_Menu1..30`、
+  冷却与 `18×18 UI` 战斗排队 inset。该插件在当前角色上启用。
 - DoiteDPS：`DoiteDPSMainFrame` `318×46 UI`、`DoiteDPSTimelineTrack`、
   `DoiteDPSReadySlot` `46 UI`、Forecast 图标 `34 UI` 与资源框 `178×22 UI`；
   插件自身保存位置、scale、锁定、战斗显隐、推荐、ETA、资源和冷却。
@@ -91,26 +92,28 @@ Button 脚本、命中区、分页、拖放、位置、尺寸和 SavedVariables 
 
 | ID | provider／对象 | 合同 |
 |---|---|---|
-| `AB.CONSUMABLE.RACK` | 优先 `AutoBarFrame`；缺失时为 AEUI feature-detect fallback | 推荐 `5×2` 十个语义口袋，实际支持 `1–24` 个 provider Button 与合法行列；可独立拖动／缩放／显隐 |
-| `AB.CONSUMABLE.POCKET` | `AutoBarFrameButtonN` 或 fallback 真实物品 Button | 显示 provider 选出的真实物品图标、数量、冷却、可用性和 Tooltip；槽底不含物品图标或名称 |
-| `AB.CONSUMABLE.POPUP` | AutoBar 分类弹出；fallback 钉选面板 | AutoBar 存在时只换肤、不复制分类表或重挂 `PickupContainerItem`；fallback 只允许用户钉选明确 item／已验证 family |
+| `AB.CONSUMABLE.RACK` | 已加载并自行显示的 `AutoBarFrame`＋`AutoBarFrameButton1..24` | 推荐一次性 `5×2 / 36 UI / gap 3 UI`，但支持 `1–24` 个真实 Button 与合法行列。因 `alignButtons` 可把子 Button 放到 `AutoBarFrame` 边界外，装饰 Frame 必须在配置变化时读取真实可见 Button 边界；不得持续重写位置／尺寸，也不得启用当前禁用的 provider |
+| `AB.CONSUMABLE.POCKET` | `AutoBarFrameButton1..24` | 显示 provider 选出的真实物品图标、数量、冷却、可用性和 Tooltip；槽底不含物品图标、名称或类别。V1 不创建自有 fallback Button |
+| `AB.CONSUMABLE.POPUP` | `AutoBarPopupFrame_Button1..12` | 复用每个真实候选 Button 的薄口袋与 `3 UI` 短连接带，支持上下左右线性增长；不得把 XML 初始 `72×72 UI` Frame 当作实际弹出边界，不复制分类表或重挂 `PickupContainerItem` |
 
 推荐十类是战斗布局预设，不是硬编码物品分类：治疗、资源、复原／应急、绷带、
 食物、饮料、战斗药剂、防护药剂、合剂／抗性、职业或工程工具。AutoBar 的真实
-类别与用户配置优先；AEUI fallback 不凭名称猜测未知消耗品。
+类别与用户配置优先。AutoBar 缺失／禁用时 V1 不显示；以后若建立 AEUI 钉选
+fallback，必须另立功能合同，且不得凭名称猜测未知消耗品。
 
 ## 饰品双槽
 
 | ID | provider／对象 | 合同 |
 |---|---|---|
-| `AB.TRINKET.DOCK` | 优先 `TrinketMenu_MainFrame`；缺失时绑定装备槽 `13`／`14` | 两枚真实已装备饰品，水平或垂直；实际图标、快捷键、冷却与 Tooltip 动态 |
+| `AB.TRINKET.DOCK` | 优先 `TrinketMenu_MainFrame`；缺失时绑定装备槽 `13`／`14` | 水平严格 `92×52 UI`、垂直严格 `52×92 UI`；两枚 `36×36 UI` 真实已装备饰品，主栏 scale／方向／拖动与 resize 继续归 provider；实际图标、快捷键、冷却与 Tooltip 动态 |
 | `AB.TRINKET.SLOT13` | `TrinketMenu_Trinket0`／`UseInventoryItem(13)` | 顶部饰品槽；点击使用，不生成固定饰品 |
 | `AB.TRINKET.SLOT14` | `TrinketMenu_Trinket1`／`UseInventoryItem(14)` | 底部饰品槽；点击使用，不生成固定饰品 |
-| `AB.TRINKET.MENU` | TrinketMenu 候选菜单或以后独立合同 | 现阶段保留 provider 原菜单并 fail-open；换装视觉需另行测量候选数量、方向与战斗限制 |
+| `AB.TRINKET.MENU` | `TrinketMenu_MenuFrame`＋`TrinketMenu_Menu1..30` | 零候选隐藏；Button `36×36 UI`、步距 `40 UI`。VERTICAL 为 `12+列数×40` 乘 `12+ceil(数量/列数)×40`，HORIZONTAL 转置；支持自动 `1–5` 列或用户 `1–30` 列、菜单独立 scale／方向／拖动、八种停靠组合与战斗 Queue。只换肤并 fail-open |
 
 TrinketMenu 已经接管 `UseInventoryItem`、背包更新、装备更新与排队时，AEUI 不再
-安装竞争性全局 hook。没有 TrinketMenu 时，fallback 的换装入口只能在非战斗
-状态使用；战斗中保留两个已装备饰品的使用反馈，不尝试换装。
+安装竞争性全局 hook。没有 TrinketMenu 时，V1 fallback 只绑定两个已装备槽的
+使用反馈，不复制候选菜单或 Queue，也不尝试换装；以后若新增非战斗换装入口，
+必须另立功能合同。
 
 ## 推荐布局而非强制布局
 
