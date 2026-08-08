@@ -25,7 +25,8 @@
   最多 5 次实际生成/修复。”
 - 自动修复预算：最多 `5` 次实际 ImageGen 生图／修图，含首次
 - 当前实际生图：`0/5`
-- 流程错误：`0`（无候选且无 provider 生成证据时不占生图额度）
+- 流程错误：`1`（`E1` 为固定子进程启动前的数据出境审查阻止；无候选、无
+  provider 生成证据，不占生图额度）
 - 多执行正文最坏实际生图数：`5`；仅一个初始正文，后续 `.rN` 必须保持本文件
   的不可变边界
 - 锁定视觉基准：
@@ -191,7 +192,8 @@
   `46/46 pass`、violations `0`
 - 内部结论：`displayable`
 - 用户结论：`SIM-V3 confirmed 2026-08-08`；若上述可见关系实质变化，确认失效
-- 下一门禁：固定执行器执行 `AB.SLOT.BASE.V1` attempt 1
+- 下一门禁：用户明确授权指定 Character V3 锁定图上传至外部 ImageGen；之后
+  固定执行器以同一正文重试 attempt 1
 
 ## 生产正文完整性预检
 
@@ -258,7 +260,7 @@ Before returning the image, check all of the following: the canvas is exactly 10
 
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
-| `1/5` | `AB.SLOT.BASE.V1` / authorization commit pending | generate |  |  |  |  | authorized |
+| `1/5` | `AB.SLOT.BASE.V1` / `a26355d` | generate | not launched | 无 | 无候选；见流程错误 `E1` | 同一正文，待外部上传明确授权后重试 | authorized / pending |
 | `2/5` | `AB.SLOT.BASE.V1.r1` / not prepared | edit／generate |  |  |  |  | unavailable until attempt 1 review |
 | `3/5` | `AB.SLOT.BASE.V1.r2` / not prepared | edit／generate |  |  |  |  | unavailable |
 | `4/5` | `AB.SLOT.BASE.V1.r3` / not prepared | edit／generate |  |  |  |  | unavailable |
@@ -266,12 +268,12 @@ Before returning the image, check all of the following: the canvas is exactly 10
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
-|  |  |  |  |  |  |
+| `E1` | `AB.SLOT.BASE.V1` / `a26355d` | 无；pre-launch approval rejection | 执行环境要求明确授权把指定 Character V3 锁定图上传至外部 ImageGen；固定子进程未启动，无图、无 provider 结果 | 请求该具体文件、具体外部用途的数据出境授权；获准后以同一正文重试 | 不占生图额度；`0/5` |
 
 ## 执行记录
 
-- 日期：已授权，未执行
-- 会话／结果 ID：无
+- 日期：`2026-08-08`；固定子进程未启动
+- 会话／结果 ID：无；pre-launch external-data approval rejection
 - 实际输入绝对路径与职责：授权后固定为
   `D:\Git\azeroth-expedition-ui-overhaul\assets\locked\character\角色属性面板_香草同构收敛_风格确认_v3.png`，
   只承担正文声明的材料职责
@@ -279,8 +281,8 @@ Before returning the image, check all of the following: the canvas is exactly 10
 - 输出尺寸／模式／SHA-256：无
 - Alpha／残色：无
 - 实际生图次数：`0/5`
-- 流程错误次数：`0`
-- 循环终态：`prompt-authorized`
+- 流程错误次数：`1`
+- 循环终态：`authority-blocked`
 
 ## 审查记录
 
@@ -294,10 +296,11 @@ Before returning the image, check all of the following: the canvas is exactly 10
 - 真实排版：V3 整体方向已确认；正式候选的逐按钮真实排版尚未执行。
 - 实际展示区域：合同已定义，报告待候选；当前不能标记 pass。
 - 技术像素：待生成。
-- 结论：`prompt-authorized / complete / not executed`
+- 结论：`prompt-authorized / execution-blocked before generation`
 - 用户结论与日期：V3 `confirmed 2026-08-08`；生产正文与最多五次实际生成／
-  修复 `authorized 2026-08-08`
-- 下一门禁：固定 `@openai/codex@0.143.0` 执行 attempt 1
+  修复 `authorized 2026-08-08`；指定锁定图的外部 ImageGen 上传授权仍需明确
+- 下一门禁：用户明确授权将上述 Character V3 锁定图上传至外部 ImageGen；
+  之后以 `a26355d` 正文重试 attempt 1
 
 ## 尝试摘要
 
@@ -306,4 +309,4 @@ Before returning the image, check all of the following: the canvas is exactly 10
 | `SIM-V1` | deterministic PNG `fd5e1537…18d0`；display `9/9` | `user-rejected 2026-08-08` | 动作条上移；玩家／目标靠近并同基线 |
 | `SIM-V2` | PNG `943d6fac…e5d0`；display `9/9`；layout `20/20` | `user-revision-requested 2026-08-08` | 加入施法、攻击计时和 DoiteDPS；重排 Aura |
 | `SIM-V3` | PNG `b2761b67…c87e8`；新增 display `9/9`；layout `46/46`；V2 回归一致 | `user-confirmed 2026-08-08` | 不改变已确认布局；进入首批组件 Prompt 门禁 |
-| `AB.SLOT.BASE.V1` | 单物件正文完整性 `6/6 pass`；ImageGen `0/5` | `prompt-authorized 2026-08-08` | 固定执行器执行 attempt 1；候选全量内审通过即停止 |
+| `AB.SLOT.BASE.V1` | 单物件正文完整性 `6/6 pass`；授权 commit `a26355d`；pre-launch `E1`；ImageGen `0/5` | `prompt-authorized / authority-blocked` | 明确授权指定锁定图向外部 ImageGen 上传；同一正文重试 |
