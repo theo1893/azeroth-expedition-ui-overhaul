@@ -170,7 +170,7 @@ assert(module.comfortUIScaleStatus == "custom")
 local ok, message = module:ApplyComfortUIScalePreset()
 assert(ok == true)
 assert(string.find(message, "Comfort UI scale applied", 1, true))
-assert(module.focusLayoutRuntimeContract == "1.1")
+assert(module.focusLayoutRuntimeContract == "1.2")
 assert(module.focusLayoutStatus == "applied")
 assert(module.focusLayoutConfigured == 9)
 assert(module.focusLayoutLive == 9)
@@ -190,14 +190,37 @@ local function AssertPosition(name, anchor, x, y, scale)
   assert(position.scale == scale)
 end
 
-AssertPosition("pfPlayer", "BOTTOM", -196, 534, 1)
-AssertPosition("pfTarget", "BOTTOM", 196, 534, 1)
-AssertPosition("pfPlayerCastbar", "BOTTOM", -196, 495, 1)
-AssertPosition("pfTargetCastbar", "BOTTOM", 196, 495, 1)
-AssertPosition("pfSwingTimerMainhand", "CENTER", 0, -49, 1)
-AssertPosition("pfSwingTimerRanged", "CENTER", 0, -49, 1)
-AssertPosition("pfActionBarStances", "TOP", 0, -1046, 1)
+AssertPosition("pfPlayer", "BOTTOM", -180, 670, 0.75)
+AssertPosition("pfTarget", "BOTTOM", 180, 670, 0.75)
+AssertPosition("pfPlayerCastbar", "BOTTOM", -180, 624, 0.75)
+AssertPosition("pfTargetCastbar", "BOTTOM", 180, 624, 0.75)
+AssertPosition("pfSwingTimerMainhand", "CENTER", 0, -85, 0.75)
+AssertPosition("pfSwingTimerRanged", "CENTER", 0, -85, 0.75)
+AssertPosition("pfActionBarStances", "TOP", 0, -835, 0.75)
 AssertPosition("pfActionBarMain", "BOTTOM", 0, 295, 1.2)
+
+-- Target-display projection: the local 0.75 compensation exactly cancels
+-- the final 1920-to-2560 stretch. The 280 UI frames therefore render at
+-- 280 px, clear the measured rack edge, and retain an 80 px inner gap.
+local displayScale = (2560 / 1920) * module.focusFrameScale
+local playerCenter = 1280 - 180 * displayScale
+local targetCenter = 1280 + 180 * displayScale
+local projectedWidth = 280 * displayScale
+assert(math.abs(displayScale - 1) < 0.001)
+assert(math.abs(playerCenter - 1100) < 0.001)
+assert(math.abs(targetCenter - 1460) < 0.001)
+assert(math.abs(projectedWidth - 280) < 0.001)
+assert(math.abs((targetCenter - projectedWidth / 2) -
+  (playerCenter + projectedWidth / 2) - 80) < 0.001)
+assert(playerCenter - projectedWidth / 2 >= 960)
+
+for _, frame in pairs({
+  player, target, playerCast, targetCast, swingMain, swingOffhand,
+  swingRanged,
+  stance, doite,
+}) do
+  assert(math.abs(frame.scale - 0.75) < 0.001)
+end
 
 for _, config in pairs({
   pfUI_config.unitframes.player,
@@ -234,8 +257,9 @@ assert(swingOffhand.points[1][5] == -4)
 
 assert(DoiteDPSDB.point == "TOPLEFT")
 assert(DoiteDPSDB.relativePoint == "TOPLEFT")
-assert(math.abs(DoiteDPSDB.x - 1168.59375) < 0.001)
-assert(math.abs(DoiteDPSDB.y + 722.8125) < 0.001)
+assert(math.abs(DoiteDPSDB.x - 1121) < 0.001)
+assert(math.abs(DoiteDPSDB.y + 560) < 0.001)
+assert(math.abs(DoiteDPSDB.scale - 0.75) < 0.001)
 assert(DoiteDPSDB.locked == true)
 assert(DoiteDPSDB.enabled == false)
 assert(DoiteDPSDB.showOnlyCombat == false)
@@ -244,8 +268,8 @@ assert(DoiteDPSDB.showResource == true)
 assert(DoiteDPSDB.showCooldowns == true)
 
 assert(AzerothExpeditionUI.db.actionbars.fieldKitBound == true)
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 2)
-assert(AzerothExpeditionUI.db.actionbars.comfortUIScaleVersion == 1)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 3)
+assert(AzerothExpeditionUI.db.actionbars.comfortUIScaleVersion == 2)
 
 for _, frame in pairs({
   player, target, playerCast, targetCast, swingMain, swingOffhand,
@@ -261,9 +285,10 @@ for _, frame in pairs({
 end
 
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "focus%-layout%-contract=1%.1"))
+assert(string.find(status, "focus%-layout%-contract=1%.2"))
 assert(string.find(status, "focus%-layout=applied"))
 assert(string.find(status, "focus%-layout%-mouse=visible%-controls%-only"))
+assert(string.find(status, "focus%-layout%-display%-scale=0%.75"))
 assert(string.find(status, "focus%-ui%-scale=applied"))
 assert(string.find(status, "focus%-ui%-scale%-tier=8"))
 assert(string.find(status, "focus%-ui%-scale%-target=8"))

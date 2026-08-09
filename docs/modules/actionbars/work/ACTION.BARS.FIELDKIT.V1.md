@@ -949,6 +949,16 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
   当前角色主／副栏保存坐标按新 UIParent 更新为 `y=295／328`；TrinketMenu
   `MainScale` 从 `0.904371` 归一为 `1.0`，抵消全局缩小后饰品槽过小。强绑定、
   `48／16 UI` 间距、popup guard、source／TGA 像素及 provider 行为均不变。
+- 上述 v1.1 方案的第二张 `2560×1440` 实机截图 `3a726e58…678f0` 判定为 fail：
+  玩家框蓝色主体实测 `374×114 px`，仍覆盖左卷袋上部。原因是 tier 8 虽在
+  `1920×1080` client buffer 内达到 pixel-perfect，最终输出仍被显示链放大
+  `4/3`；共享 adapter 又用 scale-dependent UIParent 虚拟尺寸推导战斗框架锚点。
+  AEUI `0.8.8` 的共享 adapter SHA `094a32e6…bff3a9` 保留 tier 8，只给
+  Player／Target、双方施法条、Swing、姿态与 DoiteDPS 使用 `0.75` local display
+  compensation，并改用目标显示固定坐标。投影后玩家框约 `280 px` 宽、两框
+  内缘约 `80 px`、左卷袋与玩家框约 `3 px` 净空。Combat Deck、Field Kit
+  几何／美术、TrinketMenu `MainScale=1.0`、强绑定、popup guard、source／TGA
+  像素及 provider 行为均不变；本次 ImageGen `0`。
 
 ## 审查记录
 
@@ -1062,10 +1072,11 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
 1. 两套 accepted source 与 runtime TGA 像素身份不变；adapter、source／runtime
    manifest 已更新到 `runtime-v1.5 / P5 / pending-retest`。fresh-checkout package
    已通过，目标设备只需拉取并安装 `addon/`，不得再生成、导出或打补丁。
-2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.7`、
+2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.8`、
    `fieldkit-contract=1.5`、`fieldkit-binding=bound` 与 `actionbar-stack=12x2-bound`。
-   同时确认 `focus-ui-scale-tier=8`，左卷袋与右双槽随整体 UI 缩小后仍清楚可读，
-   TrinketMenu 双槽不会因旧 `0.904371` 再次被二次缩小。
+   同时确认 `focus-layout-contract=1.2`、`focus-ui-scale-tier=8` 与
+   `focus-layout-display-scale=0.75`；左卷袋与右双槽维持当前清晰尺寸，
+   TrinketMenu 双槽不会因旧 `0.904371` 再次被二次缩小，玩家框不再覆盖卷袋。
    先确认左 `4×6` 卷袋—中央 `12×2` 动作条—右水平双槽在中心中下部共用一个
    Bar 1 mover；拖动两侧 provider 松手应回位，`unbind` 后才独立，`bind` 恢复，
    `home` 重置最初位置。再确认

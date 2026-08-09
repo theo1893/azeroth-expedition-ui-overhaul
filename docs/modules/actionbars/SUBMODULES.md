@@ -95,7 +95,7 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 
 ## 战斗焦点邻接对象
 
-这些对象加入同一推荐布局，但逻辑所有权不转移给动作条 adapter。AEUI `0.8.7`
+这些对象加入同一推荐布局，但逻辑所有权不转移给动作条 adapter。AEUI `0.8.8`
 提供 `/aeui focuslayout apply` 一次性位置 preset，以及显式
 `/aeui focuslayout comfort` 舒适缩放＋位置 preset；任何视觉接管仍须以后按对象
 独立授权并 feature-detect，失败时保留 provider 原样。
@@ -107,7 +107,7 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 | `AB.FOCUS.CASTBAR.FOCUS` | 可选 `pfFocusCastbar` | 继续跟随 Focus Frame，默认不进入中央玩家／目标双框；对象不存在时无占位 |
 | `AB.FOCUS.SWING.MELEE` | `pfSwingTimerMainhand`＋`pfSwingTimerOffhand` | `200×12 UI` 双细轨居中上下排列；副手仍跟随主手；文字、攻速与 Marker 动态 |
 | `AB.FOCUS.SWING.RANGED` | `pfSwingTimerRanged` | 复用同一中心计时层，不与近战双条组成第三条常驻栏；范围提示仍由 provider 管理 |
-| `AB.DOITEDPS.TIMELINE` | 可选 `DoiteDPSMainFrame` 及子 Frame | 保留原生 `318×46 UI` 比例、独立拖动／缩放／锁定／显隐与蓝绿状态语义；preset 只写 point／x／y，锁定态继续由 provider 关闭鼠标，以后可选低重量外缘 |
+| `AB.DOITEDPS.TIMELINE` | 可选 `DoiteDPSMainFrame` 及子 Frame | 保留原生 `318×46 UI` 比例、独立拖动／锁定／显隐与蓝绿状态语义；comfort preset 写 point／x／y 与目标显示补偿 scale `0.75`，锁定态继续由 provider 关闭鼠标，以后可选低重量外缘 |
 
 ## 消耗品卷袋
 
@@ -203,9 +203,10 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   `HORIZONTAL / scale=1.0`；启动或
   `/reload` 后由 v1.5 收敛为左卷袋—中央 `12×2`—右双槽。
 - `战斗视线邻接`：Player／Target 继续由 pfUI UnitFrame provider 所有；AEUI
-  `0.8.7` 的 preset 仅一次性把两者置于同一基线并收拢到目标设备约 `80 px`
-  内缘间距。pfUI movable 不保存 relativePoint；comfort tier 8 下用等价的
-  `BOTTOM x=-196／196, y=534, scale=1.0` 持久化；双方 Aura 从外肩
+  `0.8.8` 的 preset 仅一次性把两者置于同一基线并收拢到目标设备约 `80 px`
+  内缘间距。pfUI movable 不保存 relativePoint；comfort tier 8 与最终显示
+  compensation 下用等价的 `BOTTOM x=-180／180, y=670, scale=0.75` 持久化；
+  双方 Aura 从外肩
   `TOPLEFT／TOPRIGHT` 每行 `6` 个展开。adapter 不重画，不在维护循环中持续改位置。
 - `战斗信息纵栈`：目标设备物理顺序为 DoiteDPS `y=514–551`、近战攻击计时
   `570–593`、双方外肩 Aura `612–631`、Player／Target `639–700`、双施法条
@@ -221,12 +222,15 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   沿用 provider 的根 Frame 鼠标穿透；不增加覆盖中央视野的大型透明 Frame。
 - `舒适缩放`：目标设备保持客户端 `1920×1080`，不由本模块修改分辨率；用户
   显式执行 `comfort` 时只把当前 pfUI profile 设为
-  `Tiny PixelPerfect / tier 8 / 0.71111111111111`，再按新的 UIParent 比例重算
-  Combat Focus 与强绑定甲板锚点。普通刷新不改 pfUI scale；其他角色不自动应用。
+  `Tiny PixelPerfect / tier 8 / 0.71111111111111`。Combat Focus 另用 local
+  scale `0.75` 抵消目标机器最后的 `1920→2560` 拉伸，并使用经实机截图校准的
+  固定 pfUI movable 坐标；不再把 scale-dependent UIParent 虚拟宽高当最终显示
+  尺寸。强绑定甲板锚点保持原样。普通刷新不改 pfUI scale；其他角色不自动应用。
 - `home` 预设只在用户明确执行时写入一次。默认读取并尊重现有 profile、主栏位置、
   scale、按钮数、行列、自动隐藏和空槽设置；V3 继续默认关闭狮鹫，unlock 时
   仍可为足够宽的水平主栏单独开启。DoiteDPS 的锁定／战斗显隐／Forecast／资源／
-  冷却选项不由此 preset 改写。
+  冷却选项不由此 preset 改写；DoiteDPS 的 local scale 在 comfort preset 中
+  明确收敛为 `0.75`，其启用／锁定／显隐与推荐逻辑不变。
 
 ## 功能不变量
 
