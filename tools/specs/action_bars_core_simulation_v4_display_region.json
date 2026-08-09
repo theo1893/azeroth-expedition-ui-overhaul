@@ -1,0 +1,104 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "ACTION-BARS-CORE/SIM.V4/combat-focus-and-architotem",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, provider UI units before UIParent scale",
+  "evidence": {
+    "provider": "addon/pfUI modules castbar/swingtimer + installed DoiteDPS + installed ArchiTotem 1.7",
+    "layout_formula": "combat frames retain their provider dimensions with a proposed 0.82 local display scale; ArchiTotem uses 40 UI element/special buttons at provider scale 0.8 plus one unscaled 20 UI drag handle",
+    "simulation_spec": "tools/specs/action_bars_core_simulation_v4.json",
+    "simulation": "generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V4/action_bars_core_sim_v4.png",
+    "inherited_contract": "tools/specs/action_bars_core_simulation_v3_display_region.json",
+    "target": "1920x1080 planning canvas; runtime target remains the audited 1920x1080 to 2560x1440 display chain",
+    "atlas_role": "logical planning cell only; this layout revision has no source or runtime atlas",
+    "dynamic_ownership": "all spell icons, names, timers, cooldowns, totem choice, casts, skip flags, recall, presets, tooltips and hit boxes remain provider-owned",
+    "architotem_current_character": "scale=0.8, four element buttons, recall visible, preset hidden, unlocked; maximum Air popup has seven total buttons",
+    "final_runtime": false
+  },
+  "atlas": {
+    "size": [32, 32],
+    "visible_bbox": [0, 0, 32, 32],
+    "require_exact_visible_coverage": true,
+    "sampled_regions": [
+      {"id": "planning.geometry-only", "box": [0, 0, 32, 32]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 3, "right": 3, "top": 3, "bottom": 3},
+    "minimum_frame_size": [7, 7]
+  },
+  "scenarios": [
+    {
+      "id": "architotem-current-closed-unlocked",
+      "frame": [212, 32],
+      "preview_frame": [212, 32],
+      "zones": {"provider-footprint": [0, 0, 212, 32]},
+      "regions": [
+        {"id": "earth-main", "kind": "button", "box": [0, 0, 32, 32], "zone": "provider-footprint"},
+        {"id": "fire-main", "kind": "button", "box": [32, 0, 64, 32], "zone": "provider-footprint"},
+        {"id": "water-main", "kind": "button", "box": [64, 0, 96, 32], "zone": "provider-footprint"},
+        {"id": "air-main", "kind": "button", "box": [96, 0, 128, 32], "zone": "provider-footprint"},
+        {"id": "drag-handle", "kind": "button", "box": [128, 6, 148, 26], "zone": "provider-footprint"},
+        {"id": "cast-all", "kind": "button", "box": [148, 0, 180, 32], "zone": "provider-footprint"},
+        {"id": "recall", "kind": "button", "box": [180, 0, 212, 32], "zone": "provider-footprint"}
+      ]
+    },
+    {
+      "id": "architotem-current-air-popup-down-seven",
+      "frame": [212, 224],
+      "preview_frame": [212, 224],
+      "zones": {"provider-footprint": [0, 0, 212, 224]},
+      "regions": [
+        {"id": "main-row", "kind": "button", "box": [0, 0, 212, 32], "zone": "provider-footprint"},
+        {"id": "air-candidates-two-through-seven", "kind": "button", "box": [96, 32, 128, 224], "zone": "provider-footprint"}
+      ]
+    },
+    {
+      "id": "architotem-locked-retains-handle-gap",
+      "frame": [212, 32],
+      "preview_frame": [212, 32],
+      "zones": {"provider-footprint": [0, 0, 212, 32]},
+      "regions": [
+        {"id": "four-elements", "kind": "button", "box": [0, 0, 128, 32], "zone": "provider-footprint"},
+        {"id": "hidden-handle-layout-gap", "kind": "decoration", "box": [128, 0, 148, 32], "zone": "provider-footprint"},
+        {"id": "cast-all-and-recall", "kind": "button", "box": [148, 0, 212, 32], "zone": "provider-footprint"}
+      ]
+    },
+    {
+      "id": "architotem-both-optional-buttons-visible",
+      "frame": [244, 32],
+      "preview_frame": [244, 32],
+      "zones": {"provider-footprint": [0, 0, 244, 32]},
+      "regions": [
+        {"id": "four-elements-and-handle", "kind": "button", "box": [0, 0, 148, 32], "zone": "provider-footprint"},
+        {"id": "cast-all-recall-preset", "kind": "button", "box": [148, 0, 244, 32], "zone": "provider-footprint"}
+      ]
+    },
+    {
+      "id": "player-castbar-proposed-280x22",
+      "frame": [280, 22],
+      "preview_frame": [280, 22],
+      "zones": {"dynamic-safe": [0, 0, 280, 22]},
+      "regions": [
+        {"id": "player-cast-provider-content", "kind": "status", "box": [0, 0, 280, 22], "zone": "dynamic-safe"}
+      ]
+    },
+    {
+      "id": "target-castbar-proposed-280x22",
+      "frame": [280, 22],
+      "preview_frame": [280, 22],
+      "zones": {"dynamic-safe": [0, 0, 280, 22]},
+      "regions": [
+        {"id": "target-cast-provider-content", "kind": "status", "box": [0, 0, 280, 22], "zone": "dynamic-safe"}
+      ]
+    },
+    {
+      "id": "doitedps-native-root-proposed-scale",
+      "frame": [318, 46],
+      "preview_frame": [318, 46],
+      "zones": {"timeline-safe": [0, 0, 318, 46]},
+      "regions": [
+        {"id": "doitedps-provider-content", "kind": "timeline", "box": [0, 0, 318, 46], "zone": "timeline-safe"}
+      ]
+    }
+  ]
+}

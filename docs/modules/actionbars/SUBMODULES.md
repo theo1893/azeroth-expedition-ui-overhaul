@@ -1,7 +1,7 @@
 # Action Bars 子模块定义
 
 本文件定义动作条、姿态／宠物条，以及与战斗动作区相邻的施法／攻击读数、
-DoiteDPS、消耗品和饰品栏。
+DoiteDPS、消耗品、饰品栏和萨满图腾管理卫星栏。
 美术见 [ART_BASELINE.md](ART_BASELINE.md)，状态见
 [PROGRESS.md](PROGRESS.md)。本模块只接管明确列出的对象；未登记的 pfUI、
 AutoBar、TrinketMenu 或 Blizzard 对象继续由原 provider 正常绘制和交互。
@@ -29,6 +29,11 @@ AutoBar、TrinketMenu 或 Blizzard 对象继续由原 provider 正常绘制和�
 - DoiteDPS：`DoiteDPSMainFrame` `318×46 UI`、`DoiteDPSTimelineTrack`、
   `DoiteDPSReadySlot` `46 UI`、Forecast 图标 `34 UI` 与资源框 `178×22 UI`；
   插件自身保存位置、scale、锁定、战斗显隐、推荐、ETA、资源和冷却。
+- ArchiTotem `1.7`：`ArchiTotemFrame`、四枚当前元素 Button、Earth／Fire／Water
+  各最多 `5` 与 Air 最多 `7` 枚候选、独立 `20×20 UI` 拖动球、
+  `ArchiTotemButton_AllTotems`、可选 Recall／PresetManager Button 及独立
+  `350×450 UI` 预设管理框。该插件只在萨满角色按自身配置显示，并继续负责施放、
+  右键跳过、悬停候选、冷却／倒计时、顺序、锁定、方向和预设。
 
 ## pfUI 十二条逻辑 Bar
 
@@ -108,6 +113,7 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 | `AB.FOCUS.SWING.MELEE` | `pfSwingTimerMainhand`＋`pfSwingTimerOffhand` | `200×12 UI` 双细轨居中上下排列；副手仍跟随主手；文字、攻速与 Marker 动态 |
 | `AB.FOCUS.SWING.RANGED` | `pfSwingTimerRanged` | 复用同一中心计时层，不与近战双条组成第三条常驻栏；范围提示仍由 provider 管理 |
 | `AB.DOITEDPS.TIMELINE` | 可选 `DoiteDPSMainFrame` 及子 Frame | 保留原生 `318×46 UI` 比例、独立拖动／锁定／显隐与蓝绿状态语义；comfort preset 写 point／x／y 与目标显示补偿 scale `0.75`，锁定态继续由 provider 关闭鼠标，以后可选低重量外缘 |
+| `AB.TOTEM.ARCHITOTEM` | 可选 `ArchiTotemFrame`、四元素主 Button、元素候选、拖动球、AllTotems 与可选 Recall／PresetManager | `ACTION-BARS-CORE-SIM-V4` 的 P2 提案把闭合真实可见 union 作为职业卫星栏置于 Combat Deck 下方；provider `scale=0.8` 时当前闭合脚印为 `212×32 UI`、Air 七层最大展开为 `212×224 UI`。绑定态提议随 Bar 1，候选向下展开；施放、右键、hover、计时、锁定、方向、预设与 Tooltip 不接管。缺失、非萨满或隐藏时无占位；确认前不写 runtime 或 provider SavedVariables |
 
 ## 消耗品卷袋
 
@@ -231,6 +237,11 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   仍可为足够宽的水平主栏单独开启。DoiteDPS 的锁定／战斗显隐／Forecast／资源／
   冷却选项不由此 preset 改写；DoiteDPS 的 local scale 在 comfort preset 中
   明确收敛为 `0.75`，其启用／锁定／显隐与推荐逻辑不变。
+- `ACTION-BARS-CORE-SIM-V4` 当前只是一份待用户确认的 P2 修订：全局 tier 8、
+  Combat Deck 与 Field Kit 保持不变，只提议把 Player／Target、双施法、Swing、
+  姿态和 DoiteDPS 的 local display compensation 从 `0.75` 调至 `0.82`，并把两框
+  中心内收以保持外侧总包络不增；ArchiTotem 闭合栏居中放在主栏／XP Rail 下方，
+  最大 Air 候选向屏幕底部展开。提议在用户确认前不得写入 addon 或 SavedVariables。
 
 ## 功能不变量
 
@@ -238,6 +249,9 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   装备态、拖放、Tooltip 与右键语义继续由真实 provider 负责。
 - 施法识别、延迟、可打断状态、主／副手／远程攻击识别、DoiteDPS 推荐／ETA／
   资源／冷却继续由各自 provider 负责；本模块不复制算法或制造假读数。
+- ArchiTotem 的图腾施放、右键跳过、候选顺序、hover 展开、倒计时、锁定、方向、
+  Recall、预设和 Tooltip 继续由 ArchiTotem 负责；本模块不得复制图腾数据库或
+  创建替代 Button。
 - Bar 1、用户标记的战斗核心 Bar、消耗品核心口袋和两枚饰品在战斗中不得因
   mouseover 延迟而消失；非核心辅助栏才可选择脱战淡出。
 - 自动隐藏只能改变可见性／Alpha，不在维护循环中搬动或改尺寸。

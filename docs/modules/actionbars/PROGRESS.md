@@ -60,6 +60,24 @@
   左缘约 `x=960`、目标框右缘约 `x=1600`、内缘间距 `80 px`；左卷袋右缘约
   `x=957`，不再相交。Combat Deck／Field Kit 的当前位置与美术不变，ImageGen
   `0`；当前为 `P5 / layout-v1.2 / pending-game-validation`。
+- 用户随后提供 `1443×1067 RGB` 实机截图 `3c4eeee2…6dc9`：v1.2 已达到单位框
+  与左卷袋不再相交的目标，但用户明确判定战斗核心“有点太小”，并要求把萨满
+  图腾管理插件融入布局。因此 v1.2 保留为可回退 P5 runtime，状态改为
+  `revision-requested`，不进入 P6。实机目录与 TOC 证明口述“atomchi”实际是
+  ArchiTotem `1.7`；已审计其 `ArchiTotemFrame`、四元素当前 Button、Earth／Fire／
+  Water 各最多 `5` 与 Air 最多 `7` 候选、独立 `20×20 UI` 拖动球、AllTotems、
+  Recall、PresetManager 与独立 `350×450 UI` 对话框。当前角色实值为
+  `scale=0.8`、`direction=up`、Recall 显示、PresetManager 主按钮隐藏、未锁定；
+  真实闭合 union 为 `212×32 UI`，Air 最大展开为 `212×224 UI`。
+- `ACTION-BARS-CORE-SIM-V4` 已完成确定性 P2 内审：保留 tier 8、Combat Deck、
+  左 `4×6` 卷袋、右水平双饰品与 Bar 1 几何，只把 Player／Target、双方施法、
+  Swing、姿态和 DoiteDPS 的 local display compensation 从 `0.75` 提议为
+  `0.82`（约 `+9.3%`），同时把单位框中心内收，维持外侧总包络不增。ArchiTotem
+  作为职业卫星居中置于动作条／XP Rail 下方，提议向下展开，绑定态随 Bar 1；
+  provider 的施放、右键、hover、冷却、倒计时、锁定、方向与预设全部不接管。
+  layout `54/54`、display `7/7`、violations `0`，ImageGen `0/0`。当前为
+  `simulation-reviewed / P2 / pending-user-confirmation`，尚未改 addon、pfUI、
+  ArchiTotem 或 SavedVariables。
 - 透明度与输入合同同时冻结：关键单位状态、施法、攻击计时、DoiteDPS 与技能
   CD 不做整组淡化，继续使用各 provider 原生半透明背景；只允许非核心辅助栏按
   用户设置脱战淡出。AEUI Rail、连接片、口袋／护套等纯装饰 Frame 必须
@@ -253,24 +271,30 @@
 | `AB.CONSUMABLE.GROUP` | `P5 / runtime-v1.5 / pending-retest / 1/5` | 精确 `24 Button / 4×6 / 推荐 profile` 才显示三组、启用 external drawer、hover bridge 与 popup switch intent guard；`/aeui autobar apply／restore` 仍为当前角色备份式显式配置，普通刷新只读且不启用 provider | 实机确认“应急／增益／工具”、绑定态向左展开、跨格保持、停留切换、手动数字 item ID、非 exact profile 原生回退 |
 | `AB.TRINKET.DOCK` | `P5 / runtime-v1.5 / pending-retest / 4/5` | [source](../../../assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；TGA `3614d9a8…f455`、像素 `0961d750…aef` 不变；v1.5 在主栏右侧 `16 UI` 强绑定，当前角色一次性改为水平双槽；Queue／换装／候选不变 | `/reload` 验证双槽位于主栏右端、拖动松手回位、候选向外、横／竖／scale 与 Queue 行为保持；不执行 attempt 5 |
 | `AB.TRINKET.MENU` | `P5 / runtime-v1.5 / pending-retest / 4/5` | C 九宫格与 B 候选插页像素不变；候选 `0／1／8／30` display `9/9 pass`、换装与动态层仍归 provider；v1.5 只改变主栏位置归属，不替代 TrinketMenu 行为 | 实机验证候选图标、左右键换槽、Queue、菜单向右外展、独立 scale／方向及 provider 缺失 fail-open |
-| `AB.FOCUS.CASTBAR` | `P5 / layout-v1.2 / pending-game-validation` | 玩家／目标／Focus 真实对象；AEUI `0.8.8` comfort preset 保留 tier 8，并用 local scale `0.75` 抵消目标显示链 `4/3` 拉伸；玩家／目标双条贴各自单位框，Focus 仍跟随自身 Frame；尺寸、状态和动态层不重绘 | 实机验证约 `280 px` 单位框、`80 px` 内缘、卷袋净空、玩家延迟区、目标可打断状态、独立移动与 provider 缺失 fail-open；换肤另立合同 |
-| `AB.FOCUS.SWING` | `P5 / layout-v1.2 / pending-game-validation` | 主手／副手／ranged 真对象；三者用 local scale `0.75`，主／ranged 保存 `CENTER y=-85`，副手仍锚到主手；无维护循环 | 实机验证近战双条、远程复用、攻速变化、读数尺寸与中央视野；若换肤则另立合同 |
-| `AB.DOITEDPS.TIMELINE` | `P5 / layout-v1.2 / pending-game-validation` | 已安装 provider 的 `318×46 UI` 根 Frame；comfort preset 保存 `TOPLEFT 1121,-560 / scale 0.75`，保留启用、锁定、战斗显隐、Forecast、资源和冷却行为 | 实机验证舒适尺寸、位置、锁定态鼠标穿透、显隐与 provider 缺失 fail-open；换肤另立合同 |
+| `AB.FOCUS.CASTBAR` | v1.2 `P5 / revision-requested`；V4 `P2 / simulation-reviewed` | 玩家／目标／Focus 真实对象；当前 AEUI `0.8.8` runtime 保留 tier 8 与 local scale `0.75` 作为回退。V4 提议 `0.82`，玩家／目标双条继续贴各自单位框，Focus 仍跟随自身 Frame；尺寸、状态和动态层不重绘 | 用户接受或修订 V4；接受后实现并实机验证增大后的玩家延迟区、目标可打断状态、独立移动、卷袋净空与 provider 缺失 fail-open |
+| `AB.FOCUS.SWING` | v1.2 `P5 / revision-requested`；V4 `P2 / simulation-reviewed` | 主手／副手／ranged 真对象；当前回退 local scale `0.75`。V4 提议 `0.82`、主／ranged 反向校准为 `CENTER y=-78`，副手仍锚到主手；无维护循环 | 用户接受或修订 V4；接受后验证近战双条、远程复用、攻速变化、读数尺寸与中央视野 |
+| `AB.DOITEDPS.TIMELINE` | v1.2 `P5 / revision-requested`；V4 `P2 / simulation-reviewed` | 已安装 provider 的 `318×46 UI` 根 Frame；当前回退为 `TOPLEFT 1121,-560 / scale 0.75`。V4 提议 `TOPLEFT 1012,-512 / scale 0.82`，启用、锁定、战斗显隐、Forecast、资源和冷却行为不变 | 用户接受或修订 V4；接受后验证可读性、位置、锁定态鼠标穿透、显隐与 provider 缺失 fail-open |
+| `AB.TOTEM.ARCHITOTEM` | `P2 / simulation-reviewed / pending-user-confirmation` | [work](work/ACTION.BARS.FOCUS.V1.md)；ArchiTotem `1.7` 全部真实 Button／候选／特殊按钮已审计。V4 使用真实闭合 `212×32 UI` 与 Air 最大 `212×224 UI` union，提议在动作条下方居中、向下展开并随 Bar 1；layout `54/54`、display `7/7` | 用户接受或修订 V4；确认前不改 addon 或 provider SavedVariables，确认后再实现并复测施放、右键、hover、七层候选、拖动／锁定、Recall、预设与 fail-open |
 | `AB.MOVER／CONFIG` | `P1` | pfUI `UpdateMovable` 与 unlock 已审计 | 设计只在 unlock 出现的把手和一次性预设入口 |
 
 ## 当前方向预演
 
-- specification：`tools/specs/action_bars_core_simulation_v3.json`
+- specification：`tools/specs/action_bars_core_simulation_v4.json`，SHA
+  `54d05cc2…ee21`
 - 本地渲染：
-  `generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V3/action_bars_core_sim_v3.png`
+  `generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V4/action_bars_core_sim_v4.png`，
+  SHA `3307359c…a1867`
 - display-region 合同：
-  `tools/specs/action_bars_core_simulation_v3_display_region.json`
+  `tools/specs/action_bars_core_simulation_v4_display_region.json`
 - 报告：
-  `generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V3/display-region-report.json`；
-  新增战斗读数 `9/9 pass`、violations `0`，动作本体继承 V2 `9/9 pass`
+  `generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V4/display-region-report.json`；
+  ArchiTotem 四种状态与三项战斗读数 `7/7 pass`、violations `0`，SHA
+  `24600000…fbd6`
 - 精确布局报告：
-  `generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V3/layout-report.json`；
-  `46/46 pass`、violations `0`
+  `generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V4/layout-report.json`；
+  `54/54 pass`、violations `0`，SHA `f7b666d9…ae11`
+- V3 仍是用户已确认的原始构图基线；V4 只修订战斗核心可读性与 ArchiTotem
+  位置，尚待用户确认，未改变 V3 的 accepted art 或 runtime。
 - V2 回归重渲染 SHA 仍为
   `943d6fac246f0ebc98ebf478519da05f18c3e8e35c4279b785034a4c5548e5d0`。
 - 模拟像素为非权威本地中间件，不能切片、晋级或作为 ImageGen 输入。
@@ -416,23 +440,16 @@
    Bar 6、左 `4×6` 卷袋与右水平双槽整体跟随，仍不改 accepted art／TGA 像素、
    物品使用或候选顺序；P4→当前
    ImageGen `0`，原循环仍止于 `4/5` 与 `1/5`。
-3. 舒适缩放与位置层 v1.1 已由第二张实机截图判定失败，不能作为验收依据。
-   v1.2 的下一门禁是 Turtle WoW 实机验证：启动游戏或 `/reload` 后先确认
-   `/aeui status` 含 `version 0.8.8`、`focus-layout-contract=1.2`、
-   `focus-layout=saved`、`focus-ui-scale=saved`、`focus-ui-scale-tier=8` 与
-   `focus-layout-display-scale=0.75`、`focus-layout-mouse=visible-controls-only`。
-   确认客户端分辨率仍为 `1920×1080`、tier 8 全局尺寸保持，而战斗焦点组单独
-   收到约 `75%`：玩家框约落在最终截图 `[960,680,1240,770]`，目标框约
-   `[1320,680,1600,770]`，双方内缘约 `80 px`，玩家框与左卷袋不相交；双施法条
-   位于单位框和 Combat Deck 之间，姿态条不进入技能格。确认纵栈顺序仍为
-   DoiteDPS → 攻击计时 → 双方外肩 Aura → Player／Target → 双施法条 → 姿态 →
-   Combat Deck。分别观察满血／掉血、
-   有／无目标、双方施法、近战双持、远程计时、Aura 超过 `6` 个和 DoiteDPS
-   锁定／解锁，确认重要状态保持可读，装饰空白不拦截世界点击，中央没有大型透明
-   命中层。若 pfUI scale 或位置被手工改动，需要同时恢复舒适缩放与锚点时只执行
-   一次 `/aeui focuslayout comfort`；只恢复当前 scale 下的锚点则执行
-   `/aeui focuslayout apply`。普通刷新不持续改 scale／位置。通过前这组位置层保持
-   `P5 / pending-game-validation`，且不进入 UI 重绘。
+3. 舒适缩放与位置层 v1.1 已由第二张实机截图判定失败；v1.2 又由最新实机截图
+   判定为“位置避让通过、战斗核心偏小”，两者都不能作为 P6 验收依据。当前下一
+   门禁是用户明确接受或修订 `ACTION-BARS-CORE-SIM-V4`：只确认 combat focus
+   local scale `0.82`、单位框外包络不增、Combat Deck／Field Kit 不缩放，及
+   ArchiTotem 位于主栏下方、候选向下、绑定态随 Bar 1 的方向。确认前不得把提议
+   坐标或 `direction=down` 写入 addon／pfUI／ArchiTotem SavedVariables。接受后才
+   实现下一版 focus layout contract，并分别验证满血／掉血、有／无目标、双方施法、
+   近战双持、远程计时、Aura 超过 `6`、DoiteDPS 锁定／解锁，以及 ArchiTotem
+   四元素施放、右键跳过、Air 七层候选、拖动／锁定、Recall、缺失／非萨满
+   fail-open 与强绑定回位；本阶段继续不进入 UI 重绘。
 4. Field Kit 的同轮 P6 复测先确认 `/aeui status` 含
    `fieldkit-contract=1.5`、`fieldkit-binding=bound` 与
    `actionbar-stack=12x2-bound`。先确认主栏已从底边上移到中心中下，构图为

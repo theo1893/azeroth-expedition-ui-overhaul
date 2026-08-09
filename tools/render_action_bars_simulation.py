@@ -840,6 +840,143 @@ def draw_trinkets(
     return shell
 
 
+def totem_geometry(
+    config: dict[str, Any],
+    ui_scale: float,
+) -> dict[str, int]:
+    local_scale = float(config.get("scale", 1.0))
+    handle_scale = float(config.get("handle_scale", 1.0))
+    button = ui_px(int(config.get("button_ui", 40)), ui_scale, local_scale)
+    handle = ui_px(int(config.get("handle_ui", 20)), ui_scale, handle_scale)
+    element_count = int(config.get("element_count", 4))
+    special_count = 1
+    if config.get("recall_visible", False):
+        special_count += 1
+    if config.get("preset_visible", False):
+        special_count += 1
+    width = element_count * button + handle + special_count * button
+    popup_count = max(1, int(config.get("popup_count", 1)))
+    popup_height = popup_count * button
+    x, y = map(int, config["screen_origin"])
+    return {
+        "x": x,
+        "y": y,
+        "button": button,
+        "handle": handle,
+        "width": width,
+        "row_height": button,
+        "popup_height": popup_height,
+        "popup_bottom": y + popup_height,
+    }
+
+
+def draw_totem_satellite(
+    draw: ImageDraw.ImageDraw,
+    config: dict[str, Any],
+    ui_scale: float,
+    fonts: dict[str, ImageFont.FreeTypeFont],
+    palette: dict[str, str],
+) -> tuple[int, int, int, int]:
+    geometry = totem_geometry(config, ui_scale)
+    x = geometry["x"]
+    y = geometry["y"]
+    button = geometry["button"]
+    handle = geometry["handle"]
+    element_count = int(config.get("element_count", 4))
+    labels = list(config.get("element_labels", ["土", "火", "水", "风"]))
+    states = list(config.get("element_states", []))
+    durations = list(config.get("durations", []))
+
+    for index in range(element_count):
+        bx = x + index * button
+        draw_slot(
+            draw,
+            (bx, y, bx + button, y + button),
+            index + 20,
+            states[index] if index < len(states) else "normal",
+            fonts,
+            key=labels[index] if index < len(labels) else "",
+        )
+        if index < len(durations) and durations[index]:
+            draw_text(
+                draw,
+                (bx + button // 2, y - 3),
+                str(durations[index]),
+                fonts["micro"],
+                rgba("#e7cf91"),
+                anchor="ms",
+                stroke=1,
+                stroke_fill=rgba("#050505"),
+            )
+
+    cursor = x + element_count * button
+    cy = y + button // 2
+    draw.ellipse(
+        (cursor, cy - handle // 2, cursor + handle, cy + handle // 2),
+        fill=rgba("#17130f"),
+        outline=rgba(palette["brass"]),
+        width=2,
+    )
+    dot = max(2, handle // 5)
+    draw.ellipse(
+        (
+            cursor + handle // 2 - dot,
+            cy - dot,
+            cursor + handle // 2 + dot,
+            cy + dot,
+        ),
+        fill=rgba("#7fb959" if not config.get("locked", False) else "#716858"),
+    )
+    cursor += handle
+
+    special_buttons = [("一键", "active")]
+    if config.get("recall_visible", False):
+        special_buttons.append(("召", "cooldown"))
+    if config.get("preset_visible", False):
+        special_buttons.append(("组", "normal"))
+    for index, (label, state) in enumerate(special_buttons):
+        draw_slot(
+            draw,
+            (cursor, y, cursor + button, y + button),
+            index + 30,
+            state,
+            fonts,
+            key=label,
+        )
+        cursor += button
+
+    active_index = int(config.get("active_popup_index", element_count - 1))
+    popup_count = max(1, int(config.get("popup_count", 1)))
+    direction = str(config.get("direction", "down")).lower()
+    popup_x = x + active_index * button
+    for index in range(1, popup_count):
+        popup_y = y + index * button if direction == "down" else y - index * button
+        draw_slot(
+            draw,
+            (popup_x, popup_y, popup_x + button, popup_y + button),
+            index + 38,
+            "cooldown" if index == 2 else "normal",
+            fonts,
+        )
+
+    label = str(config.get("label", ""))
+    if label:
+        draw_text(
+            draw,
+            (x + geometry["width"] // 2, y - 20),
+            label,
+            fonts["tiny"],
+            rgba(palette["label"]),
+            anchor="ms",
+            stroke=1,
+            stroke_fill=rgba("#080a08"),
+        )
+
+    popup_top = y if direction == "down" else y - (popup_count - 1) * button
+    popup_bottom = y + button if direction == "up" else y + popup_count * button
+    return (x, popup_top, x + geometry["width"], popup_bottom)
+
+
 def validate_layout(spec: dict[str, Any]) -> dict[str, Any]:
     contract = spec.get("layout_contract")
     if not contract:
@@ -977,6 +1114,28 @@ def validate_layout(spec: dict[str, Any]) -> dict[str, Any]:
             main_swing = swing_boxes["SWING.MAINHAND"]
             check("doitedps.to-swing-clearance", int(contract["doitedps_to_swing_clearance_px"]), main_swing[1] - doite_box[3])
 
+    if "totem_satellite" in spec:
+        totem = spec["totem_satellite"]
+        geometry = totem_geometry(totem, ui_scale)
+        totem_x = geometry["x"]
+        totem_y = geometry["y"]
+        check("totem.direction", str(contract["totem_popup_direction"]), str(totem.get("direction", "down")))
+        check("totem.row-top", int(contract["totem_row_top_y"]), totem_y)
+        check("totem.row-bottom", int(contract["totem_row_bottom_y"]), totem_y + geometry["row_height"])
+        check("totem.visible-width", int(contract["totem_visible_width_px"]), geometry["width"])
+        check("totem.center-x", int(contract["main_bar_center_x"]), round(totem_x + geometry["width"] / 2))
+        check("totem.popup-bottom", int(contract["totem_popup_bottom_y"]), geometry["popup_bottom"])
+        check(
+            "totem.popup-bottom-clearance",
+            int(contract["totem_popup_bottom_clearance_px"]),
+            int(spec["canvas"]["height"]) - geometry["popup_bottom"],
+        )
+        check(
+            "totem.clear-xp-rail",
+            int(contract["totem_to_xp_rail_clearance_px"]),
+            totem_y - int(contract["xp_rail_bottom_y"]),
+        )
+
     if castbar_boxes and swing_boxes and "doite_dps" in spec:
         vertical_order = [
             indicator_box(spec["doite_dps"], ui_scale)[1],
@@ -1021,6 +1180,10 @@ def main() -> None:
         draw_bar(draw, bar, ui_scale, fonts, palette)
     draw_pouch(draw, spec["consumables"], ui_scale, fonts, palette)
     draw_trinkets(draw, spec["trinkets"], ui_scale, fonts, palette)
+    if "totem_satellite" in spec:
+        draw_totem_satellite(
+            draw, spec["totem_satellite"], ui_scale, fonts, palette
+        )
 
     # Existing XP/rep adjacency remains provider-owned.
     main = spec["bars"][0]
