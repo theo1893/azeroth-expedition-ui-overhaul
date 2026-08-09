@@ -14,8 +14,8 @@ ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
 ActionBars.fieldKitRuntimeContract = "1.6"
-ActionBars.focusLayoutRuntimeContract = "1.4"
-ActionBars.focusLayoutVersion = 5
+ActionBars.focusLayoutRuntimeContract = "1.5"
+ActionBars.focusLayoutVersion = 6
 ActionBars.comfortUIScaleVersion = 2
 ActionBars.comfortUIScaleTier = 8
 ActionBars.comfortUIScaleValue = 0.71111111111111
@@ -45,9 +45,11 @@ ActionBars.archiTotemDockXOffset = -10
 -- converted through the audited 0.812698 UI scale, rounds to 47 UI.
 ActionBars.archiTotemDockYOffset = -47
 
--- V5 positions are physical-pixel relationships to the live Bar 1 geometry.
--- They are projected to UIParent movable coordinates only when the explicit
--- preset is applied; ordinary refresh never maintains or rewrites positions.
+-- V5 positions are 1920x1080 reference-pixel relationships to the live Bar 1
+-- geometry. Runtime v1.5 converts them into WoW 1.12's normalized UI-root
+-- coordinate space, then calibrates each provider's own scaled anchor. The
+-- calibration runs only when the explicit preset is applied; ordinary refresh
+-- never maintains or rewrites positions.
 ActionBars.focusPlayerCenterFromDeck = -159
 ActionBars.focusTargetCenterFromDeck = 160
 ActionBars.focusUnitBottomAboveDeck = 106
@@ -698,7 +700,10 @@ end
 local function FocusPositionMatches(name, anchor, x, y, scale)
   local positions = pfUI_config and pfUI_config.position
   local position = positions and positions[name]
-  if type(position) ~= "table" then
+  x = tonumber(x)
+  y = tonumber(y)
+  scale = tonumber(scale)
+  if type(position) ~= "table" or not x or not y or not scale then
     return false
   end
   return position.anchor == anchor and position.parent == "UIParent" and
@@ -718,7 +723,106 @@ local function FrameCoordinatePixels(frame, method)
   return value * GetFrameScale(frame)
 end
 
-local function ProjectedFrameExtentPixels(
+local function GetScreenRootSize()
+  if type(GetScreenWidth) ~= "function" or
+    type(GetScreenHeight) ~= "function"
+  then
+    return nil, nil
+  end
+  local width = tonumber(GetScreenWidth())
+  local height = tonumber(GetScreenHeight())
+  if not width or not height or width <= 0 or height <= 0 then
+    return nil, nil
+  end
+  return width, height
+end
+
+local function GetFrameAnchorRoot(frame, anchor)
+  if not frame then
+    return nil, nil
+  end
+  local scale = GetFrameScale(frame)
+  local x
+  local y
+  if string.find(anchor, "LEFT", 1, true) then
+    x = frame.GetLeft and frame:GetLeft()
+  elseif string.find(anchor, "RIGHT", 1, true) then
+    x = frame.GetRight and frame:GetRight()
+  else
+    x = GetFrameCenter(frame)
+  end
+  if string.find(anchor, "BOTTOM", 1, true) then
+    y = frame.GetBottom and frame:GetBottom()
+  elseif string.find(anchor, "TOP", 1, true) then
+    y = frame.GetTop and frame:GetTop()
+  else
+    local _, centerY = GetFrameCenter(frame)
+    y = centerY
+  end
+  if not x or not y then
+    return nil, nil
+  end
+  return x * scale, y * scale
+end
+
+local function SetFrameAnchorOffset(frame, anchor, x, y)
+  frame:ClearAllPoints()
+  frame:SetPoint(anchor, UIParent, anchor, x, y)
+end
+
+-- SetPoint offsets live in the scaled coordinate space of the frame being
+-- anchored. Vanilla/Turtle WoW also normalizes the UI root to 768 high, so a
+-- UIParent width/height calculation cannot recover the screen root. Probe one
+-- in-bounds unit on each axis and let the client reveal the exact conversion.
+local function ApplyFrameRootPosition(
+  frame, anchor, rootX, rootY, scale
+)
+  if not frame or not UIParent or not frame.ClearAllPoints or
+    not frame.SetPoint
+  then
+    return false, nil, nil
+  end
+  if scale and frame.SetScale then
+    frame:SetScale(scale)
+  end
+
+  SetFrameAnchorOffset(frame, anchor, 0, 0)
+  local baseX, baseY = GetFrameAnchorRoot(frame, anchor)
+  if not baseX or not baseY then
+    return false, nil, nil
+  end
+
+  -- Probe toward the screen interior so clamped pfUI movables can still move.
+  local probeX = string.find(anchor, "RIGHT", 1, true) and -1 or 1
+  local probeY = string.find(anchor, "TOP", 1, true) and -1 or 1
+  SetFrameAnchorOffset(frame, anchor, probeX, probeY)
+  local probeRootX, probeRootY = GetFrameAnchorRoot(frame, anchor)
+  if not probeRootX or not probeRootY then
+    return false, nil, nil
+  end
+  local rootPerX = (probeRootX - baseX) / probeX
+  local rootPerY = (probeRootY - baseY) / probeY
+  if math.abs(rootPerX) < 0.000001 or
+    math.abs(rootPerY) < 0.000001
+  then
+    return false, nil, nil
+  end
+
+  local x = RoundCoordinate((rootX - baseX) / rootPerX)
+  local y = RoundCoordinate((rootY - baseY) / rootPerY)
+  SetFrameAnchorOffset(frame, anchor, x, y)
+
+  -- One measured correction absorbs client rounding and provider parent scale.
+  local actualX, actualY = GetFrameAnchorRoot(frame, anchor)
+  if actualX and actualY then
+    x = RoundCoordinate(x + (rootX - actualX) / rootPerX)
+    y = RoundCoordinate(y + (rootY - actualY) / rootPerY)
+    SetFrameAnchorOffset(frame, anchor, x, y)
+  end
+  return true, x, y
+end
+
+local function ProjectedFrameExtentRoot(
   frame, method, fallback, targetScale, parentScale
 )
   local size = fallback
@@ -737,71 +841,68 @@ local function ProjectedFrameExtentPixels(
 end
 
 local function ResolveCombatFocusProjection()
-  if not UIParent or not UIParent.GetWidth or not UIParent.GetHeight then
+  local screenWidth, screenHeight = GetScreenRootSize()
+  if not screenWidth or not screenHeight then
     return nil
   end
   local main = GetMainActionBarFrame()
   local mainCenterX = GetFrameCenter(main)
   local mainTop = FrameCoordinatePixels(main, "GetTop")
-  local parentScale = GetFrameScale(UIParent)
-  if not mainCenterX or not mainTop or not parentScale or parentScale <= 0 then
+  if not mainCenterX or not mainTop then
     return nil
   end
 
   mainCenterX = mainCenterX * GetFrameScale(main)
-  local parentWidth = UIParent:GetWidth() * parentScale
-  local parentHeight = UIParent:GetHeight() * parentScale
-  local parentCenterX = parentWidth / 2
-  local parentCenterY = parentHeight / 2
+  local referenceToRoot = screenHeight / 1080
   local swing = pfUI and pfUI.swingtimer and pfUI.swingtimer.mainhand or
     GetGlobal("pfSwingTimerMainhand")
   local doite = GetGlobal("DoiteDPSMainFrame")
-  local swingHeight = ProjectedFrameExtentPixels(
+  local swingHeight = ProjectedFrameExtentRoot(
     swing, nil, ActionBars.focusSwingHeight,
-    ActionBars.focusReadoutScale, parentScale
+    ActionBars.focusReadoutScale, GetFrameScale(UIParent)
   )
-  local doiteWidth = ProjectedFrameExtentPixels(
+  local doiteWidth = ProjectedFrameExtentRoot(
     doite, "GetWidth", ActionBars.focusDoiteWidth,
-    ActionBars.focusDoiteScale, parentScale
+    ActionBars.focusDoiteScale, GetFrameScale(UIParent)
   )
 
   return {
-    playerX = RoundCoordinate((
-      mainCenterX + ActionBars.focusPlayerCenterFromDeck - parentCenterX
-    ) / parentScale),
-    targetX = RoundCoordinate((
-      mainCenterX + ActionBars.focusTargetCenterFromDeck - parentCenterX
-    ) / parentScale),
-    unitY = RoundCoordinate((
-      mainTop + ActionBars.focusUnitBottomAboveDeck
-    ) / parentScale),
-    castY = RoundCoordinate((
-      mainTop + ActionBars.focusCastBottomAboveDeck
-    ) / parentScale),
-    swingX = RoundCoordinate((mainCenterX - parentCenterX) / parentScale),
-    swingY = RoundCoordinate((
-      mainTop + ActionBars.focusSwingTopAboveDeck - swingHeight / 2 -
-        parentCenterY
-    ) / parentScale),
-    stanceX = RoundCoordinate((mainCenterX - parentCenterX) / parentScale),
-    stanceY = RoundCoordinate((
-      mainTop + ActionBars.focusStanceTopAboveDeck - parentHeight
-    ) / parentScale),
-    doiteX = RoundCoordinate((mainCenterX - doiteWidth / 2) / parentScale),
-    doiteY = RoundCoordinate((
-      mainTop + ActionBars.focusDoiteTopAboveDeck - parentHeight
-    ) / parentScale),
+    coordinateSpace = "ui-root-calibrated-v1",
+    screenWidth = screenWidth,
+    screenHeight = screenHeight,
+    referenceToRoot = referenceToRoot,
+    mainCenterRoot = mainCenterX,
+    mainTopRoot = mainTop,
+    playerRootX = mainCenterX +
+      ActionBars.focusPlayerCenterFromDeck * referenceToRoot,
+    targetRootX = mainCenterX +
+      ActionBars.focusTargetCenterFromDeck * referenceToRoot,
+    unitRootY = mainTop +
+      ActionBars.focusUnitBottomAboveDeck * referenceToRoot,
+    castRootY = mainTop +
+      ActionBars.focusCastBottomAboveDeck * referenceToRoot,
+    swingRootX = mainCenterX,
+    swingRootY = mainTop +
+      ActionBars.focusSwingTopAboveDeck * referenceToRoot -
+      swingHeight / 2,
+    stanceRootX = mainCenterX,
+    stanceRootY = mainTop +
+      ActionBars.focusStanceTopAboveDeck * referenceToRoot,
+    doiteRootX = mainCenterX - doiteWidth / 2,
+    doiteRootY = mainTop +
+      ActionBars.focusDoiteTopAboveDeck * referenceToRoot,
   }
 end
 
 local function CombatFocusLayoutSaved()
-  if not UIParent or not UIParent.GetWidth or not UIParent.GetHeight or
-    not pfUI_config
-  then
+  if not pfUI_config then
     return false
   end
-  local projection = ResolveCombatFocusProjection()
-  if not projection then
+  local database = addon.db and addon.db.actionbars
+  local projection = database and database.combatFocusProjection
+  if type(projection) ~= "table" or
+    projection.coordinateSpace ~= "ui-root-calibrated-v1"
+  then
     return false
   end
   local unitframes = pfUI_config.unitframes or {}
@@ -821,17 +922,17 @@ local function CombatFocusLayoutSaved()
         ActionBars.focusDoiteScale) <= 0.001)
 
   return FocusPositionMatches(
-      "pfPlayer", "BOTTOM", projection.playerX, projection.unitY,
+      "pfPlayer", "BOTTOM", projection.playerX, projection.playerY,
       ActionBars.focusUnitScale
     ) and FocusPositionMatches(
-      "pfTarget", "BOTTOM", projection.targetX, projection.unitY,
+      "pfTarget", "BOTTOM", projection.targetX, projection.targetY,
       ActionBars.focusUnitScale
     ) and FocusPositionMatches(
-      "pfPlayerCastbar", "BOTTOM", projection.playerX,
-      projection.castY, ActionBars.focusUnitScale
+      "pfPlayerCastbar", "BOTTOM", projection.playerCastX,
+      projection.playerCastY, ActionBars.focusUnitScale
     ) and FocusPositionMatches(
-      "pfTargetCastbar", "BOTTOM", projection.targetX,
-      projection.castY, ActionBars.focusUnitScale
+      "pfTargetCastbar", "BOTTOM", projection.targetCastX,
+      projection.targetCastY, ActionBars.focusUnitScale
     ) and FocusPositionMatches(
       "pfSwingTimerMainhand", "CENTER", projection.swingX,
       projection.swingY, ActionBars.focusReadoutScale
@@ -851,23 +952,6 @@ local function CombatFocusLayoutSaved()
     targetCast.width == "-1" and targetCast.height == "22" and
     unitframes.swingtimerwidth == "200" and
     unitframes.swingtimerheight == "12" and doiteMatches
-end
-
-local function ApplyFramePosition(frame, anchor, x, y, scale)
-  if not frame or not UIParent or not frame.ClearAllPoints or
-    not frame.SetPoint
-  then
-    return false
-  end
-  if scale and frame.SetScale then
-    frame:SetScale(scale)
-  end
-  frame:ClearAllPoints()
-  frame:SetPoint(
-    anchor, UIParent, anchor,
-    RoundCoordinate(x), RoundCoordinate(y)
-  )
-  return true
 end
 
 local function ComfortUIScaleConfigured()
@@ -896,7 +980,7 @@ local function ApplyComfortUIScaleValue()
   return updated
 end
 
-local function ConfigureFocusUnitFrame(key, name, x, y)
+local function ConfigureFocusUnitFrame(key, name, rootX, rootY)
   local unitframes = pfUI_config and pfUI_config.unitframes
   local config = unitframes and unitframes[key]
   if type(config) ~= "table" then
@@ -910,9 +994,6 @@ local function ConfigureFocusUnitFrame(key, name, x, y)
   config.buffperrow = "6"
   config.debuffperrow = "6"
 
-  SavePfUIPosition(
-    name, "BOTTOM", x, y, ActionBars.focusUnitScale
-  )
   local frame = pfUI and pfUI.uf and pfUI.uf[key] or GetGlobal(name)
   if frame and type(frame.UpdateFrameSize) == "function" then
     pcall(frame.UpdateFrameSize, frame)
@@ -920,12 +1001,16 @@ local function ConfigureFocusUnitFrame(key, name, x, y)
   if frame and type(frame.UpdateConfig) == "function" then
     pcall(frame.UpdateConfig, frame)
   end
-  return true, ApplyFramePosition(
-    frame, "BOTTOM", x, y, ActionBars.focusUnitScale
+  local applied, x, y = ApplyFrameRootPosition(
+    frame, "BOTTOM", rootX, rootY, ActionBars.focusUnitScale
   )
+  local saved = applied and SavePfUIPosition(
+    name, "BOTTOM", x, y, ActionBars.focusUnitScale
+  )
+  return saved, applied, x, y
 end
 
-local function ConfigureFocusCastBar(key, name, x, y)
+local function ConfigureFocusCastBar(key, name, rootX, rootY)
   local castbars = pfUI_config and pfUI_config.castbar
   local config = castbars and castbars[key]
   if type(config) ~= "table" then
@@ -933,10 +1018,6 @@ local function ConfigureFocusCastBar(key, name, x, y)
   end
   config.width = "-1"
   config.height = "22"
-  SavePfUIPosition(
-    name, "BOTTOM", x, y, ActionBars.focusUnitScale
-  )
-
   local frame = pfUI and pfUI.castbar and pfUI.castbar[key] or
     GetGlobal(name)
   if frame and frame.SetWidth then
@@ -945,12 +1026,16 @@ local function ConfigureFocusCastBar(key, name, x, y)
   if frame and frame.SetHeight then
     frame:SetHeight(22)
   end
-  return true, ApplyFramePosition(
-    frame, "BOTTOM", x, y, ActionBars.focusUnitScale
+  local applied, x, y = ApplyFrameRootPosition(
+    frame, "BOTTOM", rootX, rootY, ActionBars.focusUnitScale
   )
+  local saved = applied and SavePfUIPosition(
+    name, "BOTTOM", x, y, ActionBars.focusUnitScale
+  )
+  return saved, applied, x, y
 end
 
-local function ConfigureFocusSwingTimers(x, y)
+local function ConfigureFocusSwingTimers(rootX, rootY)
   local unitframes = pfUI_config and pfUI_config.unitframes
   if type(unitframes) ~= "table" then
     return 0, 0
@@ -967,18 +1052,27 @@ local function ConfigureFocusSwingTimers(x, y)
   local frames = { main, ranged }
   local names = { "pfSwingTimerMainhand", "pfSwingTimerRanged" }
   local visible = 0
+  local saved = 0
+  local positionX
+  local positionY
   for index = 1, 2 do
     local frame = frames[index]
-    SavePfUIPosition(
-      names[index], "CENTER", x, y, ActionBars.focusReadoutScale
-    )
     if frame then
       if frame.SetWidth then frame:SetWidth(200) end
       if frame.SetHeight then frame:SetHeight(12) end
-      if ApplyFramePosition(
-        frame, "CENTER", x, y, ActionBars.focusReadoutScale
-      ) then
+      local applied, x, y = ApplyFrameRootPosition(
+        frame, "CENTER", rootX, rootY, ActionBars.focusReadoutScale
+      )
+      if applied then
         visible = visible + 1
+        if SavePfUIPosition(
+          names[index], "CENTER", x, y,
+          ActionBars.focusReadoutScale
+        ) then
+          saved = saved + 1
+        end
+        positionX = positionX or x
+        positionY = positionY or y
       end
     end
   end
@@ -993,23 +1087,26 @@ local function ConfigureFocusSwingTimers(x, y)
       offhand:SetPoint("TOP", main, "BOTTOM", 0, -4)
     end
   end
-  return 2, visible
+  return saved, visible, positionX, positionY
 end
 
-local function ConfigureFocusDoiteDPS(x, y)
+local function ConfigureFocusDoiteDPS(rootX, rootY)
   if type(DoiteDPSDB) ~= "table" then
-    return false, false
+    return false, false, nil, nil
+  end
+  local frame = GetGlobal("DoiteDPSMainFrame")
+  local applied, x, y = ApplyFrameRootPosition(
+    frame, "TOPLEFT", rootX, rootY, ActionBars.focusDoiteScale
+  )
+  if not applied then
+    return false, false, nil, nil
   end
   DoiteDPSDB.point = "TOPLEFT"
   DoiteDPSDB.relativePoint = "TOPLEFT"
   DoiteDPSDB.x = x
   DoiteDPSDB.y = y
   DoiteDPSDB.scale = ActionBars.focusDoiteScale
-
-  local frame = GetGlobal("DoiteDPSMainFrame")
-  return true, ApplyFramePosition(
-    frame, "TOPLEFT", x, y, ActionBars.focusDoiteScale
-  )
+  return true, true, x, y
 end
 
 function ActionBars:ApplyCombatFocusLayoutPreset()
@@ -1017,8 +1114,8 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
     self.focusLayoutStatus = "combat-locked"
     return false, "Leave combat before applying the Combat Focus layout."
   end
-  if not UIParent or not UIParent.GetWidth or not UIParent.GetHeight or
-    not pfUI_config
+  if not UIParent or type(GetScreenWidth) ~= "function" or
+    type(GetScreenHeight) ~= "function" or not pfUI_config
   then
     self.focusLayoutStatus = "unavailable"
     return false, "UIParent or the pfUI character profile is unavailable."
@@ -1037,50 +1134,78 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
   end
   local configured = 0
   local live = 0
+  local savedProjection = {
+    coordinateSpace = projection.coordinateSpace,
+    screenWidth = projection.screenWidth,
+    screenHeight = projection.screenHeight,
+    referenceToRoot = projection.referenceToRoot,
+    mainCenterRoot = projection.mainCenterRoot,
+    mainTopRoot = projection.mainTopRoot,
+  }
 
-  local saved, applied = ConfigureFocusUnitFrame(
-    "player", "pfPlayer", projection.playerX, projection.unitY
+  local saved, applied, x, y = ConfigureFocusUnitFrame(
+    "player", "pfPlayer", projection.playerRootX, projection.unitRootY
   )
+  savedProjection.playerX = x
+  savedProjection.playerY = y
   configured = configured + (saved and 1 or 0)
   live = live + (applied and 1 or 0)
-  saved, applied = ConfigureFocusUnitFrame(
-    "target", "pfTarget", projection.targetX, projection.unitY
+  saved, applied, x, y = ConfigureFocusUnitFrame(
+    "target", "pfTarget", projection.targetRootX, projection.unitRootY
   )
-  configured = configured + (saved and 1 or 0)
-  live = live + (applied and 1 or 0)
-
-  saved, applied = ConfigureFocusCastBar(
-    "player", "pfPlayerCastbar", projection.playerX, projection.castY
-  )
-  configured = configured + (saved and 1 or 0)
-  live = live + (applied and 1 or 0)
-  saved, applied = ConfigureFocusCastBar(
-    "target", "pfTargetCastbar", projection.targetX, projection.castY
-  )
+  savedProjection.targetX = x
+  savedProjection.targetY = y
   configured = configured + (saved and 1 or 0)
   live = live + (applied and 1 or 0)
 
-  local swingConfigured, swingLive = ConfigureFocusSwingTimers(
-    projection.swingX, projection.swingY
+  saved, applied, x, y = ConfigureFocusCastBar(
+    "player", "pfPlayerCastbar",
+    projection.playerRootX, projection.castRootY
   )
+  savedProjection.playerCastX = x
+  savedProjection.playerCastY = y
+  configured = configured + (saved and 1 or 0)
+  live = live + (applied and 1 or 0)
+  saved, applied, x, y = ConfigureFocusCastBar(
+    "target", "pfTargetCastbar",
+    projection.targetRootX, projection.castRootY
+  )
+  savedProjection.targetCastX = x
+  savedProjection.targetCastY = y
+  configured = configured + (saved and 1 or 0)
+  live = live + (applied and 1 or 0)
+
+  local swingConfigured, swingLive, swingX, swingY =
+    ConfigureFocusSwingTimers(
+      projection.swingRootX, projection.swingRootY
+    )
+  savedProjection.swingX = swingX
+  savedProjection.swingY = swingY
   configured = configured + swingConfigured
   live = live + swingLive
 
-  SavePfUIPosition(
-    "pfActionBarStances", "TOP", projection.stanceX,
-    projection.stanceY, self.focusReadoutScale
+  local stanceApplied, stanceX, stanceY = ApplyFrameRootPosition(
+    GetGlobal("pfActionBarStances"), "TOP",
+    projection.stanceRootX, projection.stanceRootY,
+    self.focusReadoutScale
   )
-  if ApplyFramePosition(
-    GetGlobal("pfActionBarStances"), "TOP", projection.stanceX,
-    projection.stanceY, self.focusReadoutScale
-  ) then
+  local stanceSaved = stanceApplied and SavePfUIPosition(
+    "pfActionBarStances", "TOP", stanceX, stanceY,
+    self.focusReadoutScale
+  )
+  savedProjection.stanceX = stanceX
+  savedProjection.stanceY = stanceY
+  if stanceApplied then
     live = live + 1
   end
-  configured = configured + 1
+  configured = configured + (stanceSaved and 1 or 0)
 
-  local doiteSaved, doiteApplied = ConfigureFocusDoiteDPS(
-    projection.doiteX, projection.doiteY
-  )
+  local doiteSaved, doiteApplied, doiteX, doiteY =
+    ConfigureFocusDoiteDPS(
+      projection.doiteRootX, projection.doiteRootY
+    )
+  savedProjection.doiteX = doiteX
+  savedProjection.doiteY = doiteY
   configured = configured + (doiteSaved and 1 or 0)
   live = live + (doiteApplied and 1 or 0)
 
@@ -1094,6 +1219,7 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
   local database = addon.db and addon.db.actionbars
   if database then
     database.combatFocusLayoutVersion = self.focusLayoutVersion
+    database.combatFocusProjection = savedProjection
   end
   self.focusLayoutConfigured = configured
   self.focusLayoutLive = live
@@ -1106,7 +1232,7 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
     " Detected ArchiTotem was kept provider-owned and requested to open downward." or
     " ArchiTotem was unavailable or inapplicable and remained fail-open."
   return true,
-    "Combat Focus layout applied from live Bar 1 geometry: player/target and paired cast bars use 0.75; swing timers, stance bar, and detected DoiteDPS use 0.82. Provider visibility, lock state, and native translucency were preserved." ..
+    "Combat Focus layout applied from live Bar 1 geometry in the calibrated WoW 1.12 UI-root coordinate space: player/target and paired cast bars use 0.75; swing timers, stance bar, and detected DoiteDPS use 0.82. Provider visibility, lock state, and native translucency were preserved." ..
     archiMessage
 end
 
@@ -1826,27 +1952,31 @@ function ActionBars:ResetCombatDeckPosition()
     return false, "Leave combat before resetting the Combat Deck position."
   end
   local main = GetMainActionBarFrame()
-  if not main or not UIParent or not UIParent.GetHeight then
+  local screenWidth, screenHeight = GetScreenRootSize()
+  if not main or not UIParent or not screenWidth or not screenHeight then
     return false, "The main action bar or UIParent is unavailable."
   end
 
-  local offset = UIParent:GetHeight() * self.combatDeckBottomRatio
   if main.SetParent then
     main:SetParent(UIParent)
   end
-  main:ClearAllPoints()
-  main:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, offset)
+  local rootBottom = screenHeight * self.combatDeckBottomRatio
+  local applied, x, y = ApplyFrameRootPosition(
+    main, "BOTTOM", screenWidth / 2, rootBottom
+  )
+  if not applied then
+    return false,
+      "The main action bar could not calibrate against the WoW UI root."
+  end
 
   if pfUI_config and type(pfUI_config.position) == "table" and
     main.GetName
   then
     local name = main:GetName()
-    pfUI_config.position[name] = pfUI_config.position[name] or {}
-    local position = pfUI_config.position[name]
-    position.xpos = 0
-    position.ypos = math.floor(offset + 0.5)
-    position.anchor = "BOTTOM"
-    position.parent = "UIParent"
+    SavePfUIPosition(
+      name, "BOTTOM", x, y,
+      main.GetScale and tonumber(main:GetScale()) or nil
+    )
   end
 
   local database = GetFieldKitDatabase()
@@ -1855,7 +1985,7 @@ function ActionBars:ResetCombatDeckPosition()
   end
   self:SetFieldKitDocking(true)
   return true,
-    "Combat Deck reset to the accepted center-lower layout and strongly bound."
+    "Combat Deck reset to the accepted center-lower UI-root position and strongly bound."
 end
 
 local function EnsureAutoBarShell(frame)
@@ -2887,6 +3017,7 @@ function ActionBars:GetRuntimeStatus()
     ",focus-layout-mouse=" ..
       tostring(self.focusLayoutMousePolicy or "visible-controls-only") ..
     ",focus-layout-anchor=live-bar1" ..
+    ",focus-layout-coordinate-space=ui-root-calibrated-v1" ..
     ",focus-layout-unit-scale=" ..
       tostring(self.focusUnitScale) ..
     ",focus-layout-readout-scale=" ..

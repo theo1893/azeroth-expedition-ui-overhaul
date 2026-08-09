@@ -131,6 +131,7 @@ end
 
 function UnitClass() return "Mage", "MAGE" end
 function GetScreenWidth() return 1920 end
+function GetScreenHeight() return 1080 end
 local mouseFocus
 function GetMouseFocus() return mouseFocus end
 
@@ -378,6 +379,19 @@ pfUI.bars[1] = NewFrame("pfActionBarMain", nil, {
   height = 43,
   points = { { "BOTTOM", nil, "BOTTOM", 0, 0 } },
 })
+pfUI.bars[1].SetPoint = function(self, anchor, relative, relativeAnchor, x, y)
+  table.insert(self.decorativePoints, {
+    anchor, relative, relativeAnchor, x, y,
+  })
+  if relative == UIParent and anchor == "BOTTOM" and
+    relativeAnchor == "BOTTOM"
+  then
+    self.left = (GetScreenWidth() - self.width) / 2 + (x or 0)
+    self.right = self.left + self.width
+    self.bottom = y or 0
+    self.top = self.bottom + self.height
+  end
+end
 pfUI.bars[6] = NewFrame("pfActionBarTop", nil, {
   left = 300,
   bottom = 143,

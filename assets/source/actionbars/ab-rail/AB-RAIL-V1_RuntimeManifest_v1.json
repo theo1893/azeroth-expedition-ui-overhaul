@@ -146,7 +146,7 @@
   },
   "deterministic_export": {
     "exporter": "tools/build_action_rail_v1_runtime.py",
-    "exporter_sha256": "ae8fbedb5a9a28ec802a39bddc93d73df289473c9338e8a8286a8ae9bac21ad3",
+    "exporter_sha256": "5ddf9376143f217a6f28e8d6a2cbb273680bda3decffe73bac7dd455277a4c7e",
     "expected_runtime_pixel_sha256": "1b09b93b0a229b416e7961da47d1c97e0e75280245efe2d6310a955132b09db5",
     "one_proportional_resample": true,
     "imagegen_calls_after_acceptance": 0,
@@ -154,7 +154,7 @@
   },
   "adapter": {
     "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
-    "sha256": "e3dd8b01ec327860ba405bac8bc976b1bec1472baf94407e46e85c4456d831dd",
+    "sha256": "5d4108381b1d636175e5061b3fda744e248e7984dfba7e2a7ab954f331bd7d2f",
     "provider": "pfUI.bars[1..12].backdrop and pfUI.bars[1].mergedBackdrop.backdrop",
     "logical_bars": [
       1,
@@ -187,13 +187,13 @@
   "addon_entrypoints": {
     "bootstrap": {
       "file": "addon/AzerothExpeditionUI/Core/Bootstrap.lua",
-      "sha256": "4a1d481e1cb5a7a947fa42bd4342044056e28a2bc0a04004675b4da810994f74"
+      "sha256": "65c818f67777681a3ba7b2cf02c8d85e855c1cf64a18b40dc93eb002c91ad45b"
     },
     "toc": {
       "file": "addon/AzerothExpeditionUI/AzerothExpeditionUI.toc",
-      "sha256": "3bdbe108b1bc3316564d7de4b279b848b3f9ffeeb33bf778c9733a669d3ec49f"
+      "sha256": "10b367c49f7d7e59c2918dcdeaddccd17c7acfd781c79a9e4b5fbbebcdd209d8"
     },
-    "addon_version": "0.8.10",
+    "addon_version": "0.8.11",
     "required_dependency": "pfUI"
   },
   "provider_layers_preserved": [
@@ -562,8 +562,8 @@
   "game_validation": {
     "status": "pass",
     "phase": "P6",
-    "target": "Turtle WoW 1.18.1 / Interface 11200",
     "validated_on": "2026-08-09",
+    "target": "Turtle WoW 1.18.1 / Interface 11200",
     "evidence_record": "assets/references/actionbars/p6/AB-RAIL-V1_P6Evidence_v1.json",
     "evidence_record_sha256": "2d48b8fb1808f371db33fbdc50b627eab4ee470e13c6beb49bf2c40d78430be3",
     "screenshot": "assets/references/actionbars/p6/AB-RAIL-V1_TurtleWoW_P6_2026-08-09.png",

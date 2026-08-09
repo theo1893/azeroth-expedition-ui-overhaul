@@ -138,7 +138,7 @@
     "status": "exported",
     "authorization": "user instruction '进行下一步' on 2026-08-08",
     "exporter": "tools/build_action_slot_base_v1_runtime.py",
-    "exporter_sha256": "940f91de5bdd50929c37323a049322de5815f07026da7e824566569a4ad3c212",
+    "exporter_sha256": "cf2220374987cbdf4225e60368f4c3461fc06ab2c582206d21aa65d52926c554",
     "runtime_file": "addon/AzerothExpeditionUI/Media/ActionBars/ActionSlotBaseV1.tga",
     "runtime_sha256": "5c49a1db452560251422060545625b311e182ef5b8689be996aeda005b8e23ca",
     "source_square_crop_exclusive": [

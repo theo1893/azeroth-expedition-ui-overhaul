@@ -98,6 +98,13 @@ def pixel_sha256(image: Image.Image) -> str:
     return hashlib.sha256(image.convert("RGBA").tobytes()).hexdigest()
 
 
+def addon_version(toc_path: Path) -> str:
+    for line in toc_path.read_text(encoding="utf-8-sig").splitlines():
+        if line.startswith("## Version:"):
+            return line.split(":", 1)[1].strip()
+    raise ValueError(f"addon version is missing from {toc_path}")
+
+
 def repo_path(root: Path, path: Path) -> str:
     return path.resolve().relative_to(root.resolve()).as_posix()
 
@@ -521,9 +528,10 @@ def update_source_manifest(
 ) -> None:
     path = root / SOURCE_MANIFEST_REL
     manifest = load_json(path)
-    manifest["status"] = "runtime-exported"
-    manifest["workflow_state"] = "runtime-exported"
-    manifest["project_phase"] = "P5"
+    game_validated = manifest.get("p6_validation", {}).get("status") == "pass"
+    manifest["status"] = "game-validated" if game_validated else "runtime-exported"
+    manifest["workflow_state"] = manifest["status"]
+    manifest["project_phase"] = "P6" if game_validated else "P5"
     manifest["export_contract"] = {
         "status": "exported",
         "authorization": "user instruction '进行下一步' on 2026-08-09",
@@ -581,7 +589,7 @@ def update_source_manifest(
         "real_layout_scenarios": "8/8 pass",
         "display_region_violations": 0,
         "addon_package": package_validation,
-        "game_validated": False,
+        "game_validated": game_validated,
     }
     write_json(path, manifest)
 
@@ -657,6 +665,22 @@ def main() -> None:
     for required in (adapter_path, bootstrap_path, toc_path):
         if not required.is_file():
             raise FileNotFoundError(f"required addon integration is missing: {required}")
+    source_manifest = load_json(root / SOURCE_MANIFEST_REL)
+    p6_validation = source_manifest.get("p6_validation", {})
+    game_validated = p6_validation.get("status") == "pass"
+    game_validation = (
+        {"status": "pass", "phase": "P6", **{
+            key: value
+            for key, value in p6_validation.items()
+            if key != "status"
+        }}
+        if game_validated
+        else {
+            "status": "pending",
+            "phase": "P6",
+            "target": "Turtle WoW 1.18.1 / Interface 11200",
+        }
+    )
 
     runtime_manifest = {
         "schema_version": 1,
@@ -664,8 +688,8 @@ def main() -> None:
         "batch": "AB.RAIL.V1",
         "version": "runtime-v1",
         "runtime_contract": "1.0",
-        "status": "runtime-exported",
-        "phase": "P5",
+        "status": "game-validated" if game_validated else "runtime-exported",
+        "phase": "P6" if game_validated else "P5",
         "source": {
             "file": SOURCE_REL.as_posix(),
             "sha256": sha256(source_path),
@@ -741,7 +765,7 @@ def main() -> None:
                 "sha256": sha256(bootstrap_path),
             },
             "toc": {"file": TOC_REL.as_posix(), "sha256": sha256(toc_path)},
-            "addon_version": "0.8.8",
+            "addon_version": addon_version(toc_path),
             "required_dependency": "pfUI",
         },
         "provider_layers_preserved": [
@@ -778,11 +802,7 @@ def main() -> None:
             ),
         },
         "package_validation": package_validation,
-        "game_validation": {
-            "status": "pending",
-            "phase": "P6",
-            "target": "Turtle WoW 1.18.1 / Interface 11200",
-        },
+        "game_validation": game_validation,
     }
     write_json(runtime_manifest_path, runtime_manifest)
     update_source_manifest(
@@ -799,7 +819,7 @@ def main() -> None:
     export_report = {
         "schema": "aeui-action-rail-runtime-export-report-v1",
         "status": "pass",
-        "phase": "P5",
+        "phase": "P6" if game_validated else "P5",
         "source": runtime_manifest["source"],
         "runtime": runtime_record,
         "display_region": {
@@ -811,7 +831,7 @@ def main() -> None:
         "adapter": runtime_manifest["adapter"],
         "package_validation": package_validation,
         "imagegen_calls": 0,
-        "game_validated": False,
+        "game_validated": game_validated,
     }
     export_report_path = preview_dir / "runtime-export-report.json"
     write_json(export_report_path, export_report)

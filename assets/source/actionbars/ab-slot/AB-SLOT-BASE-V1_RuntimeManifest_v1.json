@@ -72,14 +72,14 @@
   },
   "deterministic_export": {
     "exporter": "tools/build_action_slot_base_v1_runtime.py",
-    "exporter_sha256": "940f91de5bdd50929c37323a049322de5815f07026da7e824566569a4ad3c212",
+    "exporter_sha256": "cf2220374987cbdf4225e60368f4c3461fc06ab2c582206d21aa65d52926c554",
     "expected_runtime_pixel_sha256": "e527c0382a7e7d727fa8a8cee10262cd99470d1ee0204ba8301a5f698c24c35c",
     "pixel_identical_to_accepted_attempt_05_runtime_review": true,
     "imagegen_calls_after_acceptance": 0
   },
   "adapter": {
     "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
-    "sha256": "e3dd8b01ec327860ba405bac8bc976b1bec1472baf94407e46e85c4456d831dd",
+    "sha256": "5d4108381b1d636175e5061b3fda744e248e7984dfba7e2a7ab954f331bd7d2f",
     "provider": "pfUI.bars and pfActionBar<BarName>Button1..12.backdrop",
     "logical_bars": [
       1,
@@ -175,8 +175,8 @@
   "game_validation": {
     "status": "pass",
     "phase": "P6",
-    "target": "Turtle WoW 1.18.1 / Interface 11200",
     "validated_on": "2026-08-08",
+    "target": "Turtle WoW 1.18.1 / Interface 11200",
     "evidence_record": "assets/references/actionbars/p6/AB-SLOT-BASE-V1_P6Evidence_v1.json",
     "evidence_record_sha256": "73a8f942fe6812f994f0eeaae6a7e0254d3577535071ab6401fd4e9954b10d0b",
     "screenshot": "assets/references/actionbars/p6/AB-SLOT-BASE-V1_TurtleWoW_P6_2026-08-08.png",

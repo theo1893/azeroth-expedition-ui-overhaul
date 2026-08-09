@@ -107,6 +107,10 @@ def main() -> None:
         ] is False
         assert manifest["adapter"]["autobar_enabled_or_profile_applied"] is False
         assert manifest["adapter"]["automatic_profile_mutation"] is False
+        assert manifest["addon_entrypoints"]["addon_version"] == (
+            builder.addon_version(ROOT / builder.TOC_REL)
+        )
+        assert manifest["addon_entrypoints"]["addon_version"] == "0.8.11"
         if key == "consumable":
             setup = manifest["adapter"]["optional_user_configuration"]
             assert setup["apply_command"] == "/aeui autobar apply"

@@ -74,13 +74,18 @@ local function NewFrame(name, width, height)
   }, Frame)
 end
 
+-- WoW 1.12 exposes a normalized UI-root coordinate system that is always
+-- 768 units high. UIParent:GetWidth/GetHeight must not be treated as physical
+-- 1920x1080 pixels, and changing UI scale does not resize this root model.
+local rootWidth = 1920 * 768 / 1080
+local rootHeight = 768
 local uiScale = 0.81269841269841
-UIParent = NewFrame("UIParent", 1920 / uiScale, 1080 / uiScale)
+UIParent = NewFrame("UIParent", rootWidth, rootHeight)
 function UIParent:SetScale(value)
   self.scale = value
-  self.width = 1920 / value
-  self.height = 1080 / value
 end
+function GetScreenWidth() return rootWidth end
+function GetScreenHeight() return rootHeight end
 
 local function AnchorCoordinate(anchor, left, bottom, right, top)
   local x
@@ -105,8 +110,7 @@ end
 PhysicalRect = function(frame)
   local effectiveScale = frame:GetEffectiveScale()
   if frame == UIParent then
-    return 0, 0, frame.width * effectiveScale,
-      frame.height * effectiveScale
+    return 0, 0, rootWidth, rootHeight
   end
   local point = frame.points[1]
   if not point then return nil, nil, nil, nil end
@@ -119,9 +123,10 @@ PhysicalRect = function(frame)
   local targetX, targetY = AnchorCoordinate(
     relativeAnchor, relativeLeft, relativeBottom, relativeRight, relativeTop
   )
-  local relativeScale = relative:GetEffectiveScale()
-  targetX = targetX + (point[4] or 0) * relativeScale
-  targetY = targetY + (point[5] or 0) * relativeScale
+  -- Anchor offsets use the scaled coordinate space of the frame whose point
+  -- is being anchored, not the coordinate space of UIParent.
+  targetX = targetX + (point[4] or 0) * effectiveScale
+  targetY = targetY + (point[5] or 0) * effectiveScale
   local width = frame.width * effectiveScale
   local height = frame.height * effectiveScale
   local ownX, ownY = AnchorCoordinate(anchor, 0, 0, width, height)
@@ -308,7 +313,7 @@ assert(module.comfortUIScaleStatus == "custom")
 local ok, message = module:ApplyComfortUIScalePreset()
 assert(ok == true)
 assert(string.find(message, "Comfort UI scale applied", 1, true))
-assert(module.focusLayoutRuntimeContract == "1.4")
+assert(module.focusLayoutRuntimeContract == "1.5")
 assert(module.fieldKitRuntimeContract == "1.6")
 assert(module.focusLayoutStatus == "applied")
 assert(module.focusLayoutConfigured == 9)
@@ -329,50 +334,31 @@ local function AssertPosition(name, anchor, x, y, scale)
   assert(position.scale == scale)
 end
 
-AssertPosition("pfActionBarMain", "BOTTOM", 0, 295, 1.2)
+-- In the legacy root model the accepted 210/1080 bottom clearance is 149.33
+-- root units. The main frame's own effective scale converts that to y=175;
+-- the previous modern-client mock incorrectly expected y=295.
+AssertPosition("pfActionBarMain", "BOTTOM", 0, 175, 1.2)
 
-local function RoundCoordinate(value)
-  if value < 0 then return math.ceil(value - 0.5) end
-  return math.floor(value + 0.5)
-end
+local expected = assert(
+  AzerothExpeditionUI.db.actionbars.combatFocusProjection
+)
+assert(expected.coordinateSpace == "ui-root-calibrated-v1")
+assert(math.abs(expected.screenWidth - rootWidth) < 0.001)
+assert(math.abs(expected.screenHeight - rootHeight) < 0.001)
 
-local parentScale = UIParent:GetEffectiveScale()
-local parentWidth = UIParent:GetWidth() * parentScale
-local parentHeight = UIParent:GetHeight() * parentScale
-local mainScale = mainBar:GetEffectiveScale()
-local mainCenterX = select(1, mainBar:GetCenter()) * mainScale
-local mainTop = mainBar:GetTop() * mainScale
-local doiteInheritedScale = doite:GetEffectiveScale() / doite:GetScale()
-local expected = {
-  playerX = RoundCoordinate((mainCenterX - 159 - parentWidth / 2) /
-    parentScale),
-  targetX = RoundCoordinate((mainCenterX + 160 - parentWidth / 2) /
-    parentScale),
-  unitY = RoundCoordinate((mainTop + 106) / parentScale),
-  castY = RoundCoordinate((mainTop + 78) / parentScale),
-  swingX = RoundCoordinate((mainCenterX - parentWidth / 2) /
-    parentScale),
-  swingY = RoundCoordinate((
-    mainTop + 227 - 12 * 0.82 * parentScale / 2 - parentHeight / 2
-  ) / parentScale),
-  stanceX = RoundCoordinate((mainCenterX - parentWidth / 2) /
-    parentScale),
-  stanceY = RoundCoordinate((mainTop + 64 - parentHeight) /
-    parentScale),
-  doiteX = RoundCoordinate((
-    mainCenterX - 318 * 0.82 * doiteInheritedScale / 2
-  ) / parentScale),
-  doiteY = RoundCoordinate((mainTop + 287 - parentHeight) /
-    parentScale),
-}
-
-AssertPosition("pfPlayer", "BOTTOM", expected.playerX, expected.unitY, 0.75)
-AssertPosition("pfTarget", "BOTTOM", expected.targetX, expected.unitY, 0.75)
 AssertPosition(
-  "pfPlayerCastbar", "BOTTOM", expected.playerX, expected.castY, 0.75
+  "pfPlayer", "BOTTOM", expected.playerX, expected.playerY, 0.75
 )
 AssertPosition(
-  "pfTargetCastbar", "BOTTOM", expected.targetX, expected.castY, 0.75
+  "pfTarget", "BOTTOM", expected.targetX, expected.targetY, 0.75
+)
+AssertPosition(
+  "pfPlayerCastbar", "BOTTOM", expected.playerCastX,
+  expected.playerCastY, 0.75
+)
+AssertPosition(
+  "pfTargetCastbar", "BOTTOM", expected.targetCastX,
+  expected.targetCastY, 0.75
 )
 AssertPosition(
   "pfSwingTimerMainhand", "CENTER", expected.swingX, expected.swingY, 0.82
@@ -384,26 +370,56 @@ AssertPosition(
   "pfActionBarStances", "TOP", expected.stanceX, expected.stanceY, 0.82
 )
 
--- V5 persists one-shot UIParent coordinates whose physical relationships are
--- resolved from live Bar 1 after the accepted deck reset.
+-- V5 persists one-shot UIParent coordinates after runtime v1.5 calibrates
+-- each provider against WoW 1.12's normalized 768-high UI root.
 local function Near(actual, expectedValue)
   assert(math.abs(actual - expectedValue) <= 1)
 end
-Near(parentWidth / 2 + expected.playerX * parentScale - mainCenterX, -159)
-Near(parentWidth / 2 + expected.targetX * parentScale - mainCenterX, 160)
-Near(expected.unitY * parentScale - mainTop, 106)
-Near(expected.castY * parentScale - mainTop, 78)
+local function RootCoordinate(frame, method)
+  return frame[method](frame) * frame:GetEffectiveScale()
+end
+local referenceToRoot = rootHeight / 1080
+local mainCenterX = RootCoordinate(mainBar, "GetCenter")
+local mainTop = RootCoordinate(mainBar, "GetTop")
+Near(RootCoordinate(mainBar, "GetBottom"), 210 * referenceToRoot)
+Near(mainCenterX, rootWidth / 2)
 Near(
-  parentHeight / 2 + expected.swingY * parentScale +
-    12 * 0.82 * parentScale / 2 - mainTop,
-  227
+  RootCoordinate(player, "GetCenter") - mainCenterX,
+  -159 * referenceToRoot
 )
-Near(parentHeight + expected.stanceY * parentScale - mainTop, 64)
-Near(parentHeight + expected.doiteY * parentScale - mainTop, 287)
 Near(
-  expected.doiteX * parentScale + 318 * 0.82 * doiteInheritedScale / 2,
-  mainCenterX
+  RootCoordinate(target, "GetCenter") - mainCenterX,
+  160 * referenceToRoot
 )
+Near(
+  RootCoordinate(player, "GetBottom") - mainTop,
+  106 * referenceToRoot
+)
+Near(
+  RootCoordinate(target, "GetBottom") - mainTop,
+  106 * referenceToRoot
+)
+Near(
+  RootCoordinate(playerCast, "GetBottom") - mainTop,
+  78 * referenceToRoot
+)
+Near(
+  RootCoordinate(targetCast, "GetBottom") - mainTop,
+  78 * referenceToRoot
+)
+Near(
+  RootCoordinate(swingMain, "GetTop") - mainTop,
+  227 * referenceToRoot
+)
+Near(
+  RootCoordinate(stance, "GetTop") - mainTop,
+  64 * referenceToRoot
+)
+Near(
+  RootCoordinate(doite, "GetTop") - mainTop,
+  287 * referenceToRoot
+)
+Near(RootCoordinate(doite, "GetCenter"), mainCenterX)
 
 assert(module.focusUnitScale == 0.75)
 assert(module.focusReadoutScale == 0.82)
@@ -515,7 +531,7 @@ assert(archiDirectionCalls == 1)
 assert(module.archiTotemDirectionStatus == "up")
 
 assert(AzerothExpeditionUI.db.actionbars.fieldKitBound == true)
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 5)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 6)
 assert(AzerothExpeditionUI.db.actionbars.comfortUIScaleVersion == 2)
 
 for _, frame in pairs({
@@ -533,10 +549,14 @@ end
 assert(doite.parent == doiteParent)
 
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "focus%-layout%-contract=1%.4"))
+assert(string.find(status, "focus%-layout%-contract=1%.5"))
 assert(string.find(status, "focus%-layout=applied"))
 assert(string.find(status, "focus%-layout%-mouse=visible%-controls%-only"))
 assert(string.find(status, "focus%-layout%-anchor=live%-bar1"))
+assert(string.find(
+  status,
+  "focus%-layout%-coordinate%-space=ui%-root%-calibrated%-v1"
+))
 assert(string.find(status, "focus%-layout%-unit%-scale=0%.75"))
 assert(string.find(status, "focus%-layout%-readout%-scale=0%.82"))
 assert(string.find(status, "focus%-ui%-scale=applied"))

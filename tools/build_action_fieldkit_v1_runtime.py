@@ -158,6 +158,13 @@ def pixel_sha256(image: Image.Image) -> str:
     return hashlib.sha256(image.convert("RGBA").tobytes()).hexdigest()
 
 
+def addon_version(toc_path: Path) -> str:
+    for line in toc_path.read_text(encoding="utf-8-sig").splitlines():
+        if line.startswith("## Version:"):
+            return line.split(":", 1)[1].strip()
+    raise ValueError(f"addon version is missing from {toc_path}")
+
+
 def load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -950,7 +957,7 @@ def main() -> None:
                     "file": TOC_REL.as_posix(),
                     "sha256": sha256(toc_path),
                 },
-                "addon_version": "0.8.8",
+                "addon_version": addon_version(toc_path),
                 "required_dependency": "pfUI",
                 "optional_provider": "TrinketMenu" if key == "trinket" else "AutoBar",
             },
