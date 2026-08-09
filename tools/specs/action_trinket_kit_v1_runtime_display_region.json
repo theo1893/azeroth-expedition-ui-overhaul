@@ -1,0 +1,545 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "AB.TRINKET.KIT.V1/runtime-v1",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, provider UI units before UIParent and provider-local scale",
+  "evidence": {
+    "provider": "installed TrinketMenu 3.3 TrinketMenu.lua/XML + installed AutoBar 1.31 Core.lua/XML/Profile/ItemList",
+    "layout_formula": "TrinketMenu main is exactly 92x52 or 52x92 UI with two 36x36 buttons; its menu is 12+columns*40 by 12+ceil(count/columns)*40 in VERTICAL mode and transposed in HORIZONTAL mode. AutoBar buttons are 36x36 with 3 UI gapping; the full 4x6 button body is 165x243 UI. Three non-interactive 40x20 UI group labels sit 2 UI left of the body, producing a 207x243 UI visual frame while leaving all button hit boxes unchanged.",
+    "simulation_spec": "tools/specs/action_fieldkit_v2_simulation.json",
+    "scene_simulation": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.FIELDKIT.V1.runtime-v1.real-layout-1920x1080.png",
+    "state_simulation": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.TRINKET.KIT.V1.runtime-v1.layouts.png",
+    "target": "1920x1080; UI scale 0.81269841269841; TrinketMenu main scale 0.9043710231781006; menu scale 1.0",
+    "atlas_role": "final 512x512 straight-alpha power-of-two TGA; each declared A/B object, C nine-slice cell and horizontal/vertical D three-slice cell is sampled by the adapter",
+    "dynamic_ownership": "all item icons, counts, cooldowns, cooldown text, equipped state, queued trinkets, bag slots, category selection, tooltips and click behavior remain provider-owned; group labels are non-interactive runtime text shown only for the exact opt-in grouped profile",
+    "autobar_activation": "installed but disabled for the current character; this contract does not enable it",
+    "final_runtime": true,
+    "adapter": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
+    "runtime_sampling": "one proportional premultiplied-alpha reduction per complete accepted cell object; one deterministic 90-degree D rotation; transparent packing gutters are never sampled",
+    "runtime_scope": "TrinketMenu 3.3 existing main/menu frames and buttons"
+  },
+  "atlas": {
+    "size": [
+      512,
+      512
+    ],
+    "visible_bbox": [
+      8,
+      8,
+      504,
+      390
+    ],
+    "require_exact_visible_coverage": false,
+    "sampled_regions": [
+      {
+        "id": "AB.TRINKET.KIT.V1.A",
+        "box": [
+          9,
+          8,
+          119,
+          120
+        ]
+      },
+      {
+        "id": "AB.TRINKET.KIT.V1.B",
+        "box": [
+          136,
+          8,
+          248,
+          119
+        ]
+      },
+      {
+        "id": "AB.TRINKET.KIT.V1.C.topLeft",
+        "box": [
+          8,
+          138,
+          53,
+          183
+        ]
+      },
+      {
+        "id": "AB.TRINKET.KIT.V1.C.top",
+        "box": [
+          53,
+          138,
+          219,
+          183
+        ]
+      },
+      {
+        "id": "AB.TRINKET.KIT.V1.C.topRight",
+        "box": [
+          219,
+          138,
+          264,
+          183
+        ]
+      },
+      {
+        "id": "AB.TRINKET.KIT.V1.C.left",
+        "box": [
+          8,
+          183,
+          53,
+          345
+        ]
+      },
+      {
+        "id": "AB.TRINKET.KIT.V1.C.center",
+        "box": [
+          53,
+          183,
+          219,
+          345
+        ]
+      },
+      {
+        "id": "AB.TRINKET.KIT.V1.C.right",
+        "box": [
+          219,
+          183,
+          264,
+          345
+        ]
+      },
+      {
+        "id": "AB.TRINKET.KIT.V1.C.bottomLeft",
+        "box": [
+          8,
+          345,
+          53,
+          390
+        ]
+      },
+      {
+        "id": "AB.TRINKET.KIT.V1.C.bottom",
+        "box": [
+          53,
+          345,
+          219,
+          390
+        ]
+      },
+      {
+        "id": "AB.TRINKET.KIT.V1.C.bottomRight",
+        "box": [
+          219,
+          345,
+          264,
+          390
+        ]
+      },
+      {
+        "id": "AB.TRINKET.KIT.V1.D.horizontal.start",
+        "box": [
+          264,
+          23,
+          294,
+          104
+        ]
+      },
+      {
+        "id": "AB.TRINKET.KIT.V1.D.horizontal.middle",
+        "box": [
+          294,
+          23,
+          474,
+          104
+        ]
+      },
+      {
+        "id": "AB.TRINKET.KIT.V1.D.horizontal.end",
+        "box": [
+          474,
+          23,
+          504,
+          104
+        ]
+      },
+      {
+        "id": "AB.TRINKET.KIT.V1.D.vertical.start",
+        "box": [
+          407,
+          144,
+          488,
+          174
+        ]
+      },
+      {
+        "id": "AB.TRINKET.KIT.V1.D.vertical.middle",
+        "box": [
+          407,
+          174,
+          488,
+          354
+        ]
+      },
+      {
+        "id": "AB.TRINKET.KIT.V1.D.vertical.end",
+        "box": [
+          407,
+          354,
+          488,
+          384
+        ]
+      }
+    ]
+  },
+  "nine_slice": {
+    "caps": {
+      "left": 6,
+      "right": 6,
+      "top": 6,
+      "bottom": 6
+    },
+    "minimum_frame_size": [
+      13,
+      13
+    ]
+  },
+  "scenarios": [
+    {
+      "id": "trinket-main-horizontal-92x52",
+      "frame": [
+        92,
+        52
+      ],
+      "preview_frame": [
+        92,
+        52
+      ],
+      "zones": {
+        "dynamic-safe": [
+          6,
+          6,
+          86,
+          46
+        ]
+      },
+      "regions": [
+        {
+          "id": "slot13.hit-and-icon",
+          "kind": "button",
+          "box": [
+            8,
+            8,
+            44,
+            44
+          ],
+          "zone": "dynamic-safe"
+        },
+        {
+          "id": "slot14.hit-and-icon",
+          "kind": "button",
+          "box": [
+            48,
+            8,
+            84,
+            44
+          ],
+          "zone": "dynamic-safe"
+        },
+        {
+          "id": "slot13.queue",
+          "kind": "status",
+          "box": [
+            6,
+            6,
+            24,
+            24
+          ],
+          "zone": "dynamic-safe"
+        },
+        {
+          "id": "slot14.queue",
+          "kind": "status",
+          "box": [
+            46,
+            6,
+            64,
+            24
+          ],
+          "zone": "dynamic-safe"
+        }
+      ]
+    },
+    {
+      "id": "trinket-main-vertical-52x92",
+      "frame": [
+        52,
+        92
+      ],
+      "preview_frame": [
+        52,
+        92
+      ],
+      "zones": {
+        "dynamic-safe": [
+          6,
+          6,
+          46,
+          86
+        ]
+      },
+      "regions": [
+        {
+          "id": "slot13.hit-and-icon",
+          "kind": "button",
+          "box": [
+            8,
+            8,
+            44,
+            44
+          ],
+          "zone": "dynamic-safe"
+        },
+        {
+          "id": "slot14.hit-and-icon",
+          "kind": "button",
+          "box": [
+            8,
+            48,
+            44,
+            84
+          ],
+          "zone": "dynamic-safe"
+        },
+        {
+          "id": "slot13.queue",
+          "kind": "status",
+          "box": [
+            6,
+            6,
+            24,
+            24
+          ],
+          "zone": "dynamic-safe"
+        },
+        {
+          "id": "slot14.queue",
+          "kind": "status",
+          "box": [
+            6,
+            46,
+            24,
+            64
+          ],
+          "zone": "dynamic-safe"
+        }
+      ]
+    },
+    {
+      "id": "trinket-menu-zero-hidden",
+      "frame": [
+        52,
+        91
+      ],
+      "preview_frame": [
+        52,
+        91
+      ],
+      "visibility": false,
+      "zones": {
+        "hidden-frame": [
+          0,
+          0,
+          52,
+          91
+        ]
+      },
+      "regions": []
+    },
+    {
+      "id": "trinket-menu-current-four-columns-one",
+      "frame": [
+        172,
+        52
+      ],
+      "preview_frame": [
+        172,
+        52
+      ],
+      "zones": {
+        "dynamic-safe": [
+          6,
+          6,
+          166,
+          46
+        ]
+      },
+      "regions": [
+        {
+          "id": "candidate1.hit-and-icon",
+          "kind": "button",
+          "box": [
+            8,
+            8,
+            44,
+            44
+          ],
+          "zone": "dynamic-safe"
+        }
+      ]
+    },
+    {
+      "id": "trinket-menu-current-four-columns-eight",
+      "frame": [
+        172,
+        92
+      ],
+      "preview_frame": [
+        172,
+        92
+      ],
+      "zones": {
+        "dynamic-safe": [
+          6,
+          6,
+          166,
+          86
+        ]
+      },
+      "regions": [
+        {
+          "id": "candidates1-8.hit-cluster",
+          "kind": "button-cluster",
+          "box": [
+            8,
+            8,
+            164,
+            84
+          ],
+          "zone": "dynamic-safe"
+        }
+      ]
+    },
+    {
+      "id": "trinket-menu-current-four-columns-thirty",
+      "frame": [
+        172,
+        332
+      ],
+      "preview_frame": [
+        172,
+        332
+      ],
+      "zones": {
+        "dynamic-safe": [
+          6,
+          6,
+          166,
+          326
+        ]
+      },
+      "regions": [
+        {
+          "id": "candidates1-30.hit-cluster",
+          "kind": "button-cluster",
+          "box": [
+            8,
+            8,
+            164,
+            324
+          ],
+          "zone": "dynamic-safe"
+        }
+      ]
+    },
+    {
+      "id": "trinket-menu-auto-five-columns-thirty",
+      "frame": [
+        212,
+        252
+      ],
+      "preview_frame": [
+        212,
+        252
+      ],
+      "zones": {
+        "dynamic-safe": [
+          6,
+          6,
+          206,
+          246
+        ]
+      },
+      "regions": [
+        {
+          "id": "candidates1-30.hit-cluster",
+          "kind": "button-cluster",
+          "box": [
+            8,
+            8,
+            204,
+            244
+          ],
+          "zone": "dynamic-safe"
+        }
+      ]
+    },
+    {
+      "id": "trinket-menu-horizontal-four-columns-eight",
+      "frame": [
+        92,
+        172
+      ],
+      "preview_frame": [
+        92,
+        172
+      ],
+      "zones": {
+        "dynamic-safe": [
+          6,
+          6,
+          86,
+          166
+        ]
+      },
+      "regions": [
+        {
+          "id": "candidates1-8.hit-cluster",
+          "kind": "button-cluster",
+          "box": [
+            8,
+            8,
+            84,
+            164
+          ],
+          "zone": "dynamic-safe"
+        }
+      ]
+    },
+    {
+      "id": "trinket-menu-configured-thirty-columns",
+      "frame": [
+        1212,
+        52
+      ],
+      "preview_frame": [
+        1212,
+        52
+      ],
+      "zones": {
+        "dynamic-safe": [
+          6,
+          6,
+          1206,
+          46
+        ]
+      },
+      "regions": [
+        {
+          "id": "candidates1-30.hit-cluster",
+          "kind": "button-cluster",
+          "box": [
+            8,
+            8,
+            1204,
+            44
+          ],
+          "zone": "dynamic-safe"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,477 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "AB.CONSUMABLE.KIT.V1/runtime-v1",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, provider UI units before UIParent and provider-local scale",
+  "evidence": {
+    "provider": "installed TrinketMenu 3.3 TrinketMenu.lua/XML + installed AutoBar 1.31 Core.lua/XML/Profile/ItemList",
+    "layout_formula": "TrinketMenu main is exactly 92x52 or 52x92 UI with two 36x36 buttons; its menu is 12+columns*40 by 12+ceil(count/columns)*40 in VERTICAL mode and transposed in HORIZONTAL mode. AutoBar buttons are 36x36 with 3 UI gapping; the full 4x6 button body is 165x243 UI. Three non-interactive 40x20 UI group labels sit 2 UI left of the body, producing a 207x243 UI visual frame while leaving all button hit boxes unchanged.",
+    "simulation_spec": "tools/specs/action_fieldkit_v2_simulation.json",
+    "scene_simulation": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.FIELDKIT.V1.runtime-v1.real-layout-1920x1080.png",
+    "state_simulation": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.CONSUMABLE.KIT.V1.runtime-v1.layouts.png",
+    "target": "1920x1080; UI scale 0.81269841269841; TrinketMenu main scale 0.9043710231781006; menu scale 1.0",
+    "atlas_role": "final 512x512 straight-alpha power-of-two TGA; each declared A/B object, C nine-slice cell and horizontal/vertical D three-slice cell is sampled by the adapter",
+    "dynamic_ownership": "all item icons, counts, cooldowns, cooldown text, equipped state, queued trinkets, bag slots, category selection, tooltips and click behavior remain provider-owned; group labels are non-interactive runtime text shown only for the exact opt-in grouped profile",
+    "autobar_activation": "installed but disabled for the current character; this contract does not enable it",
+    "final_runtime": true,
+    "adapter": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
+    "runtime_sampling": "one proportional premultiplied-alpha reduction per complete accepted cell object; one deterministic 90-degree D rotation; transparent packing gutters are never sampled",
+    "runtime_scope": "AutoBar 1.31 existing main/popup frames and buttons"
+  },
+  "atlas": {
+    "size": [
+      512,
+      512
+    ],
+    "visible_bbox": [
+      8,
+      9,
+      504,
+      392
+    ],
+    "require_exact_visible_coverage": false,
+    "sampled_regions": [
+      {
+        "id": "AB.CONSUMABLE.KIT.V1.A",
+        "box": [
+          8,
+          10,
+          120,
+          118
+        ]
+      },
+      {
+        "id": "AB.CONSUMABLE.KIT.V1.B",
+        "box": [
+          136,
+          9,
+          248,
+          119
+        ]
+      },
+      {
+        "id": "AB.CONSUMABLE.KIT.V1.C.topLeft",
+        "box": [
+          8,
+          136,
+          54,
+          182
+        ]
+      },
+      {
+        "id": "AB.CONSUMABLE.KIT.V1.C.top",
+        "box": [
+          54,
+          136,
+          218,
+          182
+        ]
+      },
+      {
+        "id": "AB.CONSUMABLE.KIT.V1.C.topRight",
+        "box": [
+          218,
+          136,
+          264,
+          182
+        ]
+      },
+      {
+        "id": "AB.CONSUMABLE.KIT.V1.C.left",
+        "box": [
+          8,
+          182,
+          54,
+          346
+        ]
+      },
+      {
+        "id": "AB.CONSUMABLE.KIT.V1.C.center",
+        "box": [
+          54,
+          182,
+          218,
+          346
+        ]
+      },
+      {
+        "id": "AB.CONSUMABLE.KIT.V1.C.right",
+        "box": [
+          218,
+          182,
+          264,
+          346
+        ]
+      },
+      {
+        "id": "AB.CONSUMABLE.KIT.V1.C.bottomLeft",
+        "box": [
+          8,
+          346,
+          54,
+          392
+        ]
+      },
+      {
+        "id": "AB.CONSUMABLE.KIT.V1.C.bottom",
+        "box": [
+          54,
+          346,
+          218,
+          392
+        ]
+      },
+      {
+        "id": "AB.CONSUMABLE.KIT.V1.C.bottomRight",
+        "box": [
+          218,
+          346,
+          264,
+          392
+        ]
+      },
+      {
+        "id": "AB.CONSUMABLE.KIT.V1.D.horizontal.start",
+        "box": [
+          264,
+          43,
+          294,
+          84
+        ]
+      },
+      {
+        "id": "AB.CONSUMABLE.KIT.V1.D.horizontal.middle",
+        "box": [
+          294,
+          43,
+          474,
+          84
+        ]
+      },
+      {
+        "id": "AB.CONSUMABLE.KIT.V1.D.horizontal.end",
+        "box": [
+          474,
+          43,
+          504,
+          84
+        ]
+      },
+      {
+        "id": "AB.CONSUMABLE.KIT.V1.D.vertical.start",
+        "box": [
+          427,
+          144,
+          468,
+          174
+        ]
+      },
+      {
+        "id": "AB.CONSUMABLE.KIT.V1.D.vertical.middle",
+        "box": [
+          427,
+          174,
+          468,
+          354
+        ]
+      },
+      {
+        "id": "AB.CONSUMABLE.KIT.V1.D.vertical.end",
+        "box": [
+          427,
+          354,
+          468,
+          384
+        ]
+      }
+    ]
+  },
+  "nine_slice": {
+    "caps": {
+      "left": 6,
+      "right": 6,
+      "top": 6,
+      "bottom": 6
+    },
+    "minimum_frame_size": [
+      13,
+      13
+    ]
+  },
+  "scenarios": [
+    {
+      "id": "autobar-rack-minimum-1x1",
+      "frame": [
+        48,
+        48
+      ],
+      "preview_frame": [
+        48,
+        48
+      ],
+      "zones": {
+        "dynamic-safe": [
+          6,
+          6,
+          42,
+          42
+        ]
+      },
+      "regions": [
+        {
+          "id": "button1.hit-and-icon",
+          "kind": "button",
+          "box": [
+            6,
+            6,
+            42,
+            42
+          ],
+          "zone": "dynamic-safe"
+        }
+      ]
+    },
+    {
+      "id": "autobar-rack-compact-5x2",
+      "frame": [
+        204,
+        87
+      ],
+      "preview_frame": [
+        204,
+        87
+      ],
+      "zones": {
+        "dynamic-safe": [
+          6,
+          6,
+          198,
+          81
+        ]
+      },
+      "regions": [
+        {
+          "id": "buttons1-10.hit-cluster",
+          "kind": "button-cluster",
+          "box": [
+            6,
+            6,
+            198,
+            81
+          ],
+          "zone": "dynamic-safe"
+        }
+      ]
+    },
+    {
+      "id": "autobar-rack-recommended-grouped-4x6",
+      "frame": [
+        207,
+        243
+      ],
+      "preview_frame": [
+        207,
+        243
+      ],
+      "zones": {
+        "dynamic-safe": [
+          48,
+          6,
+          201,
+          237
+        ],
+        "group-emergency-label": [
+          0,
+          4,
+          40,
+          24
+        ],
+        "group-buffs-label": [
+          0,
+          82,
+          40,
+          102
+        ],
+        "group-utility-label": [
+          0,
+          160,
+          40,
+          180
+        ]
+      },
+      "regions": [
+        {
+          "id": "buttons1-24.hit-cluster",
+          "kind": "button-cluster",
+          "box": [
+            48,
+            6,
+            201,
+            237
+          ],
+          "zone": "dynamic-safe"
+        },
+        {
+          "id": "emergency.runtime-label",
+          "kind": "fontstring",
+          "box": [
+            0,
+            4,
+            40,
+            24
+          ],
+          "zone": "group-emergency-label"
+        },
+        {
+          "id": "buffs.runtime-label",
+          "kind": "fontstring",
+          "box": [
+            0,
+            82,
+            40,
+            102
+          ],
+          "zone": "group-buffs-label"
+        },
+        {
+          "id": "utility.runtime-label",
+          "kind": "fontstring",
+          "box": [
+            0,
+            160,
+            40,
+            180
+          ],
+          "zone": "group-utility-label"
+        }
+      ]
+    },
+    {
+      "id": "autobar-rack-maximum-24x1",
+      "frame": [
+        945,
+        48
+      ],
+      "preview_frame": [
+        945,
+        48
+      ],
+      "zones": {
+        "dynamic-safe": [
+          6,
+          6,
+          939,
+          42
+        ]
+      },
+      "regions": [
+        {
+          "id": "buttons1-24.hit-cluster",
+          "kind": "button-cluster",
+          "box": [
+            6,
+            6,
+            939,
+            42
+          ],
+          "zone": "dynamic-safe"
+        }
+      ]
+    },
+    {
+      "id": "autobar-rack-maximum-1x24",
+      "frame": [
+        48,
+        945
+      ],
+      "preview_frame": [
+        48,
+        945
+      ],
+      "zones": {
+        "dynamic-safe": [
+          6,
+          6,
+          42,
+          939
+        ]
+      },
+      "regions": [
+        {
+          "id": "buttons1-24.hit-cluster",
+          "kind": "button-cluster",
+          "box": [
+            6,
+            6,
+            42,
+            939
+          ],
+          "zone": "dynamic-safe"
+        }
+      ]
+    },
+    {
+      "id": "autobar-popup-top-six",
+      "frame": [
+        44,
+        239
+      ],
+      "preview_frame": [
+        44,
+        239
+      ],
+      "zones": {
+        "dynamic-safe": [
+          4,
+          4,
+          40,
+          235
+        ]
+      },
+      "regions": [
+        {
+          "id": "popup1-6.hit-cluster",
+          "kind": "button-cluster",
+          "box": [
+            4,
+            4,
+            40,
+            235
+          ],
+          "zone": "dynamic-safe"
+        }
+      ]
+    },
+    {
+      "id": "autobar-popup-right-twelve",
+      "frame": [
+        473,
+        44
+      ],
+      "preview_frame": [
+        473,
+        44
+      ],
+      "zones": {
+        "dynamic-safe": [
+          4,
+          4,
+          469,
+          40
+        ]
+      },
+      "regions": [
+        {
+          "id": "popup1-12.hit-cluster",
+          "kind": "button-cluster",
+          "box": [
+            4,
+            4,
+            469,
+            40
+          ],
+          "zone": "dynamic-safe"
+        }
+      ]
+    }
+  ]
+}

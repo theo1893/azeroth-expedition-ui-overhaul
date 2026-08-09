@@ -1,0 +1,557 @@
+{
+  "schema_version": 1,
+  "module": "actionbars",
+  "batch": "AB.FIELDKIT.V1",
+  "component": "AB.TRINKET.KIT.V1",
+  "version": "runtime-v1",
+  "runtime_contract": "1.0",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "source": {
+    "file": "assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png",
+    "sha256": "82dd2260757616912a7ef78658cc230f66d89614613d64e85f8116cac284c012",
+    "width": 1024,
+    "height": 1024,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      80,
+      80,
+      944,
+      941
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0,
+    "transparent_pixels": 646693,
+    "partially_transparent_pixels": 16995,
+    "opaque_pixels": 384888
+  },
+  "transform": {
+    "operation": "complete per-cell visible-bbox crop; one proportional premultiplied-alpha LANCZOS reduction for A/B/C and HAMMING reduction for thin D; one 90-degree D rotation; deterministic packing into a transparent 512-square atlas",
+    "source_cell_bboxes_local_exclusive": {
+      "A": [
+        82,
+        80,
+        429,
+        432
+      ],
+      "B": [
+        80,
+        81,
+        432,
+        430
+      ],
+      "C": [
+        80,
+        82,
+        432,
+        429
+      ],
+      "D": [
+        80,
+        196,
+        432,
+        315
+      ]
+    },
+    "runtime_layout": {
+      "atlas_size": [
+        512,
+        512
+      ],
+      "visible_bbox_exclusive": [
+        8,
+        8,
+        504,
+        390
+      ],
+      "objects": {
+        "A": [
+          9,
+          8,
+          119,
+          120
+        ],
+        "B": [
+          136,
+          8,
+          248,
+          119
+        ],
+        "C": [
+          8,
+          138,
+          264,
+          390
+        ],
+        "D_HORIZONTAL": [
+          264,
+          23,
+          504,
+          104
+        ],
+        "D_VERTICAL": [
+          407,
+          144,
+          488,
+          384
+        ]
+      },
+      "c_nine_slice_cap_pixels": 45,
+      "c_nine_slice_boxes": {
+        "topLeft": [
+          8,
+          138,
+          53,
+          183
+        ],
+        "top": [
+          53,
+          138,
+          219,
+          183
+        ],
+        "topRight": [
+          219,
+          138,
+          264,
+          183
+        ],
+        "left": [
+          8,
+          183,
+          53,
+          345
+        ],
+        "center": [
+          53,
+          183,
+          219,
+          345
+        ],
+        "right": [
+          219,
+          183,
+          264,
+          345
+        ],
+        "bottomLeft": [
+          8,
+          345,
+          53,
+          390
+        ],
+        "bottom": [
+          53,
+          345,
+          219,
+          390
+        ],
+        "bottomRight": [
+          219,
+          345,
+          264,
+          390
+        ]
+      },
+      "d_three_slice_cap_pixels": 30,
+      "d_horizontal_boxes": {
+        "start": [
+          264,
+          23,
+          294,
+          104
+        ],
+        "middle": [
+          294,
+          23,
+          474,
+          104
+        ],
+        "end": [
+          474,
+          23,
+          504,
+          104
+        ]
+      },
+      "d_vertical_boxes": {
+        "start": [
+          407,
+          144,
+          488,
+          174
+        ],
+        "middle": [
+          407,
+          174,
+          488,
+          354
+        ],
+        "end": [
+          407,
+          354,
+          488,
+          384
+        ]
+      },
+      "sampled_regions": [
+        {
+          "id": "A",
+          "box": [
+            9,
+            8,
+            119,
+            120
+          ]
+        },
+        {
+          "id": "B",
+          "box": [
+            136,
+            8,
+            248,
+            119
+          ]
+        },
+        {
+          "id": "C.topLeft",
+          "box": [
+            8,
+            138,
+            53,
+            183
+          ]
+        },
+        {
+          "id": "C.top",
+          "box": [
+            53,
+            138,
+            219,
+            183
+          ]
+        },
+        {
+          "id": "C.topRight",
+          "box": [
+            219,
+            138,
+            264,
+            183
+          ]
+        },
+        {
+          "id": "C.left",
+          "box": [
+            8,
+            183,
+            53,
+            345
+          ]
+        },
+        {
+          "id": "C.center",
+          "box": [
+            53,
+            183,
+            219,
+            345
+          ]
+        },
+        {
+          "id": "C.right",
+          "box": [
+            219,
+            183,
+            264,
+            345
+          ]
+        },
+        {
+          "id": "C.bottomLeft",
+          "box": [
+            8,
+            345,
+            53,
+            390
+          ]
+        },
+        {
+          "id": "C.bottom",
+          "box": [
+            53,
+            345,
+            219,
+            390
+          ]
+        },
+        {
+          "id": "C.bottomRight",
+          "box": [
+            219,
+            345,
+            264,
+            390
+          ]
+        },
+        {
+          "id": "D.horizontal.start",
+          "box": [
+            264,
+            23,
+            294,
+            104
+          ]
+        },
+        {
+          "id": "D.horizontal.middle",
+          "box": [
+            294,
+            23,
+            474,
+            104
+          ]
+        },
+        {
+          "id": "D.horizontal.end",
+          "box": [
+            474,
+            23,
+            504,
+            104
+          ]
+        },
+        {
+          "id": "D.vertical.start",
+          "box": [
+            407,
+            144,
+            488,
+            174
+          ]
+        },
+        {
+          "id": "D.vertical.middle",
+          "box": [
+            407,
+            174,
+            488,
+            354
+          ]
+        },
+        {
+          "id": "D.vertical.end",
+          "box": [
+            407,
+            354,
+            488,
+            384
+          ]
+        }
+      ],
+      "texcoords": {
+        "A": [
+          0.017578125,
+          0.232421875,
+          0.015625,
+          0.234375
+        ],
+        "B": [
+          0.265625,
+          0.484375,
+          0.015625,
+          0.232421875
+        ],
+        "C": {
+          "topLeft": [
+            0.015625,
+            0.103515625,
+            0.26953125,
+            0.357421875
+          ],
+          "top": [
+            0.103515625,
+            0.427734375,
+            0.26953125,
+            0.357421875
+          ],
+          "topRight": [
+            0.427734375,
+            0.515625,
+            0.26953125,
+            0.357421875
+          ],
+          "left": [
+            0.015625,
+            0.103515625,
+            0.357421875,
+            0.673828125
+          ],
+          "center": [
+            0.103515625,
+            0.427734375,
+            0.357421875,
+            0.673828125
+          ],
+          "right": [
+            0.427734375,
+            0.515625,
+            0.357421875,
+            0.673828125
+          ],
+          "bottomLeft": [
+            0.015625,
+            0.103515625,
+            0.673828125,
+            0.76171875
+          ],
+          "bottom": [
+            0.103515625,
+            0.427734375,
+            0.673828125,
+            0.76171875
+          ],
+          "bottomRight": [
+            0.427734375,
+            0.515625,
+            0.673828125,
+            0.76171875
+          ]
+        },
+        "D_HORIZONTAL": {
+          "start": [
+            0.515625,
+            0.57421875,
+            0.044921875,
+            0.203125
+          ],
+          "middle": [
+            0.57421875,
+            0.92578125,
+            0.044921875,
+            0.203125
+          ],
+          "end": [
+            0.92578125,
+            0.984375,
+            0.044921875,
+            0.203125
+          ]
+        },
+        "D_VERTICAL": {
+          "start": [
+            0.794921875,
+            0.953125,
+            0.28125,
+            0.33984375
+          ],
+          "middle": [
+            0.794921875,
+            0.953125,
+            0.33984375,
+            0.69140625
+          ],
+          "end": [
+            0.794921875,
+            0.953125,
+            0.69140625,
+            0.75
+          ]
+        }
+      }
+    },
+    "destination_nine_slice_cap_ui": 6,
+    "mirror": false,
+    "recolor": false,
+    "retouch": false,
+    "straight_alpha": true
+  },
+  "runtime_export": {
+    "file": "addon/AzerothExpeditionUI/Media/ActionBars/ActionTrinketKitV1.tga",
+    "sha256": "3614d9a86e1dc25399e6623ddfad398618070e8f78117ec0f0b997b9b3f9f455",
+    "width": 512,
+    "height": 512,
+    "mode": "RGBA",
+    "bits_per_pixel": 32,
+    "descriptor": 8,
+    "top_origin": false,
+    "pixel_sha256": "0961d750d7436665a333d948ba010a212c5de6f87c51ab59a10ed8af86ac4aef",
+    "visible_bbox_exclusive": [
+      8,
+      8,
+      504,
+      390
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0,
+    "transparent_pixels": 136152,
+    "partially_transparent_pixels": 11062,
+    "opaque_pixels": 114930
+  },
+  "deterministic_export": {
+    "exporter": "tools/build_action_fieldkit_v1_runtime.py",
+    "exporter_sha256": "40ef49cc4a8042164c45d6ec1bae7f796b9603c61db9c60546d209d438175484",
+    "expected_runtime_pixel_sha256": "0961d750d7436665a333d948ba010a212c5de6f87c51ab59a10ed8af86ac4aef",
+    "imagegen_calls_after_acceptance": 0,
+    "attempt_6_allowed": false
+  },
+  "adapter": {
+    "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
+    "sha256": "db124fa6331edbf9b68a75df3a709b082a36911cb6ddb3aaa81a8587e8134967",
+    "provider": "TrinketMenu 3.3 existing main/menu frames and 2+30 buttons",
+    "visual_layers_only": true,
+    "provider_geometry_writes": false,
+    "provider_behavior_replaced": false,
+    "saved_variables_written": false,
+    "autobar_enabled_or_profile_applied": false,
+    "fallback": "missing/hidden providers render no placeholder; AEUI off restores the provider normal textures and native TrinketMenu backdrops"
+  },
+  "addon_entrypoints": {
+    "bootstrap": {
+      "file": "addon/AzerothExpeditionUI/Core/Bootstrap.lua",
+      "sha256": "25e0c4b61ae58bb3d2507572171263b088e46075d936def93a54917a12f97cdd"
+    },
+    "toc": {
+      "file": "addon/AzerothExpeditionUI/AzerothExpeditionUI.toc",
+      "sha256": "ee0d7473e9a5ab8065f9044812d5b1c1a09e0c0eec6e47b5a4d08cdf0e5fe5ac"
+    },
+    "addon_version": "0.8.0",
+    "required_dependency": "pfUI",
+    "optional_provider": "TrinketMenu"
+  },
+  "provider_layers_preserved": [
+    "provider position, scale, orientation, docking and visibility",
+    "all Button parents, points, sizes, hit regions and scripts",
+    "icons, counts, cooldowns, checked/highlight and tooltip layers",
+    "Queue and combat swapping for TrinketMenu",
+    "categories, bag slots, popup ordering and item use for AutoBar",
+    "provider configuration and SavedVariables"
+  ],
+  "display_evidence": {
+    "contract": "tools/specs/action_trinket_kit_v1_runtime_display_region.json",
+    "contract_sha256": "fd2e2c5851650bc73cff77236663abbe3236635c5aafcc4dc461ac8e8743791c",
+    "report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.TRINKET.KIT.V1.display-region-report.json",
+    "report_sha256": "37177fdf7caead56fd28d51788a3576ffead2e0093cb85133a161859876ba578",
+    "runtime_atlas": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.TRINKET.KIT.V1.runtime-v1.atlas.png",
+    "runtime_atlas_sha256": "6b75e18d5877b22f40011cc4e84680ad29cc459367d5b275e35a7071d1e2c1b4",
+    "real_layout": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.FIELDKIT.V1.runtime-v1.real-layout-1920x1080.png",
+    "real_layout_sha256": "787bd62efe45fbb58476e4e4589db3d1fc5f39d22e1eaafd95f308047a762b7f",
+    "supported_layouts": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.TRINKET.KIT.V1.runtime-v1.layouts.png",
+    "supported_layouts_sha256": "d31762a27ff97479937a44b516dfa2cfb46cec15eca96576edf018847549b6f5",
+    "result": "9/9 pass",
+    "violations": 0,
+    "surrounding_pixels": "accepted AB.SLOT/AB.RAIL runtime plus deterministic provider content; no simulation pixel is runtime input"
+  },
+  "package_validation": {
+    "report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/addon-package-report.json",
+    "report_sha256": "a6a4ec74fc50859718614ece98f278a0af9ab54859df7555c2a6c0adf72c16b9",
+    "status": "pass",
+    "violations": 0,
+    "build_required_on_target_device": false
+  },
+  "game_validation": {
+    "status": "pending",
+    "phase": "P6",
+    "target": "Turtle WoW 1.18.1 / Interface 11200"
+  }
+}

@@ -132,23 +132,28 @@ AutoBar 的真实类别、物品顺序和用户后续配置始终优先；缺失
 （SHA-256 `623f29c5…a2419`），[manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_SourceManifest_v1.json)
 固定四格映射：A→`AB.CONSUMABLE.POCKET` 主口袋，B→`AB.CONSUMABLE.POPUP`
 薄候选口袋，C→`AB.CONSUMABLE.RACK／GROUP` filled 自适应卷袋外壳，D→popup
-连接带／group 分隔带。该 `1024²` 母版不是可直接加载的整架 runtime；P4→P5
-必须另行确定 crop、九宫格、旋转／拉伸、UV 与 adapter，且不得因此启用 AutoBar
-或写入 profile／SavedVariables。
+连接带／group 分隔带。该 `1024²` 母版不由客户端直接加载；确定性 P5 exporter
+把每格完整物件等比缩放并打包为
+[ActionConsumableKitV1.tga](../../../addon/AzerothExpeditionUI/Media/ActionBars/ActionConsumableKitV1.tga)
+（`512² RGBA`，文件 SHA `c48f6292…320e`、像素 SHA `658f826f…e30d`），合同见
+[runtime manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_RuntimeManifest_v1.json)。
+adapter 在现有 `24+12` Button 下分别取 A／B，C 以 `6 UI` 九宫格跟随真实可见
+Button 边界，D 以横／竖三段连接 popup 与分组 gap。它只读取 profile 以决定标签
+真伪，不启用 AutoBar、不应用 profile、不写入 SavedVariables。
 
 ## 饰品双槽
 
 | ID | provider／对象 | 合同 |
 |---|---|---|
-| `AB.TRINKET.DOCK` | 优先 `TrinketMenu_MainFrame`；缺失时绑定装备槽 `13`／`14` | 水平严格 `92×52 UI`、垂直严格 `52×92 UI`；两枚 `36×36 UI` 真实已装备饰品，主栏 scale／方向／拖动与 resize 继续归 provider；实际图标、快捷键、冷却与 Tooltip 动态 |
+| `AB.TRINKET.DOCK` | 可选 `TrinketMenu_MainFrame`；缺失时不显示占位栏 | 水平严格 `92×52 UI`、垂直严格 `52×92 UI`；两枚 `36×36 UI` 真实已装备饰品，主栏 scale／方向／拖动与 resize 继续归 provider；实际图标、快捷键、冷却与 Tooltip 动态 |
 | `AB.TRINKET.SLOT13` | `TrinketMenu_Trinket0`／`UseInventoryItem(13)` | 顶部饰品槽；点击使用，不生成固定饰品 |
 | `AB.TRINKET.SLOT14` | `TrinketMenu_Trinket1`／`UseInventoryItem(14)` | 底部饰品槽；点击使用，不生成固定饰品 |
 | `AB.TRINKET.MENU` | `TrinketMenu_MenuFrame`＋`TrinketMenu_Menu1..30` | 零候选隐藏；Button `36×36 UI`、步距 `40 UI`。VERTICAL 为 `12+列数×40` 乘 `12+ceil(数量/列数)×40`，HORIZONTAL 转置；支持自动 `1–5` 列或用户 `1–30` 列、菜单独立 scale／方向／拖动、八种停靠组合与战斗 Queue。只换肤并 fail-open |
 
-TrinketMenu 已经接管 `UseInventoryItem`、背包更新、装备更新与排队时，AEUI 不再
-安装竞争性全局 hook。没有 TrinketMenu 时，V1 fallback 只绑定两个已装备槽的
-使用反馈，不复制候选菜单或 Queue，也不尝试换装；以后若新增非战斗换装入口，
-必须另立功能合同。
+TrinketMenu 已经接管 `UseInventoryItem`、背包更新、装备更新与排队时，AEUI 不装
+竞争性的物品／换装全局 hook，只在 `OrientWindows`／`BuildMenu` 完成后刷新装饰。
+没有 TrinketMenu 时 V1 不创建 Button 或占位栏；以后若新增原生装备槽 fallback
+或非战斗换装入口，必须另立功能合同。
 
 用户于 `2026-08-09` 接受 `AB.TRINKET.KIT.V1` 第 4 稿。P4 source 为
 [ActionTrinketKit_Master_v1.png](../../../assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png)
@@ -156,7 +161,13 @@ TrinketMenu 已经接管 `UseInventoryItem`、背包更新、装备更新与排�
 固定四格映射：A→两枚 `AB.TRINKET.DOCK` 已装备护套，B→候选 Button 薄插页，
 C→`AB.TRINKET.MENU` filled 自适应九宫格，D→双护套短连接扣。母版只包含四个
 normal 静态底面；图标、冷却、Queue、文字、命中区、拖动、scale、方向、停靠与
-换装仍归 TrinketMenu。P4→P5 需独立导出／接入，接受本身不修改其 SavedVariables。
+换装仍归 TrinketMenu。确定性 P5 exporter 把完整四格物件打包为
+[ActionTrinketKitV1.tga](../../../addon/AzerothExpeditionUI/Media/ActionBars/ActionTrinketKitV1.tga)
+（`512² RGBA`，文件 SHA `3614d9a8…f455`、像素 SHA `0961d750…aef`），合同见
+[runtime manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json)。
+adapter 在既有两槽／30 候选 Button 下挂 A／B，C 以 `6 UI` 九宫格跟随菜单 Frame，
+D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 与原生 backdrop，
+不修改 TrinketMenu SavedVariables 或任何换装／Queue 行为。
 
 ## 推荐布局而非强制布局
 

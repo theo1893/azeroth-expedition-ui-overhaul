@@ -1,0 +1,557 @@
+{
+  "schema_version": 1,
+  "module": "actionbars",
+  "batch": "AB.FIELDKIT.V1",
+  "component": "AB.CONSUMABLE.KIT.V1",
+  "version": "runtime-v1",
+  "runtime_contract": "1.0",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "source": {
+    "file": "assets/source/actionbars/ab-consumable-kit/ActionConsumableKit_Master_v1.png",
+    "sha256": "623f29c5e16ea73c50778b462c2d79a4eb2dd4928b9a1d94f30876f13caa2419",
+    "width": 1024,
+    "height": 1024,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      80,
+      83,
+      944,
+      944
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0,
+    "transparent_pixels": 670302,
+    "partially_transparent_pixels": 17423,
+    "opaque_pixels": 360851
+  },
+  "transform": {
+    "operation": "complete per-cell visible-bbox crop; one proportional premultiplied-alpha LANCZOS reduction for A/B/C and HAMMING reduction for thin D; one 90-degree D rotation; deterministic packing into a transparent 512-square atlas",
+    "source_cell_bboxes_local_exclusive": {
+      "A": [
+        80,
+        87,
+        432,
+        425
+      ],
+      "B": [
+        80,
+        83,
+        432,
+        429
+      ],
+      "C": [
+        80,
+        80,
+        432,
+        432
+      ],
+      "D": [
+        80,
+        226,
+        432,
+        286
+      ]
+    },
+    "runtime_layout": {
+      "atlas_size": [
+        512,
+        512
+      ],
+      "visible_bbox_exclusive": [
+        8,
+        9,
+        504,
+        392
+      ],
+      "objects": {
+        "A": [
+          8,
+          10,
+          120,
+          118
+        ],
+        "B": [
+          136,
+          9,
+          248,
+          119
+        ],
+        "C": [
+          8,
+          136,
+          264,
+          392
+        ],
+        "D_HORIZONTAL": [
+          264,
+          43,
+          504,
+          84
+        ],
+        "D_VERTICAL": [
+          427,
+          144,
+          468,
+          384
+        ]
+      },
+      "c_nine_slice_cap_pixels": 46,
+      "c_nine_slice_boxes": {
+        "topLeft": [
+          8,
+          136,
+          54,
+          182
+        ],
+        "top": [
+          54,
+          136,
+          218,
+          182
+        ],
+        "topRight": [
+          218,
+          136,
+          264,
+          182
+        ],
+        "left": [
+          8,
+          182,
+          54,
+          346
+        ],
+        "center": [
+          54,
+          182,
+          218,
+          346
+        ],
+        "right": [
+          218,
+          182,
+          264,
+          346
+        ],
+        "bottomLeft": [
+          8,
+          346,
+          54,
+          392
+        ],
+        "bottom": [
+          54,
+          346,
+          218,
+          392
+        ],
+        "bottomRight": [
+          218,
+          346,
+          264,
+          392
+        ]
+      },
+      "d_three_slice_cap_pixels": 30,
+      "d_horizontal_boxes": {
+        "start": [
+          264,
+          43,
+          294,
+          84
+        ],
+        "middle": [
+          294,
+          43,
+          474,
+          84
+        ],
+        "end": [
+          474,
+          43,
+          504,
+          84
+        ]
+      },
+      "d_vertical_boxes": {
+        "start": [
+          427,
+          144,
+          468,
+          174
+        ],
+        "middle": [
+          427,
+          174,
+          468,
+          354
+        ],
+        "end": [
+          427,
+          354,
+          468,
+          384
+        ]
+      },
+      "sampled_regions": [
+        {
+          "id": "A",
+          "box": [
+            8,
+            10,
+            120,
+            118
+          ]
+        },
+        {
+          "id": "B",
+          "box": [
+            136,
+            9,
+            248,
+            119
+          ]
+        },
+        {
+          "id": "C.topLeft",
+          "box": [
+            8,
+            136,
+            54,
+            182
+          ]
+        },
+        {
+          "id": "C.top",
+          "box": [
+            54,
+            136,
+            218,
+            182
+          ]
+        },
+        {
+          "id": "C.topRight",
+          "box": [
+            218,
+            136,
+            264,
+            182
+          ]
+        },
+        {
+          "id": "C.left",
+          "box": [
+            8,
+            182,
+            54,
+            346
+          ]
+        },
+        {
+          "id": "C.center",
+          "box": [
+            54,
+            182,
+            218,
+            346
+          ]
+        },
+        {
+          "id": "C.right",
+          "box": [
+            218,
+            182,
+            264,
+            346
+          ]
+        },
+        {
+          "id": "C.bottomLeft",
+          "box": [
+            8,
+            346,
+            54,
+            392
+          ]
+        },
+        {
+          "id": "C.bottom",
+          "box": [
+            54,
+            346,
+            218,
+            392
+          ]
+        },
+        {
+          "id": "C.bottomRight",
+          "box": [
+            218,
+            346,
+            264,
+            392
+          ]
+        },
+        {
+          "id": "D.horizontal.start",
+          "box": [
+            264,
+            43,
+            294,
+            84
+          ]
+        },
+        {
+          "id": "D.horizontal.middle",
+          "box": [
+            294,
+            43,
+            474,
+            84
+          ]
+        },
+        {
+          "id": "D.horizontal.end",
+          "box": [
+            474,
+            43,
+            504,
+            84
+          ]
+        },
+        {
+          "id": "D.vertical.start",
+          "box": [
+            427,
+            144,
+            468,
+            174
+          ]
+        },
+        {
+          "id": "D.vertical.middle",
+          "box": [
+            427,
+            174,
+            468,
+            354
+          ]
+        },
+        {
+          "id": "D.vertical.end",
+          "box": [
+            427,
+            354,
+            468,
+            384
+          ]
+        }
+      ],
+      "texcoords": {
+        "A": [
+          0.015625,
+          0.234375,
+          0.01953125,
+          0.23046875
+        ],
+        "B": [
+          0.265625,
+          0.484375,
+          0.017578125,
+          0.232421875
+        ],
+        "C": {
+          "topLeft": [
+            0.015625,
+            0.10546875,
+            0.265625,
+            0.35546875
+          ],
+          "top": [
+            0.10546875,
+            0.42578125,
+            0.265625,
+            0.35546875
+          ],
+          "topRight": [
+            0.42578125,
+            0.515625,
+            0.265625,
+            0.35546875
+          ],
+          "left": [
+            0.015625,
+            0.10546875,
+            0.35546875,
+            0.67578125
+          ],
+          "center": [
+            0.10546875,
+            0.42578125,
+            0.35546875,
+            0.67578125
+          ],
+          "right": [
+            0.42578125,
+            0.515625,
+            0.35546875,
+            0.67578125
+          ],
+          "bottomLeft": [
+            0.015625,
+            0.10546875,
+            0.67578125,
+            0.765625
+          ],
+          "bottom": [
+            0.10546875,
+            0.42578125,
+            0.67578125,
+            0.765625
+          ],
+          "bottomRight": [
+            0.42578125,
+            0.515625,
+            0.67578125,
+            0.765625
+          ]
+        },
+        "D_HORIZONTAL": {
+          "start": [
+            0.515625,
+            0.57421875,
+            0.083984375,
+            0.1640625
+          ],
+          "middle": [
+            0.57421875,
+            0.92578125,
+            0.083984375,
+            0.1640625
+          ],
+          "end": [
+            0.92578125,
+            0.984375,
+            0.083984375,
+            0.1640625
+          ]
+        },
+        "D_VERTICAL": {
+          "start": [
+            0.833984375,
+            0.9140625,
+            0.28125,
+            0.33984375
+          ],
+          "middle": [
+            0.833984375,
+            0.9140625,
+            0.33984375,
+            0.69140625
+          ],
+          "end": [
+            0.833984375,
+            0.9140625,
+            0.69140625,
+            0.75
+          ]
+        }
+      }
+    },
+    "destination_nine_slice_cap_ui": 6,
+    "mirror": false,
+    "recolor": false,
+    "retouch": false,
+    "straight_alpha": true
+  },
+  "runtime_export": {
+    "file": "addon/AzerothExpeditionUI/Media/ActionBars/ActionConsumableKitV1.tga",
+    "sha256": "c48f6292336446d2cc0cbbfc811cde9903b06eeb41e6c9f4db49e4f13fd9320e",
+    "width": 512,
+    "height": 512,
+    "mode": "RGBA",
+    "bits_per_pixel": 32,
+    "descriptor": 8,
+    "top_origin": false,
+    "pixel_sha256": "658f826f5ffb52f77530d5e288f99ac9511db1317129aea7f64c4c8e7ea4e30d",
+    "visible_bbox_exclusive": [
+      8,
+      9,
+      504,
+      392
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0,
+    "transparent_pixels": 153061,
+    "partially_transparent_pixels": 7954,
+    "opaque_pixels": 101129
+  },
+  "deterministic_export": {
+    "exporter": "tools/build_action_fieldkit_v1_runtime.py",
+    "exporter_sha256": "40ef49cc4a8042164c45d6ec1bae7f796b9603c61db9c60546d209d438175484",
+    "expected_runtime_pixel_sha256": "658f826f5ffb52f77530d5e288f99ac9511db1317129aea7f64c4c8e7ea4e30d",
+    "imagegen_calls_after_acceptance": 0,
+    "attempt_6_allowed": false
+  },
+  "adapter": {
+    "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
+    "sha256": "db124fa6331edbf9b68a75df3a709b082a36911cb6ddb3aaa81a8587e8134967",
+    "provider": "AutoBar 1.31 existing main/popup frames and 24+12 buttons",
+    "visual_layers_only": true,
+    "provider_geometry_writes": false,
+    "provider_behavior_replaced": false,
+    "saved_variables_written": false,
+    "autobar_enabled_or_profile_applied": false,
+    "fallback": "missing/hidden providers render no placeholder; AEUI off restores the provider normal textures and native TrinketMenu backdrops"
+  },
+  "addon_entrypoints": {
+    "bootstrap": {
+      "file": "addon/AzerothExpeditionUI/Core/Bootstrap.lua",
+      "sha256": "25e0c4b61ae58bb3d2507572171263b088e46075d936def93a54917a12f97cdd"
+    },
+    "toc": {
+      "file": "addon/AzerothExpeditionUI/AzerothExpeditionUI.toc",
+      "sha256": "ee0d7473e9a5ab8065f9044812d5b1c1a09e0c0eec6e47b5a4d08cdf0e5fe5ac"
+    },
+    "addon_version": "0.8.0",
+    "required_dependency": "pfUI",
+    "optional_provider": "AutoBar"
+  },
+  "provider_layers_preserved": [
+    "provider position, scale, orientation, docking and visibility",
+    "all Button parents, points, sizes, hit regions and scripts",
+    "icons, counts, cooldowns, checked/highlight and tooltip layers",
+    "Queue and combat swapping for TrinketMenu",
+    "categories, bag slots, popup ordering and item use for AutoBar",
+    "provider configuration and SavedVariables"
+  ],
+  "display_evidence": {
+    "contract": "tools/specs/action_consumable_kit_v1_runtime_display_region.json",
+    "contract_sha256": "6bef62141b1df93f65362ae3db951ff8ec5b3d2f9541ffba89b15340dedcb7dd",
+    "report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.CONSUMABLE.KIT.V1.display-region-report.json",
+    "report_sha256": "3c0c672a79bce88e6c7810cf333dfd4407e3e929943d5ab92aa9709fe8ed0126",
+    "runtime_atlas": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.CONSUMABLE.KIT.V1.runtime-v1.atlas.png",
+    "runtime_atlas_sha256": "bf4c757261b6435d0e48746d85438a5eb2e4dea8171b053842a1508a6c303887",
+    "real_layout": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.FIELDKIT.V1.runtime-v1.real-layout-1920x1080.png",
+    "real_layout_sha256": "787bd62efe45fbb58476e4e4589db3d1fc5f39d22e1eaafd95f308047a762b7f",
+    "supported_layouts": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.CONSUMABLE.KIT.V1.runtime-v1.layouts.png",
+    "supported_layouts_sha256": "d6b32ea616537b38e5a8beacefaa1962800dbdd118940de468f81e52169d7834",
+    "result": "7/7 pass",
+    "violations": 0,
+    "surrounding_pixels": "accepted AB.SLOT/AB.RAIL runtime plus deterministic provider content; no simulation pixel is runtime input"
+  },
+  "package_validation": {
+    "report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/addon-package-report.json",
+    "report_sha256": "a6a4ec74fc50859718614ece98f278a0af9ab54859df7555c2a6c0adf72c16b9",
+    "status": "pass",
+    "violations": 0,
+    "build_required_on_target_device": false
+  },
+  "game_validation": {
+    "status": "pending",
+    "phase": "P6",
+    "target": "Turtle WoW 1.18.1 / Interface 11200"
+  }
+}

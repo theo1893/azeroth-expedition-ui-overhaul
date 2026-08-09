@@ -318,6 +318,52 @@ def main() -> None:
     assert "button:SetPoint" not in actionbars_source
     assert "button:SetWidth" not in actionbars_source
     assert "button:SetHeight" not in actionbars_source
+    assert 'ActionBars.fieldKitRuntimeContract = "1.0"' in actionbars_source
+    assert '"ActionBars\\\\ActionTrinketKitV1"' in actionbars_source
+    assert '"ActionBars\\\\ActionConsumableKitV1"' in actionbars_source
+    assert "ApplyAutoBarFieldKit" in actionbars_source
+    assert "ApplyAutoBarPopup" in actionbars_source
+    assert "ApplyTrinketFieldKit" in actionbars_source
+    assert "InstallFieldKitHooks" in actionbars_source
+    assert "AutoBarProfileMatches" in actionbars_source
+    assert 'local names = { "应急", "增益", "工具" }' in actionbars_source
+
+    fieldkit_cases = (
+        (
+            ROOT
+            / "assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json",
+            aeui / "Media" / "ActionBars" / "ActionTrinketKitV1.tga",
+            "0961d750d7436665a333d948ba010a212c5de6f87c51ab59a10ed8af86ac4aef",
+        ),
+        (
+            ROOT
+            / "assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_RuntimeManifest_v1.json",
+            aeui / "Media" / "ActionBars" / "ActionConsumableKitV1.tga",
+            "658f826f5ffb52f77530d5e288f99ac9511db1317129aea7f64c4c8e7ea4e30d",
+        ),
+    )
+    for manifest_path, runtime_path, pixel_sha in fieldkit_cases:
+        fieldkit = json.loads(manifest_path.read_text(encoding="utf-8"))
+        assert fieldkit["runtime_contract"] == "1.0"
+        assert fieldkit["status"] == "runtime-exported"
+        assert fieldkit["phase"] == "P5"
+        assert fieldkit["runtime_export"]["sha256"] == sha256(runtime_path)
+        assert fieldkit["runtime_export"]["pixel_sha256"] == pixel_sha
+        assert fieldkit["runtime_export"]["visible_green_spill_pixels"] == 0
+        assert fieldkit["runtime_export"][
+            "transparent_rgb_nonzero_values"
+        ] == 0
+        assert fieldkit["adapter"]["sha256"] == sha256(
+            aeui / "Modules" / "ActionBars.lua"
+        )
+        assert fieldkit["adapter"]["provider_geometry_writes"] is False
+        assert fieldkit["adapter"]["provider_behavior_replaced"] is False
+        assert fieldkit["adapter"]["saved_variables_written"] is False
+        assert fieldkit["adapter"][
+            "autobar_enabled_or_profile_applied"
+        ] is False
+        assert fieldkit["package_validation"]["status"] == "pass"
+        assert fieldkit["game_validation"]["status"] == "pending"
 
     rail_source_dir = ROOT / "assets" / "source" / "actionbars" / "ab-rail"
     rail_manifest = json.loads(

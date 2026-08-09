@@ -30,17 +30,19 @@
   `36 UI` Button、步距 `40 UI`。AutoBar 推荐 profile 保持完整 `24` 个主 Button
   的 `4×6`，连续 `1–8／9–16／17–24` 分为应急／增益／工具，分类内仍由最多
   `12` 个四向 popup 展开真实物品；provider 当前禁用状态没有改变。
-  用户于 `2026-08-09` 明确回复“接受 AB.TRINKET.KIT.V1 第4稿与
-  AB.CONSUMABLE.KIT.V1 第1稿”。Trinket attempt 4 canonical 已 byte-exact 晋级为
-  [ActionTrinketKit_Master_v1.png](../../../assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png)
-  SHA `82dd2260…c012`；Consumable attempt 1 canonical 已 byte-exact 晋级为
-  [ActionConsumableKit_Master_v1.png](../../../assets/source/actionbars/ab-consumable-kit/ActionConsumableKit_Master_v1.png)
-  SHA `623f29c5…a2419`。两个 SourceManifest 固定 `1024² RGBA`、四格各一显著组件、
-  原始 cell 不触边、最终 `80 px` margin、visible green `0`、透明 RGB `0`、
-  Character V3 provenance 与 `16/16` display／violations `0`。当前为
-  `dual-source-accepted / P4`；接受后 ImageGen `0`，Trinket 循环终止于 `4/5`、
-  Consumable 终止于 `1/5`，未用次数不重置或继续。尚未切片、导出 runtime、接入
-  adapter、启用 AutoBar、应用 profile 或修改 TrinketMenu SavedVariables。
+  用户于 `2026-08-09` 接受 Trinket 第4稿与 Consumable 第1稿，并随后以“下一步”
+  独立授权 P4→P5。两张 `1024² RGBA` source SHA `82dd2260…c012`／
+  `623f29c5…a2419` 保持 byte-exact；确定性 exporter 对完整 A／B／C／D 物件做一次
+  premultiplied-alpha 等比缩放，D 另有一份 `90°` 旋转副本，分别打包为两张
+  `512²` 32-bit TGA。Trinket runtime 文件 SHA `3614d9a8…f455`、像素 SHA
+  `0961d750…aef`；Consumable 文件 SHA `c48f6292…320e`、像素 SHA
+  `658f826f…e30d`。两张 atlas 均为 visible green `0`、透明 RGB `0`。
+  `ActionBars` 只给 AutoBar `24+12` 与 TrinketMenu `2+30` 既有 Button／Frame
+  添加非交互视觉层，并在 provider 完成布局／更新后刷新装饰；Button、图标、冷却、
+  Queue、换装、分类、拖动、缩放、方向、停靠、命中区及 SavedVariables 不变。
+  最终 display 为 `9/9`＋`7/7`、violations `0`，fresh-checkout package `pass`、
+  目标设备无需构建。当前为 `runtime-exported / P5`；P4→P5 ImageGen `0`，原生产
+  循环仍终止于 `4/5` 与 `1/5`。AutoBar 当前禁用状态没有改变，也未应用 profile。
 - `AB.SLOT.BASE.V1` 有界生产循环已在 `5/5` 停止；用户于 `2026-08-08` 明确
   “接受 AB.SLOT.BASE.V1 第5稿”，随后以“进行下一步”授权 P4→P5。exact source
   RGBA `6d4a4d16…7dc0` 已按冻结 `[200,200,824,824)` crop 确定性导出为
@@ -108,10 +110,10 @@
   `f.equipped`、`f.icon` 顶点色、`f.cd` 和既有按键动画继续表达悬停、当前技能、
   装备、不可用／距离／法力、冷却与按下。pfUI 没有独立 disabled Button cell，
   不为其生产假状态。
-- AutoBar／TrinketMenu 存在时只做 feature-detect 视觉桥接，不复制其数据表、
-  不竞争其全局 hook。TrinketMenu 缺失时只保留真实装备槽 `13／14` 的安全
-  fallback；AutoBar 缺失或当前禁用时 V1 不显示、不占位，钉选 fallback 以后
-  另立功能合同。
+- AutoBar／TrinketMenu 存在时只做 feature-detect 视觉桥接，不复制其数据表；
+  只在 provider 自身布局／更新方法完成后以 `hooksecurefunc` 刷新 AEUI 装饰，不装
+  物品使用／换装竞争 hook。任一 provider 缺失或未加载时 V1 不显示、不占位；
+  原生装备槽／钉选 fallback 若需要，必须以后另立功能合同。
 - 饰品更换菜单保留 provider 原功能并 fail-open；当前四列 `1／8／30` 候选
   分别为 `172×52／172×92／172×332 UI`，自动五列最大 `212×252 UI`，合法
   三十列极宽为 `1212×52 UI`。左键换入槽 `13`、右键换入槽 `14`、战斗 Queue、
@@ -156,10 +158,10 @@
 | `AB.SLOT.STATE` | `P2 / scoped` | highlight／active／equipped／icon tint／cooldown／按键动画的真实覆盖顺序已冻结 | 基底 P6 已验证；如需独立换肤再写悬停／激活覆盖合同，不生产假 disabled cell |
 | `AB.ENDCAP.GRYPHON` | `P2 / direction-locked` | pfUI 左右端帽对象、64 UI 默认能力；用户确认的 V3 preset 默认关闭 | `AB.SLOT／RAIL` 后另行授权可选端帽正文 |
 | `AB.STANCE／PET` | `P1` | Bar `11／12` 与 provider 状态已审计 | 职业最少／最多数量和自动施法实机排版 |
-| `AB.CONSUMABLE.RACK／POCKET／POPUP` | `P4 / source-accepted / 1/5` | [source](../../../assets/source/actionbars/ab-consumable-kit/ActionConsumableKit_Master_v1.png)／[manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_SourceManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；exact SHA `623f29c5…a2419`，四格、传输、美术与 `16/16` display 全 pass；当前 provider 仍 disabled | 用户若继续，先冻结 crop／九宫格／旋转／UV／adapter runtime 合同，再走 P4→P5；不启用 AutoBar、不执行 attempts 2–5 |
-| `AB.CONSUMABLE.GROUP` | `P4 / source-accepted / 1/5` | 同一 accepted source 的 C 为 filled adaptive shell、D 为 divider；推荐 profile 的 `1–8／9–16／17–24` 仍对应应急／增益／工具，三枚标题皮签与两条分隔不接收鼠标，AutoBar 无原生 `FLASK` 类别 | 与 Consumable Kit 共用 P4 source；runtime FontString／profile 仍未创建或写入，P4→P5 需独立执行 |
-| `AB.TRINKET.DOCK` | `P4 / source-accepted / 4/5` | [source](../../../assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png)／[manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_SourceManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；exact SHA `82dd2260…c012`，四格、传输、美术与 `16/16` display 全 pass；第 5 次未使用 | 用户若继续，先冻结四格 crop／九宫格／旋转／UV／adapter runtime 合同，再走 P4→P5；不改 TrinketMenu SavedVariables |
-| `AB.TRINKET.MENU` | `P4 / source-accepted / 4/5` | 同一 accepted source 的 C 为连续 filled matte center，D 为独立短连接扣；候选 `0／1／8／30`、自动五列、横竖及三十列等 `16/16 pass`、violations `0` | 与 Dock 共用 P4 source；不执行 attempt 5，图标／冷却／Queue／拖动／停靠继续由 provider 所有 |
+| `AB.CONSUMABLE.RACK／POCKET／POPUP` | `P5 / runtime-exported / 1/5` | [source](../../../assets/source/actionbars/ab-consumable-kit/ActionConsumableKit_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_RuntimeManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；TGA `c48f6292…320e`、像素 `658f826f…e30d`；AutoBar `24+12` 可选 bridge、display `7/7`、package pass；provider 仍 disabled | Turtle WoW 启用 AutoBar 后验证自定义合法布局、精确 `4×6`、四向 popup、拖动／缩放／显隐和 `/aeui actionbars` 回退；不自动应用 profile |
+| `AB.CONSUMABLE.GROUP` | `P5 / runtime-exported / 1/5` | C 九宫格自适应真实可见 Button 边界；只有精确 `24 Button / 4×6 / 推荐 profile` 才创建并显示“应急／增益／工具”三个非交互 FontString／皮签和两条底层分隔，其他配置回退单一外壳 | 实机分别验证精确签名与任一不匹配时的显隐；AutoBar profile／SavedVariables 仍只读 |
+| `AB.TRINKET.DOCK` | `P5 / runtime-exported / 4/5` | [source](../../../assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；TGA `3614d9a8…f455`、像素 `0961d750…aef`；双槽横竖连接器与 provider 原生视觉回退已接入 | Turtle WoW 验证水平／垂直方向、两槽使用、冷却、Queue、拖动／缩放与开关回退；不执行 attempt 5 |
+| `AB.TRINKET.MENU` | `P5 / runtime-exported / 4/5` | C 九宫格跟随真实 `MenuFrame`，B 只挂现有 `Menu1..30`；候选 `0／1／8／30`、自动五列、横向及三十列 display `9/9 pass`、violations `0`，换装与动态层仍归 provider | 实机验证候选生成、左右键换槽、Queue、八向停靠、独立 scale／方向／拖动及 provider 缺失 fail-open |
 | `AB.FOCUS.CASTBAR` | `P2 / direction-locked` | 玩家／目标／Focus 真实对象与用户确认的 V3 双框下沿实例 | 以后独立决定只做一次性布局 preset 或另授权细 Rail 换肤 |
 | `AB.FOCUS.SWING` | `P2 / direction-locked` | 主手／副手／ranged 真对象、`200×12 UI` 与用户确认的中心双细轨 | 实机验证近战／远程复用；若换肤则另立合同 |
 | `AB.DOITEDPS.TIMELINE` | `P2 / direction-locked` | 已安装 provider 的 `318×46 UI` 根 Frame及用户确认的中心落位 | 以后只做 feature-detect 一次性位置 preset 或独立换肤合同 |
@@ -222,8 +224,31 @@
   canonicalization report 的 component／attempt／raw SHA／canonical SHA。
   `tests/action_fieldkit_candidate_review_test.py` 覆盖 exact RGBA、旧失败棋盘审查、
   绿色传输、provenance 与横／竖极端九宫格。`generated/` 内 raw／canonical／review
-  仍只是 provenance；用户接受后只有 byte-exact tracked copies 与各自 SourceManifest
-  是 P4 source，尚无 runtime。
+  仍只是 provenance；用户接受后的 byte-exact tracked copies 继续是 P4 source，
+  客户端只加载后述 P5 TGA，不加载 raw／canonical／review 像素。
+- Field Kit 最终 exporter：`tools/build_action_fieldkit_v1_runtime.py`（SHA
+  `40ef49cc…5484`）。它按每格完整 visible bbox 取 A／B／C／D，A／B／C 使用一次
+  premultiplied-alpha LANCZOS，细 D 使用一次 premultiplied-alpha HAMMING 以避免
+  低 Alpha 绿色 overshoot；D 再确定性旋转 `90°`。不重绘、不镜像、不重着色，
+  transparent RGB 清零，两个原生产预算均不重置。
+- Trinket runtime 为
+  `addon/AzerothExpeditionUI/Media/ActionBars/ActionTrinketKitV1.tga`，文件 SHA
+  `3614d9a8…f455`、像素 SHA `0961d750…aef`；runtime manifest 位于
+  `assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json`。
+  Consumable runtime 为同一媒体目录的 `ActionConsumableKitV1.tga`，文件 SHA
+  `c48f6292…320e`、像素 SHA `658f826f…e30d`；runtime manifest 位于
+  `assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_RuntimeManifest_v1.json`。
+  两张 TGA 都是 `512² RGBA / 32-bit`，visible green 与透明 RGB 非零值均为 `0`。
+- tracked display 合同为
+  `tools/specs/action_trinket_kit_v1_runtime_display_region.json`（SHA
+  `fd2e2c58…791c`）与 `tools/specs/action_consumable_kit_v1_runtime_display_region.json`
+  （SHA `6bef6214…7dd`）。最终运行时场景分别 `9/9`、`7/7` pass，violations `0`；
+  fresh-checkout package 报告 SHA `a6a4ec74…16b9`，`status=pass`、目标设备
+  `build_required=false`。runtime 预览／报告仍是 ignored 证据，不进入 addon。
+- `ActionBars.lua` 的 Field Kit contract 为 `1.0`：AutoBar bridge 监听
+  `AutoBar_SetupVisual`、`ButtonsUpdate`、`UpdatePopupButtons` 完成态；TrinketMenu
+  bridge 监听 `OrientWindows`、`BuildMenu` 完成态。钩子仅刷新子纹理／装饰 Frame，
+  不调用 provider 配置函数，不改 Button 几何、脚本、命中区或 SavedVariables。
 - 战斗场景：
   `generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/simulation/AB-FIELDKIT-SIM-V2/AB.FIELDKIT.V1.sim-v2.scene.png`
   （SHA `9fe4d159…164d`）；provider 状态板：同目录
@@ -287,15 +312,16 @@
    `assets/references/actionbars/p6/AB-SLOT-BASE-V1_TurtleWoW_P6_2026-08-08.png`
    （SHA `dc9615ac…4d5d`）与同目录 P6 evidence JSON（SHA `73a8f942…0d0b`）；
    静态截图与用户交互确认的证明范围保持分离。
-2. `AB.FIELDKIT.V1` 的两个正式候选已由用户于 `2026-08-09` 明确接受并进入
-   `dual-source-accepted / P4`。Trinket source／manifest SHA 为 `82dd2260…c012`，
-   Consumable source／manifest SHA 为 `623f29c5…a2419`；两者都与被接受 canonical
-   字节完全一致，没有 ImageGen 或 handoff 消费。
-3. 用户若要求继续 Field Kit，则分别冻结 A／B／C／D 的 crop、九宫格、旋转／
-   拉伸、UV、runtime 文件与 provider adapter 映射，并以最终 atlas／adapter 重新
-   通过 display-region、静态回归和 fresh-checkout addon package 后才可标记 P5。
-   该过程不得启用 AutoBar、自动应用推荐 profile、修改 AutoBar／TrinketMenu
-   SavedVariables 或接管 provider 动态层；两个原生产循环保持 `4/5` 与 `1/5` 终止。
+2. `AB.FIELDKIT.V1` 已达到 `runtime-exported / P5`。Trinket／Consumable source
+   SHA `82dd2260…c012`／`623f29c5…a2419` 继续保持 exact；runtime TGA 文件 SHA
+   `3614d9a8…f455`／`c48f6292…320e`，最终 display `9/9`＋`7/7`、package 与静态
+   回归均 pass。P4→P5 ImageGen `0`，原循环仍止于 `4/5` 与 `1/5`。
+3. 下一门禁是 Turtle WoW P6：`/reload` 后先确认 `/aeui status` 含
+   `fieldkit-contract=1.0`。TrinketMenu 需验证横／竖双槽、候选 `0／1／8／30`、
+   左右键换槽、Queue、冷却、拖动、缩放、方向与停靠；AutoBar 需由用户自行启用后
+   验证自定义合法布局、精确 `4×6` 三组签名、四向 popup、拖动／缩放／显隐。
+   `/aeui actionbars` 关闭应恢复 provider 原生视觉。整个实机门禁不得由 AEUI 启用
+   AutoBar、应用 profile、修改双方 SavedVariables 或接管动态图标／行为。
 4. `AB.RAIL.V1` 已达到 `game-validated / P6`。长期证据为
    `assets/references/actionbars/p6/AB-RAIL-V1_TurtleWoW_P6_2026-08-09.png`
    （SHA `5e89c6e5…12942`）与同目录 P6 evidence JSON（SHA

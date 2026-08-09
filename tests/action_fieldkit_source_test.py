@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tracked P4 source checks for the accepted Field Kit atlases."""
+"""Tracked P5 source and runtime provenance checks for Field Kit."""
 
 from __future__ import annotations
 
@@ -22,6 +22,13 @@ CASES = (
         / "assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png",
         "manifest": ROOT
         / "assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_SourceManifest_v1.json",
+        "runtime_manifest": ROOT
+        / "assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json",
+        "runtime": ROOT
+        / "addon/AzerothExpeditionUI/Media/ActionBars/ActionTrinketKitV1.tga",
+        "runtime_file": "addon/AzerothExpeditionUI/Media/ActionBars/ActionTrinketKitV1.tga",
+        "runtime_sha256": "3614d9a86e1dc25399e6623ddfad398618070e8f78117ec0f0b997b9b3f9f455",
+        "runtime_pixel_sha256": "0961d750d7436665a333d948ba010a212c5de6f87c51ab59a10ed8af86ac4aef",
         "sha256": "82dd2260757616912a7ef78658cc230f66d89614613d64e85f8116cac284c012",
         "bbox": (80, 80, 944, 941),
         "counts": (646693, 16995, 384888),
@@ -43,6 +50,13 @@ CASES = (
         / "assets/source/actionbars/ab-consumable-kit/ActionConsumableKit_Master_v1.png",
         "manifest": ROOT
         / "assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_SourceManifest_v1.json",
+        "runtime_manifest": ROOT
+        / "assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_RuntimeManifest_v1.json",
+        "runtime": ROOT
+        / "addon/AzerothExpeditionUI/Media/ActionBars/ActionConsumableKitV1.tga",
+        "runtime_file": "addon/AzerothExpeditionUI/Media/ActionBars/ActionConsumableKitV1.tga",
+        "runtime_sha256": "c48f6292336446d2cc0cbbfc811cde9903b06eeb41e6c9f4db49e4f13fd9320e",
+        "runtime_pixel_sha256": "658f826f5ffb52f77530d5e288f99ac9511db1317129aea7f64c4c8e7ea4e30d",
         "sha256": "623f29c5e16ea73c50778b462c2d79a4eb2dd4928b9a1d94f30876f13caa2419",
         "bbox": (80, 83, 944, 944),
         "counts": (670302, 17423, 360851),
@@ -70,6 +84,9 @@ def main() -> None:
     for case in CASES:
         source_path = case["source"]
         manifest = json.loads(case["manifest"].read_text(encoding="utf-8"))
+        runtime_manifest = json.loads(
+            case["runtime_manifest"].read_text(encoding="utf-8")
+        )
 
         assert sha256(source_path) == case["sha256"]
         assert manifest["schema_version"] == 1
@@ -77,9 +94,9 @@ def main() -> None:
         assert manifest["batch"] == "AB.FIELDKIT.V1"
         assert manifest["component"] == case["component"]
         assert manifest["accepted_version"] == case["accepted_version"]
-        assert manifest["status"] == "source-accepted"
-        assert manifest["workflow_state"] == "source-accepted"
-        assert manifest["project_phase"] == "P4"
+        assert manifest["status"] == "runtime-exported"
+        assert manifest["workflow_state"] == "runtime-exported"
+        assert manifest["project_phase"] == "P5"
         assert manifest["source"]["sha256"] == case["sha256"]
         assert manifest["provenance"]["accepted_candidate_sha256"] == (
             case["sha256"]
@@ -102,8 +119,35 @@ def main() -> None:
             case["sha256"]
         )
         assert manifest["handoff"]["status"] == "not-published"
-        assert manifest["export_contract"]["status"] == "pending"
-        assert manifest["export_contract"]["runtime_file"] is None
+        assert manifest["export_contract"]["status"] == "exported"
+        assert manifest["export_contract"]["runtime_file"] == (
+            case["runtime_file"]
+        )
+        assert manifest["export_contract"]["runtime_sha256"] == (
+            case["runtime_sha256"]
+        )
+        assert manifest["export_contract"]["imagegen_calls_after_acceptance"] == 0
+        assert manifest["p5_validation"]["display_region_violations"] == 0
+        assert manifest["p5_validation"]["game_validated"] is False
+
+        assert sha256(case["runtime"]) == case["runtime_sha256"]
+        assert runtime_manifest["runtime_contract"] == "1.0"
+        assert runtime_manifest["status"] == "runtime-exported"
+        assert runtime_manifest["phase"] == "P5"
+        assert runtime_manifest["source"]["sha256"] == case["sha256"]
+        assert runtime_manifest["runtime_export"]["file"] == case["runtime_file"]
+        assert runtime_manifest["runtime_export"]["sha256"] == (
+            case["runtime_sha256"]
+        )
+        assert runtime_manifest["runtime_export"]["pixel_sha256"] == (
+            case["runtime_pixel_sha256"]
+        )
+        assert runtime_manifest["adapter"]["visual_layers_only"] is True
+        assert runtime_manifest["adapter"]["provider_geometry_writes"] is False
+        assert runtime_manifest["adapter"]["provider_behavior_replaced"] is False
+        assert runtime_manifest["adapter"]["saved_variables_written"] is False
+        assert runtime_manifest["adapter"]["autobar_enabled_or_profile_applied"] is False
+        assert runtime_manifest["game_validation"]["status"] == "pending"
 
         with Image.open(source_path) as opened:
             assert opened.format == "PNG"

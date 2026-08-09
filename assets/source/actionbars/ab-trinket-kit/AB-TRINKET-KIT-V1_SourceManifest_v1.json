@@ -4,9 +4,9 @@
   "batch": "AB.FIELDKIT.V1",
   "component": "AB.TRINKET.KIT.V1",
   "accepted_version": "AB.TRINKET.KIT.V1.r3 / attempt 4 canonical",
-  "status": "source-accepted",
-  "workflow_state": "source-accepted",
-  "project_phase": "P4",
+  "status": "runtime-exported",
+  "workflow_state": "runtime-exported",
+  "project_phase": "P5",
   "accepted_on": "2026-08-09",
   "source": {
     "file": "ActionTrinketKit_Master_v1.png",
@@ -15,41 +15,112 @@
     "width": 1024,
     "height": 1024,
     "mode": "RGBA",
-    "visible_bbox_exclusive": [80, 80, 944, 941],
-    "visible_size": [864, 861],
+    "visible_bbox_exclusive": [
+      80,
+      80,
+      944,
+      941
+    ],
+    "visible_size": [
+      864,
+      861
+    ],
     "transparent_pixels": 646693,
     "partially_transparent_pixels": 16995,
     "opaque_pixels": 384888,
     "visible_green_spill_pixels": 0,
     "transparent_rgb_nonzero_values": 0,
-    "cell_size": [512, 512],
+    "cell_size": [
+      512,
+      512
+    ],
     "cells": {
       "A": {
-        "cell_exclusive": [0, 0, 512, 512],
+        "cell_exclusive": [
+          0,
+          0,
+          512,
+          512
+        ],
         "role": "equipped-trinket sheath base",
-        "visible_bbox_local_exclusive": [82, 80, 429, 432],
-        "margins_ltrb": [82, 80, 83, 80],
+        "visible_bbox_local_exclusive": [
+          82,
+          80,
+          429,
+          432
+        ],
+        "margins_ltrb": [
+          82,
+          80,
+          83,
+          80
+        ],
         "minimum_margin": 80
       },
       "B": {
-        "cell_exclusive": [512, 0, 1024, 512],
+        "cell_exclusive": [
+          512,
+          0,
+          1024,
+          512
+        ],
         "role": "candidate-trinket insert base",
-        "visible_bbox_local_exclusive": [80, 81, 432, 430],
-        "margins_ltrb": [80, 81, 80, 82],
+        "visible_bbox_local_exclusive": [
+          80,
+          81,
+          432,
+          430
+        ],
+        "margins_ltrb": [
+          80,
+          81,
+          80,
+          82
+        ],
         "minimum_margin": 80
       },
       "C": {
-        "cell_exclusive": [0, 512, 512, 1024],
+        "cell_exclusive": [
+          0,
+          512,
+          512,
+          1024
+        ],
         "role": "adaptive filled menu-frame nine-slice master",
-        "visible_bbox_local_exclusive": [80, 82, 432, 429],
-        "margins_ltrb": [80, 82, 80, 83],
+        "visible_bbox_local_exclusive": [
+          80,
+          82,
+          432,
+          429
+        ],
+        "margins_ltrb": [
+          80,
+          82,
+          80,
+          83
+        ],
         "minimum_margin": 80
       },
       "D": {
-        "cell_exclusive": [512, 512, 1024, 1024],
+        "cell_exclusive": [
+          512,
+          512,
+          1024,
+          1024
+        ],
         "role": "short rotatable paired-sheath joiner",
-        "visible_bbox_local_exclusive": [80, 196, 432, 315],
-        "margins_ltrb": [80, 196, 80, 197],
+        "visible_bbox_local_exclusive": [
+          80,
+          196,
+          432,
+          315
+        ],
+        "margins_ltrb": [
+          80,
+          196,
+          80,
+          197
+        ],
         "minimum_margin": 80
       }
     }
@@ -65,7 +136,10 @@
     "prompt_section": "修复执行正文 A.r3（AB.TRINKET.KIT.V1.r3）",
     "provider_raw": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/production/AB.TRINKET.KIT.V1/attempt-04/raw/AB.TRINKET.KIT.V1.attempt-04.raw.png",
     "provider_raw_sha256": "2e4efc1a5c5ccc95afc5c4619427226881e86aa90653325f009fc0dddf419e3a",
-    "provider_raw_size": [1254, 1254],
+    "provider_raw_size": [
+      1254,
+      1254
+    ],
     "provider_raw_mode": "RGB",
     "canonicalization_report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/production/AB.TRINKET.KIT.V1/attempt-04/canonical/canonicalization-report.json",
     "canonicalization_report_sha256": "56f04604bd65d4ddeb17941065a09232d121f582721eabb925dd99d7dc8156fc",
@@ -105,7 +179,10 @@
     "upstream_submodule_prompt": "docs/modules/character/SUBMODULE_ART_BASELINES.md",
     "module_prompt": "docs/modules/actionbars/ART_BASELINE.md",
     "submodule_prompt": "docs/modules/actionbars/SUBMODULE_ART_BASELINES.md",
-    "submodule_prompt_sections": ["AB.TRINKET.DOCK", "AB.TRINKET.MENU"],
+    "submodule_prompt_sections": [
+      "AB.TRINKET.DOCK",
+      "AB.TRINKET.MENU"
+    ],
     "component_contract": "docs/modules/actionbars/SUBMODULES.md",
     "accepted_source_is_lower_authority_than_locked_reference": true,
     "failed_candidates_are_authority": false,
@@ -131,27 +208,57 @@
   "logical_components": [
     {
       "cell": "A",
-      "ids": ["AB.TRINKET.DOCK", "AB.TRINKET.SLOT13", "AB.TRINKET.SLOT14"],
+      "ids": [
+        "AB.TRINKET.DOCK",
+        "AB.TRINKET.SLOT13",
+        "AB.TRINKET.SLOT14"
+      ],
       "runtime_objects": "two instances behind TrinketMenu_Trinket0 and TrinketMenu_Trinket1",
-      "dynamic_content_owned_by_provider": ["equipped item icons", "cooldowns", "Queue inset", "tooltips", "click and drag behavior"]
+      "dynamic_content_owned_by_provider": [
+        "equipped item icons",
+        "cooldowns",
+        "Queue inset",
+        "tooltips",
+        "click and drag behavior"
+      ]
     },
     {
       "cell": "B",
-      "ids": ["AB.TRINKET.MENU"],
+      "ids": [
+        "AB.TRINKET.MENU"
+      ],
       "runtime_objects": "TrinketMenu_Menu1..30 candidate button bases",
-      "dynamic_content_owned_by_provider": ["candidate icons", "selection", "cooldowns", "tooltips", "left/right equip behavior"]
+      "dynamic_content_owned_by_provider": [
+        "candidate icons",
+        "selection",
+        "cooldowns",
+        "tooltips",
+        "left/right equip behavior"
+      ]
     },
     {
       "cell": "C",
-      "ids": ["AB.TRINKET.MENU"],
+      "ids": [
+        "AB.TRINKET.MENU"
+      ],
       "runtime_objects": "adaptive candidate-menu frame for zero-hidden, 1-30 candidates and legal row/column/direction settings",
-      "dynamic_content_owned_by_provider": ["candidate count", "menu geometry", "direction", "scale", "docking"]
+      "dynamic_content_owned_by_provider": [
+        "candidate count",
+        "menu geometry",
+        "direction",
+        "scale",
+        "docking"
+      ]
     },
     {
       "cell": "D",
-      "ids": ["AB.TRINKET.DOCK"],
+      "ids": [
+        "AB.TRINKET.DOCK"
+      ],
       "runtime_objects": "non-interactive joiner between the paired equipped sheaths",
-      "dynamic_content_owned_by_provider": ["horizontal or vertical dock geometry"]
+      "dynamic_content_owned_by_provider": [
+        "horizontal or vertical dock geometry"
+      ]
     }
   ],
   "review": {
@@ -172,16 +279,231 @@
     "reason": "accepted bytes are now durable in tracked assets/source and the P4 to P5 gate no longer depends on ignored candidate pixels"
   },
   "export_contract": {
-    "status": "pending",
-    "authorization": "not authorized by source acceptance alone",
-    "runtime_geometry_status": "provider geometry is known; crop, nine-slice boundaries, UVs, runtime filenames and adapter mapping require the separate P4 to P5 export operation",
-    "runtime_file": null,
+    "status": "exported",
+    "authorization": "user instruction '下一步' on 2026-08-09",
+    "exporter": "tools/build_action_fieldkit_v1_runtime.py",
+    "exporter_sha256": "40ef49cc4a8042164c45d6ec1bae7f796b9603c61db9c60546d209d438175484",
+    "runtime_file": "addon/AzerothExpeditionUI/Media/ActionBars/ActionTrinketKitV1.tga",
+    "runtime_sha256": "3614d9a86e1dc25399e6623ddfad398618070e8f78117ec0f0b997b9b3f9f455",
+    "runtime_atlas_size": [
+      512,
+      512
+    ],
+    "runtime_visible_bbox_exclusive": [
+      8,
+      8,
+      504,
+      390
+    ],
+    "runtime_objects": {
+      "A": [
+        9,
+        8,
+        119,
+        120
+      ],
+      "B": [
+        136,
+        8,
+        248,
+        119
+      ],
+      "C": [
+        8,
+        138,
+        264,
+        390
+      ],
+      "D_HORIZONTAL": [
+        264,
+        23,
+        504,
+        104
+      ],
+      "D_VERTICAL": [
+        407,
+        144,
+        488,
+        384
+      ]
+    },
+    "runtime_uv": {
+      "A": [
+        0.017578125,
+        0.232421875,
+        0.015625,
+        0.234375
+      ],
+      "B": [
+        0.265625,
+        0.484375,
+        0.015625,
+        0.232421875
+      ],
+      "C": {
+        "topLeft": [
+          0.015625,
+          0.103515625,
+          0.26953125,
+          0.357421875
+        ],
+        "top": [
+          0.103515625,
+          0.427734375,
+          0.26953125,
+          0.357421875
+        ],
+        "topRight": [
+          0.427734375,
+          0.515625,
+          0.26953125,
+          0.357421875
+        ],
+        "left": [
+          0.015625,
+          0.103515625,
+          0.357421875,
+          0.673828125
+        ],
+        "center": [
+          0.103515625,
+          0.427734375,
+          0.357421875,
+          0.673828125
+        ],
+        "right": [
+          0.427734375,
+          0.515625,
+          0.357421875,
+          0.673828125
+        ],
+        "bottomLeft": [
+          0.015625,
+          0.103515625,
+          0.673828125,
+          0.76171875
+        ],
+        "bottom": [
+          0.103515625,
+          0.427734375,
+          0.673828125,
+          0.76171875
+        ],
+        "bottomRight": [
+          0.427734375,
+          0.515625,
+          0.673828125,
+          0.76171875
+        ]
+      },
+      "D_HORIZONTAL": {
+        "start": [
+          0.515625,
+          0.57421875,
+          0.044921875,
+          0.203125
+        ],
+        "middle": [
+          0.57421875,
+          0.92578125,
+          0.044921875,
+          0.203125
+        ],
+        "end": [
+          0.92578125,
+          0.984375,
+          0.044921875,
+          0.203125
+        ]
+      },
+      "D_VERTICAL": {
+        "start": [
+          0.794921875,
+          0.953125,
+          0.28125,
+          0.33984375
+        ],
+        "middle": [
+          0.794921875,
+          0.953125,
+          0.33984375,
+          0.69140625
+        ],
+        "end": [
+          0.794921875,
+          0.953125,
+          0.69140625,
+          0.75
+        ]
+      }
+    },
+    "c_nine_slice_cap_pixels": 45,
+    "c_destination_cap_ui": 6,
+    "d_three_slice_cap_pixels": 30,
+    "resample": "Pillow premultiplied RGBa: LANCZOS for A/B/C and HAMMING for the thin D connector, converted back to straight RGBA",
+    "rotation": "Cell D receives one deterministic 90-degree runtime copy",
+    "operation": "crop each complete accepted cell visible bbox, proportionally resize it once into the frozen 512x512 packing areas, create one 90-degree D copy, clear only fully transparent RGB, and export a tracked 32-bit TGA",
+    "imagegen_calls_after_acceptance": 0,
+    "allowed": [
+      "complete declared A/B/C/D visible objects without removing visible pixels",
+      "one proportional deterministic reduction per accepted object",
+      "one deterministic 90-degree copy of the explicitly rotatable D object",
+      "transparent power-of-two packing gutters that are never sampled",
+      "fully transparent RGB zeroing without changing visible RGB or Alpha",
+      "C nine-slice and D three-slice assembly beneath provider-owned content"
+    ],
     "forbidden_runtime_uses": [
-      "load the 1024x1024 four-cell source directly in Turtle WoW",
-      "treat the source atlas as one assembled trinket dock or menu",
-      "repaint, recolor, mirror, non-uniformly scale or invent states from the accepted cells",
-      "bake item icons, cooldowns, Queue, labels, keybinds, tooltips or quality colors",
-      "replace TrinketMenu buttons, scripts, hit regions, drag, docking, scale, Queue or SavedVariables"
+      "load the accepted 1024x1024 source directly in Turtle WoW",
+      "sample transparent packing gutters or omit a declared visible slice",
+      "redraw, recolor, mirror or invent states from accepted cells",
+      "distort A/B or C edge/corner slices; only quiet C/D centers may stretch",
+      "bake item icons, counts, cooldowns, Queue, category labels or tooltips",
+      "replace provider Buttons, hit regions, scripts, drag, scale, docking or SavedVariables",
+      "enable AutoBar or apply any AutoBar or TrinketMenu profile"
     ]
+  },
+  "runtime_exports": {
+    "action_trinket_kit_v1": {
+      "file": "addon/AzerothExpeditionUI/Media/ActionBars/ActionTrinketKitV1.tga",
+      "sha256": "3614d9a86e1dc25399e6623ddfad398618070e8f78117ec0f0b997b9b3f9f455",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bits_per_pixel": 32,
+      "descriptor": 8,
+      "top_origin": false,
+      "pixel_sha256": "0961d750d7436665a333d948ba010a212c5de6f87c51ab59a10ed8af86ac4aef",
+      "visible_bbox_exclusive": [
+        8,
+        8,
+        504,
+        390
+      ],
+      "visible_green_spill_pixels": 0,
+      "transparent_rgb_nonzero_values": 0,
+      "transparent_pixels": 136152,
+      "partially_transparent_pixels": 11062,
+      "opaque_pixels": 114930
+    }
+  },
+  "p5_validation": {
+    "display_region_contract": "tools/specs/action_trinket_kit_v1_runtime_display_region.json",
+    "display_region_contract_sha256": "fd2e2c5851650bc73cff77236663abbe3236635c5aafcc4dc461ac8e8743791c",
+    "display_region_report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.TRINKET.KIT.V1.display-region-report.json",
+    "display_region_report_sha256": "37177fdf7caead56fd28d51788a3576ffead2e0093cb85133a161859876ba578",
+    "real_layout_preview": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.FIELDKIT.V1.runtime-v1.real-layout-1920x1080.png",
+    "real_layout_preview_sha256": "787bd62efe45fbb58476e4e4589db3d1fc5f39d22e1eaafd95f308047a762b7f",
+    "supported_layouts_preview": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.TRINKET.KIT.V1.runtime-v1.layouts.png",
+    "supported_layouts_preview_sha256": "d31762a27ff97479937a44b516dfa2cfb46cec15eca96576edf018847549b6f5",
+    "real_layout_scenarios": "9/9 pass",
+    "display_region_violations": 0,
+    "addon_package": {
+      "report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/addon-package-report.json",
+      "report_sha256": "a6a4ec74fc50859718614ece98f278a0af9ab54859df7555c2a6c0adf72c16b9",
+      "status": "pass",
+      "violations": 0,
+      "build_required_on_target_device": false
+    },
+    "game_validated": false
   }
 }

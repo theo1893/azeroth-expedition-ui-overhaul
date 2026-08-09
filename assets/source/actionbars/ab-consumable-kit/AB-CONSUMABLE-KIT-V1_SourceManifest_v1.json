@@ -4,9 +4,9 @@
   "batch": "AB.FIELDKIT.V1",
   "component": "AB.CONSUMABLE.KIT.V1",
   "accepted_version": "AB.CONSUMABLE.KIT.V1.transport / attempt 1 canonical",
-  "status": "source-accepted",
-  "workflow_state": "source-accepted",
-  "project_phase": "P4",
+  "status": "runtime-exported",
+  "workflow_state": "runtime-exported",
+  "project_phase": "P5",
   "accepted_on": "2026-08-09",
   "source": {
     "file": "ActionConsumableKit_Master_v1.png",
@@ -15,41 +15,112 @@
     "width": 1024,
     "height": 1024,
     "mode": "RGBA",
-    "visible_bbox_exclusive": [80, 83, 944, 944],
-    "visible_size": [864, 861],
+    "visible_bbox_exclusive": [
+      80,
+      83,
+      944,
+      944
+    ],
+    "visible_size": [
+      864,
+      861
+    ],
     "transparent_pixels": 670302,
     "partially_transparent_pixels": 17423,
     "opaque_pixels": 360851,
     "visible_green_spill_pixels": 0,
     "transparent_rgb_nonzero_values": 0,
-    "cell_size": [512, 512],
+    "cell_size": [
+      512,
+      512
+    ],
     "cells": {
       "A": {
-        "cell_exclusive": [0, 0, 512, 512],
+        "cell_exclusive": [
+          0,
+          0,
+          512,
+          512
+        ],
         "role": "main consumable-pocket base",
-        "visible_bbox_local_exclusive": [80, 87, 432, 425],
-        "margins_ltrb": [80, 87, 80, 87],
+        "visible_bbox_local_exclusive": [
+          80,
+          87,
+          432,
+          425
+        ],
+        "margins_ltrb": [
+          80,
+          87,
+          80,
+          87
+        ],
         "minimum_margin": 80
       },
       "B": {
-        "cell_exclusive": [512, 0, 1024, 512],
+        "cell_exclusive": [
+          512,
+          0,
+          1024,
+          512
+        ],
         "role": "thin popup-pocket base",
-        "visible_bbox_local_exclusive": [80, 83, 432, 429],
-        "margins_ltrb": [80, 83, 80, 83],
+        "visible_bbox_local_exclusive": [
+          80,
+          83,
+          432,
+          429
+        ],
+        "margins_ltrb": [
+          80,
+          83,
+          80,
+          83
+        ],
         "minimum_margin": 80
       },
       "C": {
-        "cell_exclusive": [0, 512, 512, 1024],
+        "cell_exclusive": [
+          0,
+          512,
+          512,
+          1024
+        ],
         "role": "adaptive filled alchemist-roll nine-slice master",
-        "visible_bbox_local_exclusive": [80, 80, 432, 432],
-        "margins_ltrb": [80, 80, 80, 80],
+        "visible_bbox_local_exclusive": [
+          80,
+          80,
+          432,
+          432
+        ],
+        "margins_ltrb": [
+          80,
+          80,
+          80,
+          80
+        ],
         "minimum_margin": 80
       },
       "D": {
-        "cell_exclusive": [512, 512, 1024, 1024],
+        "cell_exclusive": [
+          512,
+          512,
+          1024,
+          1024
+        ],
         "role": "rotatable stretchable connector and divider strip",
-        "visible_bbox_local_exclusive": [80, 226, 432, 286],
-        "margins_ltrb": [80, 226, 80, 226],
+        "visible_bbox_local_exclusive": [
+          80,
+          226,
+          432,
+          286
+        ],
+        "margins_ltrb": [
+          80,
+          226,
+          80,
+          226
+        ],
         "minimum_margin": 80
       }
     }
@@ -65,7 +136,10 @@
     "prompt_section": "传输修订执行正文 B.0（AB.CONSUMABLE.KIT.V1.transport）",
     "provider_raw": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/production/AB.CONSUMABLE.KIT.V1/attempt-01/raw/AB.CONSUMABLE.KIT.V1.attempt-01.raw.png",
     "provider_raw_sha256": "de25567fe9aa2b831e6d3667b08b7c1cf2c11f7f90e8f90836659e367050b8ba",
-    "provider_raw_size": [1254, 1254],
+    "provider_raw_size": [
+      1254,
+      1254
+    ],
     "provider_raw_mode": "RGB",
     "canonicalization_report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/production/AB.CONSUMABLE.KIT.V1/attempt-01/canonical/canonicalization-report.json",
     "canonicalization_report_sha256": "7b3c9383b51913e318de074fd65889ddfa5f9c6f025a662b940a0a795cf7433e",
@@ -105,7 +179,12 @@
     "upstream_submodule_prompt": "docs/modules/character/SUBMODULE_ART_BASELINES.md",
     "module_prompt": "docs/modules/actionbars/ART_BASELINE.md",
     "submodule_prompt": "docs/modules/actionbars/SUBMODULE_ART_BASELINES.md",
-    "submodule_prompt_sections": ["AB.CONSUMABLE.RACK", "AB.CONSUMABLE.GROUP", "AB.CONSUMABLE.POCKET", "AB.CONSUMABLE.POPUP"],
+    "submodule_prompt_sections": [
+      "AB.CONSUMABLE.RACK",
+      "AB.CONSUMABLE.GROUP",
+      "AB.CONSUMABLE.POCKET",
+      "AB.CONSUMABLE.POPUP"
+    ],
     "component_contract": "docs/modules/actionbars/SUBMODULES.md",
     "accepted_source_is_lower_authority_than_locked_reference": true,
     "failed_candidates_are_authority": false,
@@ -131,27 +210,59 @@
   "logical_components": [
     {
       "cell": "A",
-      "ids": ["AB.CONSUMABLE.POCKET"],
+      "ids": [
+        "AB.CONSUMABLE.POCKET"
+      ],
       "runtime_objects": "AutoBarFrameButton1..24 main category button bases",
-      "dynamic_content_owned_by_provider": ["category item icons", "counts", "cooldowns", "availability", "tooltips", "click behavior"]
+      "dynamic_content_owned_by_provider": [
+        "category item icons",
+        "counts",
+        "cooldowns",
+        "availability",
+        "tooltips",
+        "click behavior"
+      ]
     },
     {
       "cell": "B",
-      "ids": ["AB.CONSUMABLE.POPUP"],
+      "ids": [
+        "AB.CONSUMABLE.POPUP"
+      ],
       "runtime_objects": "AutoBarPopupFrame_Button1..12 candidate button bases",
-      "dynamic_content_owned_by_provider": ["candidate items", "counts", "cooldowns", "tooltips", "pickup behavior"]
+      "dynamic_content_owned_by_provider": [
+        "candidate items",
+        "counts",
+        "cooldowns",
+        "tooltips",
+        "pickup behavior"
+      ]
     },
     {
       "cell": "C",
-      "ids": ["AB.CONSUMABLE.RACK", "AB.CONSUMABLE.GROUP"],
+      "ids": [
+        "AB.CONSUMABLE.RACK",
+        "AB.CONSUMABLE.GROUP"
+      ],
       "runtime_objects": "adaptive rack shell and optional non-interactive group-tab bases",
-      "dynamic_content_owned_by_provider": ["visible button bounds", "row and column layout", "scale", "provider visibility"]
+      "dynamic_content_owned_by_provider": [
+        "visible button bounds",
+        "row and column layout",
+        "scale",
+        "provider visibility"
+      ]
     },
     {
       "cell": "D",
-      "ids": ["AB.CONSUMABLE.POPUP", "AB.CONSUMABLE.GROUP"],
+      "ids": [
+        "AB.CONSUMABLE.POPUP",
+        "AB.CONSUMABLE.GROUP"
+      ],
       "runtime_objects": "rotatable popup connectors and two non-interactive group-divider seams",
-      "dynamic_content_owned_by_provider": ["popup direction", "button gap", "recommended-profile signature"]
+      "dynamic_content_owned_by_provider": [
+        "popup direction",
+        "button gap",
+        "recommended-profile signature"
+      ]
     }
   ],
   "review": {
@@ -172,16 +283,231 @@
     "reason": "accepted bytes are now durable in tracked assets/source and the P4 to P5 gate no longer depends on ignored candidate pixels"
   },
   "export_contract": {
-    "status": "pending",
-    "authorization": "not authorized by source acceptance alone",
-    "runtime_geometry_status": "provider geometry is known; crop, nine-slice boundaries, UVs, runtime filenames, group-tab treatment and adapter mapping require the separate P4 to P5 export operation",
-    "runtime_file": null,
+    "status": "exported",
+    "authorization": "user instruction '下一步' on 2026-08-09",
+    "exporter": "tools/build_action_fieldkit_v1_runtime.py",
+    "exporter_sha256": "40ef49cc4a8042164c45d6ec1bae7f796b9603c61db9c60546d209d438175484",
+    "runtime_file": "addon/AzerothExpeditionUI/Media/ActionBars/ActionConsumableKitV1.tga",
+    "runtime_sha256": "c48f6292336446d2cc0cbbfc811cde9903b06eeb41e6c9f4db49e4f13fd9320e",
+    "runtime_atlas_size": [
+      512,
+      512
+    ],
+    "runtime_visible_bbox_exclusive": [
+      8,
+      9,
+      504,
+      392
+    ],
+    "runtime_objects": {
+      "A": [
+        8,
+        10,
+        120,
+        118
+      ],
+      "B": [
+        136,
+        9,
+        248,
+        119
+      ],
+      "C": [
+        8,
+        136,
+        264,
+        392
+      ],
+      "D_HORIZONTAL": [
+        264,
+        43,
+        504,
+        84
+      ],
+      "D_VERTICAL": [
+        427,
+        144,
+        468,
+        384
+      ]
+    },
+    "runtime_uv": {
+      "A": [
+        0.015625,
+        0.234375,
+        0.01953125,
+        0.23046875
+      ],
+      "B": [
+        0.265625,
+        0.484375,
+        0.017578125,
+        0.232421875
+      ],
+      "C": {
+        "topLeft": [
+          0.015625,
+          0.10546875,
+          0.265625,
+          0.35546875
+        ],
+        "top": [
+          0.10546875,
+          0.42578125,
+          0.265625,
+          0.35546875
+        ],
+        "topRight": [
+          0.42578125,
+          0.515625,
+          0.265625,
+          0.35546875
+        ],
+        "left": [
+          0.015625,
+          0.10546875,
+          0.35546875,
+          0.67578125
+        ],
+        "center": [
+          0.10546875,
+          0.42578125,
+          0.35546875,
+          0.67578125
+        ],
+        "right": [
+          0.42578125,
+          0.515625,
+          0.35546875,
+          0.67578125
+        ],
+        "bottomLeft": [
+          0.015625,
+          0.10546875,
+          0.67578125,
+          0.765625
+        ],
+        "bottom": [
+          0.10546875,
+          0.42578125,
+          0.67578125,
+          0.765625
+        ],
+        "bottomRight": [
+          0.42578125,
+          0.515625,
+          0.67578125,
+          0.765625
+        ]
+      },
+      "D_HORIZONTAL": {
+        "start": [
+          0.515625,
+          0.57421875,
+          0.083984375,
+          0.1640625
+        ],
+        "middle": [
+          0.57421875,
+          0.92578125,
+          0.083984375,
+          0.1640625
+        ],
+        "end": [
+          0.92578125,
+          0.984375,
+          0.083984375,
+          0.1640625
+        ]
+      },
+      "D_VERTICAL": {
+        "start": [
+          0.833984375,
+          0.9140625,
+          0.28125,
+          0.33984375
+        ],
+        "middle": [
+          0.833984375,
+          0.9140625,
+          0.33984375,
+          0.69140625
+        ],
+        "end": [
+          0.833984375,
+          0.9140625,
+          0.69140625,
+          0.75
+        ]
+      }
+    },
+    "c_nine_slice_cap_pixels": 46,
+    "c_destination_cap_ui": 6,
+    "d_three_slice_cap_pixels": 30,
+    "resample": "Pillow premultiplied RGBa: LANCZOS for A/B/C and HAMMING for the thin D connector, converted back to straight RGBA",
+    "rotation": "Cell D receives one deterministic 90-degree runtime copy",
+    "operation": "crop each complete accepted cell visible bbox, proportionally resize it once into the frozen 512x512 packing areas, create one 90-degree D copy, clear only fully transparent RGB, and export a tracked 32-bit TGA",
+    "imagegen_calls_after_acceptance": 0,
+    "allowed": [
+      "complete declared A/B/C/D visible objects without removing visible pixels",
+      "one proportional deterministic reduction per accepted object",
+      "one deterministic 90-degree copy of the explicitly rotatable D object",
+      "transparent power-of-two packing gutters that are never sampled",
+      "fully transparent RGB zeroing without changing visible RGB or Alpha",
+      "C nine-slice and D three-slice assembly beneath provider-owned content"
+    ],
     "forbidden_runtime_uses": [
-      "load the 1024x1024 four-cell source directly in Turtle WoW",
-      "treat the source atlas as one assembled 24-slot rack",
-      "repaint, recolor, mirror, non-uniformly scale or invent states from the accepted cells",
-      "bake item icons, category labels, counts, cooldowns, availability, tooltips or a fixed grid",
-      "enable AutoBar, apply a profile, replace provider buttons, scripts, hit regions, popup direction or SavedVariables"
+      "load the accepted 1024x1024 source directly in Turtle WoW",
+      "sample transparent packing gutters or omit a declared visible slice",
+      "redraw, recolor, mirror or invent states from accepted cells",
+      "distort A/B or C edge/corner slices; only quiet C/D centers may stretch",
+      "bake item icons, counts, cooldowns, Queue, category labels or tooltips",
+      "replace provider Buttons, hit regions, scripts, drag, scale, docking or SavedVariables",
+      "enable AutoBar or apply any AutoBar or TrinketMenu profile"
     ]
+  },
+  "runtime_exports": {
+    "action_consumable_kit_v1": {
+      "file": "addon/AzerothExpeditionUI/Media/ActionBars/ActionConsumableKitV1.tga",
+      "sha256": "c48f6292336446d2cc0cbbfc811cde9903b06eeb41e6c9f4db49e4f13fd9320e",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "bits_per_pixel": 32,
+      "descriptor": 8,
+      "top_origin": false,
+      "pixel_sha256": "658f826f5ffb52f77530d5e288f99ac9511db1317129aea7f64c4c8e7ea4e30d",
+      "visible_bbox_exclusive": [
+        8,
+        9,
+        504,
+        392
+      ],
+      "visible_green_spill_pixels": 0,
+      "transparent_rgb_nonzero_values": 0,
+      "transparent_pixels": 153061,
+      "partially_transparent_pixels": 7954,
+      "opaque_pixels": 101129
+    }
+  },
+  "p5_validation": {
+    "display_region_contract": "tools/specs/action_consumable_kit_v1_runtime_display_region.json",
+    "display_region_contract_sha256": "6bef62141b1df93f65362ae3db951ff8ec5b3d2f9541ffba89b15340dedcb7dd",
+    "display_region_report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.CONSUMABLE.KIT.V1.display-region-report.json",
+    "display_region_report_sha256": "3c0c672a79bce88e6c7810cf333dfd4407e3e929943d5ab92aa9709fe8ed0126",
+    "real_layout_preview": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.FIELDKIT.V1.runtime-v1.real-layout-1920x1080.png",
+    "real_layout_preview_sha256": "787bd62efe45fbb58476e4e4589db3d1fc5f39d22e1eaafd95f308047a762b7f",
+    "supported_layouts_preview": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.CONSUMABLE.KIT.V1.runtime-v1.layouts.png",
+    "supported_layouts_preview_sha256": "d6b32ea616537b38e5a8beacefaa1962800dbdd118940de468f81e52169d7834",
+    "real_layout_scenarios": "7/7 pass",
+    "display_region_violations": 0,
+    "addon_package": {
+      "report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/addon-package-report.json",
+      "report_sha256": "a6a4ec74fc50859718614ece98f278a0af9ab54859df7555c2a6c0adf72c16b9",
+      "status": "pass",
+      "violations": 0,
+      "build_required_on_target_device": false
+    },
+    "game_validated": false
   }
 }

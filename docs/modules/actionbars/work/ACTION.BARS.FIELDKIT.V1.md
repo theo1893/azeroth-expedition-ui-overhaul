@@ -7,15 +7,15 @@
   `AB.TRINKET.MENU`、`AB.CONSUMABLE.RACK`、`AB.CONSUMABLE.POCKET`、
   `AB.CONSUMABLE.POPUP`、`AB.CONSUMABLE.GROUP`
 - 模拟版本：`AB-FIELDKIT-SIM-V2`
-- 当前操作：`accept`
-- 子状态：`dual-source-accepted`
-- 项目阶段：`P4`
+- 当前操作：`export / integrate / validate`
+- 子状态：`runtime-exported`
+- 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
-- 当前状态：`dual-source-accepted / P4`；用户于 `2026-08-09` 明确回复
-  “接受 AB.TRINKET.KIT.V1 第4稿与 AB.CONSUMABLE.KIT.V1 第1稿”。两个通过全部
-  内部门禁的 exact canonical 已逐字节复制进各自 tracked source，并由独立
-  manifest 固定 SHA、Alpha、四格映射、执行器／会话 provenance、用户验收边界与
-  禁止 runtime 用法。本次接受没有调用 ImageGen、没有切片或接入 runtime
+- 当前状态：`runtime-exported / P5`；用户接受两套 source 后又以“下一步”授权
+  P4→P5。两个 exact canonical 继续由各自 SourceManifest 固定；确定性 exporter
+  已将完整 A／B／C／D 物件分别打包为两张 `512² RGBA / 32-bit` TGA，运行时
+  manifest、最终 display-region 合同、可选 provider bridge、静态回归与
+  fresh-checkout package 均已完成。P4→P5 没有调用 ImageGen
 - 模拟用户结论：`AB-FIELDKIT-SIM-V1 consumable direction revision-requested
   2026-08-08`；用户原文：“消耗品5*2不够用. 并且能否按照类型进行分组?”；
   `AB-FIELDKIT-SIM-V2 confirmed 2026-08-09`；用户原文：“接受
@@ -43,6 +43,12 @@
 - source manifest：
   [Trinket](../../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_SourceManifest_v1.json)／
   [Consumable](../../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_SourceManifest_v1.json)
+- runtime manifest：
+  [Trinket](../../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json)／
+  [Consumable](../../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_RuntimeManifest_v1.json)
+- runtime media：
+  [ActionTrinketKitV1.tga](../../../../addon/AzerothExpeditionUI/Media/ActionBars/ActionTrinketKitV1.tga)／
+  [ActionConsumableKitV1.tga](../../../../addon/AzerothExpeditionUI/Media/ActionBars/ActionConsumableKitV1.tga)
 - 目标：Turtle WoW `1.18.1`，Interface `11200`，`1920×1080`，
   UI Scale `0.81269841269841`
 
@@ -153,8 +159,8 @@
   排队、选中和命中区均位于资产之上。
 - `Locked=OFF` 的 resize／移动反馈本轮保留 provider fallback；不提前生产
   `AB.MOVER／CONFIG`。
-- TrinketMenu 缺失时只允许局部 fallback 到真实装备槽 `13／14` 的使用；不
-  仿造三十项菜单、Queue 或战斗换装。
+- TrinketMenu 缺失或未加载时不创建 Button／占位栏；原生装备槽 fallback 若以后
+  需要，须另立功能合同，不仿造三十项菜单、Queue 或战斗换装。
 
 ### `AB.CONSUMABLE.KIT.V1`
 
@@ -752,7 +758,47 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
 - 预算／handoff／runtime：Trinket 循环终止于 `4/5`、Consumable 终止于 `1/5`；
   未用次数不再执行。没有 handoff 可消费；没有切片、TGA、Lua／XML／TOC、adapter、
   AutoBar 启用、profile 应用或 TrinketMenu SavedVariables 变更。当前终态为
-  `dual-source-accepted / P4`。
+  该 `accept` 操作的终态为 `dual-source-accepted / P4`。
+- 日期：`2026-08-09`
+- 操作：用户回复“下一步”，以独立授权执行两个 accepted kit 的 P4→P5；调用
+  `tools/build_action_fieldkit_v1_runtime.py`，不调用 ImageGen。执行解释器为
+  `D:\Softwares\miniconda3\python.exe`（Python `3.13.5`）。
+- 确定性转换：每张 source 的四个 `512²` cell 只取完整 visible bbox。A／B／C
+  在 premultiplied-alpha 空间各做一次 LANCZOS 等比缩小；细 D 为避免 straight
+  LANCZOS 在 Alpha `1` 产生绿色 overshoot，统一做一次 premultiplied-alpha
+  HAMMING 等比缩小，并生成一份确定性 `90°` 旋转副本。只清零 Alpha `0` 下的
+  RGB；不重绘、不删除可见像素、不镜像、不重着色。exporter SHA
+  `40ef49cc…5484`。
+- Trinket runtime：`ActionTrinketKitV1.tga`，`512² RGBA / 32-bit`，文件 SHA
+  `3614d9a8…f455`、像素 SHA `0961d750…aef`、visible bbox
+  `[8,8,504,390)`、visible green `0`、透明 RGB 非零值 `0`。A／B／C／D-H／D-V
+  盒为 `[9,8,119,120)`、`[136,8,248,119)`、`[8,138,264,390)`、
+  `[264,23,504,104)`、`[407,144,488,384)`；C source cap `45 px`、destination
+  cap `6 UI`，D source cap `30 px`。
+- Consumable runtime：`ActionConsumableKitV1.tga`，`512² RGBA / 32-bit`，
+  文件 SHA `c48f6292…320e`、像素 SHA `658f826f…e30d`、visible bbox
+  `[8,9,504,392)`、visible green `0`、透明 RGB 非零值 `0`。A／B／C／D-H／D-V
+  盒为 `[8,10,120,118)`、`[136,9,248,119)`、`[8,136,264,392)`、
+  `[264,43,504,84)`、`[427,144,468,384)`；C source cap `46 px`、destination
+  cap `6 UI`，D source cap `30 px`。
+- adapter：`addon/AzerothExpeditionUI/Modules/ActionBars.lua`，Field Kit runtime
+  contract `1.0`。AutoBar 仅在 `AutoBarFrameButton1..24`／
+  `AutoBarPopupFrame_Button1..12` 下挂 A／B，C 跟随真实可见 Button 边界，D
+  连接 popup 与分组 gap；只有 exact `24 / 4×6 / 推荐 profile` 显示三枚非交互
+  标题和两条分隔。TrinketMenu 仅在现有 `2+30` Button 下挂 A／B，菜单 Frame
+  使用 C 九宫格，双槽使用 D 横／竖连接；关闭时恢复原生 NormalTexture／backdrop。
+- provider 完成态钩子：AutoBar `AutoBar_SetupVisual`、`ButtonsUpdate`、
+  `UpdatePopupButtons`；TrinketMenu `OrientWindows`、`BuildMenu`。所有回调只刷新
+  AEUI 装饰。没有启用 AutoBar、调用 provider 配置／布局函数、写入 profile 或
+  SavedVariables，也没有改 Button Parent／Point／Width／Height／hit rect／script、
+  图标、数量、冷却、Queue、Tooltip、换装、拖动、缩放、方向或停靠。
+- 最终展示／package：tracked Trinket／Consumable display 合同 SHA 分别为
+  `fd2e2c58…791c`／`6bef6214…7dd`，最终 `9/9`／`7/7 pass`、violations `0`；
+  real-layout SHA `787bd62e…2b7f`，支持布局板 SHA `d31762a2…6f5`／
+  `d6b32ea6…834`。fresh-checkout package 报告 SHA `a6a4ec74…16b9`，
+  `status=pass`、violations `0`、`build_required_on_target_device=false`。
+- 结论：`runtime-exported / P5`。两个原 ImageGen 循环仍终止于 `4/5` 与 `1/5`，
+  P4→P5 ImageGen `0`；下一步只需目标客户端实机门禁，不在目标设备生成或打补丁。
 
 ## 审查记录
 
@@ -764,11 +810,11 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
   关系成立，三组不使用现代彩色 Dashboard 编码。
 - 对象／状态合同：pass；布局 `72/72`、display `16/16`、violations `0`；
   AutoBar disabled 与 TrinketMenu enabled 状态均保持。
-- 结论：`dual-source-accepted / P4`。Trinket attempt 4 与 Consumable attempt 1
-  都已完成 Prompt／传输、语义、物理、透视、美术、对象、装配、真实排版和技术
-  像素全量复核，并由用户在 `2026-08-09` 以原文“接受 AB.TRINKET.KIT.V1 第4稿与
-  AB.CONSUMABLE.KIT.V1 第1稿”明确接受。两套 exact canonical 已晋级为 tracked
-  source；runtime 仍未发生。
+- 结论：`runtime-exported / P5`。Trinket attempt 4 与 Consumable attempt 1
+  的 Prompt／传输、语义、物理、透视、美术、对象、装配、真实排版和技术像素
+  结论不变；两套 exact canonical 仍是唯一 source。新增 deterministic runtime
+  转换、atlas sampling、实际 provider bridge、静态回归与 fresh-checkout package
+  已通过；P4→P5 没有新增 ImageGen。Turtle WoW 交互尚未验收，因此不标记 P6。
 - Trinket attempt 1 语义：pass。四格依次清楚表达已装备护套、较薄候选插页、
   自适应菜单框和可旋转连接扣；没有固定饰品、图标、文字、Queue 或完整场景。
 - Trinket attempt 1 美术：fail／可修复。深胡桃皮革与暗黄铜基本继承 Character
@@ -846,20 +892,23 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
 | `AB.TRINKET.KIT.V1 attempt 1` | raw `fe4b854e…c9e8d`；review scene `926f23ca…875f`；display `16/16` | internal fail；`1/5` | 保持四对象语义；修复 exact `1024² RGBA`、真 Alpha、每 cell `80 px` margin，并降低微纹理／黄铜噪声 |
 | `AB.TRINKET.KIT.V1 attempt 2` | raw `85f3f6f0…50b7`；review scene `c56aa652…6f3c`；display `16/16` | internal fail；`2/5` | 保持 A／B／D 与降噪成果；C 恢复 matte center。绿色键控 raw→canonical RGBA 修订已授权，完整 `r2` 已准备 |
 | `AB.TRINKET.KIT.V1 attempt 3` | raw `0c6f0bc7…8048`；canonical `6a91a2b5…5e13`；传输技术项 pass，原始 cell 隔离 fail | internal fail；`3/5` | 保持 C 的 filled matte center 与四对象身份；四物件各自收进本格中央 `68.75%`，绝不越线；进一步压低黄铜板、铆钉和微纹理；完整 `r3` 已准备 |
-| `AB.TRINKET.KIT.V1 attempt 4` | raw `2e4efc1a…19e3a`；canonical／source `82dd2260…c012`；review scene `6b59893d…53d5`；display `16/16` | 用户于 `2026-08-09` 接受第 4 稿；`source-accepted / P4 / 4/5` | exact source 与 manifest 已 tracked；原循环结束，第 5 次不执行；runtime 需独立 P4→P5 操作 |
-| `AB.CONSUMABLE.KIT.V1 attempt 1` | raw `de25567f…b8ba`；canonical／source `623f29c5…a2419`；review scene `057c45cb…150a`；display `16/16` | 用户于 `2026-08-09` 接受第 1 稿；`source-accepted / P4 / 1/5` | exact source 与 manifest 已 tracked；原循环结束，attempts 2–5 不执行；runtime 需独立 P4→P5 操作 |
+| `AB.TRINKET.KIT.V1 attempt 4` | raw `2e4efc1a…19e3a`；canonical／source `82dd2260…c012`；review scene `6b59893d…53d5`；display `16/16` | 用户于 `2026-08-09` 接受第 4 稿；`source-accepted / P4 / 4/5` | exact source 与 manifest 已 tracked；原循环结束且第 5 次不执行；独立 runtime-v1 已完成 |
+| `AB.CONSUMABLE.KIT.V1 attempt 1` | raw `de25567f…b8ba`；canonical／source `623f29c5…a2419`；review scene `057c45cb…150a`；display `16/16` | 用户于 `2026-08-09` 接受第 1 稿；`source-accepted / P4 / 1/5` | exact source 与 manifest 已 tracked；原循环结束且 attempts 2–5 不执行；独立 runtime-v1 已完成 |
+| `AB.FIELDKIT.V1 runtime-v1` | TGA `3614d9a8…f455`／`c48f6292…320e`；像素 `0961d750…aef`／`658f826f…e30d`；display `9/9`＋`7/7`；package pass | 用户“下一步”授权后完成；`runtime-exported / P5` | Turtle WoW 分别验证 AutoBar 与 TrinketMenu 全清单；通过前不标记 P6 |
 
 ## 下一门禁
 
-1. 两套 accepted source／manifest 已进入 `assets/source/actionbars/`，均为
-   `source-accepted / P4`。下一步若由用户继续，应分别确定四 cell 的 crop／九宫格／
-   UV／rotation／stretch runtime 合同，再执行确定性导出与 adapter 接入；本次接受
-   不能越过 P4。
-2. P4→P5 必须以最终 atlas／adapter／provider 再跑实际展示区域、Lua／repository
-   tests 与 fresh-checkout addon package 门禁；所有游戏加载文件都须进入 tracked
-   `addon/`，目标设备不得再构建或打补丁。
-3. 两个原生产循环已经结束：Trinket 停在 `4/5`、Consumable 停在 `1/5`，接受后
-   ImageGen `0`。未使用预算不继续执行；禁止 attempt 6。
-4. runtime 集成仍不得自动启用 AutoBar、擅自应用推荐 profile、改写 AutoBar／
-   TrinketMenu SavedVariables，或替代 provider 的按钮、动态图标、冷却、Queue、
-   Tooltip、拖动、方向和命中区。
+1. 两套 accepted source、runtime TGA、source／runtime manifest、adapter 与 tracked
+   display 合同已进入 `runtime-exported / P5`；fresh-checkout package 已通过，目标
+   设备只需拉取并安装 `addon/`，不得再生成、导出或打补丁。
+2. Turtle WoW `/reload` 后确认 `/aeui status` 含 `fieldkit-contract=1.0`。
+   TrinketMenu：水平／垂直双槽、候选 `0／1／8／30`、自动／手动列数、左右键换槽、
+   Queue、冷却、Tooltip、拖动、缩放、方向、八向停靠。AutoBar：由用户自行启用，
+   验证 `1–24` 合法行列、精确推荐 `4×6` 三组签名、任一签名不匹配回退、TOP／
+   BOTTOM／LEFT／RIGHT popup、数量／冷却／使用、拖动／缩放／显隐。
+3. `/aeui actionbars` 关闭后应恢复 TrinketMenu 原生 NormalTexture／backdrop，并让
+   AutoBar 原生视觉 fail-open；provider 缺失或隐藏时不得出现占位栏。实机全部通过
+   后方可记录 P6；截图静态层级与用户交互确认仍须分开取证。
+4. 两个原生产循环保持 Trinket `4/5`、Consumable `1/5`；P4→P5 ImageGen `0`，
+   未使用预算不继续执行，禁止 attempt 6。后续实机门禁仍不得由 AEUI 启用 AutoBar、
+   应用 profile、改双方 SavedVariables 或替代 provider 动态层与行为。
