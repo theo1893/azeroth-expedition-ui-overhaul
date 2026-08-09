@@ -280,19 +280,19 @@ def main() -> None:
         encoding="utf-8-sig"
     )
     assert "## RequiredDeps: pfUI" in aeui_toc
-    assert "## Version: 0.8.6" in aeui_toc
+    assert "## Version: 0.8.7" in aeui_toc
     assert "Core\\Bootstrap.lua" in aeui_toc
     assert "Modules\\ActionBars.lua" in aeui_toc
     assert "Modules\\Chat.lua" in aeui_toc
     assert "Modules\\QuestVisualTheme.lua" in aeui_toc
     assert "Modules\\Quests.lua" in aeui_toc
     bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(encoding="utf-8")
-    assert 'addon.version = "0.8.6"' in bootstrap
+    assert 'addon.version = "0.8.7"' in bootstrap
     assert "actionbar-runtime=" in bootstrap
     assert 'if command == "actionbars" then' in bootstrap
     assert '/aeui autobar [open|apply|restore|popup]' in bootstrap
     assert '/aeui fieldkit [bind|unbind|home|status]' in bootstrap
-    assert '/aeui focuslayout [apply|status]' in bootstrap
+    assert '/aeui focuslayout [apply|comfort|status]' in bootstrap
     assert "ApplyRecommendedAutoBarProfile" in bootstrap
     assert "RestoreAutoBarProfile" in bootstrap
     assert "chat-runtime=" in bootstrap
@@ -323,8 +323,12 @@ def main() -> None:
     assert "button:SetWidth" not in actionbars_source
     assert "button:SetHeight" not in actionbars_source
     assert 'ActionBars.fieldKitRuntimeContract = "1.5"' in actionbars_source
-    assert 'ActionBars.focusLayoutRuntimeContract = "1.0"' in actionbars_source
+    assert 'ActionBars.focusLayoutRuntimeContract = "1.1"' in actionbars_source
+    assert "ActionBars.comfortUIScaleTier = 8" in actionbars_source
+    assert "ActionBars.comfortUIScaleValue = 0.71111111111111" in actionbars_source
+    assert "ActionBars.focusFrameScale = 1" in actionbars_source
     assert "ApplyCombatFocusLayoutPreset" in actionbars_source
+    assert "ApplyComfortUIScalePreset" in actionbars_source
     assert 'config.width = "280"' in actionbars_source
     assert 'config.height = "72"' in actionbars_source
     assert 'config.buffperrow = "6"' in actionbars_source

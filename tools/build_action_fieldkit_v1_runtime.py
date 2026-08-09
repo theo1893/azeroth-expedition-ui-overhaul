@@ -950,7 +950,7 @@ def main() -> None:
                     "file": TOC_REL.as_posix(),
                     "sha256": sha256(toc_path),
                 },
-                "addon_version": "0.8.6",
+                "addon_version": "0.8.7",
                 "required_dependency": "pfUI",
                 "optional_provider": "TrinketMenu" if key == "trinket" else "AutoBar",
             },

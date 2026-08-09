@@ -741,7 +741,7 @@ def main() -> None:
                 "sha256": sha256(bootstrap_path),
             },
             "toc": {"file": TOC_REL.as_posix(), "sha256": sha256(toc_path)},
-            "addon_version": "0.8.6",
+            "addon_version": "0.8.7",
             "required_dependency": "pfUI",
         },
         "provider_layers_preserved": [

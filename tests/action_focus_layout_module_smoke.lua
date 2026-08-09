@@ -43,6 +43,14 @@ end
 
 local uiScale = 0.81269841269841
 UIParent = NewFrame("UIParent", 1920 / uiScale, 1080 / uiScale)
+function UIParent:SetScale(value)
+  self.scale = value
+  self.width = 1920 / value
+  self.height = 1080 / value
+end
+
+local cvars = { uiScale = uiScale, useUiScale = 1 }
+function SetCVar(name, value) cvars[name] = tonumber(value) or value end
 
 local player = NewFrame("pfPlayer", 200, 46)
 local target = NewFrame("pfTarget", 200, 46)
@@ -75,6 +83,7 @@ function getglobal(name) return _G[name] end
 function InCombatLockdown() return false end
 
 pfUI_config = {
+  global = { pixelperfect = "7" },
   position = {
     pfActionBarMain = { scale = 1.2 },
   },
@@ -110,7 +119,18 @@ pfUI = {
     ranged = swingRanged,
   },
   movables = {},
+  pixelperfect = {},
 }
+function pfUI.pixelperfect.UpdateConfig()
+  local scales = {
+    [7] = 0.81269841269841,
+    [8] = 0.71111111111111,
+  }
+  local scale = assert(scales[tonumber(pfUI_config.global.pixelperfect)])
+  SetCVar("uiScale", scale)
+  SetCVar("useUiScale", 1)
+  UIParent:SetScale(scale)
+end
 
 DoiteDPSDB = {
   point = "CENTER",
@@ -145,15 +165,21 @@ dofile(root .. "/addon/AzerothExpeditionUI/Modules/ActionBars.lua")
 local module = assert(AzerothExpeditionUI.modules.ActionBars)
 module:Initialize()
 assert(module.focusLayoutStatus == "ready")
+assert(module.comfortUIScaleStatus == "custom")
 
-local ok, message = module:ApplyCombatFocusLayoutPreset()
+local ok, message = module:ApplyComfortUIScalePreset()
 assert(ok == true)
-assert(string.find(message, "Combat Focus layout applied", 1, true))
-assert(module.focusLayoutRuntimeContract == "1.0")
+assert(string.find(message, "Comfort UI scale applied", 1, true))
+assert(module.focusLayoutRuntimeContract == "1.1")
 assert(module.focusLayoutStatus == "applied")
 assert(module.focusLayoutConfigured == 9)
 assert(module.focusLayoutLive == 9)
 assert(module.focusLayoutMousePolicy == "visible-controls-only")
+assert(module.comfortUIScaleStatus == "applied")
+assert(pfUI_config.global.pixelperfect == "8")
+assert(math.abs(cvars.uiScale - 0.71111111111111) < 0.000001)
+assert(cvars.useUiScale == 1)
+assert(math.abs(UIParent:GetScale() - 0.71111111111111) < 0.000001)
 
 local function AssertPosition(name, anchor, x, y, scale)
   local position = assert(pfUI_config.position[name])
@@ -164,14 +190,14 @@ local function AssertPosition(name, anchor, x, y, scale)
   assert(position.scale == scale)
 end
 
-AssertPosition("pfPlayer", "BOTTOM", -196, 468, 1.05)
-AssertPosition("pfTarget", "BOTTOM", 196, 468, 1.05)
-AssertPosition("pfPlayerCastbar", "BOTTOM", -196, 433, 1.05)
-AssertPosition("pfTargetCastbar", "BOTTOM", 196, 433, 1.05)
-AssertPosition("pfSwingTimerMainhand", "CENTER", 0, -43, 1)
-AssertPosition("pfSwingTimerRanged", "CENTER", 0, -43, 1)
-AssertPosition("pfActionBarStances", "TOP", 0, -915, 1)
-AssertPosition("pfActionBarMain", "BOTTOM", 0, 258, 1.2)
+AssertPosition("pfPlayer", "BOTTOM", -196, 534, 1)
+AssertPosition("pfTarget", "BOTTOM", 196, 534, 1)
+AssertPosition("pfPlayerCastbar", "BOTTOM", -196, 495, 1)
+AssertPosition("pfTargetCastbar", "BOTTOM", 196, 495, 1)
+AssertPosition("pfSwingTimerMainhand", "CENTER", 0, -49, 1)
+AssertPosition("pfSwingTimerRanged", "CENTER", 0, -49, 1)
+AssertPosition("pfActionBarStances", "TOP", 0, -1046, 1)
+AssertPosition("pfActionBarMain", "BOTTOM", 0, 295, 1.2)
 
 for _, config in pairs({
   pfUI_config.unitframes.player,
@@ -186,6 +212,8 @@ for _, config in pairs({
 end
 assert(player.updateConfigCalls == 1)
 assert(target.updateConfigCalls == 1)
+assert(player.updateSizeCalls == 1)
+assert(target.updateSizeCalls == 1)
 
 assert(pfUI_config.castbar.player.width == "-1")
 assert(pfUI_config.castbar.player.height == "22")
@@ -206,8 +234,8 @@ assert(swingOffhand.points[1][5] == -4)
 
 assert(DoiteDPSDB.point == "TOPLEFT")
 assert(DoiteDPSDB.relativePoint == "TOPLEFT")
-assert(math.abs(DoiteDPSDB.x - 1022.51953125) < 0.001)
-assert(math.abs(DoiteDPSDB.y + 632.4609375) < 0.001)
+assert(math.abs(DoiteDPSDB.x - 1168.59375) < 0.001)
+assert(math.abs(DoiteDPSDB.y + 722.8125) < 0.001)
 assert(DoiteDPSDB.locked == true)
 assert(DoiteDPSDB.enabled == false)
 assert(DoiteDPSDB.showOnlyCombat == false)
@@ -216,7 +244,8 @@ assert(DoiteDPSDB.showResource == true)
 assert(DoiteDPSDB.showCooldowns == true)
 
 assert(AzerothExpeditionUI.db.actionbars.fieldKitBound == true)
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 1)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 2)
+assert(AzerothExpeditionUI.db.actionbars.comfortUIScaleVersion == 1)
 
 for _, frame in pairs({
   player, target, playerCast, targetCast, swingMain, swingOffhand,
@@ -232,11 +261,15 @@ for _, frame in pairs({
 end
 
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "focus%-layout%-contract=1%.0"))
+assert(string.find(status, "focus%-layout%-contract=1%.1"))
 assert(string.find(status, "focus%-layout=applied"))
 assert(string.find(status, "focus%-layout%-mouse=visible%-controls%-only"))
+assert(string.find(status, "focus%-ui%-scale=applied"))
+assert(string.find(status, "focus%-ui%-scale%-tier=8"))
+assert(string.find(status, "focus%-ui%-scale%-target=8"))
 
 module:Initialize()
 assert(module.focusLayoutStatus == "saved")
+assert(module.comfortUIScaleStatus == "saved")
 
 print("action focus layout module smoke test passed")

@@ -13,8 +13,9 @@
   双施法条 → 姿态／技能栏。完整焦点栈仍是一次性 preset；Field Kit v1.5 则把
   Bar 6、左卷袋与右双槽直接相对锚到 Bar 1，使三部分共享一个移动根，但不使用
   维护循环重写位置或 scale。
-- 目标客户端为 `1920×1080`、UI Scale `0.81269841269841`；当前使用习惯是
-  两条 `12×1` 与若干 `4×3` 辅助栏。V3 沿用主栏外框
+- 目标客户端继续以 `1920×1080` 输出，当前显示截图为 `2560×1440`，存在
+  `4/3` 显示放大；旧 pfUI `Small / tier 7` UI Scale 为
+  `0.81269841269841`。当前使用习惯是两条 `12×1` 与若干 `4×3` 辅助栏。V3 沿用主栏外框
   `[713,827,1207,870]`，底边净空 `210 px`；玩家／目标框内缘间距 `80 px`。
 - 用户于 `2026-08-09` 明确要求本期先完成玩家／目标、施法、攻击计时、
   DoiteDPS 等战斗框架的位置摆放，后期再分别重绘。AEUI `0.8.6` 新增
@@ -29,6 +30,21 @@
   这些等价 pfUI movable 坐标；`saved` 状态按当前角色 pfUI 坐标签名判定，不用
   账号级版本标记冒充其他角色已应用。代码只在显式命令时重放，不使用维护循环，
   也不重绘任何像素，本次 ImageGen `0`。
+- 用户随后提供 `2560×1440 RGB` 实机截图 `de0fb8f7…1f3a3` 并指出还需考虑
+  pfUI 已有 UI 缩放，要求调到肉眼舒适。截图与 `Config.wtf` 联合证明客户端仍以
+  `1920×1080` 输出并被显示为 `2560×1440`：旧 tier 7 的屏幕有效尺寸约
+  `0.812698×4/3=1.0836`，玩家框明显偏重并压到左卷袋，而聊天、小地图与动作区
+  也损失视野。AEUI `0.8.7`／`focus-layout-contract=1.1` 新增显式
+  `/aeui focuslayout comfort`：只把当前 pfUI profile 改为
+  `Tiny PixelPerfect / tier 8 = 0.71111111111111`，屏幕有效尺寸约 `0.9481`；不改
+  `1920×1080` 分辨率。Player／Target 与双施法条自身 scale 从 `1.05` 收敛为
+  `1.00`，并按新 UIParent 保存为单位框 `BOTTOM x=-196／196, y=534`、施法条
+  同 `x, y=495`、Swing `CENTER y=-49`、姿态 `TOP y=-1046`、主／副动作栏
+  `BOTTOM y=295／328`。单位框在客户端约 `199 px` 宽，中心偏移约 `139.4 px`，
+  因而继续保持约 `80 px` 内缘间距；DoiteDPS 更新为
+  `TOPLEFT x=1168.59375, y=-722.8125`，TrinketMenu 当前角色 MainScale 归一为
+  `1.0`。所有位置均由当前 UIParent 比例重算，其他角色不自动写入；无美术重绘，
+  ImageGen `0`，当前为 `P5 / layout-v1.1 / pending-game-validation`。
 - 透明度与输入合同同时冻结：关键单位状态、施法、攻击计时、DoiteDPS 与技能
   CD 不做整组淡化，继续使用各 provider 原生半透明背景；只允许非核心辅助栏按
   用户设置脱战淡出。AEUI Rail、连接片、口袋／护套等纯装饰 Frame 必须
@@ -37,7 +53,8 @@
   联合悬停通道接收鼠标。
 - pfUI 施法条与 SwingTimer 已按真实对象审计：玩家／目标／Focus Castbar 均可
   独立移动；攻击条为 `200×12 UI` 主手、随主手锚定副手及独立 ranged。V3
-  双施法条物理 `239×20 px`，近战双计时物理 `163×10 px`。
+  v1.1 舒适缩放后的双施法条约 `199×16` 客户端像素，近战双计时约
+  `142×9` 客户端像素；经 `4/3` 显示放大后仍保持可读。
 - 目标设备已安装 DoiteDPS；真实根 Frame 为 `318×46 UI`，Ready 槽 `46 UI`、
   Forecast `34 UI`、资源框 `178×22 UI`，现有 scale `1.0`。V3 只提出中心落位
   与以后可选的低重量视觉桥接，不改其推荐逻辑、锁定、显隐或保存值。
@@ -104,7 +121,7 @@
   “接受 AB.SLOT.BASE.V1 第5稿”，随后以“进行下一步”授权 P4→P5。exact source
   RGBA `6d4a4d16…7dc0` 已按冻结 `[200,200,824,824)` crop 确定性导出为
   `128×128` 32-bit TGA `ActionSlotBaseV1.tga`，SHA `5c49a1db…23ca`，像素 SHA
-  `e527c038…c35c` 与已验收 attempt 5 runtime review 完全一致。当前 AEUI `0.8.6`
+  `e527c038…c35c` 与已验收 attempt 5 runtime review 完全一致。当前 AEUI `0.8.7`
   的 `ActionBars` adapter 只在现有 pfUI Bar `1–10` 的逐按钮 `backdrop` 上创建
   full-UV 子纹理；Bar `11／12`、按钮逻辑、动态图标／文字／状态、命中区、分页、
   拖放、位置、scale 与 SavedVariables 均未接管。五种最终排版 `5/5 pass`、
@@ -149,9 +166,10 @@
 - 推荐战斗预设只在用户主动应用时写入一次：主栏 `12×1 / 36 UI`，副栏
   `12×1 / 30 UI`，姿态条独立，消耗品 `4×6 / 24 类 / 三组`，饰品 `2×1`，辅助栏可保留
   `4×3`；V3 沿用主栏 `scale=1.2`、副栏 `scale=1.1`，中心均为物理 `x=960`。
-- V3 邻接建议把 pfUI Player／Target 统一为 `280×72 UI / scale 1.05 / y=468`，
-  玩家 `x=-49`、目标 `x=49`，得到物理同基线和 `80 px` 内缘间距；Action Bars
-  不接管其视觉，也不在本模拟写入 SavedVariables。
+- V3 邻接的 runtime-v1.1 把 pfUI Player／Target 统一为
+  `280×72 UI / local scale 1.00 / tier 8 / y=534`，保存 `x=-196／196`；客户端
+  物理宽约 `199 px`、中心偏移约 `139.4 px`，继续得到同基线与约 `80 px` 内缘
+  间距。Action Bars 只在显式 preset 写入当前角色位置，不接管其视觉。
 - DoiteDPS 原生根 Frame 置于物理 `[831,514,1089,551]`；主／副手攻击条置于
   `[879,570,1042,580]` 与 `[879,583,1042,593]`，ranged 复用同层；Aura 移到
   `y=612–631` 的两侧外肩；玩家／目标施法条置于 `y=708–728` 并与各自状态框
@@ -219,9 +237,9 @@
 | `AB.CONSUMABLE.GROUP` | `P5 / runtime-v1.5 / pending-retest / 1/5` | 精确 `24 Button / 4×6 / 推荐 profile` 才显示三组、启用 external drawer、hover bridge 与 popup switch intent guard；`/aeui autobar apply／restore` 仍为当前角色备份式显式配置，普通刷新只读且不启用 provider | 实机确认“应急／增益／工具”、绑定态向左展开、跨格保持、停留切换、手动数字 item ID、非 exact profile 原生回退 |
 | `AB.TRINKET.DOCK` | `P5 / runtime-v1.5 / pending-retest / 4/5` | [source](../../../assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；TGA `3614d9a8…f455`、像素 `0961d750…aef` 不变；v1.5 在主栏右侧 `16 UI` 强绑定，当前角色一次性改为水平双槽；Queue／换装／候选不变 | `/reload` 验证双槽位于主栏右端、拖动松手回位、候选向外、横／竖／scale 与 Queue 行为保持；不执行 attempt 5 |
 | `AB.TRINKET.MENU` | `P5 / runtime-v1.5 / pending-retest / 4/5` | C 九宫格与 B 候选插页像素不变；候选 `0／1／8／30` display `9/9 pass`、换装与动态层仍归 provider；v1.5 只改变主栏位置归属，不替代 TrinketMenu 行为 | 实机验证候选图标、左右键换槽、Queue、菜单向右外展、独立 scale／方向及 provider 缺失 fail-open |
-| `AB.FOCUS.CASTBAR` | `P5 / layout-v1.0 / pending-game-validation` | 玩家／目标／Focus 真实对象；AEUI `0.8.6` 一次性 preset 已把玩家／目标双条放到各自单位框下沿，Focus 仍跟随自身 Frame；尺寸、状态和动态层不重绘 | 实机验证位置、玩家延迟区、目标可打断状态、独立移动与 provider 缺失 fail-open；换肤另立合同 |
-| `AB.FOCUS.SWING` | `P5 / layout-v1.0 / pending-game-validation` | 主手／副手／ranged 真对象；一次性 preset 已写入中心 `200×12 UI` 复用层，副手仍锚到主手；无维护循环 | 实机验证近战双条、远程复用、攻速变化与中央视野；若换肤则另立合同 |
-| `AB.DOITEDPS.TIMELINE` | `P5 / layout-v1.0 / pending-game-validation` | 已安装 provider 的 `318×46 UI` 根 Frame；一次性 preset 已中心落位，只写 point／x／y，保留 scale、启用、锁定、战斗显隐、Forecast、资源和冷却 | 实机验证位置、锁定态鼠标穿透、显隐与 provider 缺失 fail-open；换肤另立合同 |
+| `AB.FOCUS.CASTBAR` | `P5 / layout-v1.1 / pending-game-validation` | 玩家／目标／Focus 真实对象；AEUI `0.8.7` comfort preset 使用 pfUI tier 8，把玩家／目标双条以 local scale `1.0` 放到各自单位框下沿，Focus 仍跟随自身 Frame；尺寸、状态和动态层不重绘 | 实机验证舒适尺寸、位置、玩家延迟区、目标可打断状态、独立移动与 provider 缺失 fail-open；换肤另立合同 |
+| `AB.FOCUS.SWING` | `P5 / layout-v1.1 / pending-game-validation` | 主手／副手／ranged 真对象；comfort preset 已按新 UIParent 重算中心 `200×12 UI` 复用层，副手仍锚到主手；无维护循环 | 实机验证近战双条、远程复用、攻速变化、读数尺寸与中央视野；若换肤则另立合同 |
+| `AB.DOITEDPS.TIMELINE` | `P5 / layout-v1.1 / pending-game-validation` | 已安装 provider 的 `318×46 UI` 根 Frame；comfort preset 按 tier 8 UIParent 重算 point／x／y，保留 scale、启用、锁定、战斗显隐、Forecast、资源和冷却 | 实机验证舒适尺寸、位置、锁定态鼠标穿透、显隐与 provider 缺失 fail-open；换肤另立合同 |
 | `AB.MOVER／CONFIG` | `P1` | pfUI `UpdateMovable` 与 unlock 已审计 | 设计只在 unlock 出现的把手和一次性预设入口 |
 
 ## 当前方向预演
@@ -382,17 +400,21 @@
    Bar 6、左 `4×6` 卷袋与右水平双槽整体跟随，仍不改 accepted art／TGA 像素、
    物品使用或候选顺序；P4→当前
    ImageGen `0`，原循环仍止于 `4/5` 与 `1/5`。
-3. 新增位置层的下一门禁是 Turtle WoW 实机验证：启动游戏或 `/reload` 后先确认
-   `/aeui status` 含 `version 0.8.6`、`focus-layout-contract=1.0`、
-   `focus-layout=saved` 与 `focus-layout-mouse=visible-controls-only`。确认物理纵栈为
-   DoiteDPS `y=514–551`、攻击计时 `570–593`、双方外肩 Aura `612–631`、
-   Player／Target `639–700`、双施法条 `708–728`、姿态 `y=744`、副栏
-   `y=783`、主栏 `y=827`；玩家／目标内缘保持 `80 px`。分别观察满血／掉血、
+3. 舒适缩放与位置层的下一门禁是 Turtle WoW 实机验证：启动游戏或 `/reload`
+   后先确认 `/aeui status` 含 `version 0.8.7`、`focus-layout-contract=1.1`、
+   `focus-layout=saved`、`focus-ui-scale=saved`、`focus-ui-scale-tier=8` 与
+   `focus-layout-mouse=visible-controls-only`。确认客户端分辨率仍为 `1920×1080`，
+   UI 相对截图整体缩小约 `12.5%`，玩家／目标与施法条额外取消旧 `1.05` 放大；
+   玩家框不再压住左卷袋，双方内缘仍约 `80 px`。确认纵栈顺序与锚点仍为
+   DoiteDPS 顶边约 `y=514`、攻击计时中心约 `y=575`、双方外肩 Aura、
+   Player／Target 底边 `y=700`、双施法条底边 `y=728`、姿态顶边 `y=744`、
+   Combat Deck 底边 `y=870`。分别观察满血／掉血、
    有／无目标、双方施法、近战双持、远程计时、Aura 超过 `6` 个和 DoiteDPS
    锁定／解锁，确认重要状态保持可读，装饰空白不拦截世界点击，中央没有大型透明
-   命中层。若手工移动后需要恢复，只执行一次 `/aeui focuslayout apply`；普通刷新
-   不持续改位置。通过前这组位置层保持 `P5 / pending-game-validation`，且不进入
-   UI 重绘。
+   命中层。若 pfUI scale 或位置被手工改动，需要同时恢复舒适缩放与锚点时只执行
+   一次 `/aeui focuslayout comfort`；只恢复当前 scale 下的锚点则执行
+   `/aeui focuslayout apply`。普通刷新不持续改 scale／位置。通过前这组位置层保持
+   `P5 / pending-game-validation`，且不进入 UI 重绘。
 4. Field Kit 的同轮 P6 复测先确认 `/aeui status` 含
    `fieldkit-contract=1.5`、`fieldkit-binding=bound` 与
    `actionbar-stack=12x2-bound`。先确认主栏已从底边上移到中心中下，构图为
@@ -415,7 +437,7 @@
    （SHA `5e89c6e5…12942`）与同目录 P6 evidence JSON（SHA
    `2d48b8fb…0be3`）；静态截图与用户对完整六项交互／布局清单的确认范围保持
    分离。Rail runtime TGA、display、功能合同与 P6 证据均未改变；manifest 只同步
-   共享 AEUI `0.8.6` adapter／bootstrap／TOC 哈希，P5→P6 ImageGen `0`。
+   共享 AEUI `0.8.7` adapter／bootstrap／TOC 哈希，P5→P6 ImageGen `0`。
 6. Rail 若要进入 `P6-C`，必须先在现存 work 中形成组件专属的精确 keep／delete
    inventory，排除共享 `ActionBars.lua`、Character V3 锁定基准及其他未完成
    Action Bars 组件依赖，并向用户展示、取得明确批准；当前不清理 ignored

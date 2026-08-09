@@ -146,7 +146,7 @@
   },
   "deterministic_export": {
     "exporter": "tools/build_action_rail_v1_runtime.py",
-    "exporter_sha256": "db5ddbce3118c0ba54f8ce007800b86c341328ac7b74c41d7ed91537617fea44",
+    "exporter_sha256": "46f7ee9db4362bb85c7273552c10de54e7f646bc3182f52ebaa1b06b54d13e88",
     "expected_runtime_pixel_sha256": "1b09b93b0a229b416e7961da47d1c97e0e75280245efe2d6310a955132b09db5",
     "one_proportional_resample": true,
     "imagegen_calls_after_acceptance": 0,
@@ -154,7 +154,7 @@
   },
   "adapter": {
     "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
-    "sha256": "379962c1e6cb3d5feb0438c4bd086ff5c552705e6d145751c01c14780f9e3798",
+    "sha256": "474848c566446d250db358cfd491f31d57161e465a98f79f6d776879ccc35ff3",
     "provider": "pfUI.bars[1..12].backdrop and pfUI.bars[1].mergedBackdrop.backdrop",
     "logical_bars": [
       1,
@@ -187,13 +187,13 @@
   "addon_entrypoints": {
     "bootstrap": {
       "file": "addon/AzerothExpeditionUI/Core/Bootstrap.lua",
-      "sha256": "32f7048b84d7d6aa3512bdea5f3ffbfb2cfc348060d4d03cf98a55b80c99ebdd"
+      "sha256": "47f90a397c9fad89c68a5db233f8a0448a6fa2b1ac60af2c591cde64e9c0bc7e"
     },
     "toc": {
       "file": "addon/AzerothExpeditionUI/AzerothExpeditionUI.toc",
-      "sha256": "c693a10743b0336712d3e39be0ca25a6b57fb70cb45373eeb394e81e2b9c9635"
+      "sha256": "0cac0d614c6b405a2f8b63ff44bb4236a73f6a1ef694817683da990466c89b69"
     },
-    "addon_version": "0.8.6",
+    "addon_version": "0.8.7",
     "required_dependency": "pfUI"
   },
   "provider_layers_preserved": [

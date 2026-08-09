@@ -931,7 +931,7 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
   因直接相对锚定自然跟随。`unbind` 恢复捕获的 Bar 6／provider 原位置和独立 mover；
   `home` 把 Bar 1 居中并写入屏幕高度 `210/1080` 的底部净空。所有写入均为初始化、
   provider 布局回调、拖动结束或显式命令，不使用 `OnUpdate`。
-- 当前角色一次性迁移：游戏未运行时将“大奶黑牛”主栏保存为 `x=0／y=258`、上栏
+- runtime-v1.5 初始角色迁移：游戏未运行时将“大奶黑牛”主栏保存为 `x=0／y=258`、上栏
   `x=0／y=291`，TrinketMenu 改为 `HORIZONTAL`，AEUI 设置
   `fieldKitBound=true／combatDeckLayoutVersion=1`。这只落实用户指定角色的最初构图，
   runtime 不自动覆盖其他角色的 TrinketMenu 方向或 AutoBar profile。
@@ -940,10 +940,15 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
   guard 与 provider fail-open。Trinket／Consumable display `9/9`、`10/10`，violations
   `0`；fresh-checkout package `pass`。TGA 文件／像素 SHA 仍为
   `3614d9a8…f455／0961d750…aef` 与 `c48f6292…320e／658f826f…e30d`；ImageGen `0`。
-- 后续共享位置层修订把 addon 升到 AEUI `0.8.6`，当前 `ActionBars.lua` adapter
+- 后续共享位置层修订把 addon 升到 AEUI `0.8.6`，当时 `ActionBars.lua` adapter
   SHA 为 `379962c1…9e3798`。该修订只增加显式 Combat Focus 一次性 preset，未改变
   `fieldkit-contract=1.5`、v1.4 popup guard、Field Kit 几何、provider 行为、source
-  或 TGA；四份 runtime manifest 已同步当前 adapter／bootstrap／TOC 哈希。
+  或 TGA；四份 runtime manifest 当时已同步 adapter／bootstrap／TOC 哈希。
+- `2560×1440` 实机截图暴露 `1920×1080` 输出与 pfUI tier 7 叠加后的整体偏大。
+  AEUI `0.8.7` 的共享 adapter SHA `474848c5…c35ff3` 增加显式 comfort tier 8，
+  当前角色主／副栏保存坐标按新 UIParent 更新为 `y=295／328`；TrinketMenu
+  `MainScale` 从 `0.904371` 归一为 `1.0`，抵消全局缩小后饰品槽过小。强绑定、
+  `48／16 UI` 间距、popup guard、source／TGA 像素及 provider 行为均不变。
 
 ## 审查记录
 
@@ -1057,8 +1062,10 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
 1. 两套 accepted source 与 runtime TGA 像素身份不变；adapter、source／runtime
    manifest 已更新到 `runtime-v1.5 / P5 / pending-retest`。fresh-checkout package
    已通过，目标设备只需拉取并安装 `addon/`，不得再生成、导出或打补丁。
-2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.6`、
+2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.7`、
    `fieldkit-contract=1.5`、`fieldkit-binding=bound` 与 `actionbar-stack=12x2-bound`。
+   同时确认 `focus-ui-scale-tier=8`，左卷袋与右双槽随整体 UI 缩小后仍清楚可读，
+   TrinketMenu 双槽不会因旧 `0.904371` 再次被二次缩小。
    先确认左 `4×6` 卷袋—中央 `12×2` 动作条—右水平双槽在中心中下部共用一个
    Bar 1 mover；拖动两侧 provider 松手应回位，`unbind` 后才独立，`bind` 恢复，
    `home` 重置最初位置。再确认

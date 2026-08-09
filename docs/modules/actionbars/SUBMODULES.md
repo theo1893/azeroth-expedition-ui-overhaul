@@ -95,8 +95,9 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 
 ## 战斗焦点邻接对象
 
-这些对象加入同一推荐布局，但逻辑所有权不转移给动作条 adapter。AEUI `0.8.6`
-只提供 `/aeui focuslayout apply` 一次性位置 preset；任何视觉接管仍须以后按对象
+这些对象加入同一推荐布局，但逻辑所有权不转移给动作条 adapter。AEUI `0.8.7`
+提供 `/aeui focuslayout apply` 一次性位置 preset，以及显式
+`/aeui focuslayout comfort` 舒适缩放＋位置 preset；任何视觉接管仍须以后按对象
 独立授权并 feature-detect，失败时保留 provider 原样。
 
 | ID | provider／真实对象 | 合同 |
@@ -197,13 +198,14 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   `12×2`，消耗品卷袋与饰品双槽分别以 `48／16 UI` 间距锚到左右。`unbind`
   恢复 Bar 6 与两种 provider 的捕获位置；`home` 把 Bar 1 重置到屏幕高度
   `210/1080` 的底部净空并重新绑定。
-- 当前“大奶黑牛”已按该合同写入 `pfActionBarMain x=0／y=258／scale=1.2`、
-  `pfActionBarTop x=0／y=291／scale=1.2`，TrinketMenu 主栏为 `HORIZONTAL`；启动或
+- 当前“大奶黑牛”舒适缩放后已写入 `pfActionBarMain x=0／y=295／scale=1.2`、
+  `pfActionBarTop x=0／y=328／scale=1.2`，TrinketMenu 主栏为
+  `HORIZONTAL / scale=1.0`；启动或
   `/reload` 后由 v1.5 收敛为左卷袋—中央 `12×2`—右双槽。
 - `战斗视线邻接`：Player／Target 继续由 pfUI UnitFrame provider 所有；AEUI
-  `0.8.6` 的 `/aeui focuslayout apply` 仅一次性把两者置于同一基线并收拢到目标
-  设备 `80 px` 内缘间距。pfUI movable 不保存 relativePoint，因此用等价的
-  `BOTTOM x=-196／196, y=468, scale=1.05` 持久化；双方 Aura 从外肩
+  `0.8.7` 的 preset 仅一次性把两者置于同一基线并收拢到目标设备约 `80 px`
+  内缘间距。pfUI movable 不保存 relativePoint；comfort tier 8 下用等价的
+  `BOTTOM x=-196／196, y=534, scale=1.0` 持久化；双方 Aura 从外肩
   `TOPLEFT／TOPRIGHT` 每行 `6` 个展开。adapter 不重画，不在维护循环中持续改位置。
 - `战斗信息纵栈`：目标设备物理顺序为 DoiteDPS `y=514–551`、近战攻击计时
   `570–593`、双方外肩 Aura `612–631`、Player／Target `639–700`、双施法条
@@ -217,6 +219,10 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   使用 provider 原生 Alpha，不做整组淡出；只允许非核心辅助栏按用户设置脱战
   淡出。Rail、连接片、卷袋、护套和标题等装饰层全部鼠标穿透，DoiteDPS 锁定态
   沿用 provider 的根 Frame 鼠标穿透；不增加覆盖中央视野的大型透明 Frame。
+- `舒适缩放`：目标设备保持客户端 `1920×1080`，不由本模块修改分辨率；用户
+  显式执行 `comfort` 时只把当前 pfUI profile 设为
+  `Tiny PixelPerfect / tier 8 / 0.71111111111111`，再按新的 UIParent 比例重算
+  Combat Focus 与强绑定甲板锚点。普通刷新不改 pfUI scale；其他角色不自动应用。
 - `home` 预设只在用户明确执行时写入一次。默认读取并尊重现有 profile、主栏位置、
   scale、按钮数、行列、自动隐藏和空槽设置；V3 继续默认关闭狮鹫，unlock 时
   仍可为足够宽的水平主栏单独开启。DoiteDPS 的锁定／战斗显隐／Forecast／资源／

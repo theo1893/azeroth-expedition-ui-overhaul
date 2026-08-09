@@ -14,8 +14,12 @@ ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
 ActionBars.fieldKitRuntimeContract = "1.5"
-ActionBars.focusLayoutRuntimeContract = "1.0"
-ActionBars.focusLayoutVersion = 1
+ActionBars.focusLayoutRuntimeContract = "1.1"
+ActionBars.focusLayoutVersion = 2
+ActionBars.comfortUIScaleVersion = 1
+ActionBars.comfortUIScaleTier = 8
+ActionBars.comfortUIScaleValue = 0.71111111111111
+ActionBars.focusFrameScale = 1
 ActionBars.trinketKitTexturePath =
   addon.media.root .. "ActionBars\\ActionTrinketKitV1"
 ActionBars.consumableKitTexturePath =
@@ -36,7 +40,9 @@ ActionBars.popupIntentEvent = "AEUI_AutoBarPopupIntent"
 -- UIParent ratios so the one-shot preset retains the same composition when a
 -- user keeps the 16:9 layout but changes resolution.  No maintenance loop
 -- rewrites these positions after the preset has been applied.
-ActionBars.focusUnitCenterOffsetRatio = 159.5 / 1920
+-- At the comfort scale, a 280 UI unit frame is about 199 client pixels wide;
+-- the 139.5 px center offset preserves the accepted 80 px inner gap.
+ActionBars.focusUnitCenterOffsetRatio = 139.5 / 1920
 ActionBars.focusUnitBottomRatio = 380 / 1080
 ActionBars.focusCastBottomRatio = 352 / 1080
 ActionBars.focusSwingCenterYOffsetRatio = -35 / 1080
@@ -720,13 +726,17 @@ local function CombatFocusLayoutSaved()
   local targetCast = castbars.target or {}
 
   return FocusPositionMatches(
-      "pfPlayer", "BOTTOM", -unitX, unitY, 1.05
+      "pfPlayer", "BOTTOM", -unitX, unitY,
+      ActionBars.focusFrameScale
     ) and FocusPositionMatches(
-      "pfTarget", "BOTTOM", unitX, unitY, 1.05
+      "pfTarget", "BOTTOM", unitX, unitY,
+      ActionBars.focusFrameScale
     ) and FocusPositionMatches(
-      "pfPlayerCastbar", "BOTTOM", -unitX, castY, 1.05
+      "pfPlayerCastbar", "BOTTOM", -unitX, castY,
+      ActionBars.focusFrameScale
     ) and FocusPositionMatches(
-      "pfTargetCastbar", "BOTTOM", unitX, castY, 1.05
+      "pfTargetCastbar", "BOTTOM", unitX, castY,
+      ActionBars.focusFrameScale
     ) and FocusPositionMatches(
       "pfSwingTimerMainhand", "CENTER", 0, swingY, 1
     ) and FocusPositionMatches(
@@ -762,6 +772,32 @@ local function ApplyFramePosition(frame, anchor, x, y, scale)
   return true
 end
 
+local function ComfortUIScaleConfigured()
+  local global = pfUI_config and pfUI_config.global
+  return global and tonumber(global.pixelperfect) ==
+    ActionBars.comfortUIScaleTier
+end
+
+local function ApplyComfortUIScaleValue()
+  local updated = false
+  if pfUI and pfUI.pixelperfect and
+    type(pfUI.pixelperfect.UpdateConfig) == "function"
+  then
+    updated = pcall(pfUI.pixelperfect.UpdateConfig)
+  end
+  if not updated then
+    if type(SetCVar) == "function" then
+      SetCVar("uiScale", ActionBars.comfortUIScaleValue)
+      SetCVar("useUiScale", 1)
+    end
+    if UIParent and UIParent.SetScale then
+      UIParent:SetScale(ActionBars.comfortUIScaleValue)
+      updated = true
+    end
+  end
+  return updated
+end
+
 local function ConfigureFocusUnitFrame(key, name, x, y)
   local unitframes = pfUI_config and pfUI_config.unitframes
   local config = unitframes and unitframes[key]
@@ -776,14 +812,19 @@ local function ConfigureFocusUnitFrame(key, name, x, y)
   config.buffperrow = "6"
   config.debuffperrow = "6"
 
-  SavePfUIPosition(name, "BOTTOM", x, y, 1.05)
+  SavePfUIPosition(
+    name, "BOTTOM", x, y, ActionBars.focusFrameScale
+  )
   local frame = pfUI and pfUI.uf and pfUI.uf[key] or GetGlobal(name)
-  if frame and type(frame.UpdateConfig) == "function" then
-    pcall(frame.UpdateConfig, frame)
-  elseif frame and type(frame.UpdateFrameSize) == "function" then
+  if frame and type(frame.UpdateFrameSize) == "function" then
     pcall(frame.UpdateFrameSize, frame)
   end
-  return true, ApplyFramePosition(frame, "BOTTOM", x, y, 1.05)
+  if frame and type(frame.UpdateConfig) == "function" then
+    pcall(frame.UpdateConfig, frame)
+  end
+  return true, ApplyFramePosition(
+    frame, "BOTTOM", x, y, ActionBars.focusFrameScale
+  )
 end
 
 local function ConfigureFocusCastBar(key, name, x, y)
@@ -794,7 +835,9 @@ local function ConfigureFocusCastBar(key, name, x, y)
   end
   config.width = "-1"
   config.height = "22"
-  SavePfUIPosition(name, "BOTTOM", x, y, 1.05)
+  SavePfUIPosition(
+    name, "BOTTOM", x, y, ActionBars.focusFrameScale
+  )
 
   local frame = pfUI and pfUI.castbar and pfUI.castbar[key] or
     GetGlobal(name)
@@ -804,7 +847,9 @@ local function ConfigureFocusCastBar(key, name, x, y)
   if frame and frame.SetHeight then
     frame:SetHeight(22)
   end
-  return true, ApplyFramePosition(frame, "BOTTOM", x, y, 1.05)
+  return true, ApplyFramePosition(
+    frame, "BOTTOM", x, y, ActionBars.focusFrameScale
+  )
 end
 
 local function ConfigureFocusSwingTimers(y)
@@ -940,6 +985,39 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
   self.focusLayoutMousePolicy = "visible-controls-only"
   return true,
     "Combat Focus layout applied: player/target, paired cast bars, swing timers, stance bar, Combat Deck, and detected DoiteDPS. Provider visibility, lock state, and native translucency were preserved."
+end
+
+function ActionBars:ApplyComfortUIScalePreset()
+  if type(InCombatLockdown) == "function" and InCombatLockdown() then
+    self.comfortUIScaleStatus = "combat-locked"
+    return false, "Leave combat before applying the Comfort UI scale."
+  end
+  if not pfUI_config or type(pfUI_config.global) ~= "table" then
+    self.comfortUIScaleStatus = "unavailable"
+    return false, "The pfUI character profile is unavailable."
+  end
+
+  pfUI_config.global.pixelperfect =
+    tostring(self.comfortUIScaleTier)
+  if not ApplyComfortUIScaleValue() then
+    self.comfortUIScaleStatus = "unavailable"
+    return false, "pfUI or UIParent could not apply the Comfort UI scale."
+  end
+
+  local database = addon.db and addon.db.actionbars
+  if database then
+    database.comfortUIScaleVersion = self.comfortUIScaleVersion
+  end
+  self.comfortUIScaleStatus = "applied"
+
+  local layoutOk, layoutMessage = self:ApplyCombatFocusLayoutPreset()
+  if not layoutOk then
+    return false,
+      "Comfort UI scale applied, but Combat Focus could not be re-anchored: " ..
+      tostring(layoutMessage)
+  end
+  return true,
+    "Comfort UI scale applied: pfUI tier 8 (0.711111), Combat Focus re-anchored for the new UIParent, and provider-native visibility preserved. Reload if a third-party frame does not redraw immediately."
 end
 
 local function FrameCoordinatePixels(frame, method)
@@ -2454,6 +2532,8 @@ function ActionBars:Initialize()
   self.focusLayoutLive = 0
   self.focusLayoutDoite = "pending"
   self.focusLayoutMousePolicy = "visible-controls-only"
+  self.comfortUIScaleStatus = ComfortUIScaleConfigured() and
+    "saved" or "custom"
 end
 
 function ActionBars:Apply()
@@ -2517,6 +2597,8 @@ function ActionBars:Apply()
 end
 
 function ActionBars:GetRuntimeStatus()
+  local global = pfUI_config and pfUI_config.global
+  local uiScaleTier = global and global.pixelperfect or "unknown"
   return
     "contract=" .. tostring(self.runtimeContract) ..
     ",rail-contract=" .. tostring(self.railRuntimeContract) ..
@@ -2531,6 +2613,10 @@ function ActionBars:GetRuntimeStatus()
       tostring(self.focusLayoutDoite or "pending") ..
     ",focus-layout-mouse=" ..
       tostring(self.focusLayoutMousePolicy or "visible-controls-only") ..
+    ",focus-ui-scale=" ..
+      tostring(self.comfortUIScaleStatus or "custom") ..
+    ",focus-ui-scale-tier=" .. tostring(uiScaleTier) ..
+    ",focus-ui-scale-target=" .. tostring(self.comfortUIScaleTier) ..
     ",fieldkit-binding=" ..
       tostring(FieldKitBound() and "bound" or "free") ..
     ",actionbar-stack=" ..
