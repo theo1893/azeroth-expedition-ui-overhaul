@@ -1,0 +1,237 @@
+{
+  "schema": "aeui-action-bars-simulation-v1",
+  "version": "ACTION-BARS-CORE-SIM-V5",
+  "extends": "tools/specs/action_bars_core_simulation_v4.json",
+  "purpose": "deterministic non-production repair preview after the 2026-08-09 client report: compact the combat stack, separate cast and attack timing, and clear the player silhouette",
+  "output": "generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V5/action_bars_core_sim_v5.png",
+  "annotations": {
+    "title": "动作条 / 战斗焦点 V5 · 紧凑分层与人物净空",
+    "subtitle": "单位框与施法条回到 0.75；攻击／DoiteDPS 保持 0.82，整栈贴近动作甲板",
+    "note": "本地确定性几何模拟 · 非 source / runtime · ImageGen 0/0",
+    "rules_title": "V5 修订边界",
+    "rules": [
+      "单位框＋对应施法条使用 0.75；攻击／姿态／DoiteDPS 保持 0.82",
+      "双单位框恢复 80 px 中线净空，不再压住人物主体",
+      "攻击计时位于 Aura／单位框之上，施法条位于单位框之下",
+      "相邻战斗信息层最大空隙 19 px，消除中部大面积空白",
+      "Combat Deck、Field Kit、饰品与 ArchiTotem 尺寸／位置不变"
+    ]
+  },
+  "focus_field": {
+    "screen_box": [515, 504, 1315, 1076],
+    "role": "non-runtime eye-path annotation for the compact deck-relative combat stack and provider-owned totem satellite"
+  },
+  "runtime_projection_proposal": {
+    "not_applied": true,
+    "global_pfui_tier": 8,
+    "combat_local_scale": {
+      "unit_and_cast": 0.75,
+      "swing_stance_doitedps": 0.82
+    },
+    "player": {"anchor_policy": "resolve from the live Bar 1 center", "center_x_physical": 801, "baseline_y_physical": 721},
+    "target": {"anchor_policy": "resolve from the live Bar 1 center", "center_x_physical": 1120, "baseline_y_physical": 721},
+    "player_castbar": {"anchor_policy": "8 px below the projected player frame", "screen_box": [681, 729, 920, 749]},
+    "target_castbar": {"anchor_policy": "8 px below the projected target frame", "screen_box": [1000, 729, 1239, 749]},
+    "swing_main_and_ranged": {"anchor_policy": "centered 227 px above the live Bar 1 top", "screen_top_y": 600},
+    "stance": {"anchor_policy": "centered 64 px above the live Bar 1 top", "screen_top_y": 763},
+    "doitedps": {"anchor_policy": "centered 287 px above the live Bar 1 top", "screen_top_y": 540, "scale": 0.82},
+    "deck_relative_physical_pixels": {
+      "main_bar_top_y": 827,
+      "unit_frame_bottom_above_main": 106,
+      "castbar_bottom_above_main": 78,
+      "stance_top_above_main": 64
+    },
+    "position_method": "on explicit preset, derive physical positions from the live Bar 1 center/top and current effective scale, then persist equivalent UIParent movable coordinates; do not reuse the V4 fixed inverse-calibration constants",
+    "architotem": "unchanged: center the audited visible footprint below Bar 1 and request direction=down only from the explicit preset"
+  },
+  "bar_overrides": {
+    "AB.BAR11.STANCE": {
+      "screen_origin": [920, 763]
+    }
+  },
+  "layout_contract": {
+    "unit_frame_baseline_y": 721,
+    "unit_frame_inner_gap_px": 80,
+    "unit_frame_outer_cluster_center_x": 960,
+    "player_core_safe_box": [920, 548, 1000, 735],
+    "player_core_safe_width_px": 80,
+    "unit_frame_aura_top_y": 633,
+    "unit_frame_aura_bottom_y": 652,
+    "stance_top_y": 763,
+    "aura_to_stance_clearance_px": 111,
+    "castbar_top_y": 729,
+    "castbar_bottom_y": 749,
+    "castbar_height_px": 20,
+    "castbar_pair_inner_gap_px": 80,
+    "unitframe_to_castbar_gap_px": 8,
+    "castbar_to_stance_clearance_px": 14,
+    "swing_main_top_y": 600,
+    "swing_pair_bottom_y": 625,
+    "swing_width_px": 178,
+    "swing_height_px": 11,
+    "swing_pair_gap_px": 3,
+    "swing_to_aura_clearance_px": 8,
+    "attack_to_castbar_clearance_px": 104,
+    "doitedps_root_top_y": 540,
+    "doitedps_root_bottom_y": 581,
+    "doitedps_root_width_px": 283,
+    "doitedps_root_height_px": 41,
+    "doitedps_to_swing_clearance_px": 19,
+    "combat_focus_max_interlayer_gap_px": 19,
+    "runtime_change_in_this_simulation": false
+  },
+  "unit_frames": {
+    "provider": "pfUI pfPlayer and pfTarget; V5 geometry-only repair after the 2026-08-09 client screenshot",
+    "cluster_label": "中线净空 80 · 单位框 0.75 · 不遮人物",
+    "cluster_label_origin": [960, 759],
+    "profile_recommendation": {
+      "not_applied": true,
+      "proposed_shared": {
+        "width_ui": 280,
+        "height_ui": 72,
+        "scale": 1.05,
+        "runtime_local_scale": 0.75,
+        "target_display_multiplier": 1.0
+      },
+      "proposed_player": {"anchor_policy": "deck-relative projection", "center_x_physical": 801, "baseline_y_physical": 721},
+      "proposed_target": {"anchor_policy": "deck-relative projection", "center_x_physical": 1120, "baseline_y_physical": 721},
+      "position_note": "one-time preset; live Bar 1 geometry replaces V4 fixed inverse-calibration coordinates"
+    },
+    "frames": [
+      {
+        "id": "UF.PLAYER.ADJACENCY",
+        "label": "",
+        "screen_box": [681, 660, 920, 721],
+        "portrait_side": "left",
+        "portrait_tint": "#39533f",
+        "name": "玩家名称",
+        "level": "Lv 60",
+        "health": 0.76,
+        "power": 0.64,
+        "health_text": "76% · 生命",
+        "health_color": "#657742",
+        "power_color": "#405f7c",
+        "aura_origin": [681, 633],
+        "auras": [
+          {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff", "count": "2"},
+          {"kind": "debuff"}, {"kind": "buff"}, {"kind": "buff"}
+        ]
+      },
+      {
+        "id": "UF.TARGET.ADJACENCY",
+        "label": "",
+        "screen_box": [1000, 660, 1239, 721],
+        "portrait_side": "right",
+        "portrait_tint": "#633b34",
+        "name": "目标名称",
+        "level": "Lv 62+",
+        "health": 0.58,
+        "power": 0.42,
+        "health_text": "58% · 目标生命",
+        "health_color": "#6f5038",
+        "power_color": "#4a4f65",
+        "aura_origin": [1105, 633],
+        "auras": [
+          {"kind": "debuff"}, {"kind": "debuff", "count": "3"}, {"kind": "debuff"},
+          {"kind": "buff"}, {"kind": "debuff"}, {"kind": "debuff"}
+        ]
+      }
+    ]
+  },
+  "cast_bars": {
+    "profile_recommendation": {
+      "not_applied": true,
+      "player": {"width_ui": -1, "height_ui": 22, "anchor_policy": "8 px below pfPlayer and match its displayed width", "runtime_local_scale": 0.75},
+      "target": {"width_ui": -1, "height_ui": 22, "anchor_policy": "8 px below pfTarget and match its displayed width", "runtime_local_scale": 0.75},
+      "focus": {"width_ui": -1, "height_ui": 18, "anchor_policy": "remain with optional focus frame"},
+      "position_note": "same one-time deck-relative preset; provider content and independent movers remain intact"
+    },
+    "bars": [
+      {
+        "id": "CAST.PLAYER",
+        "screen_box": [681, 729, 920, 749],
+        "name": "玩家施法",
+        "timer": "1.2",
+        "progress": 0.62,
+        "latency": 0.11,
+        "fill": "#766f43",
+        "icon_fill": "#48604a",
+        "glyph": 1
+      },
+      {
+        "id": "CAST.TARGET",
+        "screen_box": [1000, 729, 1239, 749],
+        "name": "目标施法 · 可打断",
+        "timer": "0.8",
+        "progress": 0.46,
+        "interruptible": true,
+        "fill": "#805143",
+        "icon_fill": "#65403a",
+        "glyph": 4
+      },
+      {
+        "id": "CAST.FOCUS.OPTIONAL",
+        "screen_box": [1488, 594, 1688, 612],
+        "visible_in_simulation": false,
+        "placement_policy": "follow the optional focus frame"
+      }
+    ]
+  },
+  "swing_timers": {
+    "label": "主／副手攻击节奏 · 与施法层分离",
+    "label_origin": [960, 596],
+    "profile_recommendation": {
+      "not_applied": true,
+      "width_ui": 200,
+      "height_ui": 12,
+      "runtime_local_scale": 0.82,
+      "center_x": 960,
+      "main_top_y": 600,
+      "ranged_policy": "same centered layer"
+    },
+    "bars": [
+      {
+        "id": "SWING.MAINHAND",
+        "screen_origin": [871, 600],
+        "width_ui": 200,
+        "height_ui": 12,
+        "scale": 1.09333333333333,
+        "progress": 0.68,
+        "fill": "#806a3d",
+        "left_text": "主",
+        "right_text": "2.8"
+      },
+      {
+        "id": "SWING.OFFHAND",
+        "screen_origin": [871, 614],
+        "width_ui": 200,
+        "height_ui": 12,
+        "scale": 1.09333333333333,
+        "progress": 0.36,
+        "fill": "#635642",
+        "left_text": "副",
+        "right_text": "1.9"
+      }
+    ]
+  },
+  "doite_dps": {
+    "label": "DoiteDPS · 原生时间线保持 0.82",
+    "label_origin": [960, 516],
+    "screen_origin": [819, 540],
+    "scale": 1.09333333333333,
+    "profile_recommendation": {
+      "not_applied": true,
+      "runtime_local_scale": 0.82,
+      "center_x": 960,
+      "root_top_y": 540,
+      "preserve": ["enabled", "locked", "showOnlyCombat", "showForecast", "showResource", "showCooldowns"]
+    }
+  },
+  "non_authoritative": [
+    "all flat colors, glyphs, portraits, aura icons and provider icon placeholders",
+    "the user screenshot is read-only failure evidence and is not pasted, traced, cropped or transformed into this simulation",
+    "unit-frame, castbar, swing and DoiteDPS visual repaint remains deferred; V5 is geometry only",
+    "no simulation pixel may be cropped, sliced, promoted, uploaded or used as ImageGen input",
+    "accepted Action Slot, Rail, Consumable Kit and Trinket Kit source/runtime pixels are unchanged"
+  ]
+}

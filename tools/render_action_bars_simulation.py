@@ -56,16 +56,39 @@ def merge_specs(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any
     return merged
 
 
+def apply_bar_overrides(spec: dict[str, Any]) -> dict[str, Any]:
+    """Apply compact per-bar geometry revisions after inherited lists resolve."""
+    overrides = spec.pop("bar_overrides", None)
+    if not overrides:
+        return spec
+
+    bars = []
+    matched: set[str] = set()
+    for bar in spec["bars"]:
+        bar_id = str(bar["id"])
+        if bar_id in overrides:
+            bars.append(merge_specs(bar, overrides[bar_id]))
+            matched.add(bar_id)
+        else:
+            bars.append(bar)
+
+    missing = sorted(set(overrides) - matched)
+    if missing:
+        raise ValueError(f"unknown bar override ids: {', '.join(missing)}")
+    spec["bars"] = bars
+    return spec
+
+
 def load_spec(path: Path, root: Path) -> dict[str, Any]:
     data = json.loads(path.read_text(encoding="utf-8"))
     base_ref = data.pop("extends", None)
     if not base_ref:
-        return data
+        return apply_bar_overrides(data)
 
     base_path = Path(str(base_ref))
     if not base_path.is_absolute():
         base_path = root / base_path
-    return merge_specs(load_spec(base_path.resolve(), root), data)
+    return apply_bar_overrides(merge_specs(load_spec(base_path.resolve(), root), data))
 
 
 def draw_text(
@@ -1011,6 +1034,16 @@ def validate_layout(spec: dict[str, Any]) -> dict[str, Any]:
         int(contract["unit_frame_outer_cluster_center_x"]),
         round((player[0] + target[2]) / 2),
     )
+    safe_box = contract.get("player_core_safe_box")
+    if safe_box:
+        safe_left, _, safe_right, _ = map(int, safe_box)
+        check("unit-frames.player-safe-lane-left", safe_left, player[2])
+        check("unit-frames.player-safe-lane-right", safe_right, target[0])
+        check(
+            "unit-frames.player-safe-lane-width",
+            int(contract["player_core_safe_width_px"]),
+            safe_right - safe_left,
+        )
 
     aura_top = min(
         int(frame["aura_origin"][1])
@@ -1102,6 +1135,12 @@ def validate_layout(spec: dict[str, Any]) -> dict[str, Any]:
         check("swing.main-center-x", int(contract["main_bar_center_x"]), round((main_swing[0] + main_swing[2]) / 2))
         check("swing.offhand-center-x", int(contract["main_bar_center_x"]), round((off_swing[0] + off_swing[2]) / 2))
         check("swing.to-aura-clearance", int(contract["swing_to_aura_clearance_px"]), aura_top - off_swing[3])
+        if castbar_boxes and "attack_to_castbar_clearance_px" in contract:
+            check(
+                "swing.to-castbar-clearance",
+                int(contract["attack_to_castbar_clearance_px"]),
+                castbar_boxes["CAST.PLAYER"][1] - off_swing[3],
+            )
 
     if "doite_dps" in spec:
         doite_box = indicator_box(spec["doite_dps"], ui_scale)
@@ -1137,8 +1176,9 @@ def validate_layout(spec: dict[str, Any]) -> dict[str, Any]:
         )
 
     if castbar_boxes and swing_boxes and "doite_dps" in spec:
+        doite_box = indicator_box(spec["doite_dps"], ui_scale)
         vertical_order = [
-            indicator_box(spec["doite_dps"], ui_scale)[1],
+            doite_box[1],
             swing_boxes["SWING.MAINHAND"][1],
             aura_top,
             player[1],
@@ -1147,6 +1187,19 @@ def validate_layout(spec: dict[str, Any]) -> dict[str, Any]:
             main_y,
         ]
         check("combat-focus.strict-vertical-order", sorted(vertical_order), vertical_order)
+        if "combat_focus_max_interlayer_gap_px" in contract:
+            interlayer_gaps = [
+                swing_boxes["SWING.MAINHAND"][1] - doite_box[3],
+                aura_top - swing_boxes["SWING.OFFHAND"][3],
+                player[1] - aura_bottom,
+                castbar_boxes["CAST.PLAYER"][1] - player[3],
+                stance_y - castbar_boxes["CAST.PLAYER"][3],
+            ]
+            check(
+                "combat-focus.max-interlayer-gap",
+                int(contract["combat_focus_max_interlayer_gap_px"]),
+                max(interlayer_gaps),
+            )
 
     violations = [item["id"] for item in checks if not item["pass"]]
     return {
