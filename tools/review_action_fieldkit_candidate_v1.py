@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Review AB.TRINKET.KIT.V1 or AB.CONSUMABLE.KIT.V1 candidates.
 
-The provider output is always kept untouched.  When a provider bakes a light
-checkerboard or returns the wrong canvas size, this tool may derive a review-only
-RGBA normalization so the failed art can still be inspected in exact provider
-layouts.  Derived pixels are never source or runtime candidates.
+The provider output is always kept untouched.  Legacy opaque checkerboard raws
+may still be normalized for failure inspection.  For the authorized chroma
+transport amendment, this reviewer instead consumes an exact canonical RGBA
+atlas plus its deterministic provenance report.  Neither path promotes pixels
+to source or runtime.
 """
 
 from __future__ import annotations
@@ -34,6 +35,8 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--component", required=True, choices=("trinket", "consumable"))
     parser.add_argument("--raw", required=True, type=Path)
+    parser.add_argument("--canonical", type=Path)
+    parser.add_argument("--canonicalization-report", type=Path)
     parser.add_argument("--spec", required=True, type=Path)
     parser.add_argument("--display-template", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
@@ -58,6 +61,36 @@ def sha256(path: Path) -> str:
 def write_json(path: Path, value: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def transparent_rgb_nonzero(image: Image.Image) -> int:
+    count = 0
+    for red, green, blue, alpha in image.convert("RGBA").getdata():
+        if alpha == 0 and (red != 0 or green != 0 or blue != 0):
+            count += 1
+    return count
+
+
+def validate_canonical_provenance(
+    report: dict[str, Any],
+    *,
+    component_name: str,
+    attempt: str,
+    raw_path: Path,
+    canonical_path: Path,
+) -> None:
+    if report.get("schema") != "aeui-action-fieldkit-canonicalization-v1":
+        raise ValueError("unexpected Field Kit canonicalization report schema")
+    if report.get("component") != component_name:
+        raise ValueError("canonicalization component does not match review component")
+    if report.get("attempt") != attempt:
+        raise ValueError("canonicalization attempt does not match review attempt")
+    if report.get("status") != "pass":
+        raise ValueError("canonicalization report did not pass")
+    if report.get("raw", {}).get("sha256") != sha256(raw_path):
+        raise ValueError("canonicalization raw SHA does not match review raw")
+    if report.get("canonical", {}).get("sha256") != sha256(canonical_path):
+        raise ValueError("canonicalization canonical SHA does not match review input")
 
 
 def bbox_or_empty(image: Image.Image) -> tuple[int, int, int, int]:
@@ -476,9 +509,41 @@ def main() -> None:
         source_mode = opened.mode
         raw = opened.copy()
 
-    normalized, derivation = derive_review_rgba(raw)
-    normalized_path = output_dir / f"AB.{args.component.upper()}.KIT.V1.{args.attempt}.normalized-transparent-review.png"
-    normalized.save(normalized_path)
+    component_name = "AB.TRINKET.KIT.V1" if args.component == "trinket" else "AB.CONSUMABLE.KIT.V1"
+    canonical_provenance: dict[str, Any] | None = None
+    if args.canonical is not None:
+        if args.canonicalization_report is None:
+            raise ValueError("--canonical requires --canonicalization-report")
+        canonical_path = resolve(root, args.canonical).resolve()
+        canonical_report_path = resolve(root, args.canonicalization_report).resolve()
+        canonical_provenance = json.loads(canonical_report_path.read_text(encoding="utf-8"))
+        validate_canonical_provenance(
+            canonical_provenance,
+            component_name=component_name,
+            attempt=args.attempt,
+            raw_path=raw_path,
+            canonical_path=canonical_path,
+        )
+        with Image.open(canonical_path) as opened:
+            opened.load()
+            normalized_source_mode = opened.mode
+            normalized = opened.copy()
+        normalized_path = canonical_path
+        derivation = {
+            "method": "authorized deterministic chroma transport canonical",
+            "review_only": False,
+            "candidate_is_unaccepted": True,
+            "canonicalization_report": str(canonical_report_path),
+            "canonicalization_report_sha256": sha256(canonical_report_path),
+            "source_mode": normalized_source_mode,
+            "source_size": list(normalized.size),
+        }
+    else:
+        if args.canonicalization_report is not None:
+            raise ValueError("--canonicalization-report requires --canonical")
+        normalized, derivation = derive_review_rgba(raw)
+        normalized_path = output_dir / f"AB.{args.component.upper()}.KIT.V1.{args.attempt}.normalized-transparent-review.png"
+        normalized.save(normalized_path)
     metrics, sprites = cell_metrics(normalized)
 
     original = {
@@ -494,14 +559,14 @@ def main() -> None:
         simulation.draw_rack, simulation.draw_grouped_rack, simulation.draw_popup = consumable_drawers(sprites)
     try:
         review_spec = copy.deepcopy(spec)
-        name = "AB.TRINKET.KIT.V1" if args.component == "trinket" else "AB.CONSUMABLE.KIT.V1"
+        name = component_name
         review_spec["scene_annotations"] = {
             "title": f"{name} · {args.attempt} 正式候选真实排版",
             "subtitle": "只有当前 Kit 的静态基底来自候选；图标、冷却、Queue、数量与文字仍是 provider 动态层",
             "note": "100% 目标设备物理像素 · review-only · 非 source/runtime",
             "rules_title": "当前候选审查",
             "rules": [
-                "原始 provider canvas、mode 与 Alpha 单独硬审查",
+                "原始 provider raw 与本地 canonical provenance 分开审查",
                 "四个 cell 必须各自完整且有至少 80 px 透明安全区",
                 "所有真实 Button hit box 与 provider 动态层保持不变",
                 "支持布局使用同一候选 cell，不从模拟像素取材",
@@ -522,11 +587,14 @@ def main() -> None:
     render_cell_board(normalized, metrics, cell_board_path)
 
     display = json.loads(display_template.read_text(encoding="utf-8"))
-    component_name = "AB.TRINKET.KIT.V1" if args.component == "trinket" else "AB.CONSUMABLE.KIT.V1"
     display["component"] = f"{component_name}/production-candidate"
     display["evidence"]["scene_simulation"] = str(scene_path)
     display["evidence"]["state_simulation"] = str(board_path)
-    display["evidence"]["atlas_role"] = "review-only four-cell candidate sampling; not source or runtime"
+    display["evidence"]["atlas_role"] = (
+        "exact authorized canonical candidate sampling; unaccepted and not source or runtime"
+        if canonical_provenance is not None
+        else "review-only failure derivation; not source or runtime"
+    )
     display["atlas"] = {
         "size": [1024, 1024],
         "visible_bbox": list(bbox_or_empty(normalized)),
@@ -552,15 +620,30 @@ def main() -> None:
     raw_alpha_extrema = raw_rgba.getchannel("A").getextrema()
     source_has_alpha = "A" in raw.getbands()
     raw_transparent = source_has_alpha and raw_alpha_extrema[0] == 0
-    checks = {
-        "raw_exact_1024_canvas": raw.size == (1024, 1024),
-        "raw_rgba_mode": source_mode == "RGBA",
-        "raw_has_true_transparency": raw_transparent,
+    normalized_rgba = normalized.convert("RGBA")
+    normalized_alpha_extrema = normalized_rgba.getchannel("A").getextrema()
+    shared_checks = {
         "four_cells_nonempty": all(item["nonempty"] for item in metrics.values()),
         "four_cells_minimum_80px_margin": all(item["minimum_margin"] >= 80 for item in metrics.values()),
         "no_cell_touches_edge": all(not item["touches_edge"] for item in metrics.values()),
-        "visible_green_spill_zero": all(value == 0 for value in visible_green_spill(raw_rgba).values()),
+        "visible_green_spill_zero": all(value == 0 for value in visible_green_spill(normalized_rgba).values()),
+        "transparent_rgb_zero": transparent_rgb_nonzero(normalized_rgba) == 0,
     }
+    if canonical_provenance is not None:
+        checks = {
+            "canonical_exact_1024_canvas": normalized.size == (1024, 1024),
+            "canonical_rgba_mode": normalized.mode == "RGBA",
+            "canonical_has_true_transparency": normalized_alpha_extrema[0] == 0 and normalized_alpha_extrema[1] > 0,
+            "canonical_provenance_pass": canonical_provenance.get("status") == "pass",
+            **shared_checks,
+        }
+    else:
+        checks = {
+            "raw_exact_1024_canvas": raw.size == (1024, 1024),
+            "raw_rgba_mode": source_mode == "RGBA",
+            "raw_has_true_transparency": raw_transparent,
+            **shared_checks,
+        }
     center_quiet = {}
     for identifier in ("A", "B", "C"):
         crop = normalized.crop(CELL_BOXES[identifier]).crop((176, 176, 336, 336)).convert("RGB")
@@ -575,6 +658,7 @@ def main() -> None:
         "attempt": args.attempt,
         "candidate_is_source": False,
         "candidate_is_runtime": False,
+        "review_subject": "canonical" if canonical_provenance is not None else "legacy-review-derivation",
         "raw": {
             "path": str(raw_path),
             "sha256": sha256(raw_path),
@@ -584,10 +668,25 @@ def main() -> None:
             "alpha_extrema_after_rgba_conversion": list(raw_alpha_extrema),
             "visible_green_spill": visible_green_spill(raw_rgba),
         },
+        "canonicalization_provenance": (
+            {
+                "schema": canonical_provenance.get("schema"),
+                "status": canonical_provenance.get("status"),
+                "raw_sha256": canonical_provenance.get("raw", {}).get("sha256"),
+                "canonical_sha256": canonical_provenance.get("canonical", {}).get("sha256"),
+            }
+            if canonical_provenance is not None
+            else None
+        ),
         "review_derivation": derivation,
         "normalized_review": {
             "path": str(normalized_path),
             "sha256": sha256(normalized_path),
+            "mode": normalized.mode,
+            "size": list(normalized.size),
+            "alpha_extrema": list(normalized_alpha_extrema),
+            "transparent_rgb_nonzero_pixels": transparent_rgb_nonzero(normalized_rgba),
+            "visible_green_spill": visible_green_spill(normalized_rgba),
             "visible_bbox": list(bbox_or_empty(normalized)),
             "cells": metrics,
             "center_quiet_metrics": center_quiet,
