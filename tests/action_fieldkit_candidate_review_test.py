@@ -84,6 +84,22 @@ class FieldKitCandidateReviewTest(unittest.TestCase):
         self.assertEqual(keyed.getpixel((250, 250)), (0, 255, 0, 255))
         self.assertGreater(report["edge_connected_pixels"], 0)
 
+    def test_chroma_transport_reports_raw_boundary_contact(self) -> None:
+        cell = Image.new("RGB", (512, 512), (0, 255, 0))
+        draw = ImageDraw.Draw(cell)
+        draw.rectangle((400, 180, 511, 330), fill=(82, 51, 30))
+        _, report = canonicalize.edge_connected_chroma_key(cell)
+        self.assertTrue(report["touches_cell_boundary"])
+        self.assertEqual(report["keyed_margins_ltrb"][2], 0)
+
+    def test_chroma_transport_reports_multiple_significant_objects(self) -> None:
+        cell = Image.new("RGB", (512, 512), (0, 255, 0))
+        draw = ImageDraw.Draw(cell)
+        draw.rectangle((90, 160, 220, 330), fill=(82, 51, 30))
+        draw.rectangle((300, 190, 410, 300), fill=(96, 61, 34))
+        _, report = canonicalize.edge_connected_chroma_key(cell)
+        self.assertEqual(report["components"]["significant_count"], 2)
+
     def test_canonical_review_requires_matching_provenance(self) -> None:
         raw_path = ROOT / "tests" / "__missing_raw_for_sha__.png"
         canonical_path = ROOT / "tests" / "__missing_canonical_for_sha__.png"

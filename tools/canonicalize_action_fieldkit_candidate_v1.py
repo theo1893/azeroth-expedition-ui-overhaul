@@ -126,7 +126,7 @@ def edge_connected_chroma_key(
     greenish = bytearray(len(rgb))
     for index, (red, green, blue) in enumerate(rgb):
         dominance = green - max(red, blue)
-        if green >= 82 and dominance >= 20 and green - blue >= 10:
+        if dominance >= 20 and green - blue >= 10:
             greenish[index] = 1
     connected = boundary_connected(greenish, cell.width, cell.height)
     connected_count = sum(connected)
@@ -181,6 +181,13 @@ def edge_connected_chroma_key(
     if bbox is None:
         raise ValueError("cell contains no visible object after chroma key")
 
+    components = significant_components(keyed)
+    keyed_margins = [
+        bbox[0],
+        bbox[1],
+        cell.width - bbox[2],
+        cell.height - bbox[3],
+    ]
     return keyed, {
         "edge_connected_pixels": connected_count,
         "edge_connected_fraction": connected_count / (cell.width * cell.height),
@@ -191,6 +198,52 @@ def edge_connected_chroma_key(
         "partial_alpha_pixels": partial_alpha,
         "opaque_pixels": opaque,
         "keyed_bbox_exclusive": list(bbox),
+        "keyed_margins_ltrb": keyed_margins,
+        "touches_cell_boundary": any(value == 0 for value in keyed_margins),
+        "components": components,
+    }
+
+
+def significant_components(
+    image: Image.Image, *, alpha_threshold: int = 16, minimum_pixels: int = 32
+) -> dict[str, Any]:
+    alpha = image.convert("RGBA").getchannel("A").tobytes()
+    width, height = image.size
+    visible = bytearray(1 if value >= alpha_threshold else 0 for value in alpha)
+    visited = bytearray(width * height)
+    sizes: list[int] = []
+    for start in range(width * height):
+        if not visible[start] or visited[start]:
+            continue
+        visited[start] = 1
+        queue: deque[int] = deque((start,))
+        size = 0
+        while queue:
+            index = queue.popleft()
+            size += 1
+            x = index % width
+            candidates = []
+            if x > 0:
+                candidates.append(index - 1)
+            if x + 1 < width:
+                candidates.append(index + 1)
+            if index >= width:
+                candidates.append(index - width)
+            if index + width < width * height:
+                candidates.append(index + width)
+            for neighbour in candidates:
+                if visible[neighbour] and not visited[neighbour]:
+                    visited[neighbour] = 1
+                    queue.append(neighbour)
+        sizes.append(size)
+    sizes.sort(reverse=True)
+    significant = [size for size in sizes if size >= minimum_pixels]
+    return {
+        "alpha_threshold": alpha_threshold,
+        "minimum_pixels": minimum_pixels,
+        "all_count": len(sizes),
+        "significant_count": len(significant),
+        "significant_sizes": significant,
     }
 
 
@@ -305,6 +358,14 @@ def canonicalize(raw: Image.Image) -> tuple[Image.Image, dict[str, Any]]:
         "canonical_has_transparency": alpha_min == 0 and alpha_max > 0,
         "four_cells_nonempty": all(
             report["fit"]["canonical_bbox_exclusive"] for report in cell_reports.values()
+        ),
+        "four_cells_one_significant_component": all(
+            report["chroma_key"]["components"]["significant_count"] == 1
+            for report in cell_reports.values()
+        ),
+        "raw_objects_do_not_touch_cell_boundaries": all(
+            not report["chroma_key"]["touches_cell_boundary"]
+            for report in cell_reports.values()
         ),
         "four_cells_minimum_80px_margin": all(
             report["fit"]["minimum_margin"] >= 80 for report in cell_reports.values()
