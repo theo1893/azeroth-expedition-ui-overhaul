@@ -13,7 +13,7 @@ ActionBars.railTexturePath = addon.media.root .. "ActionBars\\ActionRailV1"
 ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
-ActionBars.fieldKitRuntimeContract = "1.6"
+ActionBars.fieldKitRuntimeContract = "1.7"
 ActionBars.focusLayoutRuntimeContract = "1.6"
 ActionBars.focusLayoutVersion = 7
 ActionBars.focusLayoutBackupVersion = 1
@@ -1809,6 +1809,53 @@ local function FieldKitBound()
   return database and database.fieldKitBound == true
 end
 
+function ActionBars:UpdateFieldKitUnlockMover()
+  local unlock = pfUI and pfUI.unlock
+  local top = GetTopActionBarFrame()
+  if not unlock or not top or not top.drag or
+    type(unlock.IsShown) ~= "function" or not unlock:IsShown()
+  then
+    return false
+  end
+
+  if FieldKitEnabled() and FieldKitBound() then
+    top.drag:Hide()
+    return true
+  end
+
+  top.drag:Show()
+  return false
+end
+
+function ActionBars:InstallFieldKitUnlockHooks()
+  local unlock = pfUI and pfUI.unlock
+  if self.fieldKitUnlockHooked or not unlock or
+    type(unlock.GetScript) ~= "function" or
+    type(unlock.SetScript) ~= "function"
+  then
+    return false
+  end
+
+  local originalShow = unlock:GetScript("OnShow")
+  local originalHide = unlock:GetScript("OnHide")
+  unlock:SetScript("OnShow", function()
+    if originalShow then
+      originalShow()
+    end
+    ActionBars:UpdateFieldKitUnlockMover()
+  end)
+  unlock:SetScript("OnHide", function()
+    if originalHide then
+      originalHide()
+    end
+    if FieldKitEnabled() and FieldKitBound() then
+      ActionBars:ApplyActionBarStackPosition(true)
+    end
+  end)
+  self.fieldKitUnlockHooked = true
+  return true
+end
+
 local function GetActionBarStackOverlap()
   local bars = pfUI_config and pfUI_config.bars
   local configured = bars and bars.bar1 and bars.bar1.spacing
@@ -1824,18 +1871,10 @@ function ActionBars:ApplyActionBarStackPosition(enabled)
     if self.actionBarStackApplied then
       RestoreFrameAnchors(top, self.actionBarTopFreeAnchors)
     end
-    if self.actionBarTopMovableCaptured and pfUI and pfUI.movables and
-      self.actionBarTopMovableName
-    then
-      pfUI.movables[self.actionBarTopMovableName] =
-        self.actionBarTopMovableEntry
-    end
     self.actionBarStackApplied = false
     self.actionBarTopFreeAnchors = nil
-    self.actionBarTopMovableCaptured = false
-    self.actionBarTopMovableName = nil
-    self.actionBarTopMovableEntry = nil
     self.actionBarStackStatus = enabled and "free" or "disabled"
+    self:UpdateFieldKitUnlockMover()
     return false
   end
 
@@ -1847,17 +1886,6 @@ function ActionBars:ApplyActionBarStackPosition(enabled)
   if not self.actionBarStackApplied then
     self.actionBarTopFreeAnchors = CaptureFrameAnchors(top)
   end
-  if not self.actionBarTopMovableCaptured and pfUI and pfUI.movables and
-    top.GetName
-  then
-    self.actionBarTopMovableName = top:GetName()
-    self.actionBarTopMovableEntry =
-      pfUI.movables[self.actionBarTopMovableName]
-    self.actionBarTopMovableCaptured = true
-  end
-  if self.actionBarTopMovableCaptured and pfUI and pfUI.movables then
-    pfUI.movables[self.actionBarTopMovableName] = nil
-  end
 
   top:ClearAllPoints()
   top:SetPoint(
@@ -1868,6 +1896,7 @@ function ActionBars:ApplyActionBarStackPosition(enabled)
   end
   self.actionBarStackApplied = true
   self.actionBarStackStatus = "12x2-bound"
+  self:UpdateFieldKitUnlockMover()
   return true
 end
 
@@ -2937,12 +2966,30 @@ function ActionBars:InstallAutoBarPopupIntentGuard()
 end
 
 function ActionBars:InstallFieldKitHooks()
+  self:InstallFieldKitUnlockHooks()
+
   if AutoBar then
     self:InstallAutoBarPopupIntentGuard()
   end
 
   if type(hooksecurefunc) ~= "function" then
     return
+  end
+
+  if not self.actionBarConfigHooked and pfUI and pfUI.bars and
+    type(pfUI.bars.UpdateConfig) == "function"
+  then
+    self.actionBarConfigHooked = true
+    hooksecurefunc(pfUI.bars, "UpdateConfig", function()
+      local ok = pcall(
+        ActionBars.ApplyActionBarStackPosition,
+        ActionBars,
+        FieldKitEnabled()
+      )
+      if not ok then
+        ActionBars.actionBarStackStatus = "error"
+      end
+    end)
   end
 
   if AutoBar then

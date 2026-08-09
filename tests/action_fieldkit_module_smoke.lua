@@ -399,8 +399,26 @@ pfUI.bars[6] = NewFrame("pfActionBarTop", nil, {
   height = 43,
   points = { { "BOTTOM", nil, "BOTTOM", 0, 43 } },
 })
+function pfUI.bars:UpdateConfig()
+  self[6]:ClearAllPoints()
+  self[6]:SetPoint("BOTTOM", UIParent, "BOTTOM", 321, 654)
+end
 pfUI.movables.pfActionBarMain = pfUI.bars[1]
 pfUI.movables.pfActionBarTop = pfUI.bars[6]
+pfUI.unlock = NewFrame("pfUnlock", UIParent, { shown = false })
+pfUI.unlock:SetScript("OnShow", function()
+  for _, frame in pairs(pfUI.movables) do
+    frame.drag = frame.drag or NewFrame(frame:GetName() .. "Drag", UIParent)
+    frame.drag:Show()
+  end
+  pfUI.bars:UpdateConfig()
+end)
+pfUI.unlock:SetScript("OnHide", function()
+  for _, frame in pairs(pfUI.movables) do
+    assert(frame.drag, frame:GetName() .. " missing unlock drag")
+    frame.drag:Hide()
+  end
+end)
 pfUI_config = {
   bars = { bar1 = { spacing = "1" } },
   position = {},
@@ -423,12 +441,30 @@ local module = assert(AzerothExpeditionUI.modules.ActionBars)
 module:Initialize()
 module:Apply()
 
-assert(module.fieldKitRuntimeContract == "1.6")
+assert(module.fieldKitRuntimeContract == "1.7")
 assert(module.actionBarStackStatus == "12x2-bound")
 assert(pfUI.bars[6].decorativePoints[1][1] == "BOTTOM")
 assert(pfUI.bars[6].decorativePoints[1][2] == pfUI.bars[1])
 assert(pfUI.bars[6].decorativePoints[1][3] == "TOP")
-assert(pfUI.movables.pfActionBarTop == nil)
+assert(pfUI.movables.pfActionBarTop == pfUI.bars[6])
+pfUI.unlock.shown = true
+pfUI.unlock:GetScript("OnShow")()
+assert(pfUI.bars[1].drag and pfUI.bars[1].drag.shown == true)
+assert(pfUI.bars[6].drag and pfUI.bars[6].drag.shown == false)
+assert(pfUI.bars[6].decorativePoints[1][2] == pfUI.bars[1])
+local unlockUndocked = module:SetFieldKitDocking(false)
+assert(unlockUndocked == true)
+assert(pfUI.bars[6].drag.shown == true)
+local unlockRedocked = module:SetFieldKitDocking(true)
+assert(unlockRedocked == true)
+assert(pfUI.bars[6].drag.shown == false)
+pfUI.unlock.shown = false
+local unlockHideOk, unlockHideError = pcall(
+  pfUI.unlock:GetScript("OnHide")
+)
+assert(unlockHideOk, unlockHideError)
+assert(pfUI.movables.pfActionBarTop == pfUI.bars[6])
+assert(module.actionBarStackStatus == "12x2-bound")
 assert(module.autoBarFieldKitStatus == "available")
 assert(module.autoBarMainButtons == 24)
 assert(module.autoBarPopupButtons == 4)
@@ -501,7 +537,7 @@ end
 assert(TrinketMenuOptions == optionsSnapshot)
 assert(TrinketMenuPerOptions == perOptionsSnapshot)
 assert(TrinketMenuQueue.Enabled == queueSnapshot)
-assert(installedHooks == 7)
+assert(installedHooks == 8)
 
 local hookedButtonsUpdate = AutoBar.ButtonsUpdate
 local hookedPopupUpdate = AutoBar.UpdatePopupButtons
@@ -511,7 +547,7 @@ local hookedAutoBarDragStop = AutoBar.DragStop
 local hookedTrinketMouseUp = TrinketMenu.MainFrame_OnMouseUp
 local wrappedSetPopupButton = AutoBar.SetPopupButton
 module:Apply()
-assert(installedHooks == 7)
+assert(installedHooks == 8)
 assert(AutoBar.ButtonsUpdate == hookedButtonsUpdate)
 assert(AutoBar.UpdatePopupButtons == hookedPopupUpdate)
 assert(TrinketMenu.OrientWindows == hookedOrient)
@@ -706,7 +742,7 @@ assert(redocked == true)
 assert(string.find(redockMessage, "consumables left", 1, true))
 assert(AzerothExpeditionUI.db.actionbars.fieldKitBound == true)
 assert(module.actionBarStackStatus == "12x2-bound")
-assert(pfUI.movables.pfActionBarTop == nil)
+assert(pfUI.movables.pfActionBarTop == pfUI.bars[6])
 assert(module.consumableDockStatus == "left")
 assert(module.trinketDockStatus == "right")
 
@@ -805,7 +841,7 @@ module:Apply()
 assert(module.autoBarFieldKitStatus == "missing")
 assert(module.trinketFieldKitStatus == "missing")
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "fieldkit%-contract=1%.6"))
+assert(string.find(status, "fieldkit%-contract=1%.7"))
 assert(string.find(status, "fieldkit%-binding=bound"))
 assert(string.find(status, "autobar=missing"))
 assert(string.find(status, "autobar%-popup%-hover=missing"))

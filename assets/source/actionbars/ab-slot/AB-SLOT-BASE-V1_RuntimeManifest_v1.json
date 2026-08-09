@@ -79,7 +79,7 @@
   },
   "adapter": {
     "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
-    "sha256": "30af188ec203ef3227e55864a240adcacbce3c31db3adad0da77baa9e65bb38a",
+    "sha256": "b55e3d31ff38a84b0b9098e846583dae5793441adf10afc6361bc5d1275832cf",
     "provider": "pfUI.bars and pfActionBar<BarName>Button1..12.backdrop",
     "logical_bars": [
       1,

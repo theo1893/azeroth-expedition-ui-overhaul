@@ -7,7 +7,7 @@
   `AB.TRINKET.MENU`、`AB.CONSUMABLE.RACK`、`AB.CONSUMABLE.POCKET`、
   `AB.CONSUMABLE.POPUP`、`AB.CONSUMABLE.GROUP`
 - 模拟版本：`AB-FIELDKIT-SIM-V3`
-- 当前操作：`strong Combat Deck binding / game retest`
+- 当前操作：`pfUI unlock mover lifecycle repair / game retest`
 - 子状态：`runtime-exported / pending-retest`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
@@ -20,7 +20,10 @@
   关闭及调度 API 缺失都立即回退；静态回归、display-region 与 fresh-checkout package
   必须重新通过。v1.5 在不改该 guard 的前提下，把 Bar 6、左侧 AutoBar `4×6`
   与右侧 TrinketMenu 双槽直接相对锚到 Bar 1，形成唯一移动根；`unbind` 才恢复
-  provider 自由位置，`home` 恢复中心中下基线。P4→v1.5 没有调用 ImageGen
+  provider 自由位置，`home` 恢复中心中下基线。bridge-v1.6 加入 ArchiTotem；
+  bridge-v1.7 保持 Bar 6 movable 登记稳定，在 pfUI 创建 drag 后隐藏绑定态独立
+  mover，并在 actionbar 配置刷新后恢复相对锚，修复 `unlock.lua:527`。P4→当前
+  没有调用 ImageGen
 - 模拟用户结论：`AB-FIELDKIT-SIM-V1 consumable direction revision-requested
   2026-08-08`；用户原文：“消耗品5*2不够用. 并且能否按照类型进行分组?”；
   `AB-FIELDKIT-SIM-V2 confirmed 2026-08-09`；用户原文：“接受
@@ -971,6 +974,15 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
   下一张实机截图判定失败。当前 AEUI `0.8.12`／`focus-layout-contract=1.6` 改用
   固定游戏原生坐标；Field Kit atlas、bridge-v1.6 几何、popup guard、Bar 1 绑定
   和 provider 行为继续不变，ImageGen `0/0`。
+- 用户随后报告开关 pfUI unlock 时
+  `modules/unlock.lua:527: attempt to index field 'drag' (a nil value)`。精确根因是绑定态
+  删除了 Bar 6 的 `pfUI.movables` 条目，而 unlock OnShow 后的 actionbar
+  `UpdateConfig()` 会重新登记 Bar 6，导致 OnHide 遇到没有在 OnShow 创建的 drag。
+  AEUI `0.8.13`／`fieldkit-contract=1.7` 不再增删该登记：pfUI 先创建 drag，绑定态
+  只隐藏 Bar 6 mover；`unbind` 在解锁界面内重新显示，`bind` 再隐藏；
+  `pfUI.bars:UpdateConfig()` 与 unlock OnHide 后均一次性恢复 Bar 6 → Bar 1 锚。
+  Lua smoke 覆盖完整 OnShow／UpdateConfig／bind／unbind／OnHide 序列并 pass；无
+  `OnUpdate`，atlas／TGA／provider 行为／focus runtime-v1.6 均不变。
 
 ## 审查记录
 
@@ -1079,22 +1091,25 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
 | `AB.FIELDKIT.V1 runtime-v1.4` | source／TGA／可见布局不变；exact 外置态捕获 AutoBar 原 `SetPopupButton`，不同主格仅在持续停留 `0.30s` 后通过原方法提交；跨格进入通道／候选保持当前抽屉，NATIVE／非 exact／关闭态立即委托 | 用户明确否定 v1.3；跨格保持／停留切换／三类立即回退 smoke，display 与 package 重新通过，`pending-retest / P5` | `/reload` 从内侧格横穿其他主格进入左右抽屉，确认不关闭／不换类；在另一主格停留约 `0.30s` 应切换，完全离开联合区域后正常关闭 |
 | `AB.FIELDKIT.V1 runtime-v1.5` | source／TGA／v1.4 popup guard 不变；`fieldKitBound` 把 Bar 6、左 `4×6` 卷袋和右双槽直接锚到 Bar 1；提供 bind／unbind／home，绑定态侧栏误拖松手回位；当前角色写入中心中下与水平双槽 | 用户明确要求三部分强绑定并按最初构图重排；smoke、display `9/9＋10/10`、package pass，`pending-retest / P5` | 启动或 `/reload` 验证左卷袋—中央 `12×2`—右双槽、唯一主栏 mover、显式释放／恢复、外向候选及全部 provider 行为 |
 | `AB.FIELDKIT bridge-v1.6` | runtime-v1.5 source／TGA／AutoBar／TrinketMenu 合同不变；可选 ArchiTotem 根加入 Bar 1 唯一 mover，绑定态在主栏下方，拖动回位，`unbind` 恢复；显式 focus preset 请求向下，普通 refresh 只读 | V4 几何被否决但 bridge 保留；focus runtime-v1.4／v1.5 坐标传输均已实机失败，bridge 本身未变；AEUI `0.8.12`／focus runtime-v1.6 只改游戏原生坐标，`pending-game-validation / P5` | 实机验证四元素施放、右键、Air 七层、Recall、拖动／锁定、向下 popup、bind／unbind 及非萨满／缺失 fail-open |
+| `AB.FIELDKIT bridge-v1.7` | v1.6 几何、ArchiTotem、popup guard、source／TGA 全不变；Bar 6 始终保留 pfUI movable 登记，unlock 创建 drag 后绑定态仅隐藏独立 mover，actionbar 配置刷新后重施 `12×2` 锚 | 用户实机报告 `unlock.lua:527 drag=nil`；精确生命周期 smoke 与全部静态门禁 pass，AEUI `0.8.13`，`pending-retest / P5` | `/reload` 开关 pfUI unlock，确认无错误、只有 Bar 1 mover、Bar 6 不跳位；再继续原 Field Kit／focus 全清单 |
 
 ## 下一门禁
 
 1. 两套 accepted source 与 runtime TGA 像素身份不变；视觉 source／runtime
    manifest 保持 `runtime-v1.5`，共享 adapter 已更新到 bridge v1.6／P5。fresh-checkout package
    已通过，目标设备只需拉取并安装 `addon/`，不得再生成、导出或打补丁。
-2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.12`、
-   `fieldkit-contract=1.6`、`fieldkit-binding=bound` 与 `actionbar-stack=12x2-bound`。
+2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.13`、
+   `fieldkit-contract=1.7`、`fieldkit-binding=bound` 与 `actionbar-stack=12x2-bound`。
    同时确认 `focus-layout-contract=1.6`、`focus-layout-anchor=ui-parent`、
    `focus-layout-coordinate-space=game-native-v1`、
    `focus-layout-unit-scale=0.75`、`focus-layout-readout-scale=0.82`、
    `focus-ui-scale-tier=8`、`architotem-dock=bottom` 与
    `architotem-direction=down`；左卷袋与右双槽维持当前清晰尺寸，
    TrinketMenu 双槽不会因旧 `0.904371` 再次被二次缩小，玩家框不再覆盖卷袋。
-   先确认左 `4×6` 卷袋—中央 `12×2` 动作条—右水平双槽在中心中下部共用一个
-   Bar 1 mover；拖动两侧 provider 松手应回位，`unbind` 后才独立，`bind` 恢复，
+   先开关一次 pfUI unlock，确认不再出现 `unlock.lua:527`，绑定态只显示 Bar 1
+   mover，Bar 6 在解锁配置刷新前后均紧贴主栏；再确认左 `4×6` 卷袋—中央
+   `12×2` 动作条—右水平双槽在中心中下部共用一个 Bar 1 mover；拖动两侧
+   provider 松手应回位，`unbind` 后才独立，`bind` 恢复，
    `home` 重置最初位置；若需撤销 Combat Focus，使用 `/aeui focuslayout restore`
    后 `/reload`。再确认
    AutoBar 主格／popup 的 Item Icon 与 Count、TrinketMenu 双槽／候选的 Icon、

@@ -8,8 +8,8 @@
 - 最高阶段：`P5`
 - 操作：`integrate`
 - ImageGen：`0/0`
-- runtime：AEUI `0.8.12`／`focus-layout-contract=1.6`／
-  `fieldkit-contract=1.6`。exact V5 可见几何仍按用户“确认接入”冻结；v1.4 与 v1.5
+- runtime：AEUI `0.8.13`／`focus-layout-contract=1.6`／
+  `fieldkit-contract=1.7`。exact V5 可见几何仍按用户“确认接入”冻结；v1.4 与 v1.5
   坐标传输均已由实机判定失败。v1.6 直接写 Turtle WoW 原生 `UIParent` SetPoint
   坐标，不读取屏幕尺寸、不乘 effective scale、不探针、不回读；单位框／双方施法
   仍为 `0.75`，Swing／姿态／DoiteDPS 仍为 `0.82`。普通 refresh 不维护这些几何；
@@ -244,7 +244,8 @@
 `focus-layout-contract=1.6`、`focus-layout-anchor=ui-parent`、
 `focus-layout-coordinate-space=game-native-v1`、
 `focus-layout-unit-scale=0.75`、`focus-layout-readout-scale=0.82`、
-`fieldkit-contract=1.6` 与 `fieldkit-binding=bound`。随后验证三项原始失败均消失：
+`fieldkit-contract=1.7` 与 `fieldkit-binding=bound`。先开关一次 pfUI unlock，确认无
+`unlock.lua:527`、绑定态只有 Bar 1 mover 且 Bar 6 不跳位；随后验证三项原始失败均消失：
 攻击计时与双方施法不重叠；DoiteDPS → Swing → Aura → 单位框 → 施法 → 姿态形成
 紧凑连续层；Player／Target 不再挡住人物主体。再覆盖满血／掉血、有／无目标、
 双方施法、近战双持、远程计时、Aura 超过 `6`、DoiteDPS 锁定／解锁，以及
