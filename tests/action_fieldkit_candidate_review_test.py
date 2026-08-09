@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -111,6 +112,36 @@ class FieldKitCandidateReviewTest(unittest.TestCase):
                 raw_path=raw_path,
                 canonical_path=canonical_path,
             )
+
+    def test_consumable_transport_prompt_is_self_contained(self) -> None:
+        work = (
+            ROOT
+            / "docs"
+            / "modules"
+            / "actionbars"
+            / "work"
+            / "ACTION.BARS.FIELDKIT.V1.md"
+        ).read_text(encoding="utf-8")
+        match = re.search(
+            r"(?s)## 传输修订执行正文 B\.0.*?```text\n(?P<body>.*?)\n```",
+            work,
+        )
+        self.assertIsNotNone(match)
+        body = match.group("body")
+        for required in (
+            "one brand-new square RGB transport atlas",
+            "RGB #00FF00",
+            "Return RGB, not transparency",
+            "single authorized Image 1",
+            "central 68.75 percent",
+            "exactly one significant connected object",
+            "twenty-four A pockets as four columns by six rows",
+            "one to twelve real items",
+            "The visual adapter must not enable AutoBar",
+            "no dynamic provider content",
+        ):
+            self.assertIn(required, body)
+        self.assertNotIn("production-ready transparent RGBA UI asset atlas", body)
 
 
 if __name__ == "__main__":

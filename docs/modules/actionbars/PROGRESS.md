@@ -36,16 +36,16 @@
   `AB.CONSUMABLE.KIT.V1` 最终正文；模拟像素未被接受。用户于 `2026-08-09`
   分别授权两个正文、各自最多五次实际生成／修复，并分别授权 Character V3
   作为各自唯一的 Image 1 外部上传；当前仍为 `P3`。
-  Trinket attempts 1–3 已计入 `3/5`。attempt 3 raw `0c6f0bc7…8048` 经确定性
-  传输得到 exact canonical `6a91a2b5…5e13`；可见绿色、透明 RGB 与四格最终
-  `80 px` margin 均 pass，但 raw 的 C 物件越过中线，D cell 出现 C 边条和连接扣
-  两个显著组件，scope fatal fail，未进入 reviewer／display。用户此前于
+  Trinket attempt 4 raw `2e4efc1a…19e3a` 经确定性传输得到 exact canonical
+  `82dd2260…c012`；四格各一显著组件、不触原始 cell 边界，visible green、透明
+  RGB 和最终 `80 px` margin 全部 pass。语义、美术、provider 所有权及真实排版
+  `16/16`／violations `0` 也全部通过，现为 `candidate-reviewed / pending-user-
+  acceptance / 4/5`，按 pass 即停且不执行 attempt 5。用户此前于
   `2026-08-09` 明确授权两个 Kit 采用纯 `#00FF00`
   RGB raw→本地确定性 canonical `1024² RGBA` 的传输修订，允许整图归一、逐
   cell 完整 bbox 等比缩放居中、边缘连通色键转 straight Alpha 与透明 RGB
-  清零；不重绘、不新增输入图、预算不重置。Trinket 完整 `r3` 已准备，账本为
-  `3/5`；Consumable 保持 `0/5`，其 transport-amended 完整执行体须在 Trinket
-  循环结束后、attempt 1 前写入并提交。
+  清零；不重绘、不新增输入图、预算不重置。Consumable 保持 `0/5`，完整
+  transport-amended 自包含执行体已准备，须在 attempt 1 前提交。
 - `AB.SLOT.BASE.V1` 有界生产循环已在 `5/5` 停止；用户于 `2026-08-08` 明确
   “接受 AB.SLOT.BASE.V1 第5稿”，随后以“进行下一步”授权 P4→P5。exact source
   RGBA `6d4a4d16…7dc0` 已按冻结 `[200,200,824,824)` crop 确定性导出为
@@ -161,10 +161,10 @@
 | `AB.SLOT.STATE` | `P2 / scoped` | highlight／active／equipped／icon tint／cooldown／按键动画的真实覆盖顺序已冻结 | 基底 P6 已验证；如需独立换肤再写悬停／激活覆盖合同，不生产假 disabled cell |
 | `AB.ENDCAP.GRYPHON` | `P2 / direction-locked` | pfUI 左右端帽对象、64 UI 默认能力；用户确认的 V3 preset 默认关闭 | `AB.SLOT／RAIL` 后另行授权可选端帽正文 |
 | `AB.STANCE／PET` | `P1` | Bar `11／12` 与 provider 状态已审计 | 职业最少／最多数量和自动施法实机排版 |
-| `AB.CONSUMABLE.RACK／POCKET／POPUP` | `P3 / prompt-authorized / transport-amended / 0/5` | [work](work/ACTION.BARS.FIELDKIT.V1.md)；用户已确认 V2 的 AutoBar `24` 主 Button、`4×6` 满容量、主体 `165×243 UI`、`1–12` popup 与左侧共同底边；当前 provider disabled；视觉正文、独立 `5` 次预算、Character V3 Image 1 上传与纯绿 raw→canonical 修订均已授权 | Trinket 内部循环结束后写入并提交完整 transport-amended 自包含执行体，再执行 Consumable attempt 1；不启用 AutoBar |
+| `AB.CONSUMABLE.RACK／POCKET／POPUP` | `P3 / prepared-attempt-01 / transport-amended / 0/5` | [work](work/ACTION.BARS.FIELDKIT.V1.md)；用户已确认 V2 的 AutoBar `24` 主 Button、`4×6` 满容量、主体 `165×243 UI`、`1–12` popup 与左侧共同底边；当前 provider disabled；完整 RGB raw 自包含正文、独立 `5` 次预算、Character V3 Image 1 上传与纯绿 raw→canonical 修订均已授权 | 提交完整正文后执行 Consumable attempt 1；不启用 AutoBar |
 | `AB.CONSUMABLE.GROUP` | `P3 / prompt-authorized` | 用户已确认推荐 profile 的 `1–8／9–16／17–24` 对应应急／增益／工具；三枚标题皮签与两条分隔均不接收鼠标；签名失配自动退回无标签外壳；AutoBar 无原生 `FLASK` 类别，合剂只走 provider 原生的手动物品 ID | 与 Consumable Kit 共用已授权的独立有界循环；内部通过前不写 profile、不创建 runtime FontString |
-| `AB.TRINKET.DOCK` | `P3 / repair-prepared / 3/5` | [work](work/ACTION.BARS.FIELDKIT.V1.md)；attempt 3 raw `0c6f0bc7…8048`／canonical `6a91a2b5…5e13`；传输像素与最终 margin pass，但 C→D 跨 cell 污染 fatal fail。纯绿 raw→canonical 修订已授权，完整 `r3` 已准备 | 提交 attempt 3 记录、cell 隔离门禁与完整 `r3` 后执行 attempt 4；不改变 TrinketMenu SavedVariables |
-| `AB.TRINKET.MENU` | `P3 / repair-prepared / 3/5` | C 已恢复连续 matte center，但 raw 越过垂直中线并在 D cell 形成第二显著组件；candidate `0／1／8／30` 等 provider 几何合同不变 | attempt 4 的 raw 必须先通过每格单物件／不越界，再对 exact canonical 执行完整 checklist 与 display-region |
+| `AB.TRINKET.DOCK` | `P3 / candidate-reviewed / 4/5` | [work](work/ACTION.BARS.FIELDKIT.V1.md)；attempt 4 raw `2e4efc1a…19e3a`／canonical `82dd2260…c012`；Prompt、四格隔离、传输、美术与真实排版全 pass，未使用第 5 次预算 | 等待用户明确接受；此前不得晋级 source／runtime，不改变 TrinketMenu SavedVariables |
+| `AB.TRINKET.MENU` | `P3 / candidate-reviewed / 4/5` | C 为连续 filled matte center，D 为独立短连接扣；候选 `0／1／8／30`、自动五列、横竖及三十列等 `16/16 pass`、violations `0` | 与 Dock 共用 attempt 4 candidate；等待用户明确接受，不执行 attempt 5 |
 | `AB.FOCUS.CASTBAR` | `P2 / direction-locked` | 玩家／目标／Focus 真实对象与用户确认的 V3 双框下沿实例 | 以后独立决定只做一次性布局 preset 或另授权细 Rail 换肤 |
 | `AB.FOCUS.SWING` | `P2 / direction-locked` | 主手／副手／ranged 真对象、`200×12 UI` 与用户确认的中心双细轨 | 实机验证近战／远程复用；若换肤则另立合同 |
 | `AB.DOITEDPS.TIMELINE` | `P2 / direction-locked` | 已安装 provider 的 `318×46 UI` 根 Frame及用户确认的中心落位 | 以后只做 feature-detect 一次性位置 preset 或独立换肤合同 |
@@ -259,6 +259,15 @@
   非零 `0`、最终 margin 全部 `80 px`；但 raw-normalized C 触碰右中线，D 同时
   含 `14397／1814 px` 两个显著组件，故在首个 scope fatal 层停止，不生成
   reviewer／display。
+- Trinket attempt 4 raw：同一 production 根的
+  `attempt-04/raw/AB.TRINKET.KIT.V1.attempt-04.raw.png`（SHA
+  `2e4efc1a…19e3a`，`1254×1254 RGB`）；deterministic canonical
+  `attempt-04/canonical/AB.TRINKET.KIT.V1.attempt-04.canonical.png`（SHA
+  `82dd2260…c012`，exact `1024×1024 RGBA`）。四格各一显著组件、原始物件均不
+  触边，visible green `0`、透明 RGB 非零 `0`、最终 margin 全部 `80 px`。
+  review scene `6b59893d…53d5`、supported layouts `5b506d53…6da2`、cell board
+  `1cd43ebb…c9f`；display `16/16 pass`、violations `0`。完整 checklist 内部 pass，
+  现为 `candidate-reviewed / pending-user-acceptance / 4/5`，不执行 attempt 5。
 
 ## 下一门禁
 
@@ -269,12 +278,10 @@
 2. `AB.FIELDKIT.V1` 已由 `simulation-confirmed / P2` 进入 `prompt-authorized / P3`。用户于 `2026-08-09`
    明确接受 `AB-FIELDKIT-SIM-V2` 的八项文字化方向，不接受两张模拟的任何像素；
    可见方向发生实质变化时必须返回新模拟版本。
-3. `AB.TRINKET.KIT.V1` attempts 1–3 已失败并计入 `3/5`。两个 Kit 的纯
-   `#00FF00` raw→本地确定性 canonical `1024² RGBA` 传输修订已经用户明确
-   授权，预算不重置；完整 `r3` 与原始 cell 隔离门禁已准备。先提交该状态，再用
-   Character V3 唯一 Image 1 执行 Trinket attempt 4；通过即停，失败则只剩最后
-   `5/5`，禁止 attempt 6。任何通过候选只进入用户复审；Trinket 循环终止后才准备
-   Consumable transport body／attempt 1。
+3. `AB.TRINKET.KIT.V1` attempt 4 已在 `4/5` 内部全门禁通过，按 pass 即停且不执行
+   attempt 5；canonical 只进入用户复审，明确接受前不得晋级。完整
+   `AB.CONSUMABLE.KIT.V1.transport` 已在相同授权边界内准备；先提交该状态，再用
+   Character V3 唯一 Image 1 执行 Consumable attempt 1，独立从 `0/5` 计数。
 4. `AB.RAIL.V1` 已达到 `game-validated / P6`。长期证据为
    `assets/references/actionbars/p6/AB-RAIL-V1_TurtleWoW_P6_2026-08-09.png`
    （SHA `5e89c6e5…12942`）与同目录 P6 evidence JSON（SHA
