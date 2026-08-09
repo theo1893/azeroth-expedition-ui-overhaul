@@ -141,6 +141,10 @@
   `943d6fac246f0ebc98ebf478519da05f18c3e8e35c4279b785034a4c5548e5d0`。
 - 模拟像素为非权威本地中间件，不能切片、晋级或作为 ImageGen 输入。
 - `AB.RAIL.V1` specification：`tools/specs/action_rail_v1_simulation.json`
+- `AB.RAIL.V1` 正式候选统一由
+  `tools/review_action_rail_candidate_v1.py` 按冻结 `1024²` 画布、
+  `[160,160,864,864)` crop、`128／448／128` 九宫格和同一 8 场景生成 ignored
+  指标／真实排版证据；该工具不创建 source 或 runtime，也不修补候选语义。
 - `AB.RAIL.V1` 战斗场景：
   `generated/actionbars/AB.RAIL/AB.RAIL.V1/simulation/AB-RAIL-SIM-V1/AB.RAIL.V1.sim-v1.png`
   （SHA `123d1b4c…cde6`）
