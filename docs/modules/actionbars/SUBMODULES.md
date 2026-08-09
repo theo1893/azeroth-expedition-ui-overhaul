@@ -74,6 +74,17 @@ feature-detect `pfUI.bars[1..10][1..12]`，把单一 full-UV `ARTWORK` 子纹理
 backdrop 继续 fail-open。Bar `11／12` 明确排除；图标、文字、冷却、状态覆盖、
 Button 脚本、命中区、分页、拖放、位置、尺寸和 SavedVariables 仍完全归 pfUI。
 
+`AB.RAIL.V1` 的已接受 normal 态九宫格母版为
+[ActionRail_Master_v1.png](../../../assets/source/actionbars/ab-rail/ActionRail_Master_v1.png)，
+source manifest 为
+[AB-RAIL-V1_SourceManifest_v1.json](../../../assets/source/actionbars/ab-rail/AB-RAIL-V1_SourceManifest_v1.json)。
+source 为 `1024×1024 RGBA`，完整可见物件位于 `[160,160,864,864)`；其
+`704×704` crop 的冻结九宫格边界为 `0／128／576／704`。该资产当前只达到
+`source-accepted / P4`，尚未导出 runtime atlas、冻结 UV 或接入 addon；客户端
+仍使用 pfUI 原生 `bar.backdrop`／`mergedBackdrop`。后续 export 必须继续沿用
+本表的真实对象、Bar 1／6 合并条件、父 Frame 显隐／移动／缩放和 fail-open，
+不得把 source 直接加载进游戏或改写任何 Button／SavedVariables。
+
 ## 战斗焦点邻接对象
 
 这些对象加入同一推荐布局，但逻辑所有权不转移给动作条 adapter；任何视觉接管

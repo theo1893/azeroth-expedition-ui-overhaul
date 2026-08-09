@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "module": "actionbars",
+  "batch": "AB.RAIL.V1",
+  "component": "AB.RAIL",
+  "accepted_version": "AB.RAIL.V1.r4 / attempt 5 canonical",
+  "status": "accepted-source",
+  "workflow_state": "source-accepted",
+  "project_phase": "P4",
+  "accepted_on": "2026-08-09",
+  "source": {
+    "file": "ActionRail_Master_v1.png",
+    "repository_path": "assets/source/actionbars/ab-rail/ActionRail_Master_v1.png",
+    "sha256": "7c49995d45b88f5ac12020c4b158027674b7ab7ed6e44a992e643f2ef6bd32e9",
+    "width": 1024,
+    "height": 1024,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      160,
+      160,
+      864,
+      864
+    ],
+    "visible_size": [
+      704,
+      704
+    ],
+    "transparent_pixels": 555871,
+    "partially_transparent_pixels": 12483,
+    "opaque_pixels": 480222,
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "codex_package": "@openai/codex@0.143.0",
+    "fixed_child_session_id": "019fe473-5f30-7251-a4fa-da5d67d0e559",
+    "provider_result": "ig_04432058ad1da79f016a77ec6d69448191878cef0f627c82c4",
+    "candidate_review_commit": "cff6cd4",
+    "prompt_version": "AB.RAIL.V1.r4",
+    "prompt_body_sha256_utf8_lf": "1a42fa0b283ad47e200407658565280373c151fac155457fbf2051d4b2cb8597",
+    "prompt": "docs/modules/actionbars/work/ACTION.BARS.RAIL.V1.md",
+    "prompt_section": "最终执行正文（AB.RAIL.V1.r4，同一已授权边界）",
+    "provider_raw": "generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-05/raw/AB.RAIL.V1.attempt-05.raw.png",
+    "provider_raw_sha256": "3f92fb61d3507a88e95abb62bf9f944a0dad51fcc9c87719c05afeab1956ac42",
+    "transparent_review": "generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-05/transparent/AB.RAIL.V1.attempt-05.transparent.png",
+    "transparent_review_sha256": "8d5757fa86b44858d883e008cf5813901dfe070a6ed1d5a789c5822f8fefe616",
+    "accepted_candidate": "generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-05/review-canonical/AB.RAIL.V1.attempt-05-canonical.canonical-transparent-review.png",
+    "accepted_candidate_sha256": "7c49995d45b88f5ac12020c4b158027674b7ab7ed6e44a992e643f2ef6bd32e9",
+    "candidate_review_report": "generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-05/review-canonical/candidate-review.json",
+    "candidate_review_report_sha256": "da11b329602a3b19e10dc82dbd1b39a59f0c74801a04c489b364779cc103b596",
+    "review_tool": "tools/review_action_rail_candidate_v1.py",
+    "review_tool_sha256": "0635a12f762ccc026e77ec25033fcbdfad58c3127d33f80253419995079291d4",
+    "simulation_spec": "tools/specs/action_rail_v1_simulation.json",
+    "simulation_spec_sha256": "27cb13d42ce22b432ba408deaaa23c054067bfb8d7b13f3f459a893abf8ddb26",
+    "promotion": "byte-exact copy of the explicitly accepted attempt-05 canonical RGBA candidate after SHA-256, dimensions, Alpha, visible-bbox, green-spill and transparent-RGB validation",
+    "provider_canvas_normalization": "The provider raw was normalized as a complete canvas to 1024 square; its complete 744x751 alpha bbox had 0.932091 percent aspect error and was fit without object-edge crop, repaint or masking into the frozen [160,160,864,864) box.",
+    "actual_imagegen_calls_in_loop": 5,
+    "process_errors_without_generation": 0,
+    "additional_imagegen_calls_after_acceptance": 0,
+    "attempt_6_allowed": false
+  },
+  "visual_authority": {
+    "locked_reference": "assets/locked/character/角色属性面板_香草同构收敛_风格确认_v3.png",
+    "locked_reference_sha256": "b5c364482adaace09af9b5196d2e8d4f7ef79d3b21706e189d94c106ba6ec2ba",
+    "locked_reference_role": "material palette, low-saturation vanilla brush language, broad value grouping, upper-left warmth, lower-right pressure and restrained wear only",
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "upstream_module_prompt": "docs/modules/character/ART_BASELINE.md",
+    "upstream_submodule_prompt": "docs/modules/character/SUBMODULE_ART_BASELINES.md",
+    "upstream_submodule_section": "CHAR.FRAME and CHAR.SLOT material clauses only",
+    "module_prompt": "docs/modules/actionbars/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/actionbars/SUBMODULE_ART_BASELINES.md",
+    "submodule_prompt_section": "AB.RAIL",
+    "component_contract": "docs/modules/actionbars/SUBMODULES.md",
+    "component_contract_section": "AB.RAIL",
+    "accepted_source_is_lower_authority_than_locked_reference": true,
+    "failed_candidates_are_authority": false,
+    "simulation_pixels_are_authority": false,
+    "provider_raw_is_runtime_or_source": false
+  },
+  "user_acceptance": {
+    "exact_statement": "接受 AB.RAIL.V1 第5稿",
+    "accepted_candidate_sha256": "7c49995d45b88f5ac12020c4b158027674b7ab7ed6e44a992e643f2ef6bd32e9",
+    "scope": [
+      "promote the exact reviewed attempt-05 canonical RGBA bytes as the AB.RAIL normal-state source",
+      "record the accepted source and provenance at P4",
+      "preserve pfUI bar geometry, movement, scale, visibility, Button hit regions and dynamic content outside the source bitmap"
+    ],
+    "not_authorized_by_acceptance_alone": [
+      "runtime export or addon integration",
+      "a new ImageGen attempt",
+      "AB.SLOT.STATE, gryphon, consumable, trinket, castbar, swingtimer or DoiteDPS assets",
+      "changes to pfUI SavedVariables, bar positions, rows, columns, scale or provider behavior"
+    ]
+  },
+  "logical_components": [
+    {
+      "id": "AB.RAIL",
+      "generated_state": "normal adaptive nine-slice source",
+      "runtime_objects": "each enabled pfActionBar background Frame with background=1, including bar.backdrop and the existing Bar 1/6 mergedBackdrop path",
+      "runtime_layer": "below per-slot backdrops and all provider dynamic layers",
+      "provider_geometry": "provider BarLayoutSize and CreateBackdrop geometry; independent rails expand one border around the Bar Frame, while eligible Bar 1/6 uses one outer merged rail without an internal seam",
+      "dynamic_content_owned_by_provider": [
+        "spell or item icons",
+        "hotkeys, counts and macro names",
+        "cooldowns and action states",
+        "range, mana, unusable and equipped feedback",
+        "hover, active and pressed feedback",
+        "paging, stance and pet logic",
+        "tooltip, drag, scale, visibility and click behavior"
+      ]
+    }
+  ],
+  "review": {
+    "source_visual_accepted": true,
+    "semantic_and_physical_identity": "pass",
+    "perspective_and_layer_order": "pass",
+    "locked_baseline_art_inheritance": "pass",
+    "component_and_state_contract": "pass",
+    "canonical_canvas_and_containment": "pass",
+    "baked_live_content": false,
+    "technical_checks": "4/4 pass",
+    "real_layout_scenarios": "8/8 pass",
+    "display_region_violations": 0,
+    "display_region_contract": "generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-05/review-canonical/display-region-contract.json",
+    "display_region_contract_sha256": "acf50fb813c2b5f6566fc43c7f2e0cf35ed7cc0d2e08d2fea1c5d0ff86e40cdf",
+    "display_region_report": "generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-05/review-canonical/display-region-report.json",
+    "display_region_report_sha256": "c1fe2bb937d3fa081197588de306545885558a76c953f292f8a3ecc8dff96a34",
+    "real_layout_preview": "generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-05/review-canonical/AB.RAIL.V1.attempt-05-canonical.real-layout-1920x1080.png",
+    "real_layout_preview_sha256": "fbde26bb3defcd5130eba3dad0f210a0ce42223862d915a27c48e78a82ce5150"
+  },
+  "export_contract": {
+    "status": "not-exported",
+    "authorization": "pending separate export instruction",
+    "exporter": null,
+    "runtime_file": null,
+    "accepted_source_crop_exclusive": [
+      160,
+      160,
+      864,
+      864
+    ],
+    "accepted_source_crop_size": [
+      704,
+      704
+    ],
+    "source_nine_slice_boundaries": [
+      0,
+      128,
+      576,
+      704
+    ],
+    "source_corner_size": [
+      128,
+      128
+    ],
+    "source_stretch_center": [
+      128,
+      128,
+      576,
+      576
+    ],
+    "runtime_atlas_size": null,
+    "runtime_uv": null,
+    "planned_sampling": "deterministic nine-slice sampling from the complete accepted 704x704 crop; final runtime atlas size and UV must be frozen by the export operation",
+    "allowed": [
+      "the declared 704x704 crop without removing any visible accepted pixel",
+      "deterministic proportional resampling or lossless slicing after explicit export authorization",
+      "fully transparent RGB zeroing without changing visible RGB or Alpha",
+      "nine-slice assembly behind the provider-owned slots and dynamic content"
+    ],
+    "forbidden_runtime_uses": [
+      "load the 1024x1024 source directly in Turtle WoW",
+      "redraw, rotate, mirror, recolor or non-uniformly distort the accepted source",
+      "introduce a fixed slot grid or a Bar 1/6 internal seam",
+      "derive hover, pressed, cooldown, range, mana, equipped, active or disabled states",
+      "bake icons, keybinds, counts, macro names, cooldowns or state colours",
+      "replace provider Buttons, hit regions, scripts, paging, drag behavior, scale or SavedVariables",
+      "apply the source to slots, gryphons, AutoBar, TrinketMenu, castbars, swing timers or DoiteDPS without their own contracts"
+    ]
+  }
+}

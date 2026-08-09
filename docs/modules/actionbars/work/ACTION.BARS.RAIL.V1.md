@@ -5,10 +5,11 @@
 - 模块：`actionbars`
 - 组件 ID：`AB.RAIL.V1`
 - 工作版本：`AB.RAIL.V1.r4`
-- 子状态：`candidate-reviewed`
-- 项目阶段：`P3`
+- 子状态：`source-accepted`
+- 项目阶段：`P4`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`；attempt `5/5` 已全部调用，不得 attempt 6
-- 当前操作：`review`；attempt 5 canonical 候选已完成内部技术／视觉／真实排版审查，等待用户接受或拒绝 exact candidate；未创建 source／runtime
+- 当前操作：`accept`；用户已明确接受 attempt 5 canonical 候选，exact RGBA 已按
+  字节完全一致的方式晋升为 tracked source 并记录 manifest；runtime 尚未导出
 - 生成前模拟方式：`deterministic-local-geometry`
 - 模拟 ImageGen：`0/0`
 - 模拟脚本：`tools/render_action_rail_simulation.py`，SHA-256
@@ -58,7 +59,7 @@
   `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-05/transparent/AB.RAIL.V1.attempt-05.transparent.png`
   ／SHA-256 `8d5757fa86b44858d883e008cf5813901dfe070a6ed1d5a789c5822f8fefe616`；
   固定 `remove_chroma_key.py --auto-key corners --soft-matte --spill-cleanup`
-- exact canonical RGBA 待用户复审：attempt 5 review-only
+- exact canonical RGBA 已接受：attempt 5
   `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-05/review-canonical/AB.RAIL.V1.attempt-05-canonical.canonical-transparent-review.png`
   ／SHA-256 `7c49995d45b88f5ac12020c4b158027674b7ab7ed6e44a992e643f2ef6bd32e9`
 - canonical 色键技术审查：attempt 5 review-only
@@ -90,14 +91,18 @@
   `generated/actionbars/AB.RAIL/AB.RAIL.V1/simulation/AB-RAIL-SIM-V1/layout-report.json`
   ／`bb8f77299e54f2651afcf7b3017c97b45217ac6975dae581a86d58894299377c`；
   所有实例九宫格中心为正、按钮均包含、四角装饰与按钮区域无相交、层序正确
-- 最终 source：无
+- 最终 source：
+  - `assets/source/actionbars/ab-rail/ActionRail_Master_v1.png`／SHA-256
+    `7c49995d45b88f5ac12020c4b158027674b7ab7ed6e44a992e643f2ef6bd32e9`
+  - `assets/source/actionbars/ab-rail/AB-RAIL-V1_SourceManifest_v1.json`
+  - `1024×1024 RGBA`；visible bbox `[160,160,864,864)`；透明／半透明／不透明
+    像素 `555871／12483／480222`；可见绿色残留与全透明非零 RGB 均为 `0`
 
 ## 跨设备 handoff
 
-- 无。当前 exact canonical candidate 与复审都在同一设备完成；用户本次可直接
-  查看 ignored candidate。若用户结论前改为跨设备复审或同步，则必须先按资产
-  工作流发布最小 `handoff/actionbars/AB.RAIL/` 检查点；当前没有自行发布。
-  用户接受后才把 exact pixels 晋级到 tracked source，拒绝时仍不得创建 source。
+- 无。candidate、复审与 source 晋升都在同一设备完成；用户接受的 exact bytes
+  已进入 tracked `assets/source/actionbars/ab-rail/`，下一门禁不再依赖 ignored
+  candidate，因此没有创建或遗留 `handoff/actionbars/AB.RAIL/`。
 
 ## 美术基准继承
 
@@ -256,8 +261,9 @@
   `assets/locked/character/角色属性面板_香草同构收敛_风格确认_v3.png`
   作为本组件唯一 Image 1 上传至外部 ImageGen 服务；该上传授权不得复用于
   其他组件，也不允许加入模拟图、`AB.SLOT` 或候选作为额外输入。
-- 下一门禁：提交本次已授权正文与不可变修复边界，然后调用固定执行器执行
-  `AB.RAIL.V1` attempt 1。
+- 生产门禁结论：已于 `5/5` 停止并完成用户验收；不得 attempt 6。当前下一门禁
+  为用户单独指示 `export`，再冻结 runtime atlas／UV、确定性导出、scoped adapter
+  与 fresh-checkout package 合同。
 
 ## 生产正文完整性预检
 
@@ -282,7 +288,7 @@
 - 去冗余结论：只保留会改变对象、画布、拉伸安全区、材料关系与反模式的条款；
   不把模拟像素描述成可复制目标。
 
-## 当前完整修复正文（`AB.RAIL.V1.r4`，同一已授权边界）
+## 最终执行正文（`AB.RAIL.V1.r4`，同一已授权边界）
 
 ```text
 Create one production bitmap asset for Azeroth Expedition UI, component AB.RAIL.V1: exactly one reusable normal-state square nine-slice master for the background rail beneath a pfUI action bar. The returned bitmap file itself must be exactly 1024 pixels wide by 1024 pixels high; do not return 1254 by 1254 or any other size. It is a lightweight expedition equipment support that stretches around an arbitrary legal action-bar frame. It is not a complete action bar, not a fixed twelve-slot plate, not an action-button base, not an icon, not a state atlas, not a presentation board, and not a mock game screenshot.
@@ -437,12 +443,13 @@ Before returning the image, inspect every requirement literally: the returned fi
 | `AB.RAIL.V1.r1` | `974f17c`；session `019fe460…62dc`；raw `334a7dc9…bfe5`；review `8e146aa8…a5a1` | `internal-fail / 2/5` | 保留单角钉与低频中心；整体缩小约 `16%`、正方居中，亮黄铜只留在四角短断点 |
 | `AB.RAIL.V1.r2` | `9b0a4c7`；session `019fe466…51b5`；raw `4eb01991…3abb`；review `deb40edc…b3cb` | `internal-fail / 3/5` | 保留更接近的总体尺度；分别修正宽高、取消嵌套框／角块／铆钉与连续金线 |
 | `AB.RAIL.V1.r3` | `9408077`；session `019fe46c…b477`；raw `c29ea6d4…0b4d`；canonical review `fc49e49b…56f4` | `internal-fail / 4/5` | 保留近严格正方；取消全部可见金属色、角饰、内框与纹理填充，严格扩大绿色安全带 |
-| `AB.RAIL.V1.r4` | `7bd81fe`；session `019fe473…e559`；raw `3f92fb61…ac42`；canonical review `da11b329…b596` | `internal-pass / 5/5 / candidate-reviewed` | 等待用户接受或拒绝 exact canonical RGBA SHA `7c49995d…32e9`；不得 attempt 6 |
+| `AB.RAIL.V1.r4` | `7bd81fe`；session `019fe473…e559`；raw `3f92fb61…ac42`；canonical review `da11b329…b596`；source `7c49995d…32e9` | `user-accepted / source-accepted / P4` | 等待单独 `export` 指令；不得 attempt 6 |
 
 ## 审查记录
 
-- 结论：attempt 5 canonical 候选 `internal-pass / candidate-reviewed / P3`；允许
-  进入用户复审，但用户接受前不允许创建 source、runtime 或 addon 接入。
+- 结论：attempt 5 canonical 候选先达到 `internal-pass / candidate-reviewed / P3`；
+  用户于 `2026-08-09` 明确“接受 AB.RAIL.V1 第5稿”，现为
+  `source-accepted / P4`。本次接受只允许 source 晋升，不包含 runtime 或 addon 接入。
 - provider raw 审计：raw 为 `1254² RGB` 而非 `1024²`，背景为 near-green；它只
   保留为 provenance，不作为用户待接受的 exact candidate。
 - 语义／物理：单对象、正面、normal 状态与胡桃褐／暗黄铜身份可保留；没有
@@ -458,7 +465,31 @@ Before returning the image, inspect every requirement literally: the returned fi
   high-frequency mean `1.5677`，没有独特纹章或可见接缝，Rail 仍从属于 Slot。
 - 装配／尺寸：`1×1／12×1／6×2／4×3／1×12`、极端参数与合并双栏均为真实
   九宫格装配，`8/8 pass`、violations `0`；Bar 1／6 只有整体外围、无内部中缝。
-- 当前结论：exact review candidate 为 attempt 5 canonical RGBA SHA
+- 当前结论：用户接受的 exact candidate 为 attempt 5 canonical RGBA SHA
   `7c49995d45b88f5ac12020c4b158027674b7ab7ed6e44a992e643f2ef6bd32e9`；
-  当前 `candidate-reviewed / 5/5`，等待用户明确接受或拒绝。内部通过不等于用户
-  接受；无论用户结论如何均不得 attempt 6。
+  已按同一 SHA 字节完全一致地晋升到
+  `assets/source/actionbars/ab-rail/ActionRail_Master_v1.png`。当前
+  `source-accepted / P4 / 5/5`，不得 attempt 6；runtime export、atlas／UV、adapter
+  与 Turtle WoW 实机验证均尚未发生。
+
+## 用户验收与 P4 晋升
+
+- 用户结论与日期：`accepted / 2026-08-09`；原话：
+  “接受 AB.RAIL.V1 第5稿”。
+- 验收对象：attempt 5 exact canonical RGBA SHA
+  `7c49995d45b88f5ac12020c4b158027674b7ab7ed6e44a992e643f2ef6bd32e9`，不是
+  provider raw `3f92fb61…ac42`，也不是色键技术副本或真实排版合成图。
+- 晋升：accepted candidate 与
+  `assets/source/actionbars/ab-rail/ActionRail_Master_v1.png` 字节 SHA 完全一致；
+  manifest 为
+  `assets/source/actionbars/ab-rail/AB-RAIL-V1_SourceManifest_v1.json`。
+- source 技术复核：`1024×1024 RGBA`、visible bbox `[160,160,864,864)`、
+  visible exact／heuristic green `0／0`、全透明非零 RGB `0`；candidate review
+  `da11b329…b596`、display `8/8 pass`、violations `0`。
+- 接受范围：只冻结单一 normal 态自适应九宫格 Rail source；pfUI Bar 几何、
+  位置、scale、显隐、移动、按钮命中区和所有动态图标／文字／状态仍由 provider
+  所有。
+- 尚未授权／发生：runtime atlas／TGA、UV、Lua／TOC 接入、pfUI scoped bridge、
+  fresh-checkout package 或 Turtle WoW 实机验证；ImageGen 新增调用 `0`。
+- 下一门禁：用户单独指示进入 `export`，然后才能从 `P4` 推进到
+  `runtime-exported / P5`。
