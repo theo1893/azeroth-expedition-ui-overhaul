@@ -280,16 +280,19 @@ def main() -> None:
         encoding="utf-8-sig"
     )
     assert "## RequiredDeps: pfUI" in aeui_toc
-    assert "## Version: 0.8.0" in aeui_toc
+    assert "## Version: 0.8.1" in aeui_toc
     assert "Core\\Bootstrap.lua" in aeui_toc
     assert "Modules\\ActionBars.lua" in aeui_toc
     assert "Modules\\Chat.lua" in aeui_toc
     assert "Modules\\QuestVisualTheme.lua" in aeui_toc
     assert "Modules\\Quests.lua" in aeui_toc
     bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(encoding="utf-8")
-    assert 'addon.version = "0.8.0"' in bootstrap
+    assert 'addon.version = "0.8.1"' in bootstrap
     assert "actionbar-runtime=" in bootstrap
     assert 'if command == "actionbars" then' in bootstrap
+    assert '/aeui autobar [open|apply|restore]' in bootstrap
+    assert "ApplyRecommendedAutoBarProfile" in bootstrap
+    assert "RestoreAutoBarProfile" in bootstrap
     assert "chat-runtime=" in bootstrap
     assert "chat-color=" in bootstrap
     assert "quest-runtime=" in bootstrap
@@ -318,7 +321,7 @@ def main() -> None:
     assert "button:SetPoint" not in actionbars_source
     assert "button:SetWidth" not in actionbars_source
     assert "button:SetHeight" not in actionbars_source
-    assert 'ActionBars.fieldKitRuntimeContract = "1.0"' in actionbars_source
+    assert 'ActionBars.fieldKitRuntimeContract = "1.1"' in actionbars_source
     assert '"ActionBars\\\\ActionTrinketKitV1"' in actionbars_source
     assert '"ActionBars\\\\ActionConsumableKitV1"' in actionbars_source
     assert "ApplyAutoBarFieldKit" in actionbars_source
@@ -326,6 +329,11 @@ def main() -> None:
     assert "ApplyTrinketFieldKit" in actionbars_source
     assert "InstallFieldKitHooks" in actionbars_source
     assert "AutoBarProfileMatches" in actionbars_source
+    assert "CreatePocketDecorationFrame" in actionbars_source
+    assert 'texture = holder:CreateTexture(nil, "BACKGROUND")' in actionbars_source
+    assert 'texture = button:CreateTexture(nil, "BACKGROUND")' not in actionbars_source
+    assert "ApplyRecommendedAutoBarProfile" in actionbars_source
+    assert "RestoreAutoBarProfile" in actionbars_source
     assert 'local names = { "应急", "增益", "工具" }' in actionbars_source
 
     fieldkit_cases = (
@@ -344,7 +352,7 @@ def main() -> None:
     )
     for manifest_path, runtime_path, pixel_sha in fieldkit_cases:
         fieldkit = json.loads(manifest_path.read_text(encoding="utf-8"))
-        assert fieldkit["runtime_contract"] == "1.0"
+        assert fieldkit["runtime_contract"] == "1.1"
         assert fieldkit["status"] == "runtime-exported"
         assert fieldkit["phase"] == "P5"
         assert fieldkit["runtime_export"]["sha256"] == sha256(runtime_path)
@@ -362,8 +370,9 @@ def main() -> None:
         assert fieldkit["adapter"][
             "autobar_enabled_or_profile_applied"
         ] is False
+        assert fieldkit["adapter"]["automatic_profile_mutation"] is False
         assert fieldkit["package_validation"]["status"] == "pass"
-        assert fieldkit["game_validation"]["status"] == "pending"
+        assert fieldkit["game_validation"]["status"] == "pending-retest"
 
     rail_source_dir = ROOT / "assets" / "source" / "actionbars" / "ab-rail"
     rail_manifest = json.loads(

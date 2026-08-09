@@ -131,7 +131,7 @@ def main() -> None:
         assert manifest["p5_validation"]["game_validated"] is False
 
         assert sha256(case["runtime"]) == case["runtime_sha256"]
-        assert runtime_manifest["runtime_contract"] == "1.0"
+        assert runtime_manifest["runtime_contract"] == "1.1"
         assert runtime_manifest["status"] == "runtime-exported"
         assert runtime_manifest["phase"] == "P5"
         assert runtime_manifest["source"]["sha256"] == case["sha256"]
@@ -147,7 +147,7 @@ def main() -> None:
         assert runtime_manifest["adapter"]["provider_behavior_replaced"] is False
         assert runtime_manifest["adapter"]["saved_variables_written"] is False
         assert runtime_manifest["adapter"]["autobar_enabled_or_profile_applied"] is False
-        assert runtime_manifest["game_validation"]["status"] == "pending"
+        assert runtime_manifest["game_validation"]["status"] == "pending-retest"
 
         with Image.open(source_path) as opened:
             assert opened.format == "PNG"

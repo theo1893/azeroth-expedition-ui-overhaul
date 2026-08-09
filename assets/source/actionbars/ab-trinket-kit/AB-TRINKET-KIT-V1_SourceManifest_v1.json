@@ -282,7 +282,7 @@
     "status": "exported",
     "authorization": "user instruction '下一步' on 2026-08-09",
     "exporter": "tools/build_action_fieldkit_v1_runtime.py",
-    "exporter_sha256": "40ef49cc4a8042164c45d6ec1bae7f796b9603c61db9c60546d209d438175484",
+    "exporter_sha256": "e98331a3f94ef91b7bb5cf1d207f8a15a4c11c7407adbe2f89872bf226891861",
     "runtime_file": "addon/AzerothExpeditionUI/Media/ActionBars/ActionTrinketKitV1.tga",
     "runtime_sha256": "3614d9a86e1dc25399e6623ddfad398618070e8f78117ec0f0b997b9b3f9f455",
     "runtime_atlas_size": [

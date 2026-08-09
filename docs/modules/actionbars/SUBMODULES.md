@@ -139,7 +139,13 @@ AutoBar 的真实类别、物品顺序和用户后续配置始终优先；缺失
 [runtime manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_RuntimeManifest_v1.json)。
 adapter 在现有 `24+12` Button 下分别取 A／B，C 以 `6 UI` 九宫格跟随真实可见
 Button 边界，D 以横／竖三段连接 popup 与分组 gap。它只读取 profile 以决定标签
-真伪，不启用 AutoBar、不应用 profile、不写入 SavedVariables。
+真伪，不自动启用 AutoBar、不在普通刷新中应用 profile 或写入 SavedVariables。
+`fieldkit-contract=1.1` 把每个 A／B 口袋放入以真实 Button 为父、FrameLevel 比
+Button 低 `1` 的独立非交互装饰 Frame，避免与 ActionButtonTemplate 的动态图标
+共用 `BACKGROUND` 层。用户可显式执行 `/aeui autobar apply`，只为当前角色一次性
+写入已确认的 `4×6`／24 类 profile，并在 AEUI SavedVariables 中保存应用前副本；
+`/aeui autobar restore` 恢复该副本，`/aeui autobar open` 只打开 AutoBar 原配置页。
+这些命令都不自动启用 provider，不改其他角色或 TrinketMenu 配置。
 
 ## 饰品双槽
 
@@ -167,7 +173,9 @@ normal 静态底面；图标、冷却、Queue、文字、命中区、拖动、sc
 [runtime manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json)。
 adapter 在既有两槽／30 候选 Button 下挂 A／B，C 以 `6 UI` 九宫格跟随菜单 Frame，
 D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 与原生 backdrop，
-不修改 TrinketMenu SavedVariables 或任何换装／Queue 行为。
+不修改 TrinketMenu SavedVariables 或任何换装／Queue 行为。`fieldkit-contract=1.1`
+同样把两槽与候选的 A／B 纹理放进低于真实 Button `1` 级的独立非交互装饰 Frame，
+真实饰品图标、冷却和 Queue 始终位于其上。
 
 ## 推荐布局而非强制布局
 

@@ -153,6 +153,7 @@ local recommended = {
 }
 
 AutoBar = {
+  currentPlayer = "Mage - TestRealm",
   buttons = {},
   display = {
     rows = 6,
@@ -171,6 +172,29 @@ function AutoBar:ButtonsUpdate() self.providerButtonsUpdateCalls = self.provider
 function AutoBar:UpdatePopupButtons() self.providerPopupUpdateCalls = self.providerPopupUpdateCalls + 1 end
 local autoBarSetupCalls = 0
 function AutoBar_SetupVisual() autoBarSetupCalls = autoBarSetupCalls + 1 end
+local autoBarConfigToggleCalls = 0
+function AutoBarConfig_Toggle()
+  autoBarConfigToggleCalls = autoBarConfigToggleCalls + 1
+end
+
+AutoBar_Config = {
+  [AutoBar.currentPlayer] = {
+    profile = { layout = 2, layoutProfile = "_SHARED1" },
+    buttons = { [1] = { "ORIGINAL" } },
+    display = {
+      rows = 1,
+      columns = 24,
+      position = { x = 321, y = 654 },
+    },
+  },
+}
+AutoBarProfile = {}
+function AutoBarProfile.Initialize() end
+function AutoBarProfile:ProfileChanged()
+  AutoBar.buttons = AutoBar_Config[AutoBar.currentPlayer].buttons
+  AutoBar.display = AutoBar_Config[AutoBar.currentPlayer].display
+  AutoBar_SetupVisual()
+end
 
 AutoBarFrame = NewFrame("AutoBarFrame", nil, { width = 157, height = 235 })
 AutoBarPopupFrame = NewFrame("AutoBarPopupFrame", nil, { width = 153, height = 36 })
@@ -271,7 +295,7 @@ local module = assert(AzerothExpeditionUI.modules.ActionBars)
 module:Initialize()
 module:Apply()
 
-assert(module.fieldKitRuntimeContract == "1.0")
+assert(module.fieldKitRuntimeContract == "1.1")
 assert(module.autoBarFieldKitStatus == "available")
 assert(module.autoBarMainButtons == 24)
 assert(module.autoBarPopupButtons == 4)
@@ -283,6 +307,12 @@ assert(AutoBarFrame.aeuiConsumableKitLabelsV1[1].aeuiConsumableKitTextV1.text ==
 assert(table.getn(AutoBarFrame.aeuiConsumableKitDividersV1) == 2)
 assert(AutoBarFrameButton1.aeuiConsumableKitPocketV1.texture ==
   "Interface\\AddOns\\AzerothExpeditionUI\\Media\\ActionBars\\ActionConsumableKitV1")
+assert(AutoBarFrameButton1.aeuiConsumableKitPocketV1.parent ==
+  AutoBarFrameButton1.aeuiConsumableKitPocketV1Holder)
+assert(AutoBarFrameButton1.aeuiConsumableKitPocketV1Holder.parent ==
+  AutoBarFrameButton1)
+assert(AutoBarFrameButton1.aeuiConsumableKitPocketV1Holder.frameLevel ==
+  AutoBarFrameButton1.frameLevel - 1)
 assert(math.abs(
   AutoBarFrameButton1.aeuiConsumableKitPocketV1.width /
   AutoBarFrameButton1.aeuiConsumableKitPocketV1.height - 112 / 108
@@ -301,6 +331,12 @@ assert(math.abs(
   TrinketMenu_Trinket0.aeuiTrinketKitPocketV1.width /
   TrinketMenu_Trinket0.aeuiTrinketKitPocketV1.height - 110 / 112
 ) < 0.0001)
+assert(TrinketMenu_Trinket0.aeuiTrinketKitPocketV1.parent ==
+  TrinketMenu_Trinket0.aeuiTrinketKitPocketV1Holder)
+assert(TrinketMenu_Trinket0.aeuiTrinketKitPocketV1Holder.parent ==
+  TrinketMenu_Trinket0)
+assert(TrinketMenu_Trinket0.aeuiTrinketKitPocketV1Holder.frameLevel ==
+  TrinketMenu_Trinket0.frameLevel - 1)
 
 for item, before in pairs(autoBarSnapshots) do
   assert(item.parent == before.parent)
@@ -336,6 +372,53 @@ AutoBar_SetupVisual()
 assert(AutoBar.providerButtonsUpdateCalls == 1)
 assert(AutoBar.providerPopupUpdateCalls == 1)
 assert(autoBarSetupCalls == 1)
+
+local opened, openMessage = module:OpenAutoBarConfig()
+assert(opened == true)
+assert(autoBarConfigToggleCalls == 1)
+assert(string.find(openMessage, "/aeui autobar apply", 1, true))
+
+local applied, applyMessage = module:ApplyRecommendedAutoBarProfile()
+assert(applied == true)
+assert(string.find(applyMessage, "4x6", 1, true))
+local appliedConfig = AutoBar_Config[AutoBar.currentPlayer]
+assert(appliedConfig.profile.useCharacter == true)
+assert(appliedConfig.profile.useShared == false)
+assert(appliedConfig.profile.useClass == false)
+assert(appliedConfig.profile.useBasic == false)
+assert(appliedConfig.profile.layout == 1)
+assert(appliedConfig.profile.layoutProfile == AutoBar.currentPlayer)
+assert(appliedConfig.display.rows == 6)
+assert(appliedConfig.display.columns == 4)
+assert(appliedConfig.display.gapping == 3)
+assert(appliedConfig.display.buttonWidth == 36)
+assert(appliedConfig.display.buttonHeight == 36)
+assert(appliedConfig.display.showEmptyButtons == true)
+assert(appliedConfig.display.showCategoryIcon == true)
+assert(appliedConfig.display.popupToLeft == true)
+assert(appliedConfig.display.popupToRight == false)
+assert(appliedConfig.display.position.x == 321)
+assert(appliedConfig.display.position.y == 654)
+assert(appliedConfig.buttons[1][1] == "HEALPOTIONS")
+assert(appliedConfig.buttons[3][1] == "RUNES")
+assert(appliedConfig.buttons[16][1] == 13446)
+assert(appliedConfig.buttons[16][2] == 20008)
+local savedBackup = AzerothExpeditionUI.db.actionbars.autoBarBackups[
+  AutoBar.currentPlayer
+]
+assert(savedBackup)
+assert(savedBackup ~= appliedConfig)
+assert(savedBackup.buttons[1][1] == "ORIGINAL")
+assert(savedBackup.display.rows == 1)
+
+local restored, restoreMessage = module:RestoreAutoBarProfile()
+assert(restored == true)
+assert(string.find(restoreMessage, "restored", 1, true))
+assert(AutoBar_Config[AutoBar.currentPlayer].buttons[1][1] == "ORIGINAL")
+assert(AutoBar_Config[AutoBar.currentPlayer].display.rows == 1)
+assert(AzerothExpeditionUI.db.actionbars.autoBarBackups[
+  AutoBar.currentPlayer
+] == nil)
 
 TrinketMenu_MainFrame.width = 52
 TrinketMenu_MainFrame.height = 92
@@ -374,7 +457,7 @@ module:Apply()
 assert(module.autoBarFieldKitStatus == "missing")
 assert(module.trinketFieldKitStatus == "missing")
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "fieldkit%-contract=1%.0"))
+assert(string.find(status, "fieldkit%-contract=1%.1"))
 assert(string.find(status, "autobar=missing"))
 assert(string.find(status, "trinket=missing"))
 

@@ -71,7 +71,7 @@ def main() -> None:
         manifest = json.loads(
             (ROOT / case["runtime_manifest"]).read_text(encoding="utf-8")
         )
-        assert manifest["runtime_contract"] == "1.0"
+        assert manifest["runtime_contract"] == "1.1"
         assert manifest["status"] == "runtime-exported"
         assert manifest["phase"] == "P5"
         assert manifest["runtime_export"]["sha256"] == sha256(runtime_path)
@@ -85,6 +85,14 @@ def main() -> None:
         assert manifest["adapter"]["provider_behavior_replaced"] is False
         assert manifest["adapter"]["saved_variables_written"] is False
         assert manifest["adapter"]["autobar_enabled_or_profile_applied"] is False
+        assert manifest["adapter"]["automatic_profile_mutation"] is False
+        if key == "consumable":
+            setup = manifest["adapter"]["optional_user_configuration"]
+            assert setup["apply_command"] == "/aeui autobar apply"
+            assert setup["restore_command"] == "/aeui autobar restore"
+            assert setup["provider_enabled_automatically"] is False
+        else:
+            assert manifest["adapter"]["optional_user_configuration"] is None
         assert manifest["package_validation"]["status"] == "pass"
         assert manifest["package_validation"]["violations"] == 0
         assert manifest["package_validation"][
@@ -114,7 +122,7 @@ def main() -> None:
         assert result["summary"]["violation_count"] == 0
 
     for required in (
-        'ActionBars.fieldKitRuntimeContract = "1.0"',
+        'ActionBars.fieldKitRuntimeContract = "1.1"',
         "ActionTrinketKitV1",
         "ActionConsumableKitV1",
         "ApplyAutoBarFieldKit",
@@ -127,6 +135,10 @@ def main() -> None:
         'hooksecurefunc(TrinketMenu, "OrientWindows"',
         'hooksecurefunc(TrinketMenu, "BuildMenu"',
         "AutoBarProfileMatches",
+        "CreatePocketDecorationFrame",
+        'texture = holder:CreateTexture(nil, "BACKGROUND")',
+        "ApplyRecommendedAutoBarProfile",
+        "RestoreAutoBarProfile",
         'local names = { "应急", "增益", "工具" }',
     ):
         assert required in adapter
@@ -150,6 +162,7 @@ def main() -> None:
     assert "AutoBar_SetupVisual()" not in adapter
     assert "TrinketMenu.OrientWindows()" not in adapter
     assert "TrinketMenu.BuildMenu()" not in adapter
+    assert 'texture = button:CreateTexture(nil, "BACKGROUND")' not in adapter
     print("action field kit runtime test passed")
 
 

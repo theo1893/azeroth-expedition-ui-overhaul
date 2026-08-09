@@ -3,7 +3,7 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 
 addon.name = "AzerothExpeditionUI"
-addon.version = "0.8.0"
+addon.version = "0.8.1"
 addon.modules = addon.modules or {}
 addon.media = addon.media or {}
 addon.media.root = "Interface\\AddOns\\AzerothExpeditionUI\\Media\\"
@@ -158,6 +158,31 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       "; reloading UI."
     )
     ReloadUI()
+  elseif string.find(command, "^autobar") then
+    local _, _, subcommand = string.find(command, "^autobar%s*(.*)$")
+    local module = addon.modules.ActionBars
+    if not module then
+      addon:Print("ActionBars module is unavailable.")
+    elseif subcommand == "" or subcommand == "open" then
+      local _, result = module:OpenAutoBarConfig()
+      addon:Print(result)
+    elseif subcommand == "apply" or subcommand == "preset" or
+      subcommand == "setup"
+    then
+      local ok, result = module:ApplyRecommendedAutoBarProfile()
+      addon:Print(result)
+      if ok then
+        addon:ScheduleRefresh(0)
+      end
+    elseif subcommand == "restore" then
+      local ok, result = module:RestoreAutoBarProfile()
+      addon:Print(result)
+      if ok then
+        addon:ScheduleRefresh(0)
+      end
+    else
+      addon:Print("/aeui autobar [open|apply|restore]")
+    end
   elseif command == "chat" then
     AzerothExpeditionUIDB.chat.enabled =
       not AzerothExpeditionUIDB.chat.enabled
@@ -241,7 +266,7 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
     end
   else
     addon:Print(
-      "/aeui actionbars, /aeui chat, /aeui quests, /aeui refresh, /aeui status"
+      "/aeui actionbars, /aeui autobar [open|apply|restore], /aeui chat, /aeui quests, /aeui refresh, /aeui status"
     )
   end
 end

@@ -40,7 +40,7 @@ PREVIEW_REL = Path(
     "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1"
 )
 ATLAS_SIZE = (512, 512)
-RUNTIME_CONTRACT = "1.0"
+RUNTIME_CONTRACT = "1.1"
 DESTINATION_CAP_UI = 6
 CONNECTOR_SOURCE_CAP = 30
 
@@ -813,7 +813,7 @@ def main() -> None:
             "module": "actionbars",
             "batch": "AB.FIELDKIT.V1",
             "component": case["component"],
-            "version": "runtime-v1",
+            "version": "runtime-v1.1",
             "runtime_contract": RUNTIME_CONTRACT,
             "status": "runtime-exported",
             "phase": "P5",
@@ -877,6 +877,21 @@ def main() -> None:
                 "provider_behavior_replaced": False,
                 "saved_variables_written": False,
                 "autobar_enabled_or_profile_applied": False,
+                "automatic_profile_mutation": False,
+                "optional_user_configuration": (
+                    {
+                        "open_command": "/aeui autobar open",
+                        "apply_command": "/aeui autobar apply",
+                        "restore_command": "/aeui autobar restore",
+                        "scope": "current character only",
+                        "backup": (
+                            "AzerothExpeditionUIDB.actionbars.autoBarBackups"
+                        ),
+                        "provider_enabled_automatically": False,
+                    }
+                    if key == "consumable"
+                    else None
+                ),
                 "fallback": (
                     "missing/hidden providers render no placeholder; AEUI off restores "
                     "the provider normal textures and native TrinketMenu backdrops"
@@ -891,7 +906,7 @@ def main() -> None:
                     "file": TOC_REL.as_posix(),
                     "sha256": sha256(toc_path),
                 },
-                "addon_version": "0.8.0",
+                "addon_version": "0.8.1",
                 "required_dependency": "pfUI",
                 "optional_provider": "TrinketMenu" if key == "trinket" else "AutoBar",
             },
@@ -901,7 +916,12 @@ def main() -> None:
                 "icons, counts, cooldowns, checked/highlight and tooltip layers",
                 "Queue and combat swapping for TrinketMenu",
                 "categories, bag slots, popup ordering and item use for AutoBar",
-                "provider configuration and SavedVariables",
+                (
+                    "provider configuration and SavedVariables unless the user "
+                    "explicitly invokes /aeui autobar apply"
+                    if key == "consumable"
+                    else "provider configuration and SavedVariables"
+                ),
             ],
             "display_evidence": {
                 "contract": repo_path(root, contract_path),
@@ -939,9 +959,17 @@ def main() -> None:
             },
             "package_validation": package_validation,
             "game_validation": {
-                "status": "pending",
+                "status": "pending-retest",
                 "phase": "P6",
                 "target": "Turtle WoW 1.18.1 / Interface 11200",
+                "last_observation": {
+                    "date": "2026-08-09",
+                    "result": "failed-before-runtime-v1.1",
+                    "issues": [
+                        "AutoBar item icons were covered by same-layer pocket art",
+                        "TrinketMenu equipped icons were covered by same-layer sheath art",
+                    ],
+                },
             },
         }
         write_json(root / case["runtime_manifest"], runtime_manifest)

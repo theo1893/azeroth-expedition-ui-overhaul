@@ -13,7 +13,7 @@ ActionBars.railTexturePath = addon.media.root .. "ActionBars\\ActionRailV1"
 ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
-ActionBars.fieldKitRuntimeContract = "1.0"
+ActionBars.fieldKitRuntimeContract = "1.1"
 ActionBars.trinketKitTexturePath =
   addon.media.root .. "ActionBars\\ActionTrinketKitV1"
 ActionBars.consumableKitTexturePath =
@@ -271,6 +271,16 @@ local function CreateDecorationFrame(parent)
   return frame
 end
 
+local function CreatePocketDecorationFrame(button)
+  local frame = CreateFrame("Frame", nil, button)
+  frame:EnableMouse(false)
+  frame:SetAllPoints(button)
+  if button.GetFrameLevel and frame.SetFrameLevel then
+    frame:SetFrameLevel(math.max(0, button:GetFrameLevel() - 1))
+  end
+  return frame
+end
+
 local function ConfigureNineSliceAnchors(frame, slices, cap)
   slices.topLeft:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, 0)
   slices.topLeft:SetWidth(cap)
@@ -396,9 +406,17 @@ local function ApplyPocket(
   if not button then
     return false
   end
+  local holderKey = key .. "Holder"
+  local holder = button[holderKey]
+  if not holder then
+    holder = CreatePocketDecorationFrame(button)
+    button[holderKey] = holder
+  elseif button.GetFrameLevel and holder.SetFrameLevel then
+    holder:SetFrameLevel(math.max(0, button:GetFrameLevel() - 1))
+  end
   local texture = button[key]
   if not texture then
-    texture = button:CreateTexture(nil, "BACKGROUND")
+    texture = holder:CreateTexture(nil, "BACKGROUND")
     texture:SetPoint("CENTER", button, "CENTER", 0, 0)
     texture:SetTexture(texturePath)
     SetTexCoord(texture, texcoord)
@@ -548,15 +566,83 @@ local function ManualSlotMatches(slot)
   return true
 end
 
+local function GetPlayerClassToken()
+  if type(UnitClass) ~= "function" then
+    return nil
+  end
+  local ignored, class = UnitClass("player")
+  return class
+end
+
+local function CopyPlainTable(value, seen)
+  if type(value) ~= "table" then
+    return value
+  end
+  seen = seen or {}
+  if seen[value] then
+    return seen[value]
+  end
+  local result = {}
+  seen[value] = result
+  for key, item in pairs(value) do
+    result[CopyPlainTable(key, seen)] = CopyPlainTable(item, seen)
+  end
+  return result
+end
+
+local function SplitSlotSignature(signature)
+  local result = {}
+  if not signature or signature == "" then
+    return result
+  end
+  local iterator = string.gfind or string.gmatch
+  for value in iterator(signature, "[^|]+") do
+    table.insert(result, value)
+  end
+  return result
+end
+
+local function CopyManualSlot(slot)
+  if not ManualSlotMatches(slot) then
+    return {}
+  end
+  local result = {}
+  for index = 1, table.getn(slot) do
+    result[index] = slot[index]
+  end
+  return result
+end
+
+local function RecommendedAutoBarSlot(index, class, manualSlot)
+  if index == 16 then
+    return CopyManualSlot(manualSlot)
+  end
+  local signature = recommendedAutoBarSlots[index]
+  if index == 3 then
+    signature = autoBarClassSlot3[class] or autoBarManaSlot3
+  elseif index == 18 then
+    signature = autoBarClassSlot18[class] or ""
+  end
+  return SplitSlotSignature(signature)
+end
+
+local function RefreshAutoBarProfile()
+  if not AutoBarProfile or
+    type(AutoBarProfile.Initialize) ~= "function" or
+    type(AutoBarProfile.ProfileChanged) ~= "function"
+  then
+    return false, "AutoBar 1.31 profile API is unavailable."
+  end
+  AutoBarProfile.Initialize()
+  AutoBarProfile:ProfileChanged()
+  return true
+end
+
 local function AutoBarProfileMatches()
   if not AutoBar or type(AutoBar.buttons) ~= "table" then
     return false
   end
-  local class = nil
-  if type(UnitClass) == "function" then
-    local ignored
-    ignored, class = UnitClass("player")
-  end
+  local class = GetPlayerClassToken()
   local slot3 = autoBarClassSlot3[class] or autoBarManaSlot3
   local slot18 = autoBarClassSlot18[class] or ""
   for index = 1, 24 do
@@ -577,6 +663,115 @@ local function AutoBarProfileMatches()
     end
   end
   return true
+end
+
+function ActionBars:OpenAutoBarConfig()
+  local toggle = GetGlobal("AutoBarConfig_Toggle")
+  if not AutoBar or type(toggle) ~= "function" then
+    self.autoBarPresetStatus = "missing"
+    return false, "AutoBar is not enabled. Enable it at character select, then /reload."
+  end
+  toggle()
+  self.autoBarPresetStatus = "config-opened"
+  return true,
+    "AutoBar config opened. Use /aeui autobar apply for the AEUI 4x6 preset."
+end
+
+function ActionBars:ApplyRecommendedAutoBarProfile()
+  if not AutoBar or type(AutoBar_Config) ~= "table" then
+    self.autoBarPresetStatus = "missing"
+    return false, "AutoBar is not enabled. Enable it at character select, then /reload."
+  end
+  local player = AutoBar.currentPlayer
+  local current = player and AutoBar_Config[player]
+  if not player or type(current) ~= "table" then
+    self.autoBarPresetStatus = "unavailable"
+    return false, "AutoBar has not initialized the current character profile yet."
+  end
+
+  local before = CopyPlainTable(current)
+  local manualSlot = AutoBar.buttons and AutoBar.buttons[16]
+  local profile = current.profile or {}
+  current.profile = profile
+  profile.useCharacter = true
+  profile.useShared = false
+  profile.useClass = false
+  profile.useBasic = false
+  profile.layout = 1
+  profile.layoutProfile = player
+  profile.edit = 1
+  profile.editing = player
+  profile.shared = profile.shared or "_SHARED1"
+
+  current.buttons = {}
+  local class = GetPlayerClassToken()
+  for index = 1, 24 do
+    current.buttons[index] =
+      RecommendedAutoBarSlot(index, class, manualSlot)
+  end
+
+  current.display = current.display or {}
+  local display = current.display
+  display.rows = 6
+  display.columns = 4
+  display.gapping = 3
+  display.alpha = 10
+  display.buttonWidth = 36
+  display.buttonHeight = 36
+  display.widthHeightUnlocked = false
+  display.showEmptyButtons = true
+  display.showCategoryIcon = true
+  display.popupDisable = false
+  display.popupOnShift = false
+  display.popupToTop = false
+  display.popupToBottom = false
+  display.popupToRight = false
+  display.popupToLeft = true
+
+  local ok, refreshed, message = pcall(RefreshAutoBarProfile)
+  if not ok or not refreshed then
+    AutoBar_Config[player] = before
+    pcall(RefreshAutoBarProfile)
+    self.autoBarPresetStatus = "error"
+    return false, message or "AutoBar rejected the AEUI preset; the profile was restored."
+  end
+
+  addon.db.actionbars.autoBarBackups =
+    addon.db.actionbars.autoBarBackups or {}
+  if not addon.db.actionbars.autoBarBackups[player] then
+    addon.db.actionbars.autoBarBackups[player] = before
+  end
+  self.autoBarPresetStatus = "applied"
+  return true,
+    "AEUI AutoBar preset applied to this character: 4x6, 24 slots, grouped categories, popups left."
+end
+
+function ActionBars:RestoreAutoBarProfile()
+  if not AutoBar or type(AutoBar_Config) ~= "table" then
+    self.autoBarPresetStatus = "missing"
+    return false, "AutoBar is not enabled."
+  end
+  local player = AutoBar.currentPlayer
+  local backups = addon.db and addon.db.actionbars and
+    addon.db.actionbars.autoBarBackups
+  local backup = player and backups and backups[player]
+  if type(backup) ~= "table" then
+    self.autoBarPresetStatus = "no-backup"
+    return false, "No AEUI AutoBar backup exists for this character."
+  end
+
+  local before = CopyPlainTable(AutoBar_Config[player])
+  AutoBar_Config[player] = CopyPlainTable(backup)
+  local ok, refreshed, message = pcall(RefreshAutoBarProfile)
+  if not ok or not refreshed then
+    AutoBar_Config[player] = before
+    pcall(RefreshAutoBarProfile)
+    self.autoBarPresetStatus = "error"
+    return false, message or "AutoBar restore failed; the active profile was kept."
+  end
+  backups[player] = nil
+  self.autoBarPresetStatus = "restored"
+  return true, "AutoBar profile restored from the pre-AEUI backup."
 end
 
 local function AutoBarGroupingMatches(visibleCount)
@@ -1099,6 +1294,7 @@ function ActionBars:Initialize()
   self.autoBarPopupButtons = 0
   self.autoBarPopupConnectors = 0
   self.autoBarGrouped = false
+  self.autoBarPresetStatus = "ready"
   self.trinketFieldKitStatus = "pending"
   self.trinketMainButtons = 0
   self.trinketMenuButtons = 0
@@ -1184,6 +1380,8 @@ function ActionBars:GetRuntimeStatus()
       tostring(self.autoBarPopupConnectors or 0) ..
     ",autobar-groups=" ..
       tostring(self.autoBarGrouped and "semantic" or "adaptive") ..
+    ",autobar-preset=" ..
+      tostring(self.autoBarPresetStatus or "ready") ..
     ",trinket=" .. tostring(self.trinketFieldKitStatus or "pending") ..
     ",trinket-main=" .. tostring(self.trinketMainButtons or 0) ..
     ",trinket-menu=" .. tostring(self.trinketMenuButtons or 0) ..

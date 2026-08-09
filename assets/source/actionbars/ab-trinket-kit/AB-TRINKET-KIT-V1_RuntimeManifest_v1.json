@@ -3,8 +3,8 @@
   "module": "actionbars",
   "batch": "AB.FIELDKIT.V1",
   "component": "AB.TRINKET.KIT.V1",
-  "version": "runtime-v1",
-  "runtime_contract": "1.0",
+  "version": "runtime-v1.1",
+  "runtime_contract": "1.1",
   "status": "runtime-exported",
   "phase": "P5",
   "source": {
@@ -490,32 +490,34 @@
   },
   "deterministic_export": {
     "exporter": "tools/build_action_fieldkit_v1_runtime.py",
-    "exporter_sha256": "40ef49cc4a8042164c45d6ec1bae7f796b9603c61db9c60546d209d438175484",
+    "exporter_sha256": "e98331a3f94ef91b7bb5cf1d207f8a15a4c11c7407adbe2f89872bf226891861",
     "expected_runtime_pixel_sha256": "0961d750d7436665a333d948ba010a212c5de6f87c51ab59a10ed8af86ac4aef",
     "imagegen_calls_after_acceptance": 0,
     "attempt_6_allowed": false
   },
   "adapter": {
     "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
-    "sha256": "db124fa6331edbf9b68a75df3a709b082a36911cb6ddb3aaa81a8587e8134967",
+    "sha256": "530c7d3033214e2083280f8fef994f1f69b8bd0af466514b1c03eddc7f8856bf",
     "provider": "TrinketMenu 3.3 existing main/menu frames and 2+30 buttons",
     "visual_layers_only": true,
     "provider_geometry_writes": false,
     "provider_behavior_replaced": false,
     "saved_variables_written": false,
     "autobar_enabled_or_profile_applied": false,
+    "automatic_profile_mutation": false,
+    "optional_user_configuration": null,
     "fallback": "missing/hidden providers render no placeholder; AEUI off restores the provider normal textures and native TrinketMenu backdrops"
   },
   "addon_entrypoints": {
     "bootstrap": {
       "file": "addon/AzerothExpeditionUI/Core/Bootstrap.lua",
-      "sha256": "25e0c4b61ae58bb3d2507572171263b088e46075d936def93a54917a12f97cdd"
+      "sha256": "89e7ca4a25e8687e6b641f41eec345e9f853c5ab4ac91a1d02e3ee9f70175704"
     },
     "toc": {
       "file": "addon/AzerothExpeditionUI/AzerothExpeditionUI.toc",
-      "sha256": "ee0d7473e9a5ab8065f9044812d5b1c1a09e0c0eec6e47b5a4d08cdf0e5fe5ac"
+      "sha256": "9f7df2b7006a8115da4f1631ee9461268e0b6227ca5651b477a13964dc485321"
     },
-    "addon_version": "0.8.0",
+    "addon_version": "0.8.1",
     "required_dependency": "pfUI",
     "optional_provider": "TrinketMenu"
   },
@@ -550,8 +552,16 @@
     "build_required_on_target_device": false
   },
   "game_validation": {
-    "status": "pending",
+    "status": "pending-retest",
     "phase": "P6",
-    "target": "Turtle WoW 1.18.1 / Interface 11200"
+    "target": "Turtle WoW 1.18.1 / Interface 11200",
+    "last_observation": {
+      "date": "2026-08-09",
+      "result": "failed-before-runtime-v1.1",
+      "issues": [
+        "AutoBar item icons were covered by same-layer pocket art",
+        "TrinketMenu equipped icons were covered by same-layer sheath art"
+      ]
+    }
   }
 }
