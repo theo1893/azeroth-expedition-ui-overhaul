@@ -8,26 +8,29 @@
   `AB.CONSUMABLE.POPUP`、`AB.CONSUMABLE.GROUP`
 - 模拟版本：`AB-FIELDKIT-SIM-V2`
 - 当前操作：`generate`
-- 子状态：`prompt-authorized`
+- 子状态：`contract-reauthorization-required`
 - 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
-- 当前状态：`generate / P3`；`AB.TRINKET.KIT.V1` attempt 1 已计入 `1/5` 并因
-  canvas／Alpha／safe margin 失败，完整自包含修复正文 `r1` 已就绪；
-  `AB.CONSUMABLE.KIT.V1` 仍为 `0/5 / prompt-authorized`
+- 当前状态：`repair-blocked-pending-contract-authorization / P3`；
+  `AB.TRINKET.KIT.V1` attempts 1–2 已计入 `2/5`，固定服务两次都只落盘为
+  `1254² RGB` 烘焙棋盘；继续 attempt 3 前需要把 raw 传输合同改为纯绿色键控并
+  保持最终 canonical `1024² RGBA` 的单次明确授权。`AB.CONSUMABLE.KIT.V1`
+  仍为 `0/5 / prompt-authorized`，同一服务约束未解决前不浪费其预算
 - 模拟用户结论：`AB-FIELDKIT-SIM-V1 consumable direction revision-requested
   2026-08-08`；用户原文：“消耗品5*2不够用. 并且能否按照类型进行分组?”；
   `AB-FIELDKIT-SIM-V2 confirmed 2026-08-09`；用户原文：“接受
   AB-FIELDKIT-SIM-V2”
 - 当前生产候选：无内部通过候选；Trinket attempt 1 raw
-  `fe4b854e…c9e8d` 为失败证据，不是 source／runtime
+  `fe4b854e…c9e8d` 与 attempt 2 raw `85f3f6f0…50b7` 均为失败证据，不是
+  source／runtime
 - 模拟 ImageGen：`0/0`
 - 生产执行体：`AB.TRINKET.KIT.V1` 为
-  `attempt-01-failed / repair-r1-ready / 1/5`；`AB.CONSUMABLE.KIT.V1` 为
+  `attempt-02-failed / transport-amendment-required / 2/5`；`AB.CONSUMABLE.KIT.V1` 为
   `production-final / prompt-authorized / not-executed / 0/5`
 - 后续实际生成／修复预算：每个独立执行体最多 `5` 次，最坏合计 `10` 次；
   用户已于 `2026-08-09` 分别授权
 - 外部上传：用户已分别授权把 Character V3 锁定图作为两个执行体各自唯一的
-  Image 1 上传；Trinket attempt 1 已上传 `1` 次，Consumable 仍为 `0`；授权范围
+  Image 1 上传；Trinket attempts 1–2 已上传 `2` 次，Consumable 仍为 `0`；授权范围
   不含新增输入图，也不复用既有组件授权
 - 跨设备 handoff：无；确认结论与两个最终正文均已进入 tracked work，下一门禁
   不依赖 ignored 模拟像素
@@ -349,11 +352,11 @@ All four cells contain only the normal static base layer. Do not bake hover, pre
   中心安静度和连接扣可读性。
 - 需要重新授权：新增／替换输入图、上传新图、改变 cell 身份／数量、把模拟或
   AB.SLOT 当输入、改变 canvas／Alpha／动态内容所有权。
-- 预算：`1/5`；attempt 1 已返回 countable provider output，最多剩余四次。
+- 预算：`2/5`；attempts 1–2 均已返回 countable provider output，最多剩余三次。
 
 ## 修复执行正文 A.r1（`AB.TRINKET.KIT.V1.r1`）
 
-状态：`repair-final / bounded-loop-authorized / ready-for-attempt-02`。
+状态：`repair-final / executed-attempt-02 / failed`。
 
 ```text
 Create one production-ready transparent RGBA UI asset atlas for Turtle WoW 1.18.1, component AB.TRINKET.KIT.V1 repair r1. This is a fresh regeneration after attempt 1 returned an invalid 1254 by 1254 opaque RGB image with a baked checkerboard and insufficient cell margins. The output file itself, not merely its preview, must be exactly 1024 by 1024 pixels in RGBA mode. Alpha outside the four objects must be exactly zero. Never paint, flatten or bake a white, gray, checkerboard, green or any other background into RGB pixels. A transparency checker may appear only in an application preview, never in the delivered PNG pixels.
@@ -376,6 +379,25 @@ Before finalizing, inspect the actual delivered file properties and pixels: widt
 `r1` 只修复 attempt 1 已证实的 canvas／Alpha／cell safe margin，以及同一美术包络
 内的过密皮纹、偏多黄铜和小尺寸角件重量；四个 cell 身份、Image 1、provider
 几何、动态所有权与 `1024² RGBA` 合同均未改变，不需要新授权。
+
+## 固定服务传输约束与待授权修订
+
+- 固定 `@openai/codex@0.143.0` 的两次独立 ImageGen 都完成生成，但会话可取回的
+  原始附件均恒为 `1254×1254 RGB`，Alpha 全 `255`，并把透明预览棋盘烘焙进
+  RGB；attempt 1／2 SHA 分别为 `fe4b854e…c9e8d`／`85f3f6f0…50b7`。
+- attempt 2 已逐字强调 exact `1024² RGBA`、实际文件属性和禁止棋盘，返回格式
+  仍完全相同，因此这不是继续强化同一文字即可可靠修复的美术问题。
+- 项目既有 AB.SLOT／AB.RAIL 已证明该固定服务可稳定生成纯 `#00FF00` 背景 raw，
+  再由本地确定性流程只做整图归一、逐 cell 完整 bbox 等比缩放／居中、从画布
+  边缘连通色键转 straight Alpha 与全透明 RGB 清零；不重绘、不锐化、不补像素。
+- 拟议修订只改变外部服务的 raw 传输表示；最终供用户审阅和以后可能晋级的
+  canonical atlas 仍严格为 `1024×1024 RGBA`、四个 `512²` cell、每格至少
+  `80 px` 透明边和同一对象／provider／动态所有权。Trinket 剩余预算仍为 `3`
+  次，Consumable 仍为完整 `5` 次，两个账本不混算。
+- 该修订把 prompt 的“服务直接返回 Alpha”改为“服务输出可确定性色键的 RGB，
+  本地导出最终 Alpha”，超出当前工作文件冻结的 Alpha 传输条款。未取得用户
+  明确授权前，不编写 `r2`、不执行 Trinket attempt 3，也不启动 Consumable
+  attempt 1。
 
 ## 最终执行正文 B（`AB.CONSUMABLE.KIT.V1`）
 
@@ -412,7 +434,8 @@ All cells are normal static bases only. The recommended profile instantiates twe
 
 | 实际尝试 | 执行体 | 结果 | 结论 |
 |---:|---|---|---|
-| `1/5` | production final | raw `fe4b854e…c9e8d`；`1254×1254 RGB`、全不透明；四个语义对象存在 | fail：必须重生为 exact `1024² RGBA`、真 Alpha、四 cell 各边至少 `80 px`；`r1` 已就绪，待本检查点提交 |
+| `1/5` | production final | raw `fe4b854e…c9e8d`；`1254×1254 RGB`、全不透明；四个语义对象存在 | fail：必须重生为 exact `1024² RGBA`、真 Alpha、四 cell 各边至少 `80 px`；执行 `r1` |
+| `2/5` | repair `r1` | raw `85f3f6f0…50b7`；仍为 `1254×1254 RGB`、全不透明；B margin pass，A／C fail，C 中心透明 | fail：格式／Alpha 未改善且 C 语义回退；继续前需用户授权 raw 绿色键控→canonical RGBA 传输修订 |
 
 ### `AB.CONSUMABLE.KIT.V1`
 
@@ -472,6 +495,25 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
 - runtime／provider：未产生 source／runtime／adapter；未启用 AutoBar、未改变
   TrinketMenu SavedVariables。完整自包含修复正文 `AB.TRINKET.KIT.V1.r1` 只在
   已授权修复边界内收紧 canvas、Alpha、safe margin、皮纹频率与黄铜重量。
+- 日期：`2026-08-09`
+- 操作：提交 `r1` 后，以其原文调用同一固定
+  `@openai/codex@0.143.0 / gpt-5.5 / medium` 执行 Trinket attempt 2；唯一
+  Image 1 仍为已授权 Character V3，session
+  `019fe4d6-a99b-7720-8f2a-37b12c2a274e`，没有上传 attempt 1 或其他新图。
+- countable output：raw
+  `generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/production/AB.TRINKET.KIT.V1/attempt-02/raw/AB.TRINKET.KIT.V1.attempt-02.raw.png`，
+  SHA `85f3f6f0…50b7`，`1254×1254 RGB`、`1,257,352` bytes；Trinket 账本
+  进入 `2/5`，Consumable 保持 `0/5`。
+- 只读审查派生：同一 review-only 棋盘阈值与全画布归一 SHA
+  `82274057…6e64`；四 cell 最小 margin 为 `71／88／42／148 px`。B／D 通过
+  `80 px`，A／C 仍失败；C 中心全透明，违反 matte stretchable center。
+- 真实排版：scene `c56aa652…6f3c`、supported layouts
+  `edc8a8f9…4de0`、cell review `eb89ef94…f2dc`；display report
+  `75e00719…35d` 为 `16/16 pass`、violations `0`。这些只证明几何层序，不抵消
+  raw 技术合同和 C 中心语义失败。
+- runtime／provider：未产生 source／runtime／adapter；未启用 AutoBar、未改变
+  TrinketMenu SavedVariables。由于同一服务两次返回同样固定传输格式，剩余调用
+  在取得绿色键控 raw→canonical RGBA 的合同修订授权前暂停。
 
 ## 审查记录
 
@@ -483,8 +525,9 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
   关系成立，三组不使用现代彩色 Dashboard 编码。
 - 对象／状态合同：pass；布局 `72/72`、display `16/16`、violations `0`；
   AutoBar disabled 与 TrinketMenu enabled 状态均保持。
-- 结论：`prompt-authorized / P3`；允许依次启动两个独立的固定执行器有界循环，
-  仍不允许在内部通过前进入 source、runtime 或 addon 接入。
+- 结论：`contract-reauthorization-required / P3`；原始两套正文和预算仍有效，
+  但固定服务的 raw Alpha 传输形式必须先获得修订授权；此前不得继续外部调用，
+  也不得进入 source、runtime 或 addon 接入。
 - Trinket attempt 1 语义：pass。四格依次清楚表达已装备护套、较薄候选插页、
   自适应菜单框和可旋转连接扣；没有固定饰品、图标、文字、Queue 或完整场景。
 - Trinket attempt 1 美术：fail／可修复。深胡桃皮革与暗黄铜基本继承 Character
@@ -495,6 +538,15 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
   候选 `0／1／8／30`、自动五列、水平菜单和合法三十列均能保持 hit box、图标、
   冷却与 Queue 层序；display `16/16`、violations `0`。因 raw 硬失败，整体结论
   仍为 fail，不得晋级。
+- Trinket attempt 2 语义：partial fail。A／B／D 身份清楚，B 比 A 更轻，D 可旋转；
+  C 退化为空心边框，没有 prompt 要求的 matte stretchable center。
+- Trinket attempt 2 美术：pass for repair direction。相比 attempt 1，微划痕和
+  黄铜明显收敛，A／B 层级更清楚，小尺寸角件不再形成大金属块。
+- Trinket attempt 2 合同／像素：fail。raw 仍为 `1254² RGB`、Alpha 全 `255`、
+  棋盘烘焙；A／C 归一最小 margin `71／42 px`，未达到 `80 px`。
+- Trinket attempt 2 真实排版：pass for geometry。与 attempt 1 相同的 16 个
+  provider 场景均 pass、violations `0`；C 为空心使单候选菜单暴露屏幕背景，
+  因此不能仅凭 display 几何晋级。
 
 ## 尝试摘要
 
@@ -503,15 +555,19 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
 | `AB-FIELDKIT-SIM-V1` | scene `91a596b9…adce`；states `64a39772…5927`；布局 `60/60`；display `15/15` | `consumable revision-requested 2026-08-08`：“消耗品5*2不够用. 并且能否按照类型进行分组?” | 改为足量类别槽并按类型分组；保留真实 AutoBar popup 与 TrinketMenu 合同 |
 | `AB-FIELDKIT-SIM-V2` | scene `9fe4d159…164d`；states `16a90762…f467`；布局 `72/72`；display `16/16` | `confirmed 2026-08-09`：“接受 AB-FIELDKIT-SIM-V2”；只接受文字方向 | 最终正文必须保持八项确认条款、provider 所有权与模拟像素禁用边界 |
 | `AB.TRINKET.KIT.V1 attempt 1` | raw `fe4b854e…c9e8d`；review scene `926f23ca…875f`；display `16/16` | internal fail；`1/5` | 保持四对象语义；修复 exact `1024² RGBA`、真 Alpha、每 cell `80 px` margin，并降低微纹理／黄铜噪声 |
+| `AB.TRINKET.KIT.V1 attempt 2` | raw `85f3f6f0…50b7`；review scene `c56aa652…6f3c`；display `16/16` | internal fail；`2/5` | 保持 A／B／D 与降噪成果；C 恢复 matte center。继续前先授权固定服务绿色键控 raw→canonical RGBA 修订，避免重复浪费预算 |
 
 ## 下一门禁
 
-1. 提交 attempt 1 完整失败记录、reviewer／测试与自包含 `r1` 检查点，再原文执行
-   `AB.TRINKET.KIT.V1.r1` attempt 2；若返回图像即进入 Trinket `2/5`。
-2. Trinket attempt 2 后继续逐稿完成语义、美术、合同、真实排版、display-region
-   与像素门禁；若未通过，只能在既定修复边界内提交下一份完整自包含修复正文。
-   最迟 `5/5` 停止，通过即停，不为消耗预算继续生成。
-3. 然后独立以冻结正文原文执行 `AB.CONSUMABLE.KIT.V1` attempt 1，并采用相同
-   的逐稿审查与最多 `5/5` 停止规则；两个账本不得混算。
-4. 两套内部通过的候选只进入 ignored `generated/` 和用户审阅，不自动晋级
-   source／runtime；全过程不启用 AutoBar，也不改变 TrinketMenu SavedVariables。
+1. 向用户请求一次明确的传输合同修订授权：剩余两套外部 raw 改用纯
+   `#00FF00` RGB 背景；本地只做确定性归一、逐 cell 完整 bbox 等比缩放／居中、
+   边缘连通色键转 straight Alpha 与透明 RGB 清零，最终 canonical 仍为 exact
+   `1024² RGBA`。不新增输入图、不重绘，现有预算不重置。
+2. 授权前不编写或提交 `AB.TRINKET.KIT.V1.r2`，不执行 Trinket attempt 3，
+   也不启动 Consumable attempt 1。若用户拒绝修订，则两个执行体保持当前失败／
+   未执行状态，不能把烘焙棋盘派生冒充 source。
+3. 授权后，先写入并提交完整自包含 `r2`，保留 attempt 2 的 A／B／D 与降噪成果、
+   恢复 C matte center，并执行 Trinket attempt 3；通过即停，最迟 `5/5`。
+4. Trinket 内部通过后再独立执行 Consumable；两套通过候选只进入 ignored
+   `generated/` 与用户审阅，不自动晋级 source／runtime。全过程不启用 AutoBar，
+   也不改变 TrinketMenu SavedVariables。
