@@ -71,10 +71,16 @@ def test_focus_v5_compact_stack_and_architotem_footprint() -> None:
     assert len(display["scenarios"]) == 8
 
     runtime = json.loads(RUNTIME_DISPLAY.read_text(encoding="utf-8"))
-    assert runtime["component"] == "AB.FOCUS.LAYOUT.V1/runtime-v1.3"
+    assert runtime["component"] == "AB.FOCUS.LAYOUT.V1/runtime-v1.4"
     assert runtime["evidence"]["final_runtime"] is True
     assert runtime["evidence"]["adapter"].endswith("Modules/ActionBars.lua")
-    assert len(runtime["scenarios"]) == 7
+    assert runtime["evidence"]["accepted_simulation_spec"].endswith(
+        "action_bars_core_simulation_v5.json"
+    )
+    assert runtime["evidence"]["source_failure_evidence_sha256"].startswith(
+        "350607ed"
+    )
+    assert len(runtime["scenarios"]) == 8
 
     assert spec["unit_frames"]["profile_recommendation"]["proposed_shared"]["runtime_local_scale"] == 0.75
     assert spec["swing_timers"]["profile_recommendation"]["runtime_local_scale"] == 0.82

@@ -280,14 +280,14 @@ def main() -> None:
         encoding="utf-8-sig"
     )
     assert "## RequiredDeps: pfUI" in aeui_toc
-    assert "## Version: 0.8.9" in aeui_toc
+    assert "## Version: 0.8.10" in aeui_toc
     assert "Core\\Bootstrap.lua" in aeui_toc
     assert "Modules\\ActionBars.lua" in aeui_toc
     assert "Modules\\Chat.lua" in aeui_toc
     assert "Modules\\QuestVisualTheme.lua" in aeui_toc
     assert "Modules\\Quests.lua" in aeui_toc
     bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(encoding="utf-8")
-    assert 'addon.version = "0.8.9"' in bootstrap
+    assert 'addon.version = "0.8.10"' in bootstrap
     assert "actionbar-runtime=" in bootstrap
     assert 'if command == "actionbars" then' in bootstrap
     assert '/aeui autobar [open|apply|restore|popup]' in bootstrap
@@ -323,14 +323,20 @@ def main() -> None:
     assert "button:SetWidth" not in actionbars_source
     assert "button:SetHeight" not in actionbars_source
     assert 'ActionBars.fieldKitRuntimeContract = "1.6"' in actionbars_source
-    assert 'ActionBars.focusLayoutRuntimeContract = "1.3"' in actionbars_source
+    assert 'ActionBars.focusLayoutRuntimeContract = "1.4"' in actionbars_source
     assert "ActionBars.comfortUIScaleTier = 8" in actionbars_source
     assert "ActionBars.comfortUIScaleValue = 0.71111111111111" in actionbars_source
-    assert "ActionBars.focusFrameScale = 0.82" in actionbars_source
+    assert "ActionBars.focusUnitScale = 0.75" in actionbars_source
+    assert "ActionBars.focusReadoutScale = 0.82" in actionbars_source
     assert "ActionBars.focusDoiteScale = 0.82" in actionbars_source
-    assert "ActionBars.focusUnitCenterOffset = 153" in actionbars_source
-    assert "ActionBars.focusUnitBottom = 613" in actionbars_source
-    assert "ActionBars.focusCastBottom = 571" in actionbars_source
+    assert "ActionBars.focusPlayerCenterFromDeck = -159" in actionbars_source
+    assert "ActionBars.focusTargetCenterFromDeck = 160" in actionbars_source
+    assert "ActionBars.focusUnitBottomAboveDeck = 106" in actionbars_source
+    assert "ActionBars.focusCastBottomAboveDeck = 78" in actionbars_source
+    assert "ActionBars.focusSwingTopAboveDeck = 227" in actionbars_source
+    assert "ActionBars.focusStanceTopAboveDeck = 64" in actionbars_source
+    assert "ActionBars.focusDoiteTopAboveDeck = 287" in actionbars_source
+    assert "ResolveCombatFocusProjection" in actionbars_source
     assert "ApplyCombatFocusLayoutPreset" in actionbars_source
     assert "ApplyComfortUIScalePreset" in actionbars_source
     assert 'config.width = "280"' in actionbars_source
@@ -343,12 +349,15 @@ def main() -> None:
     assert 'unitframes.swingtimerheight = "12"' in actionbars_source
     focus_layout_source = actionbars_source.split(
         "function ActionBars:ApplyCombatFocusLayoutPreset()", 1
-    )[1].split("local function FrameCoordinatePixels", 1)[0]
+    )[1].split("function ActionBars:ApplyComfortUIScalePreset()", 1)[0]
     focus_position_source = actionbars_source.split(
         "local function ApplyFramePosition", 1
     )[1].split("local function ConfigureFocusUnitFrame", 1)[0]
     assert "SetAlpha" not in focus_layout_source
     assert 'SetScript("OnUpdate"' not in focus_layout_source
+    assert focus_layout_source.index("ResetCombatDeckPosition") < (
+        focus_layout_source.index("ResolveCombatFocusProjection")
+    )
     assert "SetParent" not in focus_position_source
     assert '"ActionBars\\\\ActionTrinketKitV1"' in actionbars_source
     assert '"ActionBars\\\\ActionConsumableKitV1"' in actionbars_source

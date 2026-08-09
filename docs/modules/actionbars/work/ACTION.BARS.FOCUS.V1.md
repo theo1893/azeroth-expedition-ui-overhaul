@@ -3,16 +3,17 @@
 ## 当前状态
 
 - 批次：`AB.FOCUS.LAYOUT.V1`
-- 当前版本：`ACTION-BARS-CORE-SIM-V5`
-- 子状态：`simulation-reviewed / revision-requested / runtime-unchanged`
+- 当前版本：`ACTION-BARS-CORE-SIM-V5 / runtime-v1.4`
+- 子状态：`runtime-exported / addon-integrated / pending-game-validation`
 - 最高阶段：`P5`
-- 操作：`simulate`
+- 操作：`integrate`
 - ImageGen：`0/0`
-- runtime：AEUI `0.8.9`／`focus-layout-contract=1.3`／
-  `fieldkit-contract=1.6` 仍是当前可回退 P5 实现。用户于 `2026-08-09` 的新实机
-  截图证明 V4 固定坐标／统一 `0.82` 几何失败；本门禁只生成 V5 确定性布局预览，
-  没有修改 adapter、pfUI／ArchiTotem 代码或角色 SavedVariables。V5 获用户确认前
-  不进入 runtime 集成。
+- runtime：AEUI `0.8.10`／`focus-layout-contract=1.4`／
+  `fieldkit-contract=1.6`。用户于 `2026-08-09` 明确回复“确认接入”，授权把 exact
+  V5 几何接入 addon。新合同只修改显式一次性 preset：单位框／双方施法为 `0.75`，
+  Swing／姿态／DoiteDPS 为 `0.82`，坐标从重置后的 live Bar 1 中心／顶边投影；
+  普通 refresh 不维护这些几何。本机没有写目标角色 SavedVariables，也没有修改
+  pfUI／ArchiTotem provider 代码或任何位图。
 
 ## 本次输入与结论
 
@@ -28,8 +29,8 @@
   反向校准坐标；单项尺寸虽接近合适，组合后的层序、人物净空和甲板相对位置失稳。
 - V5 将尺寸与位置解耦：Player／Target 和双方施法回到 `0.75`；Swing、姿态与
   DoiteDPS 保持 `0.82`；恢复 `80 px` 人物中线通道，并把 DoiteDPS → 攻击计时 →
-  Aura → 单位框 → 双施法 → 姿态收成甲板相对的紧凑纵栈。当前只待用户确认该
-  可见方向，未授权 runtime 坐标。
+  Aura → 单位框 → 双施法 → 姿态收成甲板相对的紧凑纵栈。用户已明确确认该
+  可见方向并授权 runtime 接入；模拟像素本身仍不是 runtime 资产。
 - 前一张 v1.2 实机截图：
   `C:/Users/西奥/AppData/Local/Temp/codex-clipboard-66323032-06ec-4a4d-bdfc-17358a2453e9.png`
   ，`1443×1067 RGB`、SHA-256
@@ -96,7 +97,7 @@
 - provider 缺失、非萨满、根隐藏或签名不匹配时不显示占位，不阻止 ActionBars
   其余 adapter。
 
-## V5 待确认可见布局合同
+## V5 已确认运行时合同
 
 - 全局 pfUI tier 8、Combat Deck、Field Kit、Trinket 和 ArchiTotem 几何保持不变；
   本轮只重排 `AB.FOCUS.LAYOUT.V1` 的战斗信息栈。
@@ -109,9 +110,12 @@
 - Aura 为 `y=633–652`，单位框为 `660–721`，双方施法条为 `729–749`，姿态条
   顶部为 `763`，主动作条顶部为 `827`。战斗信息相邻层最大空隙 `19 px`；姿态条
   距主动作条 `64 px`，既保留动作识别空间，也消除截图中的大块闲置区域。
-- 若用户确认，runtime 必须在显式 preset 时从当前 Bar 1 的实际中心／顶边推导
-  等价 UIParent movable 坐标并一次性保存；不得复用 V4 的固定反向校准常量，普通
-  refresh 仍不得持续重写 Parent、Point、Width 或 Height。
+- runtime-v1.4 在显式 preset 开始时重置既有 Combat Deck，然后读取 live Bar 1
+  的实际中心／顶边，把 `-159／+160 px` 双框中心、甲板顶边以上
+  `106／78／227／64／287 px` 的单位／施法／Swing／姿态／DoiteDPS 关系投影为
+  等价 UIParent movable 坐标并一次性保存；不再复用 V4 固定反向校准常量。普通
+  refresh 不持续重写这些对象的 Parent、Point、Width 或 Height，只在完整保存签名
+  存在时恢复没有独立 movable 条目的副手 Swing `0.82` scale。
 - 以上只定义几何方向；动态文字、图标、Aura、施法状态、Swing 进度、DoiteDPS
   推荐数据、单位框交互与 provider 行为全部保持真实运行时对象，不进入位图。
 
@@ -144,25 +148,33 @@
 - 回归测试 `tests/action_focus_simulation_test.py` pass。测试锁定 split scale
   `0.75／0.82`、单位框内缘 `80 px`、人物通道边界、`59` 项布局检查与 `8` 个
   display 场景。
-- V4 当前可回退 runtime display contract 仍为
+- V5 最终 runtime display contract 为
   `tools/specs/action_focus_layout_v1_runtime_display_region.json`，SHA
-  `977c161b…6123`；报告
-  `generated/actionbars/ACTION-BARS-CORE/runtime/V1.3/display-region-report.json`，
-  SHA `710be470…4b2`，`7/7 pass`、violations `0`。它只证明静态装配完整，新的
-  游戏截图已否决其可见几何，不能据此晋级 P6。
-- runtime entrypoints 未在 V5 门禁改动：`addon/AzerothExpeditionUI/Modules/ActionBars.lua` SHA
-  `24ef344e…f556`，`Core/Bootstrap.lua` SHA `de5b7b17…bc8b`，TOC SHA
-  `d7380d52…6db1`；部署目录仍为仓库内 `addon/AzerothExpeditionUI` 与必需的
-  `addon/pfUI`，ArchiTotem `1.7` 是已安装的可选 provider，缺失时 fail-open。
-- V4 fresh-checkout package：
-  `generated/actionbars/ACTION-BARS-CORE/runtime/V1.3/addon-package-report.json`，
+  `6df3712b…416d`；报告
+  `generated/actionbars/ACTION-BARS-CORE/runtime/V1.4/display-region-report.json`，
+  SHA `d600ab44…74eb`，`8/8 pass`、violations `0`。场景覆盖单位框、双方施法、
+  Swing、DoiteDPS 与 ArchiTotem 四态；`final_runtime=true`。
+- runtime entrypoints 已升级为 AEUI `0.8.10`：
+  `addon/AzerothExpeditionUI/Modules/ActionBars.lua` SHA `e3dd8b01…31dd`，
+  `Core/Bootstrap.lua` SHA `4a1d481e…4f74`，TOC SHA `3bdbe108…c49f`。
+  四份既有 Action Bars runtime manifest 只同步共享 adapter／bootstrap／TOC 哈希和
+  addon 版本；所有 P6 Action Slot／Rail 与 P5 Field Kit 像素、导出合同和 provider
+  行为保持不变。部署目录仍为 `addon/AzerothExpeditionUI` 与必需的 `addon/pfUI`；
+  ArchiTotem `1.7` 是可选 provider，缺失时 fail-open。
+- V5 fresh-checkout package：
+  `generated/actionbars/ACTION-BARS-CORE/runtime/V1.4/addon-package-report.json`，
   SHA `a6a4ec74…16b9`，`status=pass`、violations `0`、
-  `build_required_on_target_device=false`；V5 尚未进入 runtime，所以本门禁不伪造
-  新 package 结论。
+  `build_required_on_target_device=false`。目标设备只需拉取并安装 tracked addon，
+  不需要 Python、exporter、补丁或再改 Lua。
+- 静态回归已通过：`tests/action_focus_layout_module_smoke.lua`、
+  `tests/action_focus_simulation_test.py`、`tests/repository_contract_test.py`、
+  `tests/actionbars_runtime_test.py` 与 `tests/action_rail_runtime_test.py`。Lua smoke
+  验证 split scale、live Bar 1 物理关系投影、9/9 配置／live 对象、DoiteDPS
+  非布局配置保留、ArchiTotem 绑定／解绑／方向及缺省无 Alpha 写入。
 - 本次只读取用户截图作为失败证据，没有上传或变换它；没有调用 ImageGen，计数
-  保持 `0/0`，也没有新增位图 source、runtime atlas、adapter 或 SavedVariables。
-  `generated/` V5 像素继续 ignored，只用于当前方向确认，不能切片、晋级、上传或
-  作为以后生产输入。
+  保持 `0/0`，也没有新增或修改位图 source／runtime atlas。本机未加载游戏、未写
+  目标角色 SavedVariables。`generated/` 模拟像素和验证报告继续是 ignored 证据，
+  不能切片、晋级、上传或作为以后生产输入。
 
 ## 内部审查
 
@@ -175,20 +187,21 @@
 - 综合色与视线：pass for user review。单位框／施法回落为 `0.75` 以清出人物，
   Swing／DoiteDPS 保持 `0.82` 以维持读数；信息栈整体贴近甲板，不再让尺寸问题与
   位置问题相互放大。
-- 交互：not exercised at this gate。V5 尚无 runtime，不能把 V4 Lua smoke 或静态
-  display 误记为 V5 游戏交互验证；现有 v1.3 的 provider 方向、拖动、`unbind` 与
-  fail-open 行为保持原样。
+- 交互：static pass / game pending。V5 runtime Lua smoke 已覆盖一次性 preset、
+  provider 方向、拖动回位、`bind／unbind`、非萨满／缺失 provider fail-open 与
+  非布局配置保留；这仍不是 Turtle WoW 实机交互证据，不得据此晋级 P6。
 - 美术：不在本轮判断。图腾栏仍画作 provider 原控件占位，后期 UI 重绘必须另立
   对象级合同；模拟的平色／图标绝不是 accepted art。
 
 ## 下一门禁
 
-先由用户确认或否决 exact `ACTION-BARS-CORE-SIM-V5` 可见方向；确认对象只是布局
-几何，不是模拟像素。确认前不修改 runtime、不要求 `/reload`，也不写目标角色
-SavedVariables。若确认，再进入 `integrate`：升级 focus layout 合同，以 live Bar 1
-中心／顶边投影一次性 preset，接入 `0.75` 单位／施法与 `0.82` Swing／姿态／
-DoiteDPS，重新跑 Lua smoke、最终 runtime display 与 fresh-checkout package。之后才在
-目标角色执行 `/reload`／显式 preset，并验证满血／掉血、有／无目标、双方施法、
-近战双持、远程计时、Aura 超过 `6`、DoiteDPS 锁定／解锁，以及 ArchiTotem 施放、
-右键、Air 七层、拖动／锁定、Recall、`unbind／bind` 和 fail-open。ImageGen 继续
-保持 `0/0`。
+在目标 Turtle WoW `/reload` 后执行一次 `/aeui focuslayout comfort`，确认状态包含
+`focus-layout-contract=1.4`、`focus-layout-anchor=live-bar1`、
+`focus-layout-unit-scale=0.75`、`focus-layout-readout-scale=0.82`、
+`fieldkit-contract=1.6` 与 `fieldkit-binding=bound`。随后验证三项原始失败均消失：
+攻击计时与双方施法不重叠；DoiteDPS → Swing → Aura → 单位框 → 施法 → 姿态形成
+紧凑连续层；Player／Target 不再挡住人物主体。再覆盖满血／掉血、有／无目标、
+双方施法、近战双持、远程计时、Aura 超过 `6`、DoiteDPS 锁定／解锁，以及
+ArchiTotem 施放、右键、Air 七层、拖动／锁定、Recall、`unbind／bind` 和 fail-open。
+若仍有偏差，使用新的实机截图只修订 deck-relative 物理常量；不重用 V4 固定坐标，
+不进入位图重绘，ImageGen 继续保持 `0/0`。

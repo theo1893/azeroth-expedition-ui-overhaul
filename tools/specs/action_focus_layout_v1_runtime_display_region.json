@@ -1,17 +1,19 @@
 {
   "schema": "aeui-display-region-contract-v1",
-  "component": "AB.FOCUS.LAYOUT.V1/runtime-v1.3",
-  "coordinate_system": "top-left-origin, right-bottom-exclusive, provider UI units before UIParent scale",
+  "component": "AB.FOCUS.LAYOUT.V1/runtime-v1.4",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, provider UI units before effective scale",
   "evidence": {
     "provider": "addon/pfUI unitframes/castbar/swingtimer/actionbar + installed DoiteDPS + optional installed ArchiTotem 1.7",
-    "layout_formula": "pfUI tier 8 remains global; the accepted one-shot preset uses local scale 0.82 for combat-reading frames only, inverse-calibrated V4 positions, and a provider-owned ArchiTotem root centered below Bar 1",
-    "accepted_simulation_spec": "tools/specs/action_bars_core_simulation_v4.json",
-    "accepted_simulation": "generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V4/action_bars_core_sim_v4.png",
+    "layout_formula": "pfUI tier 8 remains global; the accepted one-shot preset resets the unchanged Combat Deck, reads live Bar 1 center/top, projects physical-pixel relationships into UIParent coordinates, uses local scale 0.75 for player/target and paired cast bars, and keeps swing/stance/DoiteDPS at 0.82",
+    "accepted_simulation_spec": "tools/specs/action_bars_core_simulation_v5.json",
+    "accepted_simulation": "generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V5/action_bars_core_sim_v5.png",
+    "source_failure_evidence": "C:/Users/西奥/AppData/Local/Temp/codex-clipboard-5b64e0c0-3266-4f55-8aa8-8c1438ba88e4.png",
+    "source_failure_evidence_sha256": "350607ed463d5b0898333d428711505c066ed6eebe48c0400a11ce31d7ad990d",
     "adapter": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
     "target": "Turtle WoW 1.18.1; audited 1920x1080 client to 2560x1440 display chain",
     "atlas_role": "layout-only runtime contract; no source or runtime bitmap is introduced",
     "dynamic_ownership": "all health, power, aura, spell, timer, cooldown, totem, skip, recall, preset, tooltip, drag, lock and hit behavior remains provider-owned",
-    "runtime_scope": "explicit /aeui focuslayout apply writes accepted pfUI/DoiteDPS positions and requests ArchiTotem direction=down; ordinary Apply only event-binds the detected ArchiTotem root when fieldKitBound=true",
+    "runtime_scope": "explicit /aeui focuslayout apply or comfort performs the one-shot live-Bar-1 projection, writes accepted pfUI/DoiteDPS positions, and requests ArchiTotem direction=down; ordinary Apply never maintains player/target/cast/swing/stance/DoiteDPS geometry and only event-binds the detected ArchiTotem root when fieldKitBound=true",
     "final_runtime": true
   },
   "atlas": {
@@ -27,6 +29,15 @@
     "minimum_frame_size": [7, 7]
   },
   "scenarios": [
+    {
+      "id": "player-target-unitframe-280x72-scale-075",
+      "frame": [280, 72],
+      "preview_frame": [280, 72],
+      "zones": {"provider-footprint": [0, 0, 280, 72]},
+      "regions": [
+        {"id": "health-power-portrait-aura-anchors", "kind": "status", "box": [0, 0, 280, 72], "zone": "provider-footprint"}
+      ]
+    },
     {
       "id": "architotem-current-closed-bound",
       "frame": [212, 32],
@@ -70,7 +81,7 @@
       ]
     },
     {
-      "id": "player-and-target-castbars-280x22",
+      "id": "player-and-target-castbars-280x22-scale-075",
       "frame": [280, 22],
       "preview_frame": [280, 22],
       "zones": {"dynamic-safe": [0, 0, 280, 22]},
@@ -79,7 +90,7 @@
       ]
     },
     {
-      "id": "swingtimer-200x12",
+      "id": "swingtimer-200x12-scale-082",
       "frame": [200, 12],
       "preview_frame": [200, 12],
       "zones": {"dynamic-safe": [0, 0, 200, 12]},

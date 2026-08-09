@@ -4,6 +4,7 @@ unpack = unpack or table.unpack
 
 local Frame = {}
 Frame.__index = Frame
+local PhysicalRect
 
 function Frame:GetName() return self.name end
 function Frame:GetWidth() return self.width end
@@ -14,7 +15,37 @@ function Frame:GetParent() return self.parent end
 function Frame:SetParent(value) self.parent = value end
 function Frame:SetScale(value) self.scale = value end
 function Frame:GetScale() return self.scale or 1 end
-function Frame:GetEffectiveScale() return self.scale or 1 end
+function Frame:GetEffectiveScale()
+  if self == UIParent then
+    return self.scale or 1
+  end
+  local parent = self.parent or UIParent
+  local parentScale = parent and parent.GetEffectiveScale and
+    parent:GetEffectiveScale() or 1
+  return (self.scale or 1) * parentScale
+end
+function Frame:GetCenter()
+  local left, bottom, right, top = PhysicalRect(self)
+  if not left then return nil, nil end
+  local scale = self:GetEffectiveScale()
+  return (left + right) / 2 / scale, (bottom + top) / 2 / scale
+end
+function Frame:GetLeft()
+  local left = PhysicalRect(self)
+  return left and left / self:GetEffectiveScale() or nil
+end
+function Frame:GetRight()
+  local left, bottom, right = PhysicalRect(self)
+  return right and right / self:GetEffectiveScale() or nil
+end
+function Frame:GetBottom()
+  local left, bottom = PhysicalRect(self)
+  return bottom and bottom / self:GetEffectiveScale() or nil
+end
+function Frame:GetTop()
+  local left, bottom, right, top = PhysicalRect(self)
+  return top and top / self:GetEffectiveScale() or nil
+end
 function Frame:IsShown() return self.shown ~= false end
 function Frame:ClearAllPoints() self.points = {} end
 function Frame:SetPoint(...)
@@ -51,6 +82,54 @@ function UIParent:SetScale(value)
   self.height = 1080 / value
 end
 
+local function AnchorCoordinate(anchor, left, bottom, right, top)
+  local x
+  local y
+  if string.find(anchor, "LEFT", 1, true) then
+    x = left
+  elseif string.find(anchor, "RIGHT", 1, true) then
+    x = right
+  else
+    x = (left + right) / 2
+  end
+  if string.find(anchor, "BOTTOM", 1, true) then
+    y = bottom
+  elseif string.find(anchor, "TOP", 1, true) then
+    y = top
+  else
+    y = (bottom + top) / 2
+  end
+  return x, y
+end
+
+PhysicalRect = function(frame)
+  local effectiveScale = frame:GetEffectiveScale()
+  if frame == UIParent then
+    return 0, 0, frame.width * effectiveScale,
+      frame.height * effectiveScale
+  end
+  local point = frame.points[1]
+  if not point then return nil, nil, nil, nil end
+  local anchor = point[1]
+  local relative = point[2] or UIParent
+  local relativeAnchor = point[3] or anchor
+  local relativeLeft, relativeBottom, relativeRight, relativeTop =
+    PhysicalRect(relative)
+  if not relativeLeft then return nil, nil, nil, nil end
+  local targetX, targetY = AnchorCoordinate(
+    relativeAnchor, relativeLeft, relativeBottom, relativeRight, relativeTop
+  )
+  local relativeScale = relative:GetEffectiveScale()
+  targetX = targetX + (point[4] or 0) * relativeScale
+  targetY = targetY + (point[5] or 0) * relativeScale
+  local width = frame.width * effectiveScale
+  local height = frame.height * effectiveScale
+  local ownX, ownY = AnchorCoordinate(anchor, 0, 0, width, height)
+  local left = targetX - ownX
+  local bottom = targetY - ownY
+  return left, bottom, left + width, bottom + height
+end
+
 local cvars = { uiScale = uiScale, useUiScale = 1 }
 function SetCVar(name, value) cvars[name] = tonumber(value) or value end
 
@@ -65,6 +144,7 @@ local stance = NewFrame("pfActionBarStances", 200, 24)
 local mainBar = NewFrame("pfActionBarMain", 500, 44)
 local topBar = NewFrame("pfActionBarTop", 400, 34)
 local doite = NewFrame("DoiteDPSMainFrame", 318, 46)
+local doiteParent = NewFrame("DoiteDPSProviderRoot", 1, 1)
 local archiTotem = NewFrame("ArchiTotemFrame", 192, 80)
 local archiEarth = NewFrame("ArchiTotemButton_Earth1", 40, 40)
 local archiFire = NewFrame("ArchiTotemButton_Fire1", 40, 40)
@@ -73,6 +153,10 @@ local archiAir = NewFrame("ArchiTotemButton_Air1", 40, 40)
 local archiHandle = NewFrame("ArchiTotemDragHandle", 20, 20)
 local archiAll = NewFrame("ArchiTotemButton_AllTotems", 40, 40)
 
+doiteParent:SetParent(UIParent)
+doiteParent:SetScale(1.1)
+doite:SetParent(doiteParent)
+mainBar:SetScale(1.2)
 mainBar:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 100)
 topBar:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 140)
 archiTotem:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 603, -790)
@@ -224,7 +308,7 @@ assert(module.comfortUIScaleStatus == "custom")
 local ok, message = module:ApplyComfortUIScalePreset()
 assert(ok == true)
 assert(string.find(message, "Comfort UI scale applied", 1, true))
-assert(module.focusLayoutRuntimeContract == "1.3")
+assert(module.focusLayoutRuntimeContract == "1.4")
 assert(module.fieldKitRuntimeContract == "1.6")
 assert(module.focusLayoutStatus == "applied")
 assert(module.focusLayoutConfigured == 9)
@@ -245,28 +329,89 @@ local function AssertPosition(name, anchor, x, y, scale)
   assert(position.scale == scale)
 end
 
-AssertPosition("pfPlayer", "BOTTOM", -153, 613, 0.82)
-AssertPosition("pfTarget", "BOTTOM", 153, 613, 0.82)
-AssertPosition("pfPlayerCastbar", "BOTTOM", -153, 571, 0.82)
-AssertPosition("pfTargetCastbar", "BOTTOM", 153, 571, 0.82)
-AssertPosition("pfSwingTimerMainhand", "CENTER", 0, -78, 0.82)
-AssertPosition("pfSwingTimerRanged", "CENTER", 0, -78, 0.82)
-AssertPosition("pfActionBarStances", "TOP", 0, -764, 0.82)
 AssertPosition("pfActionBarMain", "BOTTOM", 0, 295, 1.2)
 
--- V4 is a deliberately bounded readability increase: less than 10% on each
--- axis, but almost 20% more visible area. The unit centers move inward so the
--- accepted simulation can retain the V3 outer envelope.
-local linearGrowth = module.focusFrameScale / 0.75 - 1
-local areaGrowth = (module.focusFrameScale / 0.75) ^ 2 - 1
-assert(linearGrowth > 0.09 and linearGrowth < 0.10)
-assert(areaGrowth > 0.19 and areaGrowth < 0.20)
-assert(module.focusUnitCenterOffset == 153)
+local function RoundCoordinate(value)
+  if value < 0 then return math.ceil(value - 0.5) end
+  return math.floor(value + 0.5)
+end
 
+local parentScale = UIParent:GetEffectiveScale()
+local parentWidth = UIParent:GetWidth() * parentScale
+local parentHeight = UIParent:GetHeight() * parentScale
+local mainScale = mainBar:GetEffectiveScale()
+local mainCenterX = select(1, mainBar:GetCenter()) * mainScale
+local mainTop = mainBar:GetTop() * mainScale
+local doiteInheritedScale = doite:GetEffectiveScale() / doite:GetScale()
+local expected = {
+  playerX = RoundCoordinate((mainCenterX - 159 - parentWidth / 2) /
+    parentScale),
+  targetX = RoundCoordinate((mainCenterX + 160 - parentWidth / 2) /
+    parentScale),
+  unitY = RoundCoordinate((mainTop + 106) / parentScale),
+  castY = RoundCoordinate((mainTop + 78) / parentScale),
+  swingX = RoundCoordinate((mainCenterX - parentWidth / 2) /
+    parentScale),
+  swingY = RoundCoordinate((
+    mainTop + 227 - 12 * 0.82 * parentScale / 2 - parentHeight / 2
+  ) / parentScale),
+  stanceX = RoundCoordinate((mainCenterX - parentWidth / 2) /
+    parentScale),
+  stanceY = RoundCoordinate((mainTop + 64 - parentHeight) /
+    parentScale),
+  doiteX = RoundCoordinate((
+    mainCenterX - 318 * 0.82 * doiteInheritedScale / 2
+  ) / parentScale),
+  doiteY = RoundCoordinate((mainTop + 287 - parentHeight) /
+    parentScale),
+}
+
+AssertPosition("pfPlayer", "BOTTOM", expected.playerX, expected.unitY, 0.75)
+AssertPosition("pfTarget", "BOTTOM", expected.targetX, expected.unitY, 0.75)
+AssertPosition(
+  "pfPlayerCastbar", "BOTTOM", expected.playerX, expected.castY, 0.75
+)
+AssertPosition(
+  "pfTargetCastbar", "BOTTOM", expected.targetX, expected.castY, 0.75
+)
+AssertPosition(
+  "pfSwingTimerMainhand", "CENTER", expected.swingX, expected.swingY, 0.82
+)
+AssertPosition(
+  "pfSwingTimerRanged", "CENTER", expected.swingX, expected.swingY, 0.82
+)
+AssertPosition(
+  "pfActionBarStances", "TOP", expected.stanceX, expected.stanceY, 0.82
+)
+
+-- V5 persists one-shot UIParent coordinates whose physical relationships are
+-- resolved from live Bar 1 after the accepted deck reset.
+local function Near(actual, expectedValue)
+  assert(math.abs(actual - expectedValue) <= 1)
+end
+Near(parentWidth / 2 + expected.playerX * parentScale - mainCenterX, -159)
+Near(parentWidth / 2 + expected.targetX * parentScale - mainCenterX, 160)
+Near(expected.unitY * parentScale - mainTop, 106)
+Near(expected.castY * parentScale - mainTop, 78)
+Near(
+  parentHeight / 2 + expected.swingY * parentScale +
+    12 * 0.82 * parentScale / 2 - mainTop,
+  227
+)
+Near(parentHeight + expected.stanceY * parentScale - mainTop, 64)
+Near(parentHeight + expected.doiteY * parentScale - mainTop, 287)
+Near(
+  expected.doiteX * parentScale + 318 * 0.82 * doiteInheritedScale / 2,
+  mainCenterX
+)
+
+assert(module.focusUnitScale == 0.75)
+assert(module.focusReadoutScale == 0.82)
+for _, frame in pairs({ player, target, playerCast, targetCast }) do
+  assert(math.abs(frame.scale - 0.75) < 0.001)
+end
 for _, frame in pairs({
-  player, target, playerCast, targetCast, swingMain, swingOffhand,
-  swingRanged,
-  stance, doite,
+  swingMain, swingOffhand, swingRanged, stance, doite,
 }) do
   assert(math.abs(frame.scale - 0.82) < 0.001)
 end
@@ -306,8 +451,8 @@ assert(swingOffhand.points[1][5] == -4)
 
 assert(DoiteDPSDB.point == "TOPLEFT")
 assert(DoiteDPSDB.relativePoint == "TOPLEFT")
-assert(math.abs(DoiteDPSDB.x - 1012) < 0.001)
-assert(math.abs(DoiteDPSDB.y + 512) < 0.001)
+assert(math.abs(DoiteDPSDB.x - expected.doiteX) < 0.001)
+assert(math.abs(DoiteDPSDB.y - expected.doiteY) < 0.001)
 assert(math.abs(DoiteDPSDB.scale - 0.82) < 0.001)
 assert(DoiteDPSDB.locked == true)
 assert(DoiteDPSDB.enabled == false)
@@ -370,7 +515,7 @@ assert(archiDirectionCalls == 1)
 assert(module.archiTotemDirectionStatus == "up")
 
 assert(AzerothExpeditionUI.db.actionbars.fieldKitBound == true)
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 4)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 5)
 assert(AzerothExpeditionUI.db.actionbars.comfortUIScaleVersion == 2)
 
 for _, frame in pairs({
@@ -381,21 +526,34 @@ for _, frame in pairs({
 end
 for _, frame in pairs({
   player, target, playerCast, targetCast, swingMain, swingRanged,
-  stance, doite,
+  stance,
 }) do
   assert(frame.parent == nil)
 end
+assert(doite.parent == doiteParent)
 
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "focus%-layout%-contract=1%.3"))
+assert(string.find(status, "focus%-layout%-contract=1%.4"))
 assert(string.find(status, "focus%-layout=applied"))
 assert(string.find(status, "focus%-layout%-mouse=visible%-controls%-only"))
-assert(string.find(status, "focus%-layout%-display%-scale=0%.82"))
+assert(string.find(status, "focus%-layout%-anchor=live%-bar1"))
+assert(string.find(status, "focus%-layout%-unit%-scale=0%.75"))
+assert(string.find(status, "focus%-layout%-readout%-scale=0%.82"))
 assert(string.find(status, "focus%-ui%-scale=applied"))
 assert(string.find(status, "focus%-ui%-scale%-tier=8"))
 assert(string.find(status, "focus%-ui%-scale%-target=8"))
 assert(string.find(status, "architotem%-dock=bottom"))
 assert(string.find(status, "architotem%-direction=up"))
+
+-- Ordinary module refresh must not maintain the focus geometry. The saved
+-- one-shot profile remains recognizable, but a user's live move is untouched.
+player:ClearAllPoints()
+player:SetPoint("BOTTOM", UIParent, "BOTTOM", 123, 456)
+module:Apply()
+assert(player.points[1][1] == "BOTTOM")
+assert(player.points[1][2] == UIParent)
+assert(player.points[1][4] == 123)
+assert(player.points[1][5] == 456)
 
 module:Initialize()
 assert(module.focusLayoutStatus == "saved")
