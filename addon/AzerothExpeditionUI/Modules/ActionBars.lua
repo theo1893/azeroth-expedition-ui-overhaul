@@ -13,17 +13,17 @@ ActionBars.railTexturePath = addon.media.root .. "ActionBars\\ActionRailV1"
 ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
-ActionBars.fieldKitRuntimeContract = "1.5"
-ActionBars.focusLayoutRuntimeContract = "1.2"
-ActionBars.focusLayoutVersion = 3
+ActionBars.fieldKitRuntimeContract = "1.6"
+ActionBars.focusLayoutRuntimeContract = "1.3"
+ActionBars.focusLayoutVersion = 4
 ActionBars.comfortUIScaleVersion = 2
 ActionBars.comfortUIScaleTier = 8
 ActionBars.comfortUIScaleValue = 0.71111111111111
--- The target device renders the client at 1920x1080 and stretches the final
--- framebuffer to 2560x1440. Tier 8 makes one pfUI unit one client pixel; the
--- local 0.75 scale compensates only that final 4/3 display stretch.
-ActionBars.focusFrameScale = 0.75
-ActionBars.focusDoiteScale = 0.75
+-- ACTION-BARS-CORE-SIM-V4 keeps global pfUI tier 8 and enlarges only the
+-- combat-reading providers. 0.75 -> 0.82 is +9.3% linearly and +19.5% by
+-- visible area; the Combat Deck and both Field Kit providers remain unchanged.
+ActionBars.focusFrameScale = 0.82
+ActionBars.focusDoiteScale = 0.82
 ActionBars.trinketKitTexturePath =
   addon.media.root .. "ActionBars\\ActionTrinketKitV1"
 ActionBars.consumableKitTexturePath =
@@ -39,17 +39,21 @@ ActionBars.popupDrawerGap = 6
 ActionBars.popupDrawerMaxRows = 6
 ActionBars.popupIntentDelay = 0.30
 ActionBars.popupIntentEvent = "AEUI_AutoBarPopupIntent"
+ActionBars.archiTotemDockXOffset = -10
+-- V4: 12 px XP rail + 13 px clearance + half of the 26 px provider row,
+-- converted through the audited 0.812698 UI scale, rounds to 47 UI.
+ActionBars.archiTotemDockYOffset = -47
 
--- These are calibrated pfUI movable coordinates for the target display chain,
--- not ratios of UIParent's scale-dependent virtual dimensions. With the 0.75
--- local scale they map one-for-one to final 2560x1440 screenshot pixels.
-ActionBars.focusUnitCenterOffset = 180
-ActionBars.focusUnitBottom = 670
-ActionBars.focusCastBottom = 624
-ActionBars.focusSwingCenterYOffset = -85
-ActionBars.focusStanceTopOffset = -835
-ActionBars.focusDoiteLeft = 1121
-ActionBars.focusDoiteTop = 560
+-- These inverse-calibrated pfUI movable coordinates preserve the accepted V3
+-- physical baselines while the V4 combat providers grow. The unit-frame
+-- centers move inward so the outer cluster envelope does not expand.
+ActionBars.focusUnitCenterOffset = 153
+ActionBars.focusUnitBottom = 613
+ActionBars.focusCastBottom = 571
+ActionBars.focusSwingCenterYOffset = -78
+ActionBars.focusStanceTopOffset = -764
+ActionBars.focusDoiteLeft = 1012
+ActionBars.focusDoiteTop = 512
 
 local railSliceOrder = {
   "topLeft", "top", "topRight",
@@ -982,6 +986,10 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
   configured = configured + (doiteSaved and 1 or 0)
   live = live + (doiteApplied and 1 or 0)
 
+  -- This is the only normal AEUI path that writes ArchiTotem appearance
+  -- options. Refresh and binding merely observe the provider's direction.
+  local archiDirectionApplied = self:RequestArchiTotemDownDirection()
+
   local deckApplied = self:ResetCombatDeckPosition()
   if deckApplied then
     configured = configured + 1
@@ -995,10 +1003,16 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
   self.focusLayoutConfigured = configured
   self.focusLayoutLive = live
   self.focusLayoutDoite = doiteSaved and "preserved" or "missing"
+  self.focusLayoutArchiTotem =
+    self.archiTotemDirectionStatus or "missing"
   self.focusLayoutStatus = "applied"
   self.focusLayoutMousePolicy = "visible-controls-only"
+  local archiMessage = archiDirectionApplied and
+    " Detected ArchiTotem was kept provider-owned and requested to open downward." or
+    " ArchiTotem was unavailable or inapplicable and remained fail-open."
   return true,
-    "Combat Focus layout applied: player/target, paired cast bars, swing timers, stance bar, Combat Deck, and detected DoiteDPS. The target-display scale compensation was applied while provider visibility, lock state, and native translucency were preserved."
+    "Combat Focus layout applied: player/target, paired cast bars, swing timers, stance bar, Combat Deck, and detected DoiteDPS. The accepted 0.82 combat-reading scale was applied while provider visibility, lock state, and native translucency were preserved." ..
+    archiMessage
 end
 
 function ActionBars:ApplyComfortUIScalePreset()
@@ -1031,7 +1045,7 @@ function ActionBars:ApplyComfortUIScalePreset()
       tostring(layoutMessage)
   end
   return true,
-    "Comfort UI scale applied: pfUI tier 8 (0.711111), Combat Focus compensated for the target 1920-to-2560 display chain, and provider-native visibility preserved. Reload if a third-party frame does not redraw immediately."
+    "Comfort UI scale applied: pfUI tier 8 (0.711111), Combat Focus local scale 0.82, and provider-native visibility preserved. Reload if a third-party frame does not redraw immediately."
 end
 
 local function FrameCoordinatePixels(frame, method)
@@ -1077,6 +1091,66 @@ local function GetPlayerClassToken()
   end
   local ignored, class = UnitClass("player")
   return class
+end
+
+local archiTotemRequiredObjects = {
+  "ArchiTotemButton_Earth1",
+  "ArchiTotemButton_Fire1",
+  "ArchiTotemButton_Water1",
+  "ArchiTotemButton_Air1",
+  "ArchiTotemDragHandle",
+  "ArchiTotemButton_AllTotems",
+}
+
+local function AuditArchiTotemProvider()
+  if GetPlayerClassToken() ~= "SHAMAN" then
+    return nil, "non-shaman"
+  end
+  local frame = GetGlobal("ArchiTotemFrame")
+  if not frame or not frame.ClearAllPoints or not frame.SetPoint then
+    return nil, "missing"
+  end
+  for index = 1, table.getn(archiTotemRequiredObjects) do
+    if not GetGlobal(archiTotemRequiredObjects[index]) then
+      return nil, "signature-mismatch"
+    end
+  end
+  if frame.IsShown and not frame:IsShown() then
+    return nil, "hidden"
+  end
+  return frame, "available"
+end
+
+local function GetArchiTotemDirection()
+  local options = GetGlobal("ArchiTotem_Options")
+  local appearance = type(options) == "table" and options.Apperance
+  if type(appearance) ~= "table" then
+    return nil
+  end
+  return appearance.direction
+end
+
+function ActionBars:RequestArchiTotemDownDirection()
+  local frame, status = AuditArchiTotemProvider()
+  if not frame then
+    self.archiTotemDirectionStatus = status
+    return false
+  end
+  local setDirection = GetGlobal("ArchiTotem_SetDirection")
+  if type(setDirection) ~= "function" or not GetArchiTotemDirection() then
+    self.archiTotemDirectionStatus = "direction-unavailable"
+    return false
+  end
+  if GetArchiTotemDirection() ~= "down" then
+    local ok = pcall(setDirection, "down")
+    if not ok then
+      self.archiTotemDirectionStatus = "direction-error"
+      return false
+    end
+  end
+  local direction = GetArchiTotemDirection()
+  self.archiTotemDirectionStatus = direction or "unknown"
+  return direction == "down"
 end
 
 local function CopyPlainTable(value, seen)
@@ -1547,6 +1621,59 @@ function ActionBars:ApplyTrinketDockPosition(enabled)
   return true
 end
 
+function ActionBars:ApplyArchiTotemDockPosition(enabled)
+  local bound = FieldKitBound()
+  local frame = GetGlobal("ArchiTotemFrame")
+
+  if not enabled or not bound then
+    if self.archiTotemDockApplied then
+      RestoreFrameAnchors(frame, self.archiTotemFreeAnchors)
+    end
+    self.archiTotemDockApplied = false
+    self.archiTotemFreeAnchors = nil
+    self.archiTotemDockStatus = enabled and "free" or "disabled"
+    return false
+  end
+
+  local auditedFrame, providerStatus = AuditArchiTotemProvider()
+  local main = GetMainActionBarFrame()
+  if not auditedFrame or not main then
+    if self.archiTotemDockApplied then
+      RestoreFrameAnchors(frame, self.archiTotemFreeAnchors)
+    end
+    self.archiTotemDockApplied = false
+    self.archiTotemFreeAnchors = nil
+    self.archiTotemDockStatus = auditedFrame and
+      "unavailable" or providerStatus
+    self.archiTotemDirectionStatus =
+      GetArchiTotemDirection() or providerStatus
+    return false
+  end
+
+  if not self.archiTotemDockApplied then
+    local anchors = CaptureFrameAnchors(auditedFrame)
+    if not anchors or table.getn(anchors) == 0 then
+      self.archiTotemDockStatus = "unavailable"
+      return false
+    end
+    self.archiTotemFreeAnchors = anchors
+  end
+
+  auditedFrame:ClearAllPoints()
+  -- ArchiTotem 1.7 omits its unscaled 20 UI drag handle from the root width.
+  -- The -10 UI x offset centers the real visible union, not the stale root.
+  auditedFrame:SetPoint(
+    "CENTER", main, "BOTTOM",
+    self.archiTotemDockXOffset,
+    self.archiTotemDockYOffset
+  )
+  self.archiTotemDockApplied = true
+  self.archiTotemDockStatus = "bottom"
+  self.archiTotemDirectionStatus =
+    GetArchiTotemDirection() or "unknown"
+  return true
+end
+
 function ActionBars:HandleAutoBarDragStop()
   if not FieldKitEnabled() then
     return
@@ -1570,6 +1697,17 @@ function ActionBars:HandleTrinketDragStop()
   self:ApplyTrinketDockPosition(true)
 end
 
+function ActionBars:HandleArchiTotemDragStop()
+  if not FieldKitEnabled() then
+    return
+  end
+  if not FieldKitBound() then
+    self.archiTotemDockStatus = "free"
+    return
+  end
+  self:ApplyArchiTotemDockPosition(true)
+end
+
 function ActionBars:SetFieldKitDocking(docked)
   local database = GetFieldKitDatabase()
   if not database then
@@ -1584,15 +1722,19 @@ function ActionBars:SetFieldKitDocking(docked)
     local bounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
     self:ApplyConsumableDockPosition(FieldKitEnabled(), bounds)
     self:ApplyTrinketDockPosition(FieldKitEnabled())
+    self:ApplyArchiTotemDockPosition(FieldKitEnabled())
     return true,
-      "Combat Deck bound: consumables left, 12x2 action bars centered, trinkets right. Move the main action bar to move the whole deck."
+      "Combat Deck bound: consumables left, 12x2 action bars centered, trinkets right, and detected ArchiTotem below. Move the main action bar to move the whole deck."
   end
   self:ApplyActionBarStackPosition(FieldKitEnabled())
   self:ApplyConsumableDockPosition(FieldKitEnabled())
   self:ApplyTrinketDockPosition(FieldKitEnabled())
+  self:ApplyArchiTotemDockPosition(FieldKitEnabled())
   self.consumableDockStatus = "free"
   self.trinketDockStatus = "free"
-  return true, "Combat Deck unbound; action bars and both provider positions are independent."
+  self.archiTotemDockStatus = "free"
+  return true,
+    "Combat Deck unbound; action bars, Field Kit providers, and ArchiTotem are independent."
 end
 
 function ActionBars:ResetCombatDeckPosition()
@@ -2515,6 +2657,20 @@ function ActionBars:InstallFieldKitHooks()
       end)
     end
   end
+
+  if not self.archiTotemDragStopHooked and
+    type(GetGlobal("ArchiTotem_DragHandle_OnDragStop")) == "function"
+  then
+    self.archiTotemDragStopHooked = true
+    hooksecurefunc("ArchiTotem_DragHandle_OnDragStop", function()
+      local ok = pcall(
+        ActionBars.HandleArchiTotemDragStop, ActionBars
+      )
+      if not ok then
+        ActionBars.archiTotemDockStatus = "error"
+      end
+    end)
+  end
 end
 
 function ActionBars:Initialize()
@@ -2541,10 +2697,16 @@ function ActionBars:Initialize()
   self.trinketMenuButtons = 0
   self.trinketJoinerOrientation = "pending"
   self.trinketDockStatus = "pending"
+  self.archiTotemDockStatus = "pending"
+  self.archiTotemDirectionStatus =
+    GetArchiTotemDirection() or "pending"
+  self.archiTotemDockApplied = false
+  self.archiTotemFreeAnchors = nil
   self.focusLayoutStatus = CombatFocusLayoutSaved() and "saved" or "ready"
   self.focusLayoutConfigured = 0
   self.focusLayoutLive = 0
   self.focusLayoutDoite = "pending"
+  self.focusLayoutArchiTotem = "pending"
   self.focusLayoutMousePolicy = "visible-controls-only"
   self.comfortUIScaleStatus = ComfortUIScaleConfigured() and
     "saved" or "custom"
@@ -2608,6 +2770,7 @@ function ActionBars:Apply()
   self:ApplyActionBarStackPosition(enabled)
   self:ApplyAutoBarFieldKit(enabled)
   self:ApplyTrinketFieldKit(enabled)
+  self:ApplyArchiTotemDockPosition(enabled)
 
   -- The offhand timer has no independent pfUI movable entry. Restore its
   -- one-shot display compensation when the rest of the saved focus signature
@@ -2635,6 +2798,8 @@ function ActionBars:GetRuntimeStatus()
     ",focus-layout-live=" .. tostring(self.focusLayoutLive or 0) ..
     ",focus-layout-doite=" ..
       tostring(self.focusLayoutDoite or "pending") ..
+    ",focus-layout-architotem=" ..
+      tostring(self.focusLayoutArchiTotem or "pending") ..
     ",focus-layout-mouse=" ..
       tostring(self.focusLayoutMousePolicy or "visible-controls-only") ..
     ",focus-layout-display-scale=" ..
@@ -2678,7 +2843,11 @@ function ActionBars:GetRuntimeStatus()
     ",trinket-joiner=" ..
       tostring(self.trinketJoinerOrientation or "pending") ..
     ",trinket-dock=" ..
-      tostring(self.trinketDockStatus or "pending")
+      tostring(self.trinketDockStatus or "pending") ..
+    ",architotem-dock=" ..
+      tostring(self.archiTotemDockStatus or "pending") ..
+    ",architotem-direction=" ..
+      tostring(self.archiTotemDirectionStatus or "pending")
 end
 
 addon:RegisterModule("ActionBars", ActionBars)

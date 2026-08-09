@@ -2,12 +2,16 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
 RENDERER = ROOT / "tools" / "render_action_bars_simulation.py"
 SPEC = ROOT / "tools" / "specs" / "action_bars_core_simulation_v4.json"
+RUNTIME_DISPLAY = (
+    ROOT / "tools" / "specs" / "action_focus_layout_v1_runtime_display_region.json"
+)
 
 
 def load_renderer():
@@ -50,6 +54,17 @@ def test_focus_v4_layout_and_architotem_footprint() -> None:
     assert target["screen_box"][0] - player["screen_box"][2] == 34
     assert player["screen_box"][0] == 681
     assert target["screen_box"][2] == 1239
+
+    runtime = json.loads(RUNTIME_DISPLAY.read_text(encoding="utf-8"))
+    assert runtime["component"] == "AB.FOCUS.LAYOUT.V1/runtime-v1.3"
+    assert runtime["evidence"]["final_runtime"] is True
+    assert runtime["evidence"]["adapter"].endswith("Modules/ActionBars.lua")
+    assert len(runtime["scenarios"]) == 7
+
+    linear_growth = 0.82 / 0.75 - 1
+    area_growth = (0.82 / 0.75) ** 2 - 1
+    assert 0.09 < linear_growth < 0.10
+    assert 0.19 < area_growth < 0.20
 
 
 if __name__ == "__main__":

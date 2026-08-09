@@ -156,7 +156,7 @@ def main() -> None:
         assert result["summary"]["violation_count"] == 0
 
     for required in (
-        'ActionBars.fieldKitRuntimeContract = "1.5"',
+        'ActionBars.fieldKitRuntimeContract = "1.6"',
         "ActionTrinketKitV1",
         "ActionConsumableKitV1",
         "ApplyAutoBarFieldKit",
@@ -168,6 +168,10 @@ def main() -> None:
         "ResetCombatDeckPosition",
         "HandleAutoBarDragStop",
         "HandleTrinketDragStop",
+        "ApplyArchiTotemDockPosition",
+        "HandleArchiTotemDragStop",
+        "AuditArchiTotemProvider",
+        "RequestArchiTotemDownDirection",
         "ApplyTrinketFieldKit",
         "popupIntentDelay = 0.30",
         "ShouldDeferAutoBarPopup",
@@ -184,6 +188,7 @@ def main() -> None:
         'hooksecurefunc(TrinketMenu, "OrientWindows"',
         'hooksecurefunc(TrinketMenu, "BuildMenu"',
         'hooksecurefunc(TrinketMenu, "MainFrame_OnMouseUp"',
+        'hooksecurefunc("ArchiTotem_DragHandle_OnDragStop"',
         "AutoBarProfileMatches",
         "CreatePocketDecorationFrame",
         'texture = holder:CreateTexture(nil, "BACKGROUND")',
@@ -200,6 +205,7 @@ def main() -> None:
         r"TrinketMenuOptions\.[A-Za-z_]+\s*=",
         r"TrinketMenuPerOptions\.[A-Za-z_]+\s*=",
         r"TrinketMenuQueue\.[A-Za-z_]+\s*=",
+        r"ArchiTotem_Options(?:\.|\[).*\s*=",
         r"\bbutton:SetParent\(",
         r"\bbutton:SetWidth\(",
         r"\bbutton:SetHeight\(",
@@ -211,6 +217,8 @@ def main() -> None:
     assert "AutoBar_SetupVisual()" not in adapter
     assert "TrinketMenu.OrientWindows()" not in adapter
     assert "TrinketMenu.BuildMenu()" not in adapter
+    assert "ArchiTotem_SetScale" not in adapter
+    assert "ArchiTotem_SaveFramePosition" not in adapter
     assert 'SetScript("OnUpdate"' not in adapter
     assert 'texture = button:CreateTexture(nil, "BACKGROUND")' not in adapter
     print("action field kit runtime test passed")

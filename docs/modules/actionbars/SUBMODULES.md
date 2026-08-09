@@ -100,7 +100,7 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 
 ## 战斗焦点邻接对象
 
-这些对象加入同一推荐布局，但逻辑所有权不转移给动作条 adapter。AEUI `0.8.8`
+这些对象加入同一推荐布局，但逻辑所有权不转移给动作条 adapter。AEUI `0.8.9`
 提供 `/aeui focuslayout apply` 一次性位置 preset，以及显式
 `/aeui focuslayout comfort` 舒适缩放＋位置 preset；任何视觉接管仍须以后按对象
 独立授权并 feature-detect，失败时保留 provider 原样。
@@ -112,8 +112,8 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 | `AB.FOCUS.CASTBAR.FOCUS` | 可选 `pfFocusCastbar` | 继续跟随 Focus Frame，默认不进入中央玩家／目标双框；对象不存在时无占位 |
 | `AB.FOCUS.SWING.MELEE` | `pfSwingTimerMainhand`＋`pfSwingTimerOffhand` | `200×12 UI` 双细轨居中上下排列；副手仍跟随主手；文字、攻速与 Marker 动态 |
 | `AB.FOCUS.SWING.RANGED` | `pfSwingTimerRanged` | 复用同一中心计时层，不与近战双条组成第三条常驻栏；范围提示仍由 provider 管理 |
-| `AB.DOITEDPS.TIMELINE` | 可选 `DoiteDPSMainFrame` 及子 Frame | 保留原生 `318×46 UI` 比例、独立拖动／锁定／显隐与蓝绿状态语义；comfort preset 写 point／x／y 与目标显示补偿 scale `0.75`，锁定态继续由 provider 关闭鼠标，以后可选低重量外缘 |
-| `AB.TOTEM.ARCHITOTEM` | 可选 `ArchiTotemFrame`、四元素主 Button、元素候选、拖动球、AllTotems 与可选 Recall／PresetManager | `ACTION-BARS-CORE-SIM-V4` 的 P2 提案把闭合真实可见 union 作为职业卫星栏置于 Combat Deck 下方；provider `scale=0.8` 时当前闭合脚印为 `212×32 UI`、Air 七层最大展开为 `212×224 UI`。绑定态提议随 Bar 1，候选向下展开；施放、右键、hover、计时、锁定、方向、预设与 Tooltip 不接管。缺失、非萨满或隐藏时无占位；确认前不写 runtime 或 provider SavedVariables |
+| `AB.DOITEDPS.TIMELINE` | 可选 `DoiteDPSMainFrame` 及子 Frame | 保留原生 `318×46 UI` 比例、独立拖动／锁定／显隐与蓝绿状态语义；comfort preset 写 point／x／y 与目标显示补偿 scale `0.82`，锁定态继续由 provider 关闭鼠标，以后可选低重量外缘 |
+| `AB.TOTEM.ARCHITOTEM` | 可选 `ArchiTotemFrame`、四元素主 Button、元素候选、拖动球、AllTotems 与可选 Recall／PresetManager | 用户已接受 `ACTION-BARS-CORE-SIM-V4`。闭合真实可见 union 作为职业卫星栏置于 Combat Deck 下方；provider `scale=0.8` 时当前闭合脚印为 `212×32 UI`、Air 七层最大展开为 `212×224 UI`。`fieldKitBound=true` 时随 Bar 1，拖动松手回位，`unbind` 恢复首次自由锚点；显式 focus preset 才调用 provider 原生 API 请求向下展开，普通 refresh 只读取方向。施放、右键、hover、计时、锁定、方向、预设与 Tooltip 不接管；缺失、非萨满、隐藏或签名不匹配时无占位并 fail-open |
 
 ## 消耗品卷袋
 
@@ -122,7 +122,7 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 | `AB.CONSUMABLE.RACK` | 已加载并自行显示的 `AutoBarFrame`＋`AutoBarFrameButton1..24` | 推荐一次性满容量 `4×6 / 24 Button / 36 UI / gap 3 UI`，同时支持 `1–24` 个真实 Button 与合法行列。推荐按钮簇外壳为 `165×243 UI`。因 `alignButtons` 可把子 Button 放到 `AutoBarFrame` 边界外，装饰 Frame 必须在配置变化时读取真实可见 Button 边界。`fieldKitBound=true` 时强绑定在主动作条左侧，外壳右缘距主栏左缘 `48 UI`、底边对齐；拖动 provider 松手后立即回到组合位，不再独立脱离。`unbind` 后恢复捕获的自由位置与原拖动。不得用维护循环持续重写位置／尺寸，也不得自动启用 provider |
 | `AB.CONSUMABLE.GROUP` | 推荐 profile 的连续槽段 `1–8／9–16／17–24`；三个非交互标题 Frame／FontString 与两条底层分隔带 | 只在 Button 数、`4×6` 行列与分组 profile 签名全部匹配时显示“应急／增益／工具”；每组两行八格。标题位于命中盒外，分隔带只占两组之间既有 `3 UI` gap，不接收鼠标。任一配置不匹配即隐藏标题／分隔，退回单一自适应外壳，不能给用户自定义类别贴错标签 |
 | `AB.CONSUMABLE.POCKET` | `AutoBarFrameButton1..24` | 显示 provider 选出的真实物品图标、数量、冷却、可用性和 Tooltip；槽底不含物品图标、名称或类别。V1 不创建自有 fallback Button |
-| `AB.CONSUMABLE.POPUP` | `AutoBarPopupFrame_Button1..12` | 精确匹配推荐 `24 Button / 4×6 / profile` 时改用外置抽屉：`1–6` 个候选为单列，`7–12` 个候选为列优先双列且最多六行；整组位于卷袋外，不遮挡主格或分类签。`AUTO` 在强绑定态固定向左、自由态按屏幕剩余空间选择左右；`LEFT／RIGHT` 可强制方向，`NATIVE` 或任一 profile 签名不匹配时完整恢复 provider 原生四向线性布局。外置态在卷袋与抽屉间创建透明、可接收鼠标、直接隶属 `AutoBarPopupFrame` 且覆盖卷袋全高的悬停通道：右侧宽 `10 UI`，分组左侧连同标题净空宽 `52 UI`；XML Frame `OnLeave` 只在此态延后，关闭仍由 AutoBar 原 `PopupMouseover` 负责。因前往外侧抽屉可能穿过其他主格，`fieldkit-contract=1.5` 延续 v1.4 的 `0.30s` 意图停留：进入通道或候选前离开不同主格即保留原抽屉；持续停留才调用捕获的 AutoBar 原方法切换／关闭。相同主格、NATIVE、签名不匹配、AEUI 关闭、非鼠标调用或 provider 调度 API 缺失全部立即委托原方法；不使用逐帧循环。候选顺序、图标、数量、冷却、点击、Tooltip、Shift 条件与 Button script 仍归 AutoBar；不得把 XML 初始 `72×72 UI` Frame 当作实际弹出边界，不复制分类表或重挂 `PickupContainerItem` |
+| `AB.CONSUMABLE.POPUP` | `AutoBarPopupFrame_Button1..12` | 精确匹配推荐 `24 Button / 4×6 / profile` 时改用外置抽屉：`1–6` 个候选为单列，`7–12` 个候选为列优先双列且最多六行；整组位于卷袋外，不遮挡主格或分类签。`AUTO` 在强绑定态固定向左、自由态按屏幕剩余空间选择左右；`LEFT／RIGHT` 可强制方向，`NATIVE` 或任一 profile 签名不匹配时完整恢复 provider 原生四向线性布局。外置态在卷袋与抽屉间创建透明、可接收鼠标、直接隶属 `AutoBarPopupFrame` 且覆盖卷袋全高的悬停通道：右侧宽 `10 UI`，分组左侧连同标题净空宽 `52 UI`；XML Frame `OnLeave` 只在此态延后，关闭仍由 AutoBar 原 `PopupMouseover` 负责。因前往外侧抽屉可能穿过其他主格，`fieldkit-contract=1.6` 完整延续 v1.5 的 `0.30s` 意图停留：进入通道或候选前离开不同主格即保留原抽屉；持续停留才调用捕获的 AutoBar 原方法切换／关闭。相同主格、NATIVE、签名不匹配、AEUI 关闭、非鼠标调用或 provider 调度 API 缺失全部立即委托原方法；不使用逐帧循环。候选顺序、图标、数量、冷却、点击、Tooltip、Shift 条件与 Button script 仍归 AutoBar；不得把 XML 初始 `72×72 UI` Frame 当作实际弹出边界，不复制分类表或重挂 `PickupContainerItem` |
 
 推荐 profile 使用 AutoBar 现有类别 ID 组成三个八格槽段：`应急` 放生命／职业
 资源／双恢复／绷带／解毒／行动／机动；`增益` 放战斗药剂／守护药剂／元素
@@ -148,7 +148,7 @@ AutoBar 的真实类别、物品顺序和用户后续配置始终优先；缺失
 adapter 在现有 `24+12` Button 下分别取 A／B，C 以 `6 UI` 九宫格跟随真实可见
 Button 边界，D 用于分组 gap，并在外置 popup 抽屉靠卷袋一侧形成竖向 spine。它只
 读取 profile 以决定标签与抽屉真伪，不自动启用 AutoBar、不在普通刷新中应用 profile
-或写入 provider SavedVariables。`fieldkit-contract=1.5` 延续把每个 A／B 口袋放入
+或写入 provider SavedVariables。`fieldkit-contract=1.6` 完整延续 v1.5，把每个 A／B 口袋放入
 以真实 Button 为父、FrameLevel 比
 Button 低 `1` 的独立非交互装饰 Frame，避免与 ActionButtonTemplate 的动态图标
 共用 `BACKGROUND` 层。用户可显式执行 `/aeui autobar apply`，只为当前角色一次性
@@ -186,7 +186,7 @@ normal 静态底面；图标、冷却、Queue、文字、命中区、拖动、sc
 [runtime manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json)。
 adapter 在既有两槽／30 候选 Button 下挂 A／B，C 以 `6 UI` 九宫格跟随菜单 Frame，
 D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 与原生 backdrop，
-不替代 TrinketMenu 原有位置持久化或任何换装／Queue 行为。`fieldkit-contract=1.5`
+不替代 TrinketMenu 原有位置持久化或任何换装／Queue 行为。`fieldkit-contract=1.6`
 同样把两槽与候选的 A／B 纹理放进低于真实 Button `1` 级的独立非交互装饰 Frame，
 真实饰品图标、冷却和 Queue 始终位于其上。强绑定把 Bar 6、消耗品卷袋和饰品双槽
 都直接锚到 Bar 1；pfUI unlock 只保留 Bar 1 作为组合移动根，移动时其余部分因相对
@@ -201,22 +201,25 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   净空 `210 px`；卷袋主体为物理 `[531,673,665,870]`，与聊天框右缘净空
   `5 px`、与玩家框左缘净空 `16 px`，三枚标题皮签均在聊天框 `y=824` 上缘前结束。
 - `唯一移动根`：绑定态只移动 Bar 1；Bar 6 以 `BOTTOM → Bar 1 TOP` 组成无漂移
-  `12×2`，消耗品卷袋与饰品双槽分别以 `48／16 UI` 间距锚到左右。`unbind`
-  恢复 Bar 6 与两种 provider 的捕获位置；`home` 把 Bar 1 重置到屏幕高度
-  `210/1080` 的底部净空并重新绑定。
+  `12×2`，消耗品卷袋与饰品双槽分别以 `48／16 UI` 间距锚到左右；检测到的
+  ArchiTotem 以真实可见 union 居中锚在主栏下方。`unbind` 恢复 Bar 6 与三种
+  provider 的捕获位置；`home` 把 Bar 1 重置到屏幕高度 `210/1080` 的底部净空
+  并重新绑定。
 - 当前“大奶黑牛”舒适缩放后已写入 `pfActionBarMain x=0／y=295／scale=1.2`、
   `pfActionBarTop x=0／y=328／scale=1.2`，TrinketMenu 主栏为
   `HORIZONTAL / scale=1.0`；启动或
-  `/reload` 后由 v1.5 收敛为左卷袋—中央 `12×2`—右双槽。
+  `/reload` 后由 v1.6 收敛为左卷袋—中央 `12×2`—右双槽，并在萨满 provider
+  存在时把 ArchiTotem 放在主栏下方。
 - `战斗视线邻接`：Player／Target 继续由 pfUI UnitFrame provider 所有；AEUI
-  `0.8.8` 的 preset 仅一次性把两者置于同一基线并收拢到目标设备约 `80 px`
-  内缘间距。pfUI movable 不保存 relativePoint；comfort tier 8 与最终显示
-  compensation 下用等价的 `BOTTOM x=-180／180, y=670, scale=0.75` 持久化；
+  `0.8.9` 的 preset 仅一次性把两者置于同一基线；`0.82` 放大后中心内收，在
+  accepted V4 中保持外包络且形成约 `34 px` 内缘间距。pfUI movable 不保存
+  relativePoint；comfort tier 8 下用等价的
+  `BOTTOM x=-153／153, y=613, scale=0.82` 持久化；
   双方 Aura 从外肩
   `TOPLEFT／TOPRIGHT` 每行 `6` 个展开。adapter 不重画，不在维护循环中持续改位置。
-- `战斗信息纵栈`：目标设备物理顺序为 DoiteDPS `y=514–551`、近战攻击计时
-  `570–593`、双方外肩 Aura `612–631`、Player／Target `639–700`、双施法条
-  `708–728`、姿态 `y=744`、副栏 `y=783`、主栏 `y=827`。远程攻击计时复用
+- `战斗信息纵栈`：accepted V4 物理顺序为 DoiteDPS `y=510–551`、近战攻击计时
+  `570–595`、双方外肩 Aura `606–625`、Player／Target `633–700`、双施法条
+  `708–730`、姿态 `y=744`、副栏 `y=783`、主栏 `y=827`。远程攻击计时复用
   近战计时层；Focus 施法条跟随 Focus Frame，不加入中央双框。
 - `紧凑战斗`：主／副栏可改为 `6×2`；自适应 Rail 重新切片，狮鹫端帽缩小或
   隐藏，逻辑按钮数与分页不变。
@@ -229,19 +232,21 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
 - `舒适缩放`：目标设备保持客户端 `1920×1080`，不由本模块修改分辨率；用户
   显式执行 `comfort` 时只把当前 pfUI profile 设为
   `Tiny PixelPerfect / tier 8 / 0.71111111111111`。Combat Focus 另用 local
-  scale `0.75` 抵消目标机器最后的 `1920→2560` 拉伸，并使用经实机截图校准的
-  固定 pfUI movable 坐标；不再把 scale-dependent UIParent 虚拟宽高当最终显示
-  尺寸。强绑定甲板锚点保持原样。普通刷新不改 pfUI scale；其他角色不自动应用。
+  scale `0.82` 提升战斗读数：相对 v1.2 线性 `+9.33%`、面积约 `+19.54%`，并
+  使用经实机截图／V4 模拟校准的固定 pfUI movable 坐标；不再把 scale-dependent
+  UIParent 虚拟宽高当最终显示尺寸。强绑定甲板锚点保持原样。普通刷新不改 pfUI
+  scale；其他角色不自动应用。
 - `home` 预设只在用户明确执行时写入一次。默认读取并尊重现有 profile、主栏位置、
   scale、按钮数、行列、自动隐藏和空槽设置；V3 继续默认关闭狮鹫，unlock 时
   仍可为足够宽的水平主栏单独开启。DoiteDPS 的锁定／战斗显隐／Forecast／资源／
   冷却选项不由此 preset 改写；DoiteDPS 的 local scale 在 comfort preset 中
-  明确收敛为 `0.75`，其启用／锁定／显隐与推荐逻辑不变。
-- `ACTION-BARS-CORE-SIM-V4` 当前只是一份待用户确认的 P2 修订：全局 tier 8、
-  Combat Deck 与 Field Kit 保持不变，只提议把 Player／Target、双施法、Swing、
+  明确收敛为 `0.82`，其启用／锁定／显隐与推荐逻辑不变。
+- `ACTION-BARS-CORE-SIM-V4` 已获用户确认并由 v1.3 runtime 接入：全局 tier 8、
+  Combat Deck 与 Field Kit 保持不变，只把 Player／Target、双施法、Swing、
   姿态和 DoiteDPS 的 local display compensation 从 `0.75` 调至 `0.82`，并把两框
   中心内收以保持外侧总包络不增；ArchiTotem 闭合栏居中放在主栏／XP Rail 下方，
-  最大 Air 候选向屏幕底部展开。提议在用户确认前不得写入 addon 或 SavedVariables。
+  最大 Air 候选向屏幕底部展开。显式 focus preset 才请求 provider 方向，普通
+  refresh 不写 ArchiTotem 配置。
 
 ## 功能不变量
 

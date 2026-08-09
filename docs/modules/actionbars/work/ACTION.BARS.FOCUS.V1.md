@@ -4,12 +4,15 @@
 
 - 批次：`AB.FOCUS.LAYOUT.V1`
 - 当前版本：`ACTION-BARS-CORE-SIM-V4`
-- 子状态：`simulation-reviewed`
-- 最高阶段：`P2`
-- 操作：`simulate`
+- 子状态：`runtime-exported / pending-game-validation`
+- 最高阶段：`P5`
+- 操作：`integrate`
 - ImageGen：`0/0`
-- runtime：仍为 AEUI `0.8.8`／`focus-layout-contract=1.2`；本工作未修改
-  addon、pfUI、ArchiTotem 或任何 SavedVariables。
+- runtime：AEUI `0.8.9`／`focus-layout-contract=1.3`／
+  `fieldkit-contract=1.6`。用户于 `2026-08-09` 明确接受
+  `ACTION-BARS-CORE-SIM-V4`；adapter 已接入 accepted 坐标、`0.82` local scale
+  与 ArchiTotem 强绑定。仓库未直接修改 pfUI／ArchiTotem 代码或角色
+  SavedVariables；只有用户显式执行 focus preset 时才调用 provider 原生方向 API。
 
 ## 本次输入与结论
 
@@ -21,6 +24,9 @@
   “有点太小”。因此 v1.2 只保留为可回退的 P5 runtime，不进入 P6。
 - 截图中的底部独立六按钮＋拖动球对象来自已安装的 `ArchiTotem 1.7`；用户口述
   “atomchi”按真实目录、TOC 与全局 Frame 校正为该 provider，不据名称另造控件。
+- 用户确认后的缩放裁决：`0.75 → 0.82` 为线性 `+9.33%`，小于 `10%`；但面积
+  增量为约 `+19.54%`，已足以作为“有点太小”的第一版实机修正。`0.85–0.86`
+  会继续挤压单位框内缘、卷袋净空与底部卫星栏空间，未在本轮越过已接受 V4。
 
 ## 真实 provider 审计
 
@@ -48,24 +54,25 @@
 - 全局 pfUI 继续保持 tier 8；不放大全屏、聊天、背包、小地图、Field Kit 或
   Combat Deck。
 - 仅把 Player／Target、双方施法、主副手／远程攻击计时、姿态和 DoiteDPS 的
-  local display compensation 从当前 `0.75` 提议为 `0.82`，最终显示约增加
-  `9.3%`。
+  local display compensation 从 `0.75` 改为 `0.82`，线性显示增加约 `9.3%`、
+  面积增加约 `19.5%`。
 - Player／Target 外侧总包络保持 V3／v1.2 宽度；两框中心内收，模拟内缘从
   `80 px` 变为 `34 px`，使增大的状态框不重新压住左卷袋。
-- 提议 runtime 坐标采用反向校准，保持 v1.2 的物理基线：Player／Target
+- runtime 坐标采用反向校准，保持 v1.2 的物理基线：Player／Target
   `BOTTOM x=-153／153, y=613`；双施法 `x=-153／153, y=571`；Swing
   `CENTER y=-78`；姿态 `TOP y=-764`；DoiteDPS
-  `TOPLEFT x=1012, y=-512, scale=0.82`。这些数值在模拟确认前不写入游戏。
+  `TOPLEFT x=1012, y=-512, scale=0.82`。这些数值现由显式
+  `/aeui focuslayout apply|comfort` 一次性写入当前角色 provider 配置。
 - 左 `4×6` 消耗品卷袋、中央 `12×2` 动作条、右水平双饰品和 Bar 1 的位置／
   scale 完全保持，避免把“战斗信息偏小”错误修成整套 UI 再次遮挡视野。
 
 ### ArchiTotem 职业卫星栏
 
-- 角色为萨满且 `ArchiTotemFrame` 存在时，提议把其真实可见脚印水平居中放在
+- 角色为萨满且 `ArchiTotemFrame` 存在时，把其真实可见脚印水平居中放在
   Bar 1／XP Rail 下方；不占 AutoBar 类别、不复制为 pfUI Action Button。
 - 绑定态扩展现有 `fieldKitBound`：Bar 1 仍是唯一移动根；ArchiTotem 跟随，
   provider 拖动松手回到组合位。`unbind` 恢复首次捕获的自由锚点与原拖动。
-- 显式接受后的 focus preset 才请求 provider `direction=down`，使候选从主栏向
+- 显式 focus preset 才请求 provider `direction=down`，使候选从主栏向
   屏幕底部展开，不穿过动作格、施法条或单位框。普通 AEUI Apply／refresh 不写
   `ArchiTotem_Options`，用户以后手动改方向时以 provider 配置为准。
 - 当前 `0.8` scale、四元素、一键、召回、拖动球、锁定、右键跳过、计时、预设、
@@ -94,8 +101,22 @@
   `54/54 pass`、violations `0`。
 - display report：同目录 `display-region-report.json`，SHA
   `24600000…fbd6`，`7/7 pass`、violations `0`。
-- 本次未上传任何图，未调用 ImageGen，未创建 source／runtime／adapter，
-  `generated/` 像素继续 ignored，不能晋级、裁切、上传或作为以后生产输入。
+- 最终 runtime display contract：
+  `tools/specs/action_focus_layout_v1_runtime_display_region.json`，SHA
+  `977c161b…6123`；报告
+  `generated/actionbars/ACTION-BARS-CORE/runtime/V1.3/display-region-report.json`，
+  SHA `710be470…4b2`，`7/7 pass`、violations `0`。
+- runtime entrypoints：`addon/AzerothExpeditionUI/Modules/ActionBars.lua` SHA
+  `24ef344e…f556`，`Core/Bootstrap.lua` SHA `de5b7b17…bc8b`，TOC SHA
+  `d7380d52…6db1`；部署目录仍为仓库内 `addon/AzerothExpeditionUI` 与必需的
+  `addon/pfUI`，ArchiTotem `1.7` 是已安装的可选 provider，缺失时 fail-open。
+- fresh-checkout package：
+  `generated/actionbars/ACTION-BARS-CORE/runtime/V1.3/addon-package-report.json`，
+  SHA `a6a4ec74…16b9`，`status=pass`、violations `0`、
+  `build_required_on_target_device=false`；目标设备只需同步并加载仓库内 addon。
+- 本次未上传任何图，未调用 ImageGen；接受后只创建布局 adapter／合同，没有
+  新增位图 source 或 runtime atlas。`generated/` 像素继续 ignored，不能晋级、
+  裁切、上传或作为以后生产输入。
 
 ## 内部审查
 
@@ -106,15 +127,19 @@
   仍留 `3 px` 模拟净空。
 - 综合色与视线：pass for user review。放大只发生在战斗读数，甲板与两侧随身栏
   不再二次变大；图腾候选打开时占用底部中央而不是战斗视野或动作格。
-- 交互：proposal only。模拟证明命中区可容纳，不能代替游戏内施放、右键跳过、
-  hover 候选、拖动／锁定和强绑定复测。
+- 交互：static pass／pending game。Lua smoke 已验证显式方向请求、普通刷新不改
+  provider 方向、拖动松手回位、`unbind` 恢复首次自由锚点、重新绑定及根隐藏
+  fail-open；仍不能代替游戏内施放、右键跳过、hover 候选、锁定和 Recall 复测。
 - 美术：不在本轮判断。图腾栏仍画作 provider 原控件占位，后期 UI 重绘必须另立
   对象级合同；模拟的平色／图标绝不是 accepted art。
 
 ## 下一门禁
 
-用户明确接受或修订 `ACTION-BARS-CORE-SIM-V4`。接受只冻结以下可见方向：战斗
-核心局部放大约 `9%`、单位框外包络不增、Field Kit／Combat Deck 不缩放、
-ArchiTotem 置于主栏下方并向下弹出、绑定态随 Bar 1。确认前不得把提议坐标或
-`direction=down` 写入 addon／pfUI／ArchiTotem SavedVariables；ImageGen 仍为
-`0/0`。
+目标角色 `/reload` 后显式执行一次 `/aeui focuslayout comfort`，确认
+`/aeui status` 含 `version 0.8.9`、`focus-layout-contract=1.3`、
+`focus-layout-display-scale=0.82`、`fieldkit-contract=1.6`、
+`architotem-dock=bottom` 与 `architotem-direction=down`。随后实机验证满血／掉血、
+有／无目标、双方施法、近战双持、远程计时、Aura 超过 `6`、DoiteDPS 锁定／
+解锁，以及 ArchiTotem 四元素施放、右键跳过、Air 七层候选、拖动／锁定、Recall、
+`unbind／bind` 恢复和缺失／非萨满 fail-open。0.82 可读性实机仍不足时，再以截图
+进入独立 `0.85` 对照修订；本轮不盲目继续放大，ImageGen 保持 `0/0`。
