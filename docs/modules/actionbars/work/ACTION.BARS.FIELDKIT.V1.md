@@ -7,12 +7,12 @@
   `AB.TRINKET.MENU`、`AB.CONSUMABLE.RACK`、`AB.CONSUMABLE.POCKET`、
   `AB.CONSUMABLE.POPUP`、`AB.CONSUMABLE.GROUP`
 - 模拟版本：`AB-FIELDKIT-SIM-V2`
-- 当前操作：`prepare`
-- 子状态：`simulation-confirmed`
-- 项目阶段：`P2`
-- 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`；本阶段未加载、未调用
-- 当前状态：`simulation-confirmed / P2`；V2 文字化方向已冻结，等待两个最终
-  production body 的独立授权
+- 当前操作：`generate`
+- 子状态：`prompt-authorized`
+- 项目阶段：`P3`
+- 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
+- 当前状态：`prompt-authorized / P3`；V2 文字化方向与两个最终 production body
+  均已冻结，准备按两个独立预算依次执行
 - 模拟用户结论：`AB-FIELDKIT-SIM-V1 consumable direction revision-requested
   2026-08-08`；用户原文：“消耗品5*2不够用. 并且能否按照类型进行分组?”；
   `AB-FIELDKIT-SIM-V2 confirmed 2026-08-09`；用户原文：“接受
@@ -20,10 +20,11 @@
 - 当前生产候选：无
 - 模拟 ImageGen：`0/0`
 - 生产执行体：`AB.TRINKET.KIT.V1` 与 `AB.CONSUMABLE.KIT.V1`，均为
-  `production-final / not-authorized / not-executed`
+  `production-final / prompt-authorized / not-executed`
 - 后续实际生成／修复预算：每个独立执行体最多 `5` 次，最坏合计 `10` 次；
-  尚未授权
-- 外部上传：本阶段 `0`；既有 `AB.SLOT.BASE.V1` 的 Image 1 上传授权不得复用
+  用户已于 `2026-08-09` 分别授权
+- 外部上传：用户已分别授权把 Character V3 锁定图作为两个执行体各自唯一的
+  Image 1 上传；授权范围不含新增输入图，也不复用既有组件授权
 - 跨设备 handoff：无；确认结论与两个最终正文均已进入 tracked work，下一门禁
   不依赖 ignored 模拟像素
 - 目标：Turtle WoW `1.18.1`，Interface `11200`，`1920×1080`，
@@ -314,13 +315,13 @@ production edit／ImageGen reference。若布局、物件隐喻、材质层级�
 | source canvas／cell／Alpha | 两个执行体均为 `1024² RGBA` 四格 atlas，cell 与安全区固定 | pass |
 | 动态内容与 z-order | 图标、具体类别、冷却、Queue、Tooltip 全排除并归 provider；三组标题为 adapter runtime FontString | pass |
 | 最小／典型／最大真实排版 | V2 本地模拟布局 `72/72`、display `16/16 pass` | pass |
-| 独立执行预算 | `5 + 5`，最坏 `10` 次；两个执行体均尚未授权 | pass / blocked by authorization |
-| 外部上传 | 本轮没有授权；AB.SLOT 的旧授权不可复用 | blocked |
+| 独立执行预算 | `5 + 5`，最坏 `10` 次；用户于 `2026-08-09` 分别明确授权 | pass |
+| 外部上传 | Character V3 已分别获准作为两个执行体各自唯一的 Image 1；不复用旧授权 | pass |
 | 用户模拟确认 | `AB-FIELDKIT-SIM-V2` 于 `2026-08-09` 明确确认；只接受八项文字化方向 | pass |
 
 ## 最终执行正文 A（`AB.TRINKET.KIT.V1`）
 
-状态：`production-final / not-authorized / not-executed`。
+状态：`production-final / prompt-authorized / not-executed`。
 
 ```text
 Create one production-ready transparent RGBA UI asset atlas for Turtle WoW 1.18.1, component AB.TRINKET.KIT.V1. The output canvas must be exactly 1024 by 1024 pixels and divided into four non-overlapping 512 by 512 cells: A [0,0,512,512] equipped-trinket sheath base; B [512,0,1024,512] candidate-trinket insert base; C [0,512,512,1024] adaptive menu-frame nine-slice master; D [512,512,1024,1024] short joiner clasp used between the paired equipped sheaths. Keep every cell independent, centered, fully visible, and surrounded by at least 80 transparent pixels. No visible pixel may cross a cell boundary. Background outside each object must be true alpha zero; do not use a green key background.
@@ -348,7 +349,7 @@ All four cells contain only the normal static base layer. Do not bake hover, pre
 
 ## 最终执行正文 B（`AB.CONSUMABLE.KIT.V1`）
 
-状态：`production-final / not-authorized / not-executed`。
+状态：`production-final / prompt-authorized / not-executed`。
 
 ```text
 Create one production-ready transparent RGBA UI asset atlas for Turtle WoW 1.18.1, component AB.CONSUMABLE.KIT.V1. The output canvas must be exactly 1024 by 1024 pixels and divided into four non-overlapping 512 by 512 cells: A [0,0,512,512] main consumable pocket base; B [512,0,1024,512] thinner popup pocket base; C [0,512,512,1024] adaptive alchemist-roll nine-slice frame master that can also frame small non-interactive group tabs; D [512,512,1024,1024] narrow rotatable and length-stretchable connector strip for popup gaps and group divider seams. Keep each object independent, centered, fully visible and surrounded by at least 80 transparent pixels. No visible pixels may connect across cell boundaries. Everything outside each object must be true alpha zero, never chroma-key green.
@@ -381,13 +382,13 @@ All cells are normal static bases only. The recommended profile instantiates twe
 
 | 实际尝试 | 执行体 | 结果 | 结论 |
 |---:|---|---|---|
-| `0/5` | production final | 未执行 | 模拟已确认；等待本执行体正文／五次预算授权与 Image 1 外部上传授权 |
+| `0/5` | production final | 未执行 | 正文、最多五次预算与 Character V3 Image 1 外部上传均已授权；准备 attempt 1 |
 
 ### `AB.CONSUMABLE.KIT.V1`
 
 | 实际尝试 | 执行体 | 结果 | 结论 |
 |---:|---|---|---|
-| `0/5` | production final | 未执行 | 模拟已确认；等待本执行体正文／五次预算授权与 Image 1 外部上传授权 |
+| `0/5` | production final | 未执行 | 正文、最多五次预算与 Character V3 Image 1 外部上传均已授权；等待 Trinket Kit 完成本轮内部循环后执行 attempt 1 |
 
 流程错误：本地 display contract 曾出现一次 schema 使用错误；没有调用外部
 ImageGen、没有返回生成结果，不进入任一 `0/5` 账本。
@@ -408,6 +409,15 @@ ImageGen、没有返回生成结果，不进入任一 `0/5` 账本。
   production body 并重跑正文完整性预检。
 - 外部输入／上传／ImageGen：均为 `0`；未启用 AutoBar、未改变 TrinketMenu
   SavedVariables、未产生候选／source／runtime／adapter。
+- 日期：`2026-08-09`
+- 操作：用户分别授权执行 `AB.TRINKET.KIT.V1` 与 `AB.CONSUMABLE.KIT.V1`，
+  各自最多五次实际生成／修复；两个冻结正文均未改写。
+- 外部输入／上传：用户分别授权将
+  `assets/locked/character/角色属性面板_香草同构收敛_风格确认_v3.png`
+  作为两个执行体各自唯一的 Image 1 上传到外部 ImageGen；没有授权任何第二张
+  输入图、模拟像素或既有 `AB.SLOT／AB.RAIL` 资产。
+- ImageGen：此检查点仍为 `0/5 + 0/5`；未启用 AutoBar、未改变 TrinketMenu
+  SavedVariables、未产生候选／source／runtime／adapter。
 
 ## 审查记录
 
@@ -419,8 +429,8 @@ ImageGen、没有返回生成结果，不进入任一 `0/5` 账本。
   关系成立，三组不使用现代彩色 Dashboard 编码。
 - 对象／状态合同：pass；布局 `72/72`、display `16/16`、violations `0`；
   AutoBar disabled 与 TrinketMenu enabled 状态均保持。
-- 结论：`simulation-confirmed / P2`；允许展示两个最终 production body 并请求
-  各自独立授权，不允许直接进入 source、runtime 或正式 ImageGen。
+- 结论：`prompt-authorized / P3`；允许依次启动两个独立的固定执行器有界循环，
+  仍不允许在内部通过前进入 source、runtime 或 addon 接入。
 
 ## 尝试摘要
 
@@ -431,13 +441,12 @@ ImageGen、没有返回生成结果，不进入任一 `0/5` 账本。
 
 ## 下一门禁
 
-1. 向用户展示 `AB.TRINKET.KIT.V1` 与 `AB.CONSUMABLE.KIT.V1` 的最终执行正文、
-   不可变／可修复边界和各自 `0/5` 预算，等待分别授权。
-2. 必须分别取得两个执行体的最终正文／最多五次实际生成授权，并分别取得
-   Character V3 作为其 Image 1 上传到外部 ImageGen 的明确授权。不得复用
-   `AB.SLOT.BASE.V1` 或 `AB.RAIL.V1` 的任何旧授权。
-3. 某一执行体的正文授权与该执行体 Image 1 上传授权都齐全后，先把
-   `prompt-authorized / P3` 状态提交，再只为该执行体启动最多五次固定执行器
-   自主生成／修复循环；另一执行体仍保持 `0/5`。
-4. 对应授权未齐全前，不调用固定 ImageGen `0.143.0`，不产生候选，不接入
-   addon，不启用 AutoBar，也不改变 TrinketMenu SavedVariables。
+1. 先提交本次 `prompt-authorized / P3` 检查点，再以冻结正文原文执行
+   `AB.TRINKET.KIT.V1` attempt 1；每个 countable output 后依次完成语义、
+   美术、组件合同、真实排版、display-region 与像素门禁。
+2. Trinket Kit 若未通过，只能在既定修复边界内写入完整自包含修复正文并提交，
+   再执行下一次；最迟 `5/5` 停止。通过即停止该执行体，不为消耗预算继续生成。
+3. 然后独立以冻结正文原文执行 `AB.CONSUMABLE.KIT.V1` attempt 1，并采用相同
+   的逐稿审查与最多 `5/5` 停止规则；两个账本不得混算。
+4. 两套内部通过的候选只进入 ignored `generated/` 和用户审阅，不自动晋级
+   source／runtime；全过程不启用 AutoBar，也不改变 TrinketMenu SavedVariables。

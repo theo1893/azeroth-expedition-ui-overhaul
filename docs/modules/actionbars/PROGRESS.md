@@ -33,9 +33,10 @@
   `12` 个四向 popup 展开真实物品。display `16/16 pass`、布局 `72/72 pass`、
   violations `0`、ImageGen `0/0`。用户于 `2026-08-09` 明确回复“接受
   AB-FIELDKIT-SIM-V2”，八项文字化方向已冻结进 `AB.TRINKET.KIT.V1` 与
-  `AB.CONSUMABLE.KIT.V1` 最终正文；模拟像素未被接受。当前为
-  `simulation-confirmed / P2`，等待两个执行体各自的正文／五次预算与
-  Character V3 Image 1 外部上传授权。
+  `AB.CONSUMABLE.KIT.V1` 最终正文；模拟像素未被接受。用户于 `2026-08-09`
+  分别授权两个正文、各自最多五次实际生成／修复，并分别授权 Character V3
+  作为各自唯一的 Image 1 外部上传；当前为 `prompt-authorized / P3`，固定执行器
+  尚未调用，账本仍为 `0/5 + 0/5`。
 - `AB.SLOT.BASE.V1` 有界生产循环已在 `5/5` 停止；用户于 `2026-08-08` 明确
   “接受 AB.SLOT.BASE.V1 第5稿”，随后以“进行下一步”授权 P4→P5。exact source
   RGBA `6d4a4d16…7dc0` 已按冻结 `[200,200,824,824)` crop 确定性导出为
@@ -151,10 +152,10 @@
 | `AB.SLOT.STATE` | `P2 / scoped` | highlight／active／equipped／icon tint／cooldown／按键动画的真实覆盖顺序已冻结 | 基底 P6 已验证；如需独立换肤再写悬停／激活覆盖合同，不生产假 disabled cell |
 | `AB.ENDCAP.GRYPHON` | `P2 / direction-locked` | pfUI 左右端帽对象、64 UI 默认能力；用户确认的 V3 preset 默认关闭 | `AB.SLOT／RAIL` 后另行授权可选端帽正文 |
 | `AB.STANCE／PET` | `P1` | Bar `11／12` 与 provider 状态已审计 | 职业最少／最多数量和自动施法实机排版 |
-| `AB.CONSUMABLE.RACK／POCKET／POPUP` | `P2 / simulation-confirmed` | [work](work/ACTION.BARS.FIELDKIT.V1.md)；用户已确认 V2 的 AutoBar `24` 主 Button、`4×6` 满容量、主体 `165×243 UI`、`1–12` popup 与左侧共同底边；当前 provider disabled；display 全场景 pass，ImageGen `0/0` | 分别授权 `AB.CONSUMABLE.KIT.V1` 最终正文／最多五次实际生成及 Character V3 Image 1 上传；授权前不启用 AutoBar、不执行 production |
-| `AB.CONSUMABLE.GROUP` | `P2 / simulation-confirmed` | 用户已确认推荐 profile 的 `1–8／9–16／17–24` 对应应急／增益／工具；三枚标题皮签与两条分隔均不接收鼠标；签名失配自动退回无标签外壳；AutoBar 无原生 `FLASK` 类别，合剂只走 provider 原生的手动物品 ID | 与 Consumable Kit 共用其独立生产授权；授权前不写 profile、不创建 runtime FontString |
-| `AB.TRINKET.DOCK` | `P2 / simulation-confirmed` | [work](work/ACTION.BARS.FIELDKIT.V1.md)；用户已确认现用 TrinketMenu 的 `92×52／52×92 UI` 双槽、Queue、当前水平比例与主栏右侧 `16 px` 邻接 | 分别授权 `AB.TRINKET.KIT.V1` 最终正文／最多五次实际生成及 Character V3 Image 1 上传 |
-| `AB.TRINKET.MENU` | `P2 / simulation-confirmed` | 用户已确认菜单从双槽右侧贴出、当前四列向上增长；provider `0／1／8／30`、自动／手动列数、横竖方向、最大三十列、停靠与战斗 Queue 合同不变；display 全场景 pass | 与 Trinket Kit 共用其独立生产授权；授权前不改变 TrinketMenu SavedVariables |
+| `AB.CONSUMABLE.RACK／POCKET／POPUP` | `P3 / prompt-authorized` | [work](work/ACTION.BARS.FIELDKIT.V1.md)；用户已确认 V2 的 AutoBar `24` 主 Button、`4×6` 满容量、主体 `165×243 UI`、`1–12` popup 与左侧共同底边；当前 provider disabled；最终正文、独立 `5` 次预算与 Character V3 Image 1 上传已授权，当前 `0/5` | 在固定执行器中完成独立有界生成／修复与逐稿真实排版门禁；不启用 AutoBar |
+| `AB.CONSUMABLE.GROUP` | `P3 / prompt-authorized` | 用户已确认推荐 profile 的 `1–8／9–16／17–24` 对应应急／增益／工具；三枚标题皮签与两条分隔均不接收鼠标；签名失配自动退回无标签外壳；AutoBar 无原生 `FLASK` 类别，合剂只走 provider 原生的手动物品 ID | 与 Consumable Kit 共用已授权的独立有界循环；内部通过前不写 profile、不创建 runtime FontString |
+| `AB.TRINKET.DOCK` | `P3 / prompt-authorized` | [work](work/ACTION.BARS.FIELDKIT.V1.md)；用户已确认现用 TrinketMenu 的 `92×52／52×92 UI` 双槽、Queue、当前水平比例与主栏右侧 `16 px` 邻接；最终正文、独立 `5` 次预算与 Character V3 Image 1 上传已授权，当前 `0/5` | 先执行 Trinket Kit 独立有界循环与逐稿真实排版门禁 |
+| `AB.TRINKET.MENU` | `P3 / prompt-authorized` | 用户已确认菜单从双槽右侧贴出、当前四列向上增长；provider `0／1／8／30`、自动／手动列数、横竖方向、最大三十列、停靠与战斗 Queue 合同不变；display 全场景 pass | 与 Trinket Kit 共用已授权的独立有界循环；全过程不改变 TrinketMenu SavedVariables |
 | `AB.FOCUS.CASTBAR` | `P2 / direction-locked` | 玩家／目标／Focus 真实对象与用户确认的 V3 双框下沿实例 | 以后独立决定只做一次性布局 preset 或另授权细 Rail 换肤 |
 | `AB.FOCUS.SWING` | `P2 / direction-locked` | 主手／副手／ranged 真对象、`200×12 UI` 与用户确认的中心双细轨 | 实机验证近战／远程复用；若换肤则另立合同 |
 | `AB.DOITEDPS.TIMELINE` | `P2 / direction-locked` | 已安装 provider 的 `318×46 UI` 根 Frame及用户确认的中心落位 | 以后只做 feature-detect 一次性位置 preset 或独立换肤合同 |
@@ -229,14 +230,13 @@
    `assets/references/actionbars/p6/AB-SLOT-BASE-V1_TurtleWoW_P6_2026-08-08.png`
    （SHA `dc9615ac…4d5d`）与同目录 P6 evidence JSON（SHA `73a8f942…0d0b`）；
    静态截图与用户交互确认的证明范围保持分离。
-2. `AB.FIELDKIT.V1` 已达到 `simulation-confirmed / P2`。用户于 `2026-08-09`
+2. `AB.FIELDKIT.V1` 已由 `simulation-confirmed / P2` 进入 `prompt-authorized / P3`。用户于 `2026-08-09`
    明确接受 `AB-FIELDKIT-SIM-V2` 的八项文字化方向，不接受两张模拟的任何像素；
    可见方向发生实质变化时必须返回新模拟版本。
-3. `AB.TRINKET.KIT.V1` 与 `AB.CONSUMABLE.KIT.V1` 最终正文及修复边界已经冻结。
-   下一门禁是为每个执行体分别取得最终正文／最多 `5` 次实际生成／修复授权，
-   并分别取得 Character V3 作为其 Image 1 的外部上传授权。两个执行体最坏
-   合计 `10` 次，任何既有 AB.SLOT／AB.RAIL 授权均不得复用；对应授权齐全前
-   不启用 AutoBar、不改变 TrinketMenu 保存值、不执行 production。
+3. `AB.TRINKET.KIT.V1` 与 `AB.CONSUMABLE.KIT.V1` 最终正文、各自最多 `5` 次
+   实际生成／修复预算及各自 Character V3 Image 1 上传均已分别授权。先提交
+   `prompt-authorized` 检查点，再依次启动两个独立账本的固定执行器循环；每稿
+   必须完成真实排版与 display-region 门禁，通过即停，最迟 `5/5` 停止。
 4. `AB.RAIL.V1` 已达到 `game-validated / P6`。长期证据为
    `assets/references/actionbars/p6/AB-RAIL-V1_TurtleWoW_P6_2026-08-09.png`
    （SHA `5e89c6e5…12942`）与同目录 P6 evidence JSON（SHA
