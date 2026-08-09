@@ -4,9 +4,9 @@
   "batch": "AB.RAIL.V1",
   "component": "AB.RAIL",
   "accepted_version": "AB.RAIL.V1.r4 / attempt 5 canonical",
-  "status": "runtime-exported",
-  "workflow_state": "runtime-exported",
-  "project_phase": "P5",
+  "status": "game-validated",
+  "workflow_state": "game-validated",
+  "project_phase": "P6",
   "accepted_on": "2026-08-09",
   "source": {
     "file": "ActionRail_Master_v1.png",
@@ -303,6 +303,35 @@
       "violations": 0,
       "build_required_on_target_device": false
     },
-    "game_validated": false
+    "game_validated": true
+  },
+  "p6_validation": {
+    "status": "pass",
+    "validated_on": "2026-08-09",
+    "target": "Turtle WoW 1.18.1 / Interface 11200",
+    "evidence_record": "assets/references/actionbars/p6/AB-RAIL-V1_P6Evidence_v1.json",
+    "evidence_record_sha256": "2d48b8fb1808f371db33fbdc50b627eab4ee470e13c6beb49bf2c40d78430be3",
+    "screenshot": "assets/references/actionbars/p6/AB-RAIL-V1_TurtleWoW_P6_2026-08-09.png",
+    "screenshot_sha256": "5e89c6e5a8872f6db8fd2c2804301a9b8867eaf16fa1f46b3a3db901cb212942",
+    "screenshot_size": [
+      580,
+      129
+    ],
+    "screenshot_mode": "RGB",
+    "user_statements": [
+      "游戏内验证通过"
+    ],
+    "explicit_interaction_checks": {
+      "horizontal_vertical_and_multirow_rail": "pass",
+      "bar_1_6_merged_outer_rail_without_internal_seam": "pass",
+      "drag_scale_and_visibility_follow": "pass",
+      "stance_and_pet_rail": "pass",
+      "actionbars_toggle_native_pfui_fail_open": "pass",
+      "status_reports_rail_contract_1_0": "pass"
+    },
+    "aggregate_p6_checklist": "pass",
+    "visual_review": "pass",
+    "additional_imagegen_calls": 0,
+    "component_closure": "pending exact keep/delete inventory and explicit user approval"
   }
 }

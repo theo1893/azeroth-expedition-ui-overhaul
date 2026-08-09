@@ -15,6 +15,14 @@ SOURCE = (
     ROOT / "assets/source/actionbars/ab-rail/ActionRail_Master_v1.png"
 )
 MANIFEST = SOURCE.with_name("AB-RAIL-V1_SourceManifest_v1.json")
+P6_EVIDENCE = (
+    ROOT
+    / "assets/references/actionbars/p6/AB-RAIL-V1_P6Evidence_v1.json"
+)
+P6_SCREENSHOT = (
+    ROOT
+    / "assets/references/actionbars/p6/AB-RAIL-V1_TurtleWoW_P6_2026-08-09.png"
+)
 EXPECTED_SHA256 = (
     "7c49995d45b88f5ac12020c4b158027674b7ab7ed6e44a992e643f2ef6bd32e9"
 )
@@ -36,9 +44,9 @@ def main() -> None:
     assert manifest["module"] == "actionbars"
     assert manifest["batch"] == "AB.RAIL.V1"
     assert manifest["component"] == "AB.RAIL"
-    assert manifest["status"] == "runtime-exported"
-    assert manifest["workflow_state"] == "runtime-exported"
-    assert manifest["project_phase"] == "P5"
+    assert manifest["status"] == "game-validated"
+    assert manifest["workflow_state"] == "game-validated"
+    assert manifest["project_phase"] == "P6"
     assert manifest["source"]["sha256"] == EXPECTED_SHA256
     assert manifest["provenance"]["actual_imagegen_calls_in_loop"] == 5
     assert manifest["provenance"]["process_errors_without_generation"] == 0
@@ -113,7 +121,27 @@ def main() -> None:
 
     assert manifest["p5_validation"]["real_layout_scenarios"] == "8/8 pass"
     assert manifest["p5_validation"]["display_region_violations"] == 0
-    assert manifest["p5_validation"]["game_validated"] is False
+    assert manifest["p5_validation"]["game_validated"] is True
+
+    p6 = manifest["p6_validation"]
+    assert p6["status"] == "pass"
+    assert p6["validated_on"] == "2026-08-09"
+    assert p6["aggregate_p6_checklist"] == "pass"
+    assert p6["additional_imagegen_calls"] == 0
+    assert p6["evidence_record_sha256"] == sha256(P6_EVIDENCE)
+    assert p6["screenshot_sha256"] == sha256(P6_SCREENSHOT)
+
+    evidence = json.loads(P6_EVIDENCE.read_text(encoding="utf-8"))
+    assert evidence["schema"] == "aeui-component-p6-evidence-v1"
+    assert evidence["status"] == "game-validated"
+    assert evidence["phase"] == "P6"
+    assert evidence["screenshot"]["sha256"] == sha256(P6_SCREENSHOT)
+    assert evidence["closure"]["status"] == "pending"
+
+    with Image.open(P6_SCREENSHOT) as opened:
+        assert opened.format == "PNG"
+        assert opened.mode == "RGB"
+        assert opened.size == (580, 129)
 
     print("action rail source test passed")
 

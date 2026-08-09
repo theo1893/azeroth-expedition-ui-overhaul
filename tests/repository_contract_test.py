@@ -327,9 +327,17 @@ def main() -> None:
     )
     rail_master = rail_source_dir / "ActionRail_Master_v1.png"
     rail_runtime = aeui / "Media" / "ActionBars" / "ActionRailV1.tga"
+    rail_p6_evidence = (
+        ROOT
+        / "assets/references/actionbars/p6/AB-RAIL-V1_P6Evidence_v1.json"
+    )
+    rail_p6_screenshot = (
+        ROOT
+        / "assets/references/actionbars/p6/AB-RAIL-V1_TurtleWoW_P6_2026-08-09.png"
+    )
     assert rail_manifest["runtime_contract"] == "1.0"
-    assert rail_manifest["status"] == "runtime-exported"
-    assert rail_manifest["phase"] == "P5"
+    assert rail_manifest["status"] == "game-validated"
+    assert rail_manifest["phase"] == "P6"
     assert rail_manifest["source"]["sha256"] == sha256(rail_master)
     assert rail_manifest["runtime_export"]["sha256"] == sha256(rail_runtime)
     assert rail_manifest["adapter"]["sha256"] == sha256(
@@ -338,7 +346,19 @@ def main() -> None:
     assert rail_manifest["adapter"]["logical_bars"] == list(range(1, 13))
     assert rail_manifest["adapter"]["merged_pair"] == [1, 6]
     assert rail_manifest["package_validation"]["status"] == "pass"
-    assert rail_manifest["game_validation"]["status"] == "pending"
+    assert rail_manifest["game_validation"]["status"] == "pass"
+    assert rail_manifest["game_validation"]["aggregate_p6_checklist"] == "pass"
+    assert rail_manifest["game_validation"][
+        "evidence_record_sha256"
+    ] == sha256(rail_p6_evidence)
+    assert rail_manifest["game_validation"]["screenshot_sha256"] == sha256(
+        rail_p6_screenshot
+    )
+    rail_p6 = json.loads(rail_p6_evidence.read_text(encoding="utf-8"))
+    assert rail_p6["schema"] == "aeui-component-p6-evidence-v1"
+    assert rail_p6["status"] == "game-validated"
+    assert rail_p6["screenshot"]["sha256"] == sha256(rail_p6_screenshot)
+    assert rail_p6["closure"]["status"] == "pending"
 
     actionbars_source_dir = ROOT / "assets" / "source" / "actionbars" / "ab-slot"
     actionbars_manifest = json.loads(

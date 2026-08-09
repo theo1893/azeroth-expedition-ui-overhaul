@@ -5,12 +5,13 @@
 - 模块：`actionbars`
 - 组件 ID：`AB.RAIL.V1`
 - 工作版本：`AB.RAIL.V1/runtime-v1`
-- 子状态：`runtime-exported`
-- 项目阶段：`P5`
+- 子状态：`game-validated`
+- 项目阶段：`P6`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`；attempt `5/5` 已全部调用，不得 attempt 6
-- 当前操作：`export`；用户以“进行下一步”授权 P4→P5；accepted source 已确定性
-  导出、接入 tracked addon 并通过最终 display-region 与 fresh-checkout package；
-  Turtle WoW 实机 P6 尚未发生
+- 当前操作：`game-validate`；用户在完成上一轮六项 Rail 实机清单后明确
+  “游戏内验证通过”，并补充当前 runtime 的 Turtle WoW 场景截图；静态截图与
+  交互结论已分开取证，当前为 `game-validated / P6`。单组件 `P6-C` 尚未执行，
+  必须先形成精确保留／删除清单并另获用户批准
 - 生成前模拟方式：`deterministic-local-geometry`
 - 模拟 ImageGen：`0/0`
 - 模拟脚本：`tools/render_action_rail_simulation.py`，SHA-256
@@ -574,7 +575,45 @@ Before returning the image, inspect every requirement literally: the returned fi
 - 目标设备操作：拉取后只复制 `addon/pfUI` 与 `addon/AzerothExpeditionUI` 到
   `Interface/AddOns` 并 `/reload`；不生成、不导出、不打 patch、不修改 Lua／pfUI。
 - ImageGen：P4→P5 新增 `0`；生产仍为 `5/5`，attempt 6 禁止。
-- 尚未发生：Turtle WoW `/reload` 与 Rail 的 P6 实机交互／布局验证。
-- 下一门禁：实机验证横／竖／多行、Bar `1／6` merged 无中缝、拖动／缩放／
-  显隐、姿态／宠物栏跟随与 `/aeui actionbars` fail-open；通过前不得标 P6 或
-  执行组件清理。
+- P5 导出时尚未发生：Turtle WoW `/reload` 与 Rail 的 P6 实机交互／布局验证；
+  该门禁现已由下节证据通过。
+- P5 原下一门禁：实机验证横／竖／多行、Bar `1／6` merged 无中缝、拖动／
+  缩放／显隐、姿态／宠物栏跟随与 `/aeui actionbars` fail-open；现已完成，
+  且在 P6-C 清单获批前仍不得执行组件清理。
+
+## P6 游戏内验证记录
+
+- 状态：`game-validated / P6`
+- 目标与日期：Turtle WoW `1.18.1`／Interface `11200`；`2026-08-09`
+- 用户结论：用户在收到完整六项 P6 清单后明确回复“游戏内验证通过”。该聚合
+  结论覆盖：横向／竖向／多行 Rail；Bar `1／6` 合并外围无内部中缝；Rail 随
+  provider 拖动、缩放和显隐；姿态／宠物栏；`/aeui actionbars` 关闭后 pfUI
+  原背景 fail-open；`/aeui status` 报告 `rail-contract=1.0`。
+- Turtle WoW 截图：
+  `assets/references/actionbars/p6/AB-RAIL-V1_TurtleWoW_P6_2026-08-09.png`，
+  SHA-256
+  `5e89c6e5a8872f6db8fd2c2804301a9b8867eaf16fa1f46b3a3db901cb212942`；
+  `580×129 RGB PNG`，为用户所附截图的原始字节副本。
+- 静态目视范围：当前双行动作区中 Rail 方向正确，连续深胡桃褐承托保持在
+  Slot／动态图标／快捷键／数量下层；外缘无可见裁切或遮挡，图标与键位可读，
+  未观察到动态内容烘焙。单帧不单独证明 alternate layout、合并切换或瞬态交互，
+  这些由上述用户聚合验证及已通过的 P5 display contract 共同证明。
+- P6 evidence：
+  `assets/references/actionbars/p6/AB-RAIL-V1_P6Evidence_v1.json`，SHA-256
+  `2d48b8fb1808f371db33fbdc50b627eab4ee470e13c6beb49bf2c40d78430be3`；
+  schema `aeui-component-p6-evidence-v1`。
+- runtime 身份未变：source `7c49995d…32e9`；TGA `1e5cca09…0a3d`；像素
+  `1b09b93b…9db5`；adapter `57f4570d…987e`；contract `1.0`；AEUI `0.8.0`。
+  P5 display `8/8 pass`、violations `0` 与 package `pass` 继续作为静态前置证据。
+- P6 静态回归：Windows `py -3` 不可用，按 Skill 规则使用
+  `D:\Softwares\miniconda3\python.exe`／Python `3.13.5`。Rail source／runtime、
+  既有 Slot runtime、repository contract 与 Lua smoke 均 pass；最终 display
+  重新生成报告 SHA 仍为 `34c9388d…4c91`（`8/8 pass`、violations `0`），
+  fresh-checkout package 报告 SHA 仍为 `058214a8…80e5`（`status=pass`、
+  `build_required_on_target_device=false`）；`git diff --check` pass。
+- ImageGen：P5→P6 新增 `0`；固定生产仍为 `5/5`，attempt 6 禁止。
+- 未执行：没有修改 pfUI、Lua、TGA、SavedVariables 或 provider 行为；没有创建
+  handoff，也没有删除 `generated`、work、失败候选或回退证据。
+- 下一门禁：若要关闭 `AB.RAIL.V1`，先在本 work 中建立组件专属的精确
+  keep／delete inventory，排除共享 ActionBars adapter、锁定基准与其他未完成
+  组件依赖，向用户展示并取得明确批准后才能进入 `P6-C / component-closed`。

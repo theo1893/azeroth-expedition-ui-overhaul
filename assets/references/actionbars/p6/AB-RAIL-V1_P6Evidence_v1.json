@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "schema": "aeui-component-p6-evidence-v1",
+  "module": "actionbars",
+  "component": "AB.RAIL",
+  "batch": "AB.RAIL.V1",
+  "status": "game-validated",
+  "phase": "P6",
+  "validated_on": "2026-08-09",
+  "target": {
+    "client": "Turtle WoW 1.18.1",
+    "interface": 11200
+  },
+  "screenshot": {
+    "file": "assets/references/actionbars/p6/AB-RAIL-V1_TurtleWoW_P6_2026-08-09.png",
+    "sha256": "5e89c6e5a8872f6db8fd2c2804301a9b8867eaf16fa1f46b3a3db901cb212942",
+    "width": 580,
+    "height": 129,
+    "mode": "RGB",
+    "format": "PNG",
+    "provenance": "byte-exact tracked copy of the screenshot supplied by the user after reporting that AB.RAIL.V1 passed the requested Turtle WoW validation checklist"
+  },
+  "user_validation": {
+    "exact_statements": [
+      "游戏内验证通过"
+    ],
+    "explicit_checks": {
+      "horizontal_vertical_and_multirow_rail": "pass",
+      "bar_1_6_merged_outer_rail_without_internal_seam": "pass",
+      "drag_scale_and_visibility_follow": "pass",
+      "stance_and_pet_rail": "pass",
+      "actionbars_toggle_native_pfui_fail_open": "pass",
+      "status_reports_rail_contract_1_0": "pass"
+    },
+    "aggregate_checklist": {
+      "status": "pass",
+      "basis": "the user replied with the requested all-clear after the six-item P6 checklist was presented for the tracked AB.RAIL.V1 runtime",
+      "checks": [
+        "horizontal, vertical and multi-row Rail layouts",
+        "eligible Bar 1 and Bar 6 merged outer Rail without an internal seam",
+        "Rail follows provider drag, scale and visibility changes",
+        "stance and pet bar Rail behavior",
+        "/aeui actionbars off restores the native pfUI background",
+        "/aeui status reports rail-contract=1.0"
+      ]
+    }
+  },
+  "visual_review": {
+    "status": "pass",
+    "checks": {
+      "real_client_capture": "pass",
+      "current_two_row_action_area": "pass",
+      "rail_art_orientation": "pass",
+      "rail_below_slot_and_live_content_layers": "pass",
+      "live_icon_keybind_and_count_readability": "pass",
+      "visible_crop_or_overlap": "none",
+      "dynamic_content_baked_into_rail_art": "none observed"
+    },
+    "scope_note": "the cropped still establishes current-client geometry, orientation, layering, edge integrity and readability; merged-mode, alternate layouts and transient interaction behavior are established by the user's explicit aggregate validation and the already-passing tracked P5 display contract"
+  },
+  "runtime": {
+    "source_manifest": "assets/source/actionbars/ab-rail/AB-RAIL-V1_SourceManifest_v1.json",
+    "source_file": "assets/source/actionbars/ab-rail/ActionRail_Master_v1.png",
+    "source_sha256": "7c49995d45b88f5ac12020c4b158027674b7ab7ed6e44a992e643f2ef6bd32e9",
+    "runtime_manifest": "assets/source/actionbars/ab-rail/AB-RAIL-V1_RuntimeManifest_v1.json",
+    "runtime_file": "addon/AzerothExpeditionUI/Media/ActionBars/ActionRailV1.tga",
+    "runtime_sha256": "1e5cca09379b65ed5f938ebcf3f0d90d176bf66364159c6e3e16023f808e0a3d",
+    "runtime_pixel_sha256": "1b09b93b0a229b416e7961da47d1c97e0e75280245efe2d6310a955132b09db5",
+    "runtime_contract": "1.0",
+    "addon_version": "0.8.0"
+  },
+  "static_gates": {
+    "display_region_contract": "tools/specs/action_rail_v1_runtime_display_region.json",
+    "display_region_contract_sha256": "c45dbfc927ea20d396f74f073b459f854c885719fd8ad04dbe1f2a49ff2af0f9",
+    "display_region_report_sha256": "34c9388d11d8717c307b768f17655581df00e892245f51b0f31f86be6b334c91",
+    "display_region_result": "8/8 pass",
+    "display_region_violations": 0,
+    "addon_package_report_sha256": "058214a835d7c738097be57b017fc014a8e63650e4a5b3db1969beeb5c8480e5",
+    "addon_package_status": "pass",
+    "build_required_on_target_device": false
+  },
+  "production_budget": {
+    "actual_generations": 5,
+    "limit": 5,
+    "additional_generations_for_p6": 0,
+    "attempt_6_allowed": false
+  },
+  "closure": {
+    "status": "pending",
+    "next_phase": "P6-C",
+    "requires_exact_keep_delete_inventory_and_explicit_user_approval": true
+  }
+}
