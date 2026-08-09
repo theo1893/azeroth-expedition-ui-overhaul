@@ -3,7 +3,7 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 
 addon.name = "AzerothExpeditionUI"
-addon.version = "0.7.0"
+addon.version = "0.8.0"
 addon.modules = addon.modules or {}
 addon.media = addon.media or {}
 addon.media.root = "Interface\\AddOns\\AzerothExpeditionUI\\Media\\"
@@ -153,7 +153,7 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
     AzerothExpeditionUIDB.actionbars.enabled =
       not AzerothExpeditionUIDB.actionbars.enabled
     addon:Print(
-      "action bar slot art " ..
+      "action bar art " ..
       (AzerothExpeditionUIDB.actionbars.enabled and "enabled" or "disabled") ..
       "; reloading UI."
     )

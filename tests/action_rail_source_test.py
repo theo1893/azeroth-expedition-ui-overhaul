@@ -36,9 +36,9 @@ def main() -> None:
     assert manifest["module"] == "actionbars"
     assert manifest["batch"] == "AB.RAIL.V1"
     assert manifest["component"] == "AB.RAIL"
-    assert manifest["status"] == "accepted-source"
-    assert manifest["workflow_state"] == "source-accepted"
-    assert manifest["project_phase"] == "P4"
+    assert manifest["status"] == "runtime-exported"
+    assert manifest["workflow_state"] == "runtime-exported"
+    assert manifest["project_phase"] == "P5"
     assert manifest["source"]["sha256"] == EXPECTED_SHA256
     assert manifest["provenance"]["actual_imagegen_calls_in_loop"] == 5
     assert manifest["provenance"]["process_errors_without_generation"] == 0
@@ -87,19 +87,33 @@ def main() -> None:
     )
 
     export = manifest["export_contract"]
-    assert export["status"] == "not-exported"
-    assert export["authorization"] == "pending separate export instruction"
-    assert export["runtime_file"] is None
+    assert export["status"] == "exported"
+    assert export["authorization"] == (
+        "user instruction '进行下一步' on 2026-08-09"
+    )
+    assert export["runtime_file"] == (
+        "addon/AzerothExpeditionUI/Media/ActionBars/ActionRailV1.tga"
+    )
     assert export["accepted_source_crop_exclusive"] == [160, 160, 864, 864]
     assert export["accepted_source_crop_size"] == [704, 704]
     assert export["source_nine_slice_boundaries"] == [0, 128, 576, 704]
     assert export["source_stretch_center"] == [128, 128, 576, 576]
+    assert export["runtime_atlas_size"] == [256, 256]
+    assert export["runtime_visible_bbox_exclusive"] == [40, 40, 216, 216]
+    assert export["runtime_nine_slice_boundaries"] == [40, 72, 184, 216]
+    assert export["runtime_cell_sizes"] == [32, 112, 32]
+    assert export["runtime_cap_ui"] == 6
+    assert export["imagegen_calls_after_acceptance"] == 0
 
     review = manifest["review"]
     assert review["source_visual_accepted"] is True
     assert review["technical_checks"] == "4/4 pass"
     assert review["real_layout_scenarios"] == "8/8 pass"
     assert review["display_region_violations"] == 0
+
+    assert manifest["p5_validation"]["real_layout_scenarios"] == "8/8 pass"
+    assert manifest["p5_validation"]["display_region_violations"] == 0
+    assert manifest["p5_validation"]["game_validated"] is False
 
     print("action rail source test passed")
 

@@ -280,14 +280,14 @@ def main() -> None:
         encoding="utf-8-sig"
     )
     assert "## RequiredDeps: pfUI" in aeui_toc
-    assert "## Version: 0.7.0" in aeui_toc
+    assert "## Version: 0.8.0" in aeui_toc
     assert "Core\\Bootstrap.lua" in aeui_toc
     assert "Modules\\ActionBars.lua" in aeui_toc
     assert "Modules\\Chat.lua" in aeui_toc
     assert "Modules\\QuestVisualTheme.lua" in aeui_toc
     assert "Modules\\Quests.lua" in aeui_toc
     bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(encoding="utf-8")
-    assert 'addon.version = "0.7.0"' in bootstrap
+    assert 'addon.version = "0.8.0"' in bootstrap
     assert "actionbar-runtime=" in bootstrap
     assert 'if command == "actionbars" then' in bootstrap
     assert "chat-runtime=" in bootstrap
@@ -307,10 +307,38 @@ def main() -> None:
     assert 'backdrop:CreateTexture(nil, "ARTWORK")' in actionbars_source
     assert "texture:SetAllPoints(backdrop)" in actionbars_source
     assert "texture:SetTexCoord(0, 1, 0, 1)" in actionbars_source
+    assert 'ActionBars.railRuntimeContract = "1.0"' in actionbars_source
+    assert '"ActionBars\\\\ActionRailV1"' in actionbars_source
+    assert "ActionBars.firstRailBar = 1" in actionbars_source
+    assert "ActionBars.lastRailBar = 12" in actionbars_source
+    assert "ActionBars.railCap = 6" in actionbars_source
+    assert 'backdrop:CreateTexture(nil, "OVERLAY")' in actionbars_source
+    assert "ApplyRailBackdrop(mergedBackdrop.backdrop, enabled)" in actionbars_source
     assert "button:SetParent" not in actionbars_source
     assert "button:SetPoint" not in actionbars_source
     assert "button:SetWidth" not in actionbars_source
     assert "button:SetHeight" not in actionbars_source
+
+    rail_source_dir = ROOT / "assets" / "source" / "actionbars" / "ab-rail"
+    rail_manifest = json.loads(
+        (rail_source_dir / "AB-RAIL-V1_RuntimeManifest_v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    rail_master = rail_source_dir / "ActionRail_Master_v1.png"
+    rail_runtime = aeui / "Media" / "ActionBars" / "ActionRailV1.tga"
+    assert rail_manifest["runtime_contract"] == "1.0"
+    assert rail_manifest["status"] == "runtime-exported"
+    assert rail_manifest["phase"] == "P5"
+    assert rail_manifest["source"]["sha256"] == sha256(rail_master)
+    assert rail_manifest["runtime_export"]["sha256"] == sha256(rail_runtime)
+    assert rail_manifest["adapter"]["sha256"] == sha256(
+        aeui / "Modules" / "ActionBars.lua"
+    )
+    assert rail_manifest["adapter"]["logical_bars"] == list(range(1, 13))
+    assert rail_manifest["adapter"]["merged_pair"] == [1, 6]
+    assert rail_manifest["package_validation"]["status"] == "pass"
+    assert rail_manifest["game_validation"]["status"] == "pending"
 
     actionbars_source_dir = ROOT / "assets" / "source" / "actionbars" / "ab-slot"
     actionbars_manifest = json.loads(

@@ -7,6 +7,16 @@ function Texture:SetAllPoints(target)
   self.setAllPointsCalls = self.setAllPointsCalls + 1
   self.allPoints = target
 end
+function Texture:SetPoint(...)
+  self.setPointCalls = self.setPointCalls + 1
+  table.insert(self.points, { ... })
+end
+function Texture:SetWidth(value)
+  self.width = value
+end
+function Texture:SetHeight(value)
+  self.height = value
+end
 function Texture:SetTexture(value)
   self.setTextureCalls = self.setTextureCalls + 1
   self.texture = value
@@ -37,18 +47,26 @@ function Backdrop:CreateTexture(_, layer)
     drawLayer = layer,
     shown = true,
     setAllPointsCalls = 0,
+    setPointCalls = 0,
+    points = {},
     setTextureCalls = 0,
   }, Texture)
   self.lastTexture = texture
   return texture
 end
 
-local function NewButton(barIndex, buttonIndex)
-  local backdrop = setmetatable({
-    name = "backdrop-" .. barIndex .. "-" .. buttonIndex,
+local function NewBackdrop(name)
+  return setmetatable({
+    name = name,
     shown = true,
     createTextureCalls = 0,
   }, Backdrop)
+end
+
+local function NewButton(barIndex, buttonIndex)
+  local backdrop = NewBackdrop(
+    "backdrop-" .. barIndex .. "-" .. buttonIndex
+  )
   return {
     name = "button-" .. barIndex .. "-" .. buttonIndex,
     backdrop = backdrop,
@@ -72,8 +90,23 @@ end
 
 pfUI = { bars = {} }
 local snapshots = {}
+local barSnapshots = {}
 for barIndex = 1, 12 do
-  pfUI.bars[barIndex] = {}
+  pfUI.bars[barIndex] = {
+    parent = { id = "bar-parent-" .. barIndex },
+    points = { "bar-provider-point-" .. barIndex },
+    width = 400 + barIndex,
+    height = 40 + barIndex,
+    scripts = { OnShow = function() end },
+    backdrop = NewBackdrop("bar-backdrop-" .. barIndex),
+  }
+  barSnapshots[pfUI.bars[barIndex]] = {
+    parent = pfUI.bars[barIndex].parent,
+    points = pfUI.bars[barIndex].points,
+    width = pfUI.bars[barIndex].width,
+    height = pfUI.bars[barIndex].height,
+    scripts = pfUI.bars[barIndex].scripts,
+  }
   for buttonIndex = 1, 12 do
     local button = NewButton(barIndex, buttonIndex)
     pfUI.bars[barIndex][buttonIndex] = button
@@ -96,6 +129,21 @@ for barIndex = 1, 12 do
     }
   end
 end
+pfUI.bars[1].mergedBackdrop = {
+  parent = { id = "merged-provider-parent" },
+  points = { "merged-provider-points" },
+  width = 500,
+  height = 90,
+  scripts = { OnShow = function() end },
+  backdrop = NewBackdrop("merged-bar-backdrop"),
+}
+local mergedSnapshot = {
+  parent = pfUI.bars[1].mergedBackdrop.parent,
+  points = pfUI.bars[1].mergedBackdrop.points,
+  width = pfUI.bars[1].mergedBackdrop.width,
+  height = pfUI.bars[1].mergedBackdrop.height,
+  scripts = pfUI.bars[1].mergedBackdrop.scripts,
+}
 
 AzerothExpeditionUI = {
   media = {
@@ -117,12 +165,15 @@ dofile(root .. "/addon/AzerothExpeditionUI/Modules/ActionBars.lua")
 
 local module = assert(AzerothExpeditionUI.modules.ActionBars)
 assert(module.runtimeContract == "1.0")
+assert(module.railRuntimeContract == "1.0")
 module:Initialize()
 module:Apply()
 
 assert(module.providerStatus == "available")
 assert(module.appliedBars == 10)
 assert(module.appliedButtons == 120)
+assert(module.appliedRails == 13)
+assert(module.appliedMergedRail == true)
 
 local created = 0
 for barIndex = 1, 12 do
@@ -167,33 +218,98 @@ for barIndex = 1, 12 do
 end
 assert(created == 120)
 
+local railOrder = {
+  "topLeft", "top", "topRight",
+  "left", "center", "right",
+  "bottomLeft", "bottom", "bottomRight",
+}
+for barIndex = 1, 12 do
+  local bar = pfUI.bars[barIndex]
+  local before = barSnapshots[bar]
+  assert(bar.parent == before.parent)
+  assert(bar.points == before.points)
+  assert(bar.width == before.width)
+  assert(bar.height == before.height)
+  assert(bar.scripts == before.scripts)
+  local rail = assert(bar.backdrop.aeuiActionRailV1)
+  assert(bar.backdrop.createTextureCalls == 9)
+  for _, key in ipairs(railOrder) do
+    local texture = assert(rail[key])
+    assert(texture.parent == bar.backdrop)
+    assert(texture.drawLayer == "OVERLAY")
+    assert(texture.texture ==
+      "Interface\\AddOns\\AzerothExpeditionUI\\Media\\ActionBars\\ActionRailV1")
+    assert(texture.blendMode == "BLEND")
+    assert(table.concat(texture.vertexColor, ",") == "1,1,1,1")
+    assert(texture.shown == true)
+  end
+  assert(table.concat(rail.topLeft.texcoord, ",") ==
+    "0.15625,0.28125,0.15625,0.28125")
+  assert(table.concat(rail.center.texcoord, ",") ==
+    "0.28125,0.71875,0.28125,0.71875")
+  assert(rail.topLeft.width == 6)
+  assert(rail.topLeft.height == 6)
+  assert(rail.topLeft.setPointCalls == 1)
+  assert(rail.center.setPointCalls == 2)
+end
+
+local merged = pfUI.bars[1].mergedBackdrop
+assert(merged.parent == mergedSnapshot.parent)
+assert(merged.points == mergedSnapshot.points)
+assert(merged.width == mergedSnapshot.width)
+assert(merged.height == mergedSnapshot.height)
+assert(merged.scripts == mergedSnapshot.scripts)
+assert(merged.backdrop.aeuiActionRailV1)
+assert(merged.backdrop.createTextureCalls == 9)
+
 local firstTexture = pfUI.bars[1][1].backdrop.aeuiActionSlotBaseV1
+local firstRail = pfUI.bars[1].backdrop.aeuiActionRailV1
 module:Apply()
 assert(pfUI.bars[1][1].backdrop.aeuiActionSlotBaseV1 == firstTexture)
+assert(pfUI.bars[1].backdrop.aeuiActionRailV1 == firstRail)
 assert(firstTexture.setAllPointsCalls == 1)
 assert(firstTexture.setTextureCalls == 1)
 assert(pfUI.bars[1][1].backdrop.createTextureCalls == 1)
+assert(firstRail.topLeft.setPointCalls == 1)
+assert(pfUI.bars[1].backdrop.createTextureCalls == 9)
 
 AzerothExpeditionUI.db.actionbars.enabled = false
 module:Apply()
 assert(firstTexture.shown == false)
 assert(pfUI.bars[1][1].backdrop.shown == true)
+for _, key in ipairs(railOrder) do
+  assert(firstRail[key].shown == false)
+end
+assert(pfUI.bars[1].backdrop.shown == true)
 
 AzerothExpeditionUI.db.actionbars.enabled = true
 module:Apply()
 assert(firstTexture.shown == true)
+for _, key in ipairs(railOrder) do
+  assert(firstRail[key].shown == true)
+end
 
 pfUI.bars[10][12].backdrop = nil
 module:Apply()
 assert(module.appliedBars == 10)
 assert(module.appliedButtons == 119)
+assert(module.appliedRails == 13)
+
+pfUI.bars[12].backdrop = nil
+module:Apply()
+assert(module.appliedRails == 12)
+assert(module.appliedMergedRail == true)
 
 pfUI = nil
 module:Apply()
 assert(module.providerStatus == "missing")
 assert(module.appliedBars == 0)
 assert(module.appliedButtons == 0)
+assert(module.appliedRails == 0)
+assert(module.appliedMergedRail == false)
 assert(string.find(module:GetRuntimeStatus(), "scope=bars%-1%-10"))
+assert(string.find(module:GetRuntimeStatus(), "rail%-scope=bars%-1%-12"))
+assert(string.find(module:GetRuntimeStatus(), "rail%-contract=1%.0"))
 assert(string.find(module:GetRuntimeStatus(), "provider=missing"))
 
 print("actionbars module smoke test passed")

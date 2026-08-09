@@ -4,9 +4,9 @@
   "batch": "AB.RAIL.V1",
   "component": "AB.RAIL",
   "accepted_version": "AB.RAIL.V1.r4 / attempt 5 canonical",
-  "status": "accepted-source",
-  "workflow_state": "source-accepted",
-  "project_phase": "P4",
+  "status": "runtime-exported",
+  "workflow_state": "runtime-exported",
+  "project_phase": "P5",
   "accepted_on": "2026-08-09",
   "source": {
     "file": "ActionRail_Master_v1.png",
@@ -130,10 +130,12 @@
     "real_layout_preview_sha256": "fbde26bb3defcd5130eba3dad0f210a0ce42223862d915a27c48e78a82ce5150"
   },
   "export_contract": {
-    "status": "not-exported",
-    "authorization": "pending separate export instruction",
-    "exporter": null,
-    "runtime_file": null,
+    "status": "exported",
+    "authorization": "user instruction '进行下一步' on 2026-08-09",
+    "exporter": "tools/build_action_rail_v1_runtime.py",
+    "exporter_sha256": "1f1a7662114d94a6209074bb4ccb497cb65ea55cf5f4f1c0dd5ee35345260421",
+    "runtime_file": "addon/AzerothExpeditionUI/Media/ActionBars/ActionRailV1.tga",
+    "runtime_sha256": "1e5cca09379b65ed5f938ebcf3f0d90d176bf66364159c6e3e16023f808e0a3d",
     "accepted_source_crop_exclusive": [
       160,
       160,
@@ -160,23 +162,147 @@
       576,
       576
     ],
-    "runtime_atlas_size": null,
-    "runtime_uv": null,
-    "planned_sampling": "deterministic nine-slice sampling from the complete accepted 704x704 crop; final runtime atlas size and UV must be frozen by the export operation",
+    "runtime_atlas_size": [
+      256,
+      256
+    ],
+    "runtime_visible_bbox_exclusive": [
+      40,
+      40,
+      216,
+      216
+    ],
+    "runtime_nine_slice_boundaries": [
+      40,
+      72,
+      184,
+      216
+    ],
+    "runtime_cell_sizes": [
+      32,
+      112,
+      32
+    ],
+    "runtime_uv": {
+      "topLeft": [
+        0.15625,
+        0.28125,
+        0.15625,
+        0.28125
+      ],
+      "top": [
+        0.28125,
+        0.71875,
+        0.15625,
+        0.28125
+      ],
+      "topRight": [
+        0.71875,
+        0.84375,
+        0.15625,
+        0.28125
+      ],
+      "left": [
+        0.15625,
+        0.28125,
+        0.28125,
+        0.71875
+      ],
+      "center": [
+        0.28125,
+        0.71875,
+        0.28125,
+        0.71875
+      ],
+      "right": [
+        0.71875,
+        0.84375,
+        0.28125,
+        0.71875
+      ],
+      "bottomLeft": [
+        0.15625,
+        0.28125,
+        0.71875,
+        0.84375
+      ],
+      "bottom": [
+        0.28125,
+        0.71875,
+        0.71875,
+        0.84375
+      ],
+      "bottomRight": [
+        0.71875,
+        0.84375,
+        0.71875,
+        0.84375
+      ]
+    },
+    "runtime_cap_ui": 6,
+    "resample": "Pillow Image.Resampling.LANCZOS",
+    "operation": "crop the complete accepted 704x704 object, proportionally resize it once to 176x176, place it at [40,40,216,216) in a transparent 256x256 atlas, clear only fully transparent RGB, and export a tracked 32-bit TGA",
+    "imagegen_calls_after_acceptance": 0,
     "allowed": [
-      "the declared 704x704 crop without removing any visible accepted pixel",
-      "deterministic proportional resampling or lossless slicing after explicit export authorization",
+      "the complete declared 704x704 crop without removing visible pixels",
+      "one proportional deterministic resize by exactly one quarter",
+      "power-of-two transparent atlas padding that is never sampled",
       "fully transparent RGB zeroing without changing visible RGB or Alpha",
-      "nine-slice assembly behind the provider-owned slots and dynamic content"
+      "nine-slice assembly behind provider-owned slots and dynamic content"
     ],
     "forbidden_runtime_uses": [
       "load the 1024x1024 source directly in Turtle WoW",
-      "redraw, rotate, mirror, recolor or non-uniformly distort the accepted source",
+      "sample transparent atlas padding or omit any visible runtime cell",
+      "redraw, rotate, mirror, recolor or non-uniformly distort the source",
       "introduce a fixed slot grid or a Bar 1/6 internal seam",
       "derive hover, pressed, cooldown, range, mana, equipped, active or disabled states",
       "bake icons, keybinds, counts, macro names, cooldowns or state colours",
       "replace provider Buttons, hit regions, scripts, paging, drag behavior, scale or SavedVariables",
-      "apply the source to slots, gryphons, AutoBar, TrinketMenu, castbars, swing timers or DoiteDPS without their own contracts"
+      "apply the source to slots, gryphons, AutoBar, TrinketMenu, castbars, swing timers or DoiteDPS"
     ]
+  },
+  "runtime_exports": {
+    "action_rail_v1": {
+      "file": "addon/AzerothExpeditionUI/Media/ActionBars/ActionRailV1.tga",
+      "sha256": "1e5cca09379b65ed5f938ebcf3f0d90d176bf66364159c6e3e16023f808e0a3d",
+      "width": 256,
+      "height": 256,
+      "mode": "RGBA",
+      "bits_per_pixel": 32,
+      "descriptor": 8,
+      "top_origin": false,
+      "pixel_sha256": "1b09b93b0a229b416e7961da47d1c97e0e75280245efe2d6310a955132b09db5",
+      "visible_bbox_exclusive": [
+        40,
+        40,
+        216,
+        216
+      ],
+      "visible_green_spill_pixels": 0,
+      "transparent_rgb_nonzero_values": 0,
+      "transparent_pixels": 34560,
+      "partially_transparent_pixels": 1217,
+      "opaque_pixels": 29759
+    }
+  },
+  "p5_validation": {
+    "display_region_contract": "tools/specs/action_rail_v1_runtime_display_region.json",
+    "display_region_contract_sha256": "c45dbfc927ea20d396f74f073b459f854c885719fd8ad04dbe1f2a49ff2af0f9",
+    "display_region_report": "generated/actionbars/AB.RAIL/AB.RAIL.V1/runtime/V1/display-region-report.json",
+    "display_region_report_sha256": "34c9388d11d8717c307b768f17655581df00e892245f51b0f31f86be6b334c91",
+    "real_layout_preview": "generated/actionbars/AB.RAIL/AB.RAIL.V1/runtime/V1/AB.RAIL.V1.runtime-v1.real-layout-1920x1080.png",
+    "real_layout_preview_sha256": "f599472f3f4401c6a83fbd555e6bff72ab56d01731b4365e2b27d72871affd5c",
+    "supported_layouts_preview": "generated/actionbars/AB.RAIL/AB.RAIL.V1/runtime/V1/AB.RAIL.V1.runtime-v1.layouts.png",
+    "supported_layouts_preview_sha256": "3633fdbe9e35764ea78c7333a6826b20ee35f97aa62d372f18829daf7357e2a3",
+    "real_layout_scenarios": "8/8 pass",
+    "display_region_violations": 0,
+    "addon_package": {
+      "report": "generated/actionbars/AB.RAIL/AB.RAIL.V1/runtime/V1/addon-package-report.json",
+      "report_sha256": "058214a835d7c738097be57b017fc014a8e63650e4a5b3db1969beeb5c8480e5",
+      "status": "pass",
+      "violations": 0,
+      "build_required_on_target_device": false
+    },
+    "game_validated": false
   }
 }

@@ -4,12 +4,13 @@
 
 - 模块：`actionbars`
 - 组件 ID：`AB.RAIL.V1`
-- 工作版本：`AB.RAIL.V1.r4`
-- 子状态：`source-accepted`
-- 项目阶段：`P4`
+- 工作版本：`AB.RAIL.V1/runtime-v1`
+- 子状态：`runtime-exported`
+- 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`；attempt `5/5` 已全部调用，不得 attempt 6
-- 当前操作：`accept`；用户已明确接受 attempt 5 canonical 候选，exact RGBA 已按
-  字节完全一致的方式晋升为 tracked source 并记录 manifest；runtime 尚未导出
+- 当前操作：`export`；用户以“进行下一步”授权 P4→P5；accepted source 已确定性
+  导出、接入 tracked addon 并通过最终 display-region 与 fresh-checkout package；
+  Turtle WoW 实机 P6 尚未发生
 - 生成前模拟方式：`deterministic-local-geometry`
 - 模拟 ImageGen：`0/0`
 - 模拟脚本：`tools/render_action_rail_simulation.py`，SHA-256
@@ -97,6 +98,15 @@
   - `assets/source/actionbars/ab-rail/AB-RAIL-V1_SourceManifest_v1.json`
   - `1024×1024 RGBA`；visible bbox `[160,160,864,864)`；透明／半透明／不透明
     像素 `555871／12483／480222`；可见绿色残留与全透明非零 RGB 均为 `0`
+- 最终 runtime：
+  - `addon/AzerothExpeditionUI/Media/ActionBars/ActionRailV1.tga`／SHA-256
+    `1e5cca09379b65ed5f938ebcf3f0d90d176bf66364159c6e3e16023f808e0a3d`
+  - 像素 SHA-256
+    `1b09b93b0a229b416e7961da47d1c97e0e75280245efe2d6310a955132b09db5`
+  - `256×256 RGBA` 32-bit TGA；visible bbox `[40,40,216,216)`；透明／半透明／
+    不透明像素 `34560／1217／29759`；可见绿色残留与全透明非零 RGB 均为 `0`
+  - runtime manifest：
+    `assets/source/actionbars/ab-rail/AB-RAIL-V1_RuntimeManifest_v1.json`
 
 ## 跨设备 handoff
 
@@ -493,3 +503,78 @@ Before returning the image, inspect every requirement literally: the returned fi
   fresh-checkout package 或 Turtle WoW 实机验证；ImageGen 新增调用 `0`。
 - 下一门禁：用户单独指示进入 `export`，然后才能从 `P4` 推进到
   `runtime-exported / P5`。
+
+## P5 插件接入记录
+
+- 状态：`runtime-exported / P5`
+- export 授权与日期：用户于 `2026-08-09` 指示“进行下一步”；该指令只推进
+  accepted source 的确定性导出、addon 接入与静态门禁，不授权新 ImageGen。
+- Python：`D:\Softwares\miniconda3\python.exe`，`3.13.5`
+- deployable addon 目录：
+  - `addon/pfUI`
+  - `addon/AzerothExpeditionUI`
+- exporter：`tools/build_action_rail_v1_runtime.py`，SHA-256
+  `1f1a7662114d94a6209074bb4ccb497cb65ea55cf5f4f1c0dd5ee35345260421`
+- 确定性变换：从 accepted source 的完整 `[160,160,864,864)`／`704²` crop
+  只做一次等比 LANCZOS `704→176`，置于 `256²` 透明 power-of-two atlas 的
+  `[40,40,216,216)`；不裁物件边缘、不重绘、不旋转、不镜像、不改色，只清零
+  Alpha 为 `0` 的 RGB。
+- atlas／UV：source 九宫格 `0／128／576／704` 映射为 runtime
+  `40／72／184／216`，cell 为 `32／112／32 px`；UV 边界
+  `0.15625／0.28125／0.71875／0.84375`；四边 runtime cap 固定 `6 UI`。
+- runtime 媒体／manifest／SHA：
+  - `addon/AzerothExpeditionUI/Media/ActionBars/ActionRailV1.tga`／
+    `1e5cca09379b65ed5f938ebcf3f0d90d176bf66364159c6e3e16023f808e0a3d`
+  - pixel SHA
+    `1b09b93b0a229b416e7961da47d1c97e0e75280245efe2d6310a955132b09db5`
+  - `assets/source/actionbars/ab-rail/AB-RAIL-V1_RuntimeManifest_v1.json`
+- adapter：`addon/AzerothExpeditionUI/Modules/ActionBars.lua`，SHA-256
+  `57f4570d7d94ea97e695756bb2e3441244f2539bdf43a862143b6dfb0b48487e`；
+  `railRuntimeContract=1.0`。Bar `1–12` 每个既有 `bar.backdrop` 最多创建九枚
+  `OVERLAY` 纹理；Bar `1／6` 满足 pfUI 原合并条件时，沿用 provider 已有
+  `mergedBackdrop.backdrop`，只显示一块外围 Rail，无内部中缝。
+- provider／pfUI bridge：未修改 `addon/pfUI`。纹理只锚定自身，不接收鼠标；
+  父 Frame 的位置、尺寸、movable scale、显隐、autohide 与 Bar `1／6` 合并判断
+  仍由 pfUI 驱动。Bar／Button 的 Parent、Point、Width、Height、hit region、
+  scripts、分页、姿态／宠物行为和 SavedVariables 均未改写。
+- TOC／bootstrap：AEUI `0.8.0` 继续通过既有
+  `AzerothExpeditionUI.toc → Core\Bootstrap.lua → Modules\ActionBars.lua`
+  顺序加载，RequiredDeps 仍为 pfUI；`/aeui actionbars` 同时开关 Slot 与 Rail
+  视觉，`/aeui status` 报告 `rail-contract=1.0`、Rail scope 与实际挂载数。
+- fallback：原 pfUI backdrop 从未删除。媒体／provider Frame 缺失时对应对象
+  局部不接入；`/aeui actionbars` 关闭时隐藏 AEUI Rail／Slot 纹理并由原背景
+  fail-open；其他模块不受影响。
+- 最终实际展示区域：
+  - tracked 合同：`tools/specs/action_rail_v1_runtime_display_region.json`／SHA
+    `c45dbfc927ea20d396f74f073b459f854c885719fd8ad04dbe1f2a49ff2af0f9`
+  - ignored 报告：
+    `generated/actionbars/AB.RAIL/AB.RAIL.V1/runtime/V1/display-region-report.json`
+    ／SHA `34c9388d11d8717c307b768f17655581df00e892245f51b0f31f86be6b334c91`
+  - 9 个 sampled cells 无重叠／缺口地覆盖 `[40,40,216,216)`，透明 padding
+    未采样；`1×1`、低 scale、`12×1`、`6×2`、`4×3`、`1×12`、极大参数与
+    Bar `1／6` merged 共 `8/8 pass`，violations `0`。
+- 最终真实排版目视检查：runtime atlas／组合板／`1920×1080` 战斗场景 SHA
+  分别为 `b30da785…2727`／`3633fdbe…e2a3`／`f599472f…fd5c`；横、竖、多行
+  Rail 保持同厚，合并双栏只有整体外围。accepted Slot 与动态内容仍在上层；
+  周边 V3 场景只是已确认方向上下文，不是 runtime 或视觉权威。
+- addon package validator：
+  - 命令：`python .codex/skills/run-aeui-asset-workflow/scripts/validate_addon_package.py . --report generated/actionbars/AB.RAIL/AB.RAIL.V1/runtime/V1/addon-package-report.json`
+  - 报告 SHA：
+    `058214a835d7c738097be57b017fc014a8e63650e4a5b3db1969beeb5c8480e5`
+  - schema：`aeui-addon-package-report-v1`
+  - status：`pass`
+  - first violation：无
+  - `build_required_on_target_device=false`
+- 组件 smoke／repository contract：`lua tests/actionbars_module_smoke.lua .` 覆盖
+  12 个独立背景、Bar `1／6` merged、九枚 UV／锚点、幂等启停、对象缺失与
+  provider 缺失；`tests/action_rail_runtime_test.py`、既有 Slot runtime 测试及
+  repository contract 覆盖确定性像素、TGA、manifest、display 与 scoped 行为。
+- 运行时外部依赖审查：Lua／TOC 不引用 `assets/source`、`generated`、`tools`、
+  `handoff`、绝对路径、未跟踪文件、软链接或 Junction；P5 不依赖 handoff。
+- 目标设备操作：拉取后只复制 `addon/pfUI` 与 `addon/AzerothExpeditionUI` 到
+  `Interface/AddOns` 并 `/reload`；不生成、不导出、不打 patch、不修改 Lua／pfUI。
+- ImageGen：P4→P5 新增 `0`；生产仍为 `5/5`，attempt 6 禁止。
+- 尚未发生：Turtle WoW `/reload` 与 Rail 的 P6 实机交互／布局验证。
+- 下一门禁：实机验证横／竖／多行、Bar `1／6` merged 无中缝、拖动／缩放／
+  显隐、姿态／宠物栏跟随与 `/aeui actionbars` fail-open；通过前不得标 P6 或
+  执行组件清理。

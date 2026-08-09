@@ -37,7 +37,7 @@
   “接受 AB.SLOT.BASE.V1 第5稿”，随后以“进行下一步”授权 P4→P5。exact source
   RGBA `6d4a4d16…7dc0` 已按冻结 `[200,200,824,824)` crop 确定性导出为
   `128×128` 32-bit TGA `ActionSlotBaseV1.tga`，SHA `5c49a1db…23ca`，像素 SHA
-  `e527c038…c35c` 与已验收 attempt 5 runtime review 完全一致。AEUI `0.7.0`
+  `e527c038…c35c` 与已验收 attempt 5 runtime review 完全一致。AEUI `0.8.0`
   的 `ActionBars` adapter 只在现有 pfUI Bar `1–10` 的逐按钮 `backdrop` 上创建
   full-UV 子纹理；Bar `11／12`、按钮逻辑、动态图标／文字／状态、命中区、分页、
   拖放、位置、scale 与 SavedVariables 均未接管。五种最终排版 `5/5 pass`、
@@ -59,8 +59,17 @@
   AB.RAIL.V1 第5稿”；exact bytes 已晋升为
   `assets/source/actionbars/ab-rail/ActionRail_Master_v1.png`，source／candidate
   SHA 同为 `7c49995d…32e9`，manifest 已记录 Alpha、完整 bbox、prompt／executor
-  provenance 与用户接受边界。当前为 `source-accepted / P4`；runtime／adapter
-  尚未导出，禁止 attempt 6。
+  provenance 与用户接受边界。用户随后以“进行下一步”授权 P4→P5；完整
+  `704²` crop 只做一次等比 `704→176` LANCZOS 缩放，并置于 `256²` atlas 的
+  `[40,40,216,216)`。最终 32-bit `ActionRailV1.tga` SHA 为
+  `1e5cca09…0a3d`、像素 SHA 为 `1b09b93b…9db5`；九宫格边界
+  `40／72／184／216`、UV `0.15625／0.28125／0.71875／0.84375`、cap `6 UI`。
+  同一 `ActionBars` adapter 只在 Bar `1–12` 的既有 `bar.backdrop` 与 Bar `1／6`
+  的既有 `mergedBackdrop.backdrop` 上创建九枚非交互纹理；不修改 pfUI、Button、
+  SavedVariables 或 provider 几何。最终 display `8/8 pass`、violations `0`，
+  Lua smoke、runtime／repository tests 与 fresh-checkout package 均通过，目标设备
+  无需构建。当前为 `runtime-exported / P5`，Turtle WoW 实机尚未验证；禁止
+  attempt 6，P4→P5 新增 ImageGen `0`。
 
 ## 已确定的设计决策
 
@@ -113,18 +122,24 @@
   fallback；本阶段 ImageGen `0/0`，没有 source、runtime、adapter 或游戏改动。
   用户已接受该具体模拟版本，确认条款已冻结进 `AB.RAIL.V1` 最终生产正文；
   正文、五次预算及指定 Image 1 外部上传已于 `2026-08-09` 独立授权。
-- `AB.RAIL.V1` accepted source：
+- `AB.RAIL.V1` accepted source 与 runtime：
   `assets/source/actionbars/ab-rail/ActionRail_Master_v1.png`，SHA
   `7c49995d…32e9`；source manifest：同目录
   `AB-RAIL-V1_SourceManifest_v1.json`。母版为 `1024² RGBA`、visible bbox
   `[160,160,864,864)`，完整 `704²` crop 的 source 九宫格边界为
-  `0／128／576／704`。这是 P4 source，不是游戏运行时媒体。
+  `0／128／576／704`。确定性 exporter 为
+  `tools/build_action_rail_v1_runtime.py`；runtime manifest 为同目录
+  `AB-RAIL-V1_RuntimeManifest_v1.json`，客户端媒体为
+  `addon/AzerothExpeditionUI/Media/ActionBars/ActionRailV1.tga`，SHA
+  `1e5cca09…0a3d`。runtime 是 `256² RGBA`，可见 bbox
+  `[40,40,216,216)`，九宫格为 `32／112／32 px`，端宽 `6 UI`；source 不直接
+  被客户端加载。
 
 ## 子模块状态
 
 | ID | 阶段 | 当前证据 | 下一门禁 |
 |---|---:|---|---|
-| `AB.RAIL` | `P4 / source-accepted` | [source](../../../assets/source/actionbars/ab-rail/ActionRail_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-rail/AB-RAIL-V1_SourceManifest_v1.json)／[work](work/ACTION.BARS.RAIL.V1.md)；用户接受 attempt 5 exact canonical RGBA `7c49995d…32e9`，source 字节 SHA 完全一致；technical `4/4`、九宫格真实布局 `8/8`、violations `0`；固定生产 `5/5`，raw `3f92fb61…ac42` 只作 provenance，不得 attempt 6 | 用户单独指示 `export` 后，冻结 runtime atlas／UV，完成确定性媒体导出、scoped adapter、最终 display-region 与 fresh-checkout package；当前客户端仍使用 pfUI 原 Rail |
+| `AB.RAIL` | `P5 / runtime-exported` | [source](../../../assets/source/actionbars/ab-rail/ActionRail_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-rail/AB-RAIL-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-rail/AB-RAIL-V1_RuntimeManifest_v1.json)／[runtime TGA](../../../addon/AzerothExpeditionUI/Media/ActionBars/ActionRailV1.tga)／[work](work/ACTION.BARS.RAIL.V1.md)；TGA `1e5cca09…0a3d`、像素 `1b09b93b…9db5`；Bar `1–12`＋Bar `1／6` merged scoped adapter，display `8/8`、Lua smoke、repository tests、package 均 pass；固定生产 `5/5`，P4→P5 ImageGen `0`，不得 attempt 6 | Turtle WoW `/reload` 验证横／竖／多行、Bar 1／6 合并无中缝、拖动／缩放／显隐、姿态／宠物栏 Rail 与 `/aeui actionbars` fail-open；通过前不得标 P6 |
 | `AB.SLOT` | `P6 / game-validated` | [source](../../../assets/source/actionbars/ab-slot/ActionSlotBase_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_RuntimeManifest_v1.json)／[P6 evidence](../../../assets/references/actionbars/p6/AB-SLOT-BASE-V1_P6Evidence_v1.json)；TGA `5c49a1db…23ca`、像素 `e527c038…c35c`、实机截图 `dc9615ac…4d5d`；Bar `1–10` scoped adapter，display `5/5`、package／P6 交互均 `pass` | 独立 Rail 模拟已完成；`AB.SLOT` 进入 `P6-C` 前另行展示精确保留／删除清单并取得用户批准 |
 | `AB.SLOT.STATE` | `P2 / scoped` | highlight／active／equipped／icon tint／cooldown／按键动画的真实覆盖顺序已冻结 | 基底 P6 已验证；如需独立换肤再写悬停／激活覆盖合同，不生产假 disabled cell |
 | `AB.ENDCAP.GRYPHON` | `P2 / direction-locked` | pfUI 左右端帽对象、64 UI 默认能力；用户确认的 V3 preset 默认关闭 | `AB.SLOT／RAIL` 后另行授权可选端帽正文 |
@@ -174,6 +189,18 @@
 - Rail 模拟像素同样只承担方向确认，不能切片、晋级、导出或作为 ImageGen 输入；
   用户已于 `2026-08-08` 接受 `AB-RAIL-SIM-V1`，但没有接受这些像素；下一设备
   只依赖已跟踪的文字化确认与冻结正文，因此没有发布 handoff。
+- `AB.RAIL.V1` 最终 runtime exporter：
+  `tools/build_action_rail_v1_runtime.py`（SHA `1f1a7662…0421`）；tracked display
+  合同：`tools/specs/action_rail_v1_runtime_display_region.json`（SHA
+  `c45dbfc9…0f9`）。最终 atlas、等比例组合板与 `1920×1080` 真实排版分别为
+  `generated/actionbars/AB.RAIL/AB.RAIL.V1/runtime/V1/` 下
+  `AB.RAIL.V1.runtime-v1.atlas.png`（SHA `b30da785…2727`）、
+  `AB.RAIL.V1.runtime-v1.layouts.png`（SHA `3633fdbe…e2a3`）与
+  `AB.RAIL.V1.runtime-v1.real-layout-1920x1080.png`（SHA `f599472f…fd5c`）。
+  display 报告 SHA `34c9388d…4c91`，`8/8 pass`、violations `0`；fresh-checkout
+  package 报告 SHA `058214a8…80e5`，`status=pass`、目标设备
+  `build_required=false`。这些 ignored 预演／报告不是 source 或 runtime；目标设备
+  只需 tracked addon。
 - `AB.FIELDKIT.V1` 当前 specification：
   `tools/specs/action_fieldkit_v2_simulation.json`。
 - 战斗场景：
@@ -202,14 +229,14 @@
    `AB.CONSUMABLE.KIT.V1` 最终正文；随后每个执行体都必须另行取得最多 `5` 次
    实际生成／修复授权及 Character V3 作为其 Image 1 的外部上传授权。两个
    执行体最坏合计 `10` 次，任何既有 AB.SLOT／AB.RAIL 授权均不得复用。
-4. `AB.RAIL.V1` 当前为 `source-accepted / P4`。用户已接受 attempt 5 exact
-   canonical RGBA，tracked source／candidate SHA 均为 `7c49995d…32e9`；raw
-   `3f92fb61…ac42` 只作 provider provenance。固定执行器已用尽 `5/5`，不得
-   attempt 6，也没有因 P4 晋升新增 ImageGen 调用。
-5. Rail 下一门禁是用户单独指示 `export`；随后才能冻结 runtime atlas／UV，
-   确定性导出 addon 媒体、接入 scoped adapter、以最终 atlas／adapter／provider
-   重跑 display-region，并通过 fresh-checkout package 后进入 P5。当前尚未修改
-   addon 或 pfUI，游戏无需 `/reload`。
+4. `AB.RAIL.V1` 已达到 `runtime-exported / P5`。runtime TGA、manifest、AEUI
+   `0.8.0` adapter、最终 display 与 fresh-checkout package 均已完成；没有修改
+   pfUI 或保存值，也没有新增 ImageGen 调用。目标设备只需拉取并安装 tracked
+   `addon/pfUI` 与 `addon/AzerothExpeditionUI`，不运行 exporter、不打 patch。
+5. Rail 下一门禁是 Turtle WoW `1.18.1` `/reload` 实机 P6：验证独立横／竖／
+   多行 Rail，Bar `1／6` 合并外围无内部中缝，移动／缩放／显隐和姿态／宠物栏
+   跟随正确，以及 `/aeui actionbars` 关闭后 pfUI 原背景 fail-open。通过前不得
+   标记 `game-validated` 或清理 work／回退证据。
 6. `AB.SLOT` 若要进入 `P6-C`，必须先在现存 work 中向用户展示精确保留／删除
    inventory 并取得明确批准；当前不得清理该组件的 ignored `generated`、work
    或其他专属中间证据。

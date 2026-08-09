@@ -78,12 +78,20 @@ Button 脚本、命中区、分页、拖放、位置、尺寸和 SavedVariables 
 [ActionRail_Master_v1.png](../../../assets/source/actionbars/ab-rail/ActionRail_Master_v1.png)，
 source manifest 为
 [AB-RAIL-V1_SourceManifest_v1.json](../../../assets/source/actionbars/ab-rail/AB-RAIL-V1_SourceManifest_v1.json)。
-source 为 `1024×1024 RGBA`，完整可见物件位于 `[160,160,864,864)`；其
-`704×704` crop 的冻结九宫格边界为 `0／128／576／704`。该资产当前只达到
-`source-accepted / P4`，尚未导出 runtime atlas、冻结 UV 或接入 addon；客户端
-仍使用 pfUI 原生 `bar.backdrop`／`mergedBackdrop`。后续 export 必须继续沿用
-本表的真实对象、Bar 1／6 合并条件、父 Frame 显隐／移动／缩放和 fail-open，
-不得把 source 直接加载进游戏或改写任何 Button／SavedVariables。
+P5 runtime manifest 为
+[AB-RAIL-V1_RuntimeManifest_v1.json](../../../assets/source/actionbars/ab-rail/AB-RAIL-V1_RuntimeManifest_v1.json)，
+客户端只加载
+[ActionRailV1.tga](../../../addon/AzerothExpeditionUI/Media/ActionBars/ActionRailV1.tga)
+与同一 [ActionBars.lua](../../../addon/AzerothExpeditionUI/Modules/ActionBars.lua)。
+exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `176²`，
+置于 `256²` power-of-two atlas 的 `[40,40,216,216)`；runtime 九宫格边界为
+`40／72／184／216`，UV 为 `0.15625／0.28125／0.71875／0.84375`，端宽固定
+`6 UI`。adapter 在 Bar `1–12` 现有 `bar.backdrop` 上各挂九枚 `OVERLAY` 纹理；
+满足 pfUI 原条件时，Bar `1／6` 的两个独立背景由 provider 隐藏，只显示
+`bar1.mergedBackdrop.backdrop` 上的一块外围 Rail。所有纹理随父 Frame 显隐、
+移动与缩放，不接收鼠标，也不在维护循环改写 provider 几何。媒体／对象缺失或
+`/aeui actionbars` 关闭时，未删除的 pfUI 原生 backdrop 继续 fail-open；Button、
+状态、分页、拖放与 SavedVariables 均不变。
 
 ## 战斗焦点邻接对象
 

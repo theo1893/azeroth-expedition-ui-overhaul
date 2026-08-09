@@ -1,0 +1,567 @@
+{
+  "schema_version": 1,
+  "module": "actionbars",
+  "batch": "AB.RAIL.V1",
+  "version": "runtime-v1",
+  "runtime_contract": "1.0",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "source": {
+    "file": "assets/source/actionbars/ab-rail/ActionRail_Master_v1.png",
+    "sha256": "7c49995d45b88f5ac12020c4b158027674b7ab7ed6e44a992e643f2ef6bd32e9",
+    "width": 1024,
+    "height": 1024,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      160,
+      160,
+      864,
+      864
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0,
+    "transparent_pixels": 555871,
+    "partially_transparent_pixels": 12483,
+    "opaque_pixels": 480222
+  },
+  "transform": {
+    "operation": "fixed 704-square crop, one proportional LANCZOS resize to 176-square, paste into a transparent 256-square atlas, then zero RGB only where Alpha is fully transparent",
+    "source_crop_exclusive": [
+      160,
+      160,
+      864,
+      864
+    ],
+    "source_slice_boundaries": [
+      0,
+      128,
+      576,
+      704
+    ],
+    "runtime_atlas_size": [
+      256,
+      256
+    ],
+    "runtime_visible_bbox_exclusive": [
+      40,
+      40,
+      216,
+      216
+    ],
+    "runtime_slice_boundaries": [
+      40,
+      72,
+      184,
+      216
+    ],
+    "runtime_cell_sizes": [
+      32,
+      112,
+      32
+    ],
+    "resample": "Pillow Image.Resampling.LANCZOS",
+    "rotation": null,
+    "mirror": false,
+    "retouch": false,
+    "straight_alpha": true,
+    "texcoords": {
+      "topLeft": [
+        0.15625,
+        0.28125,
+        0.15625,
+        0.28125
+      ],
+      "top": [
+        0.28125,
+        0.71875,
+        0.15625,
+        0.28125
+      ],
+      "topRight": [
+        0.71875,
+        0.84375,
+        0.15625,
+        0.28125
+      ],
+      "left": [
+        0.15625,
+        0.28125,
+        0.28125,
+        0.71875
+      ],
+      "center": [
+        0.28125,
+        0.71875,
+        0.28125,
+        0.71875
+      ],
+      "right": [
+        0.71875,
+        0.84375,
+        0.28125,
+        0.71875
+      ],
+      "bottomLeft": [
+        0.15625,
+        0.28125,
+        0.71875,
+        0.84375
+      ],
+      "bottom": [
+        0.28125,
+        0.71875,
+        0.71875,
+        0.84375
+      ],
+      "bottomRight": [
+        0.71875,
+        0.84375,
+        0.71875,
+        0.84375
+      ]
+    },
+    "runtime_cap_ui": 6
+  },
+  "runtime_export": {
+    "file": "addon/AzerothExpeditionUI/Media/ActionBars/ActionRailV1.tga",
+    "sha256": "1e5cca09379b65ed5f938ebcf3f0d90d176bf66364159c6e3e16023f808e0a3d",
+    "width": 256,
+    "height": 256,
+    "mode": "RGBA",
+    "bits_per_pixel": 32,
+    "descriptor": 8,
+    "top_origin": false,
+    "pixel_sha256": "1b09b93b0a229b416e7961da47d1c97e0e75280245efe2d6310a955132b09db5",
+    "visible_bbox_exclusive": [
+      40,
+      40,
+      216,
+      216
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0,
+    "transparent_pixels": 34560,
+    "partially_transparent_pixels": 1217,
+    "opaque_pixels": 29759
+  },
+  "deterministic_export": {
+    "exporter": "tools/build_action_rail_v1_runtime.py",
+    "exporter_sha256": "1f1a7662114d94a6209074bb4ccb497cb65ea55cf5f4f1c0dd5ee35345260421",
+    "expected_runtime_pixel_sha256": "1b09b93b0a229b416e7961da47d1c97e0e75280245efe2d6310a955132b09db5",
+    "one_proportional_resample": true,
+    "imagegen_calls_after_acceptance": 0,
+    "attempt_6_allowed": false
+  },
+  "adapter": {
+    "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
+    "sha256": "57f4570d7d94ea97e695756bb2e3441244f2539bdf43a862143b6dfb0b48487e",
+    "provider": "pfUI.bars[1..12].backdrop and pfUI.bars[1].mergedBackdrop.backdrop",
+    "logical_bars": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "merged_pair": [
+      1,
+      6
+    ],
+    "maximum_rail_backdrops": 13,
+    "textures_per_rail": 9,
+    "maximum_texture_instances": 117,
+    "parent": "each existing provider backdrop frame",
+    "draw_layer": "OVERLAY on the provider backdrop frame, still beneath live button and slot-backdrop frame levels",
+    "fallback": "native pfUI backdrop remains and is never removed; missing provider objects or disabled AEUI art leave it visible",
+    "provider_geometry_writes": false,
+    "texture_geometry_writes_after_creation": false,
+    "provider_behavior_replaced": false
+  },
+  "addon_entrypoints": {
+    "bootstrap": {
+      "file": "addon/AzerothExpeditionUI/Core/Bootstrap.lua",
+      "sha256": "25e0c4b61ae58bb3d2507572171263b088e46075d936def93a54917a12f97cdd"
+    },
+    "toc": {
+      "file": "addon/AzerothExpeditionUI/AzerothExpeditionUI.toc",
+      "sha256": "ee0d7473e9a5ab8065f9044812d5b1c1a09e0c0eec6e47b5a4d08cdf0e5fe5ac"
+    },
+    "addon_version": "0.8.0",
+    "required_dependency": "pfUI"
+  },
+  "provider_layers_preserved": [
+    "bar position and movable scale",
+    "bar show, hide and autohide",
+    "button and hit region geometry",
+    "icons, keybinds, counts and macro names",
+    "cooldown, range, OOM, equipped, active and pressed feedback",
+    "paging, stance and pet behavior",
+    "drag behavior and SavedVariables"
+  ],
+  "display_evidence": {
+    "contract": "tools/specs/action_rail_v1_runtime_display_region.json",
+    "contract_sha256": "c45dbfc927ea20d396f74f073b459f854c885719fd8ad04dbe1f2a49ff2af0f9",
+    "report": "generated/actionbars/AB.RAIL/AB.RAIL.V1/runtime/V1/display-region-report.json",
+    "report_sha256": "34c9388d11d8717c307b768f17655581df00e892245f51b0f31f86be6b334c91",
+    "runtime_atlas": "generated/actionbars/AB.RAIL/AB.RAIL.V1/runtime/V1/AB.RAIL.V1.runtime-v1.atlas.png",
+    "runtime_atlas_sha256": "b30da785238f7b1543258b6ee27c4aeb7c2071931783863aa14e25bb6ed70727",
+    "supported_layouts": "generated/actionbars/AB.RAIL/AB.RAIL.V1/runtime/V1/AB.RAIL.V1.runtime-v1.layouts.png",
+    "supported_layouts_sha256": "3633fdbe9e35764ea78c7333a6826b20ee35f97aa62d372f18829daf7357e2a3",
+    "real_layout": "generated/actionbars/AB.RAIL/AB.RAIL.V1/runtime/V1/AB.RAIL.V1.runtime-v1.real-layout-1920x1080.png",
+    "real_layout_sha256": "f599472f3f4401c6a83fbd555e6bff72ab56d01731b4365e2b27d72871affd5c",
+    "scenario_ids": [
+      "single-minimum-1x1",
+      "single-low-scale-border-extreme-1x1",
+      "main-confirmed-12x1",
+      "compact-supported-6x2",
+      "auxiliary-supported-4x3",
+      "vertical-maximum-icon-1x12",
+      "high-border-spacing-scale-4x3",
+      "merged-main-top-12x1-pair"
+    ],
+    "scenario_frames": {
+      "single-minimum-1x1": [
+        26,
+        26
+      ],
+      "single-low-scale-border-extreme-1x1": [
+        16,
+        16
+      ],
+      "main-confirmed-12x1": [
+        497,
+        47
+      ],
+      "compact-supported-6x2": [
+        198,
+        70
+      ],
+      "auxiliary-supported-4x3": [
+        115,
+        88
+      ],
+      "vertical-maximum-icon-1x12": [
+        49,
+        532
+      ],
+      "high-border-spacing-scale-4x3": [
+        368,
+        283
+      ],
+      "merged-main-top-12x1-pair": [
+        497,
+        88
+      ]
+    },
+    "scene_bars": [
+      {
+        "id": "AB.BAR1.MAIN",
+        "rail_box": [
+          711,
+          825,
+          1208,
+          872
+        ],
+        "button_boxes": [
+          [
+            715,
+            829,
+            754,
+            868
+          ],
+          [
+            756,
+            829,
+            795,
+            868
+          ],
+          [
+            797,
+            829,
+            836,
+            868
+          ],
+          [
+            838,
+            829,
+            877,
+            868
+          ],
+          [
+            879,
+            829,
+            918,
+            868
+          ],
+          [
+            920,
+            829,
+            959,
+            868
+          ],
+          [
+            961,
+            829,
+            1000,
+            868
+          ],
+          [
+            1002,
+            829,
+            1041,
+            868
+          ],
+          [
+            1043,
+            829,
+            1082,
+            868
+          ],
+          [
+            1084,
+            829,
+            1123,
+            868
+          ],
+          [
+            1125,
+            829,
+            1164,
+            868
+          ],
+          [
+            1165,
+            829,
+            1204,
+            868
+          ]
+        ],
+        "accepted_slot_neighbor": true,
+        "provider_fallback": false
+      },
+      {
+        "id": "AB.BAR6.TOP",
+        "rail_box": [
+          764,
+          781,
+          1156,
+          819
+        ],
+        "button_boxes": [
+          [
+            768,
+            785,
+            798,
+            815
+          ],
+          [
+            800,
+            785,
+            830,
+            815
+          ],
+          [
+            832,
+            785,
+            862,
+            815
+          ],
+          [
+            864,
+            785,
+            895,
+            815
+          ],
+          [
+            896,
+            785,
+            927,
+            815
+          ],
+          [
+            928,
+            785,
+            959,
+            815
+          ],
+          [
+            961,
+            785,
+            991,
+            815
+          ],
+          [
+            993,
+            785,
+            1023,
+            815
+          ],
+          [
+            1025,
+            785,
+            1055,
+            815
+          ],
+          [
+            1057,
+            785,
+            1088,
+            815
+          ],
+          [
+            1089,
+            785,
+            1120,
+            815
+          ],
+          [
+            1122,
+            785,
+            1152,
+            815
+          ]
+        ],
+        "accepted_slot_neighbor": true,
+        "provider_fallback": false
+      },
+      {
+        "id": "AB.BAR11.STANCE",
+        "rail_box": [
+          918,
+          742,
+          1001,
+          773
+        ],
+        "button_boxes": [
+          [
+            921,
+            745,
+            946,
+            770
+          ],
+          [
+            947,
+            745,
+            972,
+            770
+          ],
+          [
+            973,
+            745,
+            998,
+            770
+          ]
+        ],
+        "accepted_slot_neighbor": false,
+        "provider_fallback": true
+      },
+      {
+        "id": "AB.BAR3.AUXILIARY",
+        "rail_box": [
+          178,
+          626,
+          293,
+          714
+        ],
+        "button_boxes": [
+          [
+            181,
+            629,
+            207,
+            655
+          ],
+          [
+            209,
+            629,
+            235,
+            655
+          ],
+          [
+            237,
+            629,
+            263,
+            655
+          ],
+          [
+            264,
+            629,
+            290,
+            655
+          ],
+          [
+            181,
+            657,
+            207,
+            683
+          ],
+          [
+            209,
+            657,
+            235,
+            683
+          ],
+          [
+            237,
+            657,
+            263,
+            683
+          ],
+          [
+            264,
+            657,
+            290,
+            683
+          ],
+          [
+            181,
+            685,
+            207,
+            711
+          ],
+          [
+            209,
+            685,
+            235,
+            711
+          ],
+          [
+            237,
+            685,
+            263,
+            711
+          ],
+          [
+            264,
+            685,
+            290,
+            711
+          ]
+        ],
+        "accepted_slot_neighbor": true,
+        "provider_fallback": false
+      }
+    ],
+    "result": "8/8 pass",
+    "violations": 0,
+    "surrounding_pixels": "confirmed V3 direction simulation only; not runtime art or visual authority"
+  },
+  "package_validation": {
+    "report": "generated/actionbars/AB.RAIL/AB.RAIL.V1/runtime/V1/addon-package-report.json",
+    "report_sha256": "058214a835d7c738097be57b017fc014a8e63650e4a5b3db1969beeb5c8480e5",
+    "status": "pass",
+    "violations": 0,
+    "build_required_on_target_device": false
+  },
+  "game_validation": {
+    "status": "pending",
+    "phase": "P6",
+    "target": "Turtle WoW 1.18.1 / Interface 11200"
+  }
+}
