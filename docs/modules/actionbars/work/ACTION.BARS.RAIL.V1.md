@@ -4,11 +4,11 @@
 
 - 模块：`actionbars`
 - 组件 ID：`AB.RAIL.V1`
-- 工作版本：`AB-RAIL-SIM-V1`
-- 子状态：`simulation-confirmed`
-- 项目阶段：`P2`
-- 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`；本阶段未加载、未调用，正式生产也不得改用其他执行器
-- 当前操作：`prepare`；记录模拟确认并冻结最终生产正文，尚未执行
+- 工作版本：`AB.RAIL.V1`
+- 子状态：`prompt-authorized`
+- 项目阶段：`P3`
+- 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`；已加载，尚未调用，不得改用其他执行器
+- 当前操作：`generate`；生产正文、五次预算与指定 Image 1 外部上传均已授权，等待本次授权提交后执行 attempt 1
 - 生成前模拟方式：`deterministic-local-geometry`
 - 模拟 ImageGen：`0/0`
 - 模拟脚本：`tools/render_action_rail_simulation.py`，SHA-256
@@ -26,7 +26,7 @@
     ／`a49088d18d7bbb8bda49e0932d0a4d0152f7807fccf5562f6058164b6e67e353`
 - 模拟用户结论：`confirmed`；`2026-08-08`，用户原话：
   “接受 AB-RAIL-SIM-V1”
-- 后续生产自动修复预算：最多 `5` 次实际 ImageGen 生图／修图，含首次；尚未授权
+- 后续生产自动修复预算：最多 `5` 次实际 ImageGen 生图／修图，含首次；已于 `2026-08-09` 授权
 - 当前实际生图：`0/5`
 - 流程错误：`0`
 - 多执行正文最坏实际生图数：`5`
@@ -223,16 +223,20 @@
 - 拒绝时必须改变：按用户指出的可见布局、物件隐喻、材料层级、配色、视觉重量
   或整合关系制作下一模拟版本；不进入生产循环。
 - 确认失效条件：上述任一可见关系发生实质变化。
-- 下一门禁：用户另行授权已冻结的 `AB.RAIL.V1` 最终生产正文与最多五次实际
-  生成／修复预算，并明确授权把指定 Character V3 锁定图作为 Image 1 上传至
-  外部 ImageGen 服务；两项授权齐全前不得执行。
+- 生产授权：`authorized / 2026-08-09`。用户明确授权执行 `AB.RAIL.V1` 并同意
+  最多 `5` 次实际生成／修复，同时授权把
+  `assets/locked/character/角色属性面板_香草同构收敛_风格确认_v3.png`
+  作为本组件唯一 Image 1 上传至外部 ImageGen 服务；该上传授权不得复用于
+  其他组件，也不允许加入模拟图、`AB.SLOT` 或候选作为额外输入。
+- 下一门禁：提交本次已授权正文与不可变修复边界，然后调用固定执行器执行
+  `AB.RAIL.V1` attempt 1。
 
 ## 生产正文完整性预检
 
 - 复杂度：`single-object / nine-slice / stretch`
 - 结论：`pass as final AB.RAIL.V1 production body`；`AB-RAIL-SIM-V1` 已获用户
-  确认，全部确认条款已冻结进正文；不得执行，原因是尚无本组件生产／预算授权，
-  也没有指定 Image 1 的外部上传授权。
+  确认，全部确认条款已冻结进正文；本组件生产／预算授权与指定 Image 1 外部
+  上传授权已于 `2026-08-09` 齐全，提交本版本后允许执行。
 
 | 门禁 | 执行正文中的证据 | 结论 |
 |---|---|---|
@@ -248,7 +252,7 @@
 - 去冗余结论：只保留会改变对象、画布、拉伸安全区、材料关系与反模式的条款；
   不把模拟像素描述成可复制目标。
 
-## 最终执行正文（`AB.RAIL.V1`，冻结待授权）
+## 最终执行正文（`AB.RAIL.V1`，冻结并已授权）
 
 ```text
 Create one production bitmap asset for Azeroth Expedition UI, component AB.RAIL.V1: exactly one reusable normal-state square nine-slice master for the background rail beneath a pfUI action bar. It is a lightweight expedition equipment support that stretches around an arbitrary legal action-bar frame. It is not a complete action bar, not a fixed twelve-slot plate, not an action-button base, not an icon, not a state atlas, not a presentation board, and not a mock game screenshot.
@@ -272,7 +276,7 @@ Do not use green verdigris or any green material inside the object, and do not a
 Before returning the image, inspect every requirement literally: the file is exactly 1024 by 1024 RGB; there is exactly one centered front-facing square object; every visible object pixel is inside [160,160,864,864); the crop is designed for slice boundaries 0/128/576/704; the canvas stretch center [288,288,736,736) is quiet and contains no unique detail; non-stretchable details remain in the corner cells; there are no visible slice guides, slot grid, repeated motifs, dynamic UI contents, or neighboring components; brown leather or dark wood dominates; dark brass is narrow and broken; at most four tiny corner fasteners exist; all sides have the same visual thickness; the style is coarse, matte, low-saturation vanilla-era hand-painted UI rather than modern PBR; and every background pixel outside the object is exact #00FF00.
 ```
 
-## 自主修复循环（尚未授权）
+## 自主修复循环（已授权）
 
 - 不可变修复边界：组件 ID、单对象、单 normal 状态、权威顺序、Image 1 职责、
   `1024² RGB`、`#00FF00`、`[160,160,864,864)`、九宫格
@@ -291,7 +295,7 @@ Before returning the image, inspect every requirement literally: the file is exa
 
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
-| `0/5` | `AB.RAIL.V1` 冻结待授权 | — | — | — | — | 等待独立生产／预算授权与指定 Image 1 外部上传授权 | `simulation-confirmed` |
+| `0/5` | `AB.RAIL.V1`／本次授权提交 | `generate` 待执行 | — | — | — | 固定执行器 attempt 1 | `prompt-authorized` |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
@@ -299,17 +303,17 @@ Before returning the image, inspect every requirement literally: the file is exa
 
 ## 执行记录
 
-- 日期：`2026-08-08`
-- 本阶段仅执行本地确定性模拟与 display-region 校验；ImageGen `0/0`，没有
-  外部上传、候选、source、runtime 或 adapter 改动。
-- 正式 `AB.RAIL.V1` 仍为 `0/5`，等待独立生产／预算与 Image 1 上传授权。
+- 日期：`2026-08-09`
+- 本地确定性模拟与 display-region 校验仍为 ImageGen `0/0`；生产正文、最多
+  五次预算和指定 Character V3 Image 1 外部上传已获得独立授权。
+- 正式 `AB.RAIL.V1` 仍为 `0/5`；提交授权版本后执行固定执行器 attempt 1。
 
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
 |---|---|---|---|
-| `AB-RAIL-SIM-V1` | scene `123d1b4c…cde6`；layouts `a49088d1…e353`；display `8/8` | `user-confirmed / P2` | 不改变已确认方向；生产仍待独立授权 |
-| `AB.RAIL.V1` | ImageGen `0/5` | `not-executed` | 授权前不得生成 |
+| `AB-RAIL-SIM-V1` | scene `123d1b4c…cde6`；layouts `a49088d1…e353`；display `8/8` | `user-confirmed / P2` | 不改变已确认方向；生产授权已于 `2026-08-09` 齐全 |
+| `AB.RAIL.V1` | ImageGen `0/5`；生产／预算／Image 1 上传授权齐全 | `prompt-authorized / P3` | 提交授权正文后执行 attempt 1 |
 
 ## 审查记录
 
@@ -320,5 +324,6 @@ Before returning the image, inspect every requirement literally: the file is exa
 - 组件合同：`8/8 pass`、violations `0`；合并双栏无内部 Rail 中缝。
 - 动态内容：全部由 provider／accepted runtime 模拟层承担，Rail 本身为零。
 - 用户结论：`2026-08-08` 接受 `AB-RAIL-SIM-V1`；只确认文字化可见方向。
-- 当前结论：`simulation-confirmed / P2`；`AB.RAIL.V1` 最终正文已冻结。生产／
-  预算授权与 Image 1 外部上传授权齐全前，不得生成、导出、接入 addon 或晋级 P3。
+- 当前结论：`prompt-authorized / P3`；`AB.RAIL.V1` 最终正文、五次实际生成／修复
+  预算与指定 Image 1 外部上传均已授权。提交本版本后进入固定执行器 attempt 1；
+  内部通过仍不等于用户接受，不得自动创建 source、导出或接入 addon。
