@@ -231,26 +231,31 @@ def main() -> None:
     source_canvas = tuple(map(int, spec["rail_contract"]["source_canvas"]))
     expected_bbox = tuple(map(int, spec["rail_contract"]["source_object_bbox"]))
     visible = alpha_bbox(transparent)
-    normalized = transparent.resize(source_canvas, Image.Resampling.LANCZOS)
+    provider_normalized = transparent.resize(
+        source_canvas, Image.Resampling.LANCZOS
+    )
+    provider_normalized_bbox = alpha_bbox(provider_normalized)
+    normalized = provider_normalized
     canonicalization: dict[str, Any] = {"enabled": False}
     canonical_transparent_path: Path | None = None
     canonical_key_path: Path | None = None
     if args.canonicalize_visible_object:
-        visible_width = visible[2] - visible[0]
-        visible_height = visible[3] - visible[1]
+        visible_width = provider_normalized_bbox[2] - provider_normalized_bbox[0]
+        visible_height = provider_normalized_bbox[3] - provider_normalized_bbox[1]
         aspect_error = abs(visible_width - visible_height) / max(
             visible_width, visible_height
         )
         if aspect_error > 0.01:
             raise ValueError(
                 "canonical review requires a complete near-square object; "
-                f"alpha bbox {visible} has {aspect_error:.6f} aspect error"
+                "normalized alpha bbox "
+                f"{provider_normalized_bbox} has {aspect_error:.6f} aspect error"
             )
         object_size = (
             expected_bbox[2] - expected_bbox[0],
             expected_bbox[3] - expected_bbox[1],
         )
-        complete_object = transparent.crop(visible)
+        complete_object = provider_normalized.crop(provider_normalized_bbox)
         fitted_object = complete_object.resize(object_size, Image.Resampling.LANCZOS)
         normalized = Image.new("RGBA", source_canvas, (0, 0, 0, 0))
         normalized.alpha_composite(fitted_object, expected_bbox[:2])
@@ -274,9 +279,10 @@ def main() -> None:
         canonicalization = {
             "enabled": True,
             "review_only": True,
-            "method": "complete alpha bbox crop plus LANCZOS fit; no crop, repaint, or source promotion",
-            "original_visible_bbox": list(visible),
-            "original_visible_size": [visible_width, visible_height],
+            "method": "whole provider canvas LANCZOS normalization to 1024, then complete alpha bbox crop plus LANCZOS fit; no object-edge crop, repaint, or source promotion",
+            "raw_visible_bbox": list(visible),
+            "normalized_visible_bbox_before_fit": list(provider_normalized_bbox),
+            "normalized_visible_size_before_fit": [visible_width, visible_height],
             "aspect_error": round(aspect_error, 8),
             "target_bbox": list(expected_bbox),
             "target_size": list(object_size),

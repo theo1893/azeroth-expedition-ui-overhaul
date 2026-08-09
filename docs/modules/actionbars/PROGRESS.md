@@ -52,7 +52,11 @@
   Slot／provider 动态层之下的可见方向；模拟像素没有被接受为 source、runtime
   或生产输入。用户于 `2026-08-09` 另行授权 `AB.RAIL.V1` 最终正文、最多 `5`
   次实际生成／修复，并授权把指定 Character V3 作为本组件唯一 Image 1 上传；
-  当前为 `prompt-authorized / P3`，正式生产仍为 `0/5`。
+  固定执行器已完成 `5/5`。attempt 5 raw `3f92fb61…ac42` 保留 provenance；
+  完整 provider 画布归一后 alpha bbox `744×751`、纵横误差 `0.932%`，整体 fit
+  到冻结盒后 exact canonical RGBA `7c49995d…32e9` 完成 technical `4/4`、真实布局
+  `8/8`、violations `0` 与内部视觉审查。当前为 `candidate-reviewed / P3`，等待
+  用户接受或拒绝 exact candidate；未创建 source／runtime，禁止 attempt 6。
 
 ## 已确定的设计决策
 
@@ -110,7 +114,7 @@
 
 | ID | 阶段 | 当前证据 | 下一门禁 |
 |---|---:|---|---|
-| `AB.RAIL` | `P3 / prompt-authorized` | [work](work/ACTION.BARS.RAIL.V1.md)；用户于 `2026-08-08` 接受 `AB-RAIL-SIM-V1`；真实 backdrop 外扩、合并双栏、8 个独立场景均 pass；用户于 `2026-08-09` 授权最终正文、最多 `5` 次实际生成／修复和指定 Character V3 Image 1 外部上传；正式生产 `0/5` | 提交授权正文后由固定 `imagegen-0-143-0` 执行 attempt 1，并逐稿完成语义、九宫格、真实排版与展示区域审查 |
+| `AB.RAIL` | `P3 / candidate-reviewed` | [work](work/ACTION.BARS.RAIL.V1.md)；固定 `imagegen-0-143-0` 已执行 `5/5`，不得 attempt 6；attempt 5 exact canonical RGBA `7c49995d…32e9` 已通过 complete-object normalization、technical `4/4`、九宫格真实布局 `8/8`、violations `0` 与内部视觉审查；raw `3f92fb61…ac42` 只作 provenance，未创建 source／runtime | 用户接受或拒绝 exact attempt 5 canonical candidate；接受后才允许晋级 source、确定性导出、scoped adapter／package 和 P5 实机门禁 |
 | `AB.SLOT` | `P6 / game-validated` | [source](../../../assets/source/actionbars/ab-slot/ActionSlotBase_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_RuntimeManifest_v1.json)／[P6 evidence](../../../assets/references/actionbars/p6/AB-SLOT-BASE-V1_P6Evidence_v1.json)；TGA `5c49a1db…23ca`、像素 `e527c038…c35c`、实机截图 `dc9615ac…4d5d`；Bar `1–10` scoped adapter，display `5/5`、package／P6 交互均 `pass` | 独立 Rail 模拟已完成；`AB.SLOT` 进入 `P6-C` 前另行展示精确保留／删除清单并取得用户批准 |
 | `AB.SLOT.STATE` | `P2 / scoped` | highlight／active／equipped／icon tint／cooldown／按键动画的真实覆盖顺序已冻结 | 基底 P6 已验证；如需独立换肤再写悬停／激活覆盖合同，不生产假 disabled cell |
 | `AB.ENDCAP.GRYPHON` | `P2 / direction-locked` | pfUI 左右端帽对象、64 UI 默认能力；用户确认的 V3 preset 默认关闭 | `AB.SLOT／RAIL` 后另行授权可选端帽正文 |
@@ -144,9 +148,10 @@
 - `AB.RAIL.V1` 正式候选统一由
   `tools/review_action_rail_candidate_v1.py` 按冻结 `1024²` 画布、
   `[160,160,864,864)` crop、`128／448／128` 九宫格和同一 8 场景生成 ignored
-  指标／真实排版证据；opt-in canonical 审查只在完整 alpha bbox 纵横误差不超过
-  `1%` 时把完整物件 fit 到冻结 `704²` 盒，不裁边、不重绘、不掩盖美术失败；
-  该工具不创建 source 或 runtime，也不修补候选语义。
+  指标／真实排版证据；opt-in canonical 审查先把完整 provider 画布归一到
+  `1024²`，只在完整 alpha bbox 纵横误差不超过 `1%` 时把完整物件 fit 到冻结
+  `704²` 盒，不裁边、不重绘、不掩盖美术失败；该工具不创建 source 或 runtime，
+  也不修补候选语义。
 - `AB.RAIL.V1` 战斗场景：
   `generated/actionbars/AB.RAIL/AB.RAIL.V1/simulation/AB-RAIL-SIM-V1/AB.RAIL.V1.sim-v1.png`
   （SHA `123d1b4c…cde6`）
@@ -187,14 +192,13 @@
    `AB.CONSUMABLE.KIT.V1` 最终正文；随后每个执行体都必须另行取得最多 `5` 次
    实际生成／修复授权及 Character V3 作为其 Image 1 的外部上传授权。两个
    执行体最坏合计 `10` 次，任何既有 AB.SLOT／AB.RAIL 授权均不得复用。
-4. `AB.RAIL.V1` 已达到 `prompt-authorized / P3`。用户对
-   `AB-RAIL-SIM-V1` 的确认仍只锁定已文字化的可见方向，不接受模拟像素；另于
-   `2026-08-09` 授权最终正文、最多 `5` 次实际生成／修复和指定 Character V3
-   作为本组件唯一 Image 1 外部上传。不得复用 `AB.SLOT` 的生产或上传授权。
-5. 下一门禁是提交本次授权版本后调用固定 `imagegen-0-143-0` 执行 attempt 1；
-   每次生成后必须重新完成语义／结构／美术、九宫格装配、`100%` 真实排版与
-   display-region 审查。任一候选完整通过即停止，attempt 5 仍失败则耗尽，禁止
-   attempt 6；内部通过不代表用户接受 source。
+4. `AB.RAIL.V1` 当前为 `candidate-reviewed / P3`。固定执行器已用尽 `5/5`，
+   attempt 5 exact canonical RGBA SHA `7c49995d…32e9` 为唯一待用户复审候选；
+   raw SHA `3f92fb61…ac42` 只作 provider provenance。technical `4/4`、真实布局
+   `8/8`、violations `0`，内部通过不代表用户接受，且不得 attempt 6。
+5. 下一门禁是用户明确接受或拒绝 attempt 5 exact canonical candidate。接受后
+   才能晋级 `assets/source/actionbars/`、确定性导出 runtime TGA、接入 scoped
+   adapter、运行 fresh-checkout package 并等待 P5 实机验证；当前不得提前执行。
 6. `AB.SLOT` 若要进入 `P6-C`，必须先在现存 work 中向用户展示精确保留／删除
    inventory 并取得明确批准；当前不得清理该组件的 ignored `generated`、work
    或其他专属中间证据。

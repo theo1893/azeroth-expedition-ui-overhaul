@@ -5,10 +5,10 @@
 - 模块：`actionbars`
 - 组件 ID：`AB.RAIL.V1`
 - 工作版本：`AB.RAIL.V1.r4`
-- 子状态：`repair-prepared`
+- 子状态：`candidate-reviewed`
 - 项目阶段：`P3`
-- 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`；attempt 1–4 已调用，不得改用其他执行器
-- 当前操作：`regenerate`；attempt 4 已成为近严格正方并可确定性归一，但仍有四角 L 形黄铜片和内框；完整 `AB.RAIL.V1.r4` 等待提交后执行最后一次
+- 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`；attempt `5/5` 已全部调用，不得 attempt 6
+- 当前操作：`review`；attempt 5 canonical 候选已完成内部技术／视觉／真实排版审查，等待用户接受或拒绝 exact candidate；未创建 source／runtime
 - 生成前模拟方式：`deterministic-local-geometry`
 - 模拟 ImageGen：`0/0`
 - 模拟脚本：`tools/render_action_rail_simulation.py`，SHA-256
@@ -27,7 +27,7 @@
 - 模拟用户结论：`confirmed`；`2026-08-08`，用户原话：
   “接受 AB-RAIL-SIM-V1”
 - 后续生产自动修复预算：最多 `5` 次实际 ImageGen 生图／修图，含首次；已于 `2026-08-09` 授权
-- 当前实际生图：`4/5`
+- 当前实际生图：`5/5`
 - 流程错误：`0`
 - 多执行正文最坏实际生图数：`5`
 - 锁定视觉基准：
@@ -46,27 +46,30 @@
     `5c49a1db452560251422060545625b311e182ef5b8689be996aeda005b8e23ca`；
     只在本地模拟中作为当前 accepted/runtime 相邻图层，用于判断密度、遮挡和
     z-order；它不是 Rail 视觉权威、不是生产参考、不得上传
-- raw：attempt 4
-  `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-04/raw/AB.RAIL.V1.attempt-04.raw.png`
-  ／SHA-256 `c29ea6d452d8ab858cd01da760a302022d114eec090358591c13d1130b6c0b4d`
+- raw：attempt 5
+  `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-05/raw/AB.RAIL.V1.attempt-05.raw.png`
+  ／SHA-256 `3f92fb61d3507a88e95abb62bf9f944a0dad51fcc9c87719c05afeab1956ac42`
 - 候选审查工具：`tools/review_action_rail_candidate_v1.py`，SHA-256
-  `af0bd3ddc5646aeb61a5df7a66f0abd856780374aaa7e06690d42a90a6ab5bb9`；
+  `0635a12f762ccc026e77ec25033fcbdfad58c3127d33f80253419995079291d4`；
   只生成 ignored 指标、冻结 crop／九宫格装配和真实排版证据；opt-in canonical
-  审查只允许完整 alpha bbox 纵横误差不超过 `1%` 时整体 fit 到冻结盒，不裁边、
-  不重绘、不晋级像素
-- 透明候选：attempt 4 review-only
-  `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-04/transparent/AB.RAIL.V1.attempt-04.transparent.png`
-  ／SHA-256 `852777377486dbd58d957c40b2b1084d379cfd618faaaf103983a37b2e7348ec`；
+  审查先把完整 provider 画布归一到 `1024²`，只允许其完整 alpha bbox 纵横误差
+  不超过 `1%` 时整体 fit 到冻结盒，不裁边、不重绘、不晋级像素
+- 透明候选：attempt 5 review-only
+  `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-05/transparent/AB.RAIL.V1.attempt-05.transparent.png`
+  ／SHA-256 `8d5757fa86b44858d883e008cf5813901dfe070a6ed1d5a789c5822f8fefe616`；
   固定 `remove_chroma_key.py --auto-key corners --soft-matte --spill-cleanup`
-- canonical 色键审查：attempt 4 review-only
-  `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-04/review-canonical/AB.RAIL.V1.attempt-04-canonical.canonical-key-review.png`
-  ／SHA-256 `85f07b432dda5ebd1c8487a44a9027dead351b0ab802f8a85b0d4afc1defab87`
-- 重组预演：attempt 4 canonical 九宫格组合板
-  `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-04/review-canonical/AB.RAIL.V1.attempt-04-canonical.supported-layouts-board.png`
-  ／SHA-256 `a8ac168ee8d95d98750ccb7a7c64779a28e4e5e1e9bff875bae7c79272ac7c12`
-- 真实排版预演：attempt 4 canonical
-  `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-04/review-canonical/AB.RAIL.V1.attempt-04-canonical.real-layout-1920x1080.png`
-  ／SHA-256 `65ec3f3377147c83aa6c8320ffa64a088873760f3e22294ca78d175956306382`；
+- exact canonical RGBA 待用户复审：attempt 5 review-only
+  `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-05/review-canonical/AB.RAIL.V1.attempt-05-canonical.canonical-transparent-review.png`
+  ／SHA-256 `7c49995d45b88f5ac12020c4b158027674b7ab7ed6e44a992e643f2ef6bd32e9`
+- canonical 色键技术审查：attempt 5 review-only
+  `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-05/review-canonical/AB.RAIL.V1.attempt-05-canonical.canonical-key-review.png`
+  ／SHA-256 `93659cf3a24f47f86fd4678c624533df4e9eef2a6773b9717d16627e99ec6243`
+- 重组预演：attempt 5 canonical 九宫格组合板
+  `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-05/review-canonical/AB.RAIL.V1.attempt-05-canonical.supported-layouts-board.png`
+  ／SHA-256 `c95cd4b1aabba8524dc7c9cbd3e20f5f1ba2a7b8c10fac53918058dc087b91b2`
+- 真实排版预演：attempt 5 canonical
+  `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-05/review-canonical/AB.RAIL.V1.attempt-05-canonical.real-layout-1920x1080.png`
+  ／SHA-256 `fbde26bb3defcd5130eba3dad0f210a0ce42223862d915a27c48e78a82ce5150`；
   `1920×1080`、UI Scale `0.81269841269841`，8 个真实参数实例，相邻槽位使用
   accepted runtime，姿态栏保留 pfUI fallback；仅 Rail 来自候选
 - 实际展示区域合同／报告：
@@ -77,10 +80,10 @@
     ／`aebb3938953cadaaa7d5b32245ea90305cd94d19b6b63d5d1d8e31a01c80685e`
   - `1×1／12×1／6×2／4×3／1×12`、低 border／scale、
     高 border／spacing／scale 与合并双栏共 `8/8 pass`，violations `0`
-  - attempt 4 canonical 候选合同：
-    `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-04/review-canonical/display-region-contract.json`
-  - attempt 4 canonical 报告：
-    `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-04/review-canonical/display-region-report.json`
+  - attempt 5 canonical 候选合同：
+    `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-05/review-canonical/display-region-contract.json`
+  - attempt 5 canonical 报告：
+    `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-05/review-canonical/display-region-report.json`
     ／SHA-256 `c1fe2bb937d3fa081197588de306545885558a76c953f292f8a3ecc8dff96a34`；
     provider 几何 `8/8 pass`、violations `0`，但不覆盖候选画布／bbox／材质失败
 - 精确布局报告：
@@ -91,8 +94,10 @@
 
 ## 跨设备 handoff
 
-- 无。模拟可由已跟踪脚本与 specification 确定性重建，下一门禁不依赖 ignored
-  像素；不得为本阶段发布 `handoff/actionbars/AB.RAIL/`。
+- 无。当前 exact canonical candidate 与复审都在同一设备完成；用户本次可直接
+  查看 ignored candidate。若用户结论前改为跨设备复审或同步，则必须先按资产
+  工作流发布最小 `handoff/actionbars/AB.RAIL/` 检查点；当前没有自行发布。
+  用户接受后才把 exact pixels 晋级到 tracked source，拒绝时仍不得创建 source。
 
 ## 美术基准继承
 
@@ -261,7 +266,7 @@
   确认，全部确认条款与不可变边界保持不变；`.r4` 只处理 attempt 4 剩余的角饰／
   内框／尺度失败：保留近严格正方与低频中心，最终一次把暗氧化黄铜压成近黑接触
   迹并取消所有亮金属、角饰、内框和纹理填充，把绿色安全带改写为面积比例自检，
-  提交后允许执行。
+  已于执行前 commit `7bd81fe` 固定并作为 attempt 5 完整输入。
 
 | 门禁 | 执行正文中的证据 | 结论 |
 |---|---|---|
@@ -324,6 +329,7 @@ Before returning the image, inspect every requirement literally: the returned fi
 | `2/5` | `AB.RAIL.V1.r1`／`974f17c` | `generate` | session `019fe460-242c-7dc0-b80f-1cbcc37362dc`／result `ig_084d9b46d47957b5016a77e77f03b881919844a1cbb7afd254` | raw `334a7dc9…bfe5` | 画布／输出仍为 `1254²`；审查归一 bbox `[100,91,923,933)` 仍越出合同且偏高、非方形；背景非 exact green；长拉伸边形成连续亮黄铜线 | 保留单对象、正面、每角最多一枚小铆钉、降低后的中心纹理与综合色域；不复用错误像素，以完整 `.r2` 从同一 Image 1 regenerate | `internal-fail / repair-prepared` |
 | `3/5` | `AB.RAIL.V1.r2`／`9b0a4c7` | `generate` | session `019fe466-849b-7971-898e-a7e5ee0e51b5`／result `ig_0eb645a14530ae9f016a77e91f90cc81919661a6505de31574` | raw `4eb01991…3abb` | 输出仍为 `1254²`；审查归一 bbox `[124,98,900,926)` 为 `776×828` 纵向矩形且越出合同；背景非 exact green；仍有嵌套框、角块、铆钉和连续金线 | 保留单对象、正面、综合色域和更接近的总体尺度；不复用错误像素，以完整 `.r3` 从同一 Image 1 重新绘制无角块／无铆钉的方形低调承托片 | `internal-fail / repair-prepared` |
 | `4/5` | `AB.RAIL.V1.r3`／`9408077` | `generate` | session `019fe46c-0b95-7e13-bd36-3a722bd0b477`／result `ig_029743cd41d9c020016a77ea87ffa481919fb7edd5f38ecfe7` | raw `c29ea6d4…0b4d` | 输出仍为 `1254²`；归一 bbox `[92,92,931,931)` 太大，但原始透明 bbox `1021×1022` 已为近严格正方；完整物件 canonical fit 技术 pass，视觉仍有四角 L 形黄铜片、内框和纹理填充 | 保留近严格正方、无铆钉、综合色域与更低中心高频；不复用错误像素，以完整 `.r4` 从同一 Image 1 最终 regenerate，全部黄铜压成近黑接触迹并取消角饰／内框 | `internal-fail / final-repair-prepared` |
+| `5/5` | `AB.RAIL.V1.r4`／`7bd81fe` | `generate` | session `019fe473-5f30-7251-a4fa-da5d67d0e559`／result `ig_04432058ad1da79f016a77ec6d69448191878cef0f627c82c4` | raw `3f92fb61…ac42`；canonical RGBA `7c49995d…32e9` | raw 仍为 provider `1254²`／near-green；全画布归一后的完整 alpha bbox `744×751`，纵横误差 `0.932%`，canonical fit 后 exact bbox／纯绿／框外像素／真实布局全部 pass；视觉无亮金属、角饰、铆钉或格线 | 保留 attempt 5 exact canonical RGBA 等待用户复审；停止循环，不创建 source／runtime，不得 attempt 6 | `internal-pass / candidate-reviewed` |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
@@ -396,7 +402,31 @@ Before returning the image, inspect every requirement literally: the returned fi
   display-region `8/8 pass`、violations `0`。
 - canonical 真实排版仍显示四角 L 形黄铜饰片，并保留内框／纹理填充；这是真实
   美术合同失败，不能由技术归一恢复资格。当前累计 `4/5`、流程错误 `0`；完整
-  `AB.RAIL.V1.r4` 等待提交后执行最后一次 regenerate。
+  `AB.RAIL.V1.r4` 随后已提交并执行。
+- attempt 5 使用执行前已提交完整正文 `7bd81fe` 和同一唯一 Image 1；固定 child
+  session 为 `019fe473-5f30-7251-a4fa-da5d67d0e559`，provider result 为
+  `ig_04432058ad1da79f016a77ec6d69448191878cef0f627c82c4`；没有额外输入或
+  独立 revised prompt。provider cache、child 原样副本与仓库 ignored raw 的
+  SHA 均为 `3f92fb61d3507a88e95abb62bf9f944a0dad51fcc9c87719c05afeab1956ac42`。
+- child 在同一次生成后的保存阶段第一次宽泛目录扫描返回非零，但输出中已包含
+  当前 session 图片；随后只列出当前 session 目录并原样复制成功。图片已生成，
+  因此只计 attempt 5 一次，也不列为“无候选／无生成证据”的非计数流程错误。
+- attempt 5 raw 仍为 `1254×1254 RGB`；透明原图 bbox
+  `[175,169,1080,1084)`，背景 exact `#00FF00` 像素为 `0`、中位数
+  `#03FA03`。透明审查 SHA 为 `8d5757fa…e616`。
+- 先按冻结规则把完整 provider 画布 LANCZOS 归一到 `1024²` 后，完整 alpha bbox
+  为 `[140,136,884,887)`／`744×751`，纵横误差 `0.00932091`，仍在 `1%`
+  合同内。随后完整 bbox fit 到 `[160,160,864,864)`；不裁物件边缘、不重绘。
+  canonical bbox exact、框外像素 `0`、exact-green 背景 pass，technical `4/4`。
+- attempt 5 canonical review JSON SHA `da11b329…b596`；exact RGBA candidate SHA
+  `7c49995d…32e9`，exact-green key 技术证据 SHA `93659cf3…6243`；display-region
+  `8/8 pass`、violations `0`。真实排版中无亮金属、
+  角饰、铆钉、固定格线或内部合并中缝；横／竖／多行均同厚，Rail 保持在 accepted
+  Slot 与 provider 动态层下方。当前累计 `5/5`、流程错误 `0`；循环停止。
+- `inspect_candidate.py` 对 exact RGBA 确认 `1024² RGBA`、visible bbox
+  `[160,160,864,864)`、opaque `480222`、partial `12483`、transparent `555871`，
+  visible exact-green 与 heuristic green spill 均为 `0`；中心 `448²` 全覆盖且无
+  Alpha 孔洞。色键技术副本为 `1024² RGB`。
 
 ## 尝试摘要
 
@@ -407,34 +437,28 @@ Before returning the image, inspect every requirement literally: the returned fi
 | `AB.RAIL.V1.r1` | `974f17c`；session `019fe460…62dc`；raw `334a7dc9…bfe5`；review `8e146aa8…a5a1` | `internal-fail / 2/5` | 保留单角钉与低频中心；整体缩小约 `16%`、正方居中，亮黄铜只留在四角短断点 |
 | `AB.RAIL.V1.r2` | `9b0a4c7`；session `019fe466…51b5`；raw `4eb01991…3abb`；review `deb40edc…b3cb` | `internal-fail / 3/5` | 保留更接近的总体尺度；分别修正宽高、取消嵌套框／角块／铆钉与连续金线 |
 | `AB.RAIL.V1.r3` | `9408077`；session `019fe46c…b477`；raw `c29ea6d4…0b4d`；canonical review `fc49e49b…56f4` | `internal-fail / 4/5` | 保留近严格正方；取消全部可见金属色、角饰、内框与纹理填充，严格扩大绿色安全带 |
-| `AB.RAIL.V1.r4` | 最终修复：近黑氧化黄铜只作接触迹、胡桃褐单层边带、plain corners、绿色面积比例自检 | `final-repair-prepared` | 提交后 regenerate attempt 5；不得 attempt 6 |
+| `AB.RAIL.V1.r4` | `7bd81fe`；session `019fe473…e559`；raw `3f92fb61…ac42`；canonical review `da11b329…b596` | `internal-pass / 5/5 / candidate-reviewed` | 等待用户接受或拒绝 exact canonical RGBA SHA `7c49995d…32e9`；不得 attempt 6 |
 
 ## 审查记录
 
-- 结论：attempt 4 退回；`final-repair-prepared / P3`，不允许进入用户复审、source
-  或 runtime。
-- 第一个失败门禁：执行输出与画布合同。raw 为 `1254² RGB` 而非 `1024²`；审查
-  画布归一 bbox `[92,92,931,931)` 越出 `[160,160,864,864)`；约 `839²`，仍比
-  合同大约 `19%`；背景也不是逐像素 exact `#00FF00`。
+- 结论：attempt 5 canonical 候选 `internal-pass / candidate-reviewed / P3`；允许
+  进入用户复审，但用户接受前不允许创建 source、runtime 或 addon 接入。
+- provider raw 审计：raw 为 `1254² RGB` 而非 `1024²`，背景为 near-green；它只
+  保留为 provenance，不作为用户待接受的 exact candidate。
 - 语义／物理：单对象、正面、normal 状态与胡桃褐／暗黄铜身份可保留；没有
   动态图标、文字、状态或固定槽格。
 - 透视／图层：正面无透视；按冻结 crop 九宫格装配后，Rail 能位于 accepted
   Slot 与 provider 动态内容之下，display-region `8/8 pass`。
-- 技术归一：完整透明物件 `1021×1022`，纵横误差 `0.098%`；review-only canonical
-  fit 后 bbox exact、框外 `0`、纯绿背景 pass，且没有裁边或重绘。这只说明
-  attempt 4 具备无损比例归一基础，不自动覆盖美术失败。
-- 美术一致性：综合色域接近 Character V3，中心 high-frequency mean 从原始冻结
-  crop 的 `1.4434` 降至 canonical 的 `1.3840`，无铆钉且综合色域克制；但四角形成
-  明显 L 形黄铜饰片，内框和全幅细纹仍让它读成完整面板而不是轻量承托轨。
-- 装配／尺寸：`1×1／12×1／6×2／4×3／1×12`、极端参数与合并双栏均可完成
-  几何装配且无内部中缝；由于冻结 crop 会切掉候选真实外框，该 pass 不能恢复
-  候选资格。
-- 下一版必须改变：保持正方，canonical 物件 exact bbox
-  `[160,160,864,864)`；fixed provider 若仍返回 `1254²`，只把
-  `[196,196,1058,1058)` 作为同比例辅助定位；绿色区域须超过画布一半。暗氧化
-  黄铜只能以无金属色的近黑接触迹存在；取消全部可见金属色、角饰、角痕、内框、
-  独立上下 rail 和纹理填充，四条 stretch edge 与四角都只能使用相同烟黑／暗褐
-  宽色带。必须保持单对象、正面、胡桃褐主导、同厚横竖适配和全部动态内容排除。
-- 当前结论：attempt 4 为 `internal-fail / 4/5`；完整 `AB.RAIL.V1.r4` 已形成，
-  提交前不得执行 attempt 5，且任何结果后均不得 attempt 6。内部通过仍不等于
-  用户接受。
+- 技术归一：先把完整 provider 画布归一到 `1024²`，完整 alpha bbox `744×751`
+  的纵横误差为 `0.932%`；review-only canonical fit 后 bbox exact、框外 `0`、
+  exact-green pass，且没有裁物件边缘或重绘。exact RGBA 可见绿色残留 `0`，
+  canonical technical `4/4 pass`。
+- 美术一致性：胡桃褐／烟褐／近黑氧化黄铜关系继承 Character V3；亮金属、角饰、
+  铆钉、角痕和固定格线均已消失。中心只有宽幅左上暖／右下暗的低频值域；
+  high-frequency mean `1.5677`，没有独特纹章或可见接缝，Rail 仍从属于 Slot。
+- 装配／尺寸：`1×1／12×1／6×2／4×3／1×12`、极端参数与合并双栏均为真实
+  九宫格装配，`8/8 pass`、violations `0`；Bar 1／6 只有整体外围、无内部中缝。
+- 当前结论：exact review candidate 为 attempt 5 canonical RGBA SHA
+  `7c49995d45b88f5ac12020c4b158027674b7ab7ed6e44a992e643f2ef6bd32e9`；
+  当前 `candidate-reviewed / 5/5`，等待用户明确接受或拒绝。内部通过不等于用户
+  接受；无论用户结论如何均不得 attempt 6。
