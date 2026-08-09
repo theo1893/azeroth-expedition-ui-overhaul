@@ -967,10 +967,10 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
   provider 方向，显式 focus preset 才请求 `down`；ImageGen `0`。
 - V4 战斗栈随后被新实机截图否决，但上述 Field Kit／ArchiTotem bridge 本身未改。
   用户已明确“确认接入” V5；AEUI `0.8.10`／focus runtime-v1.4 的实机坐标传输
-  随后失败，但失败只涉及 `UIParent`／provider scale 投影。当前 AEUI `0.8.11`／
-  `focus-layout-contract=1.5` 改用逐 Frame UI-root anchor 校准；Field Kit atlas、
-  bridge-v1.6 几何、popup guard、Bar 1 绑定和 provider 行为继续不变，ImageGen
-  `0/0`。
+  随后失败；AEUI `0.8.11`／focus runtime-v1.5 的物理屏幕投影、探针与回读又被
+  下一张实机截图判定失败。当前 AEUI `0.8.12`／`focus-layout-contract=1.6` 改用
+  固定游戏原生坐标；Field Kit atlas、bridge-v1.6 几何、popup guard、Bar 1 绑定
+  和 provider 行为继续不变，ImageGen `0/0`。
 
 ## 审查记录
 
@@ -1078,24 +1078,25 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
 | `AB.FIELDKIT.V1 runtime-v1.3` | source／TGA／可见布局不变；外置态增加全卷袋高度的透明直接子级悬停通道，延后 XML Frame `OnLeave`，所有原生回退恢复脚本与隐藏通道 | runtime-v1.2 实机截图确认外缘空隙会提前关闭；用户复测确认穿越其他主格仍触发立即关闭／换类，`game-failed / P5` | 由 runtime-v1.4 接续；保留失败根因，不把透明通道误记为完整修复 |
 | `AB.FIELDKIT.V1 runtime-v1.4` | source／TGA／可见布局不变；exact 外置态捕获 AutoBar 原 `SetPopupButton`，不同主格仅在持续停留 `0.30s` 后通过原方法提交；跨格进入通道／候选保持当前抽屉，NATIVE／非 exact／关闭态立即委托 | 用户明确否定 v1.3；跨格保持／停留切换／三类立即回退 smoke，display 与 package 重新通过，`pending-retest / P5` | `/reload` 从内侧格横穿其他主格进入左右抽屉，确认不关闭／不换类；在另一主格停留约 `0.30s` 应切换，完全离开联合区域后正常关闭 |
 | `AB.FIELDKIT.V1 runtime-v1.5` | source／TGA／v1.4 popup guard 不变；`fieldKitBound` 把 Bar 6、左 `4×6` 卷袋和右双槽直接锚到 Bar 1；提供 bind／unbind／home，绑定态侧栏误拖松手回位；当前角色写入中心中下与水平双槽 | 用户明确要求三部分强绑定并按最初构图重排；smoke、display `9/9＋10/10`、package pass，`pending-retest / P5` | 启动或 `/reload` 验证左卷袋—中央 `12×2`—右双槽、唯一主栏 mover、显式释放／恢复、外向候选及全部 provider 行为 |
-| `AB.FIELDKIT bridge-v1.6` | runtime-v1.5 source／TGA／AutoBar／TrinketMenu 合同不变；可选 ArchiTotem 根加入 Bar 1 唯一 mover，绑定态在主栏下方，拖动回位，`unbind` 恢复；显式 focus preset 请求向下，普通 refresh 只读 | V4 几何被否决但 bridge 保留；V5 focus runtime-v1.4 的坐标传输也已实机失败，bridge 本身未变；AEUI `0.8.11`／focus runtime-v1.5 只修 UI-root anchor，`pending-game-validation / P5` | 实机验证四元素施放、右键、Air 七层、Recall、拖动／锁定、向下 popup、bind／unbind 及非萨满／缺失 fail-open |
+| `AB.FIELDKIT bridge-v1.6` | runtime-v1.5 source／TGA／AutoBar／TrinketMenu 合同不变；可选 ArchiTotem 根加入 Bar 1 唯一 mover，绑定态在主栏下方，拖动回位，`unbind` 恢复；显式 focus preset 请求向下，普通 refresh 只读 | V4 几何被否决但 bridge 保留；focus runtime-v1.4／v1.5 坐标传输均已实机失败，bridge 本身未变；AEUI `0.8.12`／focus runtime-v1.6 只改游戏原生坐标，`pending-game-validation / P5` | 实机验证四元素施放、右键、Air 七层、Recall、拖动／锁定、向下 popup、bind／unbind 及非萨满／缺失 fail-open |
 
 ## 下一门禁
 
 1. 两套 accepted source 与 runtime TGA 像素身份不变；视觉 source／runtime
    manifest 保持 `runtime-v1.5`，共享 adapter 已更新到 bridge v1.6／P5。fresh-checkout package
    已通过，目标设备只需拉取并安装 `addon/`，不得再生成、导出或打补丁。
-2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.11`、
+2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.12`、
    `fieldkit-contract=1.6`、`fieldkit-binding=bound` 与 `actionbar-stack=12x2-bound`。
-   同时确认 `focus-layout-contract=1.5`、`focus-layout-anchor=live-bar1`、
-   `focus-layout-coordinate-space=ui-root-calibrated-v1`、
+   同时确认 `focus-layout-contract=1.6`、`focus-layout-anchor=ui-parent`、
+   `focus-layout-coordinate-space=game-native-v1`、
    `focus-layout-unit-scale=0.75`、`focus-layout-readout-scale=0.82`、
    `focus-ui-scale-tier=8`、`architotem-dock=bottom` 与
    `architotem-direction=down`；左卷袋与右双槽维持当前清晰尺寸，
    TrinketMenu 双槽不会因旧 `0.904371` 再次被二次缩小，玩家框不再覆盖卷袋。
    先确认左 `4×6` 卷袋—中央 `12×2` 动作条—右水平双槽在中心中下部共用一个
    Bar 1 mover；拖动两侧 provider 松手应回位，`unbind` 后才独立，`bind` 恢复，
-   `home` 重置最初位置。再确认
+   `home` 重置最初位置；若需撤销 Combat Focus，使用 `/aeui focuslayout restore`
+   后 `/reload`。再确认
    AutoBar 主格／popup 的 Item Icon 与 Count、TrinketMenu 双槽／候选的 Icon、
    Cooldown 与 Queue 都在口袋／护套之上。再执行 `/aeui autobar apply` 验证当前
    角色精确 `4×6`／24 格、“应急／增益／工具”和手动数字槽保留；打开候选数

@@ -113,7 +113,7 @@ def main() -> None:
     assert runtime_manifest["addon_entrypoints"]["addon_version"] == (
         builder.addon_version(ROOT / builder.TOC_REL)
     )
-    assert runtime_manifest["addon_entrypoints"]["addon_version"] == "0.8.11"
+    assert runtime_manifest["addon_entrypoints"]["addon_version"] == "0.8.12"
     package = runtime_manifest["package_validation"]
     assert package["status"] == "pass"
     assert package["violations"] == 0
@@ -240,8 +240,8 @@ def main() -> None:
 
     toc = (ROOT / builder.TOC_REL).read_text(encoding="utf-8-sig")
     bootstrap = (ROOT / builder.BOOTSTRAP_REL).read_text(encoding="utf-8")
-    assert "## Version: 0.8.11" in toc
-    assert 'addon.version = "0.8.11"' in bootstrap
+    assert "## Version: 0.8.12" in toc
+    assert 'addon.version = "0.8.12"' in bootstrap
     assert "Modules\\ActionBars.lua" in toc
 
     print("action rail runtime test passed")

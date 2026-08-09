@@ -3,7 +3,7 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 
 addon.name = "AzerothExpeditionUI"
-addon.version = "0.8.11"
+addon.version = "0.8.12"
 addon.modules = addon.modules or {}
 addon.media = addon.media or {}
 addon.media.root = "Interface\\AddOns\\AzerothExpeditionUI\\Media\\"
@@ -243,10 +243,16 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       if ok then
         addon:ScheduleRefresh(0)
       end
+    elseif subcommand == "restore" then
+      local ok, result = module:RestoreCombatFocusLayoutPreset()
+      addon:Print(result)
+      if ok then
+        addon:ScheduleRefresh(0)
+      end
     elseif subcommand == "status" then
       addon:Print(module:GetRuntimeStatus())
     else
-      addon:Print("/aeui focuslayout [apply|comfort|status]")
+      addon:Print("/aeui focuslayout [apply|comfort|restore|status]")
     end
   elseif command == "chat" then
     AzerothExpeditionUIDB.chat.enabled =
@@ -331,7 +337,7 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
     end
   else
     addon:Print(
-      "/aeui actionbars, /aeui autobar [open|apply|restore|popup], /aeui fieldkit [bind|unbind|home|status], /aeui focuslayout [apply|comfort|status], /aeui chat, /aeui quests, /aeui refresh, /aeui status"
+      "/aeui actionbars, /aeui autobar [open|apply|restore|popup], /aeui fieldkit [bind|unbind|home|status], /aeui focuslayout [apply|comfort|restore|status], /aeui chat, /aeui quests, /aeui refresh, /aeui status"
     )
   end
 end

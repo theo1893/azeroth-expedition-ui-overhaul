@@ -3,16 +3,17 @@
 ## 当前状态
 
 - 批次：`AB.FOCUS.LAYOUT.V1`
-- 当前版本：`ACTION-BARS-CORE-SIM-V5 / runtime-v1.5`
+- 当前版本：`ACTION-BARS-CORE-SIM-V5 / runtime-v1.6`
 - 子状态：`runtime-exported / addon-integrated / pending-game-validation`
 - 最高阶段：`P5`
 - 操作：`integrate`
 - ImageGen：`0/0`
-- runtime：AEUI `0.8.11`／`focus-layout-contract=1.5`／
-  `fieldkit-contract=1.6`。exact V5 可见几何仍按用户“确认接入”冻结；v1.4 的实机
-  坐标传输已判定失败，v1.5 只修显式一次性 preset 的 1.12 UI-root 投影：单位框／
-  双方施法仍为 `0.75`，Swing／姿态／DoiteDPS 仍为 `0.82`。普通 refresh 不维护
-  这些几何；pfUI／ArchiTotem provider 代码和全部位图不变。
+- runtime：AEUI `0.8.12`／`focus-layout-contract=1.6`／
+  `fieldkit-contract=1.6`。exact V5 可见几何仍按用户“确认接入”冻结；v1.4 与 v1.5
+  坐标传输均已由实机判定失败。v1.6 直接写 Turtle WoW 原生 `UIParent` SetPoint
+  坐标，不读取屏幕尺寸、不乘 effective scale、不探针、不回读；单位框／双方施法
+  仍为 `0.75`，Swing／姿态／DoiteDPS 仍为 `0.82`。普通 refresh 不维护这些几何；
+  pfUI／ArchiTotem provider 代码和全部位图不变。
 
 ## 本次输入与结论
 
@@ -50,6 +51,23 @@
   Frame 上先置零、再向屏内探测 `1 UI` SetPoint，直接测出该 Frame 的 scaled anchor
   换算，最后一次性写入 pfUI／DoiteDPS 坐标及当前角色签名。主栏 home 使用同一
   校准。测试环境现固定为 768-high root，不再随 UI scale 伪造 1920×1080 UIParent。
+- V5 runtime-v1.5 实机失败截图：
+  `C:/Users/西奥/AppData/Local/Temp/codex-clipboard-823cdfd0-476c-4080-abbe-bcf0615900a3.png`
+  ，`2251×1440 RGB`、SHA-256
+  `b49b4415e131a2889b93d5b971a31ddb372986a569957ea6d623db42bb71be1`。截图显示主动作
+  条、Field Kit、单位框与战斗读数被推到中右侧并相互脱节；用户明确报告“更乱了”，
+  并要求按游戏坐标摆放。
+- 最新落盘 SavedVariables 记录 v1.5 写入主栏 `x=325,y=246`、Player
+  `x=222,y=637`、Target `x=820,y=637`、双方施法 `y=585`、Swing
+  `x=476,y=126`、DoiteDPS `x=1487,y=-424`。客户端模式仍为 `1920×1080`，证明
+  v1.5 错把 `GetScreenWidth／Height` 返回的物理分辨率当作 SetPoint 根；随后又用
+  provider effective scale 和一单位探针二次换算，故所有原生 offset 被再次平移。
+- runtime-v1.6 删除整条 projection／probe／readback 路径，固定写入已由 1.12
+  坐标模型与实值交叉确认的游戏坐标：主栏 `BOTTOM (0,175)`；Player／Target
+  `BOTTOM (-212,492)／(213,492)`；双方施法 `BOTTOM (-212,454)／(213,454)`；
+  Swing `CENTER (0,-67)`；姿态 `TOP (0,-919)`；DoiteDPS
+  `TOPLEFT (1012,-647)`。显式 preset 首次执行前保存当前 profile；
+  `/aeui focuslayout restore` 可恢复并提示 reload。
 - 前一张 v1.2 实机截图：
   `C:/Users/西奥/AppData/Local/Temp/codex-clipboard-66323032-06ec-4a4d-bdfc-17358a2453e9.png`
   ，`1443×1067 RGB`、SHA-256
@@ -131,12 +149,12 @@
   距主动作条 `64 px`，既保留动作识别空间，也消除截图中的大块闲置区域。
 - runtime-v1.4 原计划从 live Bar 1 投影上述参考关系，但实机证明它把
   `UIParent` 的 768-high Frame 尺寸与 provider effective scale 混为屏幕坐标，已
-  改判 `game-geometry-failed`。runtime-v1.5 在显式 preset 开始时以 normalized
-  UI root 校准既有 Combat Deck，再读取 live Bar 1 的实际中心／顶边，把
-  `-159／+160 px` 双框中心、甲板顶边以上 `106／78／227／64／287 px` 的
-  单位／施法／Swing／姿态／DoiteDPS 关系逐 Frame 测量成等价 movable 坐标并
-  一次性保存。普通 refresh 不持续重写这些对象的 Parent、Point、Width 或 Height，
-  只在完整 v1.5 坐标签名存在时恢复没有独立 movable 条目的副手 Swing `0.82` scale。
+  改判 `game-geometry-failed`。runtime-v1.5 又把物理 `1920×1080` 屏幕返回值当作
+  normalized root，并通过 provider scale、探针和回读二次换算，实机同样改判
+  `game-geometry-failed`。runtime-v1.6 不再投影或测量，显式 preset 仅把冻结关系
+  对应的游戏原生坐标一次性写入 pfUI／DoiteDPS；普通 refresh 不持续重写这些对象
+  的 Parent、Point、Width 或 Height，只在完整 `game-native-v1` 坐标签名存在时
+  恢复没有独立 movable 条目的副手 Swing `0.82` scale。
 - 以上只定义几何方向；动态文字、图标、Aura、施法状态、Swing 进度、DoiteDPS
   推荐数据、单位框交互与 provider 行为全部保持真实运行时对象，不进入位图。
 
@@ -169,24 +187,24 @@
 - 回归测试 `tests/action_focus_simulation_test.py` pass。测试锁定 split scale
   `0.75／0.82`、单位框内缘 `80 px`、人物通道边界、`59` 项布局检查与 `8` 个
   display 场景。
-- V5 runtime-v1.5 最终 display contract 为
+- V5 runtime-v1.6 最终 display contract 为
   `tools/specs/action_focus_layout_v1_runtime_display_region.json`，SHA
-  `db19c3ea…4f51`；报告
-  `generated/actionbars/ACTION-BARS-CORE/runtime/V1.5/display-region-report.json`，
-  SHA `d196ceb1…8712`，`8/8 pass`、violations `0`。场景覆盖单位框、双方施法、
-  Swing、DoiteDPS 与 ArchiTotem 四态；`final_runtime=true`，并登记 v1.4 实机
-  失败截图及坐标空间修复。
-- runtime entrypoints 已升级为 AEUI `0.8.11`：
-  `addon/AzerothExpeditionUI/Modules/ActionBars.lua` SHA `5d410838…7d2f`，
-  `Core/Bootstrap.lua` SHA `65c818f6…d45b`，TOC SHA `10b367c4…09d8`。
+  `405500e2…9ead`；报告
+  `generated/actionbars/ACTION-BARS-CORE/runtime/V1.6/display-region-report.json`，
+  SHA `999a7063…2d9d`，`8/8 pass`、violations `0`。场景覆盖单位框、双方施法、
+  Swing、DoiteDPS 与 ArchiTotem 四态；`final_runtime=true`，并登记 v1.4／v1.5
+  两次实机坐标失败及 `game-native-v1` 修复。
+- runtime entrypoints 已升级为 AEUI `0.8.12`：
+  `addon/AzerothExpeditionUI/Modules/ActionBars.lua` SHA `30af188e…b38a`，
+  `Core/Bootstrap.lua` SHA `86e34d2c…af9e`，TOC SHA `a6441513…fec`。
   四份既有 Action Bars runtime manifest 只同步共享 adapter／bootstrap／TOC 哈希和
   addon 版本；所有 P6 Action Slot／Rail 与 P5 Field Kit 像素、导出合同和 provider
   行为保持不变。三个确定性 exporter 同时改为从 TOC 读取 addon 版本，并在重导出
   时保留已有 P6 evidence，避免 Slot／Rail 被错误降级。部署目录仍为
   `addon/AzerothExpeditionUI` 与必需的 `addon/pfUI`；ArchiTotem `1.7` 是可选
   provider，缺失时 fail-open。
-- V5 runtime-v1.5 fresh-checkout package：
-  `generated/actionbars/ACTION-BARS-CORE/runtime/V1.5/addon-package-report.json`，
+- V5 runtime-v1.6 fresh-checkout package：
+  `generated/actionbars/ACTION-BARS-CORE/runtime/V1.6/addon-package-report.json`，
   SHA `a6a4ec74…16b9`，`status=pass`、violations `0`、
   `build_required_on_target_device=false`。目标设备只需拉取并安装 tracked addon，
   不需要 Python、exporter、补丁或再改 Lua。
@@ -194,12 +212,13 @@
   `tests/action_focus_simulation_test.py`、`tests/repository_contract_test.py`、
   `tests/actionbars_runtime_test.py`、`tests/action_rail_runtime_test.py`、
   `tests/actionbars_module_smoke.lua`、`tests/action_fieldkit_module_smoke.lua` 与
-  `tests/action_fieldkit_runtime_test.py`。Lua smoke 验证 split scale、live Bar 1
-  UI-root 校准、9/9 配置／live 对象、DoiteDPS 非布局配置保留、ArchiTotem
-  绑定／解绑／方向及缺省无 Alpha 写入；Field Kit 联合悬停与强绑定回归保持通过。
-- 本次只读取用户截图作为失败证据，没有上传或变换它；没有调用 ImageGen，计数
-  保持 `0/0`，也没有新增或修改位图 source／runtime atlas。本机未加载游戏、未写
-  目标角色 SavedVariables。`generated/` 模拟像素和验证报告继续是 ignored 证据，
+  `tests/action_fieldkit_runtime_test.py`。Lua smoke 验证 split scale、原生固定坐标、
+  对 `GetScreenWidth／Height` 零调用、9/9 配置／live 对象、pre-apply profile 恢复、
+  DoiteDPS 非布局配置保留、ArchiTotem 绑定／解绑／方向及缺省无 Alpha 写入；
+  Field Kit 联合悬停与强绑定回归保持通过。
+- 本次只读取用户截图和已由游戏落盘的 SavedVariables 作为失败证据，没有上传、
+  变换或写回它们；没有调用 ImageGen，计数保持 `0/0`，也没有新增或修改位图
+  source／runtime atlas。本机未加载游戏。`generated/` 模拟像素和验证报告继续是 ignored 证据，
   不能切片、晋级、上传或作为以后生产输入。
 
 ## 内部审查
@@ -222,13 +241,14 @@
 ## 下一门禁
 
 在目标 Turtle WoW `/reload` 后执行一次 `/aeui focuslayout comfort`，确认状态包含
-`focus-layout-contract=1.5`、`focus-layout-anchor=live-bar1`、
-`focus-layout-coordinate-space=ui-root-calibrated-v1`、
+`focus-layout-contract=1.6`、`focus-layout-anchor=ui-parent`、
+`focus-layout-coordinate-space=game-native-v1`、
 `focus-layout-unit-scale=0.75`、`focus-layout-readout-scale=0.82`、
 `fieldkit-contract=1.6` 与 `fieldkit-binding=bound`。随后验证三项原始失败均消失：
 攻击计时与双方施法不重叠；DoiteDPS → Swing → Aura → 单位框 → 施法 → 姿态形成
 紧凑连续层；Player／Target 不再挡住人物主体。再覆盖满血／掉血、有／无目标、
 双方施法、近战双持、远程计时、Aura 超过 `6`、DoiteDPS 锁定／解锁，以及
 ArchiTotem 施放、右键、Air 七层、拖动／锁定、Recall、`unbind／bind` 和 fail-open。
-若仍有偏差，使用新的实机截图只修订 deck-relative 物理常量；不重用 V4 固定坐标，
-不进入位图重绘，ImageGen 继续保持 `0/0`。
+若需要回退，执行 `/aeui focuslayout restore` 后 `/reload`；若仍有偏差，使用新的
+实机截图只修订上述游戏原生坐标，不再引入屏幕像素投影，不进入位图重绘，
+ImageGen 继续保持 `0/0`。

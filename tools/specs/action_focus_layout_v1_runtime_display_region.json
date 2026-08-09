@@ -1,10 +1,10 @@
 {
   "schema": "aeui-display-region-contract-v1",
-  "component": "AB.FOCUS.LAYOUT.V1/runtime-v1.5",
-  "coordinate_system": "top-left-origin, right-bottom-exclusive; 1920x1080 reference pixels are converted to WoW 1.12 normalized UI-root units and each provider anchor is measured through its effective scale",
+  "component": "AB.FOCUS.LAYOUT.V1/runtime-v1.6",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive for display review; runtime positions are fixed Turtle WoW 1.12 Frame:SetPoint offsets relative to UIParent at pfUI tier 8, with no physical-screen projection, effective-scale multiplication, probe, or coordinate readback",
   "evidence": {
     "provider": "addon/pfUI unitframes/castbar/swingtimer/actionbar + installed DoiteDPS + optional installed ArchiTotem 1.7",
-    "layout_formula": "pfUI tier 8 remains global; the accepted one-shot preset resets the unchanged Combat Deck, reads live Bar 1 center/top in normalized UI-root coordinates, converts the 1920x1080 reference-pixel relationships by GetScreenHeight()/1080, calibrates each provider's scaled SetPoint offset with an in-bounds one-unit probe, uses local scale 0.75 for player/target and paired cast bars, and keeps swing/stance/DoiteDPS at 0.82",
+    "layout_formula": "pfUI tier 8 remains global; the explicit one-shot preset writes native UIParent coordinates directly: Combat Deck BOTTOM (0,175), player/target BOTTOM (-212,492)/(213,492), paired cast bars BOTTOM (-212,454)/(213,454), swing CENTER (0,-67), stance TOP (0,-919), and DoiteDPS TOPLEFT (1012,-647); units/casts use local scale 0.75 and swing/stance/DoiteDPS use 0.82",
     "accepted_simulation_spec": "tools/specs/action_bars_core_simulation_v5.json",
     "accepted_simulation": "generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V5/action_bars_core_sim_v5.png",
     "source_failure_evidence": "C:/Users/西奥/AppData/Local/Temp/codex-clipboard-5b64e0c0-3266-4f55-8aa8-8c1438ba88e4.png",
@@ -12,11 +12,14 @@
     "runtime_v1_4_failure_evidence": "C:/Users/西奥/AppData/Local/Temp/codex-clipboard-01b315bd-3703-4af2-858b-1b8e07caaea4.png",
     "runtime_v1_4_failure_evidence_sha256": "ed81a6c97ed2a21068054d97f60163298395e2d756cae4b8b171796811e93dd9",
     "runtime_v1_4_failure": "game-geometry-failed: UIParent:GetWidth/GetHeight and target provider scales were mixed, shifting the unit frames, cast bars, swing timer, stance bar, DoiteDPS and Combat Deck away from the accepted V5 composition",
+    "runtime_v1_5_failure_evidence": "C:/Users/西奥/AppData/Local/Temp/codex-clipboard-823cdfd0-476c-4080-abbe-bcf0615900a3.png",
+    "runtime_v1_5_failure_evidence_sha256": "b49b4415e131a2889b93d5b971a31ddb372986a569957ea6d623db42bb71be1",
+    "runtime_v1_5_failure": "game-geometry-failed: GetScreenWidth/GetScreenHeight returned physical 1920x1080 while SetPoint and pfUI saved positions consumed the normalized game coordinate space; the one-unit probe plus effective-scale readback therefore translated every native offset a second time and scattered the composition",
     "adapter": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
     "target": "Turtle WoW 1.18.1; audited 1920x1080 client to 2560x1440 display chain",
     "atlas_role": "layout-only runtime contract; no source or runtime bitmap is introduced",
     "dynamic_ownership": "all health, power, aura, spell, timer, cooldown, totem, skip, recall, preset, tooltip, drag, lock and hit behavior remains provider-owned",
-    "runtime_scope": "explicit /aeui focuslayout apply or comfort performs the one-shot calibrated live-Bar-1 UI-root projection, writes accepted pfUI/DoiteDPS positions plus the coordinate signature used to recognize the saved preset, and requests ArchiTotem direction=down; ordinary Apply never maintains player/target/cast/swing/stance/DoiteDPS geometry and only event-binds the detected ArchiTotem root when fieldKitBound=true",
+    "runtime_scope": "explicit /aeui focuslayout apply or comfort writes the fixed game-native pfUI/DoiteDPS coordinates plus their signature and requests ArchiTotem direction=down; /aeui focuslayout restore restores the captured pre-apply profile; ordinary Apply never maintains player/target/cast/swing/stance/DoiteDPS geometry and only event-binds the detected ArchiTotem root when fieldKitBound=true",
     "final_runtime": true
   },
   "atlas": {

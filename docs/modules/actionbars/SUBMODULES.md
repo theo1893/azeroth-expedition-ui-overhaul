@@ -203,25 +203,27 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
 - `唯一移动根`：绑定态只移动 Bar 1；Bar 6 以 `BOTTOM → Bar 1 TOP` 组成无漂移
   `12×2`，消耗品卷袋与饰品双槽分别以 `48／16 UI` 间距锚到左右；检测到的
   ArchiTotem 以真实可见 union 居中锚在主栏下方。`unbind` 恢复 Bar 6 与三种
-  provider 的捕获位置；`home` 把 Bar 1 重置到屏幕高度 `210/1080` 的底部净空
-  并重新绑定。
+  provider 的捕获位置；`home` 在 pfUI tier 8 下把 Bar 1 直接重置为游戏坐标
+  `BOTTOM (0,175)` 并重新绑定。
 - `focus-layout-contract=1.4` 曾在“大奶黑牛”实机把 `UIParent:GetWidth／Height`
   与 provider effective scale 混合，错误写入主栏 `y=149`、Player／Target
   `x=54／502, y=362` 等错位坐标；该签名现为 `game-geometry-failed`，不得作为
-  合法布局复用。runtime-v1.5 不再硬编码一组 SavedVariables 数值：显式 preset
-  在每个真实 Frame 上测量 UI-root 到自身 scaled SetPoint 的换算后再保存；
-  TrinketMenu 仍为 `HORIZONTAL / scale=1.0`，v1.6 强绑定和 ArchiTotem 下置不变。
+  合法布局复用。runtime-v1.5 又把物理 `GetScreenWidth／Height`、provider scale、
+  探针与回读混入 SetPoint 换算，实机写入主栏 `x=325,y=246`、Player／Target
+  `x=222／820,y=637`，同样判定 `game-geometry-failed`。runtime-v1.6 直接写
+  Turtle WoW 游戏坐标，不做任何屏幕投影；TrinketMenu 仍为
+  `HORIZONTAL / scale=1.0`，Field Kit v1.6 强绑定和 ArchiTotem 下置不变。
 - `战斗视线邻接`：Player／Target 继续由 pfUI UnitFrame provider 所有；AEUI
-  `0.8.11` 的 preset 仅一次性把两者置于同一基线；accepted V5 让单位框与
-  对应施法保持 `0.75`，中心相对 live Bar 1 为参考像素 `-159／+160`，恢复
+  `0.8.12` 的 preset 仅一次性把两者置于游戏坐标
+  `BOTTOM (-212,492)／(213,492)`；accepted V5 让单位框与对应施法保持 `0.75`，恢复
   `80 px` 人物中线通道。双方 Aura 从外肩 `TOPLEFT／TOPRIGHT` 每行 `6` 个展开。
   adapter 不重画，不在维护循环中持续改位置。
 - `战斗信息纵栈`：accepted V5 参考物理顺序为 DoiteDPS `y=540–581`、近战攻击
   计时 `600–625`、双方外肩 Aura `633–652`、Player／Target `660–721`、双施法条
   `729–749`、姿态顶边 `y=763`、主栏顶边 `y=827`。远程攻击计时复用近战层；
-  Focus 施法条跟随 Focus Frame，不加入中央双框。runtime-v1.5 先以
-  `GetScreenHeight()/1080` 把这些参考像素换成 WoW 1.12 的 768-high UI root，
-  再逐 Frame 实测 scaled anchor，避免 provider local scale 把整组推离中心。
+  Focus 施法条跟随 Focus Frame，不加入中央双框。runtime-v1.6 将参考关系固化为
+  tier 8 的原生 SetPoint offsets：双方施法 `(-212,454)／(213,454)`、Swing
+  `(0,-67)`、姿态 `(0,-919)`、DoiteDPS `(1012,-647)`；不读取或回算 Frame 几何。
 - `紧凑战斗`：主／副栏可改为 `6×2`；自适应 Rail 重新切片，狮鹫端帽缩小或
   隐藏，逻辑按钮数与分页不变。
 - `自由侧栏`：Bar 3／4／5 可保持 `4×3`、`6×2` 或竖排并独立移动；不因采用
@@ -233,19 +235,20 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
 - `舒适缩放`：目标设备保持客户端 `1920×1080`，不由本模块修改分辨率；用户
   显式执行 `comfort` 时只把当前 pfUI profile 设为
   `Tiny PixelPerfect / tier 8 / 0.71111111111111`。Combat Focus 另用 local
-  scale：单位框／双方施法为 `0.75`，Swing／姿态／DoiteDPS 为 `0.82`。不再使用
-  V4 固定坐标，也不把 `UIParent:GetWidth／Height` 当屏幕根；一次性校准后的
-  坐标签名只属于当前角色。强绑定甲板关系保持原样。普通刷新不改 pfUI scale；
+  scale：单位框／双方施法为 `0.75`，Swing／姿态／DoiteDPS 为 `0.82`。不把
+  `UIParent:GetWidth／Height` 或 `GetScreenWidth／Height` 当作 SetPoint 根；一次性
+  `game-native-v1` 坐标签名只属于当前角色。强绑定甲板关系保持原样。普通刷新不改 pfUI scale；
   其他角色不自动应用。
 - `home` 预设只在用户明确执行时写入一次。默认读取并尊重现有 profile、主栏位置、
   scale、按钮数、行列、自动隐藏和空槽设置；V3 继续默认关闭狮鹫，unlock 时
   仍可为足够宽的水平主栏单独开启。DoiteDPS 的锁定／战斗显隐／Forecast／资源／
   冷却选项不由此 preset 改写；DoiteDPS 的 local scale 在 comfort preset 中
-  明确收敛为 `0.82`，其启用／锁定／显隐与推荐逻辑不变。
-- `ACTION-BARS-CORE-SIM-V5` 已获用户确认；AEUI `0.8.11`／runtime-v1.5 保留
-  tier 8、Combat Deck、Field Kit 与 ArchiTotem bridge，只修复 v1.4 的 1.12
-  坐标传输。显式 focus preset 才执行 UI-root 校准并请求 provider 方向，普通
-  refresh 不写这些 Frame 的几何或 ArchiTotem 配置。
+  明确收敛为 `0.82`，其启用／锁定／显隐与推荐逻辑不变。首次应用前保存相关
+  pfUI／DoiteDPS／ArchiTotem 配置；`/aeui focuslayout restore` 恢复后提示 reload。
+- `ACTION-BARS-CORE-SIM-V5` 已获用户确认；AEUI `0.8.12`／runtime-v1.6 保留
+  tier 8、Combat Deck、Field Kit 与 ArchiTotem bridge，只修复 v1.4／v1.5 的
+  1.12 坐标传输。显式 focus preset 才写入固定游戏坐标并请求 provider 方向，
+  普通 refresh 不写这些 Frame 的几何或 ArchiTotem 配置。
 
 ## 功能不变量
 

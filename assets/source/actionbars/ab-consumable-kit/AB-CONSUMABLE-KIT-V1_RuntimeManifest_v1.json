@@ -497,7 +497,7 @@
   },
   "adapter": {
     "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
-    "sha256": "5d4108381b1d636175e5061b3fda744e248e7984dfba7e2a7ab954f331bd7d2f",
+    "sha256": "30af188ec203ef3227e55864a240adcacbce3c31db3adad0da77baa9e65bb38a",
     "provider": "AutoBar 1.31 existing main/popup frames and 24+12 buttons",
     "visual_layers_only": false,
     "visual_and_layout_adapter": true,
@@ -527,13 +527,13 @@
   "addon_entrypoints": {
     "bootstrap": {
       "file": "addon/AzerothExpeditionUI/Core/Bootstrap.lua",
-      "sha256": "65c818f67777681a3ba7b2cf02c8d85e855c1cf64a18b40dc93eb002c91ad45b"
+      "sha256": "86e34d2c917521818c3d6a065c5861cf571d9d68966f61b0ddf972b8b22daf9e"
     },
     "toc": {
       "file": "addon/AzerothExpeditionUI/AzerothExpeditionUI.toc",
-      "sha256": "10b367c49f7d7e59c2918dcdeaddccd17c7acfd781c79a9e4b5fbbebcdd209d8"
+      "sha256": "a64415137ee7874e6c13670d8e8b394332eb515a5e80a77464ff4ddcef35dfec"
     },
-    "addon_version": "0.8.11",
+    "addon_version": "0.8.12",
     "required_dependency": "pfUI",
     "optional_provider": "AutoBar"
   },

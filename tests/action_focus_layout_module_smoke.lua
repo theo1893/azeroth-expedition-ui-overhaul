@@ -74,9 +74,9 @@ local function NewFrame(name, width, height)
   }, Frame)
 end
 
--- WoW 1.12 exposes a normalized UI-root coordinate system that is always
--- 768 units high. UIParent:GetWidth/GetHeight must not be treated as physical
--- 1920x1080 pixels, and changing UI scale does not resize this root model.
+-- The game renders through a normalized 768-high UI root, while Turtle's
+-- GetScreenWidth/GetScreenHeight report the physical 1920x1080 mode. Runtime
+-- v1.6 must never feed those physical dimensions into Frame:SetPoint.
 local rootWidth = 1920 * 768 / 1080
 local rootHeight = 768
 local uiScale = 0.81269841269841
@@ -84,8 +84,16 @@ UIParent = NewFrame("UIParent", rootWidth, rootHeight)
 function UIParent:SetScale(value)
   self.scale = value
 end
-function GetScreenWidth() return rootWidth end
-function GetScreenHeight() return rootHeight end
+local screenWidthCalls = 0
+local screenHeightCalls = 0
+function GetScreenWidth()
+  screenWidthCalls = screenWidthCalls + 1
+  return 1920
+end
+function GetScreenHeight()
+  screenHeightCalls = screenHeightCalls + 1
+  return 1080
+end
 
 local function AnchorCoordinate(anchor, left, bottom, right, top)
   local x
@@ -149,7 +157,6 @@ local stance = NewFrame("pfActionBarStances", 200, 24)
 local mainBar = NewFrame("pfActionBarMain", 500, 44)
 local topBar = NewFrame("pfActionBarTop", 400, 34)
 local doite = NewFrame("DoiteDPSMainFrame", 318, 46)
-local doiteParent = NewFrame("DoiteDPSProviderRoot", 1, 1)
 local archiTotem = NewFrame("ArchiTotemFrame", 192, 80)
 local archiEarth = NewFrame("ArchiTotemButton_Earth1", 40, 40)
 local archiFire = NewFrame("ArchiTotemButton_Fire1", 40, 40)
@@ -158,9 +165,7 @@ local archiAir = NewFrame("ArchiTotemButton_Air1", 40, 40)
 local archiHandle = NewFrame("ArchiTotemDragHandle", 20, 20)
 local archiAll = NewFrame("ArchiTotemButton_AllTotems", 40, 40)
 
-doiteParent:SetParent(UIParent)
-doiteParent:SetScale(1.1)
-doite:SetParent(doiteParent)
+doite:SetParent(UIParent)
 mainBar:SetScale(1.2)
 mainBar:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 100)
 topBar:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 140)
@@ -310,10 +315,18 @@ module:Initialize()
 assert(module.focusLayoutStatus == "ready")
 assert(module.comfortUIScaleStatus == "custom")
 
+local directOk, directMessage = module:ApplyCombatFocusLayoutPreset()
+assert(directOk == false)
+assert(string.find(directMessage, "require pfUI tier 8", 1, true))
+assert(module.focusLayoutStatus == "scale-required")
+assert(AzerothExpeditionUI.db.actionbars.combatFocusBackup == nil)
+assert(mainBar.points[1][4] == 0)
+assert(mainBar.points[1][5] == 100)
+
 local ok, message = module:ApplyComfortUIScalePreset()
 assert(ok == true)
 assert(string.find(message, "Comfort UI scale applied", 1, true))
-assert(module.focusLayoutRuntimeContract == "1.5")
+assert(module.focusLayoutRuntimeContract == "1.6")
 assert(module.fieldKitRuntimeContract == "1.6")
 assert(module.focusLayoutStatus == "applied")
 assert(module.focusLayoutConfigured == 9)
@@ -334,17 +347,30 @@ local function AssertPosition(name, anchor, x, y, scale)
   assert(position.scale == scale)
 end
 
--- In the legacy root model the accepted 210/1080 bottom clearance is 149.33
--- root units. The main frame's own effective scale converts that to y=175;
--- the previous modern-client mock incorrectly expected y=295.
 AssertPosition("pfActionBarMain", "BOTTOM", 0, 175, 1.2)
 
 local expected = assert(
   AzerothExpeditionUI.db.actionbars.combatFocusProjection
 )
-assert(expected.coordinateSpace == "ui-root-calibrated-v1")
-assert(math.abs(expected.screenWidth - rootWidth) < 0.001)
-assert(math.abs(expected.screenHeight - rootHeight) < 0.001)
+assert(expected.coordinateSpace == "game-native-v1")
+assert(expected.deckX == 0)
+assert(expected.deckY == 175)
+assert(expected.playerX == -212)
+assert(expected.playerY == 492)
+assert(expected.targetX == 213)
+assert(expected.targetY == 492)
+assert(expected.playerCastX == -212)
+assert(expected.playerCastY == 454)
+assert(expected.targetCastX == 213)
+assert(expected.targetCastY == 454)
+assert(expected.swingX == 0)
+assert(expected.swingY == -67)
+assert(expected.stanceX == 0)
+assert(expected.stanceY == -919)
+assert(expected.doiteX == 1012)
+assert(expected.doiteY == -647)
+assert(screenWidthCalls == 0)
+assert(screenHeightCalls == 0)
 
 AssertPosition(
   "pfPlayer", "BOTTOM", expected.playerX, expected.playerY, 0.75
@@ -370,8 +396,8 @@ AssertPosition(
   "pfActionBarStances", "TOP", expected.stanceX, expected.stanceY, 0.82
 )
 
--- V5 persists one-shot UIParent coordinates after runtime v1.5 calibrates
--- each provider against WoW 1.12's normalized 768-high UI root.
+-- The explicit native coordinates preserve the accepted V5 physical
+-- relationships without any screen-size projection or frame readback.
 local function Near(actual, expectedValue)
   assert(math.abs(actual - expectedValue) <= 1)
 end
@@ -531,7 +557,7 @@ assert(archiDirectionCalls == 1)
 assert(module.archiTotemDirectionStatus == "up")
 
 assert(AzerothExpeditionUI.db.actionbars.fieldKitBound == true)
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 6)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 7)
 assert(AzerothExpeditionUI.db.actionbars.comfortUIScaleVersion == 2)
 
 for _, frame in pairs({
@@ -546,16 +572,16 @@ for _, frame in pairs({
 }) do
   assert(frame.parent == nil)
 end
-assert(doite.parent == doiteParent)
+assert(doite.parent == UIParent)
 
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "focus%-layout%-contract=1%.5"))
+assert(string.find(status, "focus%-layout%-contract=1%.6"))
 assert(string.find(status, "focus%-layout=applied"))
 assert(string.find(status, "focus%-layout%-mouse=visible%-controls%-only"))
-assert(string.find(status, "focus%-layout%-anchor=live%-bar1"))
+assert(string.find(status, "focus%-layout%-anchor=ui%-parent"))
 assert(string.find(
   status,
-  "focus%-layout%-coordinate%-space=ui%-root%-calibrated%-v1"
+  "focus%-layout%-coordinate%-space=game%-native%-v1"
 ))
 assert(string.find(status, "focus%-layout%-unit%-scale=0%.75"))
 assert(string.find(status, "focus%-layout%-readout%-scale=0%.82"))
@@ -578,5 +604,35 @@ assert(player.points[1][5] == 456)
 module:Initialize()
 assert(module.focusLayoutStatus == "saved")
 assert(module.comfortUIScaleStatus == "saved")
+
+local restored, restoreMessage = module:RestoreCombatFocusLayoutPreset()
+assert(restored == true)
+assert(string.find(restoreMessage, "pre%-Combat%-Focus"))
+assert(module.focusLayoutStatus == "restored")
+assert(module.comfortUIScaleStatus == "custom")
+assert(AzerothExpeditionUI.db.actionbars.combatFocusBackup == nil)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 1)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusProjection == nil)
+assert(AzerothExpeditionUI.db.actionbars.comfortUIScaleVersion == nil)
+assert(pfUI_config.global.pixelperfect == "7")
+assert(math.abs(UIParent:GetScale() - 0.81269841269841) < 0.000001)
+assert(pfUI_config.position.pfActionBarMain.scale == 1.2)
+assert(pfUI_config.position.pfActionBarMain.anchor == nil)
+assert(pfUI_config.position.pfPlayer == nil)
+assert(pfUI_config.position.pfTarget == nil)
+assert(pfUI_config.unitframes.player.width == "200")
+assert(pfUI_config.unitframes.player.height == "46")
+assert(pfUI_config.unitframes.player.buffperrow == "4")
+assert(pfUI_config.unitframes.target.width == "200")
+assert(pfUI_config.castbar.player.width == "300")
+assert(pfUI_config.castbar.player.height == "-1")
+assert(pfUI_config.unitframes.swingtimerwidth == "180")
+assert(pfUI_config.unitframes.swingtimerheight == "10")
+assert(DoiteDPSDB.point == "CENTER")
+assert(DoiteDPSDB.relativePoint == "CENTER")
+assert(DoiteDPSDB.x == 18)
+assert(DoiteDPSDB.y == -125)
+assert(DoiteDPSDB.scale == 1)
+assert(ArchiTotem_Options.Apperance.direction == "up")
 
 print("action focus layout module smoke test passed")

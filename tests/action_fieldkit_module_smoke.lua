@@ -712,10 +712,10 @@ assert(module.trinketDockStatus == "right")
 
 local reset, resetMessage = module:ResetCombatDeckPosition()
 assert(reset == true)
-assert(string.find(resetMessage, "center-lower", 1, true))
+assert(string.find(resetMessage, "BOTTOM (0, 175)", 1, true))
 assert(AzerothExpeditionUI.db.actionbars.combatDeckLayoutVersion == 1)
 assert(pfUI_config.position.pfActionBarMain.xpos == 0)
-assert(pfUI_config.position.pfActionBarMain.ypos == 210)
+assert(pfUI_config.position.pfActionBarMain.ypos == 175)
 assert(pfUI.bars[1].decorativePoints[1][1] == "BOTTOM")
 assert(pfUI.bars[1].decorativePoints[1][2] == UIParent)
 
