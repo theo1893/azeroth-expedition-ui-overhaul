@@ -48,6 +48,9 @@ end
 function Frame:EnableMouse(value) self.mouseEnabled = value end
 function Frame:GetFrameLevel() return self.frameLevel end
 function Frame:SetFrameLevel(value) self.frameLevel = value end
+function Frame:GetParent() return self.parent end
+function Frame:GetScript(name) return self.scripts[name] end
+function Frame:SetScript(name, callback) self.scripts[name] = callback end
 function Frame:ClearAllPoints() self.decorativePoints = {} end
 function Frame:SetPoint(...) table.insert(self.decorativePoints, { ... }) end
 function Frame:GetNumPoints() return table.getn(self.decorativePoints) end
@@ -237,7 +240,14 @@ AutoBarAnchorFrameHandle = NewFrame("AutoBarAnchorFrameHandle", nil, {
   scale = 0.6,
   points = { { "CENTER", nil, "BOTTOMLEFT", 100, 100 } },
 })
-AutoBarPopupFrame = NewFrame("AutoBarPopupFrame", nil, { width = 153, height = 36 })
+local function providerPopupOnLeave()
+  AutoBarPopupFrame:Hide()
+end
+AutoBarPopupFrame = NewFrame("AutoBarPopupFrame", nil, {
+  width = 153,
+  height = 36,
+  scripts = { OnLeave = providerPopupOnLeave },
+})
 local autoBarSnapshots = {}
 for index = 1, 24 do
   local column = math.mod(index - 1, 4)
@@ -351,7 +361,7 @@ local module = assert(AzerothExpeditionUI.modules.ActionBars)
 module:Initialize()
 module:Apply()
 
-assert(module.fieldKitRuntimeContract == "1.2")
+assert(module.fieldKitRuntimeContract == "1.3")
 assert(module.autoBarFieldKitStatus == "available")
 assert(module.autoBarMainButtons == 24)
 assert(module.autoBarPopupButtons == 4)
@@ -449,9 +459,33 @@ assert(AutoBar.providerPopupUpdateCalls == 1)
 assert(autoBarSetupCalls == 1)
 assert(module.autoBarPopupLayout == "drawer-1x4")
 assert(module.autoBarPopupSide == "left")
+assert(module.autoBarPopupHover == "bridge")
 assert(module.autoBarPopupConnectors == 1)
 assert(AutoBarPopupFrame.aeuiConsumableKitDrawerSpineV1.shown == true)
 assert(AutoBarPopupFrame_Button1.decorativePoints[1][1] == "TOPRIGHT")
+local hoverBridge = AutoBarPopupFrame.aeuiConsumableKitDrawerHoverBridgeV1
+assert(hoverBridge)
+assert(hoverBridge.parent == AutoBarPopupFrame)
+assert(hoverBridge.mouseEnabled == true)
+assert(hoverBridge.shown == true)
+assert(hoverBridge.width == 52)
+assert(hoverBridge.decorativePoints[1][1] == "TOPRIGHT")
+assert(hoverBridge.decorativePoints[1][2] == AutoBarFrame.aeuiConsumableKitShellV1)
+assert(hoverBridge.decorativePoints[1][3] == "TOPLEFT")
+assert(hoverBridge.decorativePoints[2][1] == "BOTTOMRIGHT")
+assert(hoverBridge.decorativePoints[2][3] == "BOTTOMLEFT")
+assert(hoverBridge:GetParent() == AutoBarPopupFrame)
+local function ProviderAcceptsPopupFocus(focus)
+  return focus and (
+    focus:GetParent() == AutoBarFrame or
+    focus:GetParent() == AutoBarPopupFrame
+  )
+end
+assert(ProviderAcceptsPopupFocus(hoverBridge))
+assert(AutoBarPopupFrame:GetScript("OnLeave") ~= providerPopupOnLeave)
+AutoBarPopupFrame.shown = true
+AutoBarPopupFrame:GetScript("OnLeave")()
+assert(AutoBarPopupFrame.shown == true)
 
 local function SetPopupVisible(count)
   for index = 1, 12 do
@@ -469,14 +503,29 @@ assert(module.autoBarPopupLayout == "drawer-2x4")
 SetPopupVisible(12)
 assert(module.autoBarPopupLayout == "drawer-2x6")
 
+local popupRight = module:SetAutoBarPopupMode("right")
+assert(popupRight == true)
+assert(module.autoBarPopupSide == "right")
+assert(hoverBridge.width == 10)
+assert(hoverBridge.decorativePoints[1][1] == "TOPLEFT")
+assert(hoverBridge.decorativePoints[1][3] == "TOPRIGHT")
+assert(hoverBridge.decorativePoints[2][1] == "BOTTOMLEFT")
+assert(hoverBridge.decorativePoints[2][3] == "BOTTOMRIGHT")
+assert(ProviderAcceptsPopupFocus(hoverBridge))
+
 local popupNative, popupNativeMessage = module:SetAutoBarPopupMode("native")
 assert(popupNative == true)
 assert(string.find(popupNativeMessage, "native", 1, true))
 assert(module.autoBarPopupLayout == "native")
+assert(module.autoBarPopupHover == "provider")
 assert(AutoBarPopupFrame_Button1.decorativePoints[1][1] == "LEFT")
+assert(hoverBridge.shown == false)
+assert(AutoBarPopupFrame:GetScript("OnLeave") == providerPopupOnLeave)
 local popupAuto = module:SetAutoBarPopupMode("auto")
 assert(popupAuto == true)
 assert(module.autoBarPopupLayout == "drawer-2x6")
+assert(module.autoBarPopupHover == "bridge")
+assert(hoverBridge.shown == true)
 
 local opened, openMessage = module:OpenAutoBarConfig()
 assert(opened == true)
@@ -587,6 +636,9 @@ module:ApplyAutoBarFieldKit(true)
 assert(module.autoBarGrouped == false)
 assert(AutoBarFrame.aeuiConsumableKitLabelsV1[1].shown == false)
 assert(module.autoBarPopupLayout == "native")
+assert(module.autoBarPopupHover == "provider")
+assert(hoverBridge.shown == false)
+assert(AutoBarPopupFrame:GetScript("OnLeave") == providerPopupOnLeave)
 AutoBar.display.columns = 4
 
 AzerothExpeditionUI.db.actionbars.enabled = false
@@ -594,6 +646,8 @@ module:Apply()
 assert(module.autoBarFieldKitStatus == "disabled")
 assert(AutoBarFrameButton1.aeuiConsumableKitPocketV1.shown == false)
 assert(AutoBarFrame.aeuiConsumableKitShellV1.shown == false)
+assert(hoverBridge.shown == false)
+assert(AutoBarPopupFrame:GetScript("OnLeave") == providerPopupOnLeave)
 assert(module.trinketFieldKitStatus == "disabled")
 assert(TrinketMenu_Trinket0.aeuiTrinketKitPocketV1.shown == false)
 assert(TrinketMenu_Trinket0NormalTexture.shown == true)
@@ -612,8 +666,9 @@ module:Apply()
 assert(module.autoBarFieldKitStatus == "missing")
 assert(module.trinketFieldKitStatus == "missing")
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "fieldkit%-contract=1%.2"))
+assert(string.find(status, "fieldkit%-contract=1%.3"))
 assert(string.find(status, "autobar=missing"))
+assert(string.find(status, "autobar%-popup%-hover=missing"))
 assert(string.find(status, "trinket=missing"))
 
 print("action field kit module smoke test passed")

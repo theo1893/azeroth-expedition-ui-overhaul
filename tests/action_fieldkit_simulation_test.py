@@ -79,6 +79,12 @@ def main() -> None:
     assert spec["consumable_contract"]["popup_drawer"]["one_column_range"] == [1, 6]
     assert spec["consumable_contract"]["popup_drawer"]["two_column_range"] == [7, 12]
     assert spec["consumable_contract"]["popup_drawer"]["maximum_rows"] == 6
+    hover = spec["consumable_contract"]["popup_hover_transfer"]
+    assert hover["corridor_parent"] == "AutoBarPopupFrame"
+    assert hover["corridor_mouse_enabled"] is True
+    assert hover["right_width_ui"] == 10
+    assert hover["grouped_left_width_ui"] == 52
+    assert "PopupMouseover" in hover["close_owner"]
     assert spec["dock_contract"]["consumable_side"] == "LEFT"
     assert spec["dock_contract"]["trinket_side"] == "RIGHT"
     assert spec["dock_contract"]["maintenance_loop"] is False

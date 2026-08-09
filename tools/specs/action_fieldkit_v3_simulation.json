@@ -206,7 +206,16 @@
       "drawer_to_rack_visual_gap_ui": 6,
       "grouped_left_label_clearance_ui": 42,
       "spine_source": "accepted consumable Cell D vertical connector",
-      "provider_layers_preserved": ["item order", "icons", "counts", "cooldowns", "click use", "tooltips", "hover lifetime"]
+      "provider_layers_preserved": ["item order", "icons", "counts", "cooldowns", "click use", "tooltips", "PopupMouseover close timer"]
+    },
+    "popup_hover_transfer": {
+      "corridor_parent": "AutoBarPopupFrame",
+      "corridor_mouse_enabled": true,
+      "corridor_height": "full grouped-rack shell height",
+      "right_width_ui": 10,
+      "grouped_left_width_ui": 52,
+      "provider_popup_frame_onleave": "deferred only while the external drawer is active, then restored for NATIVE, signature mismatch and AEUI disabled",
+      "close_owner": "AutoBar PopupMouseover repeating event; AEUI adds no replacement close timer"
     },
     "recommended_profile": {
       "apply_only_on_explicit_user_action": true,
@@ -283,7 +292,7 @@
     "behavior_preserved": [
       "provider categories and current item selection",
       "bag slots, counts, cooldowns, availability and tooltips",
-      "popup hover, optional shift behavior, item ordering, clicks and tooltips",
+      "popup hover and optional shift behavior through a transparent AutoBarPopupFrame child corridor; provider ordering, clicks, tooltips and close timer remain active",
       "drag handle, locking and provider-native free positions; AEUI owns only the opt-out soft dock relation",
       "disabled provider remains disabled"
     ]

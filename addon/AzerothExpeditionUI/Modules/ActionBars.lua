@@ -13,7 +13,7 @@ ActionBars.railTexturePath = addon.media.root .. "ActionBars\\ActionRailV1"
 ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
-ActionBars.fieldKitRuntimeContract = "1.2"
+ActionBars.fieldKitRuntimeContract = "1.3"
 ActionBars.trinketKitTexturePath =
   addon.media.root .. "ActionBars\\ActionTrinketKitV1"
 ActionBars.consumableKitTexturePath =
@@ -1348,6 +1348,66 @@ local function HideAutoBarDrawerSpine(frame)
   end
 end
 
+local function AutoBarDrawerOnLeave()
+  -- AutoBar's repeating PopupMouseover event remains responsible for close.
+  -- Its stock XML OnLeave only understands the original popup-frame bounds,
+  -- which no longer contain an external drawer.
+end
+
+local function EnsureAutoBarDrawerHoverBridge(frame)
+  local bridge = frame.aeuiConsumableKitDrawerHoverBridgeV1
+  if not bridge then
+    bridge = CreateFrame("Frame", nil, frame)
+    bridge:EnableMouse(true)
+    if frame.GetFrameLevel and bridge.SetFrameLevel then
+      bridge:SetFrameLevel(frame:GetFrameLevel() + 1)
+    end
+    frame.aeuiConsumableKitDrawerHoverBridgeV1 = bridge
+  end
+  return bridge
+end
+
+local function ActivateAutoBarDrawerInteraction(
+  frame, shell, side, width
+)
+  local bridge = EnsureAutoBarDrawerHoverBridge(frame)
+  bridge:ClearAllPoints()
+  bridge:SetWidth(width)
+  if side == "LEFT" then
+    bridge:SetPoint("TOPRIGHT", shell, "TOPLEFT", 0, 0)
+    bridge:SetPoint("BOTTOMRIGHT", shell, "BOTTOMLEFT", 0, 0)
+  else
+    bridge:SetPoint("TOPLEFT", shell, "TOPRIGHT", 0, 0)
+    bridge:SetPoint("BOTTOMLEFT", shell, "BOTTOMRIGHT", 0, 0)
+  end
+  bridge:Show()
+
+  if not frame.aeuiConsumableKitNativeOnLeaveCapturedV1 and
+    frame.GetScript and frame.SetScript
+  then
+    frame.aeuiConsumableKitNativeOnLeaveV1 = frame:GetScript("OnLeave")
+    frame.aeuiConsumableKitNativeOnLeaveCapturedV1 = true
+  end
+  if frame.aeuiConsumableKitNativeOnLeaveCapturedV1 and frame.SetScript then
+    frame:SetScript("OnLeave", AutoBarDrawerOnLeave)
+  end
+end
+
+local function DeactivateAutoBarDrawerInteraction(frame)
+  if not frame then
+    return
+  end
+  local bridge = frame.aeuiConsumableKitDrawerHoverBridgeV1
+  if bridge then
+    bridge:Hide()
+  end
+  if frame.aeuiConsumableKitNativeOnLeaveCapturedV1 and frame.SetScript then
+    frame:SetScript(
+      "OnLeave", frame.aeuiConsumableKitNativeOnLeaveV1
+    )
+  end
+end
+
 local function CapturePopupNativeLayouts(frame, buttons)
   frame.aeuiConsumableKitNativePopupLayoutsV1 = {}
   for index = 1, table.getn(buttons) do
@@ -1490,6 +1550,17 @@ local function ConfigureAutoBarDrawer(frame, buttons, side)
     )
   end
   spine:Show()
+  local hoverWidth = ActionBars.popupDrawerGap +
+    ActionBars.fieldKitPocketPadding
+  if side == "LEFT" then
+    hoverWidth = hoverWidth + labelOffset
+  end
+  ActivateAutoBarDrawerInteraction(
+    frame,
+    shell,
+    side,
+    hoverWidth
+  )
   frame.aeuiConsumableKitDrawerActiveV1 = true
   return true, rows, columns
 end
@@ -1529,6 +1600,7 @@ function ActionBars:ApplyAutoBarPopup(enabled, baseButton)
     self.autoBarPopupConnectors = 0
     self.autoBarPopupLayout = "missing"
     self.autoBarPopupSide = "none"
+    self.autoBarPopupHover = "missing"
     return false
   end
 
@@ -1573,6 +1645,7 @@ function ActionBars:ApplyAutoBarPopup(enabled, baseButton)
       self.autoBarPopupLayout =
         "drawer-" .. tostring(columns) .. "x" .. tostring(rows)
       self.autoBarPopupSide = string.lower(side)
+      self.autoBarPopupHover = "bridge"
       return true
     end
   end
@@ -1581,6 +1654,8 @@ function ActionBars:ApplyAutoBarPopup(enabled, baseButton)
     RestorePopupNativeLayouts(frame, buttons)
   end
   HideAutoBarDrawerSpine(frame)
+  DeactivateAutoBarDrawerInteraction(frame)
+  self.autoBarPopupHover = "provider"
 
   if not enabled or table.getn(buttons) < 2 then
     HideUnusedPopupConnectors(frame, 1)
@@ -1863,6 +1938,7 @@ function ActionBars:Initialize()
   self.autoBarPopupConnectors = 0
   self.autoBarPopupLayout = "pending"
   self.autoBarPopupSide = "pending"
+  self.autoBarPopupHover = "pending"
   self.autoBarGrouped = false
   self.autoBarPresetStatus = "ready"
   self.consumableDockStatus = "pending"
@@ -1954,6 +2030,8 @@ function ActionBars:GetRuntimeStatus()
       tostring(self.autoBarPopupLayout or "pending") ..
     ",autobar-popup-side=" ..
       tostring(self.autoBarPopupSide or "pending") ..
+    ",autobar-popup-hover=" ..
+      tostring(self.autoBarPopupHover or "pending") ..
     ",autobar-groups=" ..
       tostring(self.autoBarGrouped and "semantic" or "adaptive") ..
     ",autobar-preset=" ..

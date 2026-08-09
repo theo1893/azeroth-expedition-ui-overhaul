@@ -71,7 +71,7 @@ def main() -> None:
         manifest = json.loads(
             (ROOT / case["runtime_manifest"]).read_text(encoding="utf-8")
         )
-        assert manifest["runtime_contract"] == "1.2"
+        assert manifest["runtime_contract"] == "1.3"
         assert manifest["status"] == "runtime-exported"
         assert manifest["phase"] == "P5"
         assert manifest["runtime_export"]["sha256"] == sha256(runtime_path)
@@ -84,6 +84,12 @@ def main() -> None:
         assert manifest["adapter"]["visual_and_layout_adapter"] is True
         assert manifest["adapter"]["provider_geometry_writes"] is True
         assert manifest["adapter"]["provider_behavior_replaced"] is False
+        assert manifest["adapter"]["provider_hover_geometry_adapted"] is (
+            case["component"] == "AB.CONSUMABLE.KIT.V1"
+        )
+        assert manifest["adapter"][
+            "popup_frame_onleave_deferred_only_while_external"
+        ] is (case["component"] == "AB.CONSUMABLE.KIT.V1")
         assert manifest["adapter"]["saved_variables_written"] is True
         assert manifest["adapter"][
             "provider_saved_variables_written_automatically"
@@ -138,7 +144,7 @@ def main() -> None:
         assert result["summary"]["violation_count"] == 0
 
     for required in (
-        'ActionBars.fieldKitRuntimeContract = "1.2"',
+        'ActionBars.fieldKitRuntimeContract = "1.3"',
         "ActionTrinketKitV1",
         "ActionConsumableKitV1",
         "ApplyAutoBarFieldKit",

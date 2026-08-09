@@ -10,7 +10,7 @@
     "state_simulation": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/simulation/AB-FIELDKIT-SIM-V3/AB.FIELDKIT.V1.sim-v3.provider-states.png",
     "target": "1920x1080; UI scale 0.81269841269841; TrinketMenu main scale 0.9043710231781006; menu scale 1.0",
     "atlas_role": "accepted AB.TRINKET.KIT.V1 and AB.CONSUMABLE.KIT.V1 source/runtime pixels remain unchanged; this contract validates only new deterministic composition geometry",
-    "dynamic_ownership": "all item icons, counts, cooldowns, cooldown text, equipped state, queued trinkets, bag slots, category selection, tooltips and click behavior remain provider-owned; AEUI changes only popup points for the exact grouped profile and non-interactive dock relations",
+    "dynamic_ownership": "all item icons, counts, cooldowns, cooldown text, equipped state, queued trinkets, bag slots, category selection, tooltips, click behavior and the AutoBar PopupMouseover close timer remain provider-owned; AEUI changes popup points for the exact grouped profile, adds one transparent direct-child hover corridor for the external drawer, and owns only non-interactive dock relations",
     "autobar_activation": "already enabled by explicit prior user action; this contract performs no provider or SavedVariables write",
     "final_runtime": false
   },

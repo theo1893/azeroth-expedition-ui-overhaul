@@ -40,7 +40,7 @@ PREVIEW_REL = Path(
     "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1"
 )
 ATLAS_SIZE = (512, 512)
-RUNTIME_CONTRACT = "1.2"
+RUNTIME_CONTRACT = "1.3"
 DESTINATION_CAP_UI = 6
 CONNECTOR_SOURCE_CAP = 30
 
@@ -524,9 +524,9 @@ def render_previews(
             "不自动启用 AutoBar，不自动应用 profile，不改 provider SavedVariables",
         ],
     }
-    scene_path = preview_dir / "AB.FIELDKIT.V1.runtime-v1.2.real-layout-1920x1080.png"
-    trinket_board = preview_dir / "AB.TRINKET.KIT.V1.runtime-v1.2.layouts.png"
-    consumable_board = preview_dir / "AB.CONSUMABLE.KIT.V1.runtime-v1.2.layouts.png"
+    scene_path = preview_dir / "AB.FIELDKIT.V1.runtime-v1.3.real-layout-1920x1080.png"
+    trinket_board = preview_dir / "AB.TRINKET.KIT.V1.runtime-v1.3.layouts.png"
+    consumable_board = preview_dir / "AB.CONSUMABLE.KIT.V1.runtime-v1.3.layouts.png"
     try:
         simulation.draw_trinket_main = trinket_main
         simulation.draw_trinket_menu = trinket_menu
@@ -563,7 +563,7 @@ def build_display_contract(
     root: Path,
 ) -> dict[str, Any]:
     contract = copy.deepcopy(template)
-    contract["component"] = f"{case['component']}/runtime-v1.2"
+    contract["component"] = f"{case['component']}/runtime-v1.3"
     board_key = (
         "trinket_board"
         if case["component"] == "AB.TRINKET.KIT.V1"
@@ -694,6 +694,7 @@ def update_source_manifest(
             "transparent power-of-two packing gutters that are never sampled",
             "fully transparent RGB zeroing without changing visible RGB or Alpha",
             "C nine-slice and D three-slice assembly beneath provider-owned content",
+            "one transparent mouse-enabled corridor parented to AutoBarPopupFrame while the external drawer is active",
         ],
         "forbidden_runtime_uses": [
             "load the accepted 1024x1024 source directly in Turtle WoW",
@@ -701,8 +702,9 @@ def update_source_manifest(
             "redraw, recolor, mirror or invent states from accepted cells",
             "distort A/B or C edge/corner slices; only quiet C/D centers may stretch",
             "bake item icons, counts, cooldowns, Queue, category labels or tooltips",
-            "replace provider Buttons, scripts, item behavior or write provider SavedVariables",
+            "replace provider Button objects or Button scripts, item behavior or write provider SavedVariables",
             "leave popup points or hit regions changed after native/signature-mismatch fallback",
+            "leave the external-drawer hover corridor or deferred popup-frame OnLeave active after native/signature-mismatch fallback",
             "automatically enable AutoBar or apply any AutoBar or TrinketMenu profile",
         ],
     }
@@ -753,7 +755,7 @@ def main() -> None:
             runtime, root / case["runtime"], case["runtime"]
         )
         runtime.save(
-            preview_dir / f"{case['component']}.runtime-v1.2.atlas.png",
+            preview_dir / f"{case['component']}.runtime-v1.3.atlas.png",
             format="PNG",
             optimize=False,
             compress_level=9,
@@ -819,7 +821,7 @@ def main() -> None:
             "module": "actionbars",
             "batch": "AB.FIELDKIT.V1",
             "component": case["component"],
-            "version": "runtime-v1.2",
+            "version": "runtime-v1.3",
             "runtime_contract": RUNTIME_CONTRACT,
             "status": "runtime-exported",
             "phase": "P5",
@@ -882,6 +884,10 @@ def main() -> None:
                 "visual_and_layout_adapter": True,
                 "provider_geometry_writes": True,
                 "provider_behavior_replaced": False,
+                "provider_hover_geometry_adapted": key == "consumable",
+                "popup_frame_onleave_deferred_only_while_external": (
+                    key == "consumable"
+                ),
                 "saved_variables_written": True,
                 "provider_saved_variables_written_automatically": False,
                 "aeui_saved_variables_written_on_drag_stop": True,
@@ -925,7 +931,7 @@ def main() -> None:
                     "file": TOC_REL.as_posix(),
                     "sha256": sha256(toc_path),
                 },
-                "addon_version": "0.8.2",
+                "addon_version": "0.8.3",
                 "required_dependency": "pfUI",
                 "optional_provider": "TrinketMenu" if key == "trinket" else "AutoBar",
             },
@@ -936,6 +942,7 @@ def main() -> None:
                 "Queue and combat swapping for TrinketMenu",
                 "categories, bag slots, popup ordering and item use for AutoBar",
                 "popup points and hit insets return to provider layout in native or signature-mismatch fallback",
+                "the AutoBar popup-frame OnLeave script and transparent hover corridor return to provider state in native or signature-mismatch fallback",
                 "provider SavedVariables remain untouched by automatic soft docking",
                 (
                     "provider configuration and SavedVariables unless the user "
@@ -952,11 +959,11 @@ def main() -> None:
                 "runtime_atlas": repo_path(
                     root,
                     preview_dir
-                    / f"{case['component']}.runtime-v1.2.atlas.png",
+                    / f"{case['component']}.runtime-v1.3.atlas.png",
                 ),
                 "runtime_atlas_sha256": sha256(
                     preview_dir
-                    / f"{case['component']}.runtime-v1.2.atlas.png"
+                    / f"{case['component']}.runtime-v1.3.atlas.png"
                 ),
                 "real_layout": repo_path(root, previews["scene"]),
                 "real_layout_sha256": sha256(previews["scene"]),
@@ -985,11 +992,11 @@ def main() -> None:
                 "target": "Turtle WoW 1.18.1 / Interface 11200",
                 "last_observation": {
                     "date": "2026-08-09",
-                    "result": "runtime-v1.1-icons-pass-popup-overlap-found",
+                    "result": "runtime-v1.2-drawer-hover-transfer-failed",
                     "issues": [
-                        "AutoBar and TrinketMenu icons were visible after the runtime-v1.1 layer fix",
-                        "AutoBar native LEFT popup crossed the grouped rack and covered main cells",
-                        "soft left/right docking had not yet been implemented",
+                        "the external AutoBar drawer remained visible while the pointer stayed on the grouped rack",
+                        "crossing the gap from a main category cell to the external drawer could trigger AutoBar's stock direct-parent hover check and close the popup",
+                        "runtime-v1.3 adds a transparent direct-child hover corridor and restores the stock frame OnLeave in every native fallback",
                     ],
                 },
             },
