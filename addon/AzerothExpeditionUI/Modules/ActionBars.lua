@@ -13,7 +13,7 @@ ActionBars.railTexturePath = addon.media.root .. "ActionBars\\ActionRailV1"
 ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
-ActionBars.fieldKitRuntimeContract = "1.4"
+ActionBars.fieldKitRuntimeContract = "1.5"
 ActionBars.trinketKitTexturePath =
   addon.media.root .. "ActionBars\\ActionTrinketKitV1"
 ActionBars.consumableKitTexturePath =
@@ -23,7 +23,8 @@ ActionBars.fieldKitPocketPadding = 4
 ActionBars.fieldKitShellPadding = 6
 ActionBars.consumableDockGap = 48
 ActionBars.trinketDockGap = 16
-ActionBars.fieldKitSnapDistance = 32
+ActionBars.actionBarStackOverlap = 1
+ActionBars.combatDeckBottomRatio = 210 / 1080
 ActionBars.popupDrawerGap = 6
 ActionBars.popupDrawerMaxRows = 6
 ActionBars.popupIntentDelay = 0.30
@@ -633,6 +634,13 @@ local function GetMainActionBarFrame()
   return GetGlobal("pfActionBarMain")
 end
 
+local function GetTopActionBarFrame()
+  if pfUI and pfUI.bars and pfUI.bars[6] then
+    return pfUI.bars[6]
+  end
+  return GetGlobal("pfActionBarTop")
+end
+
 local function FrameCoordinatePixels(frame, method)
   if not frame or not frame[method] then
     return nil
@@ -979,6 +987,73 @@ local function GetFieldKitDatabase()
   return addon.db and addon.db.actionbars
 end
 
+local function FieldKitBound()
+  local database = GetFieldKitDatabase()
+  return database and database.fieldKitBound == true
+end
+
+local function GetActionBarStackOverlap()
+  local bars = pfUI_config and pfUI_config.bars
+  local configured = bars and bars.bar1 and bars.bar1.spacing
+  return tonumber(configured) or ActionBars.actionBarStackOverlap
+end
+
+function ActionBars:ApplyActionBarStackPosition(enabled)
+  local main = GetMainActionBarFrame()
+  local top = GetTopActionBarFrame()
+  local bound = FieldKitBound()
+
+  if not enabled or not bound then
+    if self.actionBarStackApplied then
+      RestoreFrameAnchors(top, self.actionBarTopFreeAnchors)
+    end
+    if self.actionBarTopMovableCaptured and pfUI and pfUI.movables and
+      self.actionBarTopMovableName
+    then
+      pfUI.movables[self.actionBarTopMovableName] =
+        self.actionBarTopMovableEntry
+    end
+    self.actionBarStackApplied = false
+    self.actionBarTopFreeAnchors = nil
+    self.actionBarTopMovableCaptured = false
+    self.actionBarTopMovableName = nil
+    self.actionBarTopMovableEntry = nil
+    self.actionBarStackStatus = enabled and "free" or "disabled"
+    return false
+  end
+
+  if not main or not top or main == top then
+    self.actionBarStackStatus = "unavailable"
+    return false
+  end
+
+  if not self.actionBarStackApplied then
+    self.actionBarTopFreeAnchors = CaptureFrameAnchors(top)
+  end
+  if not self.actionBarTopMovableCaptured and pfUI and pfUI.movables and
+    top.GetName
+  then
+    self.actionBarTopMovableName = top:GetName()
+    self.actionBarTopMovableEntry =
+      pfUI.movables[self.actionBarTopMovableName]
+    self.actionBarTopMovableCaptured = true
+  end
+  if self.actionBarTopMovableCaptured and pfUI and pfUI.movables then
+    pfUI.movables[self.actionBarTopMovableName] = nil
+  end
+
+  top:ClearAllPoints()
+  top:SetPoint(
+    "BOTTOM", main, "TOP", 0, -GetActionBarStackOverlap()
+  )
+  if type(top.OnMove) == "function" then
+    pcall(top.OnMove, top)
+  end
+  self.actionBarStackApplied = true
+  self.actionBarStackStatus = "12x2-bound"
+  return true
+end
+
 local function ConsumableVisualEdges(bounds)
   if not bounds or bounds.count == 0 or not bounds.right or
     not bounds.bottom
@@ -998,8 +1073,7 @@ local function ConsumableVisualEdges(bounds)
 end
 
 function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
-  local database = GetFieldKitDatabase()
-  local docked = database and database.consumableDocked
+  local docked = FieldKitBound()
   local handle = GetGlobal("AutoBarAnchorFrameHandle")
   local main = GetMainActionBarFrame()
 
@@ -1050,29 +1124,8 @@ function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
   return true
 end
 
-function ActionBars:ConsumableNearDock(bounds)
-  local handle = GetGlobal("AutoBarAnchorFrameHandle")
-  local main = GetMainActionBarFrame()
-  if not handle or not main then
-    return false
-  end
-  local rightPixels, bottomPixels = ConsumableVisualEdges(bounds)
-  local mainLeft = FrameCoordinatePixels(main, "GetLeft")
-  local mainBottom = FrameCoordinatePixels(main, "GetBottom")
-  if not rightPixels or not bottomPixels or not mainLeft or not mainBottom then
-    return false
-  end
-  local scale = GetFrameScale(bounds.right)
-  local desiredGap = self.consumableDockGap * scale
-  local threshold = self.fieldKitSnapDistance * scale
-  return
-    math.abs((mainLeft - rightPixels) - desiredGap) <= threshold and
-    math.abs(mainBottom - bottomPixels) <= threshold
-end
-
 function ActionBars:ApplyTrinketDockPosition(enabled)
-  local database = GetFieldKitDatabase()
-  local docked = database and database.trinketDocked
+  local docked = FieldKitBound()
   local frame = GetGlobal("TrinketMenu_MainFrame")
   local main = GetMainActionBarFrame()
 
@@ -1101,58 +1154,27 @@ function ActionBars:ApplyTrinketDockPosition(enabled)
   return true
 end
 
-function ActionBars:TrinketNearDock()
-  local frame = GetGlobal("TrinketMenu_MainFrame")
-  local main = GetMainActionBarFrame()
-  if not frame or not main then
-    return false
-  end
-  local left = FrameCoordinatePixels(frame, "GetLeft")
-  local bottom = FrameCoordinatePixels(frame, "GetBottom")
-  local mainRight = FrameCoordinatePixels(main, "GetRight")
-  local mainBottom = FrameCoordinatePixels(main, "GetBottom")
-  if not left or not bottom or not mainRight or not mainBottom then
-    return false
-  end
-  local scale = GetFrameScale(frame)
-  local desiredGap = self.trinketDockGap * scale
-  local threshold = self.fieldKitSnapDistance * scale
-  return
-    math.abs((left - mainRight) - desiredGap) <= threshold and
-    math.abs(bottom - mainBottom) <= threshold
-end
-
 function ActionBars:HandleAutoBarDragStop()
   if not FieldKitEnabled() then
     return
   end
-  local database = GetFieldKitDatabase()
-  local bounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
-  self.autoBarDockApplied = false
-  self.autoBarUndockedAnchors = nil
-  if database and self:ConsumableNearDock(bounds) then
-    database.consumableDocked = true
-    self:ApplyConsumableDockPosition(true, bounds)
-  elseif database then
-    database.consumableDocked = false
+  if not FieldKitBound() then
     self.consumableDockStatus = "free"
+    return
   end
+  local bounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
+  self:ApplyConsumableDockPosition(true, bounds)
 end
 
 function ActionBars:HandleTrinketDragStop()
   if not FieldKitEnabled() then
     return
   end
-  local database = GetFieldKitDatabase()
-  self.trinketDockApplied = false
-  self.trinketUndockedAnchors = nil
-  if database and self:TrinketNearDock() then
-    database.trinketDocked = true
-    self:ApplyTrinketDockPosition(true)
-  elseif database then
-    database.trinketDocked = false
+  if not FieldKitBound() then
     self.trinketDockStatus = "free"
+    return
   end
+  self:ApplyTrinketDockPosition(true)
 end
 
 function ActionBars:SetFieldKitDocking(docked)
@@ -1160,20 +1182,61 @@ function ActionBars:SetFieldKitDocking(docked)
   if not database then
     return false, "Action bar settings are unavailable."
   end
-  database.consumableDocked = docked and true or false
-  database.trinketDocked = docked and true or false
+  database.fieldKitBound = docked and true or false
+  -- Keep the v1.2 keys synchronized for SavedVariables compatibility.
+  database.consumableDocked = database.fieldKitBound
+  database.trinketDocked = database.fieldKitBound
   if docked then
+    self:ApplyActionBarStackPosition(FieldKitEnabled())
     local bounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
     self:ApplyConsumableDockPosition(FieldKitEnabled(), bounds)
     self:ApplyTrinketDockPosition(FieldKitEnabled())
     return true,
-      "Field Kit dock enabled: consumables left, trinkets right. Drag either kit away to release it."
+      "Combat Deck bound: consumables left, 12x2 action bars centered, trinkets right. Move the main action bar to move the whole deck."
   end
-  self:ApplyConsumableDockPosition(false)
-  self:ApplyTrinketDockPosition(false)
+  self:ApplyActionBarStackPosition(FieldKitEnabled())
+  self:ApplyConsumableDockPosition(FieldKitEnabled())
+  self:ApplyTrinketDockPosition(FieldKitEnabled())
   self.consumableDockStatus = "free"
   self.trinketDockStatus = "free"
-  return true, "Field Kit dock released; both provider positions are independent."
+  return true, "Combat Deck unbound; action bars and both provider positions are independent."
+end
+
+function ActionBars:ResetCombatDeckPosition()
+  if type(InCombatLockdown) == "function" and InCombatLockdown() then
+    return false, "Leave combat before resetting the Combat Deck position."
+  end
+  local main = GetMainActionBarFrame()
+  if not main or not UIParent or not UIParent.GetHeight then
+    return false, "The main action bar or UIParent is unavailable."
+  end
+
+  local offset = UIParent:GetHeight() * self.combatDeckBottomRatio
+  if main.SetParent then
+    main:SetParent(UIParent)
+  end
+  main:ClearAllPoints()
+  main:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, offset)
+
+  if pfUI_config and type(pfUI_config.position) == "table" and
+    main.GetName
+  then
+    local name = main:GetName()
+    pfUI_config.position[name] = pfUI_config.position[name] or {}
+    local position = pfUI_config.position[name]
+    position.xpos = 0
+    position.ypos = math.floor(offset + 0.5)
+    position.anchor = "BOTTOM"
+    position.parent = "UIParent"
+  end
+
+  local database = GetFieldKitDatabase()
+  if database then
+    database.combatDeckLayoutVersion = 1
+  end
+  self:SetFieldKitDocking(true)
+  return true,
+    "Combat Deck reset to the accepted center-lower layout and strongly bound."
 end
 
 local function EnsureAutoBarShell(frame)
@@ -1438,7 +1501,7 @@ local function ResolveAutoBarDrawerSide(frame)
     return mode
   end
   local database = GetFieldKitDatabase()
-  if database and database.consumableDocked and
+  if FieldKitBound() and
     ActionBars.autoBarDockApplied
   then
     return "LEFT"
@@ -2078,6 +2141,7 @@ function ActionBars:Initialize()
   self.autoBarPopupIntentButton = nil
   self.autoBarGrouped = false
   self.autoBarPresetStatus = "ready"
+  self.actionBarStackStatus = "pending"
   self.consumableDockStatus = "pending"
   self.trinketFieldKitStatus = "pending"
   self.trinketMainButtons = 0
@@ -2141,6 +2205,7 @@ function ActionBars:Apply()
   end
 
   self:InstallFieldKitHooks()
+  self:ApplyActionBarStackPosition(enabled)
   self:ApplyAutoBarFieldKit(enabled)
   self:ApplyTrinketFieldKit(enabled)
 end
@@ -2150,6 +2215,10 @@ function ActionBars:GetRuntimeStatus()
     "contract=" .. tostring(self.runtimeContract) ..
     ",rail-contract=" .. tostring(self.railRuntimeContract) ..
     ",fieldkit-contract=" .. tostring(self.fieldKitRuntimeContract) ..
+    ",fieldkit-binding=" ..
+      tostring(FieldKitBound() and "bound" or "free") ..
+    ",actionbar-stack=" ..
+      tostring(self.actionBarStackStatus or "pending") ..
     ",provider=" .. tostring(self.providerStatus or "pending") ..
     ",scope=bars-1-10" ..
     ",rail-scope=bars-1-12+merged-1-6" ..

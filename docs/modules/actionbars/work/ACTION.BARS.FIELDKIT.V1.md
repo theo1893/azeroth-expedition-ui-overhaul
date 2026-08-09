@@ -7,18 +7,20 @@
   `AB.TRINKET.MENU`、`AB.CONSUMABLE.RACK`、`AB.CONSUMABLE.POCKET`、
   `AB.CONSUMABLE.POPUP`、`AB.CONSUMABLE.GROUP`
 - 模拟版本：`AB-FIELDKIT-SIM-V3`
-- 当前操作：`popup main-cell traversal intent repair / retest`
+- 当前操作：`strong Combat Deck binding / game retest`
 - 子状态：`runtime-exported / pending-retest`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
-- 当前状态：`runtime-v1.4 / P5 / pending-retest`。两个 exact canonical 与 TGA
+- 当前状态：`runtime-v1.5 / P5 / pending-retest`。两个 exact canonical 与 TGA
   像素继续由 manifest 固定；runtime-v1.2 已解决线性 popup 遮挡并加入两侧软停靠，
   v1.3 补了卷袋外缘到抽屉的直接子级悬停通道，但实机证明从内侧主格前往右抽屉时
   仍会经过其他主格，其原生 `OnEnter → SetPopupButton` 会立即替换或关闭抽屉。
   v1.4 保留联合悬停区，只在 exact 外置态给不同主格加入 `0.30s` 意图停留；跨格
   离开时保留原抽屉，停留时仍调用捕获的 AutoBar 原方法。原生／签名不匹配／AEUI
   关闭及调度 API 缺失都立即回退；静态回归、display-region 与 fresh-checkout package
-  必须重新通过。P4→v1.4 没有调用 ImageGen
+  必须重新通过。v1.5 在不改该 guard 的前提下，把 Bar 6、左侧 AutoBar `4×6`
+  与右侧 TrinketMenu 双槽直接相对锚到 Bar 1，形成唯一移动根；`unbind` 才恢复
+  provider 自由位置，`home` 恢复中心中下基线。P4→v1.5 没有调用 ImageGen
 - 模拟用户结论：`AB-FIELDKIT-SIM-V1 consumable direction revision-requested
   2026-08-08`；用户原文：“消耗品5*2不够用. 并且能否按照类型进行分组?”；
   `AB-FIELDKIT-SIM-V2 confirmed 2026-08-09`；用户原文：“接受
@@ -64,12 +66,16 @@
   加载并显示。AEUI 从未自动启用它。
 - 两个插件均已安装；普通 adapter 刷新不得替用户启用 AutoBar。只有用户主动
   输入 `/aeui autobar apply／restore` 时才允许当前角色 profile 的可逆写入。
-- 当前 AutoBar `_SHARED1` 保存为 `1×24`、`36×36 UI`、gap `3 UI`、
-  `alignButtons=5`、popup 向上、锁定；这只用于容量与兼容审计。
+- 当前“大奶黑牛 - Basin of Stars”角色 profile 已由用户显式应用为 `4×6／24`、
+  `36×36 UI`、gap `3 UI` 与三组推荐类别；`_SHARED1` 的旧 `1×24` 只保留为未激活
+  provider 配置。AEUI 普通刷新不重写该 profile。
 - 当前 TrinketMenu 保存为主栏水平、主栏 scale
   `0.9043710231781006`、菜单垂直、菜单 scale `1`、固定 `4` 列、菜单停靠主栏
   右侧且底部对齐、`KeepDocked=ON`、`KeepOpen=OFF`、`MenuOnShift=OFF`、
   `Locked=OFF`、大号冷却数字开启、快捷键文字关闭。
+- 用户要求按最初构图重排后，目标角色保存为 `pfActionBarMain x=0／y=258／scale=1.2`、
+  `pfActionBarTop x=0／y=291／scale=1.2`；AEUI 保存 `fieldKitBound=true`，TrinketMenu
+  `MainOrient=HORIZONTAL`，候选仍从主栏右侧向外展开。
 - SavedVariables 不能提供当前背包内的真实候选饰品数量；模拟中的 `1／8／30`
   都是精确合法的 provider 实例，不声称当前角色正好拥有该数量。
 
@@ -911,6 +917,29 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
   `b6c827f7…b114`／`070673f1…ba2d`；fresh-checkout package SHA
   `a6a4ec74…16b9`、`status=pass`、目标设备无需构建。accepted source、两张 TGA
   与全部可见布局像素不变；P4→v1.4 ImageGen `0`。
+- 日期：`2026-08-09`
+- 操作：用户提供“大奶黑牛”完整 UI 截图并要求“现在把动作条 + 消耗品栏 +
+  饰品栏，强绑定……按照最初的设计进行重排”。截图中主动作条贴近底边，AutoBar
+  `4×6` 漂在人物右上，TrinketMenu 垂直双槽则与主栏右端断开。
+- 根因：`AzerothExpeditionUIDB.actionbars.consumableDocked／trinketDocked` 都保存为
+  `false`；pfUI 主栏仍为 `x=-31／y=35`、上栏 `x=-31／y=68`；TrinketMenu 保存为
+  `VERTICAL`。旧 v1.2 允许两边各自拖离，无法保证三者长期保持同一构图。
+- runtime-v1.5：引入唯一 `fieldKitBound`。绑定态把 Bar 6 的 `BOTTOM` 相对锚到
+  Bar 1 `TOP`，并从 pfUI movable 注册中暂时移除 Bar 6；AutoBar 外壳右缘与 Bar 1
+  左缘保持 `48 UI`，TrinketMenu 左缘与 Bar 1 右缘保持 `16 UI`，三者底边对齐。
+  侧 provider 拖动完成后只重施相对锚点，不写独立吸附状态；移动 Bar 1 时其余对象
+  因直接相对锚定自然跟随。`unbind` 恢复捕获的 Bar 6／provider 原位置和独立 mover；
+  `home` 把 Bar 1 居中并写入屏幕高度 `210/1080` 的底部净空。所有写入均为初始化、
+  provider 布局回调、拖动结束或显式命令，不使用 `OnUpdate`。
+- 当前角色一次性迁移：游戏未运行时将“大奶黑牛”主栏保存为 `x=0／y=258`、上栏
+  `x=0／y=291`，TrinketMenu 改为 `HORIZONTAL`，AEUI 设置
+  `fieldKitBound=true／combatDeckLayoutVersion=1`。这只落实用户指定角色的最初构图，
+  runtime 不自动覆盖其他角色的 TrinketMenu 方向或 AutoBar profile。
+- runtime-v1.5 门禁：AEUI `0.8.5`，adapter SHA `a49c34d1…047f`；Lua smoke 覆盖
+  `12×2` 相对锚、唯一 mover、bind／unbind／home、两侧误拖回位、旧 v1.4 popup
+  guard 与 provider fail-open。Trinket／Consumable display `9/9`、`10/10`，violations
+  `0`；fresh-checkout package `pass`。TGA 文件／像素 SHA 仍为
+  `3614d9a8…f455／0961d750…aef` 与 `c48f6292…320e／658f826f…e30d`；ImageGen `0`。
 
 ## 审查记录
 
@@ -922,7 +951,7 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
   关系成立，三组不使用现代彩色 Dashboard 编码。
 - 对象／状态合同：pass；布局 `72/72`、display `16/16`、violations `0`；
   AutoBar disabled 与 TrinketMenu enabled 状态均保持。
-- 结论：`runtime-v1.4 / runtime-exported / P5 / pending-retest`。Trinket attempt 4 与
+- 结论：`runtime-v1.5 / runtime-exported / P5 / pending-retest`。Trinket attempt 4 与
   Consumable attempt 1
   的 Prompt／传输、语义、物理、透视、美术、对象、装配、真实排版和技术像素
   结论不变；两套 exact canonical 仍是唯一 source。新增 deterministic runtime
@@ -931,7 +960,8 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
   runtime-v1 的同层装饰遮挡 Icon；v1.1 层序修复已实机通过。随后发现的左向线性
   popup 遮挡由 v1.2 外置抽屉修复，两侧软吸附也在同一有界布局合同内加入；v1.3
   只覆盖外缘空隙，实机因穿越其他主格而失败；v1.4 以不挡主格的短停留意图区分
-  “路过”与“换类”。当前仍待实机复测，因此不标记 P6。
+  “路过”与“换类”；v1.5 再按用户指定把软吸附收敛为主动作条唯一根的强绑定，
+  不改变 v1.4 交互或 accepted art。当前仍待实机复测，因此不标记 P6。
 - Trinket attempt 1 语义：pass。四格依次清楚表达已装备护套、较薄候选插页、
   自适应菜单框和可旋转连接扣；没有固定饰品、图标、文字、Queue 或完整场景。
 - Trinket attempt 1 美术：fail／可修复。深胡桃皮革与暗黄铜基本继承 Character
@@ -1016,14 +1046,18 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
 | `AB.FIELDKIT.V1 runtime-v1.2` | source／TGA 像素不变；exact `4×6` 外置 `1×1–6／2×4–6` popup drawer；消耗品左／饰品右软吸附；simulation `89/89`、display `19/19`，runtime display `9/9`＋`10/10`、package pass | 用户授权修改 popup 并要求同时考虑两袋吸附；静态门禁通过，`pending-retest / P5` | `/reload` 验证抽屉不遮主格、左右／AUTO／NATIVE、双侧拖离／回吸附与 provider 行为保持 |
 | `AB.FIELDKIT.V1 runtime-v1.3` | source／TGA／可见布局不变；外置态增加全卷袋高度的透明直接子级悬停通道，延后 XML Frame `OnLeave`，所有原生回退恢复脚本与隐藏通道 | runtime-v1.2 实机截图确认外缘空隙会提前关闭；用户复测确认穿越其他主格仍触发立即关闭／换类，`game-failed / P5` | 由 runtime-v1.4 接续；保留失败根因，不把透明通道误记为完整修复 |
 | `AB.FIELDKIT.V1 runtime-v1.4` | source／TGA／可见布局不变；exact 外置态捕获 AutoBar 原 `SetPopupButton`，不同主格仅在持续停留 `0.30s` 后通过原方法提交；跨格进入通道／候选保持当前抽屉，NATIVE／非 exact／关闭态立即委托 | 用户明确否定 v1.3；跨格保持／停留切换／三类立即回退 smoke，display 与 package 重新通过，`pending-retest / P5` | `/reload` 从内侧格横穿其他主格进入左右抽屉，确认不关闭／不换类；在另一主格停留约 `0.30s` 应切换，完全离开联合区域后正常关闭 |
+| `AB.FIELDKIT.V1 runtime-v1.5` | source／TGA／v1.4 popup guard 不变；`fieldKitBound` 把 Bar 6、左 `4×6` 卷袋和右双槽直接锚到 Bar 1；提供 bind／unbind／home，绑定态侧栏误拖松手回位；当前角色写入中心中下与水平双槽 | 用户明确要求三部分强绑定并按最初构图重排；smoke、display `9/9＋10/10`、package pass，`pending-retest / P5` | 启动或 `/reload` 验证左卷袋—中央 `12×2`—右双槽、唯一主栏 mover、显式释放／恢复、外向候选及全部 provider 行为 |
 
 ## 下一门禁
 
 1. 两套 accepted source 与 runtime TGA 像素身份不变；adapter、source／runtime
-   manifest 已更新到 `runtime-v1.4 / P5 / pending-retest`。fresh-checkout package
+   manifest 已更新到 `runtime-v1.5 / P5 / pending-retest`。fresh-checkout package
    已通过，目标设备只需拉取并安装 `addon/`，不得再生成、导出或打补丁。
-2. Turtle WoW `/reload` 后确认 `/aeui status` 含 `version 0.8.4` 与
-   `fieldkit-contract=1.4`。先确认
+2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.5`、
+   `fieldkit-contract=1.5`、`fieldkit-binding=bound` 与 `actionbar-stack=12x2-bound`。
+   先确认左 `4×6` 卷袋—中央 `12×2` 动作条—右水平双槽在中心中下部共用一个
+   Bar 1 mover；拖动两侧 provider 松手应回位，`unbind` 后才独立，`bind` 恢复，
+   `home` 重置最初位置。再确认
    AutoBar 主格／popup 的 Item Icon 与 Count、TrinketMenu 双槽／候选的 Icon、
    Cooldown 与 Queue 都在口袋／护套之上。再执行 `/aeui autobar apply` 验证当前
    角色精确 `4×6`／24 格、“应急／增益／工具”和手动数字槽保留；打开候选数
@@ -1040,11 +1074,10 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
    AutoBar 原生视觉 fail-open；provider 缺失或隐藏时不得出现占位栏。实机全部通过
    后方可记录 P6；截图静态层级与用户交互确认仍须分开取证。
 4. 默认确认消耗品卷袋在主栏左侧 `48 UI`、饰品双槽在主栏右侧 `16 UI` 且底边
-   对齐。分别拖离后只应释放当前 provider；在目标位置 `32 UI` 内松手应重新吸附。
-   `/aeui fieldkit undock` 应恢复两边原 provider 位置，`dock` 应恢复两侧构图，
-   `status` 应分别报告 `consumable-dock`／`trinket-dock`。重载与 UI scale 变化后仅
-   已吸附侧跟随主动作条；不得出现逐帧维护或拖动中的抢位。
-5. 两个原生产循环保持 Trinket `4/5`、Consumable `1/5`；P4→runtime-v1.4
+   对齐。Bar 6 应紧邻 Bar 1 上缘并不再显示独立 pfUI mover；两侧拖离松手即回位，
+   不是距离阈值吸附。`status` 应报告 `fieldkit-binding=bound`、两侧方向与 stack；
+   重载与 UI scale 变化后整体仍跟随主动作条，不得出现逐帧维护或拖动中的抢位。
+5. 两个原生产循环保持 Trinket `4/5`、Consumable `1/5`；P4→runtime-v1.5
    ImageGen `0`，未使用预算不继续执行，禁止 attempt 6。后续实机门禁仍不得由
    AEUI 自动启用 AutoBar、在普通刷新中应用 profile、修改 TrinketMenu
    SavedVariables 或替代 provider 动态层与行为；只有用户主动输入 apply／restore

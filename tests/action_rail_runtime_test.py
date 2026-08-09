@@ -110,7 +110,7 @@ def main() -> None:
     assert adapter_record["maximum_texture_instances"] == 117
     assert adapter_record["provider_geometry_writes"] is False
     assert adapter_record["provider_behavior_replaced"] is False
-    assert runtime_manifest["addon_entrypoints"]["addon_version"] == "0.8.1"
+    assert runtime_manifest["addon_entrypoints"]["addon_version"] == "0.8.5"
     package = runtime_manifest["package_validation"]
     assert package["status"] == "pass"
     assert package["violations"] == 0
@@ -237,8 +237,8 @@ def main() -> None:
 
     toc = (ROOT / builder.TOC_REL).read_text(encoding="utf-8-sig")
     bootstrap = (ROOT / builder.BOOTSTRAP_REL).read_text(encoding="utf-8")
-    assert "## Version: 0.8.4" in toc
-    assert 'addon.version = "0.8.4"' in bootstrap
+    assert "## Version: 0.8.5" in toc
+    assert 'addon.version = "0.8.5"' in bootstrap
     assert "Modules\\ActionBars.lua" in toc
 
     print("action rail runtime test passed")

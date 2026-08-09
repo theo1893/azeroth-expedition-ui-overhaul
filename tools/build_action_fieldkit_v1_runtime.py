@@ -40,7 +40,7 @@ PREVIEW_REL = Path(
     "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1"
 )
 ATLAS_SIZE = (512, 512)
-RUNTIME_CONTRACT = "1.4"
+RUNTIME_CONTRACT = "1.5"
 DESTINATION_CAP_UI = 6
 CONNECTOR_SOURCE_CAP = 30
 
@@ -518,15 +518,15 @@ def render_previews(
             "TrinketMenu 双槽、30 候选、Queue、点击与换装逻辑不变",
             "AutoBar 24 主槽、12 popup、类别、数量与冷却仍由 provider 所有",
             "候选抽屉按 1×1–6 或 2×4–6 外置，不覆盖 4×6 母格",
-            "消耗品与饰品仅在拖动结束或布局刷新时应用左右软吸附",
+            "消耗品、12×2 动作条与饰品以主动作条为唯一锚点强绑定",
             "只有精确 4×6 profile 签名显示应急／增益／工具三组",
             "provider 缺失、禁用或自定义布局时局部回退，不显示占位栏",
             "不自动启用 AutoBar，不自动应用 profile，不改 provider SavedVariables",
         ],
     }
-    scene_path = preview_dir / "AB.FIELDKIT.V1.runtime-v1.4.real-layout-1920x1080.png"
-    trinket_board = preview_dir / "AB.TRINKET.KIT.V1.runtime-v1.4.layouts.png"
-    consumable_board = preview_dir / "AB.CONSUMABLE.KIT.V1.runtime-v1.4.layouts.png"
+    scene_path = preview_dir / "AB.FIELDKIT.V1.runtime-v1.5.real-layout-1920x1080.png"
+    trinket_board = preview_dir / "AB.TRINKET.KIT.V1.runtime-v1.5.layouts.png"
+    consumable_board = preview_dir / "AB.CONSUMABLE.KIT.V1.runtime-v1.5.layouts.png"
     try:
         simulation.draw_trinket_main = trinket_main
         simulation.draw_trinket_menu = trinket_menu
@@ -563,7 +563,7 @@ def build_display_contract(
     root: Path,
 ) -> dict[str, Any]:
     contract = copy.deepcopy(template)
-    contract["component"] = f"{case['component']}/runtime-v1.4"
+    contract["component"] = f"{case['component']}/runtime-v1.5"
     board_key = (
         "trinket_board"
         if case["component"] == "AB.TRINKET.KIT.V1"
@@ -572,6 +572,15 @@ def build_display_contract(
     contract["evidence"].update(
         {
             "adapter": ADAPTER_REL.as_posix(),
+            "dynamic_ownership": (
+                "all item icons, counts, cooldowns, cooldown text, equipped "
+                "state, queued trinkets, bag slots, category selection, "
+                "tooltips, click behavior and the AutoBar PopupMouseover close "
+                "timer remain provider-owned; AEUI changes popup points for the "
+                "exact grouped profile, adds one transparent direct-child hover "
+                "corridor for the external drawer, and owns only the event-driven "
+                "strong anchor relations to pfUI Bar 1"
+            ),
             "scene_simulation": repo_path(root, previews["scene"]),
             "state_simulation": repo_path(root, previews[board_key]),
             "atlas_role": (
@@ -757,7 +766,7 @@ def main() -> None:
             runtime, root / case["runtime"], case["runtime"]
         )
         runtime.save(
-            preview_dir / f"{case['component']}.runtime-v1.4.atlas.png",
+            preview_dir / f"{case['component']}.runtime-v1.5.atlas.png",
             format="PNG",
             optimize=False,
             compress_level=9,
@@ -823,7 +832,7 @@ def main() -> None:
             "module": "actionbars",
             "batch": "AB.FIELDKIT.V1",
             "component": case["component"],
-            "version": "runtime-v1.4",
+            "version": "runtime-v1.5",
             "runtime_contract": RUNTIME_CONTRACT,
             "status": "runtime-exported",
             "phase": "P5",
@@ -900,7 +909,7 @@ def main() -> None:
                 ),
                 "saved_variables_written": True,
                 "provider_saved_variables_written_automatically": False,
-                "aeui_saved_variables_written_on_drag_stop": True,
+                "aeui_saved_variables_written_on_drag_stop": False,
                 "autobar_enabled_or_profile_applied": False,
                 "automatic_profile_mutation": False,
                 "optional_user_configuration": (
@@ -911,7 +920,7 @@ def main() -> None:
                         "popup_command": (
                             "/aeui autobar popup [auto|left|right|native]"
                         ),
-                        "dock_command": "/aeui fieldkit [dock|undock|status]",
+                        "binding_command": "/aeui fieldkit [bind|unbind|home|status]",
                         "scope": "current character only",
                         "backup": (
                             "AzerothExpeditionUIDB.actionbars.autoBarBackups"
@@ -920,9 +929,9 @@ def main() -> None:
                     }
                     if key == "consumable"
                     else {
-                        "dock_command": "/aeui fieldkit [dock|undock|status]",
+                        "binding_command": "/aeui fieldkit [bind|unbind|home|status]",
                         "state": (
-                            "AzerothExpeditionUIDB.actionbars.trinketDocked"
+                            "AzerothExpeditionUIDB.actionbars.fieldKitBound"
                         ),
                         "provider_saved_variables_written_by_aeui": False,
                     }
@@ -941,12 +950,12 @@ def main() -> None:
                     "file": TOC_REL.as_posix(),
                     "sha256": sha256(toc_path),
                 },
-                "addon_version": "0.8.4",
+                "addon_version": "0.8.5",
                 "required_dependency": "pfUI",
                 "optional_provider": "TrinketMenu" if key == "trinket" else "AutoBar",
             },
             "provider_layers_preserved": [
-                "provider free position restored on undock; provider scale, orientation and visibility preserved",
+                "provider free position restored on unbind; provider scale, orientation and visibility preserved",
                 "all Button parents, sizes and scripts",
                 "icons, counts, cooldowns, checked/highlight and tooltip layers",
                 "Queue and combat swapping for TrinketMenu",
@@ -954,7 +963,7 @@ def main() -> None:
                 "popup points and hit insets return to provider layout in native or signature-mismatch fallback",
                 "the AutoBar popup-frame OnLeave script and transparent hover corridor return to provider state in native or signature-mismatch fallback",
                 "the AutoBar SetPopupButton wrapper delegates immediately outside the exact external drawer and commits deliberate category switches through the captured provider method",
-                "provider SavedVariables remain untouched by automatic soft docking",
+                "provider SavedVariables remain untouched by automatic strong anchoring",
                 (
                     "provider configuration and SavedVariables unless the user "
                     "explicitly invokes /aeui autobar apply"
@@ -970,11 +979,11 @@ def main() -> None:
                 "runtime_atlas": repo_path(
                     root,
                     preview_dir
-                    / f"{case['component']}.runtime-v1.4.atlas.png",
+                    / f"{case['component']}.runtime-v1.5.atlas.png",
                 ),
                 "runtime_atlas_sha256": sha256(
                     preview_dir
-                    / f"{case['component']}.runtime-v1.4.atlas.png"
+                    / f"{case['component']}.runtime-v1.5.atlas.png"
                 ),
                 "real_layout": repo_path(root, previews["scene"]),
                 "real_layout_sha256": sha256(previews["scene"]),
@@ -1003,11 +1012,12 @@ def main() -> None:
                 "target": "Turtle WoW 1.18.1 / Interface 11200",
                 "last_observation": {
                     "date": "2026-08-09",
-                    "result": "runtime-v1.3-main-cell-traversal-failed",
+                    "result": "runtime-v1.5-strong-binding-pending",
                     "issues": [
                         "runtime-v1.3 kept the outer rack-to-drawer corridor hoverable but did not protect routes crossing intervening main AutoBar cells",
                         "each crossed main cell immediately called AutoBar:SetPopupButton and could replace or hide the active drawer before the pointer reached it",
                         "runtime-v1.4 preserves the active drawer during transit and commits a new category only after a 0.30-second dwell, always through AutoBar's captured original method",
+                        "runtime-v1.5 keeps that popup guard and strongly binds the 4x6 rack, 12x2 action-bar stack and horizontal trinket pair to the main action bar",
                     ],
                 },
             },

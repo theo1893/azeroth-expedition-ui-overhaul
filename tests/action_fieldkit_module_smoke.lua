@@ -49,6 +49,7 @@ function Frame:EnableMouse(value) self.mouseEnabled = value end
 function Frame:GetFrameLevel() return self.frameLevel end
 function Frame:SetFrameLevel(value) self.frameLevel = value end
 function Frame:GetParent() return self.parent end
+function Frame:SetParent(value) self.parent = value end
 function Frame:GetScript(name) return self.scripts[name] end
 function Frame:SetScript(name, callback) self.scripts[name] = callback end
 function Frame:ClearAllPoints() self.decorativePoints = {} end
@@ -368,7 +369,8 @@ local queueSnapshot = TrinketMenuQueue.Enabled
 local optionsSnapshot = TrinketMenuOptions
 local perOptionsSnapshot = TrinketMenuPerOptions
 
-pfUI = { bars = {} }
+UIParent = NewFrame("UIParent", nil, { width = 1920, height = 1080 })
+pfUI = { bars = {}, movables = {} }
 pfUI.bars[1] = NewFrame("pfActionBarMain", nil, {
   left = 300,
   bottom = 100,
@@ -376,11 +378,25 @@ pfUI.bars[1] = NewFrame("pfActionBarMain", nil, {
   height = 43,
   points = { { "BOTTOM", nil, "BOTTOM", 0, 0 } },
 })
+pfUI.bars[6] = NewFrame("pfActionBarTop", nil, {
+  left = 300,
+  bottom = 143,
+  width = 494,
+  height = 43,
+  points = { { "BOTTOM", nil, "BOTTOM", 0, 43 } },
+})
+pfUI.movables.pfActionBarMain = pfUI.bars[1]
+pfUI.movables.pfActionBarTop = pfUI.bars[6]
+pfUI_config = {
+  bars = { bar1 = { spacing = "1" } },
+  position = {},
+}
 AzerothExpeditionUI = {
   media = { root = "Interface\\AddOns\\AzerothExpeditionUI\\Media\\" },
   db = { actionbars = {
     enabled = true,
     autoBarPopupMode = "AUTO",
+    fieldKitBound = true,
     consumableDocked = true,
     trinketDocked = true,
   } },
@@ -393,7 +409,12 @@ local module = assert(AzerothExpeditionUI.modules.ActionBars)
 module:Initialize()
 module:Apply()
 
-assert(module.fieldKitRuntimeContract == "1.4")
+assert(module.fieldKitRuntimeContract == "1.5")
+assert(module.actionBarStackStatus == "12x2-bound")
+assert(pfUI.bars[6].decorativePoints[1][1] == "BOTTOM")
+assert(pfUI.bars[6].decorativePoints[1][2] == pfUI.bars[1])
+assert(pfUI.bars[6].decorativePoints[1][3] == "TOP")
+assert(pfUI.movables.pfActionBarTop == nil)
 assert(module.autoBarFieldKitStatus == "available")
 assert(module.autoBarMainButtons == 24)
 assert(module.autoBarPopupButtons == 4)
@@ -658,16 +679,31 @@ assert(AzerothExpeditionUI.db.actionbars.autoBarBackups[
 
 local undocked, undockMessage = module:SetFieldKitDocking(false)
 assert(undocked == true)
-assert(string.find(undockMessage, "released", 1, true))
+assert(string.find(undockMessage, "unbound", 1, true))
+assert(AzerothExpeditionUI.db.actionbars.fieldKitBound == false)
 assert(AzerothExpeditionUI.db.actionbars.consumableDocked == false)
 assert(AzerothExpeditionUI.db.actionbars.trinketDocked == false)
+assert(module.actionBarStackStatus == "free")
+assert(pfUI.movables.pfActionBarTop == pfUI.bars[6])
 assert(module.consumableDockStatus == "free")
 assert(module.trinketDockStatus == "free")
 local redocked, redockMessage = module:SetFieldKitDocking(true)
 assert(redocked == true)
 assert(string.find(redockMessage, "consumables left", 1, true))
+assert(AzerothExpeditionUI.db.actionbars.fieldKitBound == true)
+assert(module.actionBarStackStatus == "12x2-bound")
+assert(pfUI.movables.pfActionBarTop == nil)
 assert(module.consumableDockStatus == "left")
 assert(module.trinketDockStatus == "right")
+
+local reset, resetMessage = module:ResetCombatDeckPosition()
+assert(reset == true)
+assert(string.find(resetMessage, "center-lower", 1, true))
+assert(AzerothExpeditionUI.db.actionbars.combatDeckLayoutVersion == 1)
+assert(pfUI_config.position.pfActionBarMain.xpos == 0)
+assert(pfUI_config.position.pfActionBarMain.ypos == 210)
+assert(pfUI.bars[1].decorativePoints[1][1] == "BOTTOM")
+assert(pfUI.bars[1].decorativePoints[1][2] == UIParent)
 
 for index = 1, 24 do
   local button = _G["AutoBarFrameButton" .. index]
@@ -675,8 +711,9 @@ for index = 1, 24 do
   button.right = button.right - 200
 end
 AutoBar:DragStop()
-assert(AzerothExpeditionUI.db.actionbars.consumableDocked == false)
-assert(module.consumableDockStatus == "free")
+assert(AzerothExpeditionUI.db.actionbars.fieldKitBound == true)
+assert(AzerothExpeditionUI.db.actionbars.consumableDocked == true)
+assert(module.consumableDockStatus == "left")
 for index = 1, 24 do
   local button = _G["AutoBarFrameButton" .. index]
   button.left = button.left + 200
@@ -692,8 +729,9 @@ TrinketMenu_MainFrame.bottom = 100
 TrinketMenu_MainFrame.top = 152
 arg1 = "LeftButton"
 TrinketMenu.MainFrame_OnMouseUp()
-assert(AzerothExpeditionUI.db.actionbars.trinketDocked == false)
-assert(module.trinketDockStatus == "free")
+assert(AzerothExpeditionUI.db.actionbars.fieldKitBound == true)
+assert(AzerothExpeditionUI.db.actionbars.trinketDocked == true)
+assert(module.trinketDockStatus == "right")
 TrinketMenu_MainFrame.left = 810
 TrinketMenu_MainFrame.right = 902
 TrinketMenu_MainFrame.bottom = 100
@@ -753,7 +791,8 @@ module:Apply()
 assert(module.autoBarFieldKitStatus == "missing")
 assert(module.trinketFieldKitStatus == "missing")
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "fieldkit%-contract=1%.4"))
+assert(string.find(status, "fieldkit%-contract=1%.5"))
+assert(string.find(status, "fieldkit%-binding=bound"))
 assert(string.find(status, "autobar=missing"))
 assert(string.find(status, "autobar%-popup%-hover=missing"))
 assert(string.find(status, "trinket=missing"))

@@ -111,10 +111,10 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 
 | ID | provider／对象 | 合同 |
 |---|---|---|
-| `AB.CONSUMABLE.RACK` | 已加载并自行显示的 `AutoBarFrame`＋`AutoBarFrameButton1..24` | 推荐一次性满容量 `4×6 / 24 Button / 36 UI / gap 3 UI`，同时支持 `1–24` 个真实 Button 与合法行列。推荐按钮簇外壳为 `165×243 UI`。因 `alignButtons` 可把子 Button 放到 `AutoBarFrame` 边界外，装饰 Frame 必须在配置变化时读取真实可见 Button 边界。默认软吸附在主动作条左侧、外壳右缘距主栏左缘 `48 UI`、底边对齐；拖离后只释放消耗品栏，距离停靠点 `32 UI` 内松手重新吸附。不得用维护循环持续重写位置／尺寸，也不得启用当前禁用的 provider |
+| `AB.CONSUMABLE.RACK` | 已加载并自行显示的 `AutoBarFrame`＋`AutoBarFrameButton1..24` | 推荐一次性满容量 `4×6 / 24 Button / 36 UI / gap 3 UI`，同时支持 `1–24` 个真实 Button 与合法行列。推荐按钮簇外壳为 `165×243 UI`。因 `alignButtons` 可把子 Button 放到 `AutoBarFrame` 边界外，装饰 Frame 必须在配置变化时读取真实可见 Button 边界。`fieldKitBound=true` 时强绑定在主动作条左侧，外壳右缘距主栏左缘 `48 UI`、底边对齐；拖动 provider 松手后立即回到组合位，不再独立脱离。`unbind` 后恢复捕获的自由位置与原拖动。不得用维护循环持续重写位置／尺寸，也不得自动启用 provider |
 | `AB.CONSUMABLE.GROUP` | 推荐 profile 的连续槽段 `1–8／9–16／17–24`；三个非交互标题 Frame／FontString 与两条底层分隔带 | 只在 Button 数、`4×6` 行列与分组 profile 签名全部匹配时显示“应急／增益／工具”；每组两行八格。标题位于命中盒外，分隔带只占两组之间既有 `3 UI` gap，不接收鼠标。任一配置不匹配即隐藏标题／分隔，退回单一自适应外壳，不能给用户自定义类别贴错标签 |
 | `AB.CONSUMABLE.POCKET` | `AutoBarFrameButton1..24` | 显示 provider 选出的真实物品图标、数量、冷却、可用性和 Tooltip；槽底不含物品图标、名称或类别。V1 不创建自有 fallback Button |
-| `AB.CONSUMABLE.POPUP` | `AutoBarPopupFrame_Button1..12` | 精确匹配推荐 `24 Button / 4×6 / profile` 时改用外置抽屉：`1–6` 个候选为单列，`7–12` 个候选为列优先双列且最多六行；整组位于卷袋外，不遮挡主格或分类签。`AUTO` 在卷袋已吸附时向左展开，浮动时按屏幕剩余空间选择左右；`LEFT／RIGHT` 可强制方向，`NATIVE` 或任一 profile 签名不匹配时完整恢复 provider 原生四向线性布局。外置态在卷袋与抽屉间创建透明、可接收鼠标、直接隶属 `AutoBarPopupFrame` 且覆盖卷袋全高的悬停通道：右侧宽 `10 UI`，分组左侧连同标题净空宽 `52 UI`；XML Frame `OnLeave` 只在此态延后，关闭仍由 AutoBar 原 `PopupMouseover` 负责。因前往外侧抽屉可能穿过其他主格，`fieldkit-contract=1.4` 仅在当前外置抽屉已显示时，把不同主格的 `SetPopupButton` 延后 `0.30s`：进入通道或候选前离开该格即保留原抽屉；持续停留才调用捕获的 AutoBar 原方法切换／关闭。相同主格、NATIVE、签名不匹配、AEUI 关闭、非鼠标调用或 provider 调度 API 缺失全部立即委托原方法；不使用逐帧循环。候选顺序、图标、数量、冷却、点击、Tooltip、Shift 条件与 Button script 仍归 AutoBar；不得把 XML 初始 `72×72 UI` Frame 当作实际弹出边界，不复制分类表或重挂 `PickupContainerItem` |
+| `AB.CONSUMABLE.POPUP` | `AutoBarPopupFrame_Button1..12` | 精确匹配推荐 `24 Button / 4×6 / profile` 时改用外置抽屉：`1–6` 个候选为单列，`7–12` 个候选为列优先双列且最多六行；整组位于卷袋外，不遮挡主格或分类签。`AUTO` 在强绑定态固定向左、自由态按屏幕剩余空间选择左右；`LEFT／RIGHT` 可强制方向，`NATIVE` 或任一 profile 签名不匹配时完整恢复 provider 原生四向线性布局。外置态在卷袋与抽屉间创建透明、可接收鼠标、直接隶属 `AutoBarPopupFrame` 且覆盖卷袋全高的悬停通道：右侧宽 `10 UI`，分组左侧连同标题净空宽 `52 UI`；XML Frame `OnLeave` 只在此态延后，关闭仍由 AutoBar 原 `PopupMouseover` 负责。因前往外侧抽屉可能穿过其他主格，`fieldkit-contract=1.5` 延续 v1.4 的 `0.30s` 意图停留：进入通道或候选前离开不同主格即保留原抽屉；持续停留才调用捕获的 AutoBar 原方法切换／关闭。相同主格、NATIVE、签名不匹配、AEUI 关闭、非鼠标调用或 provider 调度 API 缺失全部立即委托原方法；不使用逐帧循环。候选顺序、图标、数量、冷却、点击、Tooltip、Shift 条件与 Button script 仍归 AutoBar；不得把 XML 初始 `72×72 UI` Frame 当作实际弹出边界，不复制分类表或重挂 `PickupContainerItem` |
 
 推荐 profile 使用 AutoBar 现有类别 ID 组成三个八格槽段：`应急` 放生命／职业
 资源／双恢复／绷带／解毒／行动／机动；`增益` 放战斗药剂／守护药剂／元素
@@ -140,21 +140,23 @@ AutoBar 的真实类别、物品顺序和用户后续配置始终优先；缺失
 adapter 在现有 `24+12` Button 下分别取 A／B，C 以 `6 UI` 九宫格跟随真实可见
 Button 边界，D 用于分组 gap，并在外置 popup 抽屉靠卷袋一侧形成竖向 spine。它只
 读取 profile 以决定标签与抽屉真伪，不自动启用 AutoBar、不在普通刷新中应用 profile
-或写入 provider SavedVariables。`fieldkit-contract=1.4` 延续把每个 A／B 口袋放入
+或写入 provider SavedVariables。`fieldkit-contract=1.5` 延续把每个 A／B 口袋放入
 以真实 Button 为父、FrameLevel 比
 Button 低 `1` 的独立非交互装饰 Frame，避免与 ActionButtonTemplate 的动态图标
 共用 `BACKGROUND` 层。用户可显式执行 `/aeui autobar apply`，只为当前角色一次性
 写入已确认的 `4×6`／24 类 profile，并在 AEUI SavedVariables 中保存应用前副本；
 `/aeui autobar restore` 恢复该副本，`/aeui autobar open` 只打开 AutoBar 原配置页。
-`/aeui autobar popup auto|left|right|native` 控制抽屉策略。吸附布尔值仅写入 AEUI
-自己的 SavedVariables；这些命令都不自动启用 provider，不改其他角色或
-TrinketMenu 配置。
+`/aeui autobar popup auto|left|right|native` 控制抽屉策略。组合状态只写入 AEUI
+自己的 `fieldKitBound`；`/aeui fieldkit bind|unbind|home|status` 分别负责强绑定、
+释放、恢复已确认的中心中下位置与查询。旧 `consumableDocked／trinketDocked` 只为
+SavedVariables 兼容同步，不再表示两侧可独立脱离。这些命令不自动启用 provider，
+不改 AutoBar profile 或 TrinketMenu 功能配置。
 
 ## 饰品双槽
 
 | ID | provider／对象 | 合同 |
 |---|---|---|
-| `AB.TRINKET.DOCK` | 可选 `TrinketMenu_MainFrame`；缺失时不显示占位栏 | 水平严格 `92×52 UI`、垂直严格 `52×92 UI`；两枚 `36×36 UI` 真实已装备饰品，主栏 scale／方向／拖动与 resize 继续归 provider；实际图标、快捷键、冷却与 Tooltip 动态。默认软吸附在主动作条右侧、左缘距主栏右缘 `16 UI`、底边对齐；拖离后只释放饰品栏，距离停靠点 `32 UI` 内松手重新吸附 |
+| `AB.TRINKET.DOCK` | 可选 `TrinketMenu_MainFrame`；缺失时不显示占位栏 | 水平严格 `92×52 UI`、垂直严格 `52×92 UI`；两枚 `36×36 UI` 真实已装备饰品，主栏 scale／方向与 resize 继续归 provider；实际图标、快捷键、冷却与 Tooltip 动态。强绑定态位于主动作条右侧、左缘距主栏右缘 `16 UI`、底边对齐，provider 拖动松手后回位；`unbind` 才恢复独立位置。当前“大奶黑牛”按最初方案一次性设为水平双槽，但 adapter 不持续覆盖方向或 Queue／换装配置 |
 | `AB.TRINKET.SLOT13` | `TrinketMenu_Trinket0`／`UseInventoryItem(13)` | 顶部饰品槽；点击使用，不生成固定饰品 |
 | `AB.TRINKET.SLOT14` | `TrinketMenu_Trinket1`／`UseInventoryItem(14)` | 底部饰品槽；点击使用，不生成固定饰品 |
 | `AB.TRINKET.MENU` | `TrinketMenu_MenuFrame`＋`TrinketMenu_Menu1..30` | 零候选隐藏；Button `36×36 UI`、步距 `40 UI`。VERTICAL 为 `12+列数×40` 乘 `12+ceil(数量/列数)×40`，HORIZONTAL 转置；支持自动 `1–5` 列或用户 `1–30` 列、菜单独立 scale／方向／拖动、八种停靠组合与战斗 Queue。只换肤并 fail-open |
@@ -176,19 +178,27 @@ normal 静态底面；图标、冷却、Queue、文字、命中区、拖动、sc
 [runtime manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json)。
 adapter 在既有两槽／30 候选 Button 下挂 A／B，C 以 `6 UI` 九宫格跟随菜单 Frame，
 D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 与原生 backdrop，
-不替代 TrinketMenu 原有位置持久化或任何换装／Queue 行为。`fieldkit-contract=1.4`
+不替代 TrinketMenu 原有位置持久化或任何换装／Queue 行为。`fieldkit-contract=1.5`
 同样把两槽与候选的 A／B 纹理放进低于真实 Button `1` 级的独立非交互装饰 Frame，
-真实饰品图标、冷却和 Queue 始终位于其上。两侧软吸附由 `/aeui fieldkit
-dock|undock|status` 统一恢复、释放或查询；每一侧拖拽结束时独立判断，AEUI 只保存
-自己的两个吸附布尔值。
+真实饰品图标、冷却和 Queue 始终位于其上。强绑定把 Bar 6、消耗品卷袋和饰品双槽
+都直接锚到 Bar 1；pfUI unlock 只保留 Bar 1 作为组合移动根，移动时其余部分因相对
+锚点自然跟随。重排只发生在初始化、provider 布局完成、显式命令和拖动结束，不建立
+`OnUpdate` 维护循环。
 
-## 推荐布局而非强制布局
+## 强绑定战斗甲板与显式释放
 
 - `战斗甲板`：Bar 1 为屏幕中下部居中 `12×1` 主栏；Bar 6 为其上方 `12×1`
   副栏；姿态／宠物条独立位于上缘；满容量消耗品卷袋以 `4×6` 竖向置于左侧，
   饰品双槽在右。目标设备 V3 沿用主栏物理 `y=827`、Button 约 `39 px`、底边
   净空 `210 px`；卷袋主体为物理 `[531,673,665,870]`，与聊天框右缘净空
   `5 px`、与玩家框左缘净空 `16 px`，三枚标题皮签均在聊天框 `y=824` 上缘前结束。
+- `唯一移动根`：绑定态只移动 Bar 1；Bar 6 以 `BOTTOM → Bar 1 TOP` 组成无漂移
+  `12×2`，消耗品卷袋与饰品双槽分别以 `48／16 UI` 间距锚到左右。`unbind`
+  恢复 Bar 6 与两种 provider 的捕获位置；`home` 把 Bar 1 重置到屏幕高度
+  `210/1080` 的底部净空并重新绑定。
+- 当前“大奶黑牛”已按该合同写入 `pfActionBarMain x=0／y=258／scale=1.2`、
+  `pfActionBarTop x=0／y=291／scale=1.2`，TrinketMenu 主栏为 `HORIZONTAL`；启动或
+  `/reload` 后由 v1.5 收敛为左卷袋—中央 `12×2`—右双槽。
 - `战斗视线邻接`：Player／Target 继续由 pfUI UnitFrame provider 所有；推荐
   preset 仅一次性把两者置于同一基线并收拢到目标设备 `80 px` 内缘间距，
   不由 Action Bars adapter 重画、重挂 Parent 或在维护循环中持续改位置。
@@ -200,7 +210,7 @@ dock|undock|status` 统一恢复、释放或查询；每一侧拖拽结束时独
   隐藏，逻辑按钮数与分页不变。
 - `自由侧栏`：Bar 3／4／5 可保持 `4×3`、`6×2` 或竖排并独立移动；不因采用
   推荐预设而失去现有布局。
-- 预设只在用户明确点击应用时写入一次。默认读取并尊重现有 profile、位置、
+- `home` 预设只在用户明确执行时写入一次。默认读取并尊重现有 profile、主栏位置、
   scale、按钮数、行列、自动隐藏和空槽设置；V3 继续默认关闭狮鹫，unlock 时
   仍可为足够宽的水平主栏单独开启。DoiteDPS 的锁定／战斗显隐／Forecast／资源／
   冷却选项不由此 preset 改写。

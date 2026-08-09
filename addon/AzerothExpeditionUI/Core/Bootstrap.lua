@@ -3,7 +3,7 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 
 addon.name = "AzerothExpeditionUI"
-addon.version = "0.8.4"
+addon.version = "0.8.5"
 addon.modules = addon.modules or {}
 addon.media = addon.media or {}
 addon.media.root = "Interface\\AddOns\\AzerothExpeditionUI\\Media\\"
@@ -13,6 +13,7 @@ local defaults = {
     enabled = true,
     artVersion = 1,
     autoBarPopupMode = "AUTO",
+    fieldKitBound = true,
     consumableDocked = true,
     trinketDocked = true,
   },
@@ -201,16 +202,23 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
     local module = addon.modules.ActionBars
     if not module then
       addon:Print("ActionBars module is unavailable.")
-    elseif subcommand == "" or subcommand == "dock" then
+    elseif subcommand == "" or subcommand == "bind" or
+      subcommand == "dock"
+    then
       local _, result = module:SetFieldKitDocking(true)
       addon:Print(result)
-    elseif subcommand == "undock" or subcommand == "free" then
+    elseif subcommand == "unbind" or subcommand == "undock" or
+      subcommand == "free"
+    then
       local _, result = module:SetFieldKitDocking(false)
+      addon:Print(result)
+    elseif subcommand == "home" or subcommand == "reset" then
+      local _, result = module:ResetCombatDeckPosition()
       addon:Print(result)
     elseif subcommand == "status" then
       addon:Print(module:GetRuntimeStatus())
     else
-      addon:Print("/aeui fieldkit [dock|undock|status]")
+      addon:Print("/aeui fieldkit [bind|unbind|home|status]")
     end
   elseif command == "chat" then
     AzerothExpeditionUIDB.chat.enabled =
@@ -295,7 +303,7 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
     end
   else
     addon:Print(
-      "/aeui actionbars, /aeui autobar [open|apply|restore|popup], /aeui fieldkit [dock|undock|status], /aeui chat, /aeui quests, /aeui refresh, /aeui status"
+      "/aeui actionbars, /aeui autobar [open|apply|restore|popup], /aeui fieldkit [bind|unbind|home|status], /aeui chat, /aeui quests, /aeui refresh, /aeui status"
     )
   end
 end

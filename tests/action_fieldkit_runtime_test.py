@@ -71,7 +71,7 @@ def main() -> None:
         manifest = json.loads(
             (ROOT / case["runtime_manifest"]).read_text(encoding="utf-8")
         )
-        assert manifest["runtime_contract"] == "1.4"
+        assert manifest["runtime_contract"] == "1.5"
         assert manifest["status"] == "runtime-exported"
         assert manifest["phase"] == "P5"
         assert manifest["runtime_export"]["sha256"] == sha256(runtime_path)
@@ -104,7 +104,7 @@ def main() -> None:
         ] is False
         assert manifest["adapter"][
             "aeui_saved_variables_written_on_drag_stop"
-        ] is True
+        ] is False
         assert manifest["adapter"]["autobar_enabled_or_profile_applied"] is False
         assert manifest["adapter"]["automatic_profile_mutation"] is False
         if key == "consumable":
@@ -114,13 +114,17 @@ def main() -> None:
             assert setup["popup_command"] == (
                 "/aeui autobar popup [auto|left|right|native]"
             )
-            assert setup["dock_command"] == "/aeui fieldkit [dock|undock|status]"
+            assert setup["binding_command"] == (
+                "/aeui fieldkit [bind|unbind|home|status]"
+            )
             assert setup["provider_enabled_automatically"] is False
         else:
             setup = manifest["adapter"]["optional_user_configuration"]
-            assert setup["dock_command"] == "/aeui fieldkit [dock|undock|status]"
+            assert setup["binding_command"] == (
+                "/aeui fieldkit [bind|unbind|home|status]"
+            )
             assert setup["state"] == (
-                "AzerothExpeditionUIDB.actionbars.trinketDocked"
+                "AzerothExpeditionUIDB.actionbars.fieldKitBound"
             )
             assert setup["provider_saved_variables_written_by_aeui"] is False
         assert manifest["package_validation"]["status"] == "pass"
@@ -152,7 +156,7 @@ def main() -> None:
         assert result["summary"]["violation_count"] == 0
 
     for required in (
-        'ActionBars.fieldKitRuntimeContract = "1.4"',
+        'ActionBars.fieldKitRuntimeContract = "1.5"',
         "ActionTrinketKitV1",
         "ActionConsumableKitV1",
         "ApplyAutoBarFieldKit",
@@ -160,6 +164,8 @@ def main() -> None:
         "ConfigureAutoBarDrawer",
         "ApplyConsumableDockPosition",
         "ApplyTrinketDockPosition",
+        "ApplyActionBarStackPosition",
+        "ResetCombatDeckPosition",
         "HandleAutoBarDragStop",
         "HandleTrinketDragStop",
         "ApplyTrinketFieldKit",
