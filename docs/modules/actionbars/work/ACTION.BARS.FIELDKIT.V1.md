@@ -7,21 +7,25 @@
   `AB.TRINKET.MENU`、`AB.CONSUMABLE.RACK`、`AB.CONSUMABLE.POCKET`、
   `AB.CONSUMABLE.POPUP`、`AB.CONSUMABLE.GROUP`
 - 模拟版本：`AB-FIELDKIT-SIM-V2`
-- 当前操作：`simulate`
-- 子状态：`simulation-reviewed`
+- 当前操作：`prepare`
+- 子状态：`simulation-confirmed`
 - 项目阶段：`P2`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`；本阶段未加载、未调用
-- 当前状态：`simulation-reviewed / P2`；等待用户对 V2 的方向结论
+- 当前状态：`simulation-confirmed / P2`；V2 文字化方向已冻结，等待两个最终
+  production body 的独立授权
 - 模拟用户结论：`AB-FIELDKIT-SIM-V1 consumable direction revision-requested
   2026-08-08`；用户原文：“消耗品5*2不够用. 并且能否按照类型进行分组?”；
-  `AB-FIELDKIT-SIM-V2 pending`
+  `AB-FIELDKIT-SIM-V2 confirmed 2026-08-09`；用户原文：“接受
+  AB-FIELDKIT-SIM-V2”
 - 当前生产候选：无
 - 模拟 ImageGen：`0/0`
 - 生产执行体：`AB.TRINKET.KIT.V1` 与 `AB.CONSUMABLE.KIT.V1`，均为
-  `production-draft / not-authorized / not-executed`
+  `production-final / not-authorized / not-executed`
 - 后续实际生成／修复预算：每个独立执行体最多 `5` 次，最坏合计 `10` 次；
   尚未授权
 - 外部上传：本阶段 `0`；既有 `AB.SLOT.BASE.V1` 的 Image 1 上传授权不得复用
+- 跨设备 handoff：无；确认结论与两个最终正文均已进入 tracked work，下一门禁
+  不依赖 ignored 模拟像素
 - 目标：Turtle WoW `1.18.1`，Interface `11200`，`1920×1080`，
   UI Scale `0.81269841269841`
 
@@ -281,7 +285,7 @@
 - 非权威：所有模拟像素不得裁切、切片、晋级、导出、上传或作为 production
   edit／ImageGen reference。
 
-### 待用户判断的可见方向
+### 用户已确认的可见方向
 
 1. 消耗品改为左侧完整 `4×6 / 24 类`，与饰品双槽共同底边的整体平衡。
 2. 每两行八格依次为应急／增益／工具；主槽是类别，悬停 popup 才是该类真实
@@ -294,8 +298,11 @@
 7. 消耗品使用暖褐炼金卷袋，popup 由独立薄口袋形成，不使用固定大面板。
 8. AutoBar 当前不启用；未来只有用户主动应用时才写入 `4×6` 分组 profile。
 
-用户方向结论：V1 消耗品方向于 `2026-08-08` 被要求修订；V2 `pending`。用户
-确认只接受上述文字化方向，不接受模拟像素。
+用户方向结论：V1 消耗品方向于 `2026-08-08` 被要求修订；用户于
+`2026-08-09` 明确回复“接受 AB-FIELDKIT-SIM-V2”，确认上述八项文字化方向。
+该结论不接受任何模拟像素；模拟图仍不得裁切、切片、晋级、导出、上传或作为
+production edit／ImageGen reference。若布局、物件隐喻、材质层级、配色、
+综合色重、整合关系或交互状态观感发生实质变化，本确认失效并返回新模拟版本。
 
 ## 生产正文完整性预检
 
@@ -307,22 +314,26 @@
 | source canvas／cell／Alpha | 两个执行体均为 `1024² RGBA` 四格 atlas，cell 与安全区固定 | pass |
 | 动态内容与 z-order | 图标、具体类别、冷却、Queue、Tooltip 全排除并归 provider；三组标题为 adapter runtime FontString | pass |
 | 最小／典型／最大真实排版 | V2 本地模拟布局 `72/72`、display `16/16 pass` | pass |
-| 独立执行预算 | `5 + 5`，最坏 `10` 次；尚未授权 | pass / blocked by authorization |
+| 独立执行预算 | `5 + 5`，最坏 `10` 次；两个执行体均尚未授权 | pass / blocked by authorization |
 | 外部上传 | 本轮没有授权；AB.SLOT 的旧授权不可复用 | blocked |
-| 用户模拟确认 | V1 消耗品方向已要求修订；`AB-FIELDKIT-SIM-V2` 尚待确认 | blocked |
+| 用户模拟确认 | `AB-FIELDKIT-SIM-V2` 于 `2026-08-09` 明确确认；只接受八项文字化方向 | pass |
 
-## 最终执行正文草案 A（`AB.TRINKET.KIT.V1`）
+## 最终执行正文 A（`AB.TRINKET.KIT.V1`）
 
-状态：`production-draft / not-authorized / not-executed`。
+状态：`production-final / not-authorized / not-executed`。
 
 ```text
 Create one production-ready transparent RGBA UI asset atlas for Turtle WoW 1.18.1, component AB.TRINKET.KIT.V1. The output canvas must be exactly 1024 by 1024 pixels and divided into four non-overlapping 512 by 512 cells: A [0,0,512,512] equipped-trinket sheath base; B [512,0,1024,512] candidate-trinket insert base; C [0,512,512,1024] adaptive menu-frame nine-slice master; D [512,512,1024,1024] short joiner clasp used between the paired equipped sheaths. Keep every cell independent, centered, fully visible, and surrounded by at least 80 transparent pixels. No visible pixel may cross a cell boundary. Background outside each object must be true alpha zero; do not use a green key background.
 
-Image 1 is the locked Character V3 Azeroth Expedition UI reference. Inherit only its classic vanilla hand-painted bitmap language, deep walnut and smoke-brown aged leather, muted oxidized brass, slightly irregular thick silhouettes, restrained wear, short warm upper-left light, darker lower-right pressure, low saturation, low-frequency value grouping, and believable material thickness. Ignore its character-window outline, parchment attribute panel, model area, equipment layout, tabs, text, icons and all large composition. Runtime geometry below overrides Image 1 whenever they conflict.
+This output is an asset atlas, not an assembled action-bar scene. Do not paint a game screenshot, screen background, action bar, consumable rack, item grid, labels, or multiple repeated runtime instances into any cell.
+
+Image 1 is the locked Character V3 Azeroth Expedition UI reference. Inherit only its classic vanilla hand-painted bitmap language, deep walnut and smoke-brown aged leather, muted oxidized brass, slightly irregular thick silhouettes, restrained wear, short warm upper-left light, darker lower-right pressure, low saturation, low-frequency value grouping, and believable material thickness. Ignore its character-window outline, parchment attribute panel, model area, equipment layout, tabs, text, icons and all large composition. Runtime geometry below overrides Image 1 whenever they conflict. Render every object in a straight-on orthographic 2D UI view with the same upper-left light and no three-quarter scene perspective.
 
 Cell A is one square leather sheath behind a live 36 by 36 UI trinket ActionButton. It must read as a compact functional sheath, not a generic spell slot: a slightly thicker deep-leather rim, a quiet recessed center completely covered by the live icon, one small muted-brass keeper near the upper edge, and no jewel, socket, gem glow or fixed trinket. It will display at roughly 40 to 44 UI units behind each of the two equipped buttons. Cell B is a visibly lighter and thinner square leather insert for each live 36 by 36 candidate button, with less brass and less depth than Cell A. Cell C is a square, quiet, non-directional nine-slice frame master with narrow broken brass edge segments and a matte stretchable center; it must remain valid around live menu frames from 52 by 52 UI through 172 by 332 UI, 212 by 252 UI and 1212 by 52 UI without creating fixed grid lines, fake pockets or a focal ornament in the center. Cell D is a very short leather-and-brass joiner that can sit in the 4 UI gap between two equipped sheaths in horizontal or vertical orientation; it must rotate cleanly and never enter either 36 by 36 hit area.
 
-All four cells contain only the normal static base layer. Do not bake hover, pressed, selected, checked, cooldown, disabled, range, queue, autoqueue, keybinding, text, count, tooltip, equipment quality, item icon, inventory-slot number, left-click or right-click labels. Those are live provider layers. Avoid continuous bright gold bezels, wide quality colors, glossy PBR gradients, fine photographic grain, micro-scratches, dense stitching, perfect machined symmetry, modern glass cards, neon glows, jewel cabinets, altars, stone plinths and decorative elements that would become noise at approximately 29 to 36 physical pixels. Preserve clear alpha separation, calm icon-safe centers, and a visual weight slightly heavier than the consumable pockets but lower than the main action bar.
+The confirmed runtime composition instantiates two Cell A sheaths as a horizontal paired dock on the right of the main action bar, with the pair bottom-aligned to the main bar and to the consumable roll on the opposite side. Cell D joins only the 4 UI gap between the two sheaths. The current typical candidate menu docks to the pair's right side, uses four columns and grows upward; Cell C must also remain valid for the provider's vertical or horizontal menu direction, automatic one-to-five columns, manual one-to-thirty columns, zero-candidate hidden state and up to thirty live candidates. Candidate content expands outward and upward rather than over the main skill icons. These are runtime assembly constraints only; do not render the assembled dock or menu into the atlas.
+
+All four cells contain only the normal static base layer. Do not bake hover, pressed, selected, checked, cooldown, disabled, range, queue, autoqueue, keybinding, text, count, tooltip, equipment quality, item icon, inventory-slot number, left-click or right-click labels. Those are live provider layers. Avoid continuous bright gold bezels, wide quality colors, glossy PBR gradients, fine photographic grain, micro-scratches, dense stitching, perfect machined symmetry, modern glass cards, neon glows, jewel cabinets, altars, stone plinths and decorative elements that would become noise at approximately 29 to 36 physical pixels. Preserve clear alpha separation, calm icon-safe centers, and a visual weight slightly heavier than the consumable pockets but lower than the main action bar. Before finalizing, verify that the canvas contains exactly four isolated front-facing objects in their assigned cells, every object has at least 80 transparent pixels around it, Cell C has a quiet stretchable center, Cell D rotates cleanly, and no dynamic provider content or assembled UI has been painted.
 ```
 
 ### A 的修复边界与预算
@@ -335,18 +346,22 @@ All four cells contain only the normal static base layer. Do not bake hover, pre
   AB.SLOT 当输入、改变 canvas／Alpha／动态内容所有权。
 - 预算：`0/5`；本体独立最多五次实际 ImageGen 生成／修图。
 
-## 最终执行正文草案 B（`AB.CONSUMABLE.KIT.V1`）
+## 最终执行正文 B（`AB.CONSUMABLE.KIT.V1`）
 
-状态：`production-draft / not-authorized / not-executed`。
+状态：`production-final / not-authorized / not-executed`。
 
 ```text
 Create one production-ready transparent RGBA UI asset atlas for Turtle WoW 1.18.1, component AB.CONSUMABLE.KIT.V1. The output canvas must be exactly 1024 by 1024 pixels and divided into four non-overlapping 512 by 512 cells: A [0,0,512,512] main consumable pocket base; B [512,0,1024,512] thinner popup pocket base; C [0,512,512,1024] adaptive alchemist-roll nine-slice frame master that can also frame small non-interactive group tabs; D [512,512,1024,1024] narrow rotatable and length-stretchable connector strip for popup gaps and group divider seams. Keep each object independent, centered, fully visible and surrounded by at least 80 transparent pixels. No visible pixels may connect across cell boundaries. Everything outside each object must be true alpha zero, never chroma-key green.
 
-Image 1 is the locked Character V3 Azeroth Expedition UI reference. Inherit only its classic vanilla hand-painted low-resolution rendering, warm aged leather, deep walnut shadows, muted oxidized brass, slightly irregular thick silhouettes, short upper-left warmth, restrained lower-right pressure, low saturation, broad readable value shapes and practical wear. Ignore the character-window composition, parchment, model background, equipment arrangement, tabs, text and icons. The real AutoBar button and popup geometry below is mandatory and overrides Image 1 when necessary.
+This output is an asset atlas, not an assembled inventory or action-bar scene. Do not paint a game screenshot, screen background, complete 24-slot grid, action bar, item collection, labels, or repeated runtime instances into any cell.
 
-Cell A is one independent square opening for a live AutoBar 36 by 36 UI item button: warm brown soft leather folded around a dark quiet center, a shallow pressure mark and sparse uneven stitches kept outside the icon-safe center. It must not resemble the main skill slot or contain a bottle. Cell B is the same family but thinner and lighter, as if a small insert unfolds from behind the main roll for one live popup candidate. Cell C is a square non-directional nine-slice master for an adaptive field alchemist roll. Use a warm old-leather outer fold, sparse short stitches and very small muted-brass fasteners at safe corners. The center must be quiet and stretchable around the recommended full-capacity 4-by-6 body of 165 by 243 UI, around three separate 40 by 20 UI non-interactive label tabs, and around every other supported real rack from 48 by 48 UI through 204 by 87 UI and the 945 by 48 or 48 by 945 UI extremes. Do not paint fixed pockets, a fixed grid, words or category marks into this frame. Cell D is one narrow connector with a completely quiet stretchable middle: it must rotate for TOP, BOTTOM, LEFT and RIGHT popup chains, fit the provider's 3 UI gap between adjacent popup buttons, and stretch horizontally beneath the buttons to form exactly two subtle divider seams between rows 2 and 3 and rows 4 and 5 of the recommended 4-by-6 profile. It may not contain repeated rivets, words or a directional motif that breaks when stretched.
+Image 1 is the locked Character V3 Azeroth Expedition UI reference. Inherit only its classic vanilla hand-painted low-resolution rendering, warm aged leather, deep walnut shadows, muted oxidized brass, slightly irregular thick silhouettes, short upper-left warmth, restrained lower-right pressure, low saturation, broad readable value shapes and practical wear. Ignore the character-window composition, parchment, model background, equipment arrangement, tabs, text and icons. The real AutoBar button and popup geometry below is mandatory and overrides Image 1 when necessary. Render every object in a straight-on orthographic 2D UI view with the same upper-left light and no three-quarter scene perspective.
 
-All cells are normal static bases only. The recommended profile instantiates twenty-four live buttons as four columns by six rows; contiguous slots 1-8, 9-16 and 17-24 are described only by runtime FontStrings as Emergency, Buffs and Utility. Do not bake those words, colored group blocks, potions, elixirs, flasks, food, drinks, bandages, engineering items, category marks, item names, keybinds, quantities, cooldown wedges or numbers, availability, family selection, tooltip content, hover, pressed, disabled, empty, missing-item or shift state. Those remain adapter or AutoBar-owned. The three tabs and two seams are mouse-disabled decoration beneath or outside every real button hit box. They must use the same warm leather and restrained dark brass as the roll, never red-blue-green dashboard coding. Avoid fixed bottle illustrations, modern card grids, glass panels, bright continuous gold frames, quality glows, large clasps, glossy PBR leather, dense fibers, tiny photographic scratches, perfect symmetry, stone bases and visual weight that competes with the main action bar. The final atlas must stay readable and subordinate at approximately 29 to 36 physical pixels per live pocket.
+Cell A is one independent square opening for a live AutoBar 36 by 36 UI item button: warm brown soft leather folded around a dark quiet center, a shallow pressure mark and sparse uneven stitches kept outside the icon-safe center. It must not resemble the main skill slot or contain a bottle. Its broad edge shapes must remain readable if the provider independently changes button width, height or scale, so do not rely on a circular focal motif or fine directional ornament. Cell B is the same family but thinner and lighter, as if a small insert unfolds from behind the main roll for one live popup candidate. Cell C is a square non-directional nine-slice master for an adaptive field alchemist roll. Use a warm old-leather outer fold, sparse short stitches and very small muted-brass fasteners at safe corners. The center must be quiet and stretchable around the recommended full-capacity 4-by-6 body of 165 by 243 UI, around three separate 40 by 20 UI non-interactive label tabs, and around every other supported real rack from 48 by 48 UI through 204 by 87 UI and the 945 by 48 or 48 by 945 UI extremes. Do not paint fixed pockets, a fixed grid, words or category marks into this frame. Cell D is one narrow connector with a completely quiet stretchable middle: it must rotate for TOP, BOTTOM, LEFT and RIGHT popup chains, fit the provider's 3 UI gap between adjacent popup buttons, and stretch horizontally beneath the buttons to form exactly two subtle divider seams between rows 2 and 3 and rows 4 and 5 of the recommended 4-by-6 profile. It may not contain repeated rivets, words or a directional motif that breaks when stretched.
+
+The confirmed runtime composition instantiates twenty-four Cell A pockets as four columns by six rows on the left of the main action bar, with the 165 by 243 UI roll body bottom-aligned to the main bar and to the paired trinket dock on the opposite side. Contiguous slots 1-8, 9-16 and 17-24 form three two-row groups for Emergency, Buffs and Utility. The three 40 by 20 UI label tabs remain outside every button hit box, and the two divider seams remain beneath the buttons. If button count, 4-by-6 layout or profile signature does not match, all group tabs and divider seams are hidden and Cell C falls back to one unlabeled adaptive shell. Each main button remains a provider category entry; one to twelve real items unfold from it as separate Cell B popup pockets in the provider's TOP, BOTTOM, LEFT or RIGHT direction. The rack and popup expand away from the central skill icons. These are runtime assembly constraints only; do not render the assembled rack, category text or items into the atlas.
+
+All cells are normal static bases only. The recommended profile instantiates twenty-four live buttons as four columns by six rows; contiguous slots 1-8, 9-16 and 17-24 are described only by runtime FontStrings as Emergency, Buffs and Utility. Do not bake those words, colored group blocks, potions, elixirs, flasks, food, drinks, bandages, engineering items, category marks, item names, keybinds, quantities, cooldown wedges or numbers, availability, family selection, tooltip content, hover, pressed, disabled, empty, missing-item or shift state. Those remain adapter or AutoBar-owned. There is no native FLASK category in the audited provider; a flask slot can only contain a real item ID manually inserted by the user, so do not invent a flask category or flask symbol. The three tabs and two seams are mouse-disabled decoration beneath or outside every real button hit box. They must use the same warm leather and restrained dark brass as the roll, never red-blue-green dashboard coding. The visual adapter must not enable AutoBar; when the provider is disabled or absent, no rack or placeholder is shown. Avoid fixed bottle illustrations, modern card grids, glass panels, bright continuous gold frames, quality glows, large clasps, glossy PBR leather, dense fibers, tiny photographic scratches, perfect symmetry, stone bases and visual weight that competes with the main action bar. The final atlas must stay readable and subordinate at approximately 29 to 36 physical pixels per live pocket. Before finalizing, verify that the canvas contains exactly four isolated front-facing objects in their assigned cells, every object has at least 80 transparent pixels around it, Cells C and D retain quiet stretchable centers, Cell D rotates cleanly, and no item, category label, fixed grid, dynamic provider state or assembled UI has been painted.
 ```
 
 ### B 的修复边界与预算
@@ -366,13 +381,13 @@ All cells are normal static bases only. The recommended profile instantiates twe
 
 | 实际尝试 | 执行体 | 结果 | 结论 |
 |---:|---|---|---|
-| `0/5` | production draft | 未执行 | 等待模拟确认、正文授权与 Image 1 外部上传授权 |
+| `0/5` | production final | 未执行 | 模拟已确认；等待本执行体正文／五次预算授权与 Image 1 外部上传授权 |
 
 ### `AB.CONSUMABLE.KIT.V1`
 
 | 实际尝试 | 执行体 | 结果 | 结论 |
 |---:|---|---|---|
-| `0/5` | production draft | 未执行 | 等待模拟确认、正文授权与 Image 1 外部上传授权 |
+| `0/5` | production final | 未执行 | 模拟已确认；等待本执行体正文／五次预算授权与 Image 1 外部上传授权 |
 
 流程错误：本地 display contract 曾出现一次 schema 使用错误；没有调用外部
 ImageGen、没有返回生成结果，不进入任一 `0/5` 账本。
@@ -388,6 +403,11 @@ ImageGen、没有返回生成结果，不进入任一 `0/5` 账本。
   均无。
 - 输出：V2 scene `9fe4d159…164d`、provider states `16a90762…f467`、
   layout `a06bde15…779f`、display `3ada8c3f…2f89`。
+- 日期：`2026-08-09`
+- 操作：用户明确确认 `AB-FIELDKIT-SIM-V2`；把八项可见方向冻结进两个最终
+  production body 并重跑正文完整性预检。
+- 外部输入／上传／ImageGen：均为 `0`；未启用 AutoBar、未改变 TrinketMenu
+  SavedVariables、未产生候选／source／runtime／adapter。
 
 ## 审查记录
 
@@ -399,24 +419,25 @@ ImageGen、没有返回生成结果，不进入任一 `0/5` 账本。
   关系成立，三组不使用现代彩色 Dashboard 编码。
 - 对象／状态合同：pass；布局 `72/72`、display `16/16`、violations `0`；
   AutoBar disabled 与 TrinketMenu enabled 状态均保持。
-- 结论：`simulation-reviewed / P2`；允许用户复审 V2 方向，不允许进入 source、
-  runtime 或正式 ImageGen。
+- 结论：`simulation-confirmed / P2`；允许展示两个最终 production body 并请求
+  各自独立授权，不允许直接进入 source、runtime 或正式 ImageGen。
 
 ## 尝试摘要
 
 | 版本 | 证据 | 用户结论 | 下一版必须改变／保持 |
 |---|---|---|---|
 | `AB-FIELDKIT-SIM-V1` | scene `91a596b9…adce`；states `64a39772…5927`；布局 `60/60`；display `15/15` | `consumable revision-requested 2026-08-08`：“消耗品5*2不够用. 并且能否按照类型进行分组?” | 改为足量类别槽并按类型分组；保留真实 AutoBar popup 与 TrinketMenu 合同 |
-| `AB-FIELDKIT-SIM-V2` | scene `9fe4d159…164d`；states `16a90762…f467`；布局 `72/72`；display `16/16` | `pending` | 等待用户判断 `4×6 / 24 类 / 三组` 可见方向；不改变 provider 所有权 |
+| `AB-FIELDKIT-SIM-V2` | scene `9fe4d159…164d`；states `16a90762…f467`；布局 `72/72`；display `16/16` | `confirmed 2026-08-09`：“接受 AB-FIELDKIT-SIM-V2”；只接受文字方向 | 最终正文必须保持八项确认条款、provider 所有权与模拟像素禁用边界 |
 
 ## 下一门禁
 
-1. 向用户展示 `AB-FIELDKIT-SIM-V2` 的战斗场景与 provider 状态板，等待明确
-   接受或修订；确认只冻结文字化可见方向。
-2. 若确认，写回用户结论并把确认条款冻结进两个最终 production body，再重跑
-   prompt completeness。
-3. 之后必须分别取得两个执行体的最终正文／最多五次实际生成授权，并分别取得
+1. 向用户展示 `AB.TRINKET.KIT.V1` 与 `AB.CONSUMABLE.KIT.V1` 的最终执行正文、
+   不可变／可修复边界和各自 `0/5` 预算，等待分别授权。
+2. 必须分别取得两个执行体的最终正文／最多五次实际生成授权，并分别取得
    Character V3 作为其 Image 1 上传到外部 ImageGen 的明确授权。不得复用
    `AB.SLOT.BASE.V1` 或 `AB.RAIL.V1` 的任何旧授权。
-4. 两项授权未齐全前，不调用固定 ImageGen `0.143.0`，不产生候选，不接入
+3. 某一执行体的正文授权与该执行体 Image 1 上传授权都齐全后，先把
+   `prompt-authorized / P3` 状态提交，再只为该执行体启动最多五次固定执行器
+   自主生成／修复循环；另一执行体仍保持 `0/5`。
+4. 对应授权未齐全前，不调用固定 ImageGen `0.143.0`，不产生候选，不接入
    addon，不启用 AutoBar，也不改变 TrinketMenu SavedVariables。
