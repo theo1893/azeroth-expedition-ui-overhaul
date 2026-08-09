@@ -280,18 +280,19 @@ def main() -> None:
         encoding="utf-8-sig"
     )
     assert "## RequiredDeps: pfUI" in aeui_toc
-    assert "## Version: 0.8.5" in aeui_toc
+    assert "## Version: 0.8.6" in aeui_toc
     assert "Core\\Bootstrap.lua" in aeui_toc
     assert "Modules\\ActionBars.lua" in aeui_toc
     assert "Modules\\Chat.lua" in aeui_toc
     assert "Modules\\QuestVisualTheme.lua" in aeui_toc
     assert "Modules\\Quests.lua" in aeui_toc
     bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(encoding="utf-8")
-    assert 'addon.version = "0.8.5"' in bootstrap
+    assert 'addon.version = "0.8.6"' in bootstrap
     assert "actionbar-runtime=" in bootstrap
     assert 'if command == "actionbars" then' in bootstrap
     assert '/aeui autobar [open|apply|restore|popup]' in bootstrap
     assert '/aeui fieldkit [bind|unbind|home|status]' in bootstrap
+    assert '/aeui focuslayout [apply|status]' in bootstrap
     assert "ApplyRecommendedAutoBarProfile" in bootstrap
     assert "RestoreAutoBarProfile" in bootstrap
     assert "chat-runtime=" in bootstrap
@@ -322,6 +323,25 @@ def main() -> None:
     assert "button:SetWidth" not in actionbars_source
     assert "button:SetHeight" not in actionbars_source
     assert 'ActionBars.fieldKitRuntimeContract = "1.5"' in actionbars_source
+    assert 'ActionBars.focusLayoutRuntimeContract = "1.0"' in actionbars_source
+    assert "ApplyCombatFocusLayoutPreset" in actionbars_source
+    assert 'config.width = "280"' in actionbars_source
+    assert 'config.height = "72"' in actionbars_source
+    assert 'config.buffperrow = "6"' in actionbars_source
+    assert 'config.debuffperrow = "6"' in actionbars_source
+    assert 'config.width = "-1"' in actionbars_source
+    assert 'config.height = "22"' in actionbars_source
+    assert 'unitframes.swingtimerwidth = "200"' in actionbars_source
+    assert 'unitframes.swingtimerheight = "12"' in actionbars_source
+    focus_layout_source = actionbars_source.split(
+        "function ActionBars:ApplyCombatFocusLayoutPreset()", 1
+    )[1].split("local function FrameCoordinatePixels", 1)[0]
+    focus_position_source = actionbars_source.split(
+        "local function ApplyFramePosition", 1
+    )[1].split("local function ConfigureFocusUnitFrame", 1)[0]
+    assert "SetAlpha" not in focus_layout_source
+    assert 'SetScript("OnUpdate"' not in focus_layout_source
+    assert "SetParent" not in focus_position_source
     assert '"ActionBars\\\\ActionTrinketKitV1"' in actionbars_source
     assert '"ActionBars\\\\ActionConsumableKitV1"' in actionbars_source
     assert "ApplyAutoBarFieldKit" in actionbars_source

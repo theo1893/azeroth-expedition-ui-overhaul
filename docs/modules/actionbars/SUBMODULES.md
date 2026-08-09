@@ -95,17 +95,18 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 
 ## 战斗焦点邻接对象
 
-这些对象加入同一推荐布局，但逻辑所有权不转移给动作条 adapter；任何视觉接管
-都必须以后按对象独立授权并 feature-detect，失败时保留 provider 原样。
+这些对象加入同一推荐布局，但逻辑所有权不转移给动作条 adapter。AEUI `0.8.6`
+只提供 `/aeui focuslayout apply` 一次性位置 preset；任何视觉接管仍须以后按对象
+独立授权并 feature-detect，失败时保留 provider 原样。
 
 | ID | provider／真实对象 | 合同 |
 |---|---|---|
-| `AB.FOCUS.CASTBAR.PLAYER` | `pfPlayerCastbar` | 推荐紧贴玩家框下方并继承其宽度；保留法术图标、名称、计时与玩家延迟区；独立可移动 |
-| `AB.FOCUS.CASTBAR.TARGET` | `pfTargetCastbar` | 推荐紧贴目标框下方并继承其宽度；保留可打断／不可打断与目标施法信息；独立可移动 |
+| `AB.FOCUS.CASTBAR.PLAYER` | `pfPlayerCastbar` | preset 紧贴玩家框下方并继承其 `280 UI` 宽度；保留法术图标、名称、计时与玩家延迟区；应用后仍可独立移动 |
+| `AB.FOCUS.CASTBAR.TARGET` | `pfTargetCastbar` | preset 紧贴目标框下方并继承其 `280 UI` 宽度；保留可打断／不可打断与目标施法信息；应用后仍可独立移动 |
 | `AB.FOCUS.CASTBAR.FOCUS` | 可选 `pfFocusCastbar` | 继续跟随 Focus Frame，默认不进入中央玩家／目标双框；对象不存在时无占位 |
 | `AB.FOCUS.SWING.MELEE` | `pfSwingTimerMainhand`＋`pfSwingTimerOffhand` | `200×12 UI` 双细轨居中上下排列；副手仍跟随主手；文字、攻速与 Marker 动态 |
 | `AB.FOCUS.SWING.RANGED` | `pfSwingTimerRanged` | 复用同一中心计时层，不与近战双条组成第三条常驻栏；范围提示仍由 provider 管理 |
-| `AB.DOITEDPS.TIMELINE` | 可选 `DoiteDPSMainFrame` 及子 Frame | 保留原生 `318×46 UI` 比例、独立拖动／缩放／锁定／显隐与蓝绿状态语义；只允许一次性位置 preset 和以后可选的低重量外缘 |
+| `AB.DOITEDPS.TIMELINE` | 可选 `DoiteDPSMainFrame` 及子 Frame | 保留原生 `318×46 UI` 比例、独立拖动／缩放／锁定／显隐与蓝绿状态语义；preset 只写 point／x／y，锁定态继续由 provider 关闭鼠标，以后可选低重量外缘 |
 
 ## 消耗品卷袋
 
@@ -199,9 +200,11 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
 - 当前“大奶黑牛”已按该合同写入 `pfActionBarMain x=0／y=258／scale=1.2`、
   `pfActionBarTop x=0／y=291／scale=1.2`，TrinketMenu 主栏为 `HORIZONTAL`；启动或
   `/reload` 后由 v1.5 收敛为左卷袋—中央 `12×2`—右双槽。
-- `战斗视线邻接`：Player／Target 继续由 pfUI UnitFrame provider 所有；推荐
-  preset 仅一次性把两者置于同一基线并收拢到目标设备 `80 px` 内缘间距，
-  不由 Action Bars adapter 重画、重挂 Parent 或在维护循环中持续改位置。
+- `战斗视线邻接`：Player／Target 继续由 pfUI UnitFrame provider 所有；AEUI
+  `0.8.6` 的 `/aeui focuslayout apply` 仅一次性把两者置于同一基线并收拢到目标
+  设备 `80 px` 内缘间距。pfUI movable 不保存 relativePoint，因此用等价的
+  `BOTTOM x=-196／196, y=468, scale=1.05` 持久化；双方 Aura 从外肩
+  `TOPLEFT／TOPRIGHT` 每行 `6` 个展开。adapter 不重画，不在维护循环中持续改位置。
 - `战斗信息纵栈`：目标设备物理顺序为 DoiteDPS `y=514–551`、近战攻击计时
   `570–593`、双方外肩 Aura `612–631`、Player／Target `639–700`、双施法条
   `708–728`、姿态 `y=744`、副栏 `y=783`、主栏 `y=827`。远程攻击计时复用
@@ -210,6 +213,10 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   隐藏，逻辑按钮数与分页不变。
 - `自由侧栏`：Bar 3／4／5 可保持 `4×3`、`6×2` 或竖排并独立移动；不因采用
   推荐预设而失去现有布局。
+- `透明度与命中`：玩家／目标状态、双方施法、攻击计时、DoiteDPS 与技能 CD
+  使用 provider 原生 Alpha，不做整组淡出；只允许非核心辅助栏按用户设置脱战
+  淡出。Rail、连接片、卷袋、护套和标题等装饰层全部鼠标穿透，DoiteDPS 锁定态
+  沿用 provider 的根 Frame 鼠标穿透；不增加覆盖中央视野的大型透明 Frame。
 - `home` 预设只在用户明确执行时写入一次。默认读取并尊重现有 profile、主栏位置、
   scale、按钮数、行列、自动隐藏和空槽设置；V3 继续默认关闭狮鹫，unlock 时
   仍可为足够宽的水平主栏单独开启。DoiteDPS 的锁定／战斗显隐／Forecast／资源／

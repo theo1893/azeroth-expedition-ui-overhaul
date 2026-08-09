@@ -3,7 +3,7 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 
 addon.name = "AzerothExpeditionUI"
-addon.version = "0.8.5"
+addon.version = "0.8.6"
 addon.modules = addon.modules or {}
 addon.media = addon.media or {}
 addon.media.root = "Interface\\AddOns\\AzerothExpeditionUI\\Media\\"
@@ -16,6 +16,7 @@ local defaults = {
     fieldKitBound = true,
     consumableDocked = true,
     trinketDocked = true,
+    combatFocusLayoutVersion = 0,
   },
   chat = {
     enabled = true,
@@ -220,6 +221,26 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
     else
       addon:Print("/aeui fieldkit [bind|unbind|home|status]")
     end
+  elseif string.find(command, "^focuslayout") or
+    string.find(command, "^combatlayout")
+  then
+    local _, _, subcommand = string.find(command, "^%S+%s*(.*)$")
+    local module = addon.modules.ActionBars
+    if not module then
+      addon:Print("ActionBars module is unavailable.")
+    elseif subcommand == "" or subcommand == "apply" or
+      subcommand == "home" or subcommand == "reset"
+    then
+      local ok, result = module:ApplyCombatFocusLayoutPreset()
+      addon:Print(result)
+      if ok then
+        addon:ScheduleRefresh(0)
+      end
+    elseif subcommand == "status" then
+      addon:Print(module:GetRuntimeStatus())
+    else
+      addon:Print("/aeui focuslayout [apply|status]")
+    end
   elseif command == "chat" then
     AzerothExpeditionUIDB.chat.enabled =
       not AzerothExpeditionUIDB.chat.enabled
@@ -303,7 +324,7 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
     end
   else
     addon:Print(
-      "/aeui actionbars, /aeui autobar [open|apply|restore|popup], /aeui fieldkit [bind|unbind|home|status], /aeui chat, /aeui quests, /aeui refresh, /aeui status"
+      "/aeui actionbars, /aeui autobar [open|apply|restore|popup], /aeui fieldkit [bind|unbind|home|status], /aeui focuslayout [apply|status], /aeui chat, /aeui quests, /aeui refresh, /aeui status"
     )
   end
 end

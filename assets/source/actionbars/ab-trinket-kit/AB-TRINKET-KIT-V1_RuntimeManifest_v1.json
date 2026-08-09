@@ -490,14 +490,14 @@
   },
   "deterministic_export": {
     "exporter": "tools/build_action_fieldkit_v1_runtime.py",
-    "exporter_sha256": "069291503385c695f7f03eb9926c5426d2e99bb9aa3e4d4cd76b31f92d4e7e3e",
+    "exporter_sha256": "c94f6d983550d492e98fcb95c28cfc6636abbb602861ccfab8f3b5f7e154e596",
     "expected_runtime_pixel_sha256": "0961d750d7436665a333d948ba010a212c5de6f87c51ab59a10ed8af86ac4aef",
     "imagegen_calls_after_acceptance": 0,
     "attempt_6_allowed": false
   },
   "adapter": {
     "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
-    "sha256": "a49c34d1e52b55b6372889e39ce1296dfce81ebb61eac609271016c0035e047f",
+    "sha256": "379962c1e6cb3d5feb0438c4bd086ff5c552705e6d145751c01c14780f9e3798",
     "provider": "TrinketMenu 3.3 existing main/menu frames and 2+30 buttons",
     "visual_layers_only": false,
     "visual_and_layout_adapter": true,
@@ -522,13 +522,13 @@
   "addon_entrypoints": {
     "bootstrap": {
       "file": "addon/AzerothExpeditionUI/Core/Bootstrap.lua",
-      "sha256": "e9b92ae75d655b28099658985586428a88e0a468728ccedd510ac2c1cea8ef8f"
+      "sha256": "32f7048b84d7d6aa3512bdea5f3ffbfb2cfc348060d4d03cf98a55b80c99ebdd"
     },
     "toc": {
       "file": "addon/AzerothExpeditionUI/AzerothExpeditionUI.toc",
-      "sha256": "eb6681418c9f764b1f488067898e9fbf563b234431c700e62fb0d8772e89cef4"
+      "sha256": "c693a10743b0336712d3e39be0ca25a6b57fb70cb45373eeb394e81e2b9c9635"
     },
-    "addon_version": "0.8.5",
+    "addon_version": "0.8.6",
     "required_dependency": "pfUI",
     "optional_provider": "TrinketMenu"
   },

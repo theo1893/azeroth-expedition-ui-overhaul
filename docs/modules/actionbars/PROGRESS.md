@@ -16,6 +16,25 @@
 - 目标客户端为 `1920×1080`、UI Scale `0.81269841269841`；当前使用习惯是
   两条 `12×1` 与若干 `4×3` 辅助栏。V3 沿用主栏外框
   `[713,827,1207,870]`，底边净空 `210 px`；玩家／目标框内缘间距 `80 px`。
+- 用户于 `2026-08-09` 明确要求本期先完成玩家／目标、施法、攻击计时、
+  DoiteDPS 等战斗框架的位置摆放，后期再分别重绘。AEUI `0.8.6` 新增
+  `focus-layout-contract=1.0` 与显式一次性命令 `/aeui focuslayout apply`：在目标
+  设备上把 Player／Target 保存为 `BOTTOM x=-196／196, y=468, scale=1.05`、
+  `280×72 UI`，双方 Aura 分别从外肩 `TOPLEFT／TOPRIGHT` 以每行 `6` 个展开；
+  双施法条保存为同 `x`、`y=433`、`280×22 UI`，Swing 主手／ranged 共用
+  `CENTER x=0, y=-43` 的 `200×12 UI` 层，副手继续跟随主手；姿态栏保存为
+  `TOP x=0, y=-915`。DoiteDPS 只更新 `TOPLEFT x=1022.5195,
+  y=-632.4609`，保留启用、锁定、战斗显隐、Forecast、资源、冷却和 scale；
+  Focus Castbar 继续跟随 Focus Frame。当前“大奶黑牛”SavedVariables 已写入
+  这些等价 pfUI movable 坐标；`saved` 状态按当前角色 pfUI 坐标签名判定，不用
+  账号级版本标记冒充其他角色已应用。代码只在显式命令时重放，不使用维护循环，
+  也不重绘任何像素，本次 ImageGen `0`。
+- 透明度与输入合同同时冻结：关键单位状态、施法、攻击计时、DoiteDPS 与技能
+  CD 不做整组淡化，继续使用各 provider 原生半透明背景；只允许非核心辅助栏按
+  用户设置脱战淡出。AEUI Rail、连接片、口袋／护套等纯装饰 Frame 必须
+  `EnableMouse(false)`，DoiteDPS 锁定态继续由 provider 关闭根 Frame 鼠标；不创建
+  覆盖中央视野的大型透明命中层，只有可见 Button、单位框和确有用途的 AutoBar
+  联合悬停通道接收鼠标。
 - pfUI 施法条与 SwingTimer 已按真实对象审计：玩家／目标／Focus Castbar 均可
   独立移动；攻击条为 `200×12 UI` 主手、随主手锚定副手及独立 ranged。V3
   双施法条物理 `239×20 px`，近战双计时物理 `163×10 px`。
@@ -85,7 +104,7 @@
   “接受 AB.SLOT.BASE.V1 第5稿”，随后以“进行下一步”授权 P4→P5。exact source
   RGBA `6d4a4d16…7dc0` 已按冻结 `[200,200,824,824)` crop 确定性导出为
   `128×128` 32-bit TGA `ActionSlotBaseV1.tga`，SHA `5c49a1db…23ca`，像素 SHA
-  `e527c038…c35c` 与已验收 attempt 5 runtime review 完全一致。当前 AEUI `0.8.5`
+  `e527c038…c35c` 与已验收 attempt 5 runtime review 完全一致。当前 AEUI `0.8.6`
   的 `ActionBars` adapter 只在现有 pfUI Bar `1–10` 的逐按钮 `backdrop` 上创建
   full-UV 子纹理；Bar `11／12`、按钮逻辑、动态图标／文字／状态、命中区、分页、
   拖放、位置、scale 与 SavedVariables 均未接管。五种最终排版 `5/5 pass`、
@@ -200,9 +219,9 @@
 | `AB.CONSUMABLE.GROUP` | `P5 / runtime-v1.5 / pending-retest / 1/5` | 精确 `24 Button / 4×6 / 推荐 profile` 才显示三组、启用 external drawer、hover bridge 与 popup switch intent guard；`/aeui autobar apply／restore` 仍为当前角色备份式显式配置，普通刷新只读且不启用 provider | 实机确认“应急／增益／工具”、绑定态向左展开、跨格保持、停留切换、手动数字 item ID、非 exact profile 原生回退 |
 | `AB.TRINKET.DOCK` | `P5 / runtime-v1.5 / pending-retest / 4/5` | [source](../../../assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；TGA `3614d9a8…f455`、像素 `0961d750…aef` 不变；v1.5 在主栏右侧 `16 UI` 强绑定，当前角色一次性改为水平双槽；Queue／换装／候选不变 | `/reload` 验证双槽位于主栏右端、拖动松手回位、候选向外、横／竖／scale 与 Queue 行为保持；不执行 attempt 5 |
 | `AB.TRINKET.MENU` | `P5 / runtime-v1.5 / pending-retest / 4/5` | C 九宫格与 B 候选插页像素不变；候选 `0／1／8／30` display `9/9 pass`、换装与动态层仍归 provider；v1.5 只改变主栏位置归属，不替代 TrinketMenu 行为 | 实机验证候选图标、左右键换槽、Queue、菜单向右外展、独立 scale／方向及 provider 缺失 fail-open |
-| `AB.FOCUS.CASTBAR` | `P2 / direction-locked` | 玩家／目标／Focus 真实对象与用户确认的 V3 双框下沿实例 | 以后独立决定只做一次性布局 preset 或另授权细 Rail 换肤 |
-| `AB.FOCUS.SWING` | `P2 / direction-locked` | 主手／副手／ranged 真对象、`200×12 UI` 与用户确认的中心双细轨 | 实机验证近战／远程复用；若换肤则另立合同 |
-| `AB.DOITEDPS.TIMELINE` | `P2 / direction-locked` | 已安装 provider 的 `318×46 UI` 根 Frame及用户确认的中心落位 | 以后只做 feature-detect 一次性位置 preset 或独立换肤合同 |
+| `AB.FOCUS.CASTBAR` | `P5 / layout-v1.0 / pending-game-validation` | 玩家／目标／Focus 真实对象；AEUI `0.8.6` 一次性 preset 已把玩家／目标双条放到各自单位框下沿，Focus 仍跟随自身 Frame；尺寸、状态和动态层不重绘 | 实机验证位置、玩家延迟区、目标可打断状态、独立移动与 provider 缺失 fail-open；换肤另立合同 |
+| `AB.FOCUS.SWING` | `P5 / layout-v1.0 / pending-game-validation` | 主手／副手／ranged 真对象；一次性 preset 已写入中心 `200×12 UI` 复用层，副手仍锚到主手；无维护循环 | 实机验证近战双条、远程复用、攻速变化与中央视野；若换肤则另立合同 |
+| `AB.DOITEDPS.TIMELINE` | `P5 / layout-v1.0 / pending-game-validation` | 已安装 provider 的 `318×46 UI` 根 Frame；一次性 preset 已中心落位，只写 point／x／y，保留 scale、启用、锁定、战斗显隐、Forecast、资源和冷却 | 实机验证位置、锁定态鼠标穿透、显隐与 provider 缺失 fail-open；换肤另立合同 |
 | `AB.MOVER／CONFIG` | `P1` | pfUI `UpdateMovable` 与 unlock 已审计 | 设计只在 unlock 出现的把手和一次性预设入口 |
 
 ## 当前方向预演
@@ -363,8 +382,19 @@
    Bar 6、左 `4×6` 卷袋与右水平双槽整体跟随，仍不改 accepted art／TGA 像素、
    物品使用或候选顺序；P4→当前
    ImageGen `0`，原循环仍止于 `4/5` 与 `1/5`。
-3. 下一门禁是 Turtle WoW P6 复测：启动游戏或 `/reload` 后先确认 `/aeui status` 含
-   `version 0.8.5`、`fieldkit-contract=1.5`、`fieldkit-binding=bound` 与
+3. 新增位置层的下一门禁是 Turtle WoW 实机验证：启动游戏或 `/reload` 后先确认
+   `/aeui status` 含 `version 0.8.6`、`focus-layout-contract=1.0`、
+   `focus-layout=saved` 与 `focus-layout-mouse=visible-controls-only`。确认物理纵栈为
+   DoiteDPS `y=514–551`、攻击计时 `570–593`、双方外肩 Aura `612–631`、
+   Player／Target `639–700`、双施法条 `708–728`、姿态 `y=744`、副栏
+   `y=783`、主栏 `y=827`；玩家／目标内缘保持 `80 px`。分别观察满血／掉血、
+   有／无目标、双方施法、近战双持、远程计时、Aura 超过 `6` 个和 DoiteDPS
+   锁定／解锁，确认重要状态保持可读，装饰空白不拦截世界点击，中央没有大型透明
+   命中层。若手工移动后需要恢复，只执行一次 `/aeui focuslayout apply`；普通刷新
+   不持续改位置。通过前这组位置层保持 `P5 / pending-game-validation`，且不进入
+   UI 重绘。
+4. Field Kit 的同轮 P6 复测先确认 `/aeui status` 含
+   `fieldkit-contract=1.5`、`fieldkit-binding=bound` 与
    `actionbar-stack=12x2-bound`。先确认主栏已从底边上移到中心中下，构图为
    “左侧 `4×6` 消耗品—中央 `12×2` 动作条—右侧水平双饰品”，三者底边对齐；用
    pfUI unlock 拖动 Bar 1 时整体跟随，拖动任一 provider 松手必须回位，`unbind`
@@ -380,19 +410,19 @@
    `0／1／8／30` 候选、左右键换槽、Queue、八向停靠。`/aeui actionbars` 关闭应
    恢复 provider 原生视觉。普通刷新不得写 profile；任何命令都不得启用 AutoBar、
    在普通刷新中修改 TrinketMenu 方向／Queue SavedVariables 或接管动态图标／行为。
-4. `AB.RAIL.V1` 已达到 `game-validated / P6`。长期证据为
+5. `AB.RAIL.V1` 已达到 `game-validated / P6`。长期证据为
    `assets/references/actionbars/p6/AB-RAIL-V1_TurtleWoW_P6_2026-08-09.png`
    （SHA `5e89c6e5…12942`）与同目录 P6 evidence JSON（SHA
    `2d48b8fb…0be3`）；静态截图与用户对完整六项交互／布局清单的确认范围保持
    分离。Rail runtime TGA、display、功能合同与 P6 证据均未改变；manifest 只同步
-   共享 AEUI `0.8.5` adapter／bootstrap／TOC 哈希，P5→P6 ImageGen `0`。
-5. Rail 若要进入 `P6-C`，必须先在现存 work 中形成组件专属的精确 keep／delete
+   共享 AEUI `0.8.6` adapter／bootstrap／TOC 哈希，P5→P6 ImageGen `0`。
+6. Rail 若要进入 `P6-C`，必须先在现存 work 中形成组件专属的精确 keep／delete
    inventory，排除共享 `ActionBars.lua`、Character V3 锁定基准及其他未完成
    Action Bars 组件依赖，并向用户展示、取得明确批准；当前不清理 ignored
    `generated`、work、失败候选或回退证据。
-6. `AB.SLOT` 若要进入 `P6-C`，必须先在现存 work 中向用户展示精确保留／删除
+7. `AB.SLOT` 若要进入 `P6-C`，必须先在现存 work 中向用户展示精确保留／删除
    inventory 并取得明确批准；当前不得清理该组件的 ignored `generated`、work
    或其他专属中间证据。
-7. `AB.SLOT.STATE` 与狮鹫继续各自形成独立合同并逐批授权。Bar `1–10` scoped
+8. `AB.SLOT.STATE` 与狮鹫继续各自形成独立合同并逐批授权。Bar `1–10` scoped
    visual adapter 不改变 pfUI 功能所有权；未登记 Bar 与第三方 provider 始终
    fail-open。

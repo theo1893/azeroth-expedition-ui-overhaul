@@ -14,6 +14,8 @@ ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
 ActionBars.fieldKitRuntimeContract = "1.5"
+ActionBars.focusLayoutRuntimeContract = "1.0"
+ActionBars.focusLayoutVersion = 1
 ActionBars.trinketKitTexturePath =
   addon.media.root .. "ActionBars\\ActionTrinketKitV1"
 ActionBars.consumableKitTexturePath =
@@ -29,6 +31,18 @@ ActionBars.popupDrawerGap = 6
 ActionBars.popupDrawerMaxRows = 6
 ActionBars.popupIntentDelay = 0.30
 ActionBars.popupIntentEvent = "AEUI_AutoBarPopupIntent"
+
+-- ACTION-BARS-CORE-SIM-V3 is a 1920x1080 composition.  Store its anchors as
+-- UIParent ratios so the one-shot preset retains the same composition when a
+-- user keeps the 16:9 layout but changes resolution.  No maintenance loop
+-- rewrites these positions after the preset has been applied.
+ActionBars.focusUnitCenterOffsetRatio = 159.5 / 1920
+ActionBars.focusUnitBottomRatio = 380 / 1080
+ActionBars.focusCastBottomRatio = 352 / 1080
+ActionBars.focusSwingCenterYOffsetRatio = -35 / 1080
+ActionBars.focusStanceTopRatio = 744 / 1080
+ActionBars.focusDoiteLeftRatio = 831 / 1920
+ActionBars.focusDoiteTopRatio = 514 / 1080
 
 local railSliceOrder = {
   "topLeft", "top", "topRight",
@@ -639,6 +653,293 @@ local function GetTopActionBarFrame()
     return pfUI.bars[6]
   end
   return GetGlobal("pfActionBarTop")
+end
+
+local function RoundCoordinate(value)
+  if value < 0 then
+    return math.ceil(value - 0.5)
+  end
+  return math.floor(value + 0.5)
+end
+
+local function SavePfUIPosition(name, anchor, x, y, scale)
+  if not pfUI_config then
+    return false
+  end
+  if type(pfUI_config.position) ~= "table" then
+    pfUI_config.position = {}
+  end
+  local position = pfUI_config.position[name] or {}
+  pfUI_config.position[name] = position
+  position.xpos = RoundCoordinate(x)
+  position.ypos = RoundCoordinate(y)
+  position.anchor = anchor
+  position.parent = "UIParent"
+  if scale then
+    position.scale = scale
+  end
+  return true
+end
+
+local function FocusPositionMatches(name, anchor, x, y, scale)
+  local positions = pfUI_config and pfUI_config.position
+  local position = positions and positions[name]
+  if type(position) ~= "table" then
+    return false
+  end
+  return position.anchor == anchor and position.parent == "UIParent" and
+    math.abs((tonumber(position.xpos) or 100000) - x) <= 1 and
+    math.abs((tonumber(position.ypos) or 100000) - y) <= 1 and
+    math.abs((tonumber(position.scale) or 100000) - scale) <= 0.001
+end
+
+local function CombatFocusLayoutSaved()
+  if not UIParent or not UIParent.GetWidth or not UIParent.GetHeight or
+    not pfUI_config
+  then
+    return false
+  end
+  local width = UIParent:GetWidth()
+  local height = UIParent:GetHeight()
+  local unitX = RoundCoordinate(
+    width * ActionBars.focusUnitCenterOffsetRatio
+  )
+  local unitY = RoundCoordinate(height * ActionBars.focusUnitBottomRatio)
+  local castY = RoundCoordinate(height * ActionBars.focusCastBottomRatio)
+  local swingY = RoundCoordinate(
+    height * ActionBars.focusSwingCenterYOffsetRatio
+  )
+  local stanceY = RoundCoordinate(
+    -height * ActionBars.focusStanceTopRatio
+  )
+  local unitframes = pfUI_config.unitframes or {}
+  local castbars = pfUI_config.castbar or {}
+  local player = unitframes.player or {}
+  local target = unitframes.target or {}
+  local playerCast = castbars.player or {}
+  local targetCast = castbars.target or {}
+
+  return FocusPositionMatches(
+      "pfPlayer", "BOTTOM", -unitX, unitY, 1.05
+    ) and FocusPositionMatches(
+      "pfTarget", "BOTTOM", unitX, unitY, 1.05
+    ) and FocusPositionMatches(
+      "pfPlayerCastbar", "BOTTOM", -unitX, castY, 1.05
+    ) and FocusPositionMatches(
+      "pfTargetCastbar", "BOTTOM", unitX, castY, 1.05
+    ) and FocusPositionMatches(
+      "pfSwingTimerMainhand", "CENTER", 0, swingY, 1
+    ) and FocusPositionMatches(
+      "pfSwingTimerRanged", "CENTER", 0, swingY, 1
+    ) and FocusPositionMatches(
+      "pfActionBarStances", "TOP", 0, stanceY, 1
+    ) and player.width == "280" and player.height == "72" and
+    player.buffs == "TOPLEFT" and player.debuffs == "TOPRIGHT" and
+    player.buffperrow == "6" and player.debuffperrow == "6" and
+    target.width == "280" and target.height == "72" and
+    target.buffs == "TOPLEFT" and target.debuffs == "TOPRIGHT" and
+    target.buffperrow == "6" and target.debuffperrow == "6" and
+    playerCast.width == "-1" and playerCast.height == "22" and
+    targetCast.width == "-1" and targetCast.height == "22" and
+    unitframes.swingtimerwidth == "200" and
+    unitframes.swingtimerheight == "12"
+end
+
+local function ApplyFramePosition(frame, anchor, x, y, scale)
+  if not frame or not UIParent or not frame.ClearAllPoints or
+    not frame.SetPoint
+  then
+    return false
+  end
+  if scale and frame.SetScale then
+    frame:SetScale(scale)
+  end
+  frame:ClearAllPoints()
+  frame:SetPoint(
+    anchor, UIParent, anchor,
+    RoundCoordinate(x), RoundCoordinate(y)
+  )
+  return true
+end
+
+local function ConfigureFocusUnitFrame(key, name, x, y)
+  local unitframes = pfUI_config and pfUI_config.unitframes
+  local config = unitframes and unitframes[key]
+  if type(config) ~= "table" then
+    return false, false
+  end
+
+  config.width = "280"
+  config.height = "72"
+  config.buffs = "TOPLEFT"
+  config.debuffs = "TOPRIGHT"
+  config.buffperrow = "6"
+  config.debuffperrow = "6"
+
+  SavePfUIPosition(name, "BOTTOM", x, y, 1.05)
+  local frame = pfUI and pfUI.uf and pfUI.uf[key] or GetGlobal(name)
+  if frame and type(frame.UpdateConfig) == "function" then
+    pcall(frame.UpdateConfig, frame)
+  elseif frame and type(frame.UpdateFrameSize) == "function" then
+    pcall(frame.UpdateFrameSize, frame)
+  end
+  return true, ApplyFramePosition(frame, "BOTTOM", x, y, 1.05)
+end
+
+local function ConfigureFocusCastBar(key, name, x, y)
+  local castbars = pfUI_config and pfUI_config.castbar
+  local config = castbars and castbars[key]
+  if type(config) ~= "table" then
+    return false, false
+  end
+  config.width = "-1"
+  config.height = "22"
+  SavePfUIPosition(name, "BOTTOM", x, y, 1.05)
+
+  local frame = pfUI and pfUI.castbar and pfUI.castbar[key] or
+    GetGlobal(name)
+  if frame and frame.SetWidth then
+    frame:SetWidth(280)
+  end
+  if frame and frame.SetHeight then
+    frame:SetHeight(22)
+  end
+  return true, ApplyFramePosition(frame, "BOTTOM", x, y, 1.05)
+end
+
+local function ConfigureFocusSwingTimers(y)
+  local unitframes = pfUI_config and pfUI_config.unitframes
+  if type(unitframes) ~= "table" then
+    return 0, 0
+  end
+  unitframes.swingtimerwidth = "200"
+  unitframes.swingtimerheight = "12"
+
+  local main = pfUI and pfUI.swingtimer and pfUI.swingtimer.mainhand or
+    GetGlobal("pfSwingTimerMainhand")
+  local offhand = pfUI and pfUI.swingtimer and pfUI.swingtimer.offhand or
+    GetGlobal("pfSwingTimerOffhand")
+  local ranged = pfUI and pfUI.swingtimer and pfUI.swingtimer.ranged or
+    GetGlobal("pfSwingTimerRanged")
+  local frames = { main, ranged }
+  local names = { "pfSwingTimerMainhand", "pfSwingTimerRanged" }
+  local visible = 0
+  for index = 1, 2 do
+    local frame = frames[index]
+    SavePfUIPosition(names[index], "CENTER", 0, y, 1)
+    if frame then
+      if frame.SetWidth then frame:SetWidth(200) end
+      if frame.SetHeight then frame:SetHeight(12) end
+      if ApplyFramePosition(frame, "CENTER", 0, y, 1) then
+        visible = visible + 1
+      end
+    end
+  end
+  if offhand then
+    if offhand.SetWidth then offhand:SetWidth(200) end
+    if offhand.SetHeight then offhand:SetHeight(12) end
+    if main and offhand.ClearAllPoints and offhand.SetPoint then
+      offhand:ClearAllPoints()
+      offhand:SetPoint("TOP", main, "BOTTOM", 0, -4)
+    end
+  end
+  return 2, visible
+end
+
+local function ConfigureFocusDoiteDPS(width, height)
+  if type(DoiteDPSDB) ~= "table" then
+    return false, false
+  end
+  local x = width * ActionBars.focusDoiteLeftRatio
+  local y = -height * ActionBars.focusDoiteTopRatio
+  DoiteDPSDB.point = "TOPLEFT"
+  DoiteDPSDB.relativePoint = "TOPLEFT"
+  DoiteDPSDB.x = x
+  DoiteDPSDB.y = y
+
+  local frame = GetGlobal("DoiteDPSMainFrame")
+  return true, ApplyFramePosition(
+    frame, "TOPLEFT", x, y, DoiteDPSDB.scale or 1
+  )
+end
+
+function ActionBars:ApplyCombatFocusLayoutPreset()
+  if type(InCombatLockdown) == "function" and InCombatLockdown() then
+    self.focusLayoutStatus = "combat-locked"
+    return false, "Leave combat before applying the Combat Focus layout."
+  end
+  if not UIParent or not UIParent.GetWidth or not UIParent.GetHeight or
+    not pfUI_config
+  then
+    self.focusLayoutStatus = "unavailable"
+    return false, "UIParent or the pfUI character profile is unavailable."
+  end
+
+  local width = UIParent:GetWidth()
+  local height = UIParent:GetHeight()
+  local unitX = width * self.focusUnitCenterOffsetRatio
+  local unitY = height * self.focusUnitBottomRatio
+  local castY = height * self.focusCastBottomRatio
+  local swingY = height * self.focusSwingCenterYOffsetRatio
+  local stanceY = -height * self.focusStanceTopRatio
+  local configured = 0
+  local live = 0
+
+  local saved, applied = ConfigureFocusUnitFrame(
+    "player", "pfPlayer", -unitX, unitY
+  )
+  configured = configured + (saved and 1 or 0)
+  live = live + (applied and 1 or 0)
+  saved, applied = ConfigureFocusUnitFrame(
+    "target", "pfTarget", unitX, unitY
+  )
+  configured = configured + (saved and 1 or 0)
+  live = live + (applied and 1 or 0)
+
+  saved, applied = ConfigureFocusCastBar(
+    "player", "pfPlayerCastbar", -unitX, castY
+  )
+  configured = configured + (saved and 1 or 0)
+  live = live + (applied and 1 or 0)
+  saved, applied = ConfigureFocusCastBar(
+    "target", "pfTargetCastbar", unitX, castY
+  )
+  configured = configured + (saved and 1 or 0)
+  live = live + (applied and 1 or 0)
+
+  local swingConfigured, swingLive = ConfigureFocusSwingTimers(swingY)
+  configured = configured + swingConfigured
+  live = live + swingLive
+
+  SavePfUIPosition("pfActionBarStances", "TOP", 0, stanceY, 1)
+  if ApplyFramePosition(
+    GetGlobal("pfActionBarStances"), "TOP", 0, stanceY, 1
+  ) then
+    live = live + 1
+  end
+  configured = configured + 1
+
+  local doiteSaved, doiteApplied = ConfigureFocusDoiteDPS(width, height)
+  configured = configured + (doiteSaved and 1 or 0)
+  live = live + (doiteApplied and 1 or 0)
+
+  local deckApplied = self:ResetCombatDeckPosition()
+  if deckApplied then
+    configured = configured + 1
+    live = live + 1
+  end
+
+  local database = addon.db and addon.db.actionbars
+  if database then
+    database.combatFocusLayoutVersion = self.focusLayoutVersion
+  end
+  self.focusLayoutConfigured = configured
+  self.focusLayoutLive = live
+  self.focusLayoutDoite = doiteSaved and "preserved" or "missing"
+  self.focusLayoutStatus = "applied"
+  self.focusLayoutMousePolicy = "visible-controls-only"
+  return true,
+    "Combat Focus layout applied: player/target, paired cast bars, swing timers, stance bar, Combat Deck, and detected DoiteDPS. Provider visibility, lock state, and native translucency were preserved."
 end
 
 local function FrameCoordinatePixels(frame, method)
@@ -2148,6 +2449,11 @@ function ActionBars:Initialize()
   self.trinketMenuButtons = 0
   self.trinketJoinerOrientation = "pending"
   self.trinketDockStatus = "pending"
+  self.focusLayoutStatus = CombatFocusLayoutSaved() and "saved" or "ready"
+  self.focusLayoutConfigured = 0
+  self.focusLayoutLive = 0
+  self.focusLayoutDoite = "pending"
+  self.focusLayoutMousePolicy = "visible-controls-only"
 end
 
 function ActionBars:Apply()
@@ -2215,6 +2521,16 @@ function ActionBars:GetRuntimeStatus()
     "contract=" .. tostring(self.runtimeContract) ..
     ",rail-contract=" .. tostring(self.railRuntimeContract) ..
     ",fieldkit-contract=" .. tostring(self.fieldKitRuntimeContract) ..
+    ",focus-layout-contract=" ..
+      tostring(self.focusLayoutRuntimeContract) ..
+    ",focus-layout=" .. tostring(self.focusLayoutStatus or "ready") ..
+    ",focus-layout-configured=" ..
+      tostring(self.focusLayoutConfigured or 0) ..
+    ",focus-layout-live=" .. tostring(self.focusLayoutLive or 0) ..
+    ",focus-layout-doite=" ..
+      tostring(self.focusLayoutDoite or "pending") ..
+    ",focus-layout-mouse=" ..
+      tostring(self.focusLayoutMousePolicy or "visible-controls-only") ..
     ",fieldkit-binding=" ..
       tostring(FieldKitBound() and "bound" or "free") ..
     ",actionbar-stack=" ..

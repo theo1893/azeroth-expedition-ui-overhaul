@@ -940,6 +940,10 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
   guard 与 provider fail-open。Trinket／Consumable display `9/9`、`10/10`，violations
   `0`；fresh-checkout package `pass`。TGA 文件／像素 SHA 仍为
   `3614d9a8…f455／0961d750…aef` 与 `c48f6292…320e／658f826f…e30d`；ImageGen `0`。
+- 后续共享位置层修订把 addon 升到 AEUI `0.8.6`，当前 `ActionBars.lua` adapter
+  SHA 为 `379962c1…9e3798`。该修订只增加显式 Combat Focus 一次性 preset，未改变
+  `fieldkit-contract=1.5`、v1.4 popup guard、Field Kit 几何、provider 行为、source
+  或 TGA；四份 runtime manifest 已同步当前 adapter／bootstrap／TOC 哈希。
 
 ## 审查记录
 
@@ -1053,7 +1057,7 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
 1. 两套 accepted source 与 runtime TGA 像素身份不变；adapter、source／runtime
    manifest 已更新到 `runtime-v1.5 / P5 / pending-retest`。fresh-checkout package
    已通过，目标设备只需拉取并安装 `addon/`，不得再生成、导出或打补丁。
-2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.5`、
+2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.6`、
    `fieldkit-contract=1.5`、`fieldkit-binding=bound` 与 `actionbar-stack=12x2-bound`。
    先确认左 `4×6` 卷袋—中央 `12×2` 动作条—右水平双槽在中心中下部共用一个
    Bar 1 mover；拖动两侧 provider 松手应回位，`unbind` 后才独立，`bind` 恢复，
