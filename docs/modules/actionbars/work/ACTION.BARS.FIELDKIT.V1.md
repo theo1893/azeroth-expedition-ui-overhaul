@@ -7,8 +7,8 @@
   `AB.TRINKET.MENU`、`AB.CONSUMABLE.RACK`、`AB.CONSUMABLE.POCKET`、
   `AB.CONSUMABLE.POPUP`、`AB.CONSUMABLE.GROUP`
 - 模拟版本：`AB-FIELDKIT-SIM-V2`
-- 当前操作：`generate`
-- 子状态：`trinket-candidate-reviewed / consumable-prepared`
+- 当前操作：`review`
+- 子状态：`dual-candidate-reviewed / pending-user-acceptance`
 - 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
 - 当前状态：`transport-amendment-authorized / candidate-reviewed / P3`；用户于
@@ -16,24 +16,26 @@
   归一、逐 cell 完整 bbox 等比缩放居中、边缘连通色键转 straight Alpha 与
   透明 RGB 清零形成 exact canonical `1024² RGBA`。不重绘、不新增输入图，
   原预算不重置。`AB.TRINKET.KIT.V1` attempt 4 已在 `4/5` 内部全门禁通过并按
-  pass 即停规则保留一次未用预算；`AB.CONSUMABLE.KIT.V1` 保持 `0/5`，完整
-  transport-amended 自包含正文已准备，等待本次提交后执行 attempt 1
+  pass 即停规则保留一次未用预算；`AB.CONSUMABLE.KIT.V1` attempt 1 也已在 `1/5`
+  内部全门禁通过并按同一规则保留四次未用预算。两者均等待用户明确接受
 - 模拟用户结论：`AB-FIELDKIT-SIM-V1 consumable direction revision-requested
   2026-08-08`；用户原文：“消耗品5*2不够用. 并且能否按照类型进行分组?”；
   `AB-FIELDKIT-SIM-V2 confirmed 2026-08-09`；用户原文：“接受
   AB-FIELDKIT-SIM-V2”
-- 当前生产候选：Trinket attempt 4 canonical `82dd2260…c012` 为
-  `candidate-reviewed / pending-user-acceptance / non-source / non-runtime`；attempts
-  1–3 仍是失败证据
+- 当前生产候选：Trinket attempt 4 canonical `82dd2260…c012` 与 Consumable
+  attempt 1 canonical `623f29c5…a2419` 均为
+  `candidate-reviewed / pending-user-acceptance / non-source / non-runtime`；Trinket
+  attempts 1–3 仍是失败证据
 - 模拟 ImageGen：`0/0`
 - 生产执行体：`AB.TRINKET.KIT.V1` 为
   `repair-r3 / transport-amended / candidate-reviewed / stopped-at-4/5`；
   `AB.CONSUMABLE.KIT.V1` 为
-  `transport-amended / prepared-attempt-01 / not-executed / 0/5`
+  `transport-amended / candidate-reviewed / stopped-at-1/5`
 - 后续实际生成／修复预算：每个独立执行体最多 `5` 次，最坏合计 `10` 次；
   用户已于 `2026-08-09` 分别授权
 - 外部上传：用户已分别授权把 Character V3 锁定图作为两个执行体各自唯一的
-  Image 1 上传；Trinket attempts 1–4 已上传 `4` 次，Consumable 仍为 `0`；授权范围
+  Image 1 上传；Trinket attempts 1–4 已上传 `4` 次，Consumable attempt 1 已上传
+  `1` 次；授权范围
   不含新增输入图，也不复用既有组件授权
 - 跨设备 handoff：无；确认结论与两个最终正文均已进入 tracked work，下一门禁
   不依赖 ignored 模拟像素
@@ -501,7 +503,8 @@ All cells are normal static bases only. The recommended profile instantiates twe
 
 ## 传输修订执行正文 B.0（`AB.CONSUMABLE.KIT.V1.transport`）
 
-状态：`production-final / transport-amended / prepared-attempt-01 / 0/5`。
+状态：`production-final / transport-amended / candidate-reviewed /
+pending-user-acceptance / stopped-at-1/5`。
 
 ```text
 Create one brand-new square RGB transport atlas for Turtle WoW 1.18.1, component AB.CONSUMABLE.KIT.V1. This is a fresh generation from the single authorized Image 1. Do not use any Trinket Kit attempt, Field Kit simulation, AB.SLOT, AB.RAIL, or other generated image as an input. The provider raw is not the final transparent candidate. Prefer an exact 1024 by 1024 RGB PNG when the service permits it. If the fixed service unavoidably returns another square provider-native size such as 1254 by 1254, preserve the same proportional four-quadrant composition and do not add a presentation border. The local deterministic pipeline will normalize the complete square to 1024 by 1024, split it into four exact 512 by 512 cells, convert only edge-connected chroma green to straight Alpha, fit each cell's complete visible bounding box proportionally and centered inside its local [80,80,432,432] safe box, and clear RGB under fully transparent pixels. Do not simulate those local operations by cropping, clipping, repainting, duplicating, or preassembling the objects.
@@ -545,7 +548,8 @@ generate，Character V3 是唯一 Image 1，任何 Trinket／simulation／AB.SLO
   安静度和连接带旋转可读性。
 - 需要重新授权：新增／替换输入图、上传新图、启用 AutoBar、引入 provider
   之外的自动分类／钉选逻辑、改变 cell 身份／数量或把模拟像素当输入。
-- 预算：`0/5`；本体独立最多五次实际 ImageGen 生成／修图。
+- 预算：`1/5`；attempt 1 已返回 countable provider output 并内部全门禁通过；按
+  pass 即停，剩余四次不再使用。用户未接受前不得晋级 source／runtime。
 
 ## 尝试与流程错误账本
 
@@ -562,7 +566,7 @@ generate，Character V3 是唯一 Image 1，任何 Trinket／simulation／AB.SLO
 
 | 实际尝试 | 执行体 | 结果 | 结论 |
 |---:|---|---|---|
-| `0/5` | transport-amended production final | 未执行 | 完整自包含正文、最多五次预算、Character V3 唯一 Image 1 外部上传及 raw→canonical 传输修订均已授权；本次提交后执行 attempt 1 |
+| `1/5` | transport-amended production final | raw `de25567f…b8ba`；canonical `623f29c5…a2419`；canonical／semantic／art／真实排版／display 全门禁 pass | `candidate-reviewed / pending-user-acceptance`；按 pass 即停，保留 `4` 次未用预算，不执行 attempt 2 |
 
 流程错误：本地 display contract 曾出现一次 schema 使用错误；没有调用外部
 ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 的固定子进程
@@ -700,6 +704,34 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
   逐层均 pass。该 canonical 仅为 `candidate-reviewed / pending-user-acceptance`；
   按工作流立即停止 Trinket 循环，不执行 attempt 5，不产生 source／runtime／adapter，
   不改变 TrinketMenu SavedVariables。
+- 日期：`2026-08-09`
+- 操作：从 commit `d193dcc` 提取并逐字传输完整
+  `AB.CONSUMABLE.KIT.V1.transport`，以固定
+  `@openai/codex@0.143.0 / gpt-5.5 / medium` fresh generate Consumable attempt 1；
+  唯一 Image 1 为已授权 Character V3，session
+  `019fe501-7dff-73e1-a27e-a2c0e2df82ae`、result
+  `ig_07e00c4828d25e6b016a7810f1341081919f816c65784c4604`。child user block 完整，
+  没有 wrapper 递归，也没有上传 Trinket／simulation／AB.SLOT／AB.RAIL 像素。
+- countable output：provider cache 与本地 raw SHA 完全一致：
+  `generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/production/AB.CONSUMABLE.KIT.V1/attempt-01/raw/AB.CONSUMABLE.KIT.V1.attempt-01.raw.png`，
+  `1254×1254 RGB`、`1,573,310` bytes、SHA `de25567f…b8ba`；Consumable 账本进入
+  `1/5`。图片已返回后 child 卡在模型缓存刷新，父会话终止空等并逐字节复制 cache；
+  不触发重生、不改变计数。
+- 确定性 canonical：`attempt-01/canonical/AB.CONSUMABLE.KIT.V1.attempt-01.canonical.png`，
+  exact `1024×1024 RGBA`、SHA `623f29c5…a2419`；透明 `670302`、半透明 `17423`、
+  不透明 `360851`，visible green `0`、透明 RGB 非零 `0`。A／B／C／D 原始 keyed
+  bbox 分别为 `[138,118,396,366)`／`[153,169,326,339)`／`[49,11,462,424)`／
+  `[40,186,463,258)`，各自只有一个显著组件且不触边；最终 minimum margin 全为
+  `80 px`。canonicalization report `7b3c9383…433e` 为 pass。
+- 真实排版／display：review scene `057c45cb…150a`、supported layouts
+  `e78b6dc5…9ae5`、cell review `cc56df10…9fd8`；candidate review
+  `d3009fd3…0bfa` 为 pass。display report `741c2ef7…3dfa` 为 `16/16 pass`、
+  violations `0`，覆盖 `1×1／5×2／4×6／24×1／1×24`、TOP 6、RIGHT 12 及
+  同一 Field Kit 邻接场景。
+- 结论：Prompt／传输、语义、物理、透视、美术、对象、装配、真实排版及技术像素
+  逐层均 pass。该 canonical 仅为 `candidate-reviewed / pending-user-acceptance`；
+  按工作流立即停止 Consumable 循环，不执行 attempts 2–5，不产生
+  source／runtime／adapter，不启用 AutoBar。
 
 ## 审查记录
 
@@ -711,9 +743,9 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
   关系成立，三组不使用现代彩色 Dashboard 编码。
 - 对象／状态合同：pass；布局 `72/72`、display `16/16`、violations `0`；
   AutoBar disabled 与 TrinketMenu enabled 状态均保持。
-- 结论：`Trinket candidate-reviewed / Consumable prepared / P3`。Trinket attempt 4
-  已完成 Prompt／传输、语义、物理、透视、美术、对象、装配、真实排版和技术像素
-  全量复核；仍须用户明确接受才可进入 source／runtime。Consumable 保持独立 `0/5`。
+- 结论：`dual-candidate-reviewed / pending-user-acceptance / P3`。Trinket attempt 4
+  与 Consumable attempt 1 都已完成 Prompt／传输、语义、物理、透视、美术、对象、
+  装配、真实排版和技术像素全量复核；均须用户分别明确接受才可进入 source／runtime。
 - Trinket attempt 1 语义：pass。四格依次清楚表达已装备护套、较薄候选插页、
   自适应菜单框和可旋转连接扣；没有固定饰品、图标、文字、Queue 或完整场景。
 - Trinket attempt 1 美术：fail／可修复。深胡桃皮革与暗黄铜基本继承 Character
@@ -764,6 +796,22 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
 - Trinket attempt 4 技术：pass。canonical exact `1024² RGBA`、四格 minimum margin
   `80 px`、visible green `0`、透明 RGB `0`、provenance 匹配。整体结论为
   `candidate-reviewed / pending-user-acceptance / 4/5`；按 pass 即停，不执行第 5 稿。
+- Consumable attempt 1 Prompt／传输：pass。完整 transport body、唯一 Character V3
+  Image 1、四格身份及纯绿色 raw 合同均正确传输；provider cache 与本地 raw 哈希一致。
+- Consumable attempt 1 语义／物理／透视：pass。A 是主类别口袋，B 是更薄更轻的
+  popup 口袋，C 是有连续 matte center 的非方向卷袋九宫格，D 是窄小可旋转／拉伸
+  连接带；四者正投影、互不污染，没有药瓶、物品、类别文字、固定网格或组装场景。
+- Consumable attempt 1 美术：pass for user review。烟褐软皮、稀疏绳结与少量暗黄铜
+  继承 Character V3，同时比 Trinket Kit 更软、更轻；A 的单枚小扣、B 的无金属薄边、
+  C 的四角小扣和 D 的安静中段在 `29–36 px` 及极端拉伸中保持从属，没有现代卡片
+  或抢夺主动作条的噪声。
+- Consumable attempt 1 对象／装配／真实排版：pass。四格各一显著组件且原始物件
+  均不触 cell 边界；live icon、count、cooldown、分类、popup 与 hit box 继续由
+  AutoBar 所有。`1×1／5×2／4×6／24×1／1×24`、TOP 6、RIGHT 12 等场景全部
+  pass，violations `0`；当前 provider disabled 状态未改变。
+- Consumable attempt 1 技术：pass。canonical exact `1024² RGBA`、四格 minimum
+  margin `80 px`、visible green `0`、透明 RGB `0`、provenance 匹配。整体结论为
+  `candidate-reviewed / pending-user-acceptance / 1/5`；按 pass 即停，不执行第 2–5 稿。
 
 ## 尝试摘要
 
@@ -775,19 +823,16 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
 | `AB.TRINKET.KIT.V1 attempt 2` | raw `85f3f6f0…50b7`；review scene `c56aa652…6f3c`；display `16/16` | internal fail；`2/5` | 保持 A／B／D 与降噪成果；C 恢复 matte center。绿色键控 raw→canonical RGBA 修订已授权，完整 `r2` 已准备 |
 | `AB.TRINKET.KIT.V1 attempt 3` | raw `0c6f0bc7…8048`；canonical `6a91a2b5…5e13`；传输技术项 pass，原始 cell 隔离 fail | internal fail；`3/5` | 保持 C 的 filled matte center 与四对象身份；四物件各自收进本格中央 `68.75%`，绝不越线；进一步压低黄铜板、铆钉和微纹理；完整 `r3` 已准备 |
 | `AB.TRINKET.KIT.V1 attempt 4` | raw `2e4efc1a…19e3a`；canonical `82dd2260…c012`；review scene `6b59893d…53d5`；display `16/16` | internal pass；`candidate-reviewed / pending-user-acceptance / 4/5` | 通过即停，保留第 5 次未用预算；不得在用户接受前晋级 source／runtime；继续独立 Consumable `0/5` |
+| `AB.CONSUMABLE.KIT.V1 attempt 1` | raw `de25567f…b8ba`；canonical `623f29c5…a2419`；review scene `057c45cb…150a`；display `16/16` | internal pass；`candidate-reviewed / pending-user-acceptance / 1/5` | 通过即停，保留 attempts 2–5 未用预算；不得在用户接受前晋级 source／runtime |
 
 ## 下一门禁
 
 1. 运行 candidate／simulation／Skill／repository contract 回归与 `git diff --check`，
-   再提交 Trinket attempt 4 内部通过证据和完整
-   `AB.CONSUMABLE.KIT.V1.transport`；必须在 Consumable provider attempt 1 前形成
-   Git 历史。
-2. 以固定 `@openai/codex@0.143.0 / gpt-5.5 / medium`、Character V3 唯一 Image 1
-   fresh generate Consumable attempt 1；raw 计入独立 `1/5`。随后只执行已授权的
-   deterministic raw→canonical 流程并从完整 checklist 审查；Trinket、模拟、
-   AB.SLOT 与 AB.RAIL 像素均不得作为输入。
-3. Consumable 任一次 exact canonical 全部门禁通过即停止；否则只在同一不可变
-   边界内写完整 repair body，并在每次调用前提交，最多 `5/5`，禁止 attempt 6。
-4. 两套内部通过候选只保存在 ignored `generated/` 并等待用户分别明确接受；不自动
-   晋级 source／runtime／adapter。全过程不启用 AutoBar，也不改变 TrinketMenu
-   SavedVariables。
+   再提交 Consumable attempt 1 内部通过证据；两套 exact canonical 继续只保存在
+   ignored `generated/`。
+2. 请用户分别审阅并明确接受或拒绝 `AB.TRINKET.KIT.V1 第4稿` 与
+   `AB.CONSUMABLE.KIT.V1 第1稿`。接受前不晋级 source／runtime／adapter。
+3. 若某套被拒绝，只能在该执行体原冻结边界内写完整 repair body 并在下一次调用前
+   提交；Trinket 只余 `1` 次，Consumable 只余 `4` 次，二者均禁止 attempt 6。
+4. 若用户接受，按资产工作流进入各自 P4→P5 source promotion／runtime integration
+   门禁；全过程仍不自动启用 AutoBar，也不改变 TrinketMenu SavedVariables。
