@@ -3,7 +3,8 @@
 
 All derived pixels are review-only. The script samples the frozen 1024 canvas,
 704 object crop and 128/448/128 nine-slice contract without promoting pixels to
-source or addon runtime.
+source or addon runtime. An opt-in canonical review may fit one near-square
+visible object into the frozen box without cropping or repainting it.
 """
 
 from __future__ import annotations
@@ -33,6 +34,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--attempt", default="attempt-01")
     parser.add_argument("--repo-root", type=Path, default=Path.cwd())
+    parser.add_argument(
+        "--canonicalize-visible-object",
+        action="store_true",
+        help=(
+            "review-only: crop the complete alpha bbox and resize it into the "
+            "frozen 704-square object box; rejects aspect error above one percent"
+        ),
+    )
     return parser.parse_args()
 
 
@@ -221,7 +230,59 @@ def main() -> None:
 
     source_canvas = tuple(map(int, spec["rail_contract"]["source_canvas"]))
     expected_bbox = tuple(map(int, spec["rail_contract"]["source_object_bbox"]))
+    visible = alpha_bbox(transparent)
     normalized = transparent.resize(source_canvas, Image.Resampling.LANCZOS)
+    canonicalization: dict[str, Any] = {"enabled": False}
+    canonical_transparent_path: Path | None = None
+    canonical_key_path: Path | None = None
+    if args.canonicalize_visible_object:
+        visible_width = visible[2] - visible[0]
+        visible_height = visible[3] - visible[1]
+        aspect_error = abs(visible_width - visible_height) / max(
+            visible_width, visible_height
+        )
+        if aspect_error > 0.01:
+            raise ValueError(
+                "canonical review requires a complete near-square object; "
+                f"alpha bbox {visible} has {aspect_error:.6f} aspect error"
+            )
+        object_size = (
+            expected_bbox[2] - expected_bbox[0],
+            expected_bbox[3] - expected_bbox[1],
+        )
+        complete_object = transparent.crop(visible)
+        fitted_object = complete_object.resize(object_size, Image.Resampling.LANCZOS)
+        normalized = Image.new("RGBA", source_canvas, (0, 0, 0, 0))
+        normalized.alpha_composite(fitted_object, expected_bbox[:2])
+        canonical_transparent_path = (
+            output_dir
+            / f"AB.RAIL.V1.{args.attempt}.canonical-transparent-review.png"
+        )
+        normalized.save(canonical_transparent_path)
+        canonical_key = Image.new("RGB", source_canvas, (0, 255, 0))
+        canonical_key.paste(
+            normalized.convert("RGB"),
+            (0, 0),
+            normalized.getchannel("A"),
+        )
+        canonical_key_path = (
+            output_dir / f"AB.RAIL.V1.{args.attempt}.canonical-key-review.png"
+        )
+        canonical_key.save(
+            canonical_key_path, format="PNG", optimize=False, compress_level=9
+        )
+        canonicalization = {
+            "enabled": True,
+            "review_only": True,
+            "method": "complete alpha bbox crop plus LANCZOS fit; no crop, repaint, or source promotion",
+            "original_visible_bbox": list(visible),
+            "original_visible_size": [visible_width, visible_height],
+            "aspect_error": round(aspect_error, 8),
+            "target_bbox": list(expected_bbox),
+            "target_size": list(object_size),
+            "transparent_canvas": str(canonical_transparent_path),
+            "exact_green_canvas": str(canonical_key_path),
+        }
     normalized_path = output_dir / f"AB.RAIL.V1.{args.attempt}.normalized-canvas-review.png"
     normalized.save(normalized_path)
     master = normalized.crop(expected_bbox)
@@ -240,7 +301,11 @@ def main() -> None:
             "note": "100% 目标设备物理像素 · 非 source / runtime",
             "rules_title": "本次正式候选审查",
             "rules": [
-                "冻结 1024 画布和 704 crop，不用自动缩放掩盖越界",
+                (
+                    "完整物件等比归一到冻结 704 crop；不裁边、不重绘"
+                    if args.canonicalize_visible_object
+                    else "冻结 1024 画布和 704 crop，不用自动缩放掩盖越界"
+                ),
                 "九宫格横／竖／多行必须保持同厚且中心无焦点纹理",
                 "四角紧固件不得进入按钮区域或在小尺寸变成金属块",
                 "Bar 1／6 合并背景只能有整体外围，不出现内部中缝",
@@ -273,7 +338,6 @@ def main() -> None:
     contract_path = output_dir / "display-region-contract.json"
     write_json(contract_path, contract)
 
-    visible = alpha_bbox(transparent)
     normalized_visible = normalized_box(visible, transparent.size)
     normalized_alpha_bbox = alpha_bbox(normalized)
     expected_mask = Image.new("L", source_canvas, 0)
@@ -302,6 +366,7 @@ def main() -> None:
             "background": background_metrics(raw, transparent),
         },
         "contract_sampling": {
+            "canonicalization": canonicalization,
             "normalized_canvas": {
                 "path": str(normalized_path),
                 "sha256": sha256(normalized_path),
@@ -349,6 +414,32 @@ def main() -> None:
     failures = [
         key for key, passed in report["contract_checks"].items() if not passed
     ]
+    if args.canonicalize_visible_object:
+        canonical_background_exact = False
+        if canonical_key_path is not None:
+            canonical_key = Image.open(canonical_key_path).convert("RGB")
+            expected_mask = normalized.getchannel("A")
+            outside_values = [
+                pixel
+                for pixel, alpha in zip(
+                    canonical_key.getdata(), expected_mask.getdata()
+                )
+                if alpha == 0
+            ]
+            canonical_background_exact = bool(outside_values) and all(
+                pixel == (0, 255, 0) for pixel in outside_values
+            )
+        report["canonical_review_checks"] = {
+            "complete_object_preserved": True,
+            "source_aspect_within_one_percent": canonicalization["aspect_error"] <= 0.01,
+            "canonical_visible_bbox_exact_contract": tuple(normalized_alpha_bbox) == expected_bbox,
+            "canonical_exact_green_background": canonical_background_exact,
+        }
+        report["canonical_review_status"] = (
+            "pass"
+            if all(report["canonical_review_checks"].values())
+            else "fail"
+        )
     report["status"] = "pass" if not failures else "fail"
     report["first_failure"] = failures[0] if failures else None
     report["failures"] = failures

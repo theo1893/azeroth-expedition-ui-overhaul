@@ -144,7 +144,9 @@
 - `AB.RAIL.V1` 正式候选统一由
   `tools/review_action_rail_candidate_v1.py` 按冻结 `1024²` 画布、
   `[160,160,864,864)` crop、`128／448／128` 九宫格和同一 8 场景生成 ignored
-  指标／真实排版证据；该工具不创建 source 或 runtime，也不修补候选语义。
+  指标／真实排版证据；opt-in canonical 审查只在完整 alpha bbox 纵横误差不超过
+  `1%` 时把完整物件 fit 到冻结 `704²` 盒，不裁边、不重绘、不掩盖美术失败；
+  该工具不创建 source 或 runtime，也不修补候选语义。
 - `AB.RAIL.V1` 战斗场景：
   `generated/actionbars/AB.RAIL/AB.RAIL.V1/simulation/AB-RAIL-SIM-V1/AB.RAIL.V1.sim-v1.png`
   （SHA `123d1b4c…cde6`）
