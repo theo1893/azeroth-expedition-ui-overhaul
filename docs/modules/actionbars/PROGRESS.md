@@ -24,30 +24,23 @@
 - 目标客户端另已安装 TrinketMenu 与 AutoBar。饰品桥接优先保留正在使用的
   TrinketMenu；当前角色明确启用 TrinketMenu、禁用 AutoBar，因此 AutoBar
   只作为可选消耗品 provider，不被强制启用。
-- `AB.FIELDKIT.V1` 已完成 provider 级审计与第二版本地确定性模拟。TrinketMenu
-  主栏严格为水平 `92×52 UI`／垂直 `52×92 UI`、两枚 `36×36 UI` 已装备
-  Button、`18×18 UI` Queue inset；候选为 `0–30` 个 `36 UI` Button、步距
-  `40 UI`，当前配置四列、右侧停靠并向上增长。用户明确指出 V1 的 `5×2`
-  消耗品容量不足并要求按类型分组；V2 改用 AutoBar 完整 `24` 个主 Button 的
-  `4×6`，连续 `1–8／9–16／17–24` 分为应急／增益／工具，分类内仍由最多
-  `12` 个四向 popup 展开真实物品。display `16/16 pass`、布局 `72/72 pass`、
-  violations `0`、ImageGen `0/0`。用户于 `2026-08-09` 明确回复“接受
-  AB-FIELDKIT-SIM-V2”，八项文字化方向已冻结进 `AB.TRINKET.KIT.V1` 与
-  `AB.CONSUMABLE.KIT.V1` 最终正文；模拟像素未被接受。用户于 `2026-08-09`
-  分别授权两个正文、各自最多五次实际生成／修复，并分别授权 Character V3
-  作为各自唯一的 Image 1 外部上传；当前仍为 `P3`。
-  Trinket attempt 4 raw `2e4efc1a…19e3a` 经确定性传输得到 exact canonical
-  `82dd2260…c012`；四格各一显著组件、不触原始 cell 边界，visible green、透明
-  RGB 和最终 `80 px` margin 全部 pass。语义、美术、provider 所有权及真实排版
-  `16/16`／violations `0` 也全部通过，现为 `candidate-reviewed / pending-user-
-  acceptance / 4/5`，按 pass 即停且不执行 attempt 5。用户此前于
-  `2026-08-09` 明确授权两个 Kit 采用纯 `#00FF00`
-  RGB raw→本地确定性 canonical `1024² RGBA` 的传输修订，允许整图归一、逐
-  cell 完整 bbox 等比缩放居中、边缘连通色键转 straight Alpha 与透明 RGB
-  清零；不重绘、不新增输入图、预算不重置。Consumable attempt 1 raw
-  `de25567f…b8ba`／canonical `623f29c5…a2419` 也已在 `1/5` 通过同样的完整门禁与
-  `16/16` display，现为 `candidate-reviewed / pending-user-acceptance`，不执行
-  attempts 2–5。
+- `AB.FIELDKIT.V1` 已完成 provider 级审计、`AB-FIELDKIT-SIM-V2` 方向确认与两套
+  production review。TrinketMenu 主栏保持水平 `92×52 UI`／垂直 `52×92 UI`、
+  两枚 `36×36 UI` 已装备 Button、`18×18 UI` Queue inset；候选保持 `0–30` 个
+  `36 UI` Button、步距 `40 UI`。AutoBar 推荐 profile 保持完整 `24` 个主 Button
+  的 `4×6`，连续 `1–8／9–16／17–24` 分为应急／增益／工具，分类内仍由最多
+  `12` 个四向 popup 展开真实物品；provider 当前禁用状态没有改变。
+  用户于 `2026-08-09` 明确回复“接受 AB.TRINKET.KIT.V1 第4稿与
+  AB.CONSUMABLE.KIT.V1 第1稿”。Trinket attempt 4 canonical 已 byte-exact 晋级为
+  [ActionTrinketKit_Master_v1.png](../../../assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png)
+  SHA `82dd2260…c012`；Consumable attempt 1 canonical 已 byte-exact 晋级为
+  [ActionConsumableKit_Master_v1.png](../../../assets/source/actionbars/ab-consumable-kit/ActionConsumableKit_Master_v1.png)
+  SHA `623f29c5…a2419`。两个 SourceManifest 固定 `1024² RGBA`、四格各一显著组件、
+  原始 cell 不触边、最终 `80 px` margin、visible green `0`、透明 RGB `0`、
+  Character V3 provenance 与 `16/16` display／violations `0`。当前为
+  `dual-source-accepted / P4`；接受后 ImageGen `0`，Trinket 循环终止于 `4/5`、
+  Consumable 终止于 `1/5`，未用次数不重置或继续。尚未切片、导出 runtime、接入
+  adapter、启用 AutoBar、应用 profile 或修改 TrinketMenu SavedVariables。
 - `AB.SLOT.BASE.V1` 有界生产循环已在 `5/5` 停止；用户于 `2026-08-08` 明确
   “接受 AB.SLOT.BASE.V1 第5稿”，随后以“进行下一步”授权 P4→P5。exact source
   RGBA `6d4a4d16…7dc0` 已按冻结 `[200,200,824,824)` crop 确定性导出为
@@ -163,10 +156,10 @@
 | `AB.SLOT.STATE` | `P2 / scoped` | highlight／active／equipped／icon tint／cooldown／按键动画的真实覆盖顺序已冻结 | 基底 P6 已验证；如需独立换肤再写悬停／激活覆盖合同，不生产假 disabled cell |
 | `AB.ENDCAP.GRYPHON` | `P2 / direction-locked` | pfUI 左右端帽对象、64 UI 默认能力；用户确认的 V3 preset 默认关闭 | `AB.SLOT／RAIL` 后另行授权可选端帽正文 |
 | `AB.STANCE／PET` | `P1` | Bar `11／12` 与 provider 状态已审计 | 职业最少／最多数量和自动施法实机排版 |
-| `AB.CONSUMABLE.RACK／POCKET／POPUP` | `P3 / candidate-reviewed / transport-amended / 1/5` | [work](work/ACTION.BARS.FIELDKIT.V1.md)；attempt 1 raw `de25567f…b8ba`／canonical `623f29c5…a2419`；AutoBar `24` 主 Button、`4×6` 满容量、`1–12` popup、极端横竖布局、四格隔离、传输和美术全 pass，display `16/16`；当前 provider 仍 disabled | 等待用户明确接受；此前不得晋级 source／runtime，不执行 attempts 2–5，不启用 AutoBar |
-| `AB.CONSUMABLE.GROUP` | `P3 / candidate-reviewed / 1/5` | 用户已确认推荐 profile 的 `1–8／9–16／17–24` 对应应急／增益／工具；attempt 1 的 filled C shell 与 D divider 在完整布局通过；三枚标题皮签与两条分隔仍不接收鼠标，AutoBar 无原生 `FLASK` 类别 | 与 Consumable Kit 共用 attempt 1 candidate；等待用户明确接受，接受前不写 profile、不创建 runtime FontString |
-| `AB.TRINKET.DOCK` | `P3 / candidate-reviewed / 4/5` | [work](work/ACTION.BARS.FIELDKIT.V1.md)；attempt 4 raw `2e4efc1a…19e3a`／canonical `82dd2260…c012`；Prompt、四格隔离、传输、美术与真实排版全 pass，未使用第 5 次预算 | 等待用户明确接受；此前不得晋级 source／runtime，不改变 TrinketMenu SavedVariables |
-| `AB.TRINKET.MENU` | `P3 / candidate-reviewed / 4/5` | C 为连续 filled matte center，D 为独立短连接扣；候选 `0／1／8／30`、自动五列、横竖及三十列等 `16/16 pass`、violations `0` | 与 Dock 共用 attempt 4 candidate；等待用户明确接受，不执行 attempt 5 |
+| `AB.CONSUMABLE.RACK／POCKET／POPUP` | `P4 / source-accepted / 1/5` | [source](../../../assets/source/actionbars/ab-consumable-kit/ActionConsumableKit_Master_v1.png)／[manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_SourceManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；exact SHA `623f29c5…a2419`，四格、传输、美术与 `16/16` display 全 pass；当前 provider 仍 disabled | 用户若继续，先冻结 crop／九宫格／旋转／UV／adapter runtime 合同，再走 P4→P5；不启用 AutoBar、不执行 attempts 2–5 |
+| `AB.CONSUMABLE.GROUP` | `P4 / source-accepted / 1/5` | 同一 accepted source 的 C 为 filled adaptive shell、D 为 divider；推荐 profile 的 `1–8／9–16／17–24` 仍对应应急／增益／工具，三枚标题皮签与两条分隔不接收鼠标，AutoBar 无原生 `FLASK` 类别 | 与 Consumable Kit 共用 P4 source；runtime FontString／profile 仍未创建或写入，P4→P5 需独立执行 |
+| `AB.TRINKET.DOCK` | `P4 / source-accepted / 4/5` | [source](../../../assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png)／[manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_SourceManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；exact SHA `82dd2260…c012`，四格、传输、美术与 `16/16` display 全 pass；第 5 次未使用 | 用户若继续，先冻结四格 crop／九宫格／旋转／UV／adapter runtime 合同，再走 P4→P5；不改 TrinketMenu SavedVariables |
+| `AB.TRINKET.MENU` | `P4 / source-accepted / 4/5` | 同一 accepted source 的 C 为连续 filled matte center，D 为独立短连接扣；候选 `0／1／8／30`、自动五列、横竖及三十列等 `16/16 pass`、violations `0` | 与 Dock 共用 P4 source；不执行 attempt 5，图标／冷却／Queue／拖动／停靠继续由 provider 所有 |
 | `AB.FOCUS.CASTBAR` | `P2 / direction-locked` | 玩家／目标／Focus 真实对象与用户确认的 V3 双框下沿实例 | 以后独立决定只做一次性布局 preset 或另授权细 Rail 换肤 |
 | `AB.FOCUS.SWING` | `P2 / direction-locked` | 主手／副手／ranged 真对象、`200×12 UI` 与用户确认的中心双细轨 | 实机验证近战／远程复用；若换肤则另立合同 |
 | `AB.DOITEDPS.TIMELINE` | `P2 / direction-locked` | 已安装 provider 的 `318×46 UI` 根 Frame及用户确认的中心落位 | 以后只做 feature-detect 一次性位置 preset 或独立换肤合同 |
@@ -228,7 +221,9 @@
   `tools/review_action_fieldkit_candidate_v1.py`；canonical 路径必须匹配
   canonicalization report 的 component／attempt／raw SHA／canonical SHA。
   `tests/action_fieldkit_candidate_review_test.py` 覆盖 exact RGBA、旧失败棋盘审查、
-  绿色传输、provenance 与横／竖极端九宫格。所有输出仍不是 source／runtime。
+  绿色传输、provenance 与横／竖极端九宫格。`generated/` 内 raw／canonical／review
+  仍只是 provenance；用户接受后只有 byte-exact tracked copies 与各自 SourceManifest
+  是 P4 source，尚无 runtime。
 - 战斗场景：
   `generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/simulation/AB-FIELDKIT-SIM-V2/AB.FIELDKIT.V1.sim-v2.scene.png`
   （SHA `9fe4d159…164d`）；provider 状态板：同目录
@@ -269,7 +264,10 @@
   触边，visible green `0`、透明 RGB 非零 `0`、最终 margin 全部 `80 px`。
   review scene `6b59893d…53d5`、supported layouts `5b506d53…6da2`、cell board
   `1cd43ebb…c9f`；display `16/16 pass`、violations `0`。完整 checklist 内部 pass，
-  现为 `candidate-reviewed / pending-user-acceptance / 4/5`，不执行 attempt 5。
+  用户接受后 exact canonical 已晋级为
+  [P4 source](../../../assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png)／
+  [manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_SourceManifest_v1.json)，
+  `source-accepted / 4/5`；不执行 attempt 5。
 - Consumable attempt 1 raw：同一 production 根的
   `AB.CONSUMABLE.KIT.V1/attempt-01/raw/AB.CONSUMABLE.KIT.V1.attempt-01.raw.png`
   （SHA `de25567f…b8ba`，`1254×1254 RGB`）；deterministic canonical
@@ -278,7 +276,10 @@
   触边，visible green `0`、透明 RGB 非零 `0`、最终 margin 全部 `80 px`。
   review scene `057c45cb…150a`、supported layouts `e78b6dc5…9ae5`、cell board
   `cc56df10…9fd8`；display `16/16 pass`、violations `0`。完整 checklist 内部 pass，
-  现为 `candidate-reviewed / pending-user-acceptance / 1/5`，不执行 attempts 2–5。
+  用户接受后 exact canonical 已晋级为
+  [P4 source](../../../assets/source/actionbars/ab-consumable-kit/ActionConsumableKit_Master_v1.png)／
+  [manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_SourceManifest_v1.json)，
+  `source-accepted / 1/5`；不执行 attempts 2–5。
 
 ## 下一门禁
 
@@ -286,13 +287,15 @@
    `assets/references/actionbars/p6/AB-SLOT-BASE-V1_TurtleWoW_P6_2026-08-08.png`
    （SHA `dc9615ac…4d5d`）与同目录 P6 evidence JSON（SHA `73a8f942…0d0b`）；
    静态截图与用户交互确认的证明范围保持分离。
-2. `AB.FIELDKIT.V1` 已由 `simulation-confirmed / P2` 进入 `prompt-authorized / P3`。用户于 `2026-08-09`
-   明确接受 `AB-FIELDKIT-SIM-V2` 的八项文字化方向，不接受两张模拟的任何像素；
-   可见方向发生实质变化时必须返回新模拟版本。
-3. `AB.TRINKET.KIT.V1` attempt 4 与 `AB.CONSUMABLE.KIT.V1` attempt 1 均已内部
-   全门禁通过并按 pass 即停；两套 canonical 只进入用户复审，明确接受前不得晋级。
-   提交 Consumable 记录后，请用户分别接受或拒绝。若拒绝，Trinket 只余 `1` 次、
-   Consumable 只余 `4` 次，且每次均须先写完整 repair body 并提交；禁止 attempt 6。
+2. `AB.FIELDKIT.V1` 的两个正式候选已由用户于 `2026-08-09` 明确接受并进入
+   `dual-source-accepted / P4`。Trinket source／manifest SHA 为 `82dd2260…c012`，
+   Consumable source／manifest SHA 为 `623f29c5…a2419`；两者都与被接受 canonical
+   字节完全一致，没有 ImageGen 或 handoff 消费。
+3. 用户若要求继续 Field Kit，则分别冻结 A／B／C／D 的 crop、九宫格、旋转／
+   拉伸、UV、runtime 文件与 provider adapter 映射，并以最终 atlas／adapter 重新
+   通过 display-region、静态回归和 fresh-checkout addon package 后才可标记 P5。
+   该过程不得启用 AutoBar、自动应用推荐 profile、修改 AutoBar／TrinketMenu
+   SavedVariables 或接管 provider 动态层；两个原生产循环保持 `4/5` 与 `1/5` 终止。
 4. `AB.RAIL.V1` 已达到 `game-validated / P6`。长期证据为
    `assets/references/actionbars/p6/AB-RAIL-V1_TurtleWoW_P6_2026-08-09.png`
    （SHA `5e89c6e5…12942`）与同目录 P6 evidence JSON（SHA

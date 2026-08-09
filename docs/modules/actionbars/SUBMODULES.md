@@ -127,6 +127,15 @@ ID，配置页也能把背包物品拖入槽位。因此“合剂手动”只接
 AutoBar 的真实类别、物品顺序和用户后续配置始终优先；缺失／禁用时 V1 不显示。
 以后若建立 AEUI 钉选 fallback，必须另立功能合同。
 
+用户于 `2026-08-09` 接受 `AB.CONSUMABLE.KIT.V1` 第 1 稿。P4 source 为
+[ActionConsumableKit_Master_v1.png](../../../assets/source/actionbars/ab-consumable-kit/ActionConsumableKit_Master_v1.png)
+（SHA-256 `623f29c5…a2419`），[manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_SourceManifest_v1.json)
+固定四格映射：A→`AB.CONSUMABLE.POCKET` 主口袋，B→`AB.CONSUMABLE.POPUP`
+薄候选口袋，C→`AB.CONSUMABLE.RACK／GROUP` filled 自适应卷袋外壳，D→popup
+连接带／group 分隔带。该 `1024²` 母版不是可直接加载的整架 runtime；P4→P5
+必须另行确定 crop、九宫格、旋转／拉伸、UV 与 adapter，且不得因此启用 AutoBar
+或写入 profile／SavedVariables。
+
 ## 饰品双槽
 
 | ID | provider／对象 | 合同 |
@@ -140,6 +149,14 @@ TrinketMenu 已经接管 `UseInventoryItem`、背包更新、装备更新与排�
 安装竞争性全局 hook。没有 TrinketMenu 时，V1 fallback 只绑定两个已装备槽的
 使用反馈，不复制候选菜单或 Queue，也不尝试换装；以后若新增非战斗换装入口，
 必须另立功能合同。
+
+用户于 `2026-08-09` 接受 `AB.TRINKET.KIT.V1` 第 4 稿。P4 source 为
+[ActionTrinketKit_Master_v1.png](../../../assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png)
+（SHA-256 `82dd2260…c012`），[manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_SourceManifest_v1.json)
+固定四格映射：A→两枚 `AB.TRINKET.DOCK` 已装备护套，B→候选 Button 薄插页，
+C→`AB.TRINKET.MENU` filled 自适应九宫格，D→双护套短连接扣。母版只包含四个
+normal 静态底面；图标、冷却、Queue、文字、命中区、拖动、scale、方向、停靠与
+换装仍归 TrinketMenu。P4→P5 需独立导出／接入，接受本身不修改其 SavedVariables。
 
 ## 推荐布局而非强制布局
 

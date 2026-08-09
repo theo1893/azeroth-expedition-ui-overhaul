@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "module": "actionbars",
+  "batch": "AB.FIELDKIT.V1",
+  "component": "AB.TRINKET.KIT.V1",
+  "accepted_version": "AB.TRINKET.KIT.V1.r3 / attempt 4 canonical",
+  "status": "source-accepted",
+  "workflow_state": "source-accepted",
+  "project_phase": "P4",
+  "accepted_on": "2026-08-09",
+  "source": {
+    "file": "ActionTrinketKit_Master_v1.png",
+    "repository_path": "assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png",
+    "sha256": "82dd2260757616912a7ef78658cc230f66d89614613d64e85f8116cac284c012",
+    "width": 1024,
+    "height": 1024,
+    "mode": "RGBA",
+    "visible_bbox_exclusive": [80, 80, 944, 941],
+    "visible_size": [864, 861],
+    "transparent_pixels": 646693,
+    "partially_transparent_pixels": 16995,
+    "opaque_pixels": 384888,
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0,
+    "cell_size": [512, 512],
+    "cells": {
+      "A": {
+        "cell_exclusive": [0, 0, 512, 512],
+        "role": "equipped-trinket sheath base",
+        "visible_bbox_local_exclusive": [82, 80, 429, 432],
+        "margins_ltrb": [82, 80, 83, 80],
+        "minimum_margin": 80
+      },
+      "B": {
+        "cell_exclusive": [512, 0, 1024, 512],
+        "role": "candidate-trinket insert base",
+        "visible_bbox_local_exclusive": [80, 81, 432, 430],
+        "margins_ltrb": [80, 81, 80, 82],
+        "minimum_margin": 80
+      },
+      "C": {
+        "cell_exclusive": [0, 512, 512, 1024],
+        "role": "adaptive filled menu-frame nine-slice master",
+        "visible_bbox_local_exclusive": [80, 82, 432, 429],
+        "margins_ltrb": [80, 82, 80, 83],
+        "minimum_margin": 80
+      },
+      "D": {
+        "cell_exclusive": [512, 512, 1024, 1024],
+        "role": "short rotatable paired-sheath joiner",
+        "visible_bbox_local_exclusive": [80, 196, 432, 315],
+        "margins_ltrb": [80, 196, 80, 197],
+        "minimum_margin": 80
+      }
+    }
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "codex_package": "@openai/codex@0.143.0",
+    "fixed_child_session_id": "019fe4f7-4ddb-7d83-8f60-9fda05576647",
+    "provider_result": "ig_05e65a84ff65cfd0016a780e4181d881919a9ca3c25055af9a",
+    "candidate_review_commit": "d193dcc",
+    "prompt_version": "AB.TRINKET.KIT.V1.r3",
+    "prompt": "docs/modules/actionbars/work/ACTION.BARS.FIELDKIT.V1.md",
+    "prompt_section": "修复执行正文 A.r3（AB.TRINKET.KIT.V1.r3）",
+    "provider_raw": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/production/AB.TRINKET.KIT.V1/attempt-04/raw/AB.TRINKET.KIT.V1.attempt-04.raw.png",
+    "provider_raw_sha256": "2e4efc1a5c5ccc95afc5c4619427226881e86aa90653325f009fc0dddf419e3a",
+    "provider_raw_size": [1254, 1254],
+    "provider_raw_mode": "RGB",
+    "canonicalization_report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/production/AB.TRINKET.KIT.V1/attempt-04/canonical/canonicalization-report.json",
+    "canonicalization_report_sha256": "56f04604bd65d4ddeb17941065a09232d121f582721eabb925dd99d7dc8156fc",
+    "accepted_candidate": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/production/AB.TRINKET.KIT.V1/attempt-04/canonical/AB.TRINKET.KIT.V1.attempt-04.canonical.png",
+    "accepted_candidate_sha256": "82dd2260757616912a7ef78658cc230f66d89614613d64e85f8116cac284c012",
+    "candidate_review_report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/production/AB.TRINKET.KIT.V1/attempt-04/review/candidate-review.json",
+    "candidate_review_report_sha256": "c9c8b22d363d407386f51220e4ec92de47db81551682343f9129a4871a4b441f",
+    "display_region_contract": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/production/AB.TRINKET.KIT.V1/attempt-04/review/display-region-contract.json",
+    "display_region_contract_sha256": "d0a3f1b9f3fd9595ddf0a2289d74c0cdfeab2dec88b1d03e497dad3d09404de1",
+    "display_region_report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/production/AB.TRINKET.KIT.V1/attempt-04/review/display-region-report.json",
+    "display_region_report_sha256": "0c80e08b3fe9f097ebab4e1171d90bdd5c116f5ea4480b0a953bf94451bba2ac",
+    "canonicalizer": "tools/canonicalize_action_fieldkit_candidate_v1.py",
+    "canonicalizer_sha256": "51af71363cc6499ac22b4645d109126eb433cec4cbcfafd790aedd5b395083ea",
+    "review_tool": "tools/review_action_fieldkit_candidate_v1.py",
+    "review_tool_sha256": "08317f38a356291cf61a10c2951650ff5fa404d3bec61a6587c91ea7782d8a20",
+    "transport_authorization": "2026-08-09 pure #00FF00 RGB raw to deterministic canonical 1024x1024 straight-alpha RGBA amendment",
+    "transport_operations": [
+      "whole-square LANCZOS normalization to 1024x1024 RGB",
+      "split into four fixed 512x512 cells",
+      "per-cell edge-connected chroma key to straight RGBA",
+      "per-cell complete visible-bbox proportional LANCZOS fit and centering inside [80,80,432,432)",
+      "fully transparent RGB zeroing"
+    ],
+    "promotion": "byte-exact copy of the explicitly accepted attempt-04 canonical RGBA candidate",
+    "actual_imagegen_calls_in_loop": 4,
+    "unused_authorized_calls": 1,
+    "additional_imagegen_calls_after_acceptance": 0,
+    "attempt_5_used": false,
+    "attempt_6_allowed": false
+  },
+  "visual_authority": {
+    "locked_reference": "assets/locked/character/角色属性面板_香草同构收敛_风格确认_v3.png",
+    "locked_reference_sha256": "b5c364482adaace09af9b5196d2e8d4f7ef79d3b21706e189d94c106ba6ec2ba",
+    "locked_reference_role": "classic vanilla bitmap language, deep walnut and smoke-brown leather, restrained oxidized brass, broad low-frequency values, upper-left warmth, lower-right pressure and wear scale only",
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "upstream_module_prompt": "docs/modules/character/ART_BASELINE.md",
+    "upstream_submodule_prompt": "docs/modules/character/SUBMODULE_ART_BASELINES.md",
+    "module_prompt": "docs/modules/actionbars/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/actionbars/SUBMODULE_ART_BASELINES.md",
+    "submodule_prompt_sections": ["AB.TRINKET.DOCK", "AB.TRINKET.MENU"],
+    "component_contract": "docs/modules/actionbars/SUBMODULES.md",
+    "accepted_source_is_lower_authority_than_locked_reference": true,
+    "failed_candidates_are_authority": false,
+    "simulation_pixels_are_authority": false,
+    "provider_raw_is_runtime_or_source": false
+  },
+  "user_acceptance": {
+    "exact_statement": "接受 AB.TRINKET.KIT.V1 第4稿与 AB.CONSUMABLE.KIT.V1 第1稿",
+    "accepted_component_clause": "AB.TRINKET.KIT.V1 第4稿",
+    "accepted_candidate_sha256": "82dd2260757616912a7ef78658cc230f66d89614613d64e85f8116cac284c012",
+    "scope": [
+      "promote the exact reviewed attempt-04 canonical RGBA bytes as the AB.TRINKET.KIT.V1 source atlas",
+      "record the four static base cells and provenance at P4",
+      "preserve all TrinketMenu icons, cooldowns, Queue state, text, hit regions, drag, scale, direction, docking and SavedVariables as provider-owned"
+    ],
+    "not_authorized_by_acceptance_alone": [
+      "runtime slicing, atlas export or addon integration",
+      "another ImageGen attempt",
+      "changes to TrinketMenu SavedVariables or provider behavior",
+      "enabling AutoBar or implementing the consumable provider"
+    ]
+  },
+  "logical_components": [
+    {
+      "cell": "A",
+      "ids": ["AB.TRINKET.DOCK", "AB.TRINKET.SLOT13", "AB.TRINKET.SLOT14"],
+      "runtime_objects": "two instances behind TrinketMenu_Trinket0 and TrinketMenu_Trinket1",
+      "dynamic_content_owned_by_provider": ["equipped item icons", "cooldowns", "Queue inset", "tooltips", "click and drag behavior"]
+    },
+    {
+      "cell": "B",
+      "ids": ["AB.TRINKET.MENU"],
+      "runtime_objects": "TrinketMenu_Menu1..30 candidate button bases",
+      "dynamic_content_owned_by_provider": ["candidate icons", "selection", "cooldowns", "tooltips", "left/right equip behavior"]
+    },
+    {
+      "cell": "C",
+      "ids": ["AB.TRINKET.MENU"],
+      "runtime_objects": "adaptive candidate-menu frame for zero-hidden, 1-30 candidates and legal row/column/direction settings",
+      "dynamic_content_owned_by_provider": ["candidate count", "menu geometry", "direction", "scale", "docking"]
+    },
+    {
+      "cell": "D",
+      "ids": ["AB.TRINKET.DOCK"],
+      "runtime_objects": "non-interactive joiner between the paired equipped sheaths",
+      "dynamic_content_owned_by_provider": ["horizontal or vertical dock geometry"]
+    }
+  ],
+  "review": {
+    "source_visual_accepted": true,
+    "semantic_and_physical_identity": "pass",
+    "perspective_and_layer_order": "pass",
+    "locked_baseline_art_inheritance": "pass",
+    "component_and_state_contract": "pass",
+    "canonical_canvas_and_containment": "pass",
+    "four_cells_one_significant_component": true,
+    "raw_objects_do_not_touch_cell_boundaries": true,
+    "baked_live_content": false,
+    "real_layout_scenarios": "16/16 pass",
+    "display_region_violations": 0
+  },
+  "handoff": {
+    "status": "not-published",
+    "reason": "accepted bytes are now durable in tracked assets/source and the P4 to P5 gate no longer depends on ignored candidate pixels"
+  },
+  "export_contract": {
+    "status": "pending",
+    "authorization": "not authorized by source acceptance alone",
+    "runtime_geometry_status": "provider geometry is known; crop, nine-slice boundaries, UVs, runtime filenames and adapter mapping require the separate P4 to P5 export operation",
+    "runtime_file": null,
+    "forbidden_runtime_uses": [
+      "load the 1024x1024 four-cell source directly in Turtle WoW",
+      "treat the source atlas as one assembled trinket dock or menu",
+      "repaint, recolor, mirror, non-uniformly scale or invent states from the accepted cells",
+      "bake item icons, cooldowns, Queue, labels, keybinds, tooltips or quality colors",
+      "replace TrinketMenu buttons, scripts, hit regions, drag, docking, scale, Queue or SavedVariables"
+    ]
+  }
+}

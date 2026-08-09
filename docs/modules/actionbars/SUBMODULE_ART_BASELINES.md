@@ -86,6 +86,15 @@ SHA-256 `6d4a4d16…7dc0`。稳定视觉条款为：深褐旧皮／胡桃色主�
 `AutoBarPopupFrame_Button1..12`，按 provider 设置向上、下、左或右形成单列；
 XML 初始 `72×72 UI` Frame 不是实际候选边界，因此不生成固定整张弹出背景。
 
+用户于 `2026-08-09` 接受 `AB.CONSUMABLE.KIT.V1` 第 1 稿；正式 P4 母版为
+[ActionConsumableKit_Master_v1.png](../../../assets/source/actionbars/ab-consumable-kit/ActionConsumableKit_Master_v1.png)，
+SHA-256 `623f29c5…a2419`。稳定视觉条款为：A 是暖烟褐软皮主口袋，B 是明显更薄、
+更轻且少装饰的 popup 插页，C 是连续 filled matte center 的非方向卷袋九宫格，
+D 是中段安静、可旋转／拉伸的窄连接带；四者都使用宽幅低频手绘值域、稀疏
+缝线与极少暗黄铜，不含物品、类别、文字、固定格、动态图标或状态。该派生
+source 低于 Character V3 锁定图与本 Prompt 的视觉权威；只承担四个 normal
+静态底面，不得反向定义 AutoBar 功能或直接作为整架 runtime 加载。
+
 ## `AB.TRINKET.DOCK`
 
 生成一对相连但可拆分的深皮革饰品护套：两枚方槽各有独立黄铜扣、轻微内凹和
@@ -103,6 +112,15 @@ HORIZONTAL 转置；既支持自动 `1–5` 列，也支持用户手动 `1–30`
 九宫格自适应且中心不含固定格线。当前配置为四列、菜单在双护套右侧底部对齐并
 向上增长；主栏和菜单分别保留拖动、scale、方向切换、八种停靠、左／右键换入
 槽 `13／14` 与战斗 Queue。所有图标、冷却、文字和排队反馈保持动态。
+
+用户于 `2026-08-09` 接受 `AB.TRINKET.KIT.V1` 第 4 稿；正式 P4 母版为
+[ActionTrinketKit_Master_v1.png](../../../assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png)，
+SHA-256 `82dd2260…c012`。稳定视觉条款为：A 是四格中最厚但仍从属于主动作条的
+深胡桃已装备护套，B 是更薄更轻的候选插页，C 是连续烟褐 matte center、边角
+克制的非方向九宫格，D 是短小、安静、可旋转的护套连接扣；暗黄铜只作短小
+从属擦边，没有珠宝柜、品质框、发光宝石、固定饰品或高频 PBR 纹理。该派生
+source 低于 Character V3 锁定图与本 Prompt，只能承担四个 normal 静态底面，
+不得覆盖 TrinketMenu 的图标、冷却、Queue、文字、命中区、拖动、方向与换装。
 
 ## `AB.MOVER／CONFIG`
 
