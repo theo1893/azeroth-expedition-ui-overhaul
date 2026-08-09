@@ -280,17 +280,18 @@ def main() -> None:
         encoding="utf-8-sig"
     )
     assert "## RequiredDeps: pfUI" in aeui_toc
-    assert "## Version: 0.8.1" in aeui_toc
+    assert "## Version: 0.8.2" in aeui_toc
     assert "Core\\Bootstrap.lua" in aeui_toc
     assert "Modules\\ActionBars.lua" in aeui_toc
     assert "Modules\\Chat.lua" in aeui_toc
     assert "Modules\\QuestVisualTheme.lua" in aeui_toc
     assert "Modules\\Quests.lua" in aeui_toc
     bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(encoding="utf-8")
-    assert 'addon.version = "0.8.1"' in bootstrap
+    assert 'addon.version = "0.8.2"' in bootstrap
     assert "actionbar-runtime=" in bootstrap
     assert 'if command == "actionbars" then' in bootstrap
-    assert '/aeui autobar [open|apply|restore]' in bootstrap
+    assert '/aeui autobar [open|apply|restore|popup]' in bootstrap
+    assert '/aeui fieldkit [dock|undock|status]' in bootstrap
     assert "ApplyRecommendedAutoBarProfile" in bootstrap
     assert "RestoreAutoBarProfile" in bootstrap
     assert "chat-runtime=" in bootstrap
@@ -318,14 +319,18 @@ def main() -> None:
     assert 'backdrop:CreateTexture(nil, "OVERLAY")' in actionbars_source
     assert "ApplyRailBackdrop(mergedBackdrop.backdrop, enabled)" in actionbars_source
     assert "button:SetParent" not in actionbars_source
-    assert "button:SetPoint" not in actionbars_source
     assert "button:SetWidth" not in actionbars_source
     assert "button:SetHeight" not in actionbars_source
-    assert 'ActionBars.fieldKitRuntimeContract = "1.1"' in actionbars_source
+    assert 'ActionBars.fieldKitRuntimeContract = "1.2"' in actionbars_source
     assert '"ActionBars\\\\ActionTrinketKitV1"' in actionbars_source
     assert '"ActionBars\\\\ActionConsumableKitV1"' in actionbars_source
     assert "ApplyAutoBarFieldKit" in actionbars_source
     assert "ApplyAutoBarPopup" in actionbars_source
+    assert "ConfigureAutoBarDrawer" in actionbars_source
+    assert "ApplyConsumableDockPosition" in actionbars_source
+    assert "ApplyTrinketDockPosition" in actionbars_source
+    assert "HandleAutoBarDragStop" in actionbars_source
+    assert "HandleTrinketDragStop" in actionbars_source
     assert "ApplyTrinketFieldKit" in actionbars_source
     assert "InstallFieldKitHooks" in actionbars_source
     assert "AutoBarProfileMatches" in actionbars_source
@@ -352,7 +357,7 @@ def main() -> None:
     )
     for manifest_path, runtime_path, pixel_sha in fieldkit_cases:
         fieldkit = json.loads(manifest_path.read_text(encoding="utf-8"))
-        assert fieldkit["runtime_contract"] == "1.1"
+        assert fieldkit["runtime_contract"] == "1.2"
         assert fieldkit["status"] == "runtime-exported"
         assert fieldkit["phase"] == "P5"
         assert fieldkit["runtime_export"]["sha256"] == sha256(runtime_path)
@@ -364,9 +369,14 @@ def main() -> None:
         assert fieldkit["adapter"]["sha256"] == sha256(
             aeui / "Modules" / "ActionBars.lua"
         )
-        assert fieldkit["adapter"]["provider_geometry_writes"] is False
+        assert fieldkit["adapter"]["visual_layers_only"] is False
+        assert fieldkit["adapter"]["visual_and_layout_adapter"] is True
+        assert fieldkit["adapter"]["provider_geometry_writes"] is True
         assert fieldkit["adapter"]["provider_behavior_replaced"] is False
-        assert fieldkit["adapter"]["saved_variables_written"] is False
+        assert fieldkit["adapter"]["saved_variables_written"] is True
+        assert fieldkit["adapter"][
+            "provider_saved_variables_written_automatically"
+        ] is False
         assert fieldkit["adapter"][
             "autobar_enabled_or_profile_applied"
         ] is False

@@ -111,10 +111,10 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 
 | ID | provider／对象 | 合同 |
 |---|---|---|
-| `AB.CONSUMABLE.RACK` | 已加载并自行显示的 `AutoBarFrame`＋`AutoBarFrameButton1..24` | 推荐一次性满容量 `4×6 / 24 Button / 36 UI / gap 3 UI`，同时支持 `1–24` 个真实 Button 与合法行列。推荐按钮簇外壳为 `165×243 UI`。因 `alignButtons` 可把子 Button 放到 `AutoBarFrame` 边界外，装饰 Frame 必须在配置变化时读取真实可见 Button 边界；不得持续重写位置／尺寸，也不得启用当前禁用的 provider |
+| `AB.CONSUMABLE.RACK` | 已加载并自行显示的 `AutoBarFrame`＋`AutoBarFrameButton1..24` | 推荐一次性满容量 `4×6 / 24 Button / 36 UI / gap 3 UI`，同时支持 `1–24` 个真实 Button 与合法行列。推荐按钮簇外壳为 `165×243 UI`。因 `alignButtons` 可把子 Button 放到 `AutoBarFrame` 边界外，装饰 Frame 必须在配置变化时读取真实可见 Button 边界。默认软吸附在主动作条左侧、外壳右缘距主栏左缘 `48 UI`、底边对齐；拖离后只释放消耗品栏，距离停靠点 `32 UI` 内松手重新吸附。不得用维护循环持续重写位置／尺寸，也不得启用当前禁用的 provider |
 | `AB.CONSUMABLE.GROUP` | 推荐 profile 的连续槽段 `1–8／9–16／17–24`；三个非交互标题 Frame／FontString 与两条底层分隔带 | 只在 Button 数、`4×6` 行列与分组 profile 签名全部匹配时显示“应急／增益／工具”；每组两行八格。标题位于命中盒外，分隔带只占两组之间既有 `3 UI` gap，不接收鼠标。任一配置不匹配即隐藏标题／分隔，退回单一自适应外壳，不能给用户自定义类别贴错标签 |
 | `AB.CONSUMABLE.POCKET` | `AutoBarFrameButton1..24` | 显示 provider 选出的真实物品图标、数量、冷却、可用性和 Tooltip；槽底不含物品图标、名称或类别。V1 不创建自有 fallback Button |
-| `AB.CONSUMABLE.POPUP` | `AutoBarPopupFrame_Button1..12` | 复用每个真实候选 Button 的薄口袋与 `3 UI` 短连接带，支持上下左右线性增长；不得把 XML 初始 `72×72 UI` Frame 当作实际弹出边界，不复制分类表或重挂 `PickupContainerItem` |
+| `AB.CONSUMABLE.POPUP` | `AutoBarPopupFrame_Button1..12` | 精确匹配推荐 `24 Button / 4×6 / profile` 时改用外置抽屉：`1–6` 个候选为单列，`7–12` 个候选为列优先双列且最多六行；整组位于卷袋外，不遮挡主格或分类签。`AUTO` 在卷袋已吸附时向左展开，浮动时按屏幕剩余空间选择左右；`LEFT／RIGHT` 可强制方向，`NATIVE` 或任一 profile 签名不匹配时完整恢复 provider 原生四向线性布局。候选顺序、图标、数量、冷却、点击、Tooltip 与悬停关闭仍归 AutoBar；不得把 XML 初始 `72×72 UI` Frame 当作实际弹出边界，不复制分类表或重挂 `PickupContainerItem` |
 
 推荐 profile 使用 AutoBar 现有类别 ID 组成三个八格槽段：`应急` 放生命／职业
 资源／双恢复／绷带／解毒／行动／机动；`增益` 放战斗药剂／守护药剂／元素
@@ -138,20 +138,23 @@ AutoBar 的真实类别、物品顺序和用户后续配置始终优先；缺失
 （`512² RGBA`，文件 SHA `c48f6292…320e`、像素 SHA `658f826f…e30d`），合同见
 [runtime manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_RuntimeManifest_v1.json)。
 adapter 在现有 `24+12` Button 下分别取 A／B，C 以 `6 UI` 九宫格跟随真实可见
-Button 边界，D 以横／竖三段连接 popup 与分组 gap。它只读取 profile 以决定标签
-真伪，不自动启用 AutoBar、不在普通刷新中应用 profile 或写入 SavedVariables。
-`fieldkit-contract=1.1` 把每个 A／B 口袋放入以真实 Button 为父、FrameLevel 比
+Button 边界，D 用于分组 gap，并在外置 popup 抽屉靠卷袋一侧形成竖向 spine。它只
+读取 profile 以决定标签与抽屉真伪，不自动启用 AutoBar、不在普通刷新中应用 profile
+或写入 provider SavedVariables。`fieldkit-contract=1.2` 延续把每个 A／B 口袋放入
+以真实 Button 为父、FrameLevel 比
 Button 低 `1` 的独立非交互装饰 Frame，避免与 ActionButtonTemplate 的动态图标
 共用 `BACKGROUND` 层。用户可显式执行 `/aeui autobar apply`，只为当前角色一次性
 写入已确认的 `4×6`／24 类 profile，并在 AEUI SavedVariables 中保存应用前副本；
 `/aeui autobar restore` 恢复该副本，`/aeui autobar open` 只打开 AutoBar 原配置页。
-这些命令都不自动启用 provider，不改其他角色或 TrinketMenu 配置。
+`/aeui autobar popup auto|left|right|native` 控制抽屉策略。吸附布尔值仅写入 AEUI
+自己的 SavedVariables；这些命令都不自动启用 provider，不改其他角色或
+TrinketMenu 配置。
 
 ## 饰品双槽
 
 | ID | provider／对象 | 合同 |
 |---|---|---|
-| `AB.TRINKET.DOCK` | 可选 `TrinketMenu_MainFrame`；缺失时不显示占位栏 | 水平严格 `92×52 UI`、垂直严格 `52×92 UI`；两枚 `36×36 UI` 真实已装备饰品，主栏 scale／方向／拖动与 resize 继续归 provider；实际图标、快捷键、冷却与 Tooltip 动态 |
+| `AB.TRINKET.DOCK` | 可选 `TrinketMenu_MainFrame`；缺失时不显示占位栏 | 水平严格 `92×52 UI`、垂直严格 `52×92 UI`；两枚 `36×36 UI` 真实已装备饰品，主栏 scale／方向／拖动与 resize 继续归 provider；实际图标、快捷键、冷却与 Tooltip 动态。默认软吸附在主动作条右侧、左缘距主栏右缘 `16 UI`、底边对齐；拖离后只释放饰品栏，距离停靠点 `32 UI` 内松手重新吸附 |
 | `AB.TRINKET.SLOT13` | `TrinketMenu_Trinket0`／`UseInventoryItem(13)` | 顶部饰品槽；点击使用，不生成固定饰品 |
 | `AB.TRINKET.SLOT14` | `TrinketMenu_Trinket1`／`UseInventoryItem(14)` | 底部饰品槽；点击使用，不生成固定饰品 |
 | `AB.TRINKET.MENU` | `TrinketMenu_MenuFrame`＋`TrinketMenu_Menu1..30` | 零候选隐藏；Button `36×36 UI`、步距 `40 UI`。VERTICAL 为 `12+列数×40` 乘 `12+ceil(数量/列数)×40`，HORIZONTAL 转置；支持自动 `1–5` 列或用户 `1–30` 列、菜单独立 scale／方向／拖动、八种停靠组合与战斗 Queue。只换肤并 fail-open |
@@ -173,9 +176,11 @@ normal 静态底面；图标、冷却、Queue、文字、命中区、拖动、sc
 [runtime manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json)。
 adapter 在既有两槽／30 候选 Button 下挂 A／B，C 以 `6 UI` 九宫格跟随菜单 Frame，
 D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 与原生 backdrop，
-不修改 TrinketMenu SavedVariables 或任何换装／Queue 行为。`fieldkit-contract=1.1`
+不替代 TrinketMenu 原有位置持久化或任何换装／Queue 行为。`fieldkit-contract=1.2`
 同样把两槽与候选的 A／B 纹理放进低于真实 Button `1` 级的独立非交互装饰 Frame，
-真实饰品图标、冷却和 Queue 始终位于其上。
+真实饰品图标、冷却和 Queue 始终位于其上。两侧软吸附由 `/aeui fieldkit
+dock|undock|status` 统一恢复、释放或查询；每一侧拖拽结束时独立判断，AEUI 只保存
+自己的两个吸附布尔值。
 
 ## 推荐布局而非强制布局
 

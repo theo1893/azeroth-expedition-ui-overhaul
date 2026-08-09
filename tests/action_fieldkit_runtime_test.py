@@ -46,7 +46,7 @@ def main() -> None:
     adapter = adapter_path.read_text(encoding="utf-8")
     adapter_sha = sha256(adapter_path)
 
-    expected_scenarios = {"trinket": 9, "consumable": 7}
+    expected_scenarios = {"trinket": 9, "consumable": 10}
     for key, case in builder.CASES.items():
         source = builder.validate_source(ROOT / case["source"], case)
         rebuilt, layout, sprites = builder.build_runtime(source, case)
@@ -71,7 +71,7 @@ def main() -> None:
         manifest = json.loads(
             (ROOT / case["runtime_manifest"]).read_text(encoding="utf-8")
         )
-        assert manifest["runtime_contract"] == "1.1"
+        assert manifest["runtime_contract"] == "1.2"
         assert manifest["status"] == "runtime-exported"
         assert manifest["phase"] == "P5"
         assert manifest["runtime_export"]["sha256"] == sha256(runtime_path)
@@ -80,19 +80,35 @@ def main() -> None:
         )
         assert manifest["transform"]["runtime_layout"] == layout
         assert manifest["adapter"]["sha256"] == adapter_sha
-        assert manifest["adapter"]["visual_layers_only"] is True
-        assert manifest["adapter"]["provider_geometry_writes"] is False
+        assert manifest["adapter"]["visual_layers_only"] is False
+        assert manifest["adapter"]["visual_and_layout_adapter"] is True
+        assert manifest["adapter"]["provider_geometry_writes"] is True
         assert manifest["adapter"]["provider_behavior_replaced"] is False
-        assert manifest["adapter"]["saved_variables_written"] is False
+        assert manifest["adapter"]["saved_variables_written"] is True
+        assert manifest["adapter"][
+            "provider_saved_variables_written_automatically"
+        ] is False
+        assert manifest["adapter"][
+            "aeui_saved_variables_written_on_drag_stop"
+        ] is True
         assert manifest["adapter"]["autobar_enabled_or_profile_applied"] is False
         assert manifest["adapter"]["automatic_profile_mutation"] is False
         if key == "consumable":
             setup = manifest["adapter"]["optional_user_configuration"]
             assert setup["apply_command"] == "/aeui autobar apply"
             assert setup["restore_command"] == "/aeui autobar restore"
+            assert setup["popup_command"] == (
+                "/aeui autobar popup [auto|left|right|native]"
+            )
+            assert setup["dock_command"] == "/aeui fieldkit [dock|undock|status]"
             assert setup["provider_enabled_automatically"] is False
         else:
-            assert manifest["adapter"]["optional_user_configuration"] is None
+            setup = manifest["adapter"]["optional_user_configuration"]
+            assert setup["dock_command"] == "/aeui fieldkit [dock|undock|status]"
+            assert setup["state"] == (
+                "AzerothExpeditionUIDB.actionbars.trinketDocked"
+            )
+            assert setup["provider_saved_variables_written_by_aeui"] is False
         assert manifest["package_validation"]["status"] == "pass"
         assert manifest["package_validation"]["violations"] == 0
         assert manifest["package_validation"][
@@ -122,18 +138,25 @@ def main() -> None:
         assert result["summary"]["violation_count"] == 0
 
     for required in (
-        'ActionBars.fieldKitRuntimeContract = "1.1"',
+        'ActionBars.fieldKitRuntimeContract = "1.2"',
         "ActionTrinketKitV1",
         "ActionConsumableKitV1",
         "ApplyAutoBarFieldKit",
         "ApplyAutoBarPopup",
+        "ConfigureAutoBarDrawer",
+        "ApplyConsumableDockPosition",
+        "ApplyTrinketDockPosition",
+        "HandleAutoBarDragStop",
+        "HandleTrinketDragStop",
         "ApplyTrinketFieldKit",
         "InstallFieldKitHooks",
         'hooksecurefunc("AutoBar_SetupVisual"',
         'hooksecurefunc(AutoBar, "ButtonsUpdate"',
         'hooksecurefunc(AutoBar, "UpdatePopupButtons"',
+        'hooksecurefunc(AutoBar, "DragStop"',
         'hooksecurefunc(TrinketMenu, "OrientWindows"',
         'hooksecurefunc(TrinketMenu, "BuildMenu"',
+        'hooksecurefunc(TrinketMenu, "MainFrame_OnMouseUp"',
         "AutoBarProfileMatches",
         "CreatePocketDecorationFrame",
         'texture = holder:CreateTexture(nil, "BACKGROUND")',
@@ -151,7 +174,6 @@ def main() -> None:
         r"TrinketMenuPerOptions\.[A-Za-z_]+\s*=",
         r"TrinketMenuQueue\.[A-Za-z_]+\s*=",
         r"\bbutton:SetParent\(",
-        r"\bbutton:SetPoint\(",
         r"\bbutton:SetWidth\(",
         r"\bbutton:SetHeight\(",
         r"\bbutton:SetScript\(",

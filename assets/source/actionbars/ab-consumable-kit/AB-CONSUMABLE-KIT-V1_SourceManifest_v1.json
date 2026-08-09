@@ -286,7 +286,7 @@
     "status": "exported",
     "authorization": "user instruction '下一步' on 2026-08-09",
     "exporter": "tools/build_action_fieldkit_v1_runtime.py",
-    "exporter_sha256": "e98331a3f94ef91b7bb5cf1d207f8a15a4c11c7407adbe2f89872bf226891861",
+    "exporter_sha256": "1c46278daeb580008a6619c4b24e906761c001e2aaf477b75feb75173cf77a29",
     "runtime_file": "addon/AzerothExpeditionUI/Media/ActionBars/ActionConsumableKitV1.tga",
     "runtime_sha256": "c48f6292336446d2cc0cbbfc811cde9903b06eeb41e6c9f4db49e4f13fd9320e",
     "runtime_atlas_size": [
@@ -462,8 +462,9 @@
       "redraw, recolor, mirror or invent states from accepted cells",
       "distort A/B or C edge/corner slices; only quiet C/D centers may stretch",
       "bake item icons, counts, cooldowns, Queue, category labels or tooltips",
-      "replace provider Buttons, hit regions, scripts, drag, scale, docking or SavedVariables",
-      "enable AutoBar or apply any AutoBar or TrinketMenu profile"
+      "replace provider Buttons, scripts, item behavior or write provider SavedVariables",
+      "leave popup points or hit regions changed after native/signature-mismatch fallback",
+      "automatically enable AutoBar or apply any AutoBar or TrinketMenu profile"
     ]
   },
   "runtime_exports": {
@@ -492,14 +493,14 @@
   },
   "p5_validation": {
     "display_region_contract": "tools/specs/action_consumable_kit_v1_runtime_display_region.json",
-    "display_region_contract_sha256": "6bef62141b1df93f65362ae3db951ff8ec5b3d2f9541ffba89b15340dedcb7dd",
+    "display_region_contract_sha256": "9a80ec483bf3031e84fe7b7d70a92af5de80fb91b6775c8a49f86fa84f5928a1",
     "display_region_report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.CONSUMABLE.KIT.V1.display-region-report.json",
-    "display_region_report_sha256": "3c0c672a79bce88e6c7810cf333dfd4407e3e929943d5ab92aa9709fe8ed0126",
-    "real_layout_preview": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.FIELDKIT.V1.runtime-v1.real-layout-1920x1080.png",
-    "real_layout_preview_sha256": "787bd62efe45fbb58476e4e4589db3d1fc5f39d22e1eaafd95f308047a762b7f",
-    "supported_layouts_preview": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.CONSUMABLE.KIT.V1.runtime-v1.layouts.png",
-    "supported_layouts_preview_sha256": "d6b32ea616537b38e5a8beacefaa1962800dbdd118940de468f81e52169d7834",
-    "real_layout_scenarios": "7/7 pass",
+    "display_region_report_sha256": "2a2c7addcd6e2f3935956134b7ce5155daf594ecb15151df4e39c57955a23ed8",
+    "real_layout_preview": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.FIELDKIT.V1.runtime-v1.2.real-layout-1920x1080.png",
+    "real_layout_preview_sha256": "00d468852311049b6cf29cc148e68d36764f7bc51fdb15cf8442432dbaa41655",
+    "supported_layouts_preview": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.CONSUMABLE.KIT.V1.runtime-v1.2.layouts.png",
+    "supported_layouts_preview_sha256": "255a816f8b9319477b672f5ac40f37ec91534bd2affcbc25b2ed71576cc9ab7c",
+    "real_layout_scenarios": "10/10 pass",
     "display_region_violations": 0,
     "addon_package": {
       "report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/addon-package-report.json",

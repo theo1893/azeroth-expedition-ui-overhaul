@@ -128,10 +128,14 @@ def main() -> None:
         )
         assert manifest["export_contract"]["imagegen_calls_after_acceptance"] == 0
         assert manifest["p5_validation"]["display_region_violations"] == 0
+        expected_scenarios = 9 if case["component"] == "AB.TRINKET.KIT.V1" else 10
+        assert manifest["p5_validation"]["real_layout_scenarios"] == (
+            f"{expected_scenarios}/{expected_scenarios} pass"
+        )
         assert manifest["p5_validation"]["game_validated"] is False
 
         assert sha256(case["runtime"]) == case["runtime_sha256"]
-        assert runtime_manifest["runtime_contract"] == "1.1"
+        assert runtime_manifest["runtime_contract"] == "1.2"
         assert runtime_manifest["status"] == "runtime-exported"
         assert runtime_manifest["phase"] == "P5"
         assert runtime_manifest["source"]["sha256"] == case["sha256"]
@@ -142,10 +146,17 @@ def main() -> None:
         assert runtime_manifest["runtime_export"]["pixel_sha256"] == (
             case["runtime_pixel_sha256"]
         )
-        assert runtime_manifest["adapter"]["visual_layers_only"] is True
-        assert runtime_manifest["adapter"]["provider_geometry_writes"] is False
+        assert runtime_manifest["adapter"]["visual_layers_only"] is False
+        assert runtime_manifest["adapter"]["visual_and_layout_adapter"] is True
+        assert runtime_manifest["adapter"]["provider_geometry_writes"] is True
         assert runtime_manifest["adapter"]["provider_behavior_replaced"] is False
-        assert runtime_manifest["adapter"]["saved_variables_written"] is False
+        assert runtime_manifest["adapter"]["saved_variables_written"] is True
+        assert runtime_manifest["adapter"][
+            "provider_saved_variables_written_automatically"
+        ] is False
+        assert runtime_manifest["adapter"][
+            "aeui_saved_variables_written_on_drag_stop"
+        ] is True
         assert runtime_manifest["adapter"]["autobar_enabled_or_profile_applied"] is False
         assert runtime_manifest["game_validation"]["status"] == "pending-retest"
 

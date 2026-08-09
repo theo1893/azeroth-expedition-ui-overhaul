@@ -3,7 +3,7 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 
 addon.name = "AzerothExpeditionUI"
-addon.version = "0.8.1"
+addon.version = "0.8.2"
 addon.modules = addon.modules or {}
 addon.media = addon.media or {}
 addon.media.root = "Interface\\AddOns\\AzerothExpeditionUI\\Media\\"
@@ -12,6 +12,9 @@ local defaults = {
   actionbars = {
     enabled = true,
     artVersion = 1,
+    autoBarPopupMode = "AUTO",
+    consumableDocked = true,
+    trinketDocked = true,
   },
   chat = {
     enabled = true,
@@ -180,8 +183,34 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       if ok then
         addon:ScheduleRefresh(0)
       end
+    elseif string.find(subcommand, "^popup") then
+      local _, _, mode = string.find(subcommand, "^popup%s*(.*)$")
+      if mode == "" then
+        addon:Print("/aeui autobar popup [auto|left|right|native]")
+      else
+        local _, result = module:SetAutoBarPopupMode(mode)
+        addon:Print(result)
+      end
     else
-      addon:Print("/aeui autobar [open|apply|restore]")
+      addon:Print(
+        "/aeui autobar [open|apply|restore|popup auto|left|right|native]"
+      )
+    end
+  elseif string.find(command, "^fieldkit") then
+    local _, _, subcommand = string.find(command, "^fieldkit%s*(.*)$")
+    local module = addon.modules.ActionBars
+    if not module then
+      addon:Print("ActionBars module is unavailable.")
+    elseif subcommand == "" or subcommand == "dock" then
+      local _, result = module:SetFieldKitDocking(true)
+      addon:Print(result)
+    elseif subcommand == "undock" or subcommand == "free" then
+      local _, result = module:SetFieldKitDocking(false)
+      addon:Print(result)
+    elseif subcommand == "status" then
+      addon:Print(module:GetRuntimeStatus())
+    else
+      addon:Print("/aeui fieldkit [dock|undock|status]")
     end
   elseif command == "chat" then
     AzerothExpeditionUIDB.chat.enabled =
@@ -266,7 +295,7 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
     end
   else
     addon:Print(
-      "/aeui actionbars, /aeui autobar [open|apply|restore], /aeui chat, /aeui quests, /aeui refresh, /aeui status"
+      "/aeui actionbars, /aeui autobar [open|apply|restore|popup], /aeui fieldkit [dock|undock|status], /aeui chat, /aeui quests, /aeui refresh, /aeui status"
     )
   end
 end

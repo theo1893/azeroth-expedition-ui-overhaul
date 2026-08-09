@@ -204,6 +204,35 @@ def autobar_popup_geometry(config: dict[str, Any], padding: int = 4) -> dict[str
     return {"frame": frame, "buttons": buttons, "direction": direction}
 
 
+def autobar_drawer_geometry(config: dict[str, Any], padding: int = 4) -> dict[str, Any]:
+    count = int(config["count"])
+    maximum_rows = int(config.get("maximum_rows", 6))
+    rows = count if count <= maximum_rows else math.ceil(count / 2)
+    rows = max(1, min(maximum_rows, rows))
+    columns = math.ceil(count / rows)
+    step = 39
+    buttons: list[list[int]] = []
+    for index in range(count):
+        column = index // rows
+        row = index % rows
+        left = padding + column * step
+        top = padding + row * step
+        buttons.append([left, top, left + 36, top + 36])
+    frame = [
+        padding * 2 + 36 + (columns - 1) * step,
+        padding * 2 + 36 + (rows - 1) * step,
+    ]
+    spine = [frame[0] - 3, 0, frame[0], frame[1]]
+    return {
+        "frame": frame,
+        "buttons": buttons,
+        "rows": rows,
+        "columns": columns,
+        "spine": spine,
+        "side": str(config.get("side", "LEFT")),
+    }
+
+
 def icon_colors(index: int) -> tuple[str, str]:
     colors = (
         ("#6f3529", "#e0ae61"),
@@ -397,6 +426,42 @@ def draw_popup(
     return frame
 
 
+def draw_popup_drawer(
+    image: Image.Image,
+    origin: tuple[int, int],
+    config: dict[str, Any],
+    factor: float,
+    fonts: dict[str, ImageFont.FreeTypeFont],
+    palette: dict[str, str],
+) -> tuple[int, int, int, int]:
+    geometry = autobar_drawer_geometry(config)
+    width, height = (round(value * factor) for value in geometry["frame"])
+    x, y = origin
+    draw = ImageDraw.Draw(image, "RGBA")
+    frame = (x, y, x + width, y + height)
+    spine = offset_box(scale_box(geometry["spine"], factor), x, y)
+    draw.rectangle(spine, fill=core.rgba(palette["pouch_dark"], 235))
+    draw.line(
+        (spine[0], spine[1], spine[0], spine[3]),
+        fill=core.rgba(palette["quiet_brass"], 155),
+        width=1,
+    )
+    for index, raw_box in enumerate(geometry["buttons"]):
+        box = offset_box(scale_box(raw_box, factor), x, y)
+        draw_item_button(
+            draw,
+            box,
+            index + 20,
+            fonts,
+            palette,
+            kind="consumable",
+            cooldown=index == 3,
+            count=str(index + 1),
+            selected=index == 1,
+        )
+    return frame
+
+
 def draw_trinket_main(
     image: Image.Image,
     origin: tuple[int, int],
@@ -526,7 +591,12 @@ def draw_scene(root: Path, spec: dict[str, Any], output: Path) -> dict[str, Any]
     # Compact callouts state the runtime ownership without masking combat content.
     callout_y = rack[1] - 62
     draw.rounded_rectangle((rack[0], callout_y, rack[2], callout_y + 36), radius=6, fill=core.rgba("#17110d", 215), outline=core.rgba("#705235"), width=1)
-    text(draw, ((rack[0] + rack[2]) // 2, callout_y + 18), "当前未启用 · 仅展示可选布局", fonts["micro"], "#d9bd85", anchor="mm")
+    rack_callout = (
+        "已由用户启用 · 左侧软吸附"
+        if spec["current_device"]["auto_bar"]["enabled_for_current_character"]
+        else "当前未启用 · 仅展示可选布局"
+    )
+    text(draw, ((rack[0] + rack[2]) // 2, callout_y + 18), rack_callout, fonts["micro"], "#d9bd85", anchor="mm")
     draw.rounded_rectangle((dock[0], dock[1] - 62, dock[2] + 76, dock[1] - 26), radius=6, fill=core.rgba("#17110d", 215), outline=core.rgba("#705235"), width=1)
     text(draw, ((dock[0] + dock[2] + 76) // 2, dock[1] - 44), "现用插件 · 排队角标保留", fonts["micro"], "#d9bd85", anchor="mm")
 
@@ -554,7 +624,12 @@ def draw_states_board(root: Path, spec: dict[str, Any], output: Path) -> None:
     image = Image.new("RGBA", (1920, 1200), core.rgba("#111613"))
     draw = ImageDraw.Draw(image, "RGBA")
     text(draw, (42, 34), "AB.FIELDKIT.V1 · Provider 真实几何状态板", fonts["title"], "#edd7a2")
-    text(draw, (42, 76), "左：当前启用的 TrinketMenu　右：已安装但当前禁用的 AutoBar", fonts["body"], "#c7b897")
+    provider_state = (
+        "左：当前启用的 TrinketMenu　右：用户已启用并应用 4×6 分组的 AutoBar"
+        if spec["current_device"]["auto_bar"]["enabled_for_current_character"]
+        else "左：当前启用的 TrinketMenu　右：已安装但当前禁用的 AutoBar"
+    )
+    text(draw, (42, 76), provider_state, fonts["body"], "#c7b897")
     text(draw, (42, 108), "这里只确认布局、材质层级与视觉重量；所有图标、数字与纹理均为非权威占位。", fonts["small"], "#a99a7c")
 
     left_panel = (30, 142, 945, 1145)
@@ -593,7 +668,7 @@ def draw_states_board(root: Path, spec: dict[str, Any], output: Path) -> None:
     text(draw, (618, 940), "合法极宽：30 列 → 1212×52 UI", fonts["tiny"], "#bdae8d", anchor="mm")
 
     # AutoBar optional recommendation and provider limits.
-    if str(spec["version"]) == "AB-FIELDKIT-SIM-V2":
+    if str(spec["version"]) in {"AB-FIELDKIT-SIM-V2", "AB-FIELDKIT-SIM-V3"}:
         text(draw, (1005, 220), "修订建议：完整 24 个类别槽，4×6；每两行一组，仍由 AutoBar 选择真实物品", fonts["small"], "#d8c49a")
         grouped_config = {
             "count": 24,
@@ -616,14 +691,44 @@ def draw_states_board(root: Path, spec: dict[str, Any], output: Path) -> None:
         text(draw, (1298, 562), "工程 / 钓鱼 / 战场事件 / 任务物品", fonts["tiny"], "#bdae8d")
         text(draw, (1005, 622), "标签与分隔线不接收鼠标；配置不匹配该预设时隐藏标签，退回单一自适应外壳。", fonts["tiny"], "#bdae8d")
 
-        text(draw, (1005, 684), "分类内候选仍用原生 popup：每个主槽悬停后最多 12 个真实物品，上下左右展开", fonts["small"], "#d8c49a")
-        popup_box = draw_popup(image, (1030, 730), {"count": 6, "direction": "RIGHT"}, 0.90, fonts, palette)
-        text(draw, (popup_box[0], popup_box[3] + 24), "代表 6 项；最大 12 项；不使用固定大面板", fonts["tiny"], "#bdae8d")
+        if str(spec["version"]) == "AB-FIELDKIT-SIM-V3":
+            text(draw, (1005, 684), "外置候选抽屉：1–6 项单列；7–12 项双列，整组位于卷袋外侧，不覆盖任何母格", fonts["small"], "#d8c49a")
+            first_drawer = draw_popup_drawer(
+                image,
+                (1030, 724),
+                {"count": 6, "side": "LEFT", "maximum_rows": 6},
+                0.62,
+                fonts,
+                palette,
+            )
+            second_drawer = draw_popup_drawer(
+                image,
+                (1140, 724),
+                {"count": 12, "side": "LEFT", "maximum_rows": 6},
+                0.62,
+                fonts,
+                palette,
+            )
+            text(draw, (first_drawer[0], first_drawer[3] + 22), "6 项 · 1×6", fonts["tiny"], "#bdae8d")
+            text(draw, (second_drawer[0], second_drawer[3] + 22), "12 项 · 2×6", fonts["tiny"], "#bdae8d")
+            text(draw, (1340, 756), "AUTO：停靠左侧时向左展开", fonts["tiny"], "#bdae8d")
+            text(draw, (1340, 786), "自由摆放时按屏幕余量选边", fonts["tiny"], "#bdae8d")
+            text(draw, (1340, 816), "自定义配置不匹配则回退原生", fonts["tiny"], "#bdae8d")
+            text(draw, (1340, 846), "图标 / CD / 点击 / Tooltip 不变", fonts["tiny"], "#bdae8d")
+        else:
+            text(draw, (1005, 684), "分类内候选仍用原生 popup：每个主槽悬停后最多 12 个真实物品，上下左右展开", fonts["small"], "#d8c49a")
+            popup_box = draw_popup(image, (1030, 730), {"count": 6, "direction": "RIGHT"}, 0.90, fonts, palette)
+            text(draw, (popup_box[0], popup_box[3] + 24), "代表 6 项；最大 12 项；不使用固定大面板", fonts["tiny"], "#bdae8d")
 
         text(draw, (1005, 875), "兼容而非推荐：原 5×2、24×1、1×24 与用户自定义行列继续有效", fonts["small"], "#d8c49a")
         draw_rack(image, (1015, 930), {"count": 10, "columns": 5, "rows": 2}, 0.80, fonts, palette, label="5×2 紧凑模式")
         draw_rack(image, (1235, 948), {"count": 24, "columns": 24, "rows": 1}, 0.45, fonts, palette, label="24×1 容量模式")
-        text(draw, (1015, 1050), "AutoBar 当前仍未启用；分类预设只在用户主动应用时写入一次，并保留恢复入口。", fonts["tiny"], "#bdae8d")
+        profile_note = (
+            "AutoBar 已由用户主动启用并应用分类预设；AEUI 仍保留恢复入口，不在普通刷新中重写配置。"
+            if spec["current_device"]["auto_bar"]["enabled_for_current_character"]
+            else "AutoBar 当前仍未启用；分类预设只在用户主动应用时写入一次，并保留恢复入口。"
+        )
+        text(draw, (1015, 1050), profile_note, fonts["tiny"], "#bdae8d")
     else:
         text(draw, (1005, 220), "建议预设：10 个真实分类按钮，5×2，36 UI，间隔 3 UI；只在用户主动应用时启用", fonts["small"], "#d8c49a")
         draw_rack(image, (1015, 285), {"count": 10, "columns": 5, "rows": 2}, 1.55, fonts, palette, label="炼金师卷袋 · 不烘焙瓶子或类别")
@@ -698,12 +803,17 @@ def validate(spec: dict[str, Any], scene_boxes: dict[str, Any]) -> dict[str, Any
             geometry = autobar_grouped_rack_geometry(scenario)
         elif scenario["kind"] == "rack":
             geometry = autobar_rack_geometry(scenario)
+        elif scenario["kind"] == "drawer":
+            geometry = autobar_drawer_geometry(scenario)
         else:
             geometry = autobar_popup_geometry(scenario)
         frame_box = [0, 0, *geometry["frame"]]
         check(f"{identifier}.count", len(geometry["buttons"]) == int(scenario["count"]), actual=len(geometry["buttons"]))
         check(f"{identifier}.buttons-contained", all(contains(frame_box, box) for box in geometry["buttons"]))
         check(f"{identifier}.no-button-overlap", all(not boxes_overlap(first, second) for index, first in enumerate(geometry["buttons"]) for second in geometry["buttons"][index + 1:]))
+        if scenario["kind"] == "drawer":
+            check(f"{identifier}.maximum-six-rows", int(geometry["rows"]) <= 6, actual=geometry["rows"])
+            check(f"{identifier}.maximum-two-columns", int(geometry["columns"]) <= 2, actual=geometry["columns"])
         if scenario["kind"] == "grouped-rack":
             groups = geometry["groups"]
             slot_ranges = [
@@ -719,7 +829,10 @@ def validate(spec: dict[str, Any], scene_boxes: dict[str, Any]) -> dict[str, Any
             check(f"{identifier}.two-divider-seams", len(geometry["group_dividers"]) == 2, actual=len(geometry["group_dividers"]))
 
     check("provider.trinket-enabled", spec["current_device"]["trinket_menu"]["enabled_for_current_character"] is True)
-    check("provider.autobar-remains-disabled", spec["current_device"]["auto_bar"]["enabled_for_current_character"] is False)
+    if str(spec["version"]) == "AB-FIELDKIT-SIM-V3":
+        check("provider.autobar-user-enabled", spec["current_device"]["auto_bar"]["enabled_for_current_character"] is True)
+    else:
+        check("provider.autobar-remains-disabled", spec["current_device"]["auto_bar"]["enabled_for_current_character"] is False)
     check("simulation.imagegen-zero", spec["imagegen"] == {"used": 0, "limit": 0})
     violations = [item["id"] for item in checks if not item["pass"]]
     return {

@@ -41,21 +41,29 @@
   添加非交互视觉层，并在 provider 完成布局／更新后刷新装饰。用户首次实机检查
   发现 AutoBar 数量仍显示但多枚物品图标缺失，TrinketMenu 两枚已装备图标也只剩
   空护套；两张截图共同证明 A／B 装饰与 ActionButtonTemplate 动态 Icon 同处
-  `BACKGROUND` 且后创建装饰覆盖 Icon。`fieldkit-contract=1.1` 已把全部主格、popup、
+  `BACKGROUND` 且后创建装饰覆盖 Icon。`fieldkit-contract=1.1` 把全部主格、popup、
   已装备槽和候选格的口袋纹理移入以真实 Button 为父、FrameLevel 低 `1` 的独立
-  非交互 Frame；没有改 Icon、Cooldown、Count、Queue、命中区或 provider 脚本。
+  非交互 Frame；后续实机复测已确认 Icon／Count／Cooldown／按下反馈正常。
   同时新增显式、可逆的当前角色配置入口：`/aeui autobar open` 打开原配置页，
   `/aeui autobar apply` 备份后一次性应用已确认的 `4×6`／24 类 profile，
   `/aeui autobar restore` 恢复；普通刷新仍不写 profile，也不自动启用 AutoBar、
-  不改其他角色或 TrinketMenu SavedVariables。AEUI 版本为 `0.8.1`。最终 display
-  仍为 `9/9`＋`7/7`、violations `0`，fresh-checkout package `pass`、目标设备无需
-  构建。当前保持 `runtime-exported / P5 / pending-retest`；P4→本次修复 ImageGen
+  不改其他角色或替代 TrinketMenu 行为。用户随后提供 `376×427 RGB` 截图
+  `4d29a262…e942`，指出 AutoBar 原生向左线性 popup 穿过并遮挡主格，并授权修改；
+  同时要求考虑消耗品袋与饰品袋吸附。AEUI `0.8.2`／`fieldkit-contract=1.2` 只在
+  exact `24 / 4×6 / 推荐 profile` 使用卷袋外置抽屉：候选 `1–6` 单列、`7–12`
+  列优先双列，`AUTO` 在吸附态向左、自由态按屏幕余量选择；支持 `LEFT／RIGHT／
+  NATIVE`，不匹配即恢复 provider 原生布局。消耗品默认软吸附主栏左侧 `48 UI`，
+  饰品默认吸附右侧 `16 UI`，阈值均为 `32 UI`；两侧可独立拖离／回吸附，AEUI 只
+  保存自己的布尔状态，没有维护循环。`AB-FIELDKIT-SIM-V3` 布局 `89/89`、display
+  `19/19`；runtime display `9/9`＋`10/10`、violations `0`，fresh-checkout package
+  `pass`、目标设备无需构建。当前保持 `runtime-exported / P5 / pending-retest`；
+  P4→本次修复 ImageGen
   `0`，原生产循环仍终止于 `4/5` 与 `1/5`。
 - `AB.SLOT.BASE.V1` 有界生产循环已在 `5/5` 停止；用户于 `2026-08-08` 明确
   “接受 AB.SLOT.BASE.V1 第5稿”，随后以“进行下一步”授权 P4→P5。exact source
   RGBA `6d4a4d16…7dc0` 已按冻结 `[200,200,824,824)` crop 确定性导出为
   `128×128` 32-bit TGA `ActionSlotBaseV1.tga`，SHA `5c49a1db…23ca`，像素 SHA
-  `e527c038…c35c` 与已验收 attempt 5 runtime review 完全一致。当前 AEUI `0.8.1`
+  `e527c038…c35c` 与已验收 attempt 5 runtime review 完全一致。当前 AEUI `0.8.2`
   的 `ActionBars` adapter 只在现有 pfUI Bar `1–10` 的逐按钮 `backdrop` 上创建
   full-UV 子纹理；Bar `11／12`、按钮逻辑、动态图标／文字／状态、命中区、分页、
   拖放、位置、scale 与 SavedVariables 均未接管。五种最终排版 `5/5 pass`、
@@ -166,10 +174,10 @@
 | `AB.SLOT.STATE` | `P2 / scoped` | highlight／active／equipped／icon tint／cooldown／按键动画的真实覆盖顺序已冻结 | 基底 P6 已验证；如需独立换肤再写悬停／激活覆盖合同，不生产假 disabled cell |
 | `AB.ENDCAP.GRYPHON` | `P2 / direction-locked` | pfUI 左右端帽对象、64 UI 默认能力；用户确认的 V3 preset 默认关闭 | `AB.SLOT／RAIL` 后另行授权可选端帽正文 |
 | `AB.STANCE／PET` | `P1` | Bar `11／12` 与 provider 状态已审计 | 职业最少／最多数量和自动施法实机排版 |
-| `AB.CONSUMABLE.RACK／POCKET／POPUP` | `P5 / runtime-v1.1 / pending-retest / 1/5` | [source](../../../assets/source/actionbars/ab-consumable-kit/ActionConsumableKit_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_RuntimeManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；TGA `c48f6292…320e`、像素 `658f826f…e30d`；AutoBar `24+12` bridge、display `7/7`、package pass；实机已发现同层口袋遮挡图标，v1.1 改为 Button 子 FrameLevel `-1` 并待复测 | `/reload` 后先确认所有主格／popup 图标与数量同时显示，再验证合法布局、四向 popup、拖动／缩放／显隐和 `/aeui actionbars` 回退 |
-| `AB.CONSUMABLE.GROUP` | `P5 / runtime-v1.1 / pending-retest / 1/5` | 精确 `24 Button / 4×6 / 推荐 profile` 才显示三组；新增 `/aeui autobar apply` 当前角色备份式一次性配置与 `/aeui autobar restore`，普通刷新仍只读且不启用 provider | 实机执行 apply，确认“应急／增益／工具”、保留的手动数字 item ID、弹出方向；再执行 restore 验证可逆 |
-| `AB.TRINKET.DOCK` | `P5 / runtime-v1.1 / pending-retest / 4/5` | [source](../../../assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；TGA `3614d9a8…f455`、像素 `0961d750…aef`；实机已发现护套遮挡两枚已装备图标，v1.1 改为 Button 子 FrameLevel `-1` | `/reload` 后确认两枚真实饰品图标、冷却和 Queue 均位于护套之上，再验证横／竖、拖动／缩放与回退；不执行 attempt 5 |
-| `AB.TRINKET.MENU` | `P5 / runtime-v1.1 / pending-retest / 4/5` | C 九宫格不变，B 候选插页同样下移至 Button 子 FrameLevel `-1`；候选 `0／1／8／30` display `9/9 pass`、换装与动态层仍归 provider | 实机验证候选图标、左右键换槽、Queue、八向停靠、独立 scale／方向／拖动及 provider 缺失 fail-open |
+| `AB.CONSUMABLE.RACK／POCKET／POPUP` | `P5 / runtime-v1.2 / pending-retest / 1/5` | [source](../../../assets/source/actionbars/ab-consumable-kit/ActionConsumableKit_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_RuntimeManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；TGA `c48f6292…320e`、像素 `658f826f…e30d` 不变；v1.1 图标层序已实机通过；v1.2 external drawer `1×1–6／2×4–6`、display `10/10`、默认主栏左侧 `48 UI` 软吸附、阈值 `32 UI`、package pass | `/reload` 验证候选 `1／6／7／12` 不遮主格，AUTO／LEFT／RIGHT／NATIVE、自由态屏幕余量选择、拖离／回吸附及 `/aeui actionbars` 回退 |
+| `AB.CONSUMABLE.GROUP` | `P5 / runtime-v1.2 / pending-retest / 1/5` | 精确 `24 Button / 4×6 / 推荐 profile` 才显示三组并启用 external drawer；`/aeui autobar apply／restore` 仍为当前角色备份式显式配置，普通刷新只读且不启用 provider | 实机确认“应急／增益／工具”、手动数字 item ID、非 exact profile 原生 popup 回退及 restore 可逆 |
+| `AB.TRINKET.DOCK` | `P5 / runtime-v1.2 / pending-retest / 4/5` | [source](../../../assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；TGA `3614d9a8…f455`、像素 `0961d750…aef` 不变；v1.1 图标层序已实机通过；v1.2 默认主栏右侧 `16 UI` 软吸附、阈值 `32 UI` | `/reload` 验证双槽拖离只释放饰品侧、靠近重新吸附、底边对齐、横／竖／scale 与 Queue 不受影响；不执行 attempt 5 |
+| `AB.TRINKET.MENU` | `P5 / runtime-v1.2 / pending-retest / 4/5` | C 九宫格与 B 候选插页像素不变；候选 `0／1／8／30` display `9/9 pass`、换装与动态层仍归 provider | 实机验证候选图标、左右键换槽、Queue、八向菜单停靠、独立 scale／方向／拖动及 provider 缺失 fail-open |
 | `AB.FOCUS.CASTBAR` | `P2 / direction-locked` | 玩家／目标／Focus 真实对象与用户确认的 V3 双框下沿实例 | 以后独立决定只做一次性布局 preset 或另授权细 Rail 换肤 |
 | `AB.FOCUS.SWING` | `P2 / direction-locked` | 主手／副手／ranged 真对象、`200×12 UI` 与用户确认的中心双细轨 | 实机验证近战／远程复用；若换肤则另立合同 |
 | `AB.DOITEDPS.TIMELINE` | `P2 / direction-locked` | 已安装 provider 的 `318×46 UI` 根 Frame及用户确认的中心落位 | 以后只做 feature-detect 一次性位置 preset 或独立换肤合同 |
@@ -323,17 +331,19 @@
    （SHA `dc9615ac…4d5d`）与同目录 P6 evidence JSON（SHA `73a8f942…0d0b`）；
    静态截图与用户交互确认的证明范围保持分离。
 2. `AB.FIELDKIT.V1` 保持 `runtime-exported / P5`，当前修复版为
-   `fieldkit-contract=1.1 / pending-retest`。Trinket／Consumable source
+   `fieldkit-contract=1.2 / pending-retest`。Trinket／Consumable source
    SHA `82dd2260…c012`／`623f29c5…a2419` 继续保持 exact；runtime TGA 文件 SHA
-   `3614d9a8…f455`／`c48f6292…320e`，最终 display `9/9`＋`7/7`、package 与静态
-   回归均 pass。修复只调整装饰 Frame 层序并增加显式可逆配置命令，P4→当前
+   `3614d9a8…f455`／`c48f6292…320e`，最终 display `9/9`＋`10/10`、package 与
+   静态回归均 pass。v1.2 增加 exact profile 外置抽屉、左右软吸附与显式控制命令，
+   不改 accepted art／TGA 像素或 provider 物品行为；P4→当前
    ImageGen `0`，原循环仍止于 `4/5` 与 `1/5`。
 3. 下一门禁是 Turtle WoW P6 复测：`/reload` 后先确认 `/aeui status` 含
-   `fieldkit-contract=1.1`。先检查 AutoBar 主格／popup 的物品图标和数量、
+   `version 0.8.2` 与 `fieldkit-contract=1.2`。先检查 AutoBar 主格／popup 的物品图标和数量、
    TrinketMenu 双槽／候选的饰品图标、冷却与 Queue 全部位于皮革装饰之上。
    再执行 `/aeui autobar apply`，确认当前角色成为精确 `4×6` 三组、24 格、
-   popup 向左且未自动启用其他角色；`/aeui autobar restore` 应恢复应用前配置。
-   随后继续验证 AutoBar 四向 popup、拖动／缩放／显隐，以及 TrinketMenu 横／竖、
+   外置 popup `1–6` 单列、`7–12` 双列且不遮主格；`/aeui autobar popup` 四模式与
+   `/aeui autobar restore` 应正确回退。随后分别验证两袋拖离／`32 UI` 回吸附、
+   `/aeui fieldkit dock／undock／status`、AutoBar 拖动／缩放／显隐，以及 TrinketMenu 横／竖、
    `0／1／8／30` 候选、左右键换槽、Queue、八向停靠。`/aeui actionbars` 关闭应
    恢复 provider 原生视觉。普通刷新不得写 profile；任何命令都不得启用 AutoBar、
    修改 TrinketMenu SavedVariables 或接管动态图标／行为。
@@ -342,7 +352,7 @@
    （SHA `5e89c6e5…12942`）与同目录 P6 evidence JSON（SHA
    `2d48b8fb…0be3`）；静态截图与用户对完整六项交互／布局清单的确认范围保持
    分离。Rail runtime TGA、display、功能合同与 P6 证据均未改变；manifest 只同步
-   共享 AEUI `0.8.1` adapter／bootstrap／TOC 哈希，P5→P6 ImageGen `0`。
+   共享 AEUI `0.8.2` adapter／bootstrap／TOC 哈希，P5→P6 ImageGen `0`。
 5. Rail 若要进入 `P6-C`，必须先在现存 work 中形成组件专属的精确 keep／delete
    inventory，排除共享 `ActionBars.lua`、Character V3 锁定基准及其他未完成
    Action Bars 组件依赖，并向用户展示、取得明确批准；当前不清理 ignored

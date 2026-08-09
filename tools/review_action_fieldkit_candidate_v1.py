@@ -325,7 +325,12 @@ def trinket_drawers(sprites: dict[str, Image.Image]) -> tuple[Callable[..., Any]
 
 def consumable_drawers(
     sprites: dict[str, Image.Image],
-) -> tuple[Callable[..., Any], Callable[..., Any], Callable[..., Any]]:
+) -> tuple[
+    Callable[..., Any],
+    Callable[..., Any],
+    Callable[..., Any],
+    Callable[..., Any],
+]:
     def draw_buttons(
         image: Image.Image,
         geometry: dict[str, Any],
@@ -422,7 +427,39 @@ def consumable_drawers(
                     paste_fitted(image, sprites["D"], strip)
         return (x, y, x + width, y + height)
 
-    return draw_rack, draw_grouped, draw_popup
+    def draw_popup_drawer(
+        image: Image.Image,
+        origin: tuple[int, int],
+        config: dict[str, Any],
+        factor: float,
+        fonts: dict[str, ImageFont.FreeTypeFont],
+        _palette: dict[str, str],
+    ) -> tuple[int, int, int, int]:
+        geometry = simulation.autobar_drawer_geometry(config)
+        width, height = (round(value * factor) for value in geometry["frame"])
+        x, y = origin
+        buttons = [
+            simulation.offset_box(simulation.scale_box(raw, factor), x, y)
+            for raw in geometry["buttons"]
+        ]
+        spine = simulation.offset_box(
+            simulation.scale_box(geometry["spine"], factor), x, y
+        )
+        paste_fitted(image, sprites["D"].rotate(90, expand=True), spine)
+        for index, button in enumerate(buttons):
+            paste_fitted(image, sprites["B"], button)
+            dynamic_button(
+                image,
+                button,
+                index + 20,
+                fonts,
+                cooldown=index == 3,
+                count=str(index + 1),
+                selected=index == 1,
+            )
+        return (x, y, x + width, y + height)
+
+    return draw_rack, draw_grouped, draw_popup, draw_popup_drawer
 
 
 def render_supported_board(
@@ -459,9 +496,24 @@ def render_supported_board(
             ("grouped 4x6", (400, 150), lambda: simulation.draw_grouped_rack(image, (400, 150), {"count": 24, "columns": 4, "rows": 6, "groups": groups, "group_label_width_ui": 40, "group_label_gap_ui": 2, "group_label_height_ui": 20}, ui_scale, fonts, palette)),
             ("rack 24x1", (700, 150), lambda: simulation.draw_rack(image, (700, 150), {"count": 24, "columns": 24, "rows": 1}, ui_scale, fonts, palette)),
             ("rack 1x24", (40, 350), lambda: simulation.draw_rack(image, (40, 350), {"count": 24, "columns": 1, "rows": 24}, ui_scale, fonts, palette)),
-            ("popup TOP 6", (180, 430), lambda: simulation.draw_popup(image, (180, 430), {"count": 6, "direction": "TOP"}, ui_scale, fonts, palette)),
-            ("popup RIGHT 12", (400, 620), lambda: simulation.draw_popup(image, (400, 620), {"count": 12, "direction": "RIGHT"}, ui_scale, fonts, palette)),
         ]
+        if str(spec["version"]) == "AB-FIELDKIT-SIM-V3":
+            scenarios.extend(
+                [
+                    ("drawer 1", (180, 430), lambda: simulation.draw_popup_drawer(image, (180, 430), {"count": 1, "side": "LEFT"}, ui_scale, fonts, palette)),
+                    ("drawer 6 / 1x6", (270, 430), lambda: simulation.draw_popup_drawer(image, (270, 430), {"count": 6, "side": "LEFT"}, ui_scale, fonts, palette)),
+                    ("drawer 7 / 2x4", (370, 430), lambda: simulation.draw_popup_drawer(image, (370, 430), {"count": 7, "side": "LEFT"}, ui_scale, fonts, palette)),
+                    ("drawer 12 / 2x6", (500, 430), lambda: simulation.draw_popup_drawer(image, (500, 430), {"count": 12, "side": "LEFT"}, ui_scale, fonts, palette)),
+                    ("native fallback RIGHT 12", (650, 620), lambda: simulation.draw_popup(image, (650, 620), {"count": 12, "direction": "RIGHT"}, ui_scale, fonts, palette)),
+                ]
+            )
+        else:
+            scenarios.extend(
+                [
+                    ("popup TOP 6", (180, 430), lambda: simulation.draw_popup(image, (180, 430), {"count": 6, "direction": "TOP"}, ui_scale, fonts, palette)),
+                    ("popup RIGHT 12", (400, 620), lambda: simulation.draw_popup(image, (400, 620), {"count": 12, "direction": "RIGHT"}, ui_scale, fonts, palette)),
+                ]
+            )
     for label, origin, renderer in scenarios:
         simulation.text(draw, (origin[0], origin[1] - 24), label, fonts["tiny"], "#d8c49a")
         renderer()
@@ -552,11 +604,17 @@ def main() -> None:
         "rack": simulation.draw_rack,
         "grouped": simulation.draw_grouped_rack,
         "popup": simulation.draw_popup,
+        "popup_drawer": simulation.draw_popup_drawer,
     }
     if args.component == "trinket":
         simulation.draw_trinket_main, simulation.draw_trinket_menu = trinket_drawers(sprites)
     else:
-        simulation.draw_rack, simulation.draw_grouped_rack, simulation.draw_popup = consumable_drawers(sprites)
+        (
+            simulation.draw_rack,
+            simulation.draw_grouped_rack,
+            simulation.draw_popup,
+            simulation.draw_popup_drawer,
+        ) = consumable_drawers(sprites)
     try:
         review_spec = copy.deepcopy(spec)
         name = component_name
@@ -582,6 +640,7 @@ def main() -> None:
         simulation.draw_rack = original["rack"]
         simulation.draw_grouped_rack = original["grouped"]
         simulation.draw_popup = original["popup"]
+        simulation.draw_popup_drawer = original["popup_drawer"]
 
     cell_board_path = output_dir / f"AB.{args.component.upper()}.KIT.V1.{args.attempt}.cell-review.png"
     render_cell_board(normalized, metrics, cell_board_path)

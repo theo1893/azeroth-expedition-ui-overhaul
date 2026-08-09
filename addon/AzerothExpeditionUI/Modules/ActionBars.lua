@@ -13,13 +13,19 @@ ActionBars.railTexturePath = addon.media.root .. "ActionBars\\ActionRailV1"
 ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
-ActionBars.fieldKitRuntimeContract = "1.1"
+ActionBars.fieldKitRuntimeContract = "1.2"
 ActionBars.trinketKitTexturePath =
   addon.media.root .. "ActionBars\\ActionTrinketKitV1"
 ActionBars.consumableKitTexturePath =
   addon.media.root .. "ActionBars\\ActionConsumableKitV1"
 ActionBars.fieldKitCap = 6
 ActionBars.fieldKitPocketPadding = 4
+ActionBars.fieldKitShellPadding = 6
+ActionBars.consumableDockGap = 48
+ActionBars.trinketDockGap = 16
+ActionBars.fieldKitSnapDistance = 32
+ActionBars.popupDrawerGap = 6
+ActionBars.popupDrawerMaxRows = 6
 
 local railSliceOrder = {
   "topLeft", "top", "topRight",
@@ -540,6 +546,102 @@ local function GetButtonExtremes(first, last, prefix)
   return result
 end
 
+local function GetFrameScale(frame)
+  if frame and frame.GetEffectiveScale then
+    local scale = tonumber(frame:GetEffectiveScale())
+    if scale and scale > 0 then
+      return scale
+    end
+  end
+  return 1
+end
+
+local function GetFrameCenter(frame)
+  if not frame then
+    return nil, nil
+  end
+  if frame.GetCenter then
+    local x, y = frame:GetCenter()
+    if x and y then
+      return x, y
+    end
+  end
+  if frame.GetLeft and frame.GetRight and
+    frame.GetTop and frame.GetBottom
+  then
+    local left = frame:GetLeft()
+    local right = frame:GetRight()
+    local top = frame:GetTop()
+    local bottom = frame:GetBottom()
+    if left and right and top and bottom then
+      return (left + right) / 2, (top + bottom) / 2
+    end
+  end
+  return nil, nil
+end
+
+local function CaptureFrameAnchors(frame)
+  if not frame or not frame.GetNumPoints or not frame.GetPoint then
+    return nil
+  end
+  local points = {}
+  for index = 1, frame:GetNumPoints() do
+    points[index] = { frame:GetPoint(index) }
+  end
+  return points
+end
+
+local function RestoreFrameAnchors(frame, points)
+  if not frame or not points or not frame.ClearAllPoints or
+    not frame.SetPoint
+  then
+    return false
+  end
+  frame:ClearAllPoints()
+  for index = 1, table.getn(points) do
+    frame:SetPoint(unpack(points[index]))
+  end
+  return true
+end
+
+local function CaptureButtonLayout(button)
+  local layout = { points = CaptureFrameAnchors(button) }
+  if button and button.GetHitRectInsets then
+    local left, right, top, bottom = button:GetHitRectInsets()
+    layout.hitRect = { left, right, top, bottom }
+  end
+  return layout
+end
+
+local function RestoreButtonLayout(button, layout)
+  if not button or not layout then
+    return false
+  end
+  RestoreFrameAnchors(button, layout.points)
+  if layout.hitRect and button.SetHitRectInsets then
+    button:SetHitRectInsets(unpack(layout.hitRect))
+  end
+  return true
+end
+
+local function GetMainActionBarFrame()
+  if pfUI and pfUI.bars and pfUI.bars[1] then
+    return pfUI.bars[1]
+  end
+  return GetGlobal("pfActionBarMain")
+end
+
+local function FrameCoordinatePixels(frame, method)
+  if not frame or not frame[method] then
+    return nil
+  end
+  local value = frame[method](frame)
+  if not value then
+    return nil
+  end
+  return value * GetFrameScale(frame)
+end
+
 local function SlotSignature(slot)
   if type(slot) ~= "table" then
     return ""
@@ -719,14 +821,11 @@ function ActionBars:ApplyRecommendedAutoBarProfile()
   display.buttonWidth = 36
   display.buttonHeight = 36
   display.widthHeightUnlocked = false
+  display.alignButtons = 1
   display.showEmptyButtons = true
   display.showCategoryIcon = true
   display.popupDisable = false
   display.popupOnShift = false
-  display.popupToTop = false
-  display.popupToBottom = false
-  display.popupToRight = false
-  display.popupToLeft = true
 
   local ok, refreshed, message = pcall(RefreshAutoBarProfile)
   if not ok or not refreshed then
@@ -743,7 +842,7 @@ function ActionBars:ApplyRecommendedAutoBarProfile()
   end
   self.autoBarPresetStatus = "applied"
   return true,
-    "AEUI AutoBar preset applied to this character: 4x6, 24 slots, grouped categories, popups left."
+    "AEUI AutoBar preset applied to this character: 4x6, 24 slots, grouped categories, external popup drawer."
 end
 
 function ActionBars:RestoreAutoBarProfile()
@@ -772,6 +871,34 @@ function ActionBars:RestoreAutoBarProfile()
   backups[player] = nil
   self.autoBarPresetStatus = "restored"
   return true, "AutoBar profile restored from the pre-AEUI backup."
+end
+
+local function NormalizePopupMode(mode)
+  mode = string.upper(tostring(mode or "AUTO"))
+  if mode == "AUTO" or mode == "LEFT" or mode == "RIGHT" or
+    mode == "NATIVE"
+  then
+    return mode
+  end
+  return nil
+end
+
+local function GetPopupMode()
+  local configured = addon.db and addon.db.actionbars and
+    addon.db.actionbars.autoBarPopupMode
+  return NormalizePopupMode(configured) or "AUTO"
+end
+
+function ActionBars:SetAutoBarPopupMode(mode)
+  local normalized = NormalizePopupMode(mode)
+  if not normalized then
+    return false, "Popup mode must be auto, left, right, or native."
+  end
+  addon.db.actionbars.autoBarPopupMode = normalized
+  self:ApplyAutoBarPopup(
+    addon.db and addon.db.actionbars and addon.db.actionbars.enabled
+  )
+  return true, "AutoBar popup mode set to " .. string.lower(normalized) .. "."
 end
 
 local function AutoBarGroupingMatches(visibleCount)
@@ -829,12 +956,14 @@ local function FieldKitEnabled()
     addon.db.actionbars.enabled
 end
 
-local function SafeFieldKitApply(methodName)
+local function SafeFieldKitApply(methodName, argument)
   local method = ActionBars[methodName]
   if type(method) ~= "function" then
     return
   end
-  local ok = pcall(method, ActionBars, FieldKitEnabled())
+  local ok = pcall(
+    method, ActionBars, FieldKitEnabled(), argument
+  )
   if not ok then
     if methodName == "ApplyTrinketFieldKit" then
       ActionBars.trinketFieldKitStatus = "error"
@@ -842,6 +971,207 @@ local function SafeFieldKitApply(methodName)
       ActionBars.autoBarFieldKitStatus = "error"
     end
   end
+end
+
+local function GetFieldKitDatabase()
+  return addon.db and addon.db.actionbars
+end
+
+local function ConsumableVisualEdges(bounds)
+  if not bounds or bounds.count == 0 or not bounds.right or
+    not bounds.bottom
+  then
+    return nil, nil
+  end
+  local right = FrameCoordinatePixels(bounds.right, "GetRight")
+  local bottom = FrameCoordinatePixels(bounds.bottom, "GetBottom")
+  if not right or not bottom then
+    return nil, nil
+  end
+  right = right +
+    ActionBars.fieldKitShellPadding * GetFrameScale(bounds.right)
+  bottom = bottom -
+    ActionBars.fieldKitShellPadding * GetFrameScale(bounds.bottom)
+  return right, bottom
+end
+
+function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
+  local database = GetFieldKitDatabase()
+  local docked = database and database.consumableDocked
+  local handle = GetGlobal("AutoBarAnchorFrameHandle")
+  local main = GetMainActionBarFrame()
+
+  if not enabled or not docked then
+    if self.autoBarDockApplied then
+      RestoreFrameAnchors(handle, self.autoBarUndockedAnchors)
+    end
+    self.autoBarDockApplied = false
+    self.autoBarUndockedAnchors = nil
+    self.consumableDockStatus = enabled and "free" or "disabled"
+    return false
+  end
+  if not handle or not main or not bounds or bounds.count == 0 then
+    self.consumableDockStatus = "unavailable"
+    return false
+  end
+
+  local rightPixels, bottomPixels = ConsumableVisualEdges(bounds)
+  local centerX, centerY = GetFrameCenter(handle)
+  local mainLeft = FrameCoordinatePixels(main, "GetLeft")
+  local mainBottom = FrameCoordinatePixels(main, "GetBottom")
+  if not rightPixels or not bottomPixels or not centerX or not centerY or
+    not mainLeft or not mainBottom
+  then
+    self.consumableDockStatus = "unavailable"
+    return false
+  end
+
+  if not self.autoBarDockApplied then
+    self.autoBarUndockedAnchors = CaptureFrameAnchors(handle)
+  end
+  local handleScale = GetFrameScale(handle)
+  local rackScale = GetFrameScale(bounds.right)
+  local centerXPixels = centerX * handleScale
+  local centerYPixels = centerY * handleScale
+  local rightDelta = rightPixels - centerXPixels
+  local bottomDelta = bottomPixels - centerYPixels
+  local xOffset =
+    (-self.consumableDockGap * rackScale - rightDelta) / handleScale
+  local yOffset = -bottomDelta / handleScale
+
+  handle:ClearAllPoints()
+  handle:SetPoint(
+    "CENTER", main, "BOTTOMLEFT", xOffset, yOffset
+  )
+  self.autoBarDockApplied = true
+  self.consumableDockStatus = "left"
+  return true
+end
+
+function ActionBars:ConsumableNearDock(bounds)
+  local handle = GetGlobal("AutoBarAnchorFrameHandle")
+  local main = GetMainActionBarFrame()
+  if not handle or not main then
+    return false
+  end
+  local rightPixels, bottomPixels = ConsumableVisualEdges(bounds)
+  local mainLeft = FrameCoordinatePixels(main, "GetLeft")
+  local mainBottom = FrameCoordinatePixels(main, "GetBottom")
+  if not rightPixels or not bottomPixels or not mainLeft or not mainBottom then
+    return false
+  end
+  local scale = GetFrameScale(bounds.right)
+  local desiredGap = self.consumableDockGap * scale
+  local threshold = self.fieldKitSnapDistance * scale
+  return
+    math.abs((mainLeft - rightPixels) - desiredGap) <= threshold and
+    math.abs(mainBottom - bottomPixels) <= threshold
+end
+
+function ActionBars:ApplyTrinketDockPosition(enabled)
+  local database = GetFieldKitDatabase()
+  local docked = database and database.trinketDocked
+  local frame = GetGlobal("TrinketMenu_MainFrame")
+  local main = GetMainActionBarFrame()
+
+  if not enabled or not docked then
+    if self.trinketDockApplied then
+      RestoreFrameAnchors(frame, self.trinketUndockedAnchors)
+    end
+    self.trinketDockApplied = false
+    self.trinketUndockedAnchors = nil
+    self.trinketDockStatus = enabled and "free" or "disabled"
+    return false
+  end
+  if not frame or not main then
+    self.trinketDockStatus = "unavailable"
+    return false
+  end
+  if not self.trinketDockApplied then
+    self.trinketUndockedAnchors = CaptureFrameAnchors(frame)
+  end
+  frame:ClearAllPoints()
+  frame:SetPoint(
+    "BOTTOMLEFT", main, "BOTTOMRIGHT", self.trinketDockGap, 0
+  )
+  self.trinketDockApplied = true
+  self.trinketDockStatus = "right"
+  return true
+end
+
+function ActionBars:TrinketNearDock()
+  local frame = GetGlobal("TrinketMenu_MainFrame")
+  local main = GetMainActionBarFrame()
+  if not frame or not main then
+    return false
+  end
+  local left = FrameCoordinatePixels(frame, "GetLeft")
+  local bottom = FrameCoordinatePixels(frame, "GetBottom")
+  local mainRight = FrameCoordinatePixels(main, "GetRight")
+  local mainBottom = FrameCoordinatePixels(main, "GetBottom")
+  if not left or not bottom or not mainRight or not mainBottom then
+    return false
+  end
+  local scale = GetFrameScale(frame)
+  local desiredGap = self.trinketDockGap * scale
+  local threshold = self.fieldKitSnapDistance * scale
+  return
+    math.abs((left - mainRight) - desiredGap) <= threshold and
+    math.abs(bottom - mainBottom) <= threshold
+end
+
+function ActionBars:HandleAutoBarDragStop()
+  if not FieldKitEnabled() then
+    return
+  end
+  local database = GetFieldKitDatabase()
+  local bounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
+  self.autoBarDockApplied = false
+  self.autoBarUndockedAnchors = nil
+  if database and self:ConsumableNearDock(bounds) then
+    database.consumableDocked = true
+    self:ApplyConsumableDockPosition(true, bounds)
+  elseif database then
+    database.consumableDocked = false
+    self.consumableDockStatus = "free"
+  end
+end
+
+function ActionBars:HandleTrinketDragStop()
+  if not FieldKitEnabled() then
+    return
+  end
+  local database = GetFieldKitDatabase()
+  self.trinketDockApplied = false
+  self.trinketUndockedAnchors = nil
+  if database and self:TrinketNearDock() then
+    database.trinketDocked = true
+    self:ApplyTrinketDockPosition(true)
+  elseif database then
+    database.trinketDocked = false
+    self.trinketDockStatus = "free"
+  end
+end
+
+function ActionBars:SetFieldKitDocking(docked)
+  local database = GetFieldKitDatabase()
+  if not database then
+    return false, "Action bar settings are unavailable."
+  end
+  database.consumableDocked = docked and true or false
+  database.trinketDocked = docked and true or false
+  if docked then
+    local bounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
+    self:ApplyConsumableDockPosition(FieldKitEnabled(), bounds)
+    self:ApplyTrinketDockPosition(FieldKitEnabled())
+    return true,
+      "Field Kit dock enabled: consumables left, trinkets right. Drag either kit away to release it."
+  end
+  self:ApplyConsumableDockPosition(false)
+  self:ApplyTrinketDockPosition(false)
+  self.consumableDockStatus = "free"
+  self.trinketDockStatus = "free"
+  return true, "Field Kit dock released; both provider positions are independent."
 end
 
 local function EnsureAutoBarShell(frame)
@@ -994,11 +1324,211 @@ local function HideUnusedPopupConnectors(frame, firstUnused)
   end
 end
 
-function ActionBars:ApplyAutoBarPopup(enabled)
+local function EnsureAutoBarDrawerSpine(frame)
+  local spine = frame.aeuiConsumableKitDrawerSpineV1
+  if not spine then
+    spine = CreateDecorationFrame(frame)
+    EnsureConnector(
+      spine,
+      "aeuiConsumableKitDrawerSpineSlicesV1",
+      ActionBars.consumableKitTexturePath,
+      consumableKitTexCoords.vertical,
+      "VERTICAL",
+      3
+    )
+    frame.aeuiConsumableKitDrawerSpineV1 = spine
+  end
+  return spine
+end
+
+local function HideAutoBarDrawerSpine(frame)
+  local spine = frame and frame.aeuiConsumableKitDrawerSpineV1
+  if spine then
+    spine:Hide()
+  end
+end
+
+local function CapturePopupNativeLayouts(frame, buttons)
+  frame.aeuiConsumableKitNativePopupLayoutsV1 = {}
+  for index = 1, table.getn(buttons) do
+    local button = buttons[index]
+    frame.aeuiConsumableKitNativePopupLayoutsV1[button] =
+      CaptureButtonLayout(button)
+  end
+end
+
+local function RestorePopupNativeLayouts(frame, buttons)
+  local layouts = frame.aeuiConsumableKitNativePopupLayoutsV1
+  if not layouts then
+    return false
+  end
+  for index = 1, table.getn(buttons) do
+    local button = buttons[index]
+    RestoreButtonLayout(button, layouts[button])
+  end
+  frame.aeuiConsumableKitDrawerActiveV1 = false
+  return true
+end
+
+local function ResolveAutoBarDrawerSide(frame)
+  local mode = GetPopupMode()
+  if mode == "LEFT" or mode == "RIGHT" then
+    return mode
+  end
+  local database = GetFieldKitDatabase()
+  if database and database.consumableDocked and
+    ActionBars.autoBarDockApplied
+  then
+    return "LEFT"
+  end
+
+  local rack = GetGlobal("AutoBarFrame")
+  local shell = rack and rack.aeuiConsumableKitShellV1
+  if not shell or not shell.GetLeft or not shell.GetRight or
+    type(GetScreenWidth) ~= "function"
+  then
+    return "RIGHT"
+  end
+  local left = shell:GetLeft()
+  local right = shell:GetRight()
+  local screenWidth = GetScreenWidth()
+  if not left or not right or not screenWidth then
+    return "RIGHT"
+  end
+  if ActionBars.autoBarGrouped then
+    left = left - 42
+  end
+  if left >= screenWidth - right then
+    return "LEFT"
+  end
+  return "RIGHT"
+end
+
+local function ConfigureAutoBarDrawer(frame, buttons, side)
+  local rack = GetGlobal("AutoBarFrame")
+  local shell = rack and rack.aeuiConsumableKitShellV1
+  local count = table.getn(buttons)
+  if not shell or count == 0 then
+    return false, 0, 0
+  end
+
+  local rows = count
+  if count > ActionBars.popupDrawerMaxRows then
+    rows = math.ceil(count / 2)
+  end
+  rows = math.min(rows, ActionBars.popupDrawerMaxRows)
+  local columns = math.ceil(count / rows)
+  local first = buttons[1]
+  local width = first:GetWidth()
+  local height = first:GetHeight()
+  local display = AutoBar and AutoBar.display or {}
+  local gap = tonumber(display.gapping) or 3
+  local hitInset = -math.ceil(gap / 2)
+  local labelOffset = ActionBars.autoBarGrouped and 42 or 0
+
+  first:ClearAllPoints()
+  if side == "LEFT" then
+    first:SetPoint(
+      "TOPRIGHT", shell, "TOPLEFT",
+      -(labelOffset + ActionBars.popupDrawerGap +
+        ActionBars.fieldKitPocketPadding),
+      -ActionBars.fieldKitPocketPadding
+    )
+  else
+    first:SetPoint(
+      "TOPLEFT", shell, "TOPRIGHT",
+      ActionBars.popupDrawerGap + ActionBars.fieldKitPocketPadding,
+      -ActionBars.fieldKitPocketPadding
+    )
+  end
+  if first.SetHitRectInsets then
+    first:SetHitRectInsets(hitInset, hitInset, hitInset, hitInset)
+  end
+
+  for index = 2, count do
+    local button = buttons[index]
+    local zero = index - 1
+    local column = math.floor(zero / rows)
+    local row = math.mod(zero, rows)
+    button:ClearAllPoints()
+    if side == "LEFT" then
+      button:SetPoint(
+        "TOPRIGHT", first, "TOPRIGHT",
+        -column * (width + gap), -row * (height + gap)
+      )
+    else
+      button:SetPoint(
+        "TOPLEFT", first, "TOPLEFT",
+        column * (width + gap), -row * (height + gap)
+      )
+    end
+    if button.SetHitRectInsets then
+      button:SetHitRectInsets(hitInset, hitInset, hitInset, hitInset)
+    end
+  end
+
+  local spine = EnsureAutoBarDrawerSpine(frame)
+  local lastNear = buttons[math.min(rows, count)]
+  spine:ClearAllPoints()
+  spine:SetPoint(
+    "TOP", first, "TOP", 0, ActionBars.fieldKitPocketPadding
+  )
+  spine:SetPoint(
+    "BOTTOM", lastNear, "BOTTOM", 0,
+    -ActionBars.fieldKitPocketPadding
+  )
+  spine:SetWidth(6)
+  if side == "LEFT" then
+    spine:SetPoint(
+      "RIGHT", first, "RIGHT",
+      ActionBars.fieldKitPocketPadding + ActionBars.popupDrawerGap, 0
+    )
+  else
+    spine:SetPoint(
+      "LEFT", first, "LEFT",
+      -(ActionBars.fieldKitPocketPadding + ActionBars.popupDrawerGap), 0
+    )
+  end
+  spine:Show()
+  frame.aeuiConsumableKitDrawerActiveV1 = true
+  return true, rows, columns
+end
+
+local function ConfigureNativePopupConnectors(frame, buttons)
+  if table.getn(buttons) < 2 then
+    HideUnusedPopupConnectors(frame, 1)
+    return 0
+  end
+  local display = AutoBar and AutoBar.display or {}
+  local horizontal = display.popupToLeft or display.popupToRight
+  SortPopupButtons(buttons, horizontal)
+  for index = 1, table.getn(buttons) - 1 do
+    local connector
+    if horizontal then
+      connector = EnsurePopupConnector(frame, index, "HORIZONTAL")
+      connector:ClearAllPoints()
+      connector:SetPoint("LEFT", buttons[index], "CENTER", 0, 0)
+      connector:SetPoint("RIGHT", buttons[index + 1], "CENTER", 0, 0)
+      connector:SetHeight(8)
+    else
+      connector = EnsurePopupConnector(frame, index, "VERTICAL")
+      connector:ClearAllPoints()
+      connector:SetPoint("BOTTOM", buttons[index], "CENTER", 0, 0)
+      connector:SetPoint("TOP", buttons[index + 1], "CENTER", 0, 0)
+      connector:SetWidth(8)
+    end
+  end
+  HideUnusedPopupConnectors(frame, table.getn(buttons))
+  return table.getn(buttons) - 1
+end
+
+function ActionBars:ApplyAutoBarPopup(enabled, baseButton)
   local frame = GetGlobal("AutoBarPopupFrame")
   if not frame then
     self.autoBarPopupButtons = 0
     self.autoBarPopupConnectors = 0
+    self.autoBarPopupLayout = "missing"
+    self.autoBarPopupSide = "none"
     return false
   end
 
@@ -1021,35 +1551,51 @@ function ActionBars:ApplyAutoBarPopup(enabled)
     end
   end
 
+  if baseButton then
+    frame.aeuiConsumableKitPopupBaseButtonV1 = baseButton
+    CapturePopupNativeLayouts(frame, buttons)
+  end
+  local activeBase = baseButton or
+    frame.aeuiConsumableKitPopupBaseButtonV1
+  local mainBounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
+  local drawerEnabled = enabled and activeBase and
+    GetPopupMode() ~= "NATIVE" and
+    AutoBarGroupingMatches(mainBounds.count)
+
+  if drawerEnabled then
+    HideUnusedPopupConnectors(frame, 1)
+    local side = ResolveAutoBarDrawerSide(frame)
+    local configured, rows, columns =
+      ConfigureAutoBarDrawer(frame, buttons, side)
+    if configured then
+      self.autoBarPopupButtons = table.getn(buttons)
+      self.autoBarPopupConnectors = 1
+      self.autoBarPopupLayout =
+        "drawer-" .. tostring(columns) .. "x" .. tostring(rows)
+      self.autoBarPopupSide = string.lower(side)
+      return true
+    end
+  end
+
+  if frame.aeuiConsumableKitDrawerActiveV1 then
+    RestorePopupNativeLayouts(frame, buttons)
+  end
+  HideAutoBarDrawerSpine(frame)
+
   if not enabled or table.getn(buttons) < 2 then
     HideUnusedPopupConnectors(frame, 1)
     self.autoBarPopupButtons = table.getn(buttons)
     self.autoBarPopupConnectors = 0
+    self.autoBarPopupLayout = enabled and "native" or "disabled"
+    self.autoBarPopupSide = "provider"
     return true
   end
 
-  local display = AutoBar and AutoBar.display or {}
-  local horizontal = display.popupToLeft or display.popupToRight
-  SortPopupButtons(buttons, horizontal)
-  for index = 1, table.getn(buttons) - 1 do
-    local connector
-    if horizontal then
-      connector = EnsurePopupConnector(frame, index, "HORIZONTAL")
-      connector:ClearAllPoints()
-      connector:SetPoint("LEFT", buttons[index], "CENTER", 0, 0)
-      connector:SetPoint("RIGHT", buttons[index + 1], "CENTER", 0, 0)
-      connector:SetHeight(8)
-    else
-      connector = EnsurePopupConnector(frame, index, "VERTICAL")
-      connector:ClearAllPoints()
-      connector:SetPoint("BOTTOM", buttons[index], "CENTER", 0, 0)
-      connector:SetPoint("TOP", buttons[index + 1], "CENTER", 0, 0)
-      connector:SetWidth(8)
-    end
-  end
-  HideUnusedPopupConnectors(frame, table.getn(buttons))
   self.autoBarPopupButtons = table.getn(buttons)
-  self.autoBarPopupConnectors = table.getn(buttons) - 1
+  self.autoBarPopupConnectors =
+    ConfigureNativePopupConnectors(frame, buttons)
+  self.autoBarPopupLayout = "native"
+  self.autoBarPopupSide = "provider"
   return true
 end
 
@@ -1059,6 +1605,7 @@ function ActionBars:ApplyAutoBarFieldKit(enabled)
     self.autoBarFieldKitStatus = "missing"
     self.autoBarMainButtons = 0
     self.autoBarGrouped = false
+    self.consumableDockStatus = "unavailable"
     self:ApplyAutoBarPopup(false)
     return false
   end
@@ -1090,6 +1637,7 @@ function ActionBars:ApplyAutoBarFieldKit(enabled)
     SetAutoBarGroupingEnabled(frame, grouped, bounds)
   self.autoBarMainButtons = bounds.count
   self.autoBarFieldKitStatus = enabled and "available" or "disabled"
+  self:ApplyConsumableDockPosition(enabled, bounds)
   self:ApplyAutoBarPopup(enabled)
   return true
 end
@@ -1174,6 +1722,7 @@ function ActionBars:ApplyTrinketFieldKit(enabled)
     self.trinketMainButtons = 0
     self.trinketMenuButtons = 0
     self.trinketJoinerOrientation = "missing"
+    self.trinketDockStatus = "unavailable"
     return false
   end
 
@@ -1228,6 +1777,7 @@ function ActionBars:ApplyTrinketFieldKit(enabled)
   self.trinketMainButtons = appliedMain
   self.trinketMenuButtons = appliedMenu
   self.trinketFieldKitStatus = enabled and "available" or "disabled"
+  self:ApplyTrinketDockPosition(enabled)
   return true
 end
 
@@ -1257,8 +1807,16 @@ function ActionBars:InstallFieldKitHooks()
       type(AutoBar.UpdatePopupButtons) == "function"
     then
       self.autoBarPopupHooked = true
-      hooksecurefunc(AutoBar, "UpdatePopupButtons", function()
-        SafeFieldKitApply("ApplyAutoBarPopup")
+      hooksecurefunc(AutoBar, "UpdatePopupButtons", function(owner, baseButton)
+        SafeFieldKitApply("ApplyAutoBarPopup", baseButton)
+      end)
+    end
+    if not self.autoBarDragStopHooked and
+      type(AutoBar.DragStop) == "function"
+    then
+      self.autoBarDragStopHooked = true
+      hooksecurefunc(AutoBar, "DragStop", function()
+        ActionBars:HandleAutoBarDragStop()
       end)
     end
   end
@@ -1280,6 +1838,16 @@ function ActionBars:InstallFieldKitHooks()
         SafeFieldKitApply("ApplyTrinketFieldKit")
       end)
     end
+    if not self.trinketDragStopHooked and
+      type(TrinketMenu.MainFrame_OnMouseUp) == "function"
+    then
+      self.trinketDragStopHooked = true
+      hooksecurefunc(TrinketMenu, "MainFrame_OnMouseUp", function()
+        if arg1 == "LeftButton" then
+          ActionBars:HandleTrinketDragStop()
+        end
+      end)
+    end
   end
 end
 
@@ -1293,12 +1861,16 @@ function ActionBars:Initialize()
   self.autoBarMainButtons = 0
   self.autoBarPopupButtons = 0
   self.autoBarPopupConnectors = 0
+  self.autoBarPopupLayout = "pending"
+  self.autoBarPopupSide = "pending"
   self.autoBarGrouped = false
   self.autoBarPresetStatus = "ready"
+  self.consumableDockStatus = "pending"
   self.trinketFieldKitStatus = "pending"
   self.trinketMainButtons = 0
   self.trinketMenuButtons = 0
   self.trinketJoinerOrientation = "pending"
+  self.trinketDockStatus = "pending"
 end
 
 function ActionBars:Apply()
@@ -1378,15 +1950,23 @@ function ActionBars:GetRuntimeStatus()
     ",autobar-popup=" .. tostring(self.autoBarPopupButtons or 0) ..
     ",autobar-connectors=" ..
       tostring(self.autoBarPopupConnectors or 0) ..
+    ",autobar-popup-layout=" ..
+      tostring(self.autoBarPopupLayout or "pending") ..
+    ",autobar-popup-side=" ..
+      tostring(self.autoBarPopupSide or "pending") ..
     ",autobar-groups=" ..
       tostring(self.autoBarGrouped and "semantic" or "adaptive") ..
     ",autobar-preset=" ..
       tostring(self.autoBarPresetStatus or "ready") ..
+    ",consumable-dock=" ..
+      tostring(self.consumableDockStatus or "pending") ..
     ",trinket=" .. tostring(self.trinketFieldKitStatus or "pending") ..
     ",trinket-main=" .. tostring(self.trinketMainButtons or 0) ..
     ",trinket-menu=" .. tostring(self.trinketMenuButtons or 0) ..
     ",trinket-joiner=" ..
-      tostring(self.trinketJoinerOrientation or "pending")
+      tostring(self.trinketJoinerOrientation or "pending") ..
+    ",trinket-dock=" ..
+      tostring(self.trinketDockStatus or "pending")
 end
 
 addon:RegisterModule("ActionBars", ActionBars)

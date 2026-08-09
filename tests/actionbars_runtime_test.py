@@ -186,15 +186,13 @@ def main() -> None:
     assert "texture:SetAllPoints(backdrop)" in adapter
     assert "texture:SetTexCoord(0, 1, 0, 1)" in adapter
     assert "button:SetParent" not in adapter
-    assert "button:SetPoint" not in adapter
     assert "button:SetWidth" not in adapter
     assert "button:SetHeight" not in adapter
-    assert "button:SetHitRectInsets" not in adapter
 
     toc = (
         ROOT / "addon/AzerothExpeditionUI/AzerothExpeditionUI.toc"
     ).read_text(encoding="utf-8-sig")
-    assert "## Version: 0.8.1" in toc
+    assert "## Version: 0.8.2" in toc
     assert "Modules\\ActionBars.lua" in toc
 
     print("actionbars runtime test passed")

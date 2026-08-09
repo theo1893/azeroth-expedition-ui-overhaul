@@ -3,8 +3,8 @@
   "module": "actionbars",
   "batch": "AB.FIELDKIT.V1",
   "component": "AB.TRINKET.KIT.V1",
-  "version": "runtime-v1.1",
-  "runtime_contract": "1.1",
+  "version": "runtime-v1.2",
+  "runtime_contract": "1.2",
   "status": "runtime-exported",
   "phase": "P5",
   "source": {
@@ -490,55 +490,64 @@
   },
   "deterministic_export": {
     "exporter": "tools/build_action_fieldkit_v1_runtime.py",
-    "exporter_sha256": "e98331a3f94ef91b7bb5cf1d207f8a15a4c11c7407adbe2f89872bf226891861",
+    "exporter_sha256": "1c46278daeb580008a6619c4b24e906761c001e2aaf477b75feb75173cf77a29",
     "expected_runtime_pixel_sha256": "0961d750d7436665a333d948ba010a212c5de6f87c51ab59a10ed8af86ac4aef",
     "imagegen_calls_after_acceptance": 0,
     "attempt_6_allowed": false
   },
   "adapter": {
     "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
-    "sha256": "530c7d3033214e2083280f8fef994f1f69b8bd0af466514b1c03eddc7f8856bf",
+    "sha256": "0f28c09fb30c213891abad6c433a4e5df1117f2e1a230ef92e1feaeb74c60615",
     "provider": "TrinketMenu 3.3 existing main/menu frames and 2+30 buttons",
-    "visual_layers_only": true,
-    "provider_geometry_writes": false,
+    "visual_layers_only": false,
+    "visual_and_layout_adapter": true,
+    "provider_geometry_writes": true,
     "provider_behavior_replaced": false,
-    "saved_variables_written": false,
+    "saved_variables_written": true,
+    "provider_saved_variables_written_automatically": false,
+    "aeui_saved_variables_written_on_drag_stop": true,
     "autobar_enabled_or_profile_applied": false,
     "automatic_profile_mutation": false,
-    "optional_user_configuration": null,
+    "optional_user_configuration": {
+      "dock_command": "/aeui fieldkit [dock|undock|status]",
+      "state": "AzerothExpeditionUIDB.actionbars.trinketDocked",
+      "provider_saved_variables_written_by_aeui": false
+    },
     "fallback": "missing/hidden providers render no placeholder; AEUI off restores the provider normal textures and native TrinketMenu backdrops"
   },
   "addon_entrypoints": {
     "bootstrap": {
       "file": "addon/AzerothExpeditionUI/Core/Bootstrap.lua",
-      "sha256": "89e7ca4a25e8687e6b641f41eec345e9f853c5ab4ac91a1d02e3ee9f70175704"
+      "sha256": "1e4ecfe5818eaa758e08f5d5a6f445a59bc6b97fb974727a9287cb655ff437ba"
     },
     "toc": {
       "file": "addon/AzerothExpeditionUI/AzerothExpeditionUI.toc",
-      "sha256": "9f7df2b7006a8115da4f1631ee9461268e0b6227ca5651b477a13964dc485321"
+      "sha256": "e99d89c7633948be2a656bc548a7538ac746b67c57bc9052715f3fdff590e6d6"
     },
-    "addon_version": "0.8.1",
+    "addon_version": "0.8.2",
     "required_dependency": "pfUI",
     "optional_provider": "TrinketMenu"
   },
   "provider_layers_preserved": [
-    "provider position, scale, orientation, docking and visibility",
-    "all Button parents, points, sizes, hit regions and scripts",
+    "provider free position restored on undock; provider scale, orientation and visibility preserved",
+    "all Button parents, sizes and scripts",
     "icons, counts, cooldowns, checked/highlight and tooltip layers",
     "Queue and combat swapping for TrinketMenu",
     "categories, bag slots, popup ordering and item use for AutoBar",
+    "popup points and hit insets return to provider layout in native or signature-mismatch fallback",
+    "provider SavedVariables remain untouched by automatic soft docking",
     "provider configuration and SavedVariables"
   ],
   "display_evidence": {
     "contract": "tools/specs/action_trinket_kit_v1_runtime_display_region.json",
-    "contract_sha256": "fd2e2c5851650bc73cff77236663abbe3236635c5aafcc4dc461ac8e8743791c",
+    "contract_sha256": "bfeaff26b3193cbaab2905f15865312a573aea22fc409ffe4b8c103ec750b206",
     "report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.TRINKET.KIT.V1.display-region-report.json",
-    "report_sha256": "37177fdf7caead56fd28d51788a3576ffead2e0093cb85133a161859876ba578",
-    "runtime_atlas": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.TRINKET.KIT.V1.runtime-v1.atlas.png",
+    "report_sha256": "51a059fbdb342959070582f0c535eec471ac63023a6935473ed9e4c27d185296",
+    "runtime_atlas": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.TRINKET.KIT.V1.runtime-v1.2.atlas.png",
     "runtime_atlas_sha256": "6b75e18d5877b22f40011cc4e84680ad29cc459367d5b275e35a7071d1e2c1b4",
-    "real_layout": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.FIELDKIT.V1.runtime-v1.real-layout-1920x1080.png",
-    "real_layout_sha256": "787bd62efe45fbb58476e4e4589db3d1fc5f39d22e1eaafd95f308047a762b7f",
-    "supported_layouts": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.TRINKET.KIT.V1.runtime-v1.layouts.png",
+    "real_layout": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.FIELDKIT.V1.runtime-v1.2.real-layout-1920x1080.png",
+    "real_layout_sha256": "00d468852311049b6cf29cc148e68d36764f7bc51fdb15cf8442432dbaa41655",
+    "supported_layouts": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.TRINKET.KIT.V1.runtime-v1.2.layouts.png",
     "supported_layouts_sha256": "d31762a27ff97479937a44b516dfa2cfb46cec15eca96576edf018847549b6f5",
     "result": "9/9 pass",
     "violations": 0,
@@ -557,10 +566,11 @@
     "target": "Turtle WoW 1.18.1 / Interface 11200",
     "last_observation": {
       "date": "2026-08-09",
-      "result": "failed-before-runtime-v1.1",
+      "result": "runtime-v1.1-icons-pass-popup-overlap-found",
       "issues": [
-        "AutoBar item icons were covered by same-layer pocket art",
-        "TrinketMenu equipped icons were covered by same-layer sheath art"
+        "AutoBar and TrinketMenu icons were visible after the runtime-v1.1 layer fix",
+        "AutoBar native LEFT popup crossed the grouped rack and covered main cells",
+        "soft left/right docking had not yet been implemented"
       ]
     }
   }

@@ -29,9 +29,9 @@ import review_action_fieldkit_candidate_v1 as reviewer
 ADAPTER_REL = Path("addon/AzerothExpeditionUI/Modules/ActionBars.lua")
 BOOTSTRAP_REL = Path("addon/AzerothExpeditionUI/Core/Bootstrap.lua")
 TOC_REL = Path("addon/AzerothExpeditionUI/AzerothExpeditionUI.toc")
-SPEC_REL = Path("tools/specs/action_fieldkit_v2_simulation.json")
+SPEC_REL = Path("tools/specs/action_fieldkit_v3_simulation.json")
 DISPLAY_TEMPLATE_REL = Path(
-    "tools/specs/action_fieldkit_v2_sim_display_region.json"
+    "tools/specs/action_fieldkit_v3_sim_display_region.json"
 )
 DISPLAY_VALIDATOR_REL = Path(
     ".codex/skills/run-aeui-asset-workflow/scripts/validate_display_regions.py"
@@ -40,7 +40,7 @@ PREVIEW_REL = Path(
     "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1"
 )
 ATLAS_SIZE = (512, 512)
-RUNTIME_CONTRACT = "1.1"
+RUNTIME_CONTRACT = "1.2"
 DESTINATION_CAP_UI = 6
 CONNECTOR_SOURCE_CAP = 30
 
@@ -500,11 +500,12 @@ def render_previews(
         "draw_rack": simulation.draw_rack,
         "draw_grouped_rack": simulation.draw_grouped_rack,
         "draw_popup": simulation.draw_popup,
+        "draw_popup_drawer": simulation.draw_popup_drawer,
     }
     trinket_main, trinket_menu = reviewer.trinket_drawers(
         sprites_by_case["trinket"]
     )
-    rack, grouped, popup = reviewer.consumable_drawers(
+    rack, grouped, popup, popup_drawer = reviewer.consumable_drawers(
         sprites_by_case["consumable"]
     )
     review_spec = copy.deepcopy(spec)
@@ -516,20 +517,23 @@ def render_previews(
         "rules": [
             "TrinketMenu 双槽、30 候选、Queue、点击与换装逻辑不变",
             "AutoBar 24 主槽、12 popup、类别、数量与冷却仍由 provider 所有",
+            "候选抽屉按 1×1–6 或 2×4–6 外置，不覆盖 4×6 母格",
+            "消耗品与饰品仅在拖动结束或布局刷新时应用左右软吸附",
             "只有精确 4×6 profile 签名显示应急／增益／工具三组",
             "provider 缺失、禁用或自定义布局时局部回退，不显示占位栏",
-            "不自动启用 AutoBar，不应用 profile，不改 TrinketMenu SavedVariables",
+            "不自动启用 AutoBar，不自动应用 profile，不改 provider SavedVariables",
         ],
     }
-    scene_path = preview_dir / "AB.FIELDKIT.V1.runtime-v1.real-layout-1920x1080.png"
-    trinket_board = preview_dir / "AB.TRINKET.KIT.V1.runtime-v1.layouts.png"
-    consumable_board = preview_dir / "AB.CONSUMABLE.KIT.V1.runtime-v1.layouts.png"
+    scene_path = preview_dir / "AB.FIELDKIT.V1.runtime-v1.2.real-layout-1920x1080.png"
+    trinket_board = preview_dir / "AB.TRINKET.KIT.V1.runtime-v1.2.layouts.png"
+    consumable_board = preview_dir / "AB.CONSUMABLE.KIT.V1.runtime-v1.2.layouts.png"
     try:
         simulation.draw_trinket_main = trinket_main
         simulation.draw_trinket_menu = trinket_menu
         simulation.draw_rack = rack
         simulation.draw_grouped_rack = grouped
         simulation.draw_popup = popup
+        simulation.draw_popup_drawer = popup_drawer
         simulation.draw_scene(root, review_spec, scene_path)
         reviewer.render_supported_board(
             root, review_spec, "trinket", trinket_board
@@ -543,6 +547,7 @@ def render_previews(
         simulation.draw_rack = originals["draw_rack"]
         simulation.draw_grouped_rack = originals["draw_grouped_rack"]
         simulation.draw_popup = originals["draw_popup"]
+        simulation.draw_popup_drawer = originals["draw_popup_drawer"]
     return {
         "scene": scene_path,
         "trinket_board": trinket_board,
@@ -558,7 +563,7 @@ def build_display_contract(
     root: Path,
 ) -> dict[str, Any]:
     contract = copy.deepcopy(template)
-    contract["component"] = f"{case['component']}/runtime-v1"
+    contract["component"] = f"{case['component']}/runtime-v1.2"
     board_key = (
         "trinket_board"
         if case["component"] == "AB.TRINKET.KIT.V1"
@@ -696,8 +701,9 @@ def update_source_manifest(
             "redraw, recolor, mirror or invent states from accepted cells",
             "distort A/B or C edge/corner slices; only quiet C/D centers may stretch",
             "bake item icons, counts, cooldowns, Queue, category labels or tooltips",
-            "replace provider Buttons, hit regions, scripts, drag, scale, docking or SavedVariables",
-            "enable AutoBar or apply any AutoBar or TrinketMenu profile",
+            "replace provider Buttons, scripts, item behavior or write provider SavedVariables",
+            "leave popup points or hit regions changed after native/signature-mismatch fallback",
+            "automatically enable AutoBar or apply any AutoBar or TrinketMenu profile",
         ],
     }
     manifest["runtime_exports"] = {case["runtime_key"]: runtime_record}
@@ -706,7 +712,7 @@ def update_source_manifest(
         if case["component"] == "AB.TRINKET.KIT.V1"
         else "consumable_board"
     )
-    scenario_count = 9 if case["component"] == "AB.TRINKET.KIT.V1" else 7
+    scenario_count = 9 if case["component"] == "AB.TRINKET.KIT.V1" else 10
     manifest["p5_validation"] = {
         "display_region_contract": repo_path(root, display_contract_path),
         "display_region_contract_sha256": sha256(display_contract_path),
@@ -747,7 +753,7 @@ def main() -> None:
             runtime, root / case["runtime"], case["runtime"]
         )
         runtime.save(
-            preview_dir / f"{case['component']}.runtime-v1.atlas.png",
+            preview_dir / f"{case['component']}.runtime-v1.2.atlas.png",
             format="PNG",
             optimize=False,
             compress_level=9,
@@ -797,7 +803,7 @@ def main() -> None:
             check=True,
         )
         display_report = load_json(display_report_path)
-        expected_scenarios = 9 if key == "trinket" else 7
+        expected_scenarios = 9 if key == "trinket" else 10
         if (
             display_report.get("status") != "pass"
             or display_report.get("summary", {}).get("violation_count") != 0
@@ -813,7 +819,7 @@ def main() -> None:
             "module": "actionbars",
             "batch": "AB.FIELDKIT.V1",
             "component": case["component"],
-            "version": "runtime-v1.1",
+            "version": "runtime-v1.2",
             "runtime_contract": RUNTIME_CONTRACT,
             "status": "runtime-exported",
             "phase": "P5",
@@ -872,10 +878,13 @@ def main() -> None:
                     if key == "trinket"
                     else "AutoBar 1.31 existing main/popup frames and 24+12 buttons"
                 ),
-                "visual_layers_only": True,
-                "provider_geometry_writes": False,
+                "visual_layers_only": False,
+                "visual_and_layout_adapter": True,
+                "provider_geometry_writes": True,
                 "provider_behavior_replaced": False,
-                "saved_variables_written": False,
+                "saved_variables_written": True,
+                "provider_saved_variables_written_automatically": False,
+                "aeui_saved_variables_written_on_drag_stop": True,
                 "autobar_enabled_or_profile_applied": False,
                 "automatic_profile_mutation": False,
                 "optional_user_configuration": (
@@ -883,6 +892,10 @@ def main() -> None:
                         "open_command": "/aeui autobar open",
                         "apply_command": "/aeui autobar apply",
                         "restore_command": "/aeui autobar restore",
+                        "popup_command": (
+                            "/aeui autobar popup [auto|left|right|native]"
+                        ),
+                        "dock_command": "/aeui fieldkit [dock|undock|status]",
                         "scope": "current character only",
                         "backup": (
                             "AzerothExpeditionUIDB.actionbars.autoBarBackups"
@@ -890,7 +903,13 @@ def main() -> None:
                         "provider_enabled_automatically": False,
                     }
                     if key == "consumable"
-                    else None
+                    else {
+                        "dock_command": "/aeui fieldkit [dock|undock|status]",
+                        "state": (
+                            "AzerothExpeditionUIDB.actionbars.trinketDocked"
+                        ),
+                        "provider_saved_variables_written_by_aeui": False,
+                    }
                 ),
                 "fallback": (
                     "missing/hidden providers render no placeholder; AEUI off restores "
@@ -906,16 +925,18 @@ def main() -> None:
                     "file": TOC_REL.as_posix(),
                     "sha256": sha256(toc_path),
                 },
-                "addon_version": "0.8.1",
+                "addon_version": "0.8.2",
                 "required_dependency": "pfUI",
                 "optional_provider": "TrinketMenu" if key == "trinket" else "AutoBar",
             },
             "provider_layers_preserved": [
-                "provider position, scale, orientation, docking and visibility",
-                "all Button parents, points, sizes, hit regions and scripts",
+                "provider free position restored on undock; provider scale, orientation and visibility preserved",
+                "all Button parents, sizes and scripts",
                 "icons, counts, cooldowns, checked/highlight and tooltip layers",
                 "Queue and combat swapping for TrinketMenu",
                 "categories, bag slots, popup ordering and item use for AutoBar",
+                "popup points and hit insets return to provider layout in native or signature-mismatch fallback",
+                "provider SavedVariables remain untouched by automatic soft docking",
                 (
                     "provider configuration and SavedVariables unless the user "
                     "explicitly invokes /aeui autobar apply"
@@ -931,11 +952,11 @@ def main() -> None:
                 "runtime_atlas": repo_path(
                     root,
                     preview_dir
-                    / f"{case['component']}.runtime-v1.atlas.png",
+                    / f"{case['component']}.runtime-v1.2.atlas.png",
                 ),
                 "runtime_atlas_sha256": sha256(
                     preview_dir
-                    / f"{case['component']}.runtime-v1.atlas.png"
+                    / f"{case['component']}.runtime-v1.2.atlas.png"
                 ),
                 "real_layout": repo_path(root, previews["scene"]),
                 "real_layout_sha256": sha256(previews["scene"]),
@@ -964,10 +985,11 @@ def main() -> None:
                 "target": "Turtle WoW 1.18.1 / Interface 11200",
                 "last_observation": {
                     "date": "2026-08-09",
-                    "result": "failed-before-runtime-v1.1",
+                    "result": "runtime-v1.1-icons-pass-popup-overlap-found",
                     "issues": [
-                        "AutoBar item icons were covered by same-layer pocket art",
-                        "TrinketMenu equipped icons were covered by same-layer sheath art",
+                        "AutoBar and TrinketMenu icons were visible after the runtime-v1.1 layer fix",
+                        "AutoBar native LEFT popup crossed the grouped rack and covered main cells",
+                        "soft left/right docking had not yet been implemented",
                     ],
                 },
             },

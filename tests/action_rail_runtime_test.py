@@ -234,12 +234,11 @@ def main() -> None:
     assert "bar:SetWidth" not in adapter
     assert "bar:SetHeight" not in adapter
     assert "button:SetParent" not in adapter
-    assert "button:SetPoint" not in adapter
 
     toc = (ROOT / builder.TOC_REL).read_text(encoding="utf-8-sig")
     bootstrap = (ROOT / builder.BOOTSTRAP_REL).read_text(encoding="utf-8")
-    assert "## Version: 0.8.1" in toc
-    assert 'addon.version = "0.8.1"' in bootstrap
+    assert "## Version: 0.8.2" in toc
+    assert 'addon.version = "0.8.2"' in bootstrap
     assert "Modules\\ActionBars.lua" in toc
 
     print("action rail runtime test passed")
