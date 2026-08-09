@@ -130,6 +130,8 @@ end
 
 function UnitClass() return "Mage", "MAGE" end
 function GetScreenWidth() return 1920 end
+local mouseFocus
+function GetMouseFocus() return mouseFocus end
 
 local function Split(value)
   local result = {}
@@ -175,6 +177,8 @@ AutoBar = {
   },
   providerButtonsUpdateCalls = 0,
   providerPopupUpdateCalls = 0,
+  providerSetPopupCalls = 0,
+  scheduledEvents = {},
 }
 for index = 1, 24 do
   AutoBar.buttons[index] = Split(recommended[index] or "")
@@ -200,6 +204,33 @@ function AutoBar:UpdatePopupButtons(baseButton)
       button:SetHitRectInsets(-2, -2, -20, -20)
     end
   end
+end
+function AutoBar:SetPopupButton(button)
+  self.providerSetPopupCalls = self.providerSetPopupCalls + 1
+  self.providerSetPopupButton = button
+  if button.noPopup then
+    AutoBarPopupFrame:Hide()
+    return
+  end
+  self:UpdatePopupButtons(button)
+  AutoBarPopupFrame:Show()
+end
+function AutoBar:ScheduleEvent(name, callback, delay, ...)
+  self.scheduledEvents[name] = {
+    callback = callback,
+    delay = delay,
+    arguments = { ... },
+  }
+  return name
+end
+function AutoBar:CancelScheduledEvent(name)
+  self.scheduledEvents[name] = nil
+end
+function AutoBar:RunScheduledEvent(name)
+  local scheduled = self.scheduledEvents[name]
+  assert(scheduled)
+  self.scheduledEvents[name] = nil
+  return scheduled.callback(unpack(scheduled.arguments))
 end
 function AutoBar:DragStop()
   self.providerDragStopCalls = (self.providerDragStopCalls or 0) + 1
@@ -258,6 +289,7 @@ for index = 1, 24 do
     width = 36,
     height = 36,
   })
+  item.effectiveButton = index
   _G[item.name] = item
   autoBarSnapshots[item] = {
     parent = item.parent,
@@ -361,7 +393,7 @@ local module = assert(AzerothExpeditionUI.modules.ActionBars)
 module:Initialize()
 module:Apply()
 
-assert(module.fieldKitRuntimeContract == "1.3")
+assert(module.fieldKitRuntimeContract == "1.4")
 assert(module.autoBarFieldKitStatus == "available")
 assert(module.autoBarMainButtons == 24)
 assert(module.autoBarPopupButtons == 4)
@@ -442,6 +474,7 @@ local hookedOrient = TrinketMenu.OrientWindows
 local hookedBuild = TrinketMenu.BuildMenu
 local hookedAutoBarDragStop = AutoBar.DragStop
 local hookedTrinketMouseUp = TrinketMenu.MainFrame_OnMouseUp
+local wrappedSetPopupButton = AutoBar.SetPopupButton
 module:Apply()
 assert(installedHooks == 7)
 assert(AutoBar.ButtonsUpdate == hookedButtonsUpdate)
@@ -450,6 +483,7 @@ assert(TrinketMenu.OrientWindows == hookedOrient)
 assert(TrinketMenu.BuildMenu == hookedBuild)
 assert(AutoBar.DragStop == hookedAutoBarDragStop)
 assert(TrinketMenu.MainFrame_OnMouseUp == hookedTrinketMouseUp)
+assert(AutoBar.SetPopupButton == wrappedSetPopupButton)
 
 AutoBar:ButtonsUpdate()
 AutoBar:UpdatePopupButtons(AutoBarFrameButton1)
@@ -459,7 +493,7 @@ assert(AutoBar.providerPopupUpdateCalls == 1)
 assert(autoBarSetupCalls == 1)
 assert(module.autoBarPopupLayout == "drawer-1x4")
 assert(module.autoBarPopupSide == "left")
-assert(module.autoBarPopupHover == "bridge")
+assert(module.autoBarPopupHover == "intent-bridge")
 assert(module.autoBarPopupConnectors == 1)
 assert(AutoBarPopupFrame.aeuiConsumableKitDrawerSpineV1.shown == true)
 assert(AutoBarPopupFrame_Button1.decorativePoints[1][1] == "TOPRIGHT")
@@ -513,6 +547,34 @@ assert(hoverBridge.decorativePoints[2][1] == "BOTTOMLEFT")
 assert(hoverBridge.decorativePoints[2][3] == "BOTTOMRIGHT")
 assert(ProviderAcceptsPopupFocus(hoverBridge))
 
+local setPopupCallsBeforeTraverse = AutoBar.providerSetPopupCalls
+mouseFocus = AutoBarFrameButton2
+AutoBar:SetPopupButton(AutoBarFrameButton2)
+assert(AutoBar.providerSetPopupCalls == setPopupCallsBeforeTraverse)
+assert(AutoBar.scheduledEvents[module.popupIntentEvent])
+assert(AutoBar.scheduledEvents[module.popupIntentEvent].delay == 0.30)
+assert(module.autoBarPopupIntentButton == AutoBarFrameButton2)
+
+mouseFocus = AutoBarFrameButton3
+AutoBar:SetPopupButton(AutoBarFrameButton3)
+assert(AutoBar.providerSetPopupCalls == setPopupCallsBeforeTraverse)
+assert(module.autoBarPopupIntentButton == AutoBarFrameButton3)
+mouseFocus = hoverBridge
+AutoBar:RunScheduledEvent(module.popupIntentEvent)
+assert(AutoBar.providerSetPopupCalls == setPopupCallsBeforeTraverse)
+assert(AutoBarPopupFrame.shown == true)
+assert(AutoBarPopupFrame.aeuiConsumableKitPopupBaseButtonV1 ==
+  AutoBarFrameButton1)
+
+mouseFocus = AutoBarFrameButton4
+AutoBar:SetPopupButton(AutoBarFrameButton4)
+assert(AutoBar.providerSetPopupCalls == setPopupCallsBeforeTraverse)
+AutoBar:RunScheduledEvent(module.popupIntentEvent)
+assert(AutoBar.providerSetPopupCalls == setPopupCallsBeforeTraverse + 1)
+assert(AutoBar.providerSetPopupButton == AutoBarFrameButton4)
+assert(AutoBarPopupFrame.aeuiConsumableKitPopupBaseButtonV1 ==
+  AutoBarFrameButton4)
+
 local popupNative, popupNativeMessage = module:SetAutoBarPopupMode("native")
 assert(popupNative == true)
 assert(string.find(popupNativeMessage, "native", 1, true))
@@ -521,11 +583,31 @@ assert(module.autoBarPopupHover == "provider")
 assert(AutoBarPopupFrame_Button1.decorativePoints[1][1] == "LEFT")
 assert(hoverBridge.shown == false)
 assert(AutoBarPopupFrame:GetScript("OnLeave") == providerPopupOnLeave)
+local setPopupCallsBeforeNative = AutoBar.providerSetPopupCalls
+mouseFocus = AutoBarFrameButton5
+AutoBar:SetPopupButton(AutoBarFrameButton5)
+assert(AutoBar.providerSetPopupCalls == setPopupCallsBeforeNative + 1)
+assert(AutoBar.scheduledEvents[module.popupIntentEvent] == nil)
 local popupAuto = module:SetAutoBarPopupMode("auto")
 assert(popupAuto == true)
 assert(module.autoBarPopupLayout == "drawer-2x6")
-assert(module.autoBarPopupHover == "bridge")
+assert(module.autoBarPopupHover == "intent-bridge")
 assert(hoverBridge.shown == true)
+
+local providerScheduleEvent = AutoBar.ScheduleEvent
+local providerCancelScheduledEvent = AutoBar.CancelScheduledEvent
+AutoBar.ScheduleEvent = nil
+AutoBar.CancelScheduledEvent = nil
+local setPopupCallsBeforeSchedulerFallback = AutoBar.providerSetPopupCalls
+mouseFocus = AutoBarFrameButton6
+AutoBar:SetPopupButton(AutoBarFrameButton6)
+assert(AutoBar.providerSetPopupCalls ==
+  setPopupCallsBeforeSchedulerFallback + 1)
+assert(module.autoBarPopupHover == "bridge")
+AutoBar.ScheduleEvent = providerScheduleEvent
+AutoBar.CancelScheduledEvent = providerCancelScheduledEvent
+module:ApplyAutoBarPopup(true)
+assert(module.autoBarPopupHover == "intent-bridge")
 
 local opened, openMessage = module:OpenAutoBarConfig()
 assert(opened == true)
@@ -639,6 +721,11 @@ assert(module.autoBarPopupLayout == "native")
 assert(module.autoBarPopupHover == "provider")
 assert(hoverBridge.shown == false)
 assert(AutoBarPopupFrame:GetScript("OnLeave") == providerPopupOnLeave)
+local setPopupCallsBeforeMismatch = AutoBar.providerSetPopupCalls
+mouseFocus = AutoBarFrameButton6
+AutoBar:SetPopupButton(AutoBarFrameButton6)
+assert(AutoBar.providerSetPopupCalls == setPopupCallsBeforeMismatch + 1)
+assert(AutoBar.scheduledEvents[module.popupIntentEvent] == nil)
 AutoBar.display.columns = 4
 
 AzerothExpeditionUI.db.actionbars.enabled = false
@@ -666,7 +753,7 @@ module:Apply()
 assert(module.autoBarFieldKitStatus == "missing")
 assert(module.trinketFieldKitStatus == "missing")
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "fieldkit%-contract=1%.3"))
+assert(string.find(status, "fieldkit%-contract=1%.4"))
 assert(string.find(status, "autobar=missing"))
 assert(string.find(status, "autobar%-popup%-hover=missing"))
 assert(string.find(status, "trinket=missing"))

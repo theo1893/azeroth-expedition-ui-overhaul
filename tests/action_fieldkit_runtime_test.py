@@ -71,7 +71,7 @@ def main() -> None:
         manifest = json.loads(
             (ROOT / case["runtime_manifest"]).read_text(encoding="utf-8")
         )
-        assert manifest["runtime_contract"] == "1.3"
+        assert manifest["runtime_contract"] == "1.4"
         assert manifest["status"] == "runtime-exported"
         assert manifest["phase"] == "P5"
         assert manifest["runtime_export"]["sha256"] == sha256(runtime_path)
@@ -87,6 +87,14 @@ def main() -> None:
         assert manifest["adapter"]["provider_hover_geometry_adapted"] is (
             case["component"] == "AB.CONSUMABLE.KIT.V1"
         )
+        assert manifest["adapter"]["provider_popup_switch_guard"] == (
+            "scoped-0.30s-original-delegate"
+            if case["component"] == "AB.CONSUMABLE.KIT.V1"
+            else "not-applicable"
+        )
+        assert manifest["adapter"][
+            "provider_set_popup_button_original_authoritative"
+        ] is (case["component"] == "AB.CONSUMABLE.KIT.V1")
         assert manifest["adapter"][
             "popup_frame_onleave_deferred_only_while_external"
         ] is (case["component"] == "AB.CONSUMABLE.KIT.V1")
@@ -144,7 +152,7 @@ def main() -> None:
         assert result["summary"]["violation_count"] == 0
 
     for required in (
-        'ActionBars.fieldKitRuntimeContract = "1.3"',
+        'ActionBars.fieldKitRuntimeContract = "1.4"',
         "ActionTrinketKitV1",
         "ActionConsumableKitV1",
         "ApplyAutoBarFieldKit",
@@ -155,6 +163,13 @@ def main() -> None:
         "HandleAutoBarDragStop",
         "HandleTrinketDragStop",
         "ApplyTrinketFieldKit",
+        "popupIntentDelay = 0.30",
+        "ShouldDeferAutoBarPopup",
+        "CommitAutoBarPopupIntent",
+        "HandleAutoBarSetPopupButton",
+        "InstallAutoBarPopupIntentGuard",
+        "AutoBar.SetPopupButton = self.autoBarSetPopupButtonWrapper",
+        'self.autoBarPopupHover = "intent-bridge"',
         "InstallFieldKitHooks",
         'hooksecurefunc("AutoBar_SetupVisual"',
         'hooksecurefunc(AutoBar, "ButtonsUpdate"',
@@ -190,6 +205,7 @@ def main() -> None:
     assert "AutoBar_SetupVisual()" not in adapter
     assert "TrinketMenu.OrientWindows()" not in adapter
     assert "TrinketMenu.BuildMenu()" not in adapter
+    assert 'SetScript("OnUpdate"' not in adapter
     assert 'texture = button:CreateTexture(nil, "BACKGROUND")' not in adapter
     print("action field kit runtime test passed")
 

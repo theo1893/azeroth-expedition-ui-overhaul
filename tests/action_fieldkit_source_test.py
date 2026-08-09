@@ -135,7 +135,7 @@ def main() -> None:
         assert manifest["p5_validation"]["game_validated"] is False
 
         assert sha256(case["runtime"]) == case["runtime_sha256"]
-        assert runtime_manifest["runtime_contract"] == "1.3"
+        assert runtime_manifest["runtime_contract"] == "1.4"
         assert runtime_manifest["status"] == "runtime-exported"
         assert runtime_manifest["phase"] == "P5"
         assert runtime_manifest["source"]["sha256"] == case["sha256"]

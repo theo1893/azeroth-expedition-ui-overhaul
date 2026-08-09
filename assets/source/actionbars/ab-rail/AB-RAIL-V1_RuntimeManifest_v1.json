@@ -154,7 +154,7 @@
   },
   "adapter": {
     "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
-    "sha256": "401e5d88609af9ed08d5fae930bed39a85fb18dabbed1d2a4b7565d545aa250c",
+    "sha256": "387df4b89e26e23115432c1e1119f0508f3044cfc32ca3b52a45e18101ba0519",
     "provider": "pfUI.bars[1..12].backdrop and pfUI.bars[1].mergedBackdrop.backdrop",
     "logical_bars": [
       1,
@@ -187,11 +187,11 @@
   "addon_entrypoints": {
     "bootstrap": {
       "file": "addon/AzerothExpeditionUI/Core/Bootstrap.lua",
-      "sha256": "7f884a1ef7e68288f5e28d605fb577c0180303ef4355a3f4529b7d1c05a1c728"
+      "sha256": "4eefa4216d97553aef470f38b0845ed64c1d17900d0fd2114449db3b262282e7"
     },
     "toc": {
       "file": "addon/AzerothExpeditionUI/AzerothExpeditionUI.toc",
-      "sha256": "dc1b46915f64c02ddc6f7314a67e686377942373ac0cd9e1991bfadc3ff719ae"
+      "sha256": "22780bced4a74f02a60ed9a2cb4484c399e67137bc848f27dc8b7a36c442a208"
     },
     "addon_version": "0.8.1",
     "required_dependency": "pfUI"
@@ -554,7 +554,7 @@
   },
   "package_validation": {
     "report": "generated/actionbars/AB.RAIL/AB.RAIL.V1/runtime/V1/addon-package-report.json",
-    "report_sha256": "058214a835d7c738097be57b017fc014a8e63650e4a5b3db1969beeb5c8480e5",
+    "report_sha256": "a6a4ec74fc50859718614ece98f278a0af9ab54859df7555c2a6c0adf72c16b9",
     "status": "pass",
     "violations": 0,
     "build_required_on_target_device": false

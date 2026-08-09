@@ -286,7 +286,7 @@
     "status": "exported",
     "authorization": "user instruction '下一步' on 2026-08-09",
     "exporter": "tools/build_action_fieldkit_v1_runtime.py",
-    "exporter_sha256": "67501b1a0d8d3fde914aabcf95c99865090f0c3ac3b0d3a07842ae1a8c41e1ba",
+    "exporter_sha256": "19b6dd783a298ac8832281fcf03018daae99a40e4cbae81e6af0a1d724e9ca28",
     "runtime_file": "addon/AzerothExpeditionUI/Media/ActionBars/ActionConsumableKitV1.tga",
     "runtime_sha256": "c48f6292336446d2cc0cbbfc811cde9903b06eeb41e6c9f4db49e4f13fd9320e",
     "runtime_atlas_size": [
@@ -455,7 +455,8 @@
       "transparent power-of-two packing gutters that are never sampled",
       "fully transparent RGB zeroing without changing visible RGB or Alpha",
       "C nine-slice and D three-slice assembly beneath provider-owned content",
-      "one transparent mouse-enabled corridor parented to AutoBarPopupFrame while the external drawer is active"
+      "one transparent mouse-enabled corridor parented to AutoBarPopupFrame while the external drawer is active",
+      "one exact-layout-only 0.30-second SetPopupButton intent guard that delegates every committed switch to the captured AutoBar method"
     ],
     "forbidden_runtime_uses": [
       "load the accepted 1024x1024 source directly in Turtle WoW",
@@ -466,6 +467,7 @@
       "replace provider Button objects or Button scripts, item behavior or write provider SavedVariables",
       "leave popup points or hit regions changed after native/signature-mismatch fallback",
       "leave the external-drawer hover corridor or deferred popup-frame OnLeave active after native/signature-mismatch fallback",
+      "delay or intercept AutoBar popup switching outside the exact external-drawer state",
       "automatically enable AutoBar or apply any AutoBar or TrinketMenu profile"
     ]
   },
@@ -495,12 +497,12 @@
   },
   "p5_validation": {
     "display_region_contract": "tools/specs/action_consumable_kit_v1_runtime_display_region.json",
-    "display_region_contract_sha256": "497162c90b6af4b50ef21ec55e874a0efeb96dfe9cc733b36c8226adcca344bc",
+    "display_region_contract_sha256": "feb12e0a0fd28d66d46bb518e40e10c86abeef2230e0faf935658dedd54b3144",
     "display_region_report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.CONSUMABLE.KIT.V1.display-region-report.json",
-    "display_region_report_sha256": "0b3947acebd0bcd5a4b60ab663ea5544f649f232c520090221f4301be6751109",
-    "real_layout_preview": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.FIELDKIT.V1.runtime-v1.3.real-layout-1920x1080.png",
+    "display_region_report_sha256": "070673f114aa38fd0194c0886b6a491240b42158146c95bbdb25bfb9f562ba2d",
+    "real_layout_preview": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.FIELDKIT.V1.runtime-v1.4.real-layout-1920x1080.png",
     "real_layout_preview_sha256": "00d468852311049b6cf29cc148e68d36764f7bc51fdb15cf8442432dbaa41655",
-    "supported_layouts_preview": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.CONSUMABLE.KIT.V1.runtime-v1.3.layouts.png",
+    "supported_layouts_preview": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.CONSUMABLE.KIT.V1.runtime-v1.4.layouts.png",
     "supported_layouts_preview_sha256": "255a816f8b9319477b672f5ac40f37ec91534bd2affcbc25b2ed71576cc9ab7c",
     "real_layout_scenarios": "10/10 pass",
     "display_region_violations": 0,

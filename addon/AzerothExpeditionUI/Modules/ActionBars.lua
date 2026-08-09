@@ -13,7 +13,7 @@ ActionBars.railTexturePath = addon.media.root .. "ActionBars\\ActionRailV1"
 ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
-ActionBars.fieldKitRuntimeContract = "1.3"
+ActionBars.fieldKitRuntimeContract = "1.4"
 ActionBars.trinketKitTexturePath =
   addon.media.root .. "ActionBars\\ActionTrinketKitV1"
 ActionBars.consumableKitTexturePath =
@@ -26,6 +26,8 @@ ActionBars.trinketDockGap = 16
 ActionBars.fieldKitSnapDistance = 32
 ActionBars.popupDrawerGap = 6
 ActionBars.popupDrawerMaxRows = 6
+ActionBars.popupIntentDelay = 0.30
+ActionBars.popupIntentEvent = "AEUI_AutoBarPopupIntent"
 
 local railSliceOrder = {
   "topLeft", "top", "topRight",
@@ -1596,6 +1598,7 @@ end
 function ActionBars:ApplyAutoBarPopup(enabled, baseButton)
   local frame = GetGlobal("AutoBarPopupFrame")
   if not frame then
+    self:CancelAutoBarPopupIntent()
     self.autoBarPopupButtons = 0
     self.autoBarPopupConnectors = 0
     self.autoBarPopupLayout = "missing"
@@ -1645,11 +1648,19 @@ function ActionBars:ApplyAutoBarPopup(enabled, baseButton)
       self.autoBarPopupLayout =
         "drawer-" .. tostring(columns) .. "x" .. tostring(rows)
       self.autoBarPopupSide = string.lower(side)
-      self.autoBarPopupHover = "bridge"
+      if self.autoBarPopupIntentWrapped and AutoBar and
+        type(AutoBar.ScheduleEvent) == "function" and
+        type(AutoBar.CancelScheduledEvent) == "function"
+      then
+        self.autoBarPopupHover = "intent-bridge"
+      else
+        self.autoBarPopupHover = "bridge"
+      end
       return true
     end
   end
 
+  self:CancelAutoBarPopupIntent()
   if frame.aeuiConsumableKitDrawerActiveV1 then
     RestorePopupNativeLayouts(frame, buttons)
   end
@@ -1856,7 +1867,131 @@ function ActionBars:ApplyTrinketFieldKit(enabled)
   return true
 end
 
+function ActionBars:CancelAutoBarPopupIntent()
+  local provider = self.autoBarPopupIntentProvider
+  if provider and type(provider.CancelScheduledEvent) == "function" then
+    pcall(
+      provider.CancelScheduledEvent,
+      provider,
+      self.popupIntentEvent
+    )
+  end
+  self.autoBarPopupIntentProvider = nil
+  self.autoBarPopupIntentButton = nil
+end
+
+function ActionBars:ShouldDeferAutoBarPopup(provider, button)
+  if provider ~= AutoBar or not FieldKitEnabled() or not button then
+    return false
+  end
+  if type(provider.ScheduleEvent) ~= "function" or
+    type(provider.CancelScheduledEvent) ~= "function" or
+    type(GetMouseFocus) ~= "function"
+  then
+    return false
+  end
+
+  local rack = GetGlobal("AutoBarFrame")
+  local frame = GetGlobal("AutoBarPopupFrame")
+  if not rack or not frame or
+    not frame.aeuiConsumableKitDrawerActiveV1 or
+    not frame.IsShown or not frame:IsShown() or
+    frame.aeuiConsumableKitPopupBaseButtonV1 == button
+  then
+    return false
+  end
+  if not button.GetParent or button:GetParent() ~= rack or
+    GetMouseFocus() ~= button
+  then
+    return false
+  end
+  return true
+end
+
+function ActionBars:CommitAutoBarPopupIntent()
+  local provider = self.autoBarPopupIntentProvider
+  local button = self.autoBarPopupIntentButton
+  self.autoBarPopupIntentProvider = nil
+  self.autoBarPopupIntentButton = nil
+
+  local original = self.autoBarSetPopupButtonOriginal
+  if type(original) ~= "function" then
+    return
+  end
+  local ok, shouldCommit = pcall(
+    self.ShouldDeferAutoBarPopup,
+    self,
+    provider,
+    button
+  )
+  if ok and shouldCommit then
+    return original(provider, button)
+  end
+end
+
+function ActionBars:HandleAutoBarSetPopupButton(provider, button)
+  local original = self.autoBarSetPopupButtonOriginal
+  if type(original) ~= "function" then
+    return
+  end
+
+  local ok, shouldDefer = pcall(
+    self.ShouldDeferAutoBarPopup,
+    self,
+    provider,
+    button
+  )
+  if not ok or not shouldDefer then
+    self:CancelAutoBarPopupIntent()
+    return original(provider, button)
+  end
+
+  if self.autoBarPopupIntentProvider == provider and
+    self.autoBarPopupIntentButton == button
+  then
+    return
+  end
+
+  self:CancelAutoBarPopupIntent()
+  self.autoBarPopupIntentProvider = provider
+  self.autoBarPopupIntentButton = button
+  local scheduled = pcall(
+    provider.ScheduleEvent,
+    provider,
+    self.popupIntentEvent,
+    self.CommitAutoBarPopupIntent,
+    self.popupIntentDelay,
+    self
+  )
+  if not scheduled then
+    self.autoBarPopupIntentProvider = nil
+    self.autoBarPopupIntentButton = nil
+    return original(provider, button)
+  end
+end
+
+function ActionBars:InstallAutoBarPopupIntentGuard()
+  if self.autoBarPopupIntentWrapped then
+    return true
+  end
+  if not AutoBar or type(AutoBar.SetPopupButton) ~= "function" then
+    return false
+  end
+
+  self.autoBarSetPopupButtonOriginal = AutoBar.SetPopupButton
+  self.autoBarSetPopupButtonWrapper = function(provider, button)
+    return ActionBars:HandleAutoBarSetPopupButton(provider, button)
+  end
+  AutoBar.SetPopupButton = self.autoBarSetPopupButtonWrapper
+  self.autoBarPopupIntentWrapped = true
+  return true
+end
+
 function ActionBars:InstallFieldKitHooks()
+  if AutoBar then
+    self:InstallAutoBarPopupIntentGuard()
+  end
+
   if type(hooksecurefunc) ~= "function" then
     return
   end
@@ -1939,6 +2074,8 @@ function ActionBars:Initialize()
   self.autoBarPopupLayout = "pending"
   self.autoBarPopupSide = "pending"
   self.autoBarPopupHover = "pending"
+  self.autoBarPopupIntentProvider = nil
+  self.autoBarPopupIntentButton = nil
   self.autoBarGrouped = false
   self.autoBarPresetStatus = "ready"
   self.consumableDockStatus = "pending"

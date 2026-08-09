@@ -298,7 +298,7 @@
     "display_region_violations": 0,
     "addon_package": {
       "report": "generated/actionbars/AB.RAIL/AB.RAIL.V1/runtime/V1/addon-package-report.json",
-      "report_sha256": "058214a835d7c738097be57b017fc014a8e63650e4a5b3db1969beeb5c8480e5",
+      "report_sha256": "a6a4ec74fc50859718614ece98f278a0af9ab54859df7555c2a6c0adf72c16b9",
       "status": "pass",
       "violations": 0,
       "build_required_on_target_device": false

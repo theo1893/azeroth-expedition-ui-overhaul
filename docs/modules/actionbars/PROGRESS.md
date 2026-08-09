@@ -63,14 +63,21 @@
   `fieldkit-contract=1.3` 在外置态加入一个覆盖卷袋全高、直接隶属
   `AutoBarPopupFrame` 的透明鼠标通道，右侧宽 `10 UI`、分组左侧宽 `52 UI`；只在
   外置态延后 Frame `OnLeave`，实际关闭仍归 provider 计时器，所有原生回退恢复
-  原脚本并隐藏通道。当前保持 `runtime-exported / P5 / pending-retest`；
+  原脚本并隐藏通道。用户复测后明确报告：“鼠标一旦移动到别的格子上，弹出栏就
+  消失了”。进一步审计确认，内侧主格到右抽屉的路径会穿过同一行其他主格；每个
+  主格的 XML `OnEnter` 都立即调用 `AutoBar:SetPopupButton`，无 popup 的格子会隐藏、
+  其他格子会替换当前抽屉，外缘通道无法覆盖这段路径。AEUI `0.8.4`／
+  `fieldkit-contract=1.4` 保留通道与 provider 关闭计时器，并只在 exact 外置抽屉已显示
+  时对“不同主格”加入 `0.30s` 意图停留：跨格离开即保持原抽屉，停留才调用捕获的
+  AutoBar 原 `SetPopupButton`；NATIVE、非 exact、关闭态、非鼠标调用或调度 API 缺失
+  都立即委托原方法，不建立逐帧维护。当前保持 `runtime-exported / P5 / pending-retest`；
   P4→本次修复 ImageGen
   `0`，原生产循环仍终止于 `4/5` 与 `1/5`。
 - `AB.SLOT.BASE.V1` 有界生产循环已在 `5/5` 停止；用户于 `2026-08-08` 明确
   “接受 AB.SLOT.BASE.V1 第5稿”，随后以“进行下一步”授权 P4→P5。exact source
   RGBA `6d4a4d16…7dc0` 已按冻结 `[200,200,824,824)` crop 确定性导出为
   `128×128` 32-bit TGA `ActionSlotBaseV1.tga`，SHA `5c49a1db…23ca`，像素 SHA
-  `e527c038…c35c` 与已验收 attempt 5 runtime review 完全一致。当前 AEUI `0.8.3`
+  `e527c038…c35c` 与已验收 attempt 5 runtime review 完全一致。当前 AEUI `0.8.4`
   的 `ActionBars` adapter 只在现有 pfUI Bar `1–10` 的逐按钮 `backdrop` 上创建
   full-UV 子纹理；Bar `11／12`、按钮逻辑、动态图标／文字／状态、命中区、分页、
   拖放、位置、scale 与 SavedVariables 均未接管。五种最终排版 `5/5 pass`、
@@ -181,10 +188,10 @@
 | `AB.SLOT.STATE` | `P2 / scoped` | highlight／active／equipped／icon tint／cooldown／按键动画的真实覆盖顺序已冻结 | 基底 P6 已验证；如需独立换肤再写悬停／激活覆盖合同，不生产假 disabled cell |
 | `AB.ENDCAP.GRYPHON` | `P2 / direction-locked` | pfUI 左右端帽对象、64 UI 默认能力；用户确认的 V3 preset 默认关闭 | `AB.SLOT／RAIL` 后另行授权可选端帽正文 |
 | `AB.STANCE／PET` | `P1` | Bar `11／12` 与 provider 状态已审计 | 职业最少／最多数量和自动施法实机排版 |
-| `AB.CONSUMABLE.RACK／POCKET／POPUP` | `P5 / runtime-v1.3 / pending-retest / 1/5` | [source](../../../assets/source/actionbars/ab-consumable-kit/ActionConsumableKit_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_RuntimeManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；TGA `c48f6292…320e`、像素 `658f826f…e30d` 不变；v1.2 external drawer／两侧软吸附保留；v1.3 增加全高透明直接子级悬停通道并在回退时恢复 Frame `OnLeave`；左右通道／原脚本恢复 smoke、display `10/10`、package pass | `/reload` 从不同高度主格缓慢移入左右候选 `1／6／7／12`，确认穿越不断开、离开后正常关闭；再验证 NATIVE／非 exact 回退及拖离／回吸附 |
-| `AB.CONSUMABLE.GROUP` | `P5 / runtime-v1.3 / pending-retest / 1/5` | 精确 `24 Button / 4×6 / 推荐 profile` 才显示三组、启用 external drawer 与 hover bridge；`/aeui autobar apply／restore` 仍为当前角色备份式显式配置，普通刷新只读且不启用 provider | 实机确认“应急／增益／工具”、手动数字 item ID、非 exact profile 原生 popup／OnLeave 回退及 restore 可逆 |
-| `AB.TRINKET.DOCK` | `P5 / runtime-v1.3 / pending-retest / 4/5` | [source](../../../assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；TGA `3614d9a8…f455`、像素 `0961d750…aef` 不变；v1.2 默认主栏右侧 `16 UI` 软吸附、阈值 `32 UI` 保留 | `/reload` 验证双槽拖离只释放饰品侧、靠近重新吸附、底边对齐、横／竖／scale 与 Queue 不受影响；不执行 attempt 5 |
-| `AB.TRINKET.MENU` | `P5 / runtime-v1.3 / pending-retest / 4/5` | C 九宫格与 B 候选插页像素不变；候选 `0／1／8／30` display `9/9 pass`、换装与动态层仍归 provider；v1.3 只共享 adapter／manifest 版本 | 实机验证候选图标、左右键换槽、Queue、八向菜单停靠、独立 scale／方向／拖动及 provider 缺失 fail-open |
+| `AB.CONSUMABLE.RACK／POCKET／POPUP` | `P5 / runtime-v1.4 / pending-retest / 1/5` | [source](../../../assets/source/actionbars/ab-consumable-kit/ActionConsumableKit_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_RuntimeManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；TGA `c48f6292…320e`、像素 `658f826f…e30d` 不变；v1.2 external drawer／两侧软吸附和 v1.3 联合悬停通道保留；v1.4 以一次性 AceEvent 调度对不同主格加入 `0.30s` 意图停留，最终切换仍调用 AutoBar 原方法；跨格保留／停留切换／NATIVE 与非 exact 立即委托 smoke、display `10/10`、package pass | `/reload` 从内侧分类横穿其他主格进入左右候选 `1／6／7／12`，确认原抽屉保持；在另一主格停留约 `0.30s` 应切换，离开联合区域后正常关闭；再验证 NATIVE／非 exact 与拖离／回吸附 |
+| `AB.CONSUMABLE.GROUP` | `P5 / runtime-v1.4 / pending-retest / 1/5` | 精确 `24 Button / 4×6 / 推荐 profile` 才显示三组、启用 external drawer、hover bridge 与 popup switch intent guard；`/aeui autobar apply／restore` 仍为当前角色备份式显式配置，普通刷新只读且不启用 provider | 实机确认“应急／增益／工具”、跨格保持、停留切换、手动数字 item ID、非 exact profile 原生 popup／OnLeave 回退及 restore 可逆 |
+| `AB.TRINKET.DOCK` | `P5 / runtime-v1.4 / pending-retest / 4/5` | [source](../../../assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；TGA `3614d9a8…f455`、像素 `0961d750…aef` 不变；v1.2 默认主栏右侧 `16 UI` 软吸附、阈值 `32 UI` 保留；v1.4 只共享 adapter／manifest 版本 | `/reload` 验证双槽拖离只释放饰品侧、靠近重新吸附、底边对齐、横／竖／scale 与 Queue 不受影响；不执行 attempt 5 |
+| `AB.TRINKET.MENU` | `P5 / runtime-v1.4 / pending-retest / 4/5` | C 九宫格与 B 候选插页像素不变；候选 `0／1／8／30` display `9/9 pass`、换装与动态层仍归 provider；v1.4 不改变 TrinketMenu 行为，只共享 adapter／manifest 版本 | 实机验证候选图标、左右键换槽、Queue、八向菜单停靠、独立 scale／方向／拖动及 provider 缺失 fail-open |
 | `AB.FOCUS.CASTBAR` | `P2 / direction-locked` | 玩家／目标／Focus 真实对象与用户确认的 V3 双框下沿实例 | 以后独立决定只做一次性布局 preset 或另授权细 Rail 换肤 |
 | `AB.FOCUS.SWING` | `P2 / direction-locked` | 主手／副手／ranged 真对象、`200×12 UI` 与用户确认的中心双细轨 | 实机验证近战／远程复用；若换肤则另立合同 |
 | `AB.DOITEDPS.TIMELINE` | `P2 / direction-locked` | 已安装 provider 的 `318×46 UI` 根 Frame及用户确认的中心落位 | 以后只做 feature-detect 一次性位置 preset 或独立换肤合同 |
@@ -338,19 +345,21 @@
    （SHA `dc9615ac…4d5d`）与同目录 P6 evidence JSON（SHA `73a8f942…0d0b`）；
    静态截图与用户交互确认的证明范围保持分离。
 2. `AB.FIELDKIT.V1` 保持 `runtime-exported / P5`，当前修复版为
-   `fieldkit-contract=1.3 / pending-retest`。Trinket／Consumable source
+   `fieldkit-contract=1.4 / pending-retest`。Trinket／Consumable source
    SHA `82dd2260…c012`／`623f29c5…a2419` 继续保持 exact；runtime TGA 文件 SHA
    `3614d9a8…f455`／`c48f6292…320e`，最终 display `9/9`＋`10/10`、package 与
    静态回归均 pass。v1.2 增加 exact profile 外置抽屉、左右软吸附与显式控制命令；
-   v1.3 只补全主格到抽屉的透明悬停通道及原生脚本回退，不改 accepted art／TGA
-   像素或 provider 物品行为；P4→当前
+   v1.3 的透明通道保留，但实机证明它没有阻止穿越其他主格时发生的立即切换；
+   v1.4 只在 exact 外置态加入 `0.30s` 分类切换意图，跨格时保持当前抽屉，明确停留
+   才调用 AutoBar 原方法，不改 accepted art／TGA 像素、物品使用或候选顺序；P4→当前
    ImageGen `0`，原循环仍止于 `4/5` 与 `1/5`。
 3. 下一门禁是 Turtle WoW P6 复测：`/reload` 后先确认 `/aeui status` 含
-   `version 0.8.3` 与 `fieldkit-contract=1.3`。先检查 AutoBar 主格／popup 的物品图标和数量、
+   `version 0.8.4` 与 `fieldkit-contract=1.4`。先检查 AutoBar 主格／popup 的物品图标和数量、
    TrinketMenu 双槽／候选的饰品图标、冷却与 Queue 全部位于皮革装饰之上。
    再执行 `/aeui autobar apply`，确认当前角色成为精确 `4×6` 三组、24 格、
-   外置 popup `1–6` 单列、`7–12` 双列且不遮主格；从卷袋上、中、下主格缓慢移入
-   左右抽屉，穿越时不得关闭，离开主格、透明通道和候选后应正常关闭；
+   外置 popup `1–6` 单列、`7–12` 双列且不遮主格；从内侧分类打开抽屉后横穿同一行
+   其他主格进入左右抽屉，穿越时原抽屉不得关闭或换类；在另一分类主格持续停留约
+   `0.30s` 应正常切换到该类，离开主格、透明通道和候选后应正常关闭；
    `/aeui autobar popup` 四模式与
    `/aeui autobar restore` 应正确回退。随后分别验证两袋拖离／`32 UI` 回吸附、
    `/aeui fieldkit dock／undock／status`、AutoBar 拖动／缩放／显隐，以及 TrinketMenu 横／竖、
@@ -362,7 +371,7 @@
    （SHA `5e89c6e5…12942`）与同目录 P6 evidence JSON（SHA
    `2d48b8fb…0be3`）；静态截图与用户对完整六项交互／布局清单的确认范围保持
    分离。Rail runtime TGA、display、功能合同与 P6 证据均未改变；manifest 只同步
-   共享 AEUI `0.8.3` adapter／bootstrap／TOC 哈希，P5→P6 ImageGen `0`。
+   共享 AEUI `0.8.4` adapter／bootstrap／TOC 哈希，P5→P6 ImageGen `0`。
 5. Rail 若要进入 `P6-C`，必须先在现存 work 中形成组件专属的精确 keep／delete
    inventory，排除共享 `ActionBars.lua`、Character V3 锁定基准及其他未完成
    Action Bars 组件依赖，并向用户展示、取得明确批准；当前不清理 ignored

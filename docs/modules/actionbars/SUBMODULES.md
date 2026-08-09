@@ -114,7 +114,7 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 | `AB.CONSUMABLE.RACK` | 已加载并自行显示的 `AutoBarFrame`＋`AutoBarFrameButton1..24` | 推荐一次性满容量 `4×6 / 24 Button / 36 UI / gap 3 UI`，同时支持 `1–24` 个真实 Button 与合法行列。推荐按钮簇外壳为 `165×243 UI`。因 `alignButtons` 可把子 Button 放到 `AutoBarFrame` 边界外，装饰 Frame 必须在配置变化时读取真实可见 Button 边界。默认软吸附在主动作条左侧、外壳右缘距主栏左缘 `48 UI`、底边对齐；拖离后只释放消耗品栏，距离停靠点 `32 UI` 内松手重新吸附。不得用维护循环持续重写位置／尺寸，也不得启用当前禁用的 provider |
 | `AB.CONSUMABLE.GROUP` | 推荐 profile 的连续槽段 `1–8／9–16／17–24`；三个非交互标题 Frame／FontString 与两条底层分隔带 | 只在 Button 数、`4×6` 行列与分组 profile 签名全部匹配时显示“应急／增益／工具”；每组两行八格。标题位于命中盒外，分隔带只占两组之间既有 `3 UI` gap，不接收鼠标。任一配置不匹配即隐藏标题／分隔，退回单一自适应外壳，不能给用户自定义类别贴错标签 |
 | `AB.CONSUMABLE.POCKET` | `AutoBarFrameButton1..24` | 显示 provider 选出的真实物品图标、数量、冷却、可用性和 Tooltip；槽底不含物品图标、名称或类别。V1 不创建自有 fallback Button |
-| `AB.CONSUMABLE.POPUP` | `AutoBarPopupFrame_Button1..12` | 精确匹配推荐 `24 Button / 4×6 / profile` 时改用外置抽屉：`1–6` 个候选为单列，`7–12` 个候选为列优先双列且最多六行；整组位于卷袋外，不遮挡主格或分类签。`AUTO` 在卷袋已吸附时向左展开，浮动时按屏幕剩余空间选择左右；`LEFT／RIGHT` 可强制方向，`NATIVE` 或任一 profile 签名不匹配时完整恢复 provider 原生四向线性布局。外置态在卷袋与抽屉间创建一个透明、可接收鼠标、直接隶属 `AutoBarPopupFrame` 且覆盖卷袋全高的悬停通道：右侧宽 `10 UI`，分组左侧连同标题净空宽 `52 UI`；只在外置态延后 XML Frame `OnLeave`，关闭仍由 AutoBar 原有 `PopupMouseover` 计时器负责，回退时恢复原脚本并隐藏通道。候选顺序、图标、数量、冷却、点击、Tooltip、Shift 条件与 Button script 仍归 AutoBar；不得把 XML 初始 `72×72 UI` Frame 当作实际弹出边界，不复制分类表或重挂 `PickupContainerItem` |
+| `AB.CONSUMABLE.POPUP` | `AutoBarPopupFrame_Button1..12` | 精确匹配推荐 `24 Button / 4×6 / profile` 时改用外置抽屉：`1–6` 个候选为单列，`7–12` 个候选为列优先双列且最多六行；整组位于卷袋外，不遮挡主格或分类签。`AUTO` 在卷袋已吸附时向左展开，浮动时按屏幕剩余空间选择左右；`LEFT／RIGHT` 可强制方向，`NATIVE` 或任一 profile 签名不匹配时完整恢复 provider 原生四向线性布局。外置态在卷袋与抽屉间创建透明、可接收鼠标、直接隶属 `AutoBarPopupFrame` 且覆盖卷袋全高的悬停通道：右侧宽 `10 UI`，分组左侧连同标题净空宽 `52 UI`；XML Frame `OnLeave` 只在此态延后，关闭仍由 AutoBar 原 `PopupMouseover` 负责。因前往外侧抽屉可能穿过其他主格，`fieldkit-contract=1.4` 仅在当前外置抽屉已显示时，把不同主格的 `SetPopupButton` 延后 `0.30s`：进入通道或候选前离开该格即保留原抽屉；持续停留才调用捕获的 AutoBar 原方法切换／关闭。相同主格、NATIVE、签名不匹配、AEUI 关闭、非鼠标调用或 provider 调度 API 缺失全部立即委托原方法；不使用逐帧循环。候选顺序、图标、数量、冷却、点击、Tooltip、Shift 条件与 Button script 仍归 AutoBar；不得把 XML 初始 `72×72 UI` Frame 当作实际弹出边界，不复制分类表或重挂 `PickupContainerItem` |
 
 推荐 profile 使用 AutoBar 现有类别 ID 组成三个八格槽段：`应急` 放生命／职业
 资源／双恢复／绷带／解毒／行动／机动；`增益` 放战斗药剂／守护药剂／元素
@@ -140,7 +140,7 @@ AutoBar 的真实类别、物品顺序和用户后续配置始终优先；缺失
 adapter 在现有 `24+12` Button 下分别取 A／B，C 以 `6 UI` 九宫格跟随真实可见
 Button 边界，D 用于分组 gap，并在外置 popup 抽屉靠卷袋一侧形成竖向 spine。它只
 读取 profile 以决定标签与抽屉真伪，不自动启用 AutoBar、不在普通刷新中应用 profile
-或写入 provider SavedVariables。`fieldkit-contract=1.3` 延续把每个 A／B 口袋放入
+或写入 provider SavedVariables。`fieldkit-contract=1.4` 延续把每个 A／B 口袋放入
 以真实 Button 为父、FrameLevel 比
 Button 低 `1` 的独立非交互装饰 Frame，避免与 ActionButtonTemplate 的动态图标
 共用 `BACKGROUND` 层。用户可显式执行 `/aeui autobar apply`，只为当前角色一次性
@@ -176,7 +176,7 @@ normal 静态底面；图标、冷却、Queue、文字、命中区、拖动、sc
 [runtime manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json)。
 adapter 在既有两槽／30 候选 Button 下挂 A／B，C 以 `6 UI` 九宫格跟随菜单 Frame，
 D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 与原生 backdrop，
-不替代 TrinketMenu 原有位置持久化或任何换装／Queue 行为。`fieldkit-contract=1.3`
+不替代 TrinketMenu 原有位置持久化或任何换装／Queue 行为。`fieldkit-contract=1.4`
 同样把两槽与候选的 A／B 纹理放进低于真实 Button `1` 级的独立非交互装饰 Frame，
 真实饰品图标、冷却和 Queue 始终位于其上。两侧软吸附由 `/aeui fieldkit
 dock|undock|status` 统一恢复、释放或查询；每一侧拖拽结束时独立判断，AEUI 只保存

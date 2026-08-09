@@ -3,8 +3,8 @@
   "module": "actionbars",
   "batch": "AB.FIELDKIT.V1",
   "component": "AB.TRINKET.KIT.V1",
-  "version": "runtime-v1.3",
-  "runtime_contract": "1.3",
+  "version": "runtime-v1.4",
+  "runtime_contract": "1.4",
   "status": "runtime-exported",
   "phase": "P5",
   "source": {
@@ -490,20 +490,22 @@
   },
   "deterministic_export": {
     "exporter": "tools/build_action_fieldkit_v1_runtime.py",
-    "exporter_sha256": "67501b1a0d8d3fde914aabcf95c99865090f0c3ac3b0d3a07842ae1a8c41e1ba",
+    "exporter_sha256": "19b6dd783a298ac8832281fcf03018daae99a40e4cbae81e6af0a1d724e9ca28",
     "expected_runtime_pixel_sha256": "0961d750d7436665a333d948ba010a212c5de6f87c51ab59a10ed8af86ac4aef",
     "imagegen_calls_after_acceptance": 0,
     "attempt_6_allowed": false
   },
   "adapter": {
     "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
-    "sha256": "401e5d88609af9ed08d5fae930bed39a85fb18dabbed1d2a4b7565d545aa250c",
+    "sha256": "387df4b89e26e23115432c1e1119f0508f3044cfc32ca3b52a45e18101ba0519",
     "provider": "TrinketMenu 3.3 existing main/menu frames and 2+30 buttons",
     "visual_layers_only": false,
     "visual_and_layout_adapter": true,
     "provider_geometry_writes": true,
     "provider_behavior_replaced": false,
     "provider_hover_geometry_adapted": false,
+    "provider_popup_switch_guard": "not-applicable",
+    "provider_set_popup_button_original_authoritative": false,
     "popup_frame_onleave_deferred_only_while_external": false,
     "saved_variables_written": true,
     "provider_saved_variables_written_automatically": false,
@@ -520,13 +522,13 @@
   "addon_entrypoints": {
     "bootstrap": {
       "file": "addon/AzerothExpeditionUI/Core/Bootstrap.lua",
-      "sha256": "7f884a1ef7e68288f5e28d605fb577c0180303ef4355a3f4529b7d1c05a1c728"
+      "sha256": "4eefa4216d97553aef470f38b0845ed64c1d17900d0fd2114449db3b262282e7"
     },
     "toc": {
       "file": "addon/AzerothExpeditionUI/AzerothExpeditionUI.toc",
-      "sha256": "dc1b46915f64c02ddc6f7314a67e686377942373ac0cd9e1991bfadc3ff719ae"
+      "sha256": "22780bced4a74f02a60ed9a2cb4484c399e67137bc848f27dc8b7a36c442a208"
     },
-    "addon_version": "0.8.3",
+    "addon_version": "0.8.4",
     "required_dependency": "pfUI",
     "optional_provider": "TrinketMenu"
   },
@@ -538,19 +540,20 @@
     "categories, bag slots, popup ordering and item use for AutoBar",
     "popup points and hit insets return to provider layout in native or signature-mismatch fallback",
     "the AutoBar popup-frame OnLeave script and transparent hover corridor return to provider state in native or signature-mismatch fallback",
+    "the AutoBar SetPopupButton wrapper delegates immediately outside the exact external drawer and commits deliberate category switches through the captured provider method",
     "provider SavedVariables remain untouched by automatic soft docking",
     "provider configuration and SavedVariables"
   ],
   "display_evidence": {
     "contract": "tools/specs/action_trinket_kit_v1_runtime_display_region.json",
-    "contract_sha256": "c1fdea8fe3af218f1d7823e0bd56b7a4a2410cefe7f755993b3fdfa5c67b86c9",
+    "contract_sha256": "7a82a0afcb92400a19867eefec81cae4ce46afd0b390f8d8f5512b71a38d4c35",
     "report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.TRINKET.KIT.V1.display-region-report.json",
-    "report_sha256": "d75700a5d302ba6a13160fa9c71a7e20be2b0371e8f5e5db1336a96d9e0469db",
-    "runtime_atlas": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.TRINKET.KIT.V1.runtime-v1.3.atlas.png",
+    "report_sha256": "b6c827f7d4c315f724c66d6c21007f38d428f1f589f83e1bbdf8f8d7d2b1b114",
+    "runtime_atlas": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.TRINKET.KIT.V1.runtime-v1.4.atlas.png",
     "runtime_atlas_sha256": "6b75e18d5877b22f40011cc4e84680ad29cc459367d5b275e35a7071d1e2c1b4",
-    "real_layout": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.FIELDKIT.V1.runtime-v1.3.real-layout-1920x1080.png",
+    "real_layout": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.FIELDKIT.V1.runtime-v1.4.real-layout-1920x1080.png",
     "real_layout_sha256": "00d468852311049b6cf29cc148e68d36764f7bc51fdb15cf8442432dbaa41655",
-    "supported_layouts": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.TRINKET.KIT.V1.runtime-v1.3.layouts.png",
+    "supported_layouts": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/AB.TRINKET.KIT.V1.runtime-v1.4.layouts.png",
     "supported_layouts_sha256": "d31762a27ff97479937a44b516dfa2cfb46cec15eca96576edf018847549b6f5",
     "result": "9/9 pass",
     "violations": 0,
@@ -569,11 +572,11 @@
     "target": "Turtle WoW 1.18.1 / Interface 11200",
     "last_observation": {
       "date": "2026-08-09",
-      "result": "runtime-v1.2-drawer-hover-transfer-failed",
+      "result": "runtime-v1.3-main-cell-traversal-failed",
       "issues": [
-        "the external AutoBar drawer remained visible while the pointer stayed on the grouped rack",
-        "crossing the gap from a main category cell to the external drawer could trigger AutoBar's stock direct-parent hover check and close the popup",
-        "runtime-v1.3 adds a transparent direct-child hover corridor and restores the stock frame OnLeave in every native fallback"
+        "runtime-v1.3 kept the outer rack-to-drawer corridor hoverable but did not protect routes crossing intervening main AutoBar cells",
+        "each crossed main cell immediately called AutoBar:SetPopupButton and could replace or hide the active drawer before the pointer reached it",
+        "runtime-v1.4 preserves the active drawer during transit and commits a new category only after a 0.30-second dwell, always through AutoBar's captured original method"
       ]
     }
   }

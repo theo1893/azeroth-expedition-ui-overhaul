@@ -79,7 +79,7 @@
   },
   "adapter": {
     "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
-    "sha256": "401e5d88609af9ed08d5fae930bed39a85fb18dabbed1d2a4b7565d545aa250c",
+    "sha256": "387df4b89e26e23115432c1e1119f0508f3044cfc32ca3b52a45e18101ba0519",
     "provider": "pfUI.bars and pfActionBar<BarName>Button1..12.backdrop",
     "logical_bars": [
       1,
@@ -167,7 +167,7 @@
   },
   "package_validation": {
     "report": "generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/runtime/V1/addon-package-report.json",
-    "report_sha256": "ab88bc38e1b47d469c96795bd84c9a83f5966d144c44c8ea8491a412ddb07f5e",
+    "report_sha256": "a6a4ec74fc50859718614ece98f278a0af9ab54859df7555c2a6c0adf72c16b9",
     "status": "pass",
     "violations": 0,
     "build_required_on_target_device": false

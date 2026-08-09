@@ -237,8 +237,8 @@ def main() -> None:
 
     toc = (ROOT / builder.TOC_REL).read_text(encoding="utf-8-sig")
     bootstrap = (ROOT / builder.BOOTSTRAP_REL).read_text(encoding="utf-8")
-    assert "## Version: 0.8.3" in toc
-    assert 'addon.version = "0.8.3"' in bootstrap
+    assert "## Version: 0.8.4" in toc
+    assert 'addon.version = "0.8.4"' in bootstrap
     assert "Modules\\ActionBars.lua" in toc
 
     print("action rail runtime test passed")
