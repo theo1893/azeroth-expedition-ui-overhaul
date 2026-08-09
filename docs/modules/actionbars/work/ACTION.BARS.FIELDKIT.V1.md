@@ -11,20 +11,24 @@
 - 子状态：`prompt-authorized`
 - 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
-- 当前状态：`prompt-authorized / P3`；V2 文字化方向与两个最终 production body
-  均已冻结，准备按两个独立预算依次执行
+- 当前状态：`generate / P3`；`AB.TRINKET.KIT.V1` attempt 1 已计入 `1/5` 并因
+  canvas／Alpha／safe margin 失败，完整自包含修复正文 `r1` 已就绪；
+  `AB.CONSUMABLE.KIT.V1` 仍为 `0/5 / prompt-authorized`
 - 模拟用户结论：`AB-FIELDKIT-SIM-V1 consumable direction revision-requested
   2026-08-08`；用户原文：“消耗品5*2不够用. 并且能否按照类型进行分组?”；
   `AB-FIELDKIT-SIM-V2 confirmed 2026-08-09`；用户原文：“接受
   AB-FIELDKIT-SIM-V2”
-- 当前生产候选：无
+- 当前生产候选：无内部通过候选；Trinket attempt 1 raw
+  `fe4b854e…c9e8d` 为失败证据，不是 source／runtime
 - 模拟 ImageGen：`0/0`
-- 生产执行体：`AB.TRINKET.KIT.V1` 与 `AB.CONSUMABLE.KIT.V1`，均为
-  `production-final / prompt-authorized / not-executed`
+- 生产执行体：`AB.TRINKET.KIT.V1` 为
+  `attempt-01-failed / repair-r1-ready / 1/5`；`AB.CONSUMABLE.KIT.V1` 为
+  `production-final / prompt-authorized / not-executed / 0/5`
 - 后续实际生成／修复预算：每个独立执行体最多 `5` 次，最坏合计 `10` 次；
   用户已于 `2026-08-09` 分别授权
 - 外部上传：用户已分别授权把 Character V3 锁定图作为两个执行体各自唯一的
-  Image 1 上传；授权范围不含新增输入图，也不复用既有组件授权
+  Image 1 上传；Trinket attempt 1 已上传 `1` 次，Consumable 仍为 `0`；授权范围
+  不含新增输入图，也不复用既有组件授权
 - 跨设备 handoff：无；确认结论与两个最终正文均已进入 tracked work，下一门禁
   不依赖 ignored 模拟像素
 - 目标：Turtle WoW `1.18.1`，Interface `11200`，`1920×1080`，
@@ -321,7 +325,7 @@ production edit／ImageGen reference。若布局、物件隐喻、材质层级�
 
 ## 最终执行正文 A（`AB.TRINKET.KIT.V1`）
 
-状态：`production-final / prompt-authorized / not-executed`。
+状态：`production-final / executed-attempt-01 / failed / superseded-by-r1`。
 
 ```text
 Create one production-ready transparent RGBA UI asset atlas for Turtle WoW 1.18.1, component AB.TRINKET.KIT.V1. The output canvas must be exactly 1024 by 1024 pixels and divided into four non-overlapping 512 by 512 cells: A [0,0,512,512] equipped-trinket sheath base; B [512,0,1024,512] candidate-trinket insert base; C [0,512,512,1024] adaptive menu-frame nine-slice master; D [512,512,1024,1024] short joiner clasp used between the paired equipped sheaths. Keep every cell independent, centered, fully visible, and surrounded by at least 80 transparent pixels. No visible pixel may cross a cell boundary. Background outside each object must be true alpha zero; do not use a green key background.
@@ -345,7 +349,33 @@ All four cells contain only the normal static base layer. Do not bake hover, pre
   中心安静度和连接扣可读性。
 - 需要重新授权：新增／替换输入图、上传新图、改变 cell 身份／数量、把模拟或
   AB.SLOT 当输入、改变 canvas／Alpha／动态内容所有权。
-- 预算：`0/5`；本体独立最多五次实际 ImageGen 生成／修图。
+- 预算：`1/5`；attempt 1 已返回 countable provider output，最多剩余四次。
+
+## 修复执行正文 A.r1（`AB.TRINKET.KIT.V1.r1`）
+
+状态：`repair-final / bounded-loop-authorized / ready-for-attempt-02`。
+
+```text
+Create one production-ready transparent RGBA UI asset atlas for Turtle WoW 1.18.1, component AB.TRINKET.KIT.V1 repair r1. This is a fresh regeneration after attempt 1 returned an invalid 1254 by 1254 opaque RGB image with a baked checkerboard and insufficient cell margins. The output file itself, not merely its preview, must be exactly 1024 by 1024 pixels in RGBA mode. Alpha outside the four objects must be exactly zero. Never paint, flatten or bake a white, gray, checkerboard, green or any other background into RGB pixels. A transparency checker may appear only in an application preview, never in the delivered PNG pixels.
+
+Divide the exact 1024 by 1024 canvas into four non-overlapping 512 by 512 cells: A [0,0,512,512] equipped-trinket sheath base; B [512,0,1024,512] candidate-trinket insert base; C [0,512,512,1024] adaptive menu-frame nine-slice master; D [512,512,1024,1024] short joiner clasp used between the paired equipped sheaths. Keep every cell independent and centered. Every visible or partially transparent pixel of each object, including antialiasing and shadow, must stay inside the local safe box [80,80,432,432] of its own 512 by 512 cell. Therefore no object may exceed 352 by 352 pixels, and each object must have at least 80 pixels of true alpha-zero padding on all four sides. No visible pixel may cross or touch a cell boundary.
+
+This output is an asset atlas, not an assembled action-bar scene. Do not paint a game screenshot, screen background, action bar, consumable rack, item grid, labels, or multiple repeated runtime instances into any cell.
+
+Image 1 is the locked Character V3 Azeroth Expedition UI reference. Inherit only its classic vanilla hand-painted bitmap language, deep walnut and smoke-brown aged leather, muted oxidized brass, slightly irregular thick silhouettes, restrained wear, short warm upper-left light, darker lower-right pressure, low saturation, low-frequency value grouping, and believable material thickness. Ignore its character-window outline, parchment attribute panel, model area, equipment layout, tabs, text, icons and all large composition. Runtime geometry below overrides Image 1 whenever they conflict. Render every object in a straight-on orthographic 2D UI view with the same upper-left light and no three-quarter scene perspective.
+
+Cell A is one square leather sheath behind a live 36 by 36 UI trinket ActionButton. It must read as a compact functional sheath, not a generic spell slot: a slightly thicker deep-leather rim, a quiet recessed center completely covered by the live icon, one small muted-brass keeper near the upper edge, and no jewel, socket, gem glow or fixed trinket. It will display at roughly 40 to 44 UI units behind each of the two equipped buttons. Cell B is a visibly lighter and thinner square leather insert for each live 36 by 36 candidate button, with substantially less brass and less depth than Cell A. Keep Cell B's brass broken into only a few short quiet accents; do not form a continuous bright bezel. Cell C is a square, quiet, non-directional nine-slice frame master with narrow broken brass edge segments and a matte stretchable center; it must remain valid around live menu frames from 52 by 52 UI through 172 by 332 UI, 212 by 252 UI and 1212 by 52 UI without creating fixed grid lines, fake pockets or a focal ornament in the center. Keep its corner and edge ornaments short and thin enough that a 52 by 52 runtime frame does not become a solid brass block. Cell D is a very short leather-and-brass joiner that can sit in the 4 UI gap between two equipped sheaths in horizontal or vertical orientation; it must rotate cleanly and never enter either 36 by 36 hit area.
+
+The confirmed runtime composition instantiates two Cell A sheaths as a horizontal paired dock on the right of the main action bar, with the pair bottom-aligned to the main bar and to the consumable roll on the opposite side. Cell D joins only the 4 UI gap between the two sheaths. The current typical candidate menu docks to the pair's right side, uses four columns and grows upward; Cell C must also remain valid for the provider's vertical or horizontal menu direction, automatic one-to-five columns, manual one-to-thirty columns, zero-candidate hidden state and up to thirty live candidates. Candidate content expands outward and upward rather than over the main skill icons. These are runtime assembly constraints only; do not render the assembled dock or menu into the atlas.
+
+All four cells contain only the normal static base layer. Do not bake hover, pressed, selected, checked, cooldown, disabled, range, queue, autoqueue, keybinding, text, count, tooltip, equipment quality, item icon, inventory-slot number, left-click or right-click labels. Those are live provider layers. Avoid continuous bright gold bezels, wide quality colors, glossy PBR gradients, fine photographic grain, micro-scratches, dense stitching, perfect machined symmetry, modern glass cards, neon glows, jewel cabinets, altars, stone plinths and decorative elements that would become noise at approximately 29 to 36 physical pixels. Compared with attempt 1, simplify the dense leather micro-scratches into broader hand-painted value shapes and reduce the amount and brightness of brass, while preserving the successful four object identities and the heavier equipped-sheath versus lighter candidate-insert hierarchy. Preserve clear alpha separation, calm icon-safe centers, and a visual weight slightly heavier than the consumable pockets but lower than the main action bar.
+
+Before finalizing, inspect the actual delivered file properties and pixels: width exactly 1024, height exactly 1024, mode RGBA, transparent background alpha exactly zero, exactly four isolated front-facing objects in their assigned cells, and every object's full visible and antialiased bounds inside its local [80,80,432,432] safe box. Verify that Cell C has a quiet stretchable center, Cell D rotates cleanly, and no dynamic provider content, checkerboard or assembled UI has been painted. If any one of these checks fails, correct it before returning the PNG.
+```
+
+`r1` 只修复 attempt 1 已证实的 canvas／Alpha／cell safe margin，以及同一美术包络
+内的过密皮纹、偏多黄铜和小尺寸角件重量；四个 cell 身份、Image 1、provider
+几何、动态所有权与 `1024² RGBA` 合同均未改变，不需要新授权。
 
 ## 最终执行正文 B（`AB.CONSUMABLE.KIT.V1`）
 
@@ -382,7 +412,7 @@ All cells are normal static bases only. The recommended profile instantiates twe
 
 | 实际尝试 | 执行体 | 结果 | 结论 |
 |---:|---|---|---|
-| `0/5` | production final | 未执行 | 正文、最多五次预算与 Character V3 Image 1 外部上传均已授权；准备 attempt 1 |
+| `1/5` | production final | raw `fe4b854e…c9e8d`；`1254×1254 RGB`、全不透明；四个语义对象存在 | fail：必须重生为 exact `1024² RGBA`、真 Alpha、四 cell 各边至少 `80 px`；`r1` 已就绪，待本检查点提交 |
 
 ### `AB.CONSUMABLE.KIT.V1`
 
@@ -391,7 +421,12 @@ All cells are normal static bases only. The recommended profile instantiates twe
 | `0/5` | production final | 未执行 | 正文、最多五次预算与 Character V3 Image 1 外部上传均已授权；等待 Trinket Kit 完成本轮内部循环后执行 attempt 1 |
 
 流程错误：本地 display contract 曾出现一次 schema 使用错误；没有调用外部
-ImageGen、没有返回生成结果，不进入任一 `0/5` 账本。
+ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 的固定子进程
+在 ImageGen 已返回图像后，因 Windows child sandbox `helper_unknown_error` 无法把
+结果复制到 `./generated`；父会话按 session ID 从固定执行器的
+`generated_images` 中只读定位并逐字节复制，source／destination SHA 均为
+`fe4b854e…c9e8d`。该错误没有触发重生，但已有 provider output，故 attempt 1
+仍严格计入 `1/5`。
 
 ## 执行记录
 
@@ -418,6 +453,25 @@ ImageGen、没有返回生成结果，不进入任一 `0/5` 账本。
   输入图、模拟像素或既有 `AB.SLOT／AB.RAIL` 资产。
 - ImageGen：此检查点仍为 `0/5 + 0/5`；未启用 AutoBar、未改变 TrinketMenu
   SavedVariables、未产生候选／source／runtime／adapter。
+- 日期：`2026-08-09`
+- 操作：以冻结 production final 原文调用固定
+  `@openai/codex@0.143.0 / gpt-5.5 / medium` 执行 Trinket attempt 1；唯一
+  Image 1 为已授权 Character V3，session
+  `019fe4cc-8302-7b40-a3e4-859a4d3abe18`。
+- countable output：raw
+  `generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/production/AB.TRINKET.KIT.V1/attempt-01/raw/AB.TRINKET.KIT.V1.attempt-01.raw.png`，
+  SHA `fe4b854e…c9e8d`，`1254×1254 RGB`、`1,823,337` bytes；Trinket 账本
+  进入 `1/5`，Consumable 保持 `0/5`。
+- 只读审查派生：将烘焙棋盘按亮度阈值移除并整张 LANCZOS 归一到 `1024²`
+  仅用于观察失败稿；派生 SHA `f56f7211…8a51`，不得晋级。四 cell 归一后最小
+  margin 依次为 `51／63／31／119 px`，前三者未达到 `80 px`。
+- 真实排版：scene `926f23ca…875f`、supported layouts
+  `1474ae4b…a268`、cell review `4a887dd6…2246`；display `16/16 pass`、
+  violations `0`，仅证明既定 provider 几何与图层容纳该四对象方向，不覆盖 raw
+  canvas／Alpha／margin 硬失败。
+- runtime／provider：未产生 source／runtime／adapter；未启用 AutoBar、未改变
+  TrinketMenu SavedVariables。完整自包含修复正文 `AB.TRINKET.KIT.V1.r1` 只在
+  已授权修复边界内收紧 canvas、Alpha、safe margin、皮纹频率与黄铜重量。
 
 ## 审查记录
 
@@ -431,6 +485,16 @@ ImageGen、没有返回生成结果，不进入任一 `0/5` 账本。
   AutoBar disabled 与 TrinketMenu enabled 状态均保持。
 - 结论：`prompt-authorized / P3`；允许依次启动两个独立的固定执行器有界循环，
   仍不允许在内部通过前进入 source、runtime 或 addon 接入。
+- Trinket attempt 1 语义：pass。四格依次清楚表达已装备护套、较薄候选插页、
+  自适应菜单框和可旋转连接扣；没有固定饰品、图标、文字、Queue 或完整场景。
+- Trinket attempt 1 美术：fail／可修复。深胡桃皮革与暗黄铜基本继承 Character
+  V3，但皮革微划痕过密，B／C 黄铜比例和小尺寸角件偏重；仍在冻结美术包络内。
+- Trinket attempt 1 合同／像素：fail。raw 为 `1254² RGB` 且棋盘烘焙、Alpha
+  全 `255`；并且归一审查中 A／B／C 最小 margin 仅 `51／63／31 px`。
+- Trinket attempt 1 真实排版：pass for geometry。当前水平双槽、竖向双槽、
+  候选 `0／1／8／30`、自动五列、水平菜单和合法三十列均能保持 hit box、图标、
+  冷却与 Queue 层序；display `16/16`、violations `0`。因 raw 硬失败，整体结论
+  仍为 fail，不得晋级。
 
 ## 尝试摘要
 
@@ -438,14 +502,15 @@ ImageGen、没有返回生成结果，不进入任一 `0/5` 账本。
 |---|---|---|---|
 | `AB-FIELDKIT-SIM-V1` | scene `91a596b9…adce`；states `64a39772…5927`；布局 `60/60`；display `15/15` | `consumable revision-requested 2026-08-08`：“消耗品5*2不够用. 并且能否按照类型进行分组?” | 改为足量类别槽并按类型分组；保留真实 AutoBar popup 与 TrinketMenu 合同 |
 | `AB-FIELDKIT-SIM-V2` | scene `9fe4d159…164d`；states `16a90762…f467`；布局 `72/72`；display `16/16` | `confirmed 2026-08-09`：“接受 AB-FIELDKIT-SIM-V2”；只接受文字方向 | 最终正文必须保持八项确认条款、provider 所有权与模拟像素禁用边界 |
+| `AB.TRINKET.KIT.V1 attempt 1` | raw `fe4b854e…c9e8d`；review scene `926f23ca…875f`；display `16/16` | internal fail；`1/5` | 保持四对象语义；修复 exact `1024² RGBA`、真 Alpha、每 cell `80 px` margin，并降低微纹理／黄铜噪声 |
 
 ## 下一门禁
 
-1. 先提交本次 `prompt-authorized / P3` 检查点，再以冻结正文原文执行
-   `AB.TRINKET.KIT.V1` attempt 1；每个 countable output 后依次完成语义、
-   美术、组件合同、真实排版、display-region 与像素门禁。
-2. Trinket Kit 若未通过，只能在既定修复边界内写入完整自包含修复正文并提交，
-   再执行下一次；最迟 `5/5` 停止。通过即停止该执行体，不为消耗预算继续生成。
+1. 提交 attempt 1 完整失败记录、reviewer／测试与自包含 `r1` 检查点，再原文执行
+   `AB.TRINKET.KIT.V1.r1` attempt 2；若返回图像即进入 Trinket `2/5`。
+2. Trinket attempt 2 后继续逐稿完成语义、美术、合同、真实排版、display-region
+   与像素门禁；若未通过，只能在既定修复边界内提交下一份完整自包含修复正文。
+   最迟 `5/5` 停止，通过即停，不为消耗预算继续生成。
 3. 然后独立以冻结正文原文执行 `AB.CONSUMABLE.KIT.V1` attempt 1，并采用相同
    的逐稿审查与最多 `5/5` 停止规则；两个账本不得混算。
 4. 两套内部通过的候选只进入 ignored `generated/` 和用户审阅，不自动晋级
