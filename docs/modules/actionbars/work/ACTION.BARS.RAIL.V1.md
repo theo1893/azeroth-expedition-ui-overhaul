@@ -4,11 +4,11 @@
 
 - 模块：`actionbars`
 - 组件 ID：`AB.RAIL.V1`
-- 工作版本：`AB.RAIL.V1.r2`
+- 工作版本：`AB.RAIL.V1.r3`
 - 子状态：`repair-prepared`
 - 项目阶段：`P3`
-- 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`；attempt 1 已调用，不得改用其他执行器
-- 当前操作：`regenerate`；attempt 2 改善四角与中心，但仍未通过画布／正方边界／纯绿背景，完整 `AB.RAIL.V1.r2` 等待提交后执行
+- 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`；attempt 1–3 已调用，不得改用其他执行器
+- 当前操作：`regenerate`；attempt 3 继续缩小但仍为纵向矩形，且保留连续金线与角块；完整 `AB.RAIL.V1.r3` 等待提交后执行
 - 生成前模拟方式：`deterministic-local-geometry`
 - 模拟 ImageGen：`0/0`
 - 模拟脚本：`tools/render_action_rail_simulation.py`，SHA-256
@@ -27,7 +27,7 @@
 - 模拟用户结论：`confirmed`；`2026-08-08`，用户原话：
   “接受 AB-RAIL-SIM-V1”
 - 后续生产自动修复预算：最多 `5` 次实际 ImageGen 生图／修图，含首次；已于 `2026-08-09` 授权
-- 当前实际生图：`2/5`
+- 当前实际生图：`3/5`
 - 流程错误：`0`
 - 多执行正文最坏实际生图数：`5`
 - 锁定视觉基准：
@@ -46,22 +46,22 @@
     `5c49a1db452560251422060545625b311e182ef5b8689be996aeda005b8e23ca`；
     只在本地模拟中作为当前 accepted/runtime 相邻图层，用于判断密度、遮挡和
     z-order；它不是 Rail 视觉权威、不是生产参考、不得上传
-- raw：attempt 2
-  `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-02/raw/AB.RAIL.V1.attempt-02.raw.png`
-  ／SHA-256 `334a7dc91ee224fad62e21dfa6c4ae7b96ce4733187e415b8baad32015c8bfe5`
+- raw：attempt 3
+  `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-03/raw/AB.RAIL.V1.attempt-03.raw.png`
+  ／SHA-256 `4eb0199150b1dc36b2dfe20b85ab932923200bfb7abbb92bc027316521ef3abb`
 - 候选审查工具：`tools/review_action_rail_candidate_v1.py`，SHA-256
   `fd9f45a3257a98de8b615707505cffbad1f9c56e2c14a9a31b8efd686df4441a`；
   只生成 ignored 指标、冻结 crop／九宫格装配和真实排版证据，不晋级像素
-- 透明候选：attempt 2 review-only
-  `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-02/transparent/AB.RAIL.V1.attempt-02.transparent.png`
-  ／SHA-256 `800eda2e2a50ed106e2c5b3f91e440f5d503d1274d50556c0c7463e64312e188`；
+- 透明候选：attempt 3 review-only
+  `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-03/transparent/AB.RAIL.V1.attempt-03.transparent.png`
+  ／SHA-256 `3e085195f4eb50439c5b29238a6fc91ca24824af619e008fc2331192902553ed`；
   固定 `remove_chroma_key.py --auto-key corners --soft-matte --spill-cleanup`
-- 重组预演：attempt 2 的冻结 crop／九宫格组合板
-  `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-02/review/AB.RAIL.V1.attempt-02.supported-layouts-board.png`
-  ／SHA-256 `3ad16ff1a0b524bd27313d68380ee975c1642bdeeced1e81f9e137723290d7c1`
-- 真实排版预演：attempt 2
-  `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-02/review/AB.RAIL.V1.attempt-02.real-layout-1920x1080.png`
-  ／SHA-256 `0ab48174b2d9e260072bda704366c873b38cfbba9a4065821d74c8c96ba17ef1`；
+- 重组预演：attempt 3 的冻结 crop／九宫格组合板
+  `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-03/review/AB.RAIL.V1.attempt-03.supported-layouts-board.png`
+  ／SHA-256 `8e0afc84c1ebe4ac1ddcf3ac1ce0b2e877d1d3610c22ee486af51f18be0f42d2`
+- 真实排版预演：attempt 3
+  `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-03/review/AB.RAIL.V1.attempt-03.real-layout-1920x1080.png`
+  ／SHA-256 `8530125a0e211f3febdc48dd35e50a31106588e752bbc07e7a3e515658f95ac6`；
   `1920×1080`、UI Scale `0.81269841269841`，8 个真实参数实例，相邻槽位使用
   accepted runtime，姿态栏保留 pfUI fallback；仅 Rail 来自候选
 - 实际展示区域合同／报告：
@@ -72,10 +72,10 @@
     ／`aebb3938953cadaaa7d5b32245ea90305cd94d19b6b63d5d1d8e31a01c80685e`
   - `1×1／12×1／6×2／4×3／1×12`、低 border／scale、
     高 border／spacing／scale 与合并双栏共 `8/8 pass`，violations `0`
-  - attempt 2 候选合同：
-    `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-02/review/display-region-contract.json`
-  - attempt 2 报告：
-    `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-02/review/display-region-report.json`
+  - attempt 3 候选合同：
+    `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-03/review/display-region-contract.json`
+  - attempt 3 报告：
+    `generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-03/review/display-region-report.json`
     ／SHA-256 `c1fe2bb937d3fa081197588de306545885558a76c953f292f8a3ecc8dff96a34`；
     provider 几何 `8/8 pass`、violations `0`，但不覆盖候选画布／bbox／材质失败
 - 精确布局报告：
@@ -252,10 +252,10 @@
 ## 生产正文完整性预检
 
 - 复杂度：`single-object / nine-slice / stretch`
-- 结论：`pass as complete AB.RAIL.V1.r2 repair body`；`AB-RAIL-SIM-V1` 已获用户
-  确认，全部确认条款与不可变边界保持不变；`.r2` 改变同一失败门禁下的修复
-  策略，加入整体缩小约 `16%`、正方居中、角部黄铜短断点和低分辨率 sprite
-  绘制要求，提交本版本后允许执行。
+- 结论：`pass as complete AB.RAIL.V1.r3 repair body`；`AB-RAIL-SIM-V1` 已获用户
+  确认，全部确认条款与不可变边界保持不变；`.r3` 继续处理同一画布／bbox／
+  拉伸材质失败，加入 fixed-provider `1254²` 比例辅助定位、分别修正宽高、取消
+  角块／铆钉／嵌套框并把黄铜缩成四角极短暗痕，提交本版本后允许执行。
 
 | 门禁 | 执行正文中的证据 | 结论 |
 |---|---|---|
@@ -271,20 +271,20 @@
 - 去冗余结论：只保留会改变对象、画布、拉伸安全区、材料关系与反模式的条款；
   不把模拟像素描述成可复制目标。
 
-## 当前完整修复正文（`AB.RAIL.V1.r2`，同一已授权边界）
+## 当前完整修复正文（`AB.RAIL.V1.r3`，同一已授权边界）
 
 ```text
 Create one production bitmap asset for Azeroth Expedition UI, component AB.RAIL.V1: exactly one reusable normal-state square nine-slice master for the background rail beneath a pfUI action bar. The returned bitmap file itself must be exactly 1024 pixels wide by 1024 pixels high; do not return 1254 by 1254 or any other size. It is a lightweight expedition equipment support that stretches around an arbitrary legal action-bar frame. It is not a complete action bar, not a fixed twelve-slot plate, not an action-button base, not an icon, not a state atlas, not a presentation board, and not a mock game screenshot.
 
 Image 1 will be the locked Character V3 visual authority. Inherit only its classic vanilla-era World of Warcraft hand-painted material relationship and value logic: deep walnut and smoke-brown aged leather or dark wood as the dominant body, a small amount of muted dark oxidized brass, low saturation, broad illustrated value groups, short warm wear light from the upper left, darker pressure toward the lower right, restrained handmade wear, and a deliberately old low-resolution game-interface character. Do not copy Image 1 pixels. Do not inherit its complete character-window silhouette, thick panel frame, paper, character, equipment slots, item or spell icons, purple quality glow, tabs, buttons, text, numbers, ornaments, internal layout, proportions, perspective, or 1254-by-1254 canvas. If Image 1 conflicts with this component contract, preserve only its material DNA and obey this prompt's exact geometry, quiet stretch zones, single-object scope, and exclusions.
 
-Create a brand-new exact 1024 by 1024 RGB output file. This is the actual returned pixel canvas, not a conceptual 1024-square design placed inside a larger provider canvas. Use one perfectly flat, uniform, pixel-level exact #00FF00 chroma-key background on every pixel outside the object, including all four canvas edges; every background pixel must have RGB values exactly 0, 255, 0 with no variation. Do not return transparency, a checkerboard, near-green, gradient, noise, haze, floor, shadow, vignette, or environmental scene. Place exactly one front-facing square rail master centered on the canvas, without perspective, camera depth, tilt, cast shadow, detached pieces, labels, guides, cell lines, or a presentation frame. The object's exact right-and-bottom-exclusive visible bounding box must be [160,160,864,864): no visible, antialiased, worn, highlighted, or contact-edge pixel may exist outside it, and the complete object must fill that exact 704-by-704 box without being clipped. A result that normalizes to approximately [100,91,923,933) is a known failure because it is about sixteen percent too large, sits too high, and is taller than it is wide. Reduce the complete object uniformly by roughly sixteen percent, move it to the exact canvas center, and make its visible width and height equal within one percent. Do not crop the border to obtain the smaller square.
+Create a brand-new exact 1024 by 1024 RGB output file. This is the actual returned pixel canvas, not a conceptual 1024-square design placed inside a larger provider canvas. Use one perfectly flat, uniform, pixel-level exact #00FF00 chroma-key background on every pixel outside the object, including all four canvas edges; every background pixel must have RGB values exactly 0, 255, 0 with no variation. Do not return transparency, a checkerboard, near-green, gradient, noise, haze, floor, shadow, vignette, or environmental scene. Place exactly one front-facing square rail master centered on the canvas, without perspective, camera depth, tilt, cast shadow, detached pieces, labels, guides, cell lines, or a presentation frame. The object's exact right-and-bottom-exclusive visible bounding box must be [160,160,864,864): no visible, antialiased, worn, highlighted, or contact-edge pixel may exist outside it, and the complete object must fill that exact 704-by-704 box without being clipped. The latest known failure normalizes to approximately [124,98,900,926), or about 776 pixels wide by 828 pixels high: it is still too wide, much too tall, and visibly portrait-shaped. Redraw it, rather than squashing or cropping it, as a true square by reducing the width about nine percent and the height about fifteen percent independently while preserving equal border thickness, then center the new square exactly. The contract remains the exact 1024 canvas and [160,160,864,864) box. If the fixed image service unavoidably wraps the requested composition in a 1254-by-1254 returned container, use the proportional fallback object box [196,196,1058,1058) on that container, which maps to the same canonical contract under deterministic whole-canvas reduction; this is a provider accommodation, not a different target. Do not use the previous [155,123,1099,1131) raw silhouette and do not crop its border to make it square.
 
 The cropped 704-by-704 object will be divided deterministically at x and y coordinates 0, 128, 576, and 704. Therefore the four corner cells are 128 by 128, the horizontal edge cells are 448 by 128, the vertical edge cells are 128 by 448, and the center cell is 448 by 448. On the full canvas, the strict two-axis stretch center is [288,288,736,736). Keep that entire center low-frequency, quiet, and free of any unique mark. Keep every non-stretchable corner decision within the four 128-by-128 corner cells. Along each edge cell, use only broad nearly uniform material bands that can stretch along that edge without revealing a repeated motif, seam, rivet chain, directional scratch, or focal highlight. Do not draw the slice boundaries or any guide.
 
-Build one coherent, lightly weighted expedition rail from outside to inside: a compact smoke-black contact edge; a shallow deep-walnut leather or dark-wood support body; one narrow, broken, muted dark-oxidized-brass trace near the true outer perimeter; and a quiet smoke-brown center field. The brown material must remain dominant. Brass is only a functional trace and a few short ochre value breaks, never a bright continuous bezel, double bevel, full metal plate, jewelry frame, gold ornament, corner bracket, corner plate, or L-shaped metal reinforcement. Confine every brighter brass break to the four non-stretchable 128-by-128 corner cells; the long 448-pixel stretchable edge cells must use dark brown material bands without a continuous gold line, repeated highlight, or unique bright segment. Put at most one tiny circular dark fastener near each true outer corner, contained within the outermost approximately 48 source pixels of the object; zero fasteners is acceptable, and no corner may contain multiple fasteners. Omit a fastener rather than enlarging it. Do not place fasteners anywhere along the stretchable edges or center. Keep the complete visible border thickness consistent on all four sides so the same slices read equally on horizontal bars, vertical bars, 6-by-2 bars, 4-by-3 bars, one-button bars, and a merged two-row bar. When assembled around merged pfUI Bar 1 and Bar 6, it must read as one uninterrupted outer rail with no internal horizontal seam. At runtime this rail remains the lowest visual layer beneath separate accepted action-slot backdrops and all provider-drawn icons, text, cooldowns, and interaction states.
+Build one coherent, lightly weighted expedition rail from outside to inside: one compact smoke-black contact edge, one shallow deep-walnut leather or dark-wood support band, four extremely short muted dark-ochre corner wear hints, and one quiet smoke-brown center field. The brown material must remain dominant. Use a single shallow outer boundary only. Do not create an inset rectangle, nested frame, double border, separate top or bottom rail bar, raised inner lip, square corner cap, corner block, corner plate, L-shaped reinforcement, jewelry frame, or full metal bezel. For this repair use zero rivets and zero circular fasteners. At each true corner, the brass-colored hint may be only a small irregular matte brush break, no larger than approximately 32 by 12 canonical pixels, contained entirely inside its 128-by-128 non-stretchable corner cell; it must not form a square, an L shape, or connect to another corner. All four long 448-pixel stretchable edge cells must be exclusively dark brown and smoke-black broad bands with no gold, brass, ochre line, repeated highlight, metal trim, unique bright segment, or directional ornament. Keep the complete visible border thickness consistent on all four sides so the same slices read equally on horizontal bars, vertical bars, 6-by-2 bars, 4-by-3 bars, one-button bars, and a merged two-row bar. When assembled around merged pfUI Bar 1 and Bar 6, it must read as one uninterrupted outer rail with no internal horizontal seam. At runtime this rail remains the lowest visual layer beneath separate accepted action-slot backdrops and all provider-drawn icons, text, cooldowns, and interaction states.
 
-The entire 448-by-448 stretch center and all four stretchable edge bands must use only a few broad matte hand-painted value masses. They must look nearly uniform at a glance and must not contain visible all-over leather grain, pebbling, pores, dense fibers, crack networks, micro-scratches, repeating mottling, directional marks, precision seams, stitches, embossed marks, long specular lines, glossy highlights, machined symmetry, smooth PBR gradients, or any detail that would smear or repeat when stretched. Keep any permissible coarse wear confined to the non-stretchable outer corners and short outer-border breaks. The upper-left warmth should be short and broken. The lower-right pressure should be dark and restrained. The object must read as a narrow lightweight backing rail once covered by action slots, not as an ornate framed full leather panel. The master must remain visually subordinate when displayed as a runtime rail with 6 UI-unit caps behind live action-slot backdrops at icon sizes from 20 to 48 UI units and movable scales from 0.75 to 1.5.
+The entire 448-by-448 stretch center and all four stretchable edge bands must use only two or three broad matte hand-painted value masses. Make them almost flat and nearly uniform at a glance. Do not texture-fill them. They must not contain visible all-over leather grain, pebbling, pores, dense fibers, crack networks, micro-scratches, repeating mottling, diagonal or radial lighting bands, directional marks, precision seams, stitches, embossed marks, long specular lines, glossy highlights, machined symmetry, smooth PBR gradients, or any detail that would smear or repeat when stretched. Keep all permissible coarse wear inside the four non-stretchable outer corner cells. The upper-left warmth should be one broad low-contrast value mass, not a diagonal spotlight. The lower-right pressure should be broad, dark, and restrained. The object must read as a narrow lightweight backing rail once covered by action slots, not as an ornate framed full leather panel. The master must remain visually subordinate when displayed as a runtime rail with 6 UI-unit caps behind live action-slot backdrops at icon sizes from 20 to 48 UI units and movable scales from 0.75 to 1.5.
 
 Render it like practical classic vanilla World of Warcraft 2D sprite art painted directly for a 64-by-64 or 128-by-128 interface sprite and then enlarged cleanly for review: coarse controlled brush shapes, compact illustrated value clusters, slightly imperfect hand-cut edges, low-frequency texture, restrained contrast, and functional wear. No material mark should be finer than a shape that remains readable after reduction to 128 by 128. It must not look photorealistic, PBR-rendered, glossy, glassy, plastic, vector-clean, precision-machined, cyber-neon, gothic, demonic, monumental, stone-carved, jewel-encrusted, or like a modern MMO dashboard slab. Do not create a black translucent glass panel, stone plinth, scroll, book, paper panel, ornate crest, wing, claw, chain, rune, gem, or large endcap.
 
@@ -292,7 +292,7 @@ Do not bake any slot subdivision or fixed grid. Do not bake any spell or item ic
 
 Do not use green verdigris or any green material inside the object, and do not allow green spill into the leather, wood, brass, edge antialiasing, or wear. Outside the exact [160,160,864,864) object box every pixel must be the same exact RGB #00FF00; do not use #03FA05, #04F907, another near-green, or a noisy green field.
 
-Before returning the image, inspect every requirement literally: the returned file itself is exactly 1024 by 1024 RGB, never 1254 by 1254; there is exactly one centered front-facing square object; its exact visible bounding box is [160,160,864,864) with equal width and height within one percent, no pixel outside, and no clipped edge; the previously oversized approximately [100,91,923,933) silhouette has been reduced uniformly by about sixteen percent and recentered; the crop is designed for slice boundaries 0/128/576/704; the canvas stretch center [288,288,736,736) is nearly uniform, quiet, and contains no unique or high-frequency detail; non-stretchable details remain in the corner cells; there are no continuous bright lines in the 448-pixel stretchable edge cells, corner plates, corner brackets, multiple fasteners per corner, visible slice guides, slot grid, repeated motifs, dynamic UI contents, or neighboring components; brown leather or dark wood dominates; dark brass is narrow, dark, rare, and confined to short corner-cell breaks; at most one tiny circular fastener exists at each corner; all sides have the same visual thickness; the style is coarse, matte, low-saturation vanilla-era hand-painted UI rather than modern PBR; and every background pixel outside the object is exactly RGB 0,255,0.
+Before returning the image, inspect every requirement literally: the returned file itself is exactly 1024 by 1024 RGB whenever the service allows it; there is exactly one centered front-facing square object; its canonical exact visible bounding box is [160,160,864,864), or the proportional [196,196,1058,1058) only if the fixed service unavoidably returns a 1254-square container; width and height are equal within one percent, no pixel lies outside the applicable box, and no edge is clipped; the latest portrait-shaped approximately [124,98,900,926) normalized silhouette has been redrawn as a smaller true square; the canonical crop is designed for slice boundaries 0/128/576/704; the canonical stretch center [288,288,736,736) is nearly uniform, quiet, and contains no unique or high-frequency detail; non-stretchable decisions remain in the corner cells; there is only one shallow outer boundary and no inset rectangle, nested frame, separate rail bar, continuous bright line, gold or brass in any 448-pixel stretch edge, square corner cap, corner bracket, rivet, fastener, visible slice guide, slot grid, repeated motif, dynamic UI content, or neighboring component; brown leather or dark wood dominates; dark ochre appears only as four tiny disconnected matte corner-cell brush breaks; all sides have the same visual thickness; the style is coarse, matte, low-saturation vanilla-era hand-painted UI rather than modern PBR; and every background pixel outside the applicable object box is exactly RGB 0,255,0.
 ```
 
 ## 自主修复循环（已授权）
@@ -316,6 +316,7 @@ Before returning the image, inspect every requirement literally: the returned fi
 |---:|---|---|---|---|---|---|---|
 | `1/5` | `AB.RAIL.V1`／`a4bf7c8` | `generate` | session `019fe458-b245-7f83-bcd8-7d1a9ddf83f3`／result `ig_0d74c14d0ce00e90016a77e595df388191902509ccb3b66398` | raw `48811c03…f31b` | 画布／输出：返回 `1254²`，归一 bbox `[103,103,921,921)` 越出合同；背景非 exact green；视觉上四角金属板／多铆钉过重且中心纹理过密 | 保留单对象、正面、胡桃褐与暗黄铜关系；不复用错误像素，从同一 Image 1 以完整 `.r1` regenerate | `internal-fail / repair-prepared` |
 | `2/5` | `AB.RAIL.V1.r1`／`974f17c` | `generate` | session `019fe460-242c-7dc0-b80f-1cbcc37362dc`／result `ig_084d9b46d47957b5016a77e77f03b881919844a1cbb7afd254` | raw `334a7dc9…bfe5` | 画布／输出仍为 `1254²`；审查归一 bbox `[100,91,923,933)` 仍越出合同且偏高、非方形；背景非 exact green；长拉伸边形成连续亮黄铜线 | 保留单对象、正面、每角最多一枚小铆钉、降低后的中心纹理与综合色域；不复用错误像素，以完整 `.r2` 从同一 Image 1 regenerate | `internal-fail / repair-prepared` |
+| `3/5` | `AB.RAIL.V1.r2`／`9b0a4c7` | `generate` | session `019fe466-849b-7971-898e-a7e5ee0e51b5`／result `ig_0eb645a14530ae9f016a77e91f90cc81919661a6505de31574` | raw `4eb01991…3abb` | 输出仍为 `1254²`；审查归一 bbox `[124,98,900,926)` 为 `776×828` 纵向矩形且越出合同；背景非 exact green；仍有嵌套框、角块、铆钉和连续金线 | 保留单对象、正面、综合色域和更接近的总体尺度；不复用错误像素，以完整 `.r3` 从同一 Image 1 重新绘制无角块／无铆钉的方形低调承托片 | `internal-fail / repair-prepared` |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
@@ -352,7 +353,25 @@ Before returning the image, inspect every requirement literally: the returned fi
 - attempt 2 候选 review JSON SHA `8e146aa8…a5a1`；display-region 几何
   `8/8 pass`、violations `0`。四角重量与中心高频纹理较 attempt 1 改善，
   但画布／bbox／色键仍失败，且四条拉伸边出现连续亮黄铜线。当前累计 `2/5`，
-  流程错误 `0`；完整 `AB.RAIL.V1.r2` 等待提交后 regenerate。
+  流程错误 `0`。
+- attempt 3 使用执行前已提交完整正文 `9b0a4c7` 和同一唯一 Image 1；固定 child
+  session 为 `019fe466-849b-7971-898e-a7e5ee0e51b5`，provider result 为
+  `ig_0eb645a14530ae9f016a77e91f90cc81919661a6505de31574`；没有额外输入或
+  独立 revised prompt。provider cache、child 原样副本与仓库 ignored raw 的
+  SHA 均为 `4eb0199150b1dc36b2dfe20b85ab932923200bfb7abbb92bc027316521ef3abb`。
+- child 在同一次生成后的保存阶段先因遍历受保护 `.sandbox-secrets` 失败，再因
+  provider 文件名占位符 `_image_id_.png` 失败；随后只列出该 session 的
+  `generated_images` 目录并原样复制成功。图片已在两次保存错误前生成，因此只计
+  attempt 3 一次，也不列为“无候选／无生成证据”的非计数流程错误。
+- attempt 3 输出仍为 `1254×1254 RGB`；透明原图 bbox
+  `[155,123,1099,1131)`，审查画布归一到 `1024²` 后实际 alpha bbox
+  `[124,98,900,926)`，即约 `776×828`，合同框外有 `143643` 个可见像素；
+  背景 exact `#00FF00` 像素为 `62`，中位数为 `#03FA05`。透明审查 SHA 为
+  `3e085195…3ed`。
+- attempt 3 候选 review JSON SHA `deb40edc…b3cb`；display-region 几何
+  `8/8 pass`、violations `0`。总体尺度继续接近合同，但物件仍为纵向矩形，
+  并形成嵌套内框、四枚角块／铆钉和四边连续金线。当前累计 `3/5`，流程错误
+  `0`；完整 `AB.RAIL.V1.r3` 等待提交后 regenerate。
 
 ## 尝试摘要
 
@@ -361,30 +380,32 @@ Before returning the image, inspect every requirement literally: the returned fi
 | `AB-RAIL-SIM-V1` | scene `123d1b4c…cde6`；layouts `a49088d1…e353`；display `8/8` | `user-confirmed / P2` | 不改变已确认方向；生产授权已于 `2026-08-09` 齐全 |
 | `AB.RAIL.V1` | `a4bf7c8`；session `019fe458…83f3`；raw `48811c03…f31b`；review `450bd197…e8f4` | `internal-fail / 1/5` | 以同一 Image 1 执行已提交的完整 `AB.RAIL.V1.r1`；不得复用 attempt 1 像素 |
 | `AB.RAIL.V1.r1` | `974f17c`；session `019fe460…62dc`；raw `334a7dc9…bfe5`；review `8e146aa8…a5a1` | `internal-fail / 2/5` | 保留单角钉与低频中心；整体缩小约 `16%`、正方居中，亮黄铜只留在四角短断点 |
-| `AB.RAIL.V1.r2` | 对象尺度／方形居中、四角短黄铜断点与低分辨率 sprite 绘制强化；其余冻结合同不变 | `repair-prepared` | 提交后 regenerate attempt 3 |
+| `AB.RAIL.V1.r2` | `9b0a4c7`；session `019fe466…51b5`；raw `4eb01991…3abb`；review `deb40edc…b3cb` | `internal-fail / 3/5` | 保留更接近的总体尺度；分别修正宽高、取消嵌套框／角块／铆钉与连续金线 |
+| `AB.RAIL.V1.r3` | 加入 fixed-provider `1254²` 比例辅助定位；四角仅极短暗痕，stretch edge 纯暗褐；其余冻结合同不变 | `repair-prepared` | 提交后 regenerate attempt 4 |
 
 ## 审查记录
 
-- 结论：attempt 2 退回；`repair-prepared / P3`，不允许进入用户复审、source
+- 结论：attempt 3 退回；`repair-prepared / P3`，不允许进入用户复审、source
   或 runtime。
 - 第一个失败门禁：执行输出与画布合同。raw 为 `1254² RGB` 而非 `1024²`；审查
-  画布归一 bbox `[100,91,923,933)` 越出 `[160,160,864,864)`，整体偏高且高于
-  宽；背景也不是逐像素 exact `#00FF00`。
+  画布归一 bbox `[124,98,900,926)` 越出 `[160,160,864,864)`；宽约 `776`、高约
+  `828`，仍是纵向矩形；背景也不是逐像素 exact `#00FF00`。
 - 语义／物理：单对象、正面、normal 状态与胡桃褐／暗黄铜身份可保留；没有
   动态图标、文字、状态或固定槽格。
 - 透视／图层：正面无透视；按冻结 crop 九宫格装配后，Rail 能位于 accepted
   Slot 与 provider 动态内容之下，display-region `8/8 pass`。
-- 美术一致性：综合色域接近 Character V3；相对 attempt 1 已移除大型金属角板
-  和多铆钉，每角只剩一枚小钉，中心 high-frequency mean 从 `2.4808` 降到
-  `1.5844`。仍失败之处是黄铜在长拉伸边形成明亮连续线，缩放后会读成固定金框，
-  不符合轻量、断续、暗黄铜承托轨。
+- 美术一致性：综合色域接近 Character V3，中心 high-frequency mean 为
+  `1.6522`，仍处在比 attempt 1 更克制的范围；但整体读作带内外双框的完整面板，
+  四角仍有方形金属角块和铆钉，四边仍由连续亮黄铜线连接，不符合轻量、断续、
+  最底层承托轨。
 - 装配／尺寸：`1×1／12×1／6×2／4×3／1×12`、极端参数与合并双栏均可完成
   几何装配且无内部中缝；由于冻结 crop 会切掉候选真实外框，该 pass 不能恢复
   候选资格。
-- 下一版必须改变：返回文件本身严格 `1024² RGB`；整体统一缩小约 `16%` 后使
-  物件 exact bbox `[160,160,864,864)`、正方且居中；背景逐像素 exact
-  `#00FF00`；全部较亮黄铜只允许留在四个 `128²` 角 cell 的短断点，四条
-  `448` 像素 stretch edge 只能使用安静暗褐宽色带。必须保持单对象、正面、
-  单角钉、已降低的中心纹理、胡桃褐主导、同厚横竖适配和全部动态内容排除。
-- 当前结论：attempt 2 为 `internal-fail / 2/5`；完整 `AB.RAIL.V1.r2` 已形成，
-  提交前不得执行 attempt 3。内部通过仍不等于用户接受。
+- 下一版必须改变：canonical 物件 exact bbox `[160,160,864,864)`、正方且居中；
+  fixed provider 若仍返回 `1254²`，只把 `[196,196,1058,1058)` 作为同比例辅助
+  定位，不改变最终合同；背景逐像素 exact `#00FF00`；取消内框、独立上下 rail、
+  角块和全部铆钉，四条 `448` 像素 stretch edge 只能使用安静暗褐／烟黑宽色带，
+  黄铜仅为四角互不连接的极短暗痕。必须保持单对象、正面、已降低的中心纹理、
+  胡桃褐主导、同厚横竖适配和全部动态内容排除。
+- 当前结论：attempt 3 为 `internal-fail / 3/5`；完整 `AB.RAIL.V1.r3` 已形成，
+  提交前不得执行 attempt 4。内部通过仍不等于用户接受。
