@@ -1,0 +1,199 @@
+{
+  "schema": "aeui-action-bars-simulation-v1",
+  "version": "ACTION-BARS-CORE-SIM-V6",
+  "extends": "tools/specs/action_bars_core_simulation_v5.json",
+  "purpose": "deterministic geometry preview for the 2026-08-10 compact combat cluster: remove AutoBar text plaques, attach TargetTarget, separate aura directions, and place equal cast/swing readouts in one row",
+  "output": "generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V6/action_bars_core_sim_v6.png",
+  "annotations": {
+    "title": "动作条 / 战斗焦点 V6 · 紧凑依附布局",
+    "subtitle": "Player / Target / TargetTarget、施法与 Swing 统一到游戏坐标合同",
+    "note": "确定性本地几何预览 · 不修改已验收位图 · ImageGen 0/0",
+    "rules_title": "V6 运行时边界",
+    "rules": [
+      "Player / Target 缩小，TargetTarget 依附 Target",
+      "Player Aura 左起；Target 系 Aura 右起",
+      "Player Cast / Swing / Target Cast 等宽等高并排",
+      "AutoBar 只保留袋体和分隔，不显示三段文字牌",
+      "动作条、消耗品、饰品与图腾间距同步压紧"
+    ]
+  },
+  "focus_field": {
+    "screen_box": [548, 520, 1372, 932],
+    "role": "non-runtime eye-path annotation for the V6 compact provider cluster"
+  },
+  "runtime_projection_proposal": {
+    "not_applied": false,
+    "global_pfui_tier": 8,
+    "combat_local_scale": {
+      "__replace__": true,
+      "player_target": 0.68,
+      "targettarget": 0.62,
+      "cast_swing_stance": 0.72,
+      "doitedps": 0.82
+    },
+    "player": {"anchor": "BOTTOM", "xpos_ui": -190, "ypos_ui": 500},
+    "target": {"anchor": "BOTTOM", "xpos_ui": 190, "ypos_ui": 500},
+    "targettarget": {"fallback_anchor": "BOTTOM", "xpos_ui": 414, "ypos_ui": 500, "live_anchor": "LEFT of frame to RIGHT of pfTarget + 8 UI"},
+    "player_castbar": {"anchor": "BOTTOM", "xpos_ui": -196, "ypos_ui": 430},
+    "swing_main_and_ranged": {"anchor": "BOTTOM", "xpos_ui": 0, "ypos_ui": 430},
+    "target_castbar": {"anchor": "BOTTOM", "xpos_ui": 196, "ypos_ui": 430},
+    "stance": {"anchor": "BOTTOM", "xpos_ui": 0, "ypos_ui": 255},
+    "doitedps": {"anchor": "TOPLEFT", "xpos_ui": 1012, "ypos_ui": -780, "scale": 0.82},
+    "position_method": "one-shot Turtle WoW Frame:SetPoint coordinates at pfUI tier 8; TargetTarget alone keeps a live relative dependency on pfTarget",
+    "architotem": "centered below Bar 1 with a five-pixel visual XP-rail clearance and provider direction=down"
+  },
+  "layout_contract": {
+    "layout_mode": "compact-row-v6",
+    "runtime_change_in_this_simulation": true,
+    "main_bar_center_x": 960,
+    "unit_frame_width_px": 195,
+    "unit_frame_inner_gap_px": 100,
+    "targettarget_gap_px": 8,
+    "targettarget_width_px": 107,
+    "readout_width_px": 146,
+    "readout_height_px": 13,
+    "readout_column_gap_px": 8,
+    "swing_pair_gap_px": 2,
+    "unit_to_readout_clearance_px": 6,
+    "readout_to_deck_clearance_px": 13,
+    "consumable_to_main_gap_px": 12,
+    "consumable_to_player_gap_px": 14,
+    "main_to_trinket_gap_px": 8,
+    "xp_rail_bottom_y": 882,
+    "totem_to_xp_rail_clearance_px": 5
+  },
+  "bar_overrides": {
+    "AB.BAR11.STANCE": {
+      "screen_origin": [920, 887],
+      "visible_in_simulation": false,
+      "runtime_note": "mutually occupies the compact below-deck satellite slot when ArchiTotem is unavailable"
+    }
+  },
+  "consumables": {
+    "label": "",
+    "labels_visible": false,
+    "screen_origin": [572, 669]
+  },
+  "trinkets": {
+    "label": "",
+    "screen_origin": [1214, 826]
+  },
+  "totem_satellite": {
+    "screen_origin": [874, 887],
+    "direction": "down"
+  },
+  "unit_frames": {
+    "cluster_label": "Aura：Player 左起；Target / TargetTarget 右起",
+    "cluster_label_origin": [960, 732],
+    "profile_recommendation": {
+      "not_applied": false,
+      "proposed_shared": {
+        "width_ui": 240,
+        "height_ui": 60,
+        "scale": 1.0,
+        "runtime_local_scale": 0.68,
+        "target_display_multiplier": 1.0
+      },
+      "targettarget": {
+        "width_ui": 132,
+        "height_ui": 30,
+        "runtime_local_scale": 0.62,
+        "attachment_gap_ui": 8
+      }
+    },
+    "frames": [
+      {
+        "id": "UF.PLAYER.ADJACENCY",
+        "label": "",
+        "screen_box": [715, 664, 910, 713],
+        "portrait_side": "left",
+        "portrait_tint": "#39533f",
+        "name": "玩家",
+        "level": "Lv 60",
+        "health": 0.76,
+        "power": 0.64,
+        "health_text": "76% · 生命",
+        "health_color": "#657742",
+        "power_color": "#405f7c",
+        "aura_origin": [715, 641],
+        "aura_strips": [
+          {"kind": "buff", "origin": [715, 641], "direction": "ltr", "auras": [{"kind": "buff"}, {"kind": "buff"}, {"kind": "buff", "count": "2"}, {"kind": "buff"}]},
+          {"kind": "debuff", "origin": [715, 717], "direction": "ltr", "auras": [{"kind": "debuff"}, {"kind": "debuff", "count": "3"}, {"kind": "debuff"}]}
+        ]
+      },
+      {
+        "id": "UF.TARGET.ADJACENCY",
+        "label": "",
+        "screen_box": [1010, 664, 1205, 713],
+        "portrait_side": "right",
+        "portrait_tint": "#633b34",
+        "name": "目标",
+        "level": "Lv 62+",
+        "health": 0.58,
+        "power": 0.42,
+        "health_text": "58% · 目标生命",
+        "health_color": "#6f5038",
+        "power_color": "#4a4f65",
+        "aura_origin": [1186, 641],
+        "aura_strips": [
+          {"kind": "buff", "origin": [1186, 641], "direction": "rtl", "auras": [{"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}]},
+          {"kind": "debuff", "origin": [1186, 717], "direction": "rtl", "auras": [{"kind": "debuff"}, {"kind": "debuff", "count": "2"}, {"kind": "debuff"}, {"kind": "debuff"}]}
+        ]
+      },
+      {
+        "id": "UF.TARGETTARGET.ADJACENCY",
+        "label": "",
+        "screen_box": [1213, 676, 1320, 700],
+        "portrait_side": "right",
+        "portrait_tint": "#4e3a32",
+        "name": "目标的目标",
+        "level": "60",
+        "health": 0.81,
+        "power": 0.52,
+        "health_text": "81%",
+        "health_color": "#625f3d",
+        "power_color": "#46556a",
+        "aura_origin": [1301, 653],
+        "aura_strips": [
+          {"kind": "buff", "origin": [1301, 653], "direction": "rtl", "auras": [{"kind": "buff"}, {"kind": "buff"}]},
+          {"kind": "debuff", "origin": [1301, 704], "direction": "rtl", "auras": [{"kind": "debuff"}, {"kind": "debuff"}]}
+        ]
+      }
+    ]
+  },
+  "cast_bars": {
+    "profile_recommendation": {
+      "not_applied": false,
+      "shared": {"width_ui": 180, "height_ui": 16, "runtime_local_scale": 0.72},
+      "position_note": "Player Cast / Swing / Target Cast are three equal columns on one baseline"
+    },
+    "bars": [
+      {"id": "CAST.PLAYER", "screen_box": [731, 742, 877, 755], "name": "玩家施法", "timer": "1.2", "progress": 0.62, "latency": 0.11, "fill": "#766f43", "icon_fill": "#48604a", "glyph": 1},
+      {"id": "CAST.TARGET", "screen_box": [1039, 742, 1185, 755], "name": "目标施法", "timer": "0.8", "progress": 0.46, "interruptible": true, "fill": "#805143", "icon_fill": "#65403a", "glyph": 4},
+      {"id": "CAST.FOCUS.OPTIONAL", "screen_box": [1488, 594, 1688, 612], "visible_in_simulation": false, "placement_policy": "follow the optional focus frame"}
+    ]
+  },
+  "swing_timers": {
+    "label": "",
+    "label_origin": [960, 738],
+    "profile_recommendation": {"not_applied": false, "width_ui": 180, "height_ui": 16, "runtime_local_scale": 0.72, "ranged_policy": "same middle column"},
+    "bars": [
+      {"id": "SWING.MAINHAND", "screen_origin": [885, 742], "width_ui": 180, "height_ui": 16, "scale": 1.0, "progress": 0.68, "fill": "#806a3d", "left_text": "主手", "right_text": "2.8"},
+      {"id": "SWING.OFFHAND", "screen_origin": [885, 757], "width_ui": 180, "height_ui": 16, "scale": 1.0, "progress": 0.36, "fill": "#635642", "left_text": "副手", "right_text": "1.9"}
+    ]
+  },
+  "doite_dps": {
+    "label": "DoiteDPS · provider-owned timeline",
+    "label_origin": [960, 592],
+    "screen_origin": [819, 596],
+    "scale": 1.09333333333333,
+    "profile_recommendation": {"not_applied": false, "runtime_local_scale": 0.82, "preserve": ["enabled", "locked", "showOnlyCombat", "showForecast", "showResource", "showCooldowns"]}
+  },
+  "non_authoritative": [
+    "all flat colors, glyphs, portraits, aura icons and provider icon placeholders",
+    "the user screenshot is read-only failure evidence and is not pasted, traced, cropped or transformed into this simulation",
+    "V6 changes only real provider geometry, aura direction and AutoBar label visibility",
+    "no simulation pixel may be promoted, sliced, uploaded or used as ImageGen input",
+    "accepted Action Slot, Rail, Consumable Kit and Trinket Kit source/runtime pixels are unchanged"
+  ]
+}

@@ -13,20 +13,31 @@ ActionBars.railTexturePath = addon.media.root .. "ActionBars\\ActionRailV1"
 ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
-ActionBars.fieldKitRuntimeContract = "1.7"
-ActionBars.focusLayoutRuntimeContract = "1.6"
-ActionBars.focusLayoutVersion = 7
+ActionBars.fieldKitRuntimeContract = "1.8"
+ActionBars.focusLayoutRuntimeContract = "1.7"
+ActionBars.focusLayoutVersion = 8
 ActionBars.focusLayoutBackupVersion = 1
 ActionBars.focusCoordinateSpace = "game-native-v1"
 ActionBars.comfortUIScaleVersion = 2
 ActionBars.comfortUIScaleTier = 8
 ActionBars.comfortUIScaleValue = 0.71111111111111
--- ACTION-BARS-CORE-SIM-V5 keeps global pfUI tier 8 and the accepted Combat
--- Deck unchanged. Unit frames and their paired cast bars return to 0.75 to
--- clear the player silhouette; compact timing/readout providers stay at 0.82.
-ActionBars.focusUnitScale = 0.75
-ActionBars.focusReadoutScale = 0.82
+-- ACTION-BARS-CORE-SIM-V6 keeps global pfUI tier 8 and the accepted Combat
+-- Deck unchanged. Player and Target use a smaller shared footprint, while
+-- cast and swing providers share one compact, equal-size timing row.
+ActionBars.focusUnitScale = 0.68
+ActionBars.focusTargetTargetScale = 0.62
+ActionBars.focusReadoutScale = 0.72
 ActionBars.focusDoiteScale = 0.82
+ActionBars.focusUnitWidth = 240
+ActionBars.focusUnitHeight = 60
+ActionBars.focusTargetTargetWidth = 132
+ActionBars.focusTargetTargetHeight = 30
+ActionBars.focusAuraSize = 18
+ActionBars.focusTargetTargetAuraSize = 14
+ActionBars.focusAuraPerRow = 8
+ActionBars.focusReadoutWidth = 180
+ActionBars.focusReadoutHeight = 16
+ActionBars.focusTargetTargetGap = 8
 ActionBars.trinketKitTexturePath =
   addon.media.root .. "ActionBars\\ActionTrinketKitV1"
 ActionBars.consumableKitTexturePath =
@@ -34,35 +45,38 @@ ActionBars.consumableKitTexturePath =
 ActionBars.fieldKitCap = 6
 ActionBars.fieldKitPocketPadding = 4
 ActionBars.fieldKitShellPadding = 6
-ActionBars.consumableDockGap = 48
-ActionBars.trinketDockGap = 16
+ActionBars.consumableDockGap = 12
+ActionBars.trinketDockGap = 8
 ActionBars.actionBarStackOverlap = 1
 ActionBars.popupDrawerGap = 6
 ActionBars.popupDrawerMaxRows = 6
 ActionBars.popupIntentDelay = 0.30
 ActionBars.popupIntentEvent = "AEUI_AutoBarPopupIntent"
 ActionBars.archiTotemDockXOffset = -10
--- V4: 12 px XP rail + 13 px clearance + half of the 26 px provider row,
--- converted through the audited 0.812698 UI scale, rounds to 47 UI.
-ActionBars.archiTotemDockYOffset = -47
+-- Keep the provider row below the XP rail with a compact five-pixel visual
+-- clearance; the provider's root still omits its unscaled drag handle.
+ActionBars.archiTotemDockYOffset = -39
 
--- Runtime v1.6 uses the exact Turtle WoW 1.12 coordinates consumed by
+-- Runtime v1.7 uses the exact Turtle WoW 1.12 coordinates consumed by
 -- Frame:SetPoint and pfUI.api.LoadMovable. They are relative to UIParent at
 -- the required pfUI tier 8. Do not project them through GetScreenWidth,
 -- effective scale, physical pixels, or frame readback: those are different
 -- coordinate spaces in this client.
 ActionBars.combatDeckX = 0
 ActionBars.combatDeckY = 175
-ActionBars.focusPlayerX = -212
-ActionBars.focusTargetX = 213
-ActionBars.focusUnitY = 492
-ActionBars.focusCastY = 454
+ActionBars.focusPlayerX = -190
+ActionBars.focusTargetX = 190
+ActionBars.focusTargetTargetX = 414
+ActionBars.focusUnitY = 500
+ActionBars.focusCastPlayerX = -196
+ActionBars.focusCastTargetX = 196
+ActionBars.focusCastY = 430
 ActionBars.focusSwingX = 0
-ActionBars.focusSwingY = -67
+ActionBars.focusSwingY = 430
 ActionBars.focusStanceX = 0
-ActionBars.focusStanceY = -919
+ActionBars.focusStanceY = 255
 ActionBars.focusDoiteX = 1012
-ActionBars.focusDoiteY = -647
+ActionBars.focusDoiteY = -780
 
 local railSliceOrder = {
   "topLeft", "top", "topRight",
@@ -765,6 +779,7 @@ local focusPositionNames = {
   "pfActionBarTop",
   "pfPlayer",
   "pfTarget",
+  "pfTargetTarget",
   "pfPlayerCastbar",
   "pfTargetCastbar",
   "pfSwingTimerMainhand",
@@ -781,9 +796,11 @@ local function GetNativeFocusLayout()
     playerY = ActionBars.focusUnitY,
     targetX = ActionBars.focusTargetX,
     targetY = ActionBars.focusUnitY,
-    playerCastX = ActionBars.focusPlayerX,
+    targetTargetX = ActionBars.focusTargetTargetX,
+    targetTargetY = ActionBars.focusUnitY,
+    playerCastX = ActionBars.focusCastPlayerX,
     playerCastY = ActionBars.focusCastY,
-    targetCastX = ActionBars.focusTargetX,
+    targetCastX = ActionBars.focusCastTargetX,
     targetCastY = ActionBars.focusCastY,
     swingX = ActionBars.focusSwingX,
     swingY = ActionBars.focusSwingY,
@@ -831,6 +848,7 @@ local function CaptureCombatFocusBackup()
     unitframes = {
       player = CaptureField(unitframes, "player"),
       target = CaptureField(unitframes, "target"),
+      ttarget = CaptureField(unitframes, "ttarget"),
       swingtimerwidth = CaptureField(unitframes, "swingtimerwidth"),
       swingtimerheight = CaptureField(unitframes, "swingtimerheight"),
     },
@@ -872,8 +890,106 @@ local function CaptureCombatFocusBackup()
   return true
 end
 
+local function UpgradeCombatFocusBackup()
+  local database = addon.db and addon.db.actionbars
+  local backup = database and database.combatFocusBackup
+  if type(backup) ~= "table" or
+    backup.version ~= ActionBars.focusLayoutBackupVersion
+  then
+    return false
+  end
+
+  local changed = false
+  backup.positions = backup.positions or {}
+  if backup.positions.pfTargetTarget == nil then
+    local positions = pfUI_config and pfUI_config.position or {}
+    backup.positions.pfTargetTarget =
+      CaptureField(positions, "pfTargetTarget")
+    changed = true
+  end
+  backup.unitframes = backup.unitframes or {}
+  if backup.unitframes.ttarget == nil then
+    local unitframes = pfUI_config and pfUI_config.unitframes or {}
+    backup.unitframes.ttarget = CaptureField(unitframes, "ttarget")
+    changed = true
+  end
+  return changed
+end
+
+local function CombatFocusLayoutActive()
+  local database = addon.db and addon.db.actionbars
+  local projection = database and database.combatFocusProjection
+  return database and
+    database.combatFocusLayoutVersion == ActionBars.focusLayoutVersion and
+    type(projection) == "table" and
+    projection.coordinateSpace == ActionBars.focusCoordinateSpace
+end
+
+local function ShouldMigrateCombatFocusLayout()
+  local database = addon.db and addon.db.actionbars
+  local projection = database and database.combatFocusProjection
+  if not database or database.combatFocusLayoutVersion ~= 7 or
+    type(projection) ~= "table" or
+    projection.coordinateSpace ~= ActionBars.focusCoordinateSpace or
+    not pfUI_config
+  then
+    return false
+  end
+
+  local unitframes = pfUI_config.unitframes or {}
+  local castbars = pfUI_config.castbar or {}
+  local positions = pfUI_config.position or {}
+  local mainPosition = positions.pfActionBarMain
+  local player = unitframes.player or {}
+  local target = unitframes.target or {}
+  local playerCast = castbars.player or {}
+  local targetCast = castbars.target or {}
+  local doiteMatches = type(DoiteDPSDB) ~= "table" or
+    (DoiteDPSDB.point == "TOPLEFT" and
+      DoiteDPSDB.relativePoint == "TOPLEFT" and
+      math.abs((tonumber(DoiteDPSDB.x) or 100000) - 1012) <= 0.01 and
+      math.abs((tonumber(DoiteDPSDB.y) or 100000) + 647) <= 0.01 and
+      math.abs((tonumber(DoiteDPSDB.scale) or 100000) - 0.82) <= 0.001)
+  local deckMatches = type(mainPosition) == "table" and
+    mainPosition.anchor == "BOTTOM" and
+    mainPosition.parent == "UIParent" and
+    math.abs((tonumber(mainPosition.xpos) or 100000) - 0) <= 1 and
+    math.abs((tonumber(mainPosition.ypos) or 100000) - 175) <= 1
+  local archiOptions = GetGlobal("ArchiTotem_Options")
+  local archiAppearance = type(archiOptions) == "table" and
+    archiOptions.Apperance
+  local archiMatches = type(archiAppearance) ~= "table" or
+    archiAppearance.direction == "down"
+
+  return database.fieldKitBound == true and deckMatches and archiMatches and
+    FocusPositionMatches(
+      "pfPlayer", "BOTTOM", -212, 492, 0.75
+    ) and FocusPositionMatches(
+      "pfTarget", "BOTTOM", 213, 492, 0.75
+    ) and FocusPositionMatches(
+      "pfPlayerCastbar", "BOTTOM", -212, 454, 0.75
+    ) and FocusPositionMatches(
+      "pfTargetCastbar", "BOTTOM", 213, 454, 0.75
+    ) and FocusPositionMatches(
+      "pfSwingTimerMainhand", "CENTER", 0, -67, 0.82
+    ) and FocusPositionMatches(
+      "pfSwingTimerRanged", "CENTER", 0, -67, 0.82
+    ) and FocusPositionMatches(
+      "pfActionBarStances", "TOP", 0, -919, 0.82
+    ) and player.width == "280" and player.height == "72" and
+    player.buffs == "TOPLEFT" and player.debuffs == "TOPRIGHT" and
+    player.buffperrow == "6" and player.debuffperrow == "6" and
+    target.width == "280" and target.height == "72" and
+    target.buffs == "TOPLEFT" and target.debuffs == "TOPRIGHT" and
+    target.buffperrow == "6" and target.debuffperrow == "6" and
+    playerCast.width == "-1" and playerCast.height == "22" and
+    targetCast.width == "-1" and targetCast.height == "22" and
+    unitframes.swingtimerwidth == "200" and
+    unitframes.swingtimerheight == "12" and doiteMatches
+end
+
 local function CombatFocusLayoutSaved()
-  if not pfUI_config then
+  if not pfUI_config or not CombatFocusLayoutActive() then
     return false
   end
   local database = addon.db and addon.db.actionbars
@@ -888,6 +1004,7 @@ local function CombatFocusLayoutSaved()
   local castbars = pfUI_config.castbar or {}
   local player = unitframes.player or {}
   local target = unitframes.target or {}
+  local targetTarget = unitframes.ttarget or {}
   local playerCast = castbars.player or {}
   local targetCast = castbars.target or {}
   local doiteMatches = type(DoiteDPSDB) ~= "table" or
@@ -907,30 +1024,47 @@ local function CombatFocusLayoutSaved()
       "pfTarget", "BOTTOM", layout.targetX, layout.targetY,
       ActionBars.focusUnitScale
     ) and FocusPositionMatches(
+      "pfTargetTarget", "BOTTOM", layout.targetTargetX,
+      layout.targetTargetY, ActionBars.focusTargetTargetScale
+    ) and FocusPositionMatches(
       "pfPlayerCastbar", "BOTTOM", layout.playerCastX,
-      layout.playerCastY, ActionBars.focusUnitScale
+      layout.playerCastY, ActionBars.focusReadoutScale
     ) and FocusPositionMatches(
       "pfTargetCastbar", "BOTTOM", layout.targetCastX,
-      layout.targetCastY, ActionBars.focusUnitScale
+      layout.targetCastY, ActionBars.focusReadoutScale
     ) and FocusPositionMatches(
-      "pfSwingTimerMainhand", "CENTER", layout.swingX,
+      "pfSwingTimerMainhand", "BOTTOM", layout.swingX,
       layout.swingY, ActionBars.focusReadoutScale
     ) and FocusPositionMatches(
-      "pfSwingTimerRanged", "CENTER", layout.swingX,
+      "pfSwingTimerRanged", "BOTTOM", layout.swingX,
       layout.swingY, ActionBars.focusReadoutScale
     ) and FocusPositionMatches(
-      "pfActionBarStances", "TOP", layout.stanceX,
+      "pfActionBarStances", "BOTTOM", layout.stanceX,
       layout.stanceY, ActionBars.focusReadoutScale
-    ) and player.width == "280" and player.height == "72" and
-    player.buffs == "TOPLEFT" and player.debuffs == "TOPRIGHT" and
-    player.buffperrow == "6" and player.debuffperrow == "6" and
-    target.width == "280" and target.height == "72" and
-    target.buffs == "TOPLEFT" and target.debuffs == "TOPRIGHT" and
-    target.buffperrow == "6" and target.debuffperrow == "6" and
-    playerCast.width == "-1" and playerCast.height == "22" and
-    targetCast.width == "-1" and targetCast.height == "22" and
-    unitframes.swingtimerwidth == "200" and
-    unitframes.swingtimerheight == "12" and doiteMatches
+    ) and player.width == tostring(ActionBars.focusUnitWidth) and
+    player.height == tostring(ActionBars.focusUnitHeight) and
+    player.buffs == "TOPLEFT" and player.debuffs == "BOTTOMLEFT" and
+    player.buffperrow == tostring(ActionBars.focusAuraPerRow) and
+    player.debuffperrow == tostring(ActionBars.focusAuraPerRow) and
+    target.width == tostring(ActionBars.focusUnitWidth) and
+    target.height == tostring(ActionBars.focusUnitHeight) and
+    target.buffs == "TOPRIGHT" and target.debuffs == "BOTTOMRIGHT" and
+    target.buffperrow == tostring(ActionBars.focusAuraPerRow) and
+    target.debuffperrow == tostring(ActionBars.focusAuraPerRow) and
+    targetTarget.width == tostring(ActionBars.focusTargetTargetWidth) and
+    targetTarget.height == tostring(ActionBars.focusTargetTargetHeight) and
+    targetTarget.buffs == "TOPRIGHT" and
+    targetTarget.debuffs == "BOTTOMRIGHT" and
+    targetTarget.buffperrow == tostring(ActionBars.focusAuraPerRow) and
+    targetTarget.debuffperrow == tostring(ActionBars.focusAuraPerRow) and
+    playerCast.width == tostring(ActionBars.focusReadoutWidth) and
+    playerCast.height == tostring(ActionBars.focusReadoutHeight) and
+    targetCast.width == tostring(ActionBars.focusReadoutWidth) and
+    targetCast.height == tostring(ActionBars.focusReadoutHeight) and
+    unitframes.swingtimerwidth ==
+      tostring(ActionBars.focusReadoutWidth) and
+    unitframes.swingtimerheight ==
+      tostring(ActionBars.focusReadoutHeight) and doiteMatches
 end
 
 local function ComfortUIScaleConfigured()
@@ -959,22 +1093,27 @@ local function ApplyComfortUIScaleValue()
   return updated
 end
 
-local function ConfigureFocusUnitFrame(key, name, x, y)
+local function ConfigureFocusUnitFrame(
+  key, name, x, y, scale, width, height, buffs, debuffs, auraSize
+)
   local unitframes = pfUI_config and pfUI_config.unitframes
   local config = unitframes and unitframes[key]
   if type(config) ~= "table" then
     return false, false
   end
 
-  config.width = "280"
-  config.height = "72"
-  config.buffs = "TOPLEFT"
-  config.debuffs = "TOPRIGHT"
-  config.buffperrow = "6"
-  config.debuffperrow = "6"
+  config.visible = "1"
+  config.width = tostring(width)
+  config.height = tostring(height)
+  config.buffs = buffs
+  config.debuffs = debuffs
+  config.buffsize = tostring(auraSize)
+  config.debuffsize = tostring(auraSize)
+  config.buffperrow = tostring(ActionBars.focusAuraPerRow)
+  config.debuffperrow = tostring(ActionBars.focusAuraPerRow)
 
   local saved = SavePfUIPosition(
-    name, "BOTTOM", x, y, ActionBars.focusUnitScale
+    name, "BOTTOM", x, y, scale
   )
   local frame = pfUI and pfUI.uf and pfUI.uf[key] or GetGlobal(name)
   if frame and type(frame.UpdateFrameSize) == "function" then
@@ -984,7 +1123,7 @@ local function ConfigureFocusUnitFrame(key, name, x, y)
     pcall(frame.UpdateConfig, frame)
   end
   local applied = ApplyFramePosition(
-    frame, "BOTTOM", x, y, ActionBars.focusUnitScale
+    frame, "BOTTOM", x, y, scale
   )
   return saved, applied
 end
@@ -995,21 +1134,21 @@ local function ConfigureFocusCastBar(key, name, x, y)
   if type(config) ~= "table" then
     return false, false
   end
-  config.width = "-1"
-  config.height = "22"
+  config.width = tostring(ActionBars.focusReadoutWidth)
+  config.height = tostring(ActionBars.focusReadoutHeight)
   local saved = SavePfUIPosition(
-    name, "BOTTOM", x, y, ActionBars.focusUnitScale
+    name, "BOTTOM", x, y, ActionBars.focusReadoutScale
   )
   local frame = pfUI and pfUI.castbar and pfUI.castbar[key] or
     GetGlobal(name)
   if frame and frame.SetWidth then
-    frame:SetWidth(280)
+    frame:SetWidth(ActionBars.focusReadoutWidth)
   end
   if frame and frame.SetHeight then
-    frame:SetHeight(22)
+    frame:SetHeight(ActionBars.focusReadoutHeight)
   end
   local applied = ApplyFramePosition(
-    frame, "BOTTOM", x, y, ActionBars.focusUnitScale
+    frame, "BOTTOM", x, y, ActionBars.focusReadoutScale
   )
   return saved, applied
 end
@@ -1019,8 +1158,8 @@ local function ConfigureFocusSwingTimers(x, y)
   if type(unitframes) ~= "table" then
     return 0, 0
   end
-  unitframes.swingtimerwidth = "200"
-  unitframes.swingtimerheight = "12"
+  unitframes.swingtimerwidth = tostring(ActionBars.focusReadoutWidth)
+  unitframes.swingtimerheight = tostring(ActionBars.focusReadoutHeight)
 
   local main = pfUI and pfUI.swingtimer and pfUI.swingtimer.mainhand or
     GetGlobal("pfSwingTimerMainhand")
@@ -1035,16 +1174,20 @@ local function ConfigureFocusSwingTimers(x, y)
   for index = 1, 2 do
     local frame = frames[index]
     if SavePfUIPosition(
-      names[index], "CENTER", x, y,
+      names[index], "BOTTOM", x, y,
       ActionBars.focusReadoutScale
     ) then
       saved = saved + 1
     end
     if frame then
-      if frame.SetWidth then frame:SetWidth(200) end
-      if frame.SetHeight then frame:SetHeight(12) end
+      if frame.SetWidth then
+        frame:SetWidth(ActionBars.focusReadoutWidth)
+      end
+      if frame.SetHeight then
+        frame:SetHeight(ActionBars.focusReadoutHeight)
+      end
       local applied = ApplyFramePosition(
-        frame, "CENTER", x, y, ActionBars.focusReadoutScale
+        frame, "BOTTOM", x, y, ActionBars.focusReadoutScale
       )
       if applied then
         visible = visible + 1
@@ -1055,14 +1198,45 @@ local function ConfigureFocusSwingTimers(x, y)
     if offhand.SetScale then
       offhand:SetScale(ActionBars.focusReadoutScale)
     end
-    if offhand.SetWidth then offhand:SetWidth(200) end
-    if offhand.SetHeight then offhand:SetHeight(12) end
+    if offhand.SetWidth then
+      offhand:SetWidth(ActionBars.focusReadoutWidth)
+    end
+    if offhand.SetHeight then
+      offhand:SetHeight(ActionBars.focusReadoutHeight)
+    end
     if main and offhand.ClearAllPoints and offhand.SetPoint then
       offhand:ClearAllPoints()
-      offhand:SetPoint("TOP", main, "BOTTOM", 0, -4)
+      offhand:SetPoint("TOP", main, "BOTTOM", 0, -2)
     end
   end
   return saved, visible
+end
+
+local function AttachFocusTargetTarget()
+  local target = pfUI and pfUI.uf and pfUI.uf.target or
+    GetGlobal("pfTarget")
+  local targetTarget = pfUI and pfUI.uf and pfUI.uf.targettarget or
+    GetGlobal("pfTargetTarget")
+  if not target or not targetTarget or
+    not targetTarget.ClearAllPoints or not targetTarget.SetPoint
+  then
+    return false
+  end
+  if targetTarget.SetScale then
+    targetTarget:SetScale(ActionBars.focusTargetTargetScale)
+  end
+  targetTarget:ClearAllPoints()
+  targetTarget:SetPoint(
+    "LEFT", target, "RIGHT", ActionBars.focusTargetTargetGap, 0
+  )
+  return true
+end
+
+function ActionBars:ApplyFocusRelativeAnchors()
+  if not CombatFocusLayoutActive() then
+    return false
+  end
+  return AttachFocusTargetTarget()
 end
 
 local function ConfigureFocusDoiteDPS(x, y)
@@ -1096,6 +1270,7 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
   end
 
   CaptureCombatFocusBackup()
+  UpgradeCombatFocusBackup()
   local deckApplied, deckMessage = self:ResetCombatDeckPosition()
   if not deckApplied then
     self.focusLayoutStatus = "unavailable"
@@ -1106,12 +1281,25 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
   local layout = GetNativeFocusLayout()
 
   local saved, applied = ConfigureFocusUnitFrame(
-    "player", "pfPlayer", layout.playerX, layout.playerY
+    "player", "pfPlayer", layout.playerX, layout.playerY,
+    self.focusUnitScale, self.focusUnitWidth, self.focusUnitHeight,
+    "TOPLEFT", "BOTTOMLEFT", self.focusAuraSize
   )
   configured = configured + (saved and 1 or 0)
   live = live + (applied and 1 or 0)
   saved, applied = ConfigureFocusUnitFrame(
-    "target", "pfTarget", layout.targetX, layout.targetY
+    "target", "pfTarget", layout.targetX, layout.targetY,
+    self.focusUnitScale, self.focusUnitWidth, self.focusUnitHeight,
+    "TOPRIGHT", "BOTTOMRIGHT", self.focusAuraSize
+  )
+  configured = configured + (saved and 1 or 0)
+  live = live + (applied and 1 or 0)
+  saved, applied = ConfigureFocusUnitFrame(
+    "ttarget", "pfTargetTarget",
+    layout.targetTargetX, layout.targetTargetY,
+    self.focusTargetTargetScale,
+    self.focusTargetTargetWidth, self.focusTargetTargetHeight,
+    "TOPRIGHT", "BOTTOMRIGHT", self.focusTargetTargetAuraSize
   )
   configured = configured + (saved and 1 or 0)
   live = live + (applied and 1 or 0)
@@ -1135,12 +1323,14 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
   configured = configured + swingConfigured
   live = live + swingLive
 
+  AttachFocusTargetTarget()
+
   local stanceSaved = SavePfUIPosition(
-    "pfActionBarStances", "TOP", layout.stanceX, layout.stanceY,
+    "pfActionBarStances", "BOTTOM", layout.stanceX, layout.stanceY,
     self.focusReadoutScale
   )
   local stanceApplied = ApplyFramePosition(
-    GetGlobal("pfActionBarStances"), "TOP",
+    GetGlobal("pfActionBarStances"), "BOTTOM",
     layout.stanceX, layout.stanceY,
     self.focusReadoutScale
   )
@@ -1178,7 +1368,7 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
     " Detected ArchiTotem was kept provider-owned and requested to open downward." or
     " ArchiTotem was unavailable or inapplicable and remained fail-open."
   return true,
-    "Combat Focus layout applied with direct Turtle WoW game coordinates relative to UIParent: player/target and paired cast bars use 0.75; swing timers, stance bar, and detected DoiteDPS use 0.82. No screen-pixel projection, scale multiplication, probe, or coordinate readback was used. Provider visibility, lock state, and native translucency were preserved." ..
+    "Combat Focus layout applied with direct Turtle WoW game coordinates: compact player/target frames use 0.68, target-of-target is attached to Target at 0.62, and the equal 180x16 cast/swing row uses 0.72. Aura directions, provider visibility, lock state, and native translucency were preserved without screen-pixel projection or coordinate readback." ..
     archiMessage
 end
 
@@ -1217,6 +1407,8 @@ local function GetFocusMovableFrame(name)
     return pfUI and pfUI.uf and pfUI.uf.player or GetGlobal(name)
   elseif name == "pfTarget" then
     return pfUI and pfUI.uf and pfUI.uf.target or GetGlobal(name)
+  elseif name == "pfTargetTarget" then
+    return pfUI and pfUI.uf and pfUI.uf.targettarget or GetGlobal(name)
   elseif name == "pfPlayerCastbar" then
     return pfUI and pfUI.castbar and pfUI.castbar.player or GetGlobal(name)
   elseif name == "pfTargetCastbar" then
@@ -1285,6 +1477,7 @@ function ActionBars:RestoreCombatFocusLayoutPreset()
   local unitframes = backup.unitframes or {}
   RestoreConfigField(pfUI_config.unitframes, "player", unitframes.player)
   RestoreConfigField(pfUI_config.unitframes, "target", unitframes.target)
+  RestoreConfigField(pfUI_config.unitframes, "ttarget", unitframes.ttarget)
   RestoreField(
     pfUI_config.unitframes, "swingtimerwidth",
     unitframes.swingtimerwidth
@@ -1302,6 +1495,7 @@ function ActionBars:RestoreCombatFocusLayoutPreset()
   local frames = {
     pfUI and pfUI.uf and pfUI.uf.player,
     pfUI and pfUI.uf and pfUI.uf.target,
+    pfUI and pfUI.uf and pfUI.uf.targettarget,
   }
   for index = 1, table.getn(frames) do
     local frame = frames[index]
@@ -1422,7 +1616,7 @@ function ActionBars:ApplyComfortUIScalePreset()
       tostring(layoutMessage)
   end
   return true,
-    "Comfort UI scale applied: pfUI tier 8 (0.711111), direct game-coordinate Combat Focus scales 0.75/0.82, and provider-native visibility preserved. Reload if a third-party frame does not redraw immediately."
+    "Comfort UI scale applied: pfUI tier 8 (0.711111), compact game-coordinate Combat Focus scales 0.68/0.62/0.72, and provider-native visibility preserved. Reload if a third-party frame does not redraw immediately."
 end
 
 local function SlotSignature(slot)
@@ -1747,14 +1941,6 @@ local function ConfigureShellBounds(shell, bounds, padding)
   return true
 end
 
-local function ConfigureGroupLabel(label, shell, bounds)
-  label:ClearAllPoints()
-  label:SetPoint("RIGHT", shell, "LEFT", -2, 0)
-  label:SetPoint("TOP", bounds.top, "TOP", 0, 2)
-  label:SetWidth(40)
-  label:SetHeight(20)
-end
-
 local function ConfigureDivider(divider, overall, first, second)
   local upper = first
   local lower = second
@@ -1812,19 +1998,33 @@ end
 function ActionBars:UpdateFieldKitUnlockMover()
   local unlock = pfUI and pfUI.unlock
   local top = GetTopActionBarFrame()
-  if not unlock or not top or not top.drag or
-    type(unlock.IsShown) ~= "function" or not unlock:IsShown()
+  if not unlock or type(unlock.IsShown) ~= "function" or
+    not unlock:IsShown()
   then
     return false
   end
 
+  local hidden = false
   if FieldKitEnabled() and FieldKitBound() then
-    top.drag:Hide()
-    return true
+    if top and top.drag then
+      top.drag:Hide()
+      hidden = true
+    end
+  elseif top and top.drag then
+    top.drag:Show()
   end
 
-  top.drag:Show()
-  return false
+  local targetTarget = pfUI and pfUI.uf and pfUI.uf.targettarget or
+    GetGlobal("pfTargetTarget")
+  if targetTarget and targetTarget.drag then
+    if CombatFocusLayoutActive() then
+      targetTarget.drag:Hide()
+      hidden = true
+    else
+      targetTarget.drag:Show()
+    end
+  end
+  return hidden
 end
 
 function ActionBars:InstallFieldKitUnlockHooks()
@@ -1851,6 +2051,7 @@ function ActionBars:InstallFieldKitUnlockHooks()
     if FieldKitEnabled() and FieldKitBound() then
       ActionBars:ApplyActionBarStackPosition(true)
     end
+    ActionBars:ApplyFocusRelativeAnchors()
   end)
   self.fieldKitUnlockHooked = true
   return true
@@ -2170,31 +2371,6 @@ local function EnsureAutoBarShell(frame)
   return shell
 end
 
-local function EnsureAutoBarGroupLabel(frame, index, text)
-  frame.aeuiConsumableKitLabelsV1 =
-    frame.aeuiConsumableKitLabelsV1 or {}
-  local label = frame.aeuiConsumableKitLabelsV1[index]
-  if not label then
-    label = CreateDecorationFrame(frame)
-    EnsureNineSlice(
-      label,
-      "aeuiConsumableKitLabelNineSliceV1",
-      ActionBars.consumableKitTexturePath,
-      consumableKitTexCoords.C,
-      ActionBars.fieldKitCap
-    )
-    local font = label:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    font:SetAllPoints(label)
-    font:SetJustifyH("CENTER")
-    font:SetJustifyV("MIDDLE")
-    font:SetTextColor(1, 0.82, 0.25, 1)
-    label.aeuiConsumableKitTextV1 = font
-    frame.aeuiConsumableKitLabelsV1[index] = label
-  end
-  label.aeuiConsumableKitTextV1:SetText(text)
-  return label
-end
-
 local function EnsureAutoBarDivider(frame, index)
   frame.aeuiConsumableKitDividersV1 =
     frame.aeuiConsumableKitDividersV1 or {}
@@ -2239,12 +2415,13 @@ local function SetAutoBarGroupingEnabled(frame, enabled, overall)
     return false
   end
 
-  local names = { "应急", "增益", "工具" }
-  local groups = { group1, group2, group3 }
-  for index = 1, 3 do
-    local label = EnsureAutoBarGroupLabel(frame, index, names[index])
-    ConfigureGroupLabel(label, frame.aeuiConsumableKitShellV1, groups[index])
-    label:Show()
+  -- The three divider bands and the pocket art already communicate the
+  -- emergency/buff/utility grouping. Keep the semantic dividers, but retire
+  -- the external text plaques and reclaim their horizontal footprint.
+  if labels then
+    for index = 1, table.getn(labels) do
+      labels[index]:Hide()
+    end
   end
 
   local divider1 = EnsureAutoBarDivider(frame, 1)
@@ -2435,9 +2612,6 @@ local function ResolveAutoBarDrawerSide(frame)
   if not left or not right or not screenWidth then
     return "RIGHT"
   end
-  if ActionBars.autoBarGrouped then
-    left = left - 42
-  end
   if left >= screenWidth - right then
     return "LEFT"
   end
@@ -2464,7 +2638,7 @@ local function ConfigureAutoBarDrawer(frame, buttons, side)
   local display = AutoBar and AutoBar.display or {}
   local gap = tonumber(display.gapping) or 3
   local hitInset = -math.ceil(gap / 2)
-  local labelOffset = ActionBars.autoBarGrouped and 42 or 0
+  local labelOffset = 0
 
   first:ClearAllPoints()
   if side == "LEFT" then
@@ -3170,13 +3344,36 @@ function ActionBars:Apply()
   self:ApplyTrinketFieldKit(enabled)
   self:ApplyArchiTotemDockPosition(enabled)
 
+  -- Upgrade only the immediately preceding AEUI game-coordinate contract.
+  -- Restored/custom profiles are not matched by this signature and remain
+  -- untouched. This makes the requested V6 repair effective on the next
+  -- /reload without requiring another pixel-space calibration command.
+  if ShouldMigrateCombatFocusLayout() and ComfortUIScaleConfigured() then
+    self:ApplyCombatFocusLayoutPreset()
+  elseif CombatFocusLayoutActive() then
+    self:ApplyFocusRelativeAnchors()
+  end
+
   -- The offhand timer has no independent pfUI movable entry. Restore its
-  -- one-shot display compensation when the rest of the saved focus signature
-  -- is present; no position or size is maintained here.
-  if CombatFocusLayoutSaved() then
+  -- one-shot equal-size compensation when the focus contract is active; no
+  -- position or size is maintained by an OnUpdate loop.
+  if CombatFocusLayoutActive() then
     local offhand = pfUI and pfUI.swingtimer and pfUI.swingtimer.offhand
-    if offhand and offhand.SetScale then
-      offhand:SetScale(self.focusReadoutScale)
+    local main = pfUI and pfUI.swingtimer and pfUI.swingtimer.mainhand
+    if offhand then
+      if offhand.SetScale then
+        offhand:SetScale(self.focusReadoutScale)
+      end
+      if offhand.SetWidth then
+        offhand:SetWidth(self.focusReadoutWidth)
+      end
+      if offhand.SetHeight then
+        offhand:SetHeight(self.focusReadoutHeight)
+      end
+      if main and offhand.ClearAllPoints and offhand.SetPoint then
+        offhand:ClearAllPoints()
+        offhand:SetPoint("TOP", main, "BOTTOM", 0, -2)
+      end
     end
   end
 end
@@ -3200,13 +3397,18 @@ function ActionBars:GetRuntimeStatus()
       tostring(self.focusLayoutArchiTotem or "pending") ..
     ",focus-layout-mouse=" ..
       tostring(self.focusLayoutMousePolicy or "visible-controls-only") ..
-    ",focus-layout-anchor=ui-parent" ..
+    ",focus-layout-anchor=ui-parent+target-dependent" ..
     ",focus-layout-coordinate-space=" ..
       tostring(self.focusCoordinateSpace) ..
     ",focus-layout-unit-scale=" ..
       tostring(self.focusUnitScale) ..
+    ",focus-layout-targettarget-scale=" ..
+      tostring(self.focusTargetTargetScale) ..
     ",focus-layout-readout-scale=" ..
       tostring(self.focusReadoutScale) ..
+    ",focus-layout-readout-size=" ..
+      tostring(self.focusReadoutWidth) .. "x" ..
+      tostring(self.focusReadoutHeight) ..
     ",focus-ui-scale=" ..
       tostring(self.comfortUIScaleStatus or "custom") ..
     ",focus-ui-scale-tier=" .. tostring(uiScaleTier) ..
@@ -3235,7 +3437,7 @@ function ActionBars:GetRuntimeStatus()
     ",autobar-popup-hover=" ..
       tostring(self.autoBarPopupHover or "pending") ..
     ",autobar-groups=" ..
-      tostring(self.autoBarGrouped and "semantic" or "adaptive") ..
+      tostring(self.autoBarGrouped and "semantic-no-labels" or "adaptive") ..
     ",autobar-preset=" ..
       tostring(self.autoBarPresetStatus or "ready") ..
     ",consumable-dock=" ..

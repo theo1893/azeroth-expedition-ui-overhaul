@@ -148,6 +148,7 @@ function SetCVar(name, value) cvars[name] = tonumber(value) or value end
 
 local player = NewFrame("pfPlayer", 200, 46)
 local target = NewFrame("pfTarget", 200, 46)
+local targetTarget = NewFrame("pfTargetTarget", 100, 17)
 local playerCast = NewFrame("pfPlayerCastbar", 300, 16)
 local targetCast = NewFrame("pfTargetCastbar", 200, 16)
 local swingMain = NewFrame("pfSwingTimerMainhand", 180, 10)
@@ -173,6 +174,7 @@ archiTotem:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 603, -790)
 
 _G.pfPlayer = player
 _G.pfTarget = target
+_G.pfTargetTarget = targetTarget
 _G.pfPlayerCastbar = playerCast
 _G.pfTargetCastbar = targetCast
 _G.pfSwingTimerMainhand = swingMain
@@ -245,6 +247,12 @@ pfUI_config = {
       width = "200", height = "46", buffs = "TOPLEFT",
       debuffs = "TOPRIGHT", buffperrow = "4", debuffperrow = "4",
     },
+    ttarget = {
+      visible = "1", width = "100", height = "17",
+      buffs = "off", debuffs = "off",
+      buffsize = "16", debuffsize = "16",
+      buffperrow = "4", debuffperrow = "4",
+    },
     swingtimerwidth = "180",
     swingtimerheight = "10",
   },
@@ -256,10 +264,15 @@ pfUI_config = {
 
 player.config = pfUI_config.unitframes.player
 target.config = pfUI_config.unitframes.target
+targetTarget.config = pfUI_config.unitframes.ttarget
 
 pfUI = {
   bars = { [1] = mainBar, [6] = topBar },
-  uf = { player = player, target = target },
+  uf = {
+    player = player,
+    target = target,
+    targettarget = targetTarget,
+  },
   castbar = { player = playerCast, target = targetCast },
   swingtimer = {
     mainhand = swingMain,
@@ -326,11 +339,11 @@ assert(mainBar.points[1][5] == 100)
 local ok, message = module:ApplyComfortUIScalePreset()
 assert(ok == true)
 assert(string.find(message, "Comfort UI scale applied", 1, true))
-assert(module.focusLayoutRuntimeContract == "1.6")
-assert(module.fieldKitRuntimeContract == "1.7")
+assert(module.focusLayoutRuntimeContract == "1.7")
+assert(module.fieldKitRuntimeContract == "1.8")
 assert(module.focusLayoutStatus == "applied")
-assert(module.focusLayoutConfigured == 9)
-assert(module.focusLayoutLive == 9)
+assert(module.focusLayoutConfigured == 10)
+assert(module.focusLayoutLive == 10)
 assert(module.focusLayoutMousePolicy == "visible-controls-only")
 assert(module.comfortUIScaleStatus == "applied")
 assert(pfUI_config.global.pixelperfect == "8")
@@ -355,141 +368,129 @@ local expected = assert(
 assert(expected.coordinateSpace == "game-native-v1")
 assert(expected.deckX == 0)
 assert(expected.deckY == 175)
-assert(expected.playerX == -212)
-assert(expected.playerY == 492)
-assert(expected.targetX == 213)
-assert(expected.targetY == 492)
-assert(expected.playerCastX == -212)
-assert(expected.playerCastY == 454)
-assert(expected.targetCastX == 213)
-assert(expected.targetCastY == 454)
+assert(expected.playerX == -190)
+assert(expected.playerY == 500)
+assert(expected.targetX == 190)
+assert(expected.targetY == 500)
+assert(expected.targetTargetX == 414)
+assert(expected.targetTargetY == 500)
+assert(expected.playerCastX == -196)
+assert(expected.playerCastY == 430)
+assert(expected.targetCastX == 196)
+assert(expected.targetCastY == 430)
 assert(expected.swingX == 0)
-assert(expected.swingY == -67)
+assert(expected.swingY == 430)
 assert(expected.stanceX == 0)
-assert(expected.stanceY == -919)
+assert(expected.stanceY == 255)
 assert(expected.doiteX == 1012)
-assert(expected.doiteY == -647)
+assert(expected.doiteY == -780)
 assert(screenWidthCalls == 0)
 assert(screenHeightCalls == 0)
 
 AssertPosition(
-  "pfPlayer", "BOTTOM", expected.playerX, expected.playerY, 0.75
+  "pfPlayer", "BOTTOM", expected.playerX, expected.playerY, 0.68
 )
 AssertPosition(
-  "pfTarget", "BOTTOM", expected.targetX, expected.targetY, 0.75
+  "pfTarget", "BOTTOM", expected.targetX, expected.targetY, 0.68
+)
+AssertPosition(
+  "pfTargetTarget", "BOTTOM", expected.targetTargetX,
+  expected.targetTargetY, 0.62
 )
 AssertPosition(
   "pfPlayerCastbar", "BOTTOM", expected.playerCastX,
-  expected.playerCastY, 0.75
+  expected.playerCastY, 0.72
 )
 AssertPosition(
   "pfTargetCastbar", "BOTTOM", expected.targetCastX,
-  expected.targetCastY, 0.75
+  expected.targetCastY, 0.72
 )
 AssertPosition(
-  "pfSwingTimerMainhand", "CENTER", expected.swingX, expected.swingY, 0.82
+  "pfSwingTimerMainhand", "BOTTOM", expected.swingX, expected.swingY, 0.72
 )
 AssertPosition(
-  "pfSwingTimerRanged", "CENTER", expected.swingX, expected.swingY, 0.82
+  "pfSwingTimerRanged", "BOTTOM", expected.swingX, expected.swingY, 0.72
 )
 AssertPosition(
-  "pfActionBarStances", "TOP", expected.stanceX, expected.stanceY, 0.82
+  "pfActionBarStances", "BOTTOM", expected.stanceX, expected.stanceY, 0.72
 )
 
--- The explicit native coordinates preserve the accepted V5 physical
--- relationships without any screen-size projection or frame readback.
-local function Near(actual, expectedValue)
-  assert(math.abs(actual - expectedValue) <= 1)
-end
-local function RootCoordinate(frame, method)
-  return frame[method](frame) * frame:GetEffectiveScale()
-end
-local referenceToRoot = rootHeight / 1080
-local mainCenterX = RootCoordinate(mainBar, "GetCenter")
-local mainTop = RootCoordinate(mainBar, "GetTop")
-Near(RootCoordinate(mainBar, "GetBottom"), 210 * referenceToRoot)
-Near(mainCenterX, rootWidth / 2)
-Near(
-  RootCoordinate(player, "GetCenter") - mainCenterX,
-  -159 * referenceToRoot
-)
-Near(
-  RootCoordinate(target, "GetCenter") - mainCenterX,
-  160 * referenceToRoot
-)
-Near(
-  RootCoordinate(player, "GetBottom") - mainTop,
-  106 * referenceToRoot
-)
-Near(
-  RootCoordinate(target, "GetBottom") - mainTop,
-  106 * referenceToRoot
-)
-Near(
-  RootCoordinate(playerCast, "GetBottom") - mainTop,
-  78 * referenceToRoot
-)
-Near(
-  RootCoordinate(targetCast, "GetBottom") - mainTop,
-  78 * referenceToRoot
-)
-Near(
-  RootCoordinate(swingMain, "GetTop") - mainTop,
-  227 * referenceToRoot
-)
-Near(
-  RootCoordinate(stance, "GetTop") - mainTop,
-  64 * referenceToRoot
-)
-Near(
-  RootCoordinate(doite, "GetTop") - mainTop,
-  287 * referenceToRoot
-)
-Near(RootCoordinate(doite, "GetCenter"), mainCenterX)
+-- V6 is expressed entirely in Turtle's game coordinate space. The target's
+-- target is the only dependent anchor; all three readout columns share one
+-- baseline, width, height and scale.
+assert(player.points[1][4] == -target.points[1][4])
+assert(player.points[1][5] == target.points[1][5])
+assert(targetTarget.points[1][1] == "LEFT")
+assert(targetTarget.points[1][2] == target)
+assert(targetTarget.points[1][3] == "RIGHT")
+assert(targetTarget.points[1][4] == 8)
+assert(targetTarget.points[1][5] == 0)
+assert(playerCast.points[1][5] == swingMain.points[1][5])
+assert(swingMain.points[1][5] == targetCast.points[1][5])
+assert(playerCast.points[1][4] == -targetCast.points[1][4])
+assert(swingMain.points[1][4] == 0)
 
-assert(module.focusUnitScale == 0.75)
-assert(module.focusReadoutScale == 0.82)
-for _, frame in pairs({ player, target, playerCast, targetCast }) do
-  assert(math.abs(frame.scale - 0.75) < 0.001)
+assert(module.focusUnitScale == 0.68)
+assert(module.focusTargetTargetScale == 0.62)
+assert(module.focusReadoutScale == 0.72)
+for _, frame in pairs({ player, target }) do
+  assert(math.abs(frame.scale - 0.68) < 0.001)
 end
+assert(math.abs(targetTarget.scale - 0.62) < 0.001)
 for _, frame in pairs({
-  swingMain, swingOffhand, swingRanged, stance, doite,
+  playerCast, targetCast, swingMain, swingOffhand, swingRanged, stance,
 }) do
-  assert(math.abs(frame.scale - 0.82) < 0.001)
+  assert(math.abs(frame.scale - 0.72) < 0.001)
 end
+assert(math.abs(doite.scale - 0.82) < 0.001)
 
-for _, config in pairs({
-  pfUI_config.unitframes.player,
-  pfUI_config.unitframes.target,
-}) do
-  assert(config.width == "280")
-  assert(config.height == "72")
-  assert(config.buffs == "TOPLEFT")
-  assert(config.debuffs == "TOPRIGHT")
-  assert(config.buffperrow == "6")
-  assert(config.debuffperrow == "6")
+local playerConfig = pfUI_config.unitframes.player
+local targetConfig = pfUI_config.unitframes.target
+local targetTargetConfig = pfUI_config.unitframes.ttarget
+for _, config in pairs({ playerConfig, targetConfig }) do
+  assert(config.width == "240")
+  assert(config.height == "60")
+  assert(config.buffsize == "18")
+  assert(config.debuffsize == "18")
+  assert(config.buffperrow == "8")
+  assert(config.debuffperrow == "8")
 end
+assert(playerConfig.buffs == "TOPLEFT")
+assert(playerConfig.debuffs == "BOTTOMLEFT")
+assert(targetConfig.buffs == "TOPRIGHT")
+assert(targetConfig.debuffs == "BOTTOMRIGHT")
+assert(targetTargetConfig.visible == "1")
+assert(targetTargetConfig.width == "132")
+assert(targetTargetConfig.height == "30")
+assert(targetTargetConfig.buffs == "TOPRIGHT")
+assert(targetTargetConfig.debuffs == "BOTTOMRIGHT")
+assert(targetTargetConfig.buffsize == "14")
+assert(targetTargetConfig.debuffsize == "14")
+assert(targetTargetConfig.buffperrow == "8")
+assert(targetTargetConfig.debuffperrow == "8")
 assert(player.updateConfigCalls == 1)
 assert(target.updateConfigCalls == 1)
+assert(targetTarget.updateConfigCalls == 1)
 assert(player.updateSizeCalls == 1)
 assert(target.updateSizeCalls == 1)
+assert(targetTarget.updateSizeCalls == 1)
 
-assert(pfUI_config.castbar.player.width == "-1")
-assert(pfUI_config.castbar.player.height == "22")
-assert(pfUI_config.castbar.target.width == "-1")
-assert(pfUI_config.castbar.target.height == "22")
-assert(playerCast.width == 280 and playerCast.height == 22)
-assert(targetCast.width == 280 and targetCast.height == 22)
+assert(pfUI_config.castbar.player.width == "180")
+assert(pfUI_config.castbar.player.height == "16")
+assert(pfUI_config.castbar.target.width == "180")
+assert(pfUI_config.castbar.target.height == "16")
+assert(playerCast.width == 180 and playerCast.height == 16)
+assert(targetCast.width == 180 and targetCast.height == 16)
 
-assert(pfUI_config.unitframes.swingtimerwidth == "200")
-assert(pfUI_config.unitframes.swingtimerheight == "12")
-assert(swingMain.width == 200 and swingMain.height == 12)
-assert(swingOffhand.width == 200 and swingOffhand.height == 12)
-assert(swingRanged.width == 200 and swingRanged.height == 12)
+assert(pfUI_config.unitframes.swingtimerwidth == "180")
+assert(pfUI_config.unitframes.swingtimerheight == "16")
+assert(swingMain.width == 180 and swingMain.height == 16)
+assert(swingOffhand.width == 180 and swingOffhand.height == 16)
+assert(swingRanged.width == 180 and swingRanged.height == 16)
 assert(swingOffhand.points[1][1] == "TOP")
 assert(swingOffhand.points[1][2] == swingMain)
 assert(swingOffhand.points[1][3] == "BOTTOM")
-assert(swingOffhand.points[1][5] == -4)
+assert(swingOffhand.points[1][5] == -2)
 
 assert(DoiteDPSDB.point == "TOPLEFT")
 assert(DoiteDPSDB.relativePoint == "TOPLEFT")
@@ -516,7 +517,7 @@ assert(archiPoint[1] == "CENTER")
 assert(archiPoint[2] == mainBar)
 assert(archiPoint[3] == "BOTTOM")
 assert(archiPoint[4] == -10)
-assert(archiPoint[5] == -47)
+assert(archiPoint[5] == -39)
 
 module:InstallFieldKitHooks()
 assert(installedHooks == 1)
@@ -557,17 +558,17 @@ assert(archiDirectionCalls == 1)
 assert(module.archiTotemDirectionStatus == "up")
 
 assert(AzerothExpeditionUI.db.actionbars.fieldKitBound == true)
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 7)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 8)
 assert(AzerothExpeditionUI.db.actionbars.comfortUIScaleVersion == 2)
 
 for _, frame in pairs({
-  player, target, playerCast, targetCast, swingMain, swingOffhand,
+  player, target, targetTarget, playerCast, targetCast, swingMain, swingOffhand,
   swingRanged, stance, mainBar, topBar, doite,
 }) do
   assert(frame.alphaCalls == 0)
 end
 for _, frame in pairs({
-  player, target, playerCast, targetCast, swingMain, swingRanged,
+  player, target, targetTarget, playerCast, targetCast, swingMain, swingRanged,
   stance,
 }) do
   assert(frame.parent == nil)
@@ -575,16 +576,21 @@ end
 assert(doite.parent == UIParent)
 
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "focus%-layout%-contract=1%.6"))
+assert(string.find(status, "focus%-layout%-contract=1%.7"))
 assert(string.find(status, "focus%-layout=applied"))
 assert(string.find(status, "focus%-layout%-mouse=visible%-controls%-only"))
-assert(string.find(status, "focus%-layout%-anchor=ui%-parent"))
+assert(string.find(
+  status,
+  "focus%-layout%-anchor=ui%-parent%+target%-dependent"
+))
 assert(string.find(
   status,
   "focus%-layout%-coordinate%-space=game%-native%-v1"
 ))
-assert(string.find(status, "focus%-layout%-unit%-scale=0%.75"))
-assert(string.find(status, "focus%-layout%-readout%-scale=0%.82"))
+assert(string.find(status, "focus%-layout%-unit%-scale=0%.68"))
+assert(string.find(status, "focus%-layout%-targettarget%-scale=0%.62"))
+assert(string.find(status, "focus%-layout%-readout%-scale=0%.72"))
+assert(string.find(status, "focus%-layout%-readout%-size=180x16"))
 assert(string.find(status, "focus%-ui%-scale=applied"))
 assert(string.find(status, "focus%-ui%-scale%-tier=8"))
 assert(string.find(status, "focus%-ui%-scale%-target=8"))
@@ -620,10 +626,15 @@ assert(pfUI_config.position.pfActionBarMain.scale == 1.2)
 assert(pfUI_config.position.pfActionBarMain.anchor == nil)
 assert(pfUI_config.position.pfPlayer == nil)
 assert(pfUI_config.position.pfTarget == nil)
+assert(pfUI_config.position.pfTargetTarget == nil)
 assert(pfUI_config.unitframes.player.width == "200")
 assert(pfUI_config.unitframes.player.height == "46")
 assert(pfUI_config.unitframes.player.buffperrow == "4")
 assert(pfUI_config.unitframes.target.width == "200")
+assert(pfUI_config.unitframes.ttarget.width == "100")
+assert(pfUI_config.unitframes.ttarget.height == "17")
+assert(pfUI_config.unitframes.ttarget.buffs == "off")
+assert(pfUI_config.unitframes.ttarget.debuffs == "off")
 assert(pfUI_config.castbar.player.width == "300")
 assert(pfUI_config.castbar.player.height == "-1")
 assert(pfUI_config.unitframes.swingtimerwidth == "180")
@@ -634,5 +645,89 @@ assert(DoiteDPSDB.x == 18)
 assert(DoiteDPSDB.y == -125)
 assert(DoiteDPSDB.scale == 1)
 assert(ArchiTotem_Options.Apperance.direction == "up")
+
+-- A live 0.8.13 profile already has a version-1 backup that predates
+-- TargetTarget ownership. V6 must extend that backup before its one-shot
+-- version-7-to-8 migration, so restore remains lossless.
+pfUI_config.global.pixelperfect = "8"
+pfUI.pixelperfect.UpdateConfig()
+local function legacyPosition(anchor, x, y, scale)
+  return {
+    anchor = anchor,
+    parent = "UIParent",
+    xpos = x,
+    ypos = y,
+    scale = scale,
+  }
+end
+pfUI_config.position.pfPlayer =
+  legacyPosition("BOTTOM", -212, 492, 0.75)
+pfUI_config.position.pfActionBarMain =
+  legacyPosition("BOTTOM", 0, 175, 1.2)
+pfUI_config.position.pfTarget =
+  legacyPosition("BOTTOM", 213, 492, 0.75)
+pfUI_config.position.pfPlayerCastbar =
+  legacyPosition("BOTTOM", -212, 454, 0.75)
+pfUI_config.position.pfTargetCastbar =
+  legacyPosition("BOTTOM", 213, 454, 0.75)
+pfUI_config.position.pfSwingTimerMainhand =
+  legacyPosition("CENTER", 0, -67, 0.82)
+pfUI_config.position.pfSwingTimerRanged =
+  legacyPosition("CENTER", 0, -67, 0.82)
+pfUI_config.position.pfActionBarStances =
+  legacyPosition("TOP", 0, -919, 0.82)
+for _, config in pairs({
+  pfUI_config.unitframes.player,
+  pfUI_config.unitframes.target,
+}) do
+  config.width = "280"
+  config.height = "72"
+  config.buffs = "TOPLEFT"
+  config.debuffs = "TOPRIGHT"
+  config.buffperrow = "6"
+  config.debuffperrow = "6"
+end
+pfUI_config.castbar.player.width = "-1"
+pfUI_config.castbar.player.height = "22"
+pfUI_config.castbar.target.width = "-1"
+pfUI_config.castbar.target.height = "22"
+pfUI_config.unitframes.swingtimerwidth = "200"
+pfUI_config.unitframes.swingtimerheight = "12"
+DoiteDPSDB.point = "TOPLEFT"
+DoiteDPSDB.relativePoint = "TOPLEFT"
+DoiteDPSDB.x = 1012
+DoiteDPSDB.y = -647
+DoiteDPSDB.scale = 0.82
+ArchiTotem_Options.Apperance.direction = "down"
+AzerothExpeditionUI.db.actionbars.fieldKitBound = true
+AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion = 7
+AzerothExpeditionUI.db.actionbars.combatFocusProjection = {
+  coordinateSpace = "game-native-v1",
+}
+AzerothExpeditionUI.db.actionbars.combatFocusBackup = {
+  version = 1,
+  positions = {},
+  unitframes = {},
+  castbar = {},
+  actionbars = {},
+}
+
+-- A manually adjusted v7 profile is not the exact migration signature and
+-- must stay untouched until the user explicitly reapplies the preset.
+pfUI_config.position.pfPlayer.xpos = -200
+module:Apply()
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 7)
+
+pfUI_config.position.pfPlayer.xpos = -212
+module:Apply()
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 8)
+local upgradedBackup =
+  assert(AzerothExpeditionUI.db.actionbars.combatFocusBackup)
+assert(upgradedBackup.positions.pfTargetTarget.present == false)
+assert(upgradedBackup.unitframes.ttarget.present == true)
+assert(upgradedBackup.unitframes.ttarget.value.width == "100")
+assert(upgradedBackup.unitframes.ttarget.value.buffs == "off")
+assert(screenWidthCalls == 0)
+assert(screenHeightCalls == 0)
 
 print("action focus layout module smoke test passed")

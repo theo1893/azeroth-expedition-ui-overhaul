@@ -3,19 +3,28 @@
 ## 当前状态
 
 - 批次：`AB.FOCUS.LAYOUT.V1`
-- 当前版本：`ACTION-BARS-CORE-SIM-V5 / runtime-v1.6`
+- 当前版本：`ACTION-BARS-CORE-SIM-V6 / runtime-v1.7`
 - 子状态：`runtime-exported / addon-integrated / pending-game-validation`
 - 最高阶段：`P5`
 - 操作：`integrate`
 - ImageGen：`0/0`
-- runtime：AEUI `0.8.13`／`focus-layout-contract=1.6`／
-  `fieldkit-contract=1.7`。exact V5 可见几何仍按用户“确认接入”冻结；v1.4 与 v1.5
-  坐标传输均已由实机判定失败。v1.6 直接写 Turtle WoW 原生 `UIParent` SetPoint
-  坐标，不读取屏幕尺寸、不乘 effective scale、不探针、不回读；单位框／双方施法
-  仍为 `0.75`，Swing／姿态／DoiteDPS 仍为 `0.82`。普通 refresh 不维护这些几何；
-  pfUI／ArchiTotem provider 代码和全部位图不变。
+- runtime：AEUI `0.8.14`／`focus-layout-contract=1.7`／
+  `fieldkit-contract=1.8`。V6 继续直接写 Turtle WoW 原生 `UIParent` SetPoint 坐标，
+  不读取屏幕尺寸、不乘 effective scale、不探针、不回读；Player／Target 为
+  `240×60 / 0.68`，TargetTarget 为 `132×30 / 0.62` 并依附 Target，玩家施法／
+  Swing／目标施法统一为 `180×16 / 0.72` 横排。玩家 Aura 左起、目标与 TargetTarget
+  Aura 右起，上 Buff／下 Debuff。未被手动调整的 exact v7 游戏坐标 profile 在 `/reload` 一次性迁移为
+  v8；普通 refresh 不维护绝对几何，只在 Apply／unlock 事件边界恢复已激活的相对锚。
+  pfUI／ArchiTotem 行为和全部位图字节不变，ImageGen `0/0`。
 
 ## 本次输入与结论
+
+- 最新实机截图：
+  `C:/Users/西奥/AppData/Local/Temp/codex-clipboard-aa446330-8b76-420c-b602-b7ea05f8e6d4.png`，
+  SHA-256 `de56051ef674981e7df72fb59de360da8174d07d38a4d2be9698f6cb38cdb5d4`。
+  用户要求修复 Player 与消耗品遮挡、移除三段卷袋文字、接入 TargetTarget、收紧
+  组件间距、把施法与 Swing 统一尺寸并排、缩小单位框，并为玩家／目标两侧指定
+  相反的 Buff／Debuff 展开方向。V6 精确覆盖这九项，不修改任何美术资产。
 
 - V4 实机失败截图：
   `C:/Users/西奥/AppData/Local/Temp/codex-clipboard-5b64e0c0-3266-4f55-8aa8-8c1438ba88e4.png`
@@ -158,7 +167,50 @@
 - 以上只定义几何方向；动态文字、图标、Aura、施法状态、Swing 进度、DoiteDPS
   推荐数据、单位框交互与 provider 行为全部保持真实运行时对象，不进入位图。
 
+## V6 当前运行时合同
+
+- 游戏原生坐标：主栏 `BOTTOM (0,175)`；Player／Target
+  `BOTTOM (-190,500)／(190,500)`；玩家施法／Swing／目标施法
+  `BOTTOM (-196,430)／(0,430)／(196,430)`；姿态 `BOTTOM (0,255)`；DoiteDPS
+  `TOPLEFT (1012,-780)`。不再使用屏幕像素投影或读取 UIParent 尺寸。
+- Player／Target 统一为 `240×60 UI / scale 0.68`；TargetTarget 为
+  `132×30 UI / scale 0.62`，运行时以 `LEFT → Target RIGHT +8 UI` 依附。v7 profile
+  的旧备份会补齐 TargetTarget 原配置／位置后迁移为 v8，`restore` 仍能恢复完整
+  pre-focus profile。
+- Player Buff 在上、Debuff 在下，均从左向右；Target／TargetTarget Buff 在上、
+  Debuff 在下，均从右向左。Aura 大小为 Player／Target `18 UI`、TargetTarget
+  `14 UI`，每行 `8`；真实 spell、层数、计时、过滤和 Tooltip 继续由 pfUI 负责。
+- 玩家施法、主手／ranged Swing、目标施法统一为 `180×16 UI / scale 0.72` 并排；
+  副手同尺寸紧贴主手下方。三个读数不再挂在单位框下方，施法与攻击不重叠。
+- Field Kit 左侧间距由 `48` 收为 `12 UI`，TrinketMenu 右侧间距由 `16` 收为
+  `8 UI`，ArchiTotem 垂直 offset 由 `-47` 收为 `-39 UI`；AutoBar 的应急／增益／
+  工具语义分隔保留，但三段文字不再创建，旧 label Frame 若存在会被隐藏。
+- pfUI unlock 仍先创建 Bar 6 与 TargetTarget 的 `drag`，AEUI 再隐藏绑定态独立 mover；
+  不删除 movable 登记。unlock 退出后同一事件边界重施 Bar 6 → Bar 1 与
+  TargetTarget → Target 锚，避免 `unlock.lua:527 drag=nil` 和坐标漂移；无 `OnUpdate`。
+
 ## 本地确定性模拟
+
+- V6 specification：`tools/specs/action_bars_core_simulation_v6.json`，SHA
+  `1240e4e6…000e`；scene：
+  `generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V6/action_bars_core_sim_v6.png`，
+  SHA `56739b7d…5be7`。该 ignored 预览只验证本轮布局，不是 source／runtime 资产。
+- V6 layout report：同目录 `layout-report.json`，SHA `e565dab7…cc85`，
+  `36/36 pass`、violations `0`；覆盖三列读数等尺寸、TargetTarget 依附、单位框净空、
+  Aura 方向、无三段文字与各停靠间距。
+- V6 display contract：`tools/specs/action_bars_core_simulation_v6_display_region.json`，
+  SHA `011bbe63…951e`；同目录报告 SHA `d0dbc24e…8def`，`6/6 pass`、violations `0`。
+- runtime-v1.7 display contract：
+  `tools/specs/action_focus_layout_v1_runtime_display_region.json`，SHA
+  `db09ace6…3377`；ignored 报告
+  `generated/actionbars/ACTION-BARS-CORE/runtime-v1.7-display-region-report.json`，SHA
+  `fcd25e82…6735`，`8/8 pass`、violations `0`。
+- 当前 entrypoints：ActionBars SHA `cc11ee7d…e3f7`、Bootstrap SHA
+  `01a9dfbd…876d`、TOC SHA `ff4df695…f76`；四份 Action Bars runtime manifest
+  已同步共享 adapter／入口哈希与 AEUI `0.8.14`，accepted TGA 与像素哈希不变。
+- AEUI `0.8.14` fresh-checkout package validator：`status=pass`、violations `0`、
+  runtime manifest records `49`、tracked addon files `547`、
+  `build_required_on_target_device=false`。
 
 - renderer：`tools/render_action_bars_simulation.py`
 - specification：`tools/specs/action_bars_core_simulation_v5.json`，SHA
@@ -223,32 +275,34 @@
 
 ## 内部审查
 
-- 范围／身份：pass。V5 只移动已审计的 Player／Target、双方施法、Swing、姿态、
-  DoiteDPS；所有 ArchiTotem 可见按钮仍对应真实 provider 对象，没有制造单位状态、
-  图腾格、倒计时或推荐数据。
-- 几何／展示区：`59/59 pass`、`8/8 pass`、violations `0`。攻击层与施法层不重叠；
-  单位框中间有精确 `80 px` 人物通道；DoiteDPS 到姿态的相邻层最大空隙为
-  `19 px`；Combat Deck、两侧 Field Kit 与 ArchiTotem 最大展开边界保持不变。
-- 综合色与视线：pass for user review。单位框／施法回落为 `0.75` 以清出人物，
-  Swing／DoiteDPS 保持 `0.82` 以维持读数；信息栈整体贴近甲板，不再让尺寸问题与
-  位置问题相互放大。
-- 交互：static pass / game pending。V5 runtime Lua smoke 已覆盖一次性 preset、
-  provider 方向、拖动回位、`bind／unbind`、非萨满／缺失 provider fail-open 与
-  非布局配置保留；这仍不是 Turtle WoW 实机交互证据，不得据此晋级 P6。
-- 美术：不在本轮判断。图腾栏仍画作 provider 原控件占位，后期 UI 重绘必须另立
-  对象级合同；模拟的平色／图标绝不是 accepted art。
+- 范围／身份：pass。V6 只修改已审计的 Player／Target／TargetTarget、双方施法、
+  Swing、姿态、DoiteDPS 与既有 Field Kit 停靠；没有制造单位状态、Aura、图腾格、
+  倒计时或推荐数据。
+- 几何／展示区：layout `36/36`、simulation display `6/6`、runtime display `8/8`
+  pass，violations `0`。TargetTarget 依附 Target；三条 `180×16` 读数等尺寸并排；
+  单位框、甲板与两侧 provider 之间的空隙收紧且没有交叠。
+- 综合色与视线：pass for user review。Player／Target 缩为 `0.68`，TargetTarget 为
+  `0.62`；单位框不再占据人物主体，消耗品分组不再依赖三枚突兀文字。
+- 交互：static pass / game pending。Lua smoke 覆盖 v7→v8 迁移、旧备份补齐、
+  TargetTarget 相对锚、Aura 方向、等尺寸读数、Bar 6／TargetTarget mover 生命周期、
+  `restore` 与 provider 缺失 fail-open；仍需 Turtle WoW 实机确认后才能进入 P6。
+- 美术：未改任何 source／TGA；本地预览只是确定性布局证据，不能晋级为资产。
 
 ## 下一门禁
 
-在目标 Turtle WoW `/reload` 后执行一次 `/aeui focuslayout comfort`，确认状态包含
-`focus-layout-contract=1.6`、`focus-layout-anchor=ui-parent`、
+在目标 Turtle WoW `/reload` 后，未被手动调整的 exact v7 游戏坐标 profile 会一次性迁移为 v8；
+无需先执行命令。确认状态包含 `version 0.8.14`、`focus-layout-contract=1.7`、
+`focus-layout-anchor=ui-parent`、
 `focus-layout-coordinate-space=game-native-v1`、
-`focus-layout-unit-scale=0.75`、`focus-layout-readout-scale=0.82`、
-`fieldkit-contract=1.7` 与 `fieldkit-binding=bound`。先开关一次 pfUI unlock，确认无
-`unlock.lua:527`、绑定态只有 Bar 1 mover 且 Bar 6 不跳位；随后验证三项原始失败均消失：
-攻击计时与双方施法不重叠；DoiteDPS → Swing → Aura → 单位框 → 施法 → 姿态形成
-紧凑连续层；Player／Target 不再挡住人物主体。再覆盖满血／掉血、有／无目标、
-双方施法、近战双持、远程计时、Aura 超过 `6`、DoiteDPS 锁定／解锁，以及
+`focus-layout-unit-scale=0.68`、`focus-layout-targettarget-scale=0.62`、
+`focus-layout-readout-scale=0.72`、`fieldkit-contract=1.8` 与
+`fieldkit-binding=bound`。先开关一次 pfUI unlock，确认无 `unlock.lua:527`、绑定态
+只有 Bar 1 mover、Bar 6 不跳位且 TargetTarget 始终贴在 Target 右侧。随后确认：
+Player／Target 不遮人物或卷袋；三段卷袋文字消失；玩家 Buff 上／Debuff 下且左起；
+Target／TargetTarget Buff 上／Debuff 下且右起；三条 `180×16` 读数并排不重叠；
+Field Kit、动作条、饰品、单位框、姿态与 ArchiTotem 形成紧凑组合。再覆盖满血／
+掉血、有／无目标、双方施法、近战双持、远程计时、Aura 超过 `8`、DoiteDPS
+锁定／解锁，以及
 ArchiTotem 施放、右键、Air 七层、拖动／锁定、Recall、`unbind／bind` 和 fail-open。
 若需要回退，执行 `/aeui focuslayout restore` 后 `/reload`；若仍有偏差，使用新的
 实机截图只修订上述游戏原生坐标，不再引入屏幕像素投影，不进入位图重绘，

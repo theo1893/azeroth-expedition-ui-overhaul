@@ -110,7 +110,7 @@ def main() -> None:
         assert manifest["addon_entrypoints"]["addon_version"] == (
             builder.addon_version(ROOT / builder.TOC_REL)
         )
-        assert manifest["addon_entrypoints"]["addon_version"] == "0.8.13"
+        assert manifest["addon_entrypoints"]["addon_version"] == "0.8.14"
         if key == "consumable":
             setup = manifest["adapter"]["optional_user_configuration"]
             assert setup["apply_command"] == "/aeui autobar apply"
@@ -160,7 +160,7 @@ def main() -> None:
         assert result["summary"]["violation_count"] == 0
 
     for required in (
-        'ActionBars.fieldKitRuntimeContract = "1.7"',
+        'ActionBars.fieldKitRuntimeContract = "1.8"',
         "ActionTrinketKitV1",
         "ActionConsumableKitV1",
         "ApplyAutoBarFieldKit",
@@ -198,7 +198,7 @@ def main() -> None:
         'texture = holder:CreateTexture(nil, "BACKGROUND")',
         "ApplyRecommendedAutoBarProfile",
         "RestoreAutoBarProfile",
-        'local names = { "应急", "增益", "工具" }',
+        "semantic-no-labels",
     ):
         assert required in adapter
 
@@ -225,6 +225,8 @@ def main() -> None:
     assert "ArchiTotem_SaveFramePosition" not in adapter
     assert 'SetScript("OnUpdate"' not in adapter
     assert 'texture = button:CreateTexture(nil, "BACKGROUND")' not in adapter
+    assert "aeuiConsumableKitLabelsV1" in adapter
+    assert 'local names = { "应急", "增益", "工具" }' not in adapter
     print("action field kit runtime test passed")
 
 

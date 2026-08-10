@@ -7,7 +7,7 @@
   `AB.TRINKET.MENU`、`AB.CONSUMABLE.RACK`、`AB.CONSUMABLE.POCKET`、
   `AB.CONSUMABLE.POPUP`、`AB.CONSUMABLE.GROUP`
 - 模拟版本：`AB-FIELDKIT-SIM-V3`
-- 当前操作：`pfUI unlock mover lifecycle repair / game retest`
+- 当前操作：`compact no-label bridge / game retest`
 - 子状态：`runtime-exported / pending-retest`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
@@ -18,11 +18,14 @@
   v1.4 保留联合悬停区，只在 exact 外置态给不同主格加入 `0.30s` 意图停留；跨格
   离开时保留原抽屉，停留时仍调用捕获的 AutoBar 原方法。原生／签名不匹配／AEUI
   关闭及调度 API 缺失都立即回退；静态回归、display-region 与 fresh-checkout package
-  必须重新通过。v1.5 在不改该 guard 的前提下，把 Bar 6、左侧 AutoBar `4×6`
+  已重新通过。v1.5 在不改该 guard 的前提下，把 Bar 6、左侧 AutoBar `4×6`
   与右侧 TrinketMenu 双槽直接相对锚到 Bar 1，形成唯一移动根；`unbind` 才恢复
   provider 自由位置，`home` 恢复中心中下基线。bridge-v1.6 加入 ArchiTotem；
   bridge-v1.7 保持 Bar 6 movable 登记稳定，在 pfUI 创建 drag 后隐藏绑定态独立
-  mover，并在 actionbar 配置刷新后恢复相对锚，修复 `unlock.lua:527`。P4→当前
+  mover，并在 actionbar 配置刷新后恢复相对锚，修复 `unlock.lua:527`。bridge-v1.8
+  移除“应急／增益／工具”三段文字但保留语义分隔，把卷袋／主栏间距收为 `12 UI`、
+  饰品／主栏间距收为 `8 UI`、ArchiTotem 垂直 offset 收为 `-39 UI`；同时沿用
+  TargetTarget mover 的同类安全生命周期。P4→当前
   没有调用 ImageGen
 - 模拟用户结论：`AB-FIELDKIT-SIM-V1 consumable direction revision-requested
   2026-08-08`；用户原文：“消耗品5*2不够用. 并且能否按照类型进行分组?”；
@@ -1092,17 +1095,19 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
 | `AB.FIELDKIT.V1 runtime-v1.5` | source／TGA／v1.4 popup guard 不变；`fieldKitBound` 把 Bar 6、左 `4×6` 卷袋和右双槽直接锚到 Bar 1；提供 bind／unbind／home，绑定态侧栏误拖松手回位；当前角色写入中心中下与水平双槽 | 用户明确要求三部分强绑定并按最初构图重排；smoke、display `9/9＋10/10`、package pass，`pending-retest / P5` | 启动或 `/reload` 验证左卷袋—中央 `12×2`—右双槽、唯一主栏 mover、显式释放／恢复、外向候选及全部 provider 行为 |
 | `AB.FIELDKIT bridge-v1.6` | runtime-v1.5 source／TGA／AutoBar／TrinketMenu 合同不变；可选 ArchiTotem 根加入 Bar 1 唯一 mover，绑定态在主栏下方，拖动回位，`unbind` 恢复；显式 focus preset 请求向下，普通 refresh 只读 | V4 几何被否决但 bridge 保留；focus runtime-v1.4／v1.5 坐标传输均已实机失败，bridge 本身未变；AEUI `0.8.12`／focus runtime-v1.6 只改游戏原生坐标，`pending-game-validation / P5` | 实机验证四元素施放、右键、Air 七层、Recall、拖动／锁定、向下 popup、bind／unbind 及非萨满／缺失 fail-open |
 | `AB.FIELDKIT bridge-v1.7` | v1.6 几何、ArchiTotem、popup guard、source／TGA 全不变；Bar 6 始终保留 pfUI movable 登记，unlock 创建 drag 后绑定态仅隐藏独立 mover，actionbar 配置刷新后重施 `12×2` 锚 | 用户实机报告 `unlock.lua:527 drag=nil`；精确生命周期 smoke 与全部静态门禁 pass，AEUI `0.8.13`，`pending-retest / P5` | `/reload` 开关 pfUI unlock，确认无错误、只有 Bar 1 mover、Bar 6 不跳位；再继续原 Field Kit／focus 全清单 |
+| `AB.FIELDKIT bridge-v1.8` | accepted source／TGA、AutoBar profile、popup guard、TrinketMenu／ArchiTotem 行为均不变；隐藏并停止创建三段文字，hover bridge 收为 `10 UI`；左／右停靠间距改为 `12／8 UI`，ArchiTotem offset 改为 `-39 UI`；Bar 6 与 TargetTarget 均在 pfUI 创建 drag 后才隐藏独立 mover | 用户最新截图要求移除文字并收紧全部组件；Field Kit Lua smoke、runtime display、V6 布局与仓库合同 pass，AEUI `0.8.14`，`pending-game-validation / P5` | `/reload` 确认无三段文字、紧凑间距、popup 联合悬停不退化，并开关 pfUI unlock 验证无空 drag／无跳位 |
 
 ## 下一门禁
 
 1. 两套 accepted source 与 runtime TGA 像素身份不变；视觉 source／runtime
-   manifest 保持 `runtime-v1.5`，共享 adapter 已更新到 bridge v1.6／P5。fresh-checkout package
+   manifest 保持 `runtime-v1.5`，共享 adapter 已更新到 bridge v1.8／P5。fresh-checkout package
    已通过，目标设备只需拉取并安装 `addon/`，不得再生成、导出或打补丁。
-2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.13`、
-   `fieldkit-contract=1.7`、`fieldkit-binding=bound` 与 `actionbar-stack=12x2-bound`。
-   同时确认 `focus-layout-contract=1.6`、`focus-layout-anchor=ui-parent`、
+2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.14`、
+   `fieldkit-contract=1.8`、`fieldkit-binding=bound` 与 `actionbar-stack=12x2-bound`。
+   同时确认 `focus-layout-contract=1.7`、`focus-layout-anchor=ui-parent`、
    `focus-layout-coordinate-space=game-native-v1`、
-   `focus-layout-unit-scale=0.75`、`focus-layout-readout-scale=0.82`、
+   `focus-layout-unit-scale=0.68`、`focus-layout-targettarget-scale=0.62`、
+   `focus-layout-readout-scale=0.72`、
    `focus-ui-scale-tier=8`、`architotem-dock=bottom` 与
    `architotem-direction=down`；左卷袋与右双槽维持当前清晰尺寸，
    TrinketMenu 双槽不会因旧 `0.904371` 再次被二次缩小，玩家框不再覆盖卷袋。
@@ -1114,7 +1119,7 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
    后 `/reload`。再确认
    AutoBar 主格／popup 的 Item Icon 与 Count、TrinketMenu 双槽／候选的 Icon、
    Cooldown 与 Queue 都在口袋／护套之上。再执行 `/aeui autobar apply` 验证当前
-   角色精确 `4×6`／24 格、“应急／增益／工具”和手动数字槽保留；打开候选数
+   角色精确 `4×6`／24 格、无“应急／增益／工具”文字且手动数字槽保留；打开候选数
    `1／6／7／12` 的分类，确认外置抽屉分别为单列／双列且不遮挡任何主格；从内侧
    分类打开抽屉后横穿同一行其他主格进入左右抽屉，路过格不得关闭或替换原抽屉；
    在另一分类主格持续停留约 `0.30s` 应切换到该类，移出主格、通道与候选后应由
@@ -1127,7 +1132,7 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
 3. `/aeui actionbars` 关闭后应恢复 TrinketMenu 原生 NormalTexture／backdrop，并让
    AutoBar 原生视觉 fail-open；provider 缺失或隐藏时不得出现占位栏。实机全部通过
    后方可记录 P6；截图静态层级与用户交互确认仍须分开取证。
-4. 默认确认消耗品卷袋在主栏左侧 `48 UI`、饰品双槽在主栏右侧 `16 UI` 且底边
+4. 默认确认消耗品卷袋在主栏左侧 `12 UI`、饰品双槽在主栏右侧 `8 UI` 且底边
    对齐。Bar 6 应紧邻 Bar 1 上缘并不再显示独立 pfUI mover；两侧拖离松手即回位，
    不是距离阈值吸附。`status` 应报告 `fieldkit-binding=bound`、两侧方向与 stack；
    重载与 UI scale 变化后整体仍跟随主动作条，不得出现逐帧维护或拖动中的抢位。

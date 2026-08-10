@@ -46,6 +46,13 @@ def merge_specs(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any
     """Recursively merge a compact revision spec over a tracked base spec."""
     merged = dict(base)
     for key, value in override.items():
+        if isinstance(value, dict) and value.get("__replace__") is True:
+            merged[key] = {
+                child_key: child_value
+                for child_key, child_value in value.items()
+                if child_key != "__replace__"
+            }
+            continue
         if (
             isinstance(value, dict)
             and isinstance(merged.get(key), dict)
@@ -216,12 +223,14 @@ def draw_aura_strip(
     origin: tuple[int, int],
     auras: list[dict[str, Any]],
     fonts: dict[str, ImageFont.FreeTypeFont],
+    direction: str = "ltr",
 ) -> None:
     x, y = origin
     size = 19
     gap = 4
     for index, aura in enumerate(auras):
-        ax = x + index * (size + gap)
+        step = index * (size + gap)
+        ax = x - step if direction == "rtl" else x + step
         kind = str(aura.get("kind", "buff"))
         outer = "#8d6b3f" if kind == "buff" else "#7c463f"
         inner = "#455b3e" if kind == "buff" else "#593333"
@@ -323,7 +332,23 @@ def draw_unit_frame_v2(
         stroke=1,
         stroke_fill=rgba("#080a08"),
     )
-    draw_aura_strip(draw, tuple(map(int, config["aura_origin"])), list(config.get("auras", [])), fonts)
+    strips = config.get("aura_strips")
+    if strips:
+        for strip in strips:
+            draw_aura_strip(
+                draw,
+                tuple(map(int, strip["origin"])),
+                list(strip.get("auras", [])),
+                fonts,
+                str(strip.get("direction", "ltr")),
+            )
+    else:
+        draw_aura_strip(
+            draw,
+            tuple(map(int, config["aura_origin"])),
+            list(config.get("auras", [])),
+            fonts,
+        )
 
 
 def draw_cast_bar(
@@ -1000,6 +1025,113 @@ def draw_totem_satellite(
     return (x, popup_top, x + geometry["width"], popup_bottom)
 
 
+def validate_compact_row_v6(
+    spec: dict[str, Any],
+    contract: dict[str, Any],
+) -> dict[str, Any]:
+    """Validate the V6 provider geometry without reusing V5's vertical stack."""
+    ui_scale = float(spec["target"]["ui_scale"])
+    checks: list[dict[str, Any]] = []
+
+    def check(identifier: str, expected: Any, actual: Any) -> None:
+        checks.append({
+            "id": identifier,
+            "expected": expected,
+            "actual": actual,
+            "pass": actual == expected,
+        })
+
+    frames = {frame["id"]: frame for frame in spec["unit_frames"]["frames"]}
+    player = list(map(int, frames["UF.PLAYER.ADJACENCY"]["screen_box"]))
+    target = list(map(int, frames["UF.TARGET.ADJACENCY"]["screen_box"]))
+    target_target = list(map(int, frames["UF.TARGETTARGET.ADJACENCY"]["screen_box"]))
+    check("unit.player-width", int(contract["unit_frame_width_px"]), player[2] - player[0])
+    check("unit.target-width", int(contract["unit_frame_width_px"]), target[2] - target[0])
+    check("unit.shared-height", player[3] - player[1], target[3] - target[1])
+    check("unit.inner-gap", int(contract["unit_frame_inner_gap_px"]), target[0] - player[2])
+    check("unit.cluster-center", int(contract["main_bar_center_x"]), round((player[0] + target[2]) / 2))
+    check("targettarget.gap", int(contract["targettarget_gap_px"]), target_target[0] - target[2])
+    check("targettarget.center-y", round((target[1] + target[3]) / 2), round((target_target[1] + target_target[3]) / 2))
+    check("targettarget.width", int(contract["targettarget_width_px"]), target_target[2] - target_target[0])
+
+    player_strips = frames["UF.PLAYER.ADJACENCY"]["aura_strips"]
+    target_strips = frames["UF.TARGET.ADJACENCY"]["aura_strips"]
+    target_target_strips = frames["UF.TARGETTARGET.ADJACENCY"]["aura_strips"]
+    check("aura.player-buffs-direction", "ltr", player_strips[0]["direction"])
+    check("aura.player-debuffs-direction", "ltr", player_strips[1]["direction"])
+    check("aura.target-buffs-direction", "rtl", target_strips[0]["direction"])
+    check("aura.target-debuffs-direction", "rtl", target_strips[1]["direction"])
+    check("aura.targettarget-buffs-direction", "rtl", target_target_strips[0]["direction"])
+    check("aura.targettarget-debuffs-direction", "rtl", target_target_strips[1]["direction"])
+
+    castbars = {
+        item["id"]: list(map(int, item["screen_box"]))
+        for item in spec["cast_bars"]["bars"]
+        if item.get("visible_in_simulation", True)
+    }
+    player_cast = castbars["CAST.PLAYER"]
+    target_cast = castbars["CAST.TARGET"]
+    swings = {
+        item["id"]: indicator_box(item, ui_scale)
+        for item in spec["swing_timers"]["bars"]
+    }
+    swing = swings["SWING.MAINHAND"]
+    offhand = swings["SWING.OFFHAND"]
+    readout_widths = [
+        player_cast[2] - player_cast[0],
+        swing[2] - swing[0],
+        target_cast[2] - target_cast[0],
+    ]
+    readout_heights = [
+        player_cast[3] - player_cast[1],
+        swing[3] - swing[1],
+        target_cast[3] - target_cast[1],
+    ]
+    check("readout.equal-widths", [readout_widths[0]] * 3, readout_widths)
+    check("readout.equal-heights", [readout_heights[0]] * 3, readout_heights)
+    check("readout.width", int(contract["readout_width_px"]), readout_widths[0])
+    check("readout.height", int(contract["readout_height_px"]), readout_heights[0])
+    check("readout.shared-top", [player_cast[1]] * 3, [player_cast[1], swing[1], target_cast[1]])
+    check("readout.player-swing-gap", int(contract["readout_column_gap_px"]), swing[0] - player_cast[2])
+    check("readout.swing-target-gap", int(contract["readout_column_gap_px"]), target_cast[0] - swing[2])
+    check("readout.offhand-gap", int(contract["swing_pair_gap_px"]), offhand[1] - swing[3])
+    check("readout.unit-clearance", int(contract["unit_to_readout_clearance_px"]), player_cast[1] - int(player_strips[1]["origin"][1]) - 19)
+
+    bars = {bar["id"]: bar for bar in spec["bars"]}
+    main_x, main_y, main_w, main_h, _, _, _ = bar_geometry(bars["AB.BAR1.MAIN"], ui_scale)
+    top_x, top_y, top_w, _, _, _, _ = bar_geometry(bars["AB.BAR6.TOP"], ui_scale)
+    check("deck.main-center", int(contract["main_bar_center_x"]), round(main_x + main_w / 2))
+    check("deck.top-center", int(contract["main_bar_center_x"]), round(top_x + top_w / 2))
+    check("deck.readout-clearance", int(contract["readout_to_deck_clearance_px"]), top_y - offhand[3])
+
+    pouch_x, _, pouch_w, _, _, _, _ = bar_geometry(spec["consumables"], ui_scale)
+    trinket_x, _, _, _, _, _, _ = bar_geometry(spec["trinkets"], ui_scale)
+    check("dock.consumable-gap", int(contract["consumable_to_main_gap_px"]), main_x - (pouch_x + pouch_w))
+    check("dock.player-clearance", int(contract["consumable_to_player_gap_px"]), player[0] - (pouch_x + pouch_w))
+    check("dock.trinket-gap", int(contract["main_to_trinket_gap_px"]), trinket_x - (main_x + main_w))
+    check("dock.group-labels", False, bool(spec["consumables"].get("labels_visible", True)))
+
+    geometry = totem_geometry(spec["totem_satellite"], ui_scale)
+    check("dock.totem-direction", "down", spec["totem_satellite"]["direction"])
+    check("dock.totem-gap", int(contract["totem_to_xp_rail_clearance_px"]), geometry["y"] - int(contract["xp_rail_bottom_y"]))
+    check("dock.totem-center", int(contract["main_bar_center_x"]), round(geometry["x"] + geometry["width"] / 2))
+
+    check("layout.no-unit-readout-overlap", True, player_strips[1]["origin"][1] + 19 <= player_cast[1])
+    check("layout.no-readout-deck-overlap", True, offhand[3] <= top_y)
+    check("layout.no-consumable-player-overlap", True, pouch_x + pouch_w <= player[0])
+
+    violations = [item["id"] for item in checks if not item["pass"]]
+    return {
+        "schema": "aeui-action-bars-layout-report-v1",
+        "version": spec["version"],
+        "target": spec["target"],
+        "status": "pass" if not violations else "fail",
+        "checks": checks,
+        "violations": violations,
+        "first_failure": violations[0] if violations else None,
+    }
+
+
 def validate_layout(spec: dict[str, Any]) -> dict[str, Any]:
     contract = spec.get("layout_contract")
     if not contract:
@@ -1010,6 +1142,9 @@ def validate_layout(spec: dict[str, Any]) -> dict[str, Any]:
             "checks": [],
             "violations": [],
         }
+
+    if contract.get("layout_mode") == "compact-row-v6":
+        return validate_compact_row_v6(spec, contract)
 
     ui_scale = float(spec["target"]["ui_scale"])
     checks: list[dict[str, Any]] = []
@@ -1230,7 +1365,8 @@ def main() -> None:
     else:
         draw_placeholder_ui_v1(draw, fonts, palette)
     for bar in spec["bars"]:
-        draw_bar(draw, bar, ui_scale, fonts, palette)
+        if bar.get("visible_in_simulation", True):
+            draw_bar(draw, bar, ui_scale, fonts, palette)
     draw_pouch(draw, spec["consumables"], ui_scale, fonts, palette)
     draw_trinkets(draw, spec["trinkets"], ui_scale, fonts, palette)
     if "totem_satellite" in spec:

@@ -1,0 +1,88 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "AB.FOCUS.LAYOUT.V1/simulation-v6",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, provider UI units before effective scale",
+  "evidence": {
+    "provider": "addon/pfUI unitframes/castbar/swingtimer/actionbar + installed DoiteDPS + optional ArchiTotem 1.7",
+    "layout_formula": "V6 uses compact Player/Target 240x60 at 0.68, TargetTarget 132x30 at 0.62 attached to Target, and Player Cast/Swing/Target Cast 180x16 at 0.72 on one baseline; AutoBar text plaques are absent",
+    "simulation_spec": "tools/specs/action_bars_core_simulation_v6.json",
+    "adapter": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
+    "target": "Turtle WoW 1.18.1; deterministic 1920x1080 review composition",
+    "source_screenshot": "C:/Users/西奥/AppData/Local/Temp/codex-clipboard-aa446330-8b76-420c-b602-b7ea05f8e6d4.png",
+    "source_screenshot_sha256": "de56051ef674981e7df72fb59de360da8174d07d38a4d2be9698f6cb38cdb5d4",
+    "dynamic_ownership": "all health, power, aura, spell, timer, cooldown, totem, tooltip, drag, lock and hit behavior remains provider-owned",
+    "runtime_scope": "geometry and visibility simulation; accepted Action Bars and Field Kit bitmap bytes are unchanged",
+    "final_runtime": false
+  },
+  "atlas": {
+    "size": [32, 32],
+    "visible_bbox": [0, 0, 32, 32],
+    "require_exact_visible_coverage": true,
+    "sampled_regions": [
+      {"id": "layout.geometry-only", "box": [0, 0, 32, 32]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 3, "right": 3, "top": 3, "bottom": 3},
+    "minimum_frame_size": [7, 7]
+  },
+  "scenarios": [
+    {
+      "id": "player-target-unitframe-240x60-scale-068",
+      "frame": [240, 60],
+      "preview_frame": [240, 60],
+      "zones": {"provider-footprint": [0, 0, 240, 60]},
+      "regions": [
+        {"id": "health-power-portrait", "kind": "status", "box": [0, 0, 240, 60], "zone": "provider-footprint"}
+      ]
+    },
+    {
+      "id": "targettarget-attached-132x30-scale-062",
+      "frame": [132, 30],
+      "preview_frame": [132, 30],
+      "zones": {"provider-footprint": [0, 0, 132, 30]},
+      "regions": [
+        {"id": "health-power-name", "kind": "status", "box": [0, 0, 132, 30], "zone": "provider-footprint"}
+      ]
+    },
+    {
+      "id": "equal-cast-swing-readout-180x16-scale-072",
+      "frame": [180, 16],
+      "preview_frame": [180, 16],
+      "zones": {"dynamic-safe": [0, 0, 180, 16]},
+      "regions": [
+        {"id": "provider-readout-content", "kind": "status", "box": [0, 0, 180, 16], "zone": "dynamic-safe"}
+      ]
+    },
+    {
+      "id": "autobar-label-free-semantic-dividers",
+      "frame": [159, 237],
+      "preview_frame": [159, 237],
+      "zones": {"rack": [0, 0, 159, 237]},
+      "regions": [
+        {"id": "four-by-six-pockets", "kind": "button", "box": [0, 0, 159, 237], "zone": "rack"}
+      ]
+    },
+    {
+      "id": "architotem-current-closed-bound",
+      "frame": [212, 32],
+      "preview_frame": [212, 32],
+      "zones": {"provider-footprint": [0, 0, 212, 32]},
+      "regions": [
+        {"id": "four-elements", "kind": "button", "box": [0, 0, 128, 32], "zone": "provider-footprint"},
+        {"id": "drag-handle", "kind": "button", "box": [128, 6, 148, 26], "zone": "provider-footprint"},
+        {"id": "cast-all-and-recall", "kind": "button", "box": [148, 0, 212, 32], "zone": "provider-footprint"}
+      ]
+    },
+    {
+      "id": "architotem-air-popup-down-seven",
+      "frame": [212, 224],
+      "preview_frame": [212, 224],
+      "zones": {"provider-footprint": [0, 0, 212, 224]},
+      "regions": [
+        {"id": "main-row", "kind": "button", "box": [0, 0, 212, 32], "zone": "provider-footprint"},
+        {"id": "air-candidates-two-through-seven", "kind": "button", "box": [96, 32, 128, 224], "zone": "provider-footprint"}
+      ]
+    }
+  ]
+}
