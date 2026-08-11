@@ -7,7 +7,7 @@
   `AB.TRINKET.MENU`、`AB.CONSUMABLE.RACK`、`AB.CONSUMABLE.POCKET`、
   `AB.CONSUMABLE.POPUP`、`AB.CONSUMABLE.GROUP`
 - 模拟版本：`AB-FIELDKIT-SIM-V3`
-- 当前操作：`AutoBar config compatibility / game retest`
+- 当前操作：`AutoBar same-event anchor settling / game retest`
 - 子状态：`runtime-exported / pending-retest`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
@@ -34,12 +34,14 @@
   下移并继续由 Bar 1 单根移动。V11 继续保持该 bridge，simulation delta `3/3`、
   runtime display `12/12 pass`。bridge-v2.1 修复 AutoBar 1.31 配置期的两个兼容
   问题：仅为 zhCN 漏掉的七个运行时分类说明及未来未知空说明补 fallback，不覆盖
-  provider 原生说明，也不写类别 profile／SavedVariables；`ButtonsUpdate` 与
-  `SetupVisual` 的嵌套回调通过 provider AceEvent 合并为布局完成后 `0.05s` 的一次
-  重施，调度缺失时才立即 fail-open。可见几何、popup、TrinketMenu、ArchiTotem、
-  source 与 TGA 均不变。
-  当前 AEUI `0.8.21` entrypoints 为 ActionBars SHA `24183cc3…d3e`、Bootstrap
-  SHA `08365cfc…659`、TOC SHA `74c47c62…ce4`；fresh-checkout package
+  provider 原生说明，也不写类别 profile／SavedVariables；它把 `ButtonsUpdate` 与
+  `SetupVisual` 合并到 `0.05s` 后置刷新，实机虽不再留下错误位置，却会先跳出再
+  回位。bridge-v2.2 保留说明修复；独立 `ButtonsUpdate` 只排到下一次 AceEvent
+  `OnUpdate` 的零延迟事件，而 `SetupVisual` 后置钩子在同一输入事件内取消该事件并
+  立即恢复组合锚点。调度缺失时仍立即 fail-open；可见几何、popup、TrinketMenu、
+  ArchiTotem、source 与 TGA 均不变。
+  当前 AEUI `0.8.22` entrypoints 为 ActionBars SHA `6c1b54af…7078`、Bootstrap
+  SHA `3c62eaee…cec4`、TOC SHA `f8327129…fd38`；fresh-checkout package
   `status=pass`、violations `0`、report SHA `a6a4ec74…16b9`、runtime manifest
   records `49`、tracked addon files `547`、`build_required_on_target_device=false`。
   P4→当前没有调用 ImageGen。
@@ -1116,15 +1118,16 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
 | `AB.FIELDKIT bridge-v1.8` | accepted source／TGA、AutoBar profile、popup guard、TrinketMenu／ArchiTotem 行为均不变；隐藏并停止创建三段文字，hover bridge 收为 `10 UI`；左／右停靠间距改为 `12／8 UI`，ArchiTotem offset 改为 `-39 UI`；Bar 6 与 TargetTarget 均在 pfUI 创建 drag 后才隐藏独立 mover | 用户要求移除文字并收紧全部组件；Field Kit Lua smoke、runtime display、V8 布局与仓库合同 pass，共享入口升至 AEUI `0.8.16`，`pending-game-validation / P5` | `/reload` 确认无三段文字、Player 退出卷袋占位、紧凑间距、popup 联合悬停不退化，并开关 pfUI unlock 验证无空 drag／无跳位 |
 | `AB.FIELDKIT bridge-v1.9` | accepted source／TGA、24 类映射、popup guard 与 provider 行为不变；默认关闭空槽／缺货类别图标并隐藏把手，外壳跟随当前 `1–24` 个可见 Button；external drawer 不再要求当前满 24 格；旧 AEUI 满格显示只按 exact backed-up 签名迁移 | 用户指定采用“大奶黑牛”的精简 AutoBar；13 格与 24 格 smoke、V9 simulation／runtime display `10/10`、仓库合同 pass；共享入口升至 AEUI `0.8.17`，`pending-game-validation / P5` | `/reload` 确认当前 13 格、库存变化动态收缩／扩展、少于 24 格仍有外置抽屉且无错误分隔、自定义／无备份 profile 不被改写 |
 | `AB.FIELDKIT bridge-v2.0` | accepted source／TGA、精简 AutoBar、popup guard 与 provider 行为不变；消耗品可见底边和 TrinketMenu 底边共同比主栏低 `20 UI`，原 x 与唯一 Bar 1 mover 不变 | 用户报告 Player 仍压消耗品，并明确允许消耗品／饰品一起下移；Field Kit Lua smoke、V10 layout `60/60`、V11 layout `68/68` 与 focus runtime display `12/12` pass；共享入口为 AEUI `0.8.20`，`pending-game-validation / P5` | 由 bridge-v2.1 接续；保留两组同步下移、同底线与全部 provider 行为 |
-| `AB.FIELDKIT bridge-v2.1` | v2.0 可见几何、accepted source／TGA、精简 profile、popup guard 与其他 provider 行为不变；只给 AutoBar 运行时空 `description` 补说明，并把 `ButtonsUpdate／SetupVisual` 合并为 `0.05s` 后置刷新 | 用户报告配置页悬停持续触发 `AutoBarConfig.lua:211 description=nil`，任意配置点击又让强绑定卷袋在两个位置间交替；provider／Locale 审计、连续两次点击锚点回归、8 个空说明与原生说明保留回归、Field Kit runtime `9/9＋10/10`、package 与仓库合同 pass；AEUI `0.8.21`，`pending-game-validation / P5` | `/reload` 逐类悬停确认无 line 211；连续点击多个配置控件确认卷袋始终固定在主栏左侧，再复测原 Field Kit／popup／Queue／换装清单 |
+| `AB.FIELDKIT bridge-v2.1` | v2.0 可见几何、accepted source／TGA、精简 profile、popup guard 与其他 provider 行为不变；只给 AutoBar 运行时空 `description` 补说明，并把 `ButtonsUpdate／SetupVisual` 合并为 `0.05s` 后置刷新 | 用户报告配置页悬停持续触发 `AutoBarConfig.lua:211 description=nil`，任意配置点击又让强绑定卷袋在两个位置间交替；provider／Locale 审计与静态回归通过，AEUI `0.8.21`；用户于 `2026-08-12` 实机确认不会停错但仍会先跳出再回位，`game-failed-visible-flicker / P5` | 由 bridge-v2.2 接续；保留说明 fallback，移除可见 `0.05s` 等待 |
+| `AB.FIELDKIT bridge-v2.2` | v2.1 的说明 fallback、v2.0 可见几何、accepted source／TGA、精简 profile、popup guard 与全部 provider 行为不变；独立 `ButtonsUpdate` 排到下一次零延迟事件，`SetupVisual` 后置钩子同事件取消并立即恢复组合锚点 | 用户实机指出 v2.1 “跳出去一下，然后又跳回来”；Lua smoke 直接断言 `SetupVisual` 返回时已是稳定锚点且无残留事件，独立零延迟路径、调度缺失回退、8 个空说明与原生说明保留回归、Field Kit runtime `9/9＋10/10`、package 与仓库合同 pass；AEUI `0.8.22`，`pending-game-validation / P5` | `/reload` 逐类悬停确认无 line 211；连续点击多个配置控件确认卷袋既不交替错位，也无先跳出后回位，再复测原 Field Kit／popup／Queue／换装清单 |
 
 ## 下一门禁
 
 1. 两套 accepted source 与 runtime TGA 像素身份不变；视觉 source／runtime
-   manifest 保持 `runtime-v1.5`，共享 adapter 已更新到 bridge v2.1／P5。fresh-checkout package
+   manifest 保持 `runtime-v1.5`，共享 adapter 已更新到 bridge v2.2／P5。fresh-checkout package
    已通过，目标设备只需拉取并安装 `addon/`，不得再生成、导出或打补丁。
-2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.21`、
-   `fieldkit-contract=2.1`、`autobar-config-descriptions=repaired`、
+2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.22`、
+   `fieldkit-contract=2.2`、`autobar-config-descriptions=repaired`、
    `autobar-config-description-fixes=7`、`fieldkit-binding=bound` 与
    `actionbar-stack=12x2-bound`。
    同时确认 `focus-layout-contract=2.3`、`focus-layout-anchor=ui-parent+target-dependent`、
@@ -1153,7 +1156,8 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
    provider 正常关闭。
    打开 AutoBar 配置页并逐类悬停，确认不再出现
    `AutoBarConfig.lua:211: attempt to concatenate field 'description'`；连续点击多个
-   任意配置控件，确认卷袋始终吸附在主动作条左侧，不再在两次点击间往返跳位。
+   任意配置控件，确认卷袋始终吸附在主动作条左侧：既不在两次点击间往返错位，
+   也不再出现先跳出、后回位的可见闪动。
    `/aeui autobar popup auto|left|right|native` 应正确切换向外／强制方向／原生回退；
    执行 `/aeui autobar restore` 验证应用前配置可恢复。随后继续验证任一签名
    不匹配回退、TOP／BOTTOM／LEFT／RIGHT popup、使用、拖动／缩放／显隐，以及

@@ -3,7 +3,7 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 
 addon.name = "AzerothExpeditionUI"
-addon.version = "0.8.21"
+addon.version = "0.8.22"
 addon.modules = addon.modules or {}
 addon.media = addon.media or {}
 addon.media.root = "Interface\\AddOns\\AzerothExpeditionUI\\Media\\"

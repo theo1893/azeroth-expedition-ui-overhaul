@@ -280,14 +280,14 @@ def main() -> None:
         encoding="utf-8-sig"
     )
     assert "## RequiredDeps: pfUI" in aeui_toc
-    assert "## Version: 0.8.21" in aeui_toc
+    assert "## Version: 0.8.22" in aeui_toc
     assert "Core\\Bootstrap.lua" in aeui_toc
     assert "Modules\\ActionBars.lua" in aeui_toc
     assert "Modules\\Chat.lua" in aeui_toc
     assert "Modules\\QuestVisualTheme.lua" in aeui_toc
     assert "Modules\\Quests.lua" in aeui_toc
     bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(encoding="utf-8")
-    assert 'addon.version = "0.8.21"' in bootstrap
+    assert 'addon.version = "0.8.22"' in bootstrap
     assert "actionbar-runtime=" in bootstrap
     assert 'if command == "actionbars" then' in bootstrap
     assert '/aeui autobar [open|apply|restore|popup]' in bootstrap
@@ -323,7 +323,7 @@ def main() -> None:
     assert "button:SetParent" not in actionbars_source
     assert "button:SetWidth" not in actionbars_source
     assert "button:SetHeight" not in actionbars_source
-    assert 'ActionBars.fieldKitRuntimeContract = "2.1"' in actionbars_source
+    assert 'ActionBars.fieldKitRuntimeContract = "2.2"' in actionbars_source
     assert 'ActionBars.focusLayoutRuntimeContract = "2.3"' in actionbars_source
     assert "ActionBars.focusLayoutVersion = 14" in actionbars_source
     assert 'ActionBars.focusCoordinateSpace = "game-native-v1"' in actionbars_source

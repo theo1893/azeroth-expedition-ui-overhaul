@@ -13,7 +13,7 @@ ActionBars.railTexturePath = addon.media.root .. "ActionBars\\ActionRailV1"
 ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
-ActionBars.fieldKitRuntimeContract = "2.1"
+ActionBars.fieldKitRuntimeContract = "2.2"
 ActionBars.focusLayoutRuntimeContract = "2.3"
 ActionBars.focusLayoutVersion = 14
 ActionBars.focusLayoutBackupVersion = 1
@@ -70,7 +70,11 @@ ActionBars.popupDrawerGap = 6
 ActionBars.popupDrawerMaxRows = 6
 ActionBars.popupIntentDelay = 0.30
 ActionBars.popupIntentEvent = "AEUI_AutoBarPopupIntent"
-ActionBars.autoBarRefreshDelay = 0.05
+-- A standalone ButtonsUpdate settles on AceEvent's next OnUpdate tick. When
+-- it runs inside AutoBar_SetupVisual, that function's post-hook cancels this
+-- zero-delay event and restores the bound anchor before the current input
+-- event can render the provider's temporary saved position.
+ActionBars.autoBarRefreshDelay = 0
 ActionBars.autoBarRefreshEvent = "AEUI_AutoBarFieldKitRefresh"
 ActionBars.archiTotemDockXOffset = -10
 -- Keep the provider row below the XP rail with a compact five-pixel visual
@@ -4369,6 +4373,18 @@ function ActionBars:CommitAutoBarFieldKitRefresh()
   SafeFieldKitApply("ApplyAutoBarFieldKit")
 end
 
+function ActionBars:SettleAutoBarFieldKitRefresh()
+  local provider = self.autoBarRefreshProvider or AutoBar
+  if provider and type(provider.CancelScheduledEvent) == "function" then
+    pcall(
+      provider.CancelScheduledEvent,
+      provider,
+      self.autoBarRefreshEvent
+    )
+  end
+  self:CommitAutoBarFieldKitRefresh()
+end
+
 function ActionBars:QueueAutoBarFieldKitRefresh()
   local provider = AutoBar
   self:RepairAutoBarCategoryDescriptions()
@@ -4441,7 +4457,7 @@ function ActionBars:InstallFieldKitHooks()
     then
       self.autoBarSetupHooked = true
       hooksecurefunc("AutoBar_SetupVisual", function()
-        ActionBars:QueueAutoBarFieldKitRefresh()
+        ActionBars:SettleAutoBarFieldKitRefresh()
       end)
     end
     if not self.autoBarButtonsHooked and

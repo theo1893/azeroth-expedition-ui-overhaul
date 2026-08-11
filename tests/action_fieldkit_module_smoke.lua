@@ -464,7 +464,7 @@ local module = assert(AzerothExpeditionUI.modules.ActionBars)
 module:Initialize()
 module:Apply()
 
-assert(module.fieldKitRuntimeContract == "2.1")
+assert(module.fieldKitRuntimeContract == "2.2")
 assert(module.autoBarCategoryDescriptionStatus == "repaired")
 assert(module.autoBarCategoryDescriptionsRepaired == 8)
 assert(AutoBar_Category_Info.POTION_SPELLPOWER.description ==
@@ -617,38 +617,40 @@ assert(TrinketMenu.MainFrame_OnMouseUp == hookedTrinketMouseUp)
 assert(AutoBar.SetPopupButton == wrappedSetPopupButton)
 
 AutoBar:ButtonsUpdate()
-AutoBar:UpdatePopupButtons(AutoBarFrameButton1)
-AutoBar_SetupVisual()
 assert(AutoBar.providerButtonsUpdateCalls == 1)
-assert(AutoBar.providerPopupUpdateCalls == 1)
-assert(autoBarSetupCalls == 1)
 assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
-assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent].delay == 0.05)
+assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent].delay == 0)
 assert(module.autoBarRefreshStatus == "queued")
 AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
 assert(module.autoBarRefreshStatus == "settled")
 
+AutoBar:UpdatePopupButtons(AutoBarFrameButton1)
+AutoBar_SetupVisual()
+assert(AutoBar.providerPopupUpdateCalls == 1)
+assert(autoBarSetupCalls == 1)
+assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent] == nil)
+assert(module.autoBarRefreshStatus == "settled")
+
 -- AutoBar's real SetupVisual calls ButtonsUpdate before restoring its saved
--- handle position. Both hooks must coalesce into one post-layout refresh so a
--- config click cannot alternate between the provider and AEUI anchors.
+-- handle position. Its post-hook must cancel the zero-delay ButtonsUpdate
+-- refresh and restore the AEUI anchor in the same input event, before the
+-- provider's temporary anchor can render.
 local settledDockAnchor = AutoBarAnchorFrameHandle.decorativePoints[1]
 local settledDockX = settledDockAnchor[4]
 local settledDockY = settledDockAnchor[5]
 providerSetupReanchors = true
 AutoBar_SetupVisual()
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == UIParent)
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == 321)
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == 654)
-assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
-AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
+assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent] == nil)
+assert(module.autoBarRefreshStatus == "settled")
 AutoBar_SetupVisual()
-assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
-AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
+assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent] == nil)
+assert(module.autoBarRefreshStatus == "settled")
 providerSetupReanchors = false
 assert(module.autoBarPopupLayout == "drawer-1x4")
 assert(module.autoBarPopupSide == "left")
@@ -974,7 +976,7 @@ module:Apply()
 assert(module.autoBarFieldKitStatus == "missing")
 assert(module.trinketFieldKitStatus == "missing")
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "fieldkit%-contract=2%.1"))
+assert(string.find(status, "fieldkit%-contract=2%.2"))
 assert(string.find(status, "autobar%-config%-descriptions=repaired"))
 assert(string.find(status, "autobar%-config%-description%-fixes=8"))
 assert(string.find(status, "fieldkit%-binding=bound"))

@@ -497,7 +497,7 @@
   },
   "adapter": {
     "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
-    "sha256": "24183cc390526ca0985f976ca9116ef29a7e2e92c2f198389618db40b0bf8d3e",
+    "sha256": "6c1b54af4117e5e91a5124fcd3f494a51e4ecacc7d16d682989a0280c6ca7078",
     "provider": "AutoBar 1.31 existing main/popup frames and 24+12 buttons",
     "visual_layers_only": false,
     "visual_and_layout_adapter": true,
@@ -505,7 +505,7 @@
     "provider_behavior_replaced": false,
     "provider_hover_geometry_adapted": true,
     "provider_popup_switch_guard": "scoped-0.30s-original-delegate",
-    "provider_layout_refresh": "coalesced one-shot 0.05s refresh after AutoBar ButtonsUpdate/SetupVisual settles; immediate fallback only when provider scheduling is unavailable",
+    "provider_layout_refresh": "zero-delay standalone ButtonsUpdate refresh; same-event SetupVisual post-hook cancels the queued refresh and restores the bound anchor before render; immediate fallback when provider scheduling is unavailable",
     "provider_runtime_category_description_compatibility": "write localized labels only to missing or empty AutoBar_Category_Info descriptions; preserve native labels and never write category profiles or SavedVariables",
     "provider_set_popup_button_original_authoritative": true,
     "popup_frame_onleave_deferred_only_while_external": true,
@@ -530,13 +530,13 @@
   "addon_entrypoints": {
     "bootstrap": {
       "file": "addon/AzerothExpeditionUI/Core/Bootstrap.lua",
-      "sha256": "08365cfc8c6550d630d269ffcec9c1a9d07e801b448d6566cfd54b1c8b078659"
+      "sha256": "3c62eaee517dc52272400338a465e56f68c1f60505224a378261dc62c0f3cec4"
     },
     "toc": {
       "file": "addon/AzerothExpeditionUI/AzerothExpeditionUI.toc",
-      "sha256": "74c47c62b68c34f2ecf0e4d772f5ff0bbb9e2f41646387c68108a950ced46ce4"
+      "sha256": "f83271293edb23a77e818445a85e08bdf9df127f0da9becf4f7956e74006fd38"
     },
-    "addon_version": "0.8.21",
+    "addon_version": "0.8.22",
     "required_dependency": "pfUI",
     "optional_provider": "AutoBar"
   },

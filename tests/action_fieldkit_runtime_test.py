@@ -112,11 +112,14 @@ def main() -> None:
         assert manifest["addon_entrypoints"]["addon_version"] == (
             builder.addon_version(ROOT / builder.TOC_REL)
         )
-        assert manifest["addon_entrypoints"]["addon_version"] == "0.8.21"
+        assert manifest["addon_entrypoints"]["addon_version"] == "0.8.22"
         if key == "consumable":
             assert manifest["adapter"]["provider_layout_refresh"].startswith(
-                "coalesced one-shot 0.05s"
+                "zero-delay standalone ButtonsUpdate"
             )
+            assert "same-event SetupVisual post-hook" in manifest["adapter"][
+                "provider_layout_refresh"
+            ]
             assert "missing or empty" in manifest["adapter"][
                 "provider_runtime_category_description_compatibility"
             ]
@@ -168,7 +171,7 @@ def main() -> None:
         assert result["summary"]["violation_count"] == 0
 
     for required in (
-        'ActionBars.fieldKitRuntimeContract = "2.1"',
+        'ActionBars.fieldKitRuntimeContract = "2.2"',
         "ActionBars.fieldKitDockYOffset = -20",
         "ActionTrinketKitV1",
         "ActionConsumableKitV1",
@@ -194,7 +197,8 @@ def main() -> None:
         "RepairAutoBarCategoryDescriptions",
         "QueueAutoBarFieldKitRefresh",
         "CommitAutoBarFieldKitRefresh",
-        "autoBarRefreshDelay = 0.05",
+        "SettleAutoBarFieldKitRefresh",
+        "autoBarRefreshDelay = 0",
         "AutoBar.SetPopupButton = self.autoBarSetPopupButtonWrapper",
         'self.autoBarPopupHover = "intent-bridge"',
         "InstallFieldKitHooks",
