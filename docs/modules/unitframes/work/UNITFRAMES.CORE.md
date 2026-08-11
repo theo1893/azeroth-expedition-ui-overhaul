@@ -15,7 +15,8 @@
   错误，使用同一命令获准写入后复跑通过，输出 SHA 未变；不属于 ImageGen。
 - 自动修复预算：未来 `UF-A1`／`UF-A2`／`UF-B1` 各最多 `5` 次实际生图，
   最坏合计 `15`；当前 `0/15`
-- 流程错误：`0`
+- 流程错误：`1`（A1 `E1`；固定 child 在生成前返回 `No prompt provided`，无
+  图片或 provider result，不占实际生图额度）
 - 正式生产授权：`2026-08-11`；用户授权 A1→A2→B1 顺序、A1／A2 固定
   Image 1／2、同段紧邻前稿 edit 输入、B1 首次无图、每段最多 `5` 次实际
   ImageGen、最坏 `15` 次、流程错误不占额度、禁止跨段复用，以及合同内的
@@ -357,6 +358,18 @@ cast, no dynamic content, no edge contact and no non-green pixels outside them.
 - 输出：本文件“生成前模拟实例图”所列 scene／zoom。
 - 实际 ImageGen：`0/0`；流程错误：`0`。
 - 循环终态：`simulation-confirmed`；正式生产循环尚未开始。
+
+## 正式生产循环
+
+### `UF-A1 V1`
+
+| 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
+|---:|---|---|---|---|---|---|---|
+| 1/5 | `UF-A1 V1` / `d902e2b` | generate | pending | pending | pending | pending | pending |
+
+| 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
+|---:|---|---|---|---|---|
+| E1 | `UF-A1 V1` / `d902e2b` | unified exec `99073`；无 child session／result | 固定 child 在读取 prompt 前退出：`No prompt provided. Either specify one as an argument or pipe the prompt into stdin.`；无图片、无 provider result、无生成证据 | 保持提交正文和 Image 1／2 完全不变，只把同一参数从 argv transport 改为 CLI 明示的 stdin transport | 不占 `0/5`；以同一正文重试 |
 
 ## 审查记录
 
