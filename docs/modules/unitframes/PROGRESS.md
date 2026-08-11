@@ -2,13 +2,18 @@
 
 ## 当前状态
 
-- 主模块：UF-A1 V2 当前为
+- 主模块：UF-A1 当前进入
+  `UF-A1 V2-A V2 / P2 / prompt-draft`。旧 V2-A V1 为
   `P3 / candidate-rejected / repair-budget-exhausted`。用户于 `2026-08-11` 明确授权
   `UF-A1 V2-A V1`／`UF-A1 V2-B V1` 按 A→B 执行，每段最多五次实际
   ImageGen、固定 Image 1／2、同段紧邻前稿有界 edit、流程错误不占额度、
   禁止跨段复用像素，并允许合同内确定性拆分、色键、等比 bbox-fit、真实排版
   与缩放预演。V2-A 已实际执行 `5/5` 且无合格候选；V2-B 因 A→B 顺序保持
-  `0/5 / sequence-blocked`；
+  `0/5 / sequence-blocked`。用户随后明确否决逐端帽独立生成，要求新版本继续
+  由一次调用输出一张四端帽 atlas，并只通过更详尽的正文约束结果。该决定没有
+  改变八件 source、标准单 shell、可变宽度三切片、固定高度或可见方向，因此
+  `UF-A1-V2-SIM-V2` 的确认继续有效；新 `UF-A1 V2-A V2` 当前 `0/5` 且尚未
+  获得正式生产授权；
   `UF-PRIMARY-SIM-V1` 已于 `2026-08-11` 获用户方向确认。`UF-A1 V1` 已完成
   五次实际 ImageGen，终态为
   `candidate-rejected / repair-budget-exhausted / user-rejected`；用户于
@@ -19,7 +24,8 @@
 - 当前仓库／远端 `main` 尚未包含用户在游戏设备完成的布局 overhaul；本批次
   因只使用现有 pfUI 资源尺寸，不把屏幕位置作为生产合同。
 - 新 V2 生成前模拟 ImageGen：`0/0`；历史正式生产为 A1 V1 `5/5`，A2／B1
-  各 `0/5`。V2-A 已用满 `5/5`，V2-B 未启动且为 `0/5`。A1 V1 有
+  各 `0/5`。V2-A V1 已用满 `5/5`，新 V2-A V2 为 `0/5`，V2-B 未启动且为
+  `0/5`。A1 V1 有
   两次无生成证据的流程错误，
   不占额度。attempt 5 的 Player／
   Target 比例误差 `0.071891%`／`0.448322%` 均通过，但真实动态走廊仍有
@@ -53,11 +59,15 @@
 - 用户于 `2026-08-11` 在看到缩放矩阵、装配板与校验结果后原文“确认”。现已
   冻结八个独立 source、标准单 shell、可变宽度三切片、共同取整、装饰角
   `1px` extrusion／overlap 和 `42px` 固定高度；确认不接受模拟像素。
-- 稳定结构已写入 `SUBMODULES.md`；work 中 `UF-A1 V2-A V1` 四端帽与
+- 稳定结构已写入 `SUBMODULES.md`；work 中旧 `UF-A1 V2-A V1` 四端帽与
   `UF-A1 V2-B V1` 四横轨最终生产正文、builder 合同及两段修复边界已经通过
   自包含预检。正式生产已授权；V2-A 五稿均未通过，最终 attempt 5 的四件 bbox
   为 `99–100×954–955px`，比例误差 `37.106918–37.801047%`，上下隔离只有
-  `34–36px`。没有 production source/runtime 或 addon 改动。
+  `34–36px`。用户已否决逐端帽独立调用；新 `UF-A1 V2-A V2` 保留同一单图
+  四列画布和四件 source，只把布局优先级、等分关系、端部接触、视觉重量不得
+  通过增宽表达及逐项末检写得更完整。生产规格为
+  `tools/specs/unitframes_a1_v2a_production_v2.json`，当前未授权、`0/5`。没有
+  production source/runtime 或 addon 改动。
 
 ## 已完成的对象审计
 
@@ -100,8 +110,8 @@
 
 ## 下一门禁
 
-V2-A 已用尽五次，禁止第六次；V2-B 因 A→B 顺序不启动。等待用户审计最终
-候选与客观失败，并决定是否建立新的生产版本。若改为每端帽独立生成、改变
-canvas／对象分段或扩大确定性处理，必须重新形成完整正文与授权。用户接受前
+等待用户审阅并明确授权新的 `UF-A1 V2-A V2` 单图四格完整正文、固定 Image
+1／2、不可变修复边界及独立 `5` 次实际 ImageGen 预算。它不是旧 V2-A V1 的
+第六次调用；未经授权不得启动。V2-A V2 内部通过后才恢复 V2-B。用户接受前
 不产出 tracked source/runtime、不接入 addon。A2／B1 继续暂停，额度均为
 `0/5`。

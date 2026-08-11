@@ -5,23 +5,25 @@
 - 模块：`unitframes`
 - 组件 ID：`UF.PLAYER.SHELL`、`UF.TARGET.SHELL`、
   `UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.BAR.*`、`UF.STATE.*`
-- 当前版本：`UF-A1 V2-A V1`／`UF-A1 V2-B V1`／`UF-A2 V1`／`UF-B1 V1`
-- 子状态：UF-A1 V2-A `candidate-rejected / repair-budget-exhausted`；V2-B
+- 当前版本：`UF-A1 V2-A V2`／`UF-A1 V2-B V1`／`UF-A2 V1`／`UF-B1 V1`
+- 子状态：UF-A1 V2-A V2 `prompt-draft`；旧 V2-A V1
+  `candidate-rejected / repair-budget-exhausted`；V2-B
   `prompt-authorized / sequence-blocked`；UF-A1 V1
   `candidate-rejected / repair-budget-exhausted / user-rejected`；UF-A2／UF-B1
   `prompt-authorized / paused`
-- 项目阶段：UF-A1 V2 `P3 / blocked`；UF-A2／UF-B1 保持 `P3 / paused`
+- 项目阶段：UF-A1 V2-A V2 `P2 / prompt-draft`；历史 V2-A V1 为 `P3 / rejected`；
+  UF-A2／UF-B1 保持 `P3 / paused`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 操作：`review`；已确认“独立四件 source → 标准宽度单 shell／可变宽度
-  三切片”，V2-A／V2-B 正文与生产授权边界均已冻结
+- 操作：`prepare`；已确认“独立四件 source → 标准宽度单 shell／可变宽度
+  三切片”。新 V2-A V2 固定为一次调用输出一张含四端帽的 atlas；正文待授权
 - 生成前模拟：`UF-A1-V2-SIM-V2`／deterministic-local-geometry；ImageGen
   `0/0`
 - 本地渲染错误：历史主模拟确认后复跑 `1` 次 sandbox 写权限错误；V2 首次
   本地执行有 `1` 次 Python `false`／`False` 拼写错误，针对性修正后同一几何
   合同重跑；随后有 `1` 次 sandbox 写权限错误，获准写入 ignored `generated/`
   后以同一命令通过。三者均不属于 ImageGen。
-- 自动修复预算：UF-A1 V1 历史终态 `5/5`；V2-A 已执行并用满 `5/5`、V2-B
-  `0/5`，最坏合计 `10` 次；UF-A2／UF-B1 各 `0/5` 并
+- 自动修复预算：UF-A1 V1 历史终态 `5/5`；V2-A V1 已执行并用满 `5/5`；
+  新 V2-A V2 `0/5 / pending authorization`；V2-B `0/5`；UF-A2／UF-B1 各 `0/5` 并
   继续暂停
 - 流程错误：`2`（A1 `E1` 为 stdin transport；A1 `E2` 为 npm sandbox
   `EPERM`；二者均无图片或 provider result，不占实际生图额度）
@@ -40,6 +42,11 @@
   紧邻前稿在冻结边界内作为 Image 3 edit 输入；每段最多 5 次实际 ImageGen，
   最坏合计 10 次；流程错误不占额度；禁止跨段复用像素；允许合同内的确定性
   拆分、色键、等比 bbox-fit、真实排版和缩放预演。`
+- V2-A V2 用户方向决定：`direction-confirmed / 2026-08-11`。用户原文：
+  `放弃分开生图的方案. 仍然采用生成一张图的方案, 通过更详尽的prompt来约束
+  生图结果`。本决定明确禁止逐端帽独立调用；每次生产 attempt 必须只返回一张
+  同时包含四端帽的 atlas。它不是 V2-A V2 的正式生产授权，也不重置旧 V1
+  历史预算。
 - V2-SIM.V2 本地执行授权：`2026-08-11`；用户在讨论缩放风险并确认“标准
   单 shell／可变宽度三切片”方案后原文“按照这个方案执行”。该授权仅覆盖
   本地几何预演、校验与文档，不扩展为 production 或 addon 接入授权。
@@ -1707,6 +1714,251 @@ edge contact, dynamic content or previous candidate pixel.
   `5/5`，禁止第 6 次；按用户授权的 A→B 顺序，V2-B 保持 `0/5` 且不启动。
   本批没有 tracked source、runtime 或 addon 改动。
 
+## `UF-A1 V2-A V2` — 单图四端帽详尽约束重启
+
+### 用户方向与版本边界
+
+- 用户于 `2026-08-11` 明确放弃“每个端帽分别独立生成”的提案，继续使用
+  “一次 ImageGen 调用只返回一张图、图内同时包含四个端帽”的生产方式。
+- 本版本仍输出四个独立 runtime source 对象，只是它们来自同一张 production
+  atlas 的四个固定格位。资产粒度、运行时所有权与确定性拆分均不改变。
+- `UF-A1-V2-SIM-V2` 已确认的游戏内可见构图、标准宽度单 shell、可变宽度
+  三切片、`42px` 固定高度和内容安全区全部不变。因此这次只强化生产排版与
+  执行正文，不构成可见方向变化；既有模拟确认继续有效，ImageGen `0/0`。
+- 旧 `UF-A1 V2-A V1` 的 `5/5` 与失败候选保持历史封存，不得作为 V2 的
+  第六次调用、参考图、edit 输入或像素来源。V2 拥有独立、尚未授权的 `0/5`
+  预算。
+
+### 单图四格生产合同
+
+- 一次 attempt 只允许一次 ImageGen 调用，并且必须得到一张 `1536×1024 RGB`
+  图；禁止把四端帽拆成四次调用、四张输出或后续拼接四张独立生成图。
+- 单张图固定分为四个 `384×1024` 竖列；每列只含一个端帽，严格从左到右为
+  Player Left、Player Right、Target Left、Target Right。
+- 每件目标 visible bbox 固定为 `128×768`，即每列宽度的 `1/3`、整张画布
+  高度的 `3/4`，高宽比精确为 `6:1`。每列对象上下左右都保留 `128px` 纯绿；
+  不得用远端小点、游离阴影或抗锯齿伪造 bbox。
+- 四件必须共享相同 bbox 尺寸和纵向基线，但以独立轮廓、修补和磨损表达身份；
+  “厚重”只由深胡桃色块、烟褐内衬、接触阴影与短促暗铜表达，绝不能通过
+  把端帽加宽、加长、做成皮板或占满列高表达。
+- 四件拆分后仍只允许边缘连通色键、透明 RGB 清零与纵横比误差不超过 `1%`
+  的等比 bbox-fit；禁止非等比压缩、裁掉端部、补画缺失材料或把独立输出拼回。
+- 规格：`tools/specs/unitframes_a1_v2a_production_v2.json`。当前状态
+  `production-draft / unauthorized`。完整 fenced 正文为 `1628` 个英文空白分词，
+  SHA-256 `9ec55d9e3db55b3082a76578c0de266c4556a06433beb5d71767abe06a06c276`；
+  该长度来自适用约束，不作为完整性通过依据。
+
+### V2 生产正文完整性预检
+
+- 复杂度：`atlas / four independent logical objects / assembly / fixed cap`。
+- 结论：`pass / production-draft`。当前没有执行必需的未知值；本结论只说明
+  正文自包含，不构成生产授权。
+
+| 门禁 | V2 正文中的具体证据 | 结论 |
+|---|---|---|
+| 物件身份、范围、数量与动态排除 | 明确一张输出、四个端帽、固定顺序；逐项排除完整框、条形填充、文字、头像、图标与状态 | pass |
+| 输入职责与权威冲突 | Image 1／2 受限职责逐张写明；文字基线优先；旧失败候选与模拟图禁止输入 | pass |
+| Canvas、格位、边距、方向、比例与层序 | 同时用全局坐标、列内比例、inclusive 像素范围、等宽绿边与 `6:1 ±1%` 描述；禁止网格／标签烘焙 | pass |
+| 逐对象形态、材料与身份 | 四件分别规定 outer／inner edge、Player 左缝线／右铆钉、Target 左折边／右窄压片及非镜像关系 | pass |
+| 接触、安全区、拆分与装配 | 逐件规定约 `6px` runtime 上下轨对应的 source 接触带、inner-edge 安静带、单图固定分区与等比 fit | pass |
+| 美术 DNA、失败约束、色键与末检 | 香草块面、深胡桃／烟褐／断续暗铜、重量不得靠增宽、照片级密纹／现代面板禁止、纯绿色键和十项末检 | pass |
+
+- 去冗余结论：数值重复只保留三种互补表达——全局坐标、列内分数与最终
+  `6:1` 比例；它们分别防止格位漂移、占用率误读和纵横比错误。过程历史不进入
+  执行正文，旧失败只转译为“不得过宽／过长／靠重量增宽”的负面门禁。
+
+### `UF-A1 V2-A V2` 最终生产正文草案 — 单张四端帽 atlas
+
+> `production-draft / unauthorized`。只有用户看到并明确授权本版本、固定
+> Image 1／2、下述修复边界和独立 `5` 次额度后，才可把规格中的 executor
+> 改为 authorized 并提交执行。首次调用不得上传 Image 3。
+
+```text
+Create exactly one production sprite-sheet image containing exactly four
+independent fixed side-cap components for the Player and Target unit frames of
+a Turtle WoW 1.18.1 / Vanilla-era pfUI overhaul. One generation call must
+return one single 1536 by 1024 RGB image. Do not return four files, four
+separate images, a sequence, or four individually generated pieces assembled
+afterward. The one output sheet itself contains all four components in fixed
+cells. Each component remains a separate logical source after deterministic
+cell splitting; generating them together does not make them one runtime object.
+
+These four components are only the narrow left and right terminal bindings
+that later join separately generated six-pixel top and bottom rails around live
+health and power bars. They are not complete unit frames, portraits, plaques,
+bookmarks, banners, leather sample boards, pillars, U-shaped brackets, or
+background panels. At standard width a deterministic builder precomposes the
+four sources for each role into one 214 by 42 shell texture. At variable width
+the builder keeps the caps fixed at 7 by 42 and places a separately generated
+center band one logical pixel beneath the caps only at the upper and lower
+decorative corners. The live content corridor must remain untouched.
+
+The written requirements are controlling. Use Image 1 only for circa-2004
+Vanilla WoW bitmap scale, broad low-resolution readability, short broken
+dull-brass highlights, heavy but restrained colour balance, and hand-painted
+edge hierarchy. Ignore Image 1's screen layout, circular portraits, complete
+unit-frame examples, chat content, text, and every book-shaped structure. Use
+Image 2 only for deep-walnut worn-leather depth, soot-brown recessed material,
+warm upper-left illumination, believable field repair, low-frequency wear, and
+slight hand-made error. Ignore Image 2's pages, spine, wooden posts, dragons,
+book silhouette, columns, and extensive metal architecture. The global and
+Unit Frames written baselines outrank both images whenever they conflict. No
+previous UF-A1 candidate, no simulation image, and no rejected whole-frame
+pixel is supplied or permitted as a reference, edit, trace, or construction
+source.
+
+LAYOUT IS THE HIGHEST PRIORITY. Establish the empty green atlas geometry before
+painting material. Return a perfectly uniform pure #00FF00 background with no
+grid lines, rulers, labels, numbers, coordinate text, cell borders, shadows, or
+guide marks. Divide the 1536 by 1024 canvas mentally into four equal vertical
+cells, each 384 pixels wide and 1024 pixels high. Draw exactly one connected
+physical cap in each cell and no fifth object. The strict left-to-right order is:
+
+1. Player left cap.
+2. Player right cap.
+3. Target left cap.
+4. Target right cap.
+
+All four caps use the same calibrated source envelope: exactly 128 pixels wide
+and exactly 768 pixels high. Each cap is therefore exactly six times taller
+than it is wide, with an acceptable ratio range of 5.94:1 through 6.06:1. It
+must be neither a broad 4:1 leather board nor an excessively thin 8:1 or 10:1
+needle. Its visual weight comes from colour masses, material depth, and contact
+shadow inside the envelope, never from making the silhouette wider or taller.
+
+Use the following inclusive global pixel ranges. They are placement
+requirements, not artwork to draw:
+
+- Cell 1 occupies x 0 through 383. Player left cap occupies x 128 through 255
+  and y 128 through 895.
+- Cell 2 occupies x 384 through 767. Player right cap occupies x 512 through
+  639 and y 128 through 895.
+- Cell 3 occupies x 768 through 1151. Target left cap occupies x 896 through
+  1023 and y 128 through 895.
+- Cell 4 occupies x 1152 through 1535. Target right cap occupies x 1280 through
+  1407 and y 128 through 895.
+
+This means every cell visibly contains: 128 pixels of pure green, then the
+128-pixel cap, then 128 pixels of pure green horizontally; and 128 pixels of
+pure green, then the 768-pixel cap, then 128 pixels of pure green vertically.
+The top and bottom green lanes are each the same thickness as one cap is wide.
+The cap occupies exactly one third of its cell width and three quarters of the
+canvas height. Preserve these equal green lanes on all four sides of every cap.
+No antialiasing, cast shadow, stitch, rivet, metal fragment, highlight, loose
+thread, detached speck, or measuring dot may escape a declared rectangle. The
+single connected physical mass, not a remote dot or shadow, must establish all
+four sides of each visible bbox. If decoration cannot fit, simplify or remove
+the decoration; never alter the rectangle.
+
+Show every cap front-facing and orthographic as a flat 2D game-UI source, with
+one shared scale and one shared warm light from the upper left. There is no
+scene, camera tilt, perspective foreshortening, floor, cast shadow outside the
+object, atmospheric backdrop, or three-dimensional presentation board. The
+four caps align to the same top and bottom baselines, but their hand-cut outer
+silhouettes and repairs are independently painted rather than mirrored.
+
+Design for a final runtime size of only 7 by 42 pixels. Use circa-2004 Vanilla
+WoW hand-painted bitmap language: a small number of broad readable colour
+masses, deliberate low-resolution transitions, short broken highlights, and
+clear material layers. Deep-walnut old leather is the primary physical mass;
+a narrow soot-brown recessed liner gives depth; dull oxidized brass appears
+only as tiny interrupted repairs. Keep saturation low and warmth restrained.
+Use contact darkening where leather overlaps liner, but keep every shadow
+inside the declared bbox. Do not use leather photography, uniform embossed
+grain, dense pores, repeated cracks, a procedural noise carpet, fine modern
+bevels, or tiny detail that vanishes at seven pixels wide.
+
+Roughness must come from believable field maintenance. Give each outer edge
+only two or three low-frequency hand-cut deviations and one or two worn
+corners. Do not make mathematically perfect rectangles, but also do not create
+large hooks, waves, flares, spikes, tassels, or loose curls that change the
+1:6 envelope. The inner joining edge of every cap stays nearly straight, dark,
+quiet, and physically usable beside live combat information. The four pieces
+belong to one craft family without becoming four matching industrial parts.
+
+The Player left cap has its outer edge on the left and its inner joining edge
+on the right. It is the most visibly repaired piece: one small crooked narrow
+dull-brass clamp and two or three coarse uneven stitches pulled through the
+leather. Keep all identity detail in the outer two thirds of the cap. The
+clamp is a repair accent, never a horizontal strap that widens the silhouette.
+
+The Player right cap has its inner joining edge on the left and outer edge on
+the right. Paint it independently and more quietly: worn leather, one shallow
+fold, and one small off-centre dark-brass rivet. Do not mirror or copy the
+Player left cap, and do not invent a matching brass clamp.
+
+The Target left cap has its outer edge on the left and inner joining edge on
+the right. Paint it independently with one rubbed, slightly polished leather
+fold and almost no metal. It must not reuse the Player right silhouette.
+
+The Target right cap has its inner joining edge on the left and outer edge on
+the right. Add one narrow damaged oxidized-brass repair strip with a small dent
+or split and uneven attachment, confined to the outer two thirds. The brass
+strip remains visibly narrower than the leather mass and must never become a
+second full-height post, square plaque, wide compression plate, or emblem. Add
+no hostility red, creature type, faction mark, elite crown, skull, horn, or
+crest.
+
+Every cap must physically join a six-pixel runtime top rail and six-pixel
+runtime bottom rail. In local coordinates inside each 128 by 768 cap bbox, the
+top contact band is y 0 through 109 and the bottom contact band is y 658
+through 767. Across the 32 source pixels nearest the inner joining edge, both
+contact bands must contain calm, continuous opaque leather mass. For left caps
+this inner contact strip is local x 96 through 127; for right caps it is local
+x 0 through 31. Do not place a curl, protruding stitch, metal spike, notch,
+outward shadow, or identity-critical mark in those contact strips. The middle
+inner edge, local y 110 through 657, stays dark and visually quiet beside the
+live bar. The first inward source pixel at the top and bottom contacts must be
+safe for the builder to cover with one logical pixel of center-band extrusion
+beneath the cap.
+
+Draw no health or power fill, bar colour, text, name, number, level, icon, aura,
+portrait, button, cursor, hit region, hover state, aggro state, glow, status
+symbol, panel, or complete frame. Do not draw continuous gold trim, matching
+corner ornaments, perfect rounded web cards, transparent black glass, gradient
+gloss, industrial rivet grids, black-iron shrines, Diablo-style architecture,
+book parts, wax seals, maps, dragons, gemstones, neon, or photoreal antiques.
+Do not use width, extra height, a second post, or large metal architecture to
+make the pieces feel heavy.
+
+Outside the four declared rectangles every pixel must remain uniform pure
+#00FF00. Before returning the single image, perform this final visual check:
+
+1. There is exactly one 1536 by 1024 image, not four outputs.
+2. There are exactly four connected caps and no other object or guide mark.
+3. Their order is Player left, Player right, Target left, Target right.
+4. Every real bbox is 128 by 768 and between 5.94:1 and 6.06:1.
+5. Every cell has equal 128-pixel green lanes on left, right, top, and bottom.
+6. All four caps share scale and baselines but are independently painted.
+7. The inner top and bottom contact strips are opaque, calm, and usable.
+8. Material weight is expressed inside the envelope, never by widening or
+   lengthening a cap.
+9. There is no baked dynamic content, complete frame, detached measuring pixel,
+   edge contact, dense photo texture, mirror duplication, or prior-candidate
+   pixel.
+10. The only non-green pixels belong to the four declared cap masses.
+```
+
+### V2 不可变修复边界与待授权预算
+
+- 固定调用单位：每个 attempt 恰好一次实际 ImageGen，恰好返回一张同时含四件
+  的 atlas；禁止四次逐件生成或把多张独立结果拼接。
+- 固定输入：每次只上传本文件既有固定 SHA 的 Image 1／2；attempt 1 无 Image
+  3。只有同一 V2 循环紧邻前稿存在明确可保留区域时，才可将整张前稿作为
+  Image 3 edit 输入；不得裁出单件后分别编辑，禁止旧 V1／模拟图／V2-B 像素。
+- 固定合同：对象数量／顺序、`1536×1024` 单图、四个 `384×1024` 列、四个
+  `128×768` bbox、`7×42` runtime、固定高度、权威顺序、色键、动态排除、
+  标准单 shell／可变宽度三切片与综合色方向。
+- 允许自主修复：仅可加强或重写同一正文中的格位占用、`6:1` 比例、单一连通
+  质量、端部接触、低频轮廓、材料块面、修补位置和纯绿隔离；可在整张 edit 与
+  从固定 Image 1／2 整张 regenerate 之间选择。
+- 必须重新授权：改为逐端帽调用、改变单图尺寸／列数／对象顺序／bbox／runtime
+  几何、增加参考、跨段或跨版本复用像素、允许非等比缩放、改变可见设计方向。
+- 待授权预算：V2 最多 `5` 次实际 ImageGen，当前 `0/5`；流程错误不占额度。
+  任一稿通过全部内部门禁即停止；第 `5` 稿失败则独立进入
+  `candidate-rejected / repair-budget-exhausted`，不影响旧 V1 的历史记录。
+- V2-B 继续 `0/5 / sequence-blocked`；只有 V2 内部通过后才可继续横轨段。
+
 ## 审查记录
 
 - 结构／交互：八件 source 保持独立；标准宽度由 builder 输出每角色一张完整
@@ -1716,10 +1968,10 @@ edge contact, dynamic content or previous candidate pixel.
 - 可见方向：维持已确认的深胡桃旧皮革、烟褐内衬、断续暗铜、Player 左／
   Target 右非镜像维修关系。用户已确认标准单 shell／可变宽度三切片不会改变
   该可见方向；几何图中的平色、像素笔触和微纹理仍明确非权威。
-- 正式生产冻结为两个独立执行段：`UF-A1 V2-A V1` 生成四个固定端帽，
-  `UF-A1 V2-B V1` 生成四条横轨。V2-A 已用满五次且没有一稿通过 source
-  几何／隔离门禁；V2-B 因 A→B 顺序保持 `0/5`，没有上传或生成。禁止跨段
-  复用、禁止第六次 V2-A 调用。
+- 旧生产段 `UF-A1 V2-A V1` 已用满五次且没有一稿通过 source 几何／隔离
+  门禁；V2-B 因 A→B 顺序保持 `0/5`，没有上传或生成。用户随后否决逐端帽
+  独立调用；新 `UF-A1 V2-A V2` 仍固定为一次调用输出一张四端帽 atlas，当前
+  为 `prompt-draft / 0/5 / unauthorized`。禁止把它计作旧版第六次或复用旧像素。
 - 用户方向结论：`confirmed / 2026-08-11`。本地模拟像素不得晋级
   source/runtime，也不得成为 ImageGen reference 或 edit 输入。
 
@@ -1745,14 +1997,15 @@ edge contact, dynamic content or previous candidate pixel.
 | `UF-PRIMARY-SIM-V1` | deterministic scene／zoom；SHA 与 display-region `4/4` 如上；ImageGen `0/0` | `simulation-confirmed` | 可见方向已写入 A1／A2／B1；等待三段正式生产授权 |
 | `UF-A1 V1` | fixed ImageGen `5/5`；attempt 5 ratio `2/2 pass`，安全走廊 `0/2 pass`；真实排版 SHA `147e9d98…5252`；用户于 `2026-08-11` 明确拒绝例外 | `candidate-rejected / repair-budget-exhausted / user-rejected` | 建立新的 UF-A1 版本；不得复用失败稿像素，不得第 6 次同版生图 |
 | `UF-A1-V2-SIM-V1` | deterministic scene／assembly；八件 source 互斥且动态区覆盖 `0px`；display-region `2/2 pass`；ImageGen `0/0` | `superseded-as-runtime / retained-as-source-granularity-evidence` | 不直接把四件挂为四张 runtime Texture；由 V2-SIM.V2 接管缩放合同 |
-| `UF-A1-V2-SIM-V2` | 标准单 shell 覆盖 `0.64–1.15×`、内部 Texture 接缝 `0`；可变 `W=160/200/240` 在 `0.71/1.00×` 接头空洞 `0px`、内容侵入 `0px`；display-region `6/6 pass`；双次重建 SHA 一致；用户于 `2026-08-11` 明确确认；ImageGen `0/0` | `prompt-authorized / P3` | V2-A／V2-B 已授权；先执行四端帽，内部通过后执行四横轨 |
+| `UF-A1-V2-SIM-V2` | 标准单 shell 覆盖 `0.64–1.15×`、内部 Texture 接缝 `0`；可变 `W=160/200/240` 在 `0.71/1.00×` 接头空洞 `0px`、内容侵入 `0px`；display-region `6/6 pass`；双次重建 SHA 一致；用户于 `2026-08-11` 明确确认；ImageGen `0/0` | `simulation-confirmed / retained-for-V2` | 新 V2-A V2 未改变可见构图或装配合同，因此继续沿用确认；不接受模拟像素 |
 | `UF-A1 V2-A V1` | fixed ImageGen `5/5`；attempt 5 为 `99–100×954–955px`、ratio error `37.106918–37.801047%`、上下隔离 `34–36px`；真实排版 SHA `7b6cceb7…642d` | `candidate-rejected / repair-budget-exhausted` | 不得第 6 次；V2-B 保持 `0/5`。新版本若改变一次生成的对象／画布拆分须重新授权 |
+| `UF-A1 V2-A V2` | 用户明确保留单次单图四端帽 atlas；正文逐项固定列宽三分之一、画布高四分之三、`6:1`、等宽绿边、接触带和“重量不得靠增宽”；规格 `unitframes_a1_v2a_production_v2.json`；ImageGen `0/5` | `prompt-draft / P2` | 用户审阅并明确授权完整正文、固定 Image 1／2、单图修复边界与新五次预算；不得作为旧版第六次 |
 
 ## 下一门禁
 
-`UF-A1 V2-A V1` 已用满五次修复预算且没有合格候选，当前终态为
-`candidate-rejected / repair-budget-exhausted`；V2-B 因顺序门禁保持 `0/5`。
-下一门禁是用户审计第五稿与失败证据，并决定是否授权新的生产版本。若改为
-每个端帽独立生成、改变 canvas／对象分段或允许新的确定性重建方式，均属于
-当前 envelope 外变更，必须形成新完整正文并重新授权。不得第六次调用本版本，
-不得创建 source/runtime 或修改 addon。UF-A2／UF-B1 继续暂停。
+`UF-A1 V2-A V2` 已形成单图四格、自包含的详尽生产正文；旧 V1 仍保持
+`candidate-rejected / repair-budget-exhausted`。下一门禁是用户审阅并明确授权
+V2 完整正文、固定 Image 1／2、单图修复边界与独立 `5` 次实际 ImageGen
+预算。未经授权不得执行；任何执行都不得计作旧版第六次。V2 内部通过后才
+恢复 V2-B。用户接受前不得创建 source/runtime 或修改 addon；UF-A2／UF-B1
+继续暂停。

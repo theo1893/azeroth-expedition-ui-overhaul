@@ -24,7 +24,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 | 任务 | 用户于 `2026-08-05` 实机确认 Quest Log 左右页 bug 与显示问题已修复；该活动范围保持 `P6 user-confirmed`。QS-B1 V7-A 为 `P5`。QL-D V3 五次循环耗尽后，用户明确“使用第4稿”：以一次性 aspect 例外接受 exact canonical SHA `816aeedd…47c5`，原 keyed aspect `2.76945`／technical `18/19` 仍保留。正式四态 atlas SHA `cda1ef21…cd56` 已由 Quests `1.27`／Theme `1.10` 接入既有奖励适配层；atlas 与 0／1／2／4／6 真实排版均和已审阅第4稿像素完全一致，display `5/5 pass`。当前 `P5 runtime-exported / addon-integrated`。真实 Button／Tooltip／动态图标／文字和几何未替换。七枚独立功能纹章仍未验收，菜单不响应，旧 Blizzard／pfQuest 按钮继续 fail-open；Tracker 与 NPC Quest／Gossip 不变 | Turtle WoW 验证 QL-D TGA 方向、四态、pressed `1px`、safe area、双列排版和长详情滚动；不得第六次生图。另验证闭合态火漆跨压与滚动裁切；七纹章与代理 parity 完成后才可启用事务菜单或隐藏旧按钮 |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |
-| 单位框 | A1 V2 `P3 / candidate-rejected / repair-budget-exhausted`。`UF-A1-V2-SIM-V2` 的八件 source、标准单 shell、可变三切片与 `42px` 固定高度合同仍有效；V2-A 四端帽已按授权用满 ImageGen `5/5`，最终四件 `99–100×954–955px`、比例误差 `37.11–37.80%`、上下隔离 `34–36px`，无合格候选。V2-B 因 A→B 顺序保持 `0/5`；无 source/runtime/addon 改动；A2／B1 继续暂停 | 禁止 V2-A 第六次调用。等待用户决定是否以新版本改为每端帽独立生成、改变画布／分段或其他重新授权生产合同；用户接受前不接入 addon |
+| 单位框 | A1 当前进入 `UF-A1 V2-A V2 / P2 / prompt-draft`。旧 V2-A V1 的单图四端帽循环已用满 ImageGen `5/5` 并退回；用户于 `2026-08-11` 明确否决逐端帽独立生成，要求继续以一次调用输出一张四端帽 atlas，并通过更详尽正文约束。`UF-A1-V2-SIM-V2` 的八件 source、标准单 shell、可变三切片、`42px` 固定高度与可见方向均未改变，确认继续有效。新 V2-A V2 为 `0/5`、尚未授权；V2-B 保持 `0/5 / sequence-blocked`；无 source/runtime/addon 改动；A2／B1 继续暂停 | 审阅并授权 `UF-A1 V2-A V2` 的单图四格完整正文、固定 Image 1／2、不可变边界和新 `5` 次预算。不得把它当成旧 V1 的第六次调用；通过后才恢复 V2-B |
 | 其他 UI | `P0–P2`，保持 pfUI 默认实现 | 逐模块建立四份长期文档，并仅登记目标模块的接管路由 |
 
 全量模块状态以 [docs/PROGRESS.md](docs/PROGRESS.md) 为准。
