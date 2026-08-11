@@ -71,7 +71,7 @@ def main() -> None:
     assert (pfui / "LICENSE").is_file(), "pfUI MIT license is missing"
 
     docs = ROOT / "docs"
-    modules = ("chat", "quests", "map", "character")
+    modules = ("chat", "quests", "map", "character", "unitframes")
     durable_names = {
         "SUBMODULES.md",
         "ART_BASELINE.md",

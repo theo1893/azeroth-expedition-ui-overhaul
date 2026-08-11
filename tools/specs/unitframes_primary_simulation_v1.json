@@ -1,0 +1,36 @@
+{
+  "schema": "aeui-unitframes-primary-simulation-v1",
+  "version": "UF-PRIMARY-SIM-V1",
+  "canvas": {"width": 1600, "height": 900},
+  "runtime": {
+    "player": {"hp": [200, 25], "power": [200, 4], "shell": [214, 42]},
+    "target": {"hp": [200, 25], "power": [200, 4], "shell": [214, 42]},
+    "targettarget": {"hp": [100, 20], "power": [100, 1], "shell": [112, 34]},
+    "focus": {"hp": [100, 25], "power": [100, 1], "shell": [112, 39]}
+  },
+  "placements": {
+    "player": [520, 708],
+    "target": [880, 708],
+    "targettarget": [744, 664],
+    "focus": [1014, 612]
+  },
+  "palette": {
+    "leather": "#28180E",
+    "leather_mid": "#49301E",
+    "liner": "#17100C",
+    "brass": "#80602D",
+    "brass_dim": "#5D4525",
+    "parchment": "#B8955C",
+    "focus_cloth": "#33475A"
+  },
+  "outputs": {
+    "scene": "generated/unitframes/primary/simulation/V1/unitframes-primary-v1.scene.png",
+    "zoom": "generated/unitframes/primary/simulation/V1/unitframes-primary-v1.zoom.png"
+  },
+  "imagegen_usage": "0/0",
+  "non_authoritative": [
+    "screen placement because the other-device layout is not synchronized",
+    "microtexture and final hand-painted brushwork",
+    "alpha extraction, atlas cells, seams and runtime export"
+  ]
+}
