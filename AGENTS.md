@@ -24,7 +24,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 | 任务 | 用户于 `2026-08-05` 实机确认 Quest Log 左右页 bug 与显示问题已修复；该活动范围保持 `P6 user-confirmed`。QS-B1 V7-A 为 `P5`。QL-D V3 五次循环耗尽后，用户明确“使用第4稿”：以一次性 aspect 例外接受 exact canonical SHA `816aeedd…47c5`，原 keyed aspect `2.76945`／technical `18/19` 仍保留。正式四态 atlas SHA `cda1ef21…cd56` 已由 Quests `1.27`／Theme `1.10` 接入既有奖励适配层；atlas 与 0／1／2／4／6 真实排版均和已审阅第4稿像素完全一致，display `5/5 pass`。当前 `P5 runtime-exported / addon-integrated`。真实 Button／Tooltip／动态图标／文字和几何未替换。七枚独立功能纹章仍未验收，菜单不响应，旧 Blizzard／pfQuest 按钮继续 fail-open；Tracker 与 NPC Quest／Gossip 不变 | Turtle WoW 验证 QL-D TGA 方向、四态、pressed `1px`、safe area、双列排版和长详情滚动；不得第六次生图。另验证闭合态火漆跨压与滚动裁切；七纹章与代理 parity 完成后才可启用事务菜单或隐藏旧按钮 |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |
-| 单位框 | A1 V2 `P2 / simulation-reviewed / user-pending`；`UF-A1 V1` 已用满 `5/5` 且用户拒绝例外。`UF-A1-V2-SIM-V2` 保留每角色四个 source，标准 `W=200` 预合成为单 `214×42` shell；`0.64–1.15×` 内部接缝／内容侵入均 `0`。可变 `W=160/200/240` 才用三切片，`0.71/1.00×` 接头空洞／内容侵入均 `0px`；display-region `6/6 pass`、双次重建 SHA 一致、ImageGen `0/0`。无 production source/runtime；A2／B1 均 `0/5`、继续暂停 | 等待用户确认单 shell／三切片运行时合同；确认后冻结 V2-A／V2-B source prompt 与 builder，再单独请求生产授权。确认前不上传、不生图、不接入 addon |
+| 单位框 | A1 V2 `P2 / simulation-confirmed / production-authorization-pending`；`UF-A1 V1` 已用满 `5/5` 且用户拒绝例外。用户于 `2026-08-11` 确认 `UF-A1-V2-SIM-V2`：每角色四个 source，标准 `W=200` 单 `214×42` shell，可变宽度三切片，固定 `42px` 高度；缩放／宽度矩阵无接缝与内容侵入，display-region `6/6 pass`。V2-A／V2-B 最终正文和 builder 合同已冻结，ImageGen `0/0`，无 production source/runtime；A2／B1 均 `0/5`、继续暂停 | 等待用户分别授权 `UF-A1 V2-A V1` 与 `UF-A1 V2-B V1`：A→B、每段最多 `5` 次、最坏 `10` 次、固定 Image 1／2 与冻结修复边界。授权前不上传、不生图、不接入 addon |
 | 其他 UI | `P0–P2`，保持 pfUI 默认实现 | 逐模块建立四份长期文档，并仅登记目标模块的接管路由 |
 
 全量模块状态以 [docs/PROGRESS.md](docs/PROGRESS.md) 为准。

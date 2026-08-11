@@ -2,7 +2,8 @@
 
 ## 当前状态
 
-- 主模块：UF-A1 V2 当前为 `P2 / simulation-reviewed / user-pending`；
+- 主模块：UF-A1 V2 当前为
+  `P2 / simulation-confirmed / production-authorization-pending`；
   `UF-PRIMARY-SIM-V1` 已于 `2026-08-11` 获用户方向确认。`UF-A1 V1` 已完成
   五次实际 ImageGen，终态为
   `candidate-rejected / repair-budget-exhausted / user-rejected`；用户于
@@ -43,8 +44,12 @@
 - 缩放矩阵 SHA `6040d50d…cd0d`；source → runtime／三切片板 SHA
   `81d45b0b…95e5`；几何报告 SHA `59fae38d…521e`；展示区域报告 SHA
   `759316cf…775`。bilinear 只是客户端过滤近似，不替代 Turtle WoW P6。
-- 当前等待用户确认该运行时结构。确认后才把合同写回稳定子模块定义、冻结
-  V2-A／V2-B source prompt 与 builder，并单独请求正式生产授权。
+- 用户于 `2026-08-11` 在看到缩放矩阵、装配板与校验结果后原文“确认”。现已
+  冻结八个独立 source、标准单 shell、可变宽度三切片、共同取整、装饰角
+  `1px` extrusion／overlap 和 `42px` 固定高度；确认不接受模拟像素。
+- 稳定结构已写入 `SUBMODULES.md`；work 中 `UF-A1 V2-A V1` 四端帽与
+  `UF-A1 V2-B V1` 四横轨最终生产正文、builder 合同及两段修复边界已经通过
+  自包含预检。正式生产仍未授权，V2 ImageGen 保持 `0/0`。
 
 ## 已完成的对象审计
 
@@ -87,8 +92,9 @@
 
 ## 下一门禁
 
-向用户展示 `UF-A1-V2-SIM-V2` 的缩放矩阵与装配板，等待明确方向结论。确认前
-不调用 ImageGen、不上传参考、不产出 production source/runtime、不接入 addon。
-若确认，先把八件 source、标准单 shell、可变宽度三切片和固定高度合同写回
-长期子模块文档，再冻结 V2-A／V2-B 正文并单独请求授权；若否决则只建立新的
-本地模拟，不恢复 V1 的动态区覆盖例外。A2／B1 继续暂停，额度均为 `0/5`。
+等待用户明确授权 `UF-A1 V2-A V1` 与 `UF-A1 V2-B V1`：按 A→B 顺序，
+每段最多五次实际 ImageGen、最坏合计十次；固定 Image 1／2；同段紧邻前稿
+才允许在冻结边界内作为 Image 3 edit 输入；流程错误不占生图额度；允许 work
+中列出的确定性提取、bbox-fit、ignored candidate 拆分、单 shell／三切片装配和真实排版
+预演。授权前不上传、不生图、不产出 source/runtime、不接入 addon。A2／B1
+继续暂停，额度均为 `0/5`。

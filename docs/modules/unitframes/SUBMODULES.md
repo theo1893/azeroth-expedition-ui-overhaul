@@ -21,6 +21,27 @@ SavedVariables、单位数据或状态逻辑。
 | `UF.STATE.HOVER.RIM` | `f.hoverglow` | 外壳边缘 | 由每张接受外壳 Alpha 确定性派生 | 暖白短边响应；不改变命中盒 |
 | `UF.STATE.AGGRO.RIM` | `f.glow` | 外壳边缘 | 由每张接受外壳 Alpha 确定性派生 | 暗红／橙褐短边响应；继续使用 pfUI 状态逻辑 |
 
+## UF-A1 已确认的 source → runtime 合同
+
+用户于 `2026-08-11` 确认 `UF-A1-V2-SIM-V2`。该确认冻结结构方向，不接受
+模拟像素，也不代表正式 source 已生成或接受。
+
+- Player／Target 各自拥有四个独立 source：左端帽 `7×42`、上轨
+  `200×6`、下轨 `200×6`、右端帽 `7×42`；共八件，角色之间不得镜像或
+  复用像素。
+- 默认内容宽度 `W=200` 时，确定性 builder 把每角色四件预合成为一张
+  `214×42` RGBA shell；运行时每角色只挂载一张 shell Texture，内部纹理
+  接缝为 `0`。
+- 只有 `W≠200` 时启用三切片：固定左右端帽，中央带承载横向延展后的上下轨
+  与透明中部。中央带在左右装饰角各伸入端帽下方 `1 logical px`，端帽位于
+  更高层；重叠不得进入 `x 7..W+7 / y 6..36` 内容／交互安全区。
+- 所有物理切片从同一逻辑原点取整；装饰盒向外取整，安全区向内取整。atlas
+  至少保留 `2px` padding，中央带端点做 `1px` extrusion，关键识别细节不得
+  只依赖单个 runtime 像素。
+- UF-A1 逻辑高度固定为 `42`，禁止纵向拉伸；若 provider 需要其他逻辑高度，
+  必须建立独立组件规格。整体 UI Scale 可以统一缩放最终 Frame／Texture，
+  不能退回四张零重叠 Texture 的直接挂载方式。
+
 逻辑 Frame 的高度仍由 provider 公式
 `height + pspace * GetPerfectPixel() + pheight + 2 * border` 计算。外壳锚到最终
 Frame 中心；透明外扩不能参与 Frame 宽高、点击区域或移动边界。
