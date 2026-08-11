@@ -6,16 +6,28 @@
 - 组件 ID：`UF.PLAYER.SHELL`、`UF.TARGET.SHELL`、
   `UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.BAR.*`、`UF.STATE.*`
 - 当前版本：`UF-A1 V1`／`UF-A2 V1`／`UF-B1 V1`
-- 子状态：`simulation-confirmed`
-- 项目阶段：`P2`
+- 子状态：`prompt-authorized`
+- 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 操作：`prepare`；正式生产尚未授权
+- 操作：`generate`；正式生产已授权，候选接受尚未发生
 - 生成前模拟：deterministic-local-geometry；ImageGen `0/0`
 - 本地渲染错误：初始模拟 `0`；确认后确定性复跑出现 `1` 次 sandbox 写权限
   错误，使用同一命令获准写入后复跑通过，输出 SHA 未变；不属于 ImageGen。
 - 自动修复预算：未来 `UF-A1`／`UF-A2`／`UF-B1` 各最多 `5` 次实际生图，
   最坏合计 `15`；当前 `0/15`
 - 流程错误：`0`
+- 正式生产授权：`2026-08-11`；用户授权 A1→A2→B1 顺序、A1／A2 固定
+  Image 1／2、同段紧邻前稿 edit 输入、B1 首次无图、每段最多 `5` 次实际
+  ImageGen、最坏 `15` 次、流程错误不占额度、禁止跨段复用，以及合同内的
+  固定分区、边缘连通色键、透明 RGB 清零、纵横比误差不超过 `1%` 的等比
+  bbox-fit 和真实排版预演。
+- 用户授权原文：`确认授权 UF-A1 V1、UF-A2 V1、UF-B1 V1；按 A1→A2→B1
+  顺序执行；A1/A2 每次允许上传固定 SHA 的 Image 1/2，首次无 Image 3，仅允许
+  同段紧邻前次输出在冻结修复边界内作为 Image 3 edit 输入；B1 首次不上传
+  图片，仅允许同段紧邻前次输出作为后续 Image 1 edit 输入；每段最多 5 次实际
+  ImageGen 调用，最坏合计 15 次，流程错误不占额度；禁止跨段复用像素；允许
+  固定分区拆分、边缘连通色键、透明 RGB 清零、纵横比误差不超过 1% 的等比
+  bbox-fit 与真实排版预演。`
 - 锁定视觉基准：当前没有 Unit Frames 专属锁定图。
 - 次级风格参考：
   - Image 1：`assets/locked/chat/聊天框视觉基准_v1.png`，SHA-256
@@ -181,9 +193,9 @@
 
 ## 最终执行正文
 
-状态：`production-final / unauthorized`。以下三段已完整吸收
-`UF-PRIMARY-SIM-V1` 的确认结论，但尚未获得正式生产授权；不得直接调用固定
-执行器。模拟图不得上传或成为生产输入。
+状态：`production / authorized 2026-08-11`。以下三段已完整吸收
+`UF-PRIMARY-SIM-V1` 的确认结论并获得用户逐项授权；首次调用必须原样执行。
+模拟图不得上传或成为生产输入。
 
 ### `UF-A1 V1` — Player／Target 大外壳
 
@@ -369,8 +381,8 @@ cast, no dynamic content, no edge contact and no non-green pixels outside them.
 
 ## 下一门禁
 
-向用户展示 `UF-A1 V1`、`UF-A2 V1`、`UF-B1 V1` 的完整最终 production
-正文、固定 Image 1／2 职责、确定性候选处理和冻结修复边界，并等待明确生产
-授权。每段最多 `5` 次实际 ImageGen，最坏合计 `15`；流程错误不占额度。
-本轮不创建 handoff：下一门禁只依赖已提交文字合同，模拟图可由 tracked 脚本
-确定性重建，不需要跨设备传递 exact ignored pixels。
+执行 `UF-A1 V1` attempt 1，并按完整审查顺序决定内部通过或生成完整 `.rN`
+修复正文；A1 结束后依次进入 A2、B1。每段最多 `5` 次实际 ImageGen，最坏
+合计 `15`；流程错误不占额度。候选需要在本设备继续逐像素审查，因此本轮不
+创建跨设备 handoff；若最终停在用户复审且需要换设备，再按稳定状态发布最小
+检查点。

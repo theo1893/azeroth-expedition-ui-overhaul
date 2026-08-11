@@ -25,7 +25,7 @@
 | Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P6`；QS-B1 V7-A `P5`；QL-D V3 attempt 4 `P5` | Quest runtime `1.27`／Theme `1.10`。QL-D 五次循环仍按 `5/5` 耗尽；用户随后明确“使用第4稿”，接受 keyed aspect `2.76945` 的一次性选稿例外，原 technical `18/19` 不重写。exact source SHA `816aeedd…47c5` 与四态 atlas SHA `cda1ef21…cd56` 已受 manifest 管理并接入 addon；正式 atlas／真实排版与已审阅 attempt 4 像素完全一致，display `5/5 pass`。真实 Button、Tooltip、动态图标／名称和双列几何不变。闭合载体根、火漆与旧功能按钮继续 fail-open；Tracker 与 NPC Quest／Gossip 不变 | Turtle WoW 验证 QL-D TGA 方向、四态、pressed `1px` 联动、safe area、0／1／2／4／6 排版及长详情滚动；同时验证闭合态火漆物理接触与滚动裁切。七纹章 parity 前不启用事务菜单；不得第六次生图 |
 | Map | `map.lua`、`minimap.lua`、`addonbuttons.lua` 等 | `P2` | 羊皮地图卷与黄铜罗盘已锁定 | 实机对象审计和组件级合同 |
 | Character | `character.lua`、`inspect.lua`、`dressup.lua` | `P2` | 香草同构角色面板已锁定 | 实机几何与装备槽／属性／页签拆分 |
-| Unit Frames | `api/unitframes.lua`、`player.lua`、`target.lua`、`targettarget.lua`、`focus.lua` | `P2`；主单位框 `simulation-confirmed` | 用户已接受 `UF-PRIMARY-SIM-V1` 的粗犷行军身份牌方向；当前只重绘 Player／Target／TargetTarget／Focus 的资源外壳与共享条材质，不改位置、尺寸或功能；三段生产正文完整性均通过，正式生产尚未开始 | 用户明确授权 `UF-A1 V1`／`UF-A2 V1`／`UF-B1 V1` 的固定参考、冻结修复边界与每段五次实际生图预算 |
+| Unit Frames | `api/unitframes.lua`、`player.lua`、`target.lua`、`targettarget.lua`、`focus.lua` | `P3`；主单位框 `prompt-authorized` | 用户已接受 `UF-PRIMARY-SIM-V1` 并授权 `UF-A1 V1`／`UF-A2 V1`／`UF-B1 V1` 按序生产；固定参考、同段 edit 边界、确定性候选处理及每段五次实际生图预算已冻结，当前 `0/15`；不改位置、尺寸或功能 | 按 A1→A2→B1 执行有界生成／审查／修复；每段内部通过即停，候选仍需用户单独接受才可进入 P4 |
 
 ## 尚未启动长期模块包
 
