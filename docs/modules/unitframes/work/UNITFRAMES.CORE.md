@@ -14,7 +14,7 @@
 - 本地渲染错误：初始模拟 `0`；确认后确定性复跑出现 `1` 次 sandbox 写权限
   错误，使用同一命令获准写入后复跑通过，输出 SHA 未变；不属于 ImageGen。
 - 自动修复预算：未来 `UF-A1`／`UF-A2`／`UF-B1` 各最多 `5` 次实际生图，
-  最坏合计 `15`；当前 A1 `3/5`、总计 `3/15`
+  最坏合计 `15`；当前 A1 `4/5`、总计 `4/15`
 - 流程错误：`2`（A1 `E1` 为 stdin transport；A1 `E2` 为 npm sandbox
   `EPERM`；二者均无图片或 provider result，不占实际生图额度）
 - 正式生产授权：`2026-08-11`；用户授权 A1→A2→B1 顺序、A1／A2 固定
@@ -368,7 +368,8 @@ cast, no dynamic content, no edge contact and no non-green pixels outside them.
 | 1/5 | `UF-A1 V1` / `d902e2b` | generate | child `019fee93-168d-7360-85c0-e7d02095deff`／result `ig_019be3007b694521016a7a83ee64d88191aa391033b667c3df` | raw `generated/unitframes/primary/UF-A1/V1/attempt-01/raw/UF-A1_V1_attempt-01.png`／SHA `80d928ac…33d3` | 组件合同：两框纵横比与动态安全走廊失败 | 保留深胡桃材质、克制装饰和 Player 左／Target 右非镜像关系；用 Image 3 edit 修正比例、隔离、开口与内缘 | failed；进入 `V1.r1` |
 | 2/5 | `UF-A1 V1.r1` / `c89e4f5` | edit | child `019fee9c-00fb-7a23-88c0-505b2f4cc403`／result `ig_07ff1b0e8d890a18016a7a863faedc8191b62e96b3d6bc4427` | raw `generated/unitframes/primary/UF-A1/V1/attempt-02/raw/UF-A1_V1_r1_attempt-02.png`／SHA `6b2af557…0346` | 组件合同：纵横比、安全走廊及 Player 隔离再次失败 | 保留同族材料与非镜像语义；改变策略，不再使用 Image 3，按更薄轨道和窄端帽从固定参考 regenerate | failed；进入 `V1.r2` |
 | 3/5 | `UF-A1 V1.r2` / `7a7c3ce` | regenerate | child `019feea5-6b2c-7ae1-88fd-94cae36e8cc0`／result `ig_0e5284289500fcb2016a7a889e347c8191ab40c73932895364` | raw `generated/unitframes/primary/UF-A1/V1/attempt-03/raw/UF-A1_V1_r2_attempt-03.png`／SHA `d7a42d40…7f5f` | 组件合同：两框过扁，比例约 `7.63:1`／`7.73:1`，运行时安全走廊失败 | 冻结明显改善的薄轨、深胡桃材质与非镜像语义；以 Image 3 edit 重新拉开上下轨并延长侧轨，禁止非等比拉伸 | failed；进入 `V1.r3` |
-| 4/5 | `UF-A1 V1.r3` / pending | edit | pending | pending | pending | pending | pending |
+| 4/5 | `UF-A1 V1.r3` / `0a3a1f5` | edit | child `019feea9-d3aa-7721-bb18-6fc4e6e031b6`／result `ig_09f4ff58c55329aa016a7a89c2fe5081918864d16ddd3300ed` | raw `generated/unitframes/primary/UF-A1/V1/attempt-04/raw/UF-A1_V1_r3_attempt-04.png`／SHA `abc6810f…bae9` | 组件合同：比例改善但仍过扁，端柱过宽且安全走廊失败 | 冻结材质和身份差异；以 Image 3 edit 横向缩短约 5%、延长侧轨约 10–15%、两端柱缩窄超过一半 | failed；进入最终 `V1.r4` |
+| 5/5 | `UF-A1 V1.r4` / pending | edit | pending | pending | pending | pending | pending |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
@@ -670,6 +671,101 @@ upper Player and lower Target order, exact 1320 by 259 bboxes within the stated
 envelopes, 5.10:1 within one percent, inner openings at least 1236 by 187,
 end strips no wider than 42, rails no thicker than 36, no non-uniform stretch,
 no baked dynamic content, no mirror duplication and no edge contact.
+
+#### Attempt 4 审查
+
+- 输入：固定 Image 1／2 与同段 attempt 3 raw 作为 Image 3；完整 `V1.r3` 正文
+  来自 `0a3a1f5`。child 完整回显正文和三张图映射，未启动递归 fixed child，
+  未报告 revised prompt。
+- 原始输出：`1536×1024 RGB`；SHA
+  `abc6810fcf6d6c7713b3be4097121e12d585f12365a1eabd20e0e827bc16bae9`。
+- 语义／美术：保留了第 3 稿的薄皮革轨、低频磨损与左右非镜像维修；Player
+  缝线和 Target 压片清楚，但 Target 黄铜片仍过大，二者端柱仍像宽端帽。
+- 第一失败门禁：Player bbox `1380×237`、比例误差 `14.278954%`；Target
+  `1381×225`、误差 `20.461059%`，虽较 attempt 3 改善但仍超过 `1%`。等比
+  fit 只有 `214×37`／`214×35`，安全走廊仍有 `1640`／`1990` 个可见 Alpha
+  像素。Player 左／右隔离 `76`／`80px`，Target `78`／`77px`，均显示横向
+  仍需收进约 `32px/侧`；Target 上隔离 `101px` 已通过，其余位置仍需按声明
+  envelope 重排。
+- 技术报告：
+  `generated/unitframes/primary/UF-A1/V1/attempt-04/review-report.json`；
+  `overall_technical_pass=false`。
+- 真实排版：
+  `generated/unitframes/primary/UF-A1/V1/attempt-04/real-layout-preview.png`，SHA
+  `7ce9d80545e4d764d401fd784bd7f45398a3914b07d0fefc66d6e1f528033c83`；
+  100% runtime 可见两框仍贴压实际 bar 末端，不可作为审美例外跳过合同。
+- 结论：`failed / attempt 4 of 5`；进入最后一次有界修复，不允许 source 或
+  runtime。
+
+#### `UF-A1 V1.r4` 完整修复正文
+
+The written requirements below are controlling. Image 1 is a secondary
+reference only for circa-2004 Vanilla WoW bitmap scale, thick readable masses,
+short dull-brass highlights and overall visual weight; ignore its whole-screen
+layout, portrait circles and every unit-frame example. Image 2 is a secondary
+reference only for deep-walnut material depth, warm upper-left illumination,
+hand-made edge error and the frequency of believable wear; ignore its pages,
+spine, columns, dragons, book silhouette and extensive gold architecture.
+Image 3 is the immediately preceding UF-A1 attempt. Preserve its deep-walnut
+material, thin horizontal rails, low-frequency wear, calm centres, Player-left
+stitch identity and Target-right brass-repair identity. Do not preserve its
+too-wide canvas occupancy, 5.82:1 and 6.14:1 proportions, short side rails,
+wide end posts, large Target brass plate or vertical positions. This written
+contract overrides every image.
+
+Perform a restrained geometry edit, not a new stylistic design. Return one
+production-ready 1536 by 1024 bitmap sheet with exactly two separate empty
+unit-frame shells on a uniform pure #00FF00 background: Player in the upper
+1536 by 512 cell and independently drawn Target in the lower cell. Keep them
+front-facing orthographic 2D, with no scene, perspective or other objects.
+
+Apply exactly these three structural corrections while repainting the affected
+junctions naturally:
+
+1. Shorten each complete shell horizontally by about five percent and centre
+   it, moving both outer side assemblies inward until the visible bbox begins
+   at x 108 and ends before x 1428. The final exclusive width is 1320 pixels.
+2. Without thickening either horizontal leather rail, move the top rail upward
+   and the bottom rail downward. Repaint and lengthen both upright side rails
+   so the Player bbox is y 126..385 and the Target bbox is global y 638..897.
+   Each final exclusive height is 259 pixels. Player and Target must therefore
+   both be 1320 by 259, ratio 5.0965:1 and within one percent of 5.10:1.
+3. Cut the left and right end posts to less than half their current width. Each
+   opaque side assembly, including stitch, fold, rivet, brass, liner and shadow,
+   is at most 42 pixels wide. Shrink the Target brass plate by more than half;
+   it is a small damaged repair strip, never a square plaque. Each top or bottom
+   rail including liner and shadow is at most 36 pixels high.
+
+The guaranteed pure-green hole inside each 1320 by 259 bbox runs from local
+x 42 through 1278 and local y 36 through 223, at least 1236 by 187 pixels.
+Nothing may cross this hole: no leather tip, corner curl, stitch, rivet, brass,
+highlight or shadow. This maps proportionally to the exact runtime transparent
+corridor x 7..207 and y 6..36 within a 214 by 42 shell, surrounding a 200 by
+25 health bar, a one-pixel gap and a 200 by 4 power bar. Do not solve this by
+stretching pixels, thickening rails, cropping an end, filling the hole or
+making a perfect pill. Reconstruct the side rails and corner joints.
+
+Preserve the established restrained field-made art: deep-walnut worn leather,
+soot-brown liner and tiny interrupted dull oxidized brass in circa-2004
+Vanilla WoW hand-painted bitmap language. Use warm upper-left illumination,
+readable low-resolution masses, short broken highlights, believable contact
+depth and only subtle low-frequency edge drift. Keep the Player's two crooked
+stitches entirely inside the narrow left 42-pixel post and one off-centre
+rivet in its narrow right post. Draw the Target independently, with a polished
+leather fold in its narrow left post and the reduced damaged brass repair
+inside its narrow right post. Never mirror them. Keep long centres quiet.
+
+Draw no fill, portrait, name, level, number, icon, aura, status text,
+classification, button or glow. Do not add wide U-shaped caps, continuous gold
+outlines, matching corners, perfect rounded rectangles, web cards, glass,
+industrial rivet grids, black-iron shrines, skulls, horns, crests, portrait
+wells, book parts, wax seals, dragons, gemstones, neon or photoreal antiques.
+Outside the two shells and inside both holes every pixel must be pure #00FF00.
+Before returning, measure and verify both bboxes are 1320 by 259 within the
+declared cell positions, both ratios are within one percent of 5.10:1, every
+side post is no wider than 42 pixels, every horizontal rail is no thicker than
+36 pixels, both 1236 by 187 openings are fully clear, isolation is at least
+96 pixels, and there is no baked content, mirror duplication or edge contact.
 
 ## 审查记录
 
