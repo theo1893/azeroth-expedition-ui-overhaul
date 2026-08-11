@@ -7,18 +7,20 @@
   `UF.BAR.HEALTH.FILL`、`UF.BAR.POWER.FILL`
 - 后续组件：`UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.STATE.*`
 - 当前版本：`UF-A1 V3-A final.r4 terminal`／`UF-A1 V3-B final.r4 terminal`／`UF-B1 V2 final`
-- 子状态：`UF-A1 V3-A exhausted / UF-A1 V3-B exhausted / UF-B1 attempt 1 queued`
+- 子状态：`UF-A1 V3-A exhausted / UF-A1 V3-B exhausted / UF-B1 attempt 1 rejected-repairable`
 - 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 当前操作：`generate`
+- 当前操作：`edit`
 - 生成前模拟：`UF-PRIMARY-V3-SIM-V1`，deterministic local geometry
 - 模拟 ImageGen：`0/0`
-- 正式生产：`authorized / 2026-08-11`；A `5/5`、B `5/5`、B1 `0/5`，
+- 正式生产：`authorized / 2026-08-11`；A `5/5`、B `5/5`、B1 `1/5`，
   最坏总计 `15` 次实际 ImageGen
-- 流程错误：`3`（审查器首次物理连通扫描性能错误；attempt 4 child 在 provider
+- 流程错误：`4`（审查器首次物理连通扫描性能错误；attempt 4 child 在 provider
   已生成后尝试 Pillow RGB 转换但环境无 Pillow，随后确认原图本身已为 RGB 并
   用原样复制完成；B attempt 5 的首个 pre-generation commit 权限自动审核超时，
-  重试后以相同内容成功；三者均未产生额外 provider 图，不占生图额度）
+  重试后以相同内容成功；B1 attempt 1 在已完成 `sips` 正方形归一化后又尝试
+  Pillow 模式确认但环境无 Pillow，随后用系统工具确认 `1024² RGB`；四者均未
+  产生额外 provider 图，不占生图额度）
 - Python：`/Users/yuanshiyao/miniconda3/envs/py312/bin/python`，`3.12.12`
 - 用户架构决定：`accepted / 2026-08-11`。用户接受“每个角色生成完整外壳，
   Python 负责精确工程化”，并新增生命／法力、怒气、集中值、能量等资源条
@@ -470,6 +472,28 @@
   `983d564992956208f40273e1d12045b85b56cd25800be4fc23cd48fe0f34f5d7`；
   technical `1e6b0508…e31b`；real-layout `f442b04c…2beb`。
 
+### Bars attempt 1 — `UF-B1 V2 final`
+
+- 固定正文 commit：`fff2730`；正文 SHA-256
+  `0bc5a43283e7dcca63b398a232a0d33ea84b994d41d8d54320bb999718f753d0`；
+  完整 child prompt SHA-256
+  `f37d26100b524549cd8fb758cea5268da0ad3e7c196ce2d8a862f2603264ca55`。
+- 固定输入：首次 generate，不上传任何图片；没有 A／B／旧 UF-B1 像素。
+- 固定执行器 session：`019ff008-3ace-73b0-aaf1-f8acc99ad61d`；provider
+  result：`ig_01d7646c04e49d70016a7ae374d8808191a37172fb8ef5d841.png`。
+- provider untouched raw：
+  `generated/unitframes/bars/V2/attempt-01/provider-raw.png`，`1254×1254 RGB`，
+  SHA-256 `30cb1ffb5b40f719c583a95fbe5403b2b8e26464281b513a1b850d6f2c61d691`。
+- 合同允许的同轴正方形归一化审查输入：
+  `generated/unitframes/bars/V2/attempt-01/raw.png`，`1024×1024 RGB`，SHA-256
+  `748c81a4edd6fbfcc2ac96aaf2c48ac3daeab1082aed515fadcf8c20d72a7abc`；
+  child log SHA-256 `396eb2c6…2ca4`。
+- 实际 ImageGen `1`，B1 累计 `1/5`。归一化后 child 的 Pillow 模式确认缺依赖，
+  但 `sips` 已成功完成且系统工具确认 `1024² RGB`；无第二张 provider 图。
+- review report SHA-256
+  `090354b64ea9ef2d16acc6b42b530b227daf888a5b649cb2fc3bfa4b2c9a882f`；
+  technical `53a08f82…a561`；real-layout `a16abc28…3f2d`。
+
 ## 审查记录
 
 - 语义／物理：Player／Target 是各自完整的连续外壳；Health／Power 是独立
@@ -642,6 +666,24 @@
   未生成 `candidate.png`，不得进入 source/runtime/addon。按授权继续独立 B1，
   最终再由用户决定 A／B 是否重开合同。
 
+### Bars attempt 1 内审 — `UF-B1 V2 final`
+
+- 已通过 `8/9` 门禁：恰好两个连通 swatch、其他材料 `0 px`；Health 在上、
+  Power 在下，中间隔离 `277 px`；全部外侧隔离至少 `167 px`；两块覆盖率
+  `99.52%/98.55%`。
+- 中性与乘色通过：Health core chroma mean/q95 `3.24/6`、Power
+  `3.63/7`；平均明度 `119.04/120.15`。中心偏差仅 `1.02/1.01`，runtime
+  stddev `8.39/7.02`，Health 较粗、Power 较静的层级成立。
+- 唯一失败为 `swatch-ratios`。Health bbox `582×207 = 2.811594:1`，相对
+  `2:1` 误差 `40.579710%`；Power bbox `689×76 = 9.065789:1`，相对 `4:1`
+  误差 `126.644737%`。直接独立归一化会过度扭曲笔触，超过冻结的 `25%`
+  source 门禁，不能作为 candidate。
+- 视觉：灰阶矿物颜料、无框无标签、低频 Health 与克制 Power 在真实四资源
+  乘色排版中方向成立；下一稿只把两块重绘到绝对 `512×256`／`512×128`，
+  保留当前明度、灰阶、笔触与隔离。
+- 结论：`candidate-rejected / repairable`；B1 `1/5`，无 candidate/source/
+  runtime。attempt 2 只用同段紧邻 `1024²` raw 作唯一 Image 1。
+
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
@@ -657,6 +699,7 @@
 | `UF-A1 V3-B final.r2` attempt 3 | session `019fefd5…a8d1`；raw `2727a2a…755c`；review `cf8a5c0…0a2e`；B `3/5` | safe 降至 `10860`；ratio `10.098017%`、aniso `9.171843%`、isolation `79/77` 失败；无 candidate/source/runtime | `final.r3` 宽减 `96`、高增 `6`，左右内脸让 `38/34 px`，保留上下薄轨 |
 | `UF-A1 V3-B final.r3` attempt 4 | session `019fefdf…779e`；raw `2d7bb28…7d18e`；review `85a4c06…eb349`；B `4/5` | 单开口／物理连通通过；bbox `1454×247`，ratio `15.532181%`、aniso `13.444030%`、safe `7979`、isolation `43/39` 失败；无 candidate/source/runtime | 最终 `r4` 用绝对坐标把 bbox 锁到 x `126..1410/y386..638`，开口覆盖 x `168..1368/y422..602`，并恢复粗旧非工业 Target 材料 |
 | `UF-A1 V3-B final.r4` attempt 5 | session `019fefef…076e`；raw `92a9889…97231`；review `983d564…4f5d7`；B `5/5` | ratio/aniso 通过；safe `22649`、isolation `68/72` 失败，工业式长边／端部仍在；`repair-budget-exhausted`；无 candidate/source/runtime | 禁止第六次；保留终态 review，继续独立 B1；最终等待用户决定是否为 A/B 重开合同 |
+| `UF-B1 V2 final` attempt 1 | session `019ff008…d61d`；provider raw `30cb1ff…1d691`；1024² raw `748c81a…a7abc`；review `090354b…a882f`；B1 `1/5` | `8/9` 通过；唯一失败为 Health `2.81:1`、Power `9.07:1` 的 source ratio；无 candidate/source/runtime | `final.r1` 只把两块重绘到 x `256..768`、Health y `128..384`、Power y `640..768`；冻结灰阶、明度、材质和隔离 |
 
 ## 最终执行正文
 
@@ -1493,6 +1536,62 @@ below, neutral equal-channel grayscale throughout, no third object, no colour,
 no centre hotspot and broad uniform green isolation.
 ```
 
+### `UF-B1 V2 final.r1` — Bars attempt 2 自包含比例修复
+
+```text
+Edit Image 1 into one corrected production sheet containing exactly two
+separate neutral-grayscale StatusBar material swatches for Turtle WoW 1.18.1.
+Return one 1024 by 1024 RGB bitmap on a perfectly uniform pure #00FF00
+background. Keep Health as the only object in the upper half and Power as the
+only object in the lower half. Do not add a third object, frame, border, cap,
+label, number, icon, colour key, guide or presentation panel.
+
+This bounded edit changes only the two source rectangle proportions and their
+canvas positions. Preserve Image 1's successful matte grey mineral-pigment
+material, quiet horizontal hand-painted brush drags, neutral value around 120,
+clean green isolation, no centre hotspot, and the hierarchy in which Health is
+slightly coarser while Power is slightly calmer. Do not turn either swatch into
+leather, paper, fabric, metal, glass or a modern glossy meter.
+
+Use exact invisible canvas rectangles. Repaint the Health material as one
+connected 512 by 256 rectangle occupying x 256 through 767 and y 128 through
+383. Repaint the Power material as one connected 512 by 128 rectangle
+occupying x 256 through 767 and y 640 through 767. These are source shapes,
+not visible guides: draw no outline or coordinate marks. Every pixel outside
+the two rectangles is pure #00FF00, including the 256-pixel vertical gap
+between them. Add no drop shadow, halo, detached fleck or antialias haze beyond
+their bboxes.
+
+Do not preserve Image 1's wrong proportions. Its Health is approximately 582
+by 207 or 2.81:1 and must become 2:1. Its Power is approximately 689 by 76 or
+9.07:1 and must become 4:1. Correct both by repainting the material into the
+specified bboxes; do not merely place the current narrow strips inside a larger
+green or transparent box. Each entire rectangle must remain visibly filled by
+one continuous pigment surface with no transparent hole.
+
+Every material pixel is neutral grayscale with equal red, green and blue
+channels because pfUI applies Health, reaction, Mana, Rage, Focus and Energy
+colours at runtime. Preserve moderate tintable brightness: neither swatch may
+be near black, white, brown, blue, red or green. Keep broad low-frequency value
+changes rather than high-frequency procedural noise. Health has three or four
+softly unequal horizontal brush accumulations and slightly deeper variation.
+Power has smaller, denser, quieter changes that survive at 64 by 16 and at four
+runtime pixels high. Preserve Image 1's successful lack of a centre emblem,
+hotspot, unique end mark or full-width scratch.
+
+At runtime Health exports to 64 by 32 and Power to 64 by 16, then stretches
+under live 200 by 25 and 200 by 4 bars. Keep the whole width statistically
+quiet so live names and values remain dominant. Forbid colour tint, diagonal
+stripes, repeated chevrons, leather grain, parchment, fabric weave, brushed
+metal, glass, gradient gloss, bevel, mirrored shine, text and UI chrome.
+
+Before returning, verify exactly two connected filled rectangles and nothing
+else: Health bbox x256..767/y128..383 at exactly 512 by 256 and 2:1; Power bbox
+x256..767/y640..767 at exactly 512 by 128 and 4:1; pure green outside; broad
+green separation; equal-channel grayscale; moderate value; Health coarser;
+Power calmer; no hotspot, frame, shadow, label or colour.
+```
+
 ## 生产正文完整性预检
 
 | 门禁 | V3 final 证据 | 结论 |
@@ -1533,7 +1632,7 @@ no centre hotspot and broad uniform green isolation.
 |---|---|---:|---:|---|
 | `UF-A1 V3-A final.r4` | `repair-budget-exhausted / candidate-rejected` | `5/5` | `2` | 禁止第六次；等待最终用户审查 |
 | `UF-A1 V3-B final.r4` | `repair-budget-exhausted / candidate-rejected` | `5/5` | `1` | 禁止第六次；等待最终用户审查 |
-| `UF-B1 V2 final` | `prompt-authorized / attempt 1 queued` | `0/5` | `0` | 提交 reviewer 后首次无图片执行 generate |
+| `UF-B1 V2 final.r1` | `repair-prepared / attempt 2 queued` | `1/5` | `1` | commit 后只以上一 B1 `1024²` raw 为 Image 1 |
 
 每次实际候选的 session／result、raw／candidate／真实排版路径与 SHA、第一失败
 门禁、保留区和下一正文都继续写入本文件；无生成证据的流程错误另表记录。
@@ -1543,6 +1642,7 @@ no centre hotspot and broad uniform green isolation.
 | 1 | `UF-A1 V3-A final` attempt 1 review／`831e7ca` | 无 provider session | 初版 reviewer 对大量微型材料 fleck 逐个全画布 flood，性能不可接受；主动终止，未调用 provider、未产生新图 | 改为 scanline run union-find，一次线性扫描精确保留面积、bbox、edge 和 center 语义；重跑成功 | 不占生图额度 |
 | 2 | `UF-A1 V3-A final.r3` attempt 4 post-copy／`8c76a77` | `019fefbb…1746` | provider 图已经存在；child 尝试用系统 `python3/Pillow` 强制 RGB 时缺少 Pillow，未生成第二张图 | child 退回 `sips` 检查，确认原图 `1536×1024 RGB / no alpha` 后原样复制 | 不额外占生图额度；attempt 4 仍只计一次 |
 | 3 | `UF-A1 V3-B final.r4` pre-generation commit／工作树基于 `8a64d44` | 无 provider session | 自动权限审核在执行 `git add && git commit` 前超时；Git 历史与工作树均未被该调用改变，也没有启动 ImageGen | 以相同文件和相同正文重试一次，成功固定为 commit `2e63721` | 不占生图额度；B attempt 5 仍只计后续唯一 provider 调用 |
+| 4 | `UF-B1 V2 final` attempt 1 post-normalize／`fff2730` | `019ff008…d61d` | provider 已返回唯一 `1254² RGB` 图；child 已用 `sips` 成功归一化为 `1024²` 后，又以系统 Python/Pillow 做模式确认但环境无 Pillow | 保留 provider raw；系统 `file`／`sips` 确认归一化结果为 `1024² RGB / no alpha`，以该结果审查 | 不额外占生图额度；B1 attempt 1 仍只计一次 |
 
 ## 历史终态摘要
 
@@ -1558,8 +1658,8 @@ no centre hotspot and broad uniform green isolation.
 
 ## 下一门禁
 
-先提交 B1 专用确定性 reviewer，再以固定执行器启动 `UF-B1 V2 final`
-attempt 1：首次不上传任何图片，只生成两个隔离的中性灰阶 swatch。B1 内部
-通过即停，失败时仅允许同段紧邻前稿作下一次 edit input；最多 `5` 次实际
-ImageGen。A／B 均已耗尽且不得第六次。三段都到终态后统一等待用户审查；
-当前仍禁止创建 source/runtime、修改 addon 或跨段复用。
+提交 `UF-B1 V2 final.r1 / repair-prepared` 后，以固定执行器启动 B1 attempt 2：
+只上传 B1 attempt 1 的 `1024²` raw 作为 Image 1，不上传 A／B 或任何旧失败
+像素。若通过全部客观门禁即停并等待用户视觉审查；否则仅可继续使用同段紧邻
+前稿，B1 总上限 `5` 次实际 ImageGen。A／B 均已耗尽且不得第六次；当前仍
+禁止创建 source/runtime、修改 addon 或跨段复用。

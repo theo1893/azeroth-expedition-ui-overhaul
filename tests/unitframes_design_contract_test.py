@@ -108,7 +108,7 @@ def main() -> None:
 
     work = WORK.read_text(encoding="utf-8")
     normalized_work = " ".join(work.split())
-    assert "UF-A1 V3-A exhausted / UF-A1 V3-B exhausted / UF-B1 attempt 1 queued" in work
+    assert "UF-A1 V3-A exhausted / UF-A1 V3-B exhausted / UF-B1 attempt 1 rejected-repairable" in work
     assert "accepted UF-PRIMARY-V3-SIM-V1 / 2026-08-11" in work
     assert "production / authorized / 2026-08-11" in work
     assert "完整性结论：`pass-final`" in work
@@ -262,6 +262,19 @@ def main() -> None:
             "At 100 percent runtime size, preserve the confirmed hierarchy",
             "Mana blue, Rage red, Focus orange-brown and Energy yellow",
             "Before returning, verify exactly two isolated swatches",
+        ),
+    )
+    bars_r1 = extract_fenced_body(work, "### `UF-B1 V2 final.r1`")
+    assert_clauses(
+        bars_r1,
+        (
+            "Edit Image 1 into one corrected production sheet",
+            "Health material as one connected 512 by 256 rectangle",
+            "Power material as one connected 512 by 128 rectangle",
+            "Do not preserve Image 1's wrong proportions",
+            "Every material pixel is neutral grayscale",
+            "Health bbox x256..767/y128..383",
+            "Power bbox x256..767/y640..767",
         ),
     )
 

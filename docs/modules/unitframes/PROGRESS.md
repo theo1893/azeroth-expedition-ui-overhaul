@@ -7,7 +7,7 @@
 - `UF-A1 V3-B final` Target 完整外壳：
   `P3 / repair-budget-exhausted / candidate-rejected / 5/5`。
 - `UF-B1 V2 final` Health／Power 灰阶填充纹：
-  `P3 / prompt-authorized / attempt 1 queued / 0/5`。
+  `P3 / attempt 1 rejected-repairable / final.r1 repair-prepared / 1/5`。
 - `UF-A2` TargetTarget／Focus：继续暂停；既有物件身份方向不变，尚无正式
   source。Hover／Aggro 仍计划由接受外壳 Alpha 确定性派生。
 - 当前只处理资源重绘、后处理合同与未来替换路径；没有修改另一台设备上的
@@ -22,7 +22,8 @@
 - 用户随后于 `2026-08-11` 明确授权上述三段 final，冻结 A→B→B1 顺序、
   A／B 固定 Image 1／2、同段紧邻前稿有界 edit、B1 首次无图片、每段
   `5` 次实际生成及最坏 `15` 次预算。流程错误不占额度；跨段与旧失败像素
-  禁止复用。A attempts 1–5 与 B attempts 1–5 均已完成并耗尽；B1 未调用。
+  禁止复用。A attempts 1–5 与 B attempts 1–5 均已完成并耗尽；B1 attempt 1
+  已完成。
 
 ## V3 结构合同
 
@@ -75,7 +76,7 @@
   下一门禁；V1／V2 的逐稿全文继续由 Git 历史保存。
 - `UF-A1 V3-A`、`UF-A1 V3-B`、`UF-B1 V2` 每段最多 `5` 次实际
   `imagegen-0-143-0`，最坏合计 `15` 次；当前 A `5/5`、B `5/5`、B1
-  `0/5`。
+  `1/5`。
 - 三段 final 已吸收用户确认的可见结论并通过 `pass-final` 自包含预检；
   正式生产授权已独立取得，按 A→B→B1 顺序执行。
 - 流程错误无生成证据时单独记录，不占额度。旧 V1／V2 失败像素禁止作为新段
@@ -144,7 +145,16 @@
 - reviewer 首次逐 fleck flood 性能错误已改为线性 scanline run union-find；
   A attempt 4 child 在 provider 图已存在后缺 Pillow，退回 `sips` 确认原图为
   RGB 并复制；B 最终正文的首次 pre-generation commit 权限审核超时，重试后
-  以相同内容成功。三项作为流程错误 `3` 单列，没有额外 provider 图，不占额度。
+  以相同内容成功；B1 attempt 1 在 `sips` 已完成正方形归一化后又尝试缺失的
+  Pillow 做模式确认，随后以系统工具确认结果。四项作为流程错误 `4` 单列，
+  没有额外 provider 图，不占额度。
+- B1 attempt 1 的两对象、上下顺序、隔离、覆盖率、中性灰阶、明度、中心偏差
+  和 Health／Power 层级全部通过。唯一失败是 source ratio：Health
+  `582×207 = 2.81:1`，Power `689×76 = 9.07:1`，超过目标 `2:1/4:1` 的
+  `25%` 门禁；无 candidate/source/runtime。
+- `UF-B1 V2 final.r1` 只把两块重绘到绝对坐标：Health x `256..768/y128..384`
+  的 `512×256`，Power x `256..768/y640..768` 的 `512×128`；保留 attempt 1
+  灰阶材质、明度、隔离和层级，只用同段紧邻 `1024²` raw 作 Image 1。
 
 ## 历史终态
 
@@ -158,7 +168,7 @@
 
 ## 下一门禁
 
-提交 B1 专用确定性 reviewer 后，以固定执行器启动 `UF-B1 V2 final`
-attempt 1；首次不上传图片。通过即停，否则后续只以上一 B1 raw 作同段 edit，
-最多 `5` 次。A／B 已耗尽且不得第六次；当前禁止创建 source/runtime、修改
-addon、跨段复用或复用旧失败像素。
+提交 `UF-B1 V2 final.r1 / repair-prepared` 后执行 B1 attempt 2，只以上一 B1
+`1024²` raw 作为 Image 1。通过即停，否则后续仍只用同段紧邻 raw，最多
+`5` 次。A／B 已耗尽且不得第六次；当前禁止创建 source/runtime、修改 addon、
+跨段复用或复用旧失败像素。
