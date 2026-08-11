@@ -76,7 +76,7 @@ end
 
 -- The game renders through a normalized 768-high UI root, while Turtle's
 -- GetScreenWidth/GetScreenHeight report the physical 1920x1080 mode. Runtime
--- v2.1 must never feed those physical dimensions into Frame:SetPoint.
+-- v2.2 must never feed those physical dimensions into Frame:SetPoint.
 local rootWidth = 1920 * 768 / 1080
 local rootHeight = 768
 local uiScale = 0.81269841269841
@@ -193,6 +193,7 @@ _G.ArchiTotemDragHandle = archiHandle
 _G.ArchiTotemButton_AllTotems = archiAll
 
 function getglobal(name) return _G[name] end
+STANDARD_TEXT_FONT = "Fonts\\FZBWJW.TTF"
 function InCombatLockdown() return false end
 function UnitClass() return "Shaman", "SHAMAN" end
 
@@ -352,7 +353,7 @@ assert(mainBar.points[1][5] == 100)
 local ok, message = module:ApplyComfortUIScalePreset()
 assert(ok == true)
 assert(string.find(message, "Comfort UI scale applied", 1, true))
-assert(module.focusLayoutRuntimeContract == "2.1")
+assert(module.focusLayoutRuntimeContract == "2.2")
 assert(module.fieldKitRuntimeContract == "2.0")
 assert(module.focusLayoutStatus == "applied")
 assert(module.focusLayoutConfigured == 10)
@@ -396,7 +397,9 @@ assert(expected.swingY == 284)
 assert(expected.stanceX == 0)
 assert(expected.stanceY == 255)
 assert(expected.doiteX == 850)
-assert(expected.doiteY == -647)
+assert(expected.doiteY == -615)
+assert(expected.unitFontRole == "system")
+assert(expected.unitFontSize == 18)
 assert(screenWidthCalls == 0)
 assert(screenHeightCalls == 0)
 
@@ -468,7 +471,8 @@ assert(module.focusUnitScale == 0.8)
 assert(module.focusTargetTargetScale == 0.68)
 assert(module.focusReadoutScale == 1)
 assert(module.focusStanceScale == 0.72)
-assert(module.focusUnitFontSize == 14)
+assert(module.focusUnitFontRole == "system")
+assert(module.focusUnitFontSize == 18)
 for _, frame in pairs({ player, target }) do
   assert(math.abs(frame.scale - 0.8) < 0.001)
 end
@@ -496,9 +500,9 @@ for _, config in pairs({ playerConfig, targetConfig }) do
   assert(config.buffperrow == "8")
   assert(config.debuffperrow == "8")
   assert(config.customfont == "1")
-  assert(config.customfont_size == "14")
-  assert(config.customfont_name == pfUI_config.global.font_unit)
-  assert(config.customfont_style == pfUI_config.global.font_unit_style)
+  assert(config.customfont_size == "18")
+  assert(config.customfont_name == STANDARD_TEXT_FONT)
+  assert(config.customfont_style == "OUTLINE")
 end
 assert(playerConfig.buffs == "TOPLEFT")
 assert(playerConfig.debuffs == "BOTTOMLEFT")
@@ -518,9 +522,9 @@ assert(targetTargetConfig.debuffoffy == "0")
 assert(targetTargetConfig.buffperrow == "8")
 assert(targetTargetConfig.debuffperrow == "8")
 assert(targetTargetConfig.customfont == "1")
-assert(targetTargetConfig.customfont_size == "14")
-assert(targetTargetConfig.customfont_name == pfUI_config.global.font_unit)
-assert(targetTargetConfig.customfont_style == pfUI_config.global.font_unit_style)
+assert(targetTargetConfig.customfont_size == "18")
+assert(targetTargetConfig.customfont_name == STANDARD_TEXT_FONT)
+assert(targetTargetConfig.customfont_style == "OUTLINE")
 assert(23 + 7 * (23 + 7) == 233)
 assert(240 - (23 + 7 * (23 + 7)) == 7)
 assert(player.updateConfigCalls == 1)
@@ -613,7 +617,7 @@ assert(archiDirectionCalls == 1)
 assert(module.archiTotemDirectionStatus == "up")
 
 assert(AzerothExpeditionUI.db.actionbars.fieldKitBound == true)
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 12)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 13)
 assert(AzerothExpeditionUI.db.actionbars.comfortUIScaleVersion == 2)
 
 for _, frame in pairs({
@@ -631,7 +635,7 @@ end
 assert(doite.parent == UIParent)
 
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "focus%-layout%-contract=2%.1"))
+assert(string.find(status, "focus%-layout%-contract=2%.2"))
 assert(string.find(status, "focus%-layout=applied"))
 assert(string.find(status, "focus%-layout%-mouse=visible%-controls%-only"))
 assert(string.find(
@@ -647,7 +651,8 @@ assert(string.find(status, "focus%-layout%-targettarget%-scale=0%.68"))
 assert(string.find(status, "focus%-layout%-readout%-scale=1"))
 assert(string.find(status, "focus%-layout%-stance%-scale=0%.72"))
 assert(string.find(status, "focus%-layout%-readout%-size=260x12"))
-assert(string.find(status, "focus%-layout%-unit%-font%-size=14"))
+assert(string.find(status, "focus%-layout%-unit%-font%-size=18"))
+assert(string.find(status, "focus%-layout%-unit%-font=system"))
 assert(string.find(status, "focus%-ui%-scale=applied"))
 assert(string.find(status, "focus%-ui%-scale%-tier=8"))
 assert(string.find(status, "focus%-ui%-scale%-target=8"))
@@ -711,7 +716,7 @@ assert(ArchiTotem_Options.Apperance.direction == "up")
 
 -- A live 0.8.14 profile may still have a version-1 backup that predates
 -- TargetTarget ownership. V10 must extend that backup before its one-shot
--- version-8-to-12 migration, so restore remains lossless.
+-- version-8-to-13 migration, so restore remains lossless.
 pfUI_config.global.pixelperfect = "8"
 pfUI.pixelperfect.UpdateConfig()
 local function legacyPosition(anchor, x, y, scale)
@@ -807,7 +812,7 @@ assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 8)
 
 pfUI_config.position.pfPlayer.xpos = -190
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 12)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 13)
 local upgradedBackup =
   assert(AzerothExpeditionUI.db.actionbars.combatFocusBackup)
 assert(upgradedBackup.positions.pfTargetTarget.present == true)
@@ -820,7 +825,7 @@ assert(screenHeightCalls == 0)
 
 -- A live in-memory v9 session can be newer than the persisted v8 snapshot.
 -- Only its exact untouched geometry and default local font signature may
--- migrate automatically to v12.
+-- migrate automatically to v13.
 pfUI_config.position.pfPlayer =
   legacyPosition("BOTTOM", -150, 535, 0.68)
 pfUI_config.position.pfTarget =
@@ -882,11 +887,11 @@ assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 9)
 
 pfUI_config.unitframes.player.customfont_size = "12"
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 12)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 13)
 
 -- The currently persisted target-device snapshot can still be the exact
 -- v7 game-coordinate contract if the in-memory v8 session has not yet been
--- written. It must also jump directly to v12 on the next load.
+-- written. It must also jump directly to v13 on the next load.
 pfUI_config.position.pfPlayer =
   legacyPosition("BOTTOM", -212, 492, 0.75)
 pfUI_config.position.pfTarget =
@@ -926,7 +931,7 @@ AzerothExpeditionUI.db.actionbars.combatFocusProjection = {
   coordinateSpace = "game-native-v1",
 }
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 12)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 13)
 assert(screenWidthCalls == 0)
 assert(screenHeightCalls == 0)
 
@@ -994,7 +999,7 @@ end
 
 ConfigureV10Signature(0.68, 0.72)
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 12)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 13)
 
 ConfigureV10Signature(0.8, 1)
 pfUI_config.position.pfTarget.ypos = 533
@@ -1002,7 +1007,7 @@ module:Apply()
 assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 10)
 pfUI_config.position.pfTarget.ypos = 535
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 12)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 13)
 assert(pfUI_config.position.pfPlayer.ypos == 485)
 assert(pfUI_config.position.pfTarget.ypos == 485)
 assert(pfUI_config.position.pfPlayer.scale == 0.8)
@@ -1013,8 +1018,8 @@ assert(pfUI_config.position.pfSwingTimerMainhand.ypos == 284)
 assert(pfUI_config.position.pfPlayerCastbar.scale == 1)
 assert(pfUI_config.position.pfActionBarStances.scale == 0.72)
 
--- The exact V11 snapshot currently persisted by 大奶黑牛 migrates once to
--- V12. A one-coordinate manual edit still protects the profile.
+-- The exact V11 snapshot migrates once to V13. A one-coordinate manual edit
+-- still protects the profile.
 ConfigureV10Signature(0.8, 1)
 pfUI_config.position.pfPlayer.ypos = 455
 pfUI_config.position.pfTarget.ypos = 455
@@ -1035,11 +1040,51 @@ module:Apply()
 assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 11)
 pfUI_config.position.pfTarget.ypos = 455
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 12)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 13)
 assert(pfUI_config.position.pfPlayer.ypos == 485)
 assert(pfUI_config.position.pfTarget.ypos == 485)
 assert(pfUI_config.position.pfTargetTarget.ypos == 576)
 assert(pfUI_config.unitframes.target.buffsize == "23")
 assert(pfUI_config.unitframes.target.debuffsize == "23")
+
+-- The exact V12 snapshot currently persisted by 大奶黑牛 receives only the
+-- requested font and DoiteDPS-lane repair. A manually selected font protects
+-- the profile until the preset is explicitly applied again.
+for _, config in pairs({
+  pfUI_config.unitframes.player,
+  pfUI_config.unitframes.target,
+  pfUI_config.unitframes.ttarget,
+}) do
+  config.customfont = "1"
+  config.customfont_name = pfUI_config.global.font_unit
+  config.customfont_size = "14"
+  config.customfont_style = pfUI_config.global.font_unit_style
+end
+DoiteDPSDB.x = 850
+DoiteDPSDB.y = -647
+DoiteDPSDB.scale = 0.82
+AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion = 12
+AzerothExpeditionUI.db.actionbars.combatFocusProjection = {
+  coordinateSpace = "game-native-v1",
+}
+
+pfUI_config.unitframes.target.customfont_name = STANDARD_TEXT_FONT
+module:Apply()
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 12)
+assert(DoiteDPSDB.y == -647)
+
+pfUI_config.unitframes.target.customfont_name = pfUI_config.global.font_unit
+module:Apply()
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 13)
+assert(DoiteDPSDB.y == -615)
+for _, config in pairs({
+  pfUI_config.unitframes.player,
+  pfUI_config.unitframes.target,
+  pfUI_config.unitframes.ttarget,
+}) do
+  assert(config.customfont_name == STANDARD_TEXT_FONT)
+  assert(config.customfont_size == "18")
+  assert(config.customfont_style == "OUTLINE")
+end
 
 print("action focus layout module smoke test passed")

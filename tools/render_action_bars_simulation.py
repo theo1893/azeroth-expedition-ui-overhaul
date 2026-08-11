@@ -86,16 +86,47 @@ def apply_bar_overrides(spec: dict[str, Any]) -> dict[str, Any]:
     return spec
 
 
+def apply_unit_frame_overrides(spec: dict[str, Any]) -> dict[str, Any]:
+    """Apply compact per-frame revisions without duplicating aura evidence."""
+    overrides = spec.pop("unit_frame_overrides", None)
+    if not overrides:
+        return spec
+
+    unit_frames = spec.get("unit_frames", {})
+    frames = []
+    matched: set[str] = set()
+    for frame in unit_frames.get("frames", []):
+        frame_id = str(frame["id"])
+        if frame_id in overrides:
+            frames.append(merge_specs(frame, overrides[frame_id]))
+            matched.add(frame_id)
+        else:
+            frames.append(frame)
+
+    missing = sorted(set(overrides) - matched)
+    if missing:
+        raise ValueError(f"unknown unit-frame override ids: {', '.join(missing)}")
+    unit_frames["frames"] = frames
+    spec["unit_frames"] = unit_frames
+    return spec
+
+
+def apply_spec_overrides(spec: dict[str, Any]) -> dict[str, Any]:
+    return apply_unit_frame_overrides(apply_bar_overrides(spec))
+
+
 def load_spec(path: Path, root: Path) -> dict[str, Any]:
     data = json.loads(path.read_text(encoding="utf-8"))
     base_ref = data.pop("extends", None)
     if not base_ref:
-        return apply_bar_overrides(data)
+        return apply_spec_overrides(data)
 
     base_path = Path(str(base_ref))
     if not base_path.is_absolute():
         base_path = root / base_path
-    return apply_bar_overrides(merge_specs(load_spec(base_path.resolve(), root), data))
+    return apply_spec_overrides(
+        merge_specs(load_spec(base_path.resolve(), root), data)
+    )
 
 
 def draw_text(
@@ -845,6 +876,50 @@ def draw_bar(
     return shell
 
 
+def draw_side_cluster(
+    draw: ImageDraw.ImageDraw,
+    config: dict[str, Any],
+    ui_scale: float,
+    fonts: dict[str, ImageFont.FreeTypeFont],
+    palette: dict[str, str],
+) -> None:
+    bars = list(config.get("bars", []))
+    if not bars:
+        return
+    shells = [bar_geometry(bar, ui_scale) for bar in bars]
+    left = min(item[0] for item in shells)
+    top = min(item[1] for item in shells)
+    right = max(item[0] + item[2] for item in shells)
+    bottom = max(item[1] + item[3] for item in shells)
+    padding = int(config.get("annotation_padding_px", 10))
+    label_height = int(config.get("annotation_label_height_px", 22))
+    outer = (
+        left - padding,
+        top - padding - label_height,
+        right + padding,
+        bottom + padding,
+    )
+    draw.rounded_rectangle(
+        outer,
+        radius=10,
+        fill=rgba("#101410", 158),
+        outline=rgba("#b18a52", 175),
+        width=2,
+    )
+    draw_text(
+        draw,
+        ((left + right) // 2, top - padding - 4),
+        str(config.get("label", "Right-side grouped bars proposal")),
+        fonts["tiny"],
+        rgba(palette["label"]),
+        anchor="ms",
+        stroke=1,
+        stroke_fill=rgba("#080a08"),
+    )
+    for bar in bars:
+        draw_bar(draw, bar, ui_scale, fonts, palette)
+
+
 def draw_pouch(
     draw: ImageDraw.ImageDraw,
     config: dict[str, Any],
@@ -1376,9 +1451,14 @@ def validate_compact_stack_v8(
     else:
         check("targettarget.same-baseline", target[3], target_target[3])
     check("unit.three-frame-center", int(contract["three_unit_cluster_center_x"]), round((player[0] + target_target[2]) / 2))
-    check("unit.font-name-role", ["small"] * 3, [str(frame.get("name_font")) for frame in frame_configs])
-    check("unit.font-level-role", ["tiny"] * 3, [str(frame.get("level_font")) for frame in frame_configs])
-    check("unit.font-health-role", ["tiny"] * 3, [str(frame.get("health_font")) for frame in frame_configs])
+    font_roles = contract.get("unit_font_roles", {
+        "name": "small",
+        "level": "tiny",
+        "health": "tiny",
+    })
+    check("unit.font-name-role", [str(font_roles["name"])] * 3, [str(frame.get("name_font")) for frame in frame_configs])
+    check("unit.font-level-role", [str(font_roles["level"])] * 3, [str(frame.get("level_font")) for frame in frame_configs])
+    check("unit.font-health-role", [str(font_roles["health"])] * 3, [str(frame.get("health_font")) for frame in frame_configs])
 
     player_strips = player_frame["aura_strips"]
     target_strips = target_frame["aura_strips"]
@@ -1508,6 +1588,65 @@ def validate_compact_stack_v8(
     check("layout.no-readout-deck-overlap", True, offhand[3] <= top_y)
     check("layout.targettarget-inside-focus-field", True, target_target[2] <= int(spec["focus_field"]["screen_box"][2]))
 
+    side_cluster = spec.get("side_cluster")
+    if side_cluster:
+        side_bars = list(side_cluster.get("bars", []))
+        side_boxes = [bar_geometry(item, ui_scale) for item in side_bars]
+        side_rights = [item[0] + item[2] for item in side_boxes]
+        side_bottoms = [item[1] + item[3] for item in side_boxes]
+        union = (
+            min(item[0] for item in side_boxes),
+            min(item[1] for item in side_boxes),
+            max(side_rights),
+            max(side_bottoms),
+        )
+        check(
+            "sidecluster.proposal-only",
+            True,
+            bool(side_cluster.get("proposal_only")),
+        )
+        check(
+            "sidecluster.provider-order",
+            list(contract["side_cluster_provider_order"]),
+            [str(item["id"]) for item in side_bars],
+        )
+        check(
+            "sidecluster.tile-shapes",
+            [[12, 3, 4]] * 4,
+            [
+                [int(item["buttons"]), int(item["cols"]), int(item["rows"])]
+                for item in side_bars
+            ],
+        )
+        check(
+            "sidecluster.union-size",
+            list(map(int, contract["side_cluster_union_size_px"])),
+            [union[2] - union[0], union[3] - union[1]],
+        )
+        check(
+            "sidecluster.right-inset",
+            int(contract["side_cluster_right_inset_px"]),
+            int(spec["canvas"]["width"]) - union[2],
+        )
+        check(
+            "sidecluster.center-offset-y",
+            int(contract["side_cluster_center_offset_y_px"]),
+            round((union[1] + union[3]) / 2) -
+            round(int(spec["canvas"]["height"]) / 2),
+        )
+        check(
+            "sidecluster.horizontal-gaps",
+            [int(contract["side_cluster_tile_gap_px"])] * 2,
+            [side_boxes[1][0] - side_rights[0],
+             side_boxes[3][0] - side_rights[2]],
+        )
+        check(
+            "sidecluster.vertical-gaps",
+            [int(contract["side_cluster_tile_gap_px"])] * 2,
+            [side_boxes[2][1] - side_bottoms[0],
+             side_boxes[3][1] - side_bottoms[1]],
+        )
+
     violations = [item["id"] for item in checks if not item["pass"]]
     return {
         "schema": "aeui-action-bars-layout-report-v1",
@@ -1544,6 +1683,9 @@ def validate_layout(spec: dict[str, Any]) -> dict[str, Any]:
         return validate_compact_stack_v8(spec, contract)
 
     if contract.get("layout_mode") == "compact-stack-v10":
+        return validate_compact_stack_v8(spec, contract)
+
+    if contract.get("layout_mode") == "compact-stack-v11":
         return validate_compact_stack_v8(spec, contract)
 
     ui_scale = float(spec["target"]["ui_scale"])
@@ -1767,6 +1909,8 @@ def main() -> None:
     for bar in spec["bars"]:
         if bar.get("visible_in_simulation", True):
             draw_bar(draw, bar, ui_scale, fonts, palette)
+    if "side_cluster" in spec:
+        draw_side_cluster(draw, spec["side_cluster"], ui_scale, fonts, palette)
     draw_pouch(draw, spec["consumables"], ui_scale, fonts, palette)
     draw_trinkets(draw, spec["trinkets"], ui_scale, fonts, palette)
     if "totem_satellite" in spec:

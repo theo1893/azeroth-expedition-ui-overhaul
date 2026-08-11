@@ -1,0 +1,64 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "AB.FOCUS.LAYOUT.V1/simulation-v11",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive; provider UI units for runtime deltas and deterministic physical pixels for the right-side proposal",
+  "evidence": {
+    "provider": "addon/pfUI unitframes/actionbar + installed DoiteDPS",
+    "layout_formula": "Player/Target/TargetTarget retain their V10 geometry but use client STANDARD_TEXT_FONT at local size 18 and OUTLINE; DoiteDPS TOPLEFT changes from (850,-647) to (850,-615) at 0.82 so its 318x46 timeline and 178x22 resource row move upward together by 32 game UI; proposal-only bars 2/4/5/3 retain 12 buttons, icon 20, spacing 1, and scale 1.2 but each becomes 3x4 inside a 2x2 group whose composed footprint is 6x8",
+    "simulation_spec": "tools/specs/action_bars_core_simulation_v11.json",
+    "adapter": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
+    "target": "Turtle WoW 1.18.1; deterministic 1920x1080 review composition",
+    "source_screenshot_focus": "C:/Users/西奥/AppData/Local/Temp/codex-clipboard-da973940-b259-4ca7-80e2-126e6274ba64.png",
+    "source_screenshot_focus_sha256": "06da838849592bcd3aab612e595f8455c86e79a343eb14f02241dff19b5328bf",
+    "source_screenshot_sidebars": "C:/Users/西奥/AppData/Local/Temp/codex-clipboard-6011e488-060f-4e43-b5df-002431877b10.png",
+    "source_screenshot_sidebars_sha256": "6abe43c76a50319c967d3bb7e1cf58c85b682ce585ebbf0365ccaeff0c556e11",
+    "dynamic_ownership": "all unit values, aura content, spell actions, paging, visibility, keybinds, cooldowns, provider lock state and hit behavior remain provider-owned",
+    "runtime_scope": "unit font and DoiteDPS placement are applied only to the exact V12 profile; the right-side group is proposal-only and has no addon runtime integration",
+    "final_runtime": false
+  },
+  "atlas": {
+    "size": [32, 32],
+    "visible_bbox": [0, 0, 32, 32],
+    "require_exact_visible_coverage": true,
+    "sampled_regions": [
+      {"id": "layout.geometry-only", "box": [0, 0, 32, 32]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 3, "right": 3, "top": 3, "bottom": 3},
+    "minimum_frame_size": [7, 7]
+  },
+  "scenarios": [
+    {
+      "id": "focus-unit-system-text-local-18",
+      "frame": [240, 60],
+      "preview_frame": [240, 60],
+      "zones": {"text-safe": [0, 0, 240, 60]},
+      "regions": [
+        {"id": "name-level-health-power-system-text", "kind": "text", "box": [0, 0, 240, 60], "zone": "text-safe"}
+      ]
+    },
+    {
+      "id": "doitedps-two-row-union-upward-delta-32",
+      "frame": [318, 125],
+      "preview_frame": [318, 125],
+      "zones": {"separated-lanes": [0, 0, 318, 125]},
+      "regions": [
+        {"id": "resource-and-timeline-union", "kind": "timeline", "box": [0, 0, 318, 70], "zone": "separated-lanes"},
+        {"id": "player-aura-reference-after-32-ui-delta", "kind": "status", "box": [0, 102, 233, 125], "zone": "separated-lanes"}
+      ]
+    },
+    {
+      "id": "right-side-four-bar-two-by-two-proposal",
+      "frame": [154, 202],
+      "preview_frame": [154, 202],
+      "zones": {"group-root": [0, 0, 154, 202]},
+      "regions": [
+        {"id": "bar2-paging-3x4", "kind": "button", "box": [0, 0, 74, 98], "zone": "group-root"},
+        {"id": "bar4-vertical-3x4", "kind": "button", "box": [80, 0, 154, 98], "zone": "group-root"},
+        {"id": "bar5-left-3x4", "kind": "button", "box": [0, 104, 74, 202], "zone": "group-root"},
+        {"id": "bar3-right-3x4", "kind": "button", "box": [80, 104, 154, 202], "zone": "group-root"}
+      ]
+    }
+  ]
+}

@@ -108,15 +108,15 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 
 | ID | provider／真实对象 | 合同 |
 |---|---|---|
-| `AB.FOCUS.UNITFRAME.PLAYER` | `pfUI.uf.player` | `240×60 UI / scale 0.8`；`BOTTOM (-160,485)`。只为该框启用沿用当前全局字形／样式的 `14 UI` local font；`23 UI` Buff 在上方从完整框架左缘向右，Debuff 在下方从完整框架左缘向右；pfUI 真实步进为 `size+7`，每排 `8` 枚占 `233／240 UI`，四个 Aura offset 为零；保留所有状态、点击与动态 Aura |
-| `AB.FOCUS.UNITFRAME.TARGET` | `pfUI.uf.target` | `240×60 UI / scale 0.8`；`BOTTOM (105,485)`。同用 `14 UI` local font；`23 UI` Buff 在上方从右向左，Debuff 在下方从右向左，每排 `8` 枚。为 Boss 的 `16` 个减益保留两排净空，第二排不进入中央施法条；保留所有目标交互与动态 Aura |
-| `AB.FOCUS.UNITFRAME.TARGETTARGET` | `pfUI.uf.targettarget` | 保持 `240×60 UI / scale 0.68`、`14 UI` local font；fallback 为 `BOTTOM (393,576)`，live Frame 以 `LEFT → Target RIGHT +8 UI` 中线依附。`23 UI` Buff 在上、Debuff 在下，均从右向左且每排 `8` 枚；Target 消失、移动或 unlock 后仍由 provider 显隐并在事件边界恢复依附，不建立维护循环 |
+| `AB.FOCUS.UNITFRAME.PLAYER` | `pfUI.uf.player` | `240×60 UI / scale 0.8`；`BOTTOM (-160,485)`。只为该框启用客户端 `STANDARD_TEXT_FONT / OUTLINE / 18 UI` local font；`23 UI` Buff 在上方从完整框架左缘向右，Debuff 在下方从完整框架左缘向右；pfUI 真实步进为 `size+7`，每排 `8` 枚占 `233／240 UI`，四个 Aura offset 为零；保留所有状态、点击与动态 Aura |
+| `AB.FOCUS.UNITFRAME.TARGET` | `pfUI.uf.target` | `240×60 UI / scale 0.8`；`BOTTOM (105,485)`。同用客户端系统字形与 `18 UI` local font；`23 UI` Buff 在上方从右向左，Debuff 在下方从右向左，每排 `8` 枚。为 Boss 的 `16` 个减益保留两排净空，第二排不进入中央施法条；保留所有目标交互与动态 Aura |
+| `AB.FOCUS.UNITFRAME.TARGETTARGET` | `pfUI.uf.targettarget` | 保持 `240×60 UI / scale 0.68`，同用客户端系统字形与 `18 UI` local font；fallback 为 `BOTTOM (393,576)`，live Frame 以 `LEFT → Target RIGHT +8 UI` 中线依附。`23 UI` Buff 在上、Debuff 在下，均从右向左且每排 `8` 枚；Target 消失、移动或 unlock 后仍由 provider 显隐并在事件边界恢复依附，不建立维护循环 |
 | `AB.FOCUS.CASTBAR.PLAYER` | `pfPlayerCastbar` | `260×12 UI / scale 1.0`；`BOTTOM (0,316)`，位于统一中心轴的第一排。保留图标、法术名、计时与玩家延迟区 |
 | `AB.FOCUS.CASTBAR.TARGET` | `pfTargetCastbar` | `260×12 UI / scale 1.0`；`BOTTOM (0,300)`，位于统一中心轴的第二排。保留可打断／不可打断与目标施法信息 |
 | `AB.FOCUS.CASTBAR.FOCUS` | 可选 `pfFocusCastbar` | 继续跟随 Focus Frame，默认不进入中央玩家／目标双框；对象不存在时无占位 |
 | `AB.FOCUS.SWING.MELEE` | `pfSwingTimerMainhand`＋`pfSwingTimerOffhand` | 主手 `260×12 UI / scale 1.0`，`BOTTOM (0,284)`，位于统一中心轴的第三排；副手同尺寸并以 `2 UI` 间距紧贴主手下方。文字、攻速与 Marker 动态 |
 | `AB.FOCUS.SWING.RANGED` | `pfSwingTimerRanged` | 与主手同为 `260×12 UI / scale 1.0` 并复用第三排，不与近战双条组成另一条常驻栏；范围提示仍由 provider 管理 |
-| `AB.DOITEDPS.TIMELINE` | 可选 `DoiteDPSMainFrame` 及子 Frame | 保留原生 `318×46 UI` 根与 `178×22 UI` 资源排、独立拖动／锁定／显隐与蓝绿状态语义；comfort preset 写 `TOPLEFT (850,-647)` 与目标显示补偿 scale `0.82`，两排作为 union 退出单位框占位，锁定态继续由 provider 关闭鼠标，以后可选低重量外缘 |
+| `AB.DOITEDPS.TIMELINE` | 可选 `DoiteDPSMainFrame` 及子 Frame | 保留原生 `318×46 UI` 根与 `178×22 UI` 资源排、独立拖动／锁定／显隐与蓝绿状态语义；comfort preset 写 `TOPLEFT (850,-615)` 与目标显示补偿 scale `0.82`，即把两排 union 一起上移 `32 UI` 退出玩家 Aura 占位；锁定态继续由 provider 关闭鼠标，以后可选低重量外缘 |
 | `AB.TOTEM.ARCHITOTEM` | 可选 `ArchiTotemFrame`、四元素主 Button、元素候选、拖动球、AllTotems 与可选 Recall／PresetManager | 用户已接受 `ACTION-BARS-CORE-SIM-V4`。闭合真实可见 union 作为职业卫星栏置于 Combat Deck 下方；provider `scale=0.8` 时当前闭合脚印为 `212×32 UI`、Air 七层最大展开为 `212×224 UI`。`fieldKitBound=true` 时随 Bar 1，拖动松手回位，`unbind` 恢复首次自由锚点；显式 focus preset 才调用 provider 原生 API 请求向下展开，普通 refresh 只读取方向。施放、右键、hover、计时、锁定、方向、预设与 Tooltip 不接管；缺失、非萨满、隐藏或签名不匹配时无占位并 fail-open |
 
 ## 消耗品卷袋
@@ -229,11 +229,11 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   `HORIZONTAL / scale=1.0`，Field Kit v1.7 强绑定和 ArchiTotem 下置不变；v1.7
   只修复 unlock mover 登记／drag 生命周期。
 - `战斗视线邻接`：Player／Target／TargetTarget 继续由 pfUI UnitFrame provider 所有；
-  AEUI `0.8.18` 的 runtime-v2.1 preset 仅一次性把 Player／Target 置于游戏坐标
+  AEUI `0.8.19` 的 runtime-v2.2 preset 仅一次性把 Player／Target 置于游戏坐标
   `BOTTOM (-160,485)／(105,485)`，两框设为 `240×60 / 0.8`；TargetTarget 保持
   `240×60 / 0.68`，fallback 为 `BOTTOM (393,576)`，live Frame 以
   `LEFT → Target RIGHT +8 UI` 中线
-  依附。三框仅本地启用沿用现有字形／样式的 `14 UI` font；Aura 均为 `23 UI`，
+  依附。三框仅本地启用客户端 `STANDARD_TEXT_FONT / OUTLINE / 18 UI` font；Aura 均为 `23 UI`，
   Player 上 Buff／下 Debuff 从完整框架左缘起，Target 与 TargetTarget 从右缘起。
   当前 `default_border=3` 且 `force_blizz=0`，故按 pfUI 真实 `size + 7` 步距，
   每排 `8` 枚占 `233／240 UI`，四个 offset 明确置零；Target 的 `16` 个 Boss
@@ -242,13 +242,20 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
 - `战斗信息纵栈`：玩家施法、目标施法、Swing 主手／ranged 统一为
   `260×12 / 1.0`，全部使用 `x=0`，依次落在 `BOTTOM y=316／300／284`；副手
   同尺寸以 `2 UI` 间距紧贴主手下方。姿态置于 `BOTTOM (0,255)`，
-  DoiteDPS 时间线与资源两排作为整体置于 `TOPLEFT (850,-647)`；Focus
+  DoiteDPS 时间线与资源两排作为整体置于 `TOPLEFT (850,-615)`，相对 v2.1 一起上移
+  `32 UI`；Focus
   施法条继续跟随 Focus Frame。所有数值均为 Turtle WoW 游戏坐标，不读取或回算
   屏幕像素、UIParent 尺寸或 provider effective scale。
 - `紧凑战斗`：主／副栏可改为 `6×2`；自适应 Rail 重新切片，狮鹫端帽缩小或
   隐藏，逻辑按钮数与分页不变。
-- `自由侧栏`：Bar 3／4／5 可保持 `4×3`、`6×2` 或竖排并独立移动；不因采用
-  推荐预设而失去现有布局。
+- `自由侧栏`：当前 runtime 中 Bar 2／3／4／5 继续按各自 SavedVariables 独立移动、
+  缩放、显隐、分页与配置，不因 Combat Focus preset 失去现有布局。
+- `右侧四栏组合方案（待用户确认）`：把“大奶黑牛”当前从左到右的
+  `Paging／Vertical／Left／Right` 映射为阅读顺序的 `2×2` 四块，每块 `3×4`，总体
+  `6×8`，置于屏幕右缘内缩约 `24 UI`、视觉中心略低于屏幕中线。若后续接入，组合态
+  只保留一个 group mover；四栏的动作内容、按键、分页、显隐、脱战淡出等配置仍各自
+  独立，原 formfactor／position 必须先备份并在 `unbind` 时精确恢复。组合态不再支持
+  四个独立位置 mover，否则不能形成真正整体；本轮 V11 只审阅方案，不写运行时。
 - `透明度与命中`：玩家／目标状态、双方施法、攻击计时、DoiteDPS 与技能 CD
   使用 provider 原生 Alpha，不做整组淡出；只允许非核心辅助栏按用户设置脱战
   淡出。Rail、连接片、卷袋、护套和标题等装饰层全部鼠标穿透，DoiteDPS 锁定态
@@ -267,7 +274,13 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   冷却选项不由此 preset 改写；DoiteDPS 的 local scale 在 comfort preset 中
   明确收敛为 `0.82`，其启用／锁定／显隐与推荐逻辑不变。首次应用前保存相关
   pfUI／DoiteDPS／ArchiTotem 配置；`/aeui focuslayout restore` 恢复后提示 reload。
-- `ACTION-BARS-CORE-SIM-V10` 以“大奶黑牛”的最新实机问题截图完成确定性本地审查；
+- `ACTION-BARS-CORE-SIM-V11` 以“大奶黑牛”的两张最新实机截图完成确定性本地审查；
+  AEUI `0.8.19`／focus runtime-v2.2 保留 V10 的全部单位框、Aura、计时栈、Field Kit
+  和 Combat Deck 几何，只把三框局部字形改为客户端系统字体 `18 UI`，并把 DoiteDPS
+  两排 union 上移 `32 UI`。仅完整匹配旧字形与几何的 exact v12 签名会在 `/reload`
+  一次迁移为 v13；手动改过字体或坐标的 profile 保持不动。右侧四栏 `2×2 / 3×4`
+  组合仍为 proposal-only，不进入 addon runtime。
+- `ACTION-BARS-CORE-SIM-V10` 以“大奶黑牛”的上一轮实机问题截图完成确定性本地审查；
   AEUI `0.8.18`／focus runtime-v2.1／Field Kit bridge-v2.0 保留 tier 8、Combat Deck、
   accepted art 与 provider 行为，只把单位族整体上移、Aura 收为真实八枚满行的
   `23 UI`，并把消耗品／饰品底边共同下移 `20 UI`；TargetTarget `0.68`、计时栈

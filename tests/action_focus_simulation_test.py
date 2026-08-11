@@ -8,9 +8,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RENDERER = ROOT / "tools" / "render_action_bars_simulation.py"
-SPEC = ROOT / "tools" / "specs" / "action_bars_core_simulation_v10.json"
+SPEC = ROOT / "tools" / "specs" / "action_bars_core_simulation_v11.json"
 SIMULATION_DISPLAY = (
-    ROOT / "tools" / "specs" / "action_bars_core_simulation_v10_display_region.json"
+    ROOT / "tools" / "specs" / "action_bars_core_simulation_v11_display_region.json"
 )
 RUNTIME_DISPLAY = (
     ROOT / "tools" / "specs" / "action_focus_layout_v1_runtime_display_region.json"
@@ -27,13 +27,13 @@ def load_renderer():
     return module
 
 
-def test_focus_v10_aura_and_side_dock_repair() -> None:
+def test_focus_v11_font_doite_and_side_cluster_proposal() -> None:
     renderer = load_renderer()
     spec = renderer.load_spec(SPEC, ROOT)
 
-    assert spec["version"] == "ACTION-BARS-CORE-SIM-V10"
+    assert spec["version"] == "ACTION-BARS-CORE-SIM-V11"
     assert spec["layout_contract"]["runtime_change_in_this_simulation"] is True
-    assert spec["layout_contract"]["layout_mode"] == "compact-stack-v10"
+    assert spec["layout_contract"]["layout_mode"] == "compact-stack-v11"
     assert spec["runtime_projection_proposal"]["combat_local_scale"] == {
         "player_target": 0.8,
         "targettarget": 0.68,
@@ -50,7 +50,7 @@ def test_focus_v10_aura_and_side_dock_repair() -> None:
     report = renderer.validate_layout(spec)
     assert report["status"] == "pass"
     assert report["violations"] == []
-    assert len(report["checks"]) == 60
+    assert len(report["checks"]) == 68
 
     frames = {item["id"]: item for item in spec["unit_frames"]["frames"]}
     player = frames["UF.PLAYER.ADJACENCY"]
@@ -66,9 +66,9 @@ def test_focus_v10_aura_and_side_dock_repair() -> None:
     assert player["screen_box"][2] - player["screen_box"][0] == 229
     assert target["screen_box"][2] - target["screen_box"][0] == 229
     assert target_target["screen_box"][2] - target_target["screen_box"][0] == 195
-    assert all(frame["name_font"] == "small" for frame in frames.values())
-    assert all(frame["level_font"] == "tiny" for frame in frames.values())
-    assert all(frame["health_font"] == "tiny" for frame in frames.values())
+    assert all(frame["name_font"] == "body" for frame in frames.values())
+    assert all(frame["level_font"] == "small" for frame in frames.values())
+    assert all(frame["health_font"] == "small" for frame in frames.values())
 
     all_strips = [
         strip
@@ -90,7 +90,9 @@ def test_focus_v10_aura_and_side_dock_repair() -> None:
     assert target["aura_strips"][0]["origin"][0] + 22 == target["screen_box"][2]
     assert target_target["aura_strips"][0]["origin"][0] + 19 == target_target["screen_box"][2]
     recommendation = spec["unit_frames"]["profile_recommendation"]["proposed_shared"]
-    assert recommendation["customfont_size_ui"] == 14
+    assert recommendation["customfont_role"] == "client-system"
+    assert recommendation["customfont_size_ui"] == 18
+    assert recommendation["customfont_style"] == "OUTLINE"
     assert recommendation["aura_size_ui"] == 23
     assert recommendation["aura_per_row"] == 8
     assert 23 + 7 * (23 + 7) == 233
@@ -146,37 +148,69 @@ def test_focus_v10_aura_and_side_dock_repair() -> None:
         "row_slack_ui": 7,
     }
     assert projection["fieldkit"]["consumable_and_trinket_y_offset_ui"] == -20
+    assert projection["doitedps"]["xpos_ui"] == 850
+    assert projection["doitedps"]["ypos_ui"] == -615
+    assert projection["unit_font"] == {
+        "role": "client STANDARD_TEXT_FONT",
+        "customfont": 1,
+        "customfont_size_ui": 18,
+        "customfont_style": "OUTLINE",
+        "scope": ["player", "target", "ttarget"],
+    }
     assert spec["consumables"]["screen_origin"][1] == 757
     assert spec["trinkets"]["screen_origin"][1] == 850
 
+    side = spec["side_cluster"]
+    assert side["proposal_only"] is True
+    assert [item["id"] for item in side["bars"]] == [
+        "AB.BAR2.PAGING",
+        "AB.BAR4.VERTICAL",
+        "AB.BAR5.LEFT",
+        "AB.BAR3.RIGHT",
+    ]
+    assert all(item["buttons"] == 12 for item in side["bars"])
+    assert all((item["cols"], item["rows"]) == (3, 4) for item in side["bars"])
+    side_boxes = [renderer.bar_geometry(item, ui_scale) for item in side["bars"]]
+    assert side_boxes[1][0] - (side_boxes[0][0] + side_boxes[0][2]) == 6
+    assert side_boxes[2][1] - (side_boxes[0][1] + side_boxes[0][3]) == 6
+    assert max(item[0] + item[2] for item in side_boxes) == 1892
+    assert min(item[0] for item in side_boxes) == 1738
+    assert max(item[1] + item[3] for item in side_boxes) == 748
+    assert min(item[1] for item in side_boxes) == 546
+
     display = json.loads(SIMULATION_DISPLAY.read_text(encoding="utf-8"))
-    assert display["component"] == "AB.FOCUS.LAYOUT.V1/simulation-v10"
+    assert display["component"] == "AB.FOCUS.LAYOUT.V1/simulation-v11"
     assert display["evidence"]["final_runtime"] is False
-    assert display["evidence"]["source_screenshot_primary_sha256"].startswith(
-        "3e44c1bb"
+    assert display["evidence"]["source_screenshot_focus_sha256"].startswith(
+        "06da8388"
     )
-    assert len(display["scenarios"]) == 12
+    assert display["evidence"]["source_screenshot_sidebars_sha256"].startswith(
+        "6abe43c7"
+    )
+    assert len(display["scenarios"]) == 3
 
     runtime = json.loads(RUNTIME_DISPLAY.read_text(encoding="utf-8"))
-    assert runtime["component"] == "AB.FOCUS.LAYOUT.V1/runtime-v2.1"
+    assert runtime["component"] == "AB.FOCUS.LAYOUT.V1/runtime-v2.2"
     assert runtime["evidence"]["final_runtime"] is True
     assert runtime["evidence"]["adapter"].endswith("Modules/ActionBars.lua")
     assert runtime["evidence"]["accepted_simulation_spec"].endswith(
-        "action_bars_core_simulation_v10.json"
+        "action_bars_core_simulation_v11.json"
     )
     formula = runtime["evidence"]["layout_formula"]
     assert "Combat Deck BOTTOM (0,175)" in formula
     assert "TargetTarget fallback BOTTOM (393,576)" in formula
     assert "Player/Target BOTTOM (-160,485)/(105,485)" in formula
     assert "Aura 23 UI" in formula
+    assert "STANDARD_TEXT_FONT at local size 18" in formula
     assert "y offset -20" in formula
     assert "Player Cast BOTTOM (0,316)" in formula
     assert "Target Cast BOTTOM (0,300)" in formula
     assert "Swing BOTTOM (0,284)" in formula
+    assert "DoiteDPS TOPLEFT (850,-615)" in formula
     assert "GetScreenHeight()/1080" not in formula
     assert len(runtime["scenarios"]) == 12
 
 
 if __name__ == "__main__":
-    test_focus_v10_aura_and_side_dock_repair()
+    test_focus_v11_font_doite_and_side_cluster_proposal()
     print("action focus simulation test passed")

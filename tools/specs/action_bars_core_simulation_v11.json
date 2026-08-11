@@ -1,0 +1,187 @@
+{
+  "schema": "aeui-action-bars-simulation-v1",
+  "version": "ACTION-BARS-CORE-SIM-V11",
+  "extends": "tools/specs/action_bars_core_simulation_v10.json",
+  "purpose": "deterministic 大奶黑牛 repair and proposal: move the provider-owned DoiteDPS two-row union upward by 32 game UI, use the client system face at local size 18 on Player/Target/TargetTarget, and review the four current right-side 1x12 pfUI bars as one reversible 2x2 group of 3x4 tiles",
+  "output": "generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V11/action_bars_core_sim_v11.png",
+  "annotations": {
+    "title": "动作条 / Combat Focus V11 · 字体与右侧工具架方案",
+    "subtitle": "系统字体 18 · DDPS 整体上移 32 UI · 四栏 2×2 分区（仅方案）",
+    "note": "确定性本地几何预览 · 已验收位图字节不变 · ImageGen 0/0",
+    "rules_title": "V11 边界",
+    "rules": [
+      "Player / Target / TargetTarget 均使用客户端系统字体，局部字号 18",
+      "DoiteDPS 时间线与资源栏作为一个整体上移，内部关系不变",
+      "右侧四栏从 4×12 高墙折叠为四个 3×4 分区，总体 6×8",
+      "分区顺序保持当前从左到右：Paging → Vertical → Left → Right",
+      "右侧组合栏仅为待确认方案；本轮不写入其运行时位置或形态"
+    ]
+  },
+  "runtime_projection_proposal": {
+    "doitedps": {
+      "anchor": "TOPLEFT",
+      "xpos_ui": 850,
+      "ypos_ui": -615,
+      "scale": 0.82,
+      "anchor_policy": "move the provider-owned timeline and resource row upward together by 32 game UI"
+    },
+    "unit_font": {
+      "role": "client STANDARD_TEXT_FONT",
+      "customfont": 1,
+      "customfont_size_ui": 18,
+      "customfont_style": "OUTLINE",
+      "scope": ["player", "target", "ttarget"]
+    },
+    "right_side_cluster": {
+      "not_applied": true,
+      "anchor": "RIGHT with 24 UI inset; visual center slightly below screen center",
+      "tile_formfactor": "3 x 4",
+      "overall_formfactor": "6 x 8",
+      "provider_order": ["bar2/paging", "bar4/vertical", "bar5/left", "bar3/right"],
+      "binding_policy": "one group mover while bound; retain and restore every independent provider setting when unbound"
+    }
+  },
+  "layout_contract": {
+    "layout_mode": "compact-stack-v11",
+    "runtime_change_in_this_simulation": true,
+    "unit_font_size_ui": 18,
+    "unit_font_role": "system",
+    "unit_font_roles": {
+      "name": "body",
+      "level": "small",
+      "health": "small"
+    },
+    "doitedps_root_top_y": 471,
+    "doitedps_root_bottom_y": 512,
+    "doitedps_to_unit_aura_vertical_clearance_px": 51,
+    "side_cluster_provider_order": [
+      "AB.BAR2.PAGING",
+      "AB.BAR4.VERTICAL",
+      "AB.BAR5.LEFT",
+      "AB.BAR3.RIGHT"
+    ],
+    "side_cluster_union_size_px": [154, 202],
+    "side_cluster_right_inset_px": 28,
+    "side_cluster_center_offset_y_px": 107,
+    "side_cluster_tile_gap_px": 6
+  },
+  "doite_dps": {
+    "label": "DoiteDPS · 两栏整体上移 32 UI",
+    "label_origin": [761, 423],
+    "screen_origin": [620, 471],
+    "profile_recommendation": {
+      "not_applied": false,
+      "runtime_local_scale": 0.82,
+      "runtime_ypos_ui": -615
+    }
+  },
+  "unit_frames": {
+    "cluster_label": "三框系统字体 18；Aura 与既有框体几何保持不变",
+    "profile_recommendation": {
+      "proposed_shared": {
+        "customfont_role": "client-system",
+        "customfont_size_ui": 18,
+        "customfont_style": "OUTLINE"
+      }
+    }
+  },
+  "unit_frame_overrides": {
+    "UF.PLAYER.ADJACENCY": {
+      "name_font": "body",
+      "level_font": "small",
+      "health_font": "small"
+    },
+    "UF.TARGET.ADJACENCY": {
+      "name_font": "body",
+      "level_font": "small",
+      "health_font": "small"
+    },
+    "UF.TARGETTARGET.ADJACENCY": {
+      "name_font": "body",
+      "level_font": "small",
+      "health_font": "small"
+    }
+  },
+  "bar_overrides": {
+    "AB.BAR3.AUXILIARY": {
+      "visible_in_simulation": false
+    }
+  },
+  "side_cluster": {
+    "proposal_only": true,
+    "label": "右侧组合栏 · 方案 · 总体 6×8",
+    "annotation_padding_px": 10,
+    "annotation_label_height_px": 22,
+    "bars": [
+      {
+        "id": "AB.BAR2.PAGING",
+        "provider": "pfActionBarPaging / bar2",
+        "label": "",
+        "buttons": 12,
+        "cols": 3,
+        "rows": 4,
+        "icon_ui": 20,
+        "border_ui": 2,
+        "spacing_ui": 1,
+        "scale": 1.2,
+        "screen_origin": [1738, 546],
+        "gryphons": false,
+        "keys": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P0", "P-", "P="]
+      },
+      {
+        "id": "AB.BAR4.VERTICAL",
+        "provider": "pfActionBarVertical / bar4",
+        "label": "",
+        "buttons": 12,
+        "cols": 3,
+        "rows": 4,
+        "icon_ui": 20,
+        "border_ui": 2,
+        "spacing_ui": 1,
+        "scale": 1.2,
+        "screen_origin": [1818, 546],
+        "gryphons": false,
+        "keys": ["V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V0", "V-", "V="]
+      },
+      {
+        "id": "AB.BAR5.LEFT",
+        "provider": "pfActionBarLeft / bar5",
+        "label": "",
+        "buttons": 12,
+        "cols": 3,
+        "rows": 4,
+        "icon_ui": 20,
+        "border_ui": 2,
+        "spacing_ui": 1,
+        "scale": 1.2,
+        "screen_origin": [1738, 650],
+        "gryphons": false,
+        "keys": ["L1", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9", "L0", "L-", "L="]
+      },
+      {
+        "id": "AB.BAR3.RIGHT",
+        "provider": "pfActionBarRight / bar3",
+        "label": "",
+        "buttons": 12,
+        "cols": 3,
+        "rows": 4,
+        "icon_ui": 20,
+        "border_ui": 2,
+        "spacing_ui": 1,
+        "scale": 1.2,
+        "screen_origin": [1818, 650],
+        "gryphons": false,
+        "keys": ["R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R0", "R-", "R="]
+      }
+    ]
+  },
+  "non_authoritative": [
+    "all flat colors, glyphs, portraits, aura icons and provider icon placeholders",
+    "the screenshot SHA-256 06da838849592bcd3aab612e595f8455c86e79a343eb14f02241dff19b5328bf is read-only geometry evidence for the unit-font and DoiteDPS repair",
+    "the screenshot SHA-256 6abe43c76a50319c967d3bb7e1cf58c85b682ce585ebbf0365ccaeff0c556e11 is read-only geometry evidence for the current four-column right-side arrangement",
+    "the system-font preview uses repository Noto role sizes only as a deterministic readability proxy; runtime resolves the client STANDARD_TEXT_FONT",
+    "the right-side four-bar group is proposal-only and no preview coordinate, formfactor or mover is integrated into addon runtime in V11",
+    "no simulation pixel may be promoted, sliced, uploaded or used as ImageGen input",
+    "accepted Action Slot, Rail, Consumable Kit and Trinket Kit source/runtime pixels are unchanged"
+  ]
+}

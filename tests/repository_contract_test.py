@@ -280,14 +280,14 @@ def main() -> None:
         encoding="utf-8-sig"
     )
     assert "## RequiredDeps: pfUI" in aeui_toc
-    assert "## Version: 0.8.18" in aeui_toc
+    assert "## Version: 0.8.19" in aeui_toc
     assert "Core\\Bootstrap.lua" in aeui_toc
     assert "Modules\\ActionBars.lua" in aeui_toc
     assert "Modules\\Chat.lua" in aeui_toc
     assert "Modules\\QuestVisualTheme.lua" in aeui_toc
     assert "Modules\\Quests.lua" in aeui_toc
     bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(encoding="utf-8")
-    assert 'addon.version = "0.8.18"' in bootstrap
+    assert 'addon.version = "0.8.19"' in bootstrap
     assert "actionbar-runtime=" in bootstrap
     assert 'if command == "actionbars" then' in bootstrap
     assert '/aeui autobar [open|apply|restore|popup]' in bootstrap
@@ -324,8 +324,8 @@ def main() -> None:
     assert "button:SetWidth" not in actionbars_source
     assert "button:SetHeight" not in actionbars_source
     assert 'ActionBars.fieldKitRuntimeContract = "2.0"' in actionbars_source
-    assert 'ActionBars.focusLayoutRuntimeContract = "2.1"' in actionbars_source
-    assert "ActionBars.focusLayoutVersion = 12" in actionbars_source
+    assert 'ActionBars.focusLayoutRuntimeContract = "2.2"' in actionbars_source
+    assert "ActionBars.focusLayoutVersion = 13" in actionbars_source
     assert 'ActionBars.focusCoordinateSpace = "game-native-v1"' in actionbars_source
     assert "ActionBars.comfortUIScaleTier = 8" in actionbars_source
     assert "ActionBars.comfortUIScaleValue = 0.71111111111111" in actionbars_source
@@ -338,7 +338,9 @@ def main() -> None:
     assert "ActionBars.focusUnitHeight = 60" in actionbars_source
     assert "ActionBars.focusTargetTargetWidth = 240" in actionbars_source
     assert "ActionBars.focusTargetTargetHeight = 60" in actionbars_source
-    assert "ActionBars.focusUnitFontSize = 14" in actionbars_source
+    assert 'ActionBars.focusUnitFontRole = "system"' in actionbars_source
+    assert "ActionBars.focusUnitFontSize = 18" in actionbars_source
+    assert 'ActionBars.focusUnitFontStyle = "OUTLINE"' in actionbars_source
     assert "ActionBars.focusAuraSize = 23" in actionbars_source
     assert "ActionBars.focusTargetTargetAuraSize = 23" in actionbars_source
     assert "ActionBars.fieldKitDockYOffset = -20" in actionbars_source
@@ -360,7 +362,7 @@ def main() -> None:
     assert "ActionBars.focusStanceX = 0" in actionbars_source
     assert "ActionBars.focusStanceY = 255" in actionbars_source
     assert "ActionBars.focusDoiteX = 850" in actionbars_source
-    assert "ActionBars.focusDoiteY = -647" in actionbars_source
+    assert "ActionBars.focusDoiteY = -615" in actionbars_source
     assert "ResolveCombatFocusProjection" not in actionbars_source
     assert "ApplyFrameRootPosition" not in actionbars_source
     assert "ProjectedFrameExtentRoot" not in actionbars_source
@@ -378,6 +380,7 @@ def main() -> None:
     assert 'config.debuffoffy = "0"' in actionbars_source
     assert 'config.customfont = "1"' in actionbars_source
     assert "config.customfont_size = tostring(ActionBars.focusUnitFontSize)" in actionbars_source
+    assert "config.customfont_name = GetSystemUnitFont()" in actionbars_source
     assert "config.buffperrow = tostring(ActionBars.focusAuraPerRow)" in actionbars_source
     assert "config.debuffperrow = tostring(ActionBars.focusAuraPerRow)" in actionbars_source
     assert "config.width = tostring(ActionBars.focusReadoutWidth)" in actionbars_source

@@ -14,19 +14,20 @@ ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
 ActionBars.fieldKitRuntimeContract = "2.0"
-ActionBars.focusLayoutRuntimeContract = "2.1"
-ActionBars.focusLayoutVersion = 12
+ActionBars.focusLayoutRuntimeContract = "2.2"
+ActionBars.focusLayoutVersion = 13
 ActionBars.focusLayoutBackupVersion = 1
 ActionBars.autoBarDefaultModeVersion = 1
 ActionBars.focusCoordinateSpace = "game-native-v1"
 ActionBars.comfortUIScaleVersion = 2
 ActionBars.comfortUIScaleTier = 8
 ActionBars.comfortUIScaleValue = 0.71111111111111
--- ACTION-BARS-CORE-SIM-V10 keeps global pfUI tier 8, the accepted Combat
--- Deck, and the user's comfortable local scales unchanged. It corrects the
--- Aura row against pfUI's real size + 2*border + 1 step, raises the unit
--- cluster just enough for two target-debuff rows, and lowers both Field Kit
--- side groups by one shared offset.
+-- ACTION-BARS-CORE-SIM-V11 keeps global pfUI tier 8, the accepted Combat
+-- Deck, and the user's comfortable local scales unchanged. It moves the
+-- provider-owned DoiteDPS two-row union upward by one safe lane and replaces
+-- the three locally pinned unit fonts with the client system face at a more
+-- readable size. The proposed right-side four-bar cluster remains simulation
+-- only until the user accepts its grouped geometry.
 ActionBars.focusUnitScale = 0.8
 ActionBars.focusTargetTargetScale = 0.68
 ActionBars.focusReadoutScale = 1
@@ -36,7 +37,9 @@ ActionBars.focusUnitWidth = 240
 ActionBars.focusUnitHeight = 60
 ActionBars.focusTargetTargetWidth = 240
 ActionBars.focusTargetTargetHeight = 60
-ActionBars.focusUnitFontSize = 14
+ActionBars.focusUnitFontRole = "system"
+ActionBars.focusUnitFontSize = 18
+ActionBars.focusUnitFontStyle = "OUTLINE"
 ActionBars.focusAuraSize = 23
 ActionBars.focusTargetTargetAuraSize = 23
 ActionBars.focusAuraPerRow = 8
@@ -63,7 +66,7 @@ ActionBars.archiTotemDockXOffset = -10
 -- clearance; the provider's root still omits its unscaled drag handle.
 ActionBars.archiTotemDockYOffset = -39
 
--- Runtime v2.1 uses the exact Turtle WoW 1.12 coordinates consumed by
+-- Runtime v2.2 uses the exact Turtle WoW 1.12 coordinates consumed by
 -- Frame:SetPoint and pfUI.api.LoadMovable. They are relative to UIParent at
 -- the required pfUI tier 8. Do not project them through GetScreenWidth,
 -- effective scale, physical pixels, or frame readback: those are different
@@ -84,7 +87,7 @@ ActionBars.focusSwingY = 284
 ActionBars.focusStanceX = 0
 ActionBars.focusStanceY = 255
 ActionBars.focusDoiteX = 850
-ActionBars.focusDoiteY = -647
+ActionBars.focusDoiteY = -615
 
 local railSliceOrder = {
   "topLeft", "top", "topRight",
@@ -512,6 +515,41 @@ local function GetGlobal(name)
   return nil
 end
 
+local function GetSystemUnitFont()
+  local systemFont = GetGlobal("STANDARD_TEXT_FONT")
+  if type(systemFont) == "string" and systemFont ~= "" then
+    return systemFont
+  end
+
+  local gameFont = GetGlobal("GameFontNormal")
+  if gameFont and type(gameFont.GetFont) == "function" then
+    local ok, font = pcall(gameFont.GetFont, gameFont)
+    if ok and type(font) == "string" and font ~= "" then
+      return font
+    end
+  end
+
+  if pfUI and type(pfUI.font_default) == "string" and
+    pfUI.font_default ~= ""
+  then
+    return pfUI.font_default
+  end
+  local global = pfUI_config and pfUI_config.global
+  if global and type(global.font_default) == "string" and
+    global.font_default ~= ""
+  then
+    return global.font_default
+  end
+  return "Fonts\\FRIZQT__.TTF"
+end
+
+local function FontPathMatches(left, right)
+  local function Normalize(path)
+    return string.lower(string.gsub(tostring(path or ""), "/", "\\"))
+  end
+  return Normalize(left) == Normalize(right)
+end
+
 local function GetProviderNormalTexture(button)
   if not button or not button.GetName then
     return nil
@@ -816,6 +854,8 @@ local function GetNativeFocusLayout()
     stanceY = ActionBars.focusStanceY,
     doiteX = ActionBars.focusDoiteX,
     doiteY = ActionBars.focusDoiteY,
+    unitFontRole = ActionBars.focusUnitFontRole,
+    unitFontSize = ActionBars.focusUnitFontSize,
   }
 end
 
@@ -939,7 +979,7 @@ local function ShouldMigrateCombatFocusLayout()
   local version = database and database.combatFocusLayoutVersion
   if not database or
     (version ~= 7 and version ~= 8 and version ~= 9 and version ~= 10 and
-      version ~= 11) or
+      version ~= 11 and version ~= 12) or
     type(projection) ~= "table" or
     projection.coordinateSpace ~= ActionBars.focusCoordinateSpace or
     not pfUI_config
@@ -957,7 +997,8 @@ local function ShouldMigrateCombatFocusLayout()
   local playerCast = castbars.player or {}
   local targetCast = castbars.target or {}
   local oldDoiteX =
-    (version == 9 or version == 10 or version == 11) and 850 or 1012
+    (version == 9 or version == 10 or version == 11 or version == 12) and
+      850 or 1012
   local oldDoiteY = version == 8 and -780 or -647
   local doiteMatches = type(DoiteDPSDB) ~= "table" or
     (DoiteDPSDB.point == "TOPLEFT" and
@@ -1065,6 +1106,56 @@ local function ShouldMigrateCombatFocusLayout()
   local function ConfiguredUnitFontMatches(config)
     return tostring(config.customfont) == "1" and
       tostring(config.customfont_size) == "14"
+  end
+
+  local function Version12UnitFontMatches(config)
+    local global = pfUI_config.global or {}
+    return ConfiguredUnitFontMatches(config) and
+      FontPathMatches(config.customfont_name, global.font_unit) and
+      tostring(config.customfont_style or "OUTLINE") ==
+        tostring(global.font_unit_style or "OUTLINE")
+  end
+
+  if version == 12 then
+    return FocusPositionMatches(
+        "pfPlayer", "BOTTOM", -160, 485, 0.8
+      ) and FocusPositionMatches(
+        "pfTarget", "BOTTOM", 105, 485, 0.8
+      ) and FocusPositionMatches(
+        "pfTargetTarget", "BOTTOM", 393, 576, 0.68
+      ) and FocusPositionMatches(
+        "pfPlayerCastbar", "BOTTOM", 0, 316, 1
+      ) and FocusPositionMatches(
+        "pfTargetCastbar", "BOTTOM", 0, 300, 1
+      ) and FocusPositionMatches(
+        "pfSwingTimerMainhand", "BOTTOM", 0, 284, 1
+      ) and FocusPositionMatches(
+        "pfSwingTimerRanged", "BOTTOM", 0, 284, 1
+      ) and FocusPositionMatches(
+        "pfActionBarStances", "BOTTOM", 0, 255, 0.72
+      ) and player.width == "240" and player.height == "60" and
+      player.buffs == "TOPLEFT" and player.debuffs == "BOTTOMLEFT" and
+      player.buffsize == "23" and player.debuffsize == "23" and
+      player.buffperrow == "8" and player.debuffperrow == "8" and
+      AuraOffsetsMatch(player) and Version12UnitFontMatches(player) and
+      target.width == "240" and target.height == "60" and
+      target.buffs == "TOPRIGHT" and target.debuffs == "BOTTOMRIGHT" and
+      target.buffsize == "23" and target.debuffsize == "23" and
+      target.buffperrow == "8" and target.debuffperrow == "8" and
+      AuraOffsetsMatch(target) and Version12UnitFontMatches(target) and
+      targetTarget.width == "240" and targetTarget.height == "60" and
+      targetTarget.buffs == "TOPRIGHT" and
+      targetTarget.debuffs == "BOTTOMRIGHT" and
+      targetTarget.buffsize == "23" and
+      targetTarget.debuffsize == "23" and
+      targetTarget.buffperrow == "8" and
+      targetTarget.debuffperrow == "8" and
+      AuraOffsetsMatch(targetTarget) and
+      Version12UnitFontMatches(targetTarget) and
+      playerCast.width == "260" and playerCast.height == "12" and
+      targetCast.width == "260" and targetCast.height == "12" and
+      unitframes.swingtimerwidth == "260" and
+      unitframes.swingtimerheight == "12"
   end
 
   if version == 11 then
@@ -1237,7 +1328,9 @@ local function CombatFocusLayoutSaved()
         ActionBars.focusDoiteScale) <= 0.001)
   local function UnitFontConfigured(config)
     return config.customfont == "1" and
-      config.customfont_size == tostring(ActionBars.focusUnitFontSize)
+      config.customfont_size == tostring(ActionBars.focusUnitFontSize) and
+      FontPathMatches(config.customfont_name, GetSystemUnitFont()) and
+      config.customfont_style == ActionBars.focusUnitFontStyle
   end
 
   return FocusPositionMatches(
@@ -1356,14 +1449,10 @@ local function ConfigureFocusUnitFrame(
   config.debuffoffy = "0"
   config.buffperrow = tostring(ActionBars.focusAuraPerRow)
   config.debuffperrow = tostring(ActionBars.focusAuraPerRow)
-  local global = pfUI_config.global or {}
-  if config.customfont ~= "1" then
-    config.customfont_name = global.font_unit or config.customfont_name
-    config.customfont_style =
-      global.font_unit_style or config.customfont_style or "OUTLINE"
-  end
   config.customfont = "1"
+  config.customfont_name = GetSystemUnitFont()
   config.customfont_size = tostring(ActionBars.focusUnitFontSize)
+  config.customfont_style = ActionBars.focusUnitFontStyle
 
   local saved = SavePfUIPosition(
     name, "BOTTOM", x, y, scale
@@ -1621,7 +1710,7 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
     " Detected ArchiTotem was kept provider-owned and requested to open downward." or
     " ArchiTotem was unavailable or inapplicable and remained fail-open."
   return true,
-    "Combat Focus layout applied with direct Turtle WoW game coordinates: player and target use 240x60 at 0.8 with 14-point local unit text; the compact 240x60 target-of-target remains at 0.68 and attaches to Target's right edge; 23x23 auras use pfUI's real seven-UI border step and fit eight per row; the raised unit cluster reserves a second target-debuff row above the unchanged centered 260x12 player-cast, target-cast, and Swing stack at 1.0. The stance bar remains at 0.72 and both DoiteDPS rows remain in their separate lanes. Provider visibility, lock state, and native translucency were preserved without screen-pixel projection or coordinate readback." ..
+    "Combat Focus layout applied with direct Turtle WoW game coordinates: player and target use 240x60 at 0.8 with 18-point client-system unit text; the compact 240x60 target-of-target remains at 0.68 and attaches to Target's right edge with the same system face; 23x23 auras use pfUI's real seven-UI border step and fit eight per row; the unit cluster reserves a second target-debuff row above the unchanged centered 260x12 player-cast, target-cast, and Swing stack at 1.0. The stance bar remains at 0.72, while the provider-owned DoiteDPS timeline and resource row move upward together by 32 UI into their own safe lane. Provider visibility, lock state, and native translucency were preserved without screen-pixel projection or coordinate readback." ..
     archiMessage
 end
 
@@ -3702,7 +3791,7 @@ function ActionBars:Apply()
 
   -- Upgrade only exact preceding AEUI game-coordinate contracts.
   -- Restored/custom profiles are not matched by this signature and remain
-  -- untouched. This makes the requested V10 repair effective on the next
+  -- untouched. This makes the requested V11 repair effective on the next
   -- /reload without requiring another pixel-space calibration command.
   if ShouldMigrateCombatFocusLayout() and ComfortUIScaleConfigured() then
     self:ApplyCombatFocusLayoutPreset()
@@ -3769,6 +3858,8 @@ function ActionBars:GetRuntimeStatus()
       tostring(self.focusReadoutHeight) ..
     ",focus-layout-unit-font-size=" ..
       tostring(self.focusUnitFontSize) ..
+    ",focus-layout-unit-font=" ..
+      tostring(self.focusUnitFontRole) ..
     ",focus-ui-scale=" ..
       tostring(self.comfortUIScaleStatus or "custom") ..
     ",focus-ui-scale-tier=" .. tostring(uiScaleTier) ..
