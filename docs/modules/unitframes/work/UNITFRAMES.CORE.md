@@ -19,7 +19,7 @@
   本地执行有 `1` 次 Python `false`／`False` 拼写错误，针对性修正后同一几何
   合同重跑；随后有 `1` 次 sandbox 写权限错误，获准写入 ignored `generated/`
   后以同一命令通过。三者均不属于 ImageGen。
-- 自动修复预算：UF-A1 V1 历史终态 `5/5`；V2-A 已执行 `3/5`、V2-B
+- 自动修复预算：UF-A1 V1 历史终态 `5/5`；V2-A 已执行 `4/5`、V2-B
   `0/5`，最坏合计 `10` 次；UF-A2／UF-B1 各 `0/5` 并
   继续暂停
 - 流程错误：`2`（A1 `E1` 为 stdin transport；A1 `E2` 为 npm sandbox
@@ -1223,6 +1223,7 @@ UF-A1 V1 output or from V2-A has been used as an edit or construction source.
 | 1/5 | `UF-A1 V2-A V1` / `79fe840` | generate | child `019feeec-3e39-71c2-bc12-bcd8771834fd`／result `ig_048116956da78c3b016a7a9ac273488191884f77edb16f767f` | raw `generated/unitframes/primary/UF-A1/V2-A/V1/attempt-01/raw/UF-A1_V2-A_V1_attempt-01.provider-native-01.png`／SHA `33b3f7f1…f1c2` | 固定分区／比例：四件比例误差 `13.625866–16.397229%`，隔离仅 `79–116px` | 保留四件顺序、非镜像身份、深胡桃综合色和已通过的端部接触；使用同段 Image 3 重建精确 bbox，并把照片级微纹理收敛为香草手绘块面 | failed；进入 `V1.r1` |
 | 2/5 | `UF-A1 V2-A V1.r1` / `2a16420` | edit | child `019feef1-4eda-7533-8a6c-9366ef11009d`／result `ig_03da9e247feeca7a016a7a9c0cd1dc819193c159f5614ada6b` | raw `generated/unitframes/primary/UF-A1/V2-A/V1/attempt-02/raw/UF-A1_V2-A_V1_r1_attempt-02.provider-native-01.png`／SHA `1c37d445…cef4` | 固定分区／比例再次失败：四件高 `886–888px`，上下隔离仅 `64–74px` | 保留文字合同中的四角色身份与可用接触规则；相同首要失败连续两次，改变策略，不再上传 Image 3，从固定 Image 1／2 按 atlas 占用率 regenerate | failed；进入 `V1.r2` |
 | 3/5 | `UF-A1 V2-A V1.r2` / `9e6d3f2` | regenerate | child `019feef5-111a-7592-90f4-7d5e30670faf`／result `ig_063dfd4959558174016a7a9cffbd408191b381a3a9b5360c82` | raw `generated/unitframes/primary/UF-A1/V2-A/V1/attempt-03/raw/UF-A1_V2-A_V1_r2_attempt-03.provider-native-01.png`／SHA `c3c03dc7…c0f4` | 组件比例：四件宽 `205–209px`、高 `826px`，比例误差 `48.910412–51.815981%`；等比 fit 后端部接触为 `0` | 保留四角色文字语义，不保留本稿宽板几何或密纹；使用同段 Image 3 按实测当前／目标 bbox 逐边重建 | failed；进入 `V1.r3` |
+| 4/5 | `UF-A1 V2-A V1.r3` / `d5ef68c` | edit | child `019feef8-ded6-7051-aba6-8afa8f8ccd6e`／result `ig_051c6ec8554e42ba016a7a9dfe5a0c8191abd08d80504ebb49` | raw `generated/unitframes/primary/UF-A1/V2-A/V1/attempt-04/raw/UF-A1_V2-A_V1_r3_attempt-04.provider-native-01.png`／SHA `56007ac5…7810` | 组件比例仍失败：宽 `196–209px`、高 `825–827px`，误差 `42.200726–52%`；接触 `0–0.142857` | 不保留宽板像素；最后一次只用固定 Image 1／2，从“超窄端部装订条”身份 regenerate，优先精确 bbox 与绿色留白 | failed；进入最终 `V1.r4` |
 
 #### V2-A Attempt 1 完整审查
 
@@ -1574,6 +1575,107 @@ four genuine 128x768, 1:6 bboxes; 128 pixels of green isolation on every side;
 usable upper/lower inner contacts; independently repainted broad Vanilla-era
 masses; no extra post, detached measuring speck, dynamic content, edge contact,
 rejected V1 pixel or non-uniform transform.
+```
+
+### V2-A Attempt 4 完整审查
+
+- 输入与传输：固定 Image 1／2，以及同段紧邻 attempt 3 raw 作为 Image 3；
+  Image 3 SHA `c3c03dc7…c0f4`。完整 `V1.r3` fenced 正文来自提交 `d5ef68c`，
+  正文 SHA `a801329a…0b18`；child 完整回显三图顺序，没有 revised prompt。
+- 原始输出：`1536×1024 RGB`；SHA
+  `56007ac56ad6825034254a0dfbba15579e53dd45b25aba296e749094e70b7810`；
+  provider-native 与 child-saved 一致，计为 V2-A `4/5`。
+- 范围／语义：四件顺序和角色标记仍正确，无动态内容；Target 右依旧形成一条
+  几乎完整的第二金属端柱，Player 左横向金属块和整体密纹仍过重。
+- 第一失败门禁：bbox 分别 `196×827`、`199×827`、`206×826`、`209×825`，
+  比例误差 `42.200726–52%`。上下隔离仅 `96–101px`，左右仅 `64–115px`；等比
+  fit 后 top／bottom contact 覆盖率为 `0–0.142857`，低于 `0.25`。逐边 edit
+  只轻微缩窄 Player 左，不能再沿用本稿像素结构。
+- 美术一致性：宽板、密集压纹和独立金属端柱仍偏离“七像素端帽”的克制语言；
+  没有可覆盖客观失败的审美优势。
+- 技术／预演：review report SHA `948cd28a…89e4`；technical contact SHA
+  `ac13094a…9f2e`；`100%` 真实排版 SHA `a700cee9…91e4`；缩放／宽度预演 SHA
+  `2b3c1568…0dc1`；display-region SHA `759316cf…775`、`6/6 pass`。
+- 结论：`failed / attempt 4 of 5`。最后一次改变策略为无 Image 3 regenerate；
+  若仍失败则 V2-A 进入 `repair-budget-exhausted`，并且不启动 V2-B。
+
+### `UF-A1 V2-A V1.r4` 完整最终修复正文
+
+```text
+Create a precise production sprite sheet of four ultra-narrow vertical unit-
+frame binding strips. Geometry and empty green space are the first priority.
+Return exactly one 1536 by 1024 RGB image with a perfectly uniform pure #00FF00
+background. Split it into four columns, each 384 by 1024. Draw exactly one
+front-facing orthographic 2D strip in each column, ordered left to right as
+Player left cap, Player right cap, Target left cap and Target right cap. Draw
+no other object. These are fixed seven-pixel-wide terminal bindings later
+joined to separate rails around live pfUI bars. They must read as very narrow
+edge bindings, never broad panels, planks, banners, portraits, U-brackets or
+complete frames.
+
+Before drawing material, reserve the exact atlas rectangles. Each physical
+strip has a genuine exclusive visible bbox exactly 128 pixels wide by 768
+pixels high, ratio 1:6 within one percent. Use these global rectangles only:
+
+1. Player left: x 128..256, y 128..896.
+2. Player right: x 512..640, y 128..896.
+3. Target left: x 896..1024, y 128..896.
+4. Target right: x 1280..1408, y 128..896.
+
+The physical painted mass itself reaches all four sides of its declared bbox.
+Every column retains an uninterrupted 128-pixel pure-green lane above, below,
+left and right of the strip. No shadow, antialiasing, stitch, rivet, highlight
+or detached speck may escape the rectangle or fake its measurement. The four
+strips will be edge-connected chroma-keyed, transparent-RGB-cleared and
+proportionally fitted without distortion to independent 7 by 42 runtime cells.
+They remain fixed size and are never stretched horizontally.
+
+No previous UF-A1 V2-A output is supplied or permitted as an edit source.
+Never copy, trace or imitate any preceding V2-A candidate or rejected UF-A1 V1
+whole-frame pixel. Image 1 is a fixed secondary reference only for circa-2004
+Vanilla WoW painted scale, thick low-resolution readability, short dull-brass
+highlights and dark visual weight; ignore its screen layout, portrait circles,
+complete frames, chat content and books. Image 2 is a fixed secondary reference
+only for deep-walnut worn leather, soot-brown depth, warm upper-left light,
+believable field repair and low-frequency wear; ignore its pages, spine,
+wooden posts, dragons, complete book silhouette and broad metal construction.
+The global and Unit Frames written baselines outrank both images.
+
+Paint for a final width of only seven runtime pixels. Use broad, simple 2004-
+era hand-painted colour blocks: deep-walnut old leather as the main mass, a
+soot-brown recessed inner lip, two or three short broken warm highlights, and
+tiny interrupted dull oxidized brass. Do not use all-over leather photography,
+dense embossed grain, repeated pores or a noise carpet. Give the outer edge
+only two or three low-frequency hand-cut deviations. Keep the inner joining
+edge nearly straight, dark and quiet beside live text. The four silhouettes
+belong to one craft family but are independently drawn and not mirrored.
+
+Player left is the most repaired: one tiny crooked brass clamp and two or three
+coarse uneven stitches pulled through leather, all inside the narrow strip;
+its right edge joins the rails. Player right is quieter, with one shallow worn
+fold and one small off-centre dark-brass rivet; its left edge joins the rails.
+Target left has one rubbed leather fold and almost no metal; its right edge
+joins the rails. Target right has one tiny damaged brass repair mark, never a
+second post or plaque, with a small dent or split; its left edge joins the
+rails. Add no red hostility, faction, creature, elite, skull, horn or crest.
+
+At both the upper and lower end of every strip, place solid opaque leather
+contact mass for a six-pixel runtime rail. The top and bottom zones along each
+inner joining edge are quiet and free of curls, protruding stitches, metal
+spikes or outward shadows. The first inward source pixel is safe for one
+logical pixel of center-band extrusion beneath the cap. No identity mark
+depends only on that cover corridor. Keep the long middle joining edge calm.
+
+Draw no health or power fill, text, name, number, level, icon, aura, portrait,
+button, cursor, hover, aggro, glow or panel. Forbid full frames, U-brackets,
+continuous gold trim, matching corners, rounded web cards, glass, gradient
+gloss, industrial grids, black-iron shrines, Diablo-style architecture, book
+parts, wax seals, maps, gemstones, neon and photoreal antiques. Before
+returning, measure: exactly four ordered ultra-narrow strips; every bbox is
+128x768 and 1:6 within one percent; each column has 128 pure-green pixels on
+all four sides; upper and lower contacts are opaque and usable; material uses
+broad Vanilla-era painted masses; and there is no extra object, detached dot,
+edge contact, dynamic content or previous candidate pixel.
 ```
 
 ## 审查记录
