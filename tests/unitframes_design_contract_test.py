@@ -107,7 +107,7 @@ def main() -> None:
 
     work = WORK.read_text(encoding="utf-8")
     normalized_work = " ".join(work.split())
-    assert "UF-A1 V3-A repair-budget-exhausted / UF-A1 V3-B attempt 1 queued" in work
+    assert "UF-A1 V3-A exhausted / UF-A1 V3-B repair-prepared / attempt 2 queued" in work
     assert "accepted UF-PRIMARY-V3-SIM-V1 / 2026-08-11" in work
     assert "production / authorized / 2026-08-11" in work
     assert "完整性结论：`pass-final`" in work
@@ -196,6 +196,18 @@ def main() -> None:
             "Its right end carries one short damaged oxidized brass",
             "Add no enemy red",
             "Before returning, verify that the image contains exactly one complete Target",
+        ),
+    )
+    target_r1 = extract_fenced_body(work, "### `UF-A1 V3-B final.r1`")
+    assert_clauses(
+        target_r1,
+        (
+            "bbox is 1354 by 305",
+            "at least 1200 by 180 pixels",
+            "Remove most of both broad end blocks",
+            "At right, retain one short damaged oxidized-brass compression tab",
+            "remove Image 3's bright full-height gold plate",
+            "zero hard-safe-core structure",
         ),
     )
     bars = extract_fenced_body(work, "### `UF-B1 V2 final`")

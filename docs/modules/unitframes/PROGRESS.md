@@ -5,7 +5,7 @@
 - `UF-A1 V3-A final` Player 完整外壳：
   `P3 / repair-budget-exhausted / candidate-rejected / 5/5`。
 - `UF-A1 V3-B final` Target 完整外壳：
-  `P3 / prompt-authorized / attempt 1 queued / 0/5`。
+  `P3 / attempt 1 rejected-repairable / final.r1 repair-prepared / 1/5`。
 - `UF-B1 V2 final` Health／Power 灰阶填充纹：
   `P3 / prompt-authorized / sequence-wait / 0/5`。
 - `UF-A2` TargetTarget／Focus：继续暂停；既有物件身份方向不变，尚无正式
@@ -22,7 +22,7 @@
 - 用户随后于 `2026-08-11` 明确授权上述三段 final，冻结 A→B→B1 顺序、
   A／B 固定 Image 1／2、同段紧邻前稿有界 edit、B1 首次无图片、每段
   `5` 次实际生成及最坏 `15` 次预算。流程错误不占额度；跨段与旧失败像素
-  禁止复用。A attempts 1–5 已完成并耗尽；B／B1 尚未调用。
+  禁止复用。A attempts 1–5 已完成并耗尽；B attempt 1 已完成；B1 未调用。
 
 ## V3 结构合同
 
@@ -74,7 +74,7 @@
 - `UNITFRAMES.CORE.md` 只保留当前 V3 合同、三段自包含 final、历史终态摘要和
   下一门禁；V1／V2 的逐稿全文继续由 Git 历史保存。
 - `UF-A1 V3-A`、`UF-A1 V3-B`、`UF-B1 V2` 每段最多 `5` 次实际
-  `imagegen-0-143-0`，最坏合计 `15` 次；当前 A `5/5`、B `0/5`、B1
+  `imagegen-0-143-0`，最坏合计 `15` 次；当前 A `5/5`、B `1/5`、B1
   `0/5`。
 - 三段 final 已吸收用户确认的可见结论并通过 `pass-final` 自包含预检；
   正式生产授权已独立取得，按 A→B→B1 顺序执行。
@@ -111,6 +111,13 @@
   `6355 px`。归一化开口约 x `65..1216`，竖边仍多 `23/26 source px`，不能
   按 `≤6 source px` 软边清理合同由 Python 删除。A `5/5`，禁止第六次；无
   candidate/source/runtime。
+- B attempt 1 独立生成，没有 A／旧失败像素。单开口、物理连通和 isolation
+  通过；bbox `1354×305` 的 ratio／anisotropy 均 `12.872683%`，hard safe
+  core `66780 px`，故无 candidate/source/runtime。Target 的磨损左折痕与
+  右黄铜损伤身份可保留。
+- `UF-A1 V3-B final.r1` 已作为 attempt 2 自包含有界正文：收敛成约
+  `1284×252` 的薄连续皮环，把开口扩为至少 `1200×180`，把右黄铜损伤压入
+  极端 `42 source px` 并打断规则长轨系带。
 - reviewer 首次逐 fleck flood 性能错误已改为线性 scanline run union-find；
   attempt 4 child 在 provider 图已存在后缺 Pillow，退回 `sips` 确认原图为
   RGB 并复制。两项作为流程错误 `2` 单列，没有额外 provider 图，不占额度。
@@ -127,8 +134,8 @@
 
 ## 下一门禁
 
-提交 A `repair-budget-exhausted` 终态后，以固定执行器启动独立
-`UF-A1 V3-B final` attempt 1，只上传固定 Image 1／2、无 Image 3，禁止复用
-A 或旧失败像素；完成 B 后执行 B1。每段内部
+提交 B `final.r1 / repair-prepared` 后，以固定执行器启动
+`UF-A1 V3-B final.r1` attempt 2，只用 B attempt 1 raw 作为 Image 3，禁止
+复用 A 或旧失败像素；完成 B 后执行 B1。每段内部
 通过即停，第五次仍失败则耗尽；当前禁止创建 source/runtime、修改 addon、
 跨段复用或复用旧失败像素。
