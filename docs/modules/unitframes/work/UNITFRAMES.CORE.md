@@ -6,12 +6,13 @@
 - 组件 ID：`UF.PLAYER.SHELL`、`UF.TARGET.SHELL`、
   `UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.BAR.*`、`UF.STATE.*`
 - 当前版本：`UF-A1 V2-A V1`／`UF-A1 V2-B V1`／`UF-A2 V1`／`UF-B1 V1`
-- 子状态：UF-A1 V2 `prompt-authorized`；UF-A1 V1
+- 子状态：UF-A1 V2-A `candidate-rejected / repair-budget-exhausted`；V2-B
+  `prompt-authorized / sequence-blocked`；UF-A1 V1
   `candidate-rejected / repair-budget-exhausted / user-rejected`；UF-A2／UF-B1
   `prompt-authorized / paused`
-- 项目阶段：UF-A1 V2 `P3`；UF-A2／UF-B1 保持 `P3 / paused`
+- 项目阶段：UF-A1 V2 `P3 / blocked`；UF-A2／UF-B1 保持 `P3 / paused`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 操作：`generate`；已确认“独立四件 source → 标准宽度单 shell／可变宽度
+- 操作：`review`；已确认“独立四件 source → 标准宽度单 shell／可变宽度
   三切片”，V2-A／V2-B 正文与生产授权边界均已冻结
 - 生成前模拟：`UF-A1-V2-SIM-V2`／deterministic-local-geometry；ImageGen
   `0/0`
@@ -19,7 +20,7 @@
   本地执行有 `1` 次 Python `false`／`False` 拼写错误，针对性修正后同一几何
   合同重跑；随后有 `1` 次 sandbox 写权限错误，获准写入 ignored `generated/`
   后以同一命令通过。三者均不属于 ImageGen。
-- 自动修复预算：UF-A1 V1 历史终态 `5/5`；V2-A 已执行 `4/5`、V2-B
+- 自动修复预算：UF-A1 V1 历史终态 `5/5`；V2-A 已执行并用满 `5/5`、V2-B
   `0/5`，最坏合计 `10` 次；UF-A2／UF-B1 各 `0/5` 并
   继续暂停
 - 流程错误：`2`（A1 `E1` 为 stdin transport；A1 `E2` 为 npm sandbox
@@ -1224,6 +1225,7 @@ UF-A1 V1 output or from V2-A has been used as an edit or construction source.
 | 2/5 | `UF-A1 V2-A V1.r1` / `2a16420` | edit | child `019feef1-4eda-7533-8a6c-9366ef11009d`／result `ig_03da9e247feeca7a016a7a9c0cd1dc819193c159f5614ada6b` | raw `generated/unitframes/primary/UF-A1/V2-A/V1/attempt-02/raw/UF-A1_V2-A_V1_r1_attempt-02.provider-native-01.png`／SHA `1c37d445…cef4` | 固定分区／比例再次失败：四件高 `886–888px`，上下隔离仅 `64–74px` | 保留文字合同中的四角色身份与可用接触规则；相同首要失败连续两次，改变策略，不再上传 Image 3，从固定 Image 1／2 按 atlas 占用率 regenerate | failed；进入 `V1.r2` |
 | 3/5 | `UF-A1 V2-A V1.r2` / `9e6d3f2` | regenerate | child `019feef5-111a-7592-90f4-7d5e30670faf`／result `ig_063dfd4959558174016a7a9cffbd408191b381a3a9b5360c82` | raw `generated/unitframes/primary/UF-A1/V2-A/V1/attempt-03/raw/UF-A1_V2-A_V1_r2_attempt-03.provider-native-01.png`／SHA `c3c03dc7…c0f4` | 组件比例：四件宽 `205–209px`、高 `826px`，比例误差 `48.910412–51.815981%`；等比 fit 后端部接触为 `0` | 保留四角色文字语义，不保留本稿宽板几何或密纹；使用同段 Image 3 按实测当前／目标 bbox 逐边重建 | failed；进入 `V1.r3` |
 | 4/5 | `UF-A1 V2-A V1.r3` / `d5ef68c` | edit | child `019feef8-ded6-7051-aba6-8afa8f8ccd6e`／result `ig_051c6ec8554e42ba016a7a9dfe5a0c8191abd08d80504ebb49` | raw `generated/unitframes/primary/UF-A1/V2-A/V1/attempt-04/raw/UF-A1_V2-A_V1_r3_attempt-04.provider-native-01.png`／SHA `56007ac5…7810` | 组件比例仍失败：宽 `196–209px`、高 `825–827px`，误差 `42.200726–52%`；接触 `0–0.142857` | 不保留宽板像素；最后一次只用固定 Image 1／2，从“超窄端部装订条”身份 regenerate，优先精确 bbox 与绿色留白 | failed；进入最终 `V1.r4` |
+| 5/5 | `UF-A1 V2-A V1.r4` / `5a2c08f` | regenerate | child `019feefc-a7a7-7772-b776-e831d8467495`／result `ig_07243a1b7a32105f016a7a9ef27db881919869440f80b1c43c` | raw `generated/unitframes/primary/UF-A1/V2-A/V1/attempt-05/raw/UF-A1_V2-A_V1_r4_attempt-05.provider-native-01.png`／SHA `b2cb4f58…abed` | 组件比例／隔离：四件宽约 `99–100px`、高 `954–955px`，误差 `37.106918–37.801047%`；上下隔离仅 `34–36px` | 保留五稿完整证据供用户审计；不得第 6 次调用，不进入 V2-B、source 或 runtime | `candidate-rejected / repair-budget-exhausted` |
 
 #### V2-A Attempt 1 完整审查
 
@@ -1678,6 +1680,33 @@ broad Vanilla-era painted masses; and there is no extra object, detached dot,
 edge contact, dynamic content or previous candidate pixel.
 ```
 
+### V2-A Attempt 5 最终审查
+
+- 输入与传输：只上传固定 Image 1／2，无 Image 3。完整 `V1.r4` fenced 正文来自
+  提交 `5a2c08f`，正文 SHA `08116bd4…4292`；child 完整回显正文，没有 revised
+  prompt。
+- 原始输出：`1536×1024 RGB`；SHA
+  `b2cb4f584c7eda1d167b0b260f968ba2deb7eb700d444706248c75761978abed`；
+  provider-native 与 child-saved 一致，计为 V2-A `5/5`。
+- 范围／语义：恰有四条超窄端部装订条，顺序正确；整体材料已从宽板收敛到
+  深胡桃窄条，Player 左缝线／夹片、Player 右铆钉、Target 左折边和 Target 右
+  小修补均可辨；没有动态内容或额外物件。该方向改善不能覆盖几何失败。
+- 第一失败门禁：四件 bbox 为 `100×954`、`99×954`、`99×955`、`99×954`；
+  比例误差 `37.106918–37.801047%`。左右隔离虽多数改善，但 top／bottom 只剩
+  `34–36px`，远低于 `128px`。等比 fit 后物件宽度只约 `4px` 并在 `7×42` cell
+  内横向居中；Player／Target 左端的 top／bottom contact 仍为 `0`，无法与轨道
+  形成可靠物理连接。
+- 美术一致性：宽板问题显著改善，块面也比 attempt 3／4 克制；但上下出现规则
+  方帽，整体仍过长、过工整，运行时只剩细针状暗线，不足以承载已确认的粗犷
+  行军身份牌重量。
+- 技术／预演：review report SHA `0ac46d4e…df0f`；technical contact SHA
+  `4297c951…4893`；`100%` 真实排版 SHA `7b6cceb7…642d`；缩放／宽度预演 SHA
+  `6f48f4c9…f752`；display-region SHA `759316cf…775`、`6/6 pass`。后者只证明
+  已确认 provider 几何，不证明本稿 source 合格。
+- 结论：`candidate-rejected / P3 / repair-budget-exhausted`。V2-A 已用满
+  `5/5`，禁止第 6 次；按用户授权的 A→B 顺序，V2-B 保持 `0/5` 且不启动。
+  本批没有 tracked source、runtime 或 addon 改动。
+
 ## 审查记录
 
 - 结构／交互：八件 source 保持独立；标准宽度由 builder 输出每角色一张完整
@@ -1687,9 +1716,10 @@ edge contact, dynamic content or previous candidate pixel.
 - 可见方向：维持已确认的深胡桃旧皮革、烟褐内衬、断续暗铜、Player 左／
   Target 右非镜像维修关系。用户已确认标准单 shell／可变宽度三切片不会改变
   该可见方向；几何图中的平色、像素笔触和微纹理仍明确非权威。
-- 正式生产已冻结并授权为两个独立执行段：`UF-A1 V2-A V1` 生成四个固定端帽，
-  `UF-A1 V2-B V1` 生成四条横轨；每段各自最多五次实际 ImageGen，不跨段复用
-  像素。两个完整正文已于 `2026-08-11` 获得用户明确生图授权。
+- 正式生产冻结为两个独立执行段：`UF-A1 V2-A V1` 生成四个固定端帽，
+  `UF-A1 V2-B V1` 生成四条横轨。V2-A 已用满五次且没有一稿通过 source
+  几何／隔离门禁；V2-B 因 A→B 顺序保持 `0/5`，没有上传或生成。禁止跨段
+  复用、禁止第六次 V2-A 调用。
 - 用户方向结论：`confirmed / 2026-08-11`。本地模拟像素不得晋级
   source/runtime，也不得成为 ImageGen reference 或 edit 输入。
 
@@ -1716,12 +1746,13 @@ edge contact, dynamic content or previous candidate pixel.
 | `UF-A1 V1` | fixed ImageGen `5/5`；attempt 5 ratio `2/2 pass`，安全走廊 `0/2 pass`；真实排版 SHA `147e9d98…5252`；用户于 `2026-08-11` 明确拒绝例外 | `candidate-rejected / repair-budget-exhausted / user-rejected` | 建立新的 UF-A1 版本；不得复用失败稿像素，不得第 6 次同版生图 |
 | `UF-A1-V2-SIM-V1` | deterministic scene／assembly；八件 source 互斥且动态区覆盖 `0px`；display-region `2/2 pass`；ImageGen `0/0` | `superseded-as-runtime / retained-as-source-granularity-evidence` | 不直接把四件挂为四张 runtime Texture；由 V2-SIM.V2 接管缩放合同 |
 | `UF-A1-V2-SIM-V2` | 标准单 shell 覆盖 `0.64–1.15×`、内部 Texture 接缝 `0`；可变 `W=160/200/240` 在 `0.71/1.00×` 接头空洞 `0px`、内容侵入 `0px`；display-region `6/6 pass`；双次重建 SHA 一致；用户于 `2026-08-11` 明确确认；ImageGen `0/0` | `prompt-authorized / P3` | V2-A／V2-B 已授权；先执行四端帽，内部通过后执行四横轨 |
+| `UF-A1 V2-A V1` | fixed ImageGen `5/5`；attempt 5 为 `99–100×954–955px`、ratio error `37.106918–37.801047%`、上下隔离 `34–36px`；真实排版 SHA `7b6cceb7…642d` | `candidate-rejected / repair-budget-exhausted` | 不得第 6 次；V2-B 保持 `0/5`。新版本若改变一次生成的对象／画布拆分须重新授权 |
 
 ## 下一门禁
 
-`UF-A1-V2-SIM-V2` 已确认，稳定子模块定义、`UF-A1 V2-A V1`／
-`UF-A1 V2-B V1` 最终正文、builder 合同和两段最多五次的修复边界均已授权。
-下一门禁是先执行 V2-A，逐稿完成固定分区、连通色键、等比 bbox-fit、端部接触、
-真实排版与缩放审查；V2-A 内部通过后才执行 V2-B。两段合并后全部内部门禁
-通过，才可达到 `candidate-reviewed / P3` 并交用户复审。用户接受前不得产出
-tracked source/runtime、不得修改 addon。UF-A2／UF-B1 继续暂停。
+`UF-A1 V2-A V1` 已用满五次修复预算且没有合格候选，当前终态为
+`candidate-rejected / repair-budget-exhausted`；V2-B 因顺序门禁保持 `0/5`。
+下一门禁是用户审计第五稿与失败证据，并决定是否授权新的生产版本。若改为
+每个端帽独立生成、改变 canvas／对象分段或允许新的确定性重建方式，均属于
+当前 envelope 外变更，必须形成新完整正文并重新授权。不得第六次调用本版本，
+不得创建 source/runtime 或修改 addon。UF-A2／UF-B1 继续暂停。
