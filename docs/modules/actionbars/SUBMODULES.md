@@ -63,7 +63,7 @@ pfUI 的合法矩形布局由按钮数因数决定；12 格支持 `12×1`、`6×
 | `AB.ENDCAP.GRYPHON` | `pfGryphonLeft`、`pfGryphonRight` | 成对香草狮鹫端帽；仅装饰、不吃点击；水平主栏宽度不足或用户关闭时不显示 |
 | `AB.STANCE` | Bar `11` 的真实形态按钮 | 较小但保持可读；不生成不存在的职业形态 |
 | `AB.PET` | Bar `12` 的真实宠物按钮 | 保留攻击、跟随、停留、技能与自动施法反馈 |
-| `AB.MOVER` | pfUI unlock／`UpdateMovable` | 每个 Bar 独立移动、缩放、重置；视觉不得持续改写 Parent、Point、Width 或 Height |
+| `AB.MOVER` | pfUI unlock／`UpdateMovable` | 默认每个 Bar 独立移动、缩放、重置；`AB.SIDEBARS.GROUP` 绑定态只扩展 Bar 2 mover 覆盖四栏 union，并在同一 unlock／UpdateConfig 事件边界同步 scale／相对锚。不得删除任何 movable 登记，也不得用 `OnUpdate` 持续改写 Parent、Point、Width 或 Height |
 
 `AB.SLOT.BASE.V1` 的已接受母版为
 [ActionSlotBase_Master_v1.png](../../../assets/source/actionbars/ab-slot/ActionSlotBase_Master_v1.png)，
@@ -229,11 +229,13 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   `HORIZONTAL / scale=1.0`，Field Kit v1.7 强绑定和 ArchiTotem 下置不变；v1.7
   只修复 unlock mover 登记／drag 生命周期。
 - `战斗视线邻接`：Player／Target／TargetTarget 继续由 pfUI UnitFrame provider 所有；
-  AEUI `0.8.19` 的 runtime-v2.2 preset 仅一次性把 Player／Target 置于游戏坐标
+  AEUI `0.8.20` 的 runtime-v2.3 preset 仅一次性把 Player／Target 置于游戏坐标
   `BOTTOM (-160,485)／(105,485)`，两框设为 `240×60 / 0.8`；TargetTarget 保持
   `240×60 / 0.68`，fallback 为 `BOTTOM (393,576)`，live Frame 以
   `LEFT → Target RIGHT +8 UI` 中线
-  依附。三框仅本地启用客户端 `STANDARD_TEXT_FONT / OUTLINE / 18 UI` font；Aura 均为 `23 UI`，
+  依附。三框仅本地启用客户端 `STANDARD_TEXT_FONT / OUTLINE / 18 UI` font，并直接
+  写入六个 health／power FontString（Player 另含 top-center），在 provider
+  `UpdateConfig` 后置钩子中重施；Aura 均为 `23 UI`，
   Player 上 Buff／下 Debuff 从完整框架左缘起，Target 与 TargetTarget 从右缘起。
   当前 `default_border=3` 且 `force_blizz=0`，故按 pfUI 真实 `size + 7` 步距，
   每排 `8` 枚占 `233／240 UI`，四个 offset 明确置零；Target 的 `16` 个 Boss
@@ -248,14 +250,15 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   屏幕像素、UIParent 尺寸或 provider effective scale。
 - `紧凑战斗`：主／副栏可改为 `6×2`；自适应 Rail 重新切片，狮鹫端帽缩小或
   隐藏，逻辑按钮数与分页不变。
-- `自由侧栏`：当前 runtime 中 Bar 2／3／4／5 继续按各自 SavedVariables 独立移动、
-  缩放、显隐、分页与配置，不因 Combat Focus preset 失去现有布局。
-- `右侧四栏组合方案（待用户确认）`：把“大奶黑牛”当前从左到右的
-  `Paging／Vertical／Left／Right` 映射为阅读顺序的 `2×2` 四块，每块 `3×4`，总体
-  `6×8`，置于屏幕右缘内缩约 `24 UI`、视觉中心略低于屏幕中线。若后续接入，组合态
-  只保留一个 group mover；四栏的动作内容、按键、分页、显隐、脱战淡出等配置仍各自
-  独立，原 formfactor／position 必须先备份并在 `unbind` 时精确恢复。组合态不再支持
-  四个独立位置 mover，否则不能形成真正整体；本轮 V11 只审阅方案，不写运行时。
+- `右侧四栏组合`：用户已确认 V11 方案。`AB.SIDEBARS.GROUP runtime-v1.0` 把
+  `bar2 Paging／bar4 Vertical／bar5 Left／bar3 Right` 映射为阅读顺序的 `2×2`
+  四块，每块 `3×4`、总体 `6×8`，初始 scale `1.2`、组间距 `6 UI`；接受的 fallback
+  坐标依次为 `RIGHT (-133,-68)／(-35,-68)／(-133,-196)／(-35,-196)`。仅
+  “大奶黑牛 - Basin of Stars”完整匹配原 `1×12` 四列签名时自动迁移；状态按角色／
+  服务器隔离。绑定态只显示覆盖 union 的 Bar 2 group mover，滚轮缩放和拖动在事件
+  边界同步四框；Bar 4／5／3 movable 登记保留但隐藏，避免 `drag=nil`。动作内容、
+  按键、分页、显隐、脱战淡出、冷却和命中仍逐栏独立；`/aeui sidebars unbind`
+  精确恢复绑定前 formfactor／icon／spacing／scale／position，绑定期间的内容配置保留。
 - `透明度与命中`：玩家／目标状态、双方施法、攻击计时、DoiteDPS 与技能 CD
   使用 provider 原生 Alpha，不做整组淡出；只允许非核心辅助栏按用户设置脱战
   淡出。Rail、连接片、卷袋、护套和标题等装饰层全部鼠标穿透，DoiteDPS 锁定态
@@ -274,12 +277,11 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   冷却选项不由此 preset 改写；DoiteDPS 的 local scale 在 comfort preset 中
   明确收敛为 `0.82`，其启用／锁定／显隐与推荐逻辑不变。首次应用前保存相关
   pfUI／DoiteDPS／ArchiTotem 配置；`/aeui focuslayout restore` 恢复后提示 reload。
-- `ACTION-BARS-CORE-SIM-V11` 以“大奶黑牛”的两张最新实机截图完成确定性本地审查；
-  AEUI `0.8.19`／focus runtime-v2.2 保留 V10 的全部单位框、Aura、计时栈、Field Kit
-  和 Combat Deck 几何，只把三框局部字形改为客户端系统字体 `18 UI`，并把 DoiteDPS
-  两排 union 上移 `32 UI`。仅完整匹配旧字形与几何的 exact v12 签名会在 `/reload`
-  一次迁移为 v13；手动改过字体或坐标的 profile 保持不动。右侧四栏 `2×2 / 3×4`
-  组合仍为 proposal-only，不进入 addon runtime。
+- `ACTION-BARS-CORE-SIM-V11` 以“大奶黑牛”的实机截图完成确定性本地审查；AEUI
+  `0.8.20`／focus runtime-v2.3 保留 V10 几何与 V11 DoiteDPS 安全区，并修正三框
+  FontString 实际刷新生命周期。exact v7–v13 签名在 `/reload` 一次迁移为 v14；
+  手动改过字体或坐标的 profile 保持不动。用户已确认右侧四栏 `2×2 / 3×4`
+  方案，现由独立 `sidebar-group-contract=1.0` 接入，不修改任何位图。
 - `ACTION-BARS-CORE-SIM-V10` 以“大奶黑牛”的上一轮实机问题截图完成确定性本地审查；
   AEUI `0.8.18`／focus runtime-v2.1／Field Kit bridge-v2.0 保留 tier 8、Combat Deck、
   accepted art 与 provider 行为，只把单位族整体上移、Aura 收为真实八枚满行的

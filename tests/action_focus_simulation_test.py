@@ -190,7 +190,7 @@ def test_focus_v11_font_doite_and_side_cluster_proposal() -> None:
     assert len(display["scenarios"]) == 3
 
     runtime = json.loads(RUNTIME_DISPLAY.read_text(encoding="utf-8"))
-    assert runtime["component"] == "AB.FOCUS.LAYOUT.V1/runtime-v2.2"
+    assert runtime["component"] == "AB.FOCUS.LAYOUT.V1/runtime-v2.3"
     assert runtime["evidence"]["final_runtime"] is True
     assert runtime["evidence"]["adapter"].endswith("Modules/ActionBars.lua")
     assert runtime["evidence"]["accepted_simulation_spec"].endswith(
@@ -202,6 +202,7 @@ def test_focus_v11_font_doite_and_side_cluster_proposal() -> None:
     assert "Player/Target BOTTOM (-160,485)/(105,485)" in formula
     assert "Aura 23 UI" in formula
     assert "STANDARD_TEXT_FONT at local size 18" in formula
+    assert "reasserted after provider UpdateConfig" in formula
     assert "y offset -20" in formula
     assert "Player Cast BOTTOM (0,316)" in formula
     assert "Target Cast BOTTOM (0,300)" in formula

@@ -6,6 +6,25 @@ local Frame = {}
 Frame.__index = Frame
 local PhysicalRect
 
+local FontString = {}
+FontString.__index = FontString
+
+function FontString:SetFont(path, size, style)
+  self.path = path
+  self.size = size
+  self.style = style
+  self.calls = self.calls + 1
+end
+
+local function NewFontString()
+  return setmetatable({ calls = 0 }, FontString)
+end
+
+local focusFontFields = {
+  "hpLeftText", "hpRightText", "hpCenterText",
+  "powerLeftText", "powerRightText", "powerCenterText",
+}
+
 function Frame:GetName() return self.name end
 function Frame:GetWidth() return self.width end
 function Frame:GetHeight() return self.height end
@@ -53,7 +72,28 @@ function Frame:SetPoint(...)
 end
 function Frame:GetNumPoints() return table.getn(self.points) end
 function Frame:GetPoint(index) return unpack(self.points[index]) end
-function Frame:UpdateConfig() self.updateConfigCalls = self.updateConfigCalls + 1 end
+function Frame:UpdateConfig()
+  self.updateConfigCalls = self.updateConfigCalls + 1
+  -- Emulate a late pfUI/provider redraw that writes its old unit face after
+  -- SavedVariables changed. AEUI's post-hook must restore the live strings.
+  for _, field in pairs(focusFontFields) do
+    local fontString = self[field]
+    if fontString then
+      fontString:SetFont(
+        "Interface\\AddOns\\pfUI\\fonts\\BigNoodleTitling.ttf",
+        14,
+        "OUTLINE"
+      )
+    end
+  end
+  if self.infoTopCenterText then
+    self.infoTopCenterText:SetFont(
+      "Interface\\AddOns\\pfUI\\fonts\\BigNoodleTitling.ttf",
+      14,
+      "OUTLINE"
+    )
+  end
+end
 function Frame:UpdateFrameSize() self.updateSizeCalls = self.updateSizeCalls + 1 end
 function Frame:SetAlpha(value)
   self.alpha = value
@@ -76,7 +116,7 @@ end
 
 -- The game renders through a normalized 768-high UI root, while Turtle's
 -- GetScreenWidth/GetScreenHeight report the physical 1920x1080 mode. Runtime
--- v2.2 must never feed those physical dimensions into Frame:SetPoint.
+-- v2.3 must never feed those physical dimensions into Frame:SetPoint.
 local rootWidth = 1920 * 768 / 1080
 local rootHeight = 768
 local uiScale = 0.81269841269841
@@ -149,6 +189,12 @@ function SetCVar(name, value) cvars[name] = tonumber(value) or value end
 local player = NewFrame("pfPlayer", 200, 46)
 local target = NewFrame("pfTarget", 200, 46)
 local targetTarget = NewFrame("pfTargetTarget", 100, 17)
+for _, frame in pairs({ player, target, targetTarget }) do
+  for _, field in pairs(focusFontFields) do
+    frame[field] = NewFontString()
+  end
+end
+player.infoTopCenterText = NewFontString()
 local playerCast = NewFrame("pfPlayerCastbar", 300, 16)
 local targetCast = NewFrame("pfTargetCastbar", 200, 16)
 local swingMain = NewFrame("pfSwingTimerMainhand", 180, 10)
@@ -353,7 +399,7 @@ assert(mainBar.points[1][5] == 100)
 local ok, message = module:ApplyComfortUIScalePreset()
 assert(ok == true)
 assert(string.find(message, "Comfort UI scale applied", 1, true))
-assert(module.focusLayoutRuntimeContract == "2.2")
+assert(module.focusLayoutRuntimeContract == "2.3")
 assert(module.fieldKitRuntimeContract == "2.0")
 assert(module.focusLayoutStatus == "applied")
 assert(module.focusLayoutConfigured == 10)
@@ -534,6 +580,33 @@ assert(player.updateSizeCalls == 1)
 assert(target.updateSizeCalls == 1)
 assert(targetTarget.updateSizeCalls == 1)
 
+local function AssertLiveSystemFont(frame)
+  for _, field in pairs(focusFontFields) do
+    local fontString = assert(frame[field])
+    assert(fontString.path == STANDARD_TEXT_FONT)
+    assert(fontString.size == 18)
+    assert(fontString.style == "OUTLINE")
+  end
+end
+AssertLiveSystemFont(player)
+AssertLiveSystemFont(target)
+AssertLiveSystemFont(targetTarget)
+assert(player.infoTopCenterText.path == STANDARD_TEXT_FONT)
+assert(player.infoTopCenterText.size == 18)
+assert(player.infoTopCenterText.style == "OUTLINE")
+assert(module.focusUnitFontLive == 19)
+
+-- A later pfUI UpdateConfig writes the provider face first; the installed
+-- post-hooks must leave all three live unit frames on the system face at 18.
+player:UpdateConfig()
+target:UpdateConfig()
+targetTarget:UpdateConfig()
+AssertLiveSystemFont(player)
+AssertLiveSystemFont(target)
+AssertLiveSystemFont(targetTarget)
+assert(player.infoTopCenterText.path == STANDARD_TEXT_FONT)
+assert(player.infoTopCenterText.size == 18)
+
 assert(pfUI_config.castbar.player.width == "260")
 assert(pfUI_config.castbar.player.height == "12")
 assert(pfUI_config.castbar.target.width == "260")
@@ -579,7 +652,7 @@ assert(archiPoint[4] == -10)
 assert(archiPoint[5] == -39)
 
 module:InstallFieldKitHooks()
-assert(installedHooks == 1)
+assert(installedHooks == 4)
 archiTotem:ClearAllPoints()
 archiTotem:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 900, -700)
 ArchiTotem_DragHandle_OnDragStop()
@@ -617,7 +690,7 @@ assert(archiDirectionCalls == 1)
 assert(module.archiTotemDirectionStatus == "up")
 
 assert(AzerothExpeditionUI.db.actionbars.fieldKitBound == true)
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 13)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 14)
 assert(AzerothExpeditionUI.db.actionbars.comfortUIScaleVersion == 2)
 
 for _, frame in pairs({
@@ -635,7 +708,7 @@ end
 assert(doite.parent == UIParent)
 
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "focus%-layout%-contract=2%.2"))
+assert(string.find(status, "focus%-layout%-contract=2%.3"))
 assert(string.find(status, "focus%-layout=applied"))
 assert(string.find(status, "focus%-layout%-mouse=visible%-controls%-only"))
 assert(string.find(
@@ -653,6 +726,7 @@ assert(string.find(status, "focus%-layout%-stance%-scale=0%.72"))
 assert(string.find(status, "focus%-layout%-readout%-size=260x12"))
 assert(string.find(status, "focus%-layout%-unit%-font%-size=18"))
 assert(string.find(status, "focus%-layout%-unit%-font=system"))
+assert(string.find(status, "focus%-layout%-unit%-font%-live=19"))
 assert(string.find(status, "focus%-ui%-scale=applied"))
 assert(string.find(status, "focus%-ui%-scale%-tier=8"))
 assert(string.find(status, "focus%-ui%-scale%-target=8"))
@@ -716,7 +790,7 @@ assert(ArchiTotem_Options.Apperance.direction == "up")
 
 -- A live 0.8.14 profile may still have a version-1 backup that predates
 -- TargetTarget ownership. V10 must extend that backup before its one-shot
--- version-8-to-13 migration, so restore remains lossless.
+-- version-8-to-14 migration, so restore remains lossless.
 pfUI_config.global.pixelperfect = "8"
 pfUI.pixelperfect.UpdateConfig()
 local function legacyPosition(anchor, x, y, scale)
@@ -812,7 +886,7 @@ assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 8)
 
 pfUI_config.position.pfPlayer.xpos = -190
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 13)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 14)
 local upgradedBackup =
   assert(AzerothExpeditionUI.db.actionbars.combatFocusBackup)
 assert(upgradedBackup.positions.pfTargetTarget.present == true)
@@ -825,7 +899,7 @@ assert(screenHeightCalls == 0)
 
 -- A live in-memory v9 session can be newer than the persisted v8 snapshot.
 -- Only its exact untouched geometry and default local font signature may
--- migrate automatically to v13.
+-- migrate automatically to v14.
 pfUI_config.position.pfPlayer =
   legacyPosition("BOTTOM", -150, 535, 0.68)
 pfUI_config.position.pfTarget =
@@ -887,11 +961,11 @@ assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 9)
 
 pfUI_config.unitframes.player.customfont_size = "12"
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 13)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 14)
 
 -- The currently persisted target-device snapshot can still be the exact
 -- v7 game-coordinate contract if the in-memory v8 session has not yet been
--- written. It must also jump directly to v13 on the next load.
+-- written. It must also jump directly to v14 on the next load.
 pfUI_config.position.pfPlayer =
   legacyPosition("BOTTOM", -212, 492, 0.75)
 pfUI_config.position.pfTarget =
@@ -931,7 +1005,7 @@ AzerothExpeditionUI.db.actionbars.combatFocusProjection = {
   coordinateSpace = "game-native-v1",
 }
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 13)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 14)
 assert(screenWidthCalls == 0)
 assert(screenHeightCalls == 0)
 
@@ -999,7 +1073,7 @@ end
 
 ConfigureV10Signature(0.68, 0.72)
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 13)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 14)
 
 ConfigureV10Signature(0.8, 1)
 pfUI_config.position.pfTarget.ypos = 533
@@ -1007,7 +1081,7 @@ module:Apply()
 assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 10)
 pfUI_config.position.pfTarget.ypos = 535
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 13)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 14)
 assert(pfUI_config.position.pfPlayer.ypos == 485)
 assert(pfUI_config.position.pfTarget.ypos == 485)
 assert(pfUI_config.position.pfPlayer.scale == 0.8)
@@ -1018,7 +1092,7 @@ assert(pfUI_config.position.pfSwingTimerMainhand.ypos == 284)
 assert(pfUI_config.position.pfPlayerCastbar.scale == 1)
 assert(pfUI_config.position.pfActionBarStances.scale == 0.72)
 
--- The exact V11 snapshot migrates once to V13. A one-coordinate manual edit
+-- The exact V11 snapshot migrates once to V14. A one-coordinate manual edit
 -- still protects the profile.
 ConfigureV10Signature(0.8, 1)
 pfUI_config.position.pfPlayer.ypos = 455
@@ -1040,7 +1114,7 @@ module:Apply()
 assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 11)
 pfUI_config.position.pfTarget.ypos = 455
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 13)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 14)
 assert(pfUI_config.position.pfPlayer.ypos == 485)
 assert(pfUI_config.position.pfTarget.ypos == 485)
 assert(pfUI_config.position.pfTargetTarget.ypos == 576)
@@ -1075,7 +1149,7 @@ assert(DoiteDPSDB.y == -647)
 
 pfUI_config.unitframes.target.customfont_name = pfUI_config.global.font_unit
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 13)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 14)
 assert(DoiteDPSDB.y == -615)
 for _, config in pairs({
   pfUI_config.unitframes.player,
@@ -1086,5 +1160,21 @@ for _, config in pairs({
   assert(config.customfont_size == "18")
   assert(config.customfont_style == "OUTLINE")
 end
+
+-- The exact V13 SavedVariables now seen on the target device must migrate
+-- once to V14 so the live FontString post-hooks become part of the contract.
+AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion = 13
+AzerothExpeditionUI.db.actionbars.combatFocusProjection = {
+  coordinateSpace = "game-native-v1",
+}
+pfUI_config.unitframes.target.customfont_size = "17"
+module:Apply()
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 13)
+pfUI_config.unitframes.target.customfont_size = "18"
+module:Apply()
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 14)
+AssertLiveSystemFont(player)
+AssertLiveSystemFont(target)
+AssertLiveSystemFont(targetTarget)
 
 print("action focus layout module smoke test passed")

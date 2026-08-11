@@ -1107,16 +1107,16 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
 | `AB.FIELDKIT bridge-v1.7` | v1.6 几何、ArchiTotem、popup guard、source／TGA 全不变；Bar 6 始终保留 pfUI movable 登记，unlock 创建 drag 后绑定态仅隐藏独立 mover，actionbar 配置刷新后重施 `12×2` 锚 | 用户实机报告 `unlock.lua:527 drag=nil`；精确生命周期 smoke 与全部静态门禁 pass，AEUI `0.8.13`，`pending-retest / P5` | `/reload` 开关 pfUI unlock，确认无错误、只有 Bar 1 mover、Bar 6 不跳位；再继续原 Field Kit／focus 全清单 |
 | `AB.FIELDKIT bridge-v1.8` | accepted source／TGA、AutoBar profile、popup guard、TrinketMenu／ArchiTotem 行为均不变；隐藏并停止创建三段文字，hover bridge 收为 `10 UI`；左／右停靠间距改为 `12／8 UI`，ArchiTotem offset 改为 `-39 UI`；Bar 6 与 TargetTarget 均在 pfUI 创建 drag 后才隐藏独立 mover | 用户要求移除文字并收紧全部组件；Field Kit Lua smoke、runtime display、V8 布局与仓库合同 pass，共享入口升至 AEUI `0.8.16`，`pending-game-validation / P5` | `/reload` 确认无三段文字、Player 退出卷袋占位、紧凑间距、popup 联合悬停不退化，并开关 pfUI unlock 验证无空 drag／无跳位 |
 | `AB.FIELDKIT bridge-v1.9` | accepted source／TGA、24 类映射、popup guard 与 provider 行为不变；默认关闭空槽／缺货类别图标并隐藏把手，外壳跟随当前 `1–24` 个可见 Button；external drawer 不再要求当前满 24 格；旧 AEUI 满格显示只按 exact backed-up 签名迁移 | 用户指定采用“大奶黑牛”的精简 AutoBar；13 格与 24 格 smoke、V9 simulation／runtime display `10/10`、仓库合同 pass；共享入口升至 AEUI `0.8.17`，`pending-game-validation / P5` | `/reload` 确认当前 13 格、库存变化动态收缩／扩展、少于 24 格仍有外置抽屉且无错误分隔、自定义／无备份 profile 不被改写 |
-| `AB.FIELDKIT bridge-v2.0` | accepted source／TGA、精简 AutoBar、popup guard 与 provider 行为不变；消耗品可见底边和 TrinketMenu 底边共同比主栏低 `20 UI`，原 x 与唯一 Bar 1 mover 不变 | 用户报告 Player 仍压消耗品，并明确允许消耗品／饰品一起下移；Field Kit Lua smoke、V10 layout `60/60`、V11 layout `68/68` 与 runtime display `12/12` pass；共享入口现为 AEUI `0.8.19`，`pending-game-validation / P5` | `/reload` 确认两组同步下移、彼此同底线、与 Player 无交叠，拖动回位／popup／Queue／换装不退化 |
+| `AB.FIELDKIT bridge-v2.0` | accepted source／TGA、精简 AutoBar、popup guard 与 provider 行为不变；消耗品可见底边和 TrinketMenu 底边共同比主栏低 `20 UI`，原 x 与唯一 Bar 1 mover 不变 | 用户报告 Player 仍压消耗品，并明确允许消耗品／饰品一起下移；Field Kit Lua smoke、V10 layout `60/60`、V11 layout `68/68` 与 focus runtime display `12/12` pass；共享入口现为 AEUI `0.8.20`，`pending-game-validation / P5` | `/reload` 确认两组同步下移、彼此同底线、与 Player 无交叠，拖动回位／popup／Queue／换装不退化 |
 
 ## 下一门禁
 
 1. 两套 accepted source 与 runtime TGA 像素身份不变；视觉 source／runtime
    manifest 保持 `runtime-v1.5`，共享 adapter 已更新到 bridge v2.0／P5。fresh-checkout package
    已通过，目标设备只需拉取并安装 `addon/`，不得再生成、导出或打补丁。
-2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.19`、
+2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.20`、
    `fieldkit-contract=2.0`、`fieldkit-binding=bound` 与 `actionbar-stack=12x2-bound`。
-   同时确认 `focus-layout-contract=2.2`、`focus-layout-anchor=ui-parent+target-dependent`、
+   同时确认 `focus-layout-contract=2.3`、`focus-layout-anchor=ui-parent+target-dependent`、
    `focus-layout-coordinate-space=game-native-v1`、
    `focus-layout-unit-scale=0.8`、`focus-layout-targettarget-scale=0.68`、
    `focus-layout-unit-font-size=18`、`focus-layout-unit-font=system`、

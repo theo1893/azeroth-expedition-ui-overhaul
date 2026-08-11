@@ -497,7 +497,7 @@
   },
   "adapter": {
     "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
-    "sha256": "7c638171afd73ab9bccda3c2eb432586dfeefff7ff0b35f1167953acc8c9a5ad",
+    "sha256": "3e62c88b3e75ecaff7b0b928c1f23e9d7304f60950ce2c85691fb11163253ac6",
     "provider": "TrinketMenu 3.3 existing main/menu frames and 2+30 buttons",
     "visual_layers_only": false,
     "visual_and_layout_adapter": true,
@@ -523,13 +523,13 @@
   "addon_entrypoints": {
     "bootstrap": {
       "file": "addon/AzerothExpeditionUI/Core/Bootstrap.lua",
-      "sha256": "5fc8ea711cde1d451220a6881950f0af59e2b71a95b4a3d3efedcb86b30d0ea8"
+      "sha256": "a97b8bf587db56b4d26e357683181dee4d8f6e53b7b8b98f94073e457882e35e"
     },
     "toc": {
       "file": "addon/AzerothExpeditionUI/AzerothExpeditionUI.toc",
-      "sha256": "eb93b4f5f2c7d7e7f4d67c176191ce4097da31ac929dfd548890a98d12a28840"
+      "sha256": "32fc7039f0ddf2f8857c07ffd0ffc9d5ae0e13d8029233b7d42e46f38c3be4bd"
     },
-    "addon_version": "0.8.19",
+    "addon_version": "0.8.20",
     "required_dependency": "pfUI",
     "optional_provider": "TrinketMenu"
   },

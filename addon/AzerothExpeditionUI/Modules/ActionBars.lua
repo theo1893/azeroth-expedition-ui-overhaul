@@ -14,9 +14,12 @@ ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
 ActionBars.fieldKitRuntimeContract = "2.0"
-ActionBars.focusLayoutRuntimeContract = "2.2"
-ActionBars.focusLayoutVersion = 13
+ActionBars.focusLayoutRuntimeContract = "2.3"
+ActionBars.focusLayoutVersion = 14
 ActionBars.focusLayoutBackupVersion = 1
+ActionBars.sideBarGroupRuntimeContract = "1.0"
+ActionBars.sideBarGroupLayoutVersion = 1
+ActionBars.sideBarGroupBackupVersion = 1
 ActionBars.autoBarDefaultModeVersion = 1
 ActionBars.focusCoordinateSpace = "game-native-v1"
 ActionBars.comfortUIScaleVersion = 2
@@ -26,8 +29,8 @@ ActionBars.comfortUIScaleValue = 0.71111111111111
 -- Deck, and the user's comfortable local scales unchanged. It moves the
 -- provider-owned DoiteDPS two-row union upward by one safe lane and replaces
 -- the three locally pinned unit fonts with the client system face at a more
--- readable size. The proposed right-side four-bar cluster remains simulation
--- only until the user accepts its grouped geometry.
+-- readable size. Its accepted right-side four-bar cluster is implemented as
+-- one reversible mover while each provider bar keeps its content settings.
 ActionBars.focusUnitScale = 0.8
 ActionBars.focusTargetTargetScale = 0.68
 ActionBars.focusReadoutScale = 1
@@ -46,6 +49,12 @@ ActionBars.focusAuraPerRow = 8
 ActionBars.focusReadoutWidth = 260
 ActionBars.focusReadoutHeight = 12
 ActionBars.focusTargetTargetGap = 8
+ActionBars.sideBarGroupFormFactor = "3 x 4"
+ActionBars.sideBarGroupIconSize = "20"
+ActionBars.sideBarGroupSpacing = "1"
+ActionBars.sideBarGroupScale = 1.2
+ActionBars.sideBarGroupGap = 6
+ActionBars.sideBarGroupAutoProfile = "大奶黑牛 - Basin of Stars"
 ActionBars.trinketKitTexturePath =
   addon.media.root .. "ActionBars\\ActionTrinketKitV1"
 ActionBars.consumableKitTexturePath =
@@ -88,6 +97,44 @@ ActionBars.focusStanceX = 0
 ActionBars.focusStanceY = 255
 ActionBars.focusDoiteX = 850
 ActionBars.focusDoiteY = -615
+
+local sideBarGroupDefinitions = {
+  {
+    index = 2,
+    config = "bar2",
+    name = "pfActionBarPaging",
+    homeX = -133,
+    homeY = -68,
+  },
+  {
+    index = 4,
+    config = "bar4",
+    name = "pfActionBarVertical",
+    homeX = -35,
+    homeY = -68,
+  },
+  {
+    index = 5,
+    config = "bar5",
+    name = "pfActionBarLeft",
+    homeX = -133,
+    homeY = -196,
+  },
+  {
+    index = 3,
+    config = "bar3",
+    name = "pfActionBarRight",
+    homeX = -35,
+    homeY = -196,
+  },
+}
+
+local sideBarLegacyPositions = {
+  pfActionBarPaging = { x = -102, y = 4 },
+  pfActionBarVertical = { x = -68, y = 4 },
+  pfActionBarLeft = { x = -34, y = 3 },
+  pfActionBarRight = { x = 0, y = 3 },
+}
 
 local railSliceOrder = {
   "topLeft", "top", "topRight",
@@ -881,6 +928,444 @@ local function RestoreField(target, key, captured)
   return true
 end
 
+local function GetSideBarGroupProfileKey()
+  if type(UnitName) ~= "function" or type(GetRealmName) ~= "function" then
+    return nil
+  end
+  local name = UnitName("player")
+  local realm = GetRealmName()
+  if not name or name == "" or not realm or realm == "" then
+    return nil
+  end
+  return tostring(name) .. " - " .. tostring(realm)
+end
+
+local function GetSideBarGroupState(create)
+  local database = addon.db and addon.db.actionbars
+  local profileKey = GetSideBarGroupProfileKey()
+  if not database or not profileKey then
+    return nil, profileKey
+  end
+  if create and type(database.sideBarGroupProfiles) ~= "table" then
+    database.sideBarGroupProfiles = {}
+  end
+  local profiles = database.sideBarGroupProfiles
+  if type(profiles) ~= "table" then
+    return nil, profileKey
+  end
+  if create and type(profiles[profileKey]) ~= "table" then
+    profiles[profileKey] = {}
+  end
+  return profiles[profileKey], profileKey
+end
+
+local function SideBarGroupBound()
+  local state = GetSideBarGroupState(false)
+  return state and state.bound == true
+end
+
+local function GetSideBarFrame(definition)
+  local bars = pfUI and pfUI.bars
+  return bars and bars[definition.index] or GetGlobal(definition.name)
+end
+
+local function SideBarPositionMatches(name, x, y, scale)
+  local positions = pfUI_config and pfUI_config.position
+  local position = positions and positions[name]
+  return type(position) == "table" and
+    position.anchor == "RIGHT" and position.parent == "UIParent" and
+    math.abs((tonumber(position.xpos) or 100000) - x) <= 1 and
+    math.abs((tonumber(position.ypos) or 100000) - y) <= 1 and
+    math.abs((tonumber(position.scale) or 100000) - scale) <= 0.001
+end
+
+local function SideBarLegacyProfileMatches()
+  if GetSideBarGroupProfileKey() ~= ActionBars.sideBarGroupAutoProfile or
+    not pfUI_config or type(pfUI_config.bars) ~= "table"
+  then
+    return false
+  end
+  for index = 1, table.getn(sideBarGroupDefinitions) do
+    local definition = sideBarGroupDefinitions[index]
+    local config = pfUI_config.bars[definition.config]
+    local position = sideBarLegacyPositions[definition.name]
+    if type(config) ~= "table" or config.buttons ~= "12" or
+      config.formfactor ~= "1 x 12" or config.icon_size ~= "20" or
+      config.spacing ~= "1" or not position or
+      not SideBarPositionMatches(
+        definition.name, position.x, position.y,
+        ActionBars.sideBarGroupScale
+      )
+    then
+      return false
+    end
+  end
+  return true
+end
+
+local function CaptureSideBarGroupBackup(state)
+  if type(state) ~= "table" or not pfUI_config then
+    return false
+  end
+  local bars = pfUI_config.bars or {}
+  local positions = pfUI_config.position or {}
+  local backup = {
+    version = ActionBars.sideBarGroupBackupVersion,
+    bars = {},
+    positions = {},
+  }
+  for index = 1, table.getn(sideBarGroupDefinitions) do
+    local definition = sideBarGroupDefinitions[index]
+    local config = bars[definition.config] or {}
+    backup.bars[definition.config] = {
+      formfactor = CaptureField(config, "formfactor"),
+      icon_size = CaptureField(config, "icon_size"),
+      spacing = CaptureField(config, "spacing"),
+    }
+    backup.positions[definition.name] =
+      CaptureField(positions, definition.name)
+  end
+  state.backup = backup
+  return true
+end
+
+local function GetSideBarGroupScale()
+  local positions = pfUI_config and pfUI_config.position
+  local position = positions and positions.pfActionBarPaging
+  local scale = position and tonumber(position.scale)
+  local root = GetSideBarFrame(sideBarGroupDefinitions[1])
+  if not scale and root and root.GetScale then
+    scale = tonumber(root:GetScale())
+  end
+  return scale or ActionBars.sideBarGroupScale
+end
+
+local function SaveSideBarGroupHomePositions()
+  local saved = 0
+  for index = 1, table.getn(sideBarGroupDefinitions) do
+    local definition = sideBarGroupDefinitions[index]
+    if SavePfUIPosition(
+      definition.name,
+      "RIGHT",
+      definition.homeX,
+      definition.homeY,
+      ActionBars.sideBarGroupScale
+    ) then
+      saved = saved + 1
+    end
+  end
+  return saved == table.getn(sideBarGroupDefinitions)
+end
+
+local function ConfigureSideBarGroupProfile(resetHome)
+  if not pfUI_config or type(pfUI_config.bars) ~= "table" then
+    return false, false
+  end
+  for index = 1, table.getn(sideBarGroupDefinitions) do
+    local definition = sideBarGroupDefinitions[index]
+    local config = pfUI_config.bars[definition.config]
+    if type(config) ~= "table" or tostring(config.buttons) ~= "12" then
+      return false, false
+    end
+  end
+  pfUI_config.position = pfUI_config.position or {}
+  local changed = false
+  if resetHome or not pfUI_config.position.pfActionBarPaging then
+    SaveSideBarGroupHomePositions()
+    changed = true
+  end
+  local scale = GetSideBarGroupScale()
+  for index = 1, table.getn(sideBarGroupDefinitions) do
+    local definition = sideBarGroupDefinitions[index]
+    local config = pfUI_config.bars[definition.config]
+    if config.formfactor ~= ActionBars.sideBarGroupFormFactor then
+      config.formfactor = ActionBars.sideBarGroupFormFactor
+      changed = true
+    end
+    if config.icon_size ~= ActionBars.sideBarGroupIconSize then
+      config.icon_size = ActionBars.sideBarGroupIconSize
+      changed = true
+    end
+    if config.spacing ~= ActionBars.sideBarGroupSpacing then
+      config.spacing = ActionBars.sideBarGroupSpacing
+      changed = true
+    end
+    local position = pfUI_config.position[definition.name]
+    if type(position) ~= "table" then
+      SavePfUIPosition(
+        definition.name,
+        "RIGHT",
+        definition.homeX,
+        definition.homeY,
+        scale
+      )
+      changed = true
+    elseif math.abs((tonumber(position.scale) or 0) - scale) > 0.001 then
+      position.scale = scale
+      changed = true
+    end
+  end
+  return true, changed
+end
+
+function ActionBars:ApplySideBarGroupAnchors()
+  if not SideBarGroupBound() then
+    self.sideBarGroupStatus = "free"
+    return false
+  end
+  local root = GetSideBarFrame(sideBarGroupDefinitions[1])
+  local topRight = GetSideBarFrame(sideBarGroupDefinitions[2])
+  local bottomLeft = GetSideBarFrame(sideBarGroupDefinitions[3])
+  local bottomRight = GetSideBarFrame(sideBarGroupDefinitions[4])
+  if not root or not topRight or not bottomLeft or not bottomRight then
+    self.sideBarGroupStatus = "unavailable"
+    return false
+  end
+
+  local scale = GetSideBarGroupScale()
+  for _, frame in pairs({ root, topRight, bottomLeft, bottomRight }) do
+    if frame.SetParent then
+      frame:SetParent(UIParent)
+    end
+    if frame.SetScale then
+      frame:SetScale(scale)
+    end
+  end
+  topRight:ClearAllPoints()
+  topRight:SetPoint(
+    "TOPLEFT", root, "TOPRIGHT", self.sideBarGroupGap, 0
+  )
+  bottomLeft:ClearAllPoints()
+  bottomLeft:SetPoint(
+    "TOPLEFT", root, "BOTTOMLEFT", 0, -self.sideBarGroupGap
+  )
+  bottomRight:ClearAllPoints()
+  bottomRight:SetPoint(
+    "TOPLEFT", bottomLeft, "TOPRIGHT", self.sideBarGroupGap, 0
+  )
+  self.sideBarGroupStatus = "bound-6x8"
+  return true
+end
+
+function ActionBars:SyncSideBarGroupScale()
+  if not SideBarGroupBound() then
+    return false
+  end
+  local root = GetSideBarFrame(sideBarGroupDefinitions[1])
+  local scale = root and root.GetScale and tonumber(root:GetScale())
+  if not scale then
+    return false
+  end
+  pfUI_config.position = pfUI_config.position or {}
+  for index = 1, table.getn(sideBarGroupDefinitions) do
+    local definition = sideBarGroupDefinitions[index]
+    local frame = GetSideBarFrame(definition)
+    if frame and frame.SetScale then
+      frame:SetScale(scale)
+    end
+    local position = pfUI_config.position[definition.name] or {}
+    pfUI_config.position[definition.name] = position
+    position.scale = scale
+  end
+  self:ApplySideBarGroupAnchors()
+  return true
+end
+
+function ActionBars:PersistSideBarGroupPositions()
+  if not SideBarGroupBound() or not pfUI_config then
+    return false
+  end
+  local converted = {}
+  local converter = pfUI and pfUI.api and pfUI.api.ConvertFrameAnchor
+  if type(converter) ~= "function" then
+    return false
+  end
+  local scale = GetSideBarGroupScale()
+  for index = 1, table.getn(sideBarGroupDefinitions) do
+    local definition = sideBarGroupDefinitions[index]
+    local frame = GetSideBarFrame(definition)
+    if not frame then
+      return false
+    end
+    local ok, anchor, x, y = pcall(converter, frame, "RIGHT")
+    if not ok or not anchor or not x or not y then
+      return false
+    end
+    converted[index] = { anchor, x, y }
+  end
+  for index = 1, table.getn(sideBarGroupDefinitions) do
+    local definition = sideBarGroupDefinitions[index]
+    local position = converted[index]
+    SavePfUIPosition(
+      definition.name, position[1], position[2], position[3], scale
+    )
+  end
+  self:ApplySideBarGroupAnchors()
+  return true
+end
+
+function ActionBars:RefreshSideBarGroupBars()
+  local bars = pfUI and pfUI.bars
+  if not bars or type(bars.UpdateConfig) ~= "function" then
+    self.sideBarGroupStatus = "unavailable"
+    return false
+  end
+  self.sideBarGroupUpdating = true
+  local ok = pcall(bars.UpdateConfig, bars)
+  self.sideBarGroupUpdating = false
+  self:ApplySideBarGroupAnchors()
+  self:UpdateFieldKitUnlockMover()
+  return ok
+end
+
+function ActionBars:MigrateSideBarGroupDefault()
+  local state = GetSideBarGroupState(false)
+  if state or not SideBarLegacyProfileMatches() then
+    return false
+  end
+  state = GetSideBarGroupState(true)
+  if not state then
+    return false
+  end
+  CaptureSideBarGroupBackup(state)
+  state.bound = true
+  state.layoutVersion = self.sideBarGroupLayoutVersion
+  state.migration = "exact-v11-profile"
+  local configured = ConfigureSideBarGroupProfile(true)
+  if configured then
+    self:RefreshSideBarGroupBars()
+    self.sideBarGroupMigration = "applied"
+    return true
+  end
+  state.bound = false
+  self.sideBarGroupMigration = "failed"
+  return false
+end
+
+function ActionBars:MaintainSideBarGroup()
+  if not SideBarGroupBound() then
+    self.sideBarGroupStatus = "free"
+    self:UpdateFieldKitUnlockMover()
+    return false
+  end
+  local configured, changed = ConfigureSideBarGroupProfile(false)
+  if not configured then
+    self.sideBarGroupStatus = "signature-mismatch"
+    return false
+  end
+  if changed and not self.sideBarGroupUpdating then
+    return self:RefreshSideBarGroupBars()
+  end
+  self:ApplySideBarGroupAnchors()
+  self:UpdateFieldKitUnlockMover()
+  return true
+end
+
+function ActionBars:SetSideBarGroupBinding(bound)
+  if type(InCombatLockdown) == "function" and InCombatLockdown() then
+    self.sideBarGroupStatus = "combat-locked"
+    return false, "Leave combat before changing the side-bar group."
+  end
+  if not pfUI_config or type(pfUI_config.bars) ~= "table" then
+    self.sideBarGroupStatus = "unavailable"
+    return false, "The pfUI character action-bar profile is unavailable."
+  end
+  local state, profileKey = GetSideBarGroupState(true)
+  if not state then
+    self.sideBarGroupStatus = "unavailable"
+    return false, "The current character profile key is unavailable."
+  end
+
+  if bound then
+    if not state.bound then
+      CaptureSideBarGroupBackup(state)
+      state.bound = true
+      state.layoutVersion = self.sideBarGroupLayoutVersion
+      state.migration = "manual"
+      local configured = ConfigureSideBarGroupProfile(true)
+      if not configured then
+        state.bound = false
+        self.sideBarGroupStatus = "signature-mismatch"
+        return false, "All four side bars must contain 12 buttons."
+      end
+      self:RefreshSideBarGroupBars()
+    else
+      self:MaintainSideBarGroup()
+    end
+    return true,
+      "Side bars grouped for " .. tostring(profileKey) ..
+      ": Paging/Vertical over Left/Right, each 3x4, with one 6x8 mover. Per-bar content, keybind, paging, visibility, and autohide settings remain independent."
+  end
+
+  if not state.bound then
+    self.sideBarGroupStatus = "free"
+    return true, "The four side bars are already independent."
+  end
+  local backup = state.backup
+  if type(backup) ~= "table" or
+    backup.version ~= self.sideBarGroupBackupVersion
+  then
+    self.sideBarGroupStatus = "no-backup"
+    return false, "No compatible pre-group side-bar backup exists."
+  end
+  state.bound = false
+  local bars = pfUI_config.bars or {}
+  pfUI_config.position = pfUI_config.position or {}
+  for index = 1, table.getn(sideBarGroupDefinitions) do
+    local definition = sideBarGroupDefinitions[index]
+    local config = bars[definition.config]
+    local savedConfig = backup.bars and backup.bars[definition.config]
+    if type(config) == "table" and type(savedConfig) == "table" then
+      RestoreField(config, "formfactor", savedConfig.formfactor)
+      RestoreField(config, "icon_size", savedConfig.icon_size)
+      RestoreField(config, "spacing", savedConfig.spacing)
+    end
+    RestoreField(
+      pfUI_config.position,
+      definition.name,
+      backup.positions and backup.positions[definition.name]
+    )
+  end
+  self:RefreshSideBarGroupBars()
+  for index = 1, table.getn(sideBarGroupDefinitions) do
+    local definition = sideBarGroupDefinitions[index]
+    local frame = GetSideBarFrame(definition)
+    if frame and pfUI and pfUI.api and
+      type(pfUI.api.LoadMovable) == "function"
+    then
+      pcall(pfUI.api.LoadMovable, frame)
+    end
+  end
+  self:UpdateFieldKitUnlockMover()
+  self.sideBarGroupStatus = "free-restored"
+  return true,
+    "Side bars ungrouped; their pre-group form factors, spacing, scale, and positions were restored. Per-bar content changes made while grouped were kept."
+end
+
+function ActionBars:ResetSideBarGroupPosition()
+  if type(InCombatLockdown) == "function" and InCombatLockdown() then
+    return false, "Leave combat before resetting the side-bar group."
+  end
+  if not SideBarGroupBound() then
+    return false, "Bind the four side bars before resetting their group home."
+  end
+  SaveSideBarGroupHomePositions()
+  local root = GetSideBarFrame(sideBarGroupDefinitions[1])
+  ApplyFramePosition(
+    root,
+    "RIGHT",
+    sideBarGroupDefinitions[1].homeX,
+    sideBarGroupDefinitions[1].homeY,
+    self.sideBarGroupScale
+  )
+  self:SyncSideBarGroupScale()
+  self:PersistSideBarGroupPositions()
+  self:UpdateFieldKitUnlockMover()
+  self.sideBarGroupStatus = "bound-6x8-home"
+  return true,
+    "The 6x8 side-bar group returned to its accepted right-side home."
+end
+
 local function CaptureCombatFocusBackup()
   local database = addon.db and addon.db.actionbars
   if not database or database.combatFocusBackup then
@@ -973,13 +1458,99 @@ local function CombatFocusLayoutActive()
     projection.coordinateSpace == ActionBars.focusCoordinateSpace
 end
 
+local focusUnitFontStrings = {
+  "hpLeftText",
+  "hpRightText",
+  "hpCenterText",
+  "powerLeftText",
+  "powerRightText",
+  "powerCenterText",
+  "infoTopCenterText",
+}
+
+local function GetFocusUnitFrame(key)
+  local unitframes = pfUI and pfUI.uf
+  if key == "ttarget" then
+    return unitframes and unitframes.targettarget or
+      GetGlobal("pfTargetTarget")
+  elseif key == "player" then
+    return unitframes and unitframes.player or GetGlobal("pfPlayer")
+  elseif key == "target" then
+    return unitframes and unitframes.target or GetGlobal("pfTarget")
+  end
+  return nil
+end
+
+local function ApplyLiveFocusUnitFont(frame)
+  if not frame then
+    return 0
+  end
+  local applied = 0
+  local font = GetSystemUnitFont()
+  for index = 1, table.getn(focusUnitFontStrings) do
+    local fontString = frame[focusUnitFontStrings[index]]
+    if fontString and type(fontString.SetFont) == "function" then
+      local ok = pcall(
+        fontString.SetFont,
+        fontString,
+        font,
+        ActionBars.focusUnitFontSize,
+        ActionBars.focusUnitFontStyle
+      )
+      if ok then
+        applied = applied + 1
+      end
+    end
+  end
+  return applied
+end
+
+function ActionBars:ApplyFocusUnitFonts(force)
+  if not force and not CombatFocusLayoutActive() then
+    self.focusUnitFontLive = 0
+    return 0
+  end
+  local applied = 0
+  applied = applied + ApplyLiveFocusUnitFont(GetFocusUnitFrame("player"))
+  applied = applied + ApplyLiveFocusUnitFont(GetFocusUnitFrame("target"))
+  applied = applied + ApplyLiveFocusUnitFont(GetFocusUnitFrame("ttarget"))
+  self.focusUnitFontLive = applied
+  return applied
+end
+
+function ActionBars:InstallFocusUnitFontHooks()
+  if type(hooksecurefunc) ~= "function" then
+    return false
+  end
+  local installed = false
+  for _, key in pairs({ "player", "target", "ttarget" }) do
+    local frame = GetFocusUnitFrame(key)
+    if frame and type(frame.UpdateConfig) == "function" and
+      not frame.aeuiFocusUnitFontHookV1
+    then
+      local hookedFrame = frame
+      frame.aeuiFocusUnitFontHookV1 = true
+      hooksecurefunc(frame, "UpdateConfig", function()
+        if not ActionBars.focusFontSuppressed and
+          CombatFocusLayoutActive()
+        then
+          ApplyLiveFocusUnitFont(hookedFrame)
+        end
+      end)
+      installed = true
+    end
+  end
+  self.focusUnitFontHooks = installed or self.focusUnitFontHooks
+  return installed
+end
+
 local function ShouldMigrateCombatFocusLayout()
   local database = addon.db and addon.db.actionbars
   local projection = database and database.combatFocusProjection
   local version = database and database.combatFocusLayoutVersion
   if not database or
     (version ~= 7 and version ~= 8 and version ~= 9 and version ~= 10 and
-      version ~= 11 and version ~= 12) or
+      version ~= 11 and version ~= 12 and version ~= 13) or
     type(projection) ~= "table" or
     projection.coordinateSpace ~= ActionBars.focusCoordinateSpace or
     not pfUI_config
@@ -997,9 +1568,11 @@ local function ShouldMigrateCombatFocusLayout()
   local playerCast = castbars.player or {}
   local targetCast = castbars.target or {}
   local oldDoiteX =
-    (version == 9 or version == 10 or version == 11 or version == 12) and
+    (version == 9 or version == 10 or version == 11 or version == 12 or
+      version == 13) and
       850 or 1012
-  local oldDoiteY = version == 8 and -780 or -647
+  local oldDoiteY = version == 8 and -780 or
+    (version == 13 and -615 or -647)
   local doiteMatches = type(DoiteDPSDB) ~= "table" or
     (DoiteDPSDB.point == "TOPLEFT" and
       DoiteDPSDB.relativePoint == "TOPLEFT" and
@@ -1116,7 +1689,20 @@ local function ShouldMigrateCombatFocusLayout()
         tostring(global.font_unit_style or "OUTLINE")
   end
 
-  if version == 12 then
+  local function Version13UnitFontMatches(config)
+    return tostring(config.customfont) == "1" and
+      tostring(config.customfont_size) == "18" and
+      FontPathMatches(config.customfont_name, GetSystemUnitFont()) and
+      tostring(config.customfont_style or "OUTLINE") == "OUTLINE"
+  end
+
+  if version == 12 or version == 13 then
+    local function ExpectedUnitFontMatches(config)
+      if version == 13 then
+        return Version13UnitFontMatches(config)
+      end
+      return Version12UnitFontMatches(config)
+    end
     return FocusPositionMatches(
         "pfPlayer", "BOTTOM", -160, 485, 0.8
       ) and FocusPositionMatches(
@@ -1137,12 +1723,12 @@ local function ShouldMigrateCombatFocusLayout()
       player.buffs == "TOPLEFT" and player.debuffs == "BOTTOMLEFT" and
       player.buffsize == "23" and player.debuffsize == "23" and
       player.buffperrow == "8" and player.debuffperrow == "8" and
-      AuraOffsetsMatch(player) and Version12UnitFontMatches(player) and
+      AuraOffsetsMatch(player) and ExpectedUnitFontMatches(player) and
       target.width == "240" and target.height == "60" and
       target.buffs == "TOPRIGHT" and target.debuffs == "BOTTOMRIGHT" and
       target.buffsize == "23" and target.debuffsize == "23" and
       target.buffperrow == "8" and target.debuffperrow == "8" and
-      AuraOffsetsMatch(target) and Version12UnitFontMatches(target) and
+      AuraOffsetsMatch(target) and ExpectedUnitFontMatches(target) and
       targetTarget.width == "240" and targetTarget.height == "60" and
       targetTarget.buffs == "TOPRIGHT" and
       targetTarget.debuffs == "BOTTOMRIGHT" and
@@ -1151,7 +1737,7 @@ local function ShouldMigrateCombatFocusLayout()
       targetTarget.buffperrow == "8" and
       targetTarget.debuffperrow == "8" and
       AuraOffsetsMatch(targetTarget) and
-      Version12UnitFontMatches(targetTarget) and
+      ExpectedUnitFontMatches(targetTarget) and
       playerCast.width == "260" and playerCast.height == "12" and
       targetCast.width == "260" and targetCast.height == "12" and
       unitframes.swingtimerwidth == "260" and
@@ -1457,13 +2043,14 @@ local function ConfigureFocusUnitFrame(
   local saved = SavePfUIPosition(
     name, "BOTTOM", x, y, scale
   )
-  local frame = pfUI and pfUI.uf and pfUI.uf[key] or GetGlobal(name)
+  local frame = GetFocusUnitFrame(key) or GetGlobal(name)
   if frame and type(frame.UpdateFrameSize) == "function" then
     pcall(frame.UpdateFrameSize, frame)
   end
   if frame and type(frame.UpdateConfig) == "function" then
     pcall(frame.UpdateConfig, frame)
   end
+  ApplyLiveFocusUnitFont(frame)
   local applied = ApplyFramePosition(
     frame, "BOTTOM", x, y, scale
   )
@@ -1699,6 +2286,8 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
     database.combatFocusLayoutVersion = self.focusLayoutVersion
     database.combatFocusProjection = layout
   end
+  self:InstallFocusUnitFontHooks()
+  self:ApplyFocusUnitFonts(true)
   self.focusLayoutConfigured = configured
   self.focusLayoutLive = live
   self.focusLayoutDoite = doiteSaved and "preserved" or "missing"
@@ -1839,6 +2428,7 @@ function ActionBars:RestoreCombatFocusLayoutPreset()
     pfUI and pfUI.uf and pfUI.uf.target,
     pfUI and pfUI.uf and pfUI.uf.targettarget,
   }
+  self.focusFontSuppressed = true
   for index = 1, table.getn(frames) do
     local frame = frames[index]
     if frame and type(frame.UpdateFrameSize) == "function" then
@@ -1848,6 +2438,7 @@ function ActionBars:RestoreCombatFocusLayoutPreset()
       pcall(frame.UpdateConfig, frame)
     end
   end
+  self.focusFontSuppressed = false
 
   for index = 1, table.getn(focusPositionNames) do
     ReloadRestoredMovable(focusPositionNames[index])
@@ -1919,6 +2510,8 @@ function ActionBars:RestoreCombatFocusLayoutPreset()
   self.focusLayoutStatus = "restored"
   self.focusLayoutConfigured = 0
   self.focusLayoutLive = 0
+  self.focusUnitFontLive = 0
+  self.focusFontSuppressed = false
   self.focusLayoutDoite = "restored"
   self.focusLayoutArchiTotem = "restored"
   self.comfortUIScaleStatus = ComfortUIScaleConfigured() and
@@ -2437,6 +3030,106 @@ local function FieldKitBound()
   return database and database.fieldKitBound == true
 end
 
+function ActionBars:RestoreSideBarGroupMover()
+  local root = GetSideBarFrame(sideBarGroupDefinitions[1])
+  local drag = root and root.drag
+  local unlock = pfUI and pfUI.unlock
+  if not drag then
+    return false
+  end
+  local state = drag.aeuiSideBarGroupMoverV1
+  if state and state.points then
+    RestoreFrameAnchors(drag, state.points)
+  elseif drag.SetAllPoints then
+    drag:SetAllPoints(root)
+  end
+  if state and state.label and drag.text and drag.text.SetText then
+    drag.text:SetText(state.label)
+  end
+  if unlock and unlock.IsShown and unlock:IsShown() then
+    for index = 2, table.getn(sideBarGroupDefinitions) do
+      local frame = GetSideBarFrame(sideBarGroupDefinitions[index])
+      if frame and frame.drag then
+        frame.drag:Show()
+      end
+    end
+  end
+  return true
+end
+
+function ActionBars:ConfigureSideBarGroupMover()
+  if not SideBarGroupBound() then
+    return self:RestoreSideBarGroupMover()
+  end
+  local root = GetSideBarFrame(sideBarGroupDefinitions[1])
+  local bottomRight = GetSideBarFrame(sideBarGroupDefinitions[4])
+  local drag = root and root.drag
+  if not root or not bottomRight or not drag or
+    not drag.ClearAllPoints or not drag.SetPoint
+  then
+    return false
+  end
+
+  local state = drag.aeuiSideBarGroupMoverV1
+  if not state then
+    state = {
+      points = CaptureFrameAnchors(drag),
+      label = drag.text and drag.text.GetText and drag.text:GetText() or
+        "ActionBarPaging",
+      mouseWheel = drag.GetScript and drag:GetScript("OnMouseWheel"),
+      dragStop = drag.GetScript and drag:GetScript("OnDragStop"),
+      click = drag.GetScript and drag:GetScript("OnClick"),
+    }
+    drag.aeuiSideBarGroupMoverV1 = state
+    if drag.SetScript then
+      drag:SetScript("OnMouseWheel", function()
+        if state.mouseWheel then
+          state.mouseWheel()
+        end
+        if SideBarGroupBound() then
+          ActionBars:SyncSideBarGroupScale()
+          ActionBars:PersistSideBarGroupPositions()
+          ActionBars:ConfigureSideBarGroupMover()
+        end
+      end)
+      drag:SetScript("OnDragStop", function()
+        if state.dragStop then
+          state.dragStop()
+        end
+        if SideBarGroupBound() then
+          ActionBars:SyncSideBarGroupScale()
+          ActionBars:PersistSideBarGroupPositions()
+          ActionBars:ConfigureSideBarGroupMover()
+        end
+      end)
+      drag:SetScript("OnClick", function()
+        if SideBarGroupBound() and arg1 == "MiddleButton" then
+          ActionBars:ResetSideBarGroupPosition()
+          return
+        end
+        if state.click then
+          state.click()
+        end
+      end)
+    end
+  end
+
+  drag:ClearAllPoints()
+  drag:SetPoint("TOPLEFT", root, "TOPLEFT", 0, 0)
+  drag:SetPoint("BOTTOMRIGHT", bottomRight, "BOTTOMRIGHT", 0, 0)
+  if drag.text and drag.text.SetText then
+    drag.text:SetText("Side Bars 6 x 8")
+  end
+  drag:Show()
+  for index = 2, table.getn(sideBarGroupDefinitions) do
+    local frame = GetSideBarFrame(sideBarGroupDefinitions[index])
+    if frame and frame.drag then
+      frame.drag:Hide()
+    end
+  end
+  return true
+end
+
 function ActionBars:UpdateFieldKitUnlockMover()
   local unlock = pfUI and pfUI.unlock
   local top = GetTopActionBarFrame()
@@ -2466,6 +3159,13 @@ function ActionBars:UpdateFieldKitUnlockMover()
       targetTarget.drag:Show()
     end
   end
+  if SideBarGroupBound() then
+    if self:ConfigureSideBarGroupMover() then
+      hidden = true
+    end
+  else
+    self:RestoreSideBarGroupMover()
+  end
   return hidden
 end
 
@@ -2494,6 +3194,10 @@ function ActionBars:InstallFieldKitUnlockHooks()
       ActionBars:ApplyActionBarStackPosition(true)
     end
     ActionBars:ApplyFocusRelativeAnchors()
+    if SideBarGroupBound() then
+      ActionBars:ApplySideBarGroupAnchors()
+      ActionBars:PersistSideBarGroupPositions()
+    end
   end)
   self.fieldKitUnlockHooked = true
   return true
@@ -3599,6 +4303,13 @@ function ActionBars:InstallFieldKitHooks()
   then
     self.actionBarConfigHooked = true
     hooksecurefunc(pfUI.bars, "UpdateConfig", function()
+      local grouped = pcall(
+        ActionBars.MaintainSideBarGroup,
+        ActionBars
+      )
+      if not grouped then
+        ActionBars.sideBarGroupStatus = "error"
+      end
       local ok = pcall(
         ActionBars.ApplyActionBarStackPosition,
         ActionBars,
@@ -3707,6 +4418,9 @@ function ActionBars:Initialize()
   self.autoBarGrouped = false
   self.autoBarPresetStatus = "ready"
   self.actionBarStackStatus = "pending"
+  self.sideBarGroupStatus = SideBarGroupBound() and "bound" or "free"
+  self.sideBarGroupMigration = "pending"
+  self.sideBarGroupUpdating = false
   self.consumableDockStatus = "pending"
   self.trinketFieldKitStatus = "pending"
   self.trinketMainButtons = 0
@@ -3783,6 +4497,9 @@ function ActionBars:Apply()
   end
 
   self:InstallFieldKitHooks()
+  self:InstallFocusUnitFontHooks()
+  self:MigrateSideBarGroupDefault()
+  self:MaintainSideBarGroup()
   self:ApplyActionBarStackPosition(enabled)
   self:MigrateAutoBarDefaultMode()
   self:ApplyAutoBarFieldKit(enabled)
@@ -3797,6 +4514,7 @@ function ActionBars:Apply()
     self:ApplyCombatFocusLayoutPreset()
   elseif CombatFocusLayoutActive() then
     self:ApplyFocusRelativeAnchors()
+    self:ApplyFocusUnitFonts()
   end
 
   -- The offhand timer has no independent pfUI movable entry. Restore its
@@ -3830,6 +4548,14 @@ function ActionBars:GetRuntimeStatus()
     "contract=" .. tostring(self.runtimeContract) ..
     ",rail-contract=" .. tostring(self.railRuntimeContract) ..
     ",fieldkit-contract=" .. tostring(self.fieldKitRuntimeContract) ..
+    ",sidebar-group-contract=" ..
+      tostring(self.sideBarGroupRuntimeContract) ..
+    ",sidebar-group=" ..
+      tostring(self.sideBarGroupStatus or "free") ..
+    ",sidebar-group-binding=" ..
+      tostring(SideBarGroupBound() and "bound" or "free") ..
+    ",sidebar-group-profile=" ..
+      tostring(GetSideBarGroupProfileKey() or "unavailable") ..
     ",focus-layout-contract=" ..
       tostring(self.focusLayoutRuntimeContract) ..
     ",focus-layout=" .. tostring(self.focusLayoutStatus or "ready") ..
@@ -3860,6 +4586,8 @@ function ActionBars:GetRuntimeStatus()
       tostring(self.focusUnitFontSize) ..
     ",focus-layout-unit-font=" ..
       tostring(self.focusUnitFontRole) ..
+    ",focus-layout-unit-font-live=" ..
+      tostring(self.focusUnitFontLive or 0) ..
     ",focus-ui-scale=" ..
       tostring(self.comfortUIScaleStatus or "custom") ..
     ",focus-ui-scale-tier=" .. tostring(uiScaleTier) ..

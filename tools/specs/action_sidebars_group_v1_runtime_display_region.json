@@ -1,0 +1,63 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "AB.SIDEBARS.GROUP.V1/runtime-v1.0",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive for display review; runtime uses Turtle WoW 1.12 game coordinates at pfUI tier 8 and frame-relative anchors inside the group",
+  "evidence": {
+    "provider": "addon/pfUI/modules/actionbar.lua bars 2/4/5/3 + addon/pfUI/modules/unlock.lua movers",
+    "adapter": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
+    "accepted_simulation_spec": "tools/specs/action_bars_core_simulation_v11.json",
+    "accepted_simulation": "generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V11/action_bars_core_sim_v11.png",
+    "layout_formula": "bar2 Paging is top-left, bar4 Vertical top-right, bar5 Left bottom-left, and bar3 Right bottom-right; every provider keeps 12 buttons with formfactor 3 x 4, icon 20, spacing 1, and shared initial scale 1.2; the two columns and two rows use 6 UI group gaps; accepted home fallback positions are RIGHT (-133,-68), (-35,-68), (-133,-196), and (-35,-196)",
+    "target": "Turtle WoW 1.18.1; accepted 1920x1080 review composition at pfUI tier 8",
+    "runtime_scope": "only the exact 大奶黑牛 - Basin of Stars 1 x 12 four-column SavedVariables signature migrates automatically; grouped geometry is character/profile scoped; one expanded bar2 mover covers the full union while bar4/bar5/bar3 movers are hidden; scroll scale and drag position synchronize all four at event boundaries; unbind restores exact pre-group formfactor, icon size, spacing, scale, and positions; per-bar action content, keybind, paging, visibility, autohide, cooldown and hit behavior remain provider-owned and individually configurable; no movable registration is removed and no OnUpdate geometry loop is used",
+    "dynamic_ownership": "all actions, keybinds, paging, show/hide state, autohide, cooldowns, counts, macro text, tooltips and click targets remain on their original four pfUI provider bars",
+    "final_runtime": true
+  },
+  "atlas": {
+    "size": [32, 32],
+    "visible_bbox": [0, 0, 32, 32],
+    "require_exact_visible_coverage": true,
+    "sampled_regions": [
+      {"id": "layout.geometry-only", "box": [0, 0, 32, 32]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 3, "right": 3, "top": 3, "bottom": 3},
+    "minimum_frame_size": [7, 7]
+  },
+  "scenarios": [
+    {
+      "id": "right-side-four-provider-bars-grouped-home",
+      "frame": [154, 202],
+      "preview_frame": [154, 202],
+      "zones": {"group-root": [0, 0, 154, 202]},
+      "regions": [
+        {"id": "bar2-paging-3x4", "kind": "button", "box": [0, 0, 74, 98], "zone": "group-root"},
+        {"id": "bar4-vertical-3x4", "kind": "button", "box": [80, 0, 154, 98], "zone": "group-root"},
+        {"id": "bar5-left-3x4", "kind": "button", "box": [0, 104, 74, 202], "zone": "group-root"},
+        {"id": "bar3-right-3x4", "kind": "button", "box": [80, 104, 154, 202], "zone": "group-root"}
+      ]
+    },
+    {
+      "id": "single-unlock-mover-covers-whole-union",
+      "frame": [154, 202],
+      "preview_frame": [154, 202],
+      "zones": {"group-mover": [0, 0, 154, 202]},
+      "regions": [
+        {"id": "bar2-expanded-group-mover", "kind": "button", "box": [0, 0, 154, 202], "zone": "group-mover"}
+      ]
+    },
+    {
+      "id": "provider-hit-regions-remain-four-independent-tiles",
+      "frame": [154, 202],
+      "preview_frame": [154, 202],
+      "zones": {"provider-hit-union": [0, 0, 154, 202]},
+      "regions": [
+        {"id": "paging-hit-tile", "kind": "button", "box": [0, 0, 74, 98], "zone": "provider-hit-union"},
+        {"id": "vertical-hit-tile", "kind": "button", "box": [80, 0, 154, 98], "zone": "provider-hit-union"},
+        {"id": "left-hit-tile", "kind": "button", "box": [0, 104, 74, 202], "zone": "provider-hit-union"},
+        {"id": "right-hit-tile", "kind": "button", "box": [80, 104, 154, 202], "zone": "provider-hit-union"}
+      ]
+    }
+  ]
+}
