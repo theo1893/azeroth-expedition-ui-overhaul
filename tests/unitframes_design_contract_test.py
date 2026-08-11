@@ -31,13 +31,21 @@ def sha256(path: Path) -> str:
 def main() -> None:
     spec = json.loads(SPEC.read_text(encoding="utf-8"))
     assert spec["schema"] == "aeui-unitframes-a1-v2a-production-v2"
-    assert spec["status"] == "prompt-authorized"
+    assert spec["status"] == "repair-prepared"
     assert spec["authorized_on"] == "2026-08-11"
     assert spec["executor"]["authorized"] is True
-    assert spec["attempts_used"] == 0
+    assert spec["attempts_used"] == 1
+    assert spec["process_errors"] == 1
     assert spec["attempt_limit"] == 5
     assert spec["prior_version"]["attempts_used"] == 5
     assert spec["prior_version"]["may_be_edit_or_reference_input"] is False
+    current = spec["current_attempt"]
+    assert current["number"] == 2
+    assert current["operation"] == "whole-sheet-edit"
+    edit = current["image_3"]
+    assert edit["whole_sheet_only"] is True
+    assert edit["per_cap_crops_forbidden"] is True
+    assert sha256(ROOT / edit["path"]) == edit["sha256"]
     for expected_number, reference in enumerate(spec["fixed_references"], start=1):
         assert reference["image"] == expected_number
         assert sha256(ROOT / reference["path"]) == reference["sha256"]
@@ -78,20 +86,22 @@ def main() -> None:
     )
     normalized_body = " ".join(body.split())
     required = (
-        "exactly one production sprite-sheet image",
-        "One generation call must return one single 1536 by 1024 RGB image",
-        "Do not return four files",
-        "exactly 128 pixels wide and exactly 768 pixels high",
-        "between 5.94:1 and 6.06:1",
-        "Player left cap",
-        "Player right cap",
-        "Target left cap",
-        "Target right cap",
-        "128 pixels of pure green",
-        "visual weight comes from colour masses",
+        "exactly one corrected production sprite-sheet image",
+        "Return one and only one 1536 by 1024 RGB bitmap",
+        "Do not return a sequence, multiple files",
+        "exact 128 by 768 visible rectangle",
+        "height is exactly six times width",
+        "Player left has its outer hand-cut edge",
+        "Player right has its joining edge",
+        "Target left has its outer edge",
+        "Target right has its joining edge",
+        "exactly 128 pixels of green",
+        "Weight must come from broad dark colour masses",
         "nearest the inner joining edge",
-        "Draw no health or power fill",
-        "The only non-green pixels belong to the four declared cap masses",
+        "Draw no complete frame",
+        "Every pixel outside the four rectangles is exactly #00FF00",
+        "Image 3 is the immediately previous whole-sheet candidate",
+        "Do not crop Image 3 into pieces",
     )
     for clause in required:
         assert clause in normalized_body, (

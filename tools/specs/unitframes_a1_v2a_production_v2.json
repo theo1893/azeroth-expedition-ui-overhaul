@@ -1,11 +1,12 @@
 {
   "schema": "aeui-unitframes-a1-v2a-production-v2",
   "version": "UF-A1 V2-A V2",
-  "status": "prompt-authorized",
+  "status": "repair-prepared",
   "direction_decided_on": "2026-08-11",
   "authorized_on": "2026-08-11",
   "attempt_limit": 5,
-  "attempts_used": 0,
+  "attempts_used": 1,
+  "process_errors": 1,
   "process_errors_count_toward_limit": false,
   "prior_version": {
     "version": "UF-A1 V2-A V1",
@@ -30,9 +31,19 @@
       "sha256": "272528e6d89cc90e5cbb37dce4ae572ddf9de0402078cdcf0ed5804f734faab8"
     }
   ],
-  "prompt_heading": "### `UF-A1 V2-A V2` 最终生产正文草案 — 单张四端帽 atlas",
+  "prompt_heading": "### `UF-A1 V2-A V2.r1` 完整修复正文 — attempt 2 整图 edit",
   "prompt_body_format": "fenced-text",
-  "prompt_body_sha256": "9ec55d9e3db55b3082a76578c0de266c4556a06433beb5d71767abe06a06c276",
+  "prompt_body_sha256": "db2c70182980770f51fe45d4225e011733b05f5af6eed28a6d8e752d79187ab5",
+  "current_attempt": {
+    "number": 2,
+    "operation": "whole-sheet-edit",
+    "image_3": {
+      "path": "generated/unitframes/primary/UF-A1/V2-A/V2/attempt-01/raw/UF-A1_V2-A_V2_attempt-01.provider-native-01.png",
+      "sha256": "46c2a9af6947314b5ccc64c32b436d9511abfa0a5cd4cb6a0e0e0912ebf0d8e9",
+      "whole_sheet_only": true,
+      "per_cap_crops_forbidden": true
+    }
+  },
   "generation_unit": {
     "calls_per_attempt": 1,
     "outputs_per_attempt": 1,
