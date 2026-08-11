@@ -4,8 +4,9 @@
 
 - 主模块：`P3`；`UF-PRIMARY-SIM-V1` 已于 `2026-08-11` 获用户方向确认。
   `UF-A1 V1` 已完成五次实际 ImageGen，终态为
-  `candidate-rejected / repair-budget-exhausted`；`UF-A2 V1`、`UF-B1 V1`
-  仍为 `prompt-authorized / paused`。没有候选获得用户接受。
+  `candidate-rejected / repair-budget-exhausted / user-rejected`；用户于
+  `2026-08-11` 明确表示“不接受例外”。`UF-A2 V1`、`UF-B1 V1` 仍为
+  `prompt-authorized / paused`。没有候选获得用户接受。
 - 当前只覆盖 `player`、`target`、`targettarget`、`focus` 的资源外观；不修改
   另一台设备的 Frame 位置、尺寸与功能。
 - 当前仓库／远端 `main` 尚未包含用户在游戏设备完成的布局 overhaul；本批次
@@ -57,8 +58,8 @@
 
 ## 下一门禁
 
-等待用户审核 A1 attempt 5（raw SHA `56ae9ae5…06a3`，100% 真实排版 SHA
-`147e9d98…5252`）。若用户接受视觉，必须同时明确授权端柱覆盖动态条和横向
-隔离不足的一次性合同例外，之后才可进入 P4；否则建立新的 A1 版本／必要时
-重做模拟。不得执行 A1 attempt 6。A2／B1 在该决策前保持暂停，额度均为
-`0/5`。
+准备新的 UF-A1 版本：重新审计运行时资产拆分和装配合同，制作不复用 V1
+失败像素的本地确定性几何模拟，并在展示后等待用户确认。V1 attempt 5 的
+合同例外已被拒绝，不再具有 P4 路径；不得执行 A1 attempt 6。新版本若改变
+对象数量、画布或装配方式，必须重新完成模拟确认和生产授权。A2／B1 继续
+暂停，额度均为 `0/5`。

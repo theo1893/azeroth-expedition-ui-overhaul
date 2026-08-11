@@ -6,11 +6,11 @@
 - 组件 ID：`UF.PLAYER.SHELL`、`UF.TARGET.SHELL`、
   `UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.BAR.*`、`UF.STATE.*`
 - 当前版本：`UF-A1 V1.r4`／`UF-A2 V1`／`UF-B1 V1`
-- 子状态：UF-A1 `candidate-rejected / repair-budget-exhausted`；UF-A2／UF-B1
-  `prompt-authorized / paused`
+- 子状态：UF-A1 `candidate-rejected / repair-budget-exhausted / user-rejected`；
+  UF-A2／UF-B1 `prompt-authorized / paused`
 - 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 操作：`review-stop`；UF-A1 候选接受尚未发生，后续批次未启动
+- 操作：`reject-recorded`；UF-A1 已被用户明确否决，后续批次未启动
 - 生成前模拟：deterministic-local-geometry；ImageGen `0/0`
 - 本地渲染错误：初始模拟 `0`；确认后确定性复跑出现 `1` 次 sandbox 写权限
   错误，使用同一命令获准写入后复跑通过，输出 SHA 未变；不属于 ImageGen。
@@ -802,6 +802,9 @@ side post is no wider than 42 pixels, every horizontal rail is no thicker than
   `5/5`，不允许第 6 次同版调用，不允许晋级 source／runtime。按有界循环
   规则暂停 UF-A2／UF-B1，等待用户审核第 5 稿的明确合同例外，或授权新的
   UF-A1 版本／模拟方向。
+- 用户结论：`rejected / 2026-08-11`；原文“不接受例外”。用户明确拒绝端柱
+  覆盖动态走廊和横向隔离不足的一次性合同例外；attempt 5 不再具有进入 P4
+  的路径，只作为失败证据与新版本负面约束保留。
 
 ## 审查记录
 
@@ -823,12 +826,12 @@ side post is no wider than 42 pixels, every horizontal rail is no thicker than
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
 |---|---|---|---|
 | `UF-PRIMARY-SIM-V1` | deterministic scene／zoom；SHA 与 display-region `4/4` 如上；ImageGen `0/0` | `simulation-confirmed` | 可见方向已写入 A1／A2／B1；等待三段正式生产授权 |
-| `UF-A1 V1` | fixed ImageGen `5/5`；attempt 5 ratio `2/2 pass`，安全走廊 `0/2 pass`；真实排版 SHA `147e9d98…5252` | `candidate-rejected / repair-budget-exhausted` | 用户若接受第 5 稿，必须明确授权端柱覆盖动态条和横向隔离不足的合同例外；否则建立新版本，不得第 6 次同版生图 |
+| `UF-A1 V1` | fixed ImageGen `5/5`；attempt 5 ratio `2/2 pass`，安全走廊 `0/2 pass`；真实排版 SHA `147e9d98…5252`；用户于 `2026-08-11` 明确拒绝例外 | `candidate-rejected / repair-budget-exhausted / user-rejected` | 建立新的 UF-A1 版本；不得复用失败稿像素，不得第 6 次同版生图 |
 
 ## 下一门禁
 
-等待用户审核 UF-A1 attempt 5。可选下一门禁只有两种：一是明确接受
-`56ae9ae5…06a3` 的视觉，并授权“安全走廊有 `872/818` Alpha 像素、横向隔离
-低于 `96px`”的一次性确定性合同例外，随后才可进入 P4；二是拒绝并建立新的
-UF-A1 版本／必要时重做模拟。不得执行 UF-A1 attempt 6。依据五次循环停止
-规则，UF-A2／UF-B1 暂停在原 `prompt-authorized`，本次未启动、未消耗额度。
+进入新的 UF-A1 版本准备门禁：重新检查运行时拆分与装配合同，制作不复用
+失败像素的本地确定性几何模拟，并向用户展示后等待方向确认。V1 attempt 5
+已经明确否决，不再提供合同例外或 P4 路径；不得执行 UF-A1 attempt 6。
+UF-A2／UF-B1 暂停在原 `prompt-authorized`，本次未启动、未消耗额度。新版本
+若改变对象拆分、画布或装配合同，必须独立完成模拟确认与正式生产授权。
