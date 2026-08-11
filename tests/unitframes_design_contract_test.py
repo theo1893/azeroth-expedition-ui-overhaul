@@ -31,8 +31,9 @@ def sha256(path: Path) -> str:
 def main() -> None:
     spec = json.loads(SPEC.read_text(encoding="utf-8"))
     assert spec["schema"] == "aeui-unitframes-a1-v2a-production-v2"
-    assert spec["status"] == "production-draft"
-    assert spec["executor"]["authorized"] is False
+    assert spec["status"] == "prompt-authorized"
+    assert spec["authorized_on"] == "2026-08-11"
+    assert spec["executor"]["authorized"] is True
     assert spec["attempts_used"] == 0
     assert spec["attempt_limit"] == 5
     assert spec["prior_version"]["attempts_used"] == 5

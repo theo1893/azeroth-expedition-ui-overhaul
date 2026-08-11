@@ -3,7 +3,7 @@
 ## 当前状态
 
 - 主模块：UF-A1 当前进入
-  `UF-A1 V2-A V2 / P2 / prompt-draft`。旧 V2-A V1 为
+  `UF-A1 V2-A V2 / P3 / prompt-authorized`。旧 V2-A V1 为
   `P3 / candidate-rejected / repair-budget-exhausted`。用户于 `2026-08-11` 明确授权
   `UF-A1 V2-A V1`／`UF-A1 V2-B V1` 按 A→B 执行，每段最多五次实际
   ImageGen、固定 Image 1／2、同段紧邻前稿有界 edit、流程错误不占额度、
@@ -12,8 +12,10 @@
   `0/5 / sequence-blocked`。用户随后明确否决逐端帽独立生成，要求新版本继续
   由一次调用输出一张四端帽 atlas，并只通过更详尽的正文约束结果。该决定没有
   改变八件 source、标准单 shell、可变宽度三切片、固定高度或可见方向，因此
-  `UF-A1-V2-SIM-V2` 的确认继续有效；新 `UF-A1 V2-A V2` 当前 `0/5` 且尚未
-  获得正式生产授权；
+  `UF-A1-V2-SIM-V2` 的确认继续有效；新 `UF-A1 V2-A V2` 已于
+  `2026-08-11` 按固定 Image 1／2、attempt 1 无 Image 3、同循环紧邻前稿仅限
+  整图有界 edit、最多五次实际调用、流程错误不占额度及确定性审查合同获得
+  正式生产授权，当前 `0/5`；
   `UF-PRIMARY-SIM-V1` 已于 `2026-08-11` 获用户方向确认。`UF-A1 V1` 已完成
   五次实际 ImageGen，终态为
   `candidate-rejected / repair-budget-exhausted / user-rejected`；用户于
@@ -66,7 +68,7 @@
   `34–36px`。用户已否决逐端帽独立调用；新 `UF-A1 V2-A V2` 保留同一单图
   四列画布和四件 source，只把布局优先级、等分关系、端部接触、视觉重量不得
   通过增宽表达及逐项末检写得更完整。生产规格为
-  `tools/specs/unitframes_a1_v2a_production_v2.json`，当前未授权、`0/5`。没有
+  `tools/specs/unitframes_a1_v2a_production_v2.json`，当前已授权、`0/5`。没有
   production source/runtime 或 addon 改动。
 
 ## 已完成的对象审计
@@ -110,8 +112,9 @@
 
 ## 下一门禁
 
-等待用户审阅并明确授权新的 `UF-A1 V2-A V2` 单图四格完整正文、固定 Image
-1／2、不可变修复边界及独立 `5` 次实际 ImageGen 预算。它不是旧 V2-A V1 的
-第六次调用；未经授权不得启动。V2-A V2 内部通过后才恢复 V2-B。用户接受前
-不产出 tracked source/runtime、不接入 addon。A2／B1 继续暂停，额度均为
-`0/5`。
+先提交已授权的 `UF-A1 V2-A V2` 单图四格正文与规格基线，再执行 attempt 1；
+随后完成固定四列拆分、边缘连通色键、透明 RGB 清零、等比 bbox-fit、真实排版
+与缩放审查。内部通过即停止；否则只在冻结边界内自主修复，最多累计五次实际
+调用，流程错误不占额度。它不是旧 V2-A V1 的第六次调用。V2-A V2 内部通过
+后才恢复 V2-B；用户接受前不产出 tracked source/runtime、不接入 addon。
+A2／B1 继续暂停，额度均为 `0/5`。

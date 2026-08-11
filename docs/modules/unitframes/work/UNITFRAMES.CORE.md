@@ -6,16 +6,16 @@
 - 组件 ID：`UF.PLAYER.SHELL`、`UF.TARGET.SHELL`、
   `UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.BAR.*`、`UF.STATE.*`
 - 当前版本：`UF-A1 V2-A V2`／`UF-A1 V2-B V1`／`UF-A2 V1`／`UF-B1 V1`
-- 子状态：UF-A1 V2-A V2 `prompt-draft`；旧 V2-A V1
+- 子状态：UF-A1 V2-A V2 `prompt-authorized`；旧 V2-A V1
   `candidate-rejected / repair-budget-exhausted`；V2-B
   `prompt-authorized / sequence-blocked`；UF-A1 V1
   `candidate-rejected / repair-budget-exhausted / user-rejected`；UF-A2／UF-B1
   `prompt-authorized / paused`
-- 项目阶段：UF-A1 V2-A V2 `P2 / prompt-draft`；历史 V2-A V1 为 `P3 / rejected`；
+- 项目阶段：UF-A1 V2-A V2 `P3 / prompt-authorized`；历史 V2-A V1 为 `P3 / rejected`；
   UF-A2／UF-B1 保持 `P3 / paused`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 操作：`prepare`；已确认“独立四件 source → 标准宽度单 shell／可变宽度
-  三切片”。新 V2-A V2 固定为一次调用输出一张含四端帽的 atlas；正文待授权
+- 操作：`generate`；已确认“独立四件 source → 标准宽度单 shell／可变宽度
+  三切片”。新 V2-A V2 固定为一次调用输出一张含四端帽的 atlas；正文已授权
 - 生成前模拟：`UF-A1-V2-SIM-V2`／deterministic-local-geometry；ImageGen
   `0/0`
 - 本地渲染错误：历史主模拟确认后复跑 `1` 次 sandbox 写权限错误；V2 首次
@@ -23,7 +23,7 @@
   合同重跑；随后有 `1` 次 sandbox 写权限错误，获准写入 ignored `generated/`
   后以同一命令通过。三者均不属于 ImageGen。
 - 自动修复预算：UF-A1 V1 历史终态 `5/5`；V2-A V1 已执行并用满 `5/5`；
-  新 V2-A V2 `0/5 / pending authorization`；V2-B `0/5`；UF-A2／UF-B1 各 `0/5` 并
+  新 V2-A V2 `0/5 / authorized`；V2-B `0/5`；UF-A2／UF-B1 各 `0/5` 并
   继续暂停
 - 流程错误：`2`（A1 `E1` 为 stdin transport；A1 `E2` 为 npm sandbox
   `EPERM`；二者均无图片或 provider result，不占实际生图额度）
@@ -45,8 +45,15 @@
 - V2-A V2 用户方向决定：`direction-confirmed / 2026-08-11`。用户原文：
   `放弃分开生图的方案. 仍然采用生成一张图的方案, 通过更详尽的prompt来约束
   生图结果`。本决定明确禁止逐端帽独立调用；每次生产 attempt 必须只返回一张
-  同时包含四端帽的 atlas。它不是 V2-A V2 的正式生产授权，也不重置旧 V1
-  历史预算。
+  同时包含四端帽的 atlas。该方向决定本身不重置旧 V1 历史预算；后续正式
+  生产授权见下一条。
+- V2-A V2 正式生产授权：`authorized / 2026-08-11`。用户原文：`确认授权
+  UF-A1 V2-A V2；每次只允许一次调用输出一张完整四端帽 atlas，禁止逐端帽
+  生成及多图拼接；允许上传固定 SHA 的 Image 1/2，attempt 1 无 Image 3，
+  仅允许同循环紧邻前稿整张图在冻结边界内作为 Image 3 edit 输入；最多 5 次
+  实际 ImageGen，流程错误不占额度；允许合同内确定性拆分、色键、等比
+  bbox-fit、真实排版与缩放预演。` 本授权建立 V2 独立 `0/5` 循环，不得计作
+  旧 V1 的第六次调用。
 - V2-SIM.V2 本地执行授权：`2026-08-11`；用户在讨论缩放风险并确认“标准
   单 shell／可变宽度三切片”方案后原文“按照这个方案执行”。该授权仅覆盖
   本地几何预演、校验与文档，不扩展为 production 或 addon 接入授权。
@@ -1726,7 +1733,7 @@ edge contact, dynamic content or previous candidate pixel.
   三切片、`42px` 固定高度和内容安全区全部不变。因此这次只强化生产排版与
   执行正文，不构成可见方向变化；既有模拟确认继续有效，ImageGen `0/0`。
 - 旧 `UF-A1 V2-A V1` 的 `5/5` 与失败候选保持历史封存，不得作为 V2 的
-  第六次调用、参考图、edit 输入或像素来源。V2 拥有独立、尚未授权的 `0/5`
+  第六次调用、参考图、edit 输入或像素来源。V2 拥有独立、已授权的 `0/5`
   预算。
 
 ### 单图四格生产合同
@@ -1744,15 +1751,15 @@ edge contact, dynamic content or previous candidate pixel.
 - 四件拆分后仍只允许边缘连通色键、透明 RGB 清零与纵横比误差不超过 `1%`
   的等比 bbox-fit；禁止非等比压缩、裁掉端部、补画缺失材料或把独立输出拼回。
 - 规格：`tools/specs/unitframes_a1_v2a_production_v2.json`。当前状态
-  `production-draft / unauthorized`。完整 fenced 正文为 `1628` 个英文空白分词，
+  `prompt-authorized / 2026-08-11`。完整 fenced 正文为 `1628` 个英文空白分词，
   SHA-256 `9ec55d9e3db55b3082a76578c0de266c4556a06433beb5d71767abe06a06c276`；
   该长度来自适用约束，不作为完整性通过依据。
 
 ### V2 生产正文完整性预检
 
 - 复杂度：`atlas / four independent logical objects / assembly / fixed cap`。
-- 结论：`pass / production-draft`。当前没有执行必需的未知值；本结论只说明
-  正文自包含，不构成生产授权。
+- 结论：`pass / prompt-authorized`。当前没有执行必需的未知值；正文已按固定
+  SHA、输入职责、冻结边界与独立 `5` 次额度获得正式生产授权。
 
 | 门禁 | V2 正文中的具体证据 | 结论 |
 |---|---|---|
@@ -1769,9 +1776,9 @@ edge contact, dynamic content or previous candidate pixel.
 
 ### `UF-A1 V2-A V2` 最终生产正文草案 — 单张四端帽 atlas
 
-> `production-draft / unauthorized`。只有用户看到并明确授权本版本、固定
-> Image 1／2、下述修复边界和独立 `5` 次额度后，才可把规格中的 executor
-> 改为 authorized 并提交执行。首次调用不得上传 Image 3。
+> `prompt-authorized / 2026-08-11`。固定 Image 1／2、下述修复边界和独立
+> `5` 次额度已经用户明确授权；执行前基线必须先提交。首次调用不得上传
+> Image 3。
 
 ```text
 Create exactly one production sprite-sheet image containing exactly four
@@ -1939,7 +1946,7 @@ Outside the four declared rectangles every pixel must remain uniform pure
 10. The only non-green pixels belong to the four declared cap masses.
 ```
 
-### V2 不可变修复边界与待授权预算
+### V2 不可变修复边界与已授权预算
 
 - 固定调用单位：每个 attempt 恰好一次实际 ImageGen，恰好返回一张同时含四件
   的 atlas；禁止四次逐件生成或把多张独立结果拼接。
@@ -1954,10 +1961,34 @@ Outside the four declared rectangles every pixel must remain uniform pure
   从固定 Image 1／2 整张 regenerate 之间选择。
 - 必须重新授权：改为逐端帽调用、改变单图尺寸／列数／对象顺序／bbox／runtime
   几何、增加参考、跨段或跨版本复用像素、允许非等比缩放、改变可见设计方向。
-- 待授权预算：V2 最多 `5` 次实际 ImageGen，当前 `0/5`；流程错误不占额度。
+- 已授权预算：V2 最多 `5` 次实际 ImageGen，当前 `0/5`；流程错误不占额度。
   任一稿通过全部内部门禁即停止；第 `5` 稿失败则独立进入
   `candidate-rejected / repair-budget-exhausted`，不影响旧 V1 的历史记录。
 - V2-B 继续 `0/5 / sequence-blocked`；只有 V2 内部通过后才可继续横轨段。
+
+### V2 自主修复循环
+
+- 不可变修复边界：单次调用／单张 `1536×1024` 四端帽 atlas、固定四列与角色
+  顺序、四个 `128×768` bbox、`7×42` runtime、固定 Image 1／2、纯绿色键、
+  八件 source 粒度与既有单 shell／三切片装配。
+- 允许的自主修复：仅在上文冻结范围内重写占位、比例、连通质量、端部接触、
+  低频轮廓、材料块面和修补位置；attempt 2–5 只有在前稿存在明确可保留区域
+  时，才允许把紧邻前稿整张 atlas 作为 Image 3 edit 输入。
+- 必须重新授权：逐端帽调用、多张生成图拼接、新增参考／上传、改变画布／
+  格位／对象／bbox／runtime、非等比缩放、跨版本或跨段复用像素、改变可见
+  美术方向。
+
+| 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
+|---:|---|---|---|---|---|---|---|
+| 1/5 | `UF-A1 V2-A V2` / pending | generate |  |  |  |  | pending |
+| 2/5 | pending | edit／generate |  |  |  |  | pending |
+| 3/5 | pending | edit／generate |  |  |  |  | pending |
+| 4/5 | pending | edit／generate |  |  |  |  | pending |
+| 5/5 | pending | edit／generate |  |  |  |  | pending |
+
+| 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
+|---:|---|---|---|---|---|
+| E1 |  |  |  |  | pending；不占生图额度 |
 
 ## 审查记录
 
@@ -1971,7 +2002,7 @@ Outside the four declared rectangles every pixel must remain uniform pure
 - 旧生产段 `UF-A1 V2-A V1` 已用满五次且没有一稿通过 source 几何／隔离
   门禁；V2-B 因 A→B 顺序保持 `0/5`，没有上传或生成。用户随后否决逐端帽
   独立调用；新 `UF-A1 V2-A V2` 仍固定为一次调用输出一张四端帽 atlas，当前
-  为 `prompt-draft / 0/5 / unauthorized`。禁止把它计作旧版第六次或复用旧像素。
+  为 `prompt-authorized / 0/5 / 2026-08-11`。禁止把它计作旧版第六次或复用旧像素。
 - 用户方向结论：`confirmed / 2026-08-11`。本地模拟像素不得晋级
   source/runtime，也不得成为 ImageGen reference 或 edit 输入。
 
@@ -1999,13 +2030,13 @@ Outside the four declared rectangles every pixel must remain uniform pure
 | `UF-A1-V2-SIM-V1` | deterministic scene／assembly；八件 source 互斥且动态区覆盖 `0px`；display-region `2/2 pass`；ImageGen `0/0` | `superseded-as-runtime / retained-as-source-granularity-evidence` | 不直接把四件挂为四张 runtime Texture；由 V2-SIM.V2 接管缩放合同 |
 | `UF-A1-V2-SIM-V2` | 标准单 shell 覆盖 `0.64–1.15×`、内部 Texture 接缝 `0`；可变 `W=160/200/240` 在 `0.71/1.00×` 接头空洞 `0px`、内容侵入 `0px`；display-region `6/6 pass`；双次重建 SHA 一致；用户于 `2026-08-11` 明确确认；ImageGen `0/0` | `simulation-confirmed / retained-for-V2` | 新 V2-A V2 未改变可见构图或装配合同，因此继续沿用确认；不接受模拟像素 |
 | `UF-A1 V2-A V1` | fixed ImageGen `5/5`；attempt 5 为 `99–100×954–955px`、ratio error `37.106918–37.801047%`、上下隔离 `34–36px`；真实排版 SHA `7b6cceb7…642d` | `candidate-rejected / repair-budget-exhausted` | 不得第 6 次；V2-B 保持 `0/5`。新版本若改变一次生成的对象／画布拆分须重新授权 |
-| `UF-A1 V2-A V2` | 用户明确保留单次单图四端帽 atlas；正文逐项固定列宽三分之一、画布高四分之三、`6:1`、等宽绿边、接触带和“重量不得靠增宽”；规格 `unitframes_a1_v2a_production_v2.json`；ImageGen `0/5` | `prompt-draft / P2` | 用户审阅并明确授权完整正文、固定 Image 1／2、单图修复边界与新五次预算；不得作为旧版第六次 |
+| `UF-A1 V2-A V2` | 用户明确授权单次单图四端帽 atlas；正文逐项固定列宽三分之一、画布高四分之三、`6:1`、等宽绿边、接触带和“重量不得靠增宽”；规格 `unitframes_a1_v2a_production_v2.json`；ImageGen `0/5` | `prompt-authorized / P3` | 以固定正文执行 attempt 1；随后进行确定性拆分、色键、bbox-fit、真实排版与缩放审查，最多五次实际调用 |
 
 ## 下一门禁
 
-`UF-A1 V2-A V2` 已形成单图四格、自包含的详尽生产正文；旧 V1 仍保持
-`candidate-rejected / repair-budget-exhausted`。下一门禁是用户审阅并明确授权
-V2 完整正文、固定 Image 1／2、单图修复边界与独立 `5` 次实际 ImageGen
-预算。未经授权不得执行；任何执行都不得计作旧版第六次。V2 内部通过后才
-恢复 V2-B。用户接受前不得创建 source/runtime 或修改 addon；UF-A2／UF-B1
-继续暂停。
+`UF-A1 V2-A V2` 的单图四格、自包含生产正文、固定 Image 1／2、冻结修复边界
+与独立 `5` 次实际 ImageGen 预算已于 `2026-08-11` 获授权。下一门禁是先提交
+本授权基线，再执行 attempt 1，并完成确定性拆分、色键、等比 bbox-fit、真实
+排版及缩放审查；内部通过即停止，否则仅在冻结边界内自主修复，最多累计五次。
+任何执行都不得计作旧版第六次。V2 内部通过后才恢复 V2-B；用户接受前不得
+创建 source/runtime 或修改 addon；UF-A2／UF-B1 继续暂停。
