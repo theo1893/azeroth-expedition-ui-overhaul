@@ -6,16 +6,17 @@
 - 当前组件：`UF.PLAYER.SHELL`、`UF.TARGET.SHELL`、
   `UF.BAR.HEALTH.FILL`、`UF.BAR.POWER.FILL`
 - 后续组件：`UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.STATE.*`
-- 当前版本：`UF-A1 V3-A final`／`UF-A1 V3-B final`／`UF-B1 V2 final`
-- 子状态：`prompt-authorized / UF-A1 V3-A queued`
+- 当前版本：`UF-A1 V3-A final.r1`／`UF-A1 V3-B final`／`UF-B1 V2 final`
+- 子状态：`repair-prepared / UF-A1 V3-A attempt 2 queued`
 - 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 当前操作：`generate`
+- 当前操作：`edit`
 - 生成前模拟：`UF-PRIMARY-V3-SIM-V1`，deterministic local geometry
 - 模拟 ImageGen：`0/0`
-- 正式生产：`authorized / 2026-08-11`；三段各 `0/5`，最坏总计
-  `15` 次实际 ImageGen
-- 流程错误：`0`
+- 正式生产：`authorized / 2026-08-11`；A `1/5`、B `0/5`、B1 `0/5`，
+  最坏总计 `15` 次实际 ImageGen
+- 流程错误：`1`（审查器首次物理连通扫描性能错误；无 provider 生成证据，
+  不占生图额度；已改为线性 scanline run union-find）
 - Python：`/Users/yuanshiyao/miniconda3/envs/py312/bin/python`，`3.12.12`
 - 用户架构决定：`accepted / 2026-08-11`。用户接受“每个角色生成完整外壳，
   Python 负责精确工程化”，并新增生命／法力、怒气、集中值、能量等资源条
@@ -243,6 +244,28 @@
 - 输出：本文件“生成前模拟实例图”列出的 scene／review／display report。
 - 实际生图：`0/0`；流程错误：`0`；循环终态：`simulation-confirmed`。
 
+### `UF-A1 V3-A final` attempt 1
+
+- 固定正文 commit：`831e7ca`；正文 SHA-256
+  `681336fc77d57ef44433304a93153e8a5764b31407aef87834ea666c9ff33c12`；
+  完整 child prompt SHA-256
+  `7a130485f4cf71d32f2832888dc98906af39b9d6829a974c30f6b2573f2398a1`。
+- 固定输入：Image 1 `90e30ba4…ee06`、Image 2 `272528e6…ab8`；按授权
+  attempt 1 没有 Image 3。
+- 固定执行器 session：`019fefa5-786e-7043-8245-5fff7149ce67`；provider
+  result：`ig_00f6d701e163924d016a7aca2bde888191923f186ba2934a2c.png`。
+- untouched raw：`generated/unitframes/primary/V3A/attempt-01/raw.png`，
+  `1536×1024 RGB`，SHA-256
+  `3533e8c6812db70563e9af55796df3a44a39a2b2d80b2d29a6a0e5b5b0a2d5c0`。
+- child log：`generated/unitframes/primary/V3A/attempt-01/fixed-child.log`，SHA-256
+  `2c31cb3f96bfb2c0ff47fed79e0e5b003fd5b213b9ed7dc9db6fae8a440c0e19`。
+- 实际 ImageGen：`1`；A 段累计 `1/5`。provider 已返回图像，故必须计数。
+- 确定性 reviewer：`tools/review_unitframes_primary_v3_candidate.py`；report
+  `generated/unitframes/primary/V3A/attempt-01/review/review-report.json`，SHA-256
+  `707fe568bafd030685dc7c4bf78bb4c1e40d8f1a25807e11780e70a16552eca7`。
+- technical review SHA-256 `41979274…fcea4`；real-layout preview SHA-256
+  `32914208…dbbb`。两者都是 ignored review evidence，不是 source/runtime。
+
 ## 审查记录
 
 - 语义／物理：Player／Target 是各自完整的连续外壳；Health／Power 是独立
@@ -258,11 +281,30 @@
   仍不允许 source、runtime 或正式生图。
 - 用户结论：`accepted UF-PRIMARY-V3-SIM-V1 / 2026-08-11`；只接受可见方向。
 
+### `UF-A1 V3-A final` attempt 1 内审
+
+- 可保留：深胡桃粗旧马鞍皮、左上暖光、粗厚香草块面、左端粗缝线与局部
+  暗铜夹片身份、右端偏心暗铆钉；完整物件的视觉整体性成立。
+- 第一失败门禁：`one-connected-opening`。检测到 `2` 个大型封闭绿色开口：
+  上部 `1004×83 / 80567 px`，下部 `1000×29 / 27390 px`；两者之间存在完整
+  横向皮革分隔条。Health／Power 必须是同一绿色开口内的运行时层，不允许由
+  source 外壳分成双槽。
+- 物理连通：主材料 `1` 个连通体，`pass`。
+- bbox：`1425×224`，相对 `214:42` 比例误差 `24.853972%`；独立归一化
+  各向异性 `19.906433%`，均超过 `8%`。
+- 动态安全区：hard core 内 `alpha>=128` 为 `90627` px，`fail`；主要来自
+  双槽分隔条、过宽左夹片和端部结构，不允许由 Python 擦除。
+- 隔离 L/T/R/B：`56/403/55/397`，左右小于 `80`，`fail`。
+- 结论：`candidate-rejected / repairable`；未产出 `candidate.png`，不得进入
+  source/runtime。下一稿只在同段紧邻 raw 上有界 edit，保留上述材料与身份，
+  删除双槽拓扑、收窄端部、把 bbox 修为约 `1284×252` 并清空固定安全区。
+
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
 |---|---|---|---|
 | `UF-PRIMARY-V3-SIM-V1` | 本地 scene／review；ImageGen `0/0`；display `7/7 pass`；用户于 `2026-08-11` 确认 | `simulation-confirmed` | 三段 final 已另行授权；进入 A attempt 1 |
+| `UF-A1 V3-A final` attempt 1 | session `019fefa5…ce67`；raw `3533e8c…d5c0`；review `707fe568…ca7`；ImageGen `1/5` | `candidate-rejected / repairable`；第一失败为双开口；无 candidate/source/runtime | `final.r1` 删除分隔条并形成单一开口；bbox 约 `1284×252`；端部与轨道退出 hard safe core；保留粗旧皮革及左右身份 |
 
 ## 最终执行正文
 
@@ -325,6 +367,92 @@ Every pixel outside the shell and inside its opening remains pure #00FF00.
 Before returning, verify that the image contains exactly one complete Player
 shell, one connected green opening, leather-led structure, only short local
 brass repair, asymmetric ends, quiet rails and no baked live content.
+```
+
+### `UF-A1 V3-A final.r1` — Player attempt 2 自包含有界修复
+
+```text
+Edit Image 3 into one corrected complete empty Player unit-frame shell as a
+single production bitmap for Turtle WoW 1.18.1 and a Vanilla-era pfUI overhaul.
+Return one 1536 by 1024 RGB image containing exactly one front-facing
+orthographic horizontal shell on a perfectly uniform pure #00FF00 background.
+Do not create an atlas, separate caps, multiple outputs, a HUD screenshot or
+any additional object. This is a bounded repair of the immediately previous
+Player candidate only; it is not a new design direction.
+
+The shell will surround a live 200 by 25 health bar and a live 200 by 4 power
+bar and will be exported to 214 by 42 runtime pixels. Correct Image 3's measured
+1425 by 224 overly long bbox: aim for one centred visible bbox close to 1284 by
+252, approximately 5.10:1, with about 126 green pixels at the left and right of
+the 1536 canvas and broad green above and below. Do not retain a bbox wider than
+about 1340 or shorter than about 240. The repaired object must be visibly less
+long-and-thin than Image 3 while keeping Vanilla information density.
+
+Create exactly one connected physical perimeter and exactly one large connected
+green central opening. Image 3's two separate green slots and the full-width
+leather divider between them are the primary failure: remove that anatomy
+completely. Health and Power are separate live runtime layers placed later
+inside the same opening; draw no second opening, inner shelf, divider, separator,
+bar trough or full-width strip for them. The entire central opening is one
+uninterrupted field of pure #00FF00 from its upper inner edge to its lower inner
+edge.
+
+Treat the final 1284 by 252 shell bbox as an engineering grid. Within that bbox,
+all pixels in the inner rectangle from x 42 through x 1241 and y 36 through y
+215 must be pure #00FF00. Keep the top rail entirely within the upper 36 pixels,
+the bottom rail entirely within the lower 36 pixels, the left end entirely
+within the left 42 pixels and the right end entirely within the right 42 pixels,
+apart from at most a soft one-pixel-equivalent antialias edge. No leather,
+stitch, clamp, rivet, shadow, liner or brass may project deeper into that inner
+rectangle. Keep unique identity detail at the extreme ends so a deterministic
+variable-width three-slice can stretch the quiet centre without moving it.
+
+At the confirmed 214 by 42 in-game scale, the shell must feel materially
+substantial like an old carried object but remain subordinate to live health,
+power, names and numbers. Let leather carry the structure and keep brass local.
+It must sit beside a worn field-book chat frame and the classic gryphon action
+bar as the same era and painted weight without copying a book, column, gryphon
+or neighbouring silhouette.
+
+The written requirements outrank all images. Use Image 1 only for circa-2004
+Vanilla WoW painted scale, broad low-resolution readability, short broken dull
+brass highlights and restrained dark weight. Ignore its complete screen,
+portraits, text and book geometry. Use Image 2 only for deep-walnut material
+depth, warm upper-left light, believable wear and hand-made error. Ignore its
+pages, spine, columns, dragons, book silhouette and broad metal construction.
+Use Image 3 only to preserve its successful deep rough saddle-leather material,
+warm upper-left lighting, dark contact depth, left-side coarse stitches, small
+crooked dull-brass repair identity and off-centre dark right rivet. Do not
+preserve Image 3's two-slot anatomy, central divider, oversized left clamp,
+overly wide end masses, 1425 by 224 proportion or insufficient side isolation.
+
+Make the object a rugged expedition field badge built from discarded saddle
+leather, a shield strap or tent-binding leather. Deep-walnut old leather is the
+main structure, a narrow soot-brown contact edge supplies depth, and oxidized
+brass appears only as short local repair. The hide is unevenly dyed,
+smoke-darkened and locally mud-worn. Use a few low-frequency hand-cut
+deviations, unequal thickness and sparse load-bearing stitches. Do not use
+repeated pores, uniform pebble grain, equal stitch spacing, symmetric rivets,
+continuous orange bevels, furniture upholstery, luxury leatherwork or
+industrial product edges.
+
+The Player identity remains heavier on the left, but compress it into the
+extreme 42-pixel end band: one small crooked dull-brass clamp and two or three
+coarse unequal stitches, never a broad vertical brace reaching into live
+content. The right extreme end is mostly worn leather with one off-centre dark
+rivet. Do not mirror the ends. Keep both long rails thin, quiet and irregular,
+with no continuous decorative stitch line competing with the bars.
+
+Draw no health colour, power colour, name, level, number, portrait, icon, aura,
+status, button, glow or text. Forbid continuous gold trim, perfect rounded
+cards, glass, modern bevels, industrial grids, black-iron shrines, skulls,
+horns, crests, book parts, wax seals, gemstones, neon and photoreal antiques.
+Every pixel outside the shell and throughout its one central opening remains
+pure #00FF00. Before returning, verify one complete Player shell, one connected
+physical perimeter, exactly one uninterrupted green opening, a bbox near 1284
+by 252, thin rails, narrow ends, no central divider, no safe-area intrusion,
+leather-led rough expedition craft, local asymmetric repairs and no baked live
+content.
 ```
 
 ### `UF-A1 V3-B final` — Target 完整外壳
@@ -463,7 +591,7 @@ no centre hotspot and broad uniform green isolation.
 
 | 段 | 当前子状态 | 实际生成 | 流程错误 | 下一动作 |
 |---|---|---:|---:|---|
-| `UF-A1 V3-A final` | `prompt-authorized / queued` | `0/5` | `0` | attempt 1 generate |
+| `UF-A1 V3-A final.r1` | `repair-prepared / attempt 2 queued` | `1/5` | `1` | commit 后以 attempt 1 raw 为 Image 3 有界 edit |
 | `UF-A1 V3-B final` | `prompt-authorized / sequence-wait` | `0/5` | `0` | A 终态后开始 |
 | `UF-B1 V2 final` | `prompt-authorized / sequence-wait` | `0/5` | `0` | B 终态后开始 |
 
@@ -472,7 +600,7 @@ no centre hotspot and broad uniform green isolation.
 
 | 流程错误 | 段／正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
-| — | — | — | 当前无流程错误 | — | 不占生图额度 |
+| 1 | `UF-A1 V3-A final` attempt 1 review／`831e7ca` | 无 provider session | 初版 reviewer 对大量微型材料 fleck 逐个全画布 flood，性能不可接受；主动终止，未调用 provider、未产生新图 | 改为 scanline run union-find，一次线性扫描精确保留面积、bbox、edge 和 center 语义；重跑成功 | 不占生图额度 |
 
 ## 历史终态摘要
 
@@ -488,8 +616,9 @@ no centre hotspot and broad uniform green isolation.
 
 ## 下一门禁
 
-提交本次 `prompt-authorized` 状态后，以固定执行器启动
-`UF-A1 V3-A final` attempt 1；完成逐候选内审与有界修复循环后依次进入
+提交 `final.r1 / repair-prepared` 状态与 V3 reviewer 后，以固定执行器启动
+`UF-A1 V3-A final.r1` attempt 2：固定 Image 1／2，并只用同段 attempt 1 raw
+作为 Image 3。完成逐候选内审与有界修复循环后依次进入
 `UF-A1 V3-B final` 和 `UF-B1 V2 final`。任一段内部通过即停；第五次仍有
 客观失败则该段耗尽。当前仍禁止创建 source/runtime、修改 addon、跨段复用或
 复用任一 V1／V2 像素。

@@ -17,6 +17,7 @@ DISPLAY_SPEC = (
     / "tools/specs/unitframes_primary_v3_simulation_display_region_v1.json"
 )
 RENDERER = ROOT / "tools/render_unitframes_primary_v3_simulation_v1.py"
+REVIEWER = ROOT / "tools/review_unitframes_primary_v3_candidate.py"
 LEGACY_V2 = ROOT / "tools/specs/unitframes_a1_v2a_production_v2.json"
 
 
@@ -106,7 +107,7 @@ def main() -> None:
 
     work = WORK.read_text(encoding="utf-8")
     normalized_work = " ".join(work.split())
-    assert "prompt-authorized / UF-A1 V3-A queued" in work
+    assert "repair-prepared / UF-A1 V3-A attempt 2 queued" in work
     assert "accepted UF-PRIMARY-V3-SIM-V1 / 2026-08-11" in work
     assert "production / authorized / 2026-08-11" in work
     assert "完整性结论：`pass-final`" in work
@@ -116,7 +117,10 @@ def main() -> None:
     assert "UnitPowerType" in work
     assert "Mana／Rage／Focus／Energy" in work
     assert "V1、V2 的逐稿正文" in work
-    assert "prompt-authorized / queued" in normalized_work
+    assert "repair-prepared / attempt 2 queued" in normalized_work
+    assert "one-connected-opening" in work
+    assert "1425×224" in work
+    assert "90627" in work
 
     player = extract_fenced_body(work, "### `UF-A1 V3-A final`")
     assert_clauses(
@@ -131,6 +135,18 @@ def main() -> None:
             "Let leather carry the structure and keep brass local",
             "Draw no health colour, power colour",
             "Before returning, verify that the image contains exactly one complete Player",
+        ),
+    )
+    player_r1 = extract_fenced_body(work, "### `UF-A1 V3-A final.r1`")
+    assert_clauses(
+        player_r1,
+        (
+            "Edit Image 3 into one corrected complete empty Player",
+            "two separate green slots and the full-width leather divider",
+            "all pixels in the inner rectangle from x 42 through x 1241",
+            "Do not preserve Image 3's two-slot anatomy",
+            "compress it into the extreme 42-pixel end band",
+            "exactly one uninterrupted green opening",
         ),
     )
     target = extract_fenced_body(work, "### `UF-A1 V3-B final`")
@@ -172,6 +188,13 @@ def main() -> None:
     assert "One continuous, hand-cut shell silhouette" in renderer_source
     assert "power_types" in renderer_source
     assert "imagegen__imagegen" not in renderer_source
+
+    reviewer_source = REVIEWER.read_text(encoding="utf-8")
+    assert "connected_component_stats" in reviewer_source
+    assert "scanline run union-find" in reviewer_source
+    assert "one-connected-opening" in reviewer_source
+    assert "candidate is emitted only" in reviewer_source
+    assert '"may_be_source": False' in reviewer_source
 
     legacy = json.loads(LEGACY_V2.read_text(encoding="utf-8"))
     assert legacy["status"] == "candidate-rejected / repair-budget-exhausted"

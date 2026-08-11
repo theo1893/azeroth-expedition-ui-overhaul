@@ -24,7 +24,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 | 任务 | 用户于 `2026-08-05` 实机确认 Quest Log 左右页 bug 与显示问题已修复；该活动范围保持 `P6 user-confirmed`。QS-B1 V7-A 为 `P5`。QL-D V3 五次循环耗尽后，用户明确“使用第4稿”：以一次性 aspect 例外接受 exact canonical SHA `816aeedd…47c5`，原 keyed aspect `2.76945`／technical `18/19` 仍保留。正式四态 atlas SHA `cda1ef21…cd56` 已由 Quests `1.27`／Theme `1.10` 接入既有奖励适配层；atlas 与 0／1／2／4／6 真实排版均和已审阅第4稿像素完全一致，display `5/5 pass`。当前 `P5 runtime-exported / addon-integrated`。真实 Button／Tooltip／动态图标／文字和几何未替换。七枚独立功能纹章仍未验收，菜单不响应，旧 Blizzard／pfQuest 按钮继续 fail-open；Tracker 与 NPC Quest／Gossip 不变 | Turtle WoW 验证 QL-D TGA 方向、四态、pressed `1px`、safe area、双列排版和长详情滚动；不得第六次生图。另验证闭合态火漆跨压与滚动裁切；七纹章与代理 parity 完成后才可启用事务菜单或隐藏旧按钮 |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |
-| 单位框 | `UF-A1 V3-A/B final` 与 `UF-B1 V2 final` 均为 `P3 / prompt-authorized / 0/5`。用户于 `2026-08-11` 接受 `UF-PRIMARY-V3-SIM-V1`，并另行授权三段 final 按 A→B→B1 执行；每段最多 `5` 次实际 ImageGen、最坏 `15` 次，流程错误不占额度。A／B 固定两张锁定图且只允许同段紧邻前稿有界 edit；B1 首次无图片；禁止跨段和旧失败像素复用。尚无 source/runtime/addon 改动 | 提交授权正文后启动 A attempt 1，逐段完成生成—审查—有界修复；内部通过即停，第五次仍失败则该段耗尽。A2 紧凑框继续暂停 |
+| 单位框 | `P3`。A attempt 1 已计 `1/5`：粗旧皮革、左端粗缝线／局部夹片和右端偏心铆钉可保留，但检测到双开口；bbox `1425×224`、比例误差 `24.853972%`、各向异性 `19.906433%`、hard safe core 侵入，故无 candidate/source/runtime。`UF-A1 V3-A final.r1` 已自包含收敛为单开口、约 `1284×252` 与固定安全区；B/B1 仍 `0/5 sequence-wait`。reviewer 一次无生成性能错误已线性化，不占额度 | 提交 `final.r1 / repair-prepared` 与 V3 reviewer 后执行 A attempt 2，只以同段前稿为 Image 3；A 终态后依次 B、B1。内部通过即停，第五次仍失败则耗尽。A2 继续暂停 |
 | 其他 UI | `P0–P2`，保持 pfUI 默认实现 | 逐模块建立四份长期文档，并仅登记目标模块的接管路由 |
 
 全量模块状态以 [docs/PROGRESS.md](docs/PROGRESS.md) 为准。
