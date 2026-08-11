@@ -5,21 +5,27 @@
 - 模块：`unitframes`
 - 组件 ID：`UF.PLAYER.SHELL`、`UF.TARGET.SHELL`、
   `UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.BAR.*`、`UF.STATE.*`
-- 当前版本：`UF-PRIMARY-SIM-V1`
-- 子状态：`simulation-reviewed`
-- 项目阶段：`P1 → P2 direction gate`
+- 当前版本：`UF-A1 V1`／`UF-A2 V1`／`UF-B1 V1`
+- 子状态：`simulation-confirmed`
+- 项目阶段：`P2`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 操作：`simulate`；正式生产尚未授权
+- 操作：`prepare`；正式生产尚未授权
 - 生成前模拟：deterministic-local-geometry；ImageGen `0/0`
+- 本地渲染错误：初始模拟 `0`；确认后确定性复跑出现 `1` 次 sandbox 写权限
+  错误，使用同一命令获准写入后复跑通过，输出 SHA 未变；不属于 ImageGen。
 - 自动修复预算：未来 `UF-A1`／`UF-A2`／`UF-B1` 各最多 `5` 次实际生图，
   最坏合计 `15`；当前 `0/15`
 - 流程错误：`0`
 - 锁定视觉基准：当前没有 Unit Frames 专属锁定图。
 - 次级风格参考：
-  - `assets/locked/chat/聊天框视觉基准_v1.png`：只提供香草时代绘制尺度、
-    短黄铜高光、厚轮廓与综合色重；明确忽略其完整屏幕布局和单位框示意结构。
-  - `assets/locked/chat/聊天框独立艺术资源_v3.png`：只提供深胡桃材料、左上
-    暖光、手工误差与磨损节奏；明确忽略书页、书脊、木柱、龙饰与大面积金边。
+  - Image 1：`assets/locked/chat/聊天框视觉基准_v1.png`，SHA-256
+    `90e30ba405a2b5cdc707cc229e56c4f64e51d0e4051f1e98dbcd2ec2ee70ee06`：
+    只提供香草时代绘制尺度、短黄铜高光、厚轮廓与综合色重；明确忽略其完整
+    屏幕布局、圆形头像和单位框示意结构。
+  - Image 2：`assets/locked/chat/聊天框独立艺术资源_v3.png`，SHA-256
+    `272528e6d89cc90e5cbb37dce4ae572ddf9de0402078cdcf0ed5804f734faab8`：
+    只提供深胡桃材料、左上暖光、手工误差与磨损节奏；明确忽略书页、书脊、
+    木柱、龙饰、完整书框与大面积金边。
 - Prompt provenance：`docs/GLOBAL_ART_BASELINE.md`、本模块
   `ART_BASELINE.md` 与 `SUBMODULE_ART_BASELINES.md`。
 
@@ -99,7 +105,11 @@
 - 命令：`conda run -n py312 python tools/render_unitframes_primary_simulation_v1.py`
 - Python：`/Users/yuanshiyao/miniconda3/envs/py312/bin/python`，`3.12.12`
 - ImageGen：`0/0`
-- 本地渲染错误：`0`
+- 初始本地渲染错误：`0`
+- 确认后复跑：首次因当前 sandbox 无法写入 ignored `generated/`，返回
+  `PermissionError: [Errno 1] Operation not permitted`；随后仅提升同一命令的
+  文件写权限重跑成功。scene／zoom／report SHA 均与确认前完全一致，不消耗
+  ImageGen 或正式生产流程错误额度。
 - 输出与 SHA：
   - scene：
     `generated/unitframes/primary/simulation/V1/unitframes-primary-v1.scene.png`；
@@ -123,35 +133,79 @@
 ### 用户方向结论
 
 - 具体模拟版本：`UF-PRIMARY-SIM-V1`
-- 用户结论：pending
-- 下一门禁：用户确认／否决本模拟方向；确认不等于授权正式 ImageGen。
+- 用户结论与日期：`confirmed / 2026-08-11`
+- 用户原文：`接受 UF-PRIMARY-SIM-V1`
+- 确认并写回生产正文的可见条款：
+  - 四个框首先读作同一工匠体系、长期携带并手工修补的粗犷行军身份牌，不能
+    读作现代卡片、黑铁圣龛、书本缩略件或规整金框。
+  - 深胡桃旧皮革是主结构，烟褐内衬承托动态条，氧化黄铜只形成短促、断续、
+    不对称的夹片与铆钉；左上暖光和低饱和综合色必须与现有 Chat 同年代。
+  - Player 左端修补偏重；Target 右端破损压片偏重；二者从零独立绘制且不得
+    镜像。TargetTarget／Focus 用减法形成紧凑身份牌，不能缩放大框。
+  - Focus 只使用一段褪色靛蓝猎踪布结识别；布结被皮革夹层和一枚暗铜钉真实
+    压住，不漂浮、不发光、不侵入内容走廊。
+  - 外轮廓只做低频歪斜，端部、铆钉、缺口与修补位置不等；粗犷来自使用和
+    维修逻辑，不是随机噪声。中央动态内容区持续安静。
+  - Hover／Aggro 只呈现两三段断续短边响应，不形成整框霓虹；当前无头像
+    profile 不生成圆形假头像槽。
+- 非确认项：模拟图像素、微纹理、手绘笔触、Alpha、切片、最终贴图接缝及
+  另一台设备的屏幕位置。
+- 确认失效条件：物件隐喻、材料主次、非镜像结构、Focus 识别件、综合色重或
+  与现有 UI 的整合关系发生实质变化。
+- 下一门禁：用户看过并明确授权三段最终生产正文；本方向确认不等于正式
+  ImageGen 授权。
 
 ## 生产正文完整性预检
 
 - 复杂度：三个独立 atlas／state 执行正文。
-- 当前结论：`draft-pass`；必须在模拟确认后加入确认条款并重新审查，才可请求
-  正式生产授权。
+- 当前结论：`pass`；模拟确认条款、固定参考职责、对象／状态、画布、边界、
+  runtime 几何、动态排除、色键和最终自检均已进入各自完整正文。
+
+| 门禁 | 执行正文中的证据 | 结论 |
+|---|---|---|
+| 身份、范围、对象数量与动态排除 | A1／A2 均固定上下两件空外壳；B1 固定两条无色 donor；文字、头像、图标、状态与颜色语义逐项排除 | pass |
+| 图片输入职责与冲突 | A1／A2 逐张定义 Image 1／2 的 inherit／ignore，并声明文字合同优先；B1 明确无图片输入 | pass |
+| Canvas、格位、方向、尺度、光照与层序 | 三段均固定画布、上下半区、隔离带、正视二维方向、左上暖光和目标 bbox 比例 | pass |
+| 逐对象轮廓、材料与关系 | 非镜像 Player／Target、减法紧凑框、Focus 实体压接布结及两条不同密度颜料纹均单列 | pass |
+| 安静区、裁切、拉伸与接缝 | 四壳完整保留真实 bar stack；两 donor 禁止中心焦点、重复接缝和全宽划痕 | pass |
+| 美术 DNA、反模式、色键与自检 | 香草手绘、低饱和材料层级、低频维修不规则、纯绿隔离与每段客观末检均明确 | pass |
+
 - `UF-A1`：两个对象、固定两格、同尺寸但非镜像、动态内容排除、色键与
-  `214×42` bbox-fit 已明确。
+  `214×42` 等比 bbox-fit 已明确。
 - `UF-A2`：两个不同高度对象、固定两格、Focus 布结、紧凑减法与各自安全区
   已明确。
 - `UF-B1`：两条灰阶不透明 donor、运行时着色、横向拉伸与重复节奏已明确。
 - 未知但执行必需的值：无；远端屏幕位置不影响本批资源生成。
+- 去冗余结论：保留对象数量、输入职责、动态排除、物理压接、非镜像、
+  safe-area、色键与反现代门禁的必要重复；不把模拟历史或情绪描述塞入正文。
 
 ## 最终执行正文
 
-状态：`production-draft / unauthorized`。以下三段尚未授权。用户确认模拟后，
-必须将可见结论写入并展示最终版本；不得以本草案直接调用固定执行器。
+状态：`production-final / unauthorized`。以下三段已完整吸收
+`UF-PRIMARY-SIM-V1` 的确认结论，但尚未获得正式生产授权；不得直接调用固定
+执行器。模拟图不得上传或成为生产输入。
 
 ### `UF-A1 V1` — Player／Target 大外壳
 
+The written requirements below are controlling. Image 1 is a secondary
+reference only for circa-2004 Vanilla WoW bitmap scale, thick readable masses,
+short dull-brass highlights and overall visual weight; ignore its whole-screen
+layout, portrait circles and every unit-frame example. Image 2 is a secondary
+reference only for deep-walnut material depth, warm upper-left illumination,
+hand-made edge error and the frequency of believable wear; ignore its pages,
+spine, columns, dragons, book silhouette and extensive gold architecture.
+Never copy either reference's object geometry. If an image conflicts with this
+text, follow this text.
+
 Create one production-ready 1536 by 1024 bitmap sheet containing exactly two
 separate horizontal unit-frame shell objects on a perfectly uniform pure
-#00FF00 background. The upper cell is the Player shell and the lower cell is
-the Target shell. Draw no other object. Each shell must remain fully inside
-its own half with a broad pure-green isolation margin and an approximately
-5.10:1 visible silhouette suitable for proportional bbox fitting to 214 by 42
-runtime pixels.
+#00FF00 background. The upper 1536 by 512 cell is the Player shell and the
+lower 1536 by 512 cell is the Target shell. Draw no other object. Show both as
+front-facing orthographic 2D game-UI assets with no scene, camera tilt or
+perspective foreshortening. Each shell must remain fully inside its own half,
+with at least 96 pixels of pure-green isolation from the canvas edges and cell
+boundary. Give each an approximately 5.10:1 visible bbox suitable for
+proportional, non-distorting fit to exactly 214 by 42 runtime pixels.
 
 These are empty physical shells around an existing pfUI bar stack, not complete
 unit frames. Leave the entire central live-content corridor visually open and
@@ -159,13 +213,15 @@ quiet for a 200 by 25 health bar plus a 200 by 4 power bar. Do not draw any
 fill, portrait, name, level, number, icon, aura, status text, classification,
 button or glow. The dynamic bars and text are drawn by the game.
 
-Both objects belong to the same hand-made Azeroth expedition field-badge
-family. Use thick deep-walnut worn leather as the main structure, a soot-brown
+Both objects are restrained, hand-repaired Azeroth expedition field badges:
+compact equipment carried through a long campaign, not decorative fantasy
+plaques. Use thick deep-walnut worn leather as the main structure, a soot-brown
 inner liner, a few short pieces of dull oxidized brass and two or three coarse
 repair stitches. Use circa-2004 Vanilla WoW hand-painted bitmap language,
 low-resolution readable masses, warm upper-left light, short broken highlights
-and real contact shadows. The long edges may wander gently at low frequency;
-the two ends, rivets, nicks and repair locations must not be symmetrical.
+and real contact shadows. The long edges may wander gently only at low
+frequency. Unequal ends, rivets, nicks and repairs must look caused by use and
+field maintenance, never by all-over random noise.
 
 The Player shell has a slightly heavier, crooked brass clamp and two coarse
 stitches at the left end, while its right end is mostly worn leather with one
@@ -185,25 +241,40 @@ duplication, no edge contact and no non-green pixel outside the two cells.
 
 ### `UF-A2 V1` — TargetTarget／Focus 紧凑外壳
 
+The written requirements below are controlling. Image 1 is a secondary
+reference only for circa-2004 Vanilla WoW bitmap scale, thick readable masses,
+short dull-brass highlights and overall visual weight; ignore its whole-screen
+layout, portrait circles and every unit-frame example. Image 2 is a secondary
+reference only for deep-walnut material depth, warm upper-left illumination,
+hand-made edge error and the frequency of believable wear; ignore its pages,
+spine, columns, dragons, book silhouette and extensive gold architecture.
+Never copy either reference's object geometry. If an image conflicts with this
+text, follow this text.
+
 Create one production-ready 1024 by 1024 bitmap sheet containing exactly two
 separate compact horizontal unit-frame shell objects on a perfectly uniform
-pure #00FF00 background. The upper cell is TargetTarget and the lower cell is
-Focus. Keep broad pure-green isolation around both. The upper silhouette must
-fit proportionally to 112 by 34 runtime pixels; the lower silhouette must fit
-proportionally to 112 by 39 runtime pixels. Do not draw any other object.
+pure #00FF00 background. The upper 1024 by 512 cell is TargetTarget and the
+lower 1024 by 512 cell is Focus. Draw both as front-facing orthographic 2D
+game-UI assets with no scene, camera tilt or perspective foreshortening. Keep
+at least 72 pixels of pure-green isolation from canvas edges and the cell
+boundary. The upper visible bbox must be approximately 3.294:1 for
+proportional, non-distorting fit to exactly 112 by 34 runtime pixels; the lower
+must be approximately 2.872:1 for fit to exactly 112 by 39. Do not draw any
+other object.
 
 These shells surround real pfUI bars. Keep the full central corridor quiet for
 a 100 by 20 plus 100 by 1 bar stack in TargetTarget and a 100 by 25 plus 100 by
 1 stack in Focus. Draw no bar fill, portrait, text, number, icon, aura, status,
 classification, click control or glow.
 
-Use the same circa-2004 hand-painted expedition field-badge family as the large
-shells: deep-walnut worn leather, soot-brown liner, restrained oxidized brass,
-warm upper-left light, thick readable silhouette, real contact depth and
-low-frequency hand-cut irregularity. These are compact purpose-built objects,
-not scaled copies of the large shells. TargetTarget is the quietest member: thin
-worn leather, only two or three short brass traces, unequal ends and no centre
-ornament.
+Use a restrained hand-repaired Azeroth expedition field-badge identity:
+deep-walnut worn leather, soot-brown liner, restrained oxidized brass, warm
+upper-left light, thick readable silhouette, real contact depth and
+low-frequency hand-cut irregularity in circa-2004 Vanilla WoW bitmap language.
+The irregularity must follow wear and repair rather than random noise. These
+are compact purpose-built objects, not scaled copies of the large shells.
+TargetTarget is the quietest member: thin worn leather, only two or three short
+brass traces, unequal ends and no centre ornament.
 
 Focus uses the same restrained compact structure but has one small faded-indigo
 hunter's tracking cloth knot emerging from the upper-right leather seam. The
@@ -221,11 +292,16 @@ quiet corridors, isolation margins and no edge contact.
 
 ### `UF-B1 V1` — Health／Power 无色填充纹
 
-Create one production-ready 1024 by 1024 bitmap sheet with exactly two separate
-horizontal opaque grayscale paint-texture swatches on a perfectly uniform pure
-#00FF00 background. The upper swatch is the Health fill donor and the lower
-swatch is the Power fill donor. Each swatch must be a long plain rectangle with
-broad green isolation and no frame, cap, text, icon, colour meaning or glow.
+No reference images are supplied for this body; everything required is stated
+below. Create one production-ready 1024 by 1024 bitmap sheet with exactly two
+separate horizontal opaque grayscale paint-texture swatches on a perfectly
+uniform pure #00FF00 background. The upper 1024 by 512 cell contains only the
+Health fill donor at approximately 2:1 visible bbox for proportional,
+non-distorting fit to exactly 64 by 32. The lower 1024 by 512 cell contains only
+the Power fill donor at approximately 4:1 for fit to exactly 64 by 16. Show both
+front-facing with at least 80 pixels of pure-green isolation from canvas edges
+and the cell boundary. Each swatch must be a plain rectangle with no frame,
+cap, text, icon, colour meaning or glow.
 
 Both swatches are neutral grayscale because pfUI supplies health, reaction,
 class and power colours at runtime. Use matte hand-painted mineral pigment with
@@ -244,10 +320,18 @@ cast, no dynamic content, no edge contact and no non-green pixels outside them.
 
 ## 自主修复循环
 
-- 不可变边界：上述三段各自的对象数量、顺序、输入职责、Canvas、runtime
-  尺寸、动态内容排除、材料方向、色键与最多五次实际生图。
-- 允许修复：同段内调整占用率、端帽不规则、材料粗细、布结接触、绿色隔离；
-  只有明确保留正确区域时才允许使用同段紧邻前次输出作 edit 输入。
+- 不可变边界：上述三段各自的组件 ID、对象数量与顺序、参考图职责、Canvas、
+  runtime 尺寸、正视方向、动态内容排除、材料主次、色键和最多五次实际生图。
+- 固定上传：`UF-A1 V1` 与 `UF-A2 V1` 的每次调用都只允许上传本文件固定 SHA
+  的 Image 1／2，顺序和职责不变；`UF-B1 V1` 的首次调用不上传图片。
+- 允许修复：同段内调整占用率、低频端帽不规则、材料粗细、磨损／修补位置、
+  Focus 布结的物理接触和纯绿隔离。A1／A2 只有明确保留正确区域时，才允许把
+  同段紧邻前次输出作为 Image 3 edit 输入；B1 同条件下作为 Image 1 edit
+  输入。不得跨段复用像素。
+- 允许的确定性候选处理：按固定上下半区拆分；只做边缘连通 `#00FF00`
+  色键、透明 RGB 清零和各对象等比 bbox-fit。源 bbox 与目标比例误差超过 `1%`
+  时必须退回，禁止非等比压缩。正式候选每次都要以真实 runtime 尺寸、真实
+  动态文字／条／状态和当前邻接 UI 生成排版预演；这些处理不构成 P4 接受。
 - 必须重新授权：新增／删除对象、改变物件身份、使用新参考、改变 Canvas／
   runtime 几何、改成头像结构、改变综合色方向或跨段复用像素。
 
@@ -260,7 +344,7 @@ cast, no dynamic content, no edge contact and no non-green pixels outside them.
   `tools/render_unitframes_primary_simulation_v1.py`
 - 输出：本文件“生成前模拟实例图”所列 scene／zoom。
 - 实际 ImageGen：`0/0`；流程错误：`0`。
-- 循环终态：`simulation-reviewed`；正式生产循环尚未开始。
+- 循环终态：`simulation-confirmed`；正式生产循环尚未开始。
 
 ## 审查记录
 
@@ -273,18 +357,20 @@ cast, no dynamic content, no edge contact and no non-green pixels outside them.
 - 对象／状态合同：四张 shell、两条 fill、两类确定性 rim 的职责完整；预演
   显示 Player normal、Target aggro、TargetTarget normal、Focus hover。
 - 实际展示区域：合同与报告 SHA 如上；`4/4 pass`，violations `0`。
-- 结论：`displayable / simulation-reviewed`，允许进入用户方向复审；不允许
-  进入 source、runtime 或正式 ImageGen。
-- 用户结论：pending。
+- 结论：`displayable / simulation-confirmed`；确认方向已写入三段最终生产
+  正文。当前仍不允许进入 source、runtime 或正式 ImageGen。
+- 用户结论：`confirmed / 2026-08-11`，原文“接受 UF-PRIMARY-SIM-V1”。
 
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
 |---|---|---|---|
-| `UF-PRIMARY-SIM-V1` | deterministic scene／zoom；SHA 与 display-region `4/4` 如上；ImageGen `0/0` | `simulation-reviewed` | 等待用户确认；若否决则按具体可见问题创建新模拟版本 |
+| `UF-PRIMARY-SIM-V1` | deterministic scene／zoom；SHA 与 display-region `4/4` 如上；ImageGen `0/0` | `simulation-confirmed` | 可见方向已写入 A1／A2／B1；等待三段正式生产授权 |
 
 ## 下一门禁
 
-渲染并内部检查 `UF-PRIMARY-SIM-V1`，向用户展示全屏 scene 与放大 zoom；等待
-明确方向确认。确认后仍需展示三段最终 production 正文和总预算，再分别获得
-正式 ImageGen 授权。
+向用户展示 `UF-A1 V1`、`UF-A2 V1`、`UF-B1 V1` 的完整最终 production
+正文、固定 Image 1／2 职责、确定性候选处理和冻结修复边界，并等待明确生产
+授权。每段最多 `5` 次实际 ImageGen，最坏合计 `15`；流程错误不占额度。
+本轮不创建 handoff：下一门禁只依赖已提交文字合同，模拟图可由 tracked 脚本
+确定性重建，不需要跨设备传递 exact ignored pixels。

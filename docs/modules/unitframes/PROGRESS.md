@@ -2,14 +2,15 @@
 
 ## 当前状态
 
-- 主模块：`P1`；当前批次 `UF-PRIMARY-SIM-V1` 为
-  `simulation-reviewed`，等待用户确认后进入 P2 方向锁定。
+- 主模块：`P2`；当前批次 `UF-PRIMARY-SIM-V1` 为
+  `simulation-confirmed`。用户于 `2026-08-11` 明确回复“接受
+  UF-PRIMARY-SIM-V1”，确认粗犷行军身份牌方向；该结论不接受模拟像素。
 - 当前只覆盖 `player`、`target`、`targettarget`、`focus` 的资源外观；不修改
   另一台设备的 Frame 位置、尺寸与功能。
 - 当前仓库／远端 `main` 尚未包含用户在游戏设备完成的布局 overhaul；本批次
   因只使用现有 pfUI 资源尺寸，不把屏幕位置作为生产合同。
-- ImageGen：`0/0`；尚未上传参考图、尚未启动固定执行器、没有 source 或
-  addon runtime。
+- 生成前模拟 ImageGen：`0/0`；正式生产为 `0/15`。尚未上传参考图、尚未启动
+  固定执行器、没有 source 或 addon runtime。
 
 ## 已完成的对象审计
 
@@ -42,9 +43,17 @@
 - 非权威：微纹理、手绘笔触、Alpha、切片、最终贴图接缝与远端布局位置。
 - 内部结论：`displayable`。动态条、文字与 Button hitbox 均留在安静区；
   Target 仇恨和 Focus hover 仅使用断续短边，不形成现代连续发光框。
+- 用户确认的可见方向：深胡桃旧皮革为主、烟褐内衬为辅、氧化黄铜只作断续
+  短夹件；Player 左端修补偏重、Target 右端损伤偏重且不得镜像；紧凑框采用
+  减法；Focus 靛蓝布结必须被皮革与暗铜钉真实压住；低频歪斜和不等端帽来自
+  维修，不使用规则金框、假头像槽或连续霓虹。
+- 正式生产正文：`UNITFRAMES.CORE.md` 中 `UF-A1 V1`、`UF-A2 V1`、
+  `UF-B1 V1` 已把上述结论写入并通过自包含完整性复审，当前均为
+  `production-final / unauthorized`。
 
 ## 下一门禁
 
-用户确认或否决 `UF-PRIMARY-SIM-V1` 的可见方向。确认后，把结论冻结进
-`UNITFRAMES.CORE.md` 的三段正式生产正文，再分别请求 `UF-A1 V1`、
-`UF-A2 V1`、`UF-B1 V1` 的授权；每段最多五次实际 ImageGen，最坏合计十五次。
+向用户展示并请求明确授权 `UNITFRAMES.CORE.md` 中的 `UF-A1 V1`、
+`UF-A2 V1`、`UF-B1 V1` 最终生产正文、固定参考职责、确定性候选处理合同与
+自主修复边界。每段最多五次实际 ImageGen，最坏合计十五次；流程错误不计入
+生图额度。方向确认本身不构成正式生产授权。
