@@ -107,7 +107,7 @@ def main() -> None:
 
     work = WORK.read_text(encoding="utf-8")
     normalized_work = " ".join(work.split())
-    assert "repair-prepared / UF-A1 V3-A attempt 4 queued" in work
+    assert "repair-prepared / UF-A1 V3-A attempt 5 queued" in work
     assert "accepted UF-PRIMARY-V3-SIM-V1 / 2026-08-11" in work
     assert "production / authorized / 2026-08-11" in work
     assert "完整性结论：`pass-final`" in work
@@ -117,7 +117,7 @@ def main() -> None:
     assert "UnitPowerType" in work
     assert "Mana／Rage／Focus／Energy" in work
     assert "V1、V2 的逐稿正文" in work
-    assert "repair-prepared / attempt 4 queued" in normalized_work
+    assert "repair-prepared / attempt 5 queued" in normalized_work
     assert "one-connected-opening" in work
     assert "1425×224" in work
     assert "90627" in work
@@ -171,6 +171,18 @@ def main() -> None:
             "cutting away roughly another five runtime pixels",
             "Break each long highlight into several unequal matte fragments",
             "no alpha-bearing structure in the hard core",
+        ),
+    )
+    player_r4 = extract_fenced_body(work, "### `UF-A1 V3-A final.r4`")
+    assert_clauses(
+        player_r4,
+        (
+            "changes only overall occupancy and the thickness of the two vertical end bands",
+            "bbox is 1392 by 281",
+            "vertical sides as visually thin as the top and bottom rails",
+            "move the left inner edge 29 pixels farther left",
+            "Replace the removed end material with uniform pure #00FF00",
+            "zero structure in the hard safe core",
         ),
     )
     target = extract_fenced_body(work, "### `UF-A1 V3-B final`")

@@ -3,7 +3,7 @@
 ## 当前状态
 
 - `UF-A1 V3-A final` Player 完整外壳：
-  `P3 / attempt 3 rejected-repairable / final.r3 repair-prepared / 3/5`。
+  `P3 / attempt 4 rejected-repairable / final.r4 repair-prepared / 4/5`。
 - `UF-A1 V3-B final` Target 完整外壳：
   `P3 / prompt-authorized / sequence-wait / 0/5`。
 - `UF-B1 V2 final` Health／Power 灰阶填充纹：
@@ -22,7 +22,7 @@
 - 用户随后于 `2026-08-11` 明确授权上述三段 final，冻结 A→B→B1 顺序、
   A／B 固定 Image 1／2、同段紧邻前稿有界 edit、B1 首次无图片、每段
   `5` 次实际生成及最坏 `15` 次预算。流程错误不占额度；跨段与旧失败像素
-  禁止复用。A attempts 1–3 已按固定正文完成三次实际生成；B／B1 尚未调用。
+  禁止复用。A attempts 1–4 已按固定正文完成四次实际生成；B／B1 尚未调用。
 
 ## V3 结构合同
 
@@ -74,7 +74,7 @@
 - `UNITFRAMES.CORE.md` 只保留当前 V3 合同、三段自包含 final、历史终态摘要和
   下一门禁；V1／V2 的逐稿全文继续由 Git 历史保存。
 - `UF-A1 V3-A`、`UF-A1 V3-B`、`UF-B1 V2` 每段最多 `5` 次实际
-  `imagegen-0-143-0`，最坏合计 `15` 次；当前 A `3/5`、B `0/5`、B1
+  `imagegen-0-143-0`，最坏合计 `15` 次；当前 A `4/5`、B `0/5`、B1
   `0/5`。
 - 三段 final 已吸收用户确认的可见结论并通过 `pass-final` 自包含预检；
   正式生产授权已独立取得，按 A→B→B1 顺序执行。
@@ -100,8 +100,15 @@
 - `UF-A1 V3-A final.r3` 已作为 attempt 4 自包含有界正文：等比缩小并居中到
   约 `1284×252`，只把端部内脸再向外让约 `32/46 source px`，保持薄轨和
   单开口，同时打断连续绳状边缘节奏。
+- A attempt 4 保持四项结构门禁通过，hard safe core 进一步降到 `9061 px`，
+  但归一化开口仍约 x `71..1206`，左右应再让 `29/36 source px`；bbox
+  `1392×281`、isolation `70/74` 仍未过。无 candidate/source/runtime。
+- `UF-A1 V3-A final.r4` 是 A 段最后一次有界正文，只保留 topology／材料，
+  要求整体等比缩至 `1284×252`，把左右竖边做成与横轨同厚并精确把内脸移至
+  x `42/1242`。不再同时引入其他美术变化。
 - reviewer 首次逐 fleck flood 性能错误已改为线性 scanline run union-find；
-  无新 provider 图，作为流程错误 `1` 单列，不占 A 的生成额度。
+  attempt 4 child 在 provider 图已存在后缺 Pillow，退回 `sips` 确认原图为
+  RGB 并复制。两项作为流程错误 `2` 单列，没有额外 provider 图，不占额度。
 
 ## 历史终态
 
@@ -115,8 +122,8 @@
 
 ## 下一门禁
 
-提交 `final.r3 / repair-prepared` 后，以固定执行器启动
-`UF-A1 V3-A final.r3` attempt 4，并把同段 attempt 3 raw 作为唯一 Image 3；
+提交 `final.r4 / repair-prepared` 后，以固定执行器启动
+`UF-A1 V3-A final.r4` attempt 5，并把同段 attempt 4 raw 作为唯一 Image 3；
 完成该段循环后依次执行 V3-B 与 B1。每段内部
 通过即停，第五次仍失败则耗尽；当前禁止创建 source/runtime、修改 addon、
 跨段复用或复用旧失败像素。
