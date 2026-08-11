@@ -107,7 +107,7 @@ def main() -> None:
 
     work = WORK.read_text(encoding="utf-8")
     normalized_work = " ".join(work.split())
-    assert "repair-prepared / UF-A1 V3-A attempt 2 queued" in work
+    assert "repair-prepared / UF-A1 V3-A attempt 3 queued" in work
     assert "accepted UF-PRIMARY-V3-SIM-V1 / 2026-08-11" in work
     assert "production / authorized / 2026-08-11" in work
     assert "完整性结论：`pass-final`" in work
@@ -117,7 +117,7 @@ def main() -> None:
     assert "UnitPowerType" in work
     assert "Mana／Rage／Focus／Energy" in work
     assert "V1、V2 的逐稿正文" in work
-    assert "repair-prepared / attempt 2 queued" in normalized_work
+    assert "repair-prepared / attempt 3 queued" in normalized_work
     assert "one-connected-opening" in work
     assert "1425×224" in work
     assert "90627" in work
@@ -147,6 +147,18 @@ def main() -> None:
             "Do not preserve Image 3's two-slot anatomy",
             "compress it into the extreme 42-pixel end band",
             "exactly one uninterrupted green opening",
+        ),
+    )
+    player_r2 = extract_fenced_body(work, "### `UF-A1 V3-A final.r2`")
+    assert_clauses(
+        player_r2,
+        (
+            "Preserve Image 3's successful single connected physical perimeter",
+            "at least the central 1200 by 180 region",
+            "remove roughly three quarters of the wide left and right leather plaques",
+            "left and right structural bands are only about 7 pixels each",
+            "nearly continuous evenly spaced edge stitches",
+            "no safe-core intrusion",
         ),
     )
     target = extract_fenced_body(work, "### `UF-A1 V3-B final`")
