@@ -3,7 +3,7 @@
 ## 当前状态
 
 - 主模块：UF-A1 当前进入
-  `UF-A1 V2-A V2 / P3 / prompt-authorized`。旧 V2-A V1 为
+  `UF-A1 V2-A V2 / P3 / candidate-rejected / repair-budget-exhausted`。旧 V2-A V1 为
   `P3 / candidate-rejected / repair-budget-exhausted`。用户于 `2026-08-11` 明确授权
   `UF-A1 V2-A V1`／`UF-A1 V2-B V1` 按 A→B 执行，每段最多五次实际
   ImageGen、固定 Image 1／2、同段紧邻前稿有界 edit、流程错误不占额度、
@@ -15,7 +15,9 @@
   `UF-A1-V2-SIM-V2` 的确认继续有效；新 `UF-A1 V2-A V2` 已于
   `2026-08-11` 按固定 Image 1／2、attempt 1 无 Image 3、同循环紧邻前稿仅限
   整图有界 edit、最多五次实际调用、流程错误不占额度及确定性审查合同获得
-  正式生产授权，当前 `0/5`；
+  正式生产授权，现已实际执行并用满 `5/5`。最终 attempt 5 四件 bbox 为
+  `139–142×798–799px`，比例误差 `4.380476%–6.766917%`，上下隔离仅
+  `109–117px`，因此未通过 `≤1%` 与 `128px` 门禁；
   `UF-PRIMARY-SIM-V1` 已于 `2026-08-11` 获用户方向确认。`UF-A1 V1` 已完成
   五次实际 ImageGen，终态为
   `candidate-rejected / repair-budget-exhausted / user-rejected`；用户于
@@ -26,7 +28,7 @@
 - 当前仓库／远端 `main` 尚未包含用户在游戏设备完成的布局 overhaul；本批次
   因只使用现有 pfUI 资源尺寸，不把屏幕位置作为生产合同。
 - 新 V2 生成前模拟 ImageGen：`0/0`；历史正式生产为 A1 V1 `5/5`，A2／B1
-  各 `0/5`。V2-A V1 已用满 `5/5`，新 V2-A V2 为 `0/5`，V2-B 未启动且为
+  各 `0/5`。V2-A V1 已用满 `5/5`，新 V2-A V2 也已用满 `5/5`，V2-B 未启动且为
   `0/5`。A1 V1 有
   两次无生成证据的流程错误，
   不占额度。attempt 5 的 Player／
@@ -67,9 +69,13 @@
   为 `99–100×954–955px`，比例误差 `37.106918–37.801047%`，上下隔离只有
   `34–36px`。用户已否决逐端帽独立调用；新 `UF-A1 V2-A V2` 保留同一单图
   四列画布和四件 source，只把布局优先级、等分关系、端部接触、视觉重量不得
-  通过增宽表达及逐项末检写得更完整。生产规格为
-  `tools/specs/unitframes_a1_v2a_production_v2.json`，当前已授权、`0/5`。没有
-  production source/runtime 或 addon 改动。
+  通过增宽表达及逐项末检写得更完整。新版本五稿均为一次调用的一张完整 atlas，
+  最终 attempt 5 SHA `315470ff…4d20`；四件 mass/contact 与 Player／Target
+  assembly 均通过，display-region `6/6 pass`，但等比 fit 只能得到三件
+  `7×40` 与一件 `7×39`，无法填满 `7×42` 固定高度。生产规格为
+  `tools/specs/unitframes_a1_v2a_production_v2.json`，当前
+  `candidate-rejected / repair-budget-exhausted / 5/5`。没有 production
+  source/runtime 或 addon 改动。
 
 ## 已完成的对象审计
 
@@ -112,9 +118,8 @@
 
 ## 下一门禁
 
-先提交已授权的 `UF-A1 V2-A V2` 单图四格正文与规格基线，再执行 attempt 1；
-随后完成固定四列拆分、边缘连通色键、透明 RGB 清零、等比 bbox-fit、真实排版
-与缩放审查。内部通过即停止；否则只在冻结边界内自主修复，最多累计五次实际
-调用，流程错误不占额度。它不是旧 V2-A V1 的第六次调用。V2-A V2 内部通过
-后才恢复 V2-B；用户接受前不产出 tracked source/runtime、不接入 addon。
-A2／B1 继续暂停，额度均为 `0/5`。
+等待用户审阅 `UF-A1 V2-A V2` 的 `5/5` 终态，并决定是否建立新的 V2-A 版本
+及新授权合同。当前禁止第 6 次调用、禁止把任一失败稿晋级 source/runtime、
+禁止启动 V2-B。新方案若改变单图尺寸／格位、对象数量、输入职责、确定性处理
+范围或视觉方向，必须先重新模拟／审阅并明确授权。A2／B1 继续暂停，额度均为
+`0/5`。

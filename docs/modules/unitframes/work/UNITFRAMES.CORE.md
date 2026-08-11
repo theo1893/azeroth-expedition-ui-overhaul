@@ -6,17 +6,17 @@
 - 组件 ID：`UF.PLAYER.SHELL`、`UF.TARGET.SHELL`、
   `UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.BAR.*`、`UF.STATE.*`
 - 当前版本：`UF-A1 V2-A V2.r4`／`UF-A1 V2-B V1`／`UF-A2 V1`／`UF-B1 V1`
-- 子状态：UF-A1 V2-A V2.r4 `repair-prepared`；旧 V2-A V1
+- 子状态：UF-A1 V2-A V2.r4 `candidate-rejected / repair-budget-exhausted`；旧 V2-A V1
   `candidate-rejected / repair-budget-exhausted`；V2-B
   `prompt-authorized / sequence-blocked`；UF-A1 V1
   `candidate-rejected / repair-budget-exhausted / user-rejected`；UF-A2／UF-B1
   `prompt-authorized / paused`
-- 项目阶段：UF-A1 V2-A V2.r4 `P3 / repair-prepared`；历史 V2-A V1 为 `P3 / rejected`；
+- 项目阶段：UF-A1 V2-A V2.r4 `P3 / rejected`；历史 V2-A V1 为 `P3 / rejected`；
   UF-A2／UF-B1 保持 `P3 / paused`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 操作：`edit`；已确认“独立四件 source → 标准宽度单 shell／可变宽度
-  三切片”。V2-A V2 attempt 4 已首次得到接近正确的 `768px` 高度；V2.r4 仅以
-  该整张前稿作为 Image 3，冻结纵向结果并修正四件横向中心与 `128px` 宽度
+- 操作：`review / reject`；已确认“独立四件 source → 标准宽度单 shell／
+  可变宽度三切片”。V2-A V2 五次单图循环已结束；attempt 5 仍未通过比例／
+  隔离门禁，不得晋级或启动第六次
 - 生成前模拟：`UF-A1-V2-SIM-V2`／deterministic-local-geometry；ImageGen
   `0/0`
 - 本地渲染错误：历史主模拟确认后复跑 `1` 次 sandbox 写权限错误；V2 首次
@@ -24,7 +24,7 @@
   合同重跑；随后有 `1` 次 sandbox 写权限错误，获准写入 ignored `generated/`
   后以同一命令通过。三者均不属于 ImageGen。
 - 自动修复预算：UF-A1 V1 历史终态 `5/5`；V2-A V1 已执行并用满 `5/5`；
-  新 V2-A V2 `4/5 / final-repair-prepared`；V2-B `0/5`；UF-A2／UF-B1 各 `0/5` 并
+  新 V2-A V2 `5/5 / repair-budget-exhausted`；V2-B `0/5`；UF-A2／UF-B1 各 `0/5` 并
   继续暂停
 - 流程错误：`3`（A1 `E1` 为 stdin transport；A1 `E2` 为 npm sandbox
   `EPERM`；V2 `E1` 为 attempt 1 审查产物首次落盘被 sandbox 拒绝，随后以
@@ -2626,7 +2626,7 @@ Before returning the single bitmap, verify all actual pixels:
 | 2/5 | `UF-A1 V2-A V2.r1` / `536ea6c` | edit（整张 Image 3） | fixed `UF-A1-V2-A-V2-attempt-02`; Codex `019fef36-c121-7840-8ec3-1ddaefa187ab`; provider `ig_06c5…e72f4` | `attempt-02.provider-native-01.png`; `e7aa257e…2007` | bbox／隔离：`141–171×872–873`、ratio error `2.981651%–17.525773%`、上下仅 `75–76px` | 保留单图／四角色／连通／接触；整张作为 V2.r2 Image 3，以逐件实测差值收缩平移并继续降频 | rejected；`2/5` |
 | 3/5 | `UF-A1 V2-A V2.r2` / `ec99851` | edit（整张 Image 3） | fixed `UF-A1-V2-A-V2-attempt-03`; Codex `019fef3b-d599-7443-8d49-7cf4cb71676e`; provider `ig_0aab…1382` | `attempt-03.provider-native-01.png`; `355197a3…a736` | bbox／隔离：`142–155×884–885`、ratio error `1.694915%–5.084746%`、上下仅 `68–72px` | 连续整图 edit 已强化错误近整高结构；V2.r3 不保留任何候选像素，只从固定 Image 1／2 fresh regenerate | rejected；`3/5` |
 | 4/5 | `UF-A1 V2-A V2.r3` / `eb992b0` | generate（无 Image 3） | fixed `UF-A1-V2-A-V2-attempt-04`; Codex `019fef3f-d6b3-7662-b142-ef71cf97c6ea`; provider `ig_0a62…c1d5` | `attempt-04.provider-native-01.png`; `753af937…3168` | 横向 bbox／隔离：`153–168×768–771`、ratio error `19.066148%–31.25%`；纵向隔离已接近目标 `123–132px` | 保留单图／四角色／连通／接触、近正确高度与低频综合色；整张作为 V2.r4 Image 3，只校准各列中心、宽度和少量 y 偏移 | rejected；`4/5` |
-| 5/5 | `UF-A1 V2-A V2.r4` / pending | edit（整张 Image 3） |  |  |  |  | final prepared |
+| 5/5 | `UF-A1 V2-A V2.r4` / `c0a1c51` | edit（整张 Image 3） | fixed `UF-A1-V2-A-V2-attempt-05`; Codex `019fef44-2356-7b01-bfb7-145b6f224cac`; provider `ig_0304…5664` | `attempt-05.provider-native-01.png`; `315470ff…4d20` | bbox／隔离：`139–142×798–799`、ratio error `4.380476%–6.766917%`、上下 `109–117px`；四件均未满足 `≤1%`／`128px` | 单图／四角色／连通／接触、装配和 display 证据仅供审计；预算耗尽，不得 source/runtime、第六次或 V2-B | `candidate-rejected / repair-budget-exhausted` |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
@@ -2643,8 +2643,27 @@ Before returning the single bitmap, verify all actual pixels:
   该可见方向；几何图中的平色、像素笔触和微纹理仍明确非权威。
 - 旧生产段 `UF-A1 V2-A V1` 已用满五次且没有一稿通过 source 几何／隔离
   门禁；V2-B 因 A→B 顺序保持 `0/5`，没有上传或生成。用户随后否决逐端帽
-  独立调用；新 `UF-A1 V2-A V2` 仍固定为一次调用输出一张四端帽 atlas，当前
-  为 `prompt-authorized / 0/5 / 2026-08-11`。禁止把它计作旧版第六次或复用旧像素。
+  独立调用；新 `UF-A1 V2-A V2` 仍固定为一次调用输出一张四端帽 atlas，也已
+  执行并用满独立 `5/5`。最终 attempt 5 是一张 `1536×1024 RGB` provider-native
+  图，SHA `315470ff…4d20`，四个 logical role 与顺序正确。
+- V2-A V2 最终技术审查：边缘连通色键后四件 bbox 为
+  `139×798`、`141×798`、`142×798`、`139×799`；比例误差分别
+  `4.511278%`、`6.015038%`、`6.766917%`、`4.380476%`，上下隔离仅
+  `109–117px`，四件 exact `#00FF00` 计数均为 `0`。因此
+  `overall_technical_pass=false`，第一失败门禁是 bbox 比例／隔离。
+- V2-A V2 保留证据：四件均为单一连通质量，top／bottom contact 均通过；
+  Player／Target 标准 shell 与 `W=160/200/240` 装配的动态安全区侵入均为
+  `0px`，display-region `6/6 pass`。但等比 bbox-fit 后只得到三件 `7×40` 与
+  一件 `7×39`，无法填满 `7×42` 固定高度，真实排版存在端部缺口，不能用
+  assembly pass 替代 source 几何失败。
+- V2-A V2 预演：technical SHA `5f511611…74e1`；100% 真实排版 SHA
+  `5cd469db…4c00`；缩放／宽度 SHA `e8ae1f72…2d65`；display-region 报告位于
+  `generated/unitframes/primary/UF-A1/V2-A/V2/attempt-05/review/`，review report
+  SHA `ef084f94…02a9`，display report SHA `759316cf…775`、`6/6 pass`；全部仅为
+  ignored 中间证据，不是 source/runtime。
+- V2-A V2 循环终态：`candidate-rejected / repair-budget-exhausted / 5/5`。
+  不创建 tracked source、manifest、runtime 或 addon 改动；禁止第 6 次调用，
+  V2-B 继续 `0/5 / sequence-blocked`。
 - 用户方向结论：`confirmed / 2026-08-11`。本地模拟像素不得晋级
   source/runtime，也不得成为 ImageGen reference 或 edit 输入。
 
@@ -2672,13 +2691,13 @@ Before returning the single bitmap, verify all actual pixels:
 | `UF-A1-V2-SIM-V1` | deterministic scene／assembly；八件 source 互斥且动态区覆盖 `0px`；display-region `2/2 pass`；ImageGen `0/0` | `superseded-as-runtime / retained-as-source-granularity-evidence` | 不直接把四件挂为四张 runtime Texture；由 V2-SIM.V2 接管缩放合同 |
 | `UF-A1-V2-SIM-V2` | 标准单 shell 覆盖 `0.64–1.15×`、内部 Texture 接缝 `0`；可变 `W=160/200/240` 在 `0.71/1.00×` 接头空洞 `0px`、内容侵入 `0px`；display-region `6/6 pass`；双次重建 SHA 一致；用户于 `2026-08-11` 明确确认；ImageGen `0/0` | `simulation-confirmed / retained-for-V2` | 新 V2-A V2 未改变可见构图或装配合同，因此继续沿用确认；不接受模拟像素 |
 | `UF-A1 V2-A V1` | fixed ImageGen `5/5`；attempt 5 为 `99–100×954–955px`、ratio error `37.106918–37.801047%`、上下隔离 `34–36px`；真实排版 SHA `7b6cceb7…642d` | `candidate-rejected / repair-budget-exhausted` | 不得第 6 次；V2-B 保持 `0/5`。新版本若改变一次生成的对象／画布拆分须重新授权 |
-| `UF-A1 V2-A V2` | 用户明确授权单次单图四端帽 atlas；正文逐项固定列宽三分之一、画布高四分之三、`6:1`、等宽绿边、接触带和“重量不得靠增宽”；规格 `unitframes_a1_v2a_production_v2.json`；ImageGen `0/5` | `prompt-authorized / P3` | 以固定正文执行 attempt 1；随后进行确定性拆分、色键、bbox-fit、真实排版与缩放审查，最多五次实际调用 |
+| `UF-A1 V2-A V2` | fixed ImageGen `5/5`；attempt 5 `139–142×798–799px`、ratio error `4.380476%–6.766917%`、上下隔离 `109–117px`；mass/contact/assembly/display `6/6` 通过但等比 fit 仅 `7×39–40`；真实排版 SHA `5cd469db…4c00` | `candidate-rejected / repair-budget-exhausted / P3` | 不得第 6 次或启动 V2-B。用户若继续，须授权新的版本／修复合同；本版不得 source/runtime |
 
 ## 下一门禁
 
-`UF-A1 V2-A V2` 的单图四格、自包含生产正文、固定 Image 1／2、冻结修复边界
-与独立 `5` 次实际 ImageGen 预算已于 `2026-08-11` 获授权。下一门禁是先提交
-本授权基线，再执行 attempt 1，并完成确定性拆分、色键、等比 bbox-fit、真实
-排版及缩放审查；内部通过即停止，否则仅在冻结边界内自主修复，最多累计五次。
-任何执行都不得计作旧版第六次。V2 内部通过后才恢复 V2-B；用户接受前不得
-创建 source/runtime 或修改 addon；UF-A2／UF-B1 继续暂停。
+`UF-A1 V2-A V2` 已执行完整单图五次循环并停在
+`candidate-rejected / repair-budget-exhausted`。下一门禁是用户审阅本终态并
+决定是否建立新的 V2-A 版本与新授权修复合同；在此之前禁止第 6 次调用、禁止
+用任一失败稿晋级 source/runtime、禁止启动 V2-B。若新方案改变单图尺寸、格位、
+对象数量、输入职责、允许的确定性处理或视觉方向，必须先重新模拟／审阅并明确
+授权。UF-A2／UF-B1 继续暂停。

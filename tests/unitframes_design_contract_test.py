@@ -31,10 +31,10 @@ def sha256(path: Path) -> str:
 def main() -> None:
     spec = json.loads(SPEC.read_text(encoding="utf-8"))
     assert spec["schema"] == "aeui-unitframes-a1-v2a-production-v2"
-    assert spec["status"] == "repair-prepared"
+    assert spec["status"] == "candidate-rejected / repair-budget-exhausted"
     assert spec["authorized_on"] == "2026-08-11"
-    assert spec["executor"]["authorized"] is True
-    assert spec["attempts_used"] == 4
+    assert spec["executor"]["authorized"] is False
+    assert spec["attempts_used"] == 5
     assert spec["process_errors"] == 1
     assert spec["attempt_limit"] == 5
     assert spec["prior_version"]["attempts_used"] == 5
@@ -46,6 +46,15 @@ def main() -> None:
     assert edit["whole_sheet_only"] is True
     assert edit["per_cap_crops_forbidden"] is True
     assert sha256(ROOT / edit["path"]) == edit["sha256"]
+    result = current["result"]
+    assert result["provider_output_sha256"] == (
+        "315470ffb4d6fd2ee2952480840d343afa3e55b7145a3dcb5b434cc852c14d20"
+    )
+    assert result["overall_technical_pass"] is False
+    terminal = spec["terminal_review"]
+    assert terminal["bbox_sizes"] == [[139, 798], [141, 798], [142, 798], [139, 799]]
+    assert terminal["may_be_source"] is False
+    assert terminal["may_be_runtime"] is False
     for expected_number, reference in enumerate(spec["fixed_references"], start=1):
         assert reference["image"] == expected_number
         assert sha256(ROOT / reference["path"]) == reference["sha256"]
