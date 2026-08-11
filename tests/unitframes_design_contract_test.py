@@ -107,7 +107,7 @@ def main() -> None:
 
     work = WORK.read_text(encoding="utf-8")
     normalized_work = " ".join(work.split())
-    assert "repair-prepared / UF-A1 V3-A attempt 5 queued" in work
+    assert "UF-A1 V3-A repair-budget-exhausted / UF-A1 V3-B attempt 1 queued" in work
     assert "accepted UF-PRIMARY-V3-SIM-V1 / 2026-08-11" in work
     assert "production / authorized / 2026-08-11" in work
     assert "完整性结论：`pass-final`" in work
@@ -117,7 +117,8 @@ def main() -> None:
     assert "UnitPowerType" in work
     assert "Mana／Rage／Focus／Energy" in work
     assert "V1、V2 的逐稿正文" in work
-    assert "repair-prepared / attempt 5 queued" in normalized_work
+    assert "repair-budget-exhausted / candidate-rejected" in normalized_work
+    assert "6355" in work
     assert "one-connected-opening" in work
     assert "1425×224" in work
     assert "90627" in work

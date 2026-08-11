@@ -6,14 +6,14 @@
 - 当前组件：`UF.PLAYER.SHELL`、`UF.TARGET.SHELL`、
   `UF.BAR.HEALTH.FILL`、`UF.BAR.POWER.FILL`
 - 后续组件：`UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.STATE.*`
-- 当前版本：`UF-A1 V3-A final.r4`／`UF-A1 V3-B final`／`UF-B1 V2 final`
-- 子状态：`repair-prepared / UF-A1 V3-A attempt 5 queued`
+- 当前版本：`UF-A1 V3-A final.r4 terminal`／`UF-A1 V3-B final`／`UF-B1 V2 final`
+- 子状态：`UF-A1 V3-A repair-budget-exhausted / UF-A1 V3-B attempt 1 queued`
 - 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 当前操作：`edit`
+- 当前操作：`generate`
 - 生成前模拟：`UF-PRIMARY-V3-SIM-V1`，deterministic local geometry
 - 模拟 ImageGen：`0/0`
-- 正式生产：`authorized / 2026-08-11`；A `4/5`、B `0/5`、B1 `0/5`，
+- 正式生产：`authorized / 2026-08-11`；A `5/5`、B `0/5`、B1 `0/5`，
   最坏总计 `15` 次实际 ImageGen
 - 流程错误：`2`（审查器首次物理连通扫描性能错误；attempt 4 child 在 provider
   已生成后尝试 Pillow RGB 转换但环境无 Pillow，随后确认原图本身已为 RGB 并
@@ -329,6 +329,25 @@
   `1debfd9f18c23de5a5455aa843c2631f3abdc0d827a16e7d70d12e93448aefdf`；
   technical `bb29073f…0233`；real-layout `a7d3a1ac…3c9d`。
 
+### Attempt 5 — `UF-A1 V3-A final.r4`
+
+- 固定正文 commit：`ac05681`；正文 SHA-256
+  `87b24ec2a305909f6f9a536c0f80b61c9aca219e0f44bca1f1c59e775fb57d1b`；
+  完整 child prompt SHA-256
+  `bf0796cc8d578085215b88e18837cb7e21cb82af8bc5745a16133e1ce060fa2e`。
+- 固定输入：Image 1 `90e30ba4…ee06`、Image 2 `272528e6…ab8`、同段紧邻
+  attempt 4 raw `109e778…8f58` 作为 Image 3；没有其他输入。
+- 固定执行器 session：`019fefc0-ee60-71e0-8c85-b6d3857f73af`；provider
+  result：`ig_0038fc959084e354016a7ad14418e08191a5d1e642ffe4cce9.png`。
+- untouched raw：`generated/unitframes/primary/V3A/attempt-05/raw.png`，
+  `1536×1024 RGB`，SHA-256
+  `8e3e426b146be2bd615a6ded53c91e561d5ccb0831e29f00d769000888ed147b`；
+  child log SHA-256 `bc52d21a…bf55`。
+- 实际 ImageGen `1`，A 段累计并封顶 `5/5`；无新增流程错误。
+- review report SHA-256
+  `b7bad109a54300fcf312b6af68be759a076eee0ddeaef05048a703c2eea2f568`；
+  technical `7c4e9275…2cbf`；real-layout `8f0121c1…f19c`。
+
 ## 审查记录
 
 - 语义／物理：Player／Target 是各自完整的连续外壳；Health／Power 是独立
@@ -407,6 +426,22 @@
 - 结论：`candidate-rejected / final-repair-available`；A 只剩 `1` 次。最终 r4
   只允许等比缩小和把两条竖边减至与横轨同厚，不再同时追求其他变化。
 
+### Attempt 5 内审 — `UF-A1 V3-A final.r4`
+
+- 通过：单一开口、单一物理连通体、bbox ratio、归一化 anisotropy、绿色
+  isolation。bbox `1298×249`，比例误差 `2.308299%`、各向异性
+  `2.256218%`；隔离 L/T/R/B `119/395/119/380`。
+- 第一且唯一客观失败仍为 `dynamic-safe-core`：`alpha>=128` 为 `6355 px`。
+  归一化开口约 x `65..1216`；相对必须的 x `42..1242`，左右竖边仍各深入
+  约 `23/26 source px = 3.8/4.3 runtime px`。这不是 `≤6 source px` 的抗
+  锯齿或软影，Python 清除会改变物件结构，合同禁止。
+- 视觉：完整单开口、粗旧深胡桃皮与非镜像端部在真实 `214×42` 排版中可读，
+  但两端依然比横轨明显更宽，且整体仍较规整；可作为用户审查证据，不能成为
+  candidate/source/runtime。
+- 结论：`repair-budget-exhausted / candidate-rejected`。A `5/5`，禁止第六次
+  调用。按用户授权，A 终态不阻止独立 B／B1 继续；最终统一向用户呈现 A 的
+  失败边界及 B／B1 的终态。
+
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
@@ -416,6 +451,7 @@
 | `UF-A1 V3-A final.r1` attempt 2 | session `019fefb1…552c`；raw `ebee939…c7a5`；review `6e21892…5cbc`；A `2/5` | 单开口、物理连通、ratio、anisotropy、isolation 通过；`dynamic-safe-core=57077` 失败；无 candidate/source/runtime | `final.r2` 扩开口至 `1200×180`，把端板／轨道压进 `42/36 source px`，缩小夹片／铆钉并打断工业式缝线 |
 | `UF-A1 V3-A final.r2` attempt 3 | session `019fefb6…f1e1`；raw `ff4690d…0d59`；review `9d1f4b8…28cf`；A `3/5` | safe intrusion 降至 `11360`；单开口／物理／ratio／anisotropy 通过；isolation `62/59` 次级失败；无 candidate/source/runtime | `final.r3` 等比缩到约 `1284×252`，只把端部内脸再向外让 `32/46 source px`，保持薄轨并打断连续绳边 |
 | `UF-A1 V3-A final.r3` attempt 4 | session `019fefbb…1746`；raw `109e778…8f58`；review `1debfd9…efdf`；A `4/5` | safe intrusion `9061`；ratio/aniso 通过，isolation `70/74` 失败；无 candidate/source/runtime | 最终 `r4` 仅等比缩至 `1284×252`，把竖边做成与横轨同厚并将内脸精确移至 x `42/1242` |
+| `UF-A1 V3-A final.r4` attempt 5 | session `019fefc0…73af`；raw `8e3e426…147b`；review `b7bad10…f568`；A `5/5` | 除 `dynamic-safe-core=6355` 外全部通过；竖边仍深 `23/26 source px`；`repair-budget-exhausted`；无 candidate/source/runtime | 禁止第六次；保留终态 review，继续已授权独立 B／B1，最终等待用户决定 A 是否改合同或开新授权 |
 
 ## 最终执行正文
 
@@ -964,8 +1000,8 @@ no centre hotspot and broad uniform green isolation.
 
 | 段 | 当前子状态 | 实际生成 | 流程错误 | 下一动作 |
 |---|---|---:|---:|---|
-| `UF-A1 V3-A final.r4` | `repair-prepared / attempt 5 queued` | `4/5` | `2` | commit 后以 attempt 4 raw 为 Image 3 最终有界 edit |
-| `UF-A1 V3-B final` | `prompt-authorized / sequence-wait` | `0/5` | `0` | A 终态后开始 |
+| `UF-A1 V3-A final.r4` | `repair-budget-exhausted / candidate-rejected` | `5/5` | `2` | 禁止第六次；等待最终用户审查 |
+| `UF-A1 V3-B final` | `prompt-authorized / attempt 1 queued` | `0/5` | `0` | commit 后独立 generate；无 Image 3 |
 | `UF-B1 V2 final` | `prompt-authorized / sequence-wait` | `0/5` | `0` | B 终态后开始 |
 
 每次实际候选的 session／result、raw／candidate／真实排版路径与 SHA、第一失败
@@ -990,9 +1026,8 @@ no centre hotspot and broad uniform green isolation.
 
 ## 下一门禁
 
-提交 `final.r4 / repair-prepared` 状态后，以固定执行器启动
-`UF-A1 V3-A final.r4` attempt 5：固定 Image 1／2，并只用同段 attempt 4 raw
-作为 Image 3。完成逐候选内审与有界修复循环后依次进入
-`UF-A1 V3-B final` 和 `UF-B1 V2 final`。任一段内部通过即停；第五次仍有
-客观失败则该段耗尽。当前仍禁止创建 source/runtime、修改 addon、跨段复用或
-复用任一 V1／V2 像素。
+提交 A 的 `repair-budget-exhausted` 终态后，以固定执行器启动
+`UF-A1 V3-B final` attempt 1：只上传固定 Image 1／2，没有 Image 3，禁止
+复用 A 或任何 V1／V2 像素。B 终态后进入 `UF-B1 V2 final`。任一段内部通过
+即停；第五次仍有客观失败则该段耗尽。三段都到终态后统一等待用户审查；当前
+仍禁止创建 source/runtime、修改 addon 或跨段复用。
