@@ -5,9 +5,9 @@
 - `UF-A1 V3-A final` Player 完整外壳：
   `P3 / repair-budget-exhausted / candidate-rejected / 5/5`。
 - `UF-A1 V3-B final` Target 完整外壳：
-  `P3 / attempt 4 rejected / final.r4 final-repair-prepared / 4/5`。
+  `P3 / repair-budget-exhausted / candidate-rejected / 5/5`。
 - `UF-B1 V2 final` Health／Power 灰阶填充纹：
-  `P3 / prompt-authorized / sequence-wait / 0/5`。
+  `P3 / prompt-authorized / attempt 1 queued / 0/5`。
 - `UF-A2` TargetTarget／Focus：继续暂停；既有物件身份方向不变，尚无正式
   source。Hover／Aggro 仍计划由接受外壳 Alpha 确定性派生。
 - 当前只处理资源重绘、后处理合同与未来替换路径；没有修改另一台设备上的
@@ -22,7 +22,7 @@
 - 用户随后于 `2026-08-11` 明确授权上述三段 final，冻结 A→B→B1 顺序、
   A／B 固定 Image 1／2、同段紧邻前稿有界 edit、B1 首次无图片、每段
   `5` 次实际生成及最坏 `15` 次预算。流程错误不占额度；跨段与旧失败像素
-  禁止复用。A attempts 1–5 已完成并耗尽；B attempts 1–4 已完成；B1 未调用。
+  禁止复用。A attempts 1–5 与 B attempts 1–5 均已完成并耗尽；B1 未调用。
 
 ## V3 结构合同
 
@@ -74,7 +74,7 @@
 - `UNITFRAMES.CORE.md` 只保留当前 V3 合同、三段自包含 final、历史终态摘要和
   下一门禁；V1／V2 的逐稿全文继续由 Git 历史保存。
 - `UF-A1 V3-A`、`UF-A1 V3-B`、`UF-B1 V2` 每段最多 `5` 次实际
-  `imagegen-0-143-0`，最坏合计 `15` 次；当前 A `5/5`、B `4/5`、B1
+  `imagegen-0-143-0`，最坏合计 `15` 次；当前 A `5/5`、B `5/5`、B1
   `0/5`。
 - 三段 final 已吸收用户确认的可见结论并通过 `pass-final` 自包含预检；
   正式生产授权已独立取得，按 A→B→B1 顺序执行。
@@ -137,9 +137,14 @@
 - `UF-A1 V3-B final.r4` 是 B 段最后一次正文：直接以画布绝对坐标锁定外 bbox
   x `126..1410/y386..638` 与单一纯绿开口 x `168..1368/y422..602`，同时恢复
   烟熏深胡桃、断续维修和非镜像 Target 身份；只用 B attempt 4 raw 作 Image 3。
+- B attempt 5 令 bbox ratio `4.973681%`、anisotropy `4.738027%` 重新通过，
+  但归一化开口仅约 x `87..1191/y43..208`，hard safe core `22649 px`，左右
+  isolation `68/72`；工业式连续长边和整高右黄铜仍在。B `5/5`，禁止第六次；
+  无 candidate/source/runtime。
 - reviewer 首次逐 fleck flood 性能错误已改为线性 scanline run union-find；
   A attempt 4 child 在 provider 图已存在后缺 Pillow，退回 `sips` 确认原图为
-  RGB 并复制。两项作为流程错误 `2` 单列，没有额外 provider 图，不占额度。
+  RGB 并复制；B 最终正文的首次 pre-generation commit 权限审核超时，重试后
+  以相同内容成功。三项作为流程错误 `3` 单列，没有额外 provider 图，不占额度。
 
 ## 历史终态
 
@@ -153,7 +158,7 @@
 
 ## 下一门禁
 
-提交 B `final.r4 / final-repair-prepared` 后，以固定执行器启动
-`UF-A1 V3-B final.r4` attempt 5，只用 B attempt 4 raw 作为 Image 3，禁止
-复用 A 或旧失败像素。B 第五次通过即停，仍失败则耗尽且不得第六次；随后执行
-B1。当前禁止创建 source/runtime、修改 addon、跨段复用或复用旧失败像素。
+提交 B1 专用确定性 reviewer 后，以固定执行器启动 `UF-B1 V2 final`
+attempt 1；首次不上传图片。通过即停，否则后续只以上一 B1 raw 作同段 edit，
+最多 `5` 次。A／B 已耗尽且不得第六次；当前禁止创建 source/runtime、修改
+addon、跨段复用或复用旧失败像素。

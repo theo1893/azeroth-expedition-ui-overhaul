@@ -18,6 +18,7 @@ DISPLAY_SPEC = (
 )
 RENDERER = ROOT / "tools/render_unitframes_primary_v3_simulation_v1.py"
 REVIEWER = ROOT / "tools/review_unitframes_primary_v3_candidate.py"
+BARS_REVIEWER = ROOT / "tools/review_unitframes_bars_v2_candidate.py"
 LEGACY_V2 = ROOT / "tools/specs/unitframes_a1_v2a_production_v2.json"
 
 
@@ -107,7 +108,7 @@ def main() -> None:
 
     work = WORK.read_text(encoding="utf-8")
     normalized_work = " ".join(work.split())
-    assert "UF-A1 V3-A exhausted / UF-A1 V3-B final-repair-prepared / attempt 5 queued" in work
+    assert "UF-A1 V3-A exhausted / UF-A1 V3-B exhausted / UF-B1 attempt 1 queued" in work
     assert "accepted UF-PRIMARY-V3-SIM-V1 / 2026-08-11" in work
     assert "production / authorized / 2026-08-11" in work
     assert "完整性结论：`pass-final`" in work
@@ -122,6 +123,8 @@ def main() -> None:
     assert "one-connected-opening" in work
     assert "1425×224" in work
     assert "90627" in work
+    assert "22649" in work
+    assert "B1 确定性候选门禁" in work
 
     player = extract_fenced_body(work, "### `UF-A1 V3-A final`")
     assert_clauses(
@@ -282,6 +285,19 @@ def main() -> None:
     assert "one-connected-opening" in reviewer_source
     assert "candidate is emitted only" in reviewer_source
     assert '"may_be_source": False' in reviewer_source
+
+    bars_reviewer_source = BARS_REVIEWER.read_text(encoding="utf-8")
+    for clause in (
+        "UF-B1 V2 Health/Power material candidates",
+        "exactly-two-isolated-swatches",
+        "equal-channel luminance conversion after residual-chroma gates",
+        "HEALTH_RUNTIME = (64, 32)",
+        "POWER_RUNTIME = (64, 16)",
+        "candidate donors are emitted only after every objective gate",
+        '"may_be_source": False',
+        '"may_be_runtime": False',
+    ):
+        assert clause in bars_reviewer_source, f"B1 reviewer missing: {clause}"
 
     legacy = json.loads(LEGACY_V2.read_text(encoding="utf-8"))
     assert legacy["status"] == "candidate-rejected / repair-budget-exhausted"
