@@ -5,7 +5,7 @@
   "direction_decided_on": "2026-08-11",
   "authorized_on": "2026-08-11",
   "attempt_limit": 5,
-  "attempts_used": 2,
+  "attempts_used": 3,
   "process_errors": 1,
   "process_errors_count_toward_limit": false,
   "prior_version": {
@@ -31,18 +31,14 @@
       "sha256": "272528e6d89cc90e5cbb37dce4ae572ddf9de0402078cdcf0ed5804f734faab8"
     }
   ],
-  "prompt_heading": "### `UF-A1 V2-A V2.r2` 完整修复正文 — attempt 3 实测差值整图 edit",
+  "prompt_heading": "### `UF-A1 V2-A V2.r3` 完整修复正文 — attempt 4 空白绿底 regenerate",
   "prompt_body_format": "fenced-text",
-  "prompt_body_sha256": "333610846b9abbd94ff1d6d2b773175c5e1e2995e3191c4dd564ca5ea5cf9c37",
+  "prompt_body_sha256": "0d0e4c2cf9dec7a8e373f82f759a2d70f1a7a0db760b51d36428ef8529d7b2d8",
   "current_attempt": {
-    "number": 3,
-    "operation": "whole-sheet-edit",
-    "image_3": {
-      "path": "generated/unitframes/primary/UF-A1/V2-A/V2/attempt-02/raw/UF-A1_V2-A_V2_attempt-02.provider-native-01.png",
-      "sha256": "e7aa257ea5dc5e1f5a601f9c4a6824984a7230680f2316271d9f65143e5d2007",
-      "whole_sheet_only": true,
-      "per_cap_crops_forbidden": true
-    }
+    "number": 4,
+    "operation": "fresh-regenerate",
+    "image_3": null,
+    "fixed_images_only": true
   },
   "generation_unit": {
     "calls_per_attempt": 1,

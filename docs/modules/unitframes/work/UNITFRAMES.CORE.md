@@ -5,18 +5,18 @@
 - 模块：`unitframes`
 - 组件 ID：`UF.PLAYER.SHELL`、`UF.TARGET.SHELL`、
   `UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.BAR.*`、`UF.STATE.*`
-- 当前版本：`UF-A1 V2-A V2.r2`／`UF-A1 V2-B V1`／`UF-A2 V1`／`UF-B1 V1`
-- 子状态：UF-A1 V2-A V2.r2 `repair-prepared`；旧 V2-A V1
+- 当前版本：`UF-A1 V2-A V2.r3`／`UF-A1 V2-B V1`／`UF-A2 V1`／`UF-B1 V1`
+- 子状态：UF-A1 V2-A V2.r3 `repair-prepared`；旧 V2-A V1
   `candidate-rejected / repair-budget-exhausted`；V2-B
   `prompt-authorized / sequence-blocked`；UF-A1 V1
   `candidate-rejected / repair-budget-exhausted / user-rejected`；UF-A2／UF-B1
   `prompt-authorized / paused`
-- 项目阶段：UF-A1 V2-A V2.r2 `P3 / repair-prepared`；历史 V2-A V1 为 `P3 / rejected`；
+- 项目阶段：UF-A1 V2-A V2.r3 `P3 / repair-prepared`；历史 V2-A V1 为 `P3 / rejected`；
   UF-A2／UF-B1 保持 `P3 / paused`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 操作：`edit`；已确认“独立四件 source → 标准宽度单 shell／可变宽度
-  三切片”。V2-A V2 attempt 2 已形成单张候选；V2.r2 仅以该整张前稿作为
-  Image 3 做实测差值驱动的冻结边界内修复
+- 操作：`generate`；已确认“独立四件 source → 标准宽度单 shell／可变宽度
+  三切片”。V2-A V2 attempt 3 证明连续整图 edit 会维持错误的近整高皮板；
+  V2.r3 不上传 Image 3，只从固定 Image 1／2 重新生成同一合同的单张 atlas
 - 生成前模拟：`UF-A1-V2-SIM-V2`／deterministic-local-geometry；ImageGen
   `0/0`
 - 本地渲染错误：历史主模拟确认后复跑 `1` 次 sandbox 写权限错误；V2 首次
@@ -24,7 +24,7 @@
   合同重跑；随后有 `1` 次 sandbox 写权限错误，获准写入 ignored `generated/`
   后以同一命令通过。三者均不属于 ImageGen。
 - 自动修复预算：UF-A1 V1 历史终态 `5/5`；V2-A V1 已执行并用满 `5/5`；
-  新 V2-A V2 `2/5 / repair-prepared`；V2-B `0/5`；UF-A2／UF-B1 各 `0/5` 并
+  新 V2-A V2 `3/5 / repair-prepared`；V2-B `0/5`；UF-A2／UF-B1 各 `0/5` 并
   继续暂停
 - 流程错误：`3`（A1 `E1` 为 stdin transport；A1 `E2` 为 npm sandbox
   `EPERM`；V2 `E1` 为 attempt 1 审查产物首次落盘被 sandbox 拒绝，随后以
@@ -2269,6 +2269,156 @@ Before returning the one bitmap, verify the actual pixels:
     present.
 ```
 
+### `UF-A1 V2-A V2.r3` 完整修复正文 — attempt 4 空白绿底 regenerate
+
+> `repair-prepared`。本稿只上传固定 SHA 的 Image 1／2，不上传 Image 3；所有
+> V2 attempt 1–3 像素均不作为 reference、edit、trace 或构造来源。一次调用仍
+> 只允许返回一张完整四端帽 atlas。
+
+```text
+Generate exactly one new 1536 by 1024 RGB production sprite-sheet containing
+four narrow side-cap components for the Player and Target unit frames of a
+Turtle WoW 1.18.1 / Vanilla-era pfUI overhaul. One generation call returns one
+single bitmap containing all four components together. Do not return four
+files, multiple images, a sequence, or a sheet assembled from separately
+generated objects.
+
+Start from a completely blank green canvas. No previous UF-A1 candidate is
+supplied or permitted as a reference, edit, trace, layout donor, or pixel
+source. This is a fresh regenerate under the same fixed production contract.
+The four objects are only thin terminal bindings that later join separate
+six-pixel top and bottom rails around live health and power bars. They are not
+full frames, portrait holders, panels, boards, pillars, plaques, bookmarks,
+banners, backgrounds, or leather samples. Runtime code will split the one
+sheet into four logical sources, proportionally fit each source to 7 by 42
+pixels, then build a 214 by 42 standard shell or a fixed-cap three-slice
+variable-width shell. Do not draw any live content.
+
+The written instructions control the output. Use Image 1 only for the broad
+hand-painted readability of circa-2004 Vanilla WoW bitmaps, compact dark value
+groups, short broken dull-brass highlights, and a heavy but restrained colour
+balance. Ignore Image 1's screen composition, complete frames, circular
+portraits, chat, text, and book-shaped structures. Use Image 2 only for
+deep-walnut old leather, soot-brown recesses, warm upper-left light, coarse
+painted wear, believable field repair, low-frequency irregularity, and slight
+hand-made error. Ignore Image 2's pages, spine, posts, dragons, columns, book
+silhouette, and large metal architecture.
+
+LAYOUT COMES BEFORE ART. Fill the entire 1536 by 1024 image with perfectly flat
+digital key green, exact RGB 0,255,0 / #00FF00. Every background pixel uses the
+same colour. There is no gradient, vignette, mottling, texture, illumination,
+haze, floor, cast shadow, antialias fog, grid, divider, guide, label, number,
+coordinate mark, or title. Mentally divide this green canvas into four equal
+vertical cells, each 384 pixels wide and 1024 pixels high. Place exactly one
+connected cap in each cell and nothing else.
+
+Before painting material, mentally reserve one fixed invisible rectangle in
+the centre of each cell. Each rectangle is exactly 128 pixels wide and 768
+pixels high. Paint only inside these invisible rectangles; never draw their
+outlines. The exact exclusive global rectangles are:
+
+- Player left: x 128 to 256, y 128 to 896.
+- Player right: x 512 to 640, y 128 to 896.
+- Target left: x 896 to 1024, y 128 to 896.
+- Target right: x 1280 to 1408, y 128 to 896.
+
+Each cap's connected main material mass must establish all four sides of its
+own 128 by 768 bbox, while every other pixel remains green. No detached stitch,
+metal chip, highlight, thread, shadow, or antialias fringe may escape. Each cap
+is exactly six times taller than it is wide. Do not maximize the available
+canvas height. The object occupies only the middle three quarters of the full
+image height; the remaining one quarter is conspicuous empty green space. The
+empty top lane is exactly one eighth of the canvas and the empty bottom lane
+is exactly one eighth. Together those two green lanes occupy 256 pixels and
+must be visually obvious.
+
+In each 384-pixel cell, the cap occupies only the middle one third of the cell
+width. The left green lane occupies one third and the right green lane occupies
+one third. Thus the green lane on every side of every cap is 128 pixels wide,
+the same visual thickness as the cap itself. At a glance each object must look
+small and deliberately isolated on a much larger green cell, not like a tall
+strap filling nearly the whole canvas. If placement is uncertain, keep all
+material safely inside the declared rectangles; never exceed them, touch a
+cell boundary, or reduce a green lane below 128 pixels.
+
+The strict left-to-right identity order is Player left, Player right, Target
+left, Target right. Show all four front-facing and orthographic at one shared
+scale and on the same top and bottom baselines. Use one warm light from the
+upper left. There is no perspective, camera tilt, floor, scene, presentation
+board, or cast shadow. Each inner joining edge is nearly straight, dark, quiet,
+and physically usable beside combat data. Give each outer edge only two or
+three slow hand-cut deviations no deeper than about six source pixels. Do not
+add a hook, wave, flare, spike, tassel, curl, or loose thread that changes the
+bbox.
+
+Design for the final 7 by 42 runtime size. Use deliberately simplified,
+hand-painted early-WoW game art, not a high-resolution material study. Build
+each object from only three to five broad vertical value masses: dominant
+deep-walnut leather, a narrow soot-brown recessed liner, one short warm worn
+edge, and at most one small interrupted patch of dull oxidized brass. Use
+chunky brush grouping, low-frequency wear, and broad low-resolution
+transitions. Most of each surface should be calm painted colour, not texture.
+Do not use leather photography, dense pores, repeated pebble grain, hairline
+cracks, procedural noise, uniform embossing, fine modern bevels, glossy
+product lighting, or a continuous bright orange outline. At source size the
+art must visibly look painted; after proportional reduction it must remain a
+rugged Vanilla-era binding instead of a dark blur or polished modern card.
+
+Player left has its rough outer edge on the left and quiet joining edge on the
+right. Give it one small crooked dull-brass clamp and two or three coarse
+uneven stitches in the outer two thirds. The clamp is a short repair accent,
+not a stacked plate or horizontal strap. Player right has its joining edge on
+the left and rough outer edge on the right. Paint it independently with one
+shallow fold shorter than one quarter of the height and one small off-centre
+dark-brass rivet. Do not mirror Player left.
+
+Target left has its rough outer edge on the left and joining edge on the right.
+Give it one restrained rubbed fold with almost no metal. The fold is shorter
+than one quarter of the height and cannot become a second panel or full-height
+flap. Target right has its joining edge on the left and rough outer edge on the
+right. Give it one narrow damaged oxidized-brass repair strip shorter than one
+fifth of the height, with one small dent or split. The strip stays subordinate
+to the leather and cannot become a column, stacked plate, crest, emblem, or
+continuous trim. Add no red hostility mark, faction symbol, skull, horn, or
+gemstone.
+
+Every cap must join later top and bottom rails. Within each exact 128 by 768
+bbox, local y 0 through 109 is the top contact band and local y 658 through 767
+is the bottom contact band. Across the 32 source pixels nearest the inner
+joining edge, both bands must contain calm continuous opaque leather: local x
+96 through 127 for left caps and local x 0 through 31 for right caps. Put no
+notch, curl, stitch, rivet, metal spike, or identity detail in those contact
+strips. Keep the middle inner edge, local y 110 through 657, dark and quiet.
+The first inward contact pixel must tolerate one logical pixel of later rail
+overlap beneath the cap.
+
+Draw no top rail, bottom rail, full frame, health fill, power fill, bar colour,
+number, name, level, text, portrait, icon, aura, cursor, button, hover, aggro,
+glow, panel, continuous gold outline, rounded web card, transparent black
+glass, industrial rivet grid, Diablo-style shrine, book part, wax seal, map,
+dragon, or photoreal antique. Visual weight comes from broad dark painted
+masses and soot-brown depth inside the fixed envelope, never from extra width,
+extra height, a second post, or large metal architecture.
+
+Before returning the single bitmap, verify these actual output properties:
+
+1. There is one 1536 by 1024 RGB image, not multiple outputs.
+2. Exactly four connected caps appear together in the required order.
+3. Every actual cap bbox is exactly 128 by 768 and exactly 1:6.
+4. Every cell has equal 128-pixel green lanes on left, right, top, and bottom.
+5. Top plus bottom empty green occupies exactly one quarter of the image height.
+6. Outside the four declared rectangles every pixel is flat #00FF00, with no
+   shadow, fringe, texture, detached speck, guide, or label.
+7. Four objects share one craft family but are independently painted and not
+   mirrored copies.
+8. Inner upper and lower contact strips are continuous opaque leather.
+9. Surface treatment uses broad coarse Vanilla-era painted masses, not dense
+   photographic or procedural leather texture, and each repair reads at 7 by
+   42 pixels.
+10. No dynamic content, complete frame, per-cap output, or multi-image
+    assembly exists.
+```
+
 ### V2 不可变修复边界与已授权预算
 
 - 固定调用单位：每个 attempt 恰好一次实际 ImageGen，恰好返回一张同时含四件
@@ -2305,8 +2455,8 @@ Before returning the one bitmap, verify the actual pixels:
 |---:|---|---|---|---|---|---|---|
 | 1/5 | `UF-A1 V2-A V2` / `063c1e5` | generate | fixed `UF-A1-V2-A-V2-attempt-01`; Codex `019fef31-44b7-7a03-85b5-0c07ecfc1f36`; provider `ig_065f…a7252` | `attempt-01.provider-native-01.png`; `46c2a9af…d8e9` | bbox／隔离：`163–174×868`、ratio error `12.672811%–20.276498%`、上下仅 `78px` | 保留单图／四角色顺序／连通质量／接触与深胡桃族；整张作为 V2.r1 Image 3，重做尺寸、纯绿与低频笔触 | rejected；`1/5` |
 | 2/5 | `UF-A1 V2-A V2.r1` / `536ea6c` | edit（整张 Image 3） | fixed `UF-A1-V2-A-V2-attempt-02`; Codex `019fef36-c121-7840-8ec3-1ddaefa187ab`; provider `ig_06c5…e72f4` | `attempt-02.provider-native-01.png`; `e7aa257e…2007` | bbox／隔离：`141–171×872–873`、ratio error `2.981651%–17.525773%`、上下仅 `75–76px` | 保留单图／四角色／连通／接触；整张作为 V2.r2 Image 3，以逐件实测差值收缩平移并继续降频 | rejected；`2/5` |
-| 3/5 | `UF-A1 V2-A V2.r2` / pending | edit（整张 Image 3） |  |  |  |  | prepared |
-| 4/5 | pending | edit／generate |  |  |  |  | pending |
+| 3/5 | `UF-A1 V2-A V2.r2` / `ec99851` | edit（整张 Image 3） | fixed `UF-A1-V2-A-V2-attempt-03`; Codex `019fef3b-d599-7443-8d49-7cf4cb71676e`; provider `ig_0aab…1382` | `attempt-03.provider-native-01.png`; `355197a3…a736` | bbox／隔离：`142–155×884–885`、ratio error `1.694915%–5.084746%`、上下仅 `68–72px` | 连续整图 edit 已强化错误近整高结构；V2.r3 不保留任何候选像素，只从固定 Image 1／2 fresh regenerate | rejected；`3/5` |
+| 4/5 | `UF-A1 V2-A V2.r3` / pending | generate（无 Image 3） |  |  |  |  | prepared |
 | 5/5 | pending | edit／generate |  |  |  |  | pending |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
