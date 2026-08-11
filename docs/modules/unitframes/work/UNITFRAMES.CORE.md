@@ -6,11 +6,11 @@
 - 当前组件：`UF.PLAYER.SHELL`、`UF.TARGET.SHELL`、
   `UF.BAR.HEALTH.FILL`、`UF.BAR.POWER.FILL`
 - 后续组件：`UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.STATE.*`
-- 当前版本：`UF-A1 V3-A draft`／`UF-A1 V3-B draft`／`UF-B1 V2 draft`
-- 子状态：`simulation-reviewed / awaiting-user-direction`
+- 当前版本：`UF-A1 V3-A final`／`UF-A1 V3-B final`／`UF-B1 V2 final`
+- 子状态：`simulation-confirmed / awaiting-production-authorization`
 - 项目阶段：`P2`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 当前操作：`prepare + simulate`
+- 当前操作：`prepare`
 - 生成前模拟：`UF-PRIMARY-V3-SIM-V1`，deterministic local geometry
 - 模拟 ImageGen：`0/0`
 - 正式生产：未授权；三段各 `0/5`，最坏总计 `15` 次实际 ImageGen
@@ -19,7 +19,10 @@
 - 用户架构决定：`accepted / 2026-08-11`。用户接受“每个角色生成完整外壳，
   Python 负责精确工程化”，并新增生命／法力、怒气、集中值、能量等资源条
   材质改造。
-- 当前模拟用户结论：`pending`
+- 当前模拟用户结论：`confirmed / 2026-08-11`
+- 用户确认范围：接受 `UF-PRIMARY-V3-SIM-V1` 所表达的完整外壳、旧马鞍／
+  盾带式粗犷皮革、Player／Target 非镜像关系、Health／Power 层级与四资源
+  运行时乘色方向；不接受模拟像素，不构成 production 或 source 授权。
 
 本文件只保留当前 V3 下一门禁所需事实。V1、V2 的逐稿正文、执行会话和完整
 审查均已存在于 Git 历史；当前树只保留下方终态摘要，避免继续膨胀文档。
@@ -169,7 +172,7 @@
 ### 本地执行
 
 - specification：`tools/specs/unitframes_primary_v3_simulation_v1.json`，SHA-256
-  `0dbed459795b7651860571e5ac9dbd9cbae518afcb3e18290f9d0e732687f152`
+  `49282ee173c80421f43892f875fd877cdb4b24ffce6b079740a9e31dde57d315`
 - renderer：`tools/render_unitframes_primary_v3_simulation_v1.py`，SHA-256
   `0c3b3329d394a33e1c30a99d3719666c6ef86b6f556be167ba1cd0b10c61efe8`
 - command：`conda run -n py312 python tools/render_unitframes_primary_v3_simulation_v1.py`
@@ -204,12 +207,27 @@
 ### 用户方向结论
 
 - 具体版本：`UF-PRIMARY-V3-SIM-V1`
-- 状态：`pending`
-- 架构层已接受：完整外壳／Python 工程化／Health 与 Power 同步改造。
-- 仍需确认：本模拟体现的可见构图、粗犷程度、bar 材质层级和四资源色关系。
-- 确认后写回：完整外壳重量、两端身份、皮革不规则节奏、Health／Power 对比、
-  运行时乘色观感。
-- 下一门禁：用户确认本模拟；随后提交最终 production 正文并请求三段正式授权。
+- 状态：`confirmed / 2026-08-11`
+- 用户明确接受的可见方向：
+  1. 标准 Player／Target 各自是一张连续完整外壳，运行时仍保持香草单位框的
+     信息密度，不回到四端帽 atlas，也不膨胀成厚重战争圣龛。
+  2. 旧马鞍带、盾牌背带和帐篷捆扎皮承担主体；粗犷来自低频手工裁切误差、
+     不均染色、烟熏泥渍和少量受力修补，不能退化为工业皮具。
+  3. 氧化黄铜只作局部短修补；Player 左端修补偏重，Target 右端损伤偏重，
+     两者同族但独立绘制、不得镜像。
+  4. Health 与 Power 是两张不同的中性灰阶颜料纹；Health 更粗、更深，
+     Power 更窄、更密、更安静，文字和数值仍是视觉主体。
+  5. Mana／Rage／Focus／Energy 共享 Power 材质并由 pfUI 乘经典语义色；
+     四种状态在当前综合色重下仍需清楚可辨，不烘焙独立彩色纹理。
+  6. 与战地旧书 Chat 和经典双头狮鹫动作条邻接时保持同一时代和综合色重，
+     但不复制书本、木柱、狮鹫或其他模块轮廓。
+- 明确未接受：模拟图像素、最终笔触／微纹理、生产 Alpha、source、runtime
+  或 addon 接入。
+- 确认失效条件：完整外壳身份、材料层级、非镜像关系、bar 粗细层级、经典
+  乘色或综合色重发生实质变化；纯技术透明提取、归一化和三切片派生不使确认
+  失效。
+- 下一门禁：用户看到并明确授权下方 `UF-A1 V3-A final`、
+  `UF-A1 V3-B final` 与 `UF-B1 V2 final` 的固定生产正文、修复边界和预算。
 
 ## 执行记录
 
@@ -217,7 +235,7 @@
 - 操作：本地确定性生成前模拟；没有启动固定 executor 或 provider。
 - 输入：只读模块文档与真实 pfUI 几何；没有上传图片。
 - 输出：本文件“生成前模拟实例图”列出的 scene／review／display report。
-- 实际生图：`0/0`；流程错误：`0`；循环终态：`simulation-reviewed`。
+- 实际生图：`0/0`；流程错误：`0`；循环终态：`simulation-confirmed`。
 
 ## 审查记录
 
@@ -230,22 +248,23 @@
   Focus／Energy 四种互斥运行时状态。
 - 装配／尺寸：标准完整 `214×42`；可变 `W=160/240` 的动态区合同通过。
 - 实际展示区域：`7/7 pass`，violations `0`，报告与 SHA 见上。
-- 结论：`displayable / simulation-reviewed`；允许用户确认方向，不允许 source、
-  runtime 或正式生图。
-- 用户结论：`pending`。
+- 结论：`displayable / simulation-confirmed`；可准备最终 production 授权，
+  仍不允许 source、runtime 或正式生图。
+- 用户结论：`accepted UF-PRIMARY-V3-SIM-V1 / 2026-08-11`；只接受可见方向。
 
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
 |---|---|---|---|
-| `UF-PRIMARY-V3-SIM-V1` | 本地 scene／review；ImageGen `0/0`；display `7/7 pass` | `simulation-reviewed` | 等待用户判断；若拒绝，按具体可见问题建立新模拟版本 |
+| `UF-PRIMARY-V3-SIM-V1` | 本地 scene／review；ImageGen `0/0`；display `7/7 pass`；用户于 `2026-08-11` 确认 | `simulation-confirmed` | 展示并请求三段 final production 正文授权 |
 
 ## 最终执行正文
 
-以下正文均为 `production-draft / not-authorized`。模拟确认后必须吸收用户结论、
-重新做完整性预检并向用户展示最终版本；当前不得调用 ImageGen。
+以下正文均为 `production-final / not-authorized`。它们已吸收
+`UF-PRIMARY-V3-SIM-V1` 的用户确认结论并通过自包含完整性复核；当前只允许
+展示并请求精确版本授权，不得调用 ImageGen。
 
-### `UF-A1 V3-A draft` — Player 完整外壳
+### `UF-A1 V3-A final` — Player 完整外壳
 
 ```text
 Create one complete empty Player unit-frame shell as a single production bitmap
@@ -262,6 +281,14 @@ central opening. The long top and bottom rails remain thin and calm; the two
 ends remain narrow. Identity detail stays at the extreme ends so a later
 deterministic variable-width three-slice can stretch the quiet centre without
 moving unique repairs. Draw no bar fill or liner across the green opening.
+
+At the confirmed 214 by 42 in-game scale, preserve Vanilla information density:
+the shell must feel materially substantial like an old carried object, yet it
+must remain visually subordinate to live health, power, names and numbers. Let
+leather carry the structure and keep brass local. The result must sit beside a
+worn field-book chat frame and the classic gryphon action bar as the same era
+and painted weight, without copying a book, column, gryphon or neighbouring
+silhouette.
 
 The written requirements outrank the images. Use Image 1 only for circa-2004
 Vanilla WoW painted scale, broad low-resolution readability, short broken dull
@@ -289,9 +316,12 @@ status, button, glow or text. Forbid continuous gold trim, perfect rounded
 cards, glass, modern bevels, industrial grids, black-iron shrines, skulls,
 horns, crests, book parts, wax seals, gemstones, neon and photoreal antiques.
 Every pixel outside the shell and inside its opening remains pure #00FF00.
+Before returning, verify that the image contains exactly one complete Player
+shell, one connected green opening, leather-led structure, only short local
+brass repair, asymmetric ends, quiet rails and no baked live content.
 ```
 
-### `UF-A1 V3-B draft` — Target 完整外壳
+### `UF-A1 V3-B final` — Target 完整外壳
 
 ```text
 Create one complete empty Target unit-frame shell as a single production bitmap
@@ -308,6 +338,13 @@ central opening. The long rails remain thin and calm and the ends remain
 narrow. Keep unique identity marks at the extreme ends so the quiet centre can
 be deterministically stretched for variable width. Draw no live bar material
 or dynamic content in the opening.
+
+At the confirmed 214 by 42 in-game scale, preserve Vanilla information density:
+the shell must feel materially substantial but remain subordinate to live
+health, power, names and numbers. It shares the Player shell's expedition-era
+painted weight while remaining independently built and visibly non-mirrored.
+It must sit beside a worn field-book chat frame and the classic gryphon action
+bar without copying their book, column, gryphon or other silhouettes.
 
 The written requirements outrank the images. Use Image 1 only for circa-2004
 Vanilla WoW painted scale, broad low-resolution readability, short broken dull
@@ -336,9 +373,13 @@ status, button, glow or text. Forbid complete gold outlines, perfect rounded
 cards, glass, modern bevels, industrial grids, black-iron shrines, book parts,
 wax seals, gemstones, neon and photoreal antiques. Every pixel outside the
 shell and inside its opening remains pure #00FF00.
+Before returning, verify that the image contains exactly one complete Target
+shell, one connected green opening, leather-led structure, a short subordinate
+right-end brass repair, non-mirrored ends, quiet rails and no baked live
+content.
 ```
 
-### `UF-B1 V2 draft` — Health／Power 灰阶颜料纹
+### `UF-B1 V2 final` — Health／Power 灰阶颜料纹
 
 ```text
 Create one production sheet containing exactly two separate neutral grayscale
@@ -358,6 +399,14 @@ three or four broad low-frequency horizontal brush drags and small unequal
 pigment accumulation. Power is narrower, denser and calmer, with fewer and
 smaller value changes so it survives at four or one runtime pixels high.
 
+At 100 percent runtime size, preserve the confirmed hierarchy: Health reads
+coarser, deeper and more materially present, while Power reads narrower,
+denser and quieter. After multiplicative tint, Mana blue, Rage red, Focus
+orange-brown and Energy yellow must remain equally clear semantic states; do
+not encode or favour any one of those colours in the grayscale pixels. Neither
+texture may compete with live text or turn the unit frame into a modern glossy
+meter.
+
 The surface must read as an early-WoW hand-painted bar texture after export to
 64 by 32 for Health and 64 by 16 for Power. Keep the whole width statistically
 quiet: no centre emblem, hotspot, unique end mark or long scratch. Forbid
@@ -365,26 +414,29 @@ colour tint, diagonal stripes, repeated chevrons, leather grain, parchment,
 fabric weave, brushed metal, glass, gradient gloss, modern bevel, procedural
 noise carpet, transparent hole and mirrored shine. Outside the two swatches
 every pixel remains pure #00FF00.
+Before returning, verify exactly two isolated swatches, Health above and Power
+below, neutral equal-channel grayscale throughout, no third object, no colour,
+no centre hotspot and broad uniform green isolation.
 ```
 
-## 草案完整性预检
+## 生产正文完整性预检
 
-| 门禁 | V3 草案证据 | 结论 |
+| 门禁 | V3 final 证据 | 结论 |
 |---|---|---|
-| 身份、范围、对象数量与动态排除 | V3-A／B 各一张完整空外壳；B1 两个独立 swatch；逐项排除动态内容 | pass-draft |
-| 图片职责与冲突 | A1 两张固定图分别限制时代尺度和材料；文字合同优先；旧候选禁止输入；B1 无参考图 | pass-draft |
-| Canvas、方向、比例、隔离与层序 | A1 `1536×1024` 单对象、约 `1284×252`；B1 `1024²` 上下两对象；均正视纯绿 | pass-draft |
-| 逐对象轮廓、材料与关系 | Player 左修补、Target 右损伤；旧马鞍／盾带皮；Health／Power 粗细差异 | pass-draft |
-| safe area、stretch、slice 与 repeat | A1 中央孔、安静长轨、未来三切片；B1 StatusBar 拉伸和低焦点分布 | pass-draft |
-| 美术 DNA、反模式、色键与末检 | 香草块面、低频维修、灰阶乘色、纯绿色键和具体反工业／反现代项 | pass-draft |
+| 身份、范围、对象数量与动态排除 | V3-A／B 各一张完整空外壳；B1 两个独立 swatch；逐项排除动态内容 | pass-final |
+| 图片职责与冲突 | A1 两张固定图分别限制时代尺度和材料；文字合同优先；旧候选禁止输入；B1 无参考图 | pass-final |
+| Canvas、方向、比例、隔离与层序 | A1 `1536×1024` 单对象、约 `1284×252`；B1 `1024²` 上下两对象；均正视纯绿 | pass-final |
+| 逐对象轮廓、材料与关系 | Player 左修补、Target 右损伤；旧马鞍／盾带皮；Health／Power 粗细差异；用户确认的综合色重已入正文 | pass-final |
+| safe area、stretch、slice 与 repeat | A1 中央孔、安静长轨、未来三切片；B1 StatusBar 拉伸和低焦点分布 | pass-final |
+| 美术 DNA、反模式、色键与末检 | 香草块面、低频维修、灰阶乘色、纯绿色键、与 Chat／动作条邻接但不复制及逐段最终自检 | pass-final |
 
 - 未知但执行必需的值：无。
-- 尚未成为 final：用户还未确认 `UF-PRIMARY-V3-SIM-V1`；确认后的可见结论尚未
-  写回正文，故不得请求或执行 production。
+- 完整性结论：`pass-final`。用户确认的布局、材质层级、轮廓、配色、视觉
+  重量与整合关系均已写回三段正文；正文仍为 `not-authorized`，不得执行。
 
-## 拟议正式预算与修复边界
+## 正式预算与修复边界（待授权）
 
-在模拟确认并由用户另行授权最终正文后：
+只有用户另行明确授权以下 final 版本后：
 
 - `UF-A1 V3-A`：最多 `5` 次实际 ImageGen；固定 Image 1／2；attempt 1 无
   edit input；后续只允许同段紧邻完整前稿作为 Image 3。
@@ -415,7 +467,8 @@ every pixel remains pure #00FF00.
 
 ## 下一门禁
 
-向用户展示 `UF-PRIMARY-V3-SIM-V1` scene 与 review。只有用户明确确认该版本的
-可见方向后，才把确认结论写回三段 production 正文、重新预检并请求
-`UF-A1 V3-A`／`UF-A1 V3-B`／`UF-B1 V2` 的正式五次循环授权。当前禁止调用
-ImageGen、创建 source/runtime、修改 addon 或复用任一 V1／V2 像素。
+向用户展示已经通过 `pass-final` 的 `UF-A1 V3-A final`、
+`UF-A1 V3-B final` 与 `UF-B1 V2 final`，并请求三段正式循环授权。拟按
+A→B→B1 顺序执行，每段最多 `5` 次实际 ImageGen、最坏合计 `15` 次；流程
+错误不占额度。当前禁止调用 ImageGen、创建 source/runtime、修改 addon 或
+复用任一 V1／V2 像素。

@@ -25,7 +25,9 @@ SavedVariables、单位数据或状态逻辑。
 
 用户于 `2026-08-11` 接受从“四端帽 atlas”改为“每个逻辑角色生成一张完整
 外壳，并由 Python 负责精确工程化”的 V3 架构。该决定冻结生产粒度与后处理
-职责；新的 `UF-A1-V3-SIM-V1` 仍需单独审阅，且不接受任何模拟像素。
+职责；用户随后于同日确认 `UF-PRIMARY-V3-SIM-V1` 的完整外壳粗犷方向、
+Player／Target 非镜像身份、Health／Power 层级和四资源乘色，只接受文字化
+方向，不接受任何模拟像素。
 
 - Player 与 Target 各自使用一次独立 ImageGen 调用生成一张完整空外壳；不得
   把两个角色放入同一 production atlas，也不得把一张外壳镜像成另一张。

@@ -30,14 +30,20 @@ def extract_fenced_body(source: str, heading: str) -> str:
 def assert_clauses(body: str, clauses: tuple[str, ...]) -> None:
     normalized = " ".join(body.split())
     for clause in clauses:
-        assert clause in normalized, f"active Unit Frames draft missing: {clause}"
+        assert clause in normalized, f"active Unit Frames final missing: {clause}"
 
 
 def main() -> None:
     sim = json.loads(SIM_SPEC.read_text(encoding="utf-8"))
     assert sim["schema"] == "aeui-unitframes-primary-v3-simulation-v1"
     assert sim["version"] == "UF-PRIMARY-V3-SIM-V1"
-    assert sim["status"] == "simulation-reviewed"
+    assert sim["status"] == "simulation-confirmed"
+    confirmation = sim["user_confirmation"]
+    assert confirmation["date"] == "2026-08-11"
+    assert confirmation["version"] == "UF-PRIMARY-V3-SIM-V1"
+    assert confirmation["accepts_pixels"] is False
+    assert confirmation["production_authorized"] is False
+    assert len(confirmation["accepted_visible_direction"]) == 6
     architecture = sim["architecture"]
     assert architecture["dynamic_content_baked"] is False
     assert architecture["runtime_height"] == 42
@@ -91,7 +97,10 @@ def main() -> None:
 
     work = WORK.read_text(encoding="utf-8")
     normalized_work = " ".join(work.split())
-    assert "simulation-reviewed / awaiting-user-direction" in work
+    assert "simulation-confirmed / awaiting-production-authorization" in work
+    assert "accepted UF-PRIMARY-V3-SIM-V1 / 2026-08-11" in work
+    assert "production-final / not-authorized" in work
+    assert "完整性结论：`pass-final`" in work
     assert "正式生产：未授权；三段各 `0/5`" in work
     assert "Python 不得补画皮革" in work
     assert "UnitPowerType" in work
@@ -99,7 +108,7 @@ def main() -> None:
     assert "V1、V2 的逐稿正文" in work
     assert "禁止调用 ImageGen" in normalized_work
 
-    player = extract_fenced_body(work, "### `UF-A1 V3-A draft`")
+    player = extract_fenced_body(work, "### `UF-A1 V3-A final`")
     assert_clauses(
         player,
         (
@@ -108,20 +117,25 @@ def main() -> None:
             "close to 1284 by 252",
             "discarded saddle leather",
             "The Player identity is heavier on the left",
+            "preserve Vanilla information density",
+            "Let leather carry the structure and keep brass local",
             "Draw no health colour, power colour",
+            "Before returning, verify that the image contains exactly one complete Player",
         ),
     )
-    target = extract_fenced_body(work, "### `UF-A1 V3-B draft`")
+    target = extract_fenced_body(work, "### `UF-A1 V3-B final`")
     assert_clauses(
         target,
         (
             "exactly one front-facing orthographic horizontal shell",
             "Do not copy or mirror a Player candidate",
+            "shares the Player shell's expedition-era painted weight",
             "Its right end carries one short damaged oxidized brass",
             "Add no enemy red",
+            "Before returning, verify that the image contains exactly one complete Target",
         ),
     )
-    bars = extract_fenced_body(work, "### `UF-B1 V2 draft`")
+    bars = extract_fenced_body(work, "### `UF-B1 V2 final`")
     assert_clauses(
         bars,
         (
@@ -129,6 +143,9 @@ def main() -> None:
             "equal red, green and blue channels",
             "Mana, Rage, Focus and Energy colours at runtime",
             "64 by 32 for Health and 64 by 16 for Power",
+            "At 100 percent runtime size, preserve the confirmed hierarchy",
+            "Mana blue, Rage red, Focus orange-brown and Energy yellow",
+            "Before returning, verify exactly two isolated swatches",
         ),
     )
 

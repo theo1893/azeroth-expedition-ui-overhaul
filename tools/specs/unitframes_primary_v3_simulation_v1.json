@@ -1,7 +1,21 @@
 {
   "schema": "aeui-unitframes-primary-v3-simulation-v1",
   "version": "UF-PRIMARY-V3-SIM-V1",
-  "status": "simulation-reviewed",
+  "status": "simulation-confirmed",
+  "user_confirmation": {
+    "date": "2026-08-11",
+    "version": "UF-PRIMARY-V3-SIM-V1",
+    "accepts_pixels": false,
+    "production_authorized": false,
+    "accepted_visible_direction": [
+      "one continuous complete shell per standard Player or Target frame",
+      "reused saddle, shield-strap and tent-binding leather carries the structure while dull brass remains a local repair",
+      "low-frequency hand-cut irregularity without industrial symmetry or modern HUD regularity",
+      "Player and Target share a craft family but remain independently painted and non-mirrored",
+      "Health is the coarser and deeper neutral pigment while Power is narrower, denser and quieter",
+      "runtime tinting preserves legible classic Mana, Rage, Focus and Energy identities"
+    ]
+  },
   "canvas": {"width": 1600, "height": 900},
   "architecture": {
     "standard_shell": "one complete source and one 214x42 runtime texture per role",

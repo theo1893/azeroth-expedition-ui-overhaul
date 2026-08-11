@@ -2,8 +2,9 @@
 
 以下条款全部继承 [Unit Frames 主模块 Prompt](ART_BASELINE.md) 与
 [全局 Prompt](../../GLOBAL_ART_BASELINE.md)。下列方向已由用户在
-`UF-PRIMARY-SIM-V1` 中确认；它们是正式生产的冻结可见约束，但不是 P4 source
-接受记录。只有具体生产候选再次获得用户明确接受后，才能凝结为锁定资产条款。
+`UF-PRIMARY-SIM-V1` 与 `UF-PRIMARY-V3-SIM-V1` 中确认；它们是正式生产的
+冻结可见约束，但不是 P4 source 接受记录。只有具体生产候选再次获得用户明确
+接受后，才能凝结为锁定资产条款。
 
 ## `UF.PLAYER.SHELL`
 

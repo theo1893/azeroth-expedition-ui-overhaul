@@ -1,8 +1,9 @@
 # Unit Frames 主模块美术基线 Prompt
 
-状态：`direction-locked / UF-PRIMARY-SIM-V1 confirmed`。用户于
-`2026-08-11` 确认本 Prompt 所定义的“粗犷行军身份牌”可见方向；该确认只锁定
-物件隐喻、材质层级、轮廓、配色、重量与整合关系，不接受模拟像素或任何正式
+状态：`direction-locked / UF-PRIMARY-SIM-V1 + UF-PRIMARY-V3-SIM-V1
+confirmed`。用户于 `2026-08-11` 确认本 Prompt 所定义的“粗犷行军身份牌”
+及 V3 完整外壳、Health／Power 层级与四资源经典乘色方向；该确认只锁定物件
+隐喻、材质层级、轮廓、配色、重量与整合关系，不接受模拟像素或任何正式
 source。本 Prompt 显式继承
 [全局美术基线](../../GLOBAL_ART_BASELINE.md)。Chat 的
 [游戏内基准](../../../assets/locked/chat/聊天框视觉基准_v1.png) 与
