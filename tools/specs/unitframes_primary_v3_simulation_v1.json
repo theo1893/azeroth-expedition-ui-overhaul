@@ -6,7 +6,15 @@
     "date": "2026-08-11",
     "version": "UF-PRIMARY-V3-SIM-V1",
     "accepts_pixels": false,
-    "production_authorized": false,
+    "production_authorized": true,
+    "production_authorization": {
+      "date": "2026-08-11",
+      "versions": ["UF-A1 V3-A final", "UF-A1 V3-B final", "UF-B1 V2 final"],
+      "sequence": ["UF-A1 V3-A final", "UF-A1 V3-B final", "UF-B1 V2 final"],
+      "actual_generation_limit_per_version": 5,
+      "worst_case_actual_generations": 15,
+      "process_errors_count_against_limit": false
+    },
     "accepted_visible_direction": [
       "one continuous complete shell per standard Player or Target frame",
       "reused saddle, shield-strap and tent-binding leather carries the structure while dull brass remains a local repair",

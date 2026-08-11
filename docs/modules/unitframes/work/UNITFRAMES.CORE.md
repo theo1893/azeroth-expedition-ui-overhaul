@@ -7,13 +7,14 @@
   `UF.BAR.HEALTH.FILL`、`UF.BAR.POWER.FILL`
 - 后续组件：`UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.STATE.*`
 - 当前版本：`UF-A1 V3-A final`／`UF-A1 V3-B final`／`UF-B1 V2 final`
-- 子状态：`simulation-confirmed / awaiting-production-authorization`
-- 项目阶段：`P2`
+- 子状态：`prompt-authorized / UF-A1 V3-A queued`
+- 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 当前操作：`prepare`
+- 当前操作：`generate`
 - 生成前模拟：`UF-PRIMARY-V3-SIM-V1`，deterministic local geometry
 - 模拟 ImageGen：`0/0`
-- 正式生产：未授权；三段各 `0/5`，最坏总计 `15` 次实际 ImageGen
+- 正式生产：`authorized / 2026-08-11`；三段各 `0/5`，最坏总计
+  `15` 次实际 ImageGen
 - 流程错误：`0`
 - Python：`/Users/yuanshiyao/miniconda3/envs/py312/bin/python`，`3.12.12`
 - 用户架构决定：`accepted / 2026-08-11`。用户接受“每个角色生成完整外壳，
@@ -23,6 +24,11 @@
 - 用户确认范围：接受 `UF-PRIMARY-V3-SIM-V1` 所表达的完整外壳、旧马鞍／
   盾带式粗犷皮革、Player／Target 非镜像关系、Health／Power 层级与四资源
   运行时乘色方向；不接受模拟像素，不构成 production 或 source 授权。
+- 正式生产授权：用户于 `2026-08-11` 明确授权 `UF-A1 V3-A final`、
+  `UF-A1 V3-B final` 与 `UF-B1 V2 final`，按 A→B→B1 顺序；每段最多
+  `5` 次实际生成、最坏 `15` 次，流程错误不占额度。A／B 固定 Image 1／2，
+  attempt 1 无 Image 3；后续仅允许同段紧邻前稿作有界 edit 输入。B1 首次无
+  图片，后续仅允许同段紧邻前稿。禁止跨段及 V1／V2 失败像素复用。
 
 本文件只保留当前 V3 下一门禁所需事实。V1、V2 的逐稿正文、执行会话和完整
 审查均已存在于 Git 历史；当前树只保留下方终态摘要，避免继续膨胀文档。
@@ -172,7 +178,7 @@
 ### 本地执行
 
 - specification：`tools/specs/unitframes_primary_v3_simulation_v1.json`，SHA-256
-  `49282ee173c80421f43892f875fd877cdb4b24ffce6b079740a9e31dde57d315`
+  `64a3f6b356fefe08766541ab911c468104e82708025aaf730417723419308765`
 - renderer：`tools/render_unitframes_primary_v3_simulation_v1.py`，SHA-256
   `0c3b3329d394a33e1c30a99d3719666c6ef86b6f556be167ba1cd0b10c61efe8`
 - command：`conda run -n py312 python tools/render_unitframes_primary_v3_simulation_v1.py`
@@ -226,8 +232,8 @@
 - 确认失效条件：完整外壳身份、材料层级、非镜像关系、bar 粗细层级、经典
   乘色或综合色重发生实质变化；纯技术透明提取、归一化和三切片派生不使确认
   失效。
-- 下一门禁：用户看到并明确授权下方 `UF-A1 V3-A final`、
-  `UF-A1 V3-B final` 与 `UF-B1 V2 final` 的固定生产正文、修复边界和预算。
+- 下一门禁：三段 final 授权已取得；提交 `prompt-authorized` 状态后执行
+  `UF-A1 V3-A final` attempt 1。
 
 ## 执行记录
 
@@ -256,13 +262,13 @@
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
 |---|---|---|---|
-| `UF-PRIMARY-V3-SIM-V1` | 本地 scene／review；ImageGen `0/0`；display `7/7 pass`；用户于 `2026-08-11` 确认 | `simulation-confirmed` | 展示并请求三段 final production 正文授权 |
+| `UF-PRIMARY-V3-SIM-V1` | 本地 scene／review；ImageGen `0/0`；display `7/7 pass`；用户于 `2026-08-11` 确认 | `simulation-confirmed` | 三段 final 已另行授权；进入 A attempt 1 |
 
 ## 最终执行正文
 
-以下正文均为 `production-final / not-authorized`。它们已吸收
-`UF-PRIMARY-V3-SIM-V1` 的用户确认结论并通过自包含完整性复核；当前只允许
-展示并请求精确版本授权，不得调用 ImageGen。
+以下正文均为 `production / authorized / 2026-08-11`。它们已吸收
+`UF-PRIMARY-V3-SIM-V1` 的用户确认结论并通过自包含完整性复核；attempt 1
+必须逐字使用对应正文，不得在传输时改写。
 
 ### `UF-A1 V3-A final` — Player 完整外壳
 
@@ -432,11 +438,11 @@ no centre hotspot and broad uniform green isolation.
 
 - 未知但执行必需的值：无。
 - 完整性结论：`pass-final`。用户确认的布局、材质层级、轮廓、配色、视觉
-  重量与整合关系均已写回三段正文；正文仍为 `not-authorized`，不得执行。
+  重量与整合关系均已写回三段正文；三段正文已于 `2026-08-11` 获精确授权。
 
-## 正式预算与修复边界（待授权）
+## 自主修复循环
 
-只有用户另行明确授权以下 final 版本后：
+### 授权与不可变边界
 
 - `UF-A1 V3-A`：最多 `5` 次实际 ImageGen；固定 Image 1／2；attempt 1 无
   edit input；后续只允许同段紧邻完整前稿作为 Image 3。
@@ -453,6 +459,21 @@ no centre hotspot and broad uniform green isolation.
 - 必须重新授权：改回端帽 atlas、把 Player／Target 合图、增加参考、跨段复用、
   改变 canvas／runtime／安全区、允许 Python 补画或改变可见方向。
 
+### 当前循环账本
+
+| 段 | 当前子状态 | 实际生成 | 流程错误 | 下一动作 |
+|---|---|---:|---:|---|
+| `UF-A1 V3-A final` | `prompt-authorized / queued` | `0/5` | `0` | attempt 1 generate |
+| `UF-A1 V3-B final` | `prompt-authorized / sequence-wait` | `0/5` | `0` | A 终态后开始 |
+| `UF-B1 V2 final` | `prompt-authorized / sequence-wait` | `0/5` | `0` | B 终态后开始 |
+
+每次实际候选的 session／result、raw／candidate／真实排版路径与 SHA、第一失败
+门禁、保留区和下一正文都继续写入本文件；无生成证据的流程错误另表记录。
+
+| 流程错误 | 段／正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
+|---:|---|---|---|---|---|
+| — | — | — | 当前无流程错误 | — | 不占生图额度 |
+
 ## 历史终态摘要
 
 - `UF-A1 V1`：整壳两对象 atlas，ImageGen `5/5`；最终外比通过但端柱侵入动态
@@ -467,8 +488,8 @@ no centre hotspot and broad uniform green isolation.
 
 ## 下一门禁
 
-向用户展示已经通过 `pass-final` 的 `UF-A1 V3-A final`、
-`UF-A1 V3-B final` 与 `UF-B1 V2 final`，并请求三段正式循环授权。拟按
-A→B→B1 顺序执行，每段最多 `5` 次实际 ImageGen、最坏合计 `15` 次；流程
-错误不占额度。当前禁止调用 ImageGen、创建 source/runtime、修改 addon 或
+提交本次 `prompt-authorized` 状态后，以固定执行器启动
+`UF-A1 V3-A final` attempt 1；完成逐候选内审与有界修复循环后依次进入
+`UF-A1 V3-B final` 和 `UF-B1 V2 final`。任一段内部通过即停；第五次仍有
+客观失败则该段耗尽。当前仍禁止创建 source/runtime、修改 addon、跨段复用或
 复用任一 V1／V2 像素。

@@ -42,7 +42,16 @@ def main() -> None:
     assert confirmation["date"] == "2026-08-11"
     assert confirmation["version"] == "UF-PRIMARY-V3-SIM-V1"
     assert confirmation["accepts_pixels"] is False
-    assert confirmation["production_authorized"] is False
+    assert confirmation["production_authorized"] is True
+    authorization = confirmation["production_authorization"]
+    assert authorization["versions"] == [
+        "UF-A1 V3-A final",
+        "UF-A1 V3-B final",
+        "UF-B1 V2 final",
+    ]
+    assert authorization["actual_generation_limit_per_version"] == 5
+    assert authorization["worst_case_actual_generations"] == 15
+    assert authorization["process_errors_count_against_limit"] is False
     assert len(confirmation["accepted_visible_direction"]) == 6
     architecture = sim["architecture"]
     assert architecture["dynamic_content_baked"] is False
@@ -97,16 +106,17 @@ def main() -> None:
 
     work = WORK.read_text(encoding="utf-8")
     normalized_work = " ".join(work.split())
-    assert "simulation-confirmed / awaiting-production-authorization" in work
+    assert "prompt-authorized / UF-A1 V3-A queued" in work
     assert "accepted UF-PRIMARY-V3-SIM-V1 / 2026-08-11" in work
-    assert "production-final / not-authorized" in work
+    assert "production / authorized / 2026-08-11" in work
     assert "完整性结论：`pass-final`" in work
-    assert "正式生产：未授权；三段各 `0/5`" in work
+    assert "正式生产：`authorized / 2026-08-11`" in work
+    assert "## 自主修复循环" in work
     assert "Python 不得补画皮革" in work
     assert "UnitPowerType" in work
     assert "Mana／Rage／Focus／Energy" in work
     assert "V1、V2 的逐稿正文" in work
-    assert "禁止调用 ImageGen" in normalized_work
+    assert "prompt-authorized / queued" in normalized_work
 
     player = extract_fenced_body(work, "### `UF-A1 V3-A final`")
     assert_clauses(

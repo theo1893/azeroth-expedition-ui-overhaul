@@ -3,11 +3,11 @@
 ## 当前状态
 
 - `UF-A1 V3-A final` Player 完整外壳：
-  `P2 / simulation-confirmed / awaiting-production-authorization / 0/5`。
+  `P3 / prompt-authorized / queued / 0/5`。
 - `UF-A1 V3-B final` Target 完整外壳：
-  `P2 / simulation-confirmed / awaiting-production-authorization / 0/5`。
+  `P3 / prompt-authorized / sequence-wait / 0/5`。
 - `UF-B1 V2 final` Health／Power 灰阶填充纹：
-  `P2 / simulation-confirmed / awaiting-production-authorization / 0/5`。
+  `P3 / prompt-authorized / sequence-wait / 0/5`。
 - `UF-A2` TargetTarget／Focus：继续暂停；既有物件身份方向不变，尚无正式
   source。Hover／Aggro 仍计划由接受外壳 Alpha 确定性派生。
 - 当前只处理资源重绘、后处理合同与未来替换路径；没有修改另一台设备上的
@@ -17,8 +17,12 @@
 - 新模拟 `UF-PRIMARY-V3-SIM-V1` 已本地完成并通过内部几何门禁；用户于
   `2026-08-11` 明确“接受”。已冻结完整外壳、旧马鞍／盾带式粗犷皮革、
   Player／Target 非镜像关系、Health／Power 层级、四资源经典乘色及与 Chat／
-  动作条邻接但不复制轮廓的可见方向。确认不接受模拟像素。ImageGen `0/0`；
-  三段 production final 均未授权。
+  动作条邻接但不复制轮廓的可见方向。确认不接受模拟像素。生成前模拟
+  ImageGen `0/0`。
+- 用户随后于 `2026-08-11` 明确授权上述三段 final，冻结 A→B→B1 顺序、
+  A／B 固定 Image 1／2、同段紧邻前稿有界 edit、B1 首次无图片、每段
+  `5` 次实际生成及最坏 `15` 次预算。流程错误不占额度；跨段与旧失败像素
+  禁止复用。当前尚未调用正式生产。
 
 ## V3 结构合同
 
@@ -69,10 +73,10 @@
 
 - `UNITFRAMES.CORE.md` 只保留当前 V3 合同、三段自包含 final、历史终态摘要和
   下一门禁；V1／V2 的逐稿全文继续由 Git 历史保存。
-- `UF-A1 V3-A`、`UF-A1 V3-B`、`UF-B1 V2` 每段拟议最多 `5` 次实际
-  `imagegen-0-143-0`，最坏合计 `15` 次；当前全部 `0/5 / not-authorized`。
-- 三段 final 已吸收用户确认的可见结论并通过 `pass-final` 自包含预检；拟按
-  A→B→B1 顺序执行，但“接受模拟”不构成正式生产授权。
+- `UF-A1 V3-A`、`UF-A1 V3-B`、`UF-B1 V2` 每段最多 `5` 次实际
+  `imagegen-0-143-0`，最坏合计 `15` 次；当前全部 `0/5 / authorized`。
+- 三段 final 已吸收用户确认的可见结论并通过 `pass-final` 自包含预检；
+  正式生产授权已独立取得，按 A→B→B1 顺序执行。
 - 流程错误无生成证据时单独记录，不占额度。旧 V1／V2 失败像素禁止作为新段
   reference、edit、source 或 runtime。
 
@@ -88,8 +92,7 @@
 
 ## 下一门禁
 
-等待用户明确授权 `UF-A1 V3-A final`、`UF-A1 V3-B final` 与
-`UF-B1 V2 final` 的固定正文、输入职责、修复边界和预算。授权后按 A→B→B1
-顺序执行，每段最多 `5` 次实际 ImageGen、最坏合计 `15` 次，流程错误不占
-额度；当前禁止调用 ImageGen、创建 source/runtime、修改 addon 或复用旧失败
-像素。
+先提交 `prompt-authorized` 状态，再以固定执行器启动
+`UF-A1 V3-A final` attempt 1；完成该段循环后依次执行 V3-B 与 B1。每段内部
+通过即停，第五次仍失败则耗尽；当前禁止创建 source/runtime、修改 addon、
+跨段复用或复用旧失败像素。
