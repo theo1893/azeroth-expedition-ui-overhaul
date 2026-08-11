@@ -192,7 +192,7 @@ def main() -> None:
     toc = (
         ROOT / "addon/AzerothExpeditionUI/AzerothExpeditionUI.toc"
     ).read_text(encoding="utf-8-sig")
-    assert "## Version: 0.8.22" in toc
+    assert "## Version: 0.8.23" in toc
     assert "Modules\\ActionBars.lua" in toc
 
     print("actionbars runtime test passed")

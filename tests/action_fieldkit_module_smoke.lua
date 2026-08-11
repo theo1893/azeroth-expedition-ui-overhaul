@@ -262,9 +262,23 @@ function AutoBar_SetupVisual()
     )
   end
 end
+local autoBarConfigOnShowCalls = 0
+local providerConfigOnShowReanchors = false
+AutoBarConfig = {}
+function AutoBarConfig.OnShow()
+  autoBarConfigOnShowCalls = autoBarConfigOnShowCalls + 1
+  AutoBar_SetupVisual()
+  if providerConfigOnShowReanchors then
+    AutoBarAnchorFrameHandle:ClearAllPoints()
+    AutoBarAnchorFrameHandle:SetPoint(
+      "CENTER", UIParent, "BOTTOMLEFT", 555, 213
+    )
+  end
+end
 local autoBarConfigToggleCalls = 0
 function AutoBarConfig_Toggle()
   autoBarConfigToggleCalls = autoBarConfigToggleCalls + 1
+  AutoBarConfig.OnShow()
 end
 
 AutoBar_Config = {
@@ -464,7 +478,7 @@ local module = assert(AzerothExpeditionUI.modules.ActionBars)
 module:Initialize()
 module:Apply()
 
-assert(module.fieldKitRuntimeContract == "2.2")
+assert(module.fieldKitRuntimeContract == "2.3")
 assert(module.autoBarCategoryDescriptionStatus == "repaired")
 assert(module.autoBarCategoryDescriptionsRepaired == 8)
 assert(AutoBar_Category_Info.POTION_SPELLPOWER.description ==
@@ -597,22 +611,24 @@ end
 assert(TrinketMenuOptions == optionsSnapshot)
 assert(TrinketMenuPerOptions == perOptionsSnapshot)
 assert(TrinketMenuQueue.Enabled == queueSnapshot)
-assert(installedHooks == 8)
+assert(installedHooks == 9)
 
 local hookedButtonsUpdate = AutoBar.ButtonsUpdate
 local hookedPopupUpdate = AutoBar.UpdatePopupButtons
 local hookedOrient = TrinketMenu.OrientWindows
 local hookedBuild = TrinketMenu.BuildMenu
 local hookedAutoBarDragStop = AutoBar.DragStop
+local hookedAutoBarConfigOnShow = AutoBarConfig.OnShow
 local hookedTrinketMouseUp = TrinketMenu.MainFrame_OnMouseUp
 local wrappedSetPopupButton = AutoBar.SetPopupButton
 module:Apply()
-assert(installedHooks == 8)
+assert(installedHooks == 9)
 assert(AutoBar.ButtonsUpdate == hookedButtonsUpdate)
 assert(AutoBar.UpdatePopupButtons == hookedPopupUpdate)
 assert(TrinketMenu.OrientWindows == hookedOrient)
 assert(TrinketMenu.BuildMenu == hookedBuild)
 assert(AutoBar.DragStop == hookedAutoBarDragStop)
+assert(AutoBarConfig.OnShow == hookedAutoBarConfigOnShow)
 assert(TrinketMenu.MainFrame_OnMouseUp == hookedTrinketMouseUp)
 assert(AutoBar.SetPopupButton == wrappedSetPopupButton)
 
@@ -628,7 +644,9 @@ AutoBar:UpdatePopupButtons(AutoBarFrameButton1)
 AutoBar_SetupVisual()
 assert(AutoBar.providerPopupUpdateCalls == 1)
 assert(autoBarSetupCalls == 1)
-assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent] == nil)
+assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
+assert(module.autoBarRefreshStatus == "queued")
+AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
 assert(module.autoBarRefreshStatus == "settled")
 
 -- AutoBar's real SetupVisual calls ButtonsUpdate before restoring its saved
@@ -643,15 +661,35 @@ AutoBar_SetupVisual()
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
-assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent] == nil)
+assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
+assert(module.autoBarRefreshStatus == "queued")
+AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
 assert(module.autoBarRefreshStatus == "settled")
 AutoBar_SetupVisual()
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
-assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent] == nil)
+assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
+assert(module.autoBarRefreshStatus == "queued")
+AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
 assert(module.autoBarRefreshStatus == "settled")
 providerSetupReanchors = false
+
+-- Opening the configuration page is a separate provider lifecycle boundary.
+-- Even if its initialization writes a free profile position after a nested
+-- SetupVisual, the OnShow post-hook must restore the cached Combat Deck
+-- anchor synchronously and defer only the geometry-dependent rebuild.
+providerConfigOnShowReanchors = true
+AutoBarConfig.OnShow()
+assert(autoBarConfigOnShowCalls == 1)
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
+assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
+assert(module.autoBarRefreshStatus == "queued")
+AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
+assert(module.autoBarRefreshStatus == "settled")
+providerConfigOnShowReanchors = false
 assert(module.autoBarPopupLayout == "drawer-1x4")
 assert(module.autoBarPopupSide == "left")
 assert(module.autoBarPopupHover == "intent-bridge")
@@ -776,6 +814,10 @@ assert(module.autoBarPopupHover == "intent-bridge")
 local opened, openMessage = module:OpenAutoBarConfig()
 assert(opened == true)
 assert(autoBarConfigToggleCalls == 1)
+assert(autoBarConfigOnShowCalls == 2)
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])
+assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
+AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
 assert(string.find(openMessage, "/aeui autobar apply", 1, true))
 
 local applied, applyMessage = module:ApplyRecommendedAutoBarProfile()
@@ -976,7 +1018,7 @@ module:Apply()
 assert(module.autoBarFieldKitStatus == "missing")
 assert(module.trinketFieldKitStatus == "missing")
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "fieldkit%-contract=2%.2"))
+assert(string.find(status, "fieldkit%-contract=2%.3"))
 assert(string.find(status, "autobar%-config%-descriptions=repaired"))
 assert(string.find(status, "autobar%-config%-description%-fixes=8"))
 assert(string.find(status, "fieldkit%-binding=bound"))

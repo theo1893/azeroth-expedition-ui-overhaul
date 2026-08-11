@@ -4,17 +4,18 @@
 
 - pfUI 十二条逻辑 Bar、按钮状态、分页、姿态／宠物、合法行列、移动／缩放与
   当前目标设备 profile 已完成 `P1` 审计。
-- 用户于 `2026-08-12` 实机确认 bridge-v2.1 已不再把卷袋留在错误位置，但每次
-  配置点击仍会先跳到 provider 位置、再回到组合位置。根因是 v2.1 的 `0.05s`
-  延迟让 `SetupVisual` 恢复的临时锚点进入了可见渲染帧。AEUI `0.8.22`／Field Kit
-  bridge-v2.2 保留七个 zhCN 缺失说明和未来未知空说明的运行时 fallback，不覆盖
-  provider 原生说明、类别内容、profile 或 SavedVariables；独立 `ButtonsUpdate`
-  只排到下一次 AceEvent `OnUpdate` 的零延迟事件，而 `AutoBar_SetupVisual` 后置钩子
-  会在同一输入事件内取消这次排队并立即恢复组合锚点。Lua smoke 现直接模拟
-  `ButtonsUpdate → provider 恢复临时位置 → SetupVisual post-hook`，并在每次
-  `SetupVisual` 返回后立即断言锚点已是 Bar 1、没有残留事件；调度 API 缺失仍局部
-  立即回退，无 AEUI `OnUpdate` 维护循环。Field Kit runtime `9/9＋10/10`、
-  fresh-checkout package 与仓库合同均 pass。位图字节不变，ImageGen `0/0`；当前仍为
+- 用户于 `2026-08-12` 继续实机确认 bridge-v2.2 在“仅打开 AutoBar 配置页”时仍会
+  把卷袋留在 provider 保存的自由坐标；证据为 `1020×926 RGB` 截图、SHA
+  `f36cd308…ab5e`，对应当前 SavedVariables 的 `position=(555,213)`。根因是配置页
+  `OnShow` 会完整重跑布局，而 v2.2 在同一事件内依赖尚未稳定的 Button 几何重算，
+  同时没有覆盖整个配置初始化结束后的最终边界。AEUI `0.8.23`／Field Kit
+  bridge-v2.3 保留七个 zhCN 缺失说明和未来未知空说明 fallback，并缓存最后一次成功
+  计算的 Bar 1 相对锚点；`AutoBar_SetupVisual` 与整个 `AutoBarConfig.OnShow` 的后置
+  钩子都先同步恢复该锚点，再把几何相关外壳／停靠重算排到下一次零延迟 AceEvent。
+  Lua smoke 直接模拟配置初始化在嵌套 `SetupVisual` 后再次写入 `(555,213)`，并断言
+  `OnShow` 返回前已经恢复 Bar 1 锚点，下一帧重算后仍稳定；独立 `ButtonsUpdate`、
+  调度 API 缺失回退、重复 Apply 不重复 hook 均继续覆盖。无 AEUI `OnUpdate` 维护循环，
+  profile、SavedVariables 与全部位图字节不变，ImageGen `0/0`；当前仍为
   `runtime-exported / addon-integrated / P5 / pending-game-validation`。
 - 用户于 `2026-08-11` 确认执行 V11 右侧四栏组合，并以最新截图继续指出 Player
   实际文字仍是旧字形／旧字号。AEUI `0.8.20` 现接入
@@ -72,7 +73,7 @@
 - 推荐方向仍是“自适应远征战斗甲板＋炼金卷袋＋饰品双护套”。当前 V10 在中下
   战斗焦点使用左侧 Player、右侧 Target／TargetTarget 横向组与下方垂直计时栈；
   DoiteDPS 双排移至左上独立监控带，再衔接姿态／技能栏。完整焦点布局仍是一次性
-  preset；Field Kit v2.2 把
+  preset；Field Kit v2.3 把
   Bar 6、左卷袋、右双槽与检测到的 ArchiTotem 直接相对锚到 Bar 1，使整组共享
   一个移动根，但不使用维护循环重写位置或 scale。
 - 目标客户端继续以 `1920×1080` 输出，当前显示截图为 `2560×1440`，存在
@@ -241,7 +242,8 @@
   `20 UI`，其余 v1.9 profile、popup 与 provider 行为不变；bridge-v2.1 修正
   AutoBar 配置 Tooltip 缺失说明与嵌套布局回调的持久错位，但 `0.05s` 延迟仍产生
   一帧可见跳动；bridge-v2.2 改为独立更新零延迟排队、`SetupVisual` 同事件立即
-  收敛，不改变可见几何。
+  收敛，但实机发现配置页打开边界仍会留下自由坐标；bridge-v2.3 先同步恢复缓存的
+  已验证锚点，再于零延迟事件按稳定几何重算，不改变可见几何。
   用户随后提供 `376×427 RGB` 截图
   `4d29a262…e942`，指出 AutoBar 原生向左线性 popup 穿过并遮挡主格，并授权修改；
   同时要求考虑消耗品袋与饰品袋吸附。AEUI `0.8.2`／`fieldkit-contract=1.2` 只在
@@ -406,26 +408,27 @@
 | `AB.SLOT.STATE` | `P2 / scoped` | highlight／active／equipped／icon tint／cooldown／按键动画的真实覆盖顺序已冻结 | 基底 P6 已验证；如需独立换肤再写悬停／激活覆盖合同，不生产假 disabled cell |
 | `AB.ENDCAP.GRYPHON` | `P2 / direction-locked` | pfUI 左右端帽对象、64 UI 默认能力；用户确认的 V3 preset 默认关闭 | `AB.SLOT／RAIL` 后另行授权可选端帽正文 |
 | `AB.STANCE／PET` | `P1` | Bar `11／12` 与 provider 状态已审计 | 职业最少／最多数量和自动施法实机排版 |
-| `AB.CONSUMABLE.RACK／POCKET／POPUP` | `P5 / runtime-asset-v1.5 / bridge-v2.2 / pending-game-validation / 1/5` | [source](../../../assets/source/actionbars/ab-consumable-kit/ActionConsumableKit_Master_v1.png)／[runtime manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_RuntimeManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；TGA `c48f6292…320e`、像素 `658f826f…e30d` 不变；24 个逻辑类别、当前可用类别动态显示、最大 `4×6`；external drawer 支持 `1–24` 个当前主格；绑定底边比主栏低 `20 UI`。v2.2 保留空说明修复；独立 `ButtonsUpdate` 零延迟排队，`SetupVisual` 同事件取消并立即回锚 | `/reload` 悬停配置页全部分类确认无 line 211 错误；连续点击不同配置控件确认卷袋始终固定在主栏左侧且无可见跳出。再确认“大奶黑牛”当前 13 格、动态边界、候选 `1／6／7／12`、NATIVE 与非 exact 回退 |
-| `AB.CONSUMABLE.GROUP` | `P5 / runtime-asset-v1.5 / bridge-v2.2 / pending-game-validation / 1/5` | 仅精确 `24 Button / 4×6 / 推荐 profile` 显示三组分隔，不创建三段文字；少于 24 个当前主格时隐藏分隔但保留 external drawer；旧 AEUI 满格显示仅在存在备份且签名完全匹配时一次迁移；v2.2 不改 profile | 实机确认库存变化时外壳动态收缩／扩展、无文字且少于 24 格无错误分隔；验证抽屉、手动数字 item ID 与非 exact 原生回退 |
-| `AB.TRINKET.DOCK` | `P5 / runtime-asset-v1.5 / bridge-v2.2 / pending-game-validation / 4/5` | [source](../../../assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png)／[runtime manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；TGA `3614d9a8…f455`、像素 `0961d750…aef` 不变；主栏右侧 `8 UI` 强绑定并与消耗品共用低 `20 UI` 的底线，Queue／换装／候选不变；v2.2 不改 TrinketMenu | `/reload` 验证双槽与消耗品同步下移、拖动松手回位、候选向外、横／竖／scale 与 Queue 行为保持；不执行 attempt 5 |
-| `AB.TRINKET.MENU` | `P5 / runtime-asset-v1.5 / bridge-v2.2 / pending-game-validation / 4/5` | C 九宫格与 B 候选插页像素不变；候选 `0／1／8／30` display `9/9 pass`、换装与动态层仍归 provider；v2.2 不替代 TrinketMenu 行为 | 实机验证候选图标、左右键换槽、Queue、菜单向右外展、独立 scale／方向及 provider 缺失 fail-open |
+| `AB.CONSUMABLE.RACK／POCKET／POPUP` | `P5 / runtime-asset-v1.5 / bridge-v2.3 / pending-game-validation / 1/5` | [source](../../../assets/source/actionbars/ab-consumable-kit/ActionConsumableKit_Master_v1.png)／[runtime manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_RuntimeManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；TGA `c48f6292…320e`、像素 `658f826f…e30d` 不变；24 个逻辑类别、当前可用类别动态显示、最大 `4×6`；external drawer 支持 `1–24` 个当前主格；绑定底边比主栏低 `20 UI`。v2.3 保留空说明修复；`SetupVisual` 与完整配置 `OnShow` 都先同事件恢复缓存锚点，再零延迟重算稳定几何 | `/reload` 连续开关配置页确认卷袋始终固定在主栏左侧且无可见跳出；悬停全部分类确认无 line 211 错误并连续点击不同配置控件。再确认“大奶黑牛”当前 13 格、动态边界、候选 `1／6／7／12`、NATIVE 与非 exact 回退 |
+| `AB.CONSUMABLE.GROUP` | `P5 / runtime-asset-v1.5 / bridge-v2.3 / pending-game-validation / 1/5` | 仅精确 `24 Button / 4×6 / 推荐 profile` 显示三组分隔，不创建三段文字；少于 24 个当前主格时隐藏分隔但保留 external drawer；旧 AEUI 满格显示仅在存在备份且签名完全匹配时一次迁移；v2.3 不改 profile | 实机确认库存变化时外壳动态收缩／扩展、无文字且少于 24 格无错误分隔；验证抽屉、手动数字 item ID 与非 exact 原生回退 |
+| `AB.TRINKET.DOCK` | `P5 / runtime-asset-v1.5 / bridge-v2.3 / pending-game-validation / 4/5` | [source](../../../assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png)／[runtime manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；TGA `3614d9a8…f455`、像素 `0961d750…aef` 不变；主栏右侧 `8 UI` 强绑定并与消耗品共用低 `20 UI` 的底线，Queue／换装／候选不变；v2.3 不改 TrinketMenu | `/reload` 验证双槽与消耗品同步下移、拖动松手回位、候选向外、横／竖／scale 与 Queue 行为保持；不执行 attempt 5 |
+| `AB.TRINKET.MENU` | `P5 / runtime-asset-v1.5 / bridge-v2.3 / pending-game-validation / 4/5` | C 九宫格与 B 候选插页像素不变；候选 `0／1／8／30` display `9/9 pass`、换装与动态层仍归 provider；v2.3 不替代 TrinketMenu 行为 | 实机验证候选图标、左右键换槽、Queue、菜单向右外展、独立 scale／方向及 provider 缺失 fail-open |
 | `AB.FOCUS.UNITFRAMES` | `P5 / runtime-v2.3 / pending-game-validation` | Player／Target 为 `240×60 / 0.8`、`(-160,485)／(105,485)`；TargetTarget 保持 `240×60 / 0.68` 并以 `LEFT → Target RIGHT +8 UI` 中线依附。三框配置与 live health／power FontString 均强制为客户端 `STANDARD_TEXT_FONT / OUTLINE / 18 UI`，并在 provider `UpdateConfig` 后重施；Aura `23 UI`、真实 `size+7` 步进每排 `8` 枚，Target 16 Debuff 双排到施法条预览净空 `3 px` | `/reload` 验证三框实际渲染均为系统字形且清晰放大，并在 `/pfui` 应用／unlock 后仍保持；再验证长名字、卷袋净空、TargetTarget、Aura 八枚满行与 Boss 双排 |
 | `AB.FOCUS.CASTBAR` | `P5 / runtime-v2.3 / pending-game-validation`；v1.4／v1.5 `game-geometry-failed` | 玩家／目标／Focus 真实对象；玩家／目标施法仍为 `260×12 / 1.0`，共用 `x=0`，分别落在 `y=316／300`；Focus 仍跟随自身 Frame，状态与动态层不重绘 | 实机验证放大后的读数、延迟区、可打断状态、与 Swing 同轴且三排不重叠、Boss Debuff 净空及 provider 缺失 fail-open |
 | `AB.FOCUS.SWING` | `P5 / runtime-v2.3 / pending-game-validation`；v1.4／v1.5 `game-geometry-failed` | 主手／副手／ranged 真对象；主手／ranged 仍为 `260×12 / 1.0`、`BOTTOM (0,284)`，副手同尺寸以 `2 UI` 间距紧贴其下；无维护循环 | 实机验证近战双条、远程复用、攻速变化、与上方两排施法同轴且不重叠及中央视野 |
 | `AB.DOITEDPS.TIMELINE` | `P5 / runtime-v2.3 / pending-game-validation`；v1.4／v1.5 `game-geometry-failed` | `318×46 UI` provider 根与 `178×22 UI` 资源排保持 `0.82`，整个 union 上移 `32 UI` 至 `TOPLEFT (850,-615)`；启用、锁定、战斗显隐、Forecast、资源和冷却行为不变 | 实机验证上下两排与 Player Buff 保持净空、锁定态鼠标穿透、显隐和 provider 缺失 fail-open |
-| `AB.TOTEM.ARCHITOTEM` | `P5 / bridge-v2.2 / pending-game-validation` | [work](work/ACTION.BARS.FOCUS.V1.md)；真实闭合 `212×32 UI`、Air 最大 `212×224 UI` union；绑定态随 Bar 1，垂直 offset 保持 `-39 UI`，拖动回位，`unbind` 恢复；provider 行为不变；v2.2 不改 ArchiTotem | 与 V11 同轮实机复测施放、右键、hover、七层候选、拖动／锁定、Recall、预设、`bind／unbind` 与缺失／非萨满 fail-open |
+| `AB.TOTEM.ARCHITOTEM` | `P5 / bridge-v2.3 / pending-game-validation` | [work](work/ACTION.BARS.FOCUS.V1.md)；真实闭合 `212×32 UI`、Air 最大 `212×224 UI` union；绑定态随 Bar 1，垂直 offset 保持 `-39 UI`，拖动回位，`unbind` 恢复；provider 行为不变；v2.3 不改 ArchiTotem | 与 V11 同轮实机复测施放、右键、hover、七层候选、拖动／锁定、Recall、预设、`bind／unbind` 与缺失／非萨满 fail-open |
 | `AB.MOVER／CONFIG` | `P5 / sidebar-group-v1.0 / pending-game-validation` | pfUI `UpdateMovable`／unlock 生命周期已接入；组合态不删除 Bar 2／4／5／3 movable，只在 drag 创建后把 Bar 2 扩展为 union mover并隐藏其余三把手；Bar 6／TargetTarget 原逻辑不变 | 实机开关 unlock、滚轮缩放、拖动、居中复位与退出，确认单 mover、无 `drag=nil`、其他 mover 不退化 |
 | `AB.SIDEBARS.GROUP` | `P5 / runtime-v1.0 / pending-game-validation` | 用户已确认 V11：Bar 2／4／5／3 按 `Paging → Vertical → Left → Right` 映射为 `2×2` 四块，每块 `3×4`、总体 `6×8`，icon `20`、spacing `1`、初始 scale `1.2`、gap `6 UI`；只对“大奶黑牛 - Basin of Stars”exact 四列签名自动迁移，按角色备份并可逆恢复；内容配置仍逐栏独立；runtime display `3/3 pass` | `/reload` 验证右侧高度、右缘净空、四栏阅读顺序和 48 个原动作；unlock 只见一个 group mover，滚轮／拖动同步；`/aeui sidebars unbind` 精确恢复旧四列，再 `bind／home` 验证可逆性 |
 
 ## 已接受方向与运行时证据
 
-- AEUI `0.8.22`／Field Kit bridge-v2.2：ActionBars SHA
-  `6c1b54af…7078`、Bootstrap SHA `3c62eaee…cec4`、TOC SHA
-  `f8327129…fd38`。Field Kit Lua smoke 模拟 AutoBar 真实
-  `ButtonsUpdate → provider handle restore → SetupVisual post-hook` 顺序，并在每轮
-  `SetupVisual` 返回后立即确认组合锚点、零残留调度事件；独立 `ButtonsUpdate`
-  的零延迟下一事件路径也单独通过。七个 zhCN 缺失说明、一个未知空说明与原生非空说明
+- AEUI `0.8.23`／Field Kit bridge-v2.3：ActionBars SHA
+  `f22feaae…92de`、Bootstrap SHA `c6139255…18cb`、TOC SHA
+  `b90b2a9f…f800`。Field Kit Lua smoke 模拟 AutoBar 真实
+  `ButtonsUpdate → provider handle restore → SetupVisual post-hook` 顺序，以及配置页在
+  嵌套 `SetupVisual` 后再次写入自由坐标的完整 `AutoBarConfig.OnShow` 边界；两条后置
+  钩子返回前都确认已同步恢复缓存的 Bar 1 锚点，随后零延迟事件按稳定几何重算。
+  独立 `ButtonsUpdate` 的零延迟下一事件路径也单独通过。七个 zhCN 缺失说明、一个未知空说明与原生非空说明
   的 Tooltip 拼接回归继续通过。Action Bars 四个 Lua smoke、Field Kit runtime
   `9/9＋10/10`、Action Slot／Rail／Sidebar contracts 与 repository contract 均
   pass。fresh-checkout package `status=pass`、violations `0`、report SHA
@@ -706,16 +709,16 @@
    （SHA `dc9615ac…4d5d`）与同目录 P6 evidence JSON（SHA `73a8f942…0d0b`）；
    静态截图与用户交互确认的证明范围保持分离。
 2. `AB.FIELDKIT.V1` 保持 `runtime-exported / P5`，当前为
-   `fieldkit-contract=2.2 / pending-game-validation`。两张视觉 runtime manifest 仍为
+   `fieldkit-contract=2.3 / pending-game-validation`。两张视觉 runtime manifest 仍为
    `runtime-asset-v1.5`；source SHA `82dd2260…c012`／`623f29c5…a2419` 与 runtime
-   TGA SHA `3614d9a8…f455`／`c48f6292…320e` 均未改变。bridge-v2.2 延续停靠、
+   TGA SHA `3614d9a8…f455`／`c48f6292…320e` 均未改变。bridge-v2.3 延续停靠、
    popup guard 与 mover 生命周期，并把 AutoBar 默认显示改为保留 24 类逻辑槽、
    仅展示当前可用类别；外置抽屉不再要求 24 个主格同时可见，并让消耗品与饰品
    底边共同落在主栏底边下 `20 UI`；只为缺失分类说明提供运行时兼容文本。独立
-   `ButtonsUpdate` 在下一次零延迟事件重施，`SetupVisual` 则在返回前取消排队并
-   同事件恢复锚点，避免 provider 临时位置被渲染。TrinketMenu Queue／
+   `ButtonsUpdate` 在下一次零延迟事件重施；`SetupVisual` 与完整配置 `OnShow` 都在
+   返回前先恢复最后一次成功的组合锚点，下一帧才按稳定几何重算。TrinketMenu Queue／
    换装、ArchiTotem 行为均不替代。P4→当前 ImageGen `0`，原循环仍止于 `4/5` 与 `1/5`。
-3. Combat Focus 当前共享 AEUI `0.8.22` entrypoint，仍为
+3. Combat Focus 当前共享 AEUI `0.8.23` entrypoint，仍为
    `focus-layout-contract=2.3`／profile v14。
    `/reload` 会把仍匹配完整旧签名的 v7／v8／v9／v10／v11 游戏坐标 profile、
    仍使用旧全局 unit face／`14 UI` 的 exact v12 profile，以及完整匹配上一版系统
@@ -732,7 +735,7 @@
    Player Cast／Target Cast／Swing 全部同轴、依次纵排且均为 `260×12 / 1.0`，
    DoiteDPS 上下两排作为整体上移 `32 UI` 后不压 Player Buff。
 4. Field Kit、Combat Focus 与已确认的四栏组合在 V11 同轮复测：先确认
-   `/aeui status` 含 `version 0.8.22`、`fieldkit-contract=2.2`、
+   `/aeui status` 含 `version 0.8.23`、`fieldkit-contract=2.3`、
    `autobar-config-descriptions=repaired`、
    `autobar-config-description-fixes=7`、
    `focus-layout-contract=2.3`、`focus-layout-unit-font-live=19`、
@@ -748,8 +751,9 @@
    再确认左侧库存自适应卷袋—中央 `12×2` 动作条—右水平双饰品保持原 x，左右
    两组共同下移 `20 UI` 且底边对齐；
    “大奶黑牛”当前应只显示 13 个有物品类别，库存变化时外壳动态收缩／扩展，
-   且无三段文字；打开 AutoBar 配置页逐类悬停，确认不再出现
-   `AutoBarConfig.lua:211`，再连续点击多个任意配置控件，确认卷袋始终停在主动作条
+   且无三段文字；先连续开关 AutoBar 配置页，确认打开动作本身不会把卷袋留在
+   provider 自由坐标；再逐类悬停确认不再出现 `AutoBarConfig.lua:211`，并连续点击
+   多个任意配置控件，确认卷袋始终停在主动作条
    左侧，既不交替错位，也不再出现先跳出、后回位的可见闪动；验证 popup `1／6／7／12`、跨格保持／
    `0.30s` 切换、四种 popup mode、
    TrinketMenu `0／1／8／30` 候选、左右键换槽、Queue、ArchiTotem 施放／候选／
@@ -762,7 +766,7 @@
    （SHA `5e89c6e5…12942`）与同目录 P6 evidence JSON（SHA
    `2d48b8fb…0be3`）；静态截图与用户对完整六项交互／布局清单的确认范围保持
    分离。Rail runtime TGA、display、功能合同与 P6 证据均未改变；manifest 只同步
-   共享 AEUI `0.8.22` adapter／bootstrap／TOC 哈希，P5→P6 ImageGen `0`。
+   共享 AEUI `0.8.23` adapter／bootstrap／TOC 哈希，P5→P6 ImageGen `0`。
 6. Rail 若要进入 `P6-C`，必须先在现存 work 中形成组件专属的精确 keep／delete
    inventory，排除共享 `ActionBars.lua`、Character V3 锁定基准及其他未完成
    Action Bars 组件依赖，并向用户展示、取得明确批准；当前不清理 ignored

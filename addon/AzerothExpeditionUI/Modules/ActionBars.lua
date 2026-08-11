@@ -13,7 +13,7 @@ ActionBars.railTexturePath = addon.media.root .. "ActionBars\\ActionRailV1"
 ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
-ActionBars.fieldKitRuntimeContract = "2.2"
+ActionBars.fieldKitRuntimeContract = "2.3"
 ActionBars.focusLayoutRuntimeContract = "2.3"
 ActionBars.focusLayoutVersion = 14
 ActionBars.focusLayoutBackupVersion = 1
@@ -70,10 +70,11 @@ ActionBars.popupDrawerGap = 6
 ActionBars.popupDrawerMaxRows = 6
 ActionBars.popupIntentDelay = 0.30
 ActionBars.popupIntentEvent = "AEUI_AutoBarPopupIntent"
--- A standalone ButtonsUpdate settles on AceEvent's next OnUpdate tick. When
--- it runs inside AutoBar_SetupVisual, that function's post-hook cancels this
--- zero-delay event and restores the bound anchor before the current input
--- event can render the provider's temporary saved position.
+-- A provider layout can write its saved free position before newly anchored
+-- buttons have usable geometry. Restore the last proven Combat Deck anchor
+-- in the same input event, then use AceEvent's next OnUpdate tick to rebuild
+-- against settled geometry. AutoBarConfig.OnShow repeats the immediate guard
+-- after its whole initialization chain has completed.
 ActionBars.autoBarRefreshDelay = 0
 ActionBars.autoBarRefreshEvent = "AEUI_AutoBarFieldKitRefresh"
 ActionBars.archiTotemDockXOffset = -10
@@ -2771,7 +2772,11 @@ function ActionBars:OpenAutoBarConfig()
     return false, "AutoBar is not enabled. Enable it at character select, then /reload."
   end
   self:RepairAutoBarCategoryDescriptions()
+  self:InstallFieldKitHooks()
   toggle()
+  if not self.autoBarConfigShowHooked then
+    self:SettleAutoBarFieldKitRefresh()
+  end
   self.autoBarPresetStatus = "config-opened"
   return true,
     "AutoBar config opened. Use /aeui autobar apply for the AEUI compact preset."
@@ -3355,6 +3360,7 @@ function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
     end
     self.autoBarDockApplied = false
     self.autoBarUndockedAnchors = nil
+    self.autoBarBoundAnchors = nil
     self.consumableDockStatus = enabled and "free" or "disabled"
     return false
   end
@@ -3393,6 +3399,21 @@ function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
     "CENTER", main, "BOTTOMLEFT", xOffset, yOffset
   )
   self.autoBarDockApplied = true
+  self.autoBarBoundAnchors = CaptureFrameAnchors(handle)
+  self.consumableDockStatus = "left"
+  return true
+end
+
+function ActionBars:RestoreAutoBarBoundAnchor()
+  if not FieldKitEnabled() or not FieldKitBound() or
+    not self.autoBarDockApplied or not self.autoBarBoundAnchors
+  then
+    return false
+  end
+  local handle = GetGlobal("AutoBarAnchorFrameHandle")
+  if not RestoreFrameAnchors(handle, self.autoBarBoundAnchors) then
+    return false
+  end
   self.consumableDockStatus = "left"
   return true
 end
@@ -4374,15 +4395,8 @@ function ActionBars:CommitAutoBarFieldKitRefresh()
 end
 
 function ActionBars:SettleAutoBarFieldKitRefresh()
-  local provider = self.autoBarRefreshProvider or AutoBar
-  if provider and type(provider.CancelScheduledEvent) == "function" then
-    pcall(
-      provider.CancelScheduledEvent,
-      provider,
-      self.autoBarRefreshEvent
-    )
-  end
-  self:CommitAutoBarFieldKitRefresh()
+  self:RestoreAutoBarBoundAnchor()
+  return self:QueueAutoBarFieldKitRefresh()
 end
 
 function ActionBars:QueueAutoBarFieldKitRefresh()
@@ -4457,6 +4471,15 @@ function ActionBars:InstallFieldKitHooks()
     then
       self.autoBarSetupHooked = true
       hooksecurefunc("AutoBar_SetupVisual", function()
+        ActionBars:SettleAutoBarFieldKitRefresh()
+      end)
+    end
+    if not self.autoBarConfigShowHooked and
+      type(AutoBarConfig) == "table" and
+      type(AutoBarConfig.OnShow) == "function"
+    then
+      self.autoBarConfigShowHooked = true
+      hooksecurefunc(AutoBarConfig, "OnShow", function()
         ActionBars:SettleAutoBarFieldKitRefresh()
       end)
     end
@@ -4547,6 +4570,8 @@ function ActionBars:Initialize()
   self.autoBarPopupIntentButton = nil
   self.autoBarRefreshProvider = nil
   self.autoBarRefreshStatus = "ready"
+  self.autoBarDockApplied = false
+  self.autoBarBoundAnchors = nil
   self.autoBarCategoryDescriptionStatus = "pending"
   self.autoBarCategoryDescriptionsRepaired = 0
   self.autoBarGrouped = false

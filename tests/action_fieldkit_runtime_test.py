@@ -112,12 +112,12 @@ def main() -> None:
         assert manifest["addon_entrypoints"]["addon_version"] == (
             builder.addon_version(ROOT / builder.TOC_REL)
         )
-        assert manifest["addon_entrypoints"]["addon_version"] == "0.8.22"
+        assert manifest["addon_entrypoints"]["addon_version"] == "0.8.23"
         if key == "consumable":
             assert manifest["adapter"]["provider_layout_refresh"].startswith(
-                "zero-delay standalone ButtonsUpdate"
+                "same-event SetupVisual and AutoBarConfig.OnShow guards"
             )
-            assert "same-event SetupVisual post-hook" in manifest["adapter"][
+            assert "settled button geometry" in manifest["adapter"][
                 "provider_layout_refresh"
             ]
             assert "missing or empty" in manifest["adapter"][
@@ -171,7 +171,7 @@ def main() -> None:
         assert result["summary"]["violation_count"] == 0
 
     for required in (
-        'ActionBars.fieldKitRuntimeContract = "2.2"',
+        'ActionBars.fieldKitRuntimeContract = "2.3"',
         "ActionBars.fieldKitDockYOffset = -20",
         "ActionTrinketKitV1",
         "ActionConsumableKitV1",
@@ -198,11 +198,13 @@ def main() -> None:
         "QueueAutoBarFieldKitRefresh",
         "CommitAutoBarFieldKitRefresh",
         "SettleAutoBarFieldKitRefresh",
+        "RestoreAutoBarBoundAnchor",
         "autoBarRefreshDelay = 0",
         "AutoBar.SetPopupButton = self.autoBarSetPopupButtonWrapper",
         'self.autoBarPopupHover = "intent-bridge"',
         "InstallFieldKitHooks",
         'hooksecurefunc("AutoBar_SetupVisual"',
+        'hooksecurefunc(AutoBarConfig, "OnShow"',
         'hooksecurefunc(AutoBar, "ButtonsUpdate"',
         'hooksecurefunc(AutoBar, "UpdatePopupButtons"',
         'hooksecurefunc(AutoBar, "DragStop"',
