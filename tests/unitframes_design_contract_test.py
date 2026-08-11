@@ -107,7 +107,7 @@ def main() -> None:
 
     work = WORK.read_text(encoding="utf-8")
     normalized_work = " ".join(work.split())
-    assert "UF-A1 V3-A exhausted / UF-A1 V3-B repair-prepared / attempt 3 queued" in work
+    assert "UF-A1 V3-A exhausted / UF-A1 V3-B repair-prepared / attempt 4 queued" in work
     assert "accepted UF-PRIMARY-V3-SIM-V1 / 2026-08-11" in work
     assert "production / authorized / 2026-08-11" in work
     assert "完整性结论：`pass-final`" in work
@@ -220,6 +220,18 @@ def main() -> None:
             "final opening is at least 1200 by 180",
             "Compress the dark damaged right brass tab",
             "zero hard-core structure",
+        ),
+    )
+    target_r3 = extract_fenced_body(work, "### `UF-A1 V3-B final.r3`")
+    assert_clauses(
+        target_r3,
+        (
+            "changes only overall bbox proportion and the two vertical side thicknesses",
+            "measures 1380 by 246",
+            "reduce total width by about 96 pixels",
+            "normalized opening currently spans about x 80..1208",
+            "move the left inner edge about 38 pixels left",
+            "zero hard safe-core structure",
         ),
     )
     bars = extract_fenced_body(work, "### `UF-B1 V2 final`")
