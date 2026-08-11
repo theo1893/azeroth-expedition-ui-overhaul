@@ -108,7 +108,7 @@ def main() -> None:
 
     work = WORK.read_text(encoding="utf-8")
     normalized_work = " ".join(work.split())
-    assert "UF-A1 V3-A exhausted / UF-A1 V3-B exhausted / UF-B1 attempt 2 rejected-repairable" in work
+    assert "UF-A1 V3-A exhausted / UF-A1 V3-B exhausted / UF-B1 candidate-ready / user-review" in work
     assert "accepted UF-PRIMARY-V3-SIM-V1 / 2026-08-11" in work
     assert "production / authorized / 2026-08-11" in work
     assert "完整性结论：`pass-final`" in work
@@ -125,6 +125,9 @@ def main() -> None:
     assert "90627" in work
     assert "22649" in work
     assert "B1 确定性候选门禁" in work
+    assert "candidate-ready / internal-pass / user-review" in work
+    assert "8d19ffe95d5314b463d88be793568667aa555460a955364a636e6ddc76508e1f" in work
+    assert "0668eddbb6c7644312eecc3c1d03f555b937d5307e48444ca520a6674cb387f1" in work
 
     player = extract_fenced_body(work, "### `UF-A1 V3-A final`")
     assert_clauses(

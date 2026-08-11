@@ -7,13 +7,13 @@
   `UF.BAR.HEALTH.FILL`、`UF.BAR.POWER.FILL`
 - 后续组件：`UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.STATE.*`
 - 当前版本：`UF-A1 V3-A final.r4 terminal`／`UF-A1 V3-B final.r4 terminal`／`UF-B1 V2 final.r2`
-- 子状态：`UF-A1 V3-A exhausted / UF-A1 V3-B exhausted / UF-B1 attempt 2 rejected-repairable`
+- 子状态：`UF-A1 V3-A exhausted / UF-A1 V3-B exhausted / UF-B1 candidate-ready / user-review`
 - 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 当前操作：`edit`
+- 当前操作：`review`
 - 生成前模拟：`UF-PRIMARY-V3-SIM-V1`，deterministic local geometry
 - 模拟 ImageGen：`0/0`
-- 正式生产：`authorized / 2026-08-11`；A `5/5`、B `5/5`、B1 `2/5`，
+- 正式生产：`authorized / 2026-08-11`；A `5/5`、B `5/5`、B1 `3/5 stopped-on-pass`，
   最坏总计 `15` 次实际 ImageGen
 - 流程错误：`4`（审查器首次物理连通扫描性能错误；attempt 4 child 在 provider
   已生成后尝试 Pillow RGB 转换但环境无 Pillow，随后确认原图本身已为 RGB 并
@@ -517,6 +517,32 @@
   `f7b4d0eaed9f8138e466f801c17e36424ca5a22c8b29dcccd688edbb6ca3c930`；
   technical `7c026c29…b007f`；real-layout `ad03d52c…95119`。
 
+### Bars attempt 3 — `UF-B1 V2 final.r2`
+
+- 固定正文 commit：`03c65d6`；正文 SHA-256
+  `5f3469d0bd85165014b5ce46df3e65f540b405977322510a9b7fefc1d486fe4f`；
+  完整 child prompt SHA-256
+  `738833a94d386516a1dc4086f5d7572b560b5b34b542c6e229bf56e662c86a6c`。
+- 固定输入：同段紧邻 B1 attempt 2 `1024²` raw `de8a0f2…57990` 作为唯一
+  Image 1；没有 A／B／旧 UF-B1 像素。
+- 固定执行器 session：`019ff025-52ee-7482-82b8-d0ba19258c02`；provider
+  result：`ig_0129cf2eb265054c016a7aeaee19188191a0c0fbee9153c245.png`。
+- provider untouched raw：
+  `generated/unitframes/bars/V2/attempt-03/provider-raw.png`，`1254×1254 RGB`，
+  SHA-256 `54e3f9bf86b44c2cafd962ddd6608147e1f4c48341397cc827118f9078936060`。
+- 同轴正方形归一化审查输入：
+  `generated/unitframes/bars/V2/attempt-03/raw.png`，`1024×1024 RGB`，SHA-256
+  `161910f75db4f809b2669491b91a3c8077b6d50b22453feeecf7729284f514e1`；
+  child log SHA-256 `978e62bf…2748`。
+- 实际 ImageGen `1`，B1 累计 `3/5`；返回唯一 provider 图，无新增流程错误。
+- review report SHA-256
+  `6e19b234032843ea9f35ea39bfff8ddc258d5814b70faa35365dde3f032cf798`；
+  technical `05c9e513…1adc`；real-layout `e9848b61…02ca`。
+- 通过后候选：Health `health-candidate.png` SHA-256
+  `8d19ffe95d5314b463d88be793568667aa555460a955364a636e6ddc76508e1f`；
+  Power `power-candidate.png` SHA-256
+  `0668eddbb6c7644312eecc3c1d03f555b937d5307e48444ca520a6674cb387f1`。
+
 ## 审查记录
 
 - 语义／物理：Player／Target 是各自完整的连续外壳；Health／Power 是独立
@@ -723,6 +749,24 @@
 - 结论：`candidate-rejected / repairable`；B1 `2/5`，无 candidate/source/
   runtime。attempt 3 只用同段紧邻 attempt 2 `1024²` raw 作为唯一 Image 1。
 
+### Bars attempt 3 内审 — `UF-B1 V2 final.r2`
+
+- 客观结果：`9/9 pass`，`first_failure=null`。恰好两个连通 swatch、其他材料
+  `0 px`、Health 在上、Power 在下；mid gap `249 px`，六向 isolation 最低
+  `101 px`，覆盖率 `99.61%/99.72%`。
+- 比例：Health bbox `664×316 = 2.101266:1`，误差 `5.063291%`；Power bbox
+  `664×221 = 3.004525:1`，误差 `24.886878%`。二者均在预先冻结的 `25%`
+  source 门禁内，可按合同确定性归一化为 `256×128`／`256×64` candidate。
+- 中性与乘色：Health core chroma mean/q95 `7.77/11`、Power `6.18/9`；
+  明度 `119.47/123.16`。runtime 中心偏差 `0.70/0.86`，stddev
+  `7.65/5.68`，Health 更粗、Power 更静；四资源真实乘色保持清楚。
+- 视觉内审：两块都是无框、无标签的哑光灰阶矿物颜料；无中心热点、玻璃光、
+  斜纹或现代进度条效果。真实 `200×25 + 200×4` 排版中纹理可见但不压过名称、
+  数值和经典资源色，符合已确认方向。
+- 结论：`candidate-ready / internal-pass / user-review`。循环按通过即停终止于
+  B1 `3/5`；attempt 4/5 不调用。candidate 仍非 source/runtime，不修改 addon，
+  等待用户接受真实排版视觉。
+
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
@@ -740,6 +784,7 @@
 | `UF-A1 V3-B final.r4` attempt 5 | session `019fefef…076e`；raw `92a9889…97231`；review `983d564…4f5d7`；B `5/5` | ratio/aniso 通过；safe `22649`、isolation `68/72` 失败，工业式长边／端部仍在；`repair-budget-exhausted`；无 candidate/source/runtime | 禁止第六次；保留终态 review，继续独立 B1；最终等待用户决定是否为 A/B 重开合同 |
 | `UF-B1 V2 final` attempt 1 | session `019ff008…d61d`；provider raw `30cb1ff…1d691`；1024² raw `748c81a…a7abc`；review `090354b…a882f`；B1 `1/5` | `8/9` 通过；唯一失败为 Health `2.81:1`、Power `9.07:1` 的 source ratio；无 candidate/source/runtime | `final.r1` 只把两块重绘到 x `256..768`、Health y `128..384`、Power y `640..768`；冻结灰阶、明度、材质和隔离 |
 | `UF-B1 V2 final.r1` attempt 2 | session `019ff018…5e87`；provider raw `e39be44…4ef7e`；1024² raw `de8a0f2…57990`；review `f7b4d0e…3c930`；B1 `2/5` | Health ratio `5.40%` 通过；唯一失败为 Power `5.355:1`、误差 `33.87%`；其他 `8/9` 门禁继续通过；无 candidate/source/runtime | `final.r2` 冻结 Health，只把 Power 保持宽 `664` 并增高为约 `166`，目标 x `180..844/y680..846` |
+| `UF-B1 V2 final.r2` attempt 3 | session `019ff025…8c02`；provider raw `54e3f9b…36060`；1024² raw `161910f…514e1`；review `6e19b23…cf798`；B1 `3/5` | `9/9 pass`；Health／Power candidate `8d19ffe…08e1f`／`0668edd…87f1`；`candidate-ready / internal-pass`；无 source/runtime/addon | 通过即停，不调用 attempt 4/5；等待用户审阅真实排版并明确接受或拒绝 |
 
 ## 最终执行正文
 
@@ -1725,7 +1770,7 @@ colour or third object.
 |---|---|---:|---:|---|
 | `UF-A1 V3-A final.r4` | `repair-budget-exhausted / candidate-rejected` | `5/5` | `2` | 禁止第六次；等待最终用户审查 |
 | `UF-A1 V3-B final.r4` | `repair-budget-exhausted / candidate-rejected` | `5/5` | `1` | 禁止第六次；等待最终用户审查 |
-| `UF-B1 V2 final.r2` | `repair-prepared / attempt 3 queued` | `2/5` | `1` | commit 后只以上一 B1 attempt 2 `1024²` raw 为 Image 1 |
+| `UF-B1 V2 final.r2` | `candidate-ready / internal-pass / user-review` | `3/5 stop` | `1` | 不调用 attempt 4/5；等待用户审阅真实排版 |
 
 每次实际候选的 session／result、raw／candidate／真实排版路径与 SHA、第一失败
 门禁、保留区和下一正文都继续写入本文件；无生成证据的流程错误另表记录。
@@ -1751,9 +1796,8 @@ colour or third object.
 
 ## 下一门禁
 
-提交 `UF-B1 V2 final.r2 / repair-prepared` 后，以固定执行器启动 B1 attempt 3：
-只上传 B1 attempt 2 的 `1024²` raw 作为 Image 1，不上传 A／B 或任何旧失败
-像素；冻结 Health，只把 Power 修成 `664×166 / 4:1`。若通过全部客观门禁即停
-并等待用户视觉审查；否则仅可继续使用同段紧邻前稿，B1 总上限 `5` 次实际
-ImageGen。A／B 均已耗尽且不得第六次；当前仍禁止创建 source/runtime、修改
-addon 或跨段复用。
+等待用户审阅 B1 attempt 3 的真实排版与两张 candidate。若用户接受，才进入
+P4：从 exact candidate 确定性导出 source，再生成 `64×32` Health、`64×16`
+Power runtime、乘色验证与 addon 媒体接入；若拒绝且明确允许继续，B1 仍剩
+attempt 4/5，但只能用同段紧邻 attempt 3 raw。A／B 均已耗尽且不得第六次；
+当前仍禁止创建 source/runtime、修改 addon 或跨段复用。

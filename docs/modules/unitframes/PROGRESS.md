@@ -7,7 +7,7 @@
 - `UF-A1 V3-B final` Target 完整外壳：
   `P3 / repair-budget-exhausted / candidate-rejected / 5/5`。
 - `UF-B1 V2 final` Health／Power 灰阶填充纹：
-  `P3 / attempt 2 rejected-repairable / final.r2 repair-prepared / 2/5`。
+  `P3 / candidate-ready / internal-pass / user-review / 3/5 stop`。
 - `UF-A2` TargetTarget／Focus：继续暂停；既有物件身份方向不变，尚无正式
   source。Hover／Aggro 仍计划由接受外壳 Alpha 确定性派生。
 - 当前只处理资源重绘、后处理合同与未来替换路径；没有修改另一台设备上的
@@ -23,7 +23,7 @@
   A／B 固定 Image 1／2、同段紧邻前稿有界 edit、B1 首次无图片、每段
   `5` 次实际生成及最坏 `15` 次预算。流程错误不占额度；跨段与旧失败像素
   禁止复用。A attempts 1–5 与 B attempts 1–5 均已完成并耗尽；B1 attempts
-  1–2 已完成。
+  1–3 已完成并在通过后停止。
 
 ## V3 结构合同
 
@@ -76,7 +76,7 @@
   下一门禁；V1／V2 的逐稿全文继续由 Git 历史保存。
 - `UF-A1 V3-A`、`UF-A1 V3-B`、`UF-B1 V2` 每段最多 `5` 次实际
   `imagegen-0-143-0`，最坏合计 `15` 次；当前 A `5/5`、B `5/5`、B1
-  `2/5`。
+  `3/5 stopped-on-pass`。
 - 三段 final 已吸收用户确认的可见结论并通过 `pass-final` 自包含预检；
   正式生产授权已独立取得，按 A→B→B1 顺序执行。
 - 流程错误无生成证据时单独记录，不占额度。旧 V1／V2 失败像素禁止作为新段
@@ -161,6 +161,13 @@
 - `UF-B1 V2 final.r2` 冻结 Health 与全部已通过属性，只把 Power 保持
   x `180..844` 的 `664 px` 宽并扩为 y `680..846` 的 `166 px` 高，即 `4:1`；
   attempt 3 只用同段紧邻 attempt 2 `1024²` raw 作为 Image 1。
+- B1 attempt 3 已通过 `9/9` 门禁并按通过即停：Health `664×316`、ratio error
+  `5.063291%`；Power `664×221`、ratio error `24.886878%`，均在冻结的
+  `25%` 内。其他材料 `0 px`，min isolation `101 px`，mid gap `249 px`；
+  中性、明度、中心与 Health-coarser／Power-calmer 层级均通过。
+- candidate Health SHA `8d19ffe9…08e1f`、Power SHA `0668eddb…87f1`；真实
+  排版 SHA `e9848b61…02ca`。它们仍不是 source/runtime，attempt 4/5 未调用，
+  addon 未修改。
 
 ## 历史终态
 
@@ -174,7 +181,7 @@
 
 ## 下一门禁
 
-提交 `UF-B1 V2 final.r2 / repair-prepared` 后执行 B1 attempt 3，只以上一 B1
-attempt 2 `1024²` raw 作为 Image 1。通过即停，否则后续仍只用同段紧邻 raw，最多
-`5` 次。A／B 已耗尽且不得第六次；当前禁止创建 source/runtime、修改 addon、
-跨段复用或复用旧失败像素。
+等待用户审阅 B1 attempt 3 真实排版。接受后才进入 P4/P5 的 exact candidate
+导出、`64×32`／`64×16` runtime 与 addon 接入；拒绝且明确继续时才可使用剩余
+attempt 4/5，并只以上一 B1 raw 作输入。A／B 已耗尽且不得第六次；当前禁止
+创建 source/runtime、修改 addon、跨段复用或复用旧失败像素。
