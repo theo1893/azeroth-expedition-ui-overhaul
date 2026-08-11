@@ -265,8 +265,79 @@ end
 local autoBarConfigOnShowCalls = 0
 local providerConfigOnShowReanchors = false
 AutoBarConfig = {}
+local function NewAutoBarConfigFrame(name, points)
+  local frame = NewFrame(name, nil, { points = points or {} })
+  _G[name] = frame
+  return frame
+end
+
+AutoBarConfigFrame = NewAutoBarConfigFrame("AutoBarConfigFrame")
+for index = 1, 5 do
+  local relative = index == 1 and AutoBarConfigFrame or
+    _G["AutoBarConfigFrameTab" .. (index - 1)]
+  NewAutoBarConfigFrame("AutoBarConfigFrameTab" .. index, {
+    { "TOPLEFT", relative, index == 1 and "BOTTOMLEFT" or "TOPRIGHT",
+      index == 1 and 150 or 0, index == 1 and 9 or 0 },
+  })
+end
+AutoBarConfigFrameResetDisplay =
+  NewAutoBarConfigFrame("AutoBarConfigFrameResetDisplay")
+AutoBarConfigFrameRevertButton =
+  NewAutoBarConfigFrame("AutoBarConfigFrameRevertButton")
+AutoBarConfigFrameSlotsView =
+  NewAutoBarConfigFrame("AutoBarConfigFrameSlotsView")
+AutoBarConfigFrameSlots = NewAutoBarConfigFrame(
+  "AutoBarConfigFrameSlots",
+  {
+    { "BOTTOMLEFT", AutoBarConfigFrame, "BOTTOMLEFT", 10, 45 },
+    { "BOTTOMRIGHT", AutoBarConfigFrame, "BOTTOMRIGHT", -10, 45 },
+  }
+)
+for index = 1, 4 do
+  NewAutoBarConfigFrame("AutoBarConfigFrameSlotsEdit" .. index)
+end
+AutoBarConfigFrameLayout1 =
+  NewAutoBarConfigFrame("AutoBarConfigFrameLayout1")
+AutoBarConfigFrameLayout2 =
+  NewAutoBarConfigFrame("AutoBarConfigFrameLayout2")
+for _, name in pairs({ "Bar", "Buttons", "Popup", "Profile" }) do
+  NewAutoBarConfigFrame("AutoBarConfigFrame" .. name)
+end
+
+function AutoBarConfig:TabButtonOnClick(tabId)
+  AutoBar_Config[AutoBar.currentPlayer].display.selectedTab = tabId
+  local panels = { "Slots", "Bar", "Buttons", "Popup", "Profile" }
+  for index, name in pairs(panels) do
+    local frame = _G["AutoBarConfigFrame" .. name]
+    if index == tabId then frame:Show() else frame:Hide() end
+  end
+  if tabId == 1 or tabId == 5 then
+    AutoBarConfigFrameSlotsView:Show()
+  else
+    AutoBarConfigFrameSlotsView:Hide()
+  end
+  if tabId == 1 then
+    AutoBarConfigFrameLayout1:Hide()
+    AutoBarConfigFrameLayout2:Hide()
+  else
+    AutoBarConfigFrameLayout1:Show()
+    AutoBarConfigFrameLayout2:Show()
+  end
+end
+
 function AutoBarConfig.OnShow()
   autoBarConfigOnShowCalls = autoBarConfigOnShowCalls + 1
+  for index = 1, 5 do
+    _G["AutoBarConfigFrameTab" .. index]:Show()
+  end
+  AutoBarConfigFrameResetDisplay:Show()
+  AutoBarConfigFrameRevertButton:Show()
+  for index = 1, 4 do
+    _G["AutoBarConfigFrameSlotsEdit" .. index]:Show()
+  end
+  AutoBarConfig:TabButtonOnClick(
+    AutoBar_Config[AutoBar.currentPlayer].display.selectedTab or 1
+  )
   AutoBar_SetupVisual()
   if providerConfigOnShowReanchors then
     AutoBarAnchorFrameHandle:ClearAllPoints()
@@ -281,23 +352,51 @@ function AutoBarConfig_Toggle()
   AutoBarConfig.OnShow()
 end
 
+local providerClassButtons = {}
+for index = 1, 24 do
+  providerClassButtons[index] = {}
+end
+providerClassButtons[1] = { "CLASS_DEFAULT" }
+
 AutoBar_Config = {
   [AutoBar.currentPlayer] = {
-    profile = { layout = 2, layoutProfile = "_SHARED1" },
+    profile = {
+      useCharacter = true,
+      useShared = false,
+      useClass = false,
+      useBasic = false,
+      layout = 2,
+      layoutProfile = "_SHARED1",
+      edit = 1,
+      editing = AutoBar.currentPlayer,
+      shared = "_SHARED1",
+    },
     buttons = { [1] = { "ORIGINAL" } },
     display = {
-      rows = 1,
-      columns = 24,
+      rows = 6,
+      columns = 4,
+      gapping = 9,
       position = { x = 321, y = 654 },
       popupToTop = true,
+      selectedTab = 2,
     },
   },
+  ["_MAGE"] = {
+    profile = {},
+    buttons = providerClassButtons,
+    display = {},
+  },
 }
-AutoBarProfile = {}
+AutoBarProfile = { CLASSPROFILE = "_MAGE" }
 function AutoBarProfile.Initialize() end
 function AutoBarProfile:ProfileChanged()
-  AutoBar.buttons = AutoBar_Config[AutoBar.currentPlayer].buttons
-  AutoBar.display = AutoBar_Config[AutoBar.currentPlayer].display
+  local current = AutoBar_Config[AutoBar.currentPlayer]
+  if current.profile.useClass then
+    AutoBar.buttons = AutoBar_Config[self.CLASSPROFILE].buttons
+  else
+    AutoBar.buttons = current.buttons
+  end
+  AutoBar.display = current.display
   AutoBar_SetupVisual()
 end
 
@@ -478,7 +577,7 @@ local module = assert(AzerothExpeditionUI.modules.ActionBars)
 module:Initialize()
 module:Apply()
 
-assert(module.fieldKitRuntimeContract == "2.3")
+assert(module.fieldKitRuntimeContract == "2.4")
 assert(module.autoBarCategoryDescriptionStatus == "repaired")
 assert(module.autoBarCategoryDescriptionsRepaired == 8)
 assert(AutoBar_Category_Info.POTION_SPELLPOWER.description ==
@@ -501,7 +600,46 @@ for _, info in pairs(AutoBar_Category_Info) do
   local tooltip = "category: " .. info.description
   assert(type(tooltip) == "string")
 end
-assert(AutoBar_Config[AutoBar.currentPlayer].display.rows == 1)
+local initialConfig = AutoBar_Config[AutoBar.currentPlayer]
+local initialClassConfig = AutoBar_Config[AutoBarProfile.CLASSPROFILE]
+assert(initialConfig.display.rows == 6)
+assert(initialConfig.display.gapping == 9)
+assert(initialConfig.display.selectedTab == 1)
+assert(initialConfig.profile.useCharacter == false)
+assert(initialConfig.profile.useShared == false)
+assert(initialConfig.profile.useClass == true)
+assert(initialConfig.profile.useBasic == false)
+assert(initialConfig.profile.edit == 3)
+assert(initialConfig.profile.editing == AutoBarProfile.CLASSPROFILE)
+assert(initialConfig.buttons[1][1] == "ORIGINAL")
+assert(initialClassConfig.buttons[1][1] == "HEALPOTIONS")
+assert(initialClassConfig.buttons[16][1] == 13446)
+assert(initialClassConfig.buttons[16][2] == 20008)
+assert(module.autoBarClassScopeStatus == "class-only")
+assert(module.autoBarConfigCurationStatus == "class-only")
+assert(AutoBarConfigFrameTab1.shown == true)
+assert(AutoBarConfigFrameTab2.shown == false)
+assert(AutoBarConfigFrameTab3.shown == true)
+assert(AutoBarConfigFrameTab4.shown == false)
+assert(AutoBarConfigFrameTab5.shown == false)
+assert(AutoBarConfigFrameResetDisplay.shown == false)
+assert(AutoBarConfigFrameRevertButton.shown == false)
+assert(AutoBarConfigFrameSlotsView.shown == false)
+for index = 1, 4 do
+  assert(_G["AutoBarConfigFrameSlotsEdit" .. index].shown == false)
+end
+assert(AutoBarConfigFrameLayout1.shown == false)
+assert(AutoBarConfigFrameLayout2.shown == false)
+assert(AutoBarConfigFrameTab3.decorativePoints[1][2] ==
+  AutoBarConfigFrameTab1)
+assert(AutoBarConfigFrameSlots.decorativePoints[1][1] == "TOPLEFT")
+assert(AutoBarConfigFrameSlots.decorativePoints[2][1] == "TOPRIGHT")
+assert(AzerothExpeditionUI.db.actionbars.autoBarClassScopePlayerVersions[
+  AutoBar.currentPlayer
+] == 1)
+assert(AzerothExpeditionUI.db.actionbars.autoBarClassScopeClassVersions[
+  AutoBarProfile.CLASSPROFILE
+] == 1)
 assert(AzerothExpeditionUI.db.actionbars.autoBarDefaultModeVersions == nil)
 assert(module.actionBarStackStatus == "12x2-bound")
 assert(pfUI.bars[6].decorativePoints[1][1] == "BOTTOM")
@@ -611,7 +749,7 @@ end
 assert(TrinketMenuOptions == optionsSnapshot)
 assert(TrinketMenuPerOptions == perOptionsSnapshot)
 assert(TrinketMenuQueue.Enabled == queueSnapshot)
-assert(installedHooks == 9)
+assert(installedHooks == 10)
 
 local hookedButtonsUpdate = AutoBar.ButtonsUpdate
 local hookedPopupUpdate = AutoBar.UpdatePopupButtons
@@ -619,18 +757,21 @@ local hookedOrient = TrinketMenu.OrientWindows
 local hookedBuild = TrinketMenu.BuildMenu
 local hookedAutoBarDragStop = AutoBar.DragStop
 local hookedAutoBarConfigOnShow = AutoBarConfig.OnShow
+local hookedAutoBarConfigTab = AutoBarConfig.TabButtonOnClick
 local hookedTrinketMouseUp = TrinketMenu.MainFrame_OnMouseUp
 local wrappedSetPopupButton = AutoBar.SetPopupButton
 module:Apply()
-assert(installedHooks == 9)
+assert(installedHooks == 10)
 assert(AutoBar.ButtonsUpdate == hookedButtonsUpdate)
 assert(AutoBar.UpdatePopupButtons == hookedPopupUpdate)
 assert(TrinketMenu.OrientWindows == hookedOrient)
 assert(TrinketMenu.BuildMenu == hookedBuild)
 assert(AutoBar.DragStop == hookedAutoBarDragStop)
 assert(AutoBarConfig.OnShow == hookedAutoBarConfigOnShow)
+assert(AutoBarConfig.TabButtonOnClick == hookedAutoBarConfigTab)
 assert(TrinketMenu.MainFrame_OnMouseUp == hookedTrinketMouseUp)
 assert(AutoBar.SetPopupButton == wrappedSetPopupButton)
+autoBarSetupCalls = 0
 
 AutoBar:ButtonsUpdate()
 assert(AutoBar.providerButtonsUpdateCalls == 1)
@@ -682,6 +823,12 @@ providerSetupReanchors = false
 providerConfigOnShowReanchors = true
 AutoBarConfig.OnShow()
 assert(autoBarConfigOnShowCalls == 1)
+assert(AutoBarConfigFrameTab2.shown == false)
+assert(AutoBarConfigFrameTab4.shown == false)
+assert(AutoBarConfigFrameTab5.shown == false)
+assert(AutoBarConfigFrameResetDisplay.shown == false)
+assert(AutoBarConfigFrameRevertButton.shown == false)
+assert(AutoBarConfigFrameSlotsView.shown == false)
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
@@ -815,6 +962,13 @@ local opened, openMessage = module:OpenAutoBarConfig()
 assert(opened == true)
 assert(autoBarConfigToggleCalls == 1)
 assert(autoBarConfigOnShowCalls == 2)
+assert(AutoBarConfigFrameTab2.shown == false)
+assert(AutoBarConfigFrameTab4.shown == false)
+assert(AutoBarConfigFrameTab5.shown == false)
+AutoBarConfig:TabButtonOnClick(4)
+assert(AutoBar_Config[AutoBar.currentPlayer].display.selectedTab == 1)
+assert(AutoBarConfigFramePopup.shown == false)
+assert(AutoBarConfigFrameSlots.shown == true)
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])
 assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
 AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
@@ -824,9 +978,10 @@ local applied, applyMessage = module:ApplyRecommendedAutoBarProfile()
 assert(applied == true)
 assert(string.find(applyMessage, "4x6", 1, true))
 local appliedConfig = AutoBar_Config[AutoBar.currentPlayer]
-assert(appliedConfig.profile.useCharacter == true)
+local appliedClassConfig = AutoBar_Config[AutoBarProfile.CLASSPROFILE]
+assert(appliedConfig.profile.useCharacter == false)
 assert(appliedConfig.profile.useShared == false)
-assert(appliedConfig.profile.useClass == false)
+assert(appliedConfig.profile.useClass == true)
 assert(appliedConfig.profile.useBasic == false)
 assert(appliedConfig.profile.layout == 1)
 assert(appliedConfig.profile.layoutProfile == AutoBar.currentPlayer)
@@ -842,17 +997,25 @@ assert(appliedConfig.display.hideDragHandle == 1)
 assert(appliedConfig.display.popupToTop == true)
 assert(appliedConfig.display.position.x == 321)
 assert(appliedConfig.display.position.y == 654)
-assert(appliedConfig.buttons[1][1] == "HEALPOTIONS")
-assert(appliedConfig.buttons[3][1] == "RUNES")
-assert(appliedConfig.buttons[16][1] == 13446)
-assert(appliedConfig.buttons[16][2] == 20008)
+assert(appliedConfig.profile.edit == 3)
+assert(appliedConfig.profile.editing == AutoBarProfile.CLASSPROFILE)
+assert(appliedConfig.buttons[1][1] == "ORIGINAL")
+assert(appliedClassConfig.buttons[1][1] == "HEALPOTIONS")
+assert(appliedClassConfig.buttons[3][1] == "RUNES")
+assert(appliedClassConfig.buttons[16][1] == 13446)
+assert(appliedClassConfig.buttons[16][2] == 20008)
 local savedBackup = AzerothExpeditionUI.db.actionbars.autoBarBackups[
   AutoBar.currentPlayer
 ]
 assert(savedBackup)
 assert(savedBackup ~= appliedConfig)
 assert(savedBackup.buttons[1][1] == "ORIGINAL")
-assert(savedBackup.display.rows == 1)
+assert(savedBackup.display.rows == 6)
+assert(savedBackup.display.gapping == 9)
+local scopeBackup = AzerothExpeditionUI.db.actionbars.
+  autoBarClassScopePlayerBackups[AutoBar.currentPlayer]
+assert(scopeBackup.profile.useCharacter == true)
+assert(scopeBackup.profile.useClass == false)
 assert(AzerothExpeditionUI.db.actionbars.autoBarDefaultModeVersions[
   AutoBar.currentPlayer
 ] == 1)
@@ -896,7 +1059,21 @@ local restored, restoreMessage = module:RestoreAutoBarProfile()
 assert(restored == true)
 assert(string.find(restoreMessage, "restored", 1, true))
 assert(AutoBar_Config[AutoBar.currentPlayer].buttons[1][1] == "ORIGINAL")
-assert(AutoBar_Config[AutoBar.currentPlayer].display.rows == 1)
+assert(AutoBar_Config[AutoBar.currentPlayer].display.rows == 6)
+assert(AutoBar_Config[AutoBar.currentPlayer].display.gapping == 9)
+assert(AutoBar_Config[AutoBar.currentPlayer].profile.useCharacter == true)
+assert(AutoBar_Config[AutoBar.currentPlayer].profile.useClass == false)
+assert(AutoBar_Config[AutoBarProfile.CLASSPROFILE].buttons[1][1] ==
+  "CLASS_DEFAULT")
+assert(AzerothExpeditionUI.db.actionbars.autoBarClassScopeOptOut[
+  AutoBar.currentPlayer
+] == true)
+assert(module.autoBarConfigCurationStatus == "native")
+assert(AutoBarConfigFrameTab2.shown == true)
+assert(AutoBarConfigFrameTab4.shown == true)
+assert(AutoBarConfigFrameTab5.shown == true)
+assert(AutoBarConfigFrameResetDisplay.shown == true)
+assert(AutoBarConfigFrameRevertButton.shown == true)
 assert(AzerothExpeditionUI.db.actionbars.autoBarBackups[
   AutoBar.currentPlayer
 ] == nil)
@@ -1018,7 +1195,9 @@ module:Apply()
 assert(module.autoBarFieldKitStatus == "missing")
 assert(module.trinketFieldKitStatus == "missing")
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "fieldkit%-contract=2%.3"))
+assert(string.find(status, "fieldkit%-contract=2%.4"))
+assert(string.find(status, "autobar%-slot%-scope=restored"))
+assert(string.find(status, "autobar%-config%-ui=native"))
 assert(string.find(status, "autobar%-config%-descriptions=repaired"))
 assert(string.find(status, "autobar%-config%-description%-fixes=8"))
 assert(string.find(status, "fieldkit%-binding=bound"))

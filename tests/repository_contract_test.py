@@ -280,14 +280,14 @@ def main() -> None:
         encoding="utf-8-sig"
     )
     assert "## RequiredDeps: pfUI" in aeui_toc
-    assert "## Version: 0.8.23" in aeui_toc
+    assert "## Version: 0.8.24" in aeui_toc
     assert "Core\\Bootstrap.lua" in aeui_toc
     assert "Modules\\ActionBars.lua" in aeui_toc
     assert "Modules\\Chat.lua" in aeui_toc
     assert "Modules\\QuestVisualTheme.lua" in aeui_toc
     assert "Modules\\Quests.lua" in aeui_toc
     bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(encoding="utf-8")
-    assert 'addon.version = "0.8.23"' in bootstrap
+    assert 'addon.version = "0.8.24"' in bootstrap
     assert "actionbar-runtime=" in bootstrap
     assert 'if command == "actionbars" then' in bootstrap
     assert '/aeui autobar [open|apply|restore|popup]' in bootstrap
@@ -323,7 +323,7 @@ def main() -> None:
     assert "button:SetParent" not in actionbars_source
     assert "button:SetWidth" not in actionbars_source
     assert "button:SetHeight" not in actionbars_source
-    assert 'ActionBars.fieldKitRuntimeContract = "2.3"' in actionbars_source
+    assert 'ActionBars.fieldKitRuntimeContract = "2.4"' in actionbars_source
     assert 'ActionBars.focusLayoutRuntimeContract = "2.3"' in actionbars_source
     assert "ActionBars.focusLayoutVersion = 14" in actionbars_source
     assert 'ActionBars.focusCoordinateSpace = "game-native-v1"' in actionbars_source
@@ -427,6 +427,10 @@ def main() -> None:
     assert 'texture = button:CreateTexture(nil, "BACKGROUND")' not in actionbars_source
     assert "ApplyRecommendedAutoBarProfile" in actionbars_source
     assert "RestoreAutoBarProfile" in actionbars_source
+    assert "MigrateAutoBarClassScope" in actionbars_source
+    assert "ApplyAutoBarConfigCuration" in actionbars_source
+    assert "RestoreAutoBarConfigCuration" in actionbars_source
+    assert 'hooksecurefunc(AutoBarConfig, "TabButtonOnClick"' in actionbars_source
     assert "semantic-no-labels" in actionbars_source
     assert "aeuiConsumableKitLabelsV1" in actionbars_source
     assert 'local names = { "应急", "增益", "工具" }' not in actionbars_source
@@ -470,8 +474,18 @@ def main() -> None:
         ] is is_consumable
         assert fieldkit["adapter"][
             "autobar_enabled_or_profile_applied"
-        ] is False
+        ] is is_consumable
+        assert fieldkit["adapter"]["autobar_enabled_automatically"] is False
+        assert fieldkit["adapter"][
+            "autobar_slot_profile_migrated_automatically"
+        ] is is_consumable
         assert fieldkit["adapter"]["automatic_profile_mutation"] is is_consumable
+        if is_consumable:
+            curation = fieldkit["adapter"]["provider_config_curation"]
+            assert curation["visible_tabs"] == ["Slots", "Buttons"]
+            assert curation["hidden_tabs"] == ["Bar", "Popup", "Profile"]
+            assert curation["slot_scope"] == "class-only"
+            assert curation["hidden_actions"] == ["ResetDisplay", "Revert"]
         assert fieldkit["package_validation"]["status"] == "pass"
         assert fieldkit["game_validation"]["status"] == "pending-retest"
 

@@ -13,7 +13,7 @@ ActionBars.railTexturePath = addon.media.root .. "ActionBars\\ActionRailV1"
 ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
-ActionBars.fieldKitRuntimeContract = "2.3"
+ActionBars.fieldKitRuntimeContract = "2.4"
 ActionBars.focusLayoutRuntimeContract = "2.3"
 ActionBars.focusLayoutVersion = 14
 ActionBars.focusLayoutBackupVersion = 1
@@ -21,6 +21,7 @@ ActionBars.sideBarGroupRuntimeContract = "1.0"
 ActionBars.sideBarGroupLayoutVersion = 1
 ActionBars.sideBarGroupBackupVersion = 1
 ActionBars.autoBarDefaultModeVersion = 1
+ActionBars.autoBarClassScopeVersion = 1
 ActionBars.focusCoordinateSpace = "game-native-v1"
 ActionBars.comfortUIScaleVersion = 2
 ActionBars.comfortUIScaleTier = 8
@@ -2765,6 +2766,340 @@ local function AutoBarProfileMatches()
   return true
 end
 
+local function AutoBarOptionEnabled(value)
+  return value == true or value == 1 or value == "1"
+end
+
+local function AutoBarConfigCurationEnabled()
+  return addon.db and addon.db.actionbars and
+    addon.db.actionbars.enabled
+end
+
+local function GetAutoBarClassProfileKey()
+  if type(AutoBarProfile) ~= "table" then
+    return nil
+  end
+  local classProfile = AutoBarProfile.CLASSPROFILE
+  if not classProfile then
+    local class = GetPlayerClassToken()
+    if class then
+      classProfile = "_" .. class
+    end
+  end
+  return classProfile
+end
+
+local function AutoBarClassScopeActive(profile, classProfile)
+  return type(profile) == "table" and classProfile and
+    not AutoBarOptionEnabled(profile.useCharacter) and
+    not AutoBarOptionEnabled(profile.useShared) and
+    AutoBarOptionEnabled(profile.useClass) and
+    not AutoBarOptionEnabled(profile.useBasic) and
+    tonumber(profile.edit) == 3
+end
+
+local function AutoBarSelectedTab()
+  local player = AutoBar and AutoBar.currentPlayer
+  local current = player and AutoBar_Config and AutoBar_Config[player]
+  local display = current and current.display
+  return display and tonumber(display.selectedTab) or 1
+end
+
+local function SetAutoBarConfigFrameShown(name, shown)
+  local frame = GetGlobal(name)
+  if not frame then
+    return false
+  end
+  if shown and frame.Show then
+    frame:Show()
+  elseif not shown and frame.Hide then
+    frame:Hide()
+  else
+    return false
+  end
+  return true
+end
+
+function ActionBars:RestoreAutoBarConfigCuration()
+  local layout = self.autoBarConfigOriginalLayout
+  if layout then
+    RestoreFrameAnchors(GetGlobal("AutoBarConfigFrameTab3"), layout.tab3)
+    RestoreFrameAnchors(GetGlobal("AutoBarConfigFrameSlots"), layout.slots)
+  end
+
+  for _, name in pairs({
+    "AutoBarConfigFrameTab1",
+    "AutoBarConfigFrameTab2",
+    "AutoBarConfigFrameTab3",
+    "AutoBarConfigFrameTab4",
+    "AutoBarConfigFrameTab5",
+    "AutoBarConfigFrameResetDisplay",
+    "AutoBarConfigFrameRevertButton",
+  }) do
+    SetAutoBarConfigFrameShown(name, true)
+  end
+
+  local selectedTab = AutoBarSelectedTab()
+  if not self.autoBarConfigSelecting and AutoBarConfig and
+    type(AutoBarConfig.TabButtonOnClick) == "function" and
+    selectedTab >= 1 and selectedTab <= 5
+  then
+    self.autoBarConfigSelecting = true
+    pcall(AutoBarConfig.TabButtonOnClick, AutoBarConfig, selectedTab)
+    self.autoBarConfigSelecting = false
+  end
+  SetAutoBarConfigFrameShown(
+    "AutoBarConfigFrameSlotsView",
+    selectedTab == 1 or selectedTab == 5
+  )
+  SetAutoBarConfigFrameShown(
+    "AutoBarConfigFrameLayout1",
+    selectedTab ~= 1
+  )
+  SetAutoBarConfigFrameShown(
+    "AutoBarConfigFrameLayout2",
+    selectedTab ~= 1
+  )
+
+  local player = AutoBar and AutoBar.currentPlayer
+  local current = player and AutoBar_Config and AutoBar_Config[player]
+  local profile = current and current.profile
+  SetAutoBarConfigFrameShown(
+    "AutoBarConfigFrameSlotsEdit1",
+    profile and AutoBarOptionEnabled(profile.useCharacter)
+  )
+  SetAutoBarConfigFrameShown(
+    "AutoBarConfigFrameSlotsEdit2",
+    profile and AutoBarOptionEnabled(profile.useShared)
+  )
+  SetAutoBarConfigFrameShown(
+    "AutoBarConfigFrameSlotsEdit3",
+    profile and AutoBarOptionEnabled(profile.useClass)
+  )
+  SetAutoBarConfigFrameShown(
+    "AutoBarConfigFrameSlotsEdit4",
+    profile and AutoBarOptionEnabled(profile.useBasic)
+  )
+  self.autoBarConfigCurationStatus = "native"
+  return true
+end
+
+function ActionBars:ApplyAutoBarConfigCuration()
+  local configFrame = GetGlobal("AutoBarConfigFrame")
+  local tab1 = GetGlobal("AutoBarConfigFrameTab1")
+  local tab3 = GetGlobal("AutoBarConfigFrameTab3")
+  local slots = GetGlobal("AutoBarConfigFrameSlots")
+  if not configFrame or not tab1 or not tab3 or not slots then
+    self.autoBarConfigCurationStatus = "unavailable"
+    return false
+  end
+
+  local player = AutoBar and AutoBar.currentPlayer
+  local current = player and AutoBar_Config and AutoBar_Config[player]
+  local profile = current and current.profile
+  local classProfile = GetAutoBarClassProfileKey()
+  local database = addon.db and addon.db.actionbars
+  local optOut = database and database.autoBarClassScopeOptOut
+  if not AutoBarConfigCurationEnabled() or
+    (player and type(optOut) == "table" and optOut[player]) or
+    not AutoBarClassScopeActive(profile, classProfile)
+  then
+    return self:RestoreAutoBarConfigCuration()
+  end
+
+  if not self.autoBarConfigOriginalLayout then
+    self.autoBarConfigOriginalLayout = {
+      tab3 = CaptureFrameAnchors(tab3),
+      slots = CaptureFrameAnchors(slots),
+    }
+  end
+
+  local selectedTab = AutoBarSelectedTab()
+  if selectedTab ~= 1 and selectedTab ~= 3 then
+    current.display = current.display or {}
+    current.display.selectedTab = 1
+    if not self.autoBarConfigSelecting and AutoBarConfig and
+      type(AutoBarConfig.TabButtonOnClick) == "function"
+    then
+      self.autoBarConfigSelecting = true
+      pcall(AutoBarConfig.TabButtonOnClick, AutoBarConfig, 1)
+      self.autoBarConfigSelecting = false
+    end
+  end
+
+  if tab3.ClearAllPoints and tab3.SetPoint then
+    tab3:ClearAllPoints()
+    tab3:SetPoint("TOPLEFT", tab1, "TOPRIGHT", 0, 0)
+  end
+  if slots.ClearAllPoints and slots.SetPoint then
+    slots:ClearAllPoints()
+    slots:SetPoint("TOPLEFT", configFrame, "TOPLEFT", 10, -100)
+    slots:SetPoint("TOPRIGHT", configFrame, "TOPRIGHT", -10, -100)
+  end
+
+  SetAutoBarConfigFrameShown("AutoBarConfigFrameTab1", true)
+  SetAutoBarConfigFrameShown("AutoBarConfigFrameTab3", true)
+  for _, name in pairs({
+    "AutoBarConfigFrameTab2",
+    "AutoBarConfigFrameTab4",
+    "AutoBarConfigFrameTab5",
+    "AutoBarConfigFrameResetDisplay",
+    "AutoBarConfigFrameRevertButton",
+    "AutoBarConfigFrameSlotsView",
+    "AutoBarConfigFrameSlotsEdit1",
+    "AutoBarConfigFrameSlotsEdit2",
+    "AutoBarConfigFrameSlotsEdit3",
+    "AutoBarConfigFrameSlotsEdit4",
+    "AutoBarConfigFrameLayout1",
+    "AutoBarConfigFrameLayout2",
+  }) do
+    SetAutoBarConfigFrameShown(name, false)
+  end
+
+  self.autoBarConfigCurationStatus = "class-only"
+  return true
+end
+
+function ActionBars:MigrateAutoBarClassScope()
+  if self.autoBarClassScopeUpdating or not AutoBarConfigCurationEnabled() or
+    not AutoBar or type(AutoBar_Config) ~= "table" or
+    type(AutoBarProfile) ~= "table" or
+    type(AutoBarProfile.Initialize) ~= "function"
+  then
+    return false
+  end
+
+  local database = addon.db and addon.db.actionbars
+  local player = AutoBar.currentPlayer
+  local current = player and AutoBar_Config[player]
+  if not database or not player or type(current) ~= "table" then
+    self.autoBarClassScopeStatus = "unavailable"
+    return false
+  end
+
+  database.autoBarClassScopeOptOut =
+    database.autoBarClassScopeOptOut or {}
+  if database.autoBarClassScopeOptOut[player] then
+    self.autoBarClassScopeStatus = "restored"
+    return false
+  end
+
+  self.autoBarClassScopeUpdating = true
+  local initialized = pcall(AutoBarProfile.Initialize)
+  local classProfile = initialized and GetAutoBarClassProfileKey() or nil
+  local classConfig = classProfile and AutoBar_Config[classProfile]
+  if not initialized or not classProfile or type(classConfig) ~= "table" then
+    self.autoBarClassScopeUpdating = false
+    self.autoBarClassScopeStatus = "unavailable"
+    return false
+  end
+
+  local currentBefore = CopyPlainTable(current)
+  current.profile = current.profile or {}
+  current.display = current.display or {}
+  local profile = current.profile
+  local alreadyActive = AutoBarClassScopeActive(profile, classProfile)
+  local selectedTabChanged = false
+  if tonumber(current.display.selectedTab) ~= 1 and
+    tonumber(current.display.selectedTab) ~= 3
+  then
+    current.display.selectedTab = 1
+    selectedTabChanged = true
+  end
+
+  database.autoBarClassScopePlayerVersions =
+    database.autoBarClassScopePlayerVersions or {}
+  database.autoBarClassScopeClassVersions =
+    database.autoBarClassScopeClassVersions or {}
+  database.autoBarClassScopeProfiles =
+    database.autoBarClassScopeProfiles or {}
+  database.autoBarClassScopePlayerBackups =
+    database.autoBarClassScopePlayerBackups or {}
+  database.autoBarClassScopeBackups =
+    database.autoBarClassScopeBackups or {}
+
+  local playerVersions = database.autoBarClassScopePlayerVersions
+  local classVersions = database.autoBarClassScopeClassVersions
+  if alreadyActive and
+    playerVersions[player] == self.autoBarClassScopeVersion and
+    classVersions[classProfile] == self.autoBarClassScopeVersion
+  then
+    self.autoBarClassScopeUpdating = false
+    self.autoBarClassScopeStatus = "class-only"
+    if selectedTabChanged then
+      self:ApplyAutoBarConfigCuration()
+    end
+    return false
+  end
+
+  local classBefore = CopyPlainTable(classConfig)
+  local seededClass = classVersions[classProfile] ~= self.autoBarClassScopeVersion
+  local sourceButtons = type(AutoBar.buttons) == "table" and
+    AutoBar.buttons or current.buttons
+  if seededClass and type(sourceButtons) ~= "table" then
+    AutoBar_Config[player] = currentBefore
+    self.autoBarClassScopeUpdating = false
+    self.autoBarClassScopeStatus = "buttons-unavailable"
+    return false
+  end
+
+  local madePlayerBackup = false
+  local madeClassBackup = false
+  if not database.autoBarClassScopePlayerBackups[player] then
+    local existingBackups = database.autoBarBackups
+    local existingBackup = type(existingBackups) == "table" and
+      existingBackups[player]
+    database.autoBarClassScopePlayerBackups[player] =
+      CopyPlainTable(existingBackup or currentBefore)
+    madePlayerBackup = true
+  end
+  if seededClass and not database.autoBarClassScopeBackups[classProfile] then
+    database.autoBarClassScopeBackups[classProfile] = classBefore
+    madeClassBackup = true
+  end
+  local previousProfileKey = database.autoBarClassScopeProfiles[player]
+  database.autoBarClassScopeProfiles[player] = classProfile
+
+  if seededClass then
+    classConfig.buttons = CopyPlainTable(sourceButtons)
+  end
+  profile.useCharacter = false
+  profile.useShared = false
+  profile.useClass = true
+  profile.useBasic = false
+  profile.edit = 3
+  profile.editing = classProfile
+  profile.shared = profile.shared or "_SHARED1"
+
+  local ok, refreshed, message = pcall(RefreshAutoBarProfile)
+  if not ok or not refreshed then
+    AutoBar_Config[player] = currentBefore
+    if seededClass then
+      AutoBar_Config[classProfile] = classBefore
+    end
+    if madePlayerBackup then
+      database.autoBarClassScopePlayerBackups[player] = nil
+    end
+    if madeClassBackup then
+      database.autoBarClassScopeBackups[classProfile] = nil
+    end
+    database.autoBarClassScopeProfiles[player] = previousProfileKey
+    pcall(RefreshAutoBarProfile)
+    self.autoBarClassScopeUpdating = false
+    self.autoBarClassScopeStatus = "error"
+    self.autoBarClassScopeMessage = message
+    return false
+  end
+
+  playerVersions[player] = self.autoBarClassScopeVersion
+  classVersions[classProfile] = self.autoBarClassScopeVersion
+  database.autoBarClassScopeOptOut[player] = nil
+  self.autoBarClassScopeUpdating = false
+  self.autoBarClassScopeStatus = "class-only"
+  self:ApplyAutoBarConfigCuration()
+  return not alreadyActive or seededClass or selectedTabChanged
+end
+
 function ActionBars:OpenAutoBarConfig()
   local toggle = GetGlobal("AutoBarConfig_Toggle")
   if not AutoBar or type(toggle) ~= "function" then
@@ -2773,6 +3108,8 @@ function ActionBars:OpenAutoBarConfig()
   end
   self:RepairAutoBarCategoryDescriptions()
   self:InstallFieldKitHooks()
+  self:MigrateAutoBarClassScope()
+  self:ApplyAutoBarConfigCuration()
   toggle()
   if not self.autoBarConfigShowHooked then
     self:SettleAutoBarFieldKitRefresh()
@@ -2918,24 +3255,38 @@ function ActionBars:ApplyRecommendedAutoBarProfile()
     return false, "AutoBar has not initialized the current character profile yet."
   end
 
+  local database = addon.db and addon.db.actionbars
+  if not database then
+    self.autoBarPresetStatus = "unavailable"
+    return false, "AEUI action bar settings are unavailable."
+  end
+  local initialized = pcall(AutoBarProfile.Initialize)
+  local classProfile = initialized and GetAutoBarClassProfileKey() or nil
+  local classConfig = classProfile and AutoBar_Config[classProfile]
+  if not initialized or not classProfile or type(classConfig) ~= "table" then
+    self.autoBarPresetStatus = "unavailable"
+    return false, "AutoBar has not initialized the current class profile yet."
+  end
+
   local before = CopyPlainTable(current)
+  local classBefore = CopyPlainTable(classConfig)
   local manualSlot = AutoBar.buttons and AutoBar.buttons[16]
   local profile = current.profile or {}
   current.profile = profile
-  profile.useCharacter = true
+  profile.useCharacter = false
   profile.useShared = false
-  profile.useClass = false
+  profile.useClass = true
   profile.useBasic = false
   profile.layout = 1
   profile.layoutProfile = player
-  profile.edit = 1
-  profile.editing = player
+  profile.edit = 3
+  profile.editing = classProfile
   profile.shared = profile.shared or "_SHARED1"
 
-  current.buttons = {}
+  classConfig.buttons = {}
   local class = GetPlayerClassToken()
   for index = 1, 24 do
-    current.buttons[index] =
+    classConfig.buttons[index] =
       RecommendedAutoBarSlot(index, class, manualSlot)
   end
 
@@ -2954,24 +3305,58 @@ function ActionBars:ApplyRecommendedAutoBarProfile()
   display.hideDragHandle = 1
   display.popupDisable = false
   display.popupOnShift = false
+  if tonumber(display.selectedTab) ~= 1 and
+    tonumber(display.selectedTab) ~= 3
+  then
+    display.selectedTab = 1
+  end
 
+  self.autoBarClassScopeUpdating = true
   local ok, refreshed, message = pcall(RefreshAutoBarProfile)
+  self.autoBarClassScopeUpdating = false
   if not ok or not refreshed then
     AutoBar_Config[player] = before
+    AutoBar_Config[classProfile] = classBefore
     pcall(RefreshAutoBarProfile)
     self.autoBarPresetStatus = "error"
     return false, message or "AutoBar rejected the AEUI preset; the profile was restored."
   end
 
-  addon.db.actionbars.autoBarBackups =
-    addon.db.actionbars.autoBarBackups or {}
-  if not addon.db.actionbars.autoBarBackups[player] then
-    addon.db.actionbars.autoBarBackups[player] = before
+  database.autoBarBackups = database.autoBarBackups or {}
+  if not database.autoBarBackups[player] then
+    database.autoBarBackups[player] = before
   end
+  database.autoBarClassScopePlayerVersions =
+    database.autoBarClassScopePlayerVersions or {}
+  database.autoBarClassScopeClassVersions =
+    database.autoBarClassScopeClassVersions or {}
+  database.autoBarClassScopeProfiles =
+    database.autoBarClassScopeProfiles or {}
+  database.autoBarClassScopePlayerBackups =
+    database.autoBarClassScopePlayerBackups or {}
+  database.autoBarClassScopeBackups =
+    database.autoBarClassScopeBackups or {}
+  database.autoBarClassScopeOptOut =
+    database.autoBarClassScopeOptOut or {}
+  if not database.autoBarClassScopePlayerBackups[player] then
+    database.autoBarClassScopePlayerBackups[player] =
+      CopyPlainTable(database.autoBarBackups[player] or before)
+  end
+  if not database.autoBarClassScopeBackups[classProfile] then
+    database.autoBarClassScopeBackups[classProfile] = classBefore
+  end
+  database.autoBarClassScopePlayerVersions[player] =
+    self.autoBarClassScopeVersion
+  database.autoBarClassScopeClassVersions[classProfile] =
+    self.autoBarClassScopeVersion
+  database.autoBarClassScopeProfiles[player] = classProfile
+  database.autoBarClassScopeOptOut[player] = nil
   RecordAutoBarDefaultMode(player)
+  self.autoBarClassScopeStatus = "class-only"
+  self:ApplyAutoBarConfigCuration()
   self.autoBarPresetStatus = "applied"
   return true,
-    "AEUI AutoBar compact preset applied to this character: 24 logical categories, only currently available categories shown in a dynamic grid up to 4x6, with the external popup drawer."
+    "AEUI AutoBar compact preset applied to this class: 24 logical categories, only currently available categories shown in a dynamic grid up to 4x6, with the external popup drawer."
 end
 
 function ActionBars:RestoreAutoBarProfile()
@@ -2980,30 +3365,73 @@ function ActionBars:RestoreAutoBarProfile()
     return false, "AutoBar is not enabled."
   end
   local player = AutoBar.currentPlayer
-  local backups = addon.db and addon.db.actionbars and
-    addon.db.actionbars.autoBarBackups
+  local database = addon.db and addon.db.actionbars
+  local backups = database and database.autoBarBackups
   local backup = player and backups and backups[player]
-  if type(backup) ~= "table" then
+  local scopeBackups = database and
+    database.autoBarClassScopePlayerBackups
+  local scopeBackup = player and scopeBackups and scopeBackups[player]
+  local profileKeys = database and database.autoBarClassScopeProfiles
+  local classProfile = player and profileKeys and profileKeys[player]
+  classProfile = classProfile or GetAutoBarClassProfileKey()
+  local classBackups = database and database.autoBarClassScopeBackups
+  local classBackup = classProfile and classBackups and
+    classBackups[classProfile]
+  if type(backup) ~= "table" and type(scopeBackup) ~= "table" then
     self.autoBarPresetStatus = "no-backup"
     return false, "No AEUI AutoBar backup exists for this character."
   end
 
   local before = CopyPlainTable(AutoBar_Config[player])
-  AutoBar_Config[player] = CopyPlainTable(backup)
+  local classBefore = classProfile and AutoBar_Config[classProfile] and
+    CopyPlainTable(AutoBar_Config[classProfile])
+  AutoBar_Config[player] = CopyPlainTable(scopeBackup or backup)
+  if type(classBackup) == "table" then
+    AutoBar_Config[classProfile] = CopyPlainTable(classBackup)
+  end
+  self.autoBarClassScopeUpdating = true
   local ok, refreshed, message = pcall(RefreshAutoBarProfile)
+  self.autoBarClassScopeUpdating = false
   if not ok or not refreshed then
     AutoBar_Config[player] = before
+    if classBefore then
+      AutoBar_Config[classProfile] = classBefore
+    end
     pcall(RefreshAutoBarProfile)
     self.autoBarPresetStatus = "error"
     return false, message or "AutoBar restore failed; the active profile was kept."
   end
-  backups[player] = nil
-  local versions = addon.db.actionbars.autoBarDefaultModeVersions
+  if backups then
+    backups[player] = nil
+  end
+  if scopeBackups then
+    scopeBackups[player] = nil
+  end
+  if classBackups and type(classBackup) == "table" then
+    classBackups[classProfile] = nil
+  end
+  if profileKeys then
+    profileKeys[player] = nil
+  end
+  local playerVersions = database.autoBarClassScopePlayerVersions
+  if type(playerVersions) == "table" then
+    playerVersions[player] = nil
+  end
+  local classVersions = database.autoBarClassScopeClassVersions
+  if type(classVersions) == "table" and type(classBackup) == "table" then
+    classVersions[classProfile] = nil
+  end
+  database.autoBarClassScopeOptOut =
+    database.autoBarClassScopeOptOut or {}
+  database.autoBarClassScopeOptOut[player] = true
+  local versions = database.autoBarDefaultModeVersions
   if type(versions) == "table" then
     versions[player] = nil
   end
+  self.autoBarClassScopeStatus = "restored"
+  self:RestoreAutoBarConfigCuration()
   self.autoBarPresetStatus = "restored"
-  return true, "AutoBar profile restored from the pre-AEUI backup."
+  return true, "AutoBar profile and class slots restored from the pre-AEUI backup."
 end
 
 local function NormalizePopupMode(mode)
@@ -4480,7 +4908,20 @@ function ActionBars:InstallFieldKitHooks()
     then
       self.autoBarConfigShowHooked = true
       hooksecurefunc(AutoBarConfig, "OnShow", function()
+        ActionBars:MigrateAutoBarClassScope()
+        ActionBars:ApplyAutoBarConfigCuration()
         ActionBars:SettleAutoBarFieldKitRefresh()
+      end)
+    end
+    if not self.autoBarConfigTabHooked and
+      type(AutoBarConfig) == "table" and
+      type(AutoBarConfig.TabButtonOnClick) == "function"
+    then
+      self.autoBarConfigTabHooked = true
+      hooksecurefunc(AutoBarConfig, "TabButtonOnClick", function()
+        if not ActionBars.autoBarConfigSelecting then
+          ActionBars:ApplyAutoBarConfigCuration()
+        end
       end)
     end
     if not self.autoBarButtonsHooked and
@@ -4576,6 +5017,11 @@ function ActionBars:Initialize()
   self.autoBarCategoryDescriptionsRepaired = 0
   self.autoBarGrouped = false
   self.autoBarPresetStatus = "ready"
+  self.autoBarClassScopeStatus = "pending"
+  self.autoBarClassScopeUpdating = false
+  self.autoBarConfigCurationStatus = "pending"
+  self.autoBarConfigSelecting = false
+  self.autoBarConfigOriginalLayout = nil
   self.actionBarStackStatus = "pending"
   self.sideBarGroupStatus = SideBarGroupBound() and "bound" or "free"
   self.sideBarGroupMigration = "pending"
@@ -4661,6 +5107,8 @@ function ActionBars:Apply()
   self:MigrateSideBarGroupDefault()
   self:MaintainSideBarGroup()
   self:ApplyActionBarStackPosition(enabled)
+  self:MigrateAutoBarClassScope()
+  self:ApplyAutoBarConfigCuration()
   self:MigrateAutoBarDefaultMode()
   self:ApplyAutoBarFieldKit(enabled)
   self:ApplyTrinketFieldKit(enabled)
@@ -4779,6 +5227,10 @@ function ActionBars:GetRuntimeStatus()
       tostring(self.autoBarGrouped and "semantic-no-labels" or "adaptive") ..
     ",autobar-preset=" ..
       tostring(self.autoBarPresetStatus or "ready") ..
+    ",autobar-slot-scope=" ..
+      tostring(self.autoBarClassScopeStatus or "pending") ..
+    ",autobar-config-ui=" ..
+      tostring(self.autoBarConfigCurationStatus or "pending") ..
     ",autobar-config-descriptions=" ..
       tostring(self.autoBarCategoryDescriptionStatus or "pending") ..
     ",autobar-config-description-fixes=" ..

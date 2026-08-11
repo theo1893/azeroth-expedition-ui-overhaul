@@ -914,19 +914,60 @@ def main() -> None:
                 "popup_frame_onleave_deferred_only_while_external": (
                     key == "consumable"
                 ),
+                "provider_layout_refresh": (
+                    "same-event SetupVisual and AutoBarConfig.OnShow guards "
+                    "restore the last proven bound anchor before render; a "
+                    "zero-delay refresh then rebuilds against settled button "
+                    "geometry; immediate fallback when provider scheduling is "
+                    "unavailable"
+                    if key == "consumable"
+                    else "not-applicable"
+                ),
+                "provider_runtime_category_description_compatibility": (
+                    "write localized labels only to missing or empty "
+                    "AutoBar_Category_Info descriptions; preserve native labels; "
+                    "this compatibility repair itself never writes category "
+                    "profiles or SavedVariables"
+                    if key == "consumable"
+                    else "not-applicable"
+                ),
                 "saved_variables_written": True,
                 "provider_saved_variables_written_automatically": (
                     key == "consumable"
                 ),
                 "aeui_saved_variables_written_on_drag_stop": False,
-                "autobar_enabled_or_profile_applied": False,
+                "autobar_enabled_or_profile_applied": key == "consumable",
+                "autobar_enabled_automatically": False,
+                "autobar_slot_profile_migrated_automatically": (
+                    key == "consumable"
+                ),
                 "automatic_profile_mutation": key == "consumable",
                 "automatic_profile_mutation_scope": (
-                    "one-time display-only migration from the exact prior AEUI "
-                    "4x6 full-grid signature when an AEUI pre-apply backup exists; "
-                    "otherwise none"
+                    "one-time reversible migration of the current effective 24 "
+                    "slot categories into the AutoBar class profile, with the "
+                    "current player fixed to class-only slot ownership; the exact "
+                    "prior AEUI 4x6 full-grid signature also receives its existing "
+                    "display-only compact migration"
                     if key == "consumable"
                     else "none"
+                ),
+                "provider_config_curation": (
+                    {
+                        "visible_tabs": ["Slots", "Buttons"],
+                        "hidden_tabs": ["Bar", "Popup", "Profile"],
+                        "slot_scope": "class-only",
+                        "hidden_slot_views": [
+                            "effective-composite",
+                            "character",
+                            "shared",
+                            "basic",
+                            "layer-selector",
+                        ],
+                        "hidden_actions": ["ResetDisplay", "Revert"],
+                        "done_action_preserved": True,
+                    }
+                    if key == "consumable"
+                    else "not-applicable"
                 ),
                 "optional_user_configuration": (
                     {
@@ -937,10 +978,12 @@ def main() -> None:
                             "/aeui autobar popup [auto|left|right|native]"
                         ),
                         "binding_command": "/aeui fieldkit [bind|unbind|home|status]",
-                        "scope": "current character only",
-                        "backup": (
-                            "AzerothExpeditionUIDB.actionbars.autoBarBackups"
-                        ),
+                        "scope": "class slots; current-character display",
+                        "backup": [
+                            "AzerothExpeditionUIDB.actionbars.autoBarBackups",
+                            "AzerothExpeditionUIDB.actionbars.autoBarClassScopePlayerBackups",
+                            "AzerothExpeditionUIDB.actionbars.autoBarClassScopeBackups",
+                        ],
                         "provider_enabled_automatically": False,
                     }
                     if key == "consumable"
@@ -980,16 +1023,17 @@ def main() -> None:
                 "the AutoBar popup-frame OnLeave script and transparent hover corridor return to provider state in native or signature-mismatch fallback",
                 "the AutoBar SetPopupButton wrapper delegates immediately outside the exact external drawer and commits deliberate category switches through the captured provider method",
                 (
-                    "provider drag-stop coordinates remain untouched; the only "
-                    "automatic provider SavedVariables write is the exact backed-up "
-                    "AEUI full-grid to inventory-aware compact display migration"
+                    "provider drag-stop coordinates remain untouched; automatic "
+                    "provider SavedVariables writes are limited to the reversible "
+                    "class-only slot migration and the exact backed-up AEUI full-grid "
+                    "to inventory-aware compact display migration"
                     if key == "consumable"
                     else "provider SavedVariables remain untouched by automatic strong anchoring"
                 ),
                 (
-                    "provider category configuration unless the user explicitly "
-                    "invokes /aeui autobar apply; exact backed-up prior AEUI full-grid "
-                    "display profiles migrate once to inventory-aware compact mode"
+                    "all provider item/category resolution and slot editing behavior; "
+                    "AEUI only fixes ownership to the native class layer, curates the "
+                    "visible config controls, and keeps /aeui autobar apply optional"
                     if key == "consumable"
                     else "provider configuration and SavedVariables"
                 ),

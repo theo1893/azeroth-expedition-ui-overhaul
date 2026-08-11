@@ -3,7 +3,7 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 
 addon.name = "AzerothExpeditionUI"
-addon.version = "0.8.23"
+addon.version = "0.8.24"
 addon.modules = addon.modules or {}
 addon.media = addon.media or {}
 addon.media.root = "Interface\\AddOns\\AzerothExpeditionUI\\Media\\"
@@ -19,6 +19,12 @@ local defaults = {
     combatFocusLayoutVersion = 0,
     comfortUIScaleVersion = 0,
     sideBarGroupProfiles = {},
+    autoBarClassScopePlayerVersions = {},
+    autoBarClassScopeClassVersions = {},
+    autoBarClassScopeProfiles = {},
+    autoBarClassScopePlayerBackups = {},
+    autoBarClassScopeBackups = {},
+    autoBarClassScopeOptOut = {},
   },
   chat = {
     enabled = true,

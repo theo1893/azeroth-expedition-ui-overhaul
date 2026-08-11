@@ -157,9 +157,18 @@ def main() -> None:
         assert runtime_manifest["adapter"][
             "aeui_saved_variables_written_on_drag_stop"
         ] is False
-        assert runtime_manifest["adapter"]["autobar_enabled_or_profile_applied"] is False
+        is_consumable = case["component"] == "AB.CONSUMABLE.KIT.V1"
+        assert runtime_manifest["adapter"][
+            "autobar_enabled_or_profile_applied"
+        ] is is_consumable
+        assert runtime_manifest["adapter"][
+            "autobar_enabled_automatically"
+        ] is False
+        assert runtime_manifest["adapter"][
+            "autobar_slot_profile_migrated_automatically"
+        ] is is_consumable
         assert runtime_manifest["adapter"]["automatic_profile_mutation"] is (
-            case["component"] == "AB.CONSUMABLE.KIT.V1"
+            is_consumable
         )
         assert runtime_manifest["game_validation"]["status"] == "pending-retest"
 

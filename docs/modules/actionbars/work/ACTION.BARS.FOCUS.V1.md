@@ -10,9 +10,10 @@
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`；本轮没有位图生产或
   修图，因此未调用执行器。
 - ImageGen：`0/0`
-- runtime：AEUI `0.8.23`／`focus-layout-contract=2.3`／
-  `sidebar-group-contract=1.0`／`fieldkit-contract=2.3`。Field Kit v2.3 只修正
-  AutoBar 配置打开边界的缓存回锚、稳定几何重算与分类说明 fallback；V11 focus 几何不变并继续直接写 Turtle WoW
+- runtime：AEUI `0.8.24`／`focus-layout-contract=2.3`／
+  `sidebar-group-contract=1.0`／`fieldkit-contract=2.4`。Field Kit v2.4 延续
+  AutoBar 配置打开边界的缓存回锚、稳定几何重算与分类说明 fallback，并把配置页
+  裁为“栏位／按钮”、单一职业槽编辑与可逆职业迁移；V11 focus 几何不变并继续直接写 Turtle WoW
   原生 `UIParent` SetPoint 坐标，
   不读取屏幕尺寸、不乘 effective scale、不探针、不回读；Player／Target 为
   `240×60 / 0.8`，TargetTarget 保持 `240×60 / 0.68` 并依附 Target 右侧；三框的
@@ -192,7 +193,7 @@
 ## 最终执行正文（无位图执行）
 
 本轮不涉及 ImageGen，正式位图执行正文不适用。确定性实现正文为：在 AEUI
-`0.8.23` 的 ActionBars adapter 内将 Player／Target 保持 `240×60 / 0.8`，
+`0.8.24` 的 ActionBars adapter 内将 Player／Target 保持 `240×60 / 0.8`，
 TargetTarget 保持 `240×60 / 0.68`，三框配置与 live FontString 改为客户端
 `STANDARD_TEXT_FONT / OUTLINE / 18`，并在 unit `UpdateConfig` 后重施；
 Aura 设为 `23 UI`、按真实 `size+7` 步进每行 `8`；Player／Target 写入
@@ -353,9 +354,9 @@ v14。Bar 2／4／5／3 以 `3×4` 四块组合为 `6×8` 右侧组，保留各�
   `3/3 pass`；focus runtime-v2.3 contract SHA `f7834b37…76f1`，报告 SHA
   `97475410…865d`，`12/12 pass`；sidebar runtime-v1.0 contract SHA
   `848d5f0c…9a79`，报告 SHA `71986166…b740`，`3/3 pass`；violations 均为 `0`。
-- 当前 AEUI `0.8.23` entrypoints：ActionBars `f22feaae…92de`、Bootstrap
-  `c6139255…18cb`、TOC `b90b2a9f…f800`。四张既有 TGA 字节不变，ImageGen `0/0`。
-- AEUI `0.8.23` fresh-checkout addon package `pass`、violations `0`、report
+- 当前 AEUI `0.8.24` entrypoints：ActionBars `950d4225…1262`、Bootstrap
+  `417592bc…b4f5`、TOC `1e2f05e6…9a45`。四张既有 TGA 字节不变，ImageGen `0/0`。
+- AEUI `0.8.24` fresh-checkout addon package `pass`、violations `0`、report
   `a6a4ec74…16b9`、runtime manifest records `49`、tracked addon files `547`，
   `build_required_on_target_device=false`；另一台设备无需构建或导出。
 - 以下 V10 证据保留为上一轮历史基线：
@@ -527,7 +528,7 @@ v14。Bar 2／4／5／3 以 `3×4` 四块组合为 `6×8` 右侧组，保留各�
 在目标 Turtle WoW `/reload` 后，未被手动调整的 exact v7–v11 游戏坐标 profile、
 仍完整匹配旧全局 unit face／`14 UI` 的 exact v12 profile，以及完整匹配上一版系统
 字体／几何签名的 exact v13 profile 会一次性迁移为 v14；无需先执行命令。确认状态
-包含 `version 0.8.23`、`focus-layout-contract=2.3`、
+包含 `version 0.8.24`、`focus-layout-contract=2.3`、
 `sidebar-group-contract=1.0`、`sidebar-group-binding=bound`、
 `focus-layout-anchor=ui-parent+target-dependent`、
 `focus-layout-coordinate-space=game-native-v1`、
@@ -535,7 +536,8 @@ v14。Bar 2／4／5／3 以 `3×4` 四块组合为 `6×8` 右侧组，保留各�
 `focus-layout-unit-font-size=18`、`focus-layout-unit-font=system`、
 `focus-layout-readout-scale=1`、
 `focus-layout-stance-scale=0.72`、`focus-layout-unit-font-live=19`、
-`fieldkit-contract=2.3` 与 `fieldkit-binding=bound`。先开关一次 pfUI unlock，确认无
+`fieldkit-contract=2.4`、`autobar-slot-scope=class-only`、
+`autobar-config-ui=class-only` 与 `fieldkit-binding=bound`。先开关一次 pfUI unlock，确认无
 `unlock.lua:527`、中央组合只有 Bar 1 mover、右侧组合只有一个 Bar 2 group mover、
 Bar 6 不跳位且 TargetTarget 始终贴在 Target 右侧。随后确认：
 Player 与共同下移 `20 UI` 的卷袋／饰品组不再相交；Player／Target 比 TargetTarget

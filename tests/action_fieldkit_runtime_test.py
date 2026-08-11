@@ -105,15 +105,30 @@ def main() -> None:
         assert manifest["adapter"][
             "aeui_saved_variables_written_on_drag_stop"
         ] is False
-        assert manifest["adapter"]["autobar_enabled_or_profile_applied"] is False
+        assert manifest["adapter"][
+            "autobar_enabled_or_profile_applied"
+        ] is (key == "consumable")
+        assert manifest["adapter"]["autobar_enabled_automatically"] is False
+        assert manifest["adapter"][
+            "autobar_slot_profile_migrated_automatically"
+        ] is (key == "consumable")
         assert manifest["adapter"]["automatic_profile_mutation"] is (
             key == "consumable"
         )
         assert manifest["addon_entrypoints"]["addon_version"] == (
             builder.addon_version(ROOT / builder.TOC_REL)
         )
-        assert manifest["addon_entrypoints"]["addon_version"] == "0.8.23"
+        assert manifest["addon_entrypoints"]["addon_version"] == "0.8.24"
         if key == "consumable":
+            assert "class-only slot ownership" in manifest["adapter"][
+                "automatic_profile_mutation_scope"
+            ]
+            curation = manifest["adapter"]["provider_config_curation"]
+            assert curation["visible_tabs"] == ["Slots", "Buttons"]
+            assert curation["hidden_tabs"] == ["Bar", "Popup", "Profile"]
+            assert curation["slot_scope"] == "class-only"
+            assert curation["hidden_actions"] == ["ResetDisplay", "Revert"]
+            assert curation["done_action_preserved"] is True
             assert manifest["adapter"]["provider_layout_refresh"].startswith(
                 "same-event SetupVisual and AutoBarConfig.OnShow guards"
             )
@@ -171,7 +186,7 @@ def main() -> None:
         assert result["summary"]["violation_count"] == 0
 
     for required in (
-        'ActionBars.fieldKitRuntimeContract = "2.3"',
+        'ActionBars.fieldKitRuntimeContract = "2.4"',
         "ActionBars.fieldKitDockYOffset = -20",
         "ActionTrinketKitV1",
         "ActionConsumableKitV1",
@@ -217,6 +232,10 @@ def main() -> None:
         'texture = holder:CreateTexture(nil, "BACKGROUND")',
         "ApplyRecommendedAutoBarProfile",
         "RestoreAutoBarProfile",
+        "MigrateAutoBarClassScope",
+        "ApplyAutoBarConfigCuration",
+        "RestoreAutoBarConfigCuration",
+        'hooksecurefunc(AutoBarConfig, "TabButtonOnClick"',
         "semantic-no-labels",
     ):
         assert required in adapter
