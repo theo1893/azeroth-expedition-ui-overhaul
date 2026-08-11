@@ -108,7 +108,7 @@ def main() -> None:
 
     work = WORK.read_text(encoding="utf-8")
     normalized_work = " ".join(work.split())
-    assert "UF-A1 V3-A exhausted / UF-A1 V3-B exhausted / UF-B1 attempt 1 rejected-repairable" in work
+    assert "UF-A1 V3-A exhausted / UF-A1 V3-B exhausted / UF-B1 attempt 2 rejected-repairable" in work
     assert "accepted UF-PRIMARY-V3-SIM-V1 / 2026-08-11" in work
     assert "production / authorized / 2026-08-11" in work
     assert "完整性结论：`pass-final`" in work
@@ -275,6 +275,19 @@ def main() -> None:
             "Every material pixel is neutral grayscale",
             "Health bbox x256..767/y128..383",
             "Power bbox x256..767/y640..767",
+        ),
+    )
+    bars_r2 = extract_fenced_body(work, "### `UF-B1 V2 final.r2`")
+    assert_clauses(
+        bars_r2,
+        (
+            "changes only the Power rectangle height and vertical position",
+            "Freeze Image 1's Health swatch exactly",
+            "Power swatch",
+            "exactly x 180 through 843",
+            "y 680 through 845",
+            "664 by 166 pixels and exact 4:1 ratio",
+            "Preserve Image 1's successful neutral equal-channel grey",
         ),
     )
 

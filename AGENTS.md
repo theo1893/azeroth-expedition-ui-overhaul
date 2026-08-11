@@ -24,7 +24,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 | 任务 | 用户于 `2026-08-05` 实机确认 Quest Log 左右页 bug 与显示问题已修复；该活动范围保持 `P6 user-confirmed`。QS-B1 V7-A 为 `P5`。QL-D V3 五次循环耗尽后，用户明确“使用第4稿”：以一次性 aspect 例外接受 exact canonical SHA `816aeedd…47c5`，原 keyed aspect `2.76945`／technical `18/19` 仍保留。正式四态 atlas SHA `cda1ef21…cd56` 已由 Quests `1.27`／Theme `1.10` 接入既有奖励适配层；atlas 与 0／1／2／4／6 真实排版均和已审阅第4稿像素完全一致，display `5/5 pass`。当前 `P5 runtime-exported / addon-integrated`。真实 Button／Tooltip／动态图标／文字和几何未替换。七枚独立功能纹章仍未验收，菜单不响应，旧 Blizzard／pfQuest 按钮继续 fail-open；Tracker 与 NPC Quest／Gossip 不变 | Turtle WoW 验证 QL-D TGA 方向、四态、pressed `1px`、safe area、双列排版和长详情滚动；不得第六次生图。另验证闭合态火漆跨压与滚动裁切；七纹章与代理 parity 完成后才可启用事务菜单或隐藏旧按钮 |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |
-| 单位框 | `P3`。A／B 均 `5/5 exhausted`，无 candidate/source/runtime，禁止第六次。B1 attempt 1 已计 `1/5`，除 ratio 外 `8/9` 通过：Health `582×207 = 2.81:1`、Power `689×76 = 9.07:1` 未过 `2:1/4:1` 门禁；灰阶、明度、隔离、中心和层级成立。`UF-B1 V2 final.r1` 锁定 `512×256`／`512×128`。流程错误 `4`，均无额外 provider 图 | 提交 B1 `final.r1 / repair-prepared` 后执行 attempt 2，只以上一 B1 `1024²` raw 为 Image 1；通过即停，否则最多 5 次同段循环。A2 暂停 |
+| 单位框 | `P3`。A／B 均 `5/5 exhausted`，无 candidate/source/runtime，禁止第六次。B1 attempt 2 已计 `2/5`：Health `664×315 = 2.108:1`、误差 `5.40%` 通过；Power `664×124 = 5.355:1`、误差 `33.87%` 仍未过 `4:1`，其余八项继续通过。`UF-B1 V2 final.r2` 冻结 Health，只把 Power 修至 `664×166`。流程错误 `4` | 提交 B1 `final.r2 / repair-prepared` 后执行 attempt 3，只以上一 B1 `1024²` raw 为 Image 1；通过即停，否则最多 5 次。A2 暂停 |
 | 其他 UI | `P0–P2`，保持 pfUI 默认实现 | 逐模块建立四份长期文档，并仅登记目标模块的接管路由 |
 
 全量模块状态以 [docs/PROGRESS.md](docs/PROGRESS.md) 为准。

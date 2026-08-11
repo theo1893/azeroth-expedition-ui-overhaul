@@ -6,14 +6,14 @@
 - 当前组件：`UF.PLAYER.SHELL`、`UF.TARGET.SHELL`、
   `UF.BAR.HEALTH.FILL`、`UF.BAR.POWER.FILL`
 - 后续组件：`UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.STATE.*`
-- 当前版本：`UF-A1 V3-A final.r4 terminal`／`UF-A1 V3-B final.r4 terminal`／`UF-B1 V2 final`
-- 子状态：`UF-A1 V3-A exhausted / UF-A1 V3-B exhausted / UF-B1 attempt 1 rejected-repairable`
+- 当前版本：`UF-A1 V3-A final.r4 terminal`／`UF-A1 V3-B final.r4 terminal`／`UF-B1 V2 final.r2`
+- 子状态：`UF-A1 V3-A exhausted / UF-A1 V3-B exhausted / UF-B1 attempt 2 rejected-repairable`
 - 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 当前操作：`edit`
 - 生成前模拟：`UF-PRIMARY-V3-SIM-V1`，deterministic local geometry
 - 模拟 ImageGen：`0/0`
-- 正式生产：`authorized / 2026-08-11`；A `5/5`、B `5/5`、B1 `1/5`，
+- 正式生产：`authorized / 2026-08-11`；A `5/5`、B `5/5`、B1 `2/5`，
   最坏总计 `15` 次实际 ImageGen
 - 流程错误：`4`（审查器首次物理连通扫描性能错误；attempt 4 child 在 provider
   已生成后尝试 Pillow RGB 转换但环境无 Pillow，随后确认原图本身已为 RGB 并
@@ -494,6 +494,29 @@
   `090354b64ea9ef2d16acc6b42b530b227daf888a5b649cb2fc3bfa4b2c9a882f`；
   technical `53a08f82…a561`；real-layout `a16abc28…3f2d`。
 
+### Bars attempt 2 — `UF-B1 V2 final.r1`
+
+- 固定正文 commit：`a8f6937`；正文 SHA-256
+  `bd38faffb7d68c23bd4354183f42d53c2168faaad55b0391042b7fd82062dffa`；
+  完整 child prompt SHA-256
+  `dc999839ddd715e3b7633e2d567464668caffb09143ee6233a885bbe18af767f`。
+- 固定输入：同段紧邻 B1 attempt 1 `1024²` raw `748c81a…a7abc` 作为唯一
+  Image 1；没有 A／B／旧 UF-B1 像素。
+- 固定执行器 session：`019ff018-ab52-73c1-a13c-d7a8229b5e87`；provider
+  result：`ig_0a35b3d0acc01a61016a7ae7c739888191bb705d3beef27029.png`。
+- provider untouched raw：
+  `generated/unitframes/bars/V2/attempt-02/provider-raw.png`，`1254×1254 RGB`，
+  SHA-256 `e39be441fb529f05dae3fe492028d8ca731a7f84becf638f7a5925b602e4ef7e`。
+- 同轴正方形归一化审查输入：
+  `generated/unitframes/bars/V2/attempt-02/raw.png`，`1024×1024 RGB`，SHA-256
+  `de8a0f22170031593cd19a26cf84f7ef1b35bff42cbc252fc8fdb8d085157990`；
+  child log SHA-256 `736283cd…f7d2c`。
+- 实际 ImageGen `1`，B1 累计 `2/5`；同一 session 的采样重连后返回唯一图，
+  无新增流程错误。
+- review report SHA-256
+  `f7b4d0eaed9f8138e466f801c17e36424ca5a22c8b29dcccd688edbb6ca3c930`；
+  technical `7c026c29…b007f`；real-layout `ad03d52c…95119`。
+
 ## 审查记录
 
 - 语义／物理：Player／Target 是各自完整的连续外壳；Health／Power 是独立
@@ -684,6 +707,22 @@
 - 结论：`candidate-rejected / repairable`；B1 `1/5`，无 candidate/source/
   runtime。attempt 2 只用同段紧邻 `1024²` raw 作唯一 Image 1。
 
+### Bars attempt 2 内审 — `UF-B1 V2 final.r1`
+
+- 继续通过：恰好两对象、其他材料 `0 px`、上下顺序、绿色隔离、覆盖率、中性
+  灰阶、明度、中心偏差和 Health／Power 层级。外侧隔离均至少 `137 px`，
+  中间 gap `272 px`。
+- Health 已修复：bbox `664×315 = 2.107937:1`，相对 `2:1` 误差仅
+  `5.396825%`，通过 `25%` source 门禁；core value `120.27`、runtime
+  stddev `7.37`，可冻结。
+- 唯一失败仍为 `swatch-ratios` 中的 Power：bbox
+  `664×124 = 5.354839:1`，相对 `4:1` 误差 `33.870968%`。其 neutral、value、
+  centre 与 hierarchy 均通过，不需要重画材料语言。
+- 下一稿冻结 Health bbox 与所有纹理，只把 Power 的同宽矩形从 `124 px` 增高
+  到约 `166 px`，绝对目标 x `180..844/y680..846`；保留纯绿 gap 和无框结构。
+- 结论：`candidate-rejected / repairable`；B1 `2/5`，无 candidate/source/
+  runtime。attempt 3 只用同段紧邻 attempt 2 `1024²` raw 作为唯一 Image 1。
+
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
@@ -700,6 +739,7 @@
 | `UF-A1 V3-B final.r3` attempt 4 | session `019fefdf…779e`；raw `2d7bb28…7d18e`；review `85a4c06…eb349`；B `4/5` | 单开口／物理连通通过；bbox `1454×247`，ratio `15.532181%`、aniso `13.444030%`、safe `7979`、isolation `43/39` 失败；无 candidate/source/runtime | 最终 `r4` 用绝对坐标把 bbox 锁到 x `126..1410/y386..638`，开口覆盖 x `168..1368/y422..602`，并恢复粗旧非工业 Target 材料 |
 | `UF-A1 V3-B final.r4` attempt 5 | session `019fefef…076e`；raw `92a9889…97231`；review `983d564…4f5d7`；B `5/5` | ratio/aniso 通过；safe `22649`、isolation `68/72` 失败，工业式长边／端部仍在；`repair-budget-exhausted`；无 candidate/source/runtime | 禁止第六次；保留终态 review，继续独立 B1；最终等待用户决定是否为 A/B 重开合同 |
 | `UF-B1 V2 final` attempt 1 | session `019ff008…d61d`；provider raw `30cb1ff…1d691`；1024² raw `748c81a…a7abc`；review `090354b…a882f`；B1 `1/5` | `8/9` 通过；唯一失败为 Health `2.81:1`、Power `9.07:1` 的 source ratio；无 candidate/source/runtime | `final.r1` 只把两块重绘到 x `256..768`、Health y `128..384`、Power y `640..768`；冻结灰阶、明度、材质和隔离 |
+| `UF-B1 V2 final.r1` attempt 2 | session `019ff018…5e87`；provider raw `e39be44…4ef7e`；1024² raw `de8a0f2…57990`；review `f7b4d0e…3c930`；B1 `2/5` | Health ratio `5.40%` 通过；唯一失败为 Power `5.355:1`、误差 `33.87%`；其他 `8/9` 门禁继续通过；无 candidate/source/runtime | `final.r2` 冻结 Health，只把 Power 保持宽 `664` 并增高为约 `166`，目标 x `180..844/y680..846` |
 
 ## 最终执行正文
 
@@ -1592,6 +1632,59 @@ green separation; equal-channel grayscale; moderate value; Health coarser;
 Power calmer; no hotspot, frame, shadow, label or colour.
 ```
 
+### `UF-B1 V2 final.r2` — Bars attempt 3 仅 Power 比例修复
+
+```text
+Edit Image 1 into one corrected 1024 by 1024 RGB production sheet for Turtle
+WoW 1.18.1. Keep exactly two separate neutral-grayscale StatusBar material
+swatches on a perfectly uniform pure #00FF00 background: Health above and
+Power below. This bounded repair changes only the Power rectangle height and
+vertical position. Preserve the Health object, all accepted material qualities
+and the existing canvas; do not add any third object, frame, label or guide.
+
+Freeze Image 1's Health swatch exactly as the accepted upper object. Its bbox
+is approximately x 180 through 843 and y 137 through 451, or 664 by 315 and
+2.108:1. Do not resize, repaint, move, crop, brighten, darken or restyle it.
+Keep its one connected rectangle, matte grey mineral-pigment brushwork,
+moderate value near 120, slight coarse variation, neutral channels, clean green
+isolation and lack of a centre hotspot.
+
+Repair only the lower Power swatch. Keep its width and horizontal placement at
+exactly x 180 through 843, a width of 664 pixels. Repaint and extend its filled
+material vertically to y 680 through 845, a height of 166 pixels and exact
+4:1 ratio. The target is 664 by 166 pixels and exact 4:1 ratio. The current
+Image 1 Power is only about 664 by 124 or 5.355:1; do
+not preserve that narrow strip and do not place it inside a larger empty box.
+The entire 664 by 166 target rectangle must be one continuously filled pigment
+surface with no green or transparent hole.
+
+Every pixel outside the frozen Health rectangle and repaired Power rectangle
+remains pure #00FF00. Preserve at least 228 green pixels between Health's lower
+edge and Power's upper edge, at least 176 green pixels below Power, and about
+180 green pixels at both sides. Add no drop shadow, halo, detached fleck,
+antialias haze, outline or coordinate mark outside either bbox.
+
+Preserve Image 1's successful neutral equal-channel grey and tintable value.
+Power remains matte hand-painted mineral pigment, not leather, parchment,
+fabric, metal, glass or a glossy meter. Keep Power quieter than Health, with
+small dense horizontal value changes that remain readable after export to 64
+by 16 and at four runtime pixels high. Do not introduce colour, a centre
+emblem, hotspot, unique end mark, full-width scratch, gradient gloss,
+diagonal stripe, repeated chevron, text, UI chrome or mirrored shine.
+
+pfUI applies Health, reaction, Mana, Rage, Focus and Energy colours at runtime;
+draw none of those colours into either source. At runtime Health exports to 64
+by 32 and Power to 64 by 16, then stretches beneath live text. Keep the full
+width statistically quiet and preserve Image 1's accepted Health-coarser,
+Power-calmer hierarchy.
+
+Before returning, verify exactly two objects and nothing else: unchanged
+Health at about x180..843/y137..451; repaired Power exactly
+x180..843/y680..845 at 664 by 166 and 4:1; pure green everywhere outside;
+equal-channel grayscale; moderate value; no hotspot, frame, shadow, label,
+colour or third object.
+```
+
 ## 生产正文完整性预检
 
 | 门禁 | V3 final 证据 | 结论 |
@@ -1632,7 +1725,7 @@ Power calmer; no hotspot, frame, shadow, label or colour.
 |---|---|---:|---:|---|
 | `UF-A1 V3-A final.r4` | `repair-budget-exhausted / candidate-rejected` | `5/5` | `2` | 禁止第六次；等待最终用户审查 |
 | `UF-A1 V3-B final.r4` | `repair-budget-exhausted / candidate-rejected` | `5/5` | `1` | 禁止第六次；等待最终用户审查 |
-| `UF-B1 V2 final.r1` | `repair-prepared / attempt 2 queued` | `1/5` | `1` | commit 后只以上一 B1 `1024²` raw 为 Image 1 |
+| `UF-B1 V2 final.r2` | `repair-prepared / attempt 3 queued` | `2/5` | `1` | commit 后只以上一 B1 attempt 2 `1024²` raw 为 Image 1 |
 
 每次实际候选的 session／result、raw／candidate／真实排版路径与 SHA、第一失败
 门禁、保留区和下一正文都继续写入本文件；无生成证据的流程错误另表记录。
@@ -1658,8 +1751,9 @@ Power calmer; no hotspot, frame, shadow, label or colour.
 
 ## 下一门禁
 
-提交 `UF-B1 V2 final.r1 / repair-prepared` 后，以固定执行器启动 B1 attempt 2：
-只上传 B1 attempt 1 的 `1024²` raw 作为 Image 1，不上传 A／B 或任何旧失败
-像素。若通过全部客观门禁即停并等待用户视觉审查；否则仅可继续使用同段紧邻
-前稿，B1 总上限 `5` 次实际 ImageGen。A／B 均已耗尽且不得第六次；当前仍
-禁止创建 source/runtime、修改 addon 或跨段复用。
+提交 `UF-B1 V2 final.r2 / repair-prepared` 后，以固定执行器启动 B1 attempt 3：
+只上传 B1 attempt 2 的 `1024²` raw 作为 Image 1，不上传 A／B 或任何旧失败
+像素；冻结 Health，只把 Power 修成 `664×166 / 4:1`。若通过全部客观门禁即停
+并等待用户视觉审查；否则仅可继续使用同段紧邻前稿，B1 总上限 `5` 次实际
+ImageGen。A／B 均已耗尽且不得第六次；当前仍禁止创建 source/runtime、修改
+addon 或跨段复用。
