@@ -21,26 +21,39 @@ SavedVariables、单位数据或状态逻辑。
 | `UF.STATE.HOVER.RIM` | `f.hoverglow` | 外壳边缘 | 由每张接受外壳 Alpha 确定性派生 | 暖白短边响应；不改变命中盒 |
 | `UF.STATE.AGGRO.RIM` | `f.glow` | 外壳边缘 | 由每张接受外壳 Alpha 确定性派生 | 暗红／橙褐短边响应；继续使用 pfUI 状态逻辑 |
 
-## UF-A1 已确认的 source → runtime 合同
+## UF-A1 V3 完整外壳 source → runtime 合同
 
-用户于 `2026-08-11` 确认 `UF-A1-V2-SIM-V2`。该确认冻结结构方向，不接受
-模拟像素，也不代表正式 source 已生成或接受。
+用户于 `2026-08-11` 接受从“四端帽 atlas”改为“每个逻辑角色生成一张完整
+外壳，并由 Python 负责精确工程化”的 V3 架构。该决定冻结生产粒度与后处理
+职责；新的 `UF-A1-V3-SIM-V1` 仍需单独审阅，且不接受任何模拟像素。
 
-- Player／Target 各自拥有四个独立 source：左端帽 `7×42`、上轨
-  `200×6`、下轨 `200×6`、右端帽 `7×42`；共八件，角色之间不得镜像或
-  复用像素。
-- 默认内容宽度 `W=200` 时，确定性 builder 把每角色四件预合成为一张
-  `214×42` RGBA shell；运行时每角色只挂载一张 shell Texture，内部纹理
-  接缝为 `0`。
-- 只有 `W≠200` 时启用三切片：固定左右端帽，中央带承载横向延展后的上下轨
-  与透明中部。中央带在左右装饰角各伸入端帽下方 `1 logical px`，端帽位于
-  更高层；重叠不得进入 `x 7..W+7 / y 6..36` 内容／交互安全区。
-- 所有物理切片从同一逻辑原点取整；装饰盒向外取整，安全区向内取整。atlas
-  至少保留 `2px` padding，中央带端点做 `1px` extrusion，关键识别细节不得
-  只依赖单个 runtime 像素。
+- Player 与 Target 各自使用一次独立 ImageGen 调用生成一张完整空外壳；不得
+  把两个角色放入同一 production atlas，也不得把一张外壳镜像成另一张。
+- 默认内容宽度 `W=200` 时，运行时直接使用该角色完整 `214×42` RGBA shell；
+  内部 Texture 接缝为 `0`。
+- 只有 `W≠200` 时，确定性 builder 才从同一完整 source 派生三切片：固定
+  左端 `7×42`、中央 `200×42`、固定右端 `7×42`。中央带在左右装饰角各伸入
+  端帽下方 `1 logical px`；重叠不得进入 `x 7..W+7 / y 6..36` 内容／交互
+  安全区。派生切片不是新的视觉 source。
+- 所有物理切片从同一逻辑原点取整；装饰盒向外取整，安全区向内取整。runtime
+  atlas 至少保留 `2px` padding，中央带端点做 `1px` extrusion；关键识别细节
+  不得只依赖单个 runtime 像素。
 - UF-A1 逻辑高度固定为 `42`，禁止纵向拉伸；若 provider 需要其他逻辑高度，
   必须建立独立组件规格。整体 UI Scale 可以统一缩放最终 Frame／Texture，
-  不能退回四张零重叠 Texture 的直接挂载方式。
+  不能把完整外壳拆成多张无重叠 Texture 直接挂载。
+
+### 确定性后处理边界
+
+- 模型只负责完整物件的粗犷轮廓、材料、磨损和非镜像身份；像素精度由 macOS
+  `py312` 下的确定性 pipeline 负责。
+- pipeline 只允许边缘连通色键、中央孔连通色键、绿溢色清理、透明 RGB 清零、
+  connected-component bbox 提取、完整外壳归一化、固定安全区清理、三切片
+  派生、缩放预演和真实排版。
+- 候选外 bbox 相对 `214:42` 的纵横比误差不得超过 `8%`；独立 X／Y 归一化的
+  各向异性也不得超过 `8%`，必须记录缩放因子。超过阈值必须重新生成。
+- Python 不得补画缺失皮革、移动铆钉、复制修补、改变拓扑或凭空生成美术。
+  进入动态安全区的结构性不透明物超过 `1 runtime px` 时必须退回；固定 mask
+  只清理边缘抗锯齿／色键残留，不能挽救错误解剖。
 
 逻辑 Frame 的高度仍由 provider 公式
 `height + pspace * GetPerfectPixel() + pheight + 2 * border` 计算。外壳锚到最终
@@ -56,6 +69,19 @@ Frame 中心；透明外扩不能参与 Frame 宽高、点击区域或移动边�
 - 整个真实 UnitFrame Button、点击施法、安全模板、拖动和配置行为。
 
 这些内容不得烘焙进外壳或条纹源资产。
+
+## 生命与 Power 材质合同
+
+- `f.hp.bar` 继续由 `bartexture` 指向 `UF.BAR.HEALTH.FILL`，`f.power.bar` 继续
+  由 `pbartexture` 指向 `UF.BAR.POWER.FILL`；不改变 `CreateStatusBar`、动画、
+  裁切、数值或背景逻辑。
+- 两张填充纹都是中性灰阶、完全不含状态色。`SetStatusBarColor` 继续负责生命
+  颜色；`UnitPowerType` 的 `0/1/2/3` 继续分别使用 pfUI 的 Mana／Rage／Focus／
+  Energy 经典配色。因此法力、怒气、集中值、能量及同等资源共享 Power 材质，
+  但保留游戏语义色。
+- Health runtime donor 为 `64×32`，Power 为 `64×16`；二者可被 StatusBar
+  横向缩放和按当前值改变显示宽度。不得烘焙端帽、数值、色相、中心热点、
+  斜纹或玻璃高光。
 
 ## 已登记但不在当前批次
 

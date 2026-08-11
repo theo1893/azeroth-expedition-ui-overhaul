@@ -1,16 +1,23 @@
 #!/usr/bin/env python3
-"""Static contract checks for the active Unit Frames production draft."""
+"""Static contract checks for the active Unit Frames V3 design."""
 
 from __future__ import annotations
 
-import hashlib
 import json
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
 WORK = ROOT / "docs/modules/unitframes/work/UNITFRAMES.CORE.md"
-SPEC = ROOT / "tools/specs/unitframes_a1_v2a_production_v2.json"
+SUBMODULES = ROOT / "docs/modules/unitframes/SUBMODULES.md"
+SUBMODULE_ART = ROOT / "docs/modules/unitframes/SUBMODULE_ART_BASELINES.md"
+SIM_SPEC = ROOT / "tools/specs/unitframes_primary_v3_simulation_v1.json"
+DISPLAY_SPEC = (
+    ROOT
+    / "tools/specs/unitframes_primary_v3_simulation_display_region_v1.json"
+)
+RENDERER = ROOT / "tools/render_unitframes_primary_v3_simulation_v1.py"
+LEGACY_V2 = ROOT / "tools/specs/unitframes_a1_v2a_production_v2.json"
 
 
 def extract_fenced_body(source: str, heading: str) -> str:
@@ -20,102 +27,132 @@ def extract_fenced_body(source: str, heading: str) -> str:
     return after[opening:closing]
 
 
-def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+def assert_clauses(body: str, clauses: tuple[str, ...]) -> None:
+    normalized = " ".join(body.split())
+    for clause in clauses:
+        assert clause in normalized, f"active Unit Frames draft missing: {clause}"
 
 
 def main() -> None:
-    spec = json.loads(SPEC.read_text(encoding="utf-8"))
-    assert spec["schema"] == "aeui-unitframes-a1-v2a-production-v2"
-    assert spec["status"] == "candidate-rejected / repair-budget-exhausted"
-    assert spec["authorized_on"] == "2026-08-11"
-    assert spec["executor"]["authorized"] is False
-    assert spec["attempts_used"] == 5
-    assert spec["process_errors"] == 1
-    assert spec["attempt_limit"] == 5
-    assert spec["prior_version"]["attempts_used"] == 5
-    assert spec["prior_version"]["may_be_edit_or_reference_input"] is False
-    current = spec["current_attempt"]
-    assert current["number"] == 5
-    assert current["operation"] == "whole-sheet-edit"
-    edit = current["image_3"]
-    assert edit["whole_sheet_only"] is True
-    assert edit["per_cap_crops_forbidden"] is True
-    assert sha256(ROOT / edit["path"]) == edit["sha256"]
-    result = current["result"]
-    assert result["provider_output_sha256"] == (
-        "315470ffb4d6fd2ee2952480840d343afa3e55b7145a3dcb5b434cc852c14d20"
-    )
-    assert result["overall_technical_pass"] is False
-    terminal = spec["terminal_review"]
-    assert terminal["bbox_sizes"] == [[139, 798], [141, 798], [142, 798], [139, 799]]
-    assert terminal["may_be_source"] is False
-    assert terminal["may_be_runtime"] is False
-    for expected_number, reference in enumerate(spec["fixed_references"], start=1):
-        assert reference["image"] == expected_number
-        assert sha256(ROOT / reference["path"]) == reference["sha256"]
+    sim = json.loads(SIM_SPEC.read_text(encoding="utf-8"))
+    assert sim["schema"] == "aeui-unitframes-primary-v3-simulation-v1"
+    assert sim["version"] == "UF-PRIMARY-V3-SIM-V1"
+    assert sim["status"] == "simulation-reviewed"
+    architecture = sim["architecture"]
+    assert architecture["dynamic_content_baked"] is False
+    assert architecture["runtime_height"] == 42
+    assert "one complete source" in architecture["standard_shell"]
+    postprocess = architecture["postprocess"]
+    assert postprocess["target_source_bbox"] == [1284, 252]
+    assert postprocess["target_runtime"] == [214, 42]
+    assert postprocess["maximum_aspect_error_percent"] == 8
+    assert postprocess["maximum_anisotropy_percent"] == 8
+    assert postprocess["python_may_invent_art"] is False
 
-    generation = spec["generation_unit"]
-    assert generation["calls_per_attempt"] == 1
-    assert generation["outputs_per_attempt"] == 1
-    assert generation["canvas"] == [1536, 1024]
-    assert generation["single_sheet"] is True
-    assert generation["contains_all_roles"] is True
-    assert generation["separate_per_cap_generation_forbidden"] is True
-    assert generation["post_generation_multi_image_stitching_forbidden"] is True
-
-    layout = spec["layout"]
-    assert layout["cell_size"] == [384, 1024]
-    assert layout["cell_count"] == 4
-    assert layout["declared_bbox"] == [128, 768]
-    assert layout["runtime_target"] == [7, 42]
-    assert layout["required_isolation"] == 128
-    roles = layout["roles"]
-    assert [item["id"] for item in roles] == [
-        "player-left-cap",
-        "player-right-cap",
-        "target-left-cap",
-        "target-right-cap",
+    runtime = sim["runtime"]
+    assert runtime["player"] == {
+        "hp": [200, 25],
+        "power": [200, 4],
+        "shell": [214, 42],
+    }
+    assert runtime["target"]["shell"] == [214, 42]
+    assert runtime["health_texture"] == [64, 32]
+    assert runtime["power_texture"] == [64, 16]
+    assert [item["unit_power_type"] for item in sim["power_types"]] == [0, 1, 2, 3]
+    assert [item["id"] for item in sim["power_types"]] == [
+        "mana",
+        "rage",
+        "focus",
+        "energy",
     ]
-    for item in roles:
-        x0, y0, x1, y1 = item["bbox_exclusive"]
-        assert (x1 - x0, y1 - y0) == (128, 768)
+    assert sim["imagegen_usage"] == "0/0"
 
-    source = WORK.read_text(encoding="utf-8")
-    heading = spec["prompt_heading"]
-    assert source.count(heading) == 1
-    body = extract_fenced_body(source, heading)
-    body_with_transport_newline = body.strip("\n") + "\n"
-    assert hashlib.sha256(body_with_transport_newline.encode("utf-8")).hexdigest() == (
-        spec["prompt_body_sha256"]
+    display = json.loads(DISPLAY_SPEC.read_text(encoding="utf-8"))
+    assert display["schema"] == "aeui-display-region-contract-v1"
+    assert display["nine_slice"]["caps"] == {
+        "left": 7,
+        "right": 7,
+        "top": 6,
+        "bottom": 6,
+    }
+    scenarios = {item["id"]: item for item in display["scenarios"]}
+    assert set(scenarios) == {
+        "player-mana-standard",
+        "player-rage-standard",
+        "player-focus-standard",
+        "player-energy-standard",
+        "target-rage-standard",
+        "player-variable-w160",
+        "target-variable-w240",
+    }
+    assert scenarios["player-mana-standard"]["frame"] == [214, 42]
+    assert scenarios["player-variable-w160"]["frame"] == [174, 42]
+    assert scenarios["target-variable-w240"]["frame"] == [254, 42]
+
+    work = WORK.read_text(encoding="utf-8")
+    normalized_work = " ".join(work.split())
+    assert "simulation-reviewed / awaiting-user-direction" in work
+    assert "正式生产：未授权；三段各 `0/5`" in work
+    assert "Python 不得补画皮革" in work
+    assert "UnitPowerType" in work
+    assert "Mana／Rage／Focus／Energy" in work
+    assert "V1、V2 的逐稿正文" in work
+    assert "禁止调用 ImageGen" in normalized_work
+
+    player = extract_fenced_body(work, "### `UF-A1 V3-A draft`")
+    assert_clauses(
+        player,
+        (
+            "exactly one front-facing orthographic horizontal shell",
+            "Do not create an atlas, separate caps, multiple outputs",
+            "close to 1284 by 252",
+            "discarded saddle leather",
+            "The Player identity is heavier on the left",
+            "Draw no health colour, power colour",
+        ),
     )
-    normalized_body = " ".join(body.split())
-    required = (
-        "exactly one final corrected 1536 by 1024 RGB production atlas",
-        "Return one bitmap containing all four caps together",
-        "Do not return multiple images",
-        "every finished bbox is exactly 128 by 768",
-        "narrower six-to-one silhouette",
-        "Player left has its rough outer painted edge",
-        "Player right has its joining edge",
-        "Target left has its rough outer edge",
-        "Target right has its joining edge",
-        "four equal 128-pixel flat #00FF00 lanes",
-        "Weight comes from broad dark painted masses",
-        "nearest the inner joining edge",
-        "Draw no top or bottom rail, full frame",
-        "All four cap centres form one evenly spaced horizontal row",
-        "Image 3 is the immediately previous complete atlas",
-        "Do not crop Image 3 into separate inputs",
+    target = extract_fenced_body(work, "### `UF-A1 V3-B draft`")
+    assert_clauses(
+        target,
+        (
+            "exactly one front-facing orthographic horizontal shell",
+            "Do not copy or mirror a Player candidate",
+            "Its right end carries one short damaged oxidized brass",
+            "Add no enemy red",
+        ),
     )
-    for clause in required:
-        assert clause in normalized_body, (
-            f"active Unit Frames prompt missing: {clause}"
-        )
+    bars = extract_fenced_body(work, "### `UF-B1 V2 draft`")
+    assert_clauses(
+        bars,
+        (
+            "exactly two separate neutral grayscale StatusBar material swatches",
+            "equal red, green and blue channels",
+            "Mana, Rage, Focus and Energy colours at runtime",
+            "64 by 32 for Health and 64 by 16 for Power",
+        ),
+    )
+
+    submodules = SUBMODULES.read_text(encoding="utf-8")
+    assert "UF-A1 V3 完整外壳 source → runtime 合同" in submodules
+    assert "纵横比误差不得超过 `8%`" in submodules
+    assert "`UnitPowerType` 的 `0/1/2/3`" in submodules
+    submodule_art = SUBMODULE_ART.read_text(encoding="utf-8")
+    assert "旧马鞍带、盾牌背带或帐篷捆扎皮" in submodule_art
+    assert "透明母版归一化为" in submodule_art
+    assert "`SetStatusBarColor` 乘色" in submodule_art
+
+    renderer_source = RENDERER.read_text(encoding="utf-8")
+    assert "One continuous, hand-cut shell silhouette" in renderer_source
+    assert "power_types" in renderer_source
+    assert "imagegen__imagegen" not in renderer_source
+
+    legacy = json.loads(LEGACY_V2.read_text(encoding="utf-8"))
+    assert legacy["status"] == "candidate-rejected / repair-budget-exhausted"
+    assert legacy["attempts_used"] == 5
+    assert legacy["executor"]["authorized"] is False
+    assert legacy["terminal_review"]["may_be_source"] is False
+    assert legacy["terminal_review"]["may_be_runtime"] is False
+
     print("unitframes design contract test passed")
 
 

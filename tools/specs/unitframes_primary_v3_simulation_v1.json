@@ -1,0 +1,69 @@
+{
+  "schema": "aeui-unitframes-primary-v3-simulation-v1",
+  "version": "UF-PRIMARY-V3-SIM-V1",
+  "status": "simulation-reviewed",
+  "canvas": {"width": 1600, "height": 900},
+  "architecture": {
+    "standard_shell": "one complete source and one 214x42 runtime texture per role",
+    "variable_width": "deterministic 7px left / stretchable center / 7px right derived from the accepted complete source",
+    "runtime_height": 42,
+    "dynamic_content_baked": false,
+    "postprocess": {
+      "target_source_bbox": [1284, 252],
+      "target_runtime": [214, 42],
+      "maximum_aspect_error_percent": 8,
+      "maximum_anisotropy_percent": 8,
+      "python_may_invent_art": false
+    }
+  },
+  "runtime": {
+    "player": {"hp": [200, 25], "power": [200, 4], "shell": [214, 42]},
+    "target": {"hp": [200, 25], "power": [200, 4], "shell": [214, 42]},
+    "targettarget": {"hp": [100, 20], "power": [100, 1], "shell": [112, 34]},
+    "focus": {"hp": [100, 25], "power": [100, 1], "shell": [112, 39]},
+    "health_texture": [64, 32],
+    "power_texture": [64, 16]
+  },
+  "power_types": [
+    {"id": "mana", "unit_power_type": 0, "color": "#536FA8"},
+    {"id": "rage", "unit_power_type": 1, "color": "#A35348"},
+    {"id": "focus", "unit_power_type": 2, "color": "#9A7650"},
+    {"id": "energy", "unit_power_type": 3, "color": "#B2A653"}
+  ],
+  "placements": {
+    "player_live_origin": [520, 708],
+    "target_live_origin": [880, 708],
+    "targettarget_live_origin": [744, 664],
+    "focus_live_origin": [1014, 612]
+  },
+  "palette": {
+    "leather_dark": "#28180E",
+    "leather_mid": "#49301E",
+    "leather_worn": "#6A4728",
+    "liner": "#17100C",
+    "brass": "#80602D",
+    "brass_dim": "#5D4525",
+    "stitch": "#8D6642",
+    "health_friendly": "#617B4B",
+    "health_hostile": "#8B493E",
+    "focus_cloth": "#33475A"
+  },
+  "outputs": {
+    "scene": "generated/unitframes/primary/simulation/V3/unitframes-primary-v3-sim-v1.scene.png",
+    "review": "generated/unitframes/primary/simulation/V3/unitframes-primary-v3-sim-v1.review.png"
+  },
+  "imagegen_usage": "0/0",
+  "authoritative": [
+    "provider frame and live-region dimensions",
+    "one complete shell texture per standard Player or Target frame",
+    "separate neutral health and power material roles",
+    "runtime tinting for mana, rage, focus and energy",
+    "z-order and representative information density"
+  ],
+  "non_authoritative": [
+    "screen placement because the other-device layout is not synchronized",
+    "final hand-painted brushwork, leather microtexture and alpha",
+    "production candidate pixels and final postprocess quality",
+    "compact TargetTarget and Focus production art"
+  ]
+}
