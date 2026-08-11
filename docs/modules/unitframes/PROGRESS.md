@@ -3,7 +3,11 @@
 ## 当前状态
 
 - 主模块：UF-A1 V2 当前为
-  `P2 / simulation-confirmed / production-authorization-pending`；
+  `P3 / prompt-authorized`；用户于 `2026-08-11` 明确授权
+  `UF-A1 V2-A V1`／`UF-A1 V2-B V1` 按 A→B 执行，每段最多五次实际
+  ImageGen、固定 Image 1／2、同段紧邻前稿有界 edit、流程错误不占额度、
+  禁止跨段复用像素，并允许合同内确定性拆分、色键、等比 bbox-fit、真实排版
+  与缩放预演；
   `UF-PRIMARY-SIM-V1` 已于 `2026-08-11` 获用户方向确认。`UF-A1 V1` 已完成
   五次实际 ImageGen，终态为
   `candidate-rejected / repair-budget-exhausted / user-rejected`；用户于
@@ -14,7 +18,8 @@
 - 当前仓库／远端 `main` 尚未包含用户在游戏设备完成的布局 overhaul；本批次
   因只使用现有 pfUI 资源尺寸，不把屏幕位置作为生产合同。
 - 新 V2 生成前模拟 ImageGen：`0/0`；历史正式生产为 A1 V1 `5/5`，A2／B1
-  各 `0/5`。V2 尚无正式生产授权或预算。A1 V1 有两次无生成证据的流程错误，
+  各 `0/5`。V2-A／V2-B 已授权且当前各 `0/5`，最坏合计 `10` 次。A1 V1 有
+  两次无生成证据的流程错误，
   不占额度。attempt 5 的 Player／
   Target 比例误差 `0.071891%`／`0.448322%` 均通过，但真实动态走廊仍有
   `872`／`818` 个 Alpha 像素被端柱侵入，横向隔离只有 `68–78px`，低于
@@ -49,7 +54,7 @@
   `1px` extrusion／overlap 和 `42px` 固定高度；确认不接受模拟像素。
 - 稳定结构已写入 `SUBMODULES.md`；work 中 `UF-A1 V2-A V1` 四端帽与
   `UF-A1 V2-B V1` 四横轨最终生产正文、builder 合同及两段修复边界已经通过
-  自包含预检。正式生产仍未授权，V2 ImageGen 保持 `0/0`。
+  自包含预检。正式生产已授权，V2 ImageGen 当前仍为 `0/0`。
 
 ## 已完成的对象审计
 
@@ -92,9 +97,8 @@
 
 ## 下一门禁
 
-等待用户明确授权 `UF-A1 V2-A V1` 与 `UF-A1 V2-B V1`：按 A→B 顺序，
-每段最多五次实际 ImageGen、最坏合计十次；固定 Image 1／2；同段紧邻前稿
-才允许在冻结边界内作为 Image 3 edit 输入；流程错误不占生图额度；允许 work
-中列出的确定性提取、bbox-fit、ignored candidate 拆分、单 shell／三切片装配和真实排版
-预演。授权前不上传、不生图、不产出 source/runtime、不接入 addon。A2／B1
-继续暂停，额度均为 `0/5`。
+先执行 `UF-A1 V2-A V1` 四端帽的最多五次内部循环；通过后才执行
+`UF-A1 V2-B V1` 四横轨。每个实际输出均重新完成语义、美术、固定分区、
+连通色键、比例、端部接触、标准单 shell／可变宽度三切片、真实排版和缩放
+审查。两段合成候选全部通过后交用户复审；用户接受前不产出 tracked
+source/runtime、不接入 addon。A2／B1 继续暂停，额度均为 `0/5`。

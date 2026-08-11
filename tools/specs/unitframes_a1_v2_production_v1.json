@@ -1,0 +1,64 @@
+{
+  "schema": "aeui-unitframes-a1-v2-production-v1",
+  "version": "UF-A1 V2-A V1 / UF-A1 V2-B V1",
+  "authorized_on": "2026-08-11",
+  "execution_order": ["V2-A", "V2-B"],
+  "attempt_limit_per_segment": 5,
+  "process_errors_count_toward_limit": false,
+  "cross_segment_pixel_reuse": false,
+  "executor": {
+    "authorized": true,
+    "skill": "imagegen-0-143-0",
+    "package": "@openai/codex@0.143.0"
+  },
+  "fixed_references": [
+    {
+      "image": 1,
+      "path": "assets/locked/chat/聊天框视觉基准_v1.png",
+      "sha256": "90e30ba405a2b5cdc707cc229e56c4f64e51d0e4051f1e98dbcd2ec2ee70ee06"
+    },
+    {
+      "image": 2,
+      "path": "assets/locked/chat/聊天框独立艺术资源_v3.png",
+      "sha256": "272528e6d89cc90e5cbb37dce4ae572ddf9de0402078cdcf0ed5804f734faab8"
+    }
+  ],
+  "segments": {
+    "V2-A": {
+      "prompt_heading": "### `UF-A1 V2-A V1` 最终生产正文 — 四个固定端帽",
+      "prompt_body_format": "fenced-text",
+      "canvas": [1536, 1024],
+      "layout": "four 384x1024 columns",
+      "source_target": [7, 42],
+      "declared_bbox": [128, 768],
+      "required_isolation": 128,
+      "roles": ["player-left-cap", "player-right-cap", "target-left-cap", "target-right-cap"]
+    },
+    "V2-B": {
+      "prompt_heading": "### `UF-A1 V2-B V1` 最终生产正文 — 四条独立横轨",
+      "prompt_body_format": "fenced-text",
+      "canvas": [1536, 1024],
+      "layout": "four 1536x256 bands",
+      "source_target": [200, 6],
+      "declared_bbox": [1200, 36],
+      "required_horizontal_isolation": 168,
+      "required_vertical_isolation": 110,
+      "roles": ["player-top-rail", "player-bottom-rail", "target-top-rail", "target-bottom-rail"]
+    }
+  },
+  "deterministic_processing": [
+    "fixed region split",
+    "edge-connected chroma key",
+    "transparent RGB clear",
+    "proportional bbox fit with ratio error no greater than one percent",
+    "eight independent ignored candidate components",
+    "standard-width single-shell precompose",
+    "variable-width three-slice assembly with one-logical-pixel extrusion beneath caps",
+    "100-percent real-layout preview",
+    "scale and variable-width preview"
+  ],
+  "promotion": {
+    "may_write_assets_source_before_user_acceptance": false,
+    "may_write_addon_before_user_acceptance": false
+  }
+}

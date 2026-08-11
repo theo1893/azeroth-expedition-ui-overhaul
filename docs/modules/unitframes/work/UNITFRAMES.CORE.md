@@ -6,21 +6,21 @@
 - 组件 ID：`UF.PLAYER.SHELL`、`UF.TARGET.SHELL`、
   `UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.BAR.*`、`UF.STATE.*`
 - 当前版本：`UF-A1 V2-A V1`／`UF-A1 V2-B V1`／`UF-A2 V1`／`UF-B1 V1`
-- 子状态：UF-A1 V2 `simulation-confirmed / production-authorization-pending`；UF-A1 V1
+- 子状态：UF-A1 V2 `prompt-authorized`；UF-A1 V1
   `candidate-rejected / repair-budget-exhausted / user-rejected`；UF-A2／UF-B1
   `prompt-authorized / paused`
-- 项目阶段：UF-A1 V2 `P2`；UF-A2／UF-B1 保持 `P3 / paused`
+- 项目阶段：UF-A1 V2 `P3`；UF-A2／UF-B1 保持 `P3 / paused`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 操作：`prepare`；已确认“独立四件 source → 标准宽度单 shell／可变宽度
-  三切片”，现冻结 V2-A／V2-B 正文与生产授权边界
+- 操作：`generate`；已确认“独立四件 source → 标准宽度单 shell／可变宽度
+  三切片”，V2-A／V2-B 正文与生产授权边界均已冻结
 - 生成前模拟：`UF-A1-V2-SIM-V2`／deterministic-local-geometry；ImageGen
   `0/0`
 - 本地渲染错误：历史主模拟确认后复跑 `1` 次 sandbox 写权限错误；V2 首次
   本地执行有 `1` 次 Python `false`／`False` 拼写错误，针对性修正后同一几何
   合同重跑；随后有 `1` 次 sandbox 写权限错误，获准写入 ignored `generated/`
   后以同一命令通过。三者均不属于 ImageGen。
-- 自动修复预算：UF-A1 V1 历史终态 `5/5`；V2-A／V2-B 尚未获得正式生产
-  授权，各为 `0/5`、若授权最坏合计 `10` 次；UF-A2／UF-B1 各 `0/5` 并
+- 自动修复预算：UF-A1 V1 历史终态 `5/5`；V2-A／V2-B 已获得正式生产
+  授权，各为 `0/5`、最坏合计 `10` 次；UF-A2／UF-B1 各 `0/5` 并
   继续暂停
 - 流程错误：`2`（A1 `E1` 为 stdin transport；A1 `E2` 为 npm sandbox
   `EPERM`；二者均无图片或 provider result，不占实际生图额度）
@@ -29,8 +29,16 @@
   ImageGen、最坏 `15` 次、流程错误不占额度、禁止跨段复用，以及合同内的
   固定分区、边缘连通色键、透明 RGB 清零、纵横比误差不超过 `1%` 的等比
   bbox-fit 和真实排版预演。
-- V2 正式生产授权：无；当前“继续处理”只执行本地确定性模拟，不允许上传或
-  调用 ImageGen。
+- V2 正式生产授权：`authorized / 2026-08-11`。按 A→B 顺序；每段每次只上传
+  固定 SHA 的 Image 1／2，attempt 1 无 Image 3；同段紧邻前稿仅可在冻结边界
+  内作为 Image 3 edit 输入；每段最多五次实际 ImageGen，流程错误不占额度，
+  禁止跨段复用像素；允许合同内的确定性拆分、色键、等比 bbox-fit、真实排版
+  和缩放预演。
+- V2 用户授权原文：`确认授权 UF-A1 V2-A V1 与 UF-A1 V2-B V1；按 A→B 顺序
+  执行；每段每次允许上传固定 SHA 的 Image 1/2，首次无 Image 3，仅允许同段
+  紧邻前稿在冻结边界内作为 Image 3 edit 输入；每段最多 5 次实际 ImageGen，
+  最坏合计 10 次；流程错误不占额度；禁止跨段复用像素；允许合同内的确定性
+  拆分、色键、等比 bbox-fit、真实排版和缩放预演。`
 - V2-SIM.V2 本地执行授权：`2026-08-11`；用户在讨论缩放风险并确认“标准
   单 shell／可变宽度三切片”方案后原文“按照这个方案执行”。该授权仅覆盖
   本地几何预演、校验与文档，不扩展为 production 或 addon 接入授权。
@@ -917,7 +925,7 @@ side post is no wider than 42 pixels, every horizontal rail is no thicker than
 
 ### 本地执行与证据
 
-- 状态：`simulation-confirmed / production-authorization-pending`；ImageGen `0/0`，没有上传、
+- 状态：`simulation-confirmed / production-authorized`；ImageGen `0/0`，没有上传、
   provider 会话、production source、runtime 或 addon 改动。
 - specification：`tools/specs/unitframes_a1_v2_simulation_v2.json`，SHA
   `a7a15ccb22f5c677bd98f6b2231fce85734562c1654638e830533c9a5d6534b0`。
@@ -975,10 +983,10 @@ side post is no wider than 42 pixels, every horizontal rail is no thicker than
   `UF-A1 V2-B = four independent horizontal rails / band atlas`；P4／P5 另有
   deterministic source-to-runtime builder，标准宽度输出两张单 shell，可变宽度
   输出三切片所需的固定端帽与带 extrusion 的中央带。
-- 当前结论：`pass / final-production-body / authorization-pending`。模拟确认的
+- 当前结论：`pass / final-production-body / authorized 2026-08-11`。模拟确认的
   source 粒度、标准单 shell、可变宽度三切片、固定高度和动态安全区已写回
   两段正文并重新核对；对象数量、参考职责、精确画布、bbox、运行时尺寸、
-  接缝、色键、禁止烘焙和验收条件均自包含。当前仍不得执行。
+  接缝、色键、禁止烘焙和验收条件均自包含。当前按 A→B 合同执行。
 
 | 门禁 | V2-A／V2-B 中的证据 | 结论 |
 |---|---|---|
@@ -991,7 +999,7 @@ side post is no wider than 42 pixels, every horizontal rail is no thicker than
 
 ### `UF-A1 V2-A V1` 最终生产正文 — 四个固定端帽
 
-> `production / authorization-pending`；不得执行。首次调用必须使用本提交中的
+> `production / authorized 2026-08-11`。首次调用必须使用本提交中的
 > 完整正文、固定 Image 1／2，且不得上传模拟图或任何 UF-A1 V1 失败稿。
 
 ```text
@@ -1086,7 +1094,7 @@ any rejected UF-A1 V1 output has been used or imitated as an edit source.
 
 ### `UF-A1 V2-B V1` 最终生产正文 — 四条独立横轨
 
-> `production / authorization-pending`；不得执行。V2-A 与 V2-B 是不同生产段，
+> `production / authorized 2026-08-11`。V2-A 与 V2-B 是不同生产段，
 > 禁止跨段复用生成像素；首次调用必须使用本提交中的完整正文与固定 Image 1／2。
 
 ```text
@@ -1174,7 +1182,7 @@ no object touches a canvas or band boundary; and no pixel from any rejected
 UF-A1 V1 output or from V2-A has been used as an edit or construction source.
 ```
 
-### V2-A／V2-B 待授权生产合同
+### V2-A／V2-B 已授权生产合同
 
 - 执行顺序：先 `UF-A1 V2-A V1`，其内部通过后再执行
   `UF-A1 V2-B V1`。二者是独立五次循环，单段通过即停。
@@ -1215,9 +1223,9 @@ UF-A1 V1 output or from V2-A has been used as an edit or construction source.
 - 可见方向：维持已确认的深胡桃旧皮革、烟褐内衬、断续暗铜、Player 左／
   Target 右非镜像维修关系。用户已确认标准单 shell／可变宽度三切片不会改变
   该可见方向；几何图中的平色、像素笔触和微纹理仍明确非权威。
-- 正式生产已冻结为两个独立授权段：`UF-A1 V2-A V1` 生成四个固定端帽，
+- 正式生产已冻结并授权为两个独立执行段：`UF-A1 V2-A V1` 生成四个固定端帽，
   `UF-A1 V2-B V1` 生成四条横轨；每段各自最多五次实际 ImageGen，不跨段复用
-  像素。两个完整正文仍未获得生图授权。
+  像素。两个完整正文已于 `2026-08-11` 获得用户明确生图授权。
 - 用户方向结论：`confirmed / 2026-08-11`。本地模拟像素不得晋级
   source/runtime，也不得成为 ImageGen reference 或 edit 输入。
 
@@ -1243,13 +1251,13 @@ UF-A1 V1 output or from V2-A has been used as an edit or construction source.
 | `UF-PRIMARY-SIM-V1` | deterministic scene／zoom；SHA 与 display-region `4/4` 如上；ImageGen `0/0` | `simulation-confirmed` | 可见方向已写入 A1／A2／B1；等待三段正式生产授权 |
 | `UF-A1 V1` | fixed ImageGen `5/5`；attempt 5 ratio `2/2 pass`，安全走廊 `0/2 pass`；真实排版 SHA `147e9d98…5252`；用户于 `2026-08-11` 明确拒绝例外 | `candidate-rejected / repair-budget-exhausted / user-rejected` | 建立新的 UF-A1 版本；不得复用失败稿像素，不得第 6 次同版生图 |
 | `UF-A1-V2-SIM-V1` | deterministic scene／assembly；八件 source 互斥且动态区覆盖 `0px`；display-region `2/2 pass`；ImageGen `0/0` | `superseded-as-runtime / retained-as-source-granularity-evidence` | 不直接把四件挂为四张 runtime Texture；由 V2-SIM.V2 接管缩放合同 |
-| `UF-A1-V2-SIM-V2` | 标准单 shell 覆盖 `0.64–1.15×`、内部 Texture 接缝 `0`；可变 `W=160/200/240` 在 `0.71/1.00×` 接头空洞 `0px`、内容侵入 `0px`；display-region `6/6 pass`；双次重建 SHA 一致；用户于 `2026-08-11` 明确确认；ImageGen `0/0` | `simulation-confirmed / production-authorization-pending` | V2-A／V2-B 最终正文与 builder 合同已冻结；等待两段正式生产授权 |
+| `UF-A1-V2-SIM-V2` | 标准单 shell 覆盖 `0.64–1.15×`、内部 Texture 接缝 `0`；可变 `W=160/200/240` 在 `0.71/1.00×` 接头空洞 `0px`、内容侵入 `0px`；display-region `6/6 pass`；双次重建 SHA 一致；用户于 `2026-08-11` 明确确认；ImageGen `0/0` | `prompt-authorized / P3` | V2-A／V2-B 已授权；先执行四端帽，内部通过后执行四横轨 |
 
 ## 下一门禁
 
 `UF-A1-V2-SIM-V2` 已确认，稳定子模块定义、`UF-A1 V2-A V1`／
-`UF-A1 V2-B V1` 最终正文与 builder 合同已冻结。下一门禁是用户明确授权这
-两个精确生产版本：按 A→B 顺序、每段最多五次实际 ImageGen、最坏合计十次、
-固定 Image 1／2、同段紧邻前稿才可作为 Image 3 edit 输入、流程错误不占额度，
-以及本文件声明的确定性处理范围。获得授权前不得上传、不得调用 ImageGen、
-不得产出 source/runtime、不得修改 addon。UF-A2／UF-B1 继续暂停。
+`UF-A1 V2-B V1` 最终正文、builder 合同和两段最多五次的修复边界均已授权。
+下一门禁是先执行 V2-A，逐稿完成固定分区、连通色键、等比 bbox-fit、端部接触、
+真实排版与缩放审查；V2-A 内部通过后才执行 V2-B。两段合并后全部内部门禁
+通过，才可达到 `candidate-reviewed / P3` 并交用户复审。用户接受前不得产出
+tracked source/runtime、不得修改 addon。UF-A2／UF-B1 继续暂停。
