@@ -265,7 +265,7 @@ def assembly_metrics(parts: dict[str, Image.Image], role: str) -> dict[str, Any]
 
 
 def render_contact(parts: dict[str, Image.Image], output: Path, segment: str) -> None:
-    board = checkerboard((1320, 650), 16)
+    board = checkerboard((1320, 900 if segment == "V2-A" else 650), 16)
     draw = ImageDraw.Draw(board, "RGBA")
     title = ImageFont.truetype(str(TITLE_FONT), 24)
     body = ImageFont.truetype(str(FONT), 14)
@@ -273,15 +273,18 @@ def render_contact(parts: dict[str, Image.Image], output: Path, segment: str) ->
     draw.text((28, 22), f"UF-A1 {segment} · deterministic keyed components", font=title, fill=(222, 192, 132, 255))
     x = 48
     y = 110
-    for name, part in parts.items():
+    for index, (name, part) in enumerate(parts.items()):
         scale = 8 if segment == "V2-A" else 4
         zoom = part.resize((part.width * scale, part.height * scale), Image.Resampling.NEAREST)
-        if x + zoom.width > 1270:
+        if segment == "V2-A" and index == 2:
+            x = 48
+            y += 250
+        elif x + zoom.width > 1270:
             x = 48
             y += 250
         board.alpha_composite(zoom, (x, y))
         draw.text((x, y + zoom.height + 10), f"{name} · {part.width}×{part.height}", font=body, fill=(226, 213, 182, 255))
-        x += zoom.width + 70
+        x += zoom.width + (240 if segment == "V2-A" else 70)
     output.parent.mkdir(parents=True, exist_ok=True)
     board.save(output, format="PNG", optimize=False, compress_level=9)
 
