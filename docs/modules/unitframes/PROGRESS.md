@@ -5,7 +5,7 @@
 - `UF-A1 V3-A final` Player 完整外壳：
   `P3 / repair-budget-exhausted / candidate-rejected / 5/5`。
 - `UF-A1 V3-B final` Target 完整外壳：
-  `P3 / attempt 3 rejected-repairable / final.r3 repair-prepared / 3/5`。
+  `P3 / attempt 4 rejected / final.r4 final-repair-prepared / 4/5`。
 - `UF-B1 V2 final` Health／Power 灰阶填充纹：
   `P3 / prompt-authorized / sequence-wait / 0/5`。
 - `UF-A2` TargetTarget／Focus：继续暂停；既有物件身份方向不变，尚无正式
@@ -22,7 +22,7 @@
 - 用户随后于 `2026-08-11` 明确授权上述三段 final，冻结 A→B→B1 顺序、
   A／B 固定 Image 1／2、同段紧邻前稿有界 edit、B1 首次无图片、每段
   `5` 次实际生成及最坏 `15` 次预算。流程错误不占额度；跨段与旧失败像素
-  禁止复用。A attempts 1–5 已完成并耗尽；B attempts 1–3 已完成；B1 未调用。
+  禁止复用。A attempts 1–5 已完成并耗尽；B attempts 1–4 已完成；B1 未调用。
 
 ## V3 结构合同
 
@@ -74,7 +74,7 @@
 - `UNITFRAMES.CORE.md` 只保留当前 V3 合同、三段自包含 final、历史终态摘要和
   下一门禁；V1／V2 的逐稿全文继续由 Git 历史保存。
 - `UF-A1 V3-A`、`UF-A1 V3-B`、`UF-B1 V2` 每段最多 `5` 次实际
-  `imagegen-0-143-0`，最坏合计 `15` 次；当前 A `5/5`、B `3/5`、B1
+  `imagegen-0-143-0`，最坏合计 `15` 次；当前 A `5/5`、B `4/5`、B1
   `0/5`。
 - 三段 final 已吸收用户确认的可见结论并通过 `pass-final` 自包含预检；
   正式生产授权已独立取得，按 A→B→B1 顺序执行。
@@ -130,8 +130,15 @@
   归一化开口约 x `80..1208/y37..212`，上下轨已接近正确。
 - `UF-A1 V3-B final.r3` 已作为 attempt 4 自包含正文：总宽减约 `96`、高增约
   `6`，左右内脸再让 `38/34 source px`，仅向下扩开口 `4px`，保留薄上轨。
+- B attempt 4 仍保持单开口和单一物理连通体，但几何回归到 bbox
+  `1454×247`，ratio `15.532181%`、anisotropy `13.444030%`；左右 isolation
+  仅 `43/39`，hard safe core `7979 px`。连续压纹、规则系带、偏亮红皮和
+  近整高右黄铜板也偏回工业皮具。无 candidate/source/runtime。
+- `UF-A1 V3-B final.r4` 是 B 段最后一次正文：直接以画布绝对坐标锁定外 bbox
+  x `126..1410/y386..638` 与单一纯绿开口 x `168..1368/y422..602`，同时恢复
+  烟熏深胡桃、断续维修和非镜像 Target 身份；只用 B attempt 4 raw 作 Image 3。
 - reviewer 首次逐 fleck flood 性能错误已改为线性 scanline run union-find；
-  attempt 4 child 在 provider 图已存在后缺 Pillow，退回 `sips` 确认原图为
+  A attempt 4 child 在 provider 图已存在后缺 Pillow，退回 `sips` 确认原图为
   RGB 并复制。两项作为流程错误 `2` 单列，没有额外 provider 图，不占额度。
 
 ## 历史终态
@@ -146,8 +153,7 @@
 
 ## 下一门禁
 
-提交 B `final.r3 / repair-prepared` 后，以固定执行器启动
-`UF-A1 V3-B final.r3` attempt 4，只用 B attempt 3 raw 作为 Image 3，禁止
-复用 A 或旧失败像素；完成 B 后执行 B1。每段内部
-通过即停，第五次仍失败则耗尽；当前禁止创建 source/runtime、修改 addon、
-跨段复用或复用旧失败像素。
+提交 B `final.r4 / final-repair-prepared` 后，以固定执行器启动
+`UF-A1 V3-B final.r4` attempt 5，只用 B attempt 4 raw 作为 Image 3，禁止
+复用 A 或旧失败像素。B 第五次通过即停，仍失败则耗尽且不得第六次；随后执行
+B1。当前禁止创建 source/runtime、修改 addon、跨段复用或复用旧失败像素。

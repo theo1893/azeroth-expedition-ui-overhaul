@@ -6,14 +6,14 @@
 - 当前组件：`UF.PLAYER.SHELL`、`UF.TARGET.SHELL`、
   `UF.BAR.HEALTH.FILL`、`UF.BAR.POWER.FILL`
 - 后续组件：`UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.STATE.*`
-- 当前版本：`UF-A1 V3-A final.r4 terminal`／`UF-A1 V3-B final.r3`／`UF-B1 V2 final`
-- 子状态：`UF-A1 V3-A exhausted / UF-A1 V3-B repair-prepared / attempt 4 queued`
+- 当前版本：`UF-A1 V3-A final.r4 terminal`／`UF-A1 V3-B final.r4`／`UF-B1 V2 final`
+- 子状态：`UF-A1 V3-A exhausted / UF-A1 V3-B final-repair-prepared / attempt 5 queued`
 - 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
 - 当前操作：`edit`
 - 生成前模拟：`UF-PRIMARY-V3-SIM-V1`，deterministic local geometry
 - 模拟 ImageGen：`0/0`
-- 正式生产：`authorized / 2026-08-11`；A `5/5`、B `3/5`、B1 `0/5`，
+- 正式生产：`authorized / 2026-08-11`；A `5/5`、B `4/5`、B1 `0/5`，
   最坏总计 `15` 次实际 ImageGen
 - 流程错误：`2`（审查器首次物理连通扫描性能错误；attempt 4 child 在 provider
   已生成后尝试 Pillow RGB 转换但环境无 Pillow，随后确认原图本身已为 RGB 并
@@ -408,6 +408,26 @@
   `cf8a5c0dfba873de5ea2b7087a9d35f3a8a14aadaeb3e3f876fb8c763d1b0a2e`；
   technical `7b0a58d7…a769`；real-layout `d2f846e3…865a`。
 
+### Target attempt 4 — `UF-A1 V3-B final.r3`
+
+- 固定正文 commit：`8a64d44`；正文 SHA-256
+  `e643c05d0c75af83adfebbca2c15a96c77b31f16b567c47ba8671a26dfb56f92`；
+  完整 child prompt SHA-256
+  `8ed90861fc6d56197373ee14e3b740b35e2cda687279645e50fea4515fccc8c1`。
+- 固定输入：Image 1 `90e30ba4…ee06`、Image 2 `272528e6…ab8`、同段紧邻
+  B attempt 3 raw `2727a2a…755c` 作为 Image 3；没有 A 或旧失败像素。
+- 固定执行器 session：`019fefdf-2e84-7581-8f91-d9278709779e`；provider
+  result：`ig_01a9a94a1aa4d703016a7ad99746f48191b4404b978a1f66cd.png`。
+- untouched raw：`generated/unitframes/primary/V3B/attempt-04/raw.png`，
+  `1536×1024 RGB`，SHA-256
+  `2d7bb28bc90de80afc4c75698cd65af81d737ee377cc60f569b9a27e21c7d18e`；
+  child log SHA-256 `0e7b2713…212c`。
+- 实际 ImageGen `1`，B 累计 `4/5`。同一固定 session 的 response stream
+  重试至 `5/5` 后仍返回一张 provider 图；这属于一次调用，不是额外流程错误。
+- review report SHA-256
+  `85a4c0688853cf3f4914c17949932a9a97d81650c3215bb1e9c83f3048eeb349`；
+  technical `4d97e267…db5ab`；real-layout `bfb3e331…81a0`。
+
 ## 审查记录
 
 - 语义／物理：Player／Target 是各自完整的连续外壳；Health／Power 是独立
@@ -545,6 +565,24 @@
 - 结论：`candidate-rejected / repairable`；r3 只修 bbox ratio 和左右端厚度，
   不再动已经接近正确的上轨。无 candidate/source/runtime。
 
+### Target attempt 4 内审 — `UF-A1 V3-B final.r3`
+
+- 保持通过：恰有一个包含画布中心的连通绿色开口，材料仍是一个物理连通体；
+  没有烘焙生命、资源、名称或图标。
+- 几何回归：bbox 扩为 `1454×247`，source ratio `5.886640`，ratio error
+  `15.532181%`、anisotropy `13.444030%`，明显超过 `8%`。左右绿色隔离仅
+  `43/39`，也低于 `80`。
+- 归一化开口约 x `69..1213/y38..213`；hard safe core 内仍有
+  `7979` 个 `alpha>=128` 像素。上下轨接近，但两端各约多出 `27/29 source
+  px` 的结构，不能由允许的 `≤6 px` 清理删除。
+- 美术回归：完整外壳可读，但长边变成连续压纹滚边，左侧等距系带、右侧近
+  整高黄铜板和规整圆角共同形成工业皮具观感；综合色也比锁定 Chat 基准偏亮、
+  偏红。最终 r4 需保留 Target 左静右损身份，改回烟熏深胡桃、断续维修和
+  手裁低频误差。
+- 结论：`candidate-rejected / final-repair-available`；B 只剩 `1` 次。r4 使用
+  画布绝对坐标冻结外 bbox 与纯绿内矩形，避免再次依赖比例描述。无
+  candidate/source/runtime。
+
 ## 尝试摘要
 
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
@@ -558,6 +596,7 @@
 | `UF-A1 V3-B final` attempt 1 | session `019fefc6…cf93`；raw `ec3cddd…9389`；review `1f60b66…c6f9`；B `1/5` | 单开口／物理／isolation 通过；ratio/aniso `12.872683%`、safe `66780` 失败；无 candidate/source/runtime | `final.r1` 收至约 `1284×252` 薄皮环，开口至少 `1200×180`，右黄铜损伤压进极端 `42 px`，打断规则系带 |
 | `UF-A1 V3-B final.r1` attempt 2 | session `019fefce…efd0`；raw `0bc83f8…8f02`；review `9ddfebe…9593`；B `2/5` | ratio/aniso 通过；safe `27311`、右 isolation `73` 失败；无 candidate/source/runtime | `final.r2` 四边分别让出 `46/42/11/13 source px`，收至 `1284×252` 并保持 Target 身份 |
 | `UF-A1 V3-B final.r2` attempt 3 | session `019fefd5…a8d1`；raw `2727a2a…755c`；review `cf8a5c0…0a2e`；B `3/5` | safe 降至 `10860`；ratio `10.098017%`、aniso `9.171843%`、isolation `79/77` 失败；无 candidate/source/runtime | `final.r3` 宽减 `96`、高增 `6`，左右内脸让 `38/34 px`，保留上下薄轨 |
+| `UF-A1 V3-B final.r3` attempt 4 | session `019fefdf…779e`；raw `2d7bb28…7d18e`；review `85a4c06…eb349`；B `4/5` | 单开口／物理连通通过；bbox `1454×247`，ratio `15.532181%`、aniso `13.444030%`、safe `7979`、isolation `43/39` 失败；无 candidate/source/runtime | 最终 `r4` 用绝对坐标把 bbox 锁到 x `126..1410/y386..638`，开口覆盖 x `168..1368/y422..602`，并恢复粗旧非工业 Target 材料 |
 
 ## 最终执行正文
 
@@ -1268,6 +1307,92 @@ safe-core structure, dark short right repair, rough Vanilla craft and no baked
 live content.
 ```
 
+### `UF-A1 V3-B final.r4` — Target attempt 5 最终有界修复
+
+```text
+Edit Image 3 into one corrected complete empty Target unit-frame shell as one
+1536 by 1024 RGB production bitmap for Turtle WoW 1.18.1 and a Vanilla-era
+pfUI overhaul. Return exactly one front-facing orthographic horizontal object
+on a perfectly uniform pure #00FF00 background. Do not create an atlas,
+separate pieces, a HUD screenshot, guide marks, text or any second object. This
+is a bounded final repair of the immediately previous Target image only. Do
+not use, copy or reconstruct Player pixels, V1/V2 pixels or any other failed
+segment.
+
+Written geometry outranks Image 3. Use two invisible absolute-coordinate
+rectangles on the 1536 by 1024 canvas. The complete outer material bbox must be
+approximately x 126 through 1409 and y 386 through 637: 1284 by 252 pixels,
+centred with about 126 pure-green pixels at both left and right. Do not let any
+material approach the canvas edges. Do not preserve Image 3's 1454 by 247 bbox,
+x 43..1496 span, 5.8866:1 ratio or tiny 43/39-pixel side isolation.
+
+Inside that outer bbox, one uninterrupted pure-green opening must fully cover
+absolute canvas rectangle x 168 through 1367 and y 422 through 601. The even
+stricter absolute hard core x 174 through 1361 and y 428 through 595 must be
+completely pure #00FF00: no leather, brass, stitch, lining, bevel, highlight,
+shadow or antialiased solid structure. This produces at most 42-pixel vertical
+ends and at most 36-pixel horizontal rails. The opening is at least 1200 by
+180 pixels and remains connected to itself as one hole. Four narrow unequal
+corner joins keep the surrounding material one physically connected perimeter.
+
+Rebuild the two end bands rather than merely scaling the current broad ends.
+The left inner edge must sit at x 168 or farther left and the right inner edge
+at x 1368 or farther right. The upper inner edge must sit at y 422 or higher;
+the lower inner edge at y 602 or lower. Never add a divider, second slot, shelf,
+power trough, plaque, post, portrait socket or internal ornament. The future
+live 200 by 25 Health bar and 200 by 4 Power bar, names and values all occupy
+this single green opening after export to 214 by 42.
+
+Preserve only Image 3's successful topology and Target identity: one connected
+ring, a quieter rubbed left end, a more damaged right end, thin rails and warm
+upper-left lighting. Replace its industrial finish. The material is scavenged
+expedition leather cut from an old saddle, shield strap or tent binding: deep
+soot-dark walnut and smoke brown, low saturation, broad hand-painted 2004-era
+WoW value blocks, matte broken highlights, dirt packed into irregular creases,
+and a few believable pressure scars. It must feel heavy, repaired and used in
+Azeroth, never precision-made.
+
+Make the long rails subtly hand-cut, with slow unequal thickness changes and
+long quiet stretches. Break every continuous raised lip. Remove the current
+repeating pebble embossing, regular braided border, equal-distance stitches,
+symmetrical rounded corners and bright red-orange piping. Use no more than two
+short crooked stitch groups, with unequal spacing and missing holes; keep both
+outside the absolute green opening. Irregularity must come from use, tension,
+cuts and repairs, not random noise or a wavy silhouette.
+
+At the left end retain only a narrow rubbed fold and one small dull fastener,
+all inside x 126..167. At the right end retain one short cracked oxidized-brass
+repair and one dark split, all inside x 1368..1409. The brass is tarnished
+umber, not bright gold, and occupies only a local fragment rather than a
+full-height plate. Do not mirror the two ends. At 214 by 42 the end identities
+must remain readable without becoming wider than the horizontal rails.
+
+The written requirements outrank all images. Use Image 1 only for circa-2004
+Vanilla WoW painted scale, chunky low-resolution readability and restrained
+warm contrast; ignore its screen, portraits, text and book content. Use Image
+2 only for deep-walnut depth, left-upper warm light, believable wear and hand-
+made error; ignore pages, spine, columns, dragons and broad book construction.
+Use Image 3 only for its same-segment one-opening topology, thin-rail intent,
+Target left/right identity and lighting. Explicitly discard Image 3's geometry,
+continuous embossed border, regular lacing, bright reddish leather and tall
+right brass plate.
+
+Forbid upholstery, luxury leather goods, industrial rounded moulding, repeated
+pores, machine embossing, equal ties, symmetric rivets, modern bevels, gloss,
+glass, black-iron shrines, enemy red, faction marks, elite crowns, skulls,
+horns, books, wax seals, gemstones and neon. Draw no health colour, power
+colour, name, level, number, portrait, icon, aura, status, button or glow.
+Every pixel outside the shell and throughout the one opening remains pure
+#00FF00.
+
+Before returning, verify all of these visibly: exactly one Target shell; outer
+bbox near x126..1409/y386..637; at least 126 green pixels at both canvas sides;
+one opening covering x168..1367/y422..601; absolute hard core
+x174..1361/y428..595 pure green; one physical perimeter; ends no thicker than
+42 pixels; rails no thicker than 36 pixels; dark rough hand-cut Vanilla craft;
+short local right repair; no industrial repetition; no baked live content.
+```
+
 ### `UF-B1 V2 final` — Health／Power 灰阶颜料纹
 
 ```text
@@ -1347,7 +1472,7 @@ no centre hotspot and broad uniform green isolation.
 | 段 | 当前子状态 | 实际生成 | 流程错误 | 下一动作 |
 |---|---|---:|---:|---|
 | `UF-A1 V3-A final.r4` | `repair-budget-exhausted / candidate-rejected` | `5/5` | `2` | 禁止第六次；等待最终用户审查 |
-| `UF-A1 V3-B final.r3` | `repair-prepared / attempt 4 queued` | `3/5` | `0` | commit 后以 B attempt 3 raw 为唯一 Image 3 |
+| `UF-A1 V3-B final.r4` | `final-repair-prepared / attempt 5 queued` | `4/5` | `0` | commit 后以 B attempt 4 raw 为唯一 Image 3；不得第六次 |
 | `UF-B1 V2 final` | `prompt-authorized / sequence-wait` | `0/5` | `0` | B 终态后开始 |
 
 每次实际候选的 session／result、raw／candidate／真实排版路径与 SHA、第一失败
@@ -1372,8 +1497,9 @@ no centre hotspot and broad uniform green isolation.
 
 ## 下一门禁
 
-提交 B `final.r3 / repair-prepared` 后，以固定执行器启动
-`UF-A1 V3-B final.r3` attempt 4：固定 Image 1／2，只用 B attempt 3 raw
-作为 Image 3，禁止复用 A 或任何 V1／V2 像素。B 终态后进入 `UF-B1 V2 final`。任一段内部通过
-即停；第五次仍有客观失败则该段耗尽。三段都到终态后统一等待用户审查；当前
-仍禁止创建 source/runtime、修改 addon 或跨段复用。
+提交 B `final.r4 / final-repair-prepared` 后，以固定执行器启动
+`UF-A1 V3-B final.r4` attempt 5：固定 Image 1／2，只用 B attempt 4 raw
+作为 Image 3，禁止复用 A 或任何 V1／V2 像素。第五次若仍有客观失败则 B
+耗尽，不得第六次；无论 B 通过或耗尽，之后都进入已授权独立
+`UF-B1 V2 final`。三段都到终态后统一等待用户审查；当前仍禁止创建
+source/runtime、修改 addon 或跨段复用。
