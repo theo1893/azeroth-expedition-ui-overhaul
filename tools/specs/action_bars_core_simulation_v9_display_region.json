@@ -1,0 +1,130 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "AB.FOCUS.LAYOUT.V1/simulation-v9",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive; provider UI units for scenario contracts and deterministic physical pixels for the composed simulation",
+  "evidence": {
+    "provider": "addon/pfUI unitframes/castbar/swingtimer/actionbar + installed DoiteDPS + optional ArchiTotem 1.7 + AutoBar 1.31",
+    "layout_formula": "V9 uses Player/Target 240x60 at 0.8; TargetTarget stays 240x60 at 0.68 and center-attaches to Target's right edge +8 UI; every Aura is 27 UI with eight per row; Player Cast BOTTOM (0,316), Target Cast BOTTOM (0,300), and Swing BOTTOM (0,284) are centered 260x12 rows at 1.0; AutoBar exposes 13 current categories in an inventory-aware grid with a 4x6 maximum",
+    "simulation_spec": "tools/specs/action_bars_core_simulation_v9.json",
+    "adapter": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
+    "target": "Turtle WoW 1.18.1; deterministic 1920x1080 review composition",
+    "source_screenshot_primary": "C:/Users/西奥/AppData/Local/Temp/codex-clipboard-0efc459e-0d06-4632-a75c-0ea50c60a3f2.png",
+    "source_screenshot_primary_sha256": "fe0dc65e8aca003d0f7b86966c281bbab4d1f24b0e938b795154ca7cda4c04d1",
+    "dynamic_ownership": "all health, power, aura, spell, timer, cooldown, inventory availability, totem, tooltip, drag, lock and hit behavior remains provider-owned",
+    "runtime_scope": "geometry, scoped scale, and exact compact AutoBar display-default simulation; accepted Action Bars and Field Kit bitmap bytes are unchanged",
+    "final_runtime": false
+  },
+  "atlas": {
+    "size": [32, 32],
+    "visible_bbox": [0, 0, 32, 32],
+    "require_exact_visible_coverage": true,
+    "sampled_regions": [
+      {"id": "layout.geometry-only", "box": [0, 0, 32, 32]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 3, "right": 3, "top": 3, "bottom": 3},
+    "minimum_frame_size": [7, 7]
+  },
+  "scenarios": [
+    {
+      "id": "player-target-240x60-scale-080",
+      "frame": [240, 60],
+      "preview_frame": [240, 60],
+      "zones": {"provider-footprint": [0, 0, 240, 60]},
+      "regions": [
+        {"id": "health-power-portrait", "kind": "status", "box": [0, 0, 240, 60], "zone": "provider-footprint"}
+      ]
+    },
+    {
+      "id": "targettarget-right-attached-240x60-scale-068",
+      "frame": [488, 60],
+      "preview_frame": [488, 60],
+      "zones": {"target-family": [0, 0, 488, 60]},
+      "regions": [
+        {"id": "target-scale-080", "kind": "status", "box": [0, 0, 240, 60], "zone": "target-family"},
+        {"id": "targettarget-scale-068", "kind": "status", "box": [248, 0, 488, 60], "zone": "target-family"}
+      ]
+    },
+    {
+      "id": "focus-unit-text-local-14",
+      "frame": [240, 60],
+      "preview_frame": [240, 60],
+      "zones": {"text-safe": [0, 0, 240, 60]},
+      "regions": [
+        {"id": "name-level-health-power-text", "kind": "text", "box": [0, 0, 240, 60], "zone": "text-safe"}
+      ]
+    },
+    {
+      "id": "auras-27-eight-per-row-edge-anchored",
+      "frame": [240, 60],
+      "preview_frame": [240, 60],
+      "zones": {"frame": [0, 0, 240, 60]},
+      "regions": [
+        {"id": "player-eight-from-left", "kind": "status", "box": [0, 0, 237, 27], "zone": "frame"},
+        {"id": "target-family-eight-from-right", "kind": "status", "box": [3, 33, 240, 60], "zone": "frame"}
+      ]
+    },
+    {
+      "id": "centered-cast-cast-swing-stack-260x12-scale-100",
+      "frame": [260, 60],
+      "preview_frame": [260, 60],
+      "zones": {"timing-stack": [0, 0, 260, 60]},
+      "regions": [
+        {"id": "player-cast", "kind": "status", "box": [0, 0, 260, 12], "zone": "timing-stack"},
+        {"id": "target-cast", "kind": "status", "box": [0, 16, 260, 28], "zone": "timing-stack"},
+        {"id": "swing", "kind": "status", "box": [0, 32, 260, 44], "zone": "timing-stack"},
+        {"id": "offhand", "kind": "status", "box": [0, 48, 260, 60], "zone": "timing-stack"}
+      ]
+    },
+    {
+      "id": "autobar-inventory-aware-current-thirteen",
+      "frame": [159, 159],
+      "preview_frame": [159, 159],
+      "zones": {"rack": [0, 0, 159, 159]},
+      "regions": [
+        {"id": "thirteen-current-pockets-up-to-four-columns", "kind": "button", "box": [0, 0, 159, 159], "zone": "rack"}
+      ]
+    },
+    {
+      "id": "autobar-inventory-aware-maximum-twenty-four",
+      "frame": [159, 237],
+      "preview_frame": [159, 237],
+      "zones": {"rack": [0, 0, 159, 237]},
+      "regions": [
+        {"id": "maximum-four-by-six-pockets", "kind": "button", "box": [0, 0, 159, 237], "zone": "rack"}
+      ]
+    },
+    {
+      "id": "architotem-current-closed-bound",
+      "frame": [212, 32],
+      "preview_frame": [212, 32],
+      "zones": {"provider-footprint": [0, 0, 212, 32]},
+      "regions": [
+        {"id": "four-elements", "kind": "button", "box": [0, 0, 128, 32], "zone": "provider-footprint"},
+        {"id": "drag-handle", "kind": "button", "box": [128, 6, 148, 26], "zone": "provider-footprint"},
+        {"id": "cast-all-and-recall", "kind": "button", "box": [148, 0, 212, 32], "zone": "provider-footprint"}
+      ]
+    },
+    {
+      "id": "architotem-air-popup-down-seven",
+      "frame": [212, 224],
+      "preview_frame": [212, 224],
+      "zones": {"provider-footprint": [0, 0, 212, 224]},
+      "regions": [
+        {"id": "main-row", "kind": "button", "box": [0, 0, 212, 32], "zone": "provider-footprint"},
+        {"id": "air-candidates-two-through-seven", "kind": "button", "box": [96, 32, 128, 224], "zone": "provider-footprint"}
+      ]
+    },
+    {
+      "id": "doitedps-native-two-row-union-scale-082",
+      "frame": [318, 70],
+      "preview_frame": [318, 70],
+      "zones": {"provider-union": [0, 0, 318, 70]},
+      "regions": [
+        {"id": "resource-row", "kind": "status", "box": [0, 0, 178, 22], "zone": "provider-union"},
+        {"id": "timeline-root", "kind": "timeline", "box": [0, 24, 318, 70], "zone": "provider-union"}
+      ]
+    }
+  ]
+}

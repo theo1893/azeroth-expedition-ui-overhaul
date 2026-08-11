@@ -13,30 +13,35 @@ ActionBars.railTexturePath = addon.media.root .. "ActionBars\\ActionRailV1"
 ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
-ActionBars.fieldKitRuntimeContract = "1.8"
-ActionBars.focusLayoutRuntimeContract = "1.7"
-ActionBars.focusLayoutVersion = 8
+ActionBars.fieldKitRuntimeContract = "2.0"
+ActionBars.focusLayoutRuntimeContract = "2.1"
+ActionBars.focusLayoutVersion = 12
 ActionBars.focusLayoutBackupVersion = 1
+ActionBars.autoBarDefaultModeVersion = 1
 ActionBars.focusCoordinateSpace = "game-native-v1"
 ActionBars.comfortUIScaleVersion = 2
 ActionBars.comfortUIScaleTier = 8
 ActionBars.comfortUIScaleValue = 0.71111111111111
--- ACTION-BARS-CORE-SIM-V6 keeps global pfUI tier 8 and the accepted Combat
--- Deck unchanged. Player and Target use a smaller shared footprint, while
--- cast and swing providers share one compact, equal-size timing row.
-ActionBars.focusUnitScale = 0.68
-ActionBars.focusTargetTargetScale = 0.62
-ActionBars.focusReadoutScale = 0.72
+-- ACTION-BARS-CORE-SIM-V10 keeps global pfUI tier 8, the accepted Combat
+-- Deck, and the user's comfortable local scales unchanged. It corrects the
+-- Aura row against pfUI's real size + 2*border + 1 step, raises the unit
+-- cluster just enough for two target-debuff rows, and lowers both Field Kit
+-- side groups by one shared offset.
+ActionBars.focusUnitScale = 0.8
+ActionBars.focusTargetTargetScale = 0.68
+ActionBars.focusReadoutScale = 1
+ActionBars.focusStanceScale = 0.72
 ActionBars.focusDoiteScale = 0.82
 ActionBars.focusUnitWidth = 240
 ActionBars.focusUnitHeight = 60
-ActionBars.focusTargetTargetWidth = 132
-ActionBars.focusTargetTargetHeight = 30
-ActionBars.focusAuraSize = 18
-ActionBars.focusTargetTargetAuraSize = 14
+ActionBars.focusTargetTargetWidth = 240
+ActionBars.focusTargetTargetHeight = 60
+ActionBars.focusUnitFontSize = 14
+ActionBars.focusAuraSize = 23
+ActionBars.focusTargetTargetAuraSize = 23
 ActionBars.focusAuraPerRow = 8
-ActionBars.focusReadoutWidth = 180
-ActionBars.focusReadoutHeight = 16
+ActionBars.focusReadoutWidth = 260
+ActionBars.focusReadoutHeight = 12
 ActionBars.focusTargetTargetGap = 8
 ActionBars.trinketKitTexturePath =
   addon.media.root .. "ActionBars\\ActionTrinketKitV1"
@@ -47,6 +52,7 @@ ActionBars.fieldKitPocketPadding = 4
 ActionBars.fieldKitShellPadding = 6
 ActionBars.consumableDockGap = 12
 ActionBars.trinketDockGap = 8
+ActionBars.fieldKitDockYOffset = -20
 ActionBars.actionBarStackOverlap = 1
 ActionBars.popupDrawerGap = 6
 ActionBars.popupDrawerMaxRows = 6
@@ -57,26 +63,28 @@ ActionBars.archiTotemDockXOffset = -10
 -- clearance; the provider's root still omits its unscaled drag handle.
 ActionBars.archiTotemDockYOffset = -39
 
--- Runtime v1.7 uses the exact Turtle WoW 1.12 coordinates consumed by
+-- Runtime v2.1 uses the exact Turtle WoW 1.12 coordinates consumed by
 -- Frame:SetPoint and pfUI.api.LoadMovable. They are relative to UIParent at
 -- the required pfUI tier 8. Do not project them through GetScreenWidth,
 -- effective scale, physical pixels, or frame readback: those are different
 -- coordinate spaces in this client.
 ActionBars.combatDeckX = 0
 ActionBars.combatDeckY = 175
-ActionBars.focusPlayerX = -190
-ActionBars.focusTargetX = 190
-ActionBars.focusTargetTargetX = 414
-ActionBars.focusUnitY = 500
-ActionBars.focusCastPlayerX = -196
-ActionBars.focusCastTargetX = 196
-ActionBars.focusCastY = 430
+ActionBars.focusPlayerX = -160
+ActionBars.focusTargetX = 105
+ActionBars.focusTargetTargetX = 393
+ActionBars.focusUnitY = 485
+ActionBars.focusTargetTargetY = 576
+ActionBars.focusCastPlayerX = 0
+ActionBars.focusCastTargetX = 0
+ActionBars.focusCastY = 316
+ActionBars.focusTargetCastY = 300
 ActionBars.focusSwingX = 0
-ActionBars.focusSwingY = 430
+ActionBars.focusSwingY = 284
 ActionBars.focusStanceX = 0
 ActionBars.focusStanceY = 255
-ActionBars.focusDoiteX = 1012
-ActionBars.focusDoiteY = -780
+ActionBars.focusDoiteX = 850
+ActionBars.focusDoiteY = -647
 
 local railSliceOrder = {
   "topLeft", "top", "topRight",
@@ -797,11 +805,11 @@ local function GetNativeFocusLayout()
     targetX = ActionBars.focusTargetX,
     targetY = ActionBars.focusUnitY,
     targetTargetX = ActionBars.focusTargetTargetX,
-    targetTargetY = ActionBars.focusUnitY,
+    targetTargetY = ActionBars.focusTargetTargetY,
     playerCastX = ActionBars.focusCastPlayerX,
     playerCastY = ActionBars.focusCastY,
     targetCastX = ActionBars.focusCastTargetX,
-    targetCastY = ActionBars.focusCastY,
+    targetCastY = ActionBars.focusTargetCastY,
     swingX = ActionBars.focusSwingX,
     swingY = ActionBars.focusSwingY,
     stanceX = ActionBars.focusStanceX,
@@ -928,7 +936,10 @@ end
 local function ShouldMigrateCombatFocusLayout()
   local database = addon.db and addon.db.actionbars
   local projection = database and database.combatFocusProjection
-  if not database or database.combatFocusLayoutVersion ~= 7 or
+  local version = database and database.combatFocusLayoutVersion
+  if not database or
+    (version ~= 7 and version ~= 8 and version ~= 9 and version ~= 10 and
+      version ~= 11) or
     type(projection) ~= "table" or
     projection.coordinateSpace ~= ActionBars.focusCoordinateSpace or
     not pfUI_config
@@ -942,13 +953,17 @@ local function ShouldMigrateCombatFocusLayout()
   local mainPosition = positions.pfActionBarMain
   local player = unitframes.player or {}
   local target = unitframes.target or {}
+  local targetTarget = unitframes.ttarget or {}
   local playerCast = castbars.player or {}
   local targetCast = castbars.target or {}
+  local oldDoiteX =
+    (version == 9 or version == 10 or version == 11) and 850 or 1012
+  local oldDoiteY = version == 8 and -780 or -647
   local doiteMatches = type(DoiteDPSDB) ~= "table" or
     (DoiteDPSDB.point == "TOPLEFT" and
       DoiteDPSDB.relativePoint == "TOPLEFT" and
-      math.abs((tonumber(DoiteDPSDB.x) or 100000) - 1012) <= 0.01 and
-      math.abs((tonumber(DoiteDPSDB.y) or 100000) + 647) <= 0.01 and
+      math.abs((tonumber(DoiteDPSDB.x) or 100000) - oldDoiteX) <= 0.01 and
+      math.abs((tonumber(DoiteDPSDB.y) or 100000) - oldDoiteY) <= 0.01 and
       math.abs((tonumber(DoiteDPSDB.scale) or 100000) - 0.82) <= 0.001)
   local deckMatches = type(mainPosition) == "table" and
     mainPosition.anchor == "BOTTOM" and
@@ -961,31 +976,235 @@ local function ShouldMigrateCombatFocusLayout()
   local archiMatches = type(archiAppearance) ~= "table" or
     archiAppearance.direction == "down"
 
-  return database.fieldKitBound == true and deckMatches and archiMatches and
-    FocusPositionMatches(
-      "pfPlayer", "BOTTOM", -212, 492, 0.75
+  if database.fieldKitBound ~= true or not deckMatches or
+    not archiMatches or not doiteMatches
+  then
+    return false
+  end
+
+  if version == 7 then
+    return FocusPositionMatches(
+        "pfPlayer", "BOTTOM", -212, 492, 0.75
+      ) and FocusPositionMatches(
+        "pfTarget", "BOTTOM", 213, 492, 0.75
+      ) and FocusPositionMatches(
+        "pfPlayerCastbar", "BOTTOM", -212, 454, 0.75
+      ) and FocusPositionMatches(
+        "pfTargetCastbar", "BOTTOM", 213, 454, 0.75
+      ) and FocusPositionMatches(
+        "pfSwingTimerMainhand", "CENTER", 0, -67, 0.82
+      ) and FocusPositionMatches(
+        "pfSwingTimerRanged", "CENTER", 0, -67, 0.82
+      ) and FocusPositionMatches(
+        "pfActionBarStances", "TOP", 0, -919, 0.82
+      ) and player.width == "280" and player.height == "72" and
+      player.buffs == "TOPLEFT" and player.debuffs == "TOPRIGHT" and
+      player.buffperrow == "6" and player.debuffperrow == "6" and
+      target.width == "280" and target.height == "72" and
+      target.buffs == "TOPLEFT" and target.debuffs == "TOPRIGHT" and
+      target.buffperrow == "6" and target.debuffperrow == "6" and
+      playerCast.width == "-1" and playerCast.height == "22" and
+      targetCast.width == "-1" and targetCast.height == "22" and
+      unitframes.swingtimerwidth == "200" and
+      unitframes.swingtimerheight == "12"
+  end
+
+  local function AuraOffsetsMatch(config)
+    return tostring(config.buffoffx) == "0" and
+      tostring(config.buffoffy) == "0" and
+      tostring(config.debuffoffx) == "0" and
+      tostring(config.debuffoffy) == "0"
+  end
+
+  if version == 8 then
+    return FocusPositionMatches(
+      "pfPlayer", "BOTTOM", -190, 500, 0.68
     ) and FocusPositionMatches(
-      "pfTarget", "BOTTOM", 213, 492, 0.75
+      "pfTarget", "BOTTOM", 190, 500, 0.68
     ) and FocusPositionMatches(
-      "pfPlayerCastbar", "BOTTOM", -212, 454, 0.75
+      "pfTargetTarget", "BOTTOM", 414, 500, 0.62
     ) and FocusPositionMatches(
-      "pfTargetCastbar", "BOTTOM", 213, 454, 0.75
+      "pfPlayerCastbar", "BOTTOM", -196, 430, 0.72
     ) and FocusPositionMatches(
-      "pfSwingTimerMainhand", "CENTER", 0, -67, 0.82
+      "pfTargetCastbar", "BOTTOM", 196, 430, 0.72
     ) and FocusPositionMatches(
-      "pfSwingTimerRanged", "CENTER", 0, -67, 0.82
+      "pfSwingTimerMainhand", "BOTTOM", 0, 430, 0.72
     ) and FocusPositionMatches(
-      "pfActionBarStances", "TOP", 0, -919, 0.82
-    ) and player.width == "280" and player.height == "72" and
-    player.buffs == "TOPLEFT" and player.debuffs == "TOPRIGHT" and
-    player.buffperrow == "6" and player.debuffperrow == "6" and
-    target.width == "280" and target.height == "72" and
-    target.buffs == "TOPLEFT" and target.debuffs == "TOPRIGHT" and
-    target.buffperrow == "6" and target.debuffperrow == "6" and
-    playerCast.width == "-1" and playerCast.height == "22" and
-    targetCast.width == "-1" and targetCast.height == "22" and
-    unitframes.swingtimerwidth == "200" and
-    unitframes.swingtimerheight == "12" and doiteMatches
+      "pfSwingTimerRanged", "BOTTOM", 0, 430, 0.72
+    ) and FocusPositionMatches(
+      "pfActionBarStances", "BOTTOM", 0, 255, 0.72
+    ) and player.width == "240" and player.height == "60" and
+    player.buffs == "TOPLEFT" and player.debuffs == "BOTTOMLEFT" and
+    player.buffsize == "18" and player.debuffsize == "18" and
+    player.buffperrow == "8" and player.debuffperrow == "8" and
+    AuraOffsetsMatch(player) and
+    target.width == "240" and target.height == "60" and
+    target.buffs == "TOPRIGHT" and target.debuffs == "BOTTOMRIGHT" and
+    target.buffsize == "18" and target.debuffsize == "18" and
+    target.buffperrow == "8" and target.debuffperrow == "8" and
+    AuraOffsetsMatch(target) and
+    targetTarget.width == "132" and targetTarget.height == "30" and
+    targetTarget.buffs == "TOPRIGHT" and
+    targetTarget.debuffs == "BOTTOMRIGHT" and
+    targetTarget.buffsize == "14" and
+    targetTarget.debuffsize == "14" and
+    targetTarget.buffperrow == "8" and
+    targetTarget.debuffperrow == "8" and
+    AuraOffsetsMatch(targetTarget) and
+    playerCast.width == "180" and playerCast.height == "16" and
+    targetCast.width == "180" and targetCast.height == "16" and
+      unitframes.swingtimerwidth == "180" and
+      unitframes.swingtimerheight == "16"
+  end
+
+  local function DefaultUnitFontMatches(config)
+    return tostring(config.customfont) == "0" and
+      tostring(config.customfont_size) == "12"
+  end
+
+  local function ConfiguredUnitFontMatches(config)
+    return tostring(config.customfont) == "1" and
+      tostring(config.customfont_size) == "14"
+  end
+
+  if version == 11 then
+    return FocusPositionMatches(
+        "pfPlayer", "BOTTOM", -160, 455, 0.8
+      ) and FocusPositionMatches(
+        "pfTarget", "BOTTOM", 105, 455, 0.8
+      ) and FocusPositionMatches(
+        "pfTargetTarget", "BOTTOM", 393, 541, 0.68
+      ) and FocusPositionMatches(
+        "pfPlayerCastbar", "BOTTOM", 0, 316, 1
+      ) and FocusPositionMatches(
+        "pfTargetCastbar", "BOTTOM", 0, 300, 1
+      ) and FocusPositionMatches(
+        "pfSwingTimerMainhand", "BOTTOM", 0, 284, 1
+      ) and FocusPositionMatches(
+        "pfSwingTimerRanged", "BOTTOM", 0, 284, 1
+      ) and FocusPositionMatches(
+        "pfActionBarStances", "BOTTOM", 0, 255, 0.72
+      ) and player.width == "240" and player.height == "60" and
+      player.buffs == "TOPLEFT" and player.debuffs == "BOTTOMLEFT" and
+      player.buffsize == "27" and player.debuffsize == "27" and
+      player.buffperrow == "8" and player.debuffperrow == "8" and
+      AuraOffsetsMatch(player) and ConfiguredUnitFontMatches(player) and
+      target.width == "240" and target.height == "60" and
+      target.buffs == "TOPRIGHT" and target.debuffs == "BOTTOMRIGHT" and
+      target.buffsize == "27" and target.debuffsize == "27" and
+      target.buffperrow == "8" and target.debuffperrow == "8" and
+      AuraOffsetsMatch(target) and ConfiguredUnitFontMatches(target) and
+      targetTarget.width == "240" and targetTarget.height == "60" and
+      targetTarget.buffs == "TOPRIGHT" and
+      targetTarget.debuffs == "BOTTOMRIGHT" and
+      targetTarget.buffsize == "27" and
+      targetTarget.debuffsize == "27" and
+      targetTarget.buffperrow == "8" and
+      targetTarget.debuffperrow == "8" and
+      AuraOffsetsMatch(targetTarget) and
+      ConfiguredUnitFontMatches(targetTarget) and
+      playerCast.width == "260" and playerCast.height == "12" and
+      targetCast.width == "260" and targetCast.height == "12" and
+      unitframes.swingtimerwidth == "260" and
+      unitframes.swingtimerheight == "12"
+  end
+
+  if version == 10 then
+    local oldScaleSignature = FocusPositionMatches(
+        "pfPlayer", "BOTTOM", -160, 535, 0.68
+      ) and FocusPositionMatches(
+        "pfTarget", "BOTTOM", 105, 535, 0.68
+      ) and FocusPositionMatches(
+        "pfPlayerCastbar", "BOTTOM", 0, 443, 0.72
+      ) and FocusPositionMatches(
+        "pfTargetCastbar", "BOTTOM", 0, 423, 0.72
+      ) and FocusPositionMatches(
+        "pfSwingTimerMainhand", "BOTTOM", 0, 403, 0.72
+      ) and FocusPositionMatches(
+        "pfSwingTimerRanged", "BOTTOM", 0, 403, 0.72
+      )
+    local userScaleSignature = FocusPositionMatches(
+        "pfPlayer", "BOTTOM", -160, 535, 0.8
+      ) and FocusPositionMatches(
+        "pfTarget", "BOTTOM", 105, 535, 0.8
+      ) and FocusPositionMatches(
+        "pfPlayerCastbar", "BOTTOM", 0, 443, 1
+      ) and FocusPositionMatches(
+        "pfTargetCastbar", "BOTTOM", 0, 423, 1
+      ) and FocusPositionMatches(
+        "pfSwingTimerMainhand", "BOTTOM", 0, 403, 1
+      ) and FocusPositionMatches(
+        "pfSwingTimerRanged", "BOTTOM", 0, 403, 1
+      )
+    return (oldScaleSignature or userScaleSignature) and
+      FocusPositionMatches(
+        "pfTargetTarget", "BOTTOM", 353, 535, 0.68
+      ) and FocusPositionMatches(
+        "pfActionBarStances", "BOTTOM", 0, 255, 0.72
+      ) and player.width == "240" and player.height == "60" and
+      player.buffs == "TOPLEFT" and player.debuffs == "BOTTOMLEFT" and
+      player.buffsize == "27" and player.debuffsize == "27" and
+      player.buffperrow == "8" and player.debuffperrow == "8" and
+      AuraOffsetsMatch(player) and ConfiguredUnitFontMatches(player) and
+      target.width == "240" and target.height == "60" and
+      target.buffs == "TOPRIGHT" and target.debuffs == "BOTTOMRIGHT" and
+      target.buffsize == "27" and target.debuffsize == "27" and
+      target.buffperrow == "8" and target.debuffperrow == "8" and
+      AuraOffsetsMatch(target) and ConfiguredUnitFontMatches(target) and
+      targetTarget.width == "240" and targetTarget.height == "60" and
+      targetTarget.buffs == "TOPRIGHT" and
+      targetTarget.debuffs == "BOTTOMRIGHT" and
+      targetTarget.buffsize == "27" and
+      targetTarget.debuffsize == "27" and
+      targetTarget.buffperrow == "8" and
+      targetTarget.debuffperrow == "8" and
+      AuraOffsetsMatch(targetTarget) and
+      ConfiguredUnitFontMatches(targetTarget) and
+      playerCast.width == "260" and playerCast.height == "12" and
+      targetCast.width == "260" and targetCast.height == "12" and
+      unitframes.swingtimerwidth == "260" and
+      unitframes.swingtimerheight == "12"
+  end
+
+  return FocusPositionMatches(
+      "pfPlayer", "BOTTOM", -150, 535, 0.68
+    ) and FocusPositionMatches(
+      "pfTarget", "BOTTOM", 190, 535, 0.68
+    ) and FocusPositionMatches(
+      "pfTargetTarget", "BOTTOM", 190, 651, 0.68
+    ) and FocusPositionMatches(
+      "pfPlayerCastbar", "BOTTOM", -100, 443, 0.72
+    ) and FocusPositionMatches(
+      "pfTargetCastbar", "BOTTOM", 100, 443, 0.72
+    ) and FocusPositionMatches(
+      "pfSwingTimerMainhand", "BOTTOM", 0, 421, 0.72
+    ) and FocusPositionMatches(
+      "pfSwingTimerRanged", "BOTTOM", 0, 421, 0.72
+    ) and FocusPositionMatches(
+      "pfActionBarStances", "BOTTOM", 0, 255, 0.72
+    ) and player.width == "240" and player.height == "60" and
+    player.buffs == "TOPLEFT" and player.debuffs == "BOTTOMLEFT" and
+    player.buffsize == "22" and player.debuffsize == "22" and
+    player.buffperrow == "8" and player.debuffperrow == "8" and
+    AuraOffsetsMatch(player) and DefaultUnitFontMatches(player) and
+    target.width == "240" and target.height == "60" and
+    target.buffs == "TOPRIGHT" and target.debuffs == "BOTTOMRIGHT" and
+    target.buffsize == "22" and target.debuffsize == "22" and
+    target.buffperrow == "8" and target.debuffperrow == "8" and
+    AuraOffsetsMatch(target) and DefaultUnitFontMatches(target) and
+    targetTarget.width == "240" and targetTarget.height == "60" and
+    targetTarget.buffs == "TOPRIGHT" and
+    targetTarget.debuffs == "BOTTOMRIGHT" and
+    targetTarget.buffsize == "22" and
+    targetTarget.debuffsize == "22" and
+    targetTarget.buffperrow == "8" and
+    targetTarget.debuffperrow == "8" and
+    AuraOffsetsMatch(targetTarget) and
+    DefaultUnitFontMatches(targetTarget) and
+    playerCast.width == "180" and playerCast.height == "16" and
+    targetCast.width == "180" and targetCast.height == "16" and
+    unitframes.swingtimerwidth == "180" and
+    unitframes.swingtimerheight == "16"
 end
 
 local function CombatFocusLayoutSaved()
@@ -1016,6 +1235,10 @@ local function CombatFocusLayoutSaved()
         layout.doiteY) <= 0.01 and
       math.abs((tonumber(DoiteDPSDB.scale) or 100000) -
         ActionBars.focusDoiteScale) <= 0.001)
+  local function UnitFontConfigured(config)
+    return config.customfont == "1" and
+      config.customfont_size == tostring(ActionBars.focusUnitFontSize)
+  end
 
   return FocusPositionMatches(
       "pfPlayer", "BOTTOM", layout.playerX, layout.playerY,
@@ -1040,23 +1263,41 @@ local function CombatFocusLayoutSaved()
       layout.swingY, ActionBars.focusReadoutScale
     ) and FocusPositionMatches(
       "pfActionBarStances", "BOTTOM", layout.stanceX,
-      layout.stanceY, ActionBars.focusReadoutScale
+      layout.stanceY, ActionBars.focusStanceScale
     ) and player.width == tostring(ActionBars.focusUnitWidth) and
     player.height == tostring(ActionBars.focusUnitHeight) and
     player.buffs == "TOPLEFT" and player.debuffs == "BOTTOMLEFT" and
+    player.buffsize == tostring(ActionBars.focusAuraSize) and
+    player.debuffsize == tostring(ActionBars.focusAuraSize) and
+    player.buffoffx == "0" and player.buffoffy == "0" and
+    player.debuffoffx == "0" and player.debuffoffy == "0" and
     player.buffperrow == tostring(ActionBars.focusAuraPerRow) and
     player.debuffperrow == tostring(ActionBars.focusAuraPerRow) and
+    UnitFontConfigured(player) and
     target.width == tostring(ActionBars.focusUnitWidth) and
     target.height == tostring(ActionBars.focusUnitHeight) and
     target.buffs == "TOPRIGHT" and target.debuffs == "BOTTOMRIGHT" and
+    target.buffsize == tostring(ActionBars.focusAuraSize) and
+    target.debuffsize == tostring(ActionBars.focusAuraSize) and
+    target.buffoffx == "0" and target.buffoffy == "0" and
+    target.debuffoffx == "0" and target.debuffoffy == "0" and
     target.buffperrow == tostring(ActionBars.focusAuraPerRow) and
     target.debuffperrow == tostring(ActionBars.focusAuraPerRow) and
+    UnitFontConfigured(target) and
     targetTarget.width == tostring(ActionBars.focusTargetTargetWidth) and
     targetTarget.height == tostring(ActionBars.focusTargetTargetHeight) and
     targetTarget.buffs == "TOPRIGHT" and
     targetTarget.debuffs == "BOTTOMRIGHT" and
+    targetTarget.buffsize ==
+      tostring(ActionBars.focusTargetTargetAuraSize) and
+    targetTarget.debuffsize ==
+      tostring(ActionBars.focusTargetTargetAuraSize) and
+    targetTarget.buffoffx == "0" and targetTarget.buffoffy == "0" and
+    targetTarget.debuffoffx == "0" and
+    targetTarget.debuffoffy == "0" and
     targetTarget.buffperrow == tostring(ActionBars.focusAuraPerRow) and
     targetTarget.debuffperrow == tostring(ActionBars.focusAuraPerRow) and
+    UnitFontConfigured(targetTarget) and
     playerCast.width == tostring(ActionBars.focusReadoutWidth) and
     playerCast.height == tostring(ActionBars.focusReadoutHeight) and
     targetCast.width == tostring(ActionBars.focusReadoutWidth) and
@@ -1109,8 +1350,20 @@ local function ConfigureFocusUnitFrame(
   config.debuffs = debuffs
   config.buffsize = tostring(auraSize)
   config.debuffsize = tostring(auraSize)
+  config.buffoffx = "0"
+  config.buffoffy = "0"
+  config.debuffoffx = "0"
+  config.debuffoffy = "0"
   config.buffperrow = tostring(ActionBars.focusAuraPerRow)
   config.debuffperrow = tostring(ActionBars.focusAuraPerRow)
+  local global = pfUI_config.global or {}
+  if config.customfont ~= "1" then
+    config.customfont_name = global.font_unit or config.customfont_name
+    config.customfont_style =
+      global.font_unit_style or config.customfont_style or "OUTLINE"
+  end
+  config.customfont = "1"
+  config.customfont_size = tostring(ActionBars.focusUnitFontSize)
 
   local saved = SavePfUIPosition(
     name, "BOTTOM", x, y, scale
@@ -1327,12 +1580,12 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
 
   local stanceSaved = SavePfUIPosition(
     "pfActionBarStances", "BOTTOM", layout.stanceX, layout.stanceY,
-    self.focusReadoutScale
+    self.focusStanceScale
   )
   local stanceApplied = ApplyFramePosition(
     GetGlobal("pfActionBarStances"), "BOTTOM",
     layout.stanceX, layout.stanceY,
-    self.focusReadoutScale
+    self.focusStanceScale
   )
   if stanceApplied then
     live = live + 1
@@ -1368,7 +1621,7 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
     " Detected ArchiTotem was kept provider-owned and requested to open downward." or
     " ArchiTotem was unavailable or inapplicable and remained fail-open."
   return true,
-    "Combat Focus layout applied with direct Turtle WoW game coordinates: compact player/target frames use 0.68, target-of-target is attached to Target at 0.62, and the equal 180x16 cast/swing row uses 0.72. Aura directions, provider visibility, lock state, and native translucency were preserved without screen-pixel projection or coordinate readback." ..
+    "Combat Focus layout applied with direct Turtle WoW game coordinates: player and target use 240x60 at 0.8 with 14-point local unit text; the compact 240x60 target-of-target remains at 0.68 and attaches to Target's right edge; 23x23 auras use pfUI's real seven-UI border step and fit eight per row; the raised unit cluster reserves a second target-debuff row above the unchanged centered 260x12 player-cast, target-cast, and Swing stack at 1.0. The stance bar remains at 0.72 and both DoiteDPS rows remain in their separate lanes. Provider visibility, lock state, and native translucency were preserved without screen-pixel projection or coordinate readback." ..
     archiMessage
 end
 
@@ -1797,7 +2050,94 @@ function ActionBars:OpenAutoBarConfig()
   toggle()
   self.autoBarPresetStatus = "config-opened"
   return true,
-    "AutoBar config opened. Use /aeui autobar apply for the AEUI 4x6 preset."
+    "AutoBar config opened. Use /aeui autobar apply for the AEUI compact preset."
+end
+
+local function AutoBarDisplayFlag(value)
+  return value == true or value == 1 or value == "1"
+end
+
+local function AutoBarBaseDisplayMatches(display)
+  return type(display) == "table" and
+    tonumber(display.rows) == 6 and
+    tonumber(display.columns) == 4 and
+    tonumber(display.gapping) == 3 and
+    tonumber(display.alpha) == 10 and
+    tonumber(display.buttonWidth) == 36 and
+    tonumber(display.buttonHeight) == 36 and
+    tonumber(display.alignButtons) == 1 and
+    not AutoBarDisplayFlag(display.widthHeightUnlocked) and
+    not AutoBarDisplayFlag(display.popupDisable) and
+    not AutoBarDisplayFlag(display.popupOnShift)
+end
+
+local function RecordAutoBarDefaultMode(player)
+  local database = addon.db and addon.db.actionbars
+  if not database or not player then
+    return false
+  end
+  database.autoBarDefaultModeVersions =
+    database.autoBarDefaultModeVersions or {}
+  database.autoBarDefaultModeVersions[player] =
+    ActionBars.autoBarDefaultModeVersion
+  return true
+end
+
+function ActionBars:MigrateAutoBarDefaultMode()
+  if not AutoBar or type(AutoBar_Config) ~= "table" then
+    return false
+  end
+  local database = addon.db and addon.db.actionbars
+  local player = AutoBar.currentPlayer
+  local current = player and AutoBar_Config[player]
+  local versions = database and database.autoBarDefaultModeVersions
+  if not database or not player or type(current) ~= "table" or
+    (type(versions) == "table" and
+      versions[player] == self.autoBarDefaultModeVersion)
+  then
+    return false
+  end
+
+  local display = current.display
+  if not AutoBarProfileMatches() or
+    not AutoBarBaseDisplayMatches(display)
+  then
+    return false
+  end
+
+  local compact = not AutoBarDisplayFlag(display.showEmptyButtons) and
+    not AutoBarDisplayFlag(display.showCategoryIcon)
+  if compact and AutoBarDisplayFlag(display.hideDragHandle) then
+    RecordAutoBarDefaultMode(player)
+    self.autoBarPresetStatus = "compact-current"
+    return false
+  end
+
+  local backups = database.autoBarBackups
+  local previouslyApplied = type(backups) == "table" and
+    type(backups[player]) == "table"
+  local legacyFullMode = AutoBarDisplayFlag(display.showEmptyButtons) and
+    AutoBarDisplayFlag(display.showCategoryIcon)
+  if not previouslyApplied or not legacyFullMode then
+    return false
+  end
+
+  local before = CopyPlainTable(current)
+  display.showEmptyButtons = false
+  display.showCategoryIcon = false
+  display.hideDragHandle = 1
+  local ok, refreshed, message = pcall(RefreshAutoBarProfile)
+  if not ok or not refreshed then
+    AutoBar_Config[player] = before
+    pcall(RefreshAutoBarProfile)
+    self.autoBarPresetStatus = "migration-error"
+    self.autoBarPresetMessage = message
+    return false
+  end
+
+  RecordAutoBarDefaultMode(player)
+  self.autoBarPresetStatus = "compact-migrated"
+  return true
 end
 
 function ActionBars:ApplyRecommendedAutoBarProfile()
@@ -1843,8 +2183,9 @@ function ActionBars:ApplyRecommendedAutoBarProfile()
   display.buttonHeight = 36
   display.widthHeightUnlocked = false
   display.alignButtons = 1
-  display.showEmptyButtons = true
-  display.showCategoryIcon = true
+  display.showEmptyButtons = false
+  display.showCategoryIcon = false
+  display.hideDragHandle = 1
   display.popupDisable = false
   display.popupOnShift = false
 
@@ -1861,9 +2202,10 @@ function ActionBars:ApplyRecommendedAutoBarProfile()
   if not addon.db.actionbars.autoBarBackups[player] then
     addon.db.actionbars.autoBarBackups[player] = before
   end
+  RecordAutoBarDefaultMode(player)
   self.autoBarPresetStatus = "applied"
   return true,
-    "AEUI AutoBar preset applied to this character: 4x6, 24 slots, grouped categories, external popup drawer."
+    "AEUI AutoBar compact preset applied to this character: 24 logical categories, only currently available categories shown in a dynamic grid up to 4x6, with the external popup drawer."
 end
 
 function ActionBars:RestoreAutoBarProfile()
@@ -1890,6 +2232,10 @@ function ActionBars:RestoreAutoBarProfile()
     return false, message or "AutoBar restore failed; the active profile was kept."
   end
   backups[player] = nil
+  local versions = addon.db.actionbars.autoBarDefaultModeVersions
+  if type(versions) == "table" then
+    versions[player] = nil
+  end
   self.autoBarPresetStatus = "restored"
   return true, "AutoBar profile restored from the pre-AEUI backup."
 end
@@ -1925,6 +2271,13 @@ end
 local function AutoBarGroupingMatches(visibleCount)
   local display = AutoBar and AutoBar.display
   return visibleCount == 24 and display and
+    tonumber(display.rows) == 6 and tonumber(display.columns) == 4 and
+    AutoBarProfileMatches()
+end
+
+local function AutoBarRecommendedLayoutMatches(visibleCount)
+  local display = AutoBar and AutoBar.display
+  return visibleCount > 0 and visibleCount <= 24 and display and
     tonumber(display.rows) == 6 and tonumber(display.columns) == 4 and
     AutoBarProfileMatches()
 end
@@ -2160,7 +2513,8 @@ function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
   local bottomDelta = bottomPixels - centerYPixels
   local xOffset =
     (-self.consumableDockGap * rackScale - rightDelta) / handleScale
-  local yOffset = -bottomDelta / handleScale
+  local yOffset =
+    (self.fieldKitDockYOffset * rackScale - bottomDelta) / handleScale
 
   handle:ClearAllPoints()
   handle:SetPoint(
@@ -2194,7 +2548,8 @@ function ActionBars:ApplyTrinketDockPosition(enabled)
   end
   frame:ClearAllPoints()
   frame:SetPoint(
-    "BOTTOMLEFT", main, "BOTTOMRIGHT", self.trinketDockGap, 0
+    "BOTTOMLEFT", main, "BOTTOMRIGHT",
+    self.trinketDockGap, self.fieldKitDockYOffset
   )
   self.trinketDockApplied = true
   self.trinketDockStatus = "right"
@@ -2304,7 +2659,7 @@ function ActionBars:SetFieldKitDocking(docked)
     self:ApplyTrinketDockPosition(FieldKitEnabled())
     self:ApplyArchiTotemDockPosition(FieldKitEnabled())
     return true,
-      "Combat Deck bound: consumables left, 12x2 action bars centered, trinkets right, and detected ArchiTotem below. Move the main action bar to move the whole deck."
+      "Combat Deck bound: consumables left and trinkets right share a 20 UI lower dock, 12x2 action bars stay centered, and detected ArchiTotem remains below. Move the main action bar to move the whole deck."
   end
   self:ApplyActionBarStackPosition(FieldKitEnabled())
   self:ApplyConsumableDockPosition(FieldKitEnabled())
@@ -2787,7 +3142,7 @@ function ActionBars:ApplyAutoBarPopup(enabled, baseButton)
   local mainBounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
   local drawerEnabled = enabled and activeBase and
     GetPopupMode() ~= "NATIVE" and
-    AutoBarGroupingMatches(mainBounds.count)
+    AutoBarRecommendedLayoutMatches(mainBounds.count)
 
   if drawerEnabled then
     HideUnusedPopupConnectors(frame, 1)
@@ -3340,13 +3695,14 @@ function ActionBars:Apply()
 
   self:InstallFieldKitHooks()
   self:ApplyActionBarStackPosition(enabled)
+  self:MigrateAutoBarDefaultMode()
   self:ApplyAutoBarFieldKit(enabled)
   self:ApplyTrinketFieldKit(enabled)
   self:ApplyArchiTotemDockPosition(enabled)
 
-  -- Upgrade only the immediately preceding AEUI game-coordinate contract.
+  -- Upgrade only exact preceding AEUI game-coordinate contracts.
   -- Restored/custom profiles are not matched by this signature and remain
-  -- untouched. This makes the requested V6 repair effective on the next
+  -- untouched. This makes the requested V10 repair effective on the next
   -- /reload without requiring another pixel-space calibration command.
   if ShouldMigrateCombatFocusLayout() and ComfortUIScaleConfigured() then
     self:ApplyCombatFocusLayoutPreset()
@@ -3406,9 +3762,13 @@ function ActionBars:GetRuntimeStatus()
       tostring(self.focusTargetTargetScale) ..
     ",focus-layout-readout-scale=" ..
       tostring(self.focusReadoutScale) ..
+    ",focus-layout-stance-scale=" ..
+      tostring(self.focusStanceScale) ..
     ",focus-layout-readout-size=" ..
       tostring(self.focusReadoutWidth) .. "x" ..
       tostring(self.focusReadoutHeight) ..
+    ",focus-layout-unit-font-size=" ..
+      tostring(self.focusUnitFontSize) ..
     ",focus-ui-scale=" ..
       tostring(self.comfortUIScaleStatus or "custom") ..
     ",focus-ui-scale-tier=" .. tostring(uiScaleTier) ..

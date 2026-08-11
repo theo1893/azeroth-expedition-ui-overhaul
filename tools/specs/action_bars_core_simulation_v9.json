@@ -1,0 +1,220 @@
+{
+  "schema": "aeui-action-bars-simulation-v1",
+  "version": "ACTION-BARS-CORE-SIM-V9",
+  "extends": "tools/specs/action_bars_core_simulation_v8.json",
+  "purpose": "deterministic geometry preview derived from 大奶黑牛: enlarge Player and Target by one pfUI step, enlarge cast and Swing timing bars by three steps, reflow the affected focus stack, and make AutoBar inventory-aware compact mode the AEUI default",
+  "output": "generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V9/action_bars_core_sim_v9.png",
+  "annotations": {
+    "title": "Action Bars / Combat Focus V9 - user-scale reflow",
+    "subtitle": "P/T 0.8 · TT 0.68 · timing 1.0 · AutoBar 13 current categories",
+    "note": "Deterministic local geometry only - accepted runtime pixels unchanged - ImageGen 0/0",
+    "rules_title": "V9 runtime boundaries",
+    "rules": [
+      "Player and Target: 240x60 at 0.8",
+      "TargetTarget: 240x60 at 0.68; centered +8 UI right",
+      "Cast and Swing: 260x12 at 1.0 on one centerline",
+      "Stance 0.72; DoiteDPS and Combat Deck unchanged",
+      "AutoBar: 24 logical categories; current inventory only"
+    ]
+  },
+  "focus_field": {
+    "screen_box": [540, 456, 1380, 932],
+    "role": "non-runtime eye-path annotation for the V9 scale-aware provider cluster"
+  },
+  "runtime_projection_proposal": {
+    "not_applied": false,
+    "global_pfui_tier": 8,
+    "combat_local_scale": {
+      "__replace__": true,
+      "player_target": 0.8,
+      "targettarget": 0.68,
+      "cast_swing": 1.0,
+      "stance": 0.72,
+      "doitedps": 0.82
+    },
+    "player": {"anchor": "BOTTOM", "xpos_ui": -160, "ypos_ui": 455},
+    "target": {"anchor": "BOTTOM", "xpos_ui": 105, "ypos_ui": 455},
+    "targettarget": {"fallback_anchor": "BOTTOM", "xpos_ui": 393, "ypos_ui": 541, "live_anchor": "LEFT of frame to RIGHT of pfTarget + 8 UI; vertical centers aligned"},
+    "player_castbar": {"anchor": "BOTTOM", "xpos_ui": 0, "ypos_ui": 316},
+    "target_castbar": {"anchor": "BOTTOM", "xpos_ui": 0, "ypos_ui": 300},
+    "swing_main_and_ranged": {"anchor": "BOTTOM", "xpos_ui": 0, "ypos_ui": 284},
+    "stance": {"anchor": "BOTTOM", "xpos_ui": 0, "ypos_ui": 255},
+    "doitedps": {"anchor": "TOPLEFT", "xpos_ui": 850, "ypos_ui": -647, "scale": 0.82},
+    "position_method": "one-shot Turtle WoW Frame:SetPoint game coordinates at pfUI tier 8; TargetTarget alone keeps a live center-aligned right-edge dependency on pfTarget",
+    "architotem": "centered below Bar 1 with a five-pixel visual XP-rail clearance and provider direction=down"
+  },
+  "layout_contract": {
+    "layout_mode": "compact-stack-v9",
+    "runtime_change_in_this_simulation": true,
+    "main_bar_center_x": 960,
+    "unit_frame_width_px": 229,
+    "unit_frame_height_px": 58,
+    "unit_frame_widths_px": [229, 229, 195],
+    "unit_frame_heights_px": [58, 58, 49],
+    "player_target_gap_px": 7,
+    "player_target_center_x": 942,
+    "targettarget_gap_px": 6,
+    "targettarget_vertical_center_offset_px": 0,
+    "three_unit_cluster_center_x": 1042,
+    "unit_font_size_ui": 14,
+    "aura_size_ui": 27,
+    "aura_gap_ui": 3,
+    "aura_per_row": 8,
+    "aura_row_span_ui": 237,
+    "aura_row_slack_ui": 3,
+    "aura_size_px": 26,
+    "aura_gap_px": 3,
+    "aura_sizes_px": [26, 26, 26, 26, 22, 22],
+    "aura_gaps_px": [3, 3, 3, 3, 2, 2],
+    "aura_row_span_px": 229,
+    "aura_row_slack_px": 0,
+    "aura_row_spans_px": [229, 229, 229, 229, 190, 190],
+    "aura_row_slacks_px": [0, 0, 0, 0, 5, 5],
+    "readout_width_ui": 260,
+    "readout_height_ui": 12,
+    "readout_width_px": 293,
+    "readout_height_px": 14,
+    "readout_row_gap_px": 3,
+    "swing_pair_gap_px": 2,
+    "unit_debuff_to_readout_gap_px": 2,
+    "readout_to_deck_clearance_px": 8,
+    "consumable_to_main_gap_px": 12,
+    "consumable_to_player_gap_px": 8,
+    "main_to_trinket_gap_px": 8,
+    "doitedps_to_unit_aura_vertical_clearance_px": 51,
+    "xp_rail_bottom_y": 882,
+    "totem_to_xp_rail_clearance_px": 5
+  },
+  "consumables": {
+    "label": "",
+    "labels_visible": false,
+    "buttons": 13,
+    "cols": 4,
+    "rows": 4,
+    "screen_origin": [572, 733],
+    "states": ["normal", "cooldown", "normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal", "cooldown", "normal", "normal"],
+    "counts": ["4", "3", "10", "5", "43", "29", "9", "4", "8", "10", "3", "48", ""]
+  },
+  "unit_frames": {
+    "cluster_label": "Aura: Player from left; Target and compact TargetTarget from right - eight per row",
+    "cluster_label_origin": [1042, 470],
+    "profile_recommendation": {
+      "not_applied": false,
+      "proposed_shared": {
+        "width_ui": 240,
+        "height_ui": 60,
+        "scale": 1.0,
+        "runtime_local_scale": 0.8,
+        "target_display_multiplier": 1.0,
+        "customfont_size_ui": 14,
+        "aura_size_ui": 27,
+        "aura_per_row": 8
+      },
+      "targettarget": {
+        "width_ui": 240,
+        "height_ui": 60,
+        "runtime_local_scale": 0.68,
+        "attachment_gap_ui": 8,
+        "attachment_side": "right",
+        "vertical_alignment": "center"
+      }
+    },
+    "frames": [
+      {
+        "id": "UF.PLAYER.ADJACENCY",
+        "label": "",
+        "screen_box": [709, 621, 938, 679],
+        "portrait_side": "left",
+        "portrait_tint": "#39533f",
+        "name": "Player",
+        "level": "Lv 60",
+        "health": 0.76,
+        "power": 0.64,
+        "health_text": "76% health",
+        "health_color": "#657742",
+        "power_color": "#405f7c",
+        "name_font": "small",
+        "level_font": "tiny",
+        "health_font": "tiny",
+        "aura_origin": [709, 592],
+        "aura_strips": [
+          {"kind": "buff", "origin": [709, 592], "direction": "ltr", "size": 26, "gap": 3, "auras": [{"kind": "buff"}, {"kind": "buff"}, {"kind": "buff", "count": "2"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}]},
+          {"kind": "debuff", "origin": [709, 683], "direction": "ltr", "size": 26, "gap": 3, "auras": [{"kind": "debuff"}, {"kind": "debuff", "count": "3"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}]}
+        ]
+      },
+      {
+        "id": "UF.TARGET.ADJACENCY",
+        "label": "",
+        "screen_box": [945, 621, 1174, 679],
+        "portrait_side": "right",
+        "portrait_tint": "#633b34",
+        "name": "Target",
+        "level": "Lv 62+",
+        "health": 0.58,
+        "power": 0.42,
+        "health_text": "58% target health",
+        "health_color": "#6f5038",
+        "power_color": "#4a4f65",
+        "name_font": "small",
+        "level_font": "tiny",
+        "health_font": "tiny",
+        "aura_origin": [1148, 592],
+        "aura_strips": [
+          {"kind": "buff", "origin": [1148, 592], "direction": "rtl", "size": 26, "gap": 3, "auras": [{"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}]},
+          {"kind": "debuff", "origin": [1148, 683], "direction": "rtl", "size": 26, "gap": 3, "auras": [{"kind": "debuff"}, {"kind": "debuff", "count": "2"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}]}
+        ]
+      },
+      {
+        "id": "UF.TARGETTARGET.ADJACENCY",
+        "label": "",
+        "screen_box": [1180, 626, 1375, 675],
+        "portrait_side": "right",
+        "portrait_tint": "#4e3a32",
+        "name": "Target's target",
+        "level": "60",
+        "health": 0.81,
+        "power": 0.52,
+        "health_text": "81%",
+        "health_color": "#625f3d",
+        "power_color": "#46556a",
+        "name_font": "small",
+        "level_font": "tiny",
+        "health_font": "tiny",
+        "aura_origin": [1353, 600],
+        "aura_strips": [
+          {"kind": "buff", "origin": [1353, 600], "direction": "rtl", "size": 22, "gap": 2, "auras": [{"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}]},
+          {"kind": "debuff", "origin": [1353, 679], "direction": "rtl", "size": 22, "gap": 2, "auras": [{"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}]}
+        ]
+      }
+    ]
+  },
+  "cast_bars": {
+    "profile_recommendation": {
+      "not_applied": false,
+      "shared": {"width_ui": 260, "height_ui": 12, "runtime_local_scale": 1.0},
+      "position_note": "Player Cast, Target Cast, and Swing use the same x=0 centerline on three distinct rows"
+    },
+    "bars": [
+      {"id": "CAST.PLAYER", "screen_box": [814, 711, 1107, 725], "name": "Player cast", "timer": "1.2", "progress": 0.62, "latency": 0.11, "fill": "#766f43", "icon_fill": "#48604a", "glyph": 1},
+      {"id": "CAST.TARGET", "screen_box": [814, 728, 1107, 742], "name": "Target cast", "timer": "0.8", "progress": 0.46, "interruptible": true, "fill": "#805143", "icon_fill": "#65403a", "glyph": 4},
+      {"id": "CAST.FOCUS.OPTIONAL", "screen_box": [1488, 594, 1688, 612], "visible_in_simulation": false, "placement_policy": "follow the optional focus frame"}
+    ]
+  },
+  "swing_timers": {
+    "label": "",
+    "label_origin": [960, 742],
+    "profile_recommendation": {"not_applied": false, "width_ui": 260, "height_ui": 12, "runtime_local_scale": 1.0, "ranged_policy": "same centered row as mainhand"},
+    "bars": [
+      {"id": "SWING.MAINHAND", "screen_origin": [814, 745], "width_ui": 260, "height_ui": 12, "scale": 1.38888888888889, "progress": 0.68, "fill": "#806a3d", "left_text": "Main", "right_text": "2.8"},
+      {"id": "SWING.OFFHAND", "screen_origin": [814, 761], "width_ui": 260, "height_ui": 12, "scale": 1.38888888888889, "progress": 0.36, "fill": "#635642", "left_text": "Off", "right_text": "1.9"}
+    ]
+  },
+  "non_authoritative": [
+    "all flat colors, glyphs, portraits, aura icons and provider icon placeholders",
+    "the user screenshot is read-only geometry and configuration evidence and is not pasted, traced, cropped or transformed into this simulation",
+    "the simulation scale factor expresses the V9-to-V8 physical comparison while runtime metadata remains the authoritative local scale 1.0",
+    "V9 changes only real provider geometry, scoped scale, and the exact AEUI AutoBar display defaults",
+    "no simulation pixel may be promoted, sliced, uploaded or used as ImageGen input",
+    "accepted Action Slot, Rail, Consumable Kit and Trinket Kit source/runtime pixels are unchanged"
+  ]
+}

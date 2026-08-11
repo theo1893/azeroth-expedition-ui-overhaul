@@ -280,14 +280,14 @@ def main() -> None:
         encoding="utf-8-sig"
     )
     assert "## RequiredDeps: pfUI" in aeui_toc
-    assert "## Version: 0.8.14" in aeui_toc
+    assert "## Version: 0.8.18" in aeui_toc
     assert "Core\\Bootstrap.lua" in aeui_toc
     assert "Modules\\ActionBars.lua" in aeui_toc
     assert "Modules\\Chat.lua" in aeui_toc
     assert "Modules\\QuestVisualTheme.lua" in aeui_toc
     assert "Modules\\Quests.lua" in aeui_toc
     bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(encoding="utf-8")
-    assert 'addon.version = "0.8.14"' in bootstrap
+    assert 'addon.version = "0.8.18"' in bootstrap
     assert "actionbar-runtime=" in bootstrap
     assert 'if command == "actionbars" then' in bootstrap
     assert '/aeui autobar [open|apply|restore|popup]' in bootstrap
@@ -323,36 +323,44 @@ def main() -> None:
     assert "button:SetParent" not in actionbars_source
     assert "button:SetWidth" not in actionbars_source
     assert "button:SetHeight" not in actionbars_source
-    assert 'ActionBars.fieldKitRuntimeContract = "1.8"' in actionbars_source
-    assert 'ActionBars.focusLayoutRuntimeContract = "1.7"' in actionbars_source
+    assert 'ActionBars.fieldKitRuntimeContract = "2.0"' in actionbars_source
+    assert 'ActionBars.focusLayoutRuntimeContract = "2.1"' in actionbars_source
+    assert "ActionBars.focusLayoutVersion = 12" in actionbars_source
     assert 'ActionBars.focusCoordinateSpace = "game-native-v1"' in actionbars_source
     assert "ActionBars.comfortUIScaleTier = 8" in actionbars_source
     assert "ActionBars.comfortUIScaleValue = 0.71111111111111" in actionbars_source
-    assert "ActionBars.focusUnitScale = 0.68" in actionbars_source
-    assert "ActionBars.focusTargetTargetScale = 0.62" in actionbars_source
-    assert "ActionBars.focusReadoutScale = 0.72" in actionbars_source
+    assert "ActionBars.focusUnitScale = 0.8" in actionbars_source
+    assert "ActionBars.focusTargetTargetScale = 0.68" in actionbars_source
+    assert "ActionBars.focusReadoutScale = 1" in actionbars_source
+    assert "ActionBars.focusStanceScale = 0.72" in actionbars_source
     assert "ActionBars.focusDoiteScale = 0.82" in actionbars_source
     assert "ActionBars.focusUnitWidth = 240" in actionbars_source
     assert "ActionBars.focusUnitHeight = 60" in actionbars_source
-    assert "ActionBars.focusTargetTargetWidth = 132" in actionbars_source
-    assert "ActionBars.focusTargetTargetHeight = 30" in actionbars_source
-    assert "ActionBars.focusReadoutWidth = 180" in actionbars_source
-    assert "ActionBars.focusReadoutHeight = 16" in actionbars_source
+    assert "ActionBars.focusTargetTargetWidth = 240" in actionbars_source
+    assert "ActionBars.focusTargetTargetHeight = 60" in actionbars_source
+    assert "ActionBars.focusUnitFontSize = 14" in actionbars_source
+    assert "ActionBars.focusAuraSize = 23" in actionbars_source
+    assert "ActionBars.focusTargetTargetAuraSize = 23" in actionbars_source
+    assert "ActionBars.fieldKitDockYOffset = -20" in actionbars_source
+    assert "ActionBars.focusReadoutWidth = 260" in actionbars_source
+    assert "ActionBars.focusReadoutHeight = 12" in actionbars_source
     assert "ActionBars.combatDeckX = 0" in actionbars_source
     assert "ActionBars.combatDeckY = 175" in actionbars_source
-    assert "ActionBars.focusPlayerX = -190" in actionbars_source
-    assert "ActionBars.focusTargetX = 190" in actionbars_source
-    assert "ActionBars.focusTargetTargetX = 414" in actionbars_source
-    assert "ActionBars.focusUnitY = 500" in actionbars_source
-    assert "ActionBars.focusCastPlayerX = -196" in actionbars_source
-    assert "ActionBars.focusCastTargetX = 196" in actionbars_source
-    assert "ActionBars.focusCastY = 430" in actionbars_source
+    assert "ActionBars.focusPlayerX = -160" in actionbars_source
+    assert "ActionBars.focusTargetX = 105" in actionbars_source
+    assert "ActionBars.focusTargetTargetX = 393" in actionbars_source
+    assert "ActionBars.focusUnitY = 485" in actionbars_source
+    assert "ActionBars.focusTargetTargetY = 576" in actionbars_source
+    assert "ActionBars.focusCastPlayerX = 0" in actionbars_source
+    assert "ActionBars.focusCastTargetX = 0" in actionbars_source
+    assert "ActionBars.focusCastY = 316" in actionbars_source
+    assert "ActionBars.focusTargetCastY = 300" in actionbars_source
     assert "ActionBars.focusSwingX = 0" in actionbars_source
-    assert "ActionBars.focusSwingY = 430" in actionbars_source
+    assert "ActionBars.focusSwingY = 284" in actionbars_source
     assert "ActionBars.focusStanceX = 0" in actionbars_source
     assert "ActionBars.focusStanceY = 255" in actionbars_source
-    assert "ActionBars.focusDoiteX = 1012" in actionbars_source
-    assert "ActionBars.focusDoiteY = -780" in actionbars_source
+    assert "ActionBars.focusDoiteX = 850" in actionbars_source
+    assert "ActionBars.focusDoiteY = -647" in actionbars_source
     assert "ResolveCombatFocusProjection" not in actionbars_source
     assert "ApplyFrameRootPosition" not in actionbars_source
     assert "ProjectedFrameExtentRoot" not in actionbars_source
@@ -364,6 +372,12 @@ def main() -> None:
     assert "config.height = tostring(height)" in actionbars_source
     assert "config.buffs = buffs" in actionbars_source
     assert "config.debuffs = debuffs" in actionbars_source
+    assert 'config.buffoffx = "0"' in actionbars_source
+    assert 'config.buffoffy = "0"' in actionbars_source
+    assert 'config.debuffoffx = "0"' in actionbars_source
+    assert 'config.debuffoffy = "0"' in actionbars_source
+    assert 'config.customfont = "1"' in actionbars_source
+    assert "config.customfont_size = tostring(ActionBars.focusUnitFontSize)" in actionbars_source
     assert "config.buffperrow = tostring(ActionBars.focusAuraPerRow)" in actionbars_source
     assert "config.debuffperrow = tostring(ActionBars.focusAuraPerRow)" in actionbars_source
     assert "config.width = tostring(ActionBars.focusReadoutWidth)" in actionbars_source
@@ -447,13 +461,14 @@ def main() -> None:
         assert fieldkit["adapter"]["provider_geometry_writes"] is True
         assert fieldkit["adapter"]["provider_behavior_replaced"] is False
         assert fieldkit["adapter"]["saved_variables_written"] is True
+        is_consumable = fieldkit["component"] == "AB.CONSUMABLE.KIT.V1"
         assert fieldkit["adapter"][
             "provider_saved_variables_written_automatically"
-        ] is False
+        ] is is_consumable
         assert fieldkit["adapter"][
             "autobar_enabled_or_profile_applied"
         ] is False
-        assert fieldkit["adapter"]["automatic_profile_mutation"] is False
+        assert fieldkit["adapter"]["automatic_profile_mutation"] is is_consumable
         assert fieldkit["package_validation"]["status"] == "pass"
         assert fieldkit["game_validation"]["status"] == "pending-retest"
 

@@ -1,21 +1,18 @@
 {
   "schema": "aeui-display-region-contract-v1",
-  "component": "AB.FOCUS.LAYOUT.V1/runtime-v2.1",
-  "coordinate_system": "top-left-origin, right-bottom-exclusive for display review; runtime uses Turtle WoW 1.12 Frame:SetPoint game coordinates at pfUI tier 8, with TargetTarget as the sole live frame-relative anchor",
+  "component": "AB.FOCUS.LAYOUT.V1/simulation-v10",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive; provider UI units for scenario contracts and deterministic physical pixels for the composed simulation",
   "evidence": {
-    "provider": "addon/pfUI unitframes/castbar/swingtimer/actionbar + installed DoiteDPS + optional installed ArchiTotem 1.7 + AutoBar 1.31 + TrinketMenu",
-    "layout_formula": "Combat Deck BOTTOM (0,175); Player/Target BOTTOM (-160,485)/(105,485) at 0.8; TargetTarget fallback BOTTOM (393,576) at 0.68 then live center-aligned LEFT-to-pfTarget-RIGHT +8; Aura 23 UI with pfUI provider step size+7 gives 233/240 UI for eight; Player Cast BOTTOM (0,316), Target Cast BOTTOM (0,300), and Swing BOTTOM (0,284), each 260x12 at 1.0; both Field Kit groups use y offset -20; stance BOTTOM (0,255) at 0.72; DoiteDPS TOPLEFT (850,-647) at 0.82",
-    "accepted_simulation_spec": "tools/specs/action_bars_core_simulation_v10.json",
-    "accepted_simulation": "generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V10/action_bars_core_sim_v10.png",
-    "source_revision_evidence_primary": "C:/Users/西奥/AppData/Local/Temp/codex-clipboard-0473244d-209c-468e-872c-a8d89b95bcc2.png",
-    "source_revision_evidence_primary_sha256": "3e44c1bbb13f10a7fe8b0e19fb0ce06323d1277405b84b7399a3917093006325",
-    "runtime_v2_1_revision": "大奶黑牛 keeps the accepted comfortable scales, moves the unit family upward without horizontal drift, uses the real pfUI size+7 aura step at size 23, reserves a two-row sixteen-debuff boss lane, and lowers both Field Kit groups together by 20 UI",
+    "provider": "addon/pfUI unitframes/castbar/swingtimer/actionbar + installed DoiteDPS + optional ArchiTotem 1.7 + AutoBar 1.31 + TrinketMenu",
+    "layout_formula": "V10 keeps Player/Target 240x60 at 0.8 and TargetTarget 240x60 at 0.68; Player/Target move from BOTTOM y=455 to 485 while TargetTarget stays center-attached +8 UI right; Aura is 23 UI with pfUI's real 7 UI provider gap, so eight occupy 233/240 UI; sixteen target debuffs use two rows and retain a three-pixel composed gap above the unchanged 260x12 timing stack; both Field Kit groups move down 20 UI",
+    "simulation_spec": "tools/specs/action_bars_core_simulation_v10.json",
     "adapter": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
-    "target": "Turtle WoW 1.18.1; audited 1920x1080 client to 2560x1440 display chain",
-    "atlas_role": "layout-only runtime contract; no source or runtime bitmap is introduced or changed",
-    "dynamic_ownership": "all health, power, aura, spell, timer, cooldown, totem, skip, recall, preset, tooltip, drag, lock and hit behavior remains provider-owned",
-    "runtime_scope": "only unchanged exact version-7 through version-11 AEUI game-coordinate signatures migrate once on /reload to version 12; the exact 大奶黑牛 version-11 profile is included while manually adjusted profiles remain untouched until explicit apply/comfort; TargetTarget is reattached to Target's right edge after pfUI unlock closes and its independent mover is hidden only while the contract is active; no OnUpdate geometry loop is used; restore returns every captured pfUI/provider field",
-    "final_runtime": true
+    "target": "Turtle WoW 1.18.1; deterministic 1920x1080 review composition",
+    "source_screenshot_primary": "C:/Users/西奥/AppData/Local/Temp/codex-clipboard-0473244d-209c-468e-872c-a8d89b95bcc2.png",
+    "source_screenshot_primary_sha256": "3e44c1bbb13f10a7fe8b0e19fb0ce06323d1277405b84b7399a3917093006325",
+    "dynamic_ownership": "all health, power, aura, spell, timer, cooldown, inventory availability, totem, tooltip, drag, lock and hit behavior remains provider-owned",
+    "runtime_scope": "geometry-only overlap repair; accepted Action Bars and Field Kit bitmap bytes are unchanged",
+    "final_runtime": false
   },
   "atlas": {
     "size": [32, 32],
@@ -45,8 +42,8 @@
       "preview_frame": [488, 60],
       "zones": {"target-family": [0, 0, 488, 60]},
       "regions": [
-        {"id": "target", "kind": "status", "box": [0, 0, 240, 60], "zone": "target-family"},
-        {"id": "targettarget", "kind": "status", "box": [248, 0, 488, 60], "zone": "target-family"}
+        {"id": "target-scale-080", "kind": "status", "box": [0, 0, 240, 60], "zone": "target-family"},
+        {"id": "targettarget-scale-068", "kind": "status", "box": [248, 0, 488, 60], "zone": "target-family"}
       ]
     },
     {
@@ -81,14 +78,14 @@
     },
     {
       "id": "centered-cast-cast-swing-stack-260x12-scale-100",
-      "frame": [260, 66],
-      "preview_frame": [260, 66],
-      "zones": {"timing-stack": [0, 0, 260, 66]},
+      "frame": [260, 60],
+      "preview_frame": [260, 60],
+      "zones": {"timing-stack": [0, 0, 260, 60]},
       "regions": [
         {"id": "player-cast", "kind": "status", "box": [0, 0, 260, 12], "zone": "timing-stack"},
-        {"id": "target-cast", "kind": "status", "box": [0, 20, 260, 32], "zone": "timing-stack"},
-        {"id": "swing", "kind": "status", "box": [0, 40, 260, 52], "zone": "timing-stack"},
-        {"id": "offhand", "kind": "status", "box": [0, 54, 260, 66], "zone": "timing-stack"}
+        {"id": "target-cast", "kind": "status", "box": [0, 16, 260, 28], "zone": "timing-stack"},
+        {"id": "swing", "kind": "status", "box": [0, 32, 260, 44], "zone": "timing-stack"},
+        {"id": "offhand", "kind": "status", "box": [0, 48, 260, 60], "zone": "timing-stack"}
       ]
     },
     {

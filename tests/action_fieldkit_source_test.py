@@ -153,11 +153,14 @@ def main() -> None:
         assert runtime_manifest["adapter"]["saved_variables_written"] is True
         assert runtime_manifest["adapter"][
             "provider_saved_variables_written_automatically"
-        ] is False
+        ] is (case["component"] == "AB.CONSUMABLE.KIT.V1")
         assert runtime_manifest["adapter"][
             "aeui_saved_variables_written_on_drag_stop"
         ] is False
         assert runtime_manifest["adapter"]["autobar_enabled_or_profile_applied"] is False
+        assert runtime_manifest["adapter"]["automatic_profile_mutation"] is (
+            case["component"] == "AB.CONSUMABLE.KIT.V1"
+        )
         assert runtime_manifest["game_validation"]["status"] == "pending-retest"
 
         with Image.open(source_path) as opened:

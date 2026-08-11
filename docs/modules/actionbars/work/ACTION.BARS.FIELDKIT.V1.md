@@ -7,7 +7,7 @@
   `AB.TRINKET.MENU`、`AB.CONSUMABLE.RACK`、`AB.CONSUMABLE.POCKET`、
   `AB.CONSUMABLE.POPUP`、`AB.CONSUMABLE.GROUP`
 - 模拟版本：`AB-FIELDKIT-SIM-V3`
-- 当前操作：`compact no-label bridge / game retest`
+- 当前操作：`inventory-aware compact default / game retest`
 - 子状态：`runtime-exported / pending-retest`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
@@ -25,7 +25,14 @@
   mover，并在 actionbar 配置刷新后恢复相对锚，修复 `unlock.lua:527`。bridge-v1.8
   移除“应急／增益／工具”三段文字但保留语义分隔，把卷袋／主栏间距收为 `12 UI`、
   饰品／主栏间距收为 `8 UI`、ArchiTotem 垂直 offset 收为 `-39 UI`；同时沿用
-  TargetTarget mover 的同类安全生命周期。P4→当前
+  TargetTarget mover 的同类安全生命周期。bridge-v1.9 以“大奶黑牛”的配置把
+  AutoBar 默认显示改为保留 24 个逻辑类别、关闭空槽与缺货类别图标、隐藏拖动把手，
+  因而只按当前可用类别动态显示并在最大 `4×6` 内收缩；external drawer 支持少于
+  24 个当前主格，三组分隔仍只在满 24 格时显示。旧 AEUI 满格显示只在存在 AEUI
+  pre-apply 备份且签名完全匹配时一次迁移。bridge-v2.0 不改上述 profile／popup／
+  provider 合同，只给左右两组共用 `-20 UI` 底部偏移，使消耗品与饰品底边同步
+  下移并继续由 Bar 1 单根移动。V10 simulation／runtime display 各 `12/12 pass`。
+  P4→当前
   没有调用 ImageGen
 - 模拟用户结论：`AB-FIELDKIT-SIM-V1 consumable direction revision-requested
   2026-08-08`；用户原文：“消耗品5*2不够用. 并且能否按照类型进行分组?”；
@@ -72,9 +79,11 @@
   加载并显示。AEUI 从未自动启用它。
 - 两个插件均已安装；普通 adapter 刷新不得替用户启用 AutoBar。只有用户主动
   输入 `/aeui autobar apply／restore` 时才允许当前角色 profile 的可逆写入。
-- 当前“大奶黑牛 - Basin of Stars”角色 profile 已由用户显式应用为 `4×6／24`、
-  `36×36 UI`、gap `3 UI` 与三组推荐类别；`_SHARED1` 的旧 `1×24` 只保留为未激活
-  provider 配置。AEUI 普通刷新不重写该 profile。
+- 当前“大奶黑牛 - Basin of Stars”角色 profile 为 24 个推荐逻辑类别、
+  `36×36 UI`、gap `3 UI`、最多 `4×6`；`showEmptyButtons` 与 `showCategoryIcon` 均
+  关闭、`hideDragHandle=1`，当前背包因此只显示 13 个有物品类别。`_SHARED1` 的旧
+  `1×24` 只保留为未激活 provider 配置。AEUI 普通刷新不重写类别 profile；仅上述
+  exact backed-up 旧 AEUI 满格显示允许一次性迁移三个显示字段。
 - 当前 TrinketMenu 保存为主栏水平、主栏 scale
   `0.9043710231781006`、菜单垂直、菜单 scale `1`、固定 `4` 列、菜单停靠主栏
   右侧且底部对齐、`KeepDocked=ON`、`KeepOpen=OFF`、`MenuOnShift=OFF`、
@@ -188,11 +197,11 @@
 - 每个口袋保持正方形命中几何，中央完整留给真实图标；数量、冷却、缺货、
   family、Tooltip 和按下反馈全部动态。
 - 外沿按真实可见 Button 簇重算，支持 `1–24` 个 Button、合法行列、非正方形
-  Button 尺寸及 provider scale；推荐实例改为完整
-  `4×6 / 24 Button / 36 UI / gap 3 UI`，卷袋主体 `165×243 UI`。
-- 推荐 profile 的 `1–8／9–16／17–24` 依次标记为“应急／增益／工具”。三枚
-  `40×20 UI` 标题皮签位于主体左侧 `2 UI` 外，底层分隔带只占两组之间的
-  `3 UI` gap；全部 `EnableMouse(false)`，不改变任一 AutoBar Button 命中盒。
+  Button 尺寸及 provider scale；推荐实例保留 24 个逻辑类别，但只显示当前可用
+  类别，`36 UI / gap 3 UI`、最大 `4×6`；满容量卷袋主体 `165×243 UI`。
+- 推荐 profile 的 `1–8／9–16／17–24` 只在 24 格全部可见时用两条底层分隔带
+  表达，不创建“应急／增益／工具”文字或三枚标题皮签；分隔带只占两组之间的
+  `3 UI` gap、`EnableMouse(false)`，不改变任一 AutoBar Button 命中盒。
 - 分组装饰必须验证 Button 数 `24`、行列 `4×6` 和 profile 签名；任一条件不
   匹配即全部隐藏，仅保留单一自适应卷袋外壳。不得给用户的 `5×2`、`24×1`、
   `1×24` 或自定义行列贴上错误类别标题。
@@ -203,8 +212,8 @@
   不复制数据库、不按名称猜测。
 - popup 复用薄口袋与短连接带，不使用固定大面板；支持上下左右和 `1–12` 个
   provider Button。
-- 当前 AutoBar 为 disabled，因此 runtime adapter 即使以后存在，也只能在
-  `AutoBarFrame` 已存在且插件已自行加载／显示时换肤；不得自动启用。
+- AutoBar 是可选 provider；runtime adapter 只能在 `AutoBarFrame` 已存在且插件已
+  自行加载／显示时换肤，不得自动启用。
 - AutoBar 缺失／禁用时 V1 显示为空。AEUI 钉选物品 fallback 属于以后独立的
   功能合同，不在本批次凭物品名称猜测分类。
 
@@ -329,17 +338,17 @@
 
 ### 用户已确认的可见方向
 
-1. 消耗品改为左侧完整 `4×6 / 24 类`，与饰品双槽共同底边的整体平衡。
+1. 消耗品保留 24 个逻辑类别，当前可见格随库存动态收缩、最大 `4×6`，与饰品双槽共同底边。
 2. 每两行八格依次为应急／增益／工具；主槽是类别，悬停 popup 才是该类真实
    物品，避免把二十四格继续当作二十四个固定物品。
-3. 三枚 runtime 标题皮签位于命中盒外；配置不匹配时隐藏，不误标用户自定义栏。
+3. 不显示 runtime 标题皮签；满 24 格时只用两条鼠标穿透分隔带，不误标自定义栏。
 4. 合剂槽只接受用户在 AutoBar 配置中显式拖入的真实 item ID，不伪造不存在的
    `FLASK` 类别。
 5. 饰品保持当前插件的水平双槽比例，菜单从右侧贴出并按当前四列向上增长。
 6. 已装备护套较厚、候选插页较薄；Queue 保持明显但不盖住主图标。
 7. 消耗品使用暖褐炼金卷袋，popup 由独立薄口袋形成，不使用固定大面板。
 8. P2 确认时 AutoBar 未启用；AEUI 永不自动启用。只有用户主动执行
-   `/aeui autobar apply` 时才写当前角色 `4×6` 分组 profile，并提供 restore。
+   `/aeui autobar apply` 时才写当前角色 24 类、库存自适应／最大 `4×6` profile，并提供 restore。
 
 用户方向结论：V1 消耗品方向于 `2026-08-08` 被要求修订；用户于
 `2026-08-09` 明确回复“接受 AB-FIELDKIT-SIM-V2”，确认上述八项文字化方向。
@@ -1095,31 +1104,36 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
 | `AB.FIELDKIT.V1 runtime-v1.5` | source／TGA／v1.4 popup guard 不变；`fieldKitBound` 把 Bar 6、左 `4×6` 卷袋和右双槽直接锚到 Bar 1；提供 bind／unbind／home，绑定态侧栏误拖松手回位；当前角色写入中心中下与水平双槽 | 用户明确要求三部分强绑定并按最初构图重排；smoke、display `9/9＋10/10`、package pass，`pending-retest / P5` | 启动或 `/reload` 验证左卷袋—中央 `12×2`—右双槽、唯一主栏 mover、显式释放／恢复、外向候选及全部 provider 行为 |
 | `AB.FIELDKIT bridge-v1.6` | runtime-v1.5 source／TGA／AutoBar／TrinketMenu 合同不变；可选 ArchiTotem 根加入 Bar 1 唯一 mover，绑定态在主栏下方，拖动回位，`unbind` 恢复；显式 focus preset 请求向下，普通 refresh 只读 | V4 几何被否决但 bridge 保留；focus runtime-v1.4／v1.5 坐标传输均已实机失败，bridge 本身未变；AEUI `0.8.12`／focus runtime-v1.6 只改游戏原生坐标，`pending-game-validation / P5` | 实机验证四元素施放、右键、Air 七层、Recall、拖动／锁定、向下 popup、bind／unbind 及非萨满／缺失 fail-open |
 | `AB.FIELDKIT bridge-v1.7` | v1.6 几何、ArchiTotem、popup guard、source／TGA 全不变；Bar 6 始终保留 pfUI movable 登记，unlock 创建 drag 后绑定态仅隐藏独立 mover，actionbar 配置刷新后重施 `12×2` 锚 | 用户实机报告 `unlock.lua:527 drag=nil`；精确生命周期 smoke 与全部静态门禁 pass，AEUI `0.8.13`，`pending-retest / P5` | `/reload` 开关 pfUI unlock，确认无错误、只有 Bar 1 mover、Bar 6 不跳位；再继续原 Field Kit／focus 全清单 |
-| `AB.FIELDKIT bridge-v1.8` | accepted source／TGA、AutoBar profile、popup guard、TrinketMenu／ArchiTotem 行为均不变；隐藏并停止创建三段文字，hover bridge 收为 `10 UI`；左／右停靠间距改为 `12／8 UI`，ArchiTotem offset 改为 `-39 UI`；Bar 6 与 TargetTarget 均在 pfUI 创建 drag 后才隐藏独立 mover | 用户最新截图要求移除文字并收紧全部组件；Field Kit Lua smoke、runtime display、V6 布局与仓库合同 pass，AEUI `0.8.14`，`pending-game-validation / P5` | `/reload` 确认无三段文字、紧凑间距、popup 联合悬停不退化，并开关 pfUI unlock 验证无空 drag／无跳位 |
+| `AB.FIELDKIT bridge-v1.8` | accepted source／TGA、AutoBar profile、popup guard、TrinketMenu／ArchiTotem 行为均不变；隐藏并停止创建三段文字，hover bridge 收为 `10 UI`；左／右停靠间距改为 `12／8 UI`，ArchiTotem offset 改为 `-39 UI`；Bar 6 与 TargetTarget 均在 pfUI 创建 drag 后才隐藏独立 mover | 用户要求移除文字并收紧全部组件；Field Kit Lua smoke、runtime display、V8 布局与仓库合同 pass，共享入口升至 AEUI `0.8.16`，`pending-game-validation / P5` | `/reload` 确认无三段文字、Player 退出卷袋占位、紧凑间距、popup 联合悬停不退化，并开关 pfUI unlock 验证无空 drag／无跳位 |
+| `AB.FIELDKIT bridge-v1.9` | accepted source／TGA、24 类映射、popup guard 与 provider 行为不变；默认关闭空槽／缺货类别图标并隐藏把手，外壳跟随当前 `1–24` 个可见 Button；external drawer 不再要求当前满 24 格；旧 AEUI 满格显示只按 exact backed-up 签名迁移 | 用户指定采用“大奶黑牛”的精简 AutoBar；13 格与 24 格 smoke、V9 simulation／runtime display `10/10`、仓库合同 pass；共享入口升至 AEUI `0.8.17`，`pending-game-validation / P5` | `/reload` 确认当前 13 格、库存变化动态收缩／扩展、少于 24 格仍有外置抽屉且无错误分隔、自定义／无备份 profile 不被改写 |
+| `AB.FIELDKIT bridge-v2.0` | accepted source／TGA、精简 AutoBar、popup guard 与 provider 行为不变；消耗品可见底边和 TrinketMenu 底边共同比主栏低 `20 UI`，原 x 与唯一 Bar 1 mover 不变 | 用户报告 Player 仍压消耗品，并明确允许消耗品／饰品一起下移；Field Kit Lua smoke、V10 layout `60/60`、simulation／runtime display `12/12` pass；共享入口升至 AEUI `0.8.18`，`pending-game-validation / P5` | `/reload` 确认两组同步下移、彼此同底线、与 Player 无交叠，拖动回位／popup／Queue／换装不退化 |
 
 ## 下一门禁
 
 1. 两套 accepted source 与 runtime TGA 像素身份不变；视觉 source／runtime
-   manifest 保持 `runtime-v1.5`，共享 adapter 已更新到 bridge v1.8／P5。fresh-checkout package
+   manifest 保持 `runtime-v1.5`，共享 adapter 已更新到 bridge v2.0／P5。fresh-checkout package
    已通过，目标设备只需拉取并安装 `addon/`，不得再生成、导出或打补丁。
-2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.14`、
-   `fieldkit-contract=1.8`、`fieldkit-binding=bound` 与 `actionbar-stack=12x2-bound`。
-   同时确认 `focus-layout-contract=1.7`、`focus-layout-anchor=ui-parent`、
+2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.18`、
+   `fieldkit-contract=2.0`、`fieldkit-binding=bound` 与 `actionbar-stack=12x2-bound`。
+   同时确认 `focus-layout-contract=2.1`、`focus-layout-anchor=ui-parent+target-dependent`、
    `focus-layout-coordinate-space=game-native-v1`、
-   `focus-layout-unit-scale=0.68`、`focus-layout-targettarget-scale=0.62`、
-   `focus-layout-readout-scale=0.72`、
+   `focus-layout-unit-scale=0.8`、`focus-layout-targettarget-scale=0.68`、
+   `focus-layout-unit-font-size=14`、`focus-layout-readout-scale=1`、
+   `focus-layout-stance-scale=0.72`、
    `focus-ui-scale-tier=8`、`architotem-dock=bottom` 与
    `architotem-direction=down`；左卷袋与右双槽维持当前清晰尺寸，
    TrinketMenu 双槽不会因旧 `0.904371` 再次被二次缩小，玩家框不再覆盖卷袋。
    先开关一次 pfUI unlock，确认不再出现 `unlock.lua:527`，绑定态只显示 Bar 1
-   mover，Bar 6 在解锁配置刷新前后均紧贴主栏；再确认左 `4×6` 卷袋—中央
-   `12×2` 动作条—右水平双槽在中心中下部共用一个 Bar 1 mover；拖动两侧
+   mover，Bar 6 在解锁配置刷新前后均紧贴主栏；再确认左侧库存自适应卷袋—中央
+   `12×2` 动作条—右水平双槽在中心中下部共用一个 Bar 1 mover，左右两组底边
+   共同比主栏低 `20 UI`；拖动两侧
    provider 松手应回位，`unbind` 后才独立，`bind` 恢复，
    `home` 重置最初位置；若需撤销 Combat Focus，使用 `/aeui focuslayout restore`
    后 `/reload`。再确认
    AutoBar 主格／popup 的 Item Icon 与 Count、TrinketMenu 双槽／候选的 Icon、
    Cooldown 与 Queue 都在口袋／护套之上。再执行 `/aeui autobar apply` 验证当前
-   角色精确 `4×6`／24 格、无“应急／增益／工具”文字且手动数字槽保留；打开候选数
+   角色保留 24 个逻辑类别、只显示当前有物品类别（当前应为 13 格）、最大 `4×6`、
+   无“应急／增益／工具”文字且手动数字槽保留；打开候选数
    `1／6／7／12` 的分类，确认外置抽屉分别为单列／双列且不遮挡任何主格；从内侧
    分类打开抽屉后横穿同一行其他主格进入左右抽屉，路过格不得关闭或替换原抽屉；
    在另一分类主格持续停留约 `0.30s` 应切换到该类，移出主格、通道与候选后应由
@@ -1132,8 +1146,9 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
 3. `/aeui actionbars` 关闭后应恢复 TrinketMenu 原生 NormalTexture／backdrop，并让
    AutoBar 原生视觉 fail-open；provider 缺失或隐藏时不得出现占位栏。实机全部通过
    后方可记录 P6；截图静态层级与用户交互确认仍须分开取证。
-4. 默认确认消耗品卷袋在主栏左侧 `12 UI`、饰品双槽在主栏右侧 `8 UI` 且底边
-   对齐。Bar 6 应紧邻 Bar 1 上缘并不再显示独立 pfUI mover；两侧拖离松手即回位，
+4. 默认确认消耗品卷袋在主栏左侧 `12 UI`、饰品双槽在主栏右侧 `8 UI`，两侧
+   底边彼此对齐且共同比主栏底边低 `20 UI`。Bar 6 应紧邻 Bar 1 上缘并不再显示
+   独立 pfUI mover；两侧拖离松手即回位，
    不是距离阈值吸附。`status` 应报告 `fieldkit-binding=bound`、两侧方向与 stack；
    重载与 UI scale 变化后整体仍跟随主动作条，不得出现逐帧维护或拖动中的抢位。
 5. 两个原生产循环保持 Trinket `4/5`、Consumable `1/5`；P4→runtime-v1.5

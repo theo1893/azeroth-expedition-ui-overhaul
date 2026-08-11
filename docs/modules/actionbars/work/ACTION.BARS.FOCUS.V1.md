@@ -3,28 +3,69 @@
 ## 当前状态
 
 - 批次：`AB.FOCUS.LAYOUT.V1`
-- 当前版本：`ACTION-BARS-CORE-SIM-V6 / runtime-v1.7`
+- 当前版本：`ACTION-BARS-CORE-SIM-V10 / runtime-v2.1`
 - 子状态：`runtime-exported / addon-integrated / pending-game-validation`
-- 最高阶段：`P5`
+- 项目阶段：`P5`
 - 操作：`integrate`
+- 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`；本轮没有位图生产或
+  修图，因此未调用执行器。
 - ImageGen：`0/0`
-- runtime：AEUI `0.8.14`／`focus-layout-contract=1.7`／
-  `fieldkit-contract=1.8`。V6 继续直接写 Turtle WoW 原生 `UIParent` SetPoint 坐标，
+- runtime：AEUI `0.8.18`／`focus-layout-contract=2.1`／
+  `fieldkit-contract=2.0`。V10 继续直接写 Turtle WoW 原生 `UIParent` SetPoint 坐标，
   不读取屏幕尺寸、不乘 effective scale、不探针、不回读；Player／Target 为
-  `240×60 / 0.68`，TargetTarget 为 `132×30 / 0.62` 并依附 Target，玩家施法／
-  Swing／目标施法统一为 `180×16 / 0.72` 横排。玩家 Aura 左起、目标与 TargetTarget
-  Aura 右起，上 Buff／下 Debuff。未被手动调整的 exact v7 游戏坐标 profile 在 `/reload` 一次性迁移为
-  v8；普通 refresh 不维护绝对几何，只在 Apply／unlock 事件边界恢复已激活的相对锚。
+  `240×60 / 0.8`，TargetTarget 保持 `240×60 / 0.68` 并依附 Target 右侧，三框局部字体均为 `14`。
+  三框 Aura 均为 `23 UI`，按 pfUI 真实 `size+7` 步进每行容纳 `8` 枚；玩家从左缘起、
+  目标两框从右缘起，上 Buff／下 Debuff。Target 的 `16` 个 Boss Debuff 以两排
+  验证且不压施法条。玩家施法、目标施法与 Swing 均为 `260×12 / 1.0`，以同一
+  中轴从上到下排列。DoiteDPS 的时间线与资源两排保持在独立左上安全区。未被手动
+  调整的 exact v7／v8／v9／v10／v11 游戏坐标 profile 在 `/reload` 一次性迁移为
+  v12；普通
+  refresh 不维护绝对几何，只在 Apply／unlock 事件边界恢复已激活的相对锚。
   pfUI／ArchiTotem 行为和全部位图字节不变，ImageGen `0/0`。
+
+## 美术基准继承
+
+- 继续继承 [全局美术基线](../../../GLOBAL_ART_BASELINE.md)、
+  [Action Bars 主模块基线](../ART_BASELINE.md) 与
+  [子模块美术基线](../SUBMODULE_ART_BASELINES.md)。
+- 本轮只修订真实 Frame 的游戏坐标、尺寸、局部字体和 Aura 排列，不生成、变换、
+  切片或替换任何 source／TGA；既有 Slot、Rail、Field Kit accepted art 保持
+  byte-exact，模拟像素不得晋级为运行时资产。
 
 ## 本次输入与结论
 
+- 当前问题截图：
+  `C:/Users/西奥/AppData/Local/Temp/codex-clipboard-0473244d-209c-468e-872c-a8d89b95bcc2.png`，
+  `1000×619 RGB`，SHA-256
+  `3e44c1bbb13f10a7fe8b0e19fb0ce06323d1277405b84b7399a3917093006325`。
+  用户指出 Player 仍与消耗品框重叠、现有 Aura 一排不足八枚、Boss Debuff 第二排
+  可能遮住施法条，并要求尽量保持相对位置。审计 `pfUI/api/unitframes.lua` 后确认
+  当前 `default_border=3`、`force_blizz=0` 的实际 Aura 步进为
+  `size + 1 + 2×border = size+7`，V9 的 `27 UI` 实际占
+  `27 + 7×34 = 265 UI`，不是旧模拟误写的 `237 UI`。V10 因此只把 Aura 收为
+  `23 UI`（八枚占 `233／240 UI`），单位族上移 `30 UI`，左右 Field Kit 底线共同
+  下移 `20 UI`；计时栈、Combat Deck、姿态与 DoiteDPS 不动。确定性预览以
+  Target `16` 个 Debuff 形成两排，第二排到 Player Cast 保留 `3 px` 净空。
+
 - 最新实机截图：
-  `C:/Users/西奥/AppData/Local/Temp/codex-clipboard-aa446330-8b76-420c-b602-b7ea05f8e6d4.png`，
-  SHA-256 `de56051ef674981e7df72fb59de360da8174d07d38a4d2be9698f6cb38cdb5d4`。
-  用户要求修复 Player 与消耗品遮挡、移除三段卷袋文字、接入 TargetTarget、收紧
-  组件间距、把施法与 Swing 统一尺寸并排、缩小单位框，并为玩家／目标两侧指定
-  相反的 Buff／Debuff 展开方向。V6 精确覆盖这九项，不修改任何美术资产。
+  `C:/Users/西奥/AppData/Local/Temp/codex-clipboard-bfd7c410-0231-4541-839e-562b3b9e69a7.png`，
+  `987×622 RGB`，SHA-256
+  `4e120794180b52de0da90879225376fdb6ed58cc245c09104536cef009e35a5d`；以及
+  `C:/Users/西奥/AppData/Local/Temp/codex-clipboard-e68667eb-5db2-4652-b662-fb9982c852c7.png`，
+  `997×579 RGB`，SHA-256
+  `2352facf5be69b35ebe2acc8ea16f5d293d5889998661a9b6935b1307b543509`。
+  用户指出五项问题：Cast 与 Swing 未对齐；单位框文字偏小；Aura 仍偏小且应每行
+  正好 `8` 枚；Cast／Swing 应更细更长；TargetTarget 位于 Target 上方会与 Aura
+  重叠，应改到右侧。V8 精确覆盖这五项，不修改任何美术资产。
+
+- 最新实机截图：
+  `C:/Users/西奥/AppData/Local/Temp/codex-clipboard-640fd020-caf5-4381-8446-3532cdc72d8b.png`，
+  `1066×662 RGB`，SHA-256
+  `d7fe7e341e40705d17b8343ced872415ceaa562ec557da39971a61c469c1c250`。
+  用户指出七项问题：Player 仍压住消耗品；玩家 Aura 起点没有从最左侧增长；Cast／
+  Swing 应上下而非左右；DoiteDPS 上下两排会压单位框；Target 应与 Player 同尺寸；
+  TargetTarget 应与 Target 同尺寸；Aura 图标需要放大。V7 精确覆盖这七项，不修改
+  任何美术资产。
 
 - V4 实机失败截图：
   `C:/Users/西奥/AppData/Local/Temp/codex-clipboard-5b64e0c0-3266-4f55-8aa8-8c1438ba88e4.png`
@@ -89,7 +130,19 @@
   证据否决的是统一缩放后的组合几何，不是否决攻击计时／DoiteDPS 的可读尺寸。
   因而 V5 不进入 `0.85–0.86`，也不把整组重新缩小。
 
-## 真实 provider 审计
+## 组件合同
+
+- 组件只覆盖已登记的 pfUI Player／Target／TargetTarget、玩家／目标 Castbar、
+  SwingTimer、Bar 1／Bar 6、姿态栏，以及可选 DoiteDPS／ArchiTotem／AutoBar／
+  TrinketMenu 的呈现连接；所有战斗数据、点击、Aura、施法、攻击计时与 provider
+  行为继续由原对象负责。
+- 所有新布局值写入 Turtle WoW 原生 `UIParent` 坐标；不读取屏幕物理分辨率、
+  effective scale 或 Frame 回读值，不建立 `OnUpdate` 维护循环。仅 exact 旧合同
+  自动迁移，手动调整的 profile 不覆盖；`restore` 必须恢复完整 pre-focus 配置。
+- pfUI unlock 生命周期保持先创建 movable／`drag`，再隐藏绑定态冗余 mover；不得
+  删除 Bar 6 或 TargetTarget 的 movable 登记。
+
+### 真实 provider 审计
 
 | 对象 | 真实来源 | 当前职责与边界 |
 |---|---|---|
@@ -107,6 +160,19 @@
 召回两枚 `32 UI`，合计 `212×32 UI`；Air 最大展开态为 `212×224 UI`。provider
 自身 `RecalculateWidth` 不计 handle，布局／命中审查必须使用真实可见 union，
 不能只信根 Frame 宽度。
+
+## 最终执行正文（无位图执行）
+
+本轮不涉及 ImageGen，正式位图执行正文不适用。确定性实现正文为：在 AEUI
+`0.8.18` 的 ActionBars adapter 内将 Player／Target 设为 `240×60 / 0.8`，
+TargetTarget 保持 `240×60 / 0.68`，三框局部字体均为 `14`；
+Aura 设为 `23 UI`、按真实 `size+7` 步进每行 `8`；Player／Target 写入
+`BOTTOM (-160,485)／(105,485)`，TargetTarget fallback 写入 `BOTTOM (393,576)`，
+并继续以 `LEFT → Target RIGHT +8 UI` 依附；
+玩家 Cast／目标 Cast／Swing 设为 `260×12 / 1.0`，分别落在同一 `x=0` 中轴的
+`y=316／300／284`，姿态保持 `0.72`；消耗品与饰品组共用 `-20 UI` 底部偏移。
+只迁移未被手动修改的 exact v7／v8／v9／v10／v11 profile 至 v12，
+其余 provider、位图与交互合同不变。
 
 ## V4 runtime 与实机结论
 
@@ -167,21 +233,50 @@
 - 以上只定义几何方向；动态文字、图标、Aura、施法状态、Swing 进度、DoiteDPS
   推荐数据、单位框交互与 provider 行为全部保持真实运行时对象，不进入位图。
 
-## V6 当前运行时合同
+## V10 当前运行时合同
 
 - 游戏原生坐标：主栏 `BOTTOM (0,175)`；Player／Target
-  `BOTTOM (-190,500)／(190,500)`；玩家施法／Swing／目标施法
-  `BOTTOM (-196,430)／(0,430)／(196,430)`；姿态 `BOTTOM (0,255)`；DoiteDPS
-  `TOPLEFT (1012,-780)`。不再使用屏幕像素投影或读取 UIParent 尺寸。
-- Player／Target 统一为 `240×60 UI / scale 0.68`；TargetTarget 为
-  `132×30 UI / scale 0.62`，运行时以 `LEFT → Target RIGHT +8 UI` 依附。v7 profile
-  的旧备份会补齐 TargetTarget 原配置／位置后迁移为 v8，`restore` 仍能恢复完整
-  pre-focus profile。
+  `BOTTOM (-160,485)／(105,485)`；TargetTarget fallback `BOTTOM (393,576)`；
+  玩家施法、目标施法与 Swing 分别为 `BOTTOM (0,316)／(0,300)／(0,284)`；
+  姿态 `BOTTOM (0,255)`；DoiteDPS `TOPLEFT (850,-647)`。不使用屏幕像素投影，
+  也不读取 UIParent 尺寸。
+- Player／Target 为 `240×60 UI / scale 0.8`，TargetTarget 保持
+  `240×60 UI / scale 0.68`；三框只在各自 unit 配置中使用 `14` 号字体，不修改
+  pfUI 全局字体。TargetTarget 运行时以
+  `LEFT → Target RIGHT +8 UI` 依附，避免与 Target 上下 Aura 条带互相占位。
+  未被手动调整的 exact v7／v8／v9／v10／v11 profile 一次性迁移为 v12；旧备份补齐
+  TargetTarget 与局部字体原配置，`restore` 仍能恢复完整 pre-focus profile。
 - Player Buff 在上、Debuff 在下，均从左向右；Target／TargetTarget Buff 在上、
-  Debuff 在下，均从右向左。Aura 大小为 Player／Target `18 UI`、TargetTarget
-  `14 UI`，每行 `8`；真实 spell、层数、计时、过滤和 Tooltip 继续由 pfUI 负责。
-- 玩家施法、主手／ranged Swing、目标施法统一为 `180×16 UI / scale 0.72` 并排；
-  副手同尺寸紧贴主手下方。三个读数不再挂在单位框下方，施法与攻击不重叠。
+  Debuff 在下，均从右向左。三框 Aura 大小统一为 `23 UI`、每行 `8`；按当前 pfUI
+  `size + 1 + 2×border = size+7` 的真实步进，一行占 `233 UI`，在 `240 UI` 框宽内
+  保留 `7 UI` 收边。Target 的 `16` 个 Boss Debuff 可形成两排且不进入施法条。
+  真实 spell、层数、计时、过滤和 Tooltip 继续由 pfUI 负责。
+- 玩家施法、目标施法与主手／ranged Swing 保持 `260×12 UI / scale 1.0`，
+  以 `x=0` 同轴纵排；副手紧贴主手下方。V10 不移动计时栈。DoiteDPS 根与资源
+  两排继续作为一个 union 退出单位框占位。
+- Field Kit 左侧间距为 `12 UI`，TrinketMenu 右侧间距为 `8 UI`，ArchiTotem 垂直
+  offset 为 `-39 UI`；消耗品与饰品底边共同比主栏低 `20 UI`。AutoBar 的三段文字
+  不创建，旧 label Frame 若存在会被隐藏。
+- pfUI unlock 仍先创建 Bar 6 与 TargetTarget 的 `drag`，AEUI 再隐藏绑定态独立 mover；
+  不删除 movable 登记。unlock 退出后同一事件边界重施 Bar 6 → Bar 1 与
+  TargetTarget → Target 锚，避免 `unlock.lua:527 drag=nil` 和坐标漂移；无 `OnUpdate`。
+
+## V7 历史运行时合同
+
+- 游戏原生坐标：主栏 `BOTTOM (0,175)`；Player／Target
+  `BOTTOM (-150,535)／(190,535)`；TargetTarget fallback `BOTTOM (190,651)`；
+  玩家／目标施法 `BOTTOM (-100,443)／(100,443)`；Swing `BOTTOM (0,421)`；
+  姿态 `BOTTOM (0,255)`；DoiteDPS `TOPLEFT (850,-647)`。不再使用屏幕像素投影或
+  读取 UIParent 尺寸。
+- Player／Target／TargetTarget 统一为 `240×60 UI / scale 0.68`；TargetTarget
+  运行时以 `BOTTOM → Target TOP +56 UI` 依附。v7／v8 profile 的旧备份会补齐
+  TargetTarget 原配置／位置后迁移为 v9，`restore` 仍能恢复完整 pre-focus profile。
+- Player Buff 在上、Debuff 在下，均从左向右；Target／TargetTarget Buff 在上、
+  Debuff 在下，均从右向左。三框 Aura 大小统一为 `22 UI`，四个 Aura offset 明确
+  置零，每行 `8`；真实 spell、层数、计时、过滤和 Tooltip 继续由 pfUI 负责。
+- 玩家／目标施法统一为 `180×16 UI / scale 0.72` 上排；主手／ranged Swing 使用
+  同尺寸下排，副手紧贴主手下方。DoiteDPS 根与资源两排作为一个 union 退出单位
+  框占位；施法、攻击与监控互不重叠。
 - Field Kit 左侧间距由 `48` 收为 `12 UI`，TrinketMenu 右侧间距由 `16` 收为
   `8 UI`，ArchiTotem 垂直 offset 由 `-47` 收为 `-39 UI`；AutoBar 的应急／增益／
   工具语义分隔保留，但三段文字不再创建，旧 label Frame 若存在会被隐藏。
@@ -189,26 +284,75 @@
   不删除 movable 登记。unlock 退出后同一事件边界重施 Bar 6 → Bar 1 与
   TargetTarget → Target 锚，避免 `unlock.lua:527 drag=nil` 和坐标漂移；无 `OnUpdate`。
 
-## 本地确定性模拟
+## 执行记录
 
-- V6 specification：`tools/specs/action_bars_core_simulation_v6.json`，SHA
-  `1240e4e6…000e`；scene：
-  `generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V6/action_bars_core_sim_v6.png`，
-  SHA `56739b7d…5be7`。该 ignored 预览只验证本轮布局，不是 source／runtime 资产。
-- V6 layout report：同目录 `layout-report.json`，SHA `e565dab7…cc85`，
-  `36/36 pass`、violations `0`；覆盖三列读数等尺寸、TargetTarget 依附、单位框净空、
-  Aura 方向、无三段文字与各停靠间距。
-- V6 display contract：`tools/specs/action_bars_core_simulation_v6_display_region.json`，
-  SHA `011bbe63…951e`；同目录报告 SHA `d0dbc24e…8def`，`6/6 pass`、violations `0`。
-- runtime-v1.7 display contract：
+### 本地确定性模拟
+
+- V10 specification：`tools/specs/action_bars_core_simulation_v10.json`，SHA
+  `8b36dfb9…16d`；scene：
+  `generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V10/action_bars_core_sim_v10.png`，
+  SHA `54b0382d…5da6`。layout report SHA `957c9eea…18d2`，`60/60 pass`。
+- V10 display contract SHA `bc771950…0ff3`，报告 SHA `2aba7a65…65d1`，
+  `12/12 pass`；runtime-v2.1 contract SHA `1f7fafdf…ef4e`，报告 SHA
+  `27234ae2…46d`，`12/12 pass`，violations 均为 `0`。
+- 当前 AEUI `0.8.18` entrypoints：ActionBars `05a300e5…9b30`、Bootstrap
+  `94bb20ed…291f`、TOC `aa9b2abc…9a16`。fresh-checkout package `pass`、violations
+  `0`、report `a6a4ec74…16b9`、tracked addon files `547`、目标设备无需构建；
+  四张既有 TGA 字节不变，ImageGen `0/0`。
+
+- 以下 V9 证据保留为上一轮历史基线：
+- V9 specification：`tools/specs/action_bars_core_simulation_v9.json`，SHA
+  `7fe55794…fd33`；scene：
+  `generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V9/action_bars_core_sim_v9.png`，
+  SHA `fb2d286a…0443`。layout report SHA `2036f813…dd6`，`56/56 pass`。
+- V9 display contract SHA `84829972…2b9f`，报告 SHA `408a97ec…1f4f`，
+  `10/10 pass`；runtime-v2.0 contract SHA `24ca41fb…8b2c`，报告 SHA
+  `6807d038…0753`，`10/10 pass`，violations 均为 `0`。
+- 当时 AEUI `0.8.17` entrypoints：ActionBars `6cfc0ac9…0a22`、Bootstrap
+  `833b2603…4abb`、TOC `438b3448…9215`；fresh-checkout package `pass`、violations
+  `0`、report `a6a4ec74…16b9`、tracked addon files `547`、目标设备无需构建。
+
+- 以下 V8 证据保留为上一轮历史基线：
+- V8 specification：`tools/specs/action_bars_core_simulation_v8.json`，SHA
+  `690487a4…ab2`；scene：
+  `generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V8/action_bars_core_sim_v8.png`，
+  SHA `d7c2b84f…4f3`。该 ignored 预览只验证布局，不是 source／runtime 资产。
+- V8 layout report：同目录 `layout_report.json`，SHA `1ed657db…f0c`，
+  `56/56 pass`、violations `0`；覆盖三框同尺寸与局部字号、TargetTarget 右侧依附、
+  三条计时同轴、Aura `27 UI`／每行 `8` 枚／两种增长方向及全部净空。
+- V8 display contract：`tools/specs/action_bars_core_simulation_v8_display_region.json`，
+  SHA `d11d4f28…147`；同目录报告 SHA `c2b9f164…c85`，`9/9 pass`、violations `0`。
+- runtime-v1.9 display contract：
   `tools/specs/action_focus_layout_v1_runtime_display_region.json`，SHA
-  `db09ace6…3377`；ignored 报告
-  `generated/actionbars/ACTION-BARS-CORE/runtime-v1.7-display-region-report.json`，SHA
-  `fcd25e82…6735`，`8/8 pass`、violations `0`。
-- 当前 entrypoints：ActionBars SHA `cc11ee7d…e3f7`、Bootstrap SHA
-  `01a9dfbd…876d`、TOC SHA `ff4df695…f76`；四份 Action Bars runtime manifest
-  已同步共享 adapter／入口哈希与 AEUI `0.8.14`，accepted TGA 与像素哈希不变。
-- AEUI `0.8.14` fresh-checkout package validator：`status=pass`、violations `0`、
+  `09d973d2…78d`；ignored 报告
+  `generated/actionbars/ACTION-BARS-CORE/runtime-v1.9/display-region-report.json`，SHA
+  `42559f26…1de`，`9/9 pass`、violations `0`。
+- 当前 entrypoints：ActionBars SHA `8ba6b1e9…00a1`、Bootstrap SHA
+  `524ad593…37bf`、TOC SHA `18e09fa5…e9d`；四份 Action Bars runtime manifest
+  已同步共享 adapter／入口哈希与 AEUI `0.8.16`，accepted TGA 与像素哈希不变。
+- AEUI `0.8.16` fresh-checkout package validator：`status=pass`、violations `0`、
+  runtime manifest records `49`、tracked addon files `547`、
+  `build_required_on_target_device=false`；报告 SHA `a6a4ec74…16b9`。
+
+- 以下 V7 证据保留为上一轮历史基线：
+- V7 specification：`tools/specs/action_bars_core_simulation_v7.json`，SHA
+  `6aeddc50…f764`；scene：
+  `generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V7/action_bars_core_sim_v7.png`，
+  SHA `be7d4c83…bdeb`。该 ignored 预览只验证本轮布局，不是 source／runtime 资产。
+- V7 layout report：同目录 `layout-report.json`，SHA `a81b81fd…69c0`，
+  `44/44 pass`、violations `0`；覆盖三框同尺寸、Aura 尺寸／方向／边缘起点、
+  TargetTarget 上方依附、Cast→Swing 纵栈、DoiteDPS 双排 union 与全部净空。
+- V7 display contract：`tools/specs/action_bars_core_simulation_v7_display_region.json`，
+  SHA `7dbb841c…f8af`；同目录报告 SHA `e3342b03…d890`，`7/7 pass`、violations `0`。
+- runtime-v1.8 display contract：
+  `tools/specs/action_focus_layout_v1_runtime_display_region.json`，SHA
+  `3e28fbc2…d9a4`；ignored 报告
+  `generated/actionbars/ACTION-BARS-CORE/runtime-v1.8-display-region-report.json`，SHA
+  `4195f373…f4db`，`8/8 pass`、violations `0`。
+- 当前 entrypoints：ActionBars SHA `7bf1e74e…49a0`、Bootstrap SHA
+  `300651cf…66af`、TOC SHA `5b297213…8cbd`；四份 Action Bars runtime manifest
+  已同步共享 adapter／入口哈希与 AEUI `0.8.15`，accepted TGA 与像素哈希不变。
+- AEUI `0.8.15` fresh-checkout package validator：`status=pass`、violations `0`、
   runtime manifest records `49`、tracked addon files `547`、
   `build_required_on_target_device=false`。
 
@@ -273,35 +417,53 @@
   source／runtime atlas。本机未加载游戏。`generated/` 模拟像素和验证报告继续是 ignored 证据，
   不能切片、晋级、上传或作为以后生产输入。
 
-## 内部审查
+## 审查记录
 
-- 范围／身份：pass。V6 只修改已审计的 Player／Target／TargetTarget、双方施法、
+- 范围／身份：pass。V8 只修改已审计的 Player／Target／TargetTarget、双方施法、
   Swing、姿态、DoiteDPS 与既有 Field Kit 停靠；没有制造单位状态、Aura、图腾格、
   倒计时或推荐数据。
-- 几何／展示区：layout `36/36`、simulation display `6/6`、runtime display `8/8`
-  pass，violations `0`。TargetTarget 依附 Target；三条 `180×16` 读数等尺寸并排；
-  单位框、甲板与两侧 provider 之间的空隙收紧且没有交叠。
-- 综合色与视线：pass for user review。Player／Target 缩为 `0.68`，TargetTarget 为
-  `0.62`；单位框不再占据人物主体，消耗品分组不再依赖三枚突兀文字。
-- 交互：static pass / game pending。Lua smoke 覆盖 v7→v8 迁移、旧备份补齐、
-  TargetTarget 相对锚、Aura 方向、等尺寸读数、Bar 6／TargetTarget mover 生命周期、
+- 几何／展示区：layout `56/56`、simulation display `9/9`、runtime display `9/9`
+  pass，violations `0`。三框等尺寸，TargetTarget 依附 Target 右侧；两条 Cast 与
+  Swing 组成 `260×12` 同轴纵栈；DoiteDPS 双排、单位框、卷袋与动作甲板之间均无交叠。
+- 综合色与视线：pass for user review。三框均为 `0.68`、局部字体 `14`，Aura 放大到
+  `27 UI` 且每行正好 `8` 枚；Player 退出卷袋占位，消耗品分组不依赖三枚突兀文字。
+- 交互：static pass / game pending。Lua smoke 覆盖 exact v7／v8／v9→v10 迁移、
+  几何与局部字体手动调整保护、旧备份补齐、TargetTarget 右侧相对锚、Aura
+  方向／offset／大小、同轴纵向等尺寸读数、
+  Bar 6／TargetTarget mover 生命周期、
   `restore` 与 provider 缺失 fail-open；仍需 Turtle WoW 实机确认后才能进入 P6。
 - 美术：未改任何 source／TGA；本地预览只是确定性布局证据，不能晋级为资产。
 
+## 尝试摘要
+
+| 版本 | 证据与结果 | 结论／后续 |
+|---|---|---|
+| `ACTION-BARS-CORE-SIM-V10 / runtime-v2.1` | “大奶黑牛”三项最新重叠问题；Aura 真实步进修正、16 Debuff 双排、两侧共下移；layout `60/60`、simulation display `12/12`、runtime display `12/12`、Lua smoke pass；ImageGen `0/0` | 当前 `P5 / pending-game-validation`；目标设备只需 `/reload` 后按下一门禁复测 |
+| `ACTION-BARS-CORE-SIM-V9 / runtime-v2.0` | “大奶黑牛”舒适缩放与精简 AutoBar；layout `56/56`、simulation display `10/10`、runtime display `10/10`、Lua 与仓库合同 pass；ImageGen `0/0` | 历史基线；V10 修正其错误的 Aura 步进假设并保留尺度与中央计时栈 |
+| `ACTION-BARS-CORE-SIM-V8 / runtime-v1.9` | 用户两张实机失败证据；layout `56/56`、simulation display `9/9`、runtime display `9/9`、Lua 与仓库合同 pass；ImageGen `0/0` | 历史基线；由 V9 接续，保留局部字体、Aura 八枚满行、TargetTarget 右侧依附与同轴计时栈 |
+| `ACTION-BARS-CORE-SIM-V7 / runtime-v1.8` | layout `44/44`、simulation display `7/7`、runtime display `8/8`；实机指出五项后续问题 | 历史基线；由 V8 接续，不回退其卷袋净空、三框同尺寸、Aura 方向及 unlock 修复 |
+| `runtime-v1.4 / runtime-v1.5` | 两次实机坐标错乱 | `game-geometry-failed`；禁止恢复屏幕像素投影／探针／回读路径 |
+
 ## 下一门禁
 
-在目标 Turtle WoW `/reload` 后，未被手动调整的 exact v7 游戏坐标 profile 会一次性迁移为 v8；
-无需先执行命令。确认状态包含 `version 0.8.14`、`focus-layout-contract=1.7`、
-`focus-layout-anchor=ui-parent`、
+在目标 Turtle WoW `/reload` 后，未被手动调整的 exact v7／v8／v9／v10／v11
+游戏坐标 profile 会一次性迁移为 v12；无需先执行命令。确认状态包含
+`version 0.8.18`、`focus-layout-contract=2.1`、
+`focus-layout-anchor=ui-parent+target-dependent`、
 `focus-layout-coordinate-space=game-native-v1`、
-`focus-layout-unit-scale=0.68`、`focus-layout-targettarget-scale=0.62`、
-`focus-layout-readout-scale=0.72`、`fieldkit-contract=1.8` 与
+`focus-layout-unit-scale=0.8`、`focus-layout-targettarget-scale=0.68`、
+`focus-layout-unit-font-size=14`、`focus-layout-readout-scale=1`、
+`focus-layout-stance-scale=0.72`、`fieldkit-contract=2.0` 与
 `fieldkit-binding=bound`。先开关一次 pfUI unlock，确认无 `unlock.lua:527`、绑定态
 只有 Bar 1 mover、Bar 6 不跳位且 TargetTarget 始终贴在 Target 右侧。随后确认：
-Player／Target 不遮人物或卷袋；三段卷袋文字消失；玩家 Buff 上／Debuff 下且左起；
-Target／TargetTarget Buff 上／Debuff 下且右起；三条 `180×16` 读数并排不重叠；
+Player 与共同下移 `20 UI` 的卷袋／饰品组不再相交；Player／Target 比 TargetTarget
+大一阶；三段卷袋文字消失；玩家 Buff 上／Debuff 下并从完整左缘起排；
+Target／TargetTarget Buff 上／Debuff 下且从右缘起排；Aura 为 `23 UI`，真实每行
+刚好 `8` 枚，Target `16` 个 Boss Debuff 换成两排后仍不压 Player Cast；三框文字
+肉眼可读；玩家 Cast、目标 Cast 与 Swing 同轴从上到下排列，
+且均为 `260×12`；DoiteDPS 上下两排不压三套单位框；
 Field Kit、动作条、饰品、单位框、姿态与 ArchiTotem 形成紧凑组合。再覆盖满血／
-掉血、有／无目标、双方施法、近战双持、远程计时、Aura 超过 `8`、DoiteDPS
+掉血、有／无目标、双方施法、近战双持、远程计时、Aura `8／9／16`、DoiteDPS
 锁定／解锁，以及
 ArchiTotem 施放、右键、Air 七层、拖动／锁定、Recall、`unbind／bind` 和 fail-open。
 若需要回退，执行 `/aeui focuslayout restore` 后 `/reload`；若仍有偏差，使用新的

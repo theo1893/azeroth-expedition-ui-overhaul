@@ -1,0 +1,165 @@
+{
+  "schema": "aeui-action-bars-simulation-v1",
+  "version": "ACTION-BARS-CORE-SIM-V10",
+  "extends": "tools/specs/action_bars_core_simulation_v9.json",
+  "purpose": "deterministic geometry repair for 大奶黑牛: fit eight real pfUI auras per 240 UI row, preserve a safe two-row boss-debuff lane above the timing stack, and lower both Field Kit side groups together without changing the central deck",
+  "output": "generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V10/action_bars_core_sim_v10.png",
+  "annotations": {
+    "title": "Action Bars / Combat Focus V10 - aura and side-dock repair",
+    "subtitle": "P/T 0.8 · TT 0.68 · aura 23+7 · dense target debuffs 2x8",
+    "note": "Deterministic local geometry only - accepted runtime pixels unchanged - ImageGen 0/0",
+    "rules_title": "V10 runtime boundaries",
+    "rules": [
+      "Player and Target move up 30 UI; horizontal geometry is unchanged",
+      "TargetTarget remains center-attached 8 UI right of Target",
+      "Aura 23 UI plus pfUI's real 7 UI step gap fits eight in 233/240 UI",
+      "Sixteen target debuffs occupy two rows with a clear cast-bar lane",
+      "Consumable and trinket groups share the same 20 UI lower dock"
+    ]
+  },
+  "focus_field": {
+    "screen_box": [540, 427, 1380, 932],
+    "role": "non-runtime eye-path annotation for the V10 overlap-repaired provider cluster"
+  },
+  "runtime_projection_proposal": {
+    "not_applied": false,
+    "player": {"anchor": "BOTTOM", "xpos_ui": -160, "ypos_ui": 485},
+    "target": {"anchor": "BOTTOM", "xpos_ui": 105, "ypos_ui": 485},
+    "targettarget": {"fallback_anchor": "BOTTOM", "xpos_ui": 393, "ypos_ui": 576, "live_anchor": "LEFT of frame to RIGHT of pfTarget + 8 UI; vertical centers aligned"},
+    "auras": {"size_ui": 23, "provider_gap_ui": 7, "per_row": 8, "row_span_ui": 233, "row_slack_ui": 7},
+    "fieldkit": {"consumable_and_trinket_y_offset_ui": -20, "relationship": "both provider groups move down together"},
+    "position_method": "one-shot Turtle WoW Frame:SetPoint game coordinates at pfUI tier 8; TargetTarget alone keeps a live center-aligned right-edge dependency on pfTarget"
+  },
+  "layout_contract": {
+    "layout_mode": "compact-stack-v10",
+    "runtime_change_in_this_simulation": true,
+    "targettarget_vertical_center_offset_px": 1,
+    "aura_size_ui": 23,
+    "aura_gap_ui": 7,
+    "aura_per_row": 8,
+    "aura_row_span_ui": 233,
+    "aura_row_slack_ui": 7,
+    "aura_size_px": 22,
+    "aura_gap_px": 7,
+    "aura_sizes_px": [22, 22, 22, 22, 19, 19],
+    "aura_gaps_px": [7, 7, 7, 7, 6, 6],
+    "aura_counts": [8, 8, 8, 16, 8, 8],
+    "aura_row_span_px": 225,
+    "aura_row_slack_px": 4,
+    "aura_row_spans_px": [225, 225, 225, 225, 194, 194],
+    "aura_row_slacks_px": [4, 4, 4, 4, 1, 1],
+    "target_debuff_dense_count": 16,
+    "target_debuff_rows": 2,
+    "target_debuff_to_readout_gap_px": 3,
+    "unit_debuff_to_readout_gap_px": 32,
+    "doitedps_to_unit_aura_vertical_clearance_px": 22,
+    "fieldkit_shared_dock_bottom_px": 886
+  },
+  "consumables": {
+    "screen_origin": [572, 757]
+  },
+  "trinkets": {
+    "screen_origin": [1214, 850]
+  },
+  "unit_frames": {
+    "cluster_label": "Aura: eight per row; Target dense-debuff evidence uses two rows",
+    "cluster_label_origin": [1042, 441],
+    "profile_recommendation": {
+      "not_applied": false,
+      "proposed_shared": {
+        "width_ui": 240,
+        "height_ui": 60,
+        "scale": 1.0,
+        "runtime_local_scale": 0.8,
+        "target_display_multiplier": 1.0,
+        "customfont_size_ui": 14,
+        "aura_size_ui": 23,
+        "aura_per_row": 8
+      },
+      "targettarget": {
+        "width_ui": 240,
+        "height_ui": 60,
+        "runtime_local_scale": 0.68,
+        "aura_size_ui": 23,
+        "attachment_gap_ui": 8,
+        "attachment_side": "right",
+        "vertical_alignment": "center"
+      }
+    },
+    "frames": [
+      {
+        "id": "UF.PLAYER.ADJACENCY",
+        "label": "",
+        "screen_box": [709, 592, 938, 650],
+        "portrait_side": "left",
+        "portrait_tint": "#39533f",
+        "name": "Player",
+        "level": "Lv 60",
+        "health": 0.76,
+        "power": 0.64,
+        "health_text": "76% health",
+        "health_color": "#657742",
+        "power_color": "#405f7c",
+        "name_font": "small",
+        "level_font": "tiny",
+        "health_font": "tiny",
+        "aura_origin": [709, 563],
+        "aura_strips": [
+          {"kind": "buff", "origin": [709, 563], "direction": "ltr", "size": 22, "gap": 7, "per_row": 8, "auras": [{"kind": "buff"}, {"kind": "buff"}, {"kind": "buff", "count": "2"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}]},
+          {"kind": "debuff", "origin": [709, 657], "direction": "ltr", "size": 22, "gap": 7, "per_row": 8, "auras": [{"kind": "debuff"}, {"kind": "debuff", "count": "3"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}]}
+        ]
+      },
+      {
+        "id": "UF.TARGET.ADJACENCY",
+        "label": "",
+        "screen_box": [945, 592, 1174, 650],
+        "portrait_side": "right",
+        "portrait_tint": "#633b34",
+        "name": "Boss target",
+        "level": "Lv 63 Boss",
+        "health": 0.58,
+        "power": 0.42,
+        "health_text": "58% target health",
+        "health_color": "#6f5038",
+        "power_color": "#4a4f65",
+        "name_font": "small",
+        "level_font": "tiny",
+        "health_font": "tiny",
+        "aura_origin": [1152, 563],
+        "aura_strips": [
+          {"kind": "buff", "origin": [1152, 563], "direction": "rtl", "size": 22, "gap": 7, "per_row": 8, "auras": [{"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}]},
+          {"kind": "debuff", "origin": [1152, 657], "direction": "rtl", "size": 22, "gap": 7, "per_row": 8, "row_gap": 7, "auras": [{"kind": "debuff"}, {"kind": "debuff", "count": "2"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff", "count": "3"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}]}
+        ]
+      },
+      {
+        "id": "UF.TARGETTARGET.ADJACENCY",
+        "label": "",
+        "screen_box": [1180, 597, 1375, 646],
+        "portrait_side": "right",
+        "portrait_tint": "#4e3a32",
+        "name": "Target's target",
+        "level": "60",
+        "health": 0.81,
+        "power": 0.52,
+        "health_text": "81%",
+        "health_color": "#625f3d",
+        "power_color": "#46556a",
+        "name_font": "small",
+        "level_font": "tiny",
+        "health_font": "tiny",
+        "aura_origin": [1356, 572],
+        "aura_strips": [
+          {"kind": "buff", "origin": [1356, 572], "direction": "rtl", "size": 19, "gap": 6, "per_row": 8, "auras": [{"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}]},
+          {"kind": "debuff", "origin": [1356, 652], "direction": "rtl", "size": 19, "gap": 6, "per_row": 8, "auras": [{"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}, {"kind": "debuff"}]}
+        ]
+      }
+    ]
+  },
+  "non_authoritative": [
+    "all flat colors, glyphs, portraits, aura icons and provider icon placeholders",
+    "the user screenshot SHA-256 3e44c1bbb13f10a7fe8b0e19fb0ce06323d1277405b84b7399a3917093006325 is read-only geometry evidence and is not pasted, traced, cropped or transformed into this simulation",
+    "V10 changes only scoped provider geometry, aura sizing, and the shared Field Kit vertical dock offset",
+    "no simulation pixel may be promoted, sliced, uploaded or used as ImageGen input",
+    "accepted Action Slot, Rail, Consumable Kit and Trinket Kit source/runtime pixels are unchanged"
+  ]
+}

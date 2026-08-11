@@ -441,7 +441,9 @@ local module = assert(AzerothExpeditionUI.modules.ActionBars)
 module:Initialize()
 module:Apply()
 
-assert(module.fieldKitRuntimeContract == "1.8")
+assert(module.fieldKitRuntimeContract == "2.0")
+assert(AutoBar_Config[AutoBar.currentPlayer].display.rows == 1)
+assert(AzerothExpeditionUI.db.actionbars.autoBarDefaultModeVersions == nil)
 assert(module.actionBarStackStatus == "12x2-bound")
 assert(pfUI.bars[6].decorativePoints[1][1] == "BOTTOM")
 assert(pfUI.bars[6].decorativePoints[1][2] == pfUI.bars[1])
@@ -484,6 +486,18 @@ local projectedVisualRight =
 assert(math.abs(
   pfUI.bars[1].left - projectedVisualRight - module.consumableDockGap
 ) < 0.0001)
+local projectedHandleCenterY =
+  pfUI.bars[1].bottom +
+  consumableDockAnchor[5] * AutoBarAnchorFrameHandle.scale
+local _, originalHandleCenterY = AutoBarAnchorFrameHandle:GetCenter()
+local originalVisualBottom = AutoBarFrameButton1:GetBottom() - 6
+local projectedVisualBottom =
+  projectedHandleCenterY + originalVisualBottom -
+  originalHandleCenterY * AutoBarAnchorFrameHandle.scale
+assert(math.abs(
+  projectedVisualBottom -
+  (pfUI.bars[1].bottom + module.fieldKitDockYOffset)
+) < 0.0001)
 assert(AutoBarFrame.aeuiConsumableKitShellV1.shown == true)
 assert(AutoBarFrame.aeuiConsumableKitLabelsV1 == nil)
 assert(table.getn(AutoBarFrame.aeuiConsumableKitDividersV1) == 2)
@@ -505,6 +519,8 @@ assert(module.trinketMainButtons == 2)
 assert(module.trinketMenuButtons == 30)
 assert(module.trinketJoinerOrientation == "horizontal")
 assert(module.trinketDockStatus == "right")
+assert(TrinketMenu_MainFrame.decorativePoints[1][5] ==
+  module.fieldKitDockYOffset)
 assert(TrinketMenu_MenuFrame.aeuiTrinketKitShellV1.shown == true)
 assert(TrinketMenu_Trinket0NormalTexture.shown == false)
 assert(TrinketMenu_Menu1NormalTexture.shown == false)
@@ -700,8 +716,9 @@ assert(appliedConfig.display.gapping == 3)
 assert(appliedConfig.display.buttonWidth == 36)
 assert(appliedConfig.display.buttonHeight == 36)
 assert(appliedConfig.display.alignButtons == 1)
-assert(appliedConfig.display.showEmptyButtons == true)
-assert(appliedConfig.display.showCategoryIcon == true)
+assert(appliedConfig.display.showEmptyButtons == false)
+assert(appliedConfig.display.showCategoryIcon == false)
+assert(appliedConfig.display.hideDragHandle == 1)
 assert(appliedConfig.display.popupToTop == true)
 assert(appliedConfig.display.position.x == 321)
 assert(appliedConfig.display.position.y == 654)
@@ -716,6 +733,44 @@ assert(savedBackup)
 assert(savedBackup ~= appliedConfig)
 assert(savedBackup.buttons[1][1] == "ORIGINAL")
 assert(savedBackup.display.rows == 1)
+assert(AzerothExpeditionUI.db.actionbars.autoBarDefaultModeVersions[
+  AutoBar.currentPlayer
+] == 1)
+
+-- An exact prior AEUI full-grid profile migrates once to the inventory-aware
+-- compact display. The category map and the user's pre-AEUI backup are kept.
+appliedConfig.display.showEmptyButtons = true
+appliedConfig.display.showCategoryIcon = true
+appliedConfig.display.hideDragHandle = nil
+AzerothExpeditionUI.db.actionbars.autoBarDefaultModeVersions[
+  AutoBar.currentPlayer
+] = nil
+AutoBarProfile:ProfileChanged()
+local migratedCompact = module:MigrateAutoBarDefaultMode()
+assert(migratedCompact == true)
+assert(appliedConfig.display.showEmptyButtons == false)
+assert(appliedConfig.display.showCategoryIcon == false)
+assert(appliedConfig.display.hideDragHandle == 1)
+assert(module.autoBarPresetStatus == "compact-migrated")
+assert(AzerothExpeditionUI.db.actionbars.autoBarBackups[
+  AutoBar.currentPlayer
+] == savedBackup)
+
+-- Compact inventories can expose fewer than 24 buttons while retaining the
+-- AEUI drawer. Semantic group dividers remain disabled until all 24 are shown.
+for index = 14, 24 do
+  _G["AutoBarFrameButton" .. index]:Hide()
+end
+module:ApplyAutoBarFieldKit(true)
+assert(module.autoBarMainButtons == 13)
+assert(module.autoBarGrouped == false)
+assert(module.autoBarPopupLayout == "drawer-2x6")
+for index = 14, 24 do
+  _G["AutoBarFrameButton" .. index]:Show()
+end
+module:ApplyAutoBarFieldKit(true)
+assert(module.autoBarMainButtons == 24)
+assert(module.autoBarGrouped == true)
 
 local restored, restoreMessage = module:RestoreAutoBarProfile()
 assert(restored == true)
@@ -723,6 +778,9 @@ assert(string.find(restoreMessage, "restored", 1, true))
 assert(AutoBar_Config[AutoBar.currentPlayer].buttons[1][1] == "ORIGINAL")
 assert(AutoBar_Config[AutoBar.currentPlayer].display.rows == 1)
 assert(AzerothExpeditionUI.db.actionbars.autoBarBackups[
+  AutoBar.currentPlayer
+] == nil)
+assert(AzerothExpeditionUI.db.actionbars.autoBarDefaultModeVersions[
   AutoBar.currentPlayer
 ] == nil)
 
@@ -840,7 +898,7 @@ module:Apply()
 assert(module.autoBarFieldKitStatus == "missing")
 assert(module.trinketFieldKitStatus == "missing")
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "fieldkit%-contract=1%.8"))
+assert(string.find(status, "fieldkit%-contract=2%.0"))
 assert(string.find(status, "fieldkit%-binding=bound"))
 assert(string.find(status, "autobar=missing"))
 assert(string.find(status, "autobar%-popup%-hover=missing"))

@@ -490,14 +490,14 @@
   },
   "deterministic_export": {
     "exporter": "tools/build_action_fieldkit_v1_runtime.py",
-    "exporter_sha256": "9c5509e5b8b7e72fe36e7855beaddb13fdf7914bb96ff636994b3fc8fb126702",
+    "exporter_sha256": "55b5eb02fa4a56b4f109434da3115b1d718f39c69765920f0234a726c5601122",
     "expected_runtime_pixel_sha256": "0961d750d7436665a333d948ba010a212c5de6f87c51ab59a10ed8af86ac4aef",
     "imagegen_calls_after_acceptance": 0,
     "attempt_6_allowed": false
   },
   "adapter": {
     "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
-    "sha256": "cc11ee7df0724616d6824a01f9d303bb606780d768638e7930d7d7ef9c0ae3f7",
+    "sha256": "05a300e52d3268bb351fb9596ad3b02f49ca1f377ec88a36a3b9d8869d359b30",
     "provider": "TrinketMenu 3.3 existing main/menu frames and 2+30 buttons",
     "visual_layers_only": false,
     "visual_and_layout_adapter": true,
@@ -512,6 +512,7 @@
     "aeui_saved_variables_written_on_drag_stop": false,
     "autobar_enabled_or_profile_applied": false,
     "automatic_profile_mutation": false,
+    "automatic_profile_mutation_scope": "none",
     "optional_user_configuration": {
       "binding_command": "/aeui fieldkit [bind|unbind|home|status]",
       "state": "AzerothExpeditionUIDB.actionbars.fieldKitBound",
@@ -522,13 +523,13 @@
   "addon_entrypoints": {
     "bootstrap": {
       "file": "addon/AzerothExpeditionUI/Core/Bootstrap.lua",
-      "sha256": "01a9dfbd03d6bd3f7ad57b1da03a454edaf34e1583dee24b44ab12dd21aa876d"
+      "sha256": "94bb20ed25871e17f5714fd10e9b9569fdb40a8bc116914a138462762fb6291f"
     },
     "toc": {
       "file": "addon/AzerothExpeditionUI/AzerothExpeditionUI.toc",
-      "sha256": "ff4df69556acf711747458287909522635f2d3d6712d8c787eeebc66cfc0ff76"
+      "sha256": "aa9b2abc3091106ea42a25746fda9f2af25377ab088b93060055f8047ee59a16"
     },
-    "addon_version": "0.8.14",
+    "addon_version": "0.8.18",
     "required_dependency": "pfUI",
     "optional_provider": "TrinketMenu"
   },

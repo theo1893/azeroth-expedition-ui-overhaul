@@ -915,10 +915,19 @@ def main() -> None:
                     key == "consumable"
                 ),
                 "saved_variables_written": True,
-                "provider_saved_variables_written_automatically": False,
+                "provider_saved_variables_written_automatically": (
+                    key == "consumable"
+                ),
                 "aeui_saved_variables_written_on_drag_stop": False,
                 "autobar_enabled_or_profile_applied": False,
-                "automatic_profile_mutation": False,
+                "automatic_profile_mutation": key == "consumable",
+                "automatic_profile_mutation_scope": (
+                    "one-time display-only migration from the exact prior AEUI "
+                    "4x6 full-grid signature when an AEUI pre-apply backup exists; "
+                    "otherwise none"
+                    if key == "consumable"
+                    else "none"
+                ),
                 "optional_user_configuration": (
                     {
                         "open_command": "/aeui autobar open",
@@ -970,10 +979,17 @@ def main() -> None:
                 "popup points and hit insets return to provider layout in native or signature-mismatch fallback",
                 "the AutoBar popup-frame OnLeave script and transparent hover corridor return to provider state in native or signature-mismatch fallback",
                 "the AutoBar SetPopupButton wrapper delegates immediately outside the exact external drawer and commits deliberate category switches through the captured provider method",
-                "provider SavedVariables remain untouched by automatic strong anchoring",
                 (
-                    "provider configuration and SavedVariables unless the user "
-                    "explicitly invokes /aeui autobar apply"
+                    "provider drag-stop coordinates remain untouched; the only "
+                    "automatic provider SavedVariables write is the exact backed-up "
+                    "AEUI full-grid to inventory-aware compact display migration"
+                    if key == "consumable"
+                    else "provider SavedVariables remain untouched by automatic strong anchoring"
+                ),
+                (
+                    "provider category configuration unless the user explicitly "
+                    "invokes /aeui autobar apply; exact backed-up prior AEUI full-grid "
+                    "display profiles migrate once to inventory-aware compact mode"
                     if key == "consumable"
                     else "provider configuration and SavedVariables"
                 ),

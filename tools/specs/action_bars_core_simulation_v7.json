@@ -1,0 +1,183 @@
+{
+  "schema": "aeui-action-bars-simulation-v1",
+  "version": "ACTION-BARS-CORE-SIM-V7",
+  "extends": "tools/specs/action_bars_core_simulation_v6.json",
+  "purpose": "deterministic geometry preview for the 2026-08-10 client repair: clear AutoBar, align all unit-frame sizes, enlarge edge-anchored auras, stack cast and swing rows, and move the two-row DoiteDPS monitor clear of unit frames",
+  "output": "generated/actionbars/ACTION-BARS-CORE/simulation/ACTION-BARS-CORE-SIM-V7/action_bars_core_sim_v7.png",
+  "annotations": {
+    "title": "Action Bars / Combat Focus V7 - equal units and vertical timing stack",
+    "subtitle": "Player clears AutoBar; TargetTarget attaches above Target; DoiteDPS keeps both provider rows in a separate lane",
+    "note": "Deterministic local geometry only - accepted runtime pixels unchanged - ImageGen 0/0",
+    "rules_title": "V7 runtime boundaries",
+    "rules": [
+      "Player, Target, and TargetTarget share 240x60 at local scale 0.68",
+      "Player auras start on the left edge; Target-family auras start on the right edge",
+      "Player/Target casts share the upper timing row; Swing occupies the row below",
+      "DoiteDPS root and resource row remain provider-owned and clear all unit frames",
+      "AutoBar labels remain absent and accepted Action Bar artwork is unchanged"
+    ]
+  },
+  "focus_field": {
+    "screen_box": [548, 456, 1372, 932],
+    "role": "non-runtime eye-path annotation for the V7 compact provider cluster"
+  },
+  "runtime_projection_proposal": {
+    "not_applied": false,
+    "global_pfui_tier": 8,
+    "combat_local_scale": {
+      "__replace__": true,
+      "player_target_targettarget": 0.68,
+      "cast_swing_stance": 0.72,
+      "doitedps": 0.82
+    },
+    "player": {"anchor": "BOTTOM", "xpos_ui": -150, "ypos_ui": 535},
+    "target": {"anchor": "BOTTOM", "xpos_ui": 190, "ypos_ui": 535},
+    "targettarget": {"fallback_anchor": "BOTTOM", "xpos_ui": 190, "ypos_ui": 651, "live_anchor": "BOTTOM of frame to TOP of pfTarget + 56 UI"},
+    "player_castbar": {"anchor": "BOTTOM", "xpos_ui": -100, "ypos_ui": 443},
+    "target_castbar": {"anchor": "BOTTOM", "xpos_ui": 100, "ypos_ui": 443},
+    "swing_main_and_ranged": {"anchor": "BOTTOM", "xpos_ui": 0, "ypos_ui": 421},
+    "stance": {"anchor": "BOTTOM", "xpos_ui": 0, "ypos_ui": 255},
+    "doitedps": {"anchor": "TOPLEFT", "xpos_ui": 850, "ypos_ui": -647, "scale": 0.82},
+    "position_method": "one-shot Turtle WoW Frame:SetPoint game coordinates at pfUI tier 8; TargetTarget alone keeps a live relative dependency on pfTarget",
+    "architotem": "centered below Bar 1 with a five-pixel visual XP-rail clearance and provider direction=down"
+  },
+  "layout_contract": {
+    "layout_mode": "compact-stack-v7",
+    "runtime_change_in_this_simulation": true,
+    "main_bar_center_x": 960,
+    "unit_frame_width_px": 195,
+    "unit_frame_height_px": 49,
+    "player_target_gap_px": 64,
+    "unit_cluster_center_x": 978,
+    "targettarget_vertical_gap_px": 55,
+    "aura_size_px": 23,
+    "internal_aura_lane_gap_px": 1,
+    "readout_width_px": 146,
+    "readout_height_px": 13,
+    "cast_horizontal_gap_px": 18,
+    "cast_to_swing_gap_px": 5,
+    "swing_pair_gap_px": 2,
+    "unit_debuff_to_cast_gap_px": 6,
+    "readout_to_deck_clearance_px": 25,
+    "consumable_to_main_gap_px": 12,
+    "consumable_to_player_gap_px": 50,
+    "main_to_trinket_gap_px": 8,
+    "doitedps_to_targettarget_clearance_px": 107,
+    "xp_rail_bottom_y": 882,
+    "totem_to_xp_rail_clearance_px": 5
+  },
+  "unit_frames": {
+    "cluster_label": "Aura: Player from left; Target and TargetTarget from right",
+    "cluster_label_origin": [978, 470],
+    "profile_recommendation": {
+      "not_applied": false,
+      "proposed_shared": {
+        "width_ui": 240,
+        "height_ui": 60,
+        "scale": 1.0,
+        "runtime_local_scale": 0.68,
+        "target_display_multiplier": 1.0
+      },
+      "targettarget": {
+        "width_ui": 240,
+        "height_ui": 60,
+        "runtime_local_scale": 0.68,
+        "attachment_gap_ui": 56
+      }
+    },
+    "frames": [
+      {
+        "id": "UF.PLAYER.ADJACENCY",
+        "label": "",
+        "screen_box": [751, 630, 946, 679],
+        "portrait_side": "left",
+        "portrait_tint": "#39533f",
+        "name": "Player",
+        "level": "Lv 60",
+        "health": 0.76,
+        "power": 0.64,
+        "health_text": "76% health",
+        "health_color": "#657742",
+        "power_color": "#405f7c",
+        "aura_origin": [751, 603],
+        "aura_strips": [
+          {"kind": "buff", "origin": [751, 603], "direction": "ltr", "size": 23, "gap": 4, "auras": [{"kind": "buff"}, {"kind": "buff"}, {"kind": "buff", "count": "2"}, {"kind": "buff"}]},
+          {"kind": "debuff", "origin": [751, 683], "direction": "ltr", "size": 23, "gap": 4, "auras": [{"kind": "debuff"}, {"kind": "debuff", "count": "3"}, {"kind": "debuff"}]}
+        ]
+      },
+      {
+        "id": "UF.TARGET.ADJACENCY",
+        "label": "",
+        "screen_box": [1010, 630, 1205, 679],
+        "portrait_side": "right",
+        "portrait_tint": "#633b34",
+        "name": "Target",
+        "level": "Lv 62+",
+        "health": 0.58,
+        "power": 0.42,
+        "health_text": "58% target health",
+        "health_color": "#6f5038",
+        "power_color": "#4a4f65",
+        "aura_origin": [1182, 603],
+        "aura_strips": [
+          {"kind": "buff", "origin": [1182, 603], "direction": "rtl", "size": 23, "gap": 4, "auras": [{"kind": "buff"}, {"kind": "buff"}, {"kind": "buff"}]},
+          {"kind": "debuff", "origin": [1182, 683], "direction": "rtl", "size": 23, "gap": 4, "auras": [{"kind": "debuff"}, {"kind": "debuff", "count": "2"}, {"kind": "debuff"}, {"kind": "debuff"}]}
+        ]
+      },
+      {
+        "id": "UF.TARGETTARGET.ADJACENCY",
+        "label": "",
+        "screen_box": [1010, 526, 1205, 575],
+        "portrait_side": "right",
+        "portrait_tint": "#4e3a32",
+        "name": "Target's target",
+        "level": "60",
+        "health": 0.81,
+        "power": 0.52,
+        "health_text": "81%",
+        "health_color": "#625f3d",
+        "power_color": "#46556a",
+        "aura_origin": [1182, 499],
+        "aura_strips": [
+          {"kind": "buff", "origin": [1182, 499], "direction": "rtl", "size": 23, "gap": 4, "auras": [{"kind": "buff"}, {"kind": "buff"}]},
+          {"kind": "debuff", "origin": [1182, 579], "direction": "rtl", "size": 23, "gap": 4, "auras": [{"kind": "debuff"}, {"kind": "debuff"}]}
+        ]
+      }
+    ]
+  },
+  "cast_bars": {
+    "profile_recommendation": {
+      "not_applied": false,
+      "shared": {"width_ui": 180, "height_ui": 16, "runtime_local_scale": 0.72},
+      "position_note": "Player and Target castbars share one row; Swing is centered on the next row"
+    },
+    "bars": [
+      {"id": "CAST.PLAYER", "screen_box": [805, 712, 951, 725], "name": "Player cast", "timer": "1.2", "progress": 0.62, "latency": 0.11, "fill": "#766f43", "icon_fill": "#48604a", "glyph": 1},
+      {"id": "CAST.TARGET", "screen_box": [969, 712, 1115, 725], "name": "Target cast", "timer": "0.8", "progress": 0.46, "interruptible": true, "fill": "#805143", "icon_fill": "#65403a", "glyph": 4},
+      {"id": "CAST.FOCUS.OPTIONAL", "screen_box": [1488, 594, 1688, 612], "visible_in_simulation": false, "placement_policy": "follow the optional focus frame"}
+    ]
+  },
+  "swing_timers": {
+    "label": "",
+    "label_origin": [960, 726],
+    "profile_recommendation": {"not_applied": false, "width_ui": 180, "height_ui": 16, "runtime_local_scale": 0.72, "ranged_policy": "same centered row as mainhand"},
+    "bars": [
+      {"id": "SWING.MAINHAND", "screen_origin": [887, 730], "width_ui": 180, "height_ui": 16, "scale": 1.0, "progress": 0.68, "fill": "#806a3d", "left_text": "Main", "right_text": "2.8"},
+      {"id": "SWING.OFFHAND", "screen_origin": [887, 745], "width_ui": 180, "height_ui": 16, "scale": 1.0, "progress": 0.36, "fill": "#635642", "left_text": "Off", "right_text": "1.9"}
+    ]
+  },
+  "doite_dps": {
+    "label": "DoiteDPS - provider-owned two-row monitor",
+    "label_origin": [761, 452],
+    "screen_origin": [620, 500],
+    "scale": 1.09333333333333,
+    "profile_recommendation": {"not_applied": false, "runtime_local_scale": 0.82, "preserve": ["enabled", "locked", "showOnlyCombat", "showForecast", "showResource", "showCooldowns"]}
+  },
+  "non_authoritative": [
+    "all flat colors, glyphs, portraits, aura icons and provider icon placeholders",
+    "the user screenshot is read-only failure evidence and is not pasted, traced, cropped or transformed into this simulation",
+    "V7 changes only real provider geometry, aura size/direction/offset, and AutoBar label visibility",
+    "no simulation pixel may be promoted, sliced, uploaded or used as ImageGen input",
+    "accepted Action Slot, Rail, Consumable Kit and Trinket Kit source/runtime pixels are unchanged"
+  ]
+}

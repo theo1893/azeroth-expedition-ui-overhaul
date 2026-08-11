@@ -101,16 +101,18 @@ def main() -> None:
         assert manifest["adapter"]["saved_variables_written"] is True
         assert manifest["adapter"][
             "provider_saved_variables_written_automatically"
-        ] is False
+        ] is (key == "consumable")
         assert manifest["adapter"][
             "aeui_saved_variables_written_on_drag_stop"
         ] is False
         assert manifest["adapter"]["autobar_enabled_or_profile_applied"] is False
-        assert manifest["adapter"]["automatic_profile_mutation"] is False
+        assert manifest["adapter"]["automatic_profile_mutation"] is (
+            key == "consumable"
+        )
         assert manifest["addon_entrypoints"]["addon_version"] == (
             builder.addon_version(ROOT / builder.TOC_REL)
         )
-        assert manifest["addon_entrypoints"]["addon_version"] == "0.8.14"
+        assert manifest["addon_entrypoints"]["addon_version"] == "0.8.18"
         if key == "consumable":
             setup = manifest["adapter"]["optional_user_configuration"]
             assert setup["apply_command"] == "/aeui autobar apply"
@@ -160,7 +162,8 @@ def main() -> None:
         assert result["summary"]["violation_count"] == 0
 
     for required in (
-        'ActionBars.fieldKitRuntimeContract = "1.8"',
+        'ActionBars.fieldKitRuntimeContract = "2.0"',
+        "ActionBars.fieldKitDockYOffset = -20",
         "ActionTrinketKitV1",
         "ActionConsumableKitV1",
         "ApplyAutoBarFieldKit",
