@@ -13,7 +13,7 @@ ActionBars.railTexturePath = addon.media.root .. "ActionBars\\ActionRailV1"
 ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
-ActionBars.fieldKitRuntimeContract = "2.0"
+ActionBars.fieldKitRuntimeContract = "2.1"
 ActionBars.focusLayoutRuntimeContract = "2.3"
 ActionBars.focusLayoutVersion = 14
 ActionBars.focusLayoutBackupVersion = 1
@@ -70,10 +70,47 @@ ActionBars.popupDrawerGap = 6
 ActionBars.popupDrawerMaxRows = 6
 ActionBars.popupIntentDelay = 0.30
 ActionBars.popupIntentEvent = "AEUI_AutoBarPopupIntent"
+ActionBars.autoBarRefreshDelay = 0.05
+ActionBars.autoBarRefreshEvent = "AEUI_AutoBarFieldKitRefresh"
 ActionBars.archiTotemDockXOffset = -10
 -- Keep the provider row below the XP rail with a compact five-pixel visual
 -- clearance; the provider's root still omits its unscaled drag handle.
 ActionBars.archiTotemDockYOffset = -39
+
+-- AutoBar 1.31's zhCN locale omits these seven category descriptions. The
+-- provider still creates the categories, so its configuration tooltip later
+-- concatenates nil and errors. Repair only missing runtime labels; category
+-- contents, profile data, and SavedVariables remain provider-owned.
+local autoBarCategoryDescriptionFallbacks = {
+  POTION_SPELLPOWER = {
+    zhCN = "法术强度药剂",
+    default = "Spellpower Potions",
+  },
+  TEAS = {
+    zhCN = "茶",
+    default = "Tea",
+  },
+  ZANZA = {
+    zhCN = "赞扎药剂",
+    default = "Zanza",
+  },
+  DRINK_STAMINA = {
+    zhCN = "饮料：耐力加成",
+    default = "Drink: Stamina Bonus",
+  },
+  FOOD_SPELLPOWER = {
+    zhCN = "食物：法术强度加成",
+    default = "Food: Spellpower Bonus",
+  },
+  QUESTSTARTITEMS = {
+    zhCN = "任务起始物品",
+    default = "Items that Start Quests",
+  },
+  QUESTUSEITEMS = {
+    zhCN = "任务使用物品",
+    default = "Items Used During Quests",
+  },
+}
 
 -- Runtime v2.2 uses the exact Turtle WoW 1.12 coordinates consumed by
 -- Frame:SetPoint and pfUI.api.LoadMovable. They are relative to UIParent at
@@ -2729,10 +2766,48 @@ function ActionBars:OpenAutoBarConfig()
     self.autoBarPresetStatus = "missing"
     return false, "AutoBar is not enabled. Enable it at character select, then /reload."
   end
+  self:RepairAutoBarCategoryDescriptions()
   toggle()
   self.autoBarPresetStatus = "config-opened"
   return true,
     "AutoBar config opened. Use /aeui autobar apply for the AEUI compact preset."
+end
+
+local function AutoBarCategoryDescription(category)
+  local fallback = autoBarCategoryDescriptionFallbacks[category]
+  if fallback then
+    local locale = type(GetLocale) == "function" and GetLocale() or nil
+    return fallback[locale] or fallback.default
+  end
+  return tostring(category)
+end
+
+function ActionBars:RepairAutoBarCategoryDescriptions()
+  if type(AutoBar_Category_Info) ~= "table" then
+    self.autoBarCategoryDescriptionStatus = "unavailable"
+    return false
+  end
+
+  local repaired = 0
+  for category, info in pairs(AutoBar_Category_Info) do
+    if type(info) == "table" and
+      (type(info.description) ~= "string" or info.description == "")
+    then
+      info.description = AutoBarCategoryDescription(category)
+      repaired = repaired + 1
+    end
+  end
+
+  if repaired > 0 then
+    self.autoBarCategoryDescriptionsRepaired =
+      (self.autoBarCategoryDescriptionsRepaired or 0) + repaired
+    self.autoBarCategoryDescriptionStatus = "repaired"
+  elseif (self.autoBarCategoryDescriptionsRepaired or 0) > 0 then
+    self.autoBarCategoryDescriptionStatus = "repaired"
+  else
+    self.autoBarCategoryDescriptionStatus = "native"
+  end
+  return true
 end
 
 local function AutoBarDisplayFlag(value)
@@ -4287,6 +4362,45 @@ function ActionBars:InstallAutoBarPopupIntentGuard()
   return true
 end
 
+function ActionBars:CommitAutoBarFieldKitRefresh()
+  self.autoBarRefreshProvider = nil
+  self.autoBarRefreshStatus = "settled"
+  self:RepairAutoBarCategoryDescriptions()
+  SafeFieldKitApply("ApplyAutoBarFieldKit")
+end
+
+function ActionBars:QueueAutoBarFieldKitRefresh()
+  local provider = AutoBar
+  self:RepairAutoBarCategoryDescriptions()
+  if provider and type(provider.ScheduleEvent) == "function" and
+    type(provider.CancelScheduledEvent) == "function"
+  then
+    pcall(
+      provider.CancelScheduledEvent,
+      provider,
+      self.autoBarRefreshEvent
+    )
+    local ok, event = pcall(
+      provider.ScheduleEvent,
+      provider,
+      self.autoBarRefreshEvent,
+      self.CommitAutoBarFieldKitRefresh,
+      self.autoBarRefreshDelay,
+      self
+    )
+    if ok and event then
+      self.autoBarRefreshProvider = provider
+      self.autoBarRefreshStatus = "queued"
+      return true
+    end
+  end
+
+  self.autoBarRefreshProvider = nil
+  self.autoBarRefreshStatus = "immediate"
+  SafeFieldKitApply("ApplyAutoBarFieldKit")
+  return false
+end
+
 function ActionBars:InstallFieldKitHooks()
   self:InstallFieldKitUnlockHooks()
 
@@ -4327,7 +4441,7 @@ function ActionBars:InstallFieldKitHooks()
     then
       self.autoBarSetupHooked = true
       hooksecurefunc("AutoBar_SetupVisual", function()
-        SafeFieldKitApply("ApplyAutoBarFieldKit")
+        ActionBars:QueueAutoBarFieldKitRefresh()
       end)
     end
     if not self.autoBarButtonsHooked and
@@ -4335,7 +4449,7 @@ function ActionBars:InstallFieldKitHooks()
     then
       self.autoBarButtonsHooked = true
       hooksecurefunc(AutoBar, "ButtonsUpdate", function()
-        SafeFieldKitApply("ApplyAutoBarFieldKit")
+        ActionBars:QueueAutoBarFieldKitRefresh()
       end)
     end
     if not self.autoBarPopupHooked and
@@ -4415,6 +4529,10 @@ function ActionBars:Initialize()
   self.autoBarPopupHover = "pending"
   self.autoBarPopupIntentProvider = nil
   self.autoBarPopupIntentButton = nil
+  self.autoBarRefreshProvider = nil
+  self.autoBarRefreshStatus = "ready"
+  self.autoBarCategoryDescriptionStatus = "pending"
+  self.autoBarCategoryDescriptionsRepaired = 0
   self.autoBarGrouped = false
   self.autoBarPresetStatus = "ready"
   self.actionBarStackStatus = "pending"
@@ -4496,6 +4614,7 @@ function ActionBars:Apply()
     self.appliedMergedRail = appliedMergedRail
   end
 
+  self:RepairAutoBarCategoryDescriptions()
   self:InstallFieldKitHooks()
   self:InstallFocusUnitFontHooks()
   self:MigrateSideBarGroupDefault()
@@ -4619,6 +4738,12 @@ function ActionBars:GetRuntimeStatus()
       tostring(self.autoBarGrouped and "semantic-no-labels" or "adaptive") ..
     ",autobar-preset=" ..
       tostring(self.autoBarPresetStatus or "ready") ..
+    ",autobar-config-descriptions=" ..
+      tostring(self.autoBarCategoryDescriptionStatus or "pending") ..
+    ",autobar-config-description-fixes=" ..
+      tostring(self.autoBarCategoryDescriptionsRepaired or 0) ..
+    ",autobar-refresh=" ..
+      tostring(self.autoBarRefreshStatus or "ready") ..
     ",consumable-dock=" ..
       tostring(self.consumableDockStatus or "pending") ..
     ",trinket=" .. tostring(self.trinketFieldKitStatus or "pending") ..

@@ -132,6 +132,7 @@ end
 function UnitClass() return "Mage", "MAGE" end
 function GetScreenWidth() return 1920 end
 function GetScreenHeight() return 1080 end
+function GetLocale() return "zhCN" end
 local mouseFocus
 function GetMouseFocus() return mouseFocus end
 
@@ -167,6 +168,18 @@ local recommended = {
   [22] = "FISHINGITEMS",
   [23] = "HOURGLASS_SAND|BATTLE_STANDARD|BATTLE_STANDARD_AV",
   [24] = "QUESTUSEITEMS|QUESTSTARTITEMS",
+}
+
+AutoBar_Category_Info = {
+  POTION_SPELLPOWER = {},
+  TEAS = {},
+  ZANZA = {},
+  DRINK_STAMINA = {},
+  FOOD_SPELLPOWER = {},
+  QUESTSTARTITEMS = {},
+  QUESTUSEITEMS = {},
+  FUTURE_PROVIDER_CATEGORY = {},
+  NATIVE_DESCRIPTION = { description = "Provider description" },
 }
 
 AutoBar = {
@@ -238,7 +251,17 @@ function AutoBar:DragStop()
   self.providerDragStopCalls = (self.providerDragStopCalls or 0) + 1
 end
 local autoBarSetupCalls = 0
-function AutoBar_SetupVisual() autoBarSetupCalls = autoBarSetupCalls + 1 end
+local providerSetupReanchors = false
+function AutoBar_SetupVisual()
+  autoBarSetupCalls = autoBarSetupCalls + 1
+  if providerSetupReanchors then
+    AutoBar:ButtonsUpdate()
+    AutoBarAnchorFrameHandle:ClearAllPoints()
+    AutoBarAnchorFrameHandle:SetPoint(
+      "CENTER", UIParent, "BOTTOMLEFT", 321, 654
+    )
+  end
+end
 local autoBarConfigToggleCalls = 0
 function AutoBarConfig_Toggle()
   autoBarConfigToggleCalls = autoBarConfigToggleCalls + 1
@@ -441,7 +464,29 @@ local module = assert(AzerothExpeditionUI.modules.ActionBars)
 module:Initialize()
 module:Apply()
 
-assert(module.fieldKitRuntimeContract == "2.0")
+assert(module.fieldKitRuntimeContract == "2.1")
+assert(module.autoBarCategoryDescriptionStatus == "repaired")
+assert(module.autoBarCategoryDescriptionsRepaired == 8)
+assert(AutoBar_Category_Info.POTION_SPELLPOWER.description ==
+  "法术强度药剂")
+assert(AutoBar_Category_Info.TEAS.description == "茶")
+assert(AutoBar_Category_Info.ZANZA.description == "赞扎药剂")
+assert(AutoBar_Category_Info.DRINK_STAMINA.description ==
+  "饮料：耐力加成")
+assert(AutoBar_Category_Info.FOOD_SPELLPOWER.description ==
+  "食物：法术强度加成")
+assert(AutoBar_Category_Info.QUESTSTARTITEMS.description ==
+  "任务起始物品")
+assert(AutoBar_Category_Info.QUESTUSEITEMS.description ==
+  "任务使用物品")
+assert(AutoBar_Category_Info.FUTURE_PROVIDER_CATEGORY.description ==
+  "FUTURE_PROVIDER_CATEGORY")
+assert(AutoBar_Category_Info.NATIVE_DESCRIPTION.description ==
+  "Provider description")
+for _, info in pairs(AutoBar_Category_Info) do
+  local tooltip = "category: " .. info.description
+  assert(type(tooltip) == "string")
+end
 assert(AutoBar_Config[AutoBar.currentPlayer].display.rows == 1)
 assert(AzerothExpeditionUI.db.actionbars.autoBarDefaultModeVersions == nil)
 assert(module.actionBarStackStatus == "12x2-bound")
@@ -577,6 +622,34 @@ AutoBar_SetupVisual()
 assert(AutoBar.providerButtonsUpdateCalls == 1)
 assert(AutoBar.providerPopupUpdateCalls == 1)
 assert(autoBarSetupCalls == 1)
+assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
+assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent].delay == 0.05)
+assert(module.autoBarRefreshStatus == "queued")
+AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
+assert(module.autoBarRefreshStatus == "settled")
+
+-- AutoBar's real SetupVisual calls ButtonsUpdate before restoring its saved
+-- handle position. Both hooks must coalesce into one post-layout refresh so a
+-- config click cannot alternate between the provider and AEUI anchors.
+local settledDockAnchor = AutoBarAnchorFrameHandle.decorativePoints[1]
+local settledDockX = settledDockAnchor[4]
+local settledDockY = settledDockAnchor[5]
+providerSetupReanchors = true
+AutoBar_SetupVisual()
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == UIParent)
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == 321)
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == 654)
+assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
+AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
+AutoBar_SetupVisual()
+assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
+AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
+providerSetupReanchors = false
 assert(module.autoBarPopupLayout == "drawer-1x4")
 assert(module.autoBarPopupSide == "left")
 assert(module.autoBarPopupHover == "intent-bridge")
@@ -690,6 +763,9 @@ AutoBar:SetPopupButton(AutoBarFrameButton6)
 assert(AutoBar.providerSetPopupCalls ==
   setPopupCallsBeforeSchedulerFallback + 1)
 assert(module.autoBarPopupHover == "bridge")
+local refreshFallback = module:QueueAutoBarFieldKitRefresh()
+assert(refreshFallback == false)
+assert(module.autoBarRefreshStatus == "immediate")
 AutoBar.ScheduleEvent = providerScheduleEvent
 AutoBar.CancelScheduledEvent = providerCancelScheduledEvent
 module:ApplyAutoBarPopup(true)
@@ -898,7 +974,9 @@ module:Apply()
 assert(module.autoBarFieldKitStatus == "missing")
 assert(module.trinketFieldKitStatus == "missing")
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "fieldkit%-contract=2%.0"))
+assert(string.find(status, "fieldkit%-contract=2%.1"))
+assert(string.find(status, "autobar%-config%-descriptions=repaired"))
+assert(string.find(status, "autobar%-config%-description%-fixes=8"))
 assert(string.find(status, "fieldkit%-binding=bound"))
 assert(string.find(status, "autobar=missing"))
 assert(string.find(status, "autobar%-popup%-hover=missing"))

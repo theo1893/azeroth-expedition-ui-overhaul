@@ -497,7 +497,7 @@
   },
   "adapter": {
     "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
-    "sha256": "3e62c88b3e75ecaff7b0b928c1f23e9d7304f60950ce2c85691fb11163253ac6",
+    "sha256": "24183cc390526ca0985f976ca9116ef29a7e2e92c2f198389618db40b0bf8d3e",
     "provider": "AutoBar 1.31 existing main/popup frames and 24+12 buttons",
     "visual_layers_only": false,
     "visual_and_layout_adapter": true,
@@ -505,6 +505,8 @@
     "provider_behavior_replaced": false,
     "provider_hover_geometry_adapted": true,
     "provider_popup_switch_guard": "scoped-0.30s-original-delegate",
+    "provider_layout_refresh": "coalesced one-shot 0.05s refresh after AutoBar ButtonsUpdate/SetupVisual settles; immediate fallback only when provider scheduling is unavailable",
+    "provider_runtime_category_description_compatibility": "write localized labels only to missing or empty AutoBar_Category_Info descriptions; preserve native labels and never write category profiles or SavedVariables",
     "provider_set_popup_button_original_authoritative": true,
     "popup_frame_onleave_deferred_only_while_external": true,
     "saved_variables_written": true,
@@ -528,13 +530,13 @@
   "addon_entrypoints": {
     "bootstrap": {
       "file": "addon/AzerothExpeditionUI/Core/Bootstrap.lua",
-      "sha256": "a97b8bf587db56b4d26e357683181dee4d8f6e53b7b8b98f94073e457882e35e"
+      "sha256": "08365cfc8c6550d630d269ffcec9c1a9d07e801b448d6566cfd54b1c8b078659"
     },
     "toc": {
       "file": "addon/AzerothExpeditionUI/AzerothExpeditionUI.toc",
-      "sha256": "32fc7039f0ddf2f8857c07ffd0ffc9d5ae0e13d8029233b7d42e46f38c3be4bd"
+      "sha256": "74c47c62b68c34f2ecf0e4d772f5ff0bbb9e2f41646387c68108a950ced46ce4"
     },
-    "addon_version": "0.8.20",
+    "addon_version": "0.8.21",
     "required_dependency": "pfUI",
     "optional_provider": "AutoBar"
   },
@@ -543,7 +545,7 @@
     "all Button parents, sizes and scripts",
     "icons, counts, cooldowns, checked/highlight and tooltip layers",
     "Queue and combat swapping for TrinketMenu",
-    "categories, bag slots, popup ordering and item use for AutoBar",
+    "category contents, bag slots, popup ordering and item use for AutoBar; only missing runtime category descriptions receive compatibility labels",
     "popup points and hit insets return to provider layout in native or signature-mismatch fallback",
     "the AutoBar popup-frame OnLeave script and transparent hover corridor return to provider state in native or signature-mismatch fallback",
     "the AutoBar SetPopupButton wrapper delegates immediately outside the exact external drawer and commits deliberate category switches through the captured provider method",

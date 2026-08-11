@@ -112,8 +112,14 @@ def main() -> None:
         assert manifest["addon_entrypoints"]["addon_version"] == (
             builder.addon_version(ROOT / builder.TOC_REL)
         )
-        assert manifest["addon_entrypoints"]["addon_version"] == "0.8.20"
+        assert manifest["addon_entrypoints"]["addon_version"] == "0.8.21"
         if key == "consumable":
+            assert manifest["adapter"]["provider_layout_refresh"].startswith(
+                "coalesced one-shot 0.05s"
+            )
+            assert "missing or empty" in manifest["adapter"][
+                "provider_runtime_category_description_compatibility"
+            ]
             setup = manifest["adapter"]["optional_user_configuration"]
             assert setup["apply_command"] == "/aeui autobar apply"
             assert setup["restore_command"] == "/aeui autobar restore"
@@ -162,7 +168,7 @@ def main() -> None:
         assert result["summary"]["violation_count"] == 0
 
     for required in (
-        'ActionBars.fieldKitRuntimeContract = "2.0"',
+        'ActionBars.fieldKitRuntimeContract = "2.1"',
         "ActionBars.fieldKitDockYOffset = -20",
         "ActionTrinketKitV1",
         "ActionConsumableKitV1",
@@ -185,6 +191,10 @@ def main() -> None:
         "CommitAutoBarPopupIntent",
         "HandleAutoBarSetPopupButton",
         "InstallAutoBarPopupIntentGuard",
+        "RepairAutoBarCategoryDescriptions",
+        "QueueAutoBarFieldKitRefresh",
+        "CommitAutoBarFieldKitRefresh",
+        "autoBarRefreshDelay = 0.05",
         "AutoBar.SetPopupButton = self.autoBarSetPopupButtonWrapper",
         'self.autoBarPopupHover = "intent-bridge"',
         "InstallFieldKitHooks",
