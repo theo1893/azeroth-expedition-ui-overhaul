@@ -5,16 +5,17 @@
 - 模块：`unitframes`
 - 组件 ID：`UF.PLAYER.SHELL`、`UF.TARGET.SHELL`、
   `UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.BAR.*`、`UF.STATE.*`
-- 当前版本：`UF-A1 V1`／`UF-A2 V1`／`UF-B1 V1`
-- 子状态：`prompt-authorized`
+- 当前版本：`UF-A1 V1.r4`／`UF-A2 V1`／`UF-B1 V1`
+- 子状态：UF-A1 `candidate-rejected / repair-budget-exhausted`；UF-A2／UF-B1
+  `prompt-authorized / paused`
 - 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 操作：`generate`；正式生产已授权，候选接受尚未发生
+- 操作：`review-stop`；UF-A1 候选接受尚未发生，后续批次未启动
 - 生成前模拟：deterministic-local-geometry；ImageGen `0/0`
 - 本地渲染错误：初始模拟 `0`；确认后确定性复跑出现 `1` 次 sandbox 写权限
   错误，使用同一命令获准写入后复跑通过，输出 SHA 未变；不属于 ImageGen。
-- 自动修复预算：未来 `UF-A1`／`UF-A2`／`UF-B1` 各最多 `5` 次实际生图，
-  最坏合计 `15`；当前 A1 `4/5`、总计 `4/15`
+- 自动修复预算：`UF-A1`／`UF-A2`／`UF-B1` 各最多 `5` 次实际生图，最坏
+  合计 `15`；当前 A1 `5/5`、A2 `0/5`、B1 `0/5`、总计 `5/15`
 - 流程错误：`2`（A1 `E1` 为 stdin transport；A1 `E2` 为 npm sandbox
   `EPERM`；二者均无图片或 provider result，不占实际生图额度）
 - 正式生产授权：`2026-08-11`；用户授权 A1→A2→B1 顺序、A1／A2 固定
@@ -369,7 +370,7 @@ cast, no dynamic content, no edge contact and no non-green pixels outside them.
 | 2/5 | `UF-A1 V1.r1` / `c89e4f5` | edit | child `019fee9c-00fb-7a23-88c0-505b2f4cc403`／result `ig_07ff1b0e8d890a18016a7a863faedc8191b62e96b3d6bc4427` | raw `generated/unitframes/primary/UF-A1/V1/attempt-02/raw/UF-A1_V1_r1_attempt-02.png`／SHA `6b2af557…0346` | 组件合同：纵横比、安全走廊及 Player 隔离再次失败 | 保留同族材料与非镜像语义；改变策略，不再使用 Image 3，按更薄轨道和窄端帽从固定参考 regenerate | failed；进入 `V1.r2` |
 | 3/5 | `UF-A1 V1.r2` / `7a7c3ce` | regenerate | child `019feea5-6b2c-7ae1-88fd-94cae36e8cc0`／result `ig_0e5284289500fcb2016a7a889e347c8191ab40c73932895364` | raw `generated/unitframes/primary/UF-A1/V1/attempt-03/raw/UF-A1_V1_r2_attempt-03.png`／SHA `d7a42d40…7f5f` | 组件合同：两框过扁，比例约 `7.63:1`／`7.73:1`，运行时安全走廊失败 | 冻结明显改善的薄轨、深胡桃材质与非镜像语义；以 Image 3 edit 重新拉开上下轨并延长侧轨，禁止非等比拉伸 | failed；进入 `V1.r3` |
 | 4/5 | `UF-A1 V1.r3` / `0a3a1f5` | edit | child `019feea9-d3aa-7721-bb18-6fc4e6e031b6`／result `ig_09f4ff58c55329aa016a7a89c2fe5081918864d16ddd3300ed` | raw `generated/unitframes/primary/UF-A1/V1/attempt-04/raw/UF-A1_V1_r3_attempt-04.png`／SHA `abc6810f…bae9` | 组件合同：比例改善但仍过扁，端柱过宽且安全走廊失败 | 冻结材质和身份差异；以 Image 3 edit 横向缩短约 5%、延长侧轨约 10–15%、两端柱缩窄超过一半 | failed；进入最终 `V1.r4` |
-| 5/5 | `UF-A1 V1.r4` / pending | edit | pending | pending | pending | pending | pending |
+| 5/5 | `UF-A1 V1.r4` / `448a8dd` | edit | child `019feeae-61b4-7c62-990d-bd20c8536b88`／result `ig_00ccd1c003ebf324016a7a8aeaa7f88191a46c8937c7e3a9b3` | raw `generated/unitframes/primary/UF-A1/V1/attempt-05/raw/UF-A1_V1_r4_attempt-05.png`／SHA `56ae9ae5…06a3` | 展示区域合同：比例通过，但端柱侵入动态走廊且横向隔离不足 | 保留第 5 稿完整候选供用户审计；不得继续同版生图、不得 source/runtime；A2/B1 按五次规则暂停 | `candidate-rejected / repair-budget-exhausted` |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
@@ -767,6 +768,41 @@ side post is no wider than 42 pixels, every horizontal rail is no thicker than
 36 pixels, both 1236 by 187 openings are fully clear, isolation is at least
 96 pixels, and there is no baked content, mirror duplication or edge contact.
 
+#### Attempt 5 审查
+
+- 输入：固定 Image 1／2 与同段 attempt 4 raw 作为 Image 3；完整 `V1.r4` 正文
+  来自 `448a8dd`。child 完整回显正文和三张输入映射，未递归启动 fixed child，
+  未报告 revised prompt。
+- 执行：child `019feeae-61b4-7c62-990d-bd20c8536b88`；provider result
+  `ig_00ccd1c003ebf324016a7a8aeaa7f88191a46c8937c7e3a9b3`。
+- 原始输出：`1536×1024 RGB`；SHA
+  `56ae9ae5f24f0a89537c0d0d55b885a3849e08abfe586a7a88b0c43692e106a3`。
+- 语义／美术：恰有 Player／Target 两张空壳，无动态内容或镜像复用；深胡桃
+  薄轨、低频磨损、Player 左缝线与 Target 右黄铜修复保持一致，粗犷度和邻接
+  Chat 语言可成立。Target 黄铜片与两侧端柱仍比合同要求更宽。
+- 已通过门禁：Player bbox `1390×273`，比例误差 `0.071891%`；Target
+  `1387×271`，误差 `0.448322%`。二者均小于授权的 `1%`，可只用等比
+  bbox-fit 完整填入 `214×42`，无非等比缩放；中央孔与外部背景均可由连通
+  色键清除，中央 seed 通过。
+- 第一失败门禁：运行时 `x 7..207 / y 6..36` 安全走廊仍分别有 `872`／`818`
+  个可见 Alpha 像素，说明宽端柱实际压住 provider 血条两端。Player 横向隔离
+  `68`／`78px`，Target `73`／`76px`，低于 `96px`；其余垂直隔离通过。
+- 确定性处理：固定两格；边缘／中央孔连通色键；一像素 despill；透明 RGB
+  清零；只做等比 bbox-fit；没有裁掉端柱、非等比拉伸或涂改候选。
+- 技术报告：
+  `generated/unitframes/primary/UF-A1/V1/attempt-05/review-report.json`；
+  `overall_technical_pass=false`。
+- 真实排版：
+  `generated/unitframes/primary/UF-A1/V1/attempt-05/real-layout-preview.png`，SHA
+  `147e9d98f70481317dae0950721402c416ccece78a05670dc6bc388cce8e5252`；
+  Player／Target shell 为 `100%` runtime，动态条和文字使用真实 provider
+  几何；可见两端装饰压住条形端部。屏幕锚点、A2 紧凑框和动作条仍为明确
+  非权威 fallback。
+- 结论：`candidate-rejected / P3 / repair-budget-exhausted`。UF-A1 已用尽
+  `5/5`，不允许第 6 次同版调用，不允许晋级 source／runtime。按有界循环
+  规则暂停 UF-A2／UF-B1，等待用户审核第 5 稿的明确合同例外，或授权新的
+  UF-A1 版本／模拟方向。
+
 ## 审查记录
 
 - 语义／物理：四框均为包住现有动态条的身份牌外壳；没有假头像槽、浮动
@@ -787,11 +823,12 @@ side post is no wider than 42 pixels, every horizontal rail is no thicker than
 | 版本 | 执行／审查证据 | 结论 | 下一版必须改变 |
 |---|---|---|---|
 | `UF-PRIMARY-SIM-V1` | deterministic scene／zoom；SHA 与 display-region `4/4` 如上；ImageGen `0/0` | `simulation-confirmed` | 可见方向已写入 A1／A2／B1；等待三段正式生产授权 |
+| `UF-A1 V1` | fixed ImageGen `5/5`；attempt 5 ratio `2/2 pass`，安全走廊 `0/2 pass`；真实排版 SHA `147e9d98…5252` | `candidate-rejected / repair-budget-exhausted` | 用户若接受第 5 稿，必须明确授权端柱覆盖动态条和横向隔离不足的合同例外；否则建立新版本，不得第 6 次同版生图 |
 
 ## 下一门禁
 
-执行 `UF-A1 V1` attempt 1，并按完整审查顺序决定内部通过或生成完整 `.rN`
-修复正文；A1 结束后依次进入 A2、B1。每段最多 `5` 次实际 ImageGen，最坏
-合计 `15`；流程错误不占额度。候选需要在本设备继续逐像素审查，因此本轮不
-创建跨设备 handoff；若最终停在用户复审且需要换设备，再按稳定状态发布最小
-检查点。
+等待用户审核 UF-A1 attempt 5。可选下一门禁只有两种：一是明确接受
+`56ae9ae5…06a3` 的视觉，并授权“安全走廊有 `872/818` Alpha 像素、横向隔离
+低于 `96px`”的一次性确定性合同例外，随后才可进入 P4；二是拒绝并建立新的
+UF-A1 版本／必要时重做模拟。不得执行 UF-A1 attempt 6。依据五次循环停止
+规则，UF-A2／UF-B1 暂停在原 `prompt-authorized`，本次未启动、未消耗额度。
