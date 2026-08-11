@@ -1,28 +1,34 @@
-# Unit Frames 主单位框批次 UF-PRIMARY V1
+# Unit Frames 主单位框批次 UF-PRIMARY／UF-A1 V2
 
 ## 元数据
 
 - 模块：`unitframes`
 - 组件 ID：`UF.PLAYER.SHELL`、`UF.TARGET.SHELL`、
   `UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.BAR.*`、`UF.STATE.*`
-- 当前版本：`UF-A1 V1.r4`／`UF-A2 V1`／`UF-B1 V1`
-- 子状态：UF-A1 `candidate-rejected / repair-budget-exhausted / user-rejected`；
-  UF-A2／UF-B1 `prompt-authorized / paused`
-- 项目阶段：`P3`
+- 当前版本：`UF-A1 V2-SIM.V1`／`UF-A2 V1`／`UF-B1 V1`
+- 子状态：UF-A1 V2 `simulation-reviewed / user-pending`；UF-A1 V1
+  `candidate-rejected / repair-budget-exhausted / user-rejected`；UF-A2／UF-B1
+  `prompt-authorized / paused`
+- 项目阶段：UF-A1 V2 `P2`；UF-A2／UF-B1 保持 `P3 / paused`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 操作：`reject-recorded`；UF-A1 已被用户明确否决，后续批次未启动
-- 生成前模拟：deterministic-local-geometry；ImageGen `0/0`
-- 本地渲染错误：初始模拟 `0`；确认后确定性复跑出现 `1` 次 sandbox 写权限
-  错误，使用同一命令获准写入后复跑通过，输出 SHA 未变；不属于 ImageGen。
-- 自动修复预算：`UF-A1`／`UF-A2`／`UF-B1` 各最多 `5` 次实际生图，最坏
-  合计 `15`；当前 A1 `5/5`、A2 `0/5`、B1 `0/5`、总计 `5/15`
+- 操作：`simulate`；以独立四件外缘装配替代 UF-A1 V1 的整框生成合同
+- 生成前模拟：`UF-A1-V2-SIM-V1`／deterministic-local-geometry；ImageGen
+  `0/0`
+- 本地渲染错误：历史主模拟确认后复跑 `1` 次 sandbox 写权限错误；V2 首次
+  本地执行有 `1` 次 Python `false`／`False` 拼写错误，针对性修正后同一几何
+  合同重跑；随后有 `1` 次 sandbox 写权限错误，获准写入 ignored `generated/`
+  后以同一命令通过。三者均不属于 ImageGen。
+- 自动修复预算：UF-A1 V1 历史终态 `5/5`；UF-A1 V2 尚未获得正式生产授权，
+  当前正式 ImageGen `0/0`；UF-A2／UF-B1 各 `0/5` 并继续暂停
 - 流程错误：`2`（A1 `E1` 为 stdin transport；A1 `E2` 为 npm sandbox
   `EPERM`；二者均无图片或 provider result，不占实际生图额度）
-- 正式生产授权：`2026-08-11`；用户授权 A1→A2→B1 顺序、A1／A2 固定
+- 历史正式生产授权：`2026-08-11`；用户授权 A1→A2→B1 顺序、A1／A2 固定
   Image 1／2、同段紧邻前稿 edit 输入、B1 首次无图、每段最多 `5` 次实际
   ImageGen、最坏 `15` 次、流程错误不占额度、禁止跨段复用，以及合同内的
   固定分区、边缘连通色键、透明 RGB 清零、纵横比误差不超过 `1%` 的等比
   bbox-fit 和真实排版预演。
+- V2 正式生产授权：无；当前“继续处理”只执行本地确定性模拟，不允许上传或
+  调用 ImageGen。
 - 用户授权原文：`确认授权 UF-A1 V1、UF-A2 V1、UF-B1 V1；按 A1→A2→B1
   顺序执行；A1/A2 每次允许上传固定 SHA 的 Image 1/2，首次无 Image 3，仅允许
   同段紧邻前次输出在冻结修复边界内作为 Image 3 edit 输入；B1 首次不上传
@@ -80,14 +86,20 @@
   为准，不生成圆形假头像槽。
 - 另一台设备位置尚未同步：位置不进入生产合同；只锁定资源尺寸和内外安全区。
 
-## 组件合同
+## 当前组件合同
 
-- 逻辑对象：四张独立静态 shell、两条共享 bar fill；Hover／Aggro 由 shell
-  Alpha 确定性派生。
+- UF-A1 V2 提案：Player／Target 各拆为 `LEFT_CAP 7×42`、
+  `TOP_RAIL 200×6`、`BOTTOM_RAIL 200×6`、`RIGHT_CAP 7×42` 四个独立对象，
+  共八件；四件以平接方式装配为一张 `214×42` shell，彼此不重叠。端帽固定
+  宽度，横轨未来只允许横向延展。
+- UF-A2 仍为 TargetTarget／Focus 两张独立静态 shell；UF-B1 仍为两条共享
+  bar fill；Hover／Aggro 由最终接受 shell Alpha 确定性派生。
 - Runtime 尺寸：Player／Target `214×42`；TargetTarget `112×34`；Focus
   `112×39`；Health `64×32`；Power `64×16`。
 - 动态安全区：各 shell 中央完整保留对应 `200×25 + 200×4` 或
   `100×20/25 + 100×1` provider 区域。
+- UF-A1 V2 的 Player／Target 安静区固定为 `x 7..207 / y 6..36`；四件装饰
+  Alpha 与该 `200×30` 区域的交集必须严格为 `0`，不得再申请覆盖例外。
 - 禁止烘焙：文字、数字、颜色语义、头像、单位类型、Buff／Debuff、图标、
   预测治疗、状态标记、点击或配置控件。
 - Alpha：正式 shell 真透明；生产阶段使用纯 `#00FF00` 外部色键并在 P4 前
@@ -806,7 +818,266 @@ side post is no wider than 42 pixels, every horizontal rail is no thicker than
   覆盖动态走廊和横向隔离不足的一次性合同例外；attempt 5 不再具有进入 P4
   的路径，只作为失败证据与新版本负面约束保留。
 
-## 审查记录
+## `UF-A1 V2-SIM.V1` — 四件式外缘结构重启
+
+### 运行时审计结论
+
+- 当前 profile 的 Player／Target 均为 `width=200`、`height=25`、
+  `pheight=4`、`pspace=-1`、`portrait=off`；`f.hp.bar` 与 `f.power.bar` 继续
+  承担动态裁切，真实 Button／文字／图标和事件均不改变。
+- 维持用户已确认的 `214×42` 外接尺寸，不通过扩大外框规避问题。唯一可用
+  装饰域是左 `7×42`、上 `200×6`、下 `200×6`、右 `7×42` 四条互斥区域；
+  中央 `x 7..207 / y 6..36` 必须完整留给 `200×25` HP、`1px` 间隔、
+  `200×4` Power 与原 Button。
+- V1 失败来自让模型一次绘制整张中空外壳，端柱厚度与整体比例被绑在同一
+  对象里。V2 改为每个角色四件独立 source：固定端帽与横向轨道分别生成、
+  审查和装配；粗犷身份差异只存在于固定端帽，长中心保持安静。
+- Player：左端帽承担歪夹片／粗缝线，右端帽只保留不居中铆钉；Target 从零
+  绘制，左端帽为磨亮折边，右端帽为窄破损黄铜压片。八件不得镜像，V1 所有
+  失败稿像素均不得成为模拟、生产 reference、edit、source 或 runtime 输入。
+
+### 本地模拟合同与执行
+
+- 版本：`UF-A1-V2-SIM-V1`；状态：`simulation-reviewed / user-pending`。
+- specification：`tools/specs/unitframes_a1_v2_simulation_v1.json`，SHA
+  `9c00c26c9d6d224459e1f082ec52f53917c83f315c1996bd9a18c95da50fd59b`。
+- 展示区域合同：
+  `tools/specs/unitframes_a1_v2_simulation_display_region_v1.json`，SHA
+  `3886a61363793d54368ebe2ddc30a463682388c92e050666c69ac780548646a4`。
+- 渲染器：`tools/render_unitframes_a1_v2_simulation_v1.py`，SHA
+  `e1937e68004d48b2caa738781db02008b1b4d6afd84794033125d86157be8564`。
+- 命令：`conda run -n py312 python tools/render_unitframes_a1_v2_simulation_v1.py`；
+  随后运行工作流 `validate_display_regions.py`。Python 为
+  `/Users/yuanshiyao/miniconda3/envs/py312/bin/python`／`3.12.12`。
+- ImageGen：`0/0`；未上传任何图片，未启动 provider，未产生 production
+  候选。
+- 真实排版预演：
+  `generated/unitframes/primary/UF-A1/V2/simulation/V1/uf-a1-v2-sim-v1.scene.png`，
+  SHA `4ff48b8fac3a0b880ed4de830c2d3426003a4585fd08aa1d07cb50e48fbb7233`；
+  Player／Target 为 `100%` runtime，动态条、文字、Aura 数量与 shell 层序按
+  当前 provider 几何绘制。屏幕位置、Chat／动作条邻接和远端布局非权威。
+- 结构审阅板：
+  `generated/unitframes/primary/UF-A1/V2/simulation/V1/uf-a1-v2-sim-v1.assembly.png`，
+  SHA `756e1550b51294fa825db58a813d44476de3909ad3e932f810be46d3d44cf220`；
+  3×图只使用最近邻放大帮助审视运行时像素，不改变合同尺寸。
+- 几何自检报告：
+  `generated/unitframes/primary/UF-A1/V2/simulation/V1/uf-a1-v2-sim-v1.report.json`，
+  SHA `9672ce1a9d06da1428c53ff747c2a8280c48eb8e037c0dd9998178b118a88f1f`；
+  Player／Target 均为四件、件间重叠 `0px`、装饰进入 content-safe `0px`、
+  每件越出声明盒 `0px`。
+- 展示区域报告：
+  `generated/unitframes/primary/UF-A1/V2/simulation/V1/display-region-report.json`，
+  SHA `38a6bb5ebcbaff8118c2f9cfcb9aaf9cb922bea825e4928423eb8476c976df11`；
+  Player normal／Target aggro `2/2 pass`，violations `0`。
+
+| 本地渲染错误 | 版本 | 错误 | 针对性修复 | 结论 |
+|---:|---|---|---|---|
+| SE1 | `UF-A1-V2-SIM-V1` | Python 布尔量误写为 JSON `false`，返回 `NameError`；尚未写图 | 只改为 `False`，不改变任何几何、配色或输出合同 | 普通渲染错误；不涉及 ImageGen |
+| SE2 | `UF-A1-V2-SIM-V1` | sandbox 无权新建 ignored `generated/.../V2`，返回 `PermissionError`；尚未写图 | 获准后以同一命令和同一 specification 重跑 | 普通环境错误；不涉及 ImageGen |
+
+### V2 生产正文完整性预检
+
+- 复杂度：`UF-A1 V2-A = four independent fixed caps / column atlas`；
+  `UF-A1 V2-B = four independent horizontal rails / band atlas / assembly`。
+- 当前结论：`pass / prompt-draft only`。两个正文已自包含对象数量、参考职责、
+  精确画布、对象 bbox、运行时尺寸、接缝、色键、禁止烘焙和验收条件；但必须
+  等待本模拟获用户确认后重新核对并单独授权，当前不得执行。
+
+| 门禁 | V2-A／V2-B 中的证据 | 结论 |
+|---|---|---|
+| 物件身份、精确范围、对象数量与动态内容排除 | V2-A 四端帽、V2-B 四横轨逐件命名；明确无文字、条形填充、图标、状态与头像 | pass |
+| 每张输入图职责与权威冲突 | Image 1 只负责香草尺度／综合色，Image 2 只负责材料／磨损；完整书框结构均忽略 | pass |
+| 画布、格位、边距、方向、透视、尺度、光照与层序 | `1536×1024`；四列 `128×768` 端帽、四带 `1200×36` 横轨；正交正视、左上暖光 | pass |
+| 逐对象形态、材料、边缘、状态与相互关系 | Player 左修补／右安静，Target 左磨亮／右损伤；上下轨独立、不镜像、不复用 | pass |
+| 安静区、裁切、拉伸、重复与接缝 | bbox-fit 目标 `7×42`／`200×6`；端帽固定、横轨只横向延展；内接触边和装配后 `0px` 覆盖明确 | pass |
+| 美术 DNA、反模式、Alpha／色键与最终自检 | 深胡桃／烟褐／断续暗铜、2004 手绘、纯绿背景、边缘连通色键及完整反现代禁止项 | pass |
+
+### `UF-A1 V2-A` 正式生产正文草案 — 四个固定端帽
+
+> 未授权；不得执行。模拟确认后仍须以最终 commit 与固定 SHA 重新展示并请求
+> 每段最多五次实际 ImageGen 的明确授权。
+
+```text
+Create exactly four independent, empty unit-frame side-cap components as a
+single orthographic 2D production sheet for a Turtle WoW 1.18.1 / Vanilla-era
+pfUI overhaul. The components are not complete frames, not portraits and not
+generic ornaments. They are the fixed-width left and right terminal pieces
+that will butt-join two separate horizontal rails around live status bars.
+
+Use Image 1 only for circa-2004 Vanilla WoW painted scale, thick low-resolution
+readability, short dull-brass highlights and the overall dark, weighty colour
+balance. Ignore its screen layout, circular portraits, complete unit-frame
+examples, chat text and every book-shaped structure. Use Image 2 only for
+deep-walnut worn leather, soot-brown liner, warm upper-left illumination,
+believable hand repair, low-frequency wear and slight field-made irregularity.
+Ignore its pages, spine, wooden posts, dragons, book silhouette and extensive
+metal architecture. The global and Unit Frames written baselines outrank both
+images whenever they conflict.
+
+Return one 1536 by 1024 RGB image on a perfectly uniform pure #00FF00
+background. Divide the canvas into four non-overlapping vertical columns, each
+384 by 1024 pixels, ordered strictly from left to right:
+
+1. Player left cap.
+2. Player right cap.
+3. Target left cap.
+4. Target right cap.
+
+Draw exactly one object in each column and no other object. Each visible object
+has an exclusive alpha-ready bounding box exactly 128 pixels wide by 768 pixels
+high, ratio 1:6, centred at y 128..896. Their x ranges are respectively
+128..256, 512..640, 896..1024 and 1280..1408. Keep at least 128 pixels of pure
+green isolation around every object. Do not let shadow, highlight, stitch,
+rivet or antialiasing touch a column edge or another object. These bboxes will
+be edge-connected chroma-keyed, transparent-RGB-cleared and proportionally
+fitted without distortion to four independent 7 by 42 runtime cells. The left
+and right caps remain fixed size; they are never horizontally stretched.
+
+All four objects are front-facing orthographic 2D hand-painted bitmap pieces,
+with no perspective and no scene. Each is a narrow, weighty strip of deep-
+walnut repaired leather over a soot-brown liner, with only tiny interrupted
+dull oxidized-brass accents. Use warm upper-left light, broad readable masses,
+one-pixel-minded edge hierarchy, short broken highlights and restrained contact
+shadow. Irregularity comes from use and repair: the outer silhouette may drift
+slightly at a few low-frequency points, while the inner joining edge remains
+nearly straight and physically usable. Do not add random noise across the
+whole surface.
+
+The Player left cap is the heaviest repair: one crooked narrow brass clamp and
+two or three coarse, uneven stitches held completely inside the cap. Its right
+edge is the inner joining edge. The stitches must look pulled through leather,
+not printed on top, and must not protrude outside the bbox. The Player right cap
+is quieter and independently drawn: worn leather, a shallow fold and one small
+off-centre dark-brass rivet. Its left edge is the inner joining edge. Do not
+mirror or copy the Player left cap.
+
+The Target left cap is independently painted with a rubbed, slightly polished
+leather fold and almost no metal. Its right edge is the inner joining edge. The
+Target right cap carries one narrow damaged oxidized-brass repair strip, with a
+small dent or split and an uneven attachment, entirely inside the cap. It must
+remain a thin repair, never a square plaque or broad U-shaped end post. Its left
+edge is the inner joining edge. Do not bake red hostility, creature type,
+elite status, skull, horn, crest or faction symbolism into either Target cap.
+
+For every cap, the upper and lower ends must contain solid leather contact
+mass suitable for butt-joining a 6-pixel runtime top or bottom rail. Along the
+inner joining edge, keep the top and bottom contact zones opaque and quiet;
+do not place a loose curl, protruding stitch, brass spike or cast shadow across
+that edge. The long middle edge beside the live bar must stay dark and calm so
+text and colour remain readable immediately next to it.
+
+Draw no health or power fill, text, number, name, level, icon, aura, portrait,
+button, cursor, glow, hover state, aggro state or background panel. Do not draw
+a complete frame, U-shaped bracket, matching mirrored pair, continuous gold
+outline, symmetrical rounded card, glass, gradient gloss, bevelled web panel,
+industrial rivet grid, black-iron shrine, Diablo-style skull architecture,
+book part, wax seal, map ornament, gemstone, neon or photoreal antique.
+
+Outside the four side caps every pixel must remain pure #00FF00. Before
+returning, verify: exactly four objects in the declared order; every bbox is
+128 by 768 within one percent of 1:6; each object is isolated; all four are
+independently painted; inner joining edges are usable; no object touches a
+canvas or column boundary; no baked dynamic content exists; and no pixel from
+any rejected UF-A1 V1 output has been used or imitated as an edit source.
+```
+
+### `UF-A1 V2-B` 正式生产正文草案 — 四条独立横轨
+
+> 未授权；不得执行。V2-A 与 V2-B 是不同生产段，禁止跨段复用生成像素。
+
+```text
+Create exactly four independent, empty horizontal unit-frame rail components
+as one orthographic 2D production sheet for a Turtle WoW 1.18.1 / Vanilla-era
+pfUI overhaul. They are narrow top and bottom rails that butt-join separate
+fixed side caps around live status bars. They are not complete frames, status
+bar fills, dividers, decorative banners or generic material swatches.
+
+Use Image 1 only for circa-2004 Vanilla WoW painted scale, thick low-resolution
+readability, short dull-brass highlights and the overall dark, weighty colour
+balance. Ignore its complete UI layout, circular portraits, chat text, unit-
+frame examples and book structures. Use Image 2 only for deep-walnut worn
+leather, soot-brown liner, warm upper-left illumination, believable field wear
+and low-frequency hand-made error. Ignore its pages, spine, wooden posts,
+dragons, complete book silhouette and broad metal construction. The global and
+Unit Frames written baselines outrank both images whenever they conflict.
+
+Return one 1536 by 1024 RGB image on a perfectly uniform pure #00FF00
+background. Divide the canvas into four horizontal bands, each 1536 by 256
+pixels, ordered strictly from top to bottom:
+
+1. Player top rail.
+2. Player bottom rail.
+3. Target top rail.
+4. Target bottom rail.
+
+Draw exactly one object in each band and no other object. Each visible object
+has an exclusive alpha-ready bounding box exactly 1200 pixels wide by 36 pixels
+high, ratio 33.3333:1, centred at x 168..1368. Their y ranges are respectively
+110..146, 366..402, 622..658 and 878..914. All remaining pixels are pure green.
+Keep the four rails fully isolated, with no shadow, scratch, highlight or
+antialiasing outside its declared band. These bboxes will be edge-connected
+chroma-keyed, transparent-RGB-cleared and proportionally fitted without
+distortion to four independent 200 by 6 runtime cells. Runtime rails may only
+be extended horizontally; they are never vertically stretched.
+
+All four rails are front-facing orthographic 2D hand-painted bitmap pieces,
+with no scene and no perspective. Each is a thin but weighty strip of deep-
+walnut worn leather over a soot-brown inner lip, with tiny interrupted dull
+oxidized-brass traces. Use warm upper-left illumination, readable broad colour
+masses, dark restrained lower contact shadow, short broken highlights and only
+two or three low-frequency silhouette deviations across the long span. Keep
+the middle visually quiet. Do not fill the strip with random scratches or make
+the edge mathematically straight, but never create large waves that consume
+the live bar area when fitted to six pixels high.
+
+The Player top rail has a slightly drier upper edge and two sparse, unequal
+brass rubs. The Player bottom rail is darker, more compressed and has a
+different wear rhythm, including one short repaired abrasion; it must not be a
+vertical flip or reused copy of the top rail. The Target top rail is independently
+painted with a more rubbed leather ridge toward the right but no enemy-red
+colour. The Target bottom rail is independently painted, darker and slightly
+more damaged toward the right, echoing the Target right repair without adding
+a plaque or emblem. No rail may be mirrored or pixel-reused from another rail.
+
+Both ends of every rail are assembly interfaces. For at least the first and
+last 24 source pixels, keep a solid, quiet leather contact band across the
+central portion of the 36-pixel thickness. Do not taper either end to a point,
+round it into a pill, add a curl, cast a shadow beyond the bbox or place a
+raised rivet on the joining edge. The two ends must visually butt against the
+separately generated fixed caps without a modern bevel seam. Long scratches,
+brass lines and highlights must stop before the join and must never become a
+continuous gold border.
+
+Draw no health or power fill, text, number, name, level, icon, aura, portrait,
+button, cursor, glow, hover state, aggro state or background panel. Do not draw
+side posts, a complete rectangular frame, U-shaped bracket, continuous gold
+outline, perfect rounded card, glass, gradient gloss, polished bevel, web panel,
+industrial rivet grid, black-iron shrine, Diablo-style skull architecture,
+book part, wax seal, map ornament, gemstone, neon or photoreal antique.
+
+Outside the four rails every pixel must remain pure #00FF00. Before returning,
+verify: exactly four objects in the declared order; every bbox is 1200 by 36
+within one percent of 33.3333:1; all four are isolated and independently
+painted; both joining ends remain usable; there is no baked dynamic content;
+no object touches a canvas or band boundary; and no pixel from any rejected
+UF-A1 V1 output or from V2-A has been used as an edit or construction source.
+```
+
+### 内部审查与用户门禁
+
+- 结构／交互：四件只在原外接边界内平接，HP／Power／文字与 Button 完整保留，
+  没有 V1 的宽 U 形端帽或覆盖例外；真实 Frame、命中盒、锚点、Aura 与状态
+  更新逻辑均未修改。
+- 可见方向：维持已确认的深胡桃旧皮革、烟褐内衬、断续暗铜、Player 左／
+  Target 右非镜像维修关系。几何图中的平色、像素笔触和微纹理明确非权威；
+  用户当前只需判断窄端帽与薄横轨在 `100%` 下是否仍具有足够重量。
+- 若用户确认本模拟，正式生产建议拆成两个独立授权段：`UF-A1 V2-A` 生成四个
+  固定端帽，`UF-A1 V2-B` 生成四条横轨；每段各自最多五次实际 ImageGen，
+  不跨段复用像素。此建议尚未形成最终正文，也未获得任何生图授权。
+- 用户方向结论：`pending`。本地模拟像素不得晋级 source/runtime，也不得成为
+  ImageGen reference 或 edit 输入。
+
+## UF-PRIMARY-SIM-V1 历史审查记录
 
 - 语义／物理：四框均为包住现有动态条的身份牌外壳；没有假头像槽、浮动
   黄铜件或悬空 Focus 布结。
@@ -827,11 +1098,12 @@ side post is no wider than 42 pixels, every horizontal rail is no thicker than
 |---|---|---|---|
 | `UF-PRIMARY-SIM-V1` | deterministic scene／zoom；SHA 与 display-region `4/4` 如上；ImageGen `0/0` | `simulation-confirmed` | 可见方向已写入 A1／A2／B1；等待三段正式生产授权 |
 | `UF-A1 V1` | fixed ImageGen `5/5`；attempt 5 ratio `2/2 pass`，安全走廊 `0/2 pass`；真实排版 SHA `147e9d98…5252`；用户于 `2026-08-11` 明确拒绝例外 | `candidate-rejected / repair-budget-exhausted / user-rejected` | 建立新的 UF-A1 版本；不得复用失败稿像素，不得第 6 次同版生图 |
+| `UF-A1-V2-SIM-V1` | deterministic scene／assembly；四件越界 `0px`、件间重叠 `0px`、动态区覆盖 `0px`；display-region `2/2 pass`；ImageGen `0/0` | `simulation-reviewed / user-pending` | 等待用户确认窄端帽／薄横轨的 100% 视觉重量；确认后才重写并授权 V2-A／V2-B 正文 |
 
 ## 下一门禁
 
-进入新的 UF-A1 版本准备门禁：重新检查运行时拆分与装配合同，制作不复用
-失败像素的本地确定性几何模拟，并向用户展示后等待方向确认。V1 attempt 5
-已经明确否决，不再提供合同例外或 P4 路径；不得执行 UF-A1 attempt 6。
-UF-A2／UF-B1 暂停在原 `prompt-authorized`，本次未启动、未消耗额度。新版本
-若改变对象拆分、画布或装配合同，必须独立完成模拟确认与正式生产授权。
+向用户展示 `UF-A1-V2-SIM-V1`，等待明确确认或否决。确认前不得编写为已授权
+生产正文、不得上传参考、不得调用 ImageGen、不得修改 addon。若用户接受，
+把八件装配结论写回稳定子模块定义与完整 V2-A／V2-B 生产正文，再独立请求
+每段最多五次实际 ImageGen 的正式授权；若用户认为 7px 端帽／6px 横轨过轻，
+必须回到新的本地模拟版本，不能恢复 V1 覆盖例外。UF-A2／UF-B1 继续暂停。

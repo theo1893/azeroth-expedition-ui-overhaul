@@ -2,8 +2,9 @@
 
 ## 当前状态
 
-- 主模块：`P3`；`UF-PRIMARY-SIM-V1` 已于 `2026-08-11` 获用户方向确认。
-  `UF-A1 V1` 已完成五次实际 ImageGen，终态为
+- 主模块：UF-A1 V2 当前回到 `P2 / simulation-reviewed / user-pending`；
+  `UF-PRIMARY-SIM-V1` 已于 `2026-08-11` 获用户方向确认。`UF-A1 V1` 已完成
+  五次实际 ImageGen，终态为
   `candidate-rejected / repair-budget-exhausted / user-rejected`；用户于
   `2026-08-11` 明确表示“不接受例外”。`UF-A2 V1`、`UF-B1 V1` 仍为
   `prompt-authorized / paused`。没有候选获得用户接受。
@@ -11,11 +12,37 @@
   另一台设备的 Frame 位置、尺寸与功能。
 - 当前仓库／远端 `main` 尚未包含用户在游戏设备完成的布局 overhaul；本批次
   因只使用现有 pfUI 资源尺寸，不把屏幕位置作为生产合同。
-- 生成前模拟 ImageGen：`0/0`；正式生产为 `5/15`：A1 `5/5`、A2 `0/5`、
-  B1 `0/5`。A1 有两次无生成证据的流程错误，不占额度。attempt 5 的 Player／
+- 新 V2 生成前模拟 ImageGen：`0/0`；历史正式生产为 A1 V1 `5/5`，A2／B1
+  各 `0/5`。V2 尚无正式生产授权或预算。A1 V1 有两次无生成证据的流程错误，
+  不占额度。attempt 5 的 Player／
   Target 比例误差 `0.071891%`／`0.448322%` 均通过，但真实动态走廊仍有
   `872`／`818` 个 Alpha 像素被端柱侵入，横向隔离只有 `68–78px`，低于
   `96px`；因此没有 source 或 addon runtime。
+
+## UF-A1 V2 结构模拟
+
+- 版本：`UF-A1-V2-SIM-V1`；只使用本地 Pillow 几何，ImageGen `0/0`，没有
+  上传范围、provider 会话或生产候选，也没有复用任一 V1 失败稿像素。
+- 运行时尺寸不变：Player／Target 仍为 `214×42`，中央 provider／Button 区仍
+  为 `x 7..207 / y 6..36`、即 `200×30`。
+- 每个角色改为四件平接：左端帽 `7×42`、上轨 `200×6`、下轨 `200×6`、
+  右端帽 `7×42`。Player／Target 共八件，端帽固定宽，横轨未来只允许横向
+  延展；不再让 ImageGen 同时解决整框比例和端柱宽度。
+- 规格：`tools/specs/unitframes_a1_v2_simulation_v1.json`；渲染器：
+  `tools/render_unitframes_a1_v2_simulation_v1.py`；展示区域合同：
+  `tools/specs/unitframes_a1_v2_simulation_display_region_v1.json`。
+- 真实排版预演：
+  `generated/unitframes/primary/UF-A1/V2/simulation/V1/uf-a1-v2-sim-v1.scene.png`，
+  SHA `4ff48b8fac3a0b880ed4de830c2d3426003a4585fd08aa1d07cb50e48fbb7233`；
+  结构审阅板 SHA `756e1550b51294fa825db58a813d44476de3909ad3e932f810be46d3d44cf220`。
+- 内部几何报告通过：两框均为件间重叠 `0px`、装饰进入动态区 `0px`、每件
+  越出声明盒 `0px`。展示区域报告 SHA
+  `38a6bb5ebcbaff8118c2f9cfcb9aaf9cb922bea825e4928423eb8476c976df11`，
+  Player normal／Target aggro `2/2 pass`、violations `0`。
+- 两次本地流程错误分别为 Python `false` 拼写和 sandbox 写权限；均在写图前
+  发生并经单一针对性修复后通过，不属于 ImageGen，也不消耗任何生图次数。
+- 当前等待用户判断：在 `100%` runtime 下，7px 固定端帽与 6px 上下轨能否
+  同时保持香草时代的粗犷重量和完整动态信息区。
 
 ## 已完成的对象审计
 
@@ -58,8 +85,8 @@
 
 ## 下一门禁
 
-准备新的 UF-A1 版本：重新审计运行时资产拆分和装配合同，制作不复用 V1
-失败像素的本地确定性几何模拟，并在展示后等待用户确认。V1 attempt 5 的
-合同例外已被拒绝，不再具有 P4 路径；不得执行 A1 attempt 6。新版本若改变
-对象数量、画布或装配方式，必须重新完成模拟确认和生产授权。A2／B1 继续
-暂停，额度均为 `0/5`。
+向用户展示 `UF-A1-V2-SIM-V1` 并等待明确方向结论。确认前不调用 ImageGen、
+不上传参考、不产出 source/runtime、不接入 addon。若确认，先把八件定义写回
+长期子模块文档，再形成 `UF-A1 V2-A` 四端帽与 `UF-A1 V2-B` 四横轨的完整生产
+正文并单独请求授权；若否决则只建立新的本地模拟，不恢复 V1 的动态区覆盖
+例外。A2／B1 继续暂停，额度均为 `0/5`。

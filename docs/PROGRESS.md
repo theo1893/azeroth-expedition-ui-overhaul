@@ -25,7 +25,7 @@
 | Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P6`；QS-B1 V7-A `P5`；QL-D V3 attempt 4 `P5` | Quest runtime `1.27`／Theme `1.10`。QL-D 五次循环仍按 `5/5` 耗尽；用户随后明确“使用第4稿”，接受 keyed aspect `2.76945` 的一次性选稿例外，原 technical `18/19` 不重写。exact source SHA `816aeedd…47c5` 与四态 atlas SHA `cda1ef21…cd56` 已受 manifest 管理并接入 addon；正式 atlas／真实排版与已审阅 attempt 4 像素完全一致，display `5/5 pass`。真实 Button、Tooltip、动态图标／名称和双列几何不变。闭合载体根、火漆与旧功能按钮继续 fail-open；Tracker 与 NPC Quest／Gossip 不变 | Turtle WoW 验证 QL-D TGA 方向、四态、pressed `1px` 联动、safe area、0／1／2／4／6 排版及长详情滚动；同时验证闭合态火漆物理接触与滚动裁切。七纹章 parity 前不启用事务菜单；不得第六次生图 |
 | Map | `map.lua`、`minimap.lua`、`addonbuttons.lua` 等 | `P2` | 羊皮地图卷与黄铜罗盘已锁定 | 实机对象审计和组件级合同 |
 | Character | `character.lua`、`inspect.lua`、`dressup.lua` | `P2` | 香草同构角色面板已锁定 | 实机几何与装备槽／属性／页签拆分 |
-| Unit Frames | `api/unitframes.lua`、`player.lua`、`target.lua`、`targettarget.lua`、`focus.lua` | `P3`；A1 `candidate-rejected` | `UF-A1 V1` 已用满 `5/5`（总计 `5/15`）。attempt 5 的 Player／Target 比例均通过 `1%` 合同，但端柱仍侵入真实动态走廊 `872/818` Alpha 像素，横向隔离仅 `68–78px`；用户于 `2026-08-11` 明确拒绝合同例外。终态为 `repair-budget-exhausted / user-rejected`，无 source/runtime。A2／B1 均 `0/5`、保持已授权暂停 | 准备新的 A1 版本：重新审计资产拆分／装配合同，制作不复用失败像素的本地几何模拟并等待确认；禁止 V1 第 6 次生图，继续暂停 A2／B1 |
+| Unit Frames | `api/unitframes.lua`、`player.lua`、`target.lua`、`targettarget.lua`、`focus.lua` | A1 V2 `P2 / simulation-reviewed`；A2／B1 `P3 / paused` | `UF-A1 V1` 已用满 `5/5` 且用户拒绝例外。新的 `UF-A1-V2-SIM-V1` 把 Player／Target 各拆为 `7×42` 左右端帽与 `200×6` 上下轨；本地几何验证件间重叠、装饰进入 `200×30` 动态区和每件越界均为 `0px`，display-region `2/2 pass`，ImageGen `0/0`。无 source/runtime；A2／B1 均 `0/5` | 等待用户确认 V2 的 100% 窄端帽／薄横轨重量；确认后才编写并授权 V2-A 四端帽、V2-B 四横轨生产正文。继续暂停 A2／B1，不修改 addon |
 
 ## 尚未启动长期模块包
 
