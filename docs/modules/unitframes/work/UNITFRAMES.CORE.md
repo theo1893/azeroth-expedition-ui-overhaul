@@ -14,7 +14,7 @@
 - 本地渲染错误：初始模拟 `0`；确认后确定性复跑出现 `1` 次 sandbox 写权限
   错误，使用同一命令获准写入后复跑通过，输出 SHA 未变；不属于 ImageGen。
 - 自动修复预算：未来 `UF-A1`／`UF-A2`／`UF-B1` 各最多 `5` 次实际生图，
-  最坏合计 `15`；当前 `0/15`
+  最坏合计 `15`；当前 A1 `1/5`、总计 `1/15`
 - 流程错误：`1`（A1 `E1`；固定 child 在生成前返回 `No prompt provided`，无
   图片或 provider result，不占实际生图额度）
 - 正式生产授权：`2026-08-11`；用户授权 A1→A2→B1 顺序、A1／A2 固定
@@ -365,11 +365,111 @@ cast, no dynamic content, no edge contact and no non-green pixels outside them.
 
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
-| 1/5 | `UF-A1 V1` / `d902e2b` | generate | pending | pending | pending | pending | pending |
+| 1/5 | `UF-A1 V1` / `d902e2b` | generate | child `019fee93-168d-7360-85c0-e7d02095deff`／result `ig_019be3007b694521016a7a83ee64d88191aa391033b667c3df` | raw `generated/unitframes/primary/UF-A1/V1/attempt-01/raw/UF-A1_V1_attempt-01.png`／SHA `80d928ac…33d3` | 组件合同：两框纵横比与动态安全走廊失败 | 保留深胡桃材质、克制装饰和 Player 左／Target 右非镜像关系；用 Image 3 edit 修正比例、隔离、开口与内缘 | failed；进入 `V1.r1` |
+| 2/5 | `UF-A1 V1.r1` / pending | edit | pending | pending | pending | pending | pending |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
 | E1 | `UF-A1 V1` / `d902e2b` | unified exec `99073`；无 child session／result | 固定 child 在读取 prompt 前退出：`No prompt provided. Either specify one as an argument or pipe the prompt into stdin.`；无图片、无 provider result、无生成证据 | 保持提交正文和 Image 1／2 完全不变，只把同一参数从 argv transport 改为 CLI 明示的 stdin transport | 不占 `0/5`；以同一正文重试 |
+
+#### Attempt 1 审查
+
+- 输入：固定 Image 1 SHA `90e30ba…ee06`、Image 2 SHA `272528e6…aab8`；无
+  Image 3。正文来自提交 `d902e2b`，stdin transport 完整回显；fixed child 未
+  报告 revised prompt。
+- 原始输出：`1536×1024 RGB`；SHA
+  `80d928ac1f07d090da2b28b5eeede38055683dab58cf3909f8c71b3d282533d3`。
+- 范围／语义：恰有上下两张空外壳，没有文字、头像、图标或状态；Player 左端
+  黄铜修补较重、Target 右端破损压片较重，二者没有镜像复用。通过。
+- 物理／美术：深胡桃皮革、少量黄铜、粗线结和接触阴影成立，装饰克制；但
+  内开口过窄且呈规则胶囊圆角，粗犷维修逻辑不足。该项必须在几何修复时一并
+  收敛，不能保留其规整内缘。
+- 第一失败门禁：Player keyed bbox `1343×280`，比例误差 `5.864486%`；Target
+  `1295×266`，误差 `4.451549%`，均超过授权 `1%`。Player 下隔离 `88px`，
+  低于 `96px`。等比装入 `214×42` 后两框分别只有 `201×42`／`204×42`，真实
+  `200×30` 动态走廊分别被 `3875`／`3599` 个可见 Alpha 像素侵入。
+- 确定性处理：固定两格；外边缘与声明的中央内容孔连通色键；一像素 despill；
+  透明 RGB 清零；只做等比 fit，无非等比压缩。
+- 技术报告：
+  `generated/unitframes/primary/UF-A1/V1/attempt-01/review-report.json`；
+  `overall_technical_pass=false`。
+- 真实排版：
+  `generated/unitframes/primary/UF-A1/V1/attempt-01/real-layout-preview.png`，SHA
+  `e9e6a6a9f3a87ea53f8c961f8b2b39fdd8588178db5e38526e561ce2e0139073`；
+  Player／Target 候选为 `100%` runtime，动态条与文字为真实几何；屏幕锚点、
+  TargetTarget／Focus 和动作条为明确非权威 fallback。预演可见端帽挤压条形区。
+- 结论：`failed / attempt 1 of 5`；不允许用户复审、source 或 runtime。
+
+#### `UF-A1 V1.r1` 完整修复正文
+
+The written requirements below are controlling. Image 1 is a secondary
+reference only for circa-2004 Vanilla WoW bitmap scale, thick readable masses,
+short dull-brass highlights and overall visual weight; ignore its whole-screen
+layout, portrait circles and every unit-frame example. Image 2 is a secondary
+reference only for deep-walnut material depth, warm upper-left illumination,
+hand-made edge error and the frequency of believable wear; ignore its pages,
+spine, columns, dragons, book silhouette and extensive gold architecture.
+Image 3 is the immediately preceding UF-A1 attempt. Preserve only its deep-
+walnut material handling, restrained amount of ornament, Player-left versus
+Target-right non-mirrored identity and coarse field-repair feeling. Do not
+preserve its too-tall proportions, narrow inner holes, pill-shaped inner
+corners, cell placement or exact silhouette. If any image conflicts with this
+text, follow this text.
+
+Edit into one production-ready 1536 by 1024 bitmap sheet containing exactly two
+separate horizontal unit-frame shell objects on a perfectly uniform pure
+#00FF00 background. The upper 1536 by 512 cell is the Player shell and the
+lower 1536 by 512 cell is the Target shell. Draw no other object. Show both as
+front-facing orthographic 2D game-UI assets with no scene, camera tilt or
+perspective foreshortening.
+
+Make each complete visible shell bbox approximately 1320 pixels wide by 259
+pixels high, a 5.0965:1 ratio within one percent of the required 5.10:1. Centre
+each inside its own half: keep every visible Player pixel approximately within
+x 108..1428 and local y 125..384, and every visible Target pixel within the
+same safe envelope in its lower cell. Keep at least 96 pixels of uniform green
+between every object and the canvas edges or horizontal cell boundary. The
+result must support proportional, non-distorting fit to exactly 214 by 42
+runtime pixels.
+
+These are empty physical shells around an existing pfUI bar stack, not complete
+unit frames. In each shell, the pure-green inner opening must occupy at least
+93.5 percent of the shell bbox width and 71.5 percent of its height so the
+entire runtime corridor x 7..207 and y 6..36 remains transparent for a 200 by
+25 health bar, a one-pixel gap and a 200 by 4 power bar. Keep end clamps,
+stitches, leather folds and every opaque edge completely outside that corridor.
+Do not make the opening a perfect pill: use subtly unequal, hand-cut inner
+corners and low-frequency edge drift while retaining the full safe corridor.
+Do not draw any fill, portrait, name, level, number, icon, aura, status text,
+classification, button or glow. Dynamic bars and text are drawn by the game.
+
+Both objects are restrained, hand-repaired Azeroth expedition field badges:
+compact equipment carried through a long campaign, not decorative fantasy
+plaques. Use thick deep-walnut worn leather as the main structure, a soot-brown
+inner liner, a few short pieces of dull oxidized brass and two or three coarse
+repair stitches. Use circa-2004 Vanilla WoW hand-painted bitmap language,
+low-resolution readable masses, warm upper-left light, short broken highlights
+and real contact shadows. The long edges may wander gently only at low
+frequency. Unequal ends, rivets, nicks and repairs must look caused by use and
+field maintenance, never by all-over random noise.
+
+The Player shell has a slightly heavier crooked brass clamp and two coarse
+stitches at the left end, but compress that end treatment enough to preserve
+the full inner opening. Its right end is mostly worn leather with one off-
+centre rivet. Redraw the Target independently rather than mirroring: its right
+end carries a visibly damaged short brass compression plate, compressed clear
+of the safe corridor, while its left end is mainly a polished leather fold.
+Keep both centres calm and all ornament subordinate to live combat information.
+
+Do not make complete continuous gold outlines, matching corner ornaments,
+perfect rounded rectangles, web cards, glass panels, industrial rivet grids,
+black-iron shrines, skulls, horns, large crests, portrait wells, book pages,
+book spines, wax seals, dragons, gemstones, neon or photoreal antiques. Outside
+the two shells and inside both open content corridors every pixel must be pure
+#00FF00. Before returning, verify exactly two shells, correct upper Player and
+lower Target order, 5.10:1 bboxes within one percent, at least 96 pixels of
+isolation, full green runtime corridors, no baked dynamic content, no mirror
+duplication, no edge contact and no non-green pixels outside the two cells.
 
 ## 审查记录
 
