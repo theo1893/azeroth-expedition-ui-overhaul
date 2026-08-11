@@ -1,0 +1,89 @@
+{
+  "schema": "aeui-unitframes-a1-v2-simulation-v2",
+  "version": "UF-A1-V2-SIM-V2",
+  "source_components": {
+    "per_role": 4,
+    "roles": ["player", "target"],
+    "pieces": {
+      "left_cap": [7, 42],
+      "top_rail": [200, 6],
+      "bottom_rail": [200, 6],
+      "right_cap": [7, 42]
+    },
+    "production_pixels_from_v1_rejected_attempts": false
+  },
+  "provider": {
+    "default_content_width": 200,
+    "health_height": 25,
+    "gap": 1,
+    "power_height": 4,
+    "content_height": 30,
+    "outer_horizontal_margin": 7,
+    "outer_top_margin": 6,
+    "outer_bottom_margin": 6,
+    "button_hitbox_unchanged": true
+  },
+  "standard_runtime": {
+    "content_width": 200,
+    "outer_size": [214, 42],
+    "content_safe": [7, 6, 207, 36],
+    "strategy": "deterministically precompose the four accepted source pieces into one RGBA shell texture per role",
+    "texture_count_per_role": 1,
+    "runtime_internal_seams": 0,
+    "state_rims_from_composite_alpha": true
+  },
+  "variable_width_runtime": {
+    "supported_preview_content_widths": [160, 200, 240],
+    "outer_width_formula": "content_width + 14",
+    "outer_height": 42,
+    "strategy": "three-slice runtime only when content width differs from 200",
+    "left_cap_box_formula": [0, 0, 7, 42],
+    "center_band_box_formula": [6, 0, "content_width + 8", 42],
+    "right_cap_box_formula": ["content_width + 7", 0, "content_width + 14", 42],
+    "center_band_contains": ["top_rail", "bottom_rail", "transparent_middle"],
+    "center_band_edge_extrusion": 1,
+    "corner_overlap_per_side": 1,
+    "z_order": ["dynamic bars", "center band", "fixed caps", "runtime text/icons"],
+    "content_safe_formula": [7, 6, "content_width + 7", 36],
+    "vertical_resize_supported": false,
+    "atlas_padding_pixels": 2
+  },
+  "scale_review": {
+    "effective_scales": [0.64, 0.71, 0.8, 0.9, 1.0, 1.15],
+    "width_matrix_scales": [0.71, 1.0],
+    "filter_simulation": "bilinear approximation; not a claim of exact Turtle WoW GPU sampling",
+    "shared_coordinate_rounding": true,
+    "decorative_slice_rounding": "derive every physical box from one shared logical origin; floor starts and ceil ends so the decorative overlap cannot collapse at fractional scale",
+    "content_safe_rounding": "ceil starts and floor ends before testing intrusion",
+    "critical_identity_may_depend_on_single_runtime_pixel": false
+  },
+  "palette": {
+    "leather": "#28180E",
+    "leather_mid": "#49301E",
+    "liner": "#17100C",
+    "brass": "#80602D",
+    "brass_dim": "#5D4525",
+    "parchment": "#B8955C"
+  },
+  "outputs": {
+    "scale_matrix": "generated/unitframes/primary/UF-A1/V2/simulation/V2/uf-a1-v2-sim-v2.scale-matrix.png",
+    "runtime_contract": "generated/unitframes/primary/UF-A1/V2/simulation/V2/uf-a1-v2-sim-v2.runtime-contract.png",
+    "report": "generated/unitframes/primary/UF-A1/V2/simulation/V2/uf-a1-v2-sim-v2.report.json",
+    "display_region_report": "generated/unitframes/primary/UF-A1/V2/simulation/V2/display-region-report.json"
+  },
+  "imagegen_usage": "0/0",
+  "authoritative": {
+    "provider_logical_geometry": true,
+    "source_to_runtime_ownership": true,
+    "standard_and_variable_width_strategy": true,
+    "screen_anchor": false,
+    "exact_client_texture_filter": false,
+    "final_brushwork_microtexture": false
+  },
+  "negative_constraints": [
+    "never mount the four zero-overlap source pieces as four direct runtime textures at standard width",
+    "never vertically stretch the 42-pixel shell contract",
+    "never let the one-pixel overlap enter the content-safe rectangle",
+    "never bake bars, text, icons, portraits or states into the shell"
+  ]
+}

@@ -2,7 +2,7 @@
 
 ## 当前状态
 
-- 主模块：UF-A1 V2 当前回到 `P2 / simulation-reviewed / user-pending`；
+- 主模块：UF-A1 V2 当前为 `P2 / simulation-reviewed / user-pending`；
   `UF-PRIMARY-SIM-V1` 已于 `2026-08-11` 获用户方向确认。`UF-A1 V1` 已完成
   五次实际 ImageGen，终态为
   `candidate-rejected / repair-budget-exhausted / user-rejected`；用户于
@@ -19,30 +19,32 @@
   `872`／`818` 个 Alpha 像素被端柱侵入，横向隔离只有 `68–78px`，低于
   `96px`；因此没有 source 或 addon runtime。
 
-## UF-A1 V2 结构模拟
+## UF-A1 V2 缩放安全结构模拟
 
-- 版本：`UF-A1-V2-SIM-V1`；只使用本地 Pillow 几何，ImageGen `0/0`，没有
-  上传范围、provider 会话或生产候选，也没有复用任一 V1 失败稿像素。
-- 运行时尺寸不变：Player／Target 仍为 `214×42`，中央 provider／Button 区仍
-  为 `x 7..207 / y 6..36`、即 `200×30`。
-- 每个角色改为四件平接：左端帽 `7×42`、上轨 `200×6`、下轨 `200×6`、
-  右端帽 `7×42`。Player／Target 共八件，端帽固定宽，横轨未来只允许横向
-  延展；不再让 ImageGen 同时解决整框比例和端柱宽度。
-- 规格：`tools/specs/unitframes_a1_v2_simulation_v1.json`；渲染器：
-  `tools/render_unitframes_a1_v2_simulation_v1.py`；展示区域合同：
-  `tools/specs/unitframes_a1_v2_simulation_display_region_v1.json`。
-- 真实排版预演：
-  `generated/unitframes/primary/UF-A1/V2/simulation/V1/uf-a1-v2-sim-v1.scene.png`，
-  SHA `4ff48b8fac3a0b880ed4de830c2d3426003a4585fd08aa1d07cb50e48fbb7233`；
-  结构审阅板 SHA `756e1550b51294fa825db58a813d44476de3909ad3e932f810be46d3d44cf220`。
-- 内部几何报告通过：两框均为件间重叠 `0px`、装饰进入动态区 `0px`、每件
-  越出声明盒 `0px`。展示区域报告 SHA
-  `38a6bb5ebcbaff8118c2f9cfcb9aaf9cb922bea825e4928423eb8476c976df11`，
-  Player normal／Target aggro `2/2 pass`、violations `0`。
-- 两次本地流程错误分别为 Python `false` 拼写和 sandbox 写权限；均在写图前
-  发生并经单一针对性修复后通过，不属于 ImageGen，也不消耗任何生图次数。
-- 当前等待用户判断：在 `100%` runtime 下，7px 固定端帽与 6px 上下轨能否
-  同时保持香草时代的粗犷重量和完整动态信息区。
+- 当前版本：`UF-A1-V2-SIM-V2`；只使用本地 Pillow 几何，ImageGen `0/0`，
+  没有上传范围、provider 会话、production source/runtime 或 addon 改动，也
+  没有复用任一 V1 失败稿像素。
+- source 粒度不变：每角色四件——左／右端帽各 `7×42`，上／下轨各
+  `200×6`。V2-SIM.V1 的直接四纹理挂载被缩放风险取代，只保留为八件 source
+  互斥和动态区零覆盖的证据。
+- 默认 `W=200` 时，确定性 builder 把每角色四件预合成为一张 `214×42` RGBA
+  shell，运行时只挂载一张 Texture，内部 Texture 接缝为 `0`。
+- 只有可变宽度才使用三切片：中央带同时承载上下轨和透明中部，在左右各
+  向固定端帽下方伸入 `1 logical px`；重叠只在装饰角，动态安全区仍为
+  `x 7..W+7 / y 6..36`。高度固定 `42`，禁止纵向拉伸。
+- 标准路径在 `0.64/0.71/0.80/0.90/1.00/1.15×` 全部通过：每角色 runtime
+  Texture `1`、内部接缝 `0`、安全区不透明装饰侵入 `0`。可变宽度
+  `W=160/200/240` 在 `0.71/1.00×` 的接头空洞与安全区侵入均为 `0px`。
+- 展示区域报告 `6/6 pass`、violations `0`；连续两次本地重建的缩放矩阵、
+  装配板、几何报告与展示区域报告 SHA 完全一致。
+- 规格：`tools/specs/unitframes_a1_v2_simulation_v2.json`；渲染器：
+  `tools/render_unitframes_a1_v2_simulation_v2.py`；展示区域合同：
+  `tools/specs/unitframes_a1_v2_simulation_display_region_v2.json`。
+- 缩放矩阵 SHA `6040d50d…cd0d`；source → runtime／三切片板 SHA
+  `81d45b0b…95e5`；几何报告 SHA `59fae38d…521e`；展示区域报告 SHA
+  `759316cf…775`。bilinear 只是客户端过滤近似，不替代 Turtle WoW P6。
+- 当前等待用户确认该运行时结构。确认后才把合同写回稳定子模块定义、冻结
+  V2-A／V2-B source prompt 与 builder，并单独请求正式生产授权。
 
 ## 已完成的对象审计
 
@@ -85,8 +87,8 @@
 
 ## 下一门禁
 
-向用户展示 `UF-A1-V2-SIM-V1` 并等待明确方向结论。确认前不调用 ImageGen、
-不上传参考、不产出 source/runtime、不接入 addon。若确认，先把八件定义写回
-长期子模块文档，再形成 `UF-A1 V2-A` 四端帽与 `UF-A1 V2-B` 四横轨的完整生产
-正文并单独请求授权；若否决则只建立新的本地模拟，不恢复 V1 的动态区覆盖
-例外。A2／B1 继续暂停，额度均为 `0/5`。
+向用户展示 `UF-A1-V2-SIM-V2` 的缩放矩阵与装配板，等待明确方向结论。确认前
+不调用 ImageGen、不上传参考、不产出 production source/runtime、不接入 addon。
+若确认，先把八件 source、标准单 shell、可变宽度三切片和固定高度合同写回
+长期子模块文档，再冻结 V2-A／V2-B 正文并单独请求授权；若否决则只建立新的
+本地模拟，不恢复 V1 的动态区覆盖例外。A2／B1 继续暂停，额度均为 `0/5`。

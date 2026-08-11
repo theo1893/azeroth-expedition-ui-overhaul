@@ -5,14 +5,15 @@
 - 模块：`unitframes`
 - 组件 ID：`UF.PLAYER.SHELL`、`UF.TARGET.SHELL`、
   `UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.BAR.*`、`UF.STATE.*`
-- 当前版本：`UF-A1 V2-SIM.V1`／`UF-A2 V1`／`UF-B1 V1`
+- 当前版本：`UF-A1 V2-SIM.V2`／`UF-A2 V1`／`UF-B1 V1`
 - 子状态：UF-A1 V2 `simulation-reviewed / user-pending`；UF-A1 V1
   `candidate-rejected / repair-budget-exhausted / user-rejected`；UF-A2／UF-B1
   `prompt-authorized / paused`
 - 项目阶段：UF-A1 V2 `P2`；UF-A2／UF-B1 保持 `P3 / paused`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 操作：`simulate`；以独立四件外缘装配替代 UF-A1 V1 的整框生成合同
-- 生成前模拟：`UF-A1-V2-SIM-V1`／deterministic-local-geometry；ImageGen
+- 操作：`simulate`；以“独立四件 source → 标准宽度单 shell／可变宽度三切片”
+  替代四张纹理直接挂载的缩放不稳定合同
+- 生成前模拟：`UF-A1-V2-SIM-V2`／deterministic-local-geometry；ImageGen
   `0/0`
 - 本地渲染错误：历史主模拟确认后复跑 `1` 次 sandbox 写权限错误；V2 首次
   本地执行有 `1` 次 Python `false`／`False` 拼写错误，针对性修正后同一几何
@@ -29,6 +30,9 @@
   bbox-fit 和真实排版预演。
 - V2 正式生产授权：无；当前“继续处理”只执行本地确定性模拟，不允许上传或
   调用 ImageGen。
+- V2-SIM.V2 本地执行授权：`2026-08-11`；用户在讨论缩放风险并确认“标准
+  单 shell／可变宽度三切片”方案后原文“按照这个方案执行”。该授权仅覆盖
+  本地几何预演、校验与文档，不扩展为 production 或 addon 接入授权。
 - 用户授权原文：`确认授权 UF-A1 V1、UF-A2 V1、UF-B1 V1；按 A1→A2→B1
   顺序执行；A1/A2 每次允许上传固定 SHA 的 Image 1/2，首次无 Image 3，仅允许
   同段紧邻前次输出在冻结修复边界内作为 Image 3 edit 输入；B1 首次不上传
@@ -88,10 +92,15 @@
 
 ## 当前组件合同
 
-- UF-A1 V2 提案：Player／Target 各拆为 `LEFT_CAP 7×42`、
+- UF-A1 V2 source：Player／Target 各拆为 `LEFT_CAP 7×42`、
   `TOP_RAIL 200×6`、`BOTTOM_RAIL 200×6`、`RIGHT_CAP 7×42` 四个独立对象，
-  共八件；四件以平接方式装配为一张 `214×42` shell，彼此不重叠。端帽固定
-  宽度，横轨未来只允许横向延展。
+  共八件。默认 `W=200` 时由确定性 builder 预合成为每角色一张 `214×42`
+  RGBA shell，运行时只挂载一张纹理，因此内部 Texture 接缝为 `0`。
+- 只有 `W≠200` 时启用三切片：固定左右端帽，中央带同时承载上下轨与透明
+  中部；中央带在两端各外扩 `1 logical px`，位于端帽下层。重叠只发生在
+  `y 0..6`／`y 36..42` 的装饰角，不进入 `200×30` 动态安全区。这是装饰件
+  之间的抗取整连接，不是 UF-A1 V1 被拒绝的“装饰覆盖内容区”例外。
+- 高度固定为 `42`，禁止纵向拉伸；需要其他高度时必须另立规格。
 - UF-A2 仍为 TargetTarget／Focus 两张独立静态 shell；UF-B1 仍为两条共享
   bar fill；Hover／Aggro 由最终接受 shell Alpha 确定性派生。
 - Runtime 尺寸：Player／Target `214×42`；TargetTarget `112×34`；Focus
@@ -104,8 +113,10 @@
   预测治疗、状态标记、点击或配置控件。
 - Alpha：正式 shell 真透明；生产阶段使用纯 `#00FF00` 外部色键并在 P4 前
   只做边缘连通色键与透明 RGB 清零。Bar fill 为不透明灰阶。
-- 装配：shell 只作鼠标无关覆盖层；bar fill 继续由现有 StatusBar 裁切；状态
-  rim 不扩大命中盒。
+- 装配：shell 只作鼠标无关覆盖层；标准路径使用单纹理 composite，可变宽度
+  的层序为动态条 → 中央带 → 固定端帽 → 运行时文字／图标；所有物理盒均从
+  同一逻辑原点计算，装饰盒起点向下取整、终点向上取整，安全区反向内收。
+  bar fill 继续由现有 StatusBar 裁切；状态 rim 不扩大命中盒。
 - 回退：任一媒体缺失时局部恢复 pfUI 当前 backdrop／bar／glow。
 
 ## 生成前模拟实例图
@@ -838,7 +849,8 @@ side post is no wider than 42 pixels, every horizontal rail is no thicker than
 
 ### 本地模拟合同与执行
 
-- 版本：`UF-A1-V2-SIM-V1`；状态：`simulation-reviewed / user-pending`。
+- 版本：`UF-A1-V2-SIM-V1`；状态：
+  `superseded-as-runtime / retained-as-source-granularity-evidence`。
 - specification：`tools/specs/unitframes_a1_v2_simulation_v1.json`，SHA
   `9c00c26c9d6d224459e1f082ec52f53917c83f315c1996bd9a18c95da50fd59b`。
 - 展示区域合同：
@@ -875,10 +887,69 @@ side post is no wider than 42 pixels, every horizontal rail is no thicker than
 | SE1 | `UF-A1-V2-SIM-V1` | Python 布尔量误写为 JSON `false`，返回 `NameError`；尚未写图 | 只改为 `False`，不改变任何几何、配色或输出合同 | 普通渲染错误；不涉及 ImageGen |
 | SE2 | `UF-A1-V2-SIM-V1` | sandbox 无权新建 ignored `generated/.../V2`，返回 `PermissionError`；尚未写图 | 获准后以同一命令和同一 specification 重跑 | 普通环境错误；不涉及 ImageGen |
 
+## `UF-A1 V2-SIM.V2` — 缩放安全的 source → runtime 合同
+
+### 为什么替代 V2-SIM.V1
+
+- V2-SIM.V1 证明八件 source 可以完全避开动态区，但若把四件直接作为四张
+  运行时 Texture 挂载，非整数 UI Scale 可能令共享边界采用不同物理像素取整，
+  产生一像素缝隙或双线。V2-SIM.V1 因此只保留为 source 粒度证据，不再作为
+  runtime 挂载方案。
+- V2-SIM.V2 不改变资产粒度：Player／Target 仍各自生成四个独立 source。
+  改变的是 P4／P5 的确定性导出方式，不复用任何 V1 失败候选像素。
+
+### 最终装配提案
+
+- 标准宽度：每角色四个已接受 source 预合成为一张 `214×42` RGBA shell；
+  addon 每角色只挂载一张 Texture，任意整体 UI 缩放都不会暴露内部纹理边界。
+- 可变宽度：仅当内容宽度不是 `200` 时启用三切片。左、右端帽固定为
+  `7×42`；中央带宽为 `W+2`，包含横向缩放后的上轨、下轨和透明中部，并在
+  左右各向端帽下方伸入 `1 logical px`。端帽后绘制、覆盖中央带接头。
+- 取整：所有物理盒从同一逻辑原点计算；装饰盒 `floor(start)`／`ceil(end)`，
+  安全区 `ceil(start)`／`floor(end)`。因此 `0.71×` 下右侧实际可能形成 `2px`
+  物理重叠，但只位于装饰角，安全区仍为零侵入。
+- 纹理过滤防护：atlas 至少保留 `2px` padding，中央带端点做 `1px` extrusion；
+  关键身份特征不得依赖单个 runtime 像素。高度固定 `42`，禁止纵向拉伸。
+
+### 本地执行与证据
+
+- 状态：`simulation-reviewed / user-pending`；ImageGen `0/0`，没有上传、
+  provider 会话、production source、runtime 或 addon 改动。
+- specification：`tools/specs/unitframes_a1_v2_simulation_v2.json`，SHA
+  `a7a15ccb22f5c677bd98f6b2231fce85734562c1654638e830533c9a5d6534b0`。
+- 展示区域合同：
+  `tools/specs/unitframes_a1_v2_simulation_display_region_v2.json`，SHA
+  `c035253da71d0d0f91b1819239be7f47eb81a501a6a89756b71673ac76aa3e0c`。
+- 渲染器：`tools/render_unitframes_a1_v2_simulation_v2.py`，SHA
+  `0bf4708974ba8cf5ccb4fb3906a3ffe10a4239d3dafa0ff73788d02d2076edbd`。
+- 标准单 shell 缩放矩阵：
+  `generated/unitframes/primary/UF-A1/V2/simulation/V2/uf-a1-v2-sim-v2.scale-matrix.png`，
+  SHA `6040d50d6412011318a075c45ed59643de1fd789f05f9a648fa58ade5d65cd0d`；
+  Player／Target 均覆盖 `0.64`、`0.71`、`0.80`、`0.90`、`1.00`、`1.15`。
+  每格 runtime Texture 数量 `1`、内部接缝 `0`、安全区不透明装饰像素 `0`。
+- source → runtime／可变宽度三切片板：
+  `generated/unitframes/primary/UF-A1/V2/simulation/V2/uf-a1-v2-sim-v2.runtime-contract.png`，
+  SHA `81d45b0b24b15405cf4cc877ca9058b78ec9c48b925f2d35194b65e2935495e5`；
+  `W=160/200/240` 在 `0.71×` 与 `1.00×` 下左右接头空洞均为 `0px`，安全区
+  不透明／半透明装饰像素均为 `0`。
+- 几何报告 SHA
+  `59fae38dd5b143509d3efdeb72cca8f9fab8ca87369e8130f31655c07df7521e`，
+  `status=pass`／violations `0`。标准路径在 `0.64`、`0.71`、`1.15` 的安全区
+  边缘分别存在双线性采样形成的低 Alpha fringe，但所有 `alpha>=128` 的装饰
+  侵入均为 `0`；这只是假定的 bilinear 近似，不声称等同 Turtle WoW GPU。
+- 展示区域报告 SHA
+  `759316cf3b521c7f00ea57cc674d79c6117967aa2cc4e756c61b6dadf3568775`，
+  标准 `W=200` 与可变 `W=160/240`、Player／Target 共 `6/6 pass`，
+  violations `0`。
+- 连续两次以 macOS `conda run -n py312 python` 重建，以上四个输出 SHA 完全
+  一致，确定性复现通过。
+
 ### V2 生产正文完整性预检
 
 - 复杂度：`UF-A1 V2-A = four independent fixed caps / column atlas`；
-  `UF-A1 V2-B = four independent horizontal rails / band atlas / assembly`。
+  `UF-A1 V2-B = four independent horizontal rails / band atlas`；P4／P5 另有
+  deterministic source-to-runtime builder，标准宽度输出两张单 shell，可变宽度
+  输出三切片所需的固定端帽与带 extrusion 的中央带。
 - 当前结论：`pass / prompt-draft only`。两个正文已自包含对象数量、参考职责、
   精确画布、对象 bbox、运行时尺寸、接缝、色键、禁止烘焙和验收条件；但必须
   等待本模拟获用户确认后重新核对并单独授权，当前不得执行。
@@ -889,7 +960,7 @@ side post is no wider than 42 pixels, every horizontal rail is no thicker than
 | 每张输入图职责与权威冲突 | Image 1 只负责香草尺度／综合色，Image 2 只负责材料／磨损；完整书框结构均忽略 | pass |
 | 画布、格位、边距、方向、透视、尺度、光照与层序 | `1536×1024`；四列 `128×768` 端帽、四带 `1200×36` 横轨；正交正视、左上暖光 | pass |
 | 逐对象形态、材料、边缘、状态与相互关系 | Player 左修补／右安静，Target 左磨亮／右损伤；上下轨独立、不镜像、不复用 | pass |
-| 安静区、裁切、拉伸、重复与接缝 | bbox-fit 目标 `7×42`／`200×6`；端帽固定、横轨只横向延展；内接触边和装配后 `0px` 覆盖明确 | pass |
+| 安静区、裁切、拉伸、重复与接缝 | bbox-fit 目标 `7×42`／`200×6`；标准宽度预合成单 shell；可变宽度中央带在装饰角下方各 extrusion／overlap `1px`；动态区覆盖仍为 `0px` | pass |
 | 美术 DNA、反模式、Alpha／色键与最终自检 | 深胡桃／烟褐／断续暗铜、2004 手绘、纯绿背景、边缘连通色键及完整反现代禁止项 | pass |
 
 ### `UF-A1 V2-A` 正式生产正文草案 — 四个固定端帽
@@ -898,11 +969,14 @@ side post is no wider than 42 pixels, every horizontal rail is no thicker than
 > 每段最多五次实际 ImageGen 的明确授权。
 
 ```text
-Create exactly four independent, empty unit-frame side-cap components as a
+Create exactly four independent, empty unit-frame side-cap source components as a
 single orthographic 2D production sheet for a Turtle WoW 1.18.1 / Vanilla-era
 pfUI overhaul. The components are not complete frames, not portraits and not
 generic ornaments. They are the fixed-width left and right terminal pieces
-that will butt-join two separate horizontal rails around live status bars.
+that a deterministic runtime builder will assemble with two separate horizontal
+rails around live status bars. At standard width the builder precomposes all
+four pieces into one shell texture. At variable width it places a center band
+one logical pixel beneath each cap at the upper and lower decorative corners.
 
 Use Image 1 only for circa-2004 Vanilla WoW painted scale, thick low-resolution
 readability, short dull-brass highlights and the overall dark, weighty colour
@@ -963,7 +1037,10 @@ For every cap, the upper and lower ends must contain solid leather contact
 mass suitable for butt-joining a 6-pixel runtime top or bottom rail. Along the
 inner joining edge, keep the top and bottom contact zones opaque and quiet;
 do not place a loose curl, protruding stitch, brass spike or cast shadow across
-that edge. The long middle edge beside the live bar must stay dark and calm so
+that edge. The first inward source pixel at each upper and lower contact must
+be visually safe for the runtime builder to cover with a one-logical-pixel
+center-band extrusion underneath the cap. Do not place identity-critical detail
+only in that cover corridor. The long middle edge beside the live bar must stay dark and calm so
 text and colour remain readable immediately next to it.
 
 Draw no health or power fill, text, number, name, level, icon, aura, portrait,
@@ -986,10 +1063,14 @@ any rejected UF-A1 V1 output has been used or imitated as an edit source.
 > 未授权；不得执行。V2-A 与 V2-B 是不同生产段，禁止跨段复用生成像素。
 
 ```text
-Create exactly four independent, empty horizontal unit-frame rail components
+Create exactly four independent, empty horizontal unit-frame rail source components
 as one orthographic 2D production sheet for a Turtle WoW 1.18.1 / Vanilla-era
-pfUI overhaul. They are narrow top and bottom rails that butt-join separate
-fixed side caps around live status bars. They are not complete frames, status
+pfUI overhaul. They are narrow top and bottom rails consumed by a deterministic
+source-to-runtime builder with separate fixed side caps around live status bars.
+At standard width the builder precomposes four sources into one shell texture;
+at variable width it horizontally resamples each rail, extrudes one endpoint
+pixel under each fixed cap and packs both rails into one transparent center
+band. They are not complete frames, status
 bar fills, dividers, decorative banners or generic material swatches.
 
 Use Image 1 only for circa-2004 Vanilla WoW painted scale, thick low-resolution
@@ -1044,7 +1125,10 @@ last 24 source pixels, keep a solid, quiet leather contact band across the
 central portion of the 36-pixel thickness. Do not taper either end to a point,
 round it into a pill, add a curl, cast a shadow beyond the bbox or place a
 raised rivet on the joining edge. The two ends must visually butt against the
-separately generated fixed caps without a modern bevel seam. Long scratches,
+separately generated fixed caps without a modern bevel seam. The outermost
+source pixel at each end must be safe to duplicate once as an extrusion beneath
+the cap; no identity-critical stitch, rivet, notch or highlight may depend on
+that single pixel. Long scratches,
 brass lines and highlights must stop before the join and must never become a
 continuous gold border.
 
@@ -1065,12 +1149,14 @@ UF-A1 V1 output or from V2-A has been used as an edit or construction source.
 
 ### 内部审查与用户门禁
 
-- 结构／交互：四件只在原外接边界内平接，HP／Power／文字与 Button 完整保留，
-  没有 V1 的宽 U 形端帽或覆盖例外；真实 Frame、命中盒、锚点、Aura 与状态
-  更新逻辑均未修改。
+- 结构／交互：八件 source 保持独立；标准宽度由 builder 输出每角色一张完整
+  shell，可变宽度才使用三切片与装饰角下方 `1px` 重叠。HP／Power／文字与
+  Button 完整保留，没有 V1 的宽 U 形端帽或内容区覆盖例外；真实 Frame、
+  命中盒、锚点、Aura 与状态更新逻辑均未修改。
 - 可见方向：维持已确认的深胡桃旧皮革、烟褐内衬、断续暗铜、Player 左／
   Target 右非镜像维修关系。几何图中的平色、像素笔触和微纹理明确非权威；
-  用户当前只需判断窄端帽与薄横轨在 `100%` 下是否仍具有足够重量。
+  用户当前需要判断标准缩放矩阵与可变宽度三切片是否能保持足够重量且没有
+  可见接缝；正式笔触仍未生成。
 - 若用户确认本模拟，正式生产建议拆成两个独立授权段：`UF-A1 V2-A` 生成四个
   固定端帽，`UF-A1 V2-B` 生成四条横轨；每段各自最多五次实际 ImageGen，
   不跨段复用像素。此建议尚未形成最终正文，也未获得任何生图授权。
@@ -1098,12 +1184,15 @@ UF-A1 V1 output or from V2-A has been used as an edit or construction source.
 |---|---|---|---|
 | `UF-PRIMARY-SIM-V1` | deterministic scene／zoom；SHA 与 display-region `4/4` 如上；ImageGen `0/0` | `simulation-confirmed` | 可见方向已写入 A1／A2／B1；等待三段正式生产授权 |
 | `UF-A1 V1` | fixed ImageGen `5/5`；attempt 5 ratio `2/2 pass`，安全走廊 `0/2 pass`；真实排版 SHA `147e9d98…5252`；用户于 `2026-08-11` 明确拒绝例外 | `candidate-rejected / repair-budget-exhausted / user-rejected` | 建立新的 UF-A1 版本；不得复用失败稿像素，不得第 6 次同版生图 |
-| `UF-A1-V2-SIM-V1` | deterministic scene／assembly；四件越界 `0px`、件间重叠 `0px`、动态区覆盖 `0px`；display-region `2/2 pass`；ImageGen `0/0` | `simulation-reviewed / user-pending` | 等待用户确认窄端帽／薄横轨的 100% 视觉重量；确认后才重写并授权 V2-A／V2-B 正文 |
+| `UF-A1-V2-SIM-V1` | deterministic scene／assembly；八件 source 互斥且动态区覆盖 `0px`；display-region `2/2 pass`；ImageGen `0/0` | `superseded-as-runtime / retained-as-source-granularity-evidence` | 不直接把四件挂为四张 runtime Texture；由 V2-SIM.V2 接管缩放合同 |
+| `UF-A1-V2-SIM-V2` | 标准单 shell 覆盖 `0.64–1.15×`、内部 Texture 接缝 `0`；可变 `W=160/200/240` 在 `0.71/1.00×` 接头空洞 `0px`、内容侵入 `0px`；display-region `6/6 pass`；双次重建 SHA 一致；ImageGen `0/0` | `simulation-reviewed / user-pending` | 等待用户确认单 shell／三切片运行时策略；确认后冻结 V2-A／V2-B source prompt 与确定性 builder 合同，再单独请求生产授权 |
 
 ## 下一门禁
 
-向用户展示 `UF-A1-V2-SIM-V1`，等待明确确认或否决。确认前不得编写为已授权
-生产正文、不得上传参考、不得调用 ImageGen、不得修改 addon。若用户接受，
-把八件装配结论写回稳定子模块定义与完整 V2-A／V2-B 生产正文，再独立请求
-每段最多五次实际 ImageGen 的正式授权；若用户认为 7px 端帽／6px 横轨过轻，
-必须回到新的本地模拟版本，不能恢复 V1 覆盖例外。UF-A2／UF-B1 继续暂停。
+向用户展示 `UF-A1-V2-SIM-V2` 的标准缩放矩阵与 source → runtime／可变宽度
+装配板，等待明确确认或否决。确认前不得写成已授权生产正文、不得上传参考、
+不得调用 ImageGen、不得修改 addon。若用户接受，把“八个独立 source、标准
+单 shell、可变宽度三切片、42px 固定高度”写回稳定子模块定义，冻结 V2-A／
+V2-B 正文与 builder 合同，再独立请求每段最多五次实际 ImageGen 的正式授权。
+若否决，只建立新的本地模拟，不恢复 V1 内容区覆盖例外。UF-A2／UF-B1 继续
+暂停。

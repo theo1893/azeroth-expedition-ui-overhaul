@@ -1,0 +1,114 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "UF-A1/V2/SIM.V2/composite-and-three-slice-scale-contract",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, logical UI pixels before effective scale",
+  "evidence": {
+    "provider": "pfUI.uf:CreateUnitFrame + pfUI.uf:UpdateFrameSize + current profile",
+    "provider_files": [
+      "addon/pfUI/api/unitframes.lua",
+      "addon/pfUI/env/profiles.lua",
+      "addon/pfUI/modules/player.lua",
+      "addon/pfUI/modules/target.lua"
+    ],
+    "simulation_spec": "tools/specs/unitframes_a1_v2_simulation_v2.json",
+    "scale_preview": "generated/unitframes/primary/UF-A1/V2/simulation/V2/uf-a1-v2-sim-v2.scale-matrix.png",
+    "runtime_contract_preview": "generated/unitframes/primary/UF-A1/V2/simulation/V2/uf-a1-v2-sim-v2.runtime-contract.png",
+    "direction_only": true,
+    "final_runtime": false,
+    "screen_placement_authoritative": false,
+    "resource_dimensions_authoritative": true
+  },
+  "atlas": {
+    "size": [214, 84],
+    "visible_bbox": [0, 0, 214, 84],
+    "require_exact_visible_coverage": true,
+    "sampled_regions": [
+      {"id": "player-standard-composite", "box": [0, 0, 214, 42]},
+      {"id": "target-standard-composite", "box": [0, 42, 214, 84]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 7, "right": 7, "top": 6, "bottom": 6},
+    "minimum_frame_size": [15, 13]
+  },
+  "scenarios": [
+    {
+      "id": "player-standard-200",
+      "frame": [214, 42],
+      "preview_frame": [214, 42],
+      "zones": {"content-safe": [7, 6, 207, 36], "interaction-safe": [7, 6, 207, 36]},
+      "regions": [
+        {"id": "player.hp", "kind": "statusbar", "box": [7, 6, 207, 31], "zone": "content-safe"},
+        {"id": "player.power", "kind": "statusbar", "box": [7, 32, 207, 36], "zone": "content-safe"},
+        {"id": "player.text-left", "kind": "fontstring", "box": [12, 10, 102, 27], "zone": "content-safe"},
+        {"id": "player.text-right", "kind": "fontstring", "box": [112, 10, 202, 27], "zone": "content-safe"},
+        {"id": "player.button", "kind": "button-hitbox", "box": [7, 6, 207, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "target-standard-200",
+      "frame": [214, 42],
+      "preview_frame": [214, 42],
+      "zones": {"content-safe": [7, 6, 207, 36], "interaction-safe": [7, 6, 207, 36]},
+      "regions": [
+        {"id": "target.hp", "kind": "statusbar", "box": [7, 6, 207, 31], "zone": "content-safe"},
+        {"id": "target.power", "kind": "statusbar", "box": [7, 32, 207, 36], "zone": "content-safe"},
+        {"id": "target.text-left", "kind": "fontstring", "box": [12, 10, 112, 27], "zone": "content-safe"},
+        {"id": "target.text-right", "kind": "fontstring", "box": [142, 10, 202, 27], "zone": "content-safe"},
+        {"id": "target.button", "kind": "button-hitbox", "box": [7, 6, 207, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "player-variable-160",
+      "frame": [174, 42],
+      "preview_frame": [174, 42],
+      "zones": {"content-safe": [7, 6, 167, 36], "interaction-safe": [7, 6, 167, 36]},
+      "regions": [
+        {"id": "player160.hp", "kind": "statusbar", "box": [7, 6, 167, 31], "zone": "content-safe"},
+        {"id": "player160.power", "kind": "statusbar", "box": [7, 32, 167, 36], "zone": "content-safe"},
+        {"id": "player160.text-left", "kind": "fontstring", "box": [12, 10, 77, 27], "zone": "content-safe"},
+        {"id": "player160.text-right", "kind": "fontstring", "box": [97, 10, 162, 27], "zone": "content-safe"},
+        {"id": "player160.button", "kind": "button-hitbox", "box": [7, 6, 167, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "target-variable-160",
+      "frame": [174, 42],
+      "preview_frame": [174, 42],
+      "zones": {"content-safe": [7, 6, 167, 36], "interaction-safe": [7, 6, 167, 36]},
+      "regions": [
+        {"id": "target160.hp", "kind": "statusbar", "box": [7, 6, 167, 31], "zone": "content-safe"},
+        {"id": "target160.power", "kind": "statusbar", "box": [7, 32, 167, 36], "zone": "content-safe"},
+        {"id": "target160.text-left", "kind": "fontstring", "box": [12, 10, 82, 27], "zone": "content-safe"},
+        {"id": "target160.text-right", "kind": "fontstring", "box": [112, 10, 162, 27], "zone": "content-safe"},
+        {"id": "target160.button", "kind": "button-hitbox", "box": [7, 6, 167, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "player-variable-240",
+      "frame": [254, 42],
+      "preview_frame": [254, 42],
+      "zones": {"content-safe": [7, 6, 247, 36], "interaction-safe": [7, 6, 247, 36]},
+      "regions": [
+        {"id": "player240.hp", "kind": "statusbar", "box": [7, 6, 247, 31], "zone": "content-safe"},
+        {"id": "player240.power", "kind": "statusbar", "box": [7, 32, 247, 36], "zone": "content-safe"},
+        {"id": "player240.text-left", "kind": "fontstring", "box": [12, 10, 117, 27], "zone": "content-safe"},
+        {"id": "player240.text-right", "kind": "fontstring", "box": [137, 10, 242, 27], "zone": "content-safe"},
+        {"id": "player240.button", "kind": "button-hitbox", "box": [7, 6, 247, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "target-variable-240",
+      "frame": [254, 42],
+      "preview_frame": [254, 42],
+      "zones": {"content-safe": [7, 6, 247, 36], "interaction-safe": [7, 6, 247, 36]},
+      "regions": [
+        {"id": "target240.hp", "kind": "statusbar", "box": [7, 6, 247, 31], "zone": "content-safe"},
+        {"id": "target240.power", "kind": "statusbar", "box": [7, 32, 247, 36], "zone": "content-safe"},
+        {"id": "target240.text-left", "kind": "fontstring", "box": [12, 10, 122, 27], "zone": "content-safe"},
+        {"id": "target240.text-right", "kind": "fontstring", "box": [172, 10, 242, 27], "zone": "content-safe"},
+        {"id": "target240.button", "kind": "button-hitbox", "box": [7, 6, 247, 36], "zone": "interaction-safe"}
+      ]
+    }
+  ]
+}
