@@ -14,9 +14,9 @@
 - 本地渲染错误：初始模拟 `0`；确认后确定性复跑出现 `1` 次 sandbox 写权限
   错误，使用同一命令获准写入后复跑通过，输出 SHA 未变；不属于 ImageGen。
 - 自动修复预算：未来 `UF-A1`／`UF-A2`／`UF-B1` 各最多 `5` 次实际生图，
-  最坏合计 `15`；当前 A1 `2/5`、总计 `2/15`
-- 流程错误：`1`（A1 `E1`；固定 child 在生成前返回 `No prompt provided`，无
-  图片或 provider result，不占实际生图额度）
+  最坏合计 `15`；当前 A1 `3/5`、总计 `3/15`
+- 流程错误：`2`（A1 `E1` 为 stdin transport；A1 `E2` 为 npm sandbox
+  `EPERM`；二者均无图片或 provider result，不占实际生图额度）
 - 正式生产授权：`2026-08-11`；用户授权 A1→A2→B1 顺序、A1／A2 固定
   Image 1／2、同段紧邻前稿 edit 输入、B1 首次无图、每段最多 `5` 次实际
   ImageGen、最坏 `15` 次、流程错误不占额度、禁止跨段复用，以及合同内的
@@ -367,11 +367,13 @@ cast, no dynamic content, no edge contact and no non-green pixels outside them.
 |---:|---|---|---|---|---|---|---|
 | 1/5 | `UF-A1 V1` / `d902e2b` | generate | child `019fee93-168d-7360-85c0-e7d02095deff`／result `ig_019be3007b694521016a7a83ee64d88191aa391033b667c3df` | raw `generated/unitframes/primary/UF-A1/V1/attempt-01/raw/UF-A1_V1_attempt-01.png`／SHA `80d928ac…33d3` | 组件合同：两框纵横比与动态安全走廊失败 | 保留深胡桃材质、克制装饰和 Player 左／Target 右非镜像关系；用 Image 3 edit 修正比例、隔离、开口与内缘 | failed；进入 `V1.r1` |
 | 2/5 | `UF-A1 V1.r1` / `c89e4f5` | edit | child `019fee9c-00fb-7a23-88c0-505b2f4cc403`／result `ig_07ff1b0e8d890a18016a7a863faedc8191b62e96b3d6bc4427` | raw `generated/unitframes/primary/UF-A1/V1/attempt-02/raw/UF-A1_V1_r1_attempt-02.png`／SHA `6b2af557…0346` | 组件合同：纵横比、安全走廊及 Player 隔离再次失败 | 保留同族材料与非镜像语义；改变策略，不再使用 Image 3，按更薄轨道和窄端帽从固定参考 regenerate | failed；进入 `V1.r2` |
-| 3/5 | `UF-A1 V1.r2` / pending | regenerate | pending | pending | pending | pending | pending |
+| 3/5 | `UF-A1 V1.r2` / `7a7c3ce` | regenerate | child `019feea5-6b2c-7ae1-88fd-94cae36e8cc0`／result `ig_0e5284289500fcb2016a7a889e347c8191ab40c73932895364` | raw `generated/unitframes/primary/UF-A1/V1/attempt-03/raw/UF-A1_V1_r2_attempt-03.png`／SHA `d7a42d40…7f5f` | 组件合同：两框过扁，比例约 `7.63:1`／`7.73:1`，运行时安全走廊失败 | 冻结明显改善的薄轨、深胡桃材质与非镜像语义；以 Image 3 edit 重新拉开上下轨并延长侧轨，禁止非等比拉伸 | failed；进入 `V1.r3` |
+| 4/5 | `UF-A1 V1.r3` / pending | edit | pending | pending | pending | pending | pending |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
 | E1 | `UF-A1 V1` / `d902e2b` | unified exec `99073`；无 child session／result | 固定 child 在读取 prompt 前退出：`No prompt provided. Either specify one as an argument or pipe the prompt into stdin.`；无图片、无 provider result、无生成证据 | 保持提交正文和 Image 1／2 完全不变，只把同一参数从 argv transport 改为 CLI 明示的 stdin transport | 不占 `0/5`；以同一正文重试 |
+| E2 | `UF-A1 V1.r2` / `7a7c3ce` | unified exec `42462`；无 child session／result | sandbox 内 npm 请求 registry／写 npm log 返回 `EPERM`；无图片、无 provider result、无生成证据 | 保持提交正文和 Image 1／2／无 Image 3 完全不变，仅按权限规则在获准环境复跑同一固定命令 | 不占 `2/5`；以同一正文重试后正常生成 attempt 3 |
 
 #### Attempt 1 审查
 
@@ -567,6 +569,107 @@ Target order, final 5.10:1 bboxes within one percent, at least 96 pixels of
 isolation, inner openings at least 1235 by 186, end structures no wider than
 42 pixels, rails no thicker than 36 pixels, no baked dynamic content, no
 mirror duplication and no edge contact.
+
+#### Attempt 3 审查
+
+- 输入：固定 Image 1／2；按策略变更不使用 Image 3。完整 `V1.r2` 正文来自
+  `7a7c3ce`，fixed child 完整回显正文、未递归启动固定 child，未报告 revised
+  prompt。
+- 原始输出：`1536×1024 RGB`；SHA
+  `d7a42d40435a75118523f3e97cf5f3db7ade107ff39e42f0b11e92ab46307f5f`。
+- 语义／美术：薄轨、深胡桃磨损、Player 左端缝线／Target 右端黄铜压片和
+  克制中心均明显优于前两稿；没有动态文字、条、图标或镜像复用。这些区域可
+  冻结。背景并非逐像素纯 `#00FF00`，但外部和中央色键均保持连通，确定性
+  pipeline 可无损职责地清除；不把该技术偏差作为第一失败门禁。
+- 第一失败门禁：Player keyed bbox `1381×181`、比例误差 `49.744411%`；Target
+  `1383×179`、误差 `51.636819%`。等比 fit 后均只有 `214×28`，上下各留
+  `7px`，导致运行时安全走廊分别被 `2640`／`2619` 个可见 Alpha 像素侵入；
+  Player 左／右隔离 `77`／`78px`、Target 左／右 `79`／`74px`，亦低于
+  `96px`。本稿从“过厚”越过目标成为“过扁”，下一稿必须通过重建几何而非
+  拉伸来命中中间值。
+- 确定性处理：固定两格；外边缘与中央孔连通色键；一像素 despill；透明 RGB
+  清零；只做等比 bbox-fit，无非等比缩放。
+- 技术报告：
+  `generated/unitframes/primary/UF-A1/V1/attempt-03/review-report.json`；
+  `overall_technical_pass=false`。
+- 真实排版：
+  `generated/unitframes/primary/UF-A1/V1/attempt-03/real-layout-preview.png`，SHA
+  `7fc9ce8a56c5940dc6f69974597ac87d478935ad525967d8ef8c8bb57bd33143`；
+  候选 shell 为 `100%` runtime，真实 bar 几何显示外框上下轨落入条形内容区。
+- 结论：`failed / attempt 3 of 5`；不允许用户复审、source 或 runtime。
+
+#### `UF-A1 V1.r3` 完整修复正文
+
+The written requirements below are controlling. Image 1 is a secondary
+reference only for circa-2004 Vanilla WoW bitmap scale, thick readable masses,
+short dull-brass highlights and overall visual weight; ignore its whole-screen
+layout, portrait circles and every unit-frame example. Image 2 is a secondary
+reference only for deep-walnut material depth, warm upper-left illumination,
+hand-made edge error and the frequency of believable wear; ignore its pages,
+spine, columns, dragons, book silhouette and extensive gold architecture.
+Image 3 is the immediately preceding UF-A1 attempt. Preserve only its thin
+deep-walnut rails, restrained brass quantity, calm long centres, hand-painted
+wear, Player-left stitch repair and Target-right compression-plate identity.
+Its two shells are much too flat at about 7.7:1, too wide in their cells and
+have short side rails. Do not preserve those dimensions or positions. If any
+image conflicts with this written contract, follow this text.
+
+Edit Image 3 into one production-ready 1536 by 1024 bitmap sheet containing
+exactly two separate horizontal unit-frame shell objects on a perfectly
+uniform pure #00FF00 background. The upper 1536 by 512 cell is the Player shell
+and the lower 1536 by 512 cell is the Target shell. Draw no other object. Keep
+both front-facing orthographic 2D game-UI assets with no scene, tilt,
+perspective, dynamic content or cast shadow extending outside their bboxes.
+
+Rebuild the geometry; never stretch or non-uniformly scale the preceding
+pixels. Give each complete visible shell an exclusive bbox exactly 1320 pixels
+wide by 259 pixels high, ratio 5.0965:1 and within one percent of 5.10:1.
+Position the upper visible bbox at x 108..1428 and y 126..385. Position the
+lower visible bbox at x 108..1428 and global y 638..897, the same local
+y 126..385 in its cell. These exclusive-coordinate envelopes leave at least
+96 pixels of pure green on all four sides and around the horizontal cell
+boundary. Do not retain Image 3's current upper-low and lower-high placement.
+
+The change must look like a physical reconstruction: move the upper rail
+upward, move the lower rail downward and repaint longer upright side rails
+between them. Keep the rail material itself thin; do not make leather bands
+thicker merely to increase total height. In each 1320 by 259 bbox, reserve a
+completely pure-green inner opening from local x 42 through 1278 and local
+y 36 through 223, at least 1236 by 187 pixels. No opaque or shadow pixel may
+enter that rectangle. Thus each left and right end structure is at most
+42 pixels wide and each top and bottom rail, including liner and shadow, is at
+most 36 pixels high. After proportional fit to exactly 214 by 42 runtime
+pixels, the whole x 7..207 and y 6..36 content corridor must be transparent
+for a 200 by 25 health bar, one-pixel gap and 200 by 4 power bar.
+
+Preserve the preceding attempt's irregular but restrained field-made quality.
+The long rails may have subtle low-frequency drift, broken highlights and a
+few material joins, but the guaranteed inner rectangle must remain clear.
+Keep the Player's crooked left stitch repair wholly inside its leftmost
+42-pixel strip; reduce or repaint it rather than letting it intrude. Keep its
+right end as worn leather with one off-centre rivet. Repaint the Target
+independently: keep its damaged brass compression plate wholly inside its
+rightmost 42-pixel strip and its left end as a polished leather fold. Never
+mirror the two frames and never turn the opening into a perfect pill.
+
+Use deep-walnut worn leather, soot-brown liner and only tiny interrupted dull
+oxidized brass, in circa-2004 Vanilla WoW hand-painted bitmap language. Use
+warm upper-left illumination, thick readable low-resolution masses, short
+broken highlights and believable contact depth. Irregularity must remain
+low-frequency and caused by travel and field repair, not all-over texture
+noise. The long centres stay visually quiet and subordinate to combat data.
+
+Draw no fill, portrait, name, level, number, icon, aura, status text,
+classification, button or glow. Do not add wide U-shaped end caps, continuous
+gold outlines, matching corners, perfect rounded rectangles, web cards, glass,
+industrial rivet grids, black-iron shrines, skulls, horns, crests, portrait
+wells, pages, spines, wax seals, dragons, gemstones, neon or photoreal
+antiques. Outside the two rebuilt shells and inside both declared openings
+every pixel must be pure #00FF00. Before returning, verify exactly two shells,
+upper Player and lower Target order, exact 1320 by 259 bboxes within the stated
+envelopes, 5.10:1 within one percent, inner openings at least 1236 by 187,
+end strips no wider than 42, rails no thicker than 36, no non-uniform stretch,
+no baked dynamic content, no mirror duplication and no edge contact.
 
 ## 审查记录
 
