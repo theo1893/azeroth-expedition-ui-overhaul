@@ -10,12 +10,13 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 - 运行时由 `addon/pfUI/` 与 `addon/AzerothExpeditionUI/` 共同组成。
 - pfUI 功能底座版本：`8.1.0`，来源提交
   `fbc8fb608b79adf32049543ec12fcc020e0acd69`；项目分支版本
-  `8.1.0-aeui.4`，MIT 许可见 `addon/pfUI/LICENSE`。
+  `8.1.0-aeui.5`，MIT 许可见 `addon/pfUI/LICENSE`。
 - pfUI 提供数据、事件、交互、SavedVariables 与兼容能力；项目允许大规模
   重构视觉、布局和呈现连接，但不改写无关功能。
 - pfUI 默认接管全部模块、Blizzard skins 与配置页面；AEUI 只接管显式登记的
-  Chat 与 Quest Log。后续改造模块 A 时，只允许修改或路由 pfUI 的模块 A，
-  不得通过公共绘制入口、全局回退或配置强写影响其他模块。
+  Chat、Quest Log 与 Unit Frame 的两张 fill donor。后续改造模块 A 时，只允许
+  修改或路由 pfUI 的模块 A，不得通过公共绘制入口、全局回退或配置强写影响
+  其他模块。
 
 | 模块 | 当前状态 | 下一门禁 |
 |---|---|---|
@@ -24,7 +25,7 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 | 任务 | 用户于 `2026-08-05` 实机确认 Quest Log 左右页 bug 与显示问题已修复；该活动范围保持 `P6 user-confirmed`。QS-B1 V7-A 为 `P5`。QL-D V3 五次循环耗尽后，用户明确“使用第4稿”：以一次性 aspect 例外接受 exact canonical SHA `816aeedd…47c5`，原 keyed aspect `2.76945`／technical `18/19` 仍保留。正式四态 atlas SHA `cda1ef21…cd56` 已由 Quests `1.27`／Theme `1.10` 接入既有奖励适配层；atlas 与 0／1／2／4／6 真实排版均和已审阅第4稿像素完全一致，display `5/5 pass`。当前 `P5 runtime-exported / addon-integrated`。真实 Button／Tooltip／动态图标／文字和几何未替换。七枚独立功能纹章仍未验收，菜单不响应，旧 Blizzard／pfQuest 按钮继续 fail-open；Tracker 与 NPC Quest／Gossip 不变 | Turtle WoW 验证 QL-D TGA 方向、四态、pressed `1px`、safe area、双列排版和长详情滚动；不得第六次生图。另验证闭合态火漆跨压与滚动裁切；七纹章与代理 parity 完成后才可启用事务菜单或隐藏旧按钮 |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2` | 实机测量并拆分装备槽、属性、页签与按钮 |
-| 单位框 | `P3`。A／B 均 `5/5 exhausted`，无 candidate/source/runtime，禁止第六次。B1 attempt 3 已 `9/9 pass` 并停止于 `3/5`：Health ratio error `5.063291%`、Power `24.886878%`，中性、明度、隔离、中心和层级均通过。candidate Health `8d19ffe9…08e1f`、Power `0668eddb…87f1`；真实排版 `e9848b61…02ca`。仍无 source/runtime/addon；流程错误 `4` | 等待用户审阅 B1 真实排版；接受后才进入 P4/P5 exact candidate 导出与接入。A／B 是否重开合同另行决定。A2 暂停 |
+| 单位框 | A／B 外壳保持 `P3 / 5/5 exhausted / rejected`，无 source/runtime，禁止第六次。用户已接受 B1 attempt 3；exact Health／Power source `8d19ffe9…08e1f`／`0668eddb…87f1` 已导出为 `64×32`／`64×16` TGA，并由 runtime `1.0` 只接入 Player、Target、TargetTarget、Focus。display `9/9 pass`，fresh checkout 无需构建；颜色、数值、裁切、事件、几何和未接管单位框仍归 pfUI。B1 当前 `P5` | Turtle WoW P6 验证 TGA 方向、四资源乘色、低数值裁切、缩放、禁用回退与旧 SavedVariables。A／B 是否重开合同另行决定；A2 暂停 |
 | 其他 UI | `P0–P2`，保持 pfUI 默认实现 | 逐模块建立四份长期文档，并仅登记目标模块的接管路由 |
 
 全量模块状态以 [docs/PROGRESS.md](docs/PROGRESS.md) 为准。

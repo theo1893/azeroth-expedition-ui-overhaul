@@ -76,7 +76,7 @@ end
 dofile(root .. "/addon/pfUI/api/expedition.lua")
 pfUI:ApplyExpeditionVisualContract()
 
-assert(pfUI.expedition.version == 3)
+assert(pfUI.expedition.version == 4)
 assert(pfUI.expedition.ownership == "scoped-v1")
 assert(pfUI_config.appearance.expedition.ownership == "scoped-v1")
 assert(pfUI_config.appearance.expedition.alpha_floor == nil)
@@ -132,6 +132,18 @@ for _, name in ipairs({
   )
 end
 
+assert(
+  pfUI:GetExpeditionComponentOwner("unitframes.health-fill") ==
+    "unitframes"
+)
+assert(
+  pfUI:GetExpeditionComponentOwner("unitframes.power-fill") ==
+    "unitframes"
+)
+assert(
+  pfUI:GetExpeditionComponentOwner("unitframes.shell") == nil
+)
+
 local questOwned, questOwner = pfUI:ShouldUseVanillaSkin("Quest Log")
 assert(questOwned, "Quest Log skin was not routed to AEUI Quests")
 assert(questOwner == "quests", "Quest Log skin has the wrong owner")
@@ -163,6 +175,7 @@ assert(pfUI_config.unitframes.player.bartexture == "custom-bar")
 pfUI_config.appearance.expedition.enabled = "0"
 assert(not pfUI:ShouldUseVanillaModule("chatcopy"))
 assert(not pfUI:ShouldUseVanillaSkin("Quest Log"))
+assert(pfUI:GetExpeditionComponentOwner("unitframes.health-fill") == nil)
 
 local panelFile = assert(io.open(root .. "/addon/pfUI/modules/panel.lua", "rb"))
 local panelSource = panelFile:read("*a")

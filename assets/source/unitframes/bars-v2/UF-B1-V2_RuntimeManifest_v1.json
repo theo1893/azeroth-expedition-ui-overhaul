@@ -1,0 +1,186 @@
+{
+  "schema": "aeui-unitframes-bars-v2-runtime-manifest-v1",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "runtime_contract": "1.0",
+  "module": "unitframes",
+  "components": [
+    "UF.BAR.HEALTH.FILL",
+    "UF.BAR.POWER.FILL"
+  ],
+  "source_manifest": "assets/source/unitframes/bars-v2/UF-B1-V2_SourceManifest_v1.json",
+  "sources": {
+    "health": {
+      "file": "assets/source/unitframes/bars-v2/UnitFrameHealthFill_Master_v1.png",
+      "sha256": "8d19ffe95d5314b463d88be793568667aa555460a955364a636e6ddc76508e1f",
+      "size": [
+        256,
+        128
+      ]
+    },
+    "power": {
+      "file": "assets/source/unitframes/bars-v2/UnitFramePowerFill_Master_v1.png",
+      "sha256": "0668eddbb6c7644312eecc3c1d03f555b937d5307e48444ca520a6674cb387f1",
+      "size": [
+        256,
+        64
+      ]
+    }
+  },
+  "runtime": {
+    "health": {
+      "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFrameHealthFillV1.tga",
+      "sha256": "bdee918674484be3a70ef1f64b3db9f326b0045560ce52234015ca1ba7836cd8",
+      "tga_header": {
+        "image_type": 2,
+        "width": 64,
+        "height": 32,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      },
+      "metrics": {
+        "size": [
+          64,
+          32
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "22d610c44ea5e8c210c27d005dad69b886965efdf64c872f7f8c80790798b572",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          64,
+          32
+        ],
+        "equal_channel": true,
+        "value_mean_alpha_gte_128": 119.586914,
+        "value_stddev_alpha_gte_128": 7.651801,
+        "visible_green_spill_pixels": 0,
+        "transparent_rgb_nonzero_values": 0,
+        "transparent_pixels": 0,
+        "partially_transparent_pixels": 167,
+        "opaque_pixels": 1881
+      }
+    },
+    "power": {
+      "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFramePowerFillV1.tga",
+      "sha256": "8fbf0797e4b3562a02ed3b7f19e7b7e100c832cf1c02b6fd172fc06317314cd0",
+      "tga_header": {
+        "image_type": 2,
+        "width": 64,
+        "height": 16,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      },
+      "metrics": {
+        "size": [
+          64,
+          16
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "411c54d8919adfe45f6c8c8b16a160765476d56e5d24c7811c1f7f7b6d3802f0",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          64,
+          16
+        ],
+        "equal_channel": true,
+        "value_mean_alpha_gte_128": 123.204102,
+        "value_stddev_alpha_gte_128": 5.681517,
+        "visible_green_spill_pixels": 0,
+        "transparent_rgb_nonzero_values": 0,
+        "transparent_pixels": 0,
+        "partially_transparent_pixels": 71,
+        "opaque_pixels": 953
+      }
+    }
+  },
+  "deterministic_export": {
+    "tool": "tools/build_unitframes_bars_v2_runtime.py",
+    "operation": "independent whole-source LANCZOS resize, transparent RGB clear, 32-bit RGBA TGA write",
+    "health_source_to_runtime": [
+      [
+        256,
+        128
+      ],
+      [
+        64,
+        32
+      ]
+    ],
+    "power_source_to_runtime": [
+      [
+        256,
+        64
+      ],
+      [
+        64,
+        16
+      ]
+    ],
+    "crop": false,
+    "redraw": false,
+    "mirror": false,
+    "foreign_source_pixels_mixed": false,
+    "dynamic_content_baked": false
+  },
+  "adapter": {
+    "file": "addon/AzerothExpeditionUI/Modules/UnitFrames.lua",
+    "toc": "addon/AzerothExpeditionUI/AzerothExpeditionUI.toc",
+    "provider_bridge": "addon/pfUI/api/unitframes.lua",
+    "provider_ownership": "addon/pfUI/api/expedition.lua",
+    "frames": [
+      "player",
+      "target",
+      "targettarget",
+      "focus"
+    ],
+    "health_marker": "frame.aeuiHealthBarTexture",
+    "power_marker": "frame.aeuiPowerBarTexture",
+    "preserved_provider_behaviour": [
+      "SetStatusBarColor health and reaction colours",
+      "UnitPowerType Mana, Rage, Focus and Energy colours",
+      "value animation and clipping",
+      "bar backgrounds",
+      "text and icon layers",
+      "events, hitboxes and SavedVariables"
+    ],
+    "fallback": "clear AEUI markers and restore each frame.config bartexture/pbartexture through pfUI.media",
+    "unowned_frames": [
+      "party",
+      "raid",
+      "pet",
+      "pet-target",
+      "focus-target",
+      "fallback"
+    ]
+  },
+  "real_layout": {
+    "file": "generated/unitframes/bars/V2/runtime/real-layout-preview.png",
+    "sha256": "00ce1084ca7d317f976c6048cde97fd7502a3e58f807d26b6d458b25ef09d247",
+    "metrics": "generated/unitframes/bars/V2/runtime/real-layout-metrics.json",
+    "metrics_sha256": "71d02bcc8d0422db673c20e720084758d51271a2d5a21cb3b342e8ab9fc2c5e6",
+    "scenario_count": 7,
+    "ui_pixel_scale": "1 image pixel = 1 UI pixel",
+    "unfinished_shell_fallback_is_authoritative": false
+  },
+  "display_region": {
+    "contract": "tools/specs/unitframes_bars_v2_runtime_display_region_v1.json",
+    "report": "generated/unitframes/bars/V2/runtime/display-region-report.json",
+    "report_sha256": "40171cf9dde327882a9a9c0365c8911fcb2ac21b95af8377ad317a25bed25f48",
+    "status": "pass",
+    "scenario_count": 9,
+    "violation_count": 0,
+    "first_failure": null
+  },
+  "deployment": {
+    "addon_directories": [
+      "addon/pfUI",
+      "addon/AzerothExpeditionUI"
+    ],
+    "build_required_on_target_device": false,
+    "game_validation": "pending Turtle WoW 1.18.1 / P6"
+  }
+}

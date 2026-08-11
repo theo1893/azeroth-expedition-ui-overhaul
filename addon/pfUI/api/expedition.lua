@@ -9,7 +9,7 @@ local STATUS_TEXTURE = "Interface\\TargetingFrame\\UI-StatusBar"
 local PFUI_STATUS_TEXTURE = pfUI.media["img:bar"]
 
 pfUI.expedition = {
-  version = 3,
+  version = 4,
   ownership = "scoped-v1",
 
   -- The main pfUI chat module stays loaded because AEUI uses its frames,
@@ -25,6 +25,14 @@ pfUI.expedition = {
   -- Game Menu skin that exposes the pfUI configuration button, stays in pfUI.
   skin_owners = {
     ["Quest Log"] = "quests",
+  },
+
+  -- Unit Frames remain fully provided by pfUI. AEUI owns only these two
+  -- concrete visual donors; frame construction, updates and interaction do
+  -- not yield to another module.
+  component_owners = {
+    ["unitframes.health-fill"] = "unitframes",
+    ["unitframes.power-fill"] = "unitframes",
   },
 }
 
@@ -48,6 +56,11 @@ end
 function pfUI:GetExpeditionSkinOwner(name)
   if not IsScopedRouteEnabled() then return nil end
   return pfUI.expedition.skin_owners[name]
+end
+
+function pfUI:GetExpeditionComponentOwner(name)
+  if not IsScopedRouteEnabled() then return nil end
+  return pfUI.expedition.component_owners[name]
 end
 
 -- Compatibility names retained for the pfUI loader. A true result now means

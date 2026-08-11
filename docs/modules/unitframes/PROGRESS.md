@@ -7,11 +7,11 @@
 - `UF-A1 V3-B final` Target 完整外壳：
   `P3 / repair-budget-exhausted / candidate-rejected / 5/5`。
 - `UF-B1 V2 final` Health／Power 灰阶填充纹：
-  `P3 / candidate-ready / internal-pass / user-review / 3/5 stop`。
+  `P5 / source-accepted / runtime-exported / addon-integrated / 3/5 stop`。
 - `UF-A2` TargetTarget／Focus：继续暂停；既有物件身份方向不变，尚无正式
   source。Hover／Aggro 仍计划由接受外壳 Alpha 确定性派生。
-- 当前只处理资源重绘、后处理合同与未来替换路径；没有修改另一台设备上的
-  Frame 位置、尺寸、点击、事件、数值或其他功能，也没有 addon runtime 变更。
+- 当前只处理资源重绘与精确媒体替换。B1 已接入 addon；没有修改另一台设备上
+  的 Frame 位置、尺寸、点击、事件、数值、颜色逻辑或其他功能。
 - 用户于 `2026-08-11` 接受“每个角色生成完整外壳，Python 负责精确工程化”
   的架构，并要求同时重绘生命与 Mana／Rage／Focus／Energy 等资源条材质。
 - 新模拟 `UF-PRIMARY-V3-SIM-V1` 已本地完成并通过内部几何门禁；用户于
@@ -24,6 +24,10 @@
   `5` 次实际生成及最坏 `15` 次预算。流程错误不占额度；跨段与旧失败像素
   禁止复用。A attempts 1–5 与 B attempts 1–5 均已完成并耗尽；B1 attempts
   1–3 已完成并在通过后停止。
+- 用户于 `2026-08-11` 明确“接受 B1 attempt 3 的运行时视觉”。两张 exact
+  candidate 已逐字节固定为 source，确定性导出为 `64×32` Health 与 `64×16`
+  Power TGA，并只接入 `player`、`target`、`targettarget`、`focus`。A／B 外壳
+  与 UF-A2 不在本次接受范围内。
 
 ## V3 结构合同
 
@@ -166,8 +170,33 @@
   `25%` 内。其他材料 `0 px`，min isolation `101 px`，mid gap `249 px`；
   中性、明度、中心与 Health-coarser／Power-calmer 层级均通过。
 - candidate Health SHA `8d19ffe9…08e1f`、Power SHA `0668eddb…87f1`；真实
-  排版 SHA `e9848b61…02ca`。它们仍不是 source/runtime，attempt 4/5 未调用，
-  addon 未修改。
+  排版 SHA `e9848b61…02ca`。这是进入用户审阅时的历史结论；用户接受后，
+  exact candidate 已成为同 SHA source，attempt 4/5 未调用。
+
+## B1 P4／P5 source、runtime 与接入
+
+- source：`assets/source/unitframes/bars-v2/UnitFrameHealthFill_Master_v1.png`
+  SHA `8d19ffe9…08e1f`；`UnitFramePowerFill_Master_v1.png` SHA
+  `0668eddb…87f1`。`UF-B1-V2_SourceManifest_v1.json` 固定接受语句、生成来源、
+  组件映射与禁止用途。
+- runtime：`addon/AzerothExpeditionUI/Media/UnitFrames/`
+  `UnitFrameHealthFillV1.tga` 为 `64×32`／SHA `bdee9186…6cd8`；
+  `UnitFramePowerFillV1.tga` 为 `64×16`／SHA `8fbf0797…14cd0`。两张均为
+  equal-channel 灰阶，透明 RGB 与可见绿溢色为 `0`。
+- 确定性导出器：`tools/build_unitframes_bars_v2_runtime.py`；只做整图 LANCZOS
+  缩放、透明清理与 32-bit RGBA TGA 写入。runtime manifest 为
+  `assets/source/unitframes/bars-v2/UF-B1-V2_RuntimeManifest_v1.json`。
+- adapter：`addon/AzerothExpeditionUI/Modules/UnitFrames.lua`，合同 `1.0`；pfUI
+  bridge 只在 `api/unitframes.lua` 的两处 StatusBar 媒体读取点消费 marker。
+  关闭 `/aeui unitframes` 或关闭作用域路由会恢复 Frame 配置的 pfUI 媒体。
+- 真实排版：`generated/unitframes/bars/V2/runtime/real-layout-preview.png`，SHA
+  `00ce1084…d247`；覆盖四种 Player 资源色、Target、TargetTarget、Focus 与
+  宽度变化。外壳仍为非权威 pfUI fallback。展示区域合同 `9/9 pass`、
+  violations `0`，报告 SHA `40171cf9…5f48`。
+- 静态门禁：runtime 确定性像素、TGA round-trip、乘色中性、作用域应用／
+  回退、pfUI ownership 与 repository contract 均由 tests 覆盖。fresh checkout
+  package 为 `pass`、violations `0`，报告 SHA `48e109a4…131c`；仓库直接包含
+  addon 媒体与 Lua，不需要目标设备运行 exporter。
 
 ## 历史终态
 
@@ -181,7 +210,8 @@
 
 ## 下一门禁
 
-等待用户审阅 B1 attempt 3 真实排版。接受后才进入 P4/P5 的 exact candidate
-导出、`64×32`／`64×16` runtime 与 addon 接入；拒绝且明确继续时才可使用剩余
-attempt 4/5，并只以上一 B1 raw 作输入。A／B 已耗尽且不得第六次；当前禁止
-创建 source/runtime、修改 addon、跨段复用或复用旧失败像素。
+B1 下一门禁是 Turtle WoW `1.18.1` P6：验证 TGA 方向、Player／Target／
+TargetTarget／Focus 的生命与 Mana／Rage／Focus／Energy 乘色、低血量裁切、
+缩放、禁用回退和旧 SavedVariables。通过前保持 P5，`generated/unitframes/`
+继续作为 ignored 中间证据。A／B 外壳仍为 `5/5` rejected，禁止第六次；是否
+重开新合同另行决定。UF-A2 继续暂停。

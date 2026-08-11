@@ -85,6 +85,23 @@ Frame 中心；透明外扩不能参与 Frame 宽高、点击区域或移动边�
   横向缩放和按当前值改变显示宽度。不得烘焙端帽、数值、色相、中心热点、
   斜纹或玻璃高光。
 
+### `UF-B1 V2` 已接受 source 与运行时映射
+
+- 用户于 `2026-08-11` 接受 B1 attempt 3 的运行时视觉。Health exact source
+  为 `assets/source/unitframes/bars-v2/UnitFrameHealthFill_Master_v1.png`，
+  SHA-256 `8d19ffe9…08e1f`；Power exact source 为同目录
+  `UnitFramePowerFill_Master_v1.png`，SHA-256 `0668eddb…87f1`。
+- `tools/build_unitframes_bars_v2_runtime.py` 只执行整图 LANCZOS 缩放、透明 RGB
+  清零和无损 32-bit RGBA TGA 写入，分别导出
+  `UnitFrameHealthFillV1.tga`（`64×32`）与 `UnitFramePowerFillV1.tga`
+  （`64×16`）；不裁切、不重画、不混入外框像素。
+- AEUI adapter 只给 `player`、`target`、`targettarget`、`focus` 写入两项媒体
+  marker；pfUI 的 `api/unitframes.lua` 在既有 StatusBar 创建点读取 marker。
+  Party、Raid、Pet、FocusTarget 与 fallback 继续使用各自 pfUI 配置媒体。
+- 禁用模块或作用域路由时，adapter 通过各 Frame 的 `bartexture`／
+  `pbartexture` 恢复 pfUI 媒体。不得改动 `SetStatusBarColor`、Frame 几何、
+  数值动画、事件、点击区域、文字、图标或 SavedVariables。
+
 ## 已登记但不在当前批次
 
 | pfUI 配置／对象 | 后续逻辑 ID | 当前处理 |

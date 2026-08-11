@@ -867,7 +867,12 @@ assert(
     statusMessage
 )
 assert(
-  string.find(statusMessage, "ownership=chat,quests", 1, true),
+  string.find(
+    statusMessage,
+    "ownership=chat,quests,unitframe-bars",
+    1,
+    true
+  ),
   "status command did not report scoped ownership"
 )
 assert(

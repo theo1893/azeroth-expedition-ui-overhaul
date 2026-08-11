@@ -6,11 +6,11 @@
 - 当前组件：`UF.PLAYER.SHELL`、`UF.TARGET.SHELL`、
   `UF.BAR.HEALTH.FILL`、`UF.BAR.POWER.FILL`
 - 后续组件：`UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.STATE.*`
-- 当前版本：`UF-A1 V3-A final.r4 terminal`／`UF-A1 V3-B final.r4 terminal`／`UF-B1 V2 final.r2`
-- 子状态：`UF-A1 V3-A exhausted / UF-A1 V3-B exhausted / UF-B1 candidate-ready / user-review`
-- 项目阶段：`P3`
+- 当前版本：`UF-A1 V3-A final.r4 terminal`／`UF-A1 V3-B final.r4 terminal`／`UF-B1 V2 final.r2 / source v1 / runtime 1.0`
+- 子状态：`UF-A1 V3-A exhausted / UF-A1 V3-B exhausted / UF-B1 source-accepted / runtime-exported`
+- 项目阶段：`P3–P5`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 当前操作：`review`
+- 当前操作：`accept / deterministic-export / addon-integrate`
 - 生成前模拟：`UF-PRIMARY-V3-SIM-V1`，deterministic local geometry
 - 模拟 ImageGen：`0/0`
 - 正式生产：`authorized / 2026-08-11`；A `5/5`、B `5/5`、B1 `3/5 stopped-on-pass`，
@@ -34,6 +34,9 @@
   `5` 次实际生成、最坏 `15` 次，流程错误不占额度。A／B 固定 Image 1／2，
   attempt 1 无 Image 3；后续仅允许同段紧邻前稿作有界 edit 输入。B1 首次无
   图片，后续仅允许同段紧邻前稿。禁止跨段及 V1／V2 失败像素复用。
+- B1 用户接受：`accepted / 2026-08-11`。用户原文为“接受 B1 attempt 3 的运行时视觉”；
+  接受范围只含 exact Health／Power candidates、已审阅的确定性
+  `64×32`／`64×16` 外观和 pfUI 经典乘色，不含 A／B 外壳或 UF-A2。
 
 本文件只保留当前 V3 下一门禁所需事实。V1、V2 的逐稿正文、执行会话和完整
 审查均已存在于 Git 历史；当前树只保留下方终态摘要，避免继续膨胀文档。
@@ -763,9 +766,53 @@
 - 视觉内审：两块都是无框、无标签的哑光灰阶矿物颜料；无中心热点、玻璃光、
   斜纹或现代进度条效果。真实 `200×25 + 200×4` 排版中纹理可见但不压过名称、
   数值和经典资源色，符合已确认方向。
-- 结论：`candidate-ready / internal-pass / user-review`。循环按通过即停终止于
-  B1 `3/5`；attempt 4/5 不调用。candidate 仍非 source/runtime，不修改 addon，
-  等待用户接受真实排版视觉。
+- 当时内审结论：`candidate-ready / internal-pass / user-review`。循环按通过即停
+  终止于 B1 `3/5`；attempt 4/5 不调用。
+- 用户随后于 `2026-08-11` 接受该运行时视觉；两张 exact candidate 已逐字节
+  晋升为 source 并完成 P4/P5。该接受不会改变 A／B 的拒绝终态。
+
+## B1 P4／P5 接受与插件接入
+
+- exact source：Health
+  `assets/source/unitframes/bars-v2/UnitFrameHealthFill_Master_v1.png`，
+  `256×128 RGBA`，SHA-256
+  `8d19ffe95d5314b463d88be793568667aa555460a955364a636e6ddc76508e1f`；
+  Power `UnitFramePowerFill_Master_v1.png`，`256×64 RGBA`，SHA-256
+  `0668eddbb6c7644312eecc3c1d03f555b937d5307e48444ca520a6674cb387f1`。
+  二者与用户接受的 attempt 3 candidate 字节完全一致。
+- source manifest：
+  `assets/source/unitframes/bars-v2/UF-B1-V2_SourceManifest_v1.json`；固定用户原文、
+  provider／prompt／review provenance、组件映射、禁止用途与 runtime export。
+- exporter：`tools/build_unitframes_bars_v2_runtime.py`；使用 macOS
+  `conda run -n py312 python`，只作各自整图 LANCZOS 缩放、透明 RGB 清零和
+  32-bit RGBA TGA 写入，不裁切、不镜像、不重画、不混入外壳像素。
+- runtime Health：
+  `addon/AzerothExpeditionUI/Media/UnitFrames/UnitFrameHealthFillV1.tga`，
+  `64×32`，文件 SHA `bdee918674484be3a70ef1f64b3db9f326b0045560ce52234015ca1ba7836cd8`，
+  pixel SHA `22d610c4…b572`，mean/stddev `119.586914/7.651801`。
+- runtime Power：
+  `addon/AzerothExpeditionUI/Media/UnitFrames/UnitFramePowerFillV1.tga`，
+  `64×16`，文件 SHA `8fbf0797e4b3562a02ed3b7f19e7b7e100c832cf1c02b6fd172fc06317314cd0`，
+  pixel SHA `411c54d8…02f0`，mean/stddev `123.204102/5.681517`。两者均为
+  equal-channel，visible green spill 与 transparent RGB nonzero 均为 `0`。
+- runtime manifest：
+  `assets/source/unitframes/bars-v2/UF-B1-V2_RuntimeManifest_v1.json`；合同 `1.0`。
+  AEUI `Modules/UnitFrames.lua` 只给 `player`、`target`、`targettarget`、`focus`
+  设置媒体 marker；pfUI `api/unitframes.lua` 只在原 StatusBar 媒体读取点消费。
+  Party／Raid／Pet／FocusTarget／fallback 不属于本批次。
+- 动态所有权不变：Health／reaction 与 Mana／Rage／Focus／Energy 颜色、数值、
+  裁切、动画、背景、文字、图标、事件、点击区域和 SavedVariables 继续由 pfUI
+  提供。关闭模块或作用域路由时恢复每个 Frame 配置的 pfUI bar media。
+- 真实排版：`generated/unitframes/bars/V2/runtime/real-layout-preview.png`，SHA
+  `00ce1084ca7d317f976c6048cde97fd7502a3e58f807d26b6d458b25ef09d247`；
+  按 `1 image px = 1 UI px` 覆盖四资源 Player、Target、TargetTarget、Focus 和
+  宽度变化。展示区域合同 `9/9 pass`、violations `0`，报告 SHA
+  `40171cf9dde327882a9a9c0365c8911fcb2ac21b95af8377ad317a25bed25f48`。
+- 目标设备直接使用仓库内 `addon/pfUI` 与 `addon/AzerothExpeditionUI`，不需要
+  再运行生成、exporter 或补丁。fresh-checkout addon package 为 `pass`、
+  violations `0`，报告 SHA-256
+  `48e109a495bc702f7c5d63993577c4e46ef0d3765a05c6a1b4b18dd6e167131c`。
+  P6 Turtle WoW 实机验证仍待进行。
 
 ## 尝试摘要
 
@@ -784,7 +831,7 @@
 | `UF-A1 V3-B final.r4` attempt 5 | session `019fefef…076e`；raw `92a9889…97231`；review `983d564…4f5d7`；B `5/5` | ratio/aniso 通过；safe `22649`、isolation `68/72` 失败，工业式长边／端部仍在；`repair-budget-exhausted`；无 candidate/source/runtime | 禁止第六次；保留终态 review，继续独立 B1；最终等待用户决定是否为 A/B 重开合同 |
 | `UF-B1 V2 final` attempt 1 | session `019ff008…d61d`；provider raw `30cb1ff…1d691`；1024² raw `748c81a…a7abc`；review `090354b…a882f`；B1 `1/5` | `8/9` 通过；唯一失败为 Health `2.81:1`、Power `9.07:1` 的 source ratio；无 candidate/source/runtime | `final.r1` 只把两块重绘到 x `256..768`、Health y `128..384`、Power y `640..768`；冻结灰阶、明度、材质和隔离 |
 | `UF-B1 V2 final.r1` attempt 2 | session `019ff018…5e87`；provider raw `e39be44…4ef7e`；1024² raw `de8a0f2…57990`；review `f7b4d0e…3c930`；B1 `2/5` | Health ratio `5.40%` 通过；唯一失败为 Power `5.355:1`、误差 `33.87%`；其他 `8/9` 门禁继续通过；无 candidate/source/runtime | `final.r2` 冻结 Health，只把 Power 保持宽 `664` 并增高为约 `166`，目标 x `180..844/y680..846` |
-| `UF-B1 V2 final.r2` attempt 3 | session `019ff025…8c02`；provider raw `54e3f9b…36060`；1024² raw `161910f…514e1`；review `6e19b23…cf798`；B1 `3/5` | `9/9 pass`；Health／Power candidate `8d19ffe…08e1f`／`0668edd…87f1`；`candidate-ready / internal-pass`；无 source/runtime/addon | 通过即停，不调用 attempt 4/5；等待用户审阅真实排版并明确接受或拒绝 |
+| `UF-B1 V2 final.r2` attempt 3 | session `019ff025…8c02`；provider raw `54e3f9b…36060`；1024² raw `161910f…514e1`；review `6e19b23…cf798`；B1 `3/5` | `9/9 pass`；Health／Power candidate `8d19ffe…08e1f`／`0668edd…87f1`；用户接受 exact pixels；`P5 runtime-exported / addon-integrated` | 通过即停，不调用 attempt 4/5；下一门禁为 Turtle WoW P6 |
 
 ## 最终执行正文
 
@@ -1770,7 +1817,7 @@ colour or third object.
 |---|---|---:|---:|---|
 | `UF-A1 V3-A final.r4` | `repair-budget-exhausted / candidate-rejected` | `5/5` | `2` | 禁止第六次；等待最终用户审查 |
 | `UF-A1 V3-B final.r4` | `repair-budget-exhausted / candidate-rejected` | `5/5` | `1` | 禁止第六次；等待最终用户审查 |
-| `UF-B1 V2 final.r2` | `candidate-ready / internal-pass / user-review` | `3/5 stop` | `1` | 不调用 attempt 4/5；等待用户审阅真实排版 |
+| `UF-B1 V2 final.r2` | `source-accepted / runtime-exported / addon-integrated` | `3/5 stop` | `1` | 不调用 attempt 4/5；等待 Turtle WoW P6 |
 
 每次实际候选的 session／result、raw／candidate／真实排版路径与 SHA、第一失败
 门禁、保留区和下一正文都继续写入本文件；无生成证据的流程错误另表记录。
@@ -1796,8 +1843,8 @@ colour or third object.
 
 ## 下一门禁
 
-等待用户审阅 B1 attempt 3 的真实排版与两张 candidate。若用户接受，才进入
-P4：从 exact candidate 确定性导出 source，再生成 `64×32` Health、`64×16`
-Power runtime、乘色验证与 addon 媒体接入；若拒绝且明确允许继续，B1 仍剩
-attempt 4/5，但只能用同段紧邻 attempt 3 raw。A／B 均已耗尽且不得第六次；
-当前仍禁止创建 source/runtime、修改 addon 或跨段复用。
+B1 已完成 P4/P5。下一门禁为 Turtle WoW `1.18.1` P6：检查两张 TGA 的方向、
+Player／Target／TargetTarget／Focus 的 Health 与四类 Power 乘色、低数值裁切、
+缩放、禁用回退、旧 SavedVariables 和缺媒体 fail-open。实机通过前不进入
+P6-C，也不清理 `generated/unitframes/`。A／B 均已耗尽且不得第六次；是否重开
+新合同另行决定，UF-A2 继续暂停。

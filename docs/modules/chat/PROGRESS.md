@@ -133,7 +133,7 @@
   `|H...|h` 链接载荷、ChatMOD 配置与历史保持原样；不修改全局 `ChatTypeInfo`、
   SavedVariables 或其他 pfUI 模块。Lua 语法、Chat／pfUI／Quest smoke、
   repository／quest design／asset workflow 契约均通过；尚待 `/reload`。
-- 运行时：插件 `0.6.0` 已加载 Full V1 主框、V3 四状态 Tab、普通／聚焦输入
+- 运行时：插件 `0.7.0` 已加载 Full V1 主框、V3 四状态 Tab、普通／聚焦输入
   和独立未读覆盖；静态测试通过，旧 V3 主框 TGA 保留为 P6-C 前回退。
 - 容器：只保留 `pfChatLeft`。`pfChatRight` 默认强制隐藏，原本分流到右框的
   拾取、经验、荣誉、声望与技能消息组回收到 `ChatFrame1`。

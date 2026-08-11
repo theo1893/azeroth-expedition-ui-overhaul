@@ -20,6 +20,9 @@ RENDERER = ROOT / "tools/render_unitframes_primary_v3_simulation_v1.py"
 REVIEWER = ROOT / "tools/review_unitframes_primary_v3_candidate.py"
 BARS_REVIEWER = ROOT / "tools/review_unitframes_bars_v2_candidate.py"
 LEGACY_V2 = ROOT / "tools/specs/unitframes_a1_v2a_production_v2.json"
+BAR_SOURCE_DIR = ROOT / "assets/source/unitframes/bars-v2"
+BAR_SOURCE_MANIFEST = BAR_SOURCE_DIR / "UF-B1-V2_SourceManifest_v1.json"
+BAR_RUNTIME_MANIFEST = BAR_SOURCE_DIR / "UF-B1-V2_RuntimeManifest_v1.json"
 
 
 def extract_fenced_body(source: str, heading: str) -> str:
@@ -108,7 +111,7 @@ def main() -> None:
 
     work = WORK.read_text(encoding="utf-8")
     normalized_work = " ".join(work.split())
-    assert "UF-A1 V3-A exhausted / UF-A1 V3-B exhausted / UF-B1 candidate-ready / user-review" in work
+    assert "UF-A1 V3-A exhausted / UF-A1 V3-B exhausted / UF-B1 source-accepted / runtime-exported" in work
     assert "accepted UF-PRIMARY-V3-SIM-V1 / 2026-08-11" in work
     assert "production / authorized / 2026-08-11" in work
     assert "完整性结论：`pass-final`" in work
@@ -128,6 +131,33 @@ def main() -> None:
     assert "candidate-ready / internal-pass / user-review" in work
     assert "8d19ffe95d5314b463d88be793568667aa555460a955364a636e6ddc76508e1f" in work
     assert "0668eddbb6c7644312eecc3c1d03f555b937d5307e48444ca520a6674cb387f1" in work
+    assert "接受 B1 attempt 3 的运行时视觉" in work
+    assert "B1 已完成 P4/P5" in work
+
+    bar_source_manifest = json.loads(
+        BAR_SOURCE_MANIFEST.read_text(encoding="utf-8")
+    )
+    bar_runtime_manifest = json.loads(
+        BAR_RUNTIME_MANIFEST.read_text(encoding="utf-8")
+    )
+    assert bar_source_manifest["status"] == "accepted-source"
+    assert bar_source_manifest["user_acceptance"]["exact_statement"] == (
+        "接受 B1 attempt 3 的运行时视觉"
+    )
+    assert bar_source_manifest["sources"]["health"]["sha256"] == (
+        "8d19ffe95d5314b463d88be793568667aa555460a955364a636e6ddc76508e1f"
+    )
+    assert bar_source_manifest["sources"]["power"]["sha256"] == (
+        "0668eddbb6c7644312eecc3c1d03f555b937d5307e48444ca520a6674cb387f1"
+    )
+    assert bar_runtime_manifest["status"] == "runtime-exported"
+    assert bar_runtime_manifest["phase"] == "P5"
+    assert bar_runtime_manifest["adapter"]["frames"] == [
+        "player",
+        "target",
+        "targettarget",
+        "focus",
+    ]
 
     player = extract_fenced_body(work, "### `UF-A1 V3-A final`")
     assert_clauses(
@@ -302,6 +332,8 @@ def main() -> None:
     assert "旧马鞍带、盾牌背带或帐篷捆扎皮" in submodule_art
     assert "透明母版归一化为" in submodule_art
     assert "`SetStatusBarColor` 乘色" in submodule_art
+    assert "`UF-B1 V2 final.r2` attempt 3 已于 `2026-08-11`" in submodule_art
+    assert "`UF-B1 V2` 已接受 source 与运行时映射" in submodules
 
     renderer_source = RENDERER.read_text(encoding="utf-8")
     assert "One continuous, hand-cut shell silhouette" in renderer_source

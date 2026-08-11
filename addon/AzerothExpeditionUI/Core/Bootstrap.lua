@@ -3,7 +3,7 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 
 addon.name = "AzerothExpeditionUI"
-addon.version = "0.6.0"
+addon.version = "0.7.0"
 addon.modules = addon.modules or {}
 addon.media = addon.media or {}
 addon.media.root = "Interface\\AddOns\\AzerothExpeditionUI\\Media\\"
@@ -20,6 +20,10 @@ local defaults = {
   quests = {
     enabled = true,
     artVersion = 4,
+  },
+  unitframes = {
+    enabled = true,
+    artVersion = 1,
   },
 }
 
@@ -163,6 +167,15 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       "; reloading UI."
     )
     ReloadUI()
+  elseif command == "unitframes" then
+    AzerothExpeditionUIDB.unitframes.enabled =
+      not AzerothExpeditionUIDB.unitframes.enabled
+    addon:Refresh()
+    addon:Print(
+      "unit-frame bar skin " ..
+      (AzerothExpeditionUIDB.unitframes.enabled and "enabled" or "disabled") ..
+      "."
+    )
   elseif command == "refresh" then
     addon:Refresh()
     addon:Print("visual adapters refreshed.")
@@ -183,6 +196,10 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       addon.modules.Quests and
       addon.modules.Quests.runtimeContract or
       "unknown"
+    local unitFrameRuntime =
+      addon.modules.UnitFrames and
+      addon.modules.UnitFrames.runtimeContract or
+      "unknown"
     local chatColorStatus =
       addon.modules.Chat and
       addon.modules.Chat.GetMessageColorStatus and
@@ -197,9 +214,13 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       ", quests=" ..
       (AzerothExpeditionUIDB.quests.enabled and "enabled" or "disabled") ..
       ", quest-runtime=" .. tostring(questRuntime) ..
+      ", unitframes=" ..
+      (AzerothExpeditionUIDB.unitframes.enabled and "enabled" or "disabled") ..
+      ", unitframes-runtime=" .. tostring(unitFrameRuntime) ..
       ", pfUI=" .. (pfUI and "available" or "missing") ..
       ", route=" .. (scopedRoute and "scoped" or "pfui") ..
-      ", ownership=" .. (scopedRoute and "chat,quests" or "none") ..
+      ", ownership=" ..
+      (scopedRoute and "chat,quests,unitframe-bars" or "none") ..
       ", blizzard-skins=" ..
       (scopedRoute and "pfui-except-quest-log" or "pfui")
     )
@@ -211,7 +232,17 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
         "quest " .. addon.modules.Quests:GetRuntimeStatus()
       )
     end
+    if
+      addon.modules.UnitFrames and
+      addon.modules.UnitFrames.GetRuntimeStatus
+    then
+      addon:Print(
+        "unitframes " .. addon.modules.UnitFrames:GetRuntimeStatus()
+      )
+    end
   else
-    addon:Print("/aeui chat, /aeui quests, /aeui refresh, /aeui status")
+    addon:Print(
+      "/aeui chat, /aeui quests, /aeui unitframes, /aeui refresh, /aeui status"
+    )
   end
 end

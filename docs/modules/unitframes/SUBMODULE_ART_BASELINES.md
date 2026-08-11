@@ -48,6 +48,12 @@ Player 放进同一 production atlas，也不得镜像或复制 Player 像素。
 `SetStatusBarColor` 乘色；Mana、Rage、Focus、Energy 等语义色全部由运行时
 提供。最终分别导出为 `64×32` 与 `64×16`。
 
+`UF-B1 V2 final.r2` attempt 3 已于 `2026-08-11` 被用户接受为该子模块的
+像素 source：Health SHA-256 `8d19ffe9…08e1f`，Power SHA-256
+`0668eddb…87f1`。Health 必须保持更粗、更深的矿物刷痕，Power 必须保持更窄、
+更静的颜料起伏；二者继续由 pfUI 运行时乘经典语义色。后续导出不得添加现代
+玻璃光、中心热点、规则斜纹、端帽、外框或任何 A／B 失败外壳元素。
+
 ## `UF.STATE.HOVER.RIM`／`UF.STATE.AGGRO.RIM`
 
 不单独进行 ImageGen。由每张用户接受外壳的 Alpha 和边缘色确定性派生：Hover

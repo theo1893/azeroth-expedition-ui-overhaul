@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "module": "unitframes",
+  "batch": "UF-B1 V2",
+  "components": [
+    "UF.BAR.HEALTH.FILL",
+    "UF.BAR.POWER.FILL"
+  ],
+  "version": "UF-B1 V2 final.r2 / attempt 3",
+  "status": "accepted-source",
+  "accepted_on": "2026-08-11",
+  "sources": {
+    "health": {
+      "file": "UnitFrameHealthFill_Master_v1.png",
+      "repository_path": "assets/source/unitframes/bars-v2/UnitFrameHealthFill_Master_v1.png",
+      "accepted_candidate": "generated/unitframes/bars/V2/attempt-03/review/health-candidate.png",
+      "sha256": "8d19ffe95d5314b463d88be793568667aa555460a955364a636e6ddc76508e1f",
+      "width": 256,
+      "height": 128,
+      "mode": "RGBA",
+      "visible_bbox_exclusive": [
+        0,
+        0,
+        256,
+        128
+      ],
+      "transparent_pixels": 0,
+      "partially_transparent_pixels": 703,
+      "opaque_pixels": 32065,
+      "visible_green_spill_pixels": 0,
+      "transparent_rgb_nonzero_values": 0
+    },
+    "power": {
+      "file": "UnitFramePowerFill_Master_v1.png",
+      "repository_path": "assets/source/unitframes/bars-v2/UnitFramePowerFill_Master_v1.png",
+      "accepted_candidate": "generated/unitframes/bars/V2/attempt-03/review/power-candidate.png",
+      "sha256": "0668eddbb6c7644312eecc3c1d03f555b937d5307e48444ca520a6674cb387f1",
+      "width": 256,
+      "height": 64,
+      "mode": "RGBA",
+      "visible_bbox_exclusive": [
+        0,
+        0,
+        256,
+        64
+      ],
+      "transparent_pixels": 0,
+      "partially_transparent_pixels": 381,
+      "opaque_pixels": 16003,
+      "visible_green_spill_pixels": 0,
+      "transparent_rgb_nonzero_values": 0
+    }
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "codex_package": "@openai/codex@0.143.0",
+    "fixed_child_session_id": "019ff025-52ee-7482-82b8-d0ba19258c02",
+    "provider_result": "ig_0129cf2eb265054c016a7aeaee19188191a0c0fbee9153c245.png",
+    "provider_raw_sha256": "54e3f9bf86b44c2cafd962ddd6608147e1f4c48341397cc827118f9078936060",
+    "normalized_raw_sha256": "161910f75db4f809b2669491b91a3c8077b6d50b22453feeecf7729284f514e1",
+    "prompt_version": "UF-B1 V2 final.r2",
+    "prompt_sha256": "5f3469d0bd85165014b5ce46df3e65f540b405977322510a9b7fefc1d486fe4f",
+    "child_prompt_sha256": "738833a94d386516a1dc4086f5d7572b560b5b34b542c6e229bf56e662c86a6c",
+    "prompt": "docs/modules/unitframes/work/UNITFRAMES.CORE.md",
+    "review_report_sha256": "6e19b234032843ea9f35ea39bfff8ddc258d5814b70faa35365dde3f032cf798",
+    "real_layout_preview_sha256": "e9848b61ca88890c92d9f3b7bfcfbd06389029c61d33bb560ea014ca2cbb02ca",
+    "actual_imagegen_calls_in_loop": 3,
+    "unused_authorized_calls": 2,
+    "process_errors": 1,
+    "promotion": "byte-exact copies of the two user-accepted attempt-03 candidate PNG files"
+  },
+  "visual_authority": {
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/unitframes/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/unitframes/SUBMODULE_ART_BASELINES.md#ufbarhealthfillufbarpowerfill",
+    "component_contract": "docs/modules/unitframes/SUBMODULES.md",
+    "locked_cross_module_references": [
+      "assets/locked/chat/聊天框视觉基准_v1.png",
+      "assets/locked/chat/聊天框独立艺术资源_v3.png"
+    ],
+    "failed_shell_candidates_are_authority": false,
+    "simulation_pixels_are_authority": false
+  },
+  "user_acceptance": {
+    "exact_statement": "接受 B1 attempt 3 的运行时视觉",
+    "accepts_exact_candidate_pixels": true,
+    "scope": [
+      "Health candidate SHA-256 8d19ffe95d5314b463d88be793568667aa555460a955364a636e6ddc76508e1f",
+      "Power candidate SHA-256 0668eddbb6c7644312eecc3c1d03f555b937d5307e48444ca520a6674cb387f1",
+      "deterministic 64x32 and 64x16 exports using the already reviewed LANCZOS runtime appearance",
+      "runtime tinting by existing pfUI health and UnitPowerType colour logic"
+    ],
+    "does_not_accept": [
+      "UF-A1 V3-A Player shell",
+      "UF-A1 V3-B Target shell",
+      "UF-A2 compact shells",
+      "any failed candidate pixels"
+    ]
+  },
+  "logical_components": {
+    "health": {
+      "id": "UF.BAR.HEALTH.FILL",
+      "provider_object": "f.hp.bar",
+      "runtime_size": [
+        64,
+        32
+      ],
+      "runtime_colour_owner": "pfUI SetStatusBarColor health/reaction logic"
+    },
+    "power": {
+      "id": "UF.BAR.POWER.FILL",
+      "provider_object": "f.power.bar",
+      "runtime_size": [
+        64,
+        16
+      ],
+      "runtime_colour_owner": "pfUI UnitPowerType Mana/Rage/Focus/Energy logic"
+    }
+  },
+  "forbidden_runtime_uses": [
+    "load these PNG masters directly from addon Lua",
+    "bake health, reaction, Mana, Rage, Focus or Energy colour into the texture",
+    "replace status values, animation, clipping, background, text, events, hitboxes or SavedVariables",
+    "apply this accepted batch to party, raid, pet, focus-target or fallback frames before their contracts are accepted"
+  ],
+  "export_contract": {
+    "status": "runtime-exported",
+    "tool": "tools/build_unitframes_bars_v2_runtime.py",
+    "health_runtime": [
+      64,
+      32
+    ],
+    "power_runtime": [
+      64,
+      16
+    ],
+    "operation": "independent whole-source LANCZOS downsample, transparent RGB clear and lossless 32-bit RGBA TGA write",
+    "crop": false,
+    "redraw": false,
+    "mirror": false,
+    "runtime_exports": [
+      {
+        "component": "UF.BAR.HEALTH.FILL",
+        "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFrameHealthFillV1.tga",
+        "sha256": "bdee918674484be3a70ef1f64b3db9f326b0045560ce52234015ca1ba7836cd8",
+        "size": [
+          64,
+          32
+        ]
+      },
+      {
+        "component": "UF.BAR.POWER.FILL",
+        "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFramePowerFillV1.tga",
+        "sha256": "8fbf0797e4b3562a02ed3b7f19e7b7e100c832cf1c02b6fd172fc06317314cd0",
+        "size": [
+          64,
+          16
+        ]
+      }
+    ]
+  }
+}

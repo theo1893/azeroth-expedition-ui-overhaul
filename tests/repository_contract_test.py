@@ -124,7 +124,7 @@ def main() -> None:
         "清空整个 `generated/<module>/`",
         "`handoff/<module>/`",
         "validate_module_closure.py",
-        "8.1.0-aeui.4",
+        "8.1.0-aeui.5",
     ):
         assert required in agents, f"AGENTS.md missing {required}"
     for path in sorted(expected_durable_docs | work_docs):
@@ -280,19 +280,58 @@ def main() -> None:
         encoding="utf-8-sig"
     )
     assert "## RequiredDeps: pfUI" in aeui_toc
-    assert "## Version: 0.6.0" in aeui_toc
+    assert "## Version: 0.7.0" in aeui_toc
     assert "Core\\Bootstrap.lua" in aeui_toc
     assert "Modules\\Chat.lua" in aeui_toc
     assert "Modules\\QuestVisualTheme.lua" in aeui_toc
     assert "Modules\\Quests.lua" in aeui_toc
+    assert "Modules\\UnitFrames.lua" in aeui_toc
     bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(encoding="utf-8")
-    assert 'addon.version = "0.6.0"' in bootstrap
+    assert 'addon.version = "0.7.0"' in bootstrap
     assert "chat-runtime=" in bootstrap
     assert "chat-color=" in bootstrap
     assert "quest-runtime=" in bootstrap
     assert 'elseif command == "quests" then' in bootstrap
+    assert 'elseif command == "unitframes" then' in bootstrap
+    assert "unitframes-runtime=" in bootstrap
     assert "function addon:RunModuleMethod" in bootstrap
     assert "pcall(module[methodName], module)" in bootstrap
+
+    unitframes_source_dir = (
+        ROOT / "assets" / "source" / "unitframes" / "bars-v2"
+    )
+    unitframes_source_manifest = json.loads(
+        (
+            unitframes_source_dir / "UF-B1-V2_SourceManifest_v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    unitframes_runtime_manifest = json.loads(
+        (
+            unitframes_source_dir / "UF-B1-V2_RuntimeManifest_v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert unitframes_source_manifest["status"] == "accepted-source"
+    assert unitframes_source_manifest["user_acceptance"]["exact_statement"] == (
+        "接受 B1 attempt 3 的运行时视觉"
+    )
+    assert unitframes_runtime_manifest["status"] == "runtime-exported"
+    assert unitframes_runtime_manifest["phase"] == "P5"
+    assert unitframes_runtime_manifest["adapter"]["frames"] == [
+        "player",
+        "target",
+        "targettarget",
+        "focus",
+    ]
+    for record in unitframes_runtime_manifest["runtime"].values():
+        runtime_path = ROOT / record["file"]
+        assert runtime_path.is_file()
+        assert sha256(runtime_path) == record["sha256"]
+    unitframes_source = (
+        aeui / "Modules" / "UnitFrames.lua"
+    ).read_text(encoding="utf-8")
+    assert 'UnitFrames.runtimeContract = "1.0"' in unitframes_source
+    assert "aeuiHealthBarTexture" in unitframes_source
+    assert "aeuiPowerBarTexture" in unitframes_source
 
     quest_source = (aeui / "Modules" / "Quests.lua").read_text(
         encoding="utf-8"
@@ -524,7 +563,7 @@ def main() -> None:
 
     for toc_name in ("pfUI.toc", "pfUI-tbc.toc"):
         toc_source = (pfui / toc_name).read_text(encoding="utf-8-sig")
-        assert "## Version: 8.1.0-aeui.4" in toc_source
+        assert "## Version: 8.1.0-aeui.5" in toc_source
 
     pfquest_toc = (pfquest / "pfQuest.toc").read_text(encoding="utf-8-sig")
     assert "## Interface: 11200" in pfquest_toc
@@ -835,6 +874,9 @@ def main() -> None:
     assert "ApplyExpeditionVisualContract" in expedition
     assert "GetExpeditionModuleOwner" in expedition
     assert "GetExpeditionSkinOwner" in expedition
+    assert "GetExpeditionComponentOwner" in expedition
+    assert '["unitframes.health-fill"] = "unitframes"' in expedition
+    assert '["unitframes.power-fill"] = "unitframes"' in expedition
     assert "ShouldUseVanillaModule" in expedition
     assert "ShouldUseVanillaSkin" in expedition
     assert "ShouldUseSingleChatFrame" in expedition
