@@ -61,8 +61,8 @@ pfUI 的合法矩形布局由按钮数因数决定；12 格支持 `12×1`、`6×
 | `AB.SLOT` | Bar `1–10` 的 `pfActionBar<BarName>Button1..12` 及其逐按钮 `backdrop` | 单一普通／空槽基底；贴合 provider 的 `icon_size + 2×border` 外框，真实图标、快捷键、数量、宏名和冷却保持动态 |
 | `AB.SLOT.STATE` | `f.highlight`、`f.active`、`f.equipped`、`f.icon` 顶点色、`f.cd` 与按键动画 | 悬停和按键按下复用 highlight／动画，当前技能使用 active；装备、不可用、range、OOM 与 cooldown 独立动态。不得虚构 disabled Button cell 或把职业色、红／蓝／绿状态烘焙进基底 |
 | `AB.ENDCAP.GRYPHON` | `pfGryphonLeft`、`pfGryphonRight` | 成对香草狮鹫端帽；仅装饰、不吃点击；水平主栏宽度不足或用户关闭时不显示 |
-| `AB.STANCE` | Bar `11` 的真实形态按钮与 `pfActionBarStances` | Combat Focus 激活时使用 provider `25 UI` 图标与 local scale `1.0`，live Frame 以 `TOP → pfActionBarMain BOTTOM -12 UI` 跟随主栏；pfUI `UpdateConfig`、自身姿态事件、宠物栏重建／显隐与 unlock 退出后均在同一事件末端恢复该相对锚，绑定态隐藏独立 mover，不建立维护循环。不生成不存在的职业形态，按钮、状态与命中仍归 pfUI |
-| `AB.PET` | Bar `12` 的真实宠物按钮与 `pfActionBarPet` | 保留攻击、跟随、停留、技能与自动施法反馈；其 `PET_BAR_UPDATE` 及 `OnShow／OnHide` 会重建姿态栏锚点，AEUI 只在这些 provider 回调完成后恢复上述姿态相对锚，不改变宠物栏自身位置或行为 |
+| `AB.STANCE` | Bar `11` 的真实形态按钮 | 较小但保持可读；不生成不存在的职业形态 |
+| `AB.PET` | Bar `12` 的真实宠物按钮 | 保留攻击、跟随、停留、技能与自动施法反馈 |
 | `AB.MOVER` | pfUI unlock／`UpdateMovable` | 默认每个 Bar 独立移动、缩放、重置；`AB.SIDEBARS.GROUP` 绑定态只扩展 Bar 2 mover 覆盖四栏 union，并在同一 unlock／UpdateConfig 事件边界同步 scale／相对锚。不得删除任何 movable 登记，也不得用 `OnUpdate` 持续改写 Parent、Point、Width 或 Height |
 
 `AB.SLOT.BASE.V1` 的已接受母版为
@@ -123,11 +123,11 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 
 | ID | provider／对象 | 合同 |
 |---|---|---|
-| `AB.CONSUMABLE.RACK` | 已加载并自行显示的 `AutoBarFrame`＋`AutoBarFrameButton1..24` | 默认保留 `24` 个逻辑类别，但关闭空槽与缺货类别图标，只按背包当前可用类别显示 `1–24` 个真实 Button；`36 UI / gap 3 UI`、最多 `4×6`，外壳随当前可见 Button 边界动态收缩。因 `alignButtons` 可把子 Button 放到 `AutoBarFrame` 边界外，装饰 Frame 必须读取真实可见 Button 边界。`fieldKitBound=true` 时强绑定在主动作条左侧，外壳右缘距主栏左缘 `12 UI`，底边比主栏底边低 `20 UI`。`fieldkit-contract=2.8` 先按 `AutoBar.display` 的 table identity 找到 provider 当前真正使用的 display，不信任嵌套 `ProfileChanged／OnShow` 期间可能滞后的 `layoutProfile`；可见 Button 相对 handle 的 provider `GetPoint`、真实宽高与 scale 只计算一次停靠偏移。该偏移写入全局命名、与 handle effective scale 一致且相对 `pfActionBarMain` 的代理锚 `AzerothExpeditionUIAutoBarDockAnchor`，当前活动 display 再通过 AutoBar 原生 `dockingFrames` 停到代理中心；因此每次 provider `SetupVisual` 的最终写入仍由 AutoBar 自己完成，自由 `position` 在绑定态不参与渲染。display 被 `DisplayReset` 替换时按 table identity 另存可逆运行时备份；`unbind`／AEUI 关闭时精确恢复原 docking／shift、自由位置与 `hideDragHandle` 偏好，logout／reload 前移除仅运行时 token，下一次 provider 就绪后再安装。零延迟事件只刷新几何与外壳，不作为持续位置维护；未知布局已有成功锚点时保持缓存，首次未知布局才允许 world-space fail-open。不得自动启用 provider |
+| `AB.CONSUMABLE.RACK` | 已加载并自行显示的 `AutoBarFrame`＋`AutoBarFrameButton1..24` | 默认保留 `24` 个逻辑类别，但关闭空槽与缺货类别图标，只按背包当前可用类别显示 `1–24` 个真实 Button；`36 UI / gap 3 UI`、最多 `4×6`，外壳随当前可见 Button 边界动态收缩。因 `alignButtons` 可把子 Button 放到 `AutoBarFrame` 边界外，装饰 Frame 必须读取真实可见 Button 边界。`fieldKitBound=true` 时强绑定在主动作条左侧，外壳右缘距主栏左缘 `12 UI`，底边比主栏底边低 `20 UI`。`fieldkit-contract=2.7` 仍由可见 Button 相对 handle 的 provider `GetPoint`、真实宽高与 scale 计算一次停靠偏移，但将该偏移注册到 AutoBar 原生 `dockingFrames.pfActionBarMain`，并把当前活动 display 的 `docking` 指向 `pfActionBarMain`；因此每次 provider `SetupVisual` 最终都由 AutoBar 自己把 handle 写到主栏相对位置，自由 `position` 在绑定态不参与渲染。`unbind`／AEUI 关闭时精确恢复原 docking／shift、自由位置与 `hideDragHandle` 偏好；logout／reload 前移除仅运行时 docking token，下一次插件就绪后再安装。零延迟事件只刷新几何与外壳，不作为持续位置维护；未知布局已有成功锚点时保持缓存，首次未知布局才允许 world-space fail-open。不得自动启用 provider |
 | `AB.CONSUMABLE.GROUP` | 推荐 profile 的连续槽段 `1–8／9–16／17–24` 与两条底层分隔带 | 连续槽段继续提供应急／增益／工具的语义组织，但不创建或显示三段文字；卷袋材质、分隔和物品排列自身承担区分。分隔带只占两组之间既有 `3 UI` gap，不接收鼠标。任一配置不匹配即隐藏分隔并退回单一自适应外壳，不能给用户自定义类别套用错误分组 |
 | `AB.CONSUMABLE.POCKET` | `AutoBarFrameButton1..24` | 显示 provider 选出的真实物品图标、数量、冷却、可用性和 Tooltip；槽底不含物品图标、名称或类别。AutoBar 1.31 的 zhCN 数据漏掉七个 `description` 时，AEUI 只为运行时空字段补本地化说明；已存在说明、分类内容、Button、profile 与 SavedVariables 均不改，未来未知空字段只显示类别 ID，避免旧配置页字符串拼接报错。V1 不创建自有 fallback Button |
-| `AB.CONSUMABLE.CONFIG` | `AutoBarConfigFrame`、`Tab1..5`、`SlotsView`、`Slots`、`SlotsEdit1..4`、`Layout1..2`、`ResetDisplay`、`RevertButton` 与 `DoneButton` | bridge-v2.8 延续 v2.4 的配置裁剪：AEUI 启用时只显示原生“栏位／按钮”两个 Tab；隐藏“动作条／弹出／设定”、综合只读预览、四种层选择器、布局选择器及“重置为默认／还原”，保留“完成”。“栏位”直接显示唯一可编辑的职业层网格，隐藏 Tab 被旧 SavedVariables 选中时回到栏位。首次迁移把当前实际生效的 24 槽完整复制到原生 `_CLASS` profile，将当前角色固定为 `useClass=true / edit=3`，角色原槽与职业原槽分别备份；同职业后续角色复用该职业层。`/aeui autobar restore` 可恢复并对该角色退出自动迁移。AutoBar 1.31 只提供角色／共用两种 display layout，所以“按钮”Tab 的显示参数仍按当前角色保存；类别／item ID 槽位才按职业共享。配置页重跑 `SetupVisual` 或切换活动 display 时，identity 解析与代理 docking 保持生效；AEUI 关闭、provider 缺失或显式 restore 时恢复原生控件与锚点 |
-| `AB.CONSUMABLE.POPUP` | `AutoBarPopupFrame_Button1..12` | 精确匹配推荐 `24` 类 profile 与 `4×6` 最大布局、且当前至少有一个可见主格时改用外置抽屉；当前可见主格无需达到 `24`。`1–6` 个候选为单列，`7–12` 个候选为列优先双列且最多六行；整组位于卷袋外，不遮挡主格。`AUTO` 在强绑定态固定向左、自由态按屏幕剩余空间选择左右；`LEFT／RIGHT` 可强制方向，`NATIVE` 或 profile 签名不匹配时完整恢复 provider 原生四向线性布局。外置态在卷袋与抽屉间创建透明、可接收鼠标、直接隶属 `AutoBarPopupFrame` 且覆盖卷袋全高的 `10 UI` 悬停通道；XML Frame `OnLeave` 只在此态延后，关闭仍由 AutoBar 原 `PopupMouseover` 负责。`fieldkit-contract=2.8` 完整延续 `0.30s` 意图停留：进入通道或候选前离开不同主格即保留原抽屉；持续停留才调用捕获的 AutoBar 原方法切换／关闭。相同主格、NATIVE、签名不匹配、AEUI 关闭、非鼠标调用或 provider 调度 API 缺失全部立即委托原方法；不使用逐帧循环。候选顺序、图标、数量、冷却、点击、Tooltip、Shift 条件与 Button script 仍归 AutoBar；不得把 XML 初始 `72×72 UI` Frame 当作实际弹出边界，不复制分类表或重挂 `PickupContainerItem` |
+| `AB.CONSUMABLE.CONFIG` | `AutoBarConfigFrame`、`Tab1..5`、`SlotsView`、`Slots`、`SlotsEdit1..4`、`Layout1..2`、`ResetDisplay`、`RevertButton` 与 `DoneButton` | bridge-v2.7 延续 v2.4 的配置裁剪：AEUI 启用时只显示原生“栏位／按钮”两个 Tab；隐藏“动作条／弹出／设定”、综合只读预览、四种层选择器、布局选择器及“重置为默认／还原”，保留“完成”。“栏位”直接显示唯一可编辑的职业层网格，隐藏 Tab 被旧 SavedVariables 选中时回到栏位。首次迁移把当前实际生效的 24 槽完整复制到原生 `_CLASS` profile，将当前角色固定为 `useClass=true / edit=3`，角色原槽与职业原槽分别备份；同职业后续角色复用该职业层。`/aeui autobar restore` 可恢复并对该角色退出自动迁移。AutoBar 1.31 只提供角色／共用两种 display layout，所以“按钮”Tab 的显示参数仍按当前角色保存；类别／item ID 槽位才按职业共享。配置页重跑 `SetupVisual` 时原生主栏 docking 保持生效；AEUI 关闭、provider 缺失或显式 restore 时恢复原生控件与锚点 |
+| `AB.CONSUMABLE.POPUP` | `AutoBarPopupFrame_Button1..12` | 精确匹配推荐 `24` 类 profile 与 `4×6` 最大布局、且当前至少有一个可见主格时改用外置抽屉；当前可见主格无需达到 `24`。`1–6` 个候选为单列，`7–12` 个候选为列优先双列且最多六行；整组位于卷袋外，不遮挡主格。`AUTO` 在强绑定态固定向左、自由态按屏幕剩余空间选择左右；`LEFT／RIGHT` 可强制方向，`NATIVE` 或 profile 签名不匹配时完整恢复 provider 原生四向线性布局。外置态在卷袋与抽屉间创建透明、可接收鼠标、直接隶属 `AutoBarPopupFrame` 且覆盖卷袋全高的 `10 UI` 悬停通道；XML Frame `OnLeave` 只在此态延后，关闭仍由 AutoBar 原 `PopupMouseover` 负责。`fieldkit-contract=2.7` 完整延续 `0.30s` 意图停留：进入通道或候选前离开不同主格即保留原抽屉；持续停留才调用捕获的 AutoBar 原方法切换／关闭。相同主格、NATIVE、签名不匹配、AEUI 关闭、非鼠标调用或 provider 调度 API 缺失全部立即委托原方法；不使用逐帧循环。候选顺序、图标、数量、冷却、点击、Tooltip、Shift 条件与 Button script 仍归 AutoBar；不得把 XML 初始 `72×72 UI` Frame 当作实际弹出边界，不复制分类表或重挂 `PickupContainerItem` |
 
 推荐 profile 使用 AutoBar 现有类别 ID 组成三个八格槽段：`应急` 放生命／职业
 资源／双恢复／绷带／解毒／行动／机动；`增益` 放战斗药剂／守护药剂／元素
@@ -136,7 +136,7 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 `AutoBarProfile.<CLASS>` 选取，不相关类别不写入。已审计的 AutoBar `1.31`
 没有独立 `FLASK` 类别；但每个主槽原生允许最多 `16` 个类别字符串或数字 item
 ID，配置页也能把背包物品拖入槽位。因此“合剂手动”只接受用户通过 AutoBar
-配置拖入的真实合剂 item ID，不凭名称猜测。bridge-v2.8 延续 v2.4 的首次迁移，把当前实际生效
+配置拖入的真实合剂 item ID，不凭名称猜测。bridge-v2.7 延续 v2.4 的首次迁移，把当前实际生效
 槽表完整迁入职业 profile；之后配置页的槽位编辑都直接写职业层。显式 apply 则把
 推荐 24 类写到同一职业层；
 默认显示关闭 `showEmptyButtons／showCategoryIcon` 并隐藏拖动把手。仅持有 AEUI 应用前
@@ -157,8 +157,8 @@ AutoBar 类别、物品顺序和用户配置始终优先。缺失／禁用时 V1
 adapter 在现有 `24+12` Button 下分别取 A／B，C 以 `6 UI` 九宫格跟随真实可见
 Button 边界，D 用于分组 gap，并在外置 popup 抽屉靠卷袋一侧形成竖向 spine。它只
 读取 profile 以决定语义分隔与抽屉真伪，不自动启用 AutoBar；普通刷新只允许上述可证明
-来源的旧 AEUI 满格显示迁移，以及 bridge-v2.8 延续的一次性职业槽迁移；其余刷新不改槽表。
-`fieldkit-contract=2.8` 完整延续 v1.5，把每个 A／B 口袋放入
+来源的旧 AEUI 满格显示迁移，以及 bridge-v2.7 延续的一次性职业槽迁移；其余刷新不改槽表。
+`fieldkit-contract=2.7` 完整延续 v1.5，把每个 A／B 口袋放入
 以真实 Button 为父、FrameLevel 比
 Button 低 `1` 的独立非交互装饰 Frame，避免与 ActionButtonTemplate 的动态图标
 共用 `BACKGROUND` 层。用户可显式执行 `/aeui autobar apply`，为当前职业写入已确认
@@ -211,8 +211,8 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   饰品双槽在右。目标设备 V3 沿用主栏物理 `y=827`、Button 约 `39 px`、底边
   净空 `210 px`；卷袋主体为物理 `[531,673,665,870]`，与聊天框右缘净空
   `5 px`、与玩家框左缘净空 `16 px`。该 V3 reference 只保留构图历史；runtime-v1.8
-  已按游戏坐标收紧停靠，bridge-v2.8 继承 v1.9 的无文字／动态收缩布局与 v2.4
-  配置裁剪，并用活动 display identity 与 provider-local Button 包络计算命名代理 docking；消耗品与
+  已按游戏坐标收紧停靠，bridge-v2.7 继承 v1.9 的无文字／动态收缩布局与 v2.4
+  配置裁剪，并用 provider-local Button 包络计算 AutoBar 原生主栏 docking 偏移；消耗品与
   饰品底边仍共同比主栏下移 `20 UI`，配置页槽位固定为
   可逆职业层不改变这组几何。
 - `唯一移动根`：绑定态只移动 Bar 1；Bar 6 以 `BOTTOM → Bar 1 TOP` 组成无漂移
@@ -220,13 +220,12 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   ArchiTotem 以真实可见 union 居中锚在主栏下方并把垂直空隙收为 `39 UI`。`unbind` 恢复 Bar 6 与三种
   provider 的捕获位置；`home` 在 pfUI tier 8 下把 Bar 1 直接重置为游戏坐标
   `BOTTOM (0,175)` 并重新绑定。
-- `pfUI unlock` 生命周期：Bar 6 与姿态栏始终保留在 `pfUI.movables`，不得在解锁开关期间
+- `pfUI unlock` 生命周期：Bar 6 始终保留在 `pfUI.movables`，不得在解锁开关期间
   动态删除／恢复登记。进入解锁后先让 pfUI 为它创建 `drag`，绑定态再只隐藏该
   独立 mover；`unbind` 时重新显示。`pfUI.bars:UpdateConfig()` 完成后在同一事件边界
   重施 Bar 6 → Bar 1 相对锚，退出解锁再确认一次。TargetTarget 同样保留 movable
   登记；focus layout 激活时，pfUI 创建其 drag 后才隐藏独立 mover，并在退出 unlock
-  时重施 TargetTarget → Target 依附锚；姿态栏同样只隐藏独立 mover，并在退出 unlock
-  后恢复主栏下沿依附。三者都不建立 `OnUpdate` 维护循环。
+  时重施 TargetTarget → Target 依附锚；两者都不建立 `OnUpdate` 维护循环。
 - `focus-layout-contract=1.4` 曾在“大奶黑牛”实机把 `UIParent:GetWidth／Height`
   与 provider effective scale 混合，错误写入主栏 `y=149`、Player／Target
   `x=54／502, y=362` 等错位坐标；该签名现为 `game-geometry-failed`，不得作为
@@ -237,7 +236,7 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   `HORIZONTAL / scale=1.0`，Field Kit v1.7 强绑定和 ArchiTotem 下置不变；v1.7
   只修复 unlock mover 登记／drag 生命周期。
 - `战斗视线邻接`：Player／Target／TargetTarget 继续由 pfUI UnitFrame provider 所有；
-  AEUI `0.8.26` 的 runtime-v2.6 preset 仅一次性把 Player／Target 置于游戏坐标
+  AEUI `0.8.25` 的 runtime-v2.5 preset 仅一次性把 Player／Target 置于游戏坐标
   `BOTTOM (-160,485)／(105,485)`，两框设为 `240×60 / 0.8`；TargetTarget 保持
   `240×60 / 0.68`，fallback 为 `BOTTOM (393,576)`，live Frame 以
   `LEFT → Target RIGHT +8 UI` 中线
@@ -287,12 +286,10 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   明确收敛为 `0.82`，其启用／锁定／显隐与推荐逻辑不变。首次应用前保存相关
   pfUI／DoiteDPS／ArchiTotem 配置；`/aeui focuslayout restore` 恢复后提示 reload。
 - `ACTION-BARS-CORE-SIM-V11` 以“大奶黑牛”的实机截图完成确定性本地审查；AEUI
-  `0.8.26`／focus runtime-v2.6 保留 V10 几何与 V11 DoiteDPS 安全区、三框 FontString
+  `0.8.25`／focus runtime-v2.5 保留 V10 几何与 V11 DoiteDPS 安全区、三框 FontString
   刷新修复，并按战士实机反馈把真实 `bar11.icon_size` 提为 `25 UI`、local scale
-  提为 `1.0`。live 姿态栏以 `TOP → pfActionBarMain BOTTOM -12 UI` 依附，覆盖 bar
-  `UpdateConfig`、姿态事件、宠物栏重建／显隐和 unlock 退出的最终写入。exact v7–v13
-  签名在 `/reload` 一次迁移为 v17；copied v14／v15 与失败 v16 只升级姿态合同，
-  非姿态手调坐标保持不动。
+  提为 `1.0`。exact v7–v13 签名在 `/reload` 一次迁移为 v16；copied v14／v15
+  只升级姿态合同，非姿态手调坐标保持不动。
   用户已确认右侧四栏 `2×2 / 3×4`
   方案，现由独立 `sidebar-group-contract=1.0` 接入，不修改任何位图。
 - `ACTION-BARS-CORE-SIM-V10` 以“大奶黑牛”的上一轮实机问题截图完成确定性本地审查；

@@ -52,7 +52,7 @@ def test_sidebars_group_runtime_contract() -> None:
     assert "OnUpdate" not in source[source.index("local sideBarGroupDefinitions"):source.index("local function CaptureCombatFocusBackup")]
 
     bootstrap = BOOTSTRAP.read_text(encoding="utf-8")
-    assert 'addon.version = "0.8.26"' in bootstrap
+    assert 'addon.version = "0.8.25"' in bootstrap
     assert 'string.find(command, "^sidebars")' in bootstrap
     assert "/aeui sidebars [bind|unbind|home|status]" in bootstrap
 

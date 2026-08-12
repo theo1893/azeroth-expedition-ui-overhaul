@@ -916,39 +916,10 @@ def main() -> None:
                 ),
                 "provider_layout_refresh": (
                     "same-event SetupVisual and AutoBarConfig.OnShow guards "
-                    "resolve the active AutoBar.display by table identity, not "
-                    "the potentially stale layoutProfile; the handle-relative "
-                    "button envelope is converted once into a named, equal-"
-                    "effective-scale proxy anchored to pfActionBarMain, and "
-                    "provider-native docking makes SetupVisual place the handle "
-                    "at proxy center; a zero-delay refresh only rebuilds settled "
-                    "visual geometry; immediate fallback remains available when "
-                    "provider scheduling is unavailable"
-                    if key == "consumable"
-                    else "not-applicable"
-                ),
-                "provider_active_display_authority": (
-                    "AutoBar.display table identity"
-                    if key == "consumable"
-                    else "not-applicable"
-                ),
-                "provider_dock_target": (
-                    "AzerothExpeditionUIAutoBarDockAnchor"
-                    if key == "consumable"
-                    else "not-applicable"
-                ),
-                "provider_dock_target_contract": (
-                    "global frame; CENTER to pfActionBarMain BOTTOMLEFT at the "
-                    "validated handle-relative offset; effective scale equals "
-                    "AutoBarAnchorFrameHandle; provider docking offset is "
-                    "CENTER to CENTER (0,0)"
-                    if key == "consumable"
-                    else "not-applicable"
-                ),
-                "provider_dock_restore": (
-                    "persisted key backup plus runtime display-table identity "
-                    "backup; restores docking and dockShiftX/Y on unbind or "
-                    "disable and removes the runtime token before logout"
+                    "restore the last proven bound anchor before render; a "
+                    "zero-delay refresh then rebuilds against settled button "
+                    "geometry; immediate fallback when provider scheduling is "
+                    "unavailable"
                     if key == "consumable"
                     else "not-applicable"
                 ),
