@@ -123,13 +123,13 @@ def main() -> None:
     assert production["repair_loop"]["maximum_actual_imagegen_calls"] == 5
     assert production["repair_loop"]["process_errors_count_toward_limit"] is False
     assert production["repair_loop"]["execution_state"] == {
-        "attempts_used": 3,
-        "attempts_remaining": 2,
+        "attempts_used": 4,
+        "attempts_remaining": 1,
         "process_errors": 1,
-        "current_prompt_version": "UF-RAID-A1 V1 final.r3",
+        "current_prompt_version": "UF-RAID-A1 V1 final.r4",
         "next_operation": (
-            "bounded edit using fixed Image 1/2 plus immediately preceding "
-            "attempt 3 complete sheet as Image 3"
+            "final regenerate from fixed Image 1/2 only; no Image 3; small "
+            "440x220 safety sources then authorized bbox normalization"
         ),
     }
 

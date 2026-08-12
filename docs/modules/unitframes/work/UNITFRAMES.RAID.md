@@ -804,3 +804,150 @@ no repeated liner grain; identities contained by fixed end caps; D patch small
 and dull; quiet stretchable centres; matched visual weight; rough low-saturation
 Vanilla craft; and no baked live content.
 ```
+
+### Attempt 4 执行与内部审查
+
+- 固定执行器 user block 完整；Image 1／2 的授权 SHA 一致，Image 3 为同循环
+  紧邻 attempt 3 完整 raw `41c9d561…e760`，未上传其他像素。session
+  `019ff4f2-9d85-7773-bdc8-c60f33f1e3bb`；provider result
+  `ig_068f201333e6d4c6016a7c2599bd908191b9fb063298bc5793`；raw
+  `1536×1024 RGB`，SHA `ab0a389f…fe44`。
+- 报告：`generated/unitframes/raid/A1/V1/attempt-04/review/technical-report.json`，
+  SHA `f2f377c6…5022`；contact SHA `7b778d2f…b946`；40 人真实排版 SHA
+  `c3c442b4…27c3`。
+- 第一失败门禁——美术回退：本稿把 attempt 3 的低频手绘表面改成了全域重复
+  压花皮纹、连续等距边缝和规则商品皮具滚边；A/C 系带与 D 金属补片也重新
+  变得工整。即使缩小后中心纹理被滤掉，来源像素仍违反全局基准和生产资产
+  门禁，不能因运行时暂时不明显而放行。
+- 装配仍失败：A/B/C/D bbox `632×323`、`628×323`、`631×327`、`630×327`，
+  ratio error 与 anisotropy 均已小于 `4%`；但内侧水平 padding 仅
+  `40/43/42/42`，A/B 底部仅 `57`，C/D 顶部仅 `56`。模型仍把四件吸向
+  全局中央十字，未满足 `64/80/64/80`。
+- 通过项：四格各一个 Alpha32 连通实体、green spill `0`、模式和尺寸正确；
+  这些通过项不能挽救美术与 padding 失败。
+- 内部结论：`internal-fail / repair-prepared`。attempt 5 是最后一次授权调用。
+  不上传退化的 attempt 4 作为 Image 3；改用固定 Image 1／2 从零生成。为避免
+  再次要求模型做不可靠的像素级终态定位，原始 sheet 使用每格 `440×220` 的
+  同比例安全对象和宽绿幕护城河；通过门禁后才用已授权 bbox normalize 等比
+  放大为 `592×296`，不做创意修补。
+
+### `UF-RAID-A1 V1 final.r4` — attempt 5 自包含安全源与原始手裁重建
+
+```text
+Create from scratch one final production sheet containing exactly four
+complete empty raid-member background shells for Turtle WoW 1.18.1 and a
+Vanilla-era pfUI overhaul. Return one 1536 by 1024 RGB bitmap on a perfectly
+uniform pure #00FF00 background. This is a fresh regeneration from the two
+fixed art references only. Do not reconstruct, imitate or retain any previous
+raid-shell attempt. Do not create a gameplay screenshot, assembled raid
+panel, concept board, title, label, letter, number, grid, guide, fifth object
+or loose component.
+
+The provider sheet intentionally contains generous extraction safety space.
+Use four fixed 768 by 512 cells: A x0..767/y0..511, B
+x768..1535/y0..511, C x0..767/y512..1023, and D
+x768..1535/y512..1023. In each cell draw exactly one small complete
+front-facing orthographic solid plate, exactly 440 pixels wide by 220 pixels
+high, a true 2:1 ratio. Use these raw visible bboxes: A
+x164..603/y146..365, B x932..1371/y146..365, C
+x164..603/y658..877, and D x932..1371/y658..877. Each raw object therefore
+occupies only about 57 percent of its cell width and 43 percent of its height,
+with about 164 pure-green pixels at both sides and 146 above and below. The
+central vertical green gutter is about 328 pixels and the central horizontal
+green gutter about 292 pixels. The objects must look deliberately small on the
+sheet. Nothing may lean toward the global centre, touch a cell boundary, cast
+an external shadow or appear as a detached fleck.
+
+After chroma key, each accepted 440 by 220 raw object will be enlarged once,
+uniformly and non-creatively, to the authorized 592 by 296 normalized source;
+both are exactly 2:1. This is why the broad green moat and exact raw ratio are
+more important than filling the cell. Do not pre-enlarge the objects. Do not
+use a panoramic ratio. Do not draw beyond the declared raw bbox.
+
+Each object is one connected opaque expedition raid-row backing: one almost
+flat soot-brown liner filling the complete interior, held by the thin exposed
+hand-cut edge of the same salvaged rawhide. It is not a hollow frame, separate
+border kit, carved plaque, upholstered cushion, book page or picture frame.
+Pure green exists only beyond the outer silhouette. There is no internal
+green, transparent opening, second inset panel, horizontal divider, fake
+StatusBar or detached repair.
+
+Treat these as deliberately coarse 2004 game-interface paintings enlarged for
+production, not as detailed leather products. The interior liner is nearly
+featureless: only two or three broad hand-painted soot, smoke or uneven-dye
+value fields, each roughly 80 to 160 raw pixels across, with soft lost edges
+and extremely low contrast. Draw no recognizable leather grain. Absolutely no
+repeated curls, rosettes, floral emboss, tooling, pores, pebbles, scales,
+crosshatch, procedural texture, fine scratches, seam, stitch track, emblem or
+ornament may cover the centre. When reduced to 74 by 37, live bars, names and
+states must be much stronger than the backing.
+
+The attached rawhide rim is only about 8 to 14 raw pixels thick so that it
+becomes roughly 11 to 19 pixels after normalization. It is a matte, mostly
+soot-dark exposed cut edge, not a separately attached decorative strip. Use
+long bare stretches, four blunt corners with visibly different wear, slow
+unequal thickness and a few isolated dull-umber scuffs. No highlight may run
+around a corner or continue along a whole side. Draw no continuous bright
+outline, gold line, piping, rope, braid, lacing, rolled lip, embossed bead,
+regular seam, equal-distance stitch row, repeated notch rhythm, perfect
+rounded rectangle or industrial edge moulding. Roughness is sparse and
+low-frequency, like a saddle offcut trimmed with a field knife, not a noisy
+sawtooth or luxury luggage edge.
+
+The normalized source uses a 48/496/48 horizontal split, equivalent to about
+36/368/36 in this smaller raw object. Keep every unique role feature entirely
+inside the outermost 34 raw pixels so later normalization cannot push it into
+the stretchable centre. A has one small blunt upper-left cut notch within its
+left end and two short unequal lower-right repair stitches within its right
+end. B has one tiny off-centre dark rivet and one modest raw rub only at its
+right end. C has one short dark attached leather repair with two or three
+irregular missing-hole stitches only at its left end, and no bright metal. D
+has one tiny skewed cracked oxidized-brass repair only at its right end and one
+tiny split only at its left end. The D repair occupies less than 18 raw pixels
+in width and less than 60 raw pixels in height, is dark tarnished umber rather
+than yellow, and is never the brightest object. No variant receives a large
+patch, decorative corner plate or centre detail.
+
+All four objects have the same raw dimensions, liner area, darkness, material
+thickness, scale and restrained warm upper-left light. Differences are sparse
+field repairs, not four different product designs. Use deep soot-dark walnut,
+smoke brown, dried mud and only tiny tarnished umber brass. Paint with the
+circa-2004 Vanilla World of Warcraft interface language seen in the references:
+broad chunky brush decisions, deliberate low-resolution readability, matte
+physical weight, simple shadow groups and hand-made error. Let irregularity
+come from unequal cut pressure, uneven dye, soot, mud rub, missing repair holes
+and local tension—not micro-detail, photographic realism, random noise, glossy
+bevels, polished metal, orange leather or precision geometry.
+
+The written requirements outrank both input images. Use Image 1 only for
+circa-2004 Vanilla WoW painted scale, broad low-resolution readability,
+restrained warm contrast, material thickness and coarse silhouette decisions;
+ignore its screen composition, text, portraits, book, pages, spine, tabs, wax
+seals and complete frame geometry. Use Image 2 only for deep-walnut depth,
+warm upper-left light, restrained dull-brass response, rough wear, matte
+contact depth and hand-made error; ignore its pages, spine, columns, dragons,
+broad book construction and large metal ornaments. Do not copy a book shape or
+any literal source object. No prior raid candidate, geometric simulation,
+accepted bar texture or primary unit-frame pixel is an input.
+
+Forbid a shared raid frame, outer raid panel, parchment card, page edge,
+bookbinding, wax seal, continuous metal rim, symmetrical gold border, rounded
+web card, black glass, glossy meter, neon, glow, black-iron shrine, spikes,
+skulls, horns, faction or class emblems, gems, runes, photoreal antiques,
+upholstery, furniture trim, industrial moulding, decorative tooling,
+continuous rope, braid, lacing, piping, rolled lip, equal-distance stitches,
+symmetric rivets, pebble embossing and orange edge light. Draw no portrait,
+Health or Power fill, name, number, class or reaction colour, aura, buff,
+debuff, raid marker, leader or loot icon, resurrection icon, combat, aggro,
+hover, highlight or click feedback.
+
+Before returning, verify visibly: one 1536 by 1024 RGB sheet; exactly four and
+only four connected solid raw plates; one deliberately small exact 440 by 220,
+2:1 object centred in each fixed cell; about 164/146/164/146 pure-green cell
+padding and very wide central green gutters; no detached fleck or internal
+hole; almost-flat liners with no repeated surface pattern; thin mostly dark
+hand-cut rims with broken sparse scuffs and no continuous decorated border;
+four restrained identities wholly inside the outermost 34 raw pixels; D repair
+tiny and dull; matched visual weight; rough low-saturation Vanilla craft; and
+no baked live content.
+```
