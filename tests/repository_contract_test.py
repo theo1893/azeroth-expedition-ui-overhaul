@@ -328,16 +328,17 @@ def main() -> None:
     assert "button:SetParent" not in actionbars_source
     assert "button:SetWidth" not in actionbars_source
     assert "button:SetHeight" not in actionbars_source
-    assert 'ActionBars.fieldKitRuntimeContract = "2.5"' in actionbars_source
-    assert 'ActionBars.focusLayoutRuntimeContract = "2.3"' in actionbars_source
-    assert "ActionBars.focusLayoutVersion = 14" in actionbars_source
+    assert 'ActionBars.fieldKitRuntimeContract = "2.6"' in actionbars_source
+    assert 'ActionBars.focusLayoutRuntimeContract = "2.4"' in actionbars_source
+    assert "ActionBars.focusLayoutVersion = 15" in actionbars_source
     assert 'ActionBars.focusCoordinateSpace = "game-native-v1"' in actionbars_source
     assert "ActionBars.comfortUIScaleTier = 8" in actionbars_source
     assert "ActionBars.comfortUIScaleValue = 0.71111111111111" in actionbars_source
     assert "ActionBars.focusUnitScale = 0.8" in actionbars_source
     assert "ActionBars.focusTargetTargetScale = 0.68" in actionbars_source
     assert "ActionBars.focusReadoutScale = 1" in actionbars_source
-    assert "ActionBars.focusStanceScale = 0.72" in actionbars_source
+    assert "ActionBars.focusStanceScale = 1" in actionbars_source
+    assert "ApplyAutoBarDragHandlePolicy" in actionbars_source
     assert "ActionBars.focusDoiteScale = 0.82" in actionbars_source
     assert "ActionBars.focusUnitWidth = 240" in actionbars_source
     assert "ActionBars.focusUnitHeight = 60" in actionbars_source

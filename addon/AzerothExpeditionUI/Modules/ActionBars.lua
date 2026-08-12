@@ -13,9 +13,9 @@ ActionBars.railTexturePath = addon.media.root .. "ActionBars\\ActionRailV1"
 ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
-ActionBars.fieldKitRuntimeContract = "2.5"
-ActionBars.focusLayoutRuntimeContract = "2.3"
-ActionBars.focusLayoutVersion = 14
+ActionBars.fieldKitRuntimeContract = "2.6"
+ActionBars.focusLayoutRuntimeContract = "2.4"
+ActionBars.focusLayoutVersion = 15
 ActionBars.focusLayoutBackupVersion = 1
 ActionBars.sideBarGroupRuntimeContract = "1.0"
 ActionBars.sideBarGroupLayoutVersion = 1
@@ -26,16 +26,15 @@ ActionBars.focusCoordinateSpace = "game-native-v1"
 ActionBars.comfortUIScaleVersion = 2
 ActionBars.comfortUIScaleTier = 8
 ActionBars.comfortUIScaleValue = 0.71111111111111
--- ACTION-BARS-CORE-SIM-V11 keeps global pfUI tier 8, the accepted Combat
--- Deck, and the user's comfortable local scales unchanged. It moves the
--- provider-owned DoiteDPS two-row union upward by one safe lane and replaces
--- the three locally pinned unit fonts with the client system face at a more
--- readable size. Its accepted right-side four-bar cluster is implemented as
--- one reversible mover while each provider bar keeps its content settings.
+-- ACTION-BARS-CORE-SIM-V11 keeps global pfUI tier 8 and the accepted Combat
+-- Deck geometry. It moves the provider-owned DoiteDPS two-row union upward,
+-- uses the client system face for the three local unit frames, and implements
+-- the accepted right-side cluster as one reversible mover. Runtime v2.4 keeps
+-- those contracts while raising only the stance bar from 0.72 to full scale.
 ActionBars.focusUnitScale = 0.8
 ActionBars.focusTargetTargetScale = 0.68
 ActionBars.focusReadoutScale = 1
-ActionBars.focusStanceScale = 0.72
+ActionBars.focusStanceScale = 1
 ActionBars.focusDoiteScale = 0.82
 ActionBars.focusUnitWidth = 240
 ActionBars.focusUnitHeight = 60
@@ -1595,7 +1594,8 @@ local function ShouldMigrateCombatFocusLayout()
   local version = database and database.combatFocusLayoutVersion
   if not database or
     (version ~= 7 and version ~= 8 and version ~= 9 and version ~= 10 and
-      version ~= 11 and version ~= 12 and version ~= 13) or
+      version ~= 11 and version ~= 12 and version ~= 13 and
+      version ~= 14) or
     type(projection) ~= "table" or
     projection.coordinateSpace ~= ActionBars.focusCoordinateSpace or
     not pfUI_config
@@ -1614,10 +1614,10 @@ local function ShouldMigrateCombatFocusLayout()
   local targetCast = castbars.target or {}
   local oldDoiteX =
     (version == 9 or version == 10 or version == 11 or version == 12 or
-      version == 13) and
+      version == 13 or version == 14) and
       850 or 1012
   local oldDoiteY = version == 8 and -780 or
-    (version == 13 and -615 or -647)
+    ((version == 13 or version == 14) and -615 or -647)
   local doiteMatches = type(DoiteDPSDB) ~= "table" or
     (DoiteDPSDB.point == "TOPLEFT" and
       DoiteDPSDB.relativePoint == "TOPLEFT" and
@@ -1734,17 +1734,17 @@ local function ShouldMigrateCombatFocusLayout()
         tostring(global.font_unit_style or "OUTLINE")
   end
 
-  local function Version13UnitFontMatches(config)
+  local function SystemUnitFontMatches(config)
     return tostring(config.customfont) == "1" and
       tostring(config.customfont_size) == "18" and
       FontPathMatches(config.customfont_name, GetSystemUnitFont()) and
       tostring(config.customfont_style or "OUTLINE") == "OUTLINE"
   end
 
-  if version == 12 or version == 13 then
+  if version == 12 or version == 13 or version == 14 then
     local function ExpectedUnitFontMatches(config)
-      if version == 13 then
-        return Version13UnitFontMatches(config)
+      if version == 13 or version == 14 then
+        return SystemUnitFontMatches(config)
       end
       return Version12UnitFontMatches(config)
     end
@@ -2344,7 +2344,7 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
     " Detected ArchiTotem was kept provider-owned and requested to open downward." or
     " ArchiTotem was unavailable or inapplicable and remained fail-open."
   return true,
-    "Combat Focus layout applied with direct Turtle WoW game coordinates: player and target use 240x60 at 0.8 with 18-point client-system unit text; the compact 240x60 target-of-target remains at 0.68 and attaches to Target's right edge with the same system face; 23x23 auras use pfUI's real seven-UI border step and fit eight per row; the unit cluster reserves a second target-debuff row above the unchanged centered 260x12 player-cast, target-cast, and Swing stack at 1.0. The stance bar remains at 0.72, while the provider-owned DoiteDPS timeline and resource row move upward together by 32 UI into their own safe lane. Provider visibility, lock state, and native translucency were preserved without screen-pixel projection or coordinate readback." ..
+    "Combat Focus layout applied with direct Turtle WoW game coordinates: player and target use 240x60 at 0.8 with 18-point client-system unit text; the compact 240x60 target-of-target remains at 0.68 and attaches to Target's right edge with the same system face; 23x23 auras use pfUI's real seven-UI border step and fit eight per row; the unit cluster reserves a second target-debuff row above the unchanged centered 260x12 player-cast, target-cast, and Swing stack at 1.0. The stance bar uses full local scale 1.0 for readable warrior controls, while the provider-owned DoiteDPS timeline and resource row remain in their own safe lane. Provider visibility, lock state, and native translucency were preserved without screen-pixel projection or coordinate readback." ..
     archiMessage
 end
 
@@ -3931,6 +3931,47 @@ function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
   return true
 end
 
+function ActionBars:ApplyAutoBarDragHandlePolicy(enabled)
+  local handle = GetGlobal("AutoBarAnchorFrameHandle")
+  if not handle then
+    self.autoBarDragHandleStatus = "missing"
+    return false
+  end
+
+  if enabled and FieldKitBound() then
+    if type(handle.Hide) ~= "function" then
+      self.autoBarDragHandleStatus = "unsupported"
+      return false
+    end
+    handle:Hide()
+    self.autoBarDragHandleStatus = "hidden-bound"
+    return true
+  end
+
+  local display = AutoBar and AutoBar.display
+  if type(display) ~= "table" then
+    self.autoBarDragHandleStatus = "provider"
+    return false
+  end
+
+  if AutoBarDisplayFlag(display.hideDragHandle) then
+    if type(handle.Hide) ~= "function" then
+      self.autoBarDragHandleStatus = "unsupported"
+      return false
+    end
+    handle:Hide()
+    self.autoBarDragHandleStatus = "hidden-provider"
+  else
+    if type(handle.Show) ~= "function" then
+      self.autoBarDragHandleStatus = "unsupported"
+      return false
+    end
+    handle:Show()
+    self.autoBarDragHandleStatus = "visible-provider"
+  end
+  return true
+end
+
 function ActionBars:RestoreAutoBarBoundAnchor()
   if not FieldKitEnabled() or not FieldKitBound() or
     not self.autoBarDockApplied or not self.autoBarBoundAnchors
@@ -4039,6 +4080,7 @@ function ActionBars:HandleAutoBarDragStop()
   end
   local bounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
   self:ApplyConsumableDockPosition(true, bounds)
+  self:ApplyAutoBarDragHandlePolicy(true)
 end
 
 function ActionBars:HandleTrinketDragStop()
@@ -4076,6 +4118,7 @@ function ActionBars:SetFieldKitDocking(docked)
     self:ApplyActionBarStackPosition(FieldKitEnabled())
     local bounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
     self:ApplyConsumableDockPosition(FieldKitEnabled(), bounds)
+    self:ApplyAutoBarDragHandlePolicy(FieldKitEnabled())
     self:ApplyTrinketDockPosition(FieldKitEnabled())
     self:ApplyArchiTotemDockPosition(FieldKitEnabled())
     return true,
@@ -4083,6 +4126,7 @@ function ActionBars:SetFieldKitDocking(docked)
   end
   self:ApplyActionBarStackPosition(FieldKitEnabled())
   self:ApplyConsumableDockPosition(FieldKitEnabled())
+  self:ApplyAutoBarDragHandlePolicy(FieldKitEnabled())
   self:ApplyTrinketDockPosition(FieldKitEnabled())
   self:ApplyArchiTotemDockPosition(FieldKitEnabled())
   self.consumableDockStatus = "free"
@@ -4616,6 +4660,7 @@ function ActionBars:ApplyAutoBarFieldKit(enabled)
   local frame = GetGlobal("AutoBarFrame")
   if not AutoBar or not frame then
     self.autoBarFieldKitStatus = "missing"
+    self.autoBarDragHandleStatus = "missing"
     self.autoBarMainButtons = 0
     self.autoBarGrouped = false
     self.consumableDockStatus = "unavailable"
@@ -4651,6 +4696,7 @@ function ActionBars:ApplyAutoBarFieldKit(enabled)
   self.autoBarMainButtons = bounds.count
   self.autoBarFieldKitStatus = enabled and "available" or "disabled"
   self:ApplyConsumableDockPosition(enabled, bounds)
+  self:ApplyAutoBarDragHandlePolicy(enabled)
   self:ApplyAutoBarPopup(enabled)
   return true
 end
@@ -4923,6 +4969,7 @@ end
 
 function ActionBars:SettleAutoBarFieldKitRefresh()
   self:RestoreAutoBarBoundAnchor()
+  self:ApplyAutoBarDragHandlePolicy(FieldKitEnabled())
   return self:QueueAutoBarFieldKitRefresh()
 end
 
@@ -5113,6 +5160,7 @@ function ActionBars:Initialize()
   self.autoBarDockApplied = false
   self.autoBarBoundAnchors = nil
   self.autoBarAnchorBasis = "pending"
+  self.autoBarDragHandleStatus = "pending"
   self.autoBarCategoryDescriptionStatus = "pending"
   self.autoBarCategoryDescriptionsRepaired = 0
   self.autoBarGrouped = false
@@ -5339,6 +5387,8 @@ function ActionBars:GetRuntimeStatus()
       tostring(self.autoBarRefreshStatus or "ready") ..
     ",autobar-anchor-basis=" ..
       tostring(self.autoBarAnchorBasis or "pending") ..
+    ",autobar-drag-handle=" ..
+      tostring(self.autoBarDragHandleStatus or "pending") ..
     ",consumable-dock=" ..
       tostring(self.consumableDockStatus or "pending") ..
     ",trinket=" .. tostring(self.trinketFieldKitStatus or "pending") ..

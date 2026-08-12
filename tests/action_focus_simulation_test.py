@@ -190,7 +190,7 @@ def test_focus_v11_font_doite_and_side_cluster_proposal() -> None:
     assert len(display["scenarios"]) == 3
 
     runtime = json.loads(RUNTIME_DISPLAY.read_text(encoding="utf-8"))
-    assert runtime["component"] == "AB.FOCUS.LAYOUT.V1/runtime-v2.3"
+    assert runtime["component"] == "AB.FOCUS.LAYOUT.V1/runtime-v2.4"
     assert runtime["evidence"]["final_runtime"] is True
     assert runtime["evidence"]["adapter"].endswith("Modules/ActionBars.lua")
     assert runtime["evidence"]["accepted_simulation_spec"].endswith(
@@ -207,9 +207,18 @@ def test_focus_v11_font_doite_and_side_cluster_proposal() -> None:
     assert "Player Cast BOTTOM (0,316)" in formula
     assert "Target Cast BOTTOM (0,300)" in formula
     assert "Swing BOTTOM (0,284)" in formula
+    assert "bound AutoBarAnchorFrameHandle is hidden synchronously" in formula
+    assert "stance BOTTOM (0,255) at 1.0" in formula
     assert "DoiteDPS TOPLEFT (850,-615)" in formula
     assert "GetScreenHeight()/1080" not in formula
-    assert len(runtime["scenarios"]) == 12
+    assert len(runtime["scenarios"]) == 13
+    stance = next(
+        scenario
+        for scenario in runtime["scenarios"]
+        if scenario["id"] == "warrior-stance-three-buttons-icon25-scale-100"
+    )
+    assert stance["frame"] == [97, 33]
+    assert len(stance["regions"]) == 3
 
 
 if __name__ == "__main__":

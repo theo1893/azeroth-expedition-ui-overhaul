@@ -186,7 +186,7 @@ def main() -> None:
         assert result["summary"]["violation_count"] == 0
 
     for required in (
-        'ActionBars.fieldKitRuntimeContract = "2.5"',
+        'ActionBars.fieldKitRuntimeContract = "2.6"',
         "ActionBars.fieldKitDockYOffset = -20",
         "ActionTrinketKitV1",
         "ActionConsumableKitV1",
@@ -213,6 +213,7 @@ def main() -> None:
         "QueueAutoBarFieldKitRefresh",
         "CommitAutoBarFieldKitRefresh",
         "SettleAutoBarFieldKitRefresh",
+        "ApplyAutoBarDragHandlePolicy",
         "RestoreAutoBarBoundAnchor",
         "AutoBarLocalVisualOffsets",
         'anchorBasis = "provider-local"',

@@ -497,7 +497,7 @@
   },
   "adapter": {
     "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
-    "sha256": "b861d7d97711d8b928d56b3c7e98cb785b40ce0a353f16491271ac59f2906ffc",
+    "sha256": "f7d676ac4360d2d5ca3bc732656be94fed5983d36ffcf41b99a5b74d0965867b",
     "provider": "AutoBar 1.31 existing main/popup frames and 24+12 buttons",
     "visual_layers_only": false,
     "visual_and_layout_adapter": true,

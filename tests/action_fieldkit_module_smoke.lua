@@ -254,6 +254,11 @@ local autoBarSetupCalls = 0
 local providerSetupReanchors = false
 function AutoBar_SetupVisual()
   autoBarSetupCalls = autoBarSetupCalls + 1
+  if AutoBarAnchorFrameHandle then
+    -- AutoBar 1.31 can expose the real XML handle during SetupVisual even
+    -- though the compact AEUI profile requests hideDragHandle.
+    AutoBarAnchorFrameHandle:Show()
+  end
   if providerSetupReanchors then
     AutoBar:ButtonsUpdate()
     AutoBarAnchorFrameHandle:ClearAllPoints()
@@ -583,7 +588,7 @@ local module = assert(AzerothExpeditionUI.modules.ActionBars)
 module:Initialize()
 module:Apply()
 
-assert(module.fieldKitRuntimeContract == "2.5")
+assert(module.fieldKitRuntimeContract == "2.6")
 assert(module.autoBarCategoryDescriptionStatus == "repaired")
 assert(module.autoBarCategoryDescriptionsRepaired == 8)
 assert(AutoBar_Category_Info.POTION_SPELLPOWER.description ==
@@ -671,6 +676,11 @@ assert(unlockHideOk, unlockHideError)
 assert(pfUI.movables.pfActionBarTop == pfUI.bars[6])
 assert(module.actionBarStackStatus == "12x2-bound")
 assert(module.autoBarFieldKitStatus == "available")
+assert(AutoBarAnchorFrameHandle.shown == false)
+assert(module.autoBarDragHandleStatus == "hidden-bound")
+assert(string.find(
+  module:GetRuntimeStatus(), "autobar%-drag%-handle=hidden%-bound"
+))
 assert(module.autoBarMainButtons == 24)
 assert(module.autoBarPopupButtons == 4)
 assert(module.autoBarPopupConnectors == 3)
@@ -795,6 +805,8 @@ assert(module.autoBarRefreshStatus == "settled")
 
 AutoBar:UpdatePopupButtons(AutoBarFrameButton1)
 AutoBar_SetupVisual()
+assert(AutoBarAnchorFrameHandle.shown == false)
+assert(module.autoBarDragHandleStatus == "hidden-bound")
 assert(AutoBar.providerPopupUpdateCalls == 1)
 assert(autoBarSetupCalls == 1)
 assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
@@ -811,6 +823,7 @@ local settledDockX = settledDockAnchor[4]
 local settledDockY = settledDockAnchor[5]
 providerSetupReanchors = true
 AutoBar_SetupVisual()
+assert(AutoBarAnchorFrameHandle.shown == false)
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
@@ -819,6 +832,7 @@ assert(module.autoBarRefreshStatus == "queued")
 AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
 assert(module.autoBarRefreshStatus == "settled")
 AutoBar_SetupVisual()
+assert(AutoBarAnchorFrameHandle.shown == false)
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
@@ -834,6 +848,7 @@ providerSetupReanchors = false
 -- anchor synchronously and defer only the geometry-dependent rebuild.
 providerConfigOnShowReanchors = true
 AutoBarConfig.OnShow()
+assert(AutoBarAnchorFrameHandle.shown == false)
 assert(autoBarConfigOnShowCalls == 1)
 assert(AutoBarConfigFrameTab2.shown == false)
 assert(AutoBarConfigFrameTab4.shown == false)
@@ -1157,6 +1172,8 @@ assert(module.actionBarStackStatus == "free")
 assert(pfUI.movables.pfActionBarTop == pfUI.bars[6])
 assert(module.consumableDockStatus == "free")
 assert(module.trinketDockStatus == "free")
+assert(AutoBarAnchorFrameHandle.shown == true)
+assert(module.autoBarDragHandleStatus == "visible-provider")
 local redocked, redockMessage = module:SetFieldKitDocking(true)
 assert(redocked == true)
 assert(string.find(redockMessage, "consumables left", 1, true))
@@ -1165,6 +1182,8 @@ assert(module.actionBarStackStatus == "12x2-bound")
 assert(pfUI.movables.pfActionBarTop == pfUI.bars[6])
 assert(module.consumableDockStatus == "left")
 assert(module.trinketDockStatus == "right")
+assert(AutoBarAnchorFrameHandle.shown == false)
+assert(module.autoBarDragHandleStatus == "hidden-bound")
 
 local reset, resetMessage = module:ResetCombatDeckPosition()
 assert(reset == true)
@@ -1239,6 +1258,8 @@ AutoBar.display.columns = 4
 AzerothExpeditionUI.db.actionbars.enabled = false
 module:Apply()
 assert(module.autoBarFieldKitStatus == "disabled")
+assert(AutoBarAnchorFrameHandle.shown == true)
+assert(module.autoBarDragHandleStatus == "visible-provider")
 assert(AutoBarFrameButton1.aeuiConsumableKitPocketV1.shown == false)
 assert(AutoBarFrame.aeuiConsumableKitShellV1.shown == false)
 assert(hoverBridge.shown == false)
@@ -1261,7 +1282,8 @@ module:Apply()
 assert(module.autoBarFieldKitStatus == "missing")
 assert(module.trinketFieldKitStatus == "missing")
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "fieldkit%-contract=2%.5"))
+assert(string.find(status, "fieldkit%-contract=2%.6"))
+assert(string.find(status, "autobar%-drag%-handle=missing"))
 assert(string.find(status, "autobar%-slot%-scope=restored"))
 assert(string.find(status, "autobar%-config%-ui=native"))
 assert(string.find(status, "autobar%-config%-descriptions=repaired"))
