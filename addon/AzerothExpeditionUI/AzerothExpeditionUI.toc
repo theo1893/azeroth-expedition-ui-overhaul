@@ -2,7 +2,7 @@
 ## Title: Azeroth Expedition UI
 ## Notes: Vanilla-style UI overhaul built on pfUI functionality.
 ## Author: Azeroth Expedition
-## Version: 0.8.27
+## Version: 0.8.28
 ## RequiredDeps: pfUI
 ## SavedVariables: AzerothExpeditionUIDB
 

@@ -2,6 +2,15 @@
 
 ## 当前结论
 
+- 用户于 `2026-08-13` 再次实机确认 AEUI `0.8.27` 后 AutoBar 仍停在左上自由坐标；截图
+  SHA `169d9da3…c1b3c` 同时证明姿态栏、饰品栏与隐藏拖拽点已生效，失败范围只剩
+  AutoBar 根锚。与没有最终坐标回写的 TrinketMenu 不同，AutoBar provider 会在刷新末尾
+  直接调用真实 handle 的 `ClearAllPoints／SetPoint`。AEUI `0.8.28` 因此在强绑定态锁定
+  `AutoBarAnchorFrameHandle.SetPoint`：provider 的任何后续坐标都被转写为相对
+  `pfActionBarMain` 的已计算锚点；`unbind` 或关闭 AEUI 时恢复原方法，不使用维护循环。
+  Field Kit 专项 smoke 新增“绕过全部 AEUI 后置回调、直接执行 provider 原始
+  `SetupVisual`”场景并通过；当前仍为
+  `runtime-exported / addon-integrated / P5 / pending-game-validation`。
 - 用户于 `2026-08-12` 最新实机复测确认姿态栏与拖拽点已收敛，但 AutoBar 仍留在左上自由坐标。
   AEUI `0.8.27` 移除 Combat Deck 根绑定对 Button 世界坐标就绪的前置条件；provider
   `SetupVisual` 返回后始终进入绑定，并优先按 Button 相对真实

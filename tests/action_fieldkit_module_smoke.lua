@@ -852,6 +852,14 @@ local settledDockAnchor = AutoBarAnchorFrameHandle.decorativePoints[1]
 local settledDockX = settledDockAnchor[4]
 local settledDockY = settledDockAnchor[5]
 providerSetupReanchors = true
+-- Even if every AEUI post-hook is bypassed, the provider's own final
+-- SetPoint cannot escape the bound Combat Deck root.
+module.combatDeckAutoBarOriginal()
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
+assert(module.autoBarAnchorBasis == "setpoint-lock")
+module:ApplyAutoBarDragHandlePolicy(true)
 AutoBar_SetupVisual()
 assert(AutoBarAnchorFrameHandle.shown == false)
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])

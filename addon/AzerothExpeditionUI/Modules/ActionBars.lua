@@ -4199,12 +4199,79 @@ local function AutoBarLocalVisualOffsets(handle)
     rackScale
 end
 
+function ActionBars:ResolveAutoBarBoundOffsets(handle)
+  local handleScale = GetFrameScale(handle)
+  local rightDelta, bottomDelta, rackScale =
+    AutoBarLocalVisualOffsets(handle)
+  if rightDelta and bottomDelta and rackScale then
+    return
+      (-self.consumableDockGap * rackScale - rightDelta) / handleScale,
+      (self.fieldKitDockYOffset * rackScale - bottomDelta) / handleScale
+  end
+  return self.autoBarBoundOffsetX, self.autoBarBoundOffsetY
+end
+
+function ActionBars:InstallAutoBarHandlePointLock()
+  local handle = GetGlobal("AutoBarAnchorFrameHandle")
+  if not handle or type(handle.SetPoint) ~= "function" then
+    self.autoBarHandlePointLockStatus = "missing"
+    return false
+  end
+
+  local state = handle.aeuiCombatDeckPointLockV1
+  if state and handle.SetPoint == state.wrapper then
+    self.autoBarHandlePointLockStatus = "locked"
+    return true
+  end
+
+  state = { original = handle.SetPoint }
+  state.wrapper = function(frame, ...)
+    local arguments = arg
+    if FieldKitEnabled() and FieldKitBound() then
+      local main = GetMainActionBarFrame()
+      local xOffset, yOffset =
+        ActionBars:ResolveAutoBarBoundOffsets(frame)
+      if main and xOffset and yOffset then
+        state.original(
+          frame, "CENTER", main, "BOTTOMLEFT", xOffset, yOffset
+        )
+        ActionBars.autoBarDockApplied = true
+        ActionBars.autoBarBoundOffsetX = xOffset
+        ActionBars.autoBarBoundOffsetY = yOffset
+        ActionBars.autoBarBoundAnchors = CaptureFrameAnchors(frame)
+        ActionBars.autoBarAnchorBasis = "setpoint-lock"
+        ActionBars.consumableDockStatus = "left"
+        ActionBars.autoBarHandlePointLockStatus = "locked"
+        return
+      end
+    end
+    return state.original(frame, unpack(arguments))
+  end
+  handle.aeuiCombatDeckPointLockV1 = state
+  handle.SetPoint = state.wrapper
+  self.autoBarHandlePointLockStatus = "locked"
+  return true
+end
+
+function ActionBars:RestoreAutoBarHandlePointLock()
+  local handle = GetGlobal("AutoBarAnchorFrameHandle")
+  local state = handle and handle.aeuiCombatDeckPointLockV1
+  if state and handle.SetPoint == state.wrapper then
+    handle.SetPoint = state.original
+  end
+  if handle then
+    handle.aeuiCombatDeckPointLockV1 = nil
+  end
+  self.autoBarHandlePointLockStatus = "free"
+end
+
 function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
   local docked = FieldKitBound()
   local handle = GetGlobal("AutoBarAnchorFrameHandle")
   local main = GetMainActionBarFrame()
 
   if not enabled or not docked then
+    self:RestoreAutoBarHandlePointLock()
     self:RestoreAutoBarProviderDock()
     if self.autoBarDockApplied then
       RestoreFrameAnchors(handle, self.autoBarUndockedAnchors)
@@ -4218,6 +4285,7 @@ function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
     self.consumableDockStatus = enabled and "free" or "disabled"
     return false
   end
+  self:InstallAutoBarHandlePointLock()
   if not handle or not main then
     self.autoBarAnchorBasis = "unavailable"
     self.consumableDockStatus = "unavailable"
@@ -5538,6 +5606,7 @@ function ActionBars:Initialize()
   self.autoBarBoundOffsetX = nil
   self.autoBarBoundOffsetY = nil
   self.autoBarAnchorBasis = "pending"
+  self.autoBarHandlePointLockStatus = "pending"
   self.autoBarProviderDockProfile = nil
   self.autoBarProviderDockStatus = "pending"
   self.autoBarDragHandleStatus = "pending"
@@ -5784,6 +5853,8 @@ function ActionBars:GetRuntimeStatus()
       tostring(self.autoBarRefreshStatus or "ready") ..
     ",autobar-anchor-basis=" ..
       tostring(self.autoBarAnchorBasis or "pending") ..
+    ",autobar-point-lock=" ..
+      tostring(self.autoBarHandlePointLockStatus or "pending") ..
     ",autobar-provider-dock=" ..
       tostring(self.autoBarProviderDockStatus or "pending") ..
     ",autobar-drag-handle=" ..
