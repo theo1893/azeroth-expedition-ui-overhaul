@@ -2,6 +2,24 @@
 
 ## 当前状态
 
+- 用户于 `2026-08-12` 要求关闭全部动态头像。Unit Frames runtime 已升为
+  `1.2 / P5 / pending-game-validation`，新增精确 route
+  `unitframes.dynamic-portraits`：`player`、`target`、`focus`、`focustarget`、
+  `group`、`grouptarget`、`grouppet`、`raid`、`ttarget`、`pet`、`ptarget`、
+  `fallback`、`tttarget` 共 13 组 `portrait` 统一为 `off`，并把
+  `raidmarkershowportrait` 置为 `0`，同步关闭 `raidmarkers`／`marktracking` 两套
+  追踪头像。live Texture／PlayerModel 会立即隐藏并取消待处理模型更新；pfUI
+  `UpdateFrameSize`／`UpdateConfig` 重施时由 scoped guard 保持关闭。
+- 原始头像配置按 pfUI profile 持久备份在
+  `AzerothExpeditionUIDB.unitframes.portraitConfigBackups[profile]`；启用期间用户在 `/pfui`
+  选择的新值会更新为回退值，关闭 `/aeui unitframes` 或作用域 route 后精确恢复
+  13 组配置、追踪开关与 live 布局。角色面板、观察和试衣间的 3D 预览不属于
+  UnitFrame，保持原样。Lua smoke、pfUI ownership、B1／Raid runtime、V4／Raid
+  资产合同与 repository contract 均通过；Windows 解释器为
+  `D:\Softwares\miniconda3\python.exe`／`Python 3.13.5`。fresh-checkout addon
+  package 为 `pass`、violations `0`、`build_required_on_target_device=false`，报告
+  `generated/unitframes/portraits/runtime/addon-package-report.json`，SHA
+  `e1ca9054…0a35`。本次 ImageGen `0/0`，既有媒体字节不变。
 - Player／Target 完整外壳已按用户于 `2026-08-12` 的要求重开；用户已确认
   `UF-PRIMARY-V4-SIM-V1`，并授权 Raid A2 已验收 sample 作为只读输入。当前
   `UF-PRIMARY-V4-CANDIDATE-V1` 为 `P4 / source-accepted / ImageGen 0/0`。
@@ -307,9 +325,10 @@
 - 确定性导出器：`tools/build_unitframes_bars_v2_runtime.py`；只做整图 LANCZOS
   缩放、透明清理与 32-bit RGBA TGA 写入。runtime manifest 为
   `assets/source/unitframes/bars-v2/UF-B1-V2_RuntimeManifest_v1.json`。
-- adapter：`addon/AzerothExpeditionUI/Modules/UnitFrames.lua`，合同 `1.0`；pfUI
-  bridge 只在 `api/unitframes.lua` 的两处 StatusBar 媒体读取点消费 marker。
-  关闭 `/aeui unitframes` 或关闭作用域路由会恢复 Frame 配置的 pfUI 媒体。
+- adapter：`addon/AzerothExpeditionUI/Modules/UnitFrames.lua`，当前合同 `1.2`；B1
+  bridge 在 `api/unitframes.lua` 的两处 StatusBar 媒体读取点消费 marker，动态
+  头像 guard 只在同一 provider 的尺寸／配置刷新入口执行。关闭
+  `/aeui unitframes` 或关闭作用域路由会恢复 Frame 配置的 pfUI 媒体与头像。
 - 真实排版：`generated/unitframes/bars/V2/runtime/real-layout-preview.png`，SHA
   `00ce1084…d247`；覆盖四种 Player 资源色、Target、TargetTarget、Focus 与
   宽度变化。外壳仍为非权威 pfUI fallback。展示区域合同 `9/9 pass`、
@@ -342,3 +361,8 @@ TargetTarget／Focus 的生命与 Mana／Rage／Focus／Energy 乘色、低血�
 缩放、禁用回退和旧 SavedVariables。通过前保持 P5，`generated/unitframes/`
 继续作为 ignored 中间证据。A／B 外壳仍为 `5/5` rejected，禁止第六次；是否
 重开新合同另行决定。UF-A2 继续暂停。
+
+动态头像合同下一门禁同为 Turtle WoW `1.18.1` P6：`/reload` 后确认 Player、
+Target、Focus、Party、Raid、Pet、各级 Target 与 fallback 均无 2D／3D 头像，
+两套 Raid Marker tracker 不显示头像且回收宽度；再在 `/pfui` 应用配置并复测
+不会重新启用。最后关闭／重开 `/aeui unitframes`，确认用户原值与布局可逆恢复。

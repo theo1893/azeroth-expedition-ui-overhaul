@@ -148,13 +148,13 @@ def main() -> None:
 
     adapter = ADAPTER.read_text(encoding="utf-8")
     for clause in (
-        'UnitFrames.runtimeContract = "1.1"',
+        'UnitFrames.runtimeContract = "1.2"',
         'local RAID_LEFT_CAP = 6',
         'local RAID_CENTRE = 62',
         'local RAID_RIGHT_CAP = 6',
         'frame.aeuiRaidShellAssembly = "complete-74x37"',
         'frame.aeuiRaidShellAssembly = "three-slice-6-centre-6"',
-        'scope=player,target,targettarget,focus,pfRaid1..40',
+        'scope=all-pfui-unitframe-portraits,player,target,targettarget,focus,pfRaid1..40',
     ):
         assert clause in adapter
     bridge = BRIDGE.read_text(encoding="utf-8")

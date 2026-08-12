@@ -14,6 +14,14 @@ end)
 pfUI.uf.frames = {}
 pfUI.uf.delayed = {}
 
+local function ApplyExpeditionPortraitGuard(frame)
+  local expedition = pfUI.expedition
+  local guard = expedition and expedition.unitFramePortraitGuard
+  if type(guard) == "function" then
+    pcall(guard, frame)
+  end
+end
+
 -- ============================================================================
 -- GUID-based Roster Tracking for Smart Updates
 -- Only updates frames where the unit actually changed, not ALL 40 frames
@@ -645,6 +653,7 @@ function pfUI.uf:UpdateVisibility()
 end
 
 function pfUI.uf:UpdateFrameSize()
+  ApplyExpeditionPortraitGuard(self)
   local rawborder, default_border = GetBorderSize("unitframes")
   local spacing = self.config.pspace * GetPerfectPixel()
   local width = self.config.width
@@ -681,6 +690,7 @@ end
 
 function pfUI.uf:UpdateConfig()
   local f = self
+  ApplyExpeditionPortraitGuard(f)
   local C = pfUI_config
   local rawborder, default_border = GetBorderSize("unitframes")
   local spacing = f.config.pspace * GetPerfectPixel()
@@ -2796,7 +2806,13 @@ function pfUI.uf:RefreshUnit(unit, component)
 
   -- portrait
   if unit.portrait and ( component == "all" or component == "portrait" ) then
-    if C.unitframes.always2dportrait == "1" then
+    if unit.aeuiPortraitDisabled and unit.config.portrait == "off" then
+      unit.portrait:Hide()
+      unit.portrait.tex:Hide()
+      unit.portrait.model:Hide()
+      unit.portrait.model.update = nil
+      unit.portrait.model.lastUnit = nil
+    elseif C.unitframes.always2dportrait == "1" then
       unit.portrait.tex:Show()
       unit.portrait.model:Hide()
       SetPortraitTexture(unit.portrait.tex, unitstr)

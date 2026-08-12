@@ -642,7 +642,7 @@ def main() -> None:
     unitframes_source = (
         aeui / "Modules" / "UnitFrames.lua"
     ).read_text(encoding="utf-8")
-    assert 'UnitFrames.runtimeContract = "1.1"' in unitframes_source
+    assert 'UnitFrames.runtimeContract = "1.2"' in unitframes_source
     assert "aeuiHealthBarTexture" in unitframes_source
     assert "aeuiPowerBarTexture" in unitframes_source
     raid_runtime_manifest = json.loads(
@@ -1206,6 +1206,8 @@ def main() -> None:
     assert '["unitframes.raid-shell"] = "unitframes"' in expedition
     assert '["unitframes.raid-health-fill"] = "unitframes"' in expedition
     assert '["unitframes.raid-power-fill"] = "unitframes"' in expedition
+    assert '["unitframes.dynamic-portraits"] = "unitframes"' in expedition
+    assert "version = 6" in expedition
     assert "ShouldUseVanillaModule" in expedition
     assert "ShouldUseVanillaSkin" in expedition
     assert "ShouldUseSingleChatFrame" in expedition

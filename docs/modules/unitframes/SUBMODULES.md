@@ -1,12 +1,14 @@
 # Unit Frames 子模块与 pfUI 对齐
 
-本模块严格对应 `addon/pfUI/api/unitframes.lua` 创建的真实对象。当前批次只替换
-静态媒体及其挂载，不改变另一台设备上的 Frame 锚点、尺寸、事件、点击、
-SavedVariables、单位数据或状态逻辑。
+本模块严格对应 `addon/pfUI/api/unitframes.lua` 创建的真实对象。当前运行时接管
+静态媒体及其挂载，并通过 `UF.PORTRAIT.DISABLE` 关闭所有 pfUI UnitFrame 动态
+头像呈现；不改变 Frame 锚点、尺寸、事件、点击、单位数据或状态逻辑。头像合同
+只写入下文列出的精确配置值，原值保存在 AEUI SavedVariables 中并可完整回退；
+其他 pfUI SavedVariables 不变。
 
 ## 主单位框与资源条批次
 
-当前 profile 使用 `portrait = off`。下列逻辑尺寸来自
+Unit Frames runtime `1.2` 会把全部 13 组真实配置强制为 `portrait = off`。下列逻辑尺寸来自
 `addon/pfUI/env/profiles.lua` 与 `pfUI.uf:UpdateFrameSize()`；外壳只在真实 Frame
 外增加不参与命中的透明装饰边，不改变 provider 几何。
 
@@ -165,12 +167,12 @@ Frame 中心；透明外扩不能参与 Frame 宽高、点击区域或移动边�
   清零和无损 32-bit RGBA TGA 写入，分别导出
   `UnitFrameHealthFillV1.tga`（`64×32`）与 `UnitFramePowerFillV1.tga`
   （`64×16`）；不裁切、不重画、不混入外框像素。
-- AEUI adapter 只给 `player`、`target`、`targettarget`、`focus` 写入两项媒体
+- B1 媒体接管只给 `player`、`target`、`targettarget`、`focus` 写入两项媒体
   marker；pfUI 的 `api/unitframes.lua` 在既有 StatusBar 创建点读取 marker。
   Party、Raid、Pet、FocusTarget 与 fallback 继续使用各自 pfUI 配置媒体。
 - 禁用模块或作用域路由时，adapter 通过各 Frame 的 `bartexture`／
   `pbartexture` 恢复 pfUI 媒体。不得改动 `SetStatusBarColor`、Frame 几何、
-  数值动画、事件、点击区域、文字、图标或 SavedVariables。
+  数值动画、事件、点击区域、文字或图标。
 
 ## 已登记但不在当前批次
 
@@ -182,12 +184,22 @@ Frame 中心；透明外扩不能参与 Frame 宽高、点击区域或移动边�
 | `group`／`grouptarget`／`grouppet` | `UF.PARTY.*` | 暂缓；后续按真实重复数量设计 |
 | `raid` | `UF.RAID.*` | `UF-RAID-A2-DONOR V1 / P5 source-accepted / runtime-exported / addon-integrated / 5/5`；仅豁免未消费外围 field bbox 最大 `19px` 偏差；A2 使用 material-only donor＋Python 精确造壳，四张独立 `74×37` TGA 服务 40 个真实对象；待 Turtle WoW P6 |
 | `fallback` | `UF.FALLBACK.*` | 保持 pfUI 回退 |
-| `portrait = bar/left/right` | `UF.PORTRAIT.*` | 当前 profile 为 `off`；未取得新合同前不制作假头像槽 |
+| `player`／`target`／`focus`／`focustarget`／`group`／`grouptarget`／`grouppet`／`raid`／`ttarget`／`pet`／`ptarget`／`fallback`／`tttarget` 的 `portrait` | `UF.PORTRAIT.DISABLE` | runtime `1.2 / P5` 统一写为 `off`；不制作假头像槽，不运行 2D／3D 动态头像 |
+| `raidmarkershowportrait` | `UF.PORTRAIT.TRACKER.DISABLE` | 同时关闭 `raidmarkers` 与 `marktracking` 两套追踪头像，并收回头像占用宽度 |
 | Buff／Debuff Buttons | `UF.AURA.*` | 当前不重绘 |
+
+`UF.PORTRAIT.DISABLE` 只使用 scoped route `unitframes.dynamic-portraits`。原始 13 组
+`portrait` 值与 `raidmarkershowportrait` 按 pfUI profile 保存在
+`AzerothExpeditionUIDB.unitframes.portraitConfigBackups[profile]`；pfUI 配置页应用期间若用户
+选择新值，该值会成为之后的回退值，但本模块启用时仍保持 `off`。关闭
+`/aeui unitframes` 或关闭该 route 后恢复原值、live Frame 与两套追踪布局。
+`CharacterFrame`、`InspectFrame`、`DressUpFrame` 的角色预览模型不属于 UnitFrame
+动态头像，本合同不接管。
 
 ## 接入边界
 
-未来 P5 只允许在 `addon/AzerothExpeditionUI` 增加 Unit Frames 媒体与一个作用域
-adapter，或在 `addon/pfUI/api/unitframes.lua` 增加等价的精确媒体挂点。不得修改
-Frame 的 Point、Width、Height、事件、点击、Secure 模板、状态刷新或配置值；
-媒体缺失时局部回退 pfUI 原始 backdrop／bar／glow。
+Unit Frames P5 只允许在 `addon/AzerothExpeditionUI` 的作用域 adapter 或
+`addon/pfUI/api/unitframes.lua` 的精确挂点内实现。不得修改 Frame 的 Point、
+Width、Height、事件、点击、Secure 模板或状态语义；配置写入只允许上述 13 组
+`portrait` 与 `raidmarkershowportrait`，并必须可逆。媒体或 route 缺失时局部回退
+pfUI 原始 portrait／backdrop／bar／glow。

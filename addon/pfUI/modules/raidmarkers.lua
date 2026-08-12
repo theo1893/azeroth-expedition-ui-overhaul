@@ -186,6 +186,33 @@ pfUI:RegisterModule("raidmarkers", "vanilla:tbc", function ()
     pfUI.raidmarkers.rows[i] = row
   end
 
+  function pfUI.raidmarkers:SetPortraitsEnabled(enabled)
+    rm_showportrait = enabled and true or false
+    TOTAL_ROW_WIDTH =
+      BAR_WIDTH + 20 +
+      (rm_showportrait and (PORTRAIT_SIZE + 2) or 0)
+    self:SetWidth(TOTAL_ROW_WIDTH)
+
+    for i = 1, 8 do
+      local row = self.rows[i]
+      if row then
+        row:SetWidth(TOTAL_ROW_WIDTH)
+        if rm_showportrait then
+          row.portrait:Show()
+        else
+          row.portrait:Hide()
+        end
+        row.health:ClearAllPoints()
+        row.health:SetPoint("LEFT", row.icon, "RIGHT", 2, 0)
+        if rm_showportrait then
+          row.health:SetPoint("RIGHT", row.portrait, "LEFT", -2, 0)
+        else
+          row.health:SetPoint("RIGHT", row, "RIGHT", -1, 0)
+        end
+      end
+    end
+  end
+
   local function UpdateDisplay()
     if isUnlocked then return end
     local anyActive = false

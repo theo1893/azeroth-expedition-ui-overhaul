@@ -130,7 +130,7 @@ def main() -> None:
     unitframes_source = (
         ROOT / "addon/AzerothExpeditionUI/Modules/UnitFrames.lua"
     ).read_text(encoding="utf-8")
-    assert 'UnitFrames.runtimeContract = "1.1"' in unitframes_source
+    assert 'UnitFrames.runtimeContract = "1.2"' in unitframes_source
     assert "frame.aeuiHealthBarTexture = HEALTH_TEXTURE" in unitframes_source
     assert "frame.aeuiPowerBarTexture = POWER_TEXTURE" in unitframes_source
     assert '"player"' in unitframes_source
@@ -149,6 +149,18 @@ def main() -> None:
         "f.aeuiPowerBarTexture or pfUI.media[f.config.pbartexture]"
         in bridge
     )
+    assert "ApplyExpeditionPortraitGuard" in bridge
+    assert "unit.aeuiPortraitDisabled" in bridge
+    assert "unit.portrait:Hide()" in bridge
+    assert "unit.portrait.model.update = nil" in bridge
+    raidmarkers = (
+        ROOT / "addon/pfUI/modules/raidmarkers.lua"
+    ).read_text(encoding="utf-8")
+    marktracking = (
+        ROOT / "addon/pfUI/modules/marktracking.lua"
+    ).read_text(encoding="utf-8")
+    assert "function pfUI.raidmarkers:SetPortraitsEnabled" in raidmarkers
+    assert "function pfUI.marktracking:SetPortraitsEnabled" in marktracking
     toc = (
         ROOT / "addon/AzerothExpeditionUI/AzerothExpeditionUI.toc"
     ).read_text(encoding="utf-8")

@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local UnitFrames = {}
-UnitFrames.runtimeContract = "1.1"
+UnitFrames.runtimeContract = "1.2"
 
 local MEDIA = addon.media.root .. "UnitFrames\\"
 local HEALTH_TEXTURE = MEDIA .. "UnitFrameHealthFillV1"
@@ -12,6 +12,26 @@ local PRIMARY_FRAME_KEYS = {
   "targettarget",
   "focus",
 }
+
+local PORTRAIT_CONFIG_KEYS = {
+  "player",
+  "target",
+  "focus",
+  "focustarget",
+  "group",
+  "grouptarget",
+  "grouppet",
+  "raid",
+  "ttarget",
+  "pet",
+  "ptarget",
+  "fallback",
+  "tttarget",
+}
+local PORTRAIT_CONFIG_COUNT = 13
+
+local PORTRAIT_NIL_BACKUP = "__AEUI_NIL__"
+local RAID_MARKER_PORTRAIT_KEY = "raidmarkershowportrait"
 
 local RAID_VARIANTS = {
   "A", "C", "B", "D", "D", "B", "A", "C", "B", "D",
@@ -65,6 +85,12 @@ local function ModuleEnabled()
     addon.db.unitframes and
     addon.db.unitframes.enabled and
     true or false
+end
+
+local function PortraitRouteOwned()
+  return
+    ModuleEnabled() and
+    RouteOwned("unitframes.dynamic-portraits")
 end
 
 local function FrameShown(frame)
@@ -159,6 +185,299 @@ local function ConfigureTexture(texture, path, left, right)
   texture:SetHeight(RAID_ART_HEIGHT)
 end
 
+local function DecodePortraitBackup(value)
+  if value == PORTRAIT_NIL_BACKUP then return nil end
+  return value
+end
+
+local function BackupAndDisable(backups, key, config, field, disabledValue)
+  if type(backups) ~= "table" or type(config) ~= "table" then
+    return false
+  end
+
+  local value = config[field]
+  if backups[key] == nil or value ~= disabledValue then
+    backups[key] = value == nil and PORTRAIT_NIL_BACKUP or value
+  end
+
+  if value == disabledValue then return false end
+  config[field] = disabledValue
+  return true
+end
+
+local function RestorePortraitValue(backups, key, config, field)
+  if type(backups) ~= "table" or type(config) ~= "table" then
+    return false
+  end
+
+  local value = backups[key]
+  if value == nil then return false end
+  config[field] = DecodePortraitBackup(value)
+  backups[key] = nil
+  return true
+end
+
+local function RefreshPortraitFrame(frame)
+  if not frame then return false end
+
+  local provider = pfUI and pfUI.uf
+  if provider and type(provider.UpdateFrameSize) == "function" then
+    pcall(provider.UpdateFrameSize, frame)
+  elseif type(frame.UpdateFrameSize) == "function" then
+    pcall(frame.UpdateFrameSize, frame)
+  end
+
+  if provider and type(provider.UpdateConfig) == "function" then
+    pcall(provider.UpdateConfig, frame)
+  elseif type(frame.UpdateConfig) == "function" then
+    pcall(frame.UpdateConfig, frame)
+  end
+
+  if frame.portrait then
+    if frame.config and frame.config.portrait == "off" then
+      if type(frame.portrait.Hide) == "function" then
+        frame.portrait:Hide()
+      end
+    elseif type(frame.portrait.Show) == "function" then
+      frame.portrait:Show()
+    end
+  end
+  return true
+end
+
+local function SetMarkerTrackerPortraits(tracker, enabled)
+  if not tracker or type(tracker.SetPortraitsEnabled) ~= "function" then
+    return false
+  end
+  return pcall(
+    tracker.SetPortraitsEnabled,
+    tracker,
+    enabled and true or false
+  )
+end
+
+function UnitFrames:GetPortraitBackupRoot(create)
+  local unitframes = addon.db and addon.db.unitframes
+  if not unitframes then return nil end
+  if create and type(unitframes.portraitConfigBackups) ~= "table" then
+    unitframes.portraitConfigBackups = {}
+  end
+  return unitframes.portraitConfigBackups
+end
+
+function UnitFrames:GetPortraitProfileKey()
+  local global = pfUI_config and pfUI_config.global
+  local profile = global and global.profile
+  if profile == nil or profile == "" then return "default" end
+  return tostring(profile)
+end
+
+function UnitFrames:GetPortraitBackups(create)
+  local root = self:GetPortraitBackupRoot(create)
+  if type(root) ~= "table" then return nil end
+
+  local profile = self:GetPortraitProfileKey()
+  if
+    root[profile] == nil and
+    (root[RAID_MARKER_PORTRAIT_KEY] ~= nil or
+      root[PORTRAIT_CONFIG_KEYS[1]] ~= nil)
+  then
+    local legacy = {}
+    for _, key in ipairs(PORTRAIT_CONFIG_KEYS) do
+      if root[key] ~= nil then
+        legacy[key] = root[key]
+        root[key] = nil
+      end
+    end
+    if root[RAID_MARKER_PORTRAIT_KEY] ~= nil then
+      legacy[RAID_MARKER_PORTRAIT_KEY] =
+        root[RAID_MARKER_PORTRAIT_KEY]
+      root[RAID_MARKER_PORTRAIT_KEY] = nil
+    end
+    root[profile] = legacy
+  end
+  if create and type(root[profile]) ~= "table" then
+    root[profile] = {}
+  end
+  return root[profile], root, profile
+end
+
+function UnitFrames:GetPortraitConfigKey(config)
+  local unitframes = pfUI_config and pfUI_config.unitframes
+  if type(config) ~= "table" or type(unitframes) ~= "table" then
+    return nil
+  end
+
+  for _, key in ipairs(PORTRAIT_CONFIG_KEYS) do
+    if unitframes[key] == config then return key end
+  end
+  return nil
+end
+
+function UnitFrames:GuardPortraitFrame(frame)
+  if not PortraitRouteOwned() or not frame then return false end
+
+  local key = self:GetPortraitConfigKey(frame.config)
+  local backups = self:GetPortraitBackups(true)
+  if not key or not backups then return false end
+
+  local changed = BackupAndDisable(
+    backups,
+    key,
+    frame.config,
+    "portrait",
+    "off"
+  )
+  if not frame.aeuiPortraitDisabled then changed = true end
+  frame.aeuiPortraitDisabled = true
+  frame.aeuiUnitFramePortraitContract = self.runtimeContract
+  return changed
+end
+
+local function ExpeditionPortraitGuard(frame)
+  UnitFrames:GuardPortraitFrame(frame)
+end
+
+function UnitFrames:InstallPortraitGuard()
+  local expedition = pfUI and pfUI.expedition
+  if not expedition then return false end
+  expedition.unitFramePortraitGuard = ExpeditionPortraitGuard
+  return true
+end
+
+function UnitFrames:RemovePortraitGuard()
+  local expedition = pfUI and pfUI.expedition
+  if
+    expedition and
+    expedition.unitFramePortraitGuard == ExpeditionPortraitGuard
+  then
+    expedition.unitFramePortraitGuard = nil
+    return true
+  end
+  return false
+end
+
+function UnitFrames:ApplyPortraitConfiguration()
+  local unitframes = pfUI_config and pfUI_config.unitframes
+  local frames = pfUI and pfUI.uf and pfUI.uf.frames
+  local backups = self:GetPortraitBackups(true)
+  if type(unitframes) ~= "table" or not backups then return false end
+
+  self:InstallPortraitGuard()
+
+  local configurationChanged = false
+  local configured = 0
+  for _, key in ipairs(PORTRAIT_CONFIG_KEYS) do
+    local config = unitframes[key]
+    if type(config) == "table" then
+      configured = configured + 1
+      if BackupAndDisable(backups, key, config, "portrait", "off") then
+        configurationChanged = true
+      end
+    end
+  end
+
+  if BackupAndDisable(
+    backups,
+    RAID_MARKER_PORTRAIT_KEY,
+    unitframes,
+    RAID_MARKER_PORTRAIT_KEY,
+    "0"
+  ) then
+    configurationChanged = true
+  end
+
+  local refreshed = 0
+  if type(frames) == "table" then
+    for _, frame in pairs(frames) do
+      local markerChanged = self:GuardPortraitFrame(frame)
+      if configurationChanged or markerChanged then
+        if RefreshPortraitFrame(frame) then refreshed = refreshed + 1 end
+      end
+    end
+  end
+
+  local trackers = 0
+  if SetMarkerTrackerPortraits(pfUI and pfUI.raidmarkers, false) then
+    trackers = trackers + 1
+  end
+  if SetMarkerTrackerPortraits(pfUI and pfUI.marktracking, false) then
+    trackers = trackers + 1
+  end
+
+  self.disabledPortraitConfigCount = configured
+  self.refreshedPortraitFrameCount = refreshed
+  self.disabledPortraitTrackerCount = trackers
+  return true
+end
+
+function UnitFrames:RestorePortraitConfiguration()
+  self:RemovePortraitGuard()
+
+  local unitframes = pfUI_config and pfUI_config.unitframes
+  local frames = pfUI and pfUI.uf and pfUI.uf.frames
+  local backups, backupRoot, profileKey = self:GetPortraitBackups(false)
+  local configurationChanged = false
+
+  if type(unitframes) == "table" and type(backups) == "table" then
+    for _, key in ipairs(PORTRAIT_CONFIG_KEYS) do
+      if RestorePortraitValue(
+        backups,
+        key,
+        unitframes[key],
+        "portrait"
+      ) then
+        configurationChanged = true
+      end
+    end
+    if RestorePortraitValue(
+      backups,
+      RAID_MARKER_PORTRAIT_KEY,
+      unitframes,
+      RAID_MARKER_PORTRAIT_KEY
+    ) then
+      configurationChanged = true
+    end
+    if backupRoot then backupRoot[profileKey] = nil end
+  end
+
+  local refreshed = 0
+  if type(frames) == "table" then
+    for _, frame in pairs(frames) do
+      local markerChanged =
+        frame.aeuiPortraitDisabled or
+        frame.aeuiUnitFramePortraitContract
+      frame.aeuiPortraitDisabled = nil
+      frame.aeuiUnitFramePortraitContract = nil
+      if configurationChanged or markerChanged then
+        if RefreshPortraitFrame(frame) then refreshed = refreshed + 1 end
+      end
+    end
+  end
+
+  if type(unitframes) == "table" then
+    local markerPortraitsEnabled =
+      unitframes[RAID_MARKER_PORTRAIT_KEY] ~= "0"
+    SetMarkerTrackerPortraits(
+      pfUI and pfUI.raidmarkers,
+      markerPortraitsEnabled
+    )
+    SetMarkerTrackerPortraits(
+      pfUI and pfUI.marktracking,
+      markerPortraitsEnabled
+    )
+  end
+
+  self.disabledPortraitConfigCount = 0
+  self.refreshedPortraitFrameCount = refreshed
+  self.disabledPortraitTrackerCount = 0
+  return true
+end
+
+function UnitFrames:IsPortraitConfigurationEnabled()
+  return PortraitRouteOwned()
+end
+
 function UnitFrames:IsPrimaryEnabled()
   return
     ModuleEnabled() and
@@ -175,7 +494,10 @@ function UnitFrames:IsRaidEnabled()
 end
 
 function UnitFrames:IsEnabled()
-  return self:IsPrimaryEnabled() or self:IsRaidEnabled()
+  return
+    self:IsPrimaryEnabled() or
+    self:IsRaidEnabled() or
+    self:IsPortraitConfigurationEnabled()
 end
 
 function UnitFrames:ApplyFrame(frame)
@@ -296,8 +618,15 @@ function UnitFrames:Apply()
   local frames = pfUI and pfUI.uf
   local primaryEnabled = self:IsPrimaryEnabled()
   local raidEnabled = self:IsRaidEnabled()
+  local portraitsEnabled = self:IsPortraitConfigurationEnabled()
   local primaryApplied = 0
   local raidApplied = 0
+
+  if portraitsEnabled then
+    self:ApplyPortraitConfiguration()
+  else
+    self:RestorePortraitConfiguration()
+  end
 
   if frames then
     for _, key in ipairs(PRIMARY_FRAME_KEYS) do
@@ -339,9 +668,13 @@ function UnitFrames:GetRuntimeStatus()
     ", enabled=" .. tostring(self:IsEnabled()) ..
     ", primary-bars=" .. tostring(self.appliedFrameCount or 0) .. "/4" ..
     ", raid-shells=" .. tostring(self.appliedRaidFrameCount or 0) .. "/40" ..
+    ", portraits=" .. tostring(self.disabledPortraitConfigCount or 0) ..
+      "/" .. tostring(PORTRAIT_CONFIG_COUNT) ..
+    ", marker-trackers=" ..
+      tostring(self.disabledPortraitTrackerCount or 0) .. "/2" ..
     ", raid-slices=6/62/6" ..
-    ", scope=player,target,targettarget,focus,pfRaid1..40" ..
-    ", fallback=pfui-configured-bars-and-raid-backdrops"
+    ", scope=all-pfui-unitframe-portraits,player,target,targettarget,focus,pfRaid1..40" ..
+    ", fallback=pfui-configured-portraits-bars-and-raid-backdrops"
 end
 
 addon:RegisterModule("UnitFrames", UnitFrames)

@@ -76,7 +76,7 @@ end
 dofile(root .. "/addon/pfUI/api/expedition.lua")
 pfUI:ApplyExpeditionVisualContract()
 
-assert(pfUI.expedition.version == 5)
+assert(pfUI.expedition.version == 6)
 assert(pfUI.expedition.ownership == "scoped-v1")
 assert(pfUI_config.appearance.expedition.ownership == "scoped-v1")
 assert(pfUI_config.appearance.expedition.alpha_floor == nil)
@@ -144,6 +144,7 @@ for _, name in ipairs({
   "unitframes.raid-shell",
   "unitframes.raid-health-fill",
   "unitframes.raid-power-fill",
+  "unitframes.dynamic-portraits",
 }) do
   assert(
     pfUI:GetExpeditionComponentOwner(name) == "unitframes",
@@ -186,6 +187,9 @@ pfUI_config.appearance.expedition.enabled = "0"
 assert(not pfUI:ShouldUseVanillaModule("chatcopy"))
 assert(not pfUI:ShouldUseVanillaSkin("Quest Log"))
 assert(pfUI:GetExpeditionComponentOwner("unitframes.health-fill") == nil)
+assert(
+  pfUI:GetExpeditionComponentOwner("unitframes.dynamic-portraits") == nil
+)
 
 local panelFile = assert(io.open(root .. "/addon/pfUI/modules/panel.lua", "rb"))
 local panelSource = panelFile:read("*a")
