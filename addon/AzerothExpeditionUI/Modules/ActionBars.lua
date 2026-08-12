@@ -4045,7 +4045,7 @@ function ActionBars:ApplyCombatDeckGroup()
 
   local handle = GetGlobal("AutoBarAnchorFrameHandle")
   local bounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
-  if handle and bounds and bounds.count > 0 then
+  if handle then
     self:ApplyConsumableDockPosition(true, bounds)
     self:ApplyAutoBarDragHandlePolicy(true)
   end
@@ -4218,7 +4218,7 @@ function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
     self.consumableDockStatus = enabled and "free" or "disabled"
     return false
   end
-  if not handle or not main or not bounds or bounds.count == 0 then
+  if not handle or not main then
     self.autoBarAnchorBasis = "unavailable"
     self.consumableDockStatus = "unavailable"
     return false
@@ -4243,6 +4243,12 @@ function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
       self.autoBarAnchorBasis = "cached"
       self.consumableDockStatus = "left"
       return true
+    end
+
+    if not bounds or bounds.count == 0 then
+      self.autoBarAnchorBasis = "layout-pending"
+      self.consumableDockStatus = "unavailable"
+      return false
     end
 
     local rightPixels, bottomPixels = ConsumableVisualEdges(bounds)

@@ -2,6 +2,13 @@
 
 ## 当前结论
 
+- 用户于 `2026-08-12` 最新实机复测确认姿态栏与拖拽点已收敛，但 AutoBar 仍留在左上自由坐标。
+  AEUI `0.8.27` 移除 Combat Deck 根绑定对 Button 世界坐标就绪的前置条件；provider
+  `SetupVisual` 返回后始终进入绑定，并优先按 Button 相对真实
+  `AutoBarAnchorFrameHandle` 的本地布局计算偏移，再把 handle 直接相对
+  `pfActionBarMain` 定位。世界坐标只保留为未知 provider 布局的兜底，不再阻止正常
+  AutoBar 进入组合。Lua 语法与 `git diff --check` 通过；当前仍为
+  `runtime-exported / addon-integrated / P5 / pending-game-validation`。
 - 用户于 `2026-08-12` 提供新的 `1408×633 RGB` 战士实机截图（SHA
   `d1a94514…49bb`），确认上一轮修复后 AutoBar 仍飞到左上角，三枚姿态按钮也仍为
   小尺寸。只读 SavedVariables 证据为该角色 Combat Focus profile v14、
