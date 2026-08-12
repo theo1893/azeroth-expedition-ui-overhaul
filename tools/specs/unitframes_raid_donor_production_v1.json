@@ -1,12 +1,18 @@
 {
   "schema": "aeui-unitframes-raid-donor-production-v1",
   "version": "UF-RAID-A2-DONOR V1",
-  "status": "production-draft / simulation-user-confirmation-pending",
+  "status": "production-draft / simulation-confirmed / authorization-pending",
   "production_authorized": false,
   "architecture": {
     "status": "user-selected",
     "statement": "ImageGen only generates rough material donors; Python deterministically constructs exact shell geometry and all four repair differences",
     "simulation_gate": "UF-RAID-A2-SIM-V1",
+    "simulation_confirmation": {
+      "status": "confirmed",
+      "date": "2026-08-12",
+      "accepts_pixels": false,
+      "production_authorized": false
+    },
     "simulation_pixels_may_be_uploaded": false,
     "rejected_a1_pixels_may_be_reused": false
   },
@@ -38,8 +44,10 @@
     "runtime_loaded": false,
     "promoted_directly_to_source": false
   },
-  "prompt_body": "Create from scratch exactly one 1536x1024 RGB material-donor sheet for a 2004-era vanilla World of Warcraft expedition raid UI. This is not a UI mockup and must contain no frame, shell, card, plaque, button, atlas part, status bar or interface geometry. Use pure flat #00FF00 only in the outer gutters and the gap separating four large rectangular material fields. Place exactly four unlabelled, uninterrupted, full-field material paintings at these fixed cells: top-left x64..736 y64..448 is deep soot-walnut salvaged rawhide; top-right x800..1472 y64..448 is quiet matte smoke-brown backing; bottom-left x64..736 y576..960 is dark tarnished umber brass; bottom-right x800..1472 y576..960 is coarse smoke-dark flax thread material. Every fixed inner sample window must be entirely filled by its material with no green, border, edge, shadow, label, divider, object silhouette or embedded ornament: leather x144..656 y112..400; liner x880..1392 y112..400; brass x144..656 y624..912; thread x880..1392 y624..912. Inherit only the references' broad hand-painted bitmap scale, warm upper-left lighting, low-saturation expedition palette, material thickness and low-frequency irregular wear. The leather should resemble reused saddle strap or shield-backing rawhide: uneven smoke stain, blunt scraped grain, broad pigment variation and sparse worn patches, never furniture upholstery. The liner is visually quiet and darker, with broad matte soot variation and no focal mark. The brass is oxidized dark umber, scratched and dull with only short discontinuous warm catches, never bright gold. The thread field shows coarse flax fibre and uneven smoke-dark dye at a broad usable scale, but no already-formed thread, stitch, cord, braid, rope or seam. Keep each field seamless enough for arbitrary deterministic cropping; avoid tiny photographic noise, repeated tile motifs and high-frequency pores. Do not draw stitches, rivets, patches, notches, cuts, repairs, piping, embossing, tooling, lacing, labels, grids or measurements: Python constructs all exact geometry and A/B/C/D repair masks later. No pages, books, wax seals, dragons, skulls, spikes, gems, runes, Diablo-style black iron, modern flat UI, glass, neon, regular industrial bevels, mirrored decoration, product swatch cards or photoreal antique photography. No text of any kind.",
+  "prompt_body": "Create from scratch exactly one 1536x1024 RGB material-donor sheet for a 2004-era vanilla World of Warcraft expedition raid UI. This is not a UI mockup and must contain no frame, shell, card, plaque, button, atlas part, status bar or interface geometry. Use pure flat #00FF00 only in the outer gutters and the gap separating four large rectangular material fields. Place exactly four unlabelled, uninterrupted, full-field material paintings at these fixed cells: top-left x64..736 y64..448 is deep soot-walnut salvaged rawhide; top-right x800..1472 y64..448 is quiet matte smoke-brown backing; bottom-left x64..736 y576..960 is dark tarnished umber brass; bottom-right x800..1472 y576..960 is coarse smoke-dark flax thread material. Every fixed inner sample window must be entirely filled by its material with no green, border, edge, shadow, label, divider, object silhouette or embedded ornament: leather x144..656 y112..400; liner x880..1392 y112..400; brass x144..656 y624..912; thread x880..1392 y624..912. Inherit only the references' broad hand-painted bitmap scale, warm upper-left lighting, low-saturation expedition palette, material thickness and low-frequency irregular wear. The leather should resemble reused saddle strap or shield-backing rawhide: uneven smoke stain, blunt scraped grain, broad pigment variation and sparse worn patches, never furniture upholstery. The liner is visually quiet and darker, with broad matte soot variation and no focal mark. The brass is oxidized dark umber, scratched and dull with only short discontinuous warm catches, never bright gold. The thread field shows coarse flax fibre and uneven smoke-dark dye at a broad usable scale, but no already-formed thread, stitch, cord, braid, rope or seam. Keep each field seamless enough for arbitrary deterministic cropping; avoid tiny photographic noise, repeated tile motifs and high-frequency pores. The written requirements outrank both input images. Use Image 1 only for its circa-2004 broad hand-painted bitmap scale, warm upper-left light, apparent material thickness and low-frequency handmade wear; ignore its book, page, spine, dragon, complete-frame geometry and every object layout. Use Image 2 only for deep-walnut tonal depth, restrained smoke-brown pigment, rough handmade paint and dull oxidized brass response; ignore its book construction, every UI contour and every object layout. Do not copy pixels or shapes from either input. Do not use any simulation image or rejected A1 candidate as a reference or edit input. Do not draw stitches, rivets, patches, notches, cuts, repairs, piping, embossing, tooling, lacing, labels, grids or measurements: Python constructs all exact geometry and A/B/C/D repair masks later. No pages, books, wax seals, dragons, skulls, spikes, gems, runes, Diablo-style black iron, modern flat UI, glass, neon, regular industrial bevels, mirrored decoration, product swatch cards or photoreal antique photography. No text of any kind. Before returning, verify visibly: exactly one 1536 by 1024 RGB donor sheet; exactly four uninterrupted unlabelled material fields in the fixed cells; every fixed sample window is completely material-filled; pure #00FF00 appears only in the outer gutters and central gaps; no frame, shell, UI geometry, formed repair object, text, label or measurement is present.",
   "prompt_completeness": {
+    "audit_date": "2026-08-12",
+    "result": "pass-final",
     "global_baseline_translated": true,
     "module_identity_translated": true,
     "real_object_count_and_canvas_explicit": true,
@@ -49,7 +57,8 @@
     "dynamic_content_excluded": true,
     "negative_constraints_explicit": true,
     "reference_roles_and_ignored_geometry_explicit": true,
-    "postprocess_and_runtime_boundary_explicit": true
+    "postprocess_and_runtime_boundary_explicit": true,
+    "unknown_execution_critical_values": []
   },
   "deterministic_consumer": {
     "script": "tools/build_unitframes_raid_donor_shells_v1.py",
@@ -73,8 +82,19 @@
       "attempts_used": 0,
       "attempts_remaining": 5,
       "process_errors": 0,
-      "next_operation": "wait for explicit UF-RAID-A2-SIM-V1 user confirmation and separate exact production authorization"
+      "next_operation": "wait for separate explicit authorization of exact UF-RAID-A2-DONOR V1; simulation confirmation alone does not authorize ImageGen"
     }
+  },
+  "authorization_request": {
+    "status": "not-yet-granted",
+    "exact_version": "UF-RAID-A2-DONOR V1",
+    "fixed_executor": "imagegen-0-143-0 / @openai/codex@0.143.0",
+    "attempt_1_inputs": "fixed SHA Image 1 and Image 2; no Image 3",
+    "later_edit_input": "only the immediately previous output from this same donor loop inside the frozen four-material repair boundary",
+    "maximum_actual_imagegen_calls": 5,
+    "process_errors_count_toward_limit": false,
+    "deterministic_postprocess": "fixed sample-window crop, exact Python shell construction, transparent RGB clearing, 592x296 source, 74x37 runtime, 6/62/6 three-slice, A-D repair masks and forty-member real-layout preview",
+    "does_not_authorize": "candidate acceptance, source promotion, addon export, Turtle WoW P6 or cleanup"
   },
   "forbidden_before_authorization": [
     "any imagegen-0-143-0 call",

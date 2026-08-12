@@ -153,13 +153,18 @@ def main() -> None:
     donor_simulation = json.loads(DONOR_SIMULATION.read_text(encoding="utf-8"))
     assert donor_simulation["schema"] == "aeui-unitframes-raid-donor-simulation-v1"
     assert donor_simulation["version"] == "UF-RAID-A2-SIM-V1"
-    assert donor_simulation["status"] == (
-        "simulation-reviewed / user-confirmation-pending"
-    )
+    assert donor_simulation["status"] == "simulation-confirmed"
     decision = donor_simulation["architecture_decision"]
     assert decision["status"] == "user-selected"
     assert decision["authorizes_imagegen"] is False
     assert "material donors" in decision["statement"]
+    confirmation = donor_simulation["user_confirmation"]
+    assert confirmation["status"] == "confirmed"
+    assert confirmation["date"] == "2026-08-12"
+    assert confirmation["statement"] == "确认UF-RAID-A2-SIM-V1"
+    assert confirmation["accepts_simulation_pixels"] is False
+    assert confirmation["production_authorized"] is False
+    assert len(confirmation["accepted_visible_direction"]) == 8
     donor_provider = donor_simulation["provider"]
     assert donor_provider["maxraid"] == 40
     assert donor_provider["frame"] == [70, 33]
@@ -206,19 +211,39 @@ def main() -> None:
     assert donor_production["schema"] == "aeui-unitframes-raid-donor-production-v1"
     assert donor_production["version"] == "UF-RAID-A2-DONOR V1"
     assert donor_production["status"] == (
-        "production-draft / simulation-user-confirmation-pending"
+        "production-draft / simulation-confirmed / authorization-pending"
     )
     assert donor_production["production_authorized"] is False
+    assert donor_production["architecture"]["simulation_confirmation"] == {
+        "status": "confirmed",
+        "date": "2026-08-12",
+        "accepts_pixels": False,
+        "production_authorized": False,
+    }
     assert donor_production["output_contract"]["image_count"] == 1
     assert donor_production["output_contract"]["runtime_loaded"] is False
-    assert all(donor_production["prompt_completeness"].values())
+    completeness = donor_production["prompt_completeness"]
+    assert completeness["result"] == "pass-final"
+    assert completeness["unknown_execution_critical_values"] == []
+    for key, value in completeness.items():
+        if key not in {"audit_date", "result", "unknown_execution_critical_values"}:
+            assert value is True, key
     assert "Python constructs all exact geometry" in donor_production["prompt_body"]
+    assert "Use Image 1 only" in donor_production["prompt_body"]
+    assert "Use Image 2 only" in donor_production["prompt_body"]
+    assert "Do not use any simulation image" in donor_production["prompt_body"]
+    assert "Before returning, verify visibly" in donor_production["prompt_body"]
     assert "No text of any kind" in donor_production["prompt_body"]
     donor_loop = donor_production["repair_loop"]
     assert donor_loop["maximum_actual_imagegen_calls"] == 5
     assert donor_loop["process_errors_count_toward_limit"] is False
     assert donor_loop["execution_state"]["attempts_used"] == 0
     assert donor_loop["execution_state"]["attempts_remaining"] == 5
+    authorization_request = donor_production["authorization_request"]
+    assert authorization_request["status"] == "not-yet-granted"
+    assert authorization_request["exact_version"] == "UF-RAID-A2-DONOR V1"
+    assert authorization_request["maximum_actual_imagegen_calls"] == 5
+    assert authorization_request["process_errors_count_toward_limit"] is False
 
     sys.path.insert(0, str(ROOT / "tools"))
     from build_unitframes_raid_donor_shells_v1 import (  # noqa: PLC0415
@@ -394,6 +419,9 @@ def main() -> None:
         "UF-RAID-A2-SIM-V1",
         "ImageGen material donor only + Python deterministic shell",
         "production_authorized=false",
+        "确认UF-RAID-A2-SIM-V1",
+        "UF-RAID-A2-DONOR V1` 正文完整性复检",
+        "当前授权状态：`not-yet-granted`",
     ):
         assert clause in work, f"raid work record missing: {clause}"
 
@@ -407,6 +435,7 @@ def main() -> None:
     assert "UF-RAID-SIM-V1" in progress
     assert "UF-RAID-A1 V1 final" in progress
     assert "UF-RAID-A2-SIM-V1" in progress
+    assert "simulation-confirmed" in progress
     assert "模型供材、Python 造壳" in submodule_art
     assert "build_unitframes_raid_donor_shells_v1.py" in submodules
     assert "docs/modules/unitframes/work/UNITFRAMES.RAID.md" in agents

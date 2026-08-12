@@ -18,10 +18,11 @@
 - 用户于 `2026-08-12` 选择新的 `UF-RAID-A2` 架构：ImageGen 未来只生成四块
   粗粝材质 donor，Python 独占精确外壳几何、Alpha、`592×296 → 74×37`、
   `48/496/48 → 6/62/6` 三切片及 A/B/C/D 四种维修差异。当前
-  `UF-RAID-A2-SIM-V1` 为
-  `P2 / simulation-reviewed / user-confirmation-pending / ImageGen 0/0`；展示
-  区域 `7/7 pass`、violations `0`。production donor 未授权，没有 source、
-  runtime 或 addon 变更。
+  `UF-RAID-A2-SIM-V1` 已由用户于 `2026-08-12` 明确确认，当前为
+  `P2 / simulation-confirmed / production-authorization-pending / ImageGen 0/0`；
+  展示区域 `7/7 pass`、violations `0`。确认只冻结真实 40 人编队、无共享
+  外框、`2px` 夹边、A-D 精确维修位置、低饱和材料层级和动态层序，不接受
+  模拟像素。production donor 未授权，没有 source、runtime 或 addon 变更。
 - 当前只处理资源重绘与精确媒体替换。B1 已接入 addon；没有修改另一台设备上
   的 Frame 位置、尺寸、点击、事件、数值、颜色逻辑或其他功能。
 - 用户于 `2026-08-11` 接受“每个角色生成完整外壳，Python 负责精确工程化”
@@ -100,6 +101,9 @@
 - A2 scene SHA `5697dcbb…5932`，review SHA `ff2467d3…0f95`，source preview SHA
   `ce084d35…0205`。模拟使用固定 seed 的本地占位材质，只确认几何、维修位置、
   运行时密度与动态层序；不确认材质笔触或任何模拟像素。ImageGen `0/0`。
+- 用户于 `2026-08-12` 原文确认 `UF-RAID-A2-SIM-V1`。已把上述可见结论写入
+  `UF-RAID-A2-DONOR V1` 的最终执行正文并重新完成 `pass-final` 完整性审计；
+  当前 production 授权仍为 `false`，实际 ImageGen `0/5`。
 
 ## 展示区域门禁
 
@@ -123,7 +127,7 @@
   `repair-budget-exhausted / candidate-rejected`，禁止第六次。
 - Raid A2 是新架构而不是 A1 attempt 6。未来 `UF-RAID-A2-DONOR V1` 只有一段
   donor 正文，最多 `5` 次实际 ImageGen，当前 `0/5` 且
-  `production_authorized=false`；用户确认模拟后仍需单独精确授权。
+  `production_authorized=false`；模拟已确认，仍需单独精确授权。
 - 三段 final 已吸收用户确认的可见结论并通过 `pass-final` 自包含预检；
   正式生产授权已独立取得，按 A→B→B1 顺序执行。
 - 流程错误无生成证据时单独记录，不占额度。旧 V1／V2 失败像素禁止作为新段
@@ -253,10 +257,10 @@
 
 ## 下一门禁
 
-Raid 的原 A1 合同已经终止，下一门禁不是 attempt 6。当前等待用户确认或拒绝
-`UF-RAID-A2-SIM-V1` 的精确几何、四种维修位置、40 人密度与动态层序。确认
-模拟不会自动授权生图；之后仍须单独授权 `UF-RAID-A2-DONOR V1`，才可调用
-固定 `imagegen-0-143-0`。未授权前禁止生成 donor、source/runtime 或接入 addon。
+Raid 的原 A1 合同已经终止，下一门禁不是 attempt 6。`UF-RAID-A2-SIM-V1`
+已经确认；当前等待用户在审阅最终正文、固定 Image 1／2、同循环紧邻前稿
+边界和最多五次实际生图预算后，单独授权精确 `UF-RAID-A2-DONOR V1`。未授权
+前固定 `imagegen-0-143-0` 仍禁止调用，也不能生成 source/runtime 或接入 addon。
 
 B1 下一门禁是 Turtle WoW `1.18.1` P6：验证 TGA 方向、Player／Target／
 TargetTarget／Focus 的生命与 Mana／Rage／Focus／Energy 乘色、低血量裁切、

@@ -1,7 +1,7 @@
 {
   "schema": "aeui-unitframes-raid-donor-simulation-v1",
   "version": "UF-RAID-A2-SIM-V1",
-  "status": "simulation-reviewed / user-confirmation-pending",
+  "status": "simulation-confirmed",
   "upstream_direction": {
     "version": "UF-RAID-SIM-V1",
     "status": "simulation-confirmed",
@@ -22,6 +22,35 @@
     "statement": "ImageGen only generates rough material donors; Python deterministically constructs exact shell geometry and all four repair differences",
     "accepts_simulation_pixels": false,
     "authorizes_imagegen": false
+  },
+  "user_confirmation": {
+    "status": "confirmed",
+    "date": "2026-08-12",
+    "statement": "确认UF-RAID-A2-SIM-V1",
+    "accepts_simulation_pixels": false,
+    "production_authorized": false,
+    "accepted_visible_direction": [
+      "forty real pfRaid buttons retain the 10x4 VERTICAL layout and 767x159 formation envelope",
+      "no shared outer raid frame, book border, metal panel or decorative background",
+      "each member uses one exact 74x37 shell behind the unchanged 70x33 Secure Button content",
+      "the runtime shell exposes an approximately two-pixel hand-cut deep-walnut edge around quiet smoke-brown backing",
+      "A-D retain the exact deterministic silhouette and repair-mask identities recorded in this specification",
+      "the 48/496/48 source partition keeps every unique repair inside fixed end caps and leaves the centre quiet",
+      "visual weight comes from the full low-saturation forty-member formation rather than thick individual cards",
+      "names, health, power, auras, raid glyphs, range, offline, aggro, hover and resurrection retain the reviewed dynamic z-order"
+    ],
+    "non_authoritative_after_confirmation": [
+      "all synthetic simulation pixels",
+      "final donor brushwork, microtexture and exact colour variation",
+      "final antialiasing, TGA orientation and target-client rendering"
+    ],
+    "confirmation_invalidated_by": [
+      "changing the forty-member layout or shared-frame decision",
+      "changing the shell metaphor, visible rim weight or A-D repair identities",
+      "changing the material hierarchy, palette role or dynamic z-order",
+      "moving a repair out of a fixed end cap or baking live provider content"
+    ],
+    "next_gate": "explicit authorization of UF-RAID-A2-DONOR V1 after reviewing its final execution body and five-call repair envelope"
   },
   "provider": {
     "maxraid": 40,
@@ -225,6 +254,6 @@
     "review_sha256": "ff2467d3271dd78331d01db7864128ad3ed57176b8c3498b6da5f08cb1000f95",
     "display_report_sha256": "ddb3fc51b7c3ef2e1590ecc145b4668ed3d23c5e627600dfa2d0a424a8ce6dd0",
     "production_authorized": false,
-    "next_gate": "user confirms or rejects UF-RAID-A2-SIM-V1; a confirmation still does not authorize ImageGen"
+    "next_gate": "simulation confirmed; wait for separate explicit authorization of UF-RAID-A2-DONOR V1; ImageGen remains forbidden"
   }
 }
