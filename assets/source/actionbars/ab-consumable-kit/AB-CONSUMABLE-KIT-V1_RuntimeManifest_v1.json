@@ -560,11 +560,11 @@
   "addon_entrypoints": {
     "bootstrap": {
       "file": "addon/AzerothExpeditionUI/Core/Bootstrap.lua",
-      "sha256": "417592bc9cf6d18b546c0128e1b29045cbc80aaa46524205cf3fa40d509eb4f5"
+      "sha256": "4e4014424d5b683ac1c4f6234d6d9014b5e15cfc1d09de8bb146af5d118f623c"
     },
     "toc": {
       "file": "addon/AzerothExpeditionUI/AzerothExpeditionUI.toc",
-      "sha256": "1e2f05e62c17b2b40dae737a370005858143bdad95fed44d59b72ea25c2d9a45"
+      "sha256": "b5eac8ca3e8642e27cf691e22203981817539bab1e03791cfd96d97cb10bf8b3"
     },
     "addon_version": "0.8.24",
     "required_dependency": "pfUI",
@@ -598,8 +598,8 @@
     "surrounding_pixels": "accepted AB.SLOT/AB.RAIL runtime plus deterministic provider content; no simulation pixel is runtime input"
   },
   "package_validation": {
-    "report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/addon-package-report.json",
-    "report_sha256": "a6a4ec74fc50859718614ece98f278a0af9ab54859df7555c2a6c0adf72c16b9",
+    "report": "generated/integration/remote-main-merge/addon-package-report.json",
+    "report_sha256": "e1ca9054cd0a86031641212318804bbbee55a01ecc2cac7649ca658aa3c30a35",
     "status": "pass",
     "violations": 0,
     "build_required_on_target_device": false

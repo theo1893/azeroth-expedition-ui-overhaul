@@ -1,0 +1,117 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "UF-PRIMARY/V4-SIM.V1/deterministic-complete-shell-architecture",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, 100%-UI-pixels",
+  "evidence": {
+    "provider": "pfUI.uf:UpdateFrameSize + f.hp.bar + f.power.bar",
+    "provider_files": [
+      "addon/pfUI/api/unitframes.lua",
+      "addon/pfUI/api/ui-widgets.lua",
+      "addon/pfUI/env/profiles.lua"
+    ],
+    "simulation_spec": "tools/specs/unitframes_primary_v4_simulation_v1.json",
+    "simulation": "generated/unitframes/primary/simulation/V4/unitframes-primary-v4-sim-v1.scene.png",
+    "direction_only": true,
+    "final_runtime": false,
+    "screen_placement_authoritative": false,
+    "resource_dimensions_authoritative": true
+  },
+  "atlas": {
+    "size": [214, 84],
+    "visible_bbox": [0, 0, 214, 84],
+    "require_exact_visible_coverage": false,
+    "sampled_regions": [
+      {"id": "player-complete-shell", "box": [0, 0, 214, 42]},
+      {"id": "target-complete-shell", "box": [0, 42, 214, 84]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 32, "right": 32, "top": 6, "bottom": 6},
+    "minimum_frame_size": [65, 13]
+  },
+  "scenarios": [
+    {
+      "id": "player-mana-standard",
+      "frame": [214, 42],
+      "preview_frame": [214, 42],
+      "zones": {"content-safe": [7, 6, 207, 36], "interaction-safe": [7, 6, 207, 36]},
+      "regions": [
+        {"id": "player.hp", "kind": "statusbar-health-material", "box": [7, 6, 207, 31], "zone": "content-safe"},
+        {"id": "player.mana", "kind": "statusbar-power-material", "box": [7, 32, 207, 36], "zone": "content-safe"},
+        {"id": "player.text-left", "kind": "fontstring", "box": [12, 10, 102, 27], "zone": "content-safe"},
+        {"id": "player.text-right", "kind": "fontstring", "box": [112, 10, 202, 27], "zone": "content-safe"},
+        {"id": "player.button", "kind": "button-hitbox", "box": [7, 6, 207, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "player-rage-standard",
+      "frame": [214, 42],
+      "preview_frame": [214, 42],
+      "zones": {"content-safe": [7, 6, 207, 36], "interaction-safe": [7, 6, 207, 36]},
+      "regions": [
+        {"id": "player.hp", "kind": "statusbar-health-material", "box": [7, 6, 207, 31], "zone": "content-safe"},
+        {"id": "player.rage", "kind": "statusbar-power-material", "box": [7, 32, 207, 36], "zone": "content-safe"},
+        {"id": "player.button", "kind": "button-hitbox", "box": [7, 6, 207, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "player-focus-standard",
+      "frame": [214, 42],
+      "preview_frame": [214, 42],
+      "zones": {"content-safe": [7, 6, 207, 36], "interaction-safe": [7, 6, 207, 36]},
+      "regions": [
+        {"id": "player.hp", "kind": "statusbar-health-material", "box": [7, 6, 207, 31], "zone": "content-safe"},
+        {"id": "player.focus", "kind": "statusbar-power-material", "box": [7, 32, 207, 36], "zone": "content-safe"},
+        {"id": "player.button", "kind": "button-hitbox", "box": [7, 6, 207, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "player-energy-standard",
+      "frame": [214, 42],
+      "preview_frame": [214, 42],
+      "zones": {"content-safe": [7, 6, 207, 36], "interaction-safe": [7, 6, 207, 36]},
+      "regions": [
+        {"id": "player.hp", "kind": "statusbar-health-material", "box": [7, 6, 207, 31], "zone": "content-safe"},
+        {"id": "player.energy", "kind": "statusbar-power-material", "box": [7, 32, 207, 36], "zone": "content-safe"},
+        {"id": "player.button", "kind": "button-hitbox", "box": [7, 6, 207, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "target-rage-aggro-standard",
+      "frame": [214, 42],
+      "preview_frame": [214, 42],
+      "zones": {"content-safe": [7, 6, 207, 36], "interaction-safe": [7, 6, 207, 36]},
+      "regions": [
+        {"id": "target.hp", "kind": "statusbar-health-material", "box": [7, 6, 207, 31], "zone": "content-safe"},
+        {"id": "target.rage", "kind": "statusbar-power-material", "box": [7, 32, 207, 36], "zone": "content-safe"},
+        {"id": "target.text-left", "kind": "fontstring", "box": [12, 10, 112, 27], "zone": "content-safe"},
+        {"id": "target.text-right", "kind": "fontstring", "box": [142, 10, 202, 27], "zone": "content-safe"},
+        {"id": "target.button", "kind": "button-hitbox", "box": [7, 6, 207, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "player-variable-w160",
+      "frame": [174, 42],
+      "preview_frame": [174, 42],
+      "zones": {"content-safe": [7, 6, 167, 36], "interaction-safe": [7, 6, 167, 36]},
+      "regions": [
+        {"id": "player.hp", "kind": "statusbar-health-material", "box": [7, 6, 167, 31], "zone": "content-safe"},
+        {"id": "player.power", "kind": "statusbar-power-material", "box": [7, 32, 167, 36], "zone": "content-safe"},
+        {"id": "player.text", "kind": "fontstring", "box": [12, 10, 162, 27], "zone": "content-safe"},
+        {"id": "player.button", "kind": "button-hitbox", "box": [7, 6, 167, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "target-variable-w240",
+      "frame": [254, 42],
+      "preview_frame": [254, 42],
+      "zones": {"content-safe": [7, 6, 247, 36], "interaction-safe": [7, 6, 247, 36]},
+      "regions": [
+        {"id": "target.hp", "kind": "statusbar-health-material", "box": [7, 6, 247, 31], "zone": "content-safe"},
+        {"id": "target.power", "kind": "statusbar-power-material", "box": [7, 32, 247, 36], "zone": "content-safe"},
+        {"id": "target.text", "kind": "fontstring", "box": [12, 10, 242, 27], "zone": "content-safe"},
+        {"id": "target.button", "kind": "button-hitbox", "box": [7, 6, 247, 36], "zone": "interaction-safe"}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,402 @@
+{
+  "schema": "aeui-unitframes-raid-a2-source-manifest-v1",
+  "schema_version": 1,
+  "module": "unitframes",
+  "batch": "UF-RAID-A2-DONOR V1",
+  "components": [
+    "UF.RAID.MEMBER.SHELL.A",
+    "UF.RAID.MEMBER.SHELL.B",
+    "UF.RAID.MEMBER.SHELL.C",
+    "UF.RAID.MEMBER.SHELL.D"
+  ],
+  "status": "accepted-source",
+  "phase": "P4",
+  "accepted_on": "2026-08-12",
+  "user_acceptance": {
+    "exact_statement": "接受 UF-RAID-A2-DONOR V1 attempt 5 的运行时视觉，并授权 sample-window-only 确定性合同例外进入 P4/P5；仅豁免未消费外围 field bbox 的最大 19px 偏差，其余固定 sample window、Python 外壳、A–D 维修、透明清理、592×296 source、74×37 runtime、6/62/6 三切片及 40 人排版合同保持不变。",
+    "accepts_exact_attempt": 5,
+    "accepts_runtime_visual": true,
+    "exception_scope": "unused outer field bbox only; maximum deviation 19px",
+    "sample_windows_accepted": true,
+    "outer_field_pixels_accepted": false,
+    "p4_p5_authorized": true
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "codex_package": "@openai/codex@0.143.0",
+    "session_id": "019ff547-a187-70d2-b123-f6b2960ae9eb",
+    "provider_result": "ig_08662f5db7697b89016a7c3ba4bae08191a3c895ac74d50469",
+    "provider_raw_path": "generated/unitframes/raid/A2/DONOR-V1/attempt-05/uf-raid-a2-donor-v1-attempt-05.provider-native-01.png",
+    "provider_raw_sha256": "dad020c26b772a26b856688bc0f5c4cf804b5d0f0ff932846feb37a701a6f159",
+    "technical_report_sha256": "9018df186f4710fa90156b6001a93326630a4b0894287262b97e5374fc3ee5e6",
+    "prompt_version": "UF-RAID-A2-DONOR V1.r4",
+    "prompt_body_sha256": "ed3ec1599512a5b6c42695334bc1466e560ac010b428b3261f4503fba30bb078",
+    "prompt": "docs/modules/unitframes/work/UNITFRAMES.RAID.md",
+    "actual_imagegen_calls": 5,
+    "remaining_imagegen_calls": 0,
+    "process_errors": 2,
+    "sixth_call_forbidden": true
+  },
+  "sample_window_exception": {
+    "strict_outer_field_gate": "failed; maximum bbox deviation 19px",
+    "consumed_sample_windows": "4/4 pass; zero dominant-green pixels",
+    "promotion_rule": "only the four fixed 512x288 crops are persisted",
+    "raw_donor_promoted": false,
+    "unconsumed_outer_field_promoted": false,
+    "crop_coordinates_frozen": true
+  },
+  "accepted_material_samples": {
+    "leather": {
+      "file": "assets/source/unitframes/raid-a2/RaidMaterialLeather_SampleV1.png",
+      "sha256": "2f0ed03df83aa0ced730681670191dee7e1b3079324f9e11a02f7c55626cc41e",
+      "size": [
+        512,
+        288
+      ],
+      "mode": "RGB",
+      "raw_sample_window": [
+        144,
+        112,
+        656,
+        400
+      ],
+      "role": "deep soot-walnut salvaged rawhide for the thin shell rim and C leather patch",
+      "visible_green_spill_pixels": 0
+    },
+    "liner": {
+      "file": "assets/source/unitframes/raid-a2/RaidMaterialLiner_SampleV1.png",
+      "sha256": "8204723f74f63618ba55fef87932288c74588e1c2784e4e780550f49a4d27ef8",
+      "size": [
+        512,
+        288
+      ],
+      "mode": "RGB",
+      "raw_sample_window": [
+        880,
+        112,
+        1392,
+        400
+      ],
+      "role": "quiet matte smoke-brown backing revealed beneath live status bars",
+      "visible_green_spill_pixels": 0
+    },
+    "brass": {
+      "file": "assets/source/unitframes/raid-a2/RaidMaterialBrass_SampleV1.png",
+      "sha256": "f55657bb6473d754a3e480f8418ebd44590f72bd6c23072633dc95e6b3406c27",
+      "size": [
+        512,
+        288
+      ],
+      "mode": "RGB",
+      "raw_sample_window": [
+        144,
+        624,
+        656,
+        912
+      ],
+      "role": "dark tarnished umber brass for B rivet and D repair only",
+      "visible_green_spill_pixels": 0
+    },
+    "thread": {
+      "file": "assets/source/unitframes/raid-a2/RaidMaterialThread_SampleV1.png",
+      "sha256": "86699161afb11d77de19e69781ba93862a538e42b16ec1da698341ba49a2e3a1",
+      "size": [
+        512,
+        288
+      ],
+      "mode": "RGB",
+      "raw_sample_window": [
+        880,
+        624,
+        1392,
+        912
+      ],
+      "role": "coarse smoke-dark flax thread material for A and C repair masks",
+      "visible_green_spill_pixels": 0
+    }
+  },
+  "shell_sources": {
+    "A": {
+      "component": "UF.RAID.MEMBER.SHELL.A",
+      "file": "assets/source/unitframes/raid-a2/RaidMemberShellA_MasterV1.png",
+      "sha256": "1d8b155fc6aaad7bcdc08be176d059bcc42682bdda613110fe08e71a05db887d",
+      "metrics": {
+        "size": [
+          592,
+          296
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "de90de7ec966ead1ed316d3849cab028f64352772cbb96f3b467c849cd268541",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          592,
+          296
+        ],
+        "transparent_pixels": 6453,
+        "partially_transparent_pixels": 86,
+        "opaque_pixels": 168693,
+        "visible_green_spill_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      }
+    },
+    "B": {
+      "component": "UF.RAID.MEMBER.SHELL.B",
+      "file": "assets/source/unitframes/raid-a2/RaidMemberShellB_MasterV1.png",
+      "sha256": "f5f3e6b9321b79633e7cf25c9df81a01999ecefae652ed5f253823499b17a49d",
+      "metrics": {
+        "size": [
+          592,
+          296
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "57dfb08843e632310d671135867a02ce8c8e853b6050cd0d5e403d2fea740b50",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          592,
+          296
+        ],
+        "transparent_pixels": 6386,
+        "partially_transparent_pixels": 0,
+        "opaque_pixels": 168846,
+        "visible_green_spill_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      }
+    },
+    "C": {
+      "component": "UF.RAID.MEMBER.SHELL.C",
+      "file": "assets/source/unitframes/raid-a2/RaidMemberShellC_MasterV1.png",
+      "sha256": "9c18594308e6923c2712cb90dd78eb9d61788abe4f53c5deed6821274a73f393",
+      "metrics": {
+        "size": [
+          592,
+          296
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "c23591113c93d98820d9bf4e6142f13737ddc64d6dc743b6cad94457b820830c",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          592,
+          296
+        ],
+        "transparent_pixels": 6392,
+        "partially_transparent_pixels": 0,
+        "opaque_pixels": 168840,
+        "visible_green_spill_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      }
+    },
+    "D": {
+      "component": "UF.RAID.MEMBER.SHELL.D",
+      "file": "assets/source/unitframes/raid-a2/RaidMemberShellD_MasterV1.png",
+      "sha256": "181c5757c32d8a9587ef1ce1749c6cc34c8553871a6e19e047694a5f26d5ec1a",
+      "metrics": {
+        "size": [
+          592,
+          296
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "96892b18238e58c34737f8260379fa4f78993f9c908a0ce694b333e778c27b8d",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          592,
+          296
+        ],
+        "transparent_pixels": 6434,
+        "partially_transparent_pixels": 0,
+        "opaque_pixels": 168798,
+        "visible_green_spill_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      }
+    }
+  },
+  "deterministic_builder": {
+    "tool": "tools/build_unitframes_raid_donor_shells_v1.py",
+    "normalized_source": [
+      592,
+      296
+    ],
+    "provider_inset": [
+      16,
+      16,
+      576,
+      280
+    ],
+    "quiet_name_zone": [
+      40,
+      48,
+      552,
+      232
+    ],
+    "source_three_slice": [
+      48,
+      496,
+      48
+    ],
+    "runtime_three_slice": [
+      6,
+      62,
+      6
+    ],
+    "variant_order": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "repairs": {
+      "coordinate_system": "top-left-origin, right-bottom-exclusive, source pixels",
+      "A": {
+        "upper_left_notch": [
+          15,
+          0,
+          44,
+          14
+        ],
+        "lower_right_threads": [
+          547,
+          270,
+          590,
+          296
+        ]
+      },
+      "B": {
+        "right_rivet": [
+          576,
+          67,
+          590,
+          82
+        ],
+        "lower_right_rub": [
+          544,
+          240,
+          592,
+          296
+        ]
+      },
+      "C": {
+        "left_rawhide_patch": [
+          0,
+          89,
+          35,
+          212
+        ],
+        "left_thread_repairs": [
+          12,
+          96,
+          30,
+          207
+        ]
+      },
+      "D": {
+        "right_brass_patch": [
+          572,
+          88,
+          592,
+          166
+        ],
+        "lower_left_split": [
+          23,
+          280,
+          50,
+          292
+        ]
+      }
+    },
+    "generative_postprocess": false
+  },
+  "visual_authority": {
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/unitframes/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/unitframes/SUBMODULE_ART_BASELINES.md#ufraidmembershella-d",
+    "component_contract": "docs/modules/unitframes/SUBMODULES.md",
+    "locked_references": [
+      "assets/locked/chat/聊天框视觉基准_v1.png",
+      "assets/locked/chat/聊天框独立艺术资源_v3.png"
+    ],
+    "simulation_pixels_are_authority": false,
+    "rejected_a1_pixels_are_authority": false
+  },
+  "runtime_mapping": {
+    "provider": "pfRaid1..pfRaid40",
+    "slot_assignment": [
+      "A",
+      "C",
+      "B",
+      "D",
+      "D",
+      "B",
+      "A",
+      "C",
+      "B",
+      "D",
+      "C",
+      "A",
+      "C",
+      "A",
+      "D",
+      "B",
+      "A",
+      "D",
+      "B",
+      "C",
+      "B",
+      "C",
+      "A",
+      "D",
+      "D",
+      "A",
+      "C",
+      "B",
+      "C",
+      "B",
+      "D",
+      "A",
+      "A",
+      "C",
+      "D",
+      "B",
+      "D",
+      "B",
+      "C",
+      "A"
+    ],
+    "runtime_repeat_count": 40,
+    "provider_button": [
+      70,
+      33
+    ],
+    "runtime_shell": [
+      74,
+      37
+    ],
+    "height_mismatch": "fail-open to pfUI"
+  },
+  "forbidden_runtime_uses": [
+    "load the attempt-5 raw donor or material sample PNGs from Lua",
+    "consume pixels outside the four fixed sample windows",
+    "bake names, values, colours, auras, raid glyphs or state into shell art",
+    "change Secure Button geometry, hitboxes, roster, events or SavedVariables",
+    "vertically stretch the shell when provider height differs from 33px"
+  ],
+  "export_contract": {
+    "status": "runtime-exported",
+    "tool": "tools/build_unitframes_raid_a2_runtime.py",
+    "runtime_manifest": "assets/source/unitframes/raid-a2/UF-RAID-A2_RuntimeManifest_v1.json",
+    "operation": "whole-source LANCZOS 592x296 to 74x37, transparent RGB clear, four independent 32-bit RGBA TGA files, 6/62/6 UV slices"
+  },
+  "review_evidence": {
+    "source_preview": "generated/unitframes/raid/A2/runtime/source-preview.png",
+    "source_preview_sha256": "26dbb0b71dfeb993f36a491ac4a28848e0c6e9ba6a6706d1daea966d0bb1c92e",
+    "real_layout_scene": "generated/unitframes/raid/A2/runtime/real-layout-scene.png",
+    "real_layout_scene_sha256": "fa4fcf2ac59cf8a70c36acce79ac060596636fddfa0c20d5d88ce4ab30b1bf72",
+    "real_layout_review": "generated/unitframes/raid/A2/runtime/real-layout-review.png",
+    "real_layout_review_sha256": "8bbf747ee52952a524be0097b829d49d55338f3faaf5ffad06624413c63647ea",
+    "display_region_report": "generated/unitframes/raid/A2/runtime/display-region-report.json",
+    "display_region_report_sha256": "9246a321024a595b26a618b935cff42b514103c2e504ae85bf2a0992bdae22b8",
+    "display_region_status": "pass"
+  }
+}

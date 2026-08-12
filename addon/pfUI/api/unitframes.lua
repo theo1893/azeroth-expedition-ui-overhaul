@@ -742,7 +742,12 @@ function pfUI.uf:UpdateConfig()
   if tonumber(f.config.height) < 0 then f.hp:Hide() end
   pfUI.api.CreateBackdrop(f.hp, default_border)
 
-  f.hp.bar:SetStatusBarTexture(pfUI.media[f.config.bartexture])
+  -- A narrowly scoped AEUI adapter may provide a Unit Frames bar donor on
+  -- the concrete frame. No global media/default is changed: frames without
+  -- the marker keep the exact configured pfUI texture.
+  f.hp.bar:SetStatusBarTexture(
+    f.aeuiHealthBarTexture or pfUI.media[f.config.bartexture]
+  )
   f.hp.bar:SetAllPoints(f.hp)
   if f.config.verticalbar == "1" then
     f.hp.bar:SetOrientation("VERTICAL")
@@ -766,7 +771,9 @@ function pfUI.uf:UpdateConfig()
   if tonumber(f.config.pheight) < 0 then f.power:Hide() end
 
   pfUI.api.CreateBackdrop(f.power, default_border)
-  f.power.bar:SetStatusBarTexture(pfUI.media[f.config.pbartexture])
+  f.power.bar:SetStatusBarTexture(
+    f.aeuiPowerBarTexture or pfUI.media[f.config.pbartexture]
+  )
   f.power.bar:SetAllPoints(f.power)
 
   local custompbg = f.config.defcolor == "0" and f.config.custompbg or C.unitframes.custompbg
@@ -1262,6 +1269,17 @@ local perrow = f.config.debuffperrow
   else
     f:UnregisterAllEvents()
     f:Hide()
+  end
+
+  -- AEUI may attach a narrowly scoped Raid media refresh callback. The
+  -- provider still owns all geometry, Secure Button behaviour, events and
+  -- roster state; this callback only reapplies the accepted shell texture
+  -- after pfUI has recalculated a Raid frame's configured width.
+  if
+    f.label == "raid" and
+    type(f.aeuiRaidRefreshVisual) == "function"
+  then
+    f:aeuiRaidRefreshVisual()
   end
 end
 

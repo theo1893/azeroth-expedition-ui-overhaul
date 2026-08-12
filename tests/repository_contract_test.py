@@ -71,7 +71,9 @@ def main() -> None:
     assert (pfui / "LICENSE").is_file(), "pfUI MIT license is missing"
 
     docs = ROOT / "docs"
-    modules = ("chat", "quests", "map", "character", "actionbars")
+    modules = (
+        "chat", "quests", "map", "character", "actionbars", "unitframes"
+    )
     durable_names = {
         "SUBMODULES.md",
         "ART_BASELINE.md",
@@ -124,7 +126,7 @@ def main() -> None:
         "清空整个 `generated/<module>/`",
         "`handoff/<module>/`",
         "validate_module_closure.py",
-        "8.1.0-aeui.4",
+        "8.1.0-aeui.5",
     ):
         assert required in agents, f"AGENTS.md missing {required}"
     for path in sorted(expected_durable_docs | work_docs):
@@ -286,6 +288,7 @@ def main() -> None:
     assert "Modules\\Chat.lua" in aeui_toc
     assert "Modules\\QuestVisualTheme.lua" in aeui_toc
     assert "Modules\\Quests.lua" in aeui_toc
+    assert "Modules\\UnitFrames.lua" in aeui_toc
     bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(encoding="utf-8")
     assert 'addon.version = "0.8.24"' in bootstrap
     assert "actionbar-runtime=" in bootstrap
@@ -300,6 +303,8 @@ def main() -> None:
     assert "chat-color=" in bootstrap
     assert "quest-runtime=" in bootstrap
     assert 'elseif command == "quests" then' in bootstrap
+    assert 'elseif command == "unitframes" then' in bootstrap
+    assert "unitframes-runtime=" in bootstrap
     assert "function addon:RunModuleMethod" in bootstrap
     assert "pcall(module[methodName], module)" in bootstrap
 
@@ -584,6 +589,76 @@ def main() -> None:
     )
     assert actionbars_p6["closure"]["status"] == "pending"
 
+    unitframes_source_dir = (
+        ROOT / "assets" / "source" / "unitframes" / "bars-v2"
+    )
+    unitframes_source_manifest = json.loads(
+        (
+            unitframes_source_dir / "UF-B1-V2_SourceManifest_v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    unitframes_runtime_manifest = json.loads(
+        (
+            unitframes_source_dir / "UF-B1-V2_RuntimeManifest_v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert unitframes_source_manifest["status"] == "accepted-source"
+    assert unitframes_source_manifest["user_acceptance"]["exact_statement"] == (
+        "接受 B1 attempt 3 的运行时视觉"
+    )
+    primary_v4_source_manifest = json.loads(
+        (
+            ROOT
+            / "assets/source/unitframes/primary-v4/UF-PRIMARY-V4_SourceManifest_v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert primary_v4_source_manifest["status"] == "accepted-source"
+    assert primary_v4_source_manifest["phase"] == "P4"
+    primary_v4_acceptance = primary_v4_source_manifest["user_acceptance"]
+    assert primary_v4_acceptance["exact_statement"] == "确认, 进入下一阶段"
+    assert primary_v4_acceptance["authorizes_p4_source_promotion"] is True
+    assert primary_v4_acceptance["authorizes_p5_runtime_export"] is False
+    assert primary_v4_acceptance["authorizes_addon_integration"] is False
+    for record in primary_v4_source_manifest["sources"].values():
+        source_path = ROOT / record["repository_path"]
+        assert source_path.is_file()
+        assert sha256(source_path) == record["sha256"]
+        assert record["mode"] == "RGBA"
+        assert [record["width"], record["height"]] == [1284, 252]
+    assert primary_v4_source_manifest["export_contract"]["status"] == "not-exported"
+    assert primary_v4_source_manifest["export_contract"]["addon_code_modified"] is False
+    assert unitframes_runtime_manifest["status"] == "runtime-exported"
+    assert unitframes_runtime_manifest["phase"] == "P5"
+    assert unitframes_runtime_manifest["adapter"]["frames"] == [
+        "player",
+        "target",
+        "targettarget",
+        "focus",
+    ]
+    for record in unitframes_runtime_manifest["runtime"].values():
+        runtime_path = ROOT / record["file"]
+        assert runtime_path.is_file()
+        assert sha256(runtime_path) == record["sha256"]
+    unitframes_source = (
+        aeui / "Modules" / "UnitFrames.lua"
+    ).read_text(encoding="utf-8")
+    assert 'UnitFrames.runtimeContract = "1.1"' in unitframes_source
+    assert "aeuiHealthBarTexture" in unitframes_source
+    assert "aeuiPowerBarTexture" in unitframes_source
+    raid_runtime_manifest = json.loads(
+        (
+            ROOT
+            / "assets/source/unitframes/raid-a2/UF-RAID-A2_RuntimeManifest_v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert raid_runtime_manifest["status"] == "runtime-exported"
+    assert raid_runtime_manifest["phase"] == "P5"
+    assert raid_runtime_manifest["runtime_contract"] == "1.1"
+    for record in raid_runtime_manifest["runtime"].values():
+        runtime_path = ROOT / record["file"]
+        assert runtime_path.is_file()
+        assert sha256(runtime_path) == record["sha256"]
+
     quest_source = (aeui / "Modules" / "Quests.lua").read_text(
         encoding="utf-8"
     )
@@ -814,7 +889,7 @@ def main() -> None:
 
     for toc_name in ("pfUI.toc", "pfUI-tbc.toc"):
         toc_source = (pfui / toc_name).read_text(encoding="utf-8-sig")
-        assert "## Version: 8.1.0-aeui.4" in toc_source
+        assert "## Version: 8.1.0-aeui.5" in toc_source
 
     pfquest_toc = (pfquest / "pfQuest.toc").read_text(encoding="utf-8-sig")
     assert "## Interface: 11200" in pfquest_toc
@@ -1125,6 +1200,12 @@ def main() -> None:
     assert "ApplyExpeditionVisualContract" in expedition
     assert "GetExpeditionModuleOwner" in expedition
     assert "GetExpeditionSkinOwner" in expedition
+    assert "GetExpeditionComponentOwner" in expedition
+    assert '["unitframes.health-fill"] = "unitframes"' in expedition
+    assert '["unitframes.power-fill"] = "unitframes"' in expedition
+    assert '["unitframes.raid-shell"] = "unitframes"' in expedition
+    assert '["unitframes.raid-health-fill"] = "unitframes"' in expedition
+    assert '["unitframes.raid-power-fill"] = "unitframes"' in expedition
     assert "ShouldUseVanillaModule" in expedition
     assert "ShouldUseVanillaSkin" in expedition
     assert "ShouldUseSingleChatFrame" in expedition

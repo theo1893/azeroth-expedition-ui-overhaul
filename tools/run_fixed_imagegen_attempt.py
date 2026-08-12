@@ -34,6 +34,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--session-id", required=True)
     parser.add_argument("--repo-root", type=Path, default=ROOT)
     parser.add_argument("--edit", type=Path)
+    parser.add_argument(
+        "--fenced-body",
+        action="store_true",
+        help="extract only the single ```text fenced body beneath the heading",
+    )
     return parser.parse_args()
 
 
@@ -50,7 +55,7 @@ def resolve(root: Path, value: str | Path) -> Path:
     return path if path.is_absolute() else root / path
 
 
-def extract_prompt(path: Path, heading: str) -> str:
+def extract_prompt(path: Path, heading: str, fenced_body: bool = False) -> str:
     lines = path.read_text(encoding="utf-8").splitlines()
     try:
         start = lines.index(heading)
@@ -61,7 +66,20 @@ def extract_prompt(path: Path, heading: str) -> str:
         if lines[index].startswith(("## ", "### ")):
             end = index
             break
-    body = "\n".join(lines[start + 1 : end]) + "\n"
+    selected = lines[start + 1 : end]
+    if fenced_body:
+        openings = [index for index, line in enumerate(selected) if line == "```text"]
+        if len(openings) != 1:
+            raise ValueError("expected exactly one ```text prompt fence")
+        opening = openings[0]
+        try:
+            closing = selected.index("```", opening + 1)
+        except ValueError as error:
+            raise ValueError("prompt text fence is not closed") from error
+        if any(line.startswith("```") for line in selected[closing + 1 :]):
+            raise ValueError("unexpected prompt fence after selected body")
+        selected = selected[opening + 1 : closing]
+    body = "\n".join(selected) + "\n"
     if not body.strip():
         raise ValueError("tracked prompt body is empty")
     return body
@@ -109,9 +127,26 @@ def main() -> int:
     output_dir = resolve(root, args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     contract: dict[str, Any] = json.loads(contract_path.read_text(encoding="utf-8"))
-    if not contract.get("executor", {}).get("authorized"):
+    authorized = bool(
+        contract.get("production_authorized")
+        or contract.get("executor", {}).get("authorized")
+    )
+    if not authorized:
         raise ValueError("production contract is not authorized")
-    references = contract.get("fixed_references", [])
+    references = contract.get("fixed_references")
+    if references is None:
+        references = []
+        for fixed_input in contract.get("fixed_inputs", []):
+            match = re.fullmatch(r"Image\s+(\d+)", fixed_input.get("slot", ""))
+            if not match:
+                raise ValueError("fixed input slot must use 'Image N'")
+            references.append(
+                {
+                    "image": int(match.group(1)),
+                    "path": fixed_input["path"],
+                    "sha256": fixed_input["sha256"],
+                }
+            )
     if len(references) != 2:
         raise ValueError("this fixed attempt requires exactly Image 1 and Image 2")
     images: list[Path] = []
@@ -146,7 +181,7 @@ def main() -> int:
             }
         )
 
-    body = extract_prompt(prompt_doc, args.prompt_heading)
+    body = extract_prompt(prompt_doc, args.prompt_heading, fenced_body=args.fenced_body)
     instruction_lines = [
         "Execution instruction:",
         "This process is already running inside fixed @openai/codex 0.143.0.",
@@ -245,6 +280,7 @@ def main() -> int:
         "executor": "@openai/codex@0.143.0",
         "prompt_doc": display(root, prompt_doc),
         "prompt_heading": args.prompt_heading,
+        "prompt_body_format": "fenced-text" if args.fenced_body else "heading-section",
         "prompt_body_sha256": hashlib.sha256(body.encode("utf-8")).hexdigest(),
         "images": image_records,
         "process_return_code": return_code,

@@ -1,0 +1,74 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "UF-A1/V2/SIM.V1/four-piece-perimeter",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, 100%-UI-pixels",
+  "evidence": {
+    "provider": "pfUI.uf:CreateUnitFrame + pfUI.uf:UpdateFrameSize + current profile",
+    "provider_files": [
+      "addon/pfUI/api/unitframes.lua",
+      "addon/pfUI/env/profiles.lua",
+      "addon/pfUI/modules/player.lua",
+      "addon/pfUI/modules/target.lua"
+    ],
+    "simulation_spec": "tools/specs/unitframes_a1_v2_simulation_v1.json",
+    "simulation": "generated/unitframes/primary/UF-A1/V2/simulation/V1/uf-a1-v2-sim-v1.scene.png",
+    "assembly_preview": "generated/unitframes/primary/UF-A1/V2/simulation/V1/uf-a1-v2-sim-v1.assembly.png",
+    "direction_only": true,
+    "final_runtime": false,
+    "screen_placement_authoritative": false,
+    "resource_dimensions_authoritative": true
+  },
+  "atlas": {
+    "size": [214, 84],
+    "visible_bbox": [0, 0, 214, 84],
+    "require_exact_visible_coverage": false,
+    "sampled_regions": [
+      {"id": "player-left-cap", "box": [0, 0, 7, 42]},
+      {"id": "player-right-cap", "box": [7, 0, 14, 42]},
+      {"id": "player-top-rail", "box": [14, 0, 214, 6]},
+      {"id": "player-bottom-rail", "box": [14, 6, 214, 12]},
+      {"id": "target-left-cap", "box": [0, 42, 7, 84]},
+      {"id": "target-right-cap", "box": [7, 42, 14, 84]},
+      {"id": "target-top-rail", "box": [14, 42, 214, 48]},
+      {"id": "target-bottom-rail", "box": [14, 48, 214, 54]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 7, "right": 7, "top": 6, "bottom": 6},
+    "minimum_frame_size": [15, 13]
+  },
+  "scenarios": [
+    {
+      "id": "player-normal",
+      "frame": [214, 42],
+      "preview_frame": [214, 42],
+      "zones": {
+        "content-safe": [7, 6, 207, 36],
+        "interaction-safe": [7, 6, 207, 36]
+      },
+      "regions": [
+        {"id": "player.hp", "kind": "statusbar", "box": [7, 6, 207, 31], "zone": "content-safe"},
+        {"id": "player.power", "kind": "statusbar", "box": [7, 32, 207, 36], "zone": "content-safe"},
+        {"id": "player.text-left", "kind": "fontstring", "box": [12, 10, 102, 27], "zone": "content-safe"},
+        {"id": "player.text-right", "kind": "fontstring", "box": [112, 10, 202, 27], "zone": "content-safe"},
+        {"id": "player.button", "kind": "button-hitbox", "box": [7, 6, 207, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "target-aggro",
+      "frame": [214, 42],
+      "preview_frame": [214, 42],
+      "zones": {
+        "content-safe": [7, 6, 207, 36],
+        "interaction-safe": [7, 6, 207, 36]
+      },
+      "regions": [
+        {"id": "target.hp", "kind": "statusbar", "box": [7, 6, 207, 31], "zone": "content-safe"},
+        {"id": "target.power", "kind": "statusbar", "box": [7, 32, 207, 36], "zone": "content-safe"},
+        {"id": "target.text-left", "kind": "fontstring", "box": [12, 10, 112, 27], "zone": "content-safe"},
+        {"id": "target.text-right", "kind": "fontstring", "box": [142, 10, 202, 27], "zone": "content-safe"},
+        {"id": "target.button", "kind": "button-hitbox", "box": [7, 6, 207, 36], "zone": "interaction-safe"}
+      ]
+    }
+  ]
+}

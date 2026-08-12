@@ -1,0 +1,140 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "UF-PRIMARY/V4-CANDIDATE.V1/player-target-complete-shells",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, 100%-UI-pixels",
+  "evidence": {
+    "provider": "pfUI.uf:UpdateFrameSize + f.hp.bar + f.power.bar",
+    "provider_files": [
+      "addon/pfUI/api/unitframes.lua",
+      "addon/pfUI/api/ui-widgets.lua",
+      "addon/pfUI/env/profiles.lua"
+    ],
+    "candidate_spec": "tools/specs/unitframes_primary_v4_candidate_v1.json",
+    "candidate_directory": "generated/unitframes/primary/candidates/V4/candidate-01",
+    "direction_only": false,
+    "final_runtime": false,
+    "resource_dimensions_authoritative": true,
+    "screen_placement_authoritative": false
+  },
+  "atlas": {
+    "size": [214, 84],
+    "visible_bbox": [0, 0, 214, 84],
+    "require_exact_visible_coverage": true,
+    "sampled_regions": [
+      {"id": "player-complete-shell", "box": [0, 0, 214, 42]},
+      {"id": "target-complete-shell", "box": [0, 42, 214, 84]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 32, "right": 32, "top": 6, "bottom": 6},
+    "minimum_frame_size": [65, 13]
+  },
+  "scenarios": [
+    {
+      "id": "player-mana-standard",
+      "frame": [214, 42], "preview_frame": [214, 42],
+      "zones": {"content-safe": [7, 6, 207, 36], "interaction-safe": [7, 6, 207, 36]},
+      "regions": [
+        {"id": "hp", "kind": "statusbar-health-material", "box": [7, 6, 207, 31], "zone": "content-safe"},
+        {"id": "mana", "kind": "statusbar-power-material", "box": [7, 32, 207, 36], "zone": "content-safe"},
+        {"id": "name", "kind": "fontstring", "box": [12, 10, 112, 27], "zone": "content-safe"},
+        {"id": "value", "kind": "fontstring", "box": [142, 10, 202, 27], "zone": "content-safe"},
+        {"id": "button", "kind": "button-hitbox", "box": [7, 6, 207, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "player-rage-standard",
+      "frame": [214, 42], "preview_frame": [214, 42],
+      "zones": {"content-safe": [7, 6, 207, 36], "interaction-safe": [7, 6, 207, 36]},
+      "regions": [
+        {"id": "hp", "kind": "statusbar-health-material", "box": [7, 6, 207, 31], "zone": "content-safe"},
+        {"id": "rage", "kind": "statusbar-power-material", "box": [7, 32, 207, 36], "zone": "content-safe"},
+        {"id": "button", "kind": "button-hitbox", "box": [7, 6, 207, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "player-focus-standard",
+      "frame": [214, 42], "preview_frame": [214, 42],
+      "zones": {"content-safe": [7, 6, 207, 36], "interaction-safe": [7, 6, 207, 36]},
+      "regions": [
+        {"id": "hp", "kind": "statusbar-health-material", "box": [7, 6, 207, 31], "zone": "content-safe"},
+        {"id": "focus", "kind": "statusbar-power-material", "box": [7, 32, 207, 36], "zone": "content-safe"},
+        {"id": "button", "kind": "button-hitbox", "box": [7, 6, 207, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "player-energy-standard",
+      "frame": [214, 42], "preview_frame": [214, 42],
+      "zones": {"content-safe": [7, 6, 207, 36], "interaction-safe": [7, 6, 207, 36]},
+      "regions": [
+        {"id": "hp", "kind": "statusbar-health-material", "box": [7, 6, 207, 31], "zone": "content-safe"},
+        {"id": "energy", "kind": "statusbar-power-material", "box": [7, 32, 207, 36], "zone": "content-safe"},
+        {"id": "button", "kind": "button-hitbox", "box": [7, 6, 207, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "player-hover-standard",
+      "frame": [214, 42], "preview_frame": [214, 42],
+      "zones": {"content-safe": [7, 6, 207, 36], "interaction-safe": [7, 6, 207, 36]},
+      "regions": [
+        {"id": "hp", "kind": "statusbar-health-material", "box": [7, 6, 207, 31], "zone": "content-safe"},
+        {"id": "power", "kind": "statusbar-power-material", "box": [7, 32, 207, 36], "zone": "content-safe"},
+        {"id": "button", "kind": "button-hitbox", "box": [7, 6, 207, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "target-hostile-standard",
+      "frame": [214, 42], "preview_frame": [214, 42],
+      "zones": {"content-safe": [7, 6, 207, 36], "interaction-safe": [7, 6, 207, 36]},
+      "regions": [
+        {"id": "hp", "kind": "statusbar-health-material", "box": [7, 6, 207, 31], "zone": "content-safe"},
+        {"id": "power", "kind": "statusbar-power-material", "box": [7, 32, 207, 36], "zone": "content-safe"},
+        {"id": "name", "kind": "fontstring", "box": [12, 10, 132, 27], "zone": "content-safe"},
+        {"id": "value", "kind": "fontstring", "box": [142, 10, 202, 27], "zone": "content-safe"},
+        {"id": "button", "kind": "button-hitbox", "box": [7, 6, 207, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "target-aggro-standard",
+      "frame": [214, 42], "preview_frame": [214, 42],
+      "zones": {"content-safe": [7, 6, 207, 36], "interaction-safe": [7, 6, 207, 36]},
+      "regions": [
+        {"id": "hp", "kind": "statusbar-health-material", "box": [7, 6, 207, 31], "zone": "content-safe"},
+        {"id": "rage", "kind": "statusbar-power-material", "box": [7, 32, 207, 36], "zone": "content-safe"},
+        {"id": "button", "kind": "button-hitbox", "box": [7, 6, 207, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "player-low-health-standard",
+      "frame": [214, 42], "preview_frame": [214, 42],
+      "zones": {"content-safe": [7, 6, 207, 36], "interaction-safe": [7, 6, 207, 36]},
+      "regions": [
+        {"id": "hp", "kind": "statusbar-health-material", "box": [7, 6, 207, 31], "zone": "content-safe"},
+        {"id": "power", "kind": "statusbar-power-material", "box": [7, 32, 207, 36], "zone": "content-safe"},
+        {"id": "button", "kind": "button-hitbox", "box": [7, 6, 207, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "player-variable-w160",
+      "frame": [174, 42], "preview_frame": [174, 42],
+      "zones": {"content-safe": [7, 6, 167, 36], "interaction-safe": [7, 6, 167, 36]},
+      "regions": [
+        {"id": "hp", "kind": "statusbar-health-material", "box": [7, 6, 167, 31], "zone": "content-safe"},
+        {"id": "power", "kind": "statusbar-power-material", "box": [7, 32, 167, 36], "zone": "content-safe"},
+        {"id": "text", "kind": "fontstring", "box": [12, 10, 162, 27], "zone": "content-safe"},
+        {"id": "button", "kind": "button-hitbox", "box": [7, 6, 167, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "target-variable-w240",
+      "frame": [254, 42], "preview_frame": [254, 42],
+      "zones": {"content-safe": [7, 6, 247, 36], "interaction-safe": [7, 6, 247, 36]},
+      "regions": [
+        {"id": "hp", "kind": "statusbar-health-material", "box": [7, 6, 247, 31], "zone": "content-safe"},
+        {"id": "power", "kind": "statusbar-power-material", "box": [7, 32, 247, 36], "zone": "content-safe"},
+        {"id": "text", "kind": "fontstring", "box": [12, 10, 242, 27], "zone": "content-safe"},
+        {"id": "button", "kind": "button-hitbox", "box": [7, 6, 247, 36], "zone": "interaction-safe"}
+      ]
+    }
+  ]
+}

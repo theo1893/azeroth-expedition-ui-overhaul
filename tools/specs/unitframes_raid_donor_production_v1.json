@@ -1,0 +1,234 @@
+{
+  "schema": "aeui-unitframes-raid-donor-production-v1",
+  "version": "UF-RAID-A2-DONOR V1",
+  "status": "source-accepted / runtime-exported / addon-integrated / P5 / 5-of-5",
+  "production_authorized": false,
+  "architecture": {
+    "status": "user-selected",
+    "statement": "ImageGen only generates rough material donors; Python deterministically constructs exact shell geometry and all four repair differences",
+    "simulation_gate": "UF-RAID-A2-SIM-V1",
+    "simulation_confirmation": {
+      "status": "confirmed",
+      "date": "2026-08-12",
+      "accepts_pixels": false,
+      "production_authorized": true
+    },
+    "simulation_pixels_may_be_uploaded": false,
+    "rejected_a1_pixels_may_be_reused": false
+  },
+  "fixed_inputs": [
+    {
+      "slot": "Image 1",
+      "path": "assets/locked/chat/聊天框视觉基准_v1.png",
+      "sha256": "90e30ba405a2b5cdc707cc229e56c4f64e51d0e4051f1e98dbcd2ec2ee70ee06",
+      "role": "Only infer 2004-era broad painted scale, warm upper-left light, material thickness and low-frequency handmade wear; ignore all book, page, spine, dragon and complete-frame geometry"
+    },
+    {
+      "slot": "Image 2",
+      "path": "assets/locked/chat/聊天框独立艺术资源_v3.png",
+      "sha256": "272528e6d89cc90e5cbb37dce4ae572ddf9de0402078cdcf0ed5804f734faab8",
+      "role": "Only infer deep-walnut depth, smoke-brown restraint, rough handmade pigment and dull oxidized brass; ignore the object's book construction and every UI contour"
+    }
+  ],
+  "output_contract": {
+    "image_count": 1,
+    "canvas": [1536, 1024],
+    "mode": "RGB",
+    "background": "#00FF00",
+    "cells": {
+      "leather": {"cell": [64, 64, 736, 448], "sample_window": [144, 112, 656, 400]},
+      "liner": {"cell": [800, 64, 1472, 448], "sample_window": [880, 112, 1392, 400]},
+      "brass": {"cell": [64, 576, 736, 960], "sample_window": [144, 624, 656, 912]},
+      "thread": {"cell": [800, 576, 1472, 960], "sample_window": [880, 624, 1392, 912]}
+    },
+    "runtime_loaded": false,
+    "promoted_directly_to_source": false
+  },
+  "prompt_body": "Create from scratch exactly one 1536x1024 RGB material-donor sheet for a 2004-era vanilla World of Warcraft expedition raid UI. This is not a UI mockup and must contain no frame, shell, card, plaque, button, atlas part, status bar or interface geometry. Use pure flat #00FF00 only in the outer gutters and the gap separating four large rectangular material fields. Place exactly four unlabelled, uninterrupted, full-field material paintings at these fixed cells: top-left x64..736 y64..448 is deep soot-walnut salvaged rawhide; top-right x800..1472 y64..448 is quiet matte smoke-brown backing; bottom-left x64..736 y576..960 is dark tarnished umber brass; bottom-right x800..1472 y576..960 is coarse smoke-dark flax thread material. Every fixed inner sample window must be entirely filled by its material with no green, border, edge, shadow, label, divider, object silhouette or embedded ornament: leather x144..656 y112..400; liner x880..1392 y112..400; brass x144..656 y624..912; thread x880..1392 y624..912. Inherit only the references' broad hand-painted bitmap scale, warm upper-left lighting, low-saturation expedition palette, material thickness and low-frequency irregular wear. The leather should resemble reused saddle strap or shield-backing rawhide: uneven smoke stain, blunt scraped grain, broad pigment variation and sparse worn patches, never furniture upholstery. The liner is visually quiet and darker, with broad matte soot variation and no focal mark. The brass is oxidized dark umber, scratched and dull with only short discontinuous warm catches, never bright gold. The thread field shows coarse flax fibre and uneven smoke-dark dye at a broad usable scale, but no already-formed thread, stitch, cord, braid, rope or seam. Keep each field seamless enough for arbitrary deterministic cropping; avoid tiny photographic noise, repeated tile motifs and high-frequency pores. The written requirements outrank both input images. Use Image 1 only for its circa-2004 broad hand-painted bitmap scale, warm upper-left light, apparent material thickness and low-frequency handmade wear; ignore its book, page, spine, dragon, complete-frame geometry and every object layout. Use Image 2 only for deep-walnut tonal depth, restrained smoke-brown pigment, rough handmade paint and dull oxidized brass response; ignore its book construction, every UI contour and every object layout. Do not copy pixels or shapes from either input. Do not use any simulation image or rejected A1 candidate as a reference or edit input. Do not draw stitches, rivets, patches, notches, cuts, repairs, piping, embossing, tooling, lacing, labels, grids or measurements: Python constructs all exact geometry and A/B/C/D repair masks later. No pages, books, wax seals, dragons, skulls, spikes, gems, runes, Diablo-style black iron, modern flat UI, glass, neon, regular industrial bevels, mirrored decoration, product swatch cards or photoreal antique photography. No text of any kind. Before returning, verify visibly: exactly one 1536 by 1024 RGB donor sheet; exactly four uninterrupted unlabelled material fields in the fixed cells; every fixed sample window is completely material-filled; pure #00FF00 appears only in the outer gutters and central gaps; no frame, shell, UI geometry, formed repair object, text, label or measurement is present.",
+  "prompt_completeness": {
+    "audit_date": "2026-08-12",
+    "result": "pass-final",
+    "global_baseline_translated": true,
+    "module_identity_translated": true,
+    "real_object_count_and_canvas_explicit": true,
+    "all_four_sample_windows_explicit": true,
+    "model_owned_content_explicit": true,
+    "python_owned_content_explicit": true,
+    "dynamic_content_excluded": true,
+    "negative_constraints_explicit": true,
+    "reference_roles_and_ignored_geometry_explicit": true,
+    "postprocess_and_runtime_boundary_explicit": true,
+    "unknown_execution_critical_values": []
+  },
+  "deterministic_consumer": {
+    "script": "tools/build_unitframes_raid_donor_shells_v1.py",
+    "normalized_source": [592, 296],
+    "runtime": [74, 37],
+    "provider_button_source": [16, 16, 576, 280],
+    "horizontal_three_slice_source": [48, 496, 48],
+    "horizontal_three_slice_runtime": [6, 62, 6],
+    "variant_order": ["A", "B", "C", "D"],
+    "variant_repair_bounds_source": "inherit exact boxes from tools/specs/unitframes_raid_donor_simulation_v1.json deterministic_builder.variant_repair_bounds without modification",
+    "allowed": "fixed donor crops, cover-fit, fixed masks, low-frequency lighting multiplication, transparent RGB clearing, exact downsample, three-slice derivation, runtime preview",
+    "forbidden": "generative fill, repainting, donor geometry inference, rejected-candidate reuse, dynamic-content baking, provider or interaction changes"
+  },
+  "repair_loop": {
+    "maximum_actual_imagegen_calls": 5,
+    "process_errors_count_toward_limit": false,
+    "attempt_1_image_3": "none",
+    "later_image_3": "only the immediately previous output from this same donor loop and only within the frozen material-field repair boundary",
+    "stop_on_pass": true,
+    "execution_state": {
+      "attempts_used": 5,
+      "attempts_remaining": 0,
+      "process_errors": 2,
+      "current_prompt_version": "UF-RAID-A2-DONOR V1.r4",
+      "current_prompt_heading": "### `UF-RAID-A2-DONOR V1.r4` — attempt 5 最终自包含低频四材料重建",
+      "current_prompt_body_sha256": "ed3ec1599512a5b6c42695334bc1466e560ac010b428b3261f4503fba30bb078",
+      "next_operation": "no more ImageGen; sample-window-only exception accepted and P4/P5 complete; next gate is Turtle WoW 1.18.1 P6 validation"
+    }
+  },
+  "attempts": [
+    {
+      "attempt": 1,
+      "prompt_version": "UF-RAID-A2-DONOR V1",
+      "execution_commit": "68e43e5892f7352ead0d3164fbb7db19fa4ef7e2",
+      "operation": "generate",
+      "codex_session_id": "019ff524-4c79-7f92-8246-d5e46140250d",
+      "provider_result": "ig_02657bd92b3d4522016a7c32547f2481919c19c602f0fdb5c2",
+      "raw_path": "generated/unitframes/raid/A2/DONOR-V1/attempt-01/uf-raid-a2-donor-v1-attempt-01.provider-native-01.png",
+      "raw_sha256": "ac2f7a2adf120f932bb3785c5b2b9dfc83d00a8ed9812421400120cfb86aec23",
+      "technical_report": "generated/unitframes/raid/A2/DONOR-V1/attempt-01/review/technical-report.json",
+      "technical_report_sha256": "d42376d63f7b587cacf687c52d2f7ffe04414c93bf44d3310412fb7a108b33e7",
+      "display_report_sha256": "ddb3fc51b7c3ef2e1590ecc145b4668ed3d23c5e627600dfa2d0a424a8ce6dd0",
+      "first_failure": "locked-baseline art inheritance: photographic high-frequency leather/brass/flax creates a continuous serrated runtime rim",
+      "secondary_failure": "all four detected material bboxes exceed their fixed cells by 18 to 52 pixels",
+      "result": "internal-fail / repair-prepared"
+    },
+    {
+      "attempt": 2,
+      "prompt_version": "UF-RAID-A2-DONOR V1.r1",
+      "execution_commit": "6cb51d31176dd98d2cef2e0848fc99fdd5c30a36",
+      "operation": "edit",
+      "codex_session_id": "019ff531-86c6-7333-9ea1-31a8d5ec461f",
+      "provider_result": "ig_0a7b3d9d79050dcb016a7c35bc352c819183b83d8fa24aeaff",
+      "raw_path": "generated/unitframes/raid/A2/DONOR-V1/attempt-02/uf-raid-a2-donor-v1-attempt-02.provider-native-01.png",
+      "raw_sha256": "d6479b8907e3200e8d3b9ebb5e9a3b44aacbbcf531d5f2b0f9036e1fcd30c893",
+      "technical_report": "generated/unitframes/raid/A2/DONOR-V1/attempt-02/review/technical-report.json",
+      "technical_report_sha256": "fe967f562a3b74b3f2b2ecbcd8af700a6db23745bc8fec6a6511f062e50913be",
+      "display_report_sha256": "ddb3fc51b7c3ef2e1590ecc145b4668ed3d23c5e627600dfa2d0a424a8ce6dd0",
+      "first_failure": "locked-baseline art inheritance: all four fields retain a repeated curled embossed surface; flax remains tangled and brass retains broad highlights",
+      "secondary_failure": "all four detected material bboxes exceed their fixed cells, with maximum deviation 55 pixels",
+      "result": "internal-fail / repair-prepared"
+    },
+    {
+      "attempt": 3,
+      "prompt_version": "UF-RAID-A2-DONOR V1.r2",
+      "execution_commit": "542810f5a97229ff59d7a1f8ca124e4e86a2e2e9",
+      "operation": "regenerate",
+      "codex_session_id": "019ff53a-39b4-79c0-94bd-b308a4a29962",
+      "provider_result": "ig_09b4123c1cee1bb7016a7c37ecb4ac81919dcddc53fa6d9b0e",
+      "raw_path": "generated/unitframes/raid/A2/DONOR-V1/attempt-03/uf-raid-a2-donor-v1-attempt-03.provider-native-01.png",
+      "raw_sha256": "6f54172bfacd4215ba431c3cc34aea7d75c0c391a473042e62c1ee5cc6ff4b28",
+      "technical_report": "generated/unitframes/raid/A2/DONOR-V1/attempt-03/review/technical-report.json",
+      "technical_report_sha256": "657c094e4472846ebb0ee6aa11f98f1fefef6470a9939eee3b9bd15af04e5f32",
+      "display_report_sha256": "ddb3fc51b7c3ef2e1590ecc145b4668ed3d23c5e627600dfa2d0a424a8ce6dd0",
+      "first_failure": "fixed cell masks: detected field bboxes deviate by up to 42 pixels and leave dominant-green pixels inside all four contract cells",
+      "secondary_failure": "leather, brass and flax remain brighter than the intended restrained runtime hierarchy despite the broad hand-painted material direction passing",
+      "result": "internal-fail / repair-prepared"
+    },
+    {
+      "attempt": 4,
+      "prompt_version": "UF-RAID-A2-DONOR V1.r3",
+      "execution_commit": "5c6dde06ebd31c5225ca6021f44de26400493064",
+      "operation": "edit",
+      "codex_session_id": "019ff541-facd-7c40-8804-b740ecfbcfc1",
+      "provider_result": "ig_0af27a56c69c29f2016a7c39edf588819187b010c7e8ab0862",
+      "raw_path": "generated/unitframes/raid/A2/DONOR-V1/attempt-04/uf-raid-a2-donor-v1-attempt-04.provider-native-01.png",
+      "raw_sha256": "7750b39de94bd062be6bc7158b0f4a4ca3bf1eea93a1746baedb128a3e70ddab",
+      "technical_report": "generated/unitframes/raid/A2/DONOR-V1/attempt-04/review/technical-report.json",
+      "technical_report_sha256": "ce6910a91ce04434f1e22d2bd742e684b0deefbd9b66261b5a654a0c3c9f9c69",
+      "display_report_sha256": "ddb3fc51b7c3ef2e1590ecc145b4668ed3d23c5e627600dfa2d0a424a8ce6dd0",
+      "first_failure": "locked-baseline art regression: editing reintroduced a shared fine curled embossed pattern across all four fields",
+      "secondary_failure": "fixed field bboxes remain outside tolerance with maximum deviation 48 pixels and 11169 to 11520 dominant-green pixels inside each contract cell",
+      "result": "internal-fail / repair-prepared"
+    },
+    {
+      "attempt": 5,
+      "prompt_version": "UF-RAID-A2-DONOR V1.r4",
+      "execution_commit": "b9e5a653355e4d2f77f57c94ecfb5f1cce4da095",
+      "operation": "regenerate",
+      "codex_session_id": "019ff547-a187-70d2-b123-f6b2960ae9eb",
+      "provider_result": "ig_08662f5db7697b89016a7c3ba4bae08191a3c895ac74d50469",
+      "raw_path": "generated/unitframes/raid/A2/DONOR-V1/attempt-05/uf-raid-a2-donor-v1-attempt-05.provider-native-01.png",
+      "raw_sha256": "dad020c26b772a26b856688bc0f5c4cf804b5d0f0ff932846feb37a701a6f159",
+      "technical_report": "generated/unitframes/raid/A2/DONOR-V1/attempt-05/review/technical-report.json",
+      "technical_report_sha256": "9018df186f4710fa90156b6001a93326630a4b0894287262b97e5374fc3ee5e6",
+      "display_report_sha256": "ddb3fc51b7c3ef2e1590ecc145b4668ed3d23c5e627600dfa2d0a424a8ce6dd0",
+      "first_failure": "strict unused outer field bboxes deviate from fixed cells by up to 19 pixels even though all four consumed sample windows are fully material-filled",
+      "secondary_failure": "flax sample luminance is 1.205 above the written target but remains non-focal after the tiny deterministic repair mask",
+      "result": "exception-review-required / best-runtime-visual / 5-of-5 stop"
+    }
+  ],
+  "process_error_records": [
+    {
+      "after_attempt": 2,
+      "codex_session_id": "019ff531-86c6-7333-9ea1-31a8d5ec461f",
+      "error": "child-side duplicate metadata check used system Python without Pillow after the single provider image had already been copied",
+      "recovery": "file and sips confirmed the same 1536x1024 RGB image; wrapper returned zero",
+      "additional_provider_outputs": 0,
+      "counts_toward_imagegen_budget": false
+    },
+    {
+      "after_attempt": 5,
+      "codex_session_id": "019ff547-a187-70d2-b123-f6b2960ae9eb",
+      "error": "provider stream disconnected before any image and retried the same sampling request once",
+      "recovery": "same wrapper and same request returned exactly one 1536x1024 RGB provider image",
+      "additional_provider_outputs": 0,
+      "counts_toward_imagegen_budget": false
+    }
+  ],
+  "terminal_review": {
+    "status": "accepted-by-sample-window-only-exception / P5",
+    "attempts_used": 5,
+    "attempts_remaining": 0,
+    "best_runtime_visual_attempt": 5,
+    "best_raw_sha256": "dad020c26b772a26b856688bc0f5c4cf804b5d0f0ff932846feb37a701a6f159",
+    "art_direction": "internal-pass",
+    "sample_windows": "4/4 fully material-filled; zero dominant-green pixels",
+    "strict_fixed_cells": "fail; maximum detected bbox deviation 19 pixels",
+    "deterministic_shells": "pass",
+    "display_region": "7/7 pass; 0 violations",
+    "exception_boundary": "ignore only the unused outer field bbox tolerance; consume the exact four authorized sample windows and preserve all crop coordinates and downstream deterministic operations",
+    "candidate_accepted": true,
+    "source_promoted": true,
+    "runtime_exported": true,
+    "addon_integrated": true,
+    "sixth_imagegen_call_forbidden": true,
+    "acceptance_record": {
+      "date": "2026-08-12",
+      "user_statement": "接受 UF-RAID-A2-DONOR V1 attempt 5 的运行时视觉，并授权 sample-window-only 确定性合同例外进入 P4/P5；仅豁免未消费外围 field bbox 的最大 19px 偏差，其余固定 sample window、Python 外壳、A–D 维修、透明清理、592×296 source、74×37 runtime、6/62/6 三切片及 40 人排版合同保持不变。",
+      "exception_scope": "only the unconsumed outer field bbox maximum 19px deviation",
+      "consumed_sample_windows_changed": false,
+      "deterministic_downstream_contract_changed": false,
+      "source_manifest": "assets/source/unitframes/raid-a2/UF-RAID-A2_SourceManifest_v1.json",
+      "runtime_manifest": "assets/source/unitframes/raid-a2/UF-RAID-A2_RuntimeManifest_v1.json"
+    }
+  },
+  "authorization_request": {
+    "status": "granted",
+    "date": "2026-08-12",
+    "user_statement": "确认授权 UF-RAID-A2-DONOR V1；允许每次上传合同中固定 SHA 的 Image 1/2，attempt 1 无 Image 3；仅允许同循环紧邻前次 donor 输出在冻结四材料字段修复边界内作为后续 Image 3 edit 输入；最多 5 次实际 ImageGen 调用，流程错误不占额度；允许按合同执行固定 sample-window crop、Python 精确外壳/A-D 维修 mask、透明 RGB 清零、592×296 source、74×37 runtime、6/62/6 三切片及 40 人真实排版预演。",
+    "exact_version": "UF-RAID-A2-DONOR V1",
+    "fixed_executor": "imagegen-0-143-0 / @openai/codex@0.143.0",
+    "attempt_1_inputs": "fixed SHA Image 1 and Image 2; no Image 3",
+    "later_edit_input": "only the immediately previous output from this same donor loop inside the frozen four-material repair boundary",
+    "maximum_actual_imagegen_calls": 5,
+    "process_errors_count_toward_limit": false,
+    "deterministic_postprocess": "fixed sample-window crop, exact Python shell construction, transparent RGB clearing, 592x296 source, 74x37 runtime, 6/62/6 three-slice, A-D repair masks and forty-member real-layout preview",
+    "does_not_authorize": "candidate acceptance, source promotion, addon export, Turtle WoW P6 or cleanup"
+  },
+  "still_requires_later_gate": [
+    "Turtle WoW 1.18.1 / P6 game validation"
+  ]
+}

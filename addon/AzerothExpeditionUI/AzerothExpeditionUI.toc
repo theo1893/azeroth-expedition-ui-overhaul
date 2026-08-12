@@ -11,3 +11,4 @@ Modules\ActionBars.lua
 Modules\Chat.lua
 Modules\QuestVisualTheme.lua
 Modules\Quests.lua
+Modules\UnitFrames.lua

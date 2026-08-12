@@ -1,0 +1,59 @@
+{
+  "schema": "aeui-unitframes-a1-v2-simulation-v1",
+  "version": "UF-A1-V2-SIM-V1",
+  "canvas": {"width": 1600, "height": 900},
+  "provider": {
+    "frame": [200, 30],
+    "health": [200, 25],
+    "gap": 1,
+    "power": [200, 4],
+    "frame_hitbox_unchanged": true
+  },
+  "shell": {
+    "size": [214, 42],
+    "content_safe": [7, 6, 207, 36],
+    "pieces": {
+      "left_cap": [0, 0, 7, 42],
+      "top_rail": [7, 0, 207, 6],
+      "bottom_rail": [7, 36, 207, 42],
+      "right_cap": [207, 0, 214, 42]
+    },
+    "assembly": "four independent butt-jointed perimeter pieces; no overlap with content-safe",
+    "future_runtime_sampling": "four independent source cells per role; caps fixed, rails horizontally scalable"
+  },
+  "roles": {
+    "player": {
+      "identity": "heavier crooked field repair only in the fixed left cap; quiet right cap",
+      "placement": [500, 704]
+    },
+    "target": {
+      "identity": "quiet polished left cap; damaged oxidized-brass repair only in the fixed right cap",
+      "placement": [886, 704]
+    }
+  },
+  "palette": {
+    "leather": "#28180E",
+    "leather_mid": "#49301E",
+    "liner": "#17100C",
+    "brass": "#80602D",
+    "brass_dim": "#5D4525",
+    "parchment": "#B8955C"
+  },
+  "outputs": {
+    "scene": "generated/unitframes/primary/UF-A1/V2/simulation/V1/uf-a1-v2-sim-v1.scene.png",
+    "assembly": "generated/unitframes/primary/UF-A1/V2/simulation/V1/uf-a1-v2-sim-v1.assembly.png",
+    "report": "generated/unitframes/primary/UF-A1/V2/simulation/V1/uf-a1-v2-sim-v1.report.json",
+    "display_region_report": "generated/unitframes/primary/UF-A1/V2/simulation/V1/display-region-report.json"
+  },
+  "imagegen_usage": "0/0",
+  "non_authoritative": [
+    "screen placement because the other-device layout is not synchronized",
+    "microtexture and final hand-painted brushwork",
+    "production atlas packing, source alpha edges and addon adapter implementation"
+  ],
+  "negative_constraints": [
+    "no pixels from rejected UF-A1 V1 attempts may be reused",
+    "no shell decoration may cover the 200 by 30 provider corridor",
+    "no enlarged end post, fake portrait, continuous gold outline, modern card or glass"
+  ]
+}

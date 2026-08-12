@@ -20,12 +20,13 @@
 
 | 主模块 | pfUI／原生边界 | 阶段 | 当前结论 | 下一门禁 |
 |---|---|---:|---|---|
-| Core／pfUI | `api/expedition.lua`、`pfUI.lua`、作用域接管路由 | `P5` | pfUI `8.1.0-aeui.4` 已恢复公共绘制、原始默认值、全部未接管模块／skins 与配置入口；仅 Chat 辅助模块和 Quest Log skin 显式让渡；旧全局回退 SavedVariables 一次迁移；swingtimer 已按攻速／玩家光环变化等比例重标活动主副手区间，修正乱舞首击与末击的攻速错位，尚待实机 | 实机覆盖 Game Menu／`/pfui`、全模块加载、旧 SavedVariables、单模块失败隔离、第三方兼容，以及乱舞触发／耗尽时的首末击计时 |
+| Core／pfUI | `api/expedition.lua`、`pfUI.lua`、作用域接管路由 | `P5` | pfUI `8.1.0-aeui.5` 已恢复公共绘制、原始默认值、全部未接管模块／skins 与配置入口；只让渡 Chat 辅助模块、Quest Log skin、Unit Frame 两张 fill donor 与 Raid 成员外壳；旧全局回退 SavedVariables 一次迁移；swingtimer 已按攻速／玩家光环变化等比例重标活动主副手区间，修正乱舞首击与末击的攻速错位，尚待实机 | 实机覆盖 Game Menu／`/pfui`、全模块加载、旧 SavedVariables、单模块失败隔离、第三方兼容、Unit Frames 局部回退，以及乱舞触发／耗尽时的首末击计时 |
 | Chat | `modules/chat.lua` + AEUI Chat adapter | 核心 `P5` / r1.22；Tab 替换 `P5` | Full V1 主框九宫格、右框回收、Dark V2 四态 Tab／承托带、Dark V1 输入及 V3 未读已在 addon 内接入；V3 Tab／承托带保留为回退。Dark V2 固定 source SHA `616f965b…a1e3c` 确定性导出为 atlas `3fb505fa…be0` 与 shelf `44c7f85c…fda`；RGB-only 清理 source `13`＋LANCZOS `23` 个低 Alpha 绿边像素，Alpha 不变，最终绿溢色 `0`。六个最终真实排版场景、display-region 和 fresh-checkout package 均通过；目标设备无需构建。v1.22 保持经典 provider 配色 | 游戏设备可用时 `/reload`，验证 `chat-runtime=1.22`、四态／五 Tab 压缩、承托带、缩放、输入与经典颜色；通过前保持 P5 |
 | Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P6`；QS-B1 V7-A `P5`；QL-D V3 attempt 4 `P5` | Quest runtime `1.27`／Theme `1.10`。QL-D 五次循环仍按 `5/5` 耗尽；用户随后明确“使用第4稿”，接受 keyed aspect `2.76945` 的一次性选稿例外，原 technical `18/19` 不重写。exact source SHA `816aeedd…47c5` 与四态 atlas SHA `cda1ef21…cd56` 已受 manifest 管理并接入 addon；正式 atlas／真实排版与已审阅 attempt 4 像素完全一致，display `5/5 pass`。真实 Button、Tooltip、动态图标／名称和双列几何不变。闭合载体根、火漆与旧功能按钮继续 fail-open；Tracker 与 NPC Quest／Gossip 不变 | Turtle WoW 验证 QL-D TGA 方向、四态、pressed `1px` 联动、safe area、0／1／2／4／6 排版及长详情滚动；同时验证闭合态火漆物理接触与滚动裁切。七纹章 parity 前不启用事务菜单；不得第六次生图 |
 | Action Bars／Field Kit | `actionbar.lua`、`castbar.lua`、`swingtimer.lua`、pfUI Player／Target／TargetTarget + 可选 AutoBar／TrinketMenu／DoiteDPS／ArchiTotem 的 scoped 视觉与一次性游戏坐标布局 | `P2–P6`；`AB.SLOT.BASE.V1` 与 `AB.RAIL.V1` 均为 `P6 / game-validated`；Field Kit 视觉 runtime-v1.5／bridge-v2.3、Combat Focus runtime-v2.3 与 Sidebar Group runtime-v1.0 为 `P5 / pending-game-validation`；v1.4／v1.5 `game-geometry-failed` | AEUI `0.8.23`／`ACTION-BARS-CORE-SIM-V11` 保留 V10 的单位框、Aura 与中央计时栈几何；Player／Target／TargetTarget 的配置和 live FontString 均强制为客户端系统字体 `OUTLINE / 18 UI`，并在 provider `UpdateConfig` 后重施；DoiteDPS 两排 union 上移 `32 UI`。用户确认的 Bar 2／4／5／3 已组成 `2×2` 四个 `3×4` 分区（总体 `6×8`），仅显示一个 group mover，内容仍逐栏独立且可逆 unbind。未手调的 exact v7–v13 profile 一次迁移为 v14；消耗品／饰品继续共同下移 `20 UI`，AutoBar 仍只显示当前有物品类别、最大 `4×6`。v2.3 继承 zhCN 缺失分类说明 fallback，缓存最后一次已验证的 Bar 1 相对锚点，并在 `SetupVisual` 与整个 `AutoBarConfig.OnShow` 完成后同事件恢复；下一次零延迟事件只负责按稳定按钮几何重算。位图字节不变，无外部生成 | `/reload` 后先连续开关 AutoBar 配置页，确认卷袋始终固定在主动作栏左侧且无可见往返；再逐类悬停确认无 line 211 错误并点击多个配置控件。确认三框实际字形为系统字体 `18` 且刷新后不回退、DoiteDPS 双排不压 Player Buff，并复测 Player／卷袋、Aura 八枚、Boss 16 Debuff 与计时栈净空；开关 pfUI unlock 确认中央仅 Bar 1 mover、右侧仅 Bar 2 group mover，Bar 6／TargetTarget 不跳位。再验证四栏拖动／缩放／home、可逆 unbind、48 个动作内容，以及 AutoBar、ArchiTotem、popup／Queue／换装；回退：`/aeui focuslayout restore` 后 `/reload` |
 | Map | `map.lua`、`minimap.lua`、`addonbuttons.lua` 等 | `P2` | 羊皮地图卷与黄铜罗盘已锁定 | 实机对象审计和组件级合同 |
 | Character | `character.lua`、`inspect.lua`、`dressup.lua` | `P2 / paused` | 香草同构角色面板已锁定；用户于 `2026-08-08` 暂停 overhaul，现有资产、Prompt 与 pfUI 默认 runtime 原样保留 | 待用户明确恢复后再做实机几何与装备槽／属性／页签拆分 |
+| Unit Frames | `api/unitframes.lua`、`modules/raid.lua`、主／紧凑单位入口 | Player／Target V4 `P4 source-accepted`；V3 A／B `P3 / 5/5 exhausted` 历史；B1 `P5`；Raid A2 `P5 source/runtime/addon / 5/5`；紧凑 A2 paused | 用户以“确认, 进入下一阶段”接受 `UF-PRIMARY-V4-CANDIDATE-V1` exact Player／Target pixels；两张独立 `1284×252 RGBA` source 与 manifest 已按原 SHA 固化，安全区／透明清理／非镜像维修及展示区域 `10/10 pass` 保持不变，没有新增位图生成，也没有 addon 改动。远端 B1 与 Raid A2 P5 已与本地 Action Bars 合并进同一 addon；V3 rejected pixels 禁止复用。当前 Combat Focus 的 Player／Target `240×60` 与 V4 固定 `214×42`、禁止纵向拉伸合同不兼容，故 V4 继续停在 P4 | 先建立并确认不改写已接受像素、也不破坏 Combat Focus 几何的兼容合同，再独立执行 Player／Target P5 runtime／状态边、真实排版、display region、addon 与 fresh-checkout package；Raid／B1 等待 Turtle WoW P6 |
 
 ## 尚未启动长期模块包
 
@@ -35,7 +36,6 @@
 
 | 计划模块 | pfUI 入口 | 当前阶段 | 方向／下一步 |
 |---|---|---:|---|
-| Unit／Party／Raid | `player.lua`、`target.lua`、`group.lua`、`raid.lua` 等 | `P1` | 从香草头像框开始，团队以可读性优先 |
 | Combat HUD | `castbar.lua`、`buff*.lua`、`nameplates.lua`、计时模块 | `P1` | 分开状态条、端帽、图标槽与警告 |
 | DPS／Threat | pfUI 无完整 meter | `P0` | 先确定数据源与 Turtle WoW API |
 | Bags／Loot／Roll | `bags.lua`、`loot.lua`、`roll.lua` | `P1` | 物品槽与需求／贪婪／放弃按钮分别拆分 |
@@ -56,11 +56,18 @@
   选择书签资产保留但 runtime 隐藏；QL-B0 V2 内框、地区条与任务条底板路线
   均已撤销。pfQuest tracker 使用临时大纸面 runtime，保留 provider 的全部
   动态内容与交互；当前因展示区域失败等待无边界 direct-paper 方向确认。
+- Unit Frames 接管 `UF.BAR.HEALTH.FILL`、`UF.BAR.POWER.FILL`，作用于 Player、
+  Target、TargetTarget、Focus 与 Raid；另只为 `pfRaid1..40` 接管
+  `UF.RAID.MEMBER.SHELL.A-D`。Frame 构造、颜色、数值、裁切、事件、点击和
+  所有未登记单位框继续由 pfUI 提供；Raid 高度失配或模块禁用时局部回退。
 - pfUI 默认所有权：动作条、导航、单位／团队、战斗 HUD、背包／拾取、系统
   skin、Game Menu 与 `/pfui` 配置页全部正常加载；Quest Log 之外的 Blizzard
   skin 不再被 AEUI 全局停用。
 - 作用域接管：Chat 保留 pfUI `chat` 作为 provider，仅暂时让渡
   `chatcopy`／`whisperproxy`／`bubbles`；Quests 只让渡 `Quest Log` skin。
+  Unit Frames 让渡 `unitframes.health-fill`／`unitframes.power-fill`，以及精确的
+  `unitframes.raid-shell`／`unitframes.raid-health-fill`／
+  `unitframes.raid-power-fill` component。
   未来模块 A 只能增加模块 A 的精确条目，不得恢复类别式全局回退。
 - Chat 视觉例外：pfUI `panel` provider 与配置保持加载，仅隐藏贴附左右聊天框
   的两条信息 Panel；小地图 Panel 与其他 pfUI Panel 功能不受影响。

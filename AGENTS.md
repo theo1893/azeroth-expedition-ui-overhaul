@@ -10,21 +10,23 @@ Codex 进入仓库后先读本文件。本文件同时承担项目级开发约�
 - 运行时由 `addon/pfUI/` 与 `addon/AzerothExpeditionUI/` 共同组成。
 - pfUI 功能底座版本：`8.1.0`，来源提交
   `fbc8fb608b79adf32049543ec12fcc020e0acd69`；项目分支版本
-  `8.1.0-aeui.4`，MIT 许可见 `addon/pfUI/LICENSE`。
+  `8.1.0-aeui.5`，MIT 许可见 `addon/pfUI/LICENSE`。
 - pfUI 提供数据、事件、交互、SavedVariables 与兼容能力；项目允许大规模
   重构视觉、布局和呈现连接，但不改写无关功能。
 - pfUI 默认接管全部模块、Blizzard skins 与配置页面；AEUI 只接管显式登记的
-  Chat 与 Quest Log。后续改造模块 A 时，只允许修改或路由 pfUI 的模块 A，
-  不得通过公共绘制入口、全局回退或配置强写影响其他模块。
+  Chat、Quest Log、Unit Frame fill donor 与 Raid 成员外壳。后续改造模块 A 时，只允许
+  修改或路由 pfUI 的模块 A，不得通过公共绘制入口、全局回退或配置强写影响
+  其他模块。
 
 | 模块 | 当前状态 | 下一门禁 |
 |---|---|---|
-| pfUI／作用域接管 | scoped ownership `P5`；pfUI 公共绘制、全部未接管模块与配置页已恢复；模块 Initialize／Apply 已隔离失败，未实机 | Turtle WoW 验证 pfUI 全模块、Game Menu／`/pfui`、旧 SavedVariables 迁移及 Chat／Quest Log 隔离 |
+| pfUI／作用域接管 | scoped ownership `P5`；pfUI 公共绘制、全部未接管模块与配置页已恢复；模块 Initialize／Apply 已隔离失败，未实机 | Turtle WoW 验证 pfUI 全模块、Game Menu／`/pfui`、旧 SavedVariables 迁移及 Chat／Quest Log／Unit Frames 隔离 |
 | 聊天 | 核心 runtime `1.22 / P5`。Full V1 主框、Dark V2 Tab／承托带、Dark V1 输入与 V3 未读已在 addon 内接入；V3 Tab／承托带保留为 P6-C 前回退。Dark V2 固定 source `ChatTabs_Dark_V2_A.png` SHA `616f965b…a1e3c` 已确定性导出为 `ChatTabAtlasDarkV2.tga` SHA `3fb505fa…be0` 与 `ChatTabShelfDarkV2.tga` SHA `44c7f85c…fda`；只清理 source 的 `13` 个和 LANCZOS 新增的 `23` 个低 Alpha 绿边 RGB，Alpha 不变，最终绿溢色 `0`。最终真实排版覆盖 6 场景、violations `0`，fresh-checkout package `pass`、目标设备无需构建。v1.22 继续透传客户端／pfUI／ChatMOD 经典颜色；Chat Copy／URL Copy 暂缓，右框及左右聊天信息 Panel 隐藏，小地图 Panel 保留；本次 P4→P5 ImageGen `0`，原生产仍为 `5/5`，attempt 6 禁止 | 游戏设备可用时 `/reload`，确认 `chat-runtime=1.22`、四态 Tab、五 Tab 压缩、承托带、缩放／拖动、经典颜色及输入行为；通过前不得标记 P6 或清理回退／证据 |
 | 任务 | 用户于 `2026-08-05` 实机确认 Quest Log 左右页 bug 与显示问题已修复；该活动范围保持 `P6 user-confirmed`。QS-B1 V7-A 为 `P5`。QL-D V3 五次循环耗尽后，用户明确“使用第4稿”：以一次性 aspect 例外接受 exact canonical SHA `816aeedd…47c5`，原 keyed aspect `2.76945`／technical `18/19` 仍保留。正式四态 atlas SHA `cda1ef21…cd56` 已由 Quests `1.27`／Theme `1.10` 接入既有奖励适配层；atlas 与 0／1／2／4／6 真实排版均和已审阅第4稿像素完全一致，display `5/5 pass`。当前 `P5 runtime-exported / addon-integrated`。真实 Button／Tooltip／动态图标／文字和几何未替换。七枚独立功能纹章仍未验收，菜单不响应，旧 Blizzard／pfQuest 按钮继续 fail-open；Tracker 与 NPC Quest／Gossip 不变 | Turtle WoW 验证 QL-D TGA 方向、四态、pressed `1px`、safe area、双列排版和长详情滚动；不得第六次生图。另验证闭合态火漆跨压与滚动裁切；七纹章与代理 parity 完成后才可启用事务菜单或隐藏旧按钮 |
 | 动作条／随身栏 | `AB.SLOT.BASE.V1` 与 `AB.RAIL` 均为 `P6 / game-validated`，固定生产 `5/5` 且禁止 attempt 6；Field Kit 视觉 runtime-v1.5／bridge-v2.3、Combat Focus runtime-v2.3 与 Sidebar Group runtime-v1.0 为 `P5 / pending-game-validation`。AEUI `0.8.23` 的 `ACTION-BARS-CORE-SIM-V11` 保留 V10 的 Turtle WoW 游戏原生几何：Player／Target `240×60 / 0.8`，TargetTarget `240×60 / 0.68` 并以 `8 UI` 间距中线依附 Target 右侧；Aura `23 UI`、真实 `size+7` 步进每行八枚；玩家 Cast／目标 Cast／Swing 同轴 `260×12 / 1.0`。三框配置与 live FontString 均强制为客户端系统字体 `OUTLINE / 18 UI` 并在 provider `UpdateConfig` 后重施；DoiteDPS 两排 union 从 `TOPLEFT (850,-647)` 上移至 `(850,-615)`。用户确认的 Bar 2／4／5／3 已组成 `2×2` 四个 `3×4` 分区、总体 `6×8`，只显示一个 group mover，内容逐栏独立且可逆 unbind。exact v7–v13 profile 在完整签名匹配时一次迁移为 v14；姿态、消耗品／饰品低 `20 UI` 底线及精简 AutoBar 行为不变。v2.3 继承 AutoBar zhCN 缺失分类说明修复，并缓存最后一次已验证的 Bar 1 相对锚点；`SetupVisual` 与整个 `AutoBarConfig.OnShow` 完成后都先在同一事件内恢复该锚点，再以零延迟事件按已稳定的按钮几何重算，既不显示 provider 自由坐标，也不依赖维护循环。全部位图字节不变，ImageGen `0/0` | `/reload` 后先连续开关 AutoBar 配置页，确认卷袋始终留在主动作栏左侧且无先跳出后回位；再逐类悬停确认无 line 211 错误，并点击多个配置控件复测。确认三框实际系统字体 `18` 在 `/pfui` 应用／unlock 后不回退、DoiteDPS 双排不压 Player Buff，并复测 Player／卷袋、Aura 八枚、Boss 16 Debuff、三条计时栈。确认中央仅 Bar 1 mover、右侧仅 Bar 2 group mover，四栏拖动／缩放／home、48 个动作与可逆 unbind 正常；继续验证 AutoBar、ArchiTotem、Field Kit popup／Queue／换装。需要回退时 `/aeui focuslayout restore` 后 `/reload` |
 | 地图 | 大地图与小地图整体视觉 `P2` | 按真实 pfUI／Frame 对象完成组件合同 |
 | 角色 | 香草同构整体视觉 `P2`；用户于 `2026-08-08` 要求暂停 overhaul，现有锁定图、Prompt 与 pfUI 默认 runtime 原样保留 | 暂停；待用户明确恢复后再实机测量并拆分装备槽、属性、页签与按钮 |
+| 单位框 | `UF-PRIMARY-V4-CANDIDATE-V1 / P4 / source-accepted`；用户以“确认, 进入下一阶段”接受 Player／Target exact pixels。两张独立 `1284×252 RGBA` 母版及 manifest 已按候选原 SHA 固化，安全区／透明清理／非镜像维修与 display `10/10 pass` 保持不变，ImageGen `0/0`；尚未导出 runtime 或接入 addon。V3 A／B 保持 `P3 / 5/5 exhausted / rejected` 历史；B1 与 Raid A2 均为 `P5 / addon-integrated` | 先为本地 Combat Focus `240×60` 框体与 V4 固定 `214×42`、禁止纵向拉伸合同建立兼容方案并取得确认，再独立执行 V4 P5；Raid／B1 等待 Turtle WoW P6 |
 | 其他 UI | `P0–P2`，保持 pfUI 默认实现 | 逐模块建立四份长期文档，并仅登记目标模块的接管路由 |
 
 全量模块状态以 [docs/PROGRESS.md](docs/PROGRESS.md) 为准。
@@ -99,6 +101,15 @@ docs/
 - [当前 AB.RAIL V1 工作文件](docs/modules/actionbars/work/ACTION.BARS.RAIL.V1.md)
 - [当前饰品／消耗品 Field Kit V1 工作文件](docs/modules/actionbars/work/ACTION.BARS.FIELDKIT.V1.md)
 - [当前 Combat Focus／ArchiTotem 布局 V1 工作文件](docs/modules/actionbars/work/ACTION.BARS.FOCUS.V1.md)
+
+单位框：
+
+- [子模块与 pfUI 对齐](docs/modules/unitframes/SUBMODULES.md)
+- [主模块美术基线 Prompt](docs/modules/unitframes/ART_BASELINE.md)
+- [子模块美术基线 Prompt](docs/modules/unitframes/SUBMODULE_ART_BASELINES.md)
+- [详细进度](docs/modules/unitframes/PROGRESS.md)
+- [当前主单位框资源批次](docs/modules/unitframes/work/UNITFRAMES.CORE.md)
+- [当前 Raid 团队框架批次](docs/modules/unitframes/work/UNITFRAMES.RAID.md)
 
 `NOTICE.md`、第三方 `SOURCE.md`、许可证、JSON manifest 和 Skill
 references 是法律、来源或机器契约，不属于项目说明文档，不在上表重复维护。

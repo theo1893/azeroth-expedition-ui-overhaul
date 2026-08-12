@@ -2,6 +2,12 @@
 
 ## 当前结论
 
+- `2026-08-12` 已把远端完成的 Unit Frames B1／Raid A2 P5 与本地插件入口合并。
+  ActionBars Lua、位图、布局合同与 AEUI `0.8.24` 均未改变；仅共享 Bootstrap／
+  TOC 增加 UnitFrames 模块与状态入口，三份仍在部署链中的 ActionBars runtime
+  manifest 已更新对应 entrypoint SHA。合并后的 fresh-checkout package
+  `status=pass`、violations `0`、runtime manifest records `64`、tracked addon
+  files `554`，报告 SHA `e1ca9054…0a35`，目标设备无需构建。
 - pfUI 十二条逻辑 Bar、按钮状态、分页、姿态／宠物、合法行列、移动／缩放与
   当前目标设备 profile 已完成 `P1` 审计。
 - 用户于 `2026-08-12` 要求把高度客制化后的 AutoBar 配置页收敛为职业槽编辑器。

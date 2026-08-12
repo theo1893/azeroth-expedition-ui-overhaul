@@ -1,0 +1,101 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "UF-PRIMARY/SIM.V1/direction-only",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, 100%-UI-pixels",
+  "evidence": {
+    "provider": "pfUI.uf:CreateUnitFrame + pfUI.uf:UpdateFrameSize",
+    "provider_files": [
+      "addon/pfUI/api/unitframes.lua",
+      "addon/pfUI/env/profiles.lua",
+      "addon/pfUI/modules/player.lua",
+      "addon/pfUI/modules/target.lua",
+      "addon/pfUI/modules/targettarget.lua",
+      "addon/pfUI/modules/focus.lua"
+    ],
+    "simulation_spec": "tools/specs/unitframes_primary_simulation_v1.json",
+    "simulation": "generated/unitframes/primary/simulation/V1/unitframes-primary-v1.scene.png",
+    "direction_only": true,
+    "final_runtime": false,
+    "screen_placement_authoritative": false,
+    "resource_dimensions_authoritative": true
+  },
+  "atlas": {
+    "size": [214, 157],
+    "visible_bbox": [0, 0, 214, 157],
+    "require_exact_visible_coverage": false,
+    "sampled_regions": [
+      {"id": "player-shell", "box": [0, 0, 214, 42]},
+      {"id": "target-shell", "box": [0, 42, 214, 84]},
+      {"id": "targettarget-shell", "box": [0, 84, 112, 118]},
+      {"id": "focus-shell", "box": [0, 118, 112, 157]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 1, "right": 1, "top": 1, "bottom": 1},
+    "minimum_frame_size": [3, 3]
+  },
+  "scenarios": [
+    {
+      "id": "player-normal",
+      "frame": [214, 42],
+      "preview_frame": [214, 42],
+      "zones": {
+        "content-safe": [7, 6, 207, 36],
+        "interaction-safe": [7, 6, 207, 36]
+      },
+      "regions": [
+        {"id": "player.hp", "kind": "statusbar", "box": [7, 6, 207, 31], "zone": "content-safe"},
+        {"id": "player.power", "kind": "statusbar", "box": [7, 32, 207, 36], "zone": "content-safe"},
+        {"id": "player.text-left", "kind": "fontstring", "box": [12, 10, 102, 27], "zone": "content-safe"},
+        {"id": "player.text-right", "kind": "fontstring", "box": [112, 10, 202, 27], "zone": "content-safe"},
+        {"id": "player.button", "kind": "button-hitbox", "box": [7, 6, 207, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "target-aggro",
+      "frame": [214, 42],
+      "preview_frame": [214, 42],
+      "zones": {
+        "content-safe": [7, 6, 207, 36],
+        "interaction-safe": [7, 6, 207, 36]
+      },
+      "regions": [
+        {"id": "target.hp", "kind": "statusbar", "box": [7, 6, 207, 31], "zone": "content-safe"},
+        {"id": "target.power", "kind": "statusbar", "box": [7, 32, 207, 36], "zone": "content-safe"},
+        {"id": "target.text-left", "kind": "fontstring", "box": [12, 10, 112, 27], "zone": "content-safe"},
+        {"id": "target.text-right", "kind": "fontstring", "box": [142, 10, 202, 27], "zone": "content-safe"},
+        {"id": "target.button", "kind": "button-hitbox", "box": [7, 6, 207, 36], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "targettarget-normal",
+      "frame": [112, 34],
+      "preview_frame": [112, 34],
+      "zones": {
+        "content-safe": [6, 6, 106, 28],
+        "interaction-safe": [6, 6, 106, 28]
+      },
+      "regions": [
+        {"id": "targettarget.hp", "kind": "statusbar", "box": [6, 6, 106, 26], "zone": "content-safe"},
+        {"id": "targettarget.power", "kind": "statusbar", "box": [6, 27, 106, 28], "zone": "content-safe"},
+        {"id": "targettarget.text", "kind": "fontstring", "box": [10, 9, 102, 24], "zone": "content-safe"},
+        {"id": "targettarget.button", "kind": "button-hitbox", "box": [6, 6, 106, 28], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "focus-hover",
+      "frame": [112, 39],
+      "preview_frame": [112, 39],
+      "zones": {
+        "content-safe": [6, 6, 106, 33],
+        "interaction-safe": [6, 6, 106, 33]
+      },
+      "regions": [
+        {"id": "focus.hp", "kind": "statusbar", "box": [6, 6, 106, 31], "zone": "content-safe"},
+        {"id": "focus.power", "kind": "statusbar", "box": [6, 32, 106, 33], "zone": "content-safe"},
+        {"id": "focus.text", "kind": "fontstring", "box": [10, 10, 102, 28], "zone": "content-safe"},
+        {"id": "focus.button", "kind": "button-hitbox", "box": [6, 6, 106, 33], "zone": "interaction-safe"}
+      ]
+    }
+  ]
+}

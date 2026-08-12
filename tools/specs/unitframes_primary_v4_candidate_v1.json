@@ -1,0 +1,167 @@
+{
+  "schema": "aeui-unitframes-primary-v4-candidate-v1",
+  "version": "UF-PRIMARY-V4-CANDIDATE-V1",
+  "status": "deterministic-candidate-authorized",
+  "phase": "P3",
+  "authorization": {
+    "date": "2026-08-12",
+    "exact_statement": "接受 UF-PRIMARY-V4-SIM-V1，并允许将 Raid A2 已验收材料样本作为 Player／Target 新透明 candidate 的只读输入。",
+    "simulation_version": "UF-PRIMARY-V4-SIM-V1",
+    "accepts_simulation_pixels": false,
+    "authorizes_exact_candidate_construction": true,
+    "authorizes_imagegen": false,
+    "authorizes_source_promotion": false,
+    "authorizes_addon_integration": false
+  },
+  "inputs": {
+    "material_manifest": "assets/source/unitframes/raid-a2/UF-RAID-A2_SourceManifest_v1.json",
+    "materials_are_read_only": true,
+    "materials": {
+      "leather": {
+        "file": "assets/source/unitframes/raid-a2/RaidMaterialLeather_SampleV1.png",
+        "sha256": "2f0ed03df83aa0ced730681670191dee7e1b3079324f9e11a02f7c55626cc41e"
+      },
+      "liner": {
+        "file": "assets/source/unitframes/raid-a2/RaidMaterialLiner_SampleV1.png",
+        "sha256": "8204723f74f63618ba55fef87932288c74588e1c2784e4e780550f49a4d27ef8"
+      },
+      "brass": {
+        "file": "assets/source/unitframes/raid-a2/RaidMaterialBrass_SampleV1.png",
+        "sha256": "f55657bb6473d754a3e480f8418ebd44590f72bd6c23072633dc95e6b3406c27"
+      },
+      "thread": {
+        "file": "assets/source/unitframes/raid-a2/RaidMaterialThread_SampleV1.png",
+        "sha256": "86699161afb11d77de19e69781ba93862a538e42b16ec1da698341ba49a2e3a1"
+      }
+    },
+    "bars": {
+      "health": {
+        "file": "assets/source/unitframes/bars-v2/UnitFrameHealthFill_Master_v1.png",
+        "sha256": "8d19ffe95d5314b463d88be793568667aa555460a955364a636e6ddc76508e1f"
+      },
+      "power": {
+        "file": "assets/source/unitframes/bars-v2/UnitFramePowerFill_Master_v1.png",
+        "sha256": "0668eddbb6c7644312eecc3c1d03f555b937d5307e48444ca520a6674cb387f1"
+      }
+    },
+    "forbidden_pixel_inputs": [
+      "all UF-A1 V1 rejected shell candidates",
+      "all UF-A1 V2 rejected shell candidates",
+      "all UF-A1 V3 rejected shell candidates",
+      "UF-PRIMARY-V4-SIM-V1 placeholder shell pixels"
+    ]
+  },
+  "geometry": {
+    "scale": 6,
+    "source": [1284, 252],
+    "runtime": [214, 42],
+    "live_content_bed_source": [42, 36, 1242, 216],
+    "live_content_bed_runtime": [7, 6, 207, 36],
+    "source_three_slice": [192, 900, 192],
+    "runtime_three_slice": [32, 150, 32],
+    "supported_content_widths": [160, 200, 240],
+    "fixed_runtime_height": 42,
+    "ui_scales": [0.75, 1.0, 1.25, 1.5],
+    "standard_width_uses_one_complete_texture": true,
+    "independent_vertical_stretching": false,
+    "transparent_outside_outer_silhouette": true,
+    "liner_may_underlay_live_bed": true,
+    "perimeter_relief_may_overlap_live_bed": false
+  },
+  "construction": {
+    "imagegen_calls": 0,
+    "python_owns": [
+      "outer silhouette and all alpha",
+      "exact live bed and three-slice geometry",
+      "material crop and low-frequency multiplicative lighting",
+      "role-specific repair masks",
+      "transparent RGB cleanup",
+      "source and 214x42 review runtime",
+      "hover and aggro review masks",
+      "variable-width, scale and real-layout previews"
+    ],
+    "python_may_not": [
+      "paint a new material donor",
+      "alter an accepted Raid A2 material sample",
+      "bake dynamic names, values, colours, icons or states into shell candidates",
+      "write source or addon runtime before exact-pixel user acceptance"
+    ],
+    "material_sampling": {
+      "mode": "aspect-preserving cover-fit with role-specific immutable offsets",
+      "tiling": false,
+      "mirroring": false,
+      "pixel_invention": "only deterministic masks, low-frequency multiplication and contact shading; material colour and brushwork come from accepted samples"
+    },
+    "role_offsets": {
+      "player": {
+        "leather": [-62, -28],
+        "liner": [74, 18],
+        "brass": [-118, 22],
+        "thread": [36, -11]
+      },
+      "target": {
+        "leather": [86, 26],
+        "liner": [-94, -16],
+        "brass": [126, -24],
+        "thread": [-48, 15]
+      }
+    }
+  },
+  "roles": {
+    "player": {
+      "component": "UF.PLAYER.SHELL",
+      "outer_profile": "hand-cut deep-walnut saddle strap with a heavier upper-left repair",
+      "repairs": [
+        "crooked short dull-brass clamp on upper-left perimeter",
+        "two uneven coarse stitches confined to left perimeter",
+        "one subordinate off-centre dark rivet on lower-right perimeter"
+      ],
+      "forbidden": ["full-height end column", "continuous brass rail", "target mirror"]
+    },
+    "target": {
+      "component": "UF.TARGET.SHELL",
+      "outer_profile": "same expedition craft family with rubbed upper-left fold and heavier lower-right damage",
+      "repairs": [
+        "rubbed folded leather only on upper-left perimeter",
+        "short cracked oxidized-brass scab wrapping lower-right perimeter",
+        "one dark split confined to lower-right perimeter"
+      ],
+      "forbidden": ["enemy-red ornament", "elite crown", "player mirror"]
+    }
+  },
+  "review_gates": {
+    "input_sha_match": true,
+    "source_size_and_mode": "1284x252 RGBA",
+    "runtime_review_size_and_mode": "214x42 RGBA",
+    "fully_transparent_rgb_must_be_zero": true,
+    "perimeter_relief_intrusion_pixels": 0,
+    "identity_repair_intrusion_pixels": 0,
+    "live_bed_liner_coverage_ratio_min": 0.995,
+    "role_pixels_must_not_be_identical": true,
+    "role_pixels_must_not_be_horizontal_mirrors": true,
+    "standard_internal_seams": 0,
+    "display_scenarios_must_pass": 10,
+    "candidate_may_be_promoted_without_user_acceptance": false
+  },
+  "outputs": {
+    "directory": "generated/unitframes/primary/candidates/V4/candidate-01",
+    "player_source": "UF-Primary-V4-Player-candidate-v1.png",
+    "target_source": "UF-Primary-V4-Target-candidate-v1.png",
+    "player_runtime_review": "UF-Primary-V4-Player-runtime-review-v1.png",
+    "target_runtime_review": "UF-Primary-V4-Target-runtime-review-v1.png",
+    "player_hover_review": "UF-Primary-V4-Player-hover-review-v1.png",
+    "target_aggro_review": "UF-Primary-V4-Target-aggro-review-v1.png",
+    "geometry_masks": "geometry-masks-v1.png",
+    "technical_review": "technical-review-v1.png",
+    "real_layout": "real-layout-v1.png",
+    "real_layout_review": "real-layout-review-v1.png",
+    "review_report": "candidate-review-report-v1.json",
+    "display_region_report": "display-region-report-v1.json"
+  },
+  "promotion_policy": {
+    "current_output_role": "ignored P3 candidate and review evidence only",
+    "source_directory_write_allowed": false,
+    "addon_write_allowed": false,
+    "next_gate": "user exact-pixel acceptance before P4 source promotion and P5 runtime integration"
+  }
+}
