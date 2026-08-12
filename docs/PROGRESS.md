@@ -25,7 +25,7 @@
 | Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P6`；QS-B1 V7-A `P5`；QL-D V3 attempt 4 `P5` | Quest runtime `1.27`／Theme `1.10`。QL-D 五次循环仍按 `5/5` 耗尽；用户随后明确“使用第4稿”，接受 keyed aspect `2.76945` 的一次性选稿例外，原 technical `18/19` 不重写。exact source SHA `816aeedd…47c5` 与四态 atlas SHA `cda1ef21…cd56` 已受 manifest 管理并接入 addon；正式 atlas／真实排版与已审阅 attempt 4 像素完全一致，display `5/5 pass`。真实 Button、Tooltip、动态图标／名称和双列几何不变。闭合载体根、火漆与旧功能按钮继续 fail-open；Tracker 与 NPC Quest／Gossip 不变 | Turtle WoW 验证 QL-D TGA 方向、四态、pressed `1px` 联动、safe area、0／1／2／4／6 排版及长详情滚动；同时验证闭合态火漆物理接触与滚动裁切。七纹章 parity 前不启用事务菜单；不得第六次生图 |
 | Map | `map.lua`、`minimap.lua`、`addonbuttons.lua` 等 | `P2` | 羊皮地图卷与黄铜罗盘已锁定 | 实机对象审计和组件级合同 |
 | Character | `character.lua`、`inspect.lua`、`dressup.lua` | `P2` | 香草同构角色面板已锁定 | 实机几何与装备槽／属性／页签拆分 |
-| Unit Frames | `api/unitframes.lua`、`modules/raid.lua`、主／紧凑单位入口 | A／B `P3 / 5/5 exhausted`；B1 `P5`；Raid `P3 prompt-authorized`；A2 paused | B1 exact Health／Power source 已只接入 Player／Target／TargetTarget／Focus；display `9/9 pass`。Raid `UF-RAID-SIM-V1` 方向已确认，`UF-RAID-A1 V1 final` 四格完整背景板合同与单段五次上限已获独立授权；当前正式生产 `0/5`，无 source/runtime/addon 变更 | 执行 Raid attempt 1 及有界内部修复，完整通过后交用户复审；不得自动进入 P4。B1 另待 Turtle WoW P6；A／B 是否重开另定，A2 暂停 |
+| Unit Frames | `api/unitframes.lua`、`modules/raid.lua`、主／紧凑单位入口 | A／B `P3 / 5/5 exhausted`；B1 `P5`；Raid `P3 / 5/5 exhausted`；A2 paused | B1 exact Health／Power source 已只接入 Player／Target／TargetTarget／Focus；display `9/9 pass`。Raid `UF-RAID-A1 V1 final` 五次正式生成已耗尽并 `candidate-rejected`：attempt 3 视觉最佳但 padding／亮边失败；attempt 5 padding 通过但 ratio 约 `3.19:1`。无 candidate/source/runtime/addon 变更 | Raid 禁止第六次；等待用户授权新合同、材质 donor＋确定性几何架构，或具体确定性例外。B1 另待 Turtle WoW P6；A／B 是否重开另定，A2 暂停 |
 
 ## 尚未启动长期模块包
 

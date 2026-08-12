@@ -11,13 +11,15 @@
 - `UF-A2` TargetTarget／Focus：继续暂停；既有物件身份方向不变，尚无正式
   source。Hover／Aggro 仍计划由接受外壳 Alpha 确定性派生。
 - `UF-RAID-SIM-V1` Raid 团队框架方向已确认；正式批次
-  `UF-RAID-A1 V1 final` 为 `P3 / prompt-authorized / attempt-1-pending`。用户于
-  `2026-08-12` 接受无共享外框、
-  薄皮革点名名条、四变体、低饱和配色、40 人整体重量与状态密度方向；模拟
-  像素仍非 source。`UF-RAID-A1 V1 final` 已冻结为一张 `1536×1024` 四格
-  production sheet、四个独立完整背景板和单段 `5` 次最坏预算；随后明确授权
-  固定 Image 1／2、同循环紧邻前稿有界 edit 与合同内确定性后处理。ImageGen
-  `0/5`，attempt 1 尚未调用；尚无 source、runtime 或 addon 接入。
+  `UF-RAID-A1 V1 final` 当前为
+  `P3 / repair-budget-exhausted / candidate-rejected / 5/5`。用户于
+  `2026-08-12` 接受无共享外框、薄皮革点名名条、四变体、低饱和配色、40 人
+  整体重量与状态密度方向，并独立授权固定 Image 1／2、同循环紧邻前稿有界
+  edit、最多五次实际 ImageGen 与合同内确定性后处理。五次均已完成；attempt 3
+  是当前最佳内部视觉参考，但安全 padding 与连续亮边／D 补片未通过；attempt 5
+  获得安全 padding，却误成约 `3.19:1`，ratio error `59.09%–59.50%`、
+  anisotropy `37.14%–37.31%`。没有 candidate、source、runtime 或 addon 接入，
+  禁止第六次调用。
 - 当前只处理资源重绘与精确媒体替换。B1 已接入 addon；没有修改另一台设备上
   的 Frame 位置、尺寸、点击、事件、数值、颜色逻辑或其他功能。
 - 用户于 `2026-08-11` 接受“每个角色生成完整外壳，Python 负责精确工程化”
@@ -85,8 +87,9 @@
   单框、40 人 Vertical／Horizontal、20 人、五人复用和 `width=90`。
 - 用户于 `2026-08-12` 确认该方向；模拟像素不接受为 source。正式机器合同为
   `tools/specs/unitframes_raid_production_v1.json`，执行正文为
-  `UF-RAID-A1 V1 final`；当前只形成 production draft，正式 ImageGen 与 addon
-  变更均为 0。
+  `UF-RAID-A1 V1 final`。正式 ImageGen 已 `5/5` 耗尽并终止于
+  `candidate-rejected`；attempt 3 仅为最佳内部视觉参考，attempt 5 仅为终态诊断。
+  两者均未进入 P4，addon 变更仍为 0。
 
 ## 展示区域门禁
 
@@ -105,6 +108,9 @@
 - `UF-A1 V3-A`、`UF-A1 V3-B`、`UF-B1 V2` 每段最多 `5` 次实际
   `imagegen-0-143-0`，最坏合计 `15` 次；当前 A `5/5`、B `5/5`、B1
   `3/5 stopped-on-pass`。
+- Raid `UF-RAID-A1 V1 final` 的独立 `5` 次预算也已全部使用；流程错误 `2`
+  不占额度且都没有产生额外 provider 图。终态为
+  `repair-budget-exhausted / candidate-rejected`，禁止第六次。
 - 三段 final 已吸收用户确认的可见结论并通过 `pass-final` 自包含预检；
   正式生产授权已独立取得，按 A→B→B1 顺序执行。
 - 流程错误无生成证据时单独记录，不占额度。旧 V1／V2 失败像素禁止作为新段
@@ -234,10 +240,10 @@
 
 ## 下一门禁
 
-Raid 的下一门禁是从已提交的 `UF-RAID-A1 V1 final` 执行固定执行器 attempt 1，
-随后按语义／物理、美术继承、组件合同、确定性装配、技术像素、40 人真实排版
-与 display-region 顺序完成内部审查。最多 `5` 次实际 ImageGen，流程错误不占
-额度；内部通过仍需用户单独接受具体候选后才能进入 P4。
+Raid 的原合同已经终止，下一门禁不是 attempt 6。用户需要明确选择并授权新的
+路径：重开带新预算的生产合同、改变为更强的“生成材质 donor＋Python 确定性
+几何”架构，或为某个现有稿授权具体且可审计的确定性例外。无新授权前保留
+P3 rejected，禁止生成 source/runtime、禁止接入 addon。
 
 B1 下一门禁是 Turtle WoW `1.18.1` P6：验证 TGA 方向、Player／Target／
 TargetTarget／Focus 的生命与 Mana／Rage／Focus／Energy 乘色、低血量裁切、

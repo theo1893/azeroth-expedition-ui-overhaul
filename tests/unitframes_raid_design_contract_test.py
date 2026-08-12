@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static checks for the pre-production pfUI raid-frame contract."""
+"""Static checks for the exhausted pfUI raid-frame production contract."""
 
 from __future__ import annotations
 
@@ -81,8 +81,8 @@ def main() -> None:
     production = json.loads(PRODUCTION.read_text(encoding="utf-8"))
     assert production["schema"] == "aeui-unitframes-raid-production-v1"
     assert production["version"] == "UF-RAID-A1 V1 final"
-    assert production["status"] == "repair-prepared"
-    assert production["production_authorized"] is True
+    assert production["status"] == "candidate-rejected / repair-budget-exhausted"
+    assert production["production_authorized"] is False
     assert production["authorization"]["authorized_version"] == (
         "UF-RAID-A1 V1 final"
     )
@@ -123,15 +123,27 @@ def main() -> None:
     assert production["repair_loop"]["maximum_actual_imagegen_calls"] == 5
     assert production["repair_loop"]["process_errors_count_toward_limit"] is False
     assert production["repair_loop"]["execution_state"] == {
-        "attempts_used": 4,
-        "attempts_remaining": 1,
-        "process_errors": 1,
+        "attempts_used": 5,
+        "attempts_remaining": 0,
+        "process_errors": 2,
         "current_prompt_version": "UF-RAID-A1 V1 final.r4",
         "next_operation": (
-            "final regenerate from fixed Image 1/2 only; no Image 3; small "
-            "440x220 safety sources then authorized bbox normalization"
+            "none; repair budget exhausted; sixth ImageGen call forbidden "
+            "without a new explicit contract"
         ),
     }
+    terminal = production["terminal_review"]
+    assert terminal["result"] == "candidate-rejected / repair-budget-exhausted"
+    assert terminal["attempts_used"] == 5
+    assert terminal["best_internal_visual_reference"]["attempt"] == 3
+    assert terminal["best_internal_visual_reference"]["may_enter_p4"] is False
+    assert terminal["final_attempt"]["attempt"] == 5
+    assert terminal["final_attempt"]["technical_pass"] is False
+    assert terminal["candidate_written"] is False
+    assert terminal["source_written"] is False
+    assert terminal["runtime_written"] is False
+    assert terminal["addon_changed"] is False
+    assert terminal["sixth_call_allowed"] is False
 
     expected_locked = {
         "assets/locked/chat/聊天框视觉基准_v1.png":
@@ -228,7 +240,7 @@ def main() -> None:
 
     work = WORK.read_text(encoding="utf-8")
     for clause in (
-        "repair-prepared / attempt-3-pending",
+        "candidate-rejected / 5/5 / waiting-new-user-direction",
         "ImageGen：`0/0`",
         "不增加一圈共享书框",
         "四个完整外壳变体",
@@ -237,13 +249,19 @@ def main() -> None:
         "UF-RAID-A1 V1 final",
         "exactly four complete empty raid-member",
         "pass-final",
-        "当前实际生图：`2/5`",
+        "当前实际生图：`5/5`",
         "UF-RAID-A1 V1 final.r1",
         "UF-RAID-A1 V1 final.r2",
+        "UF-RAID-A1 V1 final.r3",
+        "UF-RAID-A1 V1 final.r4",
         "019ff4da-2586-7cc1-8174-8de62fab3f64",
         "019ff4e5-8c60-7fb2-a18f-49dda781d752",
+        "019ff4eb-de51-7fe1-98cb-570447d68de3",
+        "019ff4f2-9d85-7773-bdc8-c60f33f1e3bb",
+        "019ff4f8-5010-7df0-9ee0-8a6627b4c507",
         "continuous rope, braid, lacing",
         "Create from scratch one production sheet",
+        "repair-budget-exhausted / candidate-rejected / 5/5",
     ):
         assert clause in work, f"raid work record missing: {clause}"
 

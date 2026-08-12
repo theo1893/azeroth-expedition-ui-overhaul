@@ -5,20 +5,21 @@
 - 模块：Unit Frames
 - 组件 ID：`UF.RAID.*`
 - 方向版本：`UF-RAID-SIM-V1`
-- 正式生产版本：`UF-RAID-A1 V1 final.r2 / repair-prepared`
-- 子状态：`repair-prepared / attempt-3-pending`
+- 正式生产版本：`UF-RAID-A1 V1 final.r4 / repair-budget-exhausted`
+- 子状态：`candidate-rejected / 5/5 / waiting-new-user-direction`
 - 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
-- 当前操作：`generate`
+- 当前操作：`stop-no-sixth-call`
 - 生成前模拟方式：`deterministic-local-geometry`
 - 模拟 ImageGen：`0/0`
 - 自动修复预算：`UF-RAID-A1 V1 final` 最多 5 次实际 ImageGen，含首次；
   流程错误不计额度
-- 当前实际生图：`2/5`；剩余 `3`
-- 流程错误：`1`
+- 当前实际生图：`5/5`；剩余 `0`
+- 流程错误：`2`；均发生在 provider 已只生成一张图之后，不增加实际生图数
 - 多执行正文最坏实际生图数：`5`；本批只有一段正式正文
-- 最新 raw：`generated/unitframes/raid/A1/V1/attempt-02/uf-raid-a1-v1-attempt-02-raw.png`，
-  SHA `6e2b9686…8696`；无 candidate／source／runtime
+- 最新 raw：`generated/unitframes/raid/A1/V1/attempt-05/uf-raid-a1-v1-attempt-05-raw.png`，
+  SHA `684e3f5e…96c1`；当前最佳内部视觉参考为 attempt 3 raw
+  `41c9d561…e760`，但二者都不是 candidate；无 source／runtime／addon 变更
 - 锁定视觉基准：
   - Image 1：`assets/locked/chat/聊天框视觉基准_v1.png`，SHA-256
     `90e30ba405a2b5cdc707cc229e56c4f64e51d0e4051f1e98dbcd2ec2ee70ee06`；
@@ -951,3 +952,31 @@ four restrained identities wholly inside the outermost 34 raw pixels; D repair
 tiny and dull; matched visual weight; rough low-saturation Vanilla craft; and
 no baked live content.
 ```
+
+### Attempt 5 执行与终态审查
+
+- 固定执行器 user block 完整；只上传授权 Image 1／2，SHA 均一致；按已提交的
+  最终策略没有 Image 3。session `019ff4f8-5010-7df0-9ee0-8a6627b4c507`；
+  provider result `ig_0f804440d375108d016a7c270efef0819181aa46c5724273d9`；raw
+  `1536×1024 RGB`，SHA `684e3f5e…96c1`。
+- child 已用 `file` 确认 raw 尺寸／模式，随后又用缺少 Pillow 的系统 Python
+  做重复确认而失败；没有第二张 provider 输出。这是流程错误 `2`，attempt 5
+  仍只计一次实际 ImageGen。
+- 报告：`generated/unitframes/raid/A1/V1/attempt-05/review/technical-report.json`，
+  SHA `5b9393e9…09a0`；contact SHA `8f294130…99f`；40 人真实排版诊断 SHA
+  `566cf542…bac4`。
+- 成功项：缩小原始对象的策略终于获得宽安全留白；四格 padding 分别
+  `[216,196,167,195]`、`[169,196,213,195]`、`[216,188,167,203]`、
+  `[169,188,213,203]`，远高于门禁。四格各只有一个 Alpha32 连通体，green
+  spill `0`；内衬微纹理比 attempt 4 明显降频。
+- 第一技术失败：模型把明确的 `440×220 / 2:1` 误画成约 `385–386×121`，
+  source ratio `3.181818–3.190083`，ratio error `59.09%–59.50%`，X／Y
+  normalize anisotropy `37.14%–37.31%`。合同最多只允许 `8%`，因此禁止把它
+  非等比强拉为 `592×296`；真实排版图只能作为诊断，不能代表 runtime。
+- 美术也未通过：平坦中心成立，但四边形成连续暖铜多层斜切滚边，角部过于
+  对称，整体更像规则金属铭牌；D 端部仍像装饰扣件，而非低调的野战补片。
+- 终态结论：`repair-budget-exhausted / candidate-rejected / 5/5`。attempt 3 是
+  本循环当前最佳内部视觉参考，但仍有连续亮边、D 补片偏亮，以及四格内侧／
+  上下 padding 不足，不能倒退绕过门禁。禁止第六次调用；不得写入
+  `assets/source/`、不得导出 runtime、不得修改 addon。下一步只能由用户明确
+  选择重开新合同、改变生成架构或授权具体确定性例外。

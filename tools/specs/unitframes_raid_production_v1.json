@@ -1,7 +1,7 @@
 {
   "schema": "aeui-unitframes-raid-production-v1",
   "version": "UF-RAID-A1 V1 final",
-  "status": "repair-prepared",
+  "status": "candidate-rejected / repair-budget-exhausted",
   "simulation_gate": {
     "version": "UF-RAID-SIM-V1",
     "status": "simulation-confirmed",
@@ -9,7 +9,7 @@
     "accepts_pixels": false
   },
   "executor": "imagegen-0-143-0 / @openai/codex@0.143.0",
-  "production_authorized": true,
+  "production_authorized": false,
   "authorization": {
     "date": "2026-08-12",
     "authorized_version": "UF-RAID-A1 V1 final",
@@ -152,11 +152,37 @@
       "green isolation and edge cleanliness"
     ],
     "execution_state": {
-      "attempts_used": 4,
-      "attempts_remaining": 1,
-      "process_errors": 1,
+      "attempts_used": 5,
+      "attempts_remaining": 0,
+      "process_errors": 2,
       "current_prompt_version": "UF-RAID-A1 V1 final.r4",
-      "next_operation": "final regenerate from fixed Image 1/2 only; no Image 3; small 440x220 safety sources then authorized bbox normalization"
+      "next_operation": "none; repair budget exhausted; sixth ImageGen call forbidden without a new explicit contract"
     }
+  },
+  "terminal_review": {
+    "result": "candidate-rejected / repair-budget-exhausted",
+    "attempts_used": 5,
+    "process_errors": 2,
+    "best_internal_visual_reference": {
+      "attempt": 3,
+      "raw_sha256": "41c9d561ebff84da6b6b64f8b636a2fd6eb08d745ac4fabed5a4a0505c57e760",
+      "technical_pass": false,
+      "failure": "minimum cell padding plus continuous warm edge and oversized D repair",
+      "may_enter_p4": false
+    },
+    "final_attempt": {
+      "attempt": 5,
+      "raw_sha256": "684e3f5e6bb47ebea5af7e44b181c1f2f5c91fe37761c989f4334a06beb296c1",
+      "technical_pass": false,
+      "bbox_sizes": [[385, 121], [386, 121], [385, 121], [386, 121]],
+      "ratio_error_percent": [59.090909, 59.504132, 59.090909, 59.504132],
+      "normalization_anisotropy_percent": [37.142857, 37.305699, 37.142857, 37.305699],
+      "failure": "ratio and anisotropy exceed 8 percent; continuous decorative bevel remains"
+    },
+    "candidate_written": false,
+    "source_written": false,
+    "runtime_written": false,
+    "addon_changed": false,
+    "sixth_call_allowed": false
   }
 }
