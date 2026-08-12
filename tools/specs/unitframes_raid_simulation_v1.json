@@ -1,11 +1,22 @@
 {
   "schema": "aeui-unitframes-raid-simulation-v1",
   "version": "UF-RAID-SIM-V1",
-  "status": "simulation-reviewed",
+  "status": "simulation-confirmed",
   "user_confirmation": {
-    "status": "pending",
+    "status": "confirmed",
+    "date": "2026-08-12",
     "accepts_pixels": false,
     "production_authorized": false
+  },
+  "accepted_visible_direction": {
+    "layout": "forty real pfRaid buttons at the provider's 10x4 VERTICAL density; no shared outer frame or decorative raid background",
+    "metaphor": "compact hand-cut expedition muster slips made from reused saddle, shield-strap and tent-binding leather",
+    "material_hierarchy": "thin deep-walnut leather edge over a quiet soot-brown liner, with only sparse dull-brass or stitch repairs",
+    "silhouette": "four equally weighted complete shell variants with low-frequency hand-cut differences; the individual member remains thin",
+    "palette": "low-saturation smoke brown, deep walnut and restrained oxidized brass under warm upper-left light",
+    "visual_weight": "weight comes from the forty-member formation and repeated dark material, not forty thick cards",
+    "integration": "existing accepted Health and Power material remains the live-bar layer; names, icons and states remain provider-owned",
+    "state_impression": "hover and aggro read as short broken edge responses while range, offline, resurrection, aura and vanilla glyph density stays legible"
   },
   "scope": {
     "included_provider": "addon/pfUI/modules/raid.lua + pfUI.uf:CreateUnitFrame('Raid', i, C.unitframes.raid)",

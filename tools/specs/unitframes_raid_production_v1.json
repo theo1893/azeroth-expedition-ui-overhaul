@@ -1,0 +1,137 @@
+{
+  "schema": "aeui-unitframes-raid-production-v1",
+  "version": "UF-RAID-A1 V1 final",
+  "status": "production-draft",
+  "simulation_gate": {
+    "version": "UF-RAID-SIM-V1",
+    "status": "simulation-confirmed",
+    "date": "2026-08-12",
+    "accepts_pixels": false
+  },
+  "executor": "imagegen-0-143-0 / @openai/codex@0.143.0",
+  "production_authorized": false,
+  "scope": {
+    "generated_components": [
+      "UF.RAID.MEMBER.SHELL.A",
+      "UF.RAID.MEMBER.SHELL.B",
+      "UF.RAID.MEMBER.SHELL.C",
+      "UF.RAID.MEMBER.SHELL.D"
+    ],
+    "generated_object_count": 4,
+    "runtime_repeat_count": 40,
+    "state_art": "derived deterministically after source acceptance; no separate ImageGen body",
+    "bar_art": "reuse accepted Health and Power sources after source acceptance; no ImageGen body in this batch",
+    "group_label_backing": "paused because raidgrouplabel is disabled"
+  },
+  "inputs": [
+    {
+      "slot": "Image 1",
+      "path": "assets/locked/chat/聊天框视觉基准_v1.png",
+      "sha256": "90e30ba405a2b5cdc707cc229e56c4f64e51d0e4051f1e98dbcd2ec2ee70ee06",
+      "inherit": "circa-2004 Vanilla WoW painted scale, broad low-resolution readability, restrained warm contrast and believable material thickness",
+      "ignore": "screen composition, text, portraits, books, pages, spine, channel tabs, wax seals and complete frame geometry"
+    },
+    {
+      "slot": "Image 2",
+      "path": "assets/locked/chat/聊天框独立艺术资源_v3.png",
+      "sha256": "272528e6d89cc90e5cbb37dce4ae572ddf9de0402078cdcf0ed5804f734faab8",
+      "inherit": "deep-walnut depth, warm upper-left light, contact shadow, restrained dull-brass response, rough wear and hand-made error",
+      "ignore": "pages, spine, columns, dragons, broad book construction and large metal ornaments"
+    }
+  ],
+  "canvas": {
+    "size": [1536, 1024],
+    "mode": "RGB",
+    "background": "#00FF00",
+    "view": "front-facing orthographic",
+    "cell_order": ["A", "B", "C", "D"],
+    "cells": [
+      {"id": "A", "cell": [0, 0, 768, 512], "target_visible_bbox": [88, 108, 680, 404]},
+      {"id": "B", "cell": [768, 0, 1536, 512], "target_visible_bbox": [856, 108, 1448, 404]},
+      {"id": "C", "cell": [0, 512, 768, 1024], "target_visible_bbox": [88, 620, 680, 916]},
+      {"id": "D", "cell": [768, 512, 1536, 1024], "target_visible_bbox": [856, 620, 1448, 916]}
+    ],
+    "labels_or_guides_in_pixels": false
+  },
+  "normalized_source": {
+    "per_variant": [592, 296],
+    "runtime": [74, 37],
+    "scale": 8,
+    "provider_button": [16, 16, 576, 280],
+    "health": [16, 16, 576, 256],
+    "health_power_gap": [16, 256, 576, 264],
+    "power": [16, 264, 576, 280],
+    "name_quiet_zone": [40, 48, 552, 232],
+    "horizontal_three_slice_source": [48, 496, 48],
+    "horizontal_three_slice_runtime": [6, 62, 6],
+    "unique_variant_features": "fixed left or right 48-source-pixel caps only",
+    "vertical_resize": "forbidden; unsupported provider height fails open to pfUI",
+    "unified_ui_scale": "whole texture and provider button share parent scale"
+  },
+  "variant_identity": {
+    "A": "one blunt upper-left notch and two unequal short stitches at lower-right",
+    "B": "one off-centre dark rivet at upper-right and a repeatedly rubbed lower edge",
+    "C": "one short attached leather repair at the left edge and no bright metal",
+    "D": "one short skewed dark oxidized-brass repair at upper-right and one lower-left split"
+  },
+  "runtime_assignment": [
+    "A", "C", "B", "D", "D", "B", "A", "C", "B", "D",
+    "C", "A", "C", "A", "D", "B", "A", "D", "B", "C",
+    "B", "C", "A", "D", "D", "A", "C", "B", "C", "B",
+    "D", "A", "A", "C", "D", "B", "D", "B", "C", "A"
+  ],
+  "deterministic_postprocess": {
+    "allowed": [
+      "normalize the provider sheet to 1536x1024 without creative repainting",
+      "split the four fixed cells",
+      "edge-connected pure-green chroma key inside each cell",
+      "clear RGB under fully transparent pixels",
+      "verify exactly one connected opaque plate and no detached flecks per cell",
+      "extract each visible bbox and fit to 592x296 only when ratio error and X/Y anisotropy are each at most 8 percent",
+      "downsample each accepted source to one complete 74x37 runtime texture",
+      "derive 6/62/6 horizontal three-slices from that same complete source for width-only changes",
+      "add atlas padding and edge extrusion without changing visible pixels",
+      "derive tintable short-edge state masks from accepted source alpha"
+    ],
+    "forbidden": [
+      "paint missing leather or brass",
+      "move, copy, mirror or invent repairs",
+      "merge variants or reuse pixels across cells",
+      "erase structural intrusions to rescue a failed object",
+      "change provider geometry, hit boxes, events, roster behavior or dynamic content"
+    ],
+    "technical_gates": {
+      "foreground_components_per_cell": 1,
+      "minimum_cell_padding": [64, 80, 64, 80],
+      "target_bbox_ratio": 2.0,
+      "maximum_ratio_error_percent": 8.0,
+      "maximum_normalization_anisotropy_percent": 8.0,
+      "visible_green_spill": 0,
+      "detached_flecks": 0,
+      "interior_green_holes": 0
+    }
+  },
+  "repair_loop": {
+    "maximum_actual_imagegen_calls": 5,
+    "process_errors_count_toward_limit": false,
+    "attempt_1_inputs": ["Image 1", "Image 2"],
+    "later_edit_input": "only the immediately preceding full production sheet from this same loop as Image 3",
+    "fixed_across_loop": [
+      "component IDs and four-object count",
+      "A/B/C/D cell order and canvas geometry",
+      "reference paths, SHA-256 values and roles",
+      "world-object metaphor and confirmed visible direction",
+      "runtime dimensions, safe zones and three-slice contract",
+      "solid background-plate topology",
+      "dynamic-content exclusions and no shared raid frame"
+    ],
+    "repairable": [
+      "cell occupancy within the fixed bboxes",
+      "edge irregularity and low-frequency hand-cut silhouette",
+      "wear, dye, smoke and material balance",
+      "liner contrast and brass restraint",
+      "variant-specific cap details",
+      "green isolation and edge cleanliness"
+    ]
+  }
+}

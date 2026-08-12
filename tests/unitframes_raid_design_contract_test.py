@@ -11,6 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = ROOT / "tools/specs/unitframes_raid_simulation_v1.json"
+PRODUCTION = ROOT / "tools/specs/unitframes_raid_production_v1.json"
 DISPLAY = ROOT / "tools/specs/unitframes_raid_simulation_display_region_v1.json"
 RENDERER = ROOT / "tools/render_unitframes_raid_simulation_v1.py"
 WORK = ROOT / "docs/modules/unitframes/work/UNITFRAMES.RAID.md"
@@ -36,13 +37,17 @@ def main() -> None:
     spec = json.loads(SPEC.read_text(encoding="utf-8"))
     assert spec["schema"] == "aeui-unitframes-raid-simulation-v1"
     assert spec["version"] == "UF-RAID-SIM-V1"
-    assert spec["status"] == "simulation-reviewed"
+    assert spec["status"] == "simulation-confirmed"
     assert spec["imagegen_usage"] == "0/0"
     assert spec["user_confirmation"] == {
-        "status": "pending",
+        "status": "confirmed",
+        "date": "2026-08-12",
         "accepts_pixels": False,
         "production_authorized": False,
     }
+    accepted = spec["accepted_visible_direction"]
+    assert "no shared outer frame" in accepted["layout"]
+    assert "forty-member formation" in accepted["visual_weight"]
 
     provider = spec["provider"]
     assert provider["maxraid"] == 40
@@ -71,6 +76,46 @@ def main() -> None:
     assert Counter(variants) == {"A": 10, "B": 10, "C": 10, "D": 10}
     assert architecture["bars"]["current_addon_scope_includes_raid"] is False
     assert architecture["optional_group_label"]["production_in_this_gate"] is False
+
+    production = json.loads(PRODUCTION.read_text(encoding="utf-8"))
+    assert production["schema"] == "aeui-unitframes-raid-production-v1"
+    assert production["version"] == "UF-RAID-A1 V1 final"
+    assert production["status"] == "production-draft"
+    assert production["production_authorized"] is False
+    assert production["simulation_gate"] == {
+        "version": "UF-RAID-SIM-V1",
+        "status": "simulation-confirmed",
+        "date": "2026-08-12",
+        "accepts_pixels": False,
+    }
+    assert production["scope"]["generated_object_count"] == 4
+    assert production["scope"]["runtime_repeat_count"] == 40
+    assert production["scope"]["state_art"].startswith("derived deterministically")
+    assert production["canvas"]["size"] == [1536, 1024]
+    assert production["canvas"]["mode"] == "RGB"
+    assert production["canvas"]["background"] == "#00FF00"
+    cells = production["canvas"]["cells"]
+    assert [cell["id"] for cell in cells] == ["A", "B", "C", "D"]
+    assert [cell["target_visible_bbox"] for cell in cells] == [
+        [88, 108, 680, 404],
+        [856, 108, 1448, 404],
+        [88, 620, 680, 916],
+        [856, 620, 1448, 916],
+    ]
+    normalized = production["normalized_source"]
+    assert normalized["per_variant"] == [592, 296]
+    assert normalized["runtime"] == [74, 37]
+    assert normalized["horizontal_three_slice_source"] == [48, 496, 48]
+    assert normalized["horizontal_three_slice_runtime"] == [6, 62, 6]
+    assert len(production["runtime_assignment"]) == 40
+    assert Counter(production["runtime_assignment"]) == {
+        "A": 10,
+        "B": 10,
+        "C": 10,
+        "D": 10,
+    }
+    assert production["repair_loop"]["maximum_actual_imagegen_calls"] == 5
+    assert production["repair_loop"]["process_errors_count_toward_limit"] is False
 
     expected_locked = {
         "assets/locked/chat/聊天框视觉基准_v1.png":
@@ -156,13 +201,16 @@ def main() -> None:
 
     work = WORK.read_text(encoding="utf-8")
     for clause in (
-        "simulation-reviewed / user-confirmation-pending",
+        "simulation-confirmed / production-authorization-pending",
         "ImageGen：`0/0`",
         "不增加一圈共享书框",
         "四个完整外壳变体",
         "7/7 pass",
         "正式生产授权：`false`",
-        "blocked-before-final-prompt",
+        "UF-RAID-A1 V1 final",
+        "exactly four complete empty raid-member",
+        "pass-final",
+        "实际 ImageGen `0/5`",
     ):
         assert clause in work, f"raid work record missing: {clause}"
 
@@ -174,6 +222,7 @@ def main() -> None:
     assert "UF.RAID.MEMBER.SHELL.A-D" in submodules
     assert "40 个高密度点名名条" in submodule_art
     assert "UF-RAID-SIM-V1" in progress
+    assert "UF-RAID-A1 V1 final" in progress
     assert "docs/modules/unitframes/work/UNITFRAMES.RAID.md" in agents
 
     print("unitframes raid design contract test passed")

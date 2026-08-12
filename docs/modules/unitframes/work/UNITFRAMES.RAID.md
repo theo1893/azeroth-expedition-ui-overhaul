@@ -4,17 +4,19 @@
 
 - 模块：Unit Frames
 - 组件 ID：`UF.RAID.*`
-- 版本：`UF-RAID-SIM-V1`
-- 子状态：`simulation-reviewed / user-confirmation-pending`
+- 方向版本：`UF-RAID-SIM-V1`
+- 正式生产版本：`UF-RAID-A1 V1 final / production-draft`
+- 子状态：`simulation-confirmed / production-authorization-pending`
 - 项目阶段：`P2`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
-- 当前操作：`simulate`
+- 当前操作：`prepare`
 - 生成前模拟方式：`deterministic-local-geometry`
 - 模拟 ImageGen：`0/0`
-- 自动修复预算：正式生成后每段最多 5 次实际 ImageGen；当前未请求授权
-- 当前实际生图：`0/0`
+- 自动修复预算：`UF-RAID-A1 V1 final` 最多 5 次实际 ImageGen，含首次；
+  流程错误不计额度
+- 当前实际生图：`0/5`；尚未授权或调用
 - 流程错误：`0`
-- 多执行正文最坏实际生图数：`pending`；需在模拟确认和最终正文形成后冻结
+- 多执行正文最坏实际生图数：`5`；本批只有一段正式正文
 - raw／candidate／source／runtime：无
 - 锁定视觉基准：
   - Image 1：`assets/locked/chat/聊天框视觉基准_v1.png`，SHA-256
@@ -160,25 +162,217 @@
 ### 用户方向结论
 
 - 具体模拟版本：`UF-RAID-SIM-V1`
-- 用户结论：`pending`
+- 用户结论与日期：`confirmed / 2026-08-12`
 - 模拟像素接受：`false`
 - 正式生产授权：`false`
-- 下一门禁：用户确认或退回本模拟的布局、物件隐喻、材质层级、配色、重量和
-  整合关系；确认后才形成自包含 production prompt 与逐段五次预算。
+- 已确认并写回正式正文的可见条款：
+  - 维持真实 `40` 个 `pfRaid` Button 与 `10×4 VERTICAL` 密度，不增加覆盖
+    整团的共享外框、底板或装饰背景；
+  - 每个成员是薄的手裁旧皮革点名名条，四变体重量一致；粗犷与厚重来自
+    40 个暗色物件形成的编队，而不是把每个对象做成厚卡片；
+  - 使用低饱和烟褐、深胡桃、少量氧化暗铜与左上暖光；继承 Chat 的年代、
+    笔触、材料厚度与磨损节奏，但不复制书本轮廓；
+  - 既有 Health／Power 材质、名称、状态、Aura 与 Vanilla glyph 保持动态，
+    Hover／Aggro 未来只用断续短边反馈。
+- 确认失效条件：改变共享外框结论、成员物件隐喻、四变体数量、综合色重、
+  配色、真实编队密度或动态状态层级时，必须返回新模拟版本。
+- 下一门禁：用户看过并明确授权 `UF-RAID-A1 V1 final` 正文、冻结修复边界与
+  最多 5 次实际 ImageGen；当前不得上传或生图。
+
+## `UF-RAID-A1 V1 final` 正式生产合同
+
+### 生产粒度与打包
+
+- 一段正式正文只生成 `UF.RAID.MEMBER.SHELL.A-D` 四个完整背景外壳，物理上
+  放在同一 `1536×1024` 生产 sheet，逻辑上仍是四个独立 source；固定格位可
+  确定性拆分，不会把 40 个 Secure Button 合并为一张交互背景。
+- `UF.RAID.STATE.RIM`／`STATE.PIP`／`AURA.RIM` 在接受外壳后确定性派生，不
+  单独 ImageGen；Health／Power 在接受本批后复用现有已接受 source；当前关闭
+  的 Group Label backing 继续暂停。因此本批只有一段正文，最坏总计 `5` 次
+  实际 ImageGen。
+- 机器合同：`tools/specs/unitframes_raid_production_v1.json`。
+
+### Canvas、格位与 source 几何
+
+- 输出：`1536×1024 RGB`，纯 `#00FF00` 背景，正面正交视角，无标签、网格、
+  尺寸字或 UI 效果图。
+- 固定 cell：A `[0,0,768,512]`；B `[768,0,1536,512]`；
+  C `[0,512,768,1024]`；D `[768,512,1536,1024]`。
+- 各完整外壳目标可见 bbox 均为 `592×296`：A `[88,108,680,404]`；
+  B `[856,108,1448,404]`；C `[88,620,680,916]`；
+  D `[856,620,1448,916]`。每格恰好一个连通实体，不跨格、无独立碎屑。
+- 每格提取并归一化为一个 `592×296 RGBA` source，确定性缩至完整
+  `74×37` runtime。normalized source 中真实 Button 为 `[16,16,576,280]`，
+  Health `[16,16,576,256]`，`8px` 间隔 `[16,256,576,264]`，Power
+  `[16,264,576,280]`；名称安静区 `[40,48,552,232]`。
+- 横向 width 变化只从同一完整 source 派生 `48/496/48` source 三切片，即
+  runtime `6/62/6`；变体唯一识别细节必须完全留在左右固定 `48px` source
+  cap。高度固定，不纵向拉伸；整体 UI Scale 由共同 Parent 一起缩放。
+
+### 色键、后处理与客观门禁
+
+- 外壳是完整不透明的“皮革夹边＋烟褐 liner”背景板，不是空心皮环；纯绿只
+  存在于每个物件外轮廓之外。liner 会位于真实动态条下方，必须安静、低对比。
+- 允许：固定格位拆分、边缘连通绿幕转 Alpha、透明 RGB 清零、每格单物件 bbox
+  提取、在 ratio error 与 X／Y anisotropy 均 `≤8%` 时归一化为 `592×296`、
+  完整纹理缩放、atlas padding／extrusion、三切片与状态短边 mask 派生。
+- 禁止：Python 补画／移动／复制／镜像修补，跨格复用像素，删除结构来挽救
+  失败物件，或改变 provider Frame、点击、事件、Roster 和动态内容。
+- 技术门禁：每格 `1` 个前景连通实体；四边最小隔离 `64/80/64/80`；目标比例
+  `2:1`、ratio error `≤8%`、归一化 anisotropy `≤8%`；detached fleck、内部
+  绿洞与可见绿溢色均为 `0`。技术通过不能替代语义和美术审查。
 
 ## 生产正文完整性预检
 
-- 当前结论：`blocked-before-final-prompt`。
-- 已知：真实对象、数量、状态、Canvas 方向、runtime 几何、安全区、动态排除、
-  参考职责、四变体关系、拉伸边界与反模式。
-- 未知：用户对 `UF-RAID-SIM-V1` 的方向结论，以及由此冻结的一次或多段正式
-  production packaging。未确认前不得撰写为可授权正文、上传参考或调用模型。
+- 复杂度：`atlas / four independent sources / repeat / horizontal-stretch`。
+- 结论：`pass-final`；执行必需但未知的值：无。
+
+| 门禁 | `UF-RAID-A1 V1 final` 中的证据 | 结论 |
+|---|---|---|
+| 物件身份、精确范围、数量与动态排除 | 第 1、4、8、9 段冻结四个点名名条与全部禁止烘焙项 | pass |
+| Image 1／2 inherit／ignore 与权威冲突 | 第 7 段逐图声明职责，并规定文字高于输入图 | pass |
+| Canvas、格位、bounds、视角、光照与层序 | 第 2、3、4 段给出四格绝对坐标、bbox、正交视角和背景板层序 | pass |
+| 逐对象轮廓、材料、磨损与四变体关系 | 第 5、6 段冻结统一重量与 A／B／C／D 身份 | pass |
+| 安静区、crop、repeat、三切片和接缝 | 第 4、5 段给出 normalized source、动态区和 `48/496/48` | pass |
+| 年代、反模式、色键与最终自检 | 第 6、8、9 段冻结 2004 手绘 DNA、禁用现代语言并逐项自检 | pass |
+
+- 去冗余结论：只重复“恰好四物件／固定格位／完整背景板而非空心框／变体细节
+  只在端帽／禁止动态内容”五项高风险约束；provenance 历史不写进模型正文。
+
+## 最终执行正文
+
+### `UF-RAID-A1 V1 final` — 四变体完整成员背景外壳
+
+```text
+Create one production sheet containing exactly four complete empty raid-member
+background shells for Turtle WoW 1.18.1 and a Vanilla-era pfUI overhaul.
+Return one 1536 by 1024 RGB bitmap on a perfectly uniform pure #00FF00
+background. This is a source-asset sheet, not a gameplay screenshot, raid
+window, concept board, contact-sheet presentation or assembled forty-player
+panel. Draw no title, label, letter, number, grid line, guide, legend or fifth
+object.
+
+Use a fixed two-by-two cell layout. Cell A is x0..767/y0..511. Cell B is
+x768..1535/y0..511. Cell C is x0..767/y512..1023. Cell D is
+x768..1535/y512..1023. Put exactly one front-facing orthographic horizontal
+shell in each cell. Aim each visible shell at exactly 592 by 296 source pixels:
+A x88..679/y108..403, B x856..1447/y108..403, C
+x88..679/y620..915, and D x856..1447/y620..915. Keep broad uninterrupted pure
+green isolation around every object. Nothing may touch a cell edge, cross a
+cell boundary, cast a shadow outside its own bbox or exist as a detached fleck.
+
+Each cell is one complete solid background plate, not a hollow ring and not a
+pile of separate border pieces. The plate is one physically connected object:
+a thin hand-cut dark-walnut leather clamp edge wrapped around a quiet opaque
+soot-brown liner that fills the entire interior. Pure green exists only outside
+the outer silhouette; there is no green opening, transparent hole, internal
+cutout, second slot or detached repair inside a plate. The liner sits behind
+live Health and Power bars, so keep it matte, continuous, very low contrast and
+free of symbols or sharp focal marks.
+
+Every cell will be extracted to one 592 by 296 RGBA source and downsampled by
+eight to one complete 74 by 37 runtime texture. At that runtime size the real
+pfUI Secure Button occupies x2..71/y2..34, Health x2..71/y2..31, a one-pixel
+gap y32, and Power x2..71/y33..34. The live name occupies the quiet central
+area. Do not paint any simulated bar, fill amount, class colour, status colour,
+name or icon. At full health only about two runtime pixels of the leather edge
+remain visible around the live Button; therefore keep the individual shell
+thin. The liner must still look intentional when an unfilled part of a live
+StatusBar reveals it.
+
+Design each complete source so it can later be divided horizontally into fixed
+48-pixel left cap, quiet 496-pixel centre and fixed 48-pixel right cap, equal to
+6/62/6 at runtime. Put every unique notch, stitch, rivet, patch or brass repair
+entirely inside a fixed end cap. Keep the long centre extremely quiet, with
+only broad low-frequency dye and soot variation; no unique mark may cross a
+slice boundary, and no repeated stitch, cord, embossing or seam may run along
+the centre. Height is fixed and will never be vertically stretched.
+
+All four shells belong to one expedition muster set and must have the same
+outer scale, liner area, darkness, visual weight and light direction. Their
+differences are low-frequency and useful only to prevent forty industrially
+identical repeats. A has one blunt hand-cut notch at the upper-left and two
+short unequal repair stitches at lower-right. B has one off-centre dark rivet
+at upper-right and a more repeatedly rubbed lower edge. C has one short
+attached leather patch at the left edge and no bright metal. D has one short
+skewed dark oxidized-brass repair at upper-right and one small split at
+lower-left. Keep every repair attached to the plate, sparse and subordinate.
+No variant may be more ornate, brighter or thicker than the others.
+
+The world object is a compact expedition roster slip cut from discarded saddle
+leather, shield straps or tent bindings and clipped behind one raid-member row.
+It is not a miniature Player frame, book page, bookmark, scroll, furniture
+trim, luxury leather label or modern card. Use deep soot-dark walnut and smoke
+brown, very low saturation, sparse tarnished umber brass, and warm upper-left
+light. Paint it like circa-2004 Vanilla World of Warcraft UI art: broad chunky
+value blocks, readable material thickness, matte broken highlights and
+deliberate low-resolution hand-painted edges. Ruggedness comes from slow
+unequal cut thickness, uneven dye, smoke, mud rub, pressure wear and a few
+repairs with believable tension. It does not come from random noisy waviness,
+uniform pores or a procedural texture carpet.
+
+The written requirements outrank both input images. Use Image 1 only for its
+circa-2004 Vanilla WoW painted scale, broad low-resolution readability,
+restrained warm contrast and believable material thickness. Ignore its screen
+composition, text, portraits, book, pages, spine, channel tabs, wax seals and
+complete frame geometry. Use Image 2 only for deep-walnut depth, warm
+upper-left light, contact shadow, restrained dull-brass response, rough wear
+and hand-made error. Ignore its pages, spine, columns, dragons, broad book
+construction and large metal ornaments. Do not copy pixels, shapes or book
+parts from either image. Do not use the geometric simulation, existing bar
+textures, rejected unit-frame candidates or any unlisted image as a visual
+source.
+
+Forbid a shared raid frame, outer raid panel, parchment card, page edge,
+bookbinding, wax seal, symmetrical gold border, continuous metal rim, rounded
+web card, transparent black glass, modern bevel, glossy meter, neon, full-frame
+glow, black-iron shrine, spikes, skulls, horns, faction emblem, class emblem,
+gem, magic rune, photoreal antique, regular lacing, equal-distance stitches,
+symmetric rivets, repeated pebble embossing, orange piping, upholstery and
+precision industrial geometry. Draw no portrait, Health or Power fill, text,
+number, class colour, reaction colour, aura, buff, debuff, raid marker,
+leader icon, master-looter icon, resurrection icon, combat mark, aggro mark,
+hover state, button highlight or click feedback.
+
+Before returning, verify visibly: one 1536 by 1024 RGB sheet; exactly four and
+only four connected solid plates in fixed A/B/C/D cells; one plate near 592 by
+296 in each cell; broad pure-green isolation with no detached flecks; no green
+hole inside any plate; identical scale, liner area and weight; unique details
+only in fixed end caps; thin rough hand-cut Vanilla craft; deep walnut and
+soot-brown palette with restrained dull brass; quiet stretchable centres; no
+shared raid panel, book geometry, modern industrial repetition or baked live
+content.
+```
 
 ## 自主修复循环
 
-- 当前未启动；实际 ImageGen `0/0`。
-- 模拟确认后，每段仍须单独冻结完整正文、参考 SHA、首次上传职责、允许的
-  同段 edit 边界和最多 5 次实际生成；流程错误不计额度。
-- 必须重新确认：新增共享外框、改变成员物件隐喻、减少／增加四个 source
-  变体、把动态状态烘焙、修改 provider Button 几何或把 Party／RaidMarker
-  混入本批。
+- 当前未启动；`UF-RAID-A1 V1 final` 实际 ImageGen `0/5`；流程错误 `0`。
+- attempt 1 固定上传：
+  - Image 1：`assets/locked/chat/聊天框视觉基准_v1.png`，SHA
+    `90e30ba405a2b5cdc707cc229e56c4f64e51d0e4051f1e98dbcd2ec2ee70ee06`；
+  - Image 2：`assets/locked/chat/聊天框独立艺术资源_v3.png`，SHA
+    `272528e6d89cc90e5cbb37dce4ae572ddf9de0402078cdcf0ed5804f734faab8`；
+  - attempt 1 无 Image 3；模拟图与既有／失败 UnitFrame 像素禁止上传。
+- attempt 2–5：每次仍固定 Image 1／2；只有明确保留合格格位时，才允许同一
+  循环紧邻前次的完整 production sheet 作为 Image 3 edit 输入。每次从完整
+  清单重新审查；同一首要失败不得重复相同策略。
+- 不可变修复边界：四个组件 ID、四物件数量、A／B／C／D 格位与 Canvas、
+  Image 1／2 路径／SHA／职责、已确认物件隐喻与综合色方向、完整背景板拓扑、
+  runtime／安全区／三切片合同、动态排除和无共享 Raid 外框。
+- 允许自主修复：固定格内 occupancy、低频手裁轮廓、磨损／染色／烟熏、liner
+  对比、暗铜克制度、四变体端帽细节与绿幕隔离；可以按门禁选择 edit 或从固定
+  Image 1／2 regenerate。
+- 必须重新授权：新增或减少对象／状态／参考图，改变格位／Canvas／物件身份／
+  配色／共享外框结论／runtime 几何／完整背景板拓扑，跨循环或跨段复用像素，
+  把 Party／RaidMarker／Group Label 加入本批，或允许动态内容烘焙。
+- 预算：最多 `5` 次实际 ImageGen；只有返回图或 provider generation 证据才
+  计数。无图且无生成证据的流程错误单列，不占额度；内部通过即停，第五次仍
+  有客观失败则 `candidate-rejected / repair-budget-exhausted`。
+
+| 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
+|---:|---|---|---|---|---|---|---|
+| 0/5 | `UF-RAID-A1 V1 final` / pending authorization commit | 未调用 | — | — | — | 等待精确生产授权 | production-draft |
+
+| 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
+|---:|---|---|---|---|---|
+| 0 | — | — | 无 | — | 不占生图额度 |

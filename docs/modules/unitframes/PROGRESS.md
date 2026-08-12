@@ -10,10 +10,12 @@
   `P5 / source-accepted / runtime-exported / addon-integrated / 3/5 stop`。
 - `UF-A2` TargetTarget／Focus：继续暂停；既有物件身份方向不变，尚无正式
   source。Hover／Aggro 仍计划由接受外壳 Alpha 确定性派生。
-- `UF-RAID-SIM-V1` Raid 团队框架：`P2 / simulation-reviewed /
-  user-confirmation-pending`。已按真实 `pfRaid1..40`、`70×33` Button、
-  `10×4 VERTICAL` 与完整状态密度制作本地预演；ImageGen `0/0`，尚无
-  production prompt、source、runtime 或 addon 接入。
+- `UF-RAID-SIM-V1` Raid 团队框架：`P2 / simulation-confirmed /
+  production-authorization-pending`。用户于 `2026-08-12` 接受无共享外框、
+  薄皮革点名名条、四变体、低饱和配色、40 人整体重量与状态密度方向；模拟
+  像素仍非 source。`UF-RAID-A1 V1 final` 已冻结为一张 `1536×1024` 四格
+  production sheet、四个独立完整背景板和单段 `5` 次最坏预算；ImageGen
+  `0/5`，尚无 source、runtime 或 addon 接入。
 - 当前只处理资源重绘与精确媒体替换。B1 已接入 addon；没有修改另一台设备上
   的 Frame 位置、尺寸、点击、事件、数值、颜色逻辑或其他功能。
 - 用户于 `2026-08-11` 接受“每个角色生成完整外壳，Python 负责精确工程化”
@@ -79,7 +81,10 @@
   Leader／Loot／Raid Icon，以及当前 Chat／动作条／罗盘邻接。
 - display-region `7/7 pass`、violations `0`，报告 SHA `ddb3fc51…6dd0`；覆盖
   单框、40 人 Vertical／Horizontal、20 人、五人复用和 `width=90`。
-- 用户确认待定；模拟像素不接受为 source，正式 ImageGen 和 addon 变更均为 0。
+- 用户于 `2026-08-12` 确认该方向；模拟像素不接受为 source。正式机器合同为
+  `tools/specs/unitframes_raid_production_v1.json`，执行正文为
+  `UF-RAID-A1 V1 final`；当前只形成 production draft，正式 ImageGen 与 addon
+  变更均为 0。
 
 ## 展示区域门禁
 
@@ -227,10 +232,12 @@
 
 ## 下一门禁
 
+Raid 的下一门禁是用户看过并明确授权 `UF-RAID-A1 V1 final` 的完整正文、固定
+Image 1／2、同循环紧邻前稿 edit 输入边界和最多 `5` 次实际 ImageGen；流程错误
+不占额度。未授权前不得上传参考、调用固定执行器或创建正式候选。
+
 B1 下一门禁是 Turtle WoW `1.18.1` P6：验证 TGA 方向、Player／Target／
 TargetTarget／Focus 的生命与 Mana／Rage／Focus／Energy 乘色、低血量裁切、
 缩放、禁用回退和旧 SavedVariables。通过前保持 P5，`generated/unitframes/`
 继续作为 ignored 中间证据。A／B 外壳仍为 `5/5` rejected，禁止第六次；是否
-重开新合同另行决定。UF-A2 继续暂停。Raid 的独立下一门禁是用户确认或退回
-`UF-RAID-SIM-V1` 的无共享外框、薄皮革点名名条、四变体、配色、重量和状态
-密度；确认前不写可执行 production prompt、不上传参考、不调用 ImageGen。
+重开新合同另行决定。UF-A2 继续暂停。
