@@ -1,0 +1,144 @@
+{
+  "schema": "aeui-display-region-contract-v1",
+  "component": "UF.RAID.MEMBER.SHELL.A-D/runtime-v1",
+  "coordinate_system": "top-left-origin, right-bottom-exclusive, 100%-UI-pixels",
+  "evidence": {
+    "provider": "pfUI modules/raid.lua + pfUI.uf:UpdateFrameSize + UpdateConfig",
+    "provider_files": [
+      "addon/pfUI/modules/raid.lua",
+      "addon/pfUI/api/unitframes.lua",
+      "addon/pfUI/env/profiles.lua"
+    ],
+    "assembly_spec": "tools/specs/unitframes_raid_donor_simulation_v1.json",
+    "source_manifest": "assets/source/unitframes/raid-a2/UF-RAID-A2_SourceManifest_v1.json",
+    "runtime_manifest": "assets/source/unitframes/raid-a2/UF-RAID-A2_RuntimeManifest_v1.json",
+    "runtime_media": [
+      "addon/AzerothExpeditionUI/Media/UnitFrames/RaidMemberShellAV1.tga",
+      "addon/AzerothExpeditionUI/Media/UnitFrames/RaidMemberShellBV1.tga",
+      "addon/AzerothExpeditionUI/Media/UnitFrames/RaidMemberShellCV1.tga",
+      "addon/AzerothExpeditionUI/Media/UnitFrames/RaidMemberShellDV1.tga"
+    ],
+    "real_layout_preview": "generated/unitframes/raid/A2/runtime/real-layout-scene.png",
+    "sample_window_only_exception": "only unused outer donor field bbox is exempt; all source/runtime geometry remains exact",
+    "direction_only": false,
+    "final_runtime": true,
+    "profile_geometry_authoritative": true,
+    "target_device_saved_variables_authoritative": false
+  },
+  "atlas": {
+    "size": [148, 74],
+    "visible_bbox": [0, 0, 148, 74],
+    "require_exact_visible_coverage": true,
+    "runtime_packing": "virtual review grid of four independent 74x37 TGA files; Lua loads each file independently",
+    "sampled_regions": [
+      {"id": "member-shell-A", "box": [0, 0, 74, 37]},
+      {"id": "member-shell-B", "box": [74, 0, 148, 37]},
+      {"id": "member-shell-C", "box": [0, 37, 74, 74]},
+      {"id": "member-shell-D", "box": [74, 37, 148, 74]}
+    ]
+  },
+  "nine_slice": {
+    "caps": {"left": 6, "right": 6, "top": 2, "bottom": 2},
+    "minimum_frame_size": [13, 5],
+    "runtime_note": "Width 70 uses one complete 74x37 texture. Other supported widths use three texture objects sampling 6/62/6 horizontal UV regions from that same variant TGA. Height remains 33 and is never stretched."
+  },
+  "scenarios": [
+    {
+      "id": "member-normal-with-raid-marker",
+      "frame": [74, 39],
+      "preview_frame": [74, 39],
+      "zones": {
+        "display-envelope": [0, 0, 74, 39],
+        "shell": [0, 2, 74, 39],
+        "content-safe": [2, 4, 72, 37],
+        "interaction-safe": [2, 4, 72, 37]
+      },
+      "regions": [
+        {"id": "raid.member.shell", "kind": "background-shell", "box": [0, 2, 74, 39], "zone": "shell"},
+        {"id": "raid.member.health", "kind": "statusbar-health", "box": [2, 4, 72, 34], "zone": "content-safe"},
+        {"id": "raid.member.power", "kind": "statusbar-power", "box": [2, 35, 72, 37], "zone": "content-safe"},
+        {"id": "raid.member.name", "kind": "fontstring", "box": [5, 8, 69, 29], "zone": "content-safe"},
+        {"id": "raid.member.button", "kind": "secure-button-hitbox", "box": [2, 4, 72, 37], "zone": "interaction-safe"},
+        {"id": "raid.member.raid-icon", "kind": "dynamic-vanilla-glyph", "box": [31, 0, 43, 12], "zone": "display-envelope"}
+      ]
+    },
+    {
+      "id": "member-state-heavy",
+      "frame": [74, 39],
+      "preview_frame": [74, 39],
+      "zones": {
+        "display-envelope": [0, 0, 74, 39],
+        "content-safe": [2, 4, 72, 37],
+        "interaction-safe": [2, 4, 72, 37]
+      },
+      "regions": [
+        {"id": "raid.member.health", "kind": "statusbar-health", "box": [2, 4, 72, 34], "zone": "content-safe"},
+        {"id": "raid.member.power", "kind": "statusbar-power", "box": [2, 35, 72, 37], "zone": "content-safe"},
+        {"id": "raid.member.buff-indicators", "kind": "dynamic-aura-icons", "box": [2, 4, 31, 13], "zone": "content-safe"},
+        {"id": "raid.member.debuff-indicator", "kind": "dynamic-dispel-icon", "box": [27, 9, 47, 29], "zone": "content-safe"},
+        {"id": "raid.member.resurrection", "kind": "dynamic-resurrection-glyph", "box": [21, 1, 53, 33], "zone": "display-envelope"},
+        {"id": "raid.member.button", "kind": "secure-button-hitbox", "box": [2, 4, 72, 37], "zone": "interaction-safe"}
+      ]
+    },
+    {
+      "id": "raid-40-max-vertical-fill",
+      "frame": [767, 159],
+      "preview_frame": [767, 159],
+      "zones": {
+        "cluster-envelope": [0, 0, 767, 159],
+        "first-button": [2, 124, 72, 157],
+        "last-button": [695, 4, 765, 37]
+      },
+      "regions": [
+        {"id": "raid.shell-repeat-x40", "kind": "forty-member-visual-envelope", "box": [0, 2, 767, 159], "zone": "cluster-envelope"},
+        {"id": "raid.first-secure-button", "kind": "secure-button-hitbox", "box": [2, 124, 72, 157], "zone": "first-button"},
+        {"id": "raid.last-secure-button", "kind": "secure-button-hitbox", "box": [695, 4, 765, 37], "zone": "last-button"}
+      ]
+    },
+    {
+      "id": "raid-40-max-horizontal-fill",
+      "frame": [767, 159],
+      "preview_frame": [767, 159],
+      "zones": {"cluster-envelope": [0, 0, 767, 159]},
+      "regions": [
+        {"id": "raid.shell-repeat-x40", "kind": "forty-member-visual-envelope", "box": [0, 2, 767, 159], "zone": "cluster-envelope"}
+      ]
+    },
+    {
+      "id": "raid-20-typical",
+      "frame": [382, 159],
+      "preview_frame": [382, 159],
+      "zones": {"cluster-envelope": [0, 0, 382, 159]},
+      "regions": [
+        {"id": "raid.shell-repeat-x20", "kind": "twenty-member-visual-envelope", "box": [0, 2, 382, 159], "zone": "cluster-envelope"}
+      ]
+    },
+    {
+      "id": "raid-for-party-5",
+      "frame": [151, 159],
+      "preview_frame": [151, 159],
+      "zones": {"cluster-envelope": [0, 0, 151, 159]},
+      "regions": [
+        {"id": "raid.shell-repeat-x5", "kind": "five-member-visual-envelope", "box": [0, 2, 151, 159], "zone": "cluster-envelope"}
+      ]
+    },
+    {
+      "id": "member-variable-width-90",
+      "frame": [94, 39],
+      "preview_frame": [94, 39],
+      "zones": {
+        "display-envelope": [0, 0, 94, 39],
+        "shell": [0, 2, 94, 39],
+        "content-safe": [2, 4, 92, 37],
+        "interaction-safe": [2, 4, 92, 37]
+      },
+      "regions": [
+        {"id": "raid.member.shell-three-slice", "kind": "background-shell", "box": [0, 2, 94, 39], "zone": "shell"},
+        {"id": "raid.member.health", "kind": "statusbar-health", "box": [2, 4, 92, 34], "zone": "content-safe"},
+        {"id": "raid.member.power", "kind": "statusbar-power", "box": [2, 35, 92, 37], "zone": "content-safe"},
+        {"id": "raid.member.name", "kind": "fontstring", "box": [5, 8, 89, 29], "zone": "content-safe"},
+        {"id": "raid.member.button", "kind": "secure-button-hitbox", "box": [2, 4, 92, 37], "zone": "interaction-safe"}
+      ]
+    }
+  ]
+}

@@ -76,7 +76,7 @@ end
 dofile(root .. "/addon/pfUI/api/expedition.lua")
 pfUI:ApplyExpeditionVisualContract()
 
-assert(pfUI.expedition.version == 4)
+assert(pfUI.expedition.version == 5)
 assert(pfUI.expedition.ownership == "scoped-v1")
 assert(pfUI_config.appearance.expedition.ownership == "scoped-v1")
 assert(pfUI_config.appearance.expedition.alpha_floor == nil)
@@ -140,6 +140,16 @@ assert(
   pfUI:GetExpeditionComponentOwner("unitframes.power-fill") ==
     "unitframes"
 )
+for _, name in ipairs({
+  "unitframes.raid-shell",
+  "unitframes.raid-health-fill",
+  "unitframes.raid-power-fill",
+}) do
+  assert(
+    pfUI:GetExpeditionComponentOwner(name) == "unitframes",
+    name .. " was not routed to AEUI UnitFrames"
+  )
+end
 assert(
   pfUI:GetExpeditionComponentOwner("unitframes.shell") == nil
 )

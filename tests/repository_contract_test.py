@@ -329,9 +329,22 @@ def main() -> None:
     unitframes_source = (
         aeui / "Modules" / "UnitFrames.lua"
     ).read_text(encoding="utf-8")
-    assert 'UnitFrames.runtimeContract = "1.0"' in unitframes_source
+    assert 'UnitFrames.runtimeContract = "1.1"' in unitframes_source
     assert "aeuiHealthBarTexture" in unitframes_source
     assert "aeuiPowerBarTexture" in unitframes_source
+    raid_runtime_manifest = json.loads(
+        (
+            ROOT
+            / "assets/source/unitframes/raid-a2/UF-RAID-A2_RuntimeManifest_v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert raid_runtime_manifest["status"] == "runtime-exported"
+    assert raid_runtime_manifest["phase"] == "P5"
+    assert raid_runtime_manifest["runtime_contract"] == "1.1"
+    for record in raid_runtime_manifest["runtime"].values():
+        runtime_path = ROOT / record["file"]
+        assert runtime_path.is_file()
+        assert sha256(runtime_path) == record["sha256"]
 
     quest_source = (aeui / "Modules" / "Quests.lua").read_text(
         encoding="utf-8"
@@ -877,6 +890,9 @@ def main() -> None:
     assert "GetExpeditionComponentOwner" in expedition
     assert '["unitframes.health-fill"] = "unitframes"' in expedition
     assert '["unitframes.power-fill"] = "unitframes"' in expedition
+    assert '["unitframes.raid-shell"] = "unitframes"' in expedition
+    assert '["unitframes.raid-health-fill"] = "unitframes"' in expedition
+    assert '["unitframes.raid-power-fill"] = "unitframes"' in expedition
     assert "ShouldUseVanillaModule" in expedition
     assert "ShouldUseVanillaSkin" in expedition
     assert "ShouldUseSingleChatFrame" in expedition

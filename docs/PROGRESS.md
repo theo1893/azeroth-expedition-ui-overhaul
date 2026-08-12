@@ -25,7 +25,7 @@
 | Quests | `questlog.lua`、`gossipquest.lua`、`questitem.lua`、`pfQuest`／`pfQuest-turtle` + AEUI Quests adapter | `P1–P6`；QS-B1 V7-A `P5`；QL-D V3 attempt 4 `P5` | Quest runtime `1.27`／Theme `1.10`。QL-D 五次循环仍按 `5/5` 耗尽；用户随后明确“使用第4稿”，接受 keyed aspect `2.76945` 的一次性选稿例外，原 technical `18/19` 不重写。exact source SHA `816aeedd…47c5` 与四态 atlas SHA `cda1ef21…cd56` 已受 manifest 管理并接入 addon；正式 atlas／真实排版与已审阅 attempt 4 像素完全一致，display `5/5 pass`。真实 Button、Tooltip、动态图标／名称和双列几何不变。闭合载体根、火漆与旧功能按钮继续 fail-open；Tracker 与 NPC Quest／Gossip 不变 | Turtle WoW 验证 QL-D TGA 方向、四态、pressed `1px` 联动、safe area、0／1／2／4／6 排版及长详情滚动；同时验证闭合态火漆物理接触与滚动裁切。七纹章 parity 前不启用事务菜单；不得第六次生图 |
 | Map | `map.lua`、`minimap.lua`、`addonbuttons.lua` 等 | `P2` | 羊皮地图卷与黄铜罗盘已锁定 | 实机对象审计和组件级合同 |
 | Character | `character.lua`、`inspect.lua`、`dressup.lua` | `P2` | 香草同构角色面板已锁定 | 实机几何与装备槽／属性／页签拆分 |
-| Unit Frames | `api/unitframes.lua`、`modules/raid.lua`、主／紧凑单位入口 | A／B `P3 / 5/5 exhausted`；B1 `P5`；Raid A1 `P3 / 5/5 exhausted`，Raid A2 `P3 / 5/5 exhausted / exception-review-required`；紧凑 A2 paused | B1 exact Health／Power 只接入 Player／Target／TargetTarget／Focus。Raid A2 attempt 5 为最佳运行时视觉；四个 fixed sample window、Python 外壳、40 人排版和 display `7/7` 通过，未消费外围 field bbox 最大偏移 `19px`。无 accepted source/runtime/addon，第六次禁止 | 用户审阅 attempt 5 并接受或拒绝 `sample-window-only` 单一例外；接受前不得进入 P4/P5。B1 另待 Turtle WoW P6 |
+| Unit Frames | `api/unitframes.lua`、`modules/raid.lua`、主／紧凑单位入口 | A／B `P3 / 5/5 exhausted`；B1 `P5`；Raid A1 `P3 / 5/5 exhausted`，Raid A2 `P5 source/runtime/addon / 5/5`；紧凑 A2 paused | B1 exact Health／Power 接入 Player／Target／TargetTarget／Focus，并复用于 Raid。Raid A2 attempt 5 已按 `sample-window-only` 单一例外接受；只豁免未消费外围 field bbox 最大 `19px` 偏差，四个固定 sample、Python A-D 外壳、四张独立 `74×37` TGA、`6/62/6` 与 40 人排版保持原合同；display `7/7`、fresh-checkout package pass、目标设备无需构建。第六次禁止 | Turtle WoW P6 验证 40 框分配、TGA 方向、完整纹理／三切片、动态层序与 pfUI 回退；B1 同步实机验证 |
 
 ## 尚未启动长期模块包
 
@@ -57,15 +57,18 @@
   选择书签资产保留但 runtime 隐藏；QL-B0 V2 内框、地区条与任务条底板路线
   均已撤销。pfQuest tracker 使用临时大纸面 runtime，保留 provider 的全部
   动态内容与交互；当前因展示区域失败等待无边界 direct-paper 方向确认。
-- Unit Frames 只接管 `UF.BAR.HEALTH.FILL` 与 `UF.BAR.POWER.FILL` 两张媒体；
-  仅作用于 Player、Target、TargetTarget、Focus。Frame 构造、颜色、数值、
-  裁切、事件、点击和所有未登记单位框继续由 pfUI 提供。
+- Unit Frames 接管 `UF.BAR.HEALTH.FILL`、`UF.BAR.POWER.FILL`，作用于 Player、
+  Target、TargetTarget、Focus 与 Raid；另只为 `pfRaid1..40` 接管
+  `UF.RAID.MEMBER.SHELL.A-D`。Frame 构造、颜色、数值、裁切、事件、点击和
+  所有未登记单位框继续由 pfUI 提供；Raid 高度失配或模块禁用时局部回退。
 - pfUI 默认所有权：动作条、导航、单位／团队、战斗 HUD、背包／拾取、系统
   skin、Game Menu 与 `/pfui` 配置页全部正常加载；Quest Log 之外的 Blizzard
   skin 不再被 AEUI 全局停用。
 - 作用域接管：Chat 保留 pfUI `chat` 作为 provider，仅暂时让渡
   `chatcopy`／`whisperproxy`／`bubbles`；Quests 只让渡 `Quest Log` skin。
-  Unit Frames 只让渡 `unitframes.health-fill`／`unitframes.power-fill` component。
+  Unit Frames 让渡 `unitframes.health-fill`／`unitframes.power-fill`，以及精确的
+  `unitframes.raid-shell`／`unitframes.raid-health-fill`／
+  `unitframes.raid-power-fill` component。
   未来模块 A 只能增加模块 A 的精确条目，不得恢复类别式全局回退。
 - Chat 视觉例外：pfUI `panel` provider 与配置保持加载，仅隐藏贴附左右聊天框
   的两条信息 Panel；小地图 Panel 与其他 pfUI Panel 功能不受影响。

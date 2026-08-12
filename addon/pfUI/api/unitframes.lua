@@ -1270,6 +1270,17 @@ local perrow = f.config.debuffperrow
     f:UnregisterAllEvents()
     f:Hide()
   end
+
+  -- AEUI may attach a narrowly scoped Raid media refresh callback. The
+  -- provider still owns all geometry, Secure Button behaviour, events and
+  -- roster state; this callback only reapplies the accepted shell texture
+  -- after pfUI has recalculated a Raid frame's configured width.
+  if
+    f.label == "raid" and
+    type(f.aeuiRaidRefreshVisual) == "function"
+  then
+    f:aeuiRaidRefreshVisual()
+  end
 end
 
 function pfUI.uf.OnShow()

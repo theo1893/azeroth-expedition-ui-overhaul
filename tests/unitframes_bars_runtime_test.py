@@ -130,15 +130,15 @@ def main() -> None:
     unitframes_source = (
         ROOT / "addon/AzerothExpeditionUI/Modules/UnitFrames.lua"
     ).read_text(encoding="utf-8")
-    assert 'UnitFrames.runtimeContract = "1.0"' in unitframes_source
+    assert 'UnitFrames.runtimeContract = "1.1"' in unitframes_source
     assert "frame.aeuiHealthBarTexture = HEALTH_TEXTURE" in unitframes_source
     assert "frame.aeuiPowerBarTexture = POWER_TEXTURE" in unitframes_source
     assert '"player"' in unitframes_source
     assert '"targettarget"' in unitframes_source
     assert '"focus"' in unitframes_source
-    assert '"raid"' not in unitframes_source.split("local FRAME_KEYS", 1)[1].split(
-        "}", 1
-    )[0]
+    assert '"raid"' not in unitframes_source.split(
+        "local PRIMARY_FRAME_KEYS", 1
+    )[1].split("}", 1)[0]
 
     bridge = (ROOT / "addon/pfUI/api/unitframes.lua").read_text(encoding="utf-8")
     assert (

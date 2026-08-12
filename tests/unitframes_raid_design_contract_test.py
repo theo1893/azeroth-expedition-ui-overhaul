@@ -29,6 +29,14 @@ RAID_PROVIDER = ROOT / "addon/pfUI/modules/raid.lua"
 UF_PROVIDER = ROOT / "addon/pfUI/api/unitframes.lua"
 PROFILE = ROOT / "addon/pfUI/env/profiles.lua"
 ADAPTER = ROOT / "addon/AzerothExpeditionUI/Modules/UnitFrames.lua"
+RUNTIME_DISPLAY = ROOT / "tools/specs/unitframes_raid_runtime_display_region_v1.json"
+SOURCE_MANIFEST = (
+    ROOT / "assets/source/unitframes/raid-a2/UF-RAID-A2_SourceManifest_v1.json"
+)
+RUNTIME_MANIFEST = (
+    ROOT / "assets/source/unitframes/raid-a2/UF-RAID-A2_RuntimeManifest_v1.json"
+)
+RUNTIME_EXPORTER = ROOT / "tools/build_unitframes_raid_a2_runtime.py"
 
 
 def sha256(path: Path) -> str:
@@ -211,7 +219,7 @@ def main() -> None:
     assert donor_production["schema"] == "aeui-unitframes-raid-donor-production-v1"
     assert donor_production["version"] == "UF-RAID-A2-DONOR V1"
     assert donor_production["status"] == (
-        "repair-budget-exhausted / exception-review-required / 5-of-5"
+        "source-accepted / runtime-exported / addon-integrated / P5 / 5-of-5"
     )
     assert donor_production["production_authorized"] is False
     assert donor_production["architecture"]["simulation_confirmation"] == {
@@ -274,11 +282,20 @@ def main() -> None:
     assert terminal["sample_windows"].startswith("4/4")
     assert terminal["strict_fixed_cells"].startswith("fail")
     assert terminal["display_region"] == "7/7 pass; 0 violations"
-    assert terminal["candidate_accepted"] is False
-    assert terminal["source_promoted"] is False
-    assert terminal["runtime_exported"] is False
-    assert terminal["addon_integrated"] is False
+    assert terminal["status"] == "accepted-by-sample-window-only-exception / P5"
+    assert terminal["candidate_accepted"] is True
+    assert terminal["source_promoted"] is True
+    assert terminal["runtime_exported"] is True
+    assert terminal["addon_integrated"] is True
     assert terminal["sixth_imagegen_call_forbidden"] is True
+    acceptance = terminal["acceptance_record"]
+    assert acceptance["date"] == "2026-08-12"
+    assert "未消费外围 field bbox 的最大 19px 偏差" in acceptance["user_statement"]
+    assert acceptance["consumed_sample_windows_changed"] is False
+    assert acceptance["deterministic_downstream_contract_changed"] is False
+    assert donor_production["still_requires_later_gate"] == [
+        "Turtle WoW 1.18.1 / P6 game validation"
+    ]
     authorization_request = donor_production["authorization_request"]
     assert authorization_request["status"] == "granted"
     assert authorization_request["date"] == "2026-08-12"
@@ -391,9 +408,23 @@ def main() -> None:
         assert clause in profile, f"profile geometry drifted: {clause}"
 
     adapter = ADAPTER.read_text(encoding="utf-8")
-    frame_keys = adapter.split("local FRAME_KEYS", 1)[1].split("}", 1)[0]
-    assert '"raid"' not in frame_keys
-    assert "Party, raid, pet" in adapter
+    primary_keys = adapter.split("local PRIMARY_FRAME_KEYS", 1)[1].split("}", 1)[0]
+    assert '"raid"' not in primary_keys
+    assert "local RAID_VARIANTS" in adapter
+    assert "RaidMemberShellAV1" in adapter
+    assert "three-slice-6-centre-6" in adapter
+    assert "pfRaid1..40" in adapter
+
+    runtime_display = json.loads(RUNTIME_DISPLAY.read_text(encoding="utf-8"))
+    assert runtime_display["evidence"]["final_runtime"] is True
+    assert runtime_display["evidence"]["direction_only"] is False
+    assert runtime_display["nine_slice"]["caps"] == {
+        "left": 6, "right": 6, "top": 2, "bottom": 2,
+    }
+    assert len(runtime_display["scenarios"]) == 7
+    assert SOURCE_MANIFEST.exists()
+    assert RUNTIME_MANIFEST.exists()
+    assert RUNTIME_EXPORTER.exists()
 
     renderer = RENDERER.read_text(encoding="utf-8")
     for clause in (
@@ -489,7 +520,8 @@ def main() -> None:
     assert "UF-RAID-SIM-V1" in progress
     assert "UF-RAID-A1 V1 final" in progress
     assert "UF-RAID-A2-SIM-V1" in progress
-    assert "exception-review-required" in progress
+    assert "accepted-by-sample-window-only-exception" in progress
+    assert "P5 / source-accepted / runtime-exported / addon-integrated" in progress
     assert "模型供材、Python 造壳" in submodule_art
     assert "build_unitframes_raid_donor_shells_v1.py" in submodules
     assert "docs/modules/unitframes/work/UNITFRAMES.RAID.md" in agents

@@ -343,11 +343,21 @@ def render_source_preview(
     canvas = Image.new("RGBA", (1380, 950), (22, 20, 18, 255))
     draw = ImageDraw.Draw(canvas)
     draw.text((34, 25), "UF-RAID-A2 · deterministic shell construction", fill=(222, 192, 130, 255))
-    mode_note = (
-        "PRODUCTION DONOR CANDIDATE · exact geometry and A-D repair masks are Python-owned"
-        if material_mode == "candidate"
-        else "SIMULATION MATERIALS ONLY · exact geometry and A-D repair masks are authoritative"
-    )
+    if material_mode == "accepted":
+        mode_note = (
+            "P4 ACCEPTED SAMPLE WINDOWS · exact geometry and A-D repair "
+            "masks are Python-owned"
+        )
+    elif material_mode == "candidate":
+        mode_note = (
+            "PRODUCTION DONOR CANDIDATE · exact geometry and A-D repair "
+            "masks are Python-owned"
+        )
+    else:
+        mode_note = (
+            "SIMULATION MATERIALS ONLY · exact geometry and A-D repair "
+            "masks are authoritative"
+        )
     draw.text((34, 52), mode_note, fill=(181, 166, 139, 255))
 
     for index, material_id in enumerate(("leather", "liner", "brass", "thread")):
@@ -355,7 +365,12 @@ def render_source_preview(
         x = 34 + index * 330
         canvas.alpha_composite(material.convert("RGBA"), (x, 92))
         draw.rectangle((x, 92, x + 279, 249), outline=(101, 79, 50, 255), width=2)
-        sample_label = "candidate donor sample" if material_mode == "candidate" else "future donor sample"
+        if material_mode == "accepted":
+            sample_label = "accepted fixed sample window"
+        elif material_mode == "candidate":
+            sample_label = "candidate donor sample"
+        else:
+            sample_label = "future donor sample"
         draw.text((x, 258), f"{sample_label}: {material_id}", fill=(173, 158, 132, 255))
 
     for index, variant in enumerate(("A", "B", "C", "D")):

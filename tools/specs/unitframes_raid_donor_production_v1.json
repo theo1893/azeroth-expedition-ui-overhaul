@@ -1,7 +1,7 @@
 {
   "schema": "aeui-unitframes-raid-donor-production-v1",
   "version": "UF-RAID-A2-DONOR V1",
-  "status": "repair-budget-exhausted / exception-review-required / 5-of-5",
+  "status": "source-accepted / runtime-exported / addon-integrated / P5 / 5-of-5",
   "production_authorized": false,
   "architecture": {
     "status": "user-selected",
@@ -85,7 +85,7 @@
       "current_prompt_version": "UF-RAID-A2-DONOR V1.r4",
       "current_prompt_heading": "### `UF-RAID-A2-DONOR V1.r4` — attempt 5 最终自包含低频四材料重建",
       "current_prompt_body_sha256": "ed3ec1599512a5b6c42695334bc1466e560ac010b428b3261f4503fba30bb078",
-      "next_operation": "no more ImageGen; present attempt 5 real-layout evidence and wait for explicit user acceptance or rejection of the sample-window-only deterministic exception"
+      "next_operation": "no more ImageGen; sample-window-only exception accepted and P4/P5 complete; next gate is Turtle WoW 1.18.1 P6 validation"
     }
   },
   "attempts": [
@@ -189,7 +189,7 @@
     }
   ],
   "terminal_review": {
-    "status": "repair-budget-exhausted / exception-review-required",
+    "status": "accepted-by-sample-window-only-exception / P5",
     "attempts_used": 5,
     "attempts_remaining": 0,
     "best_runtime_visual_attempt": 5,
@@ -200,11 +200,20 @@
     "deterministic_shells": "pass",
     "display_region": "7/7 pass; 0 violations",
     "exception_boundary": "ignore only the unused outer field bbox tolerance; consume the exact four authorized sample windows and preserve all crop coordinates and downstream deterministic operations",
-    "candidate_accepted": false,
-    "source_promoted": false,
-    "runtime_exported": false,
-    "addon_integrated": false,
-    "sixth_imagegen_call_forbidden": true
+    "candidate_accepted": true,
+    "source_promoted": true,
+    "runtime_exported": true,
+    "addon_integrated": true,
+    "sixth_imagegen_call_forbidden": true,
+    "acceptance_record": {
+      "date": "2026-08-12",
+      "user_statement": "接受 UF-RAID-A2-DONOR V1 attempt 5 的运行时视觉，并授权 sample-window-only 确定性合同例外进入 P4/P5；仅豁免未消费外围 field bbox 的最大 19px 偏差，其余固定 sample window、Python 外壳、A–D 维修、透明清理、592×296 source、74×37 runtime、6/62/6 三切片及 40 人排版合同保持不变。",
+      "exception_scope": "only the unconsumed outer field bbox maximum 19px deviation",
+      "consumed_sample_windows_changed": false,
+      "deterministic_downstream_contract_changed": false,
+      "source_manifest": "assets/source/unitframes/raid-a2/UF-RAID-A2_SourceManifest_v1.json",
+      "runtime_manifest": "assets/source/unitframes/raid-a2/UF-RAID-A2_RuntimeManifest_v1.json"
+    }
   },
   "authorization_request": {
     "status": "granted",
@@ -220,8 +229,6 @@
     "does_not_authorize": "candidate acceptance, source promotion, addon export, Turtle WoW P6 or cleanup"
   },
   "still_requires_later_gate": [
-    "candidate or source promotion",
-    "runtime export",
-    "addon integration"
+    "Turtle WoW 1.18.1 / P6 game validation"
   ]
 }

@@ -1,0 +1,330 @@
+{
+  "schema": "aeui-unitframes-raid-a2-runtime-manifest-v1",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "runtime_contract": "1.1",
+  "module": "unitframes",
+  "components": [
+    "UF.RAID.MEMBER.SHELL.A",
+    "UF.RAID.MEMBER.SHELL.B",
+    "UF.RAID.MEMBER.SHELL.C",
+    "UF.RAID.MEMBER.SHELL.D"
+  ],
+  "source_manifest": "assets/source/unitframes/raid-a2/UF-RAID-A2_SourceManifest_v1.json",
+  "source_manifest_sha256": "ae5fd4cfe8054b57363c8c9ec3eb5254909f958fe7e6d7544ae44e4a9faae41e",
+  "runtime": {
+    "A": {
+      "component": "UF.RAID.MEMBER.SHELL.A",
+      "file": "addon/AzerothExpeditionUI/Media/UnitFrames/RaidMemberShellAV1.tga",
+      "sha256": "6f9ec99f9218d28aca52156091eaf83e5009613a2d691d20d06286569f1976d7",
+      "tga_header": {
+        "image_type": 2,
+        "width": 74,
+        "height": 37,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      },
+      "metrics": {
+        "size": [
+          74,
+          37
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "9d9df5daf89a56fde32cdebc307deab00bf854e2d366df1f699f5a7f60ba55bc",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          74,
+          37
+        ],
+        "transparent_pixels": 10,
+        "partially_transparent_pixels": 418,
+        "opaque_pixels": 2310,
+        "visible_green_spill_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "full_uv": [
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "three_slice_uv": {
+        "left": [
+          0.0,
+          0.08108108108108109,
+          0.0,
+          1.0
+        ],
+        "centre": [
+          0.08108108108108109,
+          0.918918918918919,
+          0.0,
+          1.0
+        ],
+        "right": [
+          0.918918918918919,
+          1.0,
+          0.0,
+          1.0
+        ]
+      }
+    },
+    "B": {
+      "component": "UF.RAID.MEMBER.SHELL.B",
+      "file": "addon/AzerothExpeditionUI/Media/UnitFrames/RaidMemberShellBV1.tga",
+      "sha256": "432f862c452cccd8e2db22a8615e9dc73731b41f77e8984b51e5b3e6438b5dce",
+      "tga_header": {
+        "image_type": 2,
+        "width": 74,
+        "height": 37,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      },
+      "metrics": {
+        "size": [
+          74,
+          37
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "60ba6b89e01a6d31e9d6f802e99d53762beb82905982a6bcbc2326a9bc8cbff3",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          74,
+          37
+        ],
+        "transparent_pixels": 9,
+        "partially_transparent_pixels": 416,
+        "opaque_pixels": 2313,
+        "visible_green_spill_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "full_uv": [
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "three_slice_uv": {
+        "left": [
+          0.0,
+          0.08108108108108109,
+          0.0,
+          1.0
+        ],
+        "centre": [
+          0.08108108108108109,
+          0.918918918918919,
+          0.0,
+          1.0
+        ],
+        "right": [
+          0.918918918918919,
+          1.0,
+          0.0,
+          1.0
+        ]
+      }
+    },
+    "C": {
+      "component": "UF.RAID.MEMBER.SHELL.C",
+      "file": "addon/AzerothExpeditionUI/Media/UnitFrames/RaidMemberShellCV1.tga",
+      "sha256": "aa463e44b020e27443230b534b4d827745fca15b3c2013a5b7f35f7326a30aff",
+      "tga_header": {
+        "image_type": 2,
+        "width": 74,
+        "height": 37,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      },
+      "metrics": {
+        "size": [
+          74,
+          37
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "626c4e8633b33946edb9ad93456fe0ade015fdfb646e0337d020e1f6f03b1736",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          74,
+          37
+        ],
+        "transparent_pixels": 9,
+        "partially_transparent_pixels": 416,
+        "opaque_pixels": 2313,
+        "visible_green_spill_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "full_uv": [
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "three_slice_uv": {
+        "left": [
+          0.0,
+          0.08108108108108109,
+          0.0,
+          1.0
+        ],
+        "centre": [
+          0.08108108108108109,
+          0.918918918918919,
+          0.0,
+          1.0
+        ],
+        "right": [
+          0.918918918918919,
+          1.0,
+          0.0,
+          1.0
+        ]
+      }
+    },
+    "D": {
+      "component": "UF.RAID.MEMBER.SHELL.D",
+      "file": "addon/AzerothExpeditionUI/Media/UnitFrames/RaidMemberShellDV1.tga",
+      "sha256": "599160cefe94f3fe7b90b4da1d70cd084485395e1b4de931966cf572c0058f29",
+      "tga_header": {
+        "image_type": 2,
+        "width": 74,
+        "height": 37,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      },
+      "metrics": {
+        "size": [
+          74,
+          37
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "22afd39c9a4986ddc6db4df4df16df2e055a035657b91e71dfed0a755f744f63",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          74,
+          37
+        ],
+        "transparent_pixels": 9,
+        "partially_transparent_pixels": 416,
+        "opaque_pixels": 2313,
+        "visible_green_spill_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "full_uv": [
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "three_slice_uv": {
+        "left": [
+          0.0,
+          0.08108108108108109,
+          0.0,
+          1.0
+        ],
+        "centre": [
+          0.08108108108108109,
+          0.918918918918919,
+          0.0,
+          1.0
+        ],
+        "right": [
+          0.918918918918919,
+          1.0,
+          0.0,
+          1.0
+        ]
+      }
+    }
+  },
+  "deterministic_export": {
+    "tool": "tools/build_unitframes_raid_a2_runtime.py",
+    "source_to_runtime": [
+      [
+        592,
+        296
+      ],
+      [
+        74,
+        37
+      ]
+    ],
+    "resample": "Pillow LANCZOS",
+    "transparent_rgb_clear": true,
+    "source_three_slice": [
+      48,
+      496,
+      48
+    ],
+    "runtime_three_slice": [
+      6,
+      62,
+      6
+    ],
+    "standard_width_uses_complete_texture": true,
+    "variable_width_uses_three_texture_objects_with_uv_slices": true,
+    "vertical_stretch": false,
+    "redraw": false,
+    "mirror": false,
+    "foreign_pixels_mixed": false
+  },
+  "adapter": {
+    "file": "addon/AzerothExpeditionUI/Modules/UnitFrames.lua",
+    "provider_bridge": "addon/pfUI/api/unitframes.lua",
+    "provider_ownership": "addon/pfUI/api/expedition.lua",
+    "frames": "pfRaid1..pfRaid40 only",
+    "full_texture_at_width_70": true,
+    "three_slice_for_other_widths": true,
+    "height_33_required": true,
+    "provider_hitbox_changed": false,
+    "fallback": "remove AEUI shell and restore pfUI backdrops/bar media"
+  },
+  "real_layout": {
+    "scene": "generated/unitframes/raid/A2/runtime/real-layout-scene.png",
+    "scene_sha256": "fa4fcf2ac59cf8a70c36acce79ac060596636fddfa0c20d5d88ce4ab30b1bf72",
+    "review": "generated/unitframes/raid/A2/runtime/real-layout-review.png",
+    "review_sha256": "8bbf747ee52952a524be0097b829d49d55338f3faaf5ffad06624413c63647ea",
+    "object_count": 40,
+    "formation": "10x4 VERTICAL",
+    "cluster_visual_envelope": [
+      767,
+      159
+    ],
+    "ui_pixel_scale": "1 image pixel = 1 UI pixel"
+  },
+  "display_region": {
+    "contract": "tools/specs/unitframes_raid_runtime_display_region_v1.json",
+    "report": "generated/unitframes/raid/A2/runtime/display-region-report.json",
+    "report_sha256": "9246a321024a595b26a618b935cff42b514103c2e504ae85bf2a0992bdae22b8",
+    "status": "pass",
+    "scenario_count": 7,
+    "violation_count": 0,
+    "first_failure": null
+  },
+  "deployment": {
+    "addon_directories": [
+      "addon/pfUI",
+      "addon/AzerothExpeditionUI"
+    ],
+    "build_required_on_target_device": false,
+    "addon_package_gate": {
+      "file": "generated/unitframes/raid/A2/runtime/addon-package-report.json",
+      "status": "present",
+      "sha256": "de45aab0f96e252739b42ff849cf1d39e6e5806a5186bbe0d49e0575fedebde4",
+      "schema": "aeui-addon-package-report-v1",
+      "package_status": "pass",
+      "build_required_on_target_device": false,
+      "violations": []
+    },
+    "game_validation": "pending Turtle WoW 1.18.1 / P6"
+  }
+}

@@ -17,18 +17,21 @@
   runtime 或 addon，且 A1 禁止第六次。
 - 用户于 `2026-08-12` 选择新的 `UF-RAID-A2` 架构：ImageGen 未来只生成四块
   粗粝材质 donor，Python 独占精确外壳几何、Alpha、`592×296 → 74×37`、
-  `48/496/48 → 6/62/6` 三切片及 A/B/C/D 四种维修差异。当前
+  `48/496/48 → 6/62/6` 三切片及 A/B/C/D 四种维修差异。
   `UF-RAID-A2-SIM-V1` 已由用户于 `2026-08-12` 明确确认；用户同日另行精确
-  授权 `UF-RAID-A2-DONOR V1`，当前为
-  `P3 / repair-budget-exhausted / exception-review-required`；精确 attempt、
+  授权 `UF-RAID-A2-DONOR V1`。五次生成预算已耗尽，用户随后接受 attempt 5
+  的运行时视觉，并只豁免未消费外围 field bbox 最大 `19px` 偏差；固定 sample
+  window、Python 外壳、A-D 维修、透明清理、source/runtime 尺寸、三切片和
+  40 人排版合同均未改变。当前为
+  `P5 / source-accepted / runtime-exported / addon-integrated / 5/5`；精确 attempt、
   流程错误和例外边界只在
   `work/UNITFRAMES.RAID.md` 维护，避免长期进度复制逐稿流水。
-  展示区域 `7/7 pass`、violations `0`。确认只冻结真实 40 人编队、无共享
-  外框、`2px` 夹边、A-D 精确维修位置、低饱和材料层级和动态层序，不接受
-  模拟像素。production donor 已 `5/5` 终止；attempt 5 是最佳运行时视觉，
-  四个实际 sample window、Python 外壳与 display-region 均通过，但未消费的
-  外围 field bbox 最大偏移 `19px`，等待用户决定 `sample-window-only` 例外。
-  尚无 accepted source、runtime 或 addon 变更，第六次调用禁止。
+  最终展示区域 `7/7 pass`、violations `0`；四个 `512×288` sample、四张
+  `592×296 RGBA` source 与四张独立 `74×37 RGBA TGA` 已受 manifest 管理。
+  Lua 只接入 `pfRaid1..40`；标准宽度加载完整纹理，其他宽度使用同图
+  `6/62/6` 三切片，高度偏离 `33px` 时局部回退 pfUI。第六次调用仍禁止。
+  fresh-checkout addon package 为 `pass`、violations `0`，报告 SHA
+  `de45aab0…de4`；目标设备不需要运行 exporter。
 - 当前只处理资源重绘与精确媒体替换。B1 已接入 addon；没有修改另一台设备上
   的 Frame 位置、尺寸、点击、事件、数值、颜色逻辑或其他功能。
 - 用户于 `2026-08-11` 接受“每个角色生成完整外壳，Python 负责精确工程化”
@@ -111,9 +114,9 @@
   `UF-RAID-A2-DONOR V1` 的最终执行正文并重新完成 `pass-final` 完整性审计；
   用户随后精确授权该正文、固定 SHA Image 1／2、同循环紧邻前稿有界 edit、
   最多五次实际生图及合同内确定性后处理。五次额度已全部使用，授权状态已
-  关闭；当前为 `P3 / exception-review-required`。attempt 5 的美术与真实排版
-  内部通过，严格外围 field bbox 未过；精确证据见唯一 Raid work。用户接受
-  单一例外前不等于候选接受、source 晋级、runtime 或 addon 接入。
+  关闭。用户已接受 attempt 5，并授权 `sample-window-only` 单一例外进入 P4/P5；
+  当前为 `accepted-by-sample-window-only-exception / P5`。严格外围 field bbox
+  失败事实保留，未消费外围像素未晋级；精确证据见唯一 Raid work。
 
 ## 展示区域门禁
 
@@ -137,7 +140,8 @@
   `repair-budget-exhausted / candidate-rejected`，禁止第六次。
 - Raid A2 是新架构而不是 A1 attempt 6。`UF-RAID-A2-DONOR V1` 的 `5/5` 已
   耗尽，`production_authorized=false`，流程错误 `2` 不占额度；禁止第六次。
-  attempt 5 是最佳运行时视觉，正等待单一确定性例外审核。
+  attempt 5 已按 `sample-window-only` 单一例外接受并完成 P4/P5；生成合同仍
+  关闭，下一门禁只剩 Turtle WoW P6。
 - 三段 final 已吸收用户确认的可见结论并通过 `pass-final` 自包含预检；
   正式生产授权已独立取得，按 A→B→B1 顺序执行。
 - 流程错误无生成证据时单独记录，不占额度。旧 V1／V2 失败像素禁止作为新段
@@ -267,12 +271,11 @@
 
 ## 下一门禁
 
-Raid 的原 A1 合同已经终止，下一门禁不是 attempt 6。`UF-RAID-A2-SIM-V1`
-已经确认，`UF-RAID-A2-DONOR V1` 已完成 `5/5` 并停止。下一步是用户审阅
-attempt 5 的 40 人真实排版，并明确接受或拒绝只豁免“未消费外围 field bbox
-`3px` 容差”的 `sample-window-only` 例外。四个固定 sample window、Python
-精确造壳、40 人排版与 display-region 已通过。未获明确接受前不得创建
-source/runtime 或接入 addon；禁止第六次。
+Raid 的原 A1 合同已经终止，下一门禁不是 attempt 6。`UF-RAID-A2-DONOR V1`
+已完成 `5/5`，attempt 5 已通过 `sample-window-only` 单一例外进入 P4/P5。
+下一门禁是 Turtle WoW `1.18.1` P6：验证 40 框 A-D 分配、TGA 方向、标准
+`70×33` 完整纹理、非标准宽度 `6/62/6`、Health／Power 经典乘色、Raid Icon／
+Aura／距离／离线／复活层序、`33px` 高度失配回退及模块禁用回退。禁止第六次。
 
 B1 下一门禁是 Turtle WoW `1.18.1` P6：验证 TGA 方向、Player／Target／
 TargetTarget／Focus 的生命与 Mana／Rage／Focus／Energy 乘色、低血量裁切、

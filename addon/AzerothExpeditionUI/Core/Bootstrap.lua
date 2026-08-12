@@ -23,7 +23,7 @@ local defaults = {
   },
   unitframes = {
     enabled = true,
-    artVersion = 1,
+    artVersion = 2,
   },
 }
 
@@ -93,6 +93,12 @@ function addon:Initialize()
   ) then
     AzerothExpeditionUIDB.chat.artVersion = 4
     AzerothExpeditionUIDB.chat.bookBrightness = 1.00
+  end
+  if (
+    AzerothExpeditionUIDB.unitframes and
+    (tonumber(AzerothExpeditionUIDB.unitframes.artVersion) or 0) < 2
+  ) then
+    AzerothExpeditionUIDB.unitframes.artVersion = 2
   end
   ApplyDefaults(AzerothExpeditionUIDB, defaults)
   self.db = AzerothExpeditionUIDB
@@ -220,7 +226,7 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       ", pfUI=" .. (pfUI and "available" or "missing") ..
       ", route=" .. (scopedRoute and "scoped" or "pfui") ..
       ", ownership=" ..
-      (scopedRoute and "chat,quests,unitframe-bars" or "none") ..
+      (scopedRoute and "chat,quests,unitframe-bars,unitframe-raid" or "none") ..
       ", blizzard-skins=" ..
       (scopedRoute and "pfui-except-quest-log" or "pfui")
     )

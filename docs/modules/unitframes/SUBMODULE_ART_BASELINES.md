@@ -87,6 +87,12 @@ Player 放进同一 production atlas，也不得镜像或复制 Player 像素。
 伸缩区安静。Python 可以裁取、cover-fit、mask、低频乘光、清透明 RGB、缩放
 与三切片；不得生成新笔触、修复 donor 美术、复用 A1 失败像素或改变动态层级。
 
+接受像素基线为 `UF-RAID-A2-DONOR V1 attempt 5` 的四个固定 `512×288` sample
+window，经 builder 形成的四张 `592×296 RGBA` source。唯一例外是忽略未消费
+外围 field bbox 最大 `19px` 偏差；外围像素本身不属于视觉权威。runtime 固定为
+四张独立 `74×37` TGA，标准宽度使用完整纹理，其他宽度只允许从同一变体做
+`6/62/6` 横向三切片；不得重绘、镜像、跨变体拼像素或纵向拉伸。
+
 ## `UF.RAID.STATE.RIM`／`UF.RAID.STATE.PIP`／`UF.RAID.AURA.RIM`
 
 Raid 的 Hover／Aggro 不单独生图：从每个接受外壳的 Alpha 确定性派生两三段

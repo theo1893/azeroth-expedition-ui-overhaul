@@ -229,28 +229,48 @@ def draw_neighbour_ui(image: Image.Image, spec: dict) -> None:
     draw.polygon(((cx, cy - 42), (cx + 8, cy), (cx, cy + 34), (cx - 8, cy)), fill=(116, 89, 49, 255))
 
 
-def render_scene(spec: dict, shells: ShellSet, candidate: bool = False) -> Image.Image:
+def render_scene(
+    spec: dict,
+    shells: ShellSet,
+    candidate: bool = False,
+    accepted_runtime: bool = False,
+) -> Image.Image:
     image = Image.new("RGBA", (1600, 900), (0, 0, 0, 255))
     draw_world(image)
     draw_neighbour_ui(image, spec)
     draw = ImageDraw.Draw(image, "RGBA")
     title = get_font("addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf", 25)
     note = get_font(spec["provider"]["font"], 13)
-    scene_title = (
-        "UF-RAID-A2-DONOR V1 · production candidate 真实排版"
-        if candidate
-        else "UF-RAID-A2-SIM-V1 · donor / deterministic shell 预演"
-    )
-    scene_usage = (
-        "真实 74×39 显示包络 · 10×4 VERTICAL · 40 个对象 · candidate donor"
-        if candidate
-        else "真实 74×39 显示包络 · 10×4 VERTICAL · 40 个对象 · ImageGen 0/0"
-    )
-    scene_note = (
-        "本图检验实际 donor 材质经 Python 精确造壳后的 100% 运行时密度与动态层序。"
-        if candidate
-        else "本图只确认精确外壳几何、四种维修位置和运行时密度；粗粝材质为本地占位。"
-    )
+    if accepted_runtime:
+        scene_title = "UF-RAID-A2-DONOR V1 · P5 runtime 真实排版"
+        scene_usage = (
+            "真实 74×39 显示包络 · 10×4 VERTICAL · "
+            "40 个对象 · accepted sample windows"
+        )
+        scene_note = (
+            "本图使用已接受四采样窗、Python 精确外壳与游戏实际动态层；"
+            "外围 field bbox 从未被消费。"
+        )
+    elif candidate:
+        scene_title = "UF-RAID-A2-DONOR V1 · production candidate 真实排版"
+        scene_usage = (
+            "真实 74×39 显示包络 · 10×4 VERTICAL · "
+            "40 个对象 · candidate donor"
+        )
+        scene_note = (
+            "本图检验实际 donor 材质经 Python 精确造壳后的 "
+            "100% 运行时密度与动态层序。"
+        )
+    else:
+        scene_title = "UF-RAID-A2-SIM-V1 · donor / deterministic shell 预演"
+        scene_usage = (
+            "真实 74×39 显示包络 · 10×4 VERTICAL · "
+            "40 个对象 · ImageGen 0/0"
+        )
+        scene_note = (
+            "本图只确认精确外壳几何、四种维修位置和运行时密度；"
+            "粗粝材质为本地占位。"
+        )
     draw.text((34, 28), scene_title, font=title, fill=(218, 186, 119, 255))
     draw.text((36, 66), scene_usage, font=note, fill=(178, 168, 147, 255))
     draw.text((36, 88), scene_note, font=note, fill=(164, 151, 129, 255))
@@ -262,22 +282,35 @@ def render_scene(spec: dict, shells: ShellSet, candidate: bool = False) -> Image
     return image
 
 
-def render_review(spec: dict, shells: ShellSet, candidate: bool = False) -> Image.Image:
+def render_review(
+    spec: dict,
+    shells: ShellSet,
+    candidate: bool = False,
+    accepted_runtime: bool = False,
+) -> Image.Image:
     image = Image.new("RGBA", (1700, 1120), (20, 18, 16, 255))
     draw = ImageDraw.Draw(image, "RGBA")
     title = get_font("addon/AzerothExpeditionUI/Media/Fonts/NotoSerifSC-SemiBold.ttf", 27)
     label = get_font(spec["provider"]["font"], 15)
     small = get_font(spec["provider"]["font"], 12)
-    review_title = (
-        "团队框架 A2 production candidate：实际 donor + Python 造壳"
-        if candidate
-        else "团队框架 A2：模型供材，Python 造壳"
-    )
-    review_note = (
-        "本板同时审查实际 donor 材质、精确轮廓、A-D 维修、动态层级与 40 人密度；仍不是 source 接受。"
-        if candidate
-        else "不确认对象：当前材质笔触、微纹理与最终色差（这些将由未来一次 material-only donor 提供）。"
-    )
+    if accepted_runtime:
+        review_title = "团队框架 A2 P5：已接受采样窗 + Python 造壳"
+        review_note = (
+            "本板验证已接受 sample-window-only 像素、A-D 精确维修、"
+            "动态层级与 40 人密度；外围 field bbox 不进入 source/runtime。"
+        )
+    elif candidate:
+        review_title = "团队框架 A2 production candidate：实际 donor + Python 造壳"
+        review_note = (
+            "本板同时审查实际 donor 材质、精确轮廓、A-D 维修、"
+            "动态层级与 40 人密度；仍不是 source 接受。"
+        )
+    else:
+        review_title = "团队框架 A2：模型供材，Python 造壳"
+        review_note = (
+            "不确认对象：当前材质笔触、微纹理与最终色差"
+            "（这些将由未来一次 material-only donor 提供）。"
+        )
     draw.text((36, 25), review_title, font=title, fill=(219, 187, 118, 255))
     draw.text((38, 64), "确认对象：精确轮廓、2px 运行时夹边、A-D 维修差异、动态层级与 40 人密度。", font=label, fill=(178, 166, 143, 255))
     draw.text((38, 88), review_note, font=label, fill=(155, 144, 124, 255))
@@ -353,11 +386,18 @@ def render_review(spec: dict, shells: ShellSet, candidate: bool = False) -> Imag
         image.alpha_composite(runtime, (x, 872))
         draw.text((x, 1028), f"{variant} · exact 74×37 runtime", font=small, fill=(183, 164, 130, 255))
 
-    footer = (
-        "Candidate review only · 尚未用户接受 · 不写 source/runtime/addon"
-        if candidate
-        else "Simulation only · ImageGen 0/0 · 未授权 production donor · 不写 source/runtime/addon"
-    )
+    if accepted_runtime:
+        footer = (
+            "P5 runtime evidence · exact sample windows only · "
+            "Turtle WoW P6 pending"
+        )
+    elif candidate:
+        footer = "Candidate review only · 尚未用户接受 · 不写 source/runtime/addon"
+    else:
+        footer = (
+            "Simulation only · ImageGen 0/0 · 未授权 production donor · "
+            "不写 source/runtime/addon"
+        )
     draw.text((42, 1068), footer, font=label, fill=(206, 177, 116, 255))
     return image
 

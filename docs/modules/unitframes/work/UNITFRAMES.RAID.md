@@ -3,13 +3,13 @@
 ## UF-RAID-A2 当前工作快照
 
 - 版本：`UF-RAID-A2 / UF-RAID-A2-SIM-V1`
-- 子状态：`P3 / repair-budget-exhausted / exception-review-required`
+- 子状态：`P5 / source-accepted / runtime-exported / addon-integrated`
 - 用户选择的架构：`ImageGen material donor only + Python deterministic shell`
-- 当前操作：`stop-no-sixth-call / waiting-user-review`
+- 当前操作：`P4/P5 complete / waiting Turtle WoW P6`
 - 当前批 ImageGen：`5/5`；剩余 `0`
-- production donor：`attempt 5 为最佳运行时视觉；严格 field bbox 未过；等待 sample-window-only 例外决定`
+- production donor：`attempt 5 已按 sample-window-only 单一例外接受；严格外围 field bbox 失败事实保留`
 - 模拟用户结论：`confirmed / 2026-08-12 / accepts-pixels=false`
-- candidate：`attempt 5 / review-ready / not accepted`；source／runtime／addon：`均未写入`
+- candidate：`attempt 5 / accepted-runtime-visual`；source／runtime／addon：`P4/P5 complete`
 - 最新／最佳 raw：`generated/unitframes/raid/A2/DONOR-V1/attempt-05/uf-raid-a2-donor-v1-attempt-05.provider-native-01.png`，SHA `dad020c2…f159`
 - provider：40 个 `pfRaid` Secure Button，`10×4 VERTICAL`，单 Button
   `70×33`，单成员显示包络 `74×39`，整团 `767×159`；结构沿用已经确认的
@@ -17,7 +17,42 @@
 - 模拟规格：`tools/specs/unitframes_raid_donor_simulation_v1.json`
 - production 草案：`tools/specs/unitframes_raid_donor_production_v1.json`
 - 确定性构造器：`tools/build_unitframes_raid_donor_shells_v1.py`
+- P4/P5 导出器：`tools/build_unitframes_raid_a2_runtime.py`
+- source manifest：`assets/source/unitframes/raid-a2/UF-RAID-A2_SourceManifest_v1.json`
+- runtime manifest：`assets/source/unitframes/raid-a2/UF-RAID-A2_RuntimeManifest_v1.json`
 - 真实排版渲染器：`tools/render_unitframes_raid_donor_simulation_v1.py`
+
+### Attempt 5 验收与 P4/P5 收口
+
+- 用户原文：`接受 UF-RAID-A2-DONOR V1 attempt 5 的运行时视觉，并授权 sample-window-only 确定性合同例外进入 P4/P5；仅豁免未消费外围 field bbox 的最大 19px 偏差，其余固定 sample window、Python 外壳、A–D 维修、透明清理、592×296 source、74×37 runtime、6/62/6 三切片及 40 人排版合同保持不变。`
+- 日期：`2026-08-12`；接受对象：attempt 5 runtime visual；阶段：`P4/P5`。
+- 例外只覆盖没有被任何后续步骤读取的外围 field bbox 最大 `19px` 偏差。只把
+  四个固定 `512×288` sample window 写入 source；原始 donor 与外围 field 像素
+  都不晋级，也不由 Lua 加载。
+- Python 从四个 sample 确定性重建 A-D `592×296 RGBA` 母版，清理全透明 RGB，
+  再导出四张独立 `74×37 32-bit RGBA TGA`。标准 `70×33` Button 使用完整纹理；
+  其他支持宽度使用同图 `6/62/6`，高度不是 `33px` 时回退 pfUI。
+- 最终真实 40 人排版与 display-region：`7/7 pass`、violations `0`。P5 Lua 只
+  接入 `pfRaid1..40` 的外壳与已接受 Health／Power 媒体，不改变 Secure Button、
+  roster、事件、点击、SavedVariables 或动态状态层。
+- fresh-checkout addon package：`pass`、violations `0`、
+  `build_required_on_target_device=false`；报告
+  `generated/unitframes/raid/A2/runtime/addon-package-report.json`，SHA
+  `de45aab0f96e252739b42ff849cf1d39e6e5806a5186bbe0d49e0575fedebde4`。
+- 第六次 ImageGen 仍禁止；下一门禁是 Turtle WoW `1.18.1` P6。
+
+## 执行记录
+
+正式 donor 循环共执行 `5/5` 次实际 ImageGen，另有 `2` 次不计额度的流程错误；
+每次版本、输入、session、provider result、raw SHA 与第一失败见下方尝试表和
+逐次审查。P4/P5 只执行确定性 crop、Python 造壳、透明清理、缩放、TGA 导出、
+真实排版、Lua 接入与测试，没有第六次生成。
+
+## 审查记录
+
+attempt 5 美术与运行时视觉由用户接受；严格外围 field bbox 仍记录为失败，唯一
+例外只覆盖未消费区域最大 `19px` 偏差。四个固定 sample window、A-D 母版、
+四张 runtime、`6/62/6`、40 人排版与 display-region 均按原合同复核通过。
 
 ### 架构职责冻结
 
@@ -120,11 +155,11 @@ Roster、SavedVariables 或 pfUI 状态逻辑。
 ### 下一门禁
 
 `UF-RAID-A2-SIM-V1` 已确认，`UF-RAID-A2-DONOR V1` 已获得独立精确授权。
-attempt 1–5 已全部完成，实际 ImageGen 预算耗尽。attempt 5 为最佳运行时视觉，
-但四个外围 field bbox 的最大偏移 `19px`，超过严格 `3px` 门禁；四个实际消费的
-fixed sample window 全部完整，Python 外壳与 display-region 均通过。下一门禁是
-用户审阅 attempt 5 的真实 40 人排版，并决定是否接受 `sample-window-only`
-确定性合同例外。未接受前不得写 source/runtime/addon；禁止第六次 ImageGen。
+attempt 1–5 已全部完成，实际 ImageGen 预算耗尽。用户已接受 attempt 5 的运行时
+视觉，并授权只豁免未消费外围 field bbox 最大 `19px` 偏差。四个 fixed sample
+window、Python 外壳、A-D 维修、透明清理、`592×296 → 74×37`、`6/62/6` 与
+40 人排版合同保持不变，P4/P5 已完成。下一门禁是 Turtle WoW `1.18.1` P6；
+禁止第六次 ImageGen。
 
 未来 donor 循环最多 `5` 次实际 ImageGen 调用，流程错误不计额度，通过即停。
 attempt 1 只上传两张固定 Chat 锁定图且没有 Image 3；后续只允许同一 donor
@@ -132,8 +167,9 @@ attempt 1 只上传两张固定 Chat 锁定图且没有 Image 3；后续只允�
 初始机器正文保存在 `tools/specs/unitframes_raid_donor_production_v1.json`；
 当前唯一执行正文按版本保存在本 work 的 fenced body，并由固定执行器逐字提取。
 完整性复检为 `pass-final`、未知执行关键值为 `0`。当前
-`production_authorized=false`，原因是已耗尽有界生成预算；不允许继续生成、
-自动接受、晋级 source、导出 runtime 或接入 addon。
+`production_authorized=false`，原因是已耗尽有界生成预算；不允许继续生成。
+候选接受、source 晋级、runtime 导出与 addon 接入来自上方单独的用户 P4/P5
+授权，不重开生成合同。
 
 ### `UF-RAID-A2-DONOR V1` 正文完整性复检
 
@@ -252,6 +288,8 @@ formed repair object, text, label or measurement is present.
 - 下一操作：提交 attempt 5 终态证据并展示最佳运行时视觉，等待用户决定是否
   接受 `sample-window-only` 例外；禁止第六次调用。
 
+## 尝试摘要
+
 ### A2 自主修复循环
 
 - 不可变修复边界仍为上文已授权合同：一张 `1536×1024 RGB` donor、固定四材料
@@ -260,8 +298,8 @@ formed repair object, text, label or measurement is present.
   `6/62/6`、40 人真实排版及全部动态排除。
 - 允许修复：四个冻结材料字段内的材质笔触、频率、明暗、污染与 cell 占用；
   可在明确保留前稿正确结构时使用同循环紧邻 raw 作 Image 3 edit。
-- 当前：`repair-budget-exhausted / exception-review-required`；实际 ImageGen
-  `5/5`，剩余 `0`；流程错误 `2`；禁止第六次。
+- 当前：`repair-budget-exhausted / accepted-by-sample-window-only-exception / P5`；
+  实际 ImageGen `5/5`，剩余 `0`；流程错误 `2`；禁止第六次。
 
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
@@ -269,7 +307,7 @@ formed repair object, text, label or measurement is present.
 | 2/5 | `UF-RAID-A2-DONOR V1.r1` / `6cb51d3` | edit | session `019ff531-86c6-7333-9ea1-31a8d5ec461f`／provider `ig_0a7b3d9d79050dcb016a7c35bc352c819183b83d8fa24aeaff` | raw `d6479b89…c893` | 美术一致性：四材料仍共享重复卷曲压纹，thread 仍为纠缠纤维、brass 仍有大片亮区；其次最大 field bbox 偏移 `55px` | 不继承失败纹理；保留冻结职责／深色层级／sample window／无 UI 几何。attempt 3 只用固定 Image 1／2 从零生成超低频哑光颜料字段 | internal-fail |
 | 3/5 | `UF-RAID-A2-DONOR V1.r2` / `542810f` | regenerate | session `019ff53a-39b4-79c0-94bd-b308a4a29962`／provider `ig_09b4123c1cee1bb7016a7c37ecb4ac81919dcddc53fa6d9b0e` | raw `6f54172b…4b28` | 技术：四 field bbox 仍偏离固定 cell，最大 `42px`，leather／liner contract cell 内分别残留 `3840/4224` dominant-green px；其次 leather／thread 略偏亮 | 完整保留本稿已成立的宽块哑光笔触、无共享纹理、安静 liner、粗犷运行时；attempt 4 仅用紧邻 raw 作 Image 3 精确收边，并克制压暗 leather／brass／thread | internal-fail |
 | 4/5 | `UF-RAID-A2-DONOR V1.r3` / `5c6dde0` | edit | session `019ff541-facd-7c40-8804-b740ecfbcfc1`／provider `ig_0af27a56c69c29f2016a7c39edf588819187b010c7e8ab0862` | raw `7750b39d…ddab` | 美术回退：四字段重新出现细密重复压纹；技术仍失败且最大 bbox 偏移增至 `48px`、每格 contract cell green 增至 `11169–11520px` | 降亮数值方向可吸收；不保留本稿纹理或格位。attempt 5 只用固定 Image 1／2，从零恢复 attempt 3 类型的宽块哑光方向并强化非等距中心带 | internal-fail |
-| 5/5 | `UF-RAID-A2-DONOR V1.r4` / `b9e5a65` | regenerate | session `019ff547-a187-70d2-b123-f6b2960ae9eb`／provider `ig_08662f5db7697b89016a7c3ba4bae08191a3c895ac74d50469` | raw `dad020c2…f159` | 严格技术：外围 field bbox 最大偏移 `19px`，超 `3px`；实际 sample window 4/4 完整 | 美术、Python 造壳、40 人真实排版与 display-region 成立；作为最佳运行时视觉提交用户，只有用户明确接受 sample-window-only 例外后才可进入 P4/P5 | exception-review-required / 5-of-5 stop |
+| 5/5 | `UF-RAID-A2-DONOR V1.r4` / `b9e5a65` | regenerate | session `019ff547-a187-70d2-b123-f6b2960ae9eb`／provider `ig_08662f5db7697b89016a7c3ba4bae08191a3c895ac74d50469` | raw `dad020c2…f159` | 严格技术：外围 field bbox 最大偏移 `19px`，超 `3px`；实际 sample window 4/4 完整 | 美术、Python 造壳、40 人真实排版与 display-region 成立；用户随后明确接受仅覆盖未消费外围 bbox 的 sample-window-only 例外 | accepted-by-exception / P4/P5 |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
