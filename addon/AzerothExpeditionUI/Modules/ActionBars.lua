@@ -37,6 +37,7 @@ ActionBars.focusTargetTargetScale = 0.68
 ActionBars.focusReadoutScale = 1
 ActionBars.focusStanceScale = 1
 ActionBars.focusStanceIconSize = "25"
+ActionBars.combatDeckStanceGap = 0
 ActionBars.focusDoiteScale = 0.82
 ActionBars.focusUnitWidth = 240
 ActionBars.focusUnitHeight = 60
@@ -3923,6 +3924,11 @@ function ActionBars:UpdateFieldKitUnlockMover()
       targetTarget.drag:Show()
     end
   end
+  local stance = GetGlobal("pfActionBarStances")
+  if stance and stance.drag and CombatFocusLayoutActive() then
+    stance.drag:Hide()
+    hidden = true
+  end
   if SideBarGroupBound() then
     if self:ConfigureSideBarGroupMover() then
       hidden = true
@@ -3954,9 +3960,7 @@ function ActionBars:InstallFieldKitUnlockHooks()
     if originalHide then
       originalHide()
     end
-    if FieldKitEnabled() and FieldKitBound() then
-      ActionBars:ApplyActionBarStackPosition(true)
-    end
+    ActionBars:ApplyCombatDeckGroup()
     ActionBars:ApplyFocusRelativeAnchors()
     if SideBarGroupBound() then
       ActionBars:ApplySideBarGroupAnchors()
@@ -4009,6 +4013,92 @@ function ActionBars:ApplyActionBarStackPosition(enabled)
   self.actionBarStackStatus = "12x2-bound"
   self:UpdateFieldKitUnlockMover()
   return true
+end
+
+function ActionBars:ApplyCombatDeckGroup()
+  if not FieldKitEnabled() or not FieldKitBound() then
+    self.combatDeckGroupStatus = "free"
+    return false
+  end
+
+  local main = GetMainActionBarFrame()
+  if not main then
+    self.combatDeckGroupStatus = "unavailable"
+    return false
+  end
+
+  self:ApplyActionBarStackPosition(true)
+
+  if CombatFocusLayoutActive() then
+    local stance = GetGlobal("pfActionBarStances")
+    if stance and stance.ClearAllPoints and stance.SetPoint then
+      if stance.SetScale then
+        stance:SetScale(self.focusStanceScale)
+      end
+      stance:ClearAllPoints()
+      stance:SetPoint(
+        "TOP", main, "BOTTOM", 0, -self.combatDeckStanceGap
+      )
+      self.focusStanceStatus = "combat-deck-bound"
+    end
+  end
+
+  local handle = GetGlobal("AutoBarAnchorFrameHandle")
+  local bounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
+  if handle and bounds and bounds.count > 0 then
+    self:ApplyConsumableDockPosition(true, bounds)
+    self:ApplyAutoBarDragHandlePolicy(true)
+  end
+  self:ApplyTrinketDockPosition(true)
+  self:ApplyArchiTotemDockPosition(true)
+  self.combatDeckGroupStatus = "bound"
+  return true
+end
+
+local function InstallCombatDeckFrameScript(frame, scriptName)
+  if not frame or type(frame.GetScript) ~= "function" or
+    type(frame.SetScript) ~= "function"
+  then
+    return false
+  end
+  frame.aeuiCombatDeckScripts = frame.aeuiCombatDeckScripts or {}
+  local current = frame:GetScript(scriptName)
+  local existing = frame.aeuiCombatDeckScripts[scriptName]
+  if existing and current == existing.wrapper then
+    return true
+  end
+  local state = { original = current }
+  state.wrapper = function()
+    if state.original then
+      state.original()
+    end
+    ActionBars:InstallCombatDeckGroupHooks()
+    ActionBars:ApplyCombatDeckGroup()
+  end
+  frame.aeuiCombatDeckScripts[scriptName] = state
+  frame:SetScript(scriptName, state.wrapper)
+  return true
+end
+
+function ActionBars:InstallCombatDeckGroupHooks()
+  if not self.combatDeckAutoBarWrapper and
+    type(GetGlobal("AutoBar_SetupVisual")) == "function"
+  then
+    self.combatDeckAutoBarOriginal = GetGlobal("AutoBar_SetupVisual")
+    self.combatDeckAutoBarWrapper = function()
+      ActionBars.combatDeckAutoBarOriginal()
+      ActionBars:ApplyCombatDeckGroup()
+    end
+    AutoBar_SetupVisual = self.combatDeckAutoBarWrapper
+  end
+
+  InstallCombatDeckFrameScript(
+    GetGlobal("pfActionBarStances"), "OnEvent"
+  )
+  local pet = GetGlobal("pfActionBarPet")
+  InstallCombatDeckFrameScript(pet, "OnEvent")
+  InstallCombatDeckFrameScript(pet, "OnShow")
+  InstallCombatDeckFrameScript(pet, "OnHide")
 end
 
 local function ConsumableVisualEdges(bounds)
@@ -5271,6 +5361,7 @@ end
 
 function ActionBars:InstallFieldKitHooks()
   self:InstallFieldKitUnlockHooks()
+  self:InstallCombatDeckGroupHooks()
 
   if AutoBar then
     self:InstallAutoBarPopupIntentGuard()
@@ -5313,6 +5404,8 @@ function ActionBars:InstallFieldKitHooks()
           ActionBars.focusStanceStatus = "error"
         end
       end
+      ActionBars:InstallCombatDeckGroupHooks()
+      ActionBars:ApplyCombatDeckGroup()
     end)
   end
 
@@ -5474,6 +5567,7 @@ function ActionBars:Initialize()
   self.focusLayoutMousePolicy = "visible-controls-only"
   self.focusStanceStatus = "pending"
   self.focusStanceUpdating = false
+  self.combatDeckGroupStatus = "pending"
   self.comfortUIScaleStatus = ComfortUIScaleConfigured() and
     "saved" or "custom"
 end
@@ -5561,6 +5655,9 @@ function ActionBars:Apply()
     self:ApplyFocusUnitFonts()
   end
 
+  self:InstallCombatDeckGroupHooks()
+  self:ApplyCombatDeckGroup()
+
   -- The offhand timer has no independent pfUI movable entry. Restore its
   -- one-shot equal-size compensation when the focus contract is active; no
   -- position or size is maintained by an OnUpdate loop.
@@ -5644,6 +5741,8 @@ function ActionBars:GetRuntimeStatus()
       tostring(FieldKitBound() and "bound" or "free") ..
     ",actionbar-stack=" ..
       tostring(self.actionBarStackStatus or "pending") ..
+    ",combat-deck-group=" ..
+      tostring(self.combatDeckGroupStatus or "pending") ..
     ",provider=" .. tostring(self.providerStatus or "pending") ..
     ",scope=bars-1-10" ..
     ",rail-scope=bars-1-12+merged-1-6" ..
