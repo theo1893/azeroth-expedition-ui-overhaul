@@ -4,7 +4,7 @@
 静态媒体及其挂载，不改变另一台设备上的 Frame 锚点、尺寸、事件、点击、
 SavedVariables、单位数据或状态逻辑。
 
-## 当前资源批次
+## 主单位框与资源条批次
 
 当前 profile 使用 `portrait = off`。下列逻辑尺寸来自
 `addon/pfUI/env/profiles.lua` 与 `pfUI.uf:UpdateFrameSize()`；外壳只在真实 Frame
@@ -20,6 +20,32 @@ SavedVariables、单位数据或状态逻辑。
 | `UF.BAR.POWER.FILL` | 每个对象的 `f.power.bar` | provider 裁切宽度 | `64×16` 可横向拉伸纹理 | 无色灰阶窄颜料纹；继续由 pfUI 按资源类型着色 |
 | `UF.STATE.HOVER.RIM` | `f.hoverglow` | 外壳边缘 | 由每张接受外壳 Alpha 确定性派生 | 暖白短边响应；不改变命中盒 |
 | `UF.STATE.AGGRO.RIM` | `f.glow` | 外壳边缘 | 由每张接受外壳 Alpha 确定性派生 | 暗红／橙褐短边响应；继续使用 pfUI 状态逻辑 |
+
+## Raid 团队框架批次
+
+`addon/pfUI/modules/raid.lua` 当前创建 `pfRaid1..pfRaid40` 共 40 个独立 Secure
+Button；它不是一张整团背景。仓库 profile 的每个 Button 为 `70×33`，其中
+Health `70×30`、Power `70×2`、间隔 `1px`，以 `10×4 / VERTICAL`、pitch
+`77×40` 排列。包含外扩和 Raid Icon 的完整视觉包络为 `767×159`。
+
+| 组件 ID | pfUI 对象 | 数量／尺寸 | 稳定边界 |
+|---|---|---:|---|
+| `UF.RAID.MEMBER.SHELL.A-D` | `pfRaid1..40` 背景层 | 4 个 source 变体／40 次重复；标准 `74×37` | 只在真实 Button 外扩 `2px`；不增加整团外框，不接管鼠标 |
+| `UF.RAID.BAR.HEALTH.FILL` | 每个 `f.hp.bar` | 40；显示 `70×30` | 可在新合同接受后复用现有灰阶 Health donor；数值／颜色／裁切归 pfUI |
+| `UF.RAID.BAR.POWER.FILL` | 每个 `f.power.bar` | 40；显示 `70×2` | 可复用现有 Power donor；资源语义色归 pfUI |
+| `UF.RAID.STATE.RIM` | `f.hoverglow`／`f.glow` 的视觉替代层 | 每框按需 | 从接受外壳确定性派生断续边缘；不形成完整矩形 glow |
+| `UF.RAID.STATE.PIP` | `f.combat` | 每框最多 1 | 小型破颜料角标；状态判定归 pfUI |
+| `UF.RAID.AURA.RIM` | `f.hp.bar.icon[]`／`debuffindicators` | 每框最多 6＋驱散图标 | 只提供 1px 暗色承托；图标、层数、冷却和 Tooltip 保持动态 |
+| `UF.RAID.GROUP.LABEL.BACKING` | slots `1,6,...,36` 的 `f.group` | 最多 8；当前隐藏 | 已登记但 production 暂停；动态 `Group N` FontString 不烘焙 |
+
+四个外壳变体按 `pfRaid` 槽位固定分配，Roster 换人不改变外观。整体 UI Scale
+随 Parent 同步缩放；宽度变化可由接受完整 source 确定性派生横向三切片。当前
+合同冻结 provider 高度 `33px`；Height 偏离时局部回退 pfUI，不强拉资源。
+
+Leader／Master Looter／Raid Target／Resurrection、Buff／Debuff、Incoming Heal、
+名称、离线／距离 Alpha、仇恨与战斗状态继续由 pfUI 动态提供，不得烘焙。Party
+框架在 `modules/group.lua`，Raid Marker 血条列表在 `modules/raidmarkers.lua`，
+二者都不是 `UF.RAID.*`。
 
 ## UF-A1 V3 完整外壳 source → runtime 合同
 
@@ -110,7 +136,7 @@ Frame 中心；透明外扩不能参与 Frame 宽高、点击区域或移动边�
 | `pet`／`ptarget` | `UF.PET.*`／`UF.PETTARGET.*` | 暂缓 |
 | `tttarget` | `UF.TARGETTARGETTARGET.*` | 暂缓 |
 | `group`／`grouptarget`／`grouppet` | `UF.PARTY.*` | 暂缓；后续按真实重复数量设计 |
-| `raid` | `UF.RAID.*` | 暂缓；不得从主单位框简单缩放复制 |
+| `raid` | `UF.RAID.*` | 已启动 `UF-RAID-SIM-V1 / P2`；40 个真实对象，不从主单位框缩放复制 |
 | `fallback` | `UF.FALLBACK.*` | 保持 pfUI 回退 |
 | `portrait = bar/left/right` | `UF.PORTRAIT.*` | 当前 profile 为 `off`；未取得新合同前不制作假头像槽 |
 | Buff／Debuff Buttons | `UF.AURA.*` | 当前不重绘 |

@@ -10,6 +10,10 @@
   `P5 / source-accepted / runtime-exported / addon-integrated / 3/5 stop`。
 - `UF-A2` TargetTarget／Focus：继续暂停；既有物件身份方向不变，尚无正式
   source。Hover／Aggro 仍计划由接受外壳 Alpha 确定性派生。
+- `UF-RAID-SIM-V1` Raid 团队框架：`P2 / simulation-reviewed /
+  user-confirmation-pending`。已按真实 `pfRaid1..40`、`70×33` Button、
+  `10×4 VERTICAL` 与完整状态密度制作本地预演；ImageGen `0/0`，尚无
+  production prompt、source、runtime 或 addon 接入。
 - 当前只处理资源重绘与精确媒体替换。B1 已接入 addon；没有修改另一台设备上
   的 Frame 位置、尺寸、点击、事件、数值、颜色逻辑或其他功能。
 - 用户于 `2026-08-11` 接受“每个角色生成完整外壳，Python 负责精确工程化”
@@ -63,6 +67,19 @@
   恢复为不规则旧皮革。该迭代没有 ImageGen 调用。
 - 非权威：最终手绘笔触、微纹理、Alpha、生产像素、远端屏幕位置和紧凑框
   production art。
+
+### Raid `UF-RAID-SIM-V1`
+
+- specification：`tools/specs/unitframes_raid_simulation_v1.json`；renderer：
+  `tools/render_unitframes_raid_simulation_v1.py`。
+- scene SHA `41468266…5519`；review SHA `10158347…eca2`；ImageGen `0/0`，
+  本地渲染错误 `0`。
+- 模拟覆盖 40 个真实对象、四个确定性粗糙外壳变体、已接受 Health／Power
+  runtime 纹理、Hover／Aggro／Range／Offline／Dead／Heal／Res／Aura／
+  Leader／Loot／Raid Icon，以及当前 Chat／动作条／罗盘邻接。
+- display-region `7/7 pass`、violations `0`，报告 SHA `ddb3fc51…6dd0`；覆盖
+  单框、40 人 Vertical／Horizontal、20 人、五人复用和 `width=90`。
+- 用户确认待定；模拟像素不接受为 source，正式 ImageGen 和 addon 变更均为 0。
 
 ## 展示区域门禁
 
@@ -214,4 +231,6 @@ B1 下一门禁是 Turtle WoW `1.18.1` P6：验证 TGA 方向、Player／Target�
 TargetTarget／Focus 的生命与 Mana／Rage／Focus／Energy 乘色、低血量裁切、
 缩放、禁用回退和旧 SavedVariables。通过前保持 P5，`generated/unitframes/`
 继续作为 ignored 中间证据。A／B 外壳仍为 `5/5` rejected，禁止第六次；是否
-重开新合同另行决定。UF-A2 继续暂停。
+重开新合同另行决定。UF-A2 继续暂停。Raid 的独立下一门禁是用户确认或退回
+`UF-RAID-SIM-V1` 的无共享外框、薄皮革点名名条、四变体、配色、重量和状态
+密度；确认前不写可执行 production prompt、不上传参考、不调用 ImageGen。
