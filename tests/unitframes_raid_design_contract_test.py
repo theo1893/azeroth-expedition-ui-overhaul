@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sys
 from collections import Counter
 from pathlib import Path
 
@@ -15,6 +16,10 @@ PRODUCTION = ROOT / "tools/specs/unitframes_raid_production_v1.json"
 DISPLAY = ROOT / "tools/specs/unitframes_raid_simulation_display_region_v1.json"
 RENDERER = ROOT / "tools/render_unitframes_raid_simulation_v1.py"
 REVIEWER = ROOT / "tools/review_unitframes_raid_candidate_v1.py"
+DONOR_SIMULATION = ROOT / "tools/specs/unitframes_raid_donor_simulation_v1.json"
+DONOR_PRODUCTION = ROOT / "tools/specs/unitframes_raid_donor_production_v1.json"
+DONOR_BUILDER = ROOT / "tools/build_unitframes_raid_donor_shells_v1.py"
+DONOR_RENDERER = ROOT / "tools/render_unitframes_raid_donor_simulation_v1.py"
 WORK = ROOT / "docs/modules/unitframes/work/UNITFRAMES.RAID.md"
 SUBMODULES = ROOT / "docs/modules/unitframes/SUBMODULES.md"
 SUBMODULE_ART = ROOT / "docs/modules/unitframes/SUBMODULE_ART_BASELINES.md"
@@ -145,6 +150,107 @@ def main() -> None:
     assert terminal["addon_changed"] is False
     assert terminal["sixth_call_allowed"] is False
 
+    donor_simulation = json.loads(DONOR_SIMULATION.read_text(encoding="utf-8"))
+    assert donor_simulation["schema"] == "aeui-unitframes-raid-donor-simulation-v1"
+    assert donor_simulation["version"] == "UF-RAID-A2-SIM-V1"
+    assert donor_simulation["status"] == (
+        "simulation-reviewed / user-confirmation-pending"
+    )
+    decision = donor_simulation["architecture_decision"]
+    assert decision["status"] == "user-selected"
+    assert decision["authorizes_imagegen"] is False
+    assert "material donors" in decision["statement"]
+    donor_provider = donor_simulation["provider"]
+    assert donor_provider["maxraid"] == 40
+    assert donor_provider["frame"] == [70, 33]
+    assert donor_provider["runtime_shell"] == [74, 37]
+    assert donor_provider["member_display_envelope"] == [74, 39]
+    assert donor_provider["cluster_visual_envelope"] == [767, 159]
+    donor_contract = donor_simulation["donor_contract"]
+    assert donor_contract["imagegen_object_count"] == 1
+    assert donor_contract["canvas"] == [1536, 1024]
+    assert donor_contract["runtime_loaded"] is False
+    assert donor_contract["source_promoted_directly"] is False
+    assert set(donor_contract["cells"]) == {"leather", "liner", "brass", "thread"}
+    for contract in donor_contract["cells"].values():
+        cx0, cy0, cx1, cy1 = contract["cell"]
+        sx0, sy0, sx1, sy1 = contract["sample_window"]
+        assert cx0 < sx0 < sx1 < cx1
+        assert cy0 < sy0 < sy1 < cy1
+
+    deterministic = donor_simulation["deterministic_builder"]
+    assert deterministic["normalized_source"] == [592, 296]
+    assert deterministic["runtime"] == [74, 37]
+    assert deterministic["provider_button_source"] == [16, 16, 576, 280]
+    assert deterministic["quiet_name_source"] == [40, 48, 552, 232]
+    assert deterministic["horizontal_three_slice_source"] == [48, 496, 48]
+    assert deterministic["horizontal_three_slice_runtime"] == [6, 62, 6]
+    assert deterministic["variant_order"] == ["A", "B", "C", "D"]
+    repair_bounds = deterministic["variant_repair_bounds"]
+    for variant in ("A", "B", "C", "D"):
+        for box in repair_bounds[variant].values():
+            x0, y0, x1, y1 = box
+            assert 0 <= x0 < x1 <= 592
+            assert 0 <= y0 < y1 <= 296
+            assert x1 <= 50 or x0 >= 544
+    assert Counter(donor_simulation["simulation"]["variant_slot_order"]) == {
+        "A": 10, "B": 10, "C": 10, "D": 10,
+    }
+    assert donor_simulation["simulation"]["imagegen_usage"] == "0/0"
+    internal_review = donor_simulation["internal_review"]
+    assert internal_review["imagegen_calls"] == 0
+    assert internal_review["display_region"] == "7/7 pass; 0 violations"
+    assert internal_review["production_authorized"] is False
+
+    donor_production = json.loads(DONOR_PRODUCTION.read_text(encoding="utf-8"))
+    assert donor_production["schema"] == "aeui-unitframes-raid-donor-production-v1"
+    assert donor_production["version"] == "UF-RAID-A2-DONOR V1"
+    assert donor_production["status"] == (
+        "production-draft / simulation-user-confirmation-pending"
+    )
+    assert donor_production["production_authorized"] is False
+    assert donor_production["output_contract"]["image_count"] == 1
+    assert donor_production["output_contract"]["runtime_loaded"] is False
+    assert all(donor_production["prompt_completeness"].values())
+    assert "Python constructs all exact geometry" in donor_production["prompt_body"]
+    assert "No text of any kind" in donor_production["prompt_body"]
+    donor_loop = donor_production["repair_loop"]
+    assert donor_loop["maximum_actual_imagegen_calls"] == 5
+    assert donor_loop["process_errors_count_toward_limit"] is False
+    assert donor_loop["execution_state"]["attempts_used"] == 0
+    assert donor_loop["execution_state"]["attempts_remaining"] == 5
+
+    sys.path.insert(0, str(ROOT / "tools"))
+    from build_unitframes_raid_donor_shells_v1 import (  # noqa: PLC0415
+        build_shells,
+        clear_transparent_rgb,
+        synthetic_materials,
+    )
+    shell_set = build_shells(donor_simulation, synthetic_materials(donor_simulation))
+    assert set(shell_set.sources) == {"A", "B", "C", "D"}
+    assert set(shell_set.runtimes) == {"A", "B", "C", "D"}
+    for variant in ("A", "B", "C", "D"):
+        source = shell_set.sources[variant]
+        runtime = shell_set.runtimes[variant]
+        assert source.size == (592, 296)
+        assert runtime.size == (74, 37)
+        assert source.getbbox() == (0, 0, 592, 296)
+        assert runtime.getbbox() == (0, 0, 74, 37)
+        assert source.getchannel("A").crop((16, 16, 576, 280)).getextrema() == (255, 255)
+        for red, green, blue, alpha in source.getdata():
+            if alpha == 0:
+                assert (red, green, blue) == (0, 0, 0)
+    assert shell_set.sources["A"].getpixel((25, 5))[3] == 0
+    assert shell_set.sources["B"].getpixel((25, 5))[3] == 255
+    assert shell_set.sources["D"].getpixel((31, 286))[3] < 64
+    assert len({shell_set.runtimes[key].tobytes() for key in ("A", "B", "C", "D")}) == 4
+    from PIL import Image  # noqa: PLC0415
+    alpha_probe = Image.new("RGBA", (2, 1))
+    alpha_probe.putdata(((120, 80, 40, 0), (120, 80, 40, 128)))
+    cleaned_probe = clear_transparent_rgb(alpha_probe)
+    assert cleaned_probe.getpixel((0, 0)) == (0, 0, 0, 0)
+    assert cleaned_probe.getpixel((1, 0)) == (120, 80, 40, 128)
+
     expected_locked = {
         "assets/locked/chat/聊天框视觉基准_v1.png":
             "90e30ba405a2b5cdc707cc229e56c4f64e51d0e4051f1e98dbcd2ec2ee70ee06",
@@ -157,6 +263,9 @@ def main() -> None:
 
     display = json.loads(DISPLAY.read_text(encoding="utf-8"))
     assert display["schema"] == "aeui-display-region-contract-v1"
+    assert display["evidence"]["assembly_simulation_spec"] == (
+        "tools/specs/unitframes_raid_donor_simulation_v1.json"
+    )
     assert display["atlas"]["size"] == [148, 74]
     assert display["atlas"]["require_exact_visible_coverage"] is True
     assert display["nine_slice"]["caps"] == {
@@ -238,6 +347,26 @@ def main() -> None:
     ):
         assert clause in reviewer, f"raid candidate reviewer missing: {clause}"
 
+    donor_builder = DONOR_BUILDER.read_text(encoding="utf-8")
+    for clause in (
+        "ImageGen only generates rough material donors",
+        "def synthetic_materials",
+        "def load_donor_materials",
+        "def build_shells",
+        "def clear_transparent_rgb",
+        "choose exactly one of --donor or --simulation",
+    ):
+        assert clause in donor_builder, f"raid donor builder missing: {clause}"
+    donor_renderer = DONOR_RENDERER.read_text(encoding="utf-8")
+    for clause in (
+        "compose_cluster(spec, shells, 40)",
+        "UnitFrameHealthFillV1.tga",
+        "UnitFramePowerFillV1.tga",
+        "ImageGen 0/0",
+        "material-only donor",
+    ):
+        assert clause in donor_renderer, f"raid donor renderer missing: {clause}"
+
     work = WORK.read_text(encoding="utf-8")
     for clause in (
         "candidate-rejected / 5/5 / waiting-new-user-direction",
@@ -262,6 +391,9 @@ def main() -> None:
         "continuous rope, braid, lacing",
         "Create from scratch one production sheet",
         "repair-budget-exhausted / candidate-rejected / 5/5",
+        "UF-RAID-A2-SIM-V1",
+        "ImageGen material donor only + Python deterministic shell",
+        "production_authorized=false",
     ):
         assert clause in work, f"raid work record missing: {clause}"
 
@@ -274,6 +406,9 @@ def main() -> None:
     assert "40 个高密度点名名条" in submodule_art
     assert "UF-RAID-SIM-V1" in progress
     assert "UF-RAID-A1 V1 final" in progress
+    assert "UF-RAID-A2-SIM-V1" in progress
+    assert "模型供材、Python 造壳" in submodule_art
+    assert "build_unitframes_raid_donor_shells_v1.py" in submodules
     assert "docs/modules/unitframes/work/UNITFRAMES.RAID.md" in agents
 
     print("unitframes raid design contract test passed")

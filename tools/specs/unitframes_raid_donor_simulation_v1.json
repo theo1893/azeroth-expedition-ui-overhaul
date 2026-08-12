@@ -1,0 +1,230 @@
+{
+  "schema": "aeui-unitframes-raid-donor-simulation-v1",
+  "version": "UF-RAID-A2-SIM-V1",
+  "status": "simulation-reviewed / user-confirmation-pending",
+  "upstream_direction": {
+    "version": "UF-RAID-SIM-V1",
+    "status": "simulation-confirmed",
+    "date": "2026-08-12",
+    "accepts_pixels": false,
+    "preserved_visible_direction": [
+      "forty real pfRaid buttons at 10x4 VERTICAL density",
+      "no shared outer raid frame or decorative background",
+      "thin deep-walnut member shells around live provider content",
+      "four equally weighted low-frequency repair identities",
+      "low-saturation smoke brown and restrained oxidized brass",
+      "weight from the full forty-member formation rather than thick cards"
+    ]
+  },
+  "architecture_decision": {
+    "status": "user-selected",
+    "date": "2026-08-12",
+    "statement": "ImageGen only generates rough material donors; Python deterministically constructs exact shell geometry and all four repair differences",
+    "accepts_simulation_pixels": false,
+    "authorizes_imagegen": false
+  },
+  "provider": {
+    "maxraid": 40,
+    "layout": [10, 4],
+    "fill": "VERTICAL",
+    "frame": [70, 33],
+    "health": [70, 30],
+    "power": [70, 2],
+    "health_power_gap": 1,
+    "pitch": [77, 40],
+    "runtime_shell": [74, 37],
+    "member_display_envelope": [74, 39],
+    "cluster_visual_envelope": [767, 159],
+    "screen_anchor": {
+      "point": "BOTTOMLEFT",
+      "x": 2,
+      "resolved_y": 255
+    },
+    "font": "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf"
+  },
+  "donor_contract": {
+    "production_version": "UF-RAID-A2-DONOR V1",
+    "imagegen_object_count": 1,
+    "canvas": [1536, 1024],
+    "mode": "RGB",
+    "background": "#00FF00 gutters only",
+    "runtime_loaded": false,
+    "source_promoted_directly": false,
+    "cells": {
+      "leather": {
+        "cell": [64, 64, 736, 448],
+        "sample_window": [144, 112, 656, 400],
+        "role": "deep soot-walnut salvaged rawhide for the thin shell rim and C leather patch"
+      },
+      "liner": {
+        "cell": [800, 64, 1472, 448],
+        "sample_window": [880, 112, 1392, 400],
+        "role": "quiet matte smoke-brown backing revealed beneath live status bars"
+      },
+      "brass": {
+        "cell": [64, 576, 736, 960],
+        "sample_window": [144, 624, 656, 912],
+        "role": "dark tarnished umber brass for B rivet and D repair only"
+      },
+      "thread": {
+        "cell": [800, 576, 1472, 960],
+        "sample_window": [880, 624, 1392, 912],
+        "role": "coarse smoke-dark flax thread material for A and C repair masks"
+      }
+    },
+    "forbidden_content": [
+      "raid shells, frames, cards, plaques or UI geometry",
+      "stitches, rivets, patches, notches or repair layouts",
+      "text, labels, dividers, measurement marks or product swatch borders",
+      "regular embossing, continuous piping, floral tooling or furniture leather",
+      "pages, bookbinding, wax seals, dragons or complete Chat-frame shapes"
+    ]
+  },
+  "deterministic_builder": {
+    "script": "tools/build_unitframes_raid_donor_shells_v1.py",
+    "normalized_source": [592, 296],
+    "runtime": [74, 37],
+    "provider_button_source": [16, 16, 576, 280],
+    "quiet_name_source": [40, 48, 552, 232],
+    "horizontal_three_slice_source": [48, 496, 48],
+    "horizontal_three_slice_runtime": [6, 62, 6],
+    "rim_width_source": [12, 20],
+    "variant_order": ["A", "B", "C", "D"],
+    "variant_identity": {
+      "A": "one shallow upper-left cut notch plus two unequal lower-right thread repairs",
+      "B": "one small off-centre dark rivet and one restrained lower-right rub",
+      "C": "one short left rawhide patch with two irregular thread repairs and no metal",
+      "D": "one small skewed right tarnished-brass repair plus one tiny lower-left split"
+    },
+    "variant_repair_bounds": {
+      "coordinate_system": "top-left-origin, right-bottom-exclusive, source pixels",
+      "A": {
+        "upper_left_notch": [15, 0, 44, 14],
+        "lower_right_threads": [547, 270, 590, 296]
+      },
+      "B": {
+        "right_rivet": [576, 67, 590, 82],
+        "lower_right_rub": [544, 240, 592, 296]
+      },
+      "C": {
+        "left_rawhide_patch": [0, 89, 35, 212],
+        "left_thread_repairs": [12, 96, 30, 207]
+      },
+      "D": {
+        "right_brass_patch": [572, 88, 592, 166],
+        "lower_left_split": [23, 280, 50, 292]
+      }
+    },
+    "allowed_operations": [
+      "crop the four fixed donor sample windows",
+      "cover-fit donor pixels to fixed source masks",
+      "construct exact deterministic alpha polygons and inner liner masks",
+      "apply fixed low-frequency light and contact-shadow multiplication",
+      "construct A-D repair masks at fixed coordinates inside 48px end caps",
+      "clear RGB under transparent pixels",
+      "downsample complete sources to 74x37 runtime",
+      "derive 6/62/6 horizontal three-slices and short-edge state masks",
+      "render exact forty-member real-layout previews"
+    ],
+    "forbidden_operations": [
+      "generative fill or a second image model",
+      "copying geometry or pixels from rejected raid-shell candidates",
+      "putting a repair outside a fixed end cap",
+      "painting names, bars, values, icons or states into source",
+      "changing provider frame, hitbox, events, roster or SavedVariables",
+      "vertical stretching when provider height differs from 33px"
+    ]
+  },
+  "simulation": {
+    "material_source": "deterministic synthetic flat placeholders; no locked or generated pixels",
+    "imagegen_usage": "0/0",
+    "real_object_count": 40,
+    "state_distribution": {
+      "hover": [7],
+      "aggro": [2, 18, 33],
+      "out_of_range": [5, 6, 13, 14, 21, 22, 29, 30],
+      "offline": [12, 36],
+      "dead": [9, 27],
+      "incoming_heal": [4, 16, 25, 38],
+      "resurrection": [27],
+      "buff_indicators": [1, 8, 17, 26, 35],
+      "debuff_magic": [11, 23],
+      "debuff_poison": [19],
+      "raid_markers": {"3": "star", "18": "triangle", "31": "skull"},
+      "leader": [1],
+      "master_looter": [10]
+    },
+    "variant_slot_order": [
+      "A", "C", "B", "D", "D", "B", "A", "C", "B", "D",
+      "C", "A", "C", "A", "D", "B", "A", "D", "B", "C",
+      "B", "C", "A", "D", "D", "A", "C", "B", "C", "B",
+      "D", "A", "A", "C", "D", "B", "D", "B", "C", "A"
+    ],
+    "palette": {
+      "leather_dark": "#21150E",
+      "leather_mid": "#3B281B",
+      "leather_worn": "#68472B",
+      "liner": "#17110D",
+      "brass_dim": "#71572E",
+      "thread": "#826345",
+      "health_full": "#75935A",
+      "health_mid": "#9A7A46",
+      "health_low": "#91473A",
+      "mana": "#607DB8",
+      "rage": "#A45248",
+      "energy": "#B5A64B",
+      "focus": "#9D7447",
+      "aggro": "#A4412E",
+      "hover": "#D3BE90",
+      "magic": "#318FA4",
+      "poison": "#528E4B"
+    },
+    "authoritative": [
+      "592x296 and 74x37 geometry",
+      "16px source inset for the 70x33 provider button",
+      "48/496/48 source cap and stretch-safe partition",
+      "fixed A-D silhouette and repair-mask locations",
+      "forty-member count, provider placement, dynamic state z-order and information density"
+    ],
+    "non_authoritative": [
+      "final donor brushwork, material microtexture and colour variation",
+      "final alpha antialiasing and TGA conversion",
+      "target-device SavedVariables or physical placement outside the repository profile",
+      "any synthetic simulation pixel as source, runtime or ImageGen reference"
+    ]
+  },
+  "locked_references": [
+    {
+      "path": "assets/locked/chat/聊天框视觉基准_v1.png",
+      "sha256": "90e30ba405a2b5cdc707cc229e56c4f64e51d0e4051f1e98dbcd2ec2ee70ee06",
+      "role": "production donor input only; 2004-era broad painted scale, warm contrast and material thickness"
+    },
+    {
+      "path": "assets/locked/chat/聊天框独立艺术资源_v3.png",
+      "sha256": "272528e6d89cc90e5cbb37dce4ae572ddf9de0402078cdcf0ed5804f734faab8",
+      "role": "production donor input only; deep-walnut depth, hand-made wear and restrained dull brass"
+    }
+  ],
+  "outputs": {
+    "source_preview": "generated/unitframes/raid/simulation/A2-V1/unitframes-raid-a2-donor-sources.png",
+    "scene": "generated/unitframes/raid/simulation/A2-V1/unitframes-raid-a2-donor-sim-v1.scene.png",
+    "review": "generated/unitframes/raid/simulation/A2-V1/unitframes-raid-a2-donor-sim-v1.review.png",
+    "display_report": "generated/unitframes/raid/simulation/A2-V1/display-region-report.json"
+  },
+  "internal_review": {
+    "date": "2026-08-12",
+    "imagegen_calls": 0,
+    "display_region": "7/7 pass; 0 violations",
+    "provider_geometry": "pass; 74x39 member envelope and 767x159 forty-member envelope unchanged",
+    "source_geometry": "pass; four deterministic 592x296 sources and 74x37 runtimes",
+    "provider_inset_alpha": "pass; all four 560x264 source insets are fully opaque after moving D split into the lower rail",
+    "transparent_rgb": "pass; RGB is zero only where alpha is exactly zero; partial-alpha edge RGB remains unpremultiplied",
+    "dynamic_layering": "pass in deterministic real-layout preview; names, bars, icons and states remain runtime-owned",
+    "source_preview_sha256": "ce084d35c0723b5c29288b65721ae2837fac424d96f2de068d5a2b1f0f8a0205",
+    "scene_sha256": "5697dcbbbdf7a706431c3bc5ffc748f76fac6f19db1925c6b9d672e113c55932",
+    "review_sha256": "ff2467d3271dd78331d01db7864128ad3ed57176b8c3498b6da5f08cb1000f95",
+    "display_report_sha256": "ddb3fc51b7c3ef2e1590ecc145b4668ed3d23c5e627600dfa2d0a424a8ce6dd0",
+    "production_authorized": false,
+    "next_gate": "user confirms or rejects UF-RAID-A2-SIM-V1; a confirmation still does not authorize ImageGen"
+  }
+}

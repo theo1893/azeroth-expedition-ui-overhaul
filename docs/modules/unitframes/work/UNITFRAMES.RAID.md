@@ -1,6 +1,108 @@
 # Unit Frames Raid 团队框架工作记录
 
-## 元数据
+## UF-RAID-A2 当前工作快照
+
+- 版本：`UF-RAID-A2 / UF-RAID-A2-SIM-V1`
+- 子状态：`P2 / simulation-reviewed / user-confirmation-pending`
+- 用户选择的架构：`ImageGen material donor only + Python deterministic shell`
+- 当前操作：`review-simulation`
+- 当前批 ImageGen：`0/0`
+- production donor：`未授权`
+- candidate／source／runtime／addon：`均未写入`
+- provider：40 个 `pfRaid` Secure Button，`10×4 VERTICAL`，单 Button
+  `70×33`，单成员显示包络 `74×39`，整团 `767×159`；结构沿用已经确认的
+  `UF-RAID-SIM-V1`。
+- 模拟规格：`tools/specs/unitframes_raid_donor_simulation_v1.json`
+- production 草案：`tools/specs/unitframes_raid_donor_production_v1.json`
+- 确定性构造器：`tools/build_unitframes_raid_donor_shells_v1.py`
+- 真实排版渲染器：`tools/render_unitframes_raid_donor_simulation_v1.py`
+
+### 架构职责冻结
+
+ImageGen 未来只允许生成一张 `1536×1024 RGB` 粗粝材质 donor。它只提供四块
+无物件轮廓的连续材料像素：深胡桃旧生皮、烟褐静内衬、暗哑氧化黄铜、烟黑
+粗麻线材质。donor 不是 UI atlas，不得包含任何框、卡片、端帽、开口、补丁、
+针脚、铆钉、标签或动态内容，也永远不被 addon 直接加载。
+
+Python 独占并精确构造以下内容：
+
+- 四张完整 `592×296 RGBA` source 的外轮廓、Alpha、内衬与接触阴影；
+- 固定 provider inset `[16,16,576,280]`，对应 runtime `70×33` Button；
+- 固定名称安静区 `[40,48,552,232]`；
+- 固定横向三切片 `48/496/48`，对应 runtime `6/62/6`；
+- 完整 source 下采样为 `74×37` runtime，并清零全透明像素 RGB；
+- A/B/C/D 四种维修差异和所有维修坐标；
+- 40 人真实排版、动态层序、缩放与展示区域验证。
+
+四种维修身份冻结为：
+
+| 变体 | 确定性差异 | 固定区 |
+|---|---|---|
+| A | 左上浅切口；右下两条长度和角度不等的粗线修补 | 左／右 `48px` source cap |
+| B | 右侧一枚偏心暗铆钉；右下克制磨亮 | 右 `48px` source cap |
+| C | 左侧短旧生皮补丁；两处不规则线修补；无金属 | 左 `48px` source cap |
+| D | 右侧小型歪斜暗铜片；左下微裂 | 左／右 `48px` source cap |
+
+名称、Health／Power、数值、颜色、治疗预测、光环、驱散、距离／离线 Alpha、
+Hover／Aggro、Raid Icon、Leader、Master Looter 与 Resurrection 仍全部属于
+运行时。Python 不改变 Frame、Secure hitbox、Point、Width、Height、事件、
+Roster、SavedVariables 或 pfUI 状态逻辑。
+
+### donor 固定格位
+
+未来 production donor 只有一个 ImageGen 对象：
+
+| 材料 | cell | 必须连续无边界的 sample window | Python 用途 |
+|---|---|---|---|
+| leather | `[64,64,736,448]` | `[144,112,656,400]` | 薄外夹边及 C 补片 |
+| liner | `[800,64,1472,448]` | `[880,112,1392,400]` | 动态条下方的安静烟褐底层 |
+| brass | `[64,576,736,960]` | `[144,624,656,912]` | B 铆钉与 D 暗铜修补 |
+| thread | `[800,576,1472,960]` | `[880,624,1392,912]` | A／C 固定线修补 mask |
+
+格位之间和画布外侧只用纯 `#00FF00`；四个 sample window 内不得出现绿色、
+标签、边界、物件阴影或已经形成的绳／线／缝。模型不能推断或生成 UI 几何。
+
+### A2 生成前模拟
+
+- 模拟材质：由 Pillow 使用固定 seed 构造的低频占位色块；不是锁定像素、
+  ImageGen 像素、source 或未来 edit/reference。
+- source preview：
+  `generated/unitframes/raid/simulation/A2-V1/unitframes-raid-a2-donor-sources.png`，
+  SHA `ce084d35…0205`。
+- 游戏场景：
+  `generated/unitframes/raid/simulation/A2-V1/unitframes-raid-a2-donor-sim-v1.scene.png`，
+  SHA `5697dcbb…5932`。
+- 评审板：
+  `generated/unitframes/raid/simulation/A2-V1/unitframes-raid-a2-donor-sim-v1.review.png`，
+  SHA `ff2467d3…0f95`。
+- 展示区域：沿用并补充
+  `tools/specs/unitframes_raid_simulation_display_region_v1.json`；报告
+  `ddb3fc51…e6dd0`，`7/7 pass`、violations `0`。
+- 首次合同测试发现 D 的左下微裂有 `55` 个 source Alpha 像素进入 provider
+  inset；已将裂口收回底部 `16px` 外壳轨。修正后 A-D 四个
+  `[16,16,576,280]` inset 均为全 `255` Alpha，维修仍完全位于固定端部。
+- 透明清理只在 `Alpha=0` 时把 RGB 清零；`Alpha=1..254` 的抗锯齿 RGB 保持
+  非预乘，避免边缘被二次压暗。
+- ImageGen：`0/0`；本阶段没有生图调用、candidate、source、runtime 或 addon
+  变更。
+
+当前模拟中只有下列内容可被确认：精确外壳轮廓、`2px` runtime 夹边、四种
+维修的种类／位置／力度、三切片安全区、40 人密度和动态层序。模拟材质的
+笔触、微纹理、最终色差、最终抗锯齿与 TGA 方向均不在本次接受范围。
+
+### 下一门禁
+
+用户先确认或拒绝 `UF-RAID-A2-SIM-V1`。确认模拟只冻结上述几何与维修结构，
+仍不授权 ImageGen。之后必须单独给出并获得 `UF-RAID-A2-DONOR V1` 的精确
+production 授权，才能调用固定 `imagegen-0-143-0`。
+
+未来 donor 循环最多 `5` 次实际 ImageGen 调用，流程错误不计额度，通过即停。
+attempt 1 只上传两张固定 Chat 锁定图且没有 Image 3；后续只允许同一 donor
+循环紧邻前稿在冻结的四材料字段范围内作为 edit 输入。正式 Prompt 的唯一
+机器正文保存在 `tools/specs/unitframes_raid_donor_production_v1.json`；当前
+`production_authorized=false`，不得调用、导出或接入。
+
+## UF-RAID-A1 历史元数据
 
 - 模块：Unit Frames
 - 组件 ID：`UF.RAID.*`

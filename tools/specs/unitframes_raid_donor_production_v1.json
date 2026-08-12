@@ -1,0 +1,85 @@
+{
+  "schema": "aeui-unitframes-raid-donor-production-v1",
+  "version": "UF-RAID-A2-DONOR V1",
+  "status": "production-draft / simulation-user-confirmation-pending",
+  "production_authorized": false,
+  "architecture": {
+    "status": "user-selected",
+    "statement": "ImageGen only generates rough material donors; Python deterministically constructs exact shell geometry and all four repair differences",
+    "simulation_gate": "UF-RAID-A2-SIM-V1",
+    "simulation_pixels_may_be_uploaded": false,
+    "rejected_a1_pixels_may_be_reused": false
+  },
+  "fixed_inputs": [
+    {
+      "slot": "Image 1",
+      "path": "assets/locked/chat/聊天框视觉基准_v1.png",
+      "sha256": "90e30ba405a2b5cdc707cc229e56c4f64e51d0e4051f1e98dbcd2ec2ee70ee06",
+      "role": "Only infer 2004-era broad painted scale, warm upper-left light, material thickness and low-frequency handmade wear; ignore all book, page, spine, dragon and complete-frame geometry"
+    },
+    {
+      "slot": "Image 2",
+      "path": "assets/locked/chat/聊天框独立艺术资源_v3.png",
+      "sha256": "272528e6d89cc90e5cbb37dce4ae572ddf9de0402078cdcf0ed5804f734faab8",
+      "role": "Only infer deep-walnut depth, smoke-brown restraint, rough handmade pigment and dull oxidized brass; ignore the object's book construction and every UI contour"
+    }
+  ],
+  "output_contract": {
+    "image_count": 1,
+    "canvas": [1536, 1024],
+    "mode": "RGB",
+    "background": "#00FF00",
+    "cells": {
+      "leather": {"cell": [64, 64, 736, 448], "sample_window": [144, 112, 656, 400]},
+      "liner": {"cell": [800, 64, 1472, 448], "sample_window": [880, 112, 1392, 400]},
+      "brass": {"cell": [64, 576, 736, 960], "sample_window": [144, 624, 656, 912]},
+      "thread": {"cell": [800, 576, 1472, 960], "sample_window": [880, 624, 1392, 912]}
+    },
+    "runtime_loaded": false,
+    "promoted_directly_to_source": false
+  },
+  "prompt_body": "Create from scratch exactly one 1536x1024 RGB material-donor sheet for a 2004-era vanilla World of Warcraft expedition raid UI. This is not a UI mockup and must contain no frame, shell, card, plaque, button, atlas part, status bar or interface geometry. Use pure flat #00FF00 only in the outer gutters and the gap separating four large rectangular material fields. Place exactly four unlabelled, uninterrupted, full-field material paintings at these fixed cells: top-left x64..736 y64..448 is deep soot-walnut salvaged rawhide; top-right x800..1472 y64..448 is quiet matte smoke-brown backing; bottom-left x64..736 y576..960 is dark tarnished umber brass; bottom-right x800..1472 y576..960 is coarse smoke-dark flax thread material. Every fixed inner sample window must be entirely filled by its material with no green, border, edge, shadow, label, divider, object silhouette or embedded ornament: leather x144..656 y112..400; liner x880..1392 y112..400; brass x144..656 y624..912; thread x880..1392 y624..912. Inherit only the references' broad hand-painted bitmap scale, warm upper-left lighting, low-saturation expedition palette, material thickness and low-frequency irregular wear. The leather should resemble reused saddle strap or shield-backing rawhide: uneven smoke stain, blunt scraped grain, broad pigment variation and sparse worn patches, never furniture upholstery. The liner is visually quiet and darker, with broad matte soot variation and no focal mark. The brass is oxidized dark umber, scratched and dull with only short discontinuous warm catches, never bright gold. The thread field shows coarse flax fibre and uneven smoke-dark dye at a broad usable scale, but no already-formed thread, stitch, cord, braid, rope or seam. Keep each field seamless enough for arbitrary deterministic cropping; avoid tiny photographic noise, repeated tile motifs and high-frequency pores. Do not draw stitches, rivets, patches, notches, cuts, repairs, piping, embossing, tooling, lacing, labels, grids or measurements: Python constructs all exact geometry and A/B/C/D repair masks later. No pages, books, wax seals, dragons, skulls, spikes, gems, runes, Diablo-style black iron, modern flat UI, glass, neon, regular industrial bevels, mirrored decoration, product swatch cards or photoreal antique photography. No text of any kind.",
+  "prompt_completeness": {
+    "global_baseline_translated": true,
+    "module_identity_translated": true,
+    "real_object_count_and_canvas_explicit": true,
+    "all_four_sample_windows_explicit": true,
+    "model_owned_content_explicit": true,
+    "python_owned_content_explicit": true,
+    "dynamic_content_excluded": true,
+    "negative_constraints_explicit": true,
+    "reference_roles_and_ignored_geometry_explicit": true,
+    "postprocess_and_runtime_boundary_explicit": true
+  },
+  "deterministic_consumer": {
+    "script": "tools/build_unitframes_raid_donor_shells_v1.py",
+    "normalized_source": [592, 296],
+    "runtime": [74, 37],
+    "provider_button_source": [16, 16, 576, 280],
+    "horizontal_three_slice_source": [48, 496, 48],
+    "horizontal_three_slice_runtime": [6, 62, 6],
+    "variant_order": ["A", "B", "C", "D"],
+    "variant_repair_bounds_source": "inherit exact boxes from tools/specs/unitframes_raid_donor_simulation_v1.json deterministic_builder.variant_repair_bounds without modification",
+    "allowed": "fixed donor crops, cover-fit, fixed masks, low-frequency lighting multiplication, transparent RGB clearing, exact downsample, three-slice derivation, runtime preview",
+    "forbidden": "generative fill, repainting, donor geometry inference, rejected-candidate reuse, dynamic-content baking, provider or interaction changes"
+  },
+  "repair_loop": {
+    "maximum_actual_imagegen_calls": 5,
+    "process_errors_count_toward_limit": false,
+    "attempt_1_image_3": "none",
+    "later_image_3": "only the immediately previous output from this same donor loop and only within the frozen material-field repair boundary",
+    "stop_on_pass": true,
+    "execution_state": {
+      "attempts_used": 0,
+      "attempts_remaining": 5,
+      "process_errors": 0,
+      "next_operation": "wait for explicit UF-RAID-A2-SIM-V1 user confirmation and separate exact production authorization"
+    }
+  },
+  "forbidden_before_authorization": [
+    "any imagegen-0-143-0 call",
+    "candidate or source promotion",
+    "runtime export",
+    "addon integration"
+  ]
+}

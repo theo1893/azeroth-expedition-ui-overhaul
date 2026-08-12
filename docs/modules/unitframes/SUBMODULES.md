@@ -42,6 +42,15 @@ Health `70×30`、Power `70×2`、间隔 `1px`，以 `10×4 / VERTICAL`、pitch
 随 Parent 同步缩放；宽度变化可由接受完整 source 确定性派生横向三切片。当前
 合同冻结 provider 高度 `33px`；Height 偏离时局部回退 pfUI，不强拉资源。
 
+`UF-RAID-A2` 已把生成与工程职责进一步分离：ImageGen 未来只允许提供一张
+开发期材质 donor，且 donor 永远不是 source、runtime 或 addon 资产；
+`tools/build_unitframes_raid_donor_shells_v1.py` 从四个固定 sample window 取材，
+确定性构造四张逻辑粒度不变的完整 `UF.RAID.MEMBER.SHELL.A-D` source。外轮廓、
+Alpha、`592×296 → 74×37`、provider inset、`48/496/48 → 6/62/6` 三切片以及
+A/B/C/D 四种维修 mask 全部归 builder，不再要求模型像素级定位。由此改变的是
+资产生产方式，不是游戏对象粒度；最终仍是四张完整外壳供 40 个真实 Button
+按槽位重复，不能把 donor 或整团预演图挂入游戏。
+
 Leader／Master Looter／Raid Target／Resurrection、Buff／Debuff、Incoming Heal、
 名称、离线／距离 Alpha、仇恨与战斗状态继续由 pfUI 动态提供，不得烘焙。Party
 框架在 `modules/group.lua`，Raid Marker 血条列表在 `modules/raidmarkers.lua`，
@@ -136,7 +145,7 @@ Frame 中心；透明外扩不能参与 Frame 宽高、点击区域或移动边�
 | `pet`／`ptarget` | `UF.PET.*`／`UF.PETTARGET.*` | 暂缓 |
 | `tttarget` | `UF.TARGETTARGETTARGET.*` | 暂缓 |
 | `group`／`grouptarget`／`grouppet` | `UF.PARTY.*` | 暂缓；后续按真实重复数量设计 |
-| `raid` | `UF.RAID.*` | `UF-RAID-SIM-V1 / P2 simulation-confirmed`；`UF-RAID-A1 V1 final` production draft 待独立授权；40 个真实对象，不从主单位框缩放复制 |
+| `raid` | `UF.RAID.*` | `UF-RAID-A2-SIM-V1 / P2 simulation-reviewed / user-confirmation-pending`；A1 已 5/5 rejected，A2 改用 material-only donor＋Python 精确造壳；40 个真实对象，不从主单位框缩放复制 |
 | `fallback` | `UF.FALLBACK.*` | 保持 pfUI 回退 |
 | `portrait = bar/left/right` | `UF.PORTRAIT.*` | 当前 profile 为 `off`；未取得新合同前不制作假头像槽 |
 | Buff／Debuff Buttons | `UF.AURA.*` | 当前不重绘 |

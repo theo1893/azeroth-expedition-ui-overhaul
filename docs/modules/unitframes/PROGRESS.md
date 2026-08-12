@@ -10,16 +10,18 @@
   `P5 / source-accepted / runtime-exported / addon-integrated / 3/5 stop`。
 - `UF-A2` TargetTarget／Focus：继续暂停；既有物件身份方向不变，尚无正式
   source。Hover／Aggro 仍计划由接受外壳 Alpha 确定性派生。
-- `UF-RAID-SIM-V1` Raid 团队框架方向已确认；正式批次
-  `UF-RAID-A1 V1 final` 当前为
-  `P3 / repair-budget-exhausted / candidate-rejected / 5/5`。用户于
-  `2026-08-12` 接受无共享外框、薄皮革点名名条、四变体、低饱和配色、40 人
-  整体重量与状态密度方向，并独立授权固定 Image 1／2、同循环紧邻前稿有界
-  edit、最多五次实际 ImageGen 与合同内确定性后处理。五次均已完成；attempt 3
-  是当前最佳内部视觉参考，但安全 padding 与连续亮边／D 补片未通过；attempt 5
-  获得安全 padding，却误成约 `3.19:1`，ratio error `59.09%–59.50%`、
-  anisotropy `37.14%–37.31%`。没有 candidate、source、runtime 或 addon 接入，
-  禁止第六次调用。
+- Raid 已保留 `UF-RAID-SIM-V1` 的无共享外框、薄皮革名条、四变体、低饱和
+  配色与 40 人整体密度。旧 `UF-RAID-A1 V1 final` 终态仍为
+  `P3 / repair-budget-exhausted / candidate-rejected / 5/5`；attempt 3 仅是
+  最佳内部参考，attempt 5 比例误成约 `3.19:1`，没有 candidate、source、
+  runtime 或 addon，且 A1 禁止第六次。
+- 用户于 `2026-08-12` 选择新的 `UF-RAID-A2` 架构：ImageGen 未来只生成四块
+  粗粝材质 donor，Python 独占精确外壳几何、Alpha、`592×296 → 74×37`、
+  `48/496/48 → 6/62/6` 三切片及 A/B/C/D 四种维修差异。当前
+  `UF-RAID-A2-SIM-V1` 为
+  `P2 / simulation-reviewed / user-confirmation-pending / ImageGen 0/0`；展示
+  区域 `7/7 pass`、violations `0`。production donor 未授权，没有 source、
+  runtime 或 addon 变更。
 - 当前只处理资源重绘与精确媒体替换。B1 已接入 addon；没有修改另一台设备上
   的 Frame 位置、尺寸、点击、事件、数值、颜色逻辑或其他功能。
 - 用户于 `2026-08-11` 接受“每个角色生成完整外壳，Python 负责精确工程化”
@@ -74,7 +76,7 @@
 - 非权威：最终手绘笔触、微纹理、Alpha、生产像素、远端屏幕位置和紧凑框
   production art。
 
-### Raid `UF-RAID-SIM-V1`
+### Raid `UF-RAID-SIM-V1`／`UF-RAID-A2-SIM-V1`
 
 - specification：`tools/specs/unitframes_raid_simulation_v1.json`；renderer：
   `tools/render_unitframes_raid_simulation_v1.py`。
@@ -90,6 +92,14 @@
   `UF-RAID-A1 V1 final`。正式 ImageGen 已 `5/5` 耗尽并终止于
   `candidate-rejected`；attempt 3 仅为最佳内部视觉参考，attempt 5 仅为终态诊断。
   两者均未进入 P4，addon 变更仍为 0。
+- 用户随后选择 A2：模型只供 `leather/liner/brass/thread` 四块连续材料，donor
+  不含任何 UI 几何且不被 runtime 加载；
+  `tools/build_unitframes_raid_donor_shells_v1.py` 确定性构造四张完整外壳与四种
+  维修 mask。规格为 `tools/specs/unitframes_raid_donor_simulation_v1.json`，
+  production 草案为 `tools/specs/unitframes_raid_donor_production_v1.json`。
+- A2 scene SHA `5697dcbb…5932`，review SHA `ff2467d3…0f95`，source preview SHA
+  `ce084d35…0205`。模拟使用固定 seed 的本地占位材质，只确认几何、维修位置、
+  运行时密度与动态层序；不确认材质笔触或任何模拟像素。ImageGen `0/0`。
 
 ## 展示区域门禁
 
@@ -111,6 +121,9 @@
 - Raid `UF-RAID-A1 V1 final` 的独立 `5` 次预算也已全部使用；流程错误 `2`
   不占额度且都没有产生额外 provider 图。终态为
   `repair-budget-exhausted / candidate-rejected`，禁止第六次。
+- Raid A2 是新架构而不是 A1 attempt 6。未来 `UF-RAID-A2-DONOR V1` 只有一段
+  donor 正文，最多 `5` 次实际 ImageGen，当前 `0/5` 且
+  `production_authorized=false`；用户确认模拟后仍需单独精确授权。
 - 三段 final 已吸收用户确认的可见结论并通过 `pass-final` 自包含预检；
   正式生产授权已独立取得，按 A→B→B1 顺序执行。
 - 流程错误无生成证据时单独记录，不占额度。旧 V1／V2 失败像素禁止作为新段
@@ -240,10 +253,10 @@
 
 ## 下一门禁
 
-Raid 的原合同已经终止，下一门禁不是 attempt 6。用户需要明确选择并授权新的
-路径：重开带新预算的生产合同、改变为更强的“生成材质 donor＋Python 确定性
-几何”架构，或为某个现有稿授权具体且可审计的确定性例外。无新授权前保留
-P3 rejected，禁止生成 source/runtime、禁止接入 addon。
+Raid 的原 A1 合同已经终止，下一门禁不是 attempt 6。当前等待用户确认或拒绝
+`UF-RAID-A2-SIM-V1` 的精确几何、四种维修位置、40 人密度与动态层序。确认
+模拟不会自动授权生图；之后仍须单独授权 `UF-RAID-A2-DONOR V1`，才可调用
+固定 `imagegen-0-143-0`。未授权前禁止生成 donor、source/runtime 或接入 addon。
 
 B1 下一门禁是 Turtle WoW `1.18.1` P6：验证 TGA 方向、Player／Target／
 TargetTarget／Focus 的生命与 Mana／Rage／Focus／Energy 乘色、低血量裁切、
