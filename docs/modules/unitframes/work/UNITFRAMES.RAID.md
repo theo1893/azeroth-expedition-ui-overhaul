@@ -5,8 +5,8 @@
 - 模块：Unit Frames
 - 组件 ID：`UF.RAID.*`
 - 方向版本：`UF-RAID-SIM-V1`
-- 正式生产版本：`UF-RAID-A1 V1 final.r1 / repair-prepared`
-- 子状态：`repair-prepared / attempt-2-pending`
+- 正式生产版本：`UF-RAID-A1 V1 final.r2 / repair-prepared`
+- 子状态：`repair-prepared / attempt-3-pending`
 - 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
 - 当前操作：`generate`
@@ -14,11 +14,11 @@
 - 模拟 ImageGen：`0/0`
 - 自动修复预算：`UF-RAID-A1 V1 final` 最多 5 次实际 ImageGen，含首次；
   流程错误不计额度
-- 当前实际生图：`1/5`；剩余 `4`
-- 流程错误：`0`
+- 当前实际生图：`2/5`；剩余 `3`
+- 流程错误：`1`
 - 多执行正文最坏实际生图数：`5`；本批只有一段正式正文
-- raw：`generated/unitframes/raid/A1/V1/attempt-01/uf-raid-a1-v1-attempt-01-raw.png`，
-  SHA `88c8b1a0…7152`；无 candidate／source／runtime
+- 最新 raw：`generated/unitframes/raid/A1/V1/attempt-02/uf-raid-a1-v1-attempt-02-raw.png`，
+  SHA `6e2b9686…8696`；无 candidate／source／runtime
 - 锁定视觉基准：
   - Image 1：`assets/locked/chat/聊天框视觉基准_v1.png`，SHA-256
     `90e30ba405a2b5cdc707cc229e56c4f64e51d0e4051f1e98dbcd2ec2ee70ee06`；
@@ -352,8 +352,8 @@ content.
 
 ## 自主修复循环
 
-- 当前：`repair-prepared`；`UF-RAID-A1 V1 final` attempt 1 已退回，实际
-  ImageGen `1/5`，剩余 `4`；流程错误 `0`。
+- 当前：`repair-prepared`；attempt 1／2 已退回，实际 ImageGen `2/5`，剩余
+  `3`；流程错误 `1`。
 - attempt 1 固定上传：
   - Image 1：`assets/locked/chat/聊天框视觉基准_v1.png`，SHA
     `90e30ba405a2b5cdc707cc229e56c4f64e51d0e4051f1e98dbcd2ec2ee70ee06`；
@@ -379,11 +379,12 @@ content.
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
 | 1/5 | `UF-RAID-A1 V1 final` / `1c9f021` | generate | session `019ff4da-2586-7cc1-8174-8de62fab3f64`／result `ig_08eef8f9236c6505016a7c1f562d3081919a559bfb4db7deb9` | raw `88c8b1a0…7152` | 美术一致性：连续编绳／压纹边、规则圆角与家具皮具感；其次四格 ratio／isolation 失败 | 保留四格、实体背景板、深胡桃综合色、左上暖光与 A/B/C/D 身份；`.r1` 同时修正手裁边和绝对 bbox | internal-fail |
-| 2/5 | `UF-RAID-A1 V1 final.r1` / pending repair commit | edit | — | — | — | 只用同循环 attempt 1 完整 sheet 作 Image 3 | repair-prepared |
+| 2/5 | `UF-RAID-A1 V1 final.r1` / `a741f91` | edit | session `019ff4e5-8c60-7fb2-a18f-49dda781d752`／result `ig_071317d2c8000f24016a7c22463e648191a391e53f1306efca` | raw `6e2b9686…8696` | 同一美术失败持续：连续压纹边、规则圆角、均匀皮纹；ratio／isolation 仍失败 | 停止沿用像素；`.r2` 从固定 Image 1／2 regenerate，保留合同但重建材料／轮廓 | internal-fail |
+| 3/5 | `UF-RAID-A1 V1 final.r2` / pending repair commit | regenerate | — | — | — | attempt 3 不上传 Image 3 | repair-prepared |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
-| 0 | — | — | 无 | — | 不占生图额度 |
+| 1 | `UF-RAID-A1 V1 final.r1` / `a741f91` | `019ff4e5…d752` | provider 图已生成并复制；child 后续使用无 Pillow 的系统 Python 做尺寸确认失败 | 不重生；以 `sips` 确认 `1536×1024 RGB` 并继续审查 | 不额外占生图额度；attempt 2 仍只计一次 |
 
 ### Attempt 1 执行与内部审查
 
@@ -534,4 +535,137 @@ braid, embossed piping or equal rounded corners; A/B/C/D identity entirely
 inside fixed 48-pixel end caps; quiet stretchable centres; identical scale,
 liner area, darkness and light; rough low-saturation Vanilla craft; and no
 baked live content.
+```
+
+### Attempt 2 执行与内部审查
+
+- 固定执行器 user block 完整；Image 1／2 与授权 SHA 一致，Image 3 是同循环
+  attempt 1 完整 raw `88c8b1a0…7152`，未上传其他像素。session
+  `019ff4e5-8c60-7fb2-a18f-49dda781d752`；provider result
+  `ig_071317d2c8000f24016a7c22463e648191a391e53f1306efca`；未报告 revised
+  prompt。raw `1536×1024 RGB`，SHA `6e2b9686…8696`。
+- child 在生成／复制完成后用缺少 Pillow 的系统 Python 做尺寸确认失败，随后
+  以 `sips` 成功确认。它是流程错误 `1`，没有第二张 provider 图；attempt 2
+  仍只计一次实际 ImageGen。
+- 报告：`generated/unitframes/raid/A1/V1/attempt-02/review/technical-report.json`，
+  SHA `7c4a475b…c7d2`；contact SHA `afd38756…5e2f`；40 人真实排版 SHA
+  `8862a384…d972`。
+- 范围／物理仍通过：四个完整实体背景板、四身份、动态排除、正交视角和 liner
+  层序未破坏。
+- 第一失败仍是美术一致性：模型把连续压纹滚边、等半径圆角和均匀细碎皮纹
+  原样保留，只降低了局部高光；A／C／D 端部附件依旧像规则家具修补件。相同
+  首要失败连续出现，必须改变策略，不能继续拿本稿 edit。
+- 次级几何：A/B/C/D bbox `679×287`、`675×288`、`678×290`、`675×289`；
+  ratio error `18.29%/17.19%/16.90%/16.78%`，anisotropy
+  `15.46%/14.67%/14.45%/14.37%`；padding `[65,189,24,36]`、
+  `[29,188,64,36]`、`[63,60,27,162]`、`[28,60,65,163]`。虽比 attempt 1
+  略收敛，仍不可执行授权 bbox normalize。
+- 内部结论：`internal-fail / repair-prepared`。attempt 3 改为只用固定 Image 1／2
+  从零 regenerate；不上传 attempt 2 或任何其他 Image 3，以摆脱连续工业滚边。
+
+### `UF-RAID-A1 V1 final.r2` — attempt 3 自包含从零重建
+
+```text
+Create from scratch one production sheet containing exactly four complete
+empty raid-member background shells for Turtle WoW 1.18.1 and a Vanilla-era
+pfUI overhaul. Return one 1536 by 1024 RGB bitmap on a perfectly uniform pure
+#00FF00 background. This attempt deliberately regenerates from the two fixed
+visual references only. Do not reconstruct, imitate or retain any previous
+raid-shell attempt. Do not create a gameplay screenshot, assembled raid panel,
+concept board, title, label, letter, number, grid line, guide, fifth object or
+loose component.
+
+Use a strict two-by-two cell layout. Cell A is x0..767/y0..511. Cell B is
+x768..1535/y0..511. Cell C is x0..767/y512..1023. Cell D is
+x768..1535/y512..1023. In each cell draw exactly one complete front-facing
+orthographic solid plate. Centre it with equal green bands on opposing sides.
+Each plate is exactly 592 pixels wide and 296 pixels high, visibly a true 2:1
+rectangle like two equal squares placed side by side, never a panoramic strip.
+Use these absolute bboxes: A x88..679/y108..403; B
+x856..1447/y108..403; C x88..679/y620..915; D
+x856..1447/y620..915. That means each cell keeps about 88 pure-green pixels at
+both left and right and about 108 pure-green pixels at top and bottom. Do not
+expand a plate to fill most of its cell. Nothing touches or crosses a cell
+edge, casts an outside shadow or appears as a detached fleck.
+
+Each object is one solid opaque raid-row background plate: one quiet soot-brown
+liner filling the complete interior, held by a very thin attached raw-hide
+clamp edge. It is not a hollow frame, separate border kit, carved plaque,
+furniture cushion or picture frame. Pure green occurs only outside the outer
+silhouette. There is no internal green hole, transparent opening, second slot,
+raised inset panel, horizontal divider or fake StatusBar. The liner is matte,
+continuous, low contrast and nearly featureless because live Health, Power,
+names, auras and state icons will cover it.
+
+Make the perimeter fundamentally different from industrial leather goods. It
+is the exposed hand-cut rim of one salvaged leather backing, only 12 to 20
+source pixels thick, not an added cord or moulding. Use mostly flat, blunt,
+near-square corner joins with four unequal wear patterns. Long sections are
+bare and visually quiet. A few broken matte edge highlights may appear, but no
+highlight continues around a corner and no two sides share a repeating rhythm.
+Show slow hand-cut thickness variation, tiny nicks and pressure wear without
+making a wavy cartoon outline. Draw absolutely no continuous piping, rope,
+braid, lacing, rolled lip, embossed bead, pebble border, machine seam, regular
+stitch track, perfect rounded rectangle or equal corner radius.
+
+The final 592 by 296 plate becomes one 74 by 37 runtime texture and supports a
+48/496/48 horizontal source split, equal to 6/62/6 at runtime. All unique
+repair anatomy stays inside a fixed 48-pixel end cap. The central 496-pixel
+band has only broad low-frequency soot and dye variation, with no unique
+scratch, seam, stitch, patch, rivet, hotspot or ornament. Height is fixed and
+will never be stretched.
+
+All four objects have identical outer dimensions, liner area, darkness,
+material thickness and warm upper-left light. Differences are sparse and
+low-frequency. A has one blunt upper-left cut notch in its left cap and only
+two short unequal lower-right repair stitches in its right cap. B has one
+small off-centre dark rivet in its right cap and a slightly more rubbed patch
+of raw leather at that same end; do not extend wear across the centre. C has
+one very short attached leather repair within its left cap, held by two or
+three irregular missing-hole stitches, and no bright metal. D has one small
+skewed cracked oxidized-brass repair within its right cap and one tiny split
+within its left cap. A repair occupies less than half of its cap height. No
+variant is brighter, thicker, rounder or more ornate than another.
+
+The world object is a compact expedition muster slip made from discarded
+saddle leather, a shield strap or a tent binding, trimmed by hand in an
+Azeroth camp. It is not a miniature Player frame, book page, bookmark, scroll,
+luxury leather tag or modern card. Paint in circa-2004 Vanilla World of
+Warcraft UI language: broad chunky hand-painted value blocks, deliberate
+low-resolution readability, matte physical depth and restrained warm
+contrast. Use deep soot-dark walnut, smoke brown and only tiny tarnished umber
+brass accents. Ruggedness comes from unequal cut pressure, uneven dye, smoke,
+mud rub, missing stitch holes and local repair tension—not uniform pores,
+procedural grain, photo texture or random noise.
+
+The written requirements outrank both input images. Use Image 1 only for
+circa-2004 Vanilla WoW painted scale, broad low-resolution readability,
+restrained warm contrast and believable material thickness. Ignore its screen
+composition, text, portraits, book, pages, spine, tabs, wax seals and complete
+frame geometry. Use Image 2 only for deep-walnut depth, warm upper-left light,
+contact shadow, restrained dull-brass response, rough wear and hand-made
+error. Ignore its pages, spine, columns, dragons, broad book construction and
+large metal ornaments. Do not copy their book shapes or pixels. No geometric
+simulation, bar texture, rejected unit-frame candidate or previous raid-shell
+image is an input or visual source for this attempt.
+
+Forbid a shared raid frame, outer raid panel, parchment card, page edge,
+bookbinding, wax seal, continuous metal rim, symmetrical gold border, rounded
+web card, transparent black glass, glossy meter, neon, full-frame glow,
+black-iron shrine, spikes, skulls, horns, faction or class emblems, gems,
+runes, photoreal antiques, upholstery, furniture trim, industrial moulding,
+continuous rope, braid, lacing, piping, rolled lips, equal-distance stitches,
+symmetric rivets, pebble embossing, orange leather and precision geometry.
+Draw no portrait, Health or Power fill, name, number, class or reaction
+colour, aura, buff, debuff, raid marker, leader or loot icon, resurrection
+icon, combat, aggro, hover, button highlight or click feedback.
+
+Before returning, verify visibly: one 1536 by 1024 RGB sheet; exactly four and
+only four solid connected plates; one true 592 by 296, 2:1 plate centred in
+each fixed cell; roughly equal 88-pixel left/right and 108-pixel top/bottom
+green bands; no detached flecks or internal holes; one flat 12-to-20-pixel
+hand-cut raw-hide rim rather than an added border; blunt unequal corners; zero
+continuous piping, braid, embossing or regular seam; four sparse identities
+inside fixed end caps; quiet stretchable centres; identical weight and light;
+rough low-saturation Vanilla craft; and no baked live content.
 ```

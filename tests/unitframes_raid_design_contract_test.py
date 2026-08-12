@@ -123,13 +123,11 @@ def main() -> None:
     assert production["repair_loop"]["maximum_actual_imagegen_calls"] == 5
     assert production["repair_loop"]["process_errors_count_toward_limit"] is False
     assert production["repair_loop"]["execution_state"] == {
-        "attempts_used": 1,
-        "attempts_remaining": 4,
-        "process_errors": 0,
-        "current_prompt_version": "UF-RAID-A1 V1 final.r1",
-        "next_operation": (
-            "bounded edit of the immediately preceding full sheet as Image 3"
-        ),
+        "attempts_used": 2,
+        "attempts_remaining": 3,
+        "process_errors": 1,
+        "current_prompt_version": "UF-RAID-A1 V1 final.r2",
+        "next_operation": "regenerate from the fixed Image 1 and Image 2 only; no Image 3",
     }
 
     expected_locked = {
@@ -227,7 +225,7 @@ def main() -> None:
 
     work = WORK.read_text(encoding="utf-8")
     for clause in (
-        "repair-prepared / attempt-2-pending",
+        "repair-prepared / attempt-3-pending",
         "ImageGen：`0/0`",
         "不增加一圈共享书框",
         "四个完整外壳变体",
@@ -236,10 +234,13 @@ def main() -> None:
         "UF-RAID-A1 V1 final",
         "exactly four complete empty raid-member",
         "pass-final",
-        "当前实际生图：`1/5`",
+        "当前实际生图：`2/5`",
         "UF-RAID-A1 V1 final.r1",
+        "UF-RAID-A1 V1 final.r2",
         "019ff4da-2586-7cc1-8174-8de62fab3f64",
+        "019ff4e5-8c60-7fb2-a18f-49dda781d752",
         "continuous rope, braid, lacing",
+        "Create from scratch one production sheet",
     ):
         assert clause in work, f"raid work record missing: {clause}"
 
