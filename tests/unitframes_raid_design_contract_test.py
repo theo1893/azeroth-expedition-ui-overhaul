@@ -211,7 +211,7 @@ def main() -> None:
     assert donor_production["schema"] == "aeui-unitframes-raid-donor-production-v1"
     assert donor_production["version"] == "UF-RAID-A2-DONOR V1"
     assert donor_production["status"] == (
-        "repair-prepared / attempt-01-internal-fail / attempt-02-ready"
+        "repair-prepared / attempts-01-02-internal-fail / attempt-03-ready"
     )
     assert donor_production["production_authorized"] is True
     assert donor_production["architecture"]["simulation_confirmation"] == {
@@ -237,15 +237,26 @@ def main() -> None:
     donor_loop = donor_production["repair_loop"]
     assert donor_loop["maximum_actual_imagegen_calls"] == 5
     assert donor_loop["process_errors_count_toward_limit"] is False
-    assert donor_loop["execution_state"]["attempts_used"] == 1
-    assert donor_loop["execution_state"]["attempts_remaining"] == 4
+    assert donor_loop["execution_state"]["attempts_used"] == 2
+    assert donor_loop["execution_state"]["attempts_remaining"] == 3
+    assert donor_loop["execution_state"]["process_errors"] == 1
     assert donor_loop["execution_state"]["current_prompt_version"] == (
-        "UF-RAID-A2-DONOR V1.r1"
+        "UF-RAID-A2-DONOR V1.r2"
     )
-    assert len(donor_production["attempts"]) == 1
+    assert donor_loop["execution_state"]["current_prompt_body_sha256"] == (
+        "2de5a46be8462eb75f5df8e80c19bedb37047e4175ac0e55846f83d769f19dd7"
+    )
+    assert len(donor_production["attempts"]) == 2
     assert donor_production["attempts"][0]["raw_sha256"] == (
         "ac2f7a2adf120f932bb3785c5b2b9dfc83d00a8ed9812421400120cfb86aec23"
     )
+    assert donor_production["attempts"][1]["raw_sha256"] == (
+        "d6479b8907e3200e8d3b9ebb5e9a3b44aacbbcf531d5f2b0f9036e1fcd30c893"
+    )
+    assert len(donor_production["process_error_records"]) == 1
+    assert donor_production["process_error_records"][0][
+        "counts_toward_imagegen_budget"
+    ] is False
     authorization_request = donor_production["authorization_request"]
     assert authorization_request["status"] == "granted"
     assert authorization_request["date"] == "2026-08-12"
@@ -435,6 +446,8 @@ def main() -> None:
         "当前授权状态：`granted / 2026-08-12 / bounded-repair-loop-active`",
         "UF-RAID-A2-DONOR V1.r1",
         "ac2f7a2a…ec23",
+        "UF-RAID-A2-DONOR V1.r2",
+        "d6479b89…c893",
     ):
         assert clause in work, f"raid work record missing: {clause}"
 

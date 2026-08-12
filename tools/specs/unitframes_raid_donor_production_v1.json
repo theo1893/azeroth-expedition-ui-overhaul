@@ -1,7 +1,7 @@
 {
   "schema": "aeui-unitframes-raid-donor-production-v1",
   "version": "UF-RAID-A2-DONOR V1",
-  "status": "repair-prepared / attempt-01-internal-fail / attempt-02-ready",
+  "status": "repair-prepared / attempts-01-02-internal-fail / attempt-03-ready",
   "production_authorized": true,
   "architecture": {
     "status": "user-selected",
@@ -79,12 +79,13 @@
     "later_image_3": "only the immediately previous output from this same donor loop and only within the frozen material-field repair boundary",
     "stop_on_pass": true,
     "execution_state": {
-      "attempts_used": 1,
-      "attempts_remaining": 4,
-      "process_errors": 0,
-      "current_prompt_version": "UF-RAID-A2-DONOR V1.r1",
-      "current_prompt_heading": "### `UF-RAID-A2-DONOR V1.r1` — attempt 2 自包含低频手绘材质修复",
-      "next_operation": "commit attempt 1 review and complete r1 body, then edit with fixed SHA Image 1/2 and the immediately previous attempt 1 donor as Image 3"
+      "attempts_used": 2,
+      "attempts_remaining": 3,
+      "process_errors": 1,
+      "current_prompt_version": "UF-RAID-A2-DONOR V1.r2",
+      "current_prompt_heading": "### `UF-RAID-A2-DONOR V1.r2` — attempt 3 自包含超低频哑光颜料重建",
+      "current_prompt_body_sha256": "2de5a46be8462eb75f5df8e80c19bedb37047e4175ac0e55846f83d769f19dd7",
+      "next_operation": "commit attempt 2 review and complete r2 body, then regenerate with fixed SHA Image 1/2 and no Image 3"
     }
   },
   "attempts": [
@@ -103,6 +104,32 @@
       "first_failure": "locked-baseline art inheritance: photographic high-frequency leather/brass/flax creates a continuous serrated runtime rim",
       "secondary_failure": "all four detected material bboxes exceed their fixed cells by 18 to 52 pixels",
       "result": "internal-fail / repair-prepared"
+    },
+    {
+      "attempt": 2,
+      "prompt_version": "UF-RAID-A2-DONOR V1.r1",
+      "execution_commit": "6cb51d31176dd98d2cef2e0848fc99fdd5c30a36",
+      "operation": "edit",
+      "codex_session_id": "019ff531-86c6-7333-9ea1-31a8d5ec461f",
+      "provider_result": "ig_0a7b3d9d79050dcb016a7c35bc352c819183b83d8fa24aeaff",
+      "raw_path": "generated/unitframes/raid/A2/DONOR-V1/attempt-02/uf-raid-a2-donor-v1-attempt-02.provider-native-01.png",
+      "raw_sha256": "d6479b8907e3200e8d3b9ebb5e9a3b44aacbbcf531d5f2b0f9036e1fcd30c893",
+      "technical_report": "generated/unitframes/raid/A2/DONOR-V1/attempt-02/review/technical-report.json",
+      "technical_report_sha256": "fe967f562a3b74b3f2b2ecbcd8af700a6db23745bc8fec6a6511f062e50913be",
+      "display_report_sha256": "ddb3fc51b7c3ef2e1590ecc145b4668ed3d23c5e627600dfa2d0a424a8ce6dd0",
+      "first_failure": "locked-baseline art inheritance: all four fields retain a repeated curled embossed surface; flax remains tangled and brass retains broad highlights",
+      "secondary_failure": "all four detected material bboxes exceed their fixed cells, with maximum deviation 55 pixels",
+      "result": "internal-fail / repair-prepared"
+    }
+  ],
+  "process_error_records": [
+    {
+      "after_attempt": 2,
+      "codex_session_id": "019ff531-86c6-7333-9ea1-31a8d5ec461f",
+      "error": "child-side duplicate metadata check used system Python without Pillow after the single provider image had already been copied",
+      "recovery": "file and sips confirmed the same 1536x1024 RGB image; wrapper returned zero",
+      "additional_provider_outputs": 0,
+      "counts_toward_imagegen_budget": false
     }
   ],
   "authorization_request": {
