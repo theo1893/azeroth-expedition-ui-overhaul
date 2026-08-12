@@ -497,7 +497,7 @@
   },
   "adapter": {
     "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
-    "sha256": "950d4225f51da4a0e3eabe3e2242d4e48c34dcb1150d273f0925026c23f51262",
+    "sha256": "b861d7d97711d8b928d56b3c7e98cb785b40ce0a353f16491271ac59f2906ffc",
     "provider": "AutoBar 1.31 existing main/popup frames and 24+12 buttons",
     "visual_layers_only": false,
     "visual_and_layout_adapter": true,
@@ -507,7 +507,7 @@
     "provider_popup_switch_guard": "scoped-0.30s-original-delegate",
     "provider_set_popup_button_original_authoritative": true,
     "popup_frame_onleave_deferred_only_while_external": true,
-    "provider_layout_refresh": "same-event SetupVisual and AutoBarConfig.OnShow guards restore the last proven bound anchor before render; a zero-delay refresh then rebuilds against settled button geometry; immediate fallback when provider scheduling is unavailable",
+    "provider_layout_refresh": "same-event SetupVisual and AutoBarConfig.OnShow guards restore the last proven bound anchor before render; a zero-delay refresh derives the rack envelope from provider button handle-relative points and dimensions, independent of world-space coordinate caches; unknown layouts retain the proven cached anchor and missing scheduling falls back immediately",
     "provider_runtime_category_description_compatibility": "write localized labels only to missing or empty AutoBar_Category_Info descriptions; preserve native labels; this compatibility repair itself never writes category profiles or SavedVariables",
     "saved_variables_written": true,
     "provider_saved_variables_written_automatically": true,

@@ -422,10 +422,16 @@ for index = 1, 24 do
   local column = math.mod(index - 1, 4)
   local row = math.floor((index - 1) / 4)
   local item = NewFrame("AutoBarFrameButton" .. index, AutoBarFrame, {
-    left = 100 + column * 39,
-    bottom = 100 + row * 39,
+    left = 60 + column * 39,
+    bottom = 60 + row * 39,
     width = 36,
     height = 36,
+    points = {
+      {
+        "BOTTOMLEFT", AutoBarAnchorFrameHandle, "CENTER",
+        column * 39, row * 39,
+      },
+    },
   })
   item.effectiveButton = index
   _G[item.name] = item
@@ -577,7 +583,7 @@ local module = assert(AzerothExpeditionUI.modules.ActionBars)
 module:Initialize()
 module:Apply()
 
-assert(module.fieldKitRuntimeContract == "2.4")
+assert(module.fieldKitRuntimeContract == "2.5")
 assert(module.autoBarCategoryDescriptionStatus == "repaired")
 assert(module.autoBarCategoryDescriptionsRepaired == 8)
 assert(AutoBar_Category_Info.POTION_SPELLPOWER.description ==
@@ -677,24 +683,30 @@ local projectedHandleCenter =
   consumableDockAnchor[4] * AutoBarAnchorFrameHandle.scale
 local originalHandleCenter =
   AutoBarAnchorFrameHandle:GetCenter() * AutoBarAnchorFrameHandle.scale
-local originalVisualRight = AutoBarFrameButton4:GetRight() + 6
+local autoBarButtonScale = AutoBarFrameButton4:GetEffectiveScale()
+local originalVisualRight =
+  (AutoBarFrameButton4:GetRight() + 6) * autoBarButtonScale
 local projectedVisualRight =
   projectedHandleCenter + originalVisualRight - originalHandleCenter
 assert(math.abs(
-  pfUI.bars[1].left - projectedVisualRight - module.consumableDockGap
+  pfUI.bars[1].left - projectedVisualRight -
+  module.consumableDockGap * autoBarButtonScale
 ) < 0.0001)
 local projectedHandleCenterY =
   pfUI.bars[1].bottom +
   consumableDockAnchor[5] * AutoBarAnchorFrameHandle.scale
 local _, originalHandleCenterY = AutoBarAnchorFrameHandle:GetCenter()
-local originalVisualBottom = AutoBarFrameButton1:GetBottom() - 6
+local originalVisualBottom =
+  (AutoBarFrameButton1:GetBottom() - 6) * autoBarButtonScale
 local projectedVisualBottom =
   projectedHandleCenterY + originalVisualBottom -
   originalHandleCenterY * AutoBarAnchorFrameHandle.scale
 assert(math.abs(
   projectedVisualBottom -
-  (pfUI.bars[1].bottom + module.fieldKitDockYOffset)
+  (pfUI.bars[1].bottom +
+    module.fieldKitDockYOffset * autoBarButtonScale)
 ) < 0.0001)
+assert(module.autoBarAnchorBasis == "provider-local")
 assert(AutoBarFrame.aeuiConsumableKitShellV1.shown == true)
 assert(AutoBarFrame.aeuiConsumableKitLabelsV1 == nil)
 assert(table.getn(AutoBarFrame.aeuiConsumableKitDividersV1) == 2)
@@ -974,9 +986,63 @@ assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
 AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
 assert(string.find(openMessage, "/aeui autobar apply", 1, true))
 
+-- The provider can move its handle to the saved free position while WoW still
+-- reports the previous frame's button coordinates. Repeated profile applies
+-- must therefore be independent of world-space GetLeft/GetRight values.
+local function ShiftAutoBarWorldGeometry(xDelta, yDelta)
+  for index = 1, 24 do
+    local button = _G["AutoBarFrameButton" .. index]
+    button.left = button.left + xDelta
+    button.right = button.right + xDelta
+    button.bottom = button.bottom + yDelta
+    button.top = button.top + yDelta
+  end
+end
+
+providerSetupReanchors = true
+ShiftAutoBarWorldGeometry(480, 210)
 local applied, applyMessage = module:ApplyRecommendedAutoBarProfile()
 assert(applied == true)
 assert(string.find(applyMessage, "4x6", 1, true))
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
+assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
+AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
+assert(module.autoBarAnchorBasis == "provider-local")
+
+ShiftAutoBarWorldGeometry(-960, -420)
+local appliedAgain = module:ApplyRecommendedAutoBarProfile()
+assert(appliedAgain == true)
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
+assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
+AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
+assert(module.autoBarAnchorBasis == "provider-local")
+
+-- A future provider layout that does not expose the direct handle-relative
+-- point contract must retain the last proven anchor instead of falling back
+-- to the deliberately stale world coordinates above.
+local incompatibleButton = AutoBarFrameButton1
+local incompatiblePoint = { incompatibleButton:GetPoint(1) }
+incompatibleButton:ClearAllPoints()
+incompatibleButton:SetPoint("BOTTOMLEFT", UIParent, "CENTER", 0, 0)
+module:ApplyAutoBarFieldKit(true)
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
+assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
+assert(module.autoBarAnchorBasis == "cached")
+incompatibleButton:ClearAllPoints()
+incompatibleButton:SetPoint(unpack(incompatiblePoint))
+module:ApplyAutoBarFieldKit(true)
+assert(module.autoBarAnchorBasis == "provider-local")
+ShiftAutoBarWorldGeometry(480, 210)
+providerSetupReanchors = false
+
 local appliedConfig = AutoBar_Config[AutoBar.currentPlayer]
 local appliedClassConfig = AutoBar_Config[AutoBarProfile.CLASSPROFILE]
 assert(appliedConfig.profile.useCharacter == false)
@@ -1195,7 +1261,7 @@ module:Apply()
 assert(module.autoBarFieldKitStatus == "missing")
 assert(module.trinketFieldKitStatus == "missing")
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "fieldkit%-contract=2%.4"))
+assert(string.find(status, "fieldkit%-contract=2%.5"))
 assert(string.find(status, "autobar%-slot%-scope=restored"))
 assert(string.find(status, "autobar%-config%-ui=native"))
 assert(string.find(status, "autobar%-config%-descriptions=repaired"))

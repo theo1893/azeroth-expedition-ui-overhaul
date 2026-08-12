@@ -13,7 +13,7 @@ ActionBars.railTexturePath = addon.media.root .. "ActionBars\\ActionRailV1"
 ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
-ActionBars.fieldKitRuntimeContract = "2.4"
+ActionBars.fieldKitRuntimeContract = "2.5"
 ActionBars.focusLayoutRuntimeContract = "2.3"
 ActionBars.focusLayoutVersion = 14
 ActionBars.focusLayoutBackupVersion = 1
@@ -72,10 +72,12 @@ ActionBars.popupDrawerMaxRows = 6
 ActionBars.popupIntentDelay = 0.30
 ActionBars.popupIntentEvent = "AEUI_AutoBarPopupIntent"
 -- A provider layout can write its saved free position before newly anchored
--- buttons have usable geometry. Restore the last proven Combat Deck anchor
--- in the same input event, then use AceEvent's next OnUpdate tick to rebuild
--- against settled geometry. AutoBarConfig.OnShow repeats the immediate guard
--- after its whole initialization chain has completed.
+-- buttons have usable world geometry. Restore the last proven Combat Deck
+-- anchor in the same input event, then use AceEvent's next OnUpdate tick to
+-- rebuild. The rebuild derives the dock envelope from each provider button's
+-- handle-relative point, so a stale GetLeft/GetRight cache cannot create a
+-- second anchor. AutoBarConfig.OnShow repeats the immediate guard after its
+-- whole initialization chain has completed.
 ActionBars.autoBarRefreshDelay = 0
 ActionBars.autoBarRefreshEvent = "AEUI_AutoBarFieldKitRefresh"
 ActionBars.archiTotemDockXOffset = -10
@@ -3777,6 +3779,86 @@ local function ConsumableVisualEdges(bounds)
   return right, bottom
 end
 
+local function AutoBarLocalVisualOffsets(handle)
+  if not handle then
+    return nil, nil, nil
+  end
+
+  local rightEdge = nil
+  local bottomEdge = nil
+  local rackScale = nil
+  local count = 0
+
+  for index = 1, 24 do
+    local button = GetGlobal("AutoBarFrameButton" .. index)
+    if button and button.IsShown and button:IsShown() and
+      not button.forceHidden
+    then
+      if not button.GetPoint or not button.GetWidth or
+        not button.GetHeight
+      then
+        return nil, nil, nil
+      end
+
+      local point, relative, relativePoint, xOffset, yOffset =
+        button:GetPoint(1)
+      if type(relative) == "string" then
+        relative = GetGlobal(relative)
+      end
+      if relative ~= handle or relativePoint ~= "CENTER" then
+        return nil, nil, nil
+      end
+
+      point = tostring(point or "")
+      xOffset = tonumber(xOffset) or 0
+      yOffset = tonumber(yOffset) or 0
+      local width = tonumber(button:GetWidth())
+      local height = tonumber(button:GetHeight())
+      if not width or not height then
+        return nil, nil, nil
+      end
+      local buttonScale = GetFrameScale(button)
+      if rackScale and math.abs(buttonScale - rackScale) > 0.0001 then
+        return nil, nil, nil
+      end
+      rackScale = buttonScale
+
+      local right = xOffset + width / 2
+      if string.find(point, "LEFT", 1, true) then
+        right = xOffset + width
+      elseif string.find(point, "RIGHT", 1, true) then
+        right = xOffset
+      end
+
+      local bottom = yOffset - height / 2
+      if string.find(point, "BOTTOM", 1, true) then
+        bottom = yOffset
+      elseif string.find(point, "TOP", 1, true) then
+        bottom = yOffset - height
+      end
+
+      right = right * buttonScale
+      bottom = bottom * buttonScale
+      count = count + 1
+      if not rightEdge or right > rightEdge then
+        rightEdge = right
+      end
+      if not bottomEdge or bottom < bottomEdge then
+        bottomEdge = bottom
+      end
+    end
+  end
+
+  if count == 0 or not rightEdge or not bottomEdge or not rackScale then
+    return nil, nil, nil
+  end
+
+  return
+    rightEdge + ActionBars.fieldKitShellPadding * rackScale,
+    bottomEdge - ActionBars.fieldKitShellPadding * rackScale,
+    rackScale
+end
+
 function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
   local docked = FieldKitBound()
   local handle = GetGlobal("AutoBarAnchorFrameHandle")
@@ -3789,21 +3871,12 @@ function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
     self.autoBarDockApplied = false
     self.autoBarUndockedAnchors = nil
     self.autoBarBoundAnchors = nil
+    self.autoBarAnchorBasis = enabled and "free" or "disabled"
     self.consumableDockStatus = enabled and "free" or "disabled"
     return false
   end
   if not handle or not main or not bounds or bounds.count == 0 then
-    self.consumableDockStatus = "unavailable"
-    return false
-  end
-
-  local rightPixels, bottomPixels = ConsumableVisualEdges(bounds)
-  local centerX, centerY = GetFrameCenter(handle)
-  local mainLeft = FrameCoordinatePixels(main, "GetLeft")
-  local mainBottom = FrameCoordinatePixels(main, "GetBottom")
-  if not rightPixels or not bottomPixels or not centerX or not centerY or
-    not mainLeft or not mainBottom
-  then
+    self.autoBarAnchorBasis = "unavailable"
     self.consumableDockStatus = "unavailable"
     return false
   end
@@ -3811,12 +3884,37 @@ function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
   if not self.autoBarDockApplied then
     self.autoBarUndockedAnchors = CaptureFrameAnchors(handle)
   end
+
   local handleScale = GetFrameScale(handle)
-  local rackScale = GetFrameScale(bounds.right)
-  local centerXPixels = centerX * handleScale
-  local centerYPixels = centerY * handleScale
-  local rightDelta = rightPixels - centerXPixels
-  local bottomDelta = bottomPixels - centerYPixels
+  local rightDelta, bottomDelta, rackScale =
+    AutoBarLocalVisualOffsets(handle)
+  local anchorBasis = "provider-local"
+
+  if not rightDelta or not bottomDelta or not rackScale then
+    -- Unknown provider layouts may not expose direct handle-relative points.
+    -- Once a bound anchor has been proven, never replace it with a world-space
+    -- measurement that may combine a freshly moved handle with stale buttons.
+    if self.autoBarDockApplied and self.autoBarBoundAnchors and
+      RestoreFrameAnchors(handle, self.autoBarBoundAnchors)
+    then
+      self.autoBarAnchorBasis = "cached"
+      self.consumableDockStatus = "left"
+      return true
+    end
+
+    local rightPixels, bottomPixels = ConsumableVisualEdges(bounds)
+    local centerX, centerY = GetFrameCenter(handle)
+    if not rightPixels or not bottomPixels or not centerX or not centerY then
+      self.autoBarAnchorBasis = "unavailable"
+      self.consumableDockStatus = "unavailable"
+      return false
+    end
+    rackScale = GetFrameScale(bounds.right)
+    rightDelta = rightPixels - centerX * handleScale
+    bottomDelta = bottomPixels - centerY * handleScale
+    anchorBasis = "world-fallback"
+  end
+
   local xOffset =
     (-self.consumableDockGap * rackScale - rightDelta) / handleScale
   local yOffset =
@@ -3828,6 +3926,7 @@ function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
   )
   self.autoBarDockApplied = true
   self.autoBarBoundAnchors = CaptureFrameAnchors(handle)
+  self.autoBarAnchorBasis = anchorBasis
   self.consumableDockStatus = "left"
   return true
 end
@@ -5013,6 +5112,7 @@ function ActionBars:Initialize()
   self.autoBarRefreshStatus = "ready"
   self.autoBarDockApplied = false
   self.autoBarBoundAnchors = nil
+  self.autoBarAnchorBasis = "pending"
   self.autoBarCategoryDescriptionStatus = "pending"
   self.autoBarCategoryDescriptionsRepaired = 0
   self.autoBarGrouped = false
@@ -5237,6 +5337,8 @@ function ActionBars:GetRuntimeStatus()
       tostring(self.autoBarCategoryDescriptionsRepaired or 0) ..
     ",autobar-refresh=" ..
       tostring(self.autoBarRefreshStatus or "ready") ..
+    ",autobar-anchor-basis=" ..
+      tostring(self.autoBarAnchorBasis or "pending") ..
     ",consumable-dock=" ..
       tostring(self.consumableDockStatus or "pending") ..
     ",trinket=" .. tostring(self.trinketFieldKitStatus or "pending") ..

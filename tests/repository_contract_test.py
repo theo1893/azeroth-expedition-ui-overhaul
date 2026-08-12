@@ -328,7 +328,7 @@ def main() -> None:
     assert "button:SetParent" not in actionbars_source
     assert "button:SetWidth" not in actionbars_source
     assert "button:SetHeight" not in actionbars_source
-    assert 'ActionBars.fieldKitRuntimeContract = "2.4"' in actionbars_source
+    assert 'ActionBars.fieldKitRuntimeContract = "2.5"' in actionbars_source
     assert 'ActionBars.focusLayoutRuntimeContract = "2.3"' in actionbars_source
     assert "ActionBars.focusLayoutVersion = 14" in actionbars_source
     assert 'ActionBars.focusCoordinateSpace = "game-native-v1"' in actionbars_source

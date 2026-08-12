@@ -11,9 +11,11 @@
   修图，因此未调用执行器。
 - ImageGen：`0/0`
 - runtime：AEUI `0.8.24`／`focus-layout-contract=2.3`／
-  `sidebar-group-contract=1.0`／`fieldkit-contract=2.4`。Field Kit v2.4 延续
+  `sidebar-group-contract=1.0`／`fieldkit-contract=2.5`。Field Kit v2.5 延续 v2.4 的
   AutoBar 配置打开边界的缓存回锚、稳定几何重算与分类说明 fallback，并把配置页
-  裁为“栏位／按钮”、单一职业槽编辑与可逆职业迁移；V11 focus 几何不变并继续直接写 Turtle WoW
+  裁为“栏位／按钮”、单一职业槽编辑与可逆职业迁移；停靠包络现只读取 provider
+  Button 相对 handle 的局部点／尺寸／scale，重复 apply 不再受陈旧屏幕坐标影响。
+  V11 focus 几何不变并继续直接写 Turtle WoW
   原生 `UIParent` SetPoint 坐标，
   不读取屏幕尺寸、不乘 effective scale、不探针、不回读；Player／Target 为
   `240×60 / 0.8`，TargetTarget 保持 `240×60 / 0.68` 并依附 Target 右侧；三框的
@@ -354,10 +356,10 @@ v14。Bar 2／4／5／3 以 `3×4` 四块组合为 `6×8` 右侧组，保留各�
   `3/3 pass`；focus runtime-v2.3 contract SHA `f7834b37…76f1`，报告 SHA
   `97475410…865d`，`12/12 pass`；sidebar runtime-v1.0 contract SHA
   `848d5f0c…9a79`，报告 SHA `71986166…b740`，`3/3 pass`；violations 均为 `0`。
-- 当前 AEUI `0.8.24` entrypoints：ActionBars `950d4225…1262`、Bootstrap
+- 当前 AEUI `0.8.24` entrypoints：ActionBars `b861d7d9…6ffc`、Bootstrap
   `417592bc…b4f5`、TOC `1e2f05e6…9a45`。四张既有 TGA 字节不变，ImageGen `0/0`。
 - AEUI `0.8.24` fresh-checkout addon package `pass`、violations `0`、report
-  `a6a4ec74…16b9`、runtime manifest records `49`、tracked addon files `547`，
+  `e1ca9054…0a35`、runtime manifest records `64`、tracked addon files `554`，
   `build_required_on_target_device=false`；另一台设备无需构建或导出。
 - 以下 V10 证据保留为上一轮历史基线：
 - V10 specification：`tools/specs/action_bars_core_simulation_v10.json`，SHA
@@ -536,7 +538,8 @@ v14。Bar 2／4／5／3 以 `3×4` 四块组合为 `6×8` 右侧组，保留各�
 `focus-layout-unit-font-size=18`、`focus-layout-unit-font=system`、
 `focus-layout-readout-scale=1`、
 `focus-layout-stance-scale=0.72`、`focus-layout-unit-font-live=19`、
-`fieldkit-contract=2.4`、`autobar-slot-scope=class-only`、
+`fieldkit-contract=2.5`、`autobar-slot-scope=class-only`、
+`autobar-anchor-basis=provider-local`、
 `autobar-config-ui=class-only` 与 `fieldkit-binding=bound`。先开关一次 pfUI unlock，确认无
 `unlock.lua:527`、中央组合只有 Bar 1 mover、右侧组合只有一个 Bar 2 group mover、
 Bar 6 不跳位且 TargetTarget 始终贴在 Target 右侧。随后确认：

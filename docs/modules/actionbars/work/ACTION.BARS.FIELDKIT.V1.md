@@ -7,7 +7,7 @@
   `AB.TRINKET.MENU`、`AB.CONSUMABLE.RACK`、`AB.CONSUMABLE.POCKET`、
   `AB.CONSUMABLE.POPUP`、`AB.CONSUMABLE.GROUP`
 - 模拟版本：`AB-FIELDKIT-SIM-V3`
-- 当前操作：`AutoBar class-only config curation / game retest`
+- 当前操作：`AutoBar provider-local dock repair / game retest`
 - 子状态：`runtime-exported / pending-retest`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
@@ -46,8 +46,14 @@
   保留“完成”；“栏位”直接显示唯一职业层网格。首次加载把当前有效 24 槽复制到
   `_CLASS` profile 并固定 `useClass=true / edit=3`，角色原配置与职业原配置分别备份；
   `/aeui autobar restore` 可完整回退并退出该角色自动迁移。Buttons 显示参数仍按当前
-  角色保存，因为 AutoBar 1.31 没有职业 display layout。
-  当前 AEUI `0.8.24` entrypoints 为 ActionBars SHA `950d4225…1262`、Bootstrap
+  角色保存，因为 AutoBar 1.31 没有职业 display layout。用户随后以两张实机截图确认
+  重复执行 `/aeui autobar apply` 会让卷袋在两处往返；bridge-v2.5 保留全部 v2.4
+  配置／profile 合同，但不再用屏幕 `GetLeft／GetRight／GetBottom` 计算停靠锚点。
+  它读取每个可见 provider Button 相对 `AutoBarAnchorFrameHandle` 的 `GetPoint`、宽高与
+  scale，形成与当前 handle 屏幕位置无关的局部包络；未知布局已有成功锚点时保持缓存。
+  Lua smoke 模拟真实 handle `0.6`／Button `1.0` scale，并在两次 apply 前注入相反的
+  陈旧 world-space 坐标，两个同步回锚与零延迟刷新结果完全一致。
+  当前 AEUI `0.8.24` entrypoints 为 ActionBars SHA `b861d7d9…6ffc`、Bootstrap
   SHA `417592bc…b4f5`、TOC SHA `1e2f05e6…9a45`；fresh-checkout package
   `status=pass`、violations `0`、report SHA `a6a4ec74…16b9`、runtime manifest
   records `49`、tracked addon files `547`、`build_required_on_target_device=false`。
@@ -95,13 +101,13 @@
 - P2 审计时当前角色的 `AddOns.txt` 为 TrinketMenu `enabled`、AutoBar `disabled`；
   用户随后为 P6 检查自行启用 AutoBar，`2026-08-09` 实机截图已证明 provider
   加载并显示。AEUI 从未自动启用它。
-- 两个插件均已安装；普通 adapter 刷新不得替用户启用 AutoBar。bridge-v2.4 首次
+- 两个插件均已安装；普通 adapter 刷新不得替用户启用 AutoBar。bridge-v2.5 延续 v2.4 首次
   加载会把当前有效槽表可逆迁入原生职业 profile，并固定当前角色只使用／编辑职业层；
   之后普通刷新不重复覆盖。`/aeui autobar apply／restore` 继续提供显式推荐值与回退。
 - 当前“大奶黑牛 - Basin of Stars”角色 profile 为 24 个推荐逻辑类别、
   `36×36 UI`、gap `3 UI`、最多 `4×6`；`showEmptyButtons` 与 `showCategoryIcon` 均
   关闭、`hideDragHandle=1`，当前背包因此只显示 13 个有物品类别。`_SHARED1` 的旧
-  `1×24` 只保留为未激活 provider 配置。bridge-v2.4 把这份当前有效 24 槽作为
+  `1×24` 只保留为未激活 provider 配置。bridge-v2.5 延续把这份当前有效 24 槽作为
   `_SHAMAN` 职业层的首次内容，角色层原槽保持休眠并有 AEUI 备份；同职业角色共享
   该职业层。exact backed-up 旧 AEUI 满格显示仍只允许一次性迁移三个显示字段。
 - 当前 TrinketMenu 保存为主栏水平、主栏 scale
@@ -1131,16 +1137,18 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
 | `AB.FIELDKIT bridge-v2.2` | v2.1 的说明 fallback、v2.0 可见几何、accepted source／TGA、精简 profile、popup guard 与全部 provider 行为不变；独立 `ButtonsUpdate` 排到下一次零延迟事件，`SetupVisual` 后置钩子同事件取消并立即重算组合锚点 | 用户实机指出 v2.1 “跳出去一下，然后又跳回来”；静态回归通过并由 AEUI `0.8.22` 接入，但 `2026-08-12` 新截图证明只打开配置页就会把卷袋留在 provider 的 `(555,213)` 自由坐标，`game-failed-config-open-anchor / P5` | 由 bridge-v2.3 接续；保留说明 fallback 和同事件视觉保护，但不再用未稳定 Button 几何承担第一阶段回锚 |
 | `AB.FIELDKIT bridge-v2.3` | v2.2 的说明 fallback、v2.0 可见几何、accepted source／TGA、精简 profile、popup guard 与全部 provider 行为不变；缓存最后一次成功的 Bar 1 相对锚点，`SetupVisual` 与完整 `AutoBarConfig.OnShow` 返回前先同步恢复，零延迟事件随后按稳定几何重算 | 用户截图 `1020×926 RGB`、SHA `f36cd308…ab5e` 与 SavedVariables `position=(555,213)` 定位配置打开边界；Lua smoke 模拟嵌套布局后再次写入该自由坐标，并断言 `OnShow` 返回时已回到 Bar 1、下一帧仍稳定；重复 Apply、独立更新与调度缺失回退继续覆盖；AEUI `0.8.23`，`pending-game-validation / P5` | `/reload` 连续开关配置页确认打开动作本身不再移动卷袋且无可见往返；再逐类悬停、点击多个控件，并复测原 Field Kit／popup／Queue／换装清单 |
 | `AB.FIELDKIT bridge-v2.4` | v2.3 回锚、说明 fallback、动态 `4×6`、popup guard、accepted source／TGA 与 provider 物品行为不变；配置页只留 Slots／Buttons 与 Done，隐藏 Bar／Popup／Profile、综合预览、层／layout 选择及 Reset／Revert。当前有效 24 槽一次迁入原生职业 profile，角色固定 `useClass/edit3`，角色／职业原配置双备份并可 restore | 用户明确要求按高度客制化范围裁剪配置页并让槽位只按职业配置；Lua smoke 覆盖首次迁移、隐藏 Tab 重定向、OnShow 再裁剪、职业 apply、原生控件与双层数据 restore；Field Kit runtime `9/9＋10/10`、repository contracts 与 fresh-checkout package pass；AEUI `0.8.24`，ImageGen `0/0`，`pending-game-validation / P5` | `/reload` 确认只见“栏位／按钮”、单一“职业栏位（左键编辑）”与“完成”；编辑一个含数字 item ID 的槽并确认同职业共享、角色原槽不变，再连续开关／点击确认卷袋无跳位；必要时 `/aeui autobar restore` 验证回退 |
+| `AB.FIELDKIT bridge-v2.5` | v2.4 配置裁剪／职业槽、v2.3 同事件回锚、说明 fallback、动态 `4×6`、popup guard、accepted source／TGA 与全部 provider 物品行为不变；零延迟停靠包络改由 Button 相对 handle 的 provider-local `GetPoint`、宽高与 scale 计算，已有成功锚点不再被陈旧 world-space 坐标覆盖 | 用户提供两张 `/aeui autobar apply` 后实机截图，确认卷袋在两个位置往返；AutoBar 1.31 审计定位 `ProfileChanged → OnShow／ConfigChanged → SetupVisual` 连续重排与 handle／Button 坐标不同帧。Lua smoke 注入两套相反陈旧坐标并连续 apply，两次同步保护和零延迟刷新后的 x／y 完全相同；runtime／repository contracts 与 fresh-checkout package pass；AEUI `0.8.24`，ActionBars SHA `b861d7d9…6ffc`，ImageGen `0/0`，`pending-game-validation / P5` | `/reload` 连续执行两次 `/aeui autobar apply`，每次等待刷新后确认卷袋像素位置完全不变，`/aeui status` 为 `autobar-anchor-basis=provider-local`；再连续开关／点击配置页并复测职业槽、popup、Queue／换装与 restore |
 
 ## 下一门禁
 
 1. 两套 accepted source 与 runtime TGA 像素身份不变；视觉 source／runtime
-   manifest 保持 `runtime-v1.5`，共享 adapter 已更新到 bridge v2.4／P5。fresh-checkout package
+   manifest 保持 `runtime-v1.5`，共享 adapter 已更新到 bridge v2.5／P5。fresh-checkout package
    已通过，目标设备只需拉取并安装 `addon/`，不得再生成、导出或打补丁。
 2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.24`、
-   `fieldkit-contract=2.4`、`autobar-slot-scope=class-only`、
+   `fieldkit-contract=2.5`、`autobar-slot-scope=class-only`、
    `autobar-config-ui=class-only`、`autobar-config-descriptions=repaired`、
-   `autobar-config-description-fixes=7`、`fieldkit-binding=bound` 与
+   `autobar-config-description-fixes=7`、`autobar-anchor-basis=provider-local`、
+   `fieldkit-binding=bound` 与
    `actionbar-stack=12x2-bound`。
    同时确认 `focus-layout-contract=2.3`、`focus-layout-anchor=ui-parent+target-dependent`、
    `focus-layout-coordinate-space=game-native-v1`、
@@ -1163,7 +1171,8 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
    “栏位／按钮”两个 Tab、一个“职业栏位（左键编辑）”网格与“完成”，不显示综合
    预览、层／layout 选择、隐藏的三个 Tab 或“重置为默认／还原”；当前有效槽（尤其
    手动数字 item ID）应已迁入职业层，同职业角色复用，角色原槽保持备份。再执行
-   `/aeui autobar apply` 验证当前职业保留 24 个逻辑类别、只显示当前有物品类别（当前应为 13 格）、最大 `4×6`、
+   连续执行两次 `/aeui autobar apply`，每次等待零延迟刷新完成，确认卷袋的像素位置
+   完全一致，再验证当前职业保留 24 个逻辑类别、只显示当前有物品类别（当前应为 13 格）、最大 `4×6`、
    无“应急／增益／工具”文字且手动数字槽保留；打开候选数
    `1／6／7／12` 的分类，确认外置抽屉分别为单列／双列且不遮挡任何主格；从内侧
    分类打开抽屉后横穿同一行其他主格进入左右抽屉，路过格不得关闭或替换原抽屉；

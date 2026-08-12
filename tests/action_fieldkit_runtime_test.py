@@ -132,7 +132,7 @@ def main() -> None:
             assert manifest["adapter"]["provider_layout_refresh"].startswith(
                 "same-event SetupVisual and AutoBarConfig.OnShow guards"
             )
-            assert "settled button geometry" in manifest["adapter"][
+            assert "handle-relative" in manifest["adapter"][
                 "provider_layout_refresh"
             ]
             assert "missing or empty" in manifest["adapter"][
@@ -186,7 +186,7 @@ def main() -> None:
         assert result["summary"]["violation_count"] == 0
 
     for required in (
-        'ActionBars.fieldKitRuntimeContract = "2.4"',
+        'ActionBars.fieldKitRuntimeContract = "2.5"',
         "ActionBars.fieldKitDockYOffset = -20",
         "ActionTrinketKitV1",
         "ActionConsumableKitV1",
@@ -214,6 +214,8 @@ def main() -> None:
         "CommitAutoBarFieldKitRefresh",
         "SettleAutoBarFieldKitRefresh",
         "RestoreAutoBarBoundAnchor",
+        "AutoBarLocalVisualOffsets",
+        'anchorBasis = "provider-local"',
         "autoBarRefreshDelay = 0",
         "AutoBar.SetPopupButton = self.autoBarSetPopupButtonWrapper",
         'self.autoBarPopupHover = "intent-bridge"',
