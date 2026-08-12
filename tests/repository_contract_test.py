@@ -314,6 +314,27 @@ def main() -> None:
     assert unitframes_source_manifest["user_acceptance"]["exact_statement"] == (
         "接受 B1 attempt 3 的运行时视觉"
     )
+    primary_v4_source_manifest = json.loads(
+        (
+            ROOT
+            / "assets/source/unitframes/primary-v4/UF-PRIMARY-V4_SourceManifest_v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert primary_v4_source_manifest["status"] == "accepted-source"
+    assert primary_v4_source_manifest["phase"] == "P4"
+    primary_v4_acceptance = primary_v4_source_manifest["user_acceptance"]
+    assert primary_v4_acceptance["exact_statement"] == "确认, 进入下一阶段"
+    assert primary_v4_acceptance["authorizes_p4_source_promotion"] is True
+    assert primary_v4_acceptance["authorizes_p5_runtime_export"] is False
+    assert primary_v4_acceptance["authorizes_addon_integration"] is False
+    for record in primary_v4_source_manifest["sources"].values():
+        source_path = ROOT / record["repository_path"]
+        assert source_path.is_file()
+        assert sha256(source_path) == record["sha256"]
+        assert record["mode"] == "RGBA"
+        assert [record["width"], record["height"]] == [1284, 252]
+    assert primary_v4_source_manifest["export_contract"]["status"] == "not-exported"
+    assert primary_v4_source_manifest["export_contract"]["addon_code_modified"] is False
     assert unitframes_runtime_manifest["status"] == "runtime-exported"
     assert unitframes_runtime_manifest["phase"] == "P5"
     assert unitframes_runtime_manifest["adapter"]["frames"] == [

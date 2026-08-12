@@ -2,9 +2,9 @@
 
 以下条款全部继承 [Unit Frames 主模块 Prompt](ART_BASELINE.md) 与
 [全局 Prompt](../../GLOBAL_ART_BASELINE.md)。下列方向已由用户在
-`UF-PRIMARY-SIM-V1` 与 `UF-PRIMARY-V3-SIM-V1` 中确认；它们是正式生产的
-冻结可见约束，但不是 P4 source 接受记录。只有具体生产候选再次获得用户明确
-接受后，才能凝结为锁定资产条款。
+`UF-PRIMARY-SIM-V1` 与 `UF-PRIMARY-V3-SIM-V1` 中确认。Player／Target 的具体
+V4 候选已于 `2026-08-12` 获得用户明确接受并凝结为下述 P4 锁定资产；其他
+尚无 source 的组件仍只把文字方向作为冻结约束。
 
 ## `UF.PLAYER.SHELL`
 
@@ -17,6 +17,12 @@
 `1284×252`，再确定性导出完整 `214×42` runtime。身份细节集中在两端，中央
 长轨安静，未来三切片边界不得承载唯一识别特征。
 
+接受像素基线为
+`assets/source/unitframes/primary-v4/UnitFramePlayerShell_MasterV1.png`，
+SHA-256 `331b353f294ae2e658e010ea59763a48bb08ba574b88e150fe3f5a2416bd617b`。
+后续派生必须保持左端手缝、短暗铜夹片、右端偏心铆钉、安静中央和现有 Alpha；
+不得以“清理”为名把轮廓修成规则工业皮具。
+
 ## `UF.TARGET.SHELL`
 
 与玩家框属于同一材料家族，但从零绘制而非镜像。右端有更明显的断裂黄铜
@@ -25,6 +31,12 @@
 Player 放进同一 production atlas，也不得镜像或复制 Player 像素。右端身份
 不得扩散成长轨上的连续花纹，未来三切片边界不得承载唯一识别特征。透明母版
 归一化为 `1284×252`，再确定性导出完整 `214×42` runtime。
+
+接受像素基线为
+`assets/source/unitframes/primary-v4/UnitFrameTargetShell_MasterV1.png`，
+SHA-256 `256086c128561fdfa0717740701581d156ab811d88282c0098f9d3b4595acf81`。
+后续派生必须保持左上磨亮折边、右下打断暗铜损伤、非镜像轮廓、安静中央和
+现有 Alpha；不得补成连续金属长边或敌对色装饰。
 
 ## `UF.TARGETTARGET.SHELL`
 

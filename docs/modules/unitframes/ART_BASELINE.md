@@ -1,7 +1,7 @@
 # Unit Frames 主模块美术基线 Prompt
 
-状态：`direction-locked / UF-PRIMARY-SIM-V1 + UF-PRIMARY-V3-SIM-V1
-confirmed`。用户于 `2026-08-11` 确认本 Prompt 所定义的“粗犷行军身份牌”
+状态：`direction-locked / UF-PRIMARY-V4 source-accepted / P4`。用户于
+`2026-08-11` 确认本 Prompt 所定义的“粗犷行军身份牌”
 及 V3 完整外壳、Health／Power 层级与四资源经典乘色方向；该确认只锁定物件
 隐喻、材质层级、轮廓、配色、重量与整合关系，不接受模拟像素或任何正式
 source。本 Prompt 显式继承
@@ -9,15 +9,16 @@ source。本 Prompt 显式继承
 [游戏内基准](../../../assets/locked/chat/聊天框视觉基准_v1.png) 与
 [独立资源](../../../assets/locked/chat/聊天框独立艺术资源_v3.png) 只提供
 2004 年手绘位图尺度、左上暖光、材料厚度、磨损节奏和“不完全工整”的次级
-参考；不得把书页、书脊、频道签或完整书框复制到单位框。
+参考；不得把书页、书脊、频道签或完整书框复制到单位框。该方向确认本身不
+接受 source；具体 P4 像素由下段的 V4 接受另行固定。
 
 `UF-PRIMARY-V4-SIM-V1` 于 `2026-08-12` 重开的是生产职责，不是新的美术
 方向：Player／Target 仍必须遵守本 Prompt 的粗犷行军身份牌、深胡桃旧皮、
 克制暗铜、非镜像维修和香草信息密度。用户已确认 V4 模拟，并授权 Raid A2
-材料 sample 作为只读 candidate 输入；当前 exact candidate 仍为
-`P3 / candidate-reviewed / user-acceptance-pending`。不能把几何模拟的扁平颜色、
-锯齿或占位高光固化为美术基准，也不能在用户接受前把 candidate 固化为 P4
-像素基线。
+材料 sample 作为只读 candidate 输入。用户随后以“确认, 进入下一阶段”接受
+V4 exact Player／Target pixels；当前两张同 SHA 母版已成为 `P4 / source-accepted`
+像素基线：Player `331b353f…617b`、Target `256086c1…f81`。几何模拟的扁平
+颜色、锯齿或占位高光仍不是美术基准，P3 review-only Hover／Aggro 也未被接受。
 
 ## 主模块 Prompt
 

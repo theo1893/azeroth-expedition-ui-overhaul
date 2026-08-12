@@ -58,12 +58,13 @@ Leader／Master Looter／Raid Target／Resurrection、Buff／Debuff、Incoming H
 框架在 `modules/group.lua`，Raid Marker 血条列表在 `modules/raidmarkers.lua`，
 二者都不是 `UF.RAID.*`。
 
-## UF-PRIMARY V4 已确认架构与待验收候选
+## UF-PRIMARY V4 已接受 source 与待导出 runtime
 
 用户于 `2026-08-12` 要求重开 Player／Target 完整外壳的新生产架构，并已确认
-`UF-PRIMARY-V4-SIM-V1` 与 Raid A2 sample 的只读输入职责。当前确定性
-`UF-PRIMARY-V4-CANDIDATE-V1` 为 `P3 / candidate-reviewed`；以下定义真实对象
-与候选生产职责，不代表用户已经接受透明 source 或 addon runtime。
+`UF-PRIMARY-V4-SIM-V1` 与 Raid A2 sample 的只读输入职责。用户随后以“确认,
+进入下一阶段”接受 `UF-PRIMARY-V4-CANDIDATE-V1` 两张 exact candidate；当前为
+`P4 / source-accepted`，但尚未导出 runtime 或接入 addon。以下定义真实对象、
+已接受 source 与未来 P5 职责。
 
 - 最终组件粒度不变：`UF.PLAYER.SHELL` 与 `UF.TARGET.SHELL` 各自是一张独立
   完整 `1284×252 RGBA` source 和一张完整 `214×42` runtime。不得两角色合图、
@@ -81,6 +82,12 @@ Leader／Master Looter／Raid Target／Resurrection、Buff／Debuff、Incoming H
   展开，但不得侵入动态区。高度固定 `42`，只允许整体 UI Scale。
 - Player 的重修补位于左上外围；Target 的损伤位于右下外围，同族但非镜像。
   Hover／Aggro 从接受 Alpha 确定性派生断续短边，不单独生成。
+- 接受 source 分别为
+  `assets/source/unitframes/primary-v4/UnitFramePlayerShell_MasterV1.png`
+  SHA `331b353f…617b` 与
+  `assets/source/unitframes/primary-v4/UnitFrameTargetShell_MasterV1.png`
+  SHA `256086c1…f81`；manifest 为同目录
+  `UF-PRIMARY-V4_SourceManifest_v1.json`。source 不能被 Lua 直接加载。
 - 若已接受 material sample 在主框尺度上经透明 candidate 审查证明不合适，
   才能另开 primary-specific material-only donor；当前备用段未授权，不能调用。
 

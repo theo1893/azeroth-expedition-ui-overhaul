@@ -106,10 +106,10 @@ def main() -> None:
     ):
         assert clause in work, f"V4 work record missing: {clause}"
     assert "V4 新生产架构与生成前模拟" in progress
-    assert "UF-PRIMARY V4 已确认架构与待验收候选" in submodules
+    assert "UF-PRIMARY V4 已接受 source 与待导出 runtime" in submodules
     assert "重开的是生产职责，不是新的美术" in art
-    assert "Player／Target V4 `P3 candidate-reviewed`" in global_progress
-    assert "UF-PRIMARY-V4-CANDIDATE-V1 / P3 / candidate-reviewed" in agents
+    assert "Player／Target V4 `P4 source-accepted`" in global_progress
+    assert "UF-PRIMARY-V4-CANDIDATE-V1 / P4 / source-accepted" in agents
 
     print("unitframes primary V4 architecture test passed")
 

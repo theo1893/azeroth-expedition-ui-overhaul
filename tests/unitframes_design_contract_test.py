@@ -111,11 +111,11 @@ def main() -> None:
 
     work = WORK.read_text(encoding="utf-8")
     normalized_work = " ".join(work.split())
-    assert "UF-A1 V4 candidate-reviewed / user-acceptance-pending" in work
+    assert "UF-A1 V4 source-accepted / P4" in work
     assert "accepted UF-PRIMARY-V3-SIM-V1 / 2026-08-11" in work
     assert "production / authorized / 2026-08-11" in work
     assert "完整性结论：`pass-final`" in work
-    assert "V4 确定性 candidate：`authorized / built / reviewed`" in work
+    assert "V4 确定性 candidate：`accepted / source-promoted`" in work
     assert "UF-PRIMARY-V4-CANDIDATE-V1" in work
     assert "历史 V3 正式生产" in work
     assert "## V3 历史自主修复循环" in work

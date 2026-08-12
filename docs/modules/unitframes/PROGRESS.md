@@ -4,8 +4,12 @@
 
 - Player／Target 完整外壳已按用户于 `2026-08-12` 的要求重开；用户已确认
   `UF-PRIMARY-V4-SIM-V1`，并授权 Raid A2 已验收 sample 作为只读输入。当前
-  `UF-PRIMARY-V4-CANDIDATE-V1` 为 `P3 / candidate-reviewed /
-  user-acceptance-pending / ImageGen 0/0`。V4 只读复用已接受的 Raid A2
+  `UF-PRIMARY-V4-CANDIDATE-V1` 为 `P4 / source-accepted / ImageGen 0/0`。
+  用户审阅 exact candidate 后以“确认, 进入下一阶段”接受 Player SHA
+  `331b353f…617b` 与 Target SHA `256086c1…f81`，并只授权 P4。两张同 SHA
+  `1284×252 RGBA` 母版及 manifest 已写入
+  `assets/source/unitframes/primary-v4/`；没有 runtime 或 addon 改动。V4
+  只读复用已接受的 Raid A2
   leather／liner／brass／thread 材料 sample，由 Python 独占完整外壳几何、
   Alpha、安全区、维修 mask、`1284×252 → 214×42` 与 `32/150/32` 横向三切片；
   ImageGen 不再承担 UI 几何，首选路径也不需要新的 ImageGen。
@@ -60,8 +64,8 @@
 ## V4 新生产架构与生成前模拟
 
 - 用户原文：“重开 Player／Target 完整外壳的新生产架构。”用户随后确认
-  `UF-PRIMARY-V4-SIM-V1` 并授权 Raid A2 sample 只读输入；当前完成确定性
-  candidate 与 exact-pixel 内审，但没有 P4 source 或 addon 授权。
+  `UF-PRIMARY-V4-SIM-V1` 并授权 Raid A2 sample 只读输入；随后以“确认,
+  进入下一阶段”接受 exact Player／Target candidate，并只授权 P4 source。
 - 最终资产粒度不变：Player／Target 各自仍是一张独立完整 source 和一张完整
   runtime；不是端帽 atlas、两角色合图或多图拼接。标准 `W=200` 使用完整
   `214×42` 纹理，内部接缝 `0`；变宽才从同一角色 source 派生
@@ -93,8 +97,13 @@
   `3bedcae1…e5a4`、`f07b5ef6…347e`。输入 SHA、透明清理、安全区与身份 mask
   全部通过，display-region `10/10 pass`、violations `0`；多场景真实排版覆盖
   四资源、低血量、Hover／Aggro、`W=160/240` 与四档统一 UI Scale。
-- 当前下一门禁：用户审查 `UF-PRIMARY-V4-CANDIDATE-V1` exact pixels。用户
-  接受前不得晋级 `assets/source`、导出 addon runtime 或接入 Lua。
+- P4 manifest：
+  `assets/source/unitframes/primary-v4/UF-PRIMARY-V4_SourceManifest_v1.json`；
+  `tools/promote_unitframes_primary_v4_source_v1.py` 已验证重建结果与两张接受
+  candidate 的 PNG SHA、pixel SHA 均相同后固化 source。
+- 当前下一门禁：P5 runtime／状态边确定性导出、真实排版与 display-region
+  复核、addon 接入和 fresh-checkout package 校验。本次 P4 接受不授权 P5；
+  执行前保持 `addon/` 不变。
 
 ## V3 历史结构合同
 

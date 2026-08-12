@@ -104,10 +104,10 @@ def main() -> None:
     progress = PROGRESS_PATH.read_text(encoding="utf-8")
     for clause in (
         "UF-PRIMARY-V4-CANDIDATE-V1",
-        "candidate-reviewed / user-acceptance-pending",
+        "source-accepted / P4",
         "ImageGen `0/0`",
         "10/10 pass",
-        "pixels 前不得",
+        "P5",
     ):
         assert clause in work or clause in progress, clause
 

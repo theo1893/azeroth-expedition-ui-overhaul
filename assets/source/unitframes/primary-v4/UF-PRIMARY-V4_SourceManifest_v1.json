@@ -1,0 +1,187 @@
+{
+  "schema": "aeui-unitframes-primary-v4-source-manifest-v1",
+  "schema_version": 1,
+  "module": "unitframes",
+  "batch": "UF-PRIMARY-V4-CANDIDATE-V1",
+  "components": [
+    "UF.PLAYER.SHELL",
+    "UF.TARGET.SHELL"
+  ],
+  "status": "accepted-source",
+  "phase": "P4",
+  "accepted_on": "2026-08-12",
+  "user_acceptance": {
+    "exact_statement": "确认, 进入下一阶段",
+    "context": "This statement immediately followed the review of UF-PRIMARY-V4-CANDIDATE-V1 and accepts the two SHA-bound Player/Target candidate pixel sets for the next P4 source stage only.",
+    "accepts_exact_candidate_pixels": true,
+    "authorizes_p4_source_promotion": true,
+    "authorizes_p5_runtime_export": false,
+    "authorizes_addon_integration": false,
+    "scope": [
+      "UF.PLAYER.SHELL candidate SHA-256 331b353f294ae2e658e010ea59763a48bb08ba574b88e150fe3f5a2416bd617b",
+      "UF.TARGET.SHELL candidate SHA-256 256086c128561fdfa0717740701581d156ab811d88282c0098f9d3b4595acf81"
+    ]
+  },
+  "sources": {
+    "player": {
+      "component": "UF.PLAYER.SHELL",
+      "file": "UnitFramePlayerShell_MasterV1.png",
+      "repository_path": "assets/source/unitframes/primary-v4/UnitFramePlayerShell_MasterV1.png",
+      "accepted_candidate": "generated/unitframes/primary/candidates/V4/candidate-01/UF-Primary-V4-Player-candidate-v1.png",
+      "sha256": "331b353f294ae2e658e010ea59763a48bb08ba574b88e150fe3f5a2416bd617b",
+      "pixel_sha256": "1cb3581e2ab083cf72f1992ff1c5173a2bc63a046a47d3b88401d17b957b1bf9",
+      "width": 1284,
+      "height": 252,
+      "mode": "RGBA",
+      "visible_bbox_exclusive": [
+        0,
+        1,
+        1284,
+        252
+      ],
+      "transparent_pixels": 13577,
+      "partially_transparent_pixels": 0,
+      "opaque_pixels": 309991,
+      "visible_green_spill_pixels": 0,
+      "transparent_rgb_nonzero_pixels": 0,
+      "outside_outer_alpha_pixels": 0,
+      "live_bed_liner_coverage_ratio": 1.0,
+      "perimeter_relief_intrusion_pixels": 0,
+      "identity_repair_intrusion_pixels": 0
+    },
+    "target": {
+      "component": "UF.TARGET.SHELL",
+      "file": "UnitFrameTargetShell_MasterV1.png",
+      "repository_path": "assets/source/unitframes/primary-v4/UnitFrameTargetShell_MasterV1.png",
+      "accepted_candidate": "generated/unitframes/primary/candidates/V4/candidate-01/UF-Primary-V4-Target-candidate-v1.png",
+      "sha256": "256086c128561fdfa0717740701581d156ab811d88282c0098f9d3b4595acf81",
+      "pixel_sha256": "7263d08fb44d461492497959eee6c77d9383baeaedddff635b877c529ae393dd",
+      "width": 1284,
+      "height": 252,
+      "mode": "RGBA",
+      "visible_bbox_exclusive": [
+        0,
+        1,
+        1284,
+        252
+      ],
+      "transparent_pixels": 14978,
+      "partially_transparent_pixels": 0,
+      "opaque_pixels": 308590,
+      "visible_green_spill_pixels": 0,
+      "transparent_rgb_nonzero_pixels": 0,
+      "outside_outer_alpha_pixels": 0,
+      "live_bed_liner_coverage_ratio": 1.0,
+      "perimeter_relief_intrusion_pixels": 0,
+      "identity_repair_intrusion_pixels": 0
+    }
+  },
+  "provenance": {
+    "construction": "deterministic Python geometry and material sampling from immutable accepted Raid A2 samples",
+    "executor": "local py312; ImageGen not invoked",
+    "actual_imagegen_calls": 0,
+    "candidate_commit": "d4a3bba589f8bb52f4fd97e156485411920917b3",
+    "candidate_spec": "tools/specs/unitframes_primary_v4_candidate_v1.json",
+    "candidate_spec_sha256": "156e14001641e38c484d36a075eed6075e593b4d481f9a7d3539c2ce61b85089",
+    "candidate_display_contract": "tools/specs/unitframes_primary_v4_candidate_display_region_v1.json",
+    "candidate_display_contract_sha256": "ffff3879b0c24f7b936e57b01624ff7e54fb82e6a41fdd9577f2e273fd584cdd",
+    "candidate_builder": "tools/build_unitframes_primary_v4_candidates_v1.py",
+    "candidate_builder_sha256": "69e22e9adf30956c1ebee5beea39bf3c632aef6d452d4716aae66718581ab8b2",
+    "candidate_reviewer": "tools/review_unitframes_primary_v4_candidates_v1.py",
+    "candidate_reviewer_sha256": "635a68ce56a54786035eb31f081b67002ac07951d08d3270c883a8b32f553e42",
+    "candidate_review_report": "generated/unitframes/primary/candidates/V4/candidate-01/candidate-review-report-v1.json",
+    "candidate_review_report_sha256": "47a88d1c55fae6893b48d457a738a491f88dd882241ece0f77c3fecda35ac0c4",
+    "display_region_report": "generated/unitframes/primary/candidates/V4/candidate-01/display-region-report-v1.json",
+    "display_region_report_sha256": "32748c8d75145a99590515704bccd603c38a2017036bbc14a608663276ac6d85",
+    "technical_review_sha256": "d418d3c1e645e2c685b5b1608d7231970f3983a88be234a03084bfda19e36975",
+    "real_layout_sha256": "ffe78e11f392c8b6bd2ee28e180f3960e2a98af914629ffc0c9a09a8bf11951c",
+    "multi_scene_review_sha256": "c2d980bd82a87c4caeefe5a0d803a4a9e5da3e74b9be248e3d84d4ae6fd1da54",
+    "promotion_tool": "tools/promote_unitframes_primary_v4_source_v1.py",
+    "promotion": "the same deterministic builder and PNG encoding produce byte-identical copies of the two accepted candidate PNG files"
+  },
+  "material_inputs": {
+    "manifest": "assets/source/unitframes/raid-a2/UF-RAID-A2_SourceManifest_v1.json",
+    "read_only": true,
+    "leather_sha256": "2f0ed03df83aa0ced730681670191dee7e1b3079324f9e11a02f7c55626cc41e",
+    "liner_sha256": "8204723f74f63618ba55fef87932288c74588e1c2784e4e780550f49a4d27ef8",
+    "brass_sha256": "f55657bb6473d754a3e480f8418ebd44590f72bd6c23072633dc95e6b3406c27",
+    "thread_sha256": "86699161afb11d77de19e69781ba93862a538e42b16ec1da698341ba49a2e3a1"
+  },
+  "visual_authority": {
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/unitframes/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/unitframes/SUBMODULE_ART_BASELINES.md#ufplayershell-and-uftargetshell",
+    "component_contract": "docs/modules/unitframes/SUBMODULES.md",
+    "locked_cross_module_references": [
+      "assets/locked/chat/聊天框视觉基准_v1.png",
+      "assets/locked/chat/聊天框独立艺术资源_v3.png"
+    ],
+    "simulation_pixels_are_authority": false,
+    "v1_v2_v3_rejected_shell_pixels_are_authority": false
+  },
+  "geometry_contract": {
+    "source": [
+      1284,
+      252
+    ],
+    "future_standard_runtime": [
+      214,
+      42
+    ],
+    "live_content_bed_source": [
+      42,
+      36,
+      1242,
+      216
+    ],
+    "future_live_content_bed_runtime": [
+      7,
+      6,
+      207,
+      36
+    ],
+    "source_three_slice": [
+      192,
+      900,
+      192
+    ],
+    "future_runtime_three_slice": [
+      32,
+      150,
+      32
+    ],
+    "standard_width_uses_one_complete_texture": true,
+    "fixed_runtime_height": 42,
+    "independent_vertical_stretching": false
+  },
+  "logical_components": {
+    "player": {
+      "id": "UF.PLAYER.SHELL",
+      "provider_object": "pfUI.uf.player / pfPlayer",
+      "dynamic_content_owner": "pfUI",
+      "future_runtime_role": "one complete static shell texture"
+    },
+    "target": {
+      "id": "UF.TARGET.SHELL",
+      "provider_object": "pfUI.uf.target / pfTarget",
+      "dynamic_content_owner": "pfUI",
+      "future_runtime_role": "one complete static shell texture"
+    }
+  },
+  "forbidden_runtime_uses": [
+    "load these PNG masters directly from addon Lua",
+    "bake names, levels, values, status colours, portraits, auras, icons or interaction states into either source",
+    "mirror or copy Player pixels into Target or Target pixels into Player",
+    "apply either source to TargetTarget, Focus, Party or Raid frames",
+    "stretch either shell vertically or move provider geometry",
+    "promote the P3 review-only Hover or Aggro images as runtime state assets",
+    "modify events, clicks, secure templates, SavedVariables or unrelated pfUI behaviour"
+  ],
+  "export_contract": {
+    "status": "not-exported",
+    "phase": "P5-pending-separate-gate",
+    "runtime_media_written": false,
+    "addon_code_modified": false,
+    "next_gate": "separate P5 deterministic runtime export, state derivation, addon integration and fresh-checkout package validation"
+  }
+}
