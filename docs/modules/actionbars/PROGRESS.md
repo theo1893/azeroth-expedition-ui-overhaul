@@ -2,6 +2,16 @@
 
 ## 当前结论
 
+- 用户于 `2026-08-13` 提供 AEUI `0.8.28` 后实机截图（SHA `85ca1366…81a5`），确认
+  AutoBar 视觉位置仍在左上。与前图逐帧比较后确认它已随 Bar 1 同步平移，失败不是根绑定，
+  而是绑定偏移仍从尚未收敛的 24 个 Frame 状态／旧缓存取得，只有 3 个实际分配格时仍保留
+  数百像素错误距离。AEUI `0.8.29` 改为直接复刻 AutoBar 1.31 的
+  `AssignButtons + rows／columns／alignButtons + button size／gapping` 布局公式，以 provider
+  实际分配数计算可见 union；正常路径不再读取 Button 世界坐标、`IsShown` 或旧锚缓存。
+  专项 smoke 注入“实际 3 格、24 个 Frame 全部报告陈旧 shown”的真实失败条件，并断言
+  handle 固定为 Bar 1 `BOTTOMLEFT (-220,36.6667)`（handle scale `0.6`，即未缩放
+  `(-132,22)`）；provider 随后写自由 `(555,213)` 仍不能覆盖。当前仍为
+  `runtime-exported / addon-integrated / P5 / pending-game-validation`。
 - 用户于 `2026-08-13` 再次实机确认 AEUI `0.8.27` 后 AutoBar 仍停在左上自由坐标；截图
   SHA `169d9da3…c1b3c` 同时证明姿态栏、饰品栏与隐藏拖拽点已生效，失败范围只剩
   AutoBar 根锚。与没有最终坐标回写的 TrinketMenu 不同，AutoBar provider 会在刷新末尾

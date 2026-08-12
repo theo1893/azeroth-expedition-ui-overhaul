@@ -747,6 +747,49 @@ assert(module.autoBarAnchorBasis == "provider-dock")
 assert(AutoBar.display == AutoBar_Config["_SHARED1"].display)
 assert(AutoBar_Config["_SHARED1"].display.docking ==
   module.autoBarProviderDockName)
+
+-- A compact inventory may expose only three buttons while all 24 frame
+-- objects still report stale shown/position state. Dock from AutoBar's own
+-- AssignButtons/layout formula, never from that stale frame envelope.
+local compactDisplayBackup = {
+  rows = AutoBar.display.rows,
+  columns = AutoBar.display.columns,
+  gapping = AutoBar.display.gapping,
+  buttonWidth = AutoBar.display.buttonWidth,
+  buttonHeight = AutoBar.display.buttonHeight,
+  alignButtons = AutoBar.display.alignButtons,
+}
+AutoBar.display.rows = 1
+AutoBar.display.columns = 24
+AutoBar.display.gapping = 3
+AutoBar.display.buttonWidth = 36
+AutoBar.display.buttonHeight = 36
+AutoBar.display.alignButtons = 9
+AutoBar.AssignButtons = function() return 3 end
+module:ApplyAutoBarFieldKit(true)
+local compactAnchor = AutoBarAnchorFrameHandle.decorativePoints[1]
+assert(compactAnchor[2] == pfUI.bars[1])
+assert(math.abs(compactAnchor[4] - (-132 / 0.6)) < 0.0001)
+assert(math.abs(compactAnchor[5] - (22 / 0.6)) < 0.0001)
+AutoBarAnchorFrameHandle:ClearAllPoints()
+AutoBarAnchorFrameHandle:SetPoint(
+  "CENTER", UIParent, "BOTTOMLEFT", 555, 213
+)
+assert(math.abs(
+  AutoBarAnchorFrameHandle.decorativePoints[1][4] - (-132 / 0.6)
+) < 0.0001)
+assert(math.abs(
+  AutoBarAnchorFrameHandle.decorativePoints[1][5] - (22 / 0.6)
+) < 0.0001)
+AutoBar.AssignButtons = nil
+AutoBar.display.rows = compactDisplayBackup.rows
+AutoBar.display.columns = compactDisplayBackup.columns
+AutoBar.display.gapping = compactDisplayBackup.gapping
+AutoBar.display.buttonWidth = compactDisplayBackup.buttonWidth
+AutoBar.display.buttonHeight = compactDisplayBackup.buttonHeight
+AutoBar.display.alignButtons = compactDisplayBackup.alignButtons
+module:ApplyAutoBarFieldKit(true)
+
 assert(AutoBarFrame.aeuiConsumableKitShellV1.shown == true)
 assert(AutoBarFrame.aeuiConsumableKitLabelsV1 == nil)
 assert(table.getn(AutoBarFrame.aeuiConsumableKitDividersV1) == 2)

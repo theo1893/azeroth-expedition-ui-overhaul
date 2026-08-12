@@ -4199,10 +4199,117 @@ local function AutoBarLocalVisualOffsets(handle)
     rackScale
 end
 
+local function AutoBarProviderVisualOffsets()
+  local display = AutoBar and AutoBar.display
+  if type(display) ~= "table" or not AutoBar or
+    type(AutoBar.AssignButtons) ~= "function"
+  then
+    return nil, nil, nil
+  end
+
+  local ok, assigned = pcall(AutoBar.AssignButtons, AutoBar)
+  local rows = math.max(1, math.floor(tonumber(display.rows) or 1))
+  local columns = math.max(
+    1, math.floor(tonumber(display.columns) or 1)
+  )
+  local count = ok and math.min(
+    math.max(0, math.floor(tonumber(assigned) or 0)),
+    rows * columns,
+    24
+  ) or 0
+  if count == 0 then
+    return nil, nil, nil
+  end
+
+  local first = GetGlobal("AutoBarFrameButton1")
+  local width = tonumber(display.buttonWidth) or
+    (first and first.GetWidth and tonumber(first:GetWidth())) or 36
+  local height = tonumber(display.buttonHeight) or
+    (first and first.GetHeight and tonumber(first:GetHeight())) or 36
+  local gap = tonumber(display.gapping) or 3
+  local align = tonumber(display.alignButtons) or 1
+  local displayedColumns = math.min(count, columns)
+  local displayedRows = math.floor((count - 1) / columns) + 1
+  local xStep = width + gap
+  local yStep = height + gap
+  local point = "BOTTOMLEFT"
+  local centerShiftX = 0
+  local centerShiftY = 0
+
+  if align == 2 then
+    centerShiftX = -0.5 * displayedColumns * xStep + gap / 2
+  elseif align == 3 then
+    xStep = -xStep
+    point = "BOTTOMRIGHT"
+  elseif align == 4 then
+    xStep = -xStep
+    point = "BOTTOMRIGHT"
+    centerShiftY = -0.5 * displayedRows * yStep + gap / 2
+  elseif align == 5 then
+    centerShiftX = -0.5 * displayedColumns * xStep + gap / 2
+    centerShiftY = -0.5 * displayedRows * yStep + gap / 2
+  elseif align == 6 then
+    centerShiftY = -0.5 * displayedRows * yStep + gap / 2
+  elseif align == 7 then
+    xStep = -xStep
+    yStep = -yStep
+    point = "TOPRIGHT"
+  elseif align == 8 then
+    yStep = -yStep
+    point = "TOPLEFT"
+    centerShiftX = -0.5 * displayedColumns * xStep + gap / 2
+  elseif align == 9 then
+    yStep = -yStep
+    point = "TOPLEFT"
+  end
+
+  local rightEdge = nil
+  local bottomEdge = nil
+  for index = 1, count do
+    local xOffset = math.mod(index - 1, columns) * xStep +
+      centerShiftX
+    local yOffset = math.floor((index - 1) / columns) * yStep +
+      centerShiftY
+    local right = xOffset + width / 2
+    local bottom = yOffset - height / 2
+    if string.find(point, "LEFT", 1, true) then
+      right = xOffset + width
+    elseif string.find(point, "RIGHT", 1, true) then
+      right = xOffset
+    end
+    if string.find(point, "BOTTOM", 1, true) then
+      bottom = yOffset
+    elseif string.find(point, "TOP", 1, true) then
+      bottom = yOffset - height
+    end
+    if not rightEdge or right > rightEdge then
+      rightEdge = right
+    end
+    if not bottomEdge or bottom < bottomEdge then
+      bottomEdge = bottom
+    end
+  end
+
+  local rackScale = GetFrameScale(first)
+  return
+    (rightEdge + ActionBars.fieldKitShellPadding) * rackScale,
+    (bottomEdge - ActionBars.fieldKitShellPadding) * rackScale,
+    rackScale
+end
+
+local function AutoBarVisualOffsets(handle)
+  local right, bottom, scale = AutoBarProviderVisualOffsets()
+  if right and bottom and scale then
+    return right, bottom, scale, "provider-layout"
+  end
+  right, bottom, scale = AutoBarLocalVisualOffsets(handle)
+  return right, bottom, scale, "provider-local"
+end
+
 function ActionBars:ResolveAutoBarBoundOffsets(handle)
   local handleScale = GetFrameScale(handle)
   local rightDelta, bottomDelta, rackScale =
-    AutoBarLocalVisualOffsets(handle)
+    AutoBarVisualOffsets(handle)
   if rightDelta and bottomDelta and rackScale then
     return
       (-self.consumableDockGap * rackScale - rightDelta) / handleScale,
@@ -4297,9 +4404,8 @@ function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
   end
 
   local handleScale = GetFrameScale(handle)
-  local rightDelta, bottomDelta, rackScale =
-    AutoBarLocalVisualOffsets(handle)
-  local anchorBasis = "provider-local"
+  local rightDelta, bottomDelta, rackScale, anchorBasis =
+    AutoBarVisualOffsets(handle)
 
   if not rightDelta or not bottomDelta or not rackScale then
     -- Unknown provider layouts may not expose direct handle-relative points.
