@@ -211,7 +211,7 @@ def main() -> None:
     assert donor_production["schema"] == "aeui-unitframes-raid-donor-production-v1"
     assert donor_production["version"] == "UF-RAID-A2-DONOR V1"
     assert donor_production["status"] == (
-        "repair-prepared / attempts-01-02-internal-fail / attempt-03-ready"
+        "repair-prepared / attempts-01-03-internal-fail / attempt-04-ready"
     )
     assert donor_production["production_authorized"] is True
     assert donor_production["architecture"]["simulation_confirmation"] == {
@@ -237,21 +237,24 @@ def main() -> None:
     donor_loop = donor_production["repair_loop"]
     assert donor_loop["maximum_actual_imagegen_calls"] == 5
     assert donor_loop["process_errors_count_toward_limit"] is False
-    assert donor_loop["execution_state"]["attempts_used"] == 2
-    assert donor_loop["execution_state"]["attempts_remaining"] == 3
+    assert donor_loop["execution_state"]["attempts_used"] == 3
+    assert donor_loop["execution_state"]["attempts_remaining"] == 2
     assert donor_loop["execution_state"]["process_errors"] == 1
     assert donor_loop["execution_state"]["current_prompt_version"] == (
-        "UF-RAID-A2-DONOR V1.r2"
+        "UF-RAID-A2-DONOR V1.r3"
     )
     assert donor_loop["execution_state"]["current_prompt_body_sha256"] == (
-        "2de5a46be8462eb75f5df8e80c19bedb37047e4175ac0e55846f83d769f19dd7"
+        "1482ef63b69d8155438643ff9ff8141a6e9826bb6ac6cdb3d95f783d8c6305b0"
     )
-    assert len(donor_production["attempts"]) == 2
+    assert len(donor_production["attempts"]) == 3
     assert donor_production["attempts"][0]["raw_sha256"] == (
         "ac2f7a2adf120f932bb3785c5b2b9dfc83d00a8ed9812421400120cfb86aec23"
     )
     assert donor_production["attempts"][1]["raw_sha256"] == (
         "d6479b8907e3200e8d3b9ebb5e9a3b44aacbbcf531d5f2b0f9036e1fcd30c893"
+    )
+    assert donor_production["attempts"][2]["raw_sha256"] == (
+        "6f54172bfacd4215ba431c3cc34aea7d75c0c391a473042e62c1ee5cc6ff4b28"
     )
     assert len(donor_production["process_error_records"]) == 1
     assert donor_production["process_error_records"][0][
@@ -448,6 +451,8 @@ def main() -> None:
         "ac2f7a2a…ec23",
         "UF-RAID-A2-DONOR V1.r2",
         "d6479b89…c893",
+        "UF-RAID-A2-DONOR V1.r3",
+        "6f54172b…4b28",
     ):
         assert clause in work, f"raid work record missing: {clause}"
 
