@@ -669,3 +669,138 @@ continuous piping, braid, embossing or regular seam; four sparse identities
 inside fixed end caps; quiet stretchable centres; identical weight and light;
 rough low-saturation Vanilla craft; and no baked live content.
 ```
+
+### Attempt 3 执行与内部审查
+
+- 固定执行器 user block 完整；仅上传授权 Image 1／2，SHA 均一致；按修复策略
+  未上传 Image 3。session `019ff4eb-de51-7fe1-98cb-570447d68de3`；provider
+  result `ig_0ddc4352582d4a90016a7c23de41148191a5febff072277aa0`；raw
+  `1536×1024 RGB`，SHA `41c9d561…e760`。
+- 报告：`generated/unitframes/raid/A1/V1/attempt-03/review/technical-report.json`，
+  SHA `759240e7…f5df`；contact SHA `3d9345ff…264b`；40 人真实排版 SHA
+  `daac9c12…96ce`。
+- 成功项：从零重建消除了前两稿的家具式圆角和编绳滚边；四件都成为同族的
+  深胡桃、低饱和、实体外壳，A/B/C/D 身份可辨；四格 ratio error
+  `3.92%/3.92%/3.63%/3.47%`、anisotropy 同值，均已低于 `8%`；各格仅
+  `1` 个 Alpha32 连通体且 green spill `0`。
+- 第一失败门禁——真实排版美术：外沿仍形成几乎连续的暖色锯齿亮线，内衬有
+  均匀重复的细碎云纹；D 的亮黄修补件占右端过多。缩到 `74×37` 后，边线和
+  D 补片仍会先于动态生命／法力内容抢焦点，不符合聊天框基准的克制粗粝感。
+- 装配失败：A/B/C/D bbox `638×332`、`638×332`、`638×331`、`639×331`；
+  A/B 的底边留白仅 `55`，C/D 的顶边留白仅 `56`，而 A/C 右侧仅 `39`、
+  B/D 左侧仅 `39/38`。四件都被吸向整张 sheet 的中央十字；没有满足每格
+  `64/80/64/80` 的最低留白，故不得执行 bbox normalize。
+- 内部结论：`internal-fail / repair-prepared`。attempt 4 使用同段紧邻 attempt 3
+  完整 raw `41c9d561…e760` 作为 Image 3；保留已经成功的粗粝实体与身份，只
+  做格位收缩／外移、亮边中断、内衬降频和 D 补片收敛。
+
+### `UF-RAID-A1 V1 final.r3` — attempt 4 自包含格位与低频材质修复
+
+```text
+Edit Image 3 into one corrected production sheet containing exactly four
+complete empty raid-member background shells for Turtle WoW 1.18.1 and a
+Vanilla-era pfUI overhaul. Return one 1536 by 1024 RGB bitmap on a perfectly
+uniform pure #00FF00 background. This is a bounded edit of the immediately
+preceding complete sheet from this same production loop. Do not create a
+gameplay screenshot, raid panel, concept board, label, letter, number, grid,
+guide, fifth object or separate loose component.
+
+Preserve Image 3's successful art direction and topology: exactly four fixed
+cells; one front-facing orthographic connected solid plate per cell; deep
+soot-dark walnut leather; one quiet opaque liner; blunt unequal hand-cut
+corners; sparse A/B/C/D end-cap identities; restrained warm upper-left light;
+low saturation; and no baked live content. Do not replace these objects with
+rounded cards, furniture trim, book pages, metal frames or a new metaphor.
+
+Correct Image 3's sheet-centre attraction. The current plates are roughly 638
+by 331 or 332 and all lean toward the central cross. Reduce every whole plate
+to exactly 592 by 296 without cropping it, and move it away from the global
+sheet centre into the exact centred bbox of its own 768 by 512 cell. A must be
+x88..679/y108..403. B must be x856..1447/y108..403. C must be
+x88..679/y620..915. D must be x856..1447/y620..915. Relative to Image 3,
+shrink each object about 7 percent horizontally and 11 percent vertically;
+move A about 26 pixels left and 35 pixels up, B 26 pixels right and 35 pixels
+up, C 26 pixels left and 35 pixels down, and D 27 pixels right and 35 pixels
+down. Keep at least 64 pure-green pixels left and right and at least 80
+pure-green pixels above and below each object inside its cell. Make the
+vertical green gutter between the two columns at least 128 pixels and the
+horizontal green gutter between the two rows at least 160 pixels. Do not add
+green inside an object, detach an end repair, cast an outside shadow or cross
+a cell edge.
+
+Each plate remains one complete opaque raid-row backing, not a hollow frame.
+Pure green occurs only beyond the outer silhouette. Keep the whole interior
+filled by one matte soot-brown liner because live Health, Power, names, auras
+and state icons will be drawn above it. Do not draw a second inset panel,
+divider, fake StatusBar, transparent opening or green hole.
+
+Repair the current perimeter without changing its physical construction. The
+attached raw-hide rim stays thin, flat and roughly 12 to 20 source pixels, but
+remove the nearly unbroken amber jagged highlight that now traces all four
+sides. Darken the rim toward soot walnut. Leave long matte stretches and only
+four or five sparse broken dull-umber edge catches per object; no catch may
+continue around a corner, and no pair may repeat at equal spacing. Flatten any
+remaining beaded or craggy rhythm. Preserve slow unequal cut thickness, tiny
+nicks and four differently worn blunt joins, but do not make a noisy sawtooth,
+continuous piping, braid, rope, embossed lip or regular seam.
+
+Repair the liner texture. Remove Image 3's evenly distributed small cloudy
+rosettes, repeated mottling and procedural-looking grain. Replace them with
+only two or three very broad, low-frequency, hand-painted soot or dye value
+fields per plate, each roughly 80 to 180 source pixels across, with soft lost
+edges and less than subtle contrast. The centre must look quiet at 74 by 37:
+no repeated motif, uniform pores, pebble grain, sharp scratch, seam, stitch,
+rivet, hotspot, emblem or ornament across its central 496-pixel stretch band.
+
+The normalized 592 by 296 source will use a 48/496/48 horizontal split and
+become one 74 by 37 runtime texture. Keep all unique anatomy completely inside
+the 48-pixel end caps after the object is recentered. A keeps one small blunt
+upper-left notch in its left cap and two short unequal lower-right stitches in
+its right cap. B keeps one tiny off-centre dark rivet and a modest raw rub only
+in its right cap. C keeps one short dark attached leather repair and irregular
+missing-hole stitches only in its left cap, with no bright metal. D keeps one
+small skewed cracked oxidized-brass repair only in its right cap and one tiny
+split only in its left cap. Reduce D's current yellow patch to less than half
+the cap width and less than half its height; darken it to tarnished umber so it
+never becomes the brightest object. No unique feature may cross a cap boundary.
+
+All four plates retain identical dimensions, liner area, darkness, material
+thickness, scale and light. Paint in circa-2004 Vanilla World of Warcraft UI
+language: broad chunky hand-painted value blocks, deliberate low-resolution
+readability, matte depth and restrained warm contrast. Ruggedness comes from
+unequal cut pressure, uneven dye, smoke, mud rub, missing stitch holes and
+local repair tension—not precision geometry, random noise, photo texture,
+uniform pores, orange leather, polished metal or glossy modern bevels.
+
+The written requirements outrank all inputs. Use Image 1 only for circa-2004
+Vanilla WoW painted scale, broad low-resolution readability, restrained warm
+contrast and material thickness; ignore its screen, text, portraits, book,
+pages, spine, tabs, wax seals and full-frame geometry. Use Image 2 only for
+deep-walnut depth, warm upper-left light, contact shadow, restrained dull-brass
+response, rough wear and hand-made error; ignore pages, spine, columns,
+dragons, broad book construction and large metal ornaments. Use Image 3 only
+for its same-loop four-cell topology, solid plate construction, successful
+dark rough craft direction and A/B/C/D identity. Explicitly discard Image 3's
+current oversized and centre-biased bboxes, continuous amber outline, repeated
+cloudy liner grain and oversized bright D repair. No other image or prior
+candidate is a source.
+
+Forbid a shared raid frame, outer raid panel, parchment card, page edge,
+bookbinding, wax seal, continuous metal rim, symmetrical gold border, rounded
+web card, black glass, glossy meter, neon, glow, black-iron shrine, spikes,
+skulls, horns, faction or class emblems, gems, runes, photoreal antiques,
+upholstery, furniture trim, industrial moulding, continuous rope, braid,
+lacing, piping, rolled lip, equal-distance stitches, symmetric rivets, pebble
+embossing and orange edge light. Draw no portrait, Health or Power fill, name,
+number, class or reaction colour, aura, buff, debuff, raid marker, leader or
+loot icon, resurrection icon, combat, aggro, hover, highlight or click state.
+
+Before returning, verify visibly: exactly four and only four solid connected
+plates; fixed A/B/C/D cells; every complete plate centred at exactly 592 by 296
+with at least 64/80/64/80 pure-green cell padding; at least 128 green pixels
+between columns and 160 between rows; no detached fleck or internal green hole;
+thin mostly dark raw-hide rims with broken rather than continuous highlights;
+no repeated liner grain; identities contained by fixed end caps; D patch small
+and dull; quiet stretchable centres; matched visual weight; rough low-saturation
+Vanilla craft; and no baked live content.
+```
