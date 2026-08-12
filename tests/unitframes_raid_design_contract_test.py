@@ -211,9 +211,9 @@ def main() -> None:
     assert donor_production["schema"] == "aeui-unitframes-raid-donor-production-v1"
     assert donor_production["version"] == "UF-RAID-A2-DONOR V1"
     assert donor_production["status"] == (
-        "repair-prepared / attempts-01-04-internal-fail / attempt-05-ready"
+        "repair-budget-exhausted / exception-review-required / 5-of-5"
     )
-    assert donor_production["production_authorized"] is True
+    assert donor_production["production_authorized"] is False
     assert donor_production["architecture"]["simulation_confirmation"] == {
         "status": "confirmed",
         "date": "2026-08-12",
@@ -237,16 +237,17 @@ def main() -> None:
     donor_loop = donor_production["repair_loop"]
     assert donor_loop["maximum_actual_imagegen_calls"] == 5
     assert donor_loop["process_errors_count_toward_limit"] is False
-    assert donor_loop["execution_state"]["attempts_used"] == 4
-    assert donor_loop["execution_state"]["attempts_remaining"] == 1
-    assert donor_loop["execution_state"]["process_errors"] == 1
+    assert donor_loop["execution_state"]["attempts_used"] == 5
+    assert donor_loop["execution_state"]["attempts_remaining"] == 0
+    assert donor_loop["execution_state"]["process_errors"] == 2
     assert donor_loop["execution_state"]["current_prompt_version"] == (
         "UF-RAID-A2-DONOR V1.r4"
     )
     assert donor_loop["execution_state"]["current_prompt_body_sha256"] == (
         "ed3ec1599512a5b6c42695334bc1466e560ac010b428b3261f4503fba30bb078"
     )
-    assert len(donor_production["attempts"]) == 4
+    assert len(donor_production["attempts"]) == 5
+    assert [item["attempt"] for item in donor_production["attempts"]] == [1, 2, 3, 4, 5]
     assert donor_production["attempts"][0]["raw_sha256"] == (
         "ac2f7a2adf120f932bb3785c5b2b9dfc83d00a8ed9812421400120cfb86aec23"
     )
@@ -259,10 +260,25 @@ def main() -> None:
     assert donor_production["attempts"][3]["raw_sha256"] == (
         "7750b39de94bd062be6bc7158b0f4a4ca3bf1eea93a1746baedb128a3e70ddab"
     )
-    assert len(donor_production["process_error_records"]) == 1
-    assert donor_production["process_error_records"][0][
-        "counts_toward_imagegen_budget"
-    ] is False
+    assert donor_production["attempts"][4]["raw_sha256"] == (
+        "dad020c26b772a26b856688bc0f5c4cf804b5d0f0ff932846feb37a701a6f159"
+    )
+    assert len(donor_production["process_error_records"]) == 2
+    assert all(
+        record["counts_toward_imagegen_budget"] is False
+        for record in donor_production["process_error_records"]
+    )
+    terminal = donor_production["terminal_review"]
+    assert terminal["attempts_used"] == 5
+    assert terminal["best_runtime_visual_attempt"] == 5
+    assert terminal["sample_windows"].startswith("4/4")
+    assert terminal["strict_fixed_cells"].startswith("fail")
+    assert terminal["display_region"] == "7/7 pass; 0 violations"
+    assert terminal["candidate_accepted"] is False
+    assert terminal["source_promoted"] is False
+    assert terminal["runtime_exported"] is False
+    assert terminal["addon_integrated"] is False
+    assert terminal["sixth_imagegen_call_forbidden"] is True
     authorization_request = donor_production["authorization_request"]
     assert authorization_request["status"] == "granted"
     assert authorization_request["date"] == "2026-08-12"
@@ -446,10 +462,10 @@ def main() -> None:
         "repair-budget-exhausted / candidate-rejected / 5/5",
         "UF-RAID-A2-SIM-V1",
         "ImageGen material donor only + Python deterministic shell",
-        "production_authorized=true",
+        "production_authorized=false",
         "确认UF-RAID-A2-SIM-V1",
         "UF-RAID-A2-DONOR V1` 正文完整性复检",
-        "当前授权状态：`granted / 2026-08-12 / bounded-repair-loop-active`",
+        "当前授权状态：`consumed / 2026-08-12 / 5-of-5 / sixth-call-forbidden`",
         "UF-RAID-A2-DONOR V1.r1",
         "ac2f7a2a…ec23",
         "UF-RAID-A2-DONOR V1.r2",
@@ -458,6 +474,8 @@ def main() -> None:
         "6f54172b…4b28",
         "UF-RAID-A2-DONOR V1.r4",
         "7750b39d…ddab",
+        "dad020c2…f159",
+        "sample-window-only",
     ):
         assert clause in work, f"raid work record missing: {clause}"
 
@@ -471,7 +489,7 @@ def main() -> None:
     assert "UF-RAID-SIM-V1" in progress
     assert "UF-RAID-A1 V1 final" in progress
     assert "UF-RAID-A2-SIM-V1" in progress
-    assert "bounded-repair-loop-active" in progress
+    assert "exception-review-required" in progress
     assert "模型供材、Python 造壳" in submodule_art
     assert "build_unitframes_raid_donor_shells_v1.py" in submodules
     assert "docs/modules/unitframes/work/UNITFRAMES.RAID.md" in agents

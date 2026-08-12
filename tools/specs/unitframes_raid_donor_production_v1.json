@@ -1,8 +1,8 @@
 {
   "schema": "aeui-unitframes-raid-donor-production-v1",
   "version": "UF-RAID-A2-DONOR V1",
-  "status": "repair-prepared / attempts-01-04-internal-fail / attempt-05-ready",
-  "production_authorized": true,
+  "status": "repair-budget-exhausted / exception-review-required / 5-of-5",
+  "production_authorized": false,
   "architecture": {
     "status": "user-selected",
     "statement": "ImageGen only generates rough material donors; Python deterministically constructs exact shell geometry and all four repair differences",
@@ -79,13 +79,13 @@
     "later_image_3": "only the immediately previous output from this same donor loop and only within the frozen material-field repair boundary",
     "stop_on_pass": true,
     "execution_state": {
-      "attempts_used": 4,
-      "attempts_remaining": 1,
-      "process_errors": 1,
+      "attempts_used": 5,
+      "attempts_remaining": 0,
+      "process_errors": 2,
       "current_prompt_version": "UF-RAID-A2-DONOR V1.r4",
       "current_prompt_heading": "### `UF-RAID-A2-DONOR V1.r4` — attempt 5 最终自包含低频四材料重建",
       "current_prompt_body_sha256": "ed3ec1599512a5b6c42695334bc1466e560ac010b428b3261f4503fba30bb078",
-      "next_operation": "commit attempt 4 review and complete r4 body, then make the final regenerate call with fixed SHA Image 1/2 and no Image 3"
+      "next_operation": "no more ImageGen; present attempt 5 real-layout evidence and wait for explicit user acceptance or rejection of the sample-window-only deterministic exception"
     }
   },
   "attempts": [
@@ -152,6 +152,22 @@
       "first_failure": "locked-baseline art regression: editing reintroduced a shared fine curled embossed pattern across all four fields",
       "secondary_failure": "fixed field bboxes remain outside tolerance with maximum deviation 48 pixels and 11169 to 11520 dominant-green pixels inside each contract cell",
       "result": "internal-fail / repair-prepared"
+    },
+    {
+      "attempt": 5,
+      "prompt_version": "UF-RAID-A2-DONOR V1.r4",
+      "execution_commit": "b9e5a653355e4d2f77f57c94ecfb5f1cce4da095",
+      "operation": "regenerate",
+      "codex_session_id": "019ff547-a187-70d2-b123-f6b2960ae9eb",
+      "provider_result": "ig_08662f5db7697b89016a7c3ba4bae08191a3c895ac74d50469",
+      "raw_path": "generated/unitframes/raid/A2/DONOR-V1/attempt-05/uf-raid-a2-donor-v1-attempt-05.provider-native-01.png",
+      "raw_sha256": "dad020c26b772a26b856688bc0f5c4cf804b5d0f0ff932846feb37a701a6f159",
+      "technical_report": "generated/unitframes/raid/A2/DONOR-V1/attempt-05/review/technical-report.json",
+      "technical_report_sha256": "9018df186f4710fa90156b6001a93326630a4b0894287262b97e5374fc3ee5e6",
+      "display_report_sha256": "ddb3fc51b7c3ef2e1590ecc145b4668ed3d23c5e627600dfa2d0a424a8ce6dd0",
+      "first_failure": "strict unused outer field bboxes deviate from fixed cells by up to 19 pixels even though all four consumed sample windows are fully material-filled",
+      "secondary_failure": "flax sample luminance is 1.205 above the written target but remains non-focal after the tiny deterministic repair mask",
+      "result": "exception-review-required / best-runtime-visual / 5-of-5 stop"
     }
   ],
   "process_error_records": [
@@ -162,8 +178,34 @@
       "recovery": "file and sips confirmed the same 1536x1024 RGB image; wrapper returned zero",
       "additional_provider_outputs": 0,
       "counts_toward_imagegen_budget": false
+    },
+    {
+      "after_attempt": 5,
+      "codex_session_id": "019ff547-a187-70d2-b123-f6b2960ae9eb",
+      "error": "provider stream disconnected before any image and retried the same sampling request once",
+      "recovery": "same wrapper and same request returned exactly one 1536x1024 RGB provider image",
+      "additional_provider_outputs": 0,
+      "counts_toward_imagegen_budget": false
     }
   ],
+  "terminal_review": {
+    "status": "repair-budget-exhausted / exception-review-required",
+    "attempts_used": 5,
+    "attempts_remaining": 0,
+    "best_runtime_visual_attempt": 5,
+    "best_raw_sha256": "dad020c26b772a26b856688bc0f5c4cf804b5d0f0ff932846feb37a701a6f159",
+    "art_direction": "internal-pass",
+    "sample_windows": "4/4 fully material-filled; zero dominant-green pixels",
+    "strict_fixed_cells": "fail; maximum detected bbox deviation 19 pixels",
+    "deterministic_shells": "pass",
+    "display_region": "7/7 pass; 0 violations",
+    "exception_boundary": "ignore only the unused outer field bbox tolerance; consume the exact four authorized sample windows and preserve all crop coordinates and downstream deterministic operations",
+    "candidate_accepted": false,
+    "source_promoted": false,
+    "runtime_exported": false,
+    "addon_integrated": false,
+    "sixth_imagegen_call_forbidden": true
+  },
   "authorization_request": {
     "status": "granted",
     "date": "2026-08-12",

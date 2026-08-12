@@ -145,7 +145,7 @@ Frame 中心；透明外扩不能参与 Frame 宽高、点击区域或移动边�
 | `pet`／`ptarget` | `UF.PET.*`／`UF.PETTARGET.*` | 暂缓 |
 | `tttarget` | `UF.TARGETTARGETTARGET.*` | 暂缓 |
 | `group`／`grouptarget`／`grouppet` | `UF.PARTY.*` | 暂缓；后续按真实重复数量设计 |
-| `raid` | `UF.RAID.*` | `UF-RAID-A2-DONOR V1 / P3 bounded-repair-loop-active`；精确次数与当前正文见唯一 Raid work；A1 已 5/5 rejected，A2 改用 material-only donor＋Python 精确造壳；40 个真实对象，不从主单位框缩放复制 |
+| `raid` | `UF.RAID.*` | `UF-RAID-A2-DONOR V1 / P3 5/5 exhausted / exception-review-required`；attempt 5 最佳运行时视觉，等待 `sample-window-only` 例外决定；A1 已 5/5 rejected，A2 使用 material-only donor＋Python 精确造壳；40 个真实对象，不从主单位框缩放复制 |
 | `fallback` | `UF.FALLBACK.*` | 保持 pfUI 回退 |
 | `portrait = bar/left/right` | `UF.PORTRAIT.*` | 当前 profile 为 `off`；未取得新合同前不制作假头像槽 |
 | Buff／Debuff Buttons | `UF.AURA.*` | 当前不重绘 |
