@@ -3,11 +3,11 @@
 ## UF-RAID-A2 当前工作快照
 
 - 版本：`UF-RAID-A2 / UF-RAID-A2-SIM-V1`
-- 子状态：`P2 / simulation-confirmed / production-authorization-pending`
+- 子状态：`P3 / prompt-authorized / attempt-01-ready`
 - 用户选择的架构：`ImageGen material donor only + Python deterministic shell`
-- 当前操作：`prepare-production-authorization`
-- 当前批 ImageGen：`0/0`
-- production donor：`未授权`
+- 当前操作：`generate-attempt-01`
+- 当前批 ImageGen：`0/5`
+- production donor：`已授权，尚未调用`
 - 模拟用户结论：`confirmed / 2026-08-12 / accepts-pixels=false`
 - candidate／source／runtime／addon：`均未写入`
 - provider：40 个 `pfRaid` Secure Button，`10×4 VERTICAL`，单 Button
@@ -97,7 +97,7 @@ Roster、SavedVariables 或 pfUI 状态逻辑。
 - 用户原文：`确认UF-RAID-A2-SIM-V1`
 - 用户结论与日期：`confirmed / 2026-08-12`
 - 模拟像素接受：`false`
-- production／ImageGen 授权：`false`
+- production／ImageGen 授权：`true / UF-RAID-A2-DONOR V1 / 2026-08-12`
 - 已冻结并写入 `UF-RAID-A2-DONOR V1` 的可见方向：
   - 保留真实 `40` 个 `pfRaid` Button、`10×4 VERTICAL` 和 `767×159` 编队；
   - 不增加共享 Raid 外框、书框、金属底板或装饰背景；
@@ -118,16 +118,17 @@ Roster、SavedVariables 或 pfUI 状态逻辑。
 
 ### 下一门禁
 
-`UF-RAID-A2-SIM-V1` 已确认，但仍不授权 ImageGen。下一门禁是用户审阅下方
-完整正文、不可变修复边界与五次实际生图预算后，单独明确授权精确版本
-`UF-RAID-A2-DONOR V1`；未授权前不能调用固定 `imagegen-0-143-0`。
+`UF-RAID-A2-SIM-V1` 已确认，`UF-RAID-A2-DONOR V1` 已获得独立精确授权。
+下一门禁是先提交本授权状态，再以已提交的最终正文和固定 Image 1／2 调用
+固定 `imagegen-0-143-0` attempt 1；不得在提交前调用。
 
 未来 donor 循环最多 `5` 次实际 ImageGen 调用，流程错误不计额度，通过即停。
 attempt 1 只上传两张固定 Chat 锁定图且没有 Image 3；后续只允许同一 donor
 循环紧邻前稿在冻结的四材料字段范围内作为 edit 输入。正式 Prompt 的唯一
 机器正文保存在 `tools/specs/unitframes_raid_donor_production_v1.json`；完整性
 复检为 `pass-final`、未知执行关键值为 `0`。当前
-`production_authorized=false`，不得调用、导出或接入。
+`production_authorized=true`；允许执行有界生成循环，但不允许自动接受、
+晋级 source、导出 runtime 或接入 addon。
 
 ### `UF-RAID-A2-DONOR V1` 正文完整性复检
 
@@ -225,7 +226,26 @@ formed repair object, text, label or measurement is present.
   排版；不得生成新笔触、修补 donor 美术或推断模型外壳几何。
 - 本授权若未来取得，也不代表候选接受、P4 source 晋级、P5 addon 导出、P6
   实机验收或中间数据清理。
-- 当前授权状态：`not-yet-granted`。
+- 当前授权状态：`granted / 2026-08-12 / attempt-01-ready`。
+
+### `UF-RAID-A2-DONOR V1` 用户授权记录
+
+- 用户原文：`确认授权 UF-RAID-A2-DONOR V1；允许每次上传合同中固定 SHA 的 Image 1/2，attempt 1 无 Image 3；仅允许同循环紧邻前次 donor 输出在冻结四材料字段修复边界内作为后续 Image 3 edit 输入；最多 5 次实际 ImageGen 调用，流程错误不占额度；允许按合同执行固定 sample-window crop、Python 精确外壳/A-D 维修 mask、透明 RGB 清零、592×296 source、74×37 runtime、6/62/6 三切片及 40 人真实排版预演。`
+- 日期：`2026-08-12`
+- 授权版本：`UF-RAID-A2-DONOR V1`
+- 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
+- attempt 1：每次上传合同固定 SHA 的 Image 1／2，`Image 3 = none`。
+- attempt 2–5：每次仍上传固定 Image 1／2；只允许同循环紧邻前次 donor 输出
+  在冻结四材料字段内作为 Image 3 edit 输入。若不明确保留前稿则从固定两图
+  regenerate；禁止跨循环、跨段、模拟图或 A1 失败像素。
+- 预算：最多 `5` 次实际 ImageGen；当前 `0/5`；流程错误不占额度；内部通过
+  即停。
+- 允许的确定性操作：固定 sample-window crop、cover-fit、Python 精确外壳／
+  A-D mask、透明 RGB 清零、`592×296 → 74×37`、`6/62/6` 三切片和 40 人真实
+  排版预演。
+- 未授权：候选自动接受、P4 source 晋级、P5 addon 导出／接入、P6、清理。
+- 下一操作：授权记录提交后执行 attempt 1，并把执行 commit、session／result、
+  raw SHA、完整审查与下一正文写回本文件。
 
 ## UF-RAID-A1 历史元数据
 

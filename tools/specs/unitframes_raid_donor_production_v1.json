@@ -1,8 +1,8 @@
 {
   "schema": "aeui-unitframes-raid-donor-production-v1",
   "version": "UF-RAID-A2-DONOR V1",
-  "status": "production-draft / simulation-confirmed / authorization-pending",
-  "production_authorized": false,
+  "status": "prompt-authorized / attempt-01-ready",
+  "production_authorized": true,
   "architecture": {
     "status": "user-selected",
     "statement": "ImageGen only generates rough material donors; Python deterministically constructs exact shell geometry and all four repair differences",
@@ -11,7 +11,7 @@
       "status": "confirmed",
       "date": "2026-08-12",
       "accepts_pixels": false,
-      "production_authorized": false
+      "production_authorized": true
     },
     "simulation_pixels_may_be_uploaded": false,
     "rejected_a1_pixels_may_be_reused": false
@@ -82,11 +82,13 @@
       "attempts_used": 0,
       "attempts_remaining": 5,
       "process_errors": 0,
-      "next_operation": "wait for separate explicit authorization of exact UF-RAID-A2-DONOR V1; simulation confirmation alone does not authorize ImageGen"
+      "next_operation": "commit this exact authorization state, then invoke attempt 1 with fixed SHA Image 1 and Image 2 and no Image 3"
     }
   },
   "authorization_request": {
-    "status": "not-yet-granted",
+    "status": "granted",
+    "date": "2026-08-12",
+    "user_statement": "确认授权 UF-RAID-A2-DONOR V1；允许每次上传合同中固定 SHA 的 Image 1/2，attempt 1 无 Image 3；仅允许同循环紧邻前次 donor 输出在冻结四材料字段修复边界内作为后续 Image 3 edit 输入；最多 5 次实际 ImageGen 调用，流程错误不占额度；允许按合同执行固定 sample-window crop、Python 精确外壳/A-D 维修 mask、透明 RGB 清零、592×296 source、74×37 runtime、6/62/6 三切片及 40 人真实排版预演。",
     "exact_version": "UF-RAID-A2-DONOR V1",
     "fixed_executor": "imagegen-0-143-0 / @openai/codex@0.143.0",
     "attempt_1_inputs": "fixed SHA Image 1 and Image 2; no Image 3",
@@ -96,8 +98,7 @@
     "deterministic_postprocess": "fixed sample-window crop, exact Python shell construction, transparent RGB clearing, 592x296 source, 74x37 runtime, 6/62/6 three-slice, A-D repair masks and forty-member real-layout preview",
     "does_not_authorize": "candidate acceptance, source promotion, addon export, Turtle WoW P6 or cleanup"
   },
-  "forbidden_before_authorization": [
-    "any imagegen-0-143-0 call",
+  "still_requires_later_gate": [
     "candidate or source promotion",
     "runtime export",
     "addon integration"

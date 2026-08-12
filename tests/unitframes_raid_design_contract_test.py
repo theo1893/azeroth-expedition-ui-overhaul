@@ -211,14 +211,14 @@ def main() -> None:
     assert donor_production["schema"] == "aeui-unitframes-raid-donor-production-v1"
     assert donor_production["version"] == "UF-RAID-A2-DONOR V1"
     assert donor_production["status"] == (
-        "production-draft / simulation-confirmed / authorization-pending"
+        "prompt-authorized / attempt-01-ready"
     )
-    assert donor_production["production_authorized"] is False
+    assert donor_production["production_authorized"] is True
     assert donor_production["architecture"]["simulation_confirmation"] == {
         "status": "confirmed",
         "date": "2026-08-12",
         "accepts_pixels": False,
-        "production_authorized": False,
+        "production_authorized": True,
     }
     assert donor_production["output_contract"]["image_count"] == 1
     assert donor_production["output_contract"]["runtime_loaded"] is False
@@ -240,7 +240,11 @@ def main() -> None:
     assert donor_loop["execution_state"]["attempts_used"] == 0
     assert donor_loop["execution_state"]["attempts_remaining"] == 5
     authorization_request = donor_production["authorization_request"]
-    assert authorization_request["status"] == "not-yet-granted"
+    assert authorization_request["status"] == "granted"
+    assert authorization_request["date"] == "2026-08-12"
+    assert authorization_request["user_statement"].startswith(
+        "确认授权 UF-RAID-A2-DONOR V1"
+    )
     assert authorization_request["exact_version"] == "UF-RAID-A2-DONOR V1"
     assert authorization_request["maximum_actual_imagegen_calls"] == 5
     assert authorization_request["process_errors_count_toward_limit"] is False
@@ -418,10 +422,10 @@ def main() -> None:
         "repair-budget-exhausted / candidate-rejected / 5/5",
         "UF-RAID-A2-SIM-V1",
         "ImageGen material donor only + Python deterministic shell",
-        "production_authorized=false",
+        "production_authorized=true",
         "确认UF-RAID-A2-SIM-V1",
         "UF-RAID-A2-DONOR V1` 正文完整性复检",
-        "当前授权状态：`not-yet-granted`",
+        "当前授权状态：`granted / 2026-08-12 / attempt-01-ready`",
     ):
         assert clause in work, f"raid work record missing: {clause}"
 
@@ -435,7 +439,7 @@ def main() -> None:
     assert "UF-RAID-SIM-V1" in progress
     assert "UF-RAID-A1 V1 final" in progress
     assert "UF-RAID-A2-SIM-V1" in progress
-    assert "simulation-confirmed" in progress
+    assert "prompt-authorized" in progress
     assert "模型供材、Python 造壳" in submodule_art
     assert "build_unitframes_raid_donor_shells_v1.py" in submodules
     assert "docs/modules/unitframes/work/UNITFRAMES.RAID.md" in agents
