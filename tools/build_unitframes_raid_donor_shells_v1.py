@@ -36,6 +36,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--spec", type=Path, default=DEFAULT_SPEC)
     parser.add_argument("--donor", type=Path)
     parser.add_argument("--output-dir", type=Path)
+    parser.add_argument("--preview-output", type=Path)
     parser.add_argument(
         "--simulation",
         action="store_true",
@@ -321,31 +322,41 @@ def _checker(size: tuple[int, int], step: int = 16) -> Image.Image:
     return image
 
 
-def save_shell_set(shells: ShellSet, output_dir: Path) -> None:
+def save_shell_set(
+    shells: ShellSet,
+    output_dir: Path,
+    file_tag: str = "simulation",
+) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     for variant, source in shells.sources.items():
-        source.save(output_dir / f"UF-Raid-A2-{variant}-source-simulation.png")
+        source.save(output_dir / f"UF-Raid-A2-{variant}-source-{file_tag}.png")
         shells.runtimes[variant].save(
-            output_dir / f"UF-Raid-A2-{variant}-runtime-simulation.png"
+            output_dir / f"UF-Raid-A2-{variant}-runtime-{file_tag}.png"
         )
 
 
-def render_source_preview(spec: dict, shells: ShellSet) -> Image.Image:
+def render_source_preview(
+    spec: dict,
+    shells: ShellSet,
+    material_mode: str = "simulation",
+) -> Image.Image:
     canvas = Image.new("RGBA", (1380, 950), (22, 20, 18, 255))
     draw = ImageDraw.Draw(canvas)
     draw.text((34, 25), "UF-RAID-A2 · deterministic shell construction", fill=(222, 192, 130, 255))
-    draw.text(
-        (34, 52),
-        "SIMULATION MATERIALS ONLY · exact geometry and A-D repair masks are authoritative",
-        fill=(181, 166, 139, 255),
+    mode_note = (
+        "PRODUCTION DONOR CANDIDATE · exact geometry and A-D repair masks are Python-owned"
+        if material_mode == "candidate"
+        else "SIMULATION MATERIALS ONLY · exact geometry and A-D repair masks are authoritative"
     )
+    draw.text((34, 52), mode_note, fill=(181, 166, 139, 255))
 
     for index, material_id in enumerate(("leather", "liner", "brass", "thread")):
         material = shells.materials[material_id].resize((280, 158), Image.Resampling.LANCZOS)
         x = 34 + index * 330
         canvas.alpha_composite(material.convert("RGBA"), (x, 92))
         draw.rectangle((x, 92, x + 279, 249), outline=(101, 79, 50, 255), width=2)
-        draw.text((x, 258), f"future donor sample: {material_id}", fill=(173, 158, 132, 255))
+        sample_label = "candidate donor sample" if material_mode == "candidate" else "future donor sample"
+        draw.text((x, 258), f"{sample_label}: {material_id}", fill=(173, 158, 132, 255))
 
     for index, variant in enumerate(("A", "B", "C", "D")):
         x = 34 + (index % 2) * 670
@@ -375,10 +386,18 @@ def main() -> None:
     output_dir = args.output_dir or (
         ROOT / "generated/unitframes/raid/simulation/A2-V1/shells"
     )
-    save_shell_set(shells, output_dir)
-    preview_path = ROOT / spec["outputs"]["source_preview"]
+    material_mode = "candidate" if args.donor else "simulation"
+    save_shell_set(shells, output_dir, material_mode)
+    if args.preview_output:
+        preview_path = args.preview_output.resolve()
+    elif args.donor:
+        preview_path = output_dir.resolve().parent / "source-preview.png"
+    else:
+        preview_path = ROOT / spec["outputs"]["source_preview"]
     preview_path.parent.mkdir(parents=True, exist_ok=True)
-    render_source_preview(spec, shells).save(preview_path, format="PNG", compress_level=9)
+    render_source_preview(spec, shells, material_mode).save(
+        preview_path, format="PNG", compress_level=9
+    )
     print(preview_path.resolve())
     print(output_dir.resolve())
 

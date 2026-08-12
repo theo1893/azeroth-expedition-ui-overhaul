@@ -20,10 +20,12 @@
   `48/496/48 → 6/62/6` 三切片及 A/B/C/D 四种维修差异。当前
   `UF-RAID-A2-SIM-V1` 已由用户于 `2026-08-12` 明确确认；用户同日另行精确
   授权 `UF-RAID-A2-DONOR V1`，当前为
-  `P3 / prompt-authorized / attempt-01-ready / ImageGen 0/5`；
+  `P3 / bounded-repair-loop-active`；精确 attempt、流程错误和剩余额度只在
+  `work/UNITFRAMES.RAID.md` 维护，避免长期进度复制逐稿流水。
   展示区域 `7/7 pass`、violations `0`。确认只冻结真实 40 人编队、无共享
   外框、`2px` 夹边、A-D 精确维修位置、低饱和材料层级和动态层序，不接受
-  模拟像素。production donor 尚未生成，没有 source、runtime 或 addon 变更。
+  模拟像素。production donor attempt 1 已在材质频率／固定格位门禁 internal-fail，
+  当前处于有界自主修复循环；尚无 candidate、source、runtime 或 addon 变更。
 - 当前只处理资源重绘与精确媒体替换。B1 已接入 addon；没有修改另一台设备上
   的 Frame 位置、尺寸、点击、事件、数值、颜色逻辑或其他功能。
 - 用户于 `2026-08-11` 接受“每个角色生成完整外壳，Python 负责精确工程化”
@@ -105,8 +107,9 @@
 - 用户于 `2026-08-12` 原文确认 `UF-RAID-A2-SIM-V1`。已把上述可见结论写入
   `UF-RAID-A2-DONOR V1` 的最终执行正文并重新完成 `pass-final` 完整性审计；
   用户随后精确授权该正文、固定 SHA Image 1／2、同循环紧邻前稿有界 edit、
-  最多五次实际生图及合同内确定性后处理。当前授权为 `true`，实际 ImageGen
-  `0/5`；授权不等于候选接受、source 晋级、runtime 或 addon 接入。
+  最多五次实际生图及合同内确定性后处理。当前授权为 `true`，并处于
+  `P3 / bounded-repair-loop-active`；精确次数只在 Raid work 维护。授权不等于
+  候选接受、source 晋级、runtime 或 addon 接入。
 
 ## 展示区域门禁
 
@@ -128,9 +131,9 @@
 - Raid `UF-RAID-A1 V1 final` 的独立 `5` 次预算也已全部使用；流程错误 `2`
   不占额度且都没有产生额外 provider 图。终态为
   `repair-budget-exhausted / candidate-rejected`，禁止第六次。
-- Raid A2 是新架构而不是 A1 attempt 6。未来 `UF-RAID-A2-DONOR V1` 只有一段
-  donor 正文，最多 `5` 次实际 ImageGen，当前 `0/5` 且
-  `production_authorized=true`；attempt 1 已就绪，流程错误不占额度。
+- Raid A2 是新架构而不是 A1 attempt 6。`UF-RAID-A2-DONOR V1` 只有一段 donor
+  正文，最多 `5` 次实际 ImageGen，`production_authorized=true`，流程错误不占
+  额度；精确当前次数、失败门禁和下一正文见唯一 Raid work。
 - 三段 final 已吸收用户确认的可见结论并通过 `pass-final` 自包含预检；
   正式生产授权已独立取得，按 A→B→B1 顺序执行。
 - 流程错误无生成证据时单独记录，不占额度。旧 V1／V2 失败像素禁止作为新段
@@ -261,10 +264,10 @@
 ## 下一门禁
 
 Raid 的原 A1 合同已经终止，下一门禁不是 attempt 6。`UF-RAID-A2-SIM-V1`
-已经确认，`UF-RAID-A2-DONOR V1` 已精确授权。下一步以提交的完整正文、固定
-SHA Image 1／2 和 `Image 3 = none` 调用固定 `imagegen-0-143-0` attempt 1，
-随后完成 donor 技术门禁、Python 精确造壳、40 人真实排版与展示区域检查。
-内部通过即停；未获用户候选接受前不得创建 source/runtime 或接入 addon。
+已经确认，`UF-RAID-A2-DONOR V1` 已精确授权并处于有界自主修复循环。下一步
+由 Raid work 中已提交的当前完整正文决定；每稿都必须完成 donor 技术门禁、
+Python 精确造壳、40 人真实排版与展示区域检查，内部通过即停。未获用户候选
+接受前不得创建 source/runtime 或接入 addon。
 
 B1 下一门禁是 Turtle WoW `1.18.1` P6：验证 TGA 方向、Player／Target／
 TargetTarget／Focus 的生命与 Mana／Rage／Focus／Energy 乘色、低血量裁切、

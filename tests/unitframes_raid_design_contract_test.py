@@ -211,7 +211,7 @@ def main() -> None:
     assert donor_production["schema"] == "aeui-unitframes-raid-donor-production-v1"
     assert donor_production["version"] == "UF-RAID-A2-DONOR V1"
     assert donor_production["status"] == (
-        "prompt-authorized / attempt-01-ready"
+        "repair-prepared / attempt-01-internal-fail / attempt-02-ready"
     )
     assert donor_production["production_authorized"] is True
     assert donor_production["architecture"]["simulation_confirmation"] == {
@@ -237,8 +237,15 @@ def main() -> None:
     donor_loop = donor_production["repair_loop"]
     assert donor_loop["maximum_actual_imagegen_calls"] == 5
     assert donor_loop["process_errors_count_toward_limit"] is False
-    assert donor_loop["execution_state"]["attempts_used"] == 0
-    assert donor_loop["execution_state"]["attempts_remaining"] == 5
+    assert donor_loop["execution_state"]["attempts_used"] == 1
+    assert donor_loop["execution_state"]["attempts_remaining"] == 4
+    assert donor_loop["execution_state"]["current_prompt_version"] == (
+        "UF-RAID-A2-DONOR V1.r1"
+    )
+    assert len(donor_production["attempts"]) == 1
+    assert donor_production["attempts"][0]["raw_sha256"] == (
+        "ac2f7a2adf120f932bb3785c5b2b9dfc83d00a8ed9812421400120cfb86aec23"
+    )
     authorization_request = donor_production["authorization_request"]
     assert authorization_request["status"] == "granted"
     assert authorization_request["date"] == "2026-08-12"
@@ -425,7 +432,9 @@ def main() -> None:
         "production_authorized=true",
         "确认UF-RAID-A2-SIM-V1",
         "UF-RAID-A2-DONOR V1` 正文完整性复检",
-        "当前授权状态：`granted / 2026-08-12 / attempt-01-ready`",
+        "当前授权状态：`granted / 2026-08-12 / bounded-repair-loop-active`",
+        "UF-RAID-A2-DONOR V1.r1",
+        "ac2f7a2a…ec23",
     ):
         assert clause in work, f"raid work record missing: {clause}"
 
@@ -439,7 +448,7 @@ def main() -> None:
     assert "UF-RAID-SIM-V1" in progress
     assert "UF-RAID-A1 V1 final" in progress
     assert "UF-RAID-A2-SIM-V1" in progress
-    assert "prompt-authorized" in progress
+    assert "bounded-repair-loop-active" in progress
     assert "模型供材、Python 造壳" in submodule_art
     assert "build_unitframes_raid_donor_shells_v1.py" in submodules
     assert "docs/modules/unitframes/work/UNITFRAMES.RAID.md" in agents

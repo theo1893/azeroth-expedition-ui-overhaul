@@ -1,7 +1,7 @@
 {
   "schema": "aeui-unitframes-raid-donor-production-v1",
   "version": "UF-RAID-A2-DONOR V1",
-  "status": "prompt-authorized / attempt-01-ready",
+  "status": "repair-prepared / attempt-01-internal-fail / attempt-02-ready",
   "production_authorized": true,
   "architecture": {
     "status": "user-selected",
@@ -79,12 +79,32 @@
     "later_image_3": "only the immediately previous output from this same donor loop and only within the frozen material-field repair boundary",
     "stop_on_pass": true,
     "execution_state": {
-      "attempts_used": 0,
-      "attempts_remaining": 5,
+      "attempts_used": 1,
+      "attempts_remaining": 4,
       "process_errors": 0,
-      "next_operation": "commit this exact authorization state, then invoke attempt 1 with fixed SHA Image 1 and Image 2 and no Image 3"
+      "current_prompt_version": "UF-RAID-A2-DONOR V1.r1",
+      "current_prompt_heading": "### `UF-RAID-A2-DONOR V1.r1` — attempt 2 自包含低频手绘材质修复",
+      "next_operation": "commit attempt 1 review and complete r1 body, then edit with fixed SHA Image 1/2 and the immediately previous attempt 1 donor as Image 3"
     }
   },
+  "attempts": [
+    {
+      "attempt": 1,
+      "prompt_version": "UF-RAID-A2-DONOR V1",
+      "execution_commit": "68e43e5892f7352ead0d3164fbb7db19fa4ef7e2",
+      "operation": "generate",
+      "codex_session_id": "019ff524-4c79-7f92-8246-d5e46140250d",
+      "provider_result": "ig_02657bd92b3d4522016a7c32547f2481919c19c602f0fdb5c2",
+      "raw_path": "generated/unitframes/raid/A2/DONOR-V1/attempt-01/uf-raid-a2-donor-v1-attempt-01.provider-native-01.png",
+      "raw_sha256": "ac2f7a2adf120f932bb3785c5b2b9dfc83d00a8ed9812421400120cfb86aec23",
+      "technical_report": "generated/unitframes/raid/A2/DONOR-V1/attempt-01/review/technical-report.json",
+      "technical_report_sha256": "d42376d63f7b587cacf687c52d2f7ffe04414c93bf44d3310412fb7a108b33e7",
+      "display_report_sha256": "ddb3fc51b7c3ef2e1590ecc145b4668ed3d23c5e627600dfa2d0a424a8ce6dd0",
+      "first_failure": "locked-baseline art inheritance: photographic high-frequency leather/brass/flax creates a continuous serrated runtime rim",
+      "secondary_failure": "all four detected material bboxes exceed their fixed cells by 18 to 52 pixels",
+      "result": "internal-fail / repair-prepared"
+    }
+  ],
   "authorization_request": {
     "status": "granted",
     "date": "2026-08-12",
