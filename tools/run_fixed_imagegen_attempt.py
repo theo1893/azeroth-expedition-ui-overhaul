@@ -127,9 +127,26 @@ def main() -> int:
     output_dir = resolve(root, args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     contract: dict[str, Any] = json.loads(contract_path.read_text(encoding="utf-8"))
-    if not contract.get("executor", {}).get("authorized"):
+    authorized = bool(
+        contract.get("production_authorized")
+        or contract.get("executor", {}).get("authorized")
+    )
+    if not authorized:
         raise ValueError("production contract is not authorized")
-    references = contract.get("fixed_references", [])
+    references = contract.get("fixed_references")
+    if references is None:
+        references = []
+        for fixed_input in contract.get("fixed_inputs", []):
+            match = re.fullmatch(r"Image\s+(\d+)", fixed_input.get("slot", ""))
+            if not match:
+                raise ValueError("fixed input slot must use 'Image N'")
+            references.append(
+                {
+                    "image": int(match.group(1)),
+                    "path": fixed_input["path"],
+                    "sha256": fixed_input["sha256"],
+                }
+            )
     if len(references) != 2:
         raise ValueError("this fixed attempt requires exactly Image 1 and Image 2")
     images: list[Path] = []
