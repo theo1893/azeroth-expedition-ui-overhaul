@@ -282,7 +282,7 @@
     "status": "exported",
     "authorization": "user instruction '下一步' on 2026-08-09",
     "exporter": "tools/build_action_fieldkit_v1_runtime.py",
-    "exporter_sha256": "cd05d75d55b430fe6938387c1e508d14fc5c11f724e0b35831f9d34aa15f064f",
+    "exporter_sha256": "5703279a248d88b1ea87d68adb0ed78da45ff0bb2e6b99304c850cfa2a911c73",
     "runtime_file": "addon/AzerothExpeditionUI/Media/ActionBars/ActionTrinketKitV1.tga",
     "runtime_sha256": "3614d9a86e1dc25399e6623ddfad398618070e8f78117ec0f0b997b9b3f9f455",
     "runtime_atlas_size": [
@@ -504,7 +504,7 @@
     "display_region_violations": 0,
     "addon_package": {
       "report": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/runtime/V1/addon-package-report.json",
-      "report_sha256": "a6a4ec74fc50859718614ece98f278a0af9ab54859df7555c2a6c0adf72c16b9",
+      "report_sha256": "e1ca9054cd0a86031641212318804bbbee55a01ecc2cac7649ca658aa3c30a35",
       "status": "pass",
       "violations": 0,
       "build_required_on_target_device": false

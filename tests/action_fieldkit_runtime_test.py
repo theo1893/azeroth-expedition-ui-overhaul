@@ -118,7 +118,7 @@ def main() -> None:
         assert manifest["addon_entrypoints"]["addon_version"] == (
             builder.addon_version(ROOT / builder.TOC_REL)
         )
-        assert manifest["addon_entrypoints"]["addon_version"] == "0.8.25"
+        assert manifest["addon_entrypoints"]["addon_version"] == "0.8.26"
         if key == "consumable":
             assert "class-only slot ownership" in manifest["adapter"][
                 "automatic_profile_mutation_scope"
@@ -134,6 +134,18 @@ def main() -> None:
             )
             assert "handle-relative" in manifest["adapter"][
                 "provider_layout_refresh"
+            ]
+            assert manifest["adapter"]["provider_active_display_authority"] == (
+                "AutoBar.display table identity"
+            )
+            assert manifest["adapter"]["provider_dock_target"] == (
+                "AzerothExpeditionUIAutoBarDockAnchor"
+            )
+            assert "effective scale equals" in manifest["adapter"][
+                "provider_dock_target_contract"
+            ]
+            assert "display-table identity backup" in manifest["adapter"][
+                "provider_dock_restore"
             ]
             assert "missing or empty" in manifest["adapter"][
                 "provider_runtime_category_description_compatibility"
@@ -186,7 +198,7 @@ def main() -> None:
         assert result["summary"]["violation_count"] == 0
 
     for required in (
-        'ActionBars.fieldKitRuntimeContract = "2.7"',
+        'ActionBars.fieldKitRuntimeContract = "2.8"',
         "ActionBars.fieldKitDockYOffset = -20",
         "ActionTrinketKitV1",
         "ActionConsumableKitV1",
@@ -216,10 +228,16 @@ def main() -> None:
         "ApplyAutoBarDragHandlePolicy",
         "RestoreAutoBarBoundAnchor",
         "AutoBarLocalVisualOffsets",
+        "GetAutoBarLayoutProfile",
         "RegisterAutoBarProviderDock",
+        "EnsureAutoBarProviderDockAnchor",
         "ApplyAutoBarProviderDock",
         "RestoreAutoBarProviderDock",
-        'ActionBars.autoBarProviderDockName = "pfActionBarMain"',
+        "ActionBars.autoBarProviderDockName =",
+        '"AzerothExpeditionUIAutoBarDockAnchor"',
+        "AutoBar.display",
+        "config.display == active",
+        "autoBarTransientDockBackups",
         'anchorBasis = "provider-dock"',
         'anchorBasis = "provider-local"',
         "autoBarRefreshDelay = 0",

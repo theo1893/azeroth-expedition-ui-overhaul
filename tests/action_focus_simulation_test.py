@@ -190,7 +190,7 @@ def test_focus_v11_font_doite_and_side_cluster_proposal() -> None:
     assert len(display["scenarios"]) == 3
 
     runtime = json.loads(RUNTIME_DISPLAY.read_text(encoding="utf-8"))
-    assert runtime["component"] == "AB.FOCUS.LAYOUT.V1/runtime-v2.4"
+    assert runtime["component"] == "AB.FOCUS.LAYOUT.V1/runtime-v2.6"
     assert runtime["evidence"]["final_runtime"] is True
     assert runtime["evidence"]["adapter"].endswith("Modules/ActionBars.lua")
     assert runtime["evidence"]["accepted_simulation_spec"].endswith(
@@ -208,7 +208,8 @@ def test_focus_v11_font_doite_and_side_cluster_proposal() -> None:
     assert "Target Cast BOTTOM (0,300)" in formula
     assert "Swing BOTTOM (0,284)" in formula
     assert "bound AutoBarAnchorFrameHandle is hidden synchronously" in formula
-    assert "stance BOTTOM (0,255) at 1.0" in formula
+    assert "stance uses safe SavedVariables fallback BOTTOM (0,130)" in formula
+    assert "TOP-to-pfActionBarMain-BOTTOM at gap 12 UI" in formula
     assert "DoiteDPS TOPLEFT (850,-615)" in formula
     assert "GetScreenHeight()/1080" not in formula
     assert len(runtime["scenarios"]) == 13

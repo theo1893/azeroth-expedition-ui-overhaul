@@ -7,7 +7,7 @@
   `AB.TRINKET.MENU`、`AB.CONSUMABLE.RACK`、`AB.CONSUMABLE.POCKET`、
   `AB.CONSUMABLE.POPUP`、`AB.CONSUMABLE.GROUP`
 - 模拟版本：`AB-FIELDKIT-SIM-V3`
-- 当前操作：`AutoBar provider-native main-bar docking / game retest`
+- 当前操作：`AutoBar active-display proxy docking / game retest`
 - 子状态：`runtime-exported / pending-retest`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
@@ -63,11 +63,20 @@
   docking 通道：把活动 display 原生停靠到 `pfActionBarMain`，由 provider 每次
   `SetupVisual` 自己写主栏相对锚点；原自由坐标与 docking／shift 均可逆备份，unbind／
   关闭时恢复，logout／reload 前移除 AEUI 运行时 token，下一次 providers 就绪后再安装。
-  当前 AEUI `0.8.25` entrypoints 已固化为 ActionBars SHA `e3887b7f…5c28b`、
-  Bootstrap SHA `3019de4e…0de9`、TOC SHA `770d4c0a…f3a6`；Field Kit display
-  `19/19 pass`、violations `0`、report SHA `5261ccd4…edb1`；fresh-checkout package
-  `pass`、violations `0`、report SHA `e1ca9054…0a35`、records `64`、tracked addon
-  files `554`、目标设备无需构建。上一轮
+  最新 `1337×542 RGB` 实机截图（SHA `7af6c0de…c014`）又证明 v2.7 的 docking
+  仍没有作用；同轮只读 SavedVariables 显示角色 profile 的 `layoutProfile` 与真正活动的
+  `_SHARED1 display` 可在嵌套刷新期不同步，旧实现因此可能给非活动 display 写 docking，
+  而 provider 继续从活动 display 读取原自由坐标。MoveAnything 已核对为没有 AutoBar／
+  pfUI 动作条保存条目，不是第三个最终写入者。bridge-v2.8 改为以
+  `AutoBar.display` table identity 解析活动 display，并把局部偏移放到全局命名、与 handle
+  effective scale 相同、相对主栏的代理锚；活动 display 的原生 docking 只停到该代理中心。
+  `DisplayReset` 更换 display table 时另存 identity 备份，unbind／关闭仍精确回退。
+  当前 AEUI `0.8.26` entrypoints 为 ActionBars SHA `18bcaa63…e2c3e`、Bootstrap
+  SHA `68206faa…e5ed0`、TOC SHA `b3d93f60…f7ef6`；Field Kit exporter SHA
+  `5703279a…1c73`，Trinket／Consumable display 分别 `9/9`、`10/10 pass`，report SHA
+  `44fa77d3…2336`／`d3807086…bf0c`。fresh-checkout package `pass`、violations `0`、
+  report SHA `e1ca9054…0a35`、records `64`、tracked addon files `554`、
+  `build_required_on_target_device=false`，目标设备无需构建。上一轮
   ActionBars SHA `f7d676ac…867b`、Bootstrap SHA `4e401442…f623c`、TOC
   SHA `b5eac8ca…f8b3` 仅保留为 bridge-v2.6 历史。上一轮 fresh-checkout package
   `status=pass`、violations `0`、report SHA `e1ca9054…0a35`、runtime manifest
@@ -1154,28 +1163,31 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
 | `AB.FIELDKIT bridge-v2.4` | v2.3 回锚、说明 fallback、动态 `4×6`、popup guard、accepted source／TGA 与 provider 物品行为不变；配置页只留 Slots／Buttons 与 Done，隐藏 Bar／Popup／Profile、综合预览、层／layout 选择及 Reset／Revert。当前有效 24 槽一次迁入原生职业 profile，角色固定 `useClass/edit3`，角色／职业原配置双备份并可 restore | 用户明确要求按高度客制化范围裁剪配置页并让槽位只按职业配置；Lua smoke 覆盖首次迁移、隐藏 Tab 重定向、OnShow 再裁剪、职业 apply、原生控件与双层数据 restore；Field Kit runtime `9/9＋10/10`、repository contracts 与 fresh-checkout package pass；AEUI `0.8.24`，ImageGen `0/0`，`pending-game-validation / P5` | `/reload` 确认只见“栏位／按钮”、单一“职业栏位（左键编辑）”与“完成”；编辑一个含数字 item ID 的槽并确认同职业共享、角色原槽不变，再连续开关／点击确认卷袋无跳位；必要时 `/aeui autobar restore` 验证回退 |
 | `AB.FIELDKIT bridge-v2.5` | v2.4 配置裁剪／职业槽、v2.3 同事件回锚、说明 fallback、动态 `4×6`、popup guard、accepted source／TGA 与全部 provider 物品行为不变；零延迟停靠包络改由 Button 相对 handle 的 provider-local `GetPoint`、宽高与 scale 计算，已有成功锚点不再被陈旧 world-space 坐标覆盖 | 用户提供两张 `/aeui autobar apply` 后实机截图，确认卷袋在两个位置往返；AutoBar 1.31 审计定位 `ProfileChanged → OnShow／ConfigChanged → SetupVisual` 连续重排与 handle／Button 坐标不同帧。Lua smoke 注入两套相反陈旧坐标并连续 apply，两次同步保护和零延迟刷新后的 x／y 完全相同；runtime／repository contracts 与 fresh-checkout package pass；AEUI `0.8.24`，ActionBars SHA `b861d7d9…6ffc`，ImageGen `0/0`，`pending-game-validation / P5` | `/reload` 连续执行两次 `/aeui autobar apply`，每次等待刷新后确认卷袋像素位置完全不变，`/aeui status` 为 `autobar-anchor-basis=provider-local`；再连续开关／点击配置页并复测职业槽、popup、Queue／换装与 restore |
 | `AB.FIELDKIT bridge-v2.6` | v2.5 provider-local 停靠、v2.4 配置裁剪／职业槽、同步回锚、说明 fallback、动态 `4×6`、popup guard、accepted source／TGA 与 provider 行为全部不变；绑定态在 Apply、`SetupVisual` 与完整配置 `OnShow` 边界同步隐藏真实 `AutoBarAnchorFrameHandle`，`unbind`／AEUI 关闭时恢复 provider 偏好 | 用户战士截图 `1057×267 RGB`、SHA `bf05df85…76fe` 显示卷袋左上红色 handle。AutoBar 1.31 XML／Core 审计确认实际对象名，且早期 `HideHandle(AutoBarFrame)` 错指不存在的 `AutoBarFrameHandle`。Lua smoke 让 provider 在每次 `SetupVisual` 主动显示 handle，验证所有绑定生命周期均回到 `hidden-bound`，显式 unbind 显示、rebind 再隐藏；ActionBars SHA `f7d676ac…867b`，fresh-checkout package `pass`／report `e1ca9054…0a35`，ImageGen `0/0`，`pending-game-validation / P5` | `/reload` 确认红点默认不可见且 `/aeui status` 为 `autobar-drag-handle=hidden-bound`；连续开关配置页、执行两次 apply 均不得重新出现；`/aeui fieldkit unbind` 后按 provider 偏好恢复，再 `bind` 隐藏，并复测职业槽、popup、Queue／换装 |
-| `AB.FIELDKIT bridge-v2.7` | v2.6 handle 隐藏、v2.4 配置／职业槽、动态 `4×6`、popup guard、accepted source／TGA 与 provider 物品行为不变；provider-local 包络只计算一次偏移，活动 display 随后通过 AutoBar 原生 `dockingFrames` 强绑定 `pfActionBarMain`。自由 position 在绑定态不渲染；unbind／关闭精确恢复 docking／shift，logout 前撤销运行时 token | 用户新截图 `1408×633 RGB`、SHA `d1a94514…49bb` 显示卷袋飞到左上；AutoBar Core 审计确认 `SetupVisual` 最终无条件 `ClearAllPoints` 并按 docking／position 重写 handle，旧 AEUI 后置写入存在最终写者竞争。Lua smoke 覆盖连续 SetupVisual、配置 OnShow、两次 apply、unbind／rebind 与 logout-reapply，状态稳定为 `provider-dock`／`bound`；AEUI `0.8.25`，ActionBars SHA `e3887b7f…5c28b`，display `19/19`、package pass，ImageGen `0/0`，`pending-game-validation / P5` | `/reload` 后不执行补救命令先确认卷袋在主栏左侧；连续两次 apply、开关配置页、移动主栏都不跳位，status 为 `autobar-anchor-basis=provider-dock`、`autobar-provider-dock=bound`、`autobar-drag-handle=hidden-bound`；再复测职业槽、popup、Queue／换装与 unbind／bind |
+| `AB.FIELDKIT bridge-v2.8` | v2.7 原生 docking、v2.6 handle 隐藏、v2.4 配置／职业槽、动态 `4×6`、popup guard、accepted source／TGA 与 provider 物品行为不变；以 `AutoBar.display` table identity 解析真正活动 display，不读取可能滞后的 `layoutProfile`。provider-local 偏移写到全局命名、等 effective scale、相对主栏的代理锚，活动 display 通过原生 docking 绑定代理中心；display table 被替换时按 identity 可逆备份 | 用户最新截图 `1337×542 RGB`、SHA `7af6c0de…c014` 显示 v2.7 后卷袋坐标完全未变；SavedVariables／provider 审计定位活动 `_SHARED1 display` 与缓存 `layoutProfile` 的身份错配，MoveAnything 没有相关条目。Lua smoke 注入过期 `_STALE layoutProfile`、切换活动 `_SHARED1`、代理 scale、重复 SetupVisual／OnShow／apply 与 unbind／rebind，只有活动 display 获得 docking，handle 最终始终为代理中心；AEUI `0.8.26`，ImageGen `0/0`，当前 `P5 / pending-game-validation` | `/reload` 后不执行补救命令，先确认卷袋立即位于主栏左侧；再连续两次 apply、开关配置页、移动主栏，并确认 status 为 `provider-dock／bound／hidden-bound`；最后复测职业槽、popup、Queue／换装与 unbind／bind |
+| `AB.FIELDKIT bridge-v2.7` | v2.6 handle 隐藏、v2.4 配置／职业槽、动态 `4×6`、popup guard、accepted source／TGA 与 provider 物品行为不变；provider-local 包络只计算一次偏移，缓存 profile 指向的 display 随后通过 AutoBar 原生 `dockingFrames` 绑定 `pfActionBarMain` | 用户新截图 `1408×633 RGB`、SHA `d1a94514…49bb` 显示卷袋飞到左上；AutoBar Core 审计确认 `SetupVisual` 是最终写者。Lua smoke 当时覆盖单一 display 生命周期，AEUI `0.8.25`、display `19/19`、package pass；但最新实机证明缓存 `layoutProfile` 可能不是活动 display，`game-failed-active-display-identity / P5` | 由 bridge-v2.8 接续；保留 provider-native docking，修正活动 display 身份与独立代理坐标空间 |
 
 ## 下一门禁
 
 1. 两套 accepted source 与 runtime TGA 像素身份不变；视觉 source／runtime
-   manifest 保持 `runtime-v1.5`，共享 adapter 已更新到 bridge v2.7／P5。
-   fresh-checkout package 已通过（SHA `e1ca9054…0a35`），目标设备只需拉取并安装
+   manifest 保持 `runtime-v1.5`，共享 adapter 已更新到 bridge v2.8／P5。
+   fresh-checkout package 已通过（SHA `e1ca9054…0a35`）；目标设备只需拉取并安装
    `addon/`，不得再生成、导出或打补丁。
-2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.25`、
-   `fieldkit-contract=2.7`、`autobar-slot-scope=class-only`、
+2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.26`、
+   `fieldkit-contract=2.8`、`autobar-slot-scope=class-only`、
    `autobar-config-ui=class-only`、`autobar-config-descriptions=repaired`、
    `autobar-config-description-fixes=7`、`autobar-anchor-basis=provider-dock`、
    `autobar-provider-dock=bound`、
    `autobar-drag-handle=hidden-bound`、
    `fieldkit-binding=bound` 与
    `actionbar-stack=12x2-bound`。
-   同时确认 `focus-layout-contract=2.5`、`focus-layout-anchor=ui-parent+target-dependent`、
+   同时确认 `focus-layout-contract=2.6`、
+   `focus-layout-anchor=ui-parent+target-dependent+stance-main-bound`、
    `focus-layout-coordinate-space=game-native-v1`、
    `focus-layout-unit-scale=0.8`、`focus-layout-targettarget-scale=0.68`、
    `focus-layout-unit-font-size=18`、`focus-layout-unit-font=system`、
    `focus-layout-readout-scale=1`、
    `focus-layout-stance-scale=1`、`focus-layout-stance-icon-size=25`、
+   `focus-layout-stance-anchor=main-bottom`、`focus-layout-stance-gap=12`、
    `focus-ui-scale-tier=8`、`architotem-dock=bottom` 与
    `architotem-direction=down`；左卷袋与右双槽维持当前清晰尺寸，
    TrinketMenu 双槽不会因旧 `0.904371` 再次被二次缩小，玩家框不再覆盖卷袋。

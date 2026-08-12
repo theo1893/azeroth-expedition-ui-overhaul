@@ -3,19 +3,20 @@
 ## 当前状态
 
 - 批次：`AB.FOCUS.LAYOUT.V1`
-- 当前版本：`ACTION-BARS-CORE-SIM-V11 / focus runtime-v2.5 / sidebar runtime-v1.0`
+- 当前版本：`ACTION-BARS-CORE-SIM-V11 / focus runtime-v2.6 / sidebar runtime-v1.0`
 - 子状态：`runtime-exported / addon-integrated / pending-game-validation`
 - 项目阶段：`P5`
 - 操作：`integrate`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`；本轮没有位图生产或
   修图，因此未调用执行器。
 - ImageGen：`0/0`
-- runtime：AEUI `0.8.25`／`focus-layout-contract=2.5`／
-  `sidebar-group-contract=1.0`／`fieldkit-contract=2.7`。Field Kit v2.7 延续既有
+- runtime：AEUI `0.8.26`／`focus-layout-contract=2.6`／
+  `sidebar-group-contract=1.0`／`fieldkit-contract=2.8`。Field Kit v2.8 延续既有
   AutoBar 配置打开边界的缓存回锚、稳定几何重算与分类说明 fallback，并把配置页
   裁为“栏位／按钮”、单一职业槽编辑与可逆职业迁移；停靠包络现只读取 provider
-  Button 相对 handle 的局部点／尺寸／scale 计算一次偏移，并通过 AutoBar 原生
-  docking 把活动 display 强绑定到 `pfActionBarMain`；绑定态同时隐藏真实拖拽点。
+  Button 相对 handle 的局部点／尺寸／scale 计算一次偏移，以 `AutoBar.display` table
+  identity 选择活动 display，再通过 AutoBar 原生 docking 绑定到相对主栏的命名代理；
+  绑定态同时隐藏真实拖拽点。
   V11 focus 几何不变并继续直接写 Turtle WoW
   原生 `UIParent` SetPoint 坐标，
   不读取屏幕尺寸、不乘 effective scale、不探针、不回读；Player／Target 为
@@ -29,10 +30,13 @@
   中轴从上到下排列。DoiteDPS 的时间线与资源两排作为一个 union 一起上移 `32 UI`。
   未被手动调整的 exact v7–v11 游戏坐标、仍使用旧全局 unit face／`14 UI` 的 exact
   v12 profile，以及完整匹配上一版系统字体／几何的 exact v13 profile，在 `/reload`
-  一次性迁移为 v16。目标设备现存 copied v14／v15 profile 只把姿态的真实
+  一次性迁移为 v17。目标设备现存 copied v14／v15 profile，以及已失败的 exact v16
+  姿态 profile，只把姿态的真实
   `bar11.icon_size` 从 `18` 改为 `25 UI`、local scale 从 `0.7／0.72` 改为 `1.0`，
-  Player 等其他手调坐标不动；pfUI `UpdateConfig` 后重建并重施。普通
-  refresh 不维护绝对几何，只在 Apply／unlock 事件边界恢复已激活的相对锚。
+  Player 等其他手调坐标不动；live 姿态栏不再使用 `BOTTOM (0,255)`，而以
+  `TOP → pfActionBarMain BOTTOM -12 UI` 绑定。pfUI 全栏 `UpdateConfig`、姿态自身
+  `OnEvent`、宠物栏 `OnEvent／OnShow／OnHide` 与 unlock 退出都在 provider 原回调完成后
+  同步重施；绑定态隐藏姿态独立 mover。普通 refresh 不维护绝对几何。
   右侧 Bar 2／4／5／3 已按用户确认组合成 `2×2` 四块，每块 `3×4`、总体 `6×8`；
   组合态只显示一个 group mover，各栏内容配置保持独立，且支持按角色可逆 `unbind`。
   pfUI／ArchiTotem 行为和全部位图字节不变，ImageGen `0/0`。
@@ -48,6 +52,18 @@
 
 ## 本次输入与结论
 
+- 用户提供 runtime-v2.5／Field Kit v2.7 后的最新战士实机截图：
+  `C:/Users/西奥/AppData/Local/Temp/codex-clipboard-fc3e7b51-86a8-4f7e-8562-42591f7961b2.png`，
+  `1337×542 RGB`，SHA-256
+  `7af6c0de4d868f7ecbcbe03c6e306a08ab0c3514f4562d01359f27b6a718c014`。
+  图中三枚姿态已变大，但仍使用错误的绝对位置并跨压主动作栏；AutoBar 坐标完全未变。
+  pfUI 源码审计确认至少有四条末端重写姿态锚的生命周期：全栏 `UpdateConfig`、Bar 11
+  姿态事件、Bar 12 `PET_BAR_UPDATE` 重建及宠物栏显隐、unlock 关闭时
+  `UpdateMovable`。MoveAnything 没有 `pfActionBarStances` 或 AutoBar 条目，已排除第三方
+  保存坐标。runtime-v2.6 把 SavedVariables fallback 收到 `BOTTOM (0,130)`，live Frame
+  则固定为 `TOP → pfActionBarMain BOTTOM -12 UI`；上述四类 provider 回调都先保留原
+  行为，再让该相对锚成为同事件最终写入者。三姿态 provider footprint 仍为
+  `97×33 UI`，无 `OnUpdate` 几何维护。
 - 用户后续提供新的战士实机截图：
   `C:/Users/西奥/AppData/Local/Temp/codex-clipboard-9f11f013-7e87-4587-a76a-1b2ca3801747.png`，
   `1408×633 RGB`，SHA-256
@@ -385,14 +401,26 @@ v15。Bar 2／4／5／3 以 `3×4` 四块组合为 `6×8` 右侧组，保留各�
 - AEUI `0.8.24` fresh-checkout addon package `pass`、violations `0`、report
   `e1ca9054…0a35`、runtime manifest records `64`、tracked addon files `554`，
   `build_required_on_target_device=false`；另一台设备无需构建或导出。
-- AEUI `0.8.25`／focus runtime-v2.5 当前代码证据：focus Lua smoke 覆盖真实
+- AEUI `0.8.26`／focus runtime-v2.6 当前代码证据：focus Lua smoke 覆盖真实
+  `bar11.icon_size=25`／scale `1.0`，并让 provider 的 `UpdateConfig`、姿态事件、宠物栏
+  事件与显隐、unlock 退出各自故意恢复错误锚点，再逐条验证 live stance 均回到
+  `TOP → pfActionBarMain BOTTOM -12 UI`；同时覆盖 failed v16→v17 定向迁移、姿态独立
+  mover 隐藏与非姿态手调保护。Field Kit smoke 注入滞后的 `layoutProfile` 与另一张活动
+  display，验证只有 `AutoBar.display` identity 命中的 table 获得代理 docking。
+  entrypoints 为 ActionBars SHA `18bcaa63…e2c3e`、Bootstrap SHA `68206faa…e5ed0`、
+  TOC SHA `b3d93f60…f7ef6`；focus runtime-v2.6 contract SHA `84004383…cb8c`，
+  `13/13 pass`、report SHA `d04c4631…1280`；fresh-checkout package `pass`、violations
+  `0`、report SHA `e1ca9054…0a35`、records `64`、tracked addon files `554`、目标设备
+  无需构建。ImageGen `0/0`。
+- AEUI `0.8.25`／focus runtime-v2.5 历史代码证据：focus Lua smoke 覆盖真实
   `bar11.icon_size 18 → 25`、scale `0.7 → 1.0`、provider rebuild、三按钮
   `97×33 UI` 与 copied v14 的非姿态坐标保持；Field Kit smoke 同时覆盖原生 docking
   与 logout-reapply。entrypoints 为 ActionBars SHA `e3887b7f…5c28b`、Bootstrap
   SHA `3019de4e…0de9`、TOC SHA `770d4c0a…f3a6`；沿用几何未变的 runtime-v2.4
   display contract 并再次得到 `13/13 pass`、report SHA `0c01af25…26e8`；
   fresh-checkout package `pass`、violations `0`、report SHA `e1ca9054…0a35`、
-  records `64`、tracked addon files `554`，目标设备无需构建。
+  records `64`、tracked addon files `554`；最新实机仍出现姿态错位与 AutoBar 未绑定，
+  已由 runtime-v2.6／bridge-v2.8 接续。
 - 以下 V10 证据保留为上一轮历史基线：
 - V10 specification：`tools/specs/action_bars_core_simulation_v10.json`，SHA
   `8b36dfb9…16d`；scene：
@@ -553,7 +581,8 @@ v15。Bar 2／4／5／3 以 `3×4` 四块组合为 `6×8` 右侧组，保留各�
 
 | 版本 | 证据与结果 | 结论／后续 |
 |---|---|---|
-| `ACTION-BARS-CORE-SIM-V11 / focus runtime-v2.5 / sidebar runtime-v1.0` | 新战士 `1408×633` 截图与 SavedVariables 证明 v2.4 未改变 `icon_size=18` 且 copied v14 scale 为 `0.7`。v2.5 改真实 icon 为 `25 UI`、scale `1`、provider rebuild，并只定向升级 v14／v15 姿态合同；Field Kit v2.7 同轮改为 AutoBar 原生主栏 docking。两组 Lua smoke pass，ImageGen `0/0` | 当前 `P5 / pending-game-validation`；等待 `/reload` 确认三姿态约 `97×33 UI` 且 AutoBar 不再飞位，既有 V11 几何不退化 |
+| `ACTION-BARS-CORE-SIM-V11 / focus runtime-v2.6 / sidebar runtime-v1.0` | 最新 `1337×542` 截图、SHA `7af6c0de…c014` 证明 v2.5 已放大姿态但错误绝对锚跨压主栏；pfUI 审计定位全栏重建、姿态事件、宠物栏事件／显隐和 unlock 退出四类最终写入。v2.6 将 live stance 绑定主栏下沿 `12 UI`，隐藏独立 mover，并定向迁移 failed v16；Field Kit v2.8 同轮改为活动 display identity＋命名代理 docking。两组 Lua smoke 覆盖所有末端路径，ImageGen `0/0` | 当前 `P5 / pending-game-validation`；等待 `/reload` 确认姿态在主栏正下方且 AutoBar 位于主栏左侧，随后完整复测生命周期与 provider 行为 |
+| `ACTION-BARS-CORE-SIM-V11 / focus runtime-v2.5 / sidebar runtime-v1.0` | 新战士 `1408×633` 截图与 SavedVariables 证明 v2.4 未改变 `icon_size=18` 且 copied v14 scale 为 `0.7`。v2.5 改真实 icon 为 `25 UI`、scale `1`、provider rebuild，并只定向升级 v14／v15 姿态合同；Field Kit v2.7 同轮改为 AutoBar 原生主栏 docking。两组 Lua smoke pass，ImageGen `0/0` | 最新实机证明姿态虽放大但仍被 pfUI 恢复到错误绝对锚，AutoBar 也写到了非活动 display；`game-failed-final-writers / P5`，由 focus v2.6／Field Kit v2.8 接续 |
 | `ACTION-BARS-CORE-SIM-V11 / focus runtime-v2.4 / sidebar runtime-v1.0` | 战士 `1057×267` 实机证据；姿态 local scale `0.72 → 1.0`，exact v14→v15 且手调保护；Field Kit v2.6 同步隐藏绑定态 AutoBar handle。focus／Field Kit Lua smoke pass，runtime display `13/13 pass`，ImageGen `0/0` | 历史 P5；新实机证明姿态仍为 `18 UI` 且 AutoBar 仍飞位，已由 focus v2.5／Field Kit v2.7 接续 |
 | `ACTION-BARS-CORE-SIM-V11 / focus runtime-v2.3 / sidebar runtime-v1.0` | “大奶黑牛”DDPS／Player Buff 风险、live 系统字体修正与用户确认的四侧栏组合；layout `68/68`、simulation display `3/3`、focus runtime display `12/12`、sidebar runtime display `3/3`、两组 Lua smoke pass；ImageGen `0/0` | 历史基线；runtime-v2.4 只放大姿态并延续其余合同 |
 | `ACTION-BARS-CORE-SIM-V10 / runtime-v2.1` | “大奶黑牛”三项重叠问题；Aura 真实步进修正、16 Debuff 双排、两侧共下移；layout `60/60`、simulation display `12/12`、runtime display `12/12`、Lua smoke pass；ImageGen `0/0` | 历史基线；V11 保留全部 V10 几何，只改字体与 DDPS 安全区 |
@@ -566,24 +595,27 @@ v15。Bar 2／4／5／3 以 `3×4` 四块组合为 `6×8` 右侧组，保留各�
 
 在目标 Turtle WoW `/reload` 后，未被手动调整的 exact v7–v11 游戏坐标 profile、
 仍完整匹配旧全局 unit face／`14 UI` 的 exact v12 profile，以及完整匹配上一版系统
-字体／几何签名的 exact v13 profile 会一次性迁移为 v16；copied v14／v15 profile
-只升级真实姿态尺寸与 scale，无需先执行命令。确认状态
-包含 `version 0.8.25`、`focus-layout-contract=2.5`、
+字体／几何签名的 exact v13 profile 会一次性迁移为 v17；copied v14／v15 profile
+与 failed v16 profile 只升级真实姿态尺寸、scale 与主栏相对锚，无需先执行命令。确认状态
+包含 `version 0.8.26`、`focus-layout-contract=2.6`、
 `sidebar-group-contract=1.0`、`sidebar-group-binding=bound`、
-`focus-layout-anchor=ui-parent+target-dependent`、
+`focus-layout-anchor=ui-parent+target-dependent+stance-main-bound`、
 `focus-layout-coordinate-space=game-native-v1`、
 `focus-layout-unit-scale=0.8`、`focus-layout-targettarget-scale=0.68`、
 `focus-layout-unit-font-size=18`、`focus-layout-unit-font=system`、
 `focus-layout-readout-scale=1`、
 `focus-layout-stance-scale=1`、`focus-layout-stance-icon-size=25`、
+`focus-layout-stance-anchor=main-bottom`、`focus-layout-stance-gap=12`、
 `focus-layout-unit-font-live=19`、
-`fieldkit-contract=2.7`、`autobar-slot-scope=class-only`、
+`fieldkit-contract=2.8`、`autobar-slot-scope=class-only`、
 `autobar-anchor-basis=provider-dock`、`autobar-provider-dock=bound`、
 `autobar-drag-handle=hidden-bound`、
 `autobar-config-ui=class-only` 与 `fieldkit-binding=bound`。先开关一次 pfUI unlock，确认无
 `unlock.lua:527`、中央组合只有 Bar 1 mover、右侧组合只有一个 Bar 2 group mover、
-Bar 6 不跳位且 TargetTarget 始终贴在 Target 右侧。随后确认：
-AutoBar 红色拖拽点默认不显示，三枚战士姿态按钮清晰放大、命中与状态高亮正常且不压邻栏；
+Bar 6 不跳位、TargetTarget 始终贴在 Target 右侧，姿态栏独立 mover 不显示且始终位于
+主栏正下方 `12 UI`。随后触发一次姿态切换、宠物栏显示／隐藏与 `/pfui` Apply，再确认
+姿态相对锚均不变。然后确认：AutoBar 红色拖拽点默认不显示，三枚战士姿态按钮清晰放大、
+命中与状态高亮正常且不压邻栏；
 Player 与共同下移 `20 UI` 的卷袋／饰品组不再相交；Player／Target 比 TargetTarget
 大一阶；三段卷袋文字消失；玩家 Buff 上／Debuff 下并从完整左缘起排；
 Target／TargetTarget Buff 上／Debuff 下且从右缘起排；Aura 为 `23 UI`，真实每行

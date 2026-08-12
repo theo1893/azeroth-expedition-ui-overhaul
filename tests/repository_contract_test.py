@@ -282,7 +282,7 @@ def main() -> None:
         encoding="utf-8-sig"
     )
     assert "## RequiredDeps: pfUI" in aeui_toc
-    assert "## Version: 0.8.25" in aeui_toc
+    assert "## Version: 0.8.26" in aeui_toc
     assert "Core\\Bootstrap.lua" in aeui_toc
     assert "Modules\\ActionBars.lua" in aeui_toc
     assert "Modules\\Chat.lua" in aeui_toc
@@ -290,7 +290,7 @@ def main() -> None:
     assert "Modules\\Quests.lua" in aeui_toc
     assert "Modules\\UnitFrames.lua" in aeui_toc
     bootstrap = (aeui / "Core" / "Bootstrap.lua").read_text(encoding="utf-8")
-    assert 'addon.version = "0.8.25"' in bootstrap
+    assert 'addon.version = "0.8.26"' in bootstrap
     assert 'eventFrame:RegisterEvent("PLAYER_LOGOUT")' in bootstrap
     assert 'addon:RunModuleMethod(name, module, "PrepareLogout")' in bootstrap
     assert "actionbar-runtime=" in bootstrap
@@ -330,9 +330,9 @@ def main() -> None:
     assert "button:SetParent" not in actionbars_source
     assert "button:SetWidth" not in actionbars_source
     assert "button:SetHeight" not in actionbars_source
-    assert 'ActionBars.fieldKitRuntimeContract = "2.7"' in actionbars_source
-    assert 'ActionBars.focusLayoutRuntimeContract = "2.5"' in actionbars_source
-    assert "ActionBars.focusLayoutVersion = 16" in actionbars_source
+    assert 'ActionBars.fieldKitRuntimeContract = "2.8"' in actionbars_source
+    assert 'ActionBars.focusLayoutRuntimeContract = "2.6"' in actionbars_source
+    assert "ActionBars.focusLayoutVersion = 17" in actionbars_source
     assert 'ActionBars.focusCoordinateSpace = "game-native-v1"' in actionbars_source
     assert "ActionBars.comfortUIScaleTier = 8" in actionbars_source
     assert "ActionBars.comfortUIScaleValue = 0.71111111111111" in actionbars_source
@@ -341,10 +341,13 @@ def main() -> None:
     assert "ActionBars.focusReadoutScale = 1" in actionbars_source
     assert "ActionBars.focusStanceScale = 1" in actionbars_source
     assert 'ActionBars.focusStanceIconSize = "25"' in actionbars_source
-    assert 'ActionBars.autoBarProviderDockName = "pfActionBarMain"' in actionbars_source
+    assert '"AzerothExpeditionUIAutoBarDockAnchor"' in actionbars_source
+    assert "EnsureAutoBarProviderDockAnchor" in actionbars_source
     assert "ApplyAutoBarProviderDock" in actionbars_source
     assert "function ActionBars:PrepareLogout()" in actionbars_source
     assert "ApplyAutoBarDragHandlePolicy" in actionbars_source
+    assert "InstallFocusStanceLifecycleHooks" in actionbars_source
+    assert 'InstallFocusStanceScriptHook(pet, "OnEvent")' in actionbars_source
     assert "ActionBars.focusDoiteScale = 0.82" in actionbars_source
     assert "ActionBars.focusUnitWidth = 240" in actionbars_source
     assert "ActionBars.focusUnitHeight = 60" in actionbars_source
@@ -372,7 +375,8 @@ def main() -> None:
     assert "ActionBars.focusSwingX = 0" in actionbars_source
     assert "ActionBars.focusSwingY = 284" in actionbars_source
     assert "ActionBars.focusStanceX = 0" in actionbars_source
-    assert "ActionBars.focusStanceY = 255" in actionbars_source
+    assert "ActionBars.focusStanceY = 130" in actionbars_source
+    assert "ActionBars.focusStanceDockGap = 12" in actionbars_source
     assert "ActionBars.focusDoiteX = 850" in actionbars_source
     assert "ActionBars.focusDoiteY = -615" in actionbars_source
     assert "ResolveCombatFocusProjection" not in actionbars_source
