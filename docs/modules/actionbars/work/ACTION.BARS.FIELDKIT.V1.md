@@ -7,7 +7,7 @@
   `AB.TRINKET.MENU`、`AB.CONSUMABLE.RACK`、`AB.CONSUMABLE.POCKET`、
   `AB.CONSUMABLE.POPUP`、`AB.CONSUMABLE.GROUP`
 - 模拟版本：`AB-FIELDKIT-SIM-V3`
-- 当前操作：`AutoBar drag-handle default-hide / game retest`
+- 当前操作：`AutoBar provider-native main-bar docking / game retest`
 - 子状态：`runtime-exported / pending-retest`
 - 项目阶段：`P5`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
@@ -57,8 +57,19 @@
   保留 v2.5 全部坐标修复，并在绑定态 Apply、`SetupVisual` 与完整配置 `OnShow` 返回前
   同步隐藏真实 handle。显式 `unbind`／AEUI 关闭时重新遵循 provider
   `hideDragHandle`，不建立维护循环，也不改拖动脚本。
-  当前 AEUI `0.8.24` entrypoints 为 ActionBars SHA `f7d676ac…867b`、Bootstrap
-  SHA `4e401442…f623c`、TOC SHA `b5eac8ca…f8b3`；fresh-checkout package
+  用户新的 `1408×633 RGB` 截图（SHA `d1a94514…49bb`）继续证明卷袋会飞走；
+  AutoBar 1.31 源码确认 `SetupVisual` 最后无条件清空 handle 锚点并按自由 position
+  重写，因此任何 AEUI 后置抢写都仍有生命周期竞争。bridge-v2.7 改走 AutoBar 自己的
+  docking 通道：把活动 display 原生停靠到 `pfActionBarMain`，由 provider 每次
+  `SetupVisual` 自己写主栏相对锚点；原自由坐标与 docking／shift 均可逆备份，unbind／
+  关闭时恢复，logout／reload 前移除 AEUI 运行时 token，下一次 providers 就绪后再安装。
+  当前 AEUI `0.8.25` entrypoints 已固化为 ActionBars SHA `e3887b7f…5c28b`、
+  Bootstrap SHA `3019de4e…0de9`、TOC SHA `770d4c0a…f3a6`；Field Kit display
+  `19/19 pass`、violations `0`、report SHA `5261ccd4…edb1`；fresh-checkout package
+  `pass`、violations `0`、report SHA `e1ca9054…0a35`、records `64`、tracked addon
+  files `554`、目标设备无需构建。上一轮
+  ActionBars SHA `f7d676ac…867b`、Bootstrap SHA `4e401442…f623c`、TOC
+  SHA `b5eac8ca…f8b3` 仅保留为 bridge-v2.6 历史。上一轮 fresh-checkout package
   `status=pass`、violations `0`、report SHA `e1ca9054…0a35`、runtime manifest
   records `64`、tracked addon files `554`、`build_required_on_target_device=false`。
   P4→当前没有调用 ImageGen。
@@ -105,13 +116,13 @@
 - P2 审计时当前角色的 `AddOns.txt` 为 TrinketMenu `enabled`、AutoBar `disabled`；
   用户随后为 P6 检查自行启用 AutoBar，`2026-08-09` 实机截图已证明 provider
   加载并显示。AEUI 从未自动启用它。
-- 两个插件均已安装；普通 adapter 刷新不得替用户启用 AutoBar。bridge-v2.6 延续 v2.4 首次
+- 两个插件均已安装；普通 adapter 刷新不得替用户启用 AutoBar。bridge-v2.7 延续 v2.4 首次
   加载会把当前有效槽表可逆迁入原生职业 profile，并固定当前角色只使用／编辑职业层；
   之后普通刷新不重复覆盖。`/aeui autobar apply／restore` 继续提供显式推荐值与回退。
 - 当前“大奶黑牛 - Basin of Stars”角色 profile 为 24 个推荐逻辑类别、
   `36×36 UI`、gap `3 UI`、最多 `4×6`；`showEmptyButtons` 与 `showCategoryIcon` 均
   关闭、`hideDragHandle=1`，当前背包因此只显示 13 个有物品类别。`_SHARED1` 的旧
-  `1×24` 只保留为未激活 provider 配置。bridge-v2.6 延续把这份当前有效 24 槽作为
+  `1×24` 只保留为未激活 provider 配置。bridge-v2.7 延续把这份当前有效 24 槽作为
   `_SHAMAN` 职业层的首次内容，角色层原槽保持休眠并有 AEUI 备份；同职业角色共享
   该职业层。exact backed-up 旧 AEUI 满格显示仍只允许一次性迁移三个显示字段。
 - 当前 TrinketMenu 保存为主栏水平、主栏 scale
@@ -1143,25 +1154,28 @@ ImageGen、没有返回生成结果，不进入任一账本。Trinket attempt 1 
 | `AB.FIELDKIT bridge-v2.4` | v2.3 回锚、说明 fallback、动态 `4×6`、popup guard、accepted source／TGA 与 provider 物品行为不变；配置页只留 Slots／Buttons 与 Done，隐藏 Bar／Popup／Profile、综合预览、层／layout 选择及 Reset／Revert。当前有效 24 槽一次迁入原生职业 profile，角色固定 `useClass/edit3`，角色／职业原配置双备份并可 restore | 用户明确要求按高度客制化范围裁剪配置页并让槽位只按职业配置；Lua smoke 覆盖首次迁移、隐藏 Tab 重定向、OnShow 再裁剪、职业 apply、原生控件与双层数据 restore；Field Kit runtime `9/9＋10/10`、repository contracts 与 fresh-checkout package pass；AEUI `0.8.24`，ImageGen `0/0`，`pending-game-validation / P5` | `/reload` 确认只见“栏位／按钮”、单一“职业栏位（左键编辑）”与“完成”；编辑一个含数字 item ID 的槽并确认同职业共享、角色原槽不变，再连续开关／点击确认卷袋无跳位；必要时 `/aeui autobar restore` 验证回退 |
 | `AB.FIELDKIT bridge-v2.5` | v2.4 配置裁剪／职业槽、v2.3 同事件回锚、说明 fallback、动态 `4×6`、popup guard、accepted source／TGA 与全部 provider 物品行为不变；零延迟停靠包络改由 Button 相对 handle 的 provider-local `GetPoint`、宽高与 scale 计算，已有成功锚点不再被陈旧 world-space 坐标覆盖 | 用户提供两张 `/aeui autobar apply` 后实机截图，确认卷袋在两个位置往返；AutoBar 1.31 审计定位 `ProfileChanged → OnShow／ConfigChanged → SetupVisual` 连续重排与 handle／Button 坐标不同帧。Lua smoke 注入两套相反陈旧坐标并连续 apply，两次同步保护和零延迟刷新后的 x／y 完全相同；runtime／repository contracts 与 fresh-checkout package pass；AEUI `0.8.24`，ActionBars SHA `b861d7d9…6ffc`，ImageGen `0/0`，`pending-game-validation / P5` | `/reload` 连续执行两次 `/aeui autobar apply`，每次等待刷新后确认卷袋像素位置完全不变，`/aeui status` 为 `autobar-anchor-basis=provider-local`；再连续开关／点击配置页并复测职业槽、popup、Queue／换装与 restore |
 | `AB.FIELDKIT bridge-v2.6` | v2.5 provider-local 停靠、v2.4 配置裁剪／职业槽、同步回锚、说明 fallback、动态 `4×6`、popup guard、accepted source／TGA 与 provider 行为全部不变；绑定态在 Apply、`SetupVisual` 与完整配置 `OnShow` 边界同步隐藏真实 `AutoBarAnchorFrameHandle`，`unbind`／AEUI 关闭时恢复 provider 偏好 | 用户战士截图 `1057×267 RGB`、SHA `bf05df85…76fe` 显示卷袋左上红色 handle。AutoBar 1.31 XML／Core 审计确认实际对象名，且早期 `HideHandle(AutoBarFrame)` 错指不存在的 `AutoBarFrameHandle`。Lua smoke 让 provider 在每次 `SetupVisual` 主动显示 handle，验证所有绑定生命周期均回到 `hidden-bound`，显式 unbind 显示、rebind 再隐藏；ActionBars SHA `f7d676ac…867b`，fresh-checkout package `pass`／report `e1ca9054…0a35`，ImageGen `0/0`，`pending-game-validation / P5` | `/reload` 确认红点默认不可见且 `/aeui status` 为 `autobar-drag-handle=hidden-bound`；连续开关配置页、执行两次 apply 均不得重新出现；`/aeui fieldkit unbind` 后按 provider 偏好恢复，再 `bind` 隐藏，并复测职业槽、popup、Queue／换装 |
+| `AB.FIELDKIT bridge-v2.7` | v2.6 handle 隐藏、v2.4 配置／职业槽、动态 `4×6`、popup guard、accepted source／TGA 与 provider 物品行为不变；provider-local 包络只计算一次偏移，活动 display 随后通过 AutoBar 原生 `dockingFrames` 强绑定 `pfActionBarMain`。自由 position 在绑定态不渲染；unbind／关闭精确恢复 docking／shift，logout 前撤销运行时 token | 用户新截图 `1408×633 RGB`、SHA `d1a94514…49bb` 显示卷袋飞到左上；AutoBar Core 审计确认 `SetupVisual` 最终无条件 `ClearAllPoints` 并按 docking／position 重写 handle，旧 AEUI 后置写入存在最终写者竞争。Lua smoke 覆盖连续 SetupVisual、配置 OnShow、两次 apply、unbind／rebind 与 logout-reapply，状态稳定为 `provider-dock`／`bound`；AEUI `0.8.25`，ActionBars SHA `e3887b7f…5c28b`，display `19/19`、package pass，ImageGen `0/0`，`pending-game-validation / P5` | `/reload` 后不执行补救命令先确认卷袋在主栏左侧；连续两次 apply、开关配置页、移动主栏都不跳位，status 为 `autobar-anchor-basis=provider-dock`、`autobar-provider-dock=bound`、`autobar-drag-handle=hidden-bound`；再复测职业槽、popup、Queue／换装与 unbind／bind |
 
 ## 下一门禁
 
 1. 两套 accepted source 与 runtime TGA 像素身份不变；视觉 source／runtime
-   manifest 保持 `runtime-v1.5`，共享 adapter 已更新到 bridge v2.6／P5。fresh-checkout package
-   已通过，目标设备只需拉取并安装 `addon/`，不得再生成、导出或打补丁。
-2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.24`、
-   `fieldkit-contract=2.6`、`autobar-slot-scope=class-only`、
+   manifest 保持 `runtime-v1.5`，共享 adapter 已更新到 bridge v2.7／P5。
+   fresh-checkout package 已通过（SHA `e1ca9054…0a35`），目标设备只需拉取并安装
+   `addon/`，不得再生成、导出或打补丁。
+2. Turtle WoW 启动或 `/reload` 后确认 `/aeui status` 含 `version 0.8.25`、
+   `fieldkit-contract=2.7`、`autobar-slot-scope=class-only`、
    `autobar-config-ui=class-only`、`autobar-config-descriptions=repaired`、
-   `autobar-config-description-fixes=7`、`autobar-anchor-basis=provider-local`、
+   `autobar-config-description-fixes=7`、`autobar-anchor-basis=provider-dock`、
+   `autobar-provider-dock=bound`、
    `autobar-drag-handle=hidden-bound`、
    `fieldkit-binding=bound` 与
    `actionbar-stack=12x2-bound`。
-   同时确认 `focus-layout-contract=2.4`、`focus-layout-anchor=ui-parent+target-dependent`、
+   同时确认 `focus-layout-contract=2.5`、`focus-layout-anchor=ui-parent+target-dependent`、
    `focus-layout-coordinate-space=game-native-v1`、
    `focus-layout-unit-scale=0.8`、`focus-layout-targettarget-scale=0.68`、
    `focus-layout-unit-font-size=18`、`focus-layout-unit-font=system`、
    `focus-layout-readout-scale=1`、
-   `focus-layout-stance-scale=1`、
+   `focus-layout-stance-scale=1`、`focus-layout-stance-icon-size=25`、
    `focus-ui-scale-tier=8`、`architotem-dock=bottom` 与
    `architotem-direction=down`；左卷袋与右双槽维持当前清晰尺寸，
    TrinketMenu 双槽不会因旧 `0.904371` 再次被二次缩小，玩家框不再覆盖卷袋。

@@ -3,19 +3,19 @@
 ## 当前状态
 
 - 批次：`AB.FOCUS.LAYOUT.V1`
-- 当前版本：`ACTION-BARS-CORE-SIM-V11 / focus runtime-v2.4 / sidebar runtime-v1.0`
+- 当前版本：`ACTION-BARS-CORE-SIM-V11 / focus runtime-v2.5 / sidebar runtime-v1.0`
 - 子状态：`runtime-exported / addon-integrated / pending-game-validation`
 - 项目阶段：`P5`
 - 操作：`integrate`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`；本轮没有位图生产或
   修图，因此未调用执行器。
 - ImageGen：`0/0`
-- runtime：AEUI `0.8.24`／`focus-layout-contract=2.4`／
-  `sidebar-group-contract=1.0`／`fieldkit-contract=2.6`。Field Kit v2.6 延续 v2.5 的
+- runtime：AEUI `0.8.25`／`focus-layout-contract=2.5`／
+  `sidebar-group-contract=1.0`／`fieldkit-contract=2.7`。Field Kit v2.7 延续既有
   AutoBar 配置打开边界的缓存回锚、稳定几何重算与分类说明 fallback，并把配置页
   裁为“栏位／按钮”、单一职业槽编辑与可逆职业迁移；停靠包络现只读取 provider
-  Button 相对 handle 的局部点／尺寸／scale，重复 apply 不再受陈旧屏幕坐标影响；
-  绑定态同时在 provider 视觉生命周期同步隐藏真实 AutoBar 拖拽点。
+  Button 相对 handle 的局部点／尺寸／scale 计算一次偏移，并通过 AutoBar 原生
+  docking 把活动 display 强绑定到 `pfActionBarMain`；绑定态同时隐藏真实拖拽点。
   V11 focus 几何不变并继续直接写 Turtle WoW
   原生 `UIParent` SetPoint 坐标，
   不读取屏幕尺寸、不乘 effective scale、不探针、不回读；Player／Target 为
@@ -29,8 +29,9 @@
   中轴从上到下排列。DoiteDPS 的时间线与资源两排作为一个 union 一起上移 `32 UI`。
   未被手动调整的 exact v7–v11 游戏坐标、仍使用旧全局 unit face／`14 UI` 的 exact
   v12 profile，以及完整匹配上一版系统字体／几何的 exact v13 profile，在 `/reload`
-  一次性迁移为 v15；完整匹配上一版系统字体／几何且姿态仍为 `0.72` 的 exact v14
-  profile 同样迁移；手动改过字体、姿态 scale 或坐标的签名不动。普通
+  一次性迁移为 v16。目标设备现存 copied v14／v15 profile 只把姿态的真实
+  `bar11.icon_size` 从 `18` 改为 `25 UI`、local scale 从 `0.7／0.72` 改为 `1.0`，
+  Player 等其他手调坐标不动；pfUI `UpdateConfig` 后重建并重施。普通
   refresh 不维护绝对几何，只在 Apply／unlock 事件边界恢复已激活的相对锚。
   右侧 Bar 2／4／5／3 已按用户确认组合成 `2×2` 四块，每块 `3×4`、总体 `6×8`；
   组合态只显示一个 group mover，各栏内容配置保持独立，且支持按角色可逆 `unbind`。
@@ -47,14 +48,24 @@
 
 ## 本次输入与结论
 
+- 用户后续提供新的战士实机截图：
+  `C:/Users/西奥/AppData/Local/Temp/codex-clipboard-9f11f013-7e87-4587-a76a-1b2ca3801747.png`，
+  `1408×633 RGB`，SHA-256
+  `d1a9451410cdaeef4808a5dbd81a50e2350b67b560ef03531036192e414149bb`，明确指出
+  runtime-v2.4 后姿态大小仍未变化。只读 SavedVariables 显示“大斧黑牛”仍为
+  Combat Focus v14、`bars.bar11.icon_size="18"`、stance scale `0.7`，证明旧实现只改
+  外层 scale 且 exact 签名门禁没有覆盖 copied profile。runtime-v2.5 改写真实
+  provider icon size 为 `25 UI`、scale 为 `1.0`，调用 pfUI `bars:UpdateConfig()` 重建
+  按钮，并在后续配置刷新 hook 中重施。v14／v15 targeted upgrade 只改这一姿态合同，
+  保留非姿态坐标；模拟三按钮 union 为 `97×33 UI`。
 - 最新战士组合栏截图：
   `C:/Users/西奥/AppData/Local/Temp/codex-clipboard-f23bdba9-fc1a-4b7e-8aaf-17c103c82142.png`，
   `1057×267 RGB`，SHA-256
   `bf05df852a8956303e98aced9848e28eec12381017d8135ba920e38c330f76fe`。用户指出
   三枚姿态按钮在组合中太小。pfUI 审计确认 Bar 11 仍提供真实姿态 Button 和命中区；
-  runtime-v2.4 不改其 icon size、formfactor、状态或事件，只把
+  runtime-v2.4 当时不改其 icon size、formfactor、状态或事件，只把
   `pfActionBarStances` 的 local scale 从 `0.72` 提为 `1.0`，保持
-  `BOTTOM (0,255)`。exact v14 旧签名一次迁移为 v15；手动 scale／坐标受保护。
+  `BOTTOM (0,255)`。该方案已被上述新实机证据否决并由 runtime-v2.5 接续。
 - 最新 focus／DDPS 截图：
   `C:/Users/西奥/AppData/Local/Temp/codex-clipboard-da973940-b259-4ca7-80e2-126e6274ba64.png`，
   `877×354 RGB`，SHA-256
@@ -374,6 +385,14 @@ v15。Bar 2／4／5／3 以 `3×4` 四块组合为 `6×8` 右侧组，保留各�
 - AEUI `0.8.24` fresh-checkout addon package `pass`、violations `0`、report
   `e1ca9054…0a35`、runtime manifest records `64`、tracked addon files `554`，
   `build_required_on_target_device=false`；另一台设备无需构建或导出。
+- AEUI `0.8.25`／focus runtime-v2.5 当前代码证据：focus Lua smoke 覆盖真实
+  `bar11.icon_size 18 → 25`、scale `0.7 → 1.0`、provider rebuild、三按钮
+  `97×33 UI` 与 copied v14 的非姿态坐标保持；Field Kit smoke 同时覆盖原生 docking
+  与 logout-reapply。entrypoints 为 ActionBars SHA `e3887b7f…5c28b`、Bootstrap
+  SHA `3019de4e…0de9`、TOC SHA `770d4c0a…f3a6`；沿用几何未变的 runtime-v2.4
+  display contract 并再次得到 `13/13 pass`、report SHA `0c01af25…26e8`；
+  fresh-checkout package `pass`、violations `0`、report SHA `e1ca9054…0a35`、
+  records `64`、tracked addon files `554`，目标设备无需构建。
 - 以下 V10 证据保留为上一轮历史基线：
 - V10 specification：`tools/specs/action_bars_core_simulation_v10.json`，SHA
   `8b36dfb9…16d`；scene：
@@ -534,7 +553,8 @@ v15。Bar 2／4／5／3 以 `3×4` 四块组合为 `6×8` 右侧组，保留各�
 
 | 版本 | 证据与结果 | 结论／后续 |
 |---|---|---|
-| `ACTION-BARS-CORE-SIM-V11 / focus runtime-v2.4 / sidebar runtime-v1.0` | 战士 `1057×267` 实机证据；姿态 local scale `0.72 → 1.0`，exact v14→v15 且手调保护；Field Kit v2.6 同步隐藏绑定态 AutoBar handle。focus／Field Kit Lua smoke pass，runtime display `13/13 pass`，ImageGen `0/0` | 当前 `P5 / pending-game-validation`；等待战士 `/reload` 确认姿态尺寸、handle 隐藏与既有 V11 几何不退化 |
+| `ACTION-BARS-CORE-SIM-V11 / focus runtime-v2.5 / sidebar runtime-v1.0` | 新战士 `1408×633` 截图与 SavedVariables 证明 v2.4 未改变 `icon_size=18` 且 copied v14 scale 为 `0.7`。v2.5 改真实 icon 为 `25 UI`、scale `1`、provider rebuild，并只定向升级 v14／v15 姿态合同；Field Kit v2.7 同轮改为 AutoBar 原生主栏 docking。两组 Lua smoke pass，ImageGen `0/0` | 当前 `P5 / pending-game-validation`；等待 `/reload` 确认三姿态约 `97×33 UI` 且 AutoBar 不再飞位，既有 V11 几何不退化 |
+| `ACTION-BARS-CORE-SIM-V11 / focus runtime-v2.4 / sidebar runtime-v1.0` | 战士 `1057×267` 实机证据；姿态 local scale `0.72 → 1.0`，exact v14→v15 且手调保护；Field Kit v2.6 同步隐藏绑定态 AutoBar handle。focus／Field Kit Lua smoke pass，runtime display `13/13 pass`，ImageGen `0/0` | 历史 P5；新实机证明姿态仍为 `18 UI` 且 AutoBar 仍飞位，已由 focus v2.5／Field Kit v2.7 接续 |
 | `ACTION-BARS-CORE-SIM-V11 / focus runtime-v2.3 / sidebar runtime-v1.0` | “大奶黑牛”DDPS／Player Buff 风险、live 系统字体修正与用户确认的四侧栏组合；layout `68/68`、simulation display `3/3`、focus runtime display `12/12`、sidebar runtime display `3/3`、两组 Lua smoke pass；ImageGen `0/0` | 历史基线；runtime-v2.4 只放大姿态并延续其余合同 |
 | `ACTION-BARS-CORE-SIM-V10 / runtime-v2.1` | “大奶黑牛”三项重叠问题；Aura 真实步进修正、16 Debuff 双排、两侧共下移；layout `60/60`、simulation display `12/12`、runtime display `12/12`、Lua smoke pass；ImageGen `0/0` | 历史基线；V11 保留全部 V10 几何，只改字体与 DDPS 安全区 |
 | `ACTION-BARS-CORE-SIM-V9 / runtime-v2.0` | “大奶黑牛”舒适缩放与精简 AutoBar；layout `56/56`、simulation display `10/10`、runtime display `10/10`、Lua 与仓库合同 pass；ImageGen `0/0` | 历史基线；V10 修正其错误的 Aura 步进假设并保留尺度与中央计时栈 |
@@ -546,18 +566,20 @@ v15。Bar 2／4／5／3 以 `3×4` 四块组合为 `6×8` 右侧组，保留各�
 
 在目标 Turtle WoW `/reload` 后，未被手动调整的 exact v7–v11 游戏坐标 profile、
 仍完整匹配旧全局 unit face／`14 UI` 的 exact v12 profile，以及完整匹配上一版系统
-字体／几何签名的 exact v13 profile，以及保持旧姿态 `0.72` 的 exact v14 profile
-会一次性迁移为 v15；无需先执行命令。确认状态
-包含 `version 0.8.24`、`focus-layout-contract=2.4`、
+字体／几何签名的 exact v13 profile 会一次性迁移为 v16；copied v14／v15 profile
+只升级真实姿态尺寸与 scale，无需先执行命令。确认状态
+包含 `version 0.8.25`、`focus-layout-contract=2.5`、
 `sidebar-group-contract=1.0`、`sidebar-group-binding=bound`、
 `focus-layout-anchor=ui-parent+target-dependent`、
 `focus-layout-coordinate-space=game-native-v1`、
 `focus-layout-unit-scale=0.8`、`focus-layout-targettarget-scale=0.68`、
 `focus-layout-unit-font-size=18`、`focus-layout-unit-font=system`、
 `focus-layout-readout-scale=1`、
-`focus-layout-stance-scale=1`、`focus-layout-unit-font-live=19`、
-`fieldkit-contract=2.6`、`autobar-slot-scope=class-only`、
-`autobar-anchor-basis=provider-local`、`autobar-drag-handle=hidden-bound`、
+`focus-layout-stance-scale=1`、`focus-layout-stance-icon-size=25`、
+`focus-layout-unit-font-live=19`、
+`fieldkit-contract=2.7`、`autobar-slot-scope=class-only`、
+`autobar-anchor-basis=provider-dock`、`autobar-provider-dock=bound`、
+`autobar-drag-handle=hidden-bound`、
 `autobar-config-ui=class-only` 与 `fieldkit-binding=bound`。先开关一次 pfUI unlock，确认无
 `unlock.lua:527`、中央组合只有 Bar 1 mover、右侧组合只有一个 Bar 2 group mover、
 Bar 6 不跳位且 TargetTarget 始终贴在 Target 右侧。随后确认：

@@ -2,6 +2,30 @@
 
 ## 当前结论
 
+- 用户于 `2026-08-12` 提供新的 `1408×633 RGB` 战士实机截图（SHA
+  `d1a94514…49bb`），确认上一轮修复后 AutoBar 仍飞到左上角，三枚姿态按钮也仍为
+  小尺寸。只读 SavedVariables 证据为该角色 Combat Focus profile v14、
+  `bars.bar11.icon_size="18"`、`pfActionBarStances.scale=0.7`；AutoBar 共享 display
+  仍保存自由坐标约 `(409,514)`。AutoBar 1.31 的 `SetupVisual` 在末尾无条件
+  `ClearAllPoints`，随后按 `display.docking` 或 `display.position` 重写真实 handle，证明
+  AEUI 与 provider 竞争“最后一次 SetPoint”是反复跳位的根因。AEUI `0.8.25`／
+  `fieldkit-contract=2.7` 改用 provider 原生 docking：注册 `pfActionBarMain` 为合法停靠
+  Frame，在强绑定态把当前活动 display 的 `docking` 指向主栏，由每一次 provider
+  `SetupVisual` 自己写出相同的主栏相对锚点；自由 `position` 保留但绑定态不参与渲染，
+  `unbind`／关闭时精确恢复原 docking／shift，logout／reload 前移除仅运行时可用的
+  AEUI docking token，避免 AutoBar 早于 pfUI 加载时引用未知 key。`focus-layout-contract=2.5`／
+  profile v16 不再只改外层 scale，而是把真实 `bar11.icon_size` 从 `18` 改为 `25 UI`、
+  scale 固定为 `1.0`，在一次性 apply 与 pfUI `UpdateConfig` 边界调用 provider 重建并重施；
+  v14／v15 copied profile 只升级姿态合同，保留 Player 等其他手调坐标。Lua smoke 覆盖
+  原生 docking 连续 `SetupVisual`／配置 OnShow／unbind／rebind／logout-reapply，以及姿态
+  `18/0.7 → 25/1`、模拟三按钮 `97×33 UI` 和非姿态坐标不变。位图字节不变，
+  ImageGen `0/0`。ActionBars SHA `e3887b7f…5c28b`、Bootstrap SHA
+  `3019de4e…0de9`、TOC SHA `770d4c0a…f3a6` 已同步四份 runtime manifest；
+  Field Kit display `19/19 pass`（report SHA `5261ccd4…edb1`）、Focus display
+  `13/13 pass`（report SHA `0c01af25…26e8`），fresh-checkout package `pass`、
+  violations `0`、report SHA `e1ca9054…0a35`、records `64`、tracked addon files
+  `554`、目标设备无需构建。当前仍为 `runtime-exported / addon-integrated / P5 /
+  pending-game-validation`。
 - 用户于 `2026-08-12` 提供战士组合栏实机截图
   `1057×267 RGB`、SHA `bf05df85…76fe`，要求默认隐藏 AutoBar 红色拖拽点并放大
   三枚姿态按钮。AutoBar 1.31 XML 审计确认红点为真实
@@ -463,22 +487,29 @@
 | `AB.SLOT` | `P6 / game-validated` | [source](../../../assets/source/actionbars/ab-slot/ActionSlotBase_Master_v1.png)／[source manifest](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_SourceManifest_v1.json)／[runtime manifest](../../../assets/source/actionbars/ab-slot/AB-SLOT-BASE-V1_RuntimeManifest_v1.json)／[P6 evidence](../../../assets/references/actionbars/p6/AB-SLOT-BASE-V1_P6Evidence_v1.json)；TGA `5c49a1db…23ca`、像素 `e527c038…c35c`、实机截图 `dc9615ac…4d5d`；Bar `1–10` scoped adapter，display `5/5`、package／P6 交互均 `pass` | 独立 Rail 模拟已完成；`AB.SLOT` 进入 `P6-C` 前另行展示精确保留／删除清单并取得用户批准 |
 | `AB.SLOT.STATE` | `P2 / scoped` | highlight／active／equipped／icon tint／cooldown／按键动画的真实覆盖顺序已冻结 | 基底 P6 已验证；如需独立换肤再写悬停／激活覆盖合同，不生产假 disabled cell |
 | `AB.ENDCAP.GRYPHON` | `P2 / direction-locked` | pfUI 左右端帽对象、64 UI 默认能力；用户确认的 V3 preset 默认关闭 | `AB.SLOT／RAIL` 后另行授权可选端帽正文 |
-| `AB.STANCE／PET` | `P1–P5` | Bar `11／12` 与 provider 状态已审计；stance 的 focus runtime-v2.4 保持 `BOTTOM (0,255)`，local scale 从 `0.72` 放大为 `1.0`，真实姿态按钮／图标／点击仍归 pfUI；Pet 仍为 P1 | 战士 `/reload` 确认三姿态清晰放大、命中区同步且不压中央栏；再覆盖职业最少／最多姿态数量与宠物自动施法排版 |
-| `AB.CONSUMABLE.RACK／POCKET／POPUP／CONFIG` | `P5 / runtime-asset-v1.5 / bridge-v2.6 / pending-game-validation / 1/5` | [source](../../../assets/source/actionbars/ab-consumable-kit/ActionConsumableKit_Master_v1.png)／[runtime manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_RuntimeManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；TGA `c48f6292…320e`、像素 `658f826f…e30d` 不变；24 个逻辑类别、当前可用类别动态显示、最大 `4×6`；external drawer 支持 `1–24` 个当前主格；绑定底边比主栏低 `20 UI`。v2.6 延续配置裁剪、职业槽、空说明、同步回锚与 provider-local 包络，并在绑定态同步隐藏真实 `AutoBarAnchorFrameHandle`；`unbind` 恢复 provider 偏好 | `/reload` 确认红色拖拽点默认不可见，`autobar-drag-handle=hidden-bound`；连续执行两次 `/aeui autobar apply` 并跑完刷新，确认 `autobar-anchor-basis=provider-local` 且卷袋像素位置不变；再开关／点击配置页并验证职业槽、当前 13 格、候选 `1／6／7／12`、NATIVE 与非 exact 回退 |
-| `AB.CONSUMABLE.GROUP` | `P5 / runtime-asset-v1.5 / bridge-v2.6 / pending-game-validation / 1/5` | 仅精确 `24 Button / 4×6 / 推荐 profile` 显示三组分隔，不创建三段文字；少于 24 个当前主格时隐藏分隔但保留 external drawer；旧 AEUI 满格显示仅在存在备份且签名完全匹配时一次迁移；v2.6 延续职业层与全部分组合同 | 实机确认库存变化时外壳动态收缩／扩展、无文字且少于 24 格无错误分隔；验证职业槽、手动数字 item ID、抽屉与非 exact 原生回退 |
-| `AB.TRINKET.DOCK` | `P5 / runtime-asset-v1.5 / bridge-v2.6 / pending-game-validation / 4/5` | [source](../../../assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png)／[runtime manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；TGA `3614d9a8…f455`、像素 `0961d750…aef` 不变；主栏右侧 `8 UI` 强绑定并与消耗品共用低 `20 UI` 的底线，Queue／换装／候选不变；v2.6 不改 TrinketMenu | `/reload` 验证双槽与消耗品同步下移、拖动松手回位、候选向外、横／竖／scale 与 Queue 行为保持；不执行 attempt 5 |
-| `AB.TRINKET.MENU` | `P5 / runtime-asset-v1.5 / bridge-v2.6 / pending-game-validation / 4/5` | C 九宫格与 B 候选插页像素不变；候选 `0／1／8／30` display `9/9 pass`、换装与动态层仍归 provider；v2.6 不替代 TrinketMenu 行为 | 实机验证候选图标、左右键换槽、Queue、菜单向右外展、独立 scale／方向及 provider 缺失 fail-open |
-| `AB.FOCUS.UNITFRAMES` | `P5 / runtime-v2.4 / pending-game-validation` | Player／Target 为 `240×60 / 0.8`、`(-160,485)／(105,485)`；TargetTarget 保持 `240×60 / 0.68` 并以 `LEFT → Target RIGHT +8 UI` 中线依附。三框配置与 live health／power FontString 均强制为客户端 `STANDARD_TEXT_FONT / OUTLINE / 18 UI`，并在 provider `UpdateConfig` 后重施；Aura `23 UI`、真实 `size+7` 步进每排 `8` 枚，Target 16 Debuff 双排到施法条预览净空 `3 px` | `/reload` 验证三框实际渲染均为系统字形且清晰放大，并在 `/pfui` 应用／unlock 后仍保持；再验证长名字、卷袋净空、TargetTarget、Aura 八枚满行与 Boss 双排 |
-| `AB.FOCUS.CASTBAR` | `P5 / runtime-v2.4 / pending-game-validation`；v1.4／v1.5 `game-geometry-failed` | 玩家／目标／Focus 真实对象；玩家／目标施法仍为 `260×12 / 1.0`，共用 `x=0`，分别落在 `y=316／300`；Focus 仍跟随自身 Frame，状态与动态层不重绘 | 实机验证放大后的读数、延迟区、可打断状态、与 Swing 同轴且三排不重叠、Boss Debuff 净空及 provider 缺失 fail-open |
-| `AB.FOCUS.SWING` | `P5 / runtime-v2.4 / pending-game-validation`；v1.4／v1.5 `game-geometry-failed` | 主手／副手／ranged 真对象；主手／ranged 仍为 `260×12 / 1.0`、`BOTTOM (0,284)`，副手同尺寸以 `2 UI` 间距紧贴其下；无维护循环 | 实机验证近战双条、远程复用、攻速变化、与上方两排施法同轴且不重叠及中央视野 |
-| `AB.FOCUS.STANCE` | `P5 / runtime-v2.4 / pending-game-validation` | `pfActionBarStances` 保持 `BOTTOM (0,255)`，local scale `0.72 → 1.0`；exact v14 旧签名一次迁移为 v15，任意手调 scale／坐标不自动覆盖 | 战士 `/reload` 确认三枚姿态按钮约线性增大 `38.9%`、状态高亮／点击／快捷键正常，并与主动作条及计时栈保持净空 |
-| `AB.DOITEDPS.TIMELINE` | `P5 / runtime-v2.4 / pending-game-validation`；v1.4／v1.5 `game-geometry-failed` | `318×46 UI` provider 根与 `178×22 UI` 资源排保持 `0.82`，整个 union 位于 `TOPLEFT (850,-615)`；启用、锁定、战斗显隐、Forecast、资源和冷却行为不变 | 实机验证上下两排与 Player Buff 保持净空、锁定态鼠标穿透、显隐和 provider 缺失 fail-open |
-| `AB.TOTEM.ARCHITOTEM` | `P5 / bridge-v2.6 / pending-game-validation` | [work](work/ACTION.BARS.FOCUS.V1.md)；真实闭合 `212×32 UI`、Air 最大 `212×224 UI` union；绑定态随 Bar 1，垂直 offset 保持 `-39 UI`，拖动回位，`unbind` 恢复；provider 行为不变；v2.6 不改 ArchiTotem | 与 V11 同轮实机复测施放、右键、hover、七层候选、拖动／锁定、Recall、预设、`bind／unbind` 与缺失／非萨满 fail-open |
+| `AB.STANCE／PET` | `P1–P5` | Bar `11／12` 与 provider 状态已审计；stance 的 focus runtime-v2.5 保持 `BOTTOM (0,255)`，真实 `bar11.icon_size` 为 `25 UI`、local scale `1.0`，姿态内容／点击仍归 pfUI；Pet 仍为 P1 | 战士 `/reload` 确认三姿态真实按钮与命中区同步放大且不压中央栏；再覆盖职业最少／最多姿态数量与宠物自动施法排版 |
+| `AB.CONSUMABLE.RACK／POCKET／POPUP／CONFIG` | `P5 / runtime-asset-v1.5 / bridge-v2.7 / pending-game-validation / 1/5` | [source](../../../assets/source/actionbars/ab-consumable-kit/ActionConsumableKit_Master_v1.png)／[runtime manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_RuntimeManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；TGA `c48f6292…320e`、像素 `658f826f…e30d` 不变；24 个逻辑类别、当前可用类别动态显示、最大 `4×6`；绑定底边比主栏低 `20 UI`。v2.7 延续配置裁剪、职业槽、空说明与 handle 隐藏，并把活动 display 原生 docking 到 `pfActionBarMain`；自由坐标仅用于 unbind 回退，运行时 token 在 logout 前移除 | `/reload` 后连续两次 apply、开关／点击配置页并移动主栏，确认 `autobar-anchor-basis=provider-dock`、`autobar-provider-dock=bound` 且卷袋不跳；再验证职业槽、当前 13 格、候选 `1／6／7／12`、NATIVE 与非 exact 回退 |
+| `AB.CONSUMABLE.GROUP` | `P5 / runtime-asset-v1.5 / bridge-v2.7 / pending-game-validation / 1/5` | 仅精确 `24 Button / 4×6 / 推荐 profile` 显示三组分隔，不创建三段文字；少于 24 个当前主格时隐藏分隔但保留 external drawer；v2.7 只改变整组根停靠，不改变职业层与分组合同 | 实机确认库存变化时外壳动态收缩／扩展、无文字且少于 24 格无错误分隔；验证职业槽、item ID、抽屉与非 exact 原生回退 |
+| `AB.TRINKET.DOCK` | `P5 / runtime-asset-v1.5 / bridge-v2.7 / pending-game-validation / 4/5` | [source](../../../assets/source/actionbars/ab-trinket-kit/ActionTrinketKit_Master_v1.png)／[runtime manifest](../../../assets/source/actionbars/ab-trinket-kit/AB-TRINKET-KIT-V1_RuntimeManifest_v1.json)／[work](work/ACTION.BARS.FIELDKIT.V1.md)；TGA `3614d9a8…f455`、像素 `0961d750…aef` 不变；主栏右侧 `8 UI` 强绑定并与消耗品共用低 `20 UI` 的底线，Queue／换装／候选不变；v2.7 不改 TrinketMenu | `/reload` 验证双槽与消耗品同步下移、拖动松手回位、候选向外、横／竖／scale 与 Queue 行为保持；不执行 attempt 5 |
+| `AB.TRINKET.MENU` | `P5 / runtime-asset-v1.5 / bridge-v2.7 / pending-game-validation / 4/5` | C 九宫格与 B 候选插页像素不变；候选 `0／1／8／30` display `9/9 pass`、换装与动态层仍归 provider；v2.7 不替代 TrinketMenu 行为 | 实机验证候选图标、左右键换槽、Queue、菜单向右外展、独立 scale／方向及 provider 缺失 fail-open |
+| `AB.FOCUS.UNITFRAMES` | `P5 / runtime-v2.5 / pending-game-validation` | runtime-v2.5 只新增姿态尺寸修复；Player／Target `240×60 / 0.8`、TargetTarget `240×60 / 0.68`、系统字体 `OUTLINE / 18 UI`、Aura `23 UI`／每排 `8` 均不变 | `/reload` 验证既有三框、字体、长名字、卷袋净空、TargetTarget、Aura 八枚与 Boss 双排 |
+| `AB.FOCUS.CASTBAR` | `P5 / runtime-v2.5 / pending-game-validation`；v1.4／v1.5 `game-geometry-failed` | 玩家／目标／Focus 真实对象；玩家／目标施法仍为 `260×12 / 1.0`，共用 `x=0`，分别落在 `y=316／300`；Focus 仍跟随自身 Frame | 实机验证读数、延迟区、可打断状态、与 Swing 同轴且三排不重叠、Boss Debuff 净空 |
+| `AB.FOCUS.SWING` | `P5 / runtime-v2.5 / pending-game-validation`；v1.4／v1.5 `game-geometry-failed` | 主手／副手／ranged 真对象；主手／ranged 仍为 `260×12 / 1.0`、`BOTTOM (0,284)`，副手以 `2 UI` 间距紧贴其下；无维护循环 | 实机验证近战双条、远程复用、攻速变化、同轴与中央视野 |
+| `AB.FOCUS.STANCE` | `P5 / runtime-v2.5 / pending-game-validation` | `pfActionBarStances` 保持 `BOTTOM (0,255)`；真实 `bar11.icon_size 18 → 25 UI`、local scale `0.7／0.72 → 1.0`。v14／v15 copied profile 一次升级到 v16，仅改姿态合同并保留其他手调坐标；pfUI `UpdateConfig` 后重施 | 战士 `/reload` 确认三枚按钮约 `97×33 UI` union、状态高亮／点击／快捷键正常，并与主栏及计时栈保持净空 |
+| `AB.DOITEDPS.TIMELINE` | `P5 / runtime-v2.5 / pending-game-validation`；v1.4／v1.5 `game-geometry-failed` | `318×46 UI` provider 根与 `178×22 UI` 资源排保持 `0.82`，union 仍位于 `TOPLEFT (850,-615)`；v2.5 不改其行为 | 实机验证上下两排与 Player Buff 净空、锁定态、显隐和 fail-open |
+| `AB.TOTEM.ARCHITOTEM` | `P5 / bridge-v2.7 / pending-game-validation` | [work](work/ACTION.BARS.FOCUS.V1.md)；真实闭合 `212×32 UI`、Air 最大 `212×224 UI` union；绑定态随 Bar 1、offset `-39 UI`；v2.7 不改 ArchiTotem | 与 V11 同轮实机复测施放、右键、hover、候选、拖动／锁定、Recall、预设、bind／unbind 与 fail-open |
 | `AB.MOVER／CONFIG` | `P5 / sidebar-group-v1.0 / pending-game-validation` | pfUI `UpdateMovable`／unlock 生命周期已接入；组合态不删除 Bar 2／4／5／3 movable，只在 drag 创建后把 Bar 2 扩展为 union mover并隐藏其余三把手；Bar 6／TargetTarget 原逻辑不变 | 实机开关 unlock、滚轮缩放、拖动、居中复位与退出，确认单 mover、无 `drag=nil`、其他 mover 不退化 |
 | `AB.SIDEBARS.GROUP` | `P5 / runtime-v1.0 / pending-game-validation` | 用户已确认 V11：Bar 2／4／5／3 按 `Paging → Vertical → Left → Right` 映射为 `2×2` 四块，每块 `3×4`、总体 `6×8`，icon `20`、spacing `1`、初始 scale `1.2`、gap `6 UI`；只对“大奶黑牛 - Basin of Stars”exact 四列签名自动迁移，按角色备份并可逆恢复；内容配置仍逐栏独立；runtime display `3/3 pass` | `/reload` 验证右侧高度、右缘净空、四栏阅读顺序和 48 个原动作；unlock 只见一个 group mover，滚轮／拖动同步；`/aeui sidebars unbind` 精确恢复旧四列，再 `bind／home` 验证可逆性 |
 
 ## 已接受方向与运行时证据
 
+- AEUI `0.8.25`／Field Kit bridge-v2.7／Combat Focus runtime-v2.5：新实机截图
+  `1408×633 RGB`（SHA `d1a94514…49bb`）与目标角色只读 SavedVariables 共同证明上一轮
+  P5 未通过。AutoBar provider 源码审计确认 `SetupVisual` 最终写者；新的原生 docking
+  smoke 覆盖连续刷新、配置页、unbind／rebind 与 logout-reapply。Focus smoke 覆盖
+  `bar11.icon_size=25`、scale `1`、provider rebuild、三按钮 `97×33 UI` 及 copied v14
+  非姿态坐标保护。位图与现有 runtime-v2.4 display 像素合同均未改，ImageGen `0/0`；
+  当前等待同设备 `/reload` 验证，不得标记 P6。
 - AEUI `0.8.24`／Field Kit bridge-v2.6／Combat Focus runtime-v2.4：战士实机证据
   定位真实 `AutoBarAnchorFrameHandle` 与姿态 scale `0.72`。Field Kit Lua smoke 让
   provider 在每次 `SetupVisual` 主动 `Show()` handle，并验证初始 Apply、连续
@@ -782,26 +813,27 @@
    （SHA `dc9615ac…4d5d`）与同目录 P6 evidence JSON（SHA `73a8f942…0d0b`）；
    静态截图与用户交互确认的证明范围保持分离。
 2. `AB.FIELDKIT.V1` 保持 `runtime-exported / P5`，当前为
-   `fieldkit-contract=2.6 / pending-game-validation`。两张视觉 runtime manifest 仍为
+   `fieldkit-contract=2.7 / pending-game-validation`。两张视觉 runtime manifest 仍为
    `runtime-asset-v1.5`；source SHA `82dd2260…c012`／`623f29c5…a2419` 与 runtime
-   TGA SHA `3614d9a8…f455`／`c48f6292…320e` 均未改变。bridge-v2.6 延续停靠、
+   TGA SHA `3614d9a8…f455`／`c48f6292…320e` 均未改变。bridge-v2.7 延续停靠、
    popup guard 与 mover 生命周期，并把 AutoBar 默认显示改为保留 24 类逻辑槽、
    仅展示当前可用类别；外置抽屉不再要求 24 个主格同时可见，并让消耗品与饰品
    底边共同落在主栏底边下 `20 UI`；只为缺失分类说明提供运行时兼容文本。独立
-   `ButtonsUpdate` 在下一次零延迟事件重施；`SetupVisual` 与完整配置 `OnShow` 都在
-   返回前先恢复最后一次成功的组合锚点，并同步隐藏真实 XML drag handle；下一帧停靠只按
-   provider-local Button 包络重算，陈旧 `GetLeft／GetRight／GetBottom` 不再影响锚点。
-   显式 `unbind`／AEUI 关闭时恢复 provider 的 handle 偏好。配置页只保留
+   `ButtonsUpdate` 在下一次零延迟事件重施；provider-local Button 包络只用于计算一次
+   偏移，v2.7 随后把活动 display 原生 docking 到 `pfActionBarMain`，因此每一次
+   `SetupVisual` 都由 AutoBar 自己写相同的主栏相对锚点。显式 `unbind`／AEUI 关闭时
+   恢复 provider 的 docking／shift 与 handle 偏好，logout／reload 前移除仅运行时
+   token。配置页只保留
    “栏位／按钮”，槽位固定为原生职业层并带角色／职业双备份；“动作条／弹出／设定”、
    综合预览、层选择器及默认重置／还原均隐藏，“完成”保留。TrinketMenu Queue／
    换装、ArchiTotem 行为均不替代。P4→当前 ImageGen `0`，原循环仍止于 `4/5` 与 `1/5`。
-3. Combat Focus 当前共享 AEUI `0.8.24` entrypoint，仍为
-   `focus-layout-contract=2.4`／profile v15。
+3. Combat Focus 当前共享 AEUI `0.8.25` entrypoint，为
+   `focus-layout-contract=2.5`／profile v16。
    `/reload` 会把仍匹配完整旧签名的 v7／v8／v9／v10／v11 游戏坐标 profile、
    仍使用旧全局 unit face／`14 UI` 的 exact v12 profile，以及完整匹配上一版系统
-   字体／几何签名的 exact v13 profile，以及仍完整匹配系统字体／几何／姿态
-   `0.72` 的 exact v14 profile 一次性迁移；仅字体、姿态 scale 或几何被手动调整的
-   签名保持原样，显式 apply 才覆盖。
+   字体／几何签名的 exact v13 profile 继续一次性迁移；目标设备现存 copied v14／v15
+   profile 则只把姿态 `bar11.icon_size` 改为 `25 UI`、scale 改为 `1.0`，Player 等
+   非姿态手调坐标保持不变。显式 apply 仍可覆盖完整 preset。
    `/aeui focuslayout restore` 仍恢复完整 pre-focus profile。Lua smoke、V11 layout
    `68/68`、simulation display `3/3` 与 focus runtime display `13/13` 均 pass。
    下一门禁是
@@ -813,16 +845,17 @@
    Player Cast／Target Cast／Swing 全部同轴、依次纵排且均为 `260×12 / 1.0`，
    DoiteDPS 上下两排作为整体上移 `32 UI` 后不压 Player Buff。
 4. Field Kit、Combat Focus 与已确认的四栏组合在 V11 同轮复测：先确认
-   `/aeui status` 含 `version 0.8.24`、`fieldkit-contract=2.6`、
+   `/aeui status` 含 `version 0.8.25`、`fieldkit-contract=2.7`、
    `autobar-slot-scope=class-only`、`autobar-config-ui=class-only`、
    `autobar-config-descriptions=repaired`、
-   `autobar-config-description-fixes=7`、`autobar-anchor-basis=provider-local`、
+   `autobar-config-description-fixes=7`、`autobar-anchor-basis=provider-dock`、
+   `autobar-provider-dock=bound`、
    `autobar-drag-handle=hidden-bound`、
-   `focus-layout-contract=2.4`、`focus-layout-unit-font-live=19`、
+   `focus-layout-contract=2.5`、`focus-layout-unit-font-live=19`、
    `sidebar-group-contract=1.0`、`sidebar-group-binding=bound`、
    `focus-layout-coordinate-space=game-native-v1`、`focus-layout-unit-scale=0.8`、
    `focus-layout-targettarget-scale=0.68`、`focus-layout-readout-scale=1`、
-   `focus-layout-stance-scale=1`、
+   `focus-layout-stance-scale=1`、`focus-layout-stance-icon-size=25`、
    `focus-layout-readout-size=260x12`、`focus-layout-unit-font-size=18`、
    `focus-layout-unit-font=system`、
    `fieldkit-binding=bound` 与 `actionbar-stack=12x2-bound`。开关一次 pfUI unlock，
@@ -849,7 +882,7 @@
    （SHA `5e89c6e5…12942`）与同目录 P6 evidence JSON（SHA
    `2d48b8fb…0be3`）；静态截图与用户对完整六项交互／布局清单的确认范围保持
    分离。Rail runtime TGA、display、功能合同与 P6 证据均未改变；manifest 只同步
-   共享 AEUI `0.8.24` adapter／bootstrap／TOC 哈希，P5→P6 ImageGen `0`。
+   共享 AEUI `0.8.25` adapter／bootstrap／TOC 哈希，P5→P6 ImageGen `0`。
 6. Rail 若要进入 `P6-C`，必须先在现存 work 中形成组件专属的精确 keep／delete
    inventory，排除共享 `ActionBars.lua`、Character V3 锁定基准及其他未完成
    Action Bars 组件依赖，并向用户展示、取得明确批准；当前不清理 ignored

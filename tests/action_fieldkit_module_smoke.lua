@@ -262,14 +262,26 @@ function AutoBar_SetupVisual()
   if providerSetupReanchors then
     AutoBar:ButtonsUpdate()
     AutoBarAnchorFrameHandle:ClearAllPoints()
-    AutoBarAnchorFrameHandle:SetPoint(
-      "CENTER", UIParent, "BOTTOMLEFT", 321, 654
-    )
+    local docking = AutoBar.display and AutoBar.display.docking
+    local dock = docking and AutoBarConfig and
+      AutoBarConfig.dockingFrames[docking]
+    if dock and _G[docking] then
+      local offset = dock.offset
+      AutoBarAnchorFrameHandle:SetPoint(
+        offset.point, _G[docking], offset.relative,
+        (AutoBar.display.dockShiftX or 0) + offset.x,
+        (AutoBar.display.dockShiftY or 0) + offset.y
+      )
+    else
+      AutoBarAnchorFrameHandle:SetPoint(
+        "CENTER", UIParent, "BOTTOMLEFT", 321, 654
+      )
+    end
   end
 end
 local autoBarConfigOnShowCalls = 0
 local providerConfigOnShowReanchors = false
-AutoBarConfig = {}
+AutoBarConfig = { dockingFrames = {} }
 local function NewAutoBarConfigFrame(name, points)
   local frame = NewFrame(name, nil, { points = points or {} })
   _G[name] = frame
@@ -391,6 +403,18 @@ AutoBar_Config = {
     buttons = providerClassButtons,
     display = {},
   },
+  ["_SHARED1"] = {
+    profile = {},
+    buttons = {},
+    display = {
+      rows = 6,
+      columns = 4,
+      gapping = 9,
+      position = { x = 409, y = 514 },
+      popupToTop = true,
+      selectedTab = 2,
+    },
+  },
 }
 AutoBarProfile = { CLASSPROFILE = "_MAGE" }
 function AutoBarProfile.Initialize() end
@@ -401,7 +425,10 @@ function AutoBarProfile:ProfileChanged()
   else
     AutoBar.buttons = current.buttons
   end
-  AutoBar.display = current.display
+  local layoutKey = tonumber(current.profile.layout) == 1 and
+    AutoBar.currentPlayer or current.profile.shared
+  current.profile.layoutProfile = layoutKey
+  AutoBar.display = AutoBar_Config[layoutKey].display
   AutoBar_SetupVisual()
 end
 
@@ -588,7 +615,7 @@ local module = assert(AzerothExpeditionUI.modules.ActionBars)
 module:Initialize()
 module:Apply()
 
-assert(module.fieldKitRuntimeContract == "2.6")
+assert(module.fieldKitRuntimeContract == "2.7")
 assert(module.autoBarCategoryDescriptionStatus == "repaired")
 assert(module.autoBarCategoryDescriptionsRepaired == 8)
 assert(AutoBar_Category_Info.POTION_SPELLPOWER.description ==
@@ -716,7 +743,10 @@ assert(math.abs(
   (pfUI.bars[1].bottom +
     module.fieldKitDockYOffset * autoBarButtonScale)
 ) < 0.0001)
-assert(module.autoBarAnchorBasis == "provider-local")
+assert(module.autoBarAnchorBasis == "provider-dock")
+assert(AutoBar.display == AutoBar_Config["_SHARED1"].display)
+assert(AutoBar_Config["_SHARED1"].display.docking ==
+  module.autoBarProviderDockName)
 assert(AutoBarFrame.aeuiConsumableKitShellV1.shown == true)
 assert(AutoBarFrame.aeuiConsumableKitLabelsV1 == nil)
 assert(table.getn(AutoBarFrame.aeuiConsumableKitDividersV1) == 2)
@@ -1026,7 +1056,7 @@ assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
 AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
-assert(module.autoBarAnchorBasis == "provider-local")
+assert(module.autoBarAnchorBasis == "provider-dock")
 
 ShiftAutoBarWorldGeometry(-960, -420)
 local appliedAgain = module:ApplyRecommendedAutoBarProfile()
@@ -1038,7 +1068,7 @@ assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
 AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
 assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
-assert(module.autoBarAnchorBasis == "provider-local")
+assert(module.autoBarAnchorBasis == "provider-dock")
 
 -- A future provider layout that does not expose the direct handle-relative
 -- point contract must retain the last proven anchor instead of falling back
@@ -1054,7 +1084,7 @@ assert(module.autoBarAnchorBasis == "cached")
 incompatibleButton:ClearAllPoints()
 incompatibleButton:SetPoint(unpack(incompatiblePoint))
 module:ApplyAutoBarFieldKit(true)
-assert(module.autoBarAnchorBasis == "provider-local")
+assert(module.autoBarAnchorBasis == "provider-dock")
 ShiftAutoBarWorldGeometry(480, 210)
 providerSetupReanchors = false
 
@@ -1161,6 +1191,8 @@ assert(AzerothExpeditionUI.db.actionbars.autoBarBackups[
 assert(AzerothExpeditionUI.db.actionbars.autoBarDefaultModeVersions[
   AutoBar.currentPlayer
 ] == nil)
+assert(AutoBar.display.docking == module.autoBarProviderDockName)
+assert(AutoBarConfig.dockingFrames[module.autoBarProviderDockName])
 
 local undocked, undockMessage = module:SetFieldKitDocking(false)
 assert(undocked == true)
@@ -1174,6 +1206,9 @@ assert(module.consumableDockStatus == "free")
 assert(module.trinketDockStatus == "free")
 assert(AutoBarAnchorFrameHandle.shown == true)
 assert(module.autoBarDragHandleStatus == "visible-provider")
+assert(AutoBar.display.docking == nil)
+assert(AutoBarConfig.dockingFrames[module.autoBarProviderDockName] == nil)
+assert(AzerothExpeditionUI.db.actionbars.autoBarDockBackups == nil)
 local redocked, redockMessage = module:SetFieldKitDocking(true)
 assert(redocked == true)
 assert(string.find(redockMessage, "consumables left", 1, true))
@@ -1184,6 +1219,19 @@ assert(module.consumableDockStatus == "left")
 assert(module.trinketDockStatus == "right")
 assert(AutoBarAnchorFrameHandle.shown == false)
 assert(module.autoBarDragHandleStatus == "hidden-bound")
+assert(AutoBar.display.docking == module.autoBarProviderDockName)
+assert(AutoBarConfig.dockingFrames[module.autoBarProviderDockName])
+
+-- The custom provider token is runtime-only. Normal logout/reload restores
+-- the saved free-layout values so AutoBar can load before pfUI safely; the
+-- next AEUI Apply reinstalls native docking.
+assert(module:PrepareLogout() == true)
+assert(AutoBar.display.docking == nil)
+assert(AutoBarConfig.dockingFrames[module.autoBarProviderDockName] == nil)
+assert(AzerothExpeditionUI.db.actionbars.autoBarDockBackups == nil)
+module:ApplyAutoBarFieldKit(true)
+assert(AutoBar.display.docking == module.autoBarProviderDockName)
+assert(AutoBarConfig.dockingFrames[module.autoBarProviderDockName])
 
 local reset, resetMessage = module:ResetCombatDeckPosition()
 assert(reset == true)
@@ -1282,7 +1330,7 @@ module:Apply()
 assert(module.autoBarFieldKitStatus == "missing")
 assert(module.trinketFieldKitStatus == "missing")
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "fieldkit%-contract=2%.6"))
+assert(string.find(status, "fieldkit%-contract=2%.7"))
 assert(string.find(status, "autobar%-drag%-handle=missing"))
 assert(string.find(status, "autobar%-slot%-scope=restored"))
 assert(string.find(status, "autobar%-config%-ui=native"))

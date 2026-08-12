@@ -118,7 +118,7 @@ def main() -> None:
         assert manifest["addon_entrypoints"]["addon_version"] == (
             builder.addon_version(ROOT / builder.TOC_REL)
         )
-        assert manifest["addon_entrypoints"]["addon_version"] == "0.8.24"
+        assert manifest["addon_entrypoints"]["addon_version"] == "0.8.25"
         if key == "consumable":
             assert "class-only slot ownership" in manifest["adapter"][
                 "automatic_profile_mutation_scope"
@@ -186,7 +186,7 @@ def main() -> None:
         assert result["summary"]["violation_count"] == 0
 
     for required in (
-        'ActionBars.fieldKitRuntimeContract = "2.6"',
+        'ActionBars.fieldKitRuntimeContract = "2.7"',
         "ActionBars.fieldKitDockYOffset = -20",
         "ActionTrinketKitV1",
         "ActionConsumableKitV1",
@@ -216,6 +216,11 @@ def main() -> None:
         "ApplyAutoBarDragHandlePolicy",
         "RestoreAutoBarBoundAnchor",
         "AutoBarLocalVisualOffsets",
+        "RegisterAutoBarProviderDock",
+        "ApplyAutoBarProviderDock",
+        "RestoreAutoBarProviderDock",
+        'ActionBars.autoBarProviderDockName = "pfActionBarMain"',
+        'anchorBasis = "provider-dock"',
         'anchorBasis = "provider-local"',
         "autoBarRefreshDelay = 0",
         "AutoBar.SetPopupButton = self.autoBarSetPopupButtonWrapper",

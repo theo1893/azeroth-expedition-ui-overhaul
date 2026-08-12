@@ -3,7 +3,7 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 
 addon.name = "AzerothExpeditionUI"
-addon.version = "0.8.24"
+addon.version = "0.8.25"
 addon.modules = addon.modules or {}
 addon.media = addon.media or {}
 addon.media.root = "Interface\\AddOns\\AzerothExpeditionUI\\Media\\"
@@ -147,6 +147,7 @@ addon.eventFrame = eventFrame
 
 eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+eventFrame:RegisterEvent("PLAYER_LOGOUT")
 eventFrame:RegisterEvent("UI_SCALE_CHANGED")
 
 eventFrame:SetScript("OnEvent", function()
@@ -154,6 +155,10 @@ eventFrame:SetScript("OnEvent", function()
     addon:Initialize()
   elseif event == "PLAYER_ENTERING_WORLD" then
     addon:ScheduleRefresh(0.15)
+  elseif event == "PLAYER_LOGOUT" then
+    for name, module in pairs(addon.modules) do
+      addon:RunModuleMethod(name, module, "PrepareLogout")
+    end
   elseif event == "UI_SCALE_CHANGED" then
     addon:ScheduleRefresh(0.15)
   end

@@ -116,7 +116,7 @@ end
 
 -- The game renders through a normalized 768-high UI root, while Turtle's
 -- GetScreenWidth/GetScreenHeight report the physical 1920x1080 mode. Runtime
--- v2.4 must never feed those physical dimensions into Frame:SetPoint.
+-- v2.5 must never feed those physical dimensions into Frame:SetPoint.
 local rootWidth = 1920 * 768 / 1080
 local rootHeight = 768
 local uiScale = 0.81269841269841
@@ -288,7 +288,10 @@ pfUI_config = {
   position = {
     pfActionBarMain = { scale = 1.2 },
   },
-  bars = { bar1 = { spacing = "1" } },
+  bars = {
+    bar1 = { spacing = "1" },
+    bar11 = { icon_size = "18", spacing = "1" },
+  },
   unitframes = {
     player = {
       width = "200", height = "46", buffs = "TOPLEFT",
@@ -342,6 +345,13 @@ pfUI = {
   movables = {},
   pixelperfect = {},
 }
+pfUI.bars.updateConfigCalls = 0
+function pfUI.bars:UpdateConfig()
+  self.updateConfigCalls = self.updateConfigCalls + 1
+  local icon = tonumber(pfUI_config.bars.bar11.icon_size)
+  stance:SetWidth(3 * icon + 22)
+  stance:SetHeight(icon + 8)
+end
 function pfUI.pixelperfect.UpdateConfig()
   local scales = {
     [7] = 0.81269841269841,
@@ -399,8 +409,8 @@ assert(mainBar.points[1][5] == 100)
 local ok, message = module:ApplyComfortUIScalePreset()
 assert(ok == true)
 assert(string.find(message, "Comfort UI scale applied", 1, true))
-assert(module.focusLayoutRuntimeContract == "2.4")
-assert(module.fieldKitRuntimeContract == "2.6")
+assert(module.focusLayoutRuntimeContract == "2.5")
+assert(module.fieldKitRuntimeContract == "2.7")
 assert(module.focusLayoutStatus == "applied")
 assert(module.focusLayoutConfigured == 10)
 assert(module.focusLayoutLive == 10)
@@ -442,6 +452,8 @@ assert(expected.swingX == 0)
 assert(expected.swingY == 284)
 assert(expected.stanceX == 0)
 assert(expected.stanceY == 255)
+assert(expected.stanceScale == 1)
+assert(expected.stanceIconSize == 25)
 assert(expected.doiteX == 850)
 assert(expected.doiteY == -615)
 assert(expected.unitFontRole == "system")
@@ -517,6 +529,10 @@ assert(module.focusUnitScale == 0.8)
 assert(module.focusTargetTargetScale == 0.68)
 assert(module.focusReadoutScale == 1)
 assert(module.focusStanceScale == 1)
+assert(module.focusStanceIconSize == "25")
+assert(pfUI_config.bars.bar11.icon_size == "25")
+assert(stance.width == 97 and stance.height == 33)
+assert(pfUI.bars.updateConfigCalls >= 1)
 assert(module.focusUnitFontRole == "system")
 assert(module.focusUnitFontSize == 18)
 for _, frame in pairs({ player, target }) do
@@ -652,7 +668,7 @@ assert(archiPoint[4] == -10)
 assert(archiPoint[5] == -39)
 
 module:InstallFieldKitHooks()
-assert(installedHooks == 4)
+assert(installedHooks == 5)
 archiTotem:ClearAllPoints()
 archiTotem:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 900, -700)
 ArchiTotem_DragHandle_OnDragStop()
@@ -690,7 +706,7 @@ assert(archiDirectionCalls == 1)
 assert(module.archiTotemDirectionStatus == "up")
 
 assert(AzerothExpeditionUI.db.actionbars.fieldKitBound == true)
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 15)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 16)
 assert(AzerothExpeditionUI.db.actionbars.comfortUIScaleVersion == 2)
 
 for _, frame in pairs({
@@ -708,7 +724,7 @@ end
 assert(doite.parent == UIParent)
 
 local status = module:GetRuntimeStatus()
-assert(string.find(status, "focus%-layout%-contract=2%.4"))
+assert(string.find(status, "focus%-layout%-contract=2%.5"))
 assert(string.find(status, "focus%-layout=applied"))
 assert(string.find(status, "focus%-layout%-mouse=visible%-controls%-only"))
 assert(string.find(
@@ -723,6 +739,8 @@ assert(string.find(status, "focus%-layout%-unit%-scale=0%.8"))
 assert(string.find(status, "focus%-layout%-targettarget%-scale=0%.68"))
 assert(string.find(status, "focus%-layout%-readout%-scale=1"))
 assert(string.find(status, "focus%-layout%-stance%-scale=1"))
+assert(string.find(status, "focus%-layout%-stance%-icon%-size=25"))
+assert(string.find(status, "focus%-layout%-stance%-status="))
 assert(string.find(status, "focus%-layout%-readout%-size=260x12"))
 assert(string.find(status, "focus%-layout%-unit%-font%-size=18"))
 assert(string.find(status, "focus%-layout%-unit%-font=system"))
@@ -781,6 +799,7 @@ assert(pfUI_config.castbar.player.width == "300")
 assert(pfUI_config.castbar.player.height == "-1")
 assert(pfUI_config.unitframes.swingtimerwidth == "180")
 assert(pfUI_config.unitframes.swingtimerheight == "10")
+assert(pfUI_config.bars.bar11.icon_size == "18")
 assert(DoiteDPSDB.point == "CENTER")
 assert(DoiteDPSDB.relativePoint == "CENTER")
 assert(DoiteDPSDB.x == 18)
@@ -886,7 +905,7 @@ assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 8)
 
 pfUI_config.position.pfPlayer.xpos = -190
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 15)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 16)
 local upgradedBackup =
   assert(AzerothExpeditionUI.db.actionbars.combatFocusBackup)
 assert(upgradedBackup.positions.pfTargetTarget.present == true)
@@ -899,7 +918,7 @@ assert(screenHeightCalls == 0)
 
 -- A live in-memory v9 session can be newer than the persisted v8 snapshot.
 -- Only its exact untouched geometry and default local font signature may
--- migrate automatically to v15.
+-- migrate automatically to v16.
 pfUI_config.position.pfPlayer =
   legacyPosition("BOTTOM", -150, 535, 0.68)
 pfUI_config.position.pfTarget =
@@ -961,11 +980,11 @@ assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 9)
 
 pfUI_config.unitframes.player.customfont_size = "12"
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 15)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 16)
 
 -- The currently persisted target-device snapshot can still be the exact
 -- v7 game-coordinate contract if the in-memory v8 session has not yet been
--- written. It must also jump directly to v15 on the next load.
+-- written. It must also jump directly to v16 on the next load.
 pfUI_config.position.pfPlayer =
   legacyPosition("BOTTOM", -212, 492, 0.75)
 pfUI_config.position.pfTarget =
@@ -1005,7 +1024,7 @@ AzerothExpeditionUI.db.actionbars.combatFocusProjection = {
   coordinateSpace = "game-native-v1",
 }
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 15)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 16)
 assert(screenWidthCalls == 0)
 assert(screenHeightCalls == 0)
 
@@ -1073,7 +1092,7 @@ end
 
 ConfigureV10Signature(0.68, 0.72)
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 15)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 16)
 
 ConfigureV10Signature(0.8, 1)
 pfUI_config.position.pfTarget.ypos = 533
@@ -1081,7 +1100,7 @@ module:Apply()
 assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 10)
 pfUI_config.position.pfTarget.ypos = 535
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 15)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 16)
 assert(pfUI_config.position.pfPlayer.ypos == 485)
 assert(pfUI_config.position.pfTarget.ypos == 485)
 assert(pfUI_config.position.pfPlayer.scale == 0.8)
@@ -1114,7 +1133,7 @@ module:Apply()
 assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 11)
 pfUI_config.position.pfTarget.ypos = 455
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 15)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 16)
 assert(pfUI_config.position.pfPlayer.ypos == 485)
 assert(pfUI_config.position.pfTarget.ypos == 485)
 assert(pfUI_config.position.pfTargetTarget.ypos == 576)
@@ -1150,7 +1169,7 @@ assert(DoiteDPSDB.y == -647)
 
 pfUI_config.unitframes.target.customfont_name = pfUI_config.global.font_unit
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 15)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 16)
 assert(DoiteDPSDB.y == -615)
 for _, config in pairs({
   pfUI_config.unitframes.player,
@@ -1163,7 +1182,7 @@ for _, config in pairs({
 end
 
 -- The exact V13 SavedVariables now seen on the target device must migrate
--- once to V15 so the live FontString post-hooks become part of the contract.
+-- once to V16 so the live FontString and stance-size contracts are active.
 pfUI_config.position.pfActionBarStances.scale = 0.72
 AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion = 13
 AzerothExpeditionUI.db.actionbars.combatFocusProjection = {
@@ -1174,25 +1193,38 @@ module:Apply()
 assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 13)
 pfUI_config.unitframes.target.customfont_size = "18"
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 15)
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 16)
 AssertLiveSystemFont(player)
 AssertLiveSystemFont(target)
 AssertLiveSystemFont(targetTarget)
 
--- The exact V14 layout receives only the requested stance-size repair. A
--- manual stance scale still protects the profile until the preset is applied
--- explicitly or the exact prior contract is restored.
+-- A copied V14 profile can contain a 0.7 stance scale and the provider's
+-- default 18 UI icons. Upgrade only that stance contract; unrelated manual
+-- frame coordinates remain untouched.
 AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion = 14
 AzerothExpeditionUI.db.actionbars.combatFocusProjection = {
   coordinateSpace = "game-native-v1",
 }
+pfUI_config.position.pfActionBarStances.scale = 0.7
+pfUI_config.bars.bar11.icon_size = "18"
+pfUI_config.position.pfPlayer.xpos = -151
+module:Apply()
+assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 16)
+assert(pfUI_config.position.pfActionBarStances.scale == 1)
+assert(pfUI_config.bars.bar11.icon_size == "25")
+assert(pfUI_config.position.pfPlayer.xpos == -151)
+assert(math.abs(stance.scale - 1) < 0.001)
+assert(stance.width == 97 and stance.height == 33)
+assert(module.focusLayoutStatus == "stance-upgraded")
+
+-- Manual stance geometry remains protected; users can still opt into the
+-- full contract explicitly with /aeui focuslayout apply.
+AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion = 15
+pfUI_config.bars.bar11.icon_size = "30"
 pfUI_config.position.pfActionBarStances.scale = 0.8
 module:Apply()
-assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 14)
-pfUI_config.position.pfActionBarStances.scale = 0.72
-module:Apply()
 assert(AzerothExpeditionUI.db.actionbars.combatFocusLayoutVersion == 15)
-assert(pfUI_config.position.pfActionBarStances.scale == 1)
-assert(math.abs(stance.scale - 1) < 0.001)
+assert(pfUI_config.bars.bar11.icon_size == "30")
+assert(pfUI_config.position.pfActionBarStances.scale == 0.8)
 
 print("action focus layout module smoke test passed")

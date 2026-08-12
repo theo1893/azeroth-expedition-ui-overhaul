@@ -13,9 +13,9 @@ ActionBars.railTexturePath = addon.media.root .. "ActionBars\\ActionRailV1"
 ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
-ActionBars.fieldKitRuntimeContract = "2.6"
-ActionBars.focusLayoutRuntimeContract = "2.4"
-ActionBars.focusLayoutVersion = 15
+ActionBars.fieldKitRuntimeContract = "2.7"
+ActionBars.focusLayoutRuntimeContract = "2.5"
+ActionBars.focusLayoutVersion = 16
 ActionBars.focusLayoutBackupVersion = 1
 ActionBars.sideBarGroupRuntimeContract = "1.0"
 ActionBars.sideBarGroupLayoutVersion = 1
@@ -29,12 +29,14 @@ ActionBars.comfortUIScaleValue = 0.71111111111111
 -- ACTION-BARS-CORE-SIM-V11 keeps global pfUI tier 8 and the accepted Combat
 -- Deck geometry. It moves the provider-owned DoiteDPS two-row union upward,
 -- uses the client system face for the three local unit frames, and implements
--- the accepted right-side cluster as one reversible mover. Runtime v2.4 keeps
--- those contracts while raising only the stance bar from 0.72 to full scale.
+-- the accepted right-side cluster as one reversible mover. Runtime v2.5 keeps
+-- those contracts while making the warrior stance control use its accepted
+-- 25 UI provider icon size at full local scale.
 ActionBars.focusUnitScale = 0.8
 ActionBars.focusTargetTargetScale = 0.68
 ActionBars.focusReadoutScale = 1
 ActionBars.focusStanceScale = 1
+ActionBars.focusStanceIconSize = "25"
 ActionBars.focusDoiteScale = 0.82
 ActionBars.focusUnitWidth = 240
 ActionBars.focusUnitHeight = 60
@@ -70,6 +72,8 @@ ActionBars.popupDrawerGap = 6
 ActionBars.popupDrawerMaxRows = 6
 ActionBars.popupIntentDelay = 0.30
 ActionBars.popupIntentEvent = "AEUI_AutoBarPopupIntent"
+ActionBars.autoBarProviderDockName = "pfActionBarMain"
+ActionBars.autoBarDockBackupVersion = 1
 -- A provider layout can write its saved free position before newly anchored
 -- buttons have usable world geometry. Restore the last proven Combat Deck
 -- anchor in the same input event, then use AceEvent's next OnUpdate tick to
@@ -943,6 +947,8 @@ local function GetNativeFocusLayout()
     swingY = ActionBars.focusSwingY,
     stanceX = ActionBars.focusStanceX,
     stanceY = ActionBars.focusStanceY,
+    stanceScale = ActionBars.focusStanceScale,
+    stanceIconSize = tonumber(ActionBars.focusStanceIconSize),
     doiteX = ActionBars.focusDoiteX,
     doiteY = ActionBars.focusDoiteY,
     unitFontRole = ActionBars.focusUnitFontRole,
@@ -1416,12 +1422,18 @@ local function CaptureCombatFocusBackup()
     return false
   end
   local positions = pfUI_config and pfUI_config.position or {}
+  local bars = pfUI_config and pfUI_config.bars or {}
   local unitframes = pfUI_config and pfUI_config.unitframes or {}
   local castbars = pfUI_config and pfUI_config.castbar or {}
   local global = pfUI_config and pfUI_config.global or {}
   local backup = {
     version = ActionBars.focusLayoutBackupVersion,
     positions = {},
+    bars = {
+      bar11 = {
+        icon_size = CaptureField(bars.bar11, "icon_size"),
+      },
+    },
     unitframes = {
       player = CaptureField(unitframes, "player"),
       target = CaptureField(unitframes, "target"),
@@ -1482,6 +1494,15 @@ local function UpgradeCombatFocusBackup()
     local positions = pfUI_config and pfUI_config.position or {}
     backup.positions.pfTargetTarget =
       CaptureField(positions, "pfTargetTarget")
+    changed = true
+  end
+  backup.bars = backup.bars or {}
+  backup.bars.bar11 = backup.bars.bar11 or {}
+  if backup.bars.bar11.icon_size == nil then
+    local bars = pfUI_config and pfUI_config.bars or {}
+    backup.bars.bar11.icon_size = CaptureField(
+      bars.bar11, "icon_size"
+    )
     changed = true
   end
   backup.unitframes = backup.unitframes or {}
@@ -1943,6 +1964,8 @@ local function CombatFocusLayoutSaved()
   local layout = GetNativeFocusLayout()
   local unitframes = pfUI_config.unitframes or {}
   local castbars = pfUI_config.castbar or {}
+  local bars = pfUI_config.bars or {}
+  local stanceConfig = bars.bar11 or {}
   local player = unitframes.player or {}
   local target = unitframes.target or {}
   local targetTarget = unitframes.ttarget or {}
@@ -1988,7 +2011,8 @@ local function CombatFocusLayoutSaved()
     ) and FocusPositionMatches(
       "pfActionBarStances", "BOTTOM", layout.stanceX,
       layout.stanceY, ActionBars.focusStanceScale
-    ) and player.width == tostring(ActionBars.focusUnitWidth) and
+    ) and stanceConfig.icon_size == ActionBars.focusStanceIconSize and
+    player.width == tostring(ActionBars.focusUnitWidth) and
     player.height == tostring(ActionBars.focusUnitHeight) and
     player.buffs == "TOPLEFT" and player.debuffs == "BOTTOMLEFT" and
     player.buffsize == tostring(ActionBars.focusAuraSize) and
@@ -2228,6 +2252,111 @@ local function ConfigureFocusDoiteDPS(x, y)
   )
 end
 
+local function CombatFocusStanceUpgradeEligible()
+  local database = addon.db and addon.db.actionbars
+  local projection = database and database.combatFocusProjection
+  local version = database and database.combatFocusLayoutVersion
+  local bars = pfUI_config and pfUI_config.bars
+  local config = bars and bars.bar11
+  local positions = pfUI_config and pfUI_config.position
+  local position = positions and positions.pfActionBarStances
+  local scale = position and tonumber(position.scale)
+  local legacyScale = scale and (
+    math.abs(scale - 0.7) <= 0.001 or
+    math.abs(scale - 0.72) <= 0.001 or
+    (version == 15 and math.abs(scale - 1) <= 0.001)
+  )
+  return database and (version == 14 or version == 15) and
+    type(projection) == "table" and
+    projection.coordinateSpace == ActionBars.focusCoordinateSpace and
+    type(config) == "table" and
+    tonumber(config.icon_size) == 18 and
+    type(position) == "table" and position.anchor == "BOTTOM" and
+    position.parent == "UIParent" and
+    math.abs((tonumber(position.xpos) or 100000) -
+      ActionBars.focusStanceX) <= 1 and
+    math.abs((tonumber(position.ypos) or 100000) -
+      ActionBars.focusStanceY) <= 1 and legacyScale
+end
+
+function ActionBars:ApplyFocusStanceContract(resetPosition, forceProvider)
+  local bars = pfUI_config and pfUI_config.bars
+  local config = bars and bars.bar11
+  local positions = pfUI_config and pfUI_config.position
+  if type(config) ~= "table" or type(positions) ~= "table" then
+    self.focusStanceStatus = "unavailable"
+    return false, false
+  end
+
+  local changed = config.icon_size ~= self.focusStanceIconSize
+  config.icon_size = self.focusStanceIconSize
+
+  local position = positions.pfActionBarStances
+  local saved
+  if resetPosition or type(position) ~= "table" then
+    local layout = GetNativeFocusLayout()
+    saved = SavePfUIPosition(
+      "pfActionBarStances", "BOTTOM", layout.stanceX, layout.stanceY,
+      self.focusStanceScale
+    )
+  else
+    changed = changed or
+      math.abs((tonumber(position.scale) or 100000) -
+        self.focusStanceScale) > 0.001
+    position.scale = self.focusStanceScale
+    saved = true
+  end
+
+  local providerRefreshed = false
+  local provider = pfUI and pfUI.bars
+  if (changed or forceProvider) and provider and
+    type(provider.UpdateConfig) == "function" and
+    not self.focusStanceUpdating
+  then
+    self.focusStanceUpdating = true
+    providerRefreshed = pcall(provider.UpdateConfig, provider)
+    self.focusStanceUpdating = false
+  end
+
+  local frame = GetGlobal("pfActionBarStances")
+  local applied = false
+  if resetPosition then
+    local layout = GetNativeFocusLayout()
+    applied = ApplyFramePosition(
+      frame, "BOTTOM", layout.stanceX, layout.stanceY,
+      self.focusStanceScale
+    )
+  elseif frame and frame.SetScale then
+    frame:SetScale(self.focusStanceScale)
+    applied = true
+  end
+
+  self.focusStanceStatus = providerRefreshed and
+    "provider-refreshed" or (applied and "applied" or "saved")
+  return saved, applied
+end
+
+function ActionBars:UpgradeCombatFocusStanceContract()
+  if not CombatFocusStanceUpgradeEligible() then
+    return false
+  end
+  CaptureCombatFocusBackup()
+  UpgradeCombatFocusBackup()
+  local saved, applied = self:ApplyFocusStanceContract(false, true)
+  if not saved then
+    return false
+  end
+  local database = addon.db and addon.db.actionbars
+  local projection = database and database.combatFocusProjection
+  database.combatFocusLayoutVersion = self.focusLayoutVersion
+  projection.stanceScale = self.focusStanceScale
+  projection.stanceIconSize = tonumber(self.focusStanceIconSize)
+  self.focusLayoutConfigured = 1
+  self.focusLayoutLive = applied and 1 or 0
+  self.focusLayoutStatus = "stance-upgraded"
+  return true
+end
+
 function ActionBars:ApplyCombatFocusLayoutPreset()
   if type(InCombatLockdown) == "function" and InCombatLockdown() then
     self.focusLayoutStatus = "combat-locked"
@@ -2299,15 +2428,8 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
 
   AttachFocusTargetTarget()
 
-  local stanceSaved = SavePfUIPosition(
-    "pfActionBarStances", "BOTTOM", layout.stanceX, layout.stanceY,
-    self.focusStanceScale
-  )
-  local stanceApplied = ApplyFramePosition(
-    GetGlobal("pfActionBarStances"), "BOTTOM",
-    layout.stanceX, layout.stanceY,
-    self.focusStanceScale
-  )
+  local stanceSaved, stanceApplied =
+    self:ApplyFocusStanceContract(true, true)
   if stanceApplied then
     live = live + 1
   end
@@ -2344,7 +2466,7 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
     " Detected ArchiTotem was kept provider-owned and requested to open downward." or
     " ArchiTotem was unavailable or inapplicable and remained fail-open."
   return true,
-    "Combat Focus layout applied with direct Turtle WoW game coordinates: player and target use 240x60 at 0.8 with 18-point client-system unit text; the compact 240x60 target-of-target remains at 0.68 and attaches to Target's right edge with the same system face; 23x23 auras use pfUI's real seven-UI border step and fit eight per row; the unit cluster reserves a second target-debuff row above the unchanged centered 260x12 player-cast, target-cast, and Swing stack at 1.0. The stance bar uses full local scale 1.0 for readable warrior controls, while the provider-owned DoiteDPS timeline and resource row remain in their own safe lane. Provider visibility, lock state, and native translucency were preserved without screen-pixel projection or coordinate readback." ..
+    "Combat Focus layout applied with direct Turtle WoW game coordinates: player and target use 240x60 at 0.8 with 18-point client-system unit text; the compact 240x60 target-of-target remains at 0.68 and attaches to Target's right edge with the same system face; 23x23 auras use pfUI's real seven-UI border step and fit eight per row; the unit cluster reserves a second target-debuff row above the unchanged centered 260x12 player-cast, target-cast, and Swing stack at 1.0. The stance bar uses 25 UI provider icons at full local scale 1.0 for readable warrior controls, while the provider-owned DoiteDPS timeline and resource row remain in their own safe lane. Provider visibility, lock state, and native translucency were preserved without screen-pixel projection or coordinate readback." ..
     archiMessage
 end
 
@@ -2467,6 +2589,20 @@ function ActionBars:RestoreCombatFocusLayoutPreset()
   local castbar = backup.castbar or {}
   RestoreConfigField(pfUI_config.castbar, "player", castbar.player)
   RestoreConfigField(pfUI_config.castbar, "target", castbar.target)
+
+  pfUI_config.bars = pfUI_config.bars or {}
+  pfUI_config.bars.bar11 = pfUI_config.bars.bar11 or {}
+  local savedBars = backup.bars or {}
+  local savedStance = savedBars.bar11 or {}
+  RestoreField(
+    pfUI_config.bars.bar11, "icon_size", savedStance.icon_size
+  )
+  local barProvider = pfUI and pfUI.bars
+  if barProvider and type(barProvider.UpdateConfig) == "function" then
+    self.focusStanceUpdating = true
+    pcall(barProvider.UpdateConfig, barProvider)
+    self.focusStanceUpdating = false
+  end
 
   local frames = {
     pfUI and pfUI.uf and pfUI.uf.player,
@@ -3544,6 +3680,120 @@ local function FieldKitBound()
   return database and database.fieldKitBound == true
 end
 
+local function GetAutoBarLayoutProfile()
+  local player = AutoBar and AutoBar.currentPlayer
+  local current = player and AutoBar_Config and AutoBar_Config[player]
+  local profile = current and current.profile
+  if not player or type(current) ~= "table" then
+    return nil, nil
+  end
+  local key = type(profile) == "table" and profile.layoutProfile
+  if not key and type(profile) == "table" then
+    if tonumber(profile.layout) == 1 then
+      key = player
+    else
+      key = profile.shared
+    end
+  end
+  if not key or type(AutoBar_Config[key]) ~= "table" then
+    key = player
+  end
+  local config = AutoBar_Config[key]
+  config.display = config.display or {}
+  return key, config.display
+end
+
+function ActionBars:CaptureAutoBarProviderDockBackup()
+  local database = GetFieldKitDatabase()
+  local key, display = GetAutoBarLayoutProfile()
+  if not database or not key or type(display) ~= "table" then
+    return false
+  end
+  database.autoBarDockBackups = database.autoBarDockBackups or {}
+  if database.autoBarDockBackups[key] then
+    return true
+  end
+  database.autoBarDockBackups[key] = {
+    version = self.autoBarDockBackupVersion,
+    docking = CaptureField(display, "docking"),
+    dockShiftX = CaptureField(display, "dockShiftX"),
+    dockShiftY = CaptureField(display, "dockShiftY"),
+  }
+  return true
+end
+
+function ActionBars:RegisterAutoBarProviderDock(xOffset, yOffset)
+  local frames = AutoBarConfig and AutoBarConfig.dockingFrames
+  if type(frames) ~= "table" then
+    self.autoBarProviderDockStatus = "unsupported"
+    return false
+  end
+  frames[self.autoBarProviderDockName] = {
+    text = "AEUI Combat Deck",
+    offset = {
+      x = xOffset,
+      y = yOffset,
+      point = "CENTER",
+      relative = "BOTTOMLEFT",
+    },
+  }
+  self.autoBarProviderDockStatus = "registered"
+  return true
+end
+
+function ActionBars:ApplyAutoBarProviderDock(xOffset, yOffset)
+  local key, display = GetAutoBarLayoutProfile()
+  if not key or type(display) ~= "table" or
+    not self:RegisterAutoBarProviderDock(xOffset, yOffset)
+  then
+    return false
+  end
+  self:CaptureAutoBarProviderDockBackup()
+  display.docking = self.autoBarProviderDockName
+  display.dockShiftX = 0
+  display.dockShiftY = 0
+  self.autoBarProviderDockProfile = key
+  self.autoBarProviderDockStatus = "bound"
+  return true
+end
+
+function ActionBars:RestoreAutoBarProviderDock()
+  local database = GetFieldKitDatabase()
+  local backups = database and database.autoBarDockBackups
+  local restored = false
+  if type(backups) == "table" and type(AutoBar_Config) == "table" then
+    for key, backup in pairs(backups) do
+      local config = AutoBar_Config[key]
+      local display = type(config) == "table" and config.display
+      if type(display) == "table" and type(backup) == "table" and
+        backup.version == self.autoBarDockBackupVersion
+      then
+        RestoreField(display, "docking", backup.docking)
+        RestoreField(display, "dockShiftX", backup.dockShiftX)
+        RestoreField(display, "dockShiftY", backup.dockShiftY)
+        restored = true
+      end
+    end
+    database.autoBarDockBackups = nil
+  end
+  local frames = AutoBarConfig and AutoBarConfig.dockingFrames
+  if type(frames) == "table" then
+    frames[self.autoBarProviderDockName] = nil
+  end
+  self.autoBarProviderDockProfile = nil
+  self.autoBarProviderDockStatus = restored and "restored" or "free"
+  return restored
+end
+
+function ActionBars:PrepareLogout()
+  -- The provider serializes display.docking verbatim. Keep the AEUI-only
+  -- docking token out of SavedVariables so AutoBar can always initialize
+  -- safely before pfUI/AEUI on the next login; Apply() reinstalls the native
+  -- runtime dock after both providers are available.
+  self:RestoreAutoBarProviderDock()
+  return true
+end
+
 function ActionBars:RestoreSideBarGroupMover()
   local root = GetSideBarFrame(sideBarGroupDefinitions[1])
   local drag = root and root.drag
@@ -3865,12 +4115,15 @@ function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
   local main = GetMainActionBarFrame()
 
   if not enabled or not docked then
+    self:RestoreAutoBarProviderDock()
     if self.autoBarDockApplied then
       RestoreFrameAnchors(handle, self.autoBarUndockedAnchors)
     end
     self.autoBarDockApplied = false
     self.autoBarUndockedAnchors = nil
     self.autoBarBoundAnchors = nil
+    self.autoBarBoundOffsetX = nil
+    self.autoBarBoundOffsetY = nil
     self.autoBarAnchorBasis = enabled and "free" or "disabled"
     self.consumableDockStatus = enabled and "free" or "disabled"
     return false
@@ -3920,12 +4173,18 @@ function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
   local yOffset =
     (self.fieldKitDockYOffset * rackScale - bottomDelta) / handleScale
 
+  if self:ApplyAutoBarProviderDock(xOffset, yOffset) then
+    anchorBasis = "provider-dock"
+  end
+
   handle:ClearAllPoints()
   handle:SetPoint(
     "CENTER", main, "BOTTOMLEFT", xOffset, yOffset
   )
   self.autoBarDockApplied = true
   self.autoBarBoundAnchors = CaptureFrameAnchors(handle)
+  self.autoBarBoundOffsetX = xOffset
+  self.autoBarBoundOffsetY = yOffset
   self.autoBarAnchorBasis = anchorBasis
   self.consumableDockStatus = "left"
   return true
@@ -3979,6 +4238,11 @@ function ActionBars:RestoreAutoBarBoundAnchor()
     return false
   end
   local handle = GetGlobal("AutoBarAnchorFrameHandle")
+  if self.autoBarBoundOffsetX and self.autoBarBoundOffsetY then
+    self:ApplyAutoBarProviderDock(
+      self.autoBarBoundOffsetX, self.autoBarBoundOffsetY
+    )
+  end
   if not RestoreFrameAnchors(handle, self.autoBarBoundAnchors) then
     return false
   end
@@ -5036,6 +5300,19 @@ function ActionBars:InstallFieldKitHooks()
       if not ok then
         ActionBars.actionBarStackStatus = "error"
       end
+      if CombatFocusLayoutActive() and
+        not ActionBars.focusStanceUpdating
+      then
+        local stanceOk = pcall(
+          ActionBars.ApplyFocusStanceContract,
+          ActionBars,
+          false,
+          false
+        )
+        if not stanceOk then
+          ActionBars.focusStanceStatus = "error"
+        end
+      end
     end)
   end
 
@@ -5159,7 +5436,11 @@ function ActionBars:Initialize()
   self.autoBarRefreshStatus = "ready"
   self.autoBarDockApplied = false
   self.autoBarBoundAnchors = nil
+  self.autoBarBoundOffsetX = nil
+  self.autoBarBoundOffsetY = nil
   self.autoBarAnchorBasis = "pending"
+  self.autoBarProviderDockProfile = nil
+  self.autoBarProviderDockStatus = "pending"
   self.autoBarDragHandleStatus = "pending"
   self.autoBarCategoryDescriptionStatus = "pending"
   self.autoBarCategoryDescriptionsRepaired = 0
@@ -5191,6 +5472,8 @@ function ActionBars:Initialize()
   self.focusLayoutDoite = "pending"
   self.focusLayoutArchiTotem = "pending"
   self.focusLayoutMousePolicy = "visible-controls-only"
+  self.focusStanceStatus = "pending"
+  self.focusStanceUpdating = false
   self.comfortUIScaleStatus = ComfortUIScaleConfigured() and
     "saved" or "custom"
 end
@@ -5268,7 +5551,12 @@ function ActionBars:Apply()
   -- /reload without requiring another pixel-space calibration command.
   if ShouldMigrateCombatFocusLayout() and ComfortUIScaleConfigured() then
     self:ApplyCombatFocusLayoutPreset()
+  elseif CombatFocusStanceUpgradeEligible() and
+    ComfortUIScaleConfigured()
+  then
+    self:UpgradeCombatFocusStanceContract()
   elseif CombatFocusLayoutActive() then
+    self:ApplyFocusStanceContract(false, false)
     self:ApplyFocusRelativeAnchors()
     self:ApplyFocusUnitFonts()
   end
@@ -5335,6 +5623,10 @@ function ActionBars:GetRuntimeStatus()
       tostring(self.focusReadoutScale) ..
     ",focus-layout-stance-scale=" ..
       tostring(self.focusStanceScale) ..
+    ",focus-layout-stance-icon-size=" ..
+      tostring(self.focusStanceIconSize) ..
+    ",focus-layout-stance-status=" ..
+      tostring(self.focusStanceStatus or "pending") ..
     ",focus-layout-readout-size=" ..
       tostring(self.focusReadoutWidth) .. "x" ..
       tostring(self.focusReadoutHeight) ..
@@ -5387,6 +5679,8 @@ function ActionBars:GetRuntimeStatus()
       tostring(self.autoBarRefreshStatus or "ready") ..
     ",autobar-anchor-basis=" ..
       tostring(self.autoBarAnchorBasis or "pending") ..
+    ",autobar-provider-dock=" ..
+      tostring(self.autoBarProviderDockStatus or "pending") ..
     ",autobar-drag-handle=" ..
       tostring(self.autoBarDragHandleStatus or "pending") ..
     ",consumable-dock=" ..

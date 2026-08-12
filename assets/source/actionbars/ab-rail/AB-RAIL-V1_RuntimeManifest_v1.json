@@ -154,7 +154,7 @@
   },
   "adapter": {
     "file": "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
-    "sha256": "f7d676ac4360d2d5ca3bc732656be94fed5983d36ffcf41b99a5b74d0965867b",
+    "sha256": "e3887b7f84b03a60b7db3cdbfae080596894c787c88fef2f507e9d100995c28b",
     "provider": "pfUI.bars[1..12].backdrop and pfUI.bars[1].mergedBackdrop.backdrop",
     "logical_bars": [
       1,
@@ -187,13 +187,13 @@
   "addon_entrypoints": {
     "bootstrap": {
       "file": "addon/AzerothExpeditionUI/Core/Bootstrap.lua",
-      "sha256": "4e4014424d5b683ac1c4f6234d6d9014b5e15cfc1d09de8bb146af5d118f623c"
+      "sha256": "3019de4e7f33c8adb688859a117eca70fb568d3f22e6f3bd576a3480d60f0de9"
     },
     "toc": {
       "file": "addon/AzerothExpeditionUI/AzerothExpeditionUI.toc",
-      "sha256": "b5eac8ca3e8642e27cf691e22203981817539bab1e03791cfd96d97cb10bf8b3"
+      "sha256": "770d4c0a3534e20e84ed9b59f8c438198917c770c4aa7c986bab2e4ac02af3a6"
     },
-    "addon_version": "0.8.24",
+    "addon_version": "0.8.25",
     "required_dependency": "pfUI"
   },
   "provider_layers_preserved": [
