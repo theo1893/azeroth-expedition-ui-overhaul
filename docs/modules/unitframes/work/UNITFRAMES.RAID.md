@@ -3,14 +3,14 @@
 ## UF-RAID-A2 当前工作快照
 
 - 版本：`UF-RAID-A2 / UF-RAID-A2-SIM-V1`
-- 子状态：`P3 / repair-prepared / attempt-04-ready`
+- 子状态：`P3 / repair-prepared / attempt-05-ready`
 - 用户选择的架构：`ImageGen material donor only + Python deterministic shell`
-- 当前操作：`edit-attempt-04`
-- 当前批 ImageGen：`3/5`；剩余 `2`
-- production donor：`attempt 1–3 internal-fail；r3 已准备`
+- 当前操作：`regenerate-attempt-05-final`
+- 当前批 ImageGen：`4/5`；剩余 `1`
+- production donor：`attempt 1–4 internal-fail；r4 已准备；attempt 3 当前最佳内部视觉`
 - 模拟用户结论：`confirmed / 2026-08-12 / accepts-pixels=false`
 - candidate／source／runtime／addon：`均未写入`
-- 最新 raw：`generated/unitframes/raid/A2/DONOR-V1/attempt-03/uf-raid-a2-donor-v1-attempt-03.provider-native-01.png`，SHA `6f54172b…4b28`
+- 最新 raw：`generated/unitframes/raid/A2/DONOR-V1/attempt-04/uf-raid-a2-donor-v1-attempt-04.provider-native-01.png`，SHA `7750b39d…ddab`
 - provider：40 个 `pfRaid` Secure Button，`10×4 VERTICAL`，单 Button
   `70×33`，单成员显示包络 `74×39`，整团 `767×159`；结构沿用已经确认的
   `UF-RAID-SIM-V1`。
@@ -120,11 +120,11 @@ Roster、SavedVariables 或 pfUI 状态逻辑。
 ### 下一门禁
 
 `UF-RAID-A2-SIM-V1` 已确认，`UF-RAID-A2-DONOR V1` 已获得独立精确授权。
-attempt 1–3 已完成；attempt 3 已通过主要美术门禁，但固定格位仍失败且
-leather／thread 略偏亮。下一门禁是先提交 attempt 3 完整证据与
-`UF-RAID-A2-DONOR V1.r3` 自包含修复正文，再以固定 Image 1／2 和同循环紧邻
-attempt 3 donor 作为 Image 3 调用固定 `imagegen-0-143-0` attempt 4；不得在
-提交前调用。
+attempt 1–4 已完成；attempt 4 降亮有效，但固定格位更差且重新引入细密压纹。
+下一门禁是先提交 attempt 4 完整证据与 `UF-RAID-A2-DONOR V1.r4` 自包含最终
+正文，再只用固定 Image 1／2 从零调用固定 `imagegen-0-143-0` attempt 5；
+attempt 4 不作为 Image 3，且不得在提交前调用。第五次后无论结果如何都停止
+生图；若未通过则提交终态并等待用户审核，不得第六次。
 
 未来 donor 循环最多 `5` 次实际 ImageGen 调用，流程错误不计额度，通过即停。
 attempt 1 只上传两张固定 Chat 锁定图且没有 Image 3；后续只允许同一 donor
@@ -224,7 +224,7 @@ formed repair object, text, label or measurement is present.
 - attempt 1 固定上传 Image 1／2，`Image 3 = none`。
 - 后续 attempt 只允许把同一 donor 循环紧邻前稿作为 Image 3，并且只修复四个
   冻结材料字段内的材质内容／格位污染；禁止跨循环、跨段或复用 A1 失败像素。
-- 每段最多 `5` 次实际 ImageGen；当前 `3/5`，剩余 `2`。返回图片或 provider generation
+- 每段最多 `5` 次实际 ImageGen；当前 `4/5`，剩余 `1`。返回图片或 provider generation
   证据才计数；无图且无生成证据的流程错误单列，不占额度；内部通过即停。
 - Python 可执行固定 sample-window crop、cover-fit、精确 Alpha／liner／光照／
   A-D mask、透明 RGB 清零、`592×296 → 74×37`、`6/62/6` 三切片和 40 人真实
@@ -243,14 +243,14 @@ formed repair object, text, label or measurement is present.
 - attempt 2–5：每次仍上传固定 Image 1／2；只允许同循环紧邻前次 donor 输出
   在冻结四材料字段内作为 Image 3 edit 输入。若不明确保留前稿则从固定两图
   regenerate；禁止跨循环、跨段、模拟图或 A1 失败像素。
-- 预算：最多 `5` 次实际 ImageGen；当前 `3/5`，剩余 `2`；流程错误 `1` 不占额度；内部通过
+- 预算：最多 `5` 次实际 ImageGen；当前 `4/5`，剩余 `1`；流程错误 `1` 不占额度；内部通过
   即停。
 - 允许的确定性操作：固定 sample-window crop、cover-fit、Python 精确外壳／
   A-D mask、透明 RGB 清零、`592×296 → 74×37`、`6/62/6` 三切片和 40 人真实
   排版预演。
 - 未授权：候选自动接受、P4 source 晋级、P5 addon 导出／接入、P6、清理。
-- 下一操作：提交 attempt 3 的 session／result、raw SHA、完整审查与 r3 正文后，
-  执行 attempt 4；使用固定 Image 1／2 与同循环紧邻 attempt 3 raw 作 Image 3。
+- 下一操作：提交 attempt 4 的 session／result、raw SHA、完整审查与 r4 正文后，
+  执行最后 attempt 5；只用固定 Image 1／2 regenerate，`Image 3 = none`。
 
 ### A2 自主修复循环
 
@@ -260,13 +260,14 @@ formed repair object, text, label or measurement is present.
   `6/62/6`、40 人真实排版及全部动态排除。
 - 允许修复：四个冻结材料字段内的材质笔触、频率、明暗、污染与 cell 占用；
   可在明确保留前稿正确结构时使用同循环紧邻 raw 作 Image 3 edit。
-- 当前：`repair-prepared`；实际 ImageGen `3/5`，剩余 `2`；流程错误 `1`。
+- 当前：`repair-prepared`；实际 ImageGen `4/5`，剩余 `1`；流程错误 `1`。
 
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
 | 1/5 | `UF-RAID-A2-DONOR V1` / `68e43e5` | generate | session `019ff524-4c79-7f92-8246-d5e46140250d`／provider `ig_02657bd92b3d4522016a7c32547f2481919c19c602f0fdb5c2` | raw `ac2f7a2a…ec23` | 美术一致性：leather／brass／thread 为照片级高频表面，运行时形成连续锯齿滚边；其次四 field bbox 越出固定 cell | 保留四材料顺序、低饱和深色层级、完整 sample window、安静 liner 与无 UI 几何；attempt 2 用紧邻 raw 作 Image 3，重画材质频率并收回 cell | internal-fail |
 | 2/5 | `UF-RAID-A2-DONOR V1.r1` / `6cb51d3` | edit | session `019ff531-86c6-7333-9ea1-31a8d5ec461f`／provider `ig_0a7b3d9d79050dcb016a7c35bc352c819183b83d8fa24aeaff` | raw `d6479b89…c893` | 美术一致性：四材料仍共享重复卷曲压纹，thread 仍为纠缠纤维、brass 仍有大片亮区；其次最大 field bbox 偏移 `55px` | 不继承失败纹理；保留冻结职责／深色层级／sample window／无 UI 几何。attempt 3 只用固定 Image 1／2 从零生成超低频哑光颜料字段 | internal-fail |
 | 3/5 | `UF-RAID-A2-DONOR V1.r2` / `542810f` | regenerate | session `019ff53a-39b4-79c0-94bd-b308a4a29962`／provider `ig_09b4123c1cee1bb7016a7c37ecb4ac81919dcddc53fa6d9b0e` | raw `6f54172b…4b28` | 技术：四 field bbox 仍偏离固定 cell，最大 `42px`，leather／liner contract cell 内分别残留 `3840/4224` dominant-green px；其次 leather／thread 略偏亮 | 完整保留本稿已成立的宽块哑光笔触、无共享纹理、安静 liner、粗犷运行时；attempt 4 仅用紧邻 raw 作 Image 3 精确收边，并克制压暗 leather／brass／thread | internal-fail |
+| 4/5 | `UF-RAID-A2-DONOR V1.r3` / `5c6dde0` | edit | session `019ff541-facd-7c40-8804-b740ecfbcfc1`／provider `ig_0af27a56c69c29f2016a7c39edf588819187b010c7e8ab0862` | raw `7750b39d…ddab` | 美术回退：四字段重新出现细密重复压纹；技术仍失败且最大 bbox 偏移增至 `48px`、每格 contract cell green 增至 `11169–11520px` | 降亮数值方向可吸收；不保留本稿纹理或格位。attempt 5 只用固定 Image 1／2，从零恢复 attempt 3 类型的宽块哑光方向并强化非等距中心带 | internal-fail |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|
@@ -655,6 +656,135 @@ broad matte 2004 hand-painted material language is retained; leather has no
 bright continuous rim, liner stays quiet, brass is dull umber, flax is dark
 and non-focal; and there is no UI geometry, formed repair, label, measurement
 or text.
+```
+
+#### Attempt 4 执行与内部审查
+
+- 固定子进程 user block 完整回显；Prompt body SHA `1482ef63…05b0`。固定
+  Image 1／2 的路径、顺序和 SHA 与授权一致；Image 3 只使用同循环紧邻
+  attempt 3 raw，SHA `6f54172b…4b28`，没有其他输入。固定执行器返回一张
+  `1536×1024 RGB`；session `019ff541-facd-7c40-8804-b740ecfbcfc1`，provider
+  result `ig_0af27a56c69c29f2016a7c39edf588819187b010c7e8ab0862`；provider native
+  与 child copy SHA 同为 `7750b39d…ddab`。没有新增流程错误。
+- 降亮：方向有效。leather／liner／brass／thread 的 sample luminance 降为
+  `34.627/27.440/34.685/38.317`，比 attempt 3 更接近克制层级。
+- 第一失败——美术回退：edit 把 attempt 3 已通过的宽块哑光表面重新磨成四字段
+  共享的细密卷曲／压纹，leather 再次像工业压花皮具，brass 也出现均匀颗粒。
+  这违反锁定的 2004 宽块手绘和“不共享表面图案”，不能因运行时缩小后暂时
+  不明显而放行。
+- 技术仍失败：detected bbox 为
+  `[90,61,733,496]`、`[803,61,1445,496]`、`[90,539,733,962]`、
+  `[803,539,1445,962]`，最大偏移 `48px`；每格 contract cell 内 dominant-green
+  增至 `11169–11520px`。四个 fixed sample window 仍无 green，Canvas／mode、
+  A-D source/runtime、provider inset 与透明 RGB 清零通过。
+- 40 人真实排版和 display-region 仍为 `7/7 pass`、violations `0`；几何通过
+  不能覆盖美术与固定格位失败。
+- 证据：technical report SHA `ce6910a9…9c69`；display report SHA
+  `ddb3fc51…6dd0`；source preview SHA `51a8c66a…bbf1`；真实排版 review SHA
+  `edf5dbe3…f875`，scene SHA `34320b41…fc44`。executor JSON SHA
+  `7177477a…3b8`，log SHA `115a826f…e747`。
+- 内部结论：`internal-fail / repair-prepared`。attempt 5 为最后一次授权调用；
+  不上传退化的 attempt 4，不继承其像素。只从固定 Image 1／2 regenerate。
+  若 attempt 5 未通过，循环以 `5/5` 终止并等待用户审核；attempt 3 保留为当前
+  最佳内部视觉参考，但不是 candidate、source 或 runtime。
+
+### `UF-RAID-A2-DONOR V1.r4` — attempt 5 最终自包含低频四材料重建
+
+```text
+Create from scratch exactly one final 1536x1024 RGB material-donor sheet for
+a 2004-era vanilla World of Warcraft expedition raid UI. This is the final
+attempt in this bounded loop. It is a coarse hand-painted game-texture donor,
+not a photograph, PBR material study, UI mockup, atlas or product swatch
+board. Do not reconstruct or imitate any prior donor output. No Image 3 is
+supplied. Return only four flat uninterrupted material paintings separated by
+a pure-green chroma background.
+
+First establish the exact hard-edged layout, then paint inside it. The canvas
+outer gutter is exactly 64 pixels on all four sides. The vertical centre gap
+is exactly 64 pixels, visibly the same width as the left and right outer
+gutters; do not make it narrower. The horizontal centre band is exactly 128
+pixels, visibly twice the top and bottom outer gutters; do not make all three
+horizontal gaps equal. There are exactly four rectangles, each exactly 672
+by 384 pixels: top-left leather x64 inclusive through x735 inclusive and y64
+through y447; top-right liner x800 through x1471 and y64 through y447;
+bottom-left brass x64 through x735 and y576 through y959; bottom-right flax
+x800 through x1471 and y576 through y959. All pixels beyond those four masks
+are uniform flat RGB #00FF00 with no antialiasing, shadow, glow, gradient,
+texture, fringe, spill or detached fleck.
+
+These inner crop windows are the actual material sources and must be entirely
+filled: leather x144..656 y112..400; liner x880..1392 y112..400; brass
+x144..656 y624..912; flax x880..1392 y624..912. No crop window may contain
+green, border, edge, vignette, seam, divider, focal object, embedded ornament,
+silhouette, shadow, label or measurement. Python will crop these exact
+windows and cover-fit them; each window must remain one continuous generic
+material painting with no special centre or boundary.
+
+Paint as deliberately under-resolved circa-2004 game-interface bitmaps using
+matte opaque gouache and broad hand-placed value groups. Each crop window has
+only about five to eight large soft-lost tonal masses. Most visible changes
+span 70 to 220 pixels, and no recognizable mark is smaller than 32 pixels.
+Leave long quiet matte areas. Use warm upper-left illumination, simple shadow
+groups, deep low-saturation expedition colours and visibly hand-made unequal
+decisions. This is not realistic material rendering: no procedural texture,
+scan, photographic grain, bump relief, normal-map look, repeated curls,
+pores, hairs, fibres, pebbles, crackle, fine scratches, speckles, stipple or
+noise. No surface motif may repeat across two fields.
+
+Top-left leather suggests deep soot-walnut salvaged rawhide through broad
+colour and wear only. Use five to seven slow smoke or uneven-dye masses, two
+or three blunt dry-brush passages at least 40 pixels thick, and large bare
+matte stretches. Keep its average visible value dark, around RGB luminance
+32 to 44. No literal pores, wrinkle network, upholstery embossing, reptile
+scale, hair, fine cracks, stitched edge, orange patch or continuous bright
+passage.
+
+Top-right liner is the darkest and quietest field: matte smoke-brown backing
+with three to five very broad low-contrast soot or dye masses and soft lost
+edges. Target average luminance 24 to 34. No grain, repeated cloud motif,
+fabric weave, panel, vignette, centre mark, highlight strip or fake depth.
+
+Bottom-left brass is continuous dark tarnished-umber pigment, not a plate or
+metal object. Suggest aged brass using four to six broad matte oxidation
+pools and at most three short separated dull-umber catches. Target average
+luminance 32 to 44. No yellow hotspot, reflection, long crossing scratches,
+hammered dimples, engraved pattern, relief, border or polished gold.
+
+Bottom-right flax is abstract smoke-dark flax pigment, not a fibre mat. Use
+three to five broad broken dry-brush directions 48 to 120 pixels thick plus
+slow uneven dark dye. Target average luminance 30 to 42 and keep contrast
+lower than leather. No individual fibre, hair, thread, cord, stitch, braid,
+rope, seam, knot, loop, weave, felt curl, pale canvas stripe or tangled
+carpet. Its marks must differ from leather and brass.
+
+The written requirements outrank both references. Use Image 1 only for its
+circa-2004 broad painted bitmap scale, warm upper-left light, apparent material
+weight, restrained warm contrast and low-frequency handmade wear; ignore its
+screen composition, text, portraits, book, pages, spine, tabs, dragon, wax
+seals, complete-frame geometry and object layout. Use Image 2 only for
+deep-walnut depth, smoke-brown restraint, matte rough pigment, dull oxidized
+brass and hand-made error; ignore its book construction, pages, spine,
+columns, dragons, ornaments, UI contour and object layout. Do not copy pixels
+or shapes from either reference. No simulation, raid-shell candidate or prior
+donor is an input.
+
+Do not draw a frame, shell, card, plaque, panel, button, atlas part, status
+bar, opening, border, stitches, rivets, patches, notches, cuts, repairs,
+piping, tooling, lacing, grid or guide. Python alone constructs all exact
+shell geometry, Alpha, lighting, A/B/C/D repair masks, 592x296 source,
+74x37 runtime and 6/62/6 three-slice output. No pages, books, wax seals,
+dragons, skulls, spikes, gems, runes, Diablo-style black iron, modern flat UI,
+glass, neon, industrial bevels, mirrored decoration or text of any kind.
+
+Before returning, verify visibly: one 1536 by 1024 RGB sheet; exactly four and
+only four hard-edged 672 by 384 fields at the stated coordinates; 64-pixel
+outer gutters; a 64-pixel vertical centre gap equal to the side gutters; a
+128-pixel horizontal centre band visibly twice the top and bottom gutters;
+uniform #00FF00 everywhere else; every crop window fully material-filled;
+four distinct broad matte 2004 hand-painted material languages with no shared
+microtexture; leather dark and non-orange, liner quietest, brass dull umber,
+flax dark and non-fibrous; and no UI geometry, formed repair, label,
+measurement or text.
 ```
 
 ## UF-RAID-A1 历史元数据

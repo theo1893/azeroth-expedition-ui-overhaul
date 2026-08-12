@@ -1,7 +1,7 @@
 {
   "schema": "aeui-unitframes-raid-donor-production-v1",
   "version": "UF-RAID-A2-DONOR V1",
-  "status": "repair-prepared / attempts-01-03-internal-fail / attempt-04-ready",
+  "status": "repair-prepared / attempts-01-04-internal-fail / attempt-05-ready",
   "production_authorized": true,
   "architecture": {
     "status": "user-selected",
@@ -79,13 +79,13 @@
     "later_image_3": "only the immediately previous output from this same donor loop and only within the frozen material-field repair boundary",
     "stop_on_pass": true,
     "execution_state": {
-      "attempts_used": 3,
-      "attempts_remaining": 2,
+      "attempts_used": 4,
+      "attempts_remaining": 1,
       "process_errors": 1,
-      "current_prompt_version": "UF-RAID-A2-DONOR V1.r3",
-      "current_prompt_heading": "### `UF-RAID-A2-DONOR V1.r3` — attempt 4 自包含精确收边与克制降亮",
-      "current_prompt_body_sha256": "1482ef63b69d8155438643ff9ff8141a6e9826bb6ac6cdb3d95f783d8c6305b0",
-      "next_operation": "commit attempt 3 review and complete r3 body, then edit with fixed SHA Image 1/2 and the immediately previous attempt 3 donor as Image 3"
+      "current_prompt_version": "UF-RAID-A2-DONOR V1.r4",
+      "current_prompt_heading": "### `UF-RAID-A2-DONOR V1.r4` — attempt 5 最终自包含低频四材料重建",
+      "current_prompt_body_sha256": "ed3ec1599512a5b6c42695334bc1466e560ac010b428b3261f4503fba30bb078",
+      "next_operation": "commit attempt 4 review and complete r4 body, then make the final regenerate call with fixed SHA Image 1/2 and no Image 3"
     }
   },
   "attempts": [
@@ -135,6 +135,22 @@
       "display_report_sha256": "ddb3fc51b7c3ef2e1590ecc145b4668ed3d23c5e627600dfa2d0a424a8ce6dd0",
       "first_failure": "fixed cell masks: detected field bboxes deviate by up to 42 pixels and leave dominant-green pixels inside all four contract cells",
       "secondary_failure": "leather, brass and flax remain brighter than the intended restrained runtime hierarchy despite the broad hand-painted material direction passing",
+      "result": "internal-fail / repair-prepared"
+    },
+    {
+      "attempt": 4,
+      "prompt_version": "UF-RAID-A2-DONOR V1.r3",
+      "execution_commit": "5c6dde06ebd31c5225ca6021f44de26400493064",
+      "operation": "edit",
+      "codex_session_id": "019ff541-facd-7c40-8804-b740ecfbcfc1",
+      "provider_result": "ig_0af27a56c69c29f2016a7c39edf588819187b010c7e8ab0862",
+      "raw_path": "generated/unitframes/raid/A2/DONOR-V1/attempt-04/uf-raid-a2-donor-v1-attempt-04.provider-native-01.png",
+      "raw_sha256": "7750b39de94bd062be6bc7158b0f4a4ca3bf1eea93a1746baedb128a3e70ddab",
+      "technical_report": "generated/unitframes/raid/A2/DONOR-V1/attempt-04/review/technical-report.json",
+      "technical_report_sha256": "ce6910a91ce04434f1e22d2bd742e684b0deefbd9b66261b5a654a0c3c9f9c69",
+      "display_report_sha256": "ddb3fc51b7c3ef2e1590ecc145b4668ed3d23c5e627600dfa2d0a424a8ce6dd0",
+      "first_failure": "locked-baseline art regression: editing reintroduced a shared fine curled embossed pattern across all four fields",
+      "secondary_failure": "fixed field bboxes remain outside tolerance with maximum deviation 48 pixels and 11169 to 11520 dominant-green pixels inside each contract cell",
       "result": "internal-fail / repair-prepared"
     }
   ],
