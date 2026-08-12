@@ -1,7 +1,7 @@
 {
   "schema": "aeui-unitframes-raid-production-v1",
   "version": "UF-RAID-A1 V1 final",
-  "status": "prompt-authorized",
+  "status": "repair-prepared",
   "simulation_gate": {
     "version": "UF-RAID-SIM-V1",
     "status": "simulation-confirmed",
@@ -150,6 +150,13 @@
       "liner contrast and brass restraint",
       "variant-specific cap details",
       "green isolation and edge cleanliness"
-    ]
+    ],
+    "execution_state": {
+      "attempts_used": 1,
+      "attempts_remaining": 4,
+      "process_errors": 0,
+      "current_prompt_version": "UF-RAID-A1 V1 final.r1",
+      "next_operation": "bounded edit of the immediately preceding full sheet as Image 3"
+    }
   }
 }

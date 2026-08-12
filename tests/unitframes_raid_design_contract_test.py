@@ -14,6 +14,7 @@ SPEC = ROOT / "tools/specs/unitframes_raid_simulation_v1.json"
 PRODUCTION = ROOT / "tools/specs/unitframes_raid_production_v1.json"
 DISPLAY = ROOT / "tools/specs/unitframes_raid_simulation_display_region_v1.json"
 RENDERER = ROOT / "tools/render_unitframes_raid_simulation_v1.py"
+REVIEWER = ROOT / "tools/review_unitframes_raid_candidate_v1.py"
 WORK = ROOT / "docs/modules/unitframes/work/UNITFRAMES.RAID.md"
 SUBMODULES = ROOT / "docs/modules/unitframes/SUBMODULES.md"
 SUBMODULE_ART = ROOT / "docs/modules/unitframes/SUBMODULE_ART_BASELINES.md"
@@ -80,7 +81,7 @@ def main() -> None:
     production = json.loads(PRODUCTION.read_text(encoding="utf-8"))
     assert production["schema"] == "aeui-unitframes-raid-production-v1"
     assert production["version"] == "UF-RAID-A1 V1 final"
-    assert production["status"] == "prompt-authorized"
+    assert production["status"] == "repair-prepared"
     assert production["production_authorized"] is True
     assert production["authorization"]["authorized_version"] == (
         "UF-RAID-A1 V1 final"
@@ -121,6 +122,15 @@ def main() -> None:
     }
     assert production["repair_loop"]["maximum_actual_imagegen_calls"] == 5
     assert production["repair_loop"]["process_errors_count_toward_limit"] is False
+    assert production["repair_loop"]["execution_state"] == {
+        "attempts_used": 1,
+        "attempts_remaining": 4,
+        "process_errors": 0,
+        "current_prompt_version": "UF-RAID-A1 V1 final.r1",
+        "next_operation": (
+            "bounded edit of the immediately preceding full sheet as Image 3"
+        ),
+    }
 
     expected_locked = {
         "assets/locked/chat/聊天框视觉基准_v1.png":
@@ -204,9 +214,20 @@ def main() -> None:
     ):
         assert clause in renderer, f"raid simulation renderer missing: {clause}"
 
+    reviewer = REVIEWER.read_text(encoding="utf-8")
+    for clause in (
+        "connected_chroma_key",
+        "runtime_repeat_count",
+        "cluster_visual_envelope",
+        "diagnostic-proportional-fit-only",
+        "member_tile(spec, shells, index)",
+        "render_real_layout",
+    ):
+        assert clause in reviewer, f"raid candidate reviewer missing: {clause}"
+
     work = WORK.read_text(encoding="utf-8")
     for clause in (
-        "prompt-authorized / attempt-1-pending",
+        "repair-prepared / attempt-2-pending",
         "ImageGen：`0/0`",
         "不增加一圈共享书框",
         "四个完整外壳变体",
@@ -215,7 +236,10 @@ def main() -> None:
         "UF-RAID-A1 V1 final",
         "exactly four complete empty raid-member",
         "pass-final",
-        "实际 ImageGen `0/5`",
+        "当前实际生图：`1/5`",
+        "UF-RAID-A1 V1 final.r1",
+        "019ff4da-2586-7cc1-8174-8de62fab3f64",
+        "continuous rope, braid, lacing",
     ):
         assert clause in work, f"raid work record missing: {clause}"
 
