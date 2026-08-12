@@ -58,12 +58,12 @@ Leader／Master Looter／Raid Target／Resurrection、Buff／Debuff、Incoming H
 框架在 `modules/group.lua`，Raid Marker 血条列表在 `modules/raidmarkers.lua`，
 二者都不是 `UF.RAID.*`。
 
-## UF-PRIMARY V4 待确认完整外壳生产架构
+## UF-PRIMARY V4 已确认架构与待验收候选
 
-用户于 `2026-08-12` 要求重开 Player／Target 完整外壳的新生产架构。当前
-`UF-PRIMARY-V4-SIM-V1` 为 `simulation-reviewed / user-confirmation-pending`；
-以下只定义真实对象与候选生产职责，不代表用户已经接受模拟像素、透明 source
-或 addon runtime。
+用户于 `2026-08-12` 要求重开 Player／Target 完整外壳的新生产架构，并已确认
+`UF-PRIMARY-V4-SIM-V1` 与 Raid A2 sample 的只读输入职责。当前确定性
+`UF-PRIMARY-V4-CANDIDATE-V1` 为 `P3 / candidate-reviewed`；以下定义真实对象
+与候选生产职责，不代表用户已经接受透明 source 或 addon runtime。
 
 - 最终组件粒度不变：`UF.PLAYER.SHELL` 与 `UF.TARGET.SHELL` 各自是一张独立
   完整 `1284×252 RGBA` source 和一张完整 `214×42` runtime。不得两角色合图、

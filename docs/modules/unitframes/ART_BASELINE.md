@@ -13,9 +13,11 @@ source。本 Prompt 显式继承
 
 `UF-PRIMARY-V4-SIM-V1` 于 `2026-08-12` 重开的是生产职责，不是新的美术
 方向：Player／Target 仍必须遵守本 Prompt 的粗犷行军身份牌、深胡桃旧皮、
-克制暗铜、非镜像维修和香草信息密度。V4 当前只到
-`simulation-reviewed / user-confirmation-pending`，不能把几何模拟的扁平颜色、
-锯齿或占位高光固化为美术基准。
+克制暗铜、非镜像维修和香草信息密度。用户已确认 V4 模拟，并授权 Raid A2
+材料 sample 作为只读 candidate 输入；当前 exact candidate 仍为
+`P3 / candidate-reviewed / user-acceptance-pending`。不能把几何模拟的扁平颜色、
+锯齿或占位高光固化为美术基准，也不能在用户接受前把 candidate 固化为 P4
+像素基线。
 
 ## 主模块 Prompt
 

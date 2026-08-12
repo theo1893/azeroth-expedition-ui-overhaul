@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static contract checks for the pending UF-PRIMARY-V4 architecture."""
+"""Static contract checks for the confirmed UF-PRIMARY-V4 architecture."""
 
 from __future__ import annotations
 
@@ -23,12 +23,14 @@ def main() -> None:
     spec = json.loads(SPEC.read_text(encoding="utf-8"))
     assert spec["schema"] == "aeui-unitframes-primary-v4-simulation-v1"
     assert spec["version"] == "UF-PRIMARY-V4-SIM-V1"
-    assert spec["status"] == "simulation-reviewed"
-    assert spec["user_confirmation"] == {
-        "status": "pending",
-        "accepts_pixels": False,
-        "production_authorized": False,
-    }
+    assert spec["status"] == "simulation-confirmed"
+    confirmation = spec["user_confirmation"]
+    assert confirmation["status"] == "confirmed"
+    assert confirmation["accepts_pixels"] is False
+    assert confirmation["authorizes_deterministic_candidate_construction"] is True
+    assert confirmation["authorizes_raid_a2_samples_as_read_only_inputs"] is True
+    assert confirmation["authorizes_imagegen"] is False
+    assert confirmation["authorizes_addon_integration"] is False
     assert spec["reopens"]["components"] == ["UF.PLAYER.SHELL", "UF.TARGET.SHELL"]
     assert spec["reopens"]["predecessor_pixels_may_be_reused"] is False
 
@@ -100,14 +102,14 @@ def main() -> None:
         "source `192/900/192`、runtime `32/150/32`",
         "备用段最多 `5` 次实际 ImageGen",
         "`displayable / simulation-reviewed`",
-        "等待用户确认 `UF-PRIMARY-V4-SIM-V1`",
+        "用户确认 `UF-PRIMARY-V4-SIM-V1`",
     ):
         assert clause in work, f"V4 work record missing: {clause}"
     assert "V4 新生产架构与生成前模拟" in progress
-    assert "UF-PRIMARY V4 待确认完整外壳生产架构" in submodules
+    assert "UF-PRIMARY V4 已确认架构与待验收候选" in submodules
     assert "重开的是生产职责，不是新的美术" in art
-    assert "Player／Target V4 `P2 simulation-reviewed`" in global_progress
-    assert "UF-PRIMARY-V4-SIM-V1 / P2 / simulation-reviewed" in agents
+    assert "Player／Target V4 `P3 candidate-reviewed`" in global_progress
+    assert "UF-PRIMARY-V4-CANDIDATE-V1 / P3 / candidate-reviewed" in agents
 
     print("unitframes primary V4 architecture test passed")
 

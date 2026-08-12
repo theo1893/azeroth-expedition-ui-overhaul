@@ -2,9 +2,10 @@
 
 ## 当前状态
 
-- Player／Target 完整外壳已按用户于 `2026-08-12` 的要求重开为
-  `UF-PRIMARY-V4-SIM-V1`：`P2 / simulation-reviewed /
-  user-confirmation-pending / ImageGen 0/0`。V4 首选复用已接受的 Raid A2
+- Player／Target 完整外壳已按用户于 `2026-08-12` 的要求重开；用户已确认
+  `UF-PRIMARY-V4-SIM-V1`，并授权 Raid A2 已验收 sample 作为只读输入。当前
+  `UF-PRIMARY-V4-CANDIDATE-V1` 为 `P3 / candidate-reviewed /
+  user-acceptance-pending / ImageGen 0/0`。V4 只读复用已接受的 Raid A2
   leather／liner／brass／thread 材料 sample，由 Python 独占完整外壳几何、
   Alpha、安全区、维修 mask、`1284×252 → 214×42` 与 `32/150/32` 横向三切片；
   ImageGen 不再承担 UI 几何，首选路径也不需要新的 ImageGen。
@@ -58,8 +59,9 @@
 
 ## V4 新生产架构与生成前模拟
 
-- 用户原文：“重开 Player／Target 完整外壳的新生产架构。”当前只完成
-  prepare／simulate／review，没有 production、P4 source 或 addon 授权。
+- 用户原文：“重开 Player／Target 完整外壳的新生产架构。”用户随后确认
+  `UF-PRIMARY-V4-SIM-V1` 并授权 Raid A2 sample 只读输入；当前完成确定性
+  candidate 与 exact-pixel 内审，但没有 P4 source 或 addon 授权。
 - 最终资产粒度不变：Player／Target 各自仍是一张独立完整 source 和一张完整
   runtime；不是端帽 atlas、两角色合图或多图拼接。标准 `W=200` 使用完整
   `214×42` 纹理，内部接缝 `0`；变宽才从同一角色 source 派生
@@ -84,9 +86,15 @@
   `tools/specs/unitframes_primary_v4_simulation_display_region_v1.json`；Player
   四 Power mode、Target Aggro、`W=160/240` 共 `7/7 pass`，violations `0`，
   报告 SHA `1ba15de8…6a32`。
-- 下一门禁：用户确认 `UF-PRIMARY-V4-SIM-V1`。确认后先确定性构造两张透明
-  candidate 并进行真实排版／缩放／状态审查，再请求 exact-pixel 接受；不能
-  直接接入 addon。
+- candidate contract：`tools/specs/unitframes_primary_v4_candidate_v1.json`；
+  builder／reviewer 为 `tools/build_unitframes_primary_v4_candidates_v1.py` 与
+  `tools/review_unitframes_primary_v4_candidates_v1.py`。Player／Target source
+  SHA 分别为 `331b353f…617b`、`256086c1…f81`；100% runtime review SHA 为
+  `3bedcae1…e5a4`、`f07b5ef6…347e`。输入 SHA、透明清理、安全区与身份 mask
+  全部通过，display-region `10/10 pass`、violations `0`；多场景真实排版覆盖
+  四资源、低血量、Hover／Aggro、`W=160/240` 与四档统一 UI Scale。
+- 当前下一门禁：用户审查 `UF-PRIMARY-V4-CANDIDATE-V1` exact pixels。用户
+  接受前不得晋级 `assets/source`、导出 addon runtime 或接入 Lua。
 
 ## V3 历史结构合同
 

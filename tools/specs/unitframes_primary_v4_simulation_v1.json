@@ -1,13 +1,19 @@
 {
   "schema": "aeui-unitframes-primary-v4-simulation-v1",
   "version": "UF-PRIMARY-V4-SIM-V1",
-  "status": "simulation-reviewed",
+  "status": "simulation-confirmed",
   "requested_on": "2026-08-12",
   "user_request": "重开 Player／Target 完整外壳的新生产架构。",
   "user_confirmation": {
-    "status": "pending",
+    "status": "confirmed",
+    "date": "2026-08-12",
+    "exact_statement": "接受 UF-PRIMARY-V4-SIM-V1，并允许将 Raid A2 已验收材料样本作为 Player／Target 新透明 candidate 的只读输入。",
     "accepts_pixels": false,
-    "production_authorized": false
+    "authorizes_deterministic_candidate_construction": true,
+    "authorizes_raid_a2_samples_as_read_only_inputs": true,
+    "authorizes_imagegen": false,
+    "authorizes_addon_integration": false,
+    "next_gate": "review exact transparent Player and Target candidate pixels"
   },
   "reopens": {
     "components": ["UF.PLAYER.SHELL", "UF.TARGET.SHELL"],

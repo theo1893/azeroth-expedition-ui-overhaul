@@ -111,11 +111,12 @@ def main() -> None:
 
     work = WORK.read_text(encoding="utf-8")
     normalized_work = " ".join(work.split())
-    assert "UF-A1 V4 architecture-reopened / simulation-reviewed / user-confirmation-pending" in work
+    assert "UF-A1 V4 candidate-reviewed / user-acceptance-pending" in work
     assert "accepted UF-PRIMARY-V3-SIM-V1 / 2026-08-11" in work
     assert "production / authorized / 2026-08-11" in work
     assert "完整性结论：`pass-final`" in work
-    assert "V4 正式生产：`not-authorized`" in work
+    assert "V4 确定性 candidate：`authorized / built / reviewed`" in work
+    assert "UF-PRIMARY-V4-CANDIDATE-V1" in work
     assert "历史 V3 正式生产" in work
     assert "## V3 历史自主修复循环" in work
     assert "Python 不得补画皮革" in work
