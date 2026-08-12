@@ -714,43 +714,23 @@ assert(module.autoBarPopupConnectors == 3)
 assert(module.autoBarPopupLayout == "native")
 assert(module.autoBarGrouped == true)
 assert(module.consumableDockStatus == "left")
-local consumableDockAnchor = AutoBarAnchorFrameHandle.decorativePoints[1]
-local projectedHandleCenter =
-  pfUI.bars[1].left +
-  consumableDockAnchor[4] * AutoBarAnchorFrameHandle.scale
-local originalHandleCenter =
-  AutoBarAnchorFrameHandle:GetCenter() * AutoBarAnchorFrameHandle.scale
-local autoBarButtonScale = AutoBarFrameButton4:GetEffectiveScale()
-local originalVisualRight =
-  (AutoBarFrameButton4:GetRight() + 6) * autoBarButtonScale
-local projectedVisualRight =
-  projectedHandleCenter + originalVisualRight - originalHandleCenter
-assert(math.abs(
-  pfUI.bars[1].left - projectedVisualRight -
-  module.consumableDockGap * autoBarButtonScale
-) < 0.0001)
-local projectedHandleCenterY =
-  pfUI.bars[1].bottom +
-  consumableDockAnchor[5] * AutoBarAnchorFrameHandle.scale
-local _, originalHandleCenterY = AutoBarAnchorFrameHandle:GetCenter()
-local originalVisualBottom =
-  (AutoBarFrameButton1:GetBottom() - 6) * autoBarButtonScale
-local projectedVisualBottom =
-  projectedHandleCenterY + originalVisualBottom -
-  originalHandleCenterY * AutoBarAnchorFrameHandle.scale
-assert(math.abs(
-  projectedVisualBottom -
-  (pfUI.bars[1].bottom +
-    module.fieldKitDockYOffset * autoBarButtonScale)
-) < 0.0001)
-assert(module.autoBarAnchorBasis == "provider-dock")
+local consumableRoot = assert(module.autoBarDockRoot)
+local consumableDockAnchor = consumableRoot.decorativePoints[1]
+assert(consumableDockAnchor[1] == "BOTTOMRIGHT")
+assert(consumableDockAnchor[2] == pfUI.bars[1])
+assert(consumableDockAnchor[3] == "BOTTOMLEFT")
+assert(consumableDockAnchor[4] == -module.consumableDockGap)
+assert(consumableDockAnchor[5] == module.fieldKitDockYOffset)
+assert(AutoBarFrameButton1.decorativePoints[1][2] == consumableRoot)
+assert(AutoBarFrameButton2.decorativePoints[1][2] ==
+  AutoBarFrameButton1)
+assert(module.autoBarAnchorBasis == "combat-deck-root")
 assert(AutoBar.display == AutoBar_Config["_SHARED1"].display)
-assert(AutoBar_Config["_SHARED1"].display.docking ==
-  module.autoBarProviderDockName)
+assert(AutoBar_Config["_SHARED1"].display.docking == nil)
 
--- A compact inventory may expose only three buttons while all 24 frame
--- objects still report stale shown/position state. Dock from AutoBar's own
--- AssignButtons/layout formula, never from that stale frame envelope.
+-- A compact inventory exposes three real visible buttons. The dock root is
+-- sized from those three frames and remains attached even if AutoBar moves its
+-- unrelated drag handle afterward.
 local compactDisplayBackup = {
   rows = AutoBar.display.rows,
   columns = AutoBar.display.columns,
@@ -765,23 +745,27 @@ AutoBar.display.gapping = 3
 AutoBar.display.buttonWidth = 36
 AutoBar.display.buttonHeight = 36
 AutoBar.display.alignButtons = 9
-AutoBar.AssignButtons = function() return 3 end
+for index = 4, 24 do
+  _G["AutoBarFrameButton" .. index]:Hide()
+end
 module:ApplyAutoBarFieldKit(true)
-local compactAnchor = AutoBarAnchorFrameHandle.decorativePoints[1]
+local compactAnchor = module.autoBarDockRoot.decorativePoints[1]
 assert(compactAnchor[2] == pfUI.bars[1])
-assert(math.abs(compactAnchor[4] - (-132 / 0.6)) < 0.0001)
-assert(math.abs(compactAnchor[5] - (22 / 0.6)) < 0.0001)
+assert(compactAnchor[4] == -module.consumableDockGap)
+assert(compactAnchor[5] == module.fieldKitDockYOffset)
+assert(module.autoBarDockRoot.width == 126)
+local compactButtonAnchor = AutoBarFrameButton3.decorativePoints[1]
+assert(compactButtonAnchor[2] == AutoBarFrameButton2)
 AutoBarAnchorFrameHandle:ClearAllPoints()
 AutoBarAnchorFrameHandle:SetPoint(
   "CENTER", UIParent, "BOTTOMLEFT", 555, 213
 )
-assert(math.abs(
-  AutoBarAnchorFrameHandle.decorativePoints[1][4] - (-132 / 0.6)
-) < 0.0001)
-assert(math.abs(
-  AutoBarAnchorFrameHandle.decorativePoints[1][5] - (22 / 0.6)
-) < 0.0001)
-AutoBar.AssignButtons = nil
+assert(module.autoBarDockRoot.decorativePoints[1][2] == pfUI.bars[1])
+assert(AutoBarFrameButton3.decorativePoints[1][2] ==
+  AutoBarFrameButton2)
+for index = 4, 24 do
+  _G["AutoBarFrameButton" .. index]:Show()
+end
 AutoBar.display.rows = compactDisplayBackup.rows
 AutoBar.display.columns = compactDisplayBackup.columns
 AutoBar.display.gapping = compactDisplayBackup.gapping
@@ -887,46 +871,38 @@ assert(module.autoBarRefreshStatus == "queued")
 AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
 assert(module.autoBarRefreshStatus == "settled")
 
--- AutoBar's real SetupVisual calls ButtonsUpdate before restoring its saved
--- handle position. Its post-hook must cancel the zero-delay ButtonsUpdate
--- refresh and restore the AEUI anchor in the same input event, before the
--- provider's temporary anchor can render.
-local settledDockAnchor = AutoBarAnchorFrameHandle.decorativePoints[1]
-local settledDockX = settledDockAnchor[4]
-local settledDockY = settledDockAnchor[5]
+-- AutoBar may keep rewriting its drag handle. The visible buttons no longer
+-- use that handle, so both the provider body and the AEUI wrapper leave the
+-- Combat Deck root and button chain intact.
 providerSetupReanchors = true
--- Even if every AEUI post-hook is bypassed, the provider's own final
--- SetPoint cannot escape the bound Combat Deck root.
 module.combatDeckAutoBarOriginal()
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
-assert(module.autoBarAnchorBasis == "setpoint-lock")
+assert(module.autoBarDockRoot.decorativePoints[1][2] == pfUI.bars[1])
+assert(AutoBarFrameButton1.decorativePoints[1][2] ==
+  module.autoBarDockRoot)
+assert(module.autoBarAnchorBasis == "combat-deck-root")
 module:ApplyAutoBarDragHandlePolicy(true)
 AutoBar_SetupVisual()
 assert(AutoBarAnchorFrameHandle.shown == false)
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
+assert(module.autoBarDockRoot.decorativePoints[1][2] == pfUI.bars[1])
+assert(AutoBarFrameButton1.decorativePoints[1][2] ==
+  module.autoBarDockRoot)
 assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
 assert(module.autoBarRefreshStatus == "queued")
 AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
 assert(module.autoBarRefreshStatus == "settled")
 AutoBar_SetupVisual()
 assert(AutoBarAnchorFrameHandle.shown == false)
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
+assert(module.autoBarDockRoot.decorativePoints[1][2] == pfUI.bars[1])
+assert(AutoBarFrameButton1.decorativePoints[1][2] ==
+  module.autoBarDockRoot)
 assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
 assert(module.autoBarRefreshStatus == "queued")
 AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
 assert(module.autoBarRefreshStatus == "settled")
 providerSetupReanchors = false
 
--- Opening the configuration page is a separate provider lifecycle boundary.
--- Even if its initialization writes a free profile position after a nested
--- SetupVisual, the OnShow post-hook must restore the cached Combat Deck
--- anchor synchronously and defer only the geometry-dependent rebuild.
+-- Opening the configuration page may also rewrite the drag handle, but it
+-- cannot move the independent button root.
 providerConfigOnShowReanchors = true
 AutoBarConfig.OnShow()
 assert(AutoBarAnchorFrameHandle.shown == false)
@@ -937,9 +913,9 @@ assert(AutoBarConfigFrameTab5.shown == false)
 assert(AutoBarConfigFrameResetDisplay.shown == false)
 assert(AutoBarConfigFrameRevertButton.shown == false)
 assert(AutoBarConfigFrameSlotsView.shown == false)
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
+assert(module.autoBarDockRoot.decorativePoints[1][2] == pfUI.bars[1])
+assert(AutoBarFrameButton1.decorativePoints[1][2] ==
+  module.autoBarDockRoot)
 assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
 assert(module.autoBarRefreshStatus == "queued")
 AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
@@ -1077,14 +1053,15 @@ AutoBarConfig:TabButtonOnClick(4)
 assert(AutoBar_Config[AutoBar.currentPlayer].display.selectedTab == 1)
 assert(AutoBarConfigFramePopup.shown == false)
 assert(AutoBarConfigFrameSlots.shown == true)
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])
+assert(module.autoBarDockRoot.decorativePoints[1][2] == pfUI.bars[1])
+assert(AutoBarFrameButton1.decorativePoints[1][2] ==
+  module.autoBarDockRoot)
 assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
 AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
 assert(string.find(openMessage, "/aeui autobar apply", 1, true))
 
--- The provider can move its handle to the saved free position while WoW still
--- reports the previous frame's button coordinates. Repeated profile applies
--- must therefore be independent of world-space GetLeft/GetRight values.
+-- Repeated profile applies are independent of both the provider handle and
+-- stale world-space GetLeft/GetRight values.
 local function ShiftAutoBarWorldGeometry(xDelta, yDelta)
   for index = 1, 24 do
     local button = _G["AutoBarFrameButton" .. index]
@@ -1100,42 +1077,34 @@ ShiftAutoBarWorldGeometry(480, 210)
 local applied, applyMessage = module:ApplyRecommendedAutoBarProfile()
 assert(applied == true)
 assert(string.find(applyMessage, "4x6", 1, true))
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
+assert(module.autoBarDockRoot.decorativePoints[1][2] == pfUI.bars[1])
+assert(AutoBarFrameButton1.decorativePoints[1][2] ==
+  module.autoBarDockRoot)
 assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
 AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
-assert(module.autoBarAnchorBasis == "provider-dock")
+assert(module.autoBarDockRoot.decorativePoints[1][2] == pfUI.bars[1])
+assert(module.autoBarAnchorBasis == "combat-deck-root")
 
 ShiftAutoBarWorldGeometry(-960, -420)
 local appliedAgain = module:ApplyRecommendedAutoBarProfile()
 assert(appliedAgain == true)
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][2] == pfUI.bars[1])
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
+assert(module.autoBarDockRoot.decorativePoints[1][2] == pfUI.bars[1])
+assert(AutoBarFrameButton1.decorativePoints[1][2] ==
+  module.autoBarDockRoot)
 assert(AutoBar.scheduledEvents[module.autoBarRefreshEvent])
 AutoBar:RunScheduledEvent(module.autoBarRefreshEvent)
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
-assert(module.autoBarAnchorBasis == "provider-dock")
+assert(module.autoBarDockRoot.decorativePoints[1][2] == pfUI.bars[1])
+assert(module.autoBarAnchorBasis == "combat-deck-root")
 
--- A future provider layout that does not expose the direct handle-relative
--- point contract must retain the last proven anchor instead of falling back
--- to the deliberately stale world coordinates above.
+-- A provider can also replace an individual button point. The next field-kit
+-- apply restores that button to the one Combat Deck root.
 local incompatibleButton = AutoBarFrameButton1
-local incompatiblePoint = { incompatibleButton:GetPoint(1) }
 incompatibleButton:ClearAllPoints()
 incompatibleButton:SetPoint("BOTTOMLEFT", UIParent, "CENTER", 0, 0)
 module:ApplyAutoBarFieldKit(true)
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][4] == settledDockX)
-assert(AutoBarAnchorFrameHandle.decorativePoints[1][5] == settledDockY)
-assert(module.autoBarAnchorBasis == "cached")
-incompatibleButton:ClearAllPoints()
-incompatibleButton:SetPoint(unpack(incompatiblePoint))
-module:ApplyAutoBarFieldKit(true)
-assert(module.autoBarAnchorBasis == "provider-dock")
+assert(incompatibleButton.decorativePoints[1][2] ==
+  module.autoBarDockRoot)
+assert(module.autoBarAnchorBasis == "combat-deck-root")
 ShiftAutoBarWorldGeometry(480, 210)
 providerSetupReanchors = false
 
@@ -1242,8 +1211,8 @@ assert(AzerothExpeditionUI.db.actionbars.autoBarBackups[
 assert(AzerothExpeditionUI.db.actionbars.autoBarDefaultModeVersions[
   AutoBar.currentPlayer
 ] == nil)
-assert(AutoBar.display.docking == module.autoBarProviderDockName)
-assert(AutoBarConfig.dockingFrames[module.autoBarProviderDockName])
+assert(AutoBar.display.docking == nil)
+assert(AutoBarConfig.dockingFrames[module.autoBarProviderDockName] == nil)
 
 local undocked, undockMessage = module:SetFieldKitDocking(false)
 assert(undocked == true)
@@ -1270,19 +1239,20 @@ assert(module.consumableDockStatus == "left")
 assert(module.trinketDockStatus == "right")
 assert(AutoBarAnchorFrameHandle.shown == false)
 assert(module.autoBarDragHandleStatus == "hidden-bound")
-assert(AutoBar.display.docking == module.autoBarProviderDockName)
-assert(AutoBarConfig.dockingFrames[module.autoBarProviderDockName])
+assert(module.autoBarDockRoot.decorativePoints[1][2] == pfUI.bars[1])
+assert(AutoBar.display.docking == nil)
+assert(AutoBarConfig.dockingFrames[module.autoBarProviderDockName] == nil)
 
--- The custom provider token is runtime-only. Normal logout/reload restores
--- the saved free-layout values so AutoBar can load before pfUI safely; the
--- next AEUI Apply reinstalls native docking.
+-- The independent AEUI dock root never writes a provider token, including
+-- across logout preparation and the next field-kit apply.
 assert(module:PrepareLogout() == true)
 assert(AutoBar.display.docking == nil)
 assert(AutoBarConfig.dockingFrames[module.autoBarProviderDockName] == nil)
 assert(AzerothExpeditionUI.db.actionbars.autoBarDockBackups == nil)
 module:ApplyAutoBarFieldKit(true)
-assert(AutoBar.display.docking == module.autoBarProviderDockName)
-assert(AutoBarConfig.dockingFrames[module.autoBarProviderDockName])
+assert(AutoBar.display.docking == nil)
+assert(AutoBarConfig.dockingFrames[module.autoBarProviderDockName] == nil)
+assert(module.autoBarDockRoot.decorativePoints[1][2] == pfUI.bars[1])
 
 local reset, resetMessage = module:ResetCombatDeckPosition()
 assert(reset == true)

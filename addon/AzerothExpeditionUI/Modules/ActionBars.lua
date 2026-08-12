@@ -13,7 +13,7 @@ ActionBars.railTexturePath = addon.media.root .. "ActionBars\\ActionRailV1"
 ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
-ActionBars.fieldKitRuntimeContract = "2.7"
+ActionBars.fieldKitRuntimeContract = "2.8"
 ActionBars.focusLayoutRuntimeContract = "2.5"
 ActionBars.focusLayoutVersion = 16
 ActionBars.focusLayoutBackupVersion = 1
@@ -66,6 +66,7 @@ ActionBars.fieldKitCap = 6
 ActionBars.fieldKitPocketPadding = 4
 ActionBars.fieldKitShellPadding = 6
 ActionBars.consumableDockGap = 12
+ActionBars.autoBarDockColumns = 4
 ActionBars.trinketDockGap = 8
 ActionBars.fieldKitDockYOffset = -20
 ActionBars.actionBarStackOverlap = 1
@@ -75,13 +76,11 @@ ActionBars.popupIntentDelay = 0.30
 ActionBars.popupIntentEvent = "AEUI_AutoBarPopupIntent"
 ActionBars.autoBarProviderDockName = "pfActionBarMain"
 ActionBars.autoBarDockBackupVersion = 1
--- A provider layout can write its saved free position before newly anchored
--- buttons have usable world geometry. Restore the last proven Combat Deck
--- anchor in the same input event, then use AceEvent's next OnUpdate tick to
--- rebuild. The rebuild derives the dock envelope from each provider button's
--- handle-relative point, so a stale GetLeft/GetRight cache cannot create a
--- second anchor. AutoBarConfig.OnShow repeats the immediate guard after its
--- whole initialization chain has completed.
+-- AutoBar may rewrite its drag handle after every visual refresh. The bound
+-- Field Kit therefore docks the real visible buttons to a four-column AEUI
+-- root whose bottom-right edge follows the main action bar. Provider refresh
+-- hooks reapply that grid at event boundaries; no OnUpdate position loop is
+-- used.
 ActionBars.autoBarRefreshDelay = 0
 ActionBars.autoBarRefreshEvent = "AEUI_AutoBarFieldKitRefresh"
 ActionBars.archiTotemDockXOffset = -10
@@ -4372,92 +4371,160 @@ function ActionBars:RestoreAutoBarHandlePointLock()
   self.autoBarHandlePointLockStatus = "free"
 end
 
-function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
-  local docked = FieldKitBound()
-  local handle = GetGlobal("AutoBarAnchorFrameHandle")
-  local main = GetMainActionBarFrame()
-
-  if not enabled or not docked then
-    self:RestoreAutoBarHandlePointLock()
-    self:RestoreAutoBarProviderDock()
-    if self.autoBarDockApplied then
-      RestoreFrameAnchors(handle, self.autoBarUndockedAnchors)
+local function GetVisibleAutoBarButtons()
+  local buttons = {}
+  for index = 1, 24 do
+    local button = GetGlobal("AutoBarFrameButton" .. index)
+    if button and button.IsShown and button:IsShown() and
+      not button.forceHidden and button.effectiveButton
+    then
+      table.insert(buttons, button)
     end
-    self.autoBarDockApplied = false
-    self.autoBarUndockedAnchors = nil
-    self.autoBarBoundAnchors = nil
-    self.autoBarBoundOffsetX = nil
-    self.autoBarBoundOffsetY = nil
+  end
+  return buttons
+end
+
+function ActionBars:GetAutoBarDockRoot(main)
+  local root = self.autoBarDockRoot or
+    GetGlobal("AzerothExpeditionUIAutoBarDockRoot")
+  if not root then
+    root = CreateFrame(
+      "Frame", "AzerothExpeditionUIAutoBarDockRoot", UIParent
+    )
+    root:Hide()
+  end
+  self.autoBarDockRoot = root
+  root:ClearAllPoints()
+  root:SetPoint(
+    "BOTTOMRIGHT", main, "BOTTOMLEFT",
+    -self.consumableDockGap, self.fieldKitDockYOffset
+  )
+  return root
+end
+
+function ActionBars:RestoreAutoBarButtonDock()
+  local layouts = self.autoBarNativeButtonAnchors
+  if type(layouts) == "table" then
+    for index = 1, 24 do
+      RestoreFrameAnchors(
+        GetGlobal("AutoBarFrameButton" .. index), layouts[index]
+      )
+    end
+  end
+  local root = self.autoBarDockRoot or
+    GetGlobal("AzerothExpeditionUIAutoBarDockRoot")
+  if root then
+    root:Hide()
+  end
+  self.autoBarNativeButtonAnchors = nil
+  self.autoBarDockApplied = false
+  self.autoBarDockRowsApplied = nil
+  self.autoBarDockGrowth = nil
+end
+
+function ActionBars:ApplyAutoBarButtonDock(enabled)
+  if not enabled or not FieldKitBound() then
+    self:RestoreAutoBarButtonDock()
     self.autoBarAnchorBasis = enabled and "free" or "disabled"
     self.consumableDockStatus = enabled and "free" or "disabled"
     return false
   end
-  self:InstallAutoBarHandlePointLock()
-  if not handle or not main then
-    self.autoBarAnchorBasis = "unavailable"
+
+  local main = GetMainActionBarFrame()
+  local buttons = GetVisibleAutoBarButtons()
+  if not main or table.getn(buttons) == 0 then
+    self.autoBarAnchorBasis = "layout-pending"
     self.consumableDockStatus = "unavailable"
     return false
   end
 
-  if not self.autoBarDockApplied then
-    self.autoBarUndockedAnchors = CaptureFrameAnchors(handle)
+  local root = self:GetAutoBarDockRoot(main)
+  local handle = GetGlobal("AutoBarAnchorFrameHandle")
+  local padding = self.fieldKitShellPadding
+  local gap = tonumber(AutoBar and AutoBar.display and
+    AutoBar.display.gapping) or 3
+  local count = table.getn(buttons)
+  local columns = math.min(self.autoBarDockColumns, count)
+  local rows = math.floor((count - 1) / self.autoBarDockColumns) + 1
+  local buttonWidth = 0
+  local buttonHeight = 0
+
+  self.autoBarNativeButtonAnchors =
+    self.autoBarNativeButtonAnchors or {}
+  for index = 1, count do
+    local button = buttons[index]
+    local _, relative = button:GetPoint(1)
+    if type(relative) == "string" then
+      relative = GetGlobal(relative)
+    end
+    if relative == handle then
+      local _, _, buttonIndex = string.find(
+        button:GetName() or "", "(%d+)$"
+      )
+      buttonIndex = tonumber(buttonIndex)
+      if buttonIndex then
+        self.autoBarNativeButtonAnchors[buttonIndex] =
+          CaptureFrameAnchors(button)
+      end
+    end
+    buttonWidth = math.max(
+      buttonWidth, tonumber(button:GetWidth()) or 0
+    )
+    buttonHeight = math.max(
+      buttonHeight, tonumber(button:GetHeight()) or 0
+    )
   end
 
-  local handleScale = GetFrameScale(handle)
-  local rightDelta, bottomDelta, rackScale, anchorBasis =
-    AutoBarVisualOffsets(handle)
+  local width = padding * 2 + columns * buttonWidth +
+    math.max(0, columns - 1) * gap
+  local height = padding * 2 + rows * buttonHeight +
+    math.max(0, rows - 1) * gap
+  root:SetWidth(math.max(1, width))
+  root:SetHeight(math.max(1, height))
+  root:Show()
 
-  if not rightDelta or not bottomDelta or not rackScale then
-    -- Unknown provider layouts may not expose direct handle-relative points.
-    -- Once a bound anchor has been proven, never replace it with a world-space
-    -- measurement that may combine a freshly moved handle with stale buttons.
-    if self.autoBarDockApplied and self.autoBarBoundAnchors and
-      RestoreFrameAnchors(handle, self.autoBarBoundAnchors)
-    then
-      self.autoBarAnchorBasis = "cached"
-      self.consumableDockStatus = "left"
-      return true
+  -- The first row is the bottom row. Its right edge stays fixed to the main
+  -- action bar through root:BOTTOMRIGHT -> main:BOTTOMLEFT. Buttons fill four
+  -- columns left-to-right, then each new row grows upward.
+  for index = 1, count do
+    local button = buttons[index]
+    local column = math.mod(index - 1, self.autoBarDockColumns)
+    local row = math.floor((index - 1) / self.autoBarDockColumns)
+    button:ClearAllPoints()
+    if row == 0 and column == 0 then
+      button:SetPoint(
+        "BOTTOMLEFT", root, "BOTTOMLEFT", padding, padding
+      )
+    elseif column == 0 then
+      button:SetPoint(
+        "BOTTOMLEFT", buttons[index - self.autoBarDockColumns],
+        "TOPLEFT", 0, gap
+      )
+    else
+      button:SetPoint("LEFT", buttons[index - 1], "RIGHT", gap, 0)
     end
-
-    if not bounds or bounds.count == 0 then
-      self.autoBarAnchorBasis = "layout-pending"
-      self.consumableDockStatus = "unavailable"
-      return false
-    end
-
-    local rightPixels, bottomPixels = ConsumableVisualEdges(bounds)
-    local centerX, centerY = GetFrameCenter(handle)
-    if not rightPixels or not bottomPixels or not centerX or not centerY then
-      self.autoBarAnchorBasis = "unavailable"
-      self.consumableDockStatus = "unavailable"
-      return false
-    end
-    rackScale = GetFrameScale(bounds.right)
-    rightDelta = rightPixels - centerX * handleScale
-    bottomDelta = bottomPixels - centerY * handleScale
-    anchorBasis = "world-fallback"
   end
 
-  local xOffset =
-    (-self.consumableDockGap * rackScale - rightDelta) / handleScale
-  local yOffset =
-    (self.fieldKitDockYOffset * rackScale - bottomDelta) / handleScale
-
-  if self:ApplyAutoBarProviderDock(xOffset, yOffset) then
-    anchorBasis = "provider-dock"
-  end
-
-  handle:ClearAllPoints()
-  handle:SetPoint(
-    "CENTER", main, "BOTTOMLEFT", xOffset, yOffset
-  )
   self.autoBarDockApplied = true
-  self.autoBarBoundAnchors = CaptureFrameAnchors(handle)
-  self.autoBarBoundOffsetX = xOffset
-  self.autoBarBoundOffsetY = yOffset
-  self.autoBarAnchorBasis = anchorBasis
+  self.autoBarBoundAnchors = nil
+  self.autoBarBoundOffsetX = nil
+  self.autoBarBoundOffsetY = nil
+  self.autoBarDockRowsApplied = rows
+  self.autoBarDockGrowth = "up"
+  self.autoBarAnchorBasis = "button-grid-4col-up"
+  self.autoBarProviderDockStatus = "bypassed-button-grid"
   self.consumableDockStatus = "left"
   return true
+end
+
+function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
+  -- AutoBar's drag handle is not its visual root: SetupVisual positions every
+  -- button against that handle and may rewrite it again.  Dock the actual
+  -- visible buttons to one AEUI root instead, exactly as TrinketMenu docks its
+  -- own root.  Provider layout changes remain internal to the next refresh.
+  self:RestoreAutoBarHandlePointLock()
+  self:RestoreAutoBarProviderDock()
+  return self:ApplyAutoBarButtonDock(enabled)
 end
 
 function ActionBars:ApplyAutoBarDragHandlePolicy(enabled)
@@ -4502,22 +4569,7 @@ function ActionBars:ApplyAutoBarDragHandlePolicy(enabled)
 end
 
 function ActionBars:RestoreAutoBarBoundAnchor()
-  if not FieldKitEnabled() or not FieldKitBound() or
-    not self.autoBarDockApplied or not self.autoBarBoundAnchors
-  then
-    return false
-  end
-  local handle = GetGlobal("AutoBarAnchorFrameHandle")
-  if self.autoBarBoundOffsetX and self.autoBarBoundOffsetY then
-    self:ApplyAutoBarProviderDock(
-      self.autoBarBoundOffsetX, self.autoBarBoundOffsetY
-    )
-  end
-  if not RestoreFrameAnchors(handle, self.autoBarBoundAnchors) then
-    return false
-  end
-  self.consumableDockStatus = "left"
-  return true
+  return self:ApplyAutoBarButtonDock(FieldKitEnabled())
 end
 
 function ActionBars:ApplyTrinketDockPosition(enabled)
@@ -5202,7 +5254,6 @@ function ActionBars:ApplyAutoBarFieldKit(enabled)
     return false
   end
 
-  local bounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
   for index = 1, 24 do
     ApplyPocket(
       GetGlobal("AutoBarFrameButton" .. index),
@@ -5215,6 +5266,11 @@ function ActionBars:ApplyAutoBarFieldKit(enabled)
     )
   end
 
+  -- Establish the real four-column button grid before measuring its shell.
+  -- This keeps the first /reload frame on the same geometry as later
+  -- ButtonsUpdate refreshes instead of briefly measuring provider points.
+  self:ApplyConsumableDockPosition(enabled)
+  local bounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
   local shell = EnsureAutoBarShell(frame)
   local shellAvailable = ConfigureShellBounds(shell, bounds, 6)
   if enabled and shellAvailable then
@@ -5229,7 +5285,6 @@ function ActionBars:ApplyAutoBarFieldKit(enabled)
     SetAutoBarGroupingEnabled(frame, grouped, bounds)
   self.autoBarMainButtons = bounds.count
   self.autoBarFieldKitStatus = enabled and "available" or "disabled"
-  self:ApplyConsumableDockPosition(enabled, bounds)
   self:ApplyAutoBarDragHandlePolicy(enabled)
   self:ApplyAutoBarPopup(enabled)
   return true
@@ -5625,6 +5680,7 @@ function ActionBars:InstallFieldKitHooks()
     then
       self.autoBarButtonsHooked = true
       hooksecurefunc(AutoBar, "ButtonsUpdate", function()
+        ActionBars:ApplyAutoBarButtonDock(FieldKitEnabled())
         ActionBars:QueueAutoBarFieldKitRefresh()
       end)
     end
