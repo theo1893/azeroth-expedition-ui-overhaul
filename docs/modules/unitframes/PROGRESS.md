@@ -10,12 +10,14 @@
   `P5 / source-accepted / runtime-exported / addon-integrated / 3/5 stop`。
 - `UF-A2` TargetTarget／Focus：继续暂停；既有物件身份方向不变，尚无正式
   source。Hover／Aggro 仍计划由接受外壳 Alpha 确定性派生。
-- `UF-RAID-SIM-V1` Raid 团队框架：`P2 / simulation-confirmed /
-  production-authorization-pending`。用户于 `2026-08-12` 接受无共享外框、
+- `UF-RAID-SIM-V1` Raid 团队框架方向已确认；正式批次
+  `UF-RAID-A1 V1 final` 为 `P3 / prompt-authorized / attempt-1-pending`。用户于
+  `2026-08-12` 接受无共享外框、
   薄皮革点名名条、四变体、低饱和配色、40 人整体重量与状态密度方向；模拟
   像素仍非 source。`UF-RAID-A1 V1 final` 已冻结为一张 `1536×1024` 四格
-  production sheet、四个独立完整背景板和单段 `5` 次最坏预算；ImageGen
-  `0/5`，尚无 source、runtime 或 addon 接入。
+  production sheet、四个独立完整背景板和单段 `5` 次最坏预算；随后明确授权
+  固定 Image 1／2、同循环紧邻前稿有界 edit 与合同内确定性后处理。ImageGen
+  `0/5`，attempt 1 尚未调用；尚无 source、runtime 或 addon 接入。
 - 当前只处理资源重绘与精确媒体替换。B1 已接入 addon；没有修改另一台设备上
   的 Frame 位置、尺寸、点击、事件、数值、颜色逻辑或其他功能。
 - 用户于 `2026-08-11` 接受“每个角色生成完整外壳，Python 负责精确工程化”
@@ -232,9 +234,10 @@
 
 ## 下一门禁
 
-Raid 的下一门禁是用户看过并明确授权 `UF-RAID-A1 V1 final` 的完整正文、固定
-Image 1／2、同循环紧邻前稿 edit 输入边界和最多 `5` 次实际 ImageGen；流程错误
-不占额度。未授权前不得上传参考、调用固定执行器或创建正式候选。
+Raid 的下一门禁是从已提交的 `UF-RAID-A1 V1 final` 执行固定执行器 attempt 1，
+随后按语义／物理、美术继承、组件合同、确定性装配、技术像素、40 人真实排版
+与 display-region 顺序完成内部审查。最多 `5` 次实际 ImageGen，流程错误不占
+额度；内部通过仍需用户单独接受具体候选后才能进入 P4。
 
 B1 下一门禁是 Turtle WoW `1.18.1` P6：验证 TGA 方向、Player／Target／
 TargetTarget／Focus 的生命与 Mana／Rage／Focus／Energy 乘色、低血量裁切、

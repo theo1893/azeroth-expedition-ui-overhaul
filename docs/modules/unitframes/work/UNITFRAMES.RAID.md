@@ -5,16 +5,16 @@
 - 模块：Unit Frames
 - 组件 ID：`UF.RAID.*`
 - 方向版本：`UF-RAID-SIM-V1`
-- 正式生产版本：`UF-RAID-A1 V1 final / production-draft`
-- 子状态：`simulation-confirmed / production-authorization-pending`
-- 项目阶段：`P2`
+- 正式生产版本：`UF-RAID-A1 V1 final / prompt-authorized`
+- 子状态：`prompt-authorized / attempt-1-pending`
+- 项目阶段：`P3`
 - 固定执行器：`imagegen-0-143-0 / @openai/codex@0.143.0`
-- 当前操作：`prepare`
+- 当前操作：`generate`
 - 生成前模拟方式：`deterministic-local-geometry`
 - 模拟 ImageGen：`0/0`
 - 自动修复预算：`UF-RAID-A1 V1 final` 最多 5 次实际 ImageGen，含首次；
   流程错误不计额度
-- 当前实际生图：`0/5`；尚未授权或调用
+- 当前实际生图：`0/5`；已授权，attempt 1 尚未调用
 - 流程错误：`0`
 - 多执行正文最坏实际生图数：`5`；本批只有一段正式正文
 - raw／candidate／source／runtime：无
@@ -164,7 +164,7 @@
 - 具体模拟版本：`UF-RAID-SIM-V1`
 - 用户结论与日期：`confirmed / 2026-08-12`
 - 模拟像素接受：`false`
-- 正式生产授权：`false`
+- 正式生产授权：`true / UF-RAID-A1 V1 final / 2026-08-12`
 - 已确认并写回正式正文的可见条款：
   - 维持真实 `40` 个 `pfRaid` Button 与 `10×4 VERTICAL` 密度，不增加覆盖
     整团的共享外框、底板或装饰背景；
@@ -176,8 +176,13 @@
     Hover／Aggro 未来只用断续短边反馈。
 - 确认失效条件：改变共享外框结论、成员物件隐喻、四变体数量、综合色重、
   配色、真实编队密度或动态状态层级时，必须返回新模拟版本。
-- 下一门禁：用户看过并明确授权 `UF-RAID-A1 V1 final` 正文、冻结修复边界与
-  最多 5 次实际 ImageGen；当前不得上传或生图。
+- 授权原文：用户确认每次上传固定 SHA 的 Image 1／2，attempt 1 无 Image 3；
+  仅允许同循环紧邻前次完整 production sheet 在冻结修复边界内作为 Image 3
+  edit 输入；最多 5 次实际 ImageGen，流程错误不占额度；允许合同内固定四格
+  拆分、边缘连通色键、透明 RGB 清零、bbox 归一化、`74×37` runtime、
+  `6/62/6` 三切片派生及真实排版预演。
+- 下一门禁：以已提交的 `UF-RAID-A1 V1 final` 原文调用固定执行器 attempt 1，
+  然后执行完整内部审查；不得自动晋级 source。
 
 ## `UF-RAID-A1 V1 final` 正式生产合同
 
@@ -371,7 +376,7 @@ content.
 
 | 实际生图 | 正文版本／执行前 commit | 操作 | session／result | 输出／SHA | 第一失败门禁 | 保留区域与下一步 | 结论 |
 |---:|---|---|---|---|---|---|---|
-| 0/5 | `UF-RAID-A1 V1 final` / pending authorization commit | 未调用 | — | — | — | 等待精确生产授权 | production-draft |
+| 0/5 | `UF-RAID-A1 V1 final` / pending authorized commit | 未调用 | — | — | — | 提交授权状态后执行 attempt 1 | prompt-authorized |
 
 | 流程错误 | 正文版本／commit | session | 错误与无生成证据 | 针对性修复 | 结论 |
 |---:|---|---|---|---|---|

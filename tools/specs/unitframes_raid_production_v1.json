@@ -1,7 +1,7 @@
 {
   "schema": "aeui-unitframes-raid-production-v1",
   "version": "UF-RAID-A1 V1 final",
-  "status": "production-draft",
+  "status": "prompt-authorized",
   "simulation_gate": {
     "version": "UF-RAID-SIM-V1",
     "status": "simulation-confirmed",
@@ -9,7 +9,25 @@
     "accepts_pixels": false
   },
   "executor": "imagegen-0-143-0 / @openai/codex@0.143.0",
-  "production_authorized": false,
+  "production_authorized": true,
+  "authorization": {
+    "date": "2026-08-12",
+    "authorized_version": "UF-RAID-A1 V1 final",
+    "attempt_1_has_image_3": false,
+    "fixed_images_every_attempt": ["Image 1", "Image 2"],
+    "same_loop_previous_sheet_may_be_image_3": true,
+    "maximum_actual_imagegen_calls": 5,
+    "process_errors_count_toward_limit": false,
+    "authorized_deterministic_operations": [
+      "fixed four-cell split",
+      "edge-connected chroma key",
+      "clear RGB under transparent pixels",
+      "bbox normalization",
+      "74x37 runtime export",
+      "6/62/6 horizontal three-slice derivation",
+      "real-layout preview"
+    ]
+  },
   "scope": {
     "generated_components": [
       "UF.RAID.MEMBER.SHELL.A",

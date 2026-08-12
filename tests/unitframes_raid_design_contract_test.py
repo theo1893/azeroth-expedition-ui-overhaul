@@ -80,8 +80,13 @@ def main() -> None:
     production = json.loads(PRODUCTION.read_text(encoding="utf-8"))
     assert production["schema"] == "aeui-unitframes-raid-production-v1"
     assert production["version"] == "UF-RAID-A1 V1 final"
-    assert production["status"] == "production-draft"
-    assert production["production_authorized"] is False
+    assert production["status"] == "prompt-authorized"
+    assert production["production_authorized"] is True
+    assert production["authorization"]["authorized_version"] == (
+        "UF-RAID-A1 V1 final"
+    )
+    assert production["authorization"]["maximum_actual_imagegen_calls"] == 5
+    assert production["authorization"]["process_errors_count_toward_limit"] is False
     assert production["simulation_gate"] == {
         "version": "UF-RAID-SIM-V1",
         "status": "simulation-confirmed",
@@ -201,12 +206,12 @@ def main() -> None:
 
     work = WORK.read_text(encoding="utf-8")
     for clause in (
-        "simulation-confirmed / production-authorization-pending",
+        "prompt-authorized / attempt-1-pending",
         "ImageGen：`0/0`",
         "不增加一圈共享书框",
         "四个完整外壳变体",
         "7/7 pass",
-        "正式生产授权：`false`",
+        "正式生产授权：`true / UF-RAID-A1 V1 final / 2026-08-12`",
         "UF-RAID-A1 V1 final",
         "exactly four complete empty raid-member",
         "pass-final",
