@@ -2,10 +2,15 @@
 
 ## 当前状态
 
-- `UF-A1 V3-A final` Player 完整外壳：
-  `P3 / repair-budget-exhausted / candidate-rejected / 5/5`。
-- `UF-A1 V3-B final` Target 完整外壳：
-  `P3 / repair-budget-exhausted / candidate-rejected / 5/5`。
+- Player／Target 完整外壳已按用户于 `2026-08-12` 的要求重开为
+  `UF-PRIMARY-V4-SIM-V1`：`P2 / simulation-reviewed /
+  user-confirmation-pending / ImageGen 0/0`。V4 首选复用已接受的 Raid A2
+  leather／liner／brass／thread 材料 sample，由 Python 独占完整外壳几何、
+  Alpha、安全区、维修 mask、`1284×252 → 214×42` 与 `32/150/32` 横向三切片；
+  ImageGen 不再承担 UI 几何，首选路径也不需要新的 ImageGen。
+- `UF-A1 V3-A final` Player 与 `UF-A1 V3-B final` Target 保持历史终态
+  `P3 / repair-budget-exhausted / candidate-rejected / 5/5`；失败像素不得进入
+  V4 reference、edit、source、runtime 或 builder。
 - `UF-B1 V2 final` Health／Power 灰阶填充纹：
   `P5 / source-accepted / runtime-exported / addon-integrated / 3/5 stop`。
 - `UF-A2` TargetTarget／Focus：继续暂停；既有物件身份方向不变，尚无正式
@@ -51,7 +56,39 @@
   Power TGA，并只接入 `player`、`target`、`targettarget`、`focus`。A／B 外壳
   与 UF-A2 不在本次接受范围内。
 
-## V3 结构合同
+## V4 新生产架构与生成前模拟
+
+- 用户原文：“重开 Player／Target 完整外壳的新生产架构。”当前只完成
+  prepare／simulate／review，没有 production、P4 source 或 addon 授权。
+- 最终资产粒度不变：Player／Target 各自仍是一张独立完整 source 和一张完整
+  runtime；不是端帽 atlas、两角色合图或多图拼接。标准 `W=200` 使用完整
+  `214×42` 纹理，内部接缝 `0`；变宽才从同一角色 source 派生
+  `32px left / 150px quiet centre / 32px right`。
+- source 固定 `1284×252`，live bed 固定 source
+  `x42..1242/y36..216`、runtime `x7..207/y6..36`。烟褐 liner 可以在动态条
+  下方，皮革 relief／暗铜／线／铆钉／状态边必须留在外围。统一 UI Scale
+  可整体缩放；高度不独立拉伸。
+- Player 身份移到左上外围短夹片＋左侧两条粗缝，Target 身份移到左上磨损折边
+  与右下断裂暗铜压片；双方同族但不镜像。Hover／Aggro 后续从接受 Alpha
+  确定性派生断续边，不单独生图。
+- 首选材料输入为 Raid A2 已接受四 sample，原 SHA 与用途保持不变；这只是新的
+  immutable downstream 用途，不修改 Raid source/runtime。若主框 candidate
+  证明材料尺度不合适，备用 primary-specific donor 仍为
+  `inactive / not-authorized`，不得自行调用；若激活需另行精确授权，最多五次。
+- spec：`tools/specs/unitframes_primary_v4_simulation_v1.json`；renderer：
+  `tools/render_unitframes_primary_v4_simulation_v1.py`。scene SHA
+  `dd6bb345…d4622`；review SHA `574ee88d…00aa`。shell 只用本地简单几何，
+  不复制 locked 或 accepted material sample 像素；现有 P5 Health／Power runtime
+  只用于真实排版。模拟像素不得晋级。
+- display contract：
+  `tools/specs/unitframes_primary_v4_simulation_display_region_v1.json`；Player
+  四 Power mode、Target Aggro、`W=160/240` 共 `7/7 pass`，violations `0`，
+  报告 SHA `1ba15de8…6a32`。
+- 下一门禁：用户确认 `UF-PRIMARY-V4-SIM-V1`。确认后先确定性构造两张透明
+  candidate 并进行真实排版／缩放／状态审查，再请求 exact-pixel 接受；不能
+  直接接入 addon。
+
+## V3 历史结构合同
 
 - Player／Target 各自生成一张完整高分辨率空外壳，不放入同一 production
   atlas，不镜像，不逐端帽生成，不拼接多张生成图。

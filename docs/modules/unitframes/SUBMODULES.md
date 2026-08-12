@@ -58,7 +58,33 @@ Leader／Master Looter／Raid Target／Resurrection、Buff／Debuff、Incoming H
 框架在 `modules/group.lua`，Raid Marker 血条列表在 `modules/raidmarkers.lua`，
 二者都不是 `UF.RAID.*`。
 
-## UF-A1 V3 完整外壳 source → runtime 合同
+## UF-PRIMARY V4 待确认完整外壳生产架构
+
+用户于 `2026-08-12` 要求重开 Player／Target 完整外壳的新生产架构。当前
+`UF-PRIMARY-V4-SIM-V1` 为 `simulation-reviewed / user-confirmation-pending`；
+以下只定义真实对象与候选生产职责，不代表用户已经接受模拟像素、透明 source
+或 addon runtime。
+
+- 最终组件粒度不变：`UF.PLAYER.SHELL` 与 `UF.TARGET.SHELL` 各自是一张独立
+  完整 `1284×252 RGBA` source 和一张完整 `214×42` runtime。不得两角色合图、
+  镜像、逐端帽生成或把多张生成图拼成一个逻辑壳。
+- ImageGen 不拥有外轮廓、开口、Alpha、safe area、端部厚度、维修位置或切片
+  几何。首选路径直接复用已接受 Raid A2 leather／liner／brass／thread material
+  sample；确定性 builder 从这些 immutable input 构造两张完整外壳。sample
+  本身永远不是游戏组件，Lua 只加载最终两张完整 runtime。
+- provider live bed 固定 source `x42..1242/y36..216`、runtime
+  `x7..207/y6..36`。liner 可在 bar 下方；皮革 relief、金属、线、铆钉和状态
+  边不得盖住 live bed。名字、数值、状态色、Aura、事件、点击和 SavedVariables
+  全部仍由 pfUI 提供。
+- 标准 `W=200` 使用一张完整 `214×42` Texture，内部接缝 `0`。宽度变化时从
+  同一角色 source 派生 `32/150/32` 横向三切片；固定区允许身份沿顶／底外缘
+  展开，但不得侵入动态区。高度固定 `42`，只允许整体 UI Scale。
+- Player 的重修补位于左上外围；Target 的损伤位于右下外围，同族但非镜像。
+  Hover／Aggro 从接受 Alpha 确定性派生断续短边，不单独生成。
+- 若已接受 material sample 在主框尺度上经透明 candidate 审查证明不合适，
+  才能另开 primary-specific material-only donor；当前备用段未授权，不能调用。
+
+## UF-A1 V3 历史完整外壳 source → runtime 合同
 
 用户于 `2026-08-11` 接受从“四端帽 atlas”改为“每个逻辑角色生成一张完整
 外壳，并由 Python 负责精确工程化”的 V3 架构。该决定冻结生产粒度与后处理

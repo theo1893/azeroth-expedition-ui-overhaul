@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static contract checks for the active Unit Frames V3 design."""
+"""Static checks for retained V3 terminal evidence and accepted bar assets."""
 
 from __future__ import annotations
 
@@ -111,12 +111,13 @@ def main() -> None:
 
     work = WORK.read_text(encoding="utf-8")
     normalized_work = " ".join(work.split())
-    assert "UF-A1 V3-A exhausted / UF-A1 V3-B exhausted / UF-B1 source-accepted / runtime-exported" in work
+    assert "UF-A1 V4 architecture-reopened / simulation-reviewed / user-confirmation-pending" in work
     assert "accepted UF-PRIMARY-V3-SIM-V1 / 2026-08-11" in work
     assert "production / authorized / 2026-08-11" in work
     assert "完整性结论：`pass-final`" in work
-    assert "正式生产：`authorized / 2026-08-11`" in work
-    assert "## 自主修复循环" in work
+    assert "V4 正式生产：`not-authorized`" in work
+    assert "历史 V3 正式生产" in work
+    assert "## V3 历史自主修复循环" in work
     assert "Python 不得补画皮革" in work
     assert "UnitPowerType" in work
     assert "Mana／Rage／Focus／Energy" in work
@@ -132,7 +133,7 @@ def main() -> None:
     assert "8d19ffe95d5314b463d88be793568667aa555460a955364a636e6ddc76508e1f" in work
     assert "0668eddbb6c7644312eecc3c1d03f555b937d5307e48444ca520a6674cb387f1" in work
     assert "接受 B1 attempt 3 的运行时视觉" in work
-    assert "B1 已完成 P4/P5" in work
+    assert "## B1 P4／P5 接受与插件接入" in work
 
     bar_source_manifest = json.loads(
         BAR_SOURCE_MANIFEST.read_text(encoding="utf-8")
@@ -325,7 +326,7 @@ def main() -> None:
     )
 
     submodules = SUBMODULES.read_text(encoding="utf-8")
-    assert "UF-A1 V3 完整外壳 source → runtime 合同" in submodules
+    assert "UF-A1 V3 历史完整外壳 source → runtime 合同" in submodules
     assert "纵横比误差不得超过 `8%`" in submodules
     assert "`UnitPowerType` 的 `0/1/2/3`" in submodules
     submodule_art = SUBMODULE_ART.read_text(encoding="utf-8")

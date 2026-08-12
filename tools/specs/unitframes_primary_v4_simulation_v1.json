@@ -1,0 +1,170 @@
+{
+  "schema": "aeui-unitframes-primary-v4-simulation-v1",
+  "version": "UF-PRIMARY-V4-SIM-V1",
+  "status": "simulation-reviewed",
+  "requested_on": "2026-08-12",
+  "user_request": "重开 Player／Target 完整外壳的新生产架构。",
+  "user_confirmation": {
+    "status": "pending",
+    "accepts_pixels": false,
+    "production_authorized": false
+  },
+  "reopens": {
+    "components": ["UF.PLAYER.SHELL", "UF.TARGET.SHELL"],
+    "terminal_predecessors": [
+      "UF-A1 V3-A final.r4 / repair-budget-exhausted / 5/5",
+      "UF-A1 V3-B final.r4 / repair-budget-exhausted / 5/5"
+    ],
+    "predecessor_pixels_may_be_reused": false,
+    "bars_unchanged": "UF-B1 V2 P5 accepted Health and Power runtime textures"
+  },
+  "canvas": {"width": 1600, "height": 900},
+  "architecture": {
+    "name": "shared accepted material library plus deterministic complete-shell builder",
+    "final_asset_granularity": "one complete independent RGBA shell source and runtime texture per role",
+    "image_model_owns_ui_geometry": false,
+    "preferred_material_path": {
+      "kind": "reuse-accepted-unitframes-material-samples",
+      "imagegen_calls": 0,
+      "requires_user_confirmation_before_deterministic_candidate_build": true,
+      "samples": {
+        "leather": {
+          "file": "assets/source/unitframes/raid-a2/RaidMaterialLeather_SampleV1.png",
+          "sha256": "2f0ed03df83aa0ced730681670191dee7e1b3079324f9e11a02f7c55626cc41e"
+        },
+        "liner": {
+          "file": "assets/source/unitframes/raid-a2/RaidMaterialLiner_SampleV1.png",
+          "sha256": "8204723f74f63618ba55fef87932288c74588e1c2784e4e780550f49a4d27ef8"
+        },
+        "brass": {
+          "file": "assets/source/unitframes/raid-a2/RaidMaterialBrass_SampleV1.png",
+          "sha256": "f55657bb6473d754a3e480f8418ebd44590f72bd6c23072633dc95e6b3406c27"
+        },
+        "thread": {
+          "file": "assets/source/unitframes/raid-a2/RaidMaterialThread_SampleV1.png",
+          "sha256": "86699161afb11d77de19e69781ba93862a538e42b16ec1da698341ba49a2e3a1"
+        }
+      },
+      "scope_change": "the accepted raid material samples become immutable upstream material input for new primary-shell candidates; raid source/runtime pixels remain unchanged"
+    },
+    "inactive_fallback": {
+      "kind": "new-primary-specific-material-donor",
+      "status": "not-authorized",
+      "activation": "only if the deterministic candidate proves the accepted material scale unsuitable and the user authorizes a separate donor contract",
+      "maximum_actual_imagegen_calls_if_activated": 5
+    },
+    "deterministic_builder_owns": [
+      "1284x252 source canvas and 214x42 runtime export",
+      "role-specific low-frequency hand-cut outer silhouettes",
+      "exact 1200x180 live-content bed and all alpha boundaries",
+      "Player-left and Target-right non-mirrored repair masks",
+      "material crop offsets, contact shading and transparent RGB cleanup",
+      "32/150/32 horizontal three-slice and variable-width assembly",
+      "Hover and Aggro edge masks derived from accepted shell geometry",
+      "real-layout, state and scale previews"
+    ],
+    "builder_may_not": [
+      "invent new painterly material pixels",
+      "reuse any rejected V1/V2/V3 shell pixels",
+      "bake names, levels, values, colours, icons, auras or states",
+      "change pfUI frame geometry, events, hitboxes or SavedVariables"
+    ]
+  },
+  "source_contract": {
+    "scale": 6,
+    "source": [1284, 252],
+    "runtime": [214, 42],
+    "live_content_bed_source": [42, 36, 1242, 216],
+    "live_content_bed_runtime": [7, 6, 207, 36],
+    "source_three_slice": [192, 900, 192],
+    "runtime_three_slice": [32, 150, 32],
+    "standard_width_assembly": "one complete 214x42 texture with zero internal seams",
+    "variable_width_assembly": "32px left / stretchable quiet centre / 32px right derived from the same accepted role source",
+    "height_policy": "fixed 42 logical pixels; uniform UI Scale is allowed, independent vertical stretching is forbidden",
+    "layering": [
+      "derived Hover or Aggro broken edge behind the shell",
+      "complete shell and quiet liner on BACKGROUND below provider bars",
+      "pfUI Health and Power backgrounds and accepted fills",
+      "pfUI names, values, icons, auras and feedback"
+    ],
+    "safe_region_rule": "the liner may underlay the live-content bed, but leather relief, brass, thread, rivets and state marks are clipped to the perimeter and never cover provider content"
+  },
+  "role_contracts": {
+    "player": {
+      "identity": "deep walnut salvaged saddle leather with a heavier upper-left field repair",
+      "repairs": [
+        "crooked short dull-brass clamp crossing only the upper-left perimeter",
+        "two uneven coarse stitches contained by the left perimeter",
+        "one subordinate off-centre dark rivet near the right lower perimeter"
+      ],
+      "not_mirrored_from": "target"
+    },
+    "target": {
+      "identity": "same expedition craft family with a quieter left fold and heavier lower-right damage",
+      "repairs": [
+        "rubbed leather fold at the left upper perimeter",
+        "short cracked oxidized-brass scab folded around the lower-right perimeter",
+        "one dark split without enemy-red or elite symbolism"
+      ],
+      "not_mirrored_from": "player"
+    }
+  },
+  "runtime": {
+    "player": {"hp": [200, 25], "power": [200, 4], "shell": [214, 42]},
+    "target": {"hp": [200, 25], "power": [200, 4], "shell": [214, 42]},
+    "health_texture": {
+      "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFrameHealthFillV1.tga",
+      "size": [64, 32],
+      "status": "accepted-P5"
+    },
+    "power_texture": {
+      "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFramePowerFillV1.tga",
+      "size": [64, 16],
+      "status": "accepted-P5"
+    }
+  },
+  "power_types": [
+    {"id": "mana", "unit_power_type": 0, "color": "#536FA8"},
+    {"id": "rage", "unit_power_type": 1, "color": "#A35348"},
+    {"id": "focus", "unit_power_type": 2, "color": "#9A7650"},
+    {"id": "energy", "unit_power_type": 3, "color": "#B2A653"}
+  ],
+  "palette": {
+    "leather_dark": "#28180E",
+    "leather_mid": "#49301E",
+    "leather_worn": "#6A4728",
+    "liner": "#17100C",
+    "brass": "#80602D",
+    "brass_dim": "#5D4525",
+    "stitch": "#8D6642",
+    "health_friendly": "#617B4B",
+    "health_hostile": "#8B493E",
+    "focus_cloth": "#33475A"
+  },
+  "outputs": {
+    "scene": "generated/unitframes/primary/simulation/V4/unitframes-primary-v4-sim-v1.scene.png",
+    "review": "generated/unitframes/primary/simulation/V4/unitframes-primary-v4-sim-v1.review.png"
+  },
+  "simulation_rules": {
+    "imagegen_usage": "0/0",
+    "uses_locked_reference_pixels": false,
+    "uses_accepted_material_sample_pixels": false,
+    "uses_accepted_bar_runtime_pixels": true,
+    "shell_materials_are": "deterministic flat geometric placeholders",
+    "simulation_pixels_may_be_source_or_runtime": false
+  },
+  "authoritative_for_review": [
+    "production ownership split",
+    "complete-shell output granularity",
+    "214x42 and 1284x252 geometry",
+    "32/150/32 horizontal slicing",
+    "live-content bed, z-order and information density",
+    "Player and Target non-mirrored repair placement"
+  ],
+  "non_authoritative": [
+    "placeholder shell pixels and flat colours",
+    "final material scale, brushwork, microtexture and edge antialiasing",
+    "screen placement because the game-device layout is not synchronized",
+    "final Lua adapter and Turtle WoW blending"
+  ]
+}

@@ -1,4 +1,4 @@
-# Unit Frames 主资源批次 UF-PRIMARY V3
+# Unit Frames 主资源批次 UF-PRIMARY V4
 
 ## 元数据
 
@@ -6,15 +6,19 @@
 - 当前组件：`UF.PLAYER.SHELL`、`UF.TARGET.SHELL`、
   `UF.BAR.HEALTH.FILL`、`UF.BAR.POWER.FILL`
 - 后续组件：`UF.TARGETTARGET.SHELL`、`UF.FOCUS.SHELL`、`UF.STATE.*`
-- 当前版本：`UF-A1 V3-A final.r4 terminal`／`UF-A1 V3-B final.r4 terminal`／`UF-B1 V2 final.r2 / source v1 / runtime 1.0`
-- 子状态：`UF-A1 V3-A exhausted / UF-A1 V3-B exhausted / UF-B1 source-accepted / runtime-exported`
-- 项目阶段：`P3–P5`
+- 当前版本：`UF-PRIMARY-V4-SIM-V1`／`UF-B1 V2 final.r2 / source v1 / runtime 1.0`
+- 子状态：`UF-A1 V4 architecture-reopened / simulation-reviewed / user-confirmation-pending`；
+  V3-A／V3-B 保持 `repair-budget-exhausted / candidate-rejected` 历史终态；
+  UF-B1 保持 `source-accepted / runtime-exported`
+- 项目阶段：Player／Target 外壳 `P2`；Health／Power `P5`
 - 固定执行器：`imagegen-0-143-0`／`@openai/codex@0.143.0`
-- 当前操作：`accept / deterministic-export / addon-integrate`
-- 生成前模拟：`UF-PRIMARY-V3-SIM-V1`，deterministic local geometry
+- 当前操作：`prepare / simulate / review`
+- 生成前模拟：`UF-PRIMARY-V4-SIM-V1`，deterministic local geometry
 - 模拟 ImageGen：`0/0`
-- 正式生产：`authorized / 2026-08-11`；A `5/5`、B `5/5`、B1 `3/5 stopped-on-pass`，
-  最坏总计 `15` 次实际 ImageGen
+- V4 正式生产：`not-authorized`；首选路径复用已接受 Unit Frames 材料 sample，
+  预期 ImageGen `0`。只有首选路径经用户审查证明材质尺度不适合时，才可另开
+  primary-specific donor 合同并另行取得最多 `5` 次授权。
+- 历史 V3 正式生产：A `5/5`、B `5/5`；B1 `3/5 stopped-on-pass`。
 - 流程错误：`4`（审查器首次物理连通扫描性能错误；attempt 4 child 在 provider
   已生成后尝试 Pillow RGB 转换但环境无 Pillow，随后确认原图本身已为 RGB 并
   用原样复制完成；B attempt 5 的首个 pre-generation commit 权限自动审核超时，
@@ -22,6 +26,10 @@
   Pillow 模式确认但环境无 Pillow，随后用系统工具确认 `1024² RGB`；四者均未
   产生额外 provider 图，不占生图额度）
 - Python：`/Users/yuanshiyao/miniconda3/envs/py312/bin/python`，`3.12.12`
+- 用户 V4 请求：`requested / 2026-08-12`。用户原文为“重开 Player／Target
+  完整外壳的新生产架构。”
+- V4 模拟用户结论：`pending`；模拟像素不构成 source、runtime 或 production
+  授权。
 - 用户架构决定：`accepted / 2026-08-11`。用户接受“每个角色生成完整外壳，
   Python 负责精确工程化”，并新增生命／法力、怒气、集中值、能量等资源条
   材质改造。
@@ -38,8 +46,113 @@
   接受范围只含 exact Health／Power candidates、已审阅的确定性
   `64×32`／`64×16` 外观和 pfUI 经典乘色，不含 A／B 外壳或 UF-A2。
 
-本文件只保留当前 V3 下一门禁所需事实。V1、V2 的逐稿正文、执行会话和完整
-审查均已存在于 Git 历史；当前树只保留下方终态摘要，避免继续膨胀文档。
+本文件只保留当前 V4 下一门禁与既有 P5 Bars 所需事实。V1、V2 的逐稿正文
+已经存在于 Git 历史；V3 的终态正文与失败证据暂时保留在下方，直到 V4
+形成接受 source 后再按组件收口规则压缩。
+
+## UF-PRIMARY V4 新生产架构（当前）
+
+### 重开的原因
+
+- V3 的完整物件与粗旧皮革方向成立，但让 ImageGen 同时承担笔触、材料、外
+  轮廓、单开口与 `7/6 runtime px` 安全边界。Player attempt 5 仍有
+  `6355` 个 hard-safe 侵入像素，左右结构各多 `23/26 source px`；Target
+  attempt 5 仍有 `22649` 个侵入像素，并保留连续工业长边。两段均在 `5/5`
+  后终止，证明继续增加坐标描述无法稳定获得像素级外壳几何。
+- V4 不改变用户已确认的“完整外壳、粗犷行军身份牌、Player／Target 非镜像”
+  可见方向，只改变生产职责。所有 V1／V2／V3 rejected shell pixels 继续禁止
+  作为 reference、edit、source、runtime 或 builder 输入。
+
+### 生产职责与最终粒度
+
+- 最终粒度仍是一角色一张完整透明资源：Player 与 Target 各有独立
+  `1284×252 RGBA` source，并各自导出一张完整 `214×42` runtime；不是端帽
+  atlas，不把两角色放入同一 source，不镜像，不把多张生成图拼成完整外壳。
+- ImageGen 不再拥有任何 UI 几何。首选路径中不调用 ImageGen；确定性 builder
+  从已经用户接受的 Unit Frames Raid A2 四块材料 sample 取材，独占外轮廓、
+  Alpha、安静内衬、接触光、维修 mask、安全区、透明 RGB 清零、source／runtime
+  导出和真实排版。模型也不再负责端部厚度、中央孔、坐标或比例。
+- builder 可以以 mask 组合既有 leather／liner／brass／thread 材料、做固定
+  crop／cover-fit、低频乘光、透明清理和缩放；不得凭空生成新笔触、修复材料
+  美术、复用失败外壳、烘焙动态内容或改变 pfUI 功能。
+- 这仍符合游戏粒度：donor/sample 只是上游材料输入，永远不被 Lua 加载；
+  runtime 仍是 `UF.PLAYER.SHELL` 与 `UF.TARGET.SHELL` 两个真实逻辑资产。
+
+### source、动态区与三切片
+
+- source 固定 `1284×252`（runtime 的 `6×`）；runtime 固定 `214×42`。
+- provider live bed 固定 source `x 42..1242 / y 36..216`，runtime
+  `x 7..207 / y 6..36`。烟褐 liner 可位于 Health／Power 下方，但所有有厚度
+  的皮革、黄铜、线、铆钉与状态响应必须裁在外围，不得覆盖动态条、文字或
+  Button。层序为：状态短边 → 完整外壳／liner → pfUI bar 背景与填充 → pfUI
+  文字、图标、Aura 与反馈。
+- 标准 `W=200` 只挂一张完整 `214×42` 纹理，内部接缝 `0`。变宽时从同一角色
+  source 派生 source `192/900/192`、runtime `32/150/32` 横向三切片；两个
+  `32px` 固定区容纳沿上／下缘展开的身份维修，中央 `150px` 保持安静。
+  这不同于 V3 的 `7/200/7`：切片固定区可以横跨顶／底缘，但任何可见维修仍
+  不得进入 `x 7..W+7 / y 6..36` 动态区。高度永远不独立拉伸。
+- 统一 UI Scale 只整体缩放完整 Frame／Texture；预演覆盖 `75%/100%/125%/150%`。
+
+### Player／Target 非镜像 mask
+
+- Player：上左外缘承载歪斜短暗铜夹片；左侧边有两条不等粗缝；右下外缘只有
+  一枚偏心暗钉。维修沿外围转角展开，不能形成整高端柱。
+- Target：左上只有被磨亮的皮革折边；右下外缘承载一段断裂氧化暗铜压片与
+  暗裂。没有敌对红、精英冠饰、整高亮板或 Player 镜像。
+- Hover／Aggro 不生图，分别从接受壳体 Alpha 派生两三段暖白／暗红短边；
+  禁止完整霓虹矩形。
+
+### 材料输入与受控回退
+
+首选输入是 Raid A2 已接受且已受 manifest 管理的四个 immutable sample：
+
+| 角色 | 文件 | SHA-256 | V4 用途 |
+|---|---|---|---|
+| leather | `assets/source/unitframes/raid-a2/RaidMaterialLeather_SampleV1.png` | `2f0ed03d…c41e` | 主体旧马鞍／盾带皮与局部皮补 |
+| liner | `assets/source/unitframes/raid-a2/RaidMaterialLiner_SampleV1.png` | `8204723f…27ef8` | 动态条下方烟褐安静承托 |
+| brass | `assets/source/unitframes/raid-a2/RaidMaterialBrass_SampleV1.png` | `f55657bb…06c27` | Player 短夹片、Target 断裂压片与暗钉 |
+| thread | `assets/source/unitframes/raid-a2/RaidMaterialThread_SampleV1.png` | `86699161…e3a1` | 少量不等修补线 mask |
+
+这是一项新的 downstream 用途，不修改或重新解释 Raid A2 source/runtime。若
+用这些已接受材料做出的透明 candidate 在主单位框尺度上显得过软、过暗或缺乏
+粗厚香草块面，必须先把客观证据交给用户；只有用户另行授权，才能激活一个
+primary-specific material-only donor 段。该备用段最多 `5` 次实际 ImageGen，
+流程错误不占额度；当前状态 `inactive / not-authorized`。
+
+### 生成前模拟 `UF-PRIMARY-V4-SIM-V1`
+
+- specification：`tools/specs/unitframes_primary_v4_simulation_v1.json`，SHA-256
+  `e05222b512c40d7dcbf54297fbec00a5135752025579173bb83483fb39d37ea2`。
+- renderer：`tools/render_unitframes_primary_v4_simulation_v1.py`，SHA-256
+  `bd77d463bf879d0540c84299f957c0d9fcaa351a24dbc6e78d13dc135adfef08`。
+- scene：`generated/unitframes/primary/simulation/V4/unitframes-primary-v4-sim-v1.scene.png`，
+  `1600×900 RGBA`，SHA-256
+  `dd6bb3459488c012013ba39eab1e3c5da3a85b5864f5bc539ca97482218d4622`。
+- review：`generated/unitframes/primary/simulation/V4/unitframes-primary-v4-sim-v1.review.png`，
+  `1600×1050 RGBA`，SHA-256
+  `574ee88da298a011ca507bc31bcdf72840063c430bfd2caf031599977f7d00aa`。
+- 模拟只用简单几何图形表达 shell；不复制两张 locked Chat 图或四块 accepted
+  material sample 的像素。为真实信息密度，Health／Power 使用现有 P5 runtime
+  纹理；模拟输出永远不得成为 source、runtime、裁切或 production 输入。
+- 实际 ImageGen `0/0`；本地渲染错误 `0`。macOS 使用
+  `/Users/yuanshiyao/miniconda3/envs/py312/bin/python`／`3.12.12`。
+
+### 实际展示区域与内部审查
+
+- 合同：`tools/specs/unitframes_primary_v4_simulation_display_region_v1.json`，
+  SHA-256 `644df0a305e53611c4c31a554e6d90cc6f303598db64a7bff95c9c490cf03ba1`。
+- 报告：`generated/unitframes/primary/simulation/V4/display-region-report.json`，
+  SHA-256 `1ba15de81fdc6d513b9039531af69257b50bf9a0648fe810b47ae4389feb6a32`。
+- Player Mana／Rage／Focus／Energy、Target Rage＋Aggro、Player `W=160` 与
+  Target `W=240` 共 `7/7 pass`，violations `0`。
+- 审查结论：`displayable / simulation-reviewed`。Player 左上／Target 右下
+  身份沿顶底外缘展开，不占 Health／Power；标准宽度保持完整纹理，变宽不移动
+  身份件；四种 UI Scale 只整体缩放。图中扁平棕色、轮廓锯齿、线条与高光均
+  是非权威几何占位，不能用于评价最终材料笔触。
+- 当前下一门禁：等待用户确认 `UF-PRIMARY-V4-SIM-V1` 的职责拆分、完整外壳
+  粒度、`32/150/32` 伸缩、Player／Target 维修位置与真实密度。确认后先从已
+  接受材料 sample 确定性构造透明 candidate 并提交 exact-pixel 审查；不得直接
+  P5 接入，也不需要 ImageGen 授权。
 
 ## 美术基准继承
 
@@ -1792,7 +1905,7 @@ colour or third object.
 - 完整性结论：`pass-final`。用户确认的布局、材质层级、轮廓、配色、视觉
   重量与整合关系均已写回三段正文；三段正文已于 `2026-08-11` 获精确授权。
 
-## 自主修复循环
+## V3 历史自主修复循环
 
 ### 授权与不可变边界
 
@@ -1815,8 +1928,8 @@ colour or third object.
 
 | 段 | 当前子状态 | 实际生成 | 流程错误 | 下一动作 |
 |---|---|---:|---:|---|
-| `UF-A1 V3-A final.r4` | `repair-budget-exhausted / candidate-rejected` | `5/5` | `2` | 禁止第六次；等待最终用户审查 |
-| `UF-A1 V3-B final.r4` | `repair-budget-exhausted / candidate-rejected` | `5/5` | `1` | 禁止第六次；等待最终用户审查 |
+| `UF-A1 V3-A final.r4` | `repair-budget-exhausted / candidate-rejected` | `5/5` | `2` | 已关闭；V4 禁止使用其像素 |
+| `UF-A1 V3-B final.r4` | `repair-budget-exhausted / candidate-rejected` | `5/5` | `1` | 已关闭；V4 禁止使用其像素 |
 | `UF-B1 V2 final.r2` | `source-accepted / runtime-exported / addon-integrated` | `3/5 stop` | `1` | 不调用 attempt 4/5；等待 Turtle WoW P6 |
 
 每次实际候选的 session／result、raw／candidate／真实排版路径与 SHA、第一失败
@@ -1843,8 +1956,11 @@ colour or third object.
 
 ## 下一门禁
 
-B1 已完成 P4/P5。下一门禁为 Turtle WoW `1.18.1` P6：检查两张 TGA 的方向、
-Player／Target／TargetTarget／Focus 的 Health 与四类 Power 乘色、低数值裁切、
-缩放、禁用回退、旧 SavedVariables 和缺媒体 fail-open。实机通过前不进入
-P6-C，也不清理 `generated/unitframes/`。A／B 均已耗尽且不得第六次；是否重开
-新合同另行决定，UF-A2 继续暂停。
+当前第一门禁是用户确认 `UF-PRIMARY-V4-SIM-V1`。确认范围只含生产职责拆分、
+一角色一张完整纹理、`1284×252 → 214×42`、`32/150/32` 横向伸缩、Player
+左上／Target 右下非镜像维修位置及真实排版密度，不含模拟像素。确认后先从
+既有 accepted Unit Frames material sample 确定性构造透明 candidate，进行
+exact-pixel、真实排版、状态和缩放审查；用户接受前不得导出 addon runtime。
+
+B1 与 Raid A2 的独立下一门禁仍为 Turtle WoW `1.18.1` P6。UF-A2 继续暂停；
+V3 A／B 仍禁止第六次调用，其失败像素永久排除于 V4。
