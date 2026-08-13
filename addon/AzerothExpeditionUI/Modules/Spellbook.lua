@@ -1,6 +1,7 @@
 local addon = AzerothExpeditionUI
 local Spellbook = {}
 Spellbook.runtimeContract = "1.0"
+Spellbook.integrationPaused = true
 
 local MEDIA = addon.media.root .. "Spellbook\\"
 local ART = {
@@ -44,6 +45,7 @@ local ICON_CANDIDATES = {
 
 local function ModuleEnabled()
   return
+    not Spellbook.integrationPaused and
     addon.db and
     addon.db.spellbook and
     addon.db.spellbook.enabled and

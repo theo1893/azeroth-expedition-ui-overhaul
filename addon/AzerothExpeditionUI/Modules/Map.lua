@@ -1,6 +1,7 @@
 local addon = AzerothExpeditionUI
 local Map = {}
 Map.runtimeContract = "1.1"
+Map.integrationPaused = true
 
 local MEDIA = addon.media.root .. "Map\\"
 
@@ -75,6 +76,7 @@ local MINI = {
 
 local function ModuleEnabled()
   return
+    not Map.integrationPaused and
     addon.db and
     addon.db.map and
     addon.db.map.enabled and

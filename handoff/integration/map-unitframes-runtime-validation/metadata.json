@@ -12,7 +12,9 @@
     "branch": "main",
     "base_head_before_handoff": "7eabd8b71d4f5612b4d0e06ad2c2876dfd47f19e",
     "map_runtime": "1.1",
-    "unitframes_runtime": "1.6"
+    "unitframes_runtime": "1.6",
+    "spellbook_runtime": "1.0",
+    "deployment_state": "Map and Spellbook adapters remain packaged but are blocked by an integrationPaused runtime gate; Spellbook ownership and the primary/secondary unit-frame shell route are returned to pfUI. The client therefore uses the pre-integration pfUI/Blizzard presentation while runtime code and accepted assets remain tracked for repair."
   },
   "screenshots": [
     {
@@ -26,6 +28,12 @@
       "size": [1438, 1076],
       "sha256": "20cc5efe4a3fafecd14f6c925bf5c2ef324fbbab39fbfe52fde439e0fd0acf39",
       "scope": ["MAP.WORLD.*"]
+    },
+    {
+      "file": "handoff/integration/map-unitframes-runtime-validation/spellbook-validation.png",
+      "size": [546, 693],
+      "sha256": "6c5a36f6c163006699983bd15756cecbf94ce385ca7879313e4ea2a8fcead886",
+      "scope": ["SB.FRAME", "SB.PAGE.FIELD", "SB.SPELL", "SB.SKILL.TAB", "SB.BOOK.TAB"]
     }
   ],
   "confirmed_result": [
@@ -74,12 +82,19 @@
       "evidence": "world-map-validation.png",
       "observation": "顶部 provider 控件直接跨在卷杆／纸面过渡区，需要核对净空与层序。",
       "verify": "先把它作为截图发现实机确认；外壳修复中不要换肤或迁移未登记控件。"
+    },
+    {
+      "id": "SPELLBOOK-FRAME-OCCLUSION",
+      "evidence": "spellbook-validation.png",
+      "observation": "接入后的书页仍显示法术、分页、书类与技能系控件，但主框上缘、左右外壳和底部封皮形成过厚深色遮挡；右侧技能系 Tab 贴近外缘，整体不像预期的完整香草技能书轮廓。",
+      "verify": "先检查四块 page-field TGA 的真实 384x512 对位、UV、层级和被隐藏的 Blizzard/pfUI provider region；确认动态控件净空后再决定是否改适配器或 accepted 像素。"
     }
   ],
   "resume_first": [
-    "编辑前先打开两张原始截图，并在相同 UI Scale 下复核观察项。",
+    "编辑前先打开三张原始截图，并在相同 UI Scale 下复核观察项。",
     "地图先看 addon/AzerothExpeditionUI/Modules/Map.lua 的 WORLD 几何与 ApplyWorld，再看 ApplyMini 锚点和 provider backdrop 处理。",
     "单位框先看 addon/AzerothExpeditionUI/Modules/UnitFrames.lua 的 LayoutPrimarySlices 与 ApplyPrimaryShell；保留 provider Frame 的 Point、Width、Height、事件和点击。",
+    "技能书先看 addon/AzerothExpeditionUI/Modules/Spellbook.lua 的 HideProviderRegions、EnsureArt 与 ApplyFrame，核对四块 TGA 的 UV、层级及 provider region 恢复，不触碰法术、分页、书类或技能系行为。",
     "每个改动模块执行 quick 检查后立即回到聚焦实机验证。"
   ],
   "cleanup": "公司设备恢复工作且不再需要证据后，删除这个临时 handoff 目录。"

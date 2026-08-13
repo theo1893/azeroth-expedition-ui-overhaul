@@ -21,11 +21,11 @@ Codex 进入仓库后先读本文件。这里给出项目边界、文档索引�
 | Core／pfUI | AEUI `0.8.31`，scoped ownership `P5` | 实机验证模块隔离、旧配置迁移与回退 |
 | Chat | runtime `1.22 / P5`；Full V1 主框、Dark V2 Tab、Dark V1 输入已接入；右框隐藏，经典颜色透传 | 实机验证 Tab、缩放、输入、频道颜色和左框消息回收 |
 | Quests | runtime `1.27`、Theme `1.10`；Quest Log 主体／目录已获实机确认；奖励槽与闭合火漆载体 `P5`；事务菜单未启用 | 实机验证奖励槽、火漆滚动裁切；Tracker 重新确认真实区域 |
-| Action Bars | AEUI `0.8.31`；Slot／Rail `P6`；Field Kit `2.8`、Focus `2.5`、Sidebar Group `1.0` 均 `P5` | 实机验证 AutoBar 四列向上网格、姿态尺寸及相邻 provider |
-| Map | runtime `1.1 / P5`；World／Mini 外壳已在实机加载；当前大地图外框越界／角连接与小地图屏幕边距／铭牌避让待修；真实控件与插件工具带仍为 `P2` | 修正外壳布局，再验证缩放、pfQuest 层级、文字、Farm mode 与 `/aeui map` 回退 |
-| Spellbook | runtime `1.0 / P5`；`SB-A2-DONOR V1` 四块原生 TGA 已接入；pfUI 现代 backdrop 关闭，动态控件保留，左上图标隐藏 | 实机验证对位、缩放、层序、图标隐藏和 `/aeui spellbook` 回退 |
+| Action Bars | AEUI `0.8.31`；Slot／Rail `P6`；Field Kit `2.8`、Focus `2.6`、Sidebar Group `1.0` 均 `P5`；DDPS 整体左移 `200 UI` | 实机验证 DDPS 中央视野净空、AutoBar 四列向上网格、姿态尺寸及相邻 provider |
+| Map | accepted World／Mini source/runtime 保留，AEUI adapter 硬暂停；当前回退 pfUI 地图外观 | 明天依据 handoff 实机图修正大地图越界／角连接与小地图边距／铭牌后再接入 |
+| Spellbook | accepted `SB-A2-DONOR V1` source/runtime 保留，AEUI adapter 与 Spellbook ownership 暂停；当前回退 pfUI 技能书 | 明天依据 handoff 实机图核对四块 TGA 对位、层序、provider region 与控件净空 |
 | Character | 香草同构方向 `P2 / paused` | 等用户恢复后再拆真实组件 |
-| Unit Frames | runtime `1.6 / P5`；外壳已在实机加载；当前放大布局下端部身份不清、次级框文字挤压待查 | 检查 base／rim 层序、九切片和文字净空，再验证状态层序、Aura／施法条及回退 |
+| Unit Frames | Bars／Raid／头像合同继续运行；本批 Player／Target／TargetTarget／Focus 外壳 route 暂停，当前回退 pfUI 外框 | 明天依据 handoff 实机图检查 base／rim 层序、九切片和文字净空后再接入 |
 
 详细状态以 [docs/PROGRESS.md](docs/PROGRESS.md) 和目标模块的
 `PROGRESS.md` 为准。

@@ -14,7 +14,7 @@ ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
 ActionBars.fieldKitRuntimeContract = "2.8"
-ActionBars.focusLayoutRuntimeContract = "2.5"
+ActionBars.focusLayoutRuntimeContract = "2.6"
 ActionBars.focusLayoutVersion = 16
 ActionBars.focusLayoutBackupVersion = 1
 ActionBars.sideBarGroupRuntimeContract = "1.0"
@@ -27,9 +27,10 @@ ActionBars.comfortUIScaleVersion = 2
 ActionBars.comfortUIScaleTier = 8
 ActionBars.comfortUIScaleValue = 0.71111111111111
 -- ACTION-BARS-CORE-SIM-V11 keeps global pfUI tier 8 and the accepted Combat
--- Deck geometry. It moves the provider-owned DoiteDPS two-row union upward,
+-- Deck geometry. The provider-owned DoiteDPS two-row union keeps its vertical
+-- safe lane and shifts left as a whole to clear the central combat view,
 -- uses the client system face for the three local unit frames, and implements
--- the accepted right-side cluster as one reversible mover. Runtime v2.5 keeps
+-- the accepted right-side cluster as one reversible mover. Runtime v2.6 keeps
 -- those contracts while making the warrior stance control use its accepted
 -- 25 UI provider icon size at full local scale.
 ActionBars.focusUnitScale = 0.8
@@ -143,7 +144,7 @@ ActionBars.focusSwingX = 0
 ActionBars.focusSwingY = 284
 ActionBars.focusStanceX = 0
 ActionBars.focusStanceY = 255
-ActionBars.focusDoiteX = 850
+ActionBars.focusDoiteX = 650
 ActionBars.focusDoiteY = -615
 
 local sideBarGroupDefinitions = {
@@ -1950,6 +1951,26 @@ local function ShouldMigrateCombatFocusLayout()
     unitframes.swingtimerheight == "16"
 end
 
+local function CombatFocusDoiteUpgradeEligible()
+  local database = addon.db and addon.db.actionbars
+  local projection = database and database.combatFocusProjection
+  local version = database and database.combatFocusLayoutVersion
+  return database and version == 16 and
+    type(projection) == "table" and
+    projection.coordinateSpace == ActionBars.focusCoordinateSpace and
+    math.abs((tonumber(projection.doiteX) or 100000) - 850) <= 0.01 and
+    math.abs((tonumber(projection.doiteY) or 100000) -
+      ActionBars.focusDoiteY) <= 0.01 and
+    type(DoiteDPSDB) == "table" and
+    DoiteDPSDB.point == "TOPLEFT" and
+    DoiteDPSDB.relativePoint == "TOPLEFT" and
+    math.abs((tonumber(DoiteDPSDB.x) or 100000) - 850) <= 0.01 and
+    math.abs((tonumber(DoiteDPSDB.y) or 100000) -
+      ActionBars.focusDoiteY) <= 0.01 and
+    math.abs((tonumber(DoiteDPSDB.scale) or 100000) -
+      ActionBars.focusDoiteScale) <= 0.001
+end
+
 local function CombatFocusLayoutSaved()
   if not pfUI_config or not CombatFocusLayoutActive() then
     return false
@@ -2250,6 +2271,28 @@ local function ConfigureFocusDoiteDPS(x, y)
   return true, ApplyFramePosition(
     frame, "TOPLEFT", x, y, ActionBars.focusDoiteScale
   )
+end
+
+function ActionBars:UpgradeCombatFocusDoitePosition()
+  if not CombatFocusDoiteUpgradeEligible() then
+    return false
+  end
+  local saved, applied = ConfigureFocusDoiteDPS(
+    self.focusDoiteX, self.focusDoiteY
+  )
+  if not saved then
+    return false
+  end
+  local database = addon.db and addon.db.actionbars
+  local projection = database and database.combatFocusProjection
+  projection.doiteX = self.focusDoiteX
+  projection.doiteY = self.focusDoiteY
+  self:ApplyFocusRelativeAnchors()
+  self:ApplyFocusUnitFonts()
+  self.focusLayoutStatus = applied and "applied" or "saved"
+  self.focusLayoutDoite = applied and "left-shift-applied" or
+    "left-shift-saved"
+  return true
 end
 
 local function CombatFocusStanceUpgradeEligible()
@@ -5882,6 +5925,10 @@ function ActionBars:Apply()
   -- /reload without requiring another pixel-space calibration command.
   if ShouldMigrateCombatFocusLayout() and ComfortUIScaleConfigured() then
     self:ApplyCombatFocusLayoutPreset()
+  elseif CombatFocusDoiteUpgradeEligible() and
+    ComfortUIScaleConfigured()
+  then
+    self:UpgradeCombatFocusDoitePosition()
   elseif CombatFocusStanceUpgradeEligible() and
     ComfortUIScaleConfigured()
   then

@@ -9,7 +9,7 @@ local STATUS_TEXTURE = "Interface\\TargetingFrame\\UI-StatusBar"
 local PFUI_STATUS_TEXTURE = pfUI.media["img:bar"]
 
 pfUI.expedition = {
-  version = 8,
+  version = 6,
   ownership = "scoped-v1",
 
   -- The main pfUI chat module stays loaded because AEUI uses its frames,
@@ -21,13 +21,10 @@ pfUI.expedition = {
     bubbles = "chat",
   },
 
-  -- AEUI owns only these two book shells. Every other Blizzard skin,
-  -- including the Game Menu skin that exposes pfUI configuration, stays in
-  -- pfUI. Spellbook behavior remains Blizzard-owned; only its presentation
-  -- yields so pfUI cannot replace it with the modern transparent backdrop.
+  -- AEUI owns the Quest Log book. Every other Blizzard skin, including the
+  -- Game Menu skin that exposes the pfUI configuration button, stays in pfUI.
   skin_owners = {
     ["Quest Log"] = "quests",
-    ["Spellbook"] = "spellbook",
   },
 
   -- Unit Frames remain fully provided by pfUI. AEUI owns only these concrete
@@ -37,7 +34,6 @@ pfUI.expedition = {
   component_owners = {
     ["unitframes.health-fill"] = "unitframes",
     ["unitframes.power-fill"] = "unitframes",
-    ["unitframes.primary-shell"] = "unitframes",
     ["unitframes.raid-shell"] = "unitframes",
     ["unitframes.raid-health-fill"] = "unitframes",
     ["unitframes.raid-power-fill"] = "unitframes",
