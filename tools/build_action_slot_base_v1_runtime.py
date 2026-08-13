@@ -659,7 +659,6 @@ def main() -> None:
         },
         "adapter": {
             "file": str(ADAPTER_REL).replace("\\", "/"),
-            "sha256": sha256(adapter_path),
             "provider": "pfUI.bars and pfActionBar<BarName>Button1..12.backdrop",
             "logical_bars": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             "excluded_provider_bars": [11, 12],

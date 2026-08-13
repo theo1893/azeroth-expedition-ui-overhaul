@@ -60,8 +60,7 @@ SHA-256 `256086c128561fdfa0717740701581d156ab811d88282c0098f9d3b4595acf81`。
 `SetStatusBarColor` 乘色；Mana、Rage、Focus、Energy 等语义色全部由运行时
 提供。最终分别导出为 `64×32` 与 `64×16`。
 
-`UF-B1 V2 final.r2` attempt 3 已于 `2026-08-11` 被用户接受为该子模块的
-像素 source：Health SHA-256 `8d19ffe9…08e1f`，Power SHA-256
+accepted 像素 source：Health SHA-256 `8d19ffe9…08e1f`，Power SHA-256
 `0668eddb…87f1`。Health 必须保持更粗、更深的矿物刷痕，Power 必须保持更窄、
 更静的颜料起伏；二者继续由 pfUI 运行时乘经典语义色。后续导出不得添加现代
 玻璃光、中心热点、规则斜纹、端帽、外框或任何 A／B 失败外壳元素。
@@ -99,7 +98,7 @@ SHA-256 `256086c128561fdfa0717740701581d156ab811d88282c0098f9d3b4595acf81`。
 伸缩区安静。Python 可以裁取、cover-fit、mask、低频乘光、清透明 RGB、缩放
 与三切片；不得生成新笔触、修复 donor 美术、复用 A1 失败像素或改变动态层级。
 
-接受像素基线为 `UF-RAID-A2-DONOR V1 attempt 5` 的四个固定 `512×288` sample
+接受像素基线为 Raid A2 的四个固定 `512×288` sample
 window，经 builder 形成的四张 `592×296 RGBA` source。唯一例外是忽略未消费
 外围 field bbox 最大 `19px` 偏差；外围像素本身不属于视觉权威。runtime 固定为
 四张独立 `74×37` TGA，标准宽度使用完整纹理，其他宽度只允许从同一变体做

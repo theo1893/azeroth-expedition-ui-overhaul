@@ -61,7 +61,7 @@
     "prompt_version": "UF-B1 V2 final.r2",
     "prompt_sha256": "5f3469d0bd85165014b5ce46df3e65f540b405977322510a9b7fefc1d486fe4f",
     "child_prompt_sha256": "738833a94d386516a1dc4086f5d7572b560b5b34b542c6e229bf56e662c86a6c",
-    "prompt": "docs/modules/unitframes/work/UNITFRAMES.CORE.md",
+    "prompt": "docs/modules/unitframes/SUBMODULE_ART_BASELINES.md",
     "review_report_sha256": "6e19b234032843ea9f35ea39bfff8ddc258d5814b70faa35365dde3f032cf798",
     "real_layout_preview_sha256": "e9848b61ca88890c92d9f3b7bfcfbd06389029c61d33bb560ea014ca2cbb02ca",
     "actual_imagegen_calls_in_loop": 3,

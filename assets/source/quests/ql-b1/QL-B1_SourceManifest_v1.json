@@ -20,7 +20,7 @@
     "codex_package": "@openai/codex@0.143.0",
     "generation_session": "019fb1e8-db9a-7010-86d1-98008548e4d6",
     "generated_image": "ig_007a38bf53929826016a6afc3030688191af04ac2e61682f6d",
-    "prompt": "../../../../docs/modules/quests/work/QUEST.LOG.DIRECTORY.md",
+    "prompt": "docs/modules/quests/SUBMODULE_ART_BASELINES.md",
     "prompt_section": "QL-B1 V1.r3 完整修复执行正文",
     "visual_reference": "../../../locked/quests/任务详情面板_视觉基准_v1.png",
     "material_reference": "../ql-a1/QuestLogBookShell_Master_v1.png",

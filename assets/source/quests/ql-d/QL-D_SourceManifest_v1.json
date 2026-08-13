@@ -37,7 +37,7 @@
     "generation_before_commit": "94f366b",
     "prompt_version": "QL-D V3.r3",
     "prompt_sha256": "deba614615e6e768840fbea8d3354345e614e76123df6535e6ab2be67f122d51",
-    "prompt": "docs/modules/quests/work/QUEST.LOG.REWARDS.md",
+    "prompt": "docs/modules/quests/SUBMODULE_ART_BASELINES.md",
     "provider_raw": "generated/quests/ql-d-reward-slots/production/V3/attempt-04/raw/ql-d-v3-attempt-04.provider-native-01.png",
     "provider_raw_sha256": "8be3575aaf35965081734a539485c2811a30956a32a786a91ec64911981b7d2c",
     "accepted_candidate": "generated/quests/ql-d-reward-slots/production/V3/attempt-04/review/ql-d-v3-attempt-04.canonical-review.png",

@@ -17,22 +17,10 @@ Frame。美术见 [ART_BASELINE.md](ART_BASELINE.md)，状态见
 | [`skins/blizzard/gossipquest.lua`](../../../addon/pfUI/skins/blizzard/gossipquest.lua) | `QuestFrame`、`GossipFrame`、五个内容面板、滚动条、八个操作按钮、奖励高亮 | 当前由 pfUI 正常加载；不在 Quest Log 的接管路由内 |
 | [`modules/questitem.lua`](../../../addon/pfUI/modules/questitem.lua) | 任务物品 Tooltip 的任务归属、扫描与数量 | 原样保留；不是快捷使用按钮 |
 
-当前 runtime 波次只接入按 `L` 打开的 `QuestLogFrame`。pfQuest tracker
-已经完成对象审计；用户已确认聚焦主体的本地确定性 `QT-SIM V2` 几何方向。
-QT-A1／B1 V1 已获独立生产授权，固定 Image 1／2／3、同段 edit 边界和各
-`5` 次实际调用上限已冻结。QT-A1 已在 `5/5` 后因中心压花式微纹理、source
-bbox 与原生色键失败成为 `candidate-rejected / repair-budget-exhausted`，
-但用户随后选择直接使用大块背景；attempt 4 的确定性 RGBA 已按临时合同
-例外晋级并导出九宫格 runtime。QT-B1 focus／tracked／complete 三件覆盖层
-因真实排版很糟糕被暂停于 `1/5`，adapter 不挂载它们并隐藏 provider 的现代
-半透明行矩形。QT-A2 七工具 Button 保持 `scope-deferred` 与 provider
-fallback。NPC 对话仍没有获准生产资产。
-
-用户于 `2026-08-05` 在 Turtle WoW 中确认当前 Quest Log 左页与右页的既有
-bug 和显示问题均已修复。该实机结论覆盖活动的 QL-A2 V4 书体、18 行左页
-字体／无描边／类型墨色，以及 runtime `1.25`／Theme `1.8` 的右页金额、
-动态内容末端、奖励锚点／间隔／换行与原生 `NameFrame` 抑制；不改变下方
-仍处于模拟、暂缓或未接入状态的 Tracker、QS-B1、QL-B3 与 NPC 对话合同。
+当前 runtime 接入 Quest Log、临时 Tracker 纸面和明确登记的视觉层。用户已
+实机确认 Quest Log 双页、十八行左页字体及右页详情／奖励几何；Tracker 最终
+展示区域、七功能纹章和 NPC Quest／Gossip 仍未完成。阶段与下一门禁只在
+[PROGRESS.md](PROGRESS.md) 维护。
 
 ## Quest Log 顶层
 
@@ -52,39 +40,12 @@ bug 和显示问题均已修复。该实机结论覆盖活动的 QL-A2 V4 书体
 `list-only` 只隐藏右页动态内容，完整书体保持 `676 × 464`，不得缩成
 `340px` 半本书。
 
-runtime `1.17` 及更早的锚点位于书本右上方透明空间并产生 `18px` 顶部
-outset，用户已判定其“浮在空中”；runtime `1.25` 继续保持该锚点已移除。随后
-V1–V6 的外沿皮革、羊皮封签、下缘长书签、detail
-替换、黄铜包角和页内右侧菜单方向也依次被否决。V8 首次满足书外展开，却因
-`136×24px` 尖头、逐项铆钉、亮黄铜与 `72px` 外伸过重而继续否决。V9 曾冻结
-的历史物理关系为：
-火漆直接压在右侧详情页右上纸面；标题与分隔线为其保留 `40×40px` 区域。
-点击后七项事务作为真实独立 Button 从 detail 右边界 `x=612` 向书外伸出，
-真实页边 mask 遮住根部；不得进入书页内容区或覆盖正文／奖励。打开态允许
-`48px` 右侧 outset，并在屏幕右缘不足时整体左移后恢复。每条只允许
-`112×20px` 的短书口事务签、低对比暗胡桃／旧铜色边线；禁止箭头尖端、逐项
-铆钉、明亮顶部高光和整条危险色。用户于 `2026-08-03` 确认过 V9 可见方向；
-`QS-B1-INTERACTION V1` 已于 `2026-08-05` 获用户确认；`QS-B1 V1` 同日已获
-固定输入、五次实际调用与确定性后处理的正式生产授权。attempt 1 已因短粗
-比例、连续亮边、过圆端部与现代微纹理内部退回；attempt 2 已修正后面三项，
-但比例仍为 `4.2851:1`；attempt 3 已推进至 `5.1456:1`，仍低于下限并出现
-微纹／中央擦痕；attempt 4 仍为 `5.1707:1`；attempt 5 又扩宽为
-`1184×193px`、`6.1347:1`，等比 runtime-visible 仅 `112×18px`，并保留
-均匀压纹／连续亮边。当前为
-`candidate-rejected / user-rejected / repair-budget-exhausted / P3 / 5/5`；
-用户于 `2026-08-05` 明确回复“不可接受”。V1 候选不得通过几何例外晋级，
-也不得成为后续 edit 输入。页上漆章仍为无鼠标 Texture，runtime 继续
-保留全部原按钮作为 fail-open fallback；生产授权不等于菜单接入授权。
-V10 的页外索引签在确认前被用户明确改向，现为
-`user-superseded-before-confirmation`。V2 在四次实际生成后仍因低质、过度工整
-且把七功能烘焙进同一布条而由用户终止，attempt 5 未调用。当前
-`QUEST-LOG-SEAL-ACTIONS-SIM-V12 / QS-B1 V3` 已把背景、七纹章和七 Button
-所有权完全分开；用户于 `2026-08-05` 回复“可以”，确认 V12 的动态收拢、
-ScrollChild 裁切、正文／奖励不重排和分层方向。生产实现进一步以一条连续
-最大长度空白母版的动态 prefix＋tail 代替重复 body variant；七格纹章工作表
-必须在 P4 拆成七张独立 RGBA source。生产尝试、候选否决和当前模拟门禁只在
-模块 `PROGRESS.md` 与唯一 `work/QUEST.SEALS.md` 维护；本对象合同本身不把
-未接受候选写成 source／runtime，代理等价完成前始终保留旧按钮 fail-open。
+当前漆章和闭合载体共同挂在 `QuestLogDetailScrollChildFrame`，位于右页详情
+右上并随正文滚动、由真实 viewport 裁切；不再使用书外锚点、封签、包角或
+第二页面。载体以一张连续最大长度 source 的 prefix＋tail 动态装配，不烘焙
+功能。未来七项必须拆成七张独立透明纹章与七个独立真实 Button；hidden 项
+收拢排列，disabled 项留位但禁用命中。代理达到一一功能等价前，火漆保持
+无鼠标，旧按钮全部 fail-open。
 
 ## Quest Log 纸页与中央装订
 
@@ -143,8 +104,7 @@ runtime `1.25` 已落实用户确认的 V2 阅读密度：`QUESTS_DISPLAYED = 18
 不得再用 `OUTLINE` 模拟字重。
 `QuestLogTitle19..23` 继续创建以
 兼容 provider，但不删除、不改写脚本并保持隐藏；缺少 adapter 时仍回退
-pfUI。完整资源与排版历史合同见
-[work/QUEST.LOG.LEFTPAGE.md](work/QUEST.LOG.LEFTPAGE.md)。
+pfUI。当前资源与排版状态见 [PROGRESS.md](PROGRESS.md)。
 
 QL-B 的生产边界：
 
@@ -200,8 +160,8 @@ Quests runtime contract 已升至 `1.25`；任务名难度色及完成／失败�
 QL-B0 V2 的 `LIST.INSET` 已在四次候选审查后由用户移出范围，不建立 source、
 runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 `ROW.BACKPLATE` 在五次候选耗尽后也由用户于 `2026-07-31` 明确移出范围；
-不建立 source、runtime、占位 Texture 或新的生成路线。失败候选与合同只在
-[work/QUEST.LOG.LEFTPAGE.md](work/QUEST.LOG.LEFTPAGE.md) 保留历史证据。
+不建立 source、runtime、占位 Texture 或新的生成路线。失败候选只由 Git
+历史保留。
 
 ## Quest Log 滚动与控制
 
@@ -226,13 +186,13 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 | `QUEST.LOG.DETAIL.OBJECTIVES` | 目标 FontString 集 | layout-only |
 | `QUEST.LOG.DETAIL.REWARD_TEXT` | 奖励文字 FontString 集 | Theme `1.10`：标题 `14px`，标签 `12px`，均无 outline／shadow |
 | `QUEST.LOG.DETAIL.DIVIDER` | adapter 非交互 Texture | 可横向三段式短墨线 |
-| `QUEST.LOG.REWARD.SLOT` | `QuestLogItem1..MAX_NUM_ITEMS`；原生 `IconTexture／Count／Name／NameFrame`；adapter-owned `aeuiRewardContainer` | 普通／悬停／按下／禁用；图标动态，无 selected。用户在 V3 `5/5` 循环耗尽后明确选择 attempt 4，并接受其 keyed aspect `2.76945` 的一次性合同例外；原技术仍记 `18/19`。exact canonical SHA `816aeedd…47c5` 已晋级 source，正式 `512×64` 四态 atlas SHA `cda1ef21…cd56` 已由 runtime `1.27`／Theme `1.10` 接入。真实 Button、Tooltip、品质色与 provider 脚本保持；`108×41px`、名称安全宽 `64px`、`8px` 列距／`4px` 行距不变；pressed 只移动 adapter 容器及真实子内容 `1px`，不移动命中区。当前 `P5 runtime-exported / addon-integrated`，等待实机 P6 |
+| `QUEST.LOG.REWARD.SLOT` | `QuestLogItem1..MAX_NUM_ITEMS`；原生 `IconTexture／Count／Name／NameFrame`；adapter-owned `aeuiRewardContainer` | accepted 四态 atlas 已由 runtime `1.27`／Theme `1.10` 接入。真实 Button、Tooltip、动态图标、名称、数量、品质色与 provider 脚本保持；`108×41px`、名称安全宽 `64px`、`8px` 列距／`4px` 行距不变；pressed 只移动 adapter 容器及真实子内容 `1px`，不移动命中区。当前 `P5`，等待实机 |
 | `QUEST.LOG.TRACK` | `QuestLogTrack`、`QuestLogTrackTracking` | 复用 QL-B1 开放墨圈／墨勾 atlas；保留原状态控制 |
 | `QUEST.LOG.ACTION.ABANDON` | `QuestLogFrameAbandonButton` | 当前程序化暗皮革 fallback；目标事务菜单只代理原 OnClick，必须保留原生确认 |
 | `QUEST.LOG.ACTION.SHARE` | `QuestFramePushQuestButton`；兼容名需探测 | 当前程序化暗皮革 fallback；目标事务菜单代理原 Button |
 | `QUEST.LOG.ACTION.EXIT` | `QuestFrameExitButton`；兼容 `QuestLogFrameCancelButton` | 目标视觉不重复收纳；右上真实 Close 保持独立，fallback 在迁移验收前继续存在 |
 | `QUEST.LOG.DETAIL.TOGGLE` | pfUI `QuestLogFrameExpandButton`；缺失时可创建真实 Button | 当前底部 fallback；目标事务菜单代理同一动态开合行为 |
-| `QUEST.LOG.ACTION.SEAL_MENU` | adapter-owned `QuestLogDetailScrollChildFrame` 子树；载体／火漆已接入，交互未启用 | 用户于 `2026-08-07` 接受 V7-A attempt 5 并授权 P4/P5。Quests `1.27` 将 carrier body／tail 以 `ARTWORK`、QS-A1 火漆以 `OVERLAY` 共同挂在真实 ScrollChild，随正文滚动并由 `[366,64,246,324]` viewport 裁切。当前 live 仅显示闭合载体根部与火漆；7／5／3 公式已实现但无用户可达入口，菜单保持 inactive。七张独立透明纹章与七个代理 Button 未验收，因此不创建 seal hitbox、不隐藏旧入口，全部 Blizzard／pfQuest 功能继续原子 fail-open |
+| `QUEST.LOG.ACTION.SEAL_MENU` | adapter-owned `QuestLogDetailScrollChildFrame` 子树；载体／火漆已接入，交互未启用 | carrier body／tail 以 `ARTWORK`、火漆以 `OVERLAY` 共同挂在真实 ScrollChild，随正文滚动并由 `[366,64,246,324]` viewport 裁切。当前只显示闭合载体根部与火漆，菜单 inactive；七纹章与七代理 Button 未验收，因此不创建 seal hitbox、不隐藏旧入口，全部 Blizzard／pfQuest 功能原子 fail-open |
 | `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX` | adapter-owned 无鼠标 Texture；一张连续 source | accepted V7-A source [`QuestLogSealPurityRibbon_Master_v1.png`](../../../assets/source/quests/qs-b1/QuestLogSealPurityRibbon_Master_v1.png) 为 `128×768 RGBA`、SHA `168f527f…05b8`；source／runtime manifest 分别为 [`QS-B1-V7A_SourceManifest_v1.json`](../../../assets/source/quests/qs-b1/QS-B1-V7A_SourceManifest_v1.json) 与 [`QS-B1-V7A_RuntimeManifest_v1.json`](../../../assets/source/quests/qs-b1/QS-B1-V7A_RuntimeManifest_v1.json)。确定性等比导出 [`32×192` TGA](../../../addon/AzerothExpeditionUI/Media/Quests/QuestLogSealPurityRibbonV1.tga) SHA `db620778…c615`，不 bbox-fit／平铺／镜像／重绘；载体不含纹章、文字或状态。V5-A dark-cloth source [`QuestLogSealMenuSubstrate_Master_v1.png`](../../../assets/source/quests/qs-b1/QuestLogSealMenuSubstrate_Master_v1.png) 与 manifest 仍作为历史 fallback 保留，但 addon 不加载 |
 | `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.ROOT` | `SUBSTRATE.MAX` 的逻辑 UV 子区；无独立 source | 闭合态采样前 `32×28px`，锚于 ScrollChild content `[210,12,32,28]`；QS-A1 火漆位于 `[210,4,32,32]` 并以独立 OVERLAY 后绘，形成 `24px` 纵向相交。该 Texture 无鼠标且不持有功能 |
 | `QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY` | `SUBSTRATE.MAX` 的动态前缀子区；无独立 source | 最多七个 `32×22px` 容量段；只按 visible count 增长。源美术在全长连续、非周期，切点附近无强横折；不得出现 variant 循环、卡片格或功能所有权 |

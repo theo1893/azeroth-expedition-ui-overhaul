@@ -39,7 +39,7 @@
     "candidate_review_commit": "cff6cd4",
     "prompt_version": "AB.RAIL.V1.r4",
     "prompt_body_sha256_utf8_lf": "1a42fa0b283ad47e200407658565280373c151fac155457fbf2051d4b2cb8597",
-    "prompt": "docs/modules/actionbars/work/ACTION.BARS.RAIL.V1.md",
+    "prompt": "docs/modules/actionbars/SUBMODULE_ART_BASELINES.md",
     "prompt_section": "最终执行正文（AB.RAIL.V1.r4，同一已授权边界）",
     "provider_raw": "generated/actionbars/AB.RAIL/AB.RAIL.V1/production/AB.RAIL.V1/attempt-05/raw/AB.RAIL.V1.attempt-05.raw.png",
     "provider_raw_sha256": "3f92fb61d3507a88e95abb62bf9f944a0dad51fcc9c87719c05afeab1956ac42",

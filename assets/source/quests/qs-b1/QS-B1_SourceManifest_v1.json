@@ -37,7 +37,7 @@
     "prompt_version": "QS-B1 V5-A.r3",
     "prompt_before_generation_commit": "1c6b12b178f355ee484005147e30f770def56e22",
     "prompt_utf8_sha256": "0cf326a54cab55330e9d99df8f05912910a16f79150d26b46d56707e3ff168b2",
-    "prompt": "docs/modules/quests/work/QUEST.SEALS.md",
+    "prompt": "docs/modules/quests/SUBMODULE_ART_BASELINES.md",
     "prompt_section": "V5-A.r3 修复执行正文与 attempt 4 执行记录",
     "raw_attempt": "generated/quests/QUEST-SEALS/QS-B1-V5-A/attempt-04/QS-B1-V5-A.attempt-04.raw.png",
     "raw_attempt_sha256": "c9ffcc8f1e19977ff10abdeeb9d0f7554cfab02c99768b83c219516d54a9beb1",

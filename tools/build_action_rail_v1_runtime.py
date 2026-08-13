@@ -98,13 +98,6 @@ def pixel_sha256(image: Image.Image) -> str:
     return hashlib.sha256(image.convert("RGBA").tobytes()).hexdigest()
 
 
-def addon_version(toc_path: Path) -> str:
-    for line in toc_path.read_text(encoding="utf-8-sig").splitlines():
-        if line.startswith("## Version:"):
-            return line.split(":", 1)[1].strip()
-    raise ValueError(f"addon version is missing from {toc_path}")
-
-
 def repo_path(root: Path, path: Path) -> str:
     return path.resolve().relative_to(root.resolve()).as_posix()
 
@@ -736,7 +729,6 @@ def main() -> None:
         },
         "adapter": {
             "file": ADAPTER_REL.as_posix(),
-            "sha256": sha256(adapter_path),
             "provider": (
                 "pfUI.bars[1..12].backdrop and "
                 "pfUI.bars[1].mergedBackdrop.backdrop"
@@ -760,12 +752,8 @@ def main() -> None:
             "provider_behavior_replaced": False,
         },
         "addon_entrypoints": {
-            "bootstrap": {
-                "file": BOOTSTRAP_REL.as_posix(),
-                "sha256": sha256(bootstrap_path),
-            },
-            "toc": {"file": TOC_REL.as_posix(), "sha256": sha256(toc_path)},
-            "addon_version": addon_version(toc_path),
+            "bootstrap": {"file": BOOTSTRAP_REL.as_posix()},
+            "toc": {"file": TOC_REL.as_posix()},
             "required_dependency": "pfUI",
         },
         "provider_layers_preserved": [

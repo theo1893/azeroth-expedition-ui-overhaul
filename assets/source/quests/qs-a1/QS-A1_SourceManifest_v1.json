@@ -31,7 +31,7 @@
     "raw_attempt_sha256": "3e972a67a3b27bb28b6b7ef314f0784886d4e16d3de98df022891b08571e4da1",
     "accepted_candidate": "generated/quests/QUEST-SEALS/QS-A1-V1/attempt-04/review/QS-A1-V1.r4.normalized-review.png",
     "accepted_candidate_sha256": "d5e5d12e09bd06e9e76f4382eea40b5501f5f6823d58b8693902ab98d8470f75",
-    "prompt": "docs/modules/quests/work/QUEST.SEALS.md",
+    "prompt": "docs/modules/quests/SUBMODULE_ART_BASELINES.md",
     "prompt_sections": [
       "最终执行正文 — QS-A1 V1",
       "修复执行正文 — QS-A1 V1.r4"

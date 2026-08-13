@@ -31,7 +31,7 @@
     "technical_report_sha256": "9018df186f4710fa90156b6001a93326630a4b0894287262b97e5374fc3ee5e6",
     "prompt_version": "UF-RAID-A2-DONOR V1.r4",
     "prompt_body_sha256": "ed3ec1599512a5b6c42695334bc1466e560ac010b428b3261f4503fba30bb078",
-    "prompt": "docs/modules/unitframes/work/UNITFRAMES.RAID.md",
+    "prompt": "docs/modules/unitframes/SUBMODULE_ART_BASELINES.md",
     "actual_imagegen_calls": 5,
     "remaining_imagegen_calls": 0,
     "process_errors": 2,

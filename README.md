@@ -19,7 +19,6 @@ addon/AzerothExpeditionUI/  模块级视觉替换与运行时媒体
 assets/                     锁定基准、参考和确认后的源资产
 docs/                       精简的全局与模块设计状态
 tools/                      可重复的资产导出与验证工具
-tests/                      静态与 Lua smoke tests
 third-party/                第三方来源、许可与校验信息
 ```
 

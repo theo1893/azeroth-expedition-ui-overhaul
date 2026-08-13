@@ -658,7 +658,7 @@ def source_manifest(
             "raw_attempt_sha256": RAW_ATTEMPT_SHA256,
             "accepted_candidate": "generated/quests/QUEST-SEALS/QS-A1-V1/attempt-04/review/QS-A1-V1.r4.normalized-review.png",
             "accepted_candidate_sha256": ACCEPTED_CANDIDATE_SHA256,
-            "prompt": "docs/modules/quests/work/QUEST.SEALS.md",
+            "prompt": "docs/modules/quests/SUBMODULE_ART_BASELINES.md#quest-logtracker-共用漆章",
             "prompt_sections": [
                 "最终执行正文 — QS-A1 V1",
                 "修复执行正文 — QS-A1 V1.r4",

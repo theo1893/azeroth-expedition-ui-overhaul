@@ -43,7 +43,7 @@
     "provider_raw_sha256": "8275b815b19677fda2fe242b79a06557af90032e570841236cab41ec429917b5",
     "accepted_candidate": "generated/chat/core/CHAT.FRAME.FULL.V1/attempt-02/review/ChatBookFrame_Full_V1_r1_attempt02.transparent.png",
     "accepted_candidate_sha256": "a97d9c5fa055a119cd5ea7809bdaa51460cddb9674355efcec35f98f6cd2c673",
-    "prompt": "docs/modules/chat/work/CHAT.CORE.V3.md",
+    "prompt": "docs/modules/chat/SUBMODULE_ART_BASELINES.md",
     "prompt_sections": [
       "整本书框生成前模拟与生产草案：CHAT.FRAME.FULL.V1",
       "完整生产正文（已授权，必须原样执行）",

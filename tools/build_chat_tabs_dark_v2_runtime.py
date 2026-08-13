@@ -536,7 +536,7 @@ def build_manifest(
             "do not stretch a complete state instead of the three horizontal slices",
             "do not bake tab text, unread state, channel names, buttons or chat content",
             "do not change tab Button geometry, hit boxes, events, SavedVariables or nonvisual behavior",
-            "do not delete the V3 tab and shelf fallback before P6-C",
+            "do not delete the V3 tab and shelf fallback before game validation and explicit cleanup",
         ],
     }
 

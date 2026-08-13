@@ -341,7 +341,7 @@ def build_manifest(
             ],
             "fallback": (
                 "addon/AzerothExpeditionUI/Media/Chat/ChatInputAtlasV3.tga "
-                "retained until P6-C"
+                "retained until game validation and explicit fallback cleanup"
             ),
         },
         "review_artifacts": {

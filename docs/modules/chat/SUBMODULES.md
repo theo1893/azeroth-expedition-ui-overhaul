@@ -21,12 +21,12 @@
 
 | ID | 绑定对象 | 逻辑资产与状态 | 几何／禁止项 |
 |---|---|---|---|
-| `CHAT.FRAME` | 左侧物理资产合同 | 空战地旧书九宫格；`CHAT.FRAME.FULL.V1.r1 attempt 2` 已导出为 `ChatBookFrameFullV1.tga`，runtime `1.19 / P5` | 不含 Tab、文字、输入、滚动或固定槽；`1608 × 978` source 不得整图直接加载或拉伸 |
-| `CHAT.FRAME.LEFT` | `pfUI.chat.left`／`pfChatLeft` | `CHAT.FRAME` 的唯一运行时实例；九个 texture slice 使用新 Full V1 atlas，旧 V3 主框只作 P6-C 前回退 | 保留移动、尺寸和左侧停靠行为 |
+| `CHAT.FRAME` | 左侧物理资产合同 | accepted 空战地旧书 source 已导出为 `ChatBookFrameFullV1.tga`，当前 `P5` | 不含 Tab、文字、输入、滚动或固定槽；`1608 × 978` source 不得整图直接加载或拉伸 |
+| `CHAT.FRAME.LEFT` | `pfUI.chat.left`／`pfChatLeft` | `CHAT.FRAME` 的唯一运行时实例；九个 texture slice 使用新 Full V1 atlas，旧 V3 主框只作实机回退 | 保留移动、尺寸和左侧停靠行为 |
 | `CHAT.FRAME.RIGHT` | `pfUI.chat.right`／`pfChatRight` | 明确停用的兼容对象；`C.chat.right.enable=0` | 强制隐藏，不分配 AEUI 资产；源码保留以便关闭 overhaul 后对照 |
-| `CHAT.TABS` | `pfUI.chat.left.panelTop`、左侧 `ChatFrameNTab`／`ChatFrameNTabText` | 连续承托带；普通／悬停／选中／禁用 Tab，各自三段式；运行时文字居中；`CHAT.TABS.DARK.V2` 方案 A 已确定性导出并在 runtime `1.22 / P5` 加载 `ChatTabAtlasDarkV2.tga`／`ChatTabShelfDarkV2.tga`；旧 V3 atlas／shelf 仅作 P6-C 前回退 | 普通布局事件后按需恢复共同几何；`pfChatLeft.OnMove` 中检测真实局部 Scale 边沿并立即强制重放一次，现有维护节拍只检测 EffectiveScale 边沿作为全局缩放兜底；登录后只做一次延迟终局装配；普通状态维护只换 UV；完整 P4 source 不得直接加载，四态共享 `92 × 30px` 视觉外接框和既有命中区 |
+| `CHAT.TABS` | `pfUI.chat.left.panelTop`、左侧 `ChatFrameNTab`／`ChatFrameNTabText` | 连续承托带；普通／悬停／选中／禁用 Tab，各自三段式；运行时文字居中；runtime `1.22 / P5` 加载 Dark V2 atlas／shelf，旧 V3 媒体只作实机回退 | 普通布局事件后按需恢复共同几何；局部／全局 Scale 改变时只重放必要布局；普通状态维护只换 UV；完整 source 不直接加载，四态共享既有命中区 |
 | `CHAT.UNREAD` | `ChatFrameNTabFlash` | 蜡封或布结显示／隐藏 | 独立覆盖，不参与 Tab 排列 |
-| `CHAT.INPUT` | `pfUI.chat.editbox`、`ChatFrameEditBox` | 普通／聚焦暖烟草抄写纸条，各自左／中／右；`CHAT.INPUT.DARK.V1.r3 attempt 4` 已确定性导出为 `ChatInputDarkV1.tga`，runtime `1.20 / P5` | 两状态几何与 Alpha 完全相同；不烘焙输入文字；只替换三枚 slice 可见像素，真实 EditBox 行为保持；V3 atlas 保留到 P6-C |
+| `CHAT.INPUT` | `pfUI.chat.editbox`、`ChatFrameEditBox` | 普通／聚焦暖烟草抄写纸条，各自左／中／右；accepted source 已导出为 `ChatInputDarkV1.tga` | 两状态几何与 Alpha 完全相同；不烘焙输入文字；只替换三枚 slice 可见像素，真实 EditBox 行为保持；V3 atlas 暂作实机回退 |
 | `CHAT.INPUT.LANGUAGE` | 可选 `ChatFrameEditBoxLanguage` | 普通／悬停／按下／禁用／当前语言 | 独立 Button，不画进输入纸带 |
 | `CHAT.TEXT` | `ChatFrameN` | 无新增位图；pfUI 配置字体、无描边／无阴影、安全区、内边距、`3px` 行距；基础与内嵌颜色完全采用客户端／pfUI／ChatMOD 的经典 provider 输出 | 只接管当前 Parent 为左书的正文版式与字体；不安装颜色 wrapper，不改全局 `ChatTypeInfo`、基础 RGB、`|cAARRGGBB`、ChatMOD／pfUI 配置、历史存储或链接载荷；不生成连续压光、行卡片、气泡或逐行底色 |
 | `CHAT.SCROLL.UP` | `ChatFrameNUpButton` | 当前被 pfUI 隐藏 | 未来若恢复，必须独立四状态 |

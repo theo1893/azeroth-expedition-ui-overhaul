@@ -132,7 +132,7 @@
     "provider_result": "ig_07e00c4828d25e6b016a7810f1341081919f816c65784c4604",
     "candidate_review_commit": "91ee10a",
     "prompt_version": "AB.CONSUMABLE.KIT.V1.transport",
-    "prompt": "docs/modules/actionbars/work/ACTION.BARS.FIELDKIT.V1.md",
+    "prompt": "docs/modules/actionbars/SUBMODULE_ART_BASELINES.md",
     "prompt_section": "传输修订执行正文 B.0（AB.CONSUMABLE.KIT.V1.transport）",
     "provider_raw": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/production/AB.CONSUMABLE.KIT.V1/attempt-01/raw/AB.CONSUMABLE.KIT.V1.attempt-01.raw.png",
     "provider_raw_sha256": "de25567fe9aa2b831e6d3667b08b7c1cf2c11f7f90e8f90836659e367050b8ba",

@@ -40,7 +40,7 @@
     "candidate_review_commit": "1f913ddb2d94f5e2d5cc2c17a1f7156c69226d13",
     "prompt_version": "AB.SLOT.BASE.V1.r4",
     "prompt_sha256": "cda4edaf9a8e8f2ea63f4ad47e30554e26425d1f9db8c815fe2afab4515267d9",
-    "prompt": "docs/modules/actionbars/work/ACTION.BARS.SLOT.V1.md",
+    "prompt": "docs/modules/actionbars/SUBMODULE_ART_BASELINES.md",
     "prompt_section": "修复执行正文 — AB.SLOT.BASE.V1.r4",
     "provider_raw": "generated/actionbars/AB.SLOT/AB.SLOT.BASE.V1/attempt-05/AB.SLOT.BASE.V1.r4.raw.png",
     "provider_raw_sha256": "0a0cae74fbb48bf233037425b0b58e080e5ea322aa677361de1925a6001011b8",

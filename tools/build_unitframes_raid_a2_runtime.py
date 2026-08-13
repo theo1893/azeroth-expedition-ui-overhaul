@@ -373,7 +373,7 @@ def write_manifests(
             "prompt_body_sha256": (
                 "ed3ec1599512a5b6c42695334bc1466e560ac010b428b3261f4503fba30bb078"
             ),
-            "prompt": "docs/modules/unitframes/work/UNITFRAMES.RAID.md",
+            "prompt": "docs/modules/unitframes/SUBMODULE_ART_BASELINES.md#ufraidmembershella-d",
             "actual_imagegen_calls": 5,
             "remaining_imagegen_calls": 0,
             "process_errors": 2,

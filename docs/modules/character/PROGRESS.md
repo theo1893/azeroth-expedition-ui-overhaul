@@ -39,5 +39,5 @@
 1. 在 Turtle WoW 记录 `CharacterFrame`、PaperDoll、全部装备槽、模型、
    属性、Tabs、下拉、关闭与旋转对象的尺寸、锚点、层级和状态。
 2. 根据 [SUBMODULES.md](SUBMODULES.md) 确认哪些物理 atlas 可共享。
-3. 为外壳、模型背景、槽、Tabs 与小控件分别建立 `work/` Prompt。
+3. 只在活动生产期间用一份临时 `CURRENT.md` 维护当前 Prompt，不建立逐组件流水账。
 4. 完成 Character 后再验证 Inspect、DressUp 与 Pet 的复用差异。

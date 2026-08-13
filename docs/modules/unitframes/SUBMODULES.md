@@ -51,8 +51,8 @@ donor，且 donor 永远不是 source、runtime 或 addon 资产；
 Alpha、`592×296 → 74×37`、provider inset、`48/496/48 → 6/62/6` 三切片以及
 A/B/C/D 四种维修 mask 全部归 builder，不再要求模型像素级定位。由此改变的是
 资产生产方式，不是游戏对象粒度；最终仍是四张完整外壳供 40 个真实 Button
-按槽位重复，不能把 donor 或整团预演图挂入游戏。attempt 5 已按用户授权的
-`sample-window-only` 例外进入 P4/P5：只持久化四个固定 sample window，未消费
+按槽位重复，不能把 donor 或整团预演图挂入游戏。accepted source 只持久化
+四个固定 sample window，未消费
 外围 field bbox 像素仍被排除；四张 source 和四张独立 TGA 由 manifest 固定。
 
 Leader／Master Looter／Raid Target／Resurrection、Buff／Debuff、Incoming Heal、
@@ -159,7 +159,7 @@ Frame 中心；透明外扩不能参与 Frame 宽高、点击区域或移动边�
 
 ### `UF-B1 V2` 已接受 source 与运行时映射
 
-- 用户于 `2026-08-11` 接受 B1 attempt 3 的运行时视觉。Health exact source
+- Health accepted source
   为 `assets/source/unitframes/bars-v2/UnitFrameHealthFill_Master_v1.png`，
   SHA-256 `8d19ffe9…08e1f`；Power exact source 为同目录
   `UnitFramePowerFill_Master_v1.png`，SHA-256 `0668eddb…87f1`。
@@ -182,7 +182,7 @@ Frame 中心；透明外扩不能参与 Frame 宽高、点击区域或移动边�
 | `pet`／`ptarget` | `UF.PET.*`／`UF.PETTARGET.*` | 暂缓 |
 | `tttarget` | `UF.TARGETTARGETTARGET.*` | 暂缓 |
 | `group`／`grouptarget`／`grouppet` | `UF.PARTY.*` | 暂缓；后续按真实重复数量设计 |
-| `raid` | `UF.RAID.*` | `UF-RAID-A2-DONOR V1 / P5 source-accepted / runtime-exported / addon-integrated / 5/5`；仅豁免未消费外围 field bbox 最大 `19px` 偏差；A2 使用 material-only donor＋Python 精确造壳，四张独立 `74×37` TGA 服务 40 个真实对象；待 Turtle WoW P6 |
+| `raid` | `UF.RAID.*` | `P5 source-accepted / runtime-exported / addon-integrated`；A2 使用 material-only donor＋Python 精确造壳，四张独立 `74×37` TGA 服务 40 个真实对象；待 Turtle WoW 实机 |
 | `fallback` | `UF.FALLBACK.*` | 保持 pfUI 回退 |
 | `player`／`target`／`focus`／`focustarget`／`group`／`grouptarget`／`grouppet`／`raid`／`ttarget`／`pet`／`ptarget`／`fallback`／`tttarget` 的 `portrait` | `UF.PORTRAIT.DISABLE` | runtime `1.2 / P5` 统一写为 `off`；不制作假头像槽，不运行 2D／3D 动态头像 |
 | `raidmarkershowportrait` | `UF.PORTRAIT.TRACKER.DISABLE` | 同时关闭 `raidmarkers` 与 `marktracking` 两套追踪头像，并收回头像占用宽度 |

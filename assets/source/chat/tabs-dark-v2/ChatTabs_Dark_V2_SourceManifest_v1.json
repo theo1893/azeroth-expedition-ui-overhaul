@@ -48,7 +48,7 @@
     "keyed_donor_sha256": "eb02fe7c1d25fc667c78827858cd938042bbc2f42952048291b8d6032e6b7ab4",
     "accepted_candidate": "generated/chat/core/CHAT.TABS.DARK.V2/exception-feasibility-v1/attempt-01/repacked-candidate.png",
     "accepted_candidate_sha256": "616f965bb850605bcb67a98f60660feee35d80f8b95bc2b35ad72487df9a1e3c",
-    "production_prompt": "docs/modules/chat/work/CHAT.CORE.V3.md",
+    "production_prompt": "docs/modules/chat/SUBMODULE_ART_BASELINES.md",
     "production_prompt_section": "CHAT.TABS.DARK.V2 complete production body used for attempt 1",
     "production_prompt_sha256": "14bce5c3f0b0d5ed931bc8bddcd68a5e50257c0e8f9e5a8455031b24e483392f",
     "global_prompt": "docs/GLOBAL_ART_BASELINE.md",

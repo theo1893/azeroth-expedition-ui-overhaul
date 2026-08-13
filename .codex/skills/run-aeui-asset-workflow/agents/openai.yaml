@@ -1,4 +1,4 @@
 interface:
-  display_name: "AEUI 资产生成与审查"
-  short_description: "以本地预演、真实展示区门禁、五次生图闭环、跨设备检查点、可安装插件与整模块清理收口资产"
-  default_prompt: "Use $run-aeui-asset-workflow to define an AEUI component, preview it locally, publish or resume a validated minimal cross-device checkpoint when exact ignored pixels are required, verify exact provider-to-art display regions, run the authorized five-generation review-repair workflow, finish P5 as a fresh-checkout-installable addon package, and purge module intermediates after whole-module P6 acceptance."
+  display_name: "AEUI 轻量开发工作流"
+  short_description: "按逻辑快检、资产生产或发布检查三条最小路径推进，并尽快进入实机验证"
+  default_prompt: "Use $run-aeui-asset-workflow, choose the smallest quick, asset, or release path, avoid attempt ledgers and unrelated tests, and treat Turtle WoW validation as the final authority."

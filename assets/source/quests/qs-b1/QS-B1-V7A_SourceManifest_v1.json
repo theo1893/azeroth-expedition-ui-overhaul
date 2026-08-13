@@ -27,7 +27,7 @@
     "generation_operation": "fresh generation with fixed Image 1 and Image 2 only",
     "generation_before_commit": "b025656",
     "prompt_sha256": "bd8b12a6ac621dfe59f40e2f11540513b67f4cfd46666e01b804f6f4369c28f0",
-    "prompt": "docs/modules/quests/work/QUEST.SEALS.md",
+    "prompt": "docs/modules/quests/SUBMODULE_ART_BASELINES.md",
     "prompt_section": "QS-B1 V7-A final production body and attempt-5 record",
     "provider_raw": "generated/quests/QUEST-SEALS/QS-B1-V7-A/attempt-05/raw.png",
     "provider_raw_sha256": "604faa9e6cdaedf7c6ba1fbbca8d4232b9ae50a4fe21aaff46d59cb0f3583c9b",

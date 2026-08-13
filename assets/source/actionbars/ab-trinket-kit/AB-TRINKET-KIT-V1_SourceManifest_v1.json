@@ -132,7 +132,7 @@
     "provider_result": "ig_05e65a84ff65cfd0016a780e4181d881919a9ca3c25055af9a",
     "candidate_review_commit": "d193dcc",
     "prompt_version": "AB.TRINKET.KIT.V1.r3",
-    "prompt": "docs/modules/actionbars/work/ACTION.BARS.FIELDKIT.V1.md",
+    "prompt": "docs/modules/actionbars/SUBMODULE_ART_BASELINES.md",
     "prompt_section": "修复执行正文 A.r3（AB.TRINKET.KIT.V1.r3）",
     "provider_raw": "generated/actionbars/AB.FIELDKIT/AB.FIELDKIT.V1/production/AB.TRINKET.KIT.V1/attempt-04/raw/AB.TRINKET.KIT.V1.attempt-04.raw.png",
     "provider_raw_sha256": "2e4efc1a5c5ccc95afc5c4619427226881e86aa90653325f009fc0dddf419e3a",
