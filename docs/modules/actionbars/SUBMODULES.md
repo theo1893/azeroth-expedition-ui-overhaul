@@ -116,7 +116,7 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 | `AB.FOCUS.CASTBAR.FOCUS` | 可选 `pfFocusCastbar` | 继续跟随 Focus Frame，默认不进入中央玩家／目标双框；对象不存在时无占位 |
 | `AB.FOCUS.SWING.MELEE` | `pfSwingTimerMainhand`＋`pfSwingTimerOffhand` | 主手 `260×12 UI / scale 1.0`，`BOTTOM (0,284)`，位于统一中心轴的第三排；副手同尺寸并以 `2 UI` 间距紧贴主手下方。文字、攻速与 Marker 动态 |
 | `AB.FOCUS.SWING.RANGED` | `pfSwingTimerRanged` | 与主手同为 `260×12 UI / scale 1.0` 并复用第三排，不与近战双条组成另一条常驻栏；范围提示仍由 provider 管理 |
-| `AB.DOITEDPS.TIMELINE` | 可选 `DoiteDPSMainFrame` 及子 Frame | 保留原生 `318×46 UI` 根与 `178×22 UI` 资源排、独立拖动／锁定／显隐与蓝绿状态语义；comfort preset 写 `TOPLEFT (650,-615)` 与目标显示补偿 scale `0.82`，即让两排 union 保持纵向安全带并整体左移 `200 UI` 退出中央视野；锁定态继续由 provider 关闭鼠标，以后可选低重量外缘 |
+| `AB.DOITEDPS.TIMELINE` | 可选 `DoiteDPSMainFrame` 及子 Frame | 保留原生 `318×46 UI` 根与 `178×22 UI` 资源排、独立锁定／显隐与蓝绿状态语义；所有角色的运行时锚点统一为 `TOPLEFT (650,-615)`，只同步锚点／坐标并保留各角色 scale 与其他 DDPS 配置；comfort preset 仍以 `0.82` 作为目标显示补偿，锁定态继续由 provider 关闭鼠标 |
 | `AB.TOTEM.ARCHITOTEM` | 可选 `ArchiTotemFrame`、四元素主 Button、元素候选、拖动球、AllTotems 与可选 Recall／PresetManager | 用户已接受 `ACTION-BARS-CORE-SIM-V4`。闭合真实可见 union 作为职业卫星栏置于 Combat Deck 下方；provider `scale=0.8` 时当前闭合脚印为 `212×32 UI`、Air 七层最大展开为 `212×224 UI`。`fieldKitBound=true` 时随 Bar 1，拖动松手回位，`unbind` 恢复首次自由锚点；显式 focus preset 才调用 provider 原生 API 请求向下展开，普通 refresh 只读取方向。施放、右键、hover、计时、锁定、方向、预设与 Tooltip 不接管；缺失、非萨满、隐藏或签名不匹配时无占位并 fail-open |
 
 ## 消耗品卷袋
@@ -284,13 +284,16 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   仍可为足够宽的水平主栏单独开启。DoiteDPS 的锁定／战斗显隐／Forecast／资源／
   冷却选项不由此 preset 改写；DoiteDPS 的 local scale 在 comfort preset 中
   明确收敛为 `0.82`，其启用／锁定／显隐与推荐逻辑不变。首次应用前保存相关
-  pfUI／DoiteDPS／ArchiTotem 配置；`/aeui focuslayout restore` 恢复后提示 reload。
+  pfUI／DoiteDPS／ArchiTotem 配置；`/aeui focuslayout restore` 恢复 DDPS 的 scale
+  与其他 provider 配置，但其位置仍按全角色合同统一为 `TOPLEFT (650,-615)`，
+  完成后提示 reload。
 - `ACTION-BARS-CORE-SIM-V11` 以“大奶黑牛”的实机截图完成确定性本地审查；AEUI
-  focus runtime-v2.6 保留 V10 几何与 V11 DoiteDPS 纵向安全区，把 DDPS 整组左移
-  `200 UI` 清出中央视野，并保留三框 FontString
+  focus runtime-v2.7 保留 V10 几何与 V11 DoiteDPS 纵向安全区，把所有角色的
+  DDPS 整组统一到 `TOPLEFT (650,-615)` 清出中央视野，并保留各角色 scale、
+  功能配置与三框 FontString
   刷新修复，并按战士实机反馈把真实 `bar11.icon_size` 提为 `25 UI`、local scale
   提为 `1.0`。exact v7–v13 签名在 `/reload` 一次迁移为 v16；copied v14／v15
-  只升级姿态合同，非姿态手调坐标保持不动。
+  只升级姿态合同；DDPS 坐标按用户要求统一，其余非姿态手调坐标保持不动。
   用户已确认右侧四栏 `2×2 / 3×4`
   方案，现由独立 `sidebar-group-contract=1.0` 接入，不修改任何位图。
 - `ACTION-BARS-CORE-SIM-V10` 以“大奶黑牛”的上一轮实机问题截图完成确定性本地审查；
