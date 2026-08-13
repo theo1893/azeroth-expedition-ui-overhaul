@@ -2,7 +2,7 @@
   "schema": "aeui-unitframes-raid-a2-runtime-manifest-v1",
   "status": "runtime-exported",
   "phase": "P5",
-  "runtime_contract": "1.1",
+  "runtime_contract": "1.6",
   "module": "unitframes",
   "components": [
     "UF.RAID.MEMBER.SHELL.A",
@@ -11,16 +11,16 @@
     "UF.RAID.MEMBER.SHELL.D"
   ],
   "source_manifest": "assets/source/unitframes/raid-a2/UF-RAID-A2_SourceManifest_v1.json",
-  "source_manifest_sha256": "ae5fd4cfe8054b57363c8c9ec3eb5254909f958fe7e6d7544ae44e4a9faae41e",
+  "source_manifest_sha256": "15da1577b5d692b72477d839f1cabec86299f1b599c0cb86b79abb8378a2d4f1",
   "runtime": {
     "A": {
       "component": "UF.RAID.MEMBER.SHELL.A",
       "file": "addon/AzerothExpeditionUI/Media/UnitFrames/RaidMemberShellAV1.tga",
-      "sha256": "6f9ec99f9218d28aca52156091eaf83e5009613a2d691d20d06286569f1976d7",
+      "sha256": "bb4877404fb1bcf33f917d7af6e83f08e2faab377669a359d460cd164f1e4ac9",
       "tga_header": {
         "image_type": 2,
-        "width": 74,
-        "height": 37,
+        "width": 128,
+        "height": 64,
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
@@ -44,41 +44,55 @@
         "visible_green_spill_pixels": 0,
         "transparent_rgb_nonzero_values": 0
       },
+      "logical_size": [
+        74,
+        37
+      ],
+      "texture_size": [
+        128,
+        64
+      ],
+      "content_uv": [
+        0.0,
+        0.578125,
+        0.0,
+        0.578125
+      ],
       "full_uv": [
         0.0,
-        1.0,
+        0.578125,
         0.0,
-        1.0
+        0.578125
       ],
       "three_slice_uv": {
         "left": [
           0.0,
-          0.08108108108108109,
+          0.046875,
           0.0,
-          1.0
+          0.578125
         ],
         "centre": [
-          0.08108108108108109,
-          0.918918918918919,
+          0.046875,
+          0.53125,
           0.0,
-          1.0
+          0.578125
         ],
         "right": [
-          0.918918918918919,
-          1.0,
+          0.53125,
+          0.578125,
           0.0,
-          1.0
+          0.578125
         ]
       }
     },
     "B": {
       "component": "UF.RAID.MEMBER.SHELL.B",
       "file": "addon/AzerothExpeditionUI/Media/UnitFrames/RaidMemberShellBV1.tga",
-      "sha256": "432f862c452cccd8e2db22a8615e9dc73731b41f77e8984b51e5b3e6438b5dce",
+      "sha256": "d2b9e1984177a8dddf4eab0df169d4638fa7a05f841c441aa82103f6ab369903",
       "tga_header": {
         "image_type": 2,
-        "width": 74,
-        "height": 37,
+        "width": 128,
+        "height": 64,
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
@@ -102,41 +116,55 @@
         "visible_green_spill_pixels": 0,
         "transparent_rgb_nonzero_values": 0
       },
+      "logical_size": [
+        74,
+        37
+      ],
+      "texture_size": [
+        128,
+        64
+      ],
+      "content_uv": [
+        0.0,
+        0.578125,
+        0.0,
+        0.578125
+      ],
       "full_uv": [
         0.0,
-        1.0,
+        0.578125,
         0.0,
-        1.0
+        0.578125
       ],
       "three_slice_uv": {
         "left": [
           0.0,
-          0.08108108108108109,
+          0.046875,
           0.0,
-          1.0
+          0.578125
         ],
         "centre": [
-          0.08108108108108109,
-          0.918918918918919,
+          0.046875,
+          0.53125,
           0.0,
-          1.0
+          0.578125
         ],
         "right": [
-          0.918918918918919,
-          1.0,
+          0.53125,
+          0.578125,
           0.0,
-          1.0
+          0.578125
         ]
       }
     },
     "C": {
       "component": "UF.RAID.MEMBER.SHELL.C",
       "file": "addon/AzerothExpeditionUI/Media/UnitFrames/RaidMemberShellCV1.tga",
-      "sha256": "aa463e44b020e27443230b534b4d827745fca15b3c2013a5b7f35f7326a30aff",
+      "sha256": "e8e99e11bb14fe71c48850c51d830749d07c1267e868dd0292db91fe4dddacac",
       "tga_header": {
         "image_type": 2,
-        "width": 74,
-        "height": 37,
+        "width": 128,
+        "height": 64,
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
@@ -160,41 +188,55 @@
         "visible_green_spill_pixels": 0,
         "transparent_rgb_nonzero_values": 0
       },
+      "logical_size": [
+        74,
+        37
+      ],
+      "texture_size": [
+        128,
+        64
+      ],
+      "content_uv": [
+        0.0,
+        0.578125,
+        0.0,
+        0.578125
+      ],
       "full_uv": [
         0.0,
-        1.0,
+        0.578125,
         0.0,
-        1.0
+        0.578125
       ],
       "three_slice_uv": {
         "left": [
           0.0,
-          0.08108108108108109,
+          0.046875,
           0.0,
-          1.0
+          0.578125
         ],
         "centre": [
-          0.08108108108108109,
-          0.918918918918919,
+          0.046875,
+          0.53125,
           0.0,
-          1.0
+          0.578125
         ],
         "right": [
-          0.918918918918919,
-          1.0,
+          0.53125,
+          0.578125,
           0.0,
-          1.0
+          0.578125
         ]
       }
     },
     "D": {
       "component": "UF.RAID.MEMBER.SHELL.D",
       "file": "addon/AzerothExpeditionUI/Media/UnitFrames/RaidMemberShellDV1.tga",
-      "sha256": "599160cefe94f3fe7b90b4da1d70cd084485395e1b4de931966cf572c0058f29",
+      "sha256": "65b47bb4e89e96cd2641f5664ffae385f238567d468ea31fb9fdc81103515453",
       "tga_header": {
         "image_type": 2,
-        "width": 74,
-        "height": 37,
+        "width": 128,
+        "height": 64,
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
@@ -218,30 +260,44 @@
         "visible_green_spill_pixels": 0,
         "transparent_rgb_nonzero_values": 0
       },
+      "logical_size": [
+        74,
+        37
+      ],
+      "texture_size": [
+        128,
+        64
+      ],
+      "content_uv": [
+        0.0,
+        0.578125,
+        0.0,
+        0.578125
+      ],
       "full_uv": [
         0.0,
-        1.0,
+        0.578125,
         0.0,
-        1.0
+        0.578125
       ],
       "three_slice_uv": {
         "left": [
           0.0,
-          0.08108108108108109,
+          0.046875,
           0.0,
-          1.0
+          0.578125
         ],
         "centre": [
-          0.08108108108108109,
-          0.918918918918919,
+          0.046875,
+          0.53125,
           0.0,
-          1.0
+          0.578125
         ],
         "right": [
-          0.918918918918919,
-          1.0,
+          0.53125,
+          0.578125,
           0.0,
-          1.0
+          0.578125
         ]
       }
     }
@@ -257,6 +313,16 @@
         74,
         37
       ]
+    ],
+    "runtime_texture_container": [
+      128,
+      64
+    ],
+    "runtime_content_uv": [
+      0.0,
+      0.578125,
+      0.0,
+      0.578125
     ],
     "resample": "Pillow LANCZOS",
     "transparent_rgb_clear": true,
@@ -290,9 +356,9 @@
   },
   "real_layout": {
     "scene": "generated/unitframes/raid/A2/runtime/real-layout-scene.png",
-    "scene_sha256": "fa4fcf2ac59cf8a70c36acce79ac060596636fddfa0c20d5d88ce4ab30b1bf72",
+    "scene_sha256": "fbc438c7754440d5a95ab88f94a99af9d80ba78a4a51bc22ba0a1422b95d2239",
     "review": "generated/unitframes/raid/A2/runtime/real-layout-review.png",
-    "review_sha256": "8bbf747ee52952a524be0097b829d49d55338f3faaf5ffad06624413c63647ea",
+    "review_sha256": "19f85b23a28c663103c18d07c60dc4609aa3b3de8e3eec9460d29ce9fcd49a25",
     "object_count": 40,
     "formation": "10x4 VERTICAL",
     "cluster_visual_envelope": [
@@ -304,7 +370,7 @@
   "display_region": {
     "contract": "tools/specs/unitframes_raid_runtime_display_region_v1.json",
     "report": "generated/unitframes/raid/A2/runtime/display-region-report.json",
-    "report_sha256": "9246a321024a595b26a618b935cff42b514103c2e504ae85bf2a0992bdae22b8",
+    "report_sha256": "57fb172ad3dd8166e2c7a21fc63d220d31f6ab508061969b5d1e976951f52d00",
     "status": "pass",
     "scenario_count": 7,
     "violation_count": 0,
@@ -317,13 +383,8 @@
     ],
     "build_required_on_target_device": false,
     "addon_package_gate": {
-      "file": "generated/integration/remote-main-merge/addon-package-report.json",
-      "status": "present",
-      "sha256": "e1ca9054cd0a86031641212318804bbbee55a01ecc2cac7649ca658aa3c30a35",
-      "schema": "aeui-addon-package-report-v1",
-      "package_status": "pass",
-      "build_required_on_target_device": false,
-      "violations": []
+      "file": "generated/unitframes/raid/A2/runtime/addon-package-report.json",
+      "status": "pending"
     },
     "game_validation": "pending Turtle WoW 1.18.1 / P6"
   }

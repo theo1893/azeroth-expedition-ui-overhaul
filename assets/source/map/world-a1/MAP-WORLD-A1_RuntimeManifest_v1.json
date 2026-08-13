@@ -5,13 +5,13 @@
   "batch": "MAP-WORLD-A1 V1",
   "status": "runtime-exported",
   "phase": "P5",
-  "runtime_contract": "1.0",
+  "runtime_contract": "1.1",
   "source_manifest": "assets/source/map/world-a1/MAP-WORLD-A1_SourceManifest_v1.json",
   "runtime": {
     "rod_top": {
       "component": "MAP.WORLD.FRAME.ROD.TOP",
       "file": "addon/AzerothExpeditionUI/Media/Map/MapWorldRodTopV1.tga",
-      "sha256": "0662b9b2150dbf33bb0b33c353afdd01ce84b30f62be855e9ccbe98860600cf3",
+      "sha256": "7bca056630689df85c28a6f512901b24758cc7fe8af2d3e90e4331cdb4b18f83",
       "metrics": {
         "size": [
           1024,
@@ -34,16 +34,30 @@
       "tga_header": {
         "image_type": 2,
         "width": 1024,
-        "height": 109,
+        "height": 128,
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "logical_size": [
+        1024,
+        109
+      ],
+      "texture_size": [
+        1024,
+        128
+      ],
+      "content_uv": [
+        0.0,
+        1.0,
+        0.0,
+        0.8515625
+      ]
     },
     "rod_bottom": {
       "component": "MAP.WORLD.FRAME.ROD.BOTTOM",
       "file": "addon/AzerothExpeditionUI/Media/Map/MapWorldRodBottomV1.tga",
-      "sha256": "a0e337628ec39521f2e6d3e098eaed575ba7199450a00f99b1d89ff71dee1a01",
+      "sha256": "cb4eb2bf97515e63d7a0710aa777c47a25ab0b167621c4f09af37a5f8def2b37",
       "metrics": {
         "size": [
           1024,
@@ -66,16 +80,30 @@
       "tga_header": {
         "image_type": 2,
         "width": 1024,
-        "height": 109,
+        "height": 128,
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "logical_size": [
+        1024,
+        109
+      ],
+      "texture_size": [
+        1024,
+        128
+      ],
+      "content_uv": [
+        0.0,
+        1.0,
+        0.0,
+        0.8515625
+      ]
     },
     "edge_left": {
       "component": "MAP.WORLD.FRAME.EDGE.LEFT",
       "file": "addon/AzerothExpeditionUI/Media/Map/MapWorldPaperEdgeLeftV1.tga",
-      "sha256": "3e8d71a079f8bb7ac435af31aca20f51213437dd1350f9d191c513c36a4a34bd",
+      "sha256": "da3cad310c1159a165baa8e6777adbba462a90fbafa89dadfc3e05d6ded703d5",
       "metrics": {
         "size": [
           118,
@@ -97,17 +125,31 @@
       },
       "tga_header": {
         "image_type": 2,
-        "width": 118,
+        "width": 128,
         "height": 512,
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "logical_size": [
+        118,
+        512
+      ],
+      "texture_size": [
+        128,
+        512
+      ],
+      "content_uv": [
+        0.0,
+        0.921875,
+        0.0,
+        1.0
+      ]
     },
     "edge_right": {
       "component": "MAP.WORLD.FRAME.EDGE.RIGHT",
       "file": "addon/AzerothExpeditionUI/Media/Map/MapWorldPaperEdgeRightV1.tga",
-      "sha256": "41ea16b2fb6baa078e21121da4f862d08b751a2f0f6f2594db69c559a31c6013",
+      "sha256": "5fc9cae996aaa2b28a6fa643c5f9ebcefc10117b3cc19946fdeb182eb7a710ba",
       "metrics": {
         "size": [
           118,
@@ -129,12 +171,26 @@
       },
       "tga_header": {
         "image_type": 2,
-        "width": 118,
+        "width": 128,
         "height": 512,
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "logical_size": [
+        118,
+        512
+      ],
+      "texture_size": [
+        128,
+        512
+      ],
+      "content_uv": [
+        0.0,
+        0.921875,
+        0.0,
+        1.0
+      ]
     }
   },
   "layout_contract": {
@@ -162,6 +218,7 @@
     ],
     "edge_runtime_width_ui": 58,
     "edge_cap_runtime_height_ui": 40,
-    "dynamic_content_and_pfquest_above_shell": true
+    "dynamic_content_and_pfquest_above_shell": true,
+    "vanilla_power_of_two_texture_containers": true
   }
 }

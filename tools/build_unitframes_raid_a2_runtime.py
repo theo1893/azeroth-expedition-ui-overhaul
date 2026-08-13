@@ -20,6 +20,12 @@ from typing import Any
 
 from PIL import Image, ImageChops
 
+from runtime_texture_compat import (
+    content_uv,
+    pad_to_power_of_two,
+    power_of_two_size,
+)
+
 from build_unitframes_raid_donor_shells_v1 import (
     ShellSet,
     build_shells,
@@ -69,6 +75,8 @@ RUNTIME_FILES = {
     variant: f"RaidMemberShell{variant}V1.tga"
     for variant in ("A", "B", "C", "D")
 }
+RUNTIME_SIZE = (74, 37)
+RUNTIME_TEXTURE_SIZE = power_of_two_size(RUNTIME_SIZE)
 
 
 def parse_args() -> argparse.Namespace:
@@ -154,18 +162,24 @@ def tga_header(path: Path) -> dict[str, Any]:
 def verify_tga(path: Path, expected: Image.Image) -> Image.Image:
     with Image.open(path) as opened:
         roundtrip = opened.convert("RGBA")
-    if roundtrip.size != (74, 37):
-        raise ValueError(f"runtime must be 74x37: {path}")
-    if ImageChops.difference(roundtrip, expected).getbbox() is not None:
+    if roundtrip.size != RUNTIME_TEXTURE_SIZE:
+        raise ValueError(
+            f"runtime texture must be {RUNTIME_TEXTURE_SIZE}: {path}"
+        )
+    texture = pad_to_power_of_two(expected)
+    if ImageChops.difference(roundtrip, texture).getbbox() is not None:
         raise ValueError(f"runtime TGA changed pixels: {path}")
+    logical_roundtrip = roundtrip.crop((0, 0, *RUNTIME_SIZE))
+    if ImageChops.difference(logical_roundtrip, expected).getbbox() is not None:
+        raise ValueError(f"runtime container changed accepted pixels: {path}")
     header = tga_header(path)
     if (
         header["image_type"] != 2
         or header["bits_per_pixel"] != 32
-        or (header["width"], header["height"]) != (74, 37)
+        or (header["width"], header["height"]) != RUNTIME_TEXTURE_SIZE
     ):
         raise ValueError(f"invalid runtime TGA header: {path}: {header}")
-    return roundtrip
+    return logical_roundtrip
 
 
 def promote_exact_windows(spec: dict, donor_path: Path, source_dir: Path) -> None:
@@ -230,10 +244,10 @@ def export_runtime(
     runtime_dir.mkdir(parents=True, exist_ok=True)
     for variant, source in sources.items():
         runtime = clear_transparent_rgb(
-            source.resize((74, 37), Image.Resampling.LANCZOS)
+            source.resize(RUNTIME_SIZE, Image.Resampling.LANCZOS)
         )
         path = runtime_dir / RUNTIME_FILES[variant]
-        runtime.save(path, format="TGA")
+        pad_to_power_of_two(runtime).save(path, format="TGA")
         runtimes[variant] = verify_tga(path, runtime)
     return runtimes
 
@@ -318,11 +332,14 @@ def write_manifests(
             "sha256": sha256(runtime_path),
             "tga_header": tga_header(runtime_path),
             "metrics": image_metrics(runtimes[variant]),
-            "full_uv": [0.0, 1.0, 0.0, 1.0],
+            "logical_size": list(RUNTIME_SIZE),
+            "texture_size": list(RUNTIME_TEXTURE_SIZE),
+            "content_uv": content_uv(RUNTIME_SIZE, RUNTIME_TEXTURE_SIZE),
+            "full_uv": content_uv(RUNTIME_SIZE, RUNTIME_TEXTURE_SIZE),
             "three_slice_uv": {
-                "left": [0.0, 0.08108108108108109, 0.0, 1.0],
-                "centre": [0.08108108108108109, 0.918918918918919, 0.0, 1.0],
-                "right": [0.918918918918919, 1.0, 0.0, 1.0],
+                "left": [0.0, 6 / 128, 0.0, 37 / 64],
+                "centre": [6 / 128, 68 / 128, 0.0, 37 / 64],
+                "right": [68 / 128, 74 / 128, 0.0, 37 / 64],
             },
         }
 
@@ -458,7 +475,7 @@ def write_manifests(
         "schema": "aeui-unitframes-raid-a2-runtime-manifest-v1",
         "status": "runtime-exported",
         "phase": "P5",
-        "runtime_contract": "1.1",
+        "runtime_contract": "1.6",
         "module": "unitframes",
         "components": source_manifest["components"],
         "source_manifest": repository_path(SOURCE_MANIFEST),
@@ -467,6 +484,8 @@ def write_manifests(
         "deterministic_export": {
             "tool": "tools/build_unitframes_raid_a2_runtime.py",
             "source_to_runtime": [[592, 296], [74, 37]],
+            "runtime_texture_container": list(RUNTIME_TEXTURE_SIZE),
+            "runtime_content_uv": content_uv(RUNTIME_SIZE, RUNTIME_TEXTURE_SIZE),
             "resample": "Pillow LANCZOS",
             "transparent_rgb_clear": True,
             "source_three_slice": [48, 496, 48],

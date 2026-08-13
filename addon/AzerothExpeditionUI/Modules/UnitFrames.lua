@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local UnitFrames = {}
-UnitFrames.runtimeContract = "1.5"
+UnitFrames.runtimeContract = "1.6"
 
 local MEDIA = addon.media.root .. "UnitFrames\\"
 local HEALTH_TEXTURE = MEDIA .. "UnitFrameHealthFillV1"
@@ -9,6 +9,8 @@ local POWER_TEXTURE = MEDIA .. "UnitFramePowerFillV1"
 local PRIMARY_GEOMETRY = {
   sourceWidth = 214,
   sourceHeight = 42,
+  textureWidth = 256,
+  textureHeight = 64,
   leftCap = 32,
   centreWidth = 150,
   rightCap = 32,
@@ -25,6 +27,8 @@ local PRIMARY_GEOMETRY = {
 local TARGETTARGET_GEOMETRY = {
   sourceWidth = 112,
   sourceHeight = 34,
+  textureWidth = 128,
+  textureHeight = 64,
   leftCap = 20,
   centreWidth = 72,
   rightCap = 20,
@@ -41,6 +45,8 @@ local TARGETTARGET_GEOMETRY = {
 local FOCUS_GEOMETRY = {
   sourceWidth = 112,
   sourceHeight = 43,
+  textureWidth = 128,
+  textureHeight = 64,
   leftCap = 24,
   centreWidth = 64,
   rightCap = 24,
@@ -140,8 +146,13 @@ local RAID_ART_HEIGHT = 37
 local RAID_LEFT_CAP = 6
 local RAID_CENTRE = 62
 local RAID_RIGHT_CAP = 6
-local RAID_UV_LEFT = RAID_LEFT_CAP / 74
-local RAID_UV_RIGHT = (RAID_LEFT_CAP + RAID_CENTRE) / 74
+local RAID_TEXTURE_WIDTH = 128
+local RAID_TEXTURE_HEIGHT = 64
+local RAID_UV_LEFT = RAID_LEFT_CAP / RAID_TEXTURE_WIDTH
+local RAID_UV_RIGHT =
+  (RAID_LEFT_CAP + RAID_CENTRE) / RAID_TEXTURE_WIDTH
+local RAID_UV_FULL_RIGHT = 74 / RAID_TEXTURE_WIDTH
+local RAID_UV_BOTTOM = RAID_ART_HEIGHT / RAID_TEXTURE_HEIGHT
 
 local function GetConfiguredTexture(frame, key)
   if not frame or not frame.config or not pfUI or not pfUI.media then
@@ -306,22 +317,24 @@ local function LayoutPrimarySlices(
   local centreHeight = artHeight - geometry.topCap - geometry.bottomCap
   if centreWidth < 1 or centreHeight < 1 then return false end
 
-  local uvX1 = geometry.leftCap / geometry.sourceWidth
+  local uvX1 = geometry.leftCap / geometry.textureWidth
   local uvX2 =
-    (geometry.leftCap + geometry.centreWidth) / geometry.sourceWidth
-  local uvY1 = geometry.topCap / geometry.sourceHeight
+    (geometry.leftCap + geometry.centreWidth) / geometry.textureWidth
+  local uvXMax = geometry.sourceWidth / geometry.textureWidth
+  local uvY1 = geometry.topCap / geometry.textureHeight
   local uvY2 =
-    (geometry.topCap + geometry.centreHeight) / geometry.sourceHeight
+    (geometry.topCap + geometry.centreHeight) / geometry.textureHeight
+  local uvYMax = geometry.sourceHeight / geometry.textureHeight
   local texCoords = {
     topLeft = { 0, uvX1, 0, uvY1 },
     top = { uvX1, uvX2, 0, uvY1 },
-    topRight = { uvX2, 1, 0, uvY1 },
+    topRight = { uvX2, uvXMax, 0, uvY1 },
     left = { 0, uvX1, uvY1, uvY2 },
     centre = { uvX1, uvX2, uvY1, uvY2 },
-    right = { uvX2, 1, uvY1, uvY2 },
-    bottomLeft = { 0, uvX1, uvY2, 1 },
-    bottom = { uvX1, uvX2, uvY2, 1 },
-    bottomRight = { uvX2, 1, uvY2, 1 },
+    right = { uvX2, uvXMax, uvY1, uvY2 },
+    bottomLeft = { 0, uvX1, uvY2, uvYMax },
+    bottom = { uvX1, uvX2, uvY2, uvYMax },
+    bottomRight = { uvX2, uvXMax, uvY2, uvYMax },
   }
 
   ConfigurePrimarySlice(
@@ -428,7 +441,7 @@ end
 
 local function ConfigureTexture(texture, path, left, right)
   texture:SetTexture(path)
-  texture:SetTexCoord(left, right, 0, 1)
+  texture:SetTexCoord(left, right, 0, RAID_UV_BOTTOM)
   texture:SetHeight(RAID_ART_HEIGHT)
 end
 
@@ -936,7 +949,7 @@ function UnitFrames:ApplyRaidFrame(frame, slot)
   end
 
   if Round(width) == RAID_STANDARD_WIDTH then
-    ConfigureTexture(textures.full, path, 0, 1)
+    ConfigureTexture(textures.full, path, 0, RAID_UV_FULL_RIGHT)
     textures.full:SetPoint("TOPLEFT", frame, "TOPLEFT", -2, 2)
     textures.full:SetWidth(width + 4)
     textures.full:Show()
@@ -947,7 +960,7 @@ function UnitFrames:ApplyRaidFrame(frame, slot)
   else
     ConfigureTexture(textures.left, path, 0, RAID_UV_LEFT)
     ConfigureTexture(textures.centre, path, RAID_UV_LEFT, RAID_UV_RIGHT)
-    ConfigureTexture(textures.right, path, RAID_UV_RIGHT, 1)
+    ConfigureTexture(textures.right, path, RAID_UV_RIGHT, RAID_UV_FULL_RIGHT)
     textures.left:SetPoint("TOPLEFT", frame, "TOPLEFT", -2, 2)
     textures.left:SetWidth(RAID_LEFT_CAP)
     textures.centre:SetPoint("TOPLEFT", frame, "TOPLEFT", 4, 2)
@@ -1062,6 +1075,7 @@ function UnitFrames:GetRuntimeStatus()
     ", targettarget-slices=20/72/20-6/22/6" ..
     ", focus-slices=24/64/24-10/27/6" ..
     ", raid-slices=6/62/6" ..
+    ", texture-containers=pot-1.12" ..
     ", scope=all-pfui-unitframe-portraits,player,target,targettarget,focus,pfRaid1..40" ..
     ", fallback=pfui-configured-portraits-bars-primary-chrome-and-raid-backdrops"
 end

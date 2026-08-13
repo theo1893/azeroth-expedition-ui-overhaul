@@ -18,6 +18,12 @@ from typing import Any
 import numpy as np
 from PIL import Image, ImageChops, ImageDraw
 
+from runtime_texture_compat import (
+    content_uv,
+    pad_to_power_of_two,
+    power_of_two_size,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RESAMPLE = Image.Resampling.LANCZOS
@@ -383,20 +389,25 @@ def export_runtime(
     for key, source in sources.items():
         filename, target_size = exports[key]
         runtime = clear_transparent_rgb(source.resize(target_size, RESAMPLE))
+        texture = pad_to_power_of_two(runtime)
         path = RUNTIME_DIR / filename
-        runtime.save(path, format="TGA")
+        texture.save(path, format="TGA")
         with Image.open(path) as opened:
             roundtrip = opened.convert("RGBA")
-        if ImageChops.difference(runtime, roundtrip).getbbox() is not None:
+        if ImageChops.difference(texture, roundtrip).getbbox() is not None:
             raise ValueError(f"runtime TGA changed pixels: {path}")
+        logical_roundtrip = roundtrip.crop((0, 0, *target_size))
+        if ImageChops.difference(runtime, logical_roundtrip).getbbox() is not None:
+            raise ValueError(f"runtime container changed accepted pixels: {path}")
         header = tga_header(path)
         if (
             header["image_type"] != 2
             or header["bits_per_pixel"] != 32
-            or (header["width"], header["height"]) != target_size
+            or (header["width"], header["height"])
+            != power_of_two_size(target_size)
         ):
             raise ValueError(f"runtime TGA header drifted: {path}: {header}")
-        runtimes[key] = roundtrip
+        runtimes[key] = logical_roundtrip
     return runtimes
 
 
@@ -433,6 +444,9 @@ def runtime_records(
             "component": components[key],
             **media_record(RUNTIME_DIR / exports[key][0], runtimes[key]),
             "tga_header": tga_header(RUNTIME_DIR / exports[key][0]),
+            "logical_size": list(exports[key][1]),
+            "texture_size": list(power_of_two_size(exports[key][1])),
+            "content_uv": content_uv(exports[key][1]),
         }
         for key in exports
     }
@@ -509,7 +523,7 @@ def write_manifests(
         "batch": "MAP-WORLD-A1 V1",
         "status": "runtime-exported",
         "phase": "P5",
-        "runtime_contract": "1.0",
+        "runtime_contract": "1.1",
         "source_manifest": repository_path(WORLD_SOURCE_MANIFEST),
         "runtime": runtime_records(
             WORLD_RUNTIME, WORLD_COMPONENTS, world_runtimes
@@ -525,6 +539,7 @@ def write_manifests(
             "edge_runtime_width_ui": 58,
             "edge_cap_runtime_height_ui": 40,
             "dynamic_content_and_pfquest_above_shell": True,
+            "vanilla_power_of_two_texture_containers": True,
         },
     }
     WORLD_RUNTIME_MANIFEST.write_text(
@@ -594,7 +609,7 @@ def write_manifests(
         "batch": "MAP-MINI-A1 V1",
         "status": "runtime-exported",
         "phase": "P5",
-        "runtime_contract": "1.0",
+        "runtime_contract": "1.1",
         "source_manifest": repository_path(MINI_SOURCE_MANIFEST),
         "runtime": runtime_records(MINI_RUNTIME, MINI_COMPONENTS, mini_runtimes),
         "layout_contract": {
@@ -606,6 +621,7 @@ def write_manifests(
             "farmmode_shell_reuse": False,
             "provider_buttons_and_pfquest_pins_remain_live": True,
             "zone_and_coordinates_are_runtime_text": True,
+            "vanilla_power_of_two_texture_containers": True,
         },
     }
     MINI_RUNTIME_MANIFEST.write_text(

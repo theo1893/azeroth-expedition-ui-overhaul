@@ -3,7 +3,7 @@
   "status": "runtime-exported-addon-integrated",
   "phase": "P5",
   "module": "unitframes",
-  "runtime_contract": "1.5",
+  "runtime_contract": "1.6",
   "components": [
     "UF.TARGETTARGET.SHELL",
     "UF.FOCUS.SHELL"
@@ -49,11 +49,11 @@
     "targettarget": {
       "runtime": {
         "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFrameTargetTargetShellV1.tga",
-        "sha256": "8e4b14ba4937164fb0288339ad7cb121f1e8ccffeaba797b080a8c4d93736442",
+        "sha256": "fb12b849bdf2872df81cb1eeecf519f3569ab32719bda1ce1b4d1ad6eb8296b0",
         "tga_header": {
           "image_type": 2,
-          "width": 112,
-          "height": 34,
+          "width": 128,
+          "height": 64,
           "bits_per_pixel": 32,
           "descriptor": 8,
           "top_origin": false
@@ -76,15 +76,29 @@
           "opaque_pixels": 2461,
           "visible_green_spill_pixels": 0,
           "transparent_rgb_nonzero_pixels": 0
-        }
+        },
+        "logical_size": [
+          112,
+          34
+        ],
+        "texture_size": [
+          128,
+          64
+        ],
+        "content_uv": [
+          0.0,
+          0.875,
+          0.0,
+          0.53125
+        ]
       },
       "rim": {
         "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFrameTargetTargetShellRimV1.tga",
-        "sha256": "838105f7a27fa5d689d186bd0ace9422c03a3509337a448ee18bc08b116cbb59",
+        "sha256": "6d5b02635f9a5185eb1b1161ef463e8dbe631d7ca294faee73498292ccf79102",
         "tga_header": {
           "image_type": 2,
-          "width": 112,
-          "height": 34,
+          "width": 128,
+          "height": 64,
           "bits_per_pixel": 32,
           "descriptor": 8,
           "top_origin": false
@@ -107,15 +121,29 @@
           "opaque_pixels": 261,
           "visible_green_spill_pixels": 0,
           "transparent_rgb_nonzero_pixels": 0
-        }
+        },
+        "logical_size": [
+          112,
+          34
+        ],
+        "texture_size": [
+          128,
+          64
+        ],
+        "content_uv": [
+          0.0,
+          0.875,
+          0.0,
+          0.53125
+        ]
       },
       "hover": {
         "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFrameTargetTargetHoverRimV1.tga",
-        "sha256": "570fbff582e2483e90dfc5f6702ca5c04b905c838a5b79068e0d50f9293bc6c2",
+        "sha256": "1c685353d31f1e5cd03dec622a4b66346c1de51047d8083598b3580c49b3fae5",
         "tga_header": {
           "image_type": 2,
-          "width": 112,
-          "height": 34,
+          "width": 128,
+          "height": 64,
           "bits_per_pixel": 32,
           "descriptor": 8,
           "top_origin": false
@@ -138,15 +166,29 @@
           "opaque_pixels": 0,
           "visible_green_spill_pixels": 0,
           "transparent_rgb_nonzero_pixels": 0
-        }
+        },
+        "logical_size": [
+          112,
+          34
+        ],
+        "texture_size": [
+          128,
+          64
+        ],
+        "content_uv": [
+          0.0,
+          0.875,
+          0.0,
+          0.53125
+        ]
       },
       "aggro": {
         "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFrameTargetTargetAggroRimV1.tga",
-        "sha256": "ccfa0b07758bfbbdf480c0a93f290b614a3fc48938ac7c574155039c4637b99e",
+        "sha256": "c6151b8738364519d9f44e09c5ceeed7fb9aab05e928a50d89962cb54269332f",
         "tga_header": {
           "image_type": 2,
-          "width": 112,
-          "height": 34,
+          "width": 128,
+          "height": 64,
           "bits_per_pixel": 32,
           "descriptor": 8,
           "top_origin": false
@@ -169,17 +211,31 @@
           "opaque_pixels": 0,
           "visible_green_spill_pixels": 0,
           "transparent_rgb_nonzero_pixels": 0
-        }
+        },
+        "logical_size": [
+          112,
+          34
+        ],
+        "texture_size": [
+          128,
+          64
+        ],
+        "content_uv": [
+          0.0,
+          0.875,
+          0.0,
+          0.53125
+        ]
       }
     },
     "focus": {
       "runtime": {
         "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFrameFocusShellV1.tga",
-        "sha256": "addeb26d5a603016d6432757e9b49d0cd3b96fc842b522187fd93ccba010e889",
+        "sha256": "fa67cb366e7be0a1aba59e07d313abb308bd5ab4ccff5cbbecf58accd10504ba",
         "tga_header": {
           "image_type": 2,
-          "width": 112,
-          "height": 43,
+          "width": 128,
+          "height": 64,
           "bits_per_pixel": 32,
           "descriptor": 8,
           "top_origin": false
@@ -202,15 +258,29 @@
           "opaque_pixels": 3494,
           "visible_green_spill_pixels": 0,
           "transparent_rgb_nonzero_pixels": 0
-        }
+        },
+        "logical_size": [
+          112,
+          43
+        ],
+        "texture_size": [
+          128,
+          64
+        ],
+        "content_uv": [
+          0.0,
+          0.875,
+          0.0,
+          0.671875
+        ]
       },
       "rim": {
         "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFrameFocusShellRimV1.tga",
-        "sha256": "c69f924807988768a534aba87db0d82ba75808dda8cd0f8e6c7a86dc24ff5162",
+        "sha256": "05879863659cfcf5932e71969c281e7ec7d14d1a794ff1bad92731f29c797765",
         "tga_header": {
           "image_type": 2,
-          "width": 112,
-          "height": 43,
+          "width": 128,
+          "height": 64,
           "bits_per_pixel": 32,
           "descriptor": 8,
           "top_origin": false
@@ -233,15 +303,29 @@
           "opaque_pixels": 542,
           "visible_green_spill_pixels": 0,
           "transparent_rgb_nonzero_pixels": 0
-        }
+        },
+        "logical_size": [
+          112,
+          43
+        ],
+        "texture_size": [
+          128,
+          64
+        ],
+        "content_uv": [
+          0.0,
+          0.875,
+          0.0,
+          0.671875
+        ]
       },
       "hover": {
         "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFrameFocusHoverRimV1.tga",
-        "sha256": "d0b7d7e7434f95404279047938cbd4f17757e70d20cea97ea36247e556eed7ba",
+        "sha256": "ef8cd55057cc5941ae1042a8267abb6ff4d3d67b9abae1bd0a5f4977f337c459",
         "tga_header": {
           "image_type": 2,
-          "width": 112,
-          "height": 43,
+          "width": 128,
+          "height": 64,
           "bits_per_pixel": 32,
           "descriptor": 8,
           "top_origin": false
@@ -264,15 +348,29 @@
           "opaque_pixels": 0,
           "visible_green_spill_pixels": 0,
           "transparent_rgb_nonzero_pixels": 0
-        }
+        },
+        "logical_size": [
+          112,
+          43
+        ],
+        "texture_size": [
+          128,
+          64
+        ],
+        "content_uv": [
+          0.0,
+          0.875,
+          0.0,
+          0.671875
+        ]
       },
       "aggro": {
         "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFrameFocusAggroRimV1.tga",
-        "sha256": "d5d9797224b5e5d8df71475f6af069d9ca9a7c7f0c7772e71f882a90196974a4",
+        "sha256": "4170839ac4325cd0749781bb26d6937a1c73a91f062a0cee3a0405175d079c07",
         "tga_header": {
           "image_type": 2,
-          "width": 112,
-          "height": 43,
+          "width": 128,
+          "height": 64,
           "bits_per_pixel": 32,
           "descriptor": 8,
           "top_origin": false
@@ -295,13 +393,27 @@
           "opaque_pixels": 0,
           "visible_green_spill_pixels": 0,
           "transparent_rgb_nonzero_pixels": 0
-        }
+        },
+        "logical_size": [
+          112,
+          43
+        ],
+        "texture_size": [
+          128,
+          64
+        ],
+        "content_uv": [
+          0.0,
+          0.875,
+          0.0,
+          0.671875
+        ]
       }
     }
   },
   "deterministic_export": {
     "tool": "tools/build_unitframes_secondary_v1_runtime.py",
-    "operation": "whole-source LANCZOS downscale; accepted deterministic rim-source downscale plus exact live-bed Alpha clear; segmented edge masks derived from accepted rim Alpha",
+    "operation": "whole-source LANCZOS downscale; accepted deterministic rim-source downscale plus exact live-bed Alpha clear; segmented edge masks derived from accepted rim Alpha; exact logical pixels padded top-left into 1.12-compatible power-of-two texture containers",
     "redraw": false,
     "mirror": false,
     "cross_role_pixels": false,
@@ -316,6 +428,16 @@
       "standard_runtime": [
         112,
         34
+      ],
+      "texture_container": [
+        128,
+        64
+      ],
+      "content_uv": [
+        0.0,
+        0.875,
+        0.0,
+        0.53125
       ],
       "provider_live_bed": [
         6,
@@ -350,6 +472,16 @@
       "standard_runtime": [
         112,
         43
+      ],
+      "texture_container": [
+        128,
+        64
+      ],
+      "content_uv": [
+        0.0,
+        0.875,
+        0.0,
+        0.671875
       ],
       "provider_live_bed": [
         6,

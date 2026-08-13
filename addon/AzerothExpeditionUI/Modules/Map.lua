@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local Map = {}
-Map.runtimeContract = "1.0"
+Map.runtimeContract = "1.1"
 
 local MEDIA = addon.media.root .. "Map\\"
 
@@ -21,6 +21,10 @@ local WORLD = {
   edgeRightOffset = -26,
   edgeTopOffset = 10,
   edgeExtraHeight = 22,
+  rodTextureHeight = 128,
+  rodLogicalHeight = 109,
+  edgeTextureWidth = 128,
+  edgeLogicalWidth = 118,
 }
 
 local MINI = {
@@ -29,31 +33,43 @@ local MINI = {
     path = MEDIA .. "MapMiniCompassRingV1",
     width = 184,
     height = 184,
+    textureWidth = 256,
+    textureHeight = 256,
   },
   north = {
     path = MEDIA .. "MapMiniNorthV1",
     width = 42,
     height = 58,
+    textureWidth = 64,
+    textureHeight = 64,
   },
   west = {
     path = MEDIA .. "MapMiniDirectionWestV1",
     width = 50,
     height = 36,
+    textureWidth = 64,
+    textureHeight = 64,
   },
   east = {
     path = MEDIA .. "MapMiniDirectionEastV1",
     width = 50,
     height = 36,
+    textureWidth = 64,
+    textureHeight = 64,
   },
   south = {
     path = MEDIA .. "MapMiniDirectionSouthV1",
     width = 38,
     height = 42,
+    textureWidth = 64,
+    textureHeight = 64,
   },
   plaque = {
     path = MEDIA .. "MapMiniInfoPlaqueV1",
     width = 150,
     height = 44,
+    textureWidth = 256,
+    textureHeight = 64,
   },
 }
 
@@ -198,10 +214,11 @@ local function LayoutHorizontal(
   local cap = WORLD.rodCapWidth
   local centre = totalWidth - cap - cap
   if centre < 1 then return false end
+  local bottom = WORLD.rodLogicalHeight / WORLD.rodTextureHeight
 
-  ConfigureTexture(textures[1], path, cap, height, { 0, 0.15, 0, 1 })
-  ConfigureTexture(textures[2], path, centre, height, { 0.15, 0.85, 0, 1 })
-  ConfigureTexture(textures[3], path, cap, height, { 0.85, 1, 0, 1 })
+  ConfigureTexture(textures[1], path, cap, height, { 0, 0.15, 0, bottom })
+  ConfigureTexture(textures[2], path, centre, height, { 0.15, 0.85, 0, bottom })
+  ConfigureTexture(textures[3], path, cap, height, { 0.85, 1, 0, bottom })
 
   textures[1]:SetPoint(point, anchor, relativePoint, x, y)
   textures[2]:SetPoint("LEFT", textures[1], "RIGHT", 0, 0)
@@ -221,10 +238,11 @@ local function LayoutVertical(
   local cap = WORLD.edgeCapHeight
   local centre = totalHeight - cap - cap
   if centre < 1 then return false end
+  local right = WORLD.edgeLogicalWidth / WORLD.edgeTextureWidth
 
-  ConfigureTexture(textures[1], path, width, cap, { 0, 1, 0, 0.16 })
-  ConfigureTexture(textures[2], path, width, centre, { 0, 1, 0.16, 0.84 })
-  ConfigureTexture(textures[3], path, width, cap, { 0, 1, 0.84, 1 })
+  ConfigureTexture(textures[1], path, width, cap, { 0, right, 0, 0.16 })
+  ConfigureTexture(textures[2], path, width, centre, { 0, right, 0.16, 0.84 })
+  ConfigureTexture(textures[3], path, width, cap, { 0, right, 0.84, 1 })
 
   textures[1]:SetPoint("TOPLEFT", anchor, "TOPLEFT", x, y)
   textures[2]:SetPoint("TOP", textures[1], "BOTTOM", 0, 0)
@@ -391,7 +409,12 @@ local function LayoutMiniTexture(texture, definition, scale)
     definition.path,
     definition.width * scale,
     definition.height * scale,
-    { 0, 1, 0, 1 }
+    {
+      0,
+      definition.width / definition.textureWidth,
+      0,
+      definition.height / definition.textureHeight,
+    }
   )
 end
 
@@ -546,7 +569,8 @@ function Map:GetRuntimeStatus()
     ", mini=" .. tostring(self.miniStatus or "unapplied") ..
     ", controls=provider-live" ..
     ", pfquest=provider-live" ..
-    ", farmmode=separate-provider"
+    ", farmmode=separate-provider" ..
+    ", texture-containers=pot-1.12"
 end
 
 function Map:Initialize()

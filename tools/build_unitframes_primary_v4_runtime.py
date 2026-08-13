@@ -18,6 +18,12 @@ from typing import Any
 
 from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
 
+from runtime_texture_compat import (
+    content_uv,
+    pad_to_power_of_two,
+    power_of_two_size,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_DIR = ROOT / "assets/source/unitframes/primary-v4"
@@ -31,6 +37,7 @@ PREVIEW = (
 
 SOURCE_SIZE = (1284, 252)
 RUNTIME_SIZE = (214, 42)
+RUNTIME_TEXTURE_SIZE = power_of_two_size(RUNTIME_SIZE)
 LIVE_BED = (7, 6, 207, 36)
 SLICE_X = (32, 150, 32)
 SLICE_Y = (8, 26, 8)
@@ -206,19 +213,23 @@ def tga_header(path: Path) -> dict[str, Any]:
 
 def save_runtime(image: Image.Image, path: Path) -> Image.Image:
     path.parent.mkdir(parents=True, exist_ok=True)
-    image.save(path, format="TGA")
+    texture = pad_to_power_of_two(image)
+    texture.save(path, format="TGA")
     with Image.open(path) as opened:
         roundtrip = opened.convert("RGBA")
-    if ImageChops.difference(roundtrip, image).getbbox() is not None:
+    if ImageChops.difference(roundtrip, texture).getbbox() is not None:
         raise ValueError(f"TGA roundtrip changed pixels: {path}")
+    logical_roundtrip = roundtrip.crop((0, 0, *RUNTIME_SIZE))
+    if ImageChops.difference(logical_roundtrip, image).getbbox() is not None:
+        raise ValueError(f"TGA container changed accepted logical pixels: {path}")
     header = tga_header(path)
     if (
         header["image_type"] != 2
         or header["bits_per_pixel"] != 32
-        or (header["width"], header["height"]) != RUNTIME_SIZE
+        or (header["width"], header["height"]) != RUNTIME_TEXTURE_SIZE
     ):
         raise ValueError(f"invalid runtime TGA: {path}: {header}")
-    return roundtrip
+    return logical_roundtrip
 
 
 def render_nine_slice(image: Image.Image, size: tuple[int, int]) -> Image.Image:
@@ -344,6 +355,9 @@ def main() -> int:
                 "sha256": sha256(path),
                 "tga_header": tga_header(path),
                 "metrics": image_metrics(roundtrip),
+                "logical_size": list(RUNTIME_SIZE),
+                "texture_size": list(RUNTIME_TEXTURE_SIZE),
+                "content_uv": content_uv(RUNTIME_SIZE, RUNTIME_TEXTURE_SIZE),
             }
         source_records[role] = {
             "component": contract["component"],
@@ -359,7 +373,7 @@ def main() -> int:
         "status": "runtime-exported-addon-integrated",
         "phase": "P5",
         "module": "unitframes",
-        "runtime_contract": "1.3",
+        "runtime_contract": "1.6",
         "components": ["UF.PLAYER.SHELL", "UF.TARGET.SHELL"],
         "source_manifest": repository_path(SOURCE_MANIFEST),
         "sources": source_records,
@@ -367,7 +381,7 @@ def main() -> int:
         "deterministic_export": {
             "tool": "tools/build_unitframes_primary_v4_runtime.py",
             "source_to_runtime": [list(SOURCE_SIZE), list(RUNTIME_SIZE)],
-            "operation": "whole-source LANCZOS downscale; live-bed Alpha clear for overlay rim; segmented edge masks derived from accepted rim Alpha",
+            "operation": "whole-source LANCZOS downscale; live-bed Alpha clear for overlay rim; segmented edge masks derived from accepted rim Alpha; exact logical pixels padded top-left into a 1.12-compatible power-of-two texture container",
             "redraw": False,
             "mirror": False,
             "cross_role_pixels": False,
@@ -375,6 +389,8 @@ def main() -> int:
         },
         "geometry": {
             "standard_runtime": list(RUNTIME_SIZE),
+            "texture_container": list(RUNTIME_TEXTURE_SIZE),
+            "content_uv": content_uv(RUNTIME_SIZE, RUNTIME_TEXTURE_SIZE),
             "provider_live_bed": list(LIVE_BED),
             "nine_slice_x": list(SLICE_X),
             "nine_slice_y": list(SLICE_Y),

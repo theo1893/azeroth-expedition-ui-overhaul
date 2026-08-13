@@ -1,0 +1,86 @@
+{
+  "schema": "aeui-cross-device-game-validation-handoff-v1",
+  "status": "open",
+  "captured_date": "2026-08-13",
+  "intended_resume_date": "2026-08-14",
+  "client": {
+    "name": "Turtle WoW",
+    "version": "1.18.1",
+    "interface": 11200
+  },
+  "repository_context": {
+    "branch": "main",
+    "base_head_before_handoff": "7eabd8b71d4f5612b4d0e06ad2c2876dfd47f19e",
+    "map_runtime": "1.1",
+    "unitframes_runtime": "1.6"
+  },
+  "screenshots": [
+    {
+      "file": "handoff/integration/map-unitframes-runtime-validation/minimap-unitframes-validation.png",
+      "size": [2140, 965],
+      "sha256": "b636ebe61c161c3e7be7c80fc3d559661cf41b971e6194bc16c1226ac2e0f2a2",
+      "scope": ["MAP.MINI.*", "UF.PLAYER.*", "UF.TARGETTARGET.*", "UF.FOCUS.*"]
+    },
+    {
+      "file": "handoff/integration/map-unitframes-runtime-validation/world-map-validation.png",
+      "size": [1438, 1076],
+      "sha256": "20cc5efe4a3fafecd14f6c925bf5c2ef324fbbab39fbfe52fde439e0fd0acf39",
+      "scope": ["MAP.WORLD.*"]
+    }
+  ],
+  "confirmed_result": [
+    "2 次幂 TGA 兼容修复有效：单位框外壳、大地图外壳与小地图罗盘都已在 1.12 客户端加载。",
+    "本次交接不需要重新生成已接受 source 像素。"
+  ],
+  "open_issues": [
+    {
+      "id": "UF-SHELL-DETAIL-LOSS",
+      "evidence": "minimap-unitframes-validation.png",
+      "observation": "当前放大布局下，可见的玩家框和次级框仍主要呈现为低对比深色矩形，accepted 端部维修和不规则轮廓不够清楚。",
+      "verify": "改像素前先检查 base/rim 层序、Alpha、provider backdrop 恢复、九切片几何和真实 Frame 尺寸。"
+    },
+    {
+      "id": "UF-TEXT-CROWDING",
+      "evidence": "minimap-unitframes-validation.png",
+      "observation": "左侧次级框的单位名与生命文字间距不足。",
+      "verify": "先在实机确认准确 route，再检查 provider FontString 锚点与安全宽度，不改变 Frame 所有权。"
+    },
+    {
+      "id": "MAP-MINI-VIEWPORT-CLIP",
+      "evidence": "minimap-unitframes-validation.png",
+      "observation": "罗盘组件紧贴右上屏幕边界，外围装饰被裁切。",
+      "verify": "在保留 provider Minimap 位置与行为的前提下增加屏幕安全边距或美术偏移。"
+    },
+    {
+      "id": "MAP-MINI-DUPLICATE-BACKING",
+      "evidence": "minimap-unitframes-validation.png",
+      "observation": "小地图下方同时保留黑色 provider 条与 AEUI 信息铭牌；动态文字和相邻入口没有落入预期铭牌区域。",
+      "verify": "确认残留的是哪个 provider backdrop，再锚定 pfUI 区域名／坐标，同时保留 tracking／插件按钮所有权。"
+    },
+    {
+      "id": "MAP-WORLD-VIEWPORT-CLIP",
+      "evidence": "world-map-validation.png",
+      "observation": "上下卷杆及端帽超出当前可视区，在屏幕左右边缘被裁切。",
+      "verify": "从 WorldMapButton 与 UIParent 边界推导外框几何；除非仅靠几何无法通过，否则不缩放或重新生成 accepted 美术。"
+    },
+    {
+      "id": "MAP-WORLD-CORNER-JOINS",
+      "evidence": "world-map-validation.png",
+      "observation": "横向卷杆与纵向纸边端部在四角明显叠压，底边尤其突出。",
+      "verify": "检查 Map.lua 的切片端部尺寸、偏移和层序，同时保持地图内容与 pfQuest 图层归 provider 所有。"
+    },
+    {
+      "id": "MAP-WORLD-CONTROL-CLEARANCE",
+      "evidence": "world-map-validation.png",
+      "observation": "顶部 provider 控件直接跨在卷杆／纸面过渡区，需要核对净空与层序。",
+      "verify": "先把它作为截图发现实机确认；外壳修复中不要换肤或迁移未登记控件。"
+    }
+  ],
+  "resume_first": [
+    "编辑前先打开两张原始截图，并在相同 UI Scale 下复核观察项。",
+    "地图先看 addon/AzerothExpeditionUI/Modules/Map.lua 的 WORLD 几何与 ApplyWorld，再看 ApplyMini 锚点和 provider backdrop 处理。",
+    "单位框先看 addon/AzerothExpeditionUI/Modules/UnitFrames.lua 的 LayoutPrimarySlices 与 ApplyPrimaryShell；保留 provider Frame 的 Point、Width、Height、事件和点击。",
+    "每个改动模块执行 quick 检查后立即回到聚焦实机验证。"
+  ],
+  "cleanup": "公司设备恢复工作且不再需要证据后，删除这个临时 handoff 目录。"
+}

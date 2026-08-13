@@ -17,6 +17,12 @@ from typing import Any
 
 from PIL import Image, ImageChops, ImageDraw, ImageFilter
 
+from runtime_texture_compat import (
+    content_uv,
+    pad_to_power_of_two,
+    power_of_two_size,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_DIR = ROOT / "assets/source/unitframes/secondary-v1"
@@ -231,19 +237,24 @@ def save_runtime(
     expected_size: tuple[int, int],
 ) -> Image.Image:
     path.parent.mkdir(parents=True, exist_ok=True)
-    image.save(path, format="TGA")
+    texture_size = power_of_two_size(expected_size)
+    texture = pad_to_power_of_two(image)
+    texture.save(path, format="TGA")
     with Image.open(path) as opened:
         roundtrip = opened.convert("RGBA")
-    if ImageChops.difference(roundtrip, image).getbbox() is not None:
+    if ImageChops.difference(roundtrip, texture).getbbox() is not None:
         raise ValueError(f"TGA roundtrip changed pixels: {path}")
+    logical_roundtrip = roundtrip.crop((0, 0, *expected_size))
+    if ImageChops.difference(logical_roundtrip, image).getbbox() is not None:
+        raise ValueError(f"TGA container changed accepted logical pixels: {path}")
     header = tga_header(path)
     if (
         header["image_type"] != 2
         or header["bits_per_pixel"] != 32
-        or (header["width"], header["height"]) != expected_size
+        or (header["width"], header["height"]) != texture_size
     ):
         raise ValueError(f"invalid runtime TGA: {path}: {header}")
-    return roundtrip
+    return logical_roundtrip
 
 
 def live_bed_visible_pixels(
@@ -312,6 +323,9 @@ def main() -> int:
                 "sha256": sha256(path),
                 "tga_header": tga_header(path),
                 "metrics": metrics,
+                "logical_size": list(runtime_size),
+                "texture_size": list(power_of_two_size(runtime_size)),
+                "content_uv": content_uv(runtime_size),
             }
         source_records[role] = {
             "component": contract["component"],
@@ -330,14 +344,14 @@ def main() -> int:
         "status": "runtime-exported-addon-integrated",
         "phase": "P5",
         "module": "unitframes",
-        "runtime_contract": "1.5",
+        "runtime_contract": "1.6",
         "components": [contract["component"] for contract in ROLES.values()],
         "source_manifest": repository_path(SOURCE_MANIFEST),
         "sources": source_records,
         "runtime": runtime_records,
         "deterministic_export": {
             "tool": "tools/build_unitframes_secondary_v1_runtime.py",
-            "operation": "whole-source LANCZOS downscale; accepted deterministic rim-source downscale plus exact live-bed Alpha clear; segmented edge masks derived from accepted rim Alpha",
+            "operation": "whole-source LANCZOS downscale; accepted deterministic rim-source downscale plus exact live-bed Alpha clear; segmented edge masks derived from accepted rim Alpha; exact logical pixels padded top-left into 1.12-compatible power-of-two texture containers",
             "redraw": False,
             "mirror": False,
             "cross_role_pixels": False,
@@ -347,6 +361,10 @@ def main() -> int:
             role: {
                 "source_size": list(contract["source_size"]),
                 "standard_runtime": list(contract["runtime_size"]),
+                "texture_container": list(
+                    power_of_two_size(tuple(contract["runtime_size"]))
+                ),
+                "content_uv": content_uv(tuple(contract["runtime_size"])),
                 "provider_live_bed": list(contract["live_bed"]),
                 "nine_slice_x": list(contract["slice_x"]),
                 "nine_slice_y": list(contract["slice_y"]),

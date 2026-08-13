@@ -74,6 +74,20 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def is_power_of_two(value: int) -> bool:
+    return value > 0 and value & (value - 1) == 0
+
+
+def tga_size(path: Path) -> tuple[int, int] | None:
+    data = path.read_bytes()[:18]
+    if len(data) < 18:
+        return None
+    return (
+        int.from_bytes(data[12:14], "little"),
+        int.from_bytes(data[14:16], "little"),
+    )
+
+
 def as_repo_path(root: Path, path: Path) -> str:
     try:
         return path.relative_to(root).as_posix()
@@ -161,6 +175,28 @@ def collect_runtime_manifest_paths(
         and Path(value).suffix.lower() in RUNTIME_SUFFIXES
     ):
         records.append((value, None))
+
+
+def collect_runtime_texture_records(
+    value: object,
+    records: list[tuple[str, tuple[int, int]]],
+) -> None:
+    if isinstance(value, dict):
+        file_value = value.get("file")
+        texture_size = value.get("texture_size")
+        if (
+            isinstance(file_value, str)
+            and file_value.lower().endswith(".tga")
+            and isinstance(texture_size, list)
+            and len(texture_size) == 2
+            and all(isinstance(item, int) for item in texture_size)
+        ):
+            records.append((file_value, (texture_size[0], texture_size[1])))
+        for child in value.values():
+            collect_runtime_texture_records(child, records)
+    elif isinstance(value, list):
+        for child in value:
+            collect_runtime_texture_records(child, records)
 
 
 def git_tracked_addon_files(root: Path) -> set[str] | None:
@@ -376,6 +412,27 @@ def main() -> int:
                         "MANIFEST_RUNTIME_HASH_MISMATCH",
                         relative,
                         f"runtime bytes differ from {as_repo_path(root, manifest)}",
+                    )
+            texture_records: list[tuple[str, tuple[int, int]]] = []
+            collect_runtime_texture_records(data, texture_records)
+            for relative, expected_size in texture_records:
+                target = root / relative
+                if not target.is_file():
+                    continue
+                actual_size = tga_size(target)
+                if (
+                    actual_size != expected_size
+                    or actual_size is None
+                    or not all(is_power_of_two(value) for value in actual_size)
+                    or max(actual_size) > 1024
+                ):
+                    add_violation(
+                        violations,
+                        "TGA_TEXTURE_CONTAINER_INCOMPATIBLE",
+                        relative,
+                        "Turtle WoW 1.12 TGA must match its manifest and use "
+                        f"power-of-two dimensions no larger than 1024; "
+                        f"manifest={expected_size}, actual={actual_size}",
                     )
 
     report = {
