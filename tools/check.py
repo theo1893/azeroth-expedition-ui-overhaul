@@ -46,6 +46,17 @@ MODULE_FILES = {
         "addon/pfUI/api/unitframes.lua",
         "addon/pfUI/modules/raid.lua",
     ),
+    "map": (
+        "addon/AzerothExpeditionUI/Modules/Map.lua",
+        "addon/pfUI/modules/map.lua",
+        "addon/pfUI/modules/minimap.lua",
+        "addon/pfUI/modules/farmmode.lua",
+    ),
+    "spellbook": (
+        "addon/AzerothExpeditionUI/Modules/Spellbook.lua",
+        "addon/pfUI/api/expedition.lua",
+        "addon/pfUI/skins/blizzard/spellbook.lua",
+    ),
 }
 
 

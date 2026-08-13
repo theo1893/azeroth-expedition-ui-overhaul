@@ -1,10 +1,97 @@
 local addon = AzerothExpeditionUI
 local UnitFrames = {}
-UnitFrames.runtimeContract = "1.2"
+UnitFrames.runtimeContract = "1.5"
 
 local MEDIA = addon.media.root .. "UnitFrames\\"
 local HEALTH_TEXTURE = MEDIA .. "UnitFrameHealthFillV1"
 local POWER_TEXTURE = MEDIA .. "UnitFramePowerFillV1"
+
+local PRIMARY_GEOMETRY = {
+  sourceWidth = 214,
+  sourceHeight = 42,
+  leftCap = 32,
+  centreWidth = 150,
+  rightCap = 32,
+  topCap = 8,
+  centreHeight = 26,
+  bottomCap = 8,
+  outsetLeft = 7,
+  outsetRight = 7,
+  outsetTop = 6,
+  outsetBottom = 6,
+  assembly = "nine-slice-32/150/32-8/26/8",
+}
+
+local TARGETTARGET_GEOMETRY = {
+  sourceWidth = 112,
+  sourceHeight = 34,
+  leftCap = 20,
+  centreWidth = 72,
+  rightCap = 20,
+  topCap = 6,
+  centreHeight = 22,
+  bottomCap = 6,
+  outsetLeft = 6,
+  outsetRight = 6,
+  outsetTop = 6,
+  outsetBottom = 6,
+  assembly = "nine-slice-20/72/20-6/22/6",
+}
+
+local FOCUS_GEOMETRY = {
+  sourceWidth = 112,
+  sourceHeight = 43,
+  leftCap = 24,
+  centreWidth = 64,
+  rightCap = 24,
+  topCap = 10,
+  centreHeight = 27,
+  bottomCap = 6,
+  outsetLeft = 6,
+  outsetRight = 6,
+  outsetTop = 10,
+  outsetBottom = 6,
+  assembly = "nine-slice-24/64/24-10/27/6",
+}
+
+-- The existing scoped shell route owns every explicitly registered role.
+-- Geometry stays role-local so compact frames never inherit primary caps.
+local PRIMARY_SHELLS = {
+  player = {
+    base = MEDIA .. "UnitFramePlayerShellV1",
+    rim = MEDIA .. "UnitFramePlayerShellRimV1",
+    hover = MEDIA .. "UnitFramePlayerHoverRimV1",
+    aggro = MEDIA .. "UnitFramePlayerAggroRimV1",
+    geometry = PRIMARY_GEOMETRY,
+  },
+  target = {
+    base = MEDIA .. "UnitFrameTargetShellV1",
+    rim = MEDIA .. "UnitFrameTargetShellRimV1",
+    hover = MEDIA .. "UnitFrameTargetHoverRimV1",
+    aggro = MEDIA .. "UnitFrameTargetAggroRimV1",
+    geometry = PRIMARY_GEOMETRY,
+  },
+  targettarget = {
+    base = MEDIA .. "UnitFrameTargetTargetShellV1",
+    rim = MEDIA .. "UnitFrameTargetTargetShellRimV1",
+    hover = MEDIA .. "UnitFrameTargetTargetHoverRimV1",
+    aggro = MEDIA .. "UnitFrameTargetTargetAggroRimV1",
+    geometry = TARGETTARGET_GEOMETRY,
+  },
+  focus = {
+    base = MEDIA .. "UnitFrameFocusShellV1",
+    rim = MEDIA .. "UnitFrameFocusShellRimV1",
+    hover = MEDIA .. "UnitFrameFocusHoverRimV1",
+    aggro = MEDIA .. "UnitFrameFocusAggroRimV1",
+    geometry = FOCUS_GEOMETRY,
+  },
+}
+
+local PRIMARY_SLICE_ORDER = {
+  "topLeft", "top", "topRight",
+  "left", "centre", "right",
+  "bottomLeft", "bottom", "bottomRight",
+}
 
 local PRIMARY_FRAME_KEYS = {
   "player",
@@ -164,6 +251,166 @@ local function HideRaidTextures(frame)
   if not textures then return end
   for _, texture in pairs(textures) do
     texture:Hide()
+  end
+end
+
+local function EnsurePrimarySlices(owner, field, layer)
+  if not owner or type(owner.CreateTexture) ~= "function" then
+    return nil
+  end
+  if owner[field] then return owner[field] end
+
+  local slices = {}
+  for _, name in ipairs(PRIMARY_SLICE_ORDER) do
+    slices[name] = owner:CreateTexture(nil, layer or "ARTWORK")
+  end
+  owner[field] = slices
+  return slices
+end
+
+local function SetPrimarySlicesShown(slices, shown)
+  if not slices then return end
+  for _, name in ipairs(PRIMARY_SLICE_ORDER) do
+    local texture = slices[name]
+    if texture then
+      if shown then texture:Show() else texture:Hide() end
+    end
+  end
+end
+
+local function SetPrimarySlicesColour(slices, red, green, blue, alpha)
+  if not slices then return end
+  for _, name in ipairs(PRIMARY_SLICE_ORDER) do
+    local texture = slices[name]
+    if texture then
+      texture:SetVertexColor(red, green, blue)
+      texture:SetAlpha(alpha or 1)
+    end
+  end
+end
+
+local function ConfigurePrimarySlice(texture, path, coords, width, height)
+  texture:ClearAllPoints()
+  texture:SetTexture(path)
+  texture:SetTexCoord(coords[1], coords[2], coords[3], coords[4])
+  texture:SetWidth(width)
+  texture:SetHeight(height)
+end
+
+local function LayoutPrimarySlices(
+  slices, path, frame, artWidth, artHeight, geometry
+)
+  if not slices or not path or not frame or not geometry then return false end
+
+  local centreWidth = artWidth - geometry.leftCap - geometry.rightCap
+  local centreHeight = artHeight - geometry.topCap - geometry.bottomCap
+  if centreWidth < 1 or centreHeight < 1 then return false end
+
+  local uvX1 = geometry.leftCap / geometry.sourceWidth
+  local uvX2 =
+    (geometry.leftCap + geometry.centreWidth) / geometry.sourceWidth
+  local uvY1 = geometry.topCap / geometry.sourceHeight
+  local uvY2 =
+    (geometry.topCap + geometry.centreHeight) / geometry.sourceHeight
+  local texCoords = {
+    topLeft = { 0, uvX1, 0, uvY1 },
+    top = { uvX1, uvX2, 0, uvY1 },
+    topRight = { uvX2, 1, 0, uvY1 },
+    left = { 0, uvX1, uvY1, uvY2 },
+    centre = { uvX1, uvX2, uvY1, uvY2 },
+    right = { uvX2, 1, uvY1, uvY2 },
+    bottomLeft = { 0, uvX1, uvY2, 1 },
+    bottom = { uvX1, uvX2, uvY2, 1 },
+    bottomRight = { uvX2, 1, uvY2, 1 },
+  }
+
+  ConfigurePrimarySlice(
+    slices.topLeft, path, texCoords.topLeft,
+    geometry.leftCap, geometry.topCap
+  )
+  ConfigurePrimarySlice(
+    slices.top, path, texCoords.top,
+    centreWidth, geometry.topCap
+  )
+  ConfigurePrimarySlice(
+    slices.topRight, path, texCoords.topRight,
+    geometry.rightCap, geometry.topCap
+  )
+  ConfigurePrimarySlice(
+    slices.left, path, texCoords.left,
+    geometry.leftCap, centreHeight
+  )
+  ConfigurePrimarySlice(
+    slices.centre, path, texCoords.centre,
+    centreWidth, centreHeight
+  )
+  ConfigurePrimarySlice(
+    slices.right, path, texCoords.right,
+    geometry.rightCap, centreHeight
+  )
+  ConfigurePrimarySlice(
+    slices.bottomLeft, path, texCoords.bottomLeft,
+    geometry.leftCap, geometry.bottomCap
+  )
+  ConfigurePrimarySlice(
+    slices.bottom, path, texCoords.bottom,
+    centreWidth, geometry.bottomCap
+  )
+  ConfigurePrimarySlice(
+    slices.bottomRight, path, texCoords.bottomRight,
+    geometry.rightCap, geometry.bottomCap
+  )
+
+  slices.topLeft:SetPoint(
+    "TOPLEFT", frame, "TOPLEFT", -geometry.outsetLeft, geometry.outsetTop
+  )
+  slices.top:SetPoint("LEFT", slices.topLeft, "RIGHT", 0, 0)
+  slices.topRight:SetPoint("LEFT", slices.top, "RIGHT", 0, 0)
+  slices.left:SetPoint("TOP", slices.topLeft, "BOTTOM", 0, 0)
+  slices.centre:SetPoint("LEFT", slices.left, "RIGHT", 0, 0)
+  slices.right:SetPoint("LEFT", slices.centre, "RIGHT", 0, 0)
+  slices.bottomLeft:SetPoint("TOP", slices.left, "BOTTOM", 0, 0)
+  slices.bottom:SetPoint("LEFT", slices.bottomLeft, "RIGHT", 0, 0)
+  slices.bottomRight:SetPoint("LEFT", slices.bottom, "RIGHT", 0, 0)
+  SetPrimarySlicesShown(slices, true)
+  return true
+end
+
+local function EnsurePrimaryOverlay(frame)
+  if frame.aeuiPrimaryShellOverlay then
+    return frame.aeuiPrimaryShellOverlay
+  end
+  if type(CreateFrame) ~= "function" then return nil end
+
+  local overlay = CreateFrame("Frame", nil, frame)
+  overlay:SetAllPoints(frame)
+  overlay:SetFrameLevel(10)
+  frame.aeuiPrimaryShellOverlay = overlay
+  return overlay
+end
+
+local function HidePrimaryChrome(frame)
+  if frame.hp and frame.hp.backdrop then frame.hp.backdrop:Hide() end
+  if frame.power and frame.power.backdrop then frame.power.backdrop:Hide() end
+
+  if frame.backdrop_shadow then
+    if frame.aeuiPrimaryShadowRestore == nil then
+      frame.aeuiPrimaryShadowRestore = {
+        shown = FrameShown(frame.backdrop_shadow),
+      }
+    end
+    frame.backdrop_shadow:Hide()
+  end
+
+  if frame.glow and type(frame.glow.SetBackdrop) == "function" then
+    frame.glow:SetBackdrop(nil)
+    frame.glow:SetFrameStrata("MEDIUM")
+    frame.glow:SetFrameLevel(11)
+  end
+  if frame.hoverglow and type(frame.hoverglow.SetBackdrop) == "function" then
+    frame.hoverglow:SetBackdrop(nil)
+    frame.hoverglow:SetFrameStrata("MEDIUM")
+    frame.hoverglow:SetFrameLevel(12)
   end
 end
 
@@ -485,6 +732,12 @@ function UnitFrames:IsPrimaryEnabled()
     RouteOwned("unitframes.power-fill")
 end
 
+function UnitFrames:IsPrimaryShellEnabled()
+  return
+    ModuleEnabled() and
+    RouteOwned("unitframes.primary-shell")
+end
+
 function UnitFrames:IsRaidEnabled()
   return
     ModuleEnabled() and
@@ -496,8 +749,126 @@ end
 function UnitFrames:IsEnabled()
   return
     self:IsPrimaryEnabled() or
+    self:IsPrimaryShellEnabled() or
     self:IsRaidEnabled() or
     self:IsPortraitConfigurationEnabled()
+end
+
+local function ExpeditionPrimaryVisualRefresh(frame)
+  local role = frame and frame.aeuiPrimaryShellRole
+  if role then UnitFrames:ApplyPrimaryShell(frame, role) end
+end
+
+function UnitFrames:ApplyPrimaryShell(frame, role)
+  local contract = role and PRIMARY_SHELLS[role]
+  local registeredFrame = pfUI and pfUI.uf and role and pfUI.uf[role]
+  if not frame or not contract or registeredFrame ~= frame then
+    return false
+  end
+
+  local geometry = contract.geometry
+  local width = FrameDimension(frame, "GetWidth", "width")
+  local height = FrameDimension(frame, "GetHeight", "height")
+  local artWidth =
+    width and width + geometry.outsetLeft + geometry.outsetRight or nil
+  local artHeight =
+    height and height + geometry.outsetTop + geometry.outsetBottom or nil
+  if
+    not artWidth or not artHeight or
+    artWidth <= geometry.leftCap + geometry.rightCap or
+    artHeight <= geometry.topCap + geometry.bottomCap
+  then
+    self:RestorePrimaryShell(frame)
+    return false
+  end
+
+  local background = EnsurePrimarySlices(
+    frame, "aeuiPrimaryShellBackgroundSlices", "BACKGROUND"
+  )
+  local overlay = EnsurePrimaryOverlay(frame)
+  local rim = overlay and EnsurePrimarySlices(
+    overlay, "aeuiPrimaryShellRimSlices", "ARTWORK"
+  )
+  local hover = frame.hoverglow and EnsurePrimarySlices(
+    frame.hoverglow, "aeuiPrimaryHoverSlices", "ARTWORK"
+  )
+  local aggro = frame.glow and EnsurePrimarySlices(
+    frame.glow, "aeuiPrimaryAggroSlices", "ARTWORK"
+  )
+  if not background or not overlay or not rim or not hover or not aggro then
+    self:RestorePrimaryShell(frame)
+    return false
+  end
+
+  if
+    not LayoutPrimarySlices(background, contract.base, frame, artWidth, artHeight, geometry) or
+    not LayoutPrimarySlices(rim, contract.rim, frame, artWidth, artHeight, geometry) or
+    not LayoutPrimarySlices(hover, contract.hover, frame, artWidth, artHeight, geometry) or
+    not LayoutPrimarySlices(aggro, contract.aggro, frame, artWidth, artHeight, geometry)
+  then
+    self:RestorePrimaryShell(frame)
+    return false
+  end
+
+  SetPrimarySlicesColour(background, 1, 1, 1, 1)
+  SetPrimarySlicesColour(rim, 1, 1, 1, 1)
+  SetPrimarySlicesColour(hover, 0.78, 0.64, 0.40, 0.82)
+  SetPrimarySlicesColour(aggro, 0.62, 0.22, 0.10, 0.88)
+  overlay:Show()
+  HidePrimaryChrome(frame)
+
+  frame.aeuiPrimaryShellRole = role
+  frame.aeuiPrimaryShellTexture = contract.base
+  frame.aeuiPrimaryShellAssembly = geometry.assembly
+  frame.aeuiPrimaryShellArtWidth = artWidth
+  frame.aeuiPrimaryShellArtHeight = artHeight
+  frame.aeuiPrimaryShellContract = self.runtimeContract
+  frame.aeuiPrimaryRefreshVisual = ExpeditionPrimaryVisualRefresh
+  return true
+end
+
+function UnitFrames:RestorePrimaryShell(frame)
+  if not frame then return false end
+  local applied = frame.aeuiPrimaryShellContract and true or false
+
+  frame.aeuiPrimaryRefreshVisual = nil
+  SetPrimarySlicesShown(frame.aeuiPrimaryShellBackgroundSlices, false)
+  if frame.aeuiPrimaryShellOverlay then
+    SetPrimarySlicesShown(
+      frame.aeuiPrimaryShellOverlay.aeuiPrimaryShellRimSlices,
+      false
+    )
+    frame.aeuiPrimaryShellOverlay:Hide()
+  end
+  if frame.hoverglow then
+    SetPrimarySlicesShown(frame.hoverglow.aeuiPrimaryHoverSlices, false)
+  end
+  if frame.glow then
+    SetPrimarySlicesShown(frame.glow.aeuiPrimaryAggroSlices, false)
+  end
+
+  local shadow = frame.aeuiPrimaryShadowRestore
+  if shadow and frame.backdrop_shadow then
+    SetShown(frame.backdrop_shadow, shadow.shown)
+  end
+  frame.aeuiPrimaryShadowRestore = nil
+  frame.aeuiPrimaryShellRole = nil
+  frame.aeuiPrimaryShellTexture = nil
+  frame.aeuiPrimaryShellAssembly = nil
+  frame.aeuiPrimaryShellArtWidth = nil
+  frame.aeuiPrimaryShellArtHeight = nil
+  frame.aeuiPrimaryShellContract = nil
+
+  if
+    applied and
+    not frame.aeuiPrimaryShellRestoring and
+    type(frame.UpdateConfig) == "function"
+  then
+    frame.aeuiPrimaryShellRestoring = true
+    pcall(frame.UpdateConfig, frame)
+    frame.aeuiPrimaryShellRestoring = nil
+  end
+  return applied
 end
 
 function UnitFrames:ApplyFrame(frame)
@@ -617,9 +988,11 @@ end
 function UnitFrames:Apply()
   local frames = pfUI and pfUI.uf
   local primaryEnabled = self:IsPrimaryEnabled()
+  local primaryShellEnabled = self:IsPrimaryShellEnabled()
   local raidEnabled = self:IsRaidEnabled()
   local portraitsEnabled = self:IsPortraitConfigurationEnabled()
   local primaryApplied = 0
+  local primaryShellApplied = 0
   local raidApplied = 0
 
   if portraitsEnabled then
@@ -635,6 +1008,16 @@ function UnitFrames:Apply()
         if self:ApplyFrame(frame) then primaryApplied = primaryApplied + 1 end
       else
         self:RestoreFrame(frame)
+      end
+
+      if PRIMARY_SHELLS[key] then
+        if primaryShellEnabled then
+          if self:ApplyPrimaryShell(frame, key) then
+            primaryShellApplied = primaryShellApplied + 1
+          end
+        else
+          self:RestorePrimaryShell(frame)
+        end
       end
     end
 
@@ -655,6 +1038,7 @@ function UnitFrames:Apply()
   end
 
   self.appliedFrameCount = primaryApplied
+  self.appliedPrimaryShellCount = primaryShellApplied
   self.appliedRaidFrameCount = raidApplied
 end
 
@@ -667,14 +1051,19 @@ function UnitFrames:GetRuntimeStatus()
     "contract=" .. tostring(self.runtimeContract) ..
     ", enabled=" .. tostring(self:IsEnabled()) ..
     ", primary-bars=" .. tostring(self.appliedFrameCount or 0) .. "/4" ..
+    ", primary-shells=" ..
+      tostring(self.appliedPrimaryShellCount or 0) .. "/4" ..
     ", raid-shells=" .. tostring(self.appliedRaidFrameCount or 0) .. "/40" ..
     ", portraits=" .. tostring(self.disabledPortraitConfigCount or 0) ..
       "/" .. tostring(PORTRAIT_CONFIG_COUNT) ..
     ", marker-trackers=" ..
       tostring(self.disabledPortraitTrackerCount or 0) .. "/2" ..
+    ", primary-slices=32/150/32-8/26/8" ..
+    ", targettarget-slices=20/72/20-6/22/6" ..
+    ", focus-slices=24/64/24-10/27/6" ..
     ", raid-slices=6/62/6" ..
     ", scope=all-pfui-unitframe-portraits,player,target,targettarget,focus,pfRaid1..40" ..
-    ", fallback=pfui-configured-portraits-bars-and-raid-backdrops"
+    ", fallback=pfui-configured-portraits-bars-primary-chrome-and-raid-backdrops"
 end
 
 addon:RegisterModule("UnitFrames", UnitFrames)

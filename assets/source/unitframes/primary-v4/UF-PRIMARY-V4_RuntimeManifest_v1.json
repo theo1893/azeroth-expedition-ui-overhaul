@@ -1,0 +1,358 @@
+{
+  "schema": "aeui-unitframes-primary-v4-runtime-manifest-v1",
+  "status": "runtime-exported-addon-integrated",
+  "phase": "P5",
+  "module": "unitframes",
+  "runtime_contract": "1.3",
+  "components": [
+    "UF.PLAYER.SHELL",
+    "UF.TARGET.SHELL"
+  ],
+  "source_manifest": "assets/source/unitframes/primary-v4/UF-PRIMARY-V4_SourceManifest_v1.json",
+  "sources": {
+    "player": {
+      "component": "UF.PLAYER.SHELL",
+      "file": "assets/source/unitframes/primary-v4/UnitFramePlayerShell_MasterV1.png",
+      "sha256": "331b353f294ae2e658e010ea59763a48bb08ba574b88e150fe3f5a2416bd617b",
+      "size": [
+        1284,
+        252
+      ]
+    },
+    "target": {
+      "component": "UF.TARGET.SHELL",
+      "file": "assets/source/unitframes/primary-v4/UnitFrameTargetShell_MasterV1.png",
+      "sha256": "256086c128561fdfa0717740701581d156ab811d88282c0098f9d3b4595acf81",
+      "size": [
+        1284,
+        252
+      ]
+    }
+  },
+  "runtime": {
+    "player": {
+      "runtime": {
+        "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFramePlayerShellV1.tga",
+        "sha256": "235bfa53165ccb5fa8492c85e2e3b19b1c703f11ffb2323045e4fe3c300c28c7",
+        "tga_header": {
+          "image_type": 2,
+          "width": 214,
+          "height": 42,
+          "bits_per_pixel": 32,
+          "descriptor": 8,
+          "top_origin": false
+        },
+        "metrics": {
+          "size": [
+            214,
+            42
+          ],
+          "mode": "RGBA",
+          "pixel_sha256": "b6daf33be4023cab9e005a8ac7071c9662f584ba7b37c7c7c08db1e3e240900e",
+          "visible_bbox_exclusive": [
+            0,
+            0,
+            214,
+            42
+          ],
+          "transparent_pixels": 72,
+          "partially_transparent_pixels": 1004,
+          "opaque_pixels": 7912,
+          "visible_green_spill_pixels": 0,
+          "transparent_rgb_nonzero_pixels": 0
+        }
+      },
+      "rim": {
+        "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFramePlayerShellRimV1.tga",
+        "sha256": "ae8cc9d5b986aca99bd99090db01e81792d5b0b98a8ddbfade7d69ec24a0c62d",
+        "tga_header": {
+          "image_type": 2,
+          "width": 214,
+          "height": 42,
+          "bits_per_pixel": 32,
+          "descriptor": 8,
+          "top_origin": false
+        },
+        "metrics": {
+          "size": [
+            214,
+            42
+          ],
+          "mode": "RGBA",
+          "pixel_sha256": "56910d20134423a0b23d20bcd1ba73be8dec77ada4a33073f8964497b1ca6f9a",
+          "visible_bbox_exclusive": [
+            0,
+            0,
+            214,
+            42
+          ],
+          "transparent_pixels": 6072,
+          "partially_transparent_pixels": 1004,
+          "opaque_pixels": 1912,
+          "visible_green_spill_pixels": 0,
+          "transparent_rgb_nonzero_pixels": 0
+        }
+      },
+      "hover": {
+        "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFramePlayerHoverRimV1.tga",
+        "sha256": "ac361bf64fafd69844ecff83f187a5dd32bb94d2ae660ceac7321cf00c37ffd5",
+        "tga_header": {
+          "image_type": 2,
+          "width": 214,
+          "height": 42,
+          "bits_per_pixel": 32,
+          "descriptor": 8,
+          "top_origin": false
+        },
+        "metrics": {
+          "size": [
+            214,
+            42
+          ],
+          "mode": "RGBA",
+          "pixel_sha256": "6138f895d52efddc84721e4ad664fc0ccf24a095d0f28023ff1383270011c2be",
+          "visible_bbox_exclusive": [
+            0,
+            0,
+            214,
+            42
+          ],
+          "transparent_pixels": 7777,
+          "partially_transparent_pixels": 1211,
+          "opaque_pixels": 0,
+          "visible_green_spill_pixels": 0,
+          "transparent_rgb_nonzero_pixels": 0
+        }
+      },
+      "aggro": {
+        "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFramePlayerAggroRimV1.tga",
+        "sha256": "43e7506aacd6adc422e1b1eb763f24e1461b21d624b6fdfe3f92041bfb7f03c2",
+        "tga_header": {
+          "image_type": 2,
+          "width": 214,
+          "height": 42,
+          "bits_per_pixel": 32,
+          "descriptor": 8,
+          "top_origin": false
+        },
+        "metrics": {
+          "size": [
+            214,
+            42
+          ],
+          "mode": "RGBA",
+          "pixel_sha256": "d7de2a4d9644d61da6159f92a2ab868dca1f07410990e3b9b1ef1f6d5ddde61a",
+          "visible_bbox_exclusive": [
+            0,
+            0,
+            214,
+            42
+          ],
+          "transparent_pixels": 7573,
+          "partially_transparent_pixels": 1415,
+          "opaque_pixels": 0,
+          "visible_green_spill_pixels": 0,
+          "transparent_rgb_nonzero_pixels": 0
+        }
+      }
+    },
+    "target": {
+      "runtime": {
+        "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFrameTargetShellV1.tga",
+        "sha256": "7acd1f6fd3c188fe30d09033adb1cbdf0b6aec0657184a06dfe50900e95aa83b",
+        "tga_header": {
+          "image_type": 2,
+          "width": 214,
+          "height": 42,
+          "bits_per_pixel": 32,
+          "descriptor": 8,
+          "top_origin": false
+        },
+        "metrics": {
+          "size": [
+            214,
+            42
+          ],
+          "mode": "RGBA",
+          "pixel_sha256": "c5fea97657ce628ed72804f107d48f9403dbbbcde1db32c6e3636186f1e47dc2",
+          "visible_bbox_exclusive": [
+            0,
+            0,
+            214,
+            42
+          ],
+          "transparent_pixels": 103,
+          "partially_transparent_pixels": 1035,
+          "opaque_pixels": 7850,
+          "visible_green_spill_pixels": 0,
+          "transparent_rgb_nonzero_pixels": 0
+        }
+      },
+      "rim": {
+        "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFrameTargetShellRimV1.tga",
+        "sha256": "450d1cd4df2bae21c3178e5eb3caa1682d68c7bb776620570ae1c2ab33912ee6",
+        "tga_header": {
+          "image_type": 2,
+          "width": 214,
+          "height": 42,
+          "bits_per_pixel": 32,
+          "descriptor": 8,
+          "top_origin": false
+        },
+        "metrics": {
+          "size": [
+            214,
+            42
+          ],
+          "mode": "RGBA",
+          "pixel_sha256": "1fba79e8ec5331cbc7fa74117a03804498d7dffb0cb54e707e2eb2d3a3b1dcf6",
+          "visible_bbox_exclusive": [
+            0,
+            0,
+            214,
+            42
+          ],
+          "transparent_pixels": 6103,
+          "partially_transparent_pixels": 1035,
+          "opaque_pixels": 1850,
+          "visible_green_spill_pixels": 0,
+          "transparent_rgb_nonzero_pixels": 0
+        }
+      },
+      "hover": {
+        "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFrameTargetHoverRimV1.tga",
+        "sha256": "c1307060e7f9ad1e79dacb0b9cc7dc3eac78398f2199efb1a76b134840fd4aef",
+        "tga_header": {
+          "image_type": 2,
+          "width": 214,
+          "height": 42,
+          "bits_per_pixel": 32,
+          "descriptor": 8,
+          "top_origin": false
+        },
+        "metrics": {
+          "size": [
+            214,
+            42
+          ],
+          "mode": "RGBA",
+          "pixel_sha256": "b43035422743cd51c0b30f96ef5cfd1ff13a69c09fbea6fc51089915cf913d40",
+          "visible_bbox_exclusive": [
+            0,
+            0,
+            214,
+            42
+          ],
+          "transparent_pixels": 7786,
+          "partially_transparent_pixels": 1202,
+          "opaque_pixels": 0,
+          "visible_green_spill_pixels": 0,
+          "transparent_rgb_nonzero_pixels": 0
+        }
+      },
+      "aggro": {
+        "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFrameTargetAggroRimV1.tga",
+        "sha256": "cf5d44c42d947676c475b93414a1a81342adbc2297411aa71d18a5b49b8bbaa1",
+        "tga_header": {
+          "image_type": 2,
+          "width": 214,
+          "height": 42,
+          "bits_per_pixel": 32,
+          "descriptor": 8,
+          "top_origin": false
+        },
+        "metrics": {
+          "size": [
+            214,
+            42
+          ],
+          "mode": "RGBA",
+          "pixel_sha256": "32d0a8d48e01c6e4e623260026efe6c6d7eb18bb0e05dd05c9cb2c2e40660e57",
+          "visible_bbox_exclusive": [
+            0,
+            0,
+            214,
+            42
+          ],
+          "transparent_pixels": 7575,
+          "partially_transparent_pixels": 1413,
+          "opaque_pixels": 0,
+          "visible_green_spill_pixels": 0,
+          "transparent_rgb_nonzero_pixels": 0
+        }
+      }
+    }
+  },
+  "deterministic_export": {
+    "tool": "tools/build_unitframes_primary_v4_runtime.py",
+    "source_to_runtime": [
+      [
+        1284,
+        252
+      ],
+      [
+        214,
+        42
+      ]
+    ],
+    "operation": "whole-source LANCZOS downscale; live-bed Alpha clear for overlay rim; segmented edge masks derived from accepted rim Alpha",
+    "redraw": false,
+    "mirror": false,
+    "cross_role_pixels": false,
+    "imagegen_calls": 0
+  },
+  "geometry": {
+    "standard_runtime": [
+      214,
+      42
+    ],
+    "provider_live_bed": [
+      7,
+      6,
+      207,
+      36
+    ],
+    "nine_slice_x": [
+      32,
+      150,
+      32
+    ],
+    "nine_slice_y": [
+      8,
+      26,
+      8
+    ],
+    "art_box_formula": "provider frame width + 14, provider frame height + 12",
+    "live_opening_formula": "exact provider frame bounds",
+    "complete_bitmap_vertical_stretch": false,
+    "identity_caps_fixed": true,
+    "provider_geometry_changed": false
+  },
+  "adapter": {
+    "file": "addon/AzerothExpeditionUI/Modules/UnitFrames.lua",
+    "provider_bridge": "addon/pfUI/api/unitframes.lua",
+    "ownership": "addon/pfUI/api/expedition.lua",
+    "route": "unitframes.primary-shell",
+    "frames": [
+      "pfPlayer",
+      "pfTarget"
+    ],
+    "fallback": "hide AEUI slices and let pfUI rebuild configured backdrops/glows"
+  },
+  "preview": {
+    "file": "generated/unitframes/primary/V4/runtime/real-layout-preview.png",
+    "tracked": false,
+    "frame_size": [
+      240,
+      65
+    ],
+    "art_size": [
+      254,
+      77
+    ]
+  },
+  "deployment": {
+    "build_required_on_target_device": false,
+    "game_validation": "pending Turtle WoW 1.18.1 / P6"
+  }
+}

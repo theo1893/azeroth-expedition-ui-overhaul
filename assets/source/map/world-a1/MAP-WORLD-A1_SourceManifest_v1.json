@@ -1,0 +1,165 @@
+{
+  "schema": "aeui-map-world-a1-source-manifest-v1",
+  "schema_version": 1,
+  "module": "map",
+  "batch": "MAP-WORLD-A1 V1",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "accepted_on": "2026-08-13",
+  "user_acceptance": {
+    "exact_statement": "接受 MAP-WORLD-A1 V1 attempt 1 与 MAP-MINI-A1 V1 attempt 2；允许提升 source/runtime、接入 addon 并清理对应中间产物。",
+    "accepted_attempt": 1,
+    "p4_p5_and_integration_authorized": true
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "provider_raw_sha256": "c27008280cf8db8f09f7957b0f77cb0614025ba869af8ffa07926cc69be7aad0",
+    "provider_raw_size": [
+      1513,
+      1040
+    ],
+    "actual_imagegen_calls": 1,
+    "maximum_imagegen_calls": 5,
+    "prompt": "docs/modules/map/SUBMODULE_ART_BASELINES.md#mapworldframe",
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/map/ART_BASELINE.md",
+    "locked_reference_sha256": "22f9309de17014795215a5ca908a3b18e30ed0d1b6f006f08d071566693d41b9",
+    "roughness_reference_sha256": "272528e6d89cc90e5cbb37dce4ae572ddf9de0402078cdcf0ed5804f734faab8"
+  },
+  "components": {
+    "rod_top": {
+      "component": "MAP.WORLD.FRAME.ROD.TOP",
+      "file": "assets/source/map/world-a1/MapWorldRodTop_MasterV1.png",
+      "sha256": "efe109cc756e934353f8b5c606fe4b9ec0831294e463314c915c1892d03b605f",
+      "metrics": {
+        "size": [
+          1478,
+          157
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "38f219ea1619f70d83945a7872bc67fa694ae32ac4258de4a423d8fe2eb13c2d",
+        "visible_bbox_exclusive": [
+          1,
+          0,
+          1477,
+          157
+        ],
+        "transparent_pixels": 42509,
+        "partially_transparent_pixels": 0,
+        "opaque_pixels": 189537,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      }
+    },
+    "rod_bottom": {
+      "component": "MAP.WORLD.FRAME.ROD.BOTTOM",
+      "file": "assets/source/map/world-a1/MapWorldRodBottom_MasterV1.png",
+      "sha256": "042b8f2cb10801c4626d6c36ef3552fc12202a46ac85c958c21adb24892a0bbf",
+      "metrics": {
+        "size": [
+          1478,
+          157
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "079e8a078d3ccb2ef5a4c0413d21130033728c32b7c76fe7634eb2bac24d4c5e",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          1478,
+          157
+        ],
+        "transparent_pixels": 36641,
+        "partially_transparent_pixels": 0,
+        "opaque_pixels": 195405,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      }
+    },
+    "edge_left": {
+      "component": "MAP.WORLD.FRAME.EDGE.LEFT",
+      "file": "assets/source/map/world-a1/MapWorldPaperEdgeLeft_MasterV1.png",
+      "sha256": "1e5e86e699c559cede91288c1e2b12f03a665cba5d654889ee093ed713112635",
+      "metrics": {
+        "size": [
+          177,
+          768
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "9a95124b71931c41c79b790238f0fce7737b7838935e9c8544f7e97be157143e",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          177,
+          768
+        ],
+        "transparent_pixels": 32810,
+        "partially_transparent_pixels": 0,
+        "opaque_pixels": 103126,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      }
+    },
+    "edge_right": {
+      "component": "MAP.WORLD.FRAME.EDGE.RIGHT",
+      "file": "assets/source/map/world-a1/MapWorldPaperEdgeRight_MasterV1.png",
+      "sha256": "4ceed95579bc0802f5f2888c17841fc8e837ab956a78f41c83b29247c561d488",
+      "metrics": {
+        "size": [
+          177,
+          768
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "365c1ec3c9a99a084371f5aa997f4f1ef79945b5a0d0b01128ad981567596b3a",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          177,
+          768
+        ],
+        "transparent_pixels": 30831,
+        "partially_transparent_pixels": 0,
+        "opaque_pixels": 105105,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      }
+    }
+  },
+  "deterministic_transform": {
+    "outer_key": "edge-connected cyan plus isolated dominant-key spill; transparent RGB cleared",
+    "visible_bbox_exclusive": [
+      17,
+      29,
+      1495,
+      1013
+    ],
+    "component_crops_fraction_xyxy": {
+      "rod_top": [
+        0.0,
+        0.0,
+        1.0,
+        0.16
+      ],
+      "rod_bottom": [
+        0.0,
+        0.84,
+        1.0,
+        1.0
+      ],
+      "edge_left": [
+        0.035,
+        0.105,
+        0.155,
+        0.885
+      ],
+      "edge_right": [
+        0.845,
+        0.105,
+        0.965,
+        0.885
+      ]
+    },
+    "dynamic_content_pixels_promoted": false,
+    "generative_postprocess": false
+  },
+  "runtime_manifest": "assets/source/map/world-a1/MAP-WORLD-A1_RuntimeManifest_v1.json"
+}

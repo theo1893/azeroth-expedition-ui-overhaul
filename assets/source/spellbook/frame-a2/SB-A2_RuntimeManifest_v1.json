@@ -1,0 +1,152 @@
+{
+  "schema": "aeui-spellbook-sb-a2-runtime-manifest-v1",
+  "schema_version": 1,
+  "module": "spellbook",
+  "batch": "SB-A2-DONOR V1",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "runtime_contract": "1.0",
+  "source_manifest": "assets/source/spellbook/frame-a2/SB-A2_SourceManifest_v1.json",
+  "runtime": {
+    "top_left": {
+      "component": "SB.FRAME.PAGE_FIELD.TOP_LEFT",
+      "file": "addon/AzerothExpeditionUI/Media/Spellbook/SpellbookFramePageFieldTopLeftV1.tga",
+      "sha256": "8184dbb58533f22aea43bd0c7a7289931583b389e67d64761c9b8eaf23ba7f71",
+      "metrics": {
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "000a8cf6437ef703d56b9190ddd044340dd4b858492b5cc995dd72c7548d8f71",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "transparent_pixels": 1337,
+        "partially_transparent_pixels": 9587,
+        "opaque_pixels": 54612,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "tga_header": {
+        "image_type": 2,
+        "width": 256,
+        "height": 256,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "top_right": {
+      "component": "SB.FRAME.PAGE_FIELD.TOP_RIGHT",
+      "file": "addon/AzerothExpeditionUI/Media/Spellbook/SpellbookFramePageFieldTopRightV1.tga",
+      "sha256": "27530b2ee469afa9b34cf4c950c18f5c0738907026d3dbc31f056cdf995fa0e3",
+      "metrics": {
+        "size": [
+          128,
+          256
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "a4feeca3c306cf620446acd65edbebecad6f12a31b13ccecf400b05c88a24e8f",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          128,
+          256
+        ],
+        "transparent_pixels": 806,
+        "partially_transparent_pixels": 4700,
+        "opaque_pixels": 27262,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "tga_header": {
+        "image_type": 2,
+        "width": 128,
+        "height": 256,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "bottom_left": {
+      "component": "SB.FRAME.PAGE_FIELD.BOTTOM_LEFT",
+      "file": "addon/AzerothExpeditionUI/Media/Spellbook/SpellbookFramePageFieldBottomLeftV1.tga",
+      "sha256": "fccddbbffb05c75f01d5e166f7943ac7f6b16edab2af33ba63d403fc6f874a97",
+      "metrics": {
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "31274c74e537e0a051de0696a269f6f8e3fe39adf7eb9afe958d4c529285c228",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "transparent_pixels": 1346,
+        "partially_transparent_pixels": 10203,
+        "opaque_pixels": 53987,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "tga_header": {
+        "image_type": 2,
+        "width": 256,
+        "height": 256,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "bottom_right": {
+      "component": "SB.FRAME.PAGE_FIELD.BOTTOM_RIGHT",
+      "file": "addon/AzerothExpeditionUI/Media/Spellbook/SpellbookFramePageFieldBottomRightV1.tga",
+      "sha256": "5977445b54c20a0028fbb5f30a8084f0a7f39701c64a7d4410ac51de358c3076",
+      "metrics": {
+        "size": [
+          128,
+          256
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "d0c0b33e56f58d9e806267e300fab78e807d90ee3f80ad0b8855331b625fb0a2",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          128,
+          256
+        ],
+        "transparent_pixels": 1087,
+        "partially_transparent_pixels": 5580,
+        "opaque_pixels": 26101,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "tga_header": {
+        "image_type": 2,
+        "width": 128,
+        "height": 256,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    }
+  },
+  "layout_contract": {
+    "provider": "Blizzard SpellBookFrame",
+    "provider_geometry_ui": [
+      384,
+      512
+    ],
+    "provider_original_direct_textures_hidden": true,
+    "top_left_spellbook_or_class_icon_hidden": true,
+    "pfui_modern_backdrop_disabled_by_scoped_skin_ownership": true,
+    "native_spells_cooldowns_tooltips_book_tabs_skill_tabs_page_controls": "provider-live",
+    "stretch": false
+  }
+}

@@ -2,7 +2,7 @@
 
 ## 当前运行时
 
-- Unit Frames contract：`1.2`。
+- Unit Frames contract：`1.5`；SavedVariables `artVersion = 5`。
 - 本模块只处理已登记的视觉、动态头像开关和相关回退；位置、点击、事件、数值、
   颜色逻辑与未登记 Frame 继续由 pfUI 持有。
 
@@ -11,8 +11,9 @@
 | 动态头像关闭 | `P5` | Player、Target、Focus、Party、Raid、Pet、各级 Target、fallback 共 13 组 portrait 以及两套 Raid Marker tracker 头像关闭；原配置按 profile 备份，禁用模块时恢复 |
 | Health／Power fill | `P5` | accepted 灰阶 donor 接入 Player、Target、TargetTarget、Focus 与 Raid，由 provider 继续乘经典 Health／Mana／Rage／Energy／Focus 色 |
 | Raid A2 外壳 | `P5` | A–D 四种粗旧维修差异接入 `pfRaid1..40`；标准宽度完整纹理，其他宽度用同图三切片，高度失配局部回退 |
-| Player／Target V4 外壳 | `P4 source-accepted` | 两张完整透明 source 已接受；当前 Combat Focus 为 `240×60`，V4 runtime 合同为 `214×42`，兼容方案确认前不导出、不接入 |
-| TargetTarget／Focus 独立外壳 | `paused` | 尚无 accepted source，不从旧失败稿继续 |
+| Player／Target V4 外壳 | `P5` | 两张完整 source 已导出为 base／rim／Hover／Aggro；以 `32/150/32 × 8/26/8` 九切片适配真实 Frame，动态开口精确跟随 provider，未修改位置、尺寸或点击 |
+| TargetTarget A2 独立外壳 | `P5` | accepted base／rim source 已逐像素导出 base／rim／Hover／Aggro TGA；使用 `20/72/20 × 6/22/6` 九切片，不改变真实 Frame |
+| Focus A2 独立外壳 | `P5` | attempt 3 只作材料 donor，Python 确定性构造 accepted base／rim source 与 `112×43` base／rim／Hover／Aggro TGA；使用 `24/64/24 × 10/27/6` 九切片，上 `10px`／下 `6px`，右上靛蓝布结留在固定端 |
 
 ## accepted source 与 runtime
 
@@ -21,8 +22,14 @@
   `UnitFramePowerFillV1.tga`。
 - Raid A2 source／manifest：`assets/source/unitframes/raid-a2/`；runtime：
   `RaidMemberShellAV1.tga` 至 `RaidMemberShellDV1.tga`。
-- Player／Target V4 accepted source／manifest：
-  `assets/source/unitframes/primary-v4/`。目前没有对应 runtime 文件。
+- Player／Target V4 source／runtime manifest：
+  `assets/source/unitframes/primary-v4/`；runtime：
+  `Media/UnitFrames/UnitFramePlayer*V1.tga`、
+  `UnitFrameTarget*V1.tga`。
+- TargetTarget A2 与 Focus A2 source／runtime manifest：
+  `assets/source/unitframes/secondary-v1/`；runtime：
+  `Media/UnitFrames/UnitFrameTargetTarget*V1.tga`、
+  `UnitFrameFocus*V1.tga`。
 
 ## 下一次实机验证
 
@@ -34,13 +41,18 @@
    UI Scale 和模块禁用回退。
 4. 验证 40 人 Raid A–D 分配、标准／变宽三切片、Aura、Raid Icon、距离、离线、
    复活层序和高度失配回退。
+5. 验证 Player／Target V4 在当前 `240×60` Combat Focus、其他宽高和 UI Scale 下
+   不露旧 backdrop、不遮文字／Aura；检查 Hover／Aggro 断续边缘和禁用回退。
+6. 验证 TargetTarget A2 在 canonical `100×22` 与当前放大布局中仍保持次级重量，
+   九切片不拉坏端部维修，文字／Bars／Aura／点击不被覆盖，禁用时恢复 pfUI。
+7. 验证 Focus A2 在 canonical `100×27` 与当前 `240×60` 布局中，右上猎踪布结
+   不被中央拉伸、不碰 Aura，FocusCastbar 仍在下方，Hover／Aggro、点击和禁用
+   回退正常。
 
-## V4 下一门禁
+## 下一门禁
 
-先决定 `214×42` 外壳如何服务现有 `240×60` Combat Focus：优先保持完整源图，
-只允许等比整体缩放或从同一 source 三切片变宽，禁止独立纵向拉伸。用本地真实
-排版预演确认 Player／Target、状态条、文本、Aura 和相邻动作条净空后，再导出
-runtime；普通逻辑修复不得顺带推进 V4。
+等待 Turtle WoW 实机确认 Player／Target、TargetTarget 与 Focus 的九切片、
+状态层序、Aura／FocusCastbar 净空及禁用回退；静态通过不能标记 `P6`。
 
 ## 回退
 

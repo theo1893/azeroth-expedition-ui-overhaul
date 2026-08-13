@@ -1,0 +1,107 @@
+{
+  "schema": "aeui-spellbook-sb-a2-source-manifest-v1",
+  "schema_version": 1,
+  "module": "spellbook",
+  "batch": "SB-A2-DONOR V1",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "accepted_on": "2026-08-13",
+  "user_acceptance": {
+    "exact_statement": "接受 SB-A2-DONOR V1 的运行时视觉，允许提升 source/runtime、导出正式原生四块 TGA 并接入 addon。但是移除左上角的职业icon(如果左上角有职业icon)",
+    "p4_p5_and_integration_authorized": true,
+    "top_left_provider_icon_must_be_hidden": true
+  },
+  "provenance": {
+    "fixed_material_donor": "SB-A1 attempt 1",
+    "fixed_material_donor_sha256": "afb16a7f92fa492c24d5edc787d11e3bb73769a6ad57016d9b1d1dbfef6334b1",
+    "additional_imagegen_calls": 0,
+    "cross_attempt_pixel_reuse": false,
+    "other_module_pixel_reuse": false,
+    "geometry": "Python deterministic 768x1024 source and 384x512 runtime",
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/spellbook/ART_BASELINE.md",
+    "component_prompt": "docs/modules/spellbook/SUBMODULE_ART_BASELINES.md#sbframe--sbpagefield"
+  },
+  "accepted_masters": {
+    "source": {
+      "file": "assets/source/spellbook/frame-a2/SpellbookFramePageField_SourceV1.png",
+      "sha256": "deb9785f36d0f49fe78d20a56a7c25353a9e010fc10ba3859386d51cd75fa5fc",
+      "metrics": {
+        "size": [
+          768,
+          1024
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "d225486f62081636eea6ee4abfc16f4cdb653e4f2c19c4d5022190f9763edaa9",
+        "visible_bbox_exclusive": [
+          2,
+          0,
+          765,
+          1024
+        ],
+        "transparent_pixels": 28519,
+        "partially_transparent_pixels": 44904,
+        "opaque_pixels": 713009,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      }
+    },
+    "runtime": {
+      "file": "assets/source/spellbook/frame-a2/SpellbookFramePageField_RuntimeMasterV1.png",
+      "sha256": "24a007ab835c8ded8b66fc964114b624e0027cdf90c7eba94ed2cda14f4db946",
+      "metrics": {
+        "size": [
+          384,
+          512
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "3d51ed2142637f1219f3b9b59598ad75095dacdacd3c7cbb056b8df7de8fb7e7",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          384,
+          512
+        ],
+        "transparent_pixels": 4576,
+        "partially_transparent_pixels": 30070,
+        "opaque_pixels": 161962,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      }
+    }
+  },
+  "deterministic_transform": {
+    "complete_candidate_anisotropic_stretch": false,
+    "runtime_downsample": "2x LANCZOS performed before acceptance and locked as tracked runtime master",
+    "native_slices": {
+      "top_left": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "top_right": [
+        256,
+        0,
+        384,
+        256
+      ],
+      "bottom_left": [
+        0,
+        256,
+        256,
+        512
+      ],
+      "bottom_right": [
+        256,
+        256,
+        384,
+        512
+      ]
+    },
+    "native_four_slice_reassembly_exact": true,
+    "dynamic_text_icons_tabs_buttons_baked": false,
+    "top_left_class_or_spellbook_icon_baked": false
+  },
+  "runtime_manifest": "assets/source/spellbook/frame-a2/SB-A2_RuntimeManifest_v1.json"
+}

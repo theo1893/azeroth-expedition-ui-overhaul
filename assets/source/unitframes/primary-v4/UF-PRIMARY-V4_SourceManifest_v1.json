@@ -124,7 +124,7 @@
       1284,
       252
     ],
-    "future_standard_runtime": [
+    "standard_runtime": [
       214,
       42
     ],
@@ -134,38 +134,45 @@
       1242,
       216
     ],
-    "future_live_content_bed_runtime": [
+    "runtime_live_content_bed": [
       7,
       6,
       207,
       36
     ],
-    "source_three_slice": [
+    "source_horizontal_slices": [
       192,
       900,
       192
     ],
-    "future_runtime_three_slice": [
+    "runtime_horizontal_slices": [
       32,
       150,
       32
     ],
-    "standard_width_uses_one_complete_texture": true,
-    "fixed_runtime_height": 42,
-    "independent_vertical_stretching": false
+    "runtime_vertical_slices": [
+      8,
+      26,
+      8
+    ],
+    "runtime_asset_height": 42,
+    "display_art_box_formula": "provider frame width + 14, provider frame height + 12",
+    "display_uses_nine_slice": true,
+    "complete_bitmap_vertical_stretching": false,
+    "provider_geometry_changed": false
   },
   "logical_components": {
     "player": {
       "id": "UF.PLAYER.SHELL",
       "provider_object": "pfUI.uf.player / pfPlayer",
       "dynamic_content_owner": "pfUI",
-      "future_runtime_role": "one complete static shell texture"
+      "runtime_role": "one complete static shell texture sampled by nine-slice"
     },
     "target": {
       "id": "UF.TARGET.SHELL",
       "provider_object": "pfUI.uf.target / pfTarget",
       "dynamic_content_owner": "pfUI",
-      "future_runtime_role": "one complete static shell texture"
+      "runtime_role": "one complete static shell texture sampled by nine-slice"
     }
   },
   "forbidden_runtime_uses": [
@@ -173,15 +180,16 @@
     "bake names, levels, values, status colours, portraits, auras, icons or interaction states into either source",
     "mirror or copy Player pixels into Target or Target pixels into Player",
     "apply either source to TargetTarget, Focus, Party or Raid frames",
-    "stretch either shell vertically or move provider geometry",
+    "stretch either complete shell as one bitmap or move provider geometry",
     "promote the P3 review-only Hover or Aggro images as runtime state assets",
     "modify events, clicks, secure templates, SavedVariables or unrelated pfUI behaviour"
   ],
   "export_contract": {
-    "status": "not-exported",
-    "phase": "P5-pending-separate-gate",
-    "runtime_media_written": false,
-    "addon_code_modified": false,
-    "next_gate": "separate P5 deterministic runtime export, state derivation, addon integration and fresh-checkout package validation"
+    "status": "runtime-exported-addon-integrated",
+    "phase": "P5",
+    "runtime_media_written": true,
+    "addon_code_modified": true,
+    "runtime_manifest": "assets/source/unitframes/primary-v4/UF-PRIMARY-V4_RuntimeManifest_v1.json",
+    "next_gate": "Turtle WoW validation of Player/Target geometry, nine-slice scaling, states and fallback"
   }
 }

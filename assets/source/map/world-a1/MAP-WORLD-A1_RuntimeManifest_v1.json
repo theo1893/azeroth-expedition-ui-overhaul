@@ -1,0 +1,167 @@
+{
+  "schema": "aeui-map-world-a1-runtime-manifest-v1",
+  "schema_version": 1,
+  "module": "map",
+  "batch": "MAP-WORLD-A1 V1",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "runtime_contract": "1.0",
+  "source_manifest": "assets/source/map/world-a1/MAP-WORLD-A1_SourceManifest_v1.json",
+  "runtime": {
+    "rod_top": {
+      "component": "MAP.WORLD.FRAME.ROD.TOP",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapWorldRodTopV1.tga",
+      "sha256": "0662b9b2150dbf33bb0b33c353afdd01ce84b30f62be855e9ccbe98860600cf3",
+      "metrics": {
+        "size": [
+          1024,
+          109
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "89588f3baeda1e41167f611ceae2ac9f01e6a92ebf10ea254901c2df22b29ffb",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          1024,
+          109
+        ],
+        "transparent_pixels": 18336,
+        "partially_transparent_pixels": 4031,
+        "opaque_pixels": 89249,
+        "visible_cyan_key_pixels": 106,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "tga_header": {
+        "image_type": 2,
+        "width": 1024,
+        "height": 109,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "rod_bottom": {
+      "component": "MAP.WORLD.FRAME.ROD.BOTTOM",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapWorldRodBottomV1.tga",
+      "sha256": "a0e337628ec39521f2e6d3e098eaed575ba7199450a00f99b1d89ff71dee1a01",
+      "metrics": {
+        "size": [
+          1024,
+          109
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "eebc7c66aae8ea806de3db72a53a1b6476a52181df9512806b146a10ea74acf4",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          1024,
+          109
+        ],
+        "transparent_pixels": 15903,
+        "partially_transparent_pixels": 3918,
+        "opaque_pixels": 91795,
+        "visible_cyan_key_pixels": 64,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "tga_header": {
+        "image_type": 2,
+        "width": 1024,
+        "height": 109,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "edge_left": {
+      "component": "MAP.WORLD.FRAME.EDGE.LEFT",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapWorldPaperEdgeLeftV1.tga",
+      "sha256": "3e8d71a079f8bb7ac435af31aca20f51213437dd1350f9d191c513c36a4a34bd",
+      "metrics": {
+        "size": [
+          118,
+          512
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "550423d34a29b632e9bfa6631394ebe0e03e90f8108e09233f8f1782e7c89884",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          118,
+          512
+        ],
+        "transparent_pixels": 13582,
+        "partially_transparent_pixels": 2052,
+        "opaque_pixels": 44782,
+        "visible_cyan_key_pixels": 59,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "tga_header": {
+        "image_type": 2,
+        "width": 118,
+        "height": 512,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "edge_right": {
+      "component": "MAP.WORLD.FRAME.EDGE.RIGHT",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapWorldPaperEdgeRightV1.tga",
+      "sha256": "41ea16b2fb6baa078e21121da4f862d08b751a2f0f6f2594db69c559a31c6013",
+      "metrics": {
+        "size": [
+          118,
+          512
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "d4013b25ccbdc76622bdf3240627108d3be5a1798d7487229ab10e7ff3734442",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          118,
+          512
+        ],
+        "transparent_pixels": 12658,
+        "partially_transparent_pixels": 2125,
+        "opaque_pixels": 45633,
+        "visible_cyan_key_pixels": 115,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "tga_header": {
+        "image_type": 2,
+        "width": 118,
+        "height": 512,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    }
+  },
+  "layout_contract": {
+    "provider": "WorldMapButton",
+    "provider_size": "runtime GetWidth/GetHeight; no fixed fallback",
+    "art_outsets_ui": {
+      "left": 50,
+      "right": 50,
+      "top": 72,
+      "bottom": 72
+    },
+    "rod_three_slice_uv": [
+      0.0,
+      0.15,
+      0.85,
+      1.0
+    ],
+    "rod_runtime_height_ui": 72,
+    "rod_cap_runtime_width_ui": 102,
+    "edge_three_slice_uv": [
+      0.0,
+      0.16,
+      0.84,
+      1.0
+    ],
+    "edge_runtime_width_ui": 58,
+    "edge_cap_runtime_height_ui": 40,
+    "dynamic_content_and_pfquest_above_shell": true
+  }
+}

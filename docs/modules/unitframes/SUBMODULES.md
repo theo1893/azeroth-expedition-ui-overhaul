@@ -8,7 +8,7 @@
 
 ## 主单位框与资源条批次
 
-Unit Frames runtime `1.2` 会把全部 13 组真实配置强制为 `portrait = off`。下列逻辑尺寸来自
+Unit Frames runtime `1.4` 会把全部 13 组真实配置强制为 `portrait = off`。下列逻辑尺寸来自
 `addon/pfUI/env/profiles.lua` 与 `pfUI.uf:UpdateFrameSize()`；外壳只在真实 Frame
 外增加不参与命中的透明装饰边，不改变 provider 几何。
 
@@ -17,7 +17,7 @@ Unit Frames runtime `1.2` 会把全部 13 组真实配置强制为 `portrait = o
 | `UF.PLAYER.SHELL` | `pfUI.uf.player`／`pfPlayer` | HP `200×25`；Power `200×4` | `214×42` | 一张静态外壳；玩家与目标不得镜像复用 |
 | `UF.TARGET.SHELL` | `pfUI.uf.target`／`pfTarget` | HP `200×25`；Power `200×4` | `214×42` | 一张静态外壳；不得烘焙目标类型、名称或等级 |
 | `UF.TARGETTARGET.SHELL` | `pfUI.uf.targettarget`／`pfTargetTarget` | HP `100×20`；Power `100×1` | `112×34` | 一张简化静态外壳 |
-| `UF.FOCUS.SHELL` | `pfUI.uf.focus`／`pfFocus` | HP `100×25`；Power `100×1` | `112×39` | 一张静态外壳；靛蓝猎踪布结是焦点识别件 |
+| `UF.FOCUS.SHELL` | `pfUI.uf.focus`／`pfFocus` | HP `100×25`；Power `100×1` | `112×43` | 一张静态外壳；上 `10px`／下 `6px`；靛蓝猎踪布结是焦点识别件 |
 | `UF.BAR.HEALTH.FILL` | 每个对象的 `f.hp.bar` | provider 裁切宽度 | `64×32` 可横向拉伸纹理 | 无色灰阶颜料纹；继续由 pfUI 着色与更新数值 |
 | `UF.BAR.POWER.FILL` | 每个对象的 `f.power.bar` | provider 裁切宽度 | `64×16` 可横向拉伸纹理 | 无色灰阶窄颜料纹；继续由 pfUI 按资源类型着色 |
 | `UF.STATE.HOVER.RIM` | `f.hoverglow` | 外壳边缘 | 由每张接受外壳 Alpha 确定性派生 | 暖白短边响应；不改变命中盒 |
@@ -60,13 +60,13 @@ Leader／Master Looter／Raid Target／Resurrection、Buff／Debuff、Incoming H
 框架在 `modules/group.lua`，Raid Marker 血条列表在 `modules/raidmarkers.lua`，
 二者都不是 `UF.RAID.*`。
 
-## UF-PRIMARY V4 已接受 source 与待导出 runtime
+## UF-PRIMARY V4 已接受 source 与已接入 runtime
 
 用户于 `2026-08-12` 要求重开 Player／Target 完整外壳的新生产架构，并已确认
 `UF-PRIMARY-V4-SIM-V1` 与 Raid A2 sample 的只读输入职责。用户随后以“确认,
-进入下一阶段”接受 `UF-PRIMARY-V4-CANDIDATE-V1` 两张 exact candidate；当前为
-`P4 / source-accepted`，但尚未导出 runtime 或接入 addon。以下定义真实对象、
-已接受 source 与未来 P5 职责。
+进入下一阶段”接受 `UF-PRIMARY-V4-CANDIDATE-V1` 两张 exact candidate。两张
+source 现已确定性导出并接入 addon，当前为 `P5 / runtime-integrated`；以下定义
+真实对象、锁定 source 与运行时职责。
 
 - 最终组件粒度不变：`UF.PLAYER.SHELL` 与 `UF.TARGET.SHELL` 各自是一张独立
   完整 `1284×252 RGBA` source 和一张完整 `214×42` runtime。不得两角色合图、
@@ -79,9 +79,11 @@ Leader／Master Looter／Raid Target／Resurrection、Buff／Debuff、Incoming H
   `x7..207/y6..36`。liner 可在 bar 下方；皮革 relief、金属、线、铆钉和状态
   边不得盖住 live bed。名字、数值、状态色、Aura、事件、点击和 SavedVariables
   全部仍由 pfUI 提供。
-- 标准 `W=200` 使用一张完整 `214×42` Texture，内部接缝 `0`。宽度变化时从
-  同一角色 source 派生 `32/150/32` 横向三切片；固定区允许身份沿顶／底外缘
-  展开，但不得侵入动态区。高度固定 `42`，只允许整体 UI Scale。
+- 每个角色只导出一张完整 `214×42` base TGA；overlay rim 与 Hover／Aggro
+  只由同图 Alpha 确定性派生。Lua 以 `32/150/32 × 8/26/8` 九切片采样这些
+  完整纹理，显示 art box 始终为 provider Frame 的 `width+14 / height+12`，其中
+  `7px / 6px` 透明开口精确映射真实 Frame。不得把完整位图整体纵向拉伸；身份
+  端、上下实体厚度固定，只有中央安全跨度随 provider 几何扩展。
 - Player 的重修补位于左上外围；Target 的损伤位于右下外围，同族但非镜像。
   Hover／Aggro 从接受 Alpha 确定性派生断续短边，不单独生成。
 - 接受 source 分别为
@@ -90,6 +92,10 @@ Leader／Master Looter／Raid Target／Resurrection、Buff／Debuff、Incoming H
   `assets/source/unitframes/primary-v4/UnitFrameTargetShell_MasterV1.png`
   SHA `256086c1…f81`；manifest 为同目录
   `UF-PRIMARY-V4_SourceManifest_v1.json`。source 不能被 Lua 直接加载。
+- runtime manifest 为同目录 `UF-PRIMARY-V4_RuntimeManifest_v1.json`；addon 媒体
+  为 `UnitFramePlayer*V1.tga` 与 `UnitFrameTarget*V1.tga` 共八张 base／rim／
+  Hover／Aggro 派生。禁用模块、route 或媒体缺失时只恢复对应 pfUI backdrop、
+  glow 与 shadow，不影响 Frame、条、文字、Aura、事件或点击。
 - 若已接受 material sample 在主框尺度上经透明 candidate 审查证明不合适，
   才能另开 primary-specific material-only donor；当前备用段未授权，不能调用。
 

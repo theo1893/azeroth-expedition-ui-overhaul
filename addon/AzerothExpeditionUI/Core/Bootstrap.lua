@@ -3,7 +3,7 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 
 addon.name = "AzerothExpeditionUI"
-addon.version = "0.8.30"
+addon.version = "0.8.31"
 addon.modules = addon.modules or {}
 addon.media = addon.media or {}
 addon.media.root = "Interface\\AddOns\\AzerothExpeditionUI\\Media\\"
@@ -40,7 +40,15 @@ local defaults = {
   },
   unitframes = {
     enabled = true,
-    artVersion = 2,
+    artVersion = 5,
+  },
+  map = {
+    enabled = true,
+    artVersion = 1,
+  },
+  spellbook = {
+    enabled = true,
+    artVersion = 1,
   },
 }
 
@@ -113,9 +121,9 @@ function addon:Initialize()
   end
   if (
     AzerothExpeditionUIDB.unitframes and
-    (tonumber(AzerothExpeditionUIDB.unitframes.artVersion) or 0) < 2
+    (tonumber(AzerothExpeditionUIDB.unitframes.artVersion) or 0) < 5
   ) then
-    AzerothExpeditionUIDB.unitframes.artVersion = 2
+    AzerothExpeditionUIDB.unitframes.artVersion = 5
   end
   ApplyDefaults(AzerothExpeditionUIDB, defaults)
   self.db = AzerothExpeditionUIDB
@@ -335,6 +343,24 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       (AzerothExpeditionUIDB.unitframes.enabled and "enabled" or "disabled") ..
       "."
     )
+  elseif command == "map" then
+    AzerothExpeditionUIDB.map.enabled =
+      not AzerothExpeditionUIDB.map.enabled
+    addon:Refresh()
+    addon:Print(
+      "map shell skin " ..
+      (AzerothExpeditionUIDB.map.enabled and "enabled" or "disabled") ..
+      "."
+    )
+  elseif command == "spellbook" then
+    AzerothExpeditionUIDB.spellbook.enabled =
+      not AzerothExpeditionUIDB.spellbook.enabled
+    addon:Print(
+      "spellbook shell skin " ..
+      (AzerothExpeditionUIDB.spellbook.enabled and "enabled" or "disabled") ..
+      "; reloading UI."
+    )
+    ReloadUI()
   elseif command == "refresh" then
     addon:Refresh()
     addon:Print("visual adapters refreshed.")
@@ -363,6 +389,14 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       addon.modules.UnitFrames and
       addon.modules.UnitFrames.runtimeContract or
       "unknown"
+    local mapRuntime =
+      addon.modules.Map and
+      addon.modules.Map.runtimeContract or
+      "unknown"
+    local spellbookRuntime =
+      addon.modules.Spellbook and
+      addon.modules.Spellbook.runtimeContract or
+      "unknown"
     local chatColorStatus =
       addon.modules.Chat and
       addon.modules.Chat.GetMessageColorStatus and
@@ -383,12 +417,18 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       ", unitframes=" ..
       (AzerothExpeditionUIDB.unitframes.enabled and "enabled" or "disabled") ..
       ", unitframes-runtime=" .. tostring(unitFrameRuntime) ..
+      ", map=" ..
+      (AzerothExpeditionUIDB.map.enabled and "enabled" or "disabled") ..
+      ", map-runtime=" .. tostring(mapRuntime) ..
+      ", spellbook=" ..
+      (AzerothExpeditionUIDB.spellbook.enabled and "enabled" or "disabled") ..
+      ", spellbook-runtime=" .. tostring(spellbookRuntime) ..
       ", pfUI=" .. (pfUI and "available" or "missing") ..
       ", route=" .. (scopedRoute and "scoped" or "pfui") ..
       ", ownership=" ..
-      (scopedRoute and "chat,quests,unitframe-bars,unitframe-raid" or "none") ..
+      (scopedRoute and "chat,quests,unitframes,map,spellbook" or "none") ..
       ", blizzard-skins=" ..
-      (scopedRoute and "pfui-except-quest-log" or "pfui")
+      (scopedRoute and "pfui-except-owned" or "pfui")
     )
     if
       addon.modules.ActionBars and
@@ -414,9 +454,20 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
         "unitframes " .. addon.modules.UnitFrames:GetRuntimeStatus()
       )
     end
+    if addon.modules.Map and addon.modules.Map.GetRuntimeStatus then
+      addon:Print("map " .. addon.modules.Map:GetRuntimeStatus())
+    end
+    if
+      addon.modules.Spellbook and
+      addon.modules.Spellbook.GetRuntimeStatus
+    then
+      addon:Print(
+        "spellbook " .. addon.modules.Spellbook:GetRuntimeStatus()
+      )
+    end
   else
     addon:Print(
-      "/aeui actionbars, /aeui autobar [open|apply|restore|popup], /aeui fieldkit [bind|unbind|home|status], /aeui focuslayout [apply|comfort|restore|status], /aeui sidebars [bind|unbind|home|status], /aeui chat, /aeui quests, /aeui unitframes, /aeui refresh, /aeui status"
+      "/aeui actionbars, /aeui autobar [open|apply|restore|popup], /aeui fieldkit [bind|unbind|home|status], /aeui focuslayout [apply|comfort|restore|status], /aeui sidebars [bind|unbind|home|status], /aeui chat, /aeui quests, /aeui unitframes, /aeui map, /aeui spellbook, /aeui refresh, /aeui status"
     )
   end
 end

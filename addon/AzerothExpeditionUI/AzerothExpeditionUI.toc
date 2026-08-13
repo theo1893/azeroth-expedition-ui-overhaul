@@ -2,7 +2,7 @@
 ## Title: Azeroth Expedition UI
 ## Notes: Vanilla-style UI overhaul built on pfUI functionality.
 ## Author: Azeroth Expedition
-## Version: 0.8.30
+## Version: 0.8.31
 ## RequiredDeps: pfUI
 ## SavedVariables: AzerothExpeditionUIDB
 
@@ -12,3 +12,5 @@ Modules\Chat.lua
 Modules\QuestVisualTheme.lua
 Modules\Quests.lua
 Modules\UnitFrames.lua
+Modules\Map.lua
+Modules\Spellbook.lua

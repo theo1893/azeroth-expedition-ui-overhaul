@@ -1,0 +1,204 @@
+{
+  "schema": "aeui-map-mini-a1-source-manifest-v1",
+  "schema_version": 1,
+  "module": "map",
+  "batch": "MAP-MINI-A1 V1",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "accepted_on": "2026-08-13",
+  "user_acceptance": {
+    "exact_statement": "接受 MAP-WORLD-A1 V1 attempt 1 与 MAP-MINI-A1 V1 attempt 2；允许提升 source/runtime、接入 addon 并清理对应中间产物。",
+    "accepted_attempt": 2,
+    "p4_p5_and_integration_authorized": true
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "provider_raw_sha256": "eb7f13856573284290b368be829d2fb4907d476756d7b2b974076a26cdfeaba2",
+    "provider_raw_size": [
+      1254,
+      1254
+    ],
+    "actual_imagegen_calls": 2,
+    "maximum_imagegen_calls": 5,
+    "prompt": "docs/modules/map/SUBMODULE_ART_BASELINES.md#mapminimaskcompass",
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/map/ART_BASELINE.md",
+    "locked_reference_sha256": "9e6a38dbaa2e7df82480c4fe8ca32ca2c931fa016a8264f26964903468ac2ea6",
+    "roughness_reference_sha256": "272528e6d89cc90e5cbb37dce4ae572ddf9de0402078cdcf0ed5804f734faab8"
+  },
+  "components": {
+    "ring": {
+      "component": "MAP.MINI.COMPASS",
+      "file": "assets/source/map/mini-a1/MapMiniCompassRing_MasterV1.png",
+      "sha256": "e0b29173b14dd160804d1ab2016b7f0bf2983fc494d0a0987b3dec408bf09218",
+      "metrics": {
+        "size": [
+          184,
+          184
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "08df79581d8e7b9aa7f0c2916aeed16f8ce4bb6227f63a0659ab4befd916d0f5",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          184,
+          184
+        ],
+        "transparent_pixels": 22352,
+        "partially_transparent_pixels": 3050,
+        "opaque_pixels": 8454,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      }
+    },
+    "north": {
+      "component": "MAP.MINI.NORTH",
+      "file": "assets/source/map/mini-a1/MapMiniNorth_MasterV1.png",
+      "sha256": "f1e62e2bca2e08fba1c6b9f4ac4549fa26a8efe657ed2df767798cad3aa9e062",
+      "metrics": {
+        "size": [
+          42,
+          58
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "4be1e94c003d16b947d049c7c06114586bebaecbc82a974409144b877b13b542",
+        "visible_bbox_exclusive": [
+          0,
+          1,
+          42,
+          58
+        ],
+        "transparent_pixels": 864,
+        "partially_transparent_pixels": 357,
+        "opaque_pixels": 1215,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      }
+    },
+    "west": {
+      "component": "MAP.MINI.DIRECTIONS.WEST",
+      "file": "assets/source/map/mini-a1/MapMiniDirectionWest_MasterV1.png",
+      "sha256": "e228394523112eab3519f59c824acae1c8da00ae9b57345598cfe314dfedb937",
+      "metrics": {
+        "size": [
+          50,
+          36
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "a905c2b63c491e5f58e63e359f9aeb01aa0b5387d10eb44dc119c2c5647ad398",
+        "visible_bbox_exclusive": [
+          11,
+          0,
+          45,
+          36
+        ],
+        "transparent_pixels": 734,
+        "partially_transparent_pixels": 223,
+        "opaque_pixels": 843,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      }
+    },
+    "east": {
+      "component": "MAP.MINI.DIRECTIONS.EAST",
+      "file": "assets/source/map/mini-a1/MapMiniDirectionEast_MasterV1.png",
+      "sha256": "a865ac93ec389e25ad70b00d51803bb2e91fc15ea5c61093a2fcbc84e606dcb3",
+      "metrics": {
+        "size": [
+          50,
+          36
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "e5d2ff2ab454b0cc985ba6543d668273741e3f3d330a2d9900ebf943cd9bb163",
+        "visible_bbox_exclusive": [
+          4,
+          0,
+          38,
+          36
+        ],
+        "transparent_pixels": 717,
+        "partially_transparent_pixels": 238,
+        "opaque_pixels": 845,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      }
+    },
+    "south": {
+      "component": "MAP.MINI.DIRECTIONS.SOUTH",
+      "file": "assets/source/map/mini-a1/MapMiniDirectionSouth_MasterV1.png",
+      "sha256": "d62f2a5ab1defd4f651fa981fa0ffed17ff0d2fd35f5a66cc511be9a6f82e743",
+      "metrics": {
+        "size": [
+          38,
+          42
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "c6df773d3b933efe0a535cc7d110c27f88606c528f0a7b2bc02c6b923d853f31",
+        "visible_bbox_exclusive": [
+          0,
+          8,
+          38,
+          40
+        ],
+        "transparent_pixels": 534,
+        "partially_transparent_pixels": 136,
+        "opaque_pixels": 926,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      }
+    },
+    "plaque": {
+      "component": "MAP.MINI.ZONE.PLAQUE",
+      "file": "assets/source/map/mini-a1/MapMiniInfoPlaque_MasterV1.png",
+      "sha256": "534681a2e9c3adc473d211fadc6a4e9a8153b7fbbc4cb8b759b2551134b5e3b8",
+      "metrics": {
+        "size": [
+          150,
+          44
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "034d43851daf1f02848159e72366cf1c5a5924b846eb96837a683c9bfa1675e8",
+        "visible_bbox_exclusive": [
+          7,
+          0,
+          143,
+          41
+        ],
+        "transparent_pixels": 1551,
+        "partially_transparent_pixels": 651,
+        "opaque_pixels": 4398,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      }
+    }
+  },
+  "deterministic_transform": {
+    "key": "full-field cyan plus isolated dominant-key spill and transparent RGB clear",
+    "visible_bbox_exclusive": [
+      135,
+      41,
+      1119,
+      1198
+    ],
+    "ring_material_window_xyxy": [
+      118,
+      118,
+      1136,
+      1136
+    ],
+    "ring_geometry": {
+      "outer": [
+        184,
+        184
+      ],
+      "content": [
+        140,
+        140
+      ]
+    },
+    "component_windows_are_fixed": true,
+    "buttons_or_plugin_slots_promoted": false,
+    "generative_postprocess": false
+  },
+  "runtime_manifest": "assets/source/map/mini-a1/MAP-MINI-A1_RuntimeManifest_v1.json"
+}

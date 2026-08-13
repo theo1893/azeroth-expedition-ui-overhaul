@@ -1,0 +1,165 @@
+{
+  "schema": "aeui-unitframes-secondary-v1-source-manifest-v1",
+  "schema_version": 1,
+  "module": "unitframes",
+  "batch": "UF-SECONDARY V1",
+  "components": [
+    "UF.TARGETTARGET.SHELL",
+    "UF.FOCUS.SHELL"
+  ],
+  "status": "accepted-source",
+  "phase": "P4",
+  "accepted_on": "2026-08-13",
+  "user_acceptance": {
+    "targettarget_exact_statement": "接受 UF-TT-A2-DONOR V1 的运行时视觉，允许提升 source、导出 TGA 并接入 addon；随后继续 UF-FOCUS-A1 V1。",
+    "focus_exact_statement": "接受 UF-FOCUS-A2-DONOR V1 的运行时视觉，允许提升 source、导出 TGA 并接入 addon。",
+    "accepts_runtime_visual": true,
+    "source_promotion_authorized": true,
+    "runtime_export_authorized": true,
+    "addon_integration_authorized": true
+  },
+  "provenance": {
+    "production_architecture": "UF-TT-A2-DONOR V1",
+    "material_donor": "UF-TT-A1 V1 attempt 4",
+    "material_donor_sha256": "83d025831cb4c020acce4b9a75727901ae656399ae353832368ff474d016730f",
+    "imagegen_executor": "imagegen-0-143-0",
+    "actual_targettarget_imagegen_calls": 5,
+    "a2_additional_imagegen_calls": 0,
+    "donor_promoted": false,
+    "deterministic_geometry": true,
+    "focus_production_architecture": "UF-FOCUS-A2-DONOR V1",
+    "focus_material_donor": "UF-FOCUS-A1 V1 attempt 3",
+    "focus_material_donor_sha256": "bf9513d23409109a25a67b1d9a608e65f082cfbbf5000773cd20bbab5553382d",
+    "actual_focus_imagegen_calls": 5,
+    "focus_a2_additional_imagegen_calls": 0,
+    "focus_donor_promoted": false,
+    "focus_deterministic_geometry": true
+  },
+  "sources": {
+    "targettarget": {
+      "component": "UF.TARGETTARGET.SHELL",
+      "file": "assets/source/unitframes/secondary-v1/UnitFrameTargetTargetShell_MasterV1.png",
+      "sha256": "ddf04c72098fd88a967ff8da72e5bc60d98492dd194b5d5afc72244474f42fe1",
+      "pixel_sha256": "12a1fdc66cbb4b365e657f665c8529119da441a77db1e44abfae154f8f60af8c",
+      "size": [
+        672,
+        204
+      ],
+      "mode": "RGBA",
+      "visible_bbox_exclusive": [
+        2,
+        11,
+        672,
+        197
+      ],
+      "visible_green_spill_pixels": 0,
+      "transparent_rgb_nonzero_pixels": 0
+    },
+    "targettarget_rim": {
+      "component": "UF.STATE.RIM@UF.TARGETTARGET.SHELL",
+      "role": "accepted deterministic derivative; not a separately generated design",
+      "file": "assets/source/unitframes/secondary-v1/UnitFrameTargetTargetShellRim_MasterV1.png",
+      "sha256": "aaaf69d02187a53d32fb45675aa5a8752e00c89ab884e552d8499d228992c103",
+      "pixel_sha256": "e224bd3a44275a4a9f2ba7841a72ab7b987c8c45718cf15729adcb1e958021f8",
+      "size": [
+        672,
+        204
+      ],
+      "mode": "RGBA",
+      "visible_green_spill_pixels": 0,
+      "transparent_rgb_nonzero_pixels": 0
+    },
+    "focus": {
+      "component": "UF.FOCUS.SHELL",
+      "file": "assets/source/unitframes/secondary-v1/UnitFrameFocusShell_MasterV1.png",
+      "sha256": "9b6fee00cf242905a09a9cba5b4b543de2eaf4238d5118bc61fda47c94fb3b7c",
+      "pixel_sha256": "cf3ea2f2856b4b095e6b57c3a93228496476df067e40d05d7ed11c38c9fcf02e",
+      "size": [
+        672,
+        258
+      ],
+      "mode": "RGBA",
+      "visible_bbox_exclusive": [
+        2,
+        9,
+        672,
+        258
+      ],
+      "visible_green_spill_pixels": 0,
+      "transparent_rgb_nonzero_pixels": 0
+    },
+    "focus_rim": {
+      "component": "UF.STATE.RIM@UF.FOCUS.SHELL",
+      "role": "accepted deterministic derivative; not a separately generated design",
+      "file": "assets/source/unitframes/secondary-v1/UnitFrameFocusShellRim_MasterV1.png",
+      "sha256": "03ac97df6205152b9993ac217d64c5b3ff55e7eacc4004bcedd893a0f5a51353",
+      "pixel_sha256": "e6b1bfd9e23396a1272ce2a6ac7e704060d39f66863232a699086b02a0ba63e3",
+      "size": [
+        672,
+        258
+      ],
+      "mode": "RGBA",
+      "visible_bbox_exclusive": [
+        2,
+        9,
+        672,
+        258
+      ],
+      "visible_green_spill_pixels": 0,
+      "transparent_rgb_nonzero_pixels": 0
+    }
+  },
+  "geometry": {
+    "targettarget": {
+      "runtime_size": [
+        112,
+        34
+      ],
+      "provider_live_bed": [
+        6,
+        6,
+        106,
+        28
+      ],
+      "nine_slice_x": [
+        20,
+        72,
+        20
+      ],
+      "nine_slice_y": [
+        6,
+        22,
+        6
+      ],
+      "art_box_formula": "provider width + 12, provider height + 12",
+      "complete_donor_anisotropic_scale": false,
+      "provider_geometry_changed": false
+    },
+    "focus": {
+      "runtime_size": [
+        112,
+        43
+      ],
+      "provider_live_bed": [
+        6,
+        10,
+        106,
+        37
+      ],
+      "nine_slice_x": [
+        24,
+        64,
+        24
+      ],
+      "nine_slice_y": [
+        10,
+        27,
+        6
+      ],
+      "art_box_formula": "provider width + 12, provider height + 16",
+      "complete_donor_anisotropic_scale": false,
+      "provider_geometry_changed": false,
+      "tracking_cloth_fixed_right_cap": true
+    }
+  }
+}

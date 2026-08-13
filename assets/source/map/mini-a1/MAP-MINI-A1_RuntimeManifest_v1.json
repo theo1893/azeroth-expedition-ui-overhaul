@@ -1,0 +1,220 @@
+{
+  "schema": "aeui-map-mini-a1-runtime-manifest-v1",
+  "schema_version": 1,
+  "module": "map",
+  "batch": "MAP-MINI-A1 V1",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "runtime_contract": "1.0",
+  "source_manifest": "assets/source/map/mini-a1/MAP-MINI-A1_SourceManifest_v1.json",
+  "runtime": {
+    "ring": {
+      "component": "MAP.MINI.COMPASS",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniCompassRingV1.tga",
+      "sha256": "3746025271f9cb192147e9799d6ffb8342d43c0278b26deea21b05b4106c8cf9",
+      "metrics": {
+        "size": [
+          184,
+          184
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "08df79581d8e7b9aa7f0c2916aeed16f8ce4bb6227f63a0659ab4befd916d0f5",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          184,
+          184
+        ],
+        "transparent_pixels": 22352,
+        "partially_transparent_pixels": 3050,
+        "opaque_pixels": 8454,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "tga_header": {
+        "image_type": 2,
+        "width": 184,
+        "height": 184,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "north": {
+      "component": "MAP.MINI.NORTH",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniNorthV1.tga",
+      "sha256": "d5d8beecf5a8e754c2e062324584897ce906c7fefa6dbe9e1880bbd5288c68c9",
+      "metrics": {
+        "size": [
+          42,
+          58
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "4be1e94c003d16b947d049c7c06114586bebaecbc82a974409144b877b13b542",
+        "visible_bbox_exclusive": [
+          0,
+          1,
+          42,
+          58
+        ],
+        "transparent_pixels": 864,
+        "partially_transparent_pixels": 357,
+        "opaque_pixels": 1215,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "tga_header": {
+        "image_type": 2,
+        "width": 42,
+        "height": 58,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "west": {
+      "component": "MAP.MINI.DIRECTIONS.WEST",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniDirectionWestV1.tga",
+      "sha256": "d88181ee76276584d31c351492d653635005b9bd8346082b7660a77a75caf674",
+      "metrics": {
+        "size": [
+          50,
+          36
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "a905c2b63c491e5f58e63e359f9aeb01aa0b5387d10eb44dc119c2c5647ad398",
+        "visible_bbox_exclusive": [
+          11,
+          0,
+          45,
+          36
+        ],
+        "transparent_pixels": 734,
+        "partially_transparent_pixels": 223,
+        "opaque_pixels": 843,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "tga_header": {
+        "image_type": 2,
+        "width": 50,
+        "height": 36,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "east": {
+      "component": "MAP.MINI.DIRECTIONS.EAST",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniDirectionEastV1.tga",
+      "sha256": "d1829014f700f383e46f254cee18b71da8c9d9287f8762a183ce8f054acf84fb",
+      "metrics": {
+        "size": [
+          50,
+          36
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "e5d2ff2ab454b0cc985ba6543d668273741e3f3d330a2d9900ebf943cd9bb163",
+        "visible_bbox_exclusive": [
+          4,
+          0,
+          38,
+          36
+        ],
+        "transparent_pixels": 717,
+        "partially_transparent_pixels": 238,
+        "opaque_pixels": 845,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "tga_header": {
+        "image_type": 2,
+        "width": 50,
+        "height": 36,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "south": {
+      "component": "MAP.MINI.DIRECTIONS.SOUTH",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniDirectionSouthV1.tga",
+      "sha256": "463059278c7f1a40da3b94b24ce67f334c908a4d0feef88f5d2a0c7990ced30c",
+      "metrics": {
+        "size": [
+          38,
+          42
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "c6df773d3b933efe0a535cc7d110c27f88606c528f0a7b2bc02c6b923d853f31",
+        "visible_bbox_exclusive": [
+          0,
+          8,
+          38,
+          40
+        ],
+        "transparent_pixels": 534,
+        "partially_transparent_pixels": 136,
+        "opaque_pixels": 926,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "tga_header": {
+        "image_type": 2,
+        "width": 38,
+        "height": 42,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "plaque": {
+      "component": "MAP.MINI.ZONE.PLAQUE",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniInfoPlaqueV1.tga",
+      "sha256": "1855b6196973b6060cf0b17a0b2e077a940d5dd2ea32e72ebfd56c9cb36bc3a0",
+      "metrics": {
+        "size": [
+          150,
+          44
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "034d43851daf1f02848159e72366cf1c5a5924b846eb96837a683c9bfa1675e8",
+        "visible_bbox_exclusive": [
+          7,
+          0,
+          143,
+          41
+        ],
+        "transparent_pixels": 1551,
+        "partially_transparent_pixels": 651,
+        "opaque_pixels": 4398,
+        "visible_cyan_key_pixels": 0,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "tga_header": {
+        "image_type": 2,
+        "width": 150,
+        "height": 44,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    }
+  },
+  "layout_contract": {
+    "provider": "pfUI.minimap and Minimap",
+    "provider_size": "runtime Minimap GetWidth/GetHeight; square-only fail-open",
+    "reference_content_ui": [
+      140,
+      140
+    ],
+    "reference_ring_ui": [
+      184,
+      184
+    ],
+    "uniform_scale_only": true,
+    "farmmode_shell_reuse": false,
+    "provider_buttons_and_pfquest_pins_remain_live": true,
+    "zone_and_coordinates_are_runtime_text": true
+  }
+}

@@ -18,13 +18,14 @@ Codex 进入仓库后先读本文件。这里给出项目边界、文档索引�
 
 | 模块 | 当前状态 | 下一步 |
 |---|---|---|
-| Core／pfUI | AEUI `0.8.30`，scoped ownership `P5` | 实机验证模块隔离、旧配置迁移与回退 |
+| Core／pfUI | AEUI `0.8.31`，scoped ownership `P5` | 实机验证模块隔离、旧配置迁移与回退 |
 | Chat | runtime `1.22 / P5`；Full V1 主框、Dark V2 Tab、Dark V1 输入已接入；右框隐藏，经典颜色透传 | 实机验证 Tab、缩放、输入、频道颜色和左框消息回收 |
 | Quests | runtime `1.27`、Theme `1.10`；Quest Log 主体／目录已获实机确认；奖励槽与闭合火漆载体 `P5`；事务菜单未启用 | 实机验证奖励槽、火漆滚动裁切；Tracker 重新确认真实区域 |
-| Action Bars | AEUI `0.8.30`；Slot／Rail `P6`；Field Kit `2.8`、Focus `2.5`、Sidebar Group `1.0` 均 `P5` | 实机验证 AutoBar 四列向上网格、姿态尺寸及相邻 provider |
-| Map | 羊皮大地图与黄铜罗盘方向 `P2`，尚未接入 | 游戏设备上审计真实对象与几何 |
+| Action Bars | AEUI `0.8.31`；Slot／Rail `P6`；Field Kit `2.8`、Focus `2.5`、Sidebar Group `1.0` 均 `P5` | 实机验证 AutoBar 四列向上网格、姿态尺寸及相邻 provider |
+| Map | runtime `1.0 / P5`；World attempt 1 与 Mini attempt 2 非交互羊皮卷／罗盘已接入；真实控件与插件工具带仍为 `P2` | 实机验证缩放、pfQuest 层级、文字、Farm mode 与 `/aeui map` 回退 |
+| Spellbook | runtime `1.0 / P5`；`SB-A2-DONOR V1` 四块原生 TGA 已接入；pfUI 现代 backdrop 关闭，动态控件保留，左上图标隐藏 | 实机验证对位、缩放、层序、图标隐藏和 `/aeui spellbook` 回退 |
 | Character | 香草同构方向 `P2 / paused` | 等用户恢复后再拆真实组件 |
-| Unit Frames | runtime `1.2`；动态头像、Bars、Raid A2 `P5`；Player／Target V4 source `P4` | 实机验证头像关闭、Bars、Raid；解决 V4 与现有 `240×60` 几何兼容 |
+| Unit Frames | runtime `1.5 / P5`；动态头像、Bars、Raid A2、Player／Target V4、TargetTarget A2 与 Focus A2 已接入 | 实机验证九切片、状态层序、Aura／施法条净空及禁用回退 |
 
 详细状态以 [docs/PROGRESS.md](docs/PROGRESS.md) 和目标模块的
 `PROGRESS.md` 为准。
@@ -49,7 +50,8 @@ docs/modules/<module>/
 现有模块目录：[actionbars](docs/modules/actionbars/)、
 [chat](docs/modules/chat/)、[quests](docs/modules/quests/)、
 [map](docs/modules/map/)、[character](docs/modules/character/)、
-[unitframes](docs/modules/unitframes/)。
+[unitframes](docs/modules/unitframes/)、
+[spellbook](docs/modules/spellbook/)。
 
 资产正在生产时，目标模块可临时存在一份 `CURRENT.md`；它只保存当前可执行
 Prompt、固定输入、调用计数、当前候选和下一决定，不追加逐稿流水。资产接受或

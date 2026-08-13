@@ -1291,6 +1291,13 @@ local perrow = f.config.debuffperrow
   then
     f:aeuiRaidRefreshVisual()
   end
+
+  -- Player and Target may carry accepted AEUI shell media. Reapply only the
+  -- presentation after provider configuration changes; pfUI still owns the
+  -- frame size, status bars, text, events, hitbox and secure behaviour.
+  if type(f.aeuiPrimaryRefreshVisual) == "function" then
+    f:aeuiPrimaryRefreshVisual()
+  end
 end
 
 function pfUI.uf.OnShow()
