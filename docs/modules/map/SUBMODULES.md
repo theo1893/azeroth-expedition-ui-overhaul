@@ -38,7 +38,7 @@
 
 | ID | 原生／pfUI 对象 | 合同 |
 |---|---|---|
-| `MAP.MINI.PROVIDER` | `pfMinimap`、其子对象 `Minimap` | 真实内容默认 140×140、可移动并支持滚轮缩放；地图块、玩家箭头和第三方动态图层继续由 provider 所有 |
+| `MAP.MINI.PROVIDER` | `pfMinimap`、其子对象 `Minimap` | 真实内容默认 140×140、可移动并支持滚轮缩放；`pfMinimap` 的 parent／point／scale 与保存位置继续由 pfUI 所有，adapter 只跟随；地图块、玩家箭头和第三方动态图层继续由 provider 所有 |
 | `MAP.MINI.MASK` | `Minimap:SetMaskTexture`；pfUI 当前 `img:minimap` 是完全不透明的 8×8 方形 | 由确定性媒体替换为圆形内容 mask；不由 ImageGen 生产；有效内容直径 140，不把外壳 Alpha 当作 mask |
 | `MAP.MINI.COMPASS` | pfUI 已清空的 `MinimapBorder` 周围 adapter Texture | 独立于 140×140 内容区的闭合罗盘外壳；无按钮、地图、文字或图钉烘焙；右上锚定时必须为外延保留屏幕安全距 |
 | `MAP.MINI.NORTH` | 非交互装饰 Texture | 首批作为可独立定位的北针，不假定旋转行为 |
@@ -63,14 +63,15 @@
 | 子组件 | pfUI 对象／职责 | 状态 |
 |---|---|---|
 | `MAP.MINI.ADDONS.SCANNER` | `ScanForButtons`／`IsButtonValid`／`pfUI_cache.abuttons` | 行为-only；保留自动扫描、手动 add／del／reset、忽略表和缺失对象清理 |
-| `MAP.MINI.ADDONS.ANCHORS` | `C.abuttons.position` 与 adapter 计算、不可见 | 无位图；支持 bottom／left／top／right，并从 184 外壳边界之外展开，避让追踪、通知和屏幕边缘 |
-| `MAP.MINI.ADDONS.SOCKET` | 扫描到的真实插件 Button 外壳 | 普通／悬停／按下／激活／禁用 |
+| `MAP.MINI.ADDONS.ANCHORS` | `C.abuttons.position` 与 adapter 计算、不可见 | 无位图；支持 bottom／left／top／right，并从 184 外壳边界之外展开；不得为容纳工具带改写 `pfMinimap` 保存锚点，屏幕边距由 pfUI 可移动位置负责 |
+| `MAP.MINI.ADDONS.ENTRY` | 扫描到的真实插件 Button | provider 保留原始图标、状态与自带边缘；adapter 只排版，不叠加统一逐图标外框 |
 | `MAP.MINI.ADDONS.NOTICE` | 插件自己的通知语义 | 无／未读／警告独立覆盖 |
 | `MAP.MINI.ADDONS.TOGGLE` | 真实 16×16 `pfMinimapButton` | 收起普通／悬停／按下与展开普通／悬停／按下；沿配置方向附着于外壳，点击仍只切换真实容器 |
 | `MAP.MINI.ADDONS.TRAY` | 真实 `pfMinimapButtons` 容器 | 收起／展开；可四向重排的九切片工具带；宽高由真实按钮数、rowsize 与 spacing 决定 |
 
 保留插件原始左键、右键、Tooltip 与动态图标；收纳时继续使用 pfUI 的 parent／point／
-size／scale／drag／OnUpdate 备份和恢复逻辑，工具带内不伪造原插件行为。默认罗盘底图
+size／scale／drag／OnUpdate 备份和恢复逻辑，工具带内不伪造原插件行为，也不隐藏
+插件自身携带的边缘。默认罗盘底图
 不画空槽；`pfQuestIcon` 作为合格的真实插件入口由同一容器动态承载。默认
 `rowsize=6`，4／6／10 个入口按实际数量形成一行或 `6+4` 两行工具带，不生成空槽；
 0 个入口不展示空工具带。战斗隐藏继续读取 `C.abuttons.hideincombat`。`pfFarmMap`

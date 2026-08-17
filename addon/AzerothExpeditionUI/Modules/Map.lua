@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local Map = {}
-Map.runtimeContract = "2.0"
+Map.runtimeContract = "2.4"
 Map.worldIntegrationPaused = true
 Map.miniIntegrationPaused = false
 
@@ -31,7 +31,6 @@ local WORLD = {
 
 local MINI = {
   referenceContent = 140,
-  minimumScreenInset = 24,
   frame = {
     path = MEDIA .. "MapMiniFrameV2",
     width = 184,
@@ -770,38 +769,6 @@ local function GetTopAddonFrame(frame, container)
   return nil
 end
 
-local function StylePluginSocket(frame)
-  if not frame then return end
-  local socket = EnsureSocketTexture(frame)
-  socket:ClearAllPoints()
-  socket:SetAllPoints(frame)
-  socket:SetVertexColor(1, 1, 1)
-
-  if not frame.aeuiMapSocketHooks and type(HookScript) == "function" then
-    frame.aeuiMapSocketHooks = true
-    HookScript(frame, "OnEnter", function()
-      if frame.aeuiMapSocket and MiniModuleEnabled() then
-        frame.aeuiMapSocket:SetVertexColor(1, 0.84, 0.58)
-      end
-    end)
-    HookScript(frame, "OnLeave", function()
-      if frame.aeuiMapSocket then
-        frame.aeuiMapSocket:SetVertexColor(1, 1, 1)
-      end
-    end)
-    HookScript(frame, "OnMouseDown", function()
-      if frame.aeuiMapSocket and MiniModuleEnabled() then
-        frame.aeuiMapSocket:SetVertexColor(0.68, 0.58, 0.46)
-      end
-    end)
-    HookScript(frame, "OnMouseUp", function()
-      if frame.aeuiMapSocket then
-        frame.aeuiMapSocket:SetVertexColor(1, 1, 1)
-      end
-    end)
-  end
-end
-
 local function GetAddonEntries(container)
   local entries = {}
   if not container or not container.buttons then return entries end
@@ -815,6 +782,23 @@ local function GetAddonEntries(container)
     end
   end
   return entries
+end
+
+local function RelativeEffectiveScale(frame, relativeTo)
+  if
+    not frame or
+    not relativeTo or
+    type(frame.GetEffectiveScale) ~= "function" or
+    type(relativeTo.GetEffectiveScale) ~= "function"
+  then
+    return 1
+  end
+  local frameScale = frame:GetEffectiveScale()
+  local relativeScale = relativeTo:GetEffectiveScale()
+  if not frameScale or frameScale <= 0 or not relativeScale or relativeScale <= 0 then
+    return 1
+  end
+  return frameScale / relativeScale
 end
 
 local function LayoutAddonEntries(container, entries, position, scale)
@@ -854,13 +838,14 @@ local function LayoutAddonEntries(container, entries, position, scale)
       x = padding + buttonSize / 2 + group * (buttonSize + gap)
       y = -((height - groupSpan) / 2 + buttonSize / 2 + item * (buttonSize + gap))
     end
+    local frameScale = RelativeEffectiveScale(entry.frame, container)
     entry.frame:ClearAllPoints()
-    entry.frame:SetPoint("CENTER", container, "TOPLEFT", x, y)
+    entry.frame:SetPoint("CENTER", container, "TOPLEFT", x / frameScale, y / frameScale)
     if entry.top ~= entry.frame then
+      local topScale = RelativeEffectiveScale(entry.top, container)
       entry.top:ClearAllPoints()
-      entry.top:SetPoint("CENTER", container, "TOPLEFT", x, y)
+      entry.top:SetPoint("CENTER", container, "TOPLEFT", x / topScale, y / topScale)
     end
-    StylePluginSocket(entry.frame)
   end
   return count, width, height
 end
@@ -941,104 +926,6 @@ local function AnchorAddonFrames(container, button, position, scale)
   end
 end
 
-local function ClampMiniToScreen(position, container, count, scale)
-  if not pfUI or not pfUI.minimap or not UIParent then return end
-  local left = pfUI.minimap:GetLeft()
-  local right = pfUI.minimap:GetRight()
-  local top = pfUI.minimap:GetTop()
-  local bottom = pfUI.minimap:GetBottom()
-  local parentWidth = UIParent:GetWidth()
-  local parentHeight = UIParent:GetHeight()
-  if not left or not right or not top or not bottom or not parentWidth or not parentHeight then
-    return
-  end
-
-  local miniRelativeScale = 1
-  local containerRelativeScale = 1
-  if
-    type(pfUI.minimap.GetEffectiveScale) == "function" and
-    type(UIParent.GetEffectiveScale) == "function" and
-    UIParent:GetEffectiveScale() > 0
-  then
-    miniRelativeScale =
-      pfUI.minimap:GetEffectiveScale() / UIParent:GetEffectiveScale()
-  end
-  if
-    type(container.GetEffectiveScale) == "function" and
-    type(UIParent.GetEffectiveScale) == "function" and
-    UIParent:GetEffectiveScale() > 0
-  then
-    containerRelativeScale =
-      container:GetEffectiveScale() / UIParent:GetEffectiveScale()
-  end
-
-  local outLeft = 22 * scale * miniRelativeScale
-  local outRight = 22 * scale * miniRelativeScale
-  local outTop = 22 * scale * miniRelativeScale
-  local outBottom = 22 * scale * miniRelativeScale
-  if count > 0 then
-    if position == "bottom" then
-      outBottom = math.max(outBottom, 36 * scale * miniRelativeScale)
-      if container:IsShown() then
-        outBottom = math.max(
-          outBottom,
-          31 * scale * miniRelativeScale +
-            container:GetHeight() * containerRelativeScale
-        )
-      end
-    elseif position == "top" then
-      outTop = math.max(outTop, 36 * scale * miniRelativeScale)
-      if container:IsShown() then
-        outTop = math.max(
-          outTop,
-          31 * scale * miniRelativeScale +
-            container:GetHeight() * containerRelativeScale
-        )
-      end
-    elseif position == "left" then
-      outLeft = math.max(outLeft, 38 * scale * miniRelativeScale)
-      if container:IsShown() then
-        outLeft = math.max(
-          outLeft,
-          31 * scale * miniRelativeScale +
-            container:GetWidth() * containerRelativeScale
-        )
-      end
-    elseif position == "right" then
-      outRight = math.max(outRight, 38 * scale * miniRelativeScale)
-      if container:IsShown() then
-        outRight = math.max(
-          outRight,
-          31 * scale * miniRelativeScale +
-            container:GetWidth() * containerRelativeScale
-        )
-      end
-    end
-  end
-
-  local safe = MINI.minimumScreenInset
-  local dx = 0
-  local dy = 0
-  if left - outLeft < safe then dx = safe - (left - outLeft) end
-  if right + outRight > parentWidth - safe then
-    dx = (parentWidth - safe) - (right + outRight)
-  end
-  if bottom - outBottom < safe then dy = safe - (bottom - outBottom) end
-  if top + outTop > parentHeight - safe then
-    dy = (parentHeight - safe) - (top + outTop)
-  end
-  if math.abs(dx) > 0.1 or math.abs(dy) > 0.1 then
-    pfUI.minimap:ClearAllPoints()
-    pfUI.minimap:SetPoint(
-      "BOTTOMLEFT",
-      UIParent,
-      "BOTTOMLEFT",
-      left + dx,
-      bottom + dy
-    )
-  end
-end
-
 function Map:StyleAddonButtons(scale)
   if not pfUI or not pfUI.addonbuttons or not pfUI.addonbuttons.minimapbutton then
     self.addonButtonCount = 0
@@ -1073,7 +960,6 @@ function Map:StyleAddonButtons(scale)
   EnsureToggleArt(button)
   button:Show()
   SetToggleGlyph(button, ToggleDirection(position, container:IsShown()), scale)
-  ClampMiniToScreen(position, container, count, scale)
 end
 
 function Map:RestoreAddonButtons()
