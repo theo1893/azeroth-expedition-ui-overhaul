@@ -24,7 +24,8 @@ Codex 进入仓库后先读本文件。这里给出项目边界、文档索引�
 | Action Bars | AEUI `0.8.31`；Slot／Rail `P6`；Field Kit `2.8`、Focus `2.7`、Sidebar Group `1.0` 均 `P5`；所有角色 DDPS 统一 `(650,-615)` | 实机验证 DDPS 中央视野净空、AutoBar 四列向上网格、姿态尺寸及相邻 provider |
 | Map | accepted World／Mini source/runtime 保留，AEUI adapter 硬暂停；当前回退 pfUI 地图外观 | 明天依据 handoff 实机图修正大地图越界／角连接与小地图边距／铭牌后再接入 |
 | Spellbook | accepted `SB-A2-DONOR V1` source/runtime 保留，AEUI adapter 与 Spellbook ownership 暂停；当前回退 pfUI 技能书 | 明天依据 handoff 实机图核对四块 TGA 对位、层序、provider region 与控件净空 |
-| Character | 香草同构方向 `P2 / paused` | 等用户恢复后再拆真实组件 |
+| Talents | `P1 / paused`；已与 Spellbook 拆分，真实动态节点／分支边界已对齐 | 等用户明确恢复后制作独立 `TL-SIM-V1` |
+| Character | `P2 / active`；无左上 icon 的 `CHAR-SIM-V2` 已接受；当前仍使用 pfUI 默认 skin | 授权首批静态基础层 production 合同 |
 | Unit Frames | Bars／Raid／头像合同继续运行；本批 Player／Target／TargetTarget／Focus 外壳 route 暂停，当前回退 pfUI 外框 | 明天依据 handoff 实机图检查 base／rim 层序、九切片和文字净空后再接入 |
 
 详细状态以 [docs/PROGRESS.md](docs/PROGRESS.md) 和目标模块的
@@ -51,7 +52,7 @@ docs/modules/<module>/
 [chat](docs/modules/chat/)、[quests](docs/modules/quests/)、
 [map](docs/modules/map/)、[character](docs/modules/character/)、
 [unitframes](docs/modules/unitframes/)、
-[spellbook](docs/modules/spellbook/)。
+[spellbook](docs/modules/spellbook/)、[talents](docs/modules/talents/)。
 
 资产正在生产时，目标模块可临时存在一份 `CURRENT.md`；它只保存当前可执行
 Prompt、固定输入、调用计数、当前候选和下一决定，不追加逐稿流水。资产接受或

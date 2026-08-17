@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Promote the accepted Map A1 donors and export deterministic runtime media.
+"""Promote the accepted WorldMap A1 donor and export deterministic runtime media.
 
 The ignored ImageGen candidates are consumed only when ``--promote-*`` is
-provided.  Once the accepted component PNGs exist in ``assets/source``, normal
-rebuilds require no generated files and never reinterpret the donor layout.
+provided.  Minimap A1 is retired and cannot be rebuilt by this tool; use
+``build_map_mini_v2_runtime.py`` for the accepted Minimap overhaul.
 """
 
 from __future__ import annotations
@@ -31,18 +31,12 @@ RESAMPLE = Image.Resampling.LANCZOS
 WORLD_RAW_SHA256 = (
     "c27008280cf8db8f09f7957b0f77cb0614025ba869af8ffa07926cc69be7aad0"
 )
-MINI_RAW_SHA256 = (
-    "eb7f13856573284290b368be829d2fb4907d476756d7b2b974076a26cdfeaba2"
-)
 
 WORLD_SOURCE_DIR = ROOT / "assets/source/map/world-a1"
-MINI_SOURCE_DIR = ROOT / "assets/source/map/mini-a1"
 RUNTIME_DIR = ROOT / "addon/AzerothExpeditionUI/Media/Map"
 
 WORLD_SOURCE_MANIFEST = WORLD_SOURCE_DIR / "MAP-WORLD-A1_SourceManifest_v1.json"
 WORLD_RUNTIME_MANIFEST = WORLD_SOURCE_DIR / "MAP-WORLD-A1_RuntimeManifest_v1.json"
-MINI_SOURCE_MANIFEST = MINI_SOURCE_DIR / "MAP-MINI-A1_SourceManifest_v1.json"
-MINI_RUNTIME_MANIFEST = MINI_SOURCE_DIR / "MAP-MINI-A1_RuntimeManifest_v1.json"
 
 WORLD_SOURCES = {
     "rod_top": "MapWorldRodTop_MasterV1.png",
@@ -63,43 +57,12 @@ WORLD_COMPONENTS = {
     "edge_right": "MAP.WORLD.FRAME.EDGE.RIGHT",
 }
 
-MINI_SOURCES = {
-    "ring": "MapMiniCompassRing_MasterV1.png",
-    "north": "MapMiniNorth_MasterV1.png",
-    "west": "MapMiniDirectionWest_MasterV1.png",
-    "east": "MapMiniDirectionEast_MasterV1.png",
-    "south": "MapMiniDirectionSouth_MasterV1.png",
-    "plaque": "MapMiniInfoPlaque_MasterV1.png",
-}
-MINI_RUNTIME = {
-    "ring": ("MapMiniCompassRingV1.tga", (184, 184)),
-    "north": ("MapMiniNorthV1.tga", (42, 58)),
-    "west": ("MapMiniDirectionWestV1.tga", (50, 36)),
-    "east": ("MapMiniDirectionEastV1.tga", (50, 36)),
-    "south": ("MapMiniDirectionSouthV1.tga", (38, 42)),
-    "plaque": ("MapMiniInfoPlaqueV1.tga", (150, 44)),
-}
-MINI_COMPONENTS = {
-    "ring": "MAP.MINI.COMPASS",
-    "north": "MAP.MINI.NORTH",
-    "west": "MAP.MINI.DIRECTIONS.WEST",
-    "east": "MAP.MINI.DIRECTIONS.EAST",
-    "south": "MAP.MINI.DIRECTIONS.SOUTH",
-    "plaque": "MAP.MINI.ZONE.PLAQUE",
-}
-
-
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--promote-world",
         type=Path,
         help="Exact accepted MAP-WORLD-A1 attempt-1 provider output.",
-    )
-    parser.add_argument(
-        "--promote-mini",
-        type=Path,
-        help="Exact accepted MAP-MINI-A1 attempt-2 provider output.",
     )
     return parser.parse_args()
 
@@ -265,87 +228,6 @@ def promote_world(path: Path) -> None:
         save_png(source, WORLD_SOURCE_DIR / WORLD_SOURCES[key])
 
 
-def cyan_key_all(image: Image.Image) -> Image.Image:
-    rgb = np.asarray(image.convert("RGB"), dtype=np.uint8)
-    red = rgb[:, :, 0].astype(np.int16)
-    green = rgb[:, :, 1].astype(np.int16)
-    blue = rgb[:, :, 2].astype(np.int16)
-    cyan = (
-        (green >= 130)
-        & (blue >= 130)
-        & (green - red >= 65)
-        & (blue - red >= 65)
-    )
-    alpha = np.where(cyan, 0, 255).astype(np.uint8)
-    rgba = np.dstack([rgb, alpha])
-    rgba[alpha == 0, :3] = 0
-    return Image.fromarray(rgba, "RGBA")
-
-
-def antialiased_annulus(size: int = 184, outer: int = 92, inner: int = 70) -> Image.Image:
-    factor = 4
-    mask = Image.new("L", (size * factor, size * factor), 0)
-    draw = ImageDraw.Draw(mask)
-    center = size * factor / 2
-    draw.ellipse(
-        (
-            center - outer * factor,
-            center - outer * factor,
-            center + outer * factor,
-            center + outer * factor,
-        ),
-        fill=255,
-    )
-    draw.ellipse(
-        (
-            center - inner * factor,
-            center - inner * factor,
-            center + inner * factor,
-            center + inner * factor,
-        ),
-        fill=0,
-    )
-    return mask.resize((size, size), RESAMPLE)
-
-
-def apply_mask(image: Image.Image, mask: Image.Image) -> Image.Image:
-    result = image.convert("RGBA")
-    result.putalpha(ImageChops.multiply(result.getchannel("A"), mask))
-    return clear_transparent_rgb(result)
-
-
-def crop_fit(
-    image: Image.Image,
-    box: tuple[int, int, int, int],
-    size: tuple[int, int],
-) -> Image.Image:
-    crop = image.crop(box)
-    crop.thumbnail(size, RESAMPLE)
-    result = Image.new("RGBA", size, (0, 0, 0, 0))
-    result.alpha_composite(crop, ((size[0] - crop.width) // 2, (size[1] - crop.height) // 2))
-    return clear_transparent_rgb(result)
-
-
-def promote_mini(path: Path) -> None:
-    raw = validate_raw(path, MINI_RAW_SHA256, (1254, 1254))
-    keyed = cyan_key_all(raw)
-    if keyed.getbbox() != (135, 41, 1119, 1198):
-        raise ValueError(f"mini donor visible bbox drifted: {keyed.getbbox()}")
-    ring_material = keyed.crop((118, 118, 1136, 1136)).resize((184, 184), RESAMPLE)
-    sources = {
-        "ring": apply_mask(ring_material, antialiased_annulus()),
-        "north": crop_fit(keyed, (520, 20, 735, 320), (42, 58)),
-        "west": crop_fit(keyed, (75, 520, 315, 710), (50, 36)),
-        "east": crop_fit(keyed, (940, 520, 1180, 710), (50, 36)),
-        "south": crop_fit(keyed, (535, 900, 720, 1090), (38, 42)),
-        "plaque": crop_fit(keyed, (285, 1010, 970, 1225), (150, 44)),
-    }
-    for key, source in sources.items():
-        if source.size != MINI_RUNTIME[key][1]:
-            raise ValueError(f"mini component geometry drifted: {key} {source.size}")
-        save_png(source, MINI_SOURCE_DIR / MINI_SOURCES[key])
-
-
 def load_sources(
     source_dir: Path,
     names: dict[str, str],
@@ -455,8 +337,6 @@ def runtime_records(
 def write_manifests(
     world_sources: dict[str, Image.Image],
     world_runtimes: dict[str, Image.Image],
-    mini_sources: dict[str, Image.Image],
-    mini_runtimes: dict[str, Image.Image],
 ) -> None:
     world_source = {
         "schema": "aeui-map-world-a1-source-manifest-v1",
@@ -547,95 +427,11 @@ def write_manifests(
         encoding="utf-8",
     )
 
-    mini_source = {
-        "schema": "aeui-map-mini-a1-source-manifest-v1",
-        "schema_version": 1,
-        "module": "map",
-        "batch": "MAP-MINI-A1 V1",
-        "status": "runtime-exported",
-        "phase": "P5",
-        "accepted_on": "2026-08-13",
-        "user_acceptance": {
-            "exact_statement": (
-                "接受 MAP-WORLD-A1 V1 attempt 1 与 MAP-MINI-A1 V1 attempt 2；"
-                "允许提升 source/runtime、接入 addon 并清理对应中间产物。"
-            ),
-            "accepted_attempt": 2,
-            "p4_p5_and_integration_authorized": True,
-        },
-        "provenance": {
-            "executor": "imagegen-0-143-0",
-            "provider_raw_sha256": MINI_RAW_SHA256,
-            "provider_raw_size": [1254, 1254],
-            "actual_imagegen_calls": 2,
-            "maximum_imagegen_calls": 5,
-            "prompt": "docs/modules/map/SUBMODULE_ART_BASELINES.md#mapminimaskcompass",
-            "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
-            "module_prompt": "docs/modules/map/ART_BASELINE.md",
-            "locked_reference_sha256": (
-                "9e6a38dbaa2e7df82480c4fe8ca32ca2c931fa016a8264f26964903468ac2ea6"
-            ),
-            "roughness_reference_sha256": (
-                "272528e6d89cc90e5cbb37dce4ae572ddf9de0402078cdcf0ed5804f734faab8"
-            ),
-        },
-        "components": source_records(
-            MINI_SOURCE_DIR, MINI_SOURCES, MINI_COMPONENTS, mini_sources
-        ),
-        "deterministic_transform": {
-            "key": (
-                "full-field cyan plus isolated dominant-key spill and "
-                "transparent RGB clear"
-            ),
-            "visible_bbox_exclusive": [135, 41, 1119, 1198],
-            "ring_material_window_xyxy": [118, 118, 1136, 1136],
-            "ring_geometry": {"outer": [184, 184], "content": [140, 140]},
-            "component_windows_are_fixed": True,
-            "buttons_or_plugin_slots_promoted": False,
-            "generative_postprocess": False,
-        },
-        "runtime_manifest": repository_path(MINI_RUNTIME_MANIFEST),
-    }
-    MINI_SOURCE_DIR.mkdir(parents=True, exist_ok=True)
-    MINI_SOURCE_MANIFEST.write_text(
-        json.dumps(mini_source, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
-
-    mini_runtime = {
-        "schema": "aeui-map-mini-a1-runtime-manifest-v1",
-        "schema_version": 1,
-        "module": "map",
-        "batch": "MAP-MINI-A1 V1",
-        "status": "runtime-exported",
-        "phase": "P5",
-        "runtime_contract": "1.1",
-        "source_manifest": repository_path(MINI_SOURCE_MANIFEST),
-        "runtime": runtime_records(MINI_RUNTIME, MINI_COMPONENTS, mini_runtimes),
-        "layout_contract": {
-            "provider": "pfUI.minimap and Minimap",
-            "provider_size": "runtime Minimap GetWidth/GetHeight; square-only fail-open",
-            "reference_content_ui": [140, 140],
-            "reference_ring_ui": [184, 184],
-            "uniform_scale_only": True,
-            "farmmode_shell_reuse": False,
-            "provider_buttons_and_pfquest_pins_remain_live": True,
-            "zone_and_coordinates_are_runtime_text": True,
-            "vanilla_power_of_two_texture_containers": True,
-        },
-    }
-    MINI_RUNTIME_MANIFEST.write_text(
-        json.dumps(mini_runtime, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
-
 
 def main() -> int:
     args = parse_args()
     if args.promote_world:
         promote_world(args.promote_world)
-    if args.promote_mini:
-        promote_mini(args.promote_mini)
 
     world_sizes = {
         "rod_top": (1478, 157),
@@ -643,12 +439,9 @@ def main() -> int:
         "edge_left": (177, 768),
         "edge_right": (177, 768),
     }
-    mini_sizes = {key: value[1] for key, value in MINI_RUNTIME.items()}
     world_sources = load_sources(WORLD_SOURCE_DIR, WORLD_SOURCES, world_sizes)
-    mini_sources = load_sources(MINI_SOURCE_DIR, MINI_SOURCES, mini_sizes)
     world_runtimes = export_runtime(world_sources, WORLD_RUNTIME)
-    mini_runtimes = export_runtime(mini_sources, MINI_RUNTIME)
-    write_manifests(world_sources, world_runtimes, mini_sources, mini_runtimes)
+    write_manifests(world_sources, world_runtimes)
 
     print(
         json.dumps(
@@ -656,9 +449,8 @@ def main() -> int:
                 "status": "pass",
                 "world_source_manifest": repository_path(WORLD_SOURCE_MANIFEST),
                 "world_runtime_manifest": repository_path(WORLD_RUNTIME_MANIFEST),
-                "mini_source_manifest": repository_path(MINI_SOURCE_MANIFEST),
-                "mini_runtime_manifest": repository_path(MINI_RUNTIME_MANIFEST),
-                "runtime_files": len(WORLD_RUNTIME) + len(MINI_RUNTIME),
+                "mini_status": "retired; superseded by MAP-MINI-OVERHAUL-V2",
+                "runtime_files": len(WORLD_RUNTIME),
             },
             ensure_ascii=False,
         )

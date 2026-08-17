@@ -1,10 +1,23 @@
 local addon = AzerothExpeditionUI
 local UnitFrames = {}
-UnitFrames.runtimeContract = "1.6"
+UnitFrames.runtimeContract = "1.7"
 
 local MEDIA = addon.media.root .. "UnitFrames\\"
 local HEALTH_TEXTURE = MEDIA .. "UnitFrameHealthFillV1"
 local POWER_TEXTURE = MEDIA .. "UnitFramePowerFillV1"
+
+local PLAYER_V5 = {
+  base = MEDIA .. "UnitFramePlayerShellV5",
+  sourceWidth = 254,
+  sourceHeight = 77,
+  textureWidth = 256,
+  textureHeight = 128,
+  providerWidth = 240,
+  providerHeight = 65,
+  outsetLeft = 7,
+  outsetTop = 6,
+  assembly = "complete-bitmap-254x77-canonical-only",
+}
 
 local PRIMARY_GEOMETRY = {
   sourceWidth = 214,
@@ -402,6 +415,66 @@ local function EnsurePrimaryOverlay(frame)
   return overlay
 end
 
+local function EnsurePlayerV5Overlay(frame)
+  if frame.aeuiPlayerV5Overlay then
+    return frame.aeuiPlayerV5Overlay
+  end
+  if type(CreateFrame) ~= "function" then return nil end
+
+  local overlay = CreateFrame("Frame", nil, frame)
+  overlay:SetAllPoints(frame)
+  overlay:SetFrameLevel(10)
+  frame.aeuiPlayerV5Overlay = overlay
+  return overlay
+end
+
+local function EnsurePlayerV5Texture(frame)
+  local overlay = EnsurePlayerV5Overlay(frame)
+  if not overlay or type(overlay.CreateTexture) ~= "function" then
+    return nil
+  end
+  if frame.aeuiPlayerV5Texture then
+    return frame.aeuiPlayerV5Texture
+  end
+
+  local texture = overlay:CreateTexture(nil, "ARTWORK")
+  frame.aeuiPlayerV5Texture = texture
+  return texture
+end
+
+local function HidePlayerV5Chrome(frame)
+  if not frame.aeuiPlayerV5ChromeRestore then
+    frame.aeuiPlayerV5ChromeRestore = {
+      health = frame.hp and frame.hp.backdrop and
+        FrameShown(frame.hp.backdrop) or false,
+      power = frame.power and frame.power.backdrop and
+        FrameShown(frame.power.backdrop) or false,
+      shadow = frame.backdrop_shadow and
+        FrameShown(frame.backdrop_shadow) or false,
+    }
+  end
+
+  if frame.hp and frame.hp.backdrop then frame.hp.backdrop:Hide() end
+  if frame.power and frame.power.backdrop then frame.power.backdrop:Hide() end
+  if frame.backdrop_shadow then frame.backdrop_shadow:Hide() end
+end
+
+local function RestorePlayerV5Chrome(frame)
+  local restore = frame and frame.aeuiPlayerV5ChromeRestore
+  if not restore then return end
+
+  if frame.hp and frame.hp.backdrop then
+    SetShown(frame.hp.backdrop, restore.health)
+  end
+  if frame.power and frame.power.backdrop then
+    SetShown(frame.power.backdrop, restore.power)
+  end
+  if frame.backdrop_shadow then
+    SetShown(frame.backdrop_shadow, restore.shadow)
+  end
+  frame.aeuiPlayerV5ChromeRestore = nil
+end
+
 local function HidePrimaryChrome(frame)
   if frame.hp and frame.hp.backdrop then frame.hp.backdrop:Hide() end
   if frame.power and frame.power.backdrop then frame.power.backdrop:Hide() end
@@ -751,6 +824,12 @@ function UnitFrames:IsPrimaryShellEnabled()
     RouteOwned("unitframes.primary-shell")
 end
 
+function UnitFrames:IsPlayerShellV5Enabled()
+  return
+    ModuleEnabled() and
+    RouteOwned("unitframes.player-shell-v5")
+end
+
 function UnitFrames:IsRaidEnabled()
   return
     ModuleEnabled() and
@@ -762,6 +841,7 @@ end
 function UnitFrames:IsEnabled()
   return
     self:IsPrimaryEnabled() or
+    self:IsPlayerShellV5Enabled() or
     self:IsPrimaryShellEnabled() or
     self:IsRaidEnabled() or
     self:IsPortraitConfigurationEnabled()
@@ -770,6 +850,92 @@ end
 local function ExpeditionPrimaryVisualRefresh(frame)
   local role = frame and frame.aeuiPrimaryShellRole
   if role then UnitFrames:ApplyPrimaryShell(frame, role) end
+end
+
+local function ExpeditionPlayerV5VisualRefresh(frame)
+  if UnitFrames:IsPlayerShellV5Enabled() then
+    UnitFrames:ApplyPlayerV5Shell(frame)
+  else
+    UnitFrames:RestorePlayerV5Shell(frame)
+  end
+end
+
+function UnitFrames:ApplyPlayerV5Shell(frame)
+  local registeredFrame = pfUI and pfUI.uf and pfUI.uf.player
+  if not frame or registeredFrame ~= frame then return false end
+
+  local width = FrameDimension(frame, "GetWidth", "width")
+  local height = FrameDimension(frame, "GetHeight", "height")
+  if
+    not width or not height or
+    Round(width) ~= PLAYER_V5.providerWidth or
+    Round(height) ~= PLAYER_V5.providerHeight
+  then
+    self:RestorePlayerV5Shell(frame)
+    return false
+  end
+
+  local overlay = EnsurePlayerV5Overlay(frame)
+  local texture = EnsurePlayerV5Texture(frame)
+  if not overlay or not texture then
+    self:RestorePlayerV5Shell(frame)
+    return false
+  end
+
+  texture:ClearAllPoints()
+  texture:SetTexture(PLAYER_V5.base)
+  texture:SetTexCoord(
+    0, PLAYER_V5.sourceWidth / PLAYER_V5.textureWidth,
+    0, PLAYER_V5.sourceHeight / PLAYER_V5.textureHeight
+  )
+  texture:SetWidth(PLAYER_V5.sourceWidth)
+  texture:SetHeight(PLAYER_V5.sourceHeight)
+  texture:SetPoint(
+    "TOPLEFT", frame, "TOPLEFT",
+    -PLAYER_V5.outsetLeft, PLAYER_V5.outsetTop
+  )
+  texture:SetVertexColor(1, 1, 1)
+  texture:SetAlpha(1)
+  texture:Show()
+  overlay:Show()
+  HidePlayerV5Chrome(frame)
+
+  frame.aeuiPlayerV5ShellTexture = PLAYER_V5.base
+  frame.aeuiPlayerV5ShellAssembly = PLAYER_V5.assembly
+  frame.aeuiPlayerV5ShellContract = self.runtimeContract
+  frame.aeuiPrimaryRefreshVisual = ExpeditionPlayerV5VisualRefresh
+  return true
+end
+
+function UnitFrames:RestorePlayerV5Shell(frame)
+  if not frame then return false end
+  local applied = frame.aeuiPlayerV5ShellContract and true or false
+
+  if frame.aeuiPrimaryRefreshVisual == ExpeditionPlayerV5VisualRefresh then
+    frame.aeuiPrimaryRefreshVisual = nil
+  end
+  if frame.aeuiPlayerV5Texture then
+    frame.aeuiPlayerV5Texture:Hide()
+  end
+  if frame.aeuiPlayerV5Overlay then
+    frame.aeuiPlayerV5Overlay:Hide()
+  end
+  RestorePlayerV5Chrome(frame)
+
+  frame.aeuiPlayerV5ShellTexture = nil
+  frame.aeuiPlayerV5ShellAssembly = nil
+  frame.aeuiPlayerV5ShellContract = nil
+
+  if
+    applied and
+    not frame.aeuiPlayerV5Restoring and
+    type(frame.UpdateConfig) == "function"
+  then
+    frame.aeuiPlayerV5Restoring = true
+    pcall(frame.UpdateConfig, frame)
+    frame.aeuiPlayerV5Restoring = nil
+  end
+  return applied
 end
 
 function UnitFrames:ApplyPrimaryShell(frame, role)
@@ -1002,10 +1168,12 @@ function UnitFrames:Apply()
   local frames = pfUI and pfUI.uf
   local primaryEnabled = self:IsPrimaryEnabled()
   local primaryShellEnabled = self:IsPrimaryShellEnabled()
+  local playerShellV5Enabled = self:IsPlayerShellV5Enabled()
   local raidEnabled = self:IsRaidEnabled()
   local portraitsEnabled = self:IsPortraitConfigurationEnabled()
   local primaryApplied = 0
   local primaryShellApplied = 0
+  local playerShellV5Applied = 0
   local raidApplied = 0
 
   if portraitsEnabled then
@@ -1024,12 +1192,24 @@ function UnitFrames:Apply()
       end
 
       if PRIMARY_SHELLS[key] then
-        if primaryShellEnabled then
+        if key == "player" and playerShellV5Enabled then
+          self:RestorePrimaryShell(frame)
+        elseif primaryShellEnabled then
           if self:ApplyPrimaryShell(frame, key) then
             primaryShellApplied = primaryShellApplied + 1
           end
         else
           self:RestorePrimaryShell(frame)
+        end
+      end
+
+      if key == "player" then
+        if playerShellV5Enabled then
+          if self:ApplyPlayerV5Shell(frame) then
+            playerShellV5Applied = playerShellV5Applied + 1
+          end
+        else
+          self:RestorePlayerV5Shell(frame)
         end
       end
     end
@@ -1052,6 +1232,7 @@ function UnitFrames:Apply()
 
   self.appliedFrameCount = primaryApplied
   self.appliedPrimaryShellCount = primaryShellApplied
+  self.appliedPlayerShellV5Count = playerShellV5Applied
   self.appliedRaidFrameCount = raidApplied
 end
 
@@ -1066,12 +1247,15 @@ function UnitFrames:GetRuntimeStatus()
     ", primary-bars=" .. tostring(self.appliedFrameCount or 0) .. "/4" ..
     ", primary-shells=" ..
       tostring(self.appliedPrimaryShellCount or 0) .. "/4" ..
+    ", player-shell-v5=" ..
+      tostring(self.appliedPlayerShellV5Count or 0) .. "/1" ..
     ", raid-shells=" .. tostring(self.appliedRaidFrameCount or 0) .. "/40" ..
     ", portraits=" .. tostring(self.disabledPortraitConfigCount or 0) ..
       "/" .. tostring(PORTRAIT_CONFIG_COUNT) ..
     ", marker-trackers=" ..
       tostring(self.disabledPortraitTrackerCount or 0) .. "/2" ..
     ", primary-slices=32/150/32-8/26/8" ..
+    ", player-v5=complete-254x77@240x65" ..
     ", targettarget-slices=20/72/20-6/22/6" ..
     ", focus-slices=24/64/24-10/27/6" ..
     ", raid-slices=6/62/6" ..

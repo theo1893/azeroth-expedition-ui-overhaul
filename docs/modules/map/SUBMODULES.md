@@ -10,10 +10,10 @@
 | [`modules/map.lua`](../../../addon/pfUI/modules/map.lua) | WorldMap 布局、缩放／拖动及地图相关呈现 | 当前由 pfUI 正常加载；以后只在 Map 接管范围内替换外壳与控件 |
 | [`modules/mapcolors.lua`](../../../addon/pfUI/modules/mapcolors.lua) | 地图颜色行为 | 保留数据／配置，不把颜色烘焙进外框 |
 | [`modules/mapreveal.lua`](../../../addon/pfUI/modules/mapreveal.lua) | 未探索区域显示增强 | 保留功能，独立于外壳美术 |
-| [`modules/minimap.lua`](../../../addon/pfUI/modules/minimap.lua) | `Minimap`、mask、缩放、区域、坐标、邮件与战场入口 | 当前由 pfUI 正常加载；未来 adapter 保留真实内容与行为 |
+| [`modules/minimap.lua`](../../../addon/pfUI/modules/minimap.lua) | `pfMinimap` 140×140 默认 provider、方形 mask、滚轮缩放、区域／坐标、邮件与战场入口；原生边框、缩放按钮、时间及 `MinimapToggleButton` 被隐藏 | adapter 保留真实内容与行为，替换 provider 外壳、mask 与相邻对象布局 |
 | [`modules/tracking.lua`](../../../addon/pfUI/modules/tracking.lua) | 追踪入口与状态 | 保留功能，按真实 Button 换肤 |
-| [`modules/addonbuttons.lua`](../../../addon/pfUI/modules/addonbuttons.lua) | 扫描、移动、保存小地图插件按钮；`pfMinimapButtons`／`pfMinimapButton` | 可复用行为，重做动态锚点与溢出呈现 |
-| [`modules/farmmode.lua`](../../../addon/pfUI/modules/farmmode.lua) | 小地图扩展使用模式 | 作为兼容状态，不能固化进罗盘母版 |
+| [`modules/addonbuttons.lua`](../../../addon/pfUI/modules/addonbuttons.lua) | 每 5 秒扫描并临时收纳合格插件按钮；`pfMinimapButtons`／`pfMinimapButton`；支持 bottom／left／top／right、rowsize、spacing 与战斗隐藏 | 保留扫描、缓存、点击和恢复逻辑；重做真实开关、动态容器与四向锚点 |
+| [`modules/farmmode.lua`](../../../addon/pfUI/modules/farmmode.lua) | 独立 `pfFarmMap` 300×300；迁移 pfQuest 图钉、tracking 与 PVP，并把常驻 `pfMinimap` 压成返回条 | 作为兼容状态；常驻罗盘和插件工具带不得漂浮或复制到 FarmMode |
 | [`skins/blizzard/battlefield_minimap.lua`](../../../addon/pfUI/skins/blizzard/battlefield_minimap.lua) | 战场小地图 skin | 独立系统面板，不与常驻罗盘背景合并 |
 
 ## 世界地图
@@ -38,33 +38,40 @@
 
 | ID | 原生／pfUI 对象 | 合同 |
 |---|---|---|
-| `MAP.MINI.MASK` | `Minimap`、`SetMaskTexture` | 圆形内容遮罩；有效直径不低于总直径 70% |
-| `MAP.MINI.COMPASS` | `MinimapBorder` 周围 adapter Texture | 内／外黄铜环与皮革外托；无按钮烘焙 |
+| `MAP.MINI.PROVIDER` | `pfMinimap`、其子对象 `Minimap` | 真实内容默认 140×140、可移动并支持滚轮缩放；地图块、玩家箭头和第三方动态图层继续由 provider 所有 |
+| `MAP.MINI.MASK` | `Minimap:SetMaskTexture`；pfUI 当前 `img:minimap` 是完全不透明的 8×8 方形 | 由确定性媒体替换为圆形内容 mask；不由 ImageGen 生产；有效内容直径 140，不把外壳 Alpha 当作 mask |
+| `MAP.MINI.COMPASS` | pfUI 已清空的 `MinimapBorder` 周围 adapter Texture | 独立于 140×140 内容区的闭合罗盘外壳；无按钮、地图、文字或图钉烘焙；右上锚定时必须为外延保留屏幕安全距 |
 | `MAP.MINI.NORTH` | 非交互装饰 Texture | 首批作为可独立定位的北针，不假定旋转行为 |
-| `MAP.MINI.DIRECTIONS` | 非交互方向 Texture／atlas | 四向独立或 atlas；不接收插件按钮 |
-| `MAP.MINI.ZOOM.IN` | `MinimapZoomIn` | 普通／悬停／按下／禁用的独立 Button |
-| `MAP.MINI.ZOOM.OUT` | `MinimapZoomOut` | 普通／悬停／按下／禁用的独立 Button |
-| `MAP.MINI.TRACKING` | `tracking.lua` 的真实入口 | 四状态及激活；保留追踪菜单 |
-| `MAP.MINI.ZONE` | pfUI `pfMinimapZone`；原生 `MinimapZoneTextButton` 当前隐藏 | 动态区域名 layout；首批只生产空铭牌，不烘焙文字 |
+| `MAP.MINI.DIRECTIONS` | 非交互方向 Texture／atlas | W／E／S 只作低权重刻痕，北针为唯一强方向件；不接收插件按钮，不侵入开关区 |
+| `MAP.MINI.ZOOM.IN` | `MinimapZoomIn` 当前隐藏；滚轮调用 `Minimap_ZoomIn` | 首批不生产，不恢复不存在于当前 pfUI 展示结构的按钮 |
+| `MAP.MINI.ZOOM.OUT` | `MinimapZoomOut` 当前隐藏；滚轮调用 `Minimap_ZoomOut` | 首批不生产，不恢复不存在于当前 pfUI 展示结构的按钮 |
+| `MAP.MINI.TRACKING` | 独立 `pfUITracking` Button，默认 16×16、父级 `UIParent` | 普通／悬停／按下／激活四状态；保留左键取消、右键菜单、Tooltip 与无追踪脉冲；只换肤和避让 |
+| `MAP.MINI.ZONE` | pfUI `pfMinimapZone`；原生 `MinimapZoneTextButton` 当前隐藏 | 动态区域名 layout-only；不再增加与插件面板冲突的外置长铭牌，不烘焙文字 |
 | `MAP.MINI.TIME` | `GameTimeFrame` 当前隐藏 | 首批不生产；若以后恢复，动态时间不得烘焙数字 |
-| `MAP.MINI.COORDS` | pfUI `pfMinimapCoord` | 动态坐标；可选 |
-| `MAP.MINI.MAIL` | `MiniMapMailFrame` | 独立通知覆盖 |
-| `MAP.MINI.BATTLEFIELD` | `MiniMapBattlefieldFrame` | 独立状态 Button，不并入罗盘环 |
-| `MAP.MINI.PVP` | `pfUI.minimap.pvpicon` | 独立 16×16 状态覆盖，不并入罗盘环 |
+| `MAP.MINI.COORDS` | pfUI `pfMinimapCoord` | 动态坐标 layout-only；保持 off／on／hover 以及四角配置，不烘焙数值 |
+| `MAP.MINI.MAIL` | `MiniMapMailFrame`，当前锚在 `pfMinimap` 右上 | 独立通知覆盖；保留闪烁提示，避让外壳和屏幕边缘 |
+| `MAP.MINI.BATTLEFIELD` | `MiniMapBattlefieldFrame`，当前锚在 `Minimap` 右下 | 独立状态 Button；保留左／右键行为，不并入罗盘环 |
+| `MAP.MINI.PVP` | `pfUI.minimap.pvpicon` 16×16 | 独立状态覆盖，不并入罗盘环；与战场入口共享避让区但不合并对象 |
 | `MAP.MINI.PFQUEST.PINS` | `pfMiniMapPin*`／pfQuest drawlayer | 保持在 `Minimap` 动态内容层；farmmode 时随 provider 迁移 |
+| `MAP.MINI.PLAYER_ARROW` | `Minimap` 内匿名 Model；pfUI 只调整 `arrowscale` | provider-owned；不得转为静态贴图或烘焙进 compass |
+| `MAP.MINI.VISIBILITY` | 全局 `ToggleMinimap`；可见的 `MinimapToggleButton` 已被 pfUI 隐藏 | 保留收起／展开行为；外壳、相邻对象与工具带必须随 provider 同步隐藏和恢复 |
 | `MAP.MINI.ADDONS` | `addonbuttons.lua` | 动态插件 Button adapter，详见下节 |
+| `MAP.MINI.FARMMODE` | `pfFarmMap`、`pfFarmMapButton` | FarmMode 期间隐藏常驻 compass／addon tray；不改变 300×300 provider、对象迁移及返回按钮行为 |
 
 ## 插件按钮兼容
 
 | 子组件 | pfUI 对象／职责 | 状态 |
 |---|---|---|
-| `MAP.MINI.ADDONS.ANCHORS` | 由 adapter 计算、不可见 | 无位图；避让北针、缩放、追踪和屏幕边缘 |
+| `MAP.MINI.ADDONS.SCANNER` | `ScanForButtons`／`IsButtonValid`／`pfUI_cache.abuttons` | 行为-only；保留自动扫描、手动 add／del／reset、忽略表和缺失对象清理 |
+| `MAP.MINI.ADDONS.ANCHORS` | `C.abuttons.position` 与 adapter 计算、不可见 | 无位图；支持 bottom／left／top／right，并从 184 外壳边界之外展开，避让追踪、通知和屏幕边缘 |
 | `MAP.MINI.ADDONS.SOCKET` | 扫描到的真实插件 Button 外壳 | 普通／悬停／按下／激活／禁用 |
 | `MAP.MINI.ADDONS.NOTICE` | 插件自己的通知语义 | 无／未读／警告独立覆盖 |
-| `MAP.MINI.ADDONS.OVERFLOW` | `pfMinimapButton` 或替代真实 Button | 普通／悬停／按下／展开 |
-| `MAP.MINI.ADDONS.STRAP` | `pfMinimapButtons` 容器 | 收起／展开；上／中／下三段式 |
+| `MAP.MINI.ADDONS.TOGGLE` | 真实 16×16 `pfMinimapButton` | 收起普通／悬停／按下与展开普通／悬停／按下；沿配置方向附着于外壳，点击仍只切换真实容器 |
+| `MAP.MINI.ADDONS.TRAY` | 真实 `pfMinimapButtons` 容器 | 收起／展开；可四向重排的九切片工具带；宽高由真实按钮数、rowsize 与 spacing 决定 |
 
-保留插件原始左键、右键、拖动、Tooltip 与保存行为。默认罗盘底图不画空槽；
-`pfQuestIcon` 作为真实插件入口由同一容器承载。默认 `rowsize=6`，4／6／10 个
-入口按实际数量形成一行或 `6+4` 两行工具带，不生成空槽。`pfFarmMap 300×300`
-是独立兼容态，只迁移 tracking／PVP／pfQuest 动态对象，不复制常驻罗盘外壳。
+保留插件原始左键、右键、Tooltip 与动态图标；收纳时继续使用 pfUI 的 parent／point／
+size／scale／drag／OnUpdate 备份和恢复逻辑，工具带内不伪造原插件行为。默认罗盘底图
+不画空槽；`pfQuestIcon` 作为合格的真实插件入口由同一容器动态承载。默认
+`rowsize=6`，4／6／10 个入口按实际数量形成一行或 `6+4` 两行工具带，不生成空槽；
+0 个入口不展示空工具带。战斗隐藏继续读取 `C.abuttons.hideincombat`。`pfFarmMap`
+300×300 是独立兼容态，只迁移既有动态对象，不复制常驻罗盘外壳或插件工具带。

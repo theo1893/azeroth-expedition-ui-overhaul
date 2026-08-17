@@ -3,23 +3,26 @@
 ## 当前结论
 
 - “香草同构角色面板”整体视觉：`P2`，已锁定。
-- pfUI 文件级映射：`P1`。
+- WoW `1.12.1` FrameXML 与 pfUI 文件级映射：`P1`，已完成基础 PaperDoll
+  对象、尺寸和锚点审计。
 - 子组件实机几何、production Prompt、透明 source 与 runtime：未开始。
 - 当前运行时：Character、Inspect 与 DressUp 恢复 pfUI 默认 skins；AEUI 尚未
   接管任何 Character 对象。
-- 用户于 `2026-08-08` 明确暂停角色面板 overhaul，当前优先级转回动作栏的
-  饰品／消耗品 Field Kit。暂停不改变 `P2` 锁定视觉、不授权生产／runtime、
-  不删除 Character 资产或中间证据；恢复前只保留现状。
+- 用户已恢复 Character overhaul；当前只推进基础 `CharacterFrame /
+  PaperDollFrame`，右侧第三方装备列表与相邻复用窗口不在本轮生产范围。
+- 本地几何预演 `CHAR-SIM-V2` 已获用户接受；接受条件为移除左上
+  `CharacterFramePortrait` 及任何种族／职业 icon 与空徽章底座。它不构成
+  production 像素或 addon 接管授权。
 
 ## 子模块状态
 
 | ID | 阶段 | 当前证据 | 下一门禁 |
 |---|---:|---|---|
-| `CHAR.FRAME` | `P2` | [V3 锁定图](../../../assets/locked/character/角色属性面板_香草同构收敛_风格确认_v3.png) | 测量 CharacterFrame 与可切片边界 |
-| `CHAR.MODEL` | `P2` visual／`P1` object | 香草结构参考与 V3 背景 | 模型可视区、旋转与开关对象 |
-| `CHAR.SLOT*` | `P1–P2` | 经典槽位关系锁定 | 每槽尺寸、状态与品质／耐久覆盖 |
-| `CHAR.STATS／RESISTANCE` | `P1–P2` | 双列属性方向锁定 | Turtle WoW 扩展字段与下拉几何 |
-| `CHAR.TABS` | `P1–P2` | 四个香草 Tab 方向锁定 | 实际 Tab 数量、点击区和状态 |
+| `CHAR.FRAME` | `P2` | V3 锁定图；原生 `384×512`；无左上 icon 的 `CHAR-SIM-V2` 已接受 | 授权首批 production 合同 |
+| `CHAR.MODEL` | `P2` visual／`P1` object | 原生 `233×224 @ 65,78`；旋转 Button 已定位 | 确认安静背景与窄边框方向 |
+| `CHAR.SLOT*` | `P1–P2` | `19× 37×37` 装备槽与独立 `27×27` Ammo 已定位 | 确认逐对象状态拆分 |
+| `CHAR.STATS／RESISTANCE` | `P1–P2` | 属性 `230×78 @ 67,291`；五个抗性格独立 | 确认连续旧纸而非卡片的方向 |
+| `CHAR.TABS` | `P1–P2` | 原生五个 Button；无宠物页时动态显示四个 | 确认小型粗糙皮革四态 |
 | `CHAR.REPUTATION／SKILLS／HONOR／ARENA` | `P1` | pfUI skin 对象已审计 | 分页实机对象与共享组件合同 |
 | `CHAR.PET／INSPECT／DRESSUP` | `P1` | pfUI skin 对象已审计 | 确认复用与只读差异 |
 
@@ -31,13 +34,9 @@
 - 底部四装备槽、五个彩色数值格。
 - 宽紫品质框、连续外发光和过暗模型背景。
 
-## 暂停与恢复门禁
+## 下一门禁
 
-- 当前状态：`paused by user / P2 preserved`。
-- 只有用户明确恢复 Character overhaul 后，才继续以下步骤。
-
-1. 在 Turtle WoW 记录 `CharacterFrame`、PaperDoll、全部装备槽、模型、
-   属性、Tabs、下拉、关闭与旋转对象的尺寸、锚点、层级和状态。
-2. 根据 [SUBMODULES.md](SUBMODULES.md) 确认哪些物理 atlas 可共享。
-3. 只在活动生产期间用一份临时 `CURRENT.md` 维护当前 Prompt，不建立逐组件流水账。
-4. 完成 Character 后再验证 Inspect、DressUp 与 Pet 的复用差异。
+1. 审核并授权基础 PaperDoll 首批 production 段及固定输入。
+2. 生产期间只用临时 `CURRENT.md` 保存当前合同与候选。
+3. source 接受并接入 addon 后执行静态包装检查；本设备不标记 `P6`。
+4. 完成基础 Character 后再单独验证 Inspect、DressUp 与 Pet 的复用差异。

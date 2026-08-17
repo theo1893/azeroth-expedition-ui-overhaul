@@ -3,7 +3,7 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 
 addon.name = "AzerothExpeditionUI"
-addon.version = "0.8.31"
+addon.version = "0.8.33"
 addon.modules = addon.modules or {}
 addon.media = addon.media or {}
 addon.media.root = "Interface\\AddOns\\AzerothExpeditionUI\\Media\\"
@@ -40,11 +40,11 @@ local defaults = {
   },
   unitframes = {
     enabled = true,
-    artVersion = 5,
+    artVersion = 6,
   },
   map = {
-    enabled = false,
-    artVersion = 1,
+    enabled = true,
+    artVersion = 2,
   },
   spellbook = {
     enabled = false,
@@ -121,9 +121,16 @@ function addon:Initialize()
   end
   if (
     AzerothExpeditionUIDB.unitframes and
-    (tonumber(AzerothExpeditionUIDB.unitframes.artVersion) or 0) < 5
+    (tonumber(AzerothExpeditionUIDB.unitframes.artVersion) or 0) < 6
   ) then
-    AzerothExpeditionUIDB.unitframes.artVersion = 5
+    AzerothExpeditionUIDB.unitframes.artVersion = 6
+  end
+  if (
+    AzerothExpeditionUIDB.map and
+    (tonumber(AzerothExpeditionUIDB.map.artVersion) or 0) < 2
+  ) then
+    AzerothExpeditionUIDB.map.enabled = true
+    AzerothExpeditionUIDB.map.artVersion = 2
   end
   ApplyDefaults(AzerothExpeditionUIDB, defaults)
   self.db = AzerothExpeditionUIDB

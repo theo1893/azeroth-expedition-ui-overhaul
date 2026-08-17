@@ -1292,6 +1292,13 @@ local perrow = f.config.debuffperrow
     f:aeuiRaidRefreshVisual()
   end
 
+  -- AEUI may likewise attach a concrete primary-frame visual callback. It
+  -- only reapplies accepted media after pfUI owns and recalculates geometry;
+  -- provider events, bars, text, auras and interaction remain untouched.
+  if type(f.aeuiPrimaryRefreshVisual) == "function" then
+    f:aeuiPrimaryRefreshVisual()
+  end
+
 end
 
 function pfUI.uf.OnShow()

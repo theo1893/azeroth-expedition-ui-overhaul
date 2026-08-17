@@ -8,13 +8,13 @@
 
 ## 主单位框与资源条批次
 
-Unit Frames runtime `1.4` 会把全部 13 组真实配置强制为 `portrait = off`。下列逻辑尺寸来自
+Unit Frames runtime `1.7` 会把全部 13 组真实配置强制为 `portrait = off`。下列逻辑尺寸来自
 `addon/pfUI/env/profiles.lua` 与 `pfUI.uf:UpdateFrameSize()`；外壳只在真实 Frame
 外增加不参与命中的透明装饰边，不改变 provider 几何。
 
 | 组件 ID | pfUI 对象 | 动态内容区 | 资源外接尺寸 | 状态／所有权 |
 |---|---|---:|---:|---|
-| `UF.PLAYER.SHELL` | `pfUI.uf.player`／`pfPlayer` | HP `200×25`；Power `200×4` | `214×42` | 一张静态外壳；玩家与目标不得镜像复用 |
+| `UF.PLAYER.SHELL` | `pfUI.uf.player`／`pfPlayer` | 当前配置 `240×60`，`pheight=4 / pspace=-1 / border=1`，完整 provider `240×65` | `254×77` | V5 一张完整静态外壳；只在 canonical provider 接入，不切片、不改变 provider |
 | `UF.TARGET.SHELL` | `pfUI.uf.target`／`pfTarget` | HP `200×25`；Power `200×4` | `214×42` | 一张静态外壳；不得烘焙目标类型、名称或等级 |
 | `UF.TARGETTARGET.SHELL` | `pfUI.uf.targettarget`／`pfTargetTarget` | HP `100×20`；Power `100×1` | `112×34` | 一张简化静态外壳 |
 | `UF.FOCUS.SHELL` | `pfUI.uf.focus`／`pfFocus` | HP `100×25`；Power `100×1` | `112×43` | 一张静态外壳；上 `10px`／下 `6px`；靛蓝猎踪布结是焦点识别件 |
@@ -60,13 +60,30 @@ Leader／Master Looter／Raid Target／Resurrection、Buff／Debuff、Incoming H
 框架在 `modules/group.lua`，Raid Marker 血条列表在 `modules/raidmarkers.lua`，
 二者都不是 `UF.RAID.*`。
 
-## UF-PRIMARY V4 已接受 source 与已接入 runtime
+## UF-PLAYER V5 已接受 source 与已接入 runtime
+
+- `UF-PLAYER-SHELL-V5-A1 attempt 3` exact source／runtime 已由用户接受并授权
+  提升、导出和接入，当前为 `P5`；正式文件和清单位于
+  `assets/source/unitframes/player-v5/`。
+- source 为完整 `1524×462 RGBA` 外壳，runtime master 为同一完整物件的
+  `254×77 RGBA` 逻辑像素；正式媒体只透明补齐为 `256×128` TGA，以 UV
+  `(0, 254/256, 0, 77/128)` 读取，不重绘、不拼接、不九切片。
+- 适配器只接管 `pfUI.uf.player` 的静态外壳和旧 backdrop 可见性。当前配置
+  `240×60` 经 `pfUI.uf:UpdateFrameSize()` 形成 `240×65` provider；外壳从四边
+  各外扩 `7/7/6/6`。UI Scale 随父框整体缩放，不改变逻辑像素间关系。
+- provider 尺寸不符、模块禁用或精确 route 缺失时，只恢复 Player 的 pfUI
+  backdrop／shadow。Bars、文字、颜色、Aura、图标、Hover／Aggro、点击、事件
+  与 SavedVariables 继续由 pfUI 持有。
+- Target、TargetTarget、Focus 不得复用、镜像或裁取 Player V5 像素；三者旧
+  外壳 route 仍暂停，等待各自独立修复。
+
+## UF-PRIMARY V4 历史 source／暂停 runtime
 
 用户于 `2026-08-12` 要求重开 Player／Target 完整外壳的新生产架构，并已确认
 `UF-PRIMARY-V4-SIM-V1` 与 Raid A2 sample 的只读输入职责。用户随后以“确认,
 进入下一阶段”接受 `UF-PRIMARY-V4-CANDIDATE-V1` 两张 exact candidate。两张
-source 现已确定性导出并接入 addon，当前为 `P5 / runtime-integrated`；以下定义
-真实对象、锁定 source 与运行时职责。
+source 曾确定性导出；当前 Player 已被 V5 替代，Target 与整条旧
+`unitframes.primary-shell` route 暂停。以下只保留历史结构边界，不能覆盖 V5。
 
 - 最终组件粒度不变：`UF.PLAYER.SHELL` 与 `UF.TARGET.SHELL` 各自是一张独立
   完整 `1284×252 RGBA` source 和一张完整 `214×42` runtime。不得两角色合图、

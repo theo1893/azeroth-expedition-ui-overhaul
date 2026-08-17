@@ -1,0 +1,120 @@
+{
+  "schema": "aeui-unitframes-player-v5-source-manifest-v1",
+  "schema_version": 1,
+  "module": "unitframes",
+  "batch": "UF-PLAYER-SHELL-V5-A1",
+  "component": "UF.PLAYER.SHELL",
+  "status": "accepted-source",
+  "phase": "P4",
+  "accepted_on": "2026-08-17",
+  "user_acceptance": {
+    "statement": "接受 UF-PLAYER-SHELL-V5-A1 attempt 3 的 exact pixels；允许提升 source/runtime、导出正式媒体并接入 addon。",
+    "accepts_exact_pixels": true,
+    "source_promotion_authorized": true,
+    "runtime_export_authorized": true,
+    "addon_integration_authorized": true,
+    "authorized_exception": "right dynamic hard-clear intrusion: 9 source px; Alpha-clear only"
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "production_attempt": 3,
+    "actual_imagegen_calls": 5,
+    "raw_candidate_sha256": "5b0f588d66ba75a811dac7528b1c6064782d2c653dcc602c4f79c6ba6a0290e8",
+    "postprocess": "colour key, transparent RGB clear, bounded X/Y normalization, authorized hard-clear Alpha removal, LANCZOS runtime resize",
+    "python_generated_visual_pixels": false
+  },
+  "accepted_assets": {
+    "source": {
+      "file": "assets/source/unitframes/player-v5/UnitFramePlayerShell_SourceV5.png",
+      "sha256": "ec74c829d18553cc78ab95a4ae1a01fc392d2efc2157e42a4a5166f7f0cf903d",
+      "metrics": {
+        "size": [
+          1524,
+          462
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "1475f9fbf4277cf63c19cd67b0cd0a4d8ba47c4d7a3b774410f6db06c773c97f",
+        "visible_bbox_exclusive": [
+          0,
+          12,
+          1524,
+          462
+        ],
+        "transparent_pixels": 524260,
+        "partially_transparent_pixels": 14085,
+        "opaque_pixels": 165743,
+        "visible_green_spill_pixels": 0,
+        "transparent_rgb_nonzero_pixels": 0
+      },
+      "dynamic_hard_clear": [
+        42,
+        96,
+        1482,
+        432
+      ],
+      "dynamic_hard_clear_alpha_max": 0
+    },
+    "runtime_master": {
+      "file": "assets/source/unitframes/player-v5/UnitFramePlayerShell_RuntimeMasterV5.png",
+      "sha256": "d449b8bd1dfef1a073ca69cecc57e2c7cb0d38e4a4fb9961bd60f8467253ecbc",
+      "metrics": {
+        "size": [
+          254,
+          77
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "15998afd0f066658cb8a94b8970176a7765d5c64af71a34b0b7deb4319b6229b",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          254,
+          77
+        ],
+        "transparent_pixels": 14140,
+        "partially_transparent_pixels": 2255,
+        "opaque_pixels": 3163,
+        "visible_green_spill_pixels": 1,
+        "transparent_rgb_nonzero_pixels": 0
+      },
+      "dynamic_hard_clear": [
+        7,
+        16,
+        247,
+        72
+      ],
+      "dynamic_hard_clear_alpha_max": 0
+    }
+  },
+  "geometry": {
+    "provider": "pfUI.uf.player / pfPlayer",
+    "provider_size": [
+      240,
+      65
+    ],
+    "art_box": [
+      254,
+      77
+    ],
+    "outsets": {
+      "left": 7,
+      "right": 7,
+      "top": 6,
+      "bottom": 6
+    },
+    "texture_container": [
+      256,
+      128
+    ],
+    "complete_bitmap": true,
+    "canonical_size_only": true,
+    "ui_scale_inherits_from_provider": true,
+    "provider_geometry_changed": false
+  },
+  "visual_authority": {
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/unitframes/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/unitframes/SUBMODULE_ART_BASELINES.md",
+    "submodule_prompt_heading": "UF.PLAYER.SHELL",
+    "component_contract": "docs/modules/unitframes/SUBMODULES.md"
+  }
+}

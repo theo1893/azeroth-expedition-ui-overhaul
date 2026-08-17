@@ -1,0 +1,70 @@
+{
+  "schema": "aeui-unitframes-player-v5-runtime-manifest-v1",
+  "schema_version": 1,
+  "module": "unitframes",
+  "component": "UF.PLAYER.SHELL",
+  "status": "runtime-exported-addon-integrated",
+  "phase": "P5",
+  "runtime_contract": "1.7",
+  "source_manifest": "assets/source/unitframes/player-v5/UF-PLAYER-V5_SourceManifest_v1.json",
+  "route": "unitframes.player-shell-v5",
+  "runtime": {
+    "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFramePlayerShellV5.tga",
+    "sha256": "c69a8f225b3fac4c9c32553c6585bb05a84346a9aab2bb0b131eb5f5816c6926",
+    "logical_size": [
+      254,
+      77
+    ],
+    "texture_size": [
+      256,
+      128
+    ],
+    "content_uv": [
+      0.0,
+      0.9921875,
+      0.0,
+      0.6015625
+    ],
+    "tga_header": {
+      "image_type": 2,
+      "width": 256,
+      "height": 128,
+      "bits_per_pixel": 32,
+      "descriptor": 8,
+      "top_origin": false
+    },
+    "logical_metrics": {
+      "size": [
+        254,
+        77
+      ],
+      "mode": "RGBA",
+      "pixel_sha256": "15998afd0f066658cb8a94b8970176a7765d5c64af71a34b0b7deb4319b6229b",
+      "visible_bbox_exclusive": [
+        0,
+        0,
+        254,
+        77
+      ],
+      "transparent_pixels": 14140,
+      "partially_transparent_pixels": 2255,
+      "opaque_pixels": 3163,
+      "visible_green_spill_pixels": 1,
+      "transparent_rgb_nonzero_pixels": 0
+    },
+    "accepted_runtime_master_sha256": "d449b8bd1dfef1a073ca69cecc57e2c7cb0d38e4a4fb9961bd60f8467253ecbc",
+    "logical_pixels_match_runtime_master": true
+  },
+  "addon_contract": {
+    "provider": "pfUI.uf.player / pfPlayer",
+    "canonical_provider_size": [
+      240,
+      65
+    ],
+    "assembly": "one complete bitmap; no slicing or texture reconstruction",
+    "ui_scale": "inherited parent scale; accepted bitmap remains intact",
+    "size_mismatch": "restore only Player to configured pfUI chrome",
+    "other_roles": "Target, TargetTarget and Focus remain paused on pfUI fallback",
+    "dynamic_owner": "pfUI retains bars, text, colours, auras, icons, clicks and events"
+  }
+}
