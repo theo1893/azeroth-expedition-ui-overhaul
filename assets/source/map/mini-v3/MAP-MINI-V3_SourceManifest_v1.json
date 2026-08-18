@@ -1,0 +1,206 @@
+{
+  "schema": "aeui-map-mini-v3-source-manifest-v1",
+  "schema_version": 1,
+  "module": "map",
+  "batch": "MAP-MINI-V3",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "accepted_on": "2026-08-18",
+  "user_acceptance": {
+    "exact_statement": "接受 MAP-MINI-V3-A attempt 2、B attempt 1、C attempt 4 的 exact pixels；允许按既定合同执行确定性色键、透明 RGB 清零、bbox-fit、固定拆分、状态派生、九切片及四向派生，并提升 source/runtime、导出正式媒体和接入 addon。",
+    "p4_p5_and_integration_authorized": true
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "provider_raw": {
+      "a": {
+        "sha256": "5c6190eb3eee72aa5360e8d3390bb5f51187f13731da8a008d05809b1c7c6982",
+        "size": [
+          1146,
+          1373
+        ],
+        "attempt": 2,
+        "calls": 2
+      },
+      "b": {
+        "sha256": "fa42e6aa246ae217ca9fae381adee692048b940990033dbfc9c74f5d6d625f07",
+        "size": [
+          1254,
+          1254
+        ],
+        "attempt": 1,
+        "calls": 1
+      },
+      "c": {
+        "sha256": "b643663c2adaee771e0969898e460d9675167ce8ecc10a636d9c1025774a8302",
+        "size": [
+          1683,
+          935
+        ],
+        "attempt": 4,
+        "calls": 4
+      }
+    },
+    "maximum_imagegen_calls_per_segment": 5,
+    "flow_errors_counted_as_imagegen_calls": false,
+    "prompt": "docs/modules/map/SUBMODULE_ART_BASELINES.md",
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/map/ART_BASELINE.md",
+    "architecture_reference": {
+      "file": "assets/locked/map/MapMiniV3_ArchitectureLock_v1.png",
+      "sha256": "34fabc744b063ab4b2146ac2759bf440695516528ad05839cd7120b38c7bf04a"
+    },
+    "compass_reference_sha256": "9e6a38dbaa2e7df82480c4fe8ca32ca2c931fa016a8264f26964903468ac2ea6",
+    "roughness_reference_sha256": "a97d9c5fa055a119cd5ea7809bdaa51460cddb9674355efcec35f98f6cd2c673"
+  },
+  "components": {
+    "compass": {
+      "component": "MAP.MINI.COMPASS.INFO.V3",
+      "file": "assets/source/map/mini-v3/MapMiniCompassCradle_SourceV3.png",
+      "sha256": "d0ee4ac3cec0ca936795d61a79c48a0ecdc2ae10848d8a6d5ee60e10be202613",
+      "metrics": {
+        "size": [
+          220,
+          264
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "d891fe42dfe7152618fb6f4882c3f3c3838d9f0aaae0b9682b894ba9f34ba638",
+        "visible_bbox_exclusive": [
+          9,
+          0,
+          211,
+          254
+        ],
+        "transparent_pixels": 39716,
+        "partially_transparent_pixels": 2211,
+        "opaque_pixels": 16153,
+        "transparent_rgb_nonzero_values": 0
+      }
+    },
+    "latch": {
+      "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3",
+      "file": "assets/source/map/mini-v3/MapMiniAddonLatch_SourceV3.png",
+      "sha256": "0878de0512ee659c5b51c911c53a9ded2b739003ba12a8afcbc0d7f4c0467d33",
+      "metrics": {
+        "size": [
+          38,
+          24
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "7c9e84a8b980deb3c6a23091f40b371cfad6ce723c81cff3354d78f185eaa287",
+        "visible_bbox_exclusive": [
+          0,
+          1,
+          38,
+          22
+        ],
+        "transparent_pixels": 176,
+        "partially_transparent_pixels": 222,
+        "opaque_pixels": 514,
+        "transparent_rgb_nonzero_values": 0
+      }
+    },
+    "glyph": {
+      "component": "MAP.MINI.ADDONS.TOGGLE.GLYPH.V3",
+      "file": "assets/source/map/mini-v3/MapMiniAddonGlyph_SourceV3.png",
+      "sha256": "c2496bf80ea2ffd9b071ad8b5cd76886d555e0dbdea4498787f49cd0bcc5040f",
+      "metrics": {
+        "size": [
+          10,
+          12
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "ffdb6bd00296650ed42d6bd95aa4bf8e604f1282278db4371f804eefbf02cdb7",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          10,
+          11
+        ],
+        "transparent_pixels": 40,
+        "partially_transparent_pixels": 65,
+        "opaque_pixels": 15,
+        "transparent_rgb_nonzero_values": 0
+      }
+    },
+    "connector": {
+      "component": "MAP.MINI.ADDONS.CONNECTOR.V3",
+      "file": "assets/source/map/mini-v3/MapMiniAddonConnector_SourceV3.png",
+      "sha256": "752ae6ff103e6105724b431a023546a74948e964bcf5521d74d084ff8d4d2a0c",
+      "metrics": {
+        "size": [
+          32,
+          14
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "441ca60839bf81d7af7f21141e920a8c99d59f3a38af64dd23a1f3161ace1d45",
+        "visible_bbox_exclusive": [
+          2,
+          0,
+          29,
+          14
+        ],
+        "transparent_pixels": 104,
+        "partially_transparent_pixels": 144,
+        "opaque_pixels": 200,
+        "transparent_rgb_nonzero_values": 0
+      }
+    },
+    "socket": {
+      "component": "MAP.MINI.STATUS.SOCKET.V3",
+      "file": "assets/source/map/mini-v3/MapMiniStatusSocket_SourceV3.png",
+      "sha256": "ec41629b673b1331ff09d8f93a63289f911f166a06bf4a6bd5651692b08e6da3",
+      "metrics": {
+        "size": [
+          24,
+          24
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "0ed4f7efc894da69460a4b7ce1239e0264c3bbdadf3f73baa0a64d8b0177eb73",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          24,
+          24
+        ],
+        "transparent_pixels": 112,
+        "partially_transparent_pixels": 277,
+        "opaque_pixels": 187,
+        "transparent_rgb_nonzero_values": 0
+      }
+    },
+    "tray": {
+      "component": "MAP.MINI.ADDONS.TRAY.V3",
+      "file": "assets/source/map/mini-v3/MapMiniAddonTray_SourceV3.png",
+      "sha256": "923c0878eb459639edf1b03fcf881236f82338a512d1c05126ea49a934ed6696",
+      "metrics": {
+        "size": [
+          270,
+          74
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "bfca4bc4f8002cbcd0d2f25b323adb47743869d026bd7c0f1ad4ff843ec3fa09",
+        "visible_bbox_exclusive": [
+          0,
+          1,
+          270,
+          73
+        ],
+        "transparent_pixels": 2972,
+        "partially_transparent_pixels": 1515,
+        "opaque_pixels": 15493,
+        "transparent_rgb_nonzero_values": 0
+      }
+    }
+  },
+  "deterministic_transform": {
+    "a": "global chroma-key cleanup; hole-centred aspect-preserving 220x264 fit; hard radius-70 alpha exclusion",
+    "b": "fixed four-region split; chroma-key cleanup; independent aspect-preserving 38x24, 10x12, 32x14 and 24x24 bbox-fit",
+    "c": "chroma-key cleanup; visible bbox; aspect-preserving 270x74 fit",
+    "states": "latch hover brightness/color and pressed 1px displacement only",
+    "directions": "lossless 90/180/270-degree rotations only",
+    "transparent_rgb_cleared": true,
+    "generative_postprocess": false
+  },
+  "runtime_manifest": "assets/source/map/mini-v3/MAP-MINI-V3_RuntimeManifest_v1.json"
+}

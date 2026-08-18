@@ -1,0 +1,128 @@
+{
+  "schema": "aeui-character-v3-d1-res-wells-source-manifest-v1",
+  "schema_version": 1,
+  "module": "character",
+  "batch": "CHAR-V3-D1-RES-WELLS final",
+  "component": "CHAR.RESISTANCE",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "accepted_on": "2026-08-18",
+  "user_acceptance": {
+    "statement": "接受 CHAR-V3-D1-RES-WELLS attempt 3 的运行时视觉，并授权原生透明 Alpha 传输及中央安全区 Alpha 250..254 → 255 确定性钳制例外；允许提升 source/runtime、导出正式 TGA 并接入 addon。",
+    "accepts_runtime_visual": true,
+    "source_promotion_authorized": true,
+    "runtime_export_authorized": true,
+    "addon_integration_authorized": true,
+    "native_alpha_transport_exception_authorized": true,
+    "central_safe_area_alpha_clamp_exception_authorized": true
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "production_attempt": 3,
+    "actual_imagegen_calls": 5,
+    "raw_candidate_sha256": "43b9bc08648581496b27cb686a7dc76243c788dcc52cb1f69ecf804664fa4f49",
+    "postprocess": "authorized native RGBA Alpha transport, transparent RGB clear, five-component x-order split, <=2% independent-axis normalization, central source safe-area Alpha 250..254 clamp to 255, LANCZOS runtime downsample and five independent POT TGA packs",
+    "python_generated_visual_pixels": false,
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/character/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/character/SUBMODULE_ART_BASELINES.md#charresistance"
+  },
+  "accepted_assets": [
+    {
+      "index": 1,
+      "source": {
+        "file": "assets/source/character/res-wells-v3/CharacterResistanceWell1_SourceV3.png",
+        "sha256": "8bd49130e0668ed97ae04e48432e7390e1cb94a3754ab77486ae28ea8393ace4",
+        "pixel_sha256": "896cd71441c734e115055ef3e3faccd53f6af06221161450f5bf78a02f10869f"
+      },
+      "runtime_master": {
+        "file": "assets/source/character/res-wells-v3/CharacterResistanceWell1_RuntimeMasterV3.png",
+        "sha256": "bd982b48201bf8bca110197e43bde0823138287acc3e7f31148e50007f910852",
+        "pixel_sha256": "17a4404fb9b4683c4b06ce0704adf84562d50410e21f853d0acc8d74c836c1f6"
+      }
+    },
+    {
+      "index": 2,
+      "source": {
+        "file": "assets/source/character/res-wells-v3/CharacterResistanceWell2_SourceV3.png",
+        "sha256": "9071bc8a95d07f1a2db425a905eee23cf0942111ce962a5a773aa9922dc282e9",
+        "pixel_sha256": "a72cd5f96a3ce6a6f45316b4c2d0d863a106e6ccda89c7cc196294d1739c6558"
+      },
+      "runtime_master": {
+        "file": "assets/source/character/res-wells-v3/CharacterResistanceWell2_RuntimeMasterV3.png",
+        "sha256": "ab0d2c7eeef5ae3eb38af5c26ffde6ac87d63264b4ee31b7a8d8537821c0aa85",
+        "pixel_sha256": "2fe6854afd7bed8c04cd6ac0294ad2b6f5586e9b6e4f7afb4c6c9fe9856bab54"
+      }
+    },
+    {
+      "index": 3,
+      "source": {
+        "file": "assets/source/character/res-wells-v3/CharacterResistanceWell3_SourceV3.png",
+        "sha256": "03fc8343ef786548b4f84ae2ebd5991c6ae99431a9df259fa88b7c48e8fdf0f3",
+        "pixel_sha256": "3187a254ebf84c8e0d9b4a2034d611b43d97f09a1afd64d9235386c2470e458e"
+      },
+      "runtime_master": {
+        "file": "assets/source/character/res-wells-v3/CharacterResistanceWell3_RuntimeMasterV3.png",
+        "sha256": "8d24588e9d9d6d5b68085b140ffc64d33a02f144948ec098967d7aa3c20fac34",
+        "pixel_sha256": "00bfd5c644e0ce33d5c3d44c67da7668d0b00637350cecd0c55505b808d56205"
+      }
+    },
+    {
+      "index": 4,
+      "source": {
+        "file": "assets/source/character/res-wells-v3/CharacterResistanceWell4_SourceV3.png",
+        "sha256": "8ff9f57e010dc23603bbed7fd867921d0f9a870d9075ce5fbdd29007f8cdb55c",
+        "pixel_sha256": "1f1cb9642b5b703a1ecbe012975ffb4a1c8451ee554b7976922d8f37de5af063"
+      },
+      "runtime_master": {
+        "file": "assets/source/character/res-wells-v3/CharacterResistanceWell4_RuntimeMasterV3.png",
+        "sha256": "803967a51e4826c28bc9f71a6fdf6d75fcea8f3ff5f0d4b2b4775b7ee09dae2f",
+        "pixel_sha256": "cb64a96565ff4038a8fd4d861d420f9fdcbbc9e5acd34e75acf939270f8bdf82"
+      }
+    },
+    {
+      "index": 5,
+      "source": {
+        "file": "assets/source/character/res-wells-v3/CharacterResistanceWell5_SourceV3.png",
+        "sha256": "1fd16c2428dc82d79ab5d0ce04b9aed582b69091070aedfca90cd67edcf019ea",
+        "pixel_sha256": "ddb0128bd3dbffbf1a1d0f1d1ebd4f7f0a21d8d08b517ef822aee5dad8c09346"
+      },
+      "runtime_master": {
+        "file": "assets/source/character/res-wells-v3/CharacterResistanceWell5_RuntimeMasterV3.png",
+        "sha256": "7da38f81eea21b27e82c73a1836428a2b7e08238af4bc76b14ff779f8ad624a6",
+        "pixel_sha256": "52eb5a3c116ecce2abd984bfb67417219f9f35a4b6563eee828e242e51d2ca48"
+      }
+    }
+  ],
+  "asset_metrics": {
+    "source_size_each": [128, 116],
+    "runtime_size_each": [32, 29],
+    "transparent_rgb_nonzero_pixels_each": [0, 0, 0, 0, 0],
+    "visible_green_spill_pixels_each": [0, 0, 0, 0, 0]
+  },
+  "deterministic_transform": {
+    "input_size": [1659, 948],
+    "transport": "authorized native RGBA Alpha",
+    "foreground_bbox_exclusive": [21, 142, 1611, 761],
+    "component_bbox_exclusive": [
+      [55, 318, 337, 577],
+      [372, 314, 655, 577],
+      [688, 318, 972, 577],
+      [1006, 318, 1289, 577],
+      [1322, 318, 1605, 578]
+    ],
+    "axis_normalization": [
+      [1.006703, 0.993342],
+      [1.012653, 0.987505],
+      [1.003152, 0.996858],
+      [1.004923, 0.995101],
+      [1.006861, 0.993186]
+    ],
+    "source_central_safe_area": [32, 24, 96, 88],
+    "source_alpha_250_254_clamped_to_255_each": [4096, 4096, 4096, 4096, 4096],
+    "runtime_second_alpha_clamp_pixels_each": [0, 0, 0, 0, 0],
+    "painted_or_synthesized_pixels": 0,
+    "dynamic_content_baked": false
+  },
+  "runtime_manifest": "assets/source/character/res-wells-v3/CHAR-V3-D1-RES-WELLS_RuntimeManifest_v1.json"
+}

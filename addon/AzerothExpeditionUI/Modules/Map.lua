@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local Map = {}
-Map.runtimeContract = "2.4"
+Map.runtimeContract = "3.0"
 Map.worldIntegrationPaused = true
 Map.miniIntegrationPaused = false
 
@@ -32,53 +32,167 @@ local WORLD = {
 local MINI = {
   referenceContent = 140,
   frame = {
-    path = MEDIA .. "MapMiniFrameV2",
-    width = 184,
-    height = 184,
+    path = MEDIA .. "MapMiniCompassCradleV3",
+    width = 220,
+    height = 264,
     textureWidth = 256,
-    textureHeight = 256,
+    textureHeight = 512,
+    holeX = 110,
+    holeY = 110,
   },
   mask = {
-    path = MEDIA .. "MapMiniMaskV2",
+    path = MEDIA .. "MapMiniMaskV3",
   },
-  toggleBody = {
-    path = MEDIA .. "MapMiniAddonToggleBodyV2",
-    width = 28,
-    height = 25,
-    textureWidth = 32,
-    textureHeight = 32,
+  latch = {
+    bottom = {
+      normal = MEDIA .. "MapMiniAddonLatchBottomNormalV3",
+      hover = MEDIA .. "MapMiniAddonLatchBottomHoverV3",
+      pressed = MEDIA .. "MapMiniAddonLatchBottomPressedV3",
+      width = 38,
+      height = 24,
+      textureWidth = 64,
+      textureHeight = 32,
+    },
+    top = {
+      normal = MEDIA .. "MapMiniAddonLatchTopNormalV3",
+      hover = MEDIA .. "MapMiniAddonLatchTopHoverV3",
+      pressed = MEDIA .. "MapMiniAddonLatchTopPressedV3",
+      width = 38,
+      height = 24,
+      textureWidth = 64,
+      textureHeight = 32,
+    },
+    left = {
+      normal = MEDIA .. "MapMiniAddonLatchLeftNormalV3",
+      hover = MEDIA .. "MapMiniAddonLatchLeftHoverV3",
+      pressed = MEDIA .. "MapMiniAddonLatchLeftPressedV3",
+      width = 24,
+      height = 38,
+      textureWidth = 32,
+      textureHeight = 64,
+    },
+    right = {
+      normal = MEDIA .. "MapMiniAddonLatchRightNormalV3",
+      hover = MEDIA .. "MapMiniAddonLatchRightHoverV3",
+      pressed = MEDIA .. "MapMiniAddonLatchRightPressedV3",
+      width = 24,
+      height = 38,
+      textureWidth = 32,
+      textureHeight = 64,
+    },
   },
-  toggleGlyph = {
-    down = MEDIA .. "MapMiniAddonToggleGlyphDownV2",
-    up = MEDIA .. "MapMiniAddonToggleGlyphUpV2",
-    left = MEDIA .. "MapMiniAddonToggleGlyphLeftV2",
-    right = MEDIA .. "MapMiniAddonToggleGlyphRightV2",
-    horizontalWidth = 10,
-    horizontalHeight = 8,
-    horizontalTextureWidth = 16,
-    horizontalTextureHeight = 8,
-    verticalWidth = 8,
-    verticalHeight = 10,
-    verticalTextureWidth = 8,
-    verticalTextureHeight = 16,
+  glyph = {
+    up = {
+      path = MEDIA .. "MapMiniAddonGlyphUpV3",
+      width = 10,
+      height = 12,
+      textureWidth = 16,
+      textureHeight = 16,
+    },
+    down = {
+      path = MEDIA .. "MapMiniAddonGlyphDownV3",
+      width = 10,
+      height = 12,
+      textureWidth = 16,
+      textureHeight = 16,
+    },
+    left = {
+      path = MEDIA .. "MapMiniAddonGlyphLeftV3",
+      width = 12,
+      height = 10,
+      textureWidth = 16,
+      textureHeight = 16,
+    },
+    right = {
+      path = MEDIA .. "MapMiniAddonGlyphRightV3",
+      width = 12,
+      height = 10,
+      textureWidth = 16,
+      textureHeight = 16,
+    },
+  },
+  connector = {
+    bottom = {
+      path = MEDIA .. "MapMiniAddonConnectorBottomV3",
+      width = 32,
+      height = 14,
+      textureWidth = 32,
+      textureHeight = 16,
+    },
+    top = {
+      path = MEDIA .. "MapMiniAddonConnectorTopV3",
+      width = 32,
+      height = 14,
+      textureWidth = 32,
+      textureHeight = 16,
+    },
+    left = {
+      path = MEDIA .. "MapMiniAddonConnectorLeftV3",
+      width = 14,
+      height = 32,
+      textureWidth = 16,
+      textureHeight = 32,
+    },
+    right = {
+      path = MEDIA .. "MapMiniAddonConnectorRightV3",
+      width = 14,
+      height = 32,
+      textureWidth = 16,
+      textureHeight = 32,
+    },
   },
   socket = {
-    path = MEDIA .. "MapMiniAddonSocketV2",
-    width = 22,
-    height = 22,
+    path = MEDIA .. "MapMiniStatusSocketV3",
+    width = 24,
+    height = 24,
     textureWidth = 32,
     textureHeight = 32,
   },
   tray = {
-    path = MEDIA .. "MapMiniAddonTrayV2",
-    logicalWidth = 270,
-    logicalHeight = 64,
-    textureWidth = 512,
-    textureHeight = 64,
-    cutX1 = 0.13,
-    cutX2 = 0.87,
-    cutY1 = 0.25,
-    cutY2 = 0.75,
+    bottom = {
+      path = MEDIA .. "MapMiniAddonTrayBottomV3",
+      logicalWidth = 270,
+      logicalHeight = 74,
+      textureWidth = 512,
+      textureHeight = 128,
+      cutX1 = 18,
+      cutX2 = 258,
+      cutY1 = 10,
+      cutY2 = 64,
+    },
+    top = {
+      path = MEDIA .. "MapMiniAddonTrayTopV3",
+      logicalWidth = 270,
+      logicalHeight = 74,
+      textureWidth = 512,
+      textureHeight = 128,
+      cutX1 = 12,
+      cutX2 = 252,
+      cutY1 = 10,
+      cutY2 = 64,
+    },
+    left = {
+      path = MEDIA .. "MapMiniAddonTrayLeftV3",
+      logicalWidth = 74,
+      logicalHeight = 270,
+      textureWidth = 128,
+      textureHeight = 512,
+      cutX1 = 10,
+      cutX2 = 64,
+      cutY1 = 18,
+      cutY2 = 258,
+    },
+    right = {
+      path = MEDIA .. "MapMiniAddonTrayRightV3",
+      logicalWidth = 74,
+      logicalHeight = 270,
+      textureWidth = 128,
+      textureHeight = 512,
+      cutX1 = 10,
+      cutX2 = 64,
+      cutY1 = 12,
+      cutY2 = 252,
+    },
   },
 }
 
@@ -475,12 +589,16 @@ local function RestoreProviderMask()
   end
 end
 
-local function PositionDynamicText(scale)
+local function PositionDynamicText(art, scale)
+  if not art then return end
   if pfUI.minimapZone then
     CaptureAnchor(pfUI.minimapZone)
     pfUI.minimapZone:ClearAllPoints()
-    pfUI.minimapZone:SetPoint("TOP", Minimap, "TOP", 0, -7 * scale)
-    pfUI.minimapZone:SetWidth(116 * scale)
+    pfUI.minimapZone:SetPoint(
+      "CENTER", art, "TOPLEFT", 110 * scale, -227 * scale
+    )
+    pfUI.minimapZone:SetWidth(136 * scale)
+    pfUI.minimapZone:SetHeight(20 * scale)
     pfUI.minimapZone:SetFrameLevel((Minimap:GetFrameLevel() or 1) + 5)
   end
 
@@ -493,25 +611,39 @@ local function PositionDynamicText(scale)
       pfUI_config.appearance.minimap.coordsloc or
       "bottomleft"
     pfUI.minimapCoordinates:ClearAllPoints()
-    if location == "topleft" then
-      pfUI.minimapCoordinates:SetPoint(
-        "TOPLEFT", Minimap, "TOPLEFT", 12 * scale, -15 * scale
-      )
-    elseif location == "topright" then
-      pfUI.minimapCoordinates:SetPoint(
-        "TOPRIGHT", Minimap, "TOPRIGHT", -12 * scale, -15 * scale
-      )
-    elseif location == "bottomright" then
-      pfUI.minimapCoordinates:SetPoint(
-        "BOTTOMRIGHT", Minimap, "BOTTOMRIGHT", -12 * scale, 9 * scale
-      )
-    else
-      pfUI.minimapCoordinates:SetPoint(
-        "BOTTOMLEFT", Minimap, "BOTTOMLEFT", 12 * scale, 9 * scale
-      )
+    pfUI.minimapCoordinates:SetPoint(
+      "CENTER", art, "TOPLEFT", 110 * scale, -246.5 * scale
+    )
+    pfUI.minimapCoordinates:SetWidth(100 * scale)
+    pfUI.minimapCoordinates:SetHeight(15 * scale)
+    if pfUI.minimapCoordinates.text then
+      if pfUI.minimapCoordinates.aeuiMapJustifyRestore == nil then
+        pfUI.minimapCoordinates.aeuiMapJustifyRestore =
+          pfUI.minimapCoordinates.text:GetJustifyH()
+      end
+      if location == "topright" or location == "bottomright" then
+        pfUI.minimapCoordinates.text:SetJustifyH("RIGHT")
+      else
+        pfUI.minimapCoordinates.text:SetJustifyH("LEFT")
+      end
     end
-    pfUI.minimapCoordinates:SetWidth(116 * scale)
     pfUI.minimapCoordinates:SetFrameLevel((Minimap:GetFrameLevel() or 1) + 5)
+  end
+end
+
+local function RestoreDynamicText()
+  if not pfUI then return end
+  RestoreAnchor(pfUI.minimapZone)
+  RestoreAnchor(pfUI.minimapCoordinates)
+  if
+    pfUI.minimapCoordinates and
+    pfUI.minimapCoordinates.text and
+    pfUI.minimapCoordinates.aeuiMapJustifyRestore
+  then
+    pfUI.minimapCoordinates.text:SetJustifyH(
+      pfUI.minimapCoordinates.aeuiMapJustifyRestore
+    )
+    pfUI.minimapCoordinates.aeuiMapJustifyRestore = nil
   end
 end
 
@@ -528,17 +660,16 @@ end
 local function StyleStatusSocket(
   frame,
   icon,
-  point,
-  relativePoint,
+  art,
   x,
   y,
   scale
 )
-  if not frame then return end
+  if not frame or not art then return end
   CaptureAnchor(frame)
   HideProviderBackdrop(frame)
   frame:ClearAllPoints()
-  frame:SetPoint(point, Minimap, relativePoint, x * scale, y * scale)
+  frame:SetPoint("TOPLEFT", art, "TOPLEFT", x * scale, -y * scale)
   frame:SetWidth(MINI.socket.width * scale)
   frame:SetHeight(MINI.socket.height * scale)
   if type(frame.SetFrameLevel) == "function" then
@@ -551,21 +682,20 @@ local function StyleStatusSocket(
   if icon then
     CaptureAnchor(icon)
     icon:ClearAllPoints()
-    icon:SetPoint("TOPLEFT", frame, "TOPLEFT", 3 * scale, -3 * scale)
+    icon:SetPoint("TOPLEFT", frame, "TOPLEFT", 4 * scale, -4 * scale)
     icon:SetWidth(16 * scale)
     icon:SetHeight(16 * scale)
   end
 end
 
-local function StyleStatusObjects(scale)
+local function StyleStatusObjects(art, scale)
   if pfUI.tracking then
     StyleStatusSocket(
       pfUI.tracking,
       pfUI.tracking.icon,
-      "TOPLEFT",
-      "TOPLEFT",
-      -10,
-      4,
+      art,
+      12,
+      25,
       scale
     )
   end
@@ -573,10 +703,9 @@ local function StyleStatusObjects(scale)
     StyleStatusSocket(
       MiniMapMailFrame,
       MiniMapMailIcon,
-      "TOPRIGHT",
-      "TOPRIGHT",
-      10,
-      4,
+      art,
+      184,
+      25,
       scale
     )
   end
@@ -584,10 +713,9 @@ local function StyleStatusObjects(scale)
     StyleStatusSocket(
       MiniMapBattlefieldFrame,
       MiniMapBattlefieldIcon,
-      "BOTTOMRIGHT",
-      "BOTTOMRIGHT",
-      10,
-      -4,
+      art,
+      184,
+      168,
       scale
     )
   end
@@ -595,10 +723,9 @@ local function StyleStatusObjects(scale)
     StyleStatusSocket(
       pfUI.minimap.pvpicon,
       pfUI.minimap.pvpicon.texture,
-      "BOTTOMRIGHT",
-      "BOTTOMRIGHT",
-      10,
-      19,
+      art,
+      12,
+      168,
       scale
     )
   end
@@ -661,9 +788,20 @@ local function EnsureNineSlice(frame)
   return textures
 end
 
-local function PlaceSlice(texture, frame, point, relativePoint, x, y, width, height, uv)
+local function PlaceSlice(
+  texture,
+  path,
+  frame,
+  point,
+  relativePoint,
+  x,
+  y,
+  width,
+  height,
+  uv
+)
   texture:ClearAllPoints()
-  texture:SetTexture(MINI.tray.path)
+  texture:SetTexture(path)
   texture:SetTexCoord(uv[1], uv[2], uv[3], uv[4])
   texture:SetWidth(width)
   texture:SetHeight(height)
@@ -673,33 +811,41 @@ local function PlaceSlice(texture, frame, point, relativePoint, x, y, width, hei
   texture:Show()
 end
 
-local function LayoutNineSlice(frame, scale)
+local function LayoutNineSlice(frame, scale, position)
   local textures = EnsureNineSlice(frame)
   if not textures then return end
+  local definition = MINI.tray[position or "bottom"]
+  if not definition then return end
   local width = frame:GetWidth()
   local height = frame:GetHeight()
   if not width or not height or width <= 0 or height <= 0 then return end
 
-  local capX = math.min(10 * scale, width / 3)
-  local capY = math.min(6 * scale, height / 3)
-  local centreWidth = math.max(1, width - capX - capX)
-  local centreHeight = math.max(1, height - capY - capY)
-  local uMax = MINI.tray.logicalWidth / MINI.tray.textureWidth
-  local vMax = MINI.tray.logicalHeight / MINI.tray.textureHeight
+  local capLeft = math.min(definition.cutX1 * scale, width / 3)
+  local capRight = math.min(
+    (definition.logicalWidth - definition.cutX2) * scale,
+    width / 3
+  )
+  local capTop = math.min(definition.cutY1 * scale, height / 3)
+  local capBottom = math.min(
+    (definition.logicalHeight - definition.cutY2) * scale,
+    height / 3
+  )
+  local centreWidth = math.max(1, width - capLeft - capRight)
+  local centreHeight = math.max(1, height - capTop - capBottom)
   local xs = {
     0,
-    MINI.tray.cutX1 * uMax,
-    MINI.tray.cutX2 * uMax,
-    uMax,
+    definition.cutX1 / definition.textureWidth,
+    definition.cutX2 / definition.textureWidth,
+    definition.logicalWidth / definition.textureWidth,
   }
   local ys = {
     0,
-    MINI.tray.cutY1 * vMax,
-    MINI.tray.cutY2 * vMax,
-    vMax,
+    definition.cutY1 / definition.textureHeight,
+    definition.cutY2 / definition.textureHeight,
+    definition.logicalHeight / definition.textureHeight,
   }
-  local widths = { capX, centreWidth, capX }
-  local heights = { capY, centreHeight, capY }
+  local widths = { capLeft, centreWidth, capRight }
+  local heights = { capTop, centreHeight, capBottom }
   local index = 1
   local offsetY = 0
   for row = 1, 3 do
@@ -707,6 +853,7 @@ local function LayoutNineSlice(frame, scale)
     for column = 1, 3 do
       PlaceSlice(
         textures[index],
+        definition.path,
         frame,
         "TOPLEFT",
         "TOPLEFT",
@@ -807,7 +954,7 @@ local function LayoutAddonEntries(container, entries, position, scale)
   local rowSize = GetAddonRowSize()
   local buttonSize = 21 * scale
   local gap = 2 * scale
-  local padding = 2 * scale
+  local padding = 8 * scale
   local horizontal = position == "bottom" or position == "top"
   local primary = math.min(rowSize, count)
   local secondary = math.ceil(count / rowSize)
@@ -853,45 +1000,78 @@ end
 local function EnsureToggleArt(button)
   if not button then return nil end
   if not button.aeuiMapToggleBody then
-    button.aeuiMapToggleBody = button:CreateTexture(nil, "BACKGROUND")
+    button.aeuiMapConnector = button:CreateTexture(nil, "BACKGROUND")
+    button.aeuiMapToggleBody = button:CreateTexture(nil, "BORDER")
     button.aeuiMapToggleBody:SetAllPoints(button)
     button.aeuiMapToggleGlyph = button:CreateTexture(nil, "ARTWORK")
     button.aeuiMapToggleGlyph:SetPoint("CENTER", button, "CENTER", 0, 0)
   end
-  SetLogicalTexture(button.aeuiMapToggleBody, MINI.toggleBody)
   if button.icon then button.icon:Hide() end
   HideProviderBackdrop(button)
   return button.aeuiMapToggleGlyph
 end
 
+local function SetComponentTexture(texture, path, definition)
+  texture:SetTexture(path)
+  texture:SetTexCoord(
+    0,
+    definition.width / definition.textureWidth,
+    0,
+    definition.height / definition.textureHeight
+  )
+  texture:SetVertexColor(1, 1, 1)
+  texture:SetAlpha(1)
+  texture:Show()
+end
+
+local function SetToggleBodyState(button, position, state)
+  if not button then return end
+  EnsureToggleArt(button)
+  local definition = MINI.latch[position]
+  if not definition then return end
+  local path = definition[state or "normal"] or definition.normal
+  SetComponentTexture(button.aeuiMapToggleBody, path, definition)
+  button.aeuiMapToggleState = state or "normal"
+  button.aeuiMapTogglePosition = position
+end
+
 local function SetToggleGlyph(button, direction, scale)
   local glyph = EnsureToggleArt(button)
   if not glyph then return end
-  local definition = MINI.toggleGlyph
-  glyph:SetTexture(definition[direction])
+  local definition = MINI.glyph[direction]
+  if not definition then return end
   glyph:ClearAllPoints()
   glyph:SetPoint("CENTER", button, "CENTER", 0, 0)
-  if direction == "left" or direction == "right" then
-    glyph:SetWidth(definition.verticalWidth * scale)
-    glyph:SetHeight(definition.verticalHeight * scale)
-    glyph:SetTexCoord(
-      0,
-      definition.verticalWidth / definition.verticalTextureWidth,
-      0,
-      definition.verticalHeight / definition.verticalTextureHeight
-    )
-  else
-    glyph:SetWidth(definition.horizontalWidth * scale)
-    glyph:SetHeight(definition.horizontalHeight * scale)
-    glyph:SetTexCoord(
-      0,
-      definition.horizontalWidth / definition.horizontalTextureWidth,
-      0,
-      definition.horizontalHeight / definition.horizontalTextureHeight
-    )
+  glyph:SetWidth(definition.width * scale)
+  glyph:SetHeight(definition.height * scale)
+  SetComponentTexture(glyph, definition.path, definition)
+end
+
+local function SetConnector(button, position, scale, expanded)
+  if not button or not button.aeuiMapConnector then return end
+  local connector = button.aeuiMapConnector
+  if not expanded then
+    connector:Hide()
+    return
   end
-  glyph:SetVertexColor(1, 1, 1)
-  glyph:Show()
+  local definition = MINI.connector[position]
+  if not definition then
+    connector:Hide()
+    return
+  end
+  connector:ClearAllPoints()
+  connector:SetWidth(definition.width * scale)
+  connector:SetHeight(definition.height * scale)
+  SetComponentTexture(connector, definition.path, definition)
+  if position == "bottom" then
+    connector:SetPoint("TOP", button, "BOTTOM", 0, 3 * scale)
+  elseif position == "top" then
+    connector:SetPoint("BOTTOM", button, "TOP", 0, -2 * scale)
+  elseif position == "left" then
+    connector:SetPoint("RIGHT", button, "LEFT", 3 * scale, 0)
+  else
+    connector:SetPoint("LEFT", button, "RIGHT", -3 * scale, 0)
+  end
 end
 
 local function ToggleDirection(position, expanded)
@@ -906,24 +1086,28 @@ local function ToggleDirection(position, expanded)
   end
 end
 
-local function AnchorAddonFrames(container, button, position, scale)
+local function AnchorAddonFrames(container, button, art, position, scale)
+  if not art then return false end
+  local latch = MINI.latch[position]
+  if not latch then return false end
   container:ClearAllPoints()
   button:ClearAllPoints()
-  button:SetWidth(MINI.toggleBody.width * scale)
-  button:SetHeight(MINI.toggleBody.height * scale)
+  button:SetWidth(latch.width * scale)
+  button:SetHeight(latch.height * scale)
   if position == "bottom" then
-    container:SetPoint("TOP", Minimap, "BOTTOM", 0, -31 * scale)
-    button:SetPoint("TOP", Minimap, "BOTTOM", 0, -11 * scale)
+    button:SetPoint("TOP", art, "TOPLEFT", 110 * scale, -258 * scale)
+    container:SetPoint("TOP", art, "TOPLEFT", 110 * scale, -291 * scale)
   elseif position == "top" then
-    container:SetPoint("BOTTOM", Minimap, "TOP", 0, 31 * scale)
-    button:SetPoint("BOTTOM", Minimap, "TOP", 0, 11 * scale)
+    button:SetPoint("TOPLEFT", art, "TOPLEFT", 142 * scale, -17 * scale)
+    container:SetPoint("BOTTOM", art, "TOPLEFT", 161 * scale, -7 * scale)
   elseif position == "left" then
-    container:SetPoint("RIGHT", Minimap, "LEFT", -31 * scale, 0)
-    button:SetPoint("RIGHT", Minimap, "LEFT", -10 * scale, 0)
+    button:SetPoint("TOPLEFT", art, "TOPLEFT", -11 * scale, -92 * scale)
+    container:SetPoint("RIGHT", art, "TOPLEFT", -20 * scale, -104 * scale)
   else
-    container:SetPoint("LEFT", Minimap, "RIGHT", 31 * scale, 0)
-    button:SetPoint("LEFT", Minimap, "RIGHT", 10 * scale, 0)
+    button:SetPoint("TOPLEFT", art, "TOPLEFT", 207 * scale, -92 * scale)
+    container:SetPoint("LEFT", art, "TOPLEFT", 240 * scale, -104 * scale)
   end
+  return true
 end
 
 function Map:StyleAddonButtons(scale)
@@ -933,11 +1117,13 @@ function Map:StyleAddonButtons(scale)
   end
   local container = pfUI.addonbuttons
   local button = container.minimapbutton
+  local art = pfUI.minimap and pfUI.minimap.aeuiMapMiniArt
   if not MiniModuleEnabled() or not ProviderVisible() then
     if container:IsShown() then
       container.aeuiMapRestoreShown = true
       container:Hide()
     end
+    if button.aeuiMapConnector then button.aeuiMapConnector:Hide() end
     button:Hide()
     self.addonButtonCount = 0
     return
@@ -952,14 +1138,23 @@ function Map:StyleAddonButtons(scale)
     container:Hide()
     button:Hide()
     HideNineSlice(container)
+    if button.aeuiMapConnector then button.aeuiMapConnector:Hide() end
     return
   end
 
-  AnchorAddonFrames(container, button, position, scale)
-  LayoutNineSlice(container, scale)
+  if not AnchorAddonFrames(container, button, art, position, scale) then
+    container:Hide()
+    button:Hide()
+    HideNineSlice(container)
+    return
+  end
+  LayoutNineSlice(container, scale, position)
   EnsureToggleArt(button)
+  SetToggleBodyState(button, position, "normal")
   button:Show()
-  SetToggleGlyph(button, ToggleDirection(position, container:IsShown()), scale)
+  local expanded = container:IsShown()
+  SetToggleGlyph(button, ToggleDirection(position, expanded), scale)
+  SetConnector(button, position, scale, expanded)
 end
 
 function Map:RestoreAddonButtons()
@@ -978,6 +1173,7 @@ function Map:RestoreAddonButtons()
   end
   local button = container.minimapbutton
   if button then
+    if button.aeuiMapConnector then button.aeuiMapConnector:Hide() end
     if button.aeuiMapToggleBody then button.aeuiMapToggleBody:Hide() end
     if button.aeuiMapToggleGlyph then button.aeuiMapToggleGlyph:Hide() end
     if button.icon then button.icon:Show() end
@@ -992,14 +1188,16 @@ function Map:RestoreAddonButtons()
   end
 end
 
-local function LocalizedFarmReturn()
-  local locale = type(GetLocale) == "function" and GetLocale() or ""
-  if locale == "zhCN" or locale == "zhTW" then return "返回小地图" end
-  return "RETURN TO MINIMAP"
-end
-
 function Map:StyleFarmMode()
   if not pfUI or not pfUI.farmmap then return end
+  -- FarmMode is a separate 300x300 provider.  Restore its own pfUI visuals;
+  -- the permanent compass, cradle, latch and tool roll must not be reused.
+  self:RestoreFarmModeStyle()
+  RestoreProviderBackdrop(pfUI.minimap)
+  RestoreProviderMask()
+  RestoreDynamicText()
+  RestoreStatusObjects()
+  RestoreStandaloneStatusWithProvider()
   local art = pfUI.minimap and pfUI.minimap.aeuiMapMiniArt
   if art then art:Hide() end
   if pfUI.addonbuttons then
@@ -1008,29 +1206,12 @@ function Map:StyleFarmMode()
       pfUI.addonbuttons:Hide()
     end
     if pfUI.addonbuttons.minimapbutton then
+      if pfUI.addonbuttons.minimapbutton.aeuiMapConnector then
+        pfUI.addonbuttons.minimapbutton.aeuiMapConnector:Hide()
+      end
       pfUI.addonbuttons.minimapbutton:Hide()
     end
   end
-  HideProviderBackdrop(pfUI.farmmap)
-  local button = pfUI.farmmap.button
-  if not button then return end
-  CaptureAnchor(button)
-  if button.txt and button.aeuiMapOriginalText == nil then
-    button.aeuiMapOriginalText = button.txt:GetText()
-    button.aeuiMapOriginalTextColor = { button.txt:GetTextColor() }
-  end
-  button:ClearAllPoints()
-  button:SetPoint("LEFT", pfUI.farmmap, "RIGHT", 10, 0)
-  button:SetWidth(92)
-  button:SetHeight(25)
-  button:SetFrameStrata("HIGH")
-  HideProviderBackdrop(button)
-  LayoutNineSlice(button, 1)
-  if button.txt then
-    button.txt:SetText(LocalizedFarmReturn())
-    button.txt:SetTextColor(0.90, 0.82, 0.66)
-  end
-  button:Show()
 end
 
 function Map:RestoreFarmModeStyle()
@@ -1061,10 +1242,7 @@ function Map:RestoreMini()
     pfUI.minimap.aeuiMapMiniRuntimeContract = nil
   end
   RestoreProviderMask()
-  if pfUI then
-    RestoreAnchor(pfUI.minimapZone)
-    RestoreAnchor(pfUI.minimapCoordinates)
-  end
+  RestoreDynamicText()
   RestoreStatusObjects()
   RestoreStandaloneStatusWithProvider()
   self:RestoreAddonButtons()
@@ -1112,13 +1290,13 @@ function Map:ApplyMini()
     return false
   end
   art:ClearAllPoints()
-  art:SetPoint("CENTER", Minimap, "CENTER", 0, 0)
+  art:SetPoint("TOPLEFT", Minimap, "TOPLEFT", -40 * scale, 40 * scale)
   art:SetWidth(MINI.frame.width * scale)
   art:SetHeight(MINI.frame.height * scale)
   SetLogicalTexture(art.texture, MINI.frame)
   ApplyRoundProviderMask()
-  PositionDynamicText(scale)
-  StyleStatusObjects(scale)
+  PositionDynamicText(art, scale)
+  StyleStatusObjects(art, scale)
   HideProviderBackdrop(pfUI.minimap)
   self:RestoreFarmModeStyle()
   if ProviderVisible() then
@@ -1143,7 +1321,7 @@ function Map:ApplyMini()
     return true
   end
   pfUI.minimap.aeuiMapMiniRuntimeContract = self.runtimeContract
-  self.miniStatus = "mini-v2-applied-round"
+  self.miniStatus = "mini-v3-applied-round-cradle"
   return true
 end
 
@@ -1196,11 +1374,14 @@ function Map:InstallHooks()
       end)
       HookScript(container, "OnHide", function()
         if MiniModuleEnabled() and container.minimapbutton then
+          local button = container.minimapbutton
           SetToggleGlyph(
-            container.minimapbutton,
+            button,
             ToggleDirection(GetAddonPosition(), false),
             MiniScale()
           )
+          SetConnector(button, GetAddonPosition(), MiniScale(), false)
+          SetToggleBodyState(button, GetAddonPosition(), "normal")
         end
       end)
       if container.minimapbutton then
@@ -1211,27 +1392,19 @@ function Map:InstallHooks()
         end)
         HookScript(container.minimapbutton, "OnEnter", function()
           local button = container.minimapbutton
-          if button.aeuiMapToggleBody then
-            button.aeuiMapToggleBody:SetVertexColor(1, 0.84, 0.58)
-          end
+          SetToggleBodyState(button, GetAddonPosition(), "hover")
         end)
         HookScript(container.minimapbutton, "OnLeave", function()
           local button = container.minimapbutton
-          if button.aeuiMapToggleBody then
-            button.aeuiMapToggleBody:SetVertexColor(1, 1, 1)
-          end
+          SetToggleBodyState(button, GetAddonPosition(), "normal")
         end)
         HookScript(container.minimapbutton, "OnMouseDown", function()
           local button = container.minimapbutton
-          if button.aeuiMapToggleBody then
-            button.aeuiMapToggleBody:SetVertexColor(0.68, 0.58, 0.46)
-          end
+          SetToggleBodyState(button, GetAddonPosition(), "pressed")
         end)
         HookScript(container.minimapbutton, "OnMouseUp", function()
           local button = container.minimapbutton
-          if button.aeuiMapToggleBody then
-            button.aeuiMapToggleBody:SetVertexColor(1, 1, 1)
-          end
+          SetToggleBodyState(button, GetAddonPosition(), "hover")
         end)
       end
     end
@@ -1269,7 +1442,9 @@ function Map:GetRuntimeStatus()
     "world=" .. tostring(self.worldStatus or "unapplied") ..
     ", mini=" .. tostring(self.miniStatus or "unapplied") ..
     ", mask=round-hard-boundary" ..
+    ", info=external-cradle" ..
     ", addons=" .. tostring(self.addonButtonCount or 0) ..
+    ", addon-tray=four-way-nine-slice" ..
     ", controls=provider-live" ..
     ", pfquest=provider-live" ..
     ", farmmode=separate-provider" ..

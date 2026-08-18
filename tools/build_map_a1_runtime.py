@@ -449,7 +449,7 @@ def main() -> int:
                 "status": "pass",
                 "world_source_manifest": repository_path(WORLD_SOURCE_MANIFEST),
                 "world_runtime_manifest": repository_path(WORLD_RUNTIME_MANIFEST),
-                "mini_status": "retired; superseded by MAP-MINI-OVERHAUL-V2",
+                "mini_status": "retired; superseded by MAP-MINI-V3",
                 "runtime_files": len(WORLD_RUNTIME),
             },
             ensure_ascii=False,

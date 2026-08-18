@@ -1,0 +1,51 @@
+{
+  "schema": "aeui-character-v3-a1-shell-runtime-manifest-v1",
+  "schema_version": 1,
+  "module": "character",
+  "batch": "CHAR-V3-A1-SHELL final",
+  "component": "CHAR.FRAME",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "runtime_contract": "1.0",
+  "source_manifest": "assets/source/character/frame-shell-v3/CHAR-V3-A1-SHELL_SourceManifest_v1.json",
+  "runtime": {
+    "top_left": {
+      "file": "addon/AzerothExpeditionUI/Media/Character/CharacterFrameShellTopLeftV3.tga",
+      "sha256": "fca3c001d52d6b94c8fa0734aa373049847ef0abfd72736b416cb4748a8e3d4c",
+      "texture_size": [256, 256],
+      "pixel_sha256": "1a9c15f0394896444c40b34ba9587d16e273f0c83784495a5ff440420b7b1345",
+      "tga": {"image_type": 2, "bits_per_pixel": 32, "descriptor": 8, "top_origin": false}
+    },
+    "top_right": {
+      "file": "addon/AzerothExpeditionUI/Media/Character/CharacterFrameShellTopRightV3.tga",
+      "sha256": "93a7bdfcdc0ea93ee0b0487ff78ff1b9c99e7a260e8342e7a753a2cfe83edc34",
+      "texture_size": [128, 256],
+      "pixel_sha256": "d09a4bdf21117a7ab0bb5267d4ab3d306ef18dce0fb4b1b39244ca08b7dae47b",
+      "tga": {"image_type": 2, "bits_per_pixel": 32, "descriptor": 8, "top_origin": false}
+    },
+    "bottom_left": {
+      "file": "addon/AzerothExpeditionUI/Media/Character/CharacterFrameShellBottomLeftV3.tga",
+      "sha256": "26813fbf9880d5f0bcd5f5f4303d45f2fadf61fdd2fa55e240a6a61e39f27857",
+      "texture_size": [256, 256],
+      "pixel_sha256": "7f520679d14a581fc22e473361251c4c9d4209db26015d79e7d7ceaac33840d6",
+      "tga": {"image_type": 2, "bits_per_pixel": 32, "descriptor": 8, "top_origin": false}
+    },
+    "bottom_right": {
+      "file": "addon/AzerothExpeditionUI/Media/Character/CharacterFrameShellBottomRightV3.tga",
+      "sha256": "6330d040662fd88a98329f038939ef70e21d5bc80aef636054dbe8accdb827ac",
+      "texture_size": [128, 256],
+      "pixel_sha256": "ca47dc3cb41a1b36ee0a90d3f17cd1686969f0d04d37356aa70adb385c38fb98",
+      "tga": {"image_type": 2, "bits_per_pixel": 32, "descriptor": 8, "top_origin": false}
+    }
+  },
+  "layout_contract": {
+    "provider": "Blizzard CharacterFrame after pfUI Character skin",
+    "provider_geometry_ui": [384, 512],
+    "native_four_slice_reassembly_exact": true,
+    "pfui_inner_backdrop": "retained until CHAR.MODEL and CHAR.STATS assets are accepted",
+    "top_left_portrait": "hidden",
+    "model_equipment_stats_resistance_tabs_buttons_text": "provider-live",
+    "provider_geometry_changed": false,
+    "stretch": false
+  }
+}

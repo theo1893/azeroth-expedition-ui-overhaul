@@ -1,0 +1,1308 @@
+{
+  "schema": "aeui-map-mini-v3-runtime-manifest-v1",
+  "schema_version": 1,
+  "module": "map",
+  "batch": "MAP-MINI-V3",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "runtime_contract": "3.0",
+  "source_manifest": "assets/source/map/mini-v3/MAP-MINI-V3_SourceManifest_v1.json",
+  "runtime": {
+    "compass": {
+      "component": "MAP.MINI.COMPASS.INFO.V3",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniCompassCradleV3.tga",
+      "sha256": "77cff4e9d5cc404be8466889717e779d0bb6e2611accbe483906d2ea15f70327",
+      "metrics": {
+        "size": [
+          220,
+          264
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "d891fe42dfe7152618fb6f4882c3f3c3838d9f0aaae0b9682b894ba9f34ba638",
+        "visible_bbox_exclusive": [
+          9,
+          0,
+          211,
+          254
+        ],
+        "transparent_pixels": 39716,
+        "partially_transparent_pixels": 2211,
+        "opaque_pixels": 16153,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        220,
+        264
+      ],
+      "texture_size": [
+        256,
+        512
+      ],
+      "content_uv": [
+        0.0,
+        0.859375,
+        0.0,
+        0.515625
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 256,
+        "height": 512,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "mask": {
+      "component": "MAP.MINI.MASK.V3",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniMaskV3.tga",
+      "sha256": "e862b8ca7e6ce31fcfd8826ad20e96f168a7cb26a13bcc750d8f47c515779d64",
+      "metrics": {
+        "size": [
+          256,
+          256
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "bc74391ea4b48625f70f6de980329a3b5e80e86590d3f61ceca6c786fe0c01af",
+        "visible_bbox_exclusive": [
+          1,
+          1,
+          255,
+          255
+        ],
+        "transparent_pixels": 14840,
+        "partially_transparent_pixels": 1308,
+        "opaque_pixels": 49388,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        256,
+        256
+      ],
+      "texture_size": [
+        256,
+        256
+      ],
+      "content_uv": [
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 256,
+        "height": 256,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "socket": {
+      "component": "MAP.MINI.STATUS.SOCKET.V3",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniStatusSocketV3.tga",
+      "sha256": "7ed6240229cf1b18685245de25620ab11e82d4f3ee7adf45df89d22390d6da7c",
+      "metrics": {
+        "size": [
+          24,
+          24
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "0ed4f7efc894da69460a4b7ce1239e0264c3bbdadf3f73baa0a64d8b0177eb73",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          24,
+          24
+        ],
+        "transparent_pixels": 112,
+        "partially_transparent_pixels": 277,
+        "opaque_pixels": 187,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        24,
+        24
+      ],
+      "texture_size": [
+        32,
+        32
+      ],
+      "content_uv": [
+        0.0,
+        0.75,
+        0.0,
+        0.75
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 32,
+        "height": 32,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "latch_bottom_normal": {
+      "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.BOTTOM_NORMAL",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonLatchBottomNormalV3.tga",
+      "sha256": "9af2be0ff8fcd522cc03bacc39221ddd61f048980d40da35c2b256059dd61332",
+      "metrics": {
+        "size": [
+          38,
+          24
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "7c9e84a8b980deb3c6a23091f40b371cfad6ce723c81cff3354d78f185eaa287",
+        "visible_bbox_exclusive": [
+          0,
+          1,
+          38,
+          22
+        ],
+        "transparent_pixels": 176,
+        "partially_transparent_pixels": 222,
+        "opaque_pixels": 514,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        38,
+        24
+      ],
+      "texture_size": [
+        64,
+        32
+      ],
+      "content_uv": [
+        0.0,
+        0.59375,
+        0.0,
+        0.75
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 64,
+        "height": 32,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "latch_top_normal": {
+      "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.TOP_NORMAL",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonLatchTopNormalV3.tga",
+      "sha256": "1afeaa990cb89e3f2ae0c8aadf4240141dc8c0d9ebd8aa9fe533db9ed27ff33f",
+      "metrics": {
+        "size": [
+          38,
+          24
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "baaab35a04bb8e6593183efc1404255fa74b69a4bd4bce14a51e412545ef83e4",
+        "visible_bbox_exclusive": [
+          0,
+          2,
+          38,
+          23
+        ],
+        "transparent_pixels": 176,
+        "partially_transparent_pixels": 222,
+        "opaque_pixels": 514,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        38,
+        24
+      ],
+      "texture_size": [
+        64,
+        32
+      ],
+      "content_uv": [
+        0.0,
+        0.59375,
+        0.0,
+        0.75
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 64,
+        "height": 32,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "latch_left_normal": {
+      "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.LEFT_NORMAL",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonLatchLeftNormalV3.tga",
+      "sha256": "a65c2314732dff828213083c2b3d631e1353e975499753f34f9d4c7fbcf3b216",
+      "metrics": {
+        "size": [
+          24,
+          38
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "3ffb5a68eac7b86b06cd999e18151c1e1459329cbc1c0407f73b8828f891abaf",
+        "visible_bbox_exclusive": [
+          2,
+          0,
+          23,
+          38
+        ],
+        "transparent_pixels": 176,
+        "partially_transparent_pixels": 222,
+        "opaque_pixels": 514,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        24,
+        38
+      ],
+      "texture_size": [
+        32,
+        64
+      ],
+      "content_uv": [
+        0.0,
+        0.75,
+        0.0,
+        0.59375
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 32,
+        "height": 64,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "latch_right_normal": {
+      "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.RIGHT_NORMAL",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonLatchRightNormalV3.tga",
+      "sha256": "242b2d63c62e26a01652d5468a29c862cd236e722d01e18e795bdfeadce54f0f",
+      "metrics": {
+        "size": [
+          24,
+          38
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "d30201ab9278887c2d177c35196f92bd9e111429117d5607cbdfede7577ca7da",
+        "visible_bbox_exclusive": [
+          1,
+          0,
+          22,
+          38
+        ],
+        "transparent_pixels": 176,
+        "partially_transparent_pixels": 222,
+        "opaque_pixels": 514,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        24,
+        38
+      ],
+      "texture_size": [
+        32,
+        64
+      ],
+      "content_uv": [
+        0.0,
+        0.75,
+        0.0,
+        0.59375
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 32,
+        "height": 64,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "latch_bottom_hover": {
+      "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.BOTTOM_HOVER",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonLatchBottomHoverV3.tga",
+      "sha256": "adbbb2214cd97315c3370a4b831d045dabaef6f8ac1f3db98e38e3212e5983b5",
+      "metrics": {
+        "size": [
+          38,
+          24
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "dc5803cb39c7bf8f8be46b280487933876233063a581aff7da02facc6a8aae3c",
+        "visible_bbox_exclusive": [
+          0,
+          1,
+          38,
+          22
+        ],
+        "transparent_pixels": 176,
+        "partially_transparent_pixels": 222,
+        "opaque_pixels": 514,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        38,
+        24
+      ],
+      "texture_size": [
+        64,
+        32
+      ],
+      "content_uv": [
+        0.0,
+        0.59375,
+        0.0,
+        0.75
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 64,
+        "height": 32,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "latch_top_hover": {
+      "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.TOP_HOVER",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonLatchTopHoverV3.tga",
+      "sha256": "db7417b65e79e8448654ac32f910bf205ec4efca7488cfe2e457a9945c7c1bbe",
+      "metrics": {
+        "size": [
+          38,
+          24
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "c65f9d15f51408698105ac7f3f82530a90081192080184328674c7c9299a1d7e",
+        "visible_bbox_exclusive": [
+          0,
+          2,
+          38,
+          23
+        ],
+        "transparent_pixels": 176,
+        "partially_transparent_pixels": 222,
+        "opaque_pixels": 514,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        38,
+        24
+      ],
+      "texture_size": [
+        64,
+        32
+      ],
+      "content_uv": [
+        0.0,
+        0.59375,
+        0.0,
+        0.75
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 64,
+        "height": 32,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "latch_left_hover": {
+      "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.LEFT_HOVER",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonLatchLeftHoverV3.tga",
+      "sha256": "e3fded55695a50e98bf9f170b982201402ea4c343d8880b2fabe80862d5acdf3",
+      "metrics": {
+        "size": [
+          24,
+          38
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "814fe74974c6f01d67e881887dd4386ace56779811123ef0f38c64ee91fca4ea",
+        "visible_bbox_exclusive": [
+          2,
+          0,
+          23,
+          38
+        ],
+        "transparent_pixels": 176,
+        "partially_transparent_pixels": 222,
+        "opaque_pixels": 514,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        24,
+        38
+      ],
+      "texture_size": [
+        32,
+        64
+      ],
+      "content_uv": [
+        0.0,
+        0.75,
+        0.0,
+        0.59375
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 32,
+        "height": 64,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "latch_right_hover": {
+      "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.RIGHT_HOVER",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonLatchRightHoverV3.tga",
+      "sha256": "97b2e5fc8b20d6026afad7f7e2dfe27af6bbb0c5864155731443b650c51d10fa",
+      "metrics": {
+        "size": [
+          24,
+          38
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "3f492b0a1310858c2b7324e2105cf1f80c5346f076861095b75046f0d9a1af8e",
+        "visible_bbox_exclusive": [
+          1,
+          0,
+          22,
+          38
+        ],
+        "transparent_pixels": 176,
+        "partially_transparent_pixels": 222,
+        "opaque_pixels": 514,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        24,
+        38
+      ],
+      "texture_size": [
+        32,
+        64
+      ],
+      "content_uv": [
+        0.0,
+        0.75,
+        0.0,
+        0.59375
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 32,
+        "height": 64,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "latch_bottom_pressed": {
+      "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.BOTTOM_PRESSED",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonLatchBottomPressedV3.tga",
+      "sha256": "ccf24c111e26c91050a46594035a78f8f91c38b275c8a0e55497f1021aecc9c0",
+      "metrics": {
+        "size": [
+          38,
+          24
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "61e81a4b7ca1a929fbbee976f1aadc98848950bc0c690abd669de2127eaef88c",
+        "visible_bbox_exclusive": [
+          0,
+          2,
+          38,
+          23
+        ],
+        "transparent_pixels": 176,
+        "partially_transparent_pixels": 222,
+        "opaque_pixels": 514,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        38,
+        24
+      ],
+      "texture_size": [
+        64,
+        32
+      ],
+      "content_uv": [
+        0.0,
+        0.59375,
+        0.0,
+        0.75
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 64,
+        "height": 32,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "latch_top_pressed": {
+      "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.TOP_PRESSED",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonLatchTopPressedV3.tga",
+      "sha256": "6d590c7b5fe428ba04bd3bd8558fb7b5becf0d8715b9ed63c893149dcfcf8305",
+      "metrics": {
+        "size": [
+          38,
+          24
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "e620e5f9e4168f634cec3bddcdf21e10bb2507a07c960f23fe1a89d62a5fb1c9",
+        "visible_bbox_exclusive": [
+          0,
+          1,
+          38,
+          22
+        ],
+        "transparent_pixels": 176,
+        "partially_transparent_pixels": 222,
+        "opaque_pixels": 514,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        38,
+        24
+      ],
+      "texture_size": [
+        64,
+        32
+      ],
+      "content_uv": [
+        0.0,
+        0.59375,
+        0.0,
+        0.75
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 64,
+        "height": 32,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "latch_left_pressed": {
+      "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.LEFT_PRESSED",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonLatchLeftPressedV3.tga",
+      "sha256": "4da56033eeb5d336257157bbe80c4dea7782bed5362afa2e49527be93e530b48",
+      "metrics": {
+        "size": [
+          24,
+          38
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "2a18ad6cc0167e55efe1851d1e240243f91aa329d76cf05319dd8d8db242cefa",
+        "visible_bbox_exclusive": [
+          1,
+          0,
+          22,
+          38
+        ],
+        "transparent_pixels": 176,
+        "partially_transparent_pixels": 222,
+        "opaque_pixels": 514,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        24,
+        38
+      ],
+      "texture_size": [
+        32,
+        64
+      ],
+      "content_uv": [
+        0.0,
+        0.75,
+        0.0,
+        0.59375
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 32,
+        "height": 64,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "latch_right_pressed": {
+      "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.RIGHT_PRESSED",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonLatchRightPressedV3.tga",
+      "sha256": "220048340cf5514236f9830d4eaa6187385a1571ae5302b8b74aff3748fc3b25",
+      "metrics": {
+        "size": [
+          24,
+          38
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "ad1feca10a402d02de03973c776992995c2d1a9e576d78666c942a15dd9b7eb1",
+        "visible_bbox_exclusive": [
+          2,
+          0,
+          23,
+          38
+        ],
+        "transparent_pixels": 176,
+        "partially_transparent_pixels": 222,
+        "opaque_pixels": 514,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        24,
+        38
+      ],
+      "texture_size": [
+        32,
+        64
+      ],
+      "content_uv": [
+        0.0,
+        0.75,
+        0.0,
+        0.59375
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 32,
+        "height": 64,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "glyph_up": {
+      "component": "MAP.MINI.ADDONS.TOGGLE.GLYPH.V3.UP",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonGlyphUpV3.tga",
+      "sha256": "b562383034d0bd53790df7cb32ff281bc02d6721bd01dae0c810706727bca48d",
+      "metrics": {
+        "size": [
+          10,
+          12
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "ffdb6bd00296650ed42d6bd95aa4bf8e604f1282278db4371f804eefbf02cdb7",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          10,
+          11
+        ],
+        "transparent_pixels": 40,
+        "partially_transparent_pixels": 65,
+        "opaque_pixels": 15,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        10,
+        12
+      ],
+      "texture_size": [
+        16,
+        16
+      ],
+      "content_uv": [
+        0.0,
+        0.625,
+        0.0,
+        0.75
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 16,
+        "height": 16,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "glyph_down": {
+      "component": "MAP.MINI.ADDONS.TOGGLE.GLYPH.V3.DOWN",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonGlyphDownV3.tga",
+      "sha256": "565a762b04f43c166f7ce1f338374b355e236525ccb81fdca1cf135ab8d45819",
+      "metrics": {
+        "size": [
+          10,
+          12
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "b3f9b3c4ea774833b88297697bcb1ff99b1c9ba32e3b00524b126959474576b5",
+        "visible_bbox_exclusive": [
+          0,
+          1,
+          10,
+          12
+        ],
+        "transparent_pixels": 40,
+        "partially_transparent_pixels": 65,
+        "opaque_pixels": 15,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        10,
+        12
+      ],
+      "texture_size": [
+        16,
+        16
+      ],
+      "content_uv": [
+        0.0,
+        0.625,
+        0.0,
+        0.75
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 16,
+        "height": 16,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "glyph_left": {
+      "component": "MAP.MINI.ADDONS.TOGGLE.GLYPH.V3.LEFT",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonGlyphLeftV3.tga",
+      "sha256": "f7a3dbf95778196eb5573adec5754b1cf41db9523ccd4e96ce477100dcbdbc47",
+      "metrics": {
+        "size": [
+          12,
+          10
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "d6199b915ac937a7a30bc6fc2c27a577270309a5f9e3676cba4f03956901d3df",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          11,
+          10
+        ],
+        "transparent_pixels": 40,
+        "partially_transparent_pixels": 65,
+        "opaque_pixels": 15,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        12,
+        10
+      ],
+      "texture_size": [
+        16,
+        16
+      ],
+      "content_uv": [
+        0.0,
+        0.75,
+        0.0,
+        0.625
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 16,
+        "height": 16,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "glyph_right": {
+      "component": "MAP.MINI.ADDONS.TOGGLE.GLYPH.V3.RIGHT",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonGlyphRightV3.tga",
+      "sha256": "39d99153b0185fbc9dfbaf1b94eb3882f323108b03852502132f0f1ea24104fa",
+      "metrics": {
+        "size": [
+          12,
+          10
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "3b2aa520ddaf1bed5ecdc29dd3b717d2dce157bedd356cf317a7caa413ace916",
+        "visible_bbox_exclusive": [
+          1,
+          0,
+          12,
+          10
+        ],
+        "transparent_pixels": 40,
+        "partially_transparent_pixels": 65,
+        "opaque_pixels": 15,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        12,
+        10
+      ],
+      "texture_size": [
+        16,
+        16
+      ],
+      "content_uv": [
+        0.0,
+        0.75,
+        0.0,
+        0.625
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 16,
+        "height": 16,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "connector_bottom": {
+      "component": "MAP.MINI.ADDONS.CONNECTOR.V3.BOTTOM",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonConnectorBottomV3.tga",
+      "sha256": "75777b101e963c6c57572f0514ef9c70c8300a381556e96899d1b662ca3e32e0",
+      "metrics": {
+        "size": [
+          32,
+          14
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "441ca60839bf81d7af7f21141e920a8c99d59f3a38af64dd23a1f3161ace1d45",
+        "visible_bbox_exclusive": [
+          2,
+          0,
+          29,
+          14
+        ],
+        "transparent_pixels": 104,
+        "partially_transparent_pixels": 144,
+        "opaque_pixels": 200,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        32,
+        14
+      ],
+      "texture_size": [
+        32,
+        16
+      ],
+      "content_uv": [
+        0.0,
+        1.0,
+        0.0,
+        0.875
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 32,
+        "height": 16,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "tray_bottom": {
+      "component": "MAP.MINI.ADDONS.TRAY.V3.BOTTOM",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonTrayBottomV3.tga",
+      "sha256": "e725c2241ff57786afed13019dc6ebfd1855fa23f05df02b7c89721e5007670b",
+      "metrics": {
+        "size": [
+          270,
+          74
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "bfca4bc4f8002cbcd0d2f25b323adb47743869d026bd7c0f1ad4ff843ec3fa09",
+        "visible_bbox_exclusive": [
+          0,
+          1,
+          270,
+          73
+        ],
+        "transparent_pixels": 2972,
+        "partially_transparent_pixels": 1515,
+        "opaque_pixels": 15493,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        270,
+        74
+      ],
+      "texture_size": [
+        512,
+        128
+      ],
+      "content_uv": [
+        0.0,
+        0.52734375,
+        0.0,
+        0.578125
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 512,
+        "height": 128,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "connector_top": {
+      "component": "MAP.MINI.ADDONS.CONNECTOR.V3.TOP",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonConnectorTopV3.tga",
+      "sha256": "f3fddfa99b608260cda60eeb33c17aee7f5f0c29bb69e1310087a0c9dc3b2bfe",
+      "metrics": {
+        "size": [
+          32,
+          14
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "9878539d080bd6d5257e52b54f2ded662d78170f952429bc9d339cd4fc1f58cb",
+        "visible_bbox_exclusive": [
+          3,
+          0,
+          30,
+          14
+        ],
+        "transparent_pixels": 104,
+        "partially_transparent_pixels": 144,
+        "opaque_pixels": 200,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        32,
+        14
+      ],
+      "texture_size": [
+        32,
+        16
+      ],
+      "content_uv": [
+        0.0,
+        1.0,
+        0.0,
+        0.875
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 32,
+        "height": 16,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "tray_top": {
+      "component": "MAP.MINI.ADDONS.TRAY.V3.TOP",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonTrayTopV3.tga",
+      "sha256": "e11f8f2104a7bc432b6a2422536b86fa23349123a7fd2fad226646185a31ef39",
+      "metrics": {
+        "size": [
+          270,
+          74
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "f455ce299287035a79ffa6712e65842c7b5901020f5d686cfd40775a07288fad",
+        "visible_bbox_exclusive": [
+          0,
+          1,
+          270,
+          73
+        ],
+        "transparent_pixels": 2972,
+        "partially_transparent_pixels": 1515,
+        "opaque_pixels": 15493,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        270,
+        74
+      ],
+      "texture_size": [
+        512,
+        128
+      ],
+      "content_uv": [
+        0.0,
+        0.52734375,
+        0.0,
+        0.578125
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 512,
+        "height": 128,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "connector_left": {
+      "component": "MAP.MINI.ADDONS.CONNECTOR.V3.LEFT",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonConnectorLeftV3.tga",
+      "sha256": "eb55d398fae9b051d571d7f36135283637413fbc326c54a871ecddf88098bf23",
+      "metrics": {
+        "size": [
+          14,
+          32
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "2516fca1137000de6164d09d9044e48f39f5766626b4ad846d7a9da815dbd340",
+        "visible_bbox_exclusive": [
+          0,
+          2,
+          14,
+          29
+        ],
+        "transparent_pixels": 104,
+        "partially_transparent_pixels": 144,
+        "opaque_pixels": 200,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        14,
+        32
+      ],
+      "texture_size": [
+        16,
+        32
+      ],
+      "content_uv": [
+        0.0,
+        0.875,
+        0.0,
+        1.0
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 16,
+        "height": 32,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "tray_left": {
+      "component": "MAP.MINI.ADDONS.TRAY.V3.LEFT",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonTrayLeftV3.tga",
+      "sha256": "2dbe4ffa4853d2cb480e81dcdcc2c63d72cb8a97e980063282064ce6ab5a42d0",
+      "metrics": {
+        "size": [
+          74,
+          270
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "bdb95c99fa5f0dda2e1f0c964553470153a0d6eb43db2573d873895aa7aba0da",
+        "visible_bbox_exclusive": [
+          1,
+          0,
+          73,
+          270
+        ],
+        "transparent_pixels": 2972,
+        "partially_transparent_pixels": 1515,
+        "opaque_pixels": 15493,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        74,
+        270
+      ],
+      "texture_size": [
+        128,
+        512
+      ],
+      "content_uv": [
+        0.0,
+        0.578125,
+        0.0,
+        0.52734375
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 128,
+        "height": 512,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "connector_right": {
+      "component": "MAP.MINI.ADDONS.CONNECTOR.V3.RIGHT",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonConnectorRightV3.tga",
+      "sha256": "9df1f6bf053f76d23a6d61bd004a4e594a6a214d05bc2e80e67e1e1e6b5d7ddc",
+      "metrics": {
+        "size": [
+          14,
+          32
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "d11e6989b28ef1d62ef20a82b42403476fa2585decdfb9914a911bdf3e243e34",
+        "visible_bbox_exclusive": [
+          0,
+          3,
+          14,
+          30
+        ],
+        "transparent_pixels": 104,
+        "partially_transparent_pixels": 144,
+        "opaque_pixels": 200,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        14,
+        32
+      ],
+      "texture_size": [
+        16,
+        32
+      ],
+      "content_uv": [
+        0.0,
+        0.875,
+        0.0,
+        1.0
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 16,
+        "height": 32,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "tray_right": {
+      "component": "MAP.MINI.ADDONS.TRAY.V3.RIGHT",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonTrayRightV3.tga",
+      "sha256": "609eb789630d3ae9942fbab14e7981f6615400a9a00f37b53df9ea77cb4f747a",
+      "metrics": {
+        "size": [
+          74,
+          270
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "e3ba7b63d1b6cf29b3d7ca8b092f8b6808863cb3608d346712392759c3805b4f",
+        "visible_bbox_exclusive": [
+          1,
+          0,
+          73,
+          270
+        ],
+        "transparent_pixels": 2972,
+        "partially_transparent_pixels": 1515,
+        "opaque_pixels": 15493,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        74,
+        270
+      ],
+      "texture_size": [
+        128,
+        512
+      ],
+      "content_uv": [
+        0.0,
+        0.578125,
+        0.0,
+        0.52734375
+      ],
+      "tga_header": {
+        "image_type": 2,
+        "width": 128,
+        "height": 512,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    }
+  },
+  "layout_contract": {
+    "provider": "pfUI.minimap and Minimap",
+    "reference_content_ui": [
+      140,
+      140
+    ],
+    "reference_shell_ui": [
+      220,
+      264
+    ],
+    "map_hole_centre_ui": [
+      110,
+      110
+    ],
+    "map_hole_diameter_ui": 140,
+    "provider_mask_texture": "MapMiniMaskV3.tga",
+    "provider_mask_is_independent_of_shell": true,
+    "map_tiles_player_arrow_pfquest_pins_share_masked_provider": true,
+    "map_content_can_cross_compass_inner_edge": false,
+    "zone_safe_region_ui": [
+      42,
+      216,
+      178,
+      238
+    ],
+    "coordinates_safe_region_ui": [
+      60,
+      239,
+      160,
+      254
+    ],
+    "status_socket_positions_ui": {
+      "tracking": [
+        12,
+        25
+      ],
+      "mail": [
+        184,
+        25
+      ],
+      "battlefield": [
+        184,
+        168
+      ],
+      "pvp": [
+        12,
+        168
+      ]
+    },
+    "tray_nine_slice_pixels_bottom": {
+      "x": [
+        0,
+        18,
+        258,
+        270
+      ],
+      "y": [
+        0,
+        10,
+        64,
+        74
+      ]
+    },
+    "addon_positions": [
+      "bottom",
+      "top",
+      "left",
+      "right"
+    ],
+    "addon_counts_reviewed": [
+      0,
+      6,
+      30
+    ],
+    "zero_addons_hide_toggle_connector_and_tray": true,
+    "plugin_icons_states_clicks_tooltips_cooldowns_notifications_remain_provider_owned": true,
+    "zone_and_coordinates_are_runtime_text_outside_map": true,
+    "farmmode_shell_reuse": false,
+    "world_map_integration_remains_paused": true,
+    "vanilla_power_of_two_texture_containers": true
+  }
+}

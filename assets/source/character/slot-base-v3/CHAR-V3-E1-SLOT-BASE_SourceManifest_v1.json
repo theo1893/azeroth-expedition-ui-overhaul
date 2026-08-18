@@ -1,0 +1,405 @@
+{
+  "schema": "aeui-character-v3-e1-slot-base-source-manifest-v1",
+  "schema_version": 1,
+  "module": "character",
+  "batch": "CHAR-V3-E1-SLOT-BASE V1 final",
+  "component": "CHAR.SLOT",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "accepted_on": "2026-08-18",
+  "user_acceptance": {
+    "statement": "接受 CHAR-V3-E1-SLOT-BASE attempt 1 的 exact pixels；允许 1254×1254 原生容器中线四象限拆分例外，并按既有合同生成 148² source、37² runtime 和 POT atlas，随后接入 addon。",
+    "accepts_exact_pixels": true,
+    "native_container_midline_exception": true,
+    "source_promotion_authorized": true,
+    "runtime_export_authorized": true,
+    "addon_integration_authorized": true
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "production_attempt": 1,
+    "actual_imagegen_calls": 1,
+    "raw_candidate_sha256": "afd809f6ea3232119b1a75258d638ac8b5b9341b99f0c978f8fb000517863692",
+    "raw_container_size": [
+      1254,
+      1254
+    ],
+    "prompt_body_sha256": "029c166845e3c2d6c0e7542e8a35c493797b7c6e1a7cd9faf3725ce768453bba",
+    "postprocess": "accepted native-container half-axis quadrant split; green-key Alpha reduction; transparent RGB clear; per-variant <=2% X/Y bbox normalization; fixed source/runtime safe-area Alpha clear; LANCZOS runtime reduction; POT atlas assembly",
+    "python_generated_visual_pixels": false,
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/character/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/character/SUBMODULE_ART_BASELINES.md#charslot"
+  },
+  "deterministic_transform": {
+    "alpha_cleared_green_pixels": 1137368,
+    "visible_rgb_modified": false,
+    "raw_resized_before_split": false,
+    "fixed_split_axes": [
+      627,
+      627
+    ],
+    "source_size": [
+      148,
+      148
+    ],
+    "source_center_alpha_clear_exclusive": [
+      16,
+      16,
+      132,
+      132
+    ],
+    "runtime_size": [
+      37,
+      37
+    ],
+    "runtime_center_alpha_clear_exclusive": [
+      4,
+      4,
+      33,
+      33
+    ],
+    "visual_linear_size_spread": 0.00218087,
+    "painted_or_synthesized_pixels": 0,
+    "cross_attempt_pixel_reuse": false,
+    "dynamic_content_baked": false
+  },
+  "accepted_assets": {
+    "A": {
+      "quadrant": [
+        0,
+        0,
+        627,
+        627
+      ],
+      "foreground_bbox_exclusive": [
+        81,
+        83,
+        541,
+        549
+      ],
+      "foreground_size": [
+        460,
+        466
+      ],
+      "aspect_relative_error": 0.01287554,
+      "quadrant_margins": [
+        81,
+        83,
+        86,
+        78
+      ],
+      "normalization_scale": [
+        0.32173913,
+        0.31759657
+      ],
+      "normalization_axis_ratio_error": 0.01304348,
+      "source_resample_green_spill_alpha_cleared": 29,
+      "runtime_resample_green_spill_alpha_cleared": 0,
+      "source": {
+        "file": "assets/source/character/slot-base-v3/CharacterSlotBaseA_SourceV3.png",
+        "sha256": "f5695ee4549de4bd86dc25fc7444d0afcbdecade728be8be8110c1e4cd301bad",
+        "metrics": {
+          "size": [
+            148,
+            148
+          ],
+          "mode": "RGBA",
+          "pixel_sha256": "cae5fc3f08f5d86176deba5194710a3fd62e611f81b95ced3b636071cb283886",
+          "visible_bbox_exclusive": [
+            0,
+            0,
+            148,
+            148
+          ],
+          "transparent_pixels": 13495,
+          "partially_transparent_pixels": 743,
+          "opaque_pixels": 7666,
+          "visible_green_spill_pixels": 0,
+          "transparent_rgb_nonzero_pixels": 0
+        }
+      },
+      "runtime_master": {
+        "file": "assets/source/character/slot-base-v3/CharacterSlotBaseA_RuntimeMasterV3.png",
+        "sha256": "80b606ec1471395faa79cc7c7613bc2781133350544c699f708eb533644fa8b2",
+        "metrics": {
+          "size": [
+            37,
+            37
+          ],
+          "mode": "RGBA",
+          "pixel_sha256": "022387c0d7e280505564a2fb724efa7b3dd04b88ab40142204cdde4adb37f5e2",
+          "visible_bbox_exclusive": [
+            0,
+            0,
+            37,
+            37
+          ],
+          "transparent_pixels": 841,
+          "partially_transparent_pixels": 279,
+          "opaque_pixels": 249,
+          "visible_green_spill_pixels": 0,
+          "transparent_rgb_nonzero_pixels": 0
+        }
+      }
+    },
+    "B": {
+      "quadrant": [
+        627,
+        0,
+        1254,
+        627
+      ],
+      "foreground_bbox_exclusive": [
+        80,
+        83,
+        541,
+        548
+      ],
+      "foreground_size": [
+        461,
+        465
+      ],
+      "aspect_relative_error": 0.00860215,
+      "quadrant_margins": [
+        80,
+        83,
+        86,
+        79
+      ],
+      "normalization_scale": [
+        0.32104121,
+        0.31827957
+      ],
+      "normalization_axis_ratio_error": 0.00867679,
+      "source_resample_green_spill_alpha_cleared": 2,
+      "runtime_resample_green_spill_alpha_cleared": 0,
+      "source": {
+        "file": "assets/source/character/slot-base-v3/CharacterSlotBaseB_SourceV3.png",
+        "sha256": "360d1bcd62e8e2ac274634938d8209cc4e83d3a7ab51d53fad308d39940e0aee",
+        "metrics": {
+          "size": [
+            148,
+            148
+          ],
+          "mode": "RGBA",
+          "pixel_sha256": "a773ba70d6d4fcef5d3131a077e9c98b0a3b5a6e13b76577b1554b749dc42604",
+          "visible_bbox_exclusive": [
+            0,
+            0,
+            148,
+            148
+          ],
+          "transparent_pixels": 13465,
+          "partially_transparent_pixels": 886,
+          "opaque_pixels": 7553,
+          "visible_green_spill_pixels": 0,
+          "transparent_rgb_nonzero_pixels": 0
+        }
+      },
+      "runtime_master": {
+        "file": "assets/source/character/slot-base-v3/CharacterSlotBaseB_RuntimeMasterV3.png",
+        "sha256": "72b27daa28b19e554d9a1812113117ad01dd081ab984dfdd4e086b7fcdf84912",
+        "metrics": {
+          "size": [
+            37,
+            37
+          ],
+          "mode": "RGBA",
+          "pixel_sha256": "c05df7d428cd6ffee8f050e7d1965fed144292132f7f97a3aa336bbcf6315f87",
+          "visible_bbox_exclusive": [
+            0,
+            0,
+            37,
+            37
+          ],
+          "transparent_pixels": 841,
+          "partially_transparent_pixels": 271,
+          "opaque_pixels": 257,
+          "visible_green_spill_pixels": 0,
+          "transparent_rgb_nonzero_pixels": 0
+        }
+      }
+    },
+    "C": {
+      "quadrant": [
+        0,
+        627,
+        627,
+        1254
+      ],
+      "foreground_bbox_exclusive": [
+        81,
+        77,
+        542,
+        544
+      ],
+      "foreground_size": [
+        461,
+        467
+      ],
+      "aspect_relative_error": 0.01284797,
+      "quadrant_margins": [
+        81,
+        77,
+        85,
+        83
+      ],
+      "normalization_scale": [
+        0.32104121,
+        0.31691649
+      ],
+      "normalization_axis_ratio_error": 0.01301518,
+      "source_resample_green_spill_alpha_cleared": 5,
+      "runtime_resample_green_spill_alpha_cleared": 0,
+      "source": {
+        "file": "assets/source/character/slot-base-v3/CharacterSlotBaseC_SourceV3.png",
+        "sha256": "05d4d245cb2effdf203461734ede6a4987e26a3ee8fd9c18dc5dcaf569071d13",
+        "metrics": {
+          "size": [
+            148,
+            148
+          ],
+          "mode": "RGBA",
+          "pixel_sha256": "35154a21055cc6e608a1d702ab28b45c84c6c60766931bb44c8567ab206bf777",
+          "visible_bbox_exclusive": [
+            0,
+            0,
+            148,
+            148
+          ],
+          "transparent_pixels": 13549,
+          "partially_transparent_pixels": 958,
+          "opaque_pixels": 7397,
+          "visible_green_spill_pixels": 0,
+          "transparent_rgb_nonzero_pixels": 0
+        }
+      },
+      "runtime_master": {
+        "file": "assets/source/character/slot-base-v3/CharacterSlotBaseC_RuntimeMasterV3.png",
+        "sha256": "e01ca673c7649b8e19d59b20bbd317a19f2eb7c85f5b4810ef3541e8ab78122e",
+        "metrics": {
+          "size": [
+            37,
+            37
+          ],
+          "mode": "RGBA",
+          "pixel_sha256": "548535160041bebb9927441a8ee45ef09f208b7acac0b335cf2740970dd7523c",
+          "visible_bbox_exclusive": [
+            0,
+            0,
+            37,
+            37
+          ],
+          "transparent_pixels": 841,
+          "partially_transparent_pixels": 275,
+          "opaque_pixels": 253,
+          "visible_green_spill_pixels": 0,
+          "transparent_rgb_nonzero_pixels": 0
+        }
+      }
+    },
+    "D": {
+      "quadrant": [
+        627,
+        627,
+        1254,
+        1254
+      ],
+      "foreground_bbox_exclusive": [
+        77,
+        81,
+        541,
+        545
+      ],
+      "foreground_size": [
+        464,
+        464
+      ],
+      "aspect_relative_error": 0.0,
+      "quadrant_margins": [
+        77,
+        81,
+        86,
+        82
+      ],
+      "normalization_scale": [
+        0.31896552,
+        0.31896552
+      ],
+      "normalization_axis_ratio_error": 0.0,
+      "source_resample_green_spill_alpha_cleared": 5,
+      "runtime_resample_green_spill_alpha_cleared": 0,
+      "source": {
+        "file": "assets/source/character/slot-base-v3/CharacterSlotBaseD_SourceV3.png",
+        "sha256": "7844a14694f65ffec238d2682bc6985ee40d513c1dc56d35c4d0093757d1abde",
+        "metrics": {
+          "size": [
+            148,
+            148
+          ],
+          "mode": "RGBA",
+          "pixel_sha256": "8fe196fee8c0b68a9a4f4adccbee420b26ddd6c004c4a9d6e1f6f8f657f9c072",
+          "visible_bbox_exclusive": [
+            0,
+            0,
+            148,
+            148
+          ],
+          "transparent_pixels": 13594,
+          "partially_transparent_pixels": 801,
+          "opaque_pixels": 7509,
+          "visible_green_spill_pixels": 0,
+          "transparent_rgb_nonzero_pixels": 0
+        }
+      },
+      "runtime_master": {
+        "file": "assets/source/character/slot-base-v3/CharacterSlotBaseD_RuntimeMasterV3.png",
+        "sha256": "12d8226f70e148d28f2e13b4e2c5e6fb7270b9e23ebe909bfb68c368e66029fc",
+        "metrics": {
+          "size": [
+            37,
+            37
+          ],
+          "mode": "RGBA",
+          "pixel_sha256": "e6137e8beff53fc10369639063c6001dbb5d57adc5234aeb1c0b8c03420f851f",
+          "visible_bbox_exclusive": [
+            0,
+            0,
+            37,
+            37
+          ],
+          "transparent_pixels": 841,
+          "partially_transparent_pixels": 284,
+          "opaque_pixels": 244,
+          "visible_green_spill_pixels": 0,
+          "transparent_rgb_nonzero_pixels": 0
+        }
+      }
+    }
+  },
+  "runtime_atlas_master": {
+    "file": "assets/source/character/slot-base-v3/CharacterSlotBaseAtlas_RuntimeMasterV3.png",
+    "sha256": "ceb93eb0b891f623d3df9c7a76f681500426a3cb6a87e2ebcb12c541a407f66d",
+    "metrics": {
+      "size": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "pixel_sha256": "06939d18e1176a6ac80eab81d62efaab383e0a69a2c3b45f5208664bdd3278a6",
+      "visible_bbox_exclusive": [
+        0,
+        0,
+        101,
+        101
+      ],
+      "transparent_pixels": 14272,
+      "partially_transparent_pixels": 1109,
+      "opaque_pixels": 1003,
+      "visible_green_spill_pixels": 0,
+      "transparent_rgb_nonzero_pixels": 0
+    }
+  },
+  "runtime_manifest": "assets/source/character/slot-base-v3/CHAR-V3-E1-SLOT-BASE_RuntimeManifest_v1.json"
+}

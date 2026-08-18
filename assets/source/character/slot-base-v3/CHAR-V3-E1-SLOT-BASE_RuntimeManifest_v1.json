@@ -1,0 +1,161 @@
+{
+  "schema": "aeui-character-v3-e1-slot-base-runtime-manifest-v1",
+  "schema_version": 1,
+  "module": "character",
+  "batch": "CHAR-V3-E1-SLOT-BASE V1 final",
+  "component": "CHAR.SLOT",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "runtime_contract": "1.3",
+  "source_manifest": "assets/source/character/slot-base-v3/CHAR-V3-E1-SLOT-BASE_SourceManifest_v1.json",
+  "runtime": {
+    "file": "addon/AzerothExpeditionUI/Media/Character/CharacterSlotBaseAtlasV3.tga",
+    "sha256": "d69604c6ec8bde055f0bd4a8bd47e2a69156b048461652dcef6741f85357a7c1",
+    "texture_size": [
+      128,
+      128
+    ],
+    "pixel_sha256": "06939d18e1176a6ac80eab81d62efaab383e0a69a2c3b45f5208664bdd3278a6",
+    "tga": {
+      "image_type": 2,
+      "bits_per_pixel": 32,
+      "descriptor": 8,
+      "top_origin": false
+    },
+    "variants": {
+      "A": {
+        "cell_origin": [
+          0,
+          0
+        ],
+        "logical_size": [
+          37,
+          37
+        ],
+        "cell_size": [
+          64,
+          64
+        ],
+        "uv": [
+          0.0,
+          0.2890625,
+          0.0,
+          0.2890625
+        ],
+        "logical_pixel_sha256": "022387c0d7e280505564a2fb724efa7b3dd04b88ab40142204cdde4adb37f5e2"
+      },
+      "B": {
+        "cell_origin": [
+          64,
+          0
+        ],
+        "logical_size": [
+          37,
+          37
+        ],
+        "cell_size": [
+          64,
+          64
+        ],
+        "uv": [
+          0.5,
+          0.7890625,
+          0.0,
+          0.2890625
+        ],
+        "logical_pixel_sha256": "c05df7d428cd6ffee8f050e7d1965fed144292132f7f97a3aa336bbcf6315f87"
+      },
+      "C": {
+        "cell_origin": [
+          0,
+          64
+        ],
+        "logical_size": [
+          37,
+          37
+        ],
+        "cell_size": [
+          64,
+          64
+        ],
+        "uv": [
+          0.0,
+          0.2890625,
+          0.5,
+          0.7890625
+        ],
+        "logical_pixel_sha256": "548535160041bebb9927441a8ee45ef09f208b7acac0b335cf2740970dd7523c"
+      },
+      "D": {
+        "cell_origin": [
+          64,
+          64
+        ],
+        "logical_size": [
+          37,
+          37
+        ],
+        "cell_size": [
+          64,
+          64
+        ],
+        "uv": [
+          0.5,
+          0.7890625,
+          0.5,
+          0.7890625
+        ],
+        "logical_pixel_sha256": "e6137e8beff53fc10369639063c6001dbb5d57adc5234aeb1c0b8c03420f851f"
+      }
+    }
+  },
+  "slot_assignment": {
+    "A": [
+      "Head",
+      "Chest",
+      "Feet",
+      "Finger1",
+      "Ranged"
+    ],
+    "B": [
+      "Neck",
+      "Shirt",
+      "Hands",
+      "Finger0",
+      "MainHand"
+    ],
+    "C": [
+      "Shoulder",
+      "Tabard",
+      "Waist",
+      "Trinket1"
+    ],
+    "D": [
+      "Back",
+      "Wrist",
+      "Legs",
+      "Trinket0",
+      "SecondaryHand"
+    ]
+  },
+  "layout_contract": {
+    "provider": "Character<SlotName> after pfUI Character skin",
+    "provider_slots": 19,
+    "logical_size": [
+      37,
+      37
+    ],
+    "dynamic_icon_safe_area": [
+      4,
+      4,
+      33,
+      33
+    ],
+    "provider_item_icons_counts_cooldowns_tooltips_clicks_and_score": "live",
+    "quality_durability_hover_pressed_disabled": "not baked; independent E2 overlays pending",
+    "ammo_slot": "excluded; independent 27x27 E3 component",
+    "provider_geometry_changed": false,
+    "runtime_stretch": false,
+    "fallback": "hide AEUI slot texture and restore pfUI slot backdrop visibility"
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "schema": "aeui-character-v3-b1-model-source-manifest-v1",
+  "schema_version": 1,
+  "module": "character",
+  "batch": "CHAR-V3-B1-MODEL final",
+  "component": "CHAR.MODEL.BACK",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "accepted_on": "2026-08-18",
+  "user_acceptance": {
+    "statement": "接受 CHAR-V3-B1-MODEL attempt 2",
+    "accepts_exact_pixels": true,
+    "source_promotion_authorized": true,
+    "runtime_export_authorized": true,
+    "addon_integration_authorized": true
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "production_attempt": 2,
+    "actual_imagegen_calls": 2,
+    "raw_candidate_sha256": "968b821bd8092029eb3f2696cdb2c478bc08793d574fc600874fa97d053f79c6",
+    "postprocess": "authorized edge-connected green key, green-spill Alpha clear, transparent RGB clear, bbox extraction, <=2% independent-axis normalization, LANCZOS runtime downsample and POT TGA packing",
+    "python_generated_visual_pixels": false,
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/character/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/character/SUBMODULE_ART_BASELINES.md#charmodel"
+  },
+  "accepted_assets": {
+    "source": {
+      "file": "assets/source/character/model-back-v3/CharacterModelBackground_SourceV3.png",
+      "sha256": "581b3fc7c7537e9ddeb7f6a37b70072c52e7f513031f6c0ceafd1463357a622d",
+      "metrics": {
+        "size": [
+          932,
+          896
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "61d3411171fc79b599a4e4fa495e5bb7e310f50df4ad550d2e66e6a328180600",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          932,
+          896
+        ],
+        "transparent_pixels": 720,
+        "partially_transparent_pixels": 2811,
+        "opaque_pixels": 831541,
+        "visible_green_spill_pixels": 0,
+        "transparent_rgb_nonzero_pixels": 0
+      }
+    },
+    "runtime_master": {
+      "file": "assets/source/character/model-back-v3/CharacterModelBackground_RuntimeMasterV3.png",
+      "sha256": "826e7561f10115fc5f40582181c3735a428895290f1d67349bed90e93270de6a",
+      "metrics": {
+        "size": [
+          233,
+          224
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "21ed28bbf93de9adefa23cfd76117027167c74875f05758195f7b489755d4b28",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          233,
+          224
+        ],
+        "transparent_pixels": 17,
+        "partially_transparent_pixels": 702,
+        "opaque_pixels": 51473,
+        "visible_green_spill_pixels": 0,
+        "transparent_rgb_nonzero_pixels": 0
+      }
+    }
+  },
+  "deterministic_transform": {
+    "input_size": [
+      1254,
+      1254
+    ],
+    "key_rgb": [
+      3,
+      248,
+      10
+    ],
+    "border_flat_ratio": 1.0,
+    "foreground_bbox_exclusive": [
+      86,
+      116,
+      1170,
+      1144
+    ],
+    "foreground_aspect": 1.054475,
+    "target_aspect": 1.040179,
+    "independent_axis_aspect_correction": 0.013744,
+    "axis_scale": [
+      0.8597786,
+      0.87159533
+    ],
+    "green_spill_alpha_cleared": {
+      "keyed": 4362,
+      "source": 42,
+      "runtime": 0
+    },
+    "painted_or_synthesized_pixels": 0,
+    "dynamic_content_baked": false
+  },
+  "runtime_manifest": "assets/source/character/model-back-v3/CHAR-V3-B1-MODEL_RuntimeManifest_v1.json"
+}

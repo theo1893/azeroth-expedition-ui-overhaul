@@ -1,0 +1,41 @@
+{
+  "schema": "aeui-character-v3-c1-stats-paper-runtime-manifest-v1",
+  "schema_version": 1,
+  "module": "character",
+  "batch": "CHAR-V3-C1-STATS-PAPER final",
+  "component": "CHAR.STATS.PAPER",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "runtime_contract": "1.2",
+  "source_manifest": "assets/source/character/stats-paper-v3/CHAR-V3-C1-STATS-PAPER_SourceManifest_v1.json",
+  "runtime": {
+    "stats_paper": {
+      "file": "addon/AzerothExpeditionUI/Media/Character/CharacterStatsPaperV3.tga",
+      "sha256": "93459bca34a4f7d0eaa038ecd078ff1e5bb93a45f2ab5e0eb0052de312f5d10f",
+      "logical_size": [230, 78],
+      "texture_size": [256, 128],
+      "uv": [0.0, 0.8984375, 0.0, 0.609375],
+      "pixel_sha256": "915b8b0fe02d89b758b8d6bb40423e93409bebbb0006dcd104495d57b55693c5",
+      "logical_pixel_sha256": "00336582394969335541aba17bc729d03eae89fa72ec7b737edd5d40d338c2ea",
+      "tga": {
+        "image_type": 2,
+        "width": 256,
+        "height": 128,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    }
+  },
+  "layout_contract": {
+    "provider": "Blizzard CharacterAttributesFrame after pfUI Character skin",
+    "provider_geometry_ui": [384, 512],
+    "stats_rect_ui": [67, 291, 230, 78],
+    "anchor": "CharacterFrame TOPLEFT +67,-291",
+    "draw_layer": "PaperDollFrame BACKGROUND after model background",
+    "model_overlap_ui": 11,
+    "attribute_text_dropdowns_and_values": "provider-live",
+    "provider_geometry_changed": false,
+    "runtime_stretch": false
+  }
+}

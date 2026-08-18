@@ -18,14 +18,14 @@ Codex 进入仓库后先读本文件。这里给出项目边界、文档索引�
 
 | 模块 | 当前状态 | 下一步 |
 |---|---|---|
-| Core／pfUI | AEUI `0.8.31`，scoped ownership `P5` | 实机验证模块隔离、旧配置迁移与回退 |
+| Core／pfUI | AEUI `0.8.36`，scoped ownership `P5` | 实机验证模块隔离、旧配置迁移与回退 |
 | Chat | runtime `1.22 / P5`；Full V1 主框、Dark V2 Tab、Dark V1 输入已接入；右框隐藏，经典颜色透传 | 实机验证 Tab、缩放、输入、频道颜色和左框消息回收 |
 | Quests | runtime `1.27`、Theme `1.10`；Quest Log 主体／目录已获实机确认；奖励槽与闭合火漆载体 `P5`；事务菜单未启用 | 实机验证奖励槽、火漆滚动裁切；Tracker 重新确认真实区域 |
-| Action Bars | AEUI `0.8.31`；Slot／Rail `P6`；Field Kit `2.8`、Focus `2.7`、Sidebar Group `1.0` 均 `P5`；所有角色 DDPS 统一 `(650,-615)` | 实机验证 DDPS 中央视野净空、AutoBar 四列向上网格、姿态尺寸及相邻 provider |
-| Map | accepted World／Mini source/runtime 保留，AEUI adapter 硬暂停；当前回退 pfUI 地图外观 | 明天依据 handoff 实机图修正大地图越界／角连接与小地图边距／铭牌后再接入 |
+| Action Bars | AEUI `0.8.36`；Slot／Rail `P6`；Field Kit `2.8`、Focus `2.7`、Sidebar Group `1.0` 均 `P5`；所有角色 DDPS 统一 `(650,-615)` | 实机验证 DDPS 中央视野净空、AutoBar 四列向上网格、姿态尺寸及相邻 provider |
+| Map | WorldMap 继续暂停；Minimap V3 罗盘／信息托架、圆形 mask、状态插槽及四向插件工具卷已接入 `P5` | 实机验证屏幕边距、动态文字、真实插件图标、四向展开、缩放及 FarmMode 回退 |
 | Spellbook | accepted `SB-A2-DONOR V1` source/runtime 保留，AEUI adapter 与 Spellbook ownership 暂停；当前回退 pfUI 技能书 | 明天依据 handoff 实机图核对四块 TGA 对位、层序、provider region 与控件净空 |
 | Talents | `P1 / paused`；已与 Spellbook 拆分，真实动态节点／分支边界已对齐 | 等用户明确恢复后制作独立 `TL-SIM-V1` |
-| Character | `P2 / active`；无左上 icon 的 `CHAR-SIM-V2` 已接受；当前仍使用 pfUI 默认 skin | 授权首批静态基础层 production 合同 |
+| Character | `P2–P5 / active`；runtime `1.4`，基础层、E1 的 19 个普通态槽框及 E2-A 三个独立交互态已接入；两个饰品槽已覆盖，动态内容仍归 provider | 实机验证基础层／槽框层序、三态触发、图标／点击／冷却／ShaguScore、缩放及回退；稳定后做 E2-B、E3 Ammo、E4 空槽或 Tabs |
 | Unit Frames | Bars／Raid／头像合同继续运行；本批 Player／Target／TargetTarget／Focus 外壳 route 暂停，当前回退 pfUI 外框 | 明天依据 handoff 实机图检查 base／rim 层序、九切片和文字净空后再接入 |
 
 详细状态以 [docs/PROGRESS.md](docs/PROGRESS.md) 和目标模块的

@@ -1,0 +1,110 @@
+{
+  "schema": "aeui-character-v3-e2-slot-interaction-source-manifest-v1",
+  "schema_version": 1,
+  "module": "character",
+  "batch": "CHAR-V3-E2 A1/A2/A3 final",
+  "component": "CHAR.SLOT.INTERACTION",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "accepted_on": "2026-08-18",
+  "user_acceptance": {
+    "statement": "接受 CHAR-V3-E2 A1 attempt 3、A2 attempt 4、A3 attempt 2 的 exact pixels；允许提升 source/runtime、导出正式 TGA、装配 POT atlas 并接入 addon。",
+    "accepts_exact_pixels": true,
+    "source_promotion_authorized": true,
+    "runtime_export_authorized": true,
+    "addon_integration_authorized": true
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/character/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/character/SUBMODULE_ART_BASELINES.md#charslot",
+    "production": {
+      "hover": {
+        "contract": "CHAR-V3-E2-A1-HOVER final",
+        "selected_attempt": 3,
+        "actual_imagegen_calls": 3,
+        "raw_candidate_sha256": "9ba5c579fc6235de11161f44a382a0f457eeb554a811b2f2b60c968e931653c2"
+      },
+      "pressed": {
+        "contract": "CHAR-V3-E2-A2-PRESSED final",
+        "selected_attempt": 4,
+        "actual_imagegen_calls": 4,
+        "raw_candidate_sha256": "8c24fec77a6bafd678a9b1cfc30c0b49a241e06959cfdb8aa2c946ebbd397592"
+      },
+      "disabled": {
+        "contract": "CHAR-V3-E2-A3-DISABLED final",
+        "selected_attempt": 2,
+        "actual_imagegen_calls": 2,
+        "raw_candidate_sha256": "c5390d70bc1d0860f4a2312ded789bcf096b5a536ce722313d8e0e096b9a952c"
+      }
+    }
+  },
+  "deterministic_transform": {
+    "source_size": [148, 148],
+    "runtime_size": [37, 37],
+    "atlas_size": [256, 64],
+    "atlas_cell_origins": {
+      "hover": [0, 0],
+      "pressed": [64, 0],
+      "disabled": [128, 0]
+    },
+    "postprocess": "contract-authorized edge-connected green key; green-spill cleanup; transparent RGB clear; whole-object bbox-fit; 37x37 runtime reduction; fixed POT atlas packing",
+    "accepted_source_or_runtime_pixels_modified_during_promotion": false,
+    "painted_or_synthesized_pixels_during_promotion": 0,
+    "cross_segment_pixel_reuse": false
+  },
+  "accepted_assets": {
+    "hover": {
+      "source": {
+        "file": "assets/source/character/slot-states-v3/CharacterSlotHover_SourceV3.png",
+        "sha256": "a1a1d6ca4840c091c7cabc14a6b68355ed141cc8a0f5b0cac841b55975f152de",
+        "size": [148, 148],
+        "pixel_sha256": "fd0abe5283ada81acbf81863cb4596fe4495ea858a0ef511d79f77d0c00560c5",
+        "visible_bbox_exclusive": [4, 5, 144, 143]
+      },
+      "runtime_master": {
+        "file": "assets/source/character/slot-states-v3/CharacterSlotHover_RuntimeMasterV3.png",
+        "sha256": "071c770f197f532048bc1a10ec4621a826d4a16db194f90e515dd4e7f04c7a86",
+        "size": [37, 37],
+        "pixel_sha256": "aa467e3b6f88f6129b3448b49de18c82df6ca10c6bb9ba3271ab36cef9633677"
+      }
+    },
+    "pressed": {
+      "source": {
+        "file": "assets/source/character/slot-states-v3/CharacterSlotPressed_SourceV3.png",
+        "sha256": "90176232febe9643efbaf9ceae8b8e6f67f7f24f0f8deee822319db0a1df4049",
+        "size": [148, 148],
+        "pixel_sha256": "552d8d662c94197d7acce1d5675c95528bfd7642e7bdddad21c556b446f76891",
+        "visible_bbox_exclusive": [8, 8, 140, 139]
+      },
+      "runtime_master": {
+        "file": "assets/source/character/slot-states-v3/CharacterSlotPressed_RuntimeMasterV3.png",
+        "sha256": "8776952c9f7dd4aadd155e06716303995c21c20fa910f60bc9aa28c3bacaa7e8",
+        "size": [37, 37],
+        "pixel_sha256": "9317864555716e6441e63799066686db04270c4c48111d128b2ab2e4db46823e"
+      }
+    },
+    "disabled": {
+      "source": {
+        "file": "assets/source/character/slot-states-v3/CharacterSlotDisabled_SourceV3.png",
+        "sha256": "38388394937b7215e553112b59b0590b11b6cee3d171d08a4607a749a8ce6583",
+        "size": [148, 148],
+        "pixel_sha256": "9e183720a0b4f2f28d1f6c9e67d571014b2e1df126cb6dbb4d608ff4d34c6b1f",
+        "visible_bbox_exclusive": [21, 16, 126, 132]
+      },
+      "runtime_master": {
+        "file": "assets/source/character/slot-states-v3/CharacterSlotDisabled_RuntimeMasterV3.png",
+        "sha256": "00ff2dbe8bc1e8efc717dca10c444fc7c30b4dbe037bf52220ced7fb8b31ab65",
+        "size": [37, 37],
+        "pixel_sha256": "bbe8df63bf93d8f191e2fd2cc6a7b736ee84457366787a1892fc2f841d81a10e"
+      }
+    },
+    "atlas_runtime_master": {
+      "file": "assets/source/character/slot-states-v3/CharacterSlotInteractionAtlas_RuntimeMasterV3.png",
+      "sha256": "b56246000ede9734d7c1936cf9661c549d706f4d50e098082dcbf81d439515f7",
+      "size": [256, 64],
+      "pixel_sha256": "916c3aeaf6f9a1a089c723ca3c26062d70f39eb1c2c98cc61365bcbdaedcb867"
+    }
+  }
+}

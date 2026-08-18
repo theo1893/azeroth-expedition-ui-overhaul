@@ -1,0 +1,60 @@
+{
+  "schema": "aeui-character-v3-b1-model-runtime-manifest-v1",
+  "schema_version": 1,
+  "module": "character",
+  "batch": "CHAR-V3-B1-MODEL final",
+  "component": "CHAR.MODEL.BACK",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "runtime_contract": "1.1",
+  "source_manifest": "assets/source/character/model-back-v3/CHAR-V3-B1-MODEL_SourceManifest_v1.json",
+  "runtime": {
+    "model_background": {
+      "file": "addon/AzerothExpeditionUI/Media/Character/CharacterModelBackgroundV3.tga",
+      "sha256": "f4b5e899ae688f066ca03e19c742c99ec95d90548c44c214fe2502783dc7c37a",
+      "logical_size": [
+        233,
+        224
+      ],
+      "texture_size": [
+        256,
+        256
+      ],
+      "uv": [
+        0.0,
+        0.91015625,
+        0.0,
+        0.875
+      ],
+      "pixel_sha256": "0db8174a486d68b6820852f6896705f7a0b2d52b1b48d7993dee0c5a5ea22191",
+      "logical_pixel_sha256": "21ed28bbf93de9adefa23cfd76117027167c74875f05758195f7b489755d4b28",
+      "tga": {
+        "image_type": 2,
+        "width": 256,
+        "height": 256,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    }
+  },
+  "layout_contract": {
+    "provider": "Blizzard CharacterFrame / CharacterModelFrame after pfUI Character skin",
+    "provider_geometry_ui": [
+      384,
+      512
+    ],
+    "model_rect_ui": [
+      65,
+      78,
+      233,
+      224
+    ],
+    "anchor": "CharacterFrame TOPLEFT +65,-78",
+    "draw_layer": "CharacterFrame BACKGROUND",
+    "model_3d_equipment_stats_resistance_controls_text": "provider-live",
+    "shell_overlay": "CHAR.FRAME V3 remains above the background",
+    "provider_geometry_changed": false,
+    "runtime_stretch": false
+  }
+}

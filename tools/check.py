@@ -52,6 +52,11 @@ MODULE_FILES = {
         "addon/pfUI/modules/minimap.lua",
         "addon/pfUI/modules/farmmode.lua",
     ),
+    "character": (
+        "addon/AzerothExpeditionUI/Modules/Character.lua",
+        "addon/pfUI/api/expedition.lua",
+        "addon/pfUI/skins/blizzard/character.lua",
+    ),
     "spellbook": (
         "addon/AzerothExpeditionUI/Modules/Spellbook.lua",
         "addon/pfUI/api/expedition.lua",

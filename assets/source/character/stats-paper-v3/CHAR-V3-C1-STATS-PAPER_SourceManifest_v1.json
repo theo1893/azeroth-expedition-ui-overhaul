@@ -1,0 +1,75 @@
+{
+  "schema": "aeui-character-v3-c1-stats-paper-source-manifest-v1",
+  "schema_version": 1,
+  "module": "character",
+  "batch": "CHAR-V3-C1-STATS-PAPER final",
+  "component": "CHAR.STATS.PAPER",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "accepted_on": "2026-08-18",
+  "user_acceptance": {
+    "statement": "接受 CHAR-V3-C1-STATS-PAPER attempt 4 的 exact pixels；允许提升 source/runtime、导出正式 TGA 并接入 addon。",
+    "accepts_exact_pixels": true,
+    "source_promotion_authorized": true,
+    "runtime_export_authorized": true,
+    "addon_integration_authorized": true
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "production_attempt": 4,
+    "actual_imagegen_calls": 4,
+    "raw_candidate_sha256": "29c0540b5547da64d270e6c9b825591151ad2a81e94a632e998f6d587b5a6c45",
+    "accepted_review_source_sha256": "eb740334f7e73dea9af11ed8a4ac0d65c9573e0dff148ed6b9e5e19ebb1a4b0a",
+    "postprocess": "authorized edge-connected green key, green-spill Alpha clear, transparent RGB clear, bbox extraction, <=2% independent-axis normalization, LANCZOS runtime downsample and POT TGA packing",
+    "python_generated_visual_pixels": false,
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/character/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/character/SUBMODULE_ART_BASELINES.md#charstats"
+  },
+  "accepted_assets": {
+    "source": {
+      "file": "assets/source/character/stats-paper-v3/CharacterStatsPaper_SourceV3.png",
+      "sha256": "eb740334f7e73dea9af11ed8a4ac0d65c9573e0dff148ed6b9e5e19ebb1a4b0a",
+      "metrics": {
+        "size": [920, 312],
+        "mode": "RGBA",
+        "pixel_sha256": "b3e3e6af9ac2f930a97acf777e03de68f42a98e55eb54bc0e5311f11812817ba",
+        "visible_bbox_exclusive": [0, 0, 920, 312],
+        "transparent_pixels": 2579,
+        "partially_transparent_pixels": 5252,
+        "opaque_pixels": 279209,
+        "visible_green_spill_pixels": 0,
+        "transparent_rgb_nonzero_pixels": 0
+      }
+    },
+    "runtime_master": {
+      "file": "assets/source/character/stats-paper-v3/CharacterStatsPaper_RuntimeMasterV3.png",
+      "sha256": "ff938d68384859fc81f8fa85e4e0ecd30c453d77a0316ef6f95fa2e95a5bf006",
+      "metrics": {
+        "size": [230, 78],
+        "mode": "RGBA",
+        "pixel_sha256": "00336582394969335541aba17bc729d03eae89fa72ec7b737edd5d40d338c2ea",
+        "visible_bbox_exclusive": [0, 0, 230, 78],
+        "transparent_pixels": 31,
+        "partially_transparent_pixels": 1091,
+        "opaque_pixels": 16818,
+        "visible_green_spill_pixels": 0,
+        "transparent_rgb_nonzero_pixels": 0
+      }
+    }
+  },
+  "deterministic_transform": {
+    "input_size": [1254, 1254],
+    "key_rgb": [3, 249, 9],
+    "border_flat_ratio": 1.0,
+    "foreground_bbox_exclusive": [77, 434, 1177, 820],
+    "foreground_aspect": 2.849741,
+    "target_aspect": 2.948718,
+    "axis_normalization": [1.017218, 0.983074],
+    "source_green_spill_alpha_cleared": 153,
+    "runtime_green_spill_alpha_cleared": 4,
+    "painted_or_synthesized_pixels": 0,
+    "dynamic_content_baked": false
+  },
+  "runtime_manifest": "assets/source/character/stats-paper-v3/CHAR-V3-C1-STATS-PAPER_RuntimeManifest_v1.json"
+}

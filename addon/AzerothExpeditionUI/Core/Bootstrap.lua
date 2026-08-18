@@ -3,7 +3,7 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 
 addon.name = "AzerothExpeditionUI"
-addon.version = "0.8.33"
+addon.version = "0.8.36"
 addon.modules = addon.modules or {}
 addon.media = addon.media or {}
 addon.media.root = "Interface\\AddOns\\AzerothExpeditionUI\\Media\\"
@@ -44,7 +44,11 @@ local defaults = {
   },
   map = {
     enabled = true,
-    artVersion = 2,
+    artVersion = 3,
+  },
+  character = {
+    enabled = true,
+    artVersion = 3,
   },
   spellbook = {
     enabled = false,
@@ -127,10 +131,17 @@ function addon:Initialize()
   end
   if (
     AzerothExpeditionUIDB.map and
-    (tonumber(AzerothExpeditionUIDB.map.artVersion) or 0) < 2
+    (tonumber(AzerothExpeditionUIDB.map.artVersion) or 0) < 3
   ) then
     AzerothExpeditionUIDB.map.enabled = true
-    AzerothExpeditionUIDB.map.artVersion = 2
+    AzerothExpeditionUIDB.map.artVersion = 3
+  end
+  if (
+    AzerothExpeditionUIDB.character and
+    (tonumber(AzerothExpeditionUIDB.character.artVersion) or 0) < 3
+  ) then
+    AzerothExpeditionUIDB.character.enabled = true
+    AzerothExpeditionUIDB.character.artVersion = 3
   end
   ApplyDefaults(AzerothExpeditionUIDB, defaults)
   self.db = AzerothExpeditionUIDB
@@ -350,6 +361,24 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       (AzerothExpeditionUIDB.unitframes.enabled and "enabled" or "disabled") ..
       "."
     )
+  elseif command == "map" then
+    AzerothExpeditionUIDB.map.enabled =
+      not AzerothExpeditionUIDB.map.enabled
+    addon:Refresh()
+    addon:Print(
+      "minimap expedition skin " ..
+      (AzerothExpeditionUIDB.map.enabled and "enabled" or "disabled") ..
+      "."
+    )
+  elseif command == "character" then
+    AzerothExpeditionUIDB.character.enabled =
+      not AzerothExpeditionUIDB.character.enabled
+    addon:Refresh()
+    addon:Print(
+      "character shell skin " ..
+      (AzerothExpeditionUIDB.character.enabled and "enabled" or "disabled") ..
+      "."
+    )
   elseif command == "refresh" then
     addon:Refresh()
     addon:Print("visual adapters refreshed.")
@@ -378,6 +407,14 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       addon.modules.UnitFrames and
       addon.modules.UnitFrames.runtimeContract or
       "unknown"
+    local mapRuntime =
+      addon.modules.Map and
+      addon.modules.Map.runtimeContract or
+      "unknown"
+    local characterRuntime =
+      addon.modules.Character and
+      addon.modules.Character.runtimeContract or
+      "unknown"
     local chatColorStatus =
       addon.modules.Chat and
       addon.modules.Chat.GetMessageColorStatus and
@@ -398,10 +435,16 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       ", unitframes=" ..
       (AzerothExpeditionUIDB.unitframes.enabled and "enabled" or "disabled") ..
       ", unitframes-runtime=" .. tostring(unitFrameRuntime) ..
+      ", map=" ..
+      (AzerothExpeditionUIDB.map.enabled and "enabled" or "disabled") ..
+      ", map-runtime=" .. tostring(mapRuntime) ..
+      ", character=" ..
+      (AzerothExpeditionUIDB.character.enabled and "enabled" or "disabled") ..
+      ", character-runtime=" .. tostring(characterRuntime) ..
       ", pfUI=" .. (pfUI and "available" or "missing") ..
       ", route=" .. (scopedRoute and "scoped" or "pfui") ..
       ", ownership=" ..
-      (scopedRoute and "chat,quests,unitframe-bars,unitframe-raid" or "none") ..
+      (scopedRoute and "chat,quests,unitframes,map,character" or "none") ..
       ", blizzard-skins=" ..
       (scopedRoute and "pfui-except-quest-log" or "pfui")
     )
@@ -429,9 +472,20 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
         "unitframes " .. addon.modules.UnitFrames:GetRuntimeStatus()
       )
     end
+    if addon.modules.Map and addon.modules.Map.GetRuntimeStatus then
+      addon:Print("map " .. addon.modules.Map:GetRuntimeStatus())
+    end
+    if
+      addon.modules.Character and
+      addon.modules.Character.GetRuntimeStatus
+    then
+      addon:Print(
+        "character " .. addon.modules.Character:GetRuntimeStatus()
+      )
+    end
   else
     addon:Print(
-      "/aeui actionbars, /aeui autobar [open|apply|restore|popup], /aeui fieldkit [bind|unbind|home|status], /aeui focuslayout [apply|comfort|restore|status], /aeui sidebars [bind|unbind|home|status], /aeui chat, /aeui quests, /aeui unitframes, /aeui refresh, /aeui status"
+      "/aeui actionbars, /aeui autobar [open|apply|restore|popup], /aeui fieldkit [bind|unbind|home|status], /aeui focuslayout [apply|comfort|restore|status], /aeui sidebars [bind|unbind|home|status], /aeui chat, /aeui quests, /aeui unitframes, /aeui map, /aeui character, /aeui refresh, /aeui status"
     )
   end
 end
