@@ -1,7 +1,7 @@
 # Action Bars 子模块定义
 
 本文件定义动作条、姿态／宠物条，以及与战斗动作区相邻的施法／攻击读数、
-DoiteDPS、消耗品、饰品栏和萨满图腾管理卫星栏。
+DoiteDPS、消耗品、饰品栏、萨满图腾管理卫星栏和标记方阵。
 美术见 [ART_BASELINE.md](ART_BASELINE.md)，状态见
 [PROGRESS.md](PROGRESS.md)。本模块只接管明确列出的对象；未登记的 pfUI、
 AutoBar、TrinketMenu 或 Blizzard 对象继续由原 provider 正常绘制和交互。
@@ -18,6 +18,8 @@ AutoBar、TrinketMenu 或 Blizzard 对象继续由原 provider 正常绘制和�
 | [`api/unitframes.lua`](../../../addon/pfUI/api/unitframes.lua) 与 [`modules/targettarget.lua`](../../../addon/pfUI/modules/targettarget.lua) | `pfUI.uf.player`、`pfUI.uf.target`、`pfUI.uf.targettarget`；状态、Aura、目标切换、右键与 mover | 保留为唯一单位数据／交互 provider；focus preset 只写当前 profile 的尺寸、Aura 方向和一次性游戏坐标。TargetTarget 依附 Target，独立 mover 仅在绑定态隐藏，不删除 movable 登记 |
 | [`api/api.lua`](../../../addon/pfUI/api/api.lua) | `BarLayoutSize`、`BarLayout`、`UpdateMovable` | 作为尺寸公式、排列与自由拖动权威 |
 | [`api/config.lua`](../../../addon/pfUI/api/config.lua) 与 [`modules/gui.lua`](../../../addon/pfUI/modules/gui.lua) | 每条 Bar 的启用、按钮数、图标尺寸、间距、行列、空槽、自动隐藏与战斗显示配置 | 保留并扩展外观入口，不强写用户 profile |
+| Turtle WoW `mark1..mark8` unit token 与 `SetRaidTarget／GetRaidTargetIndex／TargetUnit` | 直接解析八种团队标记当前对应单位、名字、生死与血量，并执行原生设标／取消／选中 | 作为 `AB.MARKER.GRID` 的唯一数据与操作 provider；不复制 GRTT 通讯数据库，也不采用 Banana 的 `0.1s × 40` 团队目标扫描 |
+| 可选 HDLRaidTools `0.9` 的 `HDLUI.SJQKAmark／markToUid` 与 SuperWoW 原始 GUID | 以当前未标记目标的精确刷怪 GUID 查找已登记怪群，并按表中顺序一次标记同组目标 | 作为 `AB.MARKER.BULK` 的唯一怪群数据库与执行 provider；AEUI 只增加入口、依赖／权限检查、反馈和原目标恢复，不复制或维护其大型 GUID 表 |
 
 目标客户端还证实存在以下可选 provider；它们不是仓库依赖，也不复制其实现：
 
@@ -119,6 +121,26 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 | `AB.DOITEDPS.TIMELINE` | 可选 `DoiteDPSMainFrame` 及子 Frame | 保留原生 `318×46 UI` 根与 `178×22 UI` 资源排、独立锁定／显隐与蓝绿状态语义；所有角色的运行时锚点统一为 `TOPLEFT (650,-615)`，只同步锚点／坐标并保留各角色 scale 与其他 DDPS 配置；comfort preset 仍以 `0.82` 作为目标显示补偿，锁定态继续由 provider 关闭鼠标 |
 | `AB.TOTEM.ARCHITOTEM` | 可选 `ArchiTotemFrame`、四元素主 Button、元素候选、拖动球、AllTotems 与可选 Recall／PresetManager | 用户已接受 `ACTION-BARS-CORE-SIM-V4`。闭合真实可见 union 作为职业卫星栏置于 Combat Deck 下方；provider `scale=0.8` 时当前闭合脚印为 `212×32 UI`、Air 七层最大展开为 `212×224 UI`。`fieldKitBound=true` 时随 Bar 1，拖动松手回位，`unbind` 恢复首次自由锚点；显式 focus preset 才调用 provider 原生 API 请求向下展开，普通 refresh 只读取方向。施放、右键、hover、计时、锁定、方向、预设与 Tooltip 不接管；缺失、非萨满、隐藏或签名不匹配时无占位并 fail-open |
 
+## 标记方阵
+
+| ID | provider／对象 | 合同 |
+|---|---|---|
+| `AB.MARKER.GRID` | `AzerothExpeditionUIMarkerGrid` 与八个 AEUI Button；数据来自 `mark1..mark8` | 固定 `4×2`，每格为透明 `48×48 UI` 命中位、间距 `3 UI`，八格下方共用一块外扩 `6 UI` 的缝制皮革九宫格；顺序为骷髅／叉／方块／月亮／三角／菱形／圆／星。八个位置始终稳定：未使用格在中央显示 `30×30 UI` 原生团队标记；已有存活目标时切换为左下 `15×15 UI` 满亮标记与轻微暗影，顶部显示两行真实名字，超长名字从 `10 UI` 降至 `9 UI`，右下显示血量百分比，底部为 `3 UI` 窄血条；死亡目标直接按本地空态绘制。标记身份与文字不再互相覆盖。整个方阵固定为 `BACKGROUND` strata，低于 ArchiTotem 的 `LOW` 主 Frame，确保候选向下展开时始终覆盖方阵并优先接收鼠标；候选收起后方阵仍可点击。ArchiTotem 可见时挂在其闭合主行下方；否则若真实姿态／宠物栏位于主栏下方则接在该栏下方；再否则直接占用主栏下方预留的职业卫星位置。没有独立 mover，不以 `OnUpdate` 改写任何 Frame 几何 |
+| `AB.MARKER.CELL` | 对应 `markN` unit token 与原生团队标记 API | 左键只选中当前已解析的标记目标；右键只把当前目标设为该标记，同标记再次右键取消；`Shift+右键` 清除该标记，这些显式操作在团队中仍遵守队长／团长／助理权限。已标记目标死亡时只把 AEUI 本地格退回空态并从活动计数移除，不调用 `SetRaidTarget`、不要求权限，也不修改世界中或其他插件看到的真实团队标记；标记重新解析为存活目标时再次显示。名字、血量和选中态由事件刷新，并仅以 `0.50s` 数据轮询补偿标记目标进入范围却不触发事件的情况；不扫描 `raid1..40 target`，不广播插件消息，不接管 GRTT／Banana 的 Frame 或 SavedVariables |
+| `AB.MARKER.BULK` | 方阵右侧独立 `48×48 UI`“一键标记”Button；可选 provider 为 HDLRaidTools／SuperWoW | 左键以当前未标记目标触发 `HDLUI.SJQKAmark()`；调用前验证 provider、原始 GUID、登记怪群与团队标记权限，调用后以原始 GUID 恢复目标并报告怪群编号／登记数量。只有 `SUPERWOW_VERSION`、`HDLUI.SJQKAmark` 与 `HDLUI.markToUid` 全部就绪时才把 Button 纳入模块真实宽度并显示；任一依赖缺失或 Button 异常时隐藏并收回右侧占位，手动八格保持居中可用；不复制 `markToUid`、不猜测未登记怪群、不自动启用外部插件 |
+
+`TargetMarkers runtime 2.0` 位于
+[TargetMarkers.lua](../../../addon/AzerothExpeditionUI/Modules/TargetMarkers.lua)，
+复用 accepted [ActionConsumableKitV1.tga](../../../addon/AzerothExpeditionUI/Media/ActionBars/ActionConsumableKitV1.tga)
+的 C 九宫格作为八格共用的连续皮革底板，并用 B 薄皮口袋承载条件式一键 Button；
+不修改图集像素、UV 或 AutoBar 的既有用法，也不新增媒体。八个真实 Button 不再
+各画独立方框。`/aeui markers
+on|off|toggle|status` 只写 AEUI 的 `markersEnabled`；关闭整个 Action Bars route 时
+方阵同步隐藏。`markN` 暂时无目标或超出 token 可解析范围时对应格退回空态；原生
+API 缺失或调用失败不会阻止其他 Action Bars 组件加载。HDLRaidTools／SuperWoW
+只作为一键 Button 的可选 provider；外部 GRTT／Banana 若仍启用则保持独立，AEUI
+不自动关闭或改写任何外部插件。
+
 ## 消耗品卷袋
 
 | ID | provider／对象 | 合同 |
@@ -127,7 +149,7 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 | `AB.CONSUMABLE.GROUP` | 推荐 profile 的连续槽段 `1–8／9–16／17–24` 与两条底层分隔带 | 连续槽段继续提供应急／增益／工具的语义组织，但不创建或显示三段文字；卷袋材质、分隔和物品排列自身承担区分。分隔带只占两组之间既有 `3 UI` gap，不接收鼠标。任一配置不匹配即隐藏分隔并退回单一自适应外壳，不能给用户自定义类别套用错误分组 |
 | `AB.CONSUMABLE.POCKET` | `AutoBarFrameButton1..24` | 显示 provider 选出的真实物品图标、数量、冷却、可用性和 Tooltip；槽底不含物品图标、名称或类别。AutoBar 1.31 的 zhCN 数据漏掉七个 `description` 时，AEUI 只为运行时空字段补本地化说明；已存在说明、分类内容、Button、profile 与 SavedVariables 均不改，未来未知空字段只显示类别 ID，避免旧配置页字符串拼接报错。V1 不创建自有 fallback Button |
 | `AB.CONSUMABLE.CONFIG` | `AutoBarConfigFrame`、`Tab1..5`、`SlotsView`、`Slots`、`SlotsEdit1..4`、`Layout1..2`、`ResetDisplay`、`RevertButton` 与 `DoneButton` | bridge-v2.7 延续 v2.4 的配置裁剪：AEUI 启用时只显示原生“栏位／按钮”两个 Tab；隐藏“动作条／弹出／设定”、综合只读预览、四种层选择器、布局选择器及“重置为默认／还原”，保留“完成”。“栏位”直接显示唯一可编辑的职业层网格，隐藏 Tab 被旧 SavedVariables 选中时回到栏位。首次迁移把当前实际生效的 24 槽完整复制到原生 `_CLASS` profile，将当前角色固定为 `useClass=true / edit=3`，角色原槽与职业原槽分别备份；同职业后续角色复用该职业层。`/aeui autobar restore` 可恢复并对该角色退出自动迁移。AutoBar 1.31 只提供角色／共用两种 display layout，所以“按钮”Tab 的显示参数仍按当前角色保存；类别／item ID 槽位才按职业共享。配置页重跑 `SetupVisual` 时原生主栏 docking 保持生效；AEUI 关闭、provider 缺失或显式 restore 时恢复原生控件与锚点 |
-| `AB.CONSUMABLE.POPUP` | `AutoBarPopupFrame_Button1..12` | 精确匹配推荐 `24` 类 profile 与 `4×6` 最大布局、且当前至少有一个可见主格时改用外置抽屉；当前可见主格无需达到 `24`。`1–6` 个候选为单列，`7–12` 个候选为列优先双列且最多六行；整组位于卷袋外，不遮挡主格。`AUTO` 在强绑定态固定向左、自由态按屏幕剩余空间选择左右；`LEFT／RIGHT` 可强制方向，`NATIVE` 或 profile 签名不匹配时完整恢复 provider 原生四向线性布局。外置态在卷袋与抽屉间创建透明、可接收鼠标、直接隶属 `AutoBarPopupFrame` 且覆盖卷袋全高的 `10 UI` 悬停通道；XML Frame `OnLeave` 只在此态延后，关闭仍由 AutoBar 原 `PopupMouseover` 负责。`fieldkit-contract=2.7` 完整延续 `0.30s` 意图停留：进入通道或候选前离开不同主格即保留原抽屉；持续停留才调用捕获的 AutoBar 原方法切换／关闭。相同主格、NATIVE、签名不匹配、AEUI 关闭、非鼠标调用或 provider 调度 API 缺失全部立即委托原方法；不使用逐帧循环。候选顺序、图标、数量、冷却、点击、Tooltip、Shift 条件与 Button script 仍归 AutoBar；不得把 XML 初始 `72×72 UI` Frame 当作实际弹出边界，不复制分类表或重挂 `PickupContainerItem` |
+| `AB.CONSUMABLE.POPUP` | `AutoBarPopupFrame_Button1..12` | `fieldkit-contract=2.9` 在 AEUI Field Kit 强绑定且当前至少有一个可见主格时固定使用卷袋左侧外置抽屉；抽屉只依赖已接管的真实 Button 几何，不依赖推荐 `24` 类签名，因此职业槽、手工 item ID 或其他用户自定义类别不得再退回悬停图标上方。`1–6` 个候选为单列，`7–12` 个候选为列优先双列且最多六行；整组位于卷袋外，不遮挡主格。解绑后，推荐 `4×6` 布局仍可由 `AUTO／LEFT／RIGHT` 选择外置方向，`NATIVE` 或不匹配布局完整恢复 provider 原生四向线性布局。外置态在卷袋与抽屉间创建透明、可接收鼠标、直接隶属 `AutoBarPopupFrame` 且覆盖卷袋全高的 `10 UI` 悬停通道；XML Frame `OnLeave` 只在此态延后，关闭仍由 AutoBar 原 `PopupMouseover` 负责。继续保留 `0.30s` 意图停留：进入通道或候选前离开不同主格即保留原抽屉；持续停留才调用捕获的 AutoBar 原方法切换／关闭。相同主格、AEUI 关闭、非鼠标调用或 provider 调度 API 缺失立即委托原方法；不使用逐帧循环。候选顺序、图标、数量、冷却、点击、Tooltip、Shift 条件与 Button script 仍归 AutoBar；不得把 XML 初始 `72×72 UI` Frame 当作实际弹出边界，不复制分类表或重挂 `PickupContainerItem` |
 
 推荐 profile 使用 AutoBar 现有类别 ID 组成三个八格槽段：`应急` 放生命／职业
 资源／双恢复／绷带／解毒／行动／机动；`增益` 放战斗药剂／守护药剂／元素

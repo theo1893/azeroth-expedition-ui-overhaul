@@ -13,7 +13,7 @@ ActionBars.railTexturePath = addon.media.root .. "ActionBars\\ActionRailV1"
 ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
-ActionBars.fieldKitRuntimeContract = "2.8"
+ActionBars.fieldKitRuntimeContract = "2.9"
 ActionBars.focusLayoutRuntimeContract = "2.7"
 ActionBars.focusLayoutVersion = 16
 ActionBars.focusLayoutBackupVersion = 1
@@ -3632,6 +3632,12 @@ function ActionBars:SetAutoBarPopupMode(mode)
   self:ApplyAutoBarPopup(
     addon.db and addon.db.actionbars and addon.db.actionbars.enabled
   )
+  if addon.db and addon.db.actionbars and
+    addon.db.actionbars.fieldKitBound == true
+  then
+    return true, "Bound Field Kit popup remains fixed left; " ..
+      string.lower(normalized) .. " is saved for the unbound AutoBar."
+  end
   return true, "AutoBar popup mode set to " .. string.lower(normalized) .. "."
 end
 
@@ -5225,13 +5231,19 @@ function ActionBars:ApplyAutoBarPopup(enabled, baseButton)
   local activeBase = baseButton or
     frame.aeuiConsumableKitPopupBaseButtonV1
   local mainBounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
-  local drawerEnabled = enabled and activeBase and
-    GetPopupMode() ~= "NATIVE" and
-    AutoBarRecommendedLayoutMatches(mainBounds.count)
+  -- Once the Field Kit owns the visible four-column rack, its popup geometry
+  -- is independent of the category profile. Custom class slots and manual
+  -- item entries must not make AutoBar fall back to an icon-local top popup.
+  local integratedDrawer = enabled and activeBase and FieldKitBound() and
+    mainBounds.count > 0 and mainBounds.count <= 24
+  local drawerEnabled = integratedDrawer or
+    (enabled and activeBase and GetPopupMode() ~= "NATIVE" and
+      AutoBarRecommendedLayoutMatches(mainBounds.count))
 
   if drawerEnabled then
     HideUnusedPopupConnectors(frame, 1)
-    local side = ResolveAutoBarDrawerSide(frame)
+    local side = integratedDrawer and "LEFT" or
+      ResolveAutoBarDrawerSide(frame)
     local configured, rows, columns =
       ConfigureAutoBarDrawer(frame, buttons, side)
     if configured then

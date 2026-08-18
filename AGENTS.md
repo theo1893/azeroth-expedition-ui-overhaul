@@ -21,7 +21,7 @@ Codex 进入仓库后先读本文件。这里给出项目边界、文档索引�
 | Core／pfUI | AEUI `0.8.36`，scoped ownership `P5` | 实机验证模块隔离、旧配置迁移与回退 |
 | Chat | runtime `1.22 / P5`；Full V1 主框、Dark V2 Tab、Dark V1 输入已接入；右框隐藏，经典颜色透传 | 实机验证 Tab、缩放、输入、频道颜色和左框消息回收 |
 | Quests | runtime `1.27`、Theme `1.10`；Quest Log 主体／目录已获实机确认；奖励槽与闭合火漆载体 `P5`；事务菜单未启用 | 实机验证奖励槽、火漆滚动裁切；Tracker 重新确认真实区域 |
-| Action Bars | AEUI `0.8.36`；Slot／Rail `P6`；Field Kit `2.8`、Focus `2.7`、Sidebar Group `1.0` 均 `P5`；所有角色 DDPS 统一 `(650,-615)` | 实机验证 DDPS 中央视野净空、AutoBar 四列向上网格、姿态尺寸及相邻 provider |
+| Action Bars | AEUI `0.8.36`；Slot／Rail `P6`；Field Kit `2.9`、Focus `2.7`、Sidebar Group `1.0`、Target Markers `2.0` 均 `P5`；所有角色 DDPS 统一 `(650,-615)` | 实机验证共用缝制皮革底板、占用态左下标记身份、死亡目标仅本地清空的 `4×2` 方阵与 HDL 一键怪群标记、ArchiTotem 展开层级、AutoBar 左侧 popup／四列向上网格、DDPS 中央视野、姿态尺寸及相邻 provider |
 | Map | WorldMap 继续暂停；Minimap V3 罗盘／信息托架、圆形 mask、状态插槽及四向插件工具卷已接入 `P5` | 实机验证屏幕边距、动态文字、真实插件图标、四向展开、缩放及 FarmMode 回退 |
 | Spellbook | accepted `SB-A2-DONOR V1` source/runtime 保留，AEUI adapter 与 Spellbook ownership 暂停；当前回退 pfUI 技能书 | 明天依据 handoff 实机图核对四块 TGA 对位、层序、provider region 与控件净空 |
 | Talents | `P1 / paused`；已与 Spellbook 拆分，真实动态节点／分支边界已对齐 | 等用户明确恢复后制作独立 `TL-SIM-V1` |

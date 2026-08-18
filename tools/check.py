@@ -29,6 +29,7 @@ MODULE_FILES = {
     ),
     "actionbars": (
         "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
+        "addon/AzerothExpeditionUI/Modules/TargetMarkers.lua",
         "addon/pfUI/modules/actionbar.lua",
         "addon/pfUI/modules/castbar.lua",
         "addon/pfUI/modules/swingtimer.lua",

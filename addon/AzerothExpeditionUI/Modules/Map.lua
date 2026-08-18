@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local Map = {}
-Map.runtimeContract = "3.0"
+Map.runtimeContract = "3.4"
 Map.worldIntegrationPaused = true
 Map.miniIntegrationPaused = false
 
@@ -42,6 +42,13 @@ local MINI = {
   },
   mask = {
     path = MEDIA .. "MapMiniMaskV3",
+  },
+  info = {
+    centerX = 110,
+    width = 104,
+    rowHeight = 14,
+    upperCenterY = 219,
+    lowerCenterY = 236,
   },
   latch = {
     bottom = {
@@ -231,6 +238,19 @@ local function CaptureBackdropState(frame)
   if frame.backdrop_shadow and restore.shadow == nil then
     restore.shadow = FrameShown(frame.backdrop_shadow)
   end
+  if
+    restore.directCaptured == nil and
+    type(frame.GetBackdrop) == "function"
+  then
+    restore.directCaptured = true
+    restore.direct = frame:GetBackdrop()
+    if restore.direct and type(frame.GetBackdropColor) == "function" then
+      restore.directColor = { frame:GetBackdropColor() }
+    end
+    if restore.direct and type(frame.GetBackdropBorderColor) == "function" then
+      restore.directBorderColor = { frame:GetBackdropBorderColor() }
+    end
+  end
 end
 
 local function HideProviderBackdrop(frame)
@@ -238,6 +258,14 @@ local function HideProviderBackdrop(frame)
   CaptureBackdropState(frame)
   if frame.backdrop then frame.backdrop:Hide() end
   if frame.backdrop_shadow then frame.backdrop_shadow:Hide() end
+  local restore = frame.aeuiMapBackdropRestore
+  if
+    restore and
+    restore.direct and
+    type(frame.SetBackdrop) == "function"
+  then
+    frame:SetBackdrop(nil)
+  end
 end
 
 local function RestoreProviderBackdrop(frame)
@@ -249,6 +277,33 @@ local function RestoreProviderBackdrop(frame)
   end
   if restore.shadow ~= nil and frame.backdrop_shadow then
     SetShown(frame.backdrop_shadow, restore.shadow)
+  end
+  if restore.directCaptured and type(frame.SetBackdrop) == "function" then
+    frame:SetBackdrop(restore.direct)
+    if
+      restore.direct and
+      restore.directColor and
+      type(frame.SetBackdropColor) == "function"
+    then
+      frame:SetBackdropColor(
+        restore.directColor[1] or 1,
+        restore.directColor[2] or 1,
+        restore.directColor[3] or 1,
+        restore.directColor[4] or 1
+      )
+    end
+    if
+      restore.direct and
+      restore.directBorderColor and
+      type(frame.SetBackdropBorderColor) == "function"
+    then
+      frame:SetBackdropBorderColor(
+        restore.directBorderColor[1] or 1,
+        restore.directBorderColor[2] or 1,
+        restore.directBorderColor[3] or 1,
+        restore.directBorderColor[4] or 1
+      )
+    end
   end
   frame.aeuiMapBackdropRestore = nil
 end
@@ -472,15 +527,28 @@ end
 
 local function CaptureAnchor(frame)
   if not frame or frame.aeuiMapAnchorRestore then return end
-  local point, relativeTo, relativePoint, x, y = frame:GetPoint()
+  local points = {}
+  if
+    type(frame.GetNumPoints) == "function" and
+    type(frame.GetPoint) == "function"
+  then
+    local count = frame:GetNumPoints() or 0
+    for index = 1, count do
+      table.insert(points, { frame:GetPoint(index) })
+    end
+  elseif type(frame.GetPoint) == "function" then
+    table.insert(points, { frame:GetPoint() })
+  end
   frame.aeuiMapAnchorRestore = {
-    point = point,
-    relativeTo = relativeTo,
-    relativePoint = relativePoint,
-    x = x,
-    y = y,
+    points = points,
     width = frame:GetWidth(),
     height = frame:GetHeight(),
+    scale =
+      type(frame.GetScale) == "function" and
+      frame:GetScale() or nil,
+    frameStrata =
+      type(frame.GetFrameStrata) == "function" and
+      frame:GetFrameStrata() or nil,
     frameLevel =
       type(frame.GetFrameLevel) == "function" and
       frame:GetFrameLevel() or nil,
@@ -490,8 +558,195 @@ end
 local function RestoreAnchor(frame)
   if not frame or not frame.aeuiMapAnchorRestore then return end
   local restore = frame.aeuiMapAnchorRestore
+  if restore.scale and type(frame.SetScale) == "function" then
+    frame:SetScale(restore.scale)
+  end
+  if restore.width then frame:SetWidth(restore.width) end
+  if restore.height then frame:SetHeight(restore.height) end
   frame:ClearAllPoints()
-  if restore.point then
+  for _, point in ipairs(restore.points or {}) do
+    if point[1] then frame:SetPoint(unpack(point)) end
+  end
+  if restore.frameStrata and type(frame.SetFrameStrata) == "function" then
+    frame:SetFrameStrata(restore.frameStrata)
+  end
+  if restore.frameLevel and type(frame.SetFrameLevel) == "function" then
+    frame:SetFrameLevel(restore.frameLevel)
+  end
+  frame.aeuiMapAnchorRestore = nil
+end
+
+local function MatchEffectiveScale(frame, relativeTo)
+  if not frame or not relativeTo or type(frame.SetScale) ~= "function" then
+    return
+  end
+  local parent = type(frame.GetParent) == "function" and frame:GetParent()
+  if
+    not parent or
+    type(parent.GetEffectiveScale) ~= "function" or
+    type(relativeTo.GetEffectiveScale) ~= "function"
+  then
+    return
+  end
+  local parentScale = parent:GetEffectiveScale()
+  local relativeScale = relativeTo:GetEffectiveScale()
+  if parentScale and parentScale > 0 and relativeScale and relativeScale > 0 then
+    frame:SetScale(relativeScale / parentScale)
+  end
+end
+
+local function MiniProviderAnchor(frame)
+  if not frame or type(frame.GetPoint) ~= "function" then return nil end
+  local point, relativeTo, relativePoint, x, y = frame:GetPoint()
+  if not point then return nil end
+  return {
+    point = point,
+    relativeTo = relativeTo or UIParent,
+    relativePoint = relativePoint or point,
+    x = x or 0,
+    y = y or 0,
+  }
+end
+
+local function SameMiniProviderAnchor(left, right)
+  if not left or not right then return false end
+  return
+    left.point == right.point and
+    left.relativeTo == right.relativeTo and
+    left.relativePoint == right.relativePoint and
+    math.abs((left.x or 0) - (right.x or 0)) < 0.01 and
+    math.abs((left.y or 0) - (right.y or 0)) < 0.01
+end
+
+local function HorizontalAnchorKind(point)
+  if string.find(point or "", "LEFT", 1, true) then return "left" end
+  if string.find(point or "", "RIGHT", 1, true) then return "right" end
+  return "center"
+end
+
+local function VerticalAnchorKind(point)
+  if string.find(point or "", "TOP", 1, true) then return "top" end
+  if string.find(point or "", "BOTTOM", 1, true) then return "bottom" end
+  return "center"
+end
+
+local function ApplyMiniProviderSafety()
+  if not pfUI or not pfUI.minimap then return end
+  local frame = pfUI.minimap
+  local current = MiniProviderAnchor(frame)
+  if not current then return end
+
+  local state = frame.aeuiMapProviderAnchorRestore
+  if not state or not SameMiniProviderAnchor(current, state.applied) then
+    state = { original = current }
+    frame.aeuiMapProviderAnchorRestore = state
+  end
+
+  local source = state.original
+  local relativeTo = source.relativeTo or UIParent
+  if
+    not relativeTo or
+    type(frame.GetEffectiveScale) ~= "function" or
+    type(relativeTo.GetEffectiveScale) ~= "function"
+  then
+    state.applied = current
+    return
+  end
+  local relativeScale = relativeTo:GetEffectiveScale()
+  local frameScale = frame:GetEffectiveScale()
+  if not relativeScale or relativeScale <= 0 or not frameScale or frameScale <= 0 then
+    state.applied = current
+    return
+  end
+
+  local contentScale = 1
+  if Minimap and type(Minimap.GetWidth) == "function" then
+    local contentWidth = Minimap:GetWidth()
+    if contentWidth and contentWidth > 0 then
+      contentScale = contentWidth / MINI.referenceContent
+    end
+  end
+  local ratio = frameScale / relativeScale * contentScale
+  local margin = 2
+  local leftExtension =
+    (MINI.frame.holeX - MINI.referenceContent / 2) * ratio
+  local rightExtension =
+    (MINI.frame.width - MINI.frame.holeX - MINI.referenceContent / 2) * ratio
+  local topExtension =
+    (MINI.frame.holeY - MINI.referenceContent / 2) * ratio
+  local bottomExtension =
+    (MINI.frame.height - MINI.frame.holeY - MINI.referenceContent / 2) * ratio
+  local x = source.x
+  local y = source.y
+  local horizontal = HorizontalAnchorKind(source.point)
+  local relativeHorizontal = HorizontalAnchorKind(source.relativePoint)
+  local vertical = VerticalAnchorKind(source.point)
+  local relativeVertical = VerticalAnchorKind(source.relativePoint)
+
+  if horizontal == relativeHorizontal then
+    if horizontal == "left" then
+      x = math.max(x, leftExtension + margin)
+    elseif horizontal == "right" then
+      x = math.min(x, -(rightExtension + margin))
+    elseif type(relativeTo.GetWidth) == "function" then
+      local halfWidth = relativeTo:GetWidth() / 2
+      local shellLeft = MINI.frame.holeX * ratio
+      local shellRight = (MINI.frame.width - MINI.frame.holeX) * ratio
+      x = math.max(-halfWidth + shellLeft + margin, x)
+      x = math.min(halfWidth - shellRight - margin, x)
+    end
+  end
+
+  if vertical == relativeVertical then
+    if vertical == "top" then
+      y = math.min(y, -(topExtension + margin))
+    elseif vertical == "bottom" then
+      y = math.max(y, bottomExtension + margin)
+    elseif type(relativeTo.GetHeight) == "function" then
+      local halfHeight = relativeTo:GetHeight() / 2
+      local shellTop = MINI.frame.holeY * ratio
+      local shellBottom = (MINI.frame.height - MINI.frame.holeY) * ratio
+      y = math.max(-halfHeight + shellBottom + margin, y)
+      y = math.min(halfHeight - shellTop - margin, y)
+    end
+  end
+
+  state.applied = {
+    point = source.point,
+    relativeTo = relativeTo,
+    relativePoint = source.relativePoint,
+    x = x,
+    y = y,
+  }
+  if not SameMiniProviderAnchor(source, state.applied) then
+    if not SameMiniProviderAnchor(current, state.applied) then
+      frame:ClearAllPoints()
+      frame:SetPoint(
+        state.applied.point,
+        state.applied.relativeTo,
+        state.applied.relativePoint,
+        state.applied.x,
+        state.applied.y
+      )
+    end
+    Map.miniSafetyStatus = "screen-inset"
+  else
+    Map.miniSafetyStatus = "unchanged"
+  end
+end
+
+local function RestoreMiniProviderSafety()
+  if not pfUI or not pfUI.minimap then return end
+  local frame = pfUI.minimap
+  local state = frame.aeuiMapProviderAnchorRestore
+  if not state then return end
+  local current = MiniProviderAnchor(frame)
+  if current and state.applied and not SameMiniProviderAnchor(current, state.applied) then
+    state.original = current
+  end
+  local restore = state.original
+  if restore then
+    frame:ClearAllPoints()
     frame:SetPoint(
       restore.point,
       restore.relativeTo,
@@ -500,12 +755,8 @@ local function RestoreAnchor(frame)
       restore.y
     )
   end
-  if restore.width then frame:SetWidth(restore.width) end
-  if restore.height then frame:SetHeight(restore.height) end
-  if restore.frameLevel and type(frame.SetFrameLevel) == "function" then
-    frame:SetFrameLevel(restore.frameLevel)
-  end
-  frame.aeuiMapAnchorRestore = nil
+  frame.aeuiMapProviderAnchorRestore = nil
+  Map.miniSafetyStatus = "restored"
 end
 
 local function EnsureMiniArt()
@@ -589,62 +840,252 @@ local function RestoreProviderMask()
   end
 end
 
+local function SetFrameAlphaSuppressed(frame, suppressed)
+  if not frame or type(frame.SetAlpha) ~= "function" then return end
+  if suppressed then
+    if frame.aeuiMapAlphaRestore == nil then
+      frame.aeuiMapAlphaRestore = frame:GetAlpha()
+    end
+    frame:SetAlpha(0)
+  elseif frame.aeuiMapAlphaRestore ~= nil then
+    frame:SetAlpha(frame.aeuiMapAlphaRestore)
+    frame.aeuiMapAlphaRestore = nil
+  end
+end
+
+local function CenterInfoText(text)
+  if not text then return end
+  if not text.aeuiMapInfoJustifyCaptured then
+    text.aeuiMapInfoJustifyCaptured = true
+    if type(text.GetJustifyH) == "function" then
+      text.aeuiMapInfoJustifyHRestore = text:GetJustifyH()
+    end
+    if type(text.GetJustifyV) == "function" then
+      text.aeuiMapInfoJustifyVRestore = text:GetJustifyV()
+    end
+  end
+  if type(text.SetJustifyH) == "function" then
+    text:SetJustifyH("CENTER")
+  end
+  if type(text.SetJustifyV) == "function" then
+    text:SetJustifyV("MIDDLE")
+  end
+end
+
+local function RestoreInfoText(text)
+  if not text or not text.aeuiMapInfoJustifyCaptured then return end
+  if
+    text.aeuiMapInfoJustifyHRestore and
+    type(text.SetJustifyH) == "function"
+  then
+    text:SetJustifyH(text.aeuiMapInfoJustifyHRestore)
+  end
+  if
+    text.aeuiMapInfoJustifyVRestore and
+    type(text.SetJustifyV) == "function"
+  then
+    text:SetJustifyV(text.aeuiMapInfoJustifyVRestore)
+  end
+  text.aeuiMapInfoJustifyCaptured = nil
+  text.aeuiMapInfoJustifyHRestore = nil
+  text.aeuiMapInfoJustifyVRestore = nil
+end
+
+local function GetCoordinateMode()
+  return
+    pfUI_config and
+    pfUI_config.appearance and
+    pfUI_config.appearance.minimap and
+    pfUI_config.appearance.minimap.coordstext or
+    "off"
+end
+
+local function ApplyCoordinateVisibility()
+  if not pfUI or not pfUI.minimapCoordinates then return end
+  if GetCoordinateMode() == "off" then
+    pfUI.minimapCoordinates:Hide()
+  else
+    -- The V3 coordinate row sits outside Minimap's hover region. Keep every
+    -- enabled provider mode visible here so the lower cradle row cannot vanish.
+    pfUI.minimapCoordinates:Show()
+  end
+end
+
+local function RestoreCoordinateVisibility()
+  if not pfUI or not pfUI.minimapCoordinates then return end
+  if GetCoordinateMode() == "on" then
+    pfUI.minimapCoordinates:Show()
+  else
+    pfUI.minimapCoordinates:Hide()
+  end
+end
+
+local function EnsureMiniPanelProxy(art)
+  if not art then return nil end
+  if art.aeuiMapPanelProxy then return art.aeuiMapPanelProxy end
+  local proxy = CreateFrame(
+    "Button",
+    "AzerothExpeditionUIMinimapPanelProxy",
+    art
+  )
+  proxy:EnableMouse(true)
+  if type(proxy.RegisterForClicks) == "function" then
+    proxy:RegisterForClicks("LeftButtonUp")
+  end
+  proxy:SetFrameLevel((art:GetFrameLevel() or 1) + 3)
+  art.aeuiMapPanelProxy = proxy
+  return proxy
+end
+
+local function RestoreMiniPanelProvider()
+  local panel = pfUI and pfUI.panel and pfUI.panel.minimap
+  local art = pfUI and pfUI.minimap and pfUI.minimap.aeuiMapMiniArt
+  local proxy = art and art.aeuiMapPanelProxy
+  if proxy then proxy:Hide() end
+  if not panel then return end
+  RestoreAnchor(panel)
+  if panel.text then
+    RestoreAnchor(panel.text)
+    RestoreInfoText(panel.text)
+  end
+  RestoreProviderBackdrop(panel)
+  if
+    panel.aeuiMapMouseRestore ~= nil and
+    type(panel.EnableMouse) == "function"
+  then
+    panel:EnableMouse(panel.aeuiMapMouseRestore)
+    panel.aeuiMapMouseRestore = nil
+  end
+  Map.miniPanelStatus = "restored"
+end
+
+local function StyleMiniPanelProvider(art, scale)
+  local panel = pfUI and pfUI.panel and pfUI.panel.minimap
+  local panelValue =
+    pfUI_config and
+    pfUI_config.panel and
+    pfUI_config.panel.other and
+    pfUI_config.panel.other.minimap or
+    "none"
+  if not panel or not panel.text or panelValue == "none" then
+    RestoreMiniPanelProvider()
+    Map.miniPanelStatus = "none"
+    return false
+  end
+
+  CaptureAnchor(panel)
+  CaptureAnchor(panel.text)
+  HideProviderBackdrop(panel)
+  local panelAutohide =
+    pfUI_config and
+    pfUI_config.panel and
+    pfUI_config.panel.hide_minimap == "1"
+  if
+    not panelAutohide and
+    panel.aeuiMapMouseRestore == nil and
+    type(panel.IsMouseEnabled) == "function"
+  then
+    panel.aeuiMapMouseRestore = panel:IsMouseEnabled() and true or false
+  end
+  if
+    not panelAutohide and
+    panel.aeuiMapMouseRestore ~= nil and
+    type(panel.EnableMouse) == "function"
+  then
+    panel:EnableMouse(false)
+  end
+  if
+    type(panel.SetFrameStrata) == "function" and
+    type(art.GetFrameStrata) == "function"
+  then
+    panel:SetFrameStrata(art:GetFrameStrata())
+  end
+  if type(panel.SetFrameLevel) == "function" then
+    panel:SetFrameLevel((art:GetFrameLevel() or 1) + 3)
+  end
+
+  local proxy = EnsureMiniPanelProxy(art)
+  proxy:ClearAllPoints()
+  proxy:SetPoint(
+    "CENTER",
+    art,
+    "TOPLEFT",
+    MINI.info.centerX * scale,
+    -MINI.info.upperCenterY * scale
+  )
+  proxy:SetWidth(MINI.info.width * scale)
+  proxy:SetHeight(MINI.info.rowHeight * scale)
+  proxy:SetFrameLevel((art:GetFrameLevel() or 1) + 3)
+  for _, script in ipairs({
+    "OnClick",
+    "OnEnter",
+    "OnLeave",
+    "OnMouseDown",
+    "OnMouseUp",
+  }) do
+    proxy:SetScript(script, panel:GetScript(script))
+  end
+  if FrameShown(panel) then proxy:Show() else proxy:Hide() end
+
+  panel.text:ClearAllPoints()
+  panel.text:SetPoint("TOPLEFT", proxy, "TOPLEFT", 0, 0)
+  panel.text:SetPoint("BOTTOMRIGHT", proxy, "BOTTOMRIGHT", 0, 0)
+  CenterInfoText(panel.text)
+  Map.miniPanelStatus = "bridged-" .. tostring(panelValue)
+  return true
+end
+
 local function PositionDynamicText(art, scale)
   if not art then return end
+  local panelProvidesPrimaryText = StyleMiniPanelProvider(art, scale)
   if pfUI.minimapZone then
     CaptureAnchor(pfUI.minimapZone)
     pfUI.minimapZone:ClearAllPoints()
     pfUI.minimapZone:SetPoint(
-      "CENTER", art, "TOPLEFT", 110 * scale, -227 * scale
+      "CENTER",
+      art,
+      "TOPLEFT",
+      MINI.info.centerX * scale,
+      -MINI.info.upperCenterY * scale
     )
-    pfUI.minimapZone:SetWidth(136 * scale)
-    pfUI.minimapZone:SetHeight(20 * scale)
+    pfUI.minimapZone:SetWidth(MINI.info.width * scale)
+    pfUI.minimapZone:SetHeight(MINI.info.rowHeight * scale)
     pfUI.minimapZone:SetFrameLevel((Minimap:GetFrameLevel() or 1) + 5)
+    CenterInfoText(pfUI.minimapZone.text)
+    SetFrameAlphaSuppressed(pfUI.minimapZone, panelProvidesPrimaryText)
   end
 
   if pfUI.minimapCoordinates then
     CaptureAnchor(pfUI.minimapCoordinates)
-    local location =
-      pfUI_config and
-      pfUI_config.appearance and
-      pfUI_config.appearance.minimap and
-      pfUI_config.appearance.minimap.coordsloc or
-      "bottomleft"
     pfUI.minimapCoordinates:ClearAllPoints()
     pfUI.minimapCoordinates:SetPoint(
-      "CENTER", art, "TOPLEFT", 110 * scale, -246.5 * scale
+      "CENTER",
+      art,
+      "TOPLEFT",
+      MINI.info.centerX * scale,
+      -MINI.info.lowerCenterY * scale
     )
-    pfUI.minimapCoordinates:SetWidth(100 * scale)
-    pfUI.minimapCoordinates:SetHeight(15 * scale)
+    pfUI.minimapCoordinates:SetWidth(MINI.info.width * scale)
+    pfUI.minimapCoordinates:SetHeight(MINI.info.rowHeight * scale)
     if pfUI.minimapCoordinates.text then
-      if pfUI.minimapCoordinates.aeuiMapJustifyRestore == nil then
-        pfUI.minimapCoordinates.aeuiMapJustifyRestore =
-          pfUI.minimapCoordinates.text:GetJustifyH()
-      end
-      if location == "topright" or location == "bottomright" then
-        pfUI.minimapCoordinates.text:SetJustifyH("RIGHT")
-      else
-        pfUI.minimapCoordinates.text:SetJustifyH("LEFT")
-      end
+      CenterInfoText(pfUI.minimapCoordinates.text)
     end
     pfUI.minimapCoordinates:SetFrameLevel((Minimap:GetFrameLevel() or 1) + 5)
+    ApplyCoordinateVisibility()
   end
 end
 
 local function RestoreDynamicText()
   if not pfUI then return end
+  SetFrameAlphaSuppressed(pfUI.minimapZone, false)
   RestoreAnchor(pfUI.minimapZone)
   RestoreAnchor(pfUI.minimapCoordinates)
-  if
-    pfUI.minimapCoordinates and
-    pfUI.minimapCoordinates.text and
-    pfUI.minimapCoordinates.aeuiMapJustifyRestore
-  then
-    pfUI.minimapCoordinates.text:SetJustifyH(
-      pfUI.minimapCoordinates.aeuiMapJustifyRestore
-    )
-    pfUI.minimapCoordinates.aeuiMapJustifyRestore = nil
+  if pfUI.minimapZone then RestoreInfoText(pfUI.minimapZone.text) end
+  if pfUI.minimapCoordinates then
+    RestoreInfoText(pfUI.minimapCoordinates.text)
   end
+  RestoreCoordinateVisibility()
+  RestoreMiniPanelProvider()
 end
 
 local function EnsureSocketTexture(frame)
@@ -667,7 +1108,11 @@ local function StyleStatusSocket(
 )
   if not frame or not art then return end
   CaptureAnchor(frame)
+  MatchEffectiveScale(frame, art)
   HideProviderBackdrop(frame)
+  if type(frame.SetFrameStrata) == "function" then
+    frame:SetFrameStrata("HIGH")
+  end
   frame:ClearAllPoints()
   frame:SetPoint("TOPLEFT", art, "TOPLEFT", x * scale, -y * scale)
   frame:SetWidth(MINI.socket.width * scale)
@@ -956,8 +1401,15 @@ local function LayoutAddonEntries(container, entries, position, scale)
   local gap = 2 * scale
   local padding = 8 * scale
   local horizontal = position == "bottom" or position == "top"
-  local primary = math.min(rowSize, count)
-  local secondary = math.ceil(count / rowSize)
+  local lineSize = rowSize
+  if horizontal then
+    -- Bottom/top rolls should read horizontally. Preserve rowsize as the
+    -- minimum run, then widen dense collections instead of growing a tall
+    -- hanging sheet. Thirty buttons become three rows of ten.
+    lineSize = math.max(rowSize, math.ceil(count / 3))
+  end
+  local primary = math.min(lineSize, count)
+  local secondary = math.ceil(count / lineSize)
   local width
   local height
   if horizontal then
@@ -971,10 +1423,10 @@ local function LayoutAddonEntries(container, entries, position, scale)
   container:SetHeight(height)
 
   for index, entry in ipairs(entries) do
-    local group = math.floor((index - 1) / rowSize)
-    local item = (index - 1) - group * rowSize
-    local groupStart = group * rowSize
-    local groupCount = math.min(rowSize, count - groupStart)
+    local group = math.floor((index - 1) / lineSize)
+    local item = (index - 1) - group * lineSize
+    local groupStart = group * lineSize
+    local groupCount = math.min(lineSize, count - groupStart)
     local groupSpan = groupCount * buttonSize + (groupCount - 1) * gap
     local x
     local y
@@ -1095,8 +1547,8 @@ local function AnchorAddonFrames(container, button, art, position, scale)
   button:SetWidth(latch.width * scale)
   button:SetHeight(latch.height * scale)
   if position == "bottom" then
-    button:SetPoint("TOP", art, "TOPLEFT", 110 * scale, -258 * scale)
-    container:SetPoint("TOP", art, "TOPLEFT", 110 * scale, -291 * scale)
+    button:SetPoint("TOP", art, "TOPLEFT", 110 * scale, -252 * scale)
+    container:SetPoint("TOPRIGHT", art, "TOPRIGHT", 0, -285 * scale)
   elseif position == "top" then
     button:SetPoint("TOPLEFT", art, "TOPLEFT", 142 * scale, -17 * scale)
     container:SetPoint("BOTTOM", art, "TOPLEFT", 161 * scale, -7 * scale)
@@ -1198,6 +1650,7 @@ function Map:StyleFarmMode()
   RestoreDynamicText()
   RestoreStatusObjects()
   RestoreStandaloneStatusWithProvider()
+  RestoreMiniProviderSafety()
   local art = pfUI.minimap and pfUI.minimap.aeuiMapMiniArt
   if art then art:Hide() end
   if pfUI.addonbuttons then
@@ -1247,6 +1700,7 @@ function Map:RestoreMini()
   RestoreStandaloneStatusWithProvider()
   self:RestoreAddonButtons()
   self:RestoreFarmModeStyle()
+  RestoreMiniProviderSafety()
   self.miniStatus = "inactive"
 end
 
@@ -1283,6 +1737,7 @@ function Map:ApplyMini()
     return false
   end
 
+  ApplyMiniProviderSafety()
   local art = EnsureMiniArt()
   if not art then
     self:RestoreMini()
@@ -1348,6 +1803,46 @@ function Map:InstallHooks()
     pfUI.minimap.aeuiMapDragHooked = true
     HookScript(pfUI.minimap, "OnDragStop", function()
       if MiniModuleEnabled() then addon:ScheduleRefresh(0) end
+    end)
+  end
+
+  if
+    Minimap and
+    not Minimap.aeuiMapCoordinateVisibilityHooked and
+    type(HookScript) == "function"
+  then
+    Minimap.aeuiMapCoordinateVisibilityHooked = true
+    HookScript(Minimap, "OnEnter", function()
+      if MiniModuleEnabled() and not FarmModeActive() then
+        ApplyCoordinateVisibility()
+      end
+    end)
+    HookScript(Minimap, "OnLeave", function()
+      if MiniModuleEnabled() and not FarmModeActive() then
+        ApplyCoordinateVisibility()
+      end
+    end)
+  end
+
+  if
+    pfUI and
+    pfUI.panel and
+    pfUI.panel.minimap and
+    not pfUI.panel.minimap.aeuiMapPanelHooked and
+    type(HookScript) == "function"
+  then
+    local panel = pfUI.panel.minimap
+    panel.aeuiMapPanelHooked = true
+    HookScript(panel, "OnShow", function()
+      if MiniModuleEnabled() and not FarmModeActive() then
+        addon:ScheduleRefresh(0)
+      end
+    end)
+    HookScript(panel, "OnHide", function()
+      local art = pfUI.minimap and pfUI.minimap.aeuiMapMiniArt
+      if art and art.aeuiMapPanelProxy then
+        art.aeuiMapPanelProxy:Hide()
+      end
     end)
   end
 
@@ -1443,8 +1938,10 @@ function Map:GetRuntimeStatus()
     ", mini=" .. tostring(self.miniStatus or "unapplied") ..
     ", mask=round-hard-boundary" ..
     ", info=external-cradle" ..
+    ", info-provider=" .. tostring(self.miniPanelStatus or "native") ..
+    ", edge-safety=" .. tostring(self.miniSafetyStatus or "unapplied") ..
     ", addons=" .. tostring(self.addonButtonCount or 0) ..
-    ", addon-tray=four-way-nine-slice" ..
+    ", addon-tray=four-way-nine-slice-horizontal-primary" ..
     ", controls=provider-live" ..
     ", pfquest=provider-live" ..
     ", farmmode=separate-provider" ..
@@ -1454,6 +1951,8 @@ end
 function Map:Initialize()
   self.worldStatus = "unapplied"
   self.miniStatus = "unapplied"
+  self.miniPanelStatus = "unapplied"
+  self.miniSafetyStatus = "unapplied"
 end
 
 function Map:Apply()

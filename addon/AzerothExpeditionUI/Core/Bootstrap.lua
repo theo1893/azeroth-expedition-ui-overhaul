@@ -13,6 +13,7 @@ local defaults = {
     enabled = true,
     artVersion = 1,
     autoBarPopupMode = "AUTO",
+    markersEnabled = true,
     fieldKitBound = true,
     consumableDocked = true,
     trinketDocked = true,
@@ -334,6 +335,34 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
     else
       addon:Print("/aeui sidebars [bind|unbind|home|status]")
     end
+  elseif string.find(command, "^markers") or
+    string.find(command, "^marker%s") or command == "marker"
+  then
+    local _, _, subcommand = string.find(command, "^%S+%s*(.*)$")
+    local module = addon.modules.TargetMarkers
+    if not module then
+      addon:Print("TargetMarkers module is unavailable.")
+    elseif subcommand == "on" or subcommand == "show" or
+      subcommand == "enable"
+    then
+      local _, result = module:SetEnabled(true)
+      addon:Print(result)
+    elseif subcommand == "off" or subcommand == "hide" or
+      subcommand == "disable"
+    then
+      local _, result = module:SetEnabled(false)
+      addon:Print(result)
+    elseif subcommand == "toggle" then
+      local enabled = not (
+        AzerothExpeditionUIDB.actionbars.markersEnabled ~= false
+      )
+      local _, result = module:SetEnabled(enabled)
+      addon:Print(result)
+    elseif subcommand == "" or subcommand == "status" then
+      addon:Print("markers " .. module:GetRuntimeStatus())
+    else
+      addon:Print("/aeui markers [on|off|toggle|status]")
+    end
   elseif command == "chat" then
     AzerothExpeditionUIDB.chat.enabled =
       not AzerothExpeditionUIDB.chat.enabled
@@ -403,6 +432,10 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       addon.modules.ActionBars and
       addon.modules.ActionBars.runtimeContract or
       "unknown"
+    local markerRuntime =
+      addon.modules.TargetMarkers and
+      addon.modules.TargetMarkers.runtimeContract or
+      "unknown"
     local unitFrameRuntime =
       addon.modules.UnitFrames and
       addon.modules.UnitFrames.runtimeContract or
@@ -425,6 +458,11 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       ", actionbars=" ..
       (AzerothExpeditionUIDB.actionbars.enabled and "enabled" or "disabled") ..
       ", actionbar-runtime=" .. tostring(actionBarRuntime) ..
+      ", markers=" ..
+      (AzerothExpeditionUIDB.actionbars.enabled and
+        AzerothExpeditionUIDB.actionbars.markersEnabled ~= false and
+        "enabled" or "disabled") ..
+      ", marker-runtime=" .. tostring(markerRuntime) ..
       ", chat=" ..
       (AzerothExpeditionUIDB.chat.enabled and "enabled" or "disabled") ..
       ", chat-runtime=" .. tostring(chatRuntime) ..
@@ -457,6 +495,14 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       )
     end
     if
+      addon.modules.TargetMarkers and
+      addon.modules.TargetMarkers.GetRuntimeStatus
+    then
+      addon:Print(
+        "markers " .. addon.modules.TargetMarkers:GetRuntimeStatus()
+      )
+    end
+    if
       addon.modules.Quests and
       addon.modules.Quests.GetRuntimeStatus
     then
@@ -485,7 +531,7 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
     end
   else
     addon:Print(
-      "/aeui actionbars, /aeui autobar [open|apply|restore|popup], /aeui fieldkit [bind|unbind|home|status], /aeui focuslayout [apply|comfort|restore|status], /aeui sidebars [bind|unbind|home|status], /aeui chat, /aeui quests, /aeui unitframes, /aeui map, /aeui character, /aeui refresh, /aeui status"
+      "/aeui actionbars, /aeui autobar [open|apply|restore|popup], /aeui fieldkit [bind|unbind|home|status], /aeui focuslayout [apply|comfort|restore|status], /aeui sidebars [bind|unbind|home|status], /aeui markers [on|off|toggle|status], /aeui chat, /aeui quests, /aeui unitframes, /aeui map, /aeui character, /aeui refresh, /aeui status"
     )
   end
 end

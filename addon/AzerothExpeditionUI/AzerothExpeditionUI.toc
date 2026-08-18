@@ -8,6 +8,7 @@
 
 Core\Bootstrap.lua
 Modules\ActionBars.lua
+Modules\TargetMarkers.lua
 Modules\Chat.lua
 Modules\QuestVisualTheme.lua
 Modules\Quests.lua

@@ -38,19 +38,20 @@
 
 | ID | 原生／pfUI 对象 | 合同 |
 |---|---|---|
-| `MAP.MINI.PROVIDER` | `pfMinimap`、其子对象 `Minimap` | 真实内容默认 140×140、可移动并支持滚轮缩放；`pfMinimap` 的 parent／point／scale 与保存位置继续由 pfUI 所有，adapter 只跟随；地图块、玩家箭头和第三方动态图层继续由 provider 所有 |
+| `MAP.MINI.PROVIDER` | `pfMinimap`、其子对象 `Minimap` | 真实内容默认 140×140、可移动并支持滚轮缩放；parent／scale 与保存位置继续由 pfUI 所有，adapter 只在 V3 外壳碰到屏幕边缘时施加不写入配置的最小临时内缩，禁用／FarmMode 时恢复；地图块、玩家箭头和第三方动态图层继续由 provider 所有 |
 | `MAP.MINI.MASK` | `Minimap:SetMaskTexture`；pfUI 当前 `img:minimap` 是完全不透明的 8×8 方形 | 由确定性媒体替换为圆形内容 mask；不由 ImageGen 生产；有效内容直径 140，不把外壳 Alpha 当作 mask |
 | `MAP.MINI.COMPASS` | pfUI 已清空的 `MinimapBorder` 周围 adapter Texture | `V3` 使用约 204×204 的闭合罗盘外壳包围原生 140×140 内容；外壳只向外生长，不缩小 provider；无按钮、地图、文字或图钉烘焙；右上锚定时必须为外延保留屏幕安全距 |
-| `MAP.MINI.INFO.CRADLE` | adapter 静态底材；承载 `pfMinimapZone`／`pfMinimapCoord` | 与罗盘外壳固定为同一件常驻资源的下置“制图信息托架”；只提供短而厚实的皮革／黄铜实体承托和两块动态文字安全区，不烘焙文字，不侵入 140×140 地图窗口 |
+| `MAP.MINI.INFO.CRADLE` | adapter 静态底材；承载 `pfMinimapZone`／`pfMinimapCoord`／`pfPanelMinimap` 动态内容 | 与罗盘外壳固定为同一件常驻资源的下置“制图信息托架”；上栏地图名、下栏坐标分别按各自内框水平／垂直居中；只提供短而厚实的皮革／黄铜实体承托和两块动态文字安全区，不烘焙文字，不侵入 140×140 地图窗口 |
+| `MAP.MINI.INFO.LEGACY_PANEL` | pfUI `pfPanelMinimap`、其动态 FontString 与既有点击／Tooltip | Map 启用且该 panel 配置非 `none` 时，隐藏旧黑色 backdrop，把真实动态文字与交互代理到托架上部；不移动 panel 本体及其相邻 microbar，禁用／FarmMode 时完整恢复 |
 | `MAP.MINI.NORTH` | 非交互装饰 Texture | 顶部北向冠件与外壳同缩放、同显隐，可并入常驻外壳；不假定旋转行为 |
 | `MAP.MINI.DIRECTIONS` | 非交互方向 Texture／atlas | W／E／S 只作低权重非文字刻痕，北向冠件为唯一强方向件；不接收插件按钮，不侵入内容窗口或信息托架 |
 | `MAP.MINI.ZOOM.IN` | `MinimapZoomIn` 当前隐藏；滚轮调用 `Minimap_ZoomIn` | 首批不生产，不恢复不存在于当前 pfUI 展示结构的按钮 |
 | `MAP.MINI.ZOOM.OUT` | `MinimapZoomOut` 当前隐藏；滚轮调用 `Minimap_ZoomOut` | 首批不生产，不恢复不存在于当前 pfUI 展示结构的按钮 |
 | `MAP.MINI.STATUS.SOCKET` | tracking／mail／battlefield／PVP 周围的 adapter Texture | 小型独立状态插槽；只提供同材质外壳，随真实对象分别显隐，不烘焙动态图标或通知；不能永久画进罗盘底图 |
 | `MAP.MINI.TRACKING` | 独立 `pfUITracking` Button，默认 16×16、父级 `UIParent` | 普通／悬停／按下／激活四状态；保留左键取消、右键菜单、Tooltip 与无追踪脉冲；放入独立状态插槽，只换肤和避让 |
-| `MAP.MINI.ZONE` | pfUI `pfMinimapZone`；原生 `MinimapZoneTextButton` 当前隐藏 | 动态区域名 layout-only；锚到 `INFO.CRADLE` 上部安全区，不烘焙文字；长地名不能被锁扣或工具卷遮挡 |
+| `MAP.MINI.ZONE` | pfUI `pfMinimapZone`；原生 `MinimapZoneTextButton` 当前隐藏 | 动态区域名 layout-only；锚到 `INFO.CRADLE` 上部安全区，不烘焙文字；若 `pfPanelMinimap` 已承担区域等动态内容则避免重复绘制；长地名不能被锁扣或工具卷遮挡 |
 | `MAP.MINI.TIME` | `GameTimeFrame` 当前隐藏 | 首批不生产；若以后恢复，动态时间不得烘焙数字 |
-| `MAP.MINI.COORDS` | pfUI `pfMinimapCoord` | 动态坐标 layout-only；锚到 `INFO.CRADLE` 下部安全区并保持 off／on／hover；旧四角配置在 V3 中映射为托架内左／右对齐偏好，不烘焙数值 |
+| `MAP.MINI.COORDS` | pfUI `pfMinimapCoord` | 动态坐标 layout-only；在 `INFO.CRADLE` 下部安全区居中；`off` 继续隐藏，`on`／`mouseover` 在 V3 中常驻下层，退出 V3 后恢复 provider 的位置、对齐与 hover 语义；不烘焙数值 |
 | `MAP.MINI.MAIL` | `MiniMapMailFrame`，当前锚在 `pfMinimap` 右上 | 独立通知覆盖；保留闪烁提示，避让外壳和屏幕边缘 |
 | `MAP.MINI.BATTLEFIELD` | `MiniMapBattlefieldFrame`，当前锚在 `Minimap` 右下 | 独立状态 Button；保留左／右键行为，不并入罗盘环 |
 | `MAP.MINI.PVP` | `pfUI.minimap.pvpicon` 16×16 | 独立状态覆盖，不并入罗盘环；与战场入口共享避让区但不合并对象 |
@@ -70,12 +71,13 @@
 | `MAP.MINI.ADDONS.NOTICE` | 插件自己的通知语义 | 无／未读／警告独立覆盖 |
 | `MAP.MINI.ADDONS.TOGGLE` | 真实 `pfMinimapButton` | 重绘为罗盘携行结构上的短皮革／黄铜锁扣；收起／展开及悬停／按下状态仍由真实 Button 承载；0 个合格插件入口时隐藏，不允许漂浮箭头 |
 | `MAP.MINI.ADDONS.CONNECTOR` | adapter Texture，连接 `pfMinimapButton` 与 `pfMinimapButtons` | 展开时出现的短实体桥接件；按 bottom／left／top／right 换向，必须同时接触锁扣和工具卷，不能悬空或穿过动态文字 |
-| `MAP.MINI.ADDONS.TRAY` | 真实 `pfMinimapButtons` 容器 | 重绘为从锁扣外侧展开的制图工具卷；九切片支持四向重排，宽高由真实按钮数、rowsize 与 spacing 决定；不绘制假图标、空槽或逐图标统一外框 |
+| `MAP.MINI.ADDONS.TRAY` | 真实 `pfMinimapButtons` 容器 | 重绘为从锁扣外侧展开的制图工具卷；九切片支持四向重排，宽高由真实按钮数、rowsize 与 spacing 决定；bottom／top 最多三行并沿水平方向增长，left／right 沿垂直方向增长；不绘制假图标、空槽或逐图标统一外框 |
 
 保留插件原始左键、右键、Tooltip 与动态图标；收纳时继续使用 pfUI 的 parent／point／
 size／scale／drag／OnUpdate 备份和恢复逻辑，工具卷内不伪造原插件行为，也不隐藏
 插件自身携带的边缘。默认罗盘底图不画空槽；`pfQuestIcon` 作为合格的真实插件入口
 由同一容器动态承载。默认 `rowsize=6`，4／6／10 个入口按实际数量形成一行或
-`6+4` 两行工具卷，不生成空槽；0 个入口同时隐藏锁扣、连接件和工具卷。战斗隐藏
+`6+4` 两行，30 个入口形成横向 `10+10+10` 工具卷，不生成空槽；0 个入口同时
+隐藏锁扣、连接件和工具卷。战斗隐藏
 继续读取 `C.abuttons.hideincombat`。`pfFarmMap` 300×300 是独立兼容态，只迁移
 既有动态对象，不复制常驻罗盘外壳、信息托架或插件工具卷。

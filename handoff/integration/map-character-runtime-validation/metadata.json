@@ -1,0 +1,38 @@
+{
+  "schema": "aeui-cross-device-game-validation-handoff-v1",
+  "status": "open",
+  "captured_date": "2026-08-18",
+  "intended_resume_date": "2026-08-19",
+  "client": {
+    "name": "Turtle WoW",
+    "version": "1.18.1",
+    "interface": 11200
+  },
+  "repository_context": {
+    "branch": "main",
+    "base_head_before_handoff": "735a02fd13a680c9b6547e1446500e07a231c28f",
+    "map_runtime": "3.4",
+    "character_runtime": "1.4",
+    "deployment_state": "MAP.MINI.* and the current CHAR.FRAME/PaperDoll scope are integrated at P5 and await focused in-game analysis; no P6 conclusion is recorded by this handoff."
+  },
+  "screenshots": [
+    {
+      "file": "handoff/integration/map-character-runtime-validation/minimap-validation.png",
+      "size": [419, 612],
+      "sha256": "4cbef10dc20f5cb2d325c99e426370166a6bf81c8e4fe7cfba87b73354ddc32f",
+      "scope": ["MAP.MINI.*"]
+    },
+    {
+      "file": "handoff/integration/map-character-runtime-validation/character-validation.png",
+      "size": [519, 718],
+      "sha256": "c66f3346be579617ef56670869143fba3a6eff46e6004b6617d08d2ea7b15470",
+      "scope": ["CHAR.*"]
+    }
+  ],
+  "analysis": {
+    "state": "deferred_by_user",
+    "observations": [],
+    "instruction": "Open the two exact screenshots on 2026-08-19 and analyze the concrete Map and Character module issues before changing code, layout, or accepted pixels."
+  },
+  "cleanup": "Delete this temporary handoff directory after the two screenshots have been analyzed and any resulting current conclusions have been transferred to the owning module state."
+}
