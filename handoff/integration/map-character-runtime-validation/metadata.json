@@ -1,0 +1,43 @@
+{
+  "purpose": "Temporary exact live-client screenshots for the next-session Character and Minimap issue follow-up.",
+  "captured_on": "2026-08-19",
+  "client": "Turtle WoW 1.18.1 / Interface 11200",
+  "files": [
+    {
+      "path": "character-paperdoll.png",
+      "module": "character",
+      "view": "PaperDollFrame",
+      "dimensions": [517, 695],
+      "sha256": "0d8ac6337c3cc9cdbc55192b2941912f15ad67aa59b4102a853c5998d8d80675"
+    },
+    {
+      "path": "character-reputation.png",
+      "module": "character",
+      "view": "ReputationFrame",
+      "dimensions": [526, 684],
+      "sha256": "957268e8f1dd0bfb5ddc1bb66fbaefddd5a59ce9207959cff7ca24c0015ea02f"
+    },
+    {
+      "path": "character-skills.png",
+      "module": "character",
+      "view": "SkillFrame",
+      "dimensions": [526, 697],
+      "sha256": "f3192585dbba94f2447ef4947de3a0928e377915d3bd16e445d285419d048192"
+    },
+    {
+      "path": "character-honor.png",
+      "module": "character",
+      "view": "HonorFrame / PVPFrame",
+      "dimensions": [521, 687],
+      "sha256": "c2b3f5f16f8e9954825a60120a987d8fd61812d93ed577ff0e0e5be754a4fc2a"
+    },
+    {
+      "path": "minimap-addon-tray.png",
+      "module": "map",
+      "view": "MAP.MINI.ADDONS.TRAY bottom layout",
+      "dimensions": [459, 573],
+      "sha256": "69d00d19f438493d5b96cf4ff15dd7e355f4a929e52a345438e4de25bb211766"
+    }
+  ],
+  "resume": "Use these screenshots only as live validation evidence. They are not accepted source/runtime assets. Delete this directory immediately after the follow-up is resumed."
+}
