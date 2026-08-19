@@ -199,6 +199,59 @@ def collect_runtime_texture_records(
             collect_runtime_texture_records(child, records)
 
 
+def validate_texel_density_records(
+    value: object,
+    manifest_path: str,
+    violations: list[dict[str, str]],
+) -> None:
+    """Validate opt-in high-density records without burdening legacy assets."""
+
+    if isinstance(value, dict):
+        logical_size = value.get("logical_size_ui", value.get("logical_size"))
+        sampled_size = value.get("sampled_size")
+        density = value.get("texels_per_ui_unit")
+        if (
+            isinstance(logical_size, list)
+            and len(logical_size) == 2
+            and all(isinstance(item, int) for item in logical_size)
+            and isinstance(sampled_size, list)
+            and len(sampled_size) == 2
+            and all(isinstance(item, int) for item in sampled_size)
+            and isinstance(density, int)
+        ):
+            expected = [item * density for item in logical_size]
+            if density < 1 or sampled_size != expected:
+                add_violation(
+                    violations,
+                    "RUNTIME_TEXEL_DENSITY_MISMATCH",
+                    manifest_path,
+                    "sampled_size must equal logical UI size multiplied by "
+                    f"texels_per_ui_unit; logical={logical_size}, "
+                    f"density={density}, sampled={sampled_size}",
+                )
+            texture_size = value.get("texture_size")
+            if (
+                isinstance(texture_size, list)
+                and len(texture_size) == 2
+                and all(isinstance(item, int) for item in texture_size)
+                and any(
+                    sampled_size[index] > texture_size[index]
+                    for index in range(2)
+                )
+            ):
+                add_violation(
+                    violations,
+                    "RUNTIME_SAMPLE_EXCEEDS_TEXTURE",
+                    manifest_path,
+                    f"sampled={sampled_size}, texture={texture_size}",
+                )
+        for child in value.values():
+            validate_texel_density_records(child, manifest_path, violations)
+    elif isinstance(value, list):
+        for child in value:
+            validate_texel_density_records(child, manifest_path, violations)
+
+
 def git_tracked_addon_files(root: Path) -> set[str] | None:
     result = subprocess.run(
         ["git", "-C", str(root), "ls-files", "-z", "--", "addon"],
@@ -434,6 +487,11 @@ def main() -> int:
                         f"power-of-two dimensions no larger than 1024; "
                         f"manifest={expected_size}, actual={actual_size}",
                     )
+            validate_texel_density_records(
+                data,
+                as_repo_path(root, manifest),
+                violations,
+            )
 
     report = {
         "schema": SCHEMA,

@@ -6,63 +6,188 @@
   "component": "CHAR.RESISTANCE",
   "status": "runtime-exported",
   "phase": "P5",
-  "runtime_contract": "1.2",
+  "runtime_contract": "1.3",
   "source_manifest": "assets/source/character/res-wells-v3/CHAR-V3-D1-RES-WELLS_SourceManifest_v1.json",
   "runtime": [
     {
       "index": 1,
       "provider": "MagicResFrame1",
       "file": "addon/AzerothExpeditionUI/Media/Character/CharacterResistanceWell1V3.tga",
-      "sha256": "b882b4a0e024433d3dee154bccf4baa8ed2d23fc1b3631c44d79444a99b50304",
-      "logical_size": [32, 29],
-      "texture_size": [32, 32],
-      "uv": [0.0, 1.0, 0.0, 0.90625],
-      "pixel_sha256": "ea8d99d31647dc0f0146fc50099dc0ff724af8a71d3e97026bb79ed5262f151c",
-      "logical_pixel_sha256": "17a4404fb9b4683c4b06ce0704adf84562d50410e21f853d0acc8d74c836c1f6"
+      "sha256": "799108c718cec8897e450fbed7729a1a557aebe7b76c11ad1cd448fd1566c801",
+      "logical_size": [
+        32,
+        29
+      ],
+      "texture_size": [
+        64,
+        64
+      ],
+      "uv": [
+        0.0,
+        1.0,
+        0.0,
+        0.90625
+      ],
+      "pixel_sha256": "9bbf130da804c34f48b6f76ce6492683506771aa1c445bafd0764fb5d621094f",
+      "logical_pixel_sha256": "62591292d1c43f02b5a300aab0325742aba166e66e8f6742061f6b05cedda9bc",
+      "sampled_size": [
+        64,
+        58
+      ],
+      "texels_per_ui_unit": 2,
+      "sampled_pixel_sha256": "62591292d1c43f02b5a300aab0325742aba166e66e8f6742061f6b05cedda9bc",
+      "tga": {
+        "image_type": 2,
+        "width": 64,
+        "height": 64,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
     },
     {
       "index": 2,
       "provider": "MagicResFrame2",
       "file": "addon/AzerothExpeditionUI/Media/Character/CharacterResistanceWell2V3.tga",
-      "sha256": "b0f1b1b8e2ae628bbd6ffa2d3e0605e001dcdc128a8e791793701687d84a5076",
-      "logical_size": [32, 29],
-      "texture_size": [32, 32],
-      "uv": [0.0, 1.0, 0.0, 0.90625],
-      "pixel_sha256": "f0993edc04d28eb8fcb93b1446c6dc48599707420388f84e0a64fa3ccc46322a",
-      "logical_pixel_sha256": "2fe6854afd7bed8c04cd6ac0294ad2b6f5586e9b6e4f7afb4c6c9fe9856bab54"
+      "sha256": "c17255fb736cdc41b5aeb7261b8bffab56cbe7d0e53b2d99eb41757a70a7d579",
+      "logical_size": [
+        32,
+        29
+      ],
+      "texture_size": [
+        64,
+        64
+      ],
+      "uv": [
+        0.0,
+        1.0,
+        0.0,
+        0.90625
+      ],
+      "pixel_sha256": "81867078e3ccea1afd73d914adee3e7c25754da120e7345d096b4780d67ab63f",
+      "logical_pixel_sha256": "468baa2763fd9ef22d5d63713c9739a6f8256b2fbbb7a8702f18e2cb6ec59f0a",
+      "sampled_size": [
+        64,
+        58
+      ],
+      "texels_per_ui_unit": 2,
+      "sampled_pixel_sha256": "468baa2763fd9ef22d5d63713c9739a6f8256b2fbbb7a8702f18e2cb6ec59f0a",
+      "tga": {
+        "image_type": 2,
+        "width": 64,
+        "height": 64,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
     },
     {
       "index": 3,
       "provider": "MagicResFrame3",
       "file": "addon/AzerothExpeditionUI/Media/Character/CharacterResistanceWell3V3.tga",
-      "sha256": "ecff59ba49ea194f9ce210aa531d3c7240cfd846e280b0d711e15737c1398f4b",
-      "logical_size": [32, 29],
-      "texture_size": [32, 32],
-      "uv": [0.0, 1.0, 0.0, 0.90625],
-      "pixel_sha256": "c6a0f03e3c2535b4936348154c4763e2b2669203022b24ecaa2b3f80863e377e",
-      "logical_pixel_sha256": "00bfd5c644e0ce33d5c3d44c67da7668d0b00637350cecd0c55505b808d56205"
+      "sha256": "aecb814064282d5886a0d1cc7897d6130ead0be9dfa26f064838242cf34ade44",
+      "logical_size": [
+        32,
+        29
+      ],
+      "texture_size": [
+        64,
+        64
+      ],
+      "uv": [
+        0.0,
+        1.0,
+        0.0,
+        0.90625
+      ],
+      "pixel_sha256": "09ca378f613f32fad41b765ab9cf6e52fd0461fb72020221fbad4d1b4dc3139d",
+      "logical_pixel_sha256": "9a6779eb7d641a01a82b17b49fac4ff169b1074731306558d26188f8db588c9d",
+      "sampled_size": [
+        64,
+        58
+      ],
+      "texels_per_ui_unit": 2,
+      "sampled_pixel_sha256": "9a6779eb7d641a01a82b17b49fac4ff169b1074731306558d26188f8db588c9d",
+      "tga": {
+        "image_type": 2,
+        "width": 64,
+        "height": 64,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
     },
     {
       "index": 4,
       "provider": "MagicResFrame4",
       "file": "addon/AzerothExpeditionUI/Media/Character/CharacterResistanceWell4V3.tga",
-      "sha256": "8288f3b811c1cc55b380b2ac3311eca4e81088c78a2615dd18e45b736dc755ad",
-      "logical_size": [32, 29],
-      "texture_size": [32, 32],
-      "uv": [0.0, 1.0, 0.0, 0.90625],
-      "pixel_sha256": "99dbf07ba4608766decb9de82538566ebf54277662a2461e87495ac9c2a7caa7",
-      "logical_pixel_sha256": "cb64a96565ff4038a8fd4d861d420f9fdcbbc9e5acd34e75acf939270f8bdf82"
+      "sha256": "be045ca64b7003f26f8305a086ac856b7a8d607c55d3c3005eaf067b7b6ac677",
+      "logical_size": [
+        32,
+        29
+      ],
+      "texture_size": [
+        64,
+        64
+      ],
+      "uv": [
+        0.0,
+        1.0,
+        0.0,
+        0.90625
+      ],
+      "pixel_sha256": "7e28e527f2b0141f4e325e0547286f5f60b7c3a32855a93cc996525d571aa028",
+      "logical_pixel_sha256": "3081bd22e16d2a4ff8d12e9a92af290fd5ec75f742b261fe4904d7615819bc88",
+      "sampled_size": [
+        64,
+        58
+      ],
+      "texels_per_ui_unit": 2,
+      "sampled_pixel_sha256": "3081bd22e16d2a4ff8d12e9a92af290fd5ec75f742b261fe4904d7615819bc88",
+      "tga": {
+        "image_type": 2,
+        "width": 64,
+        "height": 64,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
     },
     {
       "index": 5,
       "provider": "MagicResFrame5",
       "file": "addon/AzerothExpeditionUI/Media/Character/CharacterResistanceWell5V3.tga",
-      "sha256": "62881601040cfcc001d3f02c9085dec20457fee60b73431c3644e910e188ae74",
-      "logical_size": [32, 29],
-      "texture_size": [32, 32],
-      "uv": [0.0, 1.0, 0.0, 0.90625],
-      "pixel_sha256": "0017f3bb7a3238eb983b264862a705eae8258a57a50b1c0086e8f450def31d58",
-      "logical_pixel_sha256": "52eb5a3c116ecce2abd984bfb67417219f9f35a4b6563eee828e242e51d2ca48"
+      "sha256": "ec309d89d7c4909a5371f02ede21acc70133c44622a3eba15ff895e0d2798e12",
+      "logical_size": [
+        32,
+        29
+      ],
+      "texture_size": [
+        64,
+        64
+      ],
+      "uv": [
+        0.0,
+        1.0,
+        0.0,
+        0.90625
+      ],
+      "pixel_sha256": "b24135db276a8a94a2ea51b687116e5d52a33f8b65404024a2b963848e20d750",
+      "logical_pixel_sha256": "85d5d8ab712f7dc683aa402b2c363506ccc28ce274623d93ee21c56304b19f99",
+      "sampled_size": [
+        64,
+        58
+      ],
+      "texels_per_ui_unit": 2,
+      "sampled_pixel_sha256": "85d5d8ab712f7dc683aa402b2c363506ccc28ce274623d93ee21c56304b19f99",
+      "tga": {
+        "image_type": 2,
+        "width": 64,
+        "height": 64,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
     }
   ],
   "tga_contract": {
@@ -78,6 +203,13 @@
     "resistance_icon_layer": "provider texture promoted from BACKGROUND to ARTWORK while active",
     "values_tooltips_visibility_and_interaction": "provider-live and independently controlled",
     "provider_geometry_changed_by_aeui": false,
-    "runtime_stretch": false
+    "runtime_stretch": false,
+    "texels_per_ui_unit": 2,
+    "ui_geometry_stretch": false
+  },
+  "texel_density": {
+    "texels_per_ui_unit": 2,
+    "ui_geometry_changed": false,
+    "target_physical_scale": "up to 2 screen pixels per UI unit"
   }
 }

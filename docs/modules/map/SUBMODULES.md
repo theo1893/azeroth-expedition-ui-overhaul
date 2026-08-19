@@ -66,18 +66,18 @@
 | 子组件 | pfUI 对象／职责 | 状态 |
 |---|---|---|
 | `MAP.MINI.ADDONS.SCANNER` | `ScanForButtons`／`IsButtonValid`／`pfUI_cache.abuttons` | 行为-only；保留自动扫描、手动 add／del／reset、忽略表和缺失对象清理 |
-| `MAP.MINI.ADDONS.ANCHORS` | `C.abuttons.position` 与 adapter 计算、不可见 | 无位图；支持 bottom／left／top／right，并从 V3 外壳边界之外展开；bottom 锁扣附着信息托架底部，其他方向附着罗盘对应外沿；不得为容纳工具卷改写 `pfMinimap` 保存锚点 |
+| `MAP.MINI.ADDONS.ANCHORS` | `C.abuttons.position` 与 adapter 计算、不可见 | 无位图；支持 bottom／left／top／right，并从 V3 外壳边界之外展开；bottom 锁扣附着信息托架底部，其他方向附着罗盘对应外沿；V4 工具卷受力边与锁扣按可见 Alpha 直接搭接，不得为容纳工具卷改写 `pfMinimap` 保存锚点 |
 | `MAP.MINI.ADDONS.ENTRY` | 扫描到的真实插件 Button | provider 保留原始图标、状态与自带边缘；adapter 只排版，不叠加统一逐图标外框 |
 | `MAP.MINI.ADDONS.NOTICE` | 插件自己的通知语义 | 无／未读／警告独立覆盖 |
-| `MAP.MINI.ADDONS.TOGGLE` | 真实 `pfMinimapButton` | 重绘为罗盘携行结构上的短皮革／黄铜锁扣；收起／展开及悬停／按下状态仍由真实 Button 承载；0 个合格插件入口时隐藏，不允许漂浮箭头 |
-| `MAP.MINI.ADDONS.CONNECTOR` | adapter Texture，连接 `pfMinimapButton` 与 `pfMinimapButtons` | 展开时出现的短实体桥接件；按 bottom／left／top／right 换向，必须同时接触锁扣和工具卷，不能悬空或穿过动态文字 |
-| `MAP.MINI.ADDONS.TRAY` | 真实 `pfMinimapButtons` 容器 | 重绘为从锁扣外侧展开的制图工具卷；九切片支持四向重排，宽高由真实按钮数、rowsize 与 spacing 决定；bottom／top 最多三行并沿水平方向增长，left／right 沿垂直方向增长；不绘制假图标、空槽或逐图标统一外框 |
+| `MAP.MINI.ADDONS.TOGGLE` | 真实 `pfMinimapButton` | 重绘为罗盘携行结构上的短皮革／黄铜锁扣；收起／展开及悬停／按下状态仍由真实 Button 承载；展开时真实锁扣位于工具卷之上并直接压住连续受力边；0 个合格插件入口时隐藏，不允许漂浮箭头 |
+| `MAP.MINI.ADDONS.TRAY` | 真实 `pfMinimapButtons` 容器 | V4 重绘为从锁扣外侧垂落／展开的制图工具卷；九切片支持四向重排，固定区同时决定真实图标安全 padding，宽高由真实按钮数、rowsize 与 spacing 决定；bottom／top 最多三行并沿水平方向增长，left／right 沿垂直方向增长；不绘制假图标、空槽或逐图标统一外框；不再使用独立 connector Texture |
 
 保留插件原始左键、右键、Tooltip 与动态图标；收纳时继续使用 pfUI 的 parent／point／
 size／scale／drag／OnUpdate 备份和恢复逻辑，工具卷内不伪造原插件行为，也不隐藏
 插件自身携带的边缘。默认罗盘底图不画空槽；`pfQuestIcon` 作为合格的真实插件入口
 由同一容器动态承载。默认 `rowsize=6`，4／6／10 个入口按实际数量形成一行或
 `6+4` 两行，30 个入口形成横向 `10+10+10` 工具卷，不生成空槽；0 个入口同时
-隐藏锁扣、连接件和工具卷。战斗隐藏
+隐藏锁扣和工具卷。旧 V3 connector 仅保留为尚未清理的回退媒体，不参与 V4
+运行时、锚点、命中区或显隐。战斗隐藏
 继续读取 `C.abuttons.hideincombat`。`pfFarmMap` 300×300 是独立兼容态，只迁移
 既有动态对象，不复制常驻罗盘外壳、信息托架或插件工具卷。

@@ -6,18 +6,20 @@
   "component": "CHAR.SLOT",
   "status": "runtime-exported",
   "phase": "P5",
-  "runtime_contract": "1.3",
+  "runtime_contract": "1.4.1",
   "source_manifest": "assets/source/character/slot-base-v3/CHAR-V3-E1-SLOT-BASE_SourceManifest_v1.json",
   "runtime": {
     "file": "addon/AzerothExpeditionUI/Media/Character/CharacterSlotBaseAtlasV3.tga",
-    "sha256": "d69604c6ec8bde055f0bd4a8bd47e2a69156b048461652dcef6741f85357a7c1",
+    "sha256": "56e125d1ced85ffa7d76e2491d265d3cf5502f5544abf810efaa6320e6747e5f",
     "texture_size": [
-      128,
-      128
+      256,
+      256
     ],
-    "pixel_sha256": "06939d18e1176a6ac80eab81d62efaab383e0a69a2c3b45f5208664bdd3278a6",
+    "pixel_sha256": "6199e76ee6366b38296d8a95c4ea06b7f19df14e94eefd0d62c624475462a6e7",
     "tga": {
       "image_type": 2,
+      "width": 256,
+      "height": 256,
       "bits_per_pixel": 32,
       "descriptor": 8,
       "top_origin": false
@@ -33,8 +35,8 @@
           37
         ],
         "cell_size": [
-          64,
-          64
+          128,
+          128
         ],
         "uv": [
           0.0,
@@ -42,11 +44,17 @@
           0.0,
           0.2890625
         ],
-        "logical_pixel_sha256": "022387c0d7e280505564a2fb724efa7b3dd04b88ab40142204cdde4adb37f5e2"
+        "logical_pixel_sha256": "41e304b4114d24d431a8d2be5def6f74cce51fc896c1247dab61b8d44b2adb36",
+        "sampled_size": [
+          74,
+          74
+        ],
+        "texels_per_ui_unit": 2,
+        "sampled_pixel_sha256": "41e304b4114d24d431a8d2be5def6f74cce51fc896c1247dab61b8d44b2adb36"
       },
       "B": {
         "cell_origin": [
-          64,
+          128,
           0
         ],
         "logical_size": [
@@ -54,8 +62,8 @@
           37
         ],
         "cell_size": [
-          64,
-          64
+          128,
+          128
         ],
         "uv": [
           0.5,
@@ -63,20 +71,26 @@
           0.0,
           0.2890625
         ],
-        "logical_pixel_sha256": "c05df7d428cd6ffee8f050e7d1965fed144292132f7f97a3aa336bbcf6315f87"
+        "logical_pixel_sha256": "b8af216ed86f8461702029aa25768ea08042c7597201176b8e92538487d44d07",
+        "sampled_size": [
+          74,
+          74
+        ],
+        "texels_per_ui_unit": 2,
+        "sampled_pixel_sha256": "b8af216ed86f8461702029aa25768ea08042c7597201176b8e92538487d44d07"
       },
       "C": {
         "cell_origin": [
           0,
-          64
+          128
         ],
         "logical_size": [
           37,
           37
         ],
         "cell_size": [
-          64,
-          64
+          128,
+          128
         ],
         "uv": [
           0.0,
@@ -84,20 +98,26 @@
           0.5,
           0.7890625
         ],
-        "logical_pixel_sha256": "548535160041bebb9927441a8ee45ef09f208b7acac0b335cf2740970dd7523c"
+        "logical_pixel_sha256": "4c07743f7a0edf10f550e29e210de03296b8752261a50fb1e5cd9f7d815a7bbb",
+        "sampled_size": [
+          74,
+          74
+        ],
+        "texels_per_ui_unit": 2,
+        "sampled_pixel_sha256": "4c07743f7a0edf10f550e29e210de03296b8752261a50fb1e5cd9f7d815a7bbb"
       },
       "D": {
         "cell_origin": [
-          64,
-          64
+          128,
+          128
         ],
         "logical_size": [
           37,
           37
         ],
         "cell_size": [
-          64,
-          64
+          128,
+          128
         ],
         "uv": [
           0.5,
@@ -105,9 +125,16 @@
           0.5,
           0.7890625
         ],
-        "logical_pixel_sha256": "e6137e8beff53fc10369639063c6001dbb5d57adc5234aeb1c0b8c03420f851f"
+        "logical_pixel_sha256": "43af2c202ab8b8b88bd3eef0e64443a2f332afa0fea7de5231927b1c06cf4ce3",
+        "sampled_size": [
+          74,
+          74
+        ],
+        "texels_per_ui_unit": 2,
+        "sampled_pixel_sha256": "43af2c202ab8b8b88bd3eef0e64443a2f332afa0fea7de5231927b1c06cf4ce3"
       }
-    }
+    },
+    "texels_per_ui_unit": 2
   },
   "slot_assignment": {
     "A": [
@@ -146,16 +173,53 @@
       37
     ],
     "dynamic_icon_safe_area": [
-      4,
-      4,
-      33,
-      33
+      3,
+      3,
+      34,
+      34
     ],
     "provider_item_icons_counts_cooldowns_tooltips_clicks_and_score": "live",
     "quality_durability_hover_pressed_disabled": "not baked; independent E2 overlays pending",
     "ammo_slot": "excluded; independent 27x27 E3 component",
     "provider_geometry_changed": false,
     "runtime_stretch": false,
-    "fallback": "hide AEUI slot texture and restore pfUI slot backdrop visibility"
+    "fallback": "hide AEUI slot texture and restore pfUI slot backdrop visibility",
+    "texels_per_ui_unit": 2,
+    "ui_geometry_stretch": false
+  },
+  "texel_density": {
+    "texels_per_ui_unit": 2,
+    "ui_geometry_changed": false,
+    "target_physical_scale": "up to 2 screen pixels per UI unit"
+  },
+  "slot_opening_repair": {
+    "contract": "CHAR-SLOT-OPENING-31-V1",
+    "source_alpha_clear_exclusive": [
+      12,
+      12,
+      136,
+      136
+    ],
+    "runtime_alpha_clear_exclusive": [
+      6,
+      6,
+      68,
+      68
+    ],
+    "logical_icon_safe_area": [
+      3,
+      3,
+      34,
+      34
+    ],
+    "provider_icon_size": [
+      31,
+      31
+    ],
+    "button_size": [
+      37,
+      37
+    ],
+    "button_geometry_changed": false
   }
 }

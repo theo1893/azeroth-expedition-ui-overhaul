@@ -1,0 +1,204 @@
+{
+  "schema": "aeui-character-v3-e3-ammo-source-manifest-v1",
+  "schema_version": 1,
+  "module": "character",
+  "batch": "CHAR-V3-E3-AMMO V1 final",
+  "component": "CHAR.SLOT.AMMO",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "accepted_on": "2026-08-19",
+  "acceptance": "CHAR-V3-E3-AMMO V1 attempt 5 exact pixels accepted; 1254x1254 native container split at x/y=627 authorized",
+  "provenance": {
+    "generator": "imagegen-0-143-0",
+    "selected_attempt": 5,
+    "actual_imagegen_calls": 5,
+    "raw_candidate": "generated/character/ammo-production/attempt-5/CharacterAmmoSlot_Production_Attempt5.png",
+    "raw_candidate_sha256": "79ded4c06777191d7fe4997cae3354d6aa1ce98cbcdf8eb8cca9197b1b68c96e",
+    "deterministic_exception": {
+      "native_container": [
+        1254,
+        1254
+      ],
+      "split_midlines": [
+        627,
+        627
+      ],
+      "quadrants": "normal/hover/pressed/disabled"
+    },
+    "postprocess": [
+      "fixed four-quadrant split",
+      "edge-connected green key and spill cleanup",
+      "transparent RGB zeroing",
+      "independent bbox-fit within the authorized tolerance",
+      "108x108 source normalization",
+      "84x84 hard icon-safe alpha clear"
+    ],
+    "accepted_runtime_atlas_candidate_sha256": "14e1a0100b3dd75a2b03d1c9d20ee0c62be5b772ec8285e3ca7fbcf6ff0cee09",
+    "accepted_runtime_atlas_pixel_sha256": "9b95f5a2449ec51a7e527079a568544dd1c234a54abd439125d6ae4f95986a50"
+  },
+  "contract": {
+    "provider_object": "CharacterAmmoSlot",
+    "logical_size_ui": [
+      27,
+      27
+    ],
+    "source_size": [
+      108,
+      108
+    ],
+    "source_texels_per_ui_unit": 4,
+    "icon_safe_size_ui": [
+      21,
+      21
+    ],
+    "source_icon_safe_box": [
+      12,
+      12,
+      96,
+      96
+    ],
+    "runtime_sample_size": [
+      54,
+      54
+    ],
+    "runtime_texels_per_ui_unit": 2,
+    "runtime_icon_safe_box": [
+      6,
+      6,
+      48,
+      48
+    ],
+    "dynamic_content_owner": [
+      "item icon",
+      "count",
+      "cooldown",
+      "click and tooltip",
+      "availability and bag data"
+    ]
+  },
+  "assets": {
+    "normal": {
+      "file": "assets/source/character/ammo-slot-v3/CharacterAmmoSlotNormal_SourceV3.png",
+      "sha256": "9b108bed2758484ae638db01c0514768edb63c248f1c02b562470520fb9213e5",
+      "metrics": {
+        "size": [
+          108,
+          108
+        ],
+        "pixel_sha256": "93aadf845a60362330fc1cc3410328033d3b29be4fbad67410ca76b408dc304e",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          108,
+          108
+        ],
+        "transparent_rgb_nonzero_pixels": 0,
+        "green_dominant_pixels": 1
+      },
+      "icon_safe_source_box": [
+        12,
+        12,
+        96,
+        96
+      ],
+      "icon_safe_alpha_max": 0
+    },
+    "hover": {
+      "file": "assets/source/character/ammo-slot-v3/CharacterAmmoSlotHover_SourceV3.png",
+      "sha256": "bce23047c1a7cd510cdff03128ba3b92629dd558a2673af106822c2f1dadc5af",
+      "metrics": {
+        "size": [
+          108,
+          108
+        ],
+        "pixel_sha256": "40fc5f46bc41adb1de4c82ad3bbd18c5da5a6b29a754aa80b3ff5aeea372eabd",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          108,
+          108
+        ],
+        "transparent_rgb_nonzero_pixels": 0,
+        "green_dominant_pixels": 0
+      },
+      "icon_safe_source_box": [
+        12,
+        12,
+        96,
+        96
+      ],
+      "icon_safe_alpha_max": 0
+    },
+    "pressed": {
+      "file": "assets/source/character/ammo-slot-v3/CharacterAmmoSlotPressed_SourceV3.png",
+      "sha256": "aca68aaf7af4ea545a4757ebb0844df7734861e7adb2a6ad4fd7ca35b20a70dc",
+      "metrics": {
+        "size": [
+          108,
+          108
+        ],
+        "pixel_sha256": "298a00a0681d48ec12999be1431aae1322122077f55bcf5fd1674b146b74ff2a",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          108,
+          108
+        ],
+        "transparent_rgb_nonzero_pixels": 0,
+        "green_dominant_pixels": 0
+      },
+      "icon_safe_source_box": [
+        12,
+        12,
+        96,
+        96
+      ],
+      "icon_safe_alpha_max": 0
+    },
+    "disabled": {
+      "file": "assets/source/character/ammo-slot-v3/CharacterAmmoSlotDisabled_SourceV3.png",
+      "sha256": "40e391c06b5dafd62878af592e75e59d2daf531535719011ae92293815f46b61",
+      "metrics": {
+        "size": [
+          108,
+          108
+        ],
+        "pixel_sha256": "8a283e80f334cd0ad8148846580fae1b7e96a90568d849ff962357baf2f2bc35",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          108,
+          108
+        ],
+        "transparent_rgb_nonzero_pixels": 0,
+        "green_dominant_pixels": 0
+      },
+      "icon_safe_source_box": [
+        12,
+        12,
+        96,
+        96
+      ],
+      "icon_safe_alpha_max": 0
+    },
+    "runtime_master": {
+      "file": "assets/source/character/ammo-slot-v3/CharacterAmmoSlotAtlas_RuntimeMasterV3.png",
+      "sha256": "14e1a0100b3dd75a2b03d1c9d20ee0c62be5b772ec8285e3ca7fbcf6ff0cee09",
+      "metrics": {
+        "size": [
+          128,
+          128
+        ],
+        "pixel_sha256": "9b95f5a2449ec51a7e527079a568544dd1c234a54abd439125d6ae4f95986a50",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          118,
+          118
+        ],
+        "transparent_rgb_nonzero_pixels": 0,
+        "green_dominant_pixels": 0
+      }
+    }
+  }
+}

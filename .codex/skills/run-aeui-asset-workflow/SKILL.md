@@ -49,9 +49,16 @@ prompts, compare mutable Lua hashes, or execute repository-wide mock suites.
 
 Use this only when visible source pixels must change.
 
+If the accepted high-resolution source is unchanged and only runtime texel density is
+being corrected, skip the mockup, `CURRENT.md`, ImageGen, and candidate-acceptance steps.
+Export directly from the accepted source, make one focused physical-scale comparison,
+update immutable runtime media/manifests and adapter UVs, then run the asset check. This
+density-only exception must not redraw, sharpen, repaint, or enlarge an existing 1x
+runtime.
+
 1. Map the asset to real runtime objects, states, safe areas, stretch/crop behavior,
-   and z-order. Never bake dynamic text, icons, cooldowns, selection state, or real
-   buttons into a static background.
+   z-order, logical UI size, and independent texture-sample size. Never bake dynamic
+   text, icons, cooldowns, selection state, or real buttons into a static background.
 2. Confirm that the proposed art fits the provider's actual display region. For a new
    art direction, first make a simple deterministic geometric mockup and show it to the
    user. This mockup uses no ImageGen and is not a source asset.
@@ -70,11 +77,19 @@ Use this only when visible source pixels must change.
    those boundaries and stop on the first passing candidate. If five actual calls fail,
    stop for user review.
 6. Review the candidate in a local preview using real typography, real icon/button
-   geometry, and representative empty/short/typical/dense states. Run the component's
+   geometry, and representative empty/short/typical/dense states. Bitmap previews must
+   also include the expected physical sampling scale; do not assume that one UI unit is
+   one screen pixel. A single focused 2-screen-pixels-per-UI comparison is sufficient
+   unless the target device requires another known scale. Run the component's
    display-region validator only when that contract exists and is relevant.
 7. User acceptance freezes the exact candidate. Promote it to
    `assets/source/<module>/`, write or update its manifest, export runtime media, and
-   integrate the media and adapter into `addon/` on the same device.
+   integrate the media and adapter into `addon/` on the same device. Runtime TGA defaults
+   to `2 texels / UI unit` while Lua Width/Height, anchors, and hitboxes remain at provider
+   logical geometry. Derive those samples directly from the accepted high-resolution
+   source, never by enlarging a 1x runtime. Split or pack textures as needed to keep every
+   Turtle WoW texture dimension at or below 1024; record any intentional 1x exception in
+   the runtime manifest.
 8. Run:
 
    ```text

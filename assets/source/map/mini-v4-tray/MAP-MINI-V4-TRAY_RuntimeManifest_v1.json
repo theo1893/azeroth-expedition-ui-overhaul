@@ -1,0 +1,271 @@
+{
+  "schema": "aeui-map-mini-v4-tray-runtime-manifest-v1",
+  "schema_version": 1,
+  "module": "map",
+  "batch": "MAP-MINI-V4-TRAY",
+  "phase": "P5",
+  "status": "runtime-exported",
+  "runtime_contract": "4.0",
+  "source_manifest": "assets/source/map/mini-v4-tray/MAP-MINI-V4-TRAY_SourceManifest_v1.json",
+  "runtime": {
+    "bottom": {
+      "component": "MAP.MINI.ADDONS.TRAY.V4.BOTTOM",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonTrayBottomV4.tga",
+      "sha256": "c531467b90f6cd132fbd1117b6f4419cd988475803c98ab2b43a0ad17512bb22",
+      "metrics": {
+        "size": [
+          270,
+          74
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "830233345de68a2a16621b7b179a0851a66824aad7b6b542492550eaf1055af3",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          270,
+          74
+        ],
+        "transparent_pixels": 372,
+        "partially_transparent_pixels": 1419,
+        "opaque_pixels": 18189,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        270,
+        74
+      ],
+      "texture_size": [
+        512,
+        128
+      ],
+      "content_uv": [
+        0.0,
+        0.52734375,
+        0.0,
+        0.578125
+      ],
+      "nine_slice_cuts": {
+        "x": [
+          0,
+          18,
+          258,
+          270
+        ],
+        "y": [
+          0,
+          12,
+          64,
+          74
+        ]
+      },
+      "tga_header": {
+        "image_type": 2,
+        "width": 512,
+        "height": 128,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "top": {
+      "component": "MAP.MINI.ADDONS.TRAY.V4.TOP",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonTrayTopV4.tga",
+      "sha256": "5a9d5e2779934b290d83ade1da206af4b4bd8201d7b11701d26a560122ce0094",
+      "metrics": {
+        "size": [
+          270,
+          74
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "07cacad9a613e59808100b159e480beeb5af917ec5b7e718c5334961410745ce",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          270,
+          74
+        ],
+        "transparent_pixels": 372,
+        "partially_transparent_pixels": 1419,
+        "opaque_pixels": 18189,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        270,
+        74
+      ],
+      "texture_size": [
+        512,
+        128
+      ],
+      "content_uv": [
+        0.0,
+        0.52734375,
+        0.0,
+        0.578125
+      ],
+      "nine_slice_cuts": {
+        "x": [
+          0,
+          12,
+          252,
+          270
+        ],
+        "y": [
+          0,
+          10,
+          62,
+          74
+        ]
+      },
+      "tga_header": {
+        "image_type": 2,
+        "width": 512,
+        "height": 128,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "left": {
+      "component": "MAP.MINI.ADDONS.TRAY.V4.LEFT",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonTrayLeftV4.tga",
+      "sha256": "af742f62aa3536ffe2f8619e22f5d660374efce2afda4818de5ad358de53fa5e",
+      "metrics": {
+        "size": [
+          74,
+          270
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "2238f9cad4dedfb48e5cafbc783ce2a0a950c0af6e7d4ac34e316686a30b4dfb",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          74,
+          270
+        ],
+        "transparent_pixels": 372,
+        "partially_transparent_pixels": 1419,
+        "opaque_pixels": 18189,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        74,
+        270
+      ],
+      "texture_size": [
+        128,
+        512
+      ],
+      "content_uv": [
+        0.0,
+        0.578125,
+        0.0,
+        0.52734375
+      ],
+      "nine_slice_cuts": {
+        "x": [
+          0,
+          10,
+          62,
+          74
+        ],
+        "y": [
+          0,
+          18,
+          258,
+          270
+        ]
+      },
+      "tga_header": {
+        "image_type": 2,
+        "width": 128,
+        "height": 512,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    },
+    "right": {
+      "component": "MAP.MINI.ADDONS.TRAY.V4.RIGHT",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonTrayRightV4.tga",
+      "sha256": "a611199d50a6f603006f2a2f15af54e8906cf5c3a88de0de9700cb6516928841",
+      "metrics": {
+        "size": [
+          74,
+          270
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "e825002856944da8f3962a344d05e7ba577a97212778943d00cae75bee47dbc2",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          74,
+          270
+        ],
+        "transparent_pixels": 372,
+        "partially_transparent_pixels": 1419,
+        "opaque_pixels": 18189,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size": [
+        74,
+        270
+      ],
+      "texture_size": [
+        128,
+        512
+      ],
+      "content_uv": [
+        0.0,
+        0.578125,
+        0.0,
+        0.52734375
+      ],
+      "nine_slice_cuts": {
+        "x": [
+          0,
+          12,
+          64,
+          74
+        ],
+        "y": [
+          0,
+          12,
+          252,
+          270
+        ]
+      },
+      "tga_header": {
+        "image_type": 2,
+        "width": 128,
+        "height": 512,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      }
+    }
+  },
+  "layout_contract": {
+    "provider_container": "pfUI.addonbuttons / pfMinimapButtons",
+    "provider_toggle": "pfUI.addonbuttons.minimapbutton / pfMinimapButton",
+    "addon_positions": [
+      "bottom",
+      "top",
+      "left",
+      "right"
+    ],
+    "addon_counts_reviewed": [
+      0,
+      4,
+      6,
+      30
+    ],
+    "icon_safe_padding_derived_from_nine_slice": true,
+    "plugin_icons_and_interactions_remain_provider_owned": true,
+    "decorative_connector_required": false,
+    "direct_latch_tray_rectangle_overlap_ui": 4,
+    "direct_latch_tray_visible_alpha_contact_pixels": 1,
+    "zero_addons_hide_toggle_and_tray": true,
+    "vanilla_power_of_two_texture_containers": true
+  }
+}

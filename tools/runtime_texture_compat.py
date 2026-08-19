@@ -6,6 +6,7 @@ from PIL import Image
 
 
 VANILLA_MAX_TEXTURE_SIZE = 1024
+DEFAULT_RUNTIME_TEXEL_DENSITY = 2
 
 
 def is_power_of_two(value: int) -> bool:
@@ -26,6 +27,30 @@ def power_of_two_size(size: tuple[int, int]) -> tuple[int, int]:
             f"logical={size}, texture={texture_size}"
         )
     return texture_size
+
+
+def sampled_size(
+    logical_ui_size: tuple[int, int],
+    texels_per_ui_unit: int = DEFAULT_RUNTIME_TEXEL_DENSITY,
+) -> tuple[int, int]:
+    """Return texture samples independently from the frame's UI geometry."""
+
+    if texels_per_ui_unit < 1:
+        raise ValueError(
+            f"texels_per_ui_unit must be positive: {texels_per_ui_unit}"
+        )
+    return tuple(value * texels_per_ui_unit for value in logical_ui_size)
+
+
+def sampled_content_uv(
+    logical_ui_size: tuple[int, int],
+    texels_per_ui_unit: int = DEFAULT_RUNTIME_TEXEL_DENSITY,
+    texture_size: tuple[int, int] | None = None,
+) -> list[float]:
+    """Return UVs for a high-density sample displayed at logical UI size."""
+
+    content_size = sampled_size(logical_ui_size, texels_per_ui_unit)
+    return content_uv(content_size, texture_size)
 
 
 def pad_to_power_of_two(image: Image.Image) -> Image.Image:

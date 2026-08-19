@@ -6,36 +6,68 @@
   "component": "CHAR.STATS.PAPER",
   "status": "runtime-exported",
   "phase": "P5",
-  "runtime_contract": "1.2",
+  "runtime_contract": "1.3",
   "source_manifest": "assets/source/character/stats-paper-v3/CHAR-V3-C1-STATS-PAPER_SourceManifest_v1.json",
   "runtime": {
     "stats_paper": {
       "file": "addon/AzerothExpeditionUI/Media/Character/CharacterStatsPaperV3.tga",
-      "sha256": "93459bca34a4f7d0eaa038ecd078ff1e5bb93a45f2ab5e0eb0052de312f5d10f",
-      "logical_size": [230, 78],
-      "texture_size": [256, 128],
-      "uv": [0.0, 0.8984375, 0.0, 0.609375],
-      "pixel_sha256": "915b8b0fe02d89b758b8d6bb40423e93409bebbb0006dcd104495d57b55693c5",
-      "logical_pixel_sha256": "00336582394969335541aba17bc729d03eae89fa72ec7b737edd5d40d338c2ea",
+      "sha256": "d5b3433b43baf120538fa7669a10e49d29260dc647420e7cfca6c35e5a7031f1",
+      "logical_size": [
+        230,
+        78
+      ],
+      "texture_size": [
+        512,
+        256
+      ],
+      "uv": [
+        0.0,
+        0.8984375,
+        0.0,
+        0.609375
+      ],
+      "pixel_sha256": "ba5bb1fdc3c41dec73ba1641bac01e32b868668c818fc14568038d6547216005",
+      "logical_pixel_sha256": "878d2eac69727326ceb68239c9db7cfddd66b0222818bf6cf5d8918ec3cecf9f",
       "tga": {
         "image_type": 2,
-        "width": 256,
-        "height": 128,
+        "width": 512,
+        "height": 256,
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "sampled_size": [
+        460,
+        156
+      ],
+      "texels_per_ui_unit": 2,
+      "sampled_pixel_sha256": "878d2eac69727326ceb68239c9db7cfddd66b0222818bf6cf5d8918ec3cecf9f"
     }
   },
   "layout_contract": {
     "provider": "Blizzard CharacterAttributesFrame after pfUI Character skin",
-    "provider_geometry_ui": [384, 512],
-    "stats_rect_ui": [67, 291, 230, 78],
+    "provider_geometry_ui": [
+      384,
+      512
+    ],
+    "stats_rect_ui": [
+      67,
+      291,
+      230,
+      78
+    ],
     "anchor": "CharacterFrame TOPLEFT +67,-291",
     "draw_layer": "PaperDollFrame BACKGROUND after model background",
     "model_overlap_ui": 11,
     "attribute_text_dropdowns_and_values": "provider-live",
     "provider_geometry_changed": false,
-    "runtime_stretch": false
+    "runtime_stretch": false,
+    "texels_per_ui_unit": 2,
+    "ui_geometry_stretch": false
+  },
+  "texel_density": {
+    "texels_per_ui_unit": 2,
+    "ui_geometry_changed": false,
+    "target_physical_scale": "up to 2 screen pixels per UI unit"
   }
 }

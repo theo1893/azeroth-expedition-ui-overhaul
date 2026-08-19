@@ -22,10 +22,10 @@ Codex 进入仓库后先读本文件。这里给出项目边界、文档索引�
 | Chat | runtime `1.22 / P5`；Full V1 主框、Dark V2 Tab、Dark V1 输入已接入；右框隐藏，经典颜色透传 | 实机验证 Tab、缩放、输入、频道颜色和左框消息回收 |
 | Quests | runtime `1.27`、Theme `1.10`；Quest Log 主体／目录已获实机确认；奖励槽与闭合火漆载体 `P5`；事务菜单未启用 | 实机验证奖励槽、火漆滚动裁切；Tracker 重新确认真实区域 |
 | Action Bars | AEUI `0.8.36`；Slot／Rail `P6`；Field Kit `2.9`、Focus `2.7`、Sidebar Group `1.0`、Target Markers `2.0` 均 `P5`；所有角色 DDPS 统一 `(650,-615)` | 实机验证共用缝制皮革底板、占用态左下标记身份、死亡目标仅本地清空的 `4×2` 方阵与 HDL 一键怪群标记、ArchiTotem 展开层级、AutoBar 左侧 popup／四列向上网格、DDPS 中央视野、姿态尺寸及相邻 provider |
-| Map | WorldMap 继续暂停；Minimap V3 罗盘／信息托架、圆形 mask、状态插槽及四向插件工具卷已接入 `P5` | 实机验证屏幕边距、动态文字、真实插件图标、四向展开、缩放及 FarmMode 回退 |
+| Map | WorldMap 继续暂停；Minimap runtime `4.0`，V3 罗盘／信息托架／圆形 mask／锁扣与 V4 四向插件工具卷已接入 `P5`；独立 connector 已退出运行时，锁扣直接压住工具卷 | 实机验证直接搭接、真实图标安全区、四向展开、缩放及 FarmMode 回退 |
 | Spellbook | accepted `SB-A2-DONOR V1` source/runtime 保留，AEUI adapter 与 Spellbook ownership 暂停；当前回退 pfUI 技能书 | 明天依据 handoff 实机图核对四块 TGA 对位、层序、provider region 与控件净空 |
 | Talents | `P1 / paused`；已与 Spellbook 拆分，真实动态节点／分支边界已对齐 | 等用户明确恢复后制作独立 `TL-SIM-V1` |
-| Character | `P2–P5 / active`；runtime `1.4`，基础层、E1 的 19 个普通态槽框及 E2-A 三个独立交互态已接入；两个饰品槽已覆盖，动态内容仍归 provider | 实机验证基础层／槽框层序、三态触发、图标／点击／冷却／ShaguScore、缩放及回退；稳定后做 E2-B、E3 Ammo、E4 空槽或 Tabs |
+| Character | `P2–P5 / active`；runtime `1.9`，基础层、属性纸、抗性槽、E1／E2-A 装备槽、F1 Tabs 与 E3 Ammo 均以 2× runtime 接入，原生 UI 几何与动态内容所有权不变 | 实机复核清晰度、属性纸／文字、装备槽、Tabs、Ammo 动态内容与禁用回退；稳定后做 E2-B 或 E4 空槽 |
 | Unit Frames | Bars／Raid／头像合同继续运行；本批 Player／Target／TargetTarget／Focus 外壳 route 暂停，当前回退 pfUI 外框 | 明天依据 handoff 实机图检查 base／rim 层序、九切片和文字净空后再接入 |
 
 详细状态以 [docs/PROGRESS.md](docs/PROGRESS.md) 和目标模块的
@@ -103,6 +103,11 @@ mutable Lua／TOC SHA 或重复的 source manifest 内容。
   保持二者职责清晰。
 - manifest 只固定不可变 source/runtime 媒体；不得固定会频繁变化的 Lua、TOC、
   Bootstrap 或文档哈希。
+- UI 逻辑尺寸与纹理采样尺寸必须分离。新导出默认使用 `2 texels / UI unit`；
+  Lua 的 Width／Height、锚点和命中区保持 provider 原生几何，只通过更高分辨率
+  TGA 与对应 UV 提升清晰度。不得把既有 1× runtime 放大伪装成 2×；必须直接
+  从 accepted high-resolution source 导出，并继续满足单边不超过 `1024` 的
+  Turtle WoW 限制。确需 1× 时在目标 manifest 明确记录例外。
 - Hook 后不得用维护循环持续改写 Parent、Point、Width 或 Height。
 
 ## 实机与跨设备

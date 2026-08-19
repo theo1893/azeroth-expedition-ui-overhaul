@@ -38,73 +38,159 @@
         "actual_imagegen_calls": 2,
         "raw_candidate_sha256": "c5390d70bc1d0860f4a2312ded789bcf096b5a536ce722313d8e0e096b9a952c"
       }
-    }
+    },
+    "postprocess": "deterministic 2x texel-density runtime export from accepted source"
   },
   "deterministic_transform": {
-    "source_size": [148, 148],
-    "runtime_size": [37, 37],
-    "atlas_size": [256, 64],
+    "source_size": [
+      148,
+      148
+    ],
+    "runtime_size": [
+      74,
+      74
+    ],
+    "atlas_size": [
+      512,
+      128
+    ],
     "atlas_cell_origins": {
-      "hover": [0, 0],
-      "pressed": [64, 0],
-      "disabled": [128, 0]
+      "highlight": [
+        0,
+        0
+      ],
+      "pushed": [
+        128,
+        0
+      ],
+      "disabled": [
+        256,
+        0
+      ]
     },
-    "postprocess": "contract-authorized edge-connected green key; green-spill cleanup; transparent RGB clear; whole-object bbox-fit; 37x37 runtime reduction; fixed POT atlas packing",
+    "postprocess": "accepted source to 74x74 sampled runtime reduction; fixed 2x POT atlas packing",
     "accepted_source_or_runtime_pixels_modified_during_promotion": false,
     "painted_or_synthesized_pixels_during_promotion": 0,
-    "cross_segment_pixel_reuse": false
+    "cross_segment_pixel_reuse": false,
+    "logical_size_ui": [
+      37,
+      37
+    ],
+    "texels_per_ui_unit": 2
   },
   "accepted_assets": {
     "hover": {
       "source": {
         "file": "assets/source/character/slot-states-v3/CharacterSlotHover_SourceV3.png",
         "sha256": "a1a1d6ca4840c091c7cabc14a6b68355ed141cc8a0f5b0cac841b55975f152de",
-        "size": [148, 148],
+        "size": [
+          148,
+          148
+        ],
         "pixel_sha256": "fd0abe5283ada81acbf81863cb4596fe4495ea858a0ef511d79f77d0c00560c5",
-        "visible_bbox_exclusive": [4, 5, 144, 143]
+        "visible_bbox_exclusive": [
+          4,
+          5,
+          144,
+          143
+        ]
       },
       "runtime_master": {
         "file": "assets/source/character/slot-states-v3/CharacterSlotHover_RuntimeMasterV3.png",
-        "sha256": "071c770f197f532048bc1a10ec4621a826d4a16db194f90e515dd4e7f04c7a86",
-        "size": [37, 37],
-        "pixel_sha256": "aa467e3b6f88f6129b3448b49de18c82df6ca10c6bb9ba3271ab36cef9633677"
+        "sha256": "42b469c5eb4abd5449611f4edefd9064003245e384349cbbc738cfb9b7c92415",
+        "size": [
+          74,
+          74
+        ],
+        "pixel_sha256": "5b1a809abf2f544ea2da954fed1f9c85cc669bdeb2b3371366ac82a8f2c5aada",
+        "texels_per_ui_unit": 2,
+        "logical_size_ui": [
+          37,
+          37
+        ]
       }
     },
     "pressed": {
       "source": {
         "file": "assets/source/character/slot-states-v3/CharacterSlotPressed_SourceV3.png",
         "sha256": "90176232febe9643efbaf9ceae8b8e6f67f7f24f0f8deee822319db0a1df4049",
-        "size": [148, 148],
+        "size": [
+          148,
+          148
+        ],
         "pixel_sha256": "552d8d662c94197d7acce1d5675c95528bfd7642e7bdddad21c556b446f76891",
-        "visible_bbox_exclusive": [8, 8, 140, 139]
+        "visible_bbox_exclusive": [
+          8,
+          8,
+          140,
+          139
+        ]
       },
       "runtime_master": {
         "file": "assets/source/character/slot-states-v3/CharacterSlotPressed_RuntimeMasterV3.png",
-        "sha256": "8776952c9f7dd4aadd155e06716303995c21c20fa910f60bc9aa28c3bacaa7e8",
-        "size": [37, 37],
-        "pixel_sha256": "9317864555716e6441e63799066686db04270c4c48111d128b2ab2e4db46823e"
+        "sha256": "4499ad5549d352b7bf82c22423ef53ad03a1466027d5d5be79e87bf232fbc310",
+        "size": [
+          74,
+          74
+        ],
+        "pixel_sha256": "6027c4ca5a8f640e4c79f4f8149b1ded6776aac18293df39f82fd2ec90c05354",
+        "texels_per_ui_unit": 2,
+        "logical_size_ui": [
+          37,
+          37
+        ]
       }
     },
     "disabled": {
       "source": {
         "file": "assets/source/character/slot-states-v3/CharacterSlotDisabled_SourceV3.png",
         "sha256": "38388394937b7215e553112b59b0590b11b6cee3d171d08a4607a749a8ce6583",
-        "size": [148, 148],
+        "size": [
+          148,
+          148
+        ],
         "pixel_sha256": "9e183720a0b4f2f28d1f6c9e67d571014b2e1df126cb6dbb4d608ff4d34c6b1f",
-        "visible_bbox_exclusive": [21, 16, 126, 132]
+        "visible_bbox_exclusive": [
+          21,
+          16,
+          126,
+          132
+        ]
       },
       "runtime_master": {
         "file": "assets/source/character/slot-states-v3/CharacterSlotDisabled_RuntimeMasterV3.png",
-        "sha256": "00ff2dbe8bc1e8efc717dca10c444fc7c30b4dbe037bf52220ced7fb8b31ab65",
-        "size": [37, 37],
-        "pixel_sha256": "bbe8df63bf93d8f191e2fd2cc6a7b736ee84457366787a1892fc2f841d81a10e"
+        "sha256": "3c6a5640130fb6f7b6fa9e2d5eda07034c18ded67d3489090fb437495ed4efc6",
+        "size": [
+          74,
+          74
+        ],
+        "pixel_sha256": "7dd28e9591be4d0ab58bd7afd8dfc55aefe0553855b42ad99e449899fe46529f",
+        "texels_per_ui_unit": 2,
+        "logical_size_ui": [
+          37,
+          37
+        ]
       }
     },
     "atlas_runtime_master": {
       "file": "assets/source/character/slot-states-v3/CharacterSlotInteractionAtlas_RuntimeMasterV3.png",
-      "sha256": "b56246000ede9734d7c1936cf9661c549d706f4d50e098082dcbf81d439515f7",
-      "size": [256, 64],
-      "pixel_sha256": "916c3aeaf6f9a1a089c723ca3c26062d70f39eb1c2c98cc61365bcbdaedcb867"
+      "sha256": "479502b7646a3b4bcf7977a0b221ca45b6fa3587815bced8e20775562ee33cc9",
+      "size": [
+        512,
+        128
+      ],
+      "pixel_sha256": "a2740929febcb8bcbaf5da3e1b4ad6a31f52f0b16b297daf476d24fcaf1cdb47"
     }
+  },
+  "runtime_density_upgrade": {
+    "contract": "CHARACTER-TEXEL-DENSITY-2X",
+    "authorized_on": "2026-08-19",
+    "user_instruction": "修复",
+    "texels_per_ui_unit": 2,
+    "ui_geometry_changed": false,
+    "hitboxes_changed": false,
+    "accepted_source_pixels_changed": false,
+    "imagegen_calls": 0,
+    "operation": "direct LANCZOS reduction from accepted high-resolution source to 2x sampled runtime pixels, transparent RGB clear, and POT TGA packing"
   }
 }

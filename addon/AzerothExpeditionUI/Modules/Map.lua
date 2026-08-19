@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local Map = {}
-Map.runtimeContract = "3.4"
+Map.runtimeContract = "4.0"
 Map.worldIntegrationPaused = true
 Map.miniIntegrationPaused = false
 
@@ -118,36 +118,6 @@ local MINI = {
       textureHeight = 16,
     },
   },
-  connector = {
-    bottom = {
-      path = MEDIA .. "MapMiniAddonConnectorBottomV3",
-      width = 32,
-      height = 14,
-      textureWidth = 32,
-      textureHeight = 16,
-    },
-    top = {
-      path = MEDIA .. "MapMiniAddonConnectorTopV3",
-      width = 32,
-      height = 14,
-      textureWidth = 32,
-      textureHeight = 16,
-    },
-    left = {
-      path = MEDIA .. "MapMiniAddonConnectorLeftV3",
-      width = 14,
-      height = 32,
-      textureWidth = 16,
-      textureHeight = 32,
-    },
-    right = {
-      path = MEDIA .. "MapMiniAddonConnectorRightV3",
-      width = 14,
-      height = 32,
-      textureWidth = 16,
-      textureHeight = 32,
-    },
-  },
   socket = {
     path = MEDIA .. "MapMiniStatusSocketV3",
     width = 24,
@@ -157,18 +127,18 @@ local MINI = {
   },
   tray = {
     bottom = {
-      path = MEDIA .. "MapMiniAddonTrayBottomV3",
+      path = MEDIA .. "MapMiniAddonTrayBottomV4",
       logicalWidth = 270,
       logicalHeight = 74,
       textureWidth = 512,
       textureHeight = 128,
       cutX1 = 18,
       cutX2 = 258,
-      cutY1 = 10,
+      cutY1 = 12,
       cutY2 = 64,
     },
     top = {
-      path = MEDIA .. "MapMiniAddonTrayTopV3",
+      path = MEDIA .. "MapMiniAddonTrayTopV4",
       logicalWidth = 270,
       logicalHeight = 74,
       textureWidth = 512,
@@ -176,26 +146,26 @@ local MINI = {
       cutX1 = 12,
       cutX2 = 252,
       cutY1 = 10,
-      cutY2 = 64,
+      cutY2 = 62,
     },
     left = {
-      path = MEDIA .. "MapMiniAddonTrayLeftV3",
+      path = MEDIA .. "MapMiniAddonTrayLeftV4",
       logicalWidth = 74,
       logicalHeight = 270,
       textureWidth = 128,
       textureHeight = 512,
       cutX1 = 10,
-      cutX2 = 64,
+      cutX2 = 62,
       cutY1 = 18,
       cutY2 = 258,
     },
     right = {
-      path = MEDIA .. "MapMiniAddonTrayRightV3",
+      path = MEDIA .. "MapMiniAddonTrayRightV4",
       logicalWidth = 74,
       logicalHeight = 270,
       textureWidth = 128,
       textureHeight = 512,
-      cutX1 = 10,
+      cutX1 = 12,
       cutX2 = 64,
       cutY1 = 12,
       cutY2 = 252,
@@ -1396,10 +1366,18 @@ end
 local function LayoutAddonEntries(container, entries, position, scale)
   local count = table.getn(entries)
   if count == 0 then return 0, 0, 0 end
+  local definition = MINI.tray[position]
+  if not definition then return 0, 0, 0 end
   local rowSize = GetAddonRowSize()
   local buttonSize = 21 * scale
   local gap = 2 * scale
-  local padding = 8 * scale
+  local safety = 2 * scale
+  local paddingLeft = definition.cutX1 * scale + safety
+  local paddingRight =
+    (definition.logicalWidth - definition.cutX2) * scale + safety
+  local paddingTop = definition.cutY1 * scale + safety
+  local paddingBottom =
+    (definition.logicalHeight - definition.cutY2) * scale + safety
   local horizontal = position == "bottom" or position == "top"
   local lineSize = rowSize
   if horizontal then
@@ -1413,11 +1391,27 @@ local function LayoutAddonEntries(container, entries, position, scale)
   local width
   local height
   if horizontal then
-    width = primary * buttonSize + (primary - 1) * gap + padding * 2
-    height = secondary * buttonSize + (secondary - 1) * gap + padding * 2
+    width =
+      primary * buttonSize +
+      (primary - 1) * gap +
+      paddingLeft +
+      paddingRight
+    height =
+      secondary * buttonSize +
+      (secondary - 1) * gap +
+      paddingTop +
+      paddingBottom
   else
-    width = secondary * buttonSize + (secondary - 1) * gap + padding * 2
-    height = primary * buttonSize + (primary - 1) * gap + padding * 2
+    width =
+      secondary * buttonSize +
+      (secondary - 1) * gap +
+      paddingLeft +
+      paddingRight
+    height =
+      primary * buttonSize +
+      (primary - 1) * gap +
+      paddingTop +
+      paddingBottom
   end
   container:SetWidth(width)
   container:SetHeight(height)
@@ -1431,11 +1425,22 @@ local function LayoutAddonEntries(container, entries, position, scale)
     local x
     local y
     if horizontal then
-      x = (width - groupSpan) / 2 + buttonSize / 2 + item * (buttonSize + gap)
-      y = -(padding + buttonSize / 2 + group * (buttonSize + gap))
+      local interiorWidth = width - paddingLeft - paddingRight
+      x =
+        paddingLeft +
+        (interiorWidth - groupSpan) / 2 +
+        buttonSize / 2 +
+        item * (buttonSize + gap)
+      y = -(paddingTop + buttonSize / 2 + group * (buttonSize + gap))
     else
-      x = padding + buttonSize / 2 + group * (buttonSize + gap)
-      y = -((height - groupSpan) / 2 + buttonSize / 2 + item * (buttonSize + gap))
+      local interiorHeight = height - paddingTop - paddingBottom
+      x = paddingLeft + buttonSize / 2 + group * (buttonSize + gap)
+      y = -(
+        paddingTop +
+        (interiorHeight - groupSpan) / 2 +
+        buttonSize / 2 +
+        item * (buttonSize + gap)
+      )
     end
     local frameScale = RelativeEffectiveScale(entry.frame, container)
     entry.frame:ClearAllPoints()
@@ -1452,13 +1457,25 @@ end
 local function EnsureToggleArt(button)
   if not button then return nil end
   if not button.aeuiMapToggleBody then
-    button.aeuiMapConnector = button:CreateTexture(nil, "BACKGROUND")
+    if type(button.GetFrameStrata) == "function" then
+      button.aeuiMapOriginalFrameStrata = button:GetFrameStrata()
+    end
+    if type(button.GetFrameLevel) == "function" then
+      button.aeuiMapOriginalFrameLevel = button:GetFrameLevel()
+    end
     button.aeuiMapToggleBody = button:CreateTexture(nil, "BORDER")
     button.aeuiMapToggleBody:SetAllPoints(button)
     button.aeuiMapToggleGlyph = button:CreateTexture(nil, "ARTWORK")
     button.aeuiMapToggleGlyph:SetPoint("CENTER", button, "CENTER", 0, 0)
   end
+  -- The V4 latch directly overlaps the tray.  Keep the real clickable button
+  -- above the HIGH-strata provider container so it visibly presses the tray
+  -- edge instead of being covered by the nine-slice.
+  if type(button.SetFrameStrata) == "function" then
+    button:SetFrameStrata("DIALOG")
+  end
   if button.icon then button.icon:Hide() end
+  if button.aeuiMapConnector then button.aeuiMapConnector:Hide() end
   HideProviderBackdrop(button)
   return button.aeuiMapToggleGlyph
 end
@@ -1499,33 +1516,6 @@ local function SetToggleGlyph(button, direction, scale)
   SetComponentTexture(glyph, definition.path, definition)
 end
 
-local function SetConnector(button, position, scale, expanded)
-  if not button or not button.aeuiMapConnector then return end
-  local connector = button.aeuiMapConnector
-  if not expanded then
-    connector:Hide()
-    return
-  end
-  local definition = MINI.connector[position]
-  if not definition then
-    connector:Hide()
-    return
-  end
-  connector:ClearAllPoints()
-  connector:SetWidth(definition.width * scale)
-  connector:SetHeight(definition.height * scale)
-  SetComponentTexture(connector, definition.path, definition)
-  if position == "bottom" then
-    connector:SetPoint("TOP", button, "BOTTOM", 0, 3 * scale)
-  elseif position == "top" then
-    connector:SetPoint("BOTTOM", button, "TOP", 0, -2 * scale)
-  elseif position == "left" then
-    connector:SetPoint("RIGHT", button, "LEFT", 3 * scale, 0)
-  else
-    connector:SetPoint("LEFT", button, "RIGHT", -3 * scale, 0)
-  end
-end
-
 local function ToggleDirection(position, expanded)
   if position == "bottom" then
     return expanded and "up" or "down"
@@ -1547,17 +1537,20 @@ local function AnchorAddonFrames(container, button, art, position, scale)
   button:SetWidth(latch.width * scale)
   button:SetHeight(latch.height * scale)
   if position == "bottom" then
-    button:SetPoint("TOP", art, "TOPLEFT", 110 * scale, -252 * scale)
-    container:SetPoint("TOPRIGHT", art, "TOPRIGHT", 0, -285 * scale)
+    -- V4 removes the decorative connector.  The latch remains attached to the
+    -- cradle and overlaps the tray rectangle by four UI pixels; after each
+    -- asset's transparent edge this produces one visible row of direct contact.
+    button:SetPoint("TOP", art, "TOPLEFT", 110 * scale, -251 * scale)
+    container:SetPoint("TOPRIGHT", art, "TOPRIGHT", 0, -271 * scale)
   elseif position == "top" then
     button:SetPoint("TOPLEFT", art, "TOPLEFT", 142 * scale, -17 * scale)
-    container:SetPoint("BOTTOM", art, "TOPLEFT", 161 * scale, -7 * scale)
+    container:SetPoint("BOTTOM", art, "TOPLEFT", 161 * scale, -21 * scale)
   elseif position == "left" then
     button:SetPoint("TOPLEFT", art, "TOPLEFT", -11 * scale, -92 * scale)
-    container:SetPoint("RIGHT", art, "TOPLEFT", -20 * scale, -104 * scale)
+    container:SetPoint("RIGHT", art, "TOPLEFT", -7 * scale, -111 * scale)
   else
     button:SetPoint("TOPLEFT", art, "TOPLEFT", 207 * scale, -92 * scale)
-    container:SetPoint("LEFT", art, "TOPLEFT", 240 * scale, -104 * scale)
+    container:SetPoint("LEFT", art, "TOPLEFT", 227 * scale, -111 * scale)
   end
   return true
 end
@@ -1606,7 +1599,6 @@ function Map:StyleAddonButtons(scale)
   button:Show()
   local expanded = container:IsShown()
   SetToggleGlyph(button, ToggleDirection(position, expanded), scale)
-  SetConnector(button, position, scale, expanded)
 end
 
 function Map:RestoreAddonButtons()
@@ -1630,6 +1622,18 @@ function Map:RestoreAddonButtons()
     if button.aeuiMapToggleGlyph then button.aeuiMapToggleGlyph:Hide() end
     if button.icon then button.icon:Show() end
     RestoreProviderBackdrop(button)
+    if
+      button.aeuiMapOriginalFrameStrata and
+      type(button.SetFrameStrata) == "function"
+    then
+      button:SetFrameStrata(button.aeuiMapOriginalFrameStrata)
+    end
+    if
+      button.aeuiMapOriginalFrameLevel and
+      type(button.SetFrameLevel) == "function"
+    then
+      button:SetFrameLevel(button.aeuiMapOriginalFrameLevel)
+    end
     button:SetWidth(16)
     button:SetHeight(16)
   end
@@ -1776,7 +1780,7 @@ function Map:ApplyMini()
     return true
   end
   pfUI.minimap.aeuiMapMiniRuntimeContract = self.runtimeContract
-  self.miniStatus = "mini-v3-applied-round-cradle"
+  self.miniStatus = "mini-v4-applied-round-cradle-direct-tray"
   return true
 end
 
@@ -1875,7 +1879,6 @@ function Map:InstallHooks()
             ToggleDirection(GetAddonPosition(), false),
             MiniScale()
           )
-          SetConnector(button, GetAddonPosition(), MiniScale(), false)
           SetToggleBodyState(button, GetAddonPosition(), "normal")
         end
       end)
@@ -1941,7 +1944,8 @@ function Map:GetRuntimeStatus()
     ", info-provider=" .. tostring(self.miniPanelStatus or "native") ..
     ", edge-safety=" .. tostring(self.miniSafetyStatus or "unapplied") ..
     ", addons=" .. tostring(self.addonButtonCount or 0) ..
-    ", addon-tray=four-way-nine-slice-horizontal-primary" ..
+    ", addon-tray=v4-four-way-nine-slice-direct-latch" ..
+    ", addon-connector=retired" ..
     ", controls=provider-live" ..
     ", pfquest=provider-live" ..
     ", farmmode=separate-provider" ..

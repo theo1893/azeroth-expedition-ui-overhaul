@@ -1,0 +1,329 @@
+{
+  "schema": "aeui-character-v3-f1-tabs-runtime-manifest-v1",
+  "schema_version": 1,
+  "module": "character",
+  "batch": "CHAR-V3-F1-TABS V3 final",
+  "component": "CHAR.TABS",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "runtime_contract": "1.8",
+  "source_manifest": "assets/source/character/tabs-v3/CHAR-V3-F1-TABS_SourceManifest_v1.json",
+  "runtime": {
+    "file": "addon/AzerothExpeditionUI/Media/Character/CharacterTabsV3.tga",
+    "sha256": "7568c69b69d49f73b9f5a75e1d84190b4b75e08ef0b43330c0919c5170876f24",
+    "texture_size": [
+      128,
+      256
+    ],
+    "pixel_sha256": "ac100eae6c46344445dcaee8ff5a5af1081bd575dbfc3efc8ec653e41b717b8e",
+    "texels_per_ui_unit": 2,
+    "tga": {
+      "image_type": 2,
+      "width": 128,
+      "height": 256,
+      "bits_per_pixel": 32,
+      "descriptor": 8,
+      "top_origin": false
+    },
+    "states": {
+      "normal": {
+        "left": {
+          "cell_origin": [
+            8,
+            8
+          ],
+          "logical_size_ui": [
+            6,
+            20
+          ],
+          "sampled_size": [
+            12,
+            40
+          ],
+          "texels_per_ui_unit": 2,
+          "uv": [
+            0.0625,
+            0.15625,
+            0.03125,
+            0.1875
+          ],
+          "sampled_pixel_sha256": "6d80dc113cf319fedb09bc38165c3bbdaae0ac1cc938ab773035389175a14e64"
+        },
+        "center": {
+          "cell_origin": [
+            32,
+            8
+          ],
+          "logical_size_ui": [
+            8,
+            20
+          ],
+          "sampled_size": [
+            16,
+            40
+          ],
+          "texels_per_ui_unit": 2,
+          "uv": [
+            0.25,
+            0.375,
+            0.03125,
+            0.1875
+          ],
+          "sampled_pixel_sha256": "85c5f4803c19d6df32d6c94f1149d0aeff646025c90a32cde69505fc13b1834f"
+        },
+        "right": {
+          "cell_origin": [
+            60,
+            8
+          ],
+          "logical_size_ui": [
+            6,
+            20
+          ],
+          "sampled_size": [
+            12,
+            40
+          ],
+          "texels_per_ui_unit": 2,
+          "uv": [
+            0.46875,
+            0.5625,
+            0.03125,
+            0.1875
+          ],
+          "sampled_pixel_sha256": "8ef1c3240af747e0bd7c48955e53a3cf45cff7db64481f71f02034ba9e0cb584"
+        }
+      },
+      "hover": {
+        "left": {
+          "cell_origin": [
+            8,
+            64
+          ],
+          "logical_size_ui": [
+            6,
+            20
+          ],
+          "sampled_size": [
+            12,
+            40
+          ],
+          "texels_per_ui_unit": 2,
+          "uv": [
+            0.0625,
+            0.15625,
+            0.25,
+            0.40625
+          ],
+          "sampled_pixel_sha256": "1e0dc20da03bcb8d09fae2485b8532be572522535f4dda86ac474a2c10f3d556"
+        },
+        "center": {
+          "cell_origin": [
+            32,
+            64
+          ],
+          "logical_size_ui": [
+            8,
+            20
+          ],
+          "sampled_size": [
+            16,
+            40
+          ],
+          "texels_per_ui_unit": 2,
+          "uv": [
+            0.25,
+            0.375,
+            0.25,
+            0.40625
+          ],
+          "sampled_pixel_sha256": "a04ab8443263fc8d8e6b8393392b34c3039054fb267642d8aadc926c9e43c764"
+        },
+        "right": {
+          "cell_origin": [
+            60,
+            64
+          ],
+          "logical_size_ui": [
+            6,
+            20
+          ],
+          "sampled_size": [
+            12,
+            40
+          ],
+          "texels_per_ui_unit": 2,
+          "uv": [
+            0.46875,
+            0.5625,
+            0.25,
+            0.40625
+          ],
+          "sampled_pixel_sha256": "b0b94cc458a71621f795d30adaec59d0130675a4cf752695c7c6f2b43b57238d"
+        }
+      },
+      "pressed": {
+        "left": {
+          "cell_origin": [
+            8,
+            120
+          ],
+          "logical_size_ui": [
+            6,
+            20
+          ],
+          "sampled_size": [
+            12,
+            40
+          ],
+          "texels_per_ui_unit": 2,
+          "uv": [
+            0.0625,
+            0.15625,
+            0.46875,
+            0.625
+          ],
+          "sampled_pixel_sha256": "45312f9ab9e8849cd6795d98dbd4651fd13031775d6e3805501908bad65c9cf1"
+        },
+        "center": {
+          "cell_origin": [
+            32,
+            120
+          ],
+          "logical_size_ui": [
+            8,
+            20
+          ],
+          "sampled_size": [
+            16,
+            40
+          ],
+          "texels_per_ui_unit": 2,
+          "uv": [
+            0.25,
+            0.375,
+            0.46875,
+            0.625
+          ],
+          "sampled_pixel_sha256": "c00d2c2f00bba0ced7681ff0c1bcd2e2267c5bf1b0958eecad32d7b435ff9e14"
+        },
+        "right": {
+          "cell_origin": [
+            60,
+            120
+          ],
+          "logical_size_ui": [
+            6,
+            20
+          ],
+          "sampled_size": [
+            12,
+            40
+          ],
+          "texels_per_ui_unit": 2,
+          "uv": [
+            0.46875,
+            0.5625,
+            0.46875,
+            0.625
+          ],
+          "sampled_pixel_sha256": "0d5a1eeaeb460ad2d247321fdd6bdbd9ba1773360bc20d7a32191f141a717362"
+        }
+      },
+      "selected": {
+        "left": {
+          "cell_origin": [
+            8,
+            176
+          ],
+          "logical_size_ui": [
+            6,
+            20
+          ],
+          "sampled_size": [
+            12,
+            40
+          ],
+          "texels_per_ui_unit": 2,
+          "uv": [
+            0.0625,
+            0.15625,
+            0.6875,
+            0.84375
+          ],
+          "sampled_pixel_sha256": "5452fd86e67fc3b8c74a0a340b162d98dad73234572d14694f01c24fb578d30c"
+        },
+        "center": {
+          "cell_origin": [
+            32,
+            176
+          ],
+          "logical_size_ui": [
+            8,
+            20
+          ],
+          "sampled_size": [
+            16,
+            40
+          ],
+          "texels_per_ui_unit": 2,
+          "uv": [
+            0.25,
+            0.375,
+            0.6875,
+            0.84375
+          ],
+          "sampled_pixel_sha256": "ece3a6e3c24bca5da7a3a9bc97e2b14de9211f3d0f8467a03c6b8f98b34eb93f"
+        },
+        "right": {
+          "cell_origin": [
+            60,
+            176
+          ],
+          "logical_size_ui": [
+            6,
+            20
+          ],
+          "sampled_size": [
+            12,
+            40
+          ],
+          "texels_per_ui_unit": 2,
+          "uv": [
+            0.46875,
+            0.5625,
+            0.6875,
+            0.84375
+          ],
+          "sampled_pixel_sha256": "12f65b8ffc9a6e37e6450e1e9fcf905a4253e7219a0aa480b61a9e143d7305c0"
+        }
+      }
+    }
+  },
+  "layout_contract": {
+    "ownership_route": "character.tabs-v3",
+    "provider": "CharacterFrameTab1..5 after pfUI Character SkinTab",
+    "logical_height_ui": 20,
+    "dynamic_width": "provider text width + 20 UI",
+    "left_cap_ui": 6,
+    "right_cap_ui": 6,
+    "center_width_ui": "TabWidth - 12",
+    "runtime_stretch": "horizontal center only",
+    "state_mapping": {
+      "normal": "enabled idle",
+      "hover": "enabled OnEnter",
+      "pressed": "enabled OnMouseDown",
+      "selected": "PanelTemplates disabled selected tab"
+    },
+    "provider_geometry_changed": false,
+    "provider_text_clicks_and_reflow": "live",
+    "pet_hidden_reflow": "provider-live",
+    "fallback": "restore pfUI tab backdrop when module or ownership route is inactive",
+    "texels_per_ui_unit": 2
+  },
+  "texel_density": {
+    "texels_per_ui_unit": 2,
+    "ui_geometry_changed": false,
+    "target_physical_scale": "up to 2 screen pixels per UI unit"
+  }
+}

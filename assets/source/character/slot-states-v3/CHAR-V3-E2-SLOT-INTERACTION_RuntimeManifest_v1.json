@@ -6,15 +6,20 @@
   "component": "CHAR.SLOT.INTERACTION",
   "status": "runtime-exported",
   "phase": "P5",
-  "runtime_contract": "1.4",
+  "runtime_contract": "1.5",
   "source_manifest": "assets/source/character/slot-states-v3/CHAR-V3-E2-SLOT-INTERACTION_SourceManifest_v1.json",
   "runtime": {
     "file": "addon/AzerothExpeditionUI/Media/Character/CharacterSlotInteractionAtlasV3.tga",
-    "sha256": "22128b74517a157b0e042cfbd4582224c5d4cb7ec78d0f76501b76f3f7744fab",
-    "texture_size": [256, 64],
-    "pixel_sha256": "916c3aeaf6f9a1a089c723ca3c26062d70f39eb1c2c98cc61365bcbdaedcb867",
+    "sha256": "b09210c0cf9ed3d5137b333ce86f1e285c43ee3228970ef29c85cab5a787b0c0",
+    "texture_size": [
+      512,
+      128
+    ],
+    "pixel_sha256": "a2740929febcb8bcbaf5da3e1b4ad6a31f52f0b16b297daf476d24fcaf1cdb47",
     "tga": {
       "image_type": 2,
+      "width": 512,
+      "height": 128,
       "bits_per_pixel": 32,
       "descriptor": 8,
       "top_origin": false
@@ -22,32 +27,93 @@
     "states": {
       "highlight": {
         "source_contract": "CHAR-V3-E2-A1-HOVER final / attempt 3",
-        "cell_origin": [0, 0],
-        "logical_size": [37, 37],
-        "cell_size": [64, 64],
-        "uv": [0.0, 0.14453125, 0.0, 0.578125],
-        "logical_pixel_sha256": "aa467e3b6f88f6129b3448b49de18c82df6ca10c6bb9ba3271ab36cef9633677",
-        "button_texture_alpha": 1.0
+        "cell_origin": [
+          0,
+          0
+        ],
+        "logical_size": [
+          37,
+          37
+        ],
+        "cell_size": [
+          128,
+          128
+        ],
+        "uv": [
+          0.0,
+          0.14453125,
+          0.0,
+          0.578125
+        ],
+        "logical_pixel_sha256": "5b1a809abf2f544ea2da954fed1f9c85cc669bdeb2b3371366ac82a8f2c5aada",
+        "button_texture_alpha": 1.0,
+        "sampled_size": [
+          74,
+          74
+        ],
+        "texels_per_ui_unit": 2,
+        "sampled_pixel_sha256": "5b1a809abf2f544ea2da954fed1f9c85cc669bdeb2b3371366ac82a8f2c5aada"
       },
       "pushed": {
         "source_contract": "CHAR-V3-E2-A2-PRESSED final / attempt 4",
-        "cell_origin": [64, 0],
-        "logical_size": [37, 37],
-        "cell_size": [64, 64],
-        "uv": [0.25, 0.39453125, 0.0, 0.578125],
-        "logical_pixel_sha256": "9317864555716e6441e63799066686db04270c4c48111d128b2ab2e4db46823e",
-        "button_texture_alpha": 1.0
+        "cell_origin": [
+          128,
+          0
+        ],
+        "logical_size": [
+          37,
+          37
+        ],
+        "cell_size": [
+          128,
+          128
+        ],
+        "uv": [
+          0.25,
+          0.39453125,
+          0.0,
+          0.578125
+        ],
+        "logical_pixel_sha256": "6027c4ca5a8f640e4c79f4f8149b1ded6776aac18293df39f82fd2ec90c05354",
+        "button_texture_alpha": 1.0,
+        "sampled_size": [
+          74,
+          74
+        ],
+        "texels_per_ui_unit": 2,
+        "sampled_pixel_sha256": "6027c4ca5a8f640e4c79f4f8149b1ded6776aac18293df39f82fd2ec90c05354"
       },
       "disabled": {
         "source_contract": "CHAR-V3-E2-A3-DISABLED final / attempt 2",
-        "cell_origin": [128, 0],
-        "logical_size": [37, 37],
-        "cell_size": [64, 64],
-        "uv": [0.5, 0.64453125, 0.0, 0.578125],
-        "logical_pixel_sha256": "bbe8df63bf93d8f191e2fd2cc6a7b736ee84457366787a1892fc2f841d81a10e",
-        "button_texture_alpha": 0.5882352941
+        "cell_origin": [
+          256,
+          0
+        ],
+        "logical_size": [
+          37,
+          37
+        ],
+        "cell_size": [
+          128,
+          128
+        ],
+        "uv": [
+          0.5,
+          0.64453125,
+          0.0,
+          0.578125
+        ],
+        "logical_pixel_sha256": "7dd28e9591be4d0ab58bd7afd8dfc55aefe0553855b42ad99e449899fe46529f",
+        "button_texture_alpha": 0.5882352941,
+        "sampled_size": [
+          74,
+          74
+        ],
+        "texels_per_ui_unit": 2,
+        "sampled_pixel_sha256": "7dd28e9591be4d0ab58bd7afd8dfc55aefe0553855b42ad99e449899fe46529f"
       }
-    }
+    },
+    "texels_per_ui_unit": 2
   },
   "layout_contract": {
     "ownership_route": "character.slot-interaction-v3",
@@ -57,7 +123,10 @@
       "pressed": "SetPushedTexture",
       "disabled": "SetDisabledTexture"
     },
-    "logical_size": [37, 37],
+    "logical_size": [
+      37,
+      37
+    ],
     "provider_geometry_changed": false,
     "runtime_stretch": false,
     "dynamic_icon_and_cooldown": "provider-live beneath state overlay",
@@ -66,6 +135,13 @@
     "quality_and_durability": "E2-B paused and not baked",
     "tooltip_clicks_and_shaguscore": "provider-live; score text promoted above interaction overlays",
     "ammo_slot": "excluded; independent 27x27 E3 component",
-    "fallback": "restore captured pfUI highlight, pushed and disabled textures when route is inactive"
+    "fallback": "restore captured pfUI highlight, pushed and disabled textures when route is inactive",
+    "texels_per_ui_unit": 2,
+    "ui_geometry_stretch": false
+  },
+  "texel_density": {
+    "texels_per_ui_unit": 2,
+    "ui_geometry_changed": false,
+    "target_physical_scale": "up to 2 screen pixels per UI unit"
   }
 }

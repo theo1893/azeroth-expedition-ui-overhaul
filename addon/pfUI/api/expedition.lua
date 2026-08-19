@@ -9,7 +9,7 @@ local STATUS_TEXTURE = "Interface\\TargetingFrame\\UI-StatusBar"
 local PFUI_STATUS_TEXTURE = pfUI.media["img:bar"]
 
 pfUI.expedition = {
-  version = 12,
+  version = 14,
   ownership = "scoped-v1",
 
   -- The main pfUI chat module stays loaded because AEUI uses its frames,
@@ -45,6 +45,8 @@ pfUI.expedition = {
     ["character.resistance-wells-v3"] = "character",
     ["character.slot-base-v3"] = "character",
     ["character.slot-interaction-v3"] = "character",
+    ["character.tabs-v3"] = "character",
+    ["character.ammo-slot-v3"] = "character",
   },
 }
 

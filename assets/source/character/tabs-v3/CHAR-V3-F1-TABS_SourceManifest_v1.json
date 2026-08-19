@@ -1,0 +1,184 @@
+{
+  "schema": "aeui-character-v3-f1-tabs-source-manifest-v1",
+  "schema_version": 1,
+  "module": "character",
+  "batch": "CHAR-V3-F1-TABS V3 final",
+  "component": "CHAR.TABS",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "accepted_on": "2026-08-19",
+  "user_acceptance": {
+    "statement": "接受 CHAR-V3-F1-TABS V3 attempt 2 的 exact pixels，并允许提升 source/runtime、装配 POT atlas 与接入 addon。",
+    "accepts_exact_pixels": true,
+    "source_promotion_authorized": true,
+    "runtime_export_authorized": true,
+    "addon_integration_authorized": true
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/character/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/character/SUBMODULE_ART_BASELINES.md#chartabs",
+    "contract": "CHAR-V3-F1-TABS V3 final",
+    "selected_attempt": 2,
+    "actual_imagegen_calls": 2,
+    "raw_candidate_sha256": "7e927c5a9c4af76a957b26aabcb9f75aa6b493e67e29eb3a3aa18c29b3d9edf0",
+    "postprocess": "equal-axis square normalization, fixed quadrant split, edge-connected chroma key and despill, transparent RGB clear, proportional bbox-fit to four accepted 176x80 sources",
+    "fixed_references": {
+      "geometry": "023fecfbfc81ac7edc39bdbbc6a03b707f830955422c27fec3fde5242299295e",
+      "material": "efdf1763620bf7000c14be87f99d0a2035387bd81a628d24ba87faa3540563ed",
+      "character_lock": "b5c364482adaace09af9b5196d2e8d4f7ef79d3b21706e189d94c106ba6ec2ba"
+    }
+  },
+  "deterministic_transform": {
+    "source_size_each": [
+      176,
+      80
+    ],
+    "state_order": [
+      "normal",
+      "hover",
+      "pressed",
+      "selected"
+    ],
+    "source_slice_boxes_exclusive": {
+      "left": [
+        0,
+        0,
+        24,
+        80
+      ],
+      "center": [
+        72,
+        0,
+        104,
+        80
+      ],
+      "right": [
+        152,
+        0,
+        176,
+        80
+      ]
+    },
+    "runtime_sampled_sizes": {
+      "left": [
+        12,
+        40
+      ],
+      "center": [
+        16,
+        40
+      ],
+      "right": [
+        12,
+        40
+      ]
+    },
+    "runtime_atlas_size": [
+      128,
+      256
+    ],
+    "texels_per_ui_unit": 2,
+    "horizontal_stretch_part": "center only",
+    "accepted_source_pixels_modified_during_promotion": false,
+    "painted_or_synthesized_pixels_during_promotion": 0
+  },
+  "accepted_assets": {
+    "normal": {
+      "file": "assets/source/character/tabs-v3/CharacterTabNormal_SourceV3.png",
+      "sha256": "eb513dc3163a7eb91490899d2ad663ca441f810731d8ecc475d487dc8fc54fad",
+      "metrics": {
+        "size": [
+          176,
+          80
+        ],
+        "pixel_sha256": "2923d9c20d1c61357404948c205e84e1a33eae592c917ccdff2f98efeb60098b",
+        "visible_bbox_exclusive": [
+          3,
+          0,
+          172,
+          80
+        ],
+        "transparent_rgb_nonzero_pixels": 0,
+        "green_dominant_pixels": 0
+      }
+    },
+    "hover": {
+      "file": "assets/source/character/tabs-v3/CharacterTabHover_SourceV3.png",
+      "sha256": "7c8084ab924585efe19f1a199073255d213610d18aa69f344e17c9fa6b4eb380",
+      "metrics": {
+        "size": [
+          176,
+          80
+        ],
+        "pixel_sha256": "10ad42fd2850adbf3b1e70ff5656be7294944585665a2a840c49a272e5a41616",
+        "visible_bbox_exclusive": [
+          4,
+          0,
+          172,
+          80
+        ],
+        "transparent_rgb_nonzero_pixels": 0,
+        "green_dominant_pixels": 0
+      }
+    },
+    "pressed": {
+      "file": "assets/source/character/tabs-v3/CharacterTabPressed_SourceV3.png",
+      "sha256": "36f2512e79751b7dd92aadadf5fdaff1687f28bc7247a419d00916a273353275",
+      "metrics": {
+        "size": [
+          176,
+          80
+        ],
+        "pixel_sha256": "9ab1a90fed80a050dd434a5c478636f0a90595ebb2cd2a90a32004956ea96bb2",
+        "visible_bbox_exclusive": [
+          3,
+          0,
+          173,
+          80
+        ],
+        "transparent_rgb_nonzero_pixels": 0,
+        "green_dominant_pixels": 0
+      }
+    },
+    "selected": {
+      "file": "assets/source/character/tabs-v3/CharacterTabSelected_SourceV3.png",
+      "sha256": "50624701ba8feeb3d33ec1024902bff2194d701dc6f4fd1e97f65e2dc21ee016",
+      "metrics": {
+        "size": [
+          176,
+          80
+        ],
+        "pixel_sha256": "82bd8918de9f3d26bde0bbc187c7d27af8b236b3f669009eb0a9c1e650c033e3",
+        "visible_bbox_exclusive": [
+          4,
+          0,
+          172,
+          80
+        ],
+        "transparent_rgb_nonzero_pixels": 0,
+        "green_dominant_pixels": 0
+      }
+    },
+    "atlas_runtime_master": {
+      "file": "assets/source/character/tabs-v3/CharacterTabsV3_RuntimeAtlas.png",
+      "sha256": "fac8c3660d70ffd52007e87fb022b1f275d0edf4560974df5851808eedf428e4",
+      "metrics": {
+        "size": [
+          128,
+          256
+        ],
+        "pixel_sha256": "ac100eae6c46344445dcaee8ff5a5af1081bd575dbfc3efc8ec653e41b717b8e",
+        "visible_bbox_exclusive": [
+          8,
+          8,
+          72,
+          216
+        ],
+        "transparent_rgb_nonzero_pixels": 0,
+        "green_dominant_pixels": 0
+      }
+    }
+  }
+}

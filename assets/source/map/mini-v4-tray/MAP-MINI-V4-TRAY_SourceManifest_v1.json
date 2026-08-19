@@ -1,0 +1,88 @@
+{
+  "schema": "aeui-map-mini-v4-tray-source-manifest-v1",
+  "schema_version": 1,
+  "module": "map",
+  "batch": "MAP-MINI-V4-TRAY",
+  "phase": "P5",
+  "status": "runtime-exported",
+  "accepted_on": "2026-08-19",
+  "user_acceptance": {
+    "exact_statement": "接受。并且考虑：我们是否真的需要游戏中的 connector？实机视觉效果很差。",
+    "accepted_candidate": "attempt 5",
+    "accepted_raw_sha256": "98bc709e50cc8161afd964cb93f4df9e3c73fcb4013e3e6ede95c90abe385cf9",
+    "authorized_exceptions": [
+      "maximum 2.2 percent relative Y compression",
+      "edge-connected near-cyan tolerance key"
+    ]
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "actual_imagegen_calls": 5,
+    "flow_errors_counted_as_imagegen_calls": false,
+    "accepted_raw": {
+      "sha256": "98bc709e50cc8161afd964cb93f4df9e3c73fcb4013e3e6ede95c90abe385cf9",
+      "size": [
+        1695,
+        928
+      ]
+    },
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/map/ART_BASELINE.md",
+    "stable_prompt": "docs/modules/map/SUBMODULE_ART_BASELINES.md"
+  },
+  "component": "MAP.MINI.ADDONS.TRAY.V4",
+  "source": {
+    "file": "assets/source/map/mini-v4-tray/MapMiniAddonTray_SourceV4.png",
+    "sha256": "2d16cacd7e3f985bb2cc72f103c8865e455a8683969ca4a6724cb967f1d356f3",
+    "metrics": {
+      "size": [
+        1080,
+        296
+      ],
+      "mode": "RGBA",
+      "pixel_sha256": "9a3bee7ed03f185a67e8e2781439f2abf0f74cd9190342a53af93bd5fb9a76b8",
+      "visible_bbox_exclusive": [
+        0,
+        0,
+        1080,
+        296
+      ],
+      "transparent_pixels": 9177,
+      "partially_transparent_pixels": 7273,
+      "opaque_pixels": 303230,
+      "transparent_rgb_nonzero_values": 0
+    }
+  },
+  "deterministic_transform": {
+    "raw_visible_bbox_exclusive": [
+      33,
+      263,
+      1648,
+      714
+    ],
+    "raw_visible_size": [
+      1615,
+      451
+    ],
+    "raw_visible_ratio": 3.5809312638580932,
+    "target_ratio": 3.6486486486486487,
+    "relative_y_compression": 0.018559579535189163,
+    "sampled_background_rgb": [
+      1,
+      240,
+      253
+    ],
+    "chroma_threshold_max_channel": 58,
+    "source_size": [
+      1080,
+      296
+    ],
+    "runtime_size": [
+      270,
+      74
+    ],
+    "transparent_rgb_cleared": true,
+    "generative_postprocess": false
+  },
+  "runtime_manifest": "assets/source/map/mini-v4-tray/MAP-MINI-V4-TRAY_RuntimeManifest_v1.json"
+}

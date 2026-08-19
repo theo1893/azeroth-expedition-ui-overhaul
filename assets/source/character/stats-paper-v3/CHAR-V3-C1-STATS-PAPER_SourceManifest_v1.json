@@ -20,7 +20,7 @@
     "actual_imagegen_calls": 4,
     "raw_candidate_sha256": "29c0540b5547da64d270e6c9b825591151ad2a81e94a632e998f6d587b5a6c45",
     "accepted_review_source_sha256": "eb740334f7e73dea9af11ed8a4ac0d65c9573e0dff148ed6b9e5e19ebb1a4b0a",
-    "postprocess": "authorized edge-connected green key, green-spill Alpha clear, transparent RGB clear, bbox extraction, <=2% independent-axis normalization, LANCZOS runtime downsample and POT TGA packing",
+    "postprocess": "authorized edge-connected green key, green-spill Alpha clear, transparent RGB clear, bbox extraction, <=2% independent-axis normalization, LANCZOS runtime downsample and POT TGA packing; deterministic 2x texel-density runtime export from accepted source",
     "python_generated_visual_pixels": false,
     "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
     "module_prompt": "docs/modules/character/ART_BASELINE.md",
@@ -31,10 +31,18 @@
       "file": "assets/source/character/stats-paper-v3/CharacterStatsPaper_SourceV3.png",
       "sha256": "eb740334f7e73dea9af11ed8a4ac0d65c9573e0dff148ed6b9e5e19ebb1a4b0a",
       "metrics": {
-        "size": [920, 312],
+        "size": [
+          920,
+          312
+        ],
         "mode": "RGBA",
         "pixel_sha256": "b3e3e6af9ac2f930a97acf777e03de68f42a98e55eb54bc0e5311f11812817ba",
-        "visible_bbox_exclusive": [0, 0, 920, 312],
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          920,
+          312
+        ],
         "transparent_pixels": 2579,
         "partially_transparent_pixels": 5252,
         "opaque_pixels": 279209,
@@ -44,32 +52,76 @@
     },
     "runtime_master": {
       "file": "assets/source/character/stats-paper-v3/CharacterStatsPaper_RuntimeMasterV3.png",
-      "sha256": "ff938d68384859fc81f8fa85e4e0ecd30c453d77a0316ef6f95fa2e95a5bf006",
+      "sha256": "752d13aaf9ae6da882bfb0c8aad584f1995cacc396750f3f29326dfa1b5dfbf1",
       "metrics": {
-        "size": [230, 78],
+        "size": [
+          460,
+          156
+        ],
         "mode": "RGBA",
-        "pixel_sha256": "00336582394969335541aba17bc729d03eae89fa72ec7b737edd5d40d338c2ea",
-        "visible_bbox_exclusive": [0, 0, 230, 78],
-        "transparent_pixels": 31,
-        "partially_transparent_pixels": 1091,
-        "opaque_pixels": 16818,
-        "visible_green_spill_pixels": 0,
+        "pixel_sha256": "878d2eac69727326ceb68239c9db7cfddd66b0222818bf6cf5d8918ec3cecf9f",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          460,
+          156
+        ],
+        "transparent_pixels": 360,
+        "partially_transparent_pixels": 2502,
+        "opaque_pixels": 68898,
+        "visible_green_spill_pixels": 31,
         "transparent_rgb_nonzero_pixels": 0
-      }
+      },
+      "texels_per_ui_unit": 2,
+      "logical_size_ui": [
+        230,
+        78
+      ]
     }
   },
   "deterministic_transform": {
-    "input_size": [1254, 1254],
-    "key_rgb": [3, 249, 9],
+    "input_size": [
+      1254,
+      1254
+    ],
+    "key_rgb": [
+      3,
+      249,
+      9
+    ],
     "border_flat_ratio": 1.0,
-    "foreground_bbox_exclusive": [77, 434, 1177, 820],
+    "foreground_bbox_exclusive": [
+      77,
+      434,
+      1177,
+      820
+    ],
     "foreground_aspect": 2.849741,
     "target_aspect": 2.948718,
-    "axis_normalization": [1.017218, 0.983074],
+    "axis_normalization": [
+      1.017218,
+      0.983074
+    ],
     "source_green_spill_alpha_cleared": 153,
-    "runtime_green_spill_alpha_cleared": 4,
+    "runtime_green_spill_alpha_cleared": 0,
     "painted_or_synthesized_pixels": 0,
-    "dynamic_content_baked": false
+    "dynamic_content_baked": false,
+    "sampled_runtime_size": [
+      460,
+      156
+    ],
+    "texels_per_ui_unit": 2
   },
-  "runtime_manifest": "assets/source/character/stats-paper-v3/CHAR-V3-C1-STATS-PAPER_RuntimeManifest_v1.json"
+  "runtime_manifest": "assets/source/character/stats-paper-v3/CHAR-V3-C1-STATS-PAPER_RuntimeManifest_v1.json",
+  "runtime_density_upgrade": {
+    "contract": "CHARACTER-TEXEL-DENSITY-2X",
+    "authorized_on": "2026-08-19",
+    "user_instruction": "修复",
+    "texels_per_ui_unit": 2,
+    "ui_geometry_changed": false,
+    "hitboxes_changed": false,
+    "accepted_source_pixels_changed": false,
+    "imagegen_calls": 0,
+    "operation": "direct LANCZOS reduction from accepted high-resolution source to 2x sampled runtime pixels, transparent RGB clear, and POT TGA packing"
+  }
 }

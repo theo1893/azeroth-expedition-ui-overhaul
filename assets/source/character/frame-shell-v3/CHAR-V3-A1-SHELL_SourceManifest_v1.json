@@ -20,7 +20,7 @@
     "actual_imagegen_calls": 3,
     "raw_candidate_sha256": "317745a5d913aee8880deb25b1b2f777d4256c4487763a04583df74fa95d8d20",
     "accepted_review_source_sha256": "51e09aa8d12b236c974854597a4286dd484982bba27a7c2ac35d57cd89b228fc",
-    "postprocess": "authorized green-key spill Alpha clear, transparent RGB clear, LANCZOS runtime downsample and native four-slice export",
+    "postprocess": "authorized green-key spill Alpha clear, transparent RGB clear, LANCZOS runtime downsample and native four-slice export; deterministic 2x texel-density runtime export from accepted source",
     "python_generated_visual_pixels": false,
     "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
     "module_prompt": "docs/modules/character/ART_BASELINE.md",
@@ -31,10 +31,18 @@
       "file": "assets/source/character/frame-shell-v3/CharacterFrameShell_SourceV3.png",
       "sha256": "a8efea06629dab046fb1dfda113094e12c0e22ac422b8ebc63d794606391eb1d",
       "metrics": {
-        "size": [1536, 2048],
+        "size": [
+          1536,
+          2048
+        ],
         "mode": "RGBA",
         "pixel_sha256": "a1718187b1d63440d833dd8a5092964f715fcefa364a884e5ee07e076bcd1ba2",
-        "visible_bbox_exclusive": [7, 0, 1528, 2048],
+        "visible_bbox_exclusive": [
+          7,
+          0,
+          1528,
+          2048
+        ],
         "transparent_pixels": 1474384,
         "partially_transparent_pixels": 30447,
         "opaque_pixels": 1640897,
@@ -44,35 +52,120 @@
     },
     "runtime_master": {
       "file": "assets/source/character/frame-shell-v3/CharacterFrameShell_RuntimeMasterV3.png",
-      "sha256": "82505ebf623ef368ea6a73ef8e0a2c8b41d5613fa2f8c9fb33c918bc2b134e4e",
+      "sha256": "934dfae4d49d8115f2325e38ba0543cd125aa05046d841ddfba9616eb5709699",
       "metrics": {
-        "size": [384, 512],
+        "size": [
+          768,
+          1024
+        ],
         "mode": "RGBA",
-        "pixel_sha256": "4170380f03051f5645176af307739f88759adb388658a2bf7e7e2cf7195dc083",
-        "visible_bbox_exclusive": [0, 0, 384, 512],
-        "transparent_pixels": 88943,
-        "partially_transparent_pixels": 8944,
-        "opaque_pixels": 98721,
-        "visible_green_spill_pixels": 0,
+        "pixel_sha256": "12b17b1cfb67af8e3bb5ac137327a3a924e1dce558993cb7d0135c44ab1f83b4",
+        "visible_bbox_exclusive": [
+          2,
+          0,
+          766,
+          1024
+        ],
+        "transparent_pixels": 362642,
+        "partially_transparent_pixels": 19013,
+        "opaque_pixels": 404777,
+        "visible_green_spill_pixels": 16,
         "transparent_rgb_nonzero_pixels": 0
-      }
+      },
+      "texels_per_ui_unit": 2,
+      "logical_size_ui": [
+        384,
+        512
+      ]
     }
   },
   "deterministic_transform": {
     "green_spill_source_pixels_alpha_cleared": 19207,
-    "green_spill_runtime_pixels_alpha_cleared_after_resize": 129,
+    "green_spill_runtime_pixels_alpha_cleared_after_resize": 0,
     "painted_or_synthesized_pixels": 0,
-    "model_hard_clear_ui": [65, 78, 298, 302],
-    "stats_hard_clear_ui": [67, 291, 297, 369],
+    "model_hard_clear_ui": [
+      65,
+      78,
+      298,
+      302
+    ],
+    "stats_hard_clear_ui": [
+      67,
+      291,
+      297,
+      369
+    ],
     "native_slices": {
-      "top_left": [0, 0, 256, 256],
-      "top_right": [256, 0, 384, 256],
-      "bottom_left": [0, 256, 256, 512],
-      "bottom_right": [256, 256, 384, 512]
+      "top_left": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "top_right": [
+        256,
+        0,
+        384,
+        256
+      ],
+      "bottom_left": [
+        0,
+        256,
+        256,
+        512
+      ],
+      "bottom_right": [
+        256,
+        256,
+        384,
+        512
+      ]
     },
     "native_four_slice_reassembly_exact": true,
     "dynamic_content_baked": false,
-    "top_left_portrait_or_icon_baked": false
+    "top_left_portrait_or_icon_baked": false,
+    "sampled_runtime_size": [
+      768,
+      1024
+    ],
+    "sampled_slices": {
+      "top_left": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "top_right": [
+        512,
+        0,
+        768,
+        512
+      ],
+      "bottom_left": [
+        0,
+        512,
+        512,
+        1024
+      ],
+      "bottom_right": [
+        512,
+        512,
+        768,
+        1024
+      ]
+    },
+    "texels_per_ui_unit": 2
   },
-  "runtime_manifest": "assets/source/character/frame-shell-v3/CHAR-V3-A1-SHELL_RuntimeManifest_v1.json"
+  "runtime_manifest": "assets/source/character/frame-shell-v3/CHAR-V3-A1-SHELL_RuntimeManifest_v1.json",
+  "runtime_density_upgrade": {
+    "contract": "CHARACTER-TEXEL-DENSITY-2X",
+    "authorized_on": "2026-08-19",
+    "user_instruction": "修复",
+    "texels_per_ui_unit": 2,
+    "ui_geometry_changed": false,
+    "hitboxes_changed": false,
+    "accepted_source_pixels_changed": false,
+    "imagegen_calls": 0,
+    "operation": "direct LANCZOS reduction from accepted high-resolution source to 2x sampled runtime pixels, transparent RGB clear, and POT TGA packing"
+  }
 }

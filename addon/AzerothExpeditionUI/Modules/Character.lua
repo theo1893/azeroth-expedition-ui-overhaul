@@ -1,7 +1,8 @@
 local addon = AzerothExpeditionUI
 local Character = {}
 
-Character.runtimeContract = "1.4"
+Character.runtimeContract = "1.9"
+Character.texelDensity = 2
 
 local COMPONENT_ROUTES = {
   "character.frame-shell-v3",
@@ -11,6 +12,8 @@ local COMPONENT_ROUTES = {
   "character.slot-base-v3",
   "character.slot-interaction-v3",
 }
+local TAB_COMPONENT_ROUTE = "character.tabs-v3"
+local AMMO_COMPONENT_ROUTE = "character.ammo-slot-v3"
 local MEDIA = addon.media.root .. "Character\\"
 local ART = {
   topLeft = {
@@ -49,7 +52,7 @@ local MODEL_BACKGROUND = {
   y = 78,
   width = 233,
   height = 224,
-  texCoord = { 0, 233 / 256, 0, 224 / 256 },
+  texCoord = { 0, 466 / 512, 0, 448 / 512 },
 }
 
 local STATS_PAPER = {
@@ -58,7 +61,20 @@ local STATS_PAPER = {
   y = 291,
   width = 230,
   height = 78,
-  texCoord = { 0, 230 / 256, 0, 78 / 128 },
+  texCoord = { 0, 460 / 512, 0, 156 / 256 },
+}
+
+-- The accepted shell keeps the native bottom weapon area transparent.  Reuse
+-- a native-size 233x72 crop from the accepted model background beneath that
+-- area so pfUI's flat black backdrop cannot show between the stats paper and
+-- the shell's lower inner edge.  No generated pixels are stretched or rebuilt.
+local EQUIPMENT_FOOTER_BACKGROUND = {
+  path = MODEL_BACKGROUND.path,
+  x = 65,
+  y = 369,
+  width = 233,
+  height = 72,
+  texCoord = { 0, 466 / 512, 304 / 512, 448 / 512 },
 }
 
 local RESISTANCE_WELLS = {
@@ -66,31 +82,31 @@ local RESISTANCE_WELLS = {
     path = MEDIA .. "CharacterResistanceWell1V3",
     width = 32,
     height = 29,
-    texCoord = { 0, 1, 0, 29 / 32 },
+    texCoord = { 0, 1, 0, 58 / 64 },
   },
   {
     path = MEDIA .. "CharacterResistanceWell2V3",
     width = 32,
     height = 29,
-    texCoord = { 0, 1, 0, 29 / 32 },
+    texCoord = { 0, 1, 0, 58 / 64 },
   },
   {
     path = MEDIA .. "CharacterResistanceWell3V3",
     width = 32,
     height = 29,
-    texCoord = { 0, 1, 0, 29 / 32 },
+    texCoord = { 0, 1, 0, 58 / 64 },
   },
   {
     path = MEDIA .. "CharacterResistanceWell4V3",
     width = 32,
     height = 29,
-    texCoord = { 0, 1, 0, 29 / 32 },
+    texCoord = { 0, 1, 0, 58 / 64 },
   },
   {
     path = MEDIA .. "CharacterResistanceWell5V3",
     width = 32,
     height = 29,
-    texCoord = { 0, 1, 0, 29 / 32 },
+    texCoord = { 0, 1, 0, 58 / 64 },
   },
 }
 
@@ -99,27 +115,82 @@ local SLOT_BASE = {
   width = 37,
   height = 37,
   variants = {
-    A = { 0, 37 / 128, 0, 37 / 128 },
-    B = { 64 / 128, 101 / 128, 0, 37 / 128 },
-    C = { 0, 37 / 128, 64 / 128, 101 / 128 },
-    D = { 64 / 128, 101 / 128, 64 / 128, 101 / 128 },
+    A = { 0, 74 / 256, 0, 74 / 256 },
+    B = { 128 / 256, 202 / 256, 0, 74 / 256 },
+    C = { 0, 74 / 256, 128 / 256, 202 / 256 },
+    D = { 128 / 256, 202 / 256, 128 / 256, 202 / 256 },
   },
 }
 
 local SLOT_INTERACTION = {
   path = MEDIA .. "CharacterSlotInteractionAtlasV3",
+  width = 37,
+  height = 37,
   states = {
     highlight = {
-      texCoord = { 0, 37 / 256, 0, 37 / 64 },
+      texCoord = { 0, 74 / 512, 0, 74 / 128 },
       alpha = 1,
     },
     pushed = {
-      texCoord = { 64 / 256, 101 / 256, 0, 37 / 64 },
+      texCoord = { 128 / 512, 202 / 512, 0, 74 / 128 },
       alpha = 1,
     },
     disabled = {
-      texCoord = { 128 / 256, 165 / 256, 0, 37 / 64 },
+      texCoord = { 256 / 512, 330 / 512, 0, 74 / 128 },
       alpha = 150 / 255,
+    },
+  },
+}
+
+local AMMO_SLOT = {
+  path = MEDIA .. "CharacterAmmoSlotV3",
+  width = 27,
+  height = 27,
+  states = {
+    normal = {
+      texCoord = { 0, 54 / 128, 0, 54 / 128 },
+      alpha = 1,
+    },
+    highlight = {
+      texCoord = { 64 / 128, 118 / 128, 0, 54 / 128 },
+      alpha = 1,
+    },
+    pushed = {
+      texCoord = { 0, 54 / 128, 64 / 128, 118 / 128 },
+      alpha = 1,
+    },
+    disabled = {
+      texCoord = { 64 / 128, 118 / 128, 64 / 128, 118 / 128 },
+      alpha = 1,
+    },
+  },
+}
+
+local CHARACTER_TABS = {
+  path = MEDIA .. "CharacterTabsV3",
+  height = 20,
+  leftWidth = 6,
+  rightWidth = 6,
+  states = {
+    normal = {
+      left = { 8 / 128, 20 / 128, 8 / 256, 48 / 256 },
+      center = { 32 / 128, 48 / 128, 8 / 256, 48 / 256 },
+      right = { 60 / 128, 72 / 128, 8 / 256, 48 / 256 },
+    },
+    hover = {
+      left = { 8 / 128, 20 / 128, 64 / 256, 104 / 256 },
+      center = { 32 / 128, 48 / 128, 64 / 256, 104 / 256 },
+      right = { 60 / 128, 72 / 128, 64 / 256, 104 / 256 },
+    },
+    pressed = {
+      left = { 8 / 128, 20 / 128, 120 / 256, 160 / 256 },
+      center = { 32 / 128, 48 / 128, 120 / 256, 160 / 256 },
+      right = { 60 / 128, 72 / 128, 120 / 256, 160 / 256 },
+    },
+    selected = {
+      left = { 8 / 128, 20 / 128, 176 / 256, 216 / 256 },
+      center = { 32 / 128, 48 / 128, 176 / 256, 216 / 256 },
+      right = { 60 / 128, 72 / 128, 176 / 256, 216 / 256 },
     },
   },
 }
@@ -175,12 +246,42 @@ local function ScopedOwnershipActive()
   return true
 end
 
+local function TabOwnershipActive()
+  return
+    pfUI and
+    type(pfUI.GetExpeditionComponentOwner) == "function" and
+    pfUI:GetExpeditionComponentOwner(TAB_COMPONENT_ROUTE) == "character" and
+    true or false
+end
+
+local function AmmoOwnershipActive()
+  return
+    pfUI and
+    type(pfUI.GetExpeditionComponentOwner) == "function" and
+    pfUI:GetExpeditionComponentOwner(AMMO_COMPONENT_ROUTE) == "character" and
+    true or false
+end
+
 local function FrameShown(frame)
   if not frame then return false end
   if type(frame.IsShown) == "function" then
     return frame:IsShown() and true or false
   end
   return true
+end
+
+local function ResolveStatsProvider()
+  local betterStats = _G["BetterCharacterAttributesFrame"]
+  if betterStats and FrameShown(betterStats) then
+    return betterStats, "BetterCharacterAttributesFrame"
+  end
+  if CharacterAttributesFrame then
+    return CharacterAttributesFrame, "CharacterAttributesFrame"
+  end
+  if betterStats then
+    return betterStats, "BetterCharacterAttributesFrame"
+  end
+  return nil, "missing"
 end
 
 local function SetShown(frame, shown)
@@ -218,7 +319,7 @@ local function RestorePortraits()
   CharacterFrame.aeuiCharacterPortraitRestore = nil
 end
 
-local function ConfigureTexture(texture, definition)
+local function ConfigureTexture(texture, definition, anchor)
   texture:ClearAllPoints()
   texture:SetTexture(definition.path)
   texture:SetWidth(definition.width)
@@ -232,12 +333,16 @@ local function ConfigureTexture(texture, definition)
   )
   texture:SetVertexColor(1, 1, 1)
   texture:SetAlpha(1)
+  local relativeTo = anchor and anchor.relativeTo or CharacterFrame
+  local relativePoint = anchor and anchor.relativePoint or "TOPLEFT"
+  local x = anchor and anchor.x or definition.x
+  local y = anchor and anchor.y or -definition.y
   texture:SetPoint(
     "TOPLEFT",
-    CharacterFrame,
-    "TOPLEFT",
-    definition.x,
-    -definition.y
+    relativeTo,
+    relativePoint,
+    x,
+    y
   )
   texture:Show()
 end
@@ -282,6 +387,17 @@ local function EnsureStatsPaper()
   -- while CharacterAttributesFrame text and controls remain above it.
   local texture = PaperDollFrame:CreateTexture(nil, "BACKGROUND")
   PaperDollFrame.aeuiCharacterStatsPaperV3 = texture
+  return texture
+end
+
+local function EnsureEquipmentFooterBackground()
+  if not PaperDollFrame then return nil end
+  if PaperDollFrame.aeuiCharacterEquipmentFooterBackgroundV3 then
+    return PaperDollFrame.aeuiCharacterEquipmentFooterBackgroundV3
+  end
+
+  local texture = PaperDollFrame:CreateTexture(nil, "BACKGROUND")
+  PaperDollFrame.aeuiCharacterEquipmentFooterBackgroundV3 = texture
   return texture
 end
 
@@ -395,7 +511,9 @@ local function ConfigureSlotBase(texture, frame, variant)
   )
   texture:SetVertexColor(1, 1, 1)
   texture:SetAlpha(1)
-  texture:SetPoint("CENTER", frame, "CENTER", 0, 0)
+  -- Use the native button origin rather than CENTER so odd-sized 37 px
+  -- textures cannot acquire half-pixel drift at non-1.0 UI scales.
+  texture:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, 0)
   texture:Show()
 end
 
@@ -407,6 +525,8 @@ local function CaptureTextureState(texture)
   local state = {
     exists = true,
     path = texture.GetTexture and texture:GetTexture() or nil,
+    width = texture.GetWidth and texture:GetWidth() or nil,
+    height = texture.GetHeight and texture:GetHeight() or nil,
     alpha = texture.GetAlpha and texture:GetAlpha() or 1,
     texCoord = texture.GetTexCoord and { texture:GetTexCoord() } or nil,
     blendMode = texture.GetBlendMode and texture:GetBlendMode() or nil,
@@ -414,6 +534,20 @@ local function CaptureTextureState(texture)
   }
   if texture.GetVertexColor then
     state.vertexColor = { texture:GetVertexColor() }
+  end
+  if texture.GetNumPoints and texture.GetPoint then
+    state.points = {}
+    for index = 1, texture:GetNumPoints() do
+      local point, relativeTo, relativePoint, x, y =
+        texture:GetPoint(index)
+      state.points[index] = {
+        point = point,
+        relativeTo = relativeTo,
+        relativePoint = relativePoint,
+        x = x,
+        y = y,
+      }
+    end
   end
   return state
 end
@@ -426,6 +560,24 @@ local function RestoreTextureState(frame, setterName, getterName, state)
   setter(frame, state.exists and state.path or nil)
   local texture = getter(frame)
   if not texture or not state.exists then return end
+  if state.width and texture.SetWidth then
+    texture:SetWidth(state.width)
+  end
+  if state.height and texture.SetHeight then
+    texture:SetHeight(state.height)
+  end
+  if state.points and texture.ClearAllPoints and texture.SetPoint then
+    texture:ClearAllPoints()
+    for _, point in ipairs(state.points) do
+      texture:SetPoint(
+        point.point,
+        point.relativeTo,
+        point.relativePoint,
+        point.x,
+        point.y
+      )
+    end
+  end
   if state.texCoord and texture.SetTexCoord then
     texture:SetTexCoord(unpack(state.texCoord))
   end
@@ -458,8 +610,15 @@ local function CaptureSlotInteractionProvider(frame)
   }
 end
 
-local function ConfigureSlotInteractionTexture(frame, setterName, getterName, definition)
-  frame[setterName](frame, SLOT_INTERACTION.path)
+local function ConfigureSlotInteractionTexture(
+  frame,
+  setterName,
+  getterName,
+  definition,
+  contract
+)
+  contract = contract or SLOT_INTERACTION
+  frame[setterName](frame, contract.path)
   local texture = frame[getterName](frame)
   if not texture then return false end
 
@@ -471,6 +630,10 @@ local function ConfigureSlotInteractionTexture(frame, setterName, getterName, de
   )
   texture:SetVertexColor(1, 1, 1)
   texture:SetAlpha(definition.alpha)
+  texture:ClearAllPoints()
+  texture:SetWidth(contract.width)
+  texture:SetHeight(contract.height)
+  texture:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, 0)
   if texture.SetBlendMode then
     texture:SetBlendMode("BLEND")
   end
@@ -541,6 +704,304 @@ local function RestoreSlotInteractionProvider(frame)
     frame.scoreText:SetDrawLayer(restore.scoreLayer)
   end
   frame.aeuiCharacterSlotInteractionRestoreV3 = nil
+end
+
+local function ConfigureAmmoSlotBase(texture, frame)
+  local definition = AMMO_SLOT.states.normal
+  texture:ClearAllPoints()
+  texture:SetTexture(AMMO_SLOT.path)
+  texture:SetWidth(AMMO_SLOT.width)
+  texture:SetHeight(AMMO_SLOT.height)
+  texture:SetTexCoord(
+    definition.texCoord[1],
+    definition.texCoord[2],
+    definition.texCoord[3],
+    definition.texCoord[4]
+  )
+  texture:SetVertexColor(1, 1, 1)
+  texture:SetAlpha(definition.alpha)
+  texture:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, 0)
+  texture:Show()
+end
+
+local function ConfigureAmmoSlot()
+  local frame = _G["CharacterAmmoSlot"]
+  if
+    not frame or
+    not frame.backdrop or
+    not frame.SetHighlightTexture or
+    not frame.GetHighlightTexture or
+    not frame.SetPushedTexture or
+    not frame.GetPushedTexture or
+    not frame.SetDisabledTexture or
+    not frame.GetDisabledTexture
+  then
+    return false
+  end
+
+  CaptureAndHideSlotProvider(frame)
+  ConfigureAmmoSlotBase(EnsureSlotBase(frame), frame)
+  CaptureSlotInteractionProvider(frame)
+
+  if not ConfigureSlotInteractionTexture(
+    frame,
+    "SetHighlightTexture",
+    "GetHighlightTexture",
+    AMMO_SLOT.states.highlight,
+    AMMO_SLOT
+  ) then return false end
+  if not ConfigureSlotInteractionTexture(
+    frame,
+    "SetPushedTexture",
+    "GetPushedTexture",
+    AMMO_SLOT.states.pushed,
+    AMMO_SLOT
+  ) then return false end
+  if not ConfigureSlotInteractionTexture(
+    frame,
+    "SetDisabledTexture",
+    "GetDisabledTexture",
+    AMMO_SLOT.states.disabled,
+    AMMO_SLOT
+  ) then return false end
+
+  if frame.scoreText and frame.scoreText.SetDrawLayer then
+    frame.scoreText:SetDrawLayer("HIGHLIGHT")
+  end
+  return true
+end
+
+local function RestoreAmmoSlot()
+  local frame = _G["CharacterAmmoSlot"]
+  RestoreSlotInteractionProvider(frame)
+  RestoreSlotProvider(frame)
+end
+
+local function EnsureCharacterTabArt(frame)
+  if frame.aeuiCharacterTabArtV3 then
+    return frame.aeuiCharacterTabArtV3
+  end
+
+  local art = {
+    left = frame:CreateTexture(nil, "BACKGROUND"),
+    center = frame:CreateTexture(nil, "BACKGROUND"),
+    right = frame:CreateTexture(nil, "BACKGROUND"),
+  }
+  frame.aeuiCharacterTabArtV3 = art
+  return art
+end
+
+local function CaptureAndHideCharacterTabProvider(frame)
+  if not frame.aeuiCharacterTabRestoreV3 then
+    frame.aeuiCharacterTabRestoreV3 = {
+      backdropShown = FrameShown(frame.backdrop),
+      backdropBorderShown = FrameShown(frame.backdrop_border),
+    }
+  end
+  if frame.backdrop then frame.backdrop:Hide() end
+  if frame.backdrop_border then frame.backdrop_border:Hide() end
+end
+
+local function RestoreCharacterTabProvider(frame)
+  if not frame then return end
+  local art = frame.aeuiCharacterTabArtV3
+  if art then
+    for _, texture in pairs(art) do
+      texture:Hide()
+    end
+  end
+  local restore = frame.aeuiCharacterTabRestoreV3
+  if not restore then return end
+  SetShown(frame.backdrop, restore.backdropShown)
+  SetShown(frame.backdrop_border, restore.backdropBorderShown)
+  frame.aeuiCharacterTabRestoreV3 = nil
+end
+
+local function ResolveCharacterTabState(frame)
+  if frame.IsEnabled then
+    local enabled = frame:IsEnabled()
+    if not enabled or enabled == 0 then
+      return "selected"
+    end
+  end
+  if frame.aeuiCharacterTabMouseDownV3 then
+    return "pressed"
+  end
+  if frame.aeuiCharacterTabHoverV3 then
+    return "hover"
+  end
+  return "normal"
+end
+
+local function ConfigureCharacterTabPart(
+  texture,
+  frame,
+  texCoord,
+  width,
+  point,
+  relativePoint,
+  x
+)
+  texture:ClearAllPoints()
+  texture:SetTexture(CHARACTER_TABS.path)
+  texture:SetWidth(width)
+  texture:SetHeight(CHARACTER_TABS.height)
+  texture:SetTexCoord(
+    texCoord[1],
+    texCoord[2],
+    texCoord[3],
+    texCoord[4]
+  )
+  texture:SetVertexColor(1, 1, 1)
+  texture:SetAlpha(1)
+  texture:SetPoint(point, frame, relativePoint, x, 0)
+  texture:Show()
+end
+
+local function ConfigureCharacterTab(frame)
+  local art = EnsureCharacterTabArt(frame)
+  local stateName = ResolveCharacterTabState(frame)
+  local state = CHARACTER_TABS.states[stateName]
+  local width = frame:GetWidth() or 0
+  local centerWidth =
+    width - CHARACTER_TABS.leftWidth - CHARACTER_TABS.rightWidth
+  if centerWidth < 1 then centerWidth = 1 end
+
+  ConfigureCharacterTabPart(
+    art.left,
+    frame,
+    state.left,
+    CHARACTER_TABS.leftWidth,
+    "TOPLEFT",
+    "TOPLEFT",
+    0
+  )
+  ConfigureCharacterTabPart(
+    art.center,
+    frame,
+    state.center,
+    centerWidth,
+    "TOPLEFT",
+    "TOPLEFT",
+    CHARACTER_TABS.leftWidth
+  )
+  ConfigureCharacterTabPart(
+    art.right,
+    frame,
+    state.right,
+    CHARACTER_TABS.rightWidth,
+    "TOPRIGHT",
+    "TOPRIGHT",
+    0
+  )
+end
+
+local function RefreshCharacterTab(frame)
+  if
+    not ModuleEnabled() or
+    not ScopedOwnershipActive() or
+    not TabOwnershipActive()
+  then
+    RestoreCharacterTabProvider(frame)
+    return
+  end
+  CaptureAndHideCharacterTabProvider(frame)
+  ConfigureCharacterTab(frame)
+end
+
+local function RefreshAllCharacterTabs()
+  for index = 1, 5 do
+    local frame = _G["CharacterFrameTab" .. index]
+    if frame then RefreshCharacterTab(frame) end
+  end
+end
+
+local function InstallCharacterTabHooks(frame)
+  if frame.aeuiCharacterTabHooksV3 then return end
+  frame.aeuiCharacterTabHooksV3 = true
+
+  local previousOnShow = frame:GetScript("OnShow")
+  frame:SetScript("OnShow", function()
+    if previousOnShow then previousOnShow() end
+    RefreshCharacterTab(frame)
+  end)
+
+  local previousOnHide = frame:GetScript("OnHide")
+  frame:SetScript("OnHide", function()
+    if previousOnHide then previousOnHide() end
+    frame.aeuiCharacterTabHoverV3 = nil
+    frame.aeuiCharacterTabMouseDownV3 = nil
+  end)
+
+  local previousOnEnter = frame:GetScript("OnEnter")
+  frame:SetScript("OnEnter", function()
+    if previousOnEnter then previousOnEnter() end
+    frame.aeuiCharacterTabHoverV3 = true
+    RefreshCharacterTab(frame)
+  end)
+
+  local previousOnLeave = frame:GetScript("OnLeave")
+  frame:SetScript("OnLeave", function()
+    if previousOnLeave then previousOnLeave() end
+    frame.aeuiCharacterTabHoverV3 = nil
+    frame.aeuiCharacterTabMouseDownV3 = nil
+    RefreshCharacterTab(frame)
+  end)
+
+  local previousOnMouseDown = frame:GetScript("OnMouseDown")
+  frame:SetScript("OnMouseDown", function()
+    if previousOnMouseDown then previousOnMouseDown() end
+    frame.aeuiCharacterTabMouseDownV3 = true
+    RefreshCharacterTab(frame)
+  end)
+
+  local previousOnMouseUp = frame:GetScript("OnMouseUp")
+  frame:SetScript("OnMouseUp", function()
+    if previousOnMouseUp then previousOnMouseUp() end
+    frame.aeuiCharacterTabMouseDownV3 = nil
+    RefreshCharacterTab(frame)
+  end)
+
+  local previousOnClick = frame:GetScript("OnClick")
+  frame:SetScript("OnClick", function()
+    if previousOnClick then previousOnClick() end
+    frame.aeuiCharacterTabMouseDownV3 = nil
+    RefreshAllCharacterTabs()
+  end)
+
+  local previousOnEnable = frame:GetScript("OnEnable")
+  frame:SetScript("OnEnable", function()
+    if previousOnEnable then previousOnEnable() end
+    RefreshAllCharacterTabs()
+  end)
+
+  local previousOnDisable = frame:GetScript("OnDisable")
+  frame:SetScript("OnDisable", function()
+    if previousOnDisable then previousOnDisable() end
+    RefreshAllCharacterTabs()
+  end)
+end
+
+local function ApplyCharacterTabs()
+  local frames = {}
+  for index = 1, 5 do
+    local frame = _G["CharacterFrameTab" .. index]
+    if not frame or not frame.backdrop then
+      return nil
+    end
+    table.insert(frames, frame)
+  end
+  for _, frame in ipairs(frames) do
+    InstallCharacterTabHooks(frame)
+    RefreshCharacterTab(frame)
+  end
+  return table.getn(frames)
+end
+
+local function HideCharacterTabs()
+  for index = 1, 5 do
+    RestoreCharacterTabProvider(_G["CharacterFrameTab" .. index])
+  end
 end
 
 local function ApplySlotBases()
@@ -629,6 +1090,13 @@ local function HideStatsPaper()
   if texture then texture:Hide() end
 end
 
+local function HideEquipmentFooterBackground()
+  local texture =
+    PaperDollFrame and
+    PaperDollFrame.aeuiCharacterEquipmentFooterBackgroundV3
+  if texture then texture:Hide() end
+end
+
 local function HideResistanceWells()
   for index = 1, 5 do
     local frame = _G["MagicResFrame" .. index]
@@ -656,12 +1124,18 @@ function Character:Restore()
     HideArt()
     HideModelBackground()
     HideStatsPaper()
+    HideEquipmentFooterBackground()
     HideResistanceWells()
     HideSlotInteractions()
     HideSlotBases()
+    RestoreAmmoSlot()
+    HideCharacterTabs()
     RestorePortraits()
     CharacterFrame.aeuiCharacterRuntimeContract = nil
   end
+  self.statsProviderName = nil
+  self.tabStatus = "inactive"
+  self.ammoStatus = "inactive"
   self.status = "inactive"
 end
 
@@ -716,7 +1190,37 @@ function Character:ApplyFrame()
     self.status = "model-background-missing"
     return false
   end
-  ConfigureTexture(modelBackground, MODEL_BACKGROUND)
+  ConfigureTexture(modelBackground, MODEL_BACKGROUND, {
+    relativeTo = CharacterModelFrame,
+    relativePoint = "TOPLEFT",
+    x = 0,
+    y = 0,
+  })
+
+  local statsProvider, statsProviderName = ResolveStatsProvider()
+  if not statsProvider then
+    self:Restore()
+    self.status = "stats-provider-missing"
+    return false
+  end
+  self.statsProviderName = statsProviderName
+
+  local equipmentFooterBackground = EnsureEquipmentFooterBackground()
+  if not equipmentFooterBackground then
+    self:Restore()
+    self.status = "equipment-footer-background-missing"
+    return false
+  end
+  ConfigureTexture(
+    equipmentFooterBackground,
+    EQUIPMENT_FOOTER_BACKGROUND,
+    {
+      relativeTo = statsProvider,
+      relativePoint = "BOTTOMLEFT",
+      x = -2,
+      y = 0,
+    }
+  )
 
   local statsPaper = EnsureStatsPaper()
   if not statsPaper then
@@ -724,7 +1228,12 @@ function Character:ApplyFrame()
     self.status = "stats-paper-missing"
     return false
   end
-  ConfigureTexture(statsPaper, STATS_PAPER)
+  ConfigureTexture(statsPaper, STATS_PAPER, {
+    relativeTo = statsProvider,
+    relativePoint = "TOPLEFT",
+    x = 0,
+    y = 0,
+  })
 
   local resistanceWells = EnsureResistanceWells()
   if not resistanceWells then
@@ -754,10 +1263,33 @@ function Character:ApplyFrame()
     self.status = "equipment-slot-state-provider-missing"
     return false
   end
+  if TabOwnershipActive() then
+    local tabCount = ApplyCharacterTabs()
+    if tabCount == 5 then
+      self.tabStatus = "5-provider-tabs-applied"
+    else
+      HideCharacterTabs()
+      self.tabStatus = "provider-missing-fallback"
+    end
+  else
+    HideCharacterTabs()
+    self.tabStatus = "ownership-route-disabled"
+  end
+  if AmmoOwnershipActive() then
+    if ConfigureAmmoSlot() then
+      self.ammoStatus = "provider-ammo-applied"
+    else
+      RestoreAmmoSlot()
+      self.ammoStatus = "provider-missing-fallback"
+    end
+  else
+    RestoreAmmoSlot()
+    self.ammoStatus = "ownership-route-disabled"
+  end
   CaptureAndHidePortraits()
 
   CharacterFrame.aeuiCharacterRuntimeContract = self.runtimeContract
-  self.status = "char-v3-base-layers-and-slot-states-applied"
+  self.status = "char-v3-provider-aligned-layers-and-slot-states-applied"
   return true
 end
 
@@ -780,16 +1312,25 @@ function Character:GetRuntimeStatus()
     "shell=" .. tostring(self.status or "unapplied") ..
     ", provider-geometry=384x512" ..
     ", model-background=233x224@65,78" ..
-    ", stats-paper=230x78@67,291" ..
+    ", equipment-footer-background=233x72@65,369/native-crop" ..
+    ", stats-paper=230x78/provider=" ..
+    tostring(self.statsProviderName or "unresolved") ..
     ", resistance-wells=5x32x29/provider-anchored" ..
     ", equipment-slot-base=19x37x37/atlas-v3" ..
     ", equipment-slot-states=19xhover/pressed/disabled/atlas-v3" ..
-    ", ammo-slot=provider-live/e3-pending" ..
+    ", character-tabs=" .. tostring(self.tabStatus or "unresolved") ..
+    "/3-slice/20-ui-high/dynamic-width" ..
+    ", ammo-slot=" .. tostring(self.ammoStatus or "unresolved") ..
+    "/27x27/21x21-safe/atlas-v3" ..
     ", provider-dynamic-content=live" ..
+    ", texel-density=2x/logical-geometry-unchanged" ..
     ", top-left-portrait=hidden"
 end
 
 function Character:Initialize()
+  self.statsProviderName = nil
+  self.tabStatus = "unapplied"
+  self.ammoStatus = "unapplied"
   self.status = "unapplied"
 end
 

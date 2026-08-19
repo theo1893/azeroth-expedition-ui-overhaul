@@ -1,0 +1,168 @@
+{
+  "schema": "aeui-character-v3-e3-ammo-runtime-manifest-v1",
+  "schema_version": 1,
+  "module": "character",
+  "batch": "CHAR-V3-E3-AMMO V1 final",
+  "component": "CHAR.SLOT.AMMO",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "runtime_contract": "1.9",
+  "ownership_route": "character.ammo-slot-v3",
+  "source_manifest": "assets/source/character/ammo-slot-v3/CHAR-V3-E3-AMMO_SourceManifest_v1.json",
+  "runtime": {
+    "file": "addon/AzerothExpeditionUI/Media/Character/CharacterAmmoSlotV3.tga",
+    "sha256": "dc5cfb746d1bdcb820424a7d1566796bf119bfe9d14c1525be98d47a0d430aba",
+    "texture_size": [
+      128,
+      128
+    ],
+    "pixel_sha256": "9b95f5a2449ec51a7e527079a568544dd1c234a54abd439125d6ae4f95986a50",
+    "texels_per_ui_unit": 2,
+    "tga": {
+      "image_type": 2,
+      "width": 128,
+      "height": 128,
+      "bits_per_pixel": 32,
+      "descriptor": 8,
+      "top_origin": false
+    },
+    "states": {
+      "normal": {
+        "cell_origin": [
+          0,
+          0
+        ],
+        "logical_size_ui": [
+          27,
+          27
+        ],
+        "sampled_size": [
+          54,
+          54
+        ],
+        "icon_safe_size_ui": [
+          21,
+          21
+        ],
+        "icon_safe_sampled_box": [
+          6,
+          6,
+          48,
+          48
+        ],
+        "texels_per_ui_unit": 2,
+        "uv": [
+          0.0,
+          0.421875,
+          0.0,
+          0.421875
+        ],
+        "pixel_sha256": "cbb5335aa7ebbf601a3b995a4fd83a54f940666bc9947d9cbe9421c3fa6cda8b"
+      },
+      "hover": {
+        "cell_origin": [
+          64,
+          0
+        ],
+        "logical_size_ui": [
+          27,
+          27
+        ],
+        "sampled_size": [
+          54,
+          54
+        ],
+        "icon_safe_size_ui": [
+          21,
+          21
+        ],
+        "icon_safe_sampled_box": [
+          6,
+          6,
+          48,
+          48
+        ],
+        "texels_per_ui_unit": 2,
+        "uv": [
+          0.5,
+          0.921875,
+          0.0,
+          0.421875
+        ],
+        "pixel_sha256": "15fdd54153a33c49af1ccf6ddd24fb96a80a965b901da88174395799388db61f"
+      },
+      "pressed": {
+        "cell_origin": [
+          0,
+          64
+        ],
+        "logical_size_ui": [
+          27,
+          27
+        ],
+        "sampled_size": [
+          54,
+          54
+        ],
+        "icon_safe_size_ui": [
+          21,
+          21
+        ],
+        "icon_safe_sampled_box": [
+          6,
+          6,
+          48,
+          48
+        ],
+        "texels_per_ui_unit": 2,
+        "uv": [
+          0.0,
+          0.421875,
+          0.5,
+          0.921875
+        ],
+        "pixel_sha256": "bb4829a484a0d6f4d42f0436c9ae4061c20a6cfe3a24e99614bb7f69d92d03f6"
+      },
+      "disabled": {
+        "cell_origin": [
+          64,
+          64
+        ],
+        "logical_size_ui": [
+          27,
+          27
+        ],
+        "sampled_size": [
+          54,
+          54
+        ],
+        "icon_safe_size_ui": [
+          21,
+          21
+        ],
+        "icon_safe_sampled_box": [
+          6,
+          6,
+          48,
+          48
+        ],
+        "texels_per_ui_unit": 2,
+        "uv": [
+          0.5,
+          0.921875,
+          0.5,
+          0.921875
+        ],
+        "pixel_sha256": "2f1cdbff774900e8489bdaae1e7cfc6044bfb8cefeccaafd0a2dca7b91297aa9"
+      }
+    }
+  },
+  "integration": {
+    "provider_object": "CharacterAmmoSlot",
+    "anchor": "TOPLEFT 0,0 on the unchanged provider Button",
+    "normal_layer": "ARTWORK",
+    "interaction_layers": "native Button highlight/pushed/disabled textures",
+    "dynamic_content": "provider-owned and never baked",
+    "fallback": "restore pfUI backdrop and captured Button-state textures"
+  }
+}

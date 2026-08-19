@@ -19,7 +19,7 @@
     "production_attempt": 2,
     "actual_imagegen_calls": 2,
     "raw_candidate_sha256": "968b821bd8092029eb3f2696cdb2c478bc08793d574fc600874fa97d053f79c6",
-    "postprocess": "authorized edge-connected green key, green-spill Alpha clear, transparent RGB clear, bbox extraction, <=2% independent-axis normalization, LANCZOS runtime downsample and POT TGA packing",
+    "postprocess": "authorized edge-connected green key, green-spill Alpha clear, transparent RGB clear, bbox extraction, <=2% independent-axis normalization, LANCZOS runtime downsample and POT TGA packing; deterministic 2x texel-density runtime export from accepted source",
     "python_generated_visual_pixels": false,
     "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
     "module_prompt": "docs/modules/character/ART_BASELINE.md",
@@ -51,26 +51,31 @@
     },
     "runtime_master": {
       "file": "assets/source/character/model-back-v3/CharacterModelBackground_RuntimeMasterV3.png",
-      "sha256": "826e7561f10115fc5f40582181c3735a428895290f1d67349bed90e93270de6a",
+      "sha256": "f11b8c21fd35603c1cae236316628dd750001d64133f00017fad438774052643",
       "metrics": {
         "size": [
-          233,
-          224
+          466,
+          448
         ],
         "mode": "RGBA",
-        "pixel_sha256": "21ed28bbf93de9adefa23cfd76117027167c74875f05758195f7b489755d4b28",
+        "pixel_sha256": "19c07d7a8303f0c1bae291f599c4b8a06c9f4522c9e11d321ee56e2ce82d8c6c",
         "visible_bbox_exclusive": [
           0,
           0,
-          233,
-          224
+          466,
+          448
         ],
-        "transparent_pixels": 17,
-        "partially_transparent_pixels": 702,
-        "opaque_pixels": 51473,
+        "transparent_pixels": 116,
+        "partially_transparent_pixels": 1468,
+        "opaque_pixels": 207184,
         "visible_green_spill_pixels": 0,
         "transparent_rgb_nonzero_pixels": 0
-      }
+      },
+      "texels_per_ui_unit": 2,
+      "logical_size_ui": [
+        233,
+        224
+      ]
     }
   },
   "deterministic_transform": {
@@ -103,7 +108,23 @@
       "runtime": 0
     },
     "painted_or_synthesized_pixels": 0,
-    "dynamic_content_baked": false
+    "dynamic_content_baked": false,
+    "sampled_runtime_size": [
+      466,
+      448
+    ],
+    "texels_per_ui_unit": 2
   },
-  "runtime_manifest": "assets/source/character/model-back-v3/CHAR-V3-B1-MODEL_RuntimeManifest_v1.json"
+  "runtime_manifest": "assets/source/character/model-back-v3/CHAR-V3-B1-MODEL_RuntimeManifest_v1.json",
+  "runtime_density_upgrade": {
+    "contract": "CHARACTER-TEXEL-DENSITY-2X",
+    "authorized_on": "2026-08-19",
+    "user_instruction": "修复",
+    "texels_per_ui_unit": 2,
+    "ui_geometry_changed": false,
+    "hitboxes_changed": false,
+    "accepted_source_pixels_changed": false,
+    "imagegen_calls": 0,
+    "operation": "direct LANCZOS reduction from accepted high-resolution source to 2x sampled runtime pixels, transparent RGB clear, and POT TGA packing"
+  }
 }

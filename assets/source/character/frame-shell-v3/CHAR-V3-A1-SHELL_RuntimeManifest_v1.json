@@ -6,46 +6,132 @@
   "component": "CHAR.FRAME",
   "status": "runtime-exported",
   "phase": "P5",
-  "runtime_contract": "1.0",
+  "runtime_contract": "1.1",
   "source_manifest": "assets/source/character/frame-shell-v3/CHAR-V3-A1-SHELL_SourceManifest_v1.json",
   "runtime": {
     "top_left": {
       "file": "addon/AzerothExpeditionUI/Media/Character/CharacterFrameShellTopLeftV3.tga",
-      "sha256": "fca3c001d52d6b94c8fa0734aa373049847ef0abfd72736b416cb4748a8e3d4c",
-      "texture_size": [256, 256],
-      "pixel_sha256": "1a9c15f0394896444c40b34ba9587d16e273f0c83784495a5ff440420b7b1345",
-      "tga": {"image_type": 2, "bits_per_pixel": 32, "descriptor": 8, "top_origin": false}
+      "sha256": "c63dcd267d432157db2f93519bf38725be1c9e571cca661f3ec286abe9dfa641",
+      "texture_size": [
+        512,
+        512
+      ],
+      "pixel_sha256": "2d55611de7b84f3c992a91b536e7d777a3a119da14839791f27381d1d4cbeefa",
+      "tga": {
+        "image_type": 2,
+        "width": 512,
+        "height": 512,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      },
+      "logical_size_ui": [
+        256,
+        256
+      ],
+      "sampled_size": [
+        512,
+        512
+      ],
+      "texels_per_ui_unit": 2
     },
     "top_right": {
       "file": "addon/AzerothExpeditionUI/Media/Character/CharacterFrameShellTopRightV3.tga",
-      "sha256": "93a7bdfcdc0ea93ee0b0487ff78ff1b9c99e7a260e8342e7a753a2cfe83edc34",
-      "texture_size": [128, 256],
-      "pixel_sha256": "d09a4bdf21117a7ab0bb5267d4ab3d306ef18dce0fb4b1b39244ca08b7dae47b",
-      "tga": {"image_type": 2, "bits_per_pixel": 32, "descriptor": 8, "top_origin": false}
+      "sha256": "9fb3bb6b74b10e344101ae7fe0826c7e3856e4c8cd403923b7da8029ae39cbe6",
+      "texture_size": [
+        256,
+        512
+      ],
+      "pixel_sha256": "ba88f101a4500dca3677843154d04c0161b0467936ec7ba1052f7e5358b7c269",
+      "tga": {
+        "image_type": 2,
+        "width": 256,
+        "height": 512,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      },
+      "logical_size_ui": [
+        128,
+        256
+      ],
+      "sampled_size": [
+        256,
+        512
+      ],
+      "texels_per_ui_unit": 2
     },
     "bottom_left": {
       "file": "addon/AzerothExpeditionUI/Media/Character/CharacterFrameShellBottomLeftV3.tga",
-      "sha256": "26813fbf9880d5f0bcd5f5f4303d45f2fadf61fdd2fa55e240a6a61e39f27857",
-      "texture_size": [256, 256],
-      "pixel_sha256": "7f520679d14a581fc22e473361251c4c9d4209db26015d79e7d7ceaac33840d6",
-      "tga": {"image_type": 2, "bits_per_pixel": 32, "descriptor": 8, "top_origin": false}
+      "sha256": "798d47682e964170327eaa2d4d4387ce629cb0c349b6602d9dd4acb64fb85d74",
+      "texture_size": [
+        512,
+        512
+      ],
+      "pixel_sha256": "5b319561bce873a92071bed985ae2f6f8ea0e611f4cb186bcfc5a399276811bf",
+      "tga": {
+        "image_type": 2,
+        "width": 512,
+        "height": 512,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      },
+      "logical_size_ui": [
+        256,
+        256
+      ],
+      "sampled_size": [
+        512,
+        512
+      ],
+      "texels_per_ui_unit": 2
     },
     "bottom_right": {
       "file": "addon/AzerothExpeditionUI/Media/Character/CharacterFrameShellBottomRightV3.tga",
-      "sha256": "6330d040662fd88a98329f038939ef70e21d5bc80aef636054dbe8accdb827ac",
-      "texture_size": [128, 256],
-      "pixel_sha256": "ca47dc3cb41a1b36ee0a90d3f17cd1686969f0d04d37356aa70adb385c38fb98",
-      "tga": {"image_type": 2, "bits_per_pixel": 32, "descriptor": 8, "top_origin": false}
+      "sha256": "93a10de9e820ad5f0baa8761cb7439588994d8bfd13df87b26be418e88a7502a",
+      "texture_size": [
+        256,
+        512
+      ],
+      "pixel_sha256": "07750358ff86ab41cc601cbf41849494f7da2be8a361ccc1004b8039c9caf117",
+      "tga": {
+        "image_type": 2,
+        "width": 256,
+        "height": 512,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      },
+      "logical_size_ui": [
+        128,
+        256
+      ],
+      "sampled_size": [
+        256,
+        512
+      ],
+      "texels_per_ui_unit": 2
     }
   },
   "layout_contract": {
     "provider": "Blizzard CharacterFrame after pfUI Character skin",
-    "provider_geometry_ui": [384, 512],
+    "provider_geometry_ui": [
+      384,
+      512
+    ],
     "native_four_slice_reassembly_exact": true,
     "pfui_inner_backdrop": "retained until CHAR.MODEL and CHAR.STATS assets are accepted",
     "top_left_portrait": "hidden",
     "model_equipment_stats_resistance_tabs_buttons_text": "provider-live",
     "provider_geometry_changed": false,
-    "stretch": false
+    "stretch": false,
+    "texels_per_ui_unit": 2,
+    "ui_geometry_stretch": false
+  },
+  "texel_density": {
+    "texels_per_ui_unit": 2,
+    "ui_geometry_changed": false,
+    "target_physical_scale": "up to 2 screen pixels per UI unit"
   }
 }
