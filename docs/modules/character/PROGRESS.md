@@ -41,7 +41,13 @@
   source 直接降采样为四个 `54×54` runtime state，并装入 `128×128` POT atlas。
   runtime `1.9` 只替换真实 `CharacterAmmoSlot` 的 `27×27` 普通／悬停／按下／
   禁用外壳，中央 `21×21` 图标安全区保持透明，阶段 `P5`。
-- 当前运行时：Character runtime `1.9` 接管 `CharacterFrame` 外壳、PaperDoll
+- `CHAR.SECONDARY.LEAF`：`CHAR-V3-G1-SECONDARY-LEAF V1 attempt 1` exact
+  pixels 及 `1254×1254` 原生容器例外已接受；`802×1000` source 直接降采样为
+  `602×750` runtime 并装入 `1024×1024` TGA。runtime `2.0` 把同一张档案页
+  分别挂载到声望、技能、Honor／PVP 和存在时的 Arena provider 的 `BACKGROUND`，
+  仍按 `301×375 @ 25,66` 原生逻辑区显示；列表、文字、状态条、按钮、滚动条和
+  页面显隐保持动态，阶段 `P5`。
+- 当前运行时：Character runtime `2.0` 接管 `CharacterFrame` 外壳、PaperDoll
   页模型背景、连续属性纸、五个独立抗性槽和 19 个装备槽普通态外框，并隐藏
   可能存在的左上肖像；实时 3D 人物、装备图标／计数／冷却／点击／提示／
   ShaguScore、属性文字／下拉框、抗性图标／数值、Tab 文字／显隐／重排／点击
@@ -51,6 +57,8 @@
   disabled selected 映射为暖色选中态。禁用模块时恢复 pfUI 抗性、装备槽
   backdrop／原三态纹理、Ammo backdrop 和 Tab backdrop。装备槽品质／耐久
   属于后续 E2-B。
+  声望／技能／荣誉／PvP／可选竞技场页只增加共用档案页底材，各页 provider
+  自己控制叶片显隐；分页内控件尚未重绘。
   Inspect 与 DressUp 仍使用 pfUI 默认 skins。
 - 实机确认基础资源均已加载，但底部装备区曾透出 provider，装备槽状态纹理会
   偏离按钮，属性纸也未始终跟随实际属性文字 provider。runtime `1.9` 使用已验收
@@ -76,7 +84,8 @@
 | `CHAR.SLOT` 品质／耐久／空槽 | `P1–P2` | E2-B 品质／耐久暂停；E4 各部位空槽压印边界已定义 | 基础槽与 Ammo 实机稳定后再分别生产，不从普通态烘焙或缩放派生 |
 | `CHAR.STATS／RESISTANCE` | `P5` | C1 attempt 4 连续旧纸与 D1 attempt 3 五张抗性槽均使用 2× sampled runtime；runtime `1.9` 让纸面跟随原生／BetterCharacterStats 当前 provider | 实机验证清晰度、纸面与属性文字／下拉框对齐、模型交界、五个动态图标／数值及独立显隐 |
 | `CHAR.TABS` | `P5` | F1 V3 attempt 2 exact pixels；四态独立 `176×80` source、2× 三段 runtime、`128×256` POT atlas；原生五个 Button、动态宽度与无宠物页四 Tab 重排继续存活 | 实机验证四／五 Tab、selected 映射、悬停／按下、宽中文／英文、0.80 缩放、接缝及 `/aeui character` 回退 |
-| `CHAR.REPUTATION／SKILLS／HONOR／ARENA` | `P1` | pfUI skin 对象已审计 | 分页实机对象与共享组件合同 |
+| `CHAR.SECONDARY.LEAF` | `P5` | G1 V1 attempt 1 exact pixels；`802×1000` source、`602×750` sampled runtime、`1024×1024` TGA；按可用 provider 独立挂载并随原生页面显隐 | 实机验证四类页面覆盖、文字／状态条层序、切页无泄漏、可选 Arena feature-detect 与禁用回退 |
+| `CHAR.REPUTATION／SKILLS／HONOR／ARENA` 控件 | `P1–P2` | 真实列表、状态条、滚动条、复选框、展开按钮和内页 Tabs 边界已定义；共用档案页已独立完成 | 依据实机截图逐类生产，不把动态数据烘焙进档案页 |
 | `CHAR.PET／INSPECT／DRESSUP` | `P1` | pfUI skin 对象已审计 | 确认复用与只读差异 |
 
 ## 已否决方向
@@ -95,8 +104,10 @@
    同时验证 19 个 E1 槽框覆盖正确、`31×31` 图标开口不再拥挤或裁边、两个饰品槽与底部三槽
    分配正确，悬停／按下／禁用纹理按状态触发，点击／提示／冷却／ShaguScore
    仍可用且评分文字不被状态纹理遮住。
-2. 验证分页隐藏及 `/aeui character` 禁用回退；禁用后不得遗留纸面／槽底，
-   pfUI 的抗性 backdrop 与原图标层级必须恢复。本设备不标记 `P6`。
+2. 在声望、技能、荣誉／PvP 和存在时的 Arena 页验证共用档案页完整覆盖旧内层
+   轨道，所有文字、状态条、按钮与滚动条均位于纸面上方；切回 PaperDoll 时不得
+   泄漏。再验证 `/aeui character` 禁用回退；禁用后不得遗留档案页、属性纸或
+   槽底，pfUI 的抗性 backdrop 与原图标层级必须恢复。本设备不标记 `P6`。
 3. 实机同时验证 Character Tabs 的四／五项动态重排、普通／悬停／按下／selected、
    宽文字、0.80 缩放、三段接缝及 pfUI backdrop 回退；同时验证 Ammo 的动态图标、
    三位数量、冷却、普通／悬停／按下／禁用、空弹药与 `27×27` 对位。E1、E2-A

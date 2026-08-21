@@ -1,0 +1,85 @@
+{
+  "schema": "aeui-character-v3-g1-secondary-leaf-runtime-manifest-v1",
+  "schema_version": 1,
+  "module": "character",
+  "batch": "CHAR-V3-G1-SECONDARY-LEAF V1 final",
+  "component": "CHAR.SECONDARY.LEAF",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "runtime_contract": "2.0",
+  "source_manifest": "assets/source/character/secondary-leaf-v3/CHAR-V3-G1-SECONDARY-LEAF_SourceManifest_v1.json",
+  "runtime": {
+    "secondary_leaf": {
+      "file": "addon/AzerothExpeditionUI/Media/Character/CharacterSecondaryLeafV3.tga",
+      "sha256": "6a4eddb9b18f2d046d428e19b03b2cac0c5b432026cbc997558219fadb19e55b",
+      "logical_size": [
+        301,
+        375
+      ],
+      "texture_size": [
+        1024,
+        1024
+      ],
+      "uv": [
+        0.0,
+        0.587890625,
+        0.0,
+        0.732421875
+      ],
+      "pixel_sha256": "140fbdabb10356e8a3aa0a8ec41a459dfc719be84d029a0bb54845c2c0f96590",
+      "logical_pixel_sha256": "3fe67b4e24c8ac4d597b53c29174087898dca7d85b226c10afd0ff88813763e0",
+      "tga": {
+        "image_type": 2,
+        "width": 1024,
+        "height": 1024,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      },
+      "sampled_size": [
+        602,
+        750
+      ],
+      "texels_per_ui_unit": 2,
+      "sampled_pixel_sha256": "3fe67b4e24c8ac4d597b53c29174087898dca7d85b226c10afd0ff88813763e0"
+    }
+  },
+  "layout_contract": {
+    "providers": [
+      "ReputationFrame",
+      "SkillFrame",
+      "HonorFrame or PVPFrame",
+      "ArenaFrame when present"
+    ],
+    "provider_geometry_ui": [
+      384,
+      512
+    ],
+    "leaf_rect_ui": [
+      25,
+      66,
+      301,
+      375
+    ],
+    "anchor": "CharacterFrame TOPLEFT +25,-66",
+    "draw_layer": "each native secondary provider BACKGROUND",
+    "visibility": "native provider parent",
+    "outer_shell_nameplate_close_and_character_tabs": "unchanged and outside leaf",
+    "labels_lists_statusbars_buttons_scrollbars_and_interactions": "provider-live",
+    "provider_geometry_changed": false,
+    "runtime_stretch": false,
+    "texels_per_ui_unit": 2,
+    "ui_geometry_stretch": false
+  },
+  "fallback_contract": {
+    "route": "character.secondary-leaf-v3",
+    "owner": "character",
+    "missing_provider": "apply to available providers only; missing pages retain pfUI presentation",
+    "module_disabled_or_route_missing": "hide AEUI leaf textures and retain pfUI/provider content"
+  },
+  "texel_density": {
+    "texels_per_ui_unit": 2,
+    "ui_geometry_changed": false,
+    "target_physical_scale": "up to 2 screen pixels per UI unit"
+  }
+}

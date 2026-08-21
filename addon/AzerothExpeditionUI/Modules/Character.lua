@@ -1,7 +1,7 @@
 local addon = AzerothExpeditionUI
 local Character = {}
 
-Character.runtimeContract = "1.9"
+Character.runtimeContract = "2.0"
 Character.texelDensity = 2
 
 local COMPONENT_ROUTES = {
@@ -14,6 +14,7 @@ local COMPONENT_ROUTES = {
 }
 local TAB_COMPONENT_ROUTE = "character.tabs-v3"
 local AMMO_COMPONENT_ROUTE = "character.ammo-slot-v3"
+local SECONDARY_LEAF_COMPONENT_ROUTE = "character.secondary-leaf-v3"
 local MEDIA = addon.media.root .. "Character\\"
 local ART = {
   topLeft = {
@@ -62,6 +63,23 @@ local STATS_PAPER = {
   width = 230,
   height = 78,
   texCoord = { 0, 460 / 512, 0, 156 / 256 },
+}
+
+local SECONDARY_LEAF = {
+  path = MEDIA .. "CharacterSecondaryLeafV3",
+  x = 25,
+  y = 66,
+  width = 301,
+  height = 375,
+  texCoord = { 0, 602 / 1024, 0, 750 / 1024 },
+}
+
+local SECONDARY_PAGE_PROVIDER_NAMES = {
+  "ReputationFrame",
+  "SkillFrame",
+  "HonorFrame",
+  "PVPFrame",
+  "ArenaFrame",
 }
 
 -- The accepted shell keeps the native bottom weapon area transparent.  Reuse
@@ -262,6 +280,15 @@ local function AmmoOwnershipActive()
     true or false
 end
 
+local function SecondaryLeafOwnershipActive()
+  return
+    pfUI and
+    type(pfUI.GetExpeditionComponentOwner) == "function" and
+    pfUI:GetExpeditionComponentOwner(SECONDARY_LEAF_COMPONENT_ROUTE) ==
+      "character" and
+    true or false
+end
+
 local function FrameShown(frame)
   if not frame then return false end
   if type(frame.IsShown) == "function" then
@@ -399,6 +426,46 @@ local function EnsureEquipmentFooterBackground()
   local texture = PaperDollFrame:CreateTexture(nil, "BACKGROUND")
   PaperDollFrame.aeuiCharacterEquipmentFooterBackgroundV3 = texture
   return texture
+end
+
+local function EnsureSecondaryLeaf(frame)
+  if not frame then return nil end
+  if frame.aeuiCharacterSecondaryLeafV3 then
+    return frame.aeuiCharacterSecondaryLeafV3
+  end
+
+  -- Each provider owns its own leaf so native page visibility controls it.
+  -- BACKGROUND keeps live labels, bars, buttons and scrollbars above the art.
+  local texture = frame:CreateTexture(nil, "BACKGROUND")
+  frame.aeuiCharacterSecondaryLeafV3 = texture
+  return texture
+end
+
+local function IsCharacterSubframe(frame)
+  local current = frame
+  while current do
+    if current == CharacterFrame then return true end
+    if type(current.GetParent) ~= "function" then return false end
+    current = current:GetParent()
+  end
+  return false
+end
+
+local function ApplySecondaryLeaves()
+  local count = 0
+  local applied = {}
+  for _, name in ipairs(SECONDARY_PAGE_PROVIDER_NAMES) do
+    local frame = _G[name]
+    if frame and IsCharacterSubframe(frame) then
+      local texture = EnsureSecondaryLeaf(frame)
+      if texture then
+        ConfigureTexture(texture, SECONDARY_LEAF)
+        count = count + 1
+        table.insert(applied, name)
+      end
+    end
+  end
+  return count, table.concat(applied, "+")
 end
 
 local function FindResistanceIcon(frame)
@@ -1097,6 +1164,14 @@ local function HideEquipmentFooterBackground()
   if texture then texture:Hide() end
 end
 
+local function HideSecondaryLeaves()
+  for _, name in ipairs(SECONDARY_PAGE_PROVIDER_NAMES) do
+    local frame = _G[name]
+    local texture = frame and frame.aeuiCharacterSecondaryLeafV3
+    if texture then texture:Hide() end
+  end
+end
+
 local function HideResistanceWells()
   for index = 1, 5 do
     local frame = _G["MagicResFrame" .. index]
@@ -1125,6 +1200,7 @@ function Character:Restore()
     HideModelBackground()
     HideStatsPaper()
     HideEquipmentFooterBackground()
+    HideSecondaryLeaves()
     HideResistanceWells()
     HideSlotInteractions()
     HideSlotBases()
@@ -1136,6 +1212,7 @@ function Character:Restore()
   self.statsProviderName = nil
   self.tabStatus = "inactive"
   self.ammoStatus = "inactive"
+  self.secondaryLeafStatus = "inactive"
   self.status = "inactive"
 end
 
@@ -1286,10 +1363,24 @@ function Character:ApplyFrame()
     RestoreAmmoSlot()
     self.ammoStatus = "ownership-route-disabled"
   end
+  if SecondaryLeafOwnershipActive() then
+    local leafCount, providerNames = ApplySecondaryLeaves()
+    if leafCount > 0 then
+      self.secondaryLeafStatus =
+        tostring(leafCount) .. "-provider-leaves-applied/" .. providerNames
+    else
+      HideSecondaryLeaves()
+      self.secondaryLeafStatus = "provider-missing-fallback"
+    end
+  else
+    HideSecondaryLeaves()
+    self.secondaryLeafStatus = "ownership-route-disabled"
+  end
   CaptureAndHidePortraits()
 
   CharacterFrame.aeuiCharacterRuntimeContract = self.runtimeContract
-  self.status = "char-v3-provider-aligned-layers-and-slot-states-applied"
+  self.status =
+    "char-v3-provider-aligned-layers-secondary-leaf-and-slot-states-applied"
   return true
 end
 
@@ -1322,6 +1413,9 @@ function Character:GetRuntimeStatus()
     "/3-slice/20-ui-high/dynamic-width" ..
     ", ammo-slot=" .. tostring(self.ammoStatus or "unresolved") ..
     "/27x27/21x21-safe/atlas-v3" ..
+    ", secondary-leaf=" ..
+    tostring(self.secondaryLeafStatus or "unresolved") ..
+    "/301x375/2x" ..
     ", provider-dynamic-content=live" ..
     ", texel-density=2x/logical-geometry-unchanged" ..
     ", top-left-portrait=hidden"
@@ -1331,6 +1425,7 @@ function Character:Initialize()
   self.statsProviderName = nil
   self.tabStatus = "unapplied"
   self.ammoStatus = "unapplied"
+  self.secondaryLeafStatus = "unapplied"
   self.status = "unapplied"
 end
 

@@ -1,0 +1,123 @@
+{
+  "schema": "aeui-character-v3-g1-secondary-leaf-source-manifest-v1",
+  "schema_version": 1,
+  "module": "character",
+  "batch": "CHAR-V3-G1-SECONDARY-LEAF V1 final",
+  "component": "CHAR.SECONDARY.LEAF",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "accepted_on": "2026-08-21",
+  "user_acceptance": {
+    "statement": "接受 CHAR-V3-G1-SECONDARY-LEAF V1 attempt 1 的 exact pixels；授权 1254×1254 原生容器例外，并允许按合同提升 802×1000 source、生成 602×750 runtime、装配 1024×1024 TGA、接入 addon 及清理本段中间产物。",
+    "accepts_exact_pixels": true,
+    "input_container_exception_authorized": true,
+    "source_promotion_authorized": true,
+    "runtime_export_authorized": true,
+    "addon_integration_authorized": true,
+    "intermediate_cleanup_authorized": true
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "production_attempt": 1,
+    "actual_imagegen_calls": 1,
+    "raw_candidate_sha256": "d73580a86de723fd5b39e52f5a61fada700520fc6bf65eef436723e025501c12",
+    "accepted_review_source_sha256": "8d90861f187e0ae6a7e959ad2737c8bf242b3ced3c2d2b1799922904ff8007c8",
+    "simulation_lock": {
+      "file": "assets/locked/character/CharacterSecondaryPages_SimulationLock_v1.png",
+      "sha256": "0d8d08fb032d09aa8853c878ac160ba8595801341b174c5858946af12208b752"
+    },
+    "postprocess": "authorized edge-connected green key, green-spill Alpha cleanup, transparent RGB clear, unique foreground bbox extraction, <=2% independent-axis normalization, direct LANCZOS 2x runtime downsample and POT TGA packing",
+    "python_generated_visual_pixels": false,
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/character/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/character/SUBMODULE_ART_BASELINES.md#charreputationskillshonorarea"
+  },
+  "accepted_assets": {
+    "source": {
+      "file": "assets/source/character/secondary-leaf-v3/CharacterSecondaryLeaf_SourceV3.png",
+      "sha256": "8d90861f187e0ae6a7e959ad2737c8bf242b3ced3c2d2b1799922904ff8007c8",
+      "metrics": {
+        "size": [
+          802,
+          1000
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "8d1b48f4e3e633f3916cc6d71279eaed01aa098aaa429b3054627da5a4f94271",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          802,
+          1000
+        ],
+        "transparent_pixels": 11810,
+        "partially_transparent_pixels": 11667,
+        "opaque_pixels": 778523,
+        "transparent_rgb_nonzero_pixels": 0
+      }
+    },
+    "runtime_master": {
+      "file": "assets/source/character/secondary-leaf-v3/CharacterSecondaryLeaf_RuntimeMasterV3.png",
+      "sha256": "5c328d490b96021d24e4dc5620132aed4b7528063ea65a6df9667825db99edb3",
+      "metrics": {
+        "size": [
+          602,
+          750
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "3fe67b4e24c8ac4d597b53c29174087898dca7d85b226c10afd0ff88813763e0",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          602,
+          750
+        ],
+        "transparent_pixels": 5660,
+        "partially_transparent_pixels": 9050,
+        "opaque_pixels": 436790,
+        "transparent_rgb_nonzero_pixels": 0
+      },
+      "texels_per_ui_unit": 2,
+      "logical_size_ui": [
+        301,
+        375
+      ]
+    }
+  },
+  "deterministic_transform": {
+    "input_size": [
+      1254,
+      1254
+    ],
+    "authorized_input_container_exception": true,
+    "key_rgb": [
+      3,
+      250,
+      4
+    ],
+    "foreground_bbox_exclusive": [
+      162,
+      28,
+      1114,
+      1225
+    ],
+    "foreground_size": [
+      952,
+      1197
+    ],
+    "foreground_aspect": 0.795322,
+    "target_aspect": 0.802667,
+    "aspect_error_percent": 0.915,
+    "source_normalized_size": [
+      802,
+      1000
+    ],
+    "sampled_runtime_size": [
+      602,
+      750
+    ],
+    "painted_or_synthesized_pixels": 0,
+    "dynamic_content_baked": false,
+    "texels_per_ui_unit": 2
+  },
+  "runtime_manifest": "assets/source/character/secondary-leaf-v3/CHAR-V3-G1-SECONDARY-LEAF_RuntimeManifest_v1.json"
+}

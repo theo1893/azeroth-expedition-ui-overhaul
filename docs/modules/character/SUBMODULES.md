@@ -68,6 +68,7 @@ Ranged。
 | `CHAR.STATS.RIGHT` | `CharacterAttributesFrame` 右列、`CharacterResistanceFrame`、对应 `PlayerStatFrame*DropDown` | 羊皮文字区；名称左对齐、数值右对齐；每个下拉独立 |
 | `CHAR.RESISTANCE` | `MagicResFrame1..N` | 图标动态；槽底独立 |
 | `CHAR.TABS` | `CharacterFrameTab1..5` | 角色／宠物／声望／技能／PVP；按可用页动态显示；普通／悬停／选中／禁用 |
+| `CHAR.SECONDARY.LEAF` | `ReputationFrame`、`SkillFrame`、`HonorFrame`／`PVPFrame`、存在时的 `ArenaFrame` | 各 provider 共用一张内页底材；每页独立挂载并随原生页面显隐；不得烘焙列表、文字、状态条、按钮或滚动条 |
 | `CHAR.REPUTATION` | `ReputationFrame`、`ReputationBarN`、ScrollBar、详情复选框 | 列表、状态条、滚动条分别拆分 |
 | `CHAR.SKILLS` | `SkillFrame`、`SkillTypeLabelN`、`SkillRankFrameN`、两 ScrollFrame | 展开、列表、进度条、Unlearn 分别拆分 |
 | `CHAR.HONOR` | `HonorFrame`／`PVPFrame`、progress bar、Tabs | 独立战斗状态条与列表 |

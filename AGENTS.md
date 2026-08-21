@@ -25,7 +25,7 @@ Codex 进入仓库后先读本文件。这里给出项目边界、文档索引�
 | Map | WorldMap 继续暂停；Minimap runtime `7.0`，V3 罗盘／托架／mask／状态插槽保留；bottom V7 同母图徽记／绳索／轻型袋已接入 `P5`，真实插件按钮保持动态，非 bottom 使用 V4／V3 回退 | 实机验证 closed/open 徽记不跳位、0／6／12／22／30 排布、命中区、缩放、显隐及回退 |
 | Spellbook | accepted `SB-A2-DONOR V1` source/runtime 保留，AEUI adapter 与 Spellbook ownership 暂停；当前回退 pfUI 技能书 | 明天依据 handoff 实机图核对四块 TGA 对位、层序、provider region 与控件净空 |
 | Talents | `P1 / paused`；已与 Spellbook 拆分，真实动态节点／分支边界已对齐 | 等用户明确恢复后制作独立 `TL-SIM-V1` |
-| Character | `P2–P5 / active`；runtime `1.9`，基础层、属性纸、抗性槽、E1／E2-A 装备槽、F1 Tabs 与 E3 Ammo 均以 2× runtime 接入，原生 UI 几何与动态内容所有权不变 | 实机复核清晰度、属性纸／文字、装备槽、Tabs、Ammo 动态内容与禁用回退；稳定后做 E2-B 或 E4 空槽 |
+| Character | `P2–P5 / active`；runtime `2.0`，基础层、属性纸、抗性槽、E1／E2-A 装备槽、F1 Tabs、E3 Ammo 与分页共用档案页均以 2× runtime 接入，原生 UI 几何与动态内容所有权不变 | 实机复核分页档案页层序／显隐、清晰度、属性纸、装备槽、Tabs、Ammo 与禁用回退；再做分页控件或 E2-B／E4 |
 | Unit Frames | Bars／Raid／头像合同继续运行；本批 Player／Target／TargetTarget／Focus 外壳 route 暂停，当前回退 pfUI 外框 | 明天依据 handoff 实机图检查 base／rim 层序、九切片和文字净空后再接入 |
 
 详细状态以 [docs/PROGRESS.md](docs/PROGRESS.md) 和目标模块的

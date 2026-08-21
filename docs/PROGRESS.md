@@ -26,7 +26,7 @@
 | Map | `P5` | runtime `7.0`；WorldMap 暂停；Minimap V3 常驻资源保留；bottom 已接入 V7 同母图徽记／连续绳索／轻型袋，真实入口每列 8 个并向左增长；非 bottom 使用 V4／V3 回退 | 实机验证 closed/open 徽记不跳位、0／6／12／22／30、`28×28` 命中区、图标层序、缩放、显隐及回退 |
 | Spellbook | `P4 / integration paused` | accepted `SB-A2-DONOR V1` source/runtime 保留；AEUI Spellbook adapter 与精确 ownership 暂停，客户端恢复 pfUI 技能书 | 依据 handoff 实机图核对四块 TGA 对位、层序、provider region 和动态控件净空，再恢复接入 |
 | Talents | `P1 / paused` | 已对齐动态背景、4×8 节点、Rank、分支／箭头、Tab 与 Turtle Inspect 边界；不再与 Spellbook 共用模块进度 | 等用户明确恢复后制作独立预演 |
-| Character | `P2–P5 / active` | runtime `1.9`；外壳、模型底、属性纸、抗性槽、E1／E2-A 装备槽、F1 Tabs 与 E3 Ammo 均由 accepted source 导出为 2× runtime；原生 UI 几何、点击及动态内容不变 | 实机复核清晰度、属性纸／文字、装备槽、Tabs、Ammo 动态图标／数量／冷却、缩放及禁用回退；稳定后做 E2-B 或 E4 空槽 |
+| Character | `P2–P5 / active` | runtime `2.0`；外壳、PaperDoll 组件、装备槽、Tabs、Ammo 与声望／技能／荣誉／PvP 共用档案页均由 accepted source 导出为 2× runtime；页面文字、状态条、控件及交互保持动态 | 实机复核分页档案页覆盖、层序、显隐和回退，并复核既有 PaperDoll 组件；随后拆分页滚动条／状态条／复选框等控件 |
 | Unit Frames | `P4–P5 / Player V5 active` | Bars／Raid／动态头像继续运行；Player V5 完整单图外壳已接入，Target／TargetTarget／Focus 新外壳仍暂停并回退 pfUI | 实机验证 Player `240×60` 配置对应的 `240×65` provider、UI Scale、层序与禁用回退 |
 
 ## 尚未启动
