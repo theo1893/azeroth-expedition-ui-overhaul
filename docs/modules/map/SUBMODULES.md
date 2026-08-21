@@ -49,7 +49,7 @@
 | `MAP.MINI.ZOOM.OUT` | `MinimapZoomOut` 当前隐藏；滚轮调用 `Minimap_ZoomOut` | 首批不生产，不恢复不存在于当前 pfUI 展示结构的按钮 |
 | `MAP.MINI.STATUS.SOCKET` | tracking／mail／battlefield／PVP 周围的 adapter Texture | 小型独立状态插槽；只提供同材质外壳，随真实对象分别显隐，不烘焙动态图标或通知；不能永久画进罗盘底图 |
 | `MAP.MINI.TRACKING` | 独立 `pfUITracking` Button，默认 16×16、父级 `UIParent` | 普通／悬停／按下／激活四状态；保留左键取消、右键菜单、Tooltip 与无追踪脉冲；放入独立状态插槽，只换肤和避让 |
-| `MAP.MINI.ZONE` | pfUI `pfMinimapZone`；原生 `MinimapZoneTextButton` 当前隐藏 | 动态区域名 layout-only；锚到 `INFO.CRADLE` 上部安全区，不烘焙文字；若 `pfPanelMinimap` 已承担区域等动态内容则避免重复绘制；长地名不能被锁扣或工具卷遮挡 |
+| `MAP.MINI.ZONE` | pfUI `pfMinimapZone`；原生 `MinimapZoneTextButton` 当前隐藏 | 动态区域名 layout-only；锚到 `INFO.CRADLE` 上部安全区，不烘焙文字；若 `pfPanelMinimap` 已承担区域等动态内容则避免重复绘制；长地名不能被插件徽记或垂绳遮挡 |
 | `MAP.MINI.TIME` | `GameTimeFrame` 当前隐藏 | 首批不生产；若以后恢复，动态时间不得烘焙数字 |
 | `MAP.MINI.COORDS` | pfUI `pfMinimapCoord` | 动态坐标 layout-only；在 `INFO.CRADLE` 下部安全区居中；`off` 继续隐藏，`on`／`mouseover` 在 V3 中常驻下层，退出 V3 后恢复 provider 的位置、对齐与 hover 语义；不烘焙数值 |
 | `MAP.MINI.MAIL` | `MiniMapMailFrame`，当前锚在 `pfMinimap` 右上 | 独立通知覆盖；保留闪烁提示，避让外壳和屏幕边缘 |
@@ -66,18 +66,18 @@
 | 子组件 | pfUI 对象／职责 | 状态 |
 |---|---|---|
 | `MAP.MINI.ADDONS.SCANNER` | `ScanForButtons`／`IsButtonValid`／`pfUI_cache.abuttons` | 行为-only；保留自动扫描、手动 add／del／reset、忽略表和缺失对象清理 |
-| `MAP.MINI.ADDONS.ANCHORS` | `C.abuttons.position` 与 adapter 计算、不可见 | 无位图；支持 bottom／left／top／right，并从 V3 外壳边界之外展开；bottom 锁扣附着信息托架底部，其他方向附着罗盘对应外沿；V4 工具卷受力边与锁扣按可见 Alpha 直接搭接，不得为容纳工具卷改写 `pfMinimap` 保存锚点 |
+| `MAP.MINI.ADDONS.ANCHORS` | `C.abuttons.position` 与 adapter 计算、不可见 | 无位图；bottom 使用 V7 单母图：徽记固定在罗盘右下边沿，绳索垂直跨过托架右侧净空，袋身按入口密度只向左增加 UV 可见宽度；left／top／right 暂用 V4／V3 回退；不得为容纳袋身改写 `pfMinimap` 保存锚点 |
 | `MAP.MINI.ADDONS.ENTRY` | 扫描到的真实插件 Button | provider 保留原始图标、状态与自带边缘；adapter 只排版，不叠加统一逐图标外框 |
 | `MAP.MINI.ADDONS.NOTICE` | 插件自己的通知语义 | 无／未读／警告独立覆盖 |
-| `MAP.MINI.ADDONS.TOGGLE` | 真实 `pfMinimapButton` | 重绘为罗盘携行结构上的短皮革／黄铜锁扣；收起／展开及悬停／按下状态仍由真实 Button 承载；展开时真实锁扣位于工具卷之上并直接压住连续受力边；0 个合格插件入口时隐藏，不允许漂浮箭头 |
-| `MAP.MINI.ADDONS.TRAY` | 真实 `pfMinimapButtons` 容器 | V4 重绘为从锁扣外侧垂落／展开的制图工具卷；九切片支持四向重排，固定区同时决定真实图标安全 padding，宽高由真实按钮数、rowsize 与 spacing 决定；bottom／top 最多三行并沿水平方向增长，left／right 沿垂直方向增长；不绘制假图标、空槽或逐图标统一外框；不再使用独立 connector Texture |
+| `MAP.MINI.ADDONS.TOGGLE` | 真实 `pfMinimapButton` | bottom 只保留徽记中央 `28×28 UI` 命中区；收起和展开都从同一 V7 TGA 裁出逐像素一致的徽记，绳索与袋身不接收点击；left／top／right 暂用 V3 锁扣／楔片回退；0 个入口时隐藏 |
+| `MAP.MINI.ADDONS.TRAY` | 真实 `pfMinimapButtons` 容器 | bottom 背景只显示一次 V7 一体式“徽记＋连续绳索＋轻型袋”纹理，不再使用九切片、扣座、活动皮舌或 connector；真实 `21×21 UI` 入口每列最多 8 个，先填最右列再向左增长，并覆盖在袋面之上；left／top／right 暂用 V4 四向工具卷 |
 
 保留插件原始左键、右键、Tooltip 与动态图标；收纳时继续使用 pfUI 的 parent／point／
-size／scale／drag／OnUpdate 备份和恢复逻辑，工具卷内不伪造原插件行为，也不隐藏
-插件自身携带的边缘。默认罗盘底图不画空槽；`pfQuestIcon` 作为合格的真实插件入口
-由同一容器动态承载。默认 `rowsize=6`，4／6／10 个入口按实际数量形成一行或
-`6+4` 两行，30 个入口形成横向 `10+10+10` 工具卷，不生成空槽；0 个入口同时
-隐藏锁扣和工具卷。旧 V3 connector 仅保留为尚未清理的回退媒体，不参与 V4
-运行时、锚点、命中区或显隐。战斗隐藏
-继续读取 `C.abuttons.hideincombat`。`pfFarmMap` 300×300 是独立兼容态，只迁移
-既有动态对象，不复制常驻罗盘外壳、信息托架或插件工具卷。
+size／scale／drag／OnUpdate 备份和恢复逻辑，不伪造原插件行为，也不隐藏插件自身
+携带的边缘。bottom V7 的收起态只显示母图顶部 `[84,0,120,36)`；展开态按
+`1–8／9–16／17–24／25–30` 分别显示右锚的 `36／60／84／112 UI` 宽裁片，右缘、
+徽记和绳索不跳位，30 个入口形成 `8+8+8+6`。0 个入口同时隐藏徽记与袋身；
+left／top／right 继续遵守 provider `rowsize` 与 V4／V3 回退。旧 connector、V5
+扣座和 V5 bottom 九切片不参与 V7 运行时。战斗隐藏继续读取
+`C.abuttons.hideincombat`；`pfFarmMap` 300×300 是独立兼容态，只迁移既有动态对象，
+不复制常驻罗盘、信息托架或插件收纳袋。

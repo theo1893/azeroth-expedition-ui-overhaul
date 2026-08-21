@@ -1,0 +1,64 @@
+{
+  "schema": "aeui-map-mini-v7-a1-source-manifest-v1",
+  "schema_version": 1,
+  "module": "map",
+  "batch": "MAP-MINI-V7-A1-INTEGRATED-LIGHT-SLING-MASTER",
+  "phase": "P5",
+  "status": "runtime-exported",
+  "accepted_on": "2026-08-21",
+  "user_acceptance": {
+    "exact_statement": "接受 MAP-MINI-V7-A1 attempt 3 的 exact pixels；授权四个极小黄铜固定点与三条低对比连续裁切折痕的合同例外，允许提升 source/runtime、导出正式媒体并接入 addon。",
+    "accepted_candidate": "attempt 3",
+    "accepted_raw_sha256": "2ef135f9deda61b24f14f171dc4cd949c0ae7d73059610234b753a5ff42ad0b7",
+    "authorized_exceptions": [
+      "four extremely small brass fixing points on the toggle medallion",
+      "three low-contrast continuous vertical crop folds"
+    ]
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "actual_imagegen_calls": 5,
+    "flow_errors_counted_as_imagegen_calls": false,
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/map/ART_BASELINE.md",
+    "stable_prompt": "docs/modules/map/SUBMODULE_ART_BASELINES.md",
+    "layout_lock": {
+      "file": "assets/locked/map/MapMiniV7_IntegratedLightSlingSimLock_v1.png",
+      "sha256": "787c3f5b74cd4ccddd853cdaf16314a855e8a715e4d06f664da17b548f14b318"
+    },
+    "geometry_lock": {
+      "file": "assets/locked/map/MapMiniV7_IntegratedLightSlingGeometryLock_v1.png",
+      "sha256": "7305a43ae1cf6be8a752c99c2d02b53bcfc996d10c680d246efd38fc5cbbbabe"
+    }
+  },
+  "component": "MAP.MINI.ADDONS.V7.BOTTOM.INTEGRATED_SLING",
+  "source": {
+    "file": "assets/source/map/mini-v7-addon-sling/MapMiniAddonSlingMaster_SourceV7.png",
+    "sha256": "7749e5b33a696920026612ea0237575f679bdaf577742920f18e16bfc3e02e0b",
+    "metrics": {
+      "size": [480, 1360],
+      "mode": "RGBA",
+      "pixel_sha256": "61ffa04daf2eab988c4d8ac0ea914802c61a929d62284c0ca8b801acca5aeef3",
+      "visible_bbox_exclusive": [38, 4, 475, 1356],
+      "transparent_pixels": 308825,
+      "partially_transparent_pixels": 11114,
+      "opaque_pixels": 332861,
+      "transparent_rgb_nonzero_values": 0
+    }
+  },
+  "deterministic_transform": {
+    "raw_visible_bbox_exclusive": [53, 9, 716, 2059],
+    "raw_visible_size": [663, 2050],
+    "isotropic_scale": 0.6595122,
+    "normalized_visible_size": [437, 1352],
+    "source_size": [480, 1360],
+    "source_paste_xy": [38, 4],
+    "runtime_sampled_size": [240, 680],
+    "source_texels_per_ui_unit": 4,
+    "runtime_texels_per_ui_unit": 2,
+    "runtime_alpha_values_at_or_below_eight_cleared": true,
+    "transparent_rgb_cleared": true,
+    "generative_postprocess": false
+  },
+  "runtime_manifest": "assets/source/map/mini-v7-addon-sling/MAP-MINI-V7-A1_RuntimeManifest_v1.json"
+}

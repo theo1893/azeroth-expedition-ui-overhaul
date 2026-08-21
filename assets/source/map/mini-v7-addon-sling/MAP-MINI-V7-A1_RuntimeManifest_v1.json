@@ -1,0 +1,89 @@
+{
+  "schema": "aeui-map-mini-v7-a1-runtime-manifest-v1",
+  "schema_version": 1,
+  "module": "map",
+  "batch": "MAP-MINI-V7-A1-INTEGRATED-LIGHT-SLING-MASTER",
+  "phase": "P5",
+  "status": "runtime-exported",
+  "runtime_contract": "7.0",
+  "source_manifest": "assets/source/map/mini-v7-addon-sling/MAP-MINI-V7-A1_SourceManifest_v1.json",
+  "runtime": {
+    "integrated_sling_bottom": {
+      "component": "MAP.MINI.ADDONS.V7.BOTTOM.INTEGRATED_SLING",
+      "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonSlingMasterV7.tga",
+      "sha256": "40afac0e15485fa29ae8f53238421b1e5073cbb51bc8d9474c97d657677fb5cf",
+      "metrics": {
+        "mode": "RGBA",
+        "pixel_sha256": "7a299ef89ceb9160d4ef8e98a13ef571f74ee295c8554a5ab6bc07ac788306d9",
+        "visible_bbox_exclusive": [19, 3, 238, 678],
+        "transparent_pixels": 175630,
+        "partially_transparent_pixels": 4567,
+        "opaque_pixels": 81947,
+        "transparent_rgb_nonzero_values": 0
+      },
+      "logical_size_ui": [120, 340],
+      "sampled_size": [240, 680],
+      "texels_per_ui_unit": 2,
+      "texture_size": [256, 1024],
+      "content_uv": [0.0, 0.9375, 0.0, 0.6640625],
+      "tga_header": {
+        "image_type": 2,
+        "width": 256,
+        "height": 1024,
+        "bits_per_pixel": 32,
+        "descriptor": 8
+      }
+    }
+  },
+  "uv_contract": {
+    "closed": {
+      "logical_crop": [84, 0, 120, 36],
+      "runtime_crop": [168, 0, 240, 72],
+      "texture_uv": [0.65625, 0.9375, 0.0, 0.0703125],
+      "display_size_ui": [36, 36]
+    },
+    "one_to_eight": {
+      "logical_crop": [84, 0, 120, 340],
+      "runtime_crop": [168, 0, 240, 680],
+      "texture_uv": [0.65625, 0.9375, 0.0, 0.6640625],
+      "display_size_ui": [36, 340]
+    },
+    "nine_to_sixteen": {
+      "logical_crop": [60, 0, 120, 340],
+      "runtime_crop": [120, 0, 240, 680],
+      "texture_uv": [0.46875, 0.9375, 0.0, 0.6640625],
+      "display_size_ui": [60, 340]
+    },
+    "seventeen_to_twenty_four": {
+      "logical_crop": [36, 0, 120, 340],
+      "runtime_crop": [72, 0, 240, 680],
+      "texture_uv": [0.28125, 0.9375, 0.0, 0.6640625],
+      "display_size_ui": [84, 340]
+    },
+    "twenty_five_to_thirty": {
+      "logical_crop": [8, 0, 120, 340],
+      "runtime_crop": [16, 0, 240, 680],
+      "texture_uv": [0.0625, 0.9375, 0.0, 0.6640625],
+      "display_size_ui": [112, 340]
+    }
+  },
+  "layout_contract": {
+    "provider_container": "pfUI.addonbuttons / pfMinimapButtons",
+    "provider_toggle": "pfUI.addonbuttons.minimapbutton / pfMinimapButton",
+    "master_top_left_on_compass_art_ui": [94, 142],
+    "toggle_center_on_compass_art_ui": [196, 158],
+    "provider_hitbox_ui": [28, 28],
+    "entry_size_ui": [21, 21],
+    "entry_pitch_ui": [24, 24],
+    "entry_flow": "rightmost column top-to-bottom, then grow left; eight rows",
+    "single_texture_instance_per_state": true,
+    "closed_and_open_use_same_runtime_master": true,
+    "dynamic_plugin_icons_and_interactions_remain_provider_owned": true,
+    "rope_and_bag_are_click_through": true,
+    "zero_addons_hide_toggle_and_sling": true,
+    "non_bottom_positions_use_v4_v3_fallback": true,
+    "farmmode_and_disabled_map_use_provider_fallback": true,
+    "decorative_connector_required": false,
+    "vanilla_power_of_two_texture_container": true
+  }
+}

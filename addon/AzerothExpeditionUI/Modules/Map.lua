@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local Map = {}
-Map.runtimeContract = "4.0"
+Map.runtimeContract = "7.0"
 Map.worldIntegrationPaused = true
 Map.miniIntegrationPaused = false
 
@@ -50,16 +50,35 @@ local MINI = {
     upperCenterY = 219,
     lowerCenterY = 236,
   },
-  latch = {
-    bottom = {
-      normal = MEDIA .. "MapMiniAddonLatchBottomNormalV3",
-      hover = MEDIA .. "MapMiniAddonLatchBottomHoverV3",
-      pressed = MEDIA .. "MapMiniAddonLatchBottomPressedV3",
-      width = 38,
-      height = 24,
-      textureWidth = 64,
-      textureHeight = 32,
+  addonSling = {
+    path = MEDIA .. "MapMiniAddonSlingMasterV7",
+    logicalWidth = 120,
+    logicalHeight = 340,
+    sampledWidth = 240,
+    sampledHeight = 680,
+    texelsPerUI = 2,
+    textureWidth = 256,
+    textureHeight = 1024,
+    masterX = 94,
+    masterY = 142,
+    iconCenterX = 102,
+    iconCenterY = 16,
+    hitbox = 28,
+    closedStartX = 84,
+    closedHeight = 36,
+    entryLeft = 91,
+    entryTop = 140,
+    entrySize = 21,
+    entryPitch = 24,
+    maxRows = 8,
+    tiers = {
+      { maximum = 8, startX = 84 },
+      { maximum = 16, startX = 60 },
+      { maximum = 24, startX = 36 },
+      { maximum = 30, startX = 8 },
     },
+  },
+  latch = {
     top = {
       normal = MEDIA .. "MapMiniAddonLatchTopNormalV3",
       hover = MEDIA .. "MapMiniAddonLatchTopHoverV3",
@@ -126,17 +145,6 @@ local MINI = {
     textureHeight = 32,
   },
   tray = {
-    bottom = {
-      path = MEDIA .. "MapMiniAddonTrayBottomV4",
-      logicalWidth = 270,
-      logicalHeight = 74,
-      textureWidth = 512,
-      textureHeight = 128,
-      cutX1 = 18,
-      cutX2 = 258,
-      cutY1 = 12,
-      cutY2 = 64,
-    },
     top = {
       path = MEDIA .. "MapMiniAddonTrayTopV4",
       logicalWidth = 270,
@@ -1454,6 +1462,117 @@ local function LayoutAddonEntries(container, entries, position, scale)
   return count, width, height
 end
 
+local function AddonSlingTier(count)
+  local tiers = MINI.addonSling.tiers
+  for _, tier in ipairs(tiers) do
+    if count <= tier.maximum then return tier end
+  end
+  return tiers[table.getn(tiers)]
+end
+
+local function EnsureAddonSlingTexture(art)
+  if not art then return nil end
+  if not art.aeuiMapAddonSling then
+    art.aeuiMapAddonSling = art:CreateTexture(nil, "OVERLAY")
+  end
+  return art.aeuiMapAddonSling
+end
+
+local function HideAddonSlingTexture(art)
+  if art and art.aeuiMapAddonSling then
+    art.aeuiMapAddonSling:Hide()
+  end
+end
+
+local function SetAddonSlingTexture(art, count, expanded, scale)
+  if not art or count < 1 then
+    HideAddonSlingTexture(art)
+    return nil
+  end
+  local definition = MINI.addonSling
+  local tier = AddonSlingTier(count)
+  local startX = expanded and tier.startX or definition.closedStartX
+  local logicalHeight = expanded and definition.logicalHeight or definition.closedHeight
+  local texelsPerUI = definition.texelsPerUI
+  local texture = EnsureAddonSlingTexture(art)
+  texture:ClearAllPoints()
+  texture:SetPoint(
+    "TOPLEFT",
+    art,
+    "TOPLEFT",
+    (definition.masterX + startX) * scale,
+    -definition.masterY * scale
+  )
+  texture:SetWidth((definition.logicalWidth - startX) * scale)
+  texture:SetHeight(logicalHeight * scale)
+  texture:SetTexture(definition.path)
+  texture:SetTexCoord(
+    startX * texelsPerUI / definition.textureWidth,
+    definition.sampledWidth / definition.textureWidth,
+    0,
+    logicalHeight * texelsPerUI / definition.textureHeight
+  )
+  texture:SetVertexColor(1, 1, 1)
+  texture:SetAlpha(1)
+  texture:Show()
+  return tier
+end
+
+local function LayoutAddonSlingEntries(container, entries, art, scale)
+  local count = table.getn(entries)
+  if count == 0 or not art then return count, nil end
+  local definition = MINI.addonSling
+  local tier = AddonSlingTier(count)
+  local cropWidth = definition.logicalWidth - tier.startX
+  container:ClearAllPoints()
+  container:SetPoint(
+    "TOPLEFT",
+    art,
+    "TOPLEFT",
+    (definition.masterX + tier.startX) * scale,
+    -definition.masterY * scale
+  )
+  container:SetWidth(cropWidth * scale)
+  container:SetHeight(definition.logicalHeight * scale)
+
+  for index, entry in ipairs(entries) do
+    local column = math.floor((index - 1) / definition.maxRows)
+    local row = (index - 1) - column * definition.maxRows
+    local x = (
+      definition.entryLeft -
+      column * definition.entryPitch -
+      tier.startX +
+      definition.entrySize / 2
+    ) * scale
+    local y = (
+      definition.entryTop +
+      row * definition.entryPitch +
+      definition.entrySize / 2
+    ) * scale
+    local frameScale = RelativeEffectiveScale(entry.frame, container)
+    entry.frame:ClearAllPoints()
+    entry.frame:SetPoint(
+      "CENTER",
+      container,
+      "TOPLEFT",
+      x / frameScale,
+      -y / frameScale
+    )
+    if entry.top ~= entry.frame then
+      local topScale = RelativeEffectiveScale(entry.top, container)
+      entry.top:ClearAllPoints()
+      entry.top:SetPoint(
+        "CENTER",
+        container,
+        "TOPLEFT",
+        x / topScale,
+        -y / topScale
+      )
+    end
+  end
+  return count, tier
+end
+
 local function EnsureToggleArt(button)
   if not button then return nil end
   if not button.aeuiMapToggleBody then
@@ -1468,9 +1587,7 @@ local function EnsureToggleArt(button)
     button.aeuiMapToggleGlyph = button:CreateTexture(nil, "ARTWORK")
     button.aeuiMapToggleGlyph:SetPoint("CENTER", button, "CENTER", 0, 0)
   end
-  -- The V4 latch directly overlaps the tray.  Keep the real clickable button
-  -- above the HIGH-strata provider container so it visibly presses the tray
-  -- edge instead of being covered by the nine-slice.
+  -- Keep the real clickable provider Button above all decorative art.
   if type(button.SetFrameStrata) == "function" then
     button:SetFrameStrata("DIALOG")
   end
@@ -1478,6 +1595,24 @@ local function EnsureToggleArt(button)
   if button.aeuiMapConnector then button.aeuiMapConnector:Hide() end
   HideProviderBackdrop(button)
   return button.aeuiMapToggleGlyph
+end
+
+local function PrepareAddonSlingButton(button, art, scale)
+  if not button or not art then return false end
+  EnsureToggleArt(button)
+  if button.aeuiMapToggleBody then button.aeuiMapToggleBody:Hide() end
+  if button.aeuiMapToggleGlyph then button.aeuiMapToggleGlyph:Hide() end
+  button:ClearAllPoints()
+  button:SetWidth(MINI.addonSling.hitbox * scale)
+  button:SetHeight(MINI.addonSling.hitbox * scale)
+  button:SetPoint(
+    "CENTER",
+    art,
+    "TOPLEFT",
+    (MINI.addonSling.masterX + MINI.addonSling.iconCenterX) * scale,
+    -(MINI.addonSling.masterY + MINI.addonSling.iconCenterY) * scale
+  )
+  return true
 end
 
 local function SetComponentTexture(texture, path, definition)
@@ -1536,13 +1671,7 @@ local function AnchorAddonFrames(container, button, art, position, scale)
   button:ClearAllPoints()
   button:SetWidth(latch.width * scale)
   button:SetHeight(latch.height * scale)
-  if position == "bottom" then
-    -- V4 removes the decorative connector.  The latch remains attached to the
-    -- cradle and overlaps the tray rectangle by four UI pixels; after each
-    -- asset's transparent edge this produces one visible row of direct contact.
-    button:SetPoint("TOP", art, "TOPLEFT", 110 * scale, -251 * scale)
-    container:SetPoint("TOPRIGHT", art, "TOPRIGHT", 0, -271 * scale)
-  elseif position == "top" then
+  if position == "top" then
     button:SetPoint("TOPLEFT", art, "TOPLEFT", 142 * scale, -17 * scale)
     container:SetPoint("BOTTOM", art, "TOPLEFT", 161 * scale, -21 * scale)
   elseif position == "left" then
@@ -1570,6 +1699,7 @@ function Map:StyleAddonButtons(scale)
     end
     if button.aeuiMapConnector then button.aeuiMapConnector:Hide() end
     button:Hide()
+    HideAddonSlingTexture(art)
     self.addonButtonCount = 0
     return
   end
@@ -1577,6 +1707,30 @@ function Map:StyleAddonButtons(scale)
   HideProviderBackdrop(container)
   local entries = GetAddonEntries(container)
   local position = GetAddonPosition()
+  if position == "bottom" then
+    local count = table.getn(entries)
+    self.addonButtonCount = count
+    HideNineSlice(container)
+    if count == 0 then
+      container:Hide()
+      button:Hide()
+      HideAddonSlingTexture(art)
+      if button.aeuiMapConnector then button.aeuiMapConnector:Hide() end
+      return
+    end
+    if not art or not PrepareAddonSlingButton(button, art, scale) then
+      container:Hide()
+      button:Hide()
+      HideAddonSlingTexture(art)
+      return
+    end
+    LayoutAddonSlingEntries(container, entries, art, scale)
+    button:Show()
+    SetAddonSlingTexture(art, count, container:IsShown(), scale)
+    return
+  end
+
+  HideAddonSlingTexture(art)
   local count = LayoutAddonEntries(container, entries, position, scale)
   self.addonButtonCount = count
   if count == 0 then
@@ -1604,6 +1758,8 @@ end
 function Map:RestoreAddonButtons()
   if not pfUI or not pfUI.addonbuttons then return end
   local container = pfUI.addonbuttons
+  local art = pfUI.minimap and pfUI.minimap.aeuiMapMiniArt
+  HideAddonSlingTexture(art)
   HideNineSlice(container)
   RestoreProviderBackdrop(container)
   if container.buttons then
@@ -1780,8 +1936,20 @@ function Map:ApplyMini()
     return true
   end
   pfUI.minimap.aeuiMapMiniRuntimeContract = self.runtimeContract
-  self.miniStatus = "mini-v4-applied-round-cradle-direct-tray"
+  self.miniStatus = "mini-v7-integrated-light-sling"
   return true
+end
+
+local function SetAddonToggleInteractionState(button, state)
+  local position = GetAddonPosition()
+  if position == "bottom" then
+    -- V7's exact-pixels master is state-stable. The real Button still owns
+    -- input, but hover/pressed must not resurrect the retired V5 base.
+    if button.aeuiMapToggleBody then button.aeuiMapToggleBody:Hide() end
+    if button.aeuiMapToggleGlyph then button.aeuiMapToggleGlyph:Hide() end
+    return
+  end
+  SetToggleBodyState(button, position, state)
 end
 
 function Map:InstallHooks()
@@ -1873,13 +2041,17 @@ function Map:InstallHooks()
       end)
       HookScript(container, "OnHide", function()
         if MiniModuleEnabled() and container.minimapbutton then
-          local button = container.minimapbutton
-          SetToggleGlyph(
-            button,
-            ToggleDirection(GetAddonPosition(), false),
-            MiniScale()
-          )
-          SetToggleBodyState(button, GetAddonPosition(), "normal")
+          if GetAddonPosition() == "bottom" then
+            Map:StyleAddonButtons(MiniScale())
+          else
+            local button = container.minimapbutton
+            SetToggleGlyph(
+              button,
+              ToggleDirection(GetAddonPosition(), false),
+              MiniScale()
+            )
+            SetToggleBodyState(button, GetAddonPosition(), "normal")
+          end
         end
       end)
       if container.minimapbutton then
@@ -1890,19 +2062,19 @@ function Map:InstallHooks()
         end)
         HookScript(container.minimapbutton, "OnEnter", function()
           local button = container.minimapbutton
-          SetToggleBodyState(button, GetAddonPosition(), "hover")
+          SetAddonToggleInteractionState(button, "hover")
         end)
         HookScript(container.minimapbutton, "OnLeave", function()
           local button = container.minimapbutton
-          SetToggleBodyState(button, GetAddonPosition(), "normal")
+          SetAddonToggleInteractionState(button, "normal")
         end)
         HookScript(container.minimapbutton, "OnMouseDown", function()
           local button = container.minimapbutton
-          SetToggleBodyState(button, GetAddonPosition(), "pressed")
+          SetAddonToggleInteractionState(button, "pressed")
         end)
         HookScript(container.minimapbutton, "OnMouseUp", function()
           local button = container.minimapbutton
-          SetToggleBodyState(button, GetAddonPosition(), "hover")
+          SetAddonToggleInteractionState(button, "hover")
         end)
       end
     end
@@ -1944,7 +2116,8 @@ function Map:GetRuntimeStatus()
     ", info-provider=" .. tostring(self.miniPanelStatus or "native") ..
     ", edge-safety=" .. tostring(self.miniSafetyStatus or "unapplied") ..
     ", addons=" .. tostring(self.addonButtonCount or 0) ..
-    ", addon-tray=v4-four-way-nine-slice-direct-latch" ..
+    ", addon-tray=v7-bottom-integrated-sling-v4-nonbottom-fallback" ..
+    ", addon-toggle=v7-same-master-uv-crop" ..
     ", addon-connector=retired" ..
     ", controls=provider-live" ..
     ", pfquest=provider-live" ..

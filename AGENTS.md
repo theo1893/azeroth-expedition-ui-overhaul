@@ -22,7 +22,7 @@ Codex 进入仓库后先读本文件。这里给出项目边界、文档索引�
 | Chat | runtime `1.22 / P5`；Full V1 主框、Dark V2 Tab、Dark V1 输入已接入；右框隐藏，经典颜色透传 | 实机验证 Tab、缩放、输入、频道颜色和左框消息回收 |
 | Quests | runtime `1.27`、Theme `1.10`；Quest Log 主体／目录已获实机确认；奖励槽与闭合火漆载体 `P5`；事务菜单未启用 | 实机验证奖励槽、火漆滚动裁切；Tracker 重新确认真实区域 |
 | Action Bars | AEUI `0.8.36`；Slot／Rail `P6`；Field Kit `2.9`、Focus `2.7`、Sidebar Group `1.0`、Target Markers `2.0` 均 `P5`；所有角色 DDPS 统一 `(650,-615)` | 实机验证共用缝制皮革底板、占用态左下标记身份、死亡目标仅本地清空的 `4×2` 方阵与 HDL 一键怪群标记、ArchiTotem 展开层级、AutoBar 左侧 popup／四列向上网格、DDPS 中央视野、姿态尺寸及相邻 provider |
-| Map | WorldMap 继续暂停；Minimap runtime `4.0`，V3 罗盘／信息托架／圆形 mask／锁扣与 V4 四向插件工具卷已接入 `P5`；独立 connector 已退出运行时，锁扣直接压住工具卷 | 实机验证直接搭接、真实图标安全区、四向展开、缩放及 FarmMode 回退 |
+| Map | WorldMap 继续暂停；Minimap runtime `7.0`，V3 罗盘／托架／mask／状态插槽保留；bottom V7 同母图徽记／绳索／轻型袋已接入 `P5`，真实插件按钮保持动态，非 bottom 使用 V4／V3 回退 | 实机验证 closed/open 徽记不跳位、0／6／12／22／30 排布、命中区、缩放、显隐及回退 |
 | Spellbook | accepted `SB-A2-DONOR V1` source/runtime 保留，AEUI adapter 与 Spellbook ownership 暂停；当前回退 pfUI 技能书 | 明天依据 handoff 实机图核对四块 TGA 对位、层序、provider region 与控件净空 |
 | Talents | `P1 / paused`；已与 Spellbook 拆分，真实动态节点／分支边界已对齐 | 等用户明确恢复后制作独立 `TL-SIM-V1` |
 | Character | `P2–P5 / active`；runtime `1.9`，基础层、属性纸、抗性槽、E1／E2-A 装备槽、F1 Tabs 与 E3 Ammo 均以 2× runtime 接入，原生 UI 几何与动态内容所有权不变 | 实机复核清晰度、属性纸／文字、装备槽、Tabs、Ammo 动态内容与禁用回退；稳定后做 E2-B 或 E4 空槽 |
