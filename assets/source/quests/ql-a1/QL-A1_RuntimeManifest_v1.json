@@ -2,7 +2,7 @@
   "schema_version": 1,
   "batch": "QL-A2",
   "version": "V4",
-  "runtime_contract": "1.0",
+  "runtime_contract": "1.1",
   "status": "runtime-exported",
   "source": {
     "file": "assets/source/quests/ql-a1/QuestLogBookShell_Master_v1.png",
@@ -15,27 +15,40 @@
     "opaque_pixels": 1325994
   },
   "transform": {
-    "operation": "aspect-preserving resize with integer-pixel rounding, then transparent top-left atlas padding",
+    "operation": "aspect-preserving 2x resize with integer-pixel rounding, vertical half split, then transparent top-left atlas padding",
     "resample": "Pillow Image.Resampling.LANCZOS",
     "crop": null,
     "rotation": null,
     "mirror": false,
     "retouch": false,
-    "display_size": [
+    "logical_display_size": [
       676,
       464
     ],
-    "atlas_size": [
+    "sampled_size": [
+      1352,
+      928
+    ],
+    "tile_logical_size": [
+      338,
+      464
+    ],
+    "tile_sampled_size": [
+      676,
+      928
+    ],
+    "texels_per_ui": 2,
+    "atlas_size_per_tile": [
       1024,
-      512
+      1024
     ],
-    "content_box": [
+    "tile_content_box": [
       0,
       0,
       676,
-      464
+      928
     ],
-    "texcoord": {
+    "tile_texcoord": {
       "left": 0.0,
       "right": 0.66015625,
       "top": 0.0,
@@ -44,39 +57,103 @@
   },
   "preview": {
     "file": "generated/quests/QL-A2/v4/previews/QL-A2_V4_SHELL_676x464.preview.png",
-    "sha256": "3a075d8e094fc8d3b72cf8b5fc4a5a6add020ddbcd6f1e768a841423c5b0e910",
-    "width": 676,
-    "height": 464,
+    "sha256": "cc0706f7e23ffede6122e078f4c6f5bbd31e7dfebd469f63a1b85139bcba1f1f",
+    "width": 1352,
+    "height": 928,
     "mode": "RGBA",
     "visible_bbox_exclusive": [
-      0,
-      22,
-      676,
-      438
+      1,
+      46,
+      1351,
+      873
     ],
     "visible_green_spill_pixels": 0,
-    "transparent_pixels": 45159,
-    "partially_transparent_pixels": 6974,
-    "opaque_pixels": 261531
+    "transparent_pixels": 187364,
+    "partially_transparent_pixels": 14460,
+    "opaque_pixels": 1052832
   },
   "runtime": {
-    "file": "addon/AzerothExpeditionUI/Media/Quests/QuestLogShellV4.tga",
-    "sha256": "1b6b21cd3db74202051a2ceb8b5ba1d91ca7beb636accf247603edbc3cfeb40e",
-    "width": 1024,
-    "height": 512,
-    "mode": "RGBA",
-    "tga_descriptor": 8,
-    "tga_top_origin": false,
-    "visible_bbox_exclusive": [
-      0,
-      22,
+    "assembly": "two vertical half textures in one unchanged 676x464 UI box",
+    "logical_size": [
       676,
-      438
+      464
     ],
-    "visible_green_spill_pixels": 0,
-    "transparent_pixels": 255783,
-    "partially_transparent_pixels": 6974,
-    "opaque_pixels": 261531
+    "sampled_size": [
+      1352,
+      928
+    ],
+    "texels_per_ui": 2,
+    "legacy_1x_file_retained_unmounted": "addon/AzerothExpeditionUI/Media/Quests/QuestLogShellV4.tga",
+    "tiles": {
+      "left": {
+        "file": "addon/AzerothExpeditionUI/Media/Quests/QuestLogShellLeftV4.tga",
+        "sha256": "0c0d7206b1b197f3c2c1c8a63250ffbf7388c63dc309ee3da84825283054d1d9",
+        "logical_size": [
+          338,
+          464
+        ],
+        "sampled_size": [
+          676,
+          928
+        ],
+        "texture_size": [
+          1024,
+          1024
+        ],
+        "texcoord": {
+          "left": 0.0,
+          "right": 0.66015625,
+          "top": 0.0,
+          "bottom": 0.90625
+        },
+        "tga_descriptor": 8,
+        "tga_top_origin": false,
+        "visible_bbox_exclusive": [
+          1,
+          46,
+          676,
+          873
+        ],
+        "visible_green_spill_pixels": 0,
+        "transparent_pixels": 515183,
+        "partially_transparent_pixels": 7466,
+        "opaque_pixels": 525927
+      },
+      "right": {
+        "file": "addon/AzerothExpeditionUI/Media/Quests/QuestLogShellRightV4.tga",
+        "sha256": "fd2f7e0535a831c20b34f142abeaed7013a39dcbe5b8bc173bb05f1cfab65517",
+        "logical_size": [
+          338,
+          464
+        ],
+        "sampled_size": [
+          676,
+          928
+        ],
+        "texture_size": [
+          1024,
+          1024
+        ],
+        "texcoord": {
+          "left": 0.0,
+          "right": 0.66015625,
+          "top": 0.0,
+          "bottom": 0.90625
+        },
+        "tga_descriptor": 8,
+        "tga_top_origin": false,
+        "visible_bbox_exclusive": [
+          0,
+          46,
+          675,
+          873
+        ],
+        "visible_green_spill_pixels": 0,
+        "transparent_pixels": 514677,
+        "partially_transparent_pixels": 6994,
+        "opaque_pixels": 526905
+      }
+    }
   },
   "frame_contract": {
     "object": "QuestLogFrame",
@@ -108,7 +185,7 @@
     "list_only": "keep the full 676 x 464 shell visible and hide only right-page dynamic content"
   },
   "ownership": {
-    "QUEST.LOG.SHELL": "single static runtime texture",
+    "QUEST.LOG.SHELL": "two static 2x half textures with one logical shell",
     "QUEST.LOG.LIST.PAPER": "static SHELL subregion and layout safe area",
     "QUEST.LOG.DETAIL.PAPER": "static SHELL subregion and layout safe area",
     "QUEST.LOG.GUTTER.UNDERLAY": "static SHELL subregion",

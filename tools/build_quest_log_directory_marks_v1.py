@@ -90,8 +90,9 @@ EXPECTED_SOURCE_SHA256 = (
     "719445d15fb34be4af3ec316eac5bdec51c2061423bae5d7f45b47a3b1128c44"
 )
 EXPECTED_SOURCE_SIZE = (1024, 1024)
-ATLAS_SIZE = (64, 16)
-CELL_SIZE = (16, 16)
+ATLAS_SIZE = (128, 32)
+CELL_SIZE = (32, 32)
+TEXELS_PER_UI = 2
 SHELL_DISPLAY_SIZE = (676, 464)
 ROW_COUNT = 23
 ROW_BOX = (224, 15)
@@ -243,7 +244,10 @@ def build_atlas(
         if not bounds:
             raise ValueError(f"{state['id']} source cell has no visible pixels")
         cropped = clear_transparent_rgb(source_cell.crop(bounds))
-        scaled = scale_to_fit(cropped, state["display_size"])
+        sampled_target = tuple(
+            value * TEXELS_PER_UI for value in state["display_size"]
+        )
+        scaled = scale_to_fit(cropped, sampled_target)
         cell_x = index * CELL_SIZE[0]
         paste_x = cell_x + (CELL_SIZE[0] - scaled.width) // 2
         paste_y = (CELL_SIZE[1] - scaled.height) // 2
@@ -270,6 +274,8 @@ def build_atlas(
             ],
             "runtime_content_xyxy": list(content_box),
             "runtime_display_size": [scaled.width, scaled.height],
+            "logical_display_size": list(state["display_size"]),
+            "texels_per_ui": TEXELS_PER_UI,
             "texcoord": {
                 "left": content_box[0] / ATLAS_SIZE[0],
                 "right": content_box[2] / ATLAS_SIZE[0],
@@ -330,6 +336,8 @@ def paste_sprite(
     xy: tuple[int, int],
 ) -> None:
     sprite = atlas.crop(tuple(record["runtime_content_xyxy"]))
+    logical_size = tuple(record["logical_display_size"])
+    sprite = sprite.resize(logical_size, Image.Resampling.LANCZOS)
     preview.alpha_composite(sprite, xy)
 
 
@@ -511,9 +519,17 @@ def update_source_manifest(
 ) -> None:
     manifest = json.loads(path.read_text(encoding="utf-8"))
     manifest["export_contract"]["status"] = "runtime-exported"
+    manifest["export_contract"]["operation"] = (
+        "fixed source-cell extraction, visible-alpha-bounds crop, direct "
+        "2x proportional LANCZOS scale, centering in fixed sampled cells, "
+        "transparent atlas assembly and TGA conversion"
+    )
+    manifest["export_contract"]["runtime_atlas_size"] = list(ATLAS_SIZE)
+    manifest["export_contract"]["runtime_cell_size"] = list(CELL_SIZE)
+    manifest["export_contract"]["texels_per_ui"] = TEXELS_PER_UI
     manifest["runtime_exports"] = [
         {
-            "contract": "QL-B1 V1.r3 / 1.0",
+            "contract": "QL-B1 V1.r3 / 1.1 / 2x",
             "manifest": runtime_manifest.name,
             "file": display_path(runtime_path),
             "sha256": sha256(runtime_path),
@@ -565,7 +581,7 @@ def main() -> None:
         "schema_version": 1,
         "batch": "QL-B1",
         "version": "V1.r3",
-        "runtime_contract": "1.0",
+        "runtime_contract": "1.1",
         "status": "runtime-exported",
         "source": {
             "file": display_path(args.source),
@@ -593,6 +609,7 @@ def main() -> None:
             "retouch": False,
             "atlas_size": list(ATLAS_SIZE),
             "cell_size": list(CELL_SIZE),
+            "texels_per_ui": TEXELS_PER_UI,
             "state_order": [state["id"] for state in STATES],
             "states": records,
         },

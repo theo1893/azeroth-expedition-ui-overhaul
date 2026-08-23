@@ -5,27 +5,27 @@
   "batch": "MAP-MINI-V7-A1-INTEGRATED-LIGHT-SLING-MASTER",
   "phase": "P5",
   "status": "runtime-exported",
-  "runtime_contract": "7.0",
+  "runtime_contract": "7.3",
   "source_manifest": "assets/source/map/mini-v7-addon-sling/MAP-MINI-V7-A1_SourceManifest_v1.json",
   "runtime": {
     "integrated_sling_bottom": {
       "component": "MAP.MINI.ADDONS.V7.BOTTOM.INTEGRATED_SLING",
       "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniAddonSlingMasterV7.tga",
-      "sha256": "40afac0e15485fa29ae8f53238421b1e5073cbb51bc8d9474c97d657677fb5cf",
+      "sha256": "00794829fc463f7517ec2c9e1f241ea2febd70f23e431a87030b2bcd7ba3ea93",
       "metrics": {
         "mode": "RGBA",
-        "pixel_sha256": "7a299ef89ceb9160d4ef8e98a13ef571f74ee295c8554a5ab6bc07ac788306d9",
-        "visible_bbox_exclusive": [19, 3, 238, 678],
-        "transparent_pixels": 175630,
-        "partially_transparent_pixels": 4567,
-        "opaque_pixels": 81947,
+        "pixel_sha256": "a81e44e449a07d5f5eaf1dd251d7948edf8e74b35016743c20b4dc1680d14aa0",
+        "visible_bbox_exclusive": [19, 3, 238, 582],
+        "transparent_pixels": 176717,
+        "partially_transparent_pixels": 4104,
+        "opaque_pixels": 81323,
         "transparent_rgb_nonzero_values": 0
       },
-      "logical_size_ui": [120, 340],
-      "sampled_size": [240, 680],
+      "logical_size_ui": [120, 292],
+      "sampled_size": [240, 584],
       "texels_per_ui_unit": 2,
       "texture_size": [256, 1024],
-      "content_uv": [0.0, 0.9375, 0.0, 0.6640625],
+      "content_uv": [0.0, 0.9375, 0.0, 0.5703125],
       "tga_header": {
         "image_type": 2,
         "width": 256,
@@ -43,35 +43,38 @@
       "display_size_ui": [36, 36]
     },
     "one_to_eight": {
-      "logical_crop": [84, 0, 120, 340],
-      "runtime_crop": [168, 0, 240, 680],
-      "texture_uv": [0.65625, 0.9375, 0.0, 0.6640625],
-      "display_size_ui": [36, 340]
+      "logical_crop": [84, 0, 120, 292],
+      "runtime_crop": [168, 0, 240, 584],
+      "texture_uv": [0.65625, 0.9375, 0.0, 0.5703125],
+      "display_size_ui": [36, 292]
     },
     "nine_to_sixteen": {
-      "logical_crop": [60, 0, 120, 340],
-      "runtime_crop": [120, 0, 240, 680],
-      "texture_uv": [0.46875, 0.9375, 0.0, 0.6640625],
-      "display_size_ui": [60, 340]
+      "logical_crop": [60, 0, 120, 292],
+      "runtime_crop": [120, 0, 240, 584],
+      "texture_uv": [0.46875, 0.9375, 0.0, 0.5703125],
+      "display_size_ui": [60, 292]
     },
     "seventeen_to_twenty_four": {
-      "logical_crop": [36, 0, 120, 340],
-      "runtime_crop": [72, 0, 240, 680],
-      "texture_uv": [0.28125, 0.9375, 0.0, 0.6640625],
-      "display_size_ui": [84, 340]
+      "logical_crop": [36, 0, 120, 292],
+      "runtime_crop": [72, 0, 240, 584],
+      "texture_uv": [0.28125, 0.9375, 0.0, 0.5703125],
+      "display_size_ui": [84, 292]
     },
     "twenty_five_to_thirty": {
-      "logical_crop": [8, 0, 120, 340],
-      "runtime_crop": [16, 0, 240, 680],
-      "texture_uv": [0.0625, 0.9375, 0.0, 0.6640625],
-      "display_size_ui": [112, 340]
+      "logical_crop": [8, 0, 120, 292],
+      "runtime_crop": [16, 0, 240, 584],
+      "texture_uv": [0.0625, 0.9375, 0.0, 0.5703125],
+      "display_size_ui": [112, 292]
     }
   },
   "layout_contract": {
     "provider_container": "pfUI.addonbuttons / pfMinimapButtons",
     "provider_toggle": "pfUI.addonbuttons.minimapbutton / pfMinimapButton",
-    "master_top_left_on_compass_art_ui": [94, 142],
-    "toggle_center_on_compass_art_ui": [196, 158],
+    "master_top_left_on_compass_art_ui": [77, 166],
+    "toggle_center_on_compass_art_ui": [179, 182],
+    "entry_left_on_master_ui": 87,
+    "entry_top_on_master_ui": 98,
+    "geometry_revision": "rope shortened 48 UI; toggle moved left 17 UI and down 24 UI so its visible left edge overlaps the compass boundary by 1 UI; bag moved left 17 UI and up 24 UI; entries moved left 4 UI and down 6 UI within the bag",
     "provider_hitbox_ui": [28, 28],
     "entry_size_ui": [21, 21],
     "entry_pitch_ui": [24, 24],

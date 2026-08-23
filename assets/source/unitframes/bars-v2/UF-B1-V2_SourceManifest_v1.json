@@ -142,20 +142,30 @@
       {
         "component": "UF.BAR.HEALTH.FILL",
         "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFrameHealthFillV1.tga",
-        "sha256": "bdee918674484be3a70ef1f64b3db9f326b0045560ce52234015ca1ba7836cd8",
+        "sha256": "26a6f7d1a6b7ae925a18922c1601ee5e17c276fe6556454840ac0083d9967466",
         "size": [
+          128,
+          64
+        ],
+        "logical_size": [
           64,
           32
-        ]
+        ],
+        "texels_per_ui": 2
       },
       {
         "component": "UF.BAR.POWER.FILL",
         "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFramePowerFillV1.tga",
-        "sha256": "8fbf0797e4b3562a02ed3b7f19e7b7e100c832cf1c02b6fd172fc06317314cd0",
+        "sha256": "0e97d1495d65942dbcfd52f7ebf81dc4f9dc6ace584a86fc182bbf5c7844ba0e",
         "size": [
+          128,
+          32
+        ],
+        "logical_size": [
           64,
           16
-        ]
+        ],
+        "texels_per_ui": 2
       }
     ]
   }

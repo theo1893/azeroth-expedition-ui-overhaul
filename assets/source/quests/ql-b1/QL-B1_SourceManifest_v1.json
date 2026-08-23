@@ -101,7 +101,7 @@
   },
   "export_contract": {
     "status": "runtime-exported",
-    "operation": "fixed source-cell extraction, visible-alpha-bounds crop, proportional LANCZOS scale, centering in fixed runtime cells, transparent atlas assembly and TGA conversion",
+    "operation": "fixed source-cell extraction, visible-alpha-bounds crop, direct 2x proportional LANCZOS scale, centering in fixed sampled cells, transparent atlas assembly and TGA conversion",
     "source_grid": [
       2,
       2
@@ -111,12 +111,12 @@
       512
     ],
     "runtime_atlas_size": [
-      64,
-      16
+      128,
+      32
     ],
     "runtime_cell_size": [
-      16,
-      16
+      32,
+      32
     ],
     "runtime_cell_order": [
       "collapsed",
@@ -136,21 +136,22 @@
       "rotate, mirror or deform a state",
       "load the 1024 x 1024 source directly in the client",
       "change quest row interaction, tracking state or saved data"
-    ]
+    ],
+    "texels_per_ui": 2
   },
   "runtime_exports": [
     {
-      "contract": "QL-B1 V1.r3 / 1.0",
+      "contract": "QL-B1 V1.r3 / 1.1 / 2x",
       "manifest": "QL-B1_RuntimeManifest_v1.json",
       "file": "addon/AzerothExpeditionUI/Media/Quests/QuestLogDirectoryMarksV1.tga",
-      "sha256": "e734bbf59da00f7fbc9c75649d33eaf635b5a0c19e1737128dfdce0db58eee8f",
+      "sha256": "82368ba1c6d9bab81317021d8b15af0acd9930701325dc16812fcc5e63dece16",
       "atlas_size": [
-        64,
-        16
+        128,
+        32
       ],
       "cell_size": [
-        16,
-        16
+        32,
+        32
       ]
     }
   ]

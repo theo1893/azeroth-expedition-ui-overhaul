@@ -58,6 +58,10 @@ MODULE_FILES = {
         "addon/pfUI/api/expedition.lua",
         "addon/pfUI/skins/blizzard/character.lua",
     ),
+    "gearplanner": (
+        "addon/AzerothExpeditionUI/Modules/GearPlanner.lua",
+        "addon/AzerothExpeditionUI/Core/Bootstrap.lua",
+    ),
     "spellbook": (
         "addon/AzerothExpeditionUI/Modules/Spellbook.lua",
         "addon/pfUI/api/expedition.lua",

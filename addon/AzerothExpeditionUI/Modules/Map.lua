@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local Map = {}
-Map.runtimeContract = "7.0"
+Map.runtimeContract = "7.6"
 Map.worldIntegrationPaused = true
 Map.miniIntegrationPaused = false
 
@@ -50,24 +50,37 @@ local MINI = {
     upperCenterY = 219,
     lowerCenterY = 236,
   },
+  statusRing = {
+    centerX = 110,
+    centerY = 110,
+    radius = 100,
+    trackingAngle = -140,
+    mailAngle = -50,
+    battlefieldAngle = 25,
+    pvpAngle = 170,
+  },
   addonSling = {
     path = MEDIA .. "MapMiniAddonSlingMasterV7",
     logicalWidth = 120,
-    logicalHeight = 340,
+    logicalHeight = 292,
     sampledWidth = 240,
-    sampledHeight = 680,
+    sampledHeight = 584,
     texelsPerUI = 2,
     textureWidth = 256,
     textureHeight = 1024,
-    masterX = 94,
-    masterY = 142,
+    -- Mirror the accepted right-mounted master at runtime.  Keeping the crop
+    -- origin fixed on the left makes each denser tier grow toward the right.
+    mirrorX = true,
+    masterX = 20,
+    masterY = 166,
     iconCenterX = 102,
     iconCenterY = 16,
     hitbox = 28,
     closedStartX = 84,
-    closedHeight = 36,
+    -- The medallion finishes before y=29; rows below it are rope-only.
+    closedHeight = 29,
     entryLeft = 91,
-    entryTop = 140,
+    entryTop = 98,
     entrySize = 21,
     entryPitch = 24,
     maxRows = 8,
@@ -149,8 +162,9 @@ local MINI = {
       path = MEDIA .. "MapMiniAddonTrayTopV4",
       logicalWidth = 270,
       logicalHeight = 74,
-      textureWidth = 512,
-      textureHeight = 128,
+      texelsPerUI = 2,
+      textureWidth = 1024,
+      textureHeight = 256,
       cutX1 = 12,
       cutX2 = 252,
       cutY1 = 10,
@@ -160,8 +174,9 @@ local MINI = {
       path = MEDIA .. "MapMiniAddonTrayLeftV4",
       logicalWidth = 74,
       logicalHeight = 270,
-      textureWidth = 128,
-      textureHeight = 512,
+      texelsPerUI = 2,
+      textureWidth = 256,
+      textureHeight = 1024,
       cutX1 = 10,
       cutX2 = 62,
       cutY1 = 18,
@@ -171,8 +186,9 @@ local MINI = {
       path = MEDIA .. "MapMiniAddonTrayRightV4",
       logicalWidth = 74,
       logicalHeight = 270,
-      textureWidth = 128,
-      textureHeight = 512,
+      texelsPerUI = 2,
+      textureWidth = 256,
+      textureHeight = 1024,
       cutX1 = 12,
       cutX2 = 64,
       cutY1 = 12,
@@ -1080,8 +1096,8 @@ local function StyleStatusSocket(
   frame,
   icon,
   art,
-  x,
-  y,
+  centerX,
+  centerY,
   scale
 )
   if not frame or not art then return end
@@ -1092,7 +1108,13 @@ local function StyleStatusSocket(
     frame:SetFrameStrata("HIGH")
   end
   frame:ClearAllPoints()
-  frame:SetPoint("TOPLEFT", art, "TOPLEFT", x * scale, -y * scale)
+  frame:SetPoint(
+    "CENTER",
+    art,
+    "TOPLEFT",
+    centerX * scale,
+    -centerY * scale
+  )
   frame:SetWidth(MINI.socket.width * scale)
   frame:SetHeight(MINI.socket.height * scale)
   if type(frame.SetFrameLevel) == "function" then
@@ -1111,44 +1133,57 @@ local function StyleStatusSocket(
   end
 end
 
+local function StatusRingPoint(angle)
+  local definition = MINI.statusRing
+  local radians = angle * math.pi / 180
+  return
+    definition.centerX + definition.radius * math.cos(radians),
+    definition.centerY + definition.radius * math.sin(radians)
+end
+
 local function StyleStatusObjects(art, scale)
+  local x, y
   if pfUI.tracking then
+    x, y = StatusRingPoint(MINI.statusRing.trackingAngle)
     StyleStatusSocket(
       pfUI.tracking,
       pfUI.tracking.icon,
       art,
-      12,
-      25,
+      x,
+      y,
       scale
     )
   end
   if MiniMapMailFrame then
+    x, y = StatusRingPoint(MINI.statusRing.mailAngle)
     StyleStatusSocket(
       MiniMapMailFrame,
       MiniMapMailIcon,
       art,
-      184,
-      25,
+      x,
+      y,
       scale
     )
   end
   if MiniMapBattlefieldFrame then
+    x, y = StatusRingPoint(MINI.statusRing.battlefieldAngle)
     StyleStatusSocket(
       MiniMapBattlefieldFrame,
       MiniMapBattlefieldIcon,
       art,
-      184,
-      168,
+      x,
+      y,
       scale
     )
   end
   if pfUI.minimap and pfUI.minimap.pvpicon then
+    x, y = StatusRingPoint(MINI.statusRing.pvpAngle)
     StyleStatusSocket(
       pfUI.minimap.pvpicon,
       pfUI.minimap.pvpicon.texture,
       art,
-      12,
-      168,
+      x,
+      y,
       scale
     )
   end
@@ -1257,15 +1292,17 @@ local function LayoutNineSlice(frame, scale, position)
   local centreHeight = math.max(1, height - capTop - capBottom)
   local xs = {
     0,
-    definition.cutX1 / definition.textureWidth,
-    definition.cutX2 / definition.textureWidth,
-    definition.logicalWidth / definition.textureWidth,
+    definition.cutX1 * definition.texelsPerUI / definition.textureWidth,
+    definition.cutX2 * definition.texelsPerUI / definition.textureWidth,
+    definition.logicalWidth * definition.texelsPerUI /
+      definition.textureWidth,
   }
   local ys = {
     0,
-    definition.cutY1 / definition.textureHeight,
-    definition.cutY2 / definition.textureHeight,
-    definition.logicalHeight / definition.textureHeight,
+    definition.cutY1 * definition.texelsPerUI / definition.textureHeight,
+    definition.cutY2 * definition.texelsPerUI / definition.textureHeight,
+    definition.logicalHeight * definition.texelsPerUI /
+      definition.textureHeight,
   }
   local widths = { capLeft, centreWidth, capRight }
   local heights = { capTop, centreHeight, capBottom }
@@ -1494,21 +1531,29 @@ local function SetAddonSlingTexture(art, count, expanded, scale)
   local startX = expanded and tier.startX or definition.closedStartX
   local logicalHeight = expanded and definition.logicalHeight or definition.closedHeight
   local texelsPerUI = definition.texelsPerUI
+  local cropWidth = definition.logicalWidth - startX
+  local displayX = definition.masterX
+  local texLeft = definition.sampledWidth / definition.textureWidth
+  local texRight = startX * texelsPerUI / definition.textureWidth
+  if not definition.mirrorX then
+    displayX = displayX + startX
+    texLeft, texRight = texRight, texLeft
+  end
   local texture = EnsureAddonSlingTexture(art)
   texture:ClearAllPoints()
   texture:SetPoint(
     "TOPLEFT",
     art,
     "TOPLEFT",
-    (definition.masterX + startX) * scale,
+    displayX * scale,
     -definition.masterY * scale
   )
-  texture:SetWidth((definition.logicalWidth - startX) * scale)
+  texture:SetWidth(cropWidth * scale)
   texture:SetHeight(logicalHeight * scale)
   texture:SetTexture(definition.path)
   texture:SetTexCoord(
-    startX * texelsPerUI / definition.textureWidth,
-    definition.sampledWidth / definition.textureWidth,
+    texLeft,
+    texRight,
     0,
     logicalHeight * texelsPerUI / definition.textureHeight
   )
@@ -1524,12 +1569,14 @@ local function LayoutAddonSlingEntries(container, entries, art, scale)
   local definition = MINI.addonSling
   local tier = AddonSlingTier(count)
   local cropWidth = definition.logicalWidth - tier.startX
+  local displayX = definition.masterX
+  if not definition.mirrorX then displayX = displayX + tier.startX end
   container:ClearAllPoints()
   container:SetPoint(
     "TOPLEFT",
     art,
     "TOPLEFT",
-    (definition.masterX + tier.startX) * scale,
+    displayX * scale,
     -definition.masterY * scale
   )
   container:SetWidth(cropWidth * scale)
@@ -1538,12 +1585,16 @@ local function LayoutAddonSlingEntries(container, entries, art, scale)
   for index, entry in ipairs(entries) do
     local column = math.floor((index - 1) / definition.maxRows)
     local row = (index - 1) - column * definition.maxRows
-    local x = (
+    local sourceX =
       definition.entryLeft -
-      column * definition.entryPitch -
-      tier.startX +
+      column * definition.entryPitch +
       definition.entrySize / 2
-    ) * scale
+    local x
+    if definition.mirrorX then
+      x = (definition.logicalWidth - sourceX) * scale
+    else
+      x = (sourceX - tier.startX) * scale
+    end
     local y = (
       definition.entryTop +
       row * definition.entryPitch +
@@ -1605,11 +1656,15 @@ local function PrepareAddonSlingButton(button, art, scale)
   button:ClearAllPoints()
   button:SetWidth(MINI.addonSling.hitbox * scale)
   button:SetHeight(MINI.addonSling.hitbox * scale)
+  local iconCenterX = MINI.addonSling.iconCenterX
+  if MINI.addonSling.mirrorX then
+    iconCenterX = MINI.addonSling.logicalWidth - iconCenterX
+  end
   button:SetPoint(
     "CENTER",
     art,
     "TOPLEFT",
-    (MINI.addonSling.masterX + MINI.addonSling.iconCenterX) * scale,
+    (MINI.addonSling.masterX + iconCenterX) * scale,
     -(MINI.addonSling.masterY + MINI.addonSling.iconCenterY) * scale
   )
   return true
@@ -1936,7 +1991,8 @@ function Map:ApplyMini()
     return true
   end
   pfUI.minimap.aeuiMapMiniRuntimeContract = self.runtimeContract
-  self.miniStatus = "mini-v7-integrated-light-sling"
+  self.miniStatus =
+    "mini-v7-5-collapsed-medallion-left-docked-right-growth-status-ring"
   return true
 end
 
@@ -2116,8 +2172,9 @@ function Map:GetRuntimeStatus()
     ", info-provider=" .. tostring(self.miniPanelStatus or "native") ..
     ", edge-safety=" .. tostring(self.miniSafetyStatus or "unapplied") ..
     ", addons=" .. tostring(self.addonButtonCount or 0) ..
-    ", addon-tray=v7-bottom-integrated-sling-v4-nonbottom-fallback" ..
-    ", addon-toggle=v7-same-master-uv-crop" ..
+    ", addon-tray=v7-bottom-left-dock-right-growth-v4-nonbottom-fallback" ..
+    ", addon-toggle=v7-collapsed-medallion-open-full-master" ..
+    ", status-sockets=polar-compass-ring" ..
     ", addon-connector=retired" ..
     ", controls=provider-live" ..
     ", pfquest=provider-live" ..

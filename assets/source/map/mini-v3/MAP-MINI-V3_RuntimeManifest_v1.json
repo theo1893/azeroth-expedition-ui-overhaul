@@ -5,7 +5,7 @@
   "batch": "MAP-MINI-V3",
   "status": "runtime-exported",
   "phase": "P5",
-  "runtime_contract": "3.0",
+  "runtime_contract": "3.1",
   "source_manifest": "assets/source/map/mini-v3/MAP-MINI-V3_SourceManifest_v1.json",
   "runtime": {
     "compass": {
@@ -51,37 +51,38 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "mask": {
       "component": "MAP.MINI.MASK.V3",
       "file": "addon/AzerothExpeditionUI/Media/Map/MapMiniMaskV3.tga",
-      "sha256": "e862b8ca7e6ce31fcfd8826ad20e96f168a7cb26a13bcc750d8f47c515779d64",
+      "sha256": "b7cf0c65823acb47ec42a87adade4f2273b4672ad02540fc9d263145487b973f",
       "metrics": {
         "size": [
-          256,
-          256
+          512,
+          512
         ],
         "mode": "RGBA",
-        "pixel_sha256": "bc74391ea4b48625f70f6de980329a3b5e80e86590d3f61ceca6c786fe0c01af",
+        "pixel_sha256": "8a27f82d3038d785768dfabedb599c0affd78ac00caceb89992558c88b1b2171",
         "visible_bbox_exclusive": [
           1,
           1,
-          255,
-          255
+          511,
+          511
         ],
-        "transparent_pixels": 14840,
-        "partially_transparent_pixels": 1308,
-        "opaque_pixels": 49388,
+        "transparent_pixels": 57848,
+        "partially_transparent_pixels": 2592,
+        "opaque_pixels": 201704,
         "transparent_rgb_nonzero_values": 0
       },
       "logical_size": [
-        256,
-        256
+        512,
+        512
       ],
       "texture_size": [
-        256,
-        256
+        512,
+        512
       ],
       "content_uv": [
         0.0,
@@ -91,12 +92,13 @@
       ],
       "tga_header": {
         "image_type": 2,
-        "width": 256,
-        "height": 256,
+        "width": 512,
+        "height": 512,
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": "functional-mask-512"
     },
     "socket": {
       "component": "MAP.MINI.STATUS.SOCKET.V3",
@@ -141,7 +143,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "latch_bottom_normal": {
       "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.BOTTOM_NORMAL",
@@ -186,7 +189,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "latch_top_normal": {
       "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.TOP_NORMAL",
@@ -231,7 +235,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "latch_left_normal": {
       "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.LEFT_NORMAL",
@@ -276,7 +281,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "latch_right_normal": {
       "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.RIGHT_NORMAL",
@@ -321,7 +327,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "latch_bottom_hover": {
       "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.BOTTOM_HOVER",
@@ -366,7 +373,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "latch_top_hover": {
       "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.TOP_HOVER",
@@ -411,7 +419,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "latch_left_hover": {
       "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.LEFT_HOVER",
@@ -456,7 +465,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "latch_right_hover": {
       "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.RIGHT_HOVER",
@@ -501,7 +511,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "latch_bottom_pressed": {
       "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.BOTTOM_PRESSED",
@@ -546,7 +557,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "latch_top_pressed": {
       "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.TOP_PRESSED",
@@ -591,7 +603,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "latch_left_pressed": {
       "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.LEFT_PRESSED",
@@ -636,7 +649,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "latch_right_pressed": {
       "component": "MAP.MINI.ADDONS.TOGGLE.LATCH.V3.RIGHT_PRESSED",
@@ -681,7 +695,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "glyph_up": {
       "component": "MAP.MINI.ADDONS.TOGGLE.GLYPH.V3.UP",
@@ -726,7 +741,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "glyph_down": {
       "component": "MAP.MINI.ADDONS.TOGGLE.GLYPH.V3.DOWN",
@@ -771,7 +787,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "glyph_left": {
       "component": "MAP.MINI.ADDONS.TOGGLE.GLYPH.V3.LEFT",
@@ -816,7 +833,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "glyph_right": {
       "component": "MAP.MINI.ADDONS.TOGGLE.GLYPH.V3.RIGHT",
@@ -861,7 +879,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "connector_bottom": {
       "component": "MAP.MINI.ADDONS.CONNECTOR.V3.BOTTOM",
@@ -906,7 +925,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "tray_bottom": {
       "component": "MAP.MINI.ADDONS.TRAY.V3.BOTTOM",
@@ -951,7 +971,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "connector_top": {
       "component": "MAP.MINI.ADDONS.CONNECTOR.V3.TOP",
@@ -996,7 +1017,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "tray_top": {
       "component": "MAP.MINI.ADDONS.TRAY.V3.TOP",
@@ -1041,7 +1063,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "connector_left": {
       "component": "MAP.MINI.ADDONS.CONNECTOR.V3.LEFT",
@@ -1086,7 +1109,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "tray_left": {
       "component": "MAP.MINI.ADDONS.TRAY.V3.LEFT",
@@ -1131,7 +1155,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "connector_right": {
       "component": "MAP.MINI.ADDONS.CONNECTOR.V3.RIGHT",
@@ -1176,7 +1201,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     },
     "tray_right": {
       "component": "MAP.MINI.ADDONS.TRAY.V3.RIGHT",
@@ -1221,7 +1247,8 @@
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
-      }
+      },
+      "texels_per_ui": 1
     }
   },
   "layout_contract": {

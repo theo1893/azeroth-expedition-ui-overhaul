@@ -5,19 +5,24 @@
   "component": "UF.PLAYER.SHELL",
   "status": "runtime-exported-addon-integrated",
   "phase": "P5",
-  "runtime_contract": "1.7",
+  "runtime_contract": "1.8",
   "source_manifest": "assets/source/unitframes/player-v5/UF-PLAYER-V5_SourceManifest_v1.json",
   "route": "unitframes.player-shell-v5",
   "runtime": {
     "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFramePlayerShellV5.tga",
-    "sha256": "c69a8f225b3fac4c9c32553c6585bb05a84346a9aab2bb0b131eb5f5816c6926",
+    "sha256": "df6e4e432ff6a83ad3d9e7b013c665e789761dd4f788d6ff337dd27fa7df672d",
     "logical_size": [
       254,
       77
     ],
+    "sampled_size": [
+      508,
+      154
+    ],
+    "texels_per_ui": 2,
     "texture_size": [
-      256,
-      128
+      512,
+      256
     ],
     "content_uv": [
       0.0,
@@ -27,33 +32,43 @@
     ],
     "tga_header": {
       "image_type": 2,
-      "width": 256,
-      "height": 128,
+      "width": 512,
+      "height": 256,
       "bits_per_pixel": 32,
       "descriptor": 8,
       "top_origin": false
     },
-    "logical_metrics": {
+    "sampled_metrics": {
       "size": [
-        254,
-        77
+        508,
+        154
       ],
       "mode": "RGBA",
-      "pixel_sha256": "15998afd0f066658cb8a94b8970176a7765d5c64af71a34b0b7deb4319b6229b",
+      "pixel_sha256": "4e3a5e466e3ddda3d0359b28c93ab2aaa18fecafebbb06d50f3c6de787f515b6",
       "visible_bbox_exclusive": [
         0,
-        0,
-        254,
-        77
+        1,
+        508,
+        154
       ],
-      "transparent_pixels": 14140,
-      "partially_transparent_pixels": 2255,
-      "opaque_pixels": 3163,
-      "visible_green_spill_pixels": 1,
+      "transparent_pixels": 56952,
+      "partially_transparent_pixels": 6210,
+      "opaque_pixels": 15070,
+      "visible_green_spill_pixels": 0,
       "transparent_rgb_nonzero_pixels": 0
     },
     "accepted_runtime_master_sha256": "d449b8bd1dfef1a073ca69cecc57e2c7cb0d38e4a4fb9961bd60f8467253ecbc",
-    "logical_pixels_match_runtime_master": true
+    "historical_1x_runtime_master_retained": true,
+    "source_to_sampled": [
+      [
+        1524,
+        462
+      ],
+      [
+        508,
+        154
+      ]
+    ]
   },
   "addon_contract": {
     "provider": "pfUI.uf.player / pfPlayer",
@@ -62,7 +77,7 @@
       65
     ],
     "assembly": "one complete bitmap; no slicing or texture reconstruction",
-    "ui_scale": "inherited parent scale; accepted bitmap remains intact",
+    "ui_scale": "inherited parent scale; 508x154 samples display in the unchanged 254x77 art box",
     "size_mismatch": "restore only Player to configured pfUI chrome",
     "other_roles": "Target, TargetTarget and Focus remain paused on pfUI fallback",
     "dynamic_owner": "pfUI retains bars, text, colours, auras, icons, clicks and events"

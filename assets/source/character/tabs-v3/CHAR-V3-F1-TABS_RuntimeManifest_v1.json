@@ -6,16 +6,16 @@
   "component": "CHAR.TABS",
   "status": "runtime-exported",
   "phase": "P5",
-  "runtime_contract": "1.8",
+  "runtime_contract": "2.1",
   "source_manifest": "assets/source/character/tabs-v3/CHAR-V3-F1-TABS_SourceManifest_v1.json",
   "runtime": {
     "file": "addon/AzerothExpeditionUI/Media/Character/CharacterTabsV3.tga",
-    "sha256": "7568c69b69d49f73b9f5a75e1d84190b4b75e08ef0b43330c0919c5170876f24",
+    "sha256": "ad88a0848ebfdcad6ce316de8c9332f90b06ae63a3e0afd39050bd7be8ff0566",
     "texture_size": [
       128,
       256
     ],
-    "pixel_sha256": "ac100eae6c46344445dcaee8ff5a5af1081bd575dbfc3efc8ec653e41b717b8e",
+    "pixel_sha256": "90beecc1539c25a61842d5f9d5622178412d476f83415f508f751ebf48c0c964",
     "texels_per_ui_unit": 2,
     "tga": {
       "image_type": 2,
@@ -30,272 +30,272 @@
         "left": {
           "cell_origin": [
             8,
-            8
+            4
           ],
           "logical_size_ui": [
             6,
-            20
+            28
           ],
           "sampled_size": [
             12,
-            40
+            56
           ],
           "texels_per_ui_unit": 2,
           "uv": [
             0.0625,
             0.15625,
-            0.03125,
-            0.1875
+            0.015625,
+            0.234375
           ],
-          "sampled_pixel_sha256": "6d80dc113cf319fedb09bc38165c3bbdaae0ac1cc938ab773035389175a14e64"
+          "sampled_pixel_sha256": "9a16cd2ba79be8fc807a1c1d68ec9ec9ca1ba18369f198fcce363c63ea32ebd5"
         },
         "center": {
           "cell_origin": [
             32,
-            8
+            4
           ],
           "logical_size_ui": [
             8,
-            20
+            28
           ],
           "sampled_size": [
             16,
-            40
+            56
           ],
           "texels_per_ui_unit": 2,
           "uv": [
             0.25,
             0.375,
-            0.03125,
-            0.1875
+            0.015625,
+            0.234375
           ],
-          "sampled_pixel_sha256": "85c5f4803c19d6df32d6c94f1149d0aeff646025c90a32cde69505fc13b1834f"
+          "sampled_pixel_sha256": "a7e2442f899d397504564c8b64de3a7f4d277396ec6e8aec96d9f5878bab790b"
         },
         "right": {
           "cell_origin": [
             60,
-            8
+            4
           ],
           "logical_size_ui": [
             6,
-            20
+            28
           ],
           "sampled_size": [
             12,
-            40
+            56
           ],
           "texels_per_ui_unit": 2,
           "uv": [
             0.46875,
             0.5625,
-            0.03125,
-            0.1875
+            0.015625,
+            0.234375
           ],
-          "sampled_pixel_sha256": "8ef1c3240af747e0bd7c48955e53a3cf45cff7db64481f71f02034ba9e0cb584"
+          "sampled_pixel_sha256": "d12fc9c9b46ffb96994d05504a12d250a1f47a0e8a33e9ef62077dee3badf25a"
         }
       },
       "hover": {
         "left": {
           "cell_origin": [
             8,
-            64
+            68
           ],
           "logical_size_ui": [
             6,
-            20
+            28
           ],
           "sampled_size": [
             12,
-            40
+            56
           ],
           "texels_per_ui_unit": 2,
           "uv": [
             0.0625,
             0.15625,
-            0.25,
-            0.40625
+            0.265625,
+            0.484375
           ],
-          "sampled_pixel_sha256": "1e0dc20da03bcb8d09fae2485b8532be572522535f4dda86ac474a2c10f3d556"
+          "sampled_pixel_sha256": "11df5fbe30a4bbb0228ea58154d7bc696c238c764981fd43c83f1d53a4ceaf97"
         },
         "center": {
           "cell_origin": [
             32,
-            64
+            68
           ],
           "logical_size_ui": [
             8,
-            20
+            28
           ],
           "sampled_size": [
             16,
-            40
+            56
           ],
           "texels_per_ui_unit": 2,
           "uv": [
             0.25,
             0.375,
-            0.25,
-            0.40625
+            0.265625,
+            0.484375
           ],
-          "sampled_pixel_sha256": "a04ab8443263fc8d8e6b8393392b34c3039054fb267642d8aadc926c9e43c764"
+          "sampled_pixel_sha256": "71c167550f9ee2da364bfe19919d5cd2790edf17ff57db2ff9a1d974865a4f6a"
         },
         "right": {
           "cell_origin": [
             60,
-            64
+            68
           ],
           "logical_size_ui": [
             6,
-            20
+            28
           ],
           "sampled_size": [
             12,
-            40
+            56
           ],
           "texels_per_ui_unit": 2,
           "uv": [
             0.46875,
             0.5625,
-            0.25,
-            0.40625
+            0.265625,
+            0.484375
           ],
-          "sampled_pixel_sha256": "b0b94cc458a71621f795d30adaec59d0130675a4cf752695c7c6f2b43b57238d"
+          "sampled_pixel_sha256": "1af9dd518279ce6405165ad357b49590870dd1c1e0b1faa5bf92f9c83824a209"
         }
       },
       "pressed": {
         "left": {
           "cell_origin": [
             8,
-            120
+            132
           ],
           "logical_size_ui": [
             6,
-            20
+            28
           ],
           "sampled_size": [
             12,
-            40
+            56
           ],
           "texels_per_ui_unit": 2,
           "uv": [
             0.0625,
             0.15625,
-            0.46875,
-            0.625
+            0.515625,
+            0.734375
           ],
-          "sampled_pixel_sha256": "45312f9ab9e8849cd6795d98dbd4651fd13031775d6e3805501908bad65c9cf1"
+          "sampled_pixel_sha256": "998b09ca2b6d8e62190ca9b5f6c1192fcd7c2a8f87a78a82cb73682249f7956f"
         },
         "center": {
           "cell_origin": [
             32,
-            120
+            132
           ],
           "logical_size_ui": [
             8,
-            20
+            28
           ],
           "sampled_size": [
             16,
-            40
+            56
           ],
           "texels_per_ui_unit": 2,
           "uv": [
             0.25,
             0.375,
-            0.46875,
-            0.625
+            0.515625,
+            0.734375
           ],
-          "sampled_pixel_sha256": "c00d2c2f00bba0ced7681ff0c1bcd2e2267c5bf1b0958eecad32d7b435ff9e14"
+          "sampled_pixel_sha256": "b8cebda72d3578211ff1b00f72d43c09a766263ace933dcb86352cc6307aa665"
         },
         "right": {
           "cell_origin": [
             60,
-            120
+            132
           ],
           "logical_size_ui": [
             6,
-            20
+            28
           ],
           "sampled_size": [
             12,
-            40
+            56
           ],
           "texels_per_ui_unit": 2,
           "uv": [
             0.46875,
             0.5625,
-            0.46875,
-            0.625
+            0.515625,
+            0.734375
           ],
-          "sampled_pixel_sha256": "0d5a1eeaeb460ad2d247321fdd6bdbd9ba1773360bc20d7a32191f141a717362"
+          "sampled_pixel_sha256": "5be0d677a0059036a18feedf024ec2efcf855b656d73dff714d31fd7f593ad86"
         }
       },
       "selected": {
         "left": {
           "cell_origin": [
             8,
-            176
+            196
           ],
           "logical_size_ui": [
             6,
-            20
+            28
           ],
           "sampled_size": [
             12,
-            40
+            56
           ],
           "texels_per_ui_unit": 2,
           "uv": [
             0.0625,
             0.15625,
-            0.6875,
-            0.84375
+            0.765625,
+            0.984375
           ],
-          "sampled_pixel_sha256": "5452fd86e67fc3b8c74a0a340b162d98dad73234572d14694f01c24fb578d30c"
+          "sampled_pixel_sha256": "8ad9e8ba5e22209daf33dffc315fb4edbf54fceaabcbbe65747e9e716ac06a78"
         },
         "center": {
           "cell_origin": [
             32,
-            176
+            196
           ],
           "logical_size_ui": [
             8,
-            20
+            28
           ],
           "sampled_size": [
             16,
-            40
+            56
           ],
           "texels_per_ui_unit": 2,
           "uv": [
             0.25,
             0.375,
-            0.6875,
-            0.84375
+            0.765625,
+            0.984375
           ],
-          "sampled_pixel_sha256": "ece3a6e3c24bca5da7a3a9bc97e2b14de9211f3d0f8467a03c6b8f98b34eb93f"
+          "sampled_pixel_sha256": "19908698dc6a430d972f165326880695bec2931c569287fd243d346604327480"
         },
         "right": {
           "cell_origin": [
             60,
-            176
+            196
           ],
           "logical_size_ui": [
             6,
-            20
+            28
           ],
           "sampled_size": [
             12,
-            40
+            56
           ],
           "texels_per_ui_unit": 2,
           "uv": [
             0.46875,
             0.5625,
-            0.6875,
-            0.84375
+            0.765625,
+            0.984375
           ],
-          "sampled_pixel_sha256": "12f65b8ffc9a6e37e6450e1e9fcf905a4253e7219a0aa480b61a9e143d7305c0"
+          "sampled_pixel_sha256": "f76fd69df7ffc1222cb4623fcbc229951620458e6d8086b7b8644dcbb9ff18b6"
         }
       }
     }
@@ -303,8 +303,8 @@
   "layout_contract": {
     "ownership_route": "character.tabs-v3",
     "provider": "CharacterFrameTab1..5 after pfUI Character SkinTab",
-    "logical_height_ui": 20,
-    "dynamic_width": "provider text width + 20 UI",
+    "logical_height_ui": 28,
+    "dynamic_width": "visible tabs share the pfUI Character backdrop width; each keeps at least max(64 UI, provider text width + 32 UI)",
     "left_cap_ui": 6,
     "right_cap_ui": 6,
     "center_width_ui": "TabWidth - 12",
@@ -315,15 +315,15 @@
       "pressed": "enabled OnMouseDown",
       "selected": "PanelTemplates disabled selected tab"
     },
-    "provider_geometry_changed": false,
+    "provider_geometry_changed": true,
     "provider_text_clicks_and_reflow": "live",
-    "pet_hidden_reflow": "provider-live",
+    "pet_hidden_reflow": "adapter recalculates the visible provider row",
     "fallback": "restore pfUI tab backdrop when module or ownership route is inactive",
     "texels_per_ui_unit": 2
   },
   "texel_density": {
     "texels_per_ui_unit": 2,
-    "ui_geometry_changed": false,
+    "ui_geometry_changed": true,
     "target_physical_scale": "up to 2 screen pixels per UI unit"
   }
 }

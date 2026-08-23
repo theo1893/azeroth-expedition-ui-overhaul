@@ -4,7 +4,7 @@
   "batch": "QS-B1 V7-A",
   "component": "QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX",
   "version": "V7-A / runtime v1",
-  "runtime_contract": "1.2",
+  "runtime_contract": "1.3",
   "status": "runtime-exported",
   "source": {
     "file": "assets/source/quests/qs-b1/QuestLogSealPurityRibbon_Master_v1.png",
@@ -13,7 +13,12 @@
     "width": 128,
     "height": 768,
     "mode": "RGBA",
-    "visible_bbox_exclusive": [9, 0, 119, 767],
+    "visible_bbox_exclusive": [
+      9,
+      0,
+      119,
+      767
+    ],
     "visible_green_spill_pixels": 0,
     "transparent_rgb_nonzero_values": 0,
     "transparent_pixels": 22666,
@@ -21,7 +26,7 @@
     "opaque_pixels": 69731
   },
   "transform": {
-    "operation": "one full-canvas proportional LANCZOS reduction from 128x768 to 32x192, transparent RGB zeroing and TGA conversion",
+    "operation": "one full-canvas proportional LANCZOS reduction from 128x768 to 64x384 sampled runtime, transparent RGB zeroing and TGA conversion",
     "resample": "Pillow Image.Resampling.LANCZOS",
     "crop": null,
     "bbox_fit": false,
@@ -32,24 +37,38 @@
   },
   "runtime": {
     "file": "addon/AzerothExpeditionUI/Media/Quests/QuestLogSealPurityRibbonV1.tga",
-    "sha256": "db62077870b7954d7f43faf6680a57e2f8f2a2d053ecffc7cb06f7b18a32c615",
-    "width": 32,
-    "height": 192,
+    "sha256": "1be539cc5705193eafd659c7b2bc6160786bad203a8c521bef261c07db02e532",
+    "width": 64,
+    "height": 384,
     "mode": "RGBA",
+    "visible_bbox_exclusive": [
+      3,
+      0,
+      61,
+      384
+    ],
+    "visible_green_spill_pixels": 0,
+    "transparent_rgb_nonzero_values": 0,
+    "transparent_pixels": 4984,
+    "partially_transparent_pixels": 2884,
+    "opaque_pixels": 16708,
+    "logical_size": [
+      32,
+      192
+    ],
+    "sampled_size": [
+      64,
+      384
+    ],
+    "texels_per_ui": 2,
     "tga_header": {
       "image_type": 2,
-      "width": 32,
-      "height": 192,
+      "width": 64,
+      "height": 384,
       "bits_per_pixel": 32,
       "descriptor": 8,
       "top_origin": false
-    },
-    "visible_bbox_exclusive": [0, 0, 32, 192],
-    "visible_green_spill_pixels": 0,
-    "transparent_rgb_nonzero_values": 0,
-    "transparent_pixels": 901,
-    "partially_transparent_pixels": 1396,
-    "opaque_pixels": 3847
+    }
   },
   "runtime_assembly": {
     "parent": "QuestLogDetailScrollChildFrame",
@@ -58,21 +77,50 @@
     "wax_object": "QuestLogFrame.aeuiQuestChromeSeal",
     "carrier_draw_layer": "ARTWORK",
     "wax_draw_layer": "OVERLAY",
-    "carrier_root_content_xywh": [210, 12, 32, 28],
-    "wax_visual_content_xywh": [210, 4, 32, 32],
-    "action_body_origin_content": [210, 36],
-    "action_slot_size": [32, 22],
+    "carrier_root_content_xywh": [
+      210,
+      12,
+      32,
+      28
+    ],
+    "wax_visual_content_xywh": [
+      210,
+      4,
+      32,
+      32
+    ],
+    "action_body_origin_content": [
+      210,
+      36
+    ],
+    "action_slot_size": [
+      32,
+      22
+    ],
     "maximum_action_count": 7,
     "closed": {
       "body_height": 28,
-      "body_texcoord": [0, 1, 0, 0.14583333333333334],
+      "body_texcoord": [
+        0,
+        1,
+        0,
+        0.14583333333333334
+      ],
       "tail_shown": false
     },
     "open_formula_ready": {
       "prefix_height": "24 + visible_count * 22",
       "body_texcoord_bottom": "prefix_height / 192",
-      "tail_source_rows": [178, 192],
-      "tail_texcoord": [0, 1, 0.9270833333333334, 1],
+      "tail_source_rows": [
+        178,
+        192
+      ],
+      "tail_texcoord": [
+        0,
+        1,
+        0.9270833333333334,
+        1
+      ],
       "tail_height": 14,
       "total_height": "38 + visible_count * 22",
       "seven": 192,
@@ -95,9 +143,9 @@
   },
   "exporter": {
     "file": "tools/build_quest_seal_purity_ribbon_v1.py",
-    "sha256": "034a0e51c1eddfd813a81c4c7af04f6ea404bec1d4e67bfe5b3cb41b5feeede6",
+    "sha256": "dcd66c482c613aad6a0165d42685991d62b586ce77f7a7f2578d97af4afa3f39",
     "required_python": "macOS: conda environment py312",
-    "command": "conda run -n py312 python tools/build_quest_seal_purity_ribbon_v1.py --repo-root . --promote-from generated/quests/QUEST-SEALS/QS-B1-V7-A/attempt-05/review/attempt-05.composite.png --evidence-dir generated/quests/QUEST-SEALS/QS-B1-V7-A/accepted-runtime"
+    "command": "python tools/build_quest_seal_purity_ribbon_v1.py --repo-root ."
   },
   "acceptance": {
     "accepted_on": "2026-08-07",

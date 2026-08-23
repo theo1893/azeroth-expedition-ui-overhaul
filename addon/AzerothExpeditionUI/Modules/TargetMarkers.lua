@@ -3,7 +3,7 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 local TargetMarkers = {}
 
-TargetMarkers.runtimeContract = "2.0"
+TargetMarkers.runtimeContract = "2.3"
 TargetMarkers.cellSize = 48
 TargetMarkers.cellGap = 3
 TargetMarkers.columns = 4
@@ -14,10 +14,15 @@ TargetMarkers.nameFontSize = 10
 TargetMarkers.longNameFontSize = 9
 TargetMarkers.panelCap = 6
 TargetMarkers.panelPadding = 6
+TargetMarkers.tankButtonGap = 8
 TargetMarkers.bulkButtonGap = 8
 TargetMarkers.fallbackGap = 20
 TargetMarkers.satelliteGap = 5
 TargetMarkers.archiTotemOffset = 34
+-- ActionBars moves the bound ArchiTotem 128 UI left. Offset back by the same
+-- amount so the marker list keeps its established Combat Deck position while
+-- the provider-owned downward totem columns remain beside it.
+TargetMarkers.archiTotemHorizontalOffset = 128
 TargetMarkers.refreshInterval = 0.50
 TargetMarkers.markerKitTexturePath =
   addon.media.root .. "ActionBars\\ActionConsumableKitV1"
@@ -62,6 +67,18 @@ local markerColors = {
   [6] = { 0.10, 0.48, 1.00 },
   [7] = { 0.95, 0.12, 0.10 },
   [8] = { 0.92, 0.92, 0.88 },
+}
+
+local tankStateColors = {
+  ["disabled"] = { 0.62, 0.62, 0.62 },
+  ["unassigned"] = { 0.72, 0.72, 0.68 },
+  ["unavailable"] = { 0.94, 0.44, 0.32 },
+  ["offline"] = { 0.94, 0.44, 0.32 },
+  ["dead"] = { 0.94, 0.44, 0.32 },
+  ["no_target"] = { 1.00, 0.78, 0.28 },
+  ["ready"] = { 0.38, 0.94, 0.48 },
+  ["provider_unavailable"] = { 0.94, 0.44, 0.32 },
+  ["unknown"] = { 0.82, 0.78, 0.68 },
 }
 
 local markerFallbackNames = {
@@ -209,6 +226,39 @@ local function ArchiTotemVisible()
     return nil
   end
   return frame
+end
+
+local function ArchiTotemUsesSeparatedAnchor(frame, main)
+  local database = addon.db and addon.db.actionbars
+  if not frame or not frame.ClearAllPoints or not frame.SetPoint or
+    not main or not database or not database.enabled or
+    database.fieldKitBound ~= true
+  then
+    return false
+  end
+  local required = {
+    "ArchiTotemButton_Fire1",
+    "ArchiTotemButton_Water1",
+    "ArchiTotemButton_Air1",
+    "ArchiTotemDragHandle",
+    "ArchiTotemButton_AllTotems",
+  }
+  for _, name in ipairs(required) do
+    if not GetGlobal(name) then
+      return false
+    end
+  end
+  return true
+end
+
+local function StanceUsesSeparatedAnchor(frame, main, horizontalOffset)
+  if not frame or not main or not frame.GetPoint then
+    return false
+  end
+  local point, relative, relativePoint, xOffset = frame:GetPoint(1)
+  return point == "TOP" and relative == main and
+    relativePoint == "BOTTOM" and
+    math.abs((tonumber(xOffset) or 100000) + horizontalOffset) <= 1
 end
 
 local function CanManageMarkers()
@@ -362,11 +412,14 @@ local function SetTextureCoordinates(texture, texcoord)
   )
 end
 
-local function CreateMarkerPanel(parent, width, height)
+local function CreateMarkerPanel(parent, width, height, leftOffset)
   local padding = TargetMarkers.panelPadding
   local cap = TargetMarkers.panelCap
   local panel = CreateFrame("Frame", nil, parent)
-  panel:SetPoint("TOPLEFT", parent, "TOPLEFT", -padding, padding)
+  panel:SetPoint(
+    "TOPLEFT", parent, "TOPLEFT",
+    (leftOffset or 0) - padding, padding
+  )
   panel:SetWidth(width + padding * 2)
   panel:SetHeight(height + padding * 2)
   if panel.SetFrameLevel and parent.GetFrameLevel then
@@ -431,7 +484,7 @@ local function CreateBulkPocket(owner)
   return texture
 end
 
-function TargetMarkers:CreateCell(parent, position, markerIndex)
+function TargetMarkers:CreateCell(parent, position, markerIndex, leftOffset)
   local size = self.cellSize
   local gap = self.cellGap
   local column = math.mod(position - 1, self.columns)
@@ -446,7 +499,8 @@ function TargetMarkers:CreateCell(parent, position, markerIndex)
   cell:SetHeight(size)
   cell:SetPoint(
     "TOPLEFT", parent, "TOPLEFT",
-    column * (size + gap), -row * (size + gap)
+    (leftOffset or 0) + column * (size + gap),
+    -row * (size + gap)
   )
   cell:RegisterForClicks("LeftButtonUp", "RightButtonUp")
   cell.markerIndex = markerIndex
@@ -528,6 +582,345 @@ function TargetMarkers:CreateCell(parent, position, markerIndex)
   return cell
 end
 
+function TargetMarkers:GetDDPSTankProvider()
+  local provider = GetGlobal("DoiteDPS")
+  if type(provider) ~= "table" then
+    return nil, "ddps-missing"
+  end
+  if type(provider.SetTankAssistFromUnit) ~= "function" or
+    type(provider.ClearTankAssist) ~= "function"
+  then
+    return nil, "tank-api-missing"
+  end
+  return provider, "ready"
+end
+
+function TargetMarkers:GetDDPSTankStatus(provider)
+  if type(provider) ~= "table" or
+    type(provider.GetTankAssistStatus) ~= "function"
+  then
+    return nil, "status-unavailable"
+  end
+  local ok, status = pcall(provider.GetTankAssistStatus, provider)
+  if not ok or type(status) ~= "table" then
+    return nil, "status-error"
+  end
+  return status, status.state or "unknown"
+end
+
+function TargetMarkers:GetDDPSTankStatusText(provider, status)
+  if type(provider) == "table" and
+    type(provider.GetTankAssistStatusText) == "function"
+  then
+    local ok, text = pcall(
+      provider.GetTankAssistStatusText, provider, status
+    )
+    if ok and type(text) == "string" and text ~= "" then
+      return text
+    end
+  end
+  return "DDPS 坦克状态暂时不可读取。"
+end
+
+function TargetMarkers:UpdateTankButtonState(provider)
+  local button = self.tankButton
+  if not button or self.tankButtonStatus ~= "visible" then
+    return false
+  end
+
+  provider = provider or self:GetDDPSTankProvider()
+  local status = nil
+  local state = "provider_unavailable"
+  if provider then
+    status, state = self:GetDDPSTankStatus(provider)
+  end
+  self.tankState = state
+  self.tankName = status and status.name or nil
+
+  local color = tankStateColors[state] or tankStateColors.unknown
+  if button.state then
+    button.state:SetVertexColor(color[1], color[2], color[3], 0.82)
+  end
+  if button.label then
+    button.label:SetTextColor(color[1], color[2], color[3], 1)
+  end
+  if state == "disabled" or state == "unassigned" or
+    state == "status-unavailable" or state == "status-error"
+  then
+    if button.icon then button.icon:SetAlpha(0.62) end
+    if button.state then button.state:Hide() end
+  else
+    if button.icon then button.icon:SetAlpha(1) end
+    if button.state then button.state:Show() end
+  end
+  return true
+end
+
+function TargetMarkers:UpdateTankButton()
+  if not self.tankButton then
+    return false
+  end
+  local provider, status = self:GetDDPSTankProvider()
+  self.tankProviderStatus = status
+  self.tankButton:Show()
+  self.tankButtonStatus = "visible"
+  self:UpdateTankButtonState(provider)
+  return true
+end
+
+function TargetMarkers:InstallTankButtonFallback(button)
+  if not button then
+    return false
+  end
+  button:SetWidth(self.cellSize)
+  button:SetHeight(self.cellSize)
+  button:ClearAllPoints()
+  button:SetPoint("LEFT", self.frame, "LEFT", 0, 0)
+  button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+
+  if not button.base then
+    button.base = button:CreateTexture(nil, "BACKGROUND")
+    button.base:SetWidth(self.cellSize)
+    button.base:SetHeight(self.cellSize - 1)
+    button.base:SetPoint("CENTER", button, "CENTER", 0, 0)
+    button.base:SetTexture(0.16, 0.055, 0.025, 0.96)
+  end
+  if not button.icon then
+    button.icon = button:CreateTexture(nil, "ARTWORK")
+    button.icon:SetWidth(30)
+    button.icon:SetHeight(30)
+    button.icon:SetPoint("CENTER", button, "CENTER", 0, 1)
+    button.icon:SetTexture("Interface\\Icons\\INV_Shield_06")
+  end
+  if not button.label then
+    button.label = button:CreateFontString(nil, "OVERLAY")
+    button.label:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -5, 5)
+    button.label:SetWidth(10)
+    button.label:SetHeight(10)
+    button.label:SetText("T")
+    SetCellFont(button.label, 9)
+  end
+
+  button:SetScript("OnClick", function()
+    TargetMarkers:HandleTankClick(arg1)
+  end)
+  button:SetScript("OnEnter", function()
+    TargetMarkers:ShowTankTooltip(this)
+  end)
+  button:SetScript("OnLeave", function()
+    if GameTooltip then GameTooltip:Hide() end
+  end)
+  button:Show()
+  return true
+end
+
+function TargetMarkers:KeepTankButtonVisible(errorText)
+  self.tankButtonError = tostring(errorText or "unknown")
+  self.tankState = "unknown"
+  if self.tankButton then
+    pcall(self.InstallTankButtonFallback, self, self.tankButton)
+    self.tankButton:Show()
+    self.tankButtonStatus = "visible"
+  else
+    self.tankButtonStatus = "error"
+  end
+  if not self.tankButtonErrorReported then
+    addon:Print(
+      "DDPS 坦克按钮已切换为基础可见模式。"
+    )
+    self.tankButtonErrorReported = true
+  end
+  return self.tankButton ~= nil
+end
+
+function TargetMarkers:CreateTankButtonSafely(parent)
+  local ok, button = pcall(self.CreateTankButton, self, parent)
+  if not ok then
+    self:KeepTankButtonVisible(button)
+    return self.tankButton
+  end
+
+  local updateOk, updateError = pcall(self.UpdateTankButton, self)
+  if not updateOk then
+    self:KeepTankButtonVisible(updateError)
+  end
+  return button
+end
+
+function TargetMarkers:UpdateTankButtonSafely()
+  if not self.tankButton then
+    return false
+  end
+  local ok, result = pcall(self.UpdateTankButton, self)
+  if not ok then
+    return self:KeepTankButtonVisible(result)
+  end
+  return result
+end
+
+function TargetMarkers:ShowTankTooltip(button)
+  if not button or not GameTooltip then
+    return
+  end
+  GameTooltip:SetOwner(button, "ANCHOR_TOP")
+  GameTooltip:SetText("DDPS 协助坦克")
+
+  local provider, providerStatus = self:GetDDPSTankProvider()
+  if provider then
+    local status = self:GetDDPSTankStatus(provider)
+    GameTooltip:AddLine(
+      self:GetDDPSTankStatusText(provider, status),
+      0.88, 0.90, 0.96
+    )
+  else
+    GameTooltip:AddLine(
+      providerStatus == "tank-api-missing" and
+        "当前 DDPS 版本没有坦克协助接口。" or "DDPS 未加载。",
+      0.94, 0.44, 0.32
+    )
+  end
+  GameTooltip:AddLine(
+    "左键：将当前队伍／团队玩家设为坦克",
+    0.92, 0.86, 0.72
+  )
+  GameTooltip:AddLine("右键：清除已指定坦克", 0.92, 0.86, 0.72)
+  GameTooltip:AddLine(
+    "仅在按下 DDPS 输出键时跟随；手动敌对目标优先。",
+    0.66, 0.72, 0.82
+  )
+  GameTooltip:Show()
+end
+
+function TargetMarkers:RefreshDDPSTankProvider(provider)
+  if type(provider) ~= "table" then
+    return
+  end
+  if type(provider.Update) == "function" then
+    pcall(provider.Update, provider, true)
+  end
+  local config = provider.Config
+  if type(config) == "table" and type(config.Refresh) == "function" then
+    pcall(config.Refresh, config)
+  end
+end
+
+function TargetMarkers:GetTankAssignmentError(provider, reason)
+  if type(provider) == "table" and
+    type(provider.GetTankAssistAssignmentError) == "function"
+  then
+    local ok, message = pcall(
+      provider.GetTankAssistAssignmentError, provider, reason
+    )
+    if ok and type(message) == "string" and message ~= "" then
+      return message
+    end
+  end
+  return "请先选中队伍或团队中的坦克。"
+end
+
+function TargetMarkers:HandleTankClick(mouseButton)
+  if not MarkerEnabled() then
+    return
+  end
+  local provider = self:GetDDPSTankProvider()
+  if not provider then
+    addon:Print("DDPS 坦克协助接口不可用。")
+    return
+  end
+
+  if mouseButton == "RightButton" then
+    local callOk, cleared = pcall(provider.ClearTankAssist, provider)
+    if not callOk or not cleared then
+      addon:Print("DDPS 协助坦克清除失败。")
+      return
+    end
+    self.lastTankStatus = "cleared"
+    addon:Print("已清除 DDPS 协助坦克。")
+  else
+    local callOk, assigned, nameOrReason = pcall(
+      provider.SetTankAssistFromUnit, provider, "target"
+    )
+    if not callOk then
+      self.lastTankStatus = "provider-error"
+      addon:Print("DDPS 协助坦克指定失败。")
+      return
+    end
+    if not assigned then
+      self.lastTankStatus = tostring(nameOrReason or "invalid-target")
+      addon:Print(self:GetTankAssignmentError(provider, nameOrReason))
+      return
+    end
+    self.lastTankStatus = "assigned"
+    addon:Print("已指定 DDPS 协助坦克：" .. tostring(nameOrReason))
+  end
+
+  self:RefreshDDPSTankProvider(provider)
+  self:UpdateTankButtonState(provider)
+end
+
+function TargetMarkers:CreateTankButton(parent)
+  if self.tankButton then
+    return self.tankButton
+  end
+
+  local button = CreateFrame(
+    "Button", "AzerothExpeditionUIDDPSTankButton", parent
+  )
+  self.tankButton = button
+  button:SetWidth(self.cellSize)
+  button:SetHeight(self.cellSize)
+  button:SetPoint("LEFT", parent, "LEFT", 0, 0)
+  button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+
+  button.base = CreateBulkPocket(button)
+
+  button.icon = button:CreateTexture(nil, "ARTWORK")
+  button.icon:SetWidth(30)
+  button.icon:SetHeight(30)
+  button.icon:SetPoint("CENTER", button, "CENTER", 0, 1)
+  button.icon:SetTexture("Interface\\Icons\\INV_Shield_06")
+  button.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+
+  button.state = button:CreateTexture(nil, "OVERLAY")
+  button.state:SetWidth(38)
+  button.state:SetHeight(38)
+  button.state:SetPoint("CENTER", button, "CENTER", 0, 1)
+  button.state:SetTexture("Interface\\Buttons\\ButtonHilight-Square")
+  button.state:SetBlendMode("ADD")
+  button.state:Hide()
+
+  button.label = button:CreateFontString(nil, "OVERLAY")
+  button.label:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -5, 5)
+  button.label:SetWidth(10)
+  button.label:SetHeight(10)
+  button.label:SetJustifyH("RIGHT")
+  button.label:SetText("T")
+  SetCellFont(button.label, 9)
+
+  button.hover = button:CreateTexture(nil, "HIGHLIGHT")
+  button.hover:SetWidth(38)
+  button.hover:SetHeight(38)
+  button.hover:SetPoint("CENTER", button, "CENTER", 0, 1)
+  button.hover:SetTexture("Interface\\Buttons\\ButtonHilight-Square")
+  button.hover:SetBlendMode("ADD")
+  button.hover:SetVertexColor(1, 0.82, 0.42, 0.65)
+
+  button:SetScript("OnClick", function()
+    TargetMarkers:HandleTankClick(arg1)
+  end)
+  button:SetScript("OnEnter", function()
+    TargetMarkers:ShowTankTooltip(this)
+  end)
+  button:SetScript("OnLeave", function()
+    if GameTooltip then GameTooltip:Hide() end
+  end)
+  -- The entry itself is never provider-conditional. Provider or cosmetic
+  -- failures are represented by its state and tooltip, not by hiding it.
+  button:Show()
+
+  return button
+end
+
 function TargetMarkers:GetHDLBulkProvider()
   if not GetGlobal("SUPERWOW_VERSION") then
     return nil, "superwow-missing"
@@ -603,8 +996,8 @@ function TargetMarkers:UpdateBulkButton()
     self.bulkButtonStatus = "visible"
   else
     self.bulkButton:Hide()
-    if self.frame and self.manualGridWidth then
-      self.frame:SetWidth(self.manualGridWidth)
+    if self.frame and self.baseGridWidth then
+      self.frame:SetWidth(self.baseGridWidth)
     end
     self.bulkButtonStatus = "provider-hidden"
   end
@@ -617,8 +1010,8 @@ function TargetMarkers:DisableBrokenBulkButton(errorText)
   if self.bulkButton and self.bulkButton.Hide then
     self.bulkButton:Hide()
   end
-  if self.frame and self.manualGridWidth then
-    self.frame:SetWidth(self.manualGridWidth)
+  if self.frame and self.baseGridWidth then
+    self.frame:SetWidth(self.baseGridWidth)
   end
   if not self.bulkButtonErrorReported then
     addon:Print(
@@ -748,7 +1141,7 @@ function TargetMarkers:CreateBulkButton(parent)
   button:SetHeight(self.cellSize)
   button:SetPoint(
     "LEFT", parent, "LEFT",
-    self.manualGridWidth + self.bulkButtonGap, 0
+    self.tankControlSpan + self.manualGridWidth + self.bulkButtonGap, 0
   )
   button:RegisterForClicks("LeftButtonUp")
 
@@ -800,10 +1193,14 @@ function TargetMarkers:CreateGrid()
 
   local manualGridWidth = self.columns * self.cellSize +
     (self.columns - 1) * self.cellGap
-  local bulkGridWidth = manualGridWidth + self.bulkButtonGap + self.cellSize
+  local tankControlSpan = self.cellSize + self.tankButtonGap
+  local baseGridWidth = tankControlSpan + manualGridWidth
+  local bulkGridWidth = baseGridWidth + self.bulkButtonGap + self.cellSize
   local height = self.rows * self.cellSize +
     (self.rows - 1) * self.cellGap
   self.manualGridWidth = manualGridWidth
+  self.tankControlSpan = tankControlSpan
+  self.baseGridWidth = baseGridWidth
   self.bulkGridWidth = bulkGridWidth
   local frame = CreateFrame(
     "Frame", "AzerothExpeditionUIMarkerGrid", UIParent
@@ -811,22 +1208,25 @@ function TargetMarkers:CreateGrid()
   -- The 4x2 grid is the core feature. Own it before constructing any optional
   -- provider controls so a provider/UI error can never strand it hidden.
   self.frame = frame
-  frame:SetWidth(manualGridWidth)
+  frame:SetWidth(baseGridWidth)
   frame:SetHeight(height)
-  -- ArchiTotem owns a LOW-strata popout that expands through this region.
-  -- Keep the marker Buttons underneath it so those totem choices remain both
-  -- visible and clickable while the provider list is open.
+  -- Keep the marker Buttons below ArchiTotem's provider strata as a defensive
+  -- fallback for unusual provider scales, even though the bound layout now
+  -- separates the downward totem columns from the marker list horizontally.
   frame:SetFrameStrata("BACKGROUND")
   frame:EnableMouse(false)
   frame:Hide()
 
-  self.panel = CreateMarkerPanel(frame, manualGridWidth, height)
+  self.panel = CreateMarkerPanel(
+    frame, manualGridWidth, height, tankControlSpan
+  )
 
   self.cells = {}
   for position, markerIndex in ipairs(markerOrder) do
     self.cells[markerIndex] =
-      self:CreateCell(frame, position, markerIndex)
+      self:CreateCell(frame, position, markerIndex, tankControlSpan)
   end
+  self:CreateTankButtonSafely(frame)
   self:CreateBulkButtonSafely(frame)
   return frame
 end
@@ -834,39 +1234,54 @@ end
 function TargetMarkers:ApplyAnchor()
   local frame = self:CreateGrid()
   local main = GetMainActionBar()
+  local horizontalOffset = 0
+  self.tankAnchorOffset = 0
   frame:ClearAllPoints()
 
   local archiTotem = ArchiTotemVisible()
   if archiTotem then
+    local separated = ArchiTotemUsesSeparatedAnchor(archiTotem, main)
+    local archiHorizontalOffset = separated and
+      self.archiTotemHorizontalOffset or 0
     -- ArchiTotem's 80 UI root is taller than its closed 40 UI button row.
     -- Anchor from its centre so the marker grid follows the real visible row
     -- without inheriting the root's unused lower half.
     frame:SetPoint(
-      "TOP", archiTotem, "CENTER", 0, -self.archiTotemOffset
+      "TOP", archiTotem, "CENTER",
+      archiHorizontalOffset, -self.archiTotemOffset
     )
-    self.anchorStatus = "architotem-row"
+    self.anchorStatus = separated and
+      "architotem-separated-row" or "architotem-row"
     return true
   end
 
   if main then
     local lowerBar, lowerStatus = GetLowerPfUIBar(main)
     if lowerBar then
+      local separated = lowerStatus == "stance" and
+        StanceUsesSeparatedAnchor(
+          lowerBar, main, self.archiTotemHorizontalOffset
+        )
+      local lowerHorizontalOffset = separated and
+        self.archiTotemHorizontalOffset or horizontalOffset
       frame:SetPoint(
-        "TOP", lowerBar, "BOTTOM", 0, -self.satelliteGap
+        "TOP", lowerBar, "BOTTOM", lowerHorizontalOffset,
+        -self.satelliteGap
       )
-      self.anchorStatus = lowerStatus .. "-row"
+      self.anchorStatus = separated and "stance-separated-row" or
+        lowerStatus .. "-row"
     else
       -- No class satellite exists: consume the same reserved row directly
       -- below the main action deck instead of leaving an empty gap.
       frame:SetPoint(
-        "TOP", main, "BOTTOM", 0, -self.fallbackGap
+        "TOP", main, "BOTTOM", horizontalOffset, -self.fallbackGap
       )
       self.anchorStatus = "reserved-special-row"
     end
     return true
   end
 
-  frame:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 22)
+  frame:SetPoint("BOTTOM", UIParent, "BOTTOM", horizontalOffset, 22)
   self.anchorStatus = "ui-parent-fallback"
   return false
 end
@@ -937,6 +1352,7 @@ function TargetMarkers:UpdateCells()
   self.activeMarkers = active
   self.tokenStatus = type(UnitExists) == "function" and
     "mark1-8" or "missing"
+  self:UpdateTankButtonState()
 end
 
 function TargetMarkers:ShowCellTooltip(cell)
@@ -1076,6 +1492,14 @@ function TargetMarkers:Initialize()
   self.anchorStatus = "pending"
   self.tokenStatus = "pending"
   self.activeMarkers = 0
+  self.lastTankStatus = "idle"
+  self.tankButtonStatus = "pending"
+  self.tankProviderStatus = "pending"
+  self.tankState = "pending"
+  self.tankName = nil
+  self.tankAnchorOffset = 0
+  self.tankButtonError = nil
+  self.tankButtonErrorReported = false
   self.lastBulkStatus = "idle"
   self.bulkButtonStatus = "pending"
   self.bulkProviderStatus = "pending"
@@ -1094,6 +1518,7 @@ function TargetMarkers:Apply()
     self.activeMarkers = 0
     return
   end
+  self:UpdateTankButtonSafely()
   self:ApplyAnchor()
   frame:Show()
   self:UpdateBulkButtonSafely()
@@ -1115,6 +1540,15 @@ function TargetMarkers:GetRuntimeStatus()
     ",text=top-two-line-adaptive" ..
     ",dead=local-clear-only" ..
     ",input=left-target+right-mark+shift-right-clear" ..
+    ",tank=ddps-assist" ..
+    ",tank-layout=fixed-in-frame-left" ..
+    ",tank-input=left-assign+right-clear" ..
+    ",tank-ui=" .. tostring(self.tankButtonStatus or "pending") ..
+    ",tank-provider=" .. tostring(self.tankProviderStatus or "pending") ..
+    ",tank-state=" .. tostring(self.tankState or "pending") ..
+    ",tank-last=" .. tostring(self.lastTankStatus or "idle") ..
+    ",tank-offset=" .. tostring(self.tankAnchorOffset or 0) ..
+    ",tank-error=" .. tostring(self.tankButtonError or "none") ..
     ",bulk=hdl-one-click" ..
     ",bulk-layout=conditional-in-frame-right" ..
     ",bulk-ui=" .. tostring(self.bulkButtonStatus or "pending") ..

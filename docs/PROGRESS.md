@@ -19,15 +19,16 @@
 
 | 模块 | 阶段 | 当前结论 | 下一门禁 |
 |---|---:|---|---|
-| Core／pfUI | `P5` | AEUI `0.8.36`；pfUI 公共功能保留，Chat、Quest、Unit Frames、Map、Character 等只通过精确 route 接管 | 实机验证模块隔离、旧 SavedVariables、配置页和禁用回退 |
+| Core／pfUI | `P5` | AEUI `0.9.0`；pfUI 公共功能保留，Chat、Quest、Unit Frames、Map、Character 等只通过精确 route 接管；Gear Planner `0.9-zhCN` 接入 Character 与 Inspect 独立伴随会话并保留独立回退 | 实机验证模块隔离、旧 SavedVariables、两套伴随栏、配置页和禁用回退 |
 | Chat | `P5` | runtime `1.22`；Full V1 主框、Dark V2 Tab／承托带、Dark V1 输入、未读蜡封已接入；右框隐藏并恢复经典 provider 配色 | `/reload` 验证 Tab 四态／缩放、输入、频道颜色、链接和消息回收 |
-| Quests | `P1–P6` | runtime `1.27`、Theme `1.10`；Quest Log 书体与目录已获实机确认；奖励槽和闭合火漆载体 `P5`；事务菜单未启用，Tracker 仍需重审区域 | 实机验证奖励槽与火漆；先用真实 tracker 区域重做简单预演 |
-| Action Bars | `P2–P6` | AEUI `0.8.36`；Slot／Rail `P6`；Field Kit `2.9`、Focus `2.7`、Sidebar Group `1.0`、Target Markers `2.0` 为 `P5`；所有角色 DDPS 统一 `TOPLEFT (650,-615)`；AutoBar 固定四列、自底向上；标记方阵为骷髅优先 `4×2`，八个透明命中位共用既有 Consumable Kit 的缝制皮革九宫格并直读 `mark1..mark8`；空态使用中央大标记，占用态改用左下满亮小标记、顶部两行名字和右下血量；死亡目标只从 AEUI 方阵本地清空；整体位于 `BACKGROUND`，低于 ArchiTotem 展开候选；一键 Button 仅在 HDLRaidTools／SuperWoW provider 完整就绪时显示 | 实机验证长名字下的标记身份、死亡目标本地清空、图腾候选展开后的显示／点选、一键 Button 条件显隐与怪群设标、职业栏停靠，再复查 popup、DDPS 中央视野、`13` 格 `4/4/4/1` 和姿态 `25 UI` |
-| Map | `P5` | runtime `7.0`；WorldMap 暂停；Minimap V3 常驻资源保留；bottom 已接入 V7 同母图徽记／连续绳索／轻型袋，真实入口每列 8 个并向左增长；非 bottom 使用 V4／V3 回退 | 实机验证 closed/open 徽记不跳位、0／6／12／22／30、`28×28` 命中区、图标层序、缩放、显隐及回退 |
+| Quests | `P1–P6` | runtime `1.28`、Theme `1.11`；已完成且挂载的书体、目录、奖励槽、火漆／闭合载体均为 2× runtime，逻辑几何不变；事务菜单未启用，Tracker 仍需重审区域 | 完整重启后实机验证双纹理书体接缝、奖励槽与火漆；再用真实 tracker 区域重做简单预演 |
+| Action Bars | `P2–P6` | AEUI `0.8.36`；Slot／Rail `P6`；Field Kit `2.9`、Focus `2.9`、Sidebar Group `1.0`、Target Markers `2.3` 为 `P5`；Player／Target 已压缩为 `240×48 / 0.8` 并下移至底锚点 `480 UI`，TargetTarget 仅同步下移对齐，下方施法／Swing 保持原位；三框布局按角色首次加载应用一次并保存独立回退；所有角色 DDPS 统一 `TOPLEFT (650,-615)`；AutoBar 固定四列、自底向上；标记方阵为骷髅优先 `4×2`，八个透明命中位共用既有 Consumable Kit 的缝制皮革九宫格并直读 `mark1..mark8`；空态使用中央大标记，占用态改用左下满亮小标记、顶部两行名字和右下血量；死亡目标只从 AEUI 方阵本地清空；ArchiTotem 相对旧居中位左移 `128 UI`，方阵留在既有位置，向下候选不再覆盖皮革 icon list；左侧 DDPS 坦克 Button 固定在 Combination 的真实 Frame 边界内并始终显示，provider 或装饰刷新异常时也保留基础可点击盾牌；provider API 就绪时左键指定、右键清除，未就绪时显示不可用态；右侧一键 Button 仅在 HDLRaidTools／SuperWoW provider 完整就绪时显示 | 实机验证另一角色首次加载三框默认，以及紧凑 Player／Target 与两排 Aura 对下方三条读条的净空；再验证标记、图腾、坦克／一键 Button、职业栏、popup、DDPS 中央视野、`13` 格 `4/4/4/1` 和姿态 `25 UI` |
+| Map | `P5` | runtime `7.6`；WorldMap 暂停；mask、V4 non-bottom 托盘与 V7 bottom 收纳袋为高分辨率 runtime；V3 罗盘／扣具／插槽因仅存 1× accepted source 登记明确例外且未伪放大；逻辑几何不变 | 完整重启后实机验证 mask、V4 九切片、V7 徽记压接、袋内净空、0／6／12／22／30、图标层序、缩放、显隐及回退 |
 | Spellbook | `P4 / integration paused` | accepted `SB-A2-DONOR V1` source/runtime 保留；AEUI Spellbook adapter 与精确 ownership 暂停，客户端恢复 pfUI 技能书 | 依据 handoff 实机图核对四块 TGA 对位、层序、provider region 和动态控件净空，再恢复接入 |
 | Talents | `P1 / paused` | 已对齐动态背景、4×8 节点、Rank、分支／箭头、Tab 与 Turtle Inspect 边界；不再与 Spellbook 共用模块进度 | 等用户明确恢复后制作独立预演 |
-| Character | `P2–P5 / active` | runtime `2.0`；外壳、PaperDoll 组件、装备槽、Tabs、Ammo 与声望／技能／荣誉／PvP 共用档案页均由 accepted source 导出为 2× runtime；页面文字、状态条、控件及交互保持动态 | 实机复核分页档案页覆盖、层序、显隐和回退，并复核既有 PaperDoll 组件；随后拆分页滚动条／状态条／复选框等控件 |
-| Unit Frames | `P4–P5 / Player V5 active` | Bars／Raid／动态头像继续运行；Player V5 完整单图外壳已接入，Target／TargetTarget／Focus 新外壳仍暂停并回退 pfUI | 实机验证 Player `240×60` 配置对应的 `240×65` provider、UI Scale、层序与禁用回退 |
+| Character | `P2–P5 / active` | runtime `2.0`；外壳、PaperDoll 组件、装备槽、Tabs、Ammo 与分页档案页保持 2× runtime；Gear Planner `0.9-zhCN` 提供 Character 三视图、`984 UI` 配装合同、当前／配装／变化属性对比与 Inspect“装／属／比／存”独立会话，不改 Provider Parent、尺寸或数据 | 实机复核既有 PaperDoll／分页组件，再验证配装净空、即时属性对比、角色与观察伴随栏及禁用回退 |
+| Gear Planner | `P5` | runtime `0.9-zhCN`；`560×555` 伴随配装把 19 槽与“当前／配装／变化”属性对比同屏，实际换装时即时重算；主手／副手／远程新增静态秒伤与攻速比较；查询、分页、来源和 Wishlist 由 AtlasLoot 原生 UI 持有，AEUI 只在兼容物品行追加选入 Button；方案管理与 Inspect 会话保持 | 实机验证武器秒伤／攻速、导入后差值归零、换装后差值与实时刷新、AtlasLoot 原生交互、方案 CRUD／重载及角色／观察相邻回归 |
+| Unit Frames | `P4–P5 / Player V5 active` | runtime `1.8`；Bars、Raid A2 与 Player V5 已从 accepted source 导出为 2× runtime，逻辑尺寸与 provider 所有权不变；Target／TargetTarget／Focus 新外壳仍暂停并回退 pfUI | 完整重启后实机验证 Bars 裁切／乘色、40 人 Raid、Player `240×65` provider、UI Scale、层序与禁用回退 |
 
 ## 尚未启动
 

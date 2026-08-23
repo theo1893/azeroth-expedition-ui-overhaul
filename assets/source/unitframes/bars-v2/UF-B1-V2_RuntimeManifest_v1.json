@@ -2,7 +2,7 @@
   "schema": "aeui-unitframes-bars-v2-runtime-manifest-v1",
   "status": "runtime-exported",
   "phase": "P5",
-  "runtime_contract": "1.0",
+  "runtime_contract": "1.1",
   "module": "unitframes",
   "components": [
     "UF.BAR.HEALTH.FILL",
@@ -30,10 +30,53 @@
   "runtime": {
     "health": {
       "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFrameHealthFillV1.tga",
-      "sha256": "bdee918674484be3a70ef1f64b3db9f326b0045560ce52234015ca1ba7836cd8",
+      "sha256": "26a6f7d1a6b7ae925a18922c1601ee5e17c276fe6556454840ac0083d9967466",
       "tga_header": {
         "image_type": 2,
-        "width": 64,
+        "width": 128,
+        "height": 64,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      },
+      "metrics": {
+        "size": [
+          128,
+          64
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "5449057c913971ca241185af543a69a547155be06b039743b22f72872fd15c7d",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          128,
+          64
+        ],
+        "equal_channel": true,
+        "value_mean_alpha_gte_128": 119.62085,
+        "value_stddev_alpha_gte_128": 8.290122,
+        "visible_green_spill_pixels": 0,
+        "transparent_rgb_nonzero_values": 0,
+        "transparent_pixels": 0,
+        "partially_transparent_pixels": 347,
+        "opaque_pixels": 7845
+      },
+      "logical_size": [
+        64,
+        32
+      ],
+      "sampled_size": [
+        128,
+        64
+      ],
+      "texels_per_ui": 2
+    },
+    "power": {
+      "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFramePowerFillV1.tga",
+      "sha256": "0e97d1495d65942dbcfd52f7ebf81dc4f9dc6ace584a86fc182bbf5c7844ba0e",
+      "tga_header": {
+        "image_type": 2,
+        "width": 128,
         "height": 32,
         "bits_per_pixel": 32,
         "descriptor": 8,
@@ -41,60 +84,35 @@
       },
       "metrics": {
         "size": [
-          64,
+          128,
           32
         ],
         "mode": "RGBA",
-        "pixel_sha256": "22d610c44ea5e8c210c27d005dad69b886965efdf64c872f7f8c80790798b572",
+        "pixel_sha256": "7ffff4b66b5db4ceee1d98c5ed6b013e0148305681c8976d974c1eb863053e23",
         "visible_bbox_exclusive": [
           0,
           0,
-          64,
+          128,
           32
         ],
         "equal_channel": true,
-        "value_mean_alpha_gte_128": 119.586914,
-        "value_stddev_alpha_gte_128": 7.651801,
+        "value_mean_alpha_gte_128": 123.232422,
+        "value_stddev_alpha_gte_128": 6.134733,
         "visible_green_spill_pixels": 0,
         "transparent_rgb_nonzero_values": 0,
         "transparent_pixels": 0,
-        "partially_transparent_pixels": 167,
-        "opaque_pixels": 1881
-      }
-    },
-    "power": {
-      "file": "addon/AzerothExpeditionUI/Media/UnitFrames/UnitFramePowerFillV1.tga",
-      "sha256": "8fbf0797e4b3562a02ed3b7f19e7b7e100c832cf1c02b6fd172fc06317314cd0",
-      "tga_header": {
-        "image_type": 2,
-        "width": 64,
-        "height": 16,
-        "bits_per_pixel": 32,
-        "descriptor": 8,
-        "top_origin": false
+        "partially_transparent_pixels": 178,
+        "opaque_pixels": 3918
       },
-      "metrics": {
-        "size": [
-          64,
-          16
-        ],
-        "mode": "RGBA",
-        "pixel_sha256": "411c54d8919adfe45f6c8c8b16a160765476d56e5d24c7811c1f7f7b6d3802f0",
-        "visible_bbox_exclusive": [
-          0,
-          0,
-          64,
-          16
-        ],
-        "equal_channel": true,
-        "value_mean_alpha_gte_128": 123.204102,
-        "value_stddev_alpha_gte_128": 5.681517,
-        "visible_green_spill_pixels": 0,
-        "transparent_rgb_nonzero_values": 0,
-        "transparent_pixels": 0,
-        "partially_transparent_pixels": 71,
-        "opaque_pixels": 953
-      }
+      "logical_size": [
+        64,
+        16
+      ],
+      "sampled_size": [
+        128,
+        32
+      ],
+      "texels_per_ui": 2
     }
   },
   "deterministic_export": {
@@ -106,8 +124,8 @@
         128
       ],
       [
-        64,
-        32
+        128,
+        64
       ]
     ],
     "power_source_to_runtime": [
@@ -116,10 +134,11 @@
         64
       ],
       [
-        64,
-        16
+        128,
+        32
       ]
     ],
+    "density": "2 texels per UI unit",
     "crop": false,
     "redraw": false,
     "mirror": false,
@@ -159,9 +178,9 @@
   },
   "real_layout": {
     "file": "generated/unitframes/bars/V2/runtime/real-layout-preview.png",
-    "sha256": "00ce1084ca7d317f976c6048cde97fd7502a3e58f807d26b6d458b25ef09d247",
+    "sha256": "09c5df157774012a405362958afd6d3f1f11d92ff5d3bb8e43e72a61cc972393",
     "metrics": "generated/unitframes/bars/V2/runtime/real-layout-metrics.json",
-    "metrics_sha256": "71d02bcc8d0422db673c20e720084758d51271a2d5a21cb3b342e8ab9fc2c5e6",
+    "metrics_sha256": "84eb8c35ff1b4cde32624016cac13ab14fdecb99447b2a119fb11e23e5b4006f",
     "scenario_count": 7,
     "ui_pixel_scale": "1 image pixel = 1 UI pixel",
     "unfinished_shell_fallback_is_authoritative": false
@@ -169,7 +188,7 @@
   "display_region": {
     "contract": "tools/specs/unitframes_bars_v2_runtime_display_region_v1.json",
     "report": "generated/unitframes/bars/V2/runtime/display-region-report.json",
-    "report_sha256": "40171cf9dde327882a9a9c0365c8911fcb2ac21b95af8377ad317a25bed25f48",
+    "report_sha256": "8a24e406b1cc6b17dffff4f060414dbc6fd0ddaefa94941792a5a21203d6e7c9",
     "status": "pass",
     "scenario_count": 9,
     "violation_count": 0,

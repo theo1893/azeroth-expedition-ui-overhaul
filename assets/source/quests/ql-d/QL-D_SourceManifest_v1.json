@@ -135,20 +135,20 @@
   },
   "export_contract": {
     "status": "runtime-exported",
-    "operation": "resize the entire accepted 1080x410 canonical source proportionally to 108x41, derive four RGB states with frozen formulas while preserving identical Alpha, place them in fixed 128x64 cells and write a 512x64 RGBA TGA atlas",
+    "operation": "resize the entire accepted 1080x410 canonical source directly to 216x82 sampled pixels for an unchanged 108x41 UI slot, derive four RGB states with frozen formulas, place them in fixed 256x128 cells and write a 1024x128 RGBA TGA atlas",
     "runtime_atlas_size": [
-      512,
-      64
+      1024,
+      128
     ],
     "runtime_cell_size": [
-      128,
-      64
+      256,
+      128
     ],
     "runtime_content_xyxy_in_cell": [
-      10,
-      11,
-      118,
-      52
+      20,
+      22,
+      236,
+      104
     ],
     "runtime_cell_order": [
       "normal",
@@ -171,26 +171,32 @@
       "bake icons, quantities, names, quality colours or tooltips into the atlas",
       "replace QuestLogItem Buttons, hitboxes, scripts or provider data",
       "add a selected state or a maintenance OnUpdate loop"
-    ]
+    ],
+    "texels_per_ui": 2
   },
   "runtime_exports": [
     {
-      "contract": "QL-D V3.r3 attempt-04 user-selected / 1.0",
+      "contract": "QL-D V3.r3 attempt-04 user-selected / 1.1 / 2x",
       "manifest": "QL-D_RuntimeManifest_v1.json",
       "file": "addon/AzerothExpeditionUI/Media/Quests/QuestLogRewardSlotStatesV1.tga",
-      "sha256": "cda1ef21d618e148229d05415ffb8ea9d1539b801e2f260833cccab0ef28cd56",
+      "sha256": "b5860d84751c44b7ab0c42f54b808572560d8c6a5ae2d843c8689884f4d40d91",
       "atlas_size": [
-        512,
-        64
+        1024,
+        128
       ],
       "cell_size": [
-        128,
-        64
+        256,
+        128
       ],
       "content_size": [
+        216,
+        82
+      ],
+      "logical_content_size": [
         108,
         41
-      ]
+      ],
+      "texels_per_ui": 2
     }
   ]
 }

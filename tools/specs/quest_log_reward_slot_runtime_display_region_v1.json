@@ -13,14 +13,14 @@
     "final_runtime": true
   },
   "atlas": {
-    "size": [512, 64],
-    "visible_bbox": [0, 0, 512, 64],
+    "size": [1024, 128],
+    "visible_bbox": [0, 0, 1024, 128],
     "require_exact_visible_coverage": false,
     "sampled_regions": [
-      {"id": "normal", "box": [10, 11, 118, 52]},
-      {"id": "hover", "box": [138, 11, 246, 52]},
-      {"id": "pressed", "box": [266, 11, 374, 52]},
-      {"id": "disabled", "box": [394, 11, 502, 52]}
+      {"id": "normal", "box": [20, 22, 236, 104]},
+      {"id": "hover", "box": [276, 22, 492, 104]},
+      {"id": "pressed", "box": [532, 22, 748, 104]},
+      {"id": "disabled", "box": [788, 22, 1004, 104]}
     ]
   },
   "nine_slice": {

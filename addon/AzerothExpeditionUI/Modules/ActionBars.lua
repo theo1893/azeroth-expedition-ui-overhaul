@@ -14,9 +14,11 @@ ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
 ActionBars.fieldKitRuntimeContract = "2.9"
-ActionBars.focusLayoutRuntimeContract = "2.7"
-ActionBars.focusLayoutVersion = 16
+ActionBars.focusLayoutRuntimeContract = "2.9"
+ActionBars.focusLayoutVersion = 17
 ActionBars.focusLayoutBackupVersion = 1
+ActionBars.focusUnitDefaultVersion = 1
+ActionBars.focusUnitDefaultBackupVersion = 1
 ActionBars.sideBarGroupRuntimeContract = "1.0"
 ActionBars.sideBarGroupLayoutVersion = 1
 ActionBars.sideBarGroupBackupVersion = 1
@@ -30,18 +32,22 @@ ActionBars.comfortUIScaleValue = 0.71111111111111
 -- Deck geometry. The provider-owned DoiteDPS two-row union keeps its vertical
 -- safe lane and shifts left as a whole to clear the central combat view,
 -- uses the client system face for the three local unit frames, and implements
--- the accepted right-side cluster as one reversible mover. Runtime v2.7 keeps
--- those contracts while making the warrior stance control use its accepted
--- 25 UI provider icon size at full local scale.
+-- the accepted right-side cluster as one reversible mover. Runtime v2.9 keeps
+-- those contracts, compacts the primary health regions, lowers Player and
+-- Target without moving the cast and Swing readout stack, and applies that
+-- unit-frame contract once per character with a reversible profile backup.
 ActionBars.focusUnitScale = 0.8
 ActionBars.focusTargetTargetScale = 0.68
 ActionBars.focusReadoutScale = 1
 ActionBars.focusStanceScale = 1
 ActionBars.focusStanceIconSize = "25"
+-- Warrior stances and the shaman ArchiTotem row are mutually exclusive
+-- class satellites. Keep their visible centres on one Combat Deck slot.
+ActionBars.combatDeckClassDockXOffset = -128
 ActionBars.combatDeckStanceGap = 0
 ActionBars.focusDoiteScale = 0.82
 ActionBars.focusUnitWidth = 240
-ActionBars.focusUnitHeight = 60
+ActionBars.focusUnitHeight = 48
 ActionBars.focusTargetTargetWidth = 240
 ActionBars.focusTargetTargetHeight = 60
 ActionBars.focusUnitFontRole = "system"
@@ -84,7 +90,11 @@ ActionBars.autoBarDockBackupVersion = 1
 -- used.
 ActionBars.autoBarRefreshDelay = 0
 ActionBars.autoBarRefreshEvent = "AEUI_AutoBarFieldKitRefresh"
-ActionBars.archiTotemDockXOffset = -10
+-- The former -10 UI offset only centered ArchiTotem's visible union. Shift
+-- that union another 128 UI left so all four downward element columns clear
+-- the Target Markers icon board at the provider's current 0.8 scale.
+ActionBars.archiTotemDockXOffset =
+  ActionBars.combatDeckClassDockXOffset - 10
 -- Keep the provider row below the XP rail with a compact five-pixel visual
 -- clearance; the provider's root still omits its unscaled drag handle.
 ActionBars.archiTotemDockYOffset = -39
@@ -134,8 +144,8 @@ ActionBars.combatDeckY = 175
 ActionBars.focusPlayerX = -160
 ActionBars.focusTargetX = 105
 ActionBars.focusTargetTargetX = 393
-ActionBars.focusUnitY = 485
-ActionBars.focusTargetTargetY = 576
+ActionBars.focusUnitY = 480
+ActionBars.focusTargetTargetY = 570
 ActionBars.focusCastPlayerX = 0
 ActionBars.focusCastTargetX = 0
 ActionBars.focusCastY = 316
@@ -979,7 +989,36 @@ local function RestoreField(target, key, captured)
   return true
 end
 
-local function GetSideBarGroupProfileKey()
+local focusUnitDefaultPositionNames = {
+  "pfPlayer",
+  "pfTarget",
+  "pfTargetTarget",
+}
+
+local function CaptureFocusUnitDefaultBackup(state)
+  if type(state) ~= "table" or type(state.backup) == "table" then
+    return false
+  end
+  local positions = pfUI_config and pfUI_config.position or {}
+  local unitframes = pfUI_config and pfUI_config.unitframes or {}
+  local backup = {
+    version = ActionBars.focusUnitDefaultBackupVersion,
+    positions = {},
+    unitframes = {
+      player = CaptureField(unitframes, "player"),
+      target = CaptureField(unitframes, "target"),
+      ttarget = CaptureField(unitframes, "ttarget"),
+    },
+  }
+  for index = 1, table.getn(focusUnitDefaultPositionNames) do
+    local name = focusUnitDefaultPositionNames[index]
+    backup.positions[name] = CaptureField(positions, name)
+  end
+  state.backup = backup
+  return true
+end
+
+local function GetCharacterProfileKey()
   if type(UnitName) ~= "function" or type(GetRealmName) ~= "function" then
     return nil
   end
@@ -989,6 +1028,40 @@ local function GetSideBarGroupProfileKey()
     return nil
   end
   return tostring(name) .. " - " .. tostring(realm)
+end
+
+local function GetSideBarGroupProfileKey()
+  return GetCharacterProfileKey()
+end
+
+local function GetFocusUnitDefaultState(create)
+  local database = addon.db and addon.db.actionbars
+  local profileKey = GetCharacterProfileKey()
+  if not database or not profileKey then
+    return nil, profileKey
+  end
+  if create and type(database.focusUnitDefaultProfiles) ~= "table" then
+    database.focusUnitDefaultProfiles = {}
+  end
+  local profiles = database.focusUnitDefaultProfiles
+  if type(profiles) ~= "table" then
+    return nil, profileKey
+  end
+  if create and type(profiles[profileKey]) ~= "table" then
+    profiles[profileKey] = {}
+  end
+  return profiles[profileKey], profileKey
+end
+
+local function FocusUnitDefaultLayoutActive()
+  local state = GetFocusUnitDefaultState(false)
+  return state and state.optOut ~= true and
+    state.layoutVersion == ActionBars.focusUnitDefaultVersion
+end
+
+local function FocusUnitDefaultOptedOut()
+  local state = GetFocusUnitDefaultState(false)
+  return state and state.optOut == true
 end
 
 local function GetSideBarGroupState(create)
@@ -1524,6 +1597,10 @@ local function CombatFocusLayoutActive()
     projection.coordinateSpace == ActionBars.focusCoordinateSpace
 end
 
+local function FocusUnitLayoutActive()
+  return FocusUnitDefaultLayoutActive() or CombatFocusLayoutActive()
+end
+
 local focusUnitFontStrings = {
   "hpLeftText",
   "hpRightText",
@@ -1572,7 +1649,7 @@ local function ApplyLiveFocusUnitFont(frame)
 end
 
 function ActionBars:ApplyFocusUnitFonts(force)
-  if not force and not CombatFocusLayoutActive() then
+  if not force and not FocusUnitLayoutActive() then
     self.focusUnitFontLive = 0
     return 0
   end
@@ -1598,7 +1675,7 @@ function ActionBars:InstallFocusUnitFontHooks()
       frame.aeuiFocusUnitFontHookV1 = true
       hooksecurefunc(frame, "UpdateConfig", function()
         if not ActionBars.focusFontSuppressed and
-          CombatFocusLayoutActive()
+          FocusUnitLayoutActive()
         then
           ApplyLiveFocusUnitFont(hookedFrame)
         end
@@ -1617,7 +1694,7 @@ local function ShouldMigrateCombatFocusLayout()
   if not database or
     (version ~= 7 and version ~= 8 and version ~= 9 and version ~= 10 and
       version ~= 11 and version ~= 12 and version ~= 13 and
-      version ~= 14) or
+      version ~= 14 and version ~= 15 and version ~= 16) or
     type(projection) ~= "table" or
     projection.coordinateSpace ~= ActionBars.focusCoordinateSpace or
     not pfUI_config
@@ -1627,6 +1704,7 @@ local function ShouldMigrateCombatFocusLayout()
 
   local unitframes = pfUI_config.unitframes or {}
   local castbars = pfUI_config.castbar or {}
+  local bars = pfUI_config.bars or {}
   local positions = pfUI_config.position or {}
   local mainPosition = positions.pfActionBarMain
   local player = unitframes.player or {}
@@ -1634,12 +1712,14 @@ local function ShouldMigrateCombatFocusLayout()
   local targetTarget = unitframes.ttarget or {}
   local playerCast = castbars.player or {}
   local targetCast = castbars.target or {}
+  local stanceConfig = bars.bar11 or {}
   local oldDoiteX =
-    (version == 9 or version == 10 or version == 11 or version == 12 or
-      version == 13 or version == 14) and
-      850 or 1012
+    (version == 15 or version == 16) and 650 or
+    ((version == 9 or version == 10 or version == 11 or version == 12 or
+      version == 13 or version == 14) and 850 or 1012)
   local oldDoiteY = version == 8 and -780 or
-    ((version == 13 or version == 14) and -615 or -647)
+    ((version == 13 or version == 14 or version == 15 or version == 16) and
+      -615 or -647)
   local doiteMatches = type(DoiteDPSDB) ~= "table" or
     (DoiteDPSDB.point == "TOPLEFT" and
       DoiteDPSDB.relativePoint == "TOPLEFT" and
@@ -1763,13 +1843,23 @@ local function ShouldMigrateCombatFocusLayout()
       tostring(config.customfont_style or "OUTLINE") == "OUTLINE"
   end
 
-  if version == 12 or version == 13 or version == 14 then
+  if version == 12 or version == 13 or version == 14 or version == 15 or
+    version == 16
+  then
     local function ExpectedUnitFontMatches(config)
-      if version == 13 or version == 14 then
+      if version == 13 or version == 14 or version == 15 or version == 16 then
         return SystemUnitFontMatches(config)
       end
       return Version12UnitFontMatches(config)
     end
+    local upgradedStance = version == 15 or version == 16
+    local stanceScale = upgradedStance and 1 or 0.72
+    local stanceIconMatches = not upgradedStance or
+      (version == 15 and (
+        stanceConfig.icon_size == "18" or
+        stanceConfig.icon_size == "25"
+      )) or
+      (version == 16 and stanceConfig.icon_size == "25")
     return FocusPositionMatches(
         "pfPlayer", "BOTTOM", -160, 485, 0.8
       ) and FocusPositionMatches(
@@ -1785,7 +1875,7 @@ local function ShouldMigrateCombatFocusLayout()
       ) and FocusPositionMatches(
         "pfSwingTimerRanged", "BOTTOM", 0, 284, 1
       ) and FocusPositionMatches(
-        "pfActionBarStances", "BOTTOM", 0, 255, 0.72
+        "pfActionBarStances", "BOTTOM", 0, 255, stanceScale
       ) and player.width == "240" and player.height == "60" and
       player.buffs == "TOPLEFT" and player.debuffs == "BOTTOMLEFT" and
       player.buffsize == "23" and player.debuffsize == "23" and
@@ -1808,7 +1898,7 @@ local function ShouldMigrateCombatFocusLayout()
       playerCast.width == "260" and playerCast.height == "12" and
       targetCast.width == "260" and targetCast.height == "12" and
       unitframes.swingtimerwidth == "260" and
-      unitframes.swingtimerheight == "12"
+      unitframes.swingtimerheight == "12" and stanceIconMatches
   end
 
   if version == 11 then
@@ -2127,6 +2217,171 @@ local function ConfigureFocusUnitFrame(
   return saved, applied
 end
 
+function ActionBars:ApplyFocusUnitDefaults()
+  if type(InCombatLockdown) == "function" and InCombatLockdown() then
+    self.focusUnitDefaultStatus = "combat-pending"
+    return false
+  end
+  if not UIParent or not pfUI_config then
+    self.focusUnitDefaultStatus = "unavailable"
+    return false
+  end
+
+  local state, profileKey = GetFocusUnitDefaultState(true)
+  if not state then
+    self.focusUnitDefaultStatus = "profile-unavailable"
+    return false
+  end
+  if state.optOut == true then
+    self.focusUnitDefaultStatus = "profile-opt-out"
+    return false
+  end
+  if state.layoutVersion == self.focusUnitDefaultVersion then
+    self.focusUnitDefaultStatus = "profile-saved"
+    return false
+  end
+
+  CaptureFocusUnitDefaultBackup(state)
+  local layout = GetNativeFocusLayout()
+  local configured = 0
+  local live = 0
+  local saved, applied = ConfigureFocusUnitFrame(
+    "player", "pfPlayer", layout.playerX, layout.playerY,
+    self.focusUnitScale, self.focusUnitWidth, self.focusUnitHeight,
+    "TOPLEFT", "BOTTOMLEFT", self.focusAuraSize
+  )
+  configured = configured + (saved and 1 or 0)
+  live = live + (applied and 1 or 0)
+  saved, applied = ConfigureFocusUnitFrame(
+    "target", "pfTarget", layout.targetX, layout.targetY,
+    self.focusUnitScale, self.focusUnitWidth, self.focusUnitHeight,
+    "TOPRIGHT", "BOTTOMRIGHT", self.focusAuraSize
+  )
+  configured = configured + (saved and 1 or 0)
+  live = live + (applied and 1 or 0)
+  saved, applied = ConfigureFocusUnitFrame(
+    "ttarget", "pfTargetTarget",
+    layout.targetTargetX, layout.targetTargetY,
+    self.focusTargetTargetScale,
+    self.focusTargetTargetWidth, self.focusTargetTargetHeight,
+    "TOPRIGHT", "BOTTOMRIGHT", self.focusTargetTargetAuraSize
+  )
+  configured = configured + (saved and 1 or 0)
+  live = live + (applied and 1 or 0)
+
+  if configured < 3 then
+    self.focusUnitDefaultStatus = "profile-pending"
+    return false
+  end
+  state.layoutVersion = self.focusUnitDefaultVersion
+  state.mode = "unit-default"
+  state.optOut = nil
+  self.focusUnitDefaultProfile = profileKey
+  self.focusUnitDefaultStatus = "profile-applied"
+  self.focusLayoutConfigured = configured
+  self.focusLayoutLive = live
+  return true
+end
+
+local function CopiedPrimaryUnitLayoutNeedsCompaction()
+  local database = addon.db and addon.db.actionbars
+  if not database or
+    (tonumber(database.combatFocusLayoutVersion) or 0) ~= 0 or
+    not pfUI_config
+  then
+    return false
+  end
+
+  local unitframes = pfUI_config.unitframes or {}
+  local castbars = pfUI_config.castbar or {}
+  local player = unitframes.player or {}
+  local target = unitframes.target or {}
+  local playerCast = castbars.player or {}
+  local targetCast = castbars.target or {}
+
+  return FocusPositionMatches(
+      "pfPlayer", "BOTTOM", -160, 485, 0.8
+    ) and FocusPositionMatches(
+      "pfTarget", "BOTTOM", 105, 485, 0.8
+    ) and FocusPositionMatches(
+      "pfTargetTarget", "BOTTOM", 393, 576, 0.68
+    ) and FocusPositionMatches(
+      "pfPlayerCastbar", "BOTTOM", 0, 316, 1
+    ) and FocusPositionMatches(
+      "pfTargetCastbar", "BOTTOM", 0, 300, 1
+    ) and tostring(player.width) == "240" and
+    tostring(player.height) == "60" and
+    tostring(player.pheight) == "10" and
+    tostring(player.pspace) == "-3" and
+    tostring(target.width) == "240" and
+    tostring(target.height) == "60" and
+    tostring(target.pheight) == "10" and
+    tostring(target.pspace) == "-3" and
+    tostring(playerCast.width) == "260" and
+    tostring(playerCast.height) == "12" and
+    tostring(targetCast.width) == "260" and
+    tostring(targetCast.height) == "12"
+end
+
+local function CompactCopiedPrimaryUnitFrame(key, name, x, y)
+  local unitframes = pfUI_config and pfUI_config.unitframes
+  local config = unitframes and unitframes[key]
+  if type(config) ~= "table" then
+    return false, false
+  end
+
+  config.height = tostring(ActionBars.focusUnitHeight)
+  local saved = SavePfUIPosition(
+    name, "BOTTOM", x, y, ActionBars.focusUnitScale
+  )
+  local frame = GetFocusUnitFrame(key) or GetGlobal(name)
+  if frame and type(frame.UpdateFrameSize) == "function" then
+    pcall(frame.UpdateFrameSize, frame)
+  end
+  if frame and type(frame.UpdateConfig) == "function" then
+    pcall(frame.UpdateConfig, frame)
+  end
+  local applied = ApplyFramePosition(
+    frame, "BOTTOM", x, y, ActionBars.focusUnitScale
+  )
+  return saved, applied
+end
+
+function ActionBars:MigrateCopiedPrimaryUnitLayout()
+  if not CopiedPrimaryUnitLayoutNeedsCompaction() then
+    return false
+  end
+
+  local layout = GetNativeFocusLayout()
+  local configured = 0
+  local live = 0
+  local saved, applied = CompactCopiedPrimaryUnitFrame(
+    "player", "pfPlayer", layout.playerX, layout.playerY
+  )
+  configured = configured + (saved and 1 or 0)
+  live = live + (applied and 1 or 0)
+  saved, applied = CompactCopiedPrimaryUnitFrame(
+    "target", "pfTarget", layout.targetX, layout.targetY
+  )
+  configured = configured + (saved and 1 or 0)
+  live = live + (applied and 1 or 0)
+  saved = SavePfUIPosition(
+    "pfTargetTarget", "BOTTOM", layout.targetTargetX,
+    layout.targetTargetY, ActionBars.focusTargetTargetScale
+  )
+  applied = ApplyFramePosition(
+    GetFocusUnitFrame("ttarget"), "BOTTOM", layout.targetTargetX,
+    layout.targetTargetY, ActionBars.focusTargetTargetScale
+  )
+  configured = configured + (saved and 1 or 0)
+  live = live + (applied and 1 or 0)
+
+  self.focusLayoutConfigured = configured
+  self.focusLayoutLive = live
+  self.focusLayoutStatus = "primary-units-compacted"
+  return true
+end
+
 local function ConfigureFocusCastBar(key, name, x, y)
   local castbars = pfUI_config and pfUI_config.castbar
   local config = castbars and castbars[key]
@@ -2232,7 +2487,7 @@ local function AttachFocusTargetTarget()
 end
 
 function ActionBars:ApplyFocusRelativeAnchors()
-  if not CombatFocusLayoutActive() then
+  if not FocusUnitLayoutActive() then
     return false
   end
   return AttachFocusTargetTarget()
@@ -2488,6 +2743,14 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
     database.combatFocusLayoutVersion = self.focusLayoutVersion
     database.combatFocusProjection = layout
   end
+  local defaultState, defaultProfile = GetFocusUnitDefaultState(true)
+  if defaultState then
+    defaultState.layoutVersion = self.focusUnitDefaultVersion
+    defaultState.mode = "full"
+    defaultState.optOut = nil
+    self.focusUnitDefaultProfile = defaultProfile
+    self.focusUnitDefaultStatus = "profile-full"
+  end
   self:InstallFocusUnitFontHooks()
   self:ApplyFocusUnitFonts(true)
   self.focusLayoutConfigured = configured
@@ -2501,7 +2764,7 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
     " Detected ArchiTotem was kept provider-owned and requested to open downward." or
     " ArchiTotem was unavailable or inapplicable and remained fail-open."
   return true,
-    "Combat Focus layout applied with direct Turtle WoW game coordinates: player and target use 240x60 at 0.8 with 18-point client-system unit text; the compact 240x60 target-of-target remains at 0.68 and attaches to Target's right edge with the same system face; 23x23 auras use pfUI's real seven-UI border step and fit eight per row; the unit cluster reserves a second target-debuff row above the unchanged centered 260x12 player-cast, target-cast, and Swing stack at 1.0. The stance bar uses 25 UI provider icons at full local scale 1.0 for readable warrior controls, while the provider-owned DoiteDPS timeline and resource row remain in their own safe lane. Provider visibility, lock state, and native translucency were preserved without screen-pixel projection or coordinate readback." ..
+    "Combat Focus layout applied with direct Turtle WoW game coordinates: player and target use 240x48 at 0.8 with 18-point client-system unit text and a lower 480-UI bottom anchor; the compact 240x60 target-of-target remains at 0.68 and follows the Target alignment without resizing; 23x23 auras use pfUI's real seven-UI border step and fit eight per row; two lower aura rows remain clear of the unchanged centered 260x12 player-cast, target-cast, and Swing stack at 1.0. The stance bar uses 25 UI provider icons at full local scale 1.0 for readable warrior controls, while the provider-owned DoiteDPS timeline and resource row remain in their own safe lane. Provider visibility, lock state, and native translucency were preserved without screen-pixel projection or coordinate readback." ..
     archiMessage
 end
 
@@ -2579,12 +2842,83 @@ local function ReloadRestoredMovable(name)
   )
 end
 
+function ActionBars:RestoreFocusUnitDefaults()
+  if type(InCombatLockdown) == "function" and InCombatLockdown() then
+    self.focusUnitDefaultStatus = "combat-locked"
+    return false, "Leave combat before restoring the unit-frame defaults."
+  end
+  if not pfUI_config then
+    self.focusUnitDefaultStatus = "unavailable"
+    return false, "The pfUI character profile is unavailable."
+  end
+  local state = GetFocusUnitDefaultState(false)
+  local backup = state and state.backup
+  if type(backup) ~= "table" or
+    backup.version ~= self.focusUnitDefaultBackupVersion
+  then
+    self.focusUnitDefaultStatus = "no-backup"
+    return false, "No compatible pre-default unit-frame backup exists."
+  end
+
+  pfUI_config.position = pfUI_config.position or {}
+  for index = 1, table.getn(focusUnitDefaultPositionNames) do
+    local name = focusUnitDefaultPositionNames[index]
+    RestoreField(
+      pfUI_config.position, name,
+      backup.positions and backup.positions[name]
+    )
+  end
+
+  pfUI_config.unitframes = pfUI_config.unitframes or {}
+  local unitframes = backup.unitframes or {}
+  RestoreConfigField(pfUI_config.unitframes, "player", unitframes.player)
+  RestoreConfigField(pfUI_config.unitframes, "target", unitframes.target)
+  RestoreConfigField(pfUI_config.unitframes, "ttarget", unitframes.ttarget)
+
+  local frames = {
+    GetFocusUnitFrame("player"),
+    GetFocusUnitFrame("target"),
+    GetFocusUnitFrame("ttarget"),
+  }
+  self.focusFontSuppressed = true
+  for index = 1, table.getn(frames) do
+    local frame = frames[index]
+    if frame and type(frame.UpdateFrameSize) == "function" then
+      pcall(frame.UpdateFrameSize, frame)
+    end
+    if frame and type(frame.UpdateConfig) == "function" then
+      pcall(frame.UpdateConfig, frame)
+    end
+  end
+  self.focusFontSuppressed = false
+  for index = 1, table.getn(focusUnitDefaultPositionNames) do
+    ReloadRestoredMovable(focusUnitDefaultPositionNames[index])
+  end
+
+  state.layoutVersion = 0
+  state.mode = "restored"
+  state.optOut = true
+  self.focusUnitDefaultStatus = "profile-restored"
+  self.focusLayoutStatus = "unit-default-restored"
+  self.focusLayoutConfigured = 0
+  self.focusLayoutLive = 0
+  self.focusUnitFontLive = 0
+  return true,
+    "The current character's pre-default Player, Target, and TargetTarget layout was restored. Reload once so pfUI can rebuild the original frames."
+end
+
 function ActionBars:RestoreCombatFocusLayoutPreset()
   if type(InCombatLockdown) == "function" and InCombatLockdown() then
     self.focusLayoutStatus = "combat-locked"
     return false, "Leave combat before restoring the Combat Focus layout."
   end
   local database = addon.db and addon.db.actionbars
+  local defaultState = GetFocusUnitDefaultState(false)
+  if defaultState and defaultState.mode == "unit-default" and
+    defaultState.layoutVersion == self.focusUnitDefaultVersion
+  then
+    return self:RestoreFocusUnitDefaults()
+  end
   local backup = database and database.combatFocusBackup
   if type(backup) ~= "table" or
     backup.version ~= self.focusLayoutBackupVersion
@@ -2723,6 +3057,12 @@ function ActionBars:RestoreCombatFocusLayoutPreset()
   end
 
   database.combatFocusBackup = nil
+  local restoredState = GetFocusUnitDefaultState(false)
+  if restoredState then
+    restoredState.layoutVersion = 0
+    restoredState.mode = "restored"
+    restoredState.optOut = true
+  end
   self.focusLayoutStatus = "restored"
   self.focusLayoutConfigured = 0
   self.focusLayoutLive = 0
@@ -3957,7 +4297,7 @@ function ActionBars:UpdateFieldKitUnlockMover()
   local targetTarget = pfUI and pfUI.uf and pfUI.uf.targettarget or
     GetGlobal("pfTargetTarget")
   if targetTarget and targetTarget.drag then
-    if CombatFocusLayoutActive() then
+    if FocusUnitLayoutActive() then
       targetTarget.drag:Hide()
       hidden = true
     else
@@ -3965,9 +4305,15 @@ function ActionBars:UpdateFieldKitUnlockMover()
     end
   end
   local stance = GetGlobal("pfActionBarStances")
-  if stance and stance.drag and CombatFocusLayoutActive() then
-    stance.drag:Hide()
-    hidden = true
+  if stance and stance.drag then
+    if CombatFocusLayoutActive() or
+      (FieldKitEnabled() and FieldKitBound())
+    then
+      stance.drag:Hide()
+      hidden = true
+    else
+      stance.drag:Show()
+    end
   end
   if SideBarGroupBound() then
     if self:ConfigureSideBarGroupMover() then
@@ -4055,8 +4401,57 @@ function ActionBars:ApplyActionBarStackPosition(enabled)
   return true
 end
 
+function ActionBars:ApplyStanceDockPosition(enabled)
+  local bound = FieldKitBound()
+  local frame = GetGlobal("pfActionBarStances")
+
+  if not enabled or not bound then
+    if self.stanceDockApplied then
+      RestoreFrameAnchors(frame, self.stanceFreeAnchors)
+    end
+    self.stanceDockApplied = false
+    self.stanceFreeAnchors = nil
+    self.stanceDockStatus = enabled and "free" or "disabled"
+    return false
+  end
+
+  local main = GetMainActionBarFrame()
+  if not frame or not main or not frame.ClearAllPoints or
+    not frame.SetPoint
+  then
+    self.stanceDockStatus = "unavailable"
+    return false
+  end
+
+  if not self.stanceDockApplied then
+    local anchors = CaptureFrameAnchors(frame)
+    if not anchors or table.getn(anchors) == 0 then
+      self.stanceDockStatus = "unavailable"
+      return false
+    end
+    self.stanceFreeAnchors = anchors
+  end
+
+  -- Position belongs to the Combat Deck combination, not Combat Focus. This
+  -- keeps copied or fresh account-level AEUI data from leaving warrior
+  -- stances at the old centre while ArchiTotem occupies the class slot.
+  frame:ClearAllPoints()
+  frame:SetPoint(
+    "TOP", main, "BOTTOM", self.combatDeckClassDockXOffset,
+    -self.combatDeckStanceGap
+  )
+  if CombatFocusLayoutActive() and frame.SetScale then
+    frame:SetScale(self.focusStanceScale)
+  end
+  self.stanceDockApplied = true
+  self.stanceDockStatus = "shared-class-slot"
+  return true
+end
+
 function ActionBars:ApplyCombatDeckGroup()
   if not FieldKitEnabled() or not FieldKitBound() then
+    self:ApplyStanceDockPosition(FieldKitEnabled())
+    self:UpdateFieldKitUnlockMover()
     self.combatDeckGroupStatus = "free"
     return false
   end
@@ -4068,20 +4463,7 @@ function ActionBars:ApplyCombatDeckGroup()
   end
 
   self:ApplyActionBarStackPosition(true)
-
-  if CombatFocusLayoutActive() then
-    local stance = GetGlobal("pfActionBarStances")
-    if stance and stance.ClearAllPoints and stance.SetPoint then
-      if stance.SetScale then
-        stance:SetScale(self.focusStanceScale)
-      end
-      stance:ClearAllPoints()
-      stance:SetPoint(
-        "TOP", main, "BOTTOM", 0, -self.combatDeckStanceGap
-      )
-      self.focusStanceStatus = "combat-deck-bound"
-    end
-  end
+  self:ApplyStanceDockPosition(true)
 
   local handle = GetGlobal("AutoBarAnchorFrameHandle")
   local bounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
@@ -4684,14 +5066,15 @@ function ActionBars:ApplyArchiTotemDockPosition(enabled)
 
   auditedFrame:ClearAllPoints()
   -- ArchiTotem 1.7 omits its unscaled 20 UI drag handle from the root width.
-  -- The -10 UI x offset centers the real visible union, not the stale root.
+  -- The -138 UI x offset combines the old -10 UI visible-union correction
+  -- with the new 128 UI separation from the marker icon board.
   auditedFrame:SetPoint(
     "CENTER", main, "BOTTOM",
     self.archiTotemDockXOffset,
     self.archiTotemDockYOffset
   )
   self.archiTotemDockApplied = true
-  self.archiTotemDockStatus = "bottom"
+  self.archiTotemDockStatus = "bottom-left-separated"
   self.archiTotemDirectionStatus =
     GetArchiTotemDirection() or "unknown"
   return true
@@ -4732,6 +5115,14 @@ function ActionBars:HandleArchiTotemDragStop()
   self:ApplyArchiTotemDockPosition(true)
 end
 
+local function RefreshTargetMarkerAnchor()
+  local markers = addon.modules and addon.modules.TargetMarkers
+  if not markers or type(markers.ApplyAnchor) ~= "function" then
+    return
+  end
+  pcall(markers.ApplyAnchor, markers)
+end
+
 function ActionBars:SetFieldKitDocking(docked)
   local database = GetFieldKitDatabase()
   if not database then
@@ -4743,19 +5134,25 @@ function ActionBars:SetFieldKitDocking(docked)
   database.trinketDocked = database.fieldKitBound
   if docked then
     self:ApplyActionBarStackPosition(FieldKitEnabled())
+    self:ApplyStanceDockPosition(FieldKitEnabled())
     local bounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
     self:ApplyConsumableDockPosition(FieldKitEnabled(), bounds)
     self:ApplyAutoBarDragHandlePolicy(FieldKitEnabled())
     self:ApplyTrinketDockPosition(FieldKitEnabled())
     self:ApplyArchiTotemDockPosition(FieldKitEnabled())
+    RefreshTargetMarkerAnchor()
+    self:UpdateFieldKitUnlockMover()
     return true,
-      "Combat Deck bound: consumables left and trinkets right share a 20 UI lower dock, 12x2 action bars stay centered, and detected ArchiTotem remains below. Move the main action bar to move the whole deck."
+      "Combat Deck bound: consumables left and trinkets right share a 20 UI lower dock, 12x2 action bars stay centered, and warrior stances or detected ArchiTotem share the class slot below-left of the marker list. Move the main action bar to move the whole deck."
   end
   self:ApplyActionBarStackPosition(FieldKitEnabled())
+  self:ApplyStanceDockPosition(FieldKitEnabled())
   self:ApplyConsumableDockPosition(FieldKitEnabled())
   self:ApplyAutoBarDragHandlePolicy(FieldKitEnabled())
   self:ApplyTrinketDockPosition(FieldKitEnabled())
   self:ApplyArchiTotemDockPosition(FieldKitEnabled())
+  RefreshTargetMarkerAnchor()
+  self:UpdateFieldKitUnlockMover()
   self.consumableDockStatus = "free"
   self.trinketDockStatus = "free"
   self.archiTotemDockStatus = "free"
@@ -5843,9 +6240,15 @@ function ActionBars:Initialize()
     GetArchiTotemDirection() or "pending"
   self.archiTotemDockApplied = false
   self.archiTotemFreeAnchors = nil
+  self.stanceDockStatus = "pending"
+  self.stanceDockApplied = false
+  self.stanceFreeAnchors = nil
   self.focusLayoutStatus = CombatFocusLayoutSaved() and "saved" or "ready"
   self.focusLayoutConfigured = 0
   self.focusLayoutLive = 0
+  self.focusUnitDefaultStatus = FocusUnitDefaultLayoutActive() and
+    "profile-saved" or "ready"
+  self.focusUnitDefaultProfile = GetCharacterProfileKey()
   self.focusLayoutDoite = "pending"
   self.doitePositionSynchronized = false
   self.focusLayoutArchiTotem = "pending"
@@ -5865,6 +6268,20 @@ function ActionBars:Apply()
   local appliedButtons = 0
   local appliedRails = 0
   local appliedMergedRail = false
+  -- Apply the current unit-frame contract once per character before touching
+  -- any optional action-bar provider. Later integrations cannot block it, and
+  -- the per-character version prevents refreshes from overwriting user edits.
+  local focusUnitDefaultsApplied = false
+  if enabled then
+    focusUnitDefaultsApplied = self:ApplyFocusUnitDefaults()
+  end
+  local copiedPrimaryLayoutMigrated = false
+  if enabled and not focusUnitDefaultsApplied and
+    not FocusUnitDefaultOptedOut()
+  then
+    copiedPrimaryLayoutMigrated =
+      self:MigrateCopiedPrimaryUnitLayout()
+  end
 
   if not providerAvailable then
     self.providerStatus = "missing"
@@ -5927,7 +6344,12 @@ function ActionBars:Apply()
   -- Upgrade only exact preceding AEUI game-coordinate contracts. Restored or
   -- custom non-DDPS fields are not matched by this signature and remain
   -- untouched; DDPS position is synchronized separately once per UI session.
-  if ShouldMigrateCombatFocusLayout() and ComfortUIScaleConfigured() then
+  if copiedPrimaryLayoutMigrated then
+    -- Copied character profiles can carry the exact Combat Focus unit-frame
+    -- geometry while the account-level AEUI layout flag remains unset.
+    -- Compact the two exact primary-frame matches and keep TargetTarget
+    -- aligned; leave every readout and unrelated copied position untouched.
+  elseif ShouldMigrateCombatFocusLayout() and ComfortUIScaleConfigured() then
     self:ApplyCombatFocusLayoutPreset()
   elseif CombatFocusStanceUpgradeEligible() and
     ComfortUIScaleConfigured()
@@ -5935,6 +6357,8 @@ function ActionBars:Apply()
     self:UpgradeCombatFocusStanceContract()
   elseif CombatFocusLayoutActive() then
     self:ApplyFocusStanceContract(false, false)
+  end
+  if FocusUnitLayoutActive() then
     self:ApplyFocusRelativeAnchors()
     self:ApplyFocusUnitFonts()
   end
@@ -5985,6 +6409,13 @@ function ActionBars:GetRuntimeStatus()
     ",focus-layout-contract=" ..
       tostring(self.focusLayoutRuntimeContract) ..
     ",focus-layout=" .. tostring(self.focusLayoutStatus or "ready") ..
+    ",focus-unit-default-version=" ..
+      tostring(self.focusUnitDefaultVersion) ..
+    ",focus-unit-default=" ..
+      tostring(self.focusUnitDefaultStatus or "ready") ..
+    ",focus-unit-default-profile=" ..
+      tostring(self.focusUnitDefaultProfile or
+        GetCharacterProfileKey() or "unavailable") ..
     ",focus-layout-configured=" ..
       tostring(self.focusLayoutConfigured or 0) ..
     ",focus-layout-live=" .. tostring(self.focusLayoutLive or 0) ..
@@ -6012,6 +6443,9 @@ function ActionBars:GetRuntimeStatus()
     ",focus-layout-readout-size=" ..
       tostring(self.focusReadoutWidth) .. "x" ..
       tostring(self.focusReadoutHeight) ..
+    ",focus-layout-unit-size=" ..
+      tostring(self.focusUnitWidth) .. "x" ..
+      tostring(self.focusUnitHeight) ..
     ",focus-layout-unit-font-size=" ..
       tostring(self.focusUnitFontSize) ..
     ",focus-layout-unit-font=" ..
@@ -6078,6 +6512,8 @@ function ActionBars:GetRuntimeStatus()
       tostring(self.trinketJoinerOrientation or "pending") ..
     ",trinket-dock=" ..
       tostring(self.trinketDockStatus or "pending") ..
+    ",stance-dock=" ..
+      tostring(self.stanceDockStatus or "pending") ..
     ",architotem-dock=" ..
       tostring(self.archiTotemDockStatus or "pending") ..
     ",architotem-direction=" ..

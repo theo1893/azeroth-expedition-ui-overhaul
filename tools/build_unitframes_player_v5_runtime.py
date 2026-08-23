@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Export the accepted Player V5 shell without changing its logical pixels."""
+"""Export the accepted Player V5 shell at two texels per UI unit."""
 
 from __future__ import annotations
 
@@ -26,10 +26,13 @@ RUNTIME = (
 )
 
 SOURCE_SIZE = (1524, 462)
-RUNTIME_SIZE = (254, 77)
-TEXTURE_SIZE = power_of_two_size(RUNTIME_SIZE)
+LOGICAL_SIZE = (254, 77)
+SAMPLED_SIZE = (508, 154)
+TEXTURE_SIZE = power_of_two_size(SAMPLED_SIZE)
+TEXELS_PER_UI = 2
 SOURCE_SAFE = (42, 96, 1482, 432)
 RUNTIME_SAFE = (7, 16, 247, 72)
+SAMPLED_SAFE = (14, 32, 494, 144)
 SOURCE_SHA256 = "ec74c829d18553cc78ab95a4ae1a01fc392d2efc2157e42a4a5166f7f0cf903d"
 RUNTIME_MASTER_SHA256 = "d449b8bd1dfef1a073ca69cecc57e2c7cb0d38e4a4fb9961bd60f8467253ecbc"
 RAW_SHA256 = "5b0f588d66ba75a811dac7528b1c6064782d2c653dcc602c4f79c6ba6a0290e8"
@@ -115,17 +118,38 @@ def tga_header(path: Path) -> dict[str, Any]:
     }
 
 
-def export_runtime(runtime_master: Image.Image) -> Image.Image:
+def clear_transparent_rgb(image: Image.Image) -> Image.Image:
+    rgba = image.convert("RGBA")
+    red, green, blue, alpha = rgba.split()
+    visible = alpha.point(lambda value: 255 if value else 0)
+    zero = Image.new("L", rgba.size, 0)
+    return Image.merge(
+        "RGBA",
+        (
+            Image.composite(red, zero, visible),
+            Image.composite(green, zero, visible),
+            Image.composite(blue, zero, visible),
+            alpha,
+        ),
+    )
+
+
+def export_runtime(source: Image.Image) -> Image.Image:
     RUNTIME.parent.mkdir(parents=True, exist_ok=True)
-    texture = pad_to_power_of_two(runtime_master)
+    sampled = clear_transparent_rgb(
+        source.resize(SAMPLED_SIZE, Image.Resampling.LANCZOS)
+    )
+    sampled.paste((0, 0, 0, 0), SAMPLED_SAFE)
+    sampled = clear_transparent_rgb(sampled)
+    texture = pad_to_power_of_two(sampled)
     texture.save(RUNTIME, format="TGA")
     with Image.open(RUNTIME) as opened:
         roundtrip = opened.convert("RGBA")
     if ImageChops.difference(roundtrip, texture).getbbox() is not None:
         raise ValueError("TGA roundtrip changed the padded texture")
-    logical = roundtrip.crop((0, 0, *RUNTIME_SIZE))
-    if ImageChops.difference(logical, runtime_master).getbbox() is not None:
-        raise ValueError("TGA export changed accepted logical pixels")
+    sampled_roundtrip = roundtrip.crop((0, 0, *SAMPLED_SIZE))
+    if ImageChops.difference(sampled_roundtrip, sampled).getbbox() is not None:
+        raise ValueError("TGA export changed accepted sampled pixels")
     header = tga_header(RUNTIME)
     if (
         header["image_type"] != 2
@@ -133,7 +157,7 @@ def export_runtime(runtime_master: Image.Image) -> Image.Image:
         or (header["width"], header["height"]) != TEXTURE_SIZE
     ):
         raise ValueError(f"invalid Turtle WoW runtime TGA: {header}")
-    return logical
+    return sampled_roundtrip
 
 
 def write_json(path: Path, payload: dict[str, Any]) -> None:
@@ -147,14 +171,16 @@ def write_json(path: Path, payload: dict[str, Any]) -> None:
 def main() -> int:
     source = load_exact(SOURCE, SOURCE_SIZE, SOURCE_SHA256)
     runtime_master = load_exact(
-        RUNTIME_MASTER, RUNTIME_SIZE, RUNTIME_MASTER_SHA256
+        RUNTIME_MASTER, LOGICAL_SIZE, RUNTIME_MASTER_SHA256
     )
     if alpha_max(source, SOURCE_SAFE) != 0:
         raise ValueError("accepted source dynamic hard-clear region is no longer empty")
-    if alpha_max(runtime_master, RUNTIME_SAFE) != 0:
+    if alpha_max(runtime_master, (7, 16, 247, 72)) != 0:
         raise ValueError("accepted runtime dynamic hard-clear region is no longer empty")
 
-    runtime_roundtrip = export_runtime(runtime_master)
+    runtime_roundtrip = export_runtime(source)
+    if alpha_max(runtime_roundtrip, SAMPLED_SAFE) != 0:
+        raise ValueError("2x runtime dynamic hard-clear region is no longer empty")
     runtime_header = tga_header(RUNTIME)
 
     write_json(
@@ -207,7 +233,10 @@ def main() -> int:
                 "provider_size": [240, 65],
                 "art_box": [254, 77],
                 "outsets": {"left": 7, "right": 7, "top": 6, "bottom": 6},
+                "logical_art_box": list(LOGICAL_SIZE),
+                "sampled_art_box": list(SAMPLED_SIZE),
                 "texture_container": list(TEXTURE_SIZE),
+                "texels_per_ui": TEXELS_PER_UI,
                 "complete_bitmap": True,
                 "canonical_size_only": True,
                 "ui_scale_inherits_from_provider": True,
@@ -232,25 +261,28 @@ def main() -> int:
             "component": "UF.PLAYER.SHELL",
             "status": "runtime-exported-addon-integrated",
             "phase": "P5",
-            "runtime_contract": "1.7",
+            "runtime_contract": "1.8",
             "source_manifest": repository_path(SOURCE_MANIFEST),
             "route": "unitframes.player-shell-v5",
             "runtime": {
                 "file": repository_path(RUNTIME),
                 "sha256": sha256(RUNTIME),
-                "logical_size": list(RUNTIME_SIZE),
+                "logical_size": list(LOGICAL_SIZE),
+                "sampled_size": list(SAMPLED_SIZE),
+                "texels_per_ui": TEXELS_PER_UI,
                 "texture_size": list(TEXTURE_SIZE),
-                "content_uv": content_uv(RUNTIME_SIZE, TEXTURE_SIZE),
+                "content_uv": content_uv(SAMPLED_SIZE, TEXTURE_SIZE),
                 "tga_header": runtime_header,
-                "logical_metrics": metrics(runtime_roundtrip),
+                "sampled_metrics": metrics(runtime_roundtrip),
                 "accepted_runtime_master_sha256": sha256(RUNTIME_MASTER),
-                "logical_pixels_match_runtime_master": True,
+                "historical_1x_runtime_master_retained": True,
+                "source_to_sampled": [list(SOURCE_SIZE), list(SAMPLED_SIZE)],
             },
             "addon_contract": {
                 "provider": "pfUI.uf.player / pfPlayer",
                 "canonical_provider_size": [240, 65],
                 "assembly": "one complete bitmap; no slicing or texture reconstruction",
-                "ui_scale": "inherited parent scale; accepted bitmap remains intact",
+                "ui_scale": "inherited parent scale; 508x154 samples display in the unchanged 254x77 art box",
                 "size_mismatch": "restore only Player to configured pfUI chrome",
                 "other_roles": "Target, TargetTarget and Focus remain paused on pfUI fallback",
                 "dynamic_owner": "pfUI retains bars, text, colours, auras, icons, clicks and events",
@@ -266,7 +298,8 @@ def main() -> int:
                 "runtime_tga_sha256": sha256(RUNTIME),
                 "runtime_tga": repository_path(RUNTIME),
                 "texture_size": list(TEXTURE_SIZE),
-                "logical_pixels_unchanged": True,
+                "logical_geometry_unchanged": True,
+                "texels_per_ui": TEXELS_PER_UI,
             },
             ensure_ascii=False,
             indent=2,

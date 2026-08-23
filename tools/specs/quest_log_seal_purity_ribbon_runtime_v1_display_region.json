@@ -6,18 +6,18 @@
     "provider": "QuestLogDetailScrollFrame + QuestLogDetailScrollChildFrame",
     "adapter": "addon/AzerothExpeditionUI/Modules/Quests.lua",
     "runtime": "addon/AzerothExpeditionUI/Media/Quests/QuestLogSealPurityRibbonV1.tga",
-    "background_ownership": "one adapter-owned mouse-inert 32x192 carrier master sampled as a continuous prefix plus its own 14px tail",
+    "background_ownership": "one adapter-owned mouse-inert 64x384 sampled carrier master displayed in an unchanged 32x192 UI box as a continuous prefix plus its own 14 UI tail",
     "wax_ownership": "accepted QS-A1 remains a separate OVERLAY Texture above the carrier",
     "menu_activation": false,
     "menu_activation_reason": "seven independent action motifs and proxy parity are not yet accepted; existing provider Buttons remain visible and functional",
     "final_runtime": true
   },
   "atlas": {
-    "size": [32, 192],
-    "visible_bbox": [0, 0, 32, 192],
+    "size": [64, 384],
+    "visible_bbox": [0, 0, 64, 384],
     "require_exact_visible_coverage": true,
     "sampled_regions": [
-      {"id": "carrier.master", "box": [0, 0, 32, 192]}
+      {"id": "carrier.master", "box": [0, 0, 64, 384]}
     ]
   },
   "nine_slice": {

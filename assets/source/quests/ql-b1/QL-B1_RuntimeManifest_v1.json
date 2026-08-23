@@ -2,7 +2,7 @@
   "schema_version": 1,
   "batch": "QL-B1",
   "version": "V1.r3",
-  "runtime_contract": "1.0",
+  "runtime_contract": "1.1",
   "status": "runtime-exported",
   "source": {
     "file": "assets/source/quests/ql-b1/QuestLogDirectoryMarks_Master_v1.png",
@@ -29,13 +29,14 @@
     "mirror": false,
     "retouch": false,
     "atlas_size": [
-      64,
-      16
+      128,
+      32
     ],
     "cell_size": [
-      16,
-      16
+      32,
+      32
     ],
+    "texels_per_ui": 2,
     "state_order": [
       "collapsed",
       "expanded",
@@ -64,19 +65,24 @@
         "runtime_cell_xyxy": [
           0,
           0,
-          16,
-          16
+          32,
+          32
         ],
         "runtime_content_xyxy": [
-          2,
-          2,
-          14,
-          14
+          4,
+          4,
+          28,
+          28
         ],
         "runtime_display_size": [
+          24,
+          24
+        ],
+        "logical_display_size": [
           12,
           12
         ],
+        "texels_per_ui": 2,
         "texcoord": {
           "left": 0.03125,
           "right": 0.21875,
@@ -103,21 +109,26 @@
           204
         ],
         "runtime_cell_xyxy": [
-          16,
-          0,
           32,
-          16
+          0,
+          64,
+          32
         ],
         "runtime_content_xyxy": [
-          18,
-          2,
-          30,
-          14
+          36,
+          4,
+          60,
+          28
         ],
         "runtime_display_size": [
+          24,
+          24
+        ],
+        "logical_display_size": [
           12,
           12
         ],
+        "texels_per_ui": 2,
         "texcoord": {
           "left": 0.28125,
           "right": 0.46875,
@@ -144,21 +155,26 @@
           257
         ],
         "runtime_cell_xyxy": [
-          32,
+          64,
           0,
-          48,
-          16
+          96,
+          32
         ],
         "runtime_content_xyxy": [
-          35,
-          3,
-          45,
-          13
+          70,
+          6,
+          90,
+          26
         ],
         "runtime_display_size": [
+          20,
+          20
+        ],
+        "logical_display_size": [
           10,
           10
         ],
+        "texels_per_ui": 2,
         "texcoord": {
           "left": 0.546875,
           "right": 0.703125,
@@ -185,21 +201,26 @@
           258
         ],
         "runtime_cell_xyxy": [
-          48,
+          96,
           0,
-          64,
-          16
+          128,
+          32
         ],
         "runtime_content_xyxy": [
-          51,
-          3,
-          61,
-          13
+          102,
+          6,
+          122,
+          26
         ],
         "runtime_display_size": [
+          20,
+          20
+        ],
+        "logical_display_size": [
           10,
           10
         ],
+        "texels_per_ui": 2,
         "texcoord": {
           "left": 0.796875,
           "right": 0.953125,
@@ -211,41 +232,41 @@
   },
   "runtime": {
     "file": "addon/AzerothExpeditionUI/Media/Quests/QuestLogDirectoryMarksV1.tga",
-    "sha256": "e734bbf59da00f7fbc9c75649d33eaf635b5a0c19e1737128dfdce0db58eee8f",
-    "width": 64,
-    "height": 16,
+    "sha256": "82368ba1c6d9bab81317021d8b15af0acd9930701325dc16812fcc5e63dece16",
+    "width": 128,
+    "height": 32,
     "mode": "RGBA",
     "tga_header": {
       "image_type": 2,
-      "width": 64,
-      "height": 16,
+      "width": 128,
+      "height": 32,
       "bits_per_pixel": 32,
       "descriptor": 8,
       "top_origin": false
     },
     "visible_bbox_exclusive": [
-      2,
-      2,
-      61,
-      14
+      4,
+      4,
+      122,
+      28
     ],
     "visible_green_spill_pixels": 0,
-    "transparent_pixels": 632,
-    "partially_transparent_pixels": 292,
-    "opaque_pixels": 100
+    "transparent_pixels": 2663,
+    "partially_transparent_pixels": 817,
+    "opaque_pixels": 616
   },
   "simulation": {
     "atlas_preview": {
       "file": "generated/quests/QL-B1/v1/accepted/previews/QL-B1_V1_r3_runtime_atlas.png",
-      "sha256": "7502cc1e4f576f1f28ea418a413145ba880abc18b01e4a99b5c7ce40fa366273",
+      "sha256": "f6377beee42efd21490c23292dd098cf7d52c970957f014154bf68f5ab41822b",
       "size": [
-        64,
-        16
+        128,
+        32
       ]
     },
     "real_layout_preview": {
       "file": "generated/quests/QL-B1/v1/accepted/previews/QL-B1_V1_r3_real_layout_676x464.png",
-      "sha256": "c0e5bdffc5ce09872c0da0709a3269245ef424f4dde03335d59ded335dc5fdd5",
+      "sha256": "9c43140fd362913704b7846ec7d773efd635a20f5386cb0faf6a843d8725fa29",
       "size": [
         676,
         464

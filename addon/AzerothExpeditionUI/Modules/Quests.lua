@@ -1,9 +1,11 @@
 local addon = AzerothExpeditionUI
 local Quests = {}
-Quests.runtimeContract = "1.27"
+Quests.runtimeContract = "1.28"
 
 local THEME = addon.questVisualTheme
 local SHELL_TEXTURE = THEME.media.questLogShell
+local SHELL_TEXTURE_LEFT = THEME.media.questLogShellLeft
+local SHELL_TEXTURE_RIGHT = THEME.media.questLogShellRight
 local DIRECTORY_MARK_TEXTURE = THEME.media.directoryMarks
 local QUEST_TITLE_FONT = THEME.fonts.panelTitle.path
 local TRACKER_PAPER_TEXTURE = THEME.media.trackerPaper
@@ -14,6 +16,7 @@ local REWARD_SLOT_TEXTURE = THEME.media.rewardSlotStates
 local SHELL = {
   width = 676,
   height = 464,
+  tileWidth = 338,
   texcoord = {
     left = 0,
     right = 0.66015625,
@@ -105,7 +108,7 @@ local REWARD_CONTAINER = {
 }
 
 local REWARD_SLOT = {
-  contract = "1.0",
+  contract = "1.1",
   states = {
     normal = {
       0.01953125,
@@ -135,7 +138,7 @@ local REWARD_SLOT = {
 }
 
 local DIRECTORY = {
-  contract = "1.4",
+  contract = "1.5",
   rowCount = 18,
   providerRowCeiling = 23,
   rowWidth = 246,
@@ -239,7 +242,7 @@ local TRACKER_PAPER = {
 }
 
 local QUEST_SEAL = {
-  contract = "1.2",
+  contract = "1.3",
   topOutset = 18,
   states = {
     normal = { 0, 0.25, 0, 1 },
@@ -3973,19 +3976,45 @@ function Quests:EnsureShell(frame)
     frame.aeuiQuestShell = frame:CreateTexture(nil, "BACKGROUND")
     frame.aeuiQuestShell.aeuiQuestManaged = true
   end
+  if not frame.aeuiQuestShellRight then
+    frame.aeuiQuestShellRight = frame:CreateTexture(nil, "BACKGROUND")
+    frame.aeuiQuestShellRight.aeuiQuestManaged = true
+  end
 
-  local texture = frame.aeuiQuestShell
-  texture:SetTexture(SHELL_TEXTURE)
-  texture:SetTexCoord(
-    SHELL.texcoord.left,
-    SHELL.texcoord.right,
-    SHELL.texcoord.top,
-    SHELL.texcoord.bottom
-  )
-  texture:SetVertexColor(1, 1, 1, 1)
-  texture:ClearAllPoints()
-  texture:SetAllPoints(frame)
-  texture:Show()
+  local tiles = {
+    {
+      texture = frame.aeuiQuestShell,
+      path = SHELL_TEXTURE_LEFT or SHELL_TEXTURE,
+      offset = 0,
+    },
+    {
+      texture = frame.aeuiQuestShellRight,
+      path = SHELL_TEXTURE_RIGHT or SHELL_TEXTURE,
+      offset = SHELL.tileWidth,
+    },
+  }
+  for _, tile in ipairs(tiles) do
+    local texture = tile.texture
+    texture:SetTexture(tile.path)
+    texture:SetTexCoord(
+      SHELL.texcoord.left,
+      SHELL.texcoord.right,
+      SHELL.texcoord.top,
+      SHELL.texcoord.bottom
+    )
+    texture:SetVertexColor(1, 1, 1, 1)
+    texture:ClearAllPoints()
+    texture:SetPoint(
+      "TOPLEFT",
+      frame,
+      "TOPLEFT",
+      tile.offset,
+      0
+    )
+    texture:SetWidth(SHELL.tileWidth)
+    texture:SetHeight(SHELL.height)
+    texture:Show()
+  end
 end
 
 function Quests:EnsureQuestLogChromeSeal(frame)

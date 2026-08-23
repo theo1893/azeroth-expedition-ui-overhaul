@@ -180,8 +180,9 @@ padding；真实插件 Button 保留原始图标、状态、scale、点击、Too
 
 ### `MAP-MINI-V7-A1`：bottom 一体式轻型插件收纳袋
 
-以下是已验收 attempt 3 的稳定 production Prompt。它取代 bottom 的 V5 扣座、
-活动皮舌和九切片工具卷；left／top／right 继续使用 V4／V3 回退：
+以下是已验收 attempt 3 并按实机反馈做 V7.1 短绳几何修订后的稳定 production
+Prompt。它取代 bottom 的 V5 扣座、活动皮舌和九切片工具卷；left／top／right
+继续使用 V4／V3 回退：
 
 > 为 Turtle WoW 1.18.1／Interface 11200 的香草时代 UI overhaul 生成一件完整、
 > 连续、正面平视、无透视的远征制图师插件收纳附件。只输出一张最大密度母图：
@@ -208,8 +209,8 @@ padding；真实插件 Button 保留原始图标、状态、scale、点击、Too
 > 对比纵向折痕自然暗示裁切位置；下缘可轻微不齐、磨毛和修补，但禁止整齐锯齿、
 > 流苏、卷轴杆、战旗、绶带、硬皮箱或厚重卷轴。
 >
-> 按 120×340 UI 母图理解：徽记中心 (102,16)，绳索中心 x=102±1.5，绳索约从
-> y=30 延续到袋口 y=134，袋身约为 x=12..118、y=134..335；安全裁切缝位于
+> 按 120×292 UI 母图理解：徽记中心 (102,16)，绳索中心 x=102±1.5，绳索约从
+> y=30 延续到袋口 y=86，袋身约为 x=12..118、y=86..287；安全裁切缝位于
 > x=36／60／84。物件外部与真实空隙使用完全均匀的纯青色 #00FFFF。只允许后续
 > 边缘连通色键、青色溢色清理、透明 RGB 清零、一次等比归一化、固定 UV 裁切、
 > 4× source 到 2× runtime 下采样和 POT TGA 装配；不得补画、复制、移动、平铺、
@@ -217,8 +218,10 @@ padding；真实插件 Button 保留原始图标、状态、scale、点击、Too
 
 已验收 source 为
 `assets/source/map/mini-v7-addon-sling/MapMiniAddonSlingMaster_SourceV7.png`；正式
-runtime 为 `MapMiniAddonSlingMasterV7.tga`。收起态与四个展开密度档只使用同一
-TGA 的右锚 UV 裁切，徽记像素和位置完全一致。真实 `pfMinimapButton` 命中区为
+runtime 为 `MapMiniAddonSlingMasterV7.tga`。V7.1 保留 attempt 3 的全部可见 donor
+像素，只确定性移除 `48 UI` 中段绳索，并用运行时锚点对分位移，使徽记下移、袋口
+上移各 `24 UI`。收起态与四个展开密度档只使用同一 TGA 的右锚 UV 裁切，徽记像素
+和位置完全一致。真实 `pfMinimapButton` 命中区为
 `28×28 UI`；真实入口为 `21×21 UI`、间距 3 UI、每列 8 个，先填最右列再向左
 增长。已授权 exact-pixels 例外仅为四个极小黄铜固定点，以及三条低对比但连续的
 纵向裁切折痕。
@@ -241,8 +244,9 @@ TGA 的右锚 UV 裁切，徽记像素和位置完全一致。真实 `pfMinimapB
 - 大地图锁定图仍是整体视觉 `P2` 基准，不可直接切成 runtime。
 - 小地图锁定图只保留罗盘物件身份与材料家族；V3 架构锁定图只锁定组件层级、
   外置信息托架和 0／折叠／6／30 插件场景，不锁定简单几何稿的材质与细节。
-- 常驻罗盘／托架和状态插槽继续使用 V3；bottom 以 V7 一体式轻型收纳袋为最高
-  裁决，left／top／right 暂用 V4／V3 回退。不从旧图恢复 connector、V5 扣座、
+- 常驻罗盘／托架和状态插槽继续使用 V3；bottom 以 V7.1 一体式短绳轻型收纳袋为
+  最高裁决，用户实机“线太长了”的结论只覆盖旧锁定图的绳长；left／top／right
+  暂用 V4／V3 回退。不从旧图恢复 connector、V5 扣座、
   活动皮舌、bottom 九切片卷筒、外置长铭牌、右侧拨片、吊牌、地图内信息栏、
   漂浮箭头或精密对称。
 - 历史完整原型与弃用尝试只存在于 Git 历史；当前树不维护尝试记录。

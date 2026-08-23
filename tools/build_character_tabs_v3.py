@@ -35,51 +35,53 @@ RUNTIME_TGA = MEDIA_DIR / "CharacterTabsV3.tga"
 TEXEL_DENSITY = 2
 SOURCE_SIZE = (176, 80)
 ATLAS_SIZE = (128, 256)
+TAB_LOGICAL_HEIGHT = 28
+TAB_SAMPLED_HEIGHT = TAB_LOGICAL_HEIGHT * TEXEL_DENSITY
 
 STATES: dict[str, dict[str, str | int]] = {
     "normal": {
         "source_name": "CharacterTabNormal_SourceV3.png",
         "promotion_name": "CharacterTab_normal_SourceV3.png",
         "sha256": "eb513dc3163a7eb91490899d2ad663ca441f810731d8ecc475d487dc8fc54fad",
-        "atlas_y": 8,
+        "atlas_y": 4,
     },
     "hover": {
         "source_name": "CharacterTabHover_SourceV3.png",
         "promotion_name": "CharacterTab_hover_SourceV3.png",
         "sha256": "7c8084ab924585efe19f1a199073255d213610d18aa69f344e17c9fa6b4eb380",
-        "atlas_y": 64,
+        "atlas_y": 68,
     },
     "pressed": {
         "source_name": "CharacterTabPressed_SourceV3.png",
         "promotion_name": "CharacterTab_pressed_SourceV3.png",
         "sha256": "36f2512e79751b7dd92aadadf5fdaff1687f28bc7247a419d00916a273353275",
-        "atlas_y": 120,
+        "atlas_y": 132,
     },
     "selected": {
         "source_name": "CharacterTabSelected_SourceV3.png",
         "promotion_name": "CharacterTab_selected_SourceV3.png",
         "sha256": "50624701ba8feeb3d33ec1024902bff2194d701dc6f4fd1e97f65e2dc21ee016",
-        "atlas_y": 176,
+        "atlas_y": 196,
     },
 }
 
 PARTS = {
     "left": {
         "source_box": (0, 0, 24, 80),
-        "sampled_size": (12, 40),
-        "logical_size_ui": (6, 20),
+        "sampled_size": (12, TAB_SAMPLED_HEIGHT),
+        "logical_size_ui": (6, TAB_LOGICAL_HEIGHT),
         "atlas_x": 8,
     },
     "center": {
         "source_box": (72, 0, 104, 80),
-        "sampled_size": (16, 40),
-        "logical_size_ui": (8, 20),
+        "sampled_size": (16, TAB_SAMPLED_HEIGHT),
+        "logical_size_ui": (8, TAB_LOGICAL_HEIGHT),
         "atlas_x": 32,
     },
     "right": {
         "source_box": (152, 0, 176, 80),
-        "sampled_size": (12, 40),
-        "logical_size_ui": (6, 20),
+        "sampled_size": (12, TAB_SAMPLED_HEIGHT),
+        "logical_size_ui": (6, TAB_LOGICAL_HEIGHT),
         "atlas_x": 60,
     },
 }
@@ -227,7 +229,10 @@ def build_atlas(
             sampled = clear_transparent_rgb(
                 sources[state].crop(box).resize(
                     sampled_size,
-                    Image.Resampling.LANCZOS,
+                    # BOX downsamples the accepted painted source without the
+                    # four one-pixel green overshoots produced by Lanczos at
+                    # the enlarged 56-texel runtime height.
+                    Image.Resampling.BOX,
                 )
             )
             x = int(part_definition["atlas_x"])
@@ -319,6 +324,7 @@ def write_manifests(
                 for name, definition in PARTS.items()
             },
             "runtime_atlas_size": list(ATLAS_SIZE),
+            "runtime_resampling": "Pillow BOX",
             "texels_per_ui_unit": TEXEL_DENSITY,
             "horizontal_stretch_part": "center only",
             "accepted_source_pixels_modified_during_promotion": False,
@@ -335,7 +341,7 @@ def write_manifests(
         "component": "CHAR.TABS",
         "status": "runtime-exported",
         "phase": "P5",
-        "runtime_contract": "1.8",
+        "runtime_contract": "2.1",
         "source_manifest": repo_path(SOURCE_MANIFEST),
         "runtime": {
             "file": repo_path(RUNTIME_TGA),
@@ -349,8 +355,11 @@ def write_manifests(
         "layout_contract": {
             "ownership_route": "character.tabs-v3",
             "provider": "CharacterFrameTab1..5 after pfUI Character SkinTab",
-            "logical_height_ui": 20,
-            "dynamic_width": "provider text width + 20 UI",
+            "logical_height_ui": TAB_LOGICAL_HEIGHT,
+            "dynamic_width": (
+                "visible tabs share the pfUI Character backdrop width; each keeps "
+                "at least max(64 UI, provider text width + 32 UI)"
+            ),
             "left_cap_ui": 6,
             "right_cap_ui": 6,
             "center_width_ui": "TabWidth - 12",
@@ -361,15 +370,15 @@ def write_manifests(
                 "pressed": "enabled OnMouseDown",
                 "selected": "PanelTemplates disabled selected tab",
             },
-            "provider_geometry_changed": False,
+            "provider_geometry_changed": True,
             "provider_text_clicks_and_reflow": "live",
-            "pet_hidden_reflow": "provider-live",
+            "pet_hidden_reflow": "adapter recalculates the visible provider row",
             "fallback": "restore pfUI tab backdrop when module or ownership route is inactive",
             "texels_per_ui_unit": TEXEL_DENSITY,
         },
         "texel_density": {
             "texels_per_ui_unit": TEXEL_DENSITY,
-            "ui_geometry_changed": False,
+            "ui_geometry_changed": True,
             "target_physical_scale": "up to 2 screen pixels per UI unit",
         },
     }

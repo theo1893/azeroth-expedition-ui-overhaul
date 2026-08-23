@@ -443,7 +443,7 @@ def load_sources() -> dict[str, Image.Image]:
 
 def make_round_mask() -> Image.Image:
     factor = 4
-    size = 256
+    size = 512
     high = Image.new("L", (size * factor, size * factor), 0)
     ImageDraw.Draw(high).ellipse(
         (factor, factor, size * factor - factor - 1, size * factor - factor - 1),
@@ -452,8 +452,9 @@ def make_round_mask() -> Image.Image:
     alpha = high.resize((size, size), Image.Resampling.LANCZOS)
     alpha_array = np.asarray(alpha, dtype=np.uint8).copy()
     yy, xx = np.ogrid[:size, :size]
-    radius = np.sqrt((xx - 127.5) ** 2 + (yy - 127.5) ** 2)
-    alpha_array[radius >= 127.0] = 0
+    centre = (size - 1) / 2
+    radius = np.sqrt((xx - centre) ** 2 + (yy - centre) ** 2)
+    alpha_array[radius >= centre - 0.5] = 0
     rgba = Image.new("RGBA", (size, size), (255, 255, 255, 0))
     rgba.putalpha(Image.fromarray(alpha_array, "L"))
     return clear_transparent_rgb(rgba)
@@ -537,14 +538,21 @@ def validate_geometry(
         raise ValueError("compass material enters the protected 140x140 map window")
 
     mask_alpha = np.asarray(runtimes["mask"][1].getchannel("A"), dtype=np.uint8)
+    mask_size = mask_alpha.shape[0]
     if any(
         int(mask_alpha[y, x]) != 0
-        for x, y in ((0, 0), (255, 0), (0, 255), (255, 255))
-    ) or int(mask_alpha[128, 128]) != 255:
+        for x, y in (
+            (0, 0),
+            (mask_size - 1, 0),
+            (0, mask_size - 1),
+            (mask_size - 1, mask_size - 1),
+        )
+    ) or int(mask_alpha[mask_size // 2, mask_size // 2]) != 255:
         raise ValueError("round mask does not have transparent corners and opaque centre")
-    my, mx = np.ogrid[:256, :256]
-    mask_radius = np.sqrt((mx - 127.5) ** 2 + (my - 127.5) ** 2)
-    if int(np.count_nonzero(mask_alpha[mask_radius >= 127.0])) != 0:
+    my, mx = np.ogrid[:mask_size, :mask_size]
+    mask_centre = (mask_size - 1) / 2
+    mask_radius = np.sqrt((mx - mask_centre) ** 2 + (my - mask_centre) ** 2)
+    if int(np.count_nonzero(mask_alpha[mask_radius >= mask_centre - 0.5])) != 0:
         raise ValueError("round mask leaks outside the circular provider boundary")
 
     socket_alpha = np.asarray(sources["socket"].getchannel("A"), dtype=np.uint8)
@@ -697,6 +705,22 @@ def write_manifests(
             "transparent_rgb_cleared": True,
             "generative_postprocess": False,
         },
+        "density_contract": {
+            "functional_mask": "deterministically rebuilt at 512x512",
+            "explicit_1x_exception": [
+                "compass",
+                "latch",
+                "glyph",
+                "connector",
+                "socket",
+                "tray",
+            ],
+            "reason": (
+                "the accepted normalized V3 art sources exist only at their "
+                "logical 1x sizes; the original accepted provider raws were "
+                "not retained, and upscaling those 1x sources is forbidden"
+            ),
+        },
         "runtime_manifest": repository_path(RUNTIME_MANIFEST),
     }
     SOURCE_DIR.mkdir(parents=True, exist_ok=True)
@@ -716,6 +740,9 @@ def write_manifests(
             "texture_size": list(power_of_two_size(logical_size)),
             "content_uv": content_uv(logical_size),
             "tga_header": tga_header(path),
+            "texels_per_ui": (
+                "functional-mask-512" if key == "mask" else 1
+            ),
         }
     runtime_manifest = {
         "schema": "aeui-map-mini-v3-runtime-manifest-v1",
@@ -724,7 +751,7 @@ def write_manifests(
         "batch": "MAP-MINI-V3",
         "status": "runtime-exported",
         "phase": "P5",
-        "runtime_contract": "3.0",
+        "runtime_contract": "3.1",
         "source_manifest": repository_path(SOURCE_MANIFEST),
         "runtime": runtime_components,
         "layout_contract": {

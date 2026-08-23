@@ -2,7 +2,7 @@
   "schema": "aeui-unitframes-raid-a2-runtime-manifest-v1",
   "status": "runtime-exported",
   "phase": "P5",
-  "runtime_contract": "1.6",
+  "runtime_contract": "1.7",
   "module": "unitframes",
   "components": [
     "UF.RAID.MEMBER.SHELL.A",
@@ -11,36 +11,36 @@
     "UF.RAID.MEMBER.SHELL.D"
   ],
   "source_manifest": "assets/source/unitframes/raid-a2/UF-RAID-A2_SourceManifest_v1.json",
-  "source_manifest_sha256": "15da1577b5d692b72477d839f1cabec86299f1b599c0cb86b79abb8378a2d4f1",
+  "source_manifest_sha256": "559468e2e12570b0f8a9b8cf3cb602433effbacf89f3d6703354975f777a3bd3",
   "runtime": {
     "A": {
       "component": "UF.RAID.MEMBER.SHELL.A",
       "file": "addon/AzerothExpeditionUI/Media/UnitFrames/RaidMemberShellAV1.tga",
-      "sha256": "bb4877404fb1bcf33f917d7af6e83f08e2faab377669a359d460cd164f1e4ac9",
+      "sha256": "747339a162cefa0c2db94071074a080d34972f373cb8eb7fc7f4c1c27676c860",
       "tga_header": {
         "image_type": 2,
-        "width": 128,
-        "height": 64,
+        "width": 256,
+        "height": 128,
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
       },
       "metrics": {
         "size": [
-          74,
-          37
+          148,
+          74
         ],
         "mode": "RGBA",
-        "pixel_sha256": "9d9df5daf89a56fde32cdebc307deab00bf854e2d366df1f699f5a7f60ba55bc",
+        "pixel_sha256": "62e5cf618fed51bc3b8ef9b9b250bc17d81900b03a3da006dbdb383bafd877d0",
         "visible_bbox_exclusive": [
           0,
           0,
-          74,
-          37
+          148,
+          74
         ],
-        "transparent_pixels": 10,
-        "partially_transparent_pixels": 418,
-        "opaque_pixels": 2310,
+        "transparent_pixels": 111,
+        "partially_transparent_pixels": 973,
+        "opaque_pixels": 9868,
         "visible_green_spill_pixels": 0,
         "transparent_rgb_nonzero_values": 0
       },
@@ -48,9 +48,14 @@
         74,
         37
       ],
+      "sampled_size": [
+        148,
+        74
+      ],
+      "texels_per_ui": 2,
       "texture_size": [
-        128,
-        64
+        256,
+        128
       ],
       "content_uv": [
         0.0,
@@ -88,31 +93,31 @@
     "B": {
       "component": "UF.RAID.MEMBER.SHELL.B",
       "file": "addon/AzerothExpeditionUI/Media/UnitFrames/RaidMemberShellBV1.tga",
-      "sha256": "d2b9e1984177a8dddf4eab0df169d4638fa7a05f841c441aa82103f6ab369903",
+      "sha256": "a3996af2ec908d9737fc659831cd754d3ab1bc3ba77e6f40e578328683ecc8cc",
       "tga_header": {
         "image_type": 2,
-        "width": 128,
-        "height": 64,
+        "width": 256,
+        "height": 128,
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
       },
       "metrics": {
         "size": [
-          74,
-          37
+          148,
+          74
         ],
         "mode": "RGBA",
-        "pixel_sha256": "60ba6b89e01a6d31e9d6f802e99d53762beb82905982a6bcbc2326a9bc8cbff3",
+        "pixel_sha256": "68c4fce8386d02eea1267547ca53be55c810b48aadc15d712c0cf0bf82be5f84",
         "visible_bbox_exclusive": [
           0,
           0,
-          74,
-          37
+          148,
+          74
         ],
-        "transparent_pixels": 9,
-        "partially_transparent_pixels": 416,
-        "opaque_pixels": 2313,
+        "transparent_pixels": 113,
+        "partially_transparent_pixels": 964,
+        "opaque_pixels": 9875,
         "visible_green_spill_pixels": 0,
         "transparent_rgb_nonzero_values": 0
       },
@@ -120,9 +125,14 @@
         74,
         37
       ],
+      "sampled_size": [
+        148,
+        74
+      ],
+      "texels_per_ui": 2,
       "texture_size": [
-        128,
-        64
+        256,
+        128
       ],
       "content_uv": [
         0.0,
@@ -160,31 +170,31 @@
     "C": {
       "component": "UF.RAID.MEMBER.SHELL.C",
       "file": "addon/AzerothExpeditionUI/Media/UnitFrames/RaidMemberShellCV1.tga",
-      "sha256": "e8e99e11bb14fe71c48850c51d830749d07c1267e868dd0292db91fe4dddacac",
+      "sha256": "56ec88971751cb8f3b3d6c0337f4fa2009c14260ca9bd34ae5e392fc04cc5fc2",
       "tga_header": {
         "image_type": 2,
-        "width": 128,
-        "height": 64,
+        "width": 256,
+        "height": 128,
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
       },
       "metrics": {
         "size": [
-          74,
-          37
+          148,
+          74
         ],
         "mode": "RGBA",
-        "pixel_sha256": "626c4e8633b33946edb9ad93456fe0ade015fdfb646e0337d020e1f6f03b1736",
+        "pixel_sha256": "1066e02501d5a47e8118a4164818ba85c5b49f7bb49aec5ec3e7bb58581a8ace",
         "visible_bbox_exclusive": [
           0,
           0,
-          74,
-          37
+          148,
+          74
         ],
-        "transparent_pixels": 9,
-        "partially_transparent_pixels": 416,
-        "opaque_pixels": 2313,
+        "transparent_pixels": 113,
+        "partially_transparent_pixels": 963,
+        "opaque_pixels": 9876,
         "visible_green_spill_pixels": 0,
         "transparent_rgb_nonzero_values": 0
       },
@@ -192,9 +202,14 @@
         74,
         37
       ],
+      "sampled_size": [
+        148,
+        74
+      ],
+      "texels_per_ui": 2,
       "texture_size": [
-        128,
-        64
+        256,
+        128
       ],
       "content_uv": [
         0.0,
@@ -232,31 +247,31 @@
     "D": {
       "component": "UF.RAID.MEMBER.SHELL.D",
       "file": "addon/AzerothExpeditionUI/Media/UnitFrames/RaidMemberShellDV1.tga",
-      "sha256": "65b47bb4e89e96cd2641f5664ffae385f238567d468ea31fb9fdc81103515453",
+      "sha256": "b03c8a032d74ae22d311da6ff2ecb3f50e3ea9c99cfb4db4996b4b98e268ebc3",
       "tga_header": {
         "image_type": 2,
-        "width": 128,
-        "height": 64,
+        "width": 256,
+        "height": 128,
         "bits_per_pixel": 32,
         "descriptor": 8,
         "top_origin": false
       },
       "metrics": {
         "size": [
-          74,
-          37
+          148,
+          74
         ],
         "mode": "RGBA",
-        "pixel_sha256": "22afd39c9a4986ddc6db4df4df16df2e055a035657b91e71dfed0a755f744f63",
+        "pixel_sha256": "643fefb46ca6f00be45fd66c4770d497bc0d79a63a8bd58133fbb51333062f35",
         "visible_bbox_exclusive": [
           0,
           0,
-          74,
-          37
+          148,
+          74
         ],
-        "transparent_pixels": 9,
-        "partially_transparent_pixels": 416,
-        "opaque_pixels": 2313,
+        "transparent_pixels": 114,
+        "partially_transparent_pixels": 965,
+        "opaque_pixels": 9873,
         "visible_green_spill_pixels": 0,
         "transparent_rgb_nonzero_values": 0
       },
@@ -264,9 +279,14 @@
         74,
         37
       ],
+      "sampled_size": [
+        148,
+        74
+      ],
+      "texels_per_ui": 2,
       "texture_size": [
-        128,
-        64
+        256,
+        128
       ],
       "content_uv": [
         0.0,
@@ -310,13 +330,18 @@
         296
       ],
       [
-        74,
-        37
+        148,
+        74
       ]
     ],
+    "logical_runtime_size": [
+      74,
+      37
+    ],
+    "texels_per_ui": 2,
     "runtime_texture_container": [
-      128,
-      64
+      256,
+      128
     ],
     "runtime_content_uv": [
       0.0,
@@ -331,7 +356,12 @@
       496,
       48
     ],
-    "runtime_three_slice": [
+    "runtime_three_slice_sampled": [
+      12,
+      124,
+      12
+    ],
+    "runtime_three_slice_logical": [
       6,
       62,
       6
@@ -356,9 +386,9 @@
   },
   "real_layout": {
     "scene": "generated/unitframes/raid/A2/runtime/real-layout-scene.png",
-    "scene_sha256": "fbc438c7754440d5a95ab88f94a99af9d80ba78a4a51bc22ba0a1422b95d2239",
+    "scene_sha256": "1e6974981ed27e38e45d92829773053f6f349bfbbe63c38b937470115f778cb4",
     "review": "generated/unitframes/raid/A2/runtime/real-layout-review.png",
-    "review_sha256": "19f85b23a28c663103c18d07c60dc4609aa3b3de8e3eec9460d29ce9fcd49a25",
+    "review_sha256": "bcec56580bc0dbc4be02cc959b7947c234dab44e2ec87716f16332694235c220",
     "object_count": 40,
     "formation": "10x4 VERTICAL",
     "cluster_visual_envelope": [
@@ -370,7 +400,7 @@
   "display_region": {
     "contract": "tools/specs/unitframes_raid_runtime_display_region_v1.json",
     "report": "generated/unitframes/raid/A2/runtime/display-region-report.json",
-    "report_sha256": "57fb172ad3dd8166e2c7a21fc63d220d31f6ab508061969b5d1e976951f52d00",
+    "report_sha256": "317fa27ab58b7518daf11aec75def0ca9080a9515c43abeca163b7117bb4bfd9",
     "status": "pass",
     "scenario_count": 7,
     "violation_count": 0,

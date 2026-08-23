@@ -35,6 +35,8 @@ RAW_SHA256 = "98bc709e50cc8161afd964cb93f4df9e3c73fcb4013e3e6ede95c90abe385cf9"
 RAW_SIZE = (1695, 928)
 SOURCE_SIZE = (1080, 296)
 LOGICAL_SIZE = (270, 74)
+SAMPLED_SIZE = (540, 148)
+TEXELS_PER_UI = 2
 MAX_RELATIVE_Y_COMPRESSION = 0.022
 DIRECTIONS = ("bottom", "top", "left", "right")
 
@@ -261,7 +263,7 @@ def rotate_for_attachment(image: Image.Image, direction: str) -> Image.Image:
 
 def runtime_logical(source: Image.Image) -> dict[str, Image.Image]:
     bottom = clear_transparent_rgb(
-        source.resize(LOGICAL_SIZE, Image.Resampling.LANCZOS)
+        source.resize(SAMPLED_SIZE, Image.Resampling.LANCZOS)
     )
     return {
         direction: clear_transparent_rgb(rotate_for_attachment(bottom, direction))
@@ -346,7 +348,9 @@ def write_manifests(
         "deterministic_transform": {
             **transform,
             "source_size": list(SOURCE_SIZE),
-            "runtime_size": list(LOGICAL_SIZE),
+            "logical_size": list(LOGICAL_SIZE),
+            "sampled_size": list(SAMPLED_SIZE),
+            "texels_per_ui": TEXELS_PER_UI,
             "transparent_rgb_cleared": True,
             "generative_postprocess": False,
         },
@@ -363,12 +367,26 @@ def write_manifests(
         runtime[direction] = {
             "component": f"MAP.MINI.ADDONS.TRAY.V4.{direction.upper()}",
             **media_record(path, image),
-            "logical_size": list(image.size),
+            "logical_size": list(
+                LOGICAL_SIZE
+                if direction in ("bottom", "top")
+                else (LOGICAL_SIZE[1], LOGICAL_SIZE[0])
+            ),
+            "sampled_size": list(image.size),
+            "texels_per_ui": TEXELS_PER_UI,
             "texture_size": list(power_of_two_size(image.size)),
             "content_uv": content_uv(image.size),
             "nine_slice_cuts": {
-                "x": [0, *CUTS[direction]["x"], image.width],
-                "y": [0, *CUTS[direction]["y"], image.height],
+                "x": [
+                    0,
+                    *(value * TEXELS_PER_UI for value in CUTS[direction]["x"]),
+                    image.width,
+                ],
+                "y": [
+                    0,
+                    *(value * TEXELS_PER_UI for value in CUTS[direction]["y"]),
+                    image.height,
+                ],
             },
             "tga_header": tga_header(path),
         }
@@ -379,7 +397,7 @@ def write_manifests(
         "batch": "MAP-MINI-V4-TRAY",
         "phase": "P5",
         "status": "runtime-exported",
-        "runtime_contract": "4.0",
+        "runtime_contract": "4.1",
         "source_manifest": repository_path(SOURCE_MANIFEST),
         "runtime": runtime,
         "layout_contract": {
@@ -407,13 +425,25 @@ def render_nine_slice(image: Image.Image, size: tuple[int, int], direction: str)
     x1, x2 = CUTS[direction]["x"]
     y1, y2 = CUTS[direction]["y"]
     cap_left = min(x1, width // 3)
-    cap_right = min(image.width - x2, width // 3)
+    horizontal = direction in ("bottom", "top")
+    logical = LOGICAL_SIZE if horizontal else (LOGICAL_SIZE[1], LOGICAL_SIZE[0])
+    cap_right = min(logical[0] - x2, width // 3)
     cap_top = min(y1, height // 3)
-    cap_bottom = min(image.height - y2, height // 3)
+    cap_bottom = min(logical[1] - y2, height // 3)
     destination_x = (0, cap_left, width - cap_right, width)
     destination_y = (0, cap_top, height - cap_bottom, height)
-    source_x = (0, x1, x2, image.width)
-    source_y = (0, y1, y2, image.height)
+    source_x = (
+        0,
+        x1 * TEXELS_PER_UI,
+        x2 * TEXELS_PER_UI,
+        image.width,
+    )
+    source_y = (
+        0,
+        y1 * TEXELS_PER_UI,
+        y2 * TEXELS_PER_UI,
+        image.height,
+    )
     result = Image.new("RGBA", size, (0, 0, 0, 0))
     for row in range(3):
         for column in range(3):

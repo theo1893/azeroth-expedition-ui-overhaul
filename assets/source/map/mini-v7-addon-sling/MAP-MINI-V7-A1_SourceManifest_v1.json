@@ -15,6 +15,24 @@
       "three low-contrast continuous vertical crop folds"
     ]
   },
+  "geometry_revision": {
+    "runtime_contract": "7.3",
+    "user_direction": "线太长了",
+    "layout_direction": [
+      "收纳icon没有贴在罗盘边沿",
+      "收纳袋里的插件icon整体偏上+偏右了, 需要往左下方调整一点"
+    ],
+    "applied_on": "2026-08-22",
+    "parent_source_sha256": "7749e5b33a696920026612ea0237575f679bdaf577742920f18e16bfc3e02e0b",
+    "vertical_band_removed_source_px": [212, 404],
+    "rope_shortening_ui": 48,
+    "runtime_master_anchor_delta_ui": [-17, 24],
+    "toggle_absolute_delta_ui": [-17, 24],
+    "bag_absolute_delta_ui": [-17, -24],
+    "entry_layout_delta_ui": [-4, 6],
+    "visible_pixels_repainted": false,
+    "actual_imagegen_calls": 0
+  },
   "provenance": {
     "executor": "imagegen-0-143-0",
     "actual_imagegen_calls": 5,
@@ -34,26 +52,29 @@
   "component": "MAP.MINI.ADDONS.V7.BOTTOM.INTEGRATED_SLING",
   "source": {
     "file": "assets/source/map/mini-v7-addon-sling/MapMiniAddonSlingMaster_SourceV7.png",
-    "sha256": "7749e5b33a696920026612ea0237575f679bdaf577742920f18e16bfc3e02e0b",
+    "sha256": "2f9f3fdb36771237a508af902b0ddc0d9adf33434cb5e292d54c4edd71d52429",
     "metrics": {
-      "size": [480, 1360],
+      "size": [480, 1168],
       "mode": "RGBA",
-      "pixel_sha256": "61ffa04daf2eab988c4d8ac0ea914802c61a929d62284c0ca8b801acca5aeef3",
-      "visible_bbox_exclusive": [38, 4, 475, 1356],
-      "transparent_pixels": 308825,
-      "partially_transparent_pixels": 11114,
-      "opaque_pixels": 332861,
+      "pixel_sha256": "8bb344774dd86d435e8047e36ef7098cf9304969a89ad1c0a1eabef02c2ea736",
+      "visible_bbox_exclusive": [38, 4, 475, 1164],
+      "transparent_pixels": 220809,
+      "partially_transparent_pixels": 10101,
+      "opaque_pixels": 329730,
       "transparent_rgb_nonzero_values": 0
     }
   },
   "deterministic_transform": {
+    "parent_source_size": [480, 1360],
+    "parent_source_sha256": "7749e5b33a696920026612ea0237575f679bdaf577742920f18e16bfc3e02e0b",
     "raw_visible_bbox_exclusive": [53, 9, 716, 2059],
     "raw_visible_size": [663, 2050],
     "isotropic_scale": 0.6595122,
     "normalized_visible_size": [437, 1352],
-    "source_size": [480, 1360],
+    "geometry_cut_source_px": [212, 404],
+    "source_size": [480, 1168],
     "source_paste_xy": [38, 4],
-    "runtime_sampled_size": [240, 680],
+    "runtime_sampled_size": [240, 584],
     "source_texels_per_ui_unit": 4,
     "runtime_texels_per_ui_unit": 2,
     "runtime_alpha_values_at_or_below_eight_cleared": true,

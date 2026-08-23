@@ -18,15 +18,16 @@ Codex 进入仓库后先读本文件。这里给出项目边界、文档索引�
 
 | 模块 | 当前状态 | 下一步 |
 |---|---|---|
-| Core／pfUI | AEUI `0.8.36`，scoped ownership `P5` | 实机验证模块隔离、旧配置迁移与回退 |
+| Core／pfUI | AEUI `0.9.0`，scoped ownership `P5`；Gear Planner runtime `0.9-zhCN` 已接入 Character 与 Inspect 两套独立伴随会话并保留独立回退 | 实机验证模块隔离、旧配置迁移、两套伴随栏与配装工具回退 |
 | Chat | runtime `1.22 / P5`；Full V1 主框、Dark V2 Tab、Dark V1 输入已接入；右框隐藏，经典颜色透传 | 实机验证 Tab、缩放、输入、频道颜色和左框消息回收 |
-| Quests | runtime `1.27`、Theme `1.10`；Quest Log 主体／目录已获实机确认；奖励槽与闭合火漆载体 `P5`；事务菜单未启用 | 实机验证奖励槽、火漆滚动裁切；Tracker 重新确认真实区域 |
-| Action Bars | AEUI `0.8.36`；Slot／Rail `P6`；Field Kit `2.9`、Focus `2.7`、Sidebar Group `1.0`、Target Markers `2.0` 均 `P5`；所有角色 DDPS 统一 `(650,-615)` | 实机验证共用缝制皮革底板、占用态左下标记身份、死亡目标仅本地清空的 `4×2` 方阵与 HDL 一键怪群标记、ArchiTotem 展开层级、AutoBar 左侧 popup／四列向上网格、DDPS 中央视野、姿态尺寸及相邻 provider |
-| Map | WorldMap 继续暂停；Minimap runtime `7.0`，V3 罗盘／托架／mask／状态插槽保留；bottom V7 同母图徽记／绳索／轻型袋已接入 `P5`，真实插件按钮保持动态，非 bottom 使用 V4／V3 回退 | 实机验证 closed/open 徽记不跳位、0／6／12／22／30 排布、命中区、缩放、显隐及回退 |
+| Quests | runtime `1.28`、Theme `1.11`；已完成并挂载的书体、目录、奖励槽、火漆／闭合载体均为 2× runtime；事务菜单未启用 | 完整重启后实机验证双纹理书体接缝、奖励槽、火漆滚动裁切；Tracker 重新确认真实区域 |
+| Action Bars | AEUI `0.8.36`；Slot／Rail `P6`；Field Kit `2.9`、Focus `2.9`、Sidebar Group `1.0`、Target Markers `2.3` 均 `P5`；Player／Target 为 `240×48 / 0.8`、底锚点 `480 UI`，TargetTarget 仅同步下移，下方读条原位；三框布局按角色首次加载应用一次；所有角色 DDPS 统一 `(650,-615)` | 实机验证另一角色首次加载三框默认、紧凑主框及两排 Aura 与下方三条读条净空，再验证皮革标记方阵、坦克／一键 Button、ArchiTotem 分离、AutoBar popup／网格、DDPS 中央视野、姿态尺寸及相邻 provider |
+| Map | WorldMap 继续暂停；Minimap runtime `7.6`，mask、V4 non-bottom 托盘与 V7 bottom 收纳袋为高分辨率 runtime；V3 罗盘／扣具／插槽因只保留 1× accepted source 登记明确例外且未伪放大 | 完整重启后实机验证 mask、V4 九切片、V7 徽记压接、袋内净空、0／6／12／22／30 排布、缩放、显隐及回退 |
 | Spellbook | accepted `SB-A2-DONOR V1` source/runtime 保留，AEUI adapter 与 Spellbook ownership 暂停；当前回退 pfUI 技能书 | 明天依据 handoff 实机图核对四块 TGA 对位、层序、provider region 与控件净空 |
 | Talents | `P1 / paused`；已与 Spellbook 拆分，真实动态节点／分支边界已对齐 | 等用户明确恢复后制作独立 `TL-SIM-V1` |
-| Character | `P2–P5 / active`；runtime `2.0`，基础层、属性纸、抗性槽、E1／E2-A 装备槽、F1 Tabs、E3 Ammo 与分页共用档案页均以 2× runtime 接入，原生 UI 几何与动态内容所有权不变 | 实机复核分页档案页层序／显隐、清晰度、属性纸、装备槽、Tabs、Ammo 与禁用回退；再做分页控件或 E2-B／E4 |
-| Unit Frames | Bars／Raid／头像合同继续运行；本批 Player／Target／TargetTarget／Focus 外壳 route 暂停，当前回退 pfUI 外框 | 明天依据 handoff 实机图检查 base／rim 层序、九切片和文字净空后再接入 |
+| Character | `P2–P5 / active`；runtime `2.0`，基础层、属性纸、抗性槽、E1／E2-A 装备槽、F1 Tabs、E3 Ammo 与分页共用档案页均以 2× runtime 接入；Gear Planner `0.9-zhCN` 追加角色与观察伴随栏，`560×555` 配装视图将装备与当前／配装／变化属性对比同屏，原生 UI 几何与动态内容所有权不变 | 实机复核既有 Character 组件，并验证 `984 UI` 配装净空、即时属性对比、角色三视图及观察“装／属／比／存”、分页、Provider 缺失与禁用回退 |
+| Gear Planner | runtime `0.9-zhCN / P5`；查询与来源浏览直接使用 AtlasLoot 原生 UI，AEUI 只向兼容物品行追加选入 Button；`560×555` 视图将 19 槽与“当前／配装／变化”属性对比同屏，主手／副手／远程追加静态秒伤与攻速比较，方案管理与 Inspect 会话保持 | 实机验证武器秒伤／攻速、属性对比、实际换装即时刷新、AtlasLoot 原生交互、方案 CRUD／重载、角色／观察相邻回归及 Provider／Gear 禁用回退 |
+| Unit Frames | runtime `1.8`；Bars、Raid A2 与 Player V5 已从 accepted source 导出为 2× runtime；Target／TargetTarget／Focus 外壳 route 继续暂停并回退 pfUI | 完整重启后实机验证 Bars 裁切／乘色、40 人 Raid、Player V5 层序、UI Scale 与禁用回退 |
 
 详细状态以 [docs/PROGRESS.md](docs/PROGRESS.md) 和目标模块的
 `PROGRESS.md` 为准。
@@ -52,7 +53,8 @@ docs/modules/<module>/
 [chat](docs/modules/chat/)、[quests](docs/modules/quests/)、
 [map](docs/modules/map/)、[character](docs/modules/character/)、
 [unitframes](docs/modules/unitframes/)、
-[spellbook](docs/modules/spellbook/)、[talents](docs/modules/talents/)。
+[spellbook](docs/modules/spellbook/)、[talents](docs/modules/talents/)、
+[gearplanner](docs/modules/gearplanner/)。
 
 资产正在生产时，目标模块可临时存在一份 `CURRENT.md`；它只保存当前可执行
 Prompt、固定输入、调用计数、当前候选和下一决定，不追加逐稿流水。资产接受或

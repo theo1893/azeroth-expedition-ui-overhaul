@@ -18,12 +18,12 @@
     "bar_geometry_authoritative": true
   },
   "atlas": {
-    "size": [64, 48],
-    "visible_bbox": [0, 0, 64, 48],
+    "size": [128, 96],
+    "visible_bbox": [0, 0, 128, 96],
     "require_exact_visible_coverage": true,
     "sampled_regions": [
-      {"id": "health-file-entire-texture", "box": [0, 0, 64, 32]},
-      {"id": "power-file-entire-texture", "box": [0, 32, 64, 48]}
+      {"id": "health-file-entire-texture", "box": [0, 0, 128, 64]},
+      {"id": "power-file-entire-texture", "box": [0, 64, 128, 96]}
     ]
   },
   "nine_slice": {

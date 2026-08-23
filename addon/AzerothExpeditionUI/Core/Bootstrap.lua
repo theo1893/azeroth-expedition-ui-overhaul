@@ -3,7 +3,7 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 
 addon.name = "AzerothExpeditionUI"
-addon.version = "0.8.36"
+addon.version = "0.9.0"
 addon.modules = addon.modules or {}
 addon.media = addon.media or {}
 addon.media.root = "Interface\\AddOns\\AzerothExpeditionUI\\Media\\"
@@ -18,6 +18,7 @@ local defaults = {
     consumableDocked = true,
     trinketDocked = true,
     combatFocusLayoutVersion = 0,
+    focusUnitDefaultProfiles = {},
     comfortUIScaleVersion = 0,
     sideBarGroupProfiles = {},
     autoBarClassScopePlayerVersions = {},
@@ -50,6 +51,14 @@ local defaults = {
   character = {
     enabled = true,
     artVersion = 3,
+  },
+  gearplanner = {
+    enabled = true,
+    schemaVersion = 5,
+    companionView = "current",
+    inspectView = "gear",
+    wideMode = false,
+    characters = {},
   },
   spellbook = {
     enabled = false,
@@ -408,6 +417,58 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       (AzerothExpeditionUIDB.character.enabled and "enabled" or "disabled") ..
       "."
     )
+  elseif
+    string.find(command, "^gear%s*") or
+    string.find(command, "^gearplanner%s*")
+  then
+    local _, _, subcommand = string.find(command, "^%S+%s*(.*)$")
+    local module = addon.modules.GearPlanner
+    if not module then
+      addon:Print("配装工具模块不可用。")
+    elseif subcommand == "open" or subcommand == "plan" then
+      local _, result = module:Open()
+      addon:Print(result)
+    elseif subcommand == "current" then
+      local _, result = module:OpenView("current")
+      addon:Print(result)
+    elseif subcommand == "stats" or subcommand == "attributes" then
+      local _, result = module:OpenView("stats")
+      addon:Print(result)
+    elseif subcommand == "" or subcommand == "toggle" then
+      local _, result = module:Toggle()
+      addon:Print(result)
+    elseif
+      subcommand == "on" or
+      subcommand == "enable"
+    then
+      local _, result = module:SetEnabled(true)
+      addon:Print(result)
+    elseif
+      subcommand == "off" or
+      subcommand == "disable"
+    then
+      local _, result = module:SetEnabled(false)
+      addon:Print(result)
+    elseif subcommand == "status" then
+      addon:Print("配装 " .. module:GetRuntimeStatus())
+    elseif string.find(subcommand, "^wide%s*") then
+      local _, _, wideCommand = string.find(subcommand, "^wide%s*(.*)$")
+      local _, result
+      if wideCommand == "on" or wideCommand == "enable" then
+        _, result = module:SetWideMode(true)
+      elseif wideCommand == "off" or wideCommand == "disable" then
+        _, result = module:SetWideMode(false)
+      elseif wideCommand == "" or wideCommand == "toggle" then
+        _, result = module:ToggleWideMode()
+      else
+        result = "/aeui gear wide [on|off|toggle]"
+      end
+      addon:Print(result)
+    else
+      addon:Print(
+        "/aeui gear [open|current|stats|plan|wide on|off|toggle|status]"
+      )
+    end
   elseif command == "refresh" then
     addon:Refresh()
     addon:Print("visual adapters refreshed.")
@@ -448,6 +509,10 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       addon.modules.Character and
       addon.modules.Character.runtimeContract or
       "unknown"
+    local gearRuntime =
+      addon.modules.GearPlanner and
+      addon.modules.GearPlanner.runtimeContract or
+      "unknown"
     local chatColorStatus =
       addon.modules.Chat and
       addon.modules.Chat.GetMessageColorStatus and
@@ -479,6 +544,10 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       ", character=" ..
       (AzerothExpeditionUIDB.character.enabled and "enabled" or "disabled") ..
       ", character-runtime=" .. tostring(characterRuntime) ..
+      ", gear=" ..
+      (AzerothExpeditionUIDB.gearplanner.enabled and
+        "enabled" or "disabled") ..
+      ", gear-runtime=" .. tostring(gearRuntime) ..
       ", pfUI=" .. (pfUI and "available" or "missing") ..
       ", route=" .. (scopedRoute and "scoped" or "pfui") ..
       ", ownership=" ..
@@ -529,9 +598,17 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
         "character " .. addon.modules.Character:GetRuntimeStatus()
       )
     end
+    if
+      addon.modules.GearPlanner and
+      addon.modules.GearPlanner.GetRuntimeStatus
+    then
+      addon:Print(
+        "配装 " .. addon.modules.GearPlanner:GetRuntimeStatus()
+      )
+    end
   else
     addon:Print(
-      "/aeui actionbars, /aeui autobar [open|apply|restore|popup], /aeui fieldkit [bind|unbind|home|status], /aeui focuslayout [apply|comfort|restore|status], /aeui sidebars [bind|unbind|home|status], /aeui markers [on|off|toggle|status], /aeui chat, /aeui quests, /aeui unitframes, /aeui map, /aeui character, /aeui refresh, /aeui status"
+      "/aeui actionbars, /aeui autobar [open|apply|restore|popup], /aeui fieldkit [bind|unbind|home|status], /aeui focuslayout [apply|comfort|restore|status], /aeui sidebars [bind|unbind|home|status], /aeui markers [on|off|toggle|status], /aeui chat, /aeui quests, /aeui unitframes, /aeui map, /aeui character, /aeui gear [open|current|stats|plan|wide|status], /aeui refresh, /aeui status"
     )
   end
 end

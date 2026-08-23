@@ -88,10 +88,12 @@ EXPECTED_HISTORICAL_ATLAS_SHA256 = (
 EXPECTED_HISTORICAL_ATLAS_PIXEL_SHA256 = (
     "3b538eb8d28b9b4bfa11e7497013f1ed8d8a141d15c52d1b7447fee51df50a90"
 )
-RUNTIME_SIZE = (108, 41)
-ATLAS_SIZE = (512, 64)
-CELL_SIZE = (128, 64)
-CONTENT_BOX = (10, 11, 118, 52)
+LOGICAL_SIZE = (108, 41)
+RUNTIME_SIZE = (216, 82)
+ATLAS_SIZE = (1024, 128)
+CELL_SIZE = (256, 128)
+CONTENT_BOX = (20, 22, 236, 104)
+TEXELS_PER_UI = 2
 STATE_ORDER = ("normal", "hover", "pressed", "disabled")
 RESAMPLE = Image.Resampling.LANCZOS
 
@@ -243,15 +245,29 @@ def update_source_manifest(
 ) -> None:
     value = json.loads(source_manifest.read_text(encoding="utf-8"))
     value["export_contract"]["status"] = "runtime-exported"
+    value["export_contract"]["operation"] = (
+        "resize the entire accepted 1080x410 canonical source directly to "
+        "216x82 sampled pixels for an unchanged 108x41 UI slot, derive four "
+        "RGB states with frozen formulas, place them in fixed 256x128 cells "
+        "and write a 1024x128 RGBA TGA atlas"
+    )
+    value["export_contract"]["runtime_atlas_size"] = list(ATLAS_SIZE)
+    value["export_contract"]["runtime_cell_size"] = list(CELL_SIZE)
+    value["export_contract"]["runtime_content_xyxy_in_cell"] = list(
+        CONTENT_BOX
+    )
+    value["export_contract"]["texels_per_ui"] = TEXELS_PER_UI
     value["runtime_exports"] = [
         {
-            "contract": "QL-D V3.r3 attempt-04 user-selected / 1.0",
+            "contract": "QL-D V3.r3 attempt-04 user-selected / 1.1 / 2x",
             "manifest": runtime_manifest.name,
             "file": display_path(runtime),
             "sha256": sha256(runtime),
             "atlas_size": list(ATLAS_SIZE),
             "cell_size": list(CELL_SIZE),
             "content_size": list(RUNTIME_SIZE),
+            "logical_content_size": list(LOGICAL_SIZE),
+            "texels_per_ui": TEXELS_PER_UI,
         }
     ]
     source_manifest.write_text(
@@ -283,15 +299,26 @@ def main() -> None:
         source.resize(RUNTIME_SIZE, RESAMPLE)
     )
     derived_states = reviewer.derive_states(normal)
-    atlas = reviewer.build_atlas(derived_states, contract)
+    runtime_atlas_contract = json.loads(json.dumps(contract))
+    runtime_atlas_contract["atlas"]["size"] = list(ATLAS_SIZE)
+    runtime_atlas_contract["atlas"]["cell_size"] = list(CELL_SIZE)
+    runtime_atlas_contract["atlas"]["content_xyxy_in_cell"] = list(
+        CONTENT_BOX
+    )
+    atlas = reviewer.build_atlas(derived_states, runtime_atlas_contract)
     if atlas.size != ATLAS_SIZE:
         raise ValueError(f"unexpected QL-D atlas size: {atlas.size}")
     if visible_green_pixels(atlas) or transparent_rgb_nonzero(atlas):
         raise ValueError("QL-D runtime atlas Alpha hygiene failed")
-    if pixel_sha256(atlas) != EXPECTED_HISTORICAL_ATLAS_PIXEL_SHA256:
+    review_normal = reviewer.clear_transparent_rgb(
+        source.resize(LOGICAL_SIZE, RESAMPLE)
+    )
+    review_states = reviewer.derive_states(review_normal)
+    review_atlas = reviewer.build_atlas(review_states, contract)
+    if pixel_sha256(review_atlas) != EXPECTED_HISTORICAL_ATLAS_PIXEL_SHA256:
         raise ValueError(
-            "QL-D runtime atlas pixels no longer match the user-reviewed "
-            "attempt 4"
+            "QL-D density-equivalent logical review no longer matches the "
+            "user-reviewed attempt 4"
         )
 
     save_tga(atlas, args.runtime)
@@ -308,7 +335,7 @@ def main() -> None:
     board, layout = reviewer.render_layout_board(
         ROOT,
         contract,
-        states,
+        review_states,
         args.preview_dir,
         BOARD_BASENAME,
     )
@@ -323,8 +350,8 @@ def main() -> None:
         if sha256(HISTORICAL_ATLAS) != EXPECTED_HISTORICAL_ATLAS_SHA256:
             raise ValueError("ignored QL-D attempt-04 atlas bytes changed")
         if (
-            historical.size != atlas.size
-            or ImageChops.difference(historical, atlas).getbbox() is not None
+            historical.size != review_atlas.size
+            or ImageChops.difference(historical, review_atlas).getbbox() is not None
         ):
             raise ValueError(
                 "exported QL-D atlas does not match the user-reviewed attempt 4"
@@ -345,7 +372,7 @@ def main() -> None:
         "module": "quests",
         "batch": "QL-D V3",
         "version": "V3.r3 / attempt 4 / user-selected",
-        "runtime_contract": "1.0",
+        "runtime_contract": "1.1",
         "status": "runtime-exported",
         "source": {
             "file": display_path(args.source),
@@ -376,11 +403,13 @@ def main() -> None:
         },
         "transform": {
             "operation": (
-                "uniform full-canvas 1080x410 to 108x41 LANCZOS resize, "
-                "frozen RGB state derivation and fixed atlas packing"
+                "uniform full-canvas 1080x410 to 216x82 LANCZOS resize, "
+                "frozen RGB state derivation and fixed 2x atlas packing"
             ),
             "resample": "Pillow Image.Resampling.LANCZOS",
-            "source_canvas_resize": [108, 41],
+            "logical_size": list(LOGICAL_SIZE),
+            "source_canvas_resize": list(RUNTIME_SIZE),
+            "texels_per_ui": TEXELS_PER_UI,
             "non_uniform_stretch": False,
             "visible_pixel_crop": False,
             "rotation": None,
@@ -435,8 +464,9 @@ def main() -> None:
                 EXPECTED_HISTORICAL_ATLAS_SHA256
             ),
             "expected_pixel_sha256": EXPECTED_HISTORICAL_ATLAS_PIXEL_SHA256,
-            "exported_pixel_sha256": pixel_sha256(runtime_roundtrip),
-            "pixel_identical": True,
+            "logical_review_pixel_sha256": pixel_sha256(review_atlas),
+            "logical_review_pixel_identical": True,
+            "runtime_is_direct_2x_source_export": True,
             "fresh_checkout_dependency": False,
         },
         "simulation": {
@@ -451,7 +481,7 @@ def main() -> None:
                 "size": list(Image.open(board).size),
                 "scenarios": [0, 1, 2, 4, 6],
                 "checks_passed": all(layout["checks"].values()),
-                "rendered_from_exported_atlas": True,
+                "rendered_from_density_equivalent_logical_review": True,
                 "runtime_scale_percent": 100,
             },
             "display_region": {

@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local UnitFrames = {}
-UnitFrames.runtimeContract = "1.7"
+UnitFrames.runtimeContract = "1.8"
 
 local MEDIA = addon.media.root .. "UnitFrames\\"
 local HEALTH_TEXTURE = MEDIA .. "UnitFrameHealthFillV1"
@@ -10,8 +10,10 @@ local PLAYER_V5 = {
   base = MEDIA .. "UnitFramePlayerShellV5",
   sourceWidth = 254,
   sourceHeight = 77,
-  textureWidth = 256,
-  textureHeight = 128,
+  sampledWidth = 508,
+  sampledHeight = 154,
+  textureWidth = 512,
+  textureHeight = 256,
   providerWidth = 240,
   providerHeight = 65,
   outsetLeft = 7,
@@ -159,13 +161,17 @@ local RAID_ART_HEIGHT = 37
 local RAID_LEFT_CAP = 6
 local RAID_CENTRE = 62
 local RAID_RIGHT_CAP = 6
-local RAID_TEXTURE_WIDTH = 128
-local RAID_TEXTURE_HEIGHT = 64
-local RAID_UV_LEFT = RAID_LEFT_CAP / RAID_TEXTURE_WIDTH
+local RAID_TEXELS_PER_UI = 2
+local RAID_TEXTURE_WIDTH = 256
+local RAID_TEXTURE_HEIGHT = 128
+local RAID_UV_LEFT = RAID_LEFT_CAP * RAID_TEXELS_PER_UI / RAID_TEXTURE_WIDTH
 local RAID_UV_RIGHT =
-  (RAID_LEFT_CAP + RAID_CENTRE) / RAID_TEXTURE_WIDTH
-local RAID_UV_FULL_RIGHT = 74 / RAID_TEXTURE_WIDTH
-local RAID_UV_BOTTOM = RAID_ART_HEIGHT / RAID_TEXTURE_HEIGHT
+  (RAID_LEFT_CAP + RAID_CENTRE) * RAID_TEXELS_PER_UI /
+    RAID_TEXTURE_WIDTH
+local RAID_UV_FULL_RIGHT =
+  74 * RAID_TEXELS_PER_UI / RAID_TEXTURE_WIDTH
+local RAID_UV_BOTTOM =
+  RAID_ART_HEIGHT * RAID_TEXELS_PER_UI / RAID_TEXTURE_HEIGHT
 
 local function GetConfiguredTexture(frame, key)
   if not frame or not frame.config or not pfUI or not pfUI.media then
@@ -885,8 +891,8 @@ function UnitFrames:ApplyPlayerV5Shell(frame)
   texture:ClearAllPoints()
   texture:SetTexture(PLAYER_V5.base)
   texture:SetTexCoord(
-    0, PLAYER_V5.sourceWidth / PLAYER_V5.textureWidth,
-    0, PLAYER_V5.sourceHeight / PLAYER_V5.textureHeight
+    0, PLAYER_V5.sampledWidth / PLAYER_V5.textureWidth,
+    0, PLAYER_V5.sampledHeight / PLAYER_V5.textureHeight
   )
   texture:SetWidth(PLAYER_V5.sourceWidth)
   texture:SetHeight(PLAYER_V5.sourceHeight)

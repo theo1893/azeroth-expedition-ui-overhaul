@@ -26,15 +26,15 @@
     "target_device_saved_variables_authoritative": false
   },
   "atlas": {
-    "size": [148, 74],
-    "visible_bbox": [0, 0, 148, 74],
+    "size": [296, 148],
+    "visible_bbox": [0, 0, 296, 148],
     "require_exact_visible_coverage": true,
-    "runtime_packing": "virtual review grid of four independent 74x37 TGA files; Lua loads each file independently",
+    "runtime_packing": "virtual review grid of four independent 148x74 sampled TGA files; Lua displays each in an unchanged 74x37 UI box",
     "sampled_regions": [
-      {"id": "member-shell-A", "box": [0, 0, 74, 37]},
-      {"id": "member-shell-B", "box": [74, 0, 148, 37]},
-      {"id": "member-shell-C", "box": [0, 37, 74, 74]},
-      {"id": "member-shell-D", "box": [74, 37, 148, 74]}
+      {"id": "member-shell-A", "box": [0, 0, 148, 74]},
+      {"id": "member-shell-B", "box": [148, 0, 296, 74]},
+      {"id": "member-shell-C", "box": [0, 74, 148, 148]},
+      {"id": "member-shell-D", "box": [148, 74, 296, 148]}
     ]
   },
   "nine_slice": {

@@ -101,10 +101,19 @@
       "top": 6,
       "bottom": 6
     },
-    "texture_container": [
-      256,
-      128
+    "logical_art_box": [
+      254,
+      77
     ],
+    "sampled_art_box": [
+      508,
+      154
+    ],
+    "texture_container": [
+      512,
+      256
+    ],
+    "texels_per_ui": 2,
     "complete_bitmap": true,
     "canonical_size_only": true,
     "ui_scale_inherits_from_provider": true,

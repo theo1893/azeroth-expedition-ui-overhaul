@@ -27,14 +27,16 @@ SOURCE = (
     / "ql-a1"
     / "QuestLogBookShell_Master_v1.png"
 )
-RUNTIME = (
+RUNTIME_LEFT = (
     ROOT
     / "addon"
     / "AzerothExpeditionUI"
     / "Media"
     / "Quests"
-    / "QuestLogShellV4.tga"
+    / "QuestLogShellLeftV4.tga"
 )
+RUNTIME_RIGHT = RUNTIME_LEFT.with_name("QuestLogShellRightV4.tga")
+LEGACY_RUNTIME = RUNTIME_LEFT.with_name("QuestLogShellV4.tga")
 PREVIEW = (
     ROOT
     / "generated"
@@ -45,19 +47,24 @@ PREVIEW = (
     / "QL-A2_V4_SHELL_676x464.preview.png"
 )
 MANIFEST = SOURCE.with_name("QL-A1_RuntimeManifest_v1.json")
+SOURCE_MANIFEST = SOURCE.with_name("QL-A1_SourceManifest_v1.json")
 
 EXPECTED_SOURCE_SHA256 = (
     "91f9fece41ed375df1fa32e94b18797cbb280c0b5e99478862473589c671edd5"
 )
 EXPECTED_SOURCE_SIZE = (1514, 1039)
 DISPLAY_SIZE = (676, 464)
-ATLAS_SIZE = (1024, 512)
-CONTENT_BOX = (0, 0, DISPLAY_SIZE[0], DISPLAY_SIZE[1])
+SAMPLED_SIZE = (1352, 928)
+TILE_LOGICAL_SIZE = (338, 464)
+TILE_SAMPLED_SIZE = (676, 928)
+ATLAS_SIZE = (1024, 1024)
+TEXELS_PER_UI = 2
+CONTENT_BOX = (0, 0, TILE_SAMPLED_SIZE[0], TILE_SAMPLED_SIZE[1])
 TEXCOORD = {
     "left": 0.0,
-    "right": DISPLAY_SIZE[0] / ATLAS_SIZE[0],
+    "right": TILE_SAMPLED_SIZE[0] / ATLAS_SIZE[0],
     "top": 0.0,
-    "bottom": DISPLAY_SIZE[1] / ATLAS_SIZE[1],
+    "bottom": TILE_SAMPLED_SIZE[1] / ATLAS_SIZE[1],
 }
 SAFE_AREAS = {
     "list": [64, 64, 310, 388],
@@ -105,6 +112,17 @@ def green_spill_pixels(image: Image.Image) -> int:
     return count
 
 
+def clear_resampling_green_spill(image: Image.Image) -> Image.Image:
+    rgba = image.convert("RGBA")
+    pixels = rgba.load()
+    for y in range(rgba.height):
+        for x in range(rgba.width):
+            red, green, blue, alpha = pixels[x, y]
+            if alpha > 0 and red <= 32 and green >= 224 and blue <= 32:
+                pixels[x, y] = (0, 0, 0, 0)
+    return rgba
+
+
 def visible_bbox(image: Image.Image) -> list[int] | None:
     bounds = image.getchannel("A").getbbox()
     return list(bounds) if bounds else None
@@ -126,11 +144,26 @@ def validate_source(path: Path, image: Image.Image) -> None:
         raise ValueError("QL-A1 source contains visible chroma-key green")
 
 
-def build_runtime(source: Image.Image) -> tuple[Image.Image, Image.Image]:
-    scaled = source.resize(DISPLAY_SIZE, RESAMPLE)
-    atlas = Image.new("RGBA", ATLAS_SIZE, (0, 0, 0, 0))
-    atlas.alpha_composite(scaled, (0, 0))
-    return scaled, atlas
+def build_runtime(
+    source: Image.Image,
+) -> tuple[Image.Image, dict[str, Image.Image]]:
+    scaled = clear_resampling_green_spill(
+        source.resize(SAMPLED_SIZE, RESAMPLE)
+    )
+    tiles: dict[str, Image.Image] = {}
+    for name, box in {
+        "left": (0, 0, TILE_SAMPLED_SIZE[0], SAMPLED_SIZE[1]),
+        "right": (
+            TILE_SAMPLED_SIZE[0],
+            0,
+            SAMPLED_SIZE[0],
+            SAMPLED_SIZE[1],
+        ),
+    }.items():
+        atlas = Image.new("RGBA", ATLAS_SIZE, (0, 0, 0, 0))
+        atlas.alpha_composite(scaled.crop(box), (0, 0))
+        tiles[name] = atlas
+    return scaled, tiles
 
 
 def save_png(image: Image.Image, destination: Path) -> None:
@@ -153,7 +186,8 @@ def tga_descriptor(path: Path) -> int:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--source", type=Path, default=SOURCE)
-    parser.add_argument("--runtime", type=Path, default=RUNTIME)
+    parser.add_argument("--runtime-left", type=Path, default=RUNTIME_LEFT)
+    parser.add_argument("--runtime-right", type=Path, default=RUNTIME_RIGHT)
     parser.add_argument("--preview", type=Path, default=PREVIEW)
     parser.add_argument("--manifest", type=Path, default=MANIFEST)
     return parser.parse_args()
@@ -165,16 +199,23 @@ def main() -> None:
         source = opened.convert("RGBA")
     validate_source(args.source, source)
 
-    scaled, atlas = build_runtime(source)
+    scaled, tiles = build_runtime(source)
     save_png(scaled, args.preview)
-    save_tga(atlas, args.runtime)
+    save_tga(tiles["left"], args.runtime_left)
+    save_tga(tiles["right"], args.runtime_right)
 
-    runtime_descriptor = tga_descriptor(args.runtime)
+    runtime_paths = {
+        "left": args.runtime_left,
+        "right": args.runtime_right,
+    }
+    runtime_descriptors = {
+        name: tga_descriptor(path) for name, path in runtime_paths.items()
+    }
     manifest = {
         "schema_version": 1,
         "batch": "QL-A2",
         "version": "V4",
-        "runtime_contract": "1.0",
+        "runtime_contract": "1.1",
         "status": "runtime-exported",
         "source": {
             "file": display_path(args.source),
@@ -186,18 +227,22 @@ def main() -> None:
         },
         "transform": {
             "operation": (
-                "aspect-preserving resize with integer-pixel rounding, "
-                "then transparent top-left atlas padding"
+                "aspect-preserving 2x resize with integer-pixel rounding, "
+                "vertical half split, then transparent top-left atlas padding"
             ),
             "resample": "Pillow Image.Resampling.LANCZOS",
             "crop": None,
             "rotation": None,
             "mirror": False,
             "retouch": False,
-            "display_size": list(DISPLAY_SIZE),
-            "atlas_size": list(ATLAS_SIZE),
-            "content_box": list(CONTENT_BOX),
-            "texcoord": TEXCOORD,
+            "logical_display_size": list(DISPLAY_SIZE),
+            "sampled_size": list(SAMPLED_SIZE),
+            "tile_logical_size": list(TILE_LOGICAL_SIZE),
+            "tile_sampled_size": list(TILE_SAMPLED_SIZE),
+            "texels_per_ui": TEXELS_PER_UI,
+            "atlas_size_per_tile": list(ATLAS_SIZE),
+            "tile_content_box": list(CONTENT_BOX),
+            "tile_texcoord": TEXCOORD,
         },
         "preview": {
             "file": display_path(args.preview),
@@ -210,16 +255,27 @@ def main() -> None:
             **alpha_evidence(scaled),
         },
         "runtime": {
-            "file": display_path(args.runtime),
-            "sha256": sha256(args.runtime),
-            "width": atlas.width,
-            "height": atlas.height,
-            "mode": atlas.mode,
-            "tga_descriptor": runtime_descriptor,
-            "tga_top_origin": bool(runtime_descriptor & 0x20),
-            "visible_bbox_exclusive": visible_bbox(atlas),
-            "visible_green_spill_pixels": green_spill_pixels(atlas),
-            **alpha_evidence(atlas),
+            "assembly": "two vertical half textures in one unchanged 676x464 UI box",
+            "logical_size": list(DISPLAY_SIZE),
+            "sampled_size": list(SAMPLED_SIZE),
+            "texels_per_ui": TEXELS_PER_UI,
+            "legacy_1x_file_retained_unmounted": display_path(LEGACY_RUNTIME),
+            "tiles": {
+                name: {
+                    "file": display_path(runtime_paths[name]),
+                    "sha256": sha256(runtime_paths[name]),
+                    "logical_size": list(TILE_LOGICAL_SIZE),
+                    "sampled_size": list(TILE_SAMPLED_SIZE),
+                    "texture_size": list(ATLAS_SIZE),
+                    "texcoord": TEXCOORD,
+                    "tga_descriptor": runtime_descriptors[name],
+                    "tga_top_origin": bool(runtime_descriptors[name] & 0x20),
+                    "visible_bbox_exclusive": visible_bbox(tiles[name]),
+                    "visible_green_spill_pixels": green_spill_pixels(tiles[name]),
+                    **alpha_evidence(tiles[name]),
+                }
+                for name in ("left", "right")
+            },
         },
         "frame_contract": {
             "object": "QuestLogFrame",
@@ -235,7 +291,7 @@ def main() -> None:
             ),
         },
         "ownership": {
-            "QUEST.LOG.SHELL": "single static runtime texture",
+            "QUEST.LOG.SHELL": "two static 2x half textures with one logical shell",
             "QUEST.LOG.LIST.PAPER": "static SHELL subregion and layout safe area",
             "QUEST.LOG.DETAIL.PAPER": (
                 "static SHELL subregion and layout safe area"
@@ -263,6 +319,59 @@ def main() -> None:
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.manifest.write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    source_manifest = json.loads(SOURCE_MANIFEST.read_text(encoding="utf-8"))
+    source_manifest["crop_contract"].update(
+        {
+            "reason": (
+                "QL-A2 V4 displays one unchanged 676x464 shell from two "
+                "338x464 logical half textures sampled at two texels per UI "
+                "unit. No crop, redraw, stretch, mirror, or independent "
+                "gutter extraction is allowed."
+            ),
+            "display_size": list(DISPLAY_SIZE),
+            "sampled_size": list(SAMPLED_SIZE),
+            "tile_logical_size": list(TILE_LOGICAL_SIZE),
+            "tile_sampled_size": list(TILE_SAMPLED_SIZE),
+            "atlas_size_per_tile": list(ATLAS_SIZE),
+            "atlas_content_box": list(CONTENT_BOX),
+            "texels_per_ui": TEXELS_PER_UI,
+            "texcoord": [
+                TEXCOORD["left"],
+                TEXCOORD["right"],
+                TEXCOORD["top"],
+                TEXCOORD["bottom"],
+            ],
+            "planned_outputs": [
+                display_path(RUNTIME_LEFT),
+                display_path(RUNTIME_RIGHT),
+                display_path(MANIFEST),
+            ],
+        }
+    )
+    source_manifest["runtime_exports"] = [
+        {
+            "contract": "QL-A2 V4 / 1.1 / 2x",
+            "manifest": MANIFEST.name,
+            "assembly": "left and right vertical half textures",
+            "logical_size": list(DISPLAY_SIZE),
+            "sampled_size": list(SAMPLED_SIZE),
+            "texels_per_ui": TEXELS_PER_UI,
+            "tiles": [
+                {
+                    "file": display_path(runtime_paths[name]),
+                    "sha256": sha256(runtime_paths[name]),
+                    "logical_size": list(TILE_LOGICAL_SIZE),
+                    "sampled_size": list(TILE_SAMPLED_SIZE),
+                    "atlas_size": list(ATLAS_SIZE),
+                }
+                for name in ("left", "right")
+            ],
+        }
+    ]
+    SOURCE_MANIFEST.write_text(
+        json.dumps(source_manifest, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
     print(json.dumps(manifest, ensure_ascii=False))

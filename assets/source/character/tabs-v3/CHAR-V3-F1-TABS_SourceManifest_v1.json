@@ -64,21 +64,22 @@
     "runtime_sampled_sizes": {
       "left": [
         12,
-        40
+        56
       ],
       "center": [
         16,
-        40
+        56
       ],
       "right": [
         12,
-        40
+        56
       ]
     },
     "runtime_atlas_size": [
       128,
       256
     ],
+    "runtime_resampling": "Pillow BOX",
     "texels_per_ui_unit": 2,
     "horizontal_stretch_part": "center only",
     "accepted_source_pixels_modified_during_promotion": false,
@@ -163,18 +164,18 @@
     },
     "atlas_runtime_master": {
       "file": "assets/source/character/tabs-v3/CharacterTabsV3_RuntimeAtlas.png",
-      "sha256": "fac8c3660d70ffd52007e87fb022b1f275d0edf4560974df5851808eedf428e4",
+      "sha256": "a177f959332b29deb71ae3f19802e13ef06865c625e34d82e2b22c9245e5a2c4",
       "metrics": {
         "size": [
           128,
           256
         ],
-        "pixel_sha256": "ac100eae6c46344445dcaee8ff5a5af1081bd575dbfc3efc8ec653e41b717b8e",
+        "pixel_sha256": "90beecc1539c25a61842d5f9d5622178412d476f83415f508f751ebf48c0c964",
         "visible_bbox_exclusive": [
-          8,
-          8,
-          72,
-          216
+          9,
+          4,
+          71,
+          252
         ],
         "transparent_rgb_nonzero_pixels": 0,
         "green_dominant_pixels": 0

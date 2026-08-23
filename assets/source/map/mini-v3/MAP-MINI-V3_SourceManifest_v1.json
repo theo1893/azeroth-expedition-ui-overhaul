@@ -202,5 +202,17 @@
     "transparent_rgb_cleared": true,
     "generative_postprocess": false
   },
+  "density_contract": {
+    "functional_mask": "deterministically rebuilt at 512x512",
+    "explicit_1x_exception": [
+      "compass",
+      "latch",
+      "glyph",
+      "connector",
+      "socket",
+      "tray"
+    ],
+    "reason": "the accepted normalized V3 art sources exist only at their logical 1x sizes; the original accepted provider raws were not retained, and upscaling those 1x sources is forbidden"
+  },
   "runtime_manifest": "assets/source/map/mini-v3/MAP-MINI-V3_RuntimeManifest_v1.json"
 }

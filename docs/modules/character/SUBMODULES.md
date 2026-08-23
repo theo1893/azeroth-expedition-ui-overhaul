@@ -74,17 +74,54 @@ Ranged。
 | `CHAR.HONOR` | `HonorFrame`／`PVPFrame`、progress bar、Tabs | 独立战斗状态条与列表 |
 | `CHAR.ARENA` | `ArenaFrame`、team frames、points bar、Tabs | Turtle WoW 存在时 feature-detect |
 
+## 角色伴随栏
+
+角色伴随栏由 Gear Planner runtime `0.8-zhCN` 实现，但其宿主边界登记在 Character：
+它只在 `CharacterFrame / PaperDollFrame` 的 `384×512` 几何可用且 Character 模块
+启用时出现，不成为新的 Character Tab。
+
+| ID | 对象 | 合同 |
+|---|---|---|
+| `CHAR.COMPANION.CONTROLLER` | CharacterFrame／PaperDollFrame 的 AEUI 子控制器 | 只监听父级显隐和分页切换；不再包装 CharacterFrame 的 OnShow／OnHide |
+| `CHAR.COMPANION.RAIL` | `AzerothExpeditionUICharacterCompanionRail` | 角色页右侧 `28 UI` 窄栏；按 Provider 可用性显示“装／属／配”，宽屏可显示“双” |
+| `CHAR.COMPANION.CURRENT` | `S_ItemTip_InspectFrame` | 当前装备互斥视图；Provider 持有内容、动态宽度、更新与交互 |
+| `CHAR.COMPANION.STATS` | `StatCompareSelfFrame` | 装备属性互斥视图；Provider 持有扫描、动态尺寸、拖动与 SavedVariables |
+| `CHAR.COMPANION.PLAN` | `AzerothExpeditionUIGearPlannerFrame` | 配装方案互斥视图；伴随模式 `560×555`，19 槽与“当前／配装／变化”属性对比同屏；Provider 不受支持时独立回退 |
+
+## 观察伴随栏
+
+观察伴随栏与角色伴随栏是两个独立会话；它只在 `InspectFrame`／
+`InspectPaperDollFrame` 的 `384×512` 几何可用时出现，不把可编辑配装器挂到只读
+观察页。
+
+| ID | 对象 | 合同 |
+|---|---|---|
+| `CHAR.INSPECT.COMPANION.CONTROLLER` | InspectFrame／InspectPaperDollFrame 的 AEUI 子控制器 | 监听宿主、分页、`INSPECT_READY` 与 Provider 完成更新；不包装 InspectFrame 脚本 |
+| `CHAR.INSPECT.COMPANION.RAIL` | `AzerothExpeditionUIInspectCompanionRail` | 观察页右侧 `28 UI` 窄栏；按 Provider、数据与实际净空显示“装／属／比／存” |
+| `CHAR.INSPECT.COMPANION.GEAR` | `S_ItemTip_InspectFrame` | “装”只显示观察目标装备，隐藏双方 StatCompare |
+| `CHAR.INSPECT.COMPANION.STATS` | `StatCompareTargetFrame` | “属”只显示目标属性，隐藏 S_ItemTip 与自身属性 |
+| `CHAR.INSPECT.COMPANION.COMPARE` | `StatCompareTargetFrame`、`StatCompareSelfFrame` | 显式“比”且左右净空足够时目标在右、自身在左；不再同时显示 S_ItemTip |
+| `CHAR.INSPECT.COMPANION.SAVE` | “存” Button、InspectFrame.unit 装备快照 | 数据就绪后新建观察参考方案；不改目标装备、不覆盖已有方案、不在 Inspect 内打开完整配装器 |
+
 ## 相邻复用窗口
 
 | ID | 原生对象 | 合同 |
 |---|---|---|
 | `CHAR.PET` | `PetPaperDollFrame`、`PetModelFrame`、属性、抗性、经验条 | 复用外壳／槽／状态条，保留宠物数据 |
-| `CHAR.INSPECT` | `InspectFrame`、`InspectPaperDollFrame`、`InspectModelFrame`、Tabs | 复用只读槽与外壳；不创建可装备语义 |
+| `CHAR.INSPECT` | `InspectFrame`、`InspectPaperDollFrame`、`InspectModelFrame`、Tabs | 复用只读槽与外壳；观察伴随栏只协调第三方附页，不创建可装备语义 |
 | `CHAR.DRESSUP` | `DressUpFrame`、`DressUpModel`、Reset／Cancel | 复用模型背景、外壳和按钮 |
 
 ## 功能不变量
 
 - 中央原生 3D 模型、装备图标、属性文字、品质、耐久和交互保持动态。
 - 点击装备槽、旋转、隐藏头盔／披风、切换 Tabs、声望／技能操作不改写。
-- 第三方附页只能作为可收起 adapter，默认不改变主窗口轮廓。
+- 第三方附页只能作为可收起 adapter，默认不改变主窗口轮廓；伴随栏不 Reparent、
+  缩放或改写 Provider 数据，只在真实显示事件后一次性锚定并协调显隐。
+- 配装伴随视图的水平合同为 `384 + 8 + (28 + 4 + 560) = 984 UI`，Gear 内部
+  装备与属性固定同屏；只有第三方当前装备视图在有效宽度至少 `1060 UI` 且实际
+  左右净空足够时，才允许左 StatCompare 与右侧 S_ItemTip 并存。
+- S_ItemTip／StatCompare 缺失时省略对应入口；Character 禁用、对象缺失或几何
+  不受支持时不显示伴随栏，由 Gear Planner 自己回退独立窗口。
+- 观察默认只允许一个右侧 Provider；双方属性只在用户显式选择“比”且实际空间
+  足够时并排。观察数据未就绪时不显示“存”，非 PaperDoll 分页不保留附页。
 - 对象缺失时局部回退 pfUI／原生；Character adapter 不得改变其他 pfUI skin。

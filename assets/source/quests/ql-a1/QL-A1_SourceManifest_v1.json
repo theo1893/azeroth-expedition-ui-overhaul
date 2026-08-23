@@ -67,7 +67,7 @@
     "status": "resolved-ql-a2-v4",
     "whole_image_runtime_allowed": false,
     "deterministic_full_frame_export_allowed": true,
-    "reason": "The accepted high-resolution PNG must not be loaded directly by the client. QL-A2 V4 authorizes a full-frame, aspect-preserving 676 x 464 export into the top-left of a transparent 1024 x 512 TGA. No crop, redraw, stretch, mirror, or independent gutter extraction is allowed.",
+    "reason": "QL-A2 V4 displays one unchanged 676x464 shell from two 338x464 logical half textures sampled at two texels per UI unit. No crop, redraw, stretch, mirror, or independent gutter extraction is allowed.",
     "display_size": [
       676,
       464
@@ -80,7 +80,7 @@
       0,
       0,
       676,
-      464
+      928
     ],
     "texcoord": [
       0.0,
@@ -89,23 +89,75 @@
       0.90625
     ],
     "planned_outputs": [
-      "addon/AzerothExpeditionUI/Media/Quests/QuestLogShellV4.tga",
+      "addon/AzerothExpeditionUI/Media/Quests/QuestLogShellLeftV4.tga",
+      "addon/AzerothExpeditionUI/Media/Quests/QuestLogShellRightV4.tga",
       "assets/source/quests/ql-a1/QL-A1_RuntimeManifest_v1.json"
-    ]
+    ],
+    "sampled_size": [
+      1352,
+      928
+    ],
+    "tile_logical_size": [
+      338,
+      464
+    ],
+    "tile_sampled_size": [
+      676,
+      928
+    ],
+    "atlas_size_per_tile": [
+      1024,
+      1024
+    ],
+    "texels_per_ui": 2
   },
   "runtime_exports": [
     {
-      "contract": "QL-A2 V4 / 1.0",
+      "contract": "QL-A2 V4 / 1.1 / 2x",
       "manifest": "QL-A1_RuntimeManifest_v1.json",
-      "file": "../../../../addon/AzerothExpeditionUI/Media/Quests/QuestLogShellV4.tga",
-      "sha256": "1b6b21cd3db74202051a2ceb8b5ba1d91ca7beb636accf247603edbc3cfeb40e",
-      "display_size": [
+      "assembly": "left and right vertical half textures",
+      "logical_size": [
         676,
         464
       ],
-      "atlas_size": [
-        1024,
-        512
+      "sampled_size": [
+        1352,
+        928
+      ],
+      "texels_per_ui": 2,
+      "tiles": [
+        {
+          "file": "addon/AzerothExpeditionUI/Media/Quests/QuestLogShellLeftV4.tga",
+          "sha256": "0c0d7206b1b197f3c2c1c8a63250ffbf7388c63dc309ee3da84825283054d1d9",
+          "logical_size": [
+            338,
+            464
+          ],
+          "sampled_size": [
+            676,
+            928
+          ],
+          "atlas_size": [
+            1024,
+            1024
+          ]
+        },
+        {
+          "file": "addon/AzerothExpeditionUI/Media/Quests/QuestLogShellRightV4.tga",
+          "sha256": "fd2f7e0535a831c20b34f142abeaed7013a39dcbe5b8bc173bb05f1cfab65517",
+          "logical_size": [
+            338,
+            464
+          ],
+          "sampled_size": [
+            676,
+            928
+          ],
+          "atlas_size": [
+            1024,
+            1024
+          ]
+        }
       ]
     }
   ]

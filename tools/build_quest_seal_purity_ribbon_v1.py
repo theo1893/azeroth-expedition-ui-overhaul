@@ -4,7 +4,7 @@
 This builder is intentionally narrow.  It accepts only the exact user-approved
 attempt-05 composite, byte-copies it to durable source, performs the single
 authorized proportional LANCZOS reduction, clears RGB where Alpha is zero, and
-writes the 32x192 TGA used by the addon.  It does not redraw, crop, bbox-fit,
+writes the 64x384 sampled TGA displayed at 32x192 UI units.  It does not redraw, crop, bbox-fit,
 mirror, stretch, recolour, or synthesize the seven still-pending action motifs.
 """
 
@@ -44,7 +44,11 @@ EXPECTED_ACCEPTED_SHA256 = (
     "168f527fffa09beb281c7e0bbca6076dcd00e7f827febb6cce9a853f461e05b8"
 )
 SOURCE_SIZE = (128, 768)
-RUNTIME_SIZE = (32, 192)
+LOGICAL_SIZE = (32, 192)
+RUNTIME_SIZE = (64, 384)
+TEXELS_PER_UI = 2
+SOURCE_MANIFEST = SOURCE.with_name("QS-B1-V7A_SourceManifest_v1.json")
+RUNTIME_MANIFEST = SOURCE.with_name("QS-B1-V7A_RuntimeManifest_v1.json")
 EXPECTED_SOURCE_BBOX = (9, 0, 119, 767)
 RESAMPLE = Image.Resampling.LANCZOS
 
@@ -60,7 +64,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--promote-from",
         type=Path,
-        required=True,
+        default=SOURCE,
         help="exact accepted attempt-05 composite",
     )
     parser.add_argument(
@@ -191,7 +195,8 @@ def main() -> None:
     validate_accepted(promote_from, accepted)
 
     source.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(promote_from, source)
+    if promote_from != source:
+        shutil.copyfile(promote_from, source)
     with Image.open(source) as opened:
         durable_source = opened.copy()
     validate_accepted(source, durable_source)
@@ -200,7 +205,7 @@ def main() -> None:
         durable_source.resize(RUNTIME_SIZE, RESAMPLE)
     )
     if runtime_image.size != RUNTIME_SIZE or runtime_image.mode != "RGBA":
-        raise ValueError("runtime export is not 32x192 RGBA")
+        raise ValueError("runtime export is not 64x384 RGBA")
     if transparent_rgb_nonzero_values(runtime_image):
         raise ValueError("runtime transparent RGB is not zero")
     if green_spill_pixels(runtime_image):
@@ -210,6 +215,9 @@ def main() -> None:
     runtime_image.save(runtime, "TGA")
     preview_path = evidence_dir / "QS-B1-V7A.runtime-master.png"
     runtime_image.save(preview_path, "PNG")
+    logical_review = clear_transparent_rgb(
+        durable_source.resize(LOGICAL_SIZE, RESAMPLE)
+    )
 
     review = load_review_module(root)
     layout_path = evidence_dir / "QS-B1-V7A.real-layout.png"
@@ -221,7 +229,7 @@ def main() -> None:
     _, state_metrics, layout_checks, previews = review.render_real_layout(
         root,
         simulation_path,
-        runtime_image,
+        logical_review,
         layout_path,
         preview_dir,
     )
@@ -255,6 +263,9 @@ def main() -> None:
         "runtime": {
             **image_record(root, runtime, runtime_image),
             "tga_header": tga_header(runtime),
+            "logical_size": list(LOGICAL_SIZE),
+            "sampled_size": list(RUNTIME_SIZE),
+            "texels_per_ui": TEXELS_PER_UI,
         },
         "real_layout": {
             "file": repo_path(root, layout_path),
@@ -269,6 +280,50 @@ def main() -> None:
     report_path = evidence_dir / "QS-B1-V7A.export-report.json"
     report_path.write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    runtime_manifest = json.loads(
+        RUNTIME_MANIFEST.read_text(encoding="utf-8")
+    )
+    runtime_manifest["runtime_contract"] = "1.3"
+    runtime_manifest["transform"]["operation"] = (
+        "one full-canvas proportional LANCZOS reduction from 128x768 to "
+        "64x384 sampled runtime, transparent RGB zeroing and TGA conversion"
+    )
+    runtime_manifest["runtime"] = {
+        **image_record(root, runtime, runtime_image),
+        "logical_size": list(LOGICAL_SIZE),
+        "sampled_size": list(RUNTIME_SIZE),
+        "texels_per_ui": TEXELS_PER_UI,
+        "tga_header": tga_header(runtime),
+    }
+    runtime_manifest["exporter"]["sha256"] = sha256(Path(__file__))
+    runtime_manifest["exporter"]["command"] = (
+        "python tools/build_quest_seal_purity_ribbon_v1.py --repo-root ."
+    )
+    RUNTIME_MANIFEST.write_text(
+        json.dumps(runtime_manifest, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    source_manifest = json.loads(
+        SOURCE_MANIFEST.read_text(encoding="utf-8")
+    )
+    source_manifest["logical_components"][0]["runtime_master_size"] = list(
+        LOGICAL_SIZE
+    )
+    source_manifest["logical_components"][0]["sampled_runtime_size"] = list(
+        RUNTIME_SIZE
+    )
+    source_manifest["logical_components"][0]["texels_per_ui"] = TEXELS_PER_UI
+    source_manifest["export_contract"]["operation"] = (
+        "resize the entire accepted 128x768 RGBA source proportionally to "
+        "64x384 at two texels per unchanged 32x192 UI unit, zero RGB only "
+        "where Alpha is zero, then write RGBA TGA"
+    )
+    SOURCE_MANIFEST.write_text(
+        json.dumps(source_manifest, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
     print(json.dumps(report, ensure_ascii=False, indent=2))

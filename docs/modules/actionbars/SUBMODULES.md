@@ -110,35 +110,39 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 
 | ID | provider／真实对象 | 合同 |
 |---|---|---|
-| `AB.FOCUS.UNITFRAME.PLAYER` | `pfUI.uf.player` | `240×60 UI / scale 0.8`；`BOTTOM (-160,485)`。只为该框启用客户端 `STANDARD_TEXT_FONT / OUTLINE / 18 UI` local font；`23 UI` Buff 在上方从完整框架左缘向右，Debuff 在下方从完整框架左缘向右；pfUI 真实步进为 `size+7`，每排 `8` 枚占 `233／240 UI`，四个 Aura offset 为零；保留所有状态、点击与动态 Aura |
-| `AB.FOCUS.UNITFRAME.TARGET` | `pfUI.uf.target` | `240×60 UI / scale 0.8`；`BOTTOM (105,485)`。同用客户端系统字形与 `18 UI` local font；`23 UI` Buff 在上方从右向左，Debuff 在下方从右向左，每排 `8` 枚。为 Boss 的 `16` 个减益保留两排净空，第二排不进入中央施法条；保留所有目标交互与动态 Aura |
-| `AB.FOCUS.UNITFRAME.TARGETTARGET` | `pfUI.uf.targettarget` | 保持 `240×60 UI / scale 0.68`，同用客户端系统字形与 `18 UI` local font；fallback 为 `BOTTOM (393,576)`，live Frame 以 `LEFT → Target RIGHT +8 UI` 中线依附。`23 UI` Buff 在上、Debuff 在下，均从右向左且每排 `8` 枚；Target 消失、移动或 unlock 后仍由 provider 显隐并在事件边界恢复依附，不建立维护循环 |
+| `AB.FOCUS.UNITFRAME.PLAYER` | `pfUI.uf.player` | `240×48 UI / scale 0.8`；`BOTTOM (-160,480)`。只为该框启用客户端 `STANDARD_TEXT_FONT / OUTLINE / 18 UI` local font；`23 UI` Buff 在上方从完整框架左缘向右，Debuff 在下方从完整框架左缘向右；pfUI 真实步进为 `size+7`，每排 `8` 枚占 `233／240 UI`，四个 Aura offset 为零；两排 Aura 连同外框仍停在玩家施法条上方；保留所有状态、点击与动态 Aura |
+| `AB.FOCUS.UNITFRAME.TARGET` | `pfUI.uf.target` | `240×48 UI / scale 0.8`；`BOTTOM (105,480)`。同用客户端系统字形与 `18 UI` local font；`23 UI` Buff 在上方从右向左，Debuff 在下方从右向左，每排 `8` 枚。为 Boss 的 `16` 个减益保留两排净空，第二排连同外框不进入中央施法条；保留所有目标交互与动态 Aura |
+| `AB.FOCUS.UNITFRAME.TARGETTARGET` | `pfUI.uf.targettarget` | 保持 `240×60 UI / scale 0.68`，同用客户端系统字形与 `18 UI` local font；fallback 为 `BOTTOM (393,570)`，live Frame 以 `LEFT → Target RIGHT +8 UI` 中线依附。它只随 Target 同步下移，不缩高；`23 UI` Buff 在上、Debuff 在下，均从右向左且每排 `8` 枚；Target 消失、移动或 unlock 后仍由 provider 显隐并在事件边界恢复依附，不建立维护循环 |
 | `AB.FOCUS.CASTBAR.PLAYER` | `pfPlayerCastbar` | `260×12 UI / scale 1.0`；`BOTTOM (0,316)`，位于统一中心轴的第一排。保留图标、法术名、计时与玩家延迟区 |
 | `AB.FOCUS.CASTBAR.TARGET` | `pfTargetCastbar` | `260×12 UI / scale 1.0`；`BOTTOM (0,300)`，位于统一中心轴的第二排。保留可打断／不可打断与目标施法信息 |
 | `AB.FOCUS.CASTBAR.FOCUS` | 可选 `pfFocusCastbar` | 继续跟随 Focus Frame，默认不进入中央玩家／目标双框；对象不存在时无占位 |
 | `AB.FOCUS.SWING.MELEE` | `pfSwingTimerMainhand`＋`pfSwingTimerOffhand` | 主手 `260×12 UI / scale 1.0`，`BOTTOM (0,284)`，位于统一中心轴的第三排；副手同尺寸并以 `2 UI` 间距紧贴主手下方。文字、攻速与 Marker 动态 |
 | `AB.FOCUS.SWING.RANGED` | `pfSwingTimerRanged` | 与主手同为 `260×12 UI / scale 1.0` 并复用第三排，不与近战双条组成另一条常驻栏；范围提示仍由 provider 管理 |
 | `AB.DOITEDPS.TIMELINE` | 可选 `DoiteDPSMainFrame` 及子 Frame | 保留原生 `318×46 UI` 根与 `178×22 UI` 资源排、独立锁定／显隐与蓝绿状态语义；所有角色的运行时锚点统一为 `TOPLEFT (650,-615)`，只同步锚点／坐标并保留各角色 scale 与其他 DDPS 配置；comfort preset 仍以 `0.82` 作为目标显示补偿，锁定态继续由 provider 关闭鼠标 |
-| `AB.TOTEM.ARCHITOTEM` | 可选 `ArchiTotemFrame`、四元素主 Button、元素候选、拖动球、AllTotems 与可选 Recall／PresetManager | 用户已接受 `ACTION-BARS-CORE-SIM-V4`。闭合真实可见 union 作为职业卫星栏置于 Combat Deck 下方；provider `scale=0.8` 时当前闭合脚印为 `212×32 UI`、Air 七层最大展开为 `212×224 UI`。`fieldKitBound=true` 时随 Bar 1，拖动松手回位，`unbind` 恢复首次自由锚点；显式 focus preset 才调用 provider 原生 API 请求向下展开，普通 refresh 只读取方向。施放、右键、hover、计时、锁定、方向、预设与 Tooltip 不接管；缺失、非萨满、隐藏或签名不匹配时无占位并 fail-open |
+| `AB.TOTEM.ARCHITOTEM` | 可选 `ArchiTotemFrame`、四元素主 Button、元素候选、拖动球、AllTotems 与可选 Recall／PresetManager | 用户已接受 `ACTION-BARS-CORE-SIM-V4`。闭合真实可见 union 作为职业卫星栏置于 Combat Deck 下方，并相对旧居中位整体左移 `128 UI`；provider `scale=0.8` 时当前闭合脚印为 `212×32 UI`、Air 七层最大展开为 `212×224 UI`，四个元素的向下候选列均停在 Target Markers 皮革 icon list 左侧。`fieldKitBound=true` 时随 Bar 1，拖动松手回位，`unbind` 恢复首次自由锚点；显式 focus preset 才调用 provider 原生 API 请求向下展开，普通 refresh 只读取方向。施放、右键、hover、计时、锁定、方向、预设与 Tooltip 不接管；缺失、非萨满、隐藏或签名不匹配时无占位并 fail-open |
 
 ## 标记方阵
 
 | ID | provider／对象 | 合同 |
 |---|---|---|
-| `AB.MARKER.GRID` | `AzerothExpeditionUIMarkerGrid` 与八个 AEUI Button；数据来自 `mark1..mark8` | 固定 `4×2`，每格为透明 `48×48 UI` 命中位、间距 `3 UI`，八格下方共用一块外扩 `6 UI` 的缝制皮革九宫格；顺序为骷髅／叉／方块／月亮／三角／菱形／圆／星。八个位置始终稳定：未使用格在中央显示 `30×30 UI` 原生团队标记；已有存活目标时切换为左下 `15×15 UI` 满亮标记与轻微暗影，顶部显示两行真实名字，超长名字从 `10 UI` 降至 `9 UI`，右下显示血量百分比，底部为 `3 UI` 窄血条；死亡目标直接按本地空态绘制。标记身份与文字不再互相覆盖。整个方阵固定为 `BACKGROUND` strata，低于 ArchiTotem 的 `LOW` 主 Frame，确保候选向下展开时始终覆盖方阵并优先接收鼠标；候选收起后方阵仍可点击。ArchiTotem 可见时挂在其闭合主行下方；否则若真实姿态／宠物栏位于主栏下方则接在该栏下方；再否则直接占用主栏下方预留的职业卫星位置。没有独立 mover，不以 `OnUpdate` 改写任何 Frame 几何 |
+| `AB.MARKER.GRID` | `AzerothExpeditionUIMarkerGrid` 与八个 AEUI Button；数据来自 `mark1..mark8` | 固定 `4×2`，每格为透明 `48×48 UI` 命中位、间距 `3 UI`，八格下方共用一块外扩 `6 UI` 的缝制皮革九宫格；顺序为骷髅／叉／方块／月亮／三角／菱形／圆／星。八个位置始终稳定：未使用格在中央显示 `30×30 UI` 原生团队标记；已有存活目标时切换为左下 `15×15 UI` 满亮标记与轻微暗影，顶部显示两行真实名字，超长名字从 `10 UI` 降至 `9 UI`，右下显示血量百分比，底部为 `3 UI` 窄血条；死亡目标直接按本地空态绘制。标记身份与文字不再互相覆盖。整个方阵固定为 `BACKGROUND` strata，低于 ArchiTotem 的 `LOW` 主 Frame，作为未知 provider scale 下的防御性回退；正常绑定布局不再依赖重叠区抢占鼠标。ArchiTotem 可见时沿用其闭合主行的垂直锚点，但以 `128 UI` 反向水平补偿保持既有 Combat Deck 位置，使四元素候选列与皮革 icon list 横向分离；否则若真实姿态／宠物栏位于主栏下方则接在该栏下方；再否则直接占用主栏下方预留的职业卫星位置。没有独立 mover，不以 `OnUpdate` 改写任何 Frame 几何 |
+| `AB.MARKER.TANK` | 方阵左侧 `AzerothExpeditionUIDDPSTankButton`；可选 provider 为 DDPS 的 `SetTankAssistFromUnit`／`ClearTankAssist` | `48×48 UI` 盾牌 Button 复用 accepted 图集 B 薄皮口袋；左键把当前队伍／团队玩家交给 DDPS 设为协助坦克，右键清除。状态色与 Tooltip 只读取 DDPS 的公开状态 API；目标切换、手动敌对目标优先级、SavedVariables 和输出循环继续完全由 DDPS 持有。Button 是方阵 Frame 真实宽度内固定的左槽，Action Bars／Markers 启用时始终显示；DDPS 尚未加载或版本过旧时保留红色不可用态并只给出反馈，装饰或状态刷新异常时降级为基础盾牌而不再隐藏。它复用方阵锚点链且没有独立 mover；Combat Deck／Combination 随 Bar 1 移动时整体跟随 |
 | `AB.MARKER.CELL` | 对应 `markN` unit token 与原生团队标记 API | 左键只选中当前已解析的标记目标；右键只把当前目标设为该标记，同标记再次右键取消；`Shift+右键` 清除该标记，这些显式操作在团队中仍遵守队长／团长／助理权限。已标记目标死亡时只把 AEUI 本地格退回空态并从活动计数移除，不调用 `SetRaidTarget`、不要求权限，也不修改世界中或其他插件看到的真实团队标记；标记重新解析为存活目标时再次显示。名字、血量和选中态由事件刷新，并仅以 `0.50s` 数据轮询补偿标记目标进入范围却不触发事件的情况；不扫描 `raid1..40 target`，不广播插件消息，不接管 GRTT／Banana 的 Frame 或 SavedVariables |
 | `AB.MARKER.BULK` | 方阵右侧独立 `48×48 UI`“一键标记”Button；可选 provider 为 HDLRaidTools／SuperWoW | 左键以当前未标记目标触发 `HDLUI.SJQKAmark()`；调用前验证 provider、原始 GUID、登记怪群与团队标记权限，调用后以原始 GUID 恢复目标并报告怪群编号／登记数量。只有 `SUPERWOW_VERSION`、`HDLUI.SJQKAmark` 与 `HDLUI.markToUid` 全部就绪时才把 Button 纳入模块真实宽度并显示；任一依赖缺失或 Button 异常时隐藏并收回右侧占位，手动八格保持居中可用；不复制 `markToUid`、不猜测未登记怪群、不自动启用外部插件 |
 
-`TargetMarkers runtime 2.0` 位于
+`TargetMarkers runtime 2.3` 位于
 [TargetMarkers.lua](../../../addon/AzerothExpeditionUI/Modules/TargetMarkers.lua)，
 复用 accepted [ActionConsumableKitV1.tga](../../../addon/AzerothExpeditionUI/Media/ActionBars/ActionConsumableKitV1.tga)
-的 C 九宫格作为八格共用的连续皮革底板，并用 B 薄皮口袋承载条件式一键 Button；
+的 C 九宫格作为八格共用的连续皮革底板，并用 B 薄皮口袋承载 Frame 边界内的
+固定左侧 DDPS 坦克 Button 与右侧条件式一键 Button；
 不修改图集像素、UV 或 AutoBar 的既有用法，也不新增媒体。八个真实 Button 不再
 各画独立方框。`/aeui markers
 on|off|toggle|status` 只写 AEUI 的 `markersEnabled`；关闭整个 Action Bars route 时
 方阵同步隐藏。`markN` 暂时无目标或超出 token 可解析范围时对应格退回空态；原生
-API 缺失或调用失败不会阻止其他 Action Bars 组件加载。HDLRaidTools／SuperWoW
-只作为一键 Button 的可选 provider；外部 GRTT／Banana 若仍启用则保持独立，AEUI
+API 缺失或调用失败不会阻止其他 Action Bars 组件加载。DDPS 只作为左侧坦克
+Button 的可选功能 provider；接口缺失时 Button 保持可见的不可用态。
+HDLRaidTools／SuperWoW 只作为右侧一键 Button 的可选 provider；外部
+GRTT／Banana 若仍启用则保持独立，AEUI
 不自动关闭或改写任何外部插件。
 
 ## 消耗品卷袋
@@ -239,7 +243,8 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   可逆职业层不改变这组几何。
 - `唯一移动根`：绑定态只移动 Bar 1；Bar 6 以 `BOTTOM → Bar 1 TOP` 组成无漂移
   `12×2`，消耗品卷袋与饰品双槽分别以 `12／8 UI` 间距锚到左右；检测到的
-  ArchiTotem 以真实可见 union 居中锚在主栏下方并把垂直空隙收为 `39 UI`。`unbind` 恢复 Bar 6 与三种
+  ArchiTotem 以真实可见 union 锚在主栏下方、相对旧居中位左移 `128 UI`，垂直空隙仍为
+  `39 UI`；Target Markers 反向补偿同一水平距离并留在原位。`unbind` 恢复 Bar 6 与三种
   provider 的捕获位置；`home` 在 pfUI tier 8 下把 Bar 1 直接重置为游戏坐标
   `BOTTOM (0,175)` 并重新绑定。
 - `pfUI unlock` 生命周期：Bar 6 始终保留在 `pfUI.movables`，不得在解锁开关期间
@@ -258,9 +263,9 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   `HORIZONTAL / scale=1.0`，Field Kit v1.7 强绑定和 ArchiTotem 下置不变；v1.7
   只修复 unlock mover 登记／drag 生命周期。
 - `战斗视线邻接`：Player／Target／TargetTarget 继续由 pfUI UnitFrame provider 所有；
-  AEUI `0.8.25` 的 runtime-v2.5 preset 仅一次性把 Player／Target 置于游戏坐标
-  `BOTTOM (-160,485)／(105,485)`，两框设为 `240×60 / 0.8`；TargetTarget 保持
-  `240×60 / 0.68`，fallback 为 `BOTTOM (393,576)`，live Frame 以
+  focus runtime-v2.9 把 Player／Target 置于游戏坐标
+  `BOTTOM (-160,480)／(105,480)`，两框设为 `240×48 / 0.8`；TargetTarget 保持
+  `240×60 / 0.68`，fallback 为 `BOTTOM (393,570)`，live Frame 以
   `LEFT → Target RIGHT +8 UI` 中线
   依附。三框仅本地启用客户端 `STANDARD_TEXT_FONT / OUTLINE / 18 UI` font，并直接
   写入六个 health／power FontString（Player 另含 top-center），在 provider
@@ -268,8 +273,11 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   Player 上 Buff／下 Debuff 从完整框架左缘起，Target 与 TargetTarget 从右缘起。
   当前 `default_border=3` 且 `force_blizz=0`，故按 pfUI 真实 `size + 7` 步距，
   每排 `8` 枚占 `233／240 UI`，四个 offset 明确置零；Target 的 `16` 个 Boss
-  减益按两排展开后仍停在玩家施法条上方。
-  adapter 不重画，不在维护循环中持续改位置。
+  减益按两排展开后连同 backdrop 外扩仍停在玩家施法条上方。
+  adapter 不重画，不在维护循环中持续改位置。`focus-unit-default-v1` 按
+  `角色名 - 服务器` 保存独立版本和应用前备份；每个启用 AEUI Action Bars 的
+  角色首次加载时只应用一次这三个单位框的尺寸、Aura、字体和坐标，后续刷新
+  不覆盖手调结果。
 - `战斗信息纵栈`：玩家施法、目标施法、Swing 主手／ranged 统一为
   `260×12 / 1.0`，全部使用 `x=0`，依次落在 `BOTTOM y=316／300／284`；副手
   同尺寸以 `2 UI` 间距紧贴主手下方。姿态置于 `BOTTOM (0,255)` 并使用 local scale
@@ -299,8 +307,9 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   scale：Player／Target `0.8`、TargetTarget `0.68`、施法／Swing `1.0`、姿态 `1.0`、
   DoiteDPS `0.82`。不把
   `UIParent:GetWidth／Height` 或 `GetScreenWidth／Height` 当作 SetPoint 根；一次性
-  `game-native-v1` 坐标签名只属于当前角色。强绑定甲板关系保持原样。普通刷新不改 pfUI scale；
-  其他角色不自动应用。
+  `game-native-v1` 坐标签名按角色保存。强绑定甲板关系保持原样。普通刷新不改
+  pfUI scale；三个单位框使用上述每角色一次性默认，旧 copied profile 的精确
+  签名迁移只保留为兼容路径。
 - `home` 预设只在用户明确执行时写入一次。默认读取并尊重现有 profile、主栏位置、
   scale、按钮数、行列、自动隐藏和空槽设置；V3 继续默认关闭狮鹫，unlock 时
   仍可为足够宽的水平主栏单独开启。DoiteDPS 的锁定／战斗显隐／Forecast／资源／
@@ -310,12 +319,15 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   与其他 provider 配置，但其位置仍按全角色合同统一为 `TOPLEFT (650,-615)`，
   完成后提示 reload。
 - `ACTION-BARS-CORE-SIM-V11` 以“大奶黑牛”的实机截图完成确定性本地审查；AEUI
-  focus runtime-v2.7 保留 V10 几何与 V11 DoiteDPS 纵向安全区，把所有角色的
+  focus runtime-v2.9 保留 V11 DoiteDPS 纵向安全区，把所有角色的
   DDPS 整组统一到 `TOPLEFT (650,-615)` 清出中央视野，并保留各角色 scale、
   功能配置与三框 FontString
   刷新修复，并按战士实机反馈把真实 `bar11.icon_size` 提为 `25 UI`、local scale
-  提为 `1.0`。exact v7–v13 签名在 `/reload` 一次迁移为 v16；copied v14／v15
-  只升级姿态合同；DDPS 坐标按用户要求统一，其余非姿态手调坐标保持不动。
+  提为 `1.0`。exact v7–v16 签名在 `/reload` 一次迁移为 v17；账号级 layout
+  标记未启用但精确携带旧 `240×60 / y=485` 几何的 copied profile，只把
+  Player／Target 收紧为 `240×48 / y=480` 并同步 TargetTarget 对齐，不移动读条；
+  同一单位框合同现在按角色首次加载自动应用并保存独立回退备份；
+  DDPS 坐标按用户要求统一，其余手调坐标保持不动。
   用户已确认右侧四栏 `2×2 / 3×4`
   方案，现由独立 `sidebar-group-contract=1.0` 接入，不修改任何位图。
 - `ACTION-BARS-CORE-SIM-V10` 以“大奶黑牛”的上一轮实机问题截图完成确定性本地审查；

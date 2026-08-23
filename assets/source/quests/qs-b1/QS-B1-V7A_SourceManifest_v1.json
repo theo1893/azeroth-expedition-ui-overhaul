@@ -13,7 +13,12 @@
     "width": 128,
     "height": 768,
     "mode": "RGBA",
-    "visible_bbox_exclusive": [9, 0, 119, 767],
+    "visible_bbox_exclusive": [
+      9,
+      0,
+      119,
+      767
+    ],
     "visible_green_spill_pixels": 0,
     "transparent_rgb_nonzero_values": 0,
     "transparent_pixels": 22666,
@@ -63,9 +68,20 @@
   "deterministic_derivation": {
     "reviewer": "tools/review_quest_seal_purity_ribbon_candidate_v1.py",
     "exporter": "tools/build_quest_seal_purity_ribbon_v1.py",
-    "normalized_provider_canvas": [1024, 1024],
-    "fixed_crop_xyxy": [448, 128, 576, 896],
-    "fixed_crop_size": [128, 768],
+    "normalized_provider_canvas": [
+      1024,
+      1024
+    ],
+    "fixed_crop_xyxy": [
+      448,
+      128,
+      576,
+      896
+    ],
+    "fixed_crop_size": [
+      128,
+      768
+    ],
     "mask": "tracked 31-point polygon rasterized at 4x and reduced with Pillow LANCZOS",
     "wax_contact": "QS-A1 Alpha-only multiplier 1.0 - 0.16 * alpha; no wax RGB copied",
     "transparent_rgb_cleanup": "set RGB to zero only where Alpha equals zero",
@@ -94,13 +110,29 @@
     {
       "id": "QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.MAX",
       "ownership": "one adapter-owned mouse-inert continuous carrier Texture",
-      "source_size": [128, 768],
-      "runtime_master_size": [32, 192]
+      "source_size": [
+        128,
+        768
+      ],
+      "runtime_master_size": [
+        32,
+        192
+      ],
+      "sampled_runtime_size": [
+        64,
+        384
+      ],
+      "texels_per_ui": 2
     },
     {
       "id": "QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.ROOT",
       "ownership": "first 28 rows of the same master; no independent source",
-      "runtime_box_xywh": [210, 12, 32, 28]
+      "runtime_box_xywh": [
+        210,
+        12,
+        32,
+        28
+      ]
     },
     {
       "id": "QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.BODY",
@@ -110,7 +142,10 @@
     {
       "id": "QUEST.LOG.ACTION.SEAL_MENU.SUBSTRATE.TAIL",
       "ownership": "fixed final 14-row sample of the same master",
-      "runtime_size": [32, 14],
+      "runtime_size": [
+        32,
+        14
+      ],
       "runtime_y_formula": "36 + visible_count * 22"
     }
   ],
@@ -128,7 +163,7 @@
   },
   "export_contract": {
     "status": "runtime-exported",
-    "operation": "resize the entire accepted 128x768 RGBA source proportionally to 32x192 with Pillow LANCZOS, zero RGB only where Alpha is zero, then write RGBA TGA",
+    "operation": "resize the entire accepted 128x768 RGBA source proportionally to 64x384 at two texels per unchanged 32x192 UI unit, zero RGB only where Alpha is zero, then write RGBA TGA",
     "runtime_manifest": "QS-B1-V7A_RuntimeManifest_v1.json",
     "runtime_file": "addon/AzerothExpeditionUI/Media/Quests/QuestLogSealPurityRibbonV1.tga",
     "adapter": "addon/AzerothExpeditionUI/Modules/Quests.lua",

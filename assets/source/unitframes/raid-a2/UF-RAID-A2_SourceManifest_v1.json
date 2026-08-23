@@ -31,7 +31,7 @@
     "technical_report_sha256": "9018df186f4710fa90156b6001a93326630a4b0894287262b97e5374fc3ee5e6",
     "prompt_version": "UF-RAID-A2-DONOR V1.r4",
     "prompt_body_sha256": "ed3ec1599512a5b6c42695334bc1466e560ac010b428b3261f4503fba30bb078",
-    "prompt": "docs/modules/unitframes/SUBMODULE_ART_BASELINES.md",
+    "prompt": "docs/modules/unitframes/SUBMODULE_ART_BASELINES.md#ufraidmembershella-d",
     "actual_imagegen_calls": 5,
     "remaining_imagegen_calls": 0,
     "process_errors": 2,
@@ -386,17 +386,17 @@
     "status": "runtime-exported",
     "tool": "tools/build_unitframes_raid_a2_runtime.py",
     "runtime_manifest": "assets/source/unitframes/raid-a2/UF-RAID-A2_RuntimeManifest_v1.json",
-    "operation": "whole-source LANCZOS 592x296 to 74x37, transparent RGB clear, four independent 32-bit RGBA TGA files, 6/62/6 UV slices"
+    "operation": "whole-source LANCZOS 592x296 to 148x74 sampled (74x37 UI), transparent RGB clear, four independent 2x 32-bit RGBA TGA files, 12/124/12 sampled UV slices"
   },
   "review_evidence": {
     "source_preview": "generated/unitframes/raid/A2/runtime/source-preview.png",
     "source_preview_sha256": "26dbb0b71dfeb993f36a491ac4a28848e0c6e9ba6a6706d1daea966d0bb1c92e",
     "real_layout_scene": "generated/unitframes/raid/A2/runtime/real-layout-scene.png",
-    "real_layout_scene_sha256": "fa4fcf2ac59cf8a70c36acce79ac060596636fddfa0c20d5d88ce4ab30b1bf72",
+    "real_layout_scene_sha256": "1e6974981ed27e38e45d92829773053f6f349bfbbe63c38b937470115f778cb4",
     "real_layout_review": "generated/unitframes/raid/A2/runtime/real-layout-review.png",
-    "real_layout_review_sha256": "8bbf747ee52952a524be0097b829d49d55338f3faaf5ffad06624413c63647ea",
+    "real_layout_review_sha256": "bcec56580bc0dbc4be02cc959b7947c234dab44e2ec87716f16332694235c220",
     "display_region_report": "generated/unitframes/raid/A2/runtime/display-region-report.json",
-    "display_region_report_sha256": "9246a321024a595b26a618b935cff42b514103c2e504ae85bf2a0992bdae22b8",
+    "display_region_report_sha256": "317fa27ab58b7518daf11aec75def0ca9080a9515c43abeca163b7117bb4bfd9",
     "display_region_status": "pass"
   }
 }

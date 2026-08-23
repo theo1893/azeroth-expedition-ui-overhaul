@@ -2,27 +2,31 @@
 
 ## 当前运行时
 
-- Quests contract：`1.27`；Quest Visual Theme：`1.10`。
+- Quests contract：`1.28`；Quest Visual Theme：`1.11`。
 - 用户已在游戏中确认 Quest Log 左页字体／字重、左右页布局、详情完整滚动、
   奖励区域几何及此前截断问题的修复。
+- 已完成且正在挂载的 Quest Log 外壳、目录墨记、奖励槽、闭合载体均从 accepted
+  source 直接导出为 `2 texels / UI unit`；火漆四态原先已经是 2×。逻辑尺寸、
+  锚点、滚动区、Button 与命中区均未改变。
 - Quest Log 只替换明确登记的视觉和布局；任务数据、按钮脚本、Tooltip、动态图标、
   文字、确认弹窗和 pfQuest 数据仍由原 provider 持有。
 
 | 组件 | 阶段 | 当前事实 |
 |---|---:|---|
-| `QL-A1/A2` 双页卷宗外壳 | `P6 user-confirmed` | `QuestLogShellV4.tga` 已接入，连续书页与中央页沟保持固定结构 |
-| `QL-B1` 地区目录墨记／18 行排版 | `P6 user-confirmed` | 任务行使用 pfUI 默认字体 `12px`、无描边／shadow；行末追踪圈隐藏 |
+| `QL-A1/A2` 双页卷宗外壳 | `P6 geometry / 2× refresh P5` | 两张 2× half texture 在原 `676×464 UI` 书体内重组；连续书页与中央页沟保持固定结构 |
+| `QL-B1` 地区目录墨记／18 行排版 | `P6 geometry / 2× refresh P5` | 四态墨记改为 2× atlas；任务行仍使用 pfUI 默认字体 `12px`、无描边／shadow，行末追踪圈隐藏 |
 | `QL-B2` 选择书签 | `P5 asset-retained / runtime-hidden` | accepted source 保留，但当前不显示；恢复前需重新确认 |
 | `QL-B3` 类型／计时／状态章 | `paused` | 未完成，不接入、不占位 |
-| `QL-C / QS-A1 / QS-B1` 火漆与闭合载体 | `P5` | 火漆固定在详情 ScrollChild 右上并随内容滚动；闭合载体已接入；七功能纹章／代理未完成，事务菜单 inactive，旧按钮保持可用 |
-| `QL-D` 奖励槽 | `P5` | 用户选择的 V3 第 4 稿已导出四态 atlas 并接入；真实 Button、图标、名称、数量和双列几何不变 |
+| `QL-C / QS-A1 / QS-B1` 火漆与闭合载体 | `P5` | 火漆与闭合载体均以 2× runtime 挂载；火漆固定在详情 ScrollChild 右上并随内容滚动；七功能纹章／代理未完成，事务菜单 inactive，旧按钮保持可用 |
+| `QL-D` 奖励槽 | `P5` | 用户选择的 V3 第 4 稿已直接导出为 2× 四态 atlas；真实 Button、图标、名称、数量和双列几何不变 |
 | pfQuest Tracker | `P5 temporary / display-region-blocked` | 当前使用大块纸面；用户否决外置书框和额外端帽，尚未按真实 live Frame 区域重新确认 |
 | NPC Quest／Gossip | `P1` | 保持 pfUI／原生视觉与全部行为，尚未开始 overhaul |
 
 ## accepted source 与 runtime
 
 - Quest Log shell：`assets/source/quests/ql-a1/` →
-  `Media/Quests/QuestLogShellV4.tga`。
+  `Media/Quests/QuestLogShellLeftV4.tga`、`QuestLogShellRightV4.tga`；旧
+  `QuestLogShellV4.tga` 仅作未挂载的 1× 历史回退。
 - 目录墨记：`assets/source/quests/ql-b1/` →
   `QuestLogDirectoryMarksV1.tga`。
 - 隐藏选择书签：`assets/source/quests/ql-b2/` →
@@ -38,13 +42,15 @@
 
 ## 下一次实机验证
 
-1. 检查 QL-D TGA 方向、normal／hover／pressed／disabled、pressed `1px`、
+1. 完整重启客户端后检查双纹理书体的中央接缝、四周外缘和纸面清晰度，确认
+   `676×464 UI` 几何、左右安全区与滚动范围未改变。
+2. 检查 QL-D TGA 方向、normal／hover／pressed／disabled、pressed `1px`、
    图标／名称安全区，以及 0／1／2／4／6 奖励和长详情滚动。
-2. 检查详情页右上火漆确实压在闭合载体上，随 ScrollChild 向下滚动而离开
+3. 检查详情页右上火漆确实压在闭合载体上，随 ScrollChild 向下滚动而离开
    viewport；不得悬空、遮挡正文、跑到翻页或书封区域。
-3. 菜单仍应 inactive，旧分享／放弃／退出／详情及 pfQuest 控件继续可见可用；
+4. 菜单仍应 inactive，旧分享／放弃／退出／详情及 pfQuest 控件继续可见可用；
    放弃任务必须保留原确认流程。
-4. Tracker 只验证当前 provider 功能与内容安全，不把临时纸面视为最终 P6。
+5. Tracker 只验证当前 provider 功能与内容安全，不把临时纸面视为最终 P6。
 
 ## 后续设计门禁
 

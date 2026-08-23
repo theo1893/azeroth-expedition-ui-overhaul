@@ -75,8 +75,10 @@ RUNTIME_FILES = {
     variant: f"RaidMemberShell{variant}V1.tga"
     for variant in ("A", "B", "C", "D")
 }
-RUNTIME_SIZE = (74, 37)
+RUNTIME_LOGICAL_SIZE = (74, 37)
+RUNTIME_SIZE = (148, 74)
 RUNTIME_TEXTURE_SIZE = power_of_two_size(RUNTIME_SIZE)
+TEXELS_PER_UI = 2
 
 
 def parse_args() -> argparse.Namespace:
@@ -332,14 +334,16 @@ def write_manifests(
             "sha256": sha256(runtime_path),
             "tga_header": tga_header(runtime_path),
             "metrics": image_metrics(runtimes[variant]),
-            "logical_size": list(RUNTIME_SIZE),
+            "logical_size": list(RUNTIME_LOGICAL_SIZE),
+            "sampled_size": list(RUNTIME_SIZE),
+            "texels_per_ui": TEXELS_PER_UI,
             "texture_size": list(RUNTIME_TEXTURE_SIZE),
             "content_uv": content_uv(RUNTIME_SIZE, RUNTIME_TEXTURE_SIZE),
             "full_uv": content_uv(RUNTIME_SIZE, RUNTIME_TEXTURE_SIZE),
             "three_slice_uv": {
-                "left": [0.0, 6 / 128, 0.0, 37 / 64],
-                "centre": [6 / 128, 68 / 128, 0.0, 37 / 64],
-                "right": [68 / 128, 74 / 128, 0.0, 37 / 64],
+                "left": [0.0, 12 / 256, 0.0, 74 / 128],
+                "centre": [12 / 256, 136 / 256, 0.0, 74 / 128],
+                "right": [136 / 256, 148 / 256, 0.0, 74 / 128],
             },
         }
 
@@ -449,8 +453,9 @@ def write_manifests(
             "tool": "tools/build_unitframes_raid_a2_runtime.py",
             "runtime_manifest": repository_path(RUNTIME_MANIFEST),
             "operation": (
-                "whole-source LANCZOS 592x296 to 74x37, transparent RGB clear, "
-                "four independent 32-bit RGBA TGA files, 6/62/6 UV slices"
+                "whole-source LANCZOS 592x296 to 148x74 sampled (74x37 UI), "
+                "transparent RGB clear, "
+                "four independent 2x 32-bit RGBA TGA files, 12/124/12 sampled UV slices"
             ),
         },
         "review_evidence": {
@@ -475,7 +480,7 @@ def write_manifests(
         "schema": "aeui-unitframes-raid-a2-runtime-manifest-v1",
         "status": "runtime-exported",
         "phase": "P5",
-        "runtime_contract": "1.6",
+        "runtime_contract": "1.7",
         "module": "unitframes",
         "components": source_manifest["components"],
         "source_manifest": repository_path(SOURCE_MANIFEST),
@@ -483,13 +488,16 @@ def write_manifests(
         "runtime": runtime_records,
         "deterministic_export": {
             "tool": "tools/build_unitframes_raid_a2_runtime.py",
-            "source_to_runtime": [[592, 296], [74, 37]],
+            "source_to_runtime": [[592, 296], [148, 74]],
+            "logical_runtime_size": list(RUNTIME_LOGICAL_SIZE),
+            "texels_per_ui": TEXELS_PER_UI,
             "runtime_texture_container": list(RUNTIME_TEXTURE_SIZE),
             "runtime_content_uv": content_uv(RUNTIME_SIZE, RUNTIME_TEXTURE_SIZE),
             "resample": "Pillow LANCZOS",
             "transparent_rgb_clear": True,
             "source_three_slice": [48, 496, 48],
-            "runtime_three_slice": [6, 62, 6],
+            "runtime_three_slice_sampled": [12, 124, 12],
+            "runtime_three_slice_logical": [6, 62, 6],
             "standard_width_uses_complete_texture": True,
             "variable_width_uses_three_texture_objects_with_uv_slices": True,
             "vertical_stretch": False,
@@ -554,7 +562,15 @@ def main() -> None:
 
     materials, sources = load_accepted_sources(spec, source_dir)
     runtimes = export_runtime(sources, runtime_dir)
-    shell_set = ShellSet(materials=materials, sources=sources, runtimes=runtimes)
+    review_runtimes = {
+        variant: image.resize(RUNTIME_LOGICAL_SIZE, Image.Resampling.LANCZOS)
+        for variant, image in runtimes.items()
+    }
+    shell_set = ShellSet(
+        materials=materials,
+        sources=sources,
+        runtimes=review_runtimes,
+    )
 
     source_preview = preview_dir / "source-preview.png"
     real_scene = preview_dir / "real-layout-scene.png"

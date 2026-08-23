@@ -66,7 +66,7 @@
 | 子组件 | pfUI 对象／职责 | 状态 |
 |---|---|---|
 | `MAP.MINI.ADDONS.SCANNER` | `ScanForButtons`／`IsButtonValid`／`pfUI_cache.abuttons` | 行为-only；保留自动扫描、手动 add／del／reset、忽略表和缺失对象清理 |
-| `MAP.MINI.ADDONS.ANCHORS` | `C.abuttons.position` 与 adapter 计算、不可见 | 无位图；bottom 使用 V7 单母图：徽记固定在罗盘右下边沿，绳索垂直跨过托架右侧净空，袋身按入口密度只向左增加 UV 可见宽度；left／top／right 暂用 V4／V3 回退；不得为容纳袋身改写 `pfMinimap` 保存锚点 |
+| `MAP.MINI.ADDONS.ANCHORS` | `C.abuttons.position` 与 adapter 计算、不可见 | 无位图；bottom 使用 V7.3 单母图：`120×292 UI` 母图锚在罗盘外壳 `(77,166)`，徽记中心落在 `(179,182)`；该高度的徽记可见左缘为 `x=166`、罗盘可见右缘为 `x=167`，形成 `1 UI` 压接。短绳跨过托架右侧净空，袋口紧贴托架下缘，袋身按入口密度只向左增加 UV 可见宽度；left／top／right 暂用 V4／V3 回退；不得为容纳袋身改写 `pfMinimap` 保存锚点 |
 | `MAP.MINI.ADDONS.ENTRY` | 扫描到的真实插件 Button | provider 保留原始图标、状态与自带边缘；adapter 只排版，不叠加统一逐图标外框 |
 | `MAP.MINI.ADDONS.NOTICE` | 插件自己的通知语义 | 无／未读／警告独立覆盖 |
 | `MAP.MINI.ADDONS.TOGGLE` | 真实 `pfMinimapButton` | bottom 只保留徽记中央 `28×28 UI` 命中区；收起和展开都从同一 V7 TGA 裁出逐像素一致的徽记，绳索与袋身不接收点击；left／top／right 暂用 V3 锁扣／楔片回退；0 个入口时隐藏 |
@@ -74,9 +74,10 @@
 
 保留插件原始左键、右键、Tooltip 与动态图标；收纳时继续使用 pfUI 的 parent／point／
 size／scale／drag／OnUpdate 备份和恢复逻辑，不伪造原插件行为，也不隐藏插件自身
-携带的边缘。bottom V7 的收起态只显示母图顶部 `[84,0,120,36)`；展开态按
+携带的边缘。bottom V7.3 的收起态只显示母图顶部 `[84,0,120,36)`；展开态按
 `1–8／9–16／17–24／25–30` 分别显示右锚的 `36／60／84／112 UI` 宽裁片，右缘、
-徽记和绳索不跳位，30 个入口形成 `8+8+8+6`。0 个入口同时隐藏徽记与袋身；
+徽记和绳索不跳位；展开高度为 `292 UI`，入口基准为母图 `(87,98)`，30 个入口形成
+`8+8+8+6`。0 个入口同时隐藏徽记与袋身；
 left／top／right 继续遵守 provider `rowsize` 与 V4／V3 回退。旧 connector、V5
 扣座和 V5 bottom 九切片不参与 V7 运行时。战斗隐藏继续读取
 `C.abuttons.hideincombat`；`pfFarmMap` 300×300 是独立兼容态，只迁移既有动态对象，

@@ -39,10 +39,34 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
   }
 
   -- Slam: has cast time but does NOT reset the swing timer (just delays it).
-  -- We explicitly ignore these in SPELL_GO so they fall through to no-op.
+  -- Turtle WoW may use custom spell IDs for reworked ranks, so keep the
+  -- vanilla IDs as a fast path and also identify Slam by its SpellRec name.
   local slamSpellIDs = {
     [1464] = true, [8820] = true, [11604] = true, [11605] = true,
+    [45961] = true, -- Turtle WoW reworked Slam
   }
+
+  local function GetSpellRecordName(spellId)
+    if not spellId then return nil end
+    if GetSpellRecField then
+      return GetSpellRecField(spellId, "name")
+    end
+    local rec = GetSpellRec and GetSpellRec(spellId)
+    return rec and rec.name or nil
+  end
+
+  local slamSpellNames = {
+    ["Slam"] = true,
+    ["猛击"] = true,
+  }
+  local localizedSlamName = GetSpellRecordName(1464)
+  if localizedSlamName then slamSpellNames[localizedSlamName] = true end
+
+  local function IsSlamSpell(spellId)
+    if slamSpellIDs[spellId] then return true end
+    local spellName = GetSpellRecordName(spellId)
+    return spellName and slamSpellNames[spellName] or false
+  end
 
   -- SPELL_ATTR_ON_NEXT_SWING (bit 2, value 4): spell replaces next auto-attack swing.
   -- Covers Raptor Strike, Maul, Mongoose Bite, Holy Strike, etc. automatically.
@@ -535,18 +559,14 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
     for slot = 1, 120 do
       local tex  = GetActionTexture(slot)
       local name = GetActionText(slot)
-      if tex then
+      -- GetActionText identifies macros. A /startattack macro can remain
+      -- "current" while auto attack is active, so treating its HS/Cleave icon
+      -- as a native spell slot creates a permanent false queue. Actual casts
+      -- from macros are still tracked by SPELL_CAST_EVENT/SPELL_QUEUE_EVENT.
+      if tex and not name then
         if string.find(tex, "Ability_Rogue_Ambush") then
           table.insert(S.cachedHSSlots, slot)
         elseif string.find(tex, "Ability_Warrior_Cleave") then
-          table.insert(S.cachedCleaveSlots, slot)
-        end
-      end
-      if name then
-        local lower = string.lower(name)
-        if lower == "heroic strike" or lower == "heroicstrike" or lower == "hs" then
-          table.insert(S.cachedHSSlots, slot)
-        elseif lower == "cleave" then
           table.insert(S.cachedCleaveSlots, slot)
         end
       end
@@ -826,7 +846,7 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
     if RANGED_SPELLIDS[spellId] then
       ResetRanged()
       return
-    elseif slamSpellIDs[spellId] then
+    elseif IsSlamSpell(spellId) then
       -- Slam delays auto-attack but does NOT reset the swing timer. Ignore.
       S.pendingCastSpellId = nil
       return

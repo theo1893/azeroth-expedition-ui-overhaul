@@ -45,8 +45,11 @@ EXPECTED_POWER_SHA256 = (
 )
 HEALTH_SOURCE_SIZE = (256, 128)
 POWER_SOURCE_SIZE = (256, 64)
-HEALTH_RUNTIME_SIZE = (64, 32)
-POWER_RUNTIME_SIZE = (64, 16)
+HEALTH_LOGICAL_SIZE = (64, 32)
+POWER_LOGICAL_SIZE = (64, 16)
+HEALTH_RUNTIME_SIZE = (128, 64)
+POWER_RUNTIME_SIZE = (128, 32)
+TEXELS_PER_UI = 2
 RESAMPLE = Image.Resampling.LANCZOS
 FONT = ROOT / "addon/AzerothExpeditionUI/Media/Fonts/NotoSansSC-Medium.ttf"
 TITLE_FONT = (
@@ -460,7 +463,7 @@ def render_real_layout(
 
     draw.text(
         (760, 112),
-        "Exact donors · 4× nearest",
+        "Accepted 2× runtime · 2× nearest",
         font=font(15, True),
         fill=(211, 187, 137, 255),
     )
@@ -470,13 +473,13 @@ def render_real_layout(
     scene.alpha_composite(power_zoom, (760, 320))
     draw.text(
         (760, 285),
-        "Health 64×32",
+        "Health 128×64 sampled / 64×32 UI",
         font=font(12),
         fill=(184, 169, 141, 255),
     )
     draw.text(
         (760, 392),
-        "Power 64×16",
+        "Power 128×32 sampled / 64×16 UI",
         font=font(12),
         fill=(184, 169, 141, 255),
     )
@@ -582,12 +585,16 @@ def update_source_manifest(
             "file": repository_path(health_runtime),
             "sha256": sha256(health_runtime),
             "size": list(HEALTH_RUNTIME_SIZE),
+            "logical_size": list(HEALTH_LOGICAL_SIZE),
+            "texels_per_ui": TEXELS_PER_UI,
         },
         {
             "component": "UF.BAR.POWER.FILL",
             "file": repository_path(power_runtime),
             "sha256": sha256(power_runtime),
             "size": list(POWER_RUNTIME_SIZE),
+            "logical_size": list(POWER_LOGICAL_SIZE),
+            "texels_per_ui": TEXELS_PER_UI,
         },
     ]
     path.write_text(
@@ -611,7 +618,7 @@ def write_runtime_manifest(
         "schema": "aeui-unitframes-bars-v2-runtime-manifest-v1",
         "status": "runtime-exported",
         "phase": "P5",
-        "runtime_contract": "1.0",
+        "runtime_contract": "1.1",
         "module": "unitframes",
         "components": [
             "UF.BAR.HEALTH.FILL",
@@ -636,12 +643,18 @@ def write_runtime_manifest(
                 "sha256": sha256(health_runtime),
                 "tga_header": tga_header(health_runtime),
                 "metrics": grayscale_metrics(health_image),
+                "logical_size": list(HEALTH_LOGICAL_SIZE),
+                "sampled_size": list(HEALTH_RUNTIME_SIZE),
+                "texels_per_ui": TEXELS_PER_UI,
             },
             "power": {
                 "file": repository_path(power_runtime),
                 "sha256": sha256(power_runtime),
                 "tga_header": tga_header(power_runtime),
                 "metrics": grayscale_metrics(power_image),
+                "logical_size": list(POWER_LOGICAL_SIZE),
+                "sampled_size": list(POWER_RUNTIME_SIZE),
+                "texels_per_ui": TEXELS_PER_UI,
             },
         },
         "deterministic_export": {
@@ -649,6 +662,7 @@ def write_runtime_manifest(
             "operation": "independent whole-source LANCZOS resize, transparent RGB clear, 32-bit RGBA TGA write",
             "health_source_to_runtime": [list(HEALTH_SOURCE_SIZE), list(HEALTH_RUNTIME_SIZE)],
             "power_source_to_runtime": [list(POWER_SOURCE_SIZE), list(POWER_RUNTIME_SIZE)],
+            "density": "2 texels per UI unit",
             "crop": False,
             "redraw": False,
             "mirror": False,

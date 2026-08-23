@@ -82,7 +82,16 @@
       74
     ],
     "transparent_rgb_cleared": true,
-    "generative_postprocess": false
+    "generative_postprocess": false,
+    "logical_size": [
+      270,
+      74
+    ],
+    "sampled_size": [
+      540,
+      148
+    ],
+    "texels_per_ui": 2
   },
   "runtime_manifest": "assets/source/map/mini-v4-tray/MAP-MINI-V4-TRAY_RuntimeManifest_v1.json"
 }

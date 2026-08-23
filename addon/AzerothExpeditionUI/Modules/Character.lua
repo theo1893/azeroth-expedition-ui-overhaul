@@ -49,20 +49,38 @@ local ART = {
 
 local MODEL_BACKGROUND = {
   path = MEDIA .. "CharacterModelBackgroundV3",
-  x = 65,
-  y = 78,
-  width = 233,
-  height = 224,
+  -- PaperDoll-hosted textures render left of the shell's visual opening on
+  -- the validated client.  Offset only this substrate to x=69;
+  -- CharacterModelFrame keeps its native x=65 anchor.
+  x = 69,
+  -- The shell opening starts three UI units above the provider model.  Extend
+  -- only this visual substrate to y=75 while keeping its lower edge at y=302;
+  -- CharacterModelFrame itself remains on native y=78 geometry.
+  y = 75,
+  -- The provider model remains 233 UI units wide.  The accepted shell's
+  -- visual content opening continues to x=312, so only the quiet center of
+  -- this backdrop is stretched by 10 UI units to close that visible gap.
+  width = 243,
+  height = 227,
   texCoord = { 0, 466 / 512, 0, 448 / 512 },
+  horizontalCap = 8,
+  textureWidth = 512,
 }
 
 local STATS_PAPER = {
   path = MEDIA .. "CharacterStatsPaperV3",
-  x = 67,
+  -- Center the 230 UI stats group inside the visual model opening at x=69..312.
+  x = 76,
   y = 291,
   width = 230,
-  height = 78,
+  -- BetterCharacterStats lays out six 13 UI rows from y=3 through y=81.
+  -- Blizzard's original three-piece paper is therefore 85 UI units tall even
+  -- though its owning frame is 78.  Stretch only the quiet middle of the
+  -- accepted paper so the bottom row remains on paper.
+  height = 85,
   texCoord = { 0, 460 / 512, 0, 156 / 256 },
+  verticalCap = 6,
+  textureHeight = 256,
 }
 
 local SECONDARY_LEAF = {
@@ -82,17 +100,22 @@ local SECONDARY_PAGE_PROVIDER_NAMES = {
   "ArenaFrame",
 }
 
--- The accepted shell keeps the native bottom weapon area transparent.  Reuse
--- a native-size 233x72 crop from the accepted model background beneath that
--- area so pfUI's flat black backdrop cannot show between the stats paper and
--- the shell's lower inner edge.  No generated pixels are stretched or rebuilt.
+-- The accepted shell keeps the bottom weapon area transparent.  Reuse a
+-- 233x72 crop from the accepted model background beneath that area so pfUI's
+-- flat black backdrop cannot show between the stats paper and the shell's
+-- lower inner edge.  The same three-part center stretch closes the shell's
+-- 10 UI right-side opening gap without stretching either painted edge.
 local EQUIPMENT_FOOTER_BACKGROUND = {
   path = MODEL_BACKGROUND.path,
-  x = 65,
+  x = MODEL_BACKGROUND.x,
   y = 369,
-  width = 233,
-  height = 72,
+  width = 243,
+  -- The shell opening ends at y=444; the accepted crop previously stopped at
+  -- y=441 and exposed a narrow strip of the provider backdrop.
+  height = 75,
   texCoord = { 0, 466 / 512, 304 / 512, 448 / 512 },
+  horizontalCap = MODEL_BACKGROUND.horizontalCap,
+  textureWidth = MODEL_BACKGROUND.textureWidth,
 }
 
 local RESISTANCE_WELLS = {
@@ -186,53 +209,128 @@ local AMMO_SLOT = {
 
 local CHARACTER_TABS = {
   path = MEDIA .. "CharacterTabsV3",
-  height = 20,
+  height = 28,
   leftWidth = 6,
   rightWidth = 6,
+  minWidth = 64,
+  textPadding = 32,
+  rowInset = 2,
+  gap = 3,
+  fallbackRowWidth = 344,
   states = {
     normal = {
-      left = { 8 / 128, 20 / 128, 8 / 256, 48 / 256 },
-      center = { 32 / 128, 48 / 128, 8 / 256, 48 / 256 },
-      right = { 60 / 128, 72 / 128, 8 / 256, 48 / 256 },
+      left = { 8 / 128, 20 / 128, 4 / 256, 60 / 256 },
+      center = { 32 / 128, 48 / 128, 4 / 256, 60 / 256 },
+      right = { 60 / 128, 72 / 128, 4 / 256, 60 / 256 },
     },
     hover = {
-      left = { 8 / 128, 20 / 128, 64 / 256, 104 / 256 },
-      center = { 32 / 128, 48 / 128, 64 / 256, 104 / 256 },
-      right = { 60 / 128, 72 / 128, 64 / 256, 104 / 256 },
+      left = { 8 / 128, 20 / 128, 68 / 256, 124 / 256 },
+      center = { 32 / 128, 48 / 128, 68 / 256, 124 / 256 },
+      right = { 60 / 128, 72 / 128, 68 / 256, 124 / 256 },
     },
     pressed = {
-      left = { 8 / 128, 20 / 128, 120 / 256, 160 / 256 },
-      center = { 32 / 128, 48 / 128, 120 / 256, 160 / 256 },
-      right = { 60 / 128, 72 / 128, 120 / 256, 160 / 256 },
+      left = { 8 / 128, 20 / 128, 132 / 256, 188 / 256 },
+      center = { 32 / 128, 48 / 128, 132 / 256, 188 / 256 },
+      right = { 60 / 128, 72 / 128, 132 / 256, 188 / 256 },
     },
     selected = {
-      left = { 8 / 128, 20 / 128, 176 / 256, 216 / 256 },
-      center = { 32 / 128, 48 / 128, 176 / 256, 216 / 256 },
-      right = { 60 / 128, 72 / 128, 176 / 256, 216 / 256 },
+      left = { 8 / 128, 20 / 128, 196 / 256, 252 / 256 },
+      center = { 32 / 128, 48 / 128, 196 / 256, 252 / 256 },
+      right = { 60 / 128, 72 / 128, 196 / 256, 252 / 256 },
     },
   },
 }
 
+local CHARACTER_TAB_PAGE_PROVIDERS = {
+  [1] = { "PaperDollFrame" },
+  [2] = { "PetPaperDollFrame" },
+  [3] = { "ReputationFrame" },
+  [4] = { "SkillFrame" },
+  [5] = { "HonorFrame", "PVPFrame", "ArenaFrame" },
+}
+
 local SLOT_VARIANTS = {
-  HeadSlot = "A",
-  ChestSlot = "A",
-  FeetSlot = "A",
-  Finger1Slot = "A",
-  RangedSlot = "A",
-  NeckSlot = "B",
-  ShirtSlot = "B",
-  HandsSlot = "B",
-  Finger0Slot = "B",
-  MainHandSlot = "B",
+  -- Use the neutral rail segment consistently on both vertical columns.
+  -- Mixing the four corner-detail variants from slot to slot makes a
+  -- mathematically straight native column read as a jagged one in game.
+  HeadSlot = "C",
+  NeckSlot = "C",
   ShoulderSlot = "C",
+  BackSlot = "C",
+  ChestSlot = "C",
+  ShirtSlot = "C",
   TabardSlot = "C",
+  WristSlot = "C",
+  HandsSlot = "C",
   WaistSlot = "C",
+  LegsSlot = "C",
+  FeetSlot = "C",
+  Finger0Slot = "C",
+  Finger1Slot = "C",
+  Trinket0Slot = "C",
   Trinket1Slot = "C",
-  BackSlot = "D",
-  WristSlot = "D",
-  LegsSlot = "D",
-  Trinket0Slot = "D",
+  MainHandSlot = "A",
   SecondaryHandSlot = "D",
+  RangedSlot = "B",
+}
+
+-- Keep every registered provider on Blizzard's 1.12 PaperDoll geometry.  The
+-- art below is authored for these exact logical rectangles; following a
+-- provider after another skin/addon has shifted it makes the model, paper and
+-- equipment rails disagree even though each individual texture is sized
+-- correctly.
+local LEFT_EQUIPMENT_SLOTS = {
+  "HeadSlot",
+  "NeckSlot",
+  "ShoulderSlot",
+  "BackSlot",
+  "ChestSlot",
+  "ShirtSlot",
+  "TabardSlot",
+  "WristSlot",
+}
+
+local RIGHT_EQUIPMENT_SLOTS = {
+  "HandsSlot",
+  "WaistSlot",
+  "LegsSlot",
+  "FeetSlot",
+  "Finger0Slot",
+  "Finger1Slot",
+  "Trinket0Slot",
+  "Trinket1Slot",
+}
+
+local BOTTOM_EQUIPMENT_SLOTS = {
+  "MainHandSlot",
+  "SecondaryHandSlot",
+  "RangedSlot",
+}
+
+local CANONICAL_GEOMETRY_FRAME_NAMES = {
+  "CharacterModelFrame",
+  "CharacterAttributesFrame",
+  "BetterCharacterAttributesFrame",
+  "CharacterHeadSlot",
+  "CharacterNeckSlot",
+  "CharacterShoulderSlot",
+  "CharacterBackSlot",
+  "CharacterChestSlot",
+  "CharacterShirtSlot",
+  "CharacterTabardSlot",
+  "CharacterWristSlot",
+  "CharacterHandsSlot",
+  "CharacterWaistSlot",
+  "CharacterLegsSlot",
+  "CharacterFeetSlot",
+  "CharacterFinger0Slot",
+  "CharacterFinger1Slot",
+  "CharacterTrinket0Slot",
+  "CharacterTrinket1Slot",
+  "CharacterMainHandSlot",
+  "CharacterSecondaryHandSlot",
+  "CharacterRangedSlot",
+  "CharacterAmmoSlot",
 }
 
 local PORTRAIT_CANDIDATES = {
@@ -320,6 +418,211 @@ local function SetShown(frame, shown)
   end
 end
 
+local function CaptureFrameGeometry(frame)
+  if not frame or frame.aeuiCharacterGeometryRestoreV3 then return end
+
+  local restore = {
+    width = frame.GetWidth and frame:GetWidth() or nil,
+    height = frame.GetHeight and frame:GetHeight() or nil,
+    points = {},
+  }
+  if frame.GetNumPoints and frame.GetPoint then
+    for index = 1, frame:GetNumPoints() do
+      local point, relativeTo, relativePoint, x, y = frame:GetPoint(index)
+      table.insert(restore.points, {
+        point = point,
+        relativeTo = relativeTo,
+        relativePoint = relativePoint,
+        x = x,
+        y = y,
+      })
+    end
+  end
+  frame.aeuiCharacterGeometryRestoreV3 = restore
+end
+
+local function SetCanonicalFrameGeometry(
+  frame,
+  width,
+  height,
+  point,
+  relativeTo,
+  relativePoint,
+  x,
+  y
+)
+  if not frame then return false end
+  if frame.aeuiCharacterGeometryAppliedV3 then return true end
+
+  CaptureFrameGeometry(frame)
+  frame:ClearAllPoints()
+  frame:SetWidth(width)
+  frame:SetHeight(height)
+  frame:SetPoint(point, relativeTo, relativePoint, x, y)
+  frame.aeuiCharacterGeometryAppliedV3 = true
+  return true
+end
+
+local function RestoreFrameGeometry(frame)
+  if not frame then return end
+  local restore = frame.aeuiCharacterGeometryRestoreV3
+  if not restore then
+    frame.aeuiCharacterGeometryAppliedV3 = nil
+    return
+  end
+
+  frame:ClearAllPoints()
+  if restore.width then frame:SetWidth(restore.width) end
+  if restore.height then frame:SetHeight(restore.height) end
+  for _, anchor in ipairs(restore.points) do
+    frame:SetPoint(
+      anchor.point,
+      anchor.relativeTo,
+      anchor.relativePoint,
+      anchor.x,
+      anchor.y
+    )
+  end
+  frame.aeuiCharacterGeometryRestoreV3 = nil
+  frame.aeuiCharacterGeometryAppliedV3 = nil
+end
+
+local function ApplyVerticalEquipmentRail(slotNames, x)
+  local previous = nil
+  for index, slotName in ipairs(slotNames) do
+    local frame = _G["Character" .. slotName]
+    if not frame then return false end
+
+    if index == 1 then
+      if not SetCanonicalFrameGeometry(
+        frame,
+        37,
+        37,
+        "TOPLEFT",
+        PaperDollFrame,
+        "TOPLEFT",
+        x,
+        -74
+      ) then return false end
+    else
+      if not SetCanonicalFrameGeometry(
+        frame,
+        37,
+        37,
+        "TOPLEFT",
+        previous,
+        "BOTTOMLEFT",
+        0,
+        -4
+      ) then return false end
+    end
+    previous = frame
+  end
+  return true
+end
+
+local function ApplyCanonicalPaperDollGeometry()
+  if not PaperDollFrame then return false end
+
+  if not SetCanonicalFrameGeometry(
+    CharacterModelFrame,
+    233,
+    224,
+    "TOPLEFT",
+    PaperDollFrame,
+    "TOPLEFT",
+    65,
+    -78
+  ) then return false end
+
+  if not SetCanonicalFrameGeometry(
+    CharacterAttributesFrame,
+    230,
+    78,
+    "TOPLEFT",
+    PaperDollFrame,
+    "TOPLEFT",
+    STATS_PAPER.x,
+    -STATS_PAPER.y
+  ) then return false end
+
+  local betterStats = _G["BetterCharacterAttributesFrame"]
+  if betterStats then
+    SetCanonicalFrameGeometry(
+      betterStats,
+      230,
+      78,
+      "TOPLEFT",
+      PaperDollFrame,
+      "TOPLEFT",
+      STATS_PAPER.x,
+      -STATS_PAPER.y
+    )
+  end
+
+  if not ApplyVerticalEquipmentRail(LEFT_EQUIPMENT_SLOTS, 20) then
+    return false
+  end
+  if not ApplyVerticalEquipmentRail(RIGHT_EQUIPMENT_SLOTS, 327) then
+    return false
+  end
+
+  local mainHand = _G["Character" .. BOTTOM_EQUIPMENT_SLOTS[1]]
+  local secondaryHand = _G["Character" .. BOTTOM_EQUIPMENT_SLOTS[2]]
+  local ranged = _G["Character" .. BOTTOM_EQUIPMENT_SLOTS[3]]
+  if not SetCanonicalFrameGeometry(
+    mainHand,
+    37,
+    37,
+    "TOPLEFT",
+    PaperDollFrame,
+    "BOTTOMLEFT",
+    122,
+    127
+  ) then return false end
+  if not SetCanonicalFrameGeometry(
+    secondaryHand,
+    37,
+    37,
+    "TOPLEFT",
+    mainHand,
+    "TOPRIGHT",
+    5,
+    0
+  ) then return false end
+  if not SetCanonicalFrameGeometry(
+    ranged,
+    37,
+    37,
+    "TOPLEFT",
+    secondaryHand,
+    "TOPRIGHT",
+    5,
+    0
+  ) then return false end
+
+  local ammo = _G["CharacterAmmoSlot"]
+  if ammo then
+    SetCanonicalFrameGeometry(
+      ammo,
+      AMMO_SLOT.width,
+      AMMO_SLOT.height,
+      "LEFT",
+      ranged,
+      "RIGHT",
+      15,
+      0
+    )
+  end
+  return true
+end
+
+local function RestoreCanonicalPaperDollGeometry()
+  for _, name in ipairs(CANONICAL_GEOMETRY_FRAME_NAMES) do
+    RestoreFrameGeometry(_G[name])
+  end
+end
+
 local function CaptureAndHidePortraits()
   if not CharacterFrame then return end
   CharacterFrame.aeuiCharacterPortraitRestore =
@@ -374,6 +677,115 @@ local function ConfigureTexture(texture, definition, anchor)
   texture:Show()
 end
 
+local function ConfigureHorizontalTextureSlices(textures, definition, anchor)
+  local cap = definition.horizontalCap
+  local centerWidth = definition.width - cap * 2
+  local capUV =
+    cap * Character.texelDensity / definition.textureWidth
+  local texCoord = definition.texCoord
+  local u0, u1, v0, v1 =
+    texCoord[1], texCoord[2], texCoord[3], texCoord[4]
+  local parts = {
+    {
+      width = cap,
+      x = 0,
+      texCoord = { u0, u0 + capUV, v0, v1 },
+    },
+    {
+      width = centerWidth,
+      x = cap,
+      texCoord = { u0 + capUV, u1 - capUV, v0, v1 },
+    },
+    {
+      width = cap,
+      x = definition.width - cap,
+      texCoord = { u1 - capUV, u1, v0, v1 },
+    },
+  }
+
+  for index, part in ipairs(parts) do
+    ConfigureTexture(
+      textures[index],
+      {
+        path = definition.path,
+        width = part.width,
+        height = definition.height,
+        texCoord = part.texCoord,
+      },
+      {
+        relativeTo = anchor.relativeTo,
+        relativePoint = anchor.relativePoint,
+        x = anchor.x + part.x,
+        y = anchor.y,
+      }
+    )
+  end
+end
+
+local function ConfigureVerticalTextureSlices(textures, definition, anchor)
+  local cap = definition.verticalCap
+  local centerHeight = definition.height - cap * 2
+  local capUV =
+    cap * Character.texelDensity / definition.textureHeight
+  local texCoord = definition.texCoord
+  local u0, u1, v0, v1 =
+    texCoord[1], texCoord[2], texCoord[3], texCoord[4]
+  local parts = {
+    {
+      height = cap,
+      y = 0,
+      texCoord = { u0, u1, v0, v0 + capUV },
+    },
+    {
+      height = centerHeight,
+      y = cap,
+      texCoord = { u0, u1, v0 + capUV, v1 - capUV },
+    },
+    {
+      height = cap,
+      y = definition.height - cap,
+      texCoord = { u0, u1, v1 - capUV, v1 },
+    },
+  }
+
+  for index, part in ipairs(parts) do
+    ConfigureTexture(
+      textures[index],
+      {
+        path = definition.path,
+        width = definition.width,
+        height = part.height,
+        texCoord = part.texCoord,
+      },
+      {
+        relativeTo = anchor.relativeTo,
+        relativePoint = anchor.relativePoint,
+        x = anchor.x,
+        y = anchor.y - part.y,
+      }
+    )
+  end
+end
+
+local function EnsureTextureSlices(owner, key, count)
+  if not owner then return nil end
+  if owner[key] then return owner[key] end
+
+  local textures = {}
+  for index = 1, count do
+    textures[index] = owner:CreateTexture(nil, "BACKGROUND")
+  end
+  owner[key] = textures
+  return textures
+end
+
+local function HideTextureSlices(textures)
+  if not textures then return end
+  for _, texture in ipairs(textures) do
+    texture:Hide()
+  end
+end
+
 local function ConfigureResistanceWell(texture, frame, definition)
   texture:ClearAllPoints()
   texture:SetTexture(definition.path)
@@ -393,51 +805,44 @@ local function ConfigureResistanceWell(texture, frame, definition)
 end
 
 local function EnsureModelBackground()
-  if not PaperDollFrame then return nil end
-  if PaperDollFrame.aeuiCharacterModelBackgroundV3 then
-    return PaperDollFrame.aeuiCharacterModelBackgroundV3
-  end
-
-  local texture = PaperDollFrame:CreateTexture(nil, "BACKGROUND")
-  PaperDollFrame.aeuiCharacterModelBackgroundV3 = texture
-  return texture
+  return EnsureTextureSlices(
+    PaperDollFrame,
+    "aeuiCharacterModelBackgroundV3",
+    3
+  )
 end
 
 local function EnsureStatsPaper()
-  if not PaperDollFrame then return nil end
-  if PaperDollFrame.aeuiCharacterStatsPaperV3 then
-    return PaperDollFrame.aeuiCharacterStatsPaperV3
-  end
-
   -- This is created after the accepted model background on the same draw
   -- layer so the paper naturally overlaps its lower edge by 11 UI pixels,
-  -- while CharacterAttributesFrame text and controls remain above it.
-  local texture = PaperDollFrame:CreateTexture(nil, "BACKGROUND")
-  PaperDollFrame.aeuiCharacterStatsPaperV3 = texture
-  return texture
+  -- while the original top and bottom paper edges remain unstretched.
+  return EnsureTextureSlices(
+    PaperDollFrame,
+    "aeuiCharacterStatsPaperV3",
+    3
+  )
 end
 
 local function EnsureEquipmentFooterBackground()
-  if not PaperDollFrame then return nil end
-  if PaperDollFrame.aeuiCharacterEquipmentFooterBackgroundV3 then
-    return PaperDollFrame.aeuiCharacterEquipmentFooterBackgroundV3
-  end
-
-  local texture = PaperDollFrame:CreateTexture(nil, "BACKGROUND")
-  PaperDollFrame.aeuiCharacterEquipmentFooterBackgroundV3 = texture
-  return texture
+  return EnsureTextureSlices(
+    PaperDollFrame,
+    "aeuiCharacterEquipmentFooterBackgroundV3",
+    3
+  )
 end
 
 local function EnsureSecondaryLeaf(frame)
   if not frame then return nil end
-  if frame.aeuiCharacterSecondaryLeafV3 then
-    return frame.aeuiCharacterSecondaryLeafV3
+  local texture = frame.aeuiCharacterSecondaryLeafV3
+  if not texture then
+    -- A provider-owned BACKGROUND is above CharacterFrame's shell BORDER but
+    -- below that provider's live labels, bars, buttons and scrollbars.  This
+    -- prevents the shell's wide equipment rails from masking the left/right
+    -- portions of the paper on Reputation, Skills, Honor, PvP and Arena.
+    texture = frame:CreateTexture(nil, "BACKGROUND")
+    frame.aeuiCharacterSecondaryLeafV3 = texture
   end
-
-  -- Each provider owns its own leaf so native page visibility controls it.
-  -- BACKGROUND keeps live labels, bars, buttons and scrollbars above the art.
-  local texture = frame:CreateTexture(nil, "BACKGROUND")
-  frame.aeuiCharacterSecondaryLeafV3 = texture
+  texture:SetDrawLayer("BACKGROUND")
   return texture
 end
 
@@ -451,21 +856,72 @@ local function IsCharacterSubframe(frame)
   return false
 end
 
-local function ApplySecondaryLeaves()
-  local count = 0
-  local applied = {}
+local function SecondaryPageShown()
   for _, name in ipairs(SECONDARY_PAGE_PROVIDER_NAMES) do
     local frame = _G[name]
-    if frame and IsCharacterSubframe(frame) then
+    if frame then
+      if type(frame.IsVisible) == "function" then
+        if frame:IsVisible() then return true end
+      elseif FrameShown(frame) then
+        return true
+      end
+    end
+  end
+  return false
+end
+
+local function ApplySecondaryLeaves()
+  local shared =
+    CharacterFrame and CharacterFrame.aeuiCharacterSecondaryLeafV3
+  if shared then shared:Hide() end
+
+  local count = 0
+  local applied = {}
+  local seen = {}
+  for _, name in ipairs(SECONDARY_PAGE_PROVIDER_NAMES) do
+    local frame = _G[name]
+    if frame and not seen[frame] and IsCharacterSubframe(frame) then
+      seen[frame] = true
       local texture = EnsureSecondaryLeaf(frame)
       if texture then
-        ConfigureTexture(texture, SECONDARY_LEAF)
+        ConfigureTexture(texture, SECONDARY_LEAF, {
+          relativeTo = frame,
+          relativePoint = "TOPLEFT",
+          x = SECONDARY_LEAF.x,
+          y = -SECONDARY_LEAF.y,
+        })
         count = count + 1
         table.insert(applied, name)
       end
     end
   end
   return count, table.concat(applied, "+")
+end
+
+local function GetSecondaryLeafRuntimeState()
+  local total = 0
+  local shown = 0
+  local visible = 0
+  local texturePath = "missing"
+  local seen = {}
+  for _, name in ipairs(SECONDARY_PAGE_PROVIDER_NAMES) do
+    local frame = _G[name]
+    if frame and not seen[frame] then
+      seen[frame] = true
+      local texture = frame.aeuiCharacterSecondaryLeafV3
+      if texture then
+        total = total + 1
+        if texture.IsShown and texture:IsShown() then shown = shown + 1 end
+        if texture.IsVisible and texture:IsVisible() then
+          visible = visible + 1
+        end
+        if texture.GetTexture then
+          texturePath = texture:GetTexture() or texturePath
+        end
+      end
+    end
+  end
+  return total, shown, visible, texturePath
 end
 
 local function FindResistanceIcon(frame)
@@ -863,6 +1319,8 @@ local function CaptureAndHideCharacterTabProvider(frame)
     frame.aeuiCharacterTabRestoreV3 = {
       backdropShown = FrameShown(frame.backdrop),
       backdropBorderShown = FrameShown(frame.backdrop_border),
+      width = frame.GetWidth and frame:GetWidth() or nil,
+      height = frame.GetHeight and frame:GetHeight() or nil,
     }
   end
   if frame.backdrop then frame.backdrop:Hide() end
@@ -879,25 +1337,158 @@ local function RestoreCharacterTabProvider(frame)
   end
   local restore = frame.aeuiCharacterTabRestoreV3
   if not restore then return end
+  if restore.width then frame:SetWidth(restore.width) end
+  if restore.height then frame:SetHeight(restore.height) end
   SetShown(frame.backdrop, restore.backdropShown)
   SetShown(frame.backdrop_border, restore.backdropBorderShown)
   frame.aeuiCharacterTabRestoreV3 = nil
 end
 
+local function LayoutCharacterTabs()
+  local frames = {}
+  local naturalWidths = {}
+  local naturalTotal = 0
+  for index = 1, 5 do
+    local frame = _G["CharacterFrameTab" .. index]
+    if frame and FrameShown(frame) then
+      local textWidth =
+        frame.GetTextWidth and frame:GetTextWidth() or 0
+      local naturalWidth = math.max(
+        CHARACTER_TABS.minWidth,
+        textWidth + CHARACTER_TABS.textPadding
+      )
+      table.insert(frames, frame)
+      table.insert(naturalWidths, naturalWidth)
+      naturalTotal = naturalTotal + naturalWidth
+    end
+  end
+
+  local count = table.getn(frames)
+  if count == 0 then return 0 end
+
+  local rowWidth = CHARACTER_TABS.fallbackRowWidth
+  if
+    CharacterFrame and
+    CharacterFrame.backdrop and
+    CharacterFrame.backdrop.GetWidth
+  then
+    rowWidth = CharacterFrame.backdrop:GetWidth() or rowWidth
+  end
+
+  local rowInset = CHARACTER_TABS.rowInset
+  if frames[1].GetPoint and CharacterFrame and CharacterFrame.backdrop then
+    local _, relativeTo, _, x = frames[1]:GetPoint(1)
+    if relativeTo == CharacterFrame.backdrop and x and x >= 0 then
+      rowInset = x
+    end
+  end
+  rowWidth = rowWidth - rowInset * 2
+
+  local gap = CHARACTER_TABS.gap
+  if count > 1 and frames[2].GetPoint then
+    local _, relativeTo, _, x = frames[2]:GetPoint(1)
+    if relativeTo == frames[1] and x and x >= 0 then
+      gap = x
+    end
+  end
+
+  local contentWidth =
+    rowWidth - gap * (count - 1)
+  local extraPerTab = 0
+  if contentWidth > naturalTotal then
+    extraPerTab = (contentWidth - naturalTotal) / count
+  end
+
+  for index, frame in ipairs(frames) do
+    CaptureAndHideCharacterTabProvider(frame)
+    frame:SetWidth(naturalWidths[index] + extraPerTab)
+    frame:SetHeight(CHARACTER_TABS.height)
+  end
+  return count
+end
+
+local function ResolveSelectedCharacterTabID()
+  -- The actually shown provider is authoritative.  Some Turtle/pfUI paths
+  -- update page visibility and font colors without leaving Button:IsEnabled()
+  -- in a reliable selected state.
+  for index = 1, 5 do
+    for _, providerName in ipairs(
+      CHARACTER_TAB_PAGE_PROVIDERS[index]
+    ) do
+      if FrameShown(_G[providerName]) then
+        return index, "visible-provider"
+      end
+    end
+  end
+
+  local selected =
+    CharacterFrame and tonumber(CharacterFrame.selectedTab) or nil
+  if selected then return selected, "character-selectedTab" end
+
+  if
+    CharacterFrame and
+    type(PanelTemplates_GetSelectedTab) == "function"
+  then
+    local ok, value = pcall(PanelTemplates_GetSelectedTab, CharacterFrame)
+    if ok and tonumber(value) then
+      return tonumber(value), "paneltemplates-selectedTab"
+    end
+  end
+  return nil, "button-enabled-fallback"
+end
+
 local function ResolveCharacterTabState(frame)
-  if frame.IsEnabled then
+  if frame.aeuiCharacterTabMouseDownV3 then
+    return "pressed"
+  end
+
+  local selectedID = ResolveSelectedCharacterTabID()
+  if selectedID and frame.GetID and frame:GetID() == selectedID then
+    return "selected"
+  end
+
+  if not selectedID and frame.IsEnabled then
     local enabled = frame:IsEnabled()
     if not enabled or enabled == 0 then
       return "selected"
     end
   end
-  if frame.aeuiCharacterTabMouseDownV3 then
-    return "pressed"
-  end
+
   if frame.aeuiCharacterTabHoverV3 then
     return "hover"
   end
   return "normal"
+end
+
+local function GetCharacterTabRuntimeState()
+  local selectedID, selectedSource = ResolveSelectedCharacterTabID()
+  local visibleCount = 0
+  local artCount = 0
+  local backdropCount = 0
+  for index = 1, 5 do
+    local frame = _G["CharacterFrameTab" .. index]
+    if frame and FrameShown(frame) then
+      visibleCount = visibleCount + 1
+      local art = frame.aeuiCharacterTabArtV3
+      if
+        art and
+        FrameShown(art.left) and
+        FrameShown(art.center) and
+        FrameShown(art.right)
+      then
+        artCount = artCount + 1
+      end
+      if FrameShown(frame.backdrop) then
+        backdropCount = backdropCount + 1
+      end
+    end
+  end
+  return
+    selectedID or 0,
+    selectedSource,
+    visibleCount,
+    artCount,
+    backdropCount
 end
 
 local function ConfigureCharacterTabPart(
@@ -977,76 +1568,149 @@ local function RefreshCharacterTab(frame)
 end
 
 local function RefreshAllCharacterTabs()
+  if
+    ModuleEnabled() and
+    ScopedOwnershipActive() and
+    TabOwnershipActive()
+  then
+    LayoutCharacterTabs()
+  end
   for index = 1, 5 do
     local frame = _G["CharacterFrameTab" .. index]
     if frame then RefreshCharacterTab(frame) end
   end
 end
 
-local function InstallCharacterTabHooks(frame)
-  if frame.aeuiCharacterTabHooksV3 then return end
-  frame.aeuiCharacterTabHooksV3 = true
+local function QueueCharacterTabRefresh()
+  if
+    not Character.tabHooksReady or
+    not ModuleEnabled() or
+    not ScopedOwnershipActive() or
+    not TabOwnershipActive()
+  then
+    return
+  end
 
-  local previousOnShow = frame:GetScript("OnShow")
-  frame:SetScript("OnShow", function()
-    if previousOnShow then previousOnShow() end
-    RefreshCharacterTab(frame)
+  -- This is a two-frame, one-shot settle pass.  It runs only after a provider
+  -- show/tab transition so late pfUI OnShow width/backdrop writes cannot win;
+  -- it is not a geometry maintenance loop.
+  Character.tabRefreshPasses = 2
+  if not Character.tabRefreshFrame then
+    local settleFrame = CreateFrame("Frame", nil, UIParent)
+    settleFrame:Hide()
+    settleFrame:SetScript("OnUpdate", function()
+      if
+        not Character.tabHooksReady or
+        not ModuleEnabled() or
+        not ScopedOwnershipActive() or
+        not TabOwnershipActive()
+      then
+        Character.tabRefreshPasses = 0
+        settleFrame:Hide()
+        return
+      end
+
+      local passes = Character.tabRefreshPasses or 0
+      if passes <= 0 then
+        settleFrame:Hide()
+        return
+      end
+      Character.tabRefreshPasses = passes - 1
+      RefreshAllCharacterTabs()
+      if Character.tabRefreshPasses <= 0 then
+        settleFrame:Hide()
+      end
+    end)
+    Character.tabRefreshFrame = settleFrame
+  end
+  Character.tabRefreshFrame:Show()
+end
+
+local function RefreshCharacterTabsAfterProviderTransition()
+  if
+    not Character.tabHooksReady or
+    not ModuleEnabled() or
+    not ScopedOwnershipActive() or
+    not TabOwnershipActive()
+  then
+    return
+  end
+
+  RefreshAllCharacterTabs()
+  QueueCharacterTabRefresh()
+end
+
+local function InstallCharacterTabScriptHook(
+  frame,
+  scriptName,
+  callback
+)
+  local registry = frame.aeuiCharacterTabHooksV3
+  if type(registry) ~= "table" then
+    registry = {}
+    frame.aeuiCharacterTabHooksV3 = registry
+  end
+
+  local current = frame:GetScript(scriptName)
+  if registry[scriptName] and current == registry[scriptName] then
+    return
+  end
+
+  -- pfUI SkinTab uses SetScript during its late skin pass.  Re-wrap whatever
+  -- provider script is current instead of trusting a stale boolean sentinel.
+  local previous = current
+  local wrapper = function()
+    if previous then previous() end
+    callback()
+  end
+  registry[scriptName] = wrapper
+  frame:SetScript(scriptName, wrapper)
+end
+
+local function InstallCharacterTabHooks(frame)
+  InstallCharacterTabScriptHook(frame, "OnShow", function()
+    RefreshAllCharacterTabs()
+    QueueCharacterTabRefresh()
   end)
 
-  local previousOnHide = frame:GetScript("OnHide")
-  frame:SetScript("OnHide", function()
-    if previousOnHide then previousOnHide() end
+  InstallCharacterTabScriptHook(frame, "OnHide", function()
     frame.aeuiCharacterTabHoverV3 = nil
     frame.aeuiCharacterTabMouseDownV3 = nil
+    RefreshAllCharacterTabs()
+    QueueCharacterTabRefresh()
   end)
 
-  local previousOnEnter = frame:GetScript("OnEnter")
-  frame:SetScript("OnEnter", function()
-    if previousOnEnter then previousOnEnter() end
+  InstallCharacterTabScriptHook(frame, "OnEnter", function()
     frame.aeuiCharacterTabHoverV3 = true
     RefreshCharacterTab(frame)
   end)
 
-  local previousOnLeave = frame:GetScript("OnLeave")
-  frame:SetScript("OnLeave", function()
-    if previousOnLeave then previousOnLeave() end
+  InstallCharacterTabScriptHook(frame, "OnLeave", function()
     frame.aeuiCharacterTabHoverV3 = nil
     frame.aeuiCharacterTabMouseDownV3 = nil
     RefreshCharacterTab(frame)
   end)
 
-  local previousOnMouseDown = frame:GetScript("OnMouseDown")
-  frame:SetScript("OnMouseDown", function()
-    if previousOnMouseDown then previousOnMouseDown() end
+  InstallCharacterTabScriptHook(frame, "OnMouseDown", function()
     frame.aeuiCharacterTabMouseDownV3 = true
     RefreshCharacterTab(frame)
   end)
 
-  local previousOnMouseUp = frame:GetScript("OnMouseUp")
-  frame:SetScript("OnMouseUp", function()
-    if previousOnMouseUp then previousOnMouseUp() end
+  InstallCharacterTabScriptHook(frame, "OnMouseUp", function()
     frame.aeuiCharacterTabMouseDownV3 = nil
     RefreshCharacterTab(frame)
   end)
 
-  local previousOnClick = frame:GetScript("OnClick")
-  frame:SetScript("OnClick", function()
-    if previousOnClick then previousOnClick() end
+  InstallCharacterTabScriptHook(frame, "OnClick", function()
     frame.aeuiCharacterTabMouseDownV3 = nil
     RefreshAllCharacterTabs()
+    QueueCharacterTabRefresh()
   end)
 
-  local previousOnEnable = frame:GetScript("OnEnable")
-  frame:SetScript("OnEnable", function()
-    if previousOnEnable then previousOnEnable() end
-    RefreshAllCharacterTabs()
-  end)
-
-  local previousOnDisable = frame:GetScript("OnDisable")
-  frame:SetScript("OnDisable", function()
-    if previousOnDisable then previousOnDisable() end
-    RefreshAllCharacterTabs()
-  end)
+  -- Vanilla/Turtle 1.12 Buttons do not expose OnEnable or OnDisable script
+  -- handlers.  Calling GetScript for either aborts the whole tab installation.
+  -- Provider page visibility plus the click/subframe hooks above are the
+  -- authoritative selected-state transitions on this client.
 end
 
 local function ApplyCharacterTabs()
@@ -1060,12 +1724,19 @@ local function ApplyCharacterTabs()
   end
   for _, frame in ipairs(frames) do
     InstallCharacterTabHooks(frame)
-    RefreshCharacterTab(frame)
   end
+  Character.tabHooksReady = true
+  RefreshAllCharacterTabs()
+  QueueCharacterTabRefresh()
   return table.getn(frames)
 end
 
 local function HideCharacterTabs()
+  Character.tabHooksReady = false
+  Character.tabRefreshPasses = 0
+  if Character.tabRefreshFrame then
+    Character.tabRefreshFrame:Hide()
+  end
   for index = 1, 5 do
     RestoreCharacterTabProvider(_G["CharacterFrameTab" .. index])
   end
@@ -1146,25 +1817,31 @@ local function HideArt()
 end
 
 local function HideModelBackground()
-  local texture =
+  local textures =
     PaperDollFrame and PaperDollFrame.aeuiCharacterModelBackgroundV3
-  if texture then texture:Hide() end
+  HideTextureSlices(textures)
 end
 
 local function HideStatsPaper()
-  local texture =
+  local textures =
     PaperDollFrame and PaperDollFrame.aeuiCharacterStatsPaperV3
-  if texture then texture:Hide() end
+  HideTextureSlices(textures)
 end
 
 local function HideEquipmentFooterBackground()
-  local texture =
+  local textures =
     PaperDollFrame and
     PaperDollFrame.aeuiCharacterEquipmentFooterBackgroundV3
-  if texture then texture:Hide() end
+  HideTextureSlices(textures)
 end
 
 local function HideSecondaryLeaves()
+  local shared =
+    CharacterFrame and CharacterFrame.aeuiCharacterSecondaryLeafV3
+  if shared then shared:Hide() end
+
+  -- Provider visibility normally controls these automatically; explicitly
+  -- hide them as well when the Character route is disabled or restored.
   for _, name in ipairs(SECONDARY_PAGE_PROVIDER_NAMES) do
     local frame = _G[name]
     local texture = frame and frame.aeuiCharacterSecondaryLeafV3
@@ -1207,16 +1884,23 @@ function Character:Restore()
     RestoreAmmoSlot()
     HideCharacterTabs()
     RestorePortraits()
+    RestoreCanonicalPaperDollGeometry()
     CharacterFrame.aeuiCharacterRuntimeContract = nil
   end
   self.statsProviderName = nil
+  self.slotInteractionStatus = "inactive"
+  self.slotInteractionError = nil
   self.tabStatus = "inactive"
+  self.tabError = nil
   self.ammoStatus = "inactive"
+  self.ammoError = nil
   self.secondaryLeafStatus = "inactive"
   self.status = "inactive"
+  self.applyStage = "restored"
 end
 
 function Character:ApplyFrame()
+  self.applyStage = "provider-checks"
   if
     not CharacterFrame or
     not PaperDollFrame or
@@ -1251,6 +1935,35 @@ function Character:ApplyFrame()
     return false
   end
 
+  self.applyStage = "canonical-paperdoll-geometry"
+  if not ApplyCanonicalPaperDollGeometry() then
+    self:Restore()
+    self.applyStage = "canonical-paperdoll-geometry-failed"
+    self.status = "paperdoll-provider-missing"
+    return false
+  end
+
+  -- Secondary pages are independent of the paper-doll slot treatment.  Apply
+  -- each provider's leaf before the equipment interaction pass so a provider-
+  -- specific button API failure cannot leave every secondary page on pfUI's
+  -- flat fallback backdrop.
+  self.applyStage = "secondary-leaf"
+  if SecondaryLeafOwnershipActive() then
+    local leafCount, providerNames = ApplySecondaryLeaves()
+    if leafCount > 0 then
+      self.secondaryLeafStatus =
+        tostring(leafCount) ..
+        "-provider-background-leaves-applied/" .. providerNames
+    else
+      HideSecondaryLeaves()
+      self.secondaryLeafStatus = "provider-missing-fallback"
+    end
+  else
+    HideSecondaryLeaves()
+    self.secondaryLeafStatus = "ownership-route-disabled"
+  end
+
+  self.applyStage = "shell-art"
   local art = EnsureArt()
   if not art then
     self:Restore()
@@ -1261,19 +1974,21 @@ function Character:ApplyFrame()
   for key, definition in pairs(ART) do
     ConfigureTexture(art[key], definition)
   end
+  self.applyStage = "model-background"
   local modelBackground = EnsureModelBackground()
   if not modelBackground then
     self:Restore()
     self.status = "model-background-missing"
     return false
   end
-  ConfigureTexture(modelBackground, MODEL_BACKGROUND, {
-    relativeTo = CharacterModelFrame,
+  ConfigureHorizontalTextureSlices(modelBackground, MODEL_BACKGROUND, {
+    relativeTo = PaperDollFrame,
     relativePoint = "TOPLEFT",
-    x = 0,
-    y = 0,
+    x = MODEL_BACKGROUND.x,
+    y = -MODEL_BACKGROUND.y,
   })
 
+  self.applyStage = "stats-provider"
   local statsProvider, statsProviderName = ResolveStatsProvider()
   if not statsProvider then
     self:Restore()
@@ -1282,36 +1997,39 @@ function Character:ApplyFrame()
   end
   self.statsProviderName = statsProviderName
 
+  self.applyStage = "equipment-footer"
   local equipmentFooterBackground = EnsureEquipmentFooterBackground()
   if not equipmentFooterBackground then
     self:Restore()
     self.status = "equipment-footer-background-missing"
     return false
   end
-  ConfigureTexture(
+  ConfigureHorizontalTextureSlices(
     equipmentFooterBackground,
     EQUIPMENT_FOOTER_BACKGROUND,
     {
-      relativeTo = statsProvider,
-      relativePoint = "BOTTOMLEFT",
-      x = -2,
-      y = 0,
+      relativeTo = PaperDollFrame,
+      relativePoint = "TOPLEFT",
+      x = EQUIPMENT_FOOTER_BACKGROUND.x,
+      y = -EQUIPMENT_FOOTER_BACKGROUND.y,
     }
   )
 
+  self.applyStage = "stats-paper"
   local statsPaper = EnsureStatsPaper()
   if not statsPaper then
     self:Restore()
     self.status = "stats-paper-missing"
     return false
   end
-  ConfigureTexture(statsPaper, STATS_PAPER, {
-    relativeTo = statsProvider,
+  ConfigureVerticalTextureSlices(statsPaper, STATS_PAPER, {
+    relativeTo = PaperDollFrame,
     relativePoint = "TOPLEFT",
-    x = 0,
-    y = 0,
+    x = STATS_PAPER.x,
+    y = -STATS_PAPER.y,
   })
 
+  self.applyStage = "resistance-wells"
   local resistanceWells = EnsureResistanceWells()
   if not resistanceWells then
     self:Restore()
@@ -1328,108 +2046,188 @@ function Character:ApplyFrame()
     ConfigureResistanceWell(resistanceWells[index], frame, definition)
   end
 
+  self.applyStage = "slot-bases"
   local slotCount = ApplySlotBases()
   if slotCount ~= 19 then
     self:Restore()
     self.status = "equipment-slot-provider-missing"
     return false
   end
-  local slotInteractionCount = ApplySlotInteractions()
-  if slotInteractionCount ~= 19 then
-    self:Restore()
-    self.status = "equipment-slot-state-provider-missing"
-    return false
+  self.applyStage = "slot-interactions"
+  local interactionOK, slotInteractionCount = pcall(ApplySlotInteractions)
+  if interactionOK and slotInteractionCount == 19 then
+    self.slotInteractionStatus = "19-provider-states-applied"
+    self.slotInteractionError = nil
+  else
+    pcall(HideSlotInteractions)
+    self.slotInteractionStatus = "provider-state-fallback"
+    self.slotInteractionError =
+      interactionOK and "provider-missing" or tostring(slotInteractionCount)
   end
+  self.applyStage = "character-tabs"
   if TabOwnershipActive() then
-    local tabCount = ApplyCharacterTabs()
-    if tabCount == 5 then
+    local tabOK, tabCount = pcall(ApplyCharacterTabs)
+    if tabOK and tabCount == 5 then
       self.tabStatus = "5-provider-tabs-applied"
+      self.tabError = nil
     else
-      HideCharacterTabs()
+      pcall(HideCharacterTabs)
       self.tabStatus = "provider-missing-fallback"
+      self.tabError = tabOK and "provider-missing" or tostring(tabCount)
     end
   else
     HideCharacterTabs()
     self.tabStatus = "ownership-route-disabled"
+    self.tabError = nil
   end
+  self.applyStage = "ammo-slot"
   if AmmoOwnershipActive() then
-    if ConfigureAmmoSlot() then
+    local ammoOK, ammoApplied = pcall(ConfigureAmmoSlot)
+    if ammoOK and ammoApplied then
       self.ammoStatus = "provider-ammo-applied"
+      self.ammoError = nil
     else
-      RestoreAmmoSlot()
+      pcall(RestoreAmmoSlot)
       self.ammoStatus = "provider-missing-fallback"
+      self.ammoError =
+        ammoOK and "provider-missing" or tostring(ammoApplied)
     end
   else
     RestoreAmmoSlot()
     self.ammoStatus = "ownership-route-disabled"
+    self.ammoError = nil
   end
-  if SecondaryLeafOwnershipActive() then
-    local leafCount, providerNames = ApplySecondaryLeaves()
-    if leafCount > 0 then
-      self.secondaryLeafStatus =
-        tostring(leafCount) .. "-provider-leaves-applied/" .. providerNames
-    else
-      HideSecondaryLeaves()
-      self.secondaryLeafStatus = "provider-missing-fallback"
-    end
-  else
-    HideSecondaryLeaves()
-    self.secondaryLeafStatus = "ownership-route-disabled"
-  end
+  self.applyStage = "portraits"
   CaptureAndHidePortraits()
+
+  -- Finish after every provider-owned apply stage.  pfUI may have written its
+  -- tab width/backdrop during the same show transition, so the character tabs
+  -- must be the final owner to converge before the finite settle pass runs.
+  if
+    self.tabHooksReady and
+    self.tabStatus == "5-provider-tabs-applied"
+  then
+    RefreshCharacterTabsAfterProviderTransition()
+  end
 
   CharacterFrame.aeuiCharacterRuntimeContract = self.runtimeContract
   self.status =
-    "char-v3-provider-aligned-layers-secondary-leaf-and-slot-states-applied"
+    "char-v3-canonical-geometry-and-provider-layers-applied"
+  self.applyStage = "complete"
   return true
 end
 
 function Character:InstallHooks()
-  if not CharacterFrame or CharacterFrame.aeuiCharacterShowHooked then
-    return
-  end
-  CharacterFrame.aeuiCharacterShowHooked = true
-  local previous = CharacterFrame:GetScript("OnShow")
-  CharacterFrame:SetScript("OnShow", function()
-    if previous then previous() end
-    if ModuleEnabled() then
-      addon:ScheduleRefresh(0)
+  if not CharacterFrame then return end
+
+  local currentOnShow = CharacterFrame:GetScript("OnShow")
+  if currentOnShow ~= self.characterFrameOnShowHookV3 then
+    local previousOnShow = currentOnShow
+    local wrapper = function()
+      if previousOnShow then previousOnShow() end
+      if ModuleEnabled() then
+        addon:ScheduleRefresh(0)
+        RefreshCharacterTabsAfterProviderTransition()
+      end
     end
-  end)
+    self.characterFrameOnShowHookV3 = wrapper
+    CharacterFrame:SetScript("OnShow", wrapper)
+  end
+
+  if
+    not self.tabShowSubFrameHooked and
+    type(CharacterFrame_ShowSubFrame) == "function" and
+    type(hooksecurefunc) == "function"
+  then
+    hooksecurefunc("CharacterFrame_ShowSubFrame", function()
+      RefreshCharacterTabsAfterProviderTransition()
+    end)
+    self.tabShowSubFrameHooked = true
+  end
+
+  if
+    not self.tabPanelSetHooked and
+    type(PanelTemplates_SetTab) == "function" and
+    type(hooksecurefunc) == "function"
+  then
+    hooksecurefunc("PanelTemplates_SetTab", function(panel)
+      if panel == CharacterFrame then
+        RefreshCharacterTabsAfterProviderTransition()
+      end
+    end)
+    self.tabPanelSetHooked = true
+  end
 end
 
 function Character:GetRuntimeStatus()
+  local applyFailure =
+    addon.moduleFailures and addon.moduleFailures["Character:Apply"]
+  local leafTotal, leafShown, leafVisible, leafTexture =
+    GetSecondaryLeafRuntimeState()
+  local
+    tabSelectedID,
+    tabSelectedSource,
+    tabVisibleCount,
+    tabArtCount,
+    tabBackdropCount = GetCharacterTabRuntimeState()
   return
-    "shell=" .. tostring(self.status or "unapplied") ..
-    ", provider-geometry=384x512" ..
-    ", model-background=233x224@65,78" ..
-    ", equipment-footer-background=233x72@65,369/native-crop" ..
-    ", stats-paper=230x78/provider=" ..
+    "apply-stage=" .. tostring(self.applyStage or "unknown") ..
+    ", apply-error=" .. tostring(applyFailure or "none") ..
+    ", shell=" .. tostring(self.status or "unapplied") ..
+    ", provider-geometry=384x512/canonical-paperdoll" ..
+    ", model-background=243x227@69,75/3-slice/provider=233x224@65,78" ..
+    ", equipment-footer-background=243x75@69,369/3-slice-native-crop" ..
+    ", stats-paper=230x85@76,291/3-slice/provider=" ..
     tostring(self.statsProviderName or "unresolved") ..
+    "/frame=230x78" ..
     ", resistance-wells=5x32x29/provider-anchored" ..
+    ", equipment-rails=37x37@left20/right327" ..
     ", equipment-slot-base=19x37x37/atlas-v3" ..
-    ", equipment-slot-states=19xhover/pressed/disabled/atlas-v3" ..
+    ", equipment-slot-states=" ..
+    tostring(self.slotInteractionStatus or "unresolved") ..
+    "/error=" .. tostring(self.slotInteractionError or "none") ..
     ", character-tabs=" .. tostring(self.tabStatus or "unresolved") ..
-    "/3-slice/20-ui-high/dynamic-width" ..
+    "/error=" .. tostring(self.tabError or "none") ..
+    "/3-slice/28-ui-high/adaptive-visible-row/min64/text-padding32" ..
+    "/selected=" .. tostring(tabSelectedID) ..
+    "/selected-source=" .. tostring(tabSelectedSource) ..
+    "/visible=" .. tostring(tabVisibleCount) ..
+    "/art=" .. tostring(tabArtCount) ..
+    "/pfui-backdrops=" .. tostring(tabBackdropCount) ..
+    "/settle=" .. tostring(self.tabRefreshPasses or 0) ..
     ", ammo-slot=" .. tostring(self.ammoStatus or "unresolved") ..
+    "/error=" .. tostring(self.ammoError or "none") ..
     "/27x27/21x21-safe/atlas-v3" ..
     ", secondary-leaf=" ..
     tostring(self.secondaryLeafStatus or "unresolved") ..
-    "/301x375/2x" ..
+    "/301x375/2x/host=provider-background" ..
+    "/page-visible=" .. tostring(SecondaryPageShown() and 1 or 0) ..
+    "/leaf-total=" .. tostring(leafTotal) ..
+    "/leaf-shown=" .. tostring(leafShown) ..
+    "/leaf-visible=" .. tostring(leafVisible) ..
+    "/leaf-texture=" .. tostring(leafTexture) ..
     ", provider-dynamic-content=live" ..
-    ", texel-density=2x/logical-geometry-unchanged" ..
+    ", texel-density=2x/provider-geometry-unchanged" ..
     ", top-left-portrait=hidden"
 end
 
 function Character:Initialize()
   self.statsProviderName = nil
+  self.slotInteractionStatus = "unapplied"
+  self.slotInteractionError = nil
   self.tabStatus = "unapplied"
+  self.tabError = nil
+  self.tabHooksReady = false
+  self.tabRefreshPasses = 0
   self.ammoStatus = "unapplied"
+  self.ammoError = nil
   self.secondaryLeafStatus = "unapplied"
   self.status = "unapplied"
+  self.applyStage = "initialized"
 end
 
 function Character:Apply()
+  self.applyStage = "apply-entered"
   self:InstallHooks()
   if not ModuleEnabled() then
     self:Restore()
