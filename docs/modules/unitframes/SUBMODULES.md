@@ -1,6 +1,7 @@
 # Unit Frames 子模块与 pfUI 对齐
 
-本模块严格对应 `addon/pfUI/api/unitframes.lua` 创建的真实对象。当前运行时接管
+本模块严格对应 `addon/pfUI/api/unitframes.lua` 创建的真实 UnitFrame，以及
+`addon/pfUI/modules/nameplates.lua` 创建的世界姓名板。当前运行时接管登记过的
 静态媒体及其挂载，并通过 `UF.PORTRAIT.DISABLE` 关闭所有 pfUI UnitFrame 动态
 头像呈现；不改变 Frame 锚点、尺寸、事件、点击、单位数据或状态逻辑。头像合同
 只写入下文列出的精确配置值，原值保存在 AEUI SavedVariables 中并可完整回退；
@@ -8,7 +9,7 @@
 
 ## 主单位框与资源条批次
 
-Unit Frames runtime `1.7` 会把全部 13 组真实配置强制为 `portrait = off`。下列逻辑尺寸来自
+Unit Frames runtime `1.9` 会把全部 13 组真实配置强制为 `portrait = off`。下列逻辑尺寸来自
 `addon/pfUI/env/profiles.lua` 与 `pfUI.uf:UpdateFrameSize()`；外壳只在真实 Frame
 外增加不参与命中的透明装饰边，不改变 provider 几何。
 
@@ -22,6 +23,25 @@ Unit Frames runtime `1.7` 会把全部 13 组真实配置强制为 `portrait = o
 | `UF.BAR.POWER.FILL` | 每个对象的 `f.power.bar` | provider 裁切宽度 | `64×16` 可横向拉伸纹理 | 无色灰阶窄颜料纹；继续由 pfUI 按资源类型着色 |
 | `UF.STATE.HOVER.RIM` | `f.hoverglow` | 外壳边缘 | 由每张接受外壳 Alpha 确定性派生 | 暖白短边响应；不改变命中盒 |
 | `UF.STATE.AGGRO.RIM` | `f.glow` | 外壳边缘 | 由每张接受外壳 Alpha 确定性派生 | 暗红／橙褐短边响应；继续使用 pfUI 状态逻辑 |
+
+## 世界姓名板选中目标提示
+
+`addon/pfUI/modules/nameplates.lua` 为每个 Blizzard 世界姓名板创建
+`parent.nameplate`，并在中心更新循环中把可靠的当前目标判定写入
+`nameplate.istarget`。AEUI 不重新扫描名称或猜测 Alpha，只通过精确 route
+`unitframes.nameplate-target-cue` 读取这一 provider 状态。
+
+| 组件 ID | pfUI 对象 | 展示尺寸 | 状态／所有权 |
+|---|---|---:|---|
+| `UF.NAMEPLATE.TARGET.CUE` | `parent.nameplate` 上的 AEUI 局部装饰 Frame | `20×24 UI`；`40×48` sampled region | 仅 `nameplate.istarget` 为真且姓名可见、非图腾时显示；目标识别、姓名板生命周期与点击继续归 pfUI |
+| provider 团队标记 | `nameplate.raidicon` | pfUI 配置尺寸 | 仍由 pfUI／游戏设置图标和显隐；只把 Parent 从可隐藏的 `nameplate.health` 改为 `nameplate`，不调用 `SetRaidTarget` |
+
+个人目标标记默认以底边锚在姓名上方 `4 UI`；若 provider 团队标记已显示且其
+配置位置包含 `TOP`，则改锚在团队标记上方 `4 UI`。锚点只在这两种堆叠状态
+切换时更新，不运行维护循环持续改写。血条关闭时姓名、个人目标标记和团队
+标记仍可独立显示；个人标记不覆盖姓名或血条，也不改变姓名板 Frame、命中区、
+缩放、层级判定或 SavedVariables。模块／route 禁用时只隐藏并卸载个人标记
+纹理，完整 pfUI 姓名板与团队标记继续运行。
 
 ## Raid 团队框架批次
 
@@ -221,8 +241,10 @@ Frame 中心；透明外扩不能参与 Frame 宽高、点击区域或移动边�
 
 ## 接入边界
 
-Unit Frames P5 只允许在 `addon/AzerothExpeditionUI` 的作用域 adapter 或
-`addon/pfUI/api/unitframes.lua` 的精确挂点内实现。不得修改 Frame 的 Point、
-Width、Height、事件、点击、Secure 模板或状态语义；配置写入只允许上述 13 组
-`portrait` 与 `raidmarkershowportrait`，并必须可逆。媒体或 route 缺失时局部回退
-pfUI 原始 portrait／backdrop／bar／glow。
+Unit Frames P5 只允许在 `addon/AzerothExpeditionUI` 的作用域 adapter、
+`addon/pfUI/api/unitframes.lua` 的精确挂点，或
+`addon/pfUI/modules/nameplates.lua` 的团队标记 Parent 修正内实现。不得修改
+provider Frame 的 Point、Width、Height、事件、点击、Secure 模板或状态语义；
+配置写入只允许上述 13 组 `portrait` 与 `raidmarkershowportrait`，并必须可逆。
+媒体或 route 缺失时局部回退 pfUI 原始 portrait／backdrop／bar／glow，姓名板
+只撤下 AEUI 个人目标标记。

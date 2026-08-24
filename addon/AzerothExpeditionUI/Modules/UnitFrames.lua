@@ -1,10 +1,23 @@
 local addon = AzerothExpeditionUI
 local UnitFrames = {}
-UnitFrames.runtimeContract = "1.8"
+UnitFrames.runtimeContract = "1.9"
 
 local MEDIA = addon.media.root .. "UnitFrames\\"
 local HEALTH_TEXTURE = MEDIA .. "UnitFrameHealthFillV1"
 local POWER_TEXTURE = MEDIA .. "UnitFramePowerFillV1"
+
+local NAMEPLATE_TARGET_CUE = {
+  texture = MEDIA .. "NameplateTargetCueV1",
+  route = "unitframes.nameplate-target-cue",
+  width = 20,
+  height = 24,
+  u1 = 12 / 64,
+  u2 = 52 / 64,
+  v1 = 8 / 64,
+  v2 = 56 / 64,
+  nameGap = 4,
+  raidGap = 4,
+}
 
 local PLAYER_V5 = {
   base = MEDIA .. "UnitFramePlayerShellV5",
@@ -225,6 +238,30 @@ local function SetShown(frame, shown)
   elseif not shown and type(frame.Hide) == "function" then
     frame:Hide()
   end
+end
+
+local function ForEachWorldNameplate(callback)
+  if not WorldFrame or type(callback) ~= "function" then return 0 end
+
+  local count = 0
+  local children = { WorldFrame:GetChildren() }
+  for _, parent in pairs(children) do
+    local nameplate = parent and parent.nameplate
+    if nameplate then
+      callback(nameplate)
+      count = count + 1
+    end
+  end
+  return count
+end
+
+local function RaidIconUsesTopPosition()
+  local config = pfUI_config and pfUI_config.nameplates
+  local position = config and config.raidiconpos
+  return
+    type(position) == "string" and
+    string.find(string.upper(position), "TOP") and
+    true or false
 end
 
 local function CaptureRaidBackdropState(frame)
@@ -817,6 +854,163 @@ function UnitFrames:IsPortraitConfigurationEnabled()
   return PortraitRouteOwned()
 end
 
+function UnitFrames:IsNameplateTargetCueEnabled()
+  return
+    ModuleEnabled() and
+    RouteOwned(NAMEPLATE_TARGET_CUE.route)
+end
+
+function UnitFrames:EnsureNameplateTargetCue(nameplate)
+  if not nameplate then return nil end
+
+  local holder = nameplate.aeuiTargetCueFrame
+  if not holder then
+    holder = CreateFrame("Frame", nil, nameplate)
+    holder:SetWidth(NAMEPLATE_TARGET_CUE.width)
+    holder:SetHeight(NAMEPLATE_TARGET_CUE.height)
+    holder:SetFrameLevel(nameplate:GetFrameLevel() + 9)
+    holder:EnableMouse(false)
+
+    holder.texture = holder:CreateTexture(nil, "OVERLAY")
+    holder.texture:SetAllPoints(holder)
+    nameplate.aeuiTargetCueFrame = holder
+  end
+
+  holder.texture:SetTexture(NAMEPLATE_TARGET_CUE.texture)
+  holder.texture:SetTexCoord(
+    NAMEPLATE_TARGET_CUE.u1,
+    NAMEPLATE_TARGET_CUE.u2,
+    NAMEPLATE_TARGET_CUE.v1,
+    NAMEPLATE_TARGET_CUE.v2
+  )
+  holder.aeuiTargetCueContract = self.runtimeContract
+  return holder
+end
+
+function UnitFrames:LayoutNameplateTargetCue(nameplate, holder)
+  if not nameplate or not holder or not nameplate.name then return false end
+
+  local raidIcon = nameplate.raidicon
+  local stackAboveRaid =
+    raidIcon and
+    FrameShown(raidIcon) and
+    RaidIconUsesTopPosition()
+  local anchorKey = stackAboveRaid and "raid" or "name"
+
+  if holder.aeuiTargetCueAnchor ~= anchorKey then
+    holder:ClearAllPoints()
+    if stackAboveRaid then
+      holder:SetPoint(
+        "BOTTOM",
+        raidIcon,
+        "TOP",
+        0,
+        NAMEPLATE_TARGET_CUE.raidGap
+      )
+    else
+      holder:SetPoint(
+        "BOTTOM",
+        nameplate.name,
+        "TOP",
+        0,
+        NAMEPLATE_TARGET_CUE.nameGap
+      )
+    end
+    holder.aeuiTargetCueAnchor = anchorKey
+  end
+  return true
+end
+
+function UnitFrames:RestoreNameplateTargetCue(nameplate)
+  local holder = nameplate and nameplate.aeuiTargetCueFrame
+  if not holder then return false end
+
+  if holder.aeuiTargetCueVisible ~= false then
+    holder:Hide()
+    holder.aeuiTargetCueVisible = false
+  end
+  holder.texture:SetTexture(nil)
+  holder.aeuiTargetCueContract = nil
+  return true
+end
+
+function UnitFrames:RefreshNameplateTargetCue(nameplate)
+  if not nameplate then return false end
+  if not self.nameplateTargetCueActive then
+    return self:RestoreNameplateTargetCue(nameplate)
+  end
+
+  local holder = self:EnsureNameplateTargetCue(nameplate)
+  if not holder then return false end
+  self:LayoutNameplateTargetCue(nameplate, holder)
+
+  local shown =
+    nameplate.istarget and
+    FrameShown(nameplate.name) and
+    not FrameShown(nameplate.totem) and
+    true or false
+  if holder.aeuiTargetCueVisible ~= shown then
+    SetShown(holder, shown)
+    holder.aeuiTargetCueVisible = shown
+  end
+  return true
+end
+
+function UnitFrames:InstallNameplateTargetCueHooks()
+  local provider = pfUI and pfUI.nameplates
+  if not provider then return false end
+  if provider.aeuiTargetCueHooksInstalled then return true end
+  if
+    type(provider.OnCreate) ~= "function" or
+    type(provider.OnConfigChange) ~= "function" or
+    type(provider.OnUpdate) ~= "function"
+  then
+    return false
+  end
+
+  local originalOnCreate = provider.OnCreate
+  provider.OnCreate = function(frame)
+    local result = originalOnCreate(frame)
+    UnitFrames:RefreshNameplateTargetCue(frame and frame.nameplate)
+    return result
+  end
+
+  local originalOnConfigChange = provider.OnConfigChange
+  provider.OnConfigChange = function(frame)
+    local result = originalOnConfigChange(frame)
+    local nameplate = frame and frame.nameplate
+    local holder = nameplate and nameplate.aeuiTargetCueFrame
+    if holder then holder.aeuiTargetCueAnchor = nil end
+    UnitFrames:RefreshNameplateTargetCue(nameplate)
+    return result
+  end
+
+  local originalOnUpdate = provider.OnUpdate
+  provider.OnUpdate = function(frame, state)
+    local result = originalOnUpdate(frame, state)
+    UnitFrames:RefreshNameplateTargetCue(frame and frame.nameplate)
+    return result
+  end
+
+  provider.aeuiTargetCueHooksInstalled = true
+  provider.aeuiTargetCueHookContract = self.runtimeContract
+  return true
+end
+
+function UnitFrames:ApplyNameplateTargetCue()
+  self.nameplateTargetCueActive = self:IsNameplateTargetCueEnabled()
+  local providerReady = self:InstallNameplateTargetCueHooks()
+  local applied = 0
+
+  ForEachWorldNameplate(function(nameplate)
+    if self:RefreshNameplateTargetCue(nameplate) then
+      applied = applied + 1
+    end
+  end)
+  self.appliedNameplateTargetCueCount = applied
+  return providerReady
+end
+
 function UnitFrames:IsPrimaryEnabled()
   return
     ModuleEnabled() and
@@ -850,6 +1044,7 @@ function UnitFrames:IsEnabled()
     self:IsPlayerShellV5Enabled() or
     self:IsPrimaryShellEnabled() or
     self:IsRaidEnabled() or
+    self:IsNameplateTargetCueEnabled() or
     self:IsPortraitConfigurationEnabled()
 end
 
@@ -1182,6 +1377,8 @@ function UnitFrames:Apply()
   local playerShellV5Applied = 0
   local raidApplied = 0
 
+  self:ApplyNameplateTargetCue()
+
   if portraitsEnabled then
     self:ApplyPortraitConfiguration()
   else
@@ -1256,6 +1453,9 @@ function UnitFrames:GetRuntimeStatus()
     ", player-shell-v5=" ..
       tostring(self.appliedPlayerShellV5Count or 0) .. "/1" ..
     ", raid-shells=" .. tostring(self.appliedRaidFrameCount or 0) .. "/40" ..
+    ", nameplate-target-cue=" ..
+      tostring(self.nameplateTargetCueActive) ..
+      "/" .. tostring(self.appliedNameplateTargetCueCount or 0) ..
     ", portraits=" .. tostring(self.disabledPortraitConfigCount or 0) ..
       "/" .. tostring(PORTRAIT_CONFIG_COUNT) ..
     ", marker-trackers=" ..
@@ -1266,8 +1466,8 @@ function UnitFrames:GetRuntimeStatus()
     ", focus-slices=24/64/24-10/27/6" ..
     ", raid-slices=6/62/6" ..
     ", texture-containers=pot-1.12" ..
-    ", scope=all-pfui-unitframe-portraits,player,target,targettarget,focus,pfRaid1..40" ..
-    ", fallback=pfui-configured-portraits-bars-primary-chrome-and-raid-backdrops"
+    ", scope=all-pfui-unitframe-portraits,player,target,targettarget,focus,pfRaid1..40,pfUI.nameplates" ..
+    ", fallback=pfui-configured-portraits-bars-primary-chrome-raid-backdrops-and-no-personal-target-cue"
 end
 
 addon:RegisterModule("UnitFrames", UnitFrames)

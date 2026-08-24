@@ -1,6 +1,6 @@
 # Unit Frames 主模块美术基线 Prompt
 
-状态：`direction-locked / UF-PLAYER-V5 runtime-integrated / P5`。用户于
+状态：`direction-locked / UF-PLAYER-V5 + NP-TARGET-CUE-V1 runtime-integrated / P5`。用户于
 `2026-08-11` 确认本 Prompt 所定义的“粗犷行军身份牌”
 及 V3 完整外壳、Health／Power 层级与四资源经典乘色方向；该确认只锁定物件
 隐喻、材质层级、轮廓、配色、重量与整合关系，不接受模拟像素或任何正式
@@ -57,5 +57,7 @@ V4 source `256086c1…f81` 作为暂存像素，但 route 暂停，后续必须�
 ## 当前结构边界
 
 当前 profile 的 Player／Target／TargetTarget／Focus 均为无头像横向条结构。
-本轮只重绘四个外壳、共享生命／能量填充纹和由外壳确定性派生的状态边缘；
-不改变远端设备已经完成的任何位置或布局代码。
+本轮只重绘四个外壳、共享生命／能量填充纹、由外壳确定性派生的状态边缘，以及
+已登记的世界姓名板个人选中目标指针；不改变远端设备已经完成的任何位置或
+布局代码。姓名板指针的 exact 像素与小尺寸规则只以下级基线为准，不扩展为
+通用团队标记语言。

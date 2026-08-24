@@ -42,7 +42,7 @@ local defaults = {
   },
   unitframes = {
     enabled = true,
-    artVersion = 6,
+    artVersion = 7,
   },
   map = {
     enabled = true,
@@ -135,9 +135,9 @@ function addon:Initialize()
   end
   if (
     AzerothExpeditionUIDB.unitframes and
-    (tonumber(AzerothExpeditionUIDB.unitframes.artVersion) or 0) < 6
+    (tonumber(AzerothExpeditionUIDB.unitframes.artVersion) or 0) < 7
   ) then
-    AzerothExpeditionUIDB.unitframes.artVersion = 6
+    AzerothExpeditionUIDB.unitframes.artVersion = 7
   end
   if (
     AzerothExpeditionUIDB.map and

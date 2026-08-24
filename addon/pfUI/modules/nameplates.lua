@@ -777,7 +777,10 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     nameplate.level = nameplate:CreateFontString(nil, "OVERLAY")
     nameplate.level:SetPoint("RIGHT", nameplate.health, "LEFT", -3, 0)
 
-    nameplate.raidicon:SetParent(nameplate.health)
+    -- Keep the provider-owned raid marker independent from the optional
+    -- health bar. Its anchor may still follow the health geometry, but hiding
+    -- that StatusBar must not hide the marker itself.
+    nameplate.raidicon:SetParent(nameplate)
     nameplate.raidicon:SetDrawLayer("OVERLAY")
     nameplate.raidicon:SetTexture(pfUI.media["img:raidicons"])
 

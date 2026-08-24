@@ -1,0 +1,113 @@
+{
+  "schema": "aeui-unitframes-nameplate-target-cue-v1-runtime-manifest-v1",
+  "schema_version": 1,
+  "module": "unitframes",
+  "component": "UF.NAMEPLATE.TARGET.CUE",
+  "status": "runtime-exported-addon-integrated",
+  "phase": "P5",
+  "runtime_contract": "1.9",
+  "source_manifest": "assets/source/unitframes/nameplate-target-cue-v1/NP-TARGET-CUE-V1_SourceManifest_v1.json",
+  "route": "unitframes.nameplate-target-cue",
+  "runtime": {
+    "file": "addon/AzerothExpeditionUI/Media/UnitFrames/NameplateTargetCueV1.tga",
+    "sha256": "eedc2f34fd940319c3c33e8282a4a5ee1c1e0c38a72a5c1de4b37d1d059436e5",
+    "logical_size": [
+      20,
+      24
+    ],
+    "sampled_size": [
+      40,
+      48
+    ],
+    "art_sample_size": [
+      40,
+      47
+    ],
+    "texels_per_ui": 2,
+    "texture_size": [
+      64,
+      64
+    ],
+    "sample_box_exclusive": [
+      12,
+      8,
+      52,
+      56
+    ],
+    "art_box_exclusive": [
+      12,
+      9,
+      52,
+      56
+    ],
+    "content_uv": [
+      0.1875,
+      0.8125,
+      0.125,
+      0.875
+    ],
+    "tga_header": {
+      "image_type": 2,
+      "width": 64,
+      "height": 64,
+      "bits_per_pixel": 32,
+      "descriptor": 8,
+      "top_origin": false
+    },
+    "sampled_metrics": {
+      "size": [
+        40,
+        48
+      ],
+      "mode": "RGBA",
+      "pixel_sha256": "d52c1671417e293ed71d28a28d36b5a0175a7eb46949135abdfd69753d5468dc",
+      "visible_bbox_exclusive": [
+        0,
+        1,
+        40,
+        48
+      ],
+      "transparent_pixels": 725,
+      "partially_transparent_pixels": 390,
+      "opaque_pixels": 805,
+      "transparent_rgb_nonzero_pixels": 0
+    },
+    "texture_metrics": {
+      "size": [
+        64,
+        64
+      ],
+      "mode": "RGBA",
+      "pixel_sha256": "8575c692714162c5033d03573429038bea012c189ac521e766e9b8364459977b",
+      "visible_bbox_exclusive": [
+        12,
+        9,
+        52,
+        56
+      ],
+      "transparent_pixels": 2901,
+      "partially_transparent_pixels": 390,
+      "opaque_pixels": 805,
+      "transparent_rgb_nonzero_pixels": 0
+    },
+    "source_to_art_sample": [
+      [
+        774,
+        909
+      ],
+      [
+        40,
+        47
+      ]
+    ]
+  },
+  "addon_contract": {
+    "provider": "pfUI.nameplates",
+    "state": "provider nameplate.istarget",
+    "display": "20x24 UI above the visible name or above a shown top-positioned provider raid icon",
+    "raid_icon": "provider-owned; parented to the nameplate so health visibility cannot hide it",
+    "health_hidden": "personal target cue and provider raid icon remain independently visible",
+    "dynamic_owner": "pfUI retains plate discovery, target detection, text, bars, raid marks, clicks, events and SavedVariables",
+    "fallback": "hide only the AEUI personal target cue; retain the complete pfUI nameplate"
+  }
+}

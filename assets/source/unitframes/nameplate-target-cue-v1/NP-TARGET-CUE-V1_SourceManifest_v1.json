@@ -1,0 +1,85 @@
+{
+  "schema": "aeui-unitframes-nameplate-target-cue-v1-source-manifest-v1",
+  "schema_version": 1,
+  "module": "unitframes",
+  "batch": "NP-TARGET-CUE-V1",
+  "component": "UF.NAMEPLATE.TARGET.CUE",
+  "status": "accepted-source",
+  "phase": "P4",
+  "accepted_on": "2026-08-24",
+  "user_acceptance": {
+    "statement": "用户在候选 3 展示后回复‘ok’，接受该候选 exact visible pixels，并授权正式接入。",
+    "accepts_exact_visible_pixels": true,
+    "source_promotion_authorized": true,
+    "runtime_export_authorized": true,
+    "addon_integration_authorized": true
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "production_attempt": 3,
+    "actual_imagegen_calls": 3,
+    "raw_output_sha256": "daf9d495b26c23cfff135c7eac94188b67012ed56d1253d77b7543a9cd2a94a5",
+    "accepted_candidate_sha256": "229e0d0a7718c1ef082d18c1ef391964721d1e9a3ac8a8d9ddf0a936cadb084c",
+    "candidate_alpha_crop_exclusive": [
+      240,
+      199,
+      1014,
+      1108
+    ],
+    "promotion_postprocess": "crop transparent margin and clear RGB only where Alpha is zero",
+    "python_generated_visual_pixels": false
+  },
+  "accepted_assets": {
+    "source": {
+      "file": "assets/source/unitframes/nameplate-target-cue-v1/NameplateTargetCue_SourceV1.png",
+      "sha256": "348593fec2f1c42f7bff2c3c7de88981eb0fca9f48ce35abf03417d49c447cfb",
+      "metrics": {
+        "size": [
+          774,
+          909
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "b8cb75721f29bfed91de7931ffd2b9f28c59f7b04f202cafe8a2a8271814f569",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          774,
+          909
+        ],
+        "transparent_pixels": 315155,
+        "partially_transparent_pixels": 2713,
+        "opaque_pixels": 385698,
+        "transparent_rgb_nonzero_pixels": 0
+      }
+    }
+  },
+  "geometry": {
+    "provider": "pfUI.nameplates world nameplate",
+    "logical_size": [
+      20,
+      24
+    ],
+    "sampled_size": [
+      40,
+      48
+    ],
+    "art_sample_size": [
+      40,
+      47
+    ],
+    "texture_container": [
+      64,
+      64
+    ],
+    "texels_per_ui": 2,
+    "source_aspect_ratio": 0.851485,
+    "provider_geometry_changed": false
+  },
+  "visual_authority": {
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/unitframes/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/unitframes/SUBMODULE_ART_BASELINES.md",
+    "submodule_prompt_heading": "UF.NAMEPLATE.TARGET.CUE",
+    "component_contract": "docs/modules/unitframes/SUBMODULES.md"
+  }
+}

@@ -83,6 +83,22 @@ accepted 像素 source：Health SHA-256 `8d19ffe9…08e1f`，Power SHA-256
 只在两三段高磨损边出现低 Alpha 暖白响应；Aggro 只在两端和一小段下缘出现
 暗红／橙褐响应。不得形成整框连续光圈，派生纹理不得覆盖动态内容或接管鼠标。
 
+## `UF.NAMEPLATE.TARGET.CUE`
+
+这是世界姓名板上方的个人“当前选中目标”指针，不是团队标记。使用一块短宽、
+正面朝向玩家、向下指的远征队指示牌：主体是大面积浅赭黄／羊皮金哑光信号面，
+外围保留足以在亮地形上辨认的墨褐厚边，上方仅有一条深胡桃旧皮夹带。只用
+三组宽块明暗和一个左上暖亮点；在 `20×24 UI` 下必须先读成明确指向，再读出
+材料。禁止阵营染色、外发光、团队图标轮廓、符文、宝石、徽章、现代 HUD 细线、
+文字、血条或动态信息。
+
+用户已接受 `NP-TARGET-CUE-V1` 候选 3 的 exact visible pixels。accepted source
+为 `assets/source/unitframes/nameplate-target-cue-v1/NameplateTargetCue_SourceV1.png`
+（`774×909 RGBA`，SHA-256 `348593fe…47cfb`）。确定性导出只允许等比缩为
+`40×47`，在 `40×48` sampled region 顶部留 `1px` 透明行，再置于 `64×64`
+TGA 的 `(12,8)-(52,56)`；Lua 以 UV `(12/64,52/64,8/64,56/64)` 映射回
+`20×24 UI`。不得重绘 accepted 像素、插值旧 1× 资产或仿造 Blizzard 团队标记。
+
 ## `UF.RAID.MEMBER.SHELL.A-D`
 
 把主模块“远征队行军身份牌”转译为 40 个高密度点名名条：每个成员只用一圈

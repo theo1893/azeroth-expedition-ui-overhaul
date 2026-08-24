@@ -5,7 +5,9 @@
 - Bars、Raid 与动态头像配置合同继续运行。Player 由精确 route
   `unitframes.player-shell-v5` 接入 accepted V5 完整单图外壳；Target、
   TargetTarget、Focus 的旧 `unitframes.primary-shell` route 仍撤下并回退 pfUI。
-- Unit Frames contract：`1.8`；SavedVariables `artVersion = 6`。
+- 世界姓名板新增精确 route `unitframes.nameplate-target-cue`：直接复用 pfUI
+  `nameplate.istarget` 显示个人头顶指针；provider 团队标记与血条显隐解耦。
+- Unit Frames contract：`1.9`；SavedVariables `artVersion = 7`。
 - 本模块只处理已登记的视觉、动态头像开关和相关回退；位置、点击、事件、数值、
   颜色逻辑与未登记 Frame 继续由 pfUI 持有。
 - Player V5 accepted logical runtime 为 `254×77 UI`，现从 accepted source 直接
@@ -21,6 +23,7 @@
 | Health／Power fill | `P5` | accepted 灰阶 donor 以 2× runtime 接入 Player、Target、TargetTarget、Focus 与 Raid，由 provider 继续乘经典 Health／Mana／Rage／Energy／Focus 色 |
 | Raid A2 外壳 | `P5` | A–D 四种 `148×74` sampled texture 以原 `74×37 UI` 显示并接入 `pfRaid1..40`；标准宽度完整纹理，其他宽度用同图三切片，高度失配局部回退 |
 | Player V5 完整外壳 | `P5` | attempt 3 exact source 直接导出为 2×；单张 `508×154` sampled region 通过精确 UV 覆盖原 `254×77 UI` 外壳与 `240×65` provider，pfUI 保留 Bars、文字、颜色、Aura、图标、Hover／Aggro、点击与事件 |
+| 世界姓名板个人目标指针 | `P5` | `NP-TARGET-CUE-V1` 候选 3 exact visible pixels 已接受；`40×48` sampled region 显示为 `20×24 UI`，读取 pfUI `nameplate.istarget`，顶部团队标记存在时自动向上堆叠 |
 | Player／Target V4 外壳 | `P4 / paused` | 旧 source／runtime 仅保留历史回退；九切片 adapter route 暂停，不再应用于 Player |
 | TargetTarget A2 独立外壳 | `P4 / paused` | accepted base／rim 与四态 TGA 保留；九切片 adapter 保留但 route 暂停 |
 | Focus A2 独立外壳 | `P4 / paused` | accepted base／rim 与四态 TGA 保留；九切片 adapter 保留但 route 暂停 |
@@ -36,6 +39,10 @@
 - Player V5 source／runtime master／manifest：
   `assets/source/unitframes/player-v5/`；runtime：
   `Media/UnitFrames/UnitFramePlayerShellV5.tga`。
+- 姓名板目标指针 source／manifest：
+  `assets/source/unitframes/nameplate-target-cue-v1/`；runtime：
+  `Media/UnitFrames/NameplateTargetCueV1.tga`，`64×64` 容器内读取
+  `(12,8)-(52,56)` 的 2× sampled region。
 - Player／Target V4 source／runtime manifest：
   `assets/source/unitframes/primary-v4/`；runtime：
   `Media/UnitFrames/UnitFramePlayer*V1.tga`、
@@ -47,27 +54,24 @@
 
 ## 下一次实机验证
 
-1. 完整重启客户端后确认 Player、Target、Focus、Party、Raid、Pet、各级 Target、
-   fallback 与两套 tracker 都没有 2D／3D 动态头像。
-2. 在 `/pfui` 应用一次配置，确认头像不会被 provider 重新启用；随后关闭／重开
-   `/aeui unitframes`，确认原 portrait 值与布局能恢复。
-3. 验证 2× Health／Power TGA 方向、低血量裁切、Mana／Rage／Energy／Focus 乘色、
-   UI Scale 和模块禁用回退。
-4. 验证 2× 40 人 Raid A–D 分配、标准／变宽三切片、Aura、Raid Icon、距离、离线、
-   复活层序和高度失配回退。
-5. 在当前 Player `240×60` 配置（外层 provider `240×65`）检查 2× V5 外壳层序、
-   Health／Power 嵌入、两块维修片、动态硬净空、Aura、UI Scale `0.80`、
-   `/pfui` 应用配置后的自动重挂，以及 `/aeui unitframes` 禁用回退。
-6. 相邻回归确认 Target、TargetTarget 与 Focus 的暂停外壳没有被本批密度迁移
-   重新挂载，三者继续显示 pfUI 回退且文字／Bars／Aura／点击均正常。
+1. 在敌对单位密集场景中连续切换目标，确认只有当前选中姓名板显示浅金指针，
+   指针始终在姓名上方且不放大、不覆盖任何血条。
+2. 关闭 pfUI 血条显示，给目标设置团队标记，确认姓名、个人指针和团队标记仍
+   同时可见；团队标记配置在顶部时，个人指针稳定堆在其上方。
+3. 关闭／重开 `/aeui unitframes`，确认只撤下／恢复个人指针，pfUI 姓名板、
+   团队标记、点击和目标切换不受影响。
+4. 相邻回归验证 2× Bars、40 人 Raid 和 Player V5；并确认 Target、TargetTarget、
+   Focus 暂停外壳仍回退 pfUI。
 
 ## 下一门禁
 
-等待 Turtle WoW 实机确认 Player V5 完整单图的层序、Health／Power 嵌入、
-Aura／图标净空、UI Scale、配置重挂和禁用回退；Target、TargetTarget、Focus
-仍等待各自新修复。静态通过不能标记 `P6`。
+等待 Turtle WoW 实机确认姓名板个人指针在团战、隐藏血条、顶部团队标记、
+模块禁用四种状态下的可见性与层序，并继续确认 Player V5 的层序、Bars、Aura、
+UI Scale 和回退。Target、TargetTarget、Focus 仍等待各自新修复；静态通过
+不能标记 `P6`。
 
 ## 回退
 
 模块、媒体、精确 route 或 Player canonical provider 尺寸不满足时，只回退对应
-pfUI Frame。角色面板、观察和试衣间 3D 模型不属于本模块，始终保持原样。
+pfUI Frame；姓名板 route 缺失时只隐藏个人目标指针，provider 姓名板和团队
+标记继续运行。角色面板、观察和试衣间 3D 模型不属于本模块，始终保持原样。

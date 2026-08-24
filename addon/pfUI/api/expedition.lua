@@ -9,7 +9,7 @@ local STATUS_TEXTURE = "Interface\\TargetingFrame\\UI-StatusBar"
 local PFUI_STATUS_TEXTURE = pfUI.media["img:bar"]
 
 pfUI.expedition = {
-  version = 15,
+  version = 16,
   ownership = "scoped-v1",
 
   -- The main pfUI chat module stays loaded because AEUI uses its frames,
@@ -27,14 +27,16 @@ pfUI.expedition = {
     ["Quest Log"] = "quests",
   },
 
-  -- Unit Frames remain fully provided by pfUI. AEUI owns only these concrete
-  -- visual donors, raid-member shells and dynamic portrait presentation;
-  -- frame construction, updates, roster assignment and interaction do not
-  -- yield to another module.
+  -- Unit Frames and nameplates remain fully provided by pfUI. AEUI owns only
+  -- these concrete visual donors, raid-member shells, dynamic portrait
+  -- presentation and the local selected-nameplate cue; frame construction,
+  -- updates, target detection, roster assignment and interaction do not yield
+  -- to another module.
   component_owners = {
     ["unitframes.health-fill"] = "unitframes",
     ["unitframes.power-fill"] = "unitframes",
     ["unitframes.player-shell-v5"] = "unitframes",
+    ["unitframes.nameplate-target-cue"] = "unitframes",
     ["unitframes.raid-shell"] = "unitframes",
     ["unitframes.raid-health-fill"] = "unitframes",
     ["unitframes.raid-power-fill"] = "unitframes",

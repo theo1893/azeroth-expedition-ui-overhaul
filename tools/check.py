@@ -45,6 +45,7 @@ MODULE_FILES = {
     "unitframes": (
         "addon/AzerothExpeditionUI/Modules/UnitFrames.lua",
         "addon/pfUI/api/unitframes.lua",
+        "addon/pfUI/modules/nameplates.lua",
         "addon/pfUI/modules/raid.lua",
     ),
     "map": (

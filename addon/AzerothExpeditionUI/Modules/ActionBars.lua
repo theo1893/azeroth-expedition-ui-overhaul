@@ -14,10 +14,10 @@ ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
 ActionBars.fieldKitRuntimeContract = "2.9"
-ActionBars.focusLayoutRuntimeContract = "2.9"
-ActionBars.focusLayoutVersion = 17
+ActionBars.focusLayoutRuntimeContract = "3.0"
+ActionBars.focusLayoutVersion = 18
 ActionBars.focusLayoutBackupVersion = 1
-ActionBars.focusUnitDefaultVersion = 1
+ActionBars.focusUnitDefaultVersion = 2
 ActionBars.focusUnitDefaultBackupVersion = 1
 ActionBars.sideBarGroupRuntimeContract = "1.0"
 ActionBars.sideBarGroupLayoutVersion = 1
@@ -32,10 +32,10 @@ ActionBars.comfortUIScaleValue = 0.71111111111111
 -- Deck geometry. The provider-owned DoiteDPS two-row union keeps its vertical
 -- safe lane and shifts left as a whole to clear the central combat view,
 -- uses the client system face for the three local unit frames, and implements
--- the accepted right-side cluster as one reversible mover. Runtime v2.9 keeps
--- those contracts, compacts the primary health regions, lowers Player and
--- Target without moving the cast and Swing readout stack, and applies that
--- unit-frame contract once per character with a reversible profile backup.
+-- the accepted right-side cluster as one reversible mover. Runtime v3.0 keeps
+-- the Aura icons at their readable size, expands each primary unit frame to
+-- one 16-icon row, grows both primary Aura wings away from the centre, and
+-- lowers the pair to close the space above the unchanged readout stack.
 ActionBars.focusUnitScale = 0.8
 ActionBars.focusTargetTargetScale = 0.68
 ActionBars.focusReadoutScale = 1
@@ -46,7 +46,9 @@ ActionBars.focusStanceIconSize = "25"
 ActionBars.combatDeckClassDockXOffset = -128
 ActionBars.combatDeckStanceGap = 0
 ActionBars.focusDoiteScale = 0.82
-ActionBars.focusUnitWidth = 240
+-- At the current pfUI border contract each 23 UI Aura advances by 30 UI.
+-- Sixteen cells therefore occupy the complete 480 UI primary-frame width.
+ActionBars.focusUnitWidth = 480
 ActionBars.focusUnitHeight = 48
 ActionBars.focusTargetTargetWidth = 240
 ActionBars.focusTargetTargetHeight = 60
@@ -55,7 +57,9 @@ ActionBars.focusUnitFontSize = 18
 ActionBars.focusUnitFontStyle = "OUTLINE"
 ActionBars.focusAuraSize = 23
 ActionBars.focusTargetTargetAuraSize = 23
-ActionBars.focusAuraPerRow = 8
+ActionBars.focusAuraPerRow = 16
+ActionBars.focusTargetTargetAuraPerRow = 8
+ActionBars.focusPrimaryGap = 64
 ActionBars.focusReadoutWidth = 260
 ActionBars.focusReadoutHeight = 12
 ActionBars.focusTargetTargetGap = 8
@@ -141,11 +145,14 @@ local autoBarCategoryDescriptionFallbacks = {
 -- coordinate spaces in this client.
 ActionBars.combatDeckX = 0
 ActionBars.combatDeckY = 175
-ActionBars.focusPlayerX = -160
-ActionBars.focusTargetX = 105
-ActionBars.focusTargetTargetX = 393
-ActionBars.focusUnitY = 480
-ActionBars.focusTargetTargetY = 570
+-- 480 local UI at scale 0.8 is 384 game UI. Centres at +/-224 keep a
+-- compact 64 UI sight lane between the two primary frames. Two outward Aura
+-- rows consume 48 game UI below y=408, leaving 32 UI above the player castbar.
+ActionBars.focusPlayerX = -224
+ActionBars.focusTargetX = 224
+ActionBars.focusTargetTargetX = 512
+ActionBars.focusUnitY = 408
+ActionBars.focusTargetTargetY = 408
 ActionBars.focusCastPlayerX = 0
 ActionBars.focusCastTargetX = 0
 ActionBars.focusCastY = 316
@@ -1694,7 +1701,8 @@ local function ShouldMigrateCombatFocusLayout()
   if not database or
     (version ~= 7 and version ~= 8 and version ~= 9 and version ~= 10 and
       version ~= 11 and version ~= 12 and version ~= 13 and
-      version ~= 14 and version ~= 15 and version ~= 16) or
+      version ~= 14 and version ~= 15 and version ~= 16 and
+      version ~= 17) or
     type(projection) ~= "table" or
     projection.coordinateSpace ~= ActionBars.focusCoordinateSpace or
     not pfUI_config
@@ -1714,11 +1722,12 @@ local function ShouldMigrateCombatFocusLayout()
   local targetCast = castbars.target or {}
   local stanceConfig = bars.bar11 or {}
   local oldDoiteX =
-    (version == 15 or version == 16) and 650 or
+    (version == 15 or version == 16 or version == 17) and 650 or
     ((version == 9 or version == 10 or version == 11 or version == 12 or
       version == 13 or version == 14) and 850 or 1012)
   local oldDoiteY = version == 8 and -780 or
-    ((version == 13 or version == 14 or version == 15 or version == 16) and
+    ((version == 13 or version == 14 or version == 15 or version == 16 or
+      version == 17) and
       -615 or -647)
   local doiteMatches = type(DoiteDPSDB) ~= "table" or
     (DoiteDPSDB.point == "TOPLEFT" and
@@ -1841,6 +1850,76 @@ local function ShouldMigrateCombatFocusLayout()
       tostring(config.customfont_size) == "18" and
       FontPathMatches(config.customfont_name, GetSystemUnitFont()) and
       tostring(config.customfont_style or "OUTLINE") == "OUTLINE"
+  end
+
+  -- ApplyFocusUnitDefaults runs before this migration and upgrades the exact
+  -- v17 primary frames to the new outward 16x2 contract. Match that upgraded
+  -- unit subset together with the untouched v17 readout/deck signature, then
+  -- persist the complete layout as v18.
+  if version == 17 then
+    return FocusPositionMatches(
+        "pfPlayer", "BOTTOM", ActionBars.focusPlayerX,
+        ActionBars.focusUnitY, ActionBars.focusUnitScale
+      ) and FocusPositionMatches(
+        "pfTarget", "BOTTOM", ActionBars.focusTargetX,
+        ActionBars.focusUnitY, ActionBars.focusUnitScale
+      ) and FocusPositionMatches(
+        "pfTargetTarget", "BOTTOM", ActionBars.focusTargetTargetX,
+        ActionBars.focusTargetTargetY,
+        ActionBars.focusTargetTargetScale
+      ) and FocusPositionMatches(
+        "pfPlayerCastbar", "BOTTOM", 0, 316, 1
+      ) and FocusPositionMatches(
+        "pfTargetCastbar", "BOTTOM", 0, 300, 1
+      ) and FocusPositionMatches(
+        "pfSwingTimerMainhand", "BOTTOM", 0, 284, 1
+      ) and FocusPositionMatches(
+        "pfSwingTimerRanged", "BOTTOM", 0, 284, 1
+      ) and FocusPositionMatches(
+        "pfActionBarStances", "BOTTOM", 0, 255, 1
+      ) and stanceConfig.icon_size == ActionBars.focusStanceIconSize and
+      player.width == tostring(ActionBars.focusUnitWidth) and
+      player.height == tostring(ActionBars.focusUnitHeight) and
+      player.buffs == "TOPRIGHT" and
+      player.debuffs == "BOTTOMRIGHT" and
+      player.buffsize == tostring(ActionBars.focusAuraSize) and
+      player.debuffsize == tostring(ActionBars.focusAuraSize) and
+      player.buffperrow == tostring(ActionBars.focusAuraPerRow) and
+      player.debuffperrow == tostring(ActionBars.focusAuraPerRow) and
+      AuraOffsetsMatch(player) and SystemUnitFontMatches(player) and
+      target.width == tostring(ActionBars.focusUnitWidth) and
+      target.height == tostring(ActionBars.focusUnitHeight) and
+      target.buffs == "TOPLEFT" and
+      target.debuffs == "BOTTOMLEFT" and
+      target.buffsize == tostring(ActionBars.focusAuraSize) and
+      target.debuffsize == tostring(ActionBars.focusAuraSize) and
+      target.buffperrow == tostring(ActionBars.focusAuraPerRow) and
+      target.debuffperrow == tostring(ActionBars.focusAuraPerRow) and
+      AuraOffsetsMatch(target) and SystemUnitFontMatches(target) and
+      targetTarget.width ==
+        tostring(ActionBars.focusTargetTargetWidth) and
+      targetTarget.height ==
+        tostring(ActionBars.focusTargetTargetHeight) and
+      targetTarget.buffs == "TOPLEFT" and
+      targetTarget.debuffs == "BOTTOMLEFT" and
+      targetTarget.buffsize ==
+        tostring(ActionBars.focusTargetTargetAuraSize) and
+      targetTarget.debuffsize ==
+        tostring(ActionBars.focusTargetTargetAuraSize) and
+      targetTarget.buffperrow ==
+        tostring(ActionBars.focusTargetTargetAuraPerRow) and
+      targetTarget.debuffperrow ==
+        tostring(ActionBars.focusTargetTargetAuraPerRow) and
+      AuraOffsetsMatch(targetTarget) and
+      SystemUnitFontMatches(targetTarget) and
+      playerCast.width == tostring(ActionBars.focusReadoutWidth) and
+      playerCast.height == tostring(ActionBars.focusReadoutHeight) and
+      targetCast.width == tostring(ActionBars.focusReadoutWidth) and
+      targetCast.height == tostring(ActionBars.focusReadoutHeight) and
+      unitframes.swingtimerwidth ==
+        tostring(ActionBars.focusReadoutWidth) and
+      unitframes.swingtimerheight ==
+        tostring(ActionBars.focusReadoutHeight)
   end
 
   if version == 12 or version == 13 or version == 14 or version == 15 or
@@ -2105,7 +2184,7 @@ local function CombatFocusLayoutSaved()
     ) and stanceConfig.icon_size == ActionBars.focusStanceIconSize and
     player.width == tostring(ActionBars.focusUnitWidth) and
     player.height == tostring(ActionBars.focusUnitHeight) and
-    player.buffs == "TOPLEFT" and player.debuffs == "BOTTOMLEFT" and
+    player.buffs == "TOPRIGHT" and player.debuffs == "BOTTOMRIGHT" and
     player.buffsize == tostring(ActionBars.focusAuraSize) and
     player.debuffsize == tostring(ActionBars.focusAuraSize) and
     player.buffoffx == "0" and player.buffoffy == "0" and
@@ -2115,7 +2194,7 @@ local function CombatFocusLayoutSaved()
     UnitFontConfigured(player) and
     target.width == tostring(ActionBars.focusUnitWidth) and
     target.height == tostring(ActionBars.focusUnitHeight) and
-    target.buffs == "TOPRIGHT" and target.debuffs == "BOTTOMRIGHT" and
+    target.buffs == "TOPLEFT" and target.debuffs == "BOTTOMLEFT" and
     target.buffsize == tostring(ActionBars.focusAuraSize) and
     target.debuffsize == tostring(ActionBars.focusAuraSize) and
     target.buffoffx == "0" and target.buffoffy == "0" and
@@ -2125,8 +2204,8 @@ local function CombatFocusLayoutSaved()
     UnitFontConfigured(target) and
     targetTarget.width == tostring(ActionBars.focusTargetTargetWidth) and
     targetTarget.height == tostring(ActionBars.focusTargetTargetHeight) and
-    targetTarget.buffs == "TOPRIGHT" and
-    targetTarget.debuffs == "BOTTOMRIGHT" and
+    targetTarget.buffs == "TOPLEFT" and
+    targetTarget.debuffs == "BOTTOMLEFT" and
     targetTarget.buffsize ==
       tostring(ActionBars.focusTargetTargetAuraSize) and
     targetTarget.debuffsize ==
@@ -2134,8 +2213,10 @@ local function CombatFocusLayoutSaved()
     targetTarget.buffoffx == "0" and targetTarget.buffoffy == "0" and
     targetTarget.debuffoffx == "0" and
     targetTarget.debuffoffy == "0" and
-    targetTarget.buffperrow == tostring(ActionBars.focusAuraPerRow) and
-    targetTarget.debuffperrow == tostring(ActionBars.focusAuraPerRow) and
+    targetTarget.buffperrow ==
+      tostring(ActionBars.focusTargetTargetAuraPerRow) and
+    targetTarget.debuffperrow ==
+      tostring(ActionBars.focusTargetTargetAuraPerRow) and
     UnitFontConfigured(targetTarget) and
     playerCast.width == tostring(ActionBars.focusReadoutWidth) and
     playerCast.height == tostring(ActionBars.focusReadoutHeight) and
@@ -2174,7 +2255,8 @@ local function ApplyComfortUIScaleValue()
 end
 
 local function ConfigureFocusUnitFrame(
-  key, name, x, y, scale, width, height, buffs, debuffs, auraSize
+  key, name, x, y, scale, width, height, buffs, debuffs, auraSize,
+  auraPerRow
 )
   local unitframes = pfUI_config and pfUI_config.unitframes
   local config = unitframes and unitframes[key]
@@ -2193,8 +2275,8 @@ local function ConfigureFocusUnitFrame(
   config.buffoffy = "0"
   config.debuffoffx = "0"
   config.debuffoffy = "0"
-  config.buffperrow = tostring(ActionBars.focusAuraPerRow)
-  config.debuffperrow = tostring(ActionBars.focusAuraPerRow)
+  config.buffperrow = tostring(auraPerRow)
+  config.debuffperrow = tostring(auraPerRow)
   config.customfont = "1"
   config.customfont_name = GetSystemUnitFont()
   config.customfont_size = tostring(ActionBars.focusUnitFontSize)
@@ -2248,14 +2330,16 @@ function ActionBars:ApplyFocusUnitDefaults()
   local saved, applied = ConfigureFocusUnitFrame(
     "player", "pfPlayer", layout.playerX, layout.playerY,
     self.focusUnitScale, self.focusUnitWidth, self.focusUnitHeight,
-    "TOPLEFT", "BOTTOMLEFT", self.focusAuraSize
+    "TOPRIGHT", "BOTTOMRIGHT", self.focusAuraSize,
+    self.focusAuraPerRow
   )
   configured = configured + (saved and 1 or 0)
   live = live + (applied and 1 or 0)
   saved, applied = ConfigureFocusUnitFrame(
     "target", "pfTarget", layout.targetX, layout.targetY,
     self.focusUnitScale, self.focusUnitWidth, self.focusUnitHeight,
-    "TOPRIGHT", "BOTTOMRIGHT", self.focusAuraSize
+    "TOPLEFT", "BOTTOMLEFT", self.focusAuraSize,
+    self.focusAuraPerRow
   )
   configured = configured + (saved and 1 or 0)
   live = live + (applied and 1 or 0)
@@ -2264,7 +2348,8 @@ function ActionBars:ApplyFocusUnitDefaults()
     layout.targetTargetX, layout.targetTargetY,
     self.focusTargetTargetScale,
     self.focusTargetTargetWidth, self.focusTargetTargetHeight,
-    "TOPRIGHT", "BOTTOMRIGHT", self.focusTargetTargetAuraSize
+    "TOPLEFT", "BOTTOMLEFT", self.focusTargetTargetAuraSize,
+    self.focusTargetTargetAuraPerRow
   )
   configured = configured + (saved and 1 or 0)
   live = live + (applied and 1 or 0)
@@ -2323,30 +2408,6 @@ local function CopiedPrimaryUnitLayoutNeedsCompaction()
     tostring(targetCast.height) == "12"
 end
 
-local function CompactCopiedPrimaryUnitFrame(key, name, x, y)
-  local unitframes = pfUI_config and pfUI_config.unitframes
-  local config = unitframes and unitframes[key]
-  if type(config) ~= "table" then
-    return false, false
-  end
-
-  config.height = tostring(ActionBars.focusUnitHeight)
-  local saved = SavePfUIPosition(
-    name, "BOTTOM", x, y, ActionBars.focusUnitScale
-  )
-  local frame = GetFocusUnitFrame(key) or GetGlobal(name)
-  if frame and type(frame.UpdateFrameSize) == "function" then
-    pcall(frame.UpdateFrameSize, frame)
-  end
-  if frame and type(frame.UpdateConfig) == "function" then
-    pcall(frame.UpdateConfig, frame)
-  end
-  local applied = ApplyFramePosition(
-    frame, "BOTTOM", x, y, ActionBars.focusUnitScale
-  )
-  return saved, applied
-end
-
 function ActionBars:MigrateCopiedPrimaryUnitLayout()
   if not CopiedPrimaryUnitLayoutNeedsCompaction() then
     return false
@@ -2355,30 +2416,36 @@ function ActionBars:MigrateCopiedPrimaryUnitLayout()
   local layout = GetNativeFocusLayout()
   local configured = 0
   local live = 0
-  local saved, applied = CompactCopiedPrimaryUnitFrame(
-    "player", "pfPlayer", layout.playerX, layout.playerY
+  local saved, applied = ConfigureFocusUnitFrame(
+    "player", "pfPlayer", layout.playerX, layout.playerY,
+    self.focusUnitScale, self.focusUnitWidth, self.focusUnitHeight,
+    "TOPRIGHT", "BOTTOMRIGHT", self.focusAuraSize,
+    self.focusAuraPerRow
   )
   configured = configured + (saved and 1 or 0)
   live = live + (applied and 1 or 0)
-  saved, applied = CompactCopiedPrimaryUnitFrame(
-    "target", "pfTarget", layout.targetX, layout.targetY
+  saved, applied = ConfigureFocusUnitFrame(
+    "target", "pfTarget", layout.targetX, layout.targetY,
+    self.focusUnitScale, self.focusUnitWidth, self.focusUnitHeight,
+    "TOPLEFT", "BOTTOMLEFT", self.focusAuraSize,
+    self.focusAuraPerRow
   )
   configured = configured + (saved and 1 or 0)
   live = live + (applied and 1 or 0)
-  saved = SavePfUIPosition(
-    "pfTargetTarget", "BOTTOM", layout.targetTargetX,
-    layout.targetTargetY, ActionBars.focusTargetTargetScale
-  )
-  applied = ApplyFramePosition(
-    GetFocusUnitFrame("ttarget"), "BOTTOM", layout.targetTargetX,
-    layout.targetTargetY, ActionBars.focusTargetTargetScale
+  saved, applied = ConfigureFocusUnitFrame(
+    "ttarget", "pfTargetTarget",
+    layout.targetTargetX, layout.targetTargetY,
+    self.focusTargetTargetScale,
+    self.focusTargetTargetWidth, self.focusTargetTargetHeight,
+    "TOPLEFT", "BOTTOMLEFT", self.focusTargetTargetAuraSize,
+    self.focusTargetTargetAuraPerRow
   )
   configured = configured + (saved and 1 or 0)
   live = live + (applied and 1 or 0)
 
   self.focusLayoutConfigured = configured
   self.focusLayoutLive = live
-  self.focusLayoutStatus = "primary-units-compacted"
+  self.focusLayoutStatus = "primary-units-outward-16x2"
   return true
 end
 
@@ -2676,14 +2743,16 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
   local saved, applied = ConfigureFocusUnitFrame(
     "player", "pfPlayer", layout.playerX, layout.playerY,
     self.focusUnitScale, self.focusUnitWidth, self.focusUnitHeight,
-    "TOPLEFT", "BOTTOMLEFT", self.focusAuraSize
+    "TOPRIGHT", "BOTTOMRIGHT", self.focusAuraSize,
+    self.focusAuraPerRow
   )
   configured = configured + (saved and 1 or 0)
   live = live + (applied and 1 or 0)
   saved, applied = ConfigureFocusUnitFrame(
     "target", "pfTarget", layout.targetX, layout.targetY,
     self.focusUnitScale, self.focusUnitWidth, self.focusUnitHeight,
-    "TOPRIGHT", "BOTTOMRIGHT", self.focusAuraSize
+    "TOPLEFT", "BOTTOMLEFT", self.focusAuraSize,
+    self.focusAuraPerRow
   )
   configured = configured + (saved and 1 or 0)
   live = live + (applied and 1 or 0)
@@ -2692,7 +2761,8 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
     layout.targetTargetX, layout.targetTargetY,
     self.focusTargetTargetScale,
     self.focusTargetTargetWidth, self.focusTargetTargetHeight,
-    "TOPRIGHT", "BOTTOMRIGHT", self.focusTargetTargetAuraSize
+    "TOPLEFT", "BOTTOMLEFT", self.focusTargetTargetAuraSize,
+    self.focusTargetTargetAuraPerRow
   )
   configured = configured + (saved and 1 or 0)
   live = live + (applied and 1 or 0)
@@ -6446,6 +6516,14 @@ function ActionBars:GetRuntimeStatus()
     ",focus-layout-unit-size=" ..
       tostring(self.focusUnitWidth) .. "x" ..
       tostring(self.focusUnitHeight) ..
+    ",focus-layout-unit-y=" .. tostring(self.focusUnitY) ..
+    ",focus-layout-primary-gap=" .. tostring(self.focusPrimaryGap) ..
+    ",focus-layout-aura-size=" .. tostring(self.focusAuraSize) ..
+    ",focus-layout-aura-per-row=" ..
+      tostring(self.focusAuraPerRow) ..
+    ",focus-layout-targettarget-aura-per-row=" ..
+      tostring(self.focusTargetTargetAuraPerRow) ..
+    ",focus-layout-aura-growth=player-left+target-right" ..
     ",focus-layout-unit-font-size=" ..
       tostring(self.focusUnitFontSize) ..
     ",focus-layout-unit-font=" ..
