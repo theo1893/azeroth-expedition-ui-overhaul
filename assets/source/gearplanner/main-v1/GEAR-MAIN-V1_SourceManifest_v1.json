@@ -1,0 +1,119 @@
+{
+  "schema": "aeui-gearplanner-main-v1-source-manifest-v1",
+  "schema_version": 1,
+  "module": "gearplanner",
+  "batch": "GEAR-MAIN-V1 final",
+  "component": "GEAR.FRAME / GEAR.PROFILE / GEAR.SLOT / GEAR.TOTALS",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "accepted_on": "2026-08-24",
+  "user_acceptance": {
+    "statement": "确认",
+    "accepts_exact_pixels": true,
+    "source_promotion_authorized": true,
+    "runtime_export_authorized": true,
+    "addon_integration_authorized": true
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "actual_imagegen_calls": 2,
+    "first_donor_sha256": "7280e1cd3a6430e446460956088d0c2cd90ee0c89ae00dd6a84128f9105119c2",
+    "ff00ff_repair_sha256": "14bcace78e70d178669931394cbb5986427f1dedee84796ab96d8a418cad9e2d",
+    "accepted_alpha_sha256": "90f60cc9220e413fabb37a9aaea6c83d7e488924f7a9c0ffb88853bc269f7938",
+    "postprocess": "authorized checkerboard-to-#FF00FF edit, deterministic border auto-key #fa05f9, soft matte 12/220, despill, transparent RGB clear, direct component crops, LANCZOS reduction, and POT atlas packing",
+    "python_generated_visual_pixels": false,
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/gearplanner/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/gearplanner/SUBMODULE_ART_BASELINES.md"
+  },
+  "accepted_assets": {
+    "source": {
+      "file": "assets/source/gearplanner/main-v1/GearPlannerMainDonor_SourceV1.png",
+      "sha256": "90f60cc9220e413fabb37a9aaea6c83d7e488924f7a9c0ffb88853bc269f7938",
+      "metrics": {
+        "size": [1262, 1246],
+        "mode": "RGBA",
+        "pixel_sha256": "fff80f3414dd55d59605c2e449407a01f4ffde81e21fd54f6028fc3fc5b9d683",
+        "visible_bbox_exclusive": [41, 29, 1220, 1208],
+        "transparent_pixels": 199134,
+        "partially_transparent_pixels": 6776,
+        "opaque_pixels": 1366542,
+        "transparent_rgb_nonzero_pixels": 0,
+        "visible_magenta_fringe_pixels": 0,
+        "corner_alpha": [0, 0, 0, 0]
+      }
+    },
+    "runtime_masters": {
+      "frame": {
+        "file": "assets/source/gearplanner/main-v1/GearPlannerFrameAtlas_RuntimeMasterV1.png",
+        "sha256": "e672ef8252de650cded49c7130c0f48a47919fd1a93c7b0173a9db92a430b799",
+        "size": [256, 256],
+        "pixel_sha256": "0309a0a2373cb28529cf217f93a21e97d468cd2c995d21006e4edbc80f9285b6"
+      },
+      "fill": {
+        "file": "assets/source/gearplanner/main-v1/GearPlannerLeatherFill_RuntimeMasterV1.png",
+        "sha256": "71db84029323932dc3bf87ce779d81c64a3d4966eae19637af25a491d4c263c1",
+        "size": [128, 128],
+        "pixel_sha256": "aca1be4e840f931be10e687eb07e8696a089a3495b0ea9b958397c31dee84a98"
+      },
+      "decor": {
+        "file": "assets/source/gearplanner/main-v1/GearPlannerDecorAtlas_RuntimeMasterV1.png",
+        "sha256": "68e5b13d8e77b9a00ae5122fea0804d2f59034b0010892ed933ff358942d406d",
+        "size": [1024, 256],
+        "pixel_sha256": "b46f348391de699c6f830611b7b61508c03f02c429cc961a5a1f1e9a7a83ea5e"
+      },
+      "controls": {
+        "file": "assets/source/gearplanner/main-v1/GearPlannerControlsAtlas_RuntimeMasterV1.png",
+        "sha256": "5fe65d6d8b97247f1eeba4221c371985d2b9b3944b5625d2509cc2fe9c80aa67",
+        "size": [1024, 128],
+        "pixel_sha256": "4af380a367a63b6a8347bbbc89403681feb5a5e1682a5af081e3ca5c0164b142"
+      },
+      "slot": {
+        "file": "assets/source/gearplanner/main-v1/GearPlannerSlotAtlas_RuntimeMasterV1.png",
+        "sha256": "cfed43b3aba35b87165481ba1ac4519a797164fb184f01f77cde166a1e72795d",
+        "size": [512, 128],
+        "pixel_sha256": "d7c2b003f153acb29207ff6f8fe4232bc8ab8a5a85406eaf47bc00bda7439a62"
+      },
+      "paper": {
+        "file": "assets/source/gearplanner/main-v1/GearPlannerStatsPaper_RuntimeMasterV1.png",
+        "sha256": "817e660fce84638d9a46c1786ebaefc9ddbb8799c7315951fa6c960bae59d855",
+        "size": [512, 1024],
+        "pixel_sha256": "ef9c0847fe4cdfa7a9ca255250469521cec98aa43cb75c415412d9444e9f4866"
+      }
+    }
+  },
+  "deterministic_transform": {
+    "texels_per_ui_unit": 2,
+    "ui_geometry_changed": false,
+    "hitboxes_changed": false,
+    "dynamic_content_baked": false,
+    "painted_or_synthesized_pixels": 0,
+    "transparent_rgb_cleared": true,
+    "source_component_crops_exclusive": {
+      "frame_top_left": [41, 29, 73, 61],
+      "frame_top": [950, 29, 1078, 61],
+      "frame_top_right": [1188, 29, 1220, 61],
+      "frame_left": [41, 330, 73, 458],
+      "frame_right": [1188, 330, 1220, 458],
+      "frame_bottom_left": [41, 1176, 73, 1208],
+      "frame_bottom": [600, 1176, 728, 1208],
+      "frame_bottom_right": [1188, 1176, 1220, 1208],
+      "leather_fill": [976, 103, 1104, 231],
+      "title_plaque": [82, 49, 885, 128],
+      "hinge_top": [41, 151, 105, 275],
+      "hinge_middle": [41, 518, 84, 644],
+      "hinge_bottom": [41, 882, 84, 1007],
+      "control_save": [80, 124, 241, 200],
+      "control_import": [250, 129, 432, 193],
+      "control_clear": [438, 129, 555, 193],
+      "control_manage": [560, 129, 712, 193],
+      "control_previous": [899, 52, 938, 121],
+      "control_next": [937, 52, 974, 121],
+      "control_close": [1125, 43, 1202, 123],
+      "slot_normal": [81, 235, 418, 316],
+      "stats_paper": [771, 237, 1183, 1167]
+    },
+    "runtime_exporter": "tools/build_gearplanner_main_v1_runtime.py"
+  },
+  "runtime_manifest": "assets/source/gearplanner/main-v1/GEAR-MAIN-V1_RuntimeManifest_v1.json"
+}

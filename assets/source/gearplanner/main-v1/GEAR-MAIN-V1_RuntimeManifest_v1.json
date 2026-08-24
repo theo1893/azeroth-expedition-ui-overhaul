@@ -1,0 +1,111 @@
+{
+  "schema": "aeui-gearplanner-main-v1-runtime-manifest-v1",
+  "schema_version": 1,
+  "module": "gearplanner",
+  "batch": "GEAR-MAIN-V1 final",
+  "component": "GEAR.FRAME / GEAR.PROFILE / GEAR.SLOT / GEAR.TOTALS",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "runtime_contract": "1.0-zhCN",
+  "source_manifest": "assets/source/gearplanner/main-v1/GEAR-MAIN-V1_SourceManifest_v1.json",
+  "runtime": {
+    "frame": {
+      "file": "addon/AzerothExpeditionUI/Media/GearPlanner/GearPlannerFrameAtlasV1.tga",
+      "sha256": "52a543ab2ed446875b03c890feb237351316d05c5e4cee671fd72d2879c36963",
+      "texture_size": [256, 256],
+      "regions": {
+        "top_left": { "logical_size_ui": [16, 16], "sampled_size": [32, 32], "texels_per_ui_unit": 2, "uv": [0.0, 0.125, 0.0, 0.125] },
+        "top": { "logical_size_ui": [64, 16], "sampled_size": [128, 32], "texels_per_ui_unit": 2, "uv": [0.125, 0.625, 0.0, 0.125], "stretch_x": true },
+        "top_right": { "logical_size_ui": [16, 16], "sampled_size": [32, 32], "texels_per_ui_unit": 2, "uv": [0.625, 0.75, 0.0, 0.125] },
+        "left": { "logical_size_ui": [16, 64], "sampled_size": [32, 128], "texels_per_ui_unit": 2, "uv": [0.0, 0.125, 0.125, 0.625], "stretch_y": true },
+        "right": { "logical_size_ui": [16, 64], "sampled_size": [32, 128], "texels_per_ui_unit": 2, "uv": [0.625, 0.75, 0.125, 0.625], "stretch_y": true },
+        "bottom_left": { "logical_size_ui": [16, 16], "sampled_size": [32, 32], "texels_per_ui_unit": 2, "uv": [0.0, 0.125, 0.625, 0.75] },
+        "bottom": { "logical_size_ui": [64, 16], "sampled_size": [128, 32], "texels_per_ui_unit": 2, "uv": [0.125, 0.625, 0.625, 0.75], "stretch_x": true },
+        "bottom_right": { "logical_size_ui": [16, 16], "sampled_size": [32, 32], "texels_per_ui_unit": 2, "uv": [0.625, 0.75, 0.625, 0.75] }
+      }
+    },
+    "fill": {
+      "file": "addon/AzerothExpeditionUI/Media/GearPlanner/GearPlannerLeatherFillV1.tga",
+      "sha256": "a1aedfa61b294e1263b7d6d67f4072f2333dd3145129699d82999a4a669855d7",
+      "texture_size": [128, 128],
+      "normal": { "logical_size_ui": [64, 64], "sampled_size": [128, 128], "texels_per_ui_unit": 2, "uv": [0.0, 1.0, 0.0, 1.0], "tile": true }
+    },
+    "decor": {
+      "file": "addon/AzerothExpeditionUI/Media/GearPlanner/GearPlannerDecorAtlasV1.tga",
+      "sha256": "c6983d32b1ef4cf3c9421106e8dc191c1dbc98c1ebdb1a0f2ff4715f8047c0e2",
+      "texture_size": [1024, 256],
+      "regions": {
+        "title_plaque": { "logical_size_ui": [400, 40], "sampled_size": [800, 80], "texels_per_ui_unit": 2, "uv": [0.0, 0.78125, 0.0, 0.3125] },
+        "hinge_top": { "logical_size_ui": [28, 60], "sampled_size": [56, 120], "texels_per_ui_unit": 2, "uv": [0.0, 0.0546875, 0.375, 0.84375] },
+        "hinge_middle": { "logical_size_ui": [20, 60], "sampled_size": [40, 120], "texels_per_ui_unit": 2, "uv": [0.0625, 0.1015625, 0.375, 0.84375] },
+        "hinge_bottom": { "logical_size_ui": [20, 60], "sampled_size": [40, 120], "texels_per_ui_unit": 2, "uv": [0.109375, 0.1484375, 0.375, 0.84375] }
+      }
+    },
+    "controls": {
+      "file": "addon/AzerothExpeditionUI/Media/GearPlanner/GearPlannerControlsAtlasV1.tga",
+      "sha256": "ae984be19126091e7364bcb0c253dd69c82622484d40b5ae43308f826234e517",
+      "texture_size": [1024, 128],
+      "regions": {
+        "save": { "logical_size_ui": [68, 22], "sampled_size": [136, 44], "texels_per_ui_unit": 2, "uv": [0.0, 0.1328125, 0.0, 0.34375] },
+        "import": { "logical_size_ui": [94, 22], "sampled_size": [188, 44], "texels_per_ui_unit": 2, "uv": [0.140625, 0.32421875, 0.0, 0.34375], "stretch_x_in_standalone": true },
+        "clear": { "logical_size_ui": [50, 22], "sampled_size": [100, 44], "texels_per_ui_unit": 2, "uv": [0.33203125, 0.4296875, 0.0, 0.34375], "stretch_x_in_standalone": true },
+        "manage": { "logical_size_ui": [78, 22], "sampled_size": [156, 44], "texels_per_ui_unit": 2, "uv": [0.4375, 0.58984375, 0.0, 0.34375] },
+        "previous": { "logical_size_ui": [18, 26], "sampled_size": [36, 52], "texels_per_ui_unit": 2, "uv": [0.59765625, 0.6328125, 0.0, 0.40625] },
+        "next": { "logical_size_ui": [18, 26], "sampled_size": [36, 52], "texels_per_ui_unit": 2, "uv": [0.640625, 0.67578125, 0.0, 0.40625] },
+        "close": { "logical_size_ui": [32, 32], "sampled_size": [64, 64], "texels_per_ui_unit": 2, "uv": [0.68359375, 0.74609375, 0.0, 0.5] }
+      }
+    },
+    "slot": {
+      "file": "addon/AzerothExpeditionUI/Media/GearPlanner/GearPlannerSlotAtlasV1.tga",
+      "sha256": "c157752cf371fed11f5dcb9affc23b00465bac39c6186fd5dcf0cb473b05b995",
+      "texture_size": [512, 128],
+      "normal": {
+        "logical_size_ui": [164, 40],
+        "sampled_size": [328, 80],
+        "texels_per_ui_unit": 2,
+        "uv": [0.0, 0.640625, 0.0, 0.625],
+        "horizontal_slices": {
+          "left": { "logical_width_ui": 40, "sampled_width": 80, "uv_x": [0.0, 0.15625] },
+          "center": { "logical_width_ui": 116, "sampled_width": 232, "uv_x": [0.15625, 0.609375], "stretch_x": true },
+          "right": { "logical_width_ui": 8, "sampled_width": 16, "uv_x": [0.609375, 0.640625] }
+        }
+      }
+    },
+    "paper": {
+      "file": "addon/AzerothExpeditionUI/Media/GearPlanner/GearPlannerStatsPaperV1.tga",
+      "sha256": "0e048b081b583a4baed74ee0f0bd557faf054f5e6afe756fa2a8fc7885d318a2",
+      "texture_size": [512, 1024],
+      "normal": {
+        "logical_size_ui": [196, 448],
+        "sampled_size": [392, 896],
+        "texels_per_ui_unit": 2,
+        "uv": [0.0, 0.765625, 0.0, 0.875],
+        "nine_slice_border_ui": 18,
+        "uv_x": [0.0, 0.0703125, 0.6953125, 0.765625],
+        "uv_y": [0.0, 0.03515625, 0.83984375, 0.875]
+      }
+    }
+  },
+  "layout_contract": {
+    "companion_frame_ui": [560, 555],
+    "standalone_frame_ui": [760, 555],
+    "frame_border_ui": 16,
+    "leather_fill_tile_ui": 64,
+    "companion_slot_ui": [164, 40],
+    "standalone_slot_ui": [202, 42],
+    "companion_stats_ui": [196, 448],
+    "standalone_stats_ui": [306, 463],
+    "frame_and_hitbox_geometry_changed": false,
+    "whole_donor_used_as_one_texture": false,
+    "dynamic_text_icons_values_difference_dirty_and_cooldown_content": "runtime-live",
+    "atlasloot_profile_manager_and_companion_rails": "provider/native art retained",
+    "normal_state_art_only": true,
+    "hover_pressed_disabled_transition": "normal art reused with runtime tint until a later accepted state batch"
+  },
+  "texel_density": {
+    "texels_per_ui_unit": 2,
+    "ui_geometry_changed": false,
+    "target_physical_scale": "up to 2 screen pixels per UI unit",
+    "turtle_texture_max": 1024
+  }
+}

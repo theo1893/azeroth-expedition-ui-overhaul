@@ -21,7 +21,7 @@ AtlasLoot 原按钮脚本、Wishlist 或装备监听。
 | GEAR.STATS.WEAPON | Nampower `GetItemStats()`；`AzerothExpeditionUIGearPlannerWeaponScanner` | AEUI 只读物品 `minDamage`／`maxDamage`／`delay` 计算主手、副手、远程静态秒伤与攻速；Nampower 不可用或字段不完整时只扫描自己的隐藏 Tooltip，不修改公共 GameTooltip |
 | GEAR.STATS.FALLBACK | 无通用数值 provider | BonusScanner 缺失时保留装备选择与来源功能；通用属性为空，可解析的武器行继续显示 |
 | GEAR.CURRENT | `GetInventoryItemLink()`、`GetInventorySlotInfo()`、`UNIT_INVENTORY_CHANGED` | Blizzard 持有当前穿戴；AEUI 只读基础 itemID，用于导入方案与当前装备属性基线，不写真实装备 |
-| GEAR.SAVED | AzerothExpeditionUIDB.gearplanner.characters | AEUI 按服务器／角色保存多套方案、活动方案、槽位选择与观察来源 metadata |
+| GEAR.SAVED | AzerothExpeditionUIDB.gearplanner.characters | AEUI 按服务器／角色保存多套方案、活动方案、已明确保存的槽位选择与观察来源 metadata；未保存草稿不进入 SavedVariables |
 | GEAR.HOST.CHARACTER | `CharacterFrame`、`PaperDollFrame` | Blizzard／Character 模块持有角色页与分页；Gear Planner 只挂载自己的子控制器和伴随栏，不改写主框几何 |
 | GEAR.HOST.BETTERSTATS | `BetterCharacterAttributesFrame` | BetterCharacterStats 继续持有中心属性；它不进入伴随栏 |
 | GEAR.COMPANION.CURRENT | `S_ItemTip_InspectFrame` | S_ItemTip 持有装备明细、尺寸、刷新与交互；AEUI 只在角色页可见时一次性锚定并协调显隐 |
@@ -36,13 +36,13 @@ AtlasLoot 原按钮脚本、Wishlist 或装备监听。
 
 | ID | 对象 | 合同 |
 |---|---|---|
-| GEAR.COMPANION.RAIL | `AzerothExpeditionUICharacterCompanionRail` | CharacterFrame 子对象；只显示当前可用的“装／属／配”入口，宽屏满足条件时增加“双”按钮 |
+| GEAR.COMPANION.RAIL | `AzerothExpeditionUICharacterCompanionRail` | CharacterFrame 子对象；角色 PaperDoll 每次打开时默认只显示窄栏，当前可用的“装／属／配／双”均为可再次点击收起的互斥视图入口 |
 | GEAR.INSPECT.CONTROLLER | `AzerothExpeditionUIInspectCompanionController`、PaperDoll 子控制器 | 与 Character companion 独立；监听 Inspect／PaperDoll 显隐、分页和数据就绪，不包装原生脚本 |
 | GEAR.INSPECT.RAIL | `AzerothExpeditionUIInspectCompanionRail` | InspectFrame 右侧 `28 UI` 窄栏；按条件显示“装／属／比／存” |
 | GEAR.INSPECT.SAVE | “存” Button | 数据就绪后把目标 19 槽 itemID 快照新建并激活为观察参考方案；不自动打开完整配装窗口，不覆盖原方案 |
 | GEAR.FRAME | AzerothExpeditionUIGearPlannerFrame | 伴随模式保持 `UIParent` Parent，以 `560×555` 锚到角色页右侧；角色页禁用、缺失或非 `384×512` 时恢复 `760×555` 独立可移动窗口 |
-| GEAR.PROFILE | 当前活动方案数据、导入／清空、`<／>` 与“方案管理” | 按角色保存多套方案；管理窗支持使用、新建、复制、重命名、分页与二次确认删除；不自动改穿角色装备 |
-| GEAR.SLOT | 19 个 AzerothExpeditionUIGearPlannerSlot* | 左键设定当前配装目标并打开 AtlasLoot 原生浏览器，Shift 左键把已选装备链接贴入聊天输入框，Ctrl 左键打开已选来源，右键清空；相对当前槽位按“更换／新增／未填”显示黄铜差异态 |
+| GEAR.PROFILE | 当前活动方案数据、会话草稿、“保存”、导入／清空、`<／>` 与“方案管理” | 打开配装时从已保存方案复制运行时草稿；选装、导入和清空只改草稿，只有点击“保存”才整体写回槽位。关闭／收起或切换活动方案会丢弃未保存草稿；管理窗继续支持使用、新建、复制、重命名、分页与二次确认删除；不自动改穿角色装备 |
+| GEAR.SLOT | 19 个 AzerothExpeditionUIGearPlannerSlot* | 左键设定当前配装目标并打开 AtlasLoot 原生浏览器，Shift 左键把已选装备链接贴入聊天输入框，Ctrl 左键打开已选来源；右键恢复该槽的已保存基线，Alt 右键才清空草稿槽位。相对当前装备的“更换／新增／未填”继续使用黄铜差异态；相对已保存方案的未保存槽位另用冷灰蓝描边、左缘短标与 `*`，两类状态可同时存在 |
 | GEAR.PLAN.COMBINED | 19 槽与属性对比区 | 伴随及独立模式都同时显示装备与“当前／配装／变化”；任何槽位、活动方案或玩家实际装备变化均同步刷新属性和槽位差异态 |
 | GEAR.PICKER | AtlasLoot 原生查询／浏览 UI、30 个按需显示的 AEUI 选入子 Button、目标提示与“结束选装” | 物品名、itemID、Boss、副本、选项、分页和来源跳转全部由 AtlasLoot 原生 UI 处理；AEUI 仅在与当前槽位兼容的物品行右侧显示“+”，已选物品显示“已” |
 | GEAR.TOTALS | Gear Planner 右侧属性区 | 同时汇总 BonusScanner 通用静态属性与三武器槽静态秒伤／攻速，按行比较当前和配装；普通数值及秒伤按增减用绿／红，攻速变化固定琥珀色，缺少对应武器时显示破折号与“新增／移除” |
@@ -55,6 +55,8 @@ AtlasLoot 原按钮脚本、Wishlist 或装备监听。
   Ranged 共 19 个原生槽位。
 - AtlasLoot 的 #s*#、#h*#、#w*# 标记负责第一层候选分类。
 - 双手武器选入主手时清空副手；在已有双手武器时选入副手会清空主手。
+- 右键恢复主手或副手时将两槽作为一组恢复到本次打开时的已保存基线，避免恢复后制造
+  双手武器与副手并存的非法草稿。
 - Ring 与 Trinket 候选分别复用于两个实例槽；模块不自动判定唯一装备。
 
 ## 功能不变量
@@ -74,13 +76,20 @@ AtlasLoot 原按钮脚本、Wishlist 或装备监听。
   输入框时可用原生 `ChatFrame_OpenChat` 打开待发送文本，不自动发送消息。相同 itemID
   保持普通态；不同物品或新增装备使用明显黄铜描边与浅底色，当前有装备但方案未填只用
   较弱“未填”提示，不以红绿暗示配装优劣。
+- 槽位编辑以当前已保存方案为单一基线，不保留 A→B→C 的多步历史；C 上右键直接恢复
+  A。未保存判断只比较 19 槽 itemID，物品缓存补全名称／图标不会制造伪脏状态。
+  “保存 (n)”只在存在未保存槽位时可用并一次提交全部草稿；关闭窗口、Esc、收起“配”、
+  切换到其他伴随视图、切换活动方案、禁用模块或 `/reload` 都不自动提交。
 - 属性对比以玩家当前 19 槽为基线，方案中未填槽位按空槽计算；“导入当前装备”
   后差值应归零。`UNIT_INVENTORY_CHANGED` 只在 Gear 视图可见时重新计算当前列，
   不使用维护循环。
-- 默认只显示一个伴随视图；配装视图整体合同为
+- 角色 PaperDoll 每次会话默认收起所有伴随视图；“装／属／配／双”采用同一互斥
+  状态机，点击非当前入口会原子切换，重复点击当前入口、配装窗口关闭 Button 或 Esc
+  只收起伴随内容而不关闭 CharacterFrame。SavedVariables 中的上次入口不自动展开。
+  配装视图整体合同为
   `384 + 8 + (28 + 4 + 560) = 984 UI`，内部装备与属性始终同屏。第三方当前装备
-  视图在有效宽度至少 `1060 UI` 且角色页左右实际净空足够时，仍可选在左侧同时
-  保留 StatCompare；配装视图不再启用该重复双栏。
+  与 StatCompare 在有效宽度至少 `1060 UI` 且角色页左右实际净空足够时组成独立
+  “双”视图；切到“装／属／配”或收起时同时退出双栏，配装视图不启用重复双栏。
 - S_ItemTip／StatCompare 缺失时省略对应入口；Character 模块禁用、对象缺失或
   几何不受支持时，`/aeui gear` 回退独立窗口。禁用 Gear Planner 时恢复本次角色页
   与观察页会话捕获的 Provider 锚点与显隐。

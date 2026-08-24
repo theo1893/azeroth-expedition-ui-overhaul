@@ -1,7 +1,57 @@
 local addon = AzerothExpeditionUI
 local GearPlanner = {}
 
-GearPlanner.runtimeContract = "0.9-zhCN"
+GearPlanner.runtimeContract = "1.0-zhCN"
+
+local MEDIA = addon.media.root .. "GearPlanner\\"
+local FONT_SERIF = addon.media.root .. "Fonts\\NotoSerifSC-SemiBold.ttf"
+local FRAME_ART = {
+  path = MEDIA .. "GearPlannerFrameAtlasV1",
+  border = 16,
+  regions = {
+    topLeft = { 0, 0.125, 0, 0.125 },
+    top = { 0.125, 0.625, 0, 0.125 },
+    topRight = { 0.625, 0.75, 0, 0.125 },
+    left = { 0, 0.125, 0.125, 0.625 },
+    right = { 0.625, 0.75, 0.125, 0.625 },
+    bottomLeft = { 0, 0.125, 0.625, 0.75 },
+    bottom = { 0.125, 0.625, 0.625, 0.75 },
+    bottomRight = { 0.625, 0.75, 0.625, 0.75 },
+  },
+}
+local LEATHER_FILL = MEDIA .. "GearPlannerLeatherFillV1"
+local DECOR_ART = {
+  path = MEDIA .. "GearPlannerDecorAtlasV1",
+  title = { uv = { 0, 0.78125, 0, 0.3125 }, width = 400, height = 40 },
+  hingeTop = { uv = { 0, 0.0546875, 0.375, 0.84375 }, width = 28, height = 60 },
+  hingeMiddle = { uv = { 0.0625, 0.1015625, 0.375, 0.84375 }, width = 20, height = 60 },
+  hingeBottom = { uv = { 0.109375, 0.1484375, 0.375, 0.84375 }, width = 20, height = 60 },
+}
+local CONTROL_ART = {
+  path = MEDIA .. "GearPlannerControlsAtlasV1",
+  save = { 0, 0.1328125, 0, 0.34375 },
+  import = { 0.140625, 0.32421875, 0, 0.34375 },
+  clear = { 0.33203125, 0.4296875, 0, 0.34375 },
+  manage = { 0.4375, 0.58984375, 0, 0.34375 },
+  previous = { 0.59765625, 0.6328125, 0, 0.40625 },
+  next = { 0.640625, 0.67578125, 0, 0.40625 },
+  close = { 0.68359375, 0.74609375, 0, 0.5 },
+}
+local SLOT_ART = {
+  path = MEDIA .. "GearPlannerSlotAtlasV1",
+  y = { 0, 0.625 },
+  left = { 0, 0.15625 },
+  center = { 0.15625, 0.609375 },
+  right = { 0.609375, 0.640625 },
+  leftWidth = 40,
+  rightWidth = 8,
+}
+local PAPER_ART = {
+  path = MEDIA .. "GearPlannerStatsPaperV1",
+  border = 18,
+  x = { 0, 0.0703125, 0.6953125, 0.765625 },
+  y = { 0, 0.03515625, 0.83984375, 0.875 },
+}
 
 local UNKNOWN_ICON = "Interface\\Icons\\INV_Misc_QuestionMark"
 local PROFILE_PAGE_SIZE = 8
@@ -40,6 +90,12 @@ local COMPANION_VIEWS = {
     label = "配",
     title = "配装方案",
     tooltip = "AEUI Gear Planner",
+  },
+  {
+    key = "dual",
+    label = "双",
+    title = "双栏对照",
+    tooltip = "当前装备在右、StatCompare 在左；仅在净空足够时可用",
   },
 }
 
@@ -499,6 +555,321 @@ local function CreateBackdrop(frame, alpha)
   frame:SetBackdropBorderColor(0.62, 0.45, 0.24, 1)
 end
 
+local function ConfigureArtTexture(texture, path, uv)
+  texture:SetTexture(path)
+  texture:SetTexCoord(uv[1], uv[2], uv[3], uv[4])
+  texture:SetVertexColor(1, 1, 1)
+  texture:SetAlpha(1)
+end
+
+local function CreateFrameArt(frame)
+  local art, border
+  if frame.aeuiGearPlannerFrameArt then
+    return frame.aeuiGearPlannerFrameArt
+  end
+  border = FRAME_ART.border
+  frame:SetBackdrop({
+    bgFile = LEATHER_FILL,
+    tile = true,
+    tileSize = 64,
+    insets = {
+      left = border,
+      right = border,
+      top = border,
+      bottom = border,
+    },
+  })
+  frame:SetBackdropColor(1, 1, 1, 1)
+  frame:SetBackdropBorderColor(0, 0, 0, 0)
+
+  art = {
+    topLeft = frame:CreateTexture(nil, "BORDER"),
+    top = frame:CreateTexture(nil, "BORDER"),
+    topRight = frame:CreateTexture(nil, "BORDER"),
+    left = frame:CreateTexture(nil, "BORDER"),
+    right = frame:CreateTexture(nil, "BORDER"),
+    bottomLeft = frame:CreateTexture(nil, "BORDER"),
+    bottom = frame:CreateTexture(nil, "BORDER"),
+    bottomRight = frame:CreateTexture(nil, "BORDER"),
+  }
+  ConfigureArtTexture(art.topLeft, FRAME_ART.path, FRAME_ART.regions.topLeft)
+  art.topLeft:SetWidth(border)
+  art.topLeft:SetHeight(border)
+  art.topLeft:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, 0)
+  ConfigureArtTexture(art.top, FRAME_ART.path, FRAME_ART.regions.top)
+  art.top:SetHeight(border)
+  art.top:SetPoint("TOPLEFT", frame, "TOPLEFT", border, 0)
+  art.top:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -border, 0)
+  ConfigureArtTexture(art.topRight, FRAME_ART.path, FRAME_ART.regions.topRight)
+  art.topRight:SetWidth(border)
+  art.topRight:SetHeight(border)
+  art.topRight:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 0, 0)
+  ConfigureArtTexture(art.left, FRAME_ART.path, FRAME_ART.regions.left)
+  art.left:SetWidth(border)
+  art.left:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, -border)
+  art.left:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, border)
+  ConfigureArtTexture(art.right, FRAME_ART.path, FRAME_ART.regions.right)
+  art.right:SetWidth(border)
+  art.right:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 0, -border)
+  art.right:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, border)
+  ConfigureArtTexture(art.bottomLeft, FRAME_ART.path, FRAME_ART.regions.bottomLeft)
+  art.bottomLeft:SetWidth(border)
+  art.bottomLeft:SetHeight(border)
+  art.bottomLeft:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 0)
+  ConfigureArtTexture(art.bottom, FRAME_ART.path, FRAME_ART.regions.bottom)
+  art.bottom:SetHeight(border)
+  art.bottom:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", border, 0)
+  art.bottom:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -border, 0)
+  ConfigureArtTexture(art.bottomRight, FRAME_ART.path, FRAME_ART.regions.bottomRight)
+  art.bottomRight:SetWidth(border)
+  art.bottomRight:SetHeight(border)
+  art.bottomRight:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
+
+  art.title = frame:CreateTexture(nil, "BORDER")
+  ConfigureArtTexture(art.title, DECOR_ART.path, DECOR_ART.title.uv)
+  art.title:SetWidth(DECOR_ART.title.width)
+  art.title:SetHeight(DECOR_ART.title.height)
+  art.title:SetPoint("TOPLEFT", frame, "TOPLEFT", 16, -8)
+
+  art.hingeTop = frame:CreateTexture(nil, "ARTWORK")
+  ConfigureArtTexture(art.hingeTop, DECOR_ART.path, DECOR_ART.hingeTop.uv)
+  art.hingeTop:SetWidth(DECOR_ART.hingeTop.width)
+  art.hingeTop:SetHeight(DECOR_ART.hingeTop.height)
+  art.hingeTop:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, -57)
+  art.hingeMiddle = frame:CreateTexture(nil, "ARTWORK")
+  ConfigureArtTexture(
+    art.hingeMiddle,
+    DECOR_ART.path,
+    DECOR_ART.hingeMiddle.uv
+  )
+  art.hingeMiddle:SetWidth(DECOR_ART.hingeMiddle.width)
+  art.hingeMiddle:SetHeight(DECOR_ART.hingeMiddle.height)
+  art.hingeMiddle:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, -231)
+  art.hingeBottom = frame:CreateTexture(nil, "ARTWORK")
+  ConfigureArtTexture(
+    art.hingeBottom,
+    DECOR_ART.path,
+    DECOR_ART.hingeBottom.uv
+  )
+  art.hingeBottom:SetWidth(DECOR_ART.hingeBottom.width)
+  art.hingeBottom:SetHeight(DECOR_ART.hingeBottom.height)
+  art.hingeBottom:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, -402)
+  frame.aeuiGearPlannerFrameArt = art
+  return art
+end
+
+local function ConfigureButtonStateTexture(
+  button,
+  setter,
+  getter,
+  uv,
+  red,
+  green,
+  blue,
+  alpha,
+  blendMode
+)
+  local texture
+  button[setter](button, CONTROL_ART.path)
+  texture = button[getter](button)
+  if not texture then return end
+  texture:ClearAllPoints()
+  texture:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+  texture:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
+  texture:SetTexCoord(uv[1], uv[2], uv[3], uv[4])
+  texture:SetVertexColor(red, green, blue)
+  texture:SetAlpha(alpha)
+  if blendMode and texture.SetBlendMode then texture:SetBlendMode(blendMode) end
+end
+
+local function ApplyControlArt(button, key)
+  local uv = CONTROL_ART[key]
+  local text
+  if not button or not uv then return end
+  ConfigureButtonStateTexture(
+    button, "SetNormalTexture", "GetNormalTexture", uv,
+    1, 1, 1, 1
+  )
+  ConfigureButtonStateTexture(
+    button, "SetPushedTexture", "GetPushedTexture", uv,
+    0.72, 0.68, 0.60, 1
+  )
+  ConfigureButtonStateTexture(
+    button, "SetDisabledTexture", "GetDisabledTexture", uv,
+    0.48, 0.46, 0.42, 0.82
+  )
+  ConfigureButtonStateTexture(
+    button, "SetHighlightTexture", "GetHighlightTexture", uv,
+    1, 0.84, 0.52, 0.20, "ADD"
+  )
+  text = button.GetFontString and button:GetFontString()
+  if text then
+    text:ClearAllPoints()
+    text:SetPoint("CENTER", button, "CENTER", 0, 0)
+    text:SetTextColor(0.91, 0.78, 0.55)
+  end
+end
+
+local function CreatePaperArt(frame)
+  local art, x, y, border
+  if frame.aeuiGearPlannerPaperArt then
+    return frame.aeuiGearPlannerPaperArt
+  end
+  x = PAPER_ART.x
+  y = PAPER_ART.y
+  border = PAPER_ART.border
+  art = {
+    topLeft = frame:CreateTexture(nil, "BACKGROUND"),
+    top = frame:CreateTexture(nil, "BACKGROUND"),
+    topRight = frame:CreateTexture(nil, "BACKGROUND"),
+    left = frame:CreateTexture(nil, "BACKGROUND"),
+    center = frame:CreateTexture(nil, "BACKGROUND"),
+    right = frame:CreateTexture(nil, "BACKGROUND"),
+    bottomLeft = frame:CreateTexture(nil, "BACKGROUND"),
+    bottom = frame:CreateTexture(nil, "BACKGROUND"),
+    bottomRight = frame:CreateTexture(nil, "BACKGROUND"),
+  }
+  ConfigureArtTexture(art.topLeft, PAPER_ART.path, { x[1], x[2], y[1], y[2] })
+  art.topLeft:SetWidth(border)
+  art.topLeft:SetHeight(border)
+  art.topLeft:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, 0)
+  ConfigureArtTexture(art.top, PAPER_ART.path, { x[2], x[3], y[1], y[2] })
+  art.top:SetHeight(border)
+  art.top:SetPoint("TOPLEFT", frame, "TOPLEFT", border, 0)
+  art.top:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -border, 0)
+  ConfigureArtTexture(art.topRight, PAPER_ART.path, { x[3], x[4], y[1], y[2] })
+  art.topRight:SetWidth(border)
+  art.topRight:SetHeight(border)
+  art.topRight:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 0, 0)
+  ConfigureArtTexture(art.left, PAPER_ART.path, { x[1], x[2], y[2], y[3] })
+  art.left:SetWidth(border)
+  art.left:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, -border)
+  art.left:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, border)
+  ConfigureArtTexture(art.center, PAPER_ART.path, { x[2], x[3], y[2], y[3] })
+  art.center:SetPoint("TOPLEFT", frame, "TOPLEFT", border, -border)
+  art.center:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -border, border)
+  ConfigureArtTexture(art.right, PAPER_ART.path, { x[3], x[4], y[2], y[3] })
+  art.right:SetWidth(border)
+  art.right:SetPoint("TOPRIGHT", frame, "TOPRIGHT", 0, -border)
+  art.right:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, border)
+  ConfigureArtTexture(art.bottomLeft, PAPER_ART.path, { x[1], x[2], y[3], y[4] })
+  art.bottomLeft:SetWidth(border)
+  art.bottomLeft:SetHeight(border)
+  art.bottomLeft:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 0, 0)
+  ConfigureArtTexture(art.bottom, PAPER_ART.path, { x[2], x[3], y[3], y[4] })
+  art.bottom:SetHeight(border)
+  art.bottom:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", border, 0)
+  art.bottom:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -border, 0)
+  ConfigureArtTexture(art.bottomRight, PAPER_ART.path, { x[3], x[4], y[3], y[4] })
+  art.bottomRight:SetWidth(border)
+  art.bottomRight:SetHeight(border)
+  art.bottomRight:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 0)
+  frame.aeuiGearPlannerPaperArt = art
+  return art
+end
+
+local function CreateSlotOutline(button)
+  local outline, inset, thickness
+  if button.stateOutline then return button.stateOutline end
+  inset = 1
+  thickness = 2
+  outline = {
+    button:CreateTexture(nil, "OVERLAY"),
+    button:CreateTexture(nil, "OVERLAY"),
+    button:CreateTexture(nil, "OVERLAY"),
+    button:CreateTexture(nil, "OVERLAY"),
+  }
+  outline[1]:SetPoint("TOPLEFT", button, "TOPLEFT", inset, -inset)
+  outline[1]:SetPoint("TOPRIGHT", button, "TOPRIGHT", -inset, -inset)
+  outline[1]:SetHeight(thickness)
+  outline[2]:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", inset, inset)
+  outline[2]:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -inset, inset)
+  outline[2]:SetHeight(thickness)
+  outline[3]:SetPoint("TOPLEFT", button, "TOPLEFT", inset, -inset)
+  outline[3]:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", inset, inset)
+  outline[3]:SetWidth(thickness)
+  outline[4]:SetPoint("TOPRIGHT", button, "TOPRIGHT", -inset, -inset)
+  outline[4]:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -inset, inset)
+  outline[4]:SetWidth(thickness)
+  button.stateOutline = outline
+  return outline
+end
+
+local function SetSlotOutline(button, red, green, blue, alpha)
+  local outline = CreateSlotOutline(button)
+  local index, texture
+  for index = 1, table.getn(outline) do
+    texture = outline[index]
+    if red then
+      texture:SetTexture(red, green, blue, alpha)
+      texture:Show()
+    else
+      texture:Hide()
+    end
+  end
+end
+
+local function RefreshSlotOutline(button)
+  if button.draftDirty then
+    SetSlotOutline(button, 0.42, 0.68, 0.76, 1)
+  elseif button.differenceState == "replace" or button.differenceState == "add" then
+    SetSlotOutline(button, 0.95, 0.67, 0.20, 1)
+  elseif button.differenceState == "empty" then
+    SetSlotOutline(button, 0.78, 0.51, 0.22, 0.86)
+  else
+    SetSlotOutline(button)
+  end
+end
+
+local function CreateSlotArt(button)
+  local art
+  if button.aeuiGearPlannerSlotArt then
+    return button.aeuiGearPlannerSlotArt
+  end
+  art = {
+    left = button:CreateTexture(nil, "BACKGROUND"),
+    center = button:CreateTexture(nil, "BACKGROUND"),
+    right = button:CreateTexture(nil, "BACKGROUND"),
+  }
+  ConfigureArtTexture(
+    art.left,
+    SLOT_ART.path,
+    { SLOT_ART.left[1], SLOT_ART.left[2], SLOT_ART.y[1], SLOT_ART.y[2] }
+  )
+  art.left:SetWidth(SLOT_ART.leftWidth)
+  art.left:SetPoint("TOPLEFT", button, "TOPLEFT", 0, 0)
+  art.left:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", 0, 0)
+  ConfigureArtTexture(
+    art.center,
+    SLOT_ART.path,
+    { SLOT_ART.center[1], SLOT_ART.center[2], SLOT_ART.y[1], SLOT_ART.y[2] }
+  )
+  art.center:SetPoint("TOPLEFT", button, "TOPLEFT", SLOT_ART.leftWidth, 0)
+  art.center:SetPoint(
+    "BOTTOMRIGHT",
+    button,
+    "BOTTOMRIGHT",
+    -SLOT_ART.rightWidth,
+    0
+  )
+  ConfigureArtTexture(
+    art.right,
+    SLOT_ART.path,
+    { SLOT_ART.right[1], SLOT_ART.right[2], SLOT_ART.y[1], SLOT_ART.y[2] }
+  )
+  art.right:SetWidth(SLOT_ART.rightWidth)
+  art.right:SetPoint("TOPRIGHT", button, "TOPRIGHT", 0, 0)
+  art.right:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 0, 0)
+  button.aeuiGearPlannerSlotArt = art
+
+  button.hoverWash = button:CreateTexture(nil, "HIGHLIGHT")
+  button.hoverWash:SetTexture(1, 0.84, 0.48, 0.10)
+  button.hoverWash:SetPoint("TOPLEFT", button, "TOPLEFT", 4, -4)
+  button.hoverWash:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -4, 4)
+  CreateSlotOutline(button)
+  return art
+end
+
 local function CreateButton(parent, text, width, height)
   local button = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
   button:SetWidth(width)
@@ -631,7 +1002,14 @@ function GearPlanner:ActivateProfile(index)
   if not selected or selected < 1 or selected > table.getn(store.profiles) then
     return false, "配装方案索引无效。"
   end
+  if selected == store.active then
+    self.profileSelection = selected
+    self:UpdateAll()
+    return true, "正在使用“" .. tostring(store.profiles[selected].name) .. "”。"
+  end
+  self:DiscardEditSession()
   store.active = selected
+  if self.frame and FrameVisible(self.frame) then self:BeginEditSession() end
   self.statCache = {}
   self.profileSelection = selected
   self:UpdateAll()
@@ -687,8 +1065,10 @@ end
 function GearPlanner:CreateProfile(name)
   local store = self:GetStore()
   local profileName = self:UniqueProfileName(name or "新方案")
+  self:DiscardEditSession()
   table.insert(store.profiles, { name = profileName, slots = {} })
   store.active = table.getn(store.profiles)
+  if self.frame and FrameVisible(self.frame) then self:BeginEditSession() end
   self.profileSelection = store.active
   self.statCache = {}
   self:UpdateAll()
@@ -702,11 +1082,13 @@ function GearPlanner:DuplicateProfile(index)
   if not selected or selected < 1 or selected > table.getn(store.profiles) then
     return false, "请先选择要复制的方案。"
   end
+  self:DiscardEditSession()
   source = store.profiles[selected]
   name = self:UniqueProfileName(tostring(source.name or "方案") .. " 副本")
   copy = self:CopyProfile(source, name)
   table.insert(store.profiles, selected + 1, copy)
   store.active = selected + 1
+  if self.frame and FrameVisible(self.frame) then self:BeginEditSession() end
   self.profileSelection = store.active
   self.statCache = {}
   self:UpdateAll()
@@ -739,18 +1121,29 @@ end
 function GearPlanner:DeleteProfile(index)
   local store = self:GetStore()
   local selected = tonumber(index)
-  local removedName
+  local removedName, activeProfile, session
   if table.getn(store.profiles) <= 1 then
     return false, "至少需要保留一套配装方案。"
   end
   if not selected or selected < 1 or selected > table.getn(store.profiles) then
     return false, "请先选择要删除的方案。"
   end
+  activeProfile = store.profiles[store.active]
+  session = self:GetEditSession()
+  if selected == store.active then
+    self:DiscardEditSession()
+    session = nil
+  end
   removedName = tostring(store.profiles[selected].name or "方案")
   table.remove(store.profiles, selected)
   if selected < store.active then store.active = store.active - 1 end
   if store.active > table.getn(store.profiles) then
     store.active = table.getn(store.profiles)
+  end
+  if session and session.profile == activeProfile then
+    session.profileIndex = store.active
+  elseif self.frame and FrameVisible(self.frame) then
+    self:BeginEditSession()
   end
   self.profileSelection = store.active
   self.statCache = {}
@@ -909,36 +1302,210 @@ function GearPlanner:CopyItem(item)
   }
 end
 
+function GearPlanner:CopySlots(slots)
+  local copy = {}
+  local index, definition, item
+  for index = 1, table.getn(SLOT_DEFS) do
+    definition = SLOT_DEFS[index]
+    item = slots and slots[definition[1]]
+    if item then copy[definition[1]] = self:CopyItem(item) end
+  end
+  return copy
+end
+
+function GearPlanner:SamePlannedItem(left, right)
+  if not left and not right then return true end
+  if not left or not right then return false end
+  return tonumber(left.id) == tonumber(right.id)
+end
+
+function GearPlanner:GetEditSession()
+  local session = self.editSession
+  local store
+  if not session then return nil end
+  store = self:GetStore()
+  if
+    session.store ~= store or
+    session.profileIndex ~= store.active or
+    session.profile ~= store.profiles[store.active]
+  then
+    self.editSession = nil
+    return nil
+  end
+  return session
+end
+
+function GearPlanner:BeginEditSession(force)
+  local session = not force and self:GetEditSession() or nil
+  local store, profile, savedSlots
+  if session then return session end
+  store = self:GetStore()
+  profile = store.profiles[store.active]
+  profile.slots = profile.slots or {}
+  savedSlots = self:CopySlots(profile.slots)
+  session = {
+    store = store,
+    profileIndex = store.active,
+    profile = profile,
+    savedSlots = savedSlots,
+    savedInspectSignature = profile.inspectSignature,
+    savedReferenceSource = profile.referenceSource,
+    savedReferenceName = profile.referenceName,
+    savedCapturedSlots = profile.capturedSlots,
+    draftProfile = {
+      name = profile.name,
+      slots = self:CopySlots(profile.slots),
+      inspectSignature = profile.inspectSignature,
+      referenceSource = profile.referenceSource,
+      referenceName = profile.referenceName,
+      capturedSlots = profile.capturedSlots,
+    },
+    dirtySlots = {},
+    dirtyCount = 0,
+  }
+  self.editSession = session
+  self:UpdateSaveButton()
+  return session
+end
+
+function GearPlanner:GetWorkingProfile()
+  local session = self:GetEditSession()
+  if session then return session.draftProfile end
+  return self:GetProfile()
+end
+
+function GearPlanner:DiscardEditSession()
+  local session = self:GetEditSession()
+  local count = session and session.dirtyCount or 0
+  self.editSession = nil
+  self:UpdateSaveButton()
+  return count
+end
+
+function GearPlanner:RefreshEditDirtyState()
+  local session = self:GetEditSession()
+  local index, definition, slotKey
+  if not session then return 0 end
+  session.dirtySlots = {}
+  session.dirtyCount = 0
+  for index = 1, table.getn(SLOT_DEFS) do
+    definition = SLOT_DEFS[index]
+    slotKey = definition[1]
+    if not self:SamePlannedItem(
+      session.savedSlots[slotKey],
+      session.draftProfile.slots[slotKey]
+    ) then
+      session.dirtySlots[slotKey] = true
+      session.dirtyCount = session.dirtyCount + 1
+    end
+  end
+  if session.dirtyCount == 0 then
+    session.draftProfile.inspectSignature = session.savedInspectSignature
+    session.draftProfile.referenceSource = session.savedReferenceSource
+    session.draftProfile.referenceName = session.savedReferenceName
+    session.draftProfile.capturedSlots = session.savedCapturedSlots
+  end
+  self:UpdateSaveButton()
+  return session.dirtyCount
+end
+
+function GearPlanner:UpdateSaveButton()
+  local button = self.saveButton
+  local session = self:GetEditSession()
+  local count = session and session.dirtyCount or 0
+  if not button then return end
+  if count > 0 then
+    button:SetText("保存 (" .. tostring(count) .. ")")
+    button:Enable()
+    button:LockHighlight()
+  else
+    button:SetText("保存")
+    button:Disable()
+    button:UnlockHighlight()
+  end
+end
+
+function GearPlanner:SaveEditSession()
+  local session = self:GetEditSession()
+  local profile, count
+  if not session then return false, "当前没有可保存的配装修改。" end
+  count = self:RefreshEditDirtyState()
+  if count == 0 then return false, "当前方案没有未保存修改。" end
+  profile = session.profile
+  profile.slots = self:CopySlots(session.draftProfile.slots)
+  profile.inspectSignature = session.draftProfile.inspectSignature
+  profile.referenceSource = session.draftProfile.referenceSource
+  profile.referenceName = session.draftProfile.referenceName
+  profile.capturedSlots = session.draftProfile.capturedSlots
+  self.statCache = {}
+  self.editSession = nil
+  self:BeginEditSession(true)
+  self:UpdateAll()
+  return true, "已保存当前方案的 " .. tostring(count) .. " 个槽位修改。"
+end
+
+function GearPlanner:EditSessionChanged(clearReference)
+  local session = self:GetEditSession()
+  if not session then return end
+  session.draftProfile.inspectSignature = nil
+  if clearReference then
+    session.draftProfile.referenceSource = nil
+    session.draftProfile.referenceName = nil
+    session.draftProfile.capturedSlots = nil
+  end
+  self.statCache = {}
+  self:RefreshEditDirtyState()
+  self:UpdateAll()
+end
+
 function GearPlanner:SelectItem(item)
-  local profile = self:GetProfile()
+  local session, profile
   if not self.selectedSlot or not item then return end
+  session = self:BeginEditSession()
+  profile = session.draftProfile
   profile.slots[self.selectedSlot] = self:CopyItem(item)
   if self.selectedSlot == "MainHand" and IsTwoHand(item) then
     profile.slots.SecondaryHand = nil
   elseif self.selectedSlot == "SecondaryHand" and IsTwoHand(profile.slots.MainHand) then
     profile.slots.MainHand = nil
   end
-  profile.inspectSignature = nil
   self.statCache[item.id] = nil
-  self:UpdateAll()
+  self:EditSessionChanged(false)
 end
 
 function GearPlanner:ClearSlot(slotKey)
-  local profile = self:GetProfile()
+  local session = self:BeginEditSession()
+  local profile = session.draftProfile
   profile.slots[slotKey] = nil
-  profile.inspectSignature = nil
+  self:EditSessionChanged(false)
+end
+
+function GearPlanner:RestoreSlot(slotKey)
+  local session = self:BeginEditSession()
+  local draftSlots = session.draftProfile.slots
+  if slotKey == "MainHand" or slotKey == "SecondaryHand" then
+    draftSlots.MainHand = self:CopyItem(session.savedSlots.MainHand)
+    draftSlots.SecondaryHand = self:CopyItem(session.savedSlots.SecondaryHand)
+  else
+    draftSlots[slotKey] = self:CopyItem(session.savedSlots[slotKey])
+  end
+  self:RefreshEditDirtyState()
+  self.statCache = {}
   self:UpdateAll()
 end
 
+function GearPlanner:ClearDraft()
+  local session = self:BeginEditSession()
+  session.draftProfile.slots = {}
+  self:EditSessionChanged(true)
+end
+
 function GearPlanner:ImportCurrent()
-  local profile = self:GetProfile()
+  local session = self:BeginEditSession()
+  local profile = session.draftProfile
   local index, definition, slotID, link, itemID, source, name, quality, texture
   self:EnsureIndex()
   profile.slots = {}
-  profile.inspectSignature = nil
-  profile.referenceSource = nil
-  profile.referenceName = nil
-  profile.capturedSlots = nil
   for index = 1, table.getn(SLOT_DEFS) do
     definition = SLOT_DEFS[index]
     slotID = GetInventorySlotInfo(definition[3])
@@ -958,8 +1525,7 @@ function GearPlanner:ImportCurrent()
       end
     end
   end
-  self.statCache = {}
-  self:UpdateAll()
+  self:EditSessionChanged(true)
 end
 
 function GearPlanner:UniqueInspectProfileName(store, targetName)
@@ -1039,7 +1605,10 @@ function GearPlanner:SaveInspectReference()
   store = self:GetStore()
   for index = 1, table.getn(store.profiles) do
     if store.profiles[index].inspectSignature == signature then
+      self:DiscardEditSession()
       store.active = index
+      self.profileSelection = index
+      if self.frame and FrameVisible(self.frame) then self:BeginEditSession() end
       self.planPane = "combined"
       self:UpdateAll()
       return true, "该目标当前装备已保存为“" ..
@@ -1055,7 +1624,10 @@ function GearPlanner:SaveInspectReference()
   profile.capturedSlots = count
   profile.inspectSignature = signature
   table.insert(store.profiles, profile)
+  self:DiscardEditSession()
   store.active = table.getn(store.profiles)
+  self.profileSelection = store.active
+  if self.frame and FrameVisible(self.frame) then self:BeginEditSession() end
   self.planPane = "combined"
   self.statCache = {}
   self:UpdateAll()
@@ -1283,8 +1855,23 @@ function GearPlanner:ShowTooltip(owner, item)
         0.24
       )
     end
+    if owner.draftDirty then
+      GameTooltip:AddLine(" ")
+      GameTooltip:AddLine(
+        "未保存：右键可恢复到上次保存的配置。",
+        0.48,
+        0.72,
+        0.78
+      )
+    end
     GameTooltip:AddLine("Shift+左键：贴入聊天栏", 0.92, 0.78, 0.48)
-    GameTooltip:AddLine("Ctrl+左键：查看来源　右键：清空", 0.66, 0.62, 0.54)
+    GameTooltip:AddLine("Ctrl+左键：查看来源", 0.66, 0.62, 0.54)
+    GameTooltip:AddLine(
+      "右键：恢复已保存配置　Alt+右键：清空",
+      0.66,
+      0.62,
+      0.54
+    )
   end
   GameTooltip:Show()
 end
@@ -1302,7 +1889,16 @@ function GearPlanner:ShowSlotTooltip(button)
   else
     GameTooltip:AddLine("配装方案尚未填写。", 0.72, 0.68, 0.60)
   end
+  if button.draftDirty then
+    GameTooltip:AddLine("未保存：右键可恢复到上次保存的配置。", 0.48, 0.72, 0.78)
+  end
   GameTooltip:AddLine("左键：选择装备", 0.92, 0.78, 0.48)
+  GameTooltip:AddLine(
+    "右键：恢复已保存配置　Alt+右键：清空",
+    0.66,
+    0.62,
+    0.54
+  )
   GameTooltip:Show()
 end
 
@@ -1437,7 +2033,7 @@ function GearPlanner:AddAtlasLootButtonToProfile(button)
   self:RefreshAtlasLootSelectionButtons()
   addon:Print(
     "已将“" .. tostring(candidate.name) .. "”加入" ..
-    tostring(definition and definition[2] or "当前槽位") .. "。"
+    tostring(definition and definition[2] or "当前槽位") .. "（未保存）。"
   )
   return true
 end
@@ -1511,7 +2107,7 @@ end
 
 function GearPlanner:RefreshAtlasLootSelectionButtons()
   local active = self:AtlasSelectionAvailable()
-  local profile = active and self:GetProfile() or nil
+  local profile = active and self:GetWorkingProfile() or nil
   local selectedItem = profile and profile.slots[self.selectedSlot]
   local index, addButton, itemButton, itemID
   self:CreateAtlasLootSelectionChrome()
@@ -1628,31 +2224,42 @@ function GearPlanner:SetSlotDifferenceVisual(button, state)
   if not button then return end
   button.differenceState = state
   if state == "replace" or state == "add" then
-    button:SetBackdropColor(0.085, 0.060, 0.025, 0.84)
-    button:SetBackdropBorderColor(0.95, 0.67, 0.20, 1)
     button.differenceWash:SetTexture(0.95, 0.55, 0.10, 0.11)
     button.differenceText:SetText(SLOT_DIFFERENCE_LABELS[state])
     button.differenceText:SetTextColor(1, 0.78, 0.26)
     button.differenceWash:Show()
     button.differenceText:Show()
   elseif state == "empty" then
-    button:SetBackdropColor(0.065, 0.050, 0.035, 0.78)
-    button:SetBackdropBorderColor(0.78, 0.51, 0.22, 1)
     button.differenceWash:SetTexture(0.82, 0.48, 0.12, 0.05)
     button.differenceText:SetText(SLOT_DIFFERENCE_LABELS[state])
     button.differenceText:SetTextColor(0.88, 0.62, 0.28)
     button.differenceWash:Show()
     button.differenceText:Show()
   else
-    button:SetBackdropColor(0.055, 0.045, 0.035, 0.72)
-    button:SetBackdropBorderColor(0.62, 0.45, 0.24, 1)
     button.differenceWash:Hide()
     button.differenceText:Hide()
   end
+  RefreshSlotOutline(button)
+end
+
+function GearPlanner:SetSlotDraftVisual(button, dirty)
+  if not button then return end
+  button.draftDirty = dirty and true or false
+  button.labelText:SetText(
+    tostring(button.slotLabel or "装备") ..
+    (dirty and " |cff7fb5c0*|r" or "")
+  )
+  if dirty then
+    button.draftMark:Show()
+  else
+    button.draftMark:Hide()
+  end
+  RefreshSlotOutline(button)
 end
 
 function GearPlanner:UpdateSlots()
-  local profile = self:GetProfile()
+  local profile = self:GetWorkingProfile()
+  local session = self:GetEditSession()
   local index, definition, button, item, slotID, link, currentItemID
   for index = 1, table.getn(SLOT_DEFS) do
     definition = SLOT_DEFS[index]
@@ -1673,6 +2280,10 @@ function GearPlanner:UpdateSlots()
     self:SetSlotDifferenceVisual(
       button,
       self:GetSlotDifferenceState(item, currentItemID)
+    )
+    self:SetSlotDraftVisual(
+      button,
+      session and session.dirtySlots[definition[1]]
     )
   end
 end
@@ -1752,7 +2363,7 @@ function GearPlanner:HideStatRows()
 end
 
 function GearPlanner:UpdateStats()
-  local profile = self:GetProfile()
+  local profile = self:GetWorkingProfile()
   local planned = self:CollectProfileStats(profile)
   local current = self:CollectCurrentStats()
   local keys, included = {}, {}
@@ -1774,14 +2385,14 @@ function GearPlanner:UpdateStats()
   end
   table.sort(keys, StatLess)
 
-  self.statsText:SetText("|cffc89b55属性|r")
-  self.statsCurrentText:SetText("|cffc89b55当前|r")
-  self.statsPlannedText:SetText("|cffc89b55配装|r")
-  self.statsDeltaText:SetText("|cffc89b55变化|r")
+  self.statsText:SetText("|cff3b2517属性|r")
+  self.statsCurrentText:SetText("|cff3b2517当前|r")
+  self.statsPlannedText:SetText("|cff3b2517配装|r")
+  self.statsDeltaText:SetText("|cff3b2517变化|r")
   self:HideStatRows()
 
   if table.getn(keys) == 0 then
-    self.statsEmptyText:SetText("|cff888888尚无可统计的装备属性。|r")
+    self.statsEmptyText:SetText("|cff6f604e尚无可统计的装备属性。|r")
     self.statsEmptyText:Show()
   else
     self.statsEmptyText:Hide()
@@ -1806,36 +2417,36 @@ function GearPlanner:UpdateStats()
       delta = (plannedValue or 0) - (currentValue or 0)
       row = self.statRows[index]
       row.label:SetText(
-        "|cffd9c39a" .. StatLabel(key, self.companionMode) .. "|r"
+        "|cff4d321f" .. StatLabel(key, self.companionMode) .. "|r"
       )
       currentText = weaponStat and not currentValue and "—" or
         ComparisonValue(currentValue or 0, key, false)
       plannedText = weaponStat and not plannedValue and "—" or
         ComparisonValue(plannedValue or 0, key, false)
       row.current:SetText(
-        "|cffb8b8b8" .. currentText .. "|r"
+        "|cff5a4a3a" .. currentText .. "|r"
       )
       row.planned:SetText(
-        "|cffe9d5a2" .. plannedText .. "|r"
+        "|cff2f2418" .. plannedText .. "|r"
       )
       if weaponStat and plannedValue and not currentValue then
-        row.delta:SetText("|cffd6a84d新增|r")
+        row.delta:SetText("|cff8a5d20新增|r")
       elseif weaponStat and currentValue and not plannedValue then
-        row.delta:SetText("|cffd6a84d移除|r")
+        row.delta:SetText("|cff8a5d20移除|r")
       elseif WEAPON_SPEED_STATS[key] and delta ~= 0 then
         row.delta:SetText(
-          "|cffd6a84d" .. ComparisonValue(delta, key, true) .. "|r"
+          "|cff8a5d20" .. ComparisonValue(delta, key, true) .. "|r"
         )
       elseif delta > 0 then
         row.delta:SetText(
-          "|cff55dd77" .. ComparisonValue(delta, key, true) .. "|r"
+          "|cff236b35" .. ComparisonValue(delta, key, true) .. "|r"
         )
       elseif delta < 0 then
         row.delta:SetText(
-          "|cffff6666" .. ComparisonValue(delta, key, true) .. "|r"
+          "|cff8f3028" .. ComparisonValue(delta, key, true) .. "|r"
         )
       else
-        row.delta:SetText("|cff777777—|r")
+        row.delta:SetText("|cff7b6c5a—|r")
       end
       row.label:Show()
       row.current:Show()
@@ -1845,7 +2456,7 @@ function GearPlanner:UpdateStats()
 
     if overflowCount > 0 then
       row = self.statRows[requiredRows]
-      row.label:SetText("|cff888888另有 " .. tostring(overflowCount) .. " 项|r")
+      row.label:SetText("|cff6f604e另有 " .. tostring(overflowCount) .. " 项|r")
       row.current:SetText("")
       row.planned:SetText("")
       row.delta:SetText("")
@@ -1882,6 +2493,7 @@ function GearPlanner:UpdateAll()
   self:UpdateProfileControls()
   self:UpdateSlots()
   self:UpdateStats()
+  self:UpdateSaveButton()
   if self.atlasAddButtons or self.atlasSelectionActive then
     self:RefreshAtlasLootSelectionButtons()
   end
@@ -1899,17 +2511,24 @@ function GearPlanner:CreateSlotButton(parent, definition, index)
   button.slotKey = definition[1]
   button.slotLabel = definition[2]
   button.layoutIndex = index
-  CreateBackdrop(button, 0.72)
+  CreateSlotArt(button)
   button.differenceWash = button:CreateTexture(nil, "BACKGROUND")
   button.differenceWash:SetPoint("TOPLEFT", button, "TOPLEFT", 4, -4)
   button.differenceWash:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -4, 4)
   button.differenceWash:Hide()
+  button.draftMark = button:CreateTexture(nil, "OVERLAY")
+  button.draftMark:SetTexture(0.42, 0.68, 0.76, 0.92)
+  button.draftMark:SetWidth(3)
+  button.draftMark:SetPoint("TOPLEFT", button, "TOPLEFT", 2, -2)
+  button.draftMark:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", 2, 2)
+  button.draftMark:Hide()
   button.icon = button:CreateTexture(nil, "ARTWORK")
   button.icon:SetWidth(32)
   button.icon:SetHeight(32)
   button.icon:SetPoint("LEFT", button, "LEFT", 6, 0)
   button.labelText = button:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
   button.labelText:SetPoint("TOPLEFT", button.icon, "TOPRIGHT", 7, -3)
+  button.labelText:SetTextColor(0.82, 0.66, 0.38)
   button.labelText:SetText(definition[2])
   button.itemText = button:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
   button.itemText:SetPoint("BOTTOMLEFT", button.icon, "BOTTOMRIGHT", 7, 3)
@@ -1928,8 +2547,10 @@ function GearPlanner:CreateSlotButton(parent, definition, index)
   button:SetScript("OnClick", function()
     if arg1 == "LeftButton" and IsShiftKeyDown() then
       GearPlanner:InsertItemChatLink(this.item)
-    elseif arg1 == "RightButton" then
+    elseif arg1 == "RightButton" and IsAltKeyDown() then
       GearPlanner:ClearSlot(this.slotKey)
+    elseif arg1 == "RightButton" then
+      GearPlanner:RestoreSlot(this.slotKey)
     elseif IsControlKeyDown() and this.item then
       GearPlanner:OpenSource(this.item)
     else
@@ -2284,7 +2905,8 @@ end
 
 function GearPlanner:CreateFrame()
   local frame, close, title, profilePrevious, profileNext
-  local importButton, clearButton, manageButton, index, definition, statsPanel
+  local saveButton, importButton, clearButton, manageButton
+  local index, definition, statsPanel
   if self.frame then return end
   frame = CreateFrame("Frame", "AzerothExpeditionUIGearPlannerFrame", UIParent)
   frame:SetWidth(760)
@@ -2295,7 +2917,7 @@ function GearPlanner:CreateFrame()
   frame:SetMovable(true)
   frame:EnableMouse(true)
   frame:RegisterForDrag("LeftButton")
-  CreateBackdrop(frame, 0.98)
+  CreateFrameArt(frame)
   frame:SetScript("OnDragStart", function()
     if not GearPlanner.companionMode then this:StartMoving() end
   end)
@@ -2309,48 +2931,81 @@ function GearPlanner:CreateFrame()
     if GearPlanner.profileManager then GearPlanner.profileManager:Hide() end
     GearPlanner:OnPlanFrameHidden()
   end)
-  frame:SetScript("OnShow", function() GearPlanner:UpdateAll() end)
+  frame:SetScript("OnShow", function()
+    GearPlanner:BeginEditSession()
+    GearPlanner:UpdateAll()
+  end)
   frame:Hide()
   self.frame = frame
   AddSpecialFrame("AzerothExpeditionUIGearPlannerFrame")
   title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
   title:SetPoint("TOPLEFT", frame, "TOPLEFT", 18, -16)
-  title:SetWidth(320)
+  title:SetWidth(360)
   title:SetHeight(20)
   title:SetJustifyH("LEFT")
+  if title.SetFont then title:SetFont(FONT_SERIF, 14, "OUTLINE") end
+  title:SetTextColor(0.91, 0.78, 0.50)
   title:SetText("配装方案")
   self.titleText = title
   close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
+  close:SetWidth(32)
+  close:SetHeight(32)
   close:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -5, -5)
+  ApplyControlArt(close, "close")
   close:SetScript("OnClick", function() GearPlanner:CloseActiveView() end)
   self.closeButton = close
-  profileNext = CreateButton(frame, ">", 24, 20)
-  profileNext:SetPoint("RIGHT", close, "LEFT", -2, 0)
+  profileNext = CreateButton(frame, "", 18, 26)
+  profileNext:SetPoint("RIGHT", close, "LEFT", -4, 0)
+  ApplyControlArt(profileNext, "next")
   profileNext:SetScript("OnClick", function() GearPlanner:CycleProfile(1) end)
   self.profileNextButton = profileNext
-  profilePrevious = CreateButton(frame, "<", 24, 20)
-  profilePrevious:SetPoint("RIGHT", profileNext, "LEFT", -2, 0)
+  profilePrevious = CreateButton(frame, "", 18, 26)
+  profilePrevious:SetPoint("RIGHT", profileNext, "LEFT", -4, 0)
+  ApplyControlArt(profilePrevious, "previous")
   profilePrevious:SetScript("OnClick", function() GearPlanner:CycleProfile(-1) end)
   self.profilePreviousButton = profilePrevious
+  saveButton = CreateButton(frame, "保存", 70, 22)
+  saveButton:SetPoint("TOPLEFT", frame, "TOPLEFT", 16, -43)
+  ApplyControlArt(saveButton, "save")
+  saveButton:SetScript("OnClick", function()
+    local ok, message = GearPlanner:SaveEditSession()
+    addon:Print(message)
+  end)
+  saveButton:SetScript("OnEnter", function()
+    local session = GearPlanner:GetEditSession()
+    local count = session and session.dirtyCount or 0
+    GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+    GameTooltip:AddLine("保存配装方案")
+    if count > 0 then
+      GameTooltip:AddLine(
+        "将 " .. tostring(count) .. " 个槽位修改写入当前方案。",
+        0.92,
+        0.78,
+        0.48
+      )
+    else
+      GameTooltip:AddLine("当前没有未保存修改。", 0.66, 0.62, 0.54)
+    end
+    GameTooltip:AddLine("关闭页面不会自动保存。", 0.48, 0.72, 0.78)
+    GameTooltip:Show()
+  end)
+  saveButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
+  self.saveButton = saveButton
   importButton = CreateButton(frame, "导入当前装备", 116, 22)
-  importButton:SetPoint("TOPLEFT", frame, "TOPLEFT", 16, -43)
+  importButton:SetPoint("LEFT", saveButton, "RIGHT", 7, 0)
+  ApplyControlArt(importButton, "import")
   importButton:SetScript("OnClick", function() GearPlanner:ImportCurrent() end)
   self.importButton = importButton
   clearButton = CreateButton(frame, "清空", 64, 22)
   clearButton:SetPoint("LEFT", importButton, "RIGHT", 7, 0)
+  ApplyControlArt(clearButton, "clear")
   clearButton:SetScript("OnClick", function()
-    local profile = GearPlanner:GetProfile()
-    profile.slots = {}
-    profile.inspectSignature = nil
-    profile.referenceSource = nil
-    profile.referenceName = nil
-    profile.capturedSlots = nil
-    GearPlanner.statCache = {}
-    GearPlanner:UpdateAll()
+    GearPlanner:ClearDraft()
   end)
   self.clearButton = clearButton
   manageButton = CreateButton(frame, "方案管理", 78, 22)
   manageButton:SetPoint("LEFT", clearButton, "RIGHT", 7, 0)
+  ApplyControlArt(manageButton, "manage")
   manageButton:SetScript("OnClick", function()
     GearPlanner:OpenProfileManager()
   end)
@@ -2359,6 +3014,7 @@ function GearPlanner:CreateFrame()
   self.providerText:SetPoint("LEFT", manageButton, "RIGHT", 14, 0)
   self.providerText:SetWidth(400)
   self.providerText:SetJustifyH("LEFT")
+  self.providerText:SetTextColor(0.66, 0.55, 0.38)
   self.slotButtons = {}
   for index = 1, table.getn(SLOT_DEFS) do
     definition = SLOT_DEFS[index]
@@ -2368,7 +3024,7 @@ function GearPlanner:CreateFrame()
   statsPanel:SetWidth(306)
   statsPanel:SetHeight(463)
   statsPanel:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -16, -72)
-  CreateBackdrop(statsPanel, 0.66)
+  CreatePaperArt(statsPanel)
   self.statsPanel = statsPanel
   self.statsText = statsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
   self.statsText:SetPoint("TOPLEFT", statsPanel, "TOPLEFT", 12, -12)
@@ -2412,9 +3068,10 @@ function GearPlanner:CreateFrame()
   self.statsNoteText:SetJustifyH("LEFT")
   self.statsNoteText:SetJustifyV("BOTTOM")
   self.statsNoteText:SetText(
-    "|cff777777未填槽位按空槽；仅比较装备静态属性\n" ..
+    "|cff6b5238未填槽位按空槽；仅比较装备静态属性\n" ..
     "攻速变化为琥珀色，不判断快慢优劣|r"
   )
+  self:UpdateSaveButton()
   self:SetStandaloneLayout()
 end
 
@@ -2542,9 +3199,12 @@ function GearPlanner:SetCompanionLayout()
     )
   end
 
+  self.saveButton:SetWidth(68)
+  self.saveButton:ClearAllPoints()
+  self.saveButton:SetPoint("TOPLEFT", self.frame, "TOPLEFT", 10, -43)
   self.importButton:SetWidth(94)
   self.importButton:ClearAllPoints()
-  self.importButton:SetPoint("TOPLEFT", self.frame, "TOPLEFT", 10, -43)
+  self.importButton:SetPoint("LEFT", self.saveButton, "RIGHT", 4, 0)
   self.clearButton:SetWidth(50)
   self.clearButton:ClearAllPoints()
   self.clearButton:SetPoint("LEFT", self.importButton, "RIGHT", 4, 0)
@@ -2588,9 +3248,12 @@ function GearPlanner:SetStandaloneLayout()
   end
   self.frameAnchorRestore = nil
 
+  self.saveButton:SetWidth(70)
+  self.saveButton:ClearAllPoints()
+  self.saveButton:SetPoint("TOPLEFT", self.frame, "TOPLEFT", 16, -43)
   self.importButton:SetWidth(116)
   self.importButton:ClearAllPoints()
-  self.importButton:SetPoint("TOPLEFT", self.frame, "TOPLEFT", 16, -43)
+  self.importButton:SetPoint("LEFT", self.saveButton, "RIGHT", 7, 0)
   self.clearButton:SetWidth(64)
   self.clearButton:ClearAllPoints()
   self.clearButton:SetPoint("LEFT", self.importButton, "RIGHT", 7, 0)
@@ -2600,7 +3263,7 @@ function GearPlanner:SetStandaloneLayout()
 
   self.providerText:ClearAllPoints()
   self.providerText:SetPoint("LEFT", self.profileManageButton, "RIGHT", 14, 0)
-  self.providerText:SetWidth(380)
+  self.providerText:SetWidth(365)
 
   for index = 1, table.getn(SLOT_DEFS) do
     definition = SLOT_DEFS[index]
@@ -2655,16 +3318,15 @@ end
 
 function GearPlanner:ViewAvailable(view)
   if view == "plan" then return true end
+  if view == "dual" then return self:WideLayoutSupported() end
   self:DiscoverCompanionProviders()
   return self.providers[view] and true or false
 end
 
 function GearPlanner:ResolveActiveView()
-  local preferred = addon.db.gearplanner.companionView or "current"
-  if self:ViewAvailable(preferred) then return preferred end
-  if self:ViewAvailable("current") then return "current" end
-  if self:ViewAvailable("stats") then return "stats" end
-  return "plan"
+  local active = self.activeView
+  if active and self:ViewAvailable(active) then return active end
+  return nil
 end
 
 function GearPlanner:CaptureProviderState(frame)
@@ -2684,6 +3346,15 @@ function GearPlanner:RestoreProviderStates(restore)
       RestorePoints(frame, state.points)
       SetShown(frame, state.shown)
     end
+  end
+  self.providerRestores = {}
+end
+
+function GearPlanner:ReleaseProviderStates()
+  local frame, state
+  for frame, state in pairs(self.providerRestores or {}) do
+    RestorePoints(frame, state.points)
+    SetShown(frame, false)
   end
   self.providerRestores = {}
 end
@@ -2720,12 +3391,11 @@ function GearPlanner:WideLayoutSupported()
   local parentWidth, left, right, statsWidth, rightNeed
   self:DiscoverCompanionProviders()
   if
-    self.activeView == "plan" or
-    addon.db.gearplanner.companionView == "plan"
+    not self.providers.current or
+    not self.providers.stats or
+    not UIParent or
+    not CharacterFrame
   then
-    return false
-  end
-  if not self.providers.stats or not UIParent or not CharacterFrame then
     return false
   end
   parentWidth = UIParent:GetWidth()
@@ -2757,11 +3427,7 @@ function GearPlanner:CreateCompanionRailButton(
   button.tooltipTitle = title
   button.tooltipText = tooltip
   button:SetScript("OnClick", function()
-    if this.viewKey == "wide" then
-      GearPlanner:ToggleWideMode()
-    else
-      GearPlanner:SetActiveView(this.viewKey, true)
-    end
+    GearPlanner:ToggleActiveView(this.viewKey, true)
   end)
   button:SetScript("OnEnter", function()
     GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
@@ -2805,14 +3471,6 @@ function GearPlanner:CreateCompanionRail()
     )
     self.companionButtons[definition.key] = button
   end
-  self.wideButton = self:CreateCompanionRailButton(
-    rail,
-    "AzerothExpeditionUICharacterCompanionWide",
-    "双",
-    "双栏模式",
-    "宽屏时在角色页左侧同时保留 StatCompare",
-    "wide"
-  )
 end
 
 function GearPlanner:UpdateCompanionRail()
@@ -2838,21 +3496,6 @@ function GearPlanner:UpdateCompanionRail()
       button:Hide()
       button:UnlockHighlight()
     end
-  end
-
-  self.wideButton:ClearAllPoints()
-  if self:WideLayoutSupported() then
-    self.wideButton:SetPoint("TOP", self.companionRail, "TOP", 0, y)
-    self.wideButton:Show()
-    count = count + 1
-    if self.wideActive then
-      self.wideButton:LockHighlight()
-    else
-      self.wideButton:UnlockHighlight()
-    end
-  else
-    self.wideButton:Hide()
-    self.wideButton:UnlockHighlight()
   end
 
   self.companionRail:SetHeight(math.max(30, 4 + count * 26))
@@ -3465,36 +4108,40 @@ end
 
 function GearPlanner:OnCompanionContextHidden()
   if self.companionActive or self.companionVisible then
+    self.suppressPlanHide = true
     self:HideCompanionViews()
+    self.suppressPlanHide = false
   end
+  self:StopAtlasLootSelection(false)
+  self:DiscardEditSession()
   if self.companionRail then self.companionRail:Hide() end
-  self.providerRestores = {}
+  self:ReleaseProviderStates()
+  self.activeView = nil
+  self.pendingCompanionView = nil
+  self.companionSessionActive = false
+  self.companionActive = false
   self.companionVisible = false
   self.wideActive = false
+  self.companionReason = "hidden"
 end
 
 function GearPlanner:OnPlanFrameHidden()
+  if self.suppressPlanHide then return end
+  self:DiscardEditSession()
+  if not Enabled() then return end
+  if not self.companionMode then
+    self.activeView = nil
+    return
+  end
   if
-    self.suppressPlanHide or
-    not Enabled() or
-    not self.companionMode or
     not self:CompanionContextVisible() or
     self.activeView ~= "plan"
-  then
-    return
-  end
-  if self:ViewAvailable("current") then
-    addon.db.gearplanner.companionView = "current"
-  elseif self:ViewAvailable("stats") then
-    addon.db.gearplanner.companionView = "stats"
-  else
-    return
-  end
-  self:ScheduleCompanionSettle(1)
+  then return end
+  self:CollapseCompanionView()
 end
 
 function GearPlanner:ReconcileCompanion()
-  local supported, reason, active, wide
+  local supported, reason, active
   local currentFrame, statsFrame
   self:InstallProviderHooks()
   self:DiscoverCompanionProviders()
@@ -3502,6 +4149,9 @@ function GearPlanner:ReconcileCompanion()
   self.companionReason = reason
 
   if not Enabled() or not supported then
+    if not Enabled() or not (self.frame and FrameVisible(self.frame)) then
+      self:DiscardEditSession()
+    end
     if self.companionRail then self.companionRail:Hide() end
     if self.companionMode and self:CompanionContextVisible() then
       self:RestoreProviderStates(true)
@@ -3510,11 +4160,15 @@ function GearPlanner:ReconcileCompanion()
     end
     self.companionActive = false
     self.companionVisible = false
+    self.companionSessionActive = false
+    self.activeView = nil
+    self.pendingCompanionView = nil
     self.wideActive = false
     return false
   end
 
   if not self:CompanionContextVisible() then
+    self:DiscardEditSession()
     if self.companionRail then self.companionRail:Hide() end
     self.companionVisible = false
     self.wideActive = false
@@ -3529,10 +4183,21 @@ function GearPlanner:ReconcileCompanion()
   self:CaptureProviderState(currentFrame)
   self:CaptureProviderState(statsFrame)
 
+  if not self.companionSessionActive then
+    self.activeView = self.pendingCompanionView
+    self.pendingCompanionView = nil
+    self.companionSessionActive = true
+  elseif self.pendingCompanionView then
+    self.activeView = self.pendingCompanionView
+    self.pendingCompanionView = nil
+  end
   active = self:ResolveActiveView()
   self.activeView = active
-  wide = addon.db.gearplanner.wideMode and
-    self:WideLayoutSupported() and active ~= "stats" and active ~= "plan"
+  if active == "plan" then
+    self:BeginEditSession()
+  else
+    self:DiscardEditSession()
+  end
 
   SetShown(currentFrame, false)
   SetShown(statsFrame, false)
@@ -3550,22 +4215,24 @@ function GearPlanner:ReconcileCompanion()
   elseif active == "stats" and statsFrame then
     self:AnchorProviderRight(statsFrame)
     statsFrame:Show()
-  else
-    self.activeView = "plan"
+  elseif active == "plan" then
     self:EnsureIndex()
     self:UpdateAll()
     self.frame:Show()
-  end
-
-  if wide and statsFrame then
+  elseif active == "dual" and currentFrame and statsFrame then
+    self:AnchorProviderRight(currentFrame)
     self:AnchorStatsLeft(statsFrame)
+    currentFrame:Show()
     statsFrame:Show()
+    if type(S_ItemTip_UpdateFrame) == "function" then
+      pcall(S_ItemTip_UpdateFrame, "player")
+    end
   end
 
-  self.wideActive = wide and true or false
+  self.wideActive = active == "dual"
   self.companionActive = true
   self.companionVisible = true
-  self.companionReason = "active"
+  self.companionReason = active and "active" or "collapsed"
   self:UpdateCompanionRail()
   return true
 end
@@ -3589,21 +4256,36 @@ end
 
 function GearPlanner:SetActiveView(view, refreshProvider)
   local selectedDefinition, index, definition
+  if not Enabled() then return false, "配装工具已禁用。" end
   for index = 1, table.getn(COMPANION_VIEWS) do
     definition = COMPANION_VIEWS[index]
     if definition.key == view then selectedDefinition = definition end
   end
   if not selectedDefinition then return false, "未知伴随视图。" end
+  if not self:ViewAvailable(view) then
+    return false, "当前 Provider 或可用宽度不支持“" ..
+      tostring(selectedDefinition.title) .. "”。"
+  end
 
+  if view == "plan" then
+    self:BeginEditSession()
+  else
+    self:DiscardEditSession()
+  end
   addon.db.gearplanner.companionView = view
+  addon.db.gearplanner.wideMode = false
+  self.activeView = view
+  self.pendingCompanionView = view
   if
     refreshProvider and
-    view == "stats" and
+    (view == "stats" or view == "dual") and
     type(SCPaperDollFrame_OnShow) == "function"
   then
     pcall(SCPaperDollFrame_OnShow)
   end
   if self:CompanionContextVisible() then
+    self.companionSessionActive = true
+    self.pendingCompanionView = nil
     self:ReconcileCompanion()
   else
     self:ScheduleCompanionSettle(2)
@@ -3611,24 +4293,58 @@ function GearPlanner:SetActiveView(view, refreshProvider)
   return true, "已切换到“" .. tostring(selectedDefinition.title) .. "”。"
 end
 
+function GearPlanner:CollapseCompanionView()
+  self:StopAtlasLootSelection(false)
+  self:DiscardEditSession()
+  if self.profileManager then self.profileManager:Hide() end
+  self.activeView = nil
+  self.pendingCompanionView = nil
+  self.wideActive = false
+  addon.db.gearplanner.wideMode = false
+  if self:CompanionContextVisible() then
+    self.companionSessionActive = true
+    self:ReconcileCompanion()
+  end
+  return true, "角色伴随视图已收起。"
+end
+
+function GearPlanner:ToggleActiveView(view, refreshProvider)
+  if
+    self:CompanionContextVisible() and
+    self.companionSessionActive and
+    self.activeView == view
+  then
+    return self:CollapseCompanionView()
+  end
+  if not self:CompanionContextVisible() then
+    return self:OpenView(view)
+  end
+  return self:SetActiveView(view, refreshProvider)
+end
+
 function GearPlanner:SetWideMode(enabled)
-  if enabled and not self:WideLayoutSupported() then
-    return false, "当前有效宽度或 StatCompare Provider 不支持双栏。"
-  end
-  addon.db.gearplanner.wideMode = enabled and true or false
-  if enabled and addon.db.gearplanner.companionView == "stats" then
-    if self:ViewAvailable("current") then
-      addon.db.gearplanner.companionView = "current"
-    else
-      addon.db.gearplanner.companionView = "plan"
+  addon.db.gearplanner.wideMode = false
+  if enabled then
+    if self:CompanionContextVisible() then
+      return self:SetActiveView("dual", true)
     end
+    return self:OpenView("dual")
   end
-  if self:CompanionContextVisible() then self:ReconcileCompanion() end
-  return true, "双栏模式已" .. (enabled and "启用。" or "关闭。")
+  if self.activeView == "dual" then
+    return self:CollapseCompanionView()
+  end
+  return true, "双栏模式已关闭。"
 end
 
 function GearPlanner:ToggleWideMode()
-  return self:SetWideMode(not addon.db.gearplanner.wideMode)
+  if
+    self:CompanionContextVisible() and
+    self.companionSessionActive and
+    self.activeView == "dual"
+  then
+    return self:CollapseCompanionView()
+  end
+  return self:SetWideMode(true)
 end
 
 function GearPlanner:OpenStandalone(reason)
@@ -3637,21 +4353,24 @@ function GearPlanner:OpenStandalone(reason)
   self:CreateFrame()
   self:SetStandaloneLayout()
   self:EnsureIndex()
+  self:BeginEditSession()
   self:UpdateAll()
   self.frame:Show()
   self.activeView = "plan"
+  self.pendingCompanionView = nil
+  self.companionSessionActive = false
   self.companionActive = false
   self.companionVisible = false
+  self.wideActive = false
   self.companionReason = "standalone-" .. tostring(reason or "requested")
   return true, "角色伴随栏不可用，已打开独立配装窗口。"
 end
 
 function GearPlanner:OpenView(view)
-  local supported, reason, title, requestedTitle
+  local supported, reason, title, ok, message
   if not Enabled() then return false, "配装工具已禁用。" end
   title = CompanionViewTitle(view)
   if not title then return false, "未知伴随视图。" end
-  requestedTitle = title
   supported, reason = self:CharacterCompanionSupported()
   if not supported then
     if view == "plan" then return self:OpenStandalone(reason) end
@@ -3662,41 +4381,27 @@ function GearPlanner:OpenView(view)
   self:CreateCompanionControllers()
   self:CreateCompanionRail()
   self:CreateFrame()
+  if not self:ViewAvailable(view) then
+    return false, "当前 Provider 或可用宽度不支持“" ..
+      tostring(title) .. "”。"
+  end
   if not self:ShowCharacterPaperDoll() then
     if view == "plan" then return self:OpenStandalone("open-failed") end
     return false, "角色页面无法打开。"
   end
-  if not self:ViewAvailable(view) then
-    view = self:ResolveActiveView()
-    addon.db.gearplanner.companionView = view
-    title = CompanionViewTitle(view) or "配装方案"
-  end
-  if view == "stats" and type(SCPaperDollFrame_OnShow) == "function" then
-    pcall(SCPaperDollFrame_OnShow)
-  end
+  ok, message = self:SetActiveView(view, true)
+  if not ok then return false, message end
   self:ScheduleCompanionSettle(2)
-  if title ~= requestedTitle then
-    return true, "“" .. tostring(requestedTitle) ..
-      "” Provider 不可用，已改为“" .. tostring(title) .. "”。"
-  end
   return true, "角色页已打开，伴随视图为“" .. tostring(title) .. "”。"
 end
 
 function GearPlanner:CloseActiveView()
   if self.companionMode and self:CompanionContextVisible() then
-    if self:ViewAvailable("current") then
-      self:SetActiveView("current", true)
-    elseif self:ViewAvailable("stats") then
-      self:SetActiveView("stats", true)
-    elseif type(HideUIPanel) == "function" then
-      HideUIPanel(CharacterFrame)
-    else
-      CharacterFrame:Hide()
-    end
-    return
+    return self:CollapseCompanionView()
   end
   if self.profileManager then self.profileManager:Hide() end
   if self.frame then self.frame:Hide() end
+  self.activeView = nil
 end
 
 function GearPlanner:Open()
@@ -3711,16 +4416,15 @@ function GearPlanner:Toggle()
     self.activeView == "plan" and
     FrameVisible(self.frame)
   then
-    if type(HideUIPanel) == "function" then
-      HideUIPanel(CharacterFrame)
-    else
-      CharacterFrame:Hide()
-    end
-    return true, "角色页与配装伴随栏已隐藏。"
+    return self:CollapseCompanionView()
   end
   if self.frame and not self.companionMode and FrameVisible(self.frame) then
     self.frame:Hide()
+    self.activeView = nil
     return true, "配装工具已隐藏。"
+  end
+  if self:CompanionContextVisible() then
+    return self:SetActiveView("plan", true)
   end
   return self:Open()
 end
@@ -3728,6 +4432,7 @@ end
 function GearPlanner:SetEnabled(enabled)
   addon.db.gearplanner.enabled = enabled and true or false
   if not enabled then
+    self:DiscardEditSession()
     if self.settleFrame then self.settleFrame:SetScript("OnUpdate", nil) end
     if self.inspectSettleFrame then
       self.inspectSettleFrame:SetScript("OnUpdate", nil)
@@ -3742,6 +4447,9 @@ function GearPlanner:SetEnabled(enabled)
     if self.profileManager then self.profileManager:Hide() end
     if self.frame then self.frame:Hide() end
     if self.companionMode then self:SetStandaloneLayout() end
+    self.activeView = nil
+    self.pendingCompanionView = nil
+    self.companionSessionActive = false
     self.companionActive = false
     self.companionVisible = false
     self.wideActive = false
@@ -3768,15 +4476,17 @@ function GearPlanner:GetRuntimeStatus()
   local supported, reason = self:CharacterCompanionSupported()
   local inspectSupported, inspectReason = self:InspectCompanionSupported()
   local store = self:GetStore()
+  local editSession = self:GetEditSession()
+  local activeStatus = self.activeView or
+    (self.companionSessionActive and "collapsed" or "none")
   self:DiscoverCompanionProviders()
   self:DiscoverInspectProviders()
   return "runtime=" .. self.runtimeContract .. ", enabled=" .. tostring(Enabled()) ..
     ", mode=" .. tostring(self.companionMode and "companion" or "standalone") ..
-    ", active=" .. tostring(self.activeView or "none") ..
+    ", active=" .. tostring(activeStatus) ..
     ", requested=" ..
     tostring(addon.db.gearplanner.companionView or "current") ..
-    ", wide=" .. tostring(self.wideActive and "active" or
-      (addon.db.gearplanner.wideMode and "requested" or "off")) ..
+    ", wide=" .. tostring(self.wideActive and "active" or "off") ..
     ", character=" .. tostring(supported and "ready" or reason) ..
     ", providers=current:" ..
     tostring(self.providers.current and "ready" or "missing") ..
@@ -3793,6 +4503,7 @@ function GearPlanner:GetRuntimeStatus()
     ", atlas=" .. tostring(self.atlasReady and "就绪" or "缺失") ..
     ", items=" .. tostring(self.itemCount or 0) ..
     ", profiles=" .. tostring(table.getn(store.profiles)) ..
+    ", draft=" .. tostring(editSession and editSession.dirtyCount or 0) ..
     ", picker=native-atlasloot" ..
     ", selecting=" .. tostring(self.atlasSelectionActive and
       (self.atlasSelectionLabel or "active") or "off") ..
@@ -3814,6 +4525,7 @@ function GearPlanner:Initialize()
     db.schemaVersion = 3
   end
   if (tonumber(db.schemaVersion) or 0) < 5 then db.schemaVersion = 5 end
+  db.wideMode = false
   self.index = {}
   self.byID = {}
   self.statCache = {}
@@ -3827,6 +4539,7 @@ function GearPlanner:Initialize()
   self.recordCount = 0
   self.profilePage = 1
   self.profileSelection = nil
+  self.editSession = nil
   self.atlasSelectionActive = false
   self.atlasSelectionLabel = nil
   self.atlasLootItemsHooked = false
@@ -3838,6 +4551,9 @@ function GearPlanner:Initialize()
   self.companionActive = false
   self.companionVisible = false
   self.companionMode = false
+  self.activeView = nil
+  self.pendingCompanionView = nil
+  self.companionSessionActive = false
   self.wideActive = false
   self.companionReason = "initialized"
   self.inspectActive = false
@@ -3856,6 +4572,7 @@ function GearPlanner:Apply()
   self:CreateInspectControllers()
   self:InstallProviderHooks()
   if not Enabled() then
+    self:DiscardEditSession()
     self:RestoreProviderStates(self:CompanionContextVisible())
     self:RestoreInspectProviderStates(self:InspectContextVisible())
     self:StopAtlasLootSelection(false)
@@ -3863,6 +4580,9 @@ function GearPlanner:Apply()
     if self.inspectRail then self.inspectRail:Hide() end
     if self.profileManager then self.profileManager:Hide() end
     if self.frame then self.frame:Hide() end
+    self.activeView = nil
+    self.pendingCompanionView = nil
+    self.companionSessionActive = false
     self.companionActive = false
     self.companionVisible = false
     self.wideActive = false
