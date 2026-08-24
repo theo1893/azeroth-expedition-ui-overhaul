@@ -60,7 +60,7 @@ end
 local maxdurations = {}
 local function BuffOnUpdate()
   if ( this.tick or 1) > GetTime() then return else this.tick = GetTime() + .2 end
-  local bid = GetPlayerBuff(PLAYER_BUFF_START_ID+this.id,"HELPFUL")
+  local bid = GetPlayerBuff(PLAYER_BUFF_START_ID+(this.aura_id or this.id),"HELPFUL")
   local timeleft = GetPlayerBuffTimeLeft(bid)
   local texture = GetPlayerBuffTexture(bid)
   local start = 0
@@ -95,7 +95,7 @@ local function BuffOnUpdate()
 end
 
 local function TargetBuffOnUpdate()
-  local name, rank, icon, count, duration, timeleft = _G.UnitBuff("target", this.id)
+  local name, rank, icon, count, duration, timeleft = _G.UnitBuff("target", this.aura_id or this.id)
   if duration and timeleft then
     CooldownFrame_SetTimer(this.cd, GetTime() + timeleft - duration, duration, 1)
   else
@@ -106,16 +106,17 @@ end
 local function BuffOnEnter()
   local parent = this:GetParent()
   if not parent.label then return end
+  local id = this.aura_id or this.id
 
   GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT")
   if parent.label == "player" then
-    GameTooltip:SetPlayerBuff(GetPlayerBuff(PLAYER_BUFF_START_ID+this.id,"HELPFUL"))
+    GameTooltip:SetPlayerBuff(GetPlayerBuff(PLAYER_BUFF_START_ID+id,"HELPFUL"))
   else
-    GameTooltip:SetUnitBuff(parent.label .. parent.id, this.id)
+    GameTooltip:SetUnitBuff(parent.label .. parent.id, id)
   end
 
   if IsShiftKeyDown() then
-    local texture = parent.label == "player" and GetPlayerBuffTexture(GetPlayerBuff(PLAYER_BUFF_START_ID+this.id,"HELPFUL")) or UnitBuff(parent.label .. parent.id, this.id)
+    local texture = parent.label == "player" and GetPlayerBuffTexture(GetPlayerBuff(PLAYER_BUFF_START_ID+id,"HELPFUL")) or UnitBuff(parent.label .. parent.id, id)
 
     -- slot is empty, nothing to compare against
     if not texture then return end
@@ -161,13 +162,13 @@ end
 
 local function BuffOnClick()
   if this:GetParent().label == "player" then
-    CancelPlayerBuff(GetPlayerBuff(PLAYER_BUFF_START_ID+this.id,"HELPFUL"))
+    CancelPlayerBuff(GetPlayerBuff(PLAYER_BUFF_START_ID+(this.aura_id or this.id),"HELPFUL"))
   end
 end
 
 local function DebuffOnUpdate()
   if ( this.tick or 1) > GetTime() then return else this.tick = GetTime() + .2 end
-  local bid = GetPlayerBuff(PLAYER_BUFF_START_ID+this.id,"HARMFUL")
+  local bid = GetPlayerBuff(PLAYER_BUFF_START_ID+(this.aura_id or this.id),"HARMFUL")
   local timeleft = GetPlayerBuffTimeLeft(bid)
   local texture = GetPlayerBuffTexture(bid)
   local start = 0
@@ -203,10 +204,11 @@ end
 
 local function DebuffOnEnter()
   if not this:GetParent().label then return end
+  local id = this.aura_id or this.id
 
   GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT")
   if this:GetParent().label == "player" then
-    GameTooltip:SetPlayerBuff(GetPlayerBuff(PLAYER_BUFF_START_ID+this.id,"HARMFUL"))
+    GameTooltip:SetPlayerBuff(GetPlayerBuff(PLAYER_BUFF_START_ID+id,"HARMFUL"))
   else
     local unitstr = this:GetParent().label .. this:GetParent().id
     local parent = this:GetParent()
@@ -214,23 +216,30 @@ local function DebuffOnEnter()
     -- For "only own debuffs" mode: find the REAL slot by matching spell name AND caster
     if parent.config and parent.config.selfdebuff == "1" and libdebuff then
       -- Get the spell name from our filtered list
-      local ownDebuffName = libdebuff:UnitOwnDebuff(unitstr, this.id)
+      local ownDebuffName = libdebuff:UnitOwnDebuff(unitstr, id)
       
       if ownDebuffName then
         -- Search through all game slots to find OUR debuff with matching name
-        for gameSlot = 1, 16 do
+        for gameSlot = 1, 32 do
           local gameName, _, _, _, _, _, _, gameCaster = libdebuff:UnitDebuff(unitstr, gameSlot)
           -- Match both name AND caster (must be ours)
           if gameName == ownDebuffName and gameCaster == "player" then
-            GameTooltip:SetUnitDebuff(unitstr, gameSlot)
+            if libdebuff.IsOverflowDebuff and libdebuff:IsOverflowDebuff(unitstr, gameSlot - 16) then
+              GameTooltip:SetUnitBuff(unitstr, gameSlot - 16)
+            else
+              GameTooltip:SetUnitDebuff(unitstr, gameSlot)
+            end
             return
           end
         end
       end
     end
     
-    -- Normal mode: use visual id directly
-    GameTooltip:SetUnitDebuff(unitstr, this.id)
+    if libdebuff and libdebuff.IsOverflowDebuff and libdebuff:IsOverflowDebuff(unitstr, id - 16) then
+      GameTooltip:SetUnitBuff(unitstr, id - 16)
+    else
+      GameTooltip:SetUnitDebuff(unitstr, id)
+    end
   end
 end
 
@@ -240,7 +249,7 @@ end
 
 local function DebuffOnClick()
   if this:GetParent().label == "player" then
-    CancelPlayerBuff(GetPlayerBuff(PLAYER_BUFF_START_ID+this.id,"HARMFUL"))
+    CancelPlayerBuff(GetPlayerBuff(PLAYER_BUFF_START_ID+(this.aura_id or this.id),"HARMFUL"))
   end
 end
 
@@ -446,6 +455,10 @@ local detect_icon, detect_name
 local buff_icons_seeded = false
 function pfUI.uf:DetectBuff(name, id)
   if not name or not id then return end
+
+  if libdebuff and libdebuff.IsOverflowDebuff and libdebuff:IsOverflowDebuff(name, id) then
+    return
+  end
 
   -- skip here if disabled
   if pfUI_config.unitframes.buffdetect == "0" then
@@ -2321,7 +2334,7 @@ function pfUI.uf:RefreshUnit(unit, component)
       local visible = UF_AuraVisible(unit.config, "buff", name)
 
       if texture and visible then
-        table.insert(visible_buffs, { texture = texture, stacks = stacks, buff_frame = unit.buffs[i] })
+        table.insert(visible_buffs, { id = i, texture = texture, stacks = stacks, buff_frame = unit.buffs[i] })
       end
     end
 
@@ -2372,6 +2385,7 @@ function pfUI.uf:RefreshUnit(unit, component)
           invert_h * (row*(multiply*default_border + unit.config.buffsize + 1) + (multiply*default_border + 1)) + buffoffy)
 
         unit.buffs[i].texture:SetTexture(buff_data.texture)
+        unit.buffs[i].aura_id = buff_data.id
         unit.buffs[i]:Show()
 
         if buff_data.stacks > 1 then
@@ -2381,6 +2395,7 @@ function pfUI.uf:RefreshUnit(unit, component)
         end
       else
         -- Hide excess buff frames
+        unit.buffs[i].aura_id = nil
         unit.buffs[i]:Hide()
       end
     end
@@ -2459,6 +2474,8 @@ function pfUI.uf:RefreshUnit(unit, component)
           local debuffName = libdebuff:UnitOwnDebuff(unitstr, i)
           name = debuffName
         end
+      elseif i > 16 and libdebuff then
+        name, _, texture, stacks, dtype = libdebuff:UnitDebuff(unitstr, i)
       else
         texture, stacks, dtype = UnitDebuff(unitstr, i)
         -- Get debuff name for filtering
@@ -2473,7 +2490,7 @@ function pfUI.uf:RefreshUnit(unit, component)
       local visible = UF_AuraVisible(unit.config, "debuff", name)
 
       if texture and visible then
-          table.insert(visible_debuffs, { texture = texture, stacks = stacks, dtype = dtype, name = name, debuff_frame = unit.debuffs[i] })
+          table.insert(visible_debuffs, { id = i, texture = texture, stacks = stacks, dtype = dtype, name = name, debuff_frame = unit.debuffs[i] })
         end
     end
 
@@ -2514,6 +2531,7 @@ function pfUI.uf:RefreshUnit(unit, component)
           invert_h * ((row+buffrow)*(multiply*default_border + unit.config.debuffsize + 1) + (multiply*default_border + 1)) + debuffoffy)
 
         unit.debuffs[i].texture:SetTexture(debuff_data.texture)
+        unit.debuffs[i].aura_id = debuff_data.id
 
         local r,g,b = DebuffTypeColor.none.r,DebuffTypeColor.none.g,DebuffTypeColor.none.b
         if debuff_data.dtype and DebuffTypeColor[debuff_data.dtype] then
@@ -2565,6 +2583,7 @@ function pfUI.uf:RefreshUnit(unit, component)
         end
       else
         -- Hide excess debuff frames
+        unit.debuffs[i].aura_id = nil
         unit.debuffs[i]:Hide()
       end
     end

@@ -1,0 +1,20 @@
+{
+  "schema": "aeui-cross-device-game-validation-handoff-v1",
+  "status": "open",
+  "captured_date": "2026-08-25",
+  "intended_resume_date": "2026-08-26",
+  "client": {
+    "name": "Turtle WoW",
+    "version": "1.18.1",
+    "interface": 11200
+  },
+  "screenshot": {
+    "file": "handoff/gearplanner/runtime-validation/gear-planner-runtime-2026-08-25.png",
+    "size": [729, 735],
+    "sha256": "35939536eed209738db0fc8b95f838e69f71c3ca1a3589762705774c3370544a",
+    "scope": ["GEAR.FRAME", "GEAR.SLOT", "GEAR.TOTALS"]
+  },
+  "purpose": "用户要求保留本次 Gear Planner 实机画面，供 2026-08-26 继续排查；它是临时运行时证据，不是 accepted source。",
+  "resume_first": "先打开原始截图，在相同 UI Scale 下确认待处理现象，再决定修改运行时布局还是逻辑。",
+  "cleanup": "问题恢复处理且不再需要跨设备证据后，删除这个临时 handoff 目录。"
+}

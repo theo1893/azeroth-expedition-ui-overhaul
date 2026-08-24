@@ -5,7 +5,7 @@ setfenv(1, pfUI:GetEnvironment())
 -- 一个 pfUI 库，用于检测并保存所有玩家、NPC 和敌人的持续减益效果。
 -- 
 -- 重大重写：现在使用 GetUnitField 进行槽位映射，取代手动移位。
--- 关键洞察：GetUnitField 返回稳定的光环槽位（33-48），当减益效果消失时不会移位。
+-- 关键洞察：常规减益在 33-48，第 17-48 个减益会溢出到 1-32 的增益槽。
 -- 只有显示槽位（UnitDebuff 返回的 1,2,3...）会被压缩。
 --
 -- 这消除了大约 400 行容易出错的移位逻辑，同时保持完整的多施法者追踪支持。
@@ -468,35 +468,50 @@ local function GetDebuffSlotMap(guid)
   
   local map = {}
   local displaySlot = 0
-  
-  -- Debuff aura slots are 33-48
-  for auraSlot = 33, 48 do
+
+  for auraSlot = 1, 48 do
     local spellId = auras[auraSlot]
     if spellId and spellId > 0 then
-      displaySlot = displaySlot + 1
       local spellName = GetSpellRecField and GetSpellRecField(spellId, "name")
-      local texture = libdebuff:GetSpellIcon(spellId)
-      
-      -- Get stacks from auraApplications (0-indexed, so +1 for display)
-      local stacks = (auraApps and auraApps[auraSlot] or 0) + 1
-      
-      -- Get debuff type from SpellRec DBC
-      local dtype = nil
-      if GetSpellRecField then
-        local dispelId = GetSpellRecField(spellId, "dispel")
-        if dispelId and dispelId > 0 then
-          dtype = dispelTypeMap[dispelId]
+      local outputSlot
+
+      if auraSlot > 32 then
+        displaySlot = displaySlot + 1
+        outputSlot = displaySlot
+      else
+        local ownership = slotOwnership[guid] and slotOwnership[guid][auraSlot]
+        local ownedDebuff = ownership and ownership.spellId == spellId
+        -- ponytail: unknown pre-existing overflow debuffs wait for a Nampower event;
+        -- add a DBC polarity lookup only if the locale debuff table proves incomplete.
+        if ownedDebuff or (spellName and L["debuffs"] and L["debuffs"][spellName]) then
+          outputSlot = 16 + auraSlot
         end
       end
+
+      if outputSlot then
+        local texture = libdebuff:GetSpellIcon(spellId)
       
-      map[displaySlot] = {
-        auraSlot = auraSlot,
-        spellId = spellId,
-        spellName = spellName or "未知",
-        stacks = stacks,
-        texture = texture,
-        dtype = dtype
-      }
+        -- Get stacks from auraApplications (0-indexed, so +1 for display)
+        local stacks = (auraApps and auraApps[auraSlot] or 0) + 1
+      
+        -- Get debuff type from SpellRec DBC
+        local dtype = nil
+        if GetSpellRecField then
+          local dispelId = GetSpellRecField(spellId, "dispel")
+          if dispelId and dispelId > 0 then
+            dtype = dispelTypeMap[dispelId]
+          end
+        end
+      
+        map[outputSlot] = {
+          auraSlot = auraSlot,
+          spellId = spellId,
+          spellName = spellName or "未知",
+          stacks = stacks,
+          texture = texture,
+          dtype = dtype
+        }
+      end
     end
   end
   
@@ -508,6 +523,16 @@ local function GetDebuffSlotMap(guid)
   slotMapCache[guid].timestamp = now
   
   return map
+end
+
+function libdebuff:IsOverflowDebuff(unit, buffSlot)
+  if not hasNampower or not GetUnitGUID or not buffSlot or buffSlot < 1 or buffSlot > 32 then
+    return false
+  end
+
+  local guid = GetUnitGUID(unit)
+  local map = guid and GetDebuffSlotMap(guid)
+  return map and map[16 + buffSlot] and true or false
 end
 
 -- Get caster info for a specific aura slot

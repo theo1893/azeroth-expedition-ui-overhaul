@@ -110,9 +110,9 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 
 | ID | provider／真实对象 | 合同 |
 |---|---|---|
-| `AB.FOCUS.UNITFRAME.PLAYER` | `pfUI.uf.player` | `480×48 UI / scale 0.8`；`BOTTOM (-224,408)`。只为该框启用客户端 `STANDARD_TEXT_FONT / OUTLINE / 18 UI` local font；`23 UI` Buff 在上、Debuff 在下，均从完整框架右缘向屏幕左侧展开。pfUI 真实步进为 `size+7`，每排 `16` 枚的图标本体占 `473 UI`，连同外框匹配 `480 UI` 主框；四个 Aura offset 为零，最多 `32` 枚只占两排；保留所有状态、点击与动态 Aura |
-| `AB.FOCUS.UNITFRAME.TARGET` | `pfUI.uf.target` | `480×48 UI / scale 0.8`；`BOTTOM (224,408)`。同用客户端系统字形与 `18 UI` local font；`23 UI` Buff 在上、Debuff 在下，均从完整框架左缘向屏幕右侧展开，每排 `16` 枚。与 Player 之间保留 `64 UI` 中央视线缝，两排下置 Aura 与玩家施法条之间保留约 `32 UI`；保留所有目标交互与动态 Aura |
-| `AB.FOCUS.UNITFRAME.TARGETTARGET` | `pfUI.uf.targettarget` | 保持 `240×60 UI / scale 0.68`，同用客户端系统字形与 `18 UI` local font；fallback 为 `BOTTOM (512,408)`，live Frame 以 `LEFT → Target RIGHT +8 UI` 中线依附。它只随 Target 同步对齐，不缩高；`23 UI` Buff 在上、Debuff 在下，均从左缘向屏幕右侧展开且继续每排 `8` 枚，避免跟随主框扩成过长卫星栏；Target 消失、移动或 unlock 后仍由 provider 显隐并在事件边界恢复依附，不建立维护循环 |
+| `AB.FOCUS.UNITFRAME.PLAYER` | `pfUI.uf.player` | 恢复为 `240×48 UI / scale 0.8`；`BOTTOM (-160,480)`。只为该框启用客户端 `STANDARD_TEXT_FONT / OUTLINE / 18 UI` local font；`23 UI` Buff 在上、Debuff 在下，均从完整框架左缘向右。pfUI 真实步进为 `size+7`，每排 `8` 枚实际占 `233 UI`，贴合 `240 UI` 主框；四个 Aura offset 为零，最多 `32` 枚 Debuff 占四排并与读条保持净空；保留所有状态、点击与动态 Aura |
+| `AB.FOCUS.UNITFRAME.TARGET` | `pfUI.uf.target` | 恢复为 `240×48 UI / scale 0.8`；`BOTTOM (105,480)`。同用客户端系统字形与 `18 UI` local font；`23 UI` Buff 在上、Debuff 在下，均从完整框架右缘向左，每排 `8` 枚。与 Player 之间保留 `73 UI`，最多四排下置 Debuff 与玩家施法条保持净空；保留所有目标交互与动态 Aura |
+| `AB.FOCUS.UNITFRAME.TARGETTARGET` | `pfUI.uf.targettarget` | 保持 `240×60 UI / scale 0.68`，同用客户端系统字形与 `18 UI` local font；fallback 为 `BOTTOM (393,570)`，live Frame 以 `LEFT → Target RIGHT +8 UI` 中线依附。它只随 Target 同步对齐，不缩高；`23 UI` Buff 在上、Debuff 在下，均从右缘向左且每排 `8` 枚；Target 消失、移动或 unlock 后仍由 provider 显隐并在事件边界恢复依附，不建立维护循环 |
 | `AB.FOCUS.CASTBAR.PLAYER` | `pfPlayerCastbar` | `260×12 UI / scale 1.0`；`BOTTOM (0,316)`，位于统一中心轴的第一排。保留图标、法术名、计时与玩家延迟区 |
 | `AB.FOCUS.CASTBAR.TARGET` | `pfTargetCastbar` | `260×12 UI / scale 1.0`；`BOTTOM (0,300)`，位于统一中心轴的第二排。保留可打断／不可打断与目标施法信息 |
 | `AB.FOCUS.CASTBAR.FOCUS` | 可选 `pfFocusCastbar` | 继续跟随 Focus Frame，默认不进入中央玩家／目标双框；对象不存在时无占位 |
@@ -263,21 +263,21 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   `HORIZONTAL / scale=1.0`，Field Kit v1.7 强绑定和 ArchiTotem 下置不变；v1.7
   只修复 unlock mover 登记／drag 生命周期。
 - `战斗视线邻接`：Player／Target／TargetTarget 继续由 pfUI UnitFrame provider 所有；
-  focus runtime-v3.0 把 Player／Target 置于游戏坐标
-  `BOTTOM (-224,408)／(224,408)`，两框设为 `480×48 / 0.8`，在完整框体之间
-  保留 `64 UI` 中央视线缝；TargetTarget 保持 `240×60 / 0.68`，fallback 为
-  `BOTTOM (512,408)`，live Frame 以
+  focus runtime-v3.3 把 Player／Target 恢复到游戏坐标
+  `BOTTOM (-160,480)／(105,480)`，两框设为 `240×48 / 0.8`，在完整框体之间
+  保留 `73 UI`；TargetTarget 保持 `240×60 / 0.68`，fallback 为
+  `BOTTOM (393,570)`，live Frame 以
   `LEFT → Target RIGHT +8 UI` 中线
   依附。三框仅本地启用客户端 `STANDARD_TEXT_FONT / OUTLINE / 18 UI` font，并直接
   写入六个 health／power FontString（Player 另含 top-center），在 provider
   `UpdateConfig` 后置钩子中重施；Aura 均为 `23 UI`，
-  Player 上 Buff／下 Debuff 从完整框架右缘向左展开，Target 与 TargetTarget 从
-  左缘向右展开。
+  Player 上 Buff／下 Debuff 从完整框架左缘向右展开，Target 与 TargetTarget 从
+  右缘向左展开。
   当前 `default_border=3` 且 `force_blizz=0`，故按 pfUI 真实 `size + 7` 步距，
-  Player／Target 每排 `16` 枚的图标本体占 `473 UI`，连同 Aura backdrop 匹配
-  `480 UI` 框宽，`32` 枚上限只占两排；TargetTarget 独立保持每排 `8` 枚。
-  四个 offset 明确置零；两排下置 Aura 底缘与玩家施法条顶缘约留 `32 UI`。
-  adapter 不重画，不在维护循环中持续改位置。`focus-unit-default-v2` 按
+  Player／Target 每排 `8` 枚实际占 `233 UI`，连同 Aura backdrop 匹配
+  `240 UI` 框宽，`32` 枚 Debuff 上限占四排；TargetTarget 同样每排 `8` 枚。
+  四个 offset 明确置零；四排下置 Debuff 仍与玩家施法条保持净空。
+  adapter 不重画，不在维护循环中持续改位置。`focus-unit-default-v5` 按
   `角色名 - 服务器` 保存独立版本和应用前备份；每个启用 AEUI Action Bars 的
   角色首次加载时只应用一次这三个单位框的尺寸、Aura、字体和坐标，后续刷新
   不覆盖手调结果。
@@ -322,13 +322,13 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   与其他 provider 配置，但其位置仍按全角色合同统一为 `TOPLEFT (650,-615)`，
   完成后提示 reload。
 - `ACTION-BARS-CORE-SIM-V11` 以“大奶黑牛”的实机截图完成确定性本地审查；AEUI
-  focus runtime-v3.0 保留 V11 Combat Deck、读条与 DoiteDPS 纵向安全区，把所有角色的
+  focus runtime-v3.3 保留 V11 Combat Deck、读条与 DoiteDPS 纵向安全区，把所有角色的
   DDPS 整组统一到 `TOPLEFT (650,-615)` 清出中央视野，并保留各角色 scale、
   功能配置与三框 FontString
   刷新修复，并按战士实机反馈把真实 `bar11.icon_size` 提为 `25 UI`、local scale
-  提为 `1.0`。exact v17 签名在 `/reload` 一次迁移为 v18；Player／Target 改为
-  `480×48 / y=408 / 16×2 Aura` 向屏幕两侧展开，TargetTarget 保留 `8` 枚一排，
-  下方三条读条与 Combat Deck 坐标不移动；同一单位框合同按角色首次加载自动
+  提为 `1.0`。exact v17–v20 签名在 `/reload` 一次迁移为 v21；Player／Target 恢复为
+  `240×48 / y=480 / 每排 8 Aura`，为 `32` 枚 Debuff 预留四排净空，TargetTarget
+  同样保持 `8` 枚一排，下方三条读条与 Combat Deck 坐标不移动；同一单位框合同按角色首次加载自动
   应用并保存独立回退备份；
   DDPS 坐标按用户要求统一，其余手调坐标保持不动。
   用户已确认右侧四栏 `2×2 / 3×4`
