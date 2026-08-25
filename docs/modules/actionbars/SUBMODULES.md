@@ -110,9 +110,10 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 
 | ID | provider／真实对象 | 合同 |
 |---|---|---|
-| `AB.FOCUS.UNITFRAME.PLAYER` | `pfUI.uf.player` | 恢复为 `240×48 UI / scale 0.8`；`BOTTOM (-160,480)`。只为该框启用客户端 `STANDARD_TEXT_FONT / OUTLINE / 18 UI` local font；`23 UI` Buff 在上、Debuff 在下，均从完整框架左缘向右。pfUI 真实步进为 `size+7`，每排 `8` 枚实际占 `233 UI`，贴合 `240 UI` 主框；四个 Aura offset 为零，最多 `32` 枚 Debuff 占四排并与读条保持净空；保留所有状态、点击与动态 Aura |
-| `AB.FOCUS.UNITFRAME.TARGET` | `pfUI.uf.target` | 恢复为 `240×48 UI / scale 0.8`；`BOTTOM (105,480)`。同用客户端系统字形与 `18 UI` local font；`23 UI` Buff 在上、Debuff 在下，均从完整框架右缘向左，每排 `8` 枚。与 Player 之间保留 `73 UI`，最多四排下置 Debuff 与玩家施法条保持净空；保留所有目标交互与动态 Aura |
-| `AB.FOCUS.UNITFRAME.TARGETTARGET` | `pfUI.uf.targettarget` | 保持 `240×60 UI / scale 0.68`，同用客户端系统字形与 `18 UI` local font；fallback 为 `BOTTOM (393,570)`，live Frame 以 `LEFT → Target RIGHT +8 UI` 中线依附。它只随 Target 同步对齐，不缩高；`23 UI` Buff 在上、Debuff 在下，均从右缘向左且每排 `8` 枚；Target 消失、移动或 unlock 后仍由 provider 显隐并在事件边界恢复依附，不建立维护循环 |
+| `AB.FOCUS.UNITFRAME.PLAYER` | `pfUI.uf.player` | 保持 `240×48 UI / scale 0.8` 与 `BOTTOM (-160,480)`；`23 UI` Buff 在上、Debuff 在下，从左向右且每排 `8` 枚。Buff 仅保留当前技能书同名光环，Debuff 全部保留；先扫描全部 `32` 槽再压缩，不改变 Tooltip、冷却、取消 Buff 与 provider Button |
+| `AB.FOCUS.UNITFRAME.TARGET` | `pfUI.uf.target` | 保持 `240×48 UI / scale 0.8` 与 `BOTTOM (105,480)`；Aura 从右向左且每排 `8` 枚。敌对目标保留全部真实 Buff，Debuff 为自己施加与固定关键表的并集；关键表仅含精灵之火、精灵之火（野性）、破甲攻击、破甲、雷霆一击、挫志怒吼及虚弱／鲁莽／元素／暗影／语言／疲劳诅咒。友方目标仅保留已追踪为自己施加的 Buff，Debuff 全部保留。与 Player 间距、目标交互和动态 Aura 仍归 provider |
+| `AB.FOCUS.UNITFRAME.TARGETTARGET` | `pfUI.uf.targettarget` | 保持 `240×60 UI / scale 0.68`、`LEFT → Target RIGHT +8 UI` 与右向左每排 `8` 枚 Aura；每次刷新按当前敌友关系复用 Target 语义策略，显隐、移动和 unlock 仍归 provider |
+| `AB.FOCUS.UNITFRAME.FOCUS` | `pfUI.uf.focus` | 不接管既有几何或外观，只按 Focus 当前敌友关系复用 Target 语义策略；GUID 与 Buff 归属继续由 Nampower／pfUI 提供。对象、Nampower 或归属 API 缺失时不创建占位并 fail-open |
 | `AB.FOCUS.CASTBAR.PLAYER` | `pfPlayerCastbar` | `260×12 UI / scale 1.0`；`BOTTOM (0,316)`，位于统一中心轴的第一排。保留图标、法术名、计时与玩家延迟区 |
 | `AB.FOCUS.CASTBAR.TARGET` | `pfTargetCastbar` | `260×12 UI / scale 1.0`；`BOTTOM (0,300)`，位于统一中心轴的第二排。保留可打断／不可打断与目标施法信息 |
 | `AB.FOCUS.CASTBAR.FOCUS` | 可选 `pfFocusCastbar` | 继续跟随 Focus Frame，默认不进入中央玩家／目标双框；对象不存在时无占位 |
@@ -262,8 +263,8 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   Turtle WoW 游戏坐标，不做任何屏幕投影；TrinketMenu 仍为
   `HORIZONTAL / scale=1.0`，Field Kit v1.7 强绑定和 ArchiTotem 下置不变；v1.7
   只修复 unlock mover 登记／drag 生命周期。
-- `战斗视线邻接`：Player／Target／TargetTarget 继续由 pfUI UnitFrame provider 所有；
-  focus runtime-v3.3 把 Player／Target 恢复到游戏坐标
+- `战斗视线邻接`：Player／Target／TargetTarget／Focus 继续由 pfUI UnitFrame provider 所有；
+  focus runtime-v3.5 保持 Player／Target 游戏坐标
   `BOTTOM (-160,480)／(105,480)`，两框设为 `240×48 / 0.8`，在完整框体之间
   保留 `73 UI`；TargetTarget 保持 `240×60 / 0.68`，fallback 为
   `BOTTOM (393,570)`，live Frame 以
@@ -275,8 +276,10 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   右缘向左展开。
   当前 `default_border=3` 且 `force_blizz=0`，故按 pfUI 真实 `size + 7` 步距，
   Player／Target 每排 `8` 枚实际占 `233 UI`，连同 Aura backdrop 匹配
-  `240 UI` 框宽，`32` 枚 Debuff 上限占四排；TargetTarget 同样每排 `8` 枚。
-  四个 offset 明确置零；四排下置 Debuff 仍与玩家施法条保持净空。
+  `240 UI` 框宽；TargetTarget 同样每排 `8` 枚。Aura 策略先扫描 `32` 个来源槽再
+  压缩：Player 为技能书 Buff／全部 Debuff；敌对单位为全部真实 Buff／自己施加或
+  固定 `12` 项关键 Debuff；友方单位为自己的 Buff／全部 Debuff，Focus 只接入策略而不改几何。
+  四个 offset 明确置零；Action Bars 关闭或 provider 缺失时恢复 pfUI 原显示。
   adapter 不重画，不在维护循环中持续改位置。`focus-unit-default-v5` 按
   `角色名 - 服务器` 保存独立版本和应用前备份；每个启用 AEUI Action Bars 的
   角色首次加载时只应用一次这三个单位框的尺寸、Aura、字体和坐标，后续刷新
@@ -322,7 +325,7 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   与其他 provider 配置，但其位置仍按全角色合同统一为 `TOPLEFT (650,-615)`，
   完成后提示 reload。
 - `ACTION-BARS-CORE-SIM-V11` 以“大奶黑牛”的实机截图完成确定性本地审查；AEUI
-  focus runtime-v3.3 保留 V11 Combat Deck、读条与 DoiteDPS 纵向安全区，把所有角色的
+  focus runtime-v3.5 保留 V11 Combat Deck、读条与 DoiteDPS 纵向安全区，把所有角色的
   DDPS 整组统一到 `TOPLEFT (650,-615)` 清出中央视野，并保留各角色 scale、
   功能配置与三框 FontString
   刷新修复，并按战士实机反馈把真实 `bar11.icon_size` 提为 `25 UI`、local scale

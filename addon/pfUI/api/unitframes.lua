@@ -214,7 +214,9 @@ local function DebuffOnEnter()
     local parent = this:GetParent()
     
     -- For "only own debuffs" mode: find the REAL slot by matching spell name AND caster
-    if parent.config and parent.config.selfdebuff == "1" and libdebuff then
+    if parent.config and parent.config.selfdebuff == "1" and
+      not parent.aeuiAuraPolicy and libdebuff
+    then
       -- Get the spell name from our filtered list
       local ownDebuffName = libdebuff:UnitOwnDebuff(unitstr, id)
       
@@ -285,6 +287,18 @@ local function UF_AuraVisible(config, kind, name)
     return not uf_fcache[index][lname]
   end
   return true
+end
+
+local function UF_ExpeditionAuraVisible(
+  unit, unitstr, kind, name, caster, auraSlot
+)
+  local policy = unit and unit.aeuiAuraPolicy
+  if type(policy) ~= "function" then return true end
+  local ok, visible = pcall(
+    policy, unit, unitstr, kind, name, caster, auraSlot
+  )
+  if not ok or visible == nil then return true end
+  return visible and true or false
 end
 
 -- ============================================================================
@@ -2303,12 +2317,14 @@ function pfUI.uf:RefreshUnit(unit, component)
 
   -- buffs
   if unit.buffs and ( component == "all" or component == "aura" ) then
-    local texture, stacks, name
     local visible_buffs = {}
+    local auraPolicy = type(unit.aeuiAuraPolicy) == "function"
+    local buffScanLimit = auraPolicy and 32 or
+      tonumber(unit.config.bufflimit)
 
     -- First pass: collect all visible buffs
-    for i=1, unit.config.bufflimit do
-      if not unit.buffs[i] then break end
+    for i=1, buffScanLimit do
+      local texture, stacks, name
 
       if unit.label == "player" then
         stacks = GetPlayerBuffApplications(GetPlayerBuff(PLAYER_BUFF_START_ID+i,"HELPFUL"))
@@ -2331,10 +2347,17 @@ function pfUI.uf:RefreshUnit(unit, component)
       end
 
       -- Apply buff filtering
-      local visible = UF_AuraVisible(unit.config, "buff", name)
+      local visible = UF_AuraVisible(unit.config, "buff", name) and
+        UF_ExpeditionAuraVisible(
+          unit, unitstr, "buff", name, nil, i
+        )
 
       if texture and visible then
-        table.insert(visible_buffs, { id = i, texture = texture, stacks = stacks, buff_frame = unit.buffs[i] })
+        table.insert(visible_buffs, {
+          id = i,
+          texture = texture,
+          stacks = stacks,
+        })
       end
     end
 
@@ -2403,11 +2426,13 @@ function pfUI.uf:RefreshUnit(unit, component)
 
  -- debuffs
   if unit.debuffs and ( component == "all" or component == "aura" ) then
-    local texture, stacks, dtype
     local perrow = unit.config.debuffperrow
     local bperrow = unit.config.buffperrow
     local selfdebuff = unit.config.selfdebuff
     local visible_debuffs = {}
+    local auraPolicy = type(unit.aeuiAuraPolicy) == "function"
+    local debuffScanLimit = auraPolicy and 32 or
+      tonumber(unit.config.debufflimit)
 
     local invert_h, invert_v, af
     -- 修改锚点设置，团队框架保持原有逻辑，其他框架使用新的逻辑
@@ -2452,10 +2477,8 @@ function pfUI.uf:RefreshUnit(unit, component)
     end
 
     -- First pass: collect all visible debuffs
-    for i=1, unit.config.debufflimit do
-      if not unit.debuffs[i] then break end
-
-      local name
+    for i=1, debuffScanLimit do
+      local name, texture, stacks, dtype, duration, timeleft, caster
       if unit.label == "player" then
         texture = GetPlayerBuffTexture(GetPlayerBuff(PLAYER_BUFF_START_ID+i, "HARMFUL"))
         stacks = GetPlayerBuffApplications(GetPlayerBuff(PLAYER_BUFF_START_ID+i, "HARMFUL"))
@@ -2467,15 +2490,13 @@ function pfUI.uf:RefreshUnit(unit, component)
           scanner:SetPlayerBuff(bid)
           name = scanner:Line(1)
         end
-      elseif selfdebuff == "1" then
-        _, _, texture, stacks, dtype = libdebuff:UnitOwnDebuff(unitstr, i)
+      elseif selfdebuff == "1" and not auraPolicy then
+        name, _, texture, stacks, dtype, duration, timeleft, caster =
+          libdebuff:UnitOwnDebuff(unitstr, i)
         -- Get debuff name for filtering
-        if texture and libdebuff then
-          local debuffName = libdebuff:UnitOwnDebuff(unitstr, i)
-          name = debuffName
-        end
-      elseif i > 16 and libdebuff then
-        name, _, texture, stacks, dtype = libdebuff:UnitDebuff(unitstr, i)
+      elseif libdebuff and (auraPolicy or i > 16) then
+        name, _, texture, stacks, dtype, duration, timeleft, caster =
+          libdebuff:UnitDebuff(unitstr, i)
       else
         texture, stacks, dtype = UnitDebuff(unitstr, i)
         -- Get debuff name for filtering
@@ -2487,11 +2508,22 @@ function pfUI.uf:RefreshUnit(unit, component)
       end
 
       -- Apply debuff filtering
-      local visible = UF_AuraVisible(unit.config, "debuff", name)
+      local visible = UF_AuraVisible(unit.config, "debuff", name) and
+        UF_ExpeditionAuraVisible(
+          unit, unitstr, "debuff", name, caster, i
+        )
 
       if texture and visible then
-          table.insert(visible_debuffs, { id = i, texture = texture, stacks = stacks, dtype = dtype, name = name, debuff_frame = unit.debuffs[i] })
-        end
+        table.insert(visible_debuffs, {
+          id = i,
+          texture = texture,
+          stacks = stacks,
+          dtype = dtype,
+          name = name,
+          duration = duration,
+          timeleft = timeleft,
+        })
+      end
     end
 
     -- Calculate visible debuffs count
@@ -2540,6 +2572,7 @@ function pfUI.uf:RefreshUnit(unit, component)
         unit.debuffs[i].backdrop:SetBackdropBorderColor(r,g,b,1)
 
         unit.debuffs[i]:Show()
+        CooldownFrame_SetTimer(unit.debuffs[i].cd, 0, 0, 0)
 
         if unit:GetName() == "pfPlayer" then
           -- For player debuffs, we need to find the actual buff ID
@@ -2556,6 +2589,15 @@ function pfUI.uf:RefreshUnit(unit, component)
               end
             end
           end
+        elseif auraPolicy and debuff_data.duration and
+          debuff_data.timeleft
+        then
+          CooldownFrame_SetTimer(
+            unit.debuffs[i].cd,
+            GetTime() + debuff_data.timeleft - debuff_data.duration,
+            debuff_data.duration,
+            1
+          )
         elseif libdebuff and selfdebuff == "1" then
           -- For own debuffs, find the actual debuff with matching name
           for j=1, unit.config.debufflimit do

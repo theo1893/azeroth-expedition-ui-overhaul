@@ -14,7 +14,7 @@ ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
 ActionBars.fieldKitRuntimeContract = "2.9"
-ActionBars.focusLayoutRuntimeContract = "3.3"
+ActionBars.focusLayoutRuntimeContract = "3.5"
 ActionBars.focusLayoutVersion = 21
 ActionBars.focusLayoutBackupVersion = 1
 ActionBars.focusUnitDefaultVersion = 5
@@ -1626,8 +1626,104 @@ local function GetFocusUnitFrame(key)
     return unitframes and unitframes.player or GetGlobal("pfPlayer")
   elseif key == "target" then
     return unitframes and unitframes.target or GetGlobal("pfTarget")
+  elseif key == "focus" then
+    return unitframes and unitframes.focus or GetGlobal("pfFocus")
   end
   return nil
+end
+
+local playerSkillBuffs
+local criticalTargetDebuffs = {
+  ["精灵之火"] = true,
+  ["精灵之火（野性）"] = true,
+  ["破甲攻击"] = true,
+  ["破甲"] = true,
+  ["雷霆一击"] = true,
+  ["挫志怒吼"] = true,
+  ["虚弱诅咒"] = true,
+  ["鲁莽诅咒"] = true,
+  ["元素诅咒"] = true,
+  ["暗影诅咒"] = true,
+  ["语言诅咒"] = true,
+  ["疲劳诅咒"] = true,
+}
+
+local function GetPlayerSkillBuffs()
+  if playerSkillBuffs then return playerSkillBuffs end
+  if type(GetSpellName) ~= "function" then return nil end
+  playerSkillBuffs = {}
+  for index = 1, 1024 do
+    local name = GetSpellName(index, BOOKTYPE_SPELL or "spell")
+    if not name then break end
+    playerSkillBuffs[string.lower(name)] = true
+  end
+  return playerSkillBuffs
+end
+
+local function FocusAuraPolicy(
+  frame, unitstr, kind, name, caster, auraSlot
+)
+  local player = GetFocusUnitFrame("player")
+  if frame == player then
+    if kind == "debuff" then return true end
+    local skills = name and GetPlayerSkillBuffs()
+    if not skills then return nil end
+    return skills[string.lower(name)] and true or false
+  end
+
+  local hostile = type(UnitCanAttack) == "function" and
+    UnitCanAttack("player", unitstr)
+  local friendly = type(UnitIsFriend) == "function" and
+    UnitIsFriend("player", unitstr)
+  if not hostile and not friendly then return nil end
+  if hostile then
+    if kind == "buff" then return true end
+    local provider = pfUI and pfUI.api and pfUI.api.libdebuff
+    if not provider then return nil end
+    return caster == "player" or criticalTargetDebuffs[name] == true
+  end
+  if kind == "debuff" then return true end
+
+  local provider = pfUI and pfUI.api and pfUI.api.libdebuff
+  if not provider or type(provider.UnitBuffCaster) ~= "function" then
+    return nil
+  end
+  return provider:UnitBuffCaster(unitstr, auraSlot, name) == "player"
+end
+
+local function VisitFocusAuraFrames(callback)
+  for _, key in pairs({ "player", "target", "ttarget", "focus" }) do
+    local frame = GetFocusUnitFrame(key)
+    if frame then callback(frame) end
+  end
+end
+
+function ActionBars:ApplyFocusAuraPolicy(enabled)
+  local applied = 0
+  VisitFocusAuraFrames(function(frame)
+    if enabled then
+      frame.aeuiAuraPolicy = FocusAuraPolicy
+      applied = applied + 1
+    elseif frame.aeuiAuraPolicy == FocusAuraPolicy then
+      frame.aeuiAuraPolicy = nil
+    end
+    frame.update_aura = true
+  end)
+
+  if enabled and not self.focusAuraPolicyWatcher then
+    local watcher = CreateFrame("Frame")
+    watcher:RegisterEvent("SPELLS_CHANGED")
+    watcher:SetScript("OnEvent", function()
+      playerSkillBuffs = nil
+      VisitFocusAuraFrames(function(frame)
+        frame.update_aura = true
+      end)
+    end)
+    self.focusAuraPolicyWatcher = watcher
+  end
+  self.focusAuraPolicyStatus = enabled and
+    (applied > 0 and "active" or "provider-missing") or "off"
+  return applied
 end
 
 local function ApplyLiveFocusUnitFont(frame)
@@ -6325,6 +6421,7 @@ function ActionBars:Initialize()
   self.doitePositionSynchronized = false
   self.focusLayoutArchiTotem = "pending"
   self.focusLayoutMousePolicy = "visible-controls-only"
+  self.focusAuraPolicyStatus = "pending"
   self.focusStanceStatus = "pending"
   self.focusStanceUpdating = false
   self.combatDeckGroupStatus = "pending"
@@ -6354,6 +6451,7 @@ function ActionBars:Apply()
     copiedPrimaryLayoutMigrated =
       self:MigrateCopiedPrimaryUnitLayout()
   end
+  self:ApplyFocusAuraPolicy(enabled)
 
   if not providerAvailable then
     self.providerStatus = "missing"
@@ -6497,6 +6595,8 @@ function ActionBars:GetRuntimeStatus()
       tostring(self.focusLayoutArchiTotem or "pending") ..
     ",focus-layout-mouse=" ..
       tostring(self.focusLayoutMousePolicy or "visible-controls-only") ..
+    ",focus-layout-aura-policy=" ..
+      tostring(self.focusAuraPolicyStatus or "pending") ..
     ",focus-layout-anchor=ui-parent+target-dependent" ..
     ",focus-layout-coordinate-space=" ..
       tostring(self.focusCoordinateSpace) ..

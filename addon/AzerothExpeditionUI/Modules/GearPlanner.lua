@@ -288,8 +288,17 @@ for statSortIndex = 1, table.getn(STAT_SORT_ORDER) do
   STAT_SORT_INDEX[STAT_SORT_ORDER[statSortIndex]] = statSortIndex
 end
 
+local STAT_HEADER_TOP = 24
+local STAT_HEADER_HEIGHT = 12
 local STAT_ROW_HEIGHT = 12
-local STAT_ROW_TOP = 29
+local STAT_ROW_TOP = 40
+
+local function CreateStatsText(parent, template)
+  local text = parent:CreateFontString(nil, "OVERLAY", template)
+  text:SetShadowColor(0, 0, 0, 0)
+  text:SetShadowOffset(0, 0)
+  return text
+end
 
 local function Enabled()
   if not addon.db or not addon.db.gearplanner then return false end
@@ -771,8 +780,8 @@ end
 local function CreateSlotOutline(button)
   local outline, inset, thickness
   if button.stateOutline then return button.stateOutline end
-  inset = 1
-  thickness = 2
+  inset = 3
+  thickness = 1
   outline = {
     button:CreateTexture(nil, "OVERLAY"),
     button:CreateTexture(nil, "OVERLAY"),
@@ -813,9 +822,9 @@ local function RefreshSlotOutline(button)
   if button.draftDirty then
     SetSlotOutline(button, 0.42, 0.68, 0.76, 1)
   elseif button.differenceState == "replace" or button.differenceState == "add" then
-    SetSlotOutline(button, 0.95, 0.67, 0.20, 1)
+    SetSlotOutline(button, 0.72, 0.58, 0.36, 0.72)
   elseif button.differenceState == "empty" then
-    SetSlotOutline(button, 0.78, 0.51, 0.22, 0.86)
+    SetSlotOutline(button, 0.50, 0.38, 0.18, 0.48)
   else
     SetSlotOutline(button)
   end
@@ -2224,9 +2233,9 @@ function GearPlanner:SetSlotDifferenceVisual(button, state)
   if not button then return end
   button.differenceState = state
   if state == "replace" or state == "add" then
-    button.differenceWash:SetTexture(0.95, 0.55, 0.10, 0.11)
+    button.differenceWash:SetTexture(0.72, 0.58, 0.36, 0.08)
     button.differenceText:SetText(SLOT_DIFFERENCE_LABELS[state])
-    button.differenceText:SetTextColor(1, 0.78, 0.26)
+    button.differenceText:SetTextColor(0.78, 0.64, 0.40)
     button.differenceWash:Show()
     button.differenceText:Show()
   elseif state == "empty" then
@@ -2319,26 +2328,10 @@ end
 
 function GearPlanner:CreateStatRow(index)
   local row = {}
-  row.label = self.statsPanel:CreateFontString(
-    nil,
-    "OVERLAY",
-    "GameFontHighlightSmall"
-  )
-  row.current = self.statsPanel:CreateFontString(
-    nil,
-    "OVERLAY",
-    "GameFontHighlightSmall"
-  )
-  row.planned = self.statsPanel:CreateFontString(
-    nil,
-    "OVERLAY",
-    "GameFontHighlightSmall"
-  )
-  row.delta = self.statsPanel:CreateFontString(
-    nil,
-    "OVERLAY",
-    "GameFontHighlightSmall"
-  )
+  row.label = CreateStatsText(self.statsPanel, "GameFontHighlightSmall")
+  row.current = CreateStatsText(self.statsPanel, "GameFontHighlightSmall")
+  row.planned = CreateStatsText(self.statsPanel, "GameFontHighlightSmall")
+  row.delta = CreateStatsText(self.statsPanel, "GameFontHighlightSmall")
   self.statRows[index] = row
   self:LayoutStatRow(row, index)
   return row
@@ -2439,11 +2432,11 @@ function GearPlanner:UpdateStats()
         )
       elseif delta > 0 then
         row.delta:SetText(
-          "|cff236b35" .. ComparisonValue(delta, key, true) .. "|r"
+          "|cff3f6742" .. ComparisonValue(delta, key, true) .. "|r"
         )
       elseif delta < 0 then
         row.delta:SetText(
-          "|cff8f3028" .. ComparisonValue(delta, key, true) .. "|r"
+          "|cff7a4037" .. ComparisonValue(delta, key, true) .. "|r"
         )
       else
         row.delta:SetText("|cff7b6c5a—|r")
@@ -3026,45 +3019,31 @@ function GearPlanner:CreateFrame()
   statsPanel:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -16, -72)
   CreatePaperArt(statsPanel)
   self.statsPanel = statsPanel
-  self.statsText = statsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-  self.statsText:SetPoint("TOPLEFT", statsPanel, "TOPLEFT", 12, -12)
+  self.statsText = CreateStatsText(statsPanel, "GameFontHighlightSmall")
+  self.statsText:SetPoint(
+    "TOPLEFT",
+    statsPanel,
+    "TOPLEFT",
+    12,
+    -STAT_HEADER_TOP
+  )
   self.statsText:SetWidth(282)
   self.statsText:SetJustifyH("LEFT")
   self.statsText:SetJustifyV("TOP")
-  self.statsCurrentText = statsPanel:CreateFontString(
-    nil,
-    "OVERLAY",
-    "GameFontHighlightSmall"
-  )
+  self.statsCurrentText = CreateStatsText(statsPanel, "GameFontHighlightSmall")
   self.statsCurrentText:SetJustifyH("RIGHT")
   self.statsCurrentText:SetJustifyV("TOP")
-  self.statsPlannedText = statsPanel:CreateFontString(
-    nil,
-    "OVERLAY",
-    "GameFontHighlightSmall"
-  )
+  self.statsPlannedText = CreateStatsText(statsPanel, "GameFontHighlightSmall")
   self.statsPlannedText:SetJustifyH("RIGHT")
   self.statsPlannedText:SetJustifyV("TOP")
-  self.statsDeltaText = statsPanel:CreateFontString(
-    nil,
-    "OVERLAY",
-    "GameFontHighlightSmall"
-  )
+  self.statsDeltaText = CreateStatsText(statsPanel, "GameFontHighlightSmall")
   self.statsDeltaText:SetJustifyH("RIGHT")
   self.statsDeltaText:SetJustifyV("TOP")
   self.statRows = {}
-  self.statsEmptyText = statsPanel:CreateFontString(
-    nil,
-    "OVERLAY",
-    "GameFontHighlightSmall"
-  )
+  self.statsEmptyText = CreateStatsText(statsPanel, "GameFontHighlightSmall")
   self.statsEmptyText:SetJustifyH("LEFT")
   self.statsEmptyText:SetJustifyV("TOP")
-  self.statsNoteText = statsPanel:CreateFontString(
-    nil,
-    "OVERLAY",
-    "GameFontNormalSmall"
-  )
+  self.statsNoteText = CreateStatsText(statsPanel, "GameFontNormalSmall")
   self.statsNoteText:SetJustifyH("LEFT")
   self.statsNoteText:SetJustifyV("BOTTOM")
   self.statsNoteText:SetText(
@@ -3142,9 +3121,15 @@ function GearPlanner:LayoutStatsColumns(companion)
   for index = 1, table.getn(columns) do
     column = columns[index]
     column[1]:ClearAllPoints()
-    column[1]:SetPoint("TOPLEFT", self.statsPanel, "TOPLEFT", x, -12)
+    column[1]:SetPoint(
+      "TOPLEFT",
+      self.statsPanel,
+      "TOPLEFT",
+      x,
+      -STAT_HEADER_TOP
+    )
     column[1]:SetWidth(column[2])
-    column[1]:SetHeight(14)
+    column[1]:SetHeight(STAT_HEADER_HEIGHT)
     column[1]:SetJustifyH(column[3])
     column[1]:SetJustifyV("MIDDLE")
     x = x + column[2]

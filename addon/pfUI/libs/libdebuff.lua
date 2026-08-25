@@ -129,6 +129,12 @@ local allAuraCasts = pfUI.libdebuff_all_auras
 pfUI.libdebuff_slot_ownership = pfUI.libdebuff_slot_ownership or {}
 local slotOwnership = pfUI.libdebuff_slot_ownership
 
+-- buffOwnership: [targetGUID][auraSlot] =
+--   {casterGuid, spellId, spellName, isOurs}
+-- BUFF_ADDED 给出真实槽位但不含施法者；用最近的 AURA_CAST 补齐归属。
+pfUI.libdebuff_buff_ownership = pfUI.libdebuff_buff_ownership or {}
+local buffOwnership = pfUI.libdebuff_buff_ownership
+
 -- displayToAura: [targetGUID][displaySlot] = auraSlot
 -- 将显示槽位（1-16）映射到真实光环槽位（33-48），用于 DEBUFF_REMOVED 关联
 pfUI.libdebuff_display_to_aura = pfUI.libdebuff_display_to_aura or {}
@@ -535,6 +541,52 @@ function libdebuff:IsOverflowDebuff(unit, buffSlot)
   return map and map[16 + buffSlot] and true or false
 end
 
+function libdebuff:UnitBuffCaster(unit, buffSlot, spellName)
+  if not hasNampower or not GetUnitGUID then return nil end
+  if not spellName then return nil end
+  local guid = GetUnitGUID(unit)
+  if not guid then return nil end
+  local ownership = guid and buffOwnership[guid] and
+    buffOwnership[guid][buffSlot]
+  if not ownership or ownership.spellName ~= spellName then
+    ownership = nil
+    for _, data in pairs(buffOwnership[guid] or {}) do
+      if data.spellName == spellName then
+        ownership = data
+        break
+      end
+    end
+  end
+  if not ownership then return nil end
+  if ownership.isOurs then return "player" end
+  if ownership.casterGuid then return "other" end
+end
+
+local function GetRecentAuraCaster(guid, spellName)
+  local casts = allAuraCasts[guid] and allAuraCasts[guid][spellName]
+  if not casts then return nil end
+  local casterGuid, castTime = nil, 0
+  for guid, data in pairs(casts) do
+    if data.startTime and data.startTime > castTime then
+      casterGuid, castTime = guid, data.startTime
+    end
+  end
+  if casterGuid and GetTime() - castTime <= 1 then return casterGuid end
+end
+
+local function UpdateBuffOwnershipFromCast(
+  targetGuid, spellId, casterGuid, isOurs
+)
+  local ownership = buffOwnership[targetGuid]
+  if not ownership then return end
+  for _, data in pairs(ownership) do
+    if data.spellId == spellId then
+      data.casterGuid = casterGuid
+      data.isOurs = isOurs
+    end
+  end
+end
+
 -- Get caster info for a specific aura slot
 local function GetSlotCaster(guid, auraSlot, spellName)
   -- First check our ownership tracking
@@ -587,6 +639,11 @@ local function CleanupUnit(guid)
   
   if slotOwnership[guid] then
     slotOwnership[guid] = nil
+    cleaned = true
+  end
+
+  if buffOwnership[guid] then
+    buffOwnership[guid] = nil
     cleaned = true
   end
   
@@ -667,6 +724,7 @@ local function CleanupOutOfRangeUnits()
   local allGuids = {}
   for guid in pairs(ownDebuffs) do allGuids[guid] = true end
   for guid in pairs(slotOwnership) do allGuids[guid] = true end
+  for guid in pairs(buffOwnership) do allGuids[guid] = true end
   for guid in pairs(allAuraCasts) do allGuids[guid] = true end
   for guid in pairs(objectsByGuid) do allGuids[guid] = true end
   for guid in pairs(pendingCasts) do allGuids[guid] = true end
@@ -903,6 +961,7 @@ function libdebuff:UnitDebuff(unit, displaySlot)
     local slotCasterGuid, isOurs = GetSlotCaster(guid, auraSlot, effect)
     
     if isOurs then
+      caster = "player"
       -- OUR debuff - get timer from ownDebuffs
       if ownDebuffs[guid] and ownDebuffs[guid][effect] then
         local data = ownDebuffs[guid][effect]
@@ -921,6 +980,7 @@ function libdebuff:UnitDebuff(unit, displaySlot)
         end
       end
     else
+      if slotCasterGuid then caster = "other" end
       -- OTHER player's debuff - get timer from allAuraCasts
       if slotCasterGuid and allAuraCasts[guid] and allAuraCasts[guid][effect] then
         local data = allAuraCasts[guid][effect][slotCasterGuid]
@@ -1214,6 +1274,10 @@ if hasNampower then
   frame:RegisterEvent("SPELL_CAST_EVENT")
   frame:RegisterEvent("AURA_CAST_ON_SELF")
   frame:RegisterEvent("AURA_CAST_ON_OTHER")
+  frame:RegisterEvent("BUFF_ADDED_SELF")
+  frame:RegisterEvent("BUFF_ADDED_OTHER")
+  frame:RegisterEvent("BUFF_REMOVED_SELF")
+  frame:RegisterEvent("BUFF_REMOVED_OTHER")
   frame:RegisterEvent("DEBUFF_ADDED_OTHER")
   frame:RegisterEvent("DEBUFF_REMOVED_OTHER")
   frame:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -1498,6 +1562,10 @@ if hasNampower then
       local startTime = GetTime()
       local myGuid = GetPlayerGUID()
       local isOurs = (myGuid and casterGuid == myGuid)
+
+      UpdateBuffOwnershipFromCast(
+        targetGuid, spellId, casterGuid, isOurs
+      )
       
       if debugStats.enabled and isOurs then
         debugStats.aura_cast = debugStats.aura_cast + 1
@@ -1713,6 +1781,57 @@ if hasNampower then
           fn(spellId, casterGuid, targetGuid)
         end
       end
+
+    elseif event == "BUFF_ADDED_SELF" or event == "BUFF_ADDED_OTHER" then
+      local guid = arg1
+      local spellId = arg3
+      local auraSlot = arg6 and (arg6 + 1) or nil
+      if not guid or not spellId then return end
+
+      if not auraSlot and GetUnitField then
+        local auras = GetUnitField(guid, "aura")
+        if auras then
+          for slot = 1, 32 do
+            if auras[slot] == spellId then
+              auraSlot = slot
+              break
+            end
+          end
+        end
+      end
+      if not auraSlot then return end
+
+      local spellName = GetSpellRecField and
+        GetSpellRecField(spellId, "name")
+      local casterGuid = spellName and
+        GetRecentAuraCaster(guid, spellName) or nil
+      local myGuid = GetPlayerGUID()
+      buffOwnership[guid] = buffOwnership[guid] or {}
+      buffOwnership[guid][auraSlot] = {
+        casterGuid = casterGuid,
+        spellId = spellId,
+        spellName = spellName,
+        isOurs = myGuid and casterGuid == myGuid or false,
+      }
+      slotMapCache[guid] = nil
+
+    elseif event == "BUFF_REMOVED_SELF" or
+      event == "BUFF_REMOVED_OTHER"
+    then
+      local guid = arg1
+      local spellId = arg3
+      local auraSlot = arg6 and (arg6 + 1) or nil
+      if not guid or not buffOwnership[guid] then return end
+      if auraSlot then
+        buffOwnership[guid][auraSlot] = nil
+      else
+        for slot, ownership in pairs(buffOwnership[guid]) do
+          if ownership.spellId == spellId then
+            buffOwnership[guid][slot] = nil
+          end
+        end
+      end
+      slotMapCache[guid] = nil
 
     elseif event == "DEBUFF_ADDED_OTHER" then
       local guid = arg1
