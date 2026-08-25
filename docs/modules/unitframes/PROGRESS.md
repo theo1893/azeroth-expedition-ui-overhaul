@@ -7,6 +7,8 @@
   TargetTarget、Focus 的旧 `unitframes.primary-shell` route 仍撤下并回退 pfUI。
 - 世界姓名板新增精确 route `unitframes.nameplate-target-cue`：直接复用 pfUI
   `nameplate.istarget` 显示个人头顶指针；provider 团队标记与血条显隐解耦。
+- pfUI 姓名板可选“聚焦光环显示”已复用 Combat Focus 敌友策略；同一 `16` 格
+  Debuff 优先、Buff 填余位，关闭后恢复原前 `16` 个 Debuff。
 - Unit Frames contract：`1.9`；SavedVariables `artVersion = 7`。
 - 本模块只处理已登记的视觉、动态头像开关和相关回退；位置、点击、事件、数值、
   颜色逻辑与未登记 Frame 继续由 pfUI 持有。
@@ -24,6 +26,7 @@
 | Raid A2 外壳 | `P5` | A–D 四种 `148×74` sampled texture 以原 `74×37 UI` 显示并接入 `pfRaid1..40`；标准宽度完整纹理，其他宽度用同图三切片，高度失配局部回退 |
 | Player V5 完整外壳 | `P5` | attempt 3 exact source 直接导出为 2×；单张 `508×154` sampled region 通过精确 UV 覆盖原 `254×77 UI` 外壳与 `240×65` provider，pfUI 保留 Bars、文字、颜色、Aura、图标、Hover／Aggro、点击与事件 |
 | 世界姓名板个人目标指针 | `P5` | `NP-TARGET-CUE-V1` 候选 3 exact visible pixels 已接受；`40×48` sampled region 显示为 `20×24 UI`，读取 pfUI `nameplate.istarget`，顶部团队标记存在时自动向上堆叠 |
+| 世界姓名板聚焦光环 | `P5` | 复用现有 `nameplate.debuffs[1..16]`；敌对保留自己的／固定关键 Debuff 与全部 Buff，友方保留全部 Debuff 与自己的 Buff，关闭“聚焦光环显示”恢复原逻辑；策略缺失 fail-open |
 | Player／Target V4 外壳 | `P4 / paused` | 旧 source／runtime 仅保留历史回退；九切片 adapter route 暂停，不再应用于 Player |
 | TargetTarget A2 独立外壳 | `P4 / paused` | accepted base／rim 与四态 TGA 保留；九切片 adapter 保留但 route 暂停 |
 | Focus A2 独立外壳 | `P4 / paused` | accepted base／rim 与四态 TGA 保留；九切片 adapter 保留但 route 暂停 |
@@ -60,7 +63,9 @@
    同时可见；团队标记配置在顶部时，个人指针稳定堆在其上方。
 3. 关闭／重开 `/aeui unitframes`，确认只撤下／恢复个人指针，pfUI 姓名板、
    团队标记、点击和目标切换不受影响。
-4. 相邻回归验证 2× Bars、40 人 Raid 和 Player V5；并确认 Target、TargetTarget、
+4. 在敌对与友方姓名板分别验证聚焦 Aura；再关闭 pfUI“聚焦光环显示”，确认
+   立即恢复原前 `16` 个 Debuff，黑白名单与敌友显隐开关仍有效。
+5. 相邻回归验证 2× Bars、40 人 Raid 和 Player V5；并确认 Target、TargetTarget、
    Focus 暂停外壳仍回退 pfUI。
 
 ## 下一门禁
@@ -74,4 +79,6 @@ UI Scale 和回退。Target、TargetTarget、Focus 仍等待各自新修复；�
 
 模块、媒体、精确 route 或 Player canonical provider 尺寸不满足时，只回退对应
 pfUI Frame；姓名板 route 缺失时只隐藏个人目标指针，provider 姓名板和团队
-标记继续运行。角色面板、观察和试衣间 3D 模型不属于本模块，始终保持原样。
+标记继续运行。“聚焦光环显示”关闭、Action Bars route 禁用或策略缺失时使用
+pfUI 原姓名板 Debuff 路径。角色面板、观察和试衣间 3D 模型不属于本模块，
+始终保持原样。

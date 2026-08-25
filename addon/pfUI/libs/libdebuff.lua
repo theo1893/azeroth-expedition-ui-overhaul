@@ -449,7 +449,8 @@ local dispelTypeMap = {
 }
 
 -- Get current debuff state directly from WoW via GetUnitField
--- Returns: { [displaySlot] = {auraSlot, spellId, spellName, stacks, texture, dtype} }
+-- Returns: { [displaySlot] = {auraSlot, buffDisplaySlot, spellId,
+--   spellName, stacks, texture, dtype} }
 local function GetDebuffSlotMap(guid)
   if not guid or not GetUnitField then
     return nil
@@ -474,10 +475,14 @@ local function GetDebuffSlotMap(guid)
   
   local map = {}
   local displaySlot = 0
+  local buffDisplaySlot = 0
 
   for auraSlot = 1, 48 do
     local spellId = auras[auraSlot]
     if spellId and spellId > 0 then
+      if auraSlot <= 32 then
+        buffDisplaySlot = buffDisplaySlot + 1
+      end
       local spellName = GetSpellRecField and GetSpellRecField(spellId, "name")
       local outputSlot
 
@@ -487,9 +492,9 @@ local function GetDebuffSlotMap(guid)
       else
         local ownership = slotOwnership[guid] and slotOwnership[guid][auraSlot]
         local ownedDebuff = ownership and ownership.spellId == spellId
-        -- ponytail: unknown pre-existing overflow debuffs wait for a Nampower event;
-        -- add a DBC polarity lookup only if the locale debuff table proves incomplete.
-        if ownedDebuff or (spellName and L["debuffs"] and L["debuffs"][spellName]) then
+        -- ponytail: locale durations include buffs; unknown pre-existing
+        -- overflow debuffs wait for the authoritative Nampower event.
+        if ownedDebuff then
           outputSlot = 16 + auraSlot
         end
       end
@@ -511,6 +516,7 @@ local function GetDebuffSlotMap(guid)
       
         map[outputSlot] = {
           auraSlot = auraSlot,
+          buffDisplaySlot = auraSlot <= 32 and buffDisplaySlot or nil,
           spellId = spellId,
           spellName = spellName or "未知",
           stacks = stacks,
@@ -538,7 +544,20 @@ function libdebuff:IsOverflowDebuff(unit, buffSlot)
 
   local guid = GetUnitGUID(unit)
   local map = guid and GetDebuffSlotMap(guid)
-  return map and map[16 + buffSlot] and true or false
+  local data = map and map[16 + buffSlot]
+  return data and true or false, data and data.buffDisplaySlot
+end
+
+function libdebuff:IsOverflowBuff(unit, displaySlot)
+  if not hasNampower or not GetUnitGUID or not displaySlot then return false end
+  local guid = GetUnitGUID(unit)
+  local map = guid and GetDebuffSlotMap(guid)
+  if not map then return false end
+  for rawSlot = 1, 32 do
+    local data = map[16 + rawSlot]
+    if data and data.buffDisplaySlot == displaySlot then return true end
+  end
+  return false
 end
 
 function libdebuff:UnitBuffCaster(unit, buffSlot, spellName)
@@ -574,7 +593,7 @@ local function GetRecentAuraCaster(guid, spellName)
   if casterGuid and GetTime() - castTime <= 1 then return casterGuid end
 end
 
-local function UpdateBuffOwnershipFromCast(
+function libdebuff:UpdateBuffOwnershipFromCast(
   targetGuid, spellId, casterGuid, isOurs
 )
   local ownership = buffOwnership[targetGuid]
@@ -585,6 +604,52 @@ local function UpdateBuffOwnershipFromCast(
       data.isOurs = isOurs
     end
   end
+end
+
+local function HandleBuffOwnershipEvent(
+  eventName, guid, spellId, auraSlot_0based, state
+)
+  if not guid or not spellId then return end
+  local auraSlot = auraSlot_0based and (auraSlot_0based + 1) or nil
+
+  if eventName == "BUFF_ADDED_SELF" or eventName == "BUFF_ADDED_OTHER" then
+    if not auraSlot and GetUnitField then
+      local auras = GetUnitField(guid, "aura")
+      if auras then
+        for slot = 1, 32 do
+          if auras[slot] == spellId then
+            auraSlot = slot
+            break
+          end
+        end
+      end
+    end
+    if not auraSlot then return end
+
+    local spellName = GetSpellRecField and
+      GetSpellRecField(spellId, "name")
+    local casterGuid = spellName and
+      GetRecentAuraCaster(guid, spellName) or nil
+    local myGuid = GetPlayerGUID()
+    buffOwnership[guid] = buffOwnership[guid] or {}
+    buffOwnership[guid][auraSlot] = {
+      casterGuid = casterGuid,
+      spellId = spellId,
+      spellName = spellName,
+      isOurs = myGuid and casterGuid == myGuid or false,
+    }
+  elseif state ~= 2 and buffOwnership[guid] then
+    if auraSlot then
+      buffOwnership[guid][auraSlot] = nil
+    else
+      for slot, ownership in pairs(buffOwnership[guid]) do
+        if ownership.spellId == spellId then
+          buffOwnership[guid][slot] = nil
+        end
+      end
+    end
+  end
+  slotMapCache[guid] = nil
 end
 
 -- Get caster info for a specific aura slot
@@ -1274,10 +1339,6 @@ if hasNampower then
   frame:RegisterEvent("SPELL_CAST_EVENT")
   frame:RegisterEvent("AURA_CAST_ON_SELF")
   frame:RegisterEvent("AURA_CAST_ON_OTHER")
-  frame:RegisterEvent("BUFF_ADDED_SELF")
-  frame:RegisterEvent("BUFF_ADDED_OTHER")
-  frame:RegisterEvent("BUFF_REMOVED_SELF")
-  frame:RegisterEvent("BUFF_REMOVED_OTHER")
   frame:RegisterEvent("DEBUFF_ADDED_OTHER")
   frame:RegisterEvent("DEBUFF_REMOVED_OTHER")
   frame:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -1563,7 +1624,7 @@ if hasNampower then
       local myGuid = GetPlayerGUID()
       local isOurs = (myGuid and casterGuid == myGuid)
 
-      UpdateBuffOwnershipFromCast(
+      libdebuff:UpdateBuffOwnershipFromCast(
         targetGuid, spellId, casterGuid, isOurs
       )
       
@@ -1781,57 +1842,6 @@ if hasNampower then
           fn(spellId, casterGuid, targetGuid)
         end
       end
-
-    elseif event == "BUFF_ADDED_SELF" or event == "BUFF_ADDED_OTHER" then
-      local guid = arg1
-      local spellId = arg3
-      local auraSlot = arg6 and (arg6 + 1) or nil
-      if not guid or not spellId then return end
-
-      if not auraSlot and GetUnitField then
-        local auras = GetUnitField(guid, "aura")
-        if auras then
-          for slot = 1, 32 do
-            if auras[slot] == spellId then
-              auraSlot = slot
-              break
-            end
-          end
-        end
-      end
-      if not auraSlot then return end
-
-      local spellName = GetSpellRecField and
-        GetSpellRecField(spellId, "name")
-      local casterGuid = spellName and
-        GetRecentAuraCaster(guid, spellName) or nil
-      local myGuid = GetPlayerGUID()
-      buffOwnership[guid] = buffOwnership[guid] or {}
-      buffOwnership[guid][auraSlot] = {
-        casterGuid = casterGuid,
-        spellId = spellId,
-        spellName = spellName,
-        isOurs = myGuid and casterGuid == myGuid or false,
-      }
-      slotMapCache[guid] = nil
-
-    elseif event == "BUFF_REMOVED_SELF" or
-      event == "BUFF_REMOVED_OTHER"
-    then
-      local guid = arg1
-      local spellId = arg3
-      local auraSlot = arg6 and (arg6 + 1) or nil
-      if not guid or not buffOwnership[guid] then return end
-      if auraSlot then
-        buffOwnership[guid][auraSlot] = nil
-      else
-        for slot, ownership in pairs(buffOwnership[guid]) do
-          if ownership.spellId == spellId then
-            buffOwnership[guid][slot] = nil
-          end
-        end
-      end
-      slotMapCache[guid] = nil
 
     elseif event == "DEBUFF_ADDED_OTHER" then
       local guid = arg1
@@ -2099,6 +2109,15 @@ if hasNampower then
     
     -- Periodic cleanup
     CleanupOutOfRangeUnits()
+  end)
+
+  local buffFrame = CreateFrame("Frame")
+  buffFrame:RegisterEvent("BUFF_ADDED_SELF")
+  buffFrame:RegisterEvent("BUFF_ADDED_OTHER")
+  buffFrame:RegisterEvent("BUFF_REMOVED_SELF")
+  buffFrame:RegisterEvent("BUFF_REMOVED_OTHER")
+  buffFrame:SetScript("OnEvent", function()
+    HandleBuffOwnershipEvent(event, arg1, arg3, arg6, arg7)
   end)
   
   -- Cleveroids API

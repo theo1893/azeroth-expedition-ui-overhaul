@@ -6,12 +6,15 @@ Codex 进入仓库后先读本文件。这里给出项目边界、文档索引�
 ## 项目边界
 
 - 目标客户端：Turtle WoW `1.18.1`，Interface `11200`。
-- 可部署插件位于 `addon/pfUI/` 与 `addon/AzerothExpeditionUI/`。
+- 可部署插件位于 `addon/pfUI/`、`addon/AzerothExpeditionUI/` 与
+  `addon/DoiteDPS/`。
 - pfUI 保留数据、事件、交互、SavedVariables 与兼容能力；AEUI 只重做明确
   登记模块的视觉、布局及必要连接，不改变无关功能。
+- DoiteDPS 独立持有输出建议、循环配置、执行入口与自检；AEUI 只读取其公开
+  Frame、SavedVariables 与坦克协助接口，不接管循环决策。
 - 改模块 A 时只修改模块 A 的真实 pfUI／Blizzard／第三方对象。未登记对象
   必须继续由 provider 正常加载并可局部回退。
-- `addon/` 只放运行时代码、媒体与分发许可证，不放 Markdown。
+- `addon/` 只放运行时代码、媒体、分发许可证与插件自检，不放 Markdown。
 - 默认在 `main` 开发；除非用户明确要求，不自动 push。
 
 ## 当前状态快照

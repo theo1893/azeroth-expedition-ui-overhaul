@@ -132,6 +132,7 @@ pfUI:RegisterModule("nameplates", "vanilla", function ()
     cfg.showdebuffs = C.nameplates["showdebuffs"] == "1"
     cfg.showdebuffs_hostile = C.nameplates["showdebuffs_hostile"] == "1"
     cfg.showdebuffs_friendly = C.nameplates["showdebuffs_friendly"] == "1"
+    cfg.focusauras = C.nameplates["focusauras"] == "1"
     cfg.targetzoom = C.nameplates.targetzoom == "1"
     cfg.zoomval = (tonumber(C.nameplates.targetzoomval) or 0.4) + 1
     cfg.width = tonumber(C.nameplates.width) or 120
@@ -360,10 +361,12 @@ pfUI:RegisterModule("nameplates", "vanilla", function ()
     if not self.debuffcache then self.debuffcache = {} end
     if not libdebuff then return end  -- Safety check
 
-    for id = 1, 16 do
+    local focused = cfg.focusauras and unitstr and pfUI.api and
+      type(pfUI.api.aeuiAuraPolicy) == "function"
+    for id = 1, focused and 32 or 16 do
       local effect, _, texture, stacks, _, duration, timeleft
 
-      if unitstr and C.nameplates.selfdebuff == "1" then
+      if unitstr and C.nameplates.selfdebuff == "1" and not focused then
         effect, _, texture, stacks, _, duration, timeleft = libdebuff:UnitOwnDebuff(unitstr, id)
       else
         effect, _, texture, stacks, _, duration, timeleft = libdebuff:UnitDebuff(unitstr, id)
@@ -399,6 +402,26 @@ pfUI:RegisterModule("nameplates", "vanilla", function ()
     -- return cached debuff
     local c = self.debuffcache[id]
     return c.effect, c.rank, c.texture, c.stacks, c.dtype, c.duration, (c.stop - GetTime())
+  end
+
+  local auraScanner
+  local function PlateUnitBuff(self, unitstr, id)
+    if not unitstr or not pfUI.uf or
+      type(pfUI.uf.DetectBuff) ~= "function"
+    then
+      return
+    end
+
+    local texture, stacks = pfUI.uf:DetectBuff(unitstr, id)
+    if not texture then return end
+    local effect = pfUI_cache and pfUI_cache.buff_icons and
+      pfUI_cache.buff_icons[texture]
+    if not effect and libtipscan then
+      auraScanner = auraScanner or libtipscan:GetScanner("nameplates")
+      auraScanner:SetUnitBuff(unitstr, id)
+      effect = auraScanner:Line(1)
+    end
+    return effect, texture, stacks
   end
 
   local function CreateDebuffIcon(plate, index)
@@ -483,6 +506,67 @@ pfUI:RegisterModule("nameplates", "vanilla", function ()
         nameplate.debuffs[i].cd:SetScale(cdScale)
       end
     end
+  end
+
+  local function FocusAuraVisible(
+    plate, unitstr, kind, name, caster, auraSlot
+  )
+    if not cfg.focusauras or not unitstr then return true end
+    local policy = pfUI.api and pfUI.api.aeuiAuraPolicy
+    if type(policy) ~= "function" then return true end
+    local ok, visible = pcall(
+      policy, plate, unitstr, kind, name, caster, auraSlot
+    )
+    if not ok or visible == nil then return true end
+    return visible and true or false
+  end
+
+  local function ShowAuraIcon(
+    nameplate, index, texture, stacks, duration, timeleft
+  )
+    if not nameplate.debuffs[index] then
+      CreateDebuffIcon(nameplate, index)
+      UpdateDebuffConfig(nameplate, index)
+    end
+
+    local icon = nameplate.debuffs[index]
+    icon:Show()
+    icon.icon:SetTexture(texture)
+    icon.icon:SetTexCoord(.078, .92, .079, .937)
+
+    if stacks and stacks > 1 and
+      C.nameplates.debuffs["showstacks"] == "1"
+    then
+      icon.stacks:SetText(stacks)
+      icon.stacks:Show()
+    else
+      icon.stacks:Hide()
+    end
+
+    local cd = icon.cd
+    if duration and timeleft and cfg.debufftimers then
+      local newStart = GetTime() + timeleft - duration
+      if not cd.cachedStart or abs(cd.cachedStart - newStart) > 0.5 then
+        if not cd.configCached or cd.cachedAnim ~= cfg.debuffanim or
+          cd.cachedText ~= cfg.debufftext
+        then
+          cd.pfCooldownStyleAnimation = cfg.debuffanim
+          cd.pfCooldownStyleText = cfg.debufftext
+          cd:SetAlpha(cfg.debuffanim == 1 and 1 or 0)
+          cd.cachedAnim = cfg.debuffanim
+          cd.cachedText = cfg.debufftext
+          cd.configCached = true
+        end
+        cd:Show()
+        CooldownFrame_SetTimer(cd, newStart, duration, 1)
+        cd.cachedStart = newStart
+      end
+    else
+      cd:Hide()
+      cd.cachedStart = nil
+    end
+
+    return index + 1
   end
 
   -- create nameplate core
@@ -717,6 +801,7 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     nameplate.parent = parent
     nameplate.cache = {}
     nameplate.UnitDebuff = PlateUnitDebuff
+    nameplate.UnitBuff = PlateUnitBuff
     nameplate.CacheDebuffs = PlateCacheDebuffs
     nameplate.original = {}
 
@@ -1293,76 +1378,63 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
       plate.targetname:Hide()
     end
 
-    -- update debuffs
-    local index = 1								  
+    -- update auras; focused mode reuses the provider's 16 debuff icons
+    local index = 1
 
     local isFriendly = unittype == "FRIENDLY_PLAYER" or unittype == "FRIENDLY_NPC"
     local showDebuffsForType = cfg.showdebuffs and (isFriendly and cfg.showdebuffs_friendly or (not isFriendly and cfg.showdebuffs_hostile))
     if showDebuffsForType then
       local verify = string.format("%s:%s", (name or ""), (level or ""))
+      local focused = cfg.focusauras and unitstr and pfUI.api and
+        type(pfUI.api.aeuiAuraPolicy) == "function"
 
       -- update cached debuffs
       if C.nameplates["guessdebuffs"] == "1" and unitstr then
         plate:CacheDebuffs(unitstr, verify)
       end
 
-      -- update all debuff icons
-      for i = 1, 16 do
-        local effect, rank, texture, stacks, dtype, duration, timeleft
+      -- Debuffs keep priority so relevant hostile effects cannot be crowded
+      -- out by the target's buffs.
+      for i = 1, focused and 32 or 16 do
+        local effect, rank, texture, stacks, dtype, duration, timeleft, caster
 
-        if unitstr and C.nameplates.selfdebuff == "1" and libdebuff then
+        if unitstr and C.nameplates.selfdebuff == "1" and
+          not focused and libdebuff
+        then
           effect, rank, texture, stacks, dtype, duration, timeleft = libdebuff:UnitOwnDebuff(unitstr, i)
         elseif unitstr and libdebuff then
-          effect, rank, texture, stacks, dtype, duration, timeleft = libdebuff:UnitDebuff(unitstr, i)
+          effect, rank, texture, stacks, dtype, duration, timeleft,
+            caster = libdebuff:UnitDebuff(unitstr, i)
         elseif plate.verify == verify then
           effect, rank, texture, stacks, dtype, duration, timeleft = plate:UnitDebuff(i)
         end
 
-        if effect and texture and DebuffFilter(effect) then
-          if not plate.debuffs[index] then
-            CreateDebuffIcon(plate, index)
-            UpdateDebuffConfig(plate, index)
+        if effect and texture and DebuffFilter(effect) and
+          FocusAuraVisible(
+            plate, unitstr, "debuff", effect, caster, i
+          )
+        then
+          index = ShowAuraIcon(
+            plate, index, texture, stacks, duration, timeleft
+          )
+          if index > 16 then break end
+        end
+      end
+
+      if focused and unitstr and index <= 16 then
+        for i = 1, 32 do
+          local effect, texture, stacks = plate:UnitBuff(unitstr, i)
+          if texture and FocusAuraVisible(
+            plate, unitstr, "buff", effect, nil, i
+          ) then
+            index = ShowAuraIcon(plate, index, texture, stacks)
+            if index > 16 then break end
           end
-
-          plate.debuffs[index]:Show()
-          plate.debuffs[index].icon:SetTexture(texture)
-          plate.debuffs[index].icon:SetTexCoord(.078, .92, .079, .937)
-
-          if stacks and stacks > 1 and C.nameplates.debuffs["showstacks"] == "1" then
-            plate.debuffs[index].stacks:SetText(stacks)
-            plate.debuffs[index].stacks:Show()
-          else
-            plate.debuffs[index].stacks:Hide()
-          end
-
-          if duration and timeleft and cfg.debufftimers then
-            -- PERF: Only update cooldown if start time changed significantly
-            local cd = plate.debuffs[index].cd
-            local newStart = GetTime() + timeleft - duration
-            
-            if not cd.cachedStart or abs(cd.cachedStart - newStart) > 0.5 then
-              -- Update config flags only on first run or config change
-              if not cd.configCached or cd.cachedAnim ~= cfg.debuffanim or cd.cachedText ~= cfg.debufftext then
-                cd.pfCooldownStyleAnimation = cfg.debuffanim
-                cd.pfCooldownStyleText = cfg.debufftext
-                cd:SetAlpha(cfg.debuffanim == 1 and 1 or 0)
-                cd.cachedAnim = cfg.debuffanim
-                cd.cachedText = cfg.debufftext
-                cd.configCached = true
-              end
-              
-              cd:Show()
-              CooldownFrame_SetTimer(cd, newStart, duration, 1)
-              cd.cachedStart = newStart
-            end
-          end
-
-          index = index + 1
         end
       end
     end
 
-    -- hide remaining debuffs
+    -- hide remaining aura icons
     for i = index, 16 do
       if plate.debuffs[i] then
         plate.debuffs[i]:Hide()

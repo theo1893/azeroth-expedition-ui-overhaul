@@ -226,8 +226,14 @@ local function DebuffOnEnter()
           local gameName, _, _, _, _, _, _, gameCaster = libdebuff:UnitDebuff(unitstr, gameSlot)
           -- Match both name AND caster (must be ours)
           if gameName == ownDebuffName and gameCaster == "player" then
-            if libdebuff.IsOverflowDebuff and libdebuff:IsOverflowDebuff(unitstr, gameSlot - 16) then
-              GameTooltip:SetUnitBuff(unitstr, gameSlot - 16)
+            local overflow, buffSlot
+            if libdebuff.IsOverflowDebuff then
+              overflow, buffSlot = libdebuff:IsOverflowDebuff(
+                unitstr, gameSlot - 16
+              )
+            end
+            if overflow then
+              GameTooltip:SetUnitBuff(unitstr, buffSlot)
             else
               GameTooltip:SetUnitDebuff(unitstr, gameSlot)
             end
@@ -237,8 +243,12 @@ local function DebuffOnEnter()
       end
     end
     
-    if libdebuff and libdebuff.IsOverflowDebuff and libdebuff:IsOverflowDebuff(unitstr, id - 16) then
-      GameTooltip:SetUnitBuff(unitstr, id - 16)
+    local overflow, buffSlot
+    if libdebuff and libdebuff.IsOverflowDebuff then
+      overflow, buffSlot = libdebuff:IsOverflowDebuff(unitstr, id - 16)
+    end
+    if overflow then
+      GameTooltip:SetUnitBuff(unitstr, buffSlot)
     else
       GameTooltip:SetUnitDebuff(unitstr, id)
     end
@@ -470,7 +480,9 @@ local buff_icons_seeded = false
 function pfUI.uf:DetectBuff(name, id)
   if not name or not id then return end
 
-  if libdebuff and libdebuff.IsOverflowDebuff and libdebuff:IsOverflowDebuff(name, id) then
+  if libdebuff and libdebuff.IsOverflowBuff and
+    libdebuff:IsOverflowBuff(name, id)
+  then
     return
   end
 

@@ -1691,6 +1691,8 @@ local function FocusAuraPolicy(
   return provider:UnitBuffCaster(unitstr, auraSlot, name) == "player"
 end
 
+ActionBars.FocusAuraPolicy = FocusAuraPolicy
+
 local function VisitFocusAuraFrames(callback)
   for _, key in pairs({ "player", "target", "ttarget", "focus" }) do
     local frame = GetFocusUnitFrame(key)
@@ -1700,6 +1702,13 @@ end
 
 function ActionBars:ApplyFocusAuraPolicy(enabled)
   local applied = 0
+  if pfUI and pfUI.api then
+    if enabled then
+      pfUI.api.aeuiAuraPolicy = FocusAuraPolicy
+    elseif pfUI.api.aeuiAuraPolicy == FocusAuraPolicy then
+      pfUI.api.aeuiAuraPolicy = nil
+    end
+  end
   VisitFocusAuraFrames(function(frame)
     if enabled then
       frame.aeuiAuraPolicy = FocusAuraPolicy

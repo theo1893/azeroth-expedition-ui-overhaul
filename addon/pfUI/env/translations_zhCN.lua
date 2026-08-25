@@ -293,7 +293,7 @@ pfUI_translation["zhCN"] = {
   ["Enable Indicators"] = "启用指示器",
   ["Enable Item Quality Color For Equipment Only"] = "仅在装备上显示品质颜色",
   ["Enable \"Loot & Spam\" Chat Window"] = "启用[拾取、综合]聊天窗口",
-  ["Enable \"Loot & Spam\" Window"] = "启用\拾取&刷屏\窗口",
+  ["Enable \"Loot & Spam\" Window"] = "启用拾取&刷屏窗口",
   ["Enable Loot Window On MouseCursor"] = "拾取窗口跟随鼠标",
   ["Enable Low Health Glow Effects On Screen Edges"] = "全屏显示低血量报警",
   ["Enable Mana Ticks"] = "显示法力值刻度",
@@ -864,6 +864,7 @@ pfUI_translation["zhCN"] = {
   ["Use Raid Frames To Display Group Members"] = '使用团队框架显示小组成员',
   ["Use Single Line UIErrors Frame"] = "单行显示UI错误框体",
   ["Use Unit Fonts"] = "切换插件字体",
+  ["Use Focused Aura Display"] = "聚焦光环显示（关闭后恢复原有全部显示）",
   ["Version"] = "版本",
   ["Vertical"] = "垂直",
   ["Vertical Actionbar"] = "右侧竖直动作条",
@@ -1036,4 +1037,3 @@ pfUI_translation["zhCN"] = {
   ["Show More Than 32 Buffs"] = "显示超过32位Buffs",
   ["Show More Than 16 Debuffs"] = "显示超过16位Debuffs",
 }
-

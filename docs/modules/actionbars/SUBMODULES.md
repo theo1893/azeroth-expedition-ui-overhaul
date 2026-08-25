@@ -114,6 +114,7 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 | `AB.FOCUS.UNITFRAME.TARGET` | `pfUI.uf.target` | 保持 `240×48 UI / scale 0.8` 与 `BOTTOM (105,480)`；Aura 从右向左且每排 `8` 枚。敌对目标保留全部真实 Buff，Debuff 为自己施加与固定关键表的并集；关键表仅含精灵之火、精灵之火（野性）、破甲攻击、破甲、雷霆一击、挫志怒吼及虚弱／鲁莽／元素／暗影／语言／疲劳诅咒。友方目标仅保留已追踪为自己施加的 Buff，Debuff 全部保留。与 Player 间距、目标交互和动态 Aura 仍归 provider |
 | `AB.FOCUS.UNITFRAME.TARGETTARGET` | `pfUI.uf.targettarget` | 保持 `240×60 UI / scale 0.68`、`LEFT → Target RIGHT +8 UI` 与右向左每排 `8` 枚 Aura；每次刷新按当前敌友关系复用 Target 语义策略，显隐、移动和 unlock 仍归 provider |
 | `AB.FOCUS.UNITFRAME.FOCUS` | `pfUI.uf.focus` | 不接管既有几何或外观，只按 Focus 当前敌友关系复用 Target 语义策略；GUID 与 Buff 归属继续由 Nampower／pfUI 提供。对象、Nampower 或归属 API 缺失时不创建占位并 fail-open |
+| `AB.FOCUS.NAMEPLATE.AURA` | `pfUI.nameplates` 的既有 `nameplate.debuffs[1..16]` | “聚焦光环显示”开启时向姓名板共享 Target 敌友策略：先扫描 `32` 个 Debuff 源槽并压缩符合项，再用剩余格显示符合项的真实 Buff；关闭配置、Action Bars route 禁用或策略 API 缺失时恢复 pfUI 原前 `16` 个 Debuff 逻辑。Frame、布局、计时和显隐仍归姓名板 provider |
 | `AB.FOCUS.CASTBAR.PLAYER` | `pfPlayerCastbar` | `260×12 UI / scale 1.0`；`BOTTOM (0,316)`，位于统一中心轴的第一排。保留图标、法术名、计时与玩家延迟区 |
 | `AB.FOCUS.CASTBAR.TARGET` | `pfTargetCastbar` | `260×12 UI / scale 1.0`；`BOTTOM (0,300)`，位于统一中心轴的第二排。保留可打断／不可打断与目标施法信息 |
 | `AB.FOCUS.CASTBAR.FOCUS` | 可选 `pfFocusCastbar` | 继续跟随 Focus Frame，默认不进入中央玩家／目标双框；对象不存在时无占位 |
@@ -279,6 +280,8 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   `240 UI` 框宽；TargetTarget 同样每排 `8` 枚。Aura 策略先扫描 `32` 个来源槽再
   压缩：Player 为技能书 Buff／全部 Debuff；敌对单位为全部真实 Buff／自己施加或
   固定 `12` 项关键 Debuff；友方单位为自己的 Buff／全部 Debuff，Focus 只接入策略而不改几何。
+  姓名板在 pfUI 配置的“聚焦光环显示”开启时复用同一 Target 敌友策略，并优先
+  保留 Debuff；关闭该项即恢复原有全部 Debuff 路径。
   四个 offset 明确置零；Action Bars 关闭或 provider 缺失时恢复 pfUI 原显示。
   adapter 不重画，不在维护循环中持续改位置。`focus-unit-default-v5` 按
   `角色名 - 服务器` 保存独立版本和应用前备份；每个启用 AEUI Action Bars 的

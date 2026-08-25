@@ -1,0 +1,16 @@
+## Interface: 11200
+## Title: |cff6FA8DC[DoiteDPS]|r
+## Notes: 输出与仇恨建议及显式按键执行框架；支持双手武器战、盾T防战、元素萨满和增强萨满PvP。
+## Author: Codex
+## Version: 0.9.0
+## OptionalDeps: BetterCharacterStats, DoiteAuras, pfUI, SuperCleveRoidMacros
+## SavedVariablesPerCharacter: DoiteDPSDB
+
+Core.lua
+Trackers\ShamanElemental.lua
+Profiles\WarriorArms.lua
+Profiles\WarriorProtection.lua
+Profiles\Warrior.lua
+Profiles\ShamanElemental.lua
+UI.lua
+Config.lua

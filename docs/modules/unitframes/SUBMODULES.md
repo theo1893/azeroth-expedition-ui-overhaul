@@ -34,6 +34,7 @@ Unit Frames runtime `1.9` 会把全部 13 组真实配置强制为 `portrait = o
 | 组件 ID | pfUI 对象 | 展示尺寸 | 状态／所有权 |
 |---|---|---:|---|
 | `UF.NAMEPLATE.TARGET.CUE` | `parent.nameplate` 上的 AEUI 局部装饰 Frame | `20×24 UI`；`40×48` sampled region | 仅 `nameplate.istarget` 为真且姓名可见、非图腾时显示；目标识别、姓名板生命周期与点击继续归 pfUI |
+| `UF.NAMEPLATE.AURA.POLICY` | `nameplate.debuffs[1..16]` | provider 原 `16` 枚动态图标 | pfUI“聚焦光环显示”开启且 Action Bars 策略可用时，敌对姓名板保留自己的／固定关键 Debuff 与全部真实 Buff，友方保留全部 Debuff 与自己的 Buff；Debuff 优先占位。关闭配置或策略缺失时恢复原前 `16` 个 Debuff |
 | provider 团队标记 | `nameplate.raidicon` | pfUI 配置尺寸 | 仍由 pfUI／游戏设置图标和显隐；只把 Parent 从可隐藏的 `nameplate.health` 改为 `nameplate`，不调用 `SetRaidTarget` |
 
 个人目标标记默认以底边锚在姓名上方 `4 UI`；若 provider 团队标记已显示且其
@@ -42,6 +43,10 @@ Unit Frames runtime `1.9` 会把全部 13 组真实配置强制为 `portrait = o
 标记仍可独立显示；个人标记不覆盖姓名或血条，也不改变姓名板 Frame、命中区、
 缩放、层级判定或 SavedVariables。模块／route 禁用时只隐藏并卸载个人标记
 纹理，完整 pfUI 姓名板与团队标记继续运行。
+
+聚焦光环只复用 provider 已有图标、位置、层数和冷却对象，不创建第二套姓名板
+或光环数据库。它在同一 `16` 格内先压缩从 `32` 个源槽筛出的 Debuff，再用余位
+放 Buff；原 Debuff 黑白名单和敌友显隐开关继续生效。
 
 ## Raid 团队框架批次
 

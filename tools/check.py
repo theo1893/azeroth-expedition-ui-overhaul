@@ -30,6 +30,8 @@ MODULE_FILES = {
     "actionbars": (
         "addon/AzerothExpeditionUI/Modules/ActionBars.lua",
         "addon/AzerothExpeditionUI/Modules/TargetMarkers.lua",
+        "addon/pfUI/api/unitframes.lua",
+        "addon/pfUI/libs/libdebuff.lua",
         "addon/pfUI/modules/actionbar.lua",
         "addon/pfUI/modules/castbar.lua",
         "addon/pfUI/modules/swingtimer.lua",
@@ -165,6 +167,17 @@ def lua_syntax(paths: set[Path]) -> int:
         raise CheckError("luac is required for Lua syntax checking")
     ordered = sorted(paths)
     command([luac, "-p", *[str(path) for path in ordered]])
+    for path in ordered:
+        listing = command([luac, "-l", "-p", str(path)]).stdout
+        counts = [
+            int(value)
+            for value in re.findall(r"\b(\d+)\s+upvalues?\b", listing)
+        ]
+        if counts and max(counts) > 32:
+            raise CheckError(
+                "Vanilla Lua upvalue limit exceeded: "
+                f"{path.relative_to(ROOT)} ({max(counts)} > 32)"
+            )
     return len(ordered)
 
 
@@ -194,7 +207,15 @@ def package_check() -> tuple[int, int]:
         / "scripts"
         / "validate_addon_package.py"
     )
-    result = command([sys.executable, str(validator), str(ROOT)])
+    result = command(
+        [
+            sys.executable,
+            str(validator),
+            str(ROOT),
+            "--required-addon",
+            "DoiteDPS",
+        ]
+    )
     report = json.loads(result.stdout)
     return int(report.get("tracked_addon_files", 0)), int(
         report.get("runtime_manifest_records", 0)
