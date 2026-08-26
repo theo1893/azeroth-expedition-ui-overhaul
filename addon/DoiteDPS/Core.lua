@@ -62,6 +62,7 @@ D.Names = {
     CLEAVE = zh and "顺劈斩" or "Cleave",
     WHIRLWIND = zh and "旋风斩" or "Whirlwind",
     SWEEPING_STRIKES = zh and "横扫攻击" or "Sweeping Strikes",
+    DEATH_WISH = zh and "死亡之愿" or "Death Wish",
     THUNDER_CLAP = zh and "雷霆一击" or "Thunder Clap",
     SHIELD_SLAM = zh and "盾牌猛击" or "Shield Slam",
     REVENGE = zh and "复仇" or "Revenge",
@@ -168,6 +169,11 @@ D.SpellDefs = {
         name = D.Names.SWEEPING_STRIKES,
         cost = 20,
         texture = "Interface\\Icons\\Ability_Rogue_SliceDice",
+    },
+    DEATH_WISH = {
+        name = D.Names.DEATH_WISH,
+        cost = 10,
+        texture = "Interface\\Icons\\Spell_Shadow_DeathPact",
     },
     THUNDER_CLAP = {
         name = D.Names.THUNDER_CLAP,
@@ -338,6 +344,7 @@ D.SpellOrder = {
     "CLEAVE",
     "WHIRLWIND",
     "SWEEPING_STRIKES",
+    "DEATH_WISH",
     "THUNDER_CLAP",
     "SHIELD_SLAM",
     "REVENGE",
@@ -413,6 +420,7 @@ D.DEFAULTS = {
     showForecast = true,
     showResource = true,
     showCooldowns = true,
+    tier3TwoPiece = false,
     tankAssistEnabled = false,
     tankAssistName = "",
     heroicRage = 60,
@@ -2303,15 +2311,40 @@ local function SameTexture(left, right)
     return string.lower(left) == string.lower(right)
 end
 
-function D:GetPlayerBuffState(key)
+function D:GetPlayerBuffState(key, withStacks)
     local def = self.SpellDefs[key]
     if not def then
-        return false, nil
+        return false, nil, nil
     end
 
     local spell = self.Spells[key] or {}
     local spellId = tonumber(spell.spellId)
     local texture = spell.texture or def.texture
+    local doiteActive = false
+    local doiteRemaining = nil
+    local doiteStacks = nil
+
+    if DoitePlayerAuras and DoitePlayerAuras.HasBuff then
+        local ok, active = pcall(DoitePlayerAuras.HasBuff, def.name)
+        doiteActive = ok and active and true or false
+        if withStacks and doiteActive and DoitePlayerAuras.GetBuffStacks then
+            local stacksOK, stacks = pcall(
+                DoitePlayerAuras.GetBuffStacks,
+                def.name
+            )
+            if stacksOK then doiteStacks = tonumber(stacks) end
+        end
+    end
+    if doiteActive
+        and type(DoiteAuras_GetPlayerAuraRemainingSeconds) == "function" then
+        local timeOK, timeLeft = pcall(
+            DoiteAuras_GetPlayerAuraRemainingSeconds,
+            def.name,
+            spellId,
+            false
+        )
+        if timeOK then doiteRemaining = tonumber(timeLeft) end
+    end
 
     if GetPlayerBuff and GetPlayerBuffTexture then
         local index = 0
@@ -2345,34 +2378,25 @@ function D:GetPlayerBuffState(key)
                             remaining = tonumber(timeLeft)
                         end
                     end
-                    return true, remaining
+                    return true, remaining or doiteRemaining, doiteStacks
                 end
             end
             index = index + 1
         end
     end
 
-    if DoitePlayerAuras and DoitePlayerAuras.HasBuff then
-        local ok, active = pcall(
-            DoitePlayerAuras.HasBuff,
-            def.name
-        )
-        if ok and active then
-            local remaining = nil
-            if DoitePlayerAuras.GetHiddenBuffRemaining then
-                local timeOK, timeLeft = pcall(
-                    DoitePlayerAuras.GetHiddenBuffRemaining,
-                    def.name
-                )
-                if timeOK then
-                    remaining = tonumber(timeLeft)
-                end
-            end
-            return true, remaining
+    if doiteActive then
+        if not doiteRemaining and DoitePlayerAuras.GetHiddenBuffRemaining then
+            local timeOK, timeLeft = pcall(
+                DoitePlayerAuras.GetHiddenBuffRemaining,
+                def.name
+            )
+            if timeOK then doiteRemaining = tonumber(timeLeft) end
         end
+        return true, doiteRemaining, doiteStacks
     end
 
-    return false, nil
+    return false, nil, nil
 end
 
 function D:HasTargetDebuff(spellName)

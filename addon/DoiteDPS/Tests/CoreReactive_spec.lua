@@ -73,6 +73,27 @@ Expect(
     D:GetRage() == 120
 )
 
+D.Spells.SWEEPING_STRIKES = { spellId = 12328 }
+DoitePlayerAuras = {
+    HasBuff = function(name) return name == "横扫攻击" end,
+    GetBuffStacks = function(name)
+        if name == "横扫攻击" then return 3 end
+    end,
+}
+DoiteAuras_GetPlayerAuraRemainingSeconds = function(name)
+    if name == "横扫攻击" then return 4.25 end
+end
+local sweepingActive, sweepingRemaining, sweepingStacks =
+    D:GetPlayerBuffState("SWEEPING_STRIKES", true)
+Expect(
+    "DoiteAuras supplies Sweeping Strikes time and charges",
+    sweepingActive == true
+        and sweepingRemaining == 4.25
+        and sweepingStacks == 3
+)
+DoitePlayerAuras = nil
+DoiteAuras_GetPlayerAuraRemainingSeconds = nil
+
 D.IsUsable = function() return true, false end
 
 DoiteDPSDB = {}

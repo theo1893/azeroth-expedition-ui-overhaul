@@ -2951,7 +2951,7 @@ function GearPlanner:CreateFrame()
   self.profilePreviousButton = profilePrevious
   saveButton = CreateButton(frame, "保存", 70, 22)
   saveButton:SetPoint("TOPLEFT", frame, "TOPLEFT", 16, -43)
-  ApplyControlArt(saveButton, "save")
+  ApplyControlArt(saveButton, "clear")
   saveButton:SetScript("OnClick", function()
     local ok, message = GearPlanner:SaveEditSession()
     addon:Print(message)

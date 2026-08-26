@@ -2,9 +2,16 @@
 -- Run from Interface/AddOns: lua DoiteDPS/Tests/WarriorArms_spec.lua
 
 local now = 100
+local unbridledWrathRank = 0
 table.getn = table.getn or function(value) return #value end
 function GetTime() return now end
 function GetLocale() return "zhCN" end
+function GetTalentInfo(tab, index)
+    if tab == 2 and index == 1 then
+        return "怒不可遏", nil, 1, 1, unbridledWrathRank, 5
+    end
+    return nil
+end
 
 local known = {}
 local defs = {
@@ -18,6 +25,7 @@ local defs = {
     HEROIC_STRIKE = { name = "英勇打击", cost = 15 },
     CLEAVE = { name = "顺劈斩", cost = 20 },
     SWEEPING_STRIKES = { name = "横扫攻击", cost = 20 },
+    DEATH_WISH = { name = "死亡之愿", cost = 10 },
     BATTLE_SHOUT = { name = "战斗怒吼", cost = 10 },
     SUNDER_ARMOR = { name = "破甲攻击", cost = 10 },
 }
@@ -106,6 +114,7 @@ local function State(values)
         overpower = false,
         targetTTDConfidence = false,
         targetBoss = false,
+        tier3TwoPiece = false,
         predictedMainHandRage = 15,
         swing = {
             active = true,
@@ -132,6 +141,17 @@ local function Check(label, condition)
     passed = passed + 1
 end
 
+local function ForecastByKey(forecast, key)
+    local index = 1
+    while index <= table.getn(forecast or {}) do
+        if forecast[index] and forecast[index].key == key then
+            return forecast[index]
+        end
+        index = index + 1
+    end
+    return nil
+end
+
 Check(
     "only the single and AoE deep-Arms modes remain",
     table.getn(P.ModeOrder) == 2
@@ -151,10 +171,50 @@ Check(
     math.abs(P._expectedWhiteRage(746.4286, 3.7, 40) - 37.3718) < 0.001
 )
 Check(
+    "five ranks of Unbridled Wrath add 1.5 expected two-handed rage",
+    math.abs(P._expectedWhiteRage(746.4286, 3.7, 40, 5) - 38.8718) < 0.001
+)
+unbridledWrathRank = 5
+Check("the current Unbridled Wrath rank is detected", P:GetUnbridledWrathRank() == 5)
+unbridledWrathRank = 0
+P:OnEvent("CHARACTER_POINTS_CHANGED")
+Check("talent changes refresh Unbridled Wrath", P:GetUnbridledWrathRank() == 0)
+Check(
     "Sunder maintenance is an opt-in setting for both modes",
     P.RotationDefaults.single.maintainSunder == false
         and P.RotationDefaults.aoe.maintainSunder == false
         and P.ConfigSchema.options[7].key == "maintainSunder"
+)
+Check("AoE Cleave defaults to a high-rage dump", P.RotationDefaults.aoe.cleaveRage == 95)
+
+D._profileDB = {
+    deepArmsRotationVersion = 1,
+    rotations = { single = {}, aoe = { cleaveRage = 40 } },
+}
+local migratedArmsAoE = P:GetRotationDB("aoe")
+Check(
+    "the old low Cleave default migrates once",
+    migratedArmsAoE.cleaveRage == 95
+        and D._profileDB.deepArmsRotationVersion == 2
+)
+D._profileDB = nil
+
+Check(
+    "Tier 3 two-piece is one character-wide Arms setting",
+    P.ConfigSchema.options[8].key == "tier3TwoPiece"
+        and P.ConfigSchema.options[8].scope == "general"
+        and P.ConfigSchema.options[8].modes[1] == "single"
+        and P.ConfigSchema.options[8].modes[2] == "aoe"
+)
+Check(
+    "base Sweeping Strikes and Death Wish costs remain unchanged",
+    P._rageCost(State(), "SWEEPING_STRIKES") == 20
+        and P._rageCost(State(), "DEATH_WISH") == 10
+)
+Check(
+    "Tier 3 two-piece reduces both affected costs by ten rage",
+    P._rageCost(State({ tier3TwoPiece = true }), "SWEEPING_STRIKES") == 10
+        and P._rageCost(State({ tier3TwoPiece = true }), "DEATH_WISH") == 0
 )
 
 P:ResetRuntime()
@@ -207,6 +267,113 @@ action = P:Recommend(State({
 Check("low rage may use Slam early when no stronger instant is affordable", action.key == "SLAM")
 
 action = P:Recommend(State({
+    rage = 60,
+    cooldowns = CoreCooldowns(0.5, 99),
+    swing = {
+        active = true,
+        remaining = 3.0,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("single Slam keeps its real conflict slot ahead of Mortal Strike", action.key == "SLAM")
+
+action = P:Recommend(State({
+    rage = 60,
+    cooldowns = CoreCooldowns(1.8, 99),
+    swing = {
+        active = true,
+        remaining = 3.0,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("single Slam remains worthwhile across the full conflict window", action.key == "SLAM")
+
+action = P:Recommend(State({
+    rage = 20,
+    predictedMainHandRage = 36,
+    cooldowns = CoreCooldowns(0.5, 99),
+    swing = {
+        active = true,
+        remaining = 3.0,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("single Slam never reserves rage for a near-ready Mortal Strike", action.key == "SLAM")
+
+action = P:Recommend(State({
+    rage = 20,
+    predictedMainHandRage = 15,
+    cooldowns = CoreCooldowns(0.5, 99),
+    swing = {
+        active = true,
+        remaining = 3.0,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("single Slam keeps its rage efficiency ahead of Mortal Strike", action.key == "SLAM")
+
+action = P:Recommend(State({
+    rage = 60,
+    cooldowns = CoreCooldowns(0.08, 99),
+    swing = {
+        active = true,
+        remaining = 3.63,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("single waits for a free Mortal Strike then Slam sequence", action.key == "AUTO_ATTACK")
+
+action = P:Recommend(State({
+    rage = 30,
+    cooldowns = CoreCooldowns(0.08, 99),
+    swing = {
+        active = true,
+        remaining = 3.63,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("a free timing slot does not override single-target Slam efficiency", action.key == "SLAM")
+
+action = P:Recommend(State({
+    rage = 60,
+    cooldowns = CoreCooldowns(0, 99),
+    swing = {
+        active = true,
+        remaining = 2.2,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("a ready Mortal Strike cannot delete the current safe Slam", action.key == "SLAM")
+
+action = P:Recommend(State({
+    rage = 30,
+    predictedMainHandRage = 36,
+    cooldowns = CoreCooldowns(0.5, 0),
+    swing = {
+        active = true,
+        remaining = 1.0,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("a white hit during Whirlwind's GCD still funds Mortal Strike", action.key == "WHIRLWIND")
+
+action = P:Recommend(State({
     rage = 30,
     cooldowns = CoreCooldowns(4, 4),
     swing = {
@@ -245,7 +412,7 @@ action = P:Recommend(State({
         slamCapable = true,
     },
 }))
-Check("a ready Whirlwind keeps priority during another instant GCD", action.key == "WHIRLWIND")
+Check("a ready Whirlwind cannot delete a safe Slam during the current GCD", action.key == "SLAM")
 
 action = P:Recommend(State({
     rage = 80,
@@ -619,6 +786,23 @@ Check("AoE activates Sweeping Strikes", action.key == "SWEEPING_STRIKES")
 
 action = P:Recommend(State({
     mode = "aoe",
+    rage = 10,
+    stance = 1,
+    tier3TwoPiece = true,
+    cooldowns = CoreCooldowns(4, 4, 99, 0),
+}))
+Check("Tier 3 two-piece permits Sweeping Strikes at ten rage", action.key == "SWEEPING_STRIKES")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 10,
+    stance = 1,
+    cooldowns = CoreCooldowns(4, 4, 99, 0),
+}))
+Check("base Sweeping Strikes still requires twenty rage", action.key ~= "SWEEPING_STRIKES")
+
+action = P:Recommend(State({
+    mode = "aoe",
     rage = 5,
     stance = 1,
     sweepingStrikes = true,
@@ -634,10 +818,400 @@ Check("AoE drains a pending Sweeping window with Whirlwind", action.key == "WHIR
 
 action = P:Recommend(State({
     mode = "aoe",
+    rage = 75,
+    cooldowns = CoreCooldowns(0, 4, 99, 0),
+}))
+Check("AoE drains a pending Sweeping window with Mortal Strike", action.key == "MORTAL_STRIKE")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 40,
+    cooldowns = CoreCooldowns(4, 0, 99, 0),
+    swing = {
+        active = true,
+        remaining = 3.0,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("pending Sweeping reserves rage and blocks repeat Slam", action.key == "BATTLE_STANCE")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 100,
+    cooldowns = CoreCooldowns(4, 4, 99, 0),
+}))
+Check("AoE forces Battle Stance after its available Sweeping drains", action.key == "BATTLE_STANCE")
+
+action = P:Recommend(State({
+    mode = "aoe",
     rage = 40,
     cooldowns = CoreCooldowns(4, 4, 99, 5),
 }))
-Check("AoE queues Cleave after Sweeping is no longer pending", action.key == "CLEAVE")
+Check("AoE never Cleaves below its Whirlwind reserve", action.key ~= "CLEAVE")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 45,
+    cooldowns = CoreCooldowns(4, 4, 99, 5),
+}))
+Check("AoE never treats forty-five rage as a Cleave dump", action.key ~= "CLEAVE")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 94,
+    maxRage = 130,
+    predictedMainHandRage = 36,
+    cooldowns = CoreCooldowns(4, 4, 99, 5),
+}))
+Check("AoE Cleaves when the next white would cap rage", action.key == "CLEAVE")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 100,
+    maxRage = 130,
+    predictedMainHandRage = 36,
+    cooldowns = CoreCooldowns(4, 4, 99, 5),
+    swing = {
+        active = true,
+        remaining = 3.0,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("a safe Slam removes a false Cleave cap risk", action.key == "SLAM")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    targetHP = 20,
+    rage = 120,
+    maxRage = 130,
+    predictedMainHandRage = 36,
+    cooldowns = CoreCooldowns(4, 4, 99, 5),
+    swing = {
+        active = true,
+        remaining = 0.2,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = false,
+    },
+}))
+Check("a due Execute cannot be replaced by Cleave", action.key == "EXECUTE")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 45,
+    cooldowns = CoreCooldowns(0, 4, 99, 5),
+}))
+Check("AoE preserves an immediately ready Mortal Strike before Cleave", action.key == "MORTAL_STRIKE")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 40,
+    cooldowns = CoreCooldowns(0, 4, 99, 5),
+    swing = {
+        active = true,
+        remaining = 1.0,
+        speed = 3.5,
+        slamCast = 1.5,
+        cleaveQueued = true,
+    },
+}))
+Check("a queued Cleave's rage cannot be spent by Mortal Strike", action.key ~= "MORTAL_STRIKE")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 15,
+    cooldowns = CoreCooldowns(4, 4, 99, 5),
+    swing = {
+        active = true,
+        remaining = 3.0,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("AoE Slam reserves rage for Whirlwind after a weak predicted white hit", action.key == "AUTO_ATTACK")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 35,
+    cooldowns = CoreCooldowns(4, 4, 99, 5),
+    swing = {
+        active = true,
+        remaining = 3.0,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+        cleaveQueued = true,
+    },
+}))
+Check("a queued Cleave contributes no predicted rage before Whirlwind", action.key == "CLEAVE")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 60,
+    cooldowns = CoreCooldowns(0.5, 4, 99, 5),
+    swing = {
+        active = true,
+        remaining = 3.0,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("AoE Slam never yields to Mortal Strike alone", action.key == "SLAM")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 35,
+    predictedMainHandRage = 36,
+    cooldowns = CoreCooldowns(4, 0.8, 99, 5),
+    swing = {
+        active = true,
+        remaining = 3.0,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("AoE Slam reserves insufficient rage for a near-ready Whirlwind", action.key == "AUTO_ATTACK")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 40,
+    predictedMainHandRage = 36,
+    cooldowns = CoreCooldowns(4, 0.8, 99, 5),
+    swing = {
+        active = true,
+        remaining = 3.0,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("AoE may Slam when it already preserves Whirlwind rage", action.key == "SLAM")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 25,
+    predictedMainHandRage = 36,
+    cooldowns = CoreCooldowns(4, 3, 99, 5),
+    swing = {
+        active = true,
+        remaining = 2.0,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("AoE may Slam when a normal white hit funds Whirlwind first", action.key == "SLAM")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 40,
+    cooldowns = CoreCooldowns(4, 0, 99, 5),
+    swing = {
+        active = true,
+        remaining = 2.2,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("AoE Whirlwind cannot delete a funded safe Slam", action.key == "SLAM")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 40,
+    sweepingStrikes = true,
+    sweepingRemaining = 5,
+    sweepingStacks = 1,
+    cooldowns = CoreCooldowns(4, 0, 99, 5),
+    swing = {
+        active = true,
+        remaining = 2.2,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("the last Sweeping charge makes Slam yield to Whirlwind", action.key == "WHIRLWIND")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 42,
+    predictedMainHandRage = 36,
+    cooldowns = CoreCooldowns(0, 0.5, 99, 5),
+    swing = {
+        active = true,
+        remaining = 2.0,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = false,
+    },
+}))
+Check("AoE Mortal Strike preserves rage for a near-ready Whirlwind", action.key == "AUTO_ATTACK")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 42,
+    predictedMainHandRage = 36,
+    cooldowns = CoreCooldowns(0, 0.5, 99, 5),
+    swing = {
+        active = true,
+        remaining = 1.0,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = false,
+    },
+}))
+Check("a normal white during Mortal Strike's GCD funds Whirlwind", action.key == "MORTAL_STRIKE")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 70,
+    predictedMainHandRage = 36,
+    cooldowns = CoreCooldowns(0, 0.5, 99, 5),
+    swing = {
+        active = true,
+        remaining = 1.0,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = false,
+        cleaveQueued = true,
+    },
+}))
+Check("a queued Cleave cannot fund Whirlwind after Mortal Strike", action.key == "CLEAVE")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 120,
+    maxRage = 130,
+    predictedMainHandRage = 36,
+    sweepingStrikes = true,
+    sweepingRemaining = 5,
+    sweepingStacks = 2,
+    cooldowns = CoreCooldowns(4, 0.8, 99, 5),
+    swing = {
+        active = true,
+        remaining = 0.5,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = false,
+    },
+}))
+Check("Cleave preserves the last Sweeping charge for Whirlwind", action.key ~= "CLEAVE")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 120,
+    maxRage = 130,
+    predictedMainHandRage = 36,
+    sweepingStrikes = true,
+    sweepingRemaining = 5,
+    sweepingStacks = 3,
+    cooldowns = CoreCooldowns(4, 0.8, 99, 5),
+    swing = {
+        active = true,
+        remaining = 0.5,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = false,
+    },
+}))
+Check("Cleave may spend Sweeping charges that Whirlwind does not need", action.key == "CLEAVE")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 60,
+    sweepingStrikes = true,
+    sweepingRemaining = 1.0,
+    sweepingStacks = 5,
+    cooldowns = CoreCooldowns(0, 0.5, 99, 5),
+    swing = {
+        active = true,
+        remaining = 3.0,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = false,
+    },
+}))
+Check("Mortal Strike waits when its GCD would expire Sweeping", action.key == "AUTO_ATTACK")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 60,
+    sweepingStrikes = true,
+    sweepingRemaining = 5,
+    sweepingStacks = 1,
+    cooldowns = CoreCooldowns(0, 0.5, 99, 5),
+    swing = {
+        active = true,
+        remaining = 3.0,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = false,
+    },
+}))
+Check("Mortal Strike preserves the last Sweeping charge for Whirlwind", action.key == "AUTO_ATTACK")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 60,
+    sweepingStrikes = true,
+    sweepingRemaining = 5,
+    sweepingStacks = 2,
+    cooldowns = CoreCooldowns(0, 0.5, 99, 5),
+    swing = {
+        active = true,
+        remaining = 1.0,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = false,
+    },
+}))
+Check("Mortal Strike cannot let the next white consume all Sweeping charges", action.key == "AUTO_ATTACK")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 60,
+    sweepingStrikes = true,
+    sweepingRemaining = 5,
+    sweepingStacks = 2,
+    cooldowns = CoreCooldowns(0, 0.5, 99, 5),
+    swing = {
+        active = true,
+        remaining = 3.0,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = false,
+    },
+}))
+Check("Mortal Strike may spend one of two Sweeping charges", action.key == "MORTAL_STRIKE")
+
+local cooldownState = State({
+    rage = 80,
+    cooldowns = CoreCooldowns(0, 0),
+    swing = { active = false },
+})
+P:OnEvent("SPELL_CAST_EVENT", 1, D.Spells.MORTAL_STRIKE.spellId)
+P:OnEvent("SPELL_CAST_EVENT", 1, D.Spells.WHIRLWIND.spellId)
+local cooldownForecast = P:BuildForecast(cooldownState, { key = "WAIT" })
+local mortalForecast = ForecastByKey(cooldownForecast, "MORTAL_STRIKE")
+local whirlwindForecast = ForecastByKey(cooldownForecast, "WHIRLWIND")
+Check(
+    "Mortal Strike restarts on the timeline at its real cooldown",
+    mortalForecast and mortalForecast.eta >= 5.9
+        and mortalForecast.timelineCycle == 1
+)
+Check(
+    "Whirlwind restarts on the timeline at its real cooldown",
+    whirlwindForecast and whirlwindForecast.eta >= 9.9
+        and whirlwindForecast.timelineCycle == 1
+)
 
 local previousCandidates = P._candidates
 local forecast = P:BuildForecast(State({
