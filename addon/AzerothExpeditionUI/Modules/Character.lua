@@ -16,6 +16,7 @@ local TAB_COMPONENT_ROUTE = "character.tabs-v3"
 local AMMO_COMPONENT_ROUTE = "character.ammo-slot-v3"
 local SECONDARY_LEAF_COMPONENT_ROUTE = "character.secondary-leaf-v3"
 local MEDIA = addon.media.root .. "Character\\"
+local PARCHMENT_VERTEX_COLOR = { 0.62, 0.62, 0.62 }
 local ART = {
   topLeft = {
     path = MEDIA .. "CharacterFrameShellTopLeftV3",
@@ -81,6 +82,7 @@ local STATS_PAPER = {
   texCoord = { 0, 460 / 512, 0, 156 / 256 },
   verticalCap = 6,
   textureHeight = 256,
+  vertexColor = PARCHMENT_VERTEX_COLOR,
 }
 
 local SECONDARY_LEAF = {
@@ -90,6 +92,7 @@ local SECONDARY_LEAF = {
   width = 301,
   height = 375,
   texCoord = { 0, 602 / 1024, 0, 750 / 1024 },
+  vertexColor = PARCHMENT_VERTEX_COLOR,
 }
 
 local SECONDARY_PAGE_PROVIDER_NAMES = {
@@ -661,7 +664,11 @@ local function ConfigureTexture(texture, definition, anchor)
     texCoord[3],
     texCoord[4]
   )
-  texture:SetVertexColor(1, 1, 1)
+  if definition.vertexColor then
+    texture:SetVertexColor(unpack(definition.vertexColor))
+  else
+    texture:SetVertexColor(1, 1, 1)
+  end
   texture:SetAlpha(1)
   local relativeTo = anchor and anchor.relativeTo or CharacterFrame
   local relativePoint = anchor and anchor.relativePoint or "TOPLEFT"

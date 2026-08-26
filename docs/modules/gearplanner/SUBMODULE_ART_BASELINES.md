@@ -4,7 +4,7 @@
 |---|---|
 | GEAR.FRAME | `GEAR-MAIN-V1` 军需官折叠案板；深胡桃皮革平铺内场、八切片外边、左侧三铰链与独立标题牌。伴随／独立宽度只拉伸登记安全区，不缩放整图 |
 | GEAR.PROFILE | 保存为突出的氧化黄铜锁扣；导入／清空／方案管理为较安静皮革工具签；方案名、页数和文字保持动态。首批只锁定 normal 材料，hover／pressed／disabled 暂复用 normal 并由运行时明暗反馈，后续独立生产 |
-| GEAR.SLOT | 真实 19 Button 共用三切片皮革标签；icon、槽位名、物品名和品质保持动态。琥珀差异 wash／描边与冷灰蓝未保存描边／左标／`*` 保持运行时独立，两者可叠加；不得烘焙红绿优劣 |
+| GEAR.SLOT | 真实 19 Button 共用三切片皮革标签；icon、槽位名、物品名和品质保持动态。accepted `GEAR-SLOT-STATES-V1` 另提供固定尺寸的强黄铜差异夹签、弱未填夹签与冷灰蓝修订缝带，取代整框 wash／描边；`差异／新增／未填` 与 `*` 仍由运行时绘制，两类 sprite 可叠加，不得烘焙红绿优劣 |
 | GEAR.PLAN.COMBINED | 左侧 19 槽与右侧属性纸始终同屏；不能把二者合成一个失去对象边界的整屏背景 |
 | GEAR.TOTALS | 独立九切片暖赭统计纸；标题、属性名、当前／配装／变化值、绿红差值和琥珀攻速差值全部动态，使用深墨褐高对比文字 |
 | GEAR.COMPANION.RAIL | 不属于 `GEAR-MAIN-V1`；保持独立窄栏对象，未来普通／悬停／选中／禁用态分别定义，不与 CharacterFrame 或主案板烘焙 |
@@ -13,5 +13,6 @@
 | GEAR.PICKER | AtlasLoot 搜索、30 格行、分页、来源和 Wishlist 全部保持原生；AEUI 小型“+／已”Button 与目标提示不进入主案板 atlas |
 | GEAR.SOURCES | 来源名称、件数与掉率保持 Provider 动态内容，不进入 Gear 静态资产 |
 
-`GEAR-MAIN-V1` runtime 位于 `addon/AzerothExpeditionUI/Media/GearPlanner/`，所有逻辑
-尺寸与命中区保持原合同，纹理采样密度为 `2×`。
+`GEAR-MAIN-V1` 与 `GEAR-SLOT-STATES-V1` runtime 位于
+`addon/AzerothExpeditionUI/Media/GearPlanner/`，所有逻辑尺寸与命中区保持原合同，
+纹理采样密度为 `2×`。

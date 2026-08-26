@@ -21,15 +21,15 @@ Codex 进入仓库后先读本文件。这里给出项目边界、文档索引�
 
 | 模块 | 当前状态 | 下一步 |
 |---|---|---|
-| Core／pfUI | AEUI `0.9.0`，scoped ownership `P5`；Gear Planner runtime `1.0-zhCN` 已接入 Character 与 Inspect 两套独立伴随会话并保留独立回退 | 实机验证模块隔离、旧配置迁移、两套伴随栏与配装工具回退 |
+| Core／pfUI | AEUI `0.9.0`，scoped ownership `P5`；Gear Planner runtime `1.1-zhCN` 已接入 Character 与 Inspect 两套独立伴随会话并保留独立回退 | 实机验证模块隔离、旧配置迁移、两套伴随栏与配装工具回退 |
 | Chat | runtime `1.22 / P5`；Full V1 主框、Dark V2 Tab、Dark V1 输入已接入；右框隐藏，经典颜色透传 | 实机验证 Tab、缩放、输入、频道颜色和左框消息回收 |
 | Quests | runtime `1.28`、Theme `1.11`；已完成并挂载的书体、目录、奖励槽、火漆／闭合载体均为 2× runtime；事务菜单未启用 | 完整重启后实机验证双纹理书体接缝、奖励槽、火漆滚动裁切；Tracker 重新确认真实区域 |
 | Action Bars | AEUI `0.9.0`；Slot／Rail `P6`；Field Kit `2.9`、Focus `3.5`、Sidebar Group `1.0`、Target Markers `2.3` 均 `P5`；Player／Target 保持 `240×48 / 0.8`、底锚点 `480 UI`、`23 UI / 每排 8` Aura 与 `73 UI` 间距；Aura 语义策略为 Player 仅技能书 Buff／全部 Debuff，敌对单位全部真实 Buff／自己施加与固定 `12` 项关键 Debuff 的并集，友方单位自己施加的 Buff／全部 Debuff，TargetTarget 与 Focus 同步按敌友套用；下方读条、Combat Deck 与所有角色 DDPS `(650,-615)` 原位 | 实机验证四框敌友 Aura 过滤、重载后友方 Buff 归属、Action Bars 禁用回退及另一角色 v5 默认迁移，再验证皮革标记方阵、坦克／一键 Button、ArchiTotem 分离、AutoBar popup／网格、DDPS 中央视野、姿态尺寸及相邻 provider |
 | Map | WorldMap 继续暂停；Minimap runtime `7.6`，mask、V4 non-bottom 托盘与 V7 bottom 收纳袋为高分辨率 runtime；V3 罗盘／扣具／插槽因只保留 1× accepted source 登记明确例外且未伪放大 | 完整重启后实机验证 mask、V4 九切片、V7 徽记压接、袋内净空、0／6／12／22／30 排布、缩放、显隐及回退 |
 | Spellbook | accepted `SB-A2-DONOR V1` source/runtime 保留，AEUI adapter 与 Spellbook ownership 暂停；当前回退 pfUI 技能书 | 明天依据 handoff 实机图核对四块 TGA 对位、层序、provider region 与控件净空 |
 | Talents | `P1 / paused`；已与 Spellbook 拆分，真实动态节点／分支边界已对齐 | 等用户明确恢复后制作独立 `TL-SIM-V1` |
-| Character | `P2–P5 / active`；runtime `2.0`，基础层、属性纸、抗性槽、E1／E2-A 装备槽、F1 Tabs、E3 Ammo 与分页共用档案页均以 2× runtime 接入；Gear Planner `1.0-zhCN` 追加角色与观察伴随栏，`560×555` 配装视图将装备与当前／配装／变化属性对比同屏，原生 UI 几何与动态内容所有权不变 | 实机复核既有 Character 组件，并验证 `984 UI` 配装净空、即时属性对比、角色三视图及观察“装／属／比／存”、分页、Provider 缺失与禁用回退 |
-| Gear Planner | runtime `1.0-zhCN / P5`；accepted `GEAR-MAIN-V1` 军需官折叠案板已按外壳、填充、标题／铰链、顶部控件、槽位和属性纸导出为 2× runtime；`560×555` 视图将 19 槽与当前／配装／变化同屏，动态内容不烘焙；AtlasLoot 继续持有查询、分页、来源和 Wishlist | 完整重启后实机验证案板层序／缩放、槽位与统计纸接缝、琥珀／冷蓝状态，再回归差值、AtlasLoot、方案 CRUD、角色／观察伴随栏及 Provider／Gear 禁用回退 |
+| Character | `P2–P5 / active`；runtime `2.0`，基础层、属性纸、抗性槽、E1／E2-A 装备槽、F1 Tabs、E3 Ammo 与分页共用档案页均以 2× runtime 接入；Gear Planner `1.1-zhCN` 提供 `40 UI`“装备／属性／配装／双栏”角色栏、默认双栏与独立观察栏，`560×555` 配装视图将装备与当前／配装／变化属性对比同屏，原生 UI 几何与动态内容所有权不变 | 实机复核既有 Character 组件，并验证 `996 UI` 配装净空、默认双栏、即时属性对比、观察“装／属／比／存”、分页、Provider 缺失与禁用回退 |
+| Gear Planner | runtime `1.1-zhCN / P5`；accepted `GEAR-MAIN-V1` 军需官案板与 `GEAR-SLOT-STATES-V1` 黄铜夹签／冷灰蓝修订缝带均为 2× runtime；角色栏使用完整双字文本并默认双栏，槽位以“差异／新增／未填”与可叠加修订 sprite 表达状态，保存 Button 与方案选中反馈已修复；AtlasLoot 继续持有查询、分页、来源和 Wishlist | 完整重启后实机验证默认双栏、案板层序、三种槽位 sprite、保存状态与方案选中反馈，再回归差值、AtlasLoot、方案 CRUD、观察栏及 Provider／Gear 禁用回退 |
 | Unit Frames | runtime `1.9`；Bars、Raid A2、Player V5 与姓名板 `NP-TARGET-CUE-V1` 已从 accepted source 导出为 2× runtime；团队标记已与血条显隐解耦；Target／TargetTarget／Focus 外壳 route 继续暂停并回退 pfUI | 完整重启后实机验证团战目标指针、隐藏血条＋团队标记堆叠、禁用回退，并相邻回归 Bars、40 人 Raid、Player V5 层序与 UI Scale |
 
 详细状态以 [docs/PROGRESS.md](docs/PROGRESS.md) 和目标模块的

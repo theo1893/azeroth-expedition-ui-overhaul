@@ -1,7 +1,7 @@
 local addon = AzerothExpeditionUI
 local GearPlanner = {}
 
-GearPlanner.runtimeContract = "1.0-zhCN"
+GearPlanner.runtimeContract = "1.1-zhCN"
 
 local MEDIA = addon.media.root .. "GearPlanner\\"
 local FONT_SERIF = addon.media.root .. "Fonts\\NotoSerifSC-SemiBold.ttf"
@@ -46,6 +46,18 @@ local SLOT_ART = {
   leftWidth = 40,
   rightWidth = 8,
 }
+local SLOT_STATE_ART = {
+  path = MEDIA .. "GearPlannerSlotStatesV1",
+  differenceStrong = {
+    uv = { 0, 0.390625, 0, 0.3125 }, width = 50, height = 20,
+  },
+  differenceWeak = {
+    uv = { 0.4375, 0.734375, 0.03125, 0.28125 }, width = 38, height = 16,
+  },
+  draftRevision = {
+    uv = { 0.8125, 0.8828125, 0, 0.5625 }, width = 9, height = 36,
+  },
+}
 local PAPER_ART = {
   path = MEDIA .. "GearPlannerStatsPaperV1",
   border = 18,
@@ -61,39 +73,40 @@ local ITEM_QUALITY_CHAT_COLORS = {
   [6] = "ffe6cc80", [7] = "ffe6cc80",
 }
 local SLOT_DIFFERENCE_LABELS = {
-  replace = "更换", add = "新增", empty = "未填",
+  replace = "差异", add = "新增", empty = "未填",
 }
 local PLAN_COMPANION_FRAME_WIDTH = 560
 local WIDE_RIGHT_FALLBACK = 368
-local COMPANION_RAIL_WIDTH = 28
+local CHARACTER_RAIL_WIDTH = 40
+local INSPECT_RAIL_WIDTH = 28
 local COMPANION_GAP = 8
 local COMPANION_RAIL_GAP = 4
-local WIDE_MIN_WIDTH = 1060
+local WIDE_MIN_WIDTH = 1072
 local INSPECT_GAP = 8
 local INSPECT_RAIL_GAP = 4
 
 local COMPANION_VIEWS = {
   {
     key = "current",
-    label = "装",
+    label = "装备",
     title = "当前装备",
     tooltip = "S_ItemTip 装备明细",
   },
   {
     key = "stats",
-    label = "属",
+    label = "属性",
     title = "装备属性",
     tooltip = "StatCompare 属性对比",
   },
   {
     key = "plan",
-    label = "配",
+    label = "配装",
     title = "配装方案",
     tooltip = "AEUI Gear Planner",
   },
   {
     key = "dual",
-    label = "双",
+    label = "双栏",
     title = "双栏对照",
     tooltip = "当前装备在右、StatCompare 在左；仅在净空足够时可用",
   },
@@ -777,59 +790,6 @@ local function CreatePaperArt(frame)
   return art
 end
 
-local function CreateSlotOutline(button)
-  local outline, inset, thickness
-  if button.stateOutline then return button.stateOutline end
-  inset = 3
-  thickness = 1
-  outline = {
-    button:CreateTexture(nil, "OVERLAY"),
-    button:CreateTexture(nil, "OVERLAY"),
-    button:CreateTexture(nil, "OVERLAY"),
-    button:CreateTexture(nil, "OVERLAY"),
-  }
-  outline[1]:SetPoint("TOPLEFT", button, "TOPLEFT", inset, -inset)
-  outline[1]:SetPoint("TOPRIGHT", button, "TOPRIGHT", -inset, -inset)
-  outline[1]:SetHeight(thickness)
-  outline[2]:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", inset, inset)
-  outline[2]:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -inset, inset)
-  outline[2]:SetHeight(thickness)
-  outline[3]:SetPoint("TOPLEFT", button, "TOPLEFT", inset, -inset)
-  outline[3]:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", inset, inset)
-  outline[3]:SetWidth(thickness)
-  outline[4]:SetPoint("TOPRIGHT", button, "TOPRIGHT", -inset, -inset)
-  outline[4]:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -inset, inset)
-  outline[4]:SetWidth(thickness)
-  button.stateOutline = outline
-  return outline
-end
-
-local function SetSlotOutline(button, red, green, blue, alpha)
-  local outline = CreateSlotOutline(button)
-  local index, texture
-  for index = 1, table.getn(outline) do
-    texture = outline[index]
-    if red then
-      texture:SetTexture(red, green, blue, alpha)
-      texture:Show()
-    else
-      texture:Hide()
-    end
-  end
-end
-
-local function RefreshSlotOutline(button)
-  if button.draftDirty then
-    SetSlotOutline(button, 0.42, 0.68, 0.76, 1)
-  elseif button.differenceState == "replace" or button.differenceState == "add" then
-    SetSlotOutline(button, 0.72, 0.58, 0.36, 0.72)
-  elseif button.differenceState == "empty" then
-    SetSlotOutline(button, 0.50, 0.38, 0.18, 0.48)
-  else
-    SetSlotOutline(button)
-  end
-end
-
 local function CreateSlotArt(button)
   local art
   if button.aeuiGearPlannerSlotArt then
@@ -875,7 +835,47 @@ local function CreateSlotArt(button)
   button.hoverWash:SetTexture(1, 0.84, 0.48, 0.10)
   button.hoverWash:SetPoint("TOPLEFT", button, "TOPLEFT", 4, -4)
   button.hoverWash:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -4, 4)
-  CreateSlotOutline(button)
+  return art
+end
+
+local function CreateSlotStateArt(button)
+  local art
+  if button.aeuiGearPlannerSlotStateArt then
+    return button.aeuiGearPlannerSlotStateArt
+  end
+  art = {
+    differenceStrong = button:CreateTexture(nil, "ARTWORK"),
+    differenceWeak = button:CreateTexture(nil, "ARTWORK"),
+    draftRevision = button:CreateTexture(nil, "ARTWORK"),
+  }
+  ConfigureArtTexture(
+    art.differenceStrong,
+    SLOT_STATE_ART.path,
+    SLOT_STATE_ART.differenceStrong.uv
+  )
+  art.differenceStrong:SetWidth(SLOT_STATE_ART.differenceStrong.width)
+  art.differenceStrong:SetHeight(SLOT_STATE_ART.differenceStrong.height)
+  art.differenceStrong:SetPoint("TOPRIGHT", button, "TOPRIGHT", -2, -2)
+  art.differenceStrong:Hide()
+  ConfigureArtTexture(
+    art.differenceWeak,
+    SLOT_STATE_ART.path,
+    SLOT_STATE_ART.differenceWeak.uv
+  )
+  art.differenceWeak:SetWidth(SLOT_STATE_ART.differenceWeak.width)
+  art.differenceWeak:SetHeight(SLOT_STATE_ART.differenceWeak.height)
+  art.differenceWeak:SetPoint("TOPRIGHT", button, "TOPRIGHT", -2, -2)
+  art.differenceWeak:Hide()
+  ConfigureArtTexture(
+    art.draftRevision,
+    SLOT_STATE_ART.path,
+    SLOT_STATE_ART.draftRevision.uv
+  )
+  art.draftRevision:SetWidth(SLOT_STATE_ART.draftRevision.width)
+  art.draftRevision:SetHeight(SLOT_STATE_ART.draftRevision.height)
+  art.draftRevision:SetPoint("LEFT", button.icon, "RIGHT", 0, 0)
+  art.draftRevision:Hide()
+  button.aeuiGearPlannerSlotStateArt = art
   return art
 end
 
@@ -1426,11 +1426,9 @@ function GearPlanner:UpdateSaveButton()
   if count > 0 then
     button:SetText("保存 (" .. tostring(count) .. ")")
     button:Enable()
-    button:LockHighlight()
   else
     button:SetText("保存")
     button:Disable()
-    button:UnlockHighlight()
   end
 end
 
@@ -1857,7 +1855,7 @@ function GearPlanner:ShowTooltip(owner, item)
     if owner.differenceState then
       GameTooltip:AddLine(" ")
       GameTooltip:AddLine(
-        "与当前装备不同：" ..
+        "配装方案状态：" ..
           tostring(SLOT_DIFFERENCE_LABELS[owner.differenceState] or "变更"),
         1,
         0.72,
@@ -2230,40 +2228,41 @@ function GearPlanner:GetSlotDifferenceState(item, currentItemID)
 end
 
 function GearPlanner:SetSlotDifferenceVisual(button, state)
+  local art
   if not button then return end
+  art = button.aeuiGearPlannerSlotStateArt
   button.differenceState = state
+  art.differenceStrong:Hide()
+  art.differenceWeak:Hide()
   if state == "replace" or state == "add" then
-    button.differenceWash:SetTexture(0.72, 0.58, 0.36, 0.08)
     button.differenceText:SetText(SLOT_DIFFERENCE_LABELS[state])
-    button.differenceText:SetTextColor(0.78, 0.64, 0.40)
-    button.differenceWash:Show()
+    button.differenceText:SetTextColor(0.91, 0.71, 0.33)
+    art.differenceStrong:Show()
     button.differenceText:Show()
   elseif state == "empty" then
-    button.differenceWash:SetTexture(0.82, 0.48, 0.12, 0.05)
     button.differenceText:SetText(SLOT_DIFFERENCE_LABELS[state])
-    button.differenceText:SetTextColor(0.88, 0.62, 0.28)
-    button.differenceWash:Show()
+    button.differenceText:SetTextColor(0.68, 0.54, 0.32)
+    art.differenceWeak:Show()
     button.differenceText:Show()
   else
-    button.differenceWash:Hide()
     button.differenceText:Hide()
   end
-  RefreshSlotOutline(button)
 end
 
 function GearPlanner:SetSlotDraftVisual(button, dirty)
+  local art
   if not button then return end
+  art = button.aeuiGearPlannerSlotStateArt
   button.draftDirty = dirty and true or false
   button.labelText:SetText(
     tostring(button.slotLabel or "装备") ..
     (dirty and " |cff7fb5c0*|r" or "")
   )
   if dirty then
-    button.draftMark:Show()
+    art.draftRevision:Show()
   else
-    button.draftMark:Hide()
+    art.draftRevision:Hide()
   end
-  RefreshSlotOutline(button)
 end
 
 function GearPlanner:UpdateSlots()
@@ -2505,27 +2504,18 @@ function GearPlanner:CreateSlotButton(parent, definition, index)
   button.slotLabel = definition[2]
   button.layoutIndex = index
   CreateSlotArt(button)
-  button.differenceWash = button:CreateTexture(nil, "BACKGROUND")
-  button.differenceWash:SetPoint("TOPLEFT", button, "TOPLEFT", 4, -4)
-  button.differenceWash:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -4, 4)
-  button.differenceWash:Hide()
-  button.draftMark = button:CreateTexture(nil, "OVERLAY")
-  button.draftMark:SetTexture(0.42, 0.68, 0.76, 0.92)
-  button.draftMark:SetWidth(3)
-  button.draftMark:SetPoint("TOPLEFT", button, "TOPLEFT", 2, -2)
-  button.draftMark:SetPoint("BOTTOMLEFT", button, "BOTTOMLEFT", 2, 2)
-  button.draftMark:Hide()
   button.icon = button:CreateTexture(nil, "ARTWORK")
   button.icon:SetWidth(32)
   button.icon:SetHeight(32)
   button.icon:SetPoint("LEFT", button, "LEFT", 6, 0)
+  CreateSlotStateArt(button)
   button.labelText = button:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-  button.labelText:SetPoint("TOPLEFT", button.icon, "TOPRIGHT", 7, -3)
+  button.labelText:SetPoint("TOPLEFT", button.icon, "TOPRIGHT", 10, -3)
   button.labelText:SetTextColor(0.82, 0.66, 0.38)
   button.labelText:SetText(definition[2])
   button.itemText = button:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-  button.itemText:SetPoint("BOTTOMLEFT", button.icon, "BOTTOMRIGHT", 7, 3)
-  button.itemText:SetWidth(152)
+  button.itemText:SetPoint("BOTTOMLEFT", button.icon, "BOTTOMRIGHT", 10, 3)
+  button.itemText:SetWidth(149)
   button.itemText:SetJustifyH("LEFT")
   button.differenceText = button:CreateFontString(
     nil,
@@ -2597,13 +2587,15 @@ function GearPlanner:RefreshProfileManager()
       row.metaText:SetText(metadata)
       if profileIndex == store.active then
         row:SetBackdropColor(0.07, 0.13, 0.055, 0.88)
+      elseif profileIndex == self.profileSelection then
+        row:SetBackdropColor(0.16, 0.10, 0.035, 0.92)
       else
         row:SetBackdropColor(0.055, 0.045, 0.035, 0.72)
       end
       if profileIndex == self.profileSelection then
-        row:LockHighlight()
+        row:SetBackdropBorderColor(0.82, 0.62, 0.30, 1)
       else
-        row:UnlockHighlight()
+        row:SetBackdropBorderColor(0.34, 0.25, 0.14, 0.82)
       end
       row:Show()
     else
@@ -3070,7 +3062,7 @@ function GearPlanner:LayoutSlotButton(button, index, companion)
     )
     button.icon:SetWidth(28)
     button.icon:SetHeight(28)
-    button.itemText:SetWidth(112)
+    button.itemText:SetWidth(109)
   else
     button:SetWidth(202)
     button:SetHeight(42)
@@ -3084,7 +3076,7 @@ function GearPlanner:LayoutSlotButton(button, index, companion)
     )
     button.icon:SetWidth(32)
     button.icon:SetHeight(32)
-    button.itemText:SetWidth(152)
+    button.itemText:SetWidth(149)
   end
 end
 
@@ -3179,7 +3171,7 @@ function GearPlanner:SetCompanionLayout()
       "TOPLEFT",
       CharacterFrame,
       "TOPRIGHT",
-      COMPANION_GAP + COMPANION_RAIL_WIDTH + COMPANION_RAIL_GAP,
+      COMPANION_GAP + CHARACTER_RAIL_WIDTH + COMPANION_RAIL_GAP,
       0
     )
   end
@@ -3390,7 +3382,7 @@ function GearPlanner:WideLayoutSupported()
   if not left or not right then return true end
   statsWidth = self.providers.stats:GetWidth() or 240
   rightNeed =
-    COMPANION_GAP + COMPANION_RAIL_WIDTH +
+    COMPANION_GAP + CHARACTER_RAIL_WIDTH +
     COMPANION_RAIL_GAP + WIDE_RIGHT_FALLBACK
   return left >= statsWidth + COMPANION_GAP and
     parentWidth - right >= rightNeed
@@ -3405,7 +3397,7 @@ function GearPlanner:CreateCompanionRailButton(
   view
 )
   local button = CreateFrame("Button", name, parent, "UIPanelButtonTemplate")
-  button:SetWidth(24)
+  button:SetWidth(CHARACTER_RAIL_WIDTH - 4)
   button:SetHeight(24)
   button:SetText(label)
   button.viewKey = view
@@ -3434,7 +3426,7 @@ function GearPlanner:CreateCompanionRail()
     "AzerothExpeditionUICharacterCompanionRail",
     CharacterFrame
   )
-  rail:SetWidth(COMPANION_RAIL_WIDTH)
+  rail:SetWidth(CHARACTER_RAIL_WIDTH)
   rail:SetHeight(30)
   rail:SetPoint("TOPLEFT", CharacterFrame, "TOPRIGHT", COMPANION_GAP, 0)
   rail:SetFrameStrata("FULLSCREEN_DIALOG")
@@ -3550,7 +3542,7 @@ function GearPlanner:InspectCompareSupported()
   if not parentWidth or not left or not right then return false end
   selfWidth = self.inspectProviders.selfStats:GetWidth() or 240
   targetWidth = self.inspectProviders.targetStats:GetWidth() or 240
-  rightNeed = INSPECT_GAP + COMPANION_RAIL_WIDTH +
+  rightNeed = INSPECT_GAP + INSPECT_RAIL_WIDTH +
     INSPECT_RAIL_GAP + targetWidth
   return left >= selfWidth + INSPECT_GAP and
     parentWidth - right >= rightNeed
@@ -3678,7 +3670,7 @@ function GearPlanner:CreateInspectRail()
     "AzerothExpeditionUIInspectCompanionRail",
     InspectFrame
   )
-  rail:SetWidth(COMPANION_RAIL_WIDTH)
+  rail:SetWidth(INSPECT_RAIL_WIDTH)
   rail:SetHeight(30)
   rail:SetPoint("TOPLEFT", InspectFrame, "TOPRIGHT", INSPECT_GAP, 0)
   rail:SetFrameStrata("FULLSCREEN_DIALOG")
@@ -4169,7 +4161,7 @@ function GearPlanner:ReconcileCompanion()
   self:CaptureProviderState(statsFrame)
 
   if not self.companionSessionActive then
-    self.activeView = self.pendingCompanionView
+    self.activeView = self.pendingCompanionView or "dual"
     self.pendingCompanionView = nil
     self.companionSessionActive = true
   elseif self.pendingCompanionView then
@@ -4205,6 +4197,9 @@ function GearPlanner:ReconcileCompanion()
     self:UpdateAll()
     self.frame:Show()
   elseif active == "dual" and currentFrame and statsFrame then
+    if type(SCPaperDollFrame_OnShow) == "function" then
+      pcall(SCPaperDollFrame_OnShow)
+    end
     self:AnchorProviderRight(currentFrame)
     self:AnchorStatsLeft(statsFrame)
     currentFrame:Show()

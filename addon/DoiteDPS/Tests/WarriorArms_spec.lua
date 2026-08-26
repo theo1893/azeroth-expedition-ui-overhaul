@@ -147,8 +147,8 @@ Check(
         and P.ConfigSchema.options[1].max == 0.30
 )
 Check(
-    "white rage prediction weights the current 40 percent crit chance",
-    math.abs(P._expectedWhiteRage(768.5, 3.5, 40) - 40.4844) < 0.001
+    "white rage prediction applies crit only to the damage component",
+    math.abs(P._expectedWhiteRage(746.4286, 3.7, 40) - 37.3718) < 0.001
 )
 Check(
     "Sunder maintenance is an opt-in setting for both modes",
@@ -375,16 +375,95 @@ Check("execute phase refreshes Battle Shout while reserving Execute", action.key
 
 action = P:Recommend(State({
     targetHP = 20,
+    rage = 60,
+    cooldowns = CoreCooldowns(0, 99),
+    swing = {
+        active = true,
+        remaining = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("60 rage funds Mortal Strike, Slam, then Execute", action.key == "MORTAL_STRIKE")
+
+action = P:Recommend(State({
+    targetHP = 20,
+    rage = 55,
+    cooldowns = CoreCooldowns(4, 0),
+    swing = {
+        active = true,
+        remaining = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("55 rage funds Whirlwind, Slam, then Execute", action.key == "WHIRLWIND")
+
+action = P:Recommend(State({
+    targetHP = 20,
+    rage = 45,
+    cooldowns = CoreCooldowns(0, 99),
+    swing = {
+        active = true,
+        remaining = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("45 rage uses the efficient Slam path while it fits", action.key == "SLAM")
+
+action = P:Recommend(State({
+    targetHP = 20,
+    rage = 40,
+    cooldowns = CoreCooldowns(4, 0),
+    swing = {
+        active = true,
+        remaining = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("40 rage uses Slam before the Execute dump while it fits", action.key == "SLAM")
+
+action = P:Recommend(State({
+    targetHP = 20,
+    rage = 30,
+    gcd = 1.5,
+    cooldowns = CoreCooldowns(6, 0),
+    swing = {
+        active = true,
+        remaining = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("a second instant never displaces the cycle's Slam", action.key == "SLAM")
+
+action = P:Recommend(State({
+    targetHP = 20,
+    rage = 15,
+    cooldowns = CoreCooldowns(6, 10),
+    swing = {
+        active = true,
+        remaining = 0.13,
+        slamUsed = true,
+        slamCapable = true,
+    },
+}))
+Check("the minimum Execute lands after Slam and before the white hit", action.key == "EXECUTE")
+
+action = P:Recommend(State({
+    targetHP = 20,
     rage = 45,
     cooldowns = CoreCooldowns(0, 99),
     swing = {
         active = true,
         remaining = 3.0,
-        slamCast = 1.5,
+        slamUsed = true,
         slamCapable = true,
     },
 }))
-Check("45 rage funds Mortal Strike then Execute", action.key == "MORTAL_STRIKE")
+Check("45 rage falls back to Mortal Strike then Execute after Slam", action.key == "MORTAL_STRIKE")
 
 action = P:Recommend(State({
     targetHP = 20,
@@ -393,11 +472,11 @@ action = P:Recommend(State({
     swing = {
         active = true,
         remaining = 3.0,
-        slamCast = 1.5,
+        slamUsed = true,
         slamCapable = true,
     },
 }))
-Check("40 rage funds Whirlwind then Execute", action.key == "WHIRLWIND")
+Check("40 rage falls back to Whirlwind then Execute after Slam", action.key == "WHIRLWIND")
 
 action = P:Recommend(State({
     targetHP = 20,
@@ -461,6 +540,43 @@ action = P:Recommend(State({
     targetTTD = 0.8,
 }))
 Check("a short-lived target is Executed immediately", action.key == "EXECUTE")
+
+action = P:Recommend(State({
+    targetHP = 20,
+    rage = 35,
+    cooldowns = CoreCooldowns(4, 4),
+    targetTTDConfidence = true,
+    targetTTD = 0.8,
+    targetBoss = true,
+}))
+Check("a dying boss is also Executed immediately", action.key == "EXECUTE")
+
+action = P:Recommend(State({
+    targetHP = 20,
+    rage = 45,
+    gcd = 0.9,
+    cooldowns = CoreCooldowns(0, 99),
+    swing = {
+        active = true,
+        remaining = 2.60,
+        slamUsed = true,
+        slamCapable = true,
+    },
+}))
+Check("current and following GCD are both reserved before Execute", action.key == "WAIT")
+
+action = P:Recommend(State({
+    rage = 30,
+    moving = true,
+    cooldowns = CoreCooldowns(4, 4),
+    swing = {
+        active = true,
+        remaining = 3.0,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("Slam is never recommended while moving", action.key == "AUTO_ATTACK")
 
 action = P:Recommend(State({
     rage = 90,

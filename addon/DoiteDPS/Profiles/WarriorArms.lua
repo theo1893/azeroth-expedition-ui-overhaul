@@ -320,7 +320,7 @@ local function ExpectedWhiteRage(damage, speed, critChance)
     local crit = math.max(0, math.min(100, tonumber(critChance) or 0)) / 100
     local damageRage = ((damage / 230.6) * 7.5 / 1.075)
     return damageRage * (1 + crit)
-        + (speed * (3.5 + 4 * crit) / 2.25)
+        + (speed * 3.5 / 2.25)
 end
 P._expectedWhiteRage = ExpectedWhiteRage
 
@@ -461,7 +461,8 @@ end
 
 local function SlamFits(state, minimumLock)
     local swing = state.swing
-    if not swing or not swing.active or swing.slamUsed then
+    if not swing or not swing.active or swing.slamUsed
+        or swing.slamCapable == false then
         return false
     end
     local clip = tonumber(RotationValue(state, "slamClip")) or 0.17
@@ -481,7 +482,7 @@ local function IsExecutePhase(state)
 end
 
 local function ShortExecuteTarget(state, horizon)
-    if not state.targetTTDConfidence or state.targetBoss then return false end
+    if not state.targetTTDConfidence then return false end
     local ttd = tonumber(state.targetTTD)
     return ttd and ttd > 0 and ttd <= (tonumber(horizon) or 1.25)
 end
@@ -514,25 +515,25 @@ end
 local function CanFitExecuteFollowup(state)
     local swing = state.swing
     if not swing or not swing.active or not swing.remaining then return true end
-    local lock = math.max(GCD_LOCK, tonumber(state.gcd) or 0)
+    local lock = (tonumber(state.gcd) or 0) + GCD_LOCK
     return swing.remaining > (lock + ExecuteWindow(state))
 end
 
 local function AvoidSlamForTargetLife(state)
-    if not state.targetTTDConfidence or state.targetBoss then return false end
+    if not state.targetTTDConfidence then return false end
     local ttd = tonumber(state.targetTTD)
     local cast = state.swing and tonumber(state.swing.slamCast) or 2.5
     return ttd and ttd > 0 and ttd <= (cast + EXECUTE_INTERRUPT_MARGIN)
 end
 
-local function ShouldUseSlam(state)
-    if state.stance == 2 or not Ready(state, "SLAM")
-        or IsOnSwingQueued(state) or not SlamFits(state)
+local function ShouldUseSlam(state, minimumLock)
+    if state.stance == 2 or state.moving or not Ready(state, "SLAM")
+        or IsOnSwingQueued(state) or not SlamFits(state, minimumLock)
         or AvoidSlamForTargetLife(state) then
         return false
     end
 
-    if D:IsKnown("MORTAL_STRIKE") then
+    if not IsExecutePhase(state) and D:IsKnown("MORTAL_STRIKE") then
         local cast = state.swing and tonumber(state.swing.slamCast) or 2.5
         if CooldownRemaining(state, "MORTAL_STRIKE") <= (cast + 0.25) then
             local after = (tonumber(state.rage) or 0) - Cost("SLAM")
@@ -541,6 +542,14 @@ local function ShouldUseSlam(state)
         end
     end
     return true
+end
+
+local function CanFitSlamExecuteAfterInstant(state)
+    local lock = (tonumber(state.gcd) or 0) + GCD_LOCK
+    if not ShouldUseSlam(state, lock) then return false end
+    local swing = state.swing
+    return (tonumber(swing.remaining) or 0) - lock
+        - (tonumber(swing.slamCast) or 2.5) > 0.05
 end
 
 local function ShouldUseWhirlwind(state)
@@ -566,6 +575,16 @@ local function ShouldUseWhirlwind(state)
         end
     end
     return true
+end
+
+local function CanUseExecuteInstant(state, key, slamNow, slamAfterInstant)
+    local rage = tonumber(state.rage) or 0
+    if slamAfterInstant then
+        return rage >= (Cost(key) + Cost("SLAM") + Cost("EXECUTE"))
+    end
+    return not slamNow
+        and rage >= (Cost(key) + Cost("EXECUTE"))
+        and CanFitExecuteFollowup(state)
 end
 
 local function BattleShoutNeedsRefresh(state)
@@ -716,10 +735,15 @@ local function RecommendSingle(action, state)
     if sunder then return sunder end
 
     if executePhase then
+        local slamNow = ShouldUseSlam(state)
+        local slamAfterInstant = CanFitSlamExecuteAfterInstant(state)
         if Ready(state, "MORTAL_STRIKE")
-            and (tonumber(state.rage) or 0)
-                >= (Cost("MORTAL_STRIKE") + Cost("EXECUTE"))
-            and CanFitExecuteFollowup(state) then
+            and CanUseExecuteInstant(
+                state,
+                "MORTAL_STRIKE",
+                slamNow,
+                slamAfterInstant
+            ) then
             return ApplyGCD(SetAction(
                 action,
                 "MORTAL_STRIKE",
@@ -727,14 +751,17 @@ local function RecommendSingle(action, state)
             ), state)
         end
 
-        if (tonumber(state.rage) or 0)
-                >= (Cost("WHIRLWIND") + Cost("EXECUTE"))
-            and CanFitExecuteFollowup(state) then
+        if CanUseExecuteInstant(
+            state,
+            "WHIRLWIND",
+            slamNow,
+            slamAfterInstant
+        ) then
             local whirlwind = RecommendWhirlwind(action, state)
             if whirlwind then return whirlwind end
         end
 
-        if ShouldUseSlam(state) then
+        if slamNow then
             return ApplyGCD(SetAction(action, "SLAM", R.SLAM), state)
         end
         if ExecuteDue(state) then return RecommendExecute(action, state, false) end

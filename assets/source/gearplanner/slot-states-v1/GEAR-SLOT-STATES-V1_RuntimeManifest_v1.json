@@ -1,0 +1,99 @@
+{
+  "schema": "aeui-gearplanner-slot-states-v1-runtime-manifest-v1",
+  "schema_version": 1,
+  "module": "gearplanner",
+  "batch": "GEAR-SLOT-STATES-V1 final",
+  "component": "GEAR.SLOT difference / draft state sprites",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "runtime_contract": "1.1-zhCN",
+  "source_manifest": "assets/source/gearplanner/slot-states-v1/GEAR-SLOT-STATES-V1_SourceManifest_v1.json",
+  "runtime": {
+    "slot_states": {
+      "file": "addon/AzerothExpeditionUI/Media/GearPlanner/GearPlannerSlotStatesV1.tga",
+      "sha256": "d50be90c4daa2924cf9eab1aa3a18aeae2e714dbd86dddb7e2aed3807d5cf5cf",
+      "texture_size": [
+        256,
+        128
+      ],
+      "pixel_sha256": "4517ac754bd9d18fb9778ed3e7a5f43ea9fdc9dde638979e15b90115f95915bd",
+      "tga": {
+        "image_type": 2,
+        "width": 256,
+        "height": 128,
+        "bits_per_pixel": 32,
+        "descriptor": 8,
+        "top_origin": false
+      },
+      "regions": {
+        "difference_strong": {
+          "logical_size_ui": [
+            50,
+            20
+          ],
+          "sampled_size": [
+            100,
+            40
+          ],
+          "texels_per_ui_unit": 2,
+          "uv": [
+            0.0,
+            0.390625,
+            0.0,
+            0.3125
+          ],
+          "anchor": "TOPRIGHT"
+        },
+        "difference_weak": {
+          "logical_size_ui": [
+            38,
+            16
+          ],
+          "sampled_size": [
+            76,
+            32
+          ],
+          "texels_per_ui_unit": 2,
+          "uv": [
+            0.4375,
+            0.734375,
+            0.03125,
+            0.28125
+          ],
+          "anchor": "TOPRIGHT"
+        },
+        "draft_revision": {
+          "logical_size_ui": [
+            9,
+            36
+          ],
+          "sampled_size": [
+            18,
+            72
+          ],
+          "texels_per_ui_unit": 2,
+          "uv": [
+            0.8125,
+            0.8828125,
+            0.0,
+            0.5625
+          ],
+          "anchor": "ICON_RIGHT"
+        }
+      }
+    }
+  },
+  "layout_contract": {
+    "companion_slot_ui": [
+      164,
+      40
+    ],
+    "standalone_slot_ui": [
+      202,
+      42
+    ],
+    "difference_and_draft_can_stack": true,
+    "slot_base_icon_text_status_and_star": "runtime-live",
+    "button_geometry_and_hitboxes_changed": false
+  }
+}

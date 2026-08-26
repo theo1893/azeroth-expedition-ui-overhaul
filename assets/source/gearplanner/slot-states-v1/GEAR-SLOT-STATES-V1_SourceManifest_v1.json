@@ -1,0 +1,96 @@
+{
+  "schema": "aeui-gearplanner-slot-states-v1-source-manifest-v1",
+  "schema_version": 1,
+  "module": "gearplanner",
+  "batch": "GEAR-SLOT-STATES-V1 final",
+  "component": "GEAR.SLOT difference / draft state sprites",
+  "status": "runtime-exported",
+  "phase": "P5",
+  "accepted_on": "2026-08-26",
+  "user_acceptance": {
+    "statement": "按候选 01 接入",
+    "accepts_exact_pixels": true,
+    "source_promotion_authorized": true,
+    "runtime_export_authorized": true,
+    "addon_integration_authorized": true
+  },
+  "provenance": {
+    "executor": "imagegen-0-143-0",
+    "actual_imagegen_calls": 1,
+    "fixed_reference_upload_authorized": true,
+    "global_prompt": "docs/GLOBAL_ART_BASELINE.md",
+    "module_prompt": "docs/modules/gearplanner/ART_BASELINE.md",
+    "submodule_prompt": "docs/modules/gearplanner/SUBMODULE_ART_BASELINES.md"
+  },
+  "accepted_assets": {
+    "source": {
+      "file": "assets/source/gearplanner/slot-states-v1/GearPlannerSlotStatesDonor_SourceV1.png",
+      "sha256": "027d7da64169a9939ff264d64a27934f1eee49e2984291a9480b6b63bf2f5d15",
+      "metrics": {
+        "size": [
+          1774,
+          887
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "a4ba7e21f8cff89039888aa6c0896a615a67ec458d55a65cce43713c8d1e6ea4",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          1774,
+          887
+        ],
+        "transparent_pixels": 0,
+        "partially_transparent_pixels": 0,
+        "opaque_pixels": 1573538,
+        "transparent_rgb_nonzero_pixels": 0
+      },
+      "background": "generated #00FF00-compatible chroma key"
+    },
+    "runtime_master": {
+      "file": "assets/source/gearplanner/slot-states-v1/GearPlannerSlotStatesAtlas_RuntimeMasterV1.png",
+      "sha256": "eee3a1cc01bdb299086a75e61f00712803fd510054e7ce583ea136863df80291",
+      "metrics": {
+        "size": [
+          256,
+          128
+        ],
+        "mode": "RGBA",
+        "pixel_sha256": "4517ac754bd9d18fb9778ed3e7a5f43ea9fdc9dde638979e15b90115f95915bd",
+        "visible_bbox_exclusive": [
+          0,
+          0,
+          226,
+          72
+        ],
+        "transparent_pixels": 25438,
+        "partially_transparent_pixels": 2427,
+        "opaque_pixels": 4903,
+        "transparent_rgb_nonzero_pixels": 0
+      }
+    }
+  },
+  "deterministic_transform": {
+    "texels_per_ui_unit": 2,
+    "dynamic_text_icons_slot_base_and_hitboxes_baked": false,
+    "source_crops_exclusive": {
+      "difference_strong": [
+        1505,
+        68,
+        1677,
+        151
+      ],
+      "draft_revision": [
+        326,
+        631,
+        398,
+        790
+      ]
+    },
+    "difference_weak": "difference_strong LANCZOS 76x32 and alpha 0.52",
+    "chroma_key": "green dominance: G > 100 and G > R*1.4 and G > B*1.4",
+    "polygon_masks": "4x antialiased deterministic masks",
+    "transparent_rgb_cleared": true,
+    "runtime_exporter": "tools/build_gearplanner_slot_states_v1_runtime.py"
+  },
+  "runtime_manifest": "assets/source/gearplanner/slot-states-v1/GEAR-SLOT-STATES-V1_RuntimeManifest_v1.json"
+}

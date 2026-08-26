@@ -12,8 +12,9 @@ Gear Planner 的稳定物件身份是“远征军需官的折叠配装案板”�
   保存是突出的氧化黄铜锁扣；导入、清空和方案管理是较安静的皮革工具签。
 - 装备槽是窄型缝线皮革标签，保留独立方形 icon 插槽和低对比文字安全区。右侧为一张由
   黄铜钉固定的军需官统计纸，使用墨褐色高密度文字，而不是独立现代卡片。
-- 动态方案名、页数、Button 文本、物品 icon／品质／名称、属性名／数值／差值、来源状态、
-  琥珀装备差异和冷灰蓝未保存状态始终由运行时绘制。任何后续位图不得烘焙这些内容。
+- 动态方案名、页数、Button 文本、物品 icon／品质／名称、属性名／数值／差值和来源状态
+  始终由运行时绘制。槽位差异只用固定黄铜夹签材质，未保存修订只用固定冷灰蓝缝带材质；
+  状态切换、`差异／新增／未填` 与 `*` 仍完全动态，不得烘焙。
 - AtlasLoot 查询／来源窗口、方案管理窗、Character／Inspect 伴随窄栏不属于
   `GEAR-MAIN-V1`；它们保持 Provider／当前原生视觉，直到各自建立独立组件合同。
 - 禁止现代扁平按钮、玻璃、统一大圆角、精密工业网格、科技 HUD、持续霓虹、镜面黄金、
@@ -21,6 +22,7 @@ Gear Planner 的稳定物件身份是“远征军需官的折叠配装案板”�
   锁扣和真实连接处。
 
 accepted 美术权威为
-`assets/source/gearplanner/main-v1/GearPlannerMainDonor_SourceV1.png`；运行时必须从该
-高分辨率 source 直接确定性采样为 `2 texels / UI unit`，并按真实外壳、填充、装饰、
-Button、槽位和属性纸对象拆分。单张 TGA 不得超过 `1024`。
+`assets/source/gearplanner/main-v1/GearPlannerMainDonor_SourceV1.png` 与
+`assets/source/gearplanner/slot-states-v1/GearPlannerSlotStatesDonor_SourceV1.png`；
+运行时必须从对应高分辨率 source 确定性采样为 `2 texels / UI unit`，并按真实外壳、
+填充、装饰、Button、槽位、状态 sprite 和属性纸对象拆分。单张 TGA 不得超过 `1024`。

@@ -87,14 +87,15 @@
   其余可重装脚本、两帧一次性收口，以及以实际可见的 PaperDoll／Reputation／
   Skill／Honor／PvP／Arena provider 为优先的 selected 映射保持不变。accepted
   source 与 provider 功能均未改变，等待同设备复核首次显示和逐页单击切态。
-- Gear Planner runtime `0.8-zhCN` 已把 `CharacterFrame / PaperDollFrame` 登记为
+- Gear Planner runtime `1.1-zhCN` 已把 `CharacterFrame / PaperDollFrame` 登记为
   角色伴随栏宿主：BetterCharacterStats 继续位于中心，S_ItemTip、StatCompare 与
-  AEUI Gear Planner 作为“当前装备／装备属性／配装方案”互斥视图。控制器是
+  AEUI Gear Planner 作为“装备／属性／配装／双栏”互斥视图。`40 UI` 栏使用完整文本，
+  双 Provider 与净空满足时新会话默认打开“双栏”。控制器是
   Character／PaperDoll 子对象，不包装角色页 OnShow／OnHide；只在显示、分页切换、
   Provider 加载或 StatCompare 自身刷新后做有限的一次性锚定。配装视图扩展为
-  `560×555`，19 槽与“当前／配装／变化”属性对比同屏，水平合同为 `984 UI`；
+  `560×555`，19 槽与“当前／配装／变化”属性对比同屏，水平合同为 `996 UI`；
   第三方当前装备视图在
-  有效宽度至少 `1060 UI` 且左右净空足够时仍可选双栏，配装视图不重复双开
+  有效宽度至少 `1072 UI` 且左右净空足够时仍可选双栏，配装视图不重复双开
   StatCompare。Character runtime 仍为 `2.0`，既有外壳与动态内容所有权不变，
   阶段 `P5` 等待实机。
 - 同一 runtime 以独立会话接入 `InspectFrame / InspectPaperDollFrame`：“装／属”
@@ -118,7 +119,7 @@
 | `CHAR.STATS／RESISTANCE` | `P5` | C1 attempt 4 连续旧纸与 D1 attempt 3 五张抗性槽均使用 2× sampled runtime；纸面以纵向三切片显示 `230×85 @ 76,291`，属性 provider 为 `230×78 @ 76,291` | 实机验证属性组在中央底材内居中、第六行完整留在纸面内、三切片无接缝，并复核下拉框、模型交界、五个动态图标／数值及独立显隐 |
 | `CHAR.TABS` | `P5` | F1 V3 attempt 2 exact pixels；accepted source 不变，component runtime `2.1` 重导 `56 texels / 28 UI` 四态三段样本；已按客户端错误记录移除 1.12 不支持的 `OnEnable／OnDisable`，保留晚加载脚本重装、两帧一次性收口与可见页面 selected 映射 | 首次进游戏及 `/reload` 后立即显示四／五个皮革 Tab、无 pfUI 黑底；逐项单击验证 selected 唯一跟随当前页，再复核悬停／按下、0.80 缩放、接缝与禁用回退 |
 | `CHAR.SECONDARY.LEAF` | `P5` | G1 V1 attempt 1 exact pixels；`802×1000` source、`602×750` sampled runtime、`1024×1024` TGA；按可用 provider 独立挂载并随原生页面显隐 | 实机验证四类页面覆盖、文字／状态条层序、切页无泄漏、可选 Arena feature-detect 与禁用回退 |
-| `CHAR.COMPANION` | `P5` | Gear Planner `0.8-zhCN`；Character／PaperDoll 子控制器、`28 UI` 伴随栏、S_ItemTip／StatCompare／Gear Planner 三视图、`560×555` 装备／属性对比同屏配装视图与第三方当前装备可选双栏；不改 Provider Parent／尺寸／数据 | 实机验证按 C 默认视图、`984 UI` 配装净空、三项互斥、当前／配装／变化列、分页显隐、ESC、Provider 缺失及 Character／Gear Planner 禁用回退 |
+| `CHAR.COMPANION` | `P5` | Gear Planner `1.1-zhCN`；Character／PaperDoll 子控制器、`40 UI`“装备／属性／配装／双栏”伴随栏、默认双栏、`560×555` 装备／属性对比同屏配装视图；不改 Provider Parent／尺寸／数据 | 实机验证按 C 默认双栏、`996 UI` 配装净空、四项互斥、当前／配装／变化列、分页显隐、ESC、Provider 缺失及 Character／Gear Planner 禁用回退 |
 | `CHAR.INSPECT.COMPANION` | `P5` | 独立 Inspect／PaperDoll 子控制器、`28 UI`“装／属／比／存”栏、单 Provider 默认、显式双方比较、数据就绪快照与 Provider 状态恢复已接入 | 实机验证观察首次加载、目标切换、装／属互斥、宽／窄屏“比”、分页收口、17／19 槽快照、方案箭头、缺失 Provider 与 Gear 禁用回退 |
 | `CHAR.REPUTATION／SKILLS／HONOR／ARENA` 控件 | `P1–P2` | 真实列表、状态条、滚动条、复选框、展开按钮和内页 Tabs 边界已定义；共用档案页已独立完成 | 依据实机截图逐类生产，不把动态数据烘焙进档案页 |
 | `CHAR.PET／INSPECT 外壳／DRESSUP` | `P1` | 基础 pfUI skin 对象已审计；Inspect 伴随逻辑单独登记为 P5 | 确认复用与只读视觉差异 |
@@ -153,11 +154,12 @@
    三位数量、冷却、普通／悬停／按下／禁用、空弹药与 `27×27` 对位。E1、E2-A
    与 E3 稳定后再生产 E2-B 品质／耐久或 E4 空槽压印；
    Inspect、DressUp 与 Pet 继续单独验证复用差异。
-4. 按 `C` 打开 PaperDoll，验证“装／属／配”只显示已加载 Provider、默认单视图
-   且切换不改变 BetterCharacterStats；执行 `/aeui gear` 应直接激活配装方案。
-   再验证 `984 UI` 配装视图中装备与当前／配装／变化属性对比同屏，且不额外双开
+4. 按 `C` 打开 PaperDoll，验证 `40 UI` 栏完整显示“装备／属性／配装／双栏”，只显示
+   已加载 Provider；双 Provider 与净空满足时默认打开“双栏”，切换不改变
+   BetterCharacterStats；执行 `/aeui gear` 应直接激活配装方案。
+   再验证 `996 UI` 配装视图中装备与当前／配装／变化属性对比同屏，且不额外双开
    StatCompare；在第三方
-   当前装备视图验证 ≥`1060 UI` 可选双栏。逐页切换确认伴随栏不泄漏到声望／
+   当前装备视图验证 ≥`1072 UI` 可选双栏。逐页切换确认伴随栏不泄漏到声望／
    技能／PvP，并验证 ESC、S_ItemTip／StatCompare 缺失、
    `/aeui character` 与 `/aeui gear off` 回退。
 5. 观察其他玩家，验证默认只保留一个右侧 Provider；“装／属”互斥，“比”只在

@@ -549,7 +549,7 @@ def draw_dynamic_content(
             )
             image.alpha_composite(wash)
             draw.rectangle((x + 2, y + 2, x + slot_width - 3, y + slot_height - 3), outline=(242, 171, 51, 255), width=3)
-            draw.text((x + slot_width - 58, y + 10), "更换", font=tiny, fill=(255, 200, 67, 255))
+            draw.text((x + slot_width - 58, y + 10), "差异", font=tiny, fill=(255, 200, 67, 255))
         if index == 1:
             draw.rectangle((x + 2, y + 2, x + slot_width - 3, y + slot_height - 3), outline=(107, 173, 194, 255), width=3)
             draw.rectangle((x + 4, y + 5, x + 9, y + slot_height - 6), fill=(107, 173, 194, 235))
