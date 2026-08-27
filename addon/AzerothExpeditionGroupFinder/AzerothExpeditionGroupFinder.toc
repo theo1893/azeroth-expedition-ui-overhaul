@@ -1,0 +1,10 @@
+## Interface: 11200
+## Title: |cffC9A86A[Azeroth Expedition Group Finder]|r
+## Notes: Dedicated-channel raid listings and addon-whisper applications for Turtle WoW.
+## Author: Codex
+## Version: 0.1.0
+## SavedVariables: AzerothExpeditionGroupFinderDB
+
+Protocol.lua
+Core.lua
+UI.lua

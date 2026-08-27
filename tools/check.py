@@ -70,6 +70,12 @@ MODULE_FILES = {
         "addon/pfUI/api/expedition.lua",
         "addon/pfUI/skins/blizzard/spellbook.lua",
     ),
+    "groupfinder": (
+        "addon/AzerothExpeditionGroupFinder/Protocol.lua",
+        "addon/AzerothExpeditionGroupFinder/Core.lua",
+        "addon/AzerothExpeditionGroupFinder/UI.lua",
+        "addon/AzerothExpeditionGroupFinder/Tests/Protocol_spec.lua",
+    ),
 }
 
 
@@ -214,6 +220,8 @@ def package_check() -> tuple[int, int]:
             str(ROOT),
             "--required-addon",
             "DoiteDPS",
+            "--required-addon",
+            "AzerothExpeditionGroupFinder",
         ]
     )
     report = json.loads(result.stdout)

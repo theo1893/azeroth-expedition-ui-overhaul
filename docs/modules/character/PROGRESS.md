@@ -87,7 +87,7 @@
   其余可重装脚本、两帧一次性收口，以及以实际可见的 PaperDoll／Reputation／
   Skill／Honor／PvP／Arena provider 为优先的 selected 映射保持不变。accepted
   source 与 provider 功能均未改变，等待同设备复核首次显示和逐页单击切态。
-- Gear Planner runtime `1.1-zhCN` 已把 `CharacterFrame / PaperDollFrame` 登记为
+- Gear Planner runtime `1.2-zhCN` 已把 `CharacterFrame / PaperDollFrame` 登记为
   角色伴随栏宿主：BetterCharacterStats 继续位于中心，S_ItemTip、StatCompare 与
   AEUI Gear Planner 作为“装备／属性／配装／双栏”互斥视图。`40 UI` 栏使用完整文本，
   双 Provider 与净空满足时新会话默认打开“双栏”。控制器是
@@ -119,7 +119,7 @@
 | `CHAR.STATS／RESISTANCE` | `P5` | C1 attempt 4 连续旧纸与 D1 attempt 3 五张抗性槽均使用 2× sampled runtime；纸面以纵向三切片显示 `230×85 @ 76,291`，属性 provider 为 `230×78 @ 76,291` | 实机验证属性组在中央底材内居中、第六行完整留在纸面内、三切片无接缝，并复核下拉框、模型交界、五个动态图标／数值及独立显隐 |
 | `CHAR.TABS` | `P5` | F1 V3 attempt 2 exact pixels；accepted source 不变，component runtime `2.1` 重导 `56 texels / 28 UI` 四态三段样本；已按客户端错误记录移除 1.12 不支持的 `OnEnable／OnDisable`，保留晚加载脚本重装、两帧一次性收口与可见页面 selected 映射 | 首次进游戏及 `/reload` 后立即显示四／五个皮革 Tab、无 pfUI 黑底；逐项单击验证 selected 唯一跟随当前页，再复核悬停／按下、0.80 缩放、接缝与禁用回退 |
 | `CHAR.SECONDARY.LEAF` | `P5` | G1 V1 attempt 1 exact pixels；`802×1000` source、`602×750` sampled runtime、`1024×1024` TGA；按可用 provider 独立挂载并随原生页面显隐 | 实机验证四类页面覆盖、文字／状态条层序、切页无泄漏、可选 Arena feature-detect 与禁用回退 |
-| `CHAR.COMPANION` | `P5` | Gear Planner `1.1-zhCN`；Character／PaperDoll 子控制器、`40 UI`“装备／属性／配装／双栏”伴随栏、默认双栏、`560×555` 装备／属性对比同屏配装视图；不改 Provider Parent／尺寸／数据 | 实机验证按 C 默认双栏、`996 UI` 配装净空、四项互斥、当前／配装／变化列、分页显隐、ESC、Provider 缺失及 Character／Gear Planner 禁用回退 |
+| `CHAR.COMPANION` | `P5` | Gear Planner `1.2-zhCN`；Character／PaperDoll 子控制器、`40 UI`“装备／属性／配装／双栏”深皮革伴随栏、按真实 Provider 宽度判断的默认双栏、`560×555` 装备／属性对比同屏配装视图；不改 Provider Parent／尺寸／数据 | 实机验证按 C 默认双栏、角色栏按钮、`996 UI` 配装净空、四项互斥、当前／配装／变化列、分页显隐、ESC、Provider 缺失及 Character／Gear Planner 禁用回退 |
 | `CHAR.INSPECT.COMPANION` | `P5` | 独立 Inspect／PaperDoll 子控制器、`28 UI`“装／属／比／存”栏、单 Provider 默认、显式双方比较、数据就绪快照与 Provider 状态恢复已接入 | 实机验证观察首次加载、目标切换、装／属互斥、宽／窄屏“比”、分页收口、17／19 槽快照、方案箭头、缺失 Provider 与 Gear 禁用回退 |
 | `CHAR.REPUTATION／SKILLS／HONOR／ARENA` 控件 | `P1–P2` | 真实列表、状态条、滚动条、复选框、展开按钮和内页 Tabs 边界已定义；共用档案页已独立完成 | 依据实机截图逐类生产，不把动态数据烘焙进档案页 |
 | `CHAR.PET／INSPECT 外壳／DRESSUP` | `P1` | 基础 pfUI skin 对象已审计；Inspect 伴随逻辑单独登记为 P5 | 确认复用与只读视觉差异 |

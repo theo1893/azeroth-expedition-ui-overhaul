@@ -1,7 +1,7 @@
 local addon = AzerothExpeditionUI
 local GearPlanner = {}
 
-GearPlanner.runtimeContract = "1.1-zhCN"
+GearPlanner.runtimeContract = "1.2-zhCN"
 
 local MEDIA = addon.media.root .. "GearPlanner\\"
 local FONT_SERIF = addon.media.root .. "Fonts\\NotoSerifSC-SemiBold.ttf"
@@ -76,12 +76,10 @@ local SLOT_DIFFERENCE_LABELS = {
   replace = "差异", add = "新增", empty = "未填",
 }
 local PLAN_COMPANION_FRAME_WIDTH = 560
-local WIDE_RIGHT_FALLBACK = 368
 local CHARACTER_RAIL_WIDTH = 40
 local INSPECT_RAIL_WIDTH = 28
 local COMPANION_GAP = 8
 local COMPANION_RAIL_GAP = 4
-local WIDE_MIN_WIDTH = 1072
 local INSPECT_GAP = 8
 local INSPECT_RAIL_GAP = 4
 
@@ -3365,7 +3363,7 @@ function GearPlanner:AnchorStatsLeft(frame)
 end
 
 function GearPlanner:WideLayoutSupported()
-  local parentWidth, left, right, statsWidth, rightNeed
+  local parentWidth, left, right, statsWidth, currentWidth, rightNeed
   self:DiscoverCompanionProviders()
   if
     not self.providers.current or
@@ -3376,14 +3374,18 @@ function GearPlanner:WideLayoutSupported()
     return false
   end
   parentWidth = UIParent:GetWidth()
-  if not parentWidth or parentWidth < WIDE_MIN_WIDTH then return false end
-  left = CharacterFrame:GetLeft()
-  right = CharacterFrame:GetRight()
-  if not left or not right then return true end
+  if not parentWidth then return false end
   statsWidth = self.providers.stats:GetWidth() or 240
+  currentWidth = self.providers.current:GetWidth() or 368
   rightNeed =
     COMPANION_GAP + CHARACTER_RAIL_WIDTH +
-    COMPANION_RAIL_GAP + WIDE_RIGHT_FALLBACK
+    COMPANION_RAIL_GAP + currentWidth
+  left = CharacterFrame:GetLeft()
+  right = CharacterFrame:GetRight()
+  if not left or not right then
+    return parentWidth >= statsWidth + COMPANION_GAP +
+      (CharacterFrame:GetWidth() or 384) + rightNeed
+  end
   return left >= statsWidth + COMPANION_GAP and
     parentWidth - right >= rightNeed
 end
@@ -3400,6 +3402,7 @@ function GearPlanner:CreateCompanionRailButton(
   button:SetWidth(CHARACTER_RAIL_WIDTH - 4)
   button:SetHeight(24)
   button:SetText(label)
+  ApplyControlArt(button, "clear")
   button.viewKey = view
   button.tooltipTitle = title
   button.tooltipText = tooltip
