@@ -279,6 +279,9 @@ local R = {
     WAIT_CD = zh and "等待核心仇恨技能" or "Wait for core threat cooldowns",
 }
 
+-- 复用输出记录，并保存本 Profile 专属的时序状态。预测截止时间用于补偿冷却 API
+-- 延迟；周期编号为时间线上的重复动作提供新身份；Debuff 待确认截止时间用于在
+-- 目标光环 API 更新前阻止重复施放。
 P._rec = D.Recommendation
 P._forecast = D.Forecasts
 P._forecastCandidates = {}
@@ -393,6 +396,8 @@ local function CooldownDuration(state, key)
     return nil
 end
 
+-- 优先采用客户端冷却；客户端尚未上报时保留有界的施法事件预测，避免刚打出的
+-- 核心技能被连续推荐两次。
 local function CooldownRemaining(state, key)
     local entry = state.cooldowns and state.cooldowns[key]
     local now = tonumber(state.now) or GetTime()
@@ -403,7 +408,7 @@ local function CooldownRemaining(state, key)
         apiRemaining = tonumber(entry.remaining) or 0
         apiDuration = tonumber(entry.duration) or 0
     else
-        apiRemaining, apiDuration = D:GetRealCooldown(key, now)
+        apiRemaining, apiDuration = D:GetNonGCDCooldown(key, now)
         apiRemaining = tonumber(apiRemaining) or 0
         apiDuration = tonumber(apiDuration) or 0
     end
@@ -516,7 +521,9 @@ local function TargetingPlayer()
     return false
 end
 
+-- 向 Core.State 补充 Recommend 所需的坦克装备、仇恨／减伤光环和触发窗口。
 function P:BuildState(state)
+    -- 资源与配置输入。
     state.resourceType = "rage"
     state.timingType = "swing"
     state.rage = D:GetRage()
@@ -524,10 +531,12 @@ function P:BuildState(state)
     state.stance = D:GetStance()
     state.profileDB = D:GetProfileDB(self.key)
     state.rotationDB = self:GetRotationDB(state.mode)
+    -- 装备、目标压力和天赋输入。
     state.hasShield = self:DetectShield()
     state.targetingPlayer = TargetingPlayer()
     state.improvedShieldSlamRank, state.improvedRevengeRank =
         self:GetProtectionTalentRanks()
+    -- 触发、光环与 Debuff 输入。
     state.revengeActive, state.revengeRemaining =
         D:GetReactiveState("REVENGE")
     state.shieldBlockBuff, state.shieldBlockRemaining =
@@ -544,6 +553,7 @@ function P:BuildState(state)
     state.sunderRemaining = D:GetTargetDebuffRemaining(
         D:GetName("SUNDER_ARMOR")
     )
+    -- 白字时序决定英勇／顺劈的排队安全性。
     state.swing = D:GetSwingState(state.swing)
 
     local inMelee = D:IsMeleeRange("target", "SHIELD_SLAM")
@@ -867,6 +877,9 @@ local function QueuedAction(action, state)
     return nil
 end
 
+-- 防战优先级分组（从高到低）：
+-- 校验目标／装备／姿态／距离 → 非 GCD 减伤与泄怒排队 → 即将过期的复仇 →
+-- 当前模式的核心仇恨技能 → 安全泄怒／盾挡／破甲 → 等待。
 function P:Recommend(state)
     local action = self._rec
 
@@ -1337,6 +1350,8 @@ local function AddShieldBlockForecast(
     )
 end
 
+-- 预测先把当前动作应用一次到简化的怒气／姿态／破甲模型，再沿时间游标安排候选；
+-- 结果只供参考，不会递归调用 Recommend，也不会假定未来目标或光环必然变化。
 function P:BuildForecast(state, current)
     local output = self._forecast
     local candidates = self._forecastCandidates
@@ -1581,6 +1596,8 @@ local function DebugExecute(mode, state, action, result)
     ))
 end
 
+-- 玩家按键触发的执行路径；目标准备导致换目标时重新构建 State，确保推荐和施法
+-- 使用同一份观测快照。
 function P:Execute(mode)
     mode = self:NormalizeMode(mode)
     D:SetMode(mode, true)

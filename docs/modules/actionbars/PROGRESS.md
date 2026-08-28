@@ -3,7 +3,7 @@
 ## 当前运行时
 
 - AEUI 版本：`0.9.0`。
-- 合同：Slot `1.0`、Rail `1.0`、Field Kit `2.9`、Supply `1.3`、Combat Focus `3.5`、
+- 合同：Slot `1.0`、Rail `1.0`、Field Kit `2.9`、Supply `2.0`、Combat Focus `3.5`、
   Sidebar Group `1.0`、Target Markers `2.3`。
 - AEUI Supply 独立持有背包拖入配置、精确 itemID、当前背包扫描、Button 与每角色配置；
   其他按钮脚本、分类、换装、分页、姿态和 SavedVariables 继续由各原 provider 持有。
@@ -12,7 +12,7 @@
 |---|---:|---|
 | `AB.SLOT` | `P6` | Bar 1–10 使用 accepted 逐槽底板，实机验收通过 |
 | `AB.RAIL` | `P6` | Bar 1–12 与合法 merged Bar 1／6 使用自适应外围 Rail，实机验收通过 |
-| AEUI Supply | `P5` | 原生 `24` 格精确物品补给栏已接入：配置只接受从背包拖到管理槽，拾取前记录 itemID 并在保存前让物品回包；右侧不再提供链接／itemID 输入。只显示当前背包数量，库存为 `0` 时仍常驻并显示 `0`；保留单次背包扫描、直接使用、Tooltip、移除／调序及每角色 SavedVariables |
+| AEUI Supply | `P5` | 原生 `24` 组补给栏已接入：每组最多 `12` 个有序精确 itemID、可命名、可设固定主物品及成员低库存阈值。主格左键只使用固定主物品，悬停 `0.30s`／右键展开自有候选抽屉；候选左键只使用、右键只设主格，任何使用／库存／冷却变化都不自动改主格。配置只接受背包拖入；缺货与低库存常驻，主格和候选均保留真实数量／冷却，Tooltip 为当前物品原生 Tooltip；旧单物品槽原位迁移，每角色 SavedVariables 与 AutoBar 互斥回退不变 |
 | Legacy AutoBar | `P5` | AEUI Supply 无配置或关闭时继续使用既有四列 Field Kit 与左侧 popup；Supply 有效时恢复 AutoBar 原锚点／外观并跳过自动职业槽迁移，不改或自动启用 provider |
 | TrinketMenu | `P5` | 双饰品挂到主栏右侧 `8 UI`；原候选菜单、左右键换槽和 Queue 保留 |
 | Combat Focus | `P5` | Player／Target 保持 `240×48 / 0.8`、底锚点 `480 UI`，中心分别为 `-160／105`，完整框体之间保留 `73 UI`；`23 UI` Aura 每排 `8` 枚，上 Buff／下 Debuff。Player 仅显示技能书同名 Buff 与全部 Debuff；敌对 Target／TargetTarget／Focus 显示全部真实 Buff，Debuff 为自己施加与固定 `12` 项关键表的并集；友方三框显示全部真实 Buff／Debuff。TargetTarget 保持 `240×60 / 0.68`；策略先扫描全部 `32` 槽再压缩进 provider 现有 Button，并共享给姓名板的可选“聚焦光环显示”：Debuff 优先、Buff 填充剩余 `16` 格，关闭后恢复原前 `16` 个 Debuff。Action Bars 关闭或归属 provider 缺失时 fail-open。三框几何合同仍按角色版本应用并保存独立回退，施法／Swing、姿态及 DDPS 坐标不变 |
@@ -36,7 +36,7 @@
 
 1. `/reload` 后确认 `/aeui status` 含 `version 0.9.0`、
    `fieldkit-contract=2.9`、`focus-layout-contract=3.5`、
-   `supplies-contract=1.3`、
+   `supplies-contract=2.0`、
    `focus-unit-default-version=5`、`focus-unit-default=profile-applied` 或
    `profile-saved`、`focus-layout-unit-size=240x48`、
    `focus-layout-unit-y=480`、`focus-layout-primary-gap=73`、
@@ -77,18 +77,22 @@
    不得误触图腾。再分别确认候选图腾与手动标记格仍可点击；
    非萨满／无姿态角色确认方阵直接占用预留职业栏位置。相邻回归只需复查主栏
    拖动、AutoBar 左侧卷袋与姿态／宠物 Button 命中区。
-5. `/aeui supplies` 中把两个背包物品分别拖到管理槽；确认物品回到原背包位置，
-   两格立刻显示各自真实当前数量且已有物品可点击使用。耗尽或移走其中一种后，
-   对应槽必须常驻并明确显示红色 `0`；右侧不得再出现链接／itemID 输入。再测试
-   前后调序和移除，确认移除后没有幽灵格；`/aeui supplies selfcheck`
-   应通过，`/aeui status` 应报告 `supplies=available`、正确的 `configured／zero`
-   与 `supplies-dock=left`。重载另一角色确认配置隔离。
-6. Supply 有效时 AutoBar 不得继续占用左侧补给位或弹出 AEUI 抽屉；执行
+5. `/aeui supplies` 中把多个背包物品拖到同一组，命名并分别设置低库存阈值；再创建
+   第二组，确认拖入物品都先回到原背包、重复 itemID 不会复制、组内／组间调序稳定，
+   重载后名称、顺序、阈值和显式主物品保持。主格左键只能使用固定主物品；悬停
+   `0.30s` 或右键应展开 `1–6` 单列／`7–12` 双列候选，候选左键使用后不得改主格，
+   右键只改主格且不得消耗。固定主物品缺货时，主格左键不得自动使用其他候选，
+   只展开抽屉。主格与候选 Tooltip 都只能是各自当前物品的原生 Tooltip。
+6. 移走／耗尽成员后确认红色 `0` 常驻，低于阈值为琥珀色且候选顺序不变；CD 应落在
+   实际使用物品上。删除成员、删除整组后不得残留幽灵格。`/aeui supplies selfcheck`
+   应通过，`/aeui status` 应报告 `supplies=available`、正确的
+   `configured／items／zero／low／popup` 与 `supplies-dock=left`。重载另一角色确认隔离。
+7. Supply 有效时 AutoBar 不得继续占用左侧补给位或弹出自己的抽屉；执行
    `/aeui supplies off` 后确认 Supply 隐藏、AutoBar 按自身配置恢复，再重新启用。
    `fieldkit unbind` 后 Supply 保持当前位置并可 `Shift+拖动`，重新 bind 后回到主栏左侧。
    相邻回归只需确认旧 AutoBar 无 Supply 配置时仍为自底向上的四列和左侧 popup。
-7. 验证 TrinketMenu 双槽、候选菜单、Queue、左右键换槽和 provider 缺失回退。
-8. 所有角色的 DDPS 时间线与资源排应统一到 `TOPLEFT (650,-615)`，内部相对位置、
+8. 验证 TrinketMenu 双槽、候选菜单、Queue、左右键换槽和 provider 缺失回退。
+9. 所有角色的 DDPS 时间线与资源排应统一到 `TOPLEFT (650,-615)`，内部相对位置、
    各自 scale、锁定和战斗显隐不变；同时复查三条施法／攻击计时、Aura、
    Boss Debuff，以及战士姿态 `25 UI / scale 1` 的高亮、命中区和快捷键。战士设置页
    应只列双手武器战与防战各自的单体／群体入口，旧武器／狂暴按键应迁移到对应双手
@@ -101,7 +105,7 @@
    白字预测应无需重载即时刷新。群体验证横扫准备、回狂暴姿态、旋风／致死／安全猛击，
    顺劈默认 `95` 怒且只在计划技能后仍高怒或下次白字将封顶时排队；横扫末层应留给旋风，
    定时斩杀到点不得被顺劈替代。相邻回归防战循环、精确近战换目标和无可信候选时保留原目标的红色“远”。
-9. 解锁模式应只出现中央 Bar 1 mover 与右侧 group mover；`sidebars unbind` 后
+10. 解锁模式应只出现中央 Bar 1 mover 与右侧 group mover；`sidebars unbind` 后
    四栏能精确回到旧位置，再 bind／home 可逆。
 
 ## 回退与暂缓

@@ -152,8 +152,8 @@ GRTT／Banana 若仍启用则保持独立，AEUI
 
 | ID | provider／对象 | 合同 |
 |---|---|---|
-| `AB.SUPPLY.RACK` | AEUI 自有 `AzerothExpeditionUISupplyFrame`＋最多 `24` 个精确物品 Button | `supplies-contract=1.3`；每个配置槽从背包拖入来源提取并只保存正整数 `itemID`，按当前角色独立保存。配置槽始终显示且只展示当前背包数量；数量为 `0` 时明确显示红色 `0` 而不移除，有库存时使用正常图标与绿色计数。每次背包事件单次扫描 Bag `0–4`，汇总相同 itemID 的真实堆叠／充能数量并保存一个可用 bag／slot；不按物品名称或 AutoBar 分类猜测。Button 为 `36 UI / gap 3 UI`、最多 `4×6`、自底向上，复用 accepted A 口袋与 C 九宫格；普通点击调用真实 `UseContainerItem`，Tooltip 只显示 itemID 与当前库存。`fieldKitBound=true` 时占用主栏左侧既有补给位，解绑时保留自由位置并允许 `Shift+拖动`；没有逐帧维护循环 |
-| `AB.SUPPLY.CONFIG` | `AzerothExpeditionUISupplyManager` 与 `AzerothExpeditionUIDB.actionbars.supplyProfiles[角色名 - 服务器]` | `/aeui supplies` 打开独立 `24` 格管理面板；唯一新增／替换入口是把真实背包物品拖到管理槽，拾取前记录精确 itemID，放入时先清空光标让物品回包再刷新库存。不提供物品链接、数字 itemID、裸 `item:` 或 `/aeui supplies add` 入口；支持移除与前后调序。配置中不保存目标库存、物品名称、图标或 bag／slot；旧 `target` 字段在归一化时丢弃，动态值只从客户端物品缓存与当前背包读取。`/aeui supplies on|off` 只切换 AEUI 自有栏，`remove slot` 提供无 GUI 删除回退，`selfcheck` 验证拖入边界与归一化；不改 AutoBar SavedVariables |
+| `AB.SUPPLY.RACK` | AEUI 自有 `AzerothExpeditionUISupplyFrame`＋最多 `24` 个命名补给组 Button | `supplies-contract=2.0`；每组保存稳定顺序的最多 `12` 个精确 itemID 与一个显式 `primaryItemId`。主格始终显示固定主物品：左键只使用它，缺货时不自动切换而是展开候选；右键或悬停 `0.30s` 展开 AEUI 自有抽屉。候选左键只使用该物品且不改变主格，右键只设为主格且不消耗；候选顺序不按库存或冷却重排。主格悬停只显示当前主物品的原生 Tooltip。每次背包事件单次扫描 Bag `0–4`，汇总所有组员的真实堆叠／充能数量与一个可用 bag／slot；缺货显示红色 `0`，低于成员阈值显示琥珀色，其余为绿色。主格左上只以红／琥珀数字提示组内缺货／低库存项数。Button 为 `36 UI / gap 3 UI`、最多 `4×6`、自底向上，复用 accepted A 口袋与 C 九宫格；候选复用 B 口袋与 D 连接带，`1–6` 单列、`7–12` 列优先双列且最多六行，每格保留数量、冷却和原生 Tooltip。`fieldKitBound=true` 时占用主栏左侧既有补给位，解绑时保留自由位置并允许 `Shift+拖动`；只有弹层意图／关闭待处理时短暂启用计时 Frame，不维护几何 |
+| `AB.SUPPLY.CONFIG` | `AzerothExpeditionUISupplyManager` 与 `AzerothExpeditionUIDB.actionbars.supplyProfiles[角色名 - 服务器]` | `/aeui supplies` 打开每角色管理面板；左侧 `24` 格选择／创建组，右侧管理组名、最多 `12` 个成员、显式主物品、每成员 `1–999` 低库存阈值及组内／组间稳定顺序。把真实背包物品拖到空组可创建，拖到已有组或右侧成员区可追加；全配置重复 itemID 会定位到已有成员而不复制。拾取前记录精确 itemID，保存前先清空光标让物品回包；不提供物品链接、数字 itemID、裸 `item:` 或 `/aeui supplies add` 入口。配置只保存组名、itemID、主物品、成员顺序与阈值，不保存物品名称、图标、当前库存、冷却或 bag／slot；旧单物品槽自动迁移为单成员组，旧 `target` 丢弃。`/aeui supplies on|off` 只切换 AEUI 自有栏，`remove slot` 删除整组，`selfcheck` 验证旧配置迁移、主物品、去重、阈值与拖入边界；不改 AutoBar SavedVariables |
 | `AB.SUPPLY.FALLBACK` | AEUI 补给栏与可选 AutoBar 的互斥显示 route | 默认启用常驻库存监控；只有存在至少一个有效 AEUI 配置槽时才接管左侧补给位。AEUI 补给栏关闭或当前角色尚无配置时继续显示既有 AutoBar Field Kit；一旦 AEUI 配置生效，AutoBar Button、popup、drag handle 与配置数据全部退回 provider 原路径，不自动启用、隐藏或卸载 AutoBar。Action Bars 总 route 关闭时 AEUI 补给栏隐藏 |
 | `AB.CONSUMABLE.RACK` | 已加载并自行显示的 `AutoBarFrame`＋`AutoBarFrameButton1..24` | 默认保留 `24` 个逻辑类别，但关闭空槽与缺货类别图标，只按背包当前可用类别显示 `1–24` 个真实 Button；`36 UI / gap 3 UI`、最多 `4×6`，外壳随当前可见 Button 边界动态收缩。因 `alignButtons` 可把子 Button 放到 `AutoBarFrame` 边界外，装饰 Frame 必须读取真实可见 Button 边界。`fieldKitBound=true` 时强绑定在主动作条左侧，外壳右缘距主栏左缘 `12 UI`，底边比主栏底边低 `20 UI`。`fieldkit-contract=2.7` 仍由可见 Button 相对 handle 的 provider `GetPoint`、真实宽高与 scale 计算一次停靠偏移，但将该偏移注册到 AutoBar 原生 `dockingFrames.pfActionBarMain`，并把当前活动 display 的 `docking` 指向 `pfActionBarMain`；因此每次 provider `SetupVisual` 最终都由 AutoBar 自己把 handle 写到主栏相对位置，自由 `position` 在绑定态不参与渲染。`unbind`／AEUI 关闭时精确恢复原 docking／shift、自由位置与 `hideDragHandle` 偏好；logout／reload 前移除仅运行时 docking token，下一次插件就绪后再安装。零延迟事件只刷新几何与外壳，不作为持续位置维护；未知布局已有成功锚点时保持缓存，首次未知布局才允许 world-space fail-open。不得自动启用 provider |
 | `AB.CONSUMABLE.GROUP` | 推荐 profile 的连续槽段 `1–8／9–16／17–24` 与两条底层分隔带 | 连续槽段继续提供应急／增益／工具的语义组织，但不创建或显示三段文字；卷袋材质、分隔和物品排列自身承担区分。分隔带只占两组之间既有 `3 UI` gap，不接收鼠标。任一配置不匹配即隐藏分隔并退回单一自适应外壳，不能给用户自定义类别套用错误分组 |
@@ -179,9 +179,9 @@ profile、配置裁剪与 popup 只在 AEUI 补给栏没有有效配置时继续
 用户于 `2026-08-09` 接受 `AB.CONSUMABLE.KIT.V1` 第 1 稿。P4 source 为
 [ActionConsumableKit_Master_v1.png](../../../assets/source/actionbars/ab-consumable-kit/ActionConsumableKit_Master_v1.png)
 （SHA-256 `623f29c5…a2419`），[manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_SourceManifest_v1.json)
-固定四格映射：A→`AB.SUPPLY.RACK／AB.CONSUMABLE.POCKET` 主口袋，B→`AB.CONSUMABLE.POPUP`
+固定四格映射：A→`AB.SUPPLY.RACK／AB.CONSUMABLE.POCKET` 主口袋，B→`AB.SUPPLY.RACK／AB.CONSUMABLE.POPUP`
 薄候选口袋，C→`AB.SUPPLY.RACK／CONFIG` 及 `AB.CONSUMABLE.RACK／GROUP` filled 自适应卷袋外壳，D→popup
-连接带／group 分隔带。该 `1024²` 母版不由客户端直接加载；确定性 P5 exporter
+连接带／Supply 抽屉连接带／group 分隔带。该 `1024²` 母版不由客户端直接加载；确定性 P5 exporter
 把每格完整物件等比缩放并打包为
 [ActionConsumableKitV1.tga](../../../addon/AzerothExpeditionUI/Media/ActionBars/ActionConsumableKitV1.tga)
 （`512² RGBA`，文件 SHA `c48f6292…320e`、像素 SHA `658f826f…e30d`），合同见

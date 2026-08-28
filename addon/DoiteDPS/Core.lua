@@ -12,6 +12,8 @@ D.UPDATE_OUT_OF_COMBAT = 0.15
 D.GCD_MAX = 1.60
 D.FORECAST_LIMIT = 3
 
+-- 运行链：BuildState 读取客户端状态，当前 Profile 生成推荐与预测，UI 只负责
+-- 展示；只有玩家主动触发的 Profile:Execute 才允许选择目标或施放技能。
 local locale = (GetLocale and GetLocale()) or "enUS"
 local zh = (locale == "zhCN" or locale == "zhTW")
 
@@ -94,6 +96,8 @@ D.Names = {
     WAIT = zh and "等待" or "Wait",
 }
 
+-- 以内部动作 key 索引的静态元数据。name/texture 是查询与显示回退，cost 是
+-- 基础资源消耗，virtual 表示不应从技能书解析的纯界面动作。
 D.SpellDefs = {
     BATTLE_STANCE = {
         name = D.Names.BATTLE_STANCE,
@@ -407,6 +411,8 @@ D.ShamanCooldownKeys = {
     "FIRE_NOVA_TOTEM",
 }
 
+-- SavedVariables 根默认值。profileSettings 保存职业／Profile 数据；
+-- 循环专属配置位于 profileSettings[profileKey].rotations 下。
 D.DEFAULTS = {
     enabled = true,
     locked = true,
@@ -470,6 +476,14 @@ D.PROFILE_DEFAULTS = {
     },
 }
 
+-- 这些运行时记录会被复用以避免每帧分配；调用方只能把它们视作当前快照，
+-- 不得长期持有并当作历史记录。
+--   Spells[key]：已解析的技能书 slot/id/name/texture。
+--   State：通用观测字段，以及 Profile:BuildState 追加的职业字段。
+--   State.cooldowns[key]：remaining、duration、known、proc、procRemaining。
+--   Recommendation／Forecasts[n]：包含 key/name/texture/reason、展示状态、
+--     eta、uncertain 及可选 Profile 元数据的动作记录。
+--   Profiles／Trackers：由已加载 Profile 文件注册的实例表。
 D.Spells = D.Spells or {}
 D.State = D.State or {}
 D.Recommendation = D.Recommendation or {}
@@ -639,6 +653,8 @@ local function FillMissingDefaults(target, defaults)
     return target
 end
 
+-- 循环配置按 Profile 和标准化模式保存。只补齐缺失的默认值，加载过程绝不覆盖
+-- 用户已经保存的选择。
 function D:GetRotationDB(profileKey, mode, defaults)
     local profileDB = self:GetProfileDB(profileKey)
     if type(profileDB.rotations) ~= "table" then
@@ -802,6 +818,9 @@ local PUBLIC_ENTRY_KEYS = {
     pvp_close = true,
 }
 
+-- 公共入口合同：EntryPoints[entry] 声明 label、允许模式和默认模式；
+-- entryBindings 保存当前选择。旧模式名的一次性迁移由 Profile 的
+-- version/migrations 负责。
 function D:NormalizeEntryPoint(value)
     local entry = string.lower(TrimRotationName(value))
     if PUBLIC_ENTRY_KEYS[entry] then
@@ -1243,9 +1262,9 @@ function D:GetCooldown(key, now)
     return remaining, duration, (duration > self.GCD_MAX), enabled
 end
 
-function D:GetRealCooldown(key, now)
-    local remaining, duration, real = self:GetCooldown(key, now)
-    if real then
+function D:GetNonGCDCooldown(key, now)
+    local remaining, duration, isNonGCD = self:GetCooldown(key, now)
+    if isNonGCD then
         return remaining, duration
     end
     return 0, duration
@@ -1479,6 +1498,8 @@ function D:IsPlayerMoving()
     return self._movingUntil and now <= self._movingUntil or false
 end
 
+-- 返回复用的施法观测表。remaining/duration 单位为秒；channel 只描述展示形态，
+-- active 才是该记录是否有效的唯一标记。
 function D:GetCastState(reuse)
     local cast = reuse or {}
     local info = nil
@@ -1548,7 +1569,7 @@ function D:IsUsable(key)
         end
     end
 
-    local remaining = self:GetRealCooldown(key)
+    local remaining = self:GetNonGCDCooldown(key)
     local cost = tonumber(def.cost) or 0
     local lacksPower = self:GetRage() < cost
     return remaining <= 0.05 and not lacksPower, lacksPower
@@ -1597,18 +1618,19 @@ function D:IsInRange(key, unit)
 end
 
 function D:IsHostileUnit(unit)
-    unit = unit or "target"
-    if type(UnitExists) ~= "function" or not UnitExists(unit) then
+    if not unit or type(UnitExists) ~= "function" or not UnitExists(unit) then
         return false
     end
-    if UnitIsDeadOrGhost and UnitIsDeadOrGhost(unit) then
+    if type(UnitCanAttack) == "function"
+        and not UnitCanAttack("player", unit) then
         return false
     end
-    if UnitIsDead and UnitIsDead(unit) then
+    if type(UnitIsDeadOrGhost) == "function"
+        and UnitIsDeadOrGhost(unit) then
         return false
     end
-    if UnitCanAttack then
-        return UnitCanAttack("player", unit) and true or false
+    if type(UnitIsDead) == "function" and UnitIsDead(unit) then
+        return false
     end
     return true
 end
@@ -1937,24 +1959,6 @@ function D:TryAssistTankTarget()
     return true, "tank"
 end
 
-function D:IsHostileUnit(unit)
-    if not unit or type(UnitExists) ~= "function" or not UnitExists(unit) then
-        return false
-    end
-    if type(UnitCanAttack) == "function"
-        and not UnitCanAttack("player", unit) then
-        return false
-    end
-    if type(UnitIsDeadOrGhost) == "function"
-        and UnitIsDeadOrGhost(unit) then
-        return false
-    end
-    if type(UnitIsDead) == "function" and UnitIsDead(unit) then
-        return false
-    end
-    return true
-end
-
 function D:IsExecutionUnitInMeleeRange(unit, meleeKey)
     if not self:IsHostileUnit(unit) then
         return false
@@ -2150,6 +2154,9 @@ function D:StartExecutionAttack()
     return pcall(startAttack, "")
 end
 
+-- 仅供 Execute 使用的选目标策略。近战会保留距离为近战或未知的有效手动目标；
+-- 只有已确认超出近战范围时，才尝试换成稳定的附近候选。远程先尝试坦克协助，
+-- 再回退到最近敌人。
 function D:PrepareExecutionTarget(allowNearest, requireMelee, meleeKey)
     if requireMelee then
         local currentValid = self:IsHostileTarget()
@@ -2212,6 +2219,8 @@ function D:ResetTargetHealthRuntime()
     self._targetHealthTrend = nil
 end
 
+-- 维护当前目标的短期滚动血量样本。TTD 字段只用于预测；任何临死时间决策都必须
+-- 先通过 targetTTDConfidence。目标 GUID 或最大生命变化时丢弃旧样本窗口。
 function D:UpdateTargetHealthTrend(state)
     state.targetHealthCurrent = nil
     state.targetHealthMax = nil
@@ -2609,6 +2618,9 @@ function D:ClearOnSwingQueued()
     self._pendingOnSwing = nil
 end
 
+-- 战士 Profile 共用的标准化主手白字合同：时间字段描述当前白字；
+-- queuePending 表示本地排队尝试，queueConfirmed 来自 provider，
+-- queueStale 表示过期报告，决策时必须忽略。
 function D:GetSwingState(reuse)
     local swing = reuse or {}
     local remaining = nil
@@ -2788,6 +2800,8 @@ function D:GetSwingState(reuse)
     return swing
 end
 
+-- 先建立通用冷却表，再允许 Profile 补充压制／复仇等触发窗口；Profile 不得覆盖
+-- 客户端 API 提供的冷却时间。
 function D:BuildCooldownState(state, keys, profile)
     state.cooldowns = state.cooldowns or {}
     state.cooldownOrder = keys or {}
@@ -2799,7 +2813,7 @@ function D:BuildCooldownState(state, keys, profile)
             entry = {}
             state.cooldowns[key] = entry
         end
-        entry.remaining, entry.duration = self:GetRealCooldown(key, state.now)
+        entry.remaining, entry.duration = self:GetNonGCDCooldown(key, state.now)
         entry.known = self:IsKnown(key)
         entry.proc = false
         entry.procRemaining = nil
@@ -2816,6 +2830,7 @@ function D:BuildState()
     local _, class = UnitClass("player")
     local profile = self:GetActiveProfile(class)
 
+    -- 阶段 1：读取与职业无关的客户端状态。
     state.now = now
     state.class = class
     state.profileKey = profile and profile.key or nil
@@ -2840,12 +2855,16 @@ function D:BuildState()
     state.resourceDisplay = nil
     state.timingType = nil
 
+    -- 阶段 2：计算需要斩杀时机的 Profile 共用的目标趋势。
     self:UpdateTargetHealthTrend(state)
 
+    -- 阶段 3：由 Profile 补充职业资源、光环、距离和循环配置。
     if profile and profile.BuildState then
         profile:BuildState(state)
     end
 
+    -- 阶段 4：战士使用距离滞回来保护手动目标，避免 provider 单帧漏报导致换目标；
+    -- 其他职业直接使用各自 Profile 的距离结果。
     if class == "WARRIOR" and state.meleeRangeKey then
         state.targetRangeState = self:ObserveExecutionTargetRange(
             state.meleeRangeKey
@@ -2854,6 +2873,7 @@ function D:BuildState()
         state.targetRangeState = nil
     end
 
+    -- 最后构建冷却表，确保 Profile 装饰器读取到完整 State。
     self:BuildCooldownState(
         state,
         profile and profile.CooldownKeys or {},
@@ -2887,6 +2907,8 @@ function D:GetActiveProfile(class)
     return nil
 end
 
+-- 纯观测、评估和渲染流程；不会切换目标或施法。相关副作用只能发生在玩家主动
+-- 触发的 Execute 调用中。
 function D:Update(force)
     if not self.initialized then
         return
@@ -2988,6 +3010,8 @@ function D:ExecuteMode(mode)
     return profile:Execute(mode)
 end
 
+-- 公共宏入口：先解析已保存的输出绑定，再把目标准备和施法决策完整交给所属
+-- Profile。
 function D:Execute(entry)
     local profile = self:GetActiveProfile()
     if not profile or not profile.Execute then
@@ -3273,6 +3297,8 @@ function D:DispatchProfileEvent(
     end
 end
 
+-- 事件负责即时刷新；下方限频的 OnUpdate 只补偿连续计时器，以及不会主动发出
+-- 事件的 provider 状态。
 D.EventFrame = D.EventFrame or CreateFrame("Frame", "DoiteDPSEventFrame")
 local eventFrame = D.EventFrame
 

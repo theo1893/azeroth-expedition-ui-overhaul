@@ -55,6 +55,9 @@ local SLOT_PROMOTION_KEYS = {
     CLEAVE = true,
 }
 
+-- action.state 是展示元数据，不是施法决策：ready/proc 表示可执行；
+-- gcd/queue/casting 表示暂时锁定；wait/pool/range/cooldown/disabled
+-- 解释当前为何不能执行；forecast 表示仅供参考的后续动作。
 local COLOR = {
     blue = { 0.31, 0.67, 0.95 },
     ready = { 0.20, 0.95, 0.35 },
@@ -1786,6 +1789,8 @@ local function CopyAction(target, source)
     target.cost = source.cost
 end
 
+-- 根据当前推荐和参考预测生成展示队列。这里创建的副本不会反向影响
+-- Profile:Recommend／Execute。
 function UI:BuildTimelineActions(
     action,
     forecasts,
@@ -1910,6 +1915,8 @@ local function FindCastActionKey(state)
     return nil
 end
 
+-- 读条期间让已施放技能继续占用可见就绪槽。这只是界面连续性规则，既不会
+-- 取消读条，也不会改变执行逻辑。
 function UI:GetCastLockedRecommendation(state, recommendation)
     local cast = state.cast or {}
     local casting = state.casting or cast.active
@@ -2002,6 +2009,8 @@ function UI:GetCastLockedRecommendation(state, recommendation)
     return self.castLockAction
 end
 
+-- 最终展示流程。UI 可以为动画暂存或复制动作，但绝不写入循环状态、选择目标
+-- 或施放技能。
 function UI:Update(state, recommendation, forecasts, force)
     if not D.DB or not D.DB.enabled then
         root:Hide()

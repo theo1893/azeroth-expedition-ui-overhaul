@@ -63,7 +63,7 @@ function D:GetTexture(key)
     return defs[key] and defs[key].texture or key
 end
 function D:IsKnown(key) return known[key] == true end
-function D:GetRealCooldown() return 0, 0 end
+function D:GetNonGCDCooldown() return 0, 0 end
 function D:GetProfileDB()
     self._profileDB = self._profileDB or {}
     return self._profileDB
@@ -239,6 +239,32 @@ local action = P:Recommend(State({
     },
 }))
 Check("a 3.7-speed cycle opens with Mortal Strike", action.key == "MORTAL_STRIKE")
+
+action = P:Recommend(State({
+    rage = 44,
+    cooldowns = CoreCooldowns(0, 0),
+    swing = {
+        active = true,
+        remaining = 3.63,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("Whirlwind preserves Slam when Mortal Strike cannot", action.key == "WHIRLWIND")
+
+action = P:Recommend(State({
+    rage = 45,
+    cooldowns = CoreCooldowns(0, 0),
+    swing = {
+        active = true,
+        remaining = 3.63,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("Mortal Strike leads once it can still fund Slam", action.key == "MORTAL_STRIKE")
 
 action = P:Recommend(State({
     rage = 80,
@@ -1236,12 +1262,12 @@ local cooldownForecast = P:BuildForecast(cooldownState, { key = "WAIT" })
 local mortalForecast = ForecastByKey(cooldownForecast, "MORTAL_STRIKE")
 local whirlwindForecast = ForecastByKey(cooldownForecast, "WHIRLWIND")
 Check(
-    "Mortal Strike restarts on the timeline at its real cooldown",
+    "Mortal Strike restarts on the timeline at its ability cooldown",
     mortalForecast and mortalForecast.eta >= 5.9
         and mortalForecast.timelineCycle == 1
 )
 Check(
-    "Whirlwind restarts on the timeline at its real cooldown",
+    "Whirlwind restarts on the timeline at its ability cooldown",
     whirlwindForecast and whirlwindForecast.eta >= 9.9
         and whirlwindForecast.timelineCycle == 1
 )

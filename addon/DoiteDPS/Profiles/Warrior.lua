@@ -15,6 +15,10 @@ W.key = "WARRIOR_ALL"
 local locale = (GetLocale and GetLocale()) or "enUS"
 local zh = (locale == "zhCN" or locale == "zhTW")
 
+-- 目录项合同：
+--   key 是保存到配置的公共模式；profileName/profileKey 用于定位所属 Profile；
+--   mode 是所属 Profile 的本地模式；entry 限制该项可绑定的宏出口。
+-- 本表只负责路由，不包含任何战斗优先级。
 local DEFINITIONS = {
     {
         key = "arms_berserker_single",
@@ -344,6 +348,8 @@ function W:OnEvent(eventName, a1, a2, a3, a4, a5, a6, a7, a8, a9)
     end
 end
 
+-- 所属 Profile 扩展共享 State 时，临时暴露它的本地模式；完成后恢复
+-- Core、Config 与 UI 使用的目录身份。
 function W:BuildState(state)
     local owner, ownerMode, catalogMode =
         self:ResolveModeProfile(state and state.mode)
@@ -389,6 +395,7 @@ function W:Recommend(state)
     return recommendation
 end
 
+-- 推荐与预测作为一个整体委托，确保两者始终来自同一个 Profile 和本地模式。
 function W:Evaluate(state)
     local owner, ownerMode, catalogMode = self:ResolveModeProfile(
         state and (state.warriorCatalogMode or state.mode)
@@ -403,6 +410,8 @@ function W:Evaluate(state)
     return recommendation, forecast
 end
 
+-- 委托标记让执行期间嵌套调用的 Core:BuildState 能解析所属 Profile 的本地模式；
+-- pcall 确保出错后仍会恢复两个标记。
 function W:Execute(mode)
     local owner, ownerMode, catalogMode = self:ResolveModeProfile(mode)
     if not owner or not owner.Execute then return false end

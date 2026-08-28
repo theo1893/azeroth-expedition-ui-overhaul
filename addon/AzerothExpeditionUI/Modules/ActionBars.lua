@@ -93,12 +93,14 @@ ActionBars.autoBarDockBackupVersion = 1
 -- used.
 ActionBars.autoBarRefreshDelay = 0
 ActionBars.autoBarRefreshEvent = "AEUI_AutoBarFieldKitRefresh"
-ActionBars.supplyRuntimeContract = "1.3"
-ActionBars.supplyProfileVersion = 2
+ActionBars.supplyRuntimeContract = "2.0"
+ActionBars.supplyProfileVersion = 3
 ActionBars.supplyMaxSlots = 24
+ActionBars.supplyMaxItems = 12
 ActionBars.supplyColumns = 4
 ActionBars.supplyButtonSize = 36
 ActionBars.supplyButtonGap = 3
+ActionBars.supplyPopupCloseDelay = 0.12
 ActionBars.supplyFallbackIcon = "Interface\\Icons\\INV_Misc_Gift_01"
 -- The former -10 UI offset only centered ArchiTotem's visible union. Shift
 -- that union another 128 UI left so all four downward element columns clear
@@ -4272,25 +4274,111 @@ local function ClearSupplyDrag()
   ActionBars.supplyDragItemId = nil
 end
 
+local function NormalizeSupplyMinimum(value)
+  value = math.floor(tonumber(value) or 1)
+  return math.max(1, math.min(value, 999))
+end
+
+local function NormalizeSupplyName(value)
+  local name = tostring(value or "")
+  name = string.gsub(name, "^%s+", "")
+  name = string.gsub(name, "%s+$", "")
+  return name ~= "" and name or nil
+end
+
 local function NormalizeSupplySlots(profile)
   if type(profile) ~= "table" then
     return {}
   end
   local source = type(profile.slots) == "table" and profile.slots or {}
   local slots = {}
+  local seen = {}
   for index = 1, ActionBars.supplyMaxSlots do
     local entry = source[index]
-    local itemId = type(entry) == "table" and
-      ParseSupplyItemId(entry.itemId or entry[1]) or
-      ParseSupplyItemId(entry)
-    if itemId then
+    local items = {}
+    local itemSource = type(entry) == "table" and entry.items
+    if type(itemSource) == "table" then
+      for itemIndex = 1, ActionBars.supplyMaxItems do
+        local item = itemSource[itemIndex]
+        local itemId = type(item) == "table" and
+          ParseSupplyItemId(item.itemId or item[1]) or
+          ParseSupplyItemId(item)
+        if itemId and not seen[itemId] then
+          seen[itemId] = true
+          table.insert(items, {
+            itemId = itemId,
+            minimum = NormalizeSupplyMinimum(
+              type(item) == "table" and item.minimum or nil
+            ),
+          })
+        end
+      end
+    else
+      local itemId = type(entry) == "table" and
+        ParseSupplyItemId(entry.itemId or entry[1]) or
+        ParseSupplyItemId(entry)
+      if itemId and not seen[itemId] then
+        seen[itemId] = true
+        table.insert(items, { itemId = itemId, minimum = 1 })
+      end
+    end
+    if table.getn(items) > 0 then
+      local primary = type(entry) == "table" and
+        ParseSupplyItemId(
+          entry.primaryItemId or entry.activeItemId or entry.itemId
+        ) or nil
+      local primaryFound = false
+      for itemIndex = 1, table.getn(items) do
+        if items[itemIndex].itemId == primary then
+          primaryFound = true
+          break
+        end
+      end
       table.insert(slots, {
-        itemId = itemId,
+        name = type(entry) == "table" and
+          NormalizeSupplyName(entry.name) or nil,
+        primaryItemId = primaryFound and primary or items[1].itemId,
+        items = items,
       })
     end
   end
   profile.slots = slots
   return slots
+end
+
+local function GetSupplyPrimary(group)
+  if not group or type(group.items) ~= "table" then return nil end
+  for index = 1, table.getn(group.items) do
+    if group.items[index].itemId == group.primaryItemId then
+      return group.items[index], index
+    end
+  end
+  return group.items[1], 1
+end
+
+local function GetSupplyGroupName(group, index)
+  if group and group.name then return group.name end
+  if group and table.getn(group.items or {}) == 1 then
+    local name = GetItemInfo(group.items[1].itemId)
+    if not name and type(GetItemStatsField) == "function" then
+      name = GetItemStatsField(group.items[1].itemId, "displayName")
+    end
+    if name then return name end
+  end
+  return "补给组 " .. tostring(index or "")
+end
+
+local function FindSupplyItem(profile, itemId)
+  if not profile then return nil, nil end
+  for groupIndex = 1, table.getn(profile.slots) do
+    local items = profile.slots[groupIndex].items
+    for itemIndex = 1, table.getn(items) do
+      if items[itemIndex].itemId == itemId then
+        return groupIndex, itemIndex
+      end
+    end
+  end
+  return nil, nil
 end
 
 local function GetSupplyProfile(create)
@@ -4314,7 +4402,9 @@ local function GetSupplyProfile(create)
   end
   local profile = profiles[profileKey]
   if profile then
-    NormalizeSupplySlots(profile)
+    if profile.version ~= ActionBars.supplyProfileVersion then
+      NormalizeSupplySlots(profile)
+    end
     profile.version = ActionBars.supplyProfileVersion
   end
   return profile, profileKey
@@ -4339,11 +4429,21 @@ local function GetSupplyItemInfo(itemId)
   if not texture and location then
     texture = location.texture
   end
+  if type(GetItemStatsField) == "function" then
+    name = name or GetItemStatsField(itemId, "displayName")
+    if not texture and type(GetItemIconTexture) == "function" then
+      local displayId = GetItemStatsField(itemId, "displayInfoID")
+      texture = displayId and GetItemIconTexture(displayId)
+      if texture and not string.find(texture, "\\") then
+        texture = "Interface\\Icons\\" .. texture
+      end
+    end
+  end
   if not name and link then
     local _, _, linkedName = string.find(link, "%[(.-)%]")
     name = linkedName
   end
-  return name, link, texture
+  return name, link or ("item:" .. itemId .. ":0:0:0"), texture
 end
 
 local function SupplyCount(itemId)
@@ -4359,51 +4459,70 @@ local function AddSpecialFrameName(name)
   table.insert(UISpecialFrames, name)
 end
 
-function ActionBars:ShowSupplyTooltip(button)
-  local profile = GetSupplyProfile(false)
-  local entry = profile and profile.slots[button.supplyIndex]
-  if not entry or not GameTooltip then return end
-
-  local location = self.supplyLocations and
-    self.supplyLocations[entry.itemId]
-  local name, link = GetSupplyItemInfo(entry.itemId)
-  GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
+function ActionBars:ShowSupplyItemTooltip(button, itemId, anchor)
+  if not itemId or not GameTooltip then return end
+  local location = self.supplyLocations and self.supplyLocations[itemId]
+  local name, link = GetSupplyItemInfo(itemId)
+  GameTooltip:SetOwner(button, anchor or "ANCHOR_RIGHT")
   if location and type(GameTooltip.SetBagItem) == "function" then
     GameTooltip:SetBagItem(location.bag, location.slot)
   elseif link and type(GameTooltip.SetHyperlink) == "function" then
     local ok = pcall(GameTooltip.SetHyperlink, GameTooltip, link)
     if not ok then
-      GameTooltip:SetText(name or ("物品 #" .. entry.itemId))
+      GameTooltip:SetText(name or ("物品 #" .. itemId))
     end
   else
-    GameTooltip:SetText(name or ("物品 #" .. entry.itemId))
-  end
-  local count = SupplyCount(entry.itemId)
-  GameTooltip:AddLine("itemID: " .. entry.itemId, 0.72, 0.72, 0.72)
-  GameTooltip:AddLine(
-    "背包库存 " .. count,
-    count == 0 and 1 or 0.95,
-    count == 0 and 0.25 or 0.82,
-    count == 0 and 0.2 or 0.35
-  )
-  if count == 0 then
-    GameTooltip:AddLine("缺货：槽位仍会保留", 1, 0.25, 0.2)
+    GameTooltip:SetText(name or ("物品 #" .. itemId))
   end
   GameTooltip:Show()
 end
 
-function ActionBars:UseSupplySlot(index)
+function ActionBars:ShowSupplyTooltip(button)
   local profile = GetSupplyProfile(false)
-  local entry = profile and profile.slots[index]
-  local location = entry and self.supplyLocations and
-    self.supplyLocations[entry.itemId]
-  if not entry or not location then
-    addon:Print(entry and
-      ("补给缺货：itemID " .. entry.itemId) or "这个补给槽为空。")
+  local group = profile and profile.slots[button.supplyIndex]
+  local item = GetSupplyPrimary(group)
+  self:ShowSupplyItemTooltip(button, item and item.itemId)
+end
+
+function ActionBars:UseSupplyItem(itemId)
+  local location = itemId and self.supplyLocations and
+    self.supplyLocations[itemId]
+  if not location then
+    addon:Print(itemId and
+      ("补给缺货：itemID " .. itemId) or "这个补给槽为空。")
     return false
   end
   UseContainerItem(location.bag, location.slot)
   return true
+end
+
+function ActionBars:UseSupplySlot(index)
+  local profile = GetSupplyProfile(false)
+  local group = profile and profile.slots[index]
+  local item = GetSupplyPrimary(group)
+  if not self:UseSupplyItem(item and item.itemId) then
+    if group then self:ShowSupplyPopup(index) end
+    return false
+  end
+  self:HideSupplyPopup()
+  return true
+end
+
+local function SetSupplyCooldown(button, itemId)
+  local location = itemId and ActionBars.supplyLocations and
+    ActionBars.supplyLocations[itemId]
+  if location and type(GetContainerItemCooldown) == "function" and
+    type(CooldownFrame_SetTimer) == "function"
+  then
+    local start, duration, enabled = GetContainerItemCooldown(
+      location.bag, location.slot
+    )
+    CooldownFrame_SetTimer(
+      button.cooldown, start or 0, duration or 0, enabled or 0
+    )
+  elseif button.cooldown and type(CooldownFrame_SetTimer) == "function" then
+    CooldownFrame_SetTimer(button.cooldown, 0, 0, 0)
+  end
 end
 
 local function CreateSupplyButton(root, index)
@@ -4436,6 +4555,11 @@ local function CreateSupplyButton(root, index)
   button.stock:SetPoint("BOTTOM", button, "BOTTOM", 0, 3)
   button.stock:SetJustifyH("CENTER")
 
+  button.alert = button:CreateFontString(
+    nil, "OVERLAY", "GameFontNormalSmall"
+  )
+  button.alert:SetPoint("TOPLEFT", button, "TOPLEFT", 4, -3)
+
   button.highlight = button:CreateTexture(nil, "HIGHLIGHT")
   button.highlight:SetAllPoints(button.icon)
   button.highlight:SetTexture("Interface\\Buttons\\ButtonHilight-Square")
@@ -4448,16 +4572,24 @@ local function CreateSupplyButton(root, index)
   button.cooldown.pfCooldownType = "NOGCD"
 
   button:SetScript("OnClick", function()
-    ActionBars:UseSupplySlot(button.supplyIndex)
+    if arg1 == "RightButton" then
+      ActionBars:ShowSupplyPopup(button.supplyIndex)
+    else
+      ActionBars:UseSupplySlot(button.supplyIndex)
+    end
   end)
   button:SetScript("OnEnter", function()
+    ActionBars:CancelSupplyPopupClose()
     ActionBars:ShowSupplyTooltip(button)
+    ActionBars:ScheduleSupplyPopup(button.supplyIndex)
   end)
   button:SetScript("OnLeave", function()
     if GameTooltip then GameTooltip:Hide() end
+    ActionBars:ScheduleSupplyPopupClose()
   end)
   button:SetScript("OnDragStart", function()
     if not FieldKitBound() and IsShiftKeyDown() then
+      ActionBars:HideSupplyPopup()
       root:StartMoving()
       root.aeuiSupplyMoving = true
     end
@@ -4471,6 +4603,314 @@ local function CreateSupplyButton(root, index)
   end)
   button:Hide()
   return button
+end
+
+local function CreateSupplyPopupButton(parent, index)
+  local name = "AzerothExpeditionUISupplyPopupButton" .. index
+  local button = CreateFrame("Button", name, parent)
+  button:SetWidth(ActionBars.supplyButtonSize)
+  button:SetHeight(ActionBars.supplyButtonSize)
+  button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+  ApplyPocket(
+    button,
+    "aeuiSupplyPopupPocketV1",
+    ActionBars.consumableKitTexturePath,
+    consumableKitTexCoords.B,
+    consumableKitSpriteSizes.B,
+    true,
+    ActionBars.fieldKitPocketPadding
+  )
+  button.icon = button:CreateTexture(nil, "ARTWORK")
+  button.icon:SetPoint("TOPLEFT", button, "TOPLEFT", 4, -4)
+  button.icon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -4, 4)
+  button.stock = button:CreateFontString(
+    nil, "OVERLAY", "GameFontNormalSmall"
+  )
+  button.stock:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -3, 3)
+  button.primary = button:CreateFontString(
+    nil, "OVERLAY", "GameFontNormalSmall"
+  )
+  button.primary:SetPoint("TOPLEFT", button, "TOPLEFT", 3, -3)
+  button.highlight = button:CreateTexture(nil, "HIGHLIGHT")
+  button.highlight:SetAllPoints(button.icon)
+  button.highlight:SetTexture("Interface\\Buttons\\ButtonHilight-Square")
+  button.highlight:SetBlendMode("ADD")
+  button.cooldown = CreateFrame(
+    "Model", name .. "Cooldown", button, "CooldownFrameTemplate"
+  )
+  button.cooldown:SetAllPoints(button.icon)
+  button.cooldown.pfCooldownType = "NOGCD"
+  button:SetScript("OnClick", function()
+    if arg1 == "RightButton" then
+      ActionBars:SetSupplyPrimary(
+        ActionBars.supplyPopupOwnerIndex, button.supplyItemId
+      )
+    else
+      ActionBars:UseSupplyItem(button.supplyItemId)
+    end
+    ActionBars:HideSupplyPopup()
+  end)
+  button:SetScript("OnEnter", function()
+    ActionBars:CancelSupplyPopupIntent()
+    ActionBars:ShowSupplyItemTooltip(
+      button,
+      button.supplyItemId,
+      ActionBars.supplyPopupSide == "LEFT" and
+        "ANCHOR_LEFT" or "ANCHOR_RIGHT"
+    )
+  end)
+  button:SetScript("OnLeave", function()
+    if GameTooltip then GameTooltip:Hide() end
+    ActionBars:ScheduleSupplyPopupClose()
+  end)
+  button:Hide()
+  return button
+end
+
+function ActionBars:EnsureSupplyPopup()
+  if self.supplyPopup then return self.supplyPopup end
+  local popup = CreateFrame(
+    "Frame", "AzerothExpeditionUISupplyPopup", UIParent
+  )
+  popup:SetFrameStrata("HIGH")
+  popup:SetClampedToScreen(true)
+  popup:EnableMouse(true)
+  popup.buttons = {}
+  for index = 1, self.supplyMaxItems do
+    popup.buttons[index] = CreateSupplyPopupButton(popup, index)
+  end
+  popup.spine = CreateDecorationFrame(popup)
+  EnsureConnector(
+    popup.spine,
+    "aeuiSupplyPopupSpineV1",
+    self.consumableKitTexturePath,
+    consumableKitTexCoords.vertical,
+    "VERTICAL",
+    3
+  )
+  popup.bridge = CreateFrame("Frame", nil, popup)
+  popup.bridge:EnableMouse(true)
+  popup:SetScript("OnEnter", function()
+    ActionBars:CancelSupplyPopupIntent()
+  end)
+  popup:SetScript("OnLeave", function()
+    ActionBars:ScheduleSupplyPopupClose()
+  end)
+  popup.bridge:SetScript("OnEnter", function()
+    ActionBars:CancelSupplyPopupIntent()
+  end)
+  popup.bridge:SetScript("OnLeave", function()
+    ActionBars:ScheduleSupplyPopupClose()
+  end)
+  popup:Hide()
+  self.supplyPopup = popup
+  return popup
+end
+
+function ActionBars:SetSupplyPopupTimer(active)
+  if not active and not self.supplyPopupTimer then return end
+  if not self.supplyPopupTimer then
+    self.supplyPopupTimer = CreateFrame("Frame", nil, UIParent)
+  end
+  self.supplyPopupTimer:SetScript(
+    "OnUpdate",
+    active and function() ActionBars:ProcessSupplyPopupTimer() end or nil
+  )
+end
+
+function ActionBars:ProcessSupplyPopupTimer()
+  local now = GetTime()
+  if self.supplyPopupOpenAt and now >= self.supplyPopupOpenAt then
+    local index = self.supplyPopupPendingIndex
+    self.supplyPopupOpenAt = nil
+    self.supplyPopupPendingIndex = nil
+    self:ShowSupplyPopup(index)
+  end
+  if self.supplyPopupCloseAt and now >= self.supplyPopupCloseAt then
+    self:HideSupplyPopup()
+  end
+  if not self.supplyPopupOpenAt and not self.supplyPopupCloseAt then
+    self:SetSupplyPopupTimer(false)
+  end
+end
+
+function ActionBars:ScheduleSupplyPopup(index)
+  local profile = GetSupplyProfile(false)
+  local group = profile and profile.slots[index]
+  if not group or table.getn(group.items) < 2 then
+    if self.supplyPopupOwnerIndex and
+      self.supplyPopupOwnerIndex ~= index
+    then
+      self:HideSupplyPopup()
+    end
+    return
+  end
+  if self.supplyPopupOwnerIndex == index and self.supplyPopup and
+    self.supplyPopup:IsShown()
+  then
+    self.supplyPopupOpenAt = nil
+    self.supplyPopupPendingIndex = nil
+    return
+  end
+  self.supplyPopupCloseAt = nil
+  self.supplyPopupPendingIndex = index
+  self.supplyPopupOpenAt = GetTime() + self.popupIntentDelay
+  self:SetSupplyPopupTimer(true)
+end
+
+function ActionBars:ScheduleSupplyPopupClose()
+  self.supplyPopupOpenAt = nil
+  self.supplyPopupPendingIndex = nil
+  if self.supplyPopup and self.supplyPopup:IsShown() then
+    self.supplyPopupCloseAt = GetTime() + self.supplyPopupCloseDelay
+    self:SetSupplyPopupTimer(true)
+  else
+    self:SetSupplyPopupTimer(false)
+  end
+end
+
+function ActionBars:CancelSupplyPopupClose()
+  self.supplyPopupCloseAt = nil
+  self:SetSupplyPopupTimer(self.supplyPopupOpenAt ~= nil)
+end
+
+function ActionBars:CancelSupplyPopupIntent()
+  self.supplyPopupOpenAt = nil
+  self.supplyPopupPendingIndex = nil
+  self:CancelSupplyPopupClose()
+end
+
+function ActionBars:HideSupplyPopup()
+  if self.supplyPopup then self.supplyPopup:Hide() end
+  self.supplyPopupOpenAt = nil
+  self.supplyPopupCloseAt = nil
+  self.supplyPopupPendingIndex = nil
+  self.supplyPopupOwnerIndex = nil
+  self.supplyPopupSide = nil
+  self.supplyPopupStatus = "closed"
+  self:SetSupplyPopupTimer(false)
+end
+
+function ActionBars:RefreshSupplyPopup()
+  local popup = self.supplyPopup
+  local profile = GetSupplyProfile(false)
+  local group = profile and profile.slots[self.supplyPopupOwnerIndex]
+  if not popup or not group then return end
+  for index = 1, self.supplyMaxItems do
+    local button = popup.buttons[index]
+    local item = group.items[index]
+    if item then
+      local _, _, texture = GetSupplyItemInfo(item.itemId)
+      local count = SupplyCount(item.itemId)
+      button.supplyItemId = item.itemId
+      button.icon:SetTexture(texture or self.supplyFallbackIcon)
+      button.stock:SetText(count)
+      button.primary:SetText(
+        group.primaryItemId == item.itemId and "主" or ""
+      )
+      button.primary:SetTextColor(1, 0.76, 0.28)
+      if count == 0 then
+        button.icon:SetVertexColor(0.38, 0.28, 0.28, 1)
+        button.stock:SetTextColor(1, 0.28, 0.22)
+      elseif count < item.minimum then
+        button.icon:SetVertexColor(1, 1, 1, 1)
+        button.stock:SetTextColor(1, 0.72, 0.2)
+      else
+        button.icon:SetVertexColor(1, 1, 1, 1)
+        button.stock:SetTextColor(0.45, 1, 0.45)
+      end
+      SetSupplyCooldown(button, item.itemId)
+      button:Show()
+    else
+      button.supplyItemId = nil
+      button:Hide()
+    end
+  end
+end
+
+function ActionBars:ShowSupplyPopup(index)
+  local profile = GetSupplyProfile(false)
+  local group = profile and profile.slots[index]
+  local owner = self.supplyFrame and self.supplyFrame.buttons[index]
+  local count = group and table.getn(group.items) or 0
+  if not owner or count == 0 then return false end
+
+  local popup = self:EnsureSupplyPopup()
+  local rows = math.min(count, self.popupDrawerMaxRows)
+  if count > self.popupDrawerMaxRows then rows = math.ceil(count / 2) end
+  local columns = math.ceil(count / rows)
+  local size = self.supplyButtonSize
+  local gap = self.supplyButtonGap
+  local rootX = self.supplyFrame:GetCenter()
+  local parentX = UIParent:GetCenter()
+  local side = "RIGHT"
+  if FieldKitBound() or
+    (rootX and parentX and rootX >= parentX)
+  then
+    side = "LEFT"
+  end
+
+  popup:SetWidth(columns * size + math.max(0, columns - 1) * gap)
+  popup:SetHeight(rows * size + math.max(0, rows - 1) * gap)
+  popup:ClearAllPoints()
+  if side == "LEFT" then
+    popup:SetPoint(
+      "BOTTOMRIGHT", self.supplyFrame, "BOTTOMLEFT",
+      -self.popupDrawerGap, self.fieldKitShellPadding
+    )
+  else
+    popup:SetPoint(
+      "BOTTOMLEFT", self.supplyFrame, "BOTTOMRIGHT",
+      self.popupDrawerGap, self.fieldKitShellPadding
+    )
+  end
+  for itemIndex = 1, count do
+    local button = popup.buttons[itemIndex]
+    local zero = itemIndex - 1
+    local column = math.floor(zero / rows)
+    local row = math.mod(zero, rows)
+    button:ClearAllPoints()
+    if side == "LEFT" then
+      button:SetPoint(
+        "BOTTOMRIGHT", popup, "BOTTOMRIGHT",
+        -column * (size + gap), row * (size + gap)
+      )
+    else
+      button:SetPoint(
+        "BOTTOMLEFT", popup, "BOTTOMLEFT",
+        column * (size + gap), row * (size + gap)
+      )
+    end
+  end
+
+  local lastNear = popup.buttons[math.min(rows, count)]
+  popup.spine:ClearAllPoints()
+  popup.spine:SetPoint("BOTTOM", popup.buttons[1], "BOTTOM", 0, -3)
+  popup.spine:SetPoint("TOP", lastNear, "TOP", 0, 3)
+  popup.spine:SetWidth(6)
+  popup.bridge:ClearAllPoints()
+  popup.bridge:SetWidth(self.popupDrawerGap)
+  if side == "LEFT" then
+    popup.spine:SetPoint("LEFT", popup, "RIGHT", 0, 0)
+    popup.bridge:SetPoint("TOPLEFT", popup, "TOPRIGHT", 0, 0)
+    popup.bridge:SetPoint("BOTTOMLEFT", popup, "BOTTOMRIGHT", 0, 0)
+  else
+    popup.spine:SetPoint("RIGHT", popup, "LEFT", 0, 0)
+    popup.bridge:SetPoint("TOPRIGHT", popup, "TOPLEFT", 0, 0)
+    popup.bridge:SetPoint("BOTTOMRIGHT", popup, "BOTTOMLEFT", 0, 0)
+  end
+  self.supplyPopupOwnerIndex = index
+  self.supplyPopupSide = side
+  self.supplyPopupOpenAt = nil
+  self.supplyPopupCloseAt = nil
+  self:RefreshSupplyPopup()
+  popup:Show()
+  popup.spine:Show()
+  popup.bridge:Show()
+  self.supplyPopupStatus =
+    "open-" .. string.lower(side) .. "-" .. columns .. "x" .. rows
+  self:SetSupplyPopupTimer(false)
+  return true
 end
 
 function ActionBars:EnsureSupplyFrame()
@@ -4605,38 +5045,58 @@ function ActionBars:RefreshSupplyButtons()
   local profile = GetSupplyProfile(false)
   if not root or not profile then return end
 
-  local zero = 0
+  local missingTotal = 0
+  local lowTotal = 0
+  local itemTotal = 0
   for index = 1, table.getn(profile.slots) do
-    local entry = profile.slots[index]
+    local group = profile.slots[index]
+    local item = GetSupplyPrimary(group)
     local button = root.buttons[index]
-    local _, _, texture = GetSupplyItemInfo(entry.itemId)
-    local count = SupplyCount(entry.itemId)
+    local _, _, texture = GetSupplyItemInfo(item.itemId)
+    local count = SupplyCount(item.itemId)
+    local missing = 0
+    local low = 0
+    for itemIndex = 1, table.getn(group.items) do
+      local member = group.items[itemIndex]
+      local memberCount = SupplyCount(member.itemId)
+      itemTotal = itemTotal + 1
+      if memberCount == 0 then
+        missing = missing + 1
+        missingTotal = missingTotal + 1
+      elseif memberCount < member.minimum then
+        low = low + 1
+        lowTotal = lowTotal + 1
+      end
+    end
     button.icon:SetTexture(texture or self.supplyFallbackIcon)
     button.stock:SetText(count)
     if count == 0 then
-      zero = zero + 1
       button.icon:SetVertexColor(0.38, 0.28, 0.28, 1)
       button.stock:SetTextColor(1, 0.28, 0.22)
+    elseif count < item.minimum then
+      button.icon:SetVertexColor(1, 1, 1, 1)
+      button.stock:SetTextColor(1, 0.72, 0.2)
     else
       button.icon:SetVertexColor(1, 1, 1, 1)
       button.stock:SetTextColor(0.45, 1, 0.45)
     end
-    local location = self.supplyLocations and
-      self.supplyLocations[entry.itemId]
-    if location and type(GetContainerItemCooldown) == "function" and
-      type(CooldownFrame_SetTimer) == "function"
-    then
-      local start, duration, enabled = GetContainerItemCooldown(
-        location.bag, location.slot
-      )
-      CooldownFrame_SetTimer(
-        button.cooldown, start or 0, duration or 0, enabled or 0
-      )
-    elseif type(CooldownFrame_SetTimer) == "function" then
-      CooldownFrame_SetTimer(button.cooldown, 0, 0, 0)
+    if missing > 0 then
+      button.alert:SetText(missing)
+      button.alert:SetTextColor(1, 0.2, 0.16)
+    elseif low > 0 then
+      button.alert:SetText(low)
+      button.alert:SetTextColor(1, 0.68, 0.18)
+    else
+      button.alert:SetText("")
     end
+    SetSupplyCooldown(button, item.itemId)
   end
-  self.supplyZero = zero
+  self.supplyItems = itemTotal
+  self.supplyZero = missingTotal
+  self.supplyLow = lowTotal
+  if self.supplyPopup and self.supplyPopup:IsShown() then
+    self:RefreshSupplyPopup()
+  end
 end
 
 function ActionBars:ScanSupplyInventory()
@@ -4644,7 +5104,10 @@ function ActionBars:ScanSupplyInventory()
   local wanted = {}
   if profile then
     for index = 1, table.getn(profile.slots) do
-      wanted[profile.slots[index].itemId] = true
+      local items = profile.slots[index].items
+      for itemIndex = 1, table.getn(items) do
+        wanted[items[itemIndex].itemId] = true
+      end
     end
   end
 
@@ -4740,7 +5203,13 @@ function ActionBars:ApplySupplyKit(enabled)
   local root = self.supplyFrame
   if not active then
     if root then root:Hide() end
+    self:HideSupplyPopup()
     self.supplyConfigured = configured
+    if configured == 0 then
+      self.supplyItems = 0
+      self.supplyZero = 0
+      self.supplyLow = 0
+    end
     self.supplyStatus = enabled and
       (database and database.suppliesEnabled == false and
         "disabled" or "empty") or "route-disabled"
@@ -4775,21 +5244,36 @@ function ActionBars:SetSupplySlot(index, itemId)
     math.floor(tonumber(index) or (table.getn(slots) + 1)),
     table.getn(slots) + 1
   ))
-  for existing = 1, table.getn(slots) do
-    if slots[existing].itemId == itemId and existing ~= index then
-      self.selectedSupplySlot = existing
-      self:RefreshSupplyRoute()
-      self:RefreshSupplyManager(true)
-      return true, "这个物品已存在。"
-    end
+  local existingGroup, existingItem = FindSupplyItem(profile, itemId)
+  if existingGroup then
+    self.selectedSupplySlot = existingGroup
+    self.selectedSupplyMember = existingItem
+    self:RefreshSupplyManager(true)
+    return true, "这个物品已在补给组中。"
   end
-  slots[index] = {
-    itemId = itemId,
-  }
+  local group = slots[index]
+  if group and table.getn(group.items) >= self.supplyMaxItems then
+    return false, "每个补给组最多 12 个物品。"
+  end
+  if not group then
+    if table.getn(slots) >= self.supplyMaxSlots then
+      return false, "补给栏最多 24 个组。"
+    end
+    group = {
+      primaryItemId = itemId,
+      items = {},
+    }
+    table.insert(slots, group)
+    index = table.getn(slots)
+  end
+  table.insert(group.items, { itemId = itemId, minimum = 1 })
   self.selectedSupplySlot = index
+  self.selectedSupplyMember = table.getn(group.items)
+  self:HideSupplyPopup()
   self:RefreshSupplyRoute()
   self:RefreshSupplyManager(true)
-  return true, "已从背包添加补给物品。"
+  return true, table.getn(group.items) == 1 and
+    "已创建补给组。" or "已加入当前补给组。"
 end
 
 function ActionBars:RemoveSupplySlot(index)
@@ -4803,9 +5287,11 @@ function ActionBars:RemoveSupplySlot(index)
   self.selectedSupplySlot = math.max(
     1, math.min(index, table.getn(profile.slots) + 1)
   )
+  self.selectedSupplyMember = 1
+  self:HideSupplyPopup()
   self:RefreshSupplyRoute()
   self:RefreshSupplyManager(true)
-  return true, "已移除补给物品。"
+  return true, "已移除补给组。"
 end
 
 function ActionBars:MoveSupplySlot(index, delta)
@@ -4821,9 +5307,99 @@ function ActionBars:MoveSupplySlot(index, delta)
   profile.slots[index], profile.slots[destination] =
     profile.slots[destination], profile.slots[index]
   self.selectedSupplySlot = destination
+  self:HideSupplyPopup()
   self:RefreshSupplyRoute()
   self:RefreshSupplyManager(true)
   return true, "补给顺序已调整。"
+end
+
+function ActionBars:SetSupplyGroupName(index, name)
+  local profile = GetSupplyProfile(false)
+  local group = profile and profile.slots[index]
+  if not group then return false, "这个补给组不存在。" end
+  group.name = NormalizeSupplyName(name)
+  self:RefreshSupplyManager(true)
+  return true, "补给组名称已保存。"
+end
+
+function ActionBars:SetSupplyPrimary(index, itemId)
+  local profile = GetSupplyProfile(false)
+  local group = profile and profile.slots[index]
+  local _, itemIndex = GetSupplyPrimary(group)
+  if group then
+    for candidate = 1, table.getn(group.items) do
+      if group.items[candidate].itemId == itemId then
+        itemIndex = candidate
+        break
+      end
+    end
+  end
+  local item = group and group.items[itemIndex]
+  if not item or item.itemId ~= itemId then
+    return false, "这个物品不在当前补给组。"
+  end
+  group.primaryItemId = itemId
+  self.selectedSupplySlot = index
+  self.selectedSupplyMember = itemIndex
+  self:RefreshSupplyButtons()
+  self:RefreshSupplyManager(true)
+  return true, "已设为主格物品。"
+end
+
+function ActionBars:SetSupplyMinimum(index, itemIndex, minimum)
+  local profile = GetSupplyProfile(false)
+  local group = profile and profile.slots[index]
+  local item = group and group.items[itemIndex]
+  if not item then return false, "这个组内物品不存在。" end
+  item.minimum = NormalizeSupplyMinimum(minimum)
+  self:RefreshSupplyButtons()
+  self:RefreshSupplyManager(true)
+  return true, "低库存阈值已保存。"
+end
+
+function ActionBars:RemoveSupplyItem(index, itemIndex)
+  local profile = GetSupplyProfile(false)
+  local group = profile and profile.slots[index]
+  local item = group and group.items[itemIndex]
+  if not item then return false, "这个组内物品不存在。" end
+  table.remove(group.items, itemIndex)
+  if table.getn(group.items) == 0 then
+    table.remove(profile.slots, index)
+    self.selectedSupplySlot = math.max(
+      1, math.min(index, table.getn(profile.slots) + 1)
+    )
+    self.selectedSupplyMember = 1
+  else
+    if group.primaryItemId == item.itemId then
+      group.primaryItemId = group.items[1].itemId
+    end
+    self.selectedSupplyMember = math.max(
+      1, math.min(itemIndex, table.getn(group.items))
+    )
+  end
+  self:HideSupplyPopup()
+  self:RefreshSupplyRoute()
+  self:RefreshSupplyManager(true)
+  return true, "已移除组内物品。"
+end
+
+function ActionBars:MoveSupplyItem(index, itemIndex, delta)
+  local profile = GetSupplyProfile(false)
+  local group = profile and profile.slots[index]
+  itemIndex = math.floor(tonumber(itemIndex) or 0)
+  delta = delta < 0 and -1 or 1
+  local destination = itemIndex + delta
+  if not group or not group.items[itemIndex] or
+    not group.items[destination]
+  then
+    return false, "已经到达这一端。"
+  end
+  group.items[itemIndex], group.items[destination] =
+    group.items[destination], group.items[itemIndex]
+  self.selectedSupplyMember = destination
+  self:HideSupplyPopup()
+  self:RefreshSupplyManager(true)
+  return true, "组内顺序已调整。"
 end
 
 function ActionBars:SetSuppliesEnabled(enabled)
@@ -4934,13 +5510,89 @@ local function CreateSupplyManagerCell(parent, index)
   return cell
 end
 
+local function CreateSupplyManagerMemberCell(parent, index)
+  local cell = CreateFrame("Button", nil, parent)
+  cell:SetWidth(38)
+  cell:SetHeight(38)
+  cell.memberIndex = index
+  cell:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+  cell:RegisterForDrag("LeftButton")
+  cell:SetBackdrop({
+    edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+    edgeSize = 10,
+  })
+  ApplyPocket(
+    cell,
+    "aeuiSupplyManagerMemberPocketV1",
+    ActionBars.consumableKitTexturePath,
+    consumableKitTexCoords.B,
+    consumableKitSpriteSizes.B,
+    true,
+    ActionBars.fieldKitPocketPadding
+  )
+  cell.icon = cell:CreateTexture(nil, "ARTWORK")
+  cell.icon:SetPoint("TOPLEFT", cell, "TOPLEFT", 5, -5)
+  cell.icon:SetPoint("BOTTOMRIGHT", cell, "BOTTOMRIGHT", -5, 5)
+  cell.primary = cell:CreateFontString(
+    nil, "OVERLAY", "GameFontNormalSmall"
+  )
+  cell.primary:SetPoint("TOPLEFT", cell, "TOPLEFT", 3, -2)
+  cell.stock = cell:CreateFontString(
+    nil, "OVERLAY", "GameFontNormalSmall"
+  )
+  cell.stock:SetPoint("BOTTOMRIGHT", cell, "BOTTOMRIGHT", -3, 3)
+  cell.plus = cell:CreateFontString(
+    nil, "OVERLAY", "GameFontNormalLarge"
+  )
+  cell.plus:SetPoint("CENTER", cell, "CENTER", 0, 0)
+  cell:SetScript("OnClick", function()
+    if CursorHasItem() then
+      ActionBars:AssignSupplyFromCursor(ActionBars.selectedSupplySlot)
+      return
+    end
+    local profile = GetSupplyProfile(false)
+    local group = profile and
+      profile.slots[ActionBars.selectedSupplySlot]
+    local item = group and group.items[cell.memberIndex]
+    if not item then return end
+    ActionBars:SelectSupplyMember(cell.memberIndex)
+    if arg1 == "RightButton" and item then
+      local ok, message = ActionBars:SetSupplyPrimary(
+        ActionBars.selectedSupplySlot, item.itemId
+      )
+      ActionBars:SetSupplyManagerStatus(message, not ok)
+    end
+  end)
+  cell:SetScript("OnReceiveDrag", function()
+    ActionBars:AssignSupplyFromCursor(ActionBars.selectedSupplySlot)
+  end)
+  cell:SetScript("OnEnter", function()
+    local profile = GetSupplyProfile(false)
+    local group = profile and
+      profile.slots[ActionBars.selectedSupplySlot]
+    local item = group and group.items[cell.memberIndex]
+    if item then
+      ActionBars:ShowSupplyItemTooltip(cell, item.itemId)
+    elseif GameTooltip then
+      GameTooltip:SetOwner(cell, "ANCHOR_RIGHT")
+      GameTooltip:SetText("空组内槽")
+      GameTooltip:AddLine("从背包拖入物品，加入当前补给组。")
+      GameTooltip:Show()
+    end
+  end)
+  cell:SetScript("OnLeave", function()
+    if GameTooltip then GameTooltip:Hide() end
+  end)
+  return cell
+end
+
 function ActionBars:EnsureSupplyManager()
   if self.supplyManager then return self.supplyManager end
   local frame = CreateFrame(
     "Frame", "AzerothExpeditionUISupplyManager", UIParent
   )
-  frame:SetWidth(520)
-  frame:SetHeight(350)
+  frame:SetWidth(540)
+  frame:SetHeight(420)
   frame:SetPoint("CENTER", UIParent, "CENTER", 0, 40)
   frame:SetFrameStrata("DIALOG")
   frame:SetMovable(true)
@@ -4981,7 +5633,7 @@ function ActionBars:EnsureSupplyManager()
     nil, "OVERLAY", "GameFontHighlightSmall"
   )
   help:SetPoint("TOPLEFT", frame, "TOPLEFT", 216, -42)
-  help:SetText("从背包拖到左侧槽位；库存为 0 时仍保留")
+  help:SetText("拖入创建／加入组；组内右键设主；阈值回车保存")
 
   local close = CreateFrame(
     "Button", nil, frame, "UIPanelCloseButton"
@@ -5004,26 +5656,151 @@ function ActionBars:EnsureSupplyManager()
     nil, "OVERLAY", "GameFontNormal"
   )
   frame.selected:SetPoint("TOPLEFT", frame, "TOPLEFT", 216, -74)
-  frame.selected:SetWidth(278)
+  frame.selected:SetWidth(304)
   frame.selected:SetJustifyH("LEFT")
 
-  frame.delete = CreateSupplyManagerButton(frame, "移除", 74)
-  frame.delete:SetPoint("TOPLEFT", frame, "TOPLEFT", 218, -120)
-  frame.up = CreateSupplyManagerButton(frame, "前移", 74)
-  frame.up:SetPoint("TOPLEFT", frame, "TOPLEFT", 218, -160)
-  frame.down = CreateSupplyManagerButton(frame, "后移", 74)
+  frame.nameLabel = frame:CreateFontString(
+    nil, "OVERLAY", "GameFontNormalSmall"
+  )
+  frame.nameLabel:SetPoint("TOPLEFT", frame, "TOPLEFT", 216, -96)
+  frame.nameLabel:SetText("组名")
+  frame.nameEdit = CreateFrame(
+    "EditBox", nil, frame, "InputBoxTemplate"
+  )
+  frame.nameEdit:SetWidth(160)
+  frame.nameEdit:SetHeight(22)
+  frame.nameEdit:SetPoint("TOPLEFT", frame, "TOPLEFT", 258, -87)
+  frame.nameEdit:SetAutoFocus(false)
+  frame.nameEdit:SetMaxLetters(24)
+  frame.nameSave = CreateSupplyManagerButton(frame, "保存组名", 80)
+  frame.nameSave:SetPoint("TOPLEFT", frame, "TOPLEFT", 432, -87)
+
+  frame.membersLabel = frame:CreateFontString(
+    nil, "OVERLAY", "GameFontNormalSmall"
+  )
+  frame.membersLabel:SetPoint("TOPLEFT", frame, "TOPLEFT", 216, -124)
+  frame.membersLabel:SetText("组内物品（稳定顺序）")
+  frame.memberCells = {}
+  for index = 1, self.supplyMaxItems do
+    local cell = CreateSupplyManagerMemberCell(frame, index)
+    local column = math.mod(index - 1, 6)
+    local row = math.floor((index - 1) / 6)
+    cell:SetPoint(
+      "TOPLEFT", frame, "TOPLEFT",
+      218 + column * 44, -140 - row * 44
+    )
+    frame.memberCells[index] = cell
+  end
+
+  frame.memberSelected = frame:CreateFontString(
+    nil, "OVERLAY", "GameFontNormalSmall"
+  )
+  frame.memberSelected:SetPoint("TOPLEFT", frame, "TOPLEFT", 216, -230)
+  frame.memberSelected:SetWidth(304)
+  frame.memberSelected:SetJustifyH("LEFT")
+
+  frame.minimumLabel = frame:CreateFontString(
+    nil, "OVERLAY", "GameFontNormalSmall"
+  )
+  frame.minimumLabel:SetPoint("TOPLEFT", frame, "TOPLEFT", 216, -258)
+  frame.minimumLabel:SetText("低于")
+  frame.minimumEdit = CreateFrame(
+    "EditBox", nil, frame, "InputBoxTemplate"
+  )
+  frame.minimumEdit:SetWidth(42)
+  frame.minimumEdit:SetHeight(22)
+  frame.minimumEdit:SetPoint("TOPLEFT", frame, "TOPLEFT", 252, -249)
+  frame.minimumEdit:SetAutoFocus(false)
+  frame.minimumEdit:SetMaxLetters(3)
+  if frame.minimumEdit.SetNumeric then
+    frame.minimumEdit:SetNumeric(true)
+  end
+  frame.primary = CreateSupplyManagerButton(frame, "设为主格", 80)
+  frame.primary:SetPoint("TOPLEFT", frame, "TOPLEFT", 310, -249)
+  frame.removeItem = CreateSupplyManagerButton(frame, "移除物品", 80)
+  frame.removeItem:SetPoint("TOPLEFT", frame, "TOPLEFT", 398, -249)
+  frame.itemUp = CreateSupplyManagerButton(frame, "物品前移", 80)
+  frame.itemUp:SetPoint("TOPLEFT", frame, "TOPLEFT", 216, -282)
+  frame.itemDown = CreateSupplyManagerButton(frame, "物品后移", 80)
+  frame.itemDown:SetPoint("LEFT", frame.itemUp, "RIGHT", 6, 0)
+
+  frame.delete = CreateSupplyManagerButton(frame, "删除组", 74)
+  frame.delete:SetPoint("TOPLEFT", frame, "TOPLEFT", 216, -320)
+  frame.up = CreateSupplyManagerButton(frame, "组前移", 74)
+  frame.up:SetPoint("LEFT", frame.delete, "RIGHT", 6, 0)
+  frame.down = CreateSupplyManagerButton(frame, "组后移", 74)
   frame.down:SetPoint("LEFT", frame.up, "RIGHT", 6, 0)
   frame.toggle = CreateSupplyManagerButton(frame, "停用补给栏", 112)
-  frame.toggle:SetPoint("LEFT", frame.down, "RIGHT", 6, 0)
+  frame.toggle:SetPoint("TOPLEFT", frame, "TOPLEFT", 216, -352)
 
   frame.status = frame:CreateFontString(
     nil, "OVERLAY", "GameFontNormalSmall"
   )
-  frame.status:SetPoint("TOPLEFT", frame, "TOPLEFT", 218, -205)
-  frame.status:SetWidth(274)
+  frame.status:SetPoint("TOPLEFT", frame, "TOPLEFT", 216, -386)
+  frame.status:SetWidth(304)
   frame.status:SetJustifyH("LEFT")
   frame.status:SetTextColor(0.9, 0.78, 0.5)
-  frame.status:SetText("把背包物品拖到左侧槽位。")
+  frame.status:SetText("主格左键使用；悬停或右键展开候选。")
+  local function SaveGroupName()
+    local ok, message = ActionBars:SetSupplyGroupName(
+      ActionBars.selectedSupplySlot, frame.nameEdit:GetText()
+    )
+    frame.nameEdit:ClearFocus()
+    ActionBars:SetSupplyManagerStatus(message, not ok)
+  end
+  local function SaveMinimum()
+    local ok, message = ActionBars:SetSupplyMinimum(
+      ActionBars.selectedSupplySlot,
+      ActionBars.selectedSupplyMember,
+      frame.minimumEdit:GetText()
+    )
+    frame.minimumEdit:ClearFocus()
+    ActionBars:SetSupplyManagerStatus(message, not ok)
+  end
+  frame.nameSave:SetScript("OnClick", SaveGroupName)
+  frame.nameEdit:SetScript("OnEnterPressed", SaveGroupName)
+  frame.nameEdit:SetScript("OnEscapePressed", function()
+    frame.nameEdit:ClearFocus()
+    ActionBars:RefreshSupplyManager(true)
+  end)
+  frame.minimumEdit:SetScript("OnEnterPressed", SaveMinimum)
+  frame.minimumEdit:SetScript("OnEscapePressed", function()
+    frame.minimumEdit:ClearFocus()
+    ActionBars:RefreshSupplyManager(true)
+  end)
+  frame.primary:SetScript("OnClick", function()
+    local profile = GetSupplyProfile(false)
+    local group = profile and
+      profile.slots[ActionBars.selectedSupplySlot]
+    local item = group and
+      group.items[ActionBars.selectedSupplyMember]
+    local ok, message = ActionBars:SetSupplyPrimary(
+      ActionBars.selectedSupplySlot, item and item.itemId
+    )
+    ActionBars:SetSupplyManagerStatus(message, not ok)
+  end)
+  frame.removeItem:SetScript("OnClick", function()
+    local ok, message = ActionBars:RemoveSupplyItem(
+      ActionBars.selectedSupplySlot, ActionBars.selectedSupplyMember
+    )
+    ActionBars:SetSupplyManagerStatus(message, not ok)
+  end)
+  frame.itemUp:SetScript("OnClick", function()
+    local ok, message = ActionBars:MoveSupplyItem(
+      ActionBars.selectedSupplySlot,
+      ActionBars.selectedSupplyMember,
+      -1
+    )
+    ActionBars:SetSupplyManagerStatus(message, not ok)
+  end)
+  frame.itemDown:SetScript("OnClick", function()
+    local ok, message = ActionBars:MoveSupplyItem(
+      ActionBars.selectedSupplySlot,
+      ActionBars.selectedSupplyMember,
+      1
+    )
+    ActionBars:SetSupplyManagerStatus(message, not ok)
+  end)
   frame.delete:SetScript("OnClick", function()
     local ok, message = ActionBars:RemoveSupplySlot(
       ActionBars.selectedSupplySlot
@@ -5071,11 +5848,12 @@ function ActionBars:RefreshSupplyManager(refreshSelection)
 
   for index = 1, self.supplyMaxSlots do
     local cell = frame.cells[index]
-    local entry = profile.slots[index]
+    local group = profile.slots[index]
     cell.slot:SetText(index)
-    if entry then
-      local _, _, texture = GetSupplyItemInfo(entry.itemId)
-      local stock = SupplyCount(entry.itemId)
+    if group then
+      local item = GetSupplyPrimary(group)
+      local _, _, texture = GetSupplyItemInfo(item.itemId)
+      local stock = SupplyCount(item.itemId)
       cell.icon:SetTexture(texture or self.supplyFallbackIcon)
       cell.icon:Show()
       cell.plus:SetText("")
@@ -5083,6 +5861,9 @@ function ActionBars:RefreshSupplyManager(refreshSelection)
       if stock == 0 then
         cell.icon:SetVertexColor(0.38, 0.28, 0.28, 1)
         cell.stock:SetTextColor(1, 0.28, 0.22)
+      elseif stock < item.minimum then
+        cell.icon:SetVertexColor(1, 1, 1, 1)
+        cell.stock:SetTextColor(1, 0.72, 0.2)
       else
         cell.icon:SetVertexColor(1, 1, 1, 1)
         cell.stock:SetTextColor(0.45, 1, 0.45)
@@ -5104,19 +5885,100 @@ function ActionBars:RefreshSupplyManager(refreshSelection)
     database and database.suppliesEnabled == false and
       "启用补给栏" or "停用补给栏"
   )
-  if not refreshSelection then return end
-
-  local entry = profile.slots[self.selectedSupplySlot]
-  if entry then
-    local name = GetSupplyItemInfo(entry.itemId)
-    frame.selected:SetText(
-      "槽 " .. self.selectedSupplySlot .. " · " ..
-      tostring(name or ("物品 #" .. entry.itemId))
+  local group = profile.slots[self.selectedSupplySlot]
+  local memberCount = group and table.getn(group.items) or 0
+  self.selectedSupplyMember = math.max(1, math.min(
+    tonumber(self.selectedSupplyMember) or 1,
+    math.max(1, memberCount)
+  ))
+  for index = 1, self.supplyMaxItems do
+    local cell = frame.memberCells[index]
+    local item = group and group.items[index]
+    if item then
+      local _, _, texture = GetSupplyItemInfo(item.itemId)
+      local stock = SupplyCount(item.itemId)
+      cell.icon:SetTexture(texture or self.supplyFallbackIcon)
+      cell.icon:Show()
+      cell.plus:SetText("")
+      cell.primary:SetText(
+        group.primaryItemId == item.itemId and "主" or ""
+      )
+      cell.primary:SetTextColor(1, 0.76, 0.28)
+      cell.stock:SetText(stock)
+      if stock == 0 then
+        cell.icon:SetVertexColor(0.38, 0.28, 0.28, 1)
+        cell.stock:SetTextColor(1, 0.28, 0.22)
+      elseif stock < item.minimum then
+        cell.icon:SetVertexColor(1, 1, 1, 1)
+        cell.stock:SetTextColor(1, 0.72, 0.2)
+      else
+        cell.icon:SetVertexColor(1, 1, 1, 1)
+        cell.stock:SetTextColor(0.45, 1, 0.45)
+      end
+    else
+      cell.icon:Hide()
+      cell.stock:SetText("")
+      cell.primary:SetText("")
+      cell.plus:SetText(index == memberCount + 1 and "+" or "")
+    end
+    if group and index == self.selectedSupplyMember then
+      cell:SetBackdropBorderColor(1, 0.72, 0.25, 1)
+    else
+      cell:SetBackdropBorderColor(0.28, 0.22, 0.16, 0.65)
+    end
+  end
+  local selectedItem = group and group.items[self.selectedSupplyMember]
+  if selectedItem then
+    local name = GetSupplyItemInfo(selectedItem.itemId)
+    frame.memberSelected:SetText(
+      tostring(name or ("物品 #" .. selectedItem.itemId)) ..
+      " · 库存 " .. SupplyCount(selectedItem.itemId) ..
+      " · 低于 " .. selectedItem.minimum .. " 提醒"
     )
   else
+    frame.memberSelected:SetText("从背包拖入物品，加入当前组。")
+  end
+  if not refreshSelection then return end
+
+  if group then
     frame.selected:SetText(
-      "槽 " .. self.selectedSupplySlot .. " · 从背包拖入"
+      "组 " .. self.selectedSupplySlot .. " · " ..
+      GetSupplyGroupName(group, self.selectedSupplySlot) ..
+      " · " .. memberCount .. " 项"
     )
+    frame.nameEdit:SetText(group.name or "")
+    frame.nameEdit:Enable()
+    frame.nameSave:Enable()
+    frame.delete:Enable()
+    frame.up:Enable()
+    frame.down:Enable()
+  else
+    frame.selected:SetText(
+      "组 " .. self.selectedSupplySlot .. " · 从背包拖入以创建"
+    )
+    frame.nameEdit:SetText("")
+    frame.nameEdit:Disable()
+    frame.nameSave:Disable()
+    frame.delete:Disable()
+    frame.up:Disable()
+    frame.down:Disable()
+  end
+
+  local item = selectedItem
+  if item then
+    frame.minimumEdit:SetText(item.minimum)
+    frame.minimumEdit:Enable()
+    frame.primary:Enable()
+    frame.removeItem:Enable()
+    frame.itemUp:Enable()
+    frame.itemDown:Enable()
+  else
+    frame.minimumEdit:SetText("")
+    frame.minimumEdit:Disable()
+    frame.primary:Disable()
+    frame.removeItem:Disable()
+    frame.itemUp:Disable()
+    frame.itemDown:Disable()
   end
 end
 
@@ -5126,6 +5988,18 @@ function ActionBars:SelectSupplySlot(index)
   self.selectedSupplySlot = math.max(1, math.min(
     math.floor(tonumber(index) or 1),
     table.getn(profile.slots) + 1
+  ))
+  self.selectedSupplyMember = 1
+  self:RefreshSupplyManager(true)
+  return true
+end
+
+function ActionBars:SelectSupplyMember(index)
+  local profile = GetSupplyProfile(true)
+  local group = profile and profile.slots[self.selectedSupplySlot]
+  if not group then return false end
+  self.selectedSupplyMember = math.max(1, math.min(
+    math.floor(tonumber(index) or 1), table.getn(group.items)
   ))
   self:RefreshSupplyManager(true)
   return true
@@ -5157,7 +6031,16 @@ function ActionBars:RunSupplySelfCheck()
     slots = {
       [2] = { itemId = "item:13446:0:0:0", target = "5" },
       [4] = { itemId = 0, target = 99 },
-      [7] = { itemId = "200", target = 0 },
+      [7] = {
+        name = " 抗性药水 ",
+        activeItemId = 201,
+        items = {
+          { itemId = "200", minimum = 5 },
+          { itemId = "201", minimum = 0 },
+          { itemId = "13446", minimum = 9 },
+        },
+      },
+      [9] = { itemId = "200" },
     },
   }
   local slots = NormalizeSupplySlots(profile)
@@ -5168,12 +6051,20 @@ function ActionBars:RunSupplySelfCheck()
       "|Hitem:20452:0:0:0|h[沙漠肉丸子]|h"
     )
   local ok = table.getn(slots) == 2 and
-    slots[1].itemId == 13446 and slots[1].target == nil and
-    slots[2].itemId == 200 and slots[2].target == nil and
+    slots[1].primaryItemId == 13446 and
+    table.getn(slots[1].items) == 1 and
+    slots[1].items[1].minimum == 1 and
+    slots[2].name == "抗性药水" and
+    slots[2].primaryItemId == 201 and
+    table.getn(slots[2].items) == 2 and
+    slots[2].items[1].itemId == 200 and
+    slots[2].items[1].minimum == 5 and
+    slots[2].items[2].itemId == 201 and
+    slots[2].items[2].minimum == 1 and
     dragged == 20452 and rejectsManual
   return ok, ok and
     "补给栏 self-check 通过。" or
-    "补给栏 self-check 失败：背包拖入／槽位归一化异常。"
+    "补给栏 self-check 失败：分组迁移／去重／拖入边界异常。"
 end
 
 local function GetAutoBarLayoutProfile()
@@ -7360,8 +8251,12 @@ function ActionBars:Initialize()
   self.supplyStatus = "pending"
   self.supplyDockStatus = "pending"
   self.supplyConfigured = 0
+  self.supplyItems = 0
   self.supplyZero = 0
+  self.supplyLow = 0
+  self.supplyPopupStatus = "closed"
   self.selectedSupplySlot = 1
+  self.selectedSupplyMember = 1
   self.supplyCounts = {}
   self.supplyLocations = {}
   self.actionBarStackStatus = "pending"
@@ -7669,7 +8564,11 @@ function ActionBars:GetRuntimeStatus()
     ",supplies-profile=" ..
       tostring(supplyProfileKey or "unavailable") ..
     ",supplies-configured=" .. tostring(self.supplyConfigured or 0) ..
+    ",supplies-items=" .. tostring(self.supplyItems or 0) ..
     ",supplies-zero=" .. tostring(self.supplyZero or 0) ..
+    ",supplies-low=" .. tostring(self.supplyLow or 0) ..
+    ",supplies-popup=" ..
+      tostring(self.supplyPopupStatus or "closed") ..
     ",supplies-dock=" ..
       tostring(self.supplyDockStatus or "pending") ..
     ",consumable-dock=" ..

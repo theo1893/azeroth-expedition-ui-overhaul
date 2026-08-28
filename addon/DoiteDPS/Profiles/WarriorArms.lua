@@ -1,10 +1,9 @@
 -- ============================================================================
 -- DoiteDPS - two-handed deep Arms Warrior
 --
--- One single-target and one AoE rotation share the same Berserker-home engine.
--- Instant attacks lead only when Slam still fits afterward; Slam is used at most once
--- and may delay the next white hit by the configured limit. During Execute, efficient
--- core attacks spend first only when Execute can still land before that hit.
+-- 单体与 AOE 循环共用同一套常驻狂暴姿态逻辑。
+-- 只有瞬发后仍能接猛击时才优先瞬发；每个白字周期最多使用一次猛击，允许卡条
+-- 不超过配置上限。斩杀阶段只有在下一刀前仍能完成斩杀时，才允许核心技能先消耗怒气。
 -- ============================================================================
 
 local D = DoiteDPS
@@ -44,7 +43,7 @@ P.EntryPoints = {
 P.ModeNotes = {
     single = zh
         and "常驻狂暴姿态；普通阶段瞬发后仍能接猛击才优先致死/旋风；斩杀阶段高怒改为瞬发后直接斩杀。"
-        or "Berserker home; outside Execute, instants lead only when Slam still fits; at high rage, Execute follows the instant directly.",
+        or "Defaults to Berserker Stance; outside Execute, instants lead only when Slam still fits; at high rage, Execute follows the instant directly.",
     aoe = zh
         and "横扫后回狂暴姿态；旋风、致死、安全猛击优先，顺劈预留核心怒气，斩杀补空档。"
         or "Sweeping into Berserker; Whirlwind, Mortal Strike and safe Slam lead, with reserved Cleave dumps.",
@@ -213,6 +212,8 @@ local R = {
     FORECAST = zh and "预计可用" or "Expected ready",
 }
 
+-- _rec/_forecast 是 Core 复用的输出记录。其余表仅保存本 Profile 的运行时状态：
+-- 候选暂存、预测冷却截止时间、时间线周期标识，以及 API 是否已确认该次冷却。
 P._rec = D.Recommendation
 P._forecast = D.Forecasts
 P._candidates = {}
@@ -341,7 +342,7 @@ local function CooldownRemaining(state, key)
     local apiRemaining = entry and tonumber(entry.remaining) or nil
     local apiDuration = entry and tonumber(entry.duration) or nil
     if apiRemaining == nil then
-        apiRemaining, apiDuration = D:GetRealCooldown(key, now)
+        apiRemaining, apiDuration = D:GetNonGCDCooldown(key, now)
     end
     apiRemaining = tonumber(apiRemaining) or 0
     apiDuration = tonumber(apiDuration) or 0
@@ -454,12 +455,13 @@ local function EstimateNextWhiteRage(unbridledWrathRank)
 end
 
 function P:ResetRuntime()
+    -- 这些锁存状态只属于当前角色会话，切换角色或 Profile 后不得保留。
     self._cooldownUntil = {}
     self._cooldownCycle = {}
     self._apiCooldownActive = {}
     self._lastSwingProgress = nil
     self._slamUsedInCycle = false
-    self._returnHomeAfterOverpower = false
+    self._returnToBerserkerAfterOverpower = false
     self._pendingSunderUntil = nil
     self._unbridledWrathRank = nil
 end
@@ -523,14 +525,16 @@ function P:OnEvent(eventName, a1, a2)
         if SpellEventMatches(key, spellId) then
             RecordPredictedCooldown(key)
             if key == "OVERPOWER" then
-                self._returnHomeAfterOverpower = true
+                self._returnToBerserkerAfterOverpower = true
             end
             return
         end
     end
 end
 
+-- 向 Core.State 补充武器战优先级函数需要的字段。
 function P:BuildState(state)
+    -- 资源与配置输入。
     state.resourceType = "rage"
     state.timingType = "swing"
     state.rage = D:GetRage()
@@ -540,6 +544,7 @@ function P:BuildState(state)
     state.profileDB = D:GetProfileDB(self.key)
     state.rotationDB = self:GetRotationDB(state.mode)
     state.tier3TwoPiece = D.DB and D.DB.tier3TwoPiece == true
+    -- 光环与触发状态输入。
     state.battleShout, state.battleShoutRemaining =
         D:GetPlayerBuffState("BATTLE_SHOUT")
     state.sweepingStrikes, state.sweepingRemaining, state.sweepingStacks =
@@ -552,6 +557,7 @@ function P:BuildState(state)
     state.sunderRemaining = D:GetTargetDebuffRemaining(
         D:GetName("SUNDER_ARMOR")
     )
+    -- 白字时序与下一刀预期怒气共同决定猛击和下一刀排队技能。
     state.swing = D:GetSwingState(state.swing)
     self:ObserveSwingCycle(state.swing)
     state.unbridledWrathRank = self:GetUnbridledWrathRank()
@@ -559,6 +565,7 @@ function P:BuildState(state)
         state.unbridledWrathRank
     )
 
+    -- 使用已学会的近战技能作为权威距离探针。
     local meleeKey = D:IsKnown("MORTAL_STRIKE") and "MORTAL_STRIKE"
         or (D:IsKnown("SLAM") and "SLAM" or nil)
     local inMelee = D:IsMeleeRange("target", meleeKey)
@@ -576,6 +583,7 @@ function P:DecorateCooldown(key, entry, state)
     end
 end
 
+-- 当前／前置动作锁结束后，若一次猛击能在允许的白字卡条范围内完成，则返回 true。
 local function SlamFits(state, minimumLock)
     local swing = state.swing
     if not swing or not swing.active or swing.slamUsed
@@ -720,6 +728,8 @@ local function CanWaitForInstantThenSlam(state, key, minimumLock)
         <= (tonumber(swing.remaining) or 0)
 end
 
+-- 返回 (useSlamNow, instantBeforeSlam)。第二个值表示先打该瞬发后，仍保留足够
+-- 怒气和白字时间接一次猛击。
 local function ShouldUseSlam(state, minimumLock)
     local aoe = P:NormalizeMode(state.mode) == "aoe"
     local queued = IsOnSwingQueued(state)
@@ -732,9 +742,11 @@ local function ShouldUseSlam(state, minimumLock)
 
     if IsExecutePhase(state) and not aoe then return true end
 
-    if CanWaitForInstantThenSlam(state, "MORTAL_STRIKE", minimumLock)
-        or CanWaitForInstantThenSlam(state, "WHIRLWIND", minimumLock) then
-        return false
+    if CanWaitForInstantThenSlam(state, "MORTAL_STRIKE", minimumLock) then
+        return false, "MORTAL_STRIKE"
+    end
+    if CanWaitForInstantThenSlam(state, "WHIRLWIND", minimumLock) then
+        return false, "WHIRLWIND"
     end
 
     if aoe and D:IsKnown("WHIRLWIND") then
@@ -810,7 +822,9 @@ local function ShouldUseMortalStrikeAoE(state)
     ) >= Cost(state, "WHIRLWIND")
 end
 
-local function CanUseExecuteInstant(state, key, slamNow)
+-- 斩杀阶段的预算门槛：保留斩杀怒气；当前可打猛击时也保留猛击怒气；同时要求
+-- 下一次白字前至少还能容纳一个后续动作窗口。
+local function CanUseInstantBeforeExecute(state, key, slamNow)
     local rage = tonumber(state.rage) or 0
     local reserve = Cost(state, "EXECUTE")
     if slamNow then reserve = reserve + Cost(state, "SLAM") end
@@ -866,6 +880,8 @@ local function ShouldQueueHeroicStrike(state)
         >= (tonumber(state.maxRage) or 100)
 end
 
+-- 顺劈只用于泄怒，不是核心动作：必须预留当前计划 GCD 技能，以及即将可用的
+-- 致死／旋风怒气，并保护横扫层数。
 local function ShouldQueueCleave(
     state,
     sweepingPending,
@@ -930,20 +946,20 @@ local function ShouldQueueCleave(
     return true
 end
 
-local function CanSwitchHome(state)
+local function CanSwitchToBerserkerStance(state)
     if IsOnSwingQueued(state) then return false end
     if not state.inCombat or state.stance == 2 then return true end
     return (tonumber(state.rage) or 0) <= STANCE_RAGE
 end
 
-local function ReturnHome(action, state)
-    local force = state.stance == 1 and not IsOnSwingQueued(state)
-        and (P._returnHomeAfterOverpower
+local function RecommendBerserkerStance(action, state)
+    local returnRequired = state.stance == 1 and not IsOnSwingQueued(state)
+        and (P._returnToBerserkerAfterOverpower
             or (state.sweepingStrikes
                 and P:NormalizeMode(state.mode) == "aoe"))
-    if state.stance == 3 then P._returnHomeAfterOverpower = false end
+    if state.stance == 3 then P._returnToBerserkerAfterOverpower = false end
     if D:IsKnown("BERSERKER_STANCE") and NeedsStance(state, 3)
-        and (force or CanSwitchHome(state)) then
+        and (returnRequired or CanSwitchToBerserkerStance(state)) then
         return StanceAction(action, "BERSERKER_STANCE", R.BERSERKER_STANCE, state)
     end
     return nil
@@ -964,7 +980,9 @@ end
 local function RecommendWhirlwind(action, state)
     if not ShouldUseWhirlwind(state) then return nil end
     if NeedsStance(state, 3) then
-        if CanSwitchHome(state) then return ReturnHome(action, state) end
+        if CanSwitchToBerserkerStance(state) then
+            return RecommendBerserkerStance(action, state)
+        end
         return nil
     end
     return ApplyGCD(SetAction(action, "WHIRLWIND", R.WHIRLWIND), state)
@@ -998,15 +1016,18 @@ local function WaitAction(action, state)
     return SetAction(action, "WAIT", R.WAIT_CD, "wait")
 end
 
+-- 单体优先级分组（从高到低）：
+-- 临死斩杀 → 压制姿态往返 → 安全维护技能 → 斩杀阶段怒气预算 →
+-- 普通阶段瞬发／猛击配对 → 泄怒或等待。
 local function RecommendSingle(action, state)
     local executePhase = IsExecutePhase(state)
     if executePhase and ShortExecuteTarget(state, 1.25) then
         return RecommendExecute(action, state, true)
     end
 
-    if P._returnHomeAfterOverpower then
-        local home = ReturnHome(action, state)
-        if home then return home end
+    if P._returnToBerserkerAfterOverpower then
+        local berserkerAction = RecommendBerserkerStance(action, state)
+        if berserkerAction then return berserkerAction end
     end
 
     local overpower = RecommendOverpower(action, state)
@@ -1027,7 +1048,7 @@ local function RecommendSingle(action, state)
     if executePhase then
         local slamNow = ShouldUseSlam(state)
         if Ready(state, "MORTAL_STRIKE")
-            and CanUseExecuteInstant(state, "MORTAL_STRIKE", slamNow) then
+            and CanUseInstantBeforeExecute(state, "MORTAL_STRIKE", slamNow) then
             return ApplyGCD(SetAction(
                 action,
                 "MORTAL_STRIKE",
@@ -1035,7 +1056,7 @@ local function RecommendSingle(action, state)
             ), state)
         end
 
-        if CanUseExecuteInstant(state, "WHIRLWIND", slamNow) then
+        if CanUseInstantBeforeExecute(state, "WHIRLWIND", slamNow) then
             local whirlwind = RecommendWhirlwind(action, state)
             if whirlwind then return whirlwind end
         end
@@ -1047,9 +1068,20 @@ local function RecommendSingle(action, state)
         return WaitAction(action, state)
     end
 
-    local slamNow = ShouldUseSlam(state)
+    local slamNow, instantBeforeSlam = ShouldUseSlam(state)
     if slamNow then
         return ApplyGCD(SetAction(action, "SLAM", R.SLAM), state)
+    end
+
+    if instantBeforeSlam == "WHIRLWIND" then
+        if Ready(state, "WHIRLWIND") then
+            return ApplyGCD(SetAction(
+                action,
+                "WHIRLWIND",
+                R.WHIRLWIND
+            ), state)
+        end
+        return WaitAction(action, state)
     end
 
     if Ready(state, "MORTAL_STRIKE") then
@@ -1063,8 +1095,8 @@ local function RecommendSingle(action, state)
     local whirlwind = RecommendWhirlwind(action, state)
     if whirlwind then return whirlwind end
 
-    local home = ReturnHome(action, state)
-    if home then return home end
+    local berserkerAction = RecommendBerserkerStance(action, state)
+    if berserkerAction then return berserkerAction end
 
     if ShouldQueueHeroicStrike(state) then
         return SetAction(action, "HEROIC_STRIKE", R.HEROIC_STRIKE, "queue")
@@ -1091,6 +1123,9 @@ local function SweepingPending(action, state)
     return nil, true
 end
 
+-- AOE 优先级分组（从高到低）：
+-- 临死斩杀 → 准备／开启横扫 → 返回狂暴姿态 → 旋风 → 受保护的顺劈泄怒 →
+-- 猛击／致死／斩杀 → 维护技能。
 local function RecommendAoE(action, state)
     if IsExecutePhase(state) and ShortExecuteTarget(state, 1.25) then
         return RecommendExecute(action, state, true)
@@ -1122,8 +1157,8 @@ local function RecommendAoE(action, state)
     end
 
     if state.sweepingStrikes then
-        local home = ReturnHome(action, state)
-        if home then return home end
+        local berserkerAction = RecommendBerserkerStance(action, state)
+        if berserkerAction then return berserkerAction end
     end
 
     local whirlwind = RecommendWhirlwind(action, state)
@@ -1166,8 +1201,8 @@ local function RecommendAoE(action, state)
         return ApplyGCD(SetAction(action, "BATTLE_SHOUT", R.BATTLE_SHOUT), state)
     end
 
-    local home = ReturnHome(action, state)
-    if home then return home end
+    local berserkerAction = RecommendBerserkerStance(action, state)
+    if berserkerAction then return berserkerAction end
     return WaitAction(action, state)
 end
 
@@ -1186,8 +1221,8 @@ function P:Recommend(state)
     end
 
     if not state.inMelee then
-        local home = ReturnHome(action, state)
-        if home then return home end
+        local berserkerAction = RecommendBerserkerStance(action, state)
+        if berserkerAction then return berserkerAction end
         return SetAction(
             action,
             "WAIT",
@@ -1198,8 +1233,8 @@ function P:Recommend(state)
     end
 
     if not state.inCombat or state.stance == 2 then
-        local home = ReturnHome(action, state)
-        if home then return home end
+        local berserkerAction = RecommendBerserkerStance(action, state)
+        if berserkerAction then return berserkerAction end
     end
 
     if self:NormalizeMode(state.mode) == "aoe" then
@@ -1238,6 +1273,8 @@ local function ForecastCooldown(state, current, key)
     return eta
 end
 
+-- 预测只供参考：独立估算各动作可用时间，先按 ETA、再按优先级排序，并排除当前
+-- 动作；不会递归模拟未来推荐，也不会修改战斗状态。
 function P:BuildForecast(state, current)
     ClearCandidates()
     if not state.targetValid or not state.inMelee then
@@ -1346,6 +1383,8 @@ function P:Evaluate(state)
     return recommendation, self:BuildForecast(state, recommendation)
 end
 
+-- 唯一允许主动取消施法的规则：只能取消正在读条的猛击；斩杀必须已可用；且只有
+-- 可信 TTD 判断猛击落地过晚时才允许取消。
 function P:ShouldInterruptSlamForExecute(state)
     if not state.casting or not state.targetValid or not state.inMelee
         or not ShortExecuteTarget(state, 3.0) or not Ready(state, "EXECUTE")
@@ -1376,6 +1415,8 @@ local function CastRecommendedAction(action)
     end
 end
 
+-- 玩家按键触发的执行路径。任何换目标后都重新构建 State，避免根据旧目标的观测
+-- 结果施放技能。
 function P:Execute(mode)
     mode = self:NormalizeMode(mode)
     D:SetMode(mode, true)

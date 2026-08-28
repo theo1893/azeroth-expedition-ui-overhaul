@@ -71,7 +71,7 @@ end
 function D:GetSpellDef(key) return self.Spells[key] end
 function D:GetName(key) return self.Names[key] or key end
 function D:GetTexture(key) return key end
-function D:GetRealCooldown() return 0, 0 end
+function D:GetNonGCDCooldown() return 0, 0 end
 function D:GetProfileDB() return profileDB end
 function D:GetRotationDB(profileKey, mode, defaults)
     rotationDB[mode] = rotationDB[mode] or {}

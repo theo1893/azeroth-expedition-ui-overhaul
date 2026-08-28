@@ -14,6 +14,8 @@ local FIRE_NOVA_TOTEM_TEXTURE = "spell_fire_sealoffire"
 local MAGMA_TOTEM_TEXTURE = "spell_fire_selfdestruct"
 local FIRE_NOVA_BASE_ACTIVATION = 5
 
+-- fsByGuid[guid] = { appliedAt, fullDur, spellId, lvbPending }。三个 spell-id
+-- 表缓存事件分类结果：Turtle 事件只给数字 ID，而循环逻辑使用稳定的内部动作 key。
 T.fsByGuid = {}
 T.flameShockSpellIds = {}
 T.lavaBurstSpellIds = {}
@@ -120,6 +122,9 @@ function T:GetImprovedFireTotemsRank()
     return tonumber(self.improvedFireTotemsRank) or 0
 end
 
+-- 写入标准化的火系图腾槽快照。fireTotemStateAvailable 用于区分“真实空槽”和
+-- “provider 缺失／不可靠”；kind 为 searing、nova、magma 或 utility，所有
+-- 时间字段单位均为秒。
 function T:BuildFireTotemState(state)
     local talentRank = self:GetImprovedFireTotemsRank()
     state.improvedFireTotemsRank = talentRank
@@ -169,6 +174,8 @@ function T:BuildFireTotemState(state)
     state.fireTotemRemaining = remaining
 end
 
+-- 事件推导的施法状态用于补全 Core:GetCastState 在某些客户端／provider 下缺失的
+-- 名称或时间。节能施法字段会保留最后一层的过渡状态，直到确认一次成功施法。
 function T:Reset()
     self.clearcastingRank = 0
     self.castSinceRankOne = false
@@ -276,6 +283,7 @@ function T:PredictFlameShockRemaining(remaining, state)
     return remaining - castRemaining
 end
 
+-- 把 Tracker 状态发布到 Core.State。Profile 只读取该快照，不直接检查事件缓存。
 function T:BuildState(state)
     local fsRemaining, fsDuration = self:GetFlameShockState()
     local cast = state.cast or {}
@@ -410,6 +418,8 @@ function T:OnSpellDamage(targetGuid, casterGuid, spellIdValue)
     end
 end
 
+-- 事件归并器：施法生命周期负责节能施法消耗与弹道时间；光环／伤害事件负责
+-- 按目标校准烈焰震击状态。
 function T:OnEvent(eventName, a1, a2, a3, a4, a5, a6, a7, a8, a9)
     if eventName == "PLAYER_ENTERING_WORLD" or eventName == "PLAYER_LOGIN" then
         self:Reset()

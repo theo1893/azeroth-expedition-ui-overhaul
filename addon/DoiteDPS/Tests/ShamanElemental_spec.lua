@@ -65,7 +65,7 @@ local D = DoiteDPS
 function D:IsKnown(key) return known[key] and true or false end
 function D:GetName(key) return self.Names[key] or key end
 function D:GetTexture(key) return key end
-function D:GetRealCooldown() return 0 end
+function D:GetNonGCDCooldown() return 0 end
 function D:GetProfileDB() return self.profileDB end
 function D:IsMeleeRange() return true end
 

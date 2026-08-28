@@ -8,6 +8,11 @@ local D = DoiteDPS
 local C = {}
 D.Config = C
 
+-- Profile 的 ConfigSchema 合同：
+--   modes[] = { key, label, note }；modeGroups[] 只负责标签页分组。
+--   options[] 使用 type/key/modes、控件元数据和可选的 scope。
+--   scope 为 "general" 时写 D.DB，为 "profile" 时写 Profile DB；
+--   省略 scope 时写当前模式的 Rotation DB。visibleWhen 只控制界面显隐。
 local locale = (GetLocale and GetLocale()) or "enUS"
 local zh = locale == "zhCN" or locale == "zhTW"
 
@@ -467,6 +472,8 @@ resetButton:SetScript("OnLeave", function()
 end)
 C.resetButton = resetButton
 
+-- 职业、模式或条件选项变化时，Refresh 会重建可见控件；这里复用控件对象，
+-- 池内对象不持有任何配置值。
 C.tabPool = {}
 C.entryPool = {}
 C.modeGroupPool = {}

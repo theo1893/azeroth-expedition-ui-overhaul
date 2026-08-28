@@ -11,6 +11,8 @@ D.Profiles.ShamanElemental = P
 
 P.key = "SHAMAN_ELEMENTAL"
 P.CooldownKeys = D.ShamanCooldownKeys
+-- 复用动作／预测记录，并保留一个候选暂存表。只有客户端缺少 HasFullControl()
+-- 时，controlLost 才作为事件驱动的回退状态使用。
 P._rec = {}
 P._forecast = {}
 P._candidates = {}
@@ -343,7 +345,7 @@ local function CooldownRemaining(state, key)
     if entry and entry.remaining then
         return entry.remaining
     end
-    local remaining = D:GetRealCooldown(key, state.now)
+    local remaining = D:GetNonGCDCooldown(key, state.now)
     return tonumber(remaining) or 0
 end
 
@@ -351,6 +353,8 @@ local function Ready(state, key)
     return D:IsKnown(key) and CooldownRemaining(state, key) <= 0.05
 end
 
+-- 本函数不会延迟或排队施法；它只在当前读条或 GCD 尚未结束时，标记推荐动作
+-- 何时能够执行。
 local function ApplyCastDelay(action, state)
     if state.casting and (state.castRemaining or 0) > 0.05 then
         action.state = "queue"
@@ -571,6 +575,8 @@ local function Participates(db, mode, key)
     return true
 end
 
+-- Tracker 先补充法力、施法、烈焰震击、节能施法和图腾字段；本 Profile 再补充
+-- 当前模式专属的失控与近距离观测。
 function P:BuildState(state)
     T:BuildState(state)
     local db = state.profileDB or D:GetProfileDB(self.key)
@@ -613,6 +619,9 @@ function P:ResetRuntime()
     self.controlLost = false
 end
 
+-- 各模式拥有不同优先级，但共享同一外层顺序：
+-- 解控 → 校验目标 → 明确的 PvP 优先级 → PvE 距离与移动瞬发 →
+-- 爆发优先级或节能维护 → 图腾 → 填充技能。
 function P:Recommend(state)
     local action = self._rec
     local db = state.profileDB or D:GetProfileDB(self.key)
@@ -1212,6 +1221,8 @@ local function AddDamageTotemForecast(state, db, current, actionLock)
     end
 end
 
+-- 仅生成参考时间线：候选 ETA 从当前读条／GCD 结束后开始，并与
+-- Recommend／Execute 共用同一套 Participates 参与规则。
 function P:BuildForecast(state, current)
     ClearCandidates()
     if not state.targetValid then
@@ -1422,6 +1433,8 @@ function P:SelectNearestEnemy()
         and UnitCanAttack("player", "target") and true or false
 end
 
+-- 先于目标准备判断徽记，使没有敌对目标时也能解控；任何换目标后都重新构建
+-- 技能动作所需的 State。
 function P:Execute(mode)
     mode = self:NormalizeMode(mode)
     D:SetMode(mode, true)
