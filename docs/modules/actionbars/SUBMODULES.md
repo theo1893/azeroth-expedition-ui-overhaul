@@ -25,7 +25,8 @@ AutoBar、TrinketMenu 或 Blizzard 对象继续由原 provider 正常绘制和�
 
 - AutoBar `1.31`：`AutoBarFrame`、`AutoBarFrameButton1..24`、
   `AutoBarPopupFrame_Button1..12`、真实背包物品、数量、冷却、四向线性分类弹出
-  与独立拖动把手。该插件已安装但在当前角色上禁用，项目不得自动启用。
+  与独立拖动把手。该插件只作为旧路径；AEUI 补给栏存在有效配置时恢复其原生
+  锚点／外观并停止自动职业槽迁移。该插件已安装但在当前角色上禁用，项目不得自动启用。
 - TrinketMenu `3.3`：`TrinketMenu_MainFrame`、`TrinketMenu_Trinket0`（装备槽
   `13`）、`TrinketMenu_Trinket1`（装备槽 `14`）、`TrinketMenu_Menu1..30`、
   冷却与 `18×18 UI` 战斗排队 inset。该插件在当前角色上启用。
@@ -111,7 +112,7 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 | ID | provider／真实对象 | 合同 |
 |---|---|---|
 | `AB.FOCUS.UNITFRAME.PLAYER` | `pfUI.uf.player` | 保持 `240×48 UI / scale 0.8` 与 `BOTTOM (-160,480)`；`23 UI` Buff 在上、Debuff 在下，从左向右且每排 `8` 枚。Buff 仅保留当前技能书同名光环，Debuff 全部保留；先扫描全部 `32` 槽再压缩，不改变 Tooltip、冷却、取消 Buff 与 provider Button |
-| `AB.FOCUS.UNITFRAME.TARGET` | `pfUI.uf.target` | 保持 `240×48 UI / scale 0.8` 与 `BOTTOM (105,480)`；Aura 从右向左且每排 `8` 枚。敌对目标保留全部真实 Buff，Debuff 为自己施加与固定关键表的并集；关键表仅含精灵之火、精灵之火（野性）、破甲攻击、破甲、雷霆一击、挫志怒吼及虚弱／鲁莽／元素／暗影／语言／疲劳诅咒。友方目标仅保留已追踪为自己施加的 Buff，Debuff 全部保留。与 Player 间距、目标交互和动态 Aura 仍归 provider |
+| `AB.FOCUS.UNITFRAME.TARGET` | `pfUI.uf.target` | 保持 `240×48 UI / scale 0.8` 与 `BOTTOM (105,480)`；Aura 从右向左且每排 `8` 枚。敌对目标保留全部真实 Buff，Debuff 为自己施加与固定关键表的并集；关键表仅含精灵之火、精灵之火（野性）、破甲攻击、破甲、雷霆一击、挫志怒吼及虚弱／鲁莽／元素／暗影／语言／疲劳诅咒。友方目标保留全部真实 Buff／Debuff。与 Player 间距、目标交互和动态 Aura 仍归 provider |
 | `AB.FOCUS.UNITFRAME.TARGETTARGET` | `pfUI.uf.targettarget` | 保持 `240×60 UI / scale 0.68`、`LEFT → Target RIGHT +8 UI` 与右向左每排 `8` 枚 Aura；每次刷新按当前敌友关系复用 Target 语义策略，显隐、移动和 unlock 仍归 provider |
 | `AB.FOCUS.UNITFRAME.FOCUS` | `pfUI.uf.focus` | 不接管既有几何或外观，只按 Focus 当前敌友关系复用 Target 语义策略；GUID 与 Buff 归属继续由 Nampower／pfUI 提供。对象、Nampower 或归属 API 缺失时不创建占位并 fail-open |
 | `AB.FOCUS.NAMEPLATE.AURA` | `pfUI.nameplates` 的既有 `nameplate.debuffs[1..16]` | “聚焦光环显示”开启时向姓名板共享 Target 敌友策略：先扫描 `32` 个 Debuff 源槽并压缩符合项，再用剩余格显示符合项的真实 Buff；关闭配置、Action Bars route 禁用或策略 API 缺失时恢复 pfUI 原前 `16` 个 Debuff 逻辑。Frame、布局、计时和显隐仍归姓名板 provider |
@@ -147,13 +148,16 @@ HDLRaidTools／SuperWoW 只作为右侧一键 Button 的可选 provider；外部
 GRTT／Banana 若仍启用则保持独立，AEUI
 不自动关闭或改写任何外部插件。
 
-## 消耗品卷袋
+## AEUI 补给栏与 AutoBar 旧路径
 
 | ID | provider／对象 | 合同 |
 |---|---|---|
+| `AB.SUPPLY.RACK` | AEUI 自有 `AzerothExpeditionUISupplyFrame`＋最多 `24` 个精确物品 Button | `supplies-contract=1.3`；每个配置槽从背包拖入来源提取并只保存正整数 `itemID`，按当前角色独立保存。配置槽始终显示且只展示当前背包数量；数量为 `0` 时明确显示红色 `0` 而不移除，有库存时使用正常图标与绿色计数。每次背包事件单次扫描 Bag `0–4`，汇总相同 itemID 的真实堆叠／充能数量并保存一个可用 bag／slot；不按物品名称或 AutoBar 分类猜测。Button 为 `36 UI / gap 3 UI`、最多 `4×6`、自底向上，复用 accepted A 口袋与 C 九宫格；普通点击调用真实 `UseContainerItem`，Tooltip 只显示 itemID 与当前库存。`fieldKitBound=true` 时占用主栏左侧既有补给位，解绑时保留自由位置并允许 `Shift+拖动`；没有逐帧维护循环 |
+| `AB.SUPPLY.CONFIG` | `AzerothExpeditionUISupplyManager` 与 `AzerothExpeditionUIDB.actionbars.supplyProfiles[角色名 - 服务器]` | `/aeui supplies` 打开独立 `24` 格管理面板；唯一新增／替换入口是把真实背包物品拖到管理槽，拾取前记录精确 itemID，放入时先清空光标让物品回包再刷新库存。不提供物品链接、数字 itemID、裸 `item:` 或 `/aeui supplies add` 入口；支持移除与前后调序。配置中不保存目标库存、物品名称、图标或 bag／slot；旧 `target` 字段在归一化时丢弃，动态值只从客户端物品缓存与当前背包读取。`/aeui supplies on|off` 只切换 AEUI 自有栏，`remove slot` 提供无 GUI 删除回退，`selfcheck` 验证拖入边界与归一化；不改 AutoBar SavedVariables |
+| `AB.SUPPLY.FALLBACK` | AEUI 补给栏与可选 AutoBar 的互斥显示 route | 默认启用常驻库存监控；只有存在至少一个有效 AEUI 配置槽时才接管左侧补给位。AEUI 补给栏关闭或当前角色尚无配置时继续显示既有 AutoBar Field Kit；一旦 AEUI 配置生效，AutoBar Button、popup、drag handle 与配置数据全部退回 provider 原路径，不自动启用、隐藏或卸载 AutoBar。Action Bars 总 route 关闭时 AEUI 补给栏隐藏 |
 | `AB.CONSUMABLE.RACK` | 已加载并自行显示的 `AutoBarFrame`＋`AutoBarFrameButton1..24` | 默认保留 `24` 个逻辑类别，但关闭空槽与缺货类别图标，只按背包当前可用类别显示 `1–24` 个真实 Button；`36 UI / gap 3 UI`、最多 `4×6`，外壳随当前可见 Button 边界动态收缩。因 `alignButtons` 可把子 Button 放到 `AutoBarFrame` 边界外，装饰 Frame 必须读取真实可见 Button 边界。`fieldKitBound=true` 时强绑定在主动作条左侧，外壳右缘距主栏左缘 `12 UI`，底边比主栏底边低 `20 UI`。`fieldkit-contract=2.7` 仍由可见 Button 相对 handle 的 provider `GetPoint`、真实宽高与 scale 计算一次停靠偏移，但将该偏移注册到 AutoBar 原生 `dockingFrames.pfActionBarMain`，并把当前活动 display 的 `docking` 指向 `pfActionBarMain`；因此每次 provider `SetupVisual` 最终都由 AutoBar 自己把 handle 写到主栏相对位置，自由 `position` 在绑定态不参与渲染。`unbind`／AEUI 关闭时精确恢复原 docking／shift、自由位置与 `hideDragHandle` 偏好；logout／reload 前移除仅运行时 docking token，下一次插件就绪后再安装。零延迟事件只刷新几何与外壳，不作为持续位置维护；未知布局已有成功锚点时保持缓存，首次未知布局才允许 world-space fail-open。不得自动启用 provider |
 | `AB.CONSUMABLE.GROUP` | 推荐 profile 的连续槽段 `1–8／9–16／17–24` 与两条底层分隔带 | 连续槽段继续提供应急／增益／工具的语义组织，但不创建或显示三段文字；卷袋材质、分隔和物品排列自身承担区分。分隔带只占两组之间既有 `3 UI` gap，不接收鼠标。任一配置不匹配即隐藏分隔并退回单一自适应外壳，不能给用户自定义类别套用错误分组 |
-| `AB.CONSUMABLE.POCKET` | `AutoBarFrameButton1..24` | 显示 provider 选出的真实物品图标、数量、冷却、可用性和 Tooltip；槽底不含物品图标、名称或类别。AutoBar 1.31 的 zhCN 数据漏掉七个 `description` 时，AEUI 只为运行时空字段补本地化说明；已存在说明、分类内容、Button、profile 与 SavedVariables 均不改，未来未知空字段只显示类别 ID，避免旧配置页字符串拼接报错。V1 不创建自有 fallback Button |
+| `AB.CONSUMABLE.POCKET` | `AutoBarFrameButton1..24` | 旧路径显示 provider 选出的真实物品图标、数量、冷却、可用性和 Tooltip；槽底不含物品图标、名称或类别。AutoBar 1.31 的 zhCN 数据漏掉七个 `description` 时，AEUI 只为运行时空字段补本地化说明；已存在说明、分类内容、Button、profile 与 SavedVariables 均不改，未来未知空字段只显示类别 ID，避免旧配置页字符串拼接报错 |
 | `AB.CONSUMABLE.CONFIG` | `AutoBarConfigFrame`、`Tab1..5`、`SlotsView`、`Slots`、`SlotsEdit1..4`、`Layout1..2`、`ResetDisplay`、`RevertButton` 与 `DoneButton` | bridge-v2.7 延续 v2.4 的配置裁剪：AEUI 启用时只显示原生“栏位／按钮”两个 Tab；隐藏“动作条／弹出／设定”、综合只读预览、四种层选择器、布局选择器及“重置为默认／还原”，保留“完成”。“栏位”直接显示唯一可编辑的职业层网格，隐藏 Tab 被旧 SavedVariables 选中时回到栏位。首次迁移把当前实际生效的 24 槽完整复制到原生 `_CLASS` profile，将当前角色固定为 `useClass=true / edit=3`，角色原槽与职业原槽分别备份；同职业后续角色复用该职业层。`/aeui autobar restore` 可恢复并对该角色退出自动迁移。AutoBar 1.31 只提供角色／共用两种 display layout，所以“按钮”Tab 的显示参数仍按当前角色保存；类别／item ID 槽位才按职业共享。配置页重跑 `SetupVisual` 时原生主栏 docking 保持生效；AEUI 关闭、provider 缺失或显式 restore 时恢复原生控件与锚点 |
 | `AB.CONSUMABLE.POPUP` | `AutoBarPopupFrame_Button1..12` | `fieldkit-contract=2.9` 在 AEUI Field Kit 强绑定且当前至少有一个可见主格时固定使用卷袋左侧外置抽屉；抽屉只依赖已接管的真实 Button 几何，不依赖推荐 `24` 类签名，因此职业槽、手工 item ID 或其他用户自定义类别不得再退回悬停图标上方。`1–6` 个候选为单列，`7–12` 个候选为列优先双列且最多六行；整组位于卷袋外，不遮挡主格。解绑后，推荐 `4×6` 布局仍可由 `AUTO／LEFT／RIGHT` 选择外置方向，`NATIVE` 或不匹配布局完整恢复 provider 原生四向线性布局。外置态在卷袋与抽屉间创建透明、可接收鼠标、直接隶属 `AutoBarPopupFrame` 且覆盖卷袋全高的 `10 UI` 悬停通道；XML Frame `OnLeave` 只在此态延后，关闭仍由 AutoBar 原 `PopupMouseover` 负责。继续保留 `0.30s` 意图停留：进入通道或候选前离开不同主格即保留原抽屉；持续停留才调用捕获的 AutoBar 原方法切换／关闭。相同主格、AEUI 关闭、非鼠标调用或 provider 调度 API 缺失立即委托原方法；不使用逐帧循环。候选顺序、图标、数量、冷却、点击、Tooltip、Shift 条件与 Button script 仍归 AutoBar；不得把 XML 初始 `72×72 UI` Frame 当作实际弹出边界，不复制分类表或重挂 `PickupContainerItem` |
 
@@ -169,14 +173,14 @@ ID，配置页也能把背包物品拖入槽位。因此“合剂手动”只接
 推荐 24 类写到同一职业层；
 默认显示关闭 `showEmptyButtons／showCategoryIcon` 并隐藏拖动把手。仅持有 AEUI 应用前
 备份、且仍精确匹配旧 AEUI 满格显示签名的角色会一次性迁移这三个显示字段；其他
-AutoBar 类别、物品顺序和用户配置始终优先。缺失／禁用时 V1 不显示。
-以后若建立 AEUI 钉选 fallback，必须另立功能合同。
+AutoBar 类别、物品顺序和用户配置始终优先。缺失／禁用时旧路径不显示；上述推荐
+profile、配置裁剪与 popup 只在 AEUI 补给栏没有有效配置时继续运行。
 
 用户于 `2026-08-09` 接受 `AB.CONSUMABLE.KIT.V1` 第 1 稿。P4 source 为
 [ActionConsumableKit_Master_v1.png](../../../assets/source/actionbars/ab-consumable-kit/ActionConsumableKit_Master_v1.png)
 （SHA-256 `623f29c5…a2419`），[manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_SourceManifest_v1.json)
-固定四格映射：A→`AB.CONSUMABLE.POCKET` 主口袋，B→`AB.CONSUMABLE.POPUP`
-薄候选口袋，C→`AB.CONSUMABLE.RACK／GROUP` filled 自适应卷袋外壳，D→popup
+固定四格映射：A→`AB.SUPPLY.RACK／AB.CONSUMABLE.POCKET` 主口袋，B→`AB.CONSUMABLE.POPUP`
+薄候选口袋，C→`AB.SUPPLY.RACK／CONFIG` 及 `AB.CONSUMABLE.RACK／GROUP` filled 自适应卷袋外壳，D→popup
 连接带／group 分隔带。该 `1024²` 母版不由客户端直接加载；确定性 P5 exporter
 把每格完整物件等比缩放并打包为
 [ActionConsumableKitV1.tga](../../../addon/AzerothExpeditionUI/Media/ActionBars/ActionConsumableKitV1.tga)
@@ -192,7 +196,8 @@ Button 低 `1` 的独立非交互装饰 Frame，避免与 ActionButtonTemplate �
 共用 `BACKGROUND` 层。用户可显式执行 `/aeui autobar apply`，为当前职业写入已确认
 的 24 类，并为当前角色应用库存自适应／最大 `4×6` 显示参数；AEUI SavedVariables
 同时保存角色与职业层应用前副本。`/aeui autobar restore` 恢复这些副本并退出该角色的
-自动职业迁移；`/aeui autobar open` 打开经裁剪的 AutoBar 原配置页。
+自动职业迁移；`/aeui autobar open` 打开经裁剪的 AutoBar 原配置页。新主路径使用
+`/aeui supplies`，其有效配置存在时不再运行 AutoBar 自动职业槽迁移或配置裁剪。
 `/aeui autobar popup auto|left|right|native` 控制抽屉策略。组合状态只写入 AEUI
 自己的 `fieldKitBound`；`/aeui fieldkit bind|unbind|home|status` 分别负责强绑定、
 释放、恢复已确认的中心中下位置与查询。旧 `consumableDocked／trinketDocked` 只为
@@ -279,7 +284,7 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   Player／Target 每排 `8` 枚实际占 `233 UI`，连同 Aura backdrop 匹配
   `240 UI` 框宽；TargetTarget 同样每排 `8` 枚。Aura 策略先扫描 `32` 个来源槽再
   压缩：Player 为技能书 Buff／全部 Debuff；敌对单位为全部真实 Buff／自己施加或
-  固定 `12` 项关键 Debuff；友方单位为自己的 Buff／全部 Debuff，Focus 只接入策略而不改几何。
+  固定 `12` 项关键 Debuff；友方单位为全部真实 Buff／Debuff，Focus 只接入策略而不改几何。
   姓名板在 pfUI 配置的“聚焦光环显示”开启时复用同一 Target 敌友策略，并优先
   保留 Debuff；关闭该项即恢复原有全部 Debuff 路径。
   四个 offset 明确置零；Action Bars 关闭或 provider 缺失时恢复 pfUI 原显示。

@@ -89,6 +89,7 @@ function D:GetReactiveState() return false, nil end
 function D:GetPlayerBuffState() return false, nil end
 function D:HasTargetDebuff() return false end
 function D:GetTargetDebuffStacks() return 0 end
+function D:GetTargetDebuffRemaining() return nil end
 function D:GetSwingState(reuse) return reuse end
 function D:IsMeleeRange() return true end
 function D:Print() end
@@ -143,6 +144,7 @@ local function State(changes)
         improvedShieldSlamBuff = false,
         demoralizingShout = true,
         sunderStacks = 0,
+        sunderRemaining = nil,
         cooldowns = {},
         swing = {
             active = true,
@@ -435,6 +437,21 @@ Expect(
     State({
         rage = 20,
         sunderStacks = 5,
+        sunderRemaining = 20,
+        cd = {
+            CONCUSSION_BLOW = 30,
+            SHIELD_SLAM = 4,
+            REVENGE = 4,
+        },
+    })
+)
+Expect(
+    "single automatic Sunder refreshes five stacks below five seconds",
+    "SUNDER_ARMOR",
+    State({
+        rage = 20,
+        sunderStacks = 5,
+        sunderRemaining = 4.9,
         cd = {
             CONCUSSION_BLOW = 30,
             SHIELD_SLAM = 4,
@@ -918,11 +935,12 @@ assert(
 )
 passed = passed + 1
 
-local function SunderOnlyState(mode, stacks)
+local function SunderOnlyState(mode, stacks, remaining)
     return State({
         mode = mode,
         rage = 50,
         sunderStacks = stacks,
+        sunderRemaining = remaining,
         rotation = {
             useConcussionBlow = false,
             useShieldSlam = false,
@@ -956,6 +974,28 @@ local hasFullAoESunder = ForecastContains(
 assert(
     not hasFullAoESunder,
     "five-stack AoE target must not forecast another Sunder"
+)
+passed = passed + 1
+
+local hasExpiringFullSunder = ForecastContains(
+    SunderOnlyState("single", 5, 4.9),
+    "AUTO_ATTACK",
+    "SUNDER_ARMOR"
+)
+assert(
+    hasExpiringFullSunder,
+    "an expiring five-stack target must forecast one Sunder refresh"
+)
+passed = passed + 1
+
+local hasRepeatedRefresh = ForecastContains(
+    SunderOnlyState("single", 5, 4.9),
+    "SUNDER_ARMOR",
+    "SUNDER_ARMOR"
+)
+assert(
+    not hasRepeatedRefresh,
+    "a current five-stack refresh must not forecast another Sunder"
 )
 passed = passed + 1
 

@@ -258,8 +258,8 @@ local R = {
     THUNDER_CLAP = zh and "雷霆一击建立群体仇恨" or "Thunder Clap area threat",
     DEMORALIZING_SHOUT = zh and "首次覆盖挫志并建立群体仇恨"
         or "Initial Demoralizing Shout coverage",
-    SUNDER_STACK = zh and "建立五层破甲并制造仇恨"
-        or "Build Sunder stacks and threat",
+    SUNDER_STACK = zh and "建立五层或临近结束时刷新破甲"
+        or "Build or refresh Sunder Armor",
     HEROIC_STRIKE = zh and "保留核心怒气后的英勇泄怒"
         or "Heroic Strike after core reserve",
     CLEAVE = zh and "保留群体核心怒气后的顺劈泄怒"
@@ -293,6 +293,7 @@ local ROTATION_LOCK = 1.5
 local STANCE_LOCK = 1.0
 local QUEUE_LOCK = 0.15
 local SUNDER_MAX_STACKS = 5
+local SUNDER_REFRESH_WINDOW = 5
 local IMPROVED_SHIELD_SLAM = zh and "强化盾牌猛击"
     or "Improved Shield Slam"
 local IMPROVED_REVENGE = zh and "强化复仇" or "Improved Revenge"
@@ -540,6 +541,9 @@ function P:BuildState(state)
         D:GetName("SUNDER_ARMOR"),
         "SUNDER_ARMOR"
     )
+    state.sunderRemaining = D:GetTargetDebuffRemaining(
+        D:GetName("SUNDER_ARMOR")
+    )
     state.swing = D:GetSwingState(state.swing)
 
     local inMelee = D:IsMeleeRange("target", "SHIELD_SLAM")
@@ -724,7 +728,9 @@ local function SunderNeeded(state, stacks)
     if stacks == nil then
         stacks = tonumber(state.sunderStacks) or 0
     end
+    local remaining = tonumber(state.sunderRemaining)
     return stacks < SUNDER_MAX_STACKS
+        or (remaining ~= nil and remaining < SUNDER_REFRESH_WINDOW)
 end
 
 local function SunderCoreHoldUntil(state, window)
@@ -1477,7 +1483,9 @@ function P:BuildForecast(state, current)
         shieldBlockPriority
     )
 
-    if SunderNeeded(state, projectedSunderStacks) then
+    if SunderNeeded(state, projectedSunderStacks)
+        and not (currentKey == "SUNDER_ARMOR"
+            and projectedSunderStacks >= SUNDER_MAX_STACKS) then
         -- Sunder is a true filler. When Concussion Blow or Shield Slam will
         -- be ready within one GCD, schedule Sunder only after that core slot.
         local sunderEta = Max(

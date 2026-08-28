@@ -546,12 +546,25 @@ action = P:Recommend(State({
     cooldowns = CoreCooldowns(0, 99),
     swing = {
         active = true,
-        remaining = 3.63,
+        remaining = 3.0,
         slamCast = 2.0,
         slamCapable = true,
     },
 }))
-Check("60 rage funds Mortal Strike, Slam, then Execute", action.key == "MORTAL_STRIKE")
+Check("60 rage funds Mortal Strike without requiring same-cycle Slam", action.key == "MORTAL_STRIKE")
+
+action = P:Recommend(State({
+    targetHP = 20,
+    rage = 59,
+    cooldowns = CoreCooldowns(0, 99),
+    swing = {
+        active = true,
+        remaining = 3.0,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("59 rage stays below the Mortal Strike execute reserve", action.key == "SLAM")
 
 action = P:Recommend(State({
     targetHP = 20,
@@ -559,38 +572,25 @@ action = P:Recommend(State({
     cooldowns = CoreCooldowns(4, 0),
     swing = {
         active = true,
-        remaining = 3.63,
+        remaining = 3.0,
         slamCast = 2.0,
         slamCapable = true,
     },
 }))
-Check("55 rage funds Whirlwind, Slam, then Execute", action.key == "WHIRLWIND")
+Check("55 rage funds Whirlwind without requiring same-cycle Slam", action.key == "WHIRLWIND")
 
 action = P:Recommend(State({
     targetHP = 20,
-    rage = 45,
-    cooldowns = CoreCooldowns(0, 99),
-    swing = {
-        active = true,
-        remaining = 3.63,
-        slamCast = 2.0,
-        slamCapable = true,
-    },
-}))
-Check("45 rage uses the efficient Slam path while it fits", action.key == "SLAM")
-
-action = P:Recommend(State({
-    targetHP = 20,
-    rage = 40,
+    rage = 54,
     cooldowns = CoreCooldowns(4, 0),
     swing = {
         active = true,
-        remaining = 3.63,
+        remaining = 3.0,
         slamCast = 2.0,
         slamCapable = true,
     },
 }))
-Check("40 rage uses Slam before the Execute dump while it fits", action.key == "SLAM")
+Check("54 rage stays below the Whirlwind execute reserve", action.key == "SLAM")
 
 action = P:Recommend(State({
     targetHP = 20,
@@ -803,11 +803,27 @@ Check("base Sweeping Strikes still requires twenty rage", action.key ~= "SWEEPIN
 
 action = P:Recommend(State({
     mode = "aoe",
-    rage = 5,
+    rage = 80,
     stance = 1,
     sweepingStrikes = true,
 }))
-Check("AoE returns to Berserker after Sweeping", action.key == "BERSERKER_STANCE")
+Check("AoE returns to Berserker after Sweeping at high rage", action.key == "BERSERKER_STANCE")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 80,
+    stance = 1,
+    sweepingStrikes = true,
+    swing = {
+        active = true,
+        remaining = 1.0,
+        speed = 3.5,
+        slamCast = 1.5,
+        slamCapable = true,
+        cleaveQueued = true,
+    },
+}))
+Check("a queued Cleave still blocks the post-Sweeping stance switch", action.key ~= "BERSERKER_STANCE")
 
 action = P:Recommend(State({
     mode = "aoe",
@@ -1011,8 +1027,8 @@ Check("AoE may Slam when a normal white hit funds Whirlwind first", action.key =
 
 action = P:Recommend(State({
     mode = "aoe",
-    rage = 40,
-    cooldowns = CoreCooldowns(4, 0, 99, 5),
+    rage = 80,
+    cooldowns = CoreCooldowns(0, 0, 99, 5),
     swing = {
         active = true,
         remaining = 2.2,
@@ -1021,7 +1037,7 @@ action = P:Recommend(State({
         slamCapable = true,
     },
 }))
-Check("AoE Whirlwind cannot delete a funded safe Slam", action.key == "SLAM")
+Check("AoE ready Whirlwind outranks a funded safe Slam", action.key == "WHIRLWIND")
 
 action = P:Recommend(State({
     mode = "aoe",
@@ -1039,6 +1055,23 @@ action = P:Recommend(State({
     },
 }))
 Check("the last Sweeping charge makes Slam yield to Whirlwind", action.key == "WHIRLWIND")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 40,
+    sweepingStrikes = true,
+    sweepingRemaining = 5,
+    sweepingStacks = 1,
+    cooldowns = CoreCooldowns(4, 0.5, 99, 5),
+    swing = {
+        active = true,
+        remaining = 2.2,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = true,
+    },
+}))
+Check("the last Sweeping charge still waits for near-ready Whirlwind", action.key == "AUTO_ATTACK")
 
 action = P:Recommend(State({
     mode = "aoe",

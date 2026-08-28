@@ -479,6 +479,9 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
     if S.mhFrozenAt then
       S.mhFrozenAt = nil
     end
+    -- Melee and ranged timers share one slot and are mutually exclusive.
+    S.raActive = false
+    pfUI.swingtimer.ranged:Hide()
     UpdateWeaponSpeeds()
     pfUI.swingtimer.mhGraceAt = nil  -- cancel any pending hide
     S.mhTimerMax = S.mhSpeed
@@ -895,11 +898,12 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
   events:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
   events:RegisterEvent("UNIT_DIED")
   events:RegisterEvent("SPELL_QUEUE_EVENT")
-  events:RegisterEvent("START_AUTOATTACK")
-  events:RegisterEvent("STOP_AUTOATTACK")
+  events:RegisterEvent("PLAYER_ENTER_COMBAT")
+  events:RegisterEvent("PLAYER_LEAVE_COMBAT")
 
   events:SetScript("OnEvent", function()
     if event == "AUTO_ATTACK_SELF" then
+      S.autoAttackActive = true
       local hitInfo  = arg4 or 0
       local isOffhand = bit.band(hitInfo, HITINFO_LEFTSWING) ~= 0
       local noAction  = bit.band(hitInfo, HITINFO_NOACTION) ~= 0
@@ -974,20 +978,14 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
         S.hsQueued = false; S.cleaveQueued = false
       end
 
-    elseif event == "START_AUTOATTACK" then
+    elseif event == "PLAYER_ENTER_COMBAT" then
       S.autoAttackActive = true
-      -- Immediately activate bars if weapons are equipped
-      if S.mhSpeed > 0 then
-        ResetMH()
-      end
-      if S.ohSpeed > 0 and sw_showoh then
-        ResetOH()
-      end
-      if S.raSpeed > 0 and sw_showranged then
-        ResetRanged()
-      end
+      -- Starting auto-attack has no confirmed swing timestamp. Wait for
+      -- AUTO_ATTACK_SELF instead of creating an out-of-phase melee cycle.
+      S.raActive = false
+      pfUI.swingtimer.ranged:Hide()
 
-    elseif event == "STOP_AUTOATTACK" then
+    elseif event == "PLAYER_LEAVE_COMBAT" then
       S.autoAttackActive = false
 
     elseif event == "PLAYER_ENTERING_WORLD" then

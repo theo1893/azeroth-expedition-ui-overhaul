@@ -43,8 +43,8 @@ P.EntryPoints = {
 }
 P.ModeNotes = {
     single = zh
-        and "常驻狂暴姿态；瞬发后仍能接猛击时优先致死/旋风，否则先打安全猛击；斩杀贴近下一刀清怒。"
-        or "Berserker home; lead with instants only when Slam still fits, then Execute late in the swing.",
+        and "常驻狂暴姿态；普通阶段瞬发后仍能接猛击才优先致死/旋风；斩杀阶段高怒改为瞬发后直接斩杀。"
+        or "Berserker home; outside Execute, instants lead only when Slam still fits; at high rage, Execute follows the instant directly.",
     aoe = zh
         and "横扫后回狂暴姿态；旋风、致死、安全猛击优先，顺劈预留核心怒气，斩杀补空档。"
         or "Sweeping into Berserker; Whirlwind, Mortal Strike and safe Slam lead, with reserved Cleave dumps.",
@@ -766,14 +766,6 @@ local function ShouldUseSlam(state, minimumLock)
     return true
 end
 
-local function CanFitSlamExecuteAfterInstant(state)
-    local lock = (tonumber(state.gcd) or 0) + GCD_LOCK
-    if not ShouldUseSlam(state, lock) then return false end
-    local swing = state.swing
-    return (tonumber(swing.remaining) or 0) - lock
-        - (tonumber(swing.slamCast) or 2.5) > 0.05
-end
-
 local function ShouldUseWhirlwind(state)
     if not Ready(state, "WHIRLWIND") then return false end
     if P:NormalizeMode(state.mode) == "aoe" then return true end
@@ -818,14 +810,11 @@ local function ShouldUseMortalStrikeAoE(state)
     ) >= Cost(state, "WHIRLWIND")
 end
 
-local function CanUseExecuteInstant(state, key, slamNow, slamAfterInstant)
+local function CanUseExecuteInstant(state, key, slamNow)
     local rage = tonumber(state.rage) or 0
-    if slamAfterInstant then
-        return rage >= (Cost(state, key) + Cost(state, "SLAM")
-            + Cost(state, "EXECUTE"))
-    end
-    return not slamNow
-        and rage >= (Cost(state, key) + Cost(state, "EXECUTE"))
+    local reserve = Cost(state, "EXECUTE")
+    if slamNow then reserve = reserve + Cost(state, "SLAM") end
+    return rage >= (Cost(state, key) + reserve)
         and CanFitExecuteFollowup(state)
 end
 
@@ -948,8 +937,10 @@ local function CanSwitchHome(state)
 end
 
 local function ReturnHome(action, state)
-    local force = P._returnHomeAfterOverpower and state.stance == 1
-        and not IsOnSwingQueued(state)
+    local force = state.stance == 1 and not IsOnSwingQueued(state)
+        and (P._returnHomeAfterOverpower
+            or (state.sweepingStrikes
+                and P:NormalizeMode(state.mode) == "aoe"))
     if state.stance == 3 then P._returnHomeAfterOverpower = false end
     if D:IsKnown("BERSERKER_STANCE") and NeedsStance(state, 3)
         and (force or CanSwitchHome(state)) then
@@ -1035,14 +1026,8 @@ local function RecommendSingle(action, state)
 
     if executePhase then
         local slamNow = ShouldUseSlam(state)
-        local slamAfterInstant = CanFitSlamExecuteAfterInstant(state)
         if Ready(state, "MORTAL_STRIKE")
-            and CanUseExecuteInstant(
-                state,
-                "MORTAL_STRIKE",
-                slamNow,
-                slamAfterInstant
-            ) then
+            and CanUseExecuteInstant(state, "MORTAL_STRIKE", slamNow) then
             return ApplyGCD(SetAction(
                 action,
                 "MORTAL_STRIKE",
@@ -1050,12 +1035,7 @@ local function RecommendSingle(action, state)
             ), state)
         end
 
-        if CanUseExecuteInstant(
-            state,
-            "WHIRLWIND",
-            slamNow,
-            slamAfterInstant
-        ) then
+        if CanUseExecuteInstant(state, "WHIRLWIND", slamNow) then
             local whirlwind = RecommendWhirlwind(action, state)
             if whirlwind then return whirlwind end
         end
@@ -1146,12 +1126,10 @@ local function RecommendAoE(action, state)
         if home then return home end
     end
 
-    local slamNow = ShouldUseSlam(state)
-    if not slamNow then
-        local whirlwind = RecommendWhirlwind(action, state)
-        if whirlwind then return whirlwind end
-    end
+    local whirlwind = RecommendWhirlwind(action, state)
+    if whirlwind then return whirlwind end
 
+    local slamNow = ShouldUseSlam(state)
     local mortalNow = ShouldUseMortalStrikeAoE(state)
     local executeNow = ExecuteDue(state)
     local plannedKey = slamNow and "SLAM"

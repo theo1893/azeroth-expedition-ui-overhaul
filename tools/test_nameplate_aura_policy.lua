@@ -40,7 +40,7 @@ assert(policy(nameplate, "enemy", "debuff", "破甲", "other", 2) == true)
 assert(policy(nameplate, "enemy", "debuff", "Other", "other", 3) == false)
 assert(policy(nameplate, "friend", "debuff", "Any", "other", 1) == true)
 assert(policy(nameplate, "friend", "buff", "Own Buff", nil, 1) == true)
-assert(policy(nameplate, "friend", "buff", "Other Buff", nil, 2) == false)
+assert(policy(nameplate, "friend", "buff", "Other Buff", nil, 2) == true)
 assert(policy(nameplate, "unknown", "debuff", "Any", nil, 1) == nil)
 
 module:ApplyFocusAuraPolicy(true)

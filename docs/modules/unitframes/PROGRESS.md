@@ -26,7 +26,7 @@
 | Raid A2 外壳 | `P5` | A–D 四种 `148×74` sampled texture 以原 `74×37 UI` 显示并接入 `pfRaid1..40`；标准宽度完整纹理，其他宽度用同图三切片，高度失配局部回退 |
 | Player V5 完整外壳 | `P5` | attempt 3 exact source 直接导出为 2×；单张 `508×154` sampled region 通过精确 UV 覆盖原 `254×77 UI` 外壳与 `240×65` provider，pfUI 保留 Bars、文字、颜色、Aura、图标、Hover／Aggro、点击与事件 |
 | 世界姓名板个人目标指针 | `P5` | `NP-TARGET-CUE-V1` 候选 3 exact visible pixels 已接受；`40×48` sampled region 显示为 `20×24 UI`，读取 pfUI `nameplate.istarget`，顶部团队标记存在时自动向上堆叠 |
-| 世界姓名板聚焦光环 | `P5` | 复用现有 `nameplate.debuffs[1..16]`；敌对保留自己的／固定关键 Debuff 与全部 Buff，友方保留全部 Debuff 与自己的 Buff，关闭“聚焦光环显示”恢复原逻辑；策略缺失 fail-open |
+| 世界姓名板聚焦光环 | `P5` | 复用现有 `nameplate.debuffs[1..16]`；敌对保留自己的／固定关键 Debuff 与全部 Buff，友方保留全部真实 Buff／Debuff，关闭“聚焦光环显示”恢复原逻辑；策略缺失 fail-open |
 | Player／Target V4 外壳 | `P4 / paused` | 旧 source／runtime 仅保留历史回退；九切片 adapter route 暂停，不再应用于 Player |
 | TargetTarget A2 独立外壳 | `P4 / paused` | accepted base／rim 与四态 TGA 保留；九切片 adapter 保留但 route 暂停 |
 | Focus A2 独立外壳 | `P4 / paused` | accepted base／rim 与四态 TGA 保留；九切片 adapter 保留但 route 暂停 |

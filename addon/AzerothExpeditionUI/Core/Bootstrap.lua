@@ -17,6 +17,8 @@ local defaults = {
     fieldKitBound = true,
     consumableDocked = true,
     trinketDocked = true,
+    suppliesEnabled = true,
+    supplyProfiles = {},
     combatFocusLayoutVersion = 0,
     focusUnitDefaultProfiles = {},
     comfortUIScaleVersion = 0,
@@ -222,6 +224,46 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       "; reloading UI."
     )
     ReloadUI()
+  elseif command == "supplies" or string.find(command, "^supplies%s+") or
+    command == "supply" or string.find(command, "^supply%s+")
+  then
+    local _, _, subcommand = string.find(command, "^%S+%s*(.*)$")
+    local module = addon.modules.ActionBars
+    if not module then
+      addon:Print("ActionBars module is unavailable.")
+    elseif subcommand == "" or subcommand == "open" or
+      subcommand == "config"
+    then
+      local _, result = module:OpenSupplyManager()
+      addon:Print(result)
+    elseif subcommand == "on" or subcommand == "enable" then
+      local _, result = module:SetSuppliesEnabled(true)
+      addon:Print(result)
+    elseif subcommand == "off" or subcommand == "disable" then
+      local _, result = module:SetSuppliesEnabled(false)
+      addon:Print(result)
+    elseif subcommand == "toggle" then
+      local enabled = not (
+        AzerothExpeditionUIDB.actionbars.suppliesEnabled ~= false
+      )
+      local _, result = module:SetSuppliesEnabled(enabled)
+      addon:Print(result)
+    elseif subcommand == "status" then
+      addon:Print(module:GetRuntimeStatus())
+    elseif subcommand == "selfcheck" then
+      local _, result = module:RunSupplySelfCheck()
+      addon:Print(result)
+    elseif string.find(subcommand, "^remove%s+") then
+      local _, _, index = string.find(
+        subcommand, "^remove%s+(%d+)$"
+      )
+      local _, result = module:RemoveSupplySlot(index)
+      addon:Print(result)
+    else
+      addon:Print(
+        "/aeui supplies [open|on|off|toggle|remove slot|status|selfcheck]"
+      )
+    end
   elseif string.find(command, "^autobar") then
     local _, _, subcommand = string.find(command, "^autobar%s*(.*)$")
     local module = addon.modules.ActionBars
@@ -608,7 +650,7 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
     end
   else
     addon:Print(
-      "/aeui actionbars, /aeui autobar [open|apply|restore|popup], /aeui fieldkit [bind|unbind|home|status], /aeui focuslayout [apply|comfort|restore|status], /aeui sidebars [bind|unbind|home|status], /aeui markers [on|off|toggle|status], /aeui chat, /aeui quests, /aeui unitframes, /aeui map, /aeui character, /aeui gear [open|current|stats|plan|wide|status], /aeui refresh, /aeui status"
+      "/aeui actionbars, /aeui supplies [open|on|off|remove slot|status], /aeui autobar [open|apply|restore|popup], /aeui fieldkit [bind|unbind|home|status], /aeui focuslayout [apply|comfort|restore|status], /aeui sidebars [bind|unbind|home|status], /aeui markers [on|off|toggle|status], /aeui chat, /aeui quests, /aeui unitframes, /aeui map, /aeui character, /aeui gear [open|current|stats|plan|wide|status], /aeui refresh, /aeui status"
     )
   end
 end

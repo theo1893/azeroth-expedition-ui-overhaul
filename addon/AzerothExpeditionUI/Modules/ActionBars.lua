@@ -93,6 +93,13 @@ ActionBars.autoBarDockBackupVersion = 1
 -- used.
 ActionBars.autoBarRefreshDelay = 0
 ActionBars.autoBarRefreshEvent = "AEUI_AutoBarFieldKitRefresh"
+ActionBars.supplyRuntimeContract = "1.3"
+ActionBars.supplyProfileVersion = 2
+ActionBars.supplyMaxSlots = 24
+ActionBars.supplyColumns = 4
+ActionBars.supplyButtonSize = 36
+ActionBars.supplyButtonGap = 3
+ActionBars.supplyFallbackIcon = "Interface\\Icons\\INV_Misc_Gift_01"
 -- The former -10 UI offset only centered ArchiTotem's visible union. Shift
 -- that union another 128 UI left so all four downward element columns clear
 -- the Target Markers icon board at the provider's current 0.8 scale.
@@ -1682,13 +1689,7 @@ local function FocusAuraPolicy(
     if not provider then return nil end
     return caster == "player" or criticalTargetDebuffs[name] == true
   end
-  if kind == "debuff" then return true end
-
-  local provider = pfUI and pfUI.api and pfUI.api.libdebuff
-  if not provider or type(provider.UnitBuffCaster) ~= "function" then
-    return nil
-  end
-  return provider:UnitBuffCaster(unitstr, auraSlot, name) == "player"
+  return true
 end
 
 ActionBars.FocusAuraPolicy = FocusAuraPolicy
@@ -4238,6 +4239,943 @@ local function FieldKitBound()
   return database and database.fieldKitBound == true
 end
 
+local function ParseSupplyItemId(value)
+  if type(value) == "number" then
+    value = math.floor(value)
+    return value > 0 and value or nil
+  end
+  local text = tostring(value or "")
+  local _, _, itemId = string.find(text, "item:(%d+)")
+  if not itemId then
+    _, _, itemId = string.find(text, "^%s*(%d+)%s*$")
+  end
+  itemId = math.floor(tonumber(itemId) or 0)
+  return itemId > 0 and itemId or nil
+end
+
+local function NormalizeSupplyDraggedItemId(value)
+  if type(value) ~= "number" then return nil end
+  value = math.floor(value)
+  return value > 0 and value or nil
+end
+
+local function GetSupplyBagItem(bag, slot)
+  local info = type(GetBagItem) == "function" and GetBagItem(bag, slot)
+  local itemId = info and ParseSupplyItemId(info.itemId)
+  if not itemId and type(GetContainerItemLink) == "function" then
+    itemId = ParseSupplyItemId(GetContainerItemLink(bag, slot))
+  end
+  return itemId, info
+end
+
+local function ClearSupplyDrag()
+  ActionBars.supplyDragItemId = nil
+end
+
+local function NormalizeSupplySlots(profile)
+  if type(profile) ~= "table" then
+    return {}
+  end
+  local source = type(profile.slots) == "table" and profile.slots or {}
+  local slots = {}
+  for index = 1, ActionBars.supplyMaxSlots do
+    local entry = source[index]
+    local itemId = type(entry) == "table" and
+      ParseSupplyItemId(entry.itemId or entry[1]) or
+      ParseSupplyItemId(entry)
+    if itemId then
+      table.insert(slots, {
+        itemId = itemId,
+      })
+    end
+  end
+  profile.slots = slots
+  return slots
+end
+
+local function GetSupplyProfile(create)
+  local database = GetFieldKitDatabase()
+  local profileKey = GetCharacterProfileKey()
+  if not database or not profileKey then
+    return nil, profileKey
+  end
+  if create and type(database.supplyProfiles) ~= "table" then
+    database.supplyProfiles = {}
+  end
+  local profiles = database.supplyProfiles
+  if type(profiles) ~= "table" then
+    return nil, profileKey
+  end
+  if create and type(profiles[profileKey]) ~= "table" then
+    profiles[profileKey] = {
+      version = ActionBars.supplyProfileVersion,
+      slots = {},
+    }
+  end
+  local profile = profiles[profileKey]
+  if profile then
+    NormalizeSupplySlots(profile)
+    profile.version = ActionBars.supplyProfileVersion
+  end
+  return profile, profileKey
+end
+
+local function SuppliesConfigured()
+  local profile = GetSupplyProfile(false)
+  return profile and table.getn(profile.slots) > 0
+end
+
+local function SupplyActive()
+  local database = GetFieldKitDatabase()
+  return FieldKitEnabled() and database and
+    database.suppliesEnabled ~= false and SuppliesConfigured()
+end
+
+local function GetSupplyItemInfo(itemId)
+  local name, link, quality, level, minimumLevel, itemType, subType,
+    stackCount, texture = GetItemInfo(itemId)
+  local location = ActionBars.supplyLocations and
+    ActionBars.supplyLocations[itemId]
+  if not texture and location then
+    texture = location.texture
+  end
+  if not name and link then
+    local _, _, linkedName = string.find(link, "%[(.-)%]")
+    name = linkedName
+  end
+  return name, link, texture
+end
+
+local function SupplyCount(itemId)
+  return ActionBars.supplyCounts and
+    ActionBars.supplyCounts[itemId] or 0
+end
+
+local function AddSpecialFrameName(name)
+  if not UISpecialFrames then return end
+  for index = 1, table.getn(UISpecialFrames) do
+    if UISpecialFrames[index] == name then return end
+  end
+  table.insert(UISpecialFrames, name)
+end
+
+function ActionBars:ShowSupplyTooltip(button)
+  local profile = GetSupplyProfile(false)
+  local entry = profile and profile.slots[button.supplyIndex]
+  if not entry or not GameTooltip then return end
+
+  local location = self.supplyLocations and
+    self.supplyLocations[entry.itemId]
+  local name, link = GetSupplyItemInfo(entry.itemId)
+  GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
+  if location and type(GameTooltip.SetBagItem) == "function" then
+    GameTooltip:SetBagItem(location.bag, location.slot)
+  elseif link and type(GameTooltip.SetHyperlink) == "function" then
+    local ok = pcall(GameTooltip.SetHyperlink, GameTooltip, link)
+    if not ok then
+      GameTooltip:SetText(name or ("物品 #" .. entry.itemId))
+    end
+  else
+    GameTooltip:SetText(name or ("物品 #" .. entry.itemId))
+  end
+  local count = SupplyCount(entry.itemId)
+  GameTooltip:AddLine("itemID: " .. entry.itemId, 0.72, 0.72, 0.72)
+  GameTooltip:AddLine(
+    "背包库存 " .. count,
+    count == 0 and 1 or 0.95,
+    count == 0 and 0.25 or 0.82,
+    count == 0 and 0.2 or 0.35
+  )
+  if count == 0 then
+    GameTooltip:AddLine("缺货：槽位仍会保留", 1, 0.25, 0.2)
+  end
+  GameTooltip:Show()
+end
+
+function ActionBars:UseSupplySlot(index)
+  local profile = GetSupplyProfile(false)
+  local entry = profile and profile.slots[index]
+  local location = entry and self.supplyLocations and
+    self.supplyLocations[entry.itemId]
+  if not entry or not location then
+    addon:Print(entry and
+      ("补给缺货：itemID " .. entry.itemId) or "这个补给槽为空。")
+    return false
+  end
+  UseContainerItem(location.bag, location.slot)
+  return true
+end
+
+local function CreateSupplyButton(root, index)
+  local name = "AzerothExpeditionUISupplyButton" .. index
+  local button = CreateFrame("Button", name, root)
+  button:SetWidth(ActionBars.supplyButtonSize)
+  button:SetHeight(ActionBars.supplyButtonSize)
+  button:SetFrameLevel(root:GetFrameLevel() + 2)
+  button.supplyIndex = index
+  button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+  button:RegisterForDrag("LeftButton")
+
+  ApplyPocket(
+    button,
+    "aeuiSupplyPocketV1",
+    ActionBars.consumableKitTexturePath,
+    consumableKitTexCoords.A,
+    consumableKitSpriteSizes.A,
+    true,
+    ActionBars.fieldKitPocketPadding
+  )
+
+  button.icon = button:CreateTexture(nil, "ARTWORK")
+  button.icon:SetPoint("TOPLEFT", button, "TOPLEFT", 4, -4)
+  button.icon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -4, 4)
+
+  button.stock = button:CreateFontString(
+    nil, "OVERLAY", "GameFontNormalSmall"
+  )
+  button.stock:SetPoint("BOTTOM", button, "BOTTOM", 0, 3)
+  button.stock:SetJustifyH("CENTER")
+
+  button.highlight = button:CreateTexture(nil, "HIGHLIGHT")
+  button.highlight:SetAllPoints(button.icon)
+  button.highlight:SetTexture("Interface\\Buttons\\ButtonHilight-Square")
+  button.highlight:SetBlendMode("ADD")
+
+  button.cooldown = CreateFrame(
+    "Model", name .. "Cooldown", button, "CooldownFrameTemplate"
+  )
+  button.cooldown:SetAllPoints(button.icon)
+  button.cooldown.pfCooldownType = "NOGCD"
+
+  button:SetScript("OnClick", function()
+    ActionBars:UseSupplySlot(button.supplyIndex)
+  end)
+  button:SetScript("OnEnter", function()
+    ActionBars:ShowSupplyTooltip(button)
+  end)
+  button:SetScript("OnLeave", function()
+    if GameTooltip then GameTooltip:Hide() end
+  end)
+  button:SetScript("OnDragStart", function()
+    if not FieldKitBound() and IsShiftKeyDown() then
+      root:StartMoving()
+      root.aeuiSupplyMoving = true
+    end
+  end)
+  button:SetScript("OnDragStop", function()
+    if root.aeuiSupplyMoving then
+      root:StopMovingOrSizing()
+      root.aeuiSupplyMoving = nil
+      ActionBars:SaveSupplyFreePosition()
+    end
+  end)
+  button:Hide()
+  return button
+end
+
+function ActionBars:EnsureSupplyFrame()
+  local root = self.supplyFrame or
+    GetGlobal("AzerothExpeditionUISupplyFrame")
+  if root then return root end
+
+  root = CreateFrame(
+    "Frame", "AzerothExpeditionUISupplyFrame", UIParent
+  )
+  root:SetWidth(1)
+  root:SetHeight(1)
+  root:SetFrameStrata("MEDIUM")
+  root:SetMovable(true)
+  root:SetClampedToScreen(true)
+
+  local shell = CreateDecorationFrame(root)
+  shell:SetAllPoints(root)
+  EnsureNineSlice(
+    shell,
+    "aeuiSupplyNineSliceV1",
+    self.consumableKitTexturePath,
+    consumableKitTexCoords.C,
+    self.fieldKitCap
+  )
+  root.aeuiSupplyShell = shell
+  root.buttons = {}
+  for index = 1, self.supplyMaxSlots do
+    root.buttons[index] = CreateSupplyButton(root, index)
+  end
+  root:Hide()
+  self.supplyFrame = root
+  return root
+end
+
+function ActionBars:SaveSupplyFreePosition()
+  local root = self.supplyFrame
+  local profile = GetSupplyProfile(true)
+  local x, y = GetFrameCenter(root)
+  local parentX, parentY = GetFrameCenter(UIParent)
+  if not root or not profile or not x or not y or
+    not parentX or not parentY
+  then
+    return false
+  end
+  profile.position = {
+    x = RoundCoordinate(x - parentX),
+    y = RoundCoordinate(y - parentY),
+  }
+  return true
+end
+
+function ActionBars:ApplySupplyDockPosition()
+  local root = self.supplyFrame
+  local profile = GetSupplyProfile(false)
+  if not root or not profile then return false end
+
+  if FieldKitBound() then
+    local main = GetMainActionBarFrame()
+    if not main then
+      self.supplyDockStatus = "unavailable"
+      return false
+    end
+    root:ClearAllPoints()
+    root:SetPoint(
+      "BOTTOMRIGHT", main, "BOTTOMLEFT",
+      -self.consumableDockGap, self.fieldKitDockYOffset
+    )
+    root.aeuiSupplyWasBound = true
+    self.supplyDockStatus = "left"
+    self.consumableDockStatus = "left-supplies"
+    return true
+  end
+
+  if root.aeuiSupplyWasBound then
+    self:SaveSupplyFreePosition()
+  end
+  local position = profile.position or { x = -260, y = -160 }
+  root:ClearAllPoints()
+  root:SetPoint(
+    "CENTER", UIParent, "CENTER",
+    tonumber(position.x) or -260,
+    tonumber(position.y) or -160
+  )
+  root.aeuiSupplyWasBound = nil
+  self.supplyDockStatus = "free"
+  self.consumableDockStatus = "free-supplies"
+  return true
+end
+
+function ActionBars:LayoutSupplyButtons()
+  local root = self.supplyFrame
+  local profile = GetSupplyProfile(false)
+  local slots = profile and profile.slots or {}
+  local count = table.getn(slots)
+  if not root or count == 0 then return false end
+
+  local columns = math.min(self.supplyColumns, count)
+  local rows = math.floor((count - 1) / self.supplyColumns) + 1
+  local padding = self.fieldKitShellPadding
+  root:SetWidth(
+    padding * 2 + columns * self.supplyButtonSize +
+    math.max(0, columns - 1) * self.supplyButtonGap
+  )
+  root:SetHeight(
+    padding * 2 + rows * self.supplyButtonSize +
+    math.max(0, rows - 1) * self.supplyButtonGap
+  )
+
+  for index = 1, self.supplyMaxSlots do
+    local button = root.buttons[index]
+    button:ClearAllPoints()
+    if index <= count then
+      local column = math.mod(index - 1, self.supplyColumns)
+      local row = math.floor((index - 1) / self.supplyColumns)
+      button:SetPoint(
+        "BOTTOMLEFT", root, "BOTTOMLEFT",
+        padding + column * (self.supplyButtonSize + self.supplyButtonGap),
+        padding + row * (self.supplyButtonSize + self.supplyButtonGap)
+      )
+      button:Show()
+    else
+      button:Hide()
+    end
+  end
+  self.supplyConfigured = count
+  return true
+end
+
+function ActionBars:RefreshSupplyButtons()
+  local root = self.supplyFrame
+  local profile = GetSupplyProfile(false)
+  if not root or not profile then return end
+
+  local zero = 0
+  for index = 1, table.getn(profile.slots) do
+    local entry = profile.slots[index]
+    local button = root.buttons[index]
+    local _, _, texture = GetSupplyItemInfo(entry.itemId)
+    local count = SupplyCount(entry.itemId)
+    button.icon:SetTexture(texture or self.supplyFallbackIcon)
+    button.stock:SetText(count)
+    if count == 0 then
+      zero = zero + 1
+      button.icon:SetVertexColor(0.38, 0.28, 0.28, 1)
+      button.stock:SetTextColor(1, 0.28, 0.22)
+    else
+      button.icon:SetVertexColor(1, 1, 1, 1)
+      button.stock:SetTextColor(0.45, 1, 0.45)
+    end
+    local location = self.supplyLocations and
+      self.supplyLocations[entry.itemId]
+    if location and type(GetContainerItemCooldown) == "function" and
+      type(CooldownFrame_SetTimer) == "function"
+    then
+      local start, duration, enabled = GetContainerItemCooldown(
+        location.bag, location.slot
+      )
+      CooldownFrame_SetTimer(
+        button.cooldown, start or 0, duration or 0, enabled or 0
+      )
+    elseif type(CooldownFrame_SetTimer) == "function" then
+      CooldownFrame_SetTimer(button.cooldown, 0, 0, 0)
+    end
+  end
+  self.supplyZero = zero
+end
+
+function ActionBars:ScanSupplyInventory()
+  local profile = GetSupplyProfile(false)
+  local wanted = {}
+  if profile then
+    for index = 1, table.getn(profile.slots) do
+      wanted[profile.slots[index].itemId] = true
+    end
+  end
+
+  local counts = {}
+  local locations = {}
+  for bag = 0, 4 do
+    local slots = GetContainerNumSlots(bag) or 0
+    for slot = 1, slots do
+      local itemId, info = GetSupplyBagItem(bag, slot)
+      if itemId and wanted[itemId] then
+        local texture, count, locked = GetContainerItemInfo(bag, slot)
+        if not count or count == 0 then
+          count = info and info.stackCount
+        end
+        count = math.abs(tonumber(count) or 1)
+        counts[itemId] = (counts[itemId] or 0) + count
+        if not locations[itemId] or
+          (locations[itemId].locked and not locked)
+        then
+          locations[itemId] = {
+            bag = bag,
+            slot = slot,
+            locked = locked,
+            texture = texture,
+          }
+        end
+      end
+    end
+  end
+  self.supplyCounts = counts
+  self.supplyLocations = locations
+  self:RefreshSupplyButtons()
+  if self.supplyManager and self.supplyManager:IsShown() then
+    self:RefreshSupplyManager(false)
+  end
+end
+
+function ActionBars:InstallSupplyEvents()
+  if self.supplyEventFrame then return true end
+  local frame = CreateFrame("Frame", nil, UIParent)
+  frame:RegisterEvent("BAG_UPDATE")
+  frame:RegisterEvent("BAG_UPDATE_COOLDOWN")
+  frame:RegisterEvent("ITEM_LOCK_CHANGED")
+  frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+  frame:SetScript("OnEvent", function()
+    ActionBars:ScanSupplyInventory()
+  end)
+  self.supplyEventFrame = frame
+  return true
+end
+
+function ActionBars:InstallSupplyDragHook()
+  if self.supplyDragHooked or type(hooksecurefunc) ~= "function" or
+    type(PickupContainerItem) ~= "function"
+  then
+    return self.supplyDragHooked == true
+  end
+  hooksecurefunc("PickupContainerItem", function(bag, slot)
+    ClearSupplyDrag()
+    if CursorHasItem() then return end
+    bag = tonumber(bag)
+    slot = tonumber(slot)
+    if not bag or bag < 0 or bag > 4 or not slot or slot < 1 then
+      return
+    end
+    ActionBars.supplyDragItemId = GetSupplyBagItem(bag, slot)
+  end, true)
+  if type(PickupInventoryItem) == "function" then
+    hooksecurefunc("PickupInventoryItem", function()
+      ClearSupplyDrag()
+    end, true)
+  end
+  if type(PickupBagFromSlot) == "function" then
+    hooksecurefunc("PickupBagFromSlot", function()
+      ClearSupplyDrag()
+    end, true)
+  end
+  if type(ClearCursor) == "function" then
+    hooksecurefunc("ClearCursor", function()
+      ClearSupplyDrag()
+    end)
+  end
+  self.supplyDragHooked = true
+  return true
+end
+
+function ActionBars:ApplySupplyKit(enabled)
+  local database = GetFieldKitDatabase()
+  local profile = GetSupplyProfile(false)
+  local configured = profile and table.getn(profile.slots) or 0
+  local active = enabled and database and
+    database.suppliesEnabled ~= false and configured > 0
+  local root = self.supplyFrame
+  if not active then
+    if root then root:Hide() end
+    self.supplyConfigured = configured
+    self.supplyStatus = enabled and
+      (database and database.suppliesEnabled == false and
+        "disabled" or "empty") or "route-disabled"
+    self.supplyDockStatus = "hidden"
+    return false
+  end
+
+  root = self:EnsureSupplyFrame()
+  self:LayoutSupplyButtons()
+  self:ApplySupplyDockPosition()
+  root:Show()
+  self.supplyStatus = "available"
+  self:ScanSupplyInventory()
+  return true
+end
+
+function ActionBars:RefreshSupplyRoute()
+  local enabled = FieldKitEnabled()
+  self:ApplySupplyKit(enabled)
+  self:ApplyAutoBarFieldKit(enabled and not SupplyActive())
+  self:ApplyCombatDeckGroup()
+end
+
+function ActionBars:SetSupplySlot(index, itemId)
+  local profile = GetSupplyProfile(true)
+  itemId = NormalizeSupplyDraggedItemId(itemId)
+  if not profile or not itemId then
+    return false, "只能从背包拖入物品。"
+  end
+  local slots = profile.slots
+  index = math.max(1, math.min(
+    math.floor(tonumber(index) or (table.getn(slots) + 1)),
+    table.getn(slots) + 1
+  ))
+  for existing = 1, table.getn(slots) do
+    if slots[existing].itemId == itemId and existing ~= index then
+      self.selectedSupplySlot = existing
+      self:RefreshSupplyRoute()
+      self:RefreshSupplyManager(true)
+      return true, "这个物品已存在。"
+    end
+  end
+  slots[index] = {
+    itemId = itemId,
+  }
+  self.selectedSupplySlot = index
+  self:RefreshSupplyRoute()
+  self:RefreshSupplyManager(true)
+  return true, "已从背包添加补给物品。"
+end
+
+function ActionBars:RemoveSupplySlot(index)
+  local profile = GetSupplyProfile(false)
+  index = math.floor(tonumber(index) or 0)
+  if not profile or not profile.slots[index] then
+    return false, "这个补给槽不存在。"
+  end
+  profile.slots[index] = nil
+  NormalizeSupplySlots(profile)
+  self.selectedSupplySlot = math.max(
+    1, math.min(index, table.getn(profile.slots) + 1)
+  )
+  self:RefreshSupplyRoute()
+  self:RefreshSupplyManager(true)
+  return true, "已移除补给物品。"
+end
+
+function ActionBars:MoveSupplySlot(index, delta)
+  local profile = GetSupplyProfile(false)
+  index = math.floor(tonumber(index) or 0)
+  delta = delta < 0 and -1 or 1
+  local destination = index + delta
+  if not profile or not profile.slots[index] or
+    not profile.slots[destination]
+  then
+    return false, "已经到达这一端。"
+  end
+  profile.slots[index], profile.slots[destination] =
+    profile.slots[destination], profile.slots[index]
+  self.selectedSupplySlot = destination
+  self:RefreshSupplyRoute()
+  self:RefreshSupplyManager(true)
+  return true, "补给顺序已调整。"
+end
+
+function ActionBars:SetSuppliesEnabled(enabled)
+  local database = GetFieldKitDatabase()
+  if not database then
+    return false, "Action Bars 配置不可用。"
+  end
+  database.suppliesEnabled = enabled and true or false
+  self:RefreshSupplyRoute()
+  self:RefreshSupplyManager(true)
+  return true, enabled and
+    "AEUI 补给栏已启用。" or
+    "AEUI 补给栏已停用；AutoBar 可继续使用自己的位置与外观。"
+end
+
+function ActionBars:AssignSupplyFromCursor(index)
+  local itemId = self.supplyDragItemId
+  if not CursorHasItem() or not itemId then
+    self:SetSupplyManagerStatus("只能从背包拖入物品。", true)
+    return false
+  end
+  ClearCursor()
+  local ok, message = self:SetSupplySlot(index, itemId)
+  self:SetSupplyManagerStatus(message, not ok)
+  return ok
+end
+
+function ActionBars:SetSupplyManagerStatus(message, isError)
+  local frame = self.supplyManager
+  if not frame or not frame.status then return end
+  frame.status:SetText(message or "")
+  if isError then
+    frame.status:SetTextColor(1, 0.35, 0.25)
+  else
+    frame.status:SetTextColor(0.9, 0.78, 0.5)
+  end
+end
+
+local function CreateSupplyManagerButton(parent, text, width)
+  local button = CreateFrame(
+    "Button", nil, parent, "UIPanelButtonTemplate"
+  )
+  button:SetWidth(width)
+  button:SetHeight(22)
+  button:SetText(text)
+  return button
+end
+
+local function CreateSupplyManagerCell(parent, index)
+  local cell = CreateFrame("Button", nil, parent)
+  cell:SetWidth(38)
+  cell:SetHeight(38)
+  cell.supplyIndex = index
+  cell:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+  cell:RegisterForDrag("LeftButton")
+  cell:SetBackdrop({
+    edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+    edgeSize = 10,
+  })
+  ApplyPocket(
+    cell,
+    "aeuiSupplyManagerPocketV1",
+    ActionBars.consumableKitTexturePath,
+    consumableKitTexCoords.A,
+    consumableKitSpriteSizes.A,
+    true,
+    ActionBars.fieldKitPocketPadding
+  )
+  cell.icon = cell:CreateTexture(nil, "ARTWORK")
+  cell.icon:SetPoint("TOPLEFT", cell, "TOPLEFT", 5, -5)
+  cell.icon:SetPoint("BOTTOMRIGHT", cell, "BOTTOMRIGHT", -5, 5)
+  cell.slot = cell:CreateFontString(
+    nil, "OVERLAY", "GameFontNormalSmall"
+  )
+  cell.slot:SetPoint("TOPLEFT", cell, "TOPLEFT", 3, -2)
+  cell.stock = cell:CreateFontString(
+    nil, "OVERLAY", "GameFontNormalSmall"
+  )
+  cell.stock:SetPoint("BOTTOMRIGHT", cell, "BOTTOMRIGHT", -3, 3)
+  cell.plus = cell:CreateFontString(
+    nil, "OVERLAY", "GameFontNormalLarge"
+  )
+  cell.plus:SetPoint("CENTER", cell, "CENTER", 0, 0)
+  cell:SetScript("OnClick", function()
+    if CursorHasItem() then
+      ActionBars:AssignSupplyFromCursor(cell.supplyIndex)
+    else
+      ActionBars:SelectSupplySlot(cell.supplyIndex)
+    end
+  end)
+  cell:SetScript("OnReceiveDrag", function()
+    ActionBars:AssignSupplyFromCursor(cell.supplyIndex)
+  end)
+  cell:SetScript("OnEnter", function()
+    local profile = GetSupplyProfile(false)
+    if profile and profile.slots[cell.supplyIndex] then
+      ActionBars:ShowSupplyTooltip(cell)
+    elseif GameTooltip then
+      GameTooltip:SetOwner(cell, "ANCHOR_RIGHT")
+      GameTooltip:SetText("空补给槽")
+      GameTooltip:AddLine("从背包把物品拖到这个槽位。")
+      GameTooltip:Show()
+    end
+  end)
+  cell:SetScript("OnLeave", function()
+    if GameTooltip then GameTooltip:Hide() end
+  end)
+  return cell
+end
+
+function ActionBars:EnsureSupplyManager()
+  if self.supplyManager then return self.supplyManager end
+  local frame = CreateFrame(
+    "Frame", "AzerothExpeditionUISupplyManager", UIParent
+  )
+  frame:SetWidth(520)
+  frame:SetHeight(350)
+  frame:SetPoint("CENTER", UIParent, "CENTER", 0, 40)
+  frame:SetFrameStrata("DIALOG")
+  frame:SetMovable(true)
+  frame:EnableMouse(true)
+  frame:SetClampedToScreen(true)
+  frame:RegisterForDrag("LeftButton")
+  frame:SetScript("OnDragStart", function() frame:StartMoving() end)
+  frame:SetScript("OnDragStop", function()
+    frame:StopMovingOrSizing()
+  end)
+  frame:SetBackdrop(nativeTrinketBackdrop)
+  frame:SetBackdropColor(0.05, 0.035, 0.02, 0.96)
+  frame:SetBackdropBorderColor(0.58, 0.39, 0.2, 1)
+
+  local art = CreateDecorationFrame(frame)
+  art:SetAllPoints(frame)
+  EnsureNineSlice(
+    art,
+    "aeuiSupplyManagerNineSliceV1",
+    self.consumableKitTexturePath,
+    consumableKitTexCoords.C,
+    self.fieldKitCap
+  )
+
+  local title = frame:CreateFontString(
+    nil, "OVERLAY", "GameFontNormalLarge"
+  )
+  title:SetPoint("TOPLEFT", frame, "TOPLEFT", 18, -15)
+  title:SetText("AEUI 补给栏")
+
+  frame.profile = frame:CreateFontString(
+    nil, "OVERLAY", "GameFontNormalSmall"
+  )
+  frame.profile:SetPoint("TOPLEFT", frame, "TOPLEFT", 20, -40)
+  frame.profile:SetTextColor(0.75, 0.68, 0.55)
+
+  local help = frame:CreateFontString(
+    nil, "OVERLAY", "GameFontHighlightSmall"
+  )
+  help:SetPoint("TOPLEFT", frame, "TOPLEFT", 216, -42)
+  help:SetText("从背包拖到左侧槽位；库存为 0 时仍保留")
+
+  local close = CreateFrame(
+    "Button", nil, frame, "UIPanelCloseButton"
+  )
+  close:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -4, -4)
+
+  frame.cells = {}
+  for index = 1, self.supplyMaxSlots do
+    local cell = CreateSupplyManagerCell(frame, index)
+    local column = math.mod(index - 1, self.supplyColumns)
+    local row = math.floor((index - 1) / self.supplyColumns)
+    cell:SetPoint(
+      "TOPLEFT", frame, "TOPLEFT",
+      20 + column * 44, -64 - row * 44
+    )
+    frame.cells[index] = cell
+  end
+
+  frame.selected = frame:CreateFontString(
+    nil, "OVERLAY", "GameFontNormal"
+  )
+  frame.selected:SetPoint("TOPLEFT", frame, "TOPLEFT", 216, -74)
+  frame.selected:SetWidth(278)
+  frame.selected:SetJustifyH("LEFT")
+
+  frame.delete = CreateSupplyManagerButton(frame, "移除", 74)
+  frame.delete:SetPoint("TOPLEFT", frame, "TOPLEFT", 218, -120)
+  frame.up = CreateSupplyManagerButton(frame, "前移", 74)
+  frame.up:SetPoint("TOPLEFT", frame, "TOPLEFT", 218, -160)
+  frame.down = CreateSupplyManagerButton(frame, "后移", 74)
+  frame.down:SetPoint("LEFT", frame.up, "RIGHT", 6, 0)
+  frame.toggle = CreateSupplyManagerButton(frame, "停用补给栏", 112)
+  frame.toggle:SetPoint("LEFT", frame.down, "RIGHT", 6, 0)
+
+  frame.status = frame:CreateFontString(
+    nil, "OVERLAY", "GameFontNormalSmall"
+  )
+  frame.status:SetPoint("TOPLEFT", frame, "TOPLEFT", 218, -205)
+  frame.status:SetWidth(274)
+  frame.status:SetJustifyH("LEFT")
+  frame.status:SetTextColor(0.9, 0.78, 0.5)
+  frame.status:SetText("把背包物品拖到左侧槽位。")
+  frame.delete:SetScript("OnClick", function()
+    local ok, message = ActionBars:RemoveSupplySlot(
+      ActionBars.selectedSupplySlot
+    )
+    ActionBars:SetSupplyManagerStatus(message, not ok)
+  end)
+  frame.up:SetScript("OnClick", function()
+    local ok, message = ActionBars:MoveSupplySlot(
+      ActionBars.selectedSupplySlot, -1
+    )
+    ActionBars:SetSupplyManagerStatus(message, not ok)
+  end)
+  frame.down:SetScript("OnClick", function()
+    local ok, message = ActionBars:MoveSupplySlot(
+      ActionBars.selectedSupplySlot, 1
+    )
+    ActionBars:SetSupplyManagerStatus(message, not ok)
+  end)
+  frame.toggle:SetScript("OnClick", function()
+    local database = GetFieldKitDatabase()
+    local ok, message = ActionBars:SetSuppliesEnabled(
+      database and database.suppliesEnabled == false
+    )
+    ActionBars:SetSupplyManagerStatus(message, not ok)
+  end)
+
+  frame:Hide()
+  AddSpecialFrameName(frame:GetName())
+  self.supplyManager = frame
+  return frame
+end
+
+function ActionBars:RefreshSupplyManager(refreshSelection)
+  local frame = self.supplyManager
+  local profile, profileKey = GetSupplyProfile(true)
+  if not frame or not profile then return end
+  local count = table.getn(profile.slots)
+  self.selectedSupplySlot = math.max(1, math.min(
+    tonumber(self.selectedSupplySlot) or 1,
+    math.min(self.supplyMaxSlots, count + 1)
+  ))
+  frame.profile:SetText(
+    "角色配置：" .. tostring(profileKey or "不可用")
+  )
+
+  for index = 1, self.supplyMaxSlots do
+    local cell = frame.cells[index]
+    local entry = profile.slots[index]
+    cell.slot:SetText(index)
+    if entry then
+      local _, _, texture = GetSupplyItemInfo(entry.itemId)
+      local stock = SupplyCount(entry.itemId)
+      cell.icon:SetTexture(texture or self.supplyFallbackIcon)
+      cell.icon:Show()
+      cell.plus:SetText("")
+      cell.stock:SetText(stock)
+      if stock == 0 then
+        cell.icon:SetVertexColor(0.38, 0.28, 0.28, 1)
+        cell.stock:SetTextColor(1, 0.28, 0.22)
+      else
+        cell.icon:SetVertexColor(1, 1, 1, 1)
+        cell.stock:SetTextColor(0.45, 1, 0.45)
+      end
+    else
+      cell.icon:Hide()
+      cell.stock:SetText("")
+      cell.plus:SetText(index == count + 1 and "+" or "")
+    end
+    if index == self.selectedSupplySlot then
+      cell:SetBackdropBorderColor(1, 0.72, 0.25, 1)
+    else
+      cell:SetBackdropBorderColor(0.28, 0.22, 0.16, 0.65)
+    end
+  end
+
+  local database = GetFieldKitDatabase()
+  frame.toggle:SetText(
+    database and database.suppliesEnabled == false and
+      "启用补给栏" or "停用补给栏"
+  )
+  if not refreshSelection then return end
+
+  local entry = profile.slots[self.selectedSupplySlot]
+  if entry then
+    local name = GetSupplyItemInfo(entry.itemId)
+    frame.selected:SetText(
+      "槽 " .. self.selectedSupplySlot .. " · " ..
+      tostring(name or ("物品 #" .. entry.itemId))
+    )
+  else
+    frame.selected:SetText(
+      "槽 " .. self.selectedSupplySlot .. " · 从背包拖入"
+    )
+  end
+end
+
+function ActionBars:SelectSupplySlot(index)
+  local profile = GetSupplyProfile(true)
+  if not profile then return false end
+  self.selectedSupplySlot = math.max(1, math.min(
+    math.floor(tonumber(index) or 1),
+    table.getn(profile.slots) + 1
+  ))
+  self:RefreshSupplyManager(true)
+  return true
+end
+
+function ActionBars:OpenSupplyManager()
+  if not GetSupplyProfile(true) then
+    return false, "当前角色补给配置不可用。"
+  end
+  if not CursorHasItem() then ClearSupplyDrag() end
+  local frame = self:EnsureSupplyManager()
+  self:ScanSupplyInventory()
+  self:RefreshSupplyManager(true)
+  frame:Show()
+  return true, "已打开 AEUI 补给栏管理。"
+end
+
+function ActionBars:ToggleSupplyManager()
+  local frame = self:EnsureSupplyManager()
+  if frame:IsShown() then
+    frame:Hide()
+    return true, "已关闭 AEUI 补给栏管理。"
+  end
+  return self:OpenSupplyManager()
+end
+
+function ActionBars:RunSupplySelfCheck()
+  local profile = {
+    slots = {
+      [2] = { itemId = "item:13446:0:0:0", target = "5" },
+      [4] = { itemId = 0, target = 99 },
+      [7] = { itemId = "200", target = 0 },
+    },
+  }
+  local slots = NormalizeSupplySlots(profile)
+  local dragged = NormalizeSupplyDraggedItemId(20452.9)
+  local rejectsManual =
+    not NormalizeSupplyDraggedItemId("20452") and
+    not NormalizeSupplyDraggedItemId(
+      "|Hitem:20452:0:0:0|h[沙漠肉丸子]|h"
+    )
+  local ok = table.getn(slots) == 2 and
+    slots[1].itemId == 13446 and slots[1].target == nil and
+    slots[2].itemId == 200 and slots[2].target == nil and
+    dragged == 20452 and rejectsManual
+  return ok, ok and
+    "补给栏 self-check 通过。" or
+    "补给栏 self-check 失败：背包拖入／槽位归一化异常。"
+end
+
 local function GetAutoBarLayoutProfile()
   local player = AutoBar and AutoBar.currentPlayer
   local current = player and AutoBar_Config and AutoBar_Config[player]
@@ -4933,7 +5871,7 @@ function ActionBars:InstallAutoBarHandlePointLock()
   state = { original = handle.SetPoint }
   state.wrapper = function(frame, ...)
     local arguments = arg
-    if FieldKitEnabled() and FieldKitBound() then
+    if FieldKitEnabled() and FieldKitBound() and not SupplyActive() then
       local main = GetMainActionBarFrame()
       local xOffset, yOffset =
         ActionBars:ResolveAutoBarBoundOffsets(frame)
@@ -5023,6 +5961,7 @@ function ActionBars:RestoreAutoBarButtonDock()
 end
 
 function ActionBars:ApplyAutoBarButtonDock(enabled)
+  if SupplyActive() then enabled = false end
   if not enabled or not FieldKitBound() then
     self:RestoreAutoBarButtonDock()
     self.autoBarAnchorBasis = enabled and "free" or "disabled"
@@ -5118,6 +6057,13 @@ function ActionBars:ApplyAutoBarButtonDock(enabled)
 end
 
 function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
+  if SupplyActive() then
+    self:RestoreAutoBarHandlePointLock()
+    self:RestoreAutoBarProviderDock()
+    self:ApplyAutoBarButtonDock(false)
+    return self:ApplySupplyDockPosition()
+  end
+  if self.supplyFrame then self.supplyFrame:Hide() end
   -- AutoBar's drag handle is not its visual root: SetupVisual positions every
   -- button against that handle and may rewrite it again.  Dock the actual
   -- visible buttons to one AEUI root instead, exactly as TrinketMenu docks its
@@ -5128,6 +6074,7 @@ function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
 end
 
 function ActionBars:ApplyAutoBarDragHandlePolicy(enabled)
+  if SupplyActive() then enabled = false end
   local handle = GetGlobal("AutoBarAnchorFrameHandle")
   if not handle then
     self.autoBarDragHandleStatus = "missing"
@@ -5768,6 +6715,7 @@ local function ConfigureNativePopupConnectors(frame, buttons)
 end
 
 function ActionBars:ApplyAutoBarPopup(enabled, baseButton)
+  if SupplyActive() then enabled = false end
   local frame = GetGlobal("AutoBarPopupFrame")
   if not frame then
     self:CancelAutoBarPopupIntent()
@@ -5864,13 +6812,16 @@ function ActionBars:ApplyAutoBarPopup(enabled, baseButton)
 end
 
 function ActionBars:ApplyAutoBarFieldKit(enabled)
+  if SupplyActive() then enabled = false end
   local frame = GetGlobal("AutoBarFrame")
   if not AutoBar or not frame then
     self.autoBarFieldKitStatus = "missing"
     self.autoBarDragHandleStatus = "missing"
     self.autoBarMainButtons = 0
     self.autoBarGrouped = false
-    self.consumableDockStatus = "unavailable"
+    if not SupplyActive() then
+      self.consumableDockStatus = "unavailable"
+    end
     self:ApplyAutoBarPopup(false)
     return false
   end
@@ -6280,8 +7231,10 @@ function ActionBars:InstallFieldKitHooks()
     then
       self.autoBarConfigShowHooked = true
       hooksecurefunc(AutoBarConfig, "OnShow", function()
-        ActionBars:MigrateAutoBarClassScope()
-        ActionBars:ApplyAutoBarConfigCuration()
+        if not SupplyActive() then
+          ActionBars:MigrateAutoBarClassScope()
+          ActionBars:ApplyAutoBarConfigCuration()
+        end
         ActionBars:SettleAutoBarFieldKitRefresh()
       end)
     end
@@ -6291,7 +7244,9 @@ function ActionBars:InstallFieldKitHooks()
     then
       self.autoBarConfigTabHooked = true
       hooksecurefunc(AutoBarConfig, "TabButtonOnClick", function()
-        if not ActionBars.autoBarConfigSelecting then
+        if not SupplyActive() and
+          not ActionBars.autoBarConfigSelecting
+        then
           ActionBars:ApplyAutoBarConfigCuration()
         end
       end)
@@ -6402,6 +7357,13 @@ function ActionBars:Initialize()
   self.autoBarConfigCurationStatus = "pending"
   self.autoBarConfigSelecting = false
   self.autoBarConfigOriginalLayout = nil
+  self.supplyStatus = "pending"
+  self.supplyDockStatus = "pending"
+  self.supplyConfigured = 0
+  self.supplyZero = 0
+  self.selectedSupplySlot = 1
+  self.supplyCounts = {}
+  self.supplyLocations = {}
   self.actionBarStackStatus = "pending"
   self.sideBarGroupStatus = SideBarGroupBound() and "bound" or "free"
   self.sideBarGroupMigration = "pending"
@@ -6436,6 +7398,8 @@ function ActionBars:Initialize()
   self.combatDeckGroupStatus = "pending"
   self.comfortUIScaleStatus = ComfortUIScaleConfigured() and
     "saved" or "custom"
+  self:InstallSupplyEvents()
+  self:InstallSupplyDragHook()
 end
 
 function ActionBars:Apply()
@@ -6513,10 +7477,17 @@ function ActionBars:Apply()
   self:MigrateSideBarGroupDefault()
   self:MaintainSideBarGroup()
   self:ApplyActionBarStackPosition(enabled)
-  self:MigrateAutoBarClassScope()
-  self:ApplyAutoBarConfigCuration()
-  self:MigrateAutoBarDefaultMode()
-  self:ApplyAutoBarFieldKit(enabled)
+  if not SupplyActive() then
+    self:MigrateAutoBarClassScope()
+    self:ApplyAutoBarConfigCuration()
+    self:MigrateAutoBarDefaultMode()
+  else
+    self.autoBarClassScopeStatus = "legacy-bypassed"
+    self.autoBarConfigCurationStatus = "legacy-bypassed"
+    self.autoBarPresetStatus = "legacy-bypassed"
+  end
+  self:ApplySupplyKit(enabled)
+  self:ApplyAutoBarFieldKit(enabled and not SupplyActive())
   self:ApplyTrinketFieldKit(enabled)
   self:ApplyArchiTotemDockPosition(enabled)
 
@@ -6573,10 +7544,12 @@ end
 function ActionBars:GetRuntimeStatus()
   local global = pfUI_config and pfUI_config.global
   local uiScaleTier = global and global.pixelperfect or "unknown"
+  local _, supplyProfileKey = GetSupplyProfile(false)
   return
     "contract=" .. tostring(self.runtimeContract) ..
     ",rail-contract=" .. tostring(self.railRuntimeContract) ..
     ",fieldkit-contract=" .. tostring(self.fieldKitRuntimeContract) ..
+    ",supplies-contract=" .. tostring(self.supplyRuntimeContract) ..
     ",sidebar-group-contract=" ..
       tostring(self.sideBarGroupRuntimeContract) ..
     ",sidebar-group=" ..
@@ -6692,6 +7665,13 @@ function ActionBars:GetRuntimeStatus()
       tostring(self.autoBarProviderDockStatus or "pending") ..
     ",autobar-drag-handle=" ..
       tostring(self.autoBarDragHandleStatus or "pending") ..
+    ",supplies=" .. tostring(self.supplyStatus or "pending") ..
+    ",supplies-profile=" ..
+      tostring(supplyProfileKey or "unavailable") ..
+    ",supplies-configured=" .. tostring(self.supplyConfigured or 0) ..
+    ",supplies-zero=" .. tostring(self.supplyZero or 0) ..
+    ",supplies-dock=" ..
+      tostring(self.supplyDockStatus or "pending") ..
     ",consumable-dock=" ..
       tostring(self.consumableDockStatus or "pending") ..
     ",trinket=" .. tostring(self.trinketFieldKitStatus or "pending") ..

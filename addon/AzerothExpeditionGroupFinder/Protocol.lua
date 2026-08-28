@@ -2,7 +2,7 @@ AEGFProtocol = AEGFProtocol or {}
 
 local P = AEGFProtocol
 local PREFIX = "AEGF1"
-local VERSION = "1"
+local VERSION = "2"
 local MAX_MESSAGE = 230
 
 P.classTokens = {
@@ -161,24 +161,31 @@ function P.EncodeClose(id)
     return PREFIX .. "~" .. VERSION .. "~C~" .. id
 end
 
-function P.EncodeApplication(id, role, itemLevel, classIndex)
+function P.EncodeApplication(id, recipient, role, itemLevel, classIndex)
     id = validId(id)
+    recipient = validText(recipient, 48)
     itemLevel = readInteger(itemLevel, 0, 999)
     classIndex = readInteger(classIndex, 1, 9)
-    if not id or (role ~= "T" and role ~= "N" and role ~= "D")
+    if not id or not recipient or recipient == ""
+        or (role ~= "T" and role ~= "N" and role ~= "D")
         or not itemLevel or not classIndex then
         return nil
     end
-    return table.concat({ PREFIX, VERSION, "P", id, role, tostring(itemLevel), tostring(classIndex) }, "~")
+    return table.concat({
+        PREFIX, VERSION, "P", id, recipient, role,
+        tostring(itemLevel), tostring(classIndex),
+    }, "~")
 end
 
-function P.EncodeResponse(id, state)
+function P.EncodeResponse(id, recipient, state)
     id = validId(id)
-    if not id or (state ~= "PENDING" and state ~= "INVITED"
+    recipient = validText(recipient, 48)
+    if not id or not recipient or recipient == ""
+        or (state ~= "PENDING" and state ~= "INVITED"
         and state ~= "REJECTED" and state ~= "CLOSED") then
         return nil
     end
-    return table.concat({ PREFIX, VERSION, "R", id, state }, "~")
+    return table.concat({ PREFIX, VERSION, "R", id, recipient, state }, "~")
 end
 
 function P.Decode(message)
@@ -197,19 +204,27 @@ function P.Decode(message)
     if kind == "C" and validId(fields[4]) and not fields[5] then
         return kind, { id = fields[4] }
     end
-    if kind == "P" and validId(fields[4]) and not fields[8] then
-        local itemLevel = readInteger(fields[6], 0, 999)
-        local classIndex = readInteger(fields[7], 1, 9)
-        if (fields[5] == "T" or fields[5] == "N" or fields[5] == "D")
+    if kind == "P" and validId(fields[4]) and not fields[9] then
+        local recipient = validText(fields[5], 48)
+        local itemLevel = readInteger(fields[7], 0, 999)
+        local classIndex = readInteger(fields[8], 1, 9)
+        if recipient and recipient ~= ""
+            and (fields[6] == "T" or fields[6] == "N" or fields[6] == "D")
             and itemLevel and classIndex then
-            return kind, { id = fields[4], role = fields[5], itemLevel = itemLevel, classIndex = classIndex }
+            return kind, {
+                id = fields[4], recipient = recipient, role = fields[6],
+                itemLevel = itemLevel, classIndex = classIndex,
+            }
         end
         return nil
     end
-    if kind == "R" and validId(fields[4]) and not fields[6] then
-        local state = fields[5]
-        if state == "PENDING" or state == "INVITED" or state == "REJECTED" or state == "CLOSED" then
-            return kind, { id = fields[4], state = state }
+    if kind == "R" and validId(fields[4]) and not fields[7] then
+        local recipient = validText(fields[5], 48)
+        local state = fields[6]
+        if recipient and recipient ~= ""
+            and (state == "PENDING" or state == "INVITED"
+                or state == "REJECTED" or state == "CLOSED") then
+            return kind, { id = fields[4], recipient = recipient, state = state }
         end
         return nil
     end

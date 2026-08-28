@@ -8,7 +8,7 @@ local HEARTBEAT_SECONDS = 60
 local LISTING_TTL_SECONDS = 150
 local SEND_INTERVAL_SECONDS = 1
 
-A.version = "0.1.0"
+A.version = "0.1.1"
 A.channelName = CHANNEL_NAME
 A.listings = A.listings or {}
 A.applications = A.applications or {}
@@ -154,12 +154,8 @@ local function ensureChannel()
     return nil
 end
 
-local function sendDirect(recipient, payload)
-    if not recipient or recipient == "" or not payload or not SendAddonMessage then
-        return nil
-    end
-    SendAddonMessage("TW_CHAT_MSG_WHISPER<" .. recipient .. ">", payload, "GUILD")
-    return 1
+local function queueDirected(payload)
+    return queueChannel(payload)
 end
 
 local function refreshUI()
@@ -263,6 +259,7 @@ local function handleChannelMessage(message, sender, rawChannel)
             A.nextAnnounceAt = currentTime + math.random(0, 5)
         end
     end
+    return kind == "P" or kind == "R"
 end
 
 local function handleApplication(sender, data)
@@ -271,7 +268,7 @@ local function handleApplication(sender, data)
         return
     end
     if data.itemLevel < A.activeListing.minimumItemLevel then
-        sendDirect(sender, P.EncodeResponse(data.id, "REJECTED"))
+        queueDirected(P.EncodeResponse(data.id, sender, "REJECTED"))
         return
     end
     local key = string.lower(sender)
@@ -286,7 +283,7 @@ local function handleApplication(sender, data)
         classIndex = data.classIndex,
         receivedAt = now(),
     }
-    sendDirect(sender, P.EncodeResponse(data.id, "PENDING"))
+    queueDirected(P.EncodeResponse(data.id, sender, "PENDING"))
     printMessage(sender .. " 申请入团。")
     refreshUI()
 end
@@ -300,6 +297,9 @@ local responseLabels = {
 
 local function handleDirectMessage(message, sender)
     local kind, data = P.Decode(message)
+    if not data or not sameName(data.recipient, playerName()) then
+        return
+    end
     if kind == "P" then
         handleApplication(sender, data)
     elseif kind == "R" then
@@ -395,7 +395,7 @@ function A.CloseListing(reason)
     queueChannel(P.EncodeClose(listing.id))
     local key, application
     for key, application in pairs(A.applications) do
-        sendDirect(application.name, P.EncodeResponse(listing.id, "CLOSED"))
+        queueDirected(P.EncodeResponse(listing.id, application.name, "CLOSED"))
     end
     A.applications = {}
     A.listings[listingKey(playerName(), listing.id)] = nil
@@ -461,8 +461,14 @@ function A.ApplyToListing(listing, role)
     if itemLevel < listing.minimumItemLevel then
         return nil, "当前装等 " .. itemLevel .. "，未达到要求 " .. listing.minimumItemLevel .. "。"
     end
-    local payload = P.EncodeApplication(listing.id, role, itemLevel, position)
-    if not sendDirect(listing.leader, payload) then
+    local payload = P.EncodeApplication(
+        listing.id,
+        listing.leader,
+        role,
+        itemLevel,
+        position
+    )
+    if not queueDirected(payload) then
         return nil, "无法发送申请。"
     end
     A.applicationStates[listing.key] = "SENT"
@@ -476,7 +482,11 @@ function A.InviteApplicant(application)
         return nil, "当前无法邀请该玩家。"
     end
     InviteByName(application.name)
-    sendDirect(application.name, P.EncodeResponse(A.activeListing.id, "INVITED"))
+    queueDirected(P.EncodeResponse(
+        A.activeListing.id,
+        application.name,
+        "INVITED"
+    ))
     A.applications[string.lower(application.name)] = nil
     A.selectedApplicationName = nil
     refreshUI()
@@ -487,7 +497,11 @@ function A.RejectApplicant(application)
     if not application or not A.activeListing then
         return nil, "请先选择一个申请者。"
     end
-    sendDirect(application.name, P.EncodeResponse(A.activeListing.id, "REJECTED"))
+    queueDirected(P.EncodeResponse(
+        A.activeListing.id,
+        application.name,
+        "REJECTED"
+    ))
     A.applications[string.lower(application.name)] = nil
     A.selectedApplicationName = nil
     refreshUI()
@@ -500,7 +514,6 @@ eventFrame:RegisterEvent("PLAYER_LOGIN")
 eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 eventFrame:RegisterEvent("CHAT_MSG_CHANNEL")
 eventFrame:RegisterEvent("CHAT_MSG_CHANNEL_NOTICE")
-eventFrame:RegisterEvent("CHAT_MSG_ADDON")
 eventFrame:RegisterEvent("RAID_ROSTER_UPDATE")
 eventFrame:RegisterEvent("PARTY_MEMBERS_CHANGED")
 eventFrame:RegisterEvent("PARTY_LEADER_CHANGED")
@@ -516,11 +529,11 @@ eventFrame:SetScript("OnEvent", function()
         A.nextJoinAt = 0
         A.RequestSync()
     elseif event == "CHAT_MSG_CHANNEL" then
-        handleChannelMessage(arg1, arg2, arg9)
+        if handleChannelMessage(arg1, arg2, arg9) then
+            handleDirectMessage(arg1, arg2)
+        end
     elseif event == "CHAT_MSG_CHANNEL_NOTICE" then
         A.nextJoinAt = 0
-    elseif event == "CHAT_MSG_ADDON" and arg1 == "TW_CHAT_MSG_WHISPER" then
-        handleDirectMessage(arg2, arg4)
     elseif event == "RAID_ROSTER_UPDATE" or event == "PARTY_MEMBERS_CHANGED"
         or event == "PARTY_LEADER_CHANGED" then
         updateActiveRoster()

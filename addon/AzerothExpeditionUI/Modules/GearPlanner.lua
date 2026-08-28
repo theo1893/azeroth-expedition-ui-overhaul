@@ -3755,6 +3755,7 @@ function GearPlanner:InstallProviderHooks()
   then
     hooksecurefunc("SCShowFrame", function(frame)
       if
+        not GearPlanner.suppressProviderUpdateHook and
         frame == _G["StatCompareSelfFrame"] and
         GearPlanner:CompanionContextVisible() and
         Enabled()
@@ -4201,7 +4202,9 @@ function GearPlanner:ReconcileCompanion()
     self.frame:Show()
   elseif active == "dual" and currentFrame and statsFrame then
     if type(SCPaperDollFrame_OnShow) == "function" then
+      self.suppressProviderUpdateHook = true
       pcall(SCPaperDollFrame_OnShow)
+      self.suppressProviderUpdateHook = false
     end
     self:AnchorProviderRight(currentFrame)
     self:AnchorStatsLeft(statsFrame)
@@ -4264,7 +4267,9 @@ function GearPlanner:SetActiveView(view, refreshProvider)
     (view == "stats" or view == "dual") and
     type(SCPaperDollFrame_OnShow) == "function"
   then
+    self.suppressProviderUpdateHook = true
     pcall(SCPaperDollFrame_OnShow)
+    self.suppressProviderUpdateHook = false
   end
   if self:CompanionContextVisible() then
     self.companionSessionActive = true
