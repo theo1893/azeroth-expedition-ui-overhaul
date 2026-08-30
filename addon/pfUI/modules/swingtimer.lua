@@ -83,6 +83,7 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
   local hsSpellIDs = {
     [78] = true, [284] = true, [285] = true, [1608] = true,
     [11564] = true, [11565] = true, [11566] = true, [11567] = true,
+    [25286] = true,
   }
 
   -- Cleave spell IDs (all ranks)

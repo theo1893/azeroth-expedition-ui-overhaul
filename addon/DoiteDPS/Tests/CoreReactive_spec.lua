@@ -457,6 +457,7 @@ Expect(
 
 local hsQueuedByApi = false
 local cleaveQueuedByApi = false
+D.Spells.HEROIC_STRIKE = { spellId = 25286 }
 pfUI = {
     swingtimer = {
         api = {
@@ -502,8 +503,19 @@ Expect(
 hsQueuedByApi = false
 local resolvedQueue = D:GetSwingState({})
 Expect(
-    "authoritative queue clear removes the completed Heroic Strike latch",
-    resolvedQueue.hsQueued == false and D._pendingOnSwing == nil
+    "queue-pop keeps the confirmed Heroic Strike hidden and input-locked",
+    resolvedQueue.hsQueued == false
+        and resolvedQueue.queuePending == true
+        and resolvedQueue.pendingKey == "HEROIC_STRIKE"
+        and D._pendingOnSwing
+        and D._pendingOnSwing.confirmed == true
+)
+local ignoredResult = D:ResolveOnSwingQueued(12345)
+local matchedResult = D:ResolveOnSwingQueued(25286)
+Expect(
+    "only the matching on-swing result releases the input lock",
+    ignoredResult == false and matchedResult == true
+        and D._pendingOnSwing == nil
 )
 
 cleaveQueuedByApi = true

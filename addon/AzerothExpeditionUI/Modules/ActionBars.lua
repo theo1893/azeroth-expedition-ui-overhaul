@@ -13,7 +13,7 @@ ActionBars.railTexturePath = addon.media.root .. "ActionBars\\ActionRailV1"
 ActionBars.firstRailBar = 1
 ActionBars.lastRailBar = 12
 ActionBars.railCap = 6
-ActionBars.fieldKitRuntimeContract = "2.9"
+ActionBars.fieldKitRuntimeContract = "3.0"
 ActionBars.focusLayoutRuntimeContract = "3.5"
 ActionBars.focusLayoutVersion = 21
 ActionBars.focusLayoutBackupVersion = 1
@@ -22,8 +22,6 @@ ActionBars.focusUnitDefaultBackupVersion = 1
 ActionBars.sideBarGroupRuntimeContract = "1.0"
 ActionBars.sideBarGroupLayoutVersion = 1
 ActionBars.sideBarGroupBackupVersion = 1
-ActionBars.autoBarDefaultModeVersion = 1
-ActionBars.autoBarClassScopeVersion = 1
 ActionBars.focusCoordinateSpace = "game-native-v1"
 ActionBars.comfortUIScaleVersion = 2
 ActionBars.comfortUIScaleTier = 8
@@ -75,32 +73,21 @@ ActionBars.consumableKitTexturePath =
 ActionBars.fieldKitCap = 6
 ActionBars.fieldKitPocketPadding = 4
 ActionBars.fieldKitShellPadding = 6
-ActionBars.consumableDockGap = 12
-ActionBars.autoBarDockColumns = 4
+ActionBars.supplyDockGap = 12
 ActionBars.trinketDockGap = 8
 ActionBars.fieldKitDockYOffset = -20
 ActionBars.actionBarStackOverlap = 1
 ActionBars.popupDrawerGap = 6
 ActionBars.popupDrawerMaxRows = 6
-ActionBars.popupIntentDelay = 0.30
-ActionBars.popupIntentEvent = "AEUI_AutoBarPopupIntent"
-ActionBars.autoBarProviderDockName = "pfActionBarMain"
-ActionBars.autoBarDockBackupVersion = 1
--- AutoBar may rewrite its drag handle after every visual refresh. The bound
--- Field Kit therefore docks the real visible buttons to a four-column AEUI
--- root whose bottom-right edge follows the main action bar. Provider refresh
--- hooks reapply that grid at event boundaries; no OnUpdate position loop is
--- used.
-ActionBars.autoBarRefreshDelay = 0
-ActionBars.autoBarRefreshEvent = "AEUI_AutoBarFieldKitRefresh"
-ActionBars.supplyRuntimeContract = "2.0"
-ActionBars.supplyProfileVersion = 3
+ActionBars.supplyPopupIntentDelay = 0.30
+ActionBars.supplyRuntimeContract = "2.1"
+ActionBars.supplyProfileVersion = 4
 ActionBars.supplyMaxSlots = 24
 ActionBars.supplyMaxItems = 12
 ActionBars.supplyColumns = 4
 ActionBars.supplyButtonSize = 36
 ActionBars.supplyButtonGap = 3
-ActionBars.supplyPopupCloseDelay = 0.12
+ActionBars.supplyPopupCloseDelay = 0.30
 ActionBars.supplyFallbackIcon = "Interface\\Icons\\INV_Misc_Gift_01"
 -- The former -10 UI offset only centered ArchiTotem's visible union. Shift
 -- that union another 128 UI left so all four downward element columns clear
@@ -110,41 +97,6 @@ ActionBars.archiTotemDockXOffset =
 -- Keep the provider row below the XP rail with a compact five-pixel visual
 -- clearance; the provider's root still omits its unscaled drag handle.
 ActionBars.archiTotemDockYOffset = -39
-
--- AutoBar 1.31's zhCN locale omits these seven category descriptions. The
--- provider still creates the categories, so its configuration tooltip later
--- concatenates nil and errors. Repair only missing runtime labels; category
--- contents, profile data, and SavedVariables remain provider-owned.
-local autoBarCategoryDescriptionFallbacks = {
-  POTION_SPELLPOWER = {
-    zhCN = "法术强度药剂",
-    default = "Spellpower Potions",
-  },
-  TEAS = {
-    zhCN = "茶",
-    default = "Tea",
-  },
-  ZANZA = {
-    zhCN = "赞扎药剂",
-    default = "Zanza",
-  },
-  DRINK_STAMINA = {
-    zhCN = "饮料：耐力加成",
-    default = "Drink: Stamina Bonus",
-  },
-  FOOD_SPELLPOWER = {
-    zhCN = "食物：法术强度加成",
-    default = "Food: Spellpower Bonus",
-  },
-  QUESTSTARTITEMS = {
-    zhCN = "任务起始物品",
-    default = "Items that Start Quests",
-  },
-  QUESTUSEITEMS = {
-    zhCN = "任务使用物品",
-    default = "Items Used During Quests",
-  },
-}
 
 -- Runtime v2.2 uses the exact Turtle WoW 1.12 coordinates consumed by
 -- Frame:SetPoint and pfUI.api.LoadMovable. They are relative to UIParent at
@@ -305,44 +257,6 @@ local nativeTrinketBackdrop = {
   tileSize = 16,
   edgeSize = 16,
   insets = { left = 4, right = 4, top = 4, bottom = 4 },
-}
-
-local recommendedAutoBarSlots = {
-  [1] = "HEALPOTIONS|PVP_HEALPOTIONS|ALTERAC_HEAL",
-  [2] = "HEALTHSTONE|WHIPPER_ROOT",
-  [4] = "REJUVENATION_POTIONS|NIGHT_DRAGONS_BREATH|UNGORO_RESTORE",
-  [5] = "BANDAGES|ALTERAC_BANDAGES|WARSONG_BANDAGES|ARATHI_BANDAGES",
-  [6] = "ANTI_VENOM",
-  [7] = "ACTION_POTIONS|PROTECTION_DAMAGE",
-  [8] = "SWIFTNESSPOTIONS|ZANZA",
-  [9] = "POTION_AGILITY|POTION_STRENGTH|POTION_SPELLPOWER|BUFF_ATTACKPOWER|BUFF_ATTACKSPEED",
-  [10] = "POTION_FORTITUDE|POTION_INTELLECT|POTION_WISDOM|POTION_DEFENSE|POTION_TROLL|BUFF_DODGE",
-  [11] = "PROTECTION_ARCANE|PROTECTION_FIRE|PROTECTION_FROST|PROTECTION_NATURE|PROTECTION_SHADOW|PROTECTION_SPELLS|PROTECTION_HOLY",
-  [12] = "SCROLL_AGILITY|SCROLL_INTELLECT|SCROLL_PROTECTION|SCROLL_SPIRIT|SCROLL_STAMINA|SCROLL_STRENGTH",
-  [13] = "FOOD|FOOD_PERCENT|FOOD_CONJURED",
-  [14] = "WATER|WATER_PERCENT|WATER_CONJURED|WATER_SPIRIT",
-  [15] = "FOOD_STAMINA|FOOD_AGILITY|FOOD_MANAREGEN|FOOD_HPREGEN|FOOD_STRENGTH|FOOD_INTELLIGENCE|FOOD_SPELLPOWER|DRINK_STAMINA|FOOD_WATER",
-  [17] = "SHARPENINGSTONES|WEIGHTSTONE|MANA_OIL|WIZARD_OIL",
-  [19] = "HEARTHSTONE",
-  [20] = "MOUNTS_TROLL|MOUNTS_ORC|MOUNTS_UNDEAD|MOUNTS_TAUREN|MOUNTS_HUMAN|MOUNTS_NIGHTELF|MOUNTS_DWARF|MOUNTS_GNOME|MOUNTS_SPECIAL|MOUNTS_QIRAJI",
-  [21] = "EXPLOSIVES",
-  [22] = "FISHINGITEMS",
-  [23] = "HOURGLASS_SAND|BATTLE_STANDARD|BATTLE_STANDARD_AV",
-  [24] = "QUESTUSEITEMS|QUESTSTARTITEMS",
-}
-
-local autoBarClassSlot3 = {
-  WARRIOR = "RAGEPOTIONS",
-  ROGUE = "ENERGYPOTIONS",
-}
-
-local autoBarManaSlot3 =
-  "RUNES|MANAPOTIONS|PVP_MANAPOTIONS|ALTERAC_MANA|MANASTONE|TEAS"
-
-local autoBarClassSlot18 = {
-  ROGUE = "POISON-WOUND|POISON-CRIPPLING|POISON-AGITATING|POISON-MINDNUMBING|POISON-CORROSIVE|POISON-DEADLY|POISON-INSTANT|POISON-DISSOLVENT",
-  HUNTER = "FOOD_PET_BREAD|FOOD_PET_CHEESE|FOOD_PET_FISH|FOOD_PET_FRUIT|FOOD_PET_FUNGUS|FOOD_PET_MEAT|ARROWS|BULLETS",
-  WARLOCK = "SOULSHARDS",
 }
 
 local function GetButton(barIndex, buttonIndex)
@@ -580,15 +494,6 @@ local function EnsureConnector(
   return slices
 end
 
-local function SetConnectorEnabled(slices, enabled)
-  if not slices then
-    return
-  end
-  for _, name in ipairs(connectorSliceOrder) do
-    SetTextureEnabled(slices[name], enabled)
-  end
-end
-
 local function ApplyPocket(
   button, key, texturePath, texcoord, sourceSize, enabled, padding
 )
@@ -723,57 +628,6 @@ local function IsVisibleButton(button)
     button:GetTop() and button.GetBottom and button:GetBottom()
 end
 
-local function GetButtonExtremes(first, last, prefix)
-  local result = {
-    count = 0,
-    left = nil,
-    right = nil,
-    top = nil,
-    bottom = nil,
-    leftValue = nil,
-    rightValue = nil,
-    topValue = nil,
-    bottomValue = nil,
-  }
-  for index = first, last do
-    local button = GetGlobal(prefix .. index)
-    if IsVisibleButton(button) then
-      local left = button:GetLeft()
-      local right = button:GetRight()
-      local top = button:GetTop()
-      local bottom = button:GetBottom()
-      result.count = result.count + 1
-      if not result.leftValue or left < result.leftValue then
-        result.leftValue = left
-        result.left = button
-      end
-      if not result.rightValue or right > result.rightValue then
-        result.rightValue = right
-        result.right = button
-      end
-      if not result.topValue or top > result.topValue then
-        result.topValue = top
-        result.top = button
-      end
-      if not result.bottomValue or bottom < result.bottomValue then
-        result.bottomValue = bottom
-        result.bottom = button
-      end
-    end
-  end
-  return result
-end
-
-local function GetFrameScale(frame)
-  if frame and frame.GetEffectiveScale then
-    local scale = tonumber(frame:GetEffectiveScale())
-    if scale and scale > 0 then
-      return scale
-    end
-  end
-  return 1
-end
-
 local function GetFrameCenter(frame)
   if not frame then
     return nil, nil
@@ -818,26 +672,6 @@ local function RestoreFrameAnchors(frame, points)
   frame:ClearAllPoints()
   for index = 1, table.getn(points) do
     frame:SetPoint(unpack(points[index]))
-  end
-  return true
-end
-
-local function CaptureButtonLayout(button)
-  local layout = { points = CaptureFrameAnchors(button) }
-  if button and button.GetHitRectInsets then
-    local left, right, top, bottom = button:GetHitRectInsets()
-    layout.hitRect = { left, right, top, bottom }
-  end
-  return layout
-end
-
-local function RestoreButtonLayout(button, layout)
-  if not button or not layout then
-    return false
-  end
-  RestoreFrameAnchors(button, layout.points)
-  if layout.hitRect and button.SetHitRectInsets then
-    button:SetHitRectInsets(unpack(layout.hitRect))
   end
   return true
 end
@@ -895,17 +729,6 @@ local function FocusPositionMatches(name, anchor, x, y, scale)
     math.abs((tonumber(position.xpos) or 100000) - x) <= 1 and
     math.abs((tonumber(position.ypos) or 100000) - y) <= 1 and
     math.abs((tonumber(position.scale) or 100000) - scale) <= 0.001
-end
-
-local function FrameCoordinatePixels(frame, method)
-  if not frame or not frame[method] then
-    return nil
-  end
-  local value = frame[method](frame)
-  if not value then
-    return nil
-  end
-  return value * GetFrameScale(frame)
 end
 
 local function ApplyFramePosition(frame, anchor, x, y, scale)
@@ -1545,8 +1368,6 @@ local function CaptureCombatFocusBackup()
     },
     actionbars = {
       fieldKitBound = CaptureField(database, "fieldKitBound"),
-      consumableDocked = CaptureField(database, "consumableDocked"),
-      trinketDocked = CaptureField(database, "trinketDocked"),
       combatDeckLayoutVersion =
         CaptureField(database, "combatDeckLayoutVersion"),
       combatFocusLayoutVersion =
@@ -3206,8 +3027,6 @@ function ActionBars:RestoreCombatFocusLayoutPreset()
 
   local actionbarBackup = backup.actionbars or {}
   RestoreField(database, "fieldKitBound", actionbarBackup.fieldKitBound)
-  RestoreField(database, "consumableDocked", actionbarBackup.consumableDocked)
-  RestoreField(database, "trinketDocked", actionbarBackup.trinketDocked)
   RestoreField(
     database, "combatDeckLayoutVersion",
     actionbarBackup.combatDeckLayoutVersion
@@ -3290,32 +3109,6 @@ function ActionBars:ApplyComfortUIScalePreset()
     "Comfort UI scale applied: pfUI tier 8 (0.711111), compact game-coordinate Combat Focus scales 0.68/0.62/0.72, and provider-native visibility preserved. Reload if a third-party frame does not redraw immediately."
 end
 
-local function SlotSignature(slot)
-  if type(slot) ~= "table" then
-    return ""
-  end
-  local values = {}
-  for index = 1, table.getn(slot) do
-    values[index] = tostring(slot[index])
-  end
-  return table.concat(values, "|")
-end
-
-local function ManualSlotMatches(slot)
-  if type(slot) ~= "table" then
-    return false
-  end
-  if table.getn(slot) > 16 then
-    return false
-  end
-  for index = 1, table.getn(slot) do
-    if type(slot[index]) ~= "number" then
-      return false
-    end
-  end
-  return true
-end
-
 local function GetPlayerClassToken()
   if type(UnitClass) ~= "function" then
     return nil
@@ -3384,852 +3177,16 @@ function ActionBars:RequestArchiTotemDownDirection()
   return direction == "down"
 end
 
-local function SplitSlotSignature(signature)
-  local result = {}
-  if not signature or signature == "" then
-    return result
-  end
-  local iterator = string.gfind or string.gmatch
-  for value in iterator(signature, "[^|]+") do
-    table.insert(result, value)
-  end
-  return result
-end
-
-local function CopyManualSlot(slot)
-  if not ManualSlotMatches(slot) then
-    return {}
-  end
-  local result = {}
-  for index = 1, table.getn(slot) do
-    result[index] = slot[index]
-  end
-  return result
-end
-
-local function RecommendedAutoBarSlot(index, class, manualSlot)
-  if index == 16 then
-    return CopyManualSlot(manualSlot)
-  end
-  local signature = recommendedAutoBarSlots[index]
-  if index == 3 then
-    signature = autoBarClassSlot3[class] or autoBarManaSlot3
-  elseif index == 18 then
-    signature = autoBarClassSlot18[class] or ""
-  end
-  return SplitSlotSignature(signature)
-end
-
-local function RefreshAutoBarProfile()
-  if not AutoBarProfile or
-    type(AutoBarProfile.Initialize) ~= "function" or
-    type(AutoBarProfile.ProfileChanged) ~= "function"
-  then
-    return false, "AutoBar 1.31 profile API is unavailable."
-  end
-  AutoBarProfile.Initialize()
-  AutoBarProfile:ProfileChanged()
-  return true
-end
-
-local function AutoBarProfileMatches()
-  if not AutoBar or type(AutoBar.buttons) ~= "table" then
-    return false
-  end
-  local class = GetPlayerClassToken()
-  local slot3 = autoBarClassSlot3[class] or autoBarManaSlot3
-  local slot18 = autoBarClassSlot18[class] or ""
-  for index = 1, 24 do
-    if index == 16 then
-      if not ManualSlotMatches(AutoBar.buttons[index]) then
-        return false
-      end
-    else
-      local expected = recommendedAutoBarSlots[index]
-      if index == 3 then
-        expected = slot3
-      elseif index == 18 then
-        expected = slot18
-      end
-      if SlotSignature(AutoBar.buttons[index]) ~= (expected or "") then
-        return false
-      end
-    end
-  end
-  return true
-end
-
-local function AutoBarOptionEnabled(value)
-  return value == true or value == 1 or value == "1"
-end
-
-local function AutoBarConfigCurationEnabled()
-  return addon.db and addon.db.actionbars and
-    addon.db.actionbars.enabled
-end
-
-local function GetAutoBarClassProfileKey()
-  if type(AutoBarProfile) ~= "table" then
-    return nil
-  end
-  local classProfile = AutoBarProfile.CLASSPROFILE
-  if not classProfile then
-    local class = GetPlayerClassToken()
-    if class then
-      classProfile = "_" .. class
-    end
-  end
-  return classProfile
-end
-
-local function AutoBarClassScopeActive(profile, classProfile)
-  return type(profile) == "table" and classProfile and
-    not AutoBarOptionEnabled(profile.useCharacter) and
-    not AutoBarOptionEnabled(profile.useShared) and
-    AutoBarOptionEnabled(profile.useClass) and
-    not AutoBarOptionEnabled(profile.useBasic) and
-    tonumber(profile.edit) == 3
-end
-
-local function AutoBarSelectedTab()
-  local player = AutoBar and AutoBar.currentPlayer
-  local current = player and AutoBar_Config and AutoBar_Config[player]
-  local display = current and current.display
-  return display and tonumber(display.selectedTab) or 1
-end
-
-local function SetAutoBarConfigFrameShown(name, shown)
-  local frame = GetGlobal(name)
-  if not frame then
-    return false
-  end
-  if shown and frame.Show then
-    frame:Show()
-  elseif not shown and frame.Hide then
-    frame:Hide()
-  else
-    return false
-  end
-  return true
-end
-
-function ActionBars:RestoreAutoBarConfigCuration()
-  local layout = self.autoBarConfigOriginalLayout
-  if layout then
-    RestoreFrameAnchors(GetGlobal("AutoBarConfigFrameTab3"), layout.tab3)
-    RestoreFrameAnchors(GetGlobal("AutoBarConfigFrameSlots"), layout.slots)
-  end
-
-  for _, name in pairs({
-    "AutoBarConfigFrameTab1",
-    "AutoBarConfigFrameTab2",
-    "AutoBarConfigFrameTab3",
-    "AutoBarConfigFrameTab4",
-    "AutoBarConfigFrameTab5",
-    "AutoBarConfigFrameResetDisplay",
-    "AutoBarConfigFrameRevertButton",
-  }) do
-    SetAutoBarConfigFrameShown(name, true)
-  end
-
-  local selectedTab = AutoBarSelectedTab()
-  if not self.autoBarConfigSelecting and AutoBarConfig and
-    type(AutoBarConfig.TabButtonOnClick) == "function" and
-    selectedTab >= 1 and selectedTab <= 5
-  then
-    self.autoBarConfigSelecting = true
-    pcall(AutoBarConfig.TabButtonOnClick, AutoBarConfig, selectedTab)
-    self.autoBarConfigSelecting = false
-  end
-  SetAutoBarConfigFrameShown(
-    "AutoBarConfigFrameSlotsView",
-    selectedTab == 1 or selectedTab == 5
-  )
-  SetAutoBarConfigFrameShown(
-    "AutoBarConfigFrameLayout1",
-    selectedTab ~= 1
-  )
-  SetAutoBarConfigFrameShown(
-    "AutoBarConfigFrameLayout2",
-    selectedTab ~= 1
-  )
-
-  local player = AutoBar and AutoBar.currentPlayer
-  local current = player and AutoBar_Config and AutoBar_Config[player]
-  local profile = current and current.profile
-  SetAutoBarConfigFrameShown(
-    "AutoBarConfigFrameSlotsEdit1",
-    profile and AutoBarOptionEnabled(profile.useCharacter)
-  )
-  SetAutoBarConfigFrameShown(
-    "AutoBarConfigFrameSlotsEdit2",
-    profile and AutoBarOptionEnabled(profile.useShared)
-  )
-  SetAutoBarConfigFrameShown(
-    "AutoBarConfigFrameSlotsEdit3",
-    profile and AutoBarOptionEnabled(profile.useClass)
-  )
-  SetAutoBarConfigFrameShown(
-    "AutoBarConfigFrameSlotsEdit4",
-    profile and AutoBarOptionEnabled(profile.useBasic)
-  )
-  self.autoBarConfigCurationStatus = "native"
-  return true
-end
-
-function ActionBars:ApplyAutoBarConfigCuration()
-  local configFrame = GetGlobal("AutoBarConfigFrame")
-  local tab1 = GetGlobal("AutoBarConfigFrameTab1")
-  local tab3 = GetGlobal("AutoBarConfigFrameTab3")
-  local slots = GetGlobal("AutoBarConfigFrameSlots")
-  if not configFrame or not tab1 or not tab3 or not slots then
-    self.autoBarConfigCurationStatus = "unavailable"
-    return false
-  end
-
-  local player = AutoBar and AutoBar.currentPlayer
-  local current = player and AutoBar_Config and AutoBar_Config[player]
-  local profile = current and current.profile
-  local classProfile = GetAutoBarClassProfileKey()
-  local database = addon.db and addon.db.actionbars
-  local optOut = database and database.autoBarClassScopeOptOut
-  if not AutoBarConfigCurationEnabled() or
-    (player and type(optOut) == "table" and optOut[player]) or
-    not AutoBarClassScopeActive(profile, classProfile)
-  then
-    return self:RestoreAutoBarConfigCuration()
-  end
-
-  if not self.autoBarConfigOriginalLayout then
-    self.autoBarConfigOriginalLayout = {
-      tab3 = CaptureFrameAnchors(tab3),
-      slots = CaptureFrameAnchors(slots),
-    }
-  end
-
-  local selectedTab = AutoBarSelectedTab()
-  if selectedTab ~= 1 and selectedTab ~= 3 then
-    current.display = current.display or {}
-    current.display.selectedTab = 1
-    if not self.autoBarConfigSelecting and AutoBarConfig and
-      type(AutoBarConfig.TabButtonOnClick) == "function"
-    then
-      self.autoBarConfigSelecting = true
-      pcall(AutoBarConfig.TabButtonOnClick, AutoBarConfig, 1)
-      self.autoBarConfigSelecting = false
-    end
-  end
-
-  if tab3.ClearAllPoints and tab3.SetPoint then
-    tab3:ClearAllPoints()
-    tab3:SetPoint("TOPLEFT", tab1, "TOPRIGHT", 0, 0)
-  end
-  if slots.ClearAllPoints and slots.SetPoint then
-    slots:ClearAllPoints()
-    slots:SetPoint("TOPLEFT", configFrame, "TOPLEFT", 10, -100)
-    slots:SetPoint("TOPRIGHT", configFrame, "TOPRIGHT", -10, -100)
-  end
-
-  SetAutoBarConfigFrameShown("AutoBarConfigFrameTab1", true)
-  SetAutoBarConfigFrameShown("AutoBarConfigFrameTab3", true)
-  for _, name in pairs({
-    "AutoBarConfigFrameTab2",
-    "AutoBarConfigFrameTab4",
-    "AutoBarConfigFrameTab5",
-    "AutoBarConfigFrameResetDisplay",
-    "AutoBarConfigFrameRevertButton",
-    "AutoBarConfigFrameSlotsView",
-    "AutoBarConfigFrameSlotsEdit1",
-    "AutoBarConfigFrameSlotsEdit2",
-    "AutoBarConfigFrameSlotsEdit3",
-    "AutoBarConfigFrameSlotsEdit4",
-    "AutoBarConfigFrameLayout1",
-    "AutoBarConfigFrameLayout2",
-  }) do
-    SetAutoBarConfigFrameShown(name, false)
-  end
-
-  self.autoBarConfigCurationStatus = "class-only"
-  return true
-end
-
-function ActionBars:MigrateAutoBarClassScope()
-  if self.autoBarClassScopeUpdating or not AutoBarConfigCurationEnabled() or
-    not AutoBar or type(AutoBar_Config) ~= "table" or
-    type(AutoBarProfile) ~= "table" or
-    type(AutoBarProfile.Initialize) ~= "function"
-  then
-    return false
-  end
-
-  local database = addon.db and addon.db.actionbars
-  local player = AutoBar.currentPlayer
-  local current = player and AutoBar_Config[player]
-  if not database or not player or type(current) ~= "table" then
-    self.autoBarClassScopeStatus = "unavailable"
-    return false
-  end
-
-  database.autoBarClassScopeOptOut =
-    database.autoBarClassScopeOptOut or {}
-  if database.autoBarClassScopeOptOut[player] then
-    self.autoBarClassScopeStatus = "restored"
-    return false
-  end
-
-  self.autoBarClassScopeUpdating = true
-  local initialized = pcall(AutoBarProfile.Initialize)
-  local classProfile = initialized and GetAutoBarClassProfileKey() or nil
-  local classConfig = classProfile and AutoBar_Config[classProfile]
-  if not initialized or not classProfile or type(classConfig) ~= "table" then
-    self.autoBarClassScopeUpdating = false
-    self.autoBarClassScopeStatus = "unavailable"
-    return false
-  end
-
-  local currentBefore = CopyPlainTable(current)
-  current.profile = current.profile or {}
-  current.display = current.display or {}
-  local profile = current.profile
-  local alreadyActive = AutoBarClassScopeActive(profile, classProfile)
-  local selectedTabChanged = false
-  if tonumber(current.display.selectedTab) ~= 1 and
-    tonumber(current.display.selectedTab) ~= 3
-  then
-    current.display.selectedTab = 1
-    selectedTabChanged = true
-  end
-
-  database.autoBarClassScopePlayerVersions =
-    database.autoBarClassScopePlayerVersions or {}
-  database.autoBarClassScopeClassVersions =
-    database.autoBarClassScopeClassVersions or {}
-  database.autoBarClassScopeProfiles =
-    database.autoBarClassScopeProfiles or {}
-  database.autoBarClassScopePlayerBackups =
-    database.autoBarClassScopePlayerBackups or {}
-  database.autoBarClassScopeBackups =
-    database.autoBarClassScopeBackups or {}
-
-  local playerVersions = database.autoBarClassScopePlayerVersions
-  local classVersions = database.autoBarClassScopeClassVersions
-  if alreadyActive and
-    playerVersions[player] == self.autoBarClassScopeVersion and
-    classVersions[classProfile] == self.autoBarClassScopeVersion
-  then
-    self.autoBarClassScopeUpdating = false
-    self.autoBarClassScopeStatus = "class-only"
-    if selectedTabChanged then
-      self:ApplyAutoBarConfigCuration()
-    end
-    return false
-  end
-
-  local classBefore = CopyPlainTable(classConfig)
-  local seededClass = classVersions[classProfile] ~= self.autoBarClassScopeVersion
-  local sourceButtons = type(AutoBar.buttons) == "table" and
-    AutoBar.buttons or current.buttons
-  if seededClass and type(sourceButtons) ~= "table" then
-    AutoBar_Config[player] = currentBefore
-    self.autoBarClassScopeUpdating = false
-    self.autoBarClassScopeStatus = "buttons-unavailable"
-    return false
-  end
-
-  local madePlayerBackup = false
-  local madeClassBackup = false
-  if not database.autoBarClassScopePlayerBackups[player] then
-    local existingBackups = database.autoBarBackups
-    local existingBackup = type(existingBackups) == "table" and
-      existingBackups[player]
-    database.autoBarClassScopePlayerBackups[player] =
-      CopyPlainTable(existingBackup or currentBefore)
-    madePlayerBackup = true
-  end
-  if seededClass and not database.autoBarClassScopeBackups[classProfile] then
-    database.autoBarClassScopeBackups[classProfile] = classBefore
-    madeClassBackup = true
-  end
-  local previousProfileKey = database.autoBarClassScopeProfiles[player]
-  database.autoBarClassScopeProfiles[player] = classProfile
-
-  if seededClass then
-    classConfig.buttons = CopyPlainTable(sourceButtons)
-  end
-  profile.useCharacter = false
-  profile.useShared = false
-  profile.useClass = true
-  profile.useBasic = false
-  profile.edit = 3
-  profile.editing = classProfile
-  profile.shared = profile.shared or "_SHARED1"
-
-  local ok, refreshed, message = pcall(RefreshAutoBarProfile)
-  if not ok or not refreshed then
-    AutoBar_Config[player] = currentBefore
-    if seededClass then
-      AutoBar_Config[classProfile] = classBefore
-    end
-    if madePlayerBackup then
-      database.autoBarClassScopePlayerBackups[player] = nil
-    end
-    if madeClassBackup then
-      database.autoBarClassScopeBackups[classProfile] = nil
-    end
-    database.autoBarClassScopeProfiles[player] = previousProfileKey
-    pcall(RefreshAutoBarProfile)
-    self.autoBarClassScopeUpdating = false
-    self.autoBarClassScopeStatus = "error"
-    self.autoBarClassScopeMessage = message
-    return false
-  end
-
-  playerVersions[player] = self.autoBarClassScopeVersion
-  classVersions[classProfile] = self.autoBarClassScopeVersion
-  database.autoBarClassScopeOptOut[player] = nil
-  self.autoBarClassScopeUpdating = false
-  self.autoBarClassScopeStatus = "class-only"
-  self:ApplyAutoBarConfigCuration()
-  return not alreadyActive or seededClass or selectedTabChanged
-end
-
-function ActionBars:OpenAutoBarConfig()
-  local toggle = GetGlobal("AutoBarConfig_Toggle")
-  if not AutoBar or type(toggle) ~= "function" then
-    self.autoBarPresetStatus = "missing"
-    return false, "AutoBar is not enabled. Enable it at character select, then /reload."
-  end
-  self:RepairAutoBarCategoryDescriptions()
-  self:InstallFieldKitHooks()
-  self:MigrateAutoBarClassScope()
-  self:ApplyAutoBarConfigCuration()
-  toggle()
-  if not self.autoBarConfigShowHooked then
-    self:SettleAutoBarFieldKitRefresh()
-  end
-  self.autoBarPresetStatus = "config-opened"
-  return true,
-    "AutoBar config opened. Use /aeui autobar apply for the AEUI compact preset."
-end
-
-local function AutoBarCategoryDescription(category)
-  local fallback = autoBarCategoryDescriptionFallbacks[category]
-  if fallback then
-    local locale = type(GetLocale) == "function" and GetLocale() or nil
-    return fallback[locale] or fallback.default
-  end
-  return tostring(category)
-end
-
-function ActionBars:RepairAutoBarCategoryDescriptions()
-  if type(AutoBar_Category_Info) ~= "table" then
-    self.autoBarCategoryDescriptionStatus = "unavailable"
-    return false
-  end
-
-  local repaired = 0
-  for category, info in pairs(AutoBar_Category_Info) do
-    if type(info) == "table" and
-      (type(info.description) ~= "string" or info.description == "")
-    then
-      info.description = AutoBarCategoryDescription(category)
-      repaired = repaired + 1
-    end
-  end
-
-  if repaired > 0 then
-    self.autoBarCategoryDescriptionsRepaired =
-      (self.autoBarCategoryDescriptionsRepaired or 0) + repaired
-    self.autoBarCategoryDescriptionStatus = "repaired"
-  elseif (self.autoBarCategoryDescriptionsRepaired or 0) > 0 then
-    self.autoBarCategoryDescriptionStatus = "repaired"
-  else
-    self.autoBarCategoryDescriptionStatus = "native"
-  end
-  return true
-end
-
-local function AutoBarDisplayFlag(value)
-  return value == true or value == 1 or value == "1"
-end
-
-local function AutoBarBaseDisplayMatches(display)
-  return type(display) == "table" and
-    tonumber(display.rows) == 6 and
-    tonumber(display.columns) == 4 and
-    tonumber(display.gapping) == 3 and
-    tonumber(display.alpha) == 10 and
-    tonumber(display.buttonWidth) == 36 and
-    tonumber(display.buttonHeight) == 36 and
-    tonumber(display.alignButtons) == 1 and
-    not AutoBarDisplayFlag(display.widthHeightUnlocked) and
-    not AutoBarDisplayFlag(display.popupDisable) and
-    not AutoBarDisplayFlag(display.popupOnShift)
-end
-
-local function RecordAutoBarDefaultMode(player)
-  local database = addon.db and addon.db.actionbars
-  if not database or not player then
-    return false
-  end
-  database.autoBarDefaultModeVersions =
-    database.autoBarDefaultModeVersions or {}
-  database.autoBarDefaultModeVersions[player] =
-    ActionBars.autoBarDefaultModeVersion
-  return true
-end
-
-function ActionBars:MigrateAutoBarDefaultMode()
-  if not AutoBar or type(AutoBar_Config) ~= "table" then
-    return false
-  end
-  local database = addon.db and addon.db.actionbars
-  local player = AutoBar.currentPlayer
-  local current = player and AutoBar_Config[player]
-  local versions = database and database.autoBarDefaultModeVersions
-  if not database or not player or type(current) ~= "table" or
-    (type(versions) == "table" and
-      versions[player] == self.autoBarDefaultModeVersion)
-  then
-    return false
-  end
-
-  local display = current.display
-  if not AutoBarProfileMatches() or
-    not AutoBarBaseDisplayMatches(display)
-  then
-    return false
-  end
-
-  local compact = not AutoBarDisplayFlag(display.showEmptyButtons) and
-    not AutoBarDisplayFlag(display.showCategoryIcon)
-  if compact and AutoBarDisplayFlag(display.hideDragHandle) then
-    RecordAutoBarDefaultMode(player)
-    self.autoBarPresetStatus = "compact-current"
-    return false
-  end
-
-  local backups = database.autoBarBackups
-  local previouslyApplied = type(backups) == "table" and
-    type(backups[player]) == "table"
-  local legacyFullMode = AutoBarDisplayFlag(display.showEmptyButtons) and
-    AutoBarDisplayFlag(display.showCategoryIcon)
-  if not previouslyApplied or not legacyFullMode then
-    return false
-  end
-
-  local before = CopyPlainTable(current)
-  display.showEmptyButtons = false
-  display.showCategoryIcon = false
-  display.hideDragHandle = 1
-  local ok, refreshed, message = pcall(RefreshAutoBarProfile)
-  if not ok or not refreshed then
-    AutoBar_Config[player] = before
-    pcall(RefreshAutoBarProfile)
-    self.autoBarPresetStatus = "migration-error"
-    self.autoBarPresetMessage = message
-    return false
-  end
-
-  RecordAutoBarDefaultMode(player)
-  self.autoBarPresetStatus = "compact-migrated"
-  return true
-end
-
-function ActionBars:ApplyRecommendedAutoBarProfile()
-  if not AutoBar or type(AutoBar_Config) ~= "table" then
-    self.autoBarPresetStatus = "missing"
-    return false, "AutoBar is not enabled. Enable it at character select, then /reload."
-  end
-  local player = AutoBar.currentPlayer
-  local current = player and AutoBar_Config[player]
-  if not player or type(current) ~= "table" then
-    self.autoBarPresetStatus = "unavailable"
-    return false, "AutoBar has not initialized the current character profile yet."
-  end
-
-  local database = addon.db and addon.db.actionbars
-  if not database then
-    self.autoBarPresetStatus = "unavailable"
-    return false, "AEUI action bar settings are unavailable."
-  end
-  local initialized = pcall(AutoBarProfile.Initialize)
-  local classProfile = initialized and GetAutoBarClassProfileKey() or nil
-  local classConfig = classProfile and AutoBar_Config[classProfile]
-  if not initialized or not classProfile or type(classConfig) ~= "table" then
-    self.autoBarPresetStatus = "unavailable"
-    return false, "AutoBar has not initialized the current class profile yet."
-  end
-
-  local before = CopyPlainTable(current)
-  local classBefore = CopyPlainTable(classConfig)
-  local manualSlot = AutoBar.buttons and AutoBar.buttons[16]
-  local profile = current.profile or {}
-  current.profile = profile
-  profile.useCharacter = false
-  profile.useShared = false
-  profile.useClass = true
-  profile.useBasic = false
-  profile.layout = 1
-  profile.layoutProfile = player
-  profile.edit = 3
-  profile.editing = classProfile
-  profile.shared = profile.shared or "_SHARED1"
-
-  classConfig.buttons = {}
-  local class = GetPlayerClassToken()
-  for index = 1, 24 do
-    classConfig.buttons[index] =
-      RecommendedAutoBarSlot(index, class, manualSlot)
-  end
-
-  current.display = current.display or {}
-  local display = current.display
-  display.rows = 6
-  display.columns = 4
-  display.gapping = 3
-  display.alpha = 10
-  display.buttonWidth = 36
-  display.buttonHeight = 36
-  display.widthHeightUnlocked = false
-  display.alignButtons = 1
-  display.showEmptyButtons = false
-  display.showCategoryIcon = false
-  display.hideDragHandle = 1
-  display.popupDisable = false
-  display.popupOnShift = false
-  if tonumber(display.selectedTab) ~= 1 and
-    tonumber(display.selectedTab) ~= 3
-  then
-    display.selectedTab = 1
-  end
-
-  self.autoBarClassScopeUpdating = true
-  local ok, refreshed, message = pcall(RefreshAutoBarProfile)
-  self.autoBarClassScopeUpdating = false
-  if not ok or not refreshed then
-    AutoBar_Config[player] = before
-    AutoBar_Config[classProfile] = classBefore
-    pcall(RefreshAutoBarProfile)
-    self.autoBarPresetStatus = "error"
-    return false, message or "AutoBar rejected the AEUI preset; the profile was restored."
-  end
-
-  database.autoBarBackups = database.autoBarBackups or {}
-  if not database.autoBarBackups[player] then
-    database.autoBarBackups[player] = before
-  end
-  database.autoBarClassScopePlayerVersions =
-    database.autoBarClassScopePlayerVersions or {}
-  database.autoBarClassScopeClassVersions =
-    database.autoBarClassScopeClassVersions or {}
-  database.autoBarClassScopeProfiles =
-    database.autoBarClassScopeProfiles or {}
-  database.autoBarClassScopePlayerBackups =
-    database.autoBarClassScopePlayerBackups or {}
-  database.autoBarClassScopeBackups =
-    database.autoBarClassScopeBackups or {}
-  database.autoBarClassScopeOptOut =
-    database.autoBarClassScopeOptOut or {}
-  if not database.autoBarClassScopePlayerBackups[player] then
-    database.autoBarClassScopePlayerBackups[player] =
-      CopyPlainTable(database.autoBarBackups[player] or before)
-  end
-  if not database.autoBarClassScopeBackups[classProfile] then
-    database.autoBarClassScopeBackups[classProfile] = classBefore
-  end
-  database.autoBarClassScopePlayerVersions[player] =
-    self.autoBarClassScopeVersion
-  database.autoBarClassScopeClassVersions[classProfile] =
-    self.autoBarClassScopeVersion
-  database.autoBarClassScopeProfiles[player] = classProfile
-  database.autoBarClassScopeOptOut[player] = nil
-  RecordAutoBarDefaultMode(player)
-  self.autoBarClassScopeStatus = "class-only"
-  self:ApplyAutoBarConfigCuration()
-  self.autoBarPresetStatus = "applied"
-  return true,
-    "AEUI AutoBar compact preset applied to this class: 24 logical categories, only currently available categories shown in a dynamic grid up to 4x6, with the external popup drawer."
-end
-
-function ActionBars:RestoreAutoBarProfile()
-  if not AutoBar or type(AutoBar_Config) ~= "table" then
-    self.autoBarPresetStatus = "missing"
-    return false, "AutoBar is not enabled."
-  end
-  local player = AutoBar.currentPlayer
-  local database = addon.db and addon.db.actionbars
-  local backups = database and database.autoBarBackups
-  local backup = player and backups and backups[player]
-  local scopeBackups = database and
-    database.autoBarClassScopePlayerBackups
-  local scopeBackup = player and scopeBackups and scopeBackups[player]
-  local profileKeys = database and database.autoBarClassScopeProfiles
-  local classProfile = player and profileKeys and profileKeys[player]
-  classProfile = classProfile or GetAutoBarClassProfileKey()
-  local classBackups = database and database.autoBarClassScopeBackups
-  local classBackup = classProfile and classBackups and
-    classBackups[classProfile]
-  if type(backup) ~= "table" and type(scopeBackup) ~= "table" then
-    self.autoBarPresetStatus = "no-backup"
-    return false, "No AEUI AutoBar backup exists for this character."
-  end
-
-  local before = CopyPlainTable(AutoBar_Config[player])
-  local classBefore = classProfile and AutoBar_Config[classProfile] and
-    CopyPlainTable(AutoBar_Config[classProfile])
-  AutoBar_Config[player] = CopyPlainTable(scopeBackup or backup)
-  if type(classBackup) == "table" then
-    AutoBar_Config[classProfile] = CopyPlainTable(classBackup)
-  end
-  self.autoBarClassScopeUpdating = true
-  local ok, refreshed, message = pcall(RefreshAutoBarProfile)
-  self.autoBarClassScopeUpdating = false
-  if not ok or not refreshed then
-    AutoBar_Config[player] = before
-    if classBefore then
-      AutoBar_Config[classProfile] = classBefore
-    end
-    pcall(RefreshAutoBarProfile)
-    self.autoBarPresetStatus = "error"
-    return false, message or "AutoBar restore failed; the active profile was kept."
-  end
-  if backups then
-    backups[player] = nil
-  end
-  if scopeBackups then
-    scopeBackups[player] = nil
-  end
-  if classBackups and type(classBackup) == "table" then
-    classBackups[classProfile] = nil
-  end
-  if profileKeys then
-    profileKeys[player] = nil
-  end
-  local playerVersions = database.autoBarClassScopePlayerVersions
-  if type(playerVersions) == "table" then
-    playerVersions[player] = nil
-  end
-  local classVersions = database.autoBarClassScopeClassVersions
-  if type(classVersions) == "table" and type(classBackup) == "table" then
-    classVersions[classProfile] = nil
-  end
-  database.autoBarClassScopeOptOut =
-    database.autoBarClassScopeOptOut or {}
-  database.autoBarClassScopeOptOut[player] = true
-  local versions = database.autoBarDefaultModeVersions
-  if type(versions) == "table" then
-    versions[player] = nil
-  end
-  self.autoBarClassScopeStatus = "restored"
-  self:RestoreAutoBarConfigCuration()
-  self.autoBarPresetStatus = "restored"
-  return true, "AutoBar profile and class slots restored from the pre-AEUI backup."
-end
-
-local function NormalizePopupMode(mode)
-  mode = string.upper(tostring(mode or "AUTO"))
-  if mode == "AUTO" or mode == "LEFT" or mode == "RIGHT" or
-    mode == "NATIVE"
-  then
-    return mode
-  end
-  return nil
-end
-
-local function GetPopupMode()
-  local configured = addon.db and addon.db.actionbars and
-    addon.db.actionbars.autoBarPopupMode
-  return NormalizePopupMode(configured) or "AUTO"
-end
-
-function ActionBars:SetAutoBarPopupMode(mode)
-  local normalized = NormalizePopupMode(mode)
-  if not normalized then
-    return false, "Popup mode must be auto, left, right, or native."
-  end
-  addon.db.actionbars.autoBarPopupMode = normalized
-  self:ApplyAutoBarPopup(
-    addon.db and addon.db.actionbars and addon.db.actionbars.enabled
-  )
-  if addon.db and addon.db.actionbars and
-    addon.db.actionbars.fieldKitBound == true
-  then
-    return true, "Bound Field Kit popup remains fixed left; " ..
-      string.lower(normalized) .. " is saved for the unbound AutoBar."
-  end
-  return true, "AutoBar popup mode set to " .. string.lower(normalized) .. "."
-end
-
-local function AutoBarGroupingMatches(visibleCount)
-  local display = AutoBar and AutoBar.display
-  return visibleCount == 24 and display and
-    tonumber(display.rows) == 6 and tonumber(display.columns) == 4 and
-    AutoBarProfileMatches()
-end
-
-local function AutoBarRecommendedLayoutMatches(visibleCount)
-  local display = AutoBar and AutoBar.display
-  return visibleCount > 0 and visibleCount <= 24 and display and
-    tonumber(display.rows) == 6 and tonumber(display.columns) == 4 and
-    AutoBarProfileMatches()
-end
-
-local function ConfigureShellBounds(shell, bounds, padding)
-  if not shell or bounds.count == 0 then
-    return false
-  end
-  shell:ClearAllPoints()
-  shell:SetPoint("LEFT", bounds.left, "LEFT", -padding, 0)
-  shell:SetPoint("RIGHT", bounds.right, "RIGHT", padding, 0)
-  shell:SetPoint("TOP", bounds.top, "TOP", 0, padding)
-  shell:SetPoint("BOTTOM", bounds.bottom, "BOTTOM", 0, -padding)
-  return true
-end
-
-local function ConfigureDivider(divider, overall, first, second)
-  local upper = first
-  local lower = second
-  if second.topValue > first.topValue then
-    upper = second
-    lower = first
-  end
-  divider:ClearAllPoints()
-  divider:SetPoint("LEFT", overall.left, "LEFT", 0, 0)
-  divider:SetPoint("RIGHT", overall.right, "RIGHT", 0, 0)
-  divider:SetPoint("TOP", upper.bottom, "BOTTOM", 0, 0)
-  divider:SetPoint("BOTTOM", lower.top, "TOP", 0, 0)
-end
-
-local function SortPopupButtons(buttons, horizontal)
-  table.sort(buttons, function(left, right)
-    if horizontal then
-      return left:GetLeft() < right:GetLeft()
-    end
-    return left:GetBottom() < right:GetBottom()
-  end)
-end
-
 local function FieldKitEnabled()
   return addon.db and addon.db.actionbars and
     addon.db.actionbars.enabled
 end
 
-local function SafeFieldKitApply(methodName, argument)
-  local method = ActionBars[methodName]
-  if type(method) ~= "function" then
-    return
-  end
+local function ApplyTrinketFieldKitSafely()
   local ok = pcall(
-    method, ActionBars, FieldKitEnabled(), argument
+    ActionBars.ApplyTrinketFieldKit, ActionBars, FieldKitEnabled()
   )
-  if not ok then
-    if methodName == "ApplyTrinketFieldKit" then
-      ActionBars.trinketFieldKitStatus = "error"
-    else
-      ActionBars.autoBarFieldKitStatus = "error"
-    end
-  end
+  if not ok then ActionBars.trinketFieldKitStatus = "error" end
 end
 
 local function GetFieldKitDatabase()
@@ -4334,16 +3291,42 @@ local function NormalizeSupplySlots(profile)
           break
         end
       end
-      table.insert(slots, {
+      slots[index] = {
         name = type(entry) == "table" and
           NormalizeSupplyName(entry.name) or nil,
         primaryItemId = primaryFound and primary or items[1].itemId,
         items = items,
-      })
+      }
     end
   end
   profile.slots = slots
   return slots
+end
+
+local function GetSupplySlotStats(profile)
+  local slots = type(profile) == "table" and profile.slots
+  if type(slots) ~= "table" then return 0, 0 end
+  local count = 0
+  local last = 0
+  for index = 1, ActionBars.supplyMaxSlots do
+    if slots[index] then
+      count = count + 1
+      last = index
+    end
+  end
+  return count, last
+end
+
+local function MoveSupplyGroup(slots, source, destination)
+  if type(slots) ~= "table" or not slots[source] or
+    destination < 1 or destination > ActionBars.supplyMaxSlots or
+    source == destination
+  then
+    return false
+  end
+  slots[source], slots[destination] =
+    slots[destination], slots[source]
+  return true
 end
 
 local function GetSupplyPrimary(group)
@@ -4370,11 +3353,13 @@ end
 
 local function FindSupplyItem(profile, itemId)
   if not profile then return nil, nil end
-  for groupIndex = 1, table.getn(profile.slots) do
-    local items = profile.slots[groupIndex].items
-    for itemIndex = 1, table.getn(items) do
-      if items[itemIndex].itemId == itemId then
-        return groupIndex, itemIndex
+  for groupIndex = 1, ActionBars.supplyMaxSlots do
+    local group = profile.slots[groupIndex]
+    if group then
+      for itemIndex = 1, table.getn(group.items) do
+        if group.items[itemIndex].itemId == itemId then
+          return groupIndex, itemIndex
+        end
       end
     end
   end
@@ -4408,17 +3393,6 @@ local function GetSupplyProfile(create)
     profile.version = ActionBars.supplyProfileVersion
   end
   return profile, profileKey
-end
-
-local function SuppliesConfigured()
-  local profile = GetSupplyProfile(false)
-  return profile and table.getn(profile.slots) > 0
-end
-
-local function SupplyActive()
-  local database = GetFieldKitDatabase()
-  return FieldKitEnabled() and database and
-    database.suppliesEnabled ~= false and SuppliesConfigured()
 end
 
 local function GetSupplyItemInfo(itemId)
@@ -4552,13 +3526,8 @@ local function CreateSupplyButton(root, index)
   button.stock = button:CreateFontString(
     nil, "OVERLAY", "GameFontNormalSmall"
   )
-  button.stock:SetPoint("BOTTOM", button, "BOTTOM", 0, 3)
-  button.stock:SetJustifyH("CENTER")
-
-  button.alert = button:CreateFontString(
-    nil, "OVERLAY", "GameFontNormalSmall"
-  )
-  button.alert:SetPoint("TOPLEFT", button, "TOPLEFT", 4, -3)
+  button.stock:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -3, 3)
+  button.stock:SetJustifyH("RIGHT")
 
   button.highlight = button:CreateTexture(nil, "HIGHLIGHT")
   button.highlight:SetAllPoints(button.icon)
@@ -4741,7 +3710,8 @@ function ActionBars:ScheduleSupplyPopup(index)
     if self.supplyPopupOwnerIndex and
       self.supplyPopupOwnerIndex ~= index
     then
-      self:HideSupplyPopup()
+      self.supplyPopupCloseAt = GetTime() + self.supplyPopupIntentDelay
+      self:SetSupplyPopupTimer(true)
     end
     return
   end
@@ -4754,7 +3724,7 @@ function ActionBars:ScheduleSupplyPopup(index)
   end
   self.supplyPopupCloseAt = nil
   self.supplyPopupPendingIndex = index
-  self.supplyPopupOpenAt = GetTime() + self.popupIntentDelay
+  self.supplyPopupOpenAt = GetTime() + self.supplyPopupIntentDelay
   self:SetSupplyPopupTimer(true)
 end
 
@@ -4812,12 +3782,9 @@ function ActionBars:RefreshSupplyPopup()
       if count == 0 then
         button.icon:SetVertexColor(0.38, 0.28, 0.28, 1)
         button.stock:SetTextColor(1, 0.28, 0.22)
-      elseif count < item.minimum then
-        button.icon:SetVertexColor(1, 1, 1, 1)
-        button.stock:SetTextColor(1, 0.72, 0.2)
       else
         button.icon:SetVertexColor(1, 1, 1, 1)
-        button.stock:SetTextColor(0.45, 1, 0.45)
+        button.stock:SetTextColor(1, 1, 1)
       end
       SetSupplyCooldown(button, item.itemId)
       button:Show()
@@ -4889,15 +3856,29 @@ function ActionBars:ShowSupplyPopup(index)
   popup.spine:SetPoint("TOP", lastNear, "TOP", 0, 3)
   popup.spine:SetWidth(6)
   popup.bridge:ClearAllPoints()
-  popup.bridge:SetWidth(self.popupDrawerGap)
+  popup.bridge:SetWidth(
+    self.popupDrawerGap + self.fieldKitShellPadding
+  )
   if side == "LEFT" then
     popup.spine:SetPoint("LEFT", popup, "RIGHT", 0, 0)
-    popup.bridge:SetPoint("TOPLEFT", popup, "TOPRIGHT", 0, 0)
-    popup.bridge:SetPoint("BOTTOMLEFT", popup, "BOTTOMRIGHT", 0, 0)
+    popup.bridge:SetPoint(
+      "TOPRIGHT", self.supplyFrame, "TOPLEFT",
+      self.fieldKitShellPadding, 0
+    )
+    popup.bridge:SetPoint(
+      "BOTTOMRIGHT", self.supplyFrame, "BOTTOMLEFT",
+      self.fieldKitShellPadding, 0
+    )
   else
     popup.spine:SetPoint("RIGHT", popup, "LEFT", 0, 0)
-    popup.bridge:SetPoint("TOPRIGHT", popup, "TOPLEFT", 0, 0)
-    popup.bridge:SetPoint("BOTTOMRIGHT", popup, "BOTTOMLEFT", 0, 0)
+    popup.bridge:SetPoint(
+      "TOPLEFT", self.supplyFrame, "TOPRIGHT",
+      -self.fieldKitShellPadding, 0
+    )
+    popup.bridge:SetPoint(
+      "BOTTOMLEFT", self.supplyFrame, "BOTTOMRIGHT",
+      -self.fieldKitShellPadding, 0
+    )
   end
   self.supplyPopupOwnerIndex = index
   self.supplyPopupSide = side
@@ -4926,6 +3907,13 @@ function ActionBars:EnsureSupplyFrame()
   root:SetFrameStrata("MEDIUM")
   root:SetMovable(true)
   root:SetClampedToScreen(true)
+  root:EnableMouse(true)
+  root:SetScript("OnEnter", function()
+    ActionBars:CancelSupplyPopupClose()
+  end)
+  root:SetScript("OnLeave", function()
+    ActionBars:ScheduleSupplyPopupClose()
+  end)
 
   local shell = CreateDecorationFrame(root)
   shell:SetAllPoints(root)
@@ -4977,11 +3965,10 @@ function ActionBars:ApplySupplyDockPosition()
     root:ClearAllPoints()
     root:SetPoint(
       "BOTTOMRIGHT", main, "BOTTOMLEFT",
-      -self.consumableDockGap, self.fieldKitDockYOffset
+      -self.supplyDockGap, self.fieldKitDockYOffset
     )
     root.aeuiSupplyWasBound = true
     self.supplyDockStatus = "left"
-    self.consumableDockStatus = "left-supplies"
     return true
   end
 
@@ -4997,7 +3984,6 @@ function ActionBars:ApplySupplyDockPosition()
   )
   root.aeuiSupplyWasBound = nil
   self.supplyDockStatus = "free"
-  self.consumableDockStatus = "free-supplies"
   return true
 end
 
@@ -5005,11 +3991,11 @@ function ActionBars:LayoutSupplyButtons()
   local root = self.supplyFrame
   local profile = GetSupplyProfile(false)
   local slots = profile and profile.slots or {}
-  local count = table.getn(slots)
+  local count, last = GetSupplySlotStats(profile)
   if not root or count == 0 then return false end
 
-  local columns = math.min(self.supplyColumns, count)
-  local rows = math.floor((count - 1) / self.supplyColumns) + 1
+  local columns = math.min(self.supplyColumns, last)
+  local rows = math.floor((last - 1) / self.supplyColumns) + 1
   local padding = self.fieldKitShellPadding
   root:SetWidth(
     padding * 2 + columns * self.supplyButtonSize +
@@ -5023,7 +4009,7 @@ function ActionBars:LayoutSupplyButtons()
   for index = 1, self.supplyMaxSlots do
     local button = root.buttons[index]
     button:ClearAllPoints()
-    if index <= count then
+    if slots[index] then
       local column = math.mod(index - 1, self.supplyColumns)
       local row = math.floor((index - 1) / self.supplyColumns)
       button:SetPoint(
@@ -5046,54 +4032,36 @@ function ActionBars:RefreshSupplyButtons()
   if not root or not profile then return end
 
   local missingTotal = 0
-  local lowTotal = 0
   local itemTotal = 0
-  for index = 1, table.getn(profile.slots) do
+  for index = 1, self.supplyMaxSlots do
     local group = profile.slots[index]
-    local item = GetSupplyPrimary(group)
-    local button = root.buttons[index]
-    local _, _, texture = GetSupplyItemInfo(item.itemId)
-    local count = SupplyCount(item.itemId)
-    local missing = 0
-    local low = 0
-    for itemIndex = 1, table.getn(group.items) do
-      local member = group.items[itemIndex]
-      local memberCount = SupplyCount(member.itemId)
-      itemTotal = itemTotal + 1
-      if memberCount == 0 then
-        missing = missing + 1
-        missingTotal = missingTotal + 1
-      elseif memberCount < member.minimum then
-        low = low + 1
-        lowTotal = lowTotal + 1
+    if group then
+      local item = GetSupplyPrimary(group)
+      local button = root.buttons[index]
+      local _, _, texture = GetSupplyItemInfo(item.itemId)
+      local count = SupplyCount(item.itemId)
+      for itemIndex = 1, table.getn(group.items) do
+        local member = group.items[itemIndex]
+        local memberCount = SupplyCount(member.itemId)
+        itemTotal = itemTotal + 1
+        if memberCount == 0 then
+          missingTotal = missingTotal + 1
+        end
       end
+      button.icon:SetTexture(texture or self.supplyFallbackIcon)
+      button.stock:SetText(count)
+      if count == 0 then
+        button.icon:SetVertexColor(0.38, 0.28, 0.28, 1)
+        button.stock:SetTextColor(1, 0.28, 0.22)
+      else
+        button.icon:SetVertexColor(1, 1, 1, 1)
+        button.stock:SetTextColor(1, 1, 1)
+      end
+      SetSupplyCooldown(button, item.itemId)
     end
-    button.icon:SetTexture(texture or self.supplyFallbackIcon)
-    button.stock:SetText(count)
-    if count == 0 then
-      button.icon:SetVertexColor(0.38, 0.28, 0.28, 1)
-      button.stock:SetTextColor(1, 0.28, 0.22)
-    elseif count < item.minimum then
-      button.icon:SetVertexColor(1, 1, 1, 1)
-      button.stock:SetTextColor(1, 0.72, 0.2)
-    else
-      button.icon:SetVertexColor(1, 1, 1, 1)
-      button.stock:SetTextColor(0.45, 1, 0.45)
-    end
-    if missing > 0 then
-      button.alert:SetText(missing)
-      button.alert:SetTextColor(1, 0.2, 0.16)
-    elseif low > 0 then
-      button.alert:SetText(low)
-      button.alert:SetTextColor(1, 0.68, 0.18)
-    else
-      button.alert:SetText("")
-    end
-    SetSupplyCooldown(button, item.itemId)
   end
   self.supplyItems = itemTotal
   self.supplyZero = missingTotal
-  self.supplyLow = lowTotal
   if self.supplyPopup and self.supplyPopup:IsShown() then
     self:RefreshSupplyPopup()
   end
@@ -5103,10 +4071,12 @@ function ActionBars:ScanSupplyInventory()
   local profile = GetSupplyProfile(false)
   local wanted = {}
   if profile then
-    for index = 1, table.getn(profile.slots) do
-      local items = profile.slots[index].items
-      for itemIndex = 1, table.getn(items) do
-        wanted[items[itemIndex].itemId] = true
+    for index = 1, self.supplyMaxSlots do
+      local group = profile.slots[index]
+      if group then
+        for itemIndex = 1, table.getn(group.items) do
+          wanted[group.items[itemIndex].itemId] = true
+        end
       end
     end
   end
@@ -5160,12 +4130,13 @@ function ActionBars:InstallSupplyEvents()
 end
 
 function ActionBars:InstallSupplyDragHook()
-  if self.supplyDragHooked or type(hooksecurefunc) ~= "function" or
+  local supplyHook = pfUI and pfUI.env and pfUI.env.hooksecurefunc
+  if self.supplyDragHooked or type(supplyHook) ~= "function" or
     type(PickupContainerItem) ~= "function"
   then
     return self.supplyDragHooked == true
   end
-  hooksecurefunc("PickupContainerItem", function(bag, slot)
+  supplyHook("PickupContainerItem", function(bag, slot)
     ClearSupplyDrag()
     if CursorHasItem() then return end
     bag = tonumber(bag)
@@ -5176,17 +4147,17 @@ function ActionBars:InstallSupplyDragHook()
     ActionBars.supplyDragItemId = GetSupplyBagItem(bag, slot)
   end, true)
   if type(PickupInventoryItem) == "function" then
-    hooksecurefunc("PickupInventoryItem", function()
+    supplyHook("PickupInventoryItem", function()
       ClearSupplyDrag()
     end, true)
   end
   if type(PickupBagFromSlot) == "function" then
-    hooksecurefunc("PickupBagFromSlot", function()
+    supplyHook("PickupBagFromSlot", function()
       ClearSupplyDrag()
     end, true)
   end
   if type(ClearCursor) == "function" then
-    hooksecurefunc("ClearCursor", function()
+    supplyHook("ClearCursor", function()
       ClearSupplyDrag()
     end)
   end
@@ -5197,7 +4168,7 @@ end
 function ActionBars:ApplySupplyKit(enabled)
   local database = GetFieldKitDatabase()
   local profile = GetSupplyProfile(false)
-  local configured = profile and table.getn(profile.slots) or 0
+  local configured = GetSupplySlotStats(profile)
   local active = enabled and database and
     database.suppliesEnabled ~= false and configured > 0
   local root = self.supplyFrame
@@ -5208,7 +4179,6 @@ function ActionBars:ApplySupplyKit(enabled)
     if configured == 0 then
       self.supplyItems = 0
       self.supplyZero = 0
-      self.supplyLow = 0
     end
     self.supplyStatus = enabled and
       (database and database.suppliesEnabled == false and
@@ -5229,7 +4199,6 @@ end
 function ActionBars:RefreshSupplyRoute()
   local enabled = FieldKitEnabled()
   self:ApplySupplyKit(enabled)
-  self:ApplyAutoBarFieldKit(enabled and not SupplyActive())
   self:ApplyCombatDeckGroup()
 end
 
@@ -5241,8 +4210,8 @@ function ActionBars:SetSupplySlot(index, itemId)
   end
   local slots = profile.slots
   index = math.max(1, math.min(
-    math.floor(tonumber(index) or (table.getn(slots) + 1)),
-    table.getn(slots) + 1
+    math.floor(tonumber(index) or 1),
+    self.supplyMaxSlots
   ))
   local existingGroup, existingItem = FindSupplyItem(profile, itemId)
   if existingGroup then
@@ -5256,15 +4225,15 @@ function ActionBars:SetSupplySlot(index, itemId)
     return false, "每个补给组最多 12 个物品。"
   end
   if not group then
-    if table.getn(slots) >= self.supplyMaxSlots then
+    local count = GetSupplySlotStats(profile)
+    if count >= self.supplyMaxSlots then
       return false, "补给栏最多 24 个组。"
     end
     group = {
       primaryItemId = itemId,
       items = {},
     }
-    table.insert(slots, group)
-    index = table.getn(slots)
+    slots[index] = group
   end
   table.insert(group.items, { itemId = itemId, minimum = 1 })
   self.selectedSupplySlot = index
@@ -5283,10 +4252,7 @@ function ActionBars:RemoveSupplySlot(index)
     return false, "这个补给槽不存在。"
   end
   profile.slots[index] = nil
-  NormalizeSupplySlots(profile)
-  self.selectedSupplySlot = math.max(
-    1, math.min(index, table.getn(profile.slots) + 1)
-  )
+  self.selectedSupplySlot = index
   self.selectedSupplyMember = 1
   self:HideSupplyPopup()
   self:RefreshSupplyRoute()
@@ -5294,23 +4260,27 @@ function ActionBars:RemoveSupplySlot(index)
   return true, "已移除补给组。"
 end
 
-function ActionBars:MoveSupplySlot(index, delta)
+function ActionBars:MoveSupplySlotTo(index, destination)
   local profile = GetSupplyProfile(false)
   index = math.floor(tonumber(index) or 0)
-  delta = delta < 0 and -1 or 1
-  local destination = index + delta
-  if not profile or not profile.slots[index] or
-    not profile.slots[destination]
-  then
-    return false, "已经到达这一端。"
+  destination = math.floor(tonumber(destination) or 0)
+  if not profile or not profile.slots[index] then
+    return false, "这个补给组不存在。"
   end
-  profile.slots[index], profile.slots[destination] =
-    profile.slots[destination], profile.slots[index]
+  if not MoveSupplyGroup(profile.slots, index, destination) then
+    return false, "目标槽位无效。"
+  end
   self.selectedSupplySlot = destination
   self:HideSupplyPopup()
   self:RefreshSupplyRoute()
   self:RefreshSupplyManager(true)
-  return true, "补给顺序已调整。"
+  return true, "补给组已移至槽位 " .. destination .. "。"
+end
+
+function ActionBars:MoveSupplySlot(index, delta)
+  index = math.floor(tonumber(index) or 0)
+  delta = delta < 0 and -1 or 1
+  return self:MoveSupplySlotTo(index, index + delta)
 end
 
 function ActionBars:SetSupplyGroupName(index, name)
@@ -5346,17 +4316,6 @@ function ActionBars:SetSupplyPrimary(index, itemId)
   return true, "已设为主格物品。"
 end
 
-function ActionBars:SetSupplyMinimum(index, itemIndex, minimum)
-  local profile = GetSupplyProfile(false)
-  local group = profile and profile.slots[index]
-  local item = group and group.items[itemIndex]
-  if not item then return false, "这个组内物品不存在。" end
-  item.minimum = NormalizeSupplyMinimum(minimum)
-  self:RefreshSupplyButtons()
-  self:RefreshSupplyManager(true)
-  return true, "低库存阈值已保存。"
-end
-
 function ActionBars:RemoveSupplyItem(index, itemIndex)
   local profile = GetSupplyProfile(false)
   local group = profile and profile.slots[index]
@@ -5364,10 +4323,8 @@ function ActionBars:RemoveSupplyItem(index, itemIndex)
   if not item then return false, "这个组内物品不存在。" end
   table.remove(group.items, itemIndex)
   if table.getn(group.items) == 0 then
-    table.remove(profile.slots, index)
-    self.selectedSupplySlot = math.max(
-      1, math.min(index, table.getn(profile.slots) + 1)
-    )
+    profile.slots[index] = nil
+    self.selectedSupplySlot = index
     self.selectedSupplyMember = 1
   else
     if group.primaryItemId == item.itemId then
@@ -5412,7 +4369,7 @@ function ActionBars:SetSuppliesEnabled(enabled)
   self:RefreshSupplyManager(true)
   return true, enabled and
     "AEUI 补给栏已启用。" or
-    "AEUI 补给栏已停用；AutoBar 可继续使用自己的位置与外观。"
+    "AEUI 补给栏已停用。"
 end
 
 function ActionBars:AssignSupplyFromCursor(index)
@@ -5446,6 +4403,12 @@ local function CreateSupplyManagerButton(parent, text, width)
   button:SetHeight(22)
   button:SetText(text)
   return button
+end
+
+local function SetSupplyManagerEditEnabled(edit, enabled)
+  edit:EnableMouse(enabled)
+  edit:EnableKeyboard(enabled)
+  if not enabled then edit:ClearFocus() end
 end
 
 local function CreateSupplyManagerCell(parent, index)
@@ -5486,9 +4449,20 @@ local function CreateSupplyManagerCell(parent, index)
   cell:SetScript("OnClick", function()
     if CursorHasItem() then
       ActionBars:AssignSupplyFromCursor(cell.supplyIndex)
-    else
-      ActionBars:SelectSupplySlot(cell.supplyIndex)
+      return
     end
+    local profile = GetSupplyProfile(false)
+    local source = ActionBars.selectedSupplySlot
+    if arg1 == "RightButton" and source ~= cell.supplyIndex and
+      profile and profile.slots[source]
+    then
+      local ok, message = ActionBars:MoveSupplySlotTo(
+        source, cell.supplyIndex
+      )
+      ActionBars:SetSupplyManagerStatus(message, not ok)
+      return
+    end
+    ActionBars:SelectSupplySlot(cell.supplyIndex)
   end)
   cell:SetScript("OnReceiveDrag", function()
     ActionBars:AssignSupplyFromCursor(cell.supplyIndex)
@@ -5497,10 +4471,15 @@ local function CreateSupplyManagerCell(parent, index)
     local profile = GetSupplyProfile(false)
     if profile and profile.slots[cell.supplyIndex] then
       ActionBars:ShowSupplyTooltip(cell)
+      if GameTooltip then
+        GameTooltip:AddLine("右键：把当前选中组移到这个槽位。")
+        GameTooltip:Show()
+      end
     elseif GameTooltip then
       GameTooltip:SetOwner(cell, "ANCHOR_RIGHT")
       GameTooltip:SetText("空补给槽")
       GameTooltip:AddLine("从背包把物品拖到这个槽位。")
+      GameTooltip:AddLine("右键：把当前选中组移到这里。")
       GameTooltip:Show()
     end
   end)
@@ -5633,7 +4612,7 @@ function ActionBars:EnsureSupplyManager()
     nil, "OVERLAY", "GameFontHighlightSmall"
   )
   help:SetPoint("TOPLEFT", frame, "TOPLEFT", 216, -42)
-  help:SetText("拖入创建／加入组；组内右键设主；阈值回车保存")
+  help:SetText("拖入创建／加入组；组格右键移动；组内右键设主")
 
   local close = CreateFrame(
     "Button", nil, frame, "UIPanelCloseButton"
@@ -5699,26 +4678,10 @@ function ActionBars:EnsureSupplyManager()
   frame.memberSelected:SetWidth(304)
   frame.memberSelected:SetJustifyH("LEFT")
 
-  frame.minimumLabel = frame:CreateFontString(
-    nil, "OVERLAY", "GameFontNormalSmall"
-  )
-  frame.minimumLabel:SetPoint("TOPLEFT", frame, "TOPLEFT", 216, -258)
-  frame.minimumLabel:SetText("低于")
-  frame.minimumEdit = CreateFrame(
-    "EditBox", nil, frame, "InputBoxTemplate"
-  )
-  frame.minimumEdit:SetWidth(42)
-  frame.minimumEdit:SetHeight(22)
-  frame.minimumEdit:SetPoint("TOPLEFT", frame, "TOPLEFT", 252, -249)
-  frame.minimumEdit:SetAutoFocus(false)
-  frame.minimumEdit:SetMaxLetters(3)
-  if frame.minimumEdit.SetNumeric then
-    frame.minimumEdit:SetNumeric(true)
-  end
   frame.primary = CreateSupplyManagerButton(frame, "设为主格", 80)
-  frame.primary:SetPoint("TOPLEFT", frame, "TOPLEFT", 310, -249)
+  frame.primary:SetPoint("TOPLEFT", frame, "TOPLEFT", 216, -249)
   frame.removeItem = CreateSupplyManagerButton(frame, "移除物品", 80)
-  frame.removeItem:SetPoint("TOPLEFT", frame, "TOPLEFT", 398, -249)
+  frame.removeItem:SetPoint("LEFT", frame.primary, "RIGHT", 6, 0)
   frame.itemUp = CreateSupplyManagerButton(frame, "物品前移", 80)
   frame.itemUp:SetPoint("TOPLEFT", frame, "TOPLEFT", 216, -282)
   frame.itemDown = CreateSupplyManagerButton(frame, "物品后移", 80)
@@ -5726,9 +4689,9 @@ function ActionBars:EnsureSupplyManager()
 
   frame.delete = CreateSupplyManagerButton(frame, "删除组", 74)
   frame.delete:SetPoint("TOPLEFT", frame, "TOPLEFT", 216, -320)
-  frame.up = CreateSupplyManagerButton(frame, "组前移", 74)
+  frame.up = CreateSupplyManagerButton(frame, "槽位前移", 74)
   frame.up:SetPoint("LEFT", frame.delete, "RIGHT", 6, 0)
-  frame.down = CreateSupplyManagerButton(frame, "组后移", 74)
+  frame.down = CreateSupplyManagerButton(frame, "槽位后移", 74)
   frame.down:SetPoint("LEFT", frame.up, "RIGHT", 6, 0)
   frame.toggle = CreateSupplyManagerButton(frame, "停用补给栏", 112)
   frame.toggle:SetPoint("TOPLEFT", frame, "TOPLEFT", 216, -352)
@@ -5748,24 +4711,10 @@ function ActionBars:EnsureSupplyManager()
     frame.nameEdit:ClearFocus()
     ActionBars:SetSupplyManagerStatus(message, not ok)
   end
-  local function SaveMinimum()
-    local ok, message = ActionBars:SetSupplyMinimum(
-      ActionBars.selectedSupplySlot,
-      ActionBars.selectedSupplyMember,
-      frame.minimumEdit:GetText()
-    )
-    frame.minimumEdit:ClearFocus()
-    ActionBars:SetSupplyManagerStatus(message, not ok)
-  end
   frame.nameSave:SetScript("OnClick", SaveGroupName)
   frame.nameEdit:SetScript("OnEnterPressed", SaveGroupName)
   frame.nameEdit:SetScript("OnEscapePressed", function()
     frame.nameEdit:ClearFocus()
-    ActionBars:RefreshSupplyManager(true)
-  end)
-  frame.minimumEdit:SetScript("OnEnterPressed", SaveMinimum)
-  frame.minimumEdit:SetScript("OnEscapePressed", function()
-    frame.minimumEdit:ClearFocus()
     ActionBars:RefreshSupplyManager(true)
   end)
   frame.primary:SetScript("OnClick", function()
@@ -5837,10 +4786,9 @@ function ActionBars:RefreshSupplyManager(refreshSelection)
   local frame = self.supplyManager
   local profile, profileKey = GetSupplyProfile(true)
   if not frame or not profile then return end
-  local count = table.getn(profile.slots)
   self.selectedSupplySlot = math.max(1, math.min(
     tonumber(self.selectedSupplySlot) or 1,
-    math.min(self.supplyMaxSlots, count + 1)
+    self.supplyMaxSlots
   ))
   frame.profile:SetText(
     "角色配置：" .. tostring(profileKey or "不可用")
@@ -5861,17 +4809,14 @@ function ActionBars:RefreshSupplyManager(refreshSelection)
       if stock == 0 then
         cell.icon:SetVertexColor(0.38, 0.28, 0.28, 1)
         cell.stock:SetTextColor(1, 0.28, 0.22)
-      elseif stock < item.minimum then
-        cell.icon:SetVertexColor(1, 1, 1, 1)
-        cell.stock:SetTextColor(1, 0.72, 0.2)
       else
         cell.icon:SetVertexColor(1, 1, 1, 1)
-        cell.stock:SetTextColor(0.45, 1, 0.45)
+        cell.stock:SetTextColor(1, 1, 1)
       end
     else
       cell.icon:Hide()
       cell.stock:SetText("")
-      cell.plus:SetText(index == count + 1 and "+" or "")
+      cell.plus:SetText("+")
     end
     if index == self.selectedSupplySlot then
       cell:SetBackdropBorderColor(1, 0.72, 0.25, 1)
@@ -5908,12 +4853,9 @@ function ActionBars:RefreshSupplyManager(refreshSelection)
       if stock == 0 then
         cell.icon:SetVertexColor(0.38, 0.28, 0.28, 1)
         cell.stock:SetTextColor(1, 0.28, 0.22)
-      elseif stock < item.minimum then
-        cell.icon:SetVertexColor(1, 1, 1, 1)
-        cell.stock:SetTextColor(1, 0.72, 0.2)
       else
         cell.icon:SetVertexColor(1, 1, 1, 1)
-        cell.stock:SetTextColor(0.45, 1, 0.45)
+        cell.stock:SetTextColor(1, 1, 1)
       end
     else
       cell.icon:Hide()
@@ -5932,8 +4874,7 @@ function ActionBars:RefreshSupplyManager(refreshSelection)
     local name = GetSupplyItemInfo(selectedItem.itemId)
     frame.memberSelected:SetText(
       tostring(name or ("物品 #" .. selectedItem.itemId)) ..
-      " · 库存 " .. SupplyCount(selectedItem.itemId) ..
-      " · 低于 " .. selectedItem.minimum .. " 提醒"
+      " · 库存 " .. SupplyCount(selectedItem.itemId)
     )
   else
     frame.memberSelected:SetText("从背包拖入物品，加入当前组。")
@@ -5947,7 +4888,6 @@ function ActionBars:RefreshSupplyManager(refreshSelection)
       " · " .. memberCount .. " 项"
     )
     frame.nameEdit:SetText(group.name or "")
-    frame.nameEdit:Enable()
     frame.nameSave:Enable()
     frame.delete:Enable()
     frame.up:Enable()
@@ -5957,24 +4897,20 @@ function ActionBars:RefreshSupplyManager(refreshSelection)
       "组 " .. self.selectedSupplySlot .. " · 从背包拖入以创建"
     )
     frame.nameEdit:SetText("")
-    frame.nameEdit:Disable()
     frame.nameSave:Disable()
     frame.delete:Disable()
     frame.up:Disable()
     frame.down:Disable()
   end
+  SetSupplyManagerEditEnabled(frame.nameEdit, group ~= nil)
 
   local item = selectedItem
   if item then
-    frame.minimumEdit:SetText(item.minimum)
-    frame.minimumEdit:Enable()
     frame.primary:Enable()
     frame.removeItem:Enable()
     frame.itemUp:Enable()
     frame.itemDown:Enable()
   else
-    frame.minimumEdit:SetText("")
-    frame.minimumEdit:Disable()
     frame.primary:Disable()
     frame.removeItem:Disable()
     frame.itemUp:Disable()
@@ -5987,7 +4923,7 @@ function ActionBars:SelectSupplySlot(index)
   if not profile then return false end
   self.selectedSupplySlot = math.max(1, math.min(
     math.floor(tonumber(index) or 1),
-    table.getn(profile.slots) + 1
+    self.supplyMaxSlots
   ))
   self.selectedSupplyMember = 1
   self:RefreshSupplyManager(true)
@@ -6044,141 +4980,37 @@ function ActionBars:RunSupplySelfCheck()
     },
   }
   local slots = NormalizeSupplySlots(profile)
+  local slotCount, lastSlot = GetSupplySlotStats(profile)
+  local first = {}
+  local fourth = {}
+  local moveSlots = { [1] = first, [4] = fourth }
+  local moved = MoveSupplyGroup(moveSlots, 1, 3)
+  local swapped = MoveSupplyGroup(moveSlots, 3, 4)
+  local positionsWork = moved and swapped and
+    not moveSlots[1] and moveSlots[3] == fourth and
+    moveSlots[4] == first
   local dragged = NormalizeSupplyDraggedItemId(20452.9)
   local rejectsManual =
     not NormalizeSupplyDraggedItemId("20452") and
     not NormalizeSupplyDraggedItemId(
       "|Hitem:20452:0:0:0|h[沙漠肉丸子]|h"
     )
-  local ok = table.getn(slots) == 2 and
-    slots[1].primaryItemId == 13446 and
-    table.getn(slots[1].items) == 1 and
-    slots[1].items[1].minimum == 1 and
-    slots[2].name == "抗性药水" and
-    slots[2].primaryItemId == 201 and
-    table.getn(slots[2].items) == 2 and
-    slots[2].items[1].itemId == 200 and
-    slots[2].items[1].minimum == 5 and
-    slots[2].items[2].itemId == 201 and
-    slots[2].items[2].minimum == 1 and
-    dragged == 20452 and rejectsManual
+  local ok = self.supplyDragHooked == true and
+    slotCount == 2 and lastSlot == 7 and positionsWork and
+    slots[2].primaryItemId == 13446 and
+    table.getn(slots[2].items) == 1 and
+    slots[2].items[1].minimum == 1 and
+    slots[7].name == "抗性药水" and
+    slots[7].primaryItemId == 201 and
+    table.getn(slots[7].items) == 2 and
+    slots[7].items[1].itemId == 200 and
+    slots[7].items[1].minimum == 5 and
+    slots[7].items[2].itemId == 201 and
+    slots[7].items[2].minimum == 1 and dragged == 20452 and
+    rejectsManual
   return ok, ok and
     "补给栏 self-check 通过。" or
-    "补给栏 self-check 失败：分组迁移／去重／拖入边界异常。"
-end
-
-local function GetAutoBarLayoutProfile()
-  local player = AutoBar and AutoBar.currentPlayer
-  local current = player and AutoBar_Config and AutoBar_Config[player]
-  local profile = current and current.profile
-  if not player or type(current) ~= "table" then
-    return nil, nil
-  end
-  local key = type(profile) == "table" and profile.layoutProfile
-  if not key and type(profile) == "table" then
-    if tonumber(profile.layout) == 1 then
-      key = player
-    else
-      key = profile.shared
-    end
-  end
-  if not key or type(AutoBar_Config[key]) ~= "table" then
-    key = player
-  end
-  local config = AutoBar_Config[key]
-  config.display = config.display or {}
-  return key, config.display
-end
-
-function ActionBars:CaptureAutoBarProviderDockBackup()
-  local database = GetFieldKitDatabase()
-  local key, display = GetAutoBarLayoutProfile()
-  if not database or not key or type(display) ~= "table" then
-    return false
-  end
-  database.autoBarDockBackups = database.autoBarDockBackups or {}
-  if database.autoBarDockBackups[key] then
-    return true
-  end
-  database.autoBarDockBackups[key] = {
-    version = self.autoBarDockBackupVersion,
-    docking = CaptureField(display, "docking"),
-    dockShiftX = CaptureField(display, "dockShiftX"),
-    dockShiftY = CaptureField(display, "dockShiftY"),
-  }
-  return true
-end
-
-function ActionBars:RegisterAutoBarProviderDock(xOffset, yOffset)
-  local frames = AutoBarConfig and AutoBarConfig.dockingFrames
-  if type(frames) ~= "table" then
-    self.autoBarProviderDockStatus = "unsupported"
-    return false
-  end
-  frames[self.autoBarProviderDockName] = {
-    text = "AEUI Combat Deck",
-    offset = {
-      x = xOffset,
-      y = yOffset,
-      point = "CENTER",
-      relative = "BOTTOMLEFT",
-    },
-  }
-  self.autoBarProviderDockStatus = "registered"
-  return true
-end
-
-function ActionBars:ApplyAutoBarProviderDock(xOffset, yOffset)
-  local key, display = GetAutoBarLayoutProfile()
-  if not key or type(display) ~= "table" or
-    not self:RegisterAutoBarProviderDock(xOffset, yOffset)
-  then
-    return false
-  end
-  self:CaptureAutoBarProviderDockBackup()
-  display.docking = self.autoBarProviderDockName
-  display.dockShiftX = 0
-  display.dockShiftY = 0
-  self.autoBarProviderDockProfile = key
-  self.autoBarProviderDockStatus = "bound"
-  return true
-end
-
-function ActionBars:RestoreAutoBarProviderDock()
-  local database = GetFieldKitDatabase()
-  local backups = database and database.autoBarDockBackups
-  local restored = false
-  if type(backups) == "table" and type(AutoBar_Config) == "table" then
-    for key, backup in pairs(backups) do
-      local config = AutoBar_Config[key]
-      local display = type(config) == "table" and config.display
-      if type(display) == "table" and type(backup) == "table" and
-        backup.version == self.autoBarDockBackupVersion
-      then
-        RestoreField(display, "docking", backup.docking)
-        RestoreField(display, "dockShiftX", backup.dockShiftX)
-        RestoreField(display, "dockShiftY", backup.dockShiftY)
-        restored = true
-      end
-    end
-    database.autoBarDockBackups = nil
-  end
-  local frames = AutoBarConfig and AutoBarConfig.dockingFrames
-  if type(frames) == "table" then
-    frames[self.autoBarProviderDockName] = nil
-  end
-  self.autoBarProviderDockProfile = nil
-  self.autoBarProviderDockStatus = restored and "restored" or "free"
-  return restored
-end
-
-function ActionBars:PrepareLogout()
-  -- The provider serializes display.docking verbatim. Keep the AEUI-only
-  -- docking token out of SavedVariables so AutoBar can always initialize
-  -- safely before pfUI/AEUI on the next login; Apply() reinstalls the native
-  -- runtime dock after both providers are available.
-  self:RestoreAutoBarProviderDock()
-  return true
+    "补给栏 self-check 失败：拖入钩子／槽位／迁移／去重边界异常。"
 end
 
 function ActionBars:RestoreSideBarGroupMover()
@@ -6470,13 +5302,7 @@ function ActionBars:ApplyCombatDeckGroup()
 
   self:ApplyActionBarStackPosition(true)
   self:ApplyStanceDockPosition(true)
-
-  local handle = GetGlobal("AutoBarAnchorFrameHandle")
-  local bounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
-  if handle then
-    self:ApplyConsumableDockPosition(true, bounds)
-    self:ApplyAutoBarDragHandlePolicy(true)
-  end
+  self:ApplySupplyDockPosition()
   self:ApplyTrinketDockPosition(true)
   self:ApplyArchiTotemDockPosition(true)
   self.combatDeckGroupStatus = "bound"
@@ -6509,17 +5335,6 @@ local function InstallCombatDeckFrameScript(frame, scriptName)
 end
 
 function ActionBars:InstallCombatDeckGroupHooks()
-  if not self.combatDeckAutoBarWrapper and
-    type(GetGlobal("AutoBar_SetupVisual")) == "function"
-  then
-    self.combatDeckAutoBarOriginal = GetGlobal("AutoBar_SetupVisual")
-    self.combatDeckAutoBarWrapper = function()
-      ActionBars.combatDeckAutoBarOriginal()
-      ActionBars:ApplyCombatDeckGroup()
-    end
-    AutoBar_SetupVisual = self.combatDeckAutoBarWrapper
-  end
-
   InstallCombatDeckFrameScript(
     GetGlobal("pfActionBarStances"), "OnEvent"
   )
@@ -6527,487 +5342,6 @@ function ActionBars:InstallCombatDeckGroupHooks()
   InstallCombatDeckFrameScript(pet, "OnEvent")
   InstallCombatDeckFrameScript(pet, "OnShow")
   InstallCombatDeckFrameScript(pet, "OnHide")
-end
-
-local function ConsumableVisualEdges(bounds)
-  if not bounds or bounds.count == 0 or not bounds.right or
-    not bounds.bottom
-  then
-    return nil, nil
-  end
-  local right = FrameCoordinatePixels(bounds.right, "GetRight")
-  local bottom = FrameCoordinatePixels(bounds.bottom, "GetBottom")
-  if not right or not bottom then
-    return nil, nil
-  end
-  right = right +
-    ActionBars.fieldKitShellPadding * GetFrameScale(bounds.right)
-  bottom = bottom -
-    ActionBars.fieldKitShellPadding * GetFrameScale(bounds.bottom)
-  return right, bottom
-end
-
-local function AutoBarLocalVisualOffsets(handle)
-  if not handle then
-    return nil, nil, nil
-  end
-
-  local rightEdge = nil
-  local bottomEdge = nil
-  local rackScale = nil
-  local count = 0
-
-  for index = 1, 24 do
-    local button = GetGlobal("AutoBarFrameButton" .. index)
-    if button and button.IsShown and button:IsShown() and
-      not button.forceHidden
-    then
-      if not button.GetPoint or not button.GetWidth or
-        not button.GetHeight
-      then
-        return nil, nil, nil
-      end
-
-      local point, relative, relativePoint, xOffset, yOffset =
-        button:GetPoint(1)
-      if type(relative) == "string" then
-        relative = GetGlobal(relative)
-      end
-      if relative ~= handle or relativePoint ~= "CENTER" then
-        return nil, nil, nil
-      end
-
-      point = tostring(point or "")
-      xOffset = tonumber(xOffset) or 0
-      yOffset = tonumber(yOffset) or 0
-      local width = tonumber(button:GetWidth())
-      local height = tonumber(button:GetHeight())
-      if not width or not height then
-        return nil, nil, nil
-      end
-      local buttonScale = GetFrameScale(button)
-      if rackScale and math.abs(buttonScale - rackScale) > 0.0001 then
-        return nil, nil, nil
-      end
-      rackScale = buttonScale
-
-      local right = xOffset + width / 2
-      if string.find(point, "LEFT", 1, true) then
-        right = xOffset + width
-      elseif string.find(point, "RIGHT", 1, true) then
-        right = xOffset
-      end
-
-      local bottom = yOffset - height / 2
-      if string.find(point, "BOTTOM", 1, true) then
-        bottom = yOffset
-      elseif string.find(point, "TOP", 1, true) then
-        bottom = yOffset - height
-      end
-
-      right = right * buttonScale
-      bottom = bottom * buttonScale
-      count = count + 1
-      if not rightEdge or right > rightEdge then
-        rightEdge = right
-      end
-      if not bottomEdge or bottom < bottomEdge then
-        bottomEdge = bottom
-      end
-    end
-  end
-
-  if count == 0 or not rightEdge or not bottomEdge or not rackScale then
-    return nil, nil, nil
-  end
-
-  return
-    rightEdge + ActionBars.fieldKitShellPadding * rackScale,
-    bottomEdge - ActionBars.fieldKitShellPadding * rackScale,
-    rackScale
-end
-
-local function AutoBarProviderVisualOffsets()
-  local display = AutoBar and AutoBar.display
-  if type(display) ~= "table" or not AutoBar or
-    type(AutoBar.AssignButtons) ~= "function"
-  then
-    return nil, nil, nil
-  end
-
-  local ok, assigned = pcall(AutoBar.AssignButtons, AutoBar)
-  local rows = math.max(1, math.floor(tonumber(display.rows) or 1))
-  local columns = math.max(
-    1, math.floor(tonumber(display.columns) or 1)
-  )
-  local count = ok and math.min(
-    math.max(0, math.floor(tonumber(assigned) or 0)),
-    rows * columns,
-    24
-  ) or 0
-  if count == 0 then
-    return nil, nil, nil
-  end
-
-  local first = GetGlobal("AutoBarFrameButton1")
-  local width = tonumber(display.buttonWidth) or
-    (first and first.GetWidth and tonumber(first:GetWidth())) or 36
-  local height = tonumber(display.buttonHeight) or
-    (first and first.GetHeight and tonumber(first:GetHeight())) or 36
-  local gap = tonumber(display.gapping) or 3
-  local align = tonumber(display.alignButtons) or 1
-  local displayedColumns = math.min(count, columns)
-  local displayedRows = math.floor((count - 1) / columns) + 1
-  local xStep = width + gap
-  local yStep = height + gap
-  local point = "BOTTOMLEFT"
-  local centerShiftX = 0
-  local centerShiftY = 0
-
-  if align == 2 then
-    centerShiftX = -0.5 * displayedColumns * xStep + gap / 2
-  elseif align == 3 then
-    xStep = -xStep
-    point = "BOTTOMRIGHT"
-  elseif align == 4 then
-    xStep = -xStep
-    point = "BOTTOMRIGHT"
-    centerShiftY = -0.5 * displayedRows * yStep + gap / 2
-  elseif align == 5 then
-    centerShiftX = -0.5 * displayedColumns * xStep + gap / 2
-    centerShiftY = -0.5 * displayedRows * yStep + gap / 2
-  elseif align == 6 then
-    centerShiftY = -0.5 * displayedRows * yStep + gap / 2
-  elseif align == 7 then
-    xStep = -xStep
-    yStep = -yStep
-    point = "TOPRIGHT"
-  elseif align == 8 then
-    yStep = -yStep
-    point = "TOPLEFT"
-    centerShiftX = -0.5 * displayedColumns * xStep + gap / 2
-  elseif align == 9 then
-    yStep = -yStep
-    point = "TOPLEFT"
-  end
-
-  local rightEdge = nil
-  local bottomEdge = nil
-  for index = 1, count do
-    local xOffset = math.mod(index - 1, columns) * xStep +
-      centerShiftX
-    local yOffset = math.floor((index - 1) / columns) * yStep +
-      centerShiftY
-    local right = xOffset + width / 2
-    local bottom = yOffset - height / 2
-    if string.find(point, "LEFT", 1, true) then
-      right = xOffset + width
-    elseif string.find(point, "RIGHT", 1, true) then
-      right = xOffset
-    end
-    if string.find(point, "BOTTOM", 1, true) then
-      bottom = yOffset
-    elseif string.find(point, "TOP", 1, true) then
-      bottom = yOffset - height
-    end
-    if not rightEdge or right > rightEdge then
-      rightEdge = right
-    end
-    if not bottomEdge or bottom < bottomEdge then
-      bottomEdge = bottom
-    end
-  end
-
-  local rackScale = GetFrameScale(first)
-  return
-    (rightEdge + ActionBars.fieldKitShellPadding) * rackScale,
-    (bottomEdge - ActionBars.fieldKitShellPadding) * rackScale,
-    rackScale
-end
-
-local function AutoBarVisualOffsets(handle)
-  local right, bottom, scale = AutoBarProviderVisualOffsets()
-  if right and bottom and scale then
-    return right, bottom, scale, "provider-layout"
-  end
-  right, bottom, scale = AutoBarLocalVisualOffsets(handle)
-  return right, bottom, scale, "provider-local"
-end
-
-function ActionBars:ResolveAutoBarBoundOffsets(handle)
-  local handleScale = GetFrameScale(handle)
-  local rightDelta, bottomDelta, rackScale =
-    AutoBarVisualOffsets(handle)
-  if rightDelta and bottomDelta and rackScale then
-    return
-      (-self.consumableDockGap * rackScale - rightDelta) / handleScale,
-      (self.fieldKitDockYOffset * rackScale - bottomDelta) / handleScale
-  end
-  return self.autoBarBoundOffsetX, self.autoBarBoundOffsetY
-end
-
-function ActionBars:InstallAutoBarHandlePointLock()
-  local handle = GetGlobal("AutoBarAnchorFrameHandle")
-  if not handle or type(handle.SetPoint) ~= "function" then
-    self.autoBarHandlePointLockStatus = "missing"
-    return false
-  end
-
-  local state = handle.aeuiCombatDeckPointLockV1
-  if state and handle.SetPoint == state.wrapper then
-    self.autoBarHandlePointLockStatus = "locked"
-    return true
-  end
-
-  state = { original = handle.SetPoint }
-  state.wrapper = function(frame, ...)
-    local arguments = arg
-    if FieldKitEnabled() and FieldKitBound() and not SupplyActive() then
-      local main = GetMainActionBarFrame()
-      local xOffset, yOffset =
-        ActionBars:ResolveAutoBarBoundOffsets(frame)
-      if main and xOffset and yOffset then
-        state.original(
-          frame, "CENTER", main, "BOTTOMLEFT", xOffset, yOffset
-        )
-        ActionBars.autoBarDockApplied = true
-        ActionBars.autoBarBoundOffsetX = xOffset
-        ActionBars.autoBarBoundOffsetY = yOffset
-        ActionBars.autoBarBoundAnchors = CaptureFrameAnchors(frame)
-        ActionBars.autoBarAnchorBasis = "setpoint-lock"
-        ActionBars.consumableDockStatus = "left"
-        ActionBars.autoBarHandlePointLockStatus = "locked"
-        return
-      end
-    end
-    return state.original(frame, unpack(arguments))
-  end
-  handle.aeuiCombatDeckPointLockV1 = state
-  handle.SetPoint = state.wrapper
-  self.autoBarHandlePointLockStatus = "locked"
-  return true
-end
-
-function ActionBars:RestoreAutoBarHandlePointLock()
-  local handle = GetGlobal("AutoBarAnchorFrameHandle")
-  local state = handle and handle.aeuiCombatDeckPointLockV1
-  if state and handle.SetPoint == state.wrapper then
-    handle.SetPoint = state.original
-  end
-  if handle then
-    handle.aeuiCombatDeckPointLockV1 = nil
-  end
-  self.autoBarHandlePointLockStatus = "free"
-end
-
-local function GetVisibleAutoBarButtons()
-  local buttons = {}
-  for index = 1, 24 do
-    local button = GetGlobal("AutoBarFrameButton" .. index)
-    if button and button.IsShown and button:IsShown() and
-      not button.forceHidden and button.effectiveButton
-    then
-      table.insert(buttons, button)
-    end
-  end
-  return buttons
-end
-
-function ActionBars:GetAutoBarDockRoot(main)
-  local root = self.autoBarDockRoot or
-    GetGlobal("AzerothExpeditionUIAutoBarDockRoot")
-  if not root then
-    root = CreateFrame(
-      "Frame", "AzerothExpeditionUIAutoBarDockRoot", UIParent
-    )
-    root:Hide()
-  end
-  self.autoBarDockRoot = root
-  root:ClearAllPoints()
-  root:SetPoint(
-    "BOTTOMRIGHT", main, "BOTTOMLEFT",
-    -self.consumableDockGap, self.fieldKitDockYOffset
-  )
-  return root
-end
-
-function ActionBars:RestoreAutoBarButtonDock()
-  local layouts = self.autoBarNativeButtonAnchors
-  if type(layouts) == "table" then
-    for index = 1, 24 do
-      RestoreFrameAnchors(
-        GetGlobal("AutoBarFrameButton" .. index), layouts[index]
-      )
-    end
-  end
-  local root = self.autoBarDockRoot or
-    GetGlobal("AzerothExpeditionUIAutoBarDockRoot")
-  if root then
-    root:Hide()
-  end
-  self.autoBarNativeButtonAnchors = nil
-  self.autoBarDockApplied = false
-  self.autoBarDockRowsApplied = nil
-  self.autoBarDockGrowth = nil
-end
-
-function ActionBars:ApplyAutoBarButtonDock(enabled)
-  if SupplyActive() then enabled = false end
-  if not enabled or not FieldKitBound() then
-    self:RestoreAutoBarButtonDock()
-    self.autoBarAnchorBasis = enabled and "free" or "disabled"
-    self.consumableDockStatus = enabled and "free" or "disabled"
-    return false
-  end
-
-  local main = GetMainActionBarFrame()
-  local buttons = GetVisibleAutoBarButtons()
-  if not main or table.getn(buttons) == 0 then
-    self.autoBarAnchorBasis = "layout-pending"
-    self.consumableDockStatus = "unavailable"
-    return false
-  end
-
-  local root = self:GetAutoBarDockRoot(main)
-  local handle = GetGlobal("AutoBarAnchorFrameHandle")
-  local padding = self.fieldKitShellPadding
-  local gap = tonumber(AutoBar and AutoBar.display and
-    AutoBar.display.gapping) or 3
-  local count = table.getn(buttons)
-  local columns = math.min(self.autoBarDockColumns, count)
-  local rows = math.floor((count - 1) / self.autoBarDockColumns) + 1
-  local buttonWidth = 0
-  local buttonHeight = 0
-
-  self.autoBarNativeButtonAnchors =
-    self.autoBarNativeButtonAnchors or {}
-  for index = 1, count do
-    local button = buttons[index]
-    local _, relative = button:GetPoint(1)
-    if type(relative) == "string" then
-      relative = GetGlobal(relative)
-    end
-    if relative == handle then
-      local _, _, buttonIndex = string.find(
-        button:GetName() or "", "(%d+)$"
-      )
-      buttonIndex = tonumber(buttonIndex)
-      if buttonIndex then
-        self.autoBarNativeButtonAnchors[buttonIndex] =
-          CaptureFrameAnchors(button)
-      end
-    end
-    buttonWidth = math.max(
-      buttonWidth, tonumber(button:GetWidth()) or 0
-    )
-    buttonHeight = math.max(
-      buttonHeight, tonumber(button:GetHeight()) or 0
-    )
-  end
-
-  local width = padding * 2 + columns * buttonWidth +
-    math.max(0, columns - 1) * gap
-  local height = padding * 2 + rows * buttonHeight +
-    math.max(0, rows - 1) * gap
-  root:SetWidth(math.max(1, width))
-  root:SetHeight(math.max(1, height))
-  root:Show()
-
-  -- The first row is the bottom row. Its right edge stays fixed to the main
-  -- action bar through root:BOTTOMRIGHT -> main:BOTTOMLEFT. Buttons fill four
-  -- columns left-to-right, then each new row grows upward.
-  for index = 1, count do
-    local button = buttons[index]
-    local column = math.mod(index - 1, self.autoBarDockColumns)
-    local row = math.floor((index - 1) / self.autoBarDockColumns)
-    button:ClearAllPoints()
-    if row == 0 and column == 0 then
-      button:SetPoint(
-        "BOTTOMLEFT", root, "BOTTOMLEFT", padding, padding
-      )
-    elseif column == 0 then
-      button:SetPoint(
-        "BOTTOMLEFT", buttons[index - self.autoBarDockColumns],
-        "TOPLEFT", 0, gap
-      )
-    else
-      button:SetPoint("LEFT", buttons[index - 1], "RIGHT", gap, 0)
-    end
-  end
-
-  self.autoBarDockApplied = true
-  self.autoBarBoundAnchors = nil
-  self.autoBarBoundOffsetX = nil
-  self.autoBarBoundOffsetY = nil
-  self.autoBarDockRowsApplied = rows
-  self.autoBarDockGrowth = "up"
-  self.autoBarAnchorBasis = "button-grid-4col-up"
-  self.autoBarProviderDockStatus = "bypassed-button-grid"
-  self.consumableDockStatus = "left"
-  return true
-end
-
-function ActionBars:ApplyConsumableDockPosition(enabled, bounds)
-  if SupplyActive() then
-    self:RestoreAutoBarHandlePointLock()
-    self:RestoreAutoBarProviderDock()
-    self:ApplyAutoBarButtonDock(false)
-    return self:ApplySupplyDockPosition()
-  end
-  if self.supplyFrame then self.supplyFrame:Hide() end
-  -- AutoBar's drag handle is not its visual root: SetupVisual positions every
-  -- button against that handle and may rewrite it again.  Dock the actual
-  -- visible buttons to one AEUI root instead, exactly as TrinketMenu docks its
-  -- own root.  Provider layout changes remain internal to the next refresh.
-  self:RestoreAutoBarHandlePointLock()
-  self:RestoreAutoBarProviderDock()
-  return self:ApplyAutoBarButtonDock(enabled)
-end
-
-function ActionBars:ApplyAutoBarDragHandlePolicy(enabled)
-  if SupplyActive() then enabled = false end
-  local handle = GetGlobal("AutoBarAnchorFrameHandle")
-  if not handle then
-    self.autoBarDragHandleStatus = "missing"
-    return false
-  end
-
-  if enabled and FieldKitBound() then
-    if type(handle.Hide) ~= "function" then
-      self.autoBarDragHandleStatus = "unsupported"
-      return false
-    end
-    handle:Hide()
-    self.autoBarDragHandleStatus = "hidden-bound"
-    return true
-  end
-
-  local display = AutoBar and AutoBar.display
-  if type(display) ~= "table" then
-    self.autoBarDragHandleStatus = "provider"
-    return false
-  end
-
-  if AutoBarDisplayFlag(display.hideDragHandle) then
-    if type(handle.Hide) ~= "function" then
-      self.autoBarDragHandleStatus = "unsupported"
-      return false
-    end
-    handle:Hide()
-    self.autoBarDragHandleStatus = "hidden-provider"
-  else
-    if type(handle.Show) ~= "function" then
-      self.autoBarDragHandleStatus = "unsupported"
-      return false
-    end
-    handle:Show()
-    self.autoBarDragHandleStatus = "visible-provider"
-  end
-  return true
-end
-
-function ActionBars:RestoreAutoBarBoundAnchor()
-  return self:ApplyAutoBarButtonDock(FieldKitEnabled())
 end
 
 function ActionBars:ApplyTrinketDockPosition(enabled)
@@ -7095,19 +5429,6 @@ function ActionBars:ApplyArchiTotemDockPosition(enabled)
   return true
 end
 
-function ActionBars:HandleAutoBarDragStop()
-  if not FieldKitEnabled() then
-    return
-  end
-  if not FieldKitBound() then
-    self.consumableDockStatus = "free"
-    return
-  end
-  local bounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
-  self:ApplyConsumableDockPosition(true, bounds)
-  self:ApplyAutoBarDragHandlePolicy(true)
-end
-
 function ActionBars:HandleTrinketDragStop()
   if not FieldKitEnabled() then
     return
@@ -7144,35 +5465,28 @@ function ActionBars:SetFieldKitDocking(docked)
     return false, "Action bar settings are unavailable."
   end
   database.fieldKitBound = docked and true or false
-  -- Keep the v1.2 keys synchronized for SavedVariables compatibility.
-  database.consumableDocked = database.fieldKitBound
-  database.trinketDocked = database.fieldKitBound
   if docked then
     self:ApplyActionBarStackPosition(FieldKitEnabled())
     self:ApplyStanceDockPosition(FieldKitEnabled())
-    local bounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
-    self:ApplyConsumableDockPosition(FieldKitEnabled(), bounds)
-    self:ApplyAutoBarDragHandlePolicy(FieldKitEnabled())
+    self:ApplySupplyDockPosition()
     self:ApplyTrinketDockPosition(FieldKitEnabled())
     self:ApplyArchiTotemDockPosition(FieldKitEnabled())
     RefreshTargetMarkerAnchor()
     self:UpdateFieldKitUnlockMover()
     return true,
-      "Combat Deck bound: consumables left and trinkets right share a 20 UI lower dock, 12x2 action bars stay centered, and warrior stances or detected ArchiTotem share the class slot below-left of the marker list. Move the main action bar to move the whole deck."
+      "Combat Deck bound: supplies left and trinkets right share a 20 UI lower dock, 12x2 action bars stay centered, and warrior stances or detected ArchiTotem share the class slot below-left of the marker list. Move the main action bar to move the whole deck."
   end
   self:ApplyActionBarStackPosition(FieldKitEnabled())
   self:ApplyStanceDockPosition(FieldKitEnabled())
-  self:ApplyConsumableDockPosition(FieldKitEnabled())
-  self:ApplyAutoBarDragHandlePolicy(FieldKitEnabled())
+  self:ApplySupplyDockPosition()
   self:ApplyTrinketDockPosition(FieldKitEnabled())
   self:ApplyArchiTotemDockPosition(FieldKitEnabled())
   RefreshTargetMarkerAnchor()
   self:UpdateFieldKitUnlockMover()
-  self.consumableDockStatus = "free"
   self.trinketDockStatus = "free"
   self.archiTotemDockStatus = "free"
   return true,
-    "Combat Deck unbound; action bars, Field Kit providers, and ArchiTotem are independent."
+    "Combat Deck unbound; action bars, Supply, TrinketMenu, and ArchiTotem are independent."
 end
 
 function ActionBars:ResetCombatDeckPosition()
@@ -7211,546 +5525,6 @@ function ActionBars:ResetCombatDeckPosition()
   self:SetFieldKitDocking(true)
   return true,
     "Combat Deck reset to BOTTOM (0, 175) in Turtle WoW game coordinates and strongly bound."
-end
-
-local function EnsureAutoBarShell(frame)
-  local shell = frame.aeuiConsumableKitShellV1
-  if not shell then
-    shell = CreateDecorationFrame(frame)
-    EnsureNineSlice(
-      shell,
-      "aeuiConsumableKitNineSliceV1",
-      ActionBars.consumableKitTexturePath,
-      consumableKitTexCoords.C,
-      ActionBars.fieldKitCap
-    )
-    frame.aeuiConsumableKitShellV1 = shell
-  end
-  return shell
-end
-
-local function EnsureAutoBarDivider(frame, index)
-  frame.aeuiConsumableKitDividersV1 =
-    frame.aeuiConsumableKitDividersV1 or {}
-  local divider = frame.aeuiConsumableKitDividersV1[index]
-  if not divider then
-    divider = CreateDecorationFrame(frame)
-    EnsureConnector(
-      divider,
-      "aeuiConsumableKitDividerV1",
-      ActionBars.consumableKitTexturePath,
-      consumableKitTexCoords.horizontal,
-      "HORIZONTAL",
-      2
-    )
-    frame.aeuiConsumableKitDividersV1[index] = divider
-  end
-  return divider
-end
-
-local function SetAutoBarGroupingEnabled(frame, enabled, overall)
-  local labels = frame.aeuiConsumableKitLabelsV1
-  local dividers = frame.aeuiConsumableKitDividersV1
-  if not enabled then
-    if labels then
-      for index = 1, table.getn(labels) do
-        labels[index]:Hide()
-      end
-    end
-    if dividers then
-      for index = 1, table.getn(dividers) do
-        dividers[index]:Hide()
-      end
-    end
-    return false
-  end
-
-  local group1 = GetButtonExtremes(1, 8, "AutoBarFrameButton")
-  local group2 = GetButtonExtremes(9, 16, "AutoBarFrameButton")
-  local group3 = GetButtonExtremes(17, 24, "AutoBarFrameButton")
-  if group1.count ~= 8 or group2.count ~= 8 or group3.count ~= 8 then
-    SetAutoBarGroupingEnabled(frame, false, overall)
-    return false
-  end
-
-  -- The three divider bands and the pocket art already communicate the
-  -- emergency/buff/utility grouping. Keep the semantic dividers, but retire
-  -- the external text plaques and reclaim their horizontal footprint.
-  if labels then
-    for index = 1, table.getn(labels) do
-      labels[index]:Hide()
-    end
-  end
-
-  local divider1 = EnsureAutoBarDivider(frame, 1)
-  local divider2 = EnsureAutoBarDivider(frame, 2)
-  ConfigureDivider(divider1, overall, group1, group2)
-  ConfigureDivider(divider2, overall, group2, group3)
-  divider1:Show()
-  divider2:Show()
-  return true
-end
-
-local function EnsurePopupConnector(frame, index, orientation)
-  frame.aeuiConsumableKitConnectorsV1 =
-    frame.aeuiConsumableKitConnectorsV1 or {}
-  local holder = frame.aeuiConsumableKitConnectorsV1[index]
-  if not holder then
-    holder = {
-      horizontal = CreateDecorationFrame(frame),
-      vertical = CreateDecorationFrame(frame),
-    }
-    EnsureConnector(
-      holder.horizontal,
-      "aeuiConsumableKitConnectorV1",
-      ActionBars.consumableKitTexturePath,
-      consumableKitTexCoords.horizontal,
-      "HORIZONTAL",
-      6
-    )
-    EnsureConnector(
-      holder.vertical,
-      "aeuiConsumableKitConnectorV1",
-      ActionBars.consumableKitTexturePath,
-      consumableKitTexCoords.vertical,
-      "VERTICAL",
-      6
-    )
-    frame.aeuiConsumableKitConnectorsV1[index] = holder
-  end
-  if orientation == "VERTICAL" then
-    holder.horizontal:Hide()
-    holder.vertical:Show()
-    return holder.vertical
-  end
-  holder.vertical:Hide()
-  holder.horizontal:Show()
-  return holder.horizontal
-end
-
-local function HideUnusedPopupConnectors(frame, firstUnused)
-  local connectors = frame.aeuiConsumableKitConnectorsV1
-  if not connectors then
-    return
-  end
-  for index = firstUnused, table.getn(connectors) do
-    connectors[index].horizontal:Hide()
-    connectors[index].vertical:Hide()
-  end
-end
-
-local function EnsureAutoBarDrawerSpine(frame)
-  local spine = frame.aeuiConsumableKitDrawerSpineV1
-  if not spine then
-    spine = CreateDecorationFrame(frame)
-    EnsureConnector(
-      spine,
-      "aeuiConsumableKitDrawerSpineSlicesV1",
-      ActionBars.consumableKitTexturePath,
-      consumableKitTexCoords.vertical,
-      "VERTICAL",
-      3
-    )
-    frame.aeuiConsumableKitDrawerSpineV1 = spine
-  end
-  return spine
-end
-
-local function HideAutoBarDrawerSpine(frame)
-  local spine = frame and frame.aeuiConsumableKitDrawerSpineV1
-  if spine then
-    spine:Hide()
-  end
-end
-
-local function AutoBarDrawerOnLeave()
-  -- AutoBar's repeating PopupMouseover event remains responsible for close.
-  -- Its stock XML OnLeave only understands the original popup-frame bounds,
-  -- which no longer contain an external drawer.
-end
-
-local function EnsureAutoBarDrawerHoverBridge(frame)
-  local bridge = frame.aeuiConsumableKitDrawerHoverBridgeV1
-  if not bridge then
-    bridge = CreateFrame("Frame", nil, frame)
-    bridge:EnableMouse(true)
-    if frame.GetFrameLevel and bridge.SetFrameLevel then
-      bridge:SetFrameLevel(frame:GetFrameLevel() + 1)
-    end
-    frame.aeuiConsumableKitDrawerHoverBridgeV1 = bridge
-  end
-  return bridge
-end
-
-local function ActivateAutoBarDrawerInteraction(
-  frame, shell, side, width
-)
-  local bridge = EnsureAutoBarDrawerHoverBridge(frame)
-  bridge:ClearAllPoints()
-  bridge:SetWidth(width)
-  if side == "LEFT" then
-    bridge:SetPoint("TOPRIGHT", shell, "TOPLEFT", 0, 0)
-    bridge:SetPoint("BOTTOMRIGHT", shell, "BOTTOMLEFT", 0, 0)
-  else
-    bridge:SetPoint("TOPLEFT", shell, "TOPRIGHT", 0, 0)
-    bridge:SetPoint("BOTTOMLEFT", shell, "BOTTOMRIGHT", 0, 0)
-  end
-  bridge:Show()
-
-  if not frame.aeuiConsumableKitNativeOnLeaveCapturedV1 and
-    frame.GetScript and frame.SetScript
-  then
-    frame.aeuiConsumableKitNativeOnLeaveV1 = frame:GetScript("OnLeave")
-    frame.aeuiConsumableKitNativeOnLeaveCapturedV1 = true
-  end
-  if frame.aeuiConsumableKitNativeOnLeaveCapturedV1 and frame.SetScript then
-    frame:SetScript("OnLeave", AutoBarDrawerOnLeave)
-  end
-end
-
-local function DeactivateAutoBarDrawerInteraction(frame)
-  if not frame then
-    return
-  end
-  local bridge = frame.aeuiConsumableKitDrawerHoverBridgeV1
-  if bridge then
-    bridge:Hide()
-  end
-  if frame.aeuiConsumableKitNativeOnLeaveCapturedV1 and frame.SetScript then
-    frame:SetScript(
-      "OnLeave", frame.aeuiConsumableKitNativeOnLeaveV1
-    )
-  end
-end
-
-local function CapturePopupNativeLayouts(frame, buttons)
-  frame.aeuiConsumableKitNativePopupLayoutsV1 = {}
-  for index = 1, table.getn(buttons) do
-    local button = buttons[index]
-    frame.aeuiConsumableKitNativePopupLayoutsV1[button] =
-      CaptureButtonLayout(button)
-  end
-end
-
-local function RestorePopupNativeLayouts(frame, buttons)
-  local layouts = frame.aeuiConsumableKitNativePopupLayoutsV1
-  if not layouts then
-    return false
-  end
-  for index = 1, table.getn(buttons) do
-    local button = buttons[index]
-    RestoreButtonLayout(button, layouts[button])
-  end
-  frame.aeuiConsumableKitDrawerActiveV1 = false
-  return true
-end
-
-local function ResolveAutoBarDrawerSide(frame)
-  local mode = GetPopupMode()
-  if mode == "LEFT" or mode == "RIGHT" then
-    return mode
-  end
-  local database = GetFieldKitDatabase()
-  if FieldKitBound() and
-    ActionBars.autoBarDockApplied
-  then
-    return "LEFT"
-  end
-
-  local rack = GetGlobal("AutoBarFrame")
-  local shell = rack and rack.aeuiConsumableKitShellV1
-  if not shell or not shell.GetLeft or not shell.GetRight or
-    type(GetScreenWidth) ~= "function"
-  then
-    return "RIGHT"
-  end
-  local left = shell:GetLeft()
-  local right = shell:GetRight()
-  local screenWidth = GetScreenWidth()
-  if not left or not right or not screenWidth then
-    return "RIGHT"
-  end
-  if left >= screenWidth - right then
-    return "LEFT"
-  end
-  return "RIGHT"
-end
-
-local function ConfigureAutoBarDrawer(frame, buttons, side)
-  local rack = GetGlobal("AutoBarFrame")
-  local shell = rack and rack.aeuiConsumableKitShellV1
-  local count = table.getn(buttons)
-  if not shell or count == 0 then
-    return false, 0, 0
-  end
-
-  local rows = count
-  if count > ActionBars.popupDrawerMaxRows then
-    rows = math.ceil(count / 2)
-  end
-  rows = math.min(rows, ActionBars.popupDrawerMaxRows)
-  local columns = math.ceil(count / rows)
-  local first = buttons[1]
-  local width = first:GetWidth()
-  local height = first:GetHeight()
-  local display = AutoBar and AutoBar.display or {}
-  local gap = tonumber(display.gapping) or 3
-  local hitInset = -math.ceil(gap / 2)
-  local labelOffset = 0
-
-  first:ClearAllPoints()
-  if side == "LEFT" then
-    first:SetPoint(
-      "TOPRIGHT", shell, "TOPLEFT",
-      -(labelOffset + ActionBars.popupDrawerGap +
-        ActionBars.fieldKitPocketPadding),
-      -ActionBars.fieldKitPocketPadding
-    )
-  else
-    first:SetPoint(
-      "TOPLEFT", shell, "TOPRIGHT",
-      ActionBars.popupDrawerGap + ActionBars.fieldKitPocketPadding,
-      -ActionBars.fieldKitPocketPadding
-    )
-  end
-  if first.SetHitRectInsets then
-    first:SetHitRectInsets(hitInset, hitInset, hitInset, hitInset)
-  end
-
-  for index = 2, count do
-    local button = buttons[index]
-    local zero = index - 1
-    local column = math.floor(zero / rows)
-    local row = math.mod(zero, rows)
-    button:ClearAllPoints()
-    if side == "LEFT" then
-      button:SetPoint(
-        "TOPRIGHT", first, "TOPRIGHT",
-        -column * (width + gap), -row * (height + gap)
-      )
-    else
-      button:SetPoint(
-        "TOPLEFT", first, "TOPLEFT",
-        column * (width + gap), -row * (height + gap)
-      )
-    end
-    if button.SetHitRectInsets then
-      button:SetHitRectInsets(hitInset, hitInset, hitInset, hitInset)
-    end
-  end
-
-  local spine = EnsureAutoBarDrawerSpine(frame)
-  local lastNear = buttons[math.min(rows, count)]
-  spine:ClearAllPoints()
-  spine:SetPoint(
-    "TOP", first, "TOP", 0, ActionBars.fieldKitPocketPadding
-  )
-  spine:SetPoint(
-    "BOTTOM", lastNear, "BOTTOM", 0,
-    -ActionBars.fieldKitPocketPadding
-  )
-  spine:SetWidth(6)
-  if side == "LEFT" then
-    spine:SetPoint(
-      "RIGHT", first, "RIGHT",
-      ActionBars.fieldKitPocketPadding + ActionBars.popupDrawerGap, 0
-    )
-  else
-    spine:SetPoint(
-      "LEFT", first, "LEFT",
-      -(ActionBars.fieldKitPocketPadding + ActionBars.popupDrawerGap), 0
-    )
-  end
-  spine:Show()
-  local hoverWidth = ActionBars.popupDrawerGap +
-    ActionBars.fieldKitPocketPadding
-  if side == "LEFT" then
-    hoverWidth = hoverWidth + labelOffset
-  end
-  ActivateAutoBarDrawerInteraction(
-    frame,
-    shell,
-    side,
-    hoverWidth
-  )
-  frame.aeuiConsumableKitDrawerActiveV1 = true
-  return true, rows, columns
-end
-
-local function ConfigureNativePopupConnectors(frame, buttons)
-  if table.getn(buttons) < 2 then
-    HideUnusedPopupConnectors(frame, 1)
-    return 0
-  end
-  local display = AutoBar and AutoBar.display or {}
-  local horizontal = display.popupToLeft or display.popupToRight
-  SortPopupButtons(buttons, horizontal)
-  for index = 1, table.getn(buttons) - 1 do
-    local connector
-    if horizontal then
-      connector = EnsurePopupConnector(frame, index, "HORIZONTAL")
-      connector:ClearAllPoints()
-      connector:SetPoint("LEFT", buttons[index], "CENTER", 0, 0)
-      connector:SetPoint("RIGHT", buttons[index + 1], "CENTER", 0, 0)
-      connector:SetHeight(8)
-    else
-      connector = EnsurePopupConnector(frame, index, "VERTICAL")
-      connector:ClearAllPoints()
-      connector:SetPoint("BOTTOM", buttons[index], "CENTER", 0, 0)
-      connector:SetPoint("TOP", buttons[index + 1], "CENTER", 0, 0)
-      connector:SetWidth(8)
-    end
-  end
-  HideUnusedPopupConnectors(frame, table.getn(buttons))
-  return table.getn(buttons) - 1
-end
-
-function ActionBars:ApplyAutoBarPopup(enabled, baseButton)
-  if SupplyActive() then enabled = false end
-  local frame = GetGlobal("AutoBarPopupFrame")
-  if not frame then
-    self:CancelAutoBarPopupIntent()
-    self.autoBarPopupButtons = 0
-    self.autoBarPopupConnectors = 0
-    self.autoBarPopupLayout = "missing"
-    self.autoBarPopupSide = "none"
-    self.autoBarPopupHover = "missing"
-    return false
-  end
-
-  local buttons = {}
-  for index = 1, 12 do
-    local item = GetGlobal("AutoBarPopupFrame_Button" .. index)
-    if item then
-      ApplyPocket(
-        item,
-        "aeuiConsumableKitPocketV1",
-        self.consumableKitTexturePath,
-        consumableKitTexCoords.B,
-        consumableKitSpriteSizes.B,
-        enabled,
-        self.fieldKitPocketPadding
-      )
-      if IsVisibleButton(item) then
-        table.insert(buttons, item)
-      end
-    end
-  end
-
-  if baseButton then
-    frame.aeuiConsumableKitPopupBaseButtonV1 = baseButton
-    CapturePopupNativeLayouts(frame, buttons)
-  end
-  local activeBase = baseButton or
-    frame.aeuiConsumableKitPopupBaseButtonV1
-  local mainBounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
-  -- Once the Field Kit owns the visible four-column rack, its popup geometry
-  -- is independent of the category profile. Custom class slots and manual
-  -- item entries must not make AutoBar fall back to an icon-local top popup.
-  local integratedDrawer = enabled and activeBase and FieldKitBound() and
-    mainBounds.count > 0 and mainBounds.count <= 24
-  local drawerEnabled = integratedDrawer or
-    (enabled and activeBase and GetPopupMode() ~= "NATIVE" and
-      AutoBarRecommendedLayoutMatches(mainBounds.count))
-
-  if drawerEnabled then
-    HideUnusedPopupConnectors(frame, 1)
-    local side = integratedDrawer and "LEFT" or
-      ResolveAutoBarDrawerSide(frame)
-    local configured, rows, columns =
-      ConfigureAutoBarDrawer(frame, buttons, side)
-    if configured then
-      self.autoBarPopupButtons = table.getn(buttons)
-      self.autoBarPopupConnectors = 1
-      self.autoBarPopupLayout =
-        "drawer-" .. tostring(columns) .. "x" .. tostring(rows)
-      self.autoBarPopupSide = string.lower(side)
-      if self.autoBarPopupIntentWrapped and AutoBar and
-        type(AutoBar.ScheduleEvent) == "function" and
-        type(AutoBar.CancelScheduledEvent) == "function"
-      then
-        self.autoBarPopupHover = "intent-bridge"
-      else
-        self.autoBarPopupHover = "bridge"
-      end
-      return true
-    end
-  end
-
-  self:CancelAutoBarPopupIntent()
-  if frame.aeuiConsumableKitDrawerActiveV1 then
-    RestorePopupNativeLayouts(frame, buttons)
-  end
-  HideAutoBarDrawerSpine(frame)
-  DeactivateAutoBarDrawerInteraction(frame)
-  self.autoBarPopupHover = "provider"
-
-  if not enabled or table.getn(buttons) < 2 then
-    HideUnusedPopupConnectors(frame, 1)
-    self.autoBarPopupButtons = table.getn(buttons)
-    self.autoBarPopupConnectors = 0
-    self.autoBarPopupLayout = enabled and "native" or "disabled"
-    self.autoBarPopupSide = "provider"
-    return true
-  end
-
-  self.autoBarPopupButtons = table.getn(buttons)
-  self.autoBarPopupConnectors =
-    ConfigureNativePopupConnectors(frame, buttons)
-  self.autoBarPopupLayout = "native"
-  self.autoBarPopupSide = "provider"
-  return true
-end
-
-function ActionBars:ApplyAutoBarFieldKit(enabled)
-  if SupplyActive() then enabled = false end
-  local frame = GetGlobal("AutoBarFrame")
-  if not AutoBar or not frame then
-    self.autoBarFieldKitStatus = "missing"
-    self.autoBarDragHandleStatus = "missing"
-    self.autoBarMainButtons = 0
-    self.autoBarGrouped = false
-    if not SupplyActive() then
-      self.consumableDockStatus = "unavailable"
-    end
-    self:ApplyAutoBarPopup(false)
-    return false
-  end
-
-  for index = 1, 24 do
-    ApplyPocket(
-      GetGlobal("AutoBarFrameButton" .. index),
-      "aeuiConsumableKitPocketV1",
-      self.consumableKitTexturePath,
-      consumableKitTexCoords.A,
-      consumableKitSpriteSizes.A,
-      enabled,
-      self.fieldKitPocketPadding
-    )
-  end
-
-  -- Establish the real four-column button grid before measuring its shell.
-  -- This keeps the first /reload frame on the same geometry as later
-  -- ButtonsUpdate refreshes instead of briefly measuring provider points.
-  self:ApplyConsumableDockPosition(enabled)
-  local bounds = GetButtonExtremes(1, 24, "AutoBarFrameButton")
-  local shell = EnsureAutoBarShell(frame)
-  local shellAvailable = ConfigureShellBounds(shell, bounds, 6)
-  if enabled and shellAvailable then
-    shell:Show()
-  else
-    shell:Hide()
-  end
-
-  local grouped = enabled and shellAvailable and
-    AutoBarGroupingMatches(bounds.count)
-  self.autoBarGrouped =
-    SetAutoBarGroupingEnabled(frame, grouped, bounds)
-  self.autoBarMainButtons = bounds.count
-  self.autoBarFieldKitStatus = enabled and "available" or "disabled"
-  self:ApplyAutoBarDragHandlePolicy(enabled)
-  self:ApplyAutoBarPopup(enabled)
-  return true
 end
 
 local function EnsureTrinketJoiner(frame)
@@ -7892,178 +5666,9 @@ function ActionBars:ApplyTrinketFieldKit(enabled)
   return true
 end
 
-function ActionBars:CancelAutoBarPopupIntent()
-  local provider = self.autoBarPopupIntentProvider
-  if provider and type(provider.CancelScheduledEvent) == "function" then
-    pcall(
-      provider.CancelScheduledEvent,
-      provider,
-      self.popupIntentEvent
-    )
-  end
-  self.autoBarPopupIntentProvider = nil
-  self.autoBarPopupIntentButton = nil
-end
-
-function ActionBars:ShouldDeferAutoBarPopup(provider, button)
-  if provider ~= AutoBar or not FieldKitEnabled() or not button then
-    return false
-  end
-  if type(provider.ScheduleEvent) ~= "function" or
-    type(provider.CancelScheduledEvent) ~= "function" or
-    type(GetMouseFocus) ~= "function"
-  then
-    return false
-  end
-
-  local rack = GetGlobal("AutoBarFrame")
-  local frame = GetGlobal("AutoBarPopupFrame")
-  if not rack or not frame or
-    not frame.aeuiConsumableKitDrawerActiveV1 or
-    not frame.IsShown or not frame:IsShown() or
-    frame.aeuiConsumableKitPopupBaseButtonV1 == button
-  then
-    return false
-  end
-  if not button.GetParent or button:GetParent() ~= rack or
-    GetMouseFocus() ~= button
-  then
-    return false
-  end
-  return true
-end
-
-function ActionBars:CommitAutoBarPopupIntent()
-  local provider = self.autoBarPopupIntentProvider
-  local button = self.autoBarPopupIntentButton
-  self.autoBarPopupIntentProvider = nil
-  self.autoBarPopupIntentButton = nil
-
-  local original = self.autoBarSetPopupButtonOriginal
-  if type(original) ~= "function" then
-    return
-  end
-  local ok, shouldCommit = pcall(
-    self.ShouldDeferAutoBarPopup,
-    self,
-    provider,
-    button
-  )
-  if ok and shouldCommit then
-    return original(provider, button)
-  end
-end
-
-function ActionBars:HandleAutoBarSetPopupButton(provider, button)
-  local original = self.autoBarSetPopupButtonOriginal
-  if type(original) ~= "function" then
-    return
-  end
-
-  local ok, shouldDefer = pcall(
-    self.ShouldDeferAutoBarPopup,
-    self,
-    provider,
-    button
-  )
-  if not ok or not shouldDefer then
-    self:CancelAutoBarPopupIntent()
-    return original(provider, button)
-  end
-
-  if self.autoBarPopupIntentProvider == provider and
-    self.autoBarPopupIntentButton == button
-  then
-    return
-  end
-
-  self:CancelAutoBarPopupIntent()
-  self.autoBarPopupIntentProvider = provider
-  self.autoBarPopupIntentButton = button
-  local scheduled = pcall(
-    provider.ScheduleEvent,
-    provider,
-    self.popupIntentEvent,
-    self.CommitAutoBarPopupIntent,
-    self.popupIntentDelay,
-    self
-  )
-  if not scheduled then
-    self.autoBarPopupIntentProvider = nil
-    self.autoBarPopupIntentButton = nil
-    return original(provider, button)
-  end
-end
-
-function ActionBars:InstallAutoBarPopupIntentGuard()
-  if self.autoBarPopupIntentWrapped then
-    return true
-  end
-  if not AutoBar or type(AutoBar.SetPopupButton) ~= "function" then
-    return false
-  end
-
-  self.autoBarSetPopupButtonOriginal = AutoBar.SetPopupButton
-  self.autoBarSetPopupButtonWrapper = function(provider, button)
-    return ActionBars:HandleAutoBarSetPopupButton(provider, button)
-  end
-  AutoBar.SetPopupButton = self.autoBarSetPopupButtonWrapper
-  self.autoBarPopupIntentWrapped = true
-  return true
-end
-
-function ActionBars:CommitAutoBarFieldKitRefresh()
-  self.autoBarRefreshProvider = nil
-  self.autoBarRefreshStatus = "settled"
-  self:RepairAutoBarCategoryDescriptions()
-  SafeFieldKitApply("ApplyAutoBarFieldKit")
-end
-
-function ActionBars:SettleAutoBarFieldKitRefresh()
-  self:RestoreAutoBarBoundAnchor()
-  self:ApplyAutoBarDragHandlePolicy(FieldKitEnabled())
-  return self:QueueAutoBarFieldKitRefresh()
-end
-
-function ActionBars:QueueAutoBarFieldKitRefresh()
-  local provider = AutoBar
-  self:RepairAutoBarCategoryDescriptions()
-  if provider and type(provider.ScheduleEvent) == "function" and
-    type(provider.CancelScheduledEvent) == "function"
-  then
-    pcall(
-      provider.CancelScheduledEvent,
-      provider,
-      self.autoBarRefreshEvent
-    )
-    local ok, event = pcall(
-      provider.ScheduleEvent,
-      provider,
-      self.autoBarRefreshEvent,
-      self.CommitAutoBarFieldKitRefresh,
-      self.autoBarRefreshDelay,
-      self
-    )
-    if ok and event then
-      self.autoBarRefreshProvider = provider
-      self.autoBarRefreshStatus = "queued"
-      return true
-    end
-  end
-
-  self.autoBarRefreshProvider = nil
-  self.autoBarRefreshStatus = "immediate"
-  SafeFieldKitApply("ApplyAutoBarFieldKit")
-  return false
-end
-
 function ActionBars:InstallFieldKitHooks()
   self:InstallFieldKitUnlockHooks()
   self:InstallCombatDeckGroupHooks()
-
-  if AutoBar then
-    self:InstallAutoBarPopupIntentGuard()
-  end
 
   if type(hooksecurefunc) ~= "function" then
     return
@@ -8107,75 +5712,13 @@ function ActionBars:InstallFieldKitHooks()
     end)
   end
 
-  if AutoBar then
-    if not self.autoBarSetupHooked and
-      type(GetGlobal("AutoBar_SetupVisual")) == "function"
-    then
-      self.autoBarSetupHooked = true
-      hooksecurefunc("AutoBar_SetupVisual", function()
-        ActionBars:SettleAutoBarFieldKitRefresh()
-      end)
-    end
-    if not self.autoBarConfigShowHooked and
-      type(AutoBarConfig) == "table" and
-      type(AutoBarConfig.OnShow) == "function"
-    then
-      self.autoBarConfigShowHooked = true
-      hooksecurefunc(AutoBarConfig, "OnShow", function()
-        if not SupplyActive() then
-          ActionBars:MigrateAutoBarClassScope()
-          ActionBars:ApplyAutoBarConfigCuration()
-        end
-        ActionBars:SettleAutoBarFieldKitRefresh()
-      end)
-    end
-    if not self.autoBarConfigTabHooked and
-      type(AutoBarConfig) == "table" and
-      type(AutoBarConfig.TabButtonOnClick) == "function"
-    then
-      self.autoBarConfigTabHooked = true
-      hooksecurefunc(AutoBarConfig, "TabButtonOnClick", function()
-        if not SupplyActive() and
-          not ActionBars.autoBarConfigSelecting
-        then
-          ActionBars:ApplyAutoBarConfigCuration()
-        end
-      end)
-    end
-    if not self.autoBarButtonsHooked and
-      type(AutoBar.ButtonsUpdate) == "function"
-    then
-      self.autoBarButtonsHooked = true
-      hooksecurefunc(AutoBar, "ButtonsUpdate", function()
-        ActionBars:ApplyAutoBarButtonDock(FieldKitEnabled())
-        ActionBars:QueueAutoBarFieldKitRefresh()
-      end)
-    end
-    if not self.autoBarPopupHooked and
-      type(AutoBar.UpdatePopupButtons) == "function"
-    then
-      self.autoBarPopupHooked = true
-      hooksecurefunc(AutoBar, "UpdatePopupButtons", function(owner, baseButton)
-        SafeFieldKitApply("ApplyAutoBarPopup", baseButton)
-      end)
-    end
-    if not self.autoBarDragStopHooked and
-      type(AutoBar.DragStop) == "function"
-    then
-      self.autoBarDragStopHooked = true
-      hooksecurefunc(AutoBar, "DragStop", function()
-        ActionBars:HandleAutoBarDragStop()
-      end)
-    end
-  end
-
   if TrinketMenu then
     if not self.trinketOrientHooked and
       type(TrinketMenu.OrientWindows) == "function"
     then
       self.trinketOrientHooked = true
       hooksecurefunc(TrinketMenu, "OrientWindows", function()
-        SafeFieldKitApply("ApplyTrinketFieldKit")
+        ApplyTrinketFieldKitSafely()
       end)
     end
     if not self.trinketBuildHooked and
@@ -8183,7 +5726,7 @@ function ActionBars:InstallFieldKitHooks()
     then
       self.trinketBuildHooked = true
       hooksecurefunc(TrinketMenu, "BuildMenu", function()
-        SafeFieldKitApply("ApplyTrinketFieldKit")
+        ApplyTrinketFieldKitSafely()
       end)
     end
     if not self.trinketDragStopHooked and
@@ -8219,41 +5762,11 @@ function ActionBars:Initialize()
   self.appliedButtons = 0
   self.appliedRails = 0
   self.appliedMergedRail = false
-  self.autoBarFieldKitStatus = "pending"
-  self.autoBarMainButtons = 0
-  self.autoBarPopupButtons = 0
-  self.autoBarPopupConnectors = 0
-  self.autoBarPopupLayout = "pending"
-  self.autoBarPopupSide = "pending"
-  self.autoBarPopupHover = "pending"
-  self.autoBarPopupIntentProvider = nil
-  self.autoBarPopupIntentButton = nil
-  self.autoBarRefreshProvider = nil
-  self.autoBarRefreshStatus = "ready"
-  self.autoBarDockApplied = false
-  self.autoBarBoundAnchors = nil
-  self.autoBarBoundOffsetX = nil
-  self.autoBarBoundOffsetY = nil
-  self.autoBarAnchorBasis = "pending"
-  self.autoBarHandlePointLockStatus = "pending"
-  self.autoBarProviderDockProfile = nil
-  self.autoBarProviderDockStatus = "pending"
-  self.autoBarDragHandleStatus = "pending"
-  self.autoBarCategoryDescriptionStatus = "pending"
-  self.autoBarCategoryDescriptionsRepaired = 0
-  self.autoBarGrouped = false
-  self.autoBarPresetStatus = "ready"
-  self.autoBarClassScopeStatus = "pending"
-  self.autoBarClassScopeUpdating = false
-  self.autoBarConfigCurationStatus = "pending"
-  self.autoBarConfigSelecting = false
-  self.autoBarConfigOriginalLayout = nil
   self.supplyStatus = "pending"
   self.supplyDockStatus = "pending"
   self.supplyConfigured = 0
   self.supplyItems = 0
   self.supplyZero = 0
-  self.supplyLow = 0
   self.supplyPopupStatus = "closed"
   self.selectedSupplySlot = 1
   self.selectedSupplyMember = 1
@@ -8263,7 +5776,6 @@ function ActionBars:Initialize()
   self.sideBarGroupStatus = SideBarGroupBound() and "bound" or "free"
   self.sideBarGroupMigration = "pending"
   self.sideBarGroupUpdating = false
-  self.consumableDockStatus = "pending"
   self.trinketFieldKitStatus = "pending"
   self.trinketMainButtons = 0
   self.trinketMenuButtons = 0
@@ -8366,23 +5878,12 @@ function ActionBars:Apply()
     self.appliedMergedRail = appliedMergedRail
   end
 
-  self:RepairAutoBarCategoryDescriptions()
   self:InstallFieldKitHooks()
   self:InstallFocusUnitFontHooks()
   self:MigrateSideBarGroupDefault()
   self:MaintainSideBarGroup()
   self:ApplyActionBarStackPosition(enabled)
-  if not SupplyActive() then
-    self:MigrateAutoBarClassScope()
-    self:ApplyAutoBarConfigCuration()
-    self:MigrateAutoBarDefaultMode()
-  else
-    self.autoBarClassScopeStatus = "legacy-bypassed"
-    self.autoBarConfigCurationStatus = "legacy-bypassed"
-    self.autoBarPresetStatus = "legacy-bypassed"
-  end
   self:ApplySupplyKit(enabled)
-  self:ApplyAutoBarFieldKit(enabled and not SupplyActive())
   self:ApplyTrinketFieldKit(enabled)
   self:ApplyArchiTotemDockPosition(enabled)
 
@@ -8527,52 +6028,16 @@ function ActionBars:GetRuntimeStatus()
     ",rails=" .. tostring(self.appliedRails or 0) ..
     ",merged=" ..
       tostring(self.appliedMergedRail and "available" or "missing") ..
-    ",autobar=" .. tostring(self.autoBarFieldKitStatus or "pending") ..
-    ",autobar-main=" .. tostring(self.autoBarMainButtons or 0) ..
-    ",autobar-popup=" .. tostring(self.autoBarPopupButtons or 0) ..
-    ",autobar-connectors=" ..
-      tostring(self.autoBarPopupConnectors or 0) ..
-    ",autobar-popup-layout=" ..
-      tostring(self.autoBarPopupLayout or "pending") ..
-    ",autobar-popup-side=" ..
-      tostring(self.autoBarPopupSide or "pending") ..
-    ",autobar-popup-hover=" ..
-      tostring(self.autoBarPopupHover or "pending") ..
-    ",autobar-groups=" ..
-      tostring(self.autoBarGrouped and "semantic-no-labels" or "adaptive") ..
-    ",autobar-preset=" ..
-      tostring(self.autoBarPresetStatus or "ready") ..
-    ",autobar-slot-scope=" ..
-      tostring(self.autoBarClassScopeStatus or "pending") ..
-    ",autobar-config-ui=" ..
-      tostring(self.autoBarConfigCurationStatus or "pending") ..
-    ",autobar-config-descriptions=" ..
-      tostring(self.autoBarCategoryDescriptionStatus or "pending") ..
-    ",autobar-config-description-fixes=" ..
-      tostring(self.autoBarCategoryDescriptionsRepaired or 0) ..
-    ",autobar-refresh=" ..
-      tostring(self.autoBarRefreshStatus or "ready") ..
-    ",autobar-anchor-basis=" ..
-      tostring(self.autoBarAnchorBasis or "pending") ..
-    ",autobar-point-lock=" ..
-      tostring(self.autoBarHandlePointLockStatus or "pending") ..
-    ",autobar-provider-dock=" ..
-      tostring(self.autoBarProviderDockStatus or "pending") ..
-    ",autobar-drag-handle=" ..
-      tostring(self.autoBarDragHandleStatus or "pending") ..
     ",supplies=" .. tostring(self.supplyStatus or "pending") ..
     ",supplies-profile=" ..
       tostring(supplyProfileKey or "unavailable") ..
     ",supplies-configured=" .. tostring(self.supplyConfigured or 0) ..
     ",supplies-items=" .. tostring(self.supplyItems or 0) ..
     ",supplies-zero=" .. tostring(self.supplyZero or 0) ..
-    ",supplies-low=" .. tostring(self.supplyLow or 0) ..
     ",supplies-popup=" ..
       tostring(self.supplyPopupStatus or "closed") ..
     ",supplies-dock=" ..
       tostring(self.supplyDockStatus or "pending") ..
-    ",consumable-dock=" ..
-      tostring(self.consumableDockStatus or "pending") ..
     ",trinket=" .. tostring(self.trinketFieldKitStatus or "pending") ..
     ",trinket-main=" .. tostring(self.trinketMainButtons or 0) ..
     ",trinket-menu=" .. tostring(self.trinketMenuButtons or 0) ..

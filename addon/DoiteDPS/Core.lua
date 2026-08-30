@@ -2151,12 +2151,17 @@ function D:StartExecutionAttack()
         and CleveRoids.Hooks.STARTATTACK_SlashCmd
         or (SlashCmdList and SlashCmdList.STARTATTACK)
     if type(startAttack) ~= "function" then return false end
-    return pcall(startAttack, "")
+    local hadHostileTarget = self:IsHostileTarget()
+    local ok, result = pcall(startAttack, "")
+    if not hadHostileTarget and self:IsHostileTarget() then
+        self._lastAssistedTargetGUID = self:GetUnitGUID("target")
+    end
+    return ok, result
 end
 
--- 仅供 Execute 使用的选目标策略。近战会保留距离为近战或未知的有效手动目标；
--- 只有已确认超出近战范围时，才尝试换成稳定的附近候选。远程先尝试坦克协助，
--- 再回退到最近敌人。
+-- 仅供 Execute 使用的选目标策略。近战始终保留有效手动目标；只有 DDPS 自己
+-- 选中的目标已确认超出近战范围时，才尝试换成稳定的附近候选。远程先尝试
+-- 坦克协助，再回退到最近敌人。
 function D:PrepareExecutionTarget(allowNearest, requireMelee, meleeKey)
     if requireMelee then
         local currentValid = self:IsHostileTarget()
@@ -2167,7 +2172,14 @@ function D:PrepareExecutionTarget(allowNearest, requireMelee, meleeKey)
             if rangeState == "melee" or rangeState == "unknown" then
                 source = rangeState == "melee" and "current" or "unknown"
             elseif allowNearest then
-                changed, source = self:SelectStableMeleeEnemy(meleeKey)
+                local currentGUID = self:GetUnitGUID("target")
+                if currentGUID
+                    and currentGUID == self._lastAssistedTargetGUID then
+                    changed, source = self:SelectStableMeleeEnemy(meleeKey)
+                else
+                    self._lastAssistedTargetGUID = nil
+                    source = "manual"
+                end
             else
                 source = "out_of_range"
             end
@@ -2200,80 +2212,56 @@ function D:PrepareExecutionTarget(allowNearest, requireMelee, meleeKey)
     return changed, source or "none"
 end
 
-function D:GetTargetHealthPercent()
-    if not UnitExists("target") then
-        return 100
+local function ReadUnitHealth(unit, guid)
+    if type(GetUnitField) == "function" then
+        -- Nampower's public wrapper accepts unit tokens; keep the GUID as a
+        -- fallback for older builds that only expose cached objects by GUID.
+        local identities = { unit, guid }
+        local index = 1
+        while index <= table.getn(identities) do
+            local identity = identities[index]
+            if identity then
+                local healthOK, current = pcall(GetUnitField, identity, "health")
+                local maxOK, maximum = pcall(GetUnitField, identity, "maxHealth")
+                current = healthOK and tonumber(current) or nil
+                maximum = maxOK and tonumber(maximum) or nil
+                if current and current > 0 and maximum and maximum > 0 then
+                    return current, maximum, "nampower"
+                end
+            end
+            index = index + 1
+        end
     end
-    local current = tonumber(UnitHealth("target")) or 0
-    local maximum = tonumber(UnitHealthMax("target")) or 0
-    if maximum <= 0 then
-        return 100
-    end
-    local pct = (current / maximum) * 100
-    if pct < 0 then pct = 0 end
-    if pct > 100 then pct = 100 end
-    return pct
+
+    local current = type(UnitHealth) == "function"
+        and (tonumber(UnitHealth(unit)) or 0) or 0
+    local maximum = type(UnitHealthMax) == "function"
+        and (tonumber(UnitHealthMax(unit)) or 0) or 0
+    return current, maximum, "native"
 end
 
-function D:ResetTargetHealthRuntime()
-    self._targetHealthTrend = nil
-end
-
--- 维护当前目标的短期滚动血量样本。TTD 字段只用于预测；任何临死时间决策都必须
--- 先通过 targetTTDConfidence。目标 GUID 或最大生命变化时丢弃旧样本窗口。
-function D:UpdateTargetHealthTrend(state)
+function D:UpdateTargetHealthState(state)
+    state.targetHP = 100
     state.targetHealthCurrent = nil
     state.targetHealthMax = nil
-    state.targetHealthLossRatePct = nil
-    state.targetTTD = nil
-    state.targetTimeToExecute = nil
-    state.targetTTDConfidence = false
+    state.targetHealthSource = nil
     state.targetClassification = nil
     state.targetBoss = false
 
-    if not state.targetValid
-        or type(UnitHealth) ~= "function"
-        or type(UnitHealthMax) ~= "function" then
-        self._targetHealthTrend = nil
-        return
-    end
-
-    local current = tonumber(UnitHealth("target")) or 0
-    local maximum = tonumber(UnitHealthMax("target")) or 0
-    if maximum <= 0 then
-        self._targetHealthTrend = nil
+    if not state.targetValid then
         return
     end
 
     local guid = state.targetGUID or self:GetUnitGUID("target")
-    if not guid and type(UnitName) == "function" then
-        guid = "name:" .. tostring(UnitName("target") or "unknown")
-    end
-    local now = tonumber(state.now) or GetTime()
-    local trend = self._targetHealthTrend
-    if not trend or trend.guid ~= guid or trend.maximum ~= maximum then
-        trend = {
-            guid = guid,
-            maximum = maximum,
-            samples = {},
-        }
-        self._targetHealthTrend = trend
-    end
-
-    local samples = trend.samples
-    local count = table.getn(samples)
-    local latest = count > 0 and samples[count] or nil
-    if not latest or now - latest.time >= 0.12 then
-        samples[count + 1] = { time = now, health = current }
-    end
-
-    while table.getn(samples) > 1
-        and now - samples[1].time > 1.20 do
-        table.remove(samples, 1)
+    local current, maximum, source = ReadUnitHealth("target", guid)
+    if maximum <= 0 then
+        return
     end
 
     state.targetHealthCurrent = current
     state.targetHealthMax = maximum
+    state.targetHealthSource = source
+    state.targetHP = Clamp((current / maximum) * 100, 0, 100)
     if type(UnitClassification) == "function" then
         state.targetClassification = UnitClassification("target")
     end
@@ -2281,25 +2269,6 @@ function D:UpdateTargetHealthTrend(state)
         and tonumber(UnitLevel("target")) or nil
     state.targetBoss = state.targetClassification == "worldboss"
         or targetLevel == -1
-
-    count = table.getn(samples)
-    if count < 2 then return end
-    local oldest = samples[1]
-    latest = samples[count]
-    local elapsed = latest.time - oldest.time
-    local loss = oldest.health - latest.health
-    if elapsed < 0.35 or loss <= 0 then return end
-
-    local rate = loss / elapsed
-    local pctRate = (rate / maximum) * 100
-    if pctRate <= 0 then return end
-
-    local hpPct = (current / maximum) * 100
-    state.targetHealthLossRatePct = pctRate
-    state.targetTTD = current / rate
-    state.targetTimeToExecute = hpPct <= 20
-        and 0 or ((hpPct - 20) / pctRate)
-    state.targetTTDConfidence = loss >= math.max(1, maximum * 0.0025)
 end
 
 function D:GetPlayerHealthPercent()
@@ -2538,7 +2507,6 @@ function D:ResetCharacterRuntime()
     self._elapsed = 0
     self:ResetTankAssistRuntime()
     self:ResetExecutionTargetRuntime()
-    self:ResetTargetHealthRuntime()
     self:ClearReactiveState()
 
     if self.UI and self.UI.ResetRuntimeState then
@@ -2616,6 +2584,16 @@ end
 
 function D:ClearOnSwingQueued()
     self._pendingOnSwing = nil
+end
+
+function D:ResolveOnSwingQueued(spellId)
+    local pending = self._pendingOnSwing
+    local spell = pending and self.Spells and self.Spells[pending.key]
+    if not spell or tonumber(spell.spellId) ~= tonumber(spellId) then
+        return false
+    end
+    self._pendingOnSwing = nil
+    return true
 end
 
 -- 战士 Profile 共用的标准化主手白字合同：时间字段描述当前白字；
@@ -2780,11 +2758,13 @@ function D:GetSwingState(reuse)
         local confirmationExpired = apiAvailable
             and (now - queuedAt) > ON_SWING_CONFIRM_GRACE
 
-        if now > expiresAt
-            or (apiAvailable
-                and (pending.confirmed or confirmationExpired)) then
+        local confirmationRejected = apiAvailable
+            and not pending.confirmed and confirmationExpired
+        if now > expiresAt or confirmationRejected then
             self._pendingOnSwing = nil
         else
+            -- Queue-pop precedes the real on-swing result. Keep the confirmed
+            -- attempt hidden but locked so repeated input cannot arm swing 2.
             swing.queuePending = true
             swing.pendingKey = pending.key
             if not apiAvailable then
@@ -2841,7 +2821,6 @@ function D:BuildState()
     state.inCombat = self.inCombat and true or false
     state.targetValid = self:IsHostileTarget()
     state.targetGUID = self:GetUnitGUID("target")
-    state.targetHP = self:GetTargetHealthPercent()
     state.targetDistance = self:GetDistance("target")
     state.gcd = self:GetGCDRemaining(now)
     state.mana, state.manaMax, state.manaPercent = self:GetManaState()
@@ -2855,8 +2834,8 @@ function D:BuildState()
     state.resourceDisplay = nil
     state.timingType = nil
 
-    -- 阶段 2：计算需要斩杀时机的 Profile 共用的目标趋势。
-    self:UpdateTargetHealthTrend(state)
+    -- 阶段 2：读取斩杀决策需要的当前目标实际血量。
+    self:UpdateTargetHealthState(state)
 
     -- 阶段 3：由 Profile 补充职业资源、光环、距离和循环配置。
     if profile and profile.BuildState then
@@ -2925,7 +2904,6 @@ function D:Update(force)
         self._lastKnownStance = nil
         self._lastKnownStanceAt = nil
         self:ResetExecutionTargetRuntime()
-        self:ResetTargetHealthRuntime()
         self:ClearReactiveState()
         if self.UI and self.UI.ResetRuntimeState then
             self.UI:ResetRuntimeState()
@@ -3291,6 +3269,9 @@ function D:DispatchProfileEvent(
     a8,
     a9
 )
+    if eventName == "SPELL_GO_SELF" and (tonumber(a1) or 0) == 0 then
+        self:ResolveOnSwingQueued(a2)
+    end
     local profile = self:GetActiveProfile()
     if profile and profile.OnEvent then
         profile:OnEvent(eventName, a1, a2, a3, a4, a5, a6, a7, a8, a9)

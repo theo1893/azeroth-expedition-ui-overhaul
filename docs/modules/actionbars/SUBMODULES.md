@@ -4,7 +4,7 @@
 DoiteDPS、消耗品、饰品栏、萨满图腾管理卫星栏和标记方阵。
 美术见 [ART_BASELINE.md](ART_BASELINE.md)，状态见
 [PROGRESS.md](PROGRESS.md)。本模块只接管明确列出的对象；未登记的 pfUI、
-AutoBar、TrinketMenu 或 Blizzard 对象继续由原 provider 正常绘制和交互。
+TrinketMenu 或 Blizzard 对象继续由原 provider 正常绘制和交互。
 
 ## pfUI 与客户端来源
 
@@ -23,10 +23,6 @@ AutoBar、TrinketMenu 或 Blizzard 对象继续由原 provider 正常绘制和�
 
 目标客户端还证实存在以下可选 provider；它们不是仓库依赖，也不复制其实现：
 
-- AutoBar `1.31`：`AutoBarFrame`、`AutoBarFrameButton1..24`、
-  `AutoBarPopupFrame_Button1..12`、真实背包物品、数量、冷却、四向线性分类弹出
-  与独立拖动把手。该插件只作为旧路径；AEUI 补给栏存在有效配置时恢复其原生
-  锚点／外观并停止自动职业槽迁移。该插件已安装但在当前角色上禁用，项目不得自动启用。
 - TrinketMenu `3.3`：`TrinketMenu_MainFrame`、`TrinketMenu_Trinket0`（装备槽
   `13`）、`TrinketMenu_Trinket1`（装备槽 `14`）、`TrinketMenu_Menu1..30`、
   冷却与 `18×18 UI` 战斗排队 inset。该插件在当前角色上启用。
@@ -138,7 +134,7 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 复用 accepted [ActionConsumableKitV1.tga](../../../addon/AzerothExpeditionUI/Media/ActionBars/ActionConsumableKitV1.tga)
 的 C 九宫格作为八格共用的连续皮革底板，并用 B 薄皮口袋承载 Frame 边界内的
 固定左侧 DDPS 坦克 Button 与右侧条件式一键 Button；
-不修改图集像素、UV 或 AutoBar 的既有用法，也不新增媒体。八个真实 Button 不再
+不修改图集像素、UV 或 Supply 的既有用法，也不新增媒体。八个真实 Button 不再
 各画独立方框。`/aeui markers
 on|off|toggle|status` 只写 AEUI 的 `markersEnabled`；关闭整个 Action Bars route 时
 方阵同步隐藏。`markN` 暂时无目标或超出 token 可解析范围时对应格退回空态；原生
@@ -148,61 +144,25 @@ HDLRaidTools／SuperWoW 只作为右侧一键 Button 的可选 provider；外部
 GRTT／Banana 若仍启用则保持独立，AEUI
 不自动关闭或改写任何外部插件。
 
-## AEUI 补给栏与 AutoBar 旧路径
+## AEUI 补给栏
 
 | ID | provider／对象 | 合同 |
 |---|---|---|
-| `AB.SUPPLY.RACK` | AEUI 自有 `AzerothExpeditionUISupplyFrame`＋最多 `24` 个命名补给组 Button | `supplies-contract=2.0`；每组保存稳定顺序的最多 `12` 个精确 itemID 与一个显式 `primaryItemId`。主格始终显示固定主物品：左键只使用它，缺货时不自动切换而是展开候选；右键或悬停 `0.30s` 展开 AEUI 自有抽屉。候选左键只使用该物品且不改变主格，右键只设为主格且不消耗；候选顺序不按库存或冷却重排。主格悬停只显示当前主物品的原生 Tooltip。每次背包事件单次扫描 Bag `0–4`，汇总所有组员的真实堆叠／充能数量与一个可用 bag／slot；缺货显示红色 `0`，低于成员阈值显示琥珀色，其余为绿色。主格左上只以红／琥珀数字提示组内缺货／低库存项数。Button 为 `36 UI / gap 3 UI`、最多 `4×6`、自底向上，复用 accepted A 口袋与 C 九宫格；候选复用 B 口袋与 D 连接带，`1–6` 单列、`7–12` 列优先双列且最多六行，每格保留数量、冷却和原生 Tooltip。`fieldKitBound=true` 时占用主栏左侧既有补给位，解绑时保留自由位置并允许 `Shift+拖动`；只有弹层意图／关闭待处理时短暂启用计时 Frame，不维护几何 |
-| `AB.SUPPLY.CONFIG` | `AzerothExpeditionUISupplyManager` 与 `AzerothExpeditionUIDB.actionbars.supplyProfiles[角色名 - 服务器]` | `/aeui supplies` 打开每角色管理面板；左侧 `24` 格选择／创建组，右侧管理组名、最多 `12` 个成员、显式主物品、每成员 `1–999` 低库存阈值及组内／组间稳定顺序。把真实背包物品拖到空组可创建，拖到已有组或右侧成员区可追加；全配置重复 itemID 会定位到已有成员而不复制。拾取前记录精确 itemID，保存前先清空光标让物品回包；不提供物品链接、数字 itemID、裸 `item:` 或 `/aeui supplies add` 入口。配置只保存组名、itemID、主物品、成员顺序与阈值，不保存物品名称、图标、当前库存、冷却或 bag／slot；旧单物品槽自动迁移为单成员组，旧 `target` 丢弃。`/aeui supplies on|off` 只切换 AEUI 自有栏，`remove slot` 删除整组，`selfcheck` 验证旧配置迁移、主物品、去重、阈值与拖入边界；不改 AutoBar SavedVariables |
-| `AB.SUPPLY.FALLBACK` | AEUI 补给栏与可选 AutoBar 的互斥显示 route | 默认启用常驻库存监控；只有存在至少一个有效 AEUI 配置槽时才接管左侧补给位。AEUI 补给栏关闭或当前角色尚无配置时继续显示既有 AutoBar Field Kit；一旦 AEUI 配置生效，AutoBar Button、popup、drag handle 与配置数据全部退回 provider 原路径，不自动启用、隐藏或卸载 AutoBar。Action Bars 总 route 关闭时 AEUI 补给栏隐藏 |
-| `AB.CONSUMABLE.RACK` | 已加载并自行显示的 `AutoBarFrame`＋`AutoBarFrameButton1..24` | 默认保留 `24` 个逻辑类别，但关闭空槽与缺货类别图标，只按背包当前可用类别显示 `1–24` 个真实 Button；`36 UI / gap 3 UI`、最多 `4×6`，外壳随当前可见 Button 边界动态收缩。因 `alignButtons` 可把子 Button 放到 `AutoBarFrame` 边界外，装饰 Frame 必须读取真实可见 Button 边界。`fieldKitBound=true` 时强绑定在主动作条左侧，外壳右缘距主栏左缘 `12 UI`，底边比主栏底边低 `20 UI`。`fieldkit-contract=2.7` 仍由可见 Button 相对 handle 的 provider `GetPoint`、真实宽高与 scale 计算一次停靠偏移，但将该偏移注册到 AutoBar 原生 `dockingFrames.pfActionBarMain`，并把当前活动 display 的 `docking` 指向 `pfActionBarMain`；因此每次 provider `SetupVisual` 最终都由 AutoBar 自己把 handle 写到主栏相对位置，自由 `position` 在绑定态不参与渲染。`unbind`／AEUI 关闭时精确恢复原 docking／shift、自由位置与 `hideDragHandle` 偏好；logout／reload 前移除仅运行时 docking token，下一次插件就绪后再安装。零延迟事件只刷新几何与外壳，不作为持续位置维护；未知布局已有成功锚点时保持缓存，首次未知布局才允许 world-space fail-open。不得自动启用 provider |
-| `AB.CONSUMABLE.GROUP` | 推荐 profile 的连续槽段 `1–8／9–16／17–24` 与两条底层分隔带 | 连续槽段继续提供应急／增益／工具的语义组织，但不创建或显示三段文字；卷袋材质、分隔和物品排列自身承担区分。分隔带只占两组之间既有 `3 UI` gap，不接收鼠标。任一配置不匹配即隐藏分隔并退回单一自适应外壳，不能给用户自定义类别套用错误分组 |
-| `AB.CONSUMABLE.POCKET` | `AutoBarFrameButton1..24` | 旧路径显示 provider 选出的真实物品图标、数量、冷却、可用性和 Tooltip；槽底不含物品图标、名称或类别。AutoBar 1.31 的 zhCN 数据漏掉七个 `description` 时，AEUI 只为运行时空字段补本地化说明；已存在说明、分类内容、Button、profile 与 SavedVariables 均不改，未来未知空字段只显示类别 ID，避免旧配置页字符串拼接报错 |
-| `AB.CONSUMABLE.CONFIG` | `AutoBarConfigFrame`、`Tab1..5`、`SlotsView`、`Slots`、`SlotsEdit1..4`、`Layout1..2`、`ResetDisplay`、`RevertButton` 与 `DoneButton` | bridge-v2.7 延续 v2.4 的配置裁剪：AEUI 启用时只显示原生“栏位／按钮”两个 Tab；隐藏“动作条／弹出／设定”、综合只读预览、四种层选择器、布局选择器及“重置为默认／还原”，保留“完成”。“栏位”直接显示唯一可编辑的职业层网格，隐藏 Tab 被旧 SavedVariables 选中时回到栏位。首次迁移把当前实际生效的 24 槽完整复制到原生 `_CLASS` profile，将当前角色固定为 `useClass=true / edit=3`，角色原槽与职业原槽分别备份；同职业后续角色复用该职业层。`/aeui autobar restore` 可恢复并对该角色退出自动迁移。AutoBar 1.31 只提供角色／共用两种 display layout，所以“按钮”Tab 的显示参数仍按当前角色保存；类别／item ID 槽位才按职业共享。配置页重跑 `SetupVisual` 时原生主栏 docking 保持生效；AEUI 关闭、provider 缺失或显式 restore 时恢复原生控件与锚点 |
-| `AB.CONSUMABLE.POPUP` | `AutoBarPopupFrame_Button1..12` | `fieldkit-contract=2.9` 在 AEUI Field Kit 强绑定且当前至少有一个可见主格时固定使用卷袋左侧外置抽屉；抽屉只依赖已接管的真实 Button 几何，不依赖推荐 `24` 类签名，因此职业槽、手工 item ID 或其他用户自定义类别不得再退回悬停图标上方。`1–6` 个候选为单列，`7–12` 个候选为列优先双列且最多六行；整组位于卷袋外，不遮挡主格。解绑后，推荐 `4×6` 布局仍可由 `AUTO／LEFT／RIGHT` 选择外置方向，`NATIVE` 或不匹配布局完整恢复 provider 原生四向线性布局。外置态在卷袋与抽屉间创建透明、可接收鼠标、直接隶属 `AutoBarPopupFrame` 且覆盖卷袋全高的 `10 UI` 悬停通道；XML Frame `OnLeave` 只在此态延后，关闭仍由 AutoBar 原 `PopupMouseover` 负责。继续保留 `0.30s` 意图停留：进入通道或候选前离开不同主格即保留原抽屉；持续停留才调用捕获的 AutoBar 原方法切换／关闭。相同主格、AEUI 关闭、非鼠标调用或 provider 调度 API 缺失立即委托原方法；不使用逐帧循环。候选顺序、图标、数量、冷却、点击、Tooltip、Shift 条件与 Button script 仍归 AutoBar；不得把 XML 初始 `72×72 UI` Frame 当作实际弹出边界，不复制分类表或重挂 `PickupContainerItem` |
-
-推荐 profile 使用 AutoBar 现有类别 ID 组成三个八格槽段：`应急` 放生命／职业
-资源／双恢复／绷带／解毒／行动／机动；`增益` 放战斗药剂／守护药剂／元素
-防护／卷轴／食物／饮料／增益食物／合剂手动；`工具` 放武器强化／职业用品／
-炉石／坐骑／工程／钓鱼／战场事件／任务物品。职业资源和职业用品按
-`AutoBarProfile.<CLASS>` 选取，不相关类别不写入。已审计的 AutoBar `1.31`
-没有独立 `FLASK` 类别；但每个主槽原生允许最多 `16` 个类别字符串或数字 item
-ID，配置页也能把背包物品拖入槽位。因此“合剂手动”只接受用户通过 AutoBar
-配置拖入的真实合剂 item ID，不凭名称猜测。bridge-v2.7 延续 v2.4 的首次迁移，把当前实际生效
-槽表完整迁入职业 profile；之后配置页的槽位编辑都直接写职业层。显式 apply 则把
-推荐 24 类写到同一职业层；
-默认显示关闭 `showEmptyButtons／showCategoryIcon` 并隐藏拖动把手。仅持有 AEUI 应用前
-备份、且仍精确匹配旧 AEUI 满格显示签名的角色会一次性迁移这三个显示字段；其他
-AutoBar 类别、物品顺序和用户配置始终优先。缺失／禁用时旧路径不显示；上述推荐
-profile、配置裁剪与 popup 只在 AEUI 补给栏没有有效配置时继续运行。
+| `AB.SUPPLY.RACK` | AEUI 自有 `AzerothExpeditionUISupplyFrame`＋最多 `24` 个命名补给组 Button | `supplies-contract=2.1`；每组独立占用 `1–24` 的固定位置并保存稳定顺序的最多 `12` 个精确 itemID 与一个显式 `primaryItemId`，空位置不会在重载时被压紧。主格左键只使用固定主物品，缺货时不自动切换；右键或悬停 `0.30s` 展开 AEUI 自有抽屉。候选左键只使用且不改变主格，右键只设主格且不消耗。每次背包事件单次扫描 Bag `0–4`，主格与候选数量固定在右下角：`0` 为红色并暗化图标，正库存为白色。Button 为 `36 UI / gap 3 UI`、最多 `4×6`、自底向上，复用 accepted A 口袋与 C 九宫格；候选复用 B 口袋与 D 连接带，`1–6` 单列、`7–12` 双列且最多六行。绑定时位于主栏左侧，解绑时保留自由位置并允许 `Shift+拖动`；只在弹层意图／关闭待处理时短暂启用计时 Frame |
+| `AB.SUPPLY.CONFIG` | `AzerothExpeditionUISupplyManager` 与 `AzerothExpeditionUIDB.actionbars.supplyProfiles[角色名 - 服务器]` | `/aeui supplies` 打开每角色管理面板；左侧 `24` 个固定位置均可创建／选择组，右键目标格可移动或交换，前移／后移也可进入空位。右侧管理组名、最多 `12` 个成员、显式主物品与稳定顺序。只接受真实背包拖入；全配置重复 itemID 只定位不复制，保存前先清空光标让物品回包。配置不保存物品名称、图标、库存、冷却或 bag／slot；旧 `minimum` 仅为数据兼容保留且不再读取，旧单物品槽原位迁移，旧 `target` 丢弃。支持 `on|off|toggle|remove|status|selfcheck` |
+| `AB.SUPPLY.ROUTE` | Action Bars 总 route、`suppliesEnabled` 与 `fieldKitBound` | Supply 是主栏左侧唯一补给实现。没有有效组或显式关闭时左侧补给位为空，不加载或回退到外部消耗品栏；关闭 Action Bars 总 route 时 Supply 隐藏。Field Kit `3.0` 只编排 Supply、TrinketMenu、姿态／宠物条与 ArchiTotem |
 
 用户于 `2026-08-09` 接受 `AB.CONSUMABLE.KIT.V1` 第 1 稿。P4 source 为
 [ActionConsumableKit_Master_v1.png](../../../assets/source/actionbars/ab-consumable-kit/ActionConsumableKit_Master_v1.png)
 （SHA-256 `623f29c5…a2419`），[manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_SourceManifest_v1.json)
-固定四格映射：A→`AB.SUPPLY.RACK／AB.CONSUMABLE.POCKET` 主口袋，B→`AB.SUPPLY.RACK／AB.CONSUMABLE.POPUP`
-薄候选口袋，C→`AB.SUPPLY.RACK／CONFIG` 及 `AB.CONSUMABLE.RACK／GROUP` filled 自适应卷袋外壳，D→popup
-连接带／Supply 抽屉连接带／group 分隔带。该 `1024²` 母版不由客户端直接加载；确定性 P5 exporter
-把每格完整物件等比缩放并打包为
+固定 A 主口袋、B 候选口袋、C 自适应卷袋外壳与 D 连接带。确定性 exporter
+将其打包为
 [ActionConsumableKitV1.tga](../../../addon/AzerothExpeditionUI/Media/ActionBars/ActionConsumableKitV1.tga)
 （`512² RGBA`，文件 SHA `c48f6292…320e`、像素 SHA `658f826f…e30d`），合同见
 [runtime manifest](../../../assets/source/actionbars/ab-consumable-kit/AB-CONSUMABLE-KIT-V1_RuntimeManifest_v1.json)。
-adapter 在现有 `24+12` Button 下分别取 A／B，C 以 `6 UI` 九宫格跟随真实可见
-Button 边界，D 用于分组 gap，并在外置 popup 抽屉靠卷袋一侧形成竖向 spine。它只
-读取 profile 以决定语义分隔与抽屉真伪，不自动启用 AutoBar；普通刷新只允许上述可证明
-来源的旧 AEUI 满格显示迁移，以及 bridge-v2.7 延续的一次性职业槽迁移；其余刷新不改槽表。
-`fieldkit-contract=2.7` 完整延续 v1.5，把每个 A／B 口袋放入
-以真实 Button 为父、FrameLevel 比
-Button 低 `1` 的独立非交互装饰 Frame，避免与 ActionButtonTemplate 的动态图标
-共用 `BACKGROUND` 层。用户可显式执行 `/aeui autobar apply`，为当前职业写入已确认
-的 24 类，并为当前角色应用库存自适应／最大 `4×6` 显示参数；AEUI SavedVariables
-同时保存角色与职业层应用前副本。`/aeui autobar restore` 恢复这些副本并退出该角色的
-自动职业迁移；`/aeui autobar open` 打开经裁剪的 AutoBar 原配置页。新主路径使用
-`/aeui supplies`，其有效配置存在时不再运行 AutoBar 自动职业槽迁移或配置裁剪。
-`/aeui autobar popup auto|left|right|native` 控制抽屉策略。组合状态只写入 AEUI
-自己的 `fieldKitBound`；`/aeui fieldkit bind|unbind|home|status` 分别负责强绑定、
-释放、恢复已确认的中心中下位置与查询。旧 `consumableDocked／trinketDocked` 只为
-SavedVariables 兼容同步，不再表示两侧可独立脱离。这些命令不自动启用 provider，
-不改 AutoBar profile 或 TrinketMenu 功能配置。
+该 accepted 图集继续由 Supply 与 Target Markers 共用，不因旧外部 provider 移除而改动像素或 UV。
+`/aeui fieldkit bind|unbind|home|status` 分别负责绑定、释放、恢复 Combat Deck
+位置与查询，只写 AEUI 自己的 `fieldKitBound`。
 
 ## 饰品双槽
 
@@ -232,7 +192,7 @@ adapter 在既有两槽／30 候选 Button 下挂 A／B，C 以 `6 UI` 九宫格
 D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 与原生 backdrop，
 不替代 TrinketMenu 原有位置持久化或任何换装／Queue 行为。`fieldkit-contract=1.8`
 同样把两槽与候选的 A／B 纹理放进低于真实 Button `1` 级的独立非交互装饰 Frame，
-真实饰品图标、冷却和 Queue 始终位于其上。强绑定把 Bar 6、消耗品卷袋和饰品双槽
+真实饰品图标、冷却和 Queue 始终位于其上。强绑定把 Bar 6、Supply 卷袋和饰品双槽
 都直接锚到 Bar 1；pfUI unlock 只保留 Bar 1 作为组合移动根，移动时其余部分因相对
 锚点自然跟随。重排只发生在初始化、provider 布局完成、显式命令和拖动结束，不建立
 `OnUpdate` 维护循环。
@@ -240,19 +200,17 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
 ## 强绑定战斗甲板与显式释放
 
 - `战斗甲板`：Bar 1 为屏幕中下部居中 `12×1` 主栏；Bar 6 为其上方 `12×1`
-  副栏；姿态／宠物条独立位于上缘；库存自适应消耗品卷袋以最大 `4×6` 竖向置于左侧，
+  副栏；姿态／宠物条独立位于上缘；AEUI Supply 以最大 `4×6` 竖向置于左侧，
   饰品双槽在右。目标设备 V3 沿用主栏物理 `y=827`、Button 约 `39 px`、底边
   净空 `210 px`；卷袋主体为物理 `[531,673,665,870]`，与聊天框右缘净空
-  `5 px`、与玩家框左缘净空 `16 px`。该 V3 reference 只保留构图历史；runtime-v1.8
-  已按游戏坐标收紧停靠，bridge-v2.7 继承 v1.9 的无文字／动态收缩布局与 v2.4
-  配置裁剪，并用 provider-local Button 包络计算 AutoBar 原生主栏 docking 偏移；消耗品与
-  饰品底边仍共同比主栏下移 `20 UI`，配置页槽位固定为
-  可逆职业层不改变这组几何。
+  `5 px`、与玩家框左缘净空 `16 px`。该 V3 reference 只保留构图历史；
+  `fieldkit-contract=3.0` 直接把 Supply 与饰品底边共同放在主栏下 `20 UI`，
+  Supply 的固定槽位与自由位置不改变这组绑定几何。
 - `唯一移动根`：绑定态只移动 Bar 1；Bar 6 以 `BOTTOM → Bar 1 TOP` 组成无漂移
-  `12×2`，消耗品卷袋与饰品双槽分别以 `12／8 UI` 间距锚到左右；检测到的
+  `12×2`，Supply 与饰品双槽分别以 `12／8 UI` 间距锚到左右；检测到的
   ArchiTotem 以真实可见 union 锚在主栏下方、相对旧居中位左移 `128 UI`，垂直空隙仍为
-  `39 UI`；Target Markers 反向补偿同一水平距离并留在原位。`unbind` 恢复 Bar 6 与三种
-  provider 的捕获位置；`home` 在 pfUI tier 8 下把 Bar 1 直接重置为游戏坐标
+  `39 UI`；Target Markers 反向补偿同一水平距离并留在原位。`unbind` 恢复 Bar 6、
+  Supply、TrinketMenu 与 ArchiTotem 的自由位置；`home` 在 pfUI tier 8 下把 Bar 1 直接重置为游戏坐标
   `BOTTOM (0,175)` 并重新绑定。
 - `pfUI unlock` 生命周期：Bar 6 始终保留在 `pfUI.movables`，不得在解锁开关期间
   动态删除／恢复登记。进入解锁后先让 pfUI 为它创建 `drag`，绑定态再只隐藏该

@@ -198,10 +198,11 @@ function UnitClass() return "战士", "WARRIOR" end
 BOOKTYPE_SPELL = "spell"
 SlashCmdList = {}
 function CreateFrame()
-    return {
-        RegisterEvent = function() end,
-        SetScript = function() end,
-    }
+    local frame = { RegisterEvent = function() end }
+    frame.SetScript = function(self, name, handler)
+        self[name] = handler
+    end
+    return frame
 end
 
 dofile("DoiteDPS/Core.lua")
@@ -358,12 +359,14 @@ local castingStateRefreshes = 0
 local originalStartAttackCalls = 0
 local publicStartAttackCalls = 0
 local startAttackTarget = nil
+local startAttackFallback = nil
 CleveRoids.UpdateCastingState = function()
     castingStateRefreshes = castingStateRefreshes + 1
 end
 CleveRoids.Hooks = {
     STARTATTACK_SlashCmd = function()
         originalStartAttackCalls = originalStartAttackCalls + 1
+        if not units.target then units.target = startAttackFallback end
         startAttackTarget = units.target
     end,
 }
@@ -395,17 +398,26 @@ targetCycleCalls = 0
 targetUnitCalls = 0
 changed, source = D:PrepareExecutionTarget(true, true, "MORTAL_STRIKE")
 Expect(
-    "Warrior execution immediately replaces a proven out-of-range target",
-    changed and source == "party_target"
-        and units.target == enemyB
+    "a manual out-of-range target disables Warrior auto-switching",
+    not changed and source == "manual"
+        and units.target == enemyC
         and targetCycleCalls == 0
-        and targetUnitCalls == 1
-        and D._lastAssistedTargetGUID == "ENEMY_B"
-        and startAttackTarget == enemyB
+        and targetUnitCalls == 0
+        and D._lastAssistedTargetGUID == nil
+        and startAttackTarget == enemyC
 )
 
--- Current melee validity itself prevents bounce; an unreachable target must
--- never be retained by a timer.
+units.target = nil
+changed, source = D:PrepareExecutionTarget(true, true, "MORTAL_STRIKE")
+Expect(
+    "Warrior auto-targeting still acquires an enemy when no target is selected",
+    changed and source == "party_target"
+        and units.target == enemyB
+        and targetUnitCalls == 1
+        and D._lastAssistedTargetGUID == "ENEMY_B"
+)
+
+-- DDPS may replace only a target that it selected itself.
 enemyB.inMelee = false
 enemyA.inMelee = true
 units.party1target = enemyA
@@ -422,9 +434,34 @@ Expect(
         and units.target == enemyA and targetUnitCalls == 2
 )
 
+-- /startattack is part of the DDPS execution path and may acquire the nearest
+-- enemy when no stable read-only candidate is visible.
+units.target = nil
+units.party1target = nil
+enemyB.inMelee = true
+startAttackFallback = enemyB
+D._lastAssistedTargetGUID = nil
+changed, source = D:PrepareExecutionTarget(true, true, "MORTAL_STRIKE")
+Expect(
+    "a startattack-acquired enemy remains owned by DDPS",
+    not changed and source == "out_of_range"
+        and units.target == enemyB
+        and D._lastAssistedTargetGUID == "ENEMY_B"
+)
+
+startAttackFallback = nil
+enemyB.inMelee = false
+enemyA.inMelee = true
+units.party1target = enemyA
+changed, source = D:PrepareExecutionTarget(true, true, "MORTAL_STRIKE")
+Expect(
+    "a startattack-acquired enemy may auto-switch after leaving melee",
+    changed and source == "party_target" and units.target == enemyA
+)
+
 enemyC.inMelee = false
 enemyA.inMelee = false
-units.target = enemyC
+units.target = enemyA
 units.party1target = enemyA
 targetCycleCalls = 0
 targetUnitCalls = 0
@@ -432,7 +469,7 @@ changed, source = D:PrepareExecutionTarget(true, true, "MORTAL_STRIKE")
 Expect(
     "no proven candidate keeps the original target instead of cycling",
     not changed and source == "out_of_range"
-        and units.target == enemyC
+        and units.target == enemyA
         and targetCycleCalls == 0 and targetUnitCalls == 0
 )
 
@@ -451,26 +488,57 @@ Expect(
 targetCycle = nil
 
 units.target = enemyA
-enemyA.health = 100
+enemyA.health = 80
 enemyA.healthMax = 100
-D:ResetTargetHealthRuntime()
 local healthState = {
-    now = now,
     targetValid = true,
     targetGUID = enemyA.guid,
 }
-D:UpdateTargetHealthTrend(healthState)
-now = now + 0.40
-enemyA.health = 80
-healthState.now = now
-D:UpdateTargetHealthTrend(healthState)
+D:UpdateTargetHealthState(healthState)
 Expect(
-    "the health trend exposes a bounded high-confidence TTD signal",
-    healthState.targetTTDConfidence
-        and healthState.targetTTD > 1.5
-        and healthState.targetTTD < 1.7
-        and healthState.targetTimeToExecute > 1.1
-        and healthState.targetTimeToExecute < 1.3
+    "target health state reads the current native health directly",
+    healthState.targetHealthCurrent == 80
+        and healthState.targetHealthMax == 100
+        and healthState.targetHealthSource == "native"
+        and healthState.targetHP == 80
+)
+
+local oldGetUnitField = GetUnitField
+local exactHealth = 12345
+local exactMaximum = 50000
+function GetUnitField(identity, field)
+    if identity ~= "target" and identity ~= enemyA.guid then return nil end
+    if field == "health" then return exactHealth end
+    if field == "maxHealth" then return exactMaximum end
+    return nil
+end
+D:UpdateTargetHealthState(healthState)
+Expect(
+    "Nampower exact health is exposed directly for Execute decisions",
+    healthState.targetHealthCurrent == exactHealth
+        and healthState.targetHealthMax == exactMaximum
+        and healthState.targetHealthSource == "nampower"
+        and healthState.targetHP > 24.68 and healthState.targetHP < 24.70
+)
+
+healthState.targetValid = false
+D:UpdateTargetHealthState(healthState)
+Expect(
+    "an invalid target clears stale exact health",
+    healthState.targetHealthCurrent == nil
+        and healthState.targetHealthMax == nil
+        and healthState.targetHealthSource == nil
+        and healthState.targetHP == 100
+)
+
+healthState.targetValid = true
+GetUnitField = oldGetUnitField
+D:UpdateTargetHealthState(healthState)
+Expect(
+    "native target health remains the fallback when Nampower is unavailable",
+    healthState.targetHealthCurrent == 80
+        and healthState.targetHealthMax == 100
+        and healthState.targetHealthSource == "native"
 )
 
 local updatedActionSpell = 0

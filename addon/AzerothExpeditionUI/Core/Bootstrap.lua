@@ -12,23 +12,14 @@ local defaults = {
   actionbars = {
     enabled = true,
     artVersion = 1,
-    autoBarPopupMode = "AUTO",
     markersEnabled = true,
     fieldKitBound = true,
-    consumableDocked = true,
-    trinketDocked = true,
     suppliesEnabled = true,
     supplyProfiles = {},
     combatFocusLayoutVersion = 0,
     focusUnitDefaultProfiles = {},
     comfortUIScaleVersion = 0,
     sideBarGroupProfiles = {},
-    autoBarClassScopePlayerVersions = {},
-    autoBarClassScopeClassVersions = {},
-    autoBarClassScopeProfiles = {},
-    autoBarClassScopePlayerBackups = {},
-    autoBarClassScopeBackups = {},
-    autoBarClassScopeOptOut = {},
   },
   chat = {
     enabled = true,
@@ -156,6 +147,22 @@ function addon:Initialize()
     AzerothExpeditionUIDB.character.artVersion = 3
   end
   ApplyDefaults(AzerothExpeditionUIDB, defaults)
+  for _, key in ipairs({
+    "autoBarPopupMode",
+    "autoBarBackups",
+    "autoBarDefaultModeVersions",
+    "autoBarDockBackups",
+    "autoBarClassScopePlayerVersions",
+    "autoBarClassScopeClassVersions",
+    "autoBarClassScopeProfiles",
+    "autoBarClassScopePlayerBackups",
+    "autoBarClassScopeBackups",
+    "autoBarClassScopeOptOut",
+    "consumableDocked",
+    "trinketDocked",
+  }) do
+    AzerothExpeditionUIDB.actionbars[key] = nil
+  end
   self.db = AzerothExpeditionUIDB
 
   for name, module in pairs(self.modules) do
@@ -262,41 +269,6 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
     else
       addon:Print(
         "/aeui supplies [open|on|off|toggle|remove slot|status|selfcheck]"
-      )
-    end
-  elseif string.find(command, "^autobar") then
-    local _, _, subcommand = string.find(command, "^autobar%s*(.*)$")
-    local module = addon.modules.ActionBars
-    if not module then
-      addon:Print("ActionBars module is unavailable.")
-    elseif subcommand == "" or subcommand == "open" then
-      local _, result = module:OpenAutoBarConfig()
-      addon:Print(result)
-    elseif subcommand == "apply" or subcommand == "preset" or
-      subcommand == "setup"
-    then
-      local ok, result = module:ApplyRecommendedAutoBarProfile()
-      addon:Print(result)
-      if ok then
-        addon:ScheduleRefresh(0)
-      end
-    elseif subcommand == "restore" then
-      local ok, result = module:RestoreAutoBarProfile()
-      addon:Print(result)
-      if ok then
-        addon:ScheduleRefresh(0)
-      end
-    elseif string.find(subcommand, "^popup") then
-      local _, _, mode = string.find(subcommand, "^popup%s*(.*)$")
-      if mode == "" then
-        addon:Print("/aeui autobar popup [auto|left|right|native]")
-      else
-        local _, result = module:SetAutoBarPopupMode(mode)
-        addon:Print(result)
-      end
-    else
-      addon:Print(
-        "/aeui autobar [open|apply|restore|popup auto|left|right|native]"
       )
     end
   elseif string.find(command, "^fieldkit") then
@@ -650,7 +622,7 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
     end
   else
     addon:Print(
-      "/aeui actionbars, /aeui supplies [open|on|off|remove slot|status], /aeui autobar [open|apply|restore|popup], /aeui fieldkit [bind|unbind|home|status], /aeui focuslayout [apply|comfort|restore|status], /aeui sidebars [bind|unbind|home|status], /aeui markers [on|off|toggle|status], /aeui chat, /aeui quests, /aeui unitframes, /aeui map, /aeui character, /aeui gear [open|current|stats|plan|wide|status], /aeui refresh, /aeui status"
+      "/aeui actionbars, /aeui supplies [open|on|off|remove slot|status], /aeui fieldkit [bind|unbind|home|status], /aeui focuslayout [apply|comfort|restore|status], /aeui sidebars [bind|unbind|home|status], /aeui markers [on|off|toggle|status], /aeui chat, /aeui quests, /aeui unitframes, /aeui map, /aeui character, /aeui gear [open|current|stats|plan|wide|status], /aeui refresh, /aeui status"
     )
   end
 end

@@ -246,6 +246,21 @@ assert(
 assert(
     string.find(
         macroText,
+        "#showtooltip 斩杀\\n/run SpellStopCasting()\\n/startattack",
+        1,
+        true
+    ) and string.find(
+        macroText,
+        "SMP_InstallDoiteManualExecuteMacro();",
+        1,
+        true
+    ),
+    "manual Execute macro must migrate independently and stop the current cast first"
+)
+
+assert(
+    string.find(
+        macroText,
         "/run DoiteDPS_Execute(\\\"single\\\")\\n/startattack",
         1,
         true
@@ -262,4 +277,4 @@ assert(
     "managed AOE macro must resolve the DDPS target before auto attack"
 )
 
-print("ActionBarProtection_spec: 119 checks passed")
+print("ActionBarProtection_spec: 120 checks passed")

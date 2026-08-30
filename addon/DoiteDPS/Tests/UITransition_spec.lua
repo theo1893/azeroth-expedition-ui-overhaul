@@ -191,6 +191,13 @@ local function Update(action, forecasts)
     UI:Update(state, action, forecasts or {}, true)
 end
 
+local function UpdateAtSwing(cycle, action, forecasts)
+    local state = State()
+    state.now = now
+    state.swing = { active = true, cycle = cycle }
+    UI:Update(state, action, forecasts or {}, true)
+end
+
 UI:ResetRuntimeState()
 tankAssistStatus = {
     state = "ready",
@@ -611,5 +618,38 @@ assert(
     "direct-queued Heroic Strike must reach the slot before takeover"
 )
 passed = passed + 2
+
+-- Swing-scoped predictions expire at the white-hit boundary. A fresh action
+-- may be predicted in the next cycle, but the old physical note cannot cross.
+local swingScopedKeys = { "HEROIC_STRIKE", "CLEAVE", "EXECUTE" }
+local swingScopedIndex = 1
+while swingScopedIndex <= table.getn(swingScopedKeys) do
+    local key = swingScopedKeys[swingScopedIndex]
+    now = now + 1
+    UI:ResetRuntimeState()
+    UpdateAtSwing(
+        1,
+        Action("BLOODTHIRST", "ready"),
+        { Action(key, "forecast", 0.20) }
+    )
+    RenderFor(0.13)
+    UpdateAtSwing(
+        1,
+        Action("BLOODTHIRST", "ready"),
+        { Action(key, "forecast", 0.07) }
+    )
+    assert(
+        FindTimelineFrame(key),
+        key .. " should exist in its originating swing"
+    )
+
+    UpdateAtSwing(2, Action("BLOODTHIRST", "ready"))
+    assert(
+        FindTimelineFrame(key) == nil,
+        key .. " must expire instead of crossing into the next swing"
+    )
+    passed = passed + 1
+    swingScopedIndex = swingScopedIndex + 1
+end
 
 print("UITransition_spec: " .. passed .. " checks passed")

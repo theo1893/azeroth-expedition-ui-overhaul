@@ -17,6 +17,7 @@ local locale = (GetLocale and GetLocale()) or "enUS"
 local zh = locale == "zhCN" or locale == "zhTW"
 local UNBRIDLED_WRATH = zh and "怒不可遏" or "Unbridled Wrath"
 local UNBRIDLED_WRATH_RAGE_PER_RANK = 0.30
+local IMPROVED_EXECUTE = zh and "强化斩杀" or "Improved Execute"
 
 P.ModeOrder = { "single", "aoe" }
 P.ModeLabels = {
@@ -42,8 +43,8 @@ P.EntryPoints = {
 }
 P.ModeNotes = {
     single = zh
-        and "常驻狂暴姿态；普通阶段瞬发后仍能接猛击才优先致死/旋风；斩杀阶段高怒改为瞬发后直接斩杀。"
-        or "Defaults to Berserker Stance; outside Execute, instants lead only when Slam still fits; at high rage, Execute follows the instant directly.",
+        and "常驻狂暴姿态；普通阶段瞬发后仍能接猛击才优先致死/旋风；斩杀阶段按怒气预算安排瞬发、猛击与定时斩杀。"
+        or "Defaults to Berserker Stance; outside Execute, instants lead only when Slam still fits; Execute phase budgets instants, Slam, and timed Execute.",
     aoe = zh
         and "横扫后回狂暴姿态；旋风、致死、安全猛击优先，顺劈预留核心怒气，斩杀补空档。"
         or "Sweeping into Berserker; Whirlwind, Mortal Strike and safe Slam lead, with reserved Cleave dumps.",
@@ -52,13 +53,11 @@ P.ModeNotes = {
 P.RotationDefaults = {
     single = {
         slamClip = 0.17,
-        executeSwingWindow = 0.35,
         maintainBattleShout = true,
         battleShoutRefresh = 10,
         maintainSunder = false,
     },
     aoe = {
-        executeSwingWindow = 0.35,
         maintainBattleShout = true,
         battleShoutRefresh = 10,
         maintainSunder = false,
@@ -83,17 +82,6 @@ P.ConfigSchema = {
             min = 0,
             max = 0.30,
             step = 0.01,
-            suffix = zh and "秒" or "s",
-            format = "%.2f",
-        },
-        {
-            type = "number",
-            key = "executeSwingWindow",
-            label = zh and "斩杀贴刀窗口" or "Execute before-swing window",
-            modes = { "single", "aoe" },
-            min = 0.10,
-            max = 0.80,
-            step = 0.05,
             suffix = zh and "秒" or "s",
             format = "%.2f",
         },
@@ -191,7 +179,6 @@ end
 
 local R = {
     EXECUTE = zh and "贴近下一次白字清空剩余怒气" or "Dump rage just before the next white hit",
-    EXECUTE_NOW = zh and "目标即将死亡，立即斩杀" or "Target is about to die - Execute now",
     OVERPOWER = zh and "低怒压制触发" or "Low-rage Overpower proc",
     MORTAL_STRIKE = zh and "致死打击瞬发槽" or "Mortal Strike instant slot",
     WHIRLWIND = zh and "旋风斩瞬发槽" or "Whirlwind instant slot",
@@ -220,11 +207,15 @@ P._candidates = {}
 P._cooldownUntil = {}
 P._cooldownCycle = {}
 P._apiCooldownActive = {}
+P._swingCycle = 0
 
 local FORECAST_LIMIT = D.FORECAST_LIMIT or 3
 local GCD_LOCK = 1.5
 local STANCE_RAGE = 25
-local EXECUTE_INTERRUPT_MARGIN = 0.20
+local EXECUTE_WINDOW = 0.35
+local EXECUTE_TAIL_GUARD = 0.20
+local ON_SWING_QUEUE_GUARD = 0.30
+local TEST_HAMSTRING_NAME = zh and "断筋" or "Hamstring"
 local BASE_COOLDOWNS = {
     MORTAL_STRIKE = 6,
     OVERPOWER = 5,
@@ -252,6 +243,15 @@ local function Cost(state, key)
     return math.max(0, cost)
 end
 P._rageCost = Cost
+
+local function ReadyCost(state, key)
+    local cost = Cost(state, key)
+    if key ~= "EXECUTE" then return cost end
+    local improved = math.max(0, math.min(2, P:GetImprovedExecuteRank()))
+    if improved == 1 then return math.max(0, cost - 2) end
+    if improved == 2 then return math.max(0, cost - 5) end
+    return cost
+end
 
 local function RotationValue(state, key)
     if state and state.rotationDB and state.rotationDB[key] ~= nil then
@@ -369,7 +369,7 @@ end
 
 local function Ready(state, key)
     return D:IsKnown(key)
-        and AvailableRage(state) >= Cost(state, key)
+        and AvailableRage(state) >= ReadyCost(state, key)
         and CooldownRemaining(state, key) <= 0.05
 end
 
@@ -393,7 +393,7 @@ local function ReadNumber(fn, arg1, arg2)
     return tonumber(value)
 end
 
-local function TalentRankByName(tabIndex, wantedName)
+local function TalentRank(tabIndex, wantedName, wantedTier, wantedColumn)
     if type(GetTalentInfo) ~= "function" then return 0 end
     local index = 1
     while index <= 30 do
@@ -403,7 +403,11 @@ local function TalentRankByName(tabIndex, wantedName)
             index
         )
         if not ok or not name then break end
-        if name == wantedName then return tonumber(rank) or 0 end
+        if name == wantedName
+            or (wantedTier and tonumber(tier) == wantedTier
+                and tonumber(column) == wantedColumn) then
+            return tonumber(rank) or 0
+        end
         index = index + 1
     end
     return 0
@@ -411,9 +415,16 @@ end
 
 function P:GetUnbridledWrathRank()
     if self._unbridledWrathRank == nil then
-        self._unbridledWrathRank = TalentRankByName(2, UNBRIDLED_WRATH)
+        self._unbridledWrathRank = TalentRank(2, UNBRIDLED_WRATH)
     end
     return self._unbridledWrathRank
+end
+
+function P:GetImprovedExecuteRank()
+    if self._improvedExecuteRank == nil then
+        self._improvedExecuteRank = TalentRank(2, IMPROVED_EXECUTE)
+    end
+    return self._improvedExecuteRank
 end
 
 local function ExpectedWhiteRage(damage, speed, critChance, unbridledWrathRank)
@@ -460,10 +471,12 @@ function P:ResetRuntime()
     self._cooldownCycle = {}
     self._apiCooldownActive = {}
     self._lastSwingProgress = nil
+    self._swingCycle = 0
     self._slamUsedInCycle = false
     self._returnToBerserkerAfterOverpower = false
     self._pendingSunderUntil = nil
     self._unbridledWrathRank = nil
+    self._improvedExecuteRank = nil
 end
 
 function P:ObserveSwingCycle(swing)
@@ -484,10 +497,14 @@ function P:ObserveSwingCycle(swing)
     end
 
     local previous = tonumber(self._lastSwingProgress)
+    if progress and (not previous or progress < (previous - 0.50)) then
+        self._swingCycle = (tonumber(self._swingCycle) or 0) + 1
+    end
     if progress and previous and progress < (previous - 0.50) then
         self._slamUsedInCycle = false
     end
     if progress then self._lastSwingProgress = progress end
+    swing.cycle = tonumber(self._swingCycle) or 0
     swing.slamUsed = self._slamUsedInCycle == true
 end
 
@@ -500,6 +517,7 @@ function P:OnEvent(eventName, a1, a2)
         or eventName == "CHARACTER_POINTS_CHANGED"
         or eventName == "PLAYER_TALENT_UPDATE" then
         self._unbridledWrathRank = nil
+        self._improvedExecuteRank = nil
         return
     end
 
@@ -606,17 +624,22 @@ local function IsExecutePhase(state)
     return D:IsKnown("EXECUTE") and (tonumber(state.targetHP) or 100) <= 20
 end
 
-local function ShortExecuteTarget(state, horizon)
-    if not state.targetTTDConfidence then return false end
-    local ttd = tonumber(state.targetTTD)
-    return ttd and ttd > 0 and ttd <= (tonumber(horizon) or 1.25)
+local function CanCastExecuteOnCurrentSwing(state)
+    local swing = state and state.swing
+    local remaining = swing and tonumber(swing.remaining)
+    if not swing or not swing.active or not remaining then return false end
+    return (tonumber(state.gcd) or 0) <= 0.05
+        and remaining > EXECUTE_TAIL_GUARD
+        and remaining <= (EXECUTE_TAIL_GUARD + EXECUTE_WINDOW)
 end
 
-local function ExecuteWindow(state)
-    local value = tonumber(RotationValue(state, "executeSwingWindow")) or 0.35
-    if value < 0.10 then return 0.10 end
-    if value > 0.80 then return 0.80 end
-    return value
+-- A local swing timer trails the server boundary. Never arm an on-next-swing
+-- dump inside that tail.
+local function CanQueueOnCurrentSwing(state)
+    local swing = state and state.swing
+    local remaining = swing and tonumber(swing.remaining)
+    return swing and swing.active and remaining
+        and remaining > ON_SWING_QUEUE_GUARD
 end
 
 local function ExecuteDue(state)
@@ -624,31 +647,14 @@ local function ExecuteDue(state)
         or IsOnSwingQueued(state) then
         return false
     end
-    if ShortExecuteTarget(state, 1.25) then return true end
-
-    local swing = state.swing
-    if not swing or not swing.active or not swing.remaining then return true end
-    if swing.remaining <= ExecuteWindow(state) then return true end
-
-    local predicted = tonumber(state.predictedMainHandRage)
-    local capRisk = predicted
-        and (tonumber(state.rage) or 0) + predicted
-            >= (tonumber(state.maxRage) or 100)
-    return capRisk and not SlamFits(state) or false
+    return CanCastExecuteOnCurrentSwing(state)
 end
 
 local function CanFitExecuteFollowup(state)
     local swing = state.swing
     if not swing or not swing.active or not swing.remaining then return true end
     local lock = (tonumber(state.gcd) or 0) + GCD_LOCK
-    return swing.remaining > (lock + ExecuteWindow(state))
-end
-
-local function AvoidSlamForTargetLife(state)
-    if not state.targetTTDConfidence then return false end
-    local ttd = tonumber(state.targetTTD)
-    local cast = state.swing and tonumber(state.swing.slamCast) or 2.5
-    return ttd and ttd > 0 and ttd <= (cast + EXECUTE_INTERRUPT_MARGIN)
+    return swing.remaining > (lock + EXECUTE_TAIL_GUARD)
 end
 
 local function SwingHitsBy(state, horizon, firstAt)
@@ -718,14 +724,12 @@ local function CanWaitForInstantThenSlam(state, key, minimumLock)
             < (Cost(state, key) + Cost(state, "SLAM")) then
         return false
     end
-    local swing = state.swing
     local lock = math.max(
         tonumber(state.gcd) or 0,
         tonumber(minimumLock) or 0,
         CooldownRemaining(state, key)
     )
-    return lock + GCD_LOCK + (tonumber(swing.slamCast) or 2.5)
-        <= (tonumber(swing.remaining) or 0)
+    return SlamFits(state, lock + GCD_LOCK)
 end
 
 -- 返回 (useSlamNow, instantBeforeSlam)。第二个值表示先打该瞬发后，仍保留足够
@@ -734,9 +738,8 @@ local function ShouldUseSlam(state, minimumLock)
     local aoe = P:NormalizeMode(state.mode) == "aoe"
     local queued = IsOnSwingQueued(state)
     local aoeCleave = aoe and IsCleaveQueued(state)
-    if state.stance == 2 or state.moving or not Ready(state, "SLAM")
-        or (queued and not aoeCleave) or not SlamFits(state, minimumLock)
-        or AvoidSlamForTargetLife(state) then
+    if state.stance == 2 or not Ready(state, "SLAM")
+        or (queued and not aoeCleave) or not SlamFits(state, minimumLock) then
         return false
     end
 
@@ -871,7 +874,7 @@ end
 
 local function ShouldQueueHeroicStrike(state)
     if IsExecutePhase(state) or not D:IsKnown("HEROIC_STRIKE")
-        or IsOnSwingQueued(state) or not state.swing or not state.swing.active
+        or IsOnSwingQueued(state) or not CanQueueOnCurrentSwing(state)
         or (tonumber(state.rage) or 0) < Cost(state, "HEROIC_STRIKE") then
         return false
     end
@@ -890,7 +893,7 @@ local function ShouldQueueCleave(
 )
     if sweepingPending or executeDue or not D:IsKnown("CLEAVE")
         or IsOnSwingQueued(state)
-        or not state.swing or not state.swing.active then
+        or not CanQueueOnCurrentSwing(state) then
         return false
     end
 
@@ -988,16 +991,12 @@ local function RecommendWhirlwind(action, state)
     return ApplyGCD(SetAction(action, "WHIRLWIND", R.WHIRLWIND), state)
 end
 
-local function RecommendExecute(action, state, immediate)
+local function RecommendExecute(action, state)
     if not Ready(state, "EXECUTE") then return nil end
     if state.stance == 2 and D:IsKnown("BATTLE_STANCE") then
         return StanceAction(action, "BATTLE_STANCE", R.BATTLE_STANCE, state)
     end
-    return ApplyGCD(SetAction(
-        action,
-        "EXECUTE",
-        immediate and R.EXECUTE_NOW or R.EXECUTE
-    ), state)
+    return ApplyGCD(SetAction(action, "EXECUTE", R.EXECUTE), state)
 end
 
 local function WaitAction(action, state)
@@ -1017,13 +1016,10 @@ local function WaitAction(action, state)
 end
 
 -- 单体优先级分组（从高到低）：
--- 临死斩杀 → 压制姿态往返 → 安全维护技能 → 斩杀阶段怒气预算 →
+-- 压制姿态往返 → 安全维护技能 → 斩杀阶段怒气预算 →
 -- 普通阶段瞬发／猛击配对 → 泄怒或等待。
 local function RecommendSingle(action, state)
     local executePhase = IsExecutePhase(state)
-    if executePhase and ShortExecuteTarget(state, 1.25) then
-        return RecommendExecute(action, state, true)
-    end
 
     if P._returnToBerserkerAfterOverpower then
         local berserkerAction = RecommendBerserkerStance(action, state)
@@ -1064,7 +1060,7 @@ local function RecommendSingle(action, state)
         if slamNow then
             return ApplyGCD(SetAction(action, "SLAM", R.SLAM), state)
         end
-        if ExecuteDue(state) then return RecommendExecute(action, state, false) end
+        if ExecuteDue(state) then return RecommendExecute(action, state) end
         return WaitAction(action, state)
     end
 
@@ -1124,12 +1120,11 @@ local function SweepingPending(action, state)
 end
 
 -- AOE 优先级分组（从高到低）：
--- 临死斩杀 → 准备／开启横扫 → 返回狂暴姿态 → 旋风 → 受保护的顺劈泄怒 →
+-- 低怒压制 → 准备／开启横扫 → 返回狂暴姿态 → 旋风 → 受保护的顺劈泄怒 →
 -- 猛击／致死／斩杀 → 维护技能。
 local function RecommendAoE(action, state)
-    if IsExecutePhase(state) and ShortExecuteTarget(state, 1.25) then
-        return RecommendExecute(action, state, true)
-    end
+    local overpower = RecommendOverpower(action, state)
+    if overpower then return overpower end
 
     local sweepingAction, sweepingPending = SweepingPending(action, state)
     if sweepingAction then return sweepingAction end
@@ -1137,10 +1132,6 @@ local function RecommendAoE(action, state)
     if sweepingPending then
         local rage = AvailableRage(state)
         local reserve = Cost(state, "SWEEPING_STRIKES")
-        if rage >= (Cost(state, "WHIRLWIND") + reserve) then
-            local whirlwind = RecommendWhirlwind(action, state)
-            if whirlwind then return whirlwind end
-        end
         if rage >= (Cost(state, "MORTAL_STRIKE") + reserve)
             and Ready(state, "MORTAL_STRIKE") then
             return ApplyGCD(SetAction(
@@ -1191,7 +1182,7 @@ local function RecommendAoE(action, state)
     end
 
     if IsExecutePhase(state) and executeNow then
-        return RecommendExecute(action, state, false)
+        return RecommendExecute(action, state)
     end
 
     local sunder = RecommendSunder(action, state)
@@ -1208,14 +1199,6 @@ end
 
 function P:Recommend(state)
     local action = self._rec
-    if D.testMode then
-        local keys = { "MORTAL_STRIKE", "WHIRLWIND", "SLAM", "EXECUTE" }
-        local cycle = math.floor(GetTime() / 1.5)
-        local index = cycle - math.floor(cycle / table.getn(keys))
-            * table.getn(keys) + 1
-        return SetAction(action, keys[index], zh and "测试模式" or "Test mode")
-    end
-
     if not state.targetValid then
         return SetAction(action, "WAIT", D.Text.WAIT_TARGET, "disabled")
     end
@@ -1296,17 +1279,33 @@ function P:BuildForecast(state, current)
     end
 
     if IsExecutePhase(state) and current.key ~= "EXECUTE" then
-        local eta = 0
-        if state.swing and state.swing.active and state.swing.remaining
-            and not ShortExecuteTarget(state, 1.25) then
-            eta = math.max(0, state.swing.remaining - ExecuteWindow(state))
+        local eta = nil
+        local swing = state.swing
+        local remaining = swing and tonumber(swing.remaining)
+        if swing and swing.active and remaining then
+            local windowStart = EXECUTE_TAIL_GUARD + EXECUTE_WINDOW
+            local wait = math.max(
+                0,
+                tonumber(state.gcd) or 0,
+                remaining - windowStart
+            )
+            if remaining - wait > EXECUTE_TAIL_GUARD then
+                eta = wait
+            else
+                local speed = tonumber(swing.speed) or 0
+                if speed > windowStart then
+                    eta = remaining + speed - windowStart
+                end
+            end
         end
-        AddCandidate(
-            "EXECUTE",
-            eta,
-            PRIORITY.EXECUTE,
-            (tonumber(state.rage) or 0) < Cost(state, "EXECUTE")
-        )
+        if eta then
+            AddCandidate(
+                "EXECUTE",
+                eta,
+                PRIORITY.EXECUTE,
+                (tonumber(state.rage) or 0) < Cost(state, "EXECUTE")
+            )
+        end
     end
 
     if self:NormalizeMode(state.mode) == "aoe" then
@@ -1383,28 +1382,9 @@ function P:Evaluate(state)
     return recommendation, self:BuildForecast(state, recommendation)
 end
 
--- 唯一允许主动取消施法的规则：只能取消正在读条的猛击；斩杀必须已可用；且只有
--- 可信 TTD 判断猛击落地过晚时才允许取消。
-function P:ShouldInterruptSlamForExecute(state)
-    if not state.casting or not state.targetValid or not state.inMelee
-        or not ShortExecuteTarget(state, 3.0) or not Ready(state, "EXECUTE")
-        or IsOnSwingQueued(state) then
-        return false
-    end
-    local slam = D:GetSpellDef("SLAM")
-    local castId = state.cast and tonumber(state.cast.spellId) or nil
-    if state.castName ~= D:GetName("SLAM")
-        and (not castId or not slam or castId ~= tonumber(slam.spellId)) then
-        return false
-    end
-    local remaining = tonumber(state.castRemaining) or 0
-    local ttd = tonumber(state.targetTTD) or 0
-    return remaining > 0.25 and ttd > 0
-        and ttd <= (remaining + EXECUTE_INTERRUPT_MARGIN)
-end
-
 local function CastRecommendedAction(action)
-    if action.key == "HEROIC_STRIKE" or action.key == "CLEAVE" then
+    if action.key == "HEROIC_STRIKE" or action.key == "CLEAVE"
+        or action.key == "EXECUTE" then
         if CastSpellByNameNoQueue then
             CastSpellByNameNoQueue(action.name)
         else
@@ -1421,19 +1401,7 @@ function P:Execute(mode)
     mode = self:NormalizeMode(mode)
     D:SetMode(mode, true)
     local state = D:BuildState()
-
     if state.casting then
-        if self:ShouldInterruptSlamForExecute(state)
-            and type(SpellStopCasting) == "function"
-            and pcall(SpellStopCasting) then
-            CastRecommendedAction(SetAction(
-                self._rec,
-                "EXECUTE",
-                R.EXECUTE_NOW
-            ))
-            D:Update(true)
-            return true
-        end
         D:Update(true)
         return false
     end
@@ -1442,13 +1410,21 @@ function P:Execute(mode)
     if changed or not state.targetValid then state = D:BuildState() end
 
     local action = self:Recommend(state)
+    if D.testMode and action and action.key == "EXECUTE" then
+        action.name = TEST_HAMSTRING_NAME
+    end
     if not action or not action.key or action.key == "WAIT"
         or action.key == "AUTO_ATTACK" or not D:IsKnown(action.key) then
         D:Update(true)
         return false
     end
+    if action.key == "EXECUTE"
+        and not CanCastExecuteOnCurrentSwing(state) then
+        D:Update(true)
+        return false
+    end
     if (action.key == "HEROIC_STRIKE" or action.key == "CLEAVE")
-        and IsOnSwingQueued(state) then
+        and (IsOnSwingQueued(state) or not CanQueueOnCurrentSwing(state)) then
         D:Update(true)
         return false
     end

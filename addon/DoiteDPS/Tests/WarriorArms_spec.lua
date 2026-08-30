@@ -3,12 +3,16 @@
 
 local now = 100
 local unbridledWrathRank = 0
+local improvedExecuteRank = 0
 table.getn = table.getn or function(value) return #value end
 function GetTime() return now end
 function GetLocale() return "zhCN" end
 function GetTalentInfo(tab, index)
     if tab == 2 and index == 1 then
         return "怒不可遏", nil, 1, 1, unbridledWrathRank, 5
+    end
+    if tab == 2 and index == 2 then
+        return "强化斩杀", nil, 2, 1, improvedExecuteRank, 2
     end
     return nil
 end
@@ -112,7 +116,6 @@ local function State(values)
         sunderRemaining = 20,
         sweepingStrikes = false,
         overpower = false,
-        targetTTDConfidence = false,
         targetBoss = false,
         tier3TwoPiece = false,
         predictedMainHandRage = 15,
@@ -167,6 +170,12 @@ Check(
         and P.ConfigSchema.options[1].max == 0.30
 )
 Check(
+    "Execute timing is fixed instead of user-configurable",
+    P.RotationDefaults.single.executeSwingWindow == nil
+        and P.RotationDefaults.aoe.executeSwingWindow == nil
+        and P.ConfigSchema.options[2].key == "useSweepingStrikes"
+)
+Check(
     "white rage prediction applies crit only to the damage component",
     math.abs(P._expectedWhiteRage(746.4286, 3.7, 40) - 37.3718) < 0.001
 )
@@ -179,11 +188,17 @@ Check("the current Unbridled Wrath rank is detected", P:GetUnbridledWrathRank() 
 unbridledWrathRank = 0
 P:OnEvent("CHARACTER_POINTS_CHANGED")
 Check("talent changes refresh Unbridled Wrath", P:GetUnbridledWrathRank() == 0)
+improvedExecuteRank = 2
+P:OnEvent("CHARACTER_POINTS_CHANGED")
+Check("the current Improved Execute rank is detected", P:GetImprovedExecuteRank() == 2)
+improvedExecuteRank = 0
+P:OnEvent("CHARACTER_POINTS_CHANGED")
+Check("talent changes refresh Improved Execute", P:GetImprovedExecuteRank() == 0)
 Check(
     "Sunder maintenance is an opt-in setting for both modes",
     P.RotationDefaults.single.maintainSunder == false
         and P.RotationDefaults.aoe.maintainSunder == false
-        and P.ConfigSchema.options[7].key == "maintainSunder"
+        and P.ConfigSchema.options[6].key == "maintainSunder"
 )
 Check("AoE Cleave defaults to a high-rage dump", P.RotationDefaults.aoe.cleaveRage == 95)
 
@@ -201,10 +216,10 @@ D._profileDB = nil
 
 Check(
     "Tier 3 two-piece is one character-wide Arms setting",
-    P.ConfigSchema.options[8].key == "tier3TwoPiece"
-        and P.ConfigSchema.options[8].scope == "general"
-        and P.ConfigSchema.options[8].modes[1] == "single"
-        and P.ConfigSchema.options[8].modes[2] == "aoe"
+    P.ConfigSchema.options[7].key == "tier3TwoPiece"
+        and P.ConfigSchema.options[7].scope == "general"
+        and P.ConfigSchema.options[7].modes[1] == "single"
+        and P.ConfigSchema.options[7].modes[2] == "aoe"
 )
 Check(
     "base Sweeping Strikes and Death Wish costs remain unchanged",
@@ -223,9 +238,14 @@ P:ObserveSwingCycle(observedSwing)
 P:OnEvent("SPELL_CAST_EVENT", 1, D.Spells.SLAM.spellId)
 P:ObserveSwingCycle(observedSwing)
 Check("a confirmed Slam is consumed inside its white-hit cycle", observedSwing.slamUsed)
+local firstSwingCycle = observedSwing.cycle
 observedSwing = { active = true, progress = 0.10 }
 P:ObserveSwingCycle(observedSwing)
-Check("white-hit progress rollover opens a fresh Slam cycle", not observedSwing.slamUsed)
+Check(
+    "white-hit progress rollover opens a fresh prediction cycle",
+    not observedSwing.slamUsed
+        and observedSwing.cycle == firstSwingCycle + 1
+)
 
 local action = P:Recommend(State({
     rage = 80,
@@ -265,6 +285,35 @@ action = P:Recommend(State({
     },
 }))
 Check("Mortal Strike leads once it can still fund Slam", action.key == "MORTAL_STRIKE")
+
+action = P:Recommend(State({
+    rage = 130,
+    maxRage = 130,
+    cooldowns = CoreCooldowns(0, 0),
+    swing = {
+        active = true,
+        remaining = 3.26,
+        speed = 3.55,
+        slamCast = 1.92,
+        slamCapable = true,
+    },
+}))
+Check("configured Slam clip also permits an instant before Slam", action.key == "MORTAL_STRIKE")
+
+action = P:Recommend(State({
+    rage = 130,
+    maxRage = 130,
+    cooldowns = CoreCooldowns(0, 0),
+    rotationDB = { slamClip = 0.15 },
+    swing = {
+        active = true,
+        remaining = 3.26,
+        speed = 3.55,
+        slamCast = 1.92,
+        slamCapable = true,
+    },
+}))
+Check("instant-before-Slam obeys a lower configured clip limit", action.key == "SLAM")
 
 action = P:Recommend(State({
     rage = 80,
@@ -638,12 +687,26 @@ action = P:Recommend(State({
     cooldowns = CoreCooldowns(6, 10),
     swing = {
         active = true,
-        remaining = 0.13,
+        remaining = 0.50,
         slamUsed = true,
         slamCapable = true,
     },
 }))
-Check("the minimum Execute lands after Slam and before the white hit", action.key == "EXECUTE")
+Check("the minimum Execute lands inside the safe pre-white window", action.key == "EXECUTE")
+
+action = P:Recommend(State({
+    targetHP = 20,
+    rage = 15,
+    gcd = 0.25,
+    cooldowns = CoreCooldowns(6, 10),
+    swing = {
+        active = true,
+        remaining = 0.55,
+        slamUsed = true,
+        slamCapable = true,
+    },
+}))
+Check("Execute never enters Nampower while its GCD is still locked", action.key ~= "EXECUTE")
 
 action = P:Recommend(State({
     targetHP = 20,
@@ -705,12 +768,12 @@ action = P:Recommend(State({
     cooldowns = CoreCooldowns(4, 4),
     swing = {
         active = true,
-        remaining = 0.20,
+        remaining = 0.50,
         slamCast = 1.5,
         slamCapable = true,
     },
 }))
-Check("Execute beats a missing Battle Shout before the next white hit", action.key == "EXECUTE")
+Check("Execute beats a missing Battle Shout inside its safe swing window", action.key == "EXECUTE")
 
 action = P:Recommend(State({
     targetHP = 20,
@@ -723,26 +786,219 @@ action = P:Recommend(State({
         slamCapable = true,
     },
 }))
-Check("a late swing rejects MS/WW combos and Executes", action.key == "EXECUTE")
+Check("a missed Execute window cannot spill across the white hit", action.key ~= "EXECUTE")
 
 action = P:Recommend(State({
     targetHP = 20,
     rage = 35,
     cooldowns = CoreCooldowns(4, 4),
-    targetTTDConfidence = true,
-    targetTTD = 0.8,
+    targetHealthCurrent = 5000,
+    targetHealthMax = 25000,
+    targetHealthSource = "nampower",
+    swing = {
+        active = true,
+        remaining = 0.50,
+        speed = 3.5,
+        slamCast = 1.5,
+        slamCapable = true,
+    },
 }))
-Check("a short-lived target is Executed immediately", action.key == "EXECUTE")
+Check(
+    "a nonlethal target remains the normal timed Execute",
+    action.key == "EXECUTE"
+        and action.reason == "贴近下一次白字清空剩余怒气"
+)
 
 action = P:Recommend(State({
-    targetHP = 20,
+    targetHP = 9,
     rage = 35,
     cooldowns = CoreCooldowns(4, 4),
-    targetTTDConfidence = true,
-    targetTTD = 0.8,
-    targetBoss = true,
+    targetHealthCurrent = 1,
+    targetHealthMax = 10000,
+    targetHealthSource = "nampower",
+    swing = {
+        active = true,
+        remaining = 3.0,
+        slamCast = 1.5,
+        slamCapable = true,
+    },
 }))
-Check("a dying boss is also Executed immediately", action.key == "EXECUTE")
+Check(
+    "exact low target health does not trigger an early Execute",
+    action.key == "SLAM"
+)
+
+local nextSwingForecast = P:BuildForecast(State({
+    targetHP = 9,
+    rage = 35,
+    cooldowns = CoreCooldowns(4, 4),
+    swing = {
+        active = true,
+        remaining = 3.45,
+        speed = 3.5,
+        slamCapable = false,
+    },
+}), { key = "AUTO_ATTACK" })
+local nextSwingExecute = ForecastByKey(nextSwingForecast, "EXECUTE")
+Check(
+    "the new swing forecasts Execute at its tail instead of its start",
+    nextSwingExecute and nextSwingExecute.eta > 2.85
+        and nextSwingExecute.eta < 2.95
+)
+
+local lockedTailForecast = P:BuildForecast(State({
+    targetHP = 20,
+    rage = 35,
+    gcd = 0.15,
+    cooldowns = CoreCooldowns(4, 4),
+    swing = {
+        active = true,
+        remaining = 0.30,
+        speed = 3.5,
+        slamCapable = false,
+    },
+}), { key = "AUTO_ATTACK" })
+local lockedTailExecute = ForecastByKey(lockedTailForecast, "EXECUTE")
+Check(
+    "a GCD that misses the safe tail moves Execute to the next cycle",
+    lockedTailExecute and lockedTailExecute.eta > 3.20
+        and lockedTailExecute.eta < 3.30
+)
+
+-- Reproduce the live failure: a tail Execute expires, the next white hit adds
+-- rage, and repeated input must not turn that old occurrence into a new cast.
+local oldExecuteSetMode = D.SetMode
+local oldExecuteBuildState = D.BuildState
+local oldExecutePrepareTarget = D.PrepareExecutionTarget
+local oldExecuteUpdate = D.Update
+local oldExecuteCast = CastSpellByName
+local oldExecuteCastNoQueue = CastSpellByNameNoQueue
+local oldSpellStopCasting = SpellStopCasting
+local executeState = nil
+local genericExecuteCasts = {}
+local immediateExecuteCasts = {}
+local stoppedExecuteCasts = 0
+D.SetMode = function() end
+D.BuildState = function() return executeState end
+D.PrepareExecutionTarget = function() return false, "current" end
+D.Update = function() end
+CastSpellByName = function(name) table.insert(genericExecuteCasts, name) end
+CastSpellByNameNoQueue = function(name)
+    table.insert(immediateExecuteCasts, name)
+end
+SpellStopCasting = function()
+    stoppedExecuteCasts = stoppedExecuteCasts + 1
+end
+
+executeState = State({
+    targetHP = 9,
+    rage = 15,
+    gcd = 0.20,
+    targetHealthCurrent = 590,
+    targetHealthMax = 10000,
+    targetHealthSource = "nampower",
+    casting = true,
+    castName = D:GetName("SLAM"),
+    castRemaining = 0.40,
+    cooldowns = CoreCooldowns(4, 4),
+    swing = {
+        active = true,
+        remaining = 0.70,
+        speed = 3.5,
+        slamCast = 1.5,
+        slamCapable = true,
+    },
+})
+local castingResult = P:Execute("single")
+Check(
+    "DDPS never cancels Slam for low target health",
+    not castingResult and stoppedExecuteCasts == 0
+        and table.getn(genericExecuteCasts) == 0
+        and table.getn(immediateExecuteCasts) == 0
+)
+
+executeState = State({
+    targetHP = 9,
+    rage = 15,
+    moving = true,
+    cooldowns = CoreCooldowns(4, 4),
+    swing = {
+        active = true,
+        remaining = 0.20,
+        speed = 3.5,
+        slamCapable = false,
+    },
+})
+local expiredTailResult = P:Execute("single")
+executeState = State({
+    targetHP = 9,
+    rage = 35,
+    moving = true,
+    cooldowns = CoreCooldowns(4, 4),
+    swing = {
+        active = true,
+        remaining = 3.45,
+        speed = 3.5,
+        slamCapable = false,
+    },
+})
+local nextSwingResult = P:Execute("single")
+Check(
+    "an expired Execute cannot consume rage at the next swing start",
+    not expiredTailResult and not nextSwingResult
+        and table.getn(genericExecuteCasts) == 0
+        and table.getn(immediateExecuteCasts) == 0
+)
+
+executeState = State({
+    targetHP = 20,
+    rage = 15,
+    moving = true,
+    cooldowns = CoreCooldowns(4, 4),
+    swing = {
+        active = true,
+        remaining = 0.50,
+        speed = 3.5,
+        slamCapable = false,
+    },
+})
+local safeExecuteResult = P:Execute("single")
+Check(
+    "a safe-window Execute bypasses Nampower's generic queue",
+    safeExecuteResult
+        and table.getn(genericExecuteCasts) == 0
+        and table.getn(immediateExecuteCasts) == 1
+        and immediateExecuteCasts[1] == "斩杀"
+)
+
+executeState = State({
+    targetHP = 20,
+    rage = 15,
+    gcd = 0.20,
+    moving = true,
+    cooldowns = CoreCooldowns(4, 4),
+    swing = {
+        active = true,
+        remaining = 0.50,
+        speed = 3.5,
+        slamCapable = false,
+    },
+})
+local lockedExecuteResult = P:Execute("single")
+Check(
+    "a GCD-locked Execute never reaches either cast API",
+    not lockedExecuteResult
+        and table.getn(genericExecuteCasts) == 0
+        and table.getn(immediateExecuteCasts) == 1
+)
+
+D.SetMode = oldExecuteSetMode
+D.BuildState = oldExecuteBuildState
+D.PrepareExecutionTarget = oldExecutePrepareTarget
+D.Update = oldExecuteUpdate
+CastSpellByName = oldExecuteCast
+CastSpellByNameNoQueue = oldExecuteCastNoQueue
+SpellStopCasting = oldSpellStopCasting
 
 action = P:Recommend(State({
     targetHP = 20,
@@ -769,7 +1025,7 @@ action = P:Recommend(State({
         slamCapable = true,
     },
 }))
-Check("Slam is never recommended while moving", action.key == "AUTO_ATTACK")
+Check("Slam remains available while moving", action.key == "SLAM")
 
 action = P:Recommend(State({
     rage = 90,
@@ -777,6 +1033,23 @@ action = P:Recommend(State({
     cooldowns = CoreCooldowns(4, 4),
 }))
 Check("Heroic Strike queues only for a predicted cap", action.key == "HEROIC_STRIKE")
+
+action = P:Recommend(State({
+    rage = 90,
+    predictedMainHandRage = 15,
+    cooldowns = CoreCooldowns(4, 4),
+    swing = {
+        active = true,
+        remaining = 0.30,
+        speed = 3.5,
+        slamCast = 1.5,
+        slamCapable = false,
+    },
+}))
+Check(
+    "Heroic Strike never enters the next swing from the timer tail",
+    action.key ~= "HEROIC_STRIKE"
+)
 
 action = P:Recommend(State({
     rage = 110,
@@ -793,6 +1066,14 @@ action = P:Recommend(State({
     cooldowns = CoreCooldowns(4, 4),
 }))
 Check("Heroic Strike uses the real 130 rage cap", action.key == "HEROIC_STRIKE")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 25,
+    overpower = true,
+    cooldowns = CoreCooldowns(4, 4, 0, 5),
+}))
+Check("AoE retains the low-rage Overpower stance dance", action.key == "BATTLE_STANCE")
 
 action = P:Recommend(State({
     mode = "aoe",
@@ -856,14 +1137,22 @@ action = P:Recommend(State({
     rage = 50,
     cooldowns = CoreCooldowns(4, 0, 99, 0),
 }))
-Check("AoE drains a pending Sweeping window with Whirlwind", action.key == "WHIRLWIND")
+Check("AoE preserves Whirlwind for pending Sweeping", action.key == "BATTLE_STANCE")
 
 action = P:Recommend(State({
     mode = "aoe",
     rage = 75,
     cooldowns = CoreCooldowns(0, 4, 99, 0),
 }))
-Check("AoE drains a pending Sweeping window with Mortal Strike", action.key == "MORTAL_STRIKE")
+Check("AoE may spend Mortal Strike before pending Sweeping", action.key == "MORTAL_STRIKE")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 130,
+    maxRage = 130,
+    cooldowns = CoreCooldowns(0, 0, 99, 0),
+}))
+Check("high-rage pending Sweeping spends Mortal Strike but preserves Whirlwind", action.key == "MORTAL_STRIKE")
 
 action = P:Recommend(State({
     mode = "aoe",
@@ -934,7 +1223,7 @@ action = P:Recommend(State({
     cooldowns = CoreCooldowns(4, 4, 99, 5),
     swing = {
         active = true,
-        remaining = 0.2,
+        remaining = 0.50,
         speed = 3.63,
         slamCast = 2.0,
         slamCapable = false,
@@ -1175,13 +1464,35 @@ action = P:Recommend(State({
     cooldowns = CoreCooldowns(4, 0.8, 99, 5),
     swing = {
         active = true,
-        remaining = 0.5,
+        remaining = 0.75,
         speed = 3.63,
         slamCast = 2.0,
         slamCapable = false,
     },
 }))
 Check("Cleave may spend Sweeping charges that Whirlwind does not need", action.key == "CLEAVE")
+
+action = P:Recommend(State({
+    mode = "aoe",
+    rage = 120,
+    maxRage = 130,
+    predictedMainHandRage = 36,
+    sweepingStrikes = true,
+    sweepingRemaining = 5,
+    sweepingStacks = 3,
+    cooldowns = CoreCooldowns(4, 0.8, 99, 5),
+    swing = {
+        active = true,
+        remaining = 0.30,
+        speed = 3.63,
+        slamCast = 2.0,
+        slamCapable = false,
+    },
+}))
+Check(
+    "Cleave never enters the next swing from the timer tail",
+    action.key ~= "CLEAVE"
+)
 
 action = P:Recommend(State({
     mode = "aoe",

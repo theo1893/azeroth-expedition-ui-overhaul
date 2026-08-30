@@ -2006,7 +2006,6 @@ local light = {
 			["ItemHints"] = "0",
 			["TurtleCount"] = "0",
 			["BugSack"] = "0",
-			["AutoBar"] = "0",
 			["ColorPickerPlus"] = "0",
 			["ZHunterMod"] = "0",
 			["ES_GuildCheckGUI"] = "0",

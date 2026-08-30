@@ -55,6 +55,14 @@ local SLOT_PROMOTION_KEYS = {
     CLEAVE = true,
 }
 
+-- These predictions belong to exactly one white-hit cycle. A new cycle may
+-- create a new occurrence, but it must never inherit the old physical note.
+local SWING_SCOPED_KEYS = {
+    HEROIC_STRIKE = true,
+    CLEAVE = true,
+    EXECUTE = true,
+}
+
 -- action.state 是展示元数据，不是施法决策：ready/proc 表示可执行；
 -- gcd/queue/casting 表示暂时锁定；wait/pool/range/cooldown/disabled
 -- 解释当前为何不能执行；forecast 表示仅供参考的后续动作。
@@ -863,6 +871,7 @@ function UI:ResetRuntimeState()
     self.slotPromotionArrivedKey = nil
     self.forecastPresence = {}
     self.forecastSyncSerial = 0
+    self.timelineSwingCycle = nil
 
     self.castLocked = false
     self.castLockToken = nil
@@ -1153,6 +1162,44 @@ local function CancelSlotPromotion(self)
     self.slotPromotionPhase = nil
     self.slotPromotionTravelKey = nil
     self.slotPromotionArrivedKey = nil
+end
+
+local function SyncSwingTimelineCycle(self, state)
+    local swing = state and state.swing
+    local cycle = swing and tonumber(swing.cycle)
+    if not cycle or cycle <= 0 then return end
+
+    local previous = tonumber(self.timelineSwingCycle)
+    self.timelineSwingCycle = cycle
+    if not previous or previous == cycle then return end
+
+    if SWING_SCOPED_KEYS[self.slotPromotionKey] then
+        CancelSlotPromotion(self)
+    end
+
+    local i = 1
+    while i <= table.getn(self.forecastIcons) do
+        local frame = self.forecastIcons[i]
+        if SWING_SCOPED_KEYS[frame.timelineKey] then
+            ResetForecastFrame(frame)
+        end
+        i = i + 1
+    end
+
+    local key
+    for key in pairs(SWING_SCOPED_KEYS) do
+        self.forecastPresence[key] = nil
+        self.timelineCycleByKey[key] = nil
+    end
+
+    if SWING_SCOPED_KEYS[self.currentKey] then
+        self.currentKey = nil
+        self.currentState = nil
+        self.currentSnapshot = nil
+        self.slotOccupied = false
+        self.currentIcon:Hide()
+        self.currentGhost:Hide()
+    end
 end
 
 local function PrepareSlotPromotion(self, action, now)
@@ -2024,6 +2071,7 @@ function UI:Update(state, recommendation, forecasts, force)
         self:ResetRuntimeState()
     end
     self.lastMode = state.mode
+    SyncSwingTimelineCycle(self, state)
     self.targetRangeState = state.targetRangeState
     if self.targetRangeState == "grace"
         or self.targetRangeState == "out" then
