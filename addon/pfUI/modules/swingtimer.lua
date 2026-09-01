@@ -1130,20 +1130,10 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
         end
       end
 
-      -- Extra attack detection: if timer still has >20% remaining for that hand,
-      -- the server did NOT reset the swing clock -> this is an extra attack, skip.
-      -- Use 20% here (SP_SwingTimer's ShouldResetTimer threshold).
-      -- Exception: if timer is already at 0 (expired), always accept.
+      -- Nampower identifies the attacking hand. Treat each processed swing as
+      -- the authoritative boundary even when it arrives before our countdown.
       if isOffhand then
         local pct = S.ohActive and (S.ohTimer / S.ohTimerMax) or 0
-        if S.ohActive and S.ohTimer > 0 and pct > 0.20 then
-          Trace("AUTO_ATTACK_SELF", string.format(
-            "%s decision=reject_early_extra remainingPct=%.3f",
-            autoDetail,
-            pct
-          ))
-          return
-        end
         Trace("AUTO_ATTACK_SELF", string.format(
           "%s decision=accept remainingPct=%.3f",
           autoDetail,
@@ -1152,14 +1142,6 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
         ResetOH("auto_attack_self")
       else
         local pct = S.mhActive and (S.mhTimer / S.mhTimerMax) or 0
-        if S.mhActive and S.mhTimer > 0 and pct > 0.20 then
-          Trace("AUTO_ATTACK_SELF", string.format(
-            "%s decision=reject_early_extra remainingPct=%.3f",
-            autoDetail,
-            pct
-          ))
-          return
-        end
         Trace("AUTO_ATTACK_SELF", string.format(
           "%s decision=accept remainingPct=%.3f",
           autoDetail,
