@@ -1580,6 +1580,9 @@ local function CastRecommendedAction(action)
 end
 
 local function DebugExecute(mode, state, action, result)
+    if D.TraceSwingExecution then
+        D:TraceSwingExecution("protection", mode, state, action, result)
+    end
     if not D.debugMode then return end
     D:Print(string.format(
         "execute profile=protection mode=%s action=%s state=%s rage=%d stance=%d shield=%s melee=%s sunder=%d revenge=%s result=%s",
@@ -1628,7 +1631,6 @@ function P:Execute(mode)
         return false
     end
 
-    DebugExecute(mode, state, action, "cast")
     CastRecommendedAction(action)
     if action.key == "HEROIC_STRIKE" or action.key == "CLEAVE" then
         D:MarkOnSwingQueued(action.key, state.swing)
@@ -1645,6 +1647,7 @@ function P:Execute(mode)
         self._pendingDemoralizingUntil = GetTime() + ROTATION_LOCK
     end
 
+    DebugExecute(mode, state, action, "cast")
     D:Update(true)
     return true
 end

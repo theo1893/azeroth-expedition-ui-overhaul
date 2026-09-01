@@ -2780,6 +2780,62 @@ function D:GetSwingState(reuse)
     return swing
 end
 
+-- Keep DDPS execution decisions beside pfUI's native swing events. The writer
+-- lives in pfUI; DDPS never opens or reads the trace file.
+function D:TraceSwingExecution(profile, mode, state, action, result)
+    local api = pfUI and pfUI.swingtimer and pfUI.swingtimer.api
+    if not api or type(api.AppendTrace) ~= "function" then return false end
+
+    state = state or {}
+    local swing = state.swing or {}
+    local castId, casting, channeling, onSwing, autoAttack = 0, false, false, false, false
+    if type(GetCurrentCastingInfo) == "function" then
+        local ok, spellId, _, _, isCasting, isChanneling, isOnSwing, isAutoAttack =
+            pcall(GetCurrentCastingInfo)
+        if ok then
+            castId = tonumber(spellId) or 0
+            casting = tonumber(isCasting) == 1
+            channeling = tonumber(isChanneling) == 1
+            onSwing = tonumber(isOnSwing) == 1
+            autoAttack = tonumber(isAutoAttack) == 1
+        end
+    end
+
+    local detail = string.format(
+        "profile=%s mode=%s result=%s action=%s actionState=%s actionReason=%q rage=%d target=%s targetValid=%s range=%s melee=%s stateCasting=%s provider=%s swingActive=%s swingRem=%.3f swingSpeed=%.3f swingProgress=%.3f hs=%s cleave=%s pending=%s confirmed=%s stale=%s pendingKey=%s castId=%s casting=%s channeling=%s onSwing=%s autoAttack=%s",
+        tostring(profile or "unknown"),
+        tostring(mode or "unknown"),
+        tostring(result or "unknown"),
+        tostring(action and action.key or "none"),
+        tostring(action and action.state or "none"),
+        tostring(action and action.reason or ""),
+        tonumber(state.rage) or 0,
+        tostring(state.targetGUID or "none"),
+        tostring(state.targetValid == true),
+        tostring(state.targetRangeState or "unknown"),
+        tostring(state.inMelee == true),
+        tostring(state.casting == true),
+        tostring(swing.provider or "none"),
+        tostring(swing.active == true),
+        tonumber(swing.remaining) or 0,
+        tonumber(swing.speed) or 0,
+        tonumber(swing.progress) or 0,
+        tostring(swing.hsQueued == true),
+        tostring(swing.cleaveQueued == true),
+        tostring(swing.queuePending == true),
+        tostring(swing.queueConfirmed == true),
+        tostring(swing.queueStale == true),
+        tostring(swing.pendingKey or "none"),
+        tostring(castId),
+        tostring(casting),
+        tostring(channeling),
+        tostring(onSwing),
+        tostring(autoAttack)
+    )
+    local ok, written = pcall(api.AppendTrace, "DDPS_EXECUTE", detail)
+    return ok and written and true or false
+end
+
 -- 先建立通用冷却表，再允许 Profile 补充压制／复仇等触发窗口；Profile 不得覆盖
 -- 客户端 API 提供的冷却时间。
 function D:BuildCooldownState(state, keys, profile)

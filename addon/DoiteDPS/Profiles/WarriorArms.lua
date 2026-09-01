@@ -1395,6 +1395,12 @@ local function CastRecommendedAction(action)
     end
 end
 
+local function TraceExecute(mode, state, action, result)
+    if D.TraceSwingExecution then
+        D:TraceSwingExecution("arms", mode, state, action, result)
+    end
+end
+
 -- 玩家按键触发的执行路径。任何换目标后都重新构建 State，避免根据旧目标的观测
 -- 结果施放技能。
 function P:Execute(mode)
@@ -1402,6 +1408,7 @@ function P:Execute(mode)
     D:SetMode(mode, true)
     local state = D:BuildState()
     if state.casting then
+        TraceExecute(mode, state, nil, "casting")
         D:Update(true)
         return false
     end
@@ -1415,16 +1422,19 @@ function P:Execute(mode)
     end
     if not action or not action.key or action.key == "WAIT"
         or action.key == "AUTO_ATTACK" or not D:IsKnown(action.key) then
+        TraceExecute(mode, state, action, "wait")
         D:Update(true)
         return false
     end
     if action.key == "EXECUTE"
         and not CanCastExecuteOnCurrentSwing(state) then
+        TraceExecute(mode, state, action, "execute-window-closed")
         D:Update(true)
         return false
     end
     if (action.key == "HEROIC_STRIKE" or action.key == "CLEAVE")
         and (IsOnSwingQueued(state) or not CanQueueOnCurrentSwing(state)) then
+        TraceExecute(mode, state, action, "on-swing-guard")
         D:Update(true)
         return false
     end
@@ -1433,6 +1443,7 @@ function P:Execute(mode)
     if action.key == "HEROIC_STRIKE" or action.key == "CLEAVE" then
         D:MarkOnSwingQueued(action.key, state.swing)
     end
+    TraceExecute(mode, state, action, "cast")
     D:Update(true)
     return true
 end

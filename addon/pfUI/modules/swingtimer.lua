@@ -4,7 +4,9 @@ pfUI:RegisterModule("swingtimer", "vanilla:tbc", function ()
 local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {} 																												 
   -- HitInfo flags (EVENTS.md)
   local HITINFO_LEFTSWING  = 4      -- 4: Off-hand attack
+  local HITINFO_MISS       = 16     -- 16: Miss
   local HITINFO_NOACTION   = 65536  -- 65536: server did not advance the swing clock
+  local STALL_THRESHOLD    = 0.30
 
   -- SPELL_QUEUE_EVENT codes (EVENTS.md)
   local ON_SWING_QUEUED       = 0
@@ -30,7 +32,121 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
     swingThrottle = 0,
     onSwingCache = {},
     speedSyncUntil = nil,
+    mhZeroAt = nil,
+    mhStallAt = nil,
+    traceFile = nil,
+    traceSessionEpoch = nil,
+    traceWriteFailed = false,
+    traceWarned = false,
   }
+
+  local function DisableTrace(reason)
+    S.traceWriteFailed = true
+    if S.traceWarned then return end
+    S.traceWarned = true
+    if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.AddMessage then
+      DEFAULT_CHAT_FRAME:AddMessage(
+        "|cffff8080DDPS swing trace disabled: " .. tostring(reason) .. "|r"
+      )
+    end
+  end
+
+  local function TraceState()
+    return string.format(
+      "mhActive=%s mhRem=%.3f mhMax=%.3f mhSpeed=%.3f combat=%s auto=%s hs=%s cleave=%s",
+      tostring(S.mhActive),
+      tonumber(S.mhTimer) or 0,
+      tonumber(S.mhTimerMax) or 0,
+      tonumber(S.mhSpeed) or 0,
+      tostring(S.inCombat),
+      tostring(S.autoAttackActive),
+      tostring(S.hsQueued),
+      tostring(S.cleaveQueued)
+    )
+  end
+
+  local function EnsureTraceFile()
+    if not S.isWarrior or S.traceWriteFailed then return nil end
+    if S.traceFile then return S.traceFile end
+    if type(WriteCustomFile) ~= "function" then
+      DisableTrace("Nampower WriteCustomFile is unavailable")
+      return nil
+    end
+    if type(time) ~= "function" or type(date) ~= "function" then
+      DisableTrace("client time/date API is unavailable")
+      return nil
+    end
+
+    -- GetTime survives /reload and measures this client process. Cache the
+    -- estimated process start so integer wall-clock rounding cannot rename the
+    -- file after a UI reload.
+    local estimatedSessionEpoch = math.floor(time() - GetTime() + 0.5)
+    pfUI_cache = pfUI_cache or {}
+    local traceCache = pfUI_cache.ddpsSwingTrace
+    if traceCache and tonumber(traceCache.sessionEpoch)
+      and math.abs(tonumber(traceCache.sessionEpoch) - estimatedSessionEpoch) <= 2 then
+      S.traceSessionEpoch = tonumber(traceCache.sessionEpoch)
+    else
+      S.traceSessionEpoch = estimatedSessionEpoch
+      pfUI_cache.ddpsSwingTrace = { sessionEpoch = S.traceSessionEpoch }
+    end
+    local sessionStamp = date("%Y%m%d-%H%M%S", S.traceSessionEpoch)
+    S.traceFile = "ddps-swing-" .. sessionStamp .. ".log"
+
+    local nampowerVersion = "unavailable"
+    if type(GetNampowerVersion) == "function" then
+      local ok, major, minor, patch = pcall(GetNampowerVersion)
+      if ok then
+        nampowerVersion = string.format(
+          "%s.%s.%s",
+          tostring(major or 0),
+          tostring(minor or 0),
+          tostring(patch or 0)
+        )
+      end
+    end
+    local header = string.format(
+      "# DDPS_SWING_TRACE version=1 clientStart=%s clientStartEpoch=%d nampower=%s\n",
+      date("%Y-%m-%dT%H:%M:%S", S.traceSessionEpoch),
+      S.traceSessionEpoch,
+      nampowerVersion
+    )
+    local ok, reason = pcall(WriteCustomFile, S.traceFile, header, "a")
+    if not ok then
+      S.traceFile = nil
+      DisableTrace(reason)
+      return nil
+    end
+    return S.traceFile
+  end
+
+  local function Trace(kind, detail)
+    local fileName = EnsureTraceFile()
+    if not fileName then return false end
+    local line = string.format(
+      "%s uptime=%.3f event=%s %s %s\n",
+      date("%Y-%m-%dT%H:%M:%S"),
+      GetTime(),
+      tostring(kind or "UNKNOWN"),
+      tostring(detail or ""),
+      TraceState()
+    )
+    local ok, reason = pcall(WriteCustomFile, fileName, line, "a")
+    if not ok then DisableTrace(reason) end
+    return ok
+  end
+
+  local function EndMHStall(reason)
+    if S.mhStallAt then
+      Trace("STALL_EXIT", string.format(
+        "duration=%.3f cause=%s",
+        GetTime() - S.mhStallAt,
+        tostring(reason or "unknown")
+      ))
+    end
+    S.mhZeroAt = nil
+    S.mhStallAt = nil
+  end
 
   -- Ranged spell IDs
   local RANGED_SPELLIDS = {
@@ -442,9 +558,10 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
   -- the same white hit. Rescale the active interval by completed percentage so
   -- Flurry's first affected swing is hasted and the swing after its last charge
   -- immediately returns to normal speed.
-  local function ResyncActiveWeaponSpeeds()
+  local function ResyncActiveWeaponSpeeds(reason)
     local oldMhSpeed, oldOhSpeed = S.mhSpeed, S.ohSpeed
     local oldMhMax, oldOhMax = S.mhTimerMax, S.ohTimerMax
+    local oldMhTimer, oldOhTimer = S.mhTimer, S.ohTimer
     UpdateWeaponSpeeds()
 
     if S.mhActive and oldMhMax and oldMhMax > 0
@@ -466,17 +583,33 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
       S.ohTimerMax = S.ohSpeed
       S.ohTimer = S.ohSpeed * remainingFraction
     end
+
+    if math.abs((S.mhSpeed or 0) - (oldMhSpeed or 0)) > 0.001
+      or math.abs((S.ohSpeed or 0) - (oldOhSpeed or 0)) > 0.001 then
+      Trace("SPEED_SYNC", string.format(
+        "cause=%s oldMhSpeed=%.3f oldMhRem=%.3f oldOhSpeed=%.3f oldOhRem=%.3f newOhSpeed=%.3f newOhRem=%.3f",
+        tostring(reason or "unknown"),
+        tonumber(oldMhSpeed) or 0,
+        tonumber(oldMhTimer) or 0,
+        tonumber(oldOhSpeed) or 0,
+        tonumber(oldOhTimer) or 0,
+        tonumber(S.ohSpeed) or 0,
+        tonumber(S.ohTimer) or 0
+      ))
+    end
   end
 
-  local function QueueWeaponSpeedSync()
-    ResyncActiveWeaponSpeeds()
+  local function QueueWeaponSpeedSync(reason)
+    ResyncActiveWeaponSpeeds(reason)
     -- Poll briefly as a guard against clients that dispatch the aura event one
     -- frame before UnitAttackSpeed exposes the new value.
     S.speedSyncUntil = GetTime() + 0.20
   end
 
   -- Reset MH countdown to full speed (server confirmed swing)
-  local function ResetMH()
+  local function ResetMH(reason)
+    local before = S.mhTimer
+    EndMHStall(reason or "reset_mh")
     if S.mhFrozenAt then
       S.mhFrozenAt = nil
     end
@@ -490,10 +623,16 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
     S.mhActive   = true
     pfUI.swingtimer.mainhand:Show()
     pfUI.swingtimer:Show()
+    Trace("RESET_MH", string.format(
+      "cause=%s beforeRem=%.3f",
+      tostring(reason or "unknown"),
+      tonumber(before) or 0
+    ))
   end
 
   -- Reset OH countdown to full speed
-  local function ResetOH()
+  local function ResetOH(reason)
+    local before = S.ohTimer
     UpdateWeaponSpeeds()
     if S.ohSpeed <= 0 then return end
     pfUI.swingtimer.ohGraceAt = nil  -- cancel any pending hide
@@ -502,14 +641,22 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
     S.ohActive   = true
     if sw_showoh then pfUI.swingtimer.offhand:Show() end
     pfUI.swingtimer:Show()
+    Trace("RESET_OH", string.format(
+      "cause=%s beforeRem=%.3f ohRem=%.3f ohSpeed=%.3f",
+      tostring(reason or "unknown"),
+      tonumber(before) or 0,
+      tonumber(S.ohTimer) or 0,
+      tonumber(S.ohSpeed) or 0
+    ))
   end
 
   -- Reset ranged countdown
-  local function ResetRanged()
+  local function ResetRanged(reason)
     if not sw_showranged then return end
     UpdateWeaponSpeeds()
     if S.raSpeed <= 0 then return end
     -- Ranged replaces MH bar
+    EndMHStall(reason or "reset_ranged")
     S.mhActive = false
     pfUI.swingtimer.mainhand:Hide()
     S.raTimerMax = S.raSpeed
@@ -538,9 +685,16 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
     pfUI.swingtimer.ranged.warn:Hide()
     pfUI.swingtimer.ranged:Show()
     pfUI.swingtimer:Show()
+    Trace("RESET_RANGED", string.format(
+      "cause=%s raRem=%.3f raSpeed=%.3f",
+      tostring(reason or "unknown"),
+      tonumber(S.raTimer) or 0,
+      tonumber(S.raSpeed) or 0
+    ))
   end
 
-  local function ResetAll()
+  local function ResetAll(reason)
+    EndMHStall(reason or "reset_all")
     S.mhActive = false
     S.ohActive = false
     S.raActive = false
@@ -553,6 +707,7 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
     pfUI.swingtimer.offhand:Hide()
     pfUI.swingtimer.ranged:Hide()
     pfUI.swingtimer:Hide()
+    Trace("RESET_ALL", "cause=" .. tostring(reason or "unknown"))
   end
 
   -- HS/Cleave helpers
@@ -599,7 +754,7 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
     S.swingThrottle = 0
 
     if S.speedSyncUntil then
-      ResyncActiveWeaponSpeeds()
+      ResyncActiveWeaponSpeeds("poll")
       if GetTime() >= S.speedSyncUntil then
         S.speedSyncUntil = nil
       end
@@ -620,6 +775,19 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
       S.mhTimer = S.mhTimer - delta
       if S.mhTimer <= 0 then
         S.mhTimer = 0
+        if not S.mhZeroAt then
+          S.mhZeroAt = GetTime()
+          Trace("MH_ZERO", "source=countdown")
+        end
+        if not S.mhStallAt and S.inCombat and S.autoAttackActive
+          and GetTime() - S.mhZeroAt >= STALL_THRESHOLD then
+          S.mhStallAt = S.mhZeroAt
+          Trace("STALL_ENTER", string.format(
+            "zeroFor=%.3f frozen=%s",
+            GetTime() - S.mhZeroAt,
+            tostring(S.mhFrozenAt ~= nil)
+          ))
+        end
         if S.mhFrozenAt then
           -- Spell with interruptFlags froze the swing: bar holds at 0, skip grace/hide.
           -- ResetMH() will clear mhFrozenAt when AUTO_ATTACK_SELF arrives.
@@ -628,6 +796,7 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
         elseif GetTime() >= pfUI.swingtimer.mhGraceAt then
           pfUI.swingtimer.mhGraceAt = nil
           if not S.inCombat or not S.autoAttackActive then
+            EndMHStall("inactive_hide")
             S.mhActive = false
             pfUI.swingtimer.mainhand:Hide()
             S.lastMhMarkerX = -1
@@ -841,6 +1010,7 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
   spellStartFrame:SetScript("OnEvent", function()
     if arg1 and arg1 > 0 then
       S.pendingCastSpellId = arg1
+      Trace("SPELL_START", "spellId=" .. tostring(arg1))
     end
   end)
 
@@ -848,28 +1018,52 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
   pfUI.libdebuff_spell_go_hooks = pfUI.libdebuff_spell_go_hooks or {}
   pfUI.libdebuff_spell_go_hooks["swingtimer"] = function(spellId)
     if RANGED_SPELLIDS[spellId] then
-      ResetRanged()
+      Trace("SPELL_GO", "spellId=" .. tostring(spellId) .. " decision=ranged_reset")
+      ResetRanged("spell_go:" .. tostring(spellId))
       return
     elseif IsSlamSpell(spellId) then
       -- Slam delays auto-attack but does NOT reset the swing timer. Ignore.
+      Trace("SPELL_GO", "spellId=" .. tostring(spellId) .. " decision=ignore_slam")
       S.pendingCastSpellId = nil
       return
     elseif hsSpellIDs[spellId] or IsOnSwingSpell(spellId) then
+      Trace("SPELL_GO", "spellId=" .. tostring(spellId) .. " decision=on_swing_reset")
       S.hsQueued = false; S.cleaveQueued = false
-      ResetMH()
+      ResetMH("spell_go:" .. tostring(spellId))
     elseif cleaveSpellIDs[spellId] then
+      Trace("SPELL_GO", "spellId=" .. tostring(spellId) .. " decision=cleave_reset")
       S.hsQueued = false; S.cleaveQueued = false
-      ResetMH()
+      ResetMH("spell_go:" .. tostring(spellId))
     else
       -- Any spell with interruptFlags > 0 resets the swing timer
       -- (Moonfire, Faerie Fire, Wrath, Starfire etc. - NOT Insect Swarm which has flags=0)
       local _rec = GetSpellRec(spellId)
       if _rec and _rec.interruptFlags and _rec.interruptFlags > 0 then
         if S.mhActive and S.mhSpeed > 0 then
+          local before = S.mhTimer
+          EndMHStall("spell_interrupt:" .. tostring(spellId))
           UpdateWeaponSpeeds()
           S.mhTimerMax = S.mhSpeed
           S.mhTimer    = S.mhSpeed
+          Trace("SPELL_GO", string.format(
+            "spellId=%s decision=interrupt_reset flags=%s beforeRem=%.3f",
+            tostring(spellId),
+            tostring(_rec.interruptFlags),
+            tonumber(before) or 0
+          ))
+        else
+          Trace("SPELL_GO", string.format(
+            "spellId=%s decision=interrupt_no_active flags=%s",
+            tostring(spellId),
+            tostring(_rec.interruptFlags)
+          ))
         end
+      else
+        Trace("SPELL_GO", string.format(
+          "spellId=%s decision=no_reset flags=%s",
+          tostring(spellId),
+          tostring(_rec and _rec.interruptFlags or 0)
+        ))
       end
     end
     S.pendingCastSpellId = nil
@@ -881,8 +1075,10 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
     if success ~= 1 then return end
     if hsSpellIDs[spellId] then
       S.hsQueued = true; S.cleaveQueued = false
+      Trace("SPELL_CAST", "spellId=" .. tostring(spellId) .. " queue=hs")
     elseif cleaveSpellIDs[spellId] then
       S.cleaveQueued = true; S.hsQueued = false
+      Trace("SPELL_CAST", "spellId=" .. tostring(spellId) .. " queue=cleave")
     end
   end
 
@@ -908,12 +1104,30 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
       local hitInfo  = arg4 or 0
       local isOffhand = bit.band(hitInfo, HITINFO_LEFTSWING) ~= 0
       local noAction  = bit.band(hitInfo, HITINFO_NOACTION) ~= 0
+      local miss = bit.band(hitInfo, HITINFO_MISS) ~= 0
+      local autoDetail = string.format(
+        "hand=%s source=%s target=%s amount=%s hitInfo=%s miss=%s noAction=%s victimState=%s",
+        isOffhand and "off" or "main",
+        tostring(arg1),
+        tostring(arg2),
+        tostring(arg3),
+        tostring(hitInfo),
+        tostring(miss),
+        tostring(noAction),
+        tostring(arg5)
+      )
       -- NOACTION means server did not advance swing clock (dodge/parry/miss).
       -- Only skip if the timer is already running - if it's not active yet
       -- (first swing ever), we still want to start it so the bar appears.
       if noAction then
-        if isOffhand and S.ohActive then return end
-        if not isOffhand and S.mhActive then return end
+        if isOffhand and S.ohActive then
+          Trace("AUTO_ATTACK_SELF", autoDetail .. " decision=reject_noaction")
+          return
+        end
+        if not isOffhand and S.mhActive then
+          Trace("AUTO_ATTACK_SELF", autoDetail .. " decision=reject_noaction")
+          return
+        end
       end
 
       -- Extra attack detection: if timer still has >20% remaining for that hand,
@@ -923,15 +1137,35 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
       if isOffhand then
         local pct = S.ohActive and (S.ohTimer / S.ohTimerMax) or 0
         if S.ohActive and S.ohTimer > 0 and pct > 0.20 then
+          Trace("AUTO_ATTACK_SELF", string.format(
+            "%s decision=reject_early_extra remainingPct=%.3f",
+            autoDetail,
+            pct
+          ))
           return
         end
-        ResetOH()
+        Trace("AUTO_ATTACK_SELF", string.format(
+          "%s decision=accept remainingPct=%.3f",
+          autoDetail,
+          pct
+        ))
+        ResetOH("auto_attack_self")
       else
         local pct = S.mhActive and (S.mhTimer / S.mhTimerMax) or 0
         if S.mhActive and S.mhTimer > 0 and pct > 0.20 then
+          Trace("AUTO_ATTACK_SELF", string.format(
+            "%s decision=reject_early_extra remainingPct=%.3f",
+            autoDetail,
+            pct
+          ))
           return
         end
-        ResetMH()
+        Trace("AUTO_ATTACK_SELF", string.format(
+          "%s decision=accept remainingPct=%.3f",
+          autoDetail,
+          pct
+        ))
+        ResetMH("auto_attack_self")
       end
 
     elseif event == "AUTO_ATTACK_OTHER" then
@@ -944,25 +1178,36 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
       -- Vanilla: parry reduces the NEXT swing timer by 40% of weapon speed,
       -- minimum 20% of weapon speed remaining (SP_SwingTimer approach)
       if victimState == 3 then
+        local changedHand = "none"
+        local before = 0
         -- Apply to whichever swing comes next (smallest % remaining = closest to firing)
         if S.ohActive and S.ohSpeed > 0 and (S.ohTimer / S.ohTimerMax) < (S.mhTimer / S.mhTimerMax) then
           local minimum = S.ohSpeed * 0.20
           if S.ohTimer > minimum then
             local reduct = S.ohSpeed * 0.40
-            local before = S.ohTimer
+            before = S.ohTimer
             S.ohTimer = S.ohTimer - reduct
             if S.ohTimer < minimum then S.ohTimer = minimum end
+            changedHand = "off"
           end
         elseif S.mhActive and S.mhSpeed > 0 then
           local minimum = S.mhSpeed * 0.20
           if S.mhTimer > minimum then
             local reduct = S.mhSpeed * 0.40
-            local before = S.mhTimer
+            before = S.mhTimer
             S.mhTimer = S.mhTimer - reduct
             if S.mhTimer < minimum then S.mhTimer = minimum end
+            changedHand = "main"
           end
-        else
         end
+        local after = changedHand == "off" and S.ohTimer or S.mhTimer
+        Trace("PARRY_HASTE", string.format(
+          "hand=%s beforeRem=%.3f afterRem=%.3f attacker=%s",
+          changedHand,
+          tonumber(before) or 0,
+          tonumber(after) or 0,
+          tostring(arg1)
+        ))
       end
 
     elseif event == "SPELL_QUEUE_EVENT" then
@@ -978,6 +1223,11 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
       elseif eventCode == ON_SWING_QUEUE_POPPED then
         S.hsQueued = false; S.cleaveQueued = false
       end
+      Trace("SPELL_QUEUE", string.format(
+        "code=%s spellId=%s",
+        tostring(eventCode),
+        tostring(spellId)
+      ))
 
     elseif event == "PLAYER_ENTER_COMBAT" then
       S.autoAttackActive = true
@@ -985,9 +1235,12 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
       -- AUTO_ATTACK_SELF instead of creating an out-of-phase melee cycle.
       S.raActive = false
       pfUI.swingtimer.ranged:Hide()
+      Trace("AUTO_STATE", "active=true source=PLAYER_ENTER_COMBAT")
 
     elseif event == "PLAYER_LEAVE_COMBAT" then
       S.autoAttackActive = false
+      EndMHStall("PLAYER_LEAVE_COMBAT")
+      Trace("AUTO_STATE", "active=false source=PLAYER_LEAVE_COMBAT")
 
     elseif event == "PLAYER_ENTERING_WORLD" then
       local _, class = UnitClass("player")
@@ -996,24 +1249,40 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
       isHunter  = (class == "HUNTER")   -- 添加这一行										
       UpdateWeaponSpeeds()
       RebuildQueueSlotCache()
+      Trace("SESSION", string.format(
+        "player=%s realm=%s guid=%s",
+        tostring(UnitName("player") or "unknown"),
+        tostring(GetRealmName and GetRealmName() or "unknown"),
+        tostring(S.playerGUID or "unknown")
+      ))
 
     elseif event == "UNIT_ATTACK_SPEED"
       or event == "PLAYER_AURAS_CHANGED" then
       if event == "UNIT_ATTACK_SPEED" and arg1 and arg1 ~= "player" then
         return
       end
-      QueueWeaponSpeedSync()
+      QueueWeaponSpeedSync(event)
 
     elseif event == "UNIT_INVENTORY_CHANGED" then
       if arg1 and arg1 ~= "player" then return end
+      local oldMhSpeed = S.mhSpeed
       local oldOhSpeed = S.ohSpeed
+      local oldRaSpeed = S.raSpeed
       UpdateWeaponSpeeds()
+      Trace("INVENTORY", string.format(
+        "oldMhSpeed=%.3f oldOhSpeed=%.3f oldRaSpeed=%.3f newOhSpeed=%.3f newRaSpeed=%.3f",
+        tonumber(oldMhSpeed) or 0,
+        tonumber(oldOhSpeed) or 0,
+        tonumber(oldRaSpeed) or 0,
+        tonumber(S.ohSpeed) or 0,
+        tonumber(S.raSpeed) or 0
+      ))
       if S.ohSpeed == 0 then
         S.ohActive = false
         pfUI.swingtimer.offhand:Hide()
       elseif oldOhSpeed == 0 and S.ohSpeed > 0 and S.autoAttackActive and S.inCombat then
         -- Offhand was just equipped while in combat and auto-attack active: show immediately
-        ResetOH()
+        ResetOH("offhand_equipped")
       end
       if S.raSpeed == 0 then
         S.raActive = false
@@ -1026,15 +1295,18 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
     elseif event == "PLAYER_REGEN_DISABLED" then
       S.inCombat = true
       UpdateWeaponSpeeds()
+      Trace("COMBAT", "active=true")
 
     elseif event == "PLAYER_REGEN_ENABLED" then
       S.inCombat = false
       S.hsQueued     = false
       S.cleaveQueued = false
+      EndMHStall("PLAYER_REGEN_ENABLED")
+      Trace("COMBAT", "active=false")
 
     elseif event == "UNIT_DIED" then
       if arg1 and arg1 == S.playerGUID then
-        ResetAll()
+        ResetAll("player_died")
       end
     end
   end)
@@ -1049,6 +1321,9 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
   --   end
   -- -------------------------------------------------------------------------
   pfUI.swingtimer.api = {
+    -- Append DDPS decisions to the same write-only per-client trace.
+    AppendTrace       = function(kind, detail) return Trace(kind, detail) end,
+
     -- Remaining time in seconds until next swing
     GetMHTimer        = function() return S.mhTimer end,
     GetOHTimer        = function() return S.ohTimer end,
