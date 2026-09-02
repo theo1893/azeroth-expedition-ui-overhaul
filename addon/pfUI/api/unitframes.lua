@@ -2443,7 +2443,7 @@ function pfUI.uf:RefreshUnit(unit, component)
     local selfdebuff = unit.config.selfdebuff
     local visible_debuffs = {}
     local auraPolicy = type(unit.aeuiAuraPolicy) == "function"
-    local debuffScanLimit = auraPolicy and 32 or
+    local debuffScanLimit = auraPolicy and 48 or
       tonumber(unit.config.debufflimit)
 
     local invert_h, invert_v, af

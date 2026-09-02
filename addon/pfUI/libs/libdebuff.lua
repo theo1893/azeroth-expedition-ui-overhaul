@@ -448,6 +448,18 @@ local dispelTypeMap = {
   [4] = "Poison",
 }
 
+local harmfulSpellCache = {}
+local function IsHarmfulSpellId(spellId)
+  local harmful = harmfulSpellCache[spellId]
+  if harmful ~= nil then return harmful end
+  local ok, attributesEx = pcall(GetSpellRecField, spellId, "attributesEx")
+  if not ok then attributesEx = nil end
+  local shifted = attributesEx and math.floor(attributesEx / 128)
+  harmful = shifted and shifted ~= math.floor(shifted / 2) * 2 or false
+  harmfulSpellCache[spellId] = harmful
+  return harmful
+end
+
 -- Get current debuff state directly from WoW via GetUnitField
 -- Returns: { [displaySlot] = {auraSlot, buffDisplaySlot, spellId,
 --   spellName, stacks, texture, dtype} }
@@ -492,9 +504,7 @@ local function GetDebuffSlotMap(guid)
       else
         local ownership = slotOwnership[guid] and slotOwnership[guid][auraSlot]
         local ownedDebuff = ownership and ownership.spellId == spellId
-        -- ponytail: locale durations include buffs; unknown pre-existing
-        -- overflow debuffs wait for the authoritative Nampower event.
-        if ownedDebuff then
+        if IsHarmfulSpellId(spellId) or ownedDebuff then
           outputSlot = 16 + auraSlot
         end
       end
@@ -558,6 +568,20 @@ function libdebuff:IsOverflowBuff(unit, displaySlot)
     if data and data.buffDisplaySlot == displaySlot then return true end
   end
   return false
+end
+
+function libdebuff:NotifyUnitFrameAuras(guid)
+  local frames = pfUI.uf and pfUI.uf.frames
+  if not guid or type(frames) ~= "table" or not GetUnitGUID then return end
+  for _, frame in pairs(frames) do
+    local unit = frame and frame.label and
+      frame.label .. (frame.id or "")
+    if unit and unit ~= "" and
+      (unit == guid or GetUnitGUID(unit) == guid)
+    then
+      frame.update_aura = true
+    end
+  end
 end
 
 function libdebuff:UnitBuffCaster(unit, buffSlot, spellName)
@@ -1759,22 +1783,8 @@ if hasNampower then
           pfUI.nameplates:OnAuraUpdate(targetGuid)
         end
         
-        -- Notify unitframes of debuff updates (UNIT_AURA doesn't fire on refreshes!)
-        -- Check player
-        if GetUnitGUID("player") then
-          local playerGuid = GetUnitGUID("player")
-          if playerGuid == targetGuid and pfPlayer then
-            pfPlayer.update_aura = true
-          end
-        end
-        
-        -- Check target
-        if GetUnitGUID("target") then
-          local targetUnitGuid = GetUnitGUID("target")
-          if targetUnitGuid == targetGuid and pfTarget then
-            pfTarget.update_aura = true
-          end
-        end
+        -- UNIT_AURA may be filtered for raw GUIDs; refresh every matching UF.
+        libdebuff:NotifyUnitFrameAuras(targetGuid)
       
       -- Only track in ownDebuffs if it's OUR debuff
       if not isOurs then return end
@@ -1989,6 +1999,7 @@ if hasNampower then
       if pfUI.nameplates and pfUI.nameplates.OnAuraUpdate then
         pfUI.nameplates:OnAuraUpdate(guid)
       end
+      libdebuff:NotifyUnitFrameAuras(guid)
       if pfUI.libdebuff_debuff_added_other_hooks then
         for _, fn in pairs(pfUI.libdebuff_debuff_added_other_hooks) do
           fn(arg1, arg2, arg3, arg4)
@@ -2083,6 +2094,7 @@ if hasNampower then
       if pfUI.nameplates and pfUI.nameplates.OnAuraUpdate then
         pfUI.nameplates:OnAuraUpdate(guid)
       end
+      libdebuff:NotifyUnitFrameAuras(guid)
       if pfUI.libdebuff_debuff_removed_other_hooks then
         for _, fn in pairs(pfUI.libdebuff_debuff_removed_other_hooks) do
           fn(arg1, arg2, arg3, arg4)
@@ -2118,6 +2130,7 @@ if hasNampower then
   buffFrame:RegisterEvent("BUFF_REMOVED_OTHER")
   buffFrame:SetScript("OnEvent", function()
     HandleBuffOwnershipEvent(event, arg1, arg3, arg6, arg7)
+    libdebuff:NotifyUnitFrameAuras(arg1)
   end)
   
   -- Cleveroids API
