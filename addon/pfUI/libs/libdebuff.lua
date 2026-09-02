@@ -392,6 +392,12 @@ local function DebugSpellField(spellId, field)
   if ok then return value end
 end
 
+local function DebugFlagBit(value, mask)
+  if type(value) ~= "number" then return nil end
+  local shifted = math.floor(value / mask)
+  return shifted - math.floor(shifted / 2) * 2
+end
+
 function libdebuff:DebugNampowerAuraEvent(
   eventName, guid, luaSlot, spellId, stacks, auraLevel, rawSlot, state
 )
@@ -424,16 +430,30 @@ function libdebuff:DebugNampowerAuraEvent(
   local spellName = DebugSpellField(spellId, "name")
   local attributes = DebugSpellField(spellId, "attributes")
   local attributesEx = DebugSpellField(spellId, "attributesEx")
+  local flag1 = DebugFlagBit(flagNibble, 1)
+  local flag2 = DebugFlagBit(flagNibble, 2)
+  local flag4 = DebugFlagBit(flagNibble, 4)
+  local flag8 = DebugFlagBit(flagNibble, 8)
+  local positive = type(rawSlot) == "number" and (rawSlot < 32 and 1 or 0) or nil
+  local negative = type(rawSlot) == "number" and (rawSlot >= 32 and 1 or 0) or nil
+  local visible = type(flagNibble) == "number" and
+    ((flag2 + flag4 + flag8) > 0 and 1 or 0) or nil
+  local flagWordHex = type(flagWord) == "number" and
+    string.format("0x%08X", flagWord) or "nil"
+  local flagNibbleHex = type(flagNibble) == "number" and
+    string.format("0x%X", flagNibble) or "nil"
   local attackable = UnitCanAttack and UnitCanAttack("player", "target")
   local friendly = UnitIsFriend and UnitIsFriend("player", "target")
 
   DEFAULT_CHAT_FRAME:AddMessage(string.format(
-    "%s |cff66ccff[NP_AURA]|r %s lua=%s raw=%s spell=%s(%s) x=%s state=%s aura=%s flag=%s attr=%s ex=%s attack=%s friend=%s",
+    "%s |cff66ccff[NP_AURA]|r %s lua=%s raw=%s spell=%s(%s) x=%s state=%s aura=%s af[%s]=%s(%s) slot=%s(%s) pos=%s neg=%s cancel=%s visible=%s bits[2,4,8]=%s,%s,%s attr=%s ex=%s attack=%s friend=%s",
     GetDebugTimestamp(), tostring(eventName), tostring(luaSlot),
     tostring(rawSlot), tostring(spellId), tostring(spellName), tostring(stacks),
-    tostring(state), tostring(slotSpell), tostring(flagNibble),
-    tostring(attributes), tostring(attributesEx), tostring(attackable),
-    tostring(friendly)
+    tostring(state), tostring(slotSpell), tostring(flagWordIndex),
+    tostring(flagWord), flagWordHex, tostring(flagNibble), flagNibbleHex,
+    tostring(positive), tostring(negative), tostring(flag1), tostring(visible),
+    tostring(flag2), tostring(flag4), tostring(flag8), tostring(attributes),
+    tostring(attributesEx), tostring(attackable), tostring(friendly)
   ))
 end
 

@@ -60,7 +60,7 @@ local auras = { [1] = 101, [3] = 202, [33] = 303 }
 GetUnitField = function(_, field)
   if field == "aura" then return auras end
   if field == "auraApplications" then return {} end
-  if field == "auraFlags" then return { [1] = 8, [5] = 10 } end
+  if field == "auraFlags" then return { [1] = 9, [5] = 10 } end
 end
 GetSpellRecField = function(spellId, field)
   if field == "name" then
@@ -131,7 +131,10 @@ assert(HasChatText("BUFF_ADDED_OTHER"))
 assert(HasChatText("DEBUFF_ADDED_OTHER"))
 assert(HasChatText("raw=32"))
 assert(HasChatText("x=0 state=0"))
-assert(HasChatText("aura=303 flag=10"))
+assert(HasChatText("af[1]=9(0x00000009) slot=9(0x9)"))
+assert(HasChatText("pos=1 neg=0 cancel=1 visible=1 bits[2,4,8]=0,0,1"))
+assert(HasChatText("af[5]=10(0x0000000A) slot=10(0xA)"))
+assert(HasChatText("pos=0 neg=1 cancel=0 visible=1 bits[2,4,8]=1,0,1"))
 assert(HasChatText("attr=3030 ex=128"))
 assert(HasChatText("attack=1 friend=nil"))
 assert(not HasChatText("[DEBUFF_ADDED]"))
