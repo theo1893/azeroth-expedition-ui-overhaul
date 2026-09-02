@@ -350,8 +350,10 @@ end
 -- Debug Stats
 pfUI.libdebuff_debugstats = pfUI.libdebuff_debugstats or {
   enabled = false,
+  nampower_aura_logging = false,
   trackAllUnits = false,
   aura_cast = 0,
+  nampower_aura_events = 0,
   debuff_added = 0,
   debuff_removed = 0,
   getunitfield_calls = 0,
@@ -376,6 +378,63 @@ end
 
 local function GetDebugTimestamp()
   return string.format("[%.3f]", GetTime())
+end
+
+local function DebugUnitField(guid, field)
+  if not GetUnitField then return nil end
+  local ok, value = pcall(GetUnitField, guid, field)
+  if ok then return value end
+end
+
+local function DebugSpellField(spellId, field)
+  if not GetSpellRecField or not spellId then return nil end
+  local ok, value = pcall(GetSpellRecField, spellId, field)
+  if ok then return value end
+end
+
+function libdebuff:DebugNampowerAuraEvent(
+  eventName, guid, luaSlot, spellId, stacks, auraLevel, rawSlot, state
+)
+  if not debugStats.nampower_aura_logging or
+    (eventName ~= "BUFF_ADDED_SELF" and
+      eventName ~= "BUFF_ADDED_OTHER" and
+      eventName ~= "DEBUFF_ADDED_OTHER") or
+    not IsCurrentTarget(guid) then return end
+
+  debugStats.nampower_aura_events =
+    (debugStats.nampower_aura_events or 0) + 1
+
+  local auraIndex = type(rawSlot) == "number" and rawSlot + 1 or nil
+  local auras = DebugUnitField(guid, "aura")
+  local slotSpell = auraIndex and auras and auras[auraIndex] or nil
+  local flagWordIndex, flagWord, flagNibble
+  if auraIndex and rawSlot >= 0 and rawSlot <= 47 then
+    flagWordIndex = math.floor(rawSlot / 8) + 1
+    local flags = DebugUnitField(guid, "auraFlags")
+    flagWord = flags and flags[flagWordIndex] or nil
+    if type(flagWord) == "number" then
+      local divisor = 1
+      local offset = rawSlot - math.floor(rawSlot / 8) * 8
+      for _ = 1, offset do divisor = divisor * 16 end
+      local shifted = math.floor(flagWord / divisor)
+      flagNibble = shifted - math.floor(shifted / 16) * 16
+    end
+  end
+
+  local spellName = DebugSpellField(spellId, "name")
+  local attributes = DebugSpellField(spellId, "attributes")
+  local attributesEx = DebugSpellField(spellId, "attributesEx")
+  local attackable = UnitCanAttack and UnitCanAttack("player", "target")
+  local friendly = UnitIsFriend and UnitIsFriend("player", "target")
+
+  DEFAULT_CHAT_FRAME:AddMessage(string.format(
+    "%s |cff66ccff[NP_AURA]|r %s lua=%s raw=%s spell=%s(%s) x=%s state=%s aura=%s flag=%s attr=%s ex=%s attack=%s friend=%s",
+    GetDebugTimestamp(), tostring(eventName), tostring(luaSlot),
+    tostring(rawSlot), tostring(spellId), tostring(spellName), tostring(stacks),
+    tostring(state), tostring(slotSpell), tostring(flagNibble),
+    tostring(attributes), tostring(attributesEx), tostring(attackable),
+    tostring(friendly)
+  ))
 end
 
 -- Speichert die Ranks der zuletzt gecasteten Spells
@@ -1369,6 +1428,12 @@ if hasNampower then
   frame:RegisterEvent("UNIT_HEALTH")
   
   frame:SetScript("OnEvent", function()
+    if event == "DEBUFF_ADDED_OTHER" or event == "DEBUFF_REMOVED_OTHER" then
+      libdebuff:DebugNampowerAuraEvent(
+        event, arg1, arg2, arg3, arg4, arg5, arg6, arg7
+      )
+    end
+
     if event == "PLAYER_LOGOUT" then
       this:UnregisterAllEvents()
       this:SetScript("OnEvent", nil)
@@ -2129,6 +2194,9 @@ if hasNampower then
   buffFrame:RegisterEvent("BUFF_REMOVED_SELF")
   buffFrame:RegisterEvent("BUFF_REMOVED_OTHER")
   buffFrame:SetScript("OnEvent", function()
+    libdebuff:DebugNampowerAuraEvent(
+      event, arg1, arg2, arg3, arg4, arg5, arg6, arg7
+    )
     HandleBuffOwnershipEvent(event, arg1, arg3, arg6, arg7)
     libdebuff:NotifyUnitFrameAuras(arg1)
   end)
@@ -2154,22 +2222,31 @@ _G.SLASH_LIBDEBUGSTATS1 = "/libdebugstats"
 _G.SlashCmdList["LIBDEBUGSTATS"] = function(msg)
   msg = string.lower(msg or "")
   
-  if msg == "start" then
-    debugStats.enabled = true
+  if msg == "start" or msg == "verbose" then
+    debugStats.enabled = msg == "verbose"
+    debugStats.nampower_aura_logging = true
     debugStats.trackAllUnits = false
     debugStats.aura_cast = 0
+    debugStats.nampower_aura_events = 0
     debugStats.debuff_added = 0
     debugStats.debuff_removed = 0
     debugStats.getunitfield_calls = 0
-    DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00[libdebuff]|r Debug tracking STARTED")
+    DEFAULT_CHAT_FRAME:AddMessage(msg == "verbose" and
+      "|cff00ff00[libdebuff]|r Verbose debug tracking STARTED" or
+      "|cff00ff00[libdebuff]|r Current-target Aura log STARTED")
     
   elseif msg == "stop" then
     debugStats.enabled = false
+    debugStats.nampower_aura_logging = false
     DEFAULT_CHAT_FRAME:AddMessage("|cffff9900[libdebuff]|r Debug tracking STOPPED")
     
   elseif msg == "stats" then
     DEFAULT_CHAT_FRAME:AddMessage("|cff00ffff=== LIBDEBUFF STATS (GetUnitField Edition) ===|r")
     DEFAULT_CHAT_FRAME:AddMessage(string.format("AURA_CAST events: %d", debugStats.aura_cast))
+    DEFAULT_CHAT_FRAME:AddMessage(string.format(
+      "Nampower target aura events: %d",
+      debugStats.nampower_aura_events or 0
+    ))
     DEFAULT_CHAT_FRAME:AddMessage(string.format("DEBUFF_ADDED events: %d", debugStats.debuff_added))
     DEFAULT_CHAT_FRAME:AddMessage(string.format("DEBUFF_REMOVED events: %d", debugStats.debuff_removed))
     DEFAULT_CHAT_FRAME:AddMessage(string.format("GetUnitField calls: %d", debugStats.getunitfield_calls))
@@ -2209,7 +2286,8 @@ _G.SlashCmdList["LIBDEBUGSTATS"] = function(msg)
     
   else
     DEFAULT_CHAT_FRAME:AddMessage("|cff00ffff[libdebuff] GetUnitField Edition - Commands:|r")
-    DEFAULT_CHAT_FRAME:AddMessage("  /libdebugstats start - Start debug tracking")
+    DEFAULT_CHAT_FRAME:AddMessage("  /libdebugstats start - Log current-target Aura additions")
+    DEFAULT_CHAT_FRAME:AddMessage("  /libdebugstats verbose - Include legacy debug logs")
     DEFAULT_CHAT_FRAME:AddMessage("  /libdebugstats stop  - Stop debug tracking")
     DEFAULT_CHAT_FRAME:AddMessage("  /libdebugstats stats - Show statistics")
     DEFAULT_CHAT_FRAME:AddMessage("  /libdebugstats target - Show target debuff state")
