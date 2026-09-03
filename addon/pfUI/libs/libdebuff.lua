@@ -188,10 +188,10 @@ pfUI.libdebuff_aura_cast_on_self_hooks = pfUI.libdebuff_aura_cast_on_self_hooks 
 -- 在 AURA_CAST_ON_OTHER 处理后触发的回调：fn(spellId, casterGuid, targetGuid)
 pfUI.libdebuff_aura_cast_on_other_hooks = pfUI.libdebuff_aura_cast_on_other_hooks or {}
 
--- 在 DEBUFF_ADDED_OTHER 处理后触发的回调：fn(guid, luaSlot, spellId, stackCount)
+-- 在语义 Debuff 添加处理后触发的回调：fn(guid, luaSlot, spellId, stackCount)
 pfUI.libdebuff_debuff_added_other_hooks = pfUI.libdebuff_debuff_added_other_hooks or {}
 
--- 在 DEBUFF_REMOVED_OTHER 处理后触发的回调：fn(guid, luaSlot, spellId, stackCount)
+-- 在语义 Debuff 移除处理后触发的回调：fn(guid, luaSlot, spellId, stackCount)
 pfUI.libdebuff_debuff_removed_other_hooks = pfUI.libdebuff_debuff_removed_other_hooks or {}
 
 -- 在 UNIT_HEALTH 处理后触发的回调：fn(unitToken)
@@ -386,16 +386,62 @@ local function DebugUnitField(guid, field)
   if ok then return value end
 end
 
-local function DebugSpellField(spellId, field)
-  if not GetSpellRecField or not spellId then return nil end
-  local ok, value = pcall(GetSpellRecField, spellId, field)
-  if ok then return value end
-end
-
-local function DebugFlagBit(value, mask)
+local function AuraFlagBit(value, mask)
   if type(value) ~= "number" then return nil end
   local shifted = math.floor(value / mask)
   return shifted - math.floor(shifted / 2) * 2
+end
+
+local function GetAuraFlagNibble(flags, auraSlot)
+  if type(flags) ~= "table" or type(auraSlot) ~= "number" or
+    auraSlot < 1 or auraSlot > 48 then return nil end
+
+  local rawSlot = auraSlot - 1
+  local wordIndex = math.floor(rawSlot / 8) + 1
+  local word = flags[wordIndex]
+  if type(word) ~= "number" then return nil end
+
+  local offset = rawSlot - math.floor(rawSlot / 8) * 8
+  local divisor = 1
+  for _ = 1, offset do divisor = divisor * 16 end
+  local shifted = math.floor(word / divisor)
+  return shifted - math.floor(shifted / 16) * 16
+end
+
+function libdebuff:NormalizeOtherAuraEvent(eventName, guid, spellId, rawSlot)
+  local added = eventName == "BUFF_ADDED_OTHER" or
+    eventName == "DEBUFF_ADDED_OTHER"
+  local removed = eventName == "BUFF_REMOVED_OTHER" or
+    eventName == "DEBUFF_REMOVED_OTHER"
+  if not added and not removed then return nil end
+
+  local auraSlot = type(rawSlot) == "number" and rawSlot >= 0 and
+    rawSlot <= 47 and rawSlot + 1 or nil
+  local kind
+
+  if added and guid and auraSlot and GetUnitField then
+    local flags = GetUnitField(guid, "auraFlags")
+    local nibble = GetAuraFlagNibble(flags, auraSlot)
+    if AuraFlagBit(nibble, 8) == 1 then
+      kind = "DEBUFF"
+    elseif AuraFlagBit(nibble, 4) == 1 then
+      kind = "BUFF"
+    end
+  elseif removed and guid and auraSlot then
+    local ownership = slotOwnership[guid] and slotOwnership[guid][auraSlot]
+    if ownership and ownership.spellId == spellId then
+      kind = "DEBUFF"
+    else
+      ownership = buffOwnership[guid] and buffOwnership[guid][auraSlot]
+      if ownership and ownership.spellId == spellId then kind = "BUFF" end
+    end
+  end
+
+  if not kind then
+    kind = (eventName == "DEBUFF_ADDED_OTHER" or
+      eventName == "DEBUFF_REMOVED_OTHER") and "DEBUFF" or "BUFF"
+  end
+  return kind .. (added and "_ADDED_OTHER" or "_REMOVED_OTHER")
 end
 
 function libdebuff:DebugNampowerAuraEvent(
@@ -411,49 +457,35 @@ function libdebuff:DebugNampowerAuraEvent(
     (debugStats.nampower_aura_events or 0) + 1
 
   local auraIndex = type(rawSlot) == "number" and rawSlot + 1 or nil
-  local auras = DebugUnitField(guid, "aura")
-  local slotSpell = auraIndex and auras and auras[auraIndex] or nil
-  local flagWordIndex, flagWord, flagNibble
+  local flagNibble
   if auraIndex and rawSlot >= 0 and rawSlot <= 47 then
-    flagWordIndex = math.floor(rawSlot / 8) + 1
     local flags = DebugUnitField(guid, "auraFlags")
-    flagWord = flags and flags[flagWordIndex] or nil
-    if type(flagWord) == "number" then
-      local divisor = 1
-      local offset = rawSlot - math.floor(rawSlot / 8) * 8
-      for _ = 1, offset do divisor = divisor * 16 end
-      local shifted = math.floor(flagWord / divisor)
-      flagNibble = shifted - math.floor(shifted / 16) * 16
-    end
+    flagNibble = GetAuraFlagNibble(flags, auraIndex)
   end
 
-  local spellName = DebugSpellField(spellId, "name")
-  local attributes = DebugSpellField(spellId, "attributes")
-  local attributesEx = DebugSpellField(spellId, "attributesEx")
-  local flag1 = DebugFlagBit(flagNibble, 1)
-  local flag2 = DebugFlagBit(flagNibble, 2)
-  local flag4 = DebugFlagBit(flagNibble, 4)
-  local flag8 = DebugFlagBit(flagNibble, 8)
-  local positive = type(rawSlot) == "number" and (rawSlot < 32 and 1 or 0) or nil
-  local negative = type(rawSlot) == "number" and (rawSlot >= 32 and 1 or 0) or nil
-  local visible = type(flagNibble) == "number" and
-    ((flag2 + flag4 + flag8) > 0 and 1 or 0) or nil
-  local flagWordHex = type(flagWord) == "number" and
-    string.format("0x%08X", flagWord) or "nil"
+  local flag4 = AuraFlagBit(flagNibble, 4)
+  local flag8 = AuraFlagBit(flagNibble, 8)
+  local auraKind
+  if flag8 == 1 then
+    auraKind = "DEBUFF"
+  elseif flag4 == 1 then
+    auraKind = "BUFF"
+  elseif eventName == "DEBUFF_ADDED_OTHER" then
+    auraKind = "DEBUFF"
+  else
+    auraKind = "BUFF"
+  end
+  local spellName = GetSpellRecField and
+    GetSpellRecField(spellId, "name") or "?"
   local flagNibbleHex = type(flagNibble) == "number" and
-    string.format("0x%X", flagNibble) or "nil"
-  local attackable = UnitCanAttack and UnitCanAttack("player", "target")
-  local friendly = UnitIsFriend and UnitIsFriend("player", "target")
+    string.format("%X", flagNibble) or "nil"
 
   DEFAULT_CHAT_FRAME:AddMessage(string.format(
-    "%s |cff66ccff[NP_AURA]|r %s lua=%s raw=%s spell=%s(%s) x=%s state=%s aura=%s af[%s]=%s(%s) slot=%s(%s) pos=%s neg=%s cancel=%s visible=%s bits[2,4,8]=%s,%s,%s attr=%s ex=%s attack=%s friend=%s",
-    GetDebugTimestamp(), tostring(eventName), tostring(luaSlot),
-    tostring(rawSlot), tostring(spellId), tostring(spellName), tostring(stacks),
-    tostring(state), tostring(slotSpell), tostring(flagWordIndex),
-    tostring(flagWord), flagWordHex, tostring(flagNibble), flagNibbleHex,
-    tostring(positive), tostring(negative), tostring(flag1), tostring(visible),
-    tostring(flag2), tostring(flag4), tostring(flag8), tostring(attributes),
-    tostring(attributesEx), tostring(attackable), tostring(friendly)
+    "|cff66ccff[%s]|r %s(%s,%s,%s,%s,%s,%s,%s) %s f=%s",
+    auraKind, tostring(eventName), DebugGuid(guid),
+    tostring(luaSlot), tostring(spellId), tostring(stacks),
+    tostring(auraLevel), tostring(rawSlot), tostring(state),
+    tostring(spellName), flagNibbleHex
   ))
 end
 
@@ -559,6 +591,7 @@ local function GetDebuffSlotMap(guid)
   
   -- Fetch stacks array (reusable reference - extract values immediately)
   local auraApps = GetUnitField(guid, "auraApplications")
+  local auraFlags = GetUnitField(guid, "auraFlags")
   
   if debugStats.enabled then
     debugStats.getunitfield_calls = debugStats.getunitfield_calls + 1
@@ -583,7 +616,12 @@ local function GetDebuffSlotMap(guid)
       else
         local ownership = slotOwnership[guid] and slotOwnership[guid][auraSlot]
         local ownedDebuff = ownership and ownership.spellId == spellId
-        if IsHarmfulSpellId(spellId) or ownedDebuff then
+        local harmfulFlag = AuraFlagBit(
+          GetAuraFlagNibble(auraFlags, auraSlot), 8
+        )
+        if harmfulFlag == 1 or
+          (harmfulFlag == nil and IsHarmfulSpellId(spellId)) or ownedDebuff
+        then
           outputSlot = 16 + auraSlot
         end
       end
@@ -709,7 +747,7 @@ function libdebuff:UpdateBuffOwnershipFromCast(
   end
 end
 
-local function HandleBuffOwnershipEvent(
+function libdebuff:HandleBuffOwnershipEvent(
   eventName, guid, spellId, auraSlot_0based, state
 )
   if not guid or not spellId then return end
@@ -1442,13 +1480,18 @@ if hasNampower then
   frame:RegisterEvent("SPELL_CAST_EVENT")
   frame:RegisterEvent("AURA_CAST_ON_SELF")
   frame:RegisterEvent("AURA_CAST_ON_OTHER")
+  frame:RegisterEvent("BUFF_ADDED_OTHER")
+  frame:RegisterEvent("BUFF_REMOVED_OTHER")
   frame:RegisterEvent("DEBUFF_ADDED_OTHER")
   frame:RegisterEvent("DEBUFF_REMOVED_OTHER")
   frame:RegisterEvent("PLAYER_TARGET_CHANGED")
   frame:RegisterEvent("UNIT_HEALTH")
   
   frame:SetScript("OnEvent", function()
-    if event == "DEBUFF_ADDED_OTHER" or event == "DEBUFF_REMOVED_OTHER" then
+    local auraEvent = libdebuff:NormalizeOtherAuraEvent(
+      event, arg1, arg3, arg6
+    )
+    if auraEvent then
       libdebuff:DebugNampowerAuraEvent(
         event, arg1, arg2, arg3, arg4, arg5, arg6, arg7
       )
@@ -1938,7 +1981,7 @@ if hasNampower then
         end
       end
 
-    elseif event == "DEBUFF_ADDED_OTHER" then
+    elseif auraEvent == "DEBUFF_ADDED_OTHER" then
       local guid = arg1
       local displaySlot = arg2
       local spellId = arg3
@@ -1946,6 +1989,7 @@ if hasNampower then
       local auraSlot_0based = arg6
 
       local auraSlot = auraSlot_0based and (auraSlot_0based + 1) or nil
+      if auraSlot and auraSlot <= 32 then displaySlot = 16 + auraSlot end
 
       slotMapCache[guid] = nil
       
@@ -2091,7 +2135,7 @@ if hasNampower then
         end
       end
 
-    elseif event == "DEBUFF_REMOVED_OTHER" then
+    elseif auraEvent == "DEBUFF_REMOVED_OTHER" then
       local guid = arg1
       local displaySlot = arg2  -- Display slot (1-16), compacted
       local spellId = arg3
@@ -2099,6 +2143,7 @@ if hasNampower then
 
       -- Convert 0-based (Nampower event) to 1-based (Lua GetUnitField array)
       local auraSlot = auraSlot_0based and (auraSlot_0based + 1) or nil
+      if auraSlot and auraSlot <= 32 then displaySlot = 16 + auraSlot end
 
       -- Invalidate slot map cache for this GUID
       slotMapCache[guid] = nil
@@ -2186,6 +2231,14 @@ if hasNampower then
         end
       end
 
+    elseif auraEvent == "BUFF_ADDED_OTHER" or
+      auraEvent == "BUFF_REMOVED_OTHER"
+    then
+      libdebuff:HandleBuffOwnershipEvent(
+        auraEvent, arg1, arg3, arg6, arg7
+      )
+      libdebuff:NotifyUnitFrameAuras(arg1)
+
     elseif event == "PLAYER_TARGET_CHANGED" then
       if not GetUnitGUID then return end
       local targetGuid = GetUnitGUID("target")
@@ -2210,14 +2263,12 @@ if hasNampower then
 
   local buffFrame = CreateFrame("Frame")
   buffFrame:RegisterEvent("BUFF_ADDED_SELF")
-  buffFrame:RegisterEvent("BUFF_ADDED_OTHER")
   buffFrame:RegisterEvent("BUFF_REMOVED_SELF")
-  buffFrame:RegisterEvent("BUFF_REMOVED_OTHER")
   buffFrame:SetScript("OnEvent", function()
     libdebuff:DebugNampowerAuraEvent(
       event, arg1, arg2, arg3, arg4, arg5, arg6, arg7
     )
-    HandleBuffOwnershipEvent(event, arg1, arg3, arg6, arg7)
+    libdebuff:HandleBuffOwnershipEvent(event, arg1, arg3, arg6, arg7)
     libdebuff:NotifyUnitFrameAuras(arg1)
   end)
   

@@ -60,7 +60,7 @@ local auras = { [1] = 101, [3] = 202, [33] = 303 }
 GetUnitField = function(_, field)
   if field == "aura" then return auras end
   if field == "auraApplications" then return {} end
-  if field == "auraFlags" then return { [1] = 9, [5] = 10 } end
+  if field == "auraFlags" then return { [1] = 2053, [5] = 8 } end
 end
 GetSpellRecField = function(spellId, field)
   if field == "name" then
@@ -72,7 +72,7 @@ GetSpellRecField = function(spellId, field)
   elseif field == "spellIconID" then
     return spellId
   elseif field == "attributesEx" then
-    return spellId == 101 and 0 or 128
+    return 0
   elseif field == "attributes" then
     return spellId * 10
   end
@@ -107,6 +107,11 @@ this = buffEventFrame
 buffEventFrame.OnEvent()
 
 event, arg1, arg2, arg3, arg4, arg5, arg6, arg7 =
+  "BUFF_ADDED_OTHER", "target-guid", 2, 202, 1, 63, 2, 0
+this = buffEventFrame
+buffEventFrame.OnEvent()
+
+event, arg1, arg2, arg3, arg4, arg5, arg6, arg7 =
   "DEBUFF_ADDED_OTHER", "target-guid", 1, 303, 0, 63, 32, 0
 this = eventFrame
 eventFrame.OnEvent()
@@ -126,28 +131,36 @@ local function CountChatText(text)
   return count
 end
 
-assert(CountChatText("[NP_AURA]") == 2)
-assert(HasChatText("BUFF_ADDED_OTHER"))
-assert(HasChatText("DEBUFF_ADDED_OTHER"))
-assert(HasChatText("raw=32"))
-assert(HasChatText("x=0 state=0"))
-assert(HasChatText("af[1]=9(0x00000009) slot=9(0x9)"))
-assert(HasChatText("pos=1 neg=0 cancel=1 visible=1 bits[2,4,8]=0,0,1"))
-assert(HasChatText("af[5]=10(0x0000000A) slot=10(0xA)"))
-assert(HasChatText("pos=0 neg=1 cancel=0 visible=1 bits[2,4,8]=1,0,1"))
-assert(HasChatText("attr=3030 ex=128"))
-assert(HasChatText("attack=1 friend=nil"))
+assert(CountChatText("_ADDED_OTHER(") == 3)
+assert(HasChatText("[BUFF]|r BUFF_ADDED_OTHER(guid,1,101,1,63,0,0) Rallying Cry f=5"))
+assert(HasChatText("[DEBUFF]|r BUFF_ADDED_OTHER(guid,2,202,1,63,2,0) Known Debuff f=8"))
+assert(HasChatText("[DEBUFF]|r DEBUFF_ADDED_OTHER(guid,1,303,0,63,32,0) Regular Debuff f=8"))
 assert(not HasChatText("[DEBUFF_ADDED]"))
+
+local buffOwnership = pfUI.libdebuff_buff_ownership["target-guid"]
+local slotOwnership = pfUI.libdebuff_slot_ownership["target-guid"]
+assert(buffOwnership and buffOwnership[1].spellId == 101)
+assert(not buffOwnership[3])
+assert(slotOwnership and slotOwnership[3].spellId == 202)
 
 lib:DebugNampowerAuraEvent(
   "DEBUFF_REMOVED_OTHER", "target-guid", 1, 303, 0, 63, 32, 0
 )
-assert(CountChatText("[NP_AURA]") == 2)
+assert(CountChatText("_ADDED_OTHER(") == 3)
 
 assert(lib:IsOverflowBuff("target", 1) == false)
 assert(lib:IsOverflowBuff("target", 2) == true)
 assert((lib:UnitDebuff("target", 19)) == "Known Debuff")
 assert((lib:UnitDebuff("target", 1)) == "Regular Debuff")
+
+auras[3] = nil
+event, arg1, arg2, arg3, arg4, arg5, arg6, arg7 =
+  "BUFF_REMOVED_OTHER", "target-guid", 2, 202, 0, 63, 2, 1
+this = eventFrame
+eventFrame.OnEvent()
+assert(not pfUI.libdebuff_slot_ownership["target-guid"][3])
+assert(lib:IsOverflowBuff("target", 2) == false)
+assert((lib:UnitDebuff("target", 19)) == nil)
 assert(targetFrame.update_aura == true)
 assert(focusFrame.update_aura == true)
 
