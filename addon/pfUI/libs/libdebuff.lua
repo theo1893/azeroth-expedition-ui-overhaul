@@ -3,12 +3,10 @@ setfenv(1, pfUI:GetEnvironment())
 
 --[[ libdebuff - GetUnitField 版本 ]]--
 -- 一个 pfUI 库，用于检测并保存所有玩家、NPC 和敌人的持续减益效果。
--- 
--- 重大重写：现在使用 GetUnitField 进行槽位映射，取代手动移位。
--- 关键洞察：常规减益在 33-48，第 17-48 个减益会溢出到 1-32 的增益槽。
--- 只有显示槽位（UnitDebuff 返回的 1,2,3...）会被压缩。
 --
--- 这消除了大约 400 行容易出错的移位逻辑，同时保持完整的多施法者追踪支持。
+-- 槽位映射来自 GetUnitField，而不是手动移位：常规减益占用真实光环槽
+-- 33-48，第 17 个及之后的减益溢出到 1-32 的增益槽；只有 UnitDebuff 返回的
+-- 显示槽位（1,2,3...）才是被压缩过的。多施法者追踪由本文件的所有权表维护。
 --
 --  libdebuff:UnitDebuff(unit, id)
 --    返回指定单位上指定效果的减益信息。
@@ -28,19 +26,53 @@ end
 local libdebuff = CreateFrame("Frame", "pfdebuffsScanner", UIParent)
 local scanner = libtipscan:GetScanner("libdebuff")
 local _, class = UnitClass("player")
-local lastspell
 
+-- ============================================================================
 -- Nampower 支持
-local hasNampower = false
+-- ============================================================================
 
--- 立即设置 hasNampower 以便功能正常
-if GetNampowerVersion then
+local function IsNampowerAtLeast(major, minor, patch)
+  if not GetNampowerVersion then return false end
+  local haveMajor, haveMinor, havePatch = GetNampowerVersion()
+  havePatch = havePatch or 0
+  if haveMajor ~= major then return haveMajor > major end
+  if haveMinor ~= minor then return haveMinor > minor end
+  return havePatch >= patch
+end
+
+local function GetNampowerVersionString()
   local major, minor, patch = GetNampowerVersion()
-  patch = patch or 0
-  -- 最低要求版本：2.41.0（支持 CastSpellByName unitStr、SetMouseoverUnit）
-  if major > 2 or (major == 2 and minor > 41) or (major == 2 and minor == 41 and patch >= 0) then
-    hasNampower = true
+  return major .. "." .. minor .. "." .. (patch or 0)
+end
+
+-- 最低要求版本：2.41.0（支持 CastSpellByName unitStr、SetMouseoverUnit）
+local hasNampower = IsNampowerAtLeast(2, 41, 0)
+
+-- GetUnitField 模式需要的事件 CVar
+local nampowerCVars = {
+  "NP_EnableSpellStartEvents",
+  "NP_EnableSpellGoEvents",
+  "NP_EnableAuraCastEvents",
+  "NP_EnableAutoAttackEvents",
+  "NP_EnableSpellHealEvents",
+}
+
+-- 返回：本次启用数量、原本已启用数量、读写失败数量
+local function EnableNampowerCVars()
+  local enabled, alreadyEnabled, failed = 0, 0, 0
+  for _, cvar in ipairs(nampowerCVars) do
+    local success, currentValue = pcall(GetCVar, cvar)
+    if not success or not currentValue then
+      failed = failed + 1
+    elseif currentValue == "1" then
+      alreadyEnabled = alreadyEnabled + 1
+    elseif pcall(SetCVar, cvar, "1") then
+      enabled = enabled + 1
+    else
+      failed = failed + 1
+    end
   end
+  return enabled, alreadyEnabled, failed
 end
 
 -- Nampower 启动检查：显示版本信息并确保 CVar 已设置。
@@ -54,64 +86,37 @@ nampowerCheckFrame:SetScript("OnEvent", function()
     this:UnregisterAllEvents()
     this:SetScript("OnEvent", nil)
 
-    if GetNampowerVersion then
-      local major, minor, patch = GetNampowerVersion()
-      patch = patch or 0
-      local versionString = major .. "." .. minor .. "." .. patch
-
-      if major > 3 or (major == 3 and minor > 0) or (major == 3 and minor == 0 and patch >= 0) then
-        DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99[libdebuff]|r 检测到 Nampower v" .. versionString .. " - GetUnitField 模式已启用！")
-
-        if SetCVar and GetCVar then
-          local cvarsToEnable = {
-            "NP_EnableSpellStartEvents",
-            "NP_EnableSpellGoEvents",
-            "NP_EnableAuraCastEvents",
-            "NP_EnableAutoAttackEvents",
-            "NP_EnableSpellHealEvents", 
-          }
-          local enabledCount = 0
-          local alreadyEnabledCount = 0
-          local failedCount = 0
-
-          for _, cvar in ipairs(cvarsToEnable) do
-            local success, currentValue = pcall(GetCVar, cvar)
-            if success and currentValue then
-              if currentValue == "1" then
-                alreadyEnabledCount = alreadyEnabledCount + 1
-              else
-                local setSuccess = pcall(SetCVar, cvar, "1")
-                if setSuccess then enabledCount = enabledCount + 1
-                else failedCount = failedCount + 1 end
-              end
-            else
-              failedCount = failedCount + 1
-            end
-          end
-
-          if enabledCount > 0 then
-            DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99[libdebuff]|r 已启用 " .. enabledCount .. " 个 Nampower CVar")
-          elseif alreadyEnabledCount == table.getn(cvarsToEnable) then
-            DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99[libdebuff]|r 所有必需的 Nampower CVar 均已启用")
-          end
-          if failedCount > 0 then
-            DEFAULT_CHAT_FRAME:AddMessage("|cffffcc00[libdebuff]|r 警告：无法检查/设置 " .. failedCount .. " 个 CVar")
-          end
-        end
-
-      else
-        DEFAULT_CHAT_FRAME:AddMessage("|cffff0000[libdebuff] 减益追踪已禁用！请将 Nampower 更新到 v3.0.0 或更高版本。|r")
-        StaticPopup_Show("LIBDEBUFF_NAMPOWER_UPDATE", versionString)
-      end
-    else
+    if not GetNampowerVersion then
       DEFAULT_CHAT_FRAME:AddMessage("|cffff0000[libdebuff] 未找到 Nampower！减益追踪已禁用。|r")
       StaticPopup_Show("LIBDEBUFF_NAMPOWER_MISSING")
+      return
+    end
+
+    local versionString = GetNampowerVersionString()
+    if not IsNampowerAtLeast(3, 0, 0) then
+      DEFAULT_CHAT_FRAME:AddMessage("|cffff0000[libdebuff] 减益追踪已禁用！请将 Nampower 更新到 v3.0.0 或更高版本。|r")
+      StaticPopup_Show("LIBDEBUFF_NAMPOWER_UPDATE", versionString)
+      return
+    end
+
+    DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99[libdebuff]|r 检测到 Nampower v" .. versionString .. " - GetUnitField 模式已启用！")
+
+    if not SetCVar or not GetCVar then return end
+
+    local enabled, alreadyEnabled, failed = EnableNampowerCVars()
+    if enabled > 0 then
+      DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99[libdebuff]|r 已启用 " .. enabled .. " 个 Nampower CVar")
+    elseif alreadyEnabled == table.getn(nampowerCVars) then
+      DEFAULT_CHAT_FRAME:AddMessage("|cff33ff99[libdebuff]|r 所有必需的 Nampower CVar 均已启用")
+    end
+    if failed > 0 then
+      DEFAULT_CHAT_FRAME:AddMessage("|cffffcc00[libdebuff]|r 警告：无法检查/设置 " .. failed .. " 个 CVar")
     end
   end)
 end)
 
 -- ============================================================================
--- 数据结构（简化 - 不再需要手动槽位追踪！）
+-- 数据结构
 -- ============================================================================
 
 -- ownDebuffs: [targetGUID][spellName] = {startTime, duration, texture, rank}
@@ -167,55 +172,52 @@ pfUI.libdebuff_all_slots = pfUI.libdebuff_all_slots or {}
 pfUI.libdebuff_recent_casts = pfUI.libdebuff_recent_casts or {}
 local recentCasts = pfUI.libdebuff_recent_casts
 
--- 在 SPELL_GO_SELF 处理后触发的回调：fn(spellId, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
-pfUI.libdebuff_spell_go_hooks = pfUI.libdebuff_spell_go_hooks or {}
+-- 记录最近施放法术的等级
+pfUI.libdebuff_lastranks = pfUI.libdebuff_lastranks or {}
+local lastCastRanks = pfUI.libdebuff_lastranks
 
--- 在 SPELL_GO_OTHER 处理后触发的回调：fn(spellId, casterGuid, targetGuid)
-pfUI.libdebuff_spell_go_other_hooks = pfUI.libdebuff_spell_go_other_hooks or {}
-
--- 在 SPELL_START_SELF 处理后触发的回调：fn(spellId, casterGuid, targetGuid, castTime)
-pfUI.libdebuff_spell_start_self_hooks = pfUI.libdebuff_spell_start_self_hooks or {}
-
--- 在 SPELL_START_OTHER 处理后触发的回调：fn(spellId, casterGuid, targetGuid, castTime)
-pfUI.libdebuff_spell_start_other_hooks = pfUI.libdebuff_spell_start_other_hooks or {}
-
--- 在 SPELL_FAILED_OTHER 处理后触发的回调：fn(casterGuid, spellId)
-pfUI.libdebuff_spell_failed_other_hooks = pfUI.libdebuff_spell_failed_other_hooks or {}
-
--- 在 AURA_CAST_ON_SELF 处理后触发的回调：fn(spellId, casterGuid, targetGuid)
-pfUI.libdebuff_aura_cast_on_self_hooks = pfUI.libdebuff_aura_cast_on_self_hooks or {}
-
--- 在 AURA_CAST_ON_OTHER 处理后触发的回调：fn(spellId, casterGuid, targetGuid)
-pfUI.libdebuff_aura_cast_on_other_hooks = pfUI.libdebuff_aura_cast_on_other_hooks or {}
-
--- 在语义 Debuff 添加处理后触发的回调：fn(guid, luaSlot, spellId, stackCount)
-pfUI.libdebuff_debuff_added_other_hooks = pfUI.libdebuff_debuff_added_other_hooks or {}
-
--- 在语义 Debuff 移除处理后触发的回调：fn(guid, luaSlot, spellId, stackCount)
-pfUI.libdebuff_debuff_removed_other_hooks = pfUI.libdebuff_debuff_removed_other_hooks or {}
-
--- 在 UNIT_HEALTH 处理后触发的回调：fn(unitToken)
-pfUI.libdebuff_unit_health_hooks = pfUI.libdebuff_unit_health_hooks or {}
-
--- 在 PLAYER_TARGET_CHANGED 处理后触发的回调：fn()
-pfUI.libdebuff_player_target_changed_hooks = pfUI.libdebuff_player_target_changed_hooks or {}
-
--- 在 UNIT_DIED 处理后触发的回调：fn(guid)
-pfUI.libdebuff_unit_died_hooks = pfUI.libdebuff_unit_died_hooks or {}
-
--- 在 SPELL_CAST_EVENT 处理后触发的回调：fn(success, spellId, castType, targetGuid)
-pfUI.libdebuff_spell_cast_hooks = pfUI.libdebuff_spell_cast_hooks or {}
-local AURA_CAST_DEDUPE_WINDOW = 0.1  -- 100ms 内的重复事件忽略
-
--- 从 SPELL_CAST_EVENT 捕获的连击点数（在客户端消耗之前）
--- SPELL_CAST_EVENT 在 UnitAura 更新之前触发，因此 GetComboPoints() 仍然有效
-local capturedCP = nil
+-- 记录施放失败的法术
+pfUI.libdebuff_lastfailed = pfUI.libdebuff_lastfailed or {}
+local lastFailedSpells = pfUI.libdebuff_lastfailed
 
 -- libpredict 的待处理施法信息（治疗预判目标追踪）
 -- SPELL_CAST_EVENT 在 SPELLCAST_START 之前触发并带有 targetGuid，
 -- 这使得 libpredict 能够知道队列中施法的正确目标。
 -- 字段：{ spellId, spellName, targetGuid, time }
 pfUI.libpredict_pending_cast = pfUI.libpredict_pending_cast or {}
+
+-- 外部模块把回调写入 pfUI.libdebuff_<name>，libdebuff 在对应事件处理完成后
+-- 依次触发。这里只负责创建缺失的表，已存在的表保持原引用。
+local hookTables = {
+  "spell_go_hooks",              -- fn(spellId, arg1..arg7) 处理 SPELL_GO_SELF 后
+  "spell_go_other_hooks",        -- fn(spellId, casterGuid, targetGuid)
+  "spell_start_self_hooks",      -- fn(spellId, casterGuid, targetGuid, castTime)
+  "spell_start_other_hooks",     -- fn(spellId, casterGuid, targetGuid, castTime)
+  "spell_failed_other_hooks",    -- fn(casterGuid, spellId)
+  "aura_cast_on_self_hooks",     -- fn(spellId, casterGuid, targetGuid)
+  "aura_cast_on_other_hooks",    -- fn(spellId, casterGuid, targetGuid)
+  "debuff_added_other_hooks",    -- fn(guid, luaSlot, spellId, stackCount)
+  "debuff_removed_other_hooks",  -- fn(guid, luaSlot, spellId, stackCount)
+  "unit_health_hooks",           -- fn(unitToken)
+  "player_target_changed_hooks", -- fn()
+  "unit_died_hooks",             -- fn(guid)
+  "spell_cast_hooks",            -- fn(success, spellId, castType, targetGuid)
+}
+for _, name in ipairs(hookTables) do
+  local key = "libdebuff_" .. name
+  pfUI[key] = pfUI[key] or {}
+end
+
+local function FireHooks(hooks, a1, a2, a3, a4, a5, a6, a7, a8)
+  if not hooks then return end
+  for _, fn in pairs(hooks) do
+    fn(a1, a2, a3, a4, a5, a6, a7, a8)
+  end
+end
+
+-- 从 SPELL_CAST_EVENT 捕获的连击点数（在客户端消耗之前）
+-- SPELL_CAST_EVENT 在 UnitAura 更新之前触发，因此 GetComboPoints() 仍然有效
+local capturedCP = nil
 
 -- ============================================================================
 -- 静态弹出对话框
@@ -276,11 +278,11 @@ local selfOverwriteDebuffs = {
   ["深冬之寒"] = true,
 }
 
--- 猎人陷阱效果列表（可根据实际客户端语言调整）
+-- 猎人陷阱效果：没有 AURA_CAST 事件，只能在 DEBUFF_ADDED 时归给玩家自己
 local trapDebuffs = {
-    ["爆炸陷阱效果"] = true,
-    ["冰霜陷阱光环"] = true,
-    -- 其他陷阱效果可按需添加
+  ["爆炸陷阱效果"] = true,
+  ["冰霜陷阱光环"] = true,
+  -- 其他陷阱效果可按需添加
 }
 
 -- 相互覆盖的减益对
@@ -292,8 +294,6 @@ local debuffOverwritePairs = {
 }
 
 -- 连击点技能：仅显示我们自己的施法计时器
-												
-														  
 local combopointAbilities = {
   -- Druid
   ["撕扯"] = { base = 8,  perCP = 2 },
@@ -305,39 +305,105 @@ local combopointAbilities = {
   ["破甲"] = { base = 30, perCP = 0 },  -- fixed 30s
 }
 
+-- Nampower 对多效果法术会连发多个 AURA_CAST，此窗口内的重复事件忽略
+local AURA_CAST_DEDUPE_WINDOW = 0.1
+
+-- 解离类型映射：SpellRec.dispel 索引 -> 暴雪 DebuffTypeColor 键
+local dispelTypeMap = {
+  [1] = "Magic",
+  [2] = "Curse",
+  [3] = "Disease",
+  [4] = "Poison",
+}
+
 -- ============================================================================
--- 辅助函数
+-- 通用辅助函数
 -- ============================================================================
 
--- Check if spell is a combo-point ability
+local function IsEmptyTable(t)
+  if not t then return true end
+  for _ in pairs(t) do return false end
+  return true
+end
+
+-- 删除超过 maxAge 的 [key] = {time = ...} 记录
+local function ExpireByTime(entries, maxAge, now)
+  for key, data in pairs(entries) do
+    if now - data.time > maxAge then
+      entries[key] = nil
+    end
+  end
+end
+
+-- 光环剩余时间（秒）；负值表示已过期
+local function TimeLeft(data, now)
+  return (data.startTime + data.duration) - (now or GetTime())
+end
+
+-- 仍在生效的高等级效果不能被低等级覆盖；返回被保护的剩余时间
+local function HigherRankTimeLeft(existing, rankNum)
+  if not existing or not rankNum or rankNum <= 0 then return nil end
+  if not existing.rank or not existing.startTime or not existing.duration then
+    return nil
+  end
+  local timeleft = TimeLeft(existing)
+  if timeleft > 0 and rankNum < existing.rank then return timeleft end
+end
+
+-- 有效的追踪目标 GUID
+local function IsTrackableGuid(guid)
+  return guid and guid ~= "" and guid ~= "0x0000000000000000" and true or false
+end
+
+-- 图标 API 可能只返回短名，SetTexture 需要完整路径
+local function NormalizeIconPath(texture)
+  if texture and not string.find(texture, "\\") then
+    return "Interface\\Icons\\" .. texture
+  end
+  return texture
+end
+
+local function GetTalentRank(tab, index)
+  local _, _, _, _, rank = GetTalentInfo(tab, index)
+  return rank or 0
+end
+
+local function SpellNameByRecField(spellId)
+  return GetSpellRecField and GetSpellRecField(spellId, "name")
+end
+
+local function SpellNameByRec(spellId)
+  if not GetSpellRec then return nil end
+  local rec = GetSpellRec(spellId)
+  return rec and rec.name or nil
+end
+
+local function GetDispelType(spellId)
+  if not spellId or not GetSpellRecField then return nil end
+  local dispelId = GetSpellRecField(spellId, "dispel")
+  if dispelId and dispelId > 0 then
+    return dispelTypeMap[dispelId]
+  end
+end
+
 local function IsComboPointAbility(spellName)
-  if not spellName then return false end
-  return combopointAbilities[spellName] ~= nil
+  return spellName and combopointAbilities[spellName] and true or false
 end
 
--- Get combo-point spell data (base duration and per-CP bonus)
+-- 连击点技能的基础时长与每点加成
 local function GetComboPointData(spellName)
-    if not spellName then 
-        return nil, nil 
+  local cpData = spellName and combopointAbilities[spellName]
+  if not cpData then return nil, nil end
+  if spellName == "割裂" then
+    local talentRank = GetTalentRank(1, 10)
+    if talentRank > 0 then
+      return cpData.base + talentRank * 2, cpData.perCP
     end
-    local cpData = combopointAbilities[spellName]
-    if cpData then
-        if spellName == "割裂" then
-            local _, _, _, _, count = GetTalentInfo(1, 10)
-            if count and count > 0 then
-                local base_Talent = cpData.base + count * 2
-                return base_Talent, cpData.perCP
-            else
-                return cpData.base, cpData.perCP  
-            end
-        else
-            return cpData.base, cpData.perCP
-        end
-    end
-    return nil, nil
+  end
+  return cpData.base, cpData.perCP
 end
 
--- Player GUID Cache
+-- 玩家 GUID 缓存
 local playerGUID = nil
 local function GetPlayerGUID()
   if not playerGUID and UnitExists then
@@ -347,7 +413,10 @@ local function GetPlayerGUID()
   return playerGUID
 end
 
--- Debug Stats
+-- ============================================================================
+-- 调试统计
+-- ============================================================================
+
 pfUI.libdebuff_debugstats = pfUI.libdebuff_debugstats or {
   enabled = false,
   nampower_aura_logging = false,
@@ -359,6 +428,17 @@ pfUI.libdebuff_debugstats = pfUI.libdebuff_debugstats or {
   getunitfield_calls = 0,
 }
 local debugStats = pfUI.libdebuff_debugstats
+
+local debugCounters = {
+  "aura_cast", "nampower_aura_events", "debuff_added", "debuff_removed",
+  "getunitfield_calls",
+}
+
+local function ResetDebugCounters()
+  for _, key in ipairs(debugCounters) do
+    debugStats[key] = 0
+  end
+end
 
 local function DebugGuid(guid)
   if not guid then return "nil" end
@@ -376,6 +456,11 @@ local function IsCurrentTarget(guid)
   return targetGuid == guid
 end
 
+-- 详细日志只针对当前目标（trackAllUnits 时针对所有单位）
+local function IsDebugTarget(guid)
+  return debugStats.enabled and IsCurrentTarget(guid)
+end
+
 local function GetDebugTimestamp()
   return string.format("[%.3f]", GetTime())
 end
@@ -386,12 +471,17 @@ local function DebugUnitField(guid, field)
   if ok then return value end
 end
 
+-- ============================================================================
+-- 光环标志位
+-- ============================================================================
+
 local function AuraFlagBit(value, mask)
   if type(value) ~= "number" then return nil end
   local shifted = math.floor(value / mask)
   return shifted - math.floor(shifted / 2) * 2
 end
 
+-- auraFlags 每个 32 位字打包 8 个槽位，每槽 4 位
 local function GetAuraFlagNibble(flags, auraSlot)
   if type(flags) ~= "table" or type(auraSlot) ~= "number" or
     auraSlot < 1 or auraSlot > 48 then return nil end
@@ -408,6 +498,23 @@ local function GetAuraFlagNibble(flags, auraSlot)
   return shifted - math.floor(shifted / 16) * 16
 end
 
+-- 返回：有益位（0x4）、有害位（0x8）、原始 nibble
+local function GetAuraFlagBits(flags, auraSlot)
+  local nibble = GetAuraFlagNibble(flags, auraSlot)
+  return AuraFlagBit(nibble, 4), AuraFlagBit(nibble, 8), nibble
+end
+
+-- 标志位缺失时按事件名兜底判定光环类型
+local function AuraKindFromFlags(helpfulBit, harmfulBit, eventName)
+  if harmfulBit == 1 then return "DEBUFF" end
+  if helpfulBit == 1 then return "BUFF" end
+  if eventName == "DEBUFF_ADDED_OTHER" or
+    eventName == "DEBUFF_REMOVED_OTHER" then return "DEBUFF" end
+  return "BUFF"
+end
+
+-- Nampower 的 BUFF_/DEBUFF_ 事件名不可靠（溢出减益会走增益槽），
+-- 这里用真实光环标志位或已记录的所有权还原真正的类型。
 function libdebuff:NormalizeOtherAuraEvent(eventName, guid, spellId, rawSlot)
   local added = eventName == "BUFF_ADDED_OTHER" or
     eventName == "DEBUFF_ADDED_OTHER"
@@ -420,13 +527,10 @@ function libdebuff:NormalizeOtherAuraEvent(eventName, guid, spellId, rawSlot)
   local kind
 
   if added and guid and auraSlot and GetUnitField then
-    local flags = GetUnitField(guid, "auraFlags")
-    local nibble = GetAuraFlagNibble(flags, auraSlot)
-    if AuraFlagBit(nibble, 8) == 1 then
-      kind = "DEBUFF"
-    elseif AuraFlagBit(nibble, 4) == 1 then
-      kind = "BUFF"
-    end
+    local helpfulBit, harmfulBit = GetAuraFlagBits(
+      GetUnitField(guid, "auraFlags"), auraSlot
+    )
+    kind = AuraKindFromFlags(helpfulBit, harmfulBit, eventName)
   elseif removed and guid and auraSlot then
     local ownership = slotOwnership[guid] and slotOwnership[guid][auraSlot]
     if ownership and ownership.spellId == spellId then
@@ -437,10 +541,7 @@ function libdebuff:NormalizeOtherAuraEvent(eventName, guid, spellId, rawSlot)
     end
   end
 
-  if not kind then
-    kind = (eventName == "DEBUFF_ADDED_OTHER" or
-      eventName == "DEBUFF_REMOVED_OTHER") and "DEBUFF" or "BUFF"
-  end
+  kind = kind or AuraKindFromFlags(nil, nil, eventName)
   return kind .. (added and "_ADDED_OTHER" or "_REMOVED_OTHER")
 end
 
@@ -456,27 +557,14 @@ function libdebuff:DebugNampowerAuraEvent(
   debugStats.nampower_aura_events =
     (debugStats.nampower_aura_events or 0) + 1
 
-  local auraIndex = type(rawSlot) == "number" and rawSlot + 1 or nil
-  local flagNibble
-  if auraIndex and rawSlot >= 0 and rawSlot <= 47 then
-    local flags = DebugUnitField(guid, "auraFlags")
-    flagNibble = GetAuraFlagNibble(flags, auraIndex)
+  local helpfulBit, harmfulBit, flagNibble
+  if type(rawSlot) == "number" and rawSlot >= 0 and rawSlot <= 47 then
+    helpfulBit, harmfulBit, flagNibble = GetAuraFlagBits(
+      DebugUnitField(guid, "auraFlags"), rawSlot + 1
+    )
   end
 
-  local flag4 = AuraFlagBit(flagNibble, 4)
-  local flag8 = AuraFlagBit(flagNibble, 8)
-  local auraKind
-  if flag8 == 1 then
-    auraKind = "DEBUFF"
-  elseif flag4 == 1 then
-    auraKind = "BUFF"
-  elseif eventName == "DEBUFF_ADDED_OTHER" then
-    auraKind = "DEBUFF"
-  else
-    auraKind = "BUFF"
-  end
-  local spellName = GetSpellRecField and
-    GetSpellRecField(spellId, "name") or "?"
+  local auraKind = AuraKindFromFlags(helpfulBit, harmfulBit, eventName)
   local flagNibbleHex = type(flagNibble) == "number" and
     string.format("%X", flagNibble) or "nil"
 
@@ -485,48 +573,33 @@ function libdebuff:DebugNampowerAuraEvent(
     auraKind, tostring(eventName), DebugGuid(guid),
     tostring(luaSlot), tostring(spellId), tostring(stacks),
     tostring(auraLevel), tostring(rawSlot), tostring(state),
-    tostring(spellName), flagNibbleHex
+    tostring(SpellNameByRecField(spellId) or "?"), flagNibbleHex
   ))
 end
 
--- Speichert die Ranks der zuletzt gecasteten Spells
-pfUI.libdebuff_lastranks = pfUI.libdebuff_lastranks or {}
-local lastCastRanks = pfUI.libdebuff_lastranks
+-- ============================================================================
+-- 法术图标
+-- ============================================================================
 
--- Speichert Spells die gefailed sind
-pfUI.libdebuff_lastfailed = pfUI.libdebuff_lastfailed or {}
-local lastFailedSpells = pfUI.libdebuff_lastfailed
-
--- Get spell icon texture (with caching)
 function libdebuff:GetSpellIcon(spellId)
   if not spellId or type(spellId) ~= "number" or spellId <= 0 then
     return "Interface\\Icons\\INV_Misc_QuestionMark"
   end
-  
+
   if iconCache[spellId] then
     return iconCache[spellId]
   end
-  
+
   local texture = nil
-  
   if GetSpellRecField and GetSpellIconTexture then
     local spellIconId = GetSpellRecField(spellId, "spellIconID")
     if spellIconId and type(spellIconId) == "number" and spellIconId > 0 then
-      texture = GetSpellIconTexture(spellIconId)
-      -- GetSpellIconTexture may return short name, needs full path for SetTexture
-      if texture and not string.find(texture, "\\") then
-        texture = "Interface\\Icons\\" .. texture
-      end
+      texture = NormalizeIconPath(GetSpellIconTexture(spellIconId))
     end
   end
-  
-  
-  if not texture then
-    texture = "Interface\\Icons\\INV_Misc_QuestionMark"
-  end
-  
-  iconCache[spellId] = texture
-  return texture
+
+  iconCache[spellId] = texture or "Interface\\Icons\\INV_Misc_QuestionMark"
+  return iconCache[spellId]
 end
 
 pfUI.libdebuff_GetSpellIcon = function(spellId)
@@ -536,28 +609,16 @@ end
 function libdebuff:DidSpellFail(spell)
   if not spell then return false end
   local data = lastFailedSpells[spell]
-  if data and (GetTime() - data.time) < 1 then
-    return true
-  end
-  return false
+  return data and (GetTime() - data.time) < 1 or false
 end
 
 -- ============================================================================
--- CORE: GetUnitField-based Slot Mapping (THE KEY INNOVATION!)
+-- 核心：基于 GetUnitField 的槽位映射
 -- ============================================================================
 
--- Cache for GetDebuffSlotMap to reduce GetUnitField calls
--- [guid] = {map, timestamp}
+-- GetDebuffSlotMap 的结果缓存：[guid] = {map, timestamp}
 local slotMapCache = {}
-local SLOT_MAP_CACHE_DURATION = 0.05  -- 50ms cache (1-2 frames)
-
--- Dispel type mapping: SpellRec.dispel index -> Blizzard DebuffTypeColor key
-local dispelTypeMap = {
-  [1] = "Magic",
-  [2] = "Curse",
-  [3] = "Disease",
-  [4] = "Poison",
-}
+local SLOT_MAP_CACHE_DURATION = 0.05  -- 50ms 缓存（1-2 帧）
 
 local harmfulSpellCache = {}
 local function IsHarmfulSpellId(spellId)
@@ -571,32 +632,31 @@ local function IsHarmfulSpellId(spellId)
   return harmful
 end
 
--- Get current debuff state directly from WoW via GetUnitField
--- Returns: { [displaySlot] = {auraSlot, buffDisplaySlot, spellId,
+-- 直接通过 GetUnitField 读取当前减益状态
+-- 返回：{ [displaySlot] = {auraSlot, buffDisplaySlot, spellId,
 --   spellName, stacks, texture, dtype} }
+-- 显示槽位 1-16 来自真实槽 33-48；溢出到增益槽的减益用 16+auraSlot 表示。
 local function GetDebuffSlotMap(guid)
   if not guid or not GetUnitField then
     return nil
   end
-  
-  -- Check cache first
+
   local now = GetTime()
   local cached = slotMapCache[guid]
   if cached and cached.map and (now - cached.timestamp) < SLOT_MAP_CACHE_DURATION then
     return cached.map
   end
-  
+
   local auras = GetUnitField(guid, "aura")
   if not auras then return nil end
-  
-  -- Fetch stacks array (reusable reference - extract values immediately)
+
   local auraApps = GetUnitField(guid, "auraApplications")
   local auraFlags = GetUnitField(guid, "auraFlags")
-  
+
   if debugStats.enabled then
     debugStats.getunitfield_calls = debugStats.getunitfield_calls + 1
   end
-  
+
   local map = {}
   local displaySlot = 0
   local buffDisplaySlot = 0
@@ -607,60 +667,47 @@ local function GetDebuffSlotMap(guid)
       if auraSlot <= 32 then
         buffDisplaySlot = buffDisplaySlot + 1
       end
-      local spellName = GetSpellRecField and GetSpellRecField(spellId, "name")
-      local outputSlot
 
+      local outputSlot
       if auraSlot > 32 then
         displaySlot = displaySlot + 1
         outputSlot = displaySlot
       else
+        -- 增益槽里的光环只有被标记为有害或由我们登记过才算减益
         local ownership = slotOwnership[guid] and slotOwnership[guid][auraSlot]
         local ownedDebuff = ownership and ownership.spellId == spellId
-        local harmfulFlag = AuraFlagBit(
-          GetAuraFlagNibble(auraFlags, auraSlot), 8
-        )
-        if harmfulFlag == 1 or
-          (harmfulFlag == nil and IsHarmfulSpellId(spellId)) or ownedDebuff
+        local _, harmfulBit = GetAuraFlagBits(auraFlags, auraSlot)
+        if harmfulBit == 1 or
+          (harmfulBit == nil and IsHarmfulSpellId(spellId)) or ownedDebuff
         then
           outputSlot = 16 + auraSlot
         end
       end
 
       if outputSlot then
-        local texture = libdebuff:GetSpellIcon(spellId)
-      
-        -- Get stacks from auraApplications (0-indexed, so +1 for display)
-        local stacks = (auraApps and auraApps[auraSlot] or 0) + 1
-      
-        -- Get debuff type from SpellRec DBC
-        local dtype = nil
-        if GetSpellRecField then
-          local dispelId = GetSpellRecField(spellId, "dispel")
-          if dispelId and dispelId > 0 then
-            dtype = dispelTypeMap[dispelId]
-          end
-        end
-      
         map[outputSlot] = {
           auraSlot = auraSlot,
           buffDisplaySlot = auraSlot <= 32 and buffDisplaySlot or nil,
           spellId = spellId,
-          spellName = spellName or "未知",
-          stacks = stacks,
-          texture = texture,
-          dtype = dtype
+          spellName = SpellNameByRecField(spellId) or "未知",
+          -- auraApplications 从 0 开始计数
+          stacks = (auraApps and auraApps[auraSlot] or 0) + 1,
+          texture = libdebuff:GetSpellIcon(spellId),
+          dtype = GetDispelType(spellId),
         }
       end
     end
   end
-  
-  -- Cache the result (separate from buffMap to avoid cross-invalidation)
-  if not slotMapCache[guid] then
-    slotMapCache[guid] = { timestamp = now }
+
+  -- 复用缓存条目，避免和调用方持有的引用互相失效
+  cached = slotMapCache[guid]
+  if not cached then
+    cached = {}
+    slotMapCache[guid] = cached
   end
-  slotMapCache[guid].map = map
-  slotMapCache[guid].timestamp = now
-  
+  cached.map = map
+  cached.timestamp = now
+
   return map
 end
 
@@ -701,6 +748,30 @@ function libdebuff:NotifyUnitFrameAuras(guid)
   end
 end
 
+-- ============================================================================
+-- 施法者归属
+-- ============================================================================
+
+-- 最近一次施放该法术的施法者：返回 casterGuid, startTime
+local function GetLatestCaster(casts)
+  if not casts then return nil end
+  local casterGuid, castTime = nil, 0
+  for caster, data in pairs(casts) do
+    if data.startTime and data.startTime > castTime then
+      casterGuid, castTime = caster, data.startTime
+    end
+  end
+  return casterGuid, castTime
+end
+
+-- 1 秒内的最近施法者，用于给没有施法者信息的 BUFF_ADDED 补齐归属
+local function GetRecentAuraCaster(guid, spellName)
+  local casterGuid, castTime = GetLatestCaster(
+    allAuraCasts[guid] and allAuraCasts[guid][spellName]
+  )
+  if casterGuid and GetTime() - castTime <= 1 then return casterGuid end
+end
+
 function libdebuff:UnitBuffCaster(unit, buffSlot, spellName)
   if not hasNampower or not GetUnitGUID then return nil end
   if not spellName then return nil end
@@ -720,18 +791,6 @@ function libdebuff:UnitBuffCaster(unit, buffSlot, spellName)
   if not ownership then return nil end
   if ownership.isOurs then return "player" end
   if ownership.casterGuid then return "other" end
-end
-
-local function GetRecentAuraCaster(guid, spellName)
-  local casts = allAuraCasts[guid] and allAuraCasts[guid][spellName]
-  if not casts then return nil end
-  local casterGuid, castTime = nil, 0
-  for guid, data in pairs(casts) do
-    if data.startTime and data.startTime > castTime then
-      casterGuid, castTime = guid, data.startTime
-    end
-  end
-  if casterGuid and GetTime() - castTime <= 1 then return casterGuid end
 end
 
 function libdebuff:UpdateBuffOwnershipFromCast(
@@ -754,6 +813,7 @@ function libdebuff:HandleBuffOwnershipEvent(
   local auraSlot = auraSlot_0based and (auraSlot_0based + 1) or nil
 
   if eventName == "BUFF_ADDED_SELF" or eventName == "BUFF_ADDED_OTHER" then
+    -- 事件没带槽位时在增益区间里反查
     if not auraSlot and GetUnitField then
       local auras = GetUnitField(guid, "aura")
       if auras then
@@ -767,8 +827,7 @@ function libdebuff:HandleBuffOwnershipEvent(
     end
     if not auraSlot then return end
 
-    local spellName = GetSpellRecField and
-      GetSpellRecField(spellId, "name")
+    local spellName = SpellNameByRecField(spellId)
     local casterGuid = spellName and
       GetRecentAuraCaster(guid, spellName) or nil
     local myGuid = GetPlayerGUID()
@@ -793,97 +852,74 @@ function libdebuff:HandleBuffOwnershipEvent(
   slotMapCache[guid] = nil
 end
 
--- Get caster info for a specific aura slot
+-- 指定光环槽位的施法者信息：返回 casterGuid, isOurs
 local function GetSlotCaster(guid, auraSlot, spellName)
-  -- First check our ownership tracking
-  if slotOwnership[guid] and slotOwnership[guid][auraSlot] then
-    local ownership = slotOwnership[guid][auraSlot]
-    -- Verify spell name matches (slot might have been reused)
-    if ownership.spellName == spellName then
-      return ownership.casterGuid, ownership.isOurs
-    end
+  -- 首选我们自己登记的槽位所有权
+  local ownership = slotOwnership[guid] and slotOwnership[guid][auraSlot]
+  -- 校验法术名，槽位可能已被复用
+  if ownership and ownership.spellName == spellName then
+    return ownership.casterGuid, ownership.isOurs
   end
-  
-  -- Fallback: Check ownDebuffs
+
   local myGuid = GetPlayerGUID()
   if ownDebuffs[guid] and ownDebuffs[guid][spellName] then
     return myGuid, true
   end
-  
-  -- Fallback: Check allAuraCasts for any caster
+
+  -- 回退：接受任意仍在生效的施法
   if allAuraCasts[guid] and allAuraCasts[guid][spellName] then
     for casterGuid, data in pairs(allAuraCasts[guid][spellName]) do
-      local timeleft = (data.startTime + data.duration) - GetTime()
-      if timeleft > 0 then
+      if TimeLeft(data) > 0 then
         return casterGuid, (casterGuid == myGuid)
       end
     end
   end
-  
+
   return nil, false
 end
 
 -- ============================================================================
--- CLEANUP FUNCTIONS
+-- 清理
 -- ============================================================================
 
 local lastRangeCheck = 0
 
--- Recycled buffers for cleanup (avoids table creation per call)
+-- 按 GUID 索引的追踪表，统一清理
+local guidTables = {
+  ownDebuffs, slotOwnership, buffOwnership, allAuraCasts, objectsByGuid,
+  pendingCasts,
+}
+
+-- 复用缓冲区，避免每次调用创建表
 local _cleanupBuf1 = {}
 local _cleanupBuf2 = {}
 
 local function CleanupUnit(guid)
   if not guid then return false end
-  
+
   local cleaned = false
-  
-  if ownDebuffs[guid] then
-    ownDebuffs[guid] = nil
-    cleaned = true
-  end
-  
-  if slotOwnership[guid] then
-    slotOwnership[guid] = nil
-    cleaned = true
+  for _, entries in ipairs(guidTables) do
+    if entries[guid] then
+      entries[guid] = nil
+      cleaned = true
+    end
   end
 
-  if buffOwnership[guid] then
-    buffOwnership[guid] = nil
-    cleaned = true
-  end
-  
-  if allAuraCasts[guid] then
-    allAuraCasts[guid] = nil
-    cleaned = true
-  end
-  
-  if objectsByGuid[guid] then
-    objectsByGuid[guid] = nil
-    cleaned = true
-  end
-  
-  if pendingCasts[guid] then
-    pendingCasts[guid] = nil
-    cleaned = true
-  end
-  
-  if debugStats.enabled and cleaned and IsCurrentTarget(guid) then
+  if cleaned and IsDebugTarget(guid) then
     DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffff0000[清理]|r GUID %s", DebugGuid(guid)))
   end
-  
+
   return cleaned
 end
 
 local function CleanupExpiredTimers(guid)
   local now = GetTime()
-  
-  -- Cleanup ownDebuffs
+  local grace = -2  -- 过期后仍保留 2 秒宽限
+
   if ownDebuffs[guid] then
     local n = 0
     for spellName, data in pairs(ownDebuffs[guid]) do
-      local timeleft = (data.startTime + data.duration) - now
-      if timeleft < -2 then -- Grace period
+      if TimeLeft(data, now) < grace then
         n = n + 1
         _cleanupBuf1[n] = spellName
       end
@@ -893,29 +929,21 @@ local function CleanupExpiredTimers(guid)
       _cleanupBuf1[i] = nil
     end
   end
-  
-  -- Cleanup allAuraCasts
+
   if allAuraCasts[guid] then
     for spellName, casterTable in pairs(allAuraCasts[guid]) do
-      local n2 = 0
+      local n = 0
       for casterGuid, data in pairs(casterTable) do
-        local timeleft = (data.startTime + data.duration) - now
-        if timeleft < -2 then
-          n2 = n2 + 1
-          _cleanupBuf2[n2] = casterGuid
+        if TimeLeft(data, now) < grace then
+          n = n + 1
+          _cleanupBuf2[n] = casterGuid
         end
       end
-      for i = 1, n2 do
-        allAuraCasts[guid][spellName][_cleanupBuf2[i]] = nil
+      for i = 1, n do
+        casterTable[_cleanupBuf2[i]] = nil
         _cleanupBuf2[i] = nil
       end
-      -- Remove empty spell tables
-      local hasCasters = false
-      for _ in pairs(allAuraCasts[guid][spellName]) do
-        hasCasters = true
-        break
-      end
-      if not hasCasters then
+      if IsEmptyTable(casterTable) then
         allAuraCasts[guid][spellName] = nil
       end
     end
@@ -926,92 +954,62 @@ local function CleanupOutOfRangeUnits()
   local now = GetTime()
   if now - lastRangeCheck < 10 then return end
   lastRangeCheck = now
-  
+
   local allGuids = {}
-  for guid in pairs(ownDebuffs) do allGuids[guid] = true end
-  for guid in pairs(slotOwnership) do allGuids[guid] = true end
-  for guid in pairs(buffOwnership) do allGuids[guid] = true end
-  for guid in pairs(allAuraCasts) do allGuids[guid] = true end
-  for guid in pairs(objectsByGuid) do allGuids[guid] = true end
-  for guid in pairs(pendingCasts) do allGuids[guid] = true end
-  
+  for _, entries in ipairs(guidTables) do
+    for guid in pairs(entries) do allGuids[guid] = true end
+  end
+
   for guid in pairs(allGuids) do
     local exists = UnitExists and UnitExists(guid)
     local isDead = UnitIsDead and UnitIsDead(guid)
-    
+
     if not exists or isDead then
       CleanupUnit(guid)
     end
   end
-  
-  -- Cleanup old lastCastRanks
-  for spell, data in pairs(lastCastRanks) do
-    if now - data.time > 3 then
-      lastCastRanks[spell] = nil
-    end
-  end
-  
-  -- Cleanup old lastFailedSpells
-  for spell, data in pairs(lastFailedSpells) do
-    if now - data.time > 2 then
-      lastFailedSpells[spell] = nil
-    end
-  end
-  
-  -- Cleanup old pendingCasts
+
+  ExpireByTime(lastCastRanks, 3, now)
+  ExpireByTime(lastFailedSpells, 2, now)
+
   for guid, spells in pairs(pendingCasts) do
-    for spell, data in pairs(spells) do
-      if now - data.time > 1 then
-        pendingCasts[guid][spell] = nil
-      end
-    end
-    local isEmpty = true
-    for _ in pairs(pendingCasts[guid]) do
-      isEmpty = false
-      break
-    end
-    if isEmpty then
+    ExpireByTime(spells, 1, now)
+    if IsEmptyTable(spells) then
       pendingCasts[guid] = nil
     end
   end
 end
 
 -- ============================================================================
--- DURATION FUNCTIONS
+-- 持续时间
 -- ============================================================================
 
 function libdebuff:GetDuration(effect, rank)
-  if L["debuffs"][effect] then
-    local rank = rank and tonumber((string.gsub(rank, RANK, ""))) or 0
-    local rank = L["debuffs"][effect][rank] and rank or libdebuff:GetMaxRank(effect)
-    local duration = L["debuffs"][effect][rank]
+  local durations = L["debuffs"][effect]
+  if not durations then return 0 end
 
-    if effect == L["dyndebuffs"]["Rupture"] then
-      local cp = GetComboPoints() or 0
-      duration = duration + cp*2
-    elseif effect == L["dyndebuffs"]["Kidney Shot"] then
-      local cp = GetComboPoints() or 0
-      duration = duration + cp*1
-    elseif effect == "撕扯" or effect == L["dyndebuffs"]["Rip"] then
-      local cp = GetComboPoints() or 0
-      duration = 8 + cp*2
-    elseif effect == L["dyndebuffs"]["Demoralizing Shout"] then
-      local _,_,_,_,count = GetTalentInfo(2,1)
-      if count and count > 0 then duration = duration + ( duration / 100 * (count*10)) end
-    elseif effect == L["dyndebuffs"]["Shadow Word: Pain"] then
-      local _,_,_,_,count = GetTalentInfo(3,4)
-      if count and count > 0 then duration = duration + count * 3 end
-    elseif effect == L["dyndebuffs"]["Frostbolt"] then
-      local _,_,_,_,count = GetTalentInfo(3,7)
-      if count and count > 0 then duration = duration + count end
-    elseif effect == L["dyndebuffs"]["Gouge"] then
-      local _,_,_,_,count = GetTalentInfo(3,3)
-      if count and count > 0 then duration = duration + (count*.5) end
-    end
-    return duration
-  else
-    return 0
+  local rankId = rank and tonumber((string.gsub(rank, RANK, ""))) or 0
+  if not durations[rankId] then rankId = libdebuff:GetMaxRank(effect) end
+  local duration = durations[rankId]
+
+  local dyn = L["dyndebuffs"]
+  if effect == dyn["Rupture"] then
+    duration = duration + (GetComboPoints() or 0) * 2
+  elseif effect == dyn["Kidney Shot"] then
+    duration = duration + (GetComboPoints() or 0) * 1
+  elseif effect == "撕扯" or effect == dyn["Rip"] then
+    duration = 8 + (GetComboPoints() or 0) * 2
+  elseif effect == dyn["Demoralizing Shout"] then
+    local talentRank = GetTalentRank(2, 1)
+    if talentRank > 0 then duration = duration + (duration / 100 * (talentRank * 10)) end
+  elseif effect == dyn["Shadow Word: Pain"] then
+    duration = duration + GetTalentRank(3, 4) * 3
+  elseif effect == dyn["Frostbolt"] then
+    duration = duration + GetTalentRank(3, 7)
+  elseif effect == dyn["Gouge"] then
+    duration = duration + GetTalentRank(3, 3) * .5
   end
+  return duration
 end
 
 function libdebuff:GetMaxRank(effect)
@@ -1026,8 +1024,9 @@ function libdebuff:UpdateDuration(unit, unitlevel, effect, duration)
   if not unit or not effect or not duration then return end
   unitlevel = unitlevel or 0
 
-  if libdebuff.objects[unit] and libdebuff.objects[unit][unitlevel] and libdebuff.objects[unit][unitlevel][effect] then
-    libdebuff.objects[unit][unitlevel][effect].duration = duration
+  local effects = libdebuff.objects[unit] and libdebuff.objects[unit][unitlevel]
+  if effects and effects[effect] then
+    effects[effect].duration = duration
   end
 end
 
@@ -1037,7 +1036,7 @@ function libdebuff:UpdateUnits()
 end
 
 -- ============================================================================
--- LEGACY API (for turtle-wow.lua compatibility)
+-- 遗留 API（turtle-wow.lua 兼容）
 -- ============================================================================
 
 libdebuff.pending = {}
@@ -1059,12 +1058,7 @@ function libdebuff:AddPending(unit, unitlevel, effect, duration, caster, rank)
 end
 
 function libdebuff:RemovePending()
-  libdebuff.pending[1] = nil
-  libdebuff.pending[2] = nil
-  libdebuff.pending[3] = nil
-  libdebuff.pending[4] = nil
-  libdebuff.pending[5] = nil
-  libdebuff.pending[6] = nil
+  for i = 1, 6 do libdebuff.pending[i] = nil end
 end
 
 function libdebuff:PersistPending(effect)
@@ -1086,176 +1080,145 @@ function libdebuff:AddEffect(unit, unitlevel, effect, duration, caster, rank)
       rank = lastCastRanks[effect].rank
     end
   end
-  
+
   if not unit then return end
   unitlevel = unitlevel or 0
-  
-  -- Create tables if needed
+
   libdebuff.objects[unit] = libdebuff.objects[unit] or {}
   libdebuff.objects[unit][unitlevel] = libdebuff.objects[unit][unitlevel] or {}
-  
-  -- Get duration from spell database if not provided
+
+  -- 没给时长时查法术数据库
   if not duration or duration == 0 then
     duration = libdebuff:GetDuration(effect, rank)
   end
-  
-  -- Store/update effect
-  local now = GetTime()
-  local existing = libdebuff.objects[unit][unitlevel][effect]
-  
-  if existing then
-    existing.start = now
-    existing.duration = duration
-    existing.caster = caster
-    existing.rank = rank
-  else
-    libdebuff.objects[unit][unitlevel][effect] = {
-      start = now,
-      duration = duration,
-      caster = caster,
-      rank = rank
-    }
-  end
-  
-  lastspell = libdebuff.objects[unit][unitlevel][effect]
+
+  local effects = libdebuff.objects[unit][unitlevel]
+  local entry = effects[effect] or {}
+  effects[effect] = entry
+
+  entry.start = GetTime()
+  entry.duration = duration
+  entry.caster = caster
+  entry.rank = rank
 end
 
 -- ============================================================================
--- MAIN API: UnitDebuff (GetUnitField-based)
+-- 主 API：UnitDebuff（基于 GetUnitField）
 -- ============================================================================
 
 local cache = {}
 
-function libdebuff:UnitDebuff(unit, displaySlot)
-  local unitname = UnitName(unit)
-  local unitlevel = UnitLevel(unit)
-  local duration, timeleft = nil, -1
-  local rank = nil
-  local caster = nil
-  local effect = nil
-  local texture = nil
-  local stacks = 0
-  local dtype = nil
-
-  -- Nampower: Use GetUnitField for ALL debuff data (no Blizzard UnitDebuff needed)
-  if hasNampower and GetUnitGUID then
-    local guid = GetUnitGUID(unit)
-    if not guid then
-      -- Safety fallback: no GUID available (should not happen with Nampower)
-      local bTexture, bStacks, bDtype = UnitDebuff(unit, displaySlot)
-      if bTexture then
-        scanner:SetUnitDebuff(unit, displaySlot)
-        effect = scanner:Line(1) or ""
-      end
-      return effect, rank, bTexture, bStacks, bDtype, duration, timeleft, caster
-    end
-    
-    -- Get current slot map from GetUnitField (cached 50ms)
-    local slotMap = GetDebuffSlotMap(guid)
-    if not slotMap or not slotMap[displaySlot] then
-      return nil
-    end
-    
-    local slotData = slotMap[displaySlot]
-    effect = slotData.spellName
-    texture = slotData.texture
-    stacks = slotData.stacks
-    dtype = slotData.dtype
-    local auraSlot = slotData.auraSlot
-    
-    -- Get caster info for this slot
-    local slotCasterGuid, isOurs = GetSlotCaster(guid, auraSlot, effect)
-    
-    if isOurs then
-      caster = "player"
-      -- OUR debuff - get timer from ownDebuffs
-      if ownDebuffs[guid] and ownDebuffs[guid][effect] then
-        local data = ownDebuffs[guid][effect]
-        local remaining = (data.startTime + data.duration) - GetTime()
-        if remaining > 0 then
-          duration = data.duration
-          timeleft = remaining
-          caster = "player"
-          rank = data.rank
-        elseif remaining > -1 then
-          -- Grace period - show 0 timeleft
-          duration = data.duration
-          timeleft = 0
-          caster = "player"
-          rank = data.rank
-        end
-      end
-    else
-      if slotCasterGuid then caster = "other" end
-      -- OTHER player's debuff - get timer from allAuraCasts
-      if slotCasterGuid and allAuraCasts[guid] and allAuraCasts[guid][effect] then
-        local data = allAuraCasts[guid][effect][slotCasterGuid]
-        if data then
-          local remaining = (data.startTime + data.duration) - GetTime()
-          if remaining > 0 and data.duration > 0 then
-            duration = data.duration
-            timeleft = remaining
-            caster = "other"
-            rank = data.rank
-          end
-        end
-      end
-      
-      -- Fallback: Search all casters if specific one not found
-      if not duration and allAuraCasts[guid] and allAuraCasts[guid][effect] then
-        for anyCasterGuid, data in pairs(allAuraCasts[guid][effect]) do
-          local remaining = (data.startTime + data.duration) - GetTime()
-          if remaining > 0 and data.duration > 0 then
-            duration = data.duration
-            timeleft = remaining
-            caster = "other"
-            rank = data.rank
-            break
-          end
-        end
-      end
-    end
-    
-    return effect, rank, texture, stacks, dtype, duration, timeleft, caster
-  end
-
-
-  -- ============================================================================
-  -- FALLBACK: Legacy (non-Nampower) system
-  -- ============================================================================
-  
-  local bTexture, bStacks, bDtype = UnitDebuff(unit, displaySlot)
-  texture = bTexture
-  stacks = bStacks
-  dtype = bDtype
-  
+-- 读取暴雪原生减益，并用 tooltip scanner 补出名称
+local function ScanUnitDebuff(unit, displaySlot)
+  local texture, stacks, dtype = UnitDebuff(unit, displaySlot)
+  local effect
   if texture then
     scanner:SetUnitDebuff(unit, displaySlot)
     effect = scanner:Line(1) or ""
   end
-  
+  return effect, texture, stacks, dtype
+end
+
+-- 我们自己施放的计时数据：返回 duration, timeleft, rank
+local function GetOwnTimer(guid, effect)
+  local data = ownDebuffs[guid] and ownDebuffs[guid][effect]
+  if not data then return nil end
+  local remaining = TimeLeft(data)
+  -- 宽限期内继续显示，剩余时间归零
+  if remaining <= -1 then return nil end
+  return data.duration, remaining > 0 and remaining or 0, data.rank
+end
+
+-- 其他施法者的计时数据：返回 duration, timeleft, rank
+local function GetCastTimer(data)
+  if not data then return nil end
+  local remaining = TimeLeft(data)
+  if remaining > 0 and data.duration > 0 then
+    return data.duration, remaining, data.rank
+  end
+end
+
+function libdebuff:UnitDebuff(unit, displaySlot)
+  -- Nampower：所有减益数据都来自 GetUnitField，不需要暴雪的 UnitDebuff
+  if hasNampower and GetUnitGUID then
+    local guid = GetUnitGUID(unit)
+    if not guid then
+      -- 安全兜底：拿不到 GUID（有 Nampower 时不应发生）
+      local effect, texture, stacks, dtype = ScanUnitDebuff(unit, displaySlot)
+      return effect, nil, texture, stacks, dtype, nil, -1, nil
+    end
+
+    -- 当前槽位映射来自 GetUnitField（缓存 50ms）
+    local slotMap = GetDebuffSlotMap(guid)
+    local slotData = slotMap and slotMap[displaySlot]
+    if not slotData then return nil end
+
+    local effect = slotData.spellName
+    local slotCasterGuid, isOurs = GetSlotCaster(guid, slotData.auraSlot, effect)
+    local duration, timeleft, rank, caster = nil, -1, nil, nil
+
+    if isOurs then
+      caster = "player"
+      local ownDuration, ownTimeleft, ownRank = GetOwnTimer(guid, effect)
+      if ownDuration then
+        duration, timeleft, rank = ownDuration, ownTimeleft, ownRank
+      end
+    else
+      if slotCasterGuid then caster = "other" end
+
+      local casts = allAuraCasts[guid] and allAuraCasts[guid][effect]
+      if slotCasterGuid and casts then
+        duration, timeleft, rank = GetCastTimer(casts[slotCasterGuid])
+        if duration then caster = "other" end
+      end
+
+      -- 回退：指定施法者没有数据时接受任意仍在生效的施法
+      if not duration and casts then
+        for _, data in pairs(casts) do
+          duration, timeleft, rank = GetCastTimer(data)
+          if duration then
+            caster = "other"
+            break
+          end
+        end
+      end
+      timeleft = duration and timeleft or -1
+    end
+
+    return effect, rank, slotData.texture, slotData.stacks, slotData.dtype,
+      duration, timeleft, caster
+  end
+
+  -- ==========================================================================
+  -- 回退：非 Nampower 的遗留系统
+  -- ==========================================================================
+
+  local effect, texture, stacks, dtype = ScanUnitDebuff(unit, displaySlot)
+  local unitname = UnitName(unit)
+
   if effect and libdebuff.objects[unitname] then
-    for level, effects in pairs(libdebuff.objects[unitname]) do
-      if effects[effect] and effects[effect].duration then
-        local timeleft = effects[effect].start and
-          effects[effect].start + effects[effect].duration - GetTime()
+    for _, effects in pairs(libdebuff.objects[unitname]) do
+      local entry = effects[effect]
+      if entry and entry.duration then
+        local timeleft = entry.start and
+          entry.start + entry.duration - GetTime()
 
         if timeleft and timeleft > 0 then
-          return effect, effects[effect].rank, texture, stacks, dtype,
-            effects[effect].duration, timeleft, effects[effect].caster
+          return effect, entry.rank, texture, stacks, dtype,
+            entry.duration, timeleft, entry.caster
         end
       end
     end
   end
 
-  return effect, rank, texture, stacks, dtype, duration, timeleft, caster
+  return effect, nil, texture, stacks, dtype, nil, -1, nil
 end
 
 -- ============================================================================
--- API: UnitOwnDebuff (only OUR debuffs)
+-- API：UnitOwnDebuff（只返回我们自己的减益）
 -- ============================================================================
 
--- Pre-defined sort function for UnitOwnDebuff (avoids closure creation per call)
+-- 预定义排序函数，避免每次调用创建闭包
 local _ownDebuffSortFunc = function(a, b)
   if a.data.startTime == b.data.startTime then
     return a.spellName < b.spellName
@@ -1267,14 +1230,14 @@ function libdebuff:UnitOwnDebuff(unit, id)
   if hasNampower and GetUnitGUID then
     local guid = GetUnitGUID(unit)
     if guid and ownDebuffs[guid] then
-      -- Build sorted list of our active debuffs
       local sortedDebuffs = {}
+      local count = 0
       local now = GetTime()
-      
+
       for spellName, data in pairs(ownDebuffs[guid]) do
-        local timeleft = (data.startTime + data.duration) - now
-        if timeleft > -1 then  -- Grace period
-          local count = table.getn(sortedDebuffs) + 1
+        local timeleft = TimeLeft(data, now)
+        if timeleft > -1 then  -- 宽限期
+          count = count + 1
           sortedDebuffs[count] = {
             spellName = spellName,
             data = data,
@@ -1282,34 +1245,24 @@ function libdebuff:UnitOwnDebuff(unit, id)
           }
         end
       end
-      
-      -- Sort by startTime (oldest first = lowest display slot)
-      -- If startTime is equal (e.g. after Carnage refresh), use spellName for stable sorting
+
+      -- 按 startTime 排序（最旧的在最前 = 最小显示槽位）
+      -- startTime 相同时（如 Carnage 刷新后）用法术名保证稳定排序
       table.sort(sortedDebuffs, _ownDebuffSortFunc)
-      
-      -- Return debuff at position 'id'
-      if sortedDebuffs[id] then
-        local entry = sortedDebuffs[id]
-        local texture = entry.data.texture or "Interface\\Icons\\INV_Misc_QuestionMark"
-        local displayTimeleft = entry.timeleft > 0 and entry.timeleft or 0
-        
-        -- Get dtype from SpellRec DBC via stored spellId
-        local entryDtype = nil
-        if entry.data.spellId and GetSpellRecField then
-          local dispelId = GetSpellRecField(entry.data.spellId, "dispel")
-          if dispelId and dispelId > 0 then
-            entryDtype = dispelTypeMap[dispelId]
-          end
-        end
-        
-        local stacks = entry.data.stacks or 1
-        return entry.spellName, entry.data.rank, texture, stacks, entryDtype, entry.data.duration, displayTimeleft, "player"
+
+      local entry = sortedDebuffs[id]
+      if entry then
+        return entry.spellName, entry.data.rank,
+          entry.data.texture or "Interface\\Icons\\INV_Misc_QuestionMark",
+          entry.data.stacks or 1, GetDispelType(entry.data.spellId),
+          entry.data.duration, entry.timeleft > 0 and entry.timeleft or 0,
+          "player"
       end
     end
     return nil
   end
-  
-  -- Fallback: Iterate through all debuffs and filter
+
+  -- 回退：遍历所有减益并过滤
   for k in pairs(cache) do cache[k] = nil end
   local count = 1
   for i=1,16 do
@@ -1326,57 +1279,54 @@ function libdebuff:UnitOwnDebuff(unit, id)
 end
 
 -- ============================================================================
--- API: GetBestAuraCast (for libpredict HoT tracking)
+-- API：GetBestAuraCast（供 libpredict 追踪 HoT）
 -- ============================================================================
 
 function libdebuff:GetBestAuraCast(guid, spellName)
   if not guid or not spellName then return nil end
-  
-  -- Check ownDebuffs first (for our casts)
+
+  -- 优先我们自己的施法
   if ownDebuffs[guid] and ownDebuffs[guid][spellName] then
     local data = ownDebuffs[guid][spellName]
-    local timeleft = (data.startTime + data.duration) - GetTime()
+    local timeleft = TimeLeft(data)
     if timeleft > 0 then
       return data.startTime, data.duration, timeleft, data.rank, GetPlayerGUID()
     end
   end
-  
-  -- Check allAuraCasts (for any caster)
+
+  -- 其次是任意施法者里剩余时间最长的
   if allAuraCasts[guid] and allAuraCasts[guid][spellName] then
-    local bestData = nil
-    local bestCaster = nil
-    local bestTimeleft = 0
-    
+    local bestData, bestCaster, bestTimeleft = nil, nil, 0
+
     for casterGuid, data in pairs(allAuraCasts[guid][spellName]) do
-      local timeleft = (data.startTime + data.duration) - GetTime()
+      local timeleft = TimeLeft(data)
       if timeleft > bestTimeleft then
         bestTimeleft = timeleft
         bestData = data
         bestCaster = casterGuid
       end
     end
-    
+
     if bestData and bestTimeleft > 0 then
       return bestData.startTime, bestData.duration, bestTimeleft, bestData.rank, bestCaster
     end
   end
-  
+
   return nil
 end
 
 -- ============================================================================
--- API: GetEnhancedDebuffs (for external modules)
+-- API：GetEnhancedDebuffs（供外部模块使用）
 -- ============================================================================
 
 function libdebuff:GetEnhancedDebuffs(targetGUID)
   if not targetGUID then return nil end
   local result = {}
-  
+
   if ownDebuffs[targetGUID] then
     local myGuid = GetPlayerGUID()
     for spellName, data in pairs(ownDebuffs[targetGUID]) do
-      local timeleft = (data.startTime + data.duration) - GetTime()
-      if timeleft > 0 then
+      if TimeLeft(data) > 0 then
         result[spellName] = result[spellName] or {}
         result[spellName][myGuid] = {
           startTime = data.startTime,
@@ -1387,24 +1337,28 @@ function libdebuff:GetEnhancedDebuffs(targetGUID)
       end
     end
   end
-  
+
   return result
 end
 
 -- ============================================================================
--- NAMPOWER EVENT HANDLING
+-- Nampower 事件处理
 -- ============================================================================
 
 if hasNampower then
-  -- Carnage Talent Rank
+  -- Carnage 天赋等级
   local carnageRank = 0
   local function UpdateCarnageRank()
     if class ~= "DRUID" then return end
-    local _, _, _, _, rank = GetTalentInfo(2, 17)
-    carnageRank = rank or 0
+    carnageRank = GetTalentRank(2, 17)
   end
-  
-  -- Persistent Carnage check frame (reused instead of CreateFrame per Bite)
+
+  -- Carnage 触发后被刷新的德鲁伊流血效果。键必须是客户端本地化法术名，
+  -- 因为 ownDebuffs／allAuraCasts 就是用 GetSpellRecField(spellId, "name")
+  -- 的结果做键的；触发判定同样只认本地化的“凶猛撕咬”。
+  local carnageRefreshSpells = { "撕扯", "斜掠" }
+
+  -- 常驻的 Carnage 检查框（而不是每次凶猛撕咬都 CreateFrame）
   local carnageState = nil  -- {targetGuid, checkTime}
   local carnageCheckFrame = CreateFrame("Frame")
   carnageCheckFrame:Hide()
@@ -1414,59 +1368,658 @@ if hasNampower then
       return
     end
     if GetTime() < carnageState.checkTime then return end
-    
-    -- Check if we gained a combo point (indicates Carnage proc)
-    local cp = GetComboPoints() or 0
-    
-    if cp > 0 then
-      -- Carnage triggered! Refresh Rip & Rake
+
+    -- 撕咬后立刻拿到连击点，说明 Carnage 触发了
+    if (GetComboPoints() or 0) > 0 then
       local guid = carnageState.targetGuid
       local refreshTime = GetTime()
       local myGuid = GetPlayerGUID()
-      
-      -- Refresh in ownDebuffs
-      if ownDebuffs[guid] then
-        if ownDebuffs[guid]["Rip"] then
-          ownDebuffs[guid]["Rip"].startTime = refreshTime
+
+      for _, spellName in ipairs(carnageRefreshSpells) do
+        local own = ownDebuffs[guid] and ownDebuffs[guid][spellName]
+        if own then
+          own.startTime = refreshTime
           if debugStats.enabled then
-            DEFAULT_CHAT_FRAME:AddMessage("|cff00ffff[CARNAGE]|r Rip refreshed (CP detected)")
+            DEFAULT_CHAT_FRAME:AddMessage("|cff00ffff[CARNAGE]|r " .. spellName .. " refreshed (CP detected)")
           end
         end
-        if ownDebuffs[guid]["Rake"] then
-          ownDebuffs[guid]["Rake"].startTime = refreshTime
-          if debugStats.enabled then
-            DEFAULT_CHAT_FRAME:AddMessage("|cff00ffff[CARNAGE]|r Rake refreshed (CP detected)")
-          end
+
+        local casts = allAuraCasts[guid] and allAuraCasts[guid][spellName]
+        if casts and casts[myGuid] then
+          casts[myGuid].startTime = refreshTime
         end
       end
-      
-      -- Refresh in allAuraCasts
-      if allAuraCasts[guid] then
-        if allAuraCasts[guid]["Rip"] and allAuraCasts[guid]["Rip"][myGuid] then
-          allAuraCasts[guid]["Rip"][myGuid].startTime = refreshTime
-        end
-        if allAuraCasts[guid]["Rake"] and allAuraCasts[guid]["Rake"][myGuid] then
-          allAuraCasts[guid]["Rake"][myGuid].startTime = refreshTime
-        end
+
+      if pfTarget and GetUnitGUID("target") == guid then
+        pfTarget.update_aura = true
       end
-      
-      -- Trigger UI updates
-      if pfTarget and GetUnitGUID("target") then
-        local currentTargetGuid = GetUnitGUID("target")
-        if currentTargetGuid == guid then
-          pfTarget.update_aura = true
-        end
-      end
-      
+
       if pfUI.nameplates and pfUI.nameplates.OnAuraUpdate then
         pfUI.nameplates:OnAuraUpdate(guid)
       end
     end
-    
+
     carnageState = nil
     this:Hide()
   end)
-  
+
+  local function NotifyAuraConsumers(guid)
+    if pfUI.nameplates and pfUI.nameplates.OnAuraUpdate then
+      pfUI.nameplates:OnAuraUpdate(guid)
+    end
+    -- 原始 GUID 可能收不到 UNIT_AURA，逐个刷新匹配的单位框体
+    libdebuff:NotifyUnitFrameAuras(guid)
+  end
+
+  -- 事件处理表：键为归一化后的光环事件名或原始事件名。
+  -- 处理函数返回 false 表示提前结束，与原实现一样跳过本次周期清理。
+  local eventHandlers = {}
+
+  eventHandlers["PLAYER_LOGOUT"] = function()
+    this:UnregisterAllEvents()
+    this:SetScript("OnEvent", nil)
+    return false
+  end
+
+  eventHandlers["PLAYER_ENTERING_WORLD"] = function()
+    GetPlayerGUID()
+    UpdateCarnageRank()
+  end
+
+  eventHandlers["PLAYER_TALENT_UPDATE"] = UpdateCarnageRank
+
+  eventHandlers["UNIT_HEALTH"] = function()
+    local guid = arg1
+    if guid and UnitIsDead and UnitIsDead(guid) then
+      CleanupUnit(guid)
+    end
+    FireHooks(pfUI.libdebuff_unit_health_hooks, arg1)
+  end
+
+  eventHandlers["UNIT_DIED"] = function()
+    FireHooks(pfUI.libdebuff_unit_died_hooks, arg1)
+  end
+
+  eventHandlers["SPELL_FAILED_OTHER"] = function()
+    local casterGuid = arg1
+    if casterGuid and pfUI.libdebuff_casts[casterGuid] then
+      pfUI.libdebuff_casts[casterGuid] = nil
+    end
+    FireHooks(pfUI.libdebuff_spell_failed_other_hooks, casterGuid, arg2)
+  end
+
+  eventHandlers["PLAYER_TARGET_CHANGED"] = function()
+    if not GetUnitGUID then return false end
+    local targetGuid = GetUnitGUID("target")
+
+    if targetGuid and targetGuid ~= "" then
+      -- 取消／重新选中同一目标后，旧的槽位映射不再可信
+      slotMapCache[targetGuid] = nil
+      CleanupExpiredTimers(targetGuid)
+    end
+    FireHooks(pfUI.libdebuff_player_target_changed_hooks)
+  end
+
+  local function HandleSpellStart(eventName)
+    local itemId, spellId, casterGuid, castTime = arg1, arg2, arg3, arg6
+
+    if not casterGuid or not spellId then return false end
+
+    local spellName = SpellNameByRec(spellId)
+    local icon = libdebuff:GetSpellIcon(spellId)
+
+    -- 物品触发的施法使用物品图标，并单独缓存
+    -- （SPELL_GO 会清掉 libdebuff_casts，物品图标需要留存）
+    if itemId and itemId > 0 and GetItemStatsField and GetItemIconTexture then
+      local displayInfoId = GetItemStatsField(itemId, "displayInfoID")
+      local itemIcon = displayInfoId and GetItemIconTexture(displayInfoId)
+      if itemIcon then icon = NormalizeIconPath(itemIcon) end
+      pfUI.libdebuff_item_icons[casterGuid] = {
+        icon = icon,
+        name = GetItemStatsField(itemId, "displayName")
+      }
+    else
+      pfUI.libdebuff_item_icons[casterGuid] = nil
+    end
+
+    local startTime = GetTime()
+    pfUI.libdebuff_casts[casterGuid] = {
+      spellID = spellId,
+      itemID = itemId and itemId > 0 and itemId or nil,
+      spellName = spellName,
+      icon = icon,
+      startTime = startTime,
+      duration = castTime and castTime / 1000 or 0,
+      endTime = castTime and (startTime + castTime / 1000) or nil,
+      event = "START"
+    }
+
+    if eventName == "SPELL_START_SELF" then
+      FireHooks(pfUI.libdebuff_spell_start_self_hooks,
+        spellId, casterGuid, arg4, castTime)
+    else
+      FireHooks(pfUI.libdebuff_spell_start_other_hooks,
+        spellId, casterGuid, arg4, castTime)
+    end
+  end
+
+  eventHandlers["SPELL_START_SELF"] = HandleSpellStart
+  eventHandlers["SPELL_START_OTHER"] = HandleSpellStart
+
+  local function HandleSpellGo(eventName)
+    local spellId, casterGuid, targetGuid = arg2, arg3, arg4
+    local numHit, numMissed = arg6 or 0, arg7 or 0
+    local isSelf = eventName == "SPELL_GO_SELF"
+
+    -- 只有与当前施法匹配的 SPELL_GO 才清空施法条
+    -- （霜甲之类的被动触发也会发 SPELL_GO，但不应清空施法条）
+    local cast = casterGuid and pfUI.libdebuff_casts[casterGuid]
+    if cast and cast.spellID == spellId then
+      pfUI.libdebuff_casts[casterGuid] = nil
+    end
+
+    -- 命中判定之前先触发 SPELL_GO_SELF 回调
+    -- （挥砍计时器需要看到包括未命中在内的所有施法，用于重置挥砍）
+    if isSelf then
+      FireHooks(pfUI.libdebuff_spell_go_hooks,
+        spellId, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
+    end
+    if numMissed > 0 or numHit == 0 then return false end
+
+    local spellName, spellRankString
+    if SpellInfo then
+      spellName, spellRankString = SpellInfo(spellId)
+    elseif GetSpellRecField then
+      spellName = GetSpellRecField(spellId, "name")
+    end
+    if not spellName then return false end
+
+    local castRank = 0
+    if spellRankString and spellRankString ~= "" then
+      castRank = tonumber((string.gsub(spellRankString, "Rank ", ""))) or 0
+    end
+
+    -- 存入 pendingCasts 供 DEBUFF_ADDED 关联
+    if targetGuid then
+      pendingCasts[targetGuid] = pendingCasts[targetGuid] or {}
+      pendingCasts[targetGuid][spellName] = {
+        casterGuid = casterGuid,
+        rank = castRank,
+        time = GetTime()
+      }
+    end
+
+    local myGuid = GetPlayerGUID()
+    if casterGuid == myGuid then
+      lastCastRanks[spellName] = {
+        rank = castRank,
+        time = GetTime()
+      }
+    end
+
+    -- CARNAGE 天赋：凶猛撕咬会刷新 Rip 与 Rake
+    -- 触发时撕咬后会立刻多给 1 点连击点，延迟 50ms 检查即可判断
+    if class == "DRUID" and carnageRank >= 1 and spellName == "凶猛撕咬" and casterGuid == myGuid then
+      if targetGuid and numHit > 0 then
+        carnageState = {
+          targetGuid = targetGuid,
+          checkTime = GetTime() + 0.05
+        }
+        carnageCheckFrame:Show()
+      end
+    end
+
+    -- SPELL_GO_SELF 的回调已在命中判定之前触发过，这里只处理他人施法
+    if not isSelf then
+      FireHooks(pfUI.libdebuff_spell_go_other_hooks,
+        spellId, casterGuid, targetGuid)
+    end
+  end
+
+  eventHandlers["SPELL_GO_SELF"] = HandleSpellGo
+  eventHandlers["SPELL_GO_OTHER"] = HandleSpellGo
+
+  eventHandlers["SPELL_CAST_EVENT"] = function()
+    -- 在连击点被客户端消耗之前抓取
+    -- 这个事件在你施放法术时触发（服务器处理之前）
+    local success, spellId, castType, targetGuid = arg1, arg2, arg3, arg4
+
+    if success ~= 1 or not spellId then return false end
+
+    local spellName = SpellNameByRec(spellId)
+    if not spellName and SpellInfo then
+      spellName = SpellInfo(spellId)
+    end
+
+    -- 为 libpredict 记录待处理施法信息（治疗预判目标追踪）
+    -- Nampower 队列施法时 CastSpellByName hook 在 current_cast 已设置的情况下
+    -- 触发且无法更新 spell_queue，而 SPELL_CAST_EVENT 恰好早于 SPELLCAST_START。
+    local pendingCast = pfUI.libpredict_pending_cast
+    if spellName and IsTrackableGuid(targetGuid) then
+      pendingCast.spellId = spellId
+      pendingCast.spellName = spellName
+      pendingCast.targetGuid = targetGuid
+      pendingCast.time = GetTime()
+    else
+      -- 没有明确目标：清空待处理信息，让 libpredict 回退到 spell_queue
+      pendingCast.spellId = nil
+      pendingCast.spellName = nil
+      pendingCast.targetGuid = nil
+      pendingCast.time = nil
+    end
+
+    -- 只为连击点技能抓取连击点
+    if spellName and IsComboPointAbility(spellName) then
+      capturedCP = GetComboPoints() or 0
+    end
+
+    FireHooks(pfUI.libdebuff_spell_cast_hooks,
+      success, spellId, castType, targetGuid)
+  end
+
+  -- 按连击点数解析时长
+  local function GetComboPointDuration(spellName, rankNum, isOurs)
+    local base, perCP = GetComboPointData(spellName)
+
+    if isOurs then
+      -- 自己施放：使用 SPELL_CAST_EVENT 抓到的连击点（如果有）
+      local duration
+      if base and perCP then
+        duration = base + (capturedCP or 0) * perCP
+      else
+        duration = libdebuff:GetDuration(spellName, rankNum)
+      end
+      capturedCP = nil  -- 已消耗
+      return duration
+    end
+
+    -- 其他玩家的连击点未知，只有固定时长可用（如破甲的 30 秒）
+    if perCP == 0 and base then return base end
+    return 0
+  end
+
+  local function HandleAuraCast(eventName)
+    local spellId, casterGuid, targetGuid = arg1, arg2, arg3
+    local durationMs = arg8
+
+    if not spellId then return false end
+    if not IsTrackableGuid(targetGuid) then return false end
+
+    local spellName = (SpellInfo and SpellInfo(spellId)) or
+      SpellNameByRecField(spellId)
+    if not spellName then return false end
+
+    -- 去重：Nampower 对多效果法术会连发多个 AURA_CAST
+    -- （例如精灵之火有 3 个效果）
+    recentCasts[targetGuid] = recentCasts[targetGuid] or {}
+    recentCasts[targetGuid][spellName] = recentCasts[targetGuid][spellName] or {}
+
+    local now = GetTime()
+    local lastCastTime = recentCasts[targetGuid][spellName][casterGuid]
+    if lastCastTime and (now - lastCastTime) < AURA_CAST_DEDUPE_WINDOW then
+      return false
+    end
+    recentCasts[targetGuid][spellName][casterGuid] = now
+
+    -- 从 spellId 取等级
+    local rankNum = 0
+    local rankString = GetSpellRecField(spellId, "rank")
+    if rankString and rankString ~= "" then
+      rankNum = tonumber((string.gsub(rankString, "Rank ", ""))) or 0
+    end
+
+    local myGuid = GetPlayerGUID()
+    local isOurs = (myGuid and casterGuid == myGuid)
+    local duration = durationMs and (durationMs / 1000) or 0
+
+    libdebuff:UpdateBuffOwnershipFromCast(
+      targetGuid, spellId, casterGuid, isOurs
+    )
+
+    if debugStats.enabled and isOurs then
+      debugStats.aura_cast = debugStats.aura_cast + 1
+    end
+
+    if IsComboPointAbility(spellName) then
+      duration = GetComboPointDuration(spellName, rankNum, isOurs)
+    elseif duration == 0 then
+      -- 非连击点技能：AURA_CAST 返回 0 时用法术数据库
+      duration = libdebuff:GetDuration(spellName, rankNum) or 0
+    end
+
+    allAuraCasts[targetGuid] = allAuraCasts[targetGuid] or {}
+    local spellCasts = allAuraCasts[targetGuid][spellName] or {}
+    allAuraCasts[targetGuid][spellName] = spellCasts
+
+    -- 降级保护：必须在清理其他施法者之前检查！
+    if selfOverwriteDebuffs[spellName] then
+      -- 独占型减益要检查所有已有施法者
+      for otherCaster, existingData in pairs(spellCasts) do
+        local blockedFor = HigherRankTimeLeft(existingData, rankNum)
+        if blockedFor then
+          if debugStats.enabled then
+            DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffff0000[DOWNRANK BLOCKED]|r %s: Rank %d from %s cannot overwrite Rank %d from %s (%.1fs left)",
+              spellName, rankNum, DebugGuid(casterGuid), existingData.rank, DebugGuid(otherCaster), blockedFor))
+          end
+          return false
+        end
+      end
+    else
+      -- 非独占型：只检查同一施法者
+      local blockedFor = HigherRankTimeLeft(spellCasts[casterGuid], rankNum)
+      if blockedFor then
+        if debugStats.enabled and isOurs then
+          DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffff0000[DOWNRANK BLOCKED]|r %s: Rank %d cannot overwrite Rank %d (%.1fs left)",
+            spellName, rankNum, spellCasts[casterGuid].rank, blockedFor))
+        end
+        return false
+      end
+    end
+
+    -- 独占型减益：清掉其他施法者
+    if selfOverwriteDebuffs[spellName] then
+      local n = 0
+      for otherCaster in pairs(spellCasts) do
+        if otherCaster ~= casterGuid then
+          n = n + 1
+          _cleanupBuf1[n] = otherCaster
+        end
+      end
+      for i = 1, n do
+        spellCasts[_cleanupBuf1[i]] = nil
+        _cleanupBuf1[i] = nil
+      end
+
+      -- 我们的减益被别人覆盖时从 ownDebuffs 移除
+      if not isOurs and ownDebuffs[targetGuid] and ownDebuffs[targetGuid][spellName] then
+        ownDebuffs[targetGuid][spellName] = nil
+      end
+    end
+
+    -- 互相覆盖的变体（精灵之火 <-> 精灵之火（野性））
+    local otherVariant = debuffOverwritePairs[spellName]
+    if otherVariant and allAuraCasts[targetGuid][otherVariant] then
+      allAuraCasts[targetGuid][otherVariant][casterGuid] = nil
+    end
+
+    spellCasts[casterGuid] = {
+      startTime = now,
+      duration = duration,
+      rank = rankNum
+    }
+
+    -- 独占型减益刷新时同步 slotOwnership
+    -- （刷新不会触发 DEBUFF_ADDED，必须在这里更新！）
+    if selfOverwriteDebuffs[spellName] and slotOwnership[targetGuid] then
+      for auraSlot, ownership in pairs(slotOwnership[targetGuid]) do
+        if ownership.spellName == spellName then
+          ownership.casterGuid = casterGuid
+          ownership.isOurs = isOurs
+
+          if IsDebugTarget(targetGuid) then
+            DEFAULT_CHAT_FRAME:AddMessage(string.format("|cff00ff00[SLOT UPDATED]|r aura=%d %s newCaster=%s isOurs=%s",
+              auraSlot, spellName, DebugGuid(casterGuid), tostring(isOurs)))
+          end
+          break
+        end
+      end
+    end
+
+    if IsDebugTarget(targetGuid) then
+      DEFAULT_CHAT_FRAME:AddMessage(string.format("%s |cff00ffff[AURA_CAST]|r %s target=%s caster=%s isOurs=%s dur=%.1fs",
+        GetDebugTimestamp(), spellName, DebugGuid(targetGuid), DebugGuid(casterGuid), tostring(isOurs), duration))
+    end
+
+    NotifyAuraConsumers(targetGuid)
+
+    -- 只有我们自己的减益才记入 ownDebuffs
+    if not isOurs then return false end
+    if targetGuid == myGuid then return false end  -- 跳过自身增益
+
+    ownDebuffs[targetGuid] = ownDebuffs[targetGuid] or {}
+    local data = ownDebuffs[targetGuid][spellName] or {}
+    ownDebuffs[targetGuid][spellName] = data
+
+    -- 降级保护：已有减益仍在生效且等级更高时拒绝更新
+    local blockedFor = HigherRankTimeLeft(data, rankNum)
+    if blockedFor then
+      if debugStats.enabled then
+        DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffff0000[DOWNRANK BLOCKED]|r %s: Rank %d cannot overwrite Rank %d (%.1fs left)",
+          spellName, rankNum, data.rank, blockedFor))
+      end
+      return false
+    end
+
+    data.startTime = now
+    data.duration = duration
+    data.texture = libdebuff:GetSpellIcon(spellId)
+    data.rank = rankNum
+    data.spellId = spellId
+    data.stacks = 1   -- 初始设为 1，稍后由 DEBUFF_ADDED 更新
+
+    if otherVariant and ownDebuffs[targetGuid][otherVariant] then
+      ownDebuffs[targetGuid][otherVariant] = nil
+    end
+
+    -- 供 Cleveroids API 使用
+    objectsByGuid[targetGuid] = objectsByGuid[targetGuid] or {}
+    objectsByGuid[targetGuid][spellId] = {
+      start = now,
+      duration = duration,
+      caster = "player",
+      stacks = 1
+    }
+
+    if eventName == "AURA_CAST_ON_SELF" then
+      FireHooks(pfUI.libdebuff_aura_cast_on_self_hooks,
+        spellId, casterGuid, targetGuid)
+    else
+      FireHooks(pfUI.libdebuff_aura_cast_on_other_hooks,
+        spellId, casterGuid, targetGuid)
+    end
+  end
+
+  eventHandlers["AURA_CAST_ON_SELF"] = HandleAuraCast
+  eventHandlers["AURA_CAST_ON_OTHER"] = HandleAuraCast
+
+  eventHandlers["DEBUFF_ADDED_OTHER"] = function()
+    local guid, displaySlot, spellId, stacks = arg1, arg2, arg3, arg4
+
+    -- Nampower 2.29+：arg6 是 0 起的真实槽位
+    local auraSlot = arg6 and (arg6 + 1) or nil
+    if auraSlot and auraSlot <= 32 then displaySlot = 16 + auraSlot end
+
+    slotMapCache[guid] = nil
+
+    local spellName = SpellNameByRecField(spellId)
+    if not spellName then return false end
+
+    if debugStats.enabled then
+      debugStats.debuff_added = debugStats.debuff_added + 1
+    end
+
+    if UnitIsDead and UnitIsDead(guid) then
+      CleanupUnit(guid)
+      return false
+    end
+
+    -- 事件没带真实槽位时先查槽位映射，再退回显示槽位推算
+    if not auraSlot then
+      local slotMap = GetDebuffSlotMap(guid)
+      local slotData = slotMap and slotMap[displaySlot]
+      auraSlot = slotData and slotData.auraSlot or 32 + displaySlot
+    end
+
+    -- 尝试从 pendingCasts 获取施法者
+    local casterGuid = nil
+    local pending = pendingCasts[guid] and pendingCasts[guid][spellName]
+    if pending and GetTime() - pending.time < 0.5 then
+      casterGuid = pending.casterGuid
+      pendingCasts[guid][spellName] = nil
+    end
+
+    -- 从 allAuraCasts 回退获取最近施法者
+    if not casterGuid then
+      casterGuid = GetLatestCaster(
+        allAuraCasts[guid] and allAuraCasts[guid][spellName]
+      )
+    end
+
+    local myGuid = GetPlayerGUID()
+    local isOurs = (myGuid and casterGuid == myGuid)
+
+    -- 从 ownDebuffs 回退（刚施放不久）
+    if not isOurs and not casterGuid then
+      local own = ownDebuffs[guid] and ownDebuffs[guid][spellName]
+      if own and GetTime() - own.startTime < 0.5 then
+        isOurs = true
+        casterGuid = myGuid
+      end
+    end
+
+    -- 猎人陷阱没有 AURA_CAST 事件，只能视为玩家自己施加
+    if not casterGuid and trapDebuffs[spellName] then
+      casterGuid = myGuid
+      isOurs = true
+      if debugStats.enabled then
+        DEFAULT_CHAT_FRAME:AddMessage(string.format("|cff33ff99[TRAP FALLBACK]|r 将 %s 视为玩家自己的 debuff", spellName))
+      end
+    end
+
+    -- 存储槽位所有权
+    slotOwnership[guid] = slotOwnership[guid] or {}
+    slotOwnership[guid][auraSlot] = {
+      casterGuid = casterGuid,
+      spellName = spellName,
+      spellId = spellId,
+      isOurs = isOurs
+    }
+
+    displayToAura[guid] = displayToAura[guid] or {}
+    displayToAura[guid][displaySlot] = auraSlot
+
+    if IsDebugTarget(guid) then
+      DEFAULT_CHAT_FRAME:AddMessage(string.format("%s |cff00ff00[DEBUFF_ADDED]|r display=%d aura=%d %s caster=%s isOurs=%s",
+        GetDebugTimestamp(), displaySlot, auraSlot, spellName, DebugGuid(casterGuid), tostring(isOurs)))
+    end
+
+    -- 更新 ownDebuffs（如果是我们的 debuff）
+    if isOurs and casterGuid and casterGuid == myGuid then
+      local auraData = allAuraCasts[guid] and allAuraCasts[guid][spellName] and
+        allAuraCasts[guid][spellName][casterGuid]
+      local startTime, duration, rank
+
+      if auraData then
+        startTime = auraData.startTime
+        duration = auraData.duration
+        rank = auraData.rank or 0
+      else
+        -- 没有 AURA_CAST 数据（如陷阱 debuff），使用当前时间和默认持续时间
+        startTime = GetTime()
+        duration = libdebuff:GetDuration(spellName, 0) or 0
+        rank = 0
+        if debugStats.enabled then
+          DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffffaa00[TRAP DURATION]|r %s 使用默认持续时间 %.1fs", spellName, duration))
+        end
+      end
+
+      ownDebuffs[guid] = ownDebuffs[guid] or {}
+      ownDebuffs[guid][spellName] = {
+        startTime = startTime,
+        duration = duration,
+        texture = libdebuff:GetSpellIcon(spellId),
+        rank = rank,
+        spellId = spellId,
+        stacks = stacks,
+      }
+
+      if IsDebugTarget(guid) then
+        DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffff00ff[OWNDEBUFF SYNC]|r %s from DEBUFF_ADDED (dur=%.1f)", spellName, duration))
+      end
+    end
+
+    CleanupExpiredTimers(guid)
+    NotifyAuraConsumers(guid)
+    FireHooks(pfUI.libdebuff_debuff_added_other_hooks, arg1, arg2, arg3, arg4)
+  end
+
+  eventHandlers["DEBUFF_REMOVED_OTHER"] = function()
+    local guid, displaySlot, spellId = arg1, arg2, arg3
+
+    -- Nampower 2.29+：arg6 是 0 起的真实槽位（32-47），转成 1 起的 Lua 索引
+    local auraSlot = arg6 and (arg6 + 1) or nil
+    if auraSlot and auraSlot <= 32 then displaySlot = 16 + auraSlot end
+
+    slotMapCache[guid] = nil
+
+    local spellName = SpellNameByRecField(spellId) or "?"
+
+    if debugStats.enabled then
+      debugStats.debuff_removed = debugStats.debuff_removed + 1
+      if IsCurrentTarget(guid) then
+        DEFAULT_CHAT_FRAME:AddMessage(string.format("%s |cffff9900[DEBUFF_REMOVED]|r display=%d aura=%d (0based=%d) %s",
+          GetDebugTimestamp(), displaySlot, auraSlot or -1, arg6 or -1, spellName))
+      end
+    end
+
+    if UnitIsDead and UnitIsDead(guid) then
+      CleanupUnit(guid)
+      return false
+    end
+
+    -- 事件没带真实槽位时回退 displayToAura 映射
+    local foundAuraSlot = auraSlot or
+      (displayToAura[guid] and displayToAura[guid][displaySlot])
+
+    local wasOurs = false
+    local removedCasterGuid = nil
+
+    if foundAuraSlot then
+      local ownership = slotOwnership[guid] and slotOwnership[guid][foundAuraSlot]
+      if ownership then
+        wasOurs = ownership.isOurs
+        removedCasterGuid = ownership.casterGuid
+      end
+
+      if slotOwnership[guid] then
+        slotOwnership[guid][foundAuraSlot] = nil
+      end
+      if displayToAura[guid] then
+        displayToAura[guid][displaySlot] = nil
+      end
+
+      if IsDebugTarget(guid) then
+        DEFAULT_CHAT_FRAME:AddMessage(string.format("%s |cffff9900[SLOT CLEARED]|r aura=%d [arg6] %s wasOurs=%s caster=%s",
+          GetDebugTimestamp(), foundAuraSlot, spellName, tostring(wasOurs), DebugGuid(removedCasterGuid)))
+      end
+    end
+
+    -- 只有不是刚刚续上的才真正删除
+    local own = wasOurs and ownDebuffs[guid] and ownDebuffs[guid][spellName]
+    if own and GetTime() - own.startTime > 1 then
+      ownDebuffs[guid][spellName] = nil
+    end
+
+    local casts = removedCasterGuid and allAuraCasts[guid] and
+      allAuraCasts[guid][spellName]
+    local auraData = casts and casts[removedCasterGuid]
+    if auraData and GetTime() - auraData.startTime > 1 then
+      casts[removedCasterGuid] = nil
+    end
+
+    CleanupExpiredTimers(guid)
+    NotifyAuraConsumers(guid)
+    FireHooks(pfUI.libdebuff_debuff_removed_other_hooks, arg1, arg2, arg3, arg4)
+  end
+
+  local function HandleBuffOwnership(eventName)
+    libdebuff:HandleBuffOwnershipEvent(eventName, arg1, arg3, arg6, arg7)
+    libdebuff:NotifyUnitFrameAuras(arg1)
+  end
+
+  eventHandlers["BUFF_ADDED_OTHER"] = HandleBuffOwnership
+  eventHandlers["BUFF_REMOVED_OTHER"] = HandleBuffOwnership
+
   local frame = CreateFrame("Frame")
   frame:RegisterEvent("PLAYER_ENTERING_WORLD")
   frame:RegisterEvent("PLAYER_TALENT_UPDATE")
@@ -1486,8 +2039,9 @@ if hasNampower then
   frame:RegisterEvent("DEBUFF_REMOVED_OTHER")
   frame:RegisterEvent("PLAYER_TARGET_CHANGED")
   frame:RegisterEvent("UNIT_HEALTH")
-  
+
   frame:SetScript("OnEvent", function()
+    -- 光环事件名按真实标志位归一化后再分发
     local auraEvent = libdebuff:NormalizeOtherAuraEvent(
       event, arg1, arg3, arg6
     )
@@ -1497,767 +2051,11 @@ if hasNampower then
       )
     end
 
-    if event == "PLAYER_LOGOUT" then
-      this:UnregisterAllEvents()
-      this:SetScript("OnEvent", nil)
-      return
-      
-    elseif event == "PLAYER_ENTERING_WORLD" then
-      GetPlayerGUID()
-      UpdateCarnageRank()
-      
-    elseif event == "PLAYER_TALENT_UPDATE" then
-      UpdateCarnageRank()
-      
-    elseif event == "UNIT_HEALTH" then
-      local guid = arg1
-      if guid and UnitIsDead and UnitIsDead(guid) then
-        CleanupUnit(guid)
-      end
-      if pfUI.libdebuff_unit_health_hooks then
-        for _, fn in pairs(pfUI.libdebuff_unit_health_hooks) do
-          fn(arg1)
-        end
-      end
+    local eventName = auraEvent or event
+    local handler = eventHandlers[eventName]
+    if handler and handler(eventName) == false then return end
 
-    elseif event == "SPELL_START_SELF" or event == "SPELL_START_OTHER" then
-      local itemId = arg1
-      local spellId = arg2
-      local casterGuid = arg3
-      local castTime = arg6
-      
-      if not casterGuid or not spellId then return end
-      
-      -- Get spell name via Nampower
-      local spellName = nil
-      if GetSpellRec then
-        local rec = GetSpellRec(spellId)
-        spellName = rec and rec.name or nil
-      end
-      
-      local icon = libdebuff:GetSpellIcon(spellId)
-      
-      -- Use item icon for item-triggered casts
-      if itemId and itemId > 0 and GetItemStatsField and GetItemIconTexture then
-        local displayInfoId = GetItemStatsField(itemId, "displayInfoID")
-        if displayInfoId then
-          local itemIcon = GetItemIconTexture(displayInfoId)
-          if itemIcon then
-            -- GetItemIconTexture returns short name (e.g. "INV_Gizmo_08"), needs full path
-            if not string.find(itemIcon, "\\") then
-              itemIcon = "Interface\\Icons\\" .. itemIcon
-            end
-            icon = itemIcon
-          end
-        end
-        -- Store in persistent item icon cache (survives SPELL_GO clearing libdebuff_casts)
-        pfUI.libdebuff_item_icons[casterGuid] = {
-          icon = icon,
-          name = GetItemStatsField and GetItemStatsField(itemId, "displayName") or nil
-        }
-      else
-        pfUI.libdebuff_item_icons[casterGuid] = nil
-      end
-      
-      pfUI.libdebuff_casts[casterGuid] = {
-        spellID = spellId,
-        itemID = itemId and itemId > 0 and itemId or nil,
-        spellName = spellName,
-        icon = icon,
-        startTime = GetTime(),
-        duration = castTime and castTime / 1000 or 0,
-        endTime = castTime and (GetTime() + castTime / 1000) or nil,
-        event = "START"
-      }
-
-      if event == "SPELL_START_SELF" and pfUI.libdebuff_spell_start_self_hooks then
-        for _, fn in pairs(pfUI.libdebuff_spell_start_self_hooks) do
-          fn(spellId, casterGuid, arg4, castTime)
-        end
-      elseif event == "SPELL_START_OTHER" and pfUI.libdebuff_spell_start_other_hooks then
-        for _, fn in pairs(pfUI.libdebuff_spell_start_other_hooks) do
-          fn(spellId, casterGuid, arg4, castTime)
-        end
-      end
-
-    elseif event == "SPELL_GO_SELF" or event == "SPELL_GO_OTHER" then
-      local itemId = arg1
-      local spellId = arg2
-      local casterGuid = arg3
-      local targetGuid = arg4
-      local numHit = arg6 or 0
-      local numMissed = arg7 or 0
-      
-      -- Clear cast bar only if SPELL_GO matches the active cast
-      -- (Reactive procs like Frost Armor trigger SPELL_GO but shouldn't clear the castbar)
-      if casterGuid and pfUI.libdebuff_casts[casterGuid] then
-        if pfUI.libdebuff_casts[casterGuid].spellID == spellId then
-          pfUI.libdebuff_casts[casterGuid] = nil
-        end
-      end
-      
-      -- Fire registered SPELL_GO_SELF hooks BEFORE miss guard
-      -- (Swingtimer needs to see ALL casts, even misses, for swing reset)
-      if event == "SPELL_GO_SELF" and pfUI.libdebuff_spell_go_hooks then
-        for _, fn in pairs(pfUI.libdebuff_spell_go_hooks) do
-          fn(spellId, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
-        end
-      end
-      if numMissed > 0 or numHit == 0 then return end
-
-      local spellName, spellRankString
-      if SpellInfo then
-        spellName, spellRankString = SpellInfo(spellId)
-      elseif GetSpellRecField then
-        spellName = GetSpellRecField(spellId, "name")
-      end
-      if not spellName then return end
-      
-      local castRank = 0
-      if spellRankString and spellRankString ~= "" then
-        castRank = tonumber((string.gsub(spellRankString, "Rank ", ""))) or 0
-      end
-      
-      -- Store in pendingCasts for DEBUFF_ADDED correlation
-      if targetGuid then
-        pendingCasts[targetGuid] = pendingCasts[targetGuid] or {}
-        pendingCasts[targetGuid][spellName] = {
-          casterGuid = casterGuid,
-          rank = castRank,
-          time = GetTime()
-        }
-      end
-      
-      -- Store rank for our casts
-      local myGuid = GetPlayerGUID()
-      if casterGuid == myGuid then
-        lastCastRanks[spellName] = {
-          rank = castRank,
-          time = GetTime()
-        }
-      end
-      
-      -- CARNAGE TALENT: Ferocious Bite refreshes Rip & Rake
-      -- Check for combo point gain after Bite (indicates Carnage proc)
-      -- Carnage gives +1 CP immediately after Bite if it procs
-      if class == "DRUID" and carnageRank >= 1 and spellName == "凶猛撕咬" and casterGuid == myGuid then
-        if targetGuid and numHit > 0 then
-          -- Schedule delayed check (50ms to allow CP to register)
-          carnageState = {
-            targetGuid = targetGuid,
-            checkTime = GetTime() + 0.05
-          }
-          carnageCheckFrame:Show()
-        end
-      end
-
-      -- Fire registered SPELL_GO_SELF hooks (only for own casts)
-      if event == "SPELL_GO_SELF" and pfUI.libdebuff_spell_go_hooks then
-        for _, fn in pairs(pfUI.libdebuff_spell_go_hooks) do
-          fn(spellId, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
-        end
-      end
-
-      -- Fire registered SPELL_GO_OTHER hooks
-      if event == "SPELL_GO_OTHER" and pfUI.libdebuff_spell_go_other_hooks then
-        for _, fn in pairs(pfUI.libdebuff_spell_go_other_hooks) do
-          fn(spellId, casterGuid, targetGuid)
-        end
-      end
-
-    elseif event == "UNIT_DIED" then
-      if pfUI.libdebuff_unit_died_hooks then
-        for _, fn in pairs(pfUI.libdebuff_unit_died_hooks) do
-          fn(arg1)
-        end
-      end
-
-    elseif event == "SPELL_FAILED_OTHER" then
-      local casterGuid = arg1
-      
-      if casterGuid and pfUI.libdebuff_casts[casterGuid] then
-        pfUI.libdebuff_casts[casterGuid] = nil
-      end
-      if pfUI.libdebuff_spell_failed_other_hooks then
-        for _, fn in pairs(pfUI.libdebuff_spell_failed_other_hooks) do
-          fn(casterGuid, arg2)
-        end
-      end
-
-    elseif event == "SPELL_CAST_EVENT" then
-      -- Capture combo points BEFORE they're consumed
-      -- This event fires when YOU cast a spell (before server processes it)
-      local success = arg1
-      local spellId = arg2
-      local castType = arg3
-      local targetGuid = arg4
-      
-      if success ~= 1 or not spellId then return end
-      
-      -- Get spell name
-      local spellName = nil
-      if GetSpellRec then
-        local rec = GetSpellRec(spellId)
-        spellName = rec and rec.name or nil
-      end
-      if not spellName and SpellInfo then
-        spellName = SpellInfo(spellId)
-      end
-      
-      -- Store pending cast info for libpredict (heal prediction target tracking)
-      -- This allows libpredict to resolve the correct target for Nampower queued casts,
-      -- where CastSpellByName hook fires while current_cast is set and spell_queue
-      -- cannot be updated. SPELL_CAST_EVENT fires right before SPELLCAST_START.
-      if spellName and targetGuid and targetGuid ~= "" and targetGuid ~= "0x0000000000000000" then
-        pfUI.libpredict_pending_cast.spellId = spellId
-        pfUI.libpredict_pending_cast.spellName = spellName
-        pfUI.libpredict_pending_cast.targetGuid = targetGuid
-        pfUI.libpredict_pending_cast.time = GetTime()
-      else
-        -- No explicit target - clear pending so libpredict falls back to spell_queue
-        pfUI.libpredict_pending_cast.spellId = nil
-        pfUI.libpredict_pending_cast.spellName = nil
-        pfUI.libpredict_pending_cast.targetGuid = nil
-        pfUI.libpredict_pending_cast.time = nil
-      end
-      
-      -- Only capture CPs for combo-point abilities
-      if spellName and IsComboPointAbility(spellName) then
-        capturedCP = GetComboPoints() or 0
-      end
-
-      -- Fire registered SPELL_CAST_EVENT hooks
-      if pfUI.libdebuff_spell_cast_hooks then
-        for _, fn in pairs(pfUI.libdebuff_spell_cast_hooks) do
-          fn(success, spellId, castType, targetGuid)
-        end
-      end
-      
-    elseif event == "AURA_CAST_ON_SELF" or event == "AURA_CAST_ON_OTHER" then
-      local spellId = arg1
-      local casterGuid = arg2
-      local targetGuid = arg3
-      local effect = arg4
-      local effectAuraName = arg5
-      local effectAmplitude = arg6
-      local effectMiscValue = arg7
-      local durationMs = arg8
-      local auraCapStatus = arg9
-      
-      if not spellId then return end
-      if not targetGuid or targetGuid == "" or targetGuid == "0x0000000000000000" then return end
-      
-      local spellName = SpellInfo and SpellInfo(spellId) or (GetSpellRecField and GetSpellRecField(spellId, "name"))
-      if not spellName then return end
-      
-      -- Deduplicate: Ignore if we processed this exact cast recently (within 100ms)
-      -- Nampower fires multiple AURA_CAST events for multi-effect spells (e.g. Faerie Fire has 3 effects)
-      recentCasts[targetGuid] = recentCasts[targetGuid] or {}
-      recentCasts[targetGuid][spellName] = recentCasts[targetGuid][spellName] or {}
-      
-      local now = GetTime()
-      local lastCastTime = recentCasts[targetGuid][spellName][casterGuid]
-      
-      if lastCastTime and (now - lastCastTime) < AURA_CAST_DEDUPE_WINDOW then
-        return  -- Duplicate event, ignore
-      end
-      
-      recentCasts[targetGuid][spellName][casterGuid] = now
-      
-      -- Rank aus spellId ermitteln
-      local rankNum = 0
-      local rankString = GetSpellRecField(spellId, "rank")
-      if rankString and rankString ~= "" then
-        rankNum = tonumber((string.gsub(rankString, "Rank ", ""))) or 0
-      end
-      
-      local duration = durationMs and (durationMs / 1000) or 0
-      local startTime = GetTime()
-      local myGuid = GetPlayerGUID()
-      local isOurs = (myGuid and casterGuid == myGuid)
-
-      libdebuff:UpdateBuffOwnershipFromCast(
-        targetGuid, spellId, casterGuid, isOurs
-      )
-      
-      if debugStats.enabled and isOurs then
-        debugStats.aura_cast = debugStats.aura_cast + 1
-      end
-      
-      -- Combo-point abilities: Calculate duration based on CPs used
-      if IsComboPointAbility(spellName) then
-        if isOurs then
-          -- OWN casts: use captured CPs from SPELL_CAST_EVENT (if available)
-          local cp = capturedCP or 0
-          local base, perCP = GetComboPointData(spellName)
-          if base and perCP then
-            duration = base + cp * perCP
-          else
-            -- Fallback to legacy database
-            duration = libdebuff:GetDuration(spellName, rankNum)
-          end
-          capturedCP = nil  -- consumed
-        else
-          -- OTHER players: CP unknown, no timer (except Expose Armor = fixed 30s)
-          local base, perCP = GetComboPointData(spellName)
-          if perCP and perCP == 0 and base then
-            duration = base  -- fixed duration (Expose Armor)
-          else
-            duration = 0  -- CP unknown for other players
-          end
-        end
-      elseif duration == 0 then
-        -- Non-CP managed spells: use database if AURA_CAST returned 0
-        duration = libdebuff:GetDuration(spellName, rankNum) or 0
-      end
-      
-      -- Store in allAuraCasts
-      if targetGuid and targetGuid ~= "" and targetGuid ~= "0x0000000000000000" then
-        allAuraCasts[targetGuid] = allAuraCasts[targetGuid] or {}
-        allAuraCasts[targetGuid][spellName] = allAuraCasts[targetGuid][spellName] or {}
-        
-        -- Downrank Protection: Check BEFORE clearing old casters!
-        -- For selfOverwrite debuffs, check ALL existing casters
-        if selfOverwriteDebuffs[spellName] then
-          for otherCaster, existingData in pairs(allAuraCasts[targetGuid][spellName]) do
-            if existingData.rank and rankNum and rankNum > 0 then
-              local existingTimeleft = (existingData.startTime + existingData.duration) - GetTime()
-              if existingTimeleft > 0 and rankNum < existingData.rank then
-                -- Lower rank cannot overwrite higher rank - block the update
-                if debugStats.enabled then
-                  DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffff0000[DOWNRANK BLOCKED]|r %s: Rank %d from %s cannot overwrite Rank %d from %s (%.1fs left)", 
-                    spellName, rankNum, DebugGuid(casterGuid), existingData.rank, DebugGuid(otherCaster), existingTimeleft))
-                end
-                return
-              end
-            end
-          end
-        else
-          -- For non-selfOverwrite: Check only same caster
-          local existingData = allAuraCasts[targetGuid][spellName][casterGuid]
-          if existingData and existingData.rank and rankNum and rankNum > 0 then
-            local existingTimeleft = (existingData.startTime + existingData.duration) - GetTime()
-            if existingTimeleft > 0 and rankNum < existingData.rank then
-              if debugStats.enabled and isOurs then
-                DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffff0000[DOWNRANK BLOCKED]|r %s: Rank %d cannot overwrite Rank %d (%.1fs left)", 
-                  spellName, rankNum, existingData.rank, existingTimeleft))
-              end
-              return
-            end
-          end
-        end
-        
-        -- Handle self-overwrite debuffs (clear other casters)
-        if selfOverwriteDebuffs[spellName] then
-          local n = 0
-          for otherCaster in pairs(allAuraCasts[targetGuid][spellName]) do
-            if otherCaster ~= casterGuid then
-              n = n + 1
-              _cleanupBuf1[n] = otherCaster
-            end
-          end
-          for i = 1, n do
-            allAuraCasts[targetGuid][spellName][_cleanupBuf1[i]] = nil
-            _cleanupBuf1[i] = nil
-          end
-          
-          -- Clear from ownDebuffs if we're being overwritten
-          if not isOurs and ownDebuffs[targetGuid] and ownDebuffs[targetGuid][spellName] then
-            ownDebuffs[targetGuid][spellName] = nil
-          end
-        end
-        
-        -- Handle variant pairs (Faerie Fire <-> Faerie Fire (Feral))
-        if debuffOverwritePairs[spellName] then
-          local otherVariant = debuffOverwritePairs[spellName]
-          if allAuraCasts[targetGuid][otherVariant] and allAuraCasts[targetGuid][otherVariant][casterGuid] then
-            allAuraCasts[targetGuid][otherVariant][casterGuid] = nil
-          end
-        end
-        
-        -- Store timer data
-        allAuraCasts[targetGuid][spellName][casterGuid] = {
-          startTime = startTime,
-          duration = duration,
-          rank = rankNum
-        }
-        
-        -- UPDATE slotOwnership for selfOverwrite refreshes
-        -- (DEBUFF_ADDED doesn't fire on refresh, so we must update here!)
-        if selfOverwriteDebuffs[spellName] and slotOwnership[targetGuid] then
-          for auraSlot, ownership in pairs(slotOwnership[targetGuid]) do
-            if ownership.spellName == spellName then
-              -- Update the casterGuid and isOurs for this slot
-              ownership.casterGuid = casterGuid
-              ownership.isOurs = isOurs
-              
-              if debugStats.enabled and IsCurrentTarget(targetGuid) then
-                DEFAULT_CHAT_FRAME:AddMessage(string.format("|cff00ff00[SLOT UPDATED]|r aura=%d %s newCaster=%s isOurs=%s", 
-                  auraSlot, spellName, DebugGuid(casterGuid), tostring(isOurs)))
-              end
-              break
-            end
-          end
-        end
-        
-        if debugStats.enabled and IsCurrentTarget(targetGuid) then
-          DEFAULT_CHAT_FRAME:AddMessage(string.format("%s |cff00ffff[AURA_CAST]|r %s target=%s caster=%s isOurs=%s dur=%.1fs", 
-            GetDebugTimestamp(), spellName, DebugGuid(targetGuid), DebugGuid(casterGuid), tostring(isOurs), duration))
-        end
-      end
-      
-      -- Notify nameplates
-        if pfUI.nameplates and pfUI.nameplates.OnAuraUpdate then
-          pfUI.nameplates:OnAuraUpdate(targetGuid)
-        end
-        
-        -- UNIT_AURA may be filtered for raw GUIDs; refresh every matching UF.
-        libdebuff:NotifyUnitFrameAuras(targetGuid)
-      
-      -- Only track in ownDebuffs if it's OUR debuff
-      if not isOurs then return end
-      if targetGuid == myGuid then return end  -- Skip self-buffs
-      if not targetGuid or targetGuid == "" or targetGuid == "0x0000000000000000" then return end
-      
-      -- Get texture
-      local texture = libdebuff:GetSpellIcon(spellId)
-      
-      -- Store in ownDebuffs
-      ownDebuffs[targetGuid] = ownDebuffs[targetGuid] or {}
-      
-      if not ownDebuffs[targetGuid][spellName] then
-        ownDebuffs[targetGuid][spellName] = {}
-      end
-      
-      local data = ownDebuffs[targetGuid][spellName]
-      if not data then return end  -- race condition: cleared by DEBUFF_REMOVED between init and use
-      
-      -- Downrank Protection: Check if existing debuff is still active and has higher rank
-      if data.startTime and data.duration and data.rank and rankNum > 0 then
-        local existingTimeleft = (data.startTime + data.duration) - GetTime()
-        if existingTimeleft > 0 then
-          -- Existing debuff is still active
-          if rankNum < data.rank then
-            -- Lower rank cannot overwrite higher rank - block the update
-            if debugStats.enabled then
-              DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffff0000[DOWNRANK BLOCKED]|r %s: Rank %d cannot overwrite Rank %d (%.1fs left)", 
-                spellName, rankNum, data.rank, existingTimeleft))
-            end
-            return
-          end
-        end
-      end
-      
-      data.startTime = startTime
-      data.duration = duration
-      data.texture = texture
-      data.rank = rankNum
-      data.spellId = spellId
-      data.stacks = 1   -- 初始设为 1，稍后由 DEBUFF_ADDED 更新
-      
-      -- Handle variant pairs for ownDebuffs
-      if debuffOverwritePairs[spellName] then
-        local otherVariant = debuffOverwritePairs[spellName]
-        if ownDebuffs[targetGuid][otherVariant] then
-          ownDebuffs[targetGuid][otherVariant] = nil
-        end
-      end
-      
-      -- Store for Cleveroids API
-      objectsByGuid[targetGuid] = objectsByGuid[targetGuid] or {}
-      objectsByGuid[targetGuid][spellId] = {
-        start = startTime,
-        duration = duration,
-        caster = "player",
-        stacks = 1
-      }
-      if event == "AURA_CAST_ON_SELF" and pfUI.libdebuff_aura_cast_on_self_hooks then
-        for _, fn in pairs(pfUI.libdebuff_aura_cast_on_self_hooks) do
-          fn(spellId, casterGuid, targetGuid)
-        end
-      elseif event == "AURA_CAST_ON_OTHER" and pfUI.libdebuff_aura_cast_on_other_hooks then
-        for _, fn in pairs(pfUI.libdebuff_aura_cast_on_other_hooks) do
-          fn(spellId, casterGuid, targetGuid)
-        end
-      end
-
-    elseif auraEvent == "DEBUFF_ADDED_OTHER" then
-      local guid = arg1
-      local displaySlot = arg2
-      local spellId = arg3
-      local stacks = arg4
-      local auraSlot_0based = arg6
-
-      local auraSlot = auraSlot_0based and (auraSlot_0based + 1) or nil
-      if auraSlot and auraSlot <= 32 then displaySlot = 16 + auraSlot end
-
-      slotMapCache[guid] = nil
-      
-      local spellName = GetSpellRecField and GetSpellRecField(spellId, "name")
-      if not spellName then return end
-      
-      if debugStats.enabled then
-        debugStats.debuff_added = debugStats.debuff_added + 1
-      end
-      
-      if UnitIsDead and UnitIsDead(guid) then
-        CleanupUnit(guid)
-        return
-      end
-      
-      -- 获取 auraSlot
-      if not auraSlot then
-        local slotMap = GetDebuffSlotMap(guid)
-        if slotMap and slotMap[displaySlot] then
-          auraSlot = slotMap[displaySlot].auraSlot
-        end
-      end
-      if not auraSlot then
-        auraSlot = 32 + displaySlot
-      end
-      
-      -- 尝试从 pendingCasts 获取施法者
-      local casterGuid = nil
-      if pendingCasts[guid] and pendingCasts[guid][spellName] then
-        local pending = pendingCasts[guid][spellName]
-        if GetTime() - pending.time < 0.5 then
-          casterGuid = pending.casterGuid
-          pendingCasts[guid][spellName] = nil
-        end
-      end
-      
-      -- 从 allAuraCasts 回退获取最近施法者
-      if not casterGuid and allAuraCasts[guid] and allAuraCasts[guid][spellName] then
-        local mostRecent = nil
-        local mostRecentTime = 0
-        for casterId, data in pairs(allAuraCasts[guid][spellName]) do
-          if data.startTime > mostRecentTime then
-            mostRecentTime = data.startTime
-            mostRecent = casterId
-          end
-        end
-        if mostRecent then
-          casterGuid = mostRecent
-        end
-      end
-      
-      local myGuid = GetPlayerGUID()
-      local isOurs = (myGuid and casterGuid == myGuid)
-      
-      -- 从 ownDebuffs 回退（刚施放不久）
-      if not isOurs and not casterGuid then
-        if ownDebuffs[guid] and ownDebuffs[guid][spellName] then
-          local age = GetTime() - ownDebuffs[guid][spellName].startTime
-          if age < 0.5 then
-            isOurs = true
-            casterGuid = myGuid
-          end
-        end
-      end
-
-      -- ========== 猎人陷阱 debuff 特殊处理 ==========
-      local hunterTrapDebuffs = {
-          ["爆炸陷阱效果"] = true,
-          ["冰霜陷阱光环"] = true,
-      }
-      if not casterGuid and hunterTrapDebuffs[spellName] then
-          casterGuid = myGuid
-          isOurs = true
-          if debugStats.enabled then
-              DEFAULT_CHAT_FRAME:AddMessage(string.format("|cff33ff99[TRAP FALLBACK]|r 将 %s 视为玩家自己的 debuff", spellName))
-          end
-      end
-      -- ============================================
-      
-      -- 存储槽位所有权
-      slotOwnership[guid] = slotOwnership[guid] or {}
-      slotOwnership[guid][auraSlot] = {
-        casterGuid = casterGuid,
-        spellName = spellName,
-        spellId = spellId,
-        isOurs = isOurs
-      }
-      
-      displayToAura[guid] = displayToAura[guid] or {}
-      displayToAura[guid][displaySlot] = auraSlot
-      
-      if debugStats.enabled and IsCurrentTarget(guid) then
-        DEFAULT_CHAT_FRAME:AddMessage(string.format("%s |cff00ff00[DEBUFF_ADDED]|r display=%d aura=%d %s caster=%s isOurs=%s", 
-          GetDebugTimestamp(), displaySlot, auraSlot, spellName, DebugGuid(casterGuid), tostring(isOurs)))
-      end
-      
-      -- 更新 ownDebuffs（如果是我们的 debuff）
-      if isOurs and casterGuid and myGuid and casterGuid == myGuid then
-          -- 尝试从 allAuraCasts 获取计时数据
-          local auraData = allAuraCasts[guid] and allAuraCasts[guid][spellName] and allAuraCasts[guid][spellName][casterGuid]
-          local startTime, duration, rank
-          if auraData then
-              startTime = auraData.startTime
-              duration = auraData.duration
-              rank = auraData.rank or 0
-          else
-              -- 没有 AURA_CAST 数据（如陷阱 debuff），使用当前时间和默认持续时间
-              startTime = GetTime()
-              duration = libdebuff:GetDuration(spellName, 0) or 0
-              rank = 0
-              if debugStats.enabled then
-                  DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffffaa00[TRAP DURATION]|r %s 使用默认持续时间 %.1fs", spellName, duration))
-              end
-          end
-          local texture = libdebuff:GetSpellIcon(spellId)
-          
-          ownDebuffs[guid] = ownDebuffs[guid] or {}
-          ownDebuffs[guid][spellName] = {
-              startTime = startTime,
-              duration = duration,
-              texture = texture,
-              rank = rank,
-              spellId = spellId,
-              stacks = stacks,
-          }
-          
-          if debugStats.enabled and IsCurrentTarget(guid) then
-              DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffff00ff[OWNDEBUFF SYNC]|r %s from DEBUFF_ADDED (dur=%.1f)", spellName, duration))
-          end
-      end
-      
-      -- 清理过期计时器
-      CleanupExpiredTimers(guid)
-      
-      -- 通知姓名板
-      if pfUI.nameplates and pfUI.nameplates.OnAuraUpdate then
-        pfUI.nameplates:OnAuraUpdate(guid)
-      end
-      libdebuff:NotifyUnitFrameAuras(guid)
-      if pfUI.libdebuff_debuff_added_other_hooks then
-        for _, fn in pairs(pfUI.libdebuff_debuff_added_other_hooks) do
-          fn(arg1, arg2, arg3, arg4)
-        end
-      end
-
-    elseif auraEvent == "DEBUFF_REMOVED_OTHER" then
-      local guid = arg1
-      local displaySlot = arg2  -- Display slot (1-16), compacted
-      local spellId = arg3
-      local auraSlot_0based = arg6  -- Nampower 2.29+: raw slot 0-based (32-47)
-
-      -- Convert 0-based (Nampower event) to 1-based (Lua GetUnitField array)
-      local auraSlot = auraSlot_0based and (auraSlot_0based + 1) or nil
-      if auraSlot and auraSlot <= 32 then displaySlot = 16 + auraSlot end
-
-      -- Invalidate slot map cache for this GUID
-      slotMapCache[guid] = nil
-      
-      local spellName = (GetSpellRecField and GetSpellRecField(spellId, "name")) or "?"
-      
-      if debugStats.enabled then
-        debugStats.debuff_removed = debugStats.debuff_removed + 1
-        if IsCurrentTarget(guid) then
-          DEFAULT_CHAT_FRAME:AddMessage(string.format("%s |cffff9900[DEBUFF_REMOVED]|r display=%d aura=%d (0based=%d) %s", 
-            GetDebugTimestamp(), displaySlot, auraSlot or -1, auraSlot_0based or -1, spellName))
-        end
-      end
-      
-      -- If unit is dead, cleanup all
-      if UnitIsDead and UnitIsDead(guid) then
-        CleanupUnit(guid)
-        return
-      end
-      
-      -- Get auraSlot from event parameter (Nampower 2.29+)
-      -- Fallback to displayToAura mapping if not available
-      local foundAuraSlot = auraSlot
-      if not foundAuraSlot and displayToAura[guid] and displayToAura[guid][displaySlot] then
-        foundAuraSlot = displayToAura[guid][displaySlot]
-      end
-
-      local wasOurs = false
-      local removedCasterGuid = nil
-
-      if foundAuraSlot then
-        -- Get ownership info for this specific slot
-        if slotOwnership[guid] and slotOwnership[guid][foundAuraSlot] then
-          local ownership = slotOwnership[guid][foundAuraSlot]
-          wasOurs = ownership.isOurs
-          removedCasterGuid = ownership.casterGuid
-        end
-        
-        -- Clear both mappings (with nil-checks)
-        if slotOwnership[guid] then
-          slotOwnership[guid][foundAuraSlot] = nil
-        end
-        if displayToAura[guid] then
-          displayToAura[guid][displaySlot] = nil
-        end
-        
-        if debugStats.enabled and IsCurrentTarget(guid) then
-          DEFAULT_CHAT_FRAME:AddMessage(string.format("%s |cffff9900[SLOT CLEARED]|r aura=%d [arg6] %s wasOurs=%s caster=%s", 
-            GetDebugTimestamp(), foundAuraSlot, spellName, tostring(wasOurs), DebugGuid(removedCasterGuid)))
-        end
-      end
-      
-      -- Remove from ownDebuffs if it was ours
-      if wasOurs and ownDebuffs[guid] and ownDebuffs[guid][spellName] then
-        local age = GetTime() - ownDebuffs[guid][spellName].startTime
-        -- Only delete if not recently renewed
-        if age > 1 then
-          ownDebuffs[guid][spellName] = nil
-        end
-      end
-      
-      -- Remove from allAuraCasts
-      if removedCasterGuid and allAuraCasts[guid] and allAuraCasts[guid][spellName] then
-        if allAuraCasts[guid][spellName][removedCasterGuid] then
-          local auraData = allAuraCasts[guid][spellName][removedCasterGuid]
-          local age = GetTime() - auraData.startTime
-          -- Only delete if not recently refreshed
-          if age > 1 then
-            allAuraCasts[guid][spellName][removedCasterGuid] = nil
-          end
-        end
-      end
-      
-      -- Cleanup expired timers
-      CleanupExpiredTimers(guid)
-      
-      -- Notify nameplates
-      if pfUI.nameplates and pfUI.nameplates.OnAuraUpdate then
-        pfUI.nameplates:OnAuraUpdate(guid)
-      end
-      libdebuff:NotifyUnitFrameAuras(guid)
-      if pfUI.libdebuff_debuff_removed_other_hooks then
-        for _, fn in pairs(pfUI.libdebuff_debuff_removed_other_hooks) do
-          fn(arg1, arg2, arg3, arg4)
-        end
-      end
-
-    elseif auraEvent == "BUFF_ADDED_OTHER" or
-      auraEvent == "BUFF_REMOVED_OTHER"
-    then
-      libdebuff:HandleBuffOwnershipEvent(
-        auraEvent, arg1, arg3, arg6, arg7
-      )
-      libdebuff:NotifyUnitFrameAuras(arg1)
-
-    elseif event == "PLAYER_TARGET_CHANGED" then
-      if not GetUnitGUID then return end
-      local targetGuid = GetUnitGUID("target")
-      
-      if targetGuid and targetGuid ~= "" then
-        -- Invalidate slot map cache on retarget
-        -- Prevents stale slot mappings after untarget/retarget cycles
-        slotMapCache[targetGuid] = nil
-        -- Cleanup expired timers for new target
-        CleanupExpiredTimers(targetGuid)
-      end
-      if pfUI.libdebuff_player_target_changed_hooks then
-        for _, fn in pairs(pfUI.libdebuff_player_target_changed_hooks) do
-          fn()
-        end
-      end
-    end
-    
-    -- Periodic cleanup
+    -- 周期清理
     CleanupOutOfRangeUnits()
   end)
 
@@ -2268,10 +2066,9 @@ if hasNampower then
     libdebuff:DebugNampowerAuraEvent(
       event, arg1, arg2, arg3, arg4, arg5, arg6, arg7
     )
-    libdebuff:HandleBuffOwnershipEvent(event, arg1, arg3, arg6, arg7)
-    libdebuff:NotifyUnitFrameAuras(arg1)
+    HandleBuffOwnership(event)
   end)
-  
+
   -- Cleveroids API
   if CleveRoids then
     CleveRoids.libdebuff = libdebuff
@@ -2286,31 +2083,27 @@ pfUI.api.libdebuff = libdebuff
 libdebuff.debugStats = debugStats
 
 -- ============================================================================
--- DEBUG COMMANDS
+-- 调试命令
 -- ============================================================================
 
 _G.SLASH_LIBDEBUGSTATS1 = "/libdebugstats"
 _G.SlashCmdList["LIBDEBUGSTATS"] = function(msg)
   msg = string.lower(msg or "")
-  
+
   if msg == "start" or msg == "verbose" then
     debugStats.enabled = msg == "verbose"
     debugStats.nampower_aura_logging = true
     debugStats.trackAllUnits = false
-    debugStats.aura_cast = 0
-    debugStats.nampower_aura_events = 0
-    debugStats.debuff_added = 0
-    debugStats.debuff_removed = 0
-    debugStats.getunitfield_calls = 0
+    ResetDebugCounters()
     DEFAULT_CHAT_FRAME:AddMessage(msg == "verbose" and
       "|cff00ff00[libdebuff]|r Verbose debug tracking STARTED" or
       "|cff00ff00[libdebuff]|r Current-target Aura log STARTED")
-    
+
   elseif msg == "stop" then
     debugStats.enabled = false
     debugStats.nampower_aura_logging = false
     DEFAULT_CHAT_FRAME:AddMessage("|cffff9900[libdebuff]|r Debug tracking STOPPED")
-    
+
   elseif msg == "stats" then
     DEFAULT_CHAT_FRAME:AddMessage("|cff00ffff=== LIBDEBUFF STATS (GetUnitField Edition) ===|r")
     DEFAULT_CHAT_FRAME:AddMessage(string.format("AURA_CAST events: %d", debugStats.aura_cast))
@@ -2322,39 +2115,36 @@ _G.SlashCmdList["LIBDEBUGSTATS"] = function(msg)
     DEFAULT_CHAT_FRAME:AddMessage(string.format("DEBUFF_REMOVED events: %d", debugStats.debuff_removed))
     DEFAULT_CHAT_FRAME:AddMessage(string.format("GetUnitField calls: %d", debugStats.getunitfield_calls))
     DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00No manual slot shifting needed!|r")
-    
+
   elseif msg == "target" then
-    if not GetUnitGUID("target") then
+    local guid = GetUnitGUID("target")
+    if not guid then
       DEFAULT_CHAT_FRAME:AddMessage("|cffff0000[libdebuff]|r No target!")
       return
     end
-    
-    local guid = GetUnitGUID("target")
+
     DEFAULT_CHAT_FRAME:AddMessage("|cff00ffff=== TARGET DEBUFF STATE ===|r")
     DEFAULT_CHAT_FRAME:AddMessage(string.format("GUID: %s", tostring(guid)))
-    
-    -- Show GetUnitField slot map
+
     local slotMap = GetDebuffSlotMap(guid)
     if slotMap then
       DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00GetUnitField Slots:|r")
       for displaySlot, data in pairs(slotMap) do
         local casterGuid, isOurs = GetSlotCaster(guid, data.auraSlot, data.spellName)
-        DEFAULT_CHAT_FRAME:AddMessage(string.format("  Display %d (aura %d): %s [caster=%s, ours=%s]", 
+        DEFAULT_CHAT_FRAME:AddMessage(string.format("  Display %d (aura %d): %s [caster=%s, ours=%s]",
           displaySlot, data.auraSlot, data.spellName, DebugGuid(casterGuid), tostring(isOurs)))
       end
     else
       DEFAULT_CHAT_FRAME:AddMessage("|cffff9900No debuffs via GetUnitField|r")
     end
-    
-    -- Show ownDebuffs
+
     if ownDebuffs[guid] then
       DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00ownDebuffs:|r")
       for spell, data in pairs(ownDebuffs[guid]) do
-        local timeleft = (data.startTime + data.duration) - GetTime()
-        DEFAULT_CHAT_FRAME:AddMessage(string.format("  %s: dur=%.1f left=%.1f", spell, data.duration, timeleft))
+        DEFAULT_CHAT_FRAME:AddMessage(string.format("  %s: dur=%.1f left=%.1f", spell, data.duration, TimeLeft(data)))
       end
     end
-    
+
   else
     DEFAULT_CHAT_FRAME:AddMessage("|cff00ffff[libdebuff] GetUnitField Edition - Commands:|r")
     DEFAULT_CHAT_FRAME:AddMessage("  /libdebugstats start - Log current-target Aura additions")
@@ -2373,7 +2163,7 @@ _G.SlashCmdList["MEMCHECK"] = function()
     for _ in pairs(t) do count = count + 1 end
     return count
   end
-  
+
   local function countNestedEntries(t)
     local total = 0
     if not t then return 0 end
@@ -2384,7 +2174,7 @@ _G.SlashCmdList["MEMCHECK"] = function()
     end
     return total
   end
-  
+
   DEFAULT_CHAT_FRAME:AddMessage("|cff00ffff========== LIBDEBUFF MEMORY (GetUnitField Edition) ==========|r")
   DEFAULT_CHAT_FRAME:AddMessage(string.format("|cff00ff00Primary Tables:|r"))
   DEFAULT_CHAT_FRAME:AddMessage(string.format("  ownDebuffs: %d GUIDs, %d debuffs", countTable(ownDebuffs), countNestedEntries(ownDebuffs)))
