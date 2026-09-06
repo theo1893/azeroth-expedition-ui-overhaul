@@ -2,6 +2,63 @@
 
 ## 当前运行时
 
+- 饰品候选常驻：使用 TrinketMenu 原生 KeepOpen，关闭按 Shift 才显示；候选置于
+  两个已装备饰品下方，两列从左上向下排列。袋内无饰品时由 provider 隐藏，换装、
+  左右键 13／14 槽和战斗队列仍归 TrinketMenu。首次应用保存原设置，禁用 Action Bars
+  时恢复；待实机核对常驻显示、背包变化、换装后候选补位与菜单高度。
+  主栏与候选区统一使用 `0.88` 缩放、两列对齐，候选区在主栏下方留 `2 UI` 间隙，取消原生锁定时的向上叠靠，并启用 TrinketMenu 原生 Locked：隐藏缩放柄、
+  禁止其拖动缩放／旋转；组合位置仍由 AEUI 主动作条带动。旧常驻配置自动补迁移，
+  中止未结束的缩放操作，禁用 Action Bars 时恢复原缩放及锁定设置。
+
+- Combination 紧凑布局已接入，待实机：左右补给／饰品改为与上动作条顶边对齐，
+  两侧间距 `8 UI`；补给按钮 `30 UI`。姿态贴主条左下，间隔 `8 UI`。
+  标记区 `2.4` 保持原 `4×2` 内容，以主条的 `80%` 有效缩放贴右下；坦克／一键按钮
+  改为顶边对齐，宠物动作条可见时保留其完整行。解绑定恢复自由锚点。
+  用户否定此前错位、松散的实机布局；本版先调整几何，沿用现有媒体。
+  萨满实机再次反馈对齐偏差：当前改用缩放后按钮的实际右边界定位，名义宽度仅供
+  首次布局未就绪时回退。图腾栏位于标记区左侧，间隔 `8 UI`；图腾、坦克／一键
+  顶部与标记板外缘对齐，补给／饰品顶部参照动作条外壳，饰品扣除自带外壳偏移。
+  `actionbars.architotem-art / P5` 已接入：四系主格与候选、一键、召回、预设按钮
+  共用补给槽位 accepted 材质，保留 provider 图标语义色、冷却、点击与顺序；
+  Action Bars 禁用或 route 缺失恢复原图标锚点、层序和原生 normal 外框。
+  待实机复核整体对齐、展开候选、倒计时文字、可选按钮显隐及禁用回退。
+  图腾剩余持续时间现为槽内底部浅金描边小字；技能 CD 为中央稍偏上的白色描边
+  大字，取消旧 CD 黑底，避免两个读数重叠。原计时文字与显隐归 provider，方向
+  切换后重新应用文字锚点；禁用恢复原位置、字体、颜色、层序与 CD 底图透明度。
+  本机第三方 ArchiTotem 的 `Data/Core.lua` 已修正天赋计时：图腾掌握只对友方
+  增益图腾增加 `20%` 持续时间；强化火焰图腾每级减少火焰新星激活延迟 `1 秒`，
+  满级 `5→3 秒`，技能冷却不变。计算保留原始基础数据，天赋事件刷新等级。
+  该修复位于客户端独立插件目录，未纳入仓库分发；重装或跨设备需同步此 provider 文件。
+  本机 ArchiTotem `Presets.lua`／`Core.lua` 的召回也已修正：点击不再直接写入
+  六秒冷却或清空图腾；冷却来自客户端 API，排除公共 CD，并在召回请求后出现新的
+  实际技能冷却时清空记录。失败、重复点击与请求过期保留原有图腾，待实机复核。
+
+- DDPS 外观试接入 `P5`：当前／预测／资源／坦克提示槽使用 Readout V1 细边与深棕底，
+  时间线增加窄底轨；保持动态图标、状态色、预测动画和执行逻辑。`/aeui status`
+  的 readout-art 行显示 `doite=active`，禁用 Action Bars 恢复 provider 外观。
+  当前槽外缘贴合 `38 UI` 图标，状态色由底部细条表达。DoiteAuras 图标接入同一细边，
+  保留分组位置、标题、冷却与触发特效，不接管其 Bar 或配置窗口。
+  待实机验证推荐切换、触发／不可用色、资源、DoiteAuras 图标与禁用回退。
+- 战斗读数 `ReadoutArt 1.0 / P5` 已接入：玩家／目标／Focus 施法条、主／副手与远程攻击条
+  使用 accepted 细轨 V1。玩家／目标与攻击条保持 `260×12 UI`，Focus 保留原尺寸和跟随位置，外框每边 `1 UI`；
+  从上到下为目标施法条（底锚点 `316`）、玩家施法条（`300`）、Swing（`284`）。
+  旧默认施法条坐标自动互换，自定义坐标保留。
+  施法／攻击各用独立 2× 灰阶填充，颜色、进度、延迟区、Marker、文字与事件归 pfUI。
+  技能图标作为独立框体挂细外缘。`/aeui actionbars` 禁用后恢复 provider 材质、
+  backdrop 与 shadow；`/aeui status` 新增 `readout-art` 行。
+- 本次需完整重启客户端加载新增 TGA。实机验证施法、引导、打断、显示／隐藏图标、
+  长名称与计时、攻击 Marker 和副手／远程切换；相邻检查动作栏与 Aura，验证禁用回退。
+  静态和资源检查不代表实机验收，阶段保持 P5。
+
+- TargetTarget／Focus 的 Aura 显示配置随 Target 对齐：位置、
+  偏移、数量上限与黑白名单一致，上 Buff／下 Debuff。图标大小按两框与 Target
+  的有效缩放比换算，保持屏幕显示大小相同；每排最多跟随 Target 的 8 枚，按
+  实际框宽和 pfUI 边框间距自动减列。当前 Focus `120 UI / 1.2` 对比 Target
+  `240 UI / 0.8`，图标约 `15.33 UI`、每排 5 枚。
+  两框保留原尺寸与位置，共用现有敌友筛选。原 Aura 配置按角色备份，禁用
+  Action Bars 时恢复；仅配置变化时刷新 provider，不运行几何维护循环。
+  实机检查两框敌友 Aura、上下排列与换目标，相邻回归 Player／Target，并验证禁用回退。
+
 - AEUI 版本：`0.9.0`。
 - 合同：Slot `1.0`、Rail `1.0`、Field Kit `3.0`、Supply `2.1`、Combat Focus `3.5`、
   Sidebar Group `1.0`、Target Markers `2.3`。
@@ -40,7 +97,7 @@
    `supplies-contract=2.1`、
    `focus-unit-default-version=5`、`focus-unit-default=profile-applied` 或
    `profile-saved`、`focus-layout-unit-size=240x48`、
-   `focus-layout-unit-y=480`、`focus-layout-primary-gap=73`、
+   `focus-layout-unit-y=470`、`focus-layout-primary-gap=73`、
    `focus-layout-aura-per-row=8`、
    `focus-layout-targettarget-aura-per-row=8`、
    `focus-layout-aura-growth=player-right+target-left`、
@@ -79,7 +136,7 @@
 5. `/aeui supplies` 中把多个背包物品拖到同一组，命名并设置固定主物品；再创建
    第二组，选中第一组后右键第 `4` 格，确认它可越过空位直接移动；再右键第二组所在格，
    确认两组交换。槽位前移／后移也应允许进入空位，重载后空位、组位置、名称、组内顺序
-   和显式主物品均保持；拖入物品都先回到原背包，重复 itemID 不会复制。主格左键只能使用固定主物品；悬停
+   和显式主物品均保持；拖入物品都先回到原背包，同组重复 itemID 不会复制；将同一赞扎药剂分别加入治疗组与 DPS 组，重载后两组均应保留，删除一组的该成员不得影响另一组。主格左键只能使用固定主物品；悬停
    `0.30s` 或右键应展开 `1–6` 单列／`7–12` 双列候选，候选左键使用后不得改主格，
    右键只改主格且不得消耗。固定主物品缺货时，主格左键不得自动使用其他候选，
    只展开抽屉。主格与候选 Tooltip 都只能是各自当前物品的原生 Tooltip。
@@ -92,8 +149,8 @@
    `fieldkit unbind` 后 Supply 保持当前位置并可 `Shift+拖动`，重新 bind 后回到主栏左侧。
 8. 验证 TrinketMenu 双槽、候选菜单、Queue、左右键换槽和 provider 缺失回退。
 9. 所有角色的 DDPS 时间线与资源排应统一到 `TOPLEFT (650,-615)`，内部相对位置、
-   各自 scale、锁定和战斗显隐不变；同时复查三条施法／攻击计时，尤其确认混战中
-   早到的真实主手白字会立即重置、不得满条卡住；再复查 Aura、
+   各自 scale、锁定和战斗显隐不变；萨满风怒额外攻击已实机确认按真实主／副手攻击
+   事件立即重置，pfUI 不再满条卡住；再检查 Aura、
    Boss Debuff，以及战士姿态 `25 UI / scale 1` 的高亮、命中区和快捷键。战士设置页
    应只列双手武器战与防战各自的单体／群体入口，旧武器／狂暴按键应迁移到对应双手
    武器战。Boss 普通阶段验证致死／旋风保持就绪优先、每白字最多一次猛击、“猛击最大
@@ -119,3 +176,11 @@
 - Field Kit 与 Sidebar Group 保留各自 bind／unbind／home 命令。
 - `AB.SLOT.STATE`、可选双头狮鹫、Pet 细节与其他尚未单独验收的覆盖层保持暂停；
   不从旧失败稿继续生产。
+
+## 战斗读数 accepted source
+
+`assets/source/actionbars/readouts-v1/` 保存完整透明外壳、两张灰阶填充、固定皮革
+样本及 source/runtime manifest。`tools/build_readouts_v1_runtime.py` 验证 accepted
+哈希并导出2× runtime：外壳524×28装入1024×32 TGA；两张填充均128×32。
+运行时媒体位于 `Media/ActionBars/Readouts/`，`ReadoutArt.lua` 只接管精确 route
+`actionbars.readout-art`，不修改施法或攻击计时逻辑。

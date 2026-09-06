@@ -1,0 +1,86 @@
+{
+  "schema": "aeui-readouts-runtime-v1",
+  "phase": "P5",
+  "files": [
+    {
+      "file": "addon/AzerothExpeditionUI/Media/ActionBars/Readouts/ReadoutShellV1.tga",
+      "sha256": "f32f86f8135457d74512c49a3530dae5e5e611684ef5413f149fecee9205d012",
+      "logical_size": [
+        262,
+        14
+      ],
+      "sampled_size": [
+        524,
+        28
+      ],
+      "texture_size": [
+        1024,
+        32
+      ],
+      "texels_per_ui": 2,
+      "content_uv": [
+        0.0,
+        0.51171875,
+        0.0,
+        0.875
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/ActionBars/Readouts/CastFillV1.tga",
+      "sha256": "1e4cd4ba4266da7eb68bf4fefd08a91f135d5d3daa7519ada793a01984d18d93",
+      "logical_size": [
+        64,
+        16
+      ],
+      "sampled_size": [
+        128,
+        32
+      ],
+      "texture_size": [
+        128,
+        32
+      ],
+      "texels_per_ui": 2,
+      "content_uv": [
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/ActionBars/Readouts/SwingFillV1.tga",
+      "sha256": "7ab88ef77ecddc779fb5cf5542aa3ed5074a3f44ea12cb04e08bee1abab3597a",
+      "logical_size": [
+        64,
+        16
+      ],
+      "sampled_size": [
+        128,
+        32
+      ],
+      "texture_size": [
+        128,
+        32
+      ],
+      "texels_per_ui": 2,
+      "content_uv": [
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ]
+    }
+  ],
+  "shell_slices_ui": [
+    4,
+    254,
+    4,
+    1,
+    12,
+    1
+  ],
+  "outset_ui": 1,
+  "route": "actionbars.readout-art",
+  "dynamic_owner": "pfUI"
+}

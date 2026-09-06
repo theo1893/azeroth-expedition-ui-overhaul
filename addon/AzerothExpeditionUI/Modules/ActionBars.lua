@@ -41,7 +41,7 @@ ActionBars.focusStanceIconSize = "25"
 -- Warrior stances and the shaman ArchiTotem row are mutually exclusive
 -- class satellites. Keep their visible centres on one Combat Deck slot.
 ActionBars.combatDeckClassDockXOffset = -128
-ActionBars.combatDeckStanceGap = 0
+ActionBars.combatDeckStanceGap = 8
 ActionBars.focusDoiteScale = 0.82
 -- At the current pfUI border contract each 23 UI Aura advances by 30 UI.
 -- Eight cells occupy 233 UI and fit the complete 240 UI primary frame.
@@ -73,9 +73,8 @@ ActionBars.consumableKitTexturePath =
 ActionBars.fieldKitCap = 6
 ActionBars.fieldKitPocketPadding = 4
 ActionBars.fieldKitShellPadding = 6
-ActionBars.supplyDockGap = 12
+ActionBars.supplyDockGap = 8
 ActionBars.trinketDockGap = 8
-ActionBars.fieldKitDockYOffset = -20
 ActionBars.actionBarStackOverlap = 1
 ActionBars.popupDrawerGap = 6
 ActionBars.popupDrawerMaxRows = 6
@@ -85,7 +84,7 @@ ActionBars.supplyProfileVersion = 4
 ActionBars.supplyMaxSlots = 24
 ActionBars.supplyMaxItems = 12
 ActionBars.supplyColumns = 4
-ActionBars.supplyButtonSize = 36
+ActionBars.supplyButtonSize = 30
 ActionBars.supplyButtonGap = 3
 ActionBars.supplyPopupCloseDelay = 0.30
 ActionBars.supplyFallbackIcon = "Interface\\Icons\\INV_Misc_Gift_01"
@@ -106,17 +105,17 @@ ActionBars.archiTotemDockYOffset = -39
 ActionBars.combatDeckX = 0
 ActionBars.combatDeckY = 175
 -- 240 local UI at scale 0.8 is 192 game UI. The 265 UI centre distance keeps
--- 73 UI between the primary frames, while y=480 leaves four Debuff rows clear
+-- 73 UI between the primary frames, while y=470 leaves two Debuff rows clear
 -- of the unchanged player-cast, target-cast, and Swing readout stack.
 ActionBars.focusPlayerX = -160
 ActionBars.focusTargetX = 105
 ActionBars.focusTargetTargetX = 393
-ActionBars.focusUnitY = 480
+ActionBars.focusUnitY = 470
 ActionBars.focusTargetTargetY = 570
 ActionBars.focusCastPlayerX = 0
 ActionBars.focusCastTargetX = 0
-ActionBars.focusCastY = 316
-ActionBars.focusTargetCastY = 300
+ActionBars.focusCastY = 300
+ActionBars.focusTargetCastY = 316
 ActionBars.focusSwingX = 0
 ActionBars.focusSwingY = 284
 ActionBars.focusStanceX = 0
@@ -588,6 +587,19 @@ local function GetProviderNormalTexture(button)
 end
 
 local function SetTrinketButtonNativeNormal(button, enabled)
+  local name = button and button.GetName and button:GetName()
+  local icon = name and GetGlobal(name .. "Icon")
+  if icon then
+    if not enabled then
+      if not icon.aeuiTrinketTexCoord then
+        icon.aeuiTrinketTexCoord = {icon:GetTexCoord()}
+      end
+      icon:SetTexCoord(.08, .92, .08, .92)
+    elseif icon.aeuiTrinketTexCoord then
+      icon:SetTexCoord(unpack(icon.aeuiTrinketTexCoord))
+      icon.aeuiTrinketTexCoord = nil
+    end
+  end
   local texture = GetProviderNormalTexture(button)
   if not texture then
     return
@@ -1524,7 +1536,72 @@ local function VisitFocusAuraFrames(callback)
   end
 end
 
+local secondaryAuraFields = {
+  "buffs", "debuffs", "buffsize", "debuffsize", "buffperrow", "debuffperrow",
+  "buffoffx", "buffoffy", "debuffoffx", "debuffoffy", "bufflimit", "debufflimit",
+  "bufffilter", "debufffilter", "buffwhitelist", "debuffwhitelist",
+  "buffblacklist", "debuffblacklist", "selfdebuff",
+}
+
+function ActionBars:ApplySecondaryAuraLayout(enabled)
+  local database = addon.db and addon.db.actionbars
+  local profile = GetCharacterProfileKey()
+  local configs = pfUI_config and pfUI_config.unitframes
+  if not database or not profile or not configs then return end
+  if enabled and not configs.target then return end
+  database.secondaryAuraBackups = database.secondaryAuraBackups or {}
+  local backups = database.secondaryAuraBackups
+  if enabled then backups[profile] = backups[profile] or {} end
+  local saved = backups[profile]
+  if not saved then return end
+  for _, role in ipairs({ "ttarget", "focus" }) do
+    local config = configs[role]
+    if config then
+      local frame = GetFocusUnitFrame(role)
+      local target = GetFocusUnitFrame("target")
+      local ratio = 1
+      if frame and target and frame.GetEffectiveScale and target.GetEffectiveScale then
+        local scale = frame:GetEffectiveScale()
+        if scale and scale > 0 then ratio = target:GetEffectiveScale() / scale end
+      end
+      local changed = false
+      if enabled then saved[role] = saved[role] or {} end
+      for _, key in ipairs(secondaryAuraFields) do
+        local before = config[key]
+        if enabled then
+          saved[role][key] = saved[role][key] or CaptureField(config, key)
+          config[key] = configs.target[key]
+          if key == "buffsize" or key == "debuffsize" then
+            config[key] = tostring(tonumber(configs.target[key]) * ratio)
+          elseif key == "buffperrow" or key == "debuffperrow" then
+            local sizeKey = key == "buffperrow" and "buffsize" or "debuffsize"
+            local size = tonumber(configs.target[sizeKey]) * ratio
+            local width = frame and frame.GetWidth and frame:GetWidth() or tonumber(config.width)
+            local api = pfUI and pfUI.api
+            if width and api and api.GetBorderSize then
+              local _, border = api.GetBorderSize("unitframes")
+              local appearance = pfUI_config.appearance
+              local multiply = appearance and appearance.border and
+                appearance.border.force_blizz == "1" and 1 or 2
+              local perrow = math.max(1, math.floor((width + 1) / (size + multiply * border + 1)))
+              config[key] = tostring(math.min(tonumber(configs.target[key]), perrow))
+            end
+          end
+        elseif saved[role] then
+          RestoreField(config, key, saved[role][key])
+        end
+        if before ~= config[key] then changed = true end
+      end
+      if changed and frame and type(frame.UpdateConfig) == "function" then
+        frame:UpdateConfig()
+      end
+    end
+  end
+  if not enabled then backups[profile] = nil end
+end
+
 function ActionBars:ApplyFocusAuraPolicy(enabled)
+  self:ApplySecondaryAuraLayout(enabled)
   local applied = 0
   if pfUI and pfUI.api then
     if enabled then
@@ -2380,6 +2457,38 @@ function ActionBars:MigrateCopiedPrimaryUnitLayout()
   return true
 end
 
+function ActionBars:CompactFocusDebuffSpace()
+  if type(InCombatLockdown) == "function" and InCombatLockdown() then return end
+  for _, role in ipairs({"player", "target"}) do
+    local name = role == "player" and "pfPlayer" or "pfTarget"
+    local x = role == "player" and self.focusPlayerX or self.focusTargetX
+    if FocusPositionMatches(name, "BOTTOM", x, 480, self.focusUnitScale) then
+      SavePfUIPosition(name, "BOTTOM", x, self.focusUnitY, self.focusUnitScale)
+      ApplyFramePosition(GetFocusUnitFrame(role) or GetGlobal(name),
+        "BOTTOM", x, self.focusUnitY, self.focusUnitScale)
+    end
+  end
+end
+
+function ActionBars:MigrateFocusCastbarOrder()
+  if type(InCombatLockdown) == "function" and InCombatLockdown() then
+    return false
+  end
+  if not FocusPositionMatches("pfPlayerCastbar", "BOTTOM", 0, 316, 1) or
+    not FocusPositionMatches("pfTargetCastbar", "BOTTOM", 0, 300, 1)
+  then
+    return false
+  end
+  local castbars = pfUI and pfUI.castbar
+  SavePfUIPosition("pfPlayerCastbar", "BOTTOM", 0, self.focusCastY, 1)
+  SavePfUIPosition("pfTargetCastbar", "BOTTOM", 0, self.focusTargetCastY, 1)
+  ApplyFramePosition(castbars and castbars.player or GetGlobal("pfPlayerCastbar"),
+    "BOTTOM", 0, self.focusCastY, 1)
+  ApplyFramePosition(castbars and castbars.target or GetGlobal("pfTargetCastbar"),
+    "BOTTOM", 0, self.focusTargetCastY, 1)
+  return true
+end
+
 local function ConfigureFocusCastBar(key, name, x, y)
   local castbars = pfUI_config and pfUI_config.castbar
   local config = castbars and castbars[key]
@@ -2765,7 +2874,7 @@ function ActionBars:ApplyCombatFocusLayoutPreset()
     " Detected ArchiTotem was kept provider-owned and requested to open downward." or
     " ArchiTotem was unavailable or inapplicable and remained fail-open."
   return true,
-    "Combat Focus layout applied with direct Turtle WoW game coordinates: player and target use 240x48 at 0.8 with 18-point client-system unit text and a 480-UI bottom anchor; the compact 240x60 target-of-target remains at 0.68 and follows the Target alignment without resizing; 23x23 auras use pfUI's real seven-UI border step and fit eight per row, leaving all four lower Debuff rows clear of the unchanged centered 260x12 player-cast, target-cast, and Swing stack at 1.0. The stance bar uses 25 UI provider icons at full local scale 1.0 for readable warrior controls, while the provider-owned DoiteDPS timeline and resource row remain in their own safe lane. Provider visibility, lock state, and native translucency were preserved without screen-pixel projection or coordinate readback." ..
+    "Combat Focus layout applied with direct Turtle WoW game coordinates: player and target use 240x48 at 0.8 with 18-point client-system unit text and a 470-UI bottom anchor; the compact 240x60 target-of-target remains at 0.68 and follows the Target alignment without resizing; 23x23 auras use pfUI's real seven-UI border step and fit eight per row, leaving two lower Debuff rows clear of the unchanged centered 260x12 player-cast, target-cast, and Swing stack at 1.0. The stance bar uses 25 UI provider icons at full local scale 1.0 for readable warrior controls, while the provider-owned DoiteDPS timeline and resource row remain in their own safe lane. Provider visibility, lock state, and native translucency were preserved without screen-pixel projection or coordinate readback." ..
     archiMessage
 end
 
@@ -3249,8 +3358,8 @@ local function NormalizeSupplySlots(profile)
   end
   local source = type(profile.slots) == "table" and profile.slots or {}
   local slots = {}
-  local seen = {}
   for index = 1, ActionBars.supplyMaxSlots do
+    local seen = {}
     local entry = source[index]
     local items = {}
     local itemSource = type(entry) == "table" and entry.items
@@ -3351,19 +3460,14 @@ local function GetSupplyGroupName(group, index)
   return "补给组 " .. tostring(index or "")
 end
 
-local function FindSupplyItem(profile, itemId)
-  if not profile then return nil, nil end
-  for groupIndex = 1, ActionBars.supplyMaxSlots do
-    local group = profile.slots[groupIndex]
-    if group then
-      for itemIndex = 1, table.getn(group.items) do
-        if group.items[itemIndex].itemId == itemId then
-          return groupIndex, itemIndex
-        end
-      end
+local function FindSupplyItem(group, itemId)
+  if not group then return nil end
+  for itemIndex = 1, table.getn(group.items) do
+    if group.items[itemIndex].itemId == itemId then
+      return itemIndex
     end
   end
-  return nil, nil
+  return nil
 end
 
 local function GetSupplyProfile(create)
@@ -3520,8 +3624,9 @@ local function CreateSupplyButton(root, index)
   )
 
   button.icon = button:CreateTexture(nil, "ARTWORK")
-  button.icon:SetPoint("TOPLEFT", button, "TOPLEFT", 4, -4)
-  button.icon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -4, 4)
+  button.icon:SetPoint("TOPLEFT", button, "TOPLEFT", 1, -1)
+  button.icon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, 1)
+  button.icon:SetTexCoord(.08, .92, .08, .92)
 
   button.stock = button:CreateFontString(
     nil, "OVERLAY", "GameFontNormalSmall"
@@ -3590,8 +3695,9 @@ local function CreateSupplyPopupButton(parent, index)
     ActionBars.fieldKitPocketPadding
   )
   button.icon = button:CreateTexture(nil, "ARTWORK")
-  button.icon:SetPoint("TOPLEFT", button, "TOPLEFT", 4, -4)
-  button.icon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -4, 4)
+  button.icon:SetPoint("TOPLEFT", button, "TOPLEFT", 1, -1)
+  button.icon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, 1)
+  button.icon:SetTexCoord(.08, .92, .08, .92)
   button.stock = button:CreateFontString(
     nil, "OVERLAY", "GameFontNormalSmall"
   )
@@ -3963,9 +4069,10 @@ function ActionBars:ApplySupplyDockPosition()
       return false
     end
     root:ClearAllPoints()
+    local top = GetTopActionBarFrame() or main
     root:SetPoint(
-      "BOTTOMRIGHT", main, "BOTTOMLEFT",
-      -self.supplyDockGap, self.fieldKitDockYOffset
+      "TOPRIGHT", top.backdrop or top, "TOPLEFT",
+      -self.supplyDockGap, 0
     )
     root.aeuiSupplyWasBound = true
     self.supplyDockStatus = "left"
@@ -4213,14 +4320,14 @@ function ActionBars:SetSupplySlot(index, itemId)
     math.floor(tonumber(index) or 1),
     self.supplyMaxSlots
   ))
-  local existingGroup, existingItem = FindSupplyItem(profile, itemId)
-  if existingGroup then
-    self.selectedSupplySlot = existingGroup
+  local group = slots[index]
+  local existingItem = FindSupplyItem(group, itemId)
+  if existingItem then
+    self.selectedSupplySlot = index
     self.selectedSupplyMember = existingItem
     self:RefreshSupplyManager(true)
-    return true, "这个物品已在补给组中。"
+    return true, "这个物品已在当前补给组中。"
   end
-  local group = slots[index]
   if group and table.getn(group.items) >= self.supplyMaxItems then
     return false, "每个补给组最多 12 个物品。"
   end
@@ -4974,6 +5081,7 @@ function ActionBars:RunSupplySelfCheck()
           { itemId = "200", minimum = 5 },
           { itemId = "201", minimum = 0 },
           { itemId = "13446", minimum = 9 },
+          { itemId = "200", minimum = 9 },
         },
       },
       [9] = { itemId = "200" },
@@ -4996,17 +5104,25 @@ function ActionBars:RunSupplySelfCheck()
       "|Hitem:20452:0:0:0|h[沙漠肉丸子]|h"
     )
   local ok = self.supplyDragHooked == true and
-    slotCount == 2 and lastSlot == 7 and positionsWork and
+    slotCount == 3 and lastSlot == 9 and positionsWork and
     slots[2].primaryItemId == 13446 and
     table.getn(slots[2].items) == 1 and
     slots[2].items[1].minimum == 1 and
     slots[7].name == "抗性药水" and
     slots[7].primaryItemId == 201 and
-    table.getn(slots[7].items) == 2 and
+    table.getn(slots[7].items) == 3 and
     slots[7].items[1].itemId == 200 and
     slots[7].items[1].minimum == 5 and
     slots[7].items[2].itemId == 201 and
     slots[7].items[2].minimum == 1 and dragged == 20452 and
+    slots[7].items[3].itemId == 13446 and
+    slots[9].primaryItemId == 200 and
+    table.getn(slots[9].items) == 1 and
+    slots[9].items[1] ~= slots[7].items[1] and
+    FindSupplyItem(slots[7], 200) == 1 and
+    FindSupplyItem(slots[9], 200) == 1 and
+    not FindSupplyItem(slots[2], 200) and
+    not FindSupplyItem(nil, 200) and
     rejectsManual
   return ok, ok and
     "补给栏 self-check 通过。" or
@@ -5275,7 +5391,7 @@ function ActionBars:ApplyStanceDockPosition(enabled)
   -- stances at the old centre while ArchiTotem occupies the class slot.
   frame:ClearAllPoints()
   frame:SetPoint(
-    "TOP", main, "BOTTOM", self.combatDeckClassDockXOffset,
+    "TOPLEFT", main, "BOTTOMLEFT", 0,
     -self.combatDeckStanceGap
   )
   if CombatFocusLayoutActive() and frame.SetScale then
@@ -5306,6 +5422,8 @@ function ActionBars:ApplyCombatDeckGroup()
   self:ApplyTrinketDockPosition(true)
   self:ApplyArchiTotemDockPosition(true)
   self.combatDeckGroupStatus = "bound"
+  local markers = addon.modules and addon.modules.TargetMarkers
+  if markers and markers.frame then markers:ApplyAnchor() end
   return true
 end
 
@@ -5365,17 +5483,116 @@ function ActionBars:ApplyTrinketDockPosition(enabled)
   if not self.trinketDockApplied then
     self.trinketUndockedAnchors = CaptureFrameAnchors(frame)
   end
+  local top = GetTopActionBarFrame() or main
+  local first = GetGlobal("TrinketMenu_Trinket0")
+  local pocket = first and first.aeuiTrinketKitPocketV1
+  local topInset = 0
+  if pocket and pocket:GetTop() and frame:GetTop() then
+    topInset = pocket:GetTop() * first:GetEffectiveScale() /
+      frame:GetEffectiveScale() - frame:GetTop()
+  end
   frame:ClearAllPoints()
   frame:SetPoint(
-    "BOTTOMLEFT", main, "BOTTOMRIGHT",
-    self.trinketDockGap, self.fieldKitDockYOffset
+    "TOPLEFT", top.backdrop or top, "TOPRIGHT",
+    self.trinketDockGap, -topInset
   )
   self.trinketDockApplied = true
   self.trinketDockStatus = "right"
   return true
 end
 
+local function StyleTotemTimer(text, button, enabled, duration)
+  if not text then return end
+  local state = text.aeuiTotemTimer
+  if enabled then
+    if not state then
+      state = {points = CaptureFrameAnchors(text), font = {text:GetFont()},
+        color = {text:GetTextColor()}, layer = text:GetDrawLayer()}
+      text.aeuiTotemTimer = state
+    end
+    text:ClearAllPoints()
+    if duration then
+      text:SetPoint("BOTTOM", button, "BOTTOM", 0, 3)
+      text:SetTextColor(1, .84, .55, 1)
+    else
+      text:SetPoint("CENTER", button, "CENTER", 0, 4)
+      text:SetTextColor(1, 1, 1, 1)
+    end
+    text:SetFont(GetSystemUnitFont(), duration and 12 or 16, "OUTLINE")
+    text:SetDrawLayer("OVERLAY")
+  elseif state then
+    RestoreFrameAnchors(text, state.points)
+    text:SetFont(unpack(state.font))
+    text:SetTextColor(unpack(state.color))
+    text:SetDrawLayer(state.layer)
+    text.aeuiTotemTimer = nil
+  end
+end
+
+function ActionBars:ApplyArchiTotemArt(enabled)
+  enabled = enabled and pfUI and pfUI.GetExpeditionComponentOwner and
+    pfUI:GetExpeditionComponentOwner("actionbars.architotem-art") == "actionbars"
+  local names = {"AllTotems", "Recall", "PresetManager"}
+  for _, element in ipairs({"Earth", "Fire", "Water", "Air"}) do
+    for index = 1, (element == "Air" and 7 or 5) do
+      table.insert(names, element .. index)
+    end
+  end
+  for _, suffix in ipairs(names) do
+    local name = "ArchiTotemButton_" .. suffix
+    local button = GetGlobal(name)
+    local icon = GetGlobal(name .. "Texture")
+    if button then
+      StyleTotemTimer(GetGlobal(name .. "CooldownText"), button, enabled, false)
+      local element = string.gsub(suffix, "1$", "")
+      if suffix == element .. "1" then
+        StyleTotemTimer(GetGlobal(element .. "DurationText"), button, enabled, true)
+      end
+      local background = GetGlobal(name .. "CooldownBg")
+      if background then
+        if enabled then
+          if background.aeuiTotemAlpha == nil then
+            background.aeuiTotemAlpha = background:GetAlpha()
+          end
+          background:SetAlpha(0)
+        elseif background.aeuiTotemAlpha ~= nil then
+          background:SetAlpha(background.aeuiTotemAlpha)
+          background.aeuiTotemAlpha = nil
+        end
+      end
+    end
+    if button and icon then
+      local state = button.aeuiTotemArt
+      if enabled then
+        if not state then
+          local normal = GetProviderNormalTexture(button)
+          state = {points = CaptureFrameAnchors(icon), layer = icon:GetDrawLayer(),
+            texcoord = {icon:GetTexCoord()},
+            normal = normal, normalShown = normal and normal:IsShown()}
+          button.aeuiTotemArt = state
+        end
+        ApplyPocket(button, "aeuiTotemPocket", self.consumableKitTexturePath,
+          consumableKitTexCoords.A, consumableKitSpriteSizes.A, true, 0)
+        icon:ClearAllPoints()
+        icon:SetPoint("TOPLEFT", button, "TOPLEFT", 2, -2)
+        icon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -2, 2)
+        icon:SetDrawLayer("ARTWORK")
+        icon:SetTexCoord(.08, .92, .08, .92)
+        if state.normal then state.normal:Hide() end
+      elseif state then
+        SetTextureEnabled(button.aeuiTotemPocket, false)
+        RestoreFrameAnchors(icon, state.points)
+        icon:SetDrawLayer(state.layer)
+        icon:SetTexCoord(unpack(state.texcoord))
+        if state.normal and state.normalShown then state.normal:Show() end
+        button.aeuiTotemArt = nil
+      end
+    end
+  end
+end
+
 function ActionBars:ApplyArchiTotemDockPosition(enabled)
+  self:ApplyArchiTotemArt(enabled)
   local bound = FieldKitBound()
   local frame = GetGlobal("ArchiTotemFrame")
 
@@ -5413,10 +5630,52 @@ function ActionBars:ApplyArchiTotemDockPosition(enabled)
     self.archiTotemFreeAnchors = anchors
   end
 
-  auditedFrame:ClearAllPoints()
+  local markers = addon.modules and addon.modules.TargetMarkers
+  local database = addon.db and addon.db.actionbars
+  if markers and markers.frame and database.markersEnabled ~= false then
+    -- The provider root omits the drag handle. Measure the actual closed row,
+    -- including optional recall/preset controls, in effective UI units.
+    local width = 0
+    for _, name in ipairs({
+      "Earth1", "Fire1", "Water1", "Air1", "AllTotems", "Recall", "PresetManager",
+    }) do
+      local button = GetGlobal("ArchiTotemButton_" .. name)
+      if button and button:IsShown() then
+        width = width + button:GetWidth() * button:GetEffectiveScale()
+      end
+    end
+    local drag = GetGlobal("ArchiTotemDragHandle")
+    if drag and drag:IsShown() then
+      width = width + drag:GetWidth() * drag:GetEffectiveScale()
+    end
+    local first = GetGlobal("ArchiTotemButton_Earth1")
+    local scale = auditedFrame:GetEffectiveScale()
+    -- Scaled sibling anchors in ArchiTotem do not necessarily add up to the
+    -- nominal widths. Use the actual visible right edge when layout is ready.
+    local right = nil
+    for _, suffix in ipairs({"Earth1", "Fire1", "Water1", "Air1", "AllTotems", "Recall", "PresetManager"}) do
+      local button = GetGlobal("ArchiTotemButton_" .. suffix)
+      if button and button:IsShown() and button:GetRight() then
+        right = math.max(right or 0, button:GetRight() * button:GetEffectiveScale())
+      end
+    end
+    if right and auditedFrame:GetLeft() then
+      width = right - auditedFrame:GetLeft() * scale
+    end
+    auditedFrame:ClearAllPoints()
+    auditedFrame:SetPoint("LEFT", markers.frame, "TOPLEFT",
+      -(width + 8 * main:GetEffectiveScale()) / scale,
+      (markers.panelPadding * markers.frame:GetEffectiveScale() -
+        first:GetHeight() * first:GetEffectiveScale() / 2) / scale)
+    self.archiTotemDockApplied = true
+    self.archiTotemDockStatus = "compact-left-of-markers"
+    self.archiTotemDirectionStatus = GetArchiTotemDirection() or "unknown"
+    return true
+  end
   -- ArchiTotem 1.7 omits its unscaled 20 UI drag handle from the root width.
   -- The -138 UI x offset combines the old -10 UI visible-union correction
   -- with the new 128 UI separation from the marker icon board.
+  auditedFrame:ClearAllPoints()
   auditedFrame:SetPoint(
     "CENTER", main, "BOTTOM",
     self.archiTotemDockXOffset,
@@ -5474,7 +5733,7 @@ function ActionBars:SetFieldKitDocking(docked)
     RefreshTargetMarkerAnchor()
     self:UpdateFieldKitUnlockMover()
     return true,
-      "Combat Deck bound: supplies left and trinkets right share a 20 UI lower dock, 12x2 action bars stay centered, and warrior stances or detected ArchiTotem share the class slot below-left of the marker list. Move the main action bar to move the whole deck."
+      "Combat Deck bound: supplies and trinkets align with the top action row; stances sit below-left and compact markers below-right. Move the main action bar to move the whole deck."
   end
   self:ApplyActionBarStackPosition(FieldKitEnabled())
   self:ApplyStanceDockPosition(FieldKitEnabled())
@@ -5599,6 +5858,86 @@ local function EnsureTrinketMenuShell(frame)
   return shell
 end
 
+function ActionBars:ConfigureTrinketShelf(enabled)
+  if not TrinketMenu or not TrinketMenuOptions or not TrinketMenuPerOptions or
+    not TrinketMenu.DockWindows then return end
+  local database = addon.db and addon.db.actionbars
+  local key = GetCharacterProfileKey()
+  if not database or not key then return end
+  database.trinketShelfProfiles = database.trinketShelfProfiles or {}
+  local state = database.trinketShelfProfiles[key]
+  local fields = {
+    {TrinketMenuOptions, "KeepOpen", "ON"},
+    {TrinketMenuOptions, "MenuOnShift", "OFF"},
+    {TrinketMenuOptions, "SetColumns", "ON"},
+    {TrinketMenuOptions, "Columns", 2},
+    {TrinketMenuOptions, "KeepDocked", "ON"},
+    {TrinketMenuPerOptions, "MainDock", "BOTTOMLEFT"},
+    {TrinketMenuPerOptions, "MenuDock", "TOPLEFT"},
+    {TrinketMenuPerOptions, "MenuOrient", "VERTICAL"},
+    {TrinketMenuPerOptions, "MainScale", 0.88},
+    {TrinketMenuPerOptions, "MenuScale", 0.88},
+    {TrinketMenuOptions, "Locked", "ON"},
+  }
+  local function ApplyScaleAndLock()
+    for _, role in ipairs({"Main", "Menu"}) do
+      local frame = GetGlobal("TrinketMenu_" .. role .. "Frame")
+      if frame then frame:SetScale(TrinketMenuPerOptions[role .. "Scale"] or 1) end
+    end
+    if TrinketMenu.StopTimer then TrinketMenu.StopTimer("Scaling") end
+    TrinketMenu.FrameToScale = nil
+    if TrinketMenu.ReflectLock then TrinketMenu.ReflectLock() end
+  end
+  if enabled then
+    state = state or {}
+    for i, field in ipairs(fields) do
+      if not state[i] then
+        state[i] = CaptureField(field[1], field[2])
+        field[1][field[2]] = field[3]
+        self.trinketShelfReady = nil
+      end
+    end
+    database.trinketShelfProfiles[key] = state
+    if not state.mainSizeUpgraded then
+      if tonumber(TrinketMenuPerOptions.MainScale) == 0.8 then
+        TrinketMenuPerOptions.MainScale = 0.88
+        self.trinketShelfReady = nil
+      end
+      state.mainSizeUpgraded = true
+    end
+    if not state.menuSizeAligned then
+      TrinketMenuPerOptions.MenuScale = TrinketMenuPerOptions.MainScale
+      state.menuSizeAligned = true
+      self.trinketShelfReady = nil
+    end
+  elseif not enabled and state then
+    for i, field in ipairs(fields) do RestoreField(field[1], field[2], state[i]) end
+    database.trinketShelfProfiles[key] = nil
+    self.trinketShelfReady = nil
+    ApplyScaleAndLock()
+    TrinketMenu.DockWindows()
+    if TrinketMenuOptions.KeepOpen ~= "ON" then
+      local menu = GetGlobal("TrinketMenu_MenuFrame")
+      if menu then menu:Hide() end
+    end
+  end
+  if enabled and not self.trinketShelfReady then
+    -- Set before the provider call: DockWindows -> BuildMenu invokes our skin hook.
+    self.trinketShelfReady = true
+    ApplyScaleAndLock()
+    TrinketMenu.DockWindows()
+    TrinketMenu.BuildMenu()
+  end
+  if enabled and TrinketMenuOptions.KeepDocked == "ON" then
+    local main = GetGlobal("TrinketMenu_MainFrame")
+    local menu = GetGlobal("TrinketMenu_MenuFrame")
+    if main and menu then
+      menu:ClearAllPoints()
+      menu:SetPoint("TOPLEFT", main, "BOTTOMLEFT", 0, -2)
+    end
+  end
+end
+
 function ActionBars:ApplyTrinketFieldKit(enabled)
   local main = GetGlobal("TrinketMenu_MainFrame")
   local menu = GetGlobal("TrinketMenu_MenuFrame")
@@ -5663,6 +6002,7 @@ function ActionBars:ApplyTrinketFieldKit(enabled)
   self.trinketMenuButtons = appliedMenu
   self.trinketFieldKitStatus = enabled and "available" or "disabled"
   self:ApplyTrinketDockPosition(enabled)
+  self:ConfigureTrinketShelf(enabled)
   return true
 end
 
@@ -5741,6 +6081,22 @@ function ActionBars:InstallFieldKitHooks()
     end
   end
 
+  if not self.archiTotemDirectionHooked and
+    type(GetGlobal("ArchiTotem_SetDirection")) == "function"
+  then
+    self.archiTotemDirectionHooked = true
+    hooksecurefunc("ArchiTotem_SetDirection", function()
+      ActionBars:ApplyArchiTotemArt(FieldKitEnabled())
+    end)
+  end
+  if not self.archiTotemWidthHooked and
+    type(GetGlobal("ArchiTotem_RecalculateWidth")) == "function"
+  then
+    self.archiTotemWidthHooked = true
+    hooksecurefunc("ArchiTotem_RecalculateWidth", function()
+      ActionBars:ApplyArchiTotemDockPosition(FieldKitEnabled())
+    end)
+  end
   if not self.archiTotemDragStopHooked and
     type(GetGlobal("ArchiTotem_DragHandle_OnDragStop")) == "function"
   then
@@ -5903,6 +6259,10 @@ function ActionBars:Apply()
     self:UpgradeCombatFocusStanceContract()
   elseif CombatFocusLayoutActive() then
     self:ApplyFocusStanceContract(false, false)
+  end
+  if enabled then
+    self:MigrateFocusCastbarOrder()
+    self:CompactFocusDebuffSpace()
   end
   if FocusUnitLayoutActive() then
     self:ApplyFocusRelativeAnchors()

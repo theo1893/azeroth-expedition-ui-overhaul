@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local UnitFrames = {}
-UnitFrames.runtimeContract = "1.9"
+UnitFrames.runtimeContract = "2.1"
 
 local MEDIA = addon.media.root .. "UnitFrames\\"
 local HEALTH_TEXTURE = MEDIA .. "UnitFrameHealthFillV1"
@@ -23,15 +23,19 @@ local PLAYER_V5 = {
   base = MEDIA .. "UnitFramePlayerShellV5",
   sourceWidth = 254,
   sourceHeight = 77,
-  sampledWidth = 508,
-  sampledHeight = 154,
-  textureWidth = 512,
-  textureHeight = 256,
+  -- Logical container dimensions preserve the 2x sampled texture UVs.
+  textureWidth = 256,
+  textureHeight = 128,
   providerWidth = 240,
-  providerHeight = 65,
   outsetLeft = 7,
   outsetTop = 6,
-  assembly = "complete-bitmap-254x77-canonical-only",
+  leftCap = 7,
+  centreWidth = 240,
+  rightCap = 7,
+  topCap = 16,
+  centreHeight = 55,
+  bottomCap = 6,
+  assembly = "height-adaptive-v5-fixed-top-and-bottom",
 }
 
 local PRIMARY_GEOMETRY = {
@@ -169,6 +173,15 @@ local RAID_TEXTURES = {
 }
 
 local RAID_HEIGHT = 33
+local THIN_VARIANTS = { player = "A", target = "B", targettarget = "C", focus = "D" }
+-- Reuse the Raid A2 pixels at their original border thickness on primary frames.
+local THIN_GEOMETRY = {
+  sourceWidth = 74, sourceHeight = 37,
+  textureWidth = 128, textureHeight = 64, -- logical dimensions of the 2x container
+  leftCap = 6, centreWidth = 62, rightCap = 6,
+  topCap = 6, centreHeight = 25, bottomCap = 6,
+  outsetLeft = 2, outsetTop = 2,
+}
 local RAID_STANDARD_WIDTH = 70
 local RAID_ART_HEIGHT = 37
 local RAID_LEFT_CAP = 6
@@ -469,20 +482,6 @@ local function EnsurePlayerV5Overlay(frame)
   overlay:SetFrameLevel(10)
   frame.aeuiPlayerV5Overlay = overlay
   return overlay
-end
-
-local function EnsurePlayerV5Texture(frame)
-  local overlay = EnsurePlayerV5Overlay(frame)
-  if not overlay or type(overlay.CreateTexture) ~= "function" then
-    return nil
-  end
-  if frame.aeuiPlayerV5Texture then
-    return frame.aeuiPlayerV5Texture
-  end
-
-  local texture = overlay:CreateTexture(nil, "ARTWORK")
-  frame.aeuiPlayerV5Texture = texture
-  return texture
 end
 
 local function HidePlayerV5Chrome(frame)
@@ -1018,10 +1017,11 @@ function UnitFrames:IsPrimaryEnabled()
     RouteOwned("unitframes.power-fill")
 end
 
-function UnitFrames:IsPrimaryShellEnabled()
+function UnitFrames:IsPrimaryShellEnabled(role)
   return
     ModuleEnabled() and
-    RouteOwned("unitframes.primary-shell")
+    (RouteOwned("unitframes.primary-shell") or
+      ((not role or role == "target") and RouteOwned("unitframes.target-shell-v4")))
 end
 
 function UnitFrames:IsPlayerShellV5Enabled()
@@ -1041,6 +1041,8 @@ end
 function UnitFrames:IsEnabled()
   return
     self:IsPrimaryEnabled() or
+    (ModuleEnabled() and RouteOwned("unitframes.standalone-aura-rim")) or
+    (ModuleEnabled() and RouteOwned("unitframes.primary-thin-shell")) or
     self:IsPlayerShellV5Enabled() or
     self:IsPrimaryShellEnabled() or
     self:IsRaidEnabled() or
@@ -1050,7 +1052,11 @@ end
 
 local function ExpeditionPrimaryVisualRefresh(frame)
   local role = frame and frame.aeuiPrimaryShellRole
-  if role then UnitFrames:ApplyPrimaryShell(frame, role) end
+  if role and UnitFrames:IsPrimaryShellEnabled(role) then
+    UnitFrames:ApplyPrimaryShell(frame, role)
+  else
+    UnitFrames:RestorePrimaryShell(frame)
+  end
 end
 
 local function ExpeditionPlayerV5VisualRefresh(frame)
@@ -1070,34 +1076,22 @@ function UnitFrames:ApplyPlayerV5Shell(frame)
   if
     not width or not height or
     Round(width) ~= PLAYER_V5.providerWidth or
-    Round(height) ~= PLAYER_V5.providerHeight
+    height + 12 <= PLAYER_V5.topCap + PLAYER_V5.bottomCap
   then
     self:RestorePlayerV5Shell(frame)
     return false
   end
 
   local overlay = EnsurePlayerV5Overlay(frame)
-  local texture = EnsurePlayerV5Texture(frame)
-  if not overlay or not texture then
+  local slices = overlay and EnsurePrimarySlices(overlay, "aeuiPlayerV5Slices", "ARTWORK")
+  if not slices or not LayoutPrimarySlices(
+    slices, PLAYER_V5.base, frame, width + 14, height + 12, PLAYER_V5
+  ) then
     self:RestorePlayerV5Shell(frame)
     return false
   end
 
-  texture:ClearAllPoints()
-  texture:SetTexture(PLAYER_V5.base)
-  texture:SetTexCoord(
-    0, PLAYER_V5.sampledWidth / PLAYER_V5.textureWidth,
-    0, PLAYER_V5.sampledHeight / PLAYER_V5.textureHeight
-  )
-  texture:SetWidth(PLAYER_V5.sourceWidth)
-  texture:SetHeight(PLAYER_V5.sourceHeight)
-  texture:SetPoint(
-    "TOPLEFT", frame, "TOPLEFT",
-    -PLAYER_V5.outsetLeft, PLAYER_V5.outsetTop
-  )
-  texture:SetVertexColor(1, 1, 1)
-  texture:SetAlpha(1)
-  texture:Show()
+  SetPrimarySlicesColour(slices, 1, 1, 1, 1)
   overlay:Show()
   HidePlayerV5Chrome(frame)
 
@@ -1114,9 +1108,6 @@ function UnitFrames:RestorePlayerV5Shell(frame)
 
   if frame.aeuiPrimaryRefreshVisual == ExpeditionPlayerV5VisualRefresh then
     frame.aeuiPrimaryRefreshVisual = nil
-  end
-  if frame.aeuiPlayerV5Texture then
-    frame.aeuiPlayerV5Texture:Hide()
   end
   if frame.aeuiPlayerV5Overlay then
     frame.aeuiPlayerV5Overlay:Hide()
@@ -1289,7 +1280,9 @@ function UnitFrames:RestoreFrame(frame)
 end
 
 function UnitFrames:ApplyRaidFrame(frame, slot)
-  if not frame or (frame.label and frame.label ~= "raid") then
+  -- pfRaid objects also represent player/party units in solo, group and preview.
+  local raid = pfUI and pfUI.uf and pfUI.uf.raid
+  if not frame or not raid or not slot or raid[slot] ~= frame then
     return false
   end
 
@@ -1365,10 +1358,147 @@ function UnitFrames:RestoreRaidFrame(frame)
   return true
 end
 
+local function TintAuraThinShell(button, r, g, b)
+  SetPrimarySlicesColour(button.aeuiAuraThinSlices, r, g, b, 1)
+end
+
+local function ApplyAuraButtonThinShell(button, path)
+  local width = FrameDimension(button, "GetWidth", "width")
+  local height = FrameDimension(button, "GetHeight", "height")
+  if path and width and height and width > 8 and height > 8 and button.backdrop then
+    local slices = EnsurePrimarySlices(button, "aeuiAuraThinSlices", "BACKGROUND")
+    if LayoutPrimarySlices(slices, path, button, width + 4, height + 4, THIN_GEOMETRY) then
+      if button.aeuiAuraBackdropShown == nil then
+        button.aeuiAuraBackdropShown = FrameShown(button.backdrop)
+      end
+      button.backdrop:Hide()
+      if button.backdrop_shadow then
+        if button.aeuiAuraShadowShown == nil then
+          button.aeuiAuraShadowShown = FrameShown(button.backdrop_shadow)
+        end
+        button.backdrop_shadow:Hide()
+      end
+      -- The standalone provider creates icons on BACKGROUND, unlike unit-frame auras.
+      if button.texture and button.texture.GetDrawLayer and button.texture.SetDrawLayer then
+        if not button.aeuiAuraIconLayer then
+          button.aeuiAuraIconLayer = button.texture:GetDrawLayer()
+        end
+        button.texture:SetDrawLayer("ARTWORK")
+      end
+      SetPrimarySlicesColour(slices, 1, 1, 1, 1)
+      button.aeuiAuraTint = TintAuraThinShell
+      return true
+    end
+  end
+  SetPrimarySlicesShown(button.aeuiAuraThinSlices, false)
+  if button.aeuiAuraBackdropShown ~= nil then
+    SetShown(button.backdrop, button.aeuiAuraBackdropShown)
+    button.aeuiAuraBackdropShown = nil
+  end
+  if button.aeuiAuraShadowShown ~= nil then
+    SetShown(button.backdrop_shadow, button.aeuiAuraShadowShown)
+    button.aeuiAuraShadowShown = nil
+  end
+  if button.aeuiAuraIconLayer then
+    button.texture:SetDrawLayer(button.aeuiAuraIconLayer)
+    button.aeuiAuraIconLayer = nil
+  end
+  button.aeuiAuraTint = nil
+  return false
+end
+
+function UnitFrames:ApplyAuraThinShells(frame, path)
+  if not frame then return end
+  if not RouteOwned("unitframes.primary-aura-rim") then path = nil end
+  frame.aeuiAuraBorder = path and 2 or nil
+  for _, kind in ipairs({ "buffs", "debuffs" }) do
+    for _, button in pairs(frame[kind] or {}) do
+      ApplyAuraButtonThinShell(button, path)
+    end
+  end
+  frame.update_aura = true
+end
+
+local function RefreshStandaloneAuraColour(button)
+  if button.mode == "HELPFUL" then
+    TintAuraThinShell(button, 1, 1, 1)
+  elseif button.backdrop and button.backdrop.GetBackdropBorderColor then
+    TintAuraThinShell(button, button.backdrop:GetBackdropBorderColor())
+  end
+end
+
+function UnitFrames:ApplyRaidAuraShells(frame)
+  local enabled = ModuleEnabled() and RouteOwned("unitframes.raid-aura-rim")
+  for _, kind in ipairs({"buffs", "debuffs"}) do
+    local path = enabled and RAID_TEXTURES[kind == "debuffs" and "B" or "A"] or nil
+    for _, button in pairs(frame[kind] or {}) do
+      if ApplyAuraButtonThinShell(button, path) and kind == "debuffs" and
+        button.backdrop.GetBackdropBorderColor then
+        TintAuraThinShell(button, button.backdrop:GetBackdropBorderColor())
+      end
+    end
+  end
+  frame.aeuiRaidAuraRefresh = enabled and function(target)
+    UnitFrames:ApplyRaidAuraShells(target)
+  end or nil
+end
+
+function UnitFrames:ApplyStandaloneAuraShells()
+  local provider = pfUI and pfUI.buff
+  if not provider then return end
+  local enabled = ModuleEnabled() and RouteOwned("unitframes.standalone-aura-rim")
+  for _, kind in ipairs({ "buffs", "debuffs", "wepbuffs" }) do
+    local group = provider[kind]
+    for _, button in pairs(group and group.buttons or {}) do
+      local path = enabled and RAID_TEXTURES[kind == "debuffs" and "B" or "A"] or nil
+      local applied = ApplyAuraButtonThinShell(button, path)
+      button.aeuiAuraRefreshColour = applied and RefreshStandaloneAuraColour or nil
+      if applied then RefreshStandaloneAuraColour(button) end
+    end
+  end
+  provider.aeuiRefreshAuraShells = enabled and function()
+    UnitFrames:ApplyStandaloneAuraShells()
+  end or nil
+end
+
+function UnitFrames:RestoreThinShell(frame)
+  if not frame or not frame.aeuiThinShell then return end
+  self:ApplyAuraThinShells(frame, nil)
+  frame.aeuiPrimaryRefreshVisual = nil
+  SetPrimarySlicesShown(frame.aeuiThinShellSlices, false)
+  RestorePlayerV5Chrome(frame)
+  frame.aeuiThinShell = nil
+end
+
+function UnitFrames:ApplyThinShell(frame, role)
+  if not frame or not THIN_VARIANTS[role] or
+    not pfUI or not pfUI.uf or pfUI.uf[role] ~= frame then return false end
+  local width = FrameDimension(frame, "GetWidth", "width")
+  local height = FrameDimension(frame, "GetHeight", "height")
+  if not ModuleEnabled() or not RouteOwned("unitframes.primary-thin-shell") or
+    not width or not height or width <= 8 or height <= 8 then
+    self:RestoreThinShell(frame)
+    return false
+  end
+  local slices = EnsurePrimarySlices(frame, "aeuiThinShellSlices", "BACKGROUND")
+  local path = RAID_TEXTURES[THIN_VARIANTS[role]]
+  if not LayoutPrimarySlices(slices, path, frame, width + 4, height + 4, THIN_GEOMETRY) then
+    self:RestoreThinShell(frame)
+    return false
+  end
+  SetPrimarySlicesColour(slices, 1, 1, 1, 1)
+  HidePlayerV5Chrome(frame)
+  self:ApplyAuraThinShells(frame, path)
+  frame.aeuiThinShell = path
+  frame.aeuiPrimaryRefreshVisual = function(target)
+    UnitFrames:ApplyThinShell(target, role)
+  end
+  return true
+end
+
 function UnitFrames:Apply()
   local frames = pfUI and pfUI.uf
   local primaryEnabled = self:IsPrimaryEnabled()
-  local primaryShellEnabled = self:IsPrimaryShellEnabled()
   local playerShellV5Enabled = self:IsPlayerShellV5Enabled()
   local raidEnabled = self:IsRaidEnabled()
   local portraitsEnabled = self:IsPortraitConfigurationEnabled()
@@ -1376,7 +1506,9 @@ function UnitFrames:Apply()
   local primaryShellApplied = 0
   local playerShellV5Applied = 0
   local raidApplied = 0
+  local thinApplied = 0
 
+  self:ApplyStandaloneAuraShells()
   self:ApplyNameplateTargetCue()
 
   if portraitsEnabled then
@@ -1388,6 +1520,7 @@ function UnitFrames:Apply()
   if frames then
     for _, key in ipairs(PRIMARY_FRAME_KEYS) do
       local frame = frames[key]
+      self:RestoreThinShell(frame)
       if primaryEnabled then
         if self:ApplyFrame(frame) then primaryApplied = primaryApplied + 1 end
       else
@@ -1397,7 +1530,7 @@ function UnitFrames:Apply()
       if PRIMARY_SHELLS[key] then
         if key == "player" and playerShellV5Enabled then
           self:RestorePrimaryShell(frame)
-        elseif primaryShellEnabled then
+        elseif self:IsPrimaryShellEnabled(key) then
           if self:ApplyPrimaryShell(frame, key) then
             primaryShellApplied = primaryShellApplied + 1
           end
@@ -1415,6 +1548,9 @@ function UnitFrames:Apply()
           self:RestorePlayerV5Shell(frame)
         end
       end
+      if THIN_VARIANTS[key] then
+        if self:ApplyThinShell(frame, key) then thinApplied = thinApplied + 1 end
+      end
     end
 
     local raid = frames.raid
@@ -1422,6 +1558,7 @@ function UnitFrames:Apply()
       for slot = 1, 40 do
         local frame = raid[slot]
         if frame then
+          self:ApplyRaidAuraShells(frame)
           if raidEnabled and self:ApplyFrame(frame) and self:ApplyRaidFrame(frame, slot) then
             raidApplied = raidApplied + 1
           else
@@ -1437,6 +1574,7 @@ function UnitFrames:Apply()
   self.appliedPrimaryShellCount = primaryShellApplied
   self.appliedPlayerShellV5Count = playerShellV5Applied
   self.appliedRaidFrameCount = raidApplied
+  self.appliedThinShellCount = thinApplied
 end
 
 function UnitFrames:Initialize()
@@ -1446,6 +1584,7 @@ end
 function UnitFrames:GetRuntimeStatus()
   return
     "contract=" .. tostring(self.runtimeContract) ..
+    ", primary-thin-shells=" .. tostring(self.appliedThinShellCount or 0) .. "/4" ..
     ", enabled=" .. tostring(self:IsEnabled()) ..
     ", primary-bars=" .. tostring(self.appliedFrameCount or 0) .. "/4" ..
     ", primary-shells=" ..
@@ -1461,7 +1600,7 @@ function UnitFrames:GetRuntimeStatus()
     ", marker-trackers=" ..
       tostring(self.disabledPortraitTrackerCount or 0) .. "/2" ..
     ", primary-slices=32/150/32-8/26/8" ..
-    ", player-v5=complete-254x77@240x65" ..
+    ", player-v5=height-adaptive@240" ..
     ", targettarget-slices=20/72/20-6/22/6" ..
     ", focus-slices=24/64/24-10/27/6" ..
     ", raid-slices=6/62/6" ..

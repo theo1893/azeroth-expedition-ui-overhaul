@@ -1326,10 +1326,8 @@ local perrow = f.config.debuffperrow
   -- provider still owns all geometry, Secure Button behaviour, events and
   -- roster state; this callback only reapplies the accepted shell texture
   -- after pfUI has recalculated a Raid frame's configured width.
-  if
-    f.label == "raid" and
-    type(f.aeuiRaidRefreshVisual) == "function"
-  then
+  -- The attached callback owns a concrete Raid object, even under player/party aliases.
+  if type(f.aeuiRaidRefreshVisual) == "function" then
     f:aeuiRaidRefreshVisual()
   end
 
@@ -1338,6 +1336,10 @@ local perrow = f.config.debuffperrow
   -- provider events, bars, text, auras and interaction remain untouched.
   if type(f.aeuiPrimaryRefreshVisual) == "function" then
     f:aeuiPrimaryRefreshVisual()
+  end
+  -- Raid aura buttons are recreated/resized here, including solo/party aliases.
+  if type(f.aeuiRaidAuraRefresh) == "function" then
+    f:aeuiRaidAuraRefresh()
   end
 
 end
@@ -1933,6 +1935,9 @@ function pfUI.uf.OnEnter()
   GameTooltip_SetDefaultAnchor(GameTooltip, this)
   GameTooltip:SetUnit(this.label .. this.id)
   GameTooltip:Show()
+  if pfUI.tooltip and pfUI.tooltip.AnchorRaidTooltip then
+    pfUI.tooltip:AnchorRaidTooltip(GameTooltip, this)
+  end
 end
 
 function pfUI.uf.OnLeave()
@@ -2382,10 +2387,13 @@ function pfUI.uf:RefreshUnit(unit, component)
     local multiply = C.appearance.border.force_blizz == "1" and 1 or 2
     local buffoffx = unit.config.buffoffx and tonumber(unit.config.buffoffx) or 0
     local buffoffy = unit.config.buffoffy and tonumber(unit.config.buffoffy) or 0
+    local auraSpacing = unit.aeuiAuraBorder and 2 * unit.aeuiAuraBorder + 1 or
+      multiply * default_border + 1
     local anchor = unit.config.portraitheight ~= "-1" and unit.hp or unit
     if anchor == unit.hp and (unit.config.buffs == "BOTTOMLEFT" or unit.config.buffs == "BOTTOMRIGHT") then
       anchor = unit.power
     end
+    if unit.aeuiAuraBorder then anchor = unit end
 
     local invert_h, invert_v, af
     if unit.config.buffs == "TOPLEFT" then
@@ -2416,8 +2424,8 @@ function pfUI.uf:RefreshUnit(unit, component)
 
         unit.buffs[i]:ClearAllPoints()
         unit.buffs[i]:SetPoint(af, anchor, unit.config.buffs,
-          invert_v * (i-1-row*perrow)*(multiply*default_border + unit.config.buffsize + 1) + buffoffx,
-          invert_h * (row*(multiply*default_border + unit.config.buffsize + 1) + (multiply*default_border + 1)) + buffoffy)
+          invert_v * (i-1-row*perrow)*(unit.config.buffsize + auraSpacing) + buffoffx,
+          invert_h * (row*(unit.config.buffsize + auraSpacing) + auraSpacing) + buffoffy)
 
         unit.buffs[i].texture:SetTexture(buff_data.texture)
         unit.buffs[i].aura_id = buff_data.id
@@ -2556,10 +2564,13 @@ function pfUI.uf:RefreshUnit(unit, component)
     local multiply = C.appearance.border.force_blizz == "1" and 1 or 2
     local debuffoffx = unit.config.debuffoffx and tonumber(unit.config.debuffoffx) or 0
     local debuffoffy = unit.config.debuffoffy and tonumber(unit.config.debuffoffy) or 0
+    local auraSpacing = unit.aeuiAuraBorder and 2 * unit.aeuiAuraBorder + 1 or
+      multiply * default_border + 1
     local anchor = unit.config.portraitheight ~= "-1" and unit.hp or unit
     if anchor == unit.hp and (unit.config.debuffs == "BOTTOMLEFT" or unit.config.debuffs == "BOTTOMRIGHT") then
       anchor = unit.power
     end
+    if unit.aeuiAuraBorder then anchor = unit end
 
     for i=1, unit.config.debufflimit do
       if not unit.debuffs[i] then break end
@@ -2571,8 +2582,8 @@ function pfUI.uf:RefreshUnit(unit, component)
 
         unit.debuffs[i]:ClearAllPoints()
         unit.debuffs[i]:SetPoint(af, anchor, unit.config.debuffs,
-          invert_v * (i-1-row*perrow)*(multiply*default_border + unit.config.debuffsize + 1) + debuffoffx,
-          invert_h * ((row+buffrow)*(multiply*default_border + unit.config.debuffsize + 1) + (multiply*default_border + 1)) + debuffoffy)
+          invert_v * (i-1-row*perrow)*(unit.config.debuffsize + auraSpacing) + debuffoffx,
+          invert_h * ((row+buffrow)*(unit.config.debuffsize + auraSpacing) + auraSpacing) + debuffoffy)
 
         unit.debuffs[i].texture:SetTexture(debuff_data.texture)
         unit.debuffs[i].aura_id = debuff_data.id
@@ -2582,6 +2593,9 @@ function pfUI.uf:RefreshUnit(unit, component)
           r,g,b = DebuffTypeColor[debuff_data.dtype].r,DebuffTypeColor[debuff_data.dtype].g,DebuffTypeColor[debuff_data.dtype].b
         end
         unit.debuffs[i].backdrop:SetBackdropBorderColor(r,g,b,1)
+        if unit.debuffs[i].aeuiAuraTint then
+          unit.debuffs[i]:aeuiAuraTint(r,g,b)
+        end
 
         unit.debuffs[i]:Show()
         CooldownFrame_SetTimer(unit.debuffs[i].cd, 0, 0, 0)

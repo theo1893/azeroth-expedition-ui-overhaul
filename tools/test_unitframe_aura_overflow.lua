@@ -57,10 +57,11 @@ UnitName = function() return "Target" end
 UnitLevel = function() return 63 end
 
 local auras = { [1] = 101, [3] = 202, [33] = 303 }
+local auraFlags = { [1] = 2053, [5] = 8 }
 GetUnitField = function(_, field)
   if field == "aura" then return auras end
   if field == "auraApplications" then return {} end
-  if field == "auraFlags" then return { [1] = 2053, [5] = 8 } end
+  if field == "auraFlags" then return auraFlags end
 end
 GetSpellRecField = function(spellId, field)
   if field == "name" then
@@ -163,5 +164,39 @@ assert(lib:IsOverflowBuff("target", 2) == false)
 assert((lib:UnitDebuff("target", 19)) == nil)
 assert(targetFrame.update_aura == true)
 assert(focusFrame.update_aura == true)
+
+-- Hidden auras occupy raw slots but must not shift native display indices.
+local now = 2
+GetTime = function() return now end
+IsAuraHidden = function(spellId) return spellId == 404 and 1 or nil end
+auras[1], auras[2], auras[3] = 404, 101, 202
+auraFlags[1] = 2133 -- 0x855: three occupied visible-flag slots
+assert(lib:IsOverflowBuff("target", 1) == false)
+assert(lib:IsOverflowBuff("target", 2) == true)
+local _, tooltipSlot = lib:IsOverflowDebuff("target", 3)
+assert(tooltipSlot == 2)
+assert((lib:UnitDebuff("target", 19)) == "Known Debuff")
+
+-- Removing a visible buff compresses indices; reusing it restores them.
+auras[2], now = nil, 3
+assert(lib:IsOverflowBuff("target", 1) == true)
+assert(lib:IsOverflowBuff("target", 2) == false)
+auras[2], now = 101, 4
+assert(lib:IsOverflowBuff("target", 1) == false)
+assert(lib:IsOverflowBuff("target", 2) == true)
+
+-- Older providers without visibility detection retain the existing mapping.
+IsAuraHidden, now = nil, 5
+assert(lib:IsOverflowBuff("target", 3) == true)
+assert(lib:IsOverflowBuff("target", 2) == false)
+
+-- A present spell with flags 0/1 is also absent from the native display list.
+for flag = 0, 1 do
+  auraFlags[1], now = 2128 + flag, now + 1 -- 0x850 / 0x851
+  assert(lib:IsOverflowBuff("target", 1) == false)
+  assert(lib:IsOverflowBuff("target", 2) == true)
+  local _, slot = lib:IsOverflowDebuff("target", 3)
+  assert(slot == 2)
+end
 
 print("unitframe aura overflow: PASS")

@@ -663,7 +663,12 @@ local function GetDebuffSlotMap(guid)
 
   for auraSlot = 1, 48 do
     local spellId = auras[auraSlot]
-    if spellId and spellId > 0 then
+    local flags = GetAuraFlagNibble(auraFlags, auraSlot)
+    -- 与 Nampower CountsAsEmptyForLua 一致：隐藏光环或 flags & 0xE == 0
+    -- 不占用原生 API 的压缩显示序号。旧接口缺少标志时保留原有回退。
+    if spellId and spellId > 0 and
+      (flags == nil or flags >= 2) and
+      not (IsAuraHidden and IsAuraHidden(spellId)) then
       if auraSlot <= 32 then
         buffDisplaySlot = buffDisplaySlot + 1
       end

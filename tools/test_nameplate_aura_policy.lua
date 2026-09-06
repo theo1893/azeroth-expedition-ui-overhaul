@@ -48,4 +48,45 @@ assert(pfUI.api.aeuiAuraPolicy == policy)
 module:ApplyFocusAuraPolicy(false)
 assert(pfUI.api.aeuiAuraPolicy == nil)
 
-print("nameplate aura policy: PASS")
+UnitName = function() return "Test" end
+GetRealmName = function() return "Realm" end
+AzerothExpeditionUI.db = { actionbars = {} }
+pfUI_config = { unitframes = {
+  target = {buffs = "TOPRIGHT", debuffs = "BOTTOMRIGHT", buffsize = "23",
+    debuffsize = "23", buffperrow = "8", debuffperrow = "8", bufflimit = "32"},
+  ttarget = {buffs = "off", buffsize = "16", width = "240"},
+  focus = {buffs = "TOPLEFT", debuffs = "TOPRIGHT", buffsize = "12", width = "100"},
+} }
+local updates = 0
+for _, key in ipairs({"target", "targettarget", "focus"}) do
+  pfUI.uf[key] = {UpdateConfig = function() updates = updates + 1 end}
+end
+module:ApplyFocusAuraPolicy(true)
+for _, role in ipairs({"ttarget", "focus"}) do
+  local config = pfUI_config.unitframes[role]
+  assert(config.buffs == "TOPRIGHT" and config.debuffs == "BOTTOMRIGHT")
+  assert(config.buffsize == "23" and config.buffperrow == "8" and config.bufflimit == "32")
+end
+assert(pfUI_config.unitframes.focus.width == "100")
+assert(pfUI.uf.focus.aeuiAuraPolicy == policy and pfUI.uf.targettarget.aeuiAuraPolicy == policy)
+module:ApplyFocusAuraPolicy(true)
+assert(updates == 2) -- unchanged settings must not trigger another geometry refresh
+pfUI.uf.target.GetEffectiveScale = function() return 0.8 end
+pfUI.uf.focus.GetEffectiveScale = function() return 1.2 end
+pfUI.uf.focus.GetWidth = function() return 120 end
+pfUI.api.GetBorderSize = function() return 3, 3 end
+module:ApplyFocusAuraPolicy(true)
+local focusConfig = pfUI_config.unitframes.focus
+assert(math.abs(tonumber(focusConfig.buffsize) * 1.2 - 23 * 0.8) < 0.00001)
+assert(math.abs(tonumber(focusConfig.debuffsize) * 1.2 - 23 * 0.8) < 0.00001)
+assert(focusConfig.buffperrow == "5" and focusConfig.debuffperrow == "5")
+local refreshed = updates
+module:ApplyFocusAuraPolicy(true)
+assert(updates == refreshed)
+module:ApplyFocusAuraPolicy(false)
+assert(pfUI_config.unitframes.focus.buffsize == "12")
+assert(pfUI_config.unitframes.focus.debuffs == "TOPRIGHT")
+assert(pfUI_config.unitframes.ttarget.buffs == "off")
+assert(pfUI_config.unitframes.ttarget.debuffs == nil)
+assert(pfUI.uf.focus.aeuiAuraPolicy == nil and pfUI.uf.targettarget.aeuiAuraPolicy == nil)
+print("shared aura policy and secondary display configuration: PASS")

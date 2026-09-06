@@ -22,6 +22,9 @@ TOC = AEUI / "AzerothExpeditionUI.toc"
 BOOTSTRAP = AEUI / "Core" / "Bootstrap.lua"
 
 MODULE_FILES = {
+    "bagshui": (
+        "addon/AzerothExpeditionUI/Modules/Bagshui.lua",
+    ),
     "core": (
         "addon/AzerothExpeditionUI/Core/Bootstrap.lua",
         "addon/pfUI/pfUI.lua",

@@ -17,7 +17,7 @@ exact pixels：主体改为肉面朝外、半硝制、从破损兽皮帐篷裁�
 左上受力点和上沿拼接点两块烟黑锻铁维修片；近平直上下承力线只保留少量短撕口，
 禁止实木、家具皮框、压花、连续波浪和工业滚边。accepted source SHA 为
 `ec74c829…f903d`，accepted runtime master SHA 为 `d449b8bd…ecbc`。Target 仍以
-V4 source `256086c1…f81` 作为暂存像素，但 route 暂停，后续必须独立重修，
+V4 source `256086c1…f81` 作为暂存像素，并通过独立 route 恢复接入，后续美术重修仍须独立进行，
 不得镜像或复制 Player V5 像素。
 
 ## 主模块 Prompt

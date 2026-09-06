@@ -62,6 +62,20 @@ Ranged。
 
 ## 属性与 Tabs
 
+`character.controls` 精确接管下列展示对象：称号与左右属性下拉的 pfUI backdrop、
+这些下拉打开时的 DropDownList Backdrop／MenuBackdrop、ReputationHeader／
+SkillTypeLabel／CollapseAll 的折叠图标、两列表 ScrollBar 的轨道／滑块／箭头底材、
+ReputationBar／SkillRankFrame／Honor progress／Arena points／Skill detail 状态条、
+HonorFrameTab／ArenaFrameTab、声望详情外框及已有关闭／Unlearn 按钮底材。
+HonorFrameProgressBar／ArenaFramePointsBar 与 ArenaTeam1..5／ArenaFrameTeam1..5
+只隐藏 pfUI 附加 backdrop／border／shadow，以共用纸页承托动态内容；不隐藏
+真实进度条、队伍框体或其交互，禁用时恢复附加底框原 Alpha。
+真实文字与数值保持动态，名称与数值只调整对齐。Character 伴随状态下另接管
+StatCompareSelfFrame／S_ItemTip_InspectFrame 的外底材、等级框与装备部位签；
+不改变第三方的 Parent、尺寸、数据和交互，离开角色 PaperDoll 恢复原材质。
+资产复用 Gear Planner FrameAtlas／LeatherFill／ControlsAtlas 的现有 2× 像素，
+滑块取 ControlsAtlas 的扣具 `x=50..88,y=5..34`，状态条复用 UnitFrameHealthFillV1。
+
 | ID | 原生对象 | 合同 |
 |---|---|---|
 | `CHAR.STATS.LEFT` | `CharacterAttributesFrame` 左列、对应 `PlayerStatFrame*DropDown` | 羊皮文字区；名称左对齐、数值右对齐；每个下拉独立 |

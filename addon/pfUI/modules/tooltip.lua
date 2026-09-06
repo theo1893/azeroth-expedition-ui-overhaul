@@ -25,6 +25,10 @@ pfUI:RegisterModule("tooltip", "vanilla", function ()
 
   if C.tooltip.position == "cursor" then
     function _G.GameTooltip_SetDefaultAnchor(tooltip, parent)
+      if parent and (parent.cache_raid or 0) > 0 then
+        tooltip:SetOwner(parent, "ANCHOR_NONE")
+        return
+      end
       tooltip:SetOwner(parent, "ANCHOR_CURSOR")
       if C.tooltip.cursoralign ~= "native" then
         -- create mouse follow frame
@@ -56,6 +60,43 @@ pfUI:RegisterModule("tooltip", "vanilla", function ()
         end
       end
     end
+  end
+
+  -- Called after SetUnit/Show so placement uses this tooltip's real size.
+  function pfUI.tooltip:AnchorRaidTooltip(tooltip, owner)
+    -- Raid frames also display player/party tokens in solo and small groups.
+    if C.tooltip.position ~= "cursor" or not owner or (owner.cache_raid or 0) <= 0 then return end
+    local scale = UIParent:GetEffectiveScale()
+    local left, right, bottom, top
+    for i = 1, 40 do
+      local frame = pfUI.uf and pfUI.uf.raid and pfUI.uf.raid[i]
+      if frame and frame:IsVisible() and frame:GetLeft() then
+        local ratio = frame:GetEffectiveScale() / scale
+        left = math.min(left or math.huge, frame:GetLeft() * ratio)
+        right = math.max(right or 0, frame:GetRight() * ratio)
+        bottom = math.min(bottom or math.huge, frame:GetBottom() * ratio)
+        top = math.max(top or 0, frame:GetTop() * ratio)
+      end
+    end
+    if not left then return end
+    local ratio = tooltip:GetEffectiveScale() / scale
+    local width, height = tooltip:GetWidth() * ratio, tooltip:GetHeight() * ratio
+    local screenWidth, screenHeight = UIParent:GetWidth(), UIParent:GetHeight()
+    local gap = 12
+    local x, y
+    if screenWidth - right >= width + gap then
+      x, y = right + gap, top
+    elseif left >= width + gap then
+      x, y = left - gap - width, top
+    elseif bottom >= height + gap + 16 then
+      x, y = left, bottom - gap - 16
+    else
+      x, y = left, top + gap + height
+    end
+    x = math.max(2, math.min(x, screenWidth - width - 2))
+    y = math.max(height + 2, math.min(y, screenHeight - 18))
+    tooltip:ClearAllPoints()
+    tooltip:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", x / ratio, y / ratio)
   end
 
   local units = { "mouseover", "player", "pet", "target", "party", "partypet", "raid", "raidpet" }

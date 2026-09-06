@@ -33,11 +33,20 @@ pfUI.expedition = {
   -- updates, target detection, roster assignment and interaction do not yield
   -- to another module.
   component_owners = {
+    ["bagshui.inventory-art"] = "bagshui",
+    ["actionbars.architotem-art"] = "actionbars",
+    ["tooltips.shells"] = "tooltips",
+    ["actionbars.readout-art"] = "actionbars",
+    ["actionbars.doite-art"] = "actionbars",
+    ["actionbars.doiteauras-art"] = "actionbars",
     ["unitframes.health-fill"] = "unitframes",
     ["unitframes.power-fill"] = "unitframes",
-    ["unitframes.player-shell-v5"] = "unitframes",
+    ["unitframes.primary-thin-shell"] = "unitframes",
+    ["unitframes.primary-aura-rim"] = "unitframes",
+    ["unitframes.standalone-aura-rim"] = "unitframes",
     ["unitframes.nameplate-target-cue"] = "unitframes",
     ["unitframes.raid-shell"] = "unitframes",
+    ["unitframes.raid-aura-rim"] = "unitframes",
     ["unitframes.raid-health-fill"] = "unitframes",
     ["unitframes.raid-power-fill"] = "unitframes",
     ["unitframes.dynamic-portraits"] = "unitframes",
@@ -50,6 +59,7 @@ pfUI.expedition = {
     ["character.tabs-v3"] = "character",
     ["character.ammo-slot-v3"] = "character",
     ["character.secondary-leaf-v3"] = "character",
+    ["character.controls"] = "character",
   },
 }
 

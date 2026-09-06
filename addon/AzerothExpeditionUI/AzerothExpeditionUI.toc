@@ -4,11 +4,13 @@
 ## Author: Azeroth Expedition
 ## Version: 0.9.0
 ## RequiredDeps: pfUI
-## OptionalDeps: AtlasLoot, BonusScanner
+## OptionalDeps: AtlasLoot, BonusScanner, Bagshui
 ## SavedVariables: AzerothExpeditionUIDB
 
 Core\Bootstrap.lua
 Modules\ActionBars.lua
+Modules\ReadoutArt.lua
+Modules\Tooltips.lua
 Modules\TargetMarkers.lua
 Modules\Chat.lua
 Modules\QuestVisualTheme.lua
@@ -18,3 +20,4 @@ Modules\Map.lua
 Modules\Character.lua
 Modules\GearPlanner.lua
 Modules\Spellbook.lua
+Modules\Bagshui.lua

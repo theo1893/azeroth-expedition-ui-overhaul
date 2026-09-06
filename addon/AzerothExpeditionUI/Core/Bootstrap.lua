@@ -9,6 +9,8 @@ addon.media = addon.media or {}
 addon.media.root = "Interface\\AddOns\\AzerothExpeditionUI\\Media\\"
 
 local defaults = {
+  bagshui = { enabled = true },
+  tooltips = { enabled = true },
   actionbars = {
     enabled = true,
     artVersion = 1,
@@ -413,6 +415,15 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       (AzerothExpeditionUIDB.unitframes.enabled and "enabled" or "disabled") ..
       "."
     )
+  elseif command == "bags" then
+    addon.db.bagshui.enabled = not addon.db.bagshui.enabled
+    addon:Refresh()
+    addon:Print(addon.modules.Bagshui:GetRuntimeStatus())
+  elseif command == "tooltips" then
+    AzerothExpeditionUIDB.tooltips.enabled = not AzerothExpeditionUIDB.tooltips.enabled
+    addon:Refresh()
+    addon:Print("tooltip overhaul " ..
+      (AzerothExpeditionUIDB.tooltips.enabled and "enabled" or "disabled") .. ".")
   elseif command == "map" then
     AzerothExpeditionUIDB.map.enabled =
       not AzerothExpeditionUIDB.map.enabled
@@ -565,7 +576,7 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       ", pfUI=" .. (pfUI and "available" or "missing") ..
       ", route=" .. (scopedRoute and "scoped" or "pfui") ..
       ", ownership=" ..
-      (scopedRoute and "chat,quests,unitframes,map,character" or "none") ..
+      (scopedRoute and "chat,quests,unitframes,map,character,tooltips" or "none") ..
       ", blizzard-skins=" ..
       (scopedRoute and "pfui-except-quest-log" or "pfui")
     )
@@ -576,6 +587,12 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       addon:Print(
         "actionbars " .. addon.modules.ActionBars:GetRuntimeStatus()
       )
+    end
+    if addon.modules.ReadoutArt and addon.modules.ReadoutArt.GetRuntimeStatus then
+      addon:Print("readout-art " .. addon.modules.ReadoutArt:GetRuntimeStatus())
+    end
+    if addon.modules.Tooltips then
+      addon:Print("tooltips " .. addon.modules.Tooltips:GetRuntimeStatus())
     end
     if
       addon.modules.TargetMarkers and
@@ -622,7 +639,7 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
     end
   else
     addon:Print(
-      "/aeui actionbars, /aeui supplies [open|on|off|remove slot|status], /aeui fieldkit [bind|unbind|home|status], /aeui focuslayout [apply|comfort|restore|status], /aeui sidebars [bind|unbind|home|status], /aeui markers [on|off|toggle|status], /aeui chat, /aeui quests, /aeui unitframes, /aeui map, /aeui character, /aeui gear [open|current|stats|plan|wide|status], /aeui refresh, /aeui status"
+      "/aeui actionbars, /aeui supplies [open|on|off|remove slot|status], /aeui fieldkit [bind|unbind|home|status], /aeui focuslayout [apply|comfort|restore|status], /aeui sidebars [bind|unbind|home|status], /aeui markers [on|off|toggle|status], /aeui chat, /aeui quests, /aeui unitframes, /aeui tooltips, /aeui bags, /aeui map, /aeui character, /aeui gear [open|current|stats|plan|wide|status], /aeui refresh, /aeui status"
     )
   end
 end

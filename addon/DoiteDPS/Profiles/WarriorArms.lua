@@ -18,6 +18,8 @@ local zh = locale == "zhCN" or locale == "zhTW"
 local UNBRIDLED_WRATH = zh and "怒不可遏" or "Unbridled Wrath"
 local UNBRIDLED_WRATH_RAGE_PER_RANK = 0.30
 local IMPROVED_EXECUTE = zh and "强化斩杀" or "Improved Execute"
+local IMPROVED_HEROIC_STRIKE = zh and "强化英勇打击" or "Improved Heroic Strike"
+local RAVAGER = zh and "碾碎" or "Ravager"
 
 P.ModeOrder = { "single", "aoe" }
 P.ModeLabels = {
@@ -233,9 +235,23 @@ local PRIORITY = {
     CLEAVE = 7,
 }
 
+local function BaseCooldown(key)
+    local duration = BASE_COOLDOWNS[key]
+    if key == "WHIRLWIND" then duration = duration - P:GetRavagerRank() end
+    return duration
+end
+
 local function Cost(state, key)
     local def = D:GetSpellDef(key)
     local cost = def and tonumber(def.cost) or 0
+    if key == "HEROIC_STRIKE" then
+        cost = cost - P:GetImprovedHeroicStrikeRank()
+    elseif key == "CLEAVE" then
+        cost = cost - P:GetRavagerRank()
+    elseif key == "EXECUTE" then
+        local rank = P:GetImprovedExecuteRank()
+        cost = cost - (rank == 2 and 5 or (rank == 1 and 2 or 0))
+    end
     if state and state.tier3TwoPiece
         and (key == "SWEEPING_STRIKES" or key == "DEATH_WISH") then
         cost = cost - 10
@@ -243,15 +259,6 @@ local function Cost(state, key)
     return math.max(0, cost)
 end
 P._rageCost = Cost
-
-local function ReadyCost(state, key)
-    local cost = Cost(state, key)
-    if key ~= "EXECUTE" then return cost end
-    local improved = math.max(0, math.min(2, P:GetImprovedExecuteRank()))
-    if improved == 1 then return math.max(0, cost - 2) end
-    if improved == 2 then return math.max(0, cost - 5) end
-    return cost
-end
 
 local function RotationValue(state, key)
     if state and state.rotationDB and state.rotationDB[key] ~= nil then
@@ -303,9 +310,8 @@ end
 
 local function AvailableRage(state)
     local rage = tonumber(state and state.rage) or 0
-    if P:NormalizeMode(state and state.mode) == "aoe"
-        and IsCleaveQueued(state) then
-        rage = rage - Cost(state, "CLEAVE")
+    if IsOnSwingQueued(state) then
+        rage = rage - Cost(state, IsCleaveQueued(state) and "CLEAVE" or "HEROIC_STRIKE")
     end
     if rage < 0 then return 0 end
     return rage
@@ -369,12 +375,12 @@ end
 
 local function Ready(state, key)
     return D:IsKnown(key)
-        and AvailableRage(state) >= ReadyCost(state, key)
+        and AvailableRage(state) >= Cost(state, key)
         and CooldownRemaining(state, key) <= 0.05
 end
 
 local function RecordPredictedCooldown(key)
-    local duration = BASE_COOLDOWNS[key]
+    local duration = BaseCooldown(key)
     if not duration then return end
     local deadline = GetTime() + duration
     local existing = P._cooldownUntil[key]
@@ -394,7 +400,7 @@ local function ReadNumber(fn, arg1, arg2)
 end
 
 local function TalentRank(tabIndex, wantedName, wantedTier, wantedColumn)
-    if type(GetTalentInfo) ~= "function" then return 0 end
+    if type(GetTalentInfo) ~= "function" then return 0, "api-missing" end
     local index = 1
     while index <= 30 do
         local ok, name, icon, tier, column, rank = pcall(
@@ -402,15 +408,17 @@ local function TalentRank(tabIndex, wantedName, wantedTier, wantedColumn)
             tabIndex,
             index
         )
-        if not ok or not name then break end
+        if not ok then return 0, "api-error" end
+        if not name then break end
         if name == wantedName
             or (wantedTier and tonumber(tier) == wantedTier
                 and tonumber(column) == wantedColumn) then
-            return tonumber(rank) or 0
+            if not tonumber(rank) then return 0, "invalid-rank" end
+            return tonumber(rank), "found"
         end
         index = index + 1
     end
-    return 0
+    return 0, "not-found"
 end
 
 function P:GetUnbridledWrathRank()
@@ -422,9 +430,24 @@ end
 
 function P:GetImprovedExecuteRank()
     if self._improvedExecuteRank == nil then
-        self._improvedExecuteRank = TalentRank(2, IMPROVED_EXECUTE)
+        self._improvedExecuteRank = math.max(0, math.min(2, (TalentRank(2, IMPROVED_EXECUTE))))
     end
     return self._improvedExecuteRank
+end
+
+function P:GetImprovedHeroicStrikeRank()
+    if self._improvedHeroicStrikeRank == nil then
+        self._improvedHeroicStrikeRank = math.max(0, math.min(3,
+            (TalentRank(1, IMPROVED_HEROIC_STRIKE))))
+    end
+    return self._improvedHeroicStrikeRank
+end
+
+function P:GetRavagerRank()
+    if self._ravagerRank == nil then
+        self._ravagerRank = math.max(0, math.min(3, (TalentRank(2, RAVAGER))))
+    end
+    return self._ravagerRank
 end
 
 local function ExpectedWhiteRage(damage, speed, critChance, unbridledWrathRank)
@@ -458,6 +481,7 @@ local function EstimateNextWhiteRage(unbridledWrathRank)
     if not delay or delay <= 0 or not minimum or not maximum then return nil end
 
     local speed = delay / 1000
+    -- 客户端单位伤害已包含双手武器专精等修正，不能再乘一次 1.06。
     local damage = (minimum + maximum) / 2
     local crit = BCS and ReadNumber(BCS.GetCritChance, BCS) or nil
     local rage = ExpectedWhiteRage(damage, speed, crit, unbridledWrathRank)
@@ -477,6 +501,9 @@ function P:ResetRuntime()
     self._pendingSunderUntil = nil
     self._unbridledWrathRank = nil
     self._improvedExecuteRank = nil
+    self._improvedHeroicStrikeRank = nil
+    self._ravagerRank = nil
+    self._talentDebugLogged = nil
 end
 
 function P:ObserveSwingCycle(swing)
@@ -518,6 +545,11 @@ function P:OnEvent(eventName, a1, a2)
         or eventName == "PLAYER_TALENT_UPDATE" then
         self._unbridledWrathRank = nil
         self._improvedExecuteRank = nil
+        self._improvedHeroicStrikeRank = nil
+        self._ravagerRank = nil
+        self._talentDebugLogged = nil
+        self._cooldownUntil = {}
+        self._apiCooldownActive = {}
         return
     end
 
@@ -550,12 +582,64 @@ function P:OnEvent(eventName, a1, a2)
     end
 end
 
+-- 一次开启／天赋变更只输出一份快照，不在每帧记录变化的怒气或伤害。
+function P:DebugTalents(state)
+    if not D.debugMode then self._talentDebugLogged = nil; return end
+    if self._talentDebugLogged then return end
+    self._talentDebugLogged = true
+    local talents = {
+        { 1, IMPROVED_HEROIC_STRIKE, 3 },
+        { 1, zh and "双手武器专精" or "Two-Handed Weapon Specialization", 3 },
+        { 1, zh and "无边怒火" or "Boundless Anger", 3 },
+        { 1, zh and "精准砍杀" or "Precision Cut", 3 },
+        { 2, RAVAGER, 3 },
+        { 2, IMPROVED_EXECUTE, 2 },
+        { 2, UNBRIDLED_WRATH, 5 },
+    }
+    local lines = {}
+    local ranks = {}
+    local i
+    for i = 1, table.getn(talents) do
+        local talent = talents[i]
+        local rank, status = TalentRank(talent[1], talent[2])
+        ranks[i] = rank
+        table.insert(lines, string.format("%s=%s/%d read=%s",
+            talent[2], tostring(rank), talent[3], status))
+    end
+    local actualMax = ReadNumber(UnitManaMax, "player")
+    local _, wwDuration = D:GetNonGCDCooldown("WHIRLWIND", state.now)
+    table.insert(lines, string.format(
+        "computed: HS=%s Cleave=%s Execute=%s WW-model=%ss WW-api=%ss",
+        tostring(Cost(state, "HEROIC_STRIKE")), tostring(Cost(state, "CLEAVE")),
+        tostring(Cost(state, "EXECUTE")), tostring(BaseCooldown("WHIRLWIND")),
+        tostring(wwDuration)))
+    table.insert(lines, string.format(
+        "rage: modelMax=%s apiMax=%s usedMax=%s match=%s; nextWhite=%s",
+        tostring(100 + 10 * ranks[3]), tostring(actualMax), tostring(state.maxRage),
+        tostring(actualMax == 100 + 10 * ranks[3]), tostring(state.predictedMainHandRage)))
+    table.insert(lines, string.format(
+        "damage: twoHand-model=%s unitMin=%s unitMax=%s (API already modified); executeExtraMultiplier=%s (analysis only)",
+        tostring(1 + 0.02 * ranks[2]),
+        tostring(ReadNumber(GetUnitField, "player", "minDamage")),
+        tostring(ReadNumber(GetUnitField, "player", "maxDamage")),
+        tostring(1 + 0.25 * ranks[4])))
+    local api = pfUI and pfUI.swingtimer and pfUI.swingtimer.api
+    local ok, written = false, false
+    if api and type(api.AppendTrace) == "function" then
+        ok, written = pcall(api.AppendTrace, "DDPS_TALENTS", table.concat(lines, " | "))
+    end
+    for i = 1, table.getn(lines) do D:Print("[talents] " .. lines[i]) end
+    D:Print("[talents] file=" .. (ok and written and "written" or "unavailable")
+        .. "; WW-api=0 means no active cooldown; nil means unavailable")
+end
+
 -- 向 Core.State 补充武器战优先级函数需要的字段。
 function P:BuildState(state)
     -- 资源与配置输入。
     state.resourceType = "rage"
     state.timingType = "swing"
     state.rage = D:GetRage()
+    -- UnitManaMax 已包含无边怒火：满级为 130，不能再额外加 30。
     state.maxRage = D.GetMaxRage and D:GetMaxRage() or 100
     state.playerHP = D:GetPlayerHealthPercent()
     state.stance = D:GetStance()
@@ -582,6 +666,7 @@ function P:BuildState(state)
     state.predictedMainHandRage = EstimateNextWhiteRage(
         state.unbridledWrathRank
     )
+    self:DebugTalents(state)
 
     -- 使用已学会的近战技能作为权威距离探针。
     local meleeKey = D:IsKnown("MORTAL_STRIKE") and "MORTAL_STRIKE"
@@ -872,14 +957,34 @@ local function RecommendSunder(action, state)
     return ApplyGCD(SetAction(action, "SUNDER_ARMOR", R.SUNDER_ARMOR), state)
 end
 
-local function ShouldQueueHeroicStrike(state)
+-- 排队会替换眼前白字；下一笔正常白字收入前，先留出计划动作与核心技能成本。
+local function OnSwingReserve(state, plannedKey)
+    local speed = tonumber(state.swing.speed) or 3.5
+    if speed <= 0 then speed = 3.5 end
+    local nextRageAt = (tonumber(state.swing.remaining) or 0)
+        + speed
+    local reserve = plannedKey and Cost(state, plannedKey) or 0
+    if plannedKey ~= "WHIRLWIND" and D:IsKnown("WHIRLWIND")
+        and CooldownRemaining(state, "WHIRLWIND") <= nextRageAt then
+        reserve = reserve + Cost(state, "WHIRLWIND")
+    end
+    if plannedKey ~= "MORTAL_STRIKE" and D:IsKnown("MORTAL_STRIKE")
+        and CooldownRemaining(state, "MORTAL_STRIKE") <= nextRageAt then
+        reserve = reserve + Cost(state, "MORTAL_STRIKE")
+    end
+    return reserve
+end
+
+local function ShouldQueueHeroicStrike(state, plannedKey)
     if IsExecutePhase(state) or not D:IsKnown("HEROIC_STRIKE")
         or IsOnSwingQueued(state) or not CanQueueOnCurrentSwing(state)
-        or (tonumber(state.rage) or 0) < Cost(state, "HEROIC_STRIKE") then
+        or SlamFits(state)
+        or (tonumber(state.rage) or 0)
+            < Cost(state, "HEROIC_STRIKE") + OnSwingReserve(state, plannedKey) then
         return false
     end
-    local predicted = tonumber(state.predictedMainHandRage)
-    return predicted ~= nil and (tonumber(state.rage) or 0) + predicted
+    local predicted = tonumber(state.predictedMainHandRage) or 0
+    return (tonumber(state.rage) or 0) + predicted
         >= (tonumber(state.maxRage) or 100)
 end
 
@@ -904,22 +1009,12 @@ local function ShouldQueueCleave(
     local predicted = tonumber(state.predictedMainHandRage)
     local capRisk = predicted ~= nil
         and projected + predicted >= (tonumber(state.maxRage) or 100)
-    if projected < threshold and not capRisk then return false end
+    if rage < threshold and not capRisk then return false end
 
     local swingAt = tonumber(state.swing.remaining) or 0
     local speed = tonumber(state.swing.speed) or 3.5
     if speed <= 0 then speed = 3.5 end
-    local nextRageAt = swingAt + speed
-    local reserve = plannedCost
-    if plannedKey ~= "WHIRLWIND" and D:IsKnown("WHIRLWIND")
-        and CooldownRemaining(state, "WHIRLWIND") <= nextRageAt then
-        reserve = reserve + Cost(state, "WHIRLWIND")
-    end
-    if D:IsKnown("MORTAL_STRIKE")
-        and plannedKey ~= "MORTAL_STRIKE"
-        and CooldownRemaining(state, "MORTAL_STRIKE") <= nextRageAt then
-        reserve = reserve + Cost(state, "MORTAL_STRIKE")
-    end
+    local reserve = OnSwingReserve(state, plannedKey)
     if rage < (Cost(state, "CLEAVE") + reserve) then return false end
 
     if state.sweepingStrikes then
@@ -1220,10 +1315,29 @@ function P:Recommend(state)
         if berserkerAction then return berserkerAction end
     end
 
-    if self:NormalizeMode(state.mode) == "aoe" then
-        return RecommendAoE(action, state)
+    local aoe = self:NormalizeMode(state.mode) == "aoe"
+    if aoe then
+        action = RecommendAoE(action, state)
+    else
+        action = RecommendSingle(action, state)
     end
-    return RecommendSingle(action, state)
+
+    -- 等待 GCD 的普通技能不能占住不受 GCD 限制的下一刀排队机会。
+    -- 姿态、横扫和斩杀仍独占其原有决策窗口。
+    if action.state == "gcd" and (action.key == "MORTAL_STRIKE"
+        or action.key == "WHIRLWIND" or action.key == "SLAM"
+        or action.key == "BATTLE_SHOUT" or action.key == "SUNDER_ARMOR") then
+        if aoe then
+            local sweepingPending = RotationValue(state, "useSweepingStrikes") ~= false
+                and not state.sweepingStrikes and Ready(state, "SWEEPING_STRIKES")
+            if ShouldQueueCleave(state, sweepingPending, action.key, ExecuteDue(state)) then
+                return SetAction(action, "CLEAVE", R.CLEAVE, "queue")
+            end
+        elseif action.key ~= "SLAM" and ShouldQueueHeroicStrike(state, action.key) then
+            return SetAction(action, "HEROIC_STRIKE", R.HEROIC_STRIKE, "queue")
+        end
+    end
+    return action
 end
 
 local function ClearCandidates()
@@ -1251,7 +1365,7 @@ end
 local function ForecastCooldown(state, current, key)
     local eta = CooldownRemaining(state, key)
     if current.key == key and eta <= 0.05 then
-        eta = BASE_COOLDOWNS[key] or GCD_LOCK
+        eta = BaseCooldown(key) or GCD_LOCK
     end
     return eta
 end

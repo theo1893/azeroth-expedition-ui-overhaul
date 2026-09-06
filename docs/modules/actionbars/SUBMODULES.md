@@ -2,6 +2,11 @@
 
 本文件定义动作条、姿态／宠物条，以及与战斗动作区相邻的施法／攻击读数、
 DoiteDPS、消耗品、饰品栏、萨满图腾管理卫星栏和标记方阵。
+Combination 绑定态采用上层顶边对齐的补给／双排动作／饰品，下层左姿态、右紧凑
+标记区；标记原生内容与点击不变，仅按主条有效缩放的 `80%` 展示。
+`actionbars.architotem-art` 仅登记 ArchiTotemButton 的 Earth／Fire／Water 1–5、
+Air 1–7、AllTotems、Recall、PresetManager 的槽位与图标排布。施法、排序、候选
+显隐、冷却、图腾持续时间、拖动柄和预设窗口仍由 ArchiTotem 持有。
 美术见 [ART_BASELINE.md](ART_BASELINE.md)，状态见
 [PROGRESS.md](PROGRESS.md)。本模块只接管明确列出的对象；未登记的 pfUI、
 TrinketMenu 或 Blizzard 对象继续由原 provider 正常绘制和交互。
@@ -149,7 +154,7 @@ GRTT／Banana 若仍启用则保持独立，AEUI
 | ID | provider／对象 | 合同 |
 |---|---|---|
 | `AB.SUPPLY.RACK` | AEUI 自有 `AzerothExpeditionUISupplyFrame`＋最多 `24` 个命名补给组 Button | `supplies-contract=2.1`；每组独立占用 `1–24` 的固定位置并保存稳定顺序的最多 `12` 个精确 itemID 与一个显式 `primaryItemId`，空位置不会在重载时被压紧。主格左键只使用固定主物品，缺货时不自动切换；右键或悬停 `0.30s` 展开 AEUI 自有抽屉。候选左键只使用且不改变主格，右键只设主格且不消耗。每次背包事件单次扫描 Bag `0–4`，主格与候选数量固定在右下角：`0` 为红色并暗化图标，正库存为白色。Button 为 `36 UI / gap 3 UI`、最多 `4×6`、自底向上，复用 accepted A 口袋与 C 九宫格；候选复用 B 口袋与 D 连接带，`1–6` 单列、`7–12` 双列且最多六行。绑定时位于主栏左侧，解绑时保留自由位置并允许 `Shift+拖动`；只在弹层意图／关闭待处理时短暂启用计时 Frame |
-| `AB.SUPPLY.CONFIG` | `AzerothExpeditionUISupplyManager` 与 `AzerothExpeditionUIDB.actionbars.supplyProfiles[角色名 - 服务器]` | `/aeui supplies` 打开每角色管理面板；左侧 `24` 个固定位置均可创建／选择组，右键目标格可移动或交换，前移／后移也可进入空位。右侧管理组名、最多 `12` 个成员、显式主物品与稳定顺序。只接受真实背包拖入；全配置重复 itemID 只定位不复制，保存前先清空光标让物品回包。配置不保存物品名称、图标、库存、冷却或 bag／slot；旧 `minimum` 仅为数据兼容保留且不再读取，旧单物品槽原位迁移，旧 `target` 丢弃。支持 `on|off|toggle|remove|status|selfcheck` |
+| `AB.SUPPLY.CONFIG` | `AzerothExpeditionUISupplyManager` 与 `AzerothExpeditionUIDB.actionbars.supplyProfiles[角色名 - 服务器]` | `/aeui supplies` 打开每角色管理面板；左侧 `24` 个固定位置均可创建／选择组，右键目标格可移动或交换，前移／后移也可进入空位。右侧管理组名、最多 `12` 个成员、显式主物品与稳定顺序。只接受真实背包拖入；同组重复 itemID 只定位不复制，同一 itemID 可独立加入多个组，保存前先清空光标让物品回包。配置不保存物品名称、图标、库存、冷却或 bag／slot；旧 `minimum` 仅为数据兼容保留且不再读取，旧单物品槽原位迁移，旧 `target` 丢弃。支持 `on|off|toggle|remove|status|selfcheck` |
 | `AB.SUPPLY.ROUTE` | Action Bars 总 route、`suppliesEnabled` 与 `fieldKitBound` | Supply 是主栏左侧唯一补给实现。没有有效组或显式关闭时左侧补给位为空，不加载或回退到外部消耗品栏；关闭 Action Bars 总 route 时 Supply 隐藏。Field Kit `3.0` 只编排 Supply、TrinketMenu、姿态／宠物条与 ArchiTotem |
 
 用户于 `2026-08-09` 接受 `AB.CONSUMABLE.KIT.V1` 第 1 稿。P4 source 为
@@ -327,3 +332,33 @@ D 以横／竖三段连接两槽；关闭 AEUI 视觉时恢复原 NormalTexture 
   功能；不得阻止 pfUI 或 AEUI 其余模块加载。
 - 不把技能图标、物品图标、文字、数字、键位、冷却、职业状态或真实按钮烘焙
   进背景资产。
+
+## TargetTarget／Focus Aura 显示同步
+
+`pfUI_config.unitframes.ttarget` 与 `focus` 的 Buff／Debuff 锚点、尺寸、每排数量、
+偏移、数量上限、过滤模式及名单、selfdebuff 跟随 `target`；图标尺寸按有效
+缩放比换算以匹配屏幕大小，每排数量按实际宽度和 pfUI 边框间距限制在 Target
+列数以内。只调整 Aura 配置，
+不接管两框位置与大小。原字段按角色保存在
+`AzerothExpeditionUIDB.actionbars.secondaryAuraBackups`，禁用时恢复。
+筛选继续共用 `FocusAuraPolicy`；真实 Aura、图标、层数、冷却与 Tooltip 由 pfUI 提供。
+
+## ReadoutArt 细轨 V1
+
+`actionbars.readout-art` 对应 `pfUI.castbar.player/target/focus.bar` 及独立 `icon`，
+`pfUI.swingtimer.mainhand/offhand` 和 `ranged.left/right/warn`。完整外壳按
+`4/254/4 × 1/12/1` 九切片，外扩1 UI，四角固定，锚点跟随 provider 的真实大小。
+图标、动态文字、延迟区、引导进度、近战填充和远程分区／警告／Marker 全部归 pfUI；
+AEUI 只换填充材质、静态外缘与空槽底，隐藏原 backdrop/shadow。禁用恢复原材质
+及显隐，不接管其他第三方施法条。没有新增几何维护循环。
+
+`actionbars.doite-art` 只接管 `DoiteDPS.UI` 公开的 readySlot、currentIcon、
+currentGhost、forecastIcons、resourceRoot、resourceIcons、tankAssistBadge 外缘，
+以及 track 下的静态窄轨。复用 Readout V1；动态图标、状态颜色、文字、轨迹、
+预测和执行继续由 DoiteDPS 持有。禁用 Action Bars 恢复原生 backdrop 与最新状态色，
+DoiteDPS 缺失时跳过。当前槽装饰锚到 currentIcon，readySlot 的逻辑几何保持原样。
+
+`actionbars.doiteauras-art` 对应 DoiteAuras 已登记 spells 的 `DoiteIcon_<key>`
+图标外缘，排除 `type=Bar` 与配置窗口。通过公开 GetIconFrame／边框刷新入口
+接入新建图标和重建边框；位置、尺寸、分组、图标、特效及文字全部归 provider。
+禁用 Action Bars 恢复 provider 边框，缺失 DoiteAuras 时跳过。

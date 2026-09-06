@@ -4,15 +4,23 @@
 local now = 100
 local unbridledWrathRank = 0
 local improvedExecuteRank = 0
+local improvedHeroicStrikeRank = 0
+local ravagerRank = 0
 table.getn = table.getn or function(value) return #value end
 function GetTime() return now end
 function GetLocale() return "zhCN" end
 function GetTalentInfo(tab, index)
+    if tab == 1 and index == 1 then
+        return "强化英勇打击", nil, 1, 1, improvedHeroicStrikeRank, 3
+    end
     if tab == 2 and index == 1 then
         return "怒不可遏", nil, 1, 1, unbridledWrathRank, 5
     end
     if tab == 2 and index == 2 then
         return "强化斩杀", nil, 2, 1, improvedExecuteRank, 2
+    end
+    if tab == 2 and index == 3 then
+        return "碾碎", nil, 5, 1, ravagerRank, 3
     end
     return nil
 end
@@ -1212,7 +1220,7 @@ action = P:Recommend(State({
         slamCapable = true,
     },
 }))
-Check("a safe Slam removes a false Cleave cap risk", action.key == "SLAM")
+Check("high current rage permits Cleave while reserving Slam and both cores", action.key == "CLEAVE")
 
 action = P:Recommend(State({
     mode = "aoe",
@@ -1591,5 +1599,183 @@ local forecast = P:BuildForecast(State({
 }), { key = "MORTAL_STRIKE" })
 Check("the QTE timeline keeps a compact forecast", forecast[1] ~= nil)
 Check("each forecast resets Lua 5.0's cached list size", P._candidates ~= previousCandidates)
+
+-- A queued dump must remain available while a core action waits for its GCD.
+local dumpState = State({
+    rage = 100, gcd = 1, cooldowns = CoreCooldowns(0, 5),
+    swing = { active = true, remaining = 0.8, speed = 3.5,
+        slamCast = 1.5, slamUsed = true },
+})
+Check("GCD-locked Mortal Strike permits funded Heroic Strike",
+    P:Recommend(dumpState).key == "HEROIC_STRIKE")
+dumpState.swing.hsQueued = true
+dumpState.rage = 40
+Check("queued Heroic Strike rage cannot also fund Mortal Strike",
+    P:Recommend(dumpState).key ~= "MORTAL_STRIKE")
+
+dumpState = State({ rage = 100, cooldowns = CoreCooldowns(5, 5) })
+dumpState.predictedMainHandRage = nil
+Check("full rage permits Heroic Strike without prediction APIs",
+    P:Recommend(dumpState).key == "HEROIC_STRIKE")
+dumpState.rage = 99
+Check("missing prediction does not invent overflow below the cap",
+    P:Recommend(dumpState).key ~= "HEROIC_STRIKE")
+
+dumpState = State({ rage = 60, gcd = 1, predictedMainHandRage = 50,
+    cooldowns = CoreCooldowns(0, 0) })
+Check("predicted overflow cannot spend reserved core rage",
+    P:Recommend(dumpState).key ~= "HEROIC_STRIKE")
+
+dumpState = State({ rage = 100, gcd = 0.5,
+    cooldowns = CoreCooldowns(0, 5),
+    swing = { active = true, remaining = 3, speed = 3.5, slamCast = 1.5 },
+})
+Check("a safe single-target Slam window is not replaced by Heroic Strike",
+    P:Recommend(dumpState).key ~= "HEROIC_STRIKE")
+
+dumpState = State({ mode = "aoe", rage = 100, gcd = 1,
+    cooldowns = CoreCooldowns(5, 0),
+    swing = { active = true, remaining = 0.8, speed = 3.5,
+        slamCast = 1.5, slamUsed = true },
+})
+Check("GCD-locked Whirlwind permits funded Cleave",
+    P:Recommend(dumpState).key == "CLEAVE")
+dumpState.swing.queuePending = true
+dumpState.swing.pendingKey = "CLEAVE"
+Check("pending Cleave is not queued twice during the GCD",
+    P:Recommend(dumpState).key == "WHIRLWIND")
+
+dumpState = State({ mode = "aoe", rage = 100,
+    predictedMainHandRage = 20, cooldowns = CoreCooldowns(0, 5) })
+Check("Cleave uses current rage rather than rage after planned Mortal Strike",
+    P:Recommend(dumpState).key == "CLEAVE")
+dumpState.swing.cleaveQueued = true
+Check("funded Mortal Strike follows queued Cleave",
+    P:Recommend(dumpState).key == "MORTAL_STRIKE")
+
+dumpState = State({ mode = "aoe", rage = 100,
+    cooldowns = CoreCooldowns(4, 4, 99, 5),
+    swing = { active = true, remaining = 3, speed = 3.63, slamCast = 2 },
+})
+Check("high-rage AoE queues Cleave before a funded Slam",
+    P:Recommend(dumpState).key == "CLEAVE")
+dumpState.swing.cleaveQueued = true
+Check("queued Cleave preserves the funded Slam",
+    P:Recommend(dumpState).key == "SLAM")
+
+dumpState = State({ mode = "aoe", rage = 100, gcd = 1,
+    cooldowns = CoreCooldowns(0, 5, 99, 0) })
+Check("GCD dump cannot bypass preparation for Sweeping Strikes",
+    P:Recommend(dumpState).key ~= "CLEAVE")
+
+for rank = 0, 3 do
+    improvedHeroicStrikeRank = rank
+    ravagerRank = rank
+    P:OnEvent("CHARACTER_POINTS_CHANGED")
+    Check("Heroic Strike cost follows talent rank " .. rank,
+        P._rageCost(nil, "HEROIC_STRIKE") == 15 - rank)
+    Check("Cleave cost follows Ravager rank " .. rank,
+        P._rageCost(nil, "CLEAVE") == 20 - rank)
+end
+for rank = 0, 2 do
+    improvedExecuteRank = rank
+    P:OnEvent("PLAYER_TALENT_UPDATE")
+    Check("Execute readiness and reserves share talented cost " .. rank,
+        P._rageCost(nil, "EXECUTE") == (rank == 2 and 10 or (rank == 1 and 13 or 15)))
+end
+
+local talented = State({ targetHP = 20, rage = 55,
+    cooldowns = CoreCooldowns(0, 99),
+    swing = { active = true, remaining = 4, speed = 4, slamCast = 2 },
+})
+Check("Improved Execute permits Mortal Strike plus Slam plus Execute at 55 rage",
+    P:Recommend(talented).key == "MORTAL_STRIKE")
+talented.rage = 54
+Check("the talented three-action budget still rejects 54 rage",
+    P:Recommend(talented).key ~= "MORTAL_STRIKE")
+
+talented = State({ rage = 41, gcd = 1, cooldowns = CoreCooldowns(0, 99),
+    swing = { active = true, remaining = 0.8, speed = 3.5,
+        slamCast = 2, hsQueued = true },
+})
+Check("queued talented Heroic Strike reserves twelve rage",
+    P:Recommend(talented).key ~= "MORTAL_STRIKE")
+talented.rage = 42
+Check("forty-two rage funds queued talented Heroic Strike and Mortal Strike",
+    P:Recommend(talented).key == "MORTAL_STRIKE")
+
+talented = State({ cooldowns = CoreCooldowns(99, 0) })
+local talentedForecast = P:BuildForecast(talented, { key = "WHIRLWIND" })
+Check("Ravager predicts a seven-second Whirlwind cycle",
+    ForecastByKey(P._candidates, "WHIRLWIND").eta == 7)
+P:OnEvent("SPELL_CAST_EVENT", 1, D.Spells.WHIRLWIND.spellId)
+Check("Ravager event cooldown is seven seconds",
+    P._cooldownUntil.WHIRLWIND == now + 7)
+talented.cooldowns.WHIRLWIND = { remaining = 8, duration = 8 }
+talentedForecast = P:BuildForecast(talented, { key = "WAIT" })
+Check("actual API cooldown overrides prediction without a second talent reduction",
+    ForecastByKey(talentedForecast, "WHIRLWIND").eta == 8)
+improvedHeroicStrikeRank, ravagerRank, improvedExecuteRank = 0, 0, 0
+P:OnEvent("SPELLS_CHANGED")
+Check("respec clears talented costs and stale Whirlwind prediction",
+    P._rageCost(nil, "HEROIC_STRIKE") == 15
+        and P._rageCost(nil, "CLEAVE") == 20
+        and P._rageCost(nil, "EXECUTE") == 15
+        and P._cooldownUntil.WHIRLWIND == nil)
+
+local oldTalentInfo, oldPrint, oldPfUI = GetTalentInfo, D.Print, pfUI
+local debugLines, debugWrites = {}, 0
+D.Print = function(_, message) table.insert(debugLines, message) end
+pfUI = { swingtimer = { api = { AppendTrace = function(kind, detail)
+    Check("talent snapshot uses the shared trace event", kind == "DDPS_TALENTS")
+    debugWrites = debugWrites + 1
+    return true
+end } } }
+GetTalentInfo = function(tab, index)
+    if tab == 1 then
+        local names = { "强化英勇打击", "双手武器专精", "无边怒火", "精准砍杀" }
+        if names[index] then return names[index], nil, 1, index, 3, 3 end
+    elseif tab == 2 then
+        if index == 1 then return "怒不可遏", nil, 1, 1, 0, 5 end
+        if index == 2 then return "强化斩杀", nil, 2, 1, 2, 2 end
+        if index == 3 then return "碾碎", nil, 5, 1, 3, 3 end
+    end
+end
+local oldManaMax = UnitManaMax
+UnitManaMax = function() return 130 end
+local debugState = State({ maxRage = 130 })
+P:DebugTalents(debugState)
+Check("disabled talent debug does not print or write", #debugLines == 0 and debugWrites == 0)
+D.debugMode = true
+P:DebugTalents(debugState)
+local snapshot = table.concat(debugLines, "\n")
+Check("snapshot distinguishes a detected zero-point talent",
+    string.find(snapshot, "怒不可遏=0/5 read=found", 1, true) ~= nil)
+Check("snapshot reports the actual talented costs and cap",
+    string.find(snapshot, "HS=12 Cleave=17 Execute=10 WW-model=7s", 1, true) ~= nil
+        and string.find(snapshot, "apiMax=130 usedMax=130 match=true", 1, true) ~= nil)
+local lineCount = #debugLines
+P:DebugTalents(debugState)
+Check("unchanged frames do not repeat talent logs", #debugLines == lineCount and debugWrites == 1)
+P:OnEvent("PLAYER_TALENT_UPDATE")
+P:DebugTalents(debugState)
+Check("talent changes emit a fresh snapshot", debugWrites == 2)
+GetTalentInfo = nil
+P:OnEvent("PLAYER_TALENT_UPDATE")
+P:DebugTalents(debugState)
+Check("missing talent API is reported instead of looking like zero points",
+    string.find(table.concat(debugLines, "\n"), "read=api-missing", 1, true) ~= nil)
+GetTalentInfo = function() return nil end
+pfUI = nil
+P:OnEvent("PLAYER_TALENT_UPDATE")
+P:DebugTalents(debugState)
+snapshot = table.concat(debugLines, "\n")
+Check("missing talent and missing writer still produce readable diagnostics",
+    string.find(snapshot, "read=not-found", 1, true) ~= nil
+        and string.find(snapshot, "file=unavailable", 1, true) ~= nil)
+D.debugMode = false
+P:DebugTalents(debugState)
+GetTalentInfo, D.Print, pfUI, UnitManaMax = oldTalentInfo, oldPrint, oldPfUI, oldManaMax
+P:ResetRuntime()
 
 print("WarriorArms_spec: " .. passed .. " checks passed")

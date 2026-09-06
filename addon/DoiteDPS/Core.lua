@@ -3229,6 +3229,7 @@ function D:HandleSlash(message)
         self:Print(zh and
             ("调试：" .. (self.debugMode and "开启" or "关闭")) or
             ("Debug: " .. (self.debugMode and "on" or "off")))
+        self:BuildState()
     elseif command == "status" then
         local state = self:BuildState()
         if state.class == "SHAMAN" then

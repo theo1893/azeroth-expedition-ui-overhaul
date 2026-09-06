@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "corner_uv": [
+    0,
+    0.125,
+    0.875,
+    1
+  ],
+  "frame_border_ui": 12,
+  "cloth_tile_ui": 64,
+  "minimum_texels_per_ui": 2,
+  "files": [
+    {
+      "path": "assets/source/bagshui/frame-v1/SatchelDonorV1.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "sha256": "4f2d33e72ddd3a7822890eaf7142e8b1bbdd7a7b47056d7e2b591d15b17bb785"
+    },
+    {
+      "path": "addon/AzerothExpeditionUI/Media/Bagshui/SatchelFrameV1.tga",
+      "size": [
+        512,
+        512
+      ],
+      "sha256": "71bf9dc54ad2c9c06d19244838b6a47606a94966778568afa680b7424dd0f0f7"
+    },
+    {
+      "path": "addon/AzerothExpeditionUI/Media/Bagshui/SatchelClothV1.tga",
+      "size": [
+        128,
+        128
+      ],
+      "sha256": "6eb93a0f22d69734033150c88b59a2785ed17667de67e5a1429a07b254f8fb73"
+    }
+  ]
+}

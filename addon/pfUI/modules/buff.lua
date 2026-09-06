@@ -150,6 +150,7 @@ pfUI:RegisterModule("buff", "vanilla:tbc", function ()
       end
     end
 
+    if buff.aeuiAuraRefreshColour then buff:aeuiAuraRefreshColour() end
     buff:Show()
   end
 
@@ -476,6 +477,7 @@ pfUI:RegisterModule("buff", "vanilla:tbc", function ()
       pfUI.buff:UpdateConfigBuffButton(pfUI.buff.wepbuffs.buttons[i])
     end
 
+    if self.aeuiRefreshAuraShells then self:aeuiRefreshAuraShells() end
     pfUI.buff:GetScript("OnEvent")()
   end
 

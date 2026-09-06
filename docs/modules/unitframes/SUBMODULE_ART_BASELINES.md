@@ -3,7 +3,7 @@
 以下条款全部继承 [Unit Frames 主模块 Prompt](ART_BASELINE.md) 与
 [全局 Prompt](../../GLOBAL_ART_BASELINE.md)。下列方向已由用户在
 `UF-PRIMARY-SIM-V1` 与后续 Player V5 收敛中确认。Player V5 exact pixels 已于
-`2026-08-17` 获得用户明确接受；Target 当前保留 V4 source 但 route 暂停；其他
+`2026-08-17` 获得用户明确接受；Target 当前恢复独立 V4 route；其他
 尚无新 source 的组件仍只把文字方向作为冻结约束。
 
 ## `UF.PLAYER.SHELL`
@@ -21,9 +21,9 @@
 
 生产粒度是一张完整外壳，不生成端帽 atlas，也不由 Python 拼画材料。accepted
 source 固定为 `1524×462 RGBA`，runtime master 固定为 `254×77 RGBA`；中央
-动态硬净空为 runtime `(7,16)-(247,72)`，Power 禁入区保持透明。当前 Lua 只在
-`240×60` 配置形成的 `240×65` provider 上完整挂载这一张图，UI Scale 随父框
-整体缩放，不切片或拉伸。名称、数值、生命／Power、语义色、Aura、图标、
+动态硬净空为 runtime `(7,16)-(247,72)`，Power 禁入区保持透明。当前 Lua 保持
+`240 UI` provider 宽度，以同图 `7/240/7 × 16/55/6` 切片适配高度；上下边
+与维修片保持尺寸，只伸缩中段皮边，UI Scale 随父框整体缩放。名称、数值、生命／Power、语义色、Aura、图标、
 Hover／Aggro、点击与事件均继续由 pfUI 提供。
 
 接受像素基线位于 `assets/source/unitframes/player-v5/`：source SHA-256

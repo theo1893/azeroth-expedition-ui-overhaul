@@ -1,0 +1,48 @@
+{
+  "schema": "aeui-readouts-source-v1",
+  "phase": "P5",
+  "components": [
+    "AB.FOCUS.CASTBAR.SHELL",
+    "AB.FOCUS.CAST.FILL",
+    "AB.FOCUS.SWING.FILL"
+  ],
+  "donor_sha256": "da0f50df003c7d516a0717b6751e9b200e5373bba4bad24b28d796c429b46b3c",
+  "sample_windows": [
+    [
+      85,
+      59,
+      2043,
+      206
+    ],
+    [
+      85,
+      295,
+      2043,
+      443
+    ],
+    [
+      85,
+      539,
+      2043,
+      687
+    ]
+  ],
+  "files": [
+    {
+      "file": "assets/source/actionbars/readouts-v1/CastFill_SourceV1.png",
+      "sha256": "85c510994ef605567918326e3da378e65061c490082ac8148f1261027502489a"
+    },
+    {
+      "file": "assets/source/actionbars/readouts-v1/LeatherSampleV1.png",
+      "sha256": "fc3292a0da1036c21818a987ce40659342476b7f56a39e2130beecc568ba58b2"
+    },
+    {
+      "file": "assets/source/actionbars/readouts-v1/ReadoutShell_SourceV1.png",
+      "sha256": "cc13506d6ccf78399512b5b4f8d8e899561dbacb814b1c10daaab0ac58baddd4"
+    },
+    {
+      "file": "assets/source/actionbars/readouts-v1/SwingFill_SourceV1.png",
+      "sha256": "bde67d87d02fb3e74b13943edb3c842f5974857b6c25c664af568ee3c914fd2f"
+    }
+  ]
+}

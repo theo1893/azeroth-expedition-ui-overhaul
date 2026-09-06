@@ -3,7 +3,8 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 local TargetMarkers = {}
 
-TargetMarkers.runtimeContract = "2.3"
+TargetMarkers.runtimeContract = "2.4"
+TargetMarkers.compactScale = 0.8
 TargetMarkers.cellSize = 48
 TargetMarkers.cellGap = 3
 TargetMarkers.columns = 4
@@ -675,7 +676,7 @@ function TargetMarkers:InstallTankButtonFallback(button)
   button:SetWidth(self.cellSize)
   button:SetHeight(self.cellSize)
   button:ClearAllPoints()
-  button:SetPoint("LEFT", self.frame, "LEFT", 0, 0)
+  button:SetPoint("TOPLEFT", self.frame, "TOPLEFT", 0, self.panelPadding)
   button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 
   if not button.base then
@@ -869,7 +870,7 @@ function TargetMarkers:CreateTankButton(parent)
   self.tankButton = button
   button:SetWidth(self.cellSize)
   button:SetHeight(self.cellSize)
-  button:SetPoint("LEFT", parent, "LEFT", 0, 0)
+  button:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, self.panelPadding)
   button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 
   button.base = CreateBulkPocket(button)
@@ -1140,8 +1141,8 @@ function TargetMarkers:CreateBulkButton(parent)
   button:SetWidth(self.cellSize)
   button:SetHeight(self.cellSize)
   button:SetPoint(
-    "LEFT", parent, "LEFT",
-    self.tankControlSpan + self.manualGridWidth + self.bulkButtonGap, 0
+    "TOPLEFT", parent, "TOPLEFT",
+    self.tankControlSpan + self.manualGridWidth + self.bulkButtonGap, self.panelPadding
   )
   button:RegisterForClicks("LeftButtonUp")
 
@@ -1237,6 +1238,21 @@ function TargetMarkers:ApplyAnchor()
   local horizontalOffset = 0
   self.tankAnchorOffset = 0
   frame:ClearAllPoints()
+
+  local config = addon.db and addon.db.actionbars
+  if main and config and config.enabled and config.fieldKitBound then
+    frame:SetScale(main:GetEffectiveScale() / UIParent:GetEffectiveScale() * self.compactScale)
+    local lowerBar, lowerStatus = GetLowerPfUIBar(main)
+    -- Pet actions need their full row; stances share the left of this row.
+    local anchor = lowerStatus == "pet" and lowerBar or main
+    frame:SetPoint("TOPRIGHT", anchor, "BOTTOMRIGHT",
+      -self.panelPadding, -(8 / self.compactScale + self.panelPadding))
+    self.anchorStatus = "compact-bottom-right"
+    local actions = addon.modules and addon.modules.ActionBars
+    if actions then actions:ApplyArchiTotemDockPosition(true) end
+    return true
+  end
+  frame:SetScale(1)
 
   local archiTotem = ArchiTotemVisible()
   if archiTotem then

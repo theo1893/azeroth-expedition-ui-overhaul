@@ -1,7 +1,7 @@
 local addon = AzerothExpeditionUI
 local Character = {}
 
-Character.runtimeContract = "2.0"
+Character.runtimeContract = "2.1"
 Character.texelDensity = 2
 
 local COMPONENT_ROUTES = {
@@ -90,8 +90,10 @@ local SECONDARY_LEAF = {
   x = 25,
   y = 66,
   width = 301,
-  height = 375,
+  height = 382,
   texCoord = { 0, 602 / 1024, 0, 750 / 1024 },
+  verticalCap = 8,
+  textureHeight = 1024,
   vertexColor = PARCHMENT_VERTEX_COLOR,
 }
 
@@ -763,6 +765,7 @@ local function ConfigureVerticalTextureSlices(textures, definition, anchor)
         width = definition.width,
         height = part.height,
         texCoord = part.texCoord,
+        vertexColor = definition.vertexColor,
       },
       {
         relativeTo = anchor.relativeTo,
@@ -891,7 +894,10 @@ local function ApplySecondaryLeaves()
       seen[frame] = true
       local texture = EnsureSecondaryLeaf(frame)
       if texture then
-        ConfigureTexture(texture, SECONDARY_LEAF, {
+        local slices = EnsureTextureSlices(frame, "aeuiCharacterSecondarySlices", 3)
+        texture:Hide()
+        frame.aeuiCharacterSecondaryLeafV3 = slices[1]
+        ConfigureVerticalTextureSlices(slices, SECONDARY_LEAF, {
           relativeTo = frame,
           relativePoint = "TOPLEFT",
           x = SECONDARY_LEAF.x,
@@ -1853,6 +1859,7 @@ local function HideSecondaryLeaves()
     local frame = _G[name]
     local texture = frame and frame.aeuiCharacterSecondaryLeafV3
     if texture then texture:Hide() end
+    if frame then HideTextureSlices(frame.aeuiCharacterSecondarySlices) end
   end
 end
 
@@ -1878,7 +1885,468 @@ local function HideSlotInteractions()
   end
 end
 
+-- Only these registered controls use the shared accepted leather/brass donor.
+-- Provider frames, scripts, values and hit rectangles remain live.
+local CONTROL_DROPDOWNS = {
+  "PaperDollFrameTitlesDropdown", "PlayerTitleDropDown",
+  "PlayerStatFrameLeftDropDown", "PlayerStatFrameRightDropDown",
+}
+local chromeFrames, controlTextures, controlLabels, controlBars = {}, {}, {}, {}
+local scrollHeadings, reputationRows = {}, {}
+local pvpBackdrops = {}
+local arenaNativeBackdrops, arenaHoverHooks = {}, {}
+local CONTROL_MEDIA = addon.media.root .. "GearPlanner\\"
+
+local function ControlsEnabled()
+  return ModuleEnabled() and ScopedOwnershipActive() and
+    pfUI:GetExpeditionComponentOwner("character.controls") == "character"
+end
+
+local function RestoreChrome(frame)
+  local saved = chromeFrames[frame]
+  if not saved then return end
+  saved.art:Hide()
+  frame:SetBackdrop(saved.backdrop)
+  frame:SetBackdropColor(unpack(saved.color))
+  frame:SetBackdropBorderColor(unpack(saved.border))
+  chromeFrames[frame] = nil
+end
+
+local function ControlChrome(frame, border, behind)
+  if not frame or not frame.GetBackdrop then return end
+  if not chromeFrames[frame] then
+    local art = frame.aeuiCharacterControlArt
+    if not art then
+      art = CreateFrame("Frame", nil, frame)
+      art:SetAllPoints(frame)
+      art:SetFrameLevel(math.max(0, frame:GetFrameLevel() - (behind and 1 or 0)))
+      art:EnableMouse(false)
+      art:SetBackdrop({bgFile = CONTROL_MEDIA .. "GearPlannerLeatherFillV1",
+        tile = true, tileSize = 64})
+      art:SetBackdropColor(1, 1, 1, 1)
+      local uv = {0, 0.125, 0.625, 0.75}
+      local x, y = {0, border, -border, 0}, {0, -border, border, 0}
+      for row = 1, 3 do
+        for column = 1, 3 do
+          if row ~= 2 or column ~= 2 then
+            local texture = art:CreateTexture(nil, "BORDER")
+            texture:SetTexture(CONTROL_MEDIA .. "GearPlannerFrameAtlasV1")
+            texture:SetTexCoord(uv[column], uv[column+1], uv[row], uv[row+1])
+            texture:SetPoint("TOPLEFT", art,
+              (row <= 2 and "TOP" or "BOTTOM") .. (column <= 2 and "LEFT" or "RIGHT"),
+              x[column], y[row])
+            texture:SetPoint("BOTTOMRIGHT", art,
+              (row < 2 and "TOP" or "BOTTOM") .. (column < 2 and "LEFT" or "RIGHT"),
+              x[column+1], y[row+1])
+          end
+        end
+      end
+      frame.aeuiCharacterControlArt = art
+    end
+    chromeFrames[frame] = {art = art, backdrop = frame:GetBackdrop(),
+      color = {frame:GetBackdropColor()}, border = {frame:GetBackdropBorderColor()}}
+  end
+  frame:SetBackdrop(nil)
+  chromeFrames[frame].art:Show()
+end
+
+local function ControlTexture(texture, path, uv)
+  if not texture then return end
+  if not controlTextures[texture] then
+    controlTextures[texture] = CaptureTextureState(texture)
+  end
+  texture:SetTexture(path)
+  texture:SetTexCoord(unpack(uv or {0, 1, 0, 1}))
+  texture:SetVertexColor(1, 1, 1, 1)
+end
+
+local function ControlButton(button)
+  if not button then return end
+  ControlChrome(button.backdrop or button, 3)
+end
+
+local function ControlLabel(label, anchor, point, x, width)
+  if not label or not anchor then return end
+  if not controlLabels[label] then
+    CaptureFrameGeometry(label)
+    controlLabels[label] = label:GetJustifyH()
+  end
+  label:ClearAllPoints()
+  label:SetPoint(point, anchor, point, x, 0)
+  label:SetWidth(width)
+  label:SetJustifyH(point == "RIGHT" and "RIGHT" or "LEFT")
+end
+
+local function ControlBar(bar)
+  if not bar then return end
+  ControlChrome(bar.backdrop or bar, 2)
+  -- Keep status colors and values supplied by reputation, skills and PvP.
+  local texture = bar.GetStatusBarTexture and bar:GetStatusBarTexture()
+  if texture then
+    local path = type(texture) == "string" and texture or texture:GetTexture()
+    if not path then return end
+    if not controlBars[bar] then controlBars[bar] = path end
+    local color = {bar:GetStatusBarColor()}
+    bar:SetStatusBarTexture(addon.media.root .. "UnitFrames\\UnitFrameHealthFillV1")
+    bar:SetStatusBarColor(unpack(color))
+  end
+end
+
+local function RemovePvPBackdrop(frame)
+  if not frame then return end
+  -- The paper supplies these regions' background. Keep the real status bar,
+  -- team frame, labels and mouse handlers; only remove pfUI's extra shell.
+  for _, key in ipairs({"backdrop", "backdrop_border", "backdrop_shadow"}) do
+    local backdrop = frame[key]
+    if backdrop then
+      if pvpBackdrops[backdrop] == nil then pvpBackdrops[backdrop] = backdrop:GetAlpha() end
+      backdrop:SetAlpha(0)
+    end
+  end
+end
+
+local function ClearArenaHover(team)
+  if not ControlsEnabled() then return end
+  if not arenaNativeBackdrops[team] then
+    arenaNativeBackdrops[team] = {backdrop = team:GetBackdrop(),
+      color = {team:GetBackdropColor()}, border = {team:GetBackdropBorderColor()}}
+  end
+  team:SetBackdrop(nil)
+  RemovePvPBackdrop(team)
+  local highlight = team.GetHighlightTexture and team:GetHighlightTexture()
+  if highlight then
+    if not controlTextures[highlight] then controlTextures[highlight] = CaptureTextureState(highlight) end
+    highlight:SetAlpha(0)
+  end
+  -- Turtle can draw hover art as an ordinary named region/child instead of
+  -- Button:GetHighlightTexture(), and can show it again in OnEnter.
+  for _, region in ipairs({team:GetRegions()}) do
+    local name = region.GetName and region:GetName() or ""
+    local path = region.GetTexture and region:GetTexture()
+    if region.GetTexture and ((region.GetDrawLayer and region:GetDrawLayer() == "HIGHLIGHT") or
+      string.find(string.lower(name), "highlight", 1, true) or
+      (type(path) == "string" and string.find(string.lower(path), "highlight", 1, true))) then
+      if not controlTextures[region] then controlTextures[region] = CaptureTextureState(region) end
+      region:SetAlpha(0)
+    end
+  end
+  for _, child in ipairs({team:GetChildren()}) do
+    local name = child:GetName() or ""
+    if string.find(string.lower(name), "highlight", 1, true) then
+      if pvpBackdrops[child] == nil then pvpBackdrops[child] = child:GetAlpha() end
+      child:SetAlpha(0)
+    end
+  end
+end
+
+local function ControlHeader(header, page)
+  if not header or not header.icon then return end
+  ControlButton(header.icon)
+  local x = 2
+  if page and page:GetLeft() and header:GetLeft() then
+    x = math.max(x, SECONDARY_LEAF.x + 8 - (header:GetLeft() - page:GetLeft()))
+  end
+  SetCanonicalFrameGeometry(header.icon, header.icon:GetWidth(), header.icon:GetHeight(),
+    "LEFT", header, "LEFT", x, 0)
+  local text = header.GetFontString and header:GetFontString()
+  ControlLabel(text, header, "LEFT", x + 18, math.max(48, header:GetWidth() - x - 22))
+end
+
+local function ListAtTop(scroll)
+  if not scroll then return true end
+  local offset = type(FauxScrollFrame_GetOffset) == "function" and
+    FauxScrollFrame_GetOffset(scroll) or scroll.offset
+  return (offset or 0) == 0
+end
+
+local function ScrollHeading(object, scroll)
+  if not object then return end
+  if not scrollHeadings[object] then
+    scrollHeadings[object] = {shown = FrameShown(object), scroll = scroll}
+  end
+  SetShown(object, ListAtTop(scroll) and scrollHeadings[object].shown)
+end
+
+local function SpaceReputationRow(frame)
+  if not frame then return end
+  if not reputationRows[frame] then
+    CaptureFrameGeometry(frame)
+    reputationRows[frame] = frame.aeuiCharacterGeometryRestoreV3
+  end
+  -- FauxScrollFrame reuses visible rows. Only the first page reserves space
+  -- for its heading; later pages use the entire list area.
+  local inset = ListAtTop(ReputationListScrollFrame) and 12 or 0
+  frame:ClearAllPoints()
+  for _, anchor in ipairs(reputationRows[frame].points) do
+    -- Relative row chains inherit the inset from their root.
+    local relative = anchor.relativeTo
+    local name = type(relative) == "string" and relative or
+      (relative and relative.GetName and relative:GetName())
+    local chained = name and (string.find(name, "^ReputationBar%d+$") or
+      string.find(name, "^ReputationHeader%d+$"))
+    frame:SetPoint(anchor.point, relative, anchor.relativePoint, anchor.x,
+      (anchor.y or 0) - (chained and 0 or inset))
+  end
+end
+
+local function AlignSecondaryText(page, frame)
+  if not page or not page:IsVisible() or not page:GetTop() then return end
+  frame = frame or page
+  for _, region in ipairs({frame:GetRegions()}) do
+    if region.GetJustifyH and region:GetTop() and region:GetLeft() then
+      local point = region:GetPoint(1)
+      local y = page:GetTop() - region:GetTop()
+      local heading = page == ReputationFrame and frame == page and y >= 40 and y < 76
+      local value = (page == HonorFrame or page == PVPFrame) and point and
+        string.find(point, "RIGHT", 1, true) and y >= SECONDARY_LEAF.y and
+        y < SECONDARY_LEAF.y + SECONDARY_LEAF.height
+      if heading or value then
+        if not controlLabels[region] then
+          CaptureFrameGeometry(region)
+          controlLabels[region] = region:GetJustifyH()
+        end
+        local x = region:GetLeft() - page:GetLeft()
+        region:ClearAllPoints()
+        if heading then
+          region:SetPoint("TOPLEFT", page, "TOPLEFT", math.max(SECONDARY_LEAF.x + 10, x), -76)
+          ScrollHeading(region, ReputationListScrollFrame)
+        else
+          region:SetPoint("TOPRIGHT", page, "TOPLEFT", SECONDARY_LEAF.x + SECONDARY_LEAF.width - 14, -y)
+          region:SetJustifyH("RIGHT")
+        end
+      end
+    end
+  end
+  -- Honor values can live in section Frames, with left-justified text but
+  -- RIGHT anchors. Inspect those real sections too, excluding tab Buttons.
+  for _, child in ipairs({frame:GetChildren()}) do
+    if child:GetObjectType() == "Frame" then AlignSecondaryText(page, child) end
+  end
+end
+
+local function ControlScrollbar(bar)
+  if not bar then return end
+  if bar.bg then ControlChrome(bar.bg.backdrop or bar.bg, 2) end
+  local name = bar:GetName()
+  ControlButton(_G[name .. "ScrollUpButton"])
+  ControlButton(_G[name .. "ScrollDownButton"])
+  ControlTexture(bar.thumb or bar:GetThumbTexture(),
+    CONTROL_MEDIA .. "GearPlannerControlsAtlasV1", {50/1024, 88/1024, 5/128, 34/128})
+end
+
+function Character:RefreshCompanionArt()
+  local active = ControlsEnabled() and CharacterFrame and CharacterFrame:IsVisible()
+    and PaperDollFrame and PaperDollFrame:IsVisible()
+  for _, name in ipairs({"StatCompareSelfFrame", "S_ItemTip_InspectFrame"}) do
+    local frame = _G[name]
+    if frame then
+      if active then
+        ControlChrome(frame, 6, true)
+        ControlChrome(frame.levelBg, 3)
+      else
+        RestoreChrome(frame)
+        if frame.levelBg then RestoreChrome(frame.levelBg) end
+      end
+      for _, row in ipairs(frame.slotFrames or {}) do
+        if row.labelBg then
+          if active then ControlChrome(row.labelBg, 2) else RestoreChrome(row.labelBg) end
+        end
+      end
+    end
+  end
+end
+
+function Character:RefreshControls()
+  if not ControlsEnabled() then return end
+  for _, name in ipairs(CONTROL_DROPDOWNS) do
+    local dropdown = _G[name]
+    if dropdown and dropdown.backdrop then
+      ControlChrome(dropdown.backdrop, 3)
+      ControlButton(_G[name .. "Button"])
+      local text = _G[name .. "Text"]
+      ControlLabel(text, dropdown.backdrop, "LEFT", 8,
+        math.max(10, dropdown.backdrop:GetWidth() - 34))
+    end
+  end
+  for _, name in ipairs({"CharacterFrameCloseButton", "StatCompareSelfFrameCloseButton",
+    "SkillDetailStatusBarUnlearnButton", "ReputationDetailCloseButton"}) do
+    ControlButton(_G[name])
+  end
+  for _, name in ipairs({"ReputationListScrollFrameScrollBar", "SkillListScrollFrameScrollBar"}) do
+    ControlScrollbar(_G[name])
+  end
+  for i = 1, (NUM_FACTIONS_DISPLAYED or 15) do
+    local bar, header = _G["ReputationBar" .. i], _G["ReputationHeader" .. i]
+    SpaceReputationRow(bar)
+    SpaceReputationRow(header)
+    ControlBar(bar)
+    ControlHeader(header, ReputationFrame)
+    if bar then
+      ControlLabel(_G["ReputationBar" .. i .. "FactionName"], bar, "LEFT", -112, 106)
+      ControlLabel(_G["ReputationBar" .. i .. "Reputation"], bar, "RIGHT", -5,
+        math.max(10, bar:GetWidth() - 10))
+    end
+  end
+  local collapse = _G["SkillFrameCollapseAllButton"]
+  if collapse and SkillFrame then
+    SetCanonicalFrameGeometry(collapse, 70, 18, "TOPRIGHT", SkillFrame, "TOPLEFT",
+      SECONDARY_LEAF.x + SECONDARY_LEAF.width - 10, -72)
+  end
+  ControlHeader(collapse, SkillFrame)
+  ScrollHeading(collapse, SkillListScrollFrame)
+  for i = 1, (SKILLS_TO_DISPLAY or 12) do
+    local header, bar = _G["SkillTypeLabel" .. i], _G["SkillRankFrame" .. i]
+    ControlHeader(header, SkillFrame)
+    ControlBar(bar)
+    if bar then
+      ControlLabel(_G["SkillRankFrame" .. i .. "SkillName"], bar, "LEFT", 8,
+        math.max(10, bar:GetWidth() - 86))
+      ControlLabel(_G["SkillRankFrame" .. i .. "SkillRank"], bar, "RIGHT", -8, 72)
+    end
+  end
+  for _, name in ipairs({"HonorFrameProgressBar", "ArenaFramePointsBar", "SkillDetailStatusBar"}) do
+    ControlBar(_G[name])
+  end
+  RemovePvPBackdrop(HonorFrameProgressBar)
+  RemovePvPBackdrop(ArenaFramePointsBar)
+  for _, prefix in ipairs({"ArenaTeam", "ArenaFrameTeam"}) do
+    for i = 1, 5 do
+      local team = _G[prefix .. i]
+      if team then
+        ClearArenaHover(team)
+        if not arenaHoverHooks[team] then
+          local previous = team:GetScript("OnEnter")
+          team:SetScript("OnEnter", function()
+            if previous then previous() end
+            ClearArenaHover(team)
+          end)
+          arenaHoverHooks[team] = true
+        end
+      end
+    end
+  end
+  for _, prefix in ipairs({"HonorFrameTab", "ArenaFrameTab"}) do
+    for i = 1, 2 do
+      local button = _G[prefix .. i]
+      if button and button.backdrop then
+        ControlChrome(button.backdrop, 4)
+        local art = chromeFrames[button.backdrop].art
+        -- PanelTemplates disables the selected real Button.
+        local tint = button:IsEnabled() == 0 and 1 or 0.65
+        art:SetBackdropColor(tint, tint, tint, 1)
+      end
+    end
+  end
+  ControlChrome(ReputationDetailFrame and (ReputationDetailFrame.backdrop or ReputationDetailFrame), 6)
+  for _, name in ipairs({"ReputationFrame", "HonorFrame", "PVPFrame"}) do
+    AlignSecondaryText(_G[name])
+  end
+  for object, saved in pairs(scrollHeadings) do
+    SetShown(object, ListAtTop(saved.scroll) and saved.shown)
+  end
+  self:RefreshCompanionArt()
+end
+
+local function RestoreControls()
+  for team, saved in pairs(arenaNativeBackdrops) do
+    team:SetBackdrop(saved.backdrop)
+    team:SetBackdropColor(unpack(saved.color))
+    team:SetBackdropBorderColor(unpack(saved.border))
+  end
+  arenaNativeBackdrops = {}
+  for backdrop, alpha in pairs(pvpBackdrops) do backdrop:SetAlpha(alpha) end
+  pvpBackdrops = {}
+  for object, saved in pairs(scrollHeadings) do SetShown(object, saved.shown) end
+  for frame in pairs(reputationRows) do RestoreFrameGeometry(frame) end
+  scrollHeadings, reputationRows = {}, {}
+  for frame in pairs(chromeFrames) do RestoreChrome(frame) end
+  for texture, saved in pairs(controlTextures) do
+    texture:SetTexture(saved.path)
+    if saved.texCoord then texture:SetTexCoord(unpack(saved.texCoord)) end
+    if saved.vertexColor then texture:SetVertexColor(unpack(saved.vertexColor)) end
+    if saved.blendMode then texture:SetBlendMode(saved.blendMode) end
+    if saved.alpha then texture:SetAlpha(saved.alpha) end
+  end
+  for bar, path in pairs(controlBars) do bar:SetStatusBarTexture(path) end
+  for label, justify in pairs(controlLabels) do
+    RestoreFrameGeometry(label)
+    label:SetJustifyH(justify)
+  end
+  for _, prefix in ipairs({"ReputationHeader", "SkillTypeLabel"}) do
+    for i = 1, math.max(NUM_FACTIONS_DISPLAYED or 15, SKILLS_TO_DISPLAY or 12) do
+      local header = _G[prefix .. i]
+      if header then RestoreFrameGeometry(header.icon) end
+    end
+  end
+  if SkillFrameCollapseAllButton then
+    RestoreFrameGeometry(SkillFrameCollapseAllButton.icon)
+    RestoreFrameGeometry(SkillFrameCollapseAllButton)
+  end
+  controlTextures, controlLabels, controlBars = {}, {}, {}
+end
+
+function Character:InstallControlHooks()
+  if not self.controlHooks then self.controlHooks = {} end
+  if type(hooksecurefunc) ~= "function" then return end
+  for _, name in ipairs({"ReputationFrame_Update", "SkillFrame_Update", "SkillFrame_UpdateSkills",
+    "HonorFrame_Update", "ArenaFrame_Update", "SCShowFrame", "S_ItemTip_UpdateFrame",
+    "CharacterFrame_ShowSubFrame", "PanelTemplates_SetTab"}) do
+    if type(_G[name]) == "function" and not self.controlHooks[name] then
+      hooksecurefunc(name, function() Character:RefreshControls() end)
+      self.controlHooks[name] = true
+    end
+  end
+  -- Run after the actual scroll handler, including its provider Show() calls.
+  -- Not every Turtle skill update goes through SkillFrame_Update.
+  for _, name in ipairs({"ReputationListScrollFrame", "SkillListScrollFrame"}) do
+    for _, spec in ipairs({{name, "OnVerticalScroll"}, {name .. "ScrollBar", "OnValueChanged"}}) do
+      local frame, script = _G[spec[1]], spec[2]
+      local key = spec[1] .. ":" .. script
+      if frame and not self.controlHooks[key] then
+        local previous = frame:GetScript(script)
+        frame:SetScript(script, function()
+          if previous then previous() end
+          Character:RefreshControls()
+        end)
+        self.controlHooks[key] = true
+      end
+    end
+  end
+  if not self.controlHooks.dropdown and type(ToggleDropDownMenu) == "function" then
+    hooksecurefunc("ToggleDropDownMenu", function(level, value, dropdown)
+      local owner = dropdown or UIDROPDOWNMENU_OPEN_MENU
+      local owned = false
+      for _, name in ipairs(CONTROL_DROPDOWNS) do
+        if owner == name or (_G[name] and owner == _G[name]) then owned = true end
+      end
+      for i = 1, (UIDROPDOWNMENU_MAXLEVELS or 2) do
+        for _, suffix in ipairs({"Backdrop", "MenuBackdrop"}) do
+          local frame = _G["DropDownList" .. i .. suffix]
+          if frame then
+            local target = frame.backdrop or frame
+            if owned and ControlsEnabled() then ControlChrome(target, 4)
+            else RestoreChrome(target) end
+          end
+        end
+      end
+    end)
+    self.controlHooks.dropdown = true
+  end
+  if PaperDollFrame and not self.controlController then
+    local controller = CreateFrame("Frame", nil, PaperDollFrame)
+    controller:SetScript("OnShow", function() Character:RefreshControls() end)
+    controller:SetScript("OnHide", function() Character:RefreshCompanionArt() end)
+    controller:RegisterEvent("ADDON_LOADED")
+    controller:SetScript("OnEvent", function()
+      Character:InstallControlHooks()
+      if ControlsEnabled() then addon:ScheduleRefresh(0) end
+    end)
+    self.controlController = controller
+  end
+end
+
 function Character:Restore()
+  RestoreControls()
   if CharacterFrame then
     HideArt()
     HideModelBackground()
@@ -2106,6 +2574,8 @@ function Character:ApplyFrame()
   end
   self.applyStage = "portraits"
   CaptureAndHidePortraits()
+  self:InstallControlHooks()
+  self:RefreshControls()
 
   -- Finish after every provider-owned apply stage.  pfUI may have written its
   -- tab width/backdrop during the same show transition, so the character tabs
@@ -2207,7 +2677,7 @@ function Character:GetRuntimeStatus()
     "/27x27/21x21-safe/atlas-v3" ..
     ", secondary-leaf=" ..
     tostring(self.secondaryLeafStatus or "unresolved") ..
-    "/301x375/2x/host=provider-background" ..
+    "/301x382/3-slice/2x/host=provider-background" ..
     "/page-visible=" .. tostring(SecondaryPageShown() and 1 or 0) ..
     "/leaf-total=" .. tostring(leafTotal) ..
     "/leaf-shown=" .. tostring(leafShown) ..

@@ -1,5 +1,9 @@
 # Unit Frames 子模块与 pfUI 对齐
 
+`unitframes.raid-aura-rim` 仅接管 `pfUI.uf.raid[1..40].buffs/debuffs` 的真实
+Button 外缘，复用 Raid A2 细边资源；provider 更新尺寸后刷新外观，保留排列、
+显隐、类型色与交互。禁用恢复原 backdrop／shadow，不接管框内状态指示器。
+
 本模块严格对应 `addon/pfUI/api/unitframes.lua` 创建的真实 UnitFrame，以及
 `addon/pfUI/modules/nameplates.lua` 创建的世界姓名板。当前运行时接管登记过的
 静态媒体及其挂载，并通过 `UF.PORTRAIT.DISABLE` 关闭所有 pfUI UnitFrame 动态
@@ -7,16 +11,26 @@
 只写入下文列出的精确配置值，原值保存在 AEUI SavedVariables 中并可完整回退；
 其他 pfUI SavedVariables 不变。
 
+## 当前四个单位框细边框试用
+
+runtime `2.1` 通过 `unitframes.primary-thin-shell` 为真实 `pfUI.uf.player`、
+`pfUI.uf.target`、`pfUI.uf.targettarget` 与 `pfUI.uf.focus` 分别复用 Raid A2
+的 A／B／C／D 纹理。九切片为
+`6/62/6 × 6/25/6`，边角不缩放，外扩 `2 UI`；只在 Frame 背景层挂载，不修改
+状态条、命中、位置、尺寸、文字或第三方精英龙饰。团队本身仍走原三切片。
+模块／route 禁用时恢复四框 pfUI chrome。下面 Player V5 与 Target V4 记录为
+保留资产合同，当前厚外壳 route 均暂停；细边框视觉尚待用户实机确认。
+
 ## 主单位框与资源条批次
 
-Unit Frames runtime `1.9` 会把全部 13 组真实配置强制为 `portrait = off`。下列逻辑尺寸来自
+Unit Frames runtime `2.0` 会把全部 13 组真实配置强制为 `portrait = off`。下列逻辑尺寸来自
 `addon/pfUI/env/profiles.lua` 与 `pfUI.uf:UpdateFrameSize()`；外壳只在真实 Frame
 外增加不参与命中的透明装饰边，不改变 provider 几何。
 
 | 组件 ID | pfUI 对象 | 动态内容区 | 资源外接尺寸 | 状态／所有权 |
 |---|---|---:|---:|---|
-| `UF.PLAYER.SHELL` | `pfUI.uf.player`／`pfPlayer` | 当前配置 `240×60`，`pheight=4 / pspace=-1 / border=1`，完整 provider `240×65` | `254×77` | V5 一张完整静态外壳；只在 canonical provider 接入，不切片、不改变 provider |
-| `UF.TARGET.SHELL` | `pfUI.uf.target`／`pfTarget` | HP `200×25`；Power `200×4` | `214×42` | 一张静态外壳；不得烘焙目标类型、名称或等级 |
+| `UF.PLAYER.SHELL` | `pfUI.uf.player`／`pfPlayer` | 当前配置 `240×48`，`pheight=10 / pspace=-3 / border=3`，当前 provider `240×61` | 当前 `254×73` | V5 同一完整纹理以固定上下边切片适配高度；宽度保持 240，不改变 provider |
+| `UF.TARGET.SHELL` | `pfUI.uf.target`／`pfTarget` | 当前 HP `240×48`；Power `240×10`，provider `240×61` | 当前 `254×73` | 独立 target-shell-v4 route 恢复 V4 九切片；不得烘焙目标类型、名称或等级 |
 | `UF.TARGETTARGET.SHELL` | `pfUI.uf.targettarget`／`pfTargetTarget` | HP `100×20`；Power `100×1` | `112×34` | 一张简化静态外壳 |
 | `UF.FOCUS.SHELL` | `pfUI.uf.focus`／`pfFocus` | HP `100×25`；Power `100×1` | `112×43` | 一张静态外壳；上 `10px`／下 `6px`；靛蓝猎踪布结是焦点识别件 |
 | `UF.BAR.HEALTH.FILL` | 每个对象的 `f.hp.bar` | provider 裁切宽度 | `64×32` 可横向拉伸纹理 | 无色灰阶颜料纹；继续由 pfUI 着色与更新数值 |
@@ -93,22 +107,22 @@ Leader／Master Looter／Raid Target／Resurrection、Buff／Debuff、Incoming H
 - source 为完整 `1524×462 RGBA` 外壳，runtime master 为同一完整物件的
   `254×77 RGBA` 逻辑像素；正式媒体只透明补齐为 `256×128` TGA，以 UV
   `(0, 254/256, 0, 77/128)` 读取，不重绘、不拼接、不九切片。
-- 适配器只接管 `pfUI.uf.player` 的静态外壳和旧 backdrop 可见性。当前配置
-  `240×60` 经 `pfUI.uf:UpdateFrameSize()` 形成 `240×65` provider；外壳从四边
-  各外扩 `7/7/6/6`。UI Scale 随父框整体缩放，不改变逻辑像素间关系。
-- provider 尺寸不符、模块禁用或精确 route 缺失时，只恢复 Player 的 pfUI
-  backdrop／shadow。Bars、文字、颜色、Aura、图标、Hover／Aggro、点击、事件
-  与 SavedVariables 继续由 pfUI 持有。
-- Target、TargetTarget、Focus 不得复用、镜像或裁取 Player V5 像素；三者旧
-  外壳 route 仍暂停，等待各自独立修复。
+- 适配器只接管 `pfUI.uf.player`；2× runtime 按 `7/240/7 × 16/55/6`
+  逻辑切片采样同一完整纹理。宽度固定 `240 UI`，上下边与维修片不缩放，
+  只适配侧边中段高度；art box 为 provider `width+14 / height+12`。
+- 非 `240 UI` 宽度、过小高度、模块禁用或 route 缺失时恢复 Player 的 pfUI
+  backdrop／shadow。Bars、文字、颜色、Aura、图标、Hover／Aggro、点击和事件
+  继续由 pfUI 持有。
+- Target 使用自己的 `unitframes.target-shell-v4` route 和 V4 像素，不复用
+  Player V5。TargetTarget、Focus 与旧共享 route 继续暂停。
 
 ## UF-PRIMARY V4 历史 source／暂停 runtime
 
 用户于 `2026-08-12` 要求重开 Player／Target 完整外壳的新生产架构，并已确认
 `UF-PRIMARY-V4-SIM-V1` 与 Raid A2 sample 的只读输入职责。用户随后以“确认,
 进入下一阶段”接受 `UF-PRIMARY-V4-CANDIDATE-V1` 两张 exact candidate。两张
-source 曾确定性导出；当前 Player 已被 V5 替代，Target 与整条旧
-`unitframes.primary-shell` route 暂停。以下只保留历史结构边界，不能覆盖 V5。
+source 曾确定性导出；当前 Player 已被 V5 替代；Target V4 已通过独立 route 恢复，旧共享
+`unitframes.primary-shell` route 仍暂停。以下 V4 结构只应用于 Target，不能覆盖 V5。
 
 - 最终组件粒度不变：`UF.PLAYER.SHELL` 与 `UF.TARGET.SHELL` 各自是一张独立
   完整 `1284×252 RGBA` source 和一张完整 `214×42` runtime。不得两角色合图、
@@ -234,7 +248,7 @@ Frame 中心；透明外扩不能参与 Frame 宽高、点击区域或移动边�
 | `fallback` | `UF.FALLBACK.*` | 保持 pfUI 回退 |
 | `player`／`target`／`focus`／`focustarget`／`group`／`grouptarget`／`grouppet`／`raid`／`ttarget`／`pet`／`ptarget`／`fallback`／`tttarget` 的 `portrait` | `UF.PORTRAIT.DISABLE` | runtime `1.2 / P5` 统一写为 `off`；不制作假头像槽，不运行 2D／3D 动态头像 |
 | `raidmarkershowportrait` | `UF.PORTRAIT.TRACKER.DISABLE` | 同时关闭 `raidmarkers` 与 `marktracking` 两套追踪头像，并收回头像占用宽度 |
-| Buff／Debuff Buttons | `UF.AURA.*` | 当前不重绘 |
+| 四个主框 Buff／Debuff Buttons | `UF.AURA.*` | `unitframes.primary-aura-rim` 复用各自 Raid A2 细边框；尺寸、排列、图标、冷却与事件归 pfUI，Debuff 类型色透传；禁用恢复原 backdrop |
 
 `UF.PORTRAIT.DISABLE` 只使用 scoped route `unitframes.dynamic-portraits`。原始 13 组
 `portrait` 值与 `raidmarkershowportrait` 按 pfUI profile 保存在
@@ -253,3 +267,16 @@ provider Frame 的 Point、Width、Height、事件、点击、Secure 模板或�
 配置写入只允许上述 13 组 `portrait` 与 `raidmarkershowportrait`，并必须可逆。
 媒体或 route 缺失时局部回退 pfUI 原始 portrait／backdrop／bar／glow，姓名板
 只撤下 AEUI 个人目标标记。
+
+四框 Aura 细边框挂在真实 Button 的背景层，四边外扩 `2 UI`，使用同图九切片；
+provider `UpdateConfig` 完成后通过已有框体视觉回调接入，不通过维护循环重写
+几何。Debuff 更新只向边框传递颜色，不重新布局。团队、姓名板 Aura 不在此 route 内。
+
+## pfUI 独立 Buff／Debuff 面板
+
+`unitframes.standalone-aura-rim` 只接管 `pfUI.buff.buffs.buttons`、
+`pfUI.buff.debuffs.buttons` 与 `pfUI.buff.wepbuffs.buttons` 的边框、阴影替代
+及图标层序；复用 Raid A2 A／B 媒体和 `2 UI` 外扩。`modules/buff.lua` 继续
+持有图标、附魔状态、计时、层数、染色、布局、事件、Tooltip 与取消操作。
+在 provider 配置更新结束时更新边框几何；Buff 刷新只传递颜色，不维护几何。
+禁用模块／route 后恢复原 backdrop、shadow 与图标 DrawLayer。
