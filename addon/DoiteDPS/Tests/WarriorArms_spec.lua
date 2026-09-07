@@ -1048,7 +1048,7 @@ action = P:Recommend(State({
     cooldowns = CoreCooldowns(4, 4),
     swing = {
         active = true,
-        remaining = 0.30,
+        remaining = 0.20,
         speed = 3.5,
         slamCast = 1.5,
         slamCapable = false,
@@ -1491,7 +1491,7 @@ action = P:Recommend(State({
     cooldowns = CoreCooldowns(4, 0.8, 99, 5),
     swing = {
         active = true,
-        remaining = 0.30,
+        remaining = 0.20,
         speed = 3.63,
         slamCast = 2.0,
         slamCapable = false,
@@ -1501,6 +1501,16 @@ Check(
     "Cleave never enters the next swing from the timer tail",
     action.key ~= "CLEAVE"
 )
+
+for mode, key in pairs({ single = "HEROIC_STRIKE", aoe = "CLEAVE" }) do
+    local state = State({ mode = mode, rage = 100 })
+    state.swing.remaining = 0.21
+    Check(key .. " can queue just before the 0.20s guard",
+        P:Recommend(state).key == key)
+    state.swing.remaining = 0.20
+    Check(key .. " cannot queue at the 0.20s boundary",
+        P:Recommend(state).key ~= key)
+end
 
 action = P:Recommend(State({
     mode = "aoe",

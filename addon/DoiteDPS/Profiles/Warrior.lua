@@ -338,6 +338,9 @@ function W:ResetRuntime()
 end
 
 function W:OnEvent(eventName, a1, a2, a3, a4, a5, a6, a7, a8, a9)
+    if eventName == "PLAYER_ENTERING_WORLD" and self.weaponSwap then
+        self:FinishWeaponSwap(false)
+    end
     local profileIndex = 1
     while profileIndex <= table.getn(PROFILE_NAMES) do
         local owner = D.Profiles[PROFILE_NAMES[profileIndex]]
@@ -413,6 +416,7 @@ end
 -- 委托标记让执行期间嵌套调用的 Core:BuildState 能解析所属 Profile 的本地模式；
 -- pcall 确保出错后仍会恢复两个标记。
 function W:Execute(mode)
+    if self.weaponSwap then return false end
     local owner, ownerMode, catalogMode = self:ResolveModeProfile(mode)
     if not owner or not owner.Execute then return false end
 
@@ -425,4 +429,226 @@ function W:Execute(mode)
     D._warriorDelegateCatalogMode = previousCatalogMode
     if not ok then error(result) end
     return result
+end
+
+-- Explicit role swap: only a player command starts this short equipment job.
+-- Recommendations never equip items or cast spells. Commit both public entries
+-- only after the client reports the complete weapon set in slots 16/17.
+local function WeaponKey(link)
+    local _, _, key = string.find(link or "", "(item:[^|]+)")
+    return key
+end
+
+local function EquippedKey(slot)
+    return WeaponKey(GetInventoryItemLink("player", slot))
+end
+
+local function EquipLocation(link)
+    if not link then return nil end
+    local name, itemLink, quality, level, itemType, subType, count, location =
+        GetItemInfo(link)
+    return location
+end
+
+local function FindWeapon(key)
+    local bag, slot
+    for bag = 0, 4 do
+        for slot = 1, GetContainerNumSlots(bag) do
+            if WeaponKey(GetContainerItemLink(bag, slot)) == key then
+                return bag, slot
+            end
+        end
+    end
+end
+
+local function EmptyBackpackSlot()
+    -- ponytail: use the always-general backpack; scan bag families if support
+    -- for an entirely full backpack with empty specialty/normal bags is needed.
+    local slot
+    for slot = 1, GetContainerNumSlots(0) do
+        if not GetContainerItemLink(0, slot) then return slot end
+    end
+end
+
+local function WeaponError(message)
+    D:Print(message)
+    return false
+end
+
+function W:IsWeaponAllowed(role, slot, key)
+    local location = EquipLocation(key)
+    if role == "dps" and slot == "main" then
+        return location == "INVTYPE_2HWEAPON"
+    elseif role == "tank" and slot == "main" then
+        return location == "INVTYPE_WEAPON" or location == "INVTYPE_WEAPONMAINHAND"
+    elseif role == "tank" and slot == "off" then
+        return location == "INVTYPE_SHIELD"
+    end
+    return false
+end
+
+function W:SetWeapon(role, slot, key)
+    if self.weaponSwap then
+        return WeaponError(zh and "正在切换武器，请稍候。" or "Weapon swap in progress.")
+    end
+    if (role ~= "dps" and role ~= "tank") or (slot ~= "main" and slot ~= "off")
+        or (role == "dps" and slot == "off") then return false end
+    if key and not self:IsWeaponAllowed(role, slot, key) then return false end
+    local db = D:GetProfileDB(self.key)
+    db.weaponSets = db.weaponSets or {}
+    db.weaponSets[role] = db.weaponSets[role] or {}
+    db.weaponSets[role][slot] = key
+    if D.Config and D.Config.Sync then D.Config:Sync() end
+    return true
+end
+
+function W:SaveWeapons(role)
+    if self.weaponSwap then
+        return WeaponError(zh and "正在切换武器，请稍候。" or "Weapon swap in progress.")
+    end
+    if role ~= "dps" and role ~= "tank" then return false end
+    local main = GetInventoryItemLink("player", 16)
+    local off = GetInventoryItemLink("player", 17)
+    if role == "dps" then
+        -- The current damage catalog contains only the two-handed Arms owner.
+        if not self:IsWeaponAllowed(role, "main", main) then
+            return WeaponError(zh and "当前输出循环为双手武器战，请先装备输出双手武器。"
+                or "The damage rotation requires an equipped two-handed weapon.")
+        end
+        off = nil
+    elseif not self:IsWeaponAllowed(role, "main", main)
+        or not self:IsWeaponAllowed(role, "off", off) then
+        return WeaponError(zh and "请先装备坦克单手武器和盾牌。"
+            or "Equip a tank one-handed weapon and shield first.")
+    end
+    local db = D:GetProfileDB(self.key)
+    db.weaponSets = db.weaponSets or {}
+    db.weaponSets[role] = { main = WeaponKey(main), off = WeaponKey(off) }
+    if D.Config and D.Config.Sync then D.Config:Sync() end
+    D:Print((role == "tank" and (zh and "已保存坦克武器：" or "Tank weapons saved: ")
+        or (zh and "已保存输出武器：" or "Damage weapon saved: "))
+        .. main .. (off and (" / " .. off) or ""))
+    return true
+end
+
+function W:FinishWeaponSwap(success)
+    local job = self.weaponSwap
+    self.weaponSwap = nil
+    if self.weaponFrame then self.weaponFrame:Hide() end
+    if not job then return end
+    if not success then
+        D:Print(zh and "武器切换未完成，循环未更改；请检查装备、物品锁定及背包空格后重按。部分装备可能已切换。"
+            or "Weapon swap incomplete; rotations unchanged. Check gear, item locks and bag space, then retry. Some gear may have changed.")
+        return
+    end
+    local prefix = job.role == "tank" and "protection_" or "arms_berserker_"
+    D:SetEntryBinding(self, "single", prefix .. "single")
+    D:SetEntryBinding(self, "aoe", prefix .. "aoe")
+    D:SetMode(prefix .. job.entry, true)
+    if D.Config and D.Config.Sync then D.Config:Sync() end
+    D:Print(job.role == "tank"
+        and (zh and "已切换：剑盾 + 防战循环（单体／AOE）。" or "Switched to weapon/shield + Protection (single/AoE).")
+        or (zh and "已切换：输出武器 + 武器战循环（单体／AOE）。" or "Switched to damage weapon + Arms (single/AoE)."))
+end
+
+function W:AdvanceWeaponSwap()
+    local job = self.weaponSwap
+    if not job then return end
+    local _, class = UnitClass("player")
+    if class ~= "WARRIOR" or job.db ~= D.DB or GetTime() > job.deadline
+        or CursorHasItem() then
+        self:FinishWeaponSwap(false)
+        return
+    end
+    local main, off = EquippedKey(16), EquippedKey(17)
+    if main == job.set.main and off == job.set.off then
+        self:FinishWeaponSwap(true)
+        return
+    end
+    -- One request per slot, wait for acknowledgement before touching the next.
+    if job.waitSlot then
+        if EquippedKey(job.waitSlot) ~= job.waitKey then return end
+        job.waitSlot = nil
+    end
+    if not job.set.off and off then
+        local empty = EmptyBackpackSlot()
+        if not empty then self:FinishWeaponSwap(false); return end
+        job.waitSlot, job.waitKey = 17, nil
+        PickupInventoryItem(17)
+        if CursorHasItem() then PickupContainerItem(0, empty) end
+    else
+        local inventorySlot = main ~= job.set.main and 16 or 17
+        local key = inventorySlot == 16 and job.set.main or job.set.off
+        local bag, slot = FindWeapon(key)
+        if not bag then self:FinishWeaponSwap(false); return end
+        local texture, count, locked = GetContainerItemInfo(bag, slot)
+        if locked then return end
+        job.waitSlot, job.waitKey = inventorySlot, key
+        PickupContainerItem(bag, slot)
+        if CursorHasItem() then EquipCursorItem(inventorySlot) end
+    end
+    -- Return any unaccepted/displaced cursor item; never destroy or overwrite it.
+    if CursorHasItem() then
+        ClearCursor()
+        self:FinishWeaponSwap(false)
+    end
+end
+
+function W:SwitchRole(role)
+    if self.weaponSwap then return true end -- Repeated clicks cannot reverse an unfinished swap.
+    local mode = self:NormalizeMode(D.DB.mode)
+    if not role or role == "toggle" then
+        role = MODE_BY_KEY[mode].profileKey == "WARRIOR_PROTECTION" and "dps" or "tank"
+    end
+    if role ~= "dps" and role ~= "tank" then
+        return WeaponError("/ddps role toggle|dps|tank")
+    end
+    local sets = D:GetProfileDB(self.key).weaponSets
+    local set = sets and sets[role]
+    if not set or not set.main or (role == "tank" and not set.off) then
+        return WeaponError(zh and "请先装备并保存该武器方案：/ddps weapons save dps 或 /ddps weapons save tank"
+            or "Equip and save this set first: /ddps weapons save dps or /ddps weapons save tank")
+    end
+    if CursorHasItem() then
+        return WeaponError(zh and "请先放下鼠标上的物品。" or "Put down the cursor item first.")
+    end
+    local slots = { 16, 17 }
+    local index
+    for index = 1, 2 do
+        local key = index == 1 and set.main or set.off
+        if key and EquippedKey(slots[index]) ~= key and not FindWeapon(key) then
+            return WeaponError(zh and "所需武器不在装备位或随身背包中，未切换。"
+                or "Required weapon missing from equipment/bags; no swap started.")
+        end
+    end
+    if not set.off and EquippedKey(17) and not EmptyBackpackSlot() then
+        return WeaponError(zh and "请在主背包留出一个空格用于收起盾牌。"
+            or "Leave one empty backpack slot to store the shield.")
+    end
+    self.weaponSwap = {
+        role = role, set = set, entry = MODE_BY_KEY[mode].entry,
+        db = D.DB, deadline = GetTime() + 5,
+    }
+    if not self.weaponFrame then
+        self.weaponFrame = CreateFrame("Frame")
+        self.weaponFrame:SetScript("OnUpdate", function()
+            if not W.weaponSwap then return end
+            local now = GetTime()
+            if now < (W.weaponSwap.nextCheck or 0) then return end
+            W.weaponSwap.nextCheck = now + 0.1
+            W:AdvanceWeaponSwap()
+        end)
+    end
+    self.weaponFrame:Show()
+    self:AdvanceWeaponSwap()
+    return true
+end
+
+function DoiteDPS_WarriorRole(role)
+    local profile = D:GetActiveProfile()
+    if profile ~= W then
+        return WeaponError(zh and "此命令仅支持战士。" or "This command is Warrior-only.")
+    end
+    if not D.DB then D:InitializeDB() end
+    return W:SwitchRole(role)
 end

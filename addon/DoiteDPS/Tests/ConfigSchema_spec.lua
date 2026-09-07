@@ -9,6 +9,10 @@ end
 function GetLocale() return "zhCN" end
 function UnitClass() return "战士", "WARRIOR" end
 function GetCursorPosition() return 0, 0 end
+function getglobal(name) return _G[name] end
+function setglobal(name, value) _G[name] = value end
+local cursorItem
+function CursorHasItem() return cursorItem ~= nil end
 
 local Widget = {}
 Widget.__index = Widget
@@ -594,4 +598,65 @@ Expect(
 profile.ConfigSchema.modes = originalModes
 profile.ConfigSchema.modeGroups = originalModeGroups
 
+Expect("weapon controls hidden without Warrior capability", not C.weaponRow:IsVisible())
+local capturedRole
+profile.SaveWeapons = function(self, role) capturedRole = role end
+C:Refresh()
+Expect("weapon controls visible for Warrior capability", C.weaponRow:IsVisible())
+C.saveDamageWeapons.OnClick()
+Expect("damage capture button saves damage set", capturedRole == "dps")
+C.saveTankWeapons.OnClick()
+Expect("tank capture button saves tank set", capturedRole == "tank")
+local menuEntries = {}
+function UIDropDownMenu_Initialize(frame, callback) menuEntries = {}; callback() end
+function UIDropDownMenu_AddButton(info) table.insert(menuEntries, info) end
+function ToggleDropDownMenu() end
+function GetInventoryItemLink(_, slot) return slot == 16 and "item:1:0:0:0" or nil end
+function GetContainerNumSlots(bag) return bag == 0 and 3 or 0 end
+function GetContainerItemLink(_, slot) return "item:" .. slot .. ":0:0:0" end
+function GetItemInfo(key) return "Weapon " .. key, key, 1, 1, "", "", 1, "", "icon" end
+profile.IsWeaponAllowed = function(self, role, slot, key) return key ~= "item:3:0:0:0" end
+profile.SetWeapon = function(self, role, slot, key)
+    profileDB.weaponSets = profileDB.weaponSets or {}
+    profileDB.weaponSets[role] = profileDB.weaponSets[role] or {}
+    profileDB.weaponSets[role][slot] = key
+    C:Sync()
+    return true
+end
+C.weaponSlots[1].OnClick()
+Expect("weapon menu deduplicates equipment/bag items and filters unsuitable items", table.getn(menuEntries) == 3)
+menuEntries[3].func()
+Expect("selection saves and displays chosen weapon", C.weaponSlots[1].itemKey == "item:2:0:0:0"
+    and C.weaponSlots[1].text.text == "Weapon item:2:0:0:0")
+menuEntries[1].func()
+Expect("clear selection displays empty slot", rawget(C.weaponSlots[1], "itemKey") == nil)
+local pickups = 0
+function PickupContainerItem(bag, slot)
+    pickups = pickups + 1
+    cursorItem = GetContainerItemLink(bag, slot)
+end
+function PickupInventoryItem(slot) cursorItem = GetInventoryItemLink("player", slot) end
+function ClearCursor() cursorItem = nil end
+C:InstallWeaponDragTracking()
+local hookedPickup = PickupContainerItem
+C.panel:Show()
+C:InstallWeaponDragTracking()
+Expect("drag tracking is installed once", PickupContainerItem == hookedPickup)
+PickupContainerItem(0, 2)
+C.weaponSlots[1].OnReceiveDrag()
+Expect("bag drop saves exact item and releases cursor", C.weaponSlots[1].itemKey == "item:2:0:0:0"
+    and not CursorHasItem() and pickups == 1)
+PickupInventoryItem(16)
+C.weaponSlots[1].OnClick()
+Expect("equipment pickup can be placed with a click", C.weaponSlots[1].itemKey == "item:1:0:0:0" and not CursorHasItem())
+PickupContainerItem(0, 3)
+Expect("wrong item is rejected without clearing cursor or changing selection", not C:ReceiveWeaponDrag(C.weaponSlots[1])
+    and CursorHasItem() and C.weaponSlots[1].itemKey == "item:1:0:0:0")
+ClearCursor()
+cursorItem = "item:2:0:0:0"
+Expect("unknown cursor source cannot reuse an old drag", not C:ReceiveWeaponDrag(C.weaponSlots[1]))
+ClearCursor()
+profile.SaveWeapons = nil
+C:Refresh()
+Expect("weapon controls hide on profile change", not C.weaponRow:IsVisible())
 print("ConfigSchema_spec: " .. passed .. " checks passed")

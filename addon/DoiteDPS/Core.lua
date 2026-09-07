@@ -3180,6 +3180,16 @@ function D:HandleSlash(message)
         else
             self:Execute(rest)
         end
+    elseif command == "role" then
+        DoiteDPS_WarriorRole(rest ~= "" and string.lower(rest) or "toggle")
+    elseif command == "weapons" then
+        local profile = self:GetActiveProfile()
+        local _, _, role = string.find(string.lower(rest), "^save%s+(%a+)$")
+        if profile and profile.SaveWeapons and (role == "dps" or role == "tank") then
+            profile:SaveWeapons(role)
+        else
+            self:Print("/ddps weapons save dps|tank (Warrior)")
+        end
     elseif command == "tank" then
         local tankCommand = string.lower(NormalizeTankName(rest))
         if tankCommand == "set" then
@@ -3263,8 +3273,8 @@ function D:HandleSlash(message)
         self:Print(zh and "设置已重置。" or "Settings reset.")
     else
         self:Print(zh and
-            "/ddps show|hide|lock|unlock|mode single|aoe|pvp_close|cast [single|aoe|pvp_close]|tank set|clear|status|macros|config|scale 1.0|combat|test|debug|status|reset" or
-            "/ddps show|hide|lock|unlock|mode single|aoe|pvp_close|cast [single|aoe|pvp_close]|tank set|clear|status|macros|config|scale 1.0|combat|test|debug|status|reset")
+            "/ddps show|hide|lock|unlock|mode single|aoe|pvp_close|cast [single|aoe|pvp_close]|role toggle|dps|tank|weapons save dps|tank|tank set|clear|status|macros|config|scale 1.0|combat|test|debug|status|reset" or
+            "/ddps show|hide|lock|unlock|mode single|aoe|pvp_close|cast [single|aoe|pvp_close]|role toggle|dps|tank|weapons save dps|tank|tank set|clear|status|macros|config|scale 1.0|combat|test|debug|status|reset")
     end
 end
 

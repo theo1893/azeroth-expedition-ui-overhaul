@@ -436,6 +436,186 @@ assignTankButton:SetScript("OnClick", function()
 end)
 C.assignTankButton = assignTankButton
 
+-- Capture equipped items rather than asking users to type localized item names.
+local weaponRow = CreateFrame("Frame", nil, panel)
+weaponRow:SetWidth(CONTENT_WIDTH)
+weaponRow:SetHeight(138)
+weaponRow:Hide()
+C.weaponRow = weaponRow
+local weaponTitle = CreateSectionHeader(weaponRow, zh and "战士武器方案" or "Warrior weapons")
+weaponTitle:SetPoint("TOPLEFT", weaponRow, "TOPLEFT", 0, 0)
+local weaponHint = weaponRow:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+weaponHint:SetPoint("TOPLEFT", weaponRow, "TOPLEFT", 8, -116)
+weaponHint:SetText(zh and "动作栏切换宏：/ddps role toggle" or "Action-bar macro: /ddps role toggle")
+local function CreateWeaponSaveButton(role, x, label)
+    local button = CreateFrame("Button", nil, weaponRow, "UIPanelButtonTemplate")
+    button:SetWidth(230)
+    button:SetHeight(21)
+    button:SetPoint("TOPLEFT", weaponRow, "TOPLEFT", x, -24)
+    button:SetText(label)
+    button:SetScript("OnClick", function()
+        local profile = D:GetActiveProfile()
+        if profile and profile.SaveWeapons then profile:SaveWeapons(role) end
+    end)
+    button:SetScript("OnEnter", function()
+        local profile = D:GetActiveProfile()
+        local sets = profile and D:GetProfileDB(profile.key).weaponSets
+        local set = sets and sets[role]
+        GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+        GameTooltip:SetText(label)
+        GameTooltip:AddLine(zh and "先装备对应武器，再点击保存。" or "Equip the desired weapons, then click to save.", 1, 1, 1)
+        if set then
+            local name = GetItemInfo(set.main)
+            GameTooltip:AddLine(name or set.main, 0.4, 0.9, 0.5)
+            if set.off then
+                local offName = GetItemInfo(set.off)
+                GameTooltip:AddLine(offName or set.off, 0.4, 0.9, 0.5)
+            end
+        else
+            GameTooltip:AddLine(zh and "尚未保存" or "Not saved", 1, 0.5, 0.2)
+        end
+        GameTooltip:Show()
+    end)
+    button:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    return button
+end
+C.saveDamageWeapons = CreateWeaponSaveButton("dps", 0,
+    zh and "保存当前输出双手武器" or "Save equipped damage weapon")
+C.saveTankWeapons = CreateWeaponSaveButton("tank", 244,
+    zh and "保存当前坦克单手武器／盾牌" or "Save equipped tank weapon/shield")
+
+-- Native dropdowns list only suitable equipped/bag items, without equipping them.
+local weaponMenu = CreateFrame("Frame", "DoiteDPSWeaponDropdown", panel, "UIDropDownMenuTemplate")
+weaponMenu:Hide()
+C.weaponSlots = {}
+panel:SetScript("OnHide", function() C.weaponDrag = nil end)
+-- Vanilla has no reliable cursor item link API. Capture the exact link before
+-- the native bag/equipment pickup, chaining providers already installed.
+function C:InstallWeaponDragTracking()
+    self.weaponDragHooks = self.weaponDragHooks or {}
+    local function HookPickup(name)
+        local original = getglobal(name)
+        if C.weaponDragHooks[name] or type(original) ~= "function" then return end
+        setglobal(name, function(a, b)
+            local link
+            if panel:IsVisible() and not CursorHasItem() then
+                if name == "PickupContainerItem" then
+                    link = GetContainerItemLink(a, b)
+                elseif name == "PickupInventoryItem" then
+                    link = GetInventoryItemLink("player", a)
+                end
+            end
+            C.weaponDrag = nil
+            original(a, b)
+            local _, _, key = string.find(link or "", "(item:[^|]+)")
+            if key and CursorHasItem() then C.weaponDrag = { key = key, db = D.DB } end
+        end)
+        C.weaponDragHooks[name] = true
+    end
+    HookPickup("PickupContainerItem")
+    HookPickup("PickupInventoryItem")
+    HookPickup("PickupBagFromSlot")
+    HookPickup("PickupItem")
+    HookPickup("ClearCursor")
+end
+function C:ReceiveWeaponDrag(button)
+    if not CursorHasItem() then self.weaponDrag = nil; return false end
+    local drag = self.weaponDrag
+    local profile = D:GetActiveProfile()
+    if not drag or drag.db ~= D.DB or not profile or not profile.SetWeapon then
+        D:Print(zh and "请打开配置页后，从背包或角色装备栏重新拖入物品。"
+            or "With config open, pick up the item again from your bags or equipment.")
+        return false
+    end
+    if not profile:IsWeaponAllowed(button.role, button.slot, drag.key) then
+        D:Print(zh and "物品类型不符：输出主手需要双手武器，坦克需要单手武器／盾牌。"
+            or "Wrong item type: damage needs a two-hander; tank needs a one-hander/shield.")
+        return false
+    end
+    if not profile:SetWeapon(button.role, button.slot, drag.key) then return false end
+    ClearCursor() -- Return the item to its source; this only saves a reference.
+    self.weaponDrag = nil
+    return true
+end
+local function AddWeaponChoice(profile, role, slot, key, name, icon)
+    local sets = D:GetProfileDB(profile.key).weaponSets
+    local saved = sets and sets[role] and sets[role][slot]
+    UIDropDownMenu_AddButton({
+        text = name, icon = icon, checked = saved == key,
+        func = function() profile:SetWeapon(role, slot, key) end,
+    })
+end
+function C:OpenWeaponMenu(button)
+    local profile = D:GetActiveProfile()
+    if not profile or not profile.SetWeapon then return end
+    UIDropDownMenu_Initialize(weaponMenu, function()
+        AddWeaponChoice(profile, button.role, button.slot, nil,
+            zh and "未配置（清除）" or "Not configured (clear)")
+        local seen = {}
+        local function AddLink(link)
+            local _, _, key = string.find(link or "", "(item:[^|]+)")
+            if not key or seen[key] or not profile:IsWeaponAllowed(button.role, button.slot, key) then return end
+            seen[key] = true
+            local name, itemLink, quality, level, itemType, subType, count, location, icon = GetItemInfo(key)
+            AddWeaponChoice(profile, button.role, button.slot, key, name or key, icon)
+        end
+        AddLink(GetInventoryItemLink("player", 16))
+        AddLink(GetInventoryItemLink("player", 17))
+        local bag, slot
+        for bag = 0, 4 do
+            for slot = 1, GetContainerNumSlots(bag) do
+                AddLink(GetContainerItemLink(bag, slot))
+            end
+        end
+    end, "MENU")
+    ToggleDropDownMenu(1, nil, weaponMenu, button, 0, 0)
+end
+local function CreateWeaponSlot(role, slot, x, y, label)
+    local button = CreateFrame("Button", nil, weaponRow, "UIPanelButtonTemplate")
+    button:SetWidth(230)
+    button:SetHeight(28)
+    button:SetPoint("TOPLEFT", weaponRow, "TOPLEFT", x, y)
+    button.role, button.slot, button.label = role, slot, label
+    button.icon = button:CreateTexture(nil, "ARTWORK")
+    button.icon:SetWidth(22)
+    button.icon:SetHeight(22)
+    button.icon:SetPoint("LEFT", button, "LEFT", 4, 0)
+    button.text = button:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    button.text:SetPoint("LEFT", button, "LEFT", 31, 0)
+    button.text:SetWidth(188)
+    button.text:SetJustifyH("LEFT")
+    button:SetScript("OnReceiveDrag", function() C:ReceiveWeaponDrag(button) end)
+    button:SetScript("OnClick", function()
+        if CursorHasItem() then C:ReceiveWeaponDrag(button)
+        else C:OpenWeaponMenu(button) end
+    end)
+    button:SetScript("OnEnter", function()
+        GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
+        if button.itemKey then GameTooltip:SetHyperlink(button.itemKey)
+        else GameTooltip:SetText(label) end
+        GameTooltip:AddLine(zh and "从背包／角色装备栏拖入物品，或点击选择。" or "Drag from bags/equipment, or click to choose.", 1, 1, 1)
+        GameTooltip:Show()
+    end)
+    button:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    C.weaponSlots[table.getn(C.weaponSlots) + 1] = button
+end
+CreateWeaponSlot("dps", "main", 0, -49, zh and "输出主手" or "Damage main hand")
+CreateWeaponSlot("tank", "main", 244, -49, zh and "坦克主手" or "Tank main hand")
+CreateWeaponSlot("tank", "off", 244, -80, zh and "坦克盾牌" or "Tank shield")
+function C:UpdateWeaponSlots(profile)
+    local sets = D:GetProfileDB(profile.key).weaponSets
+    local index
+    for index = 1, table.getn(self.weaponSlots) do
+        local button = self.weaponSlots[index]
+        local key = sets and sets[button.role] and sets[button.role][button.slot]
+        local name, link, quality, level, itemType, subType, count, location, icon
+        if key then name, link, quality, level, itemType, subType, count, location, icon = GetItemInfo(key) end
+        button.itemKey = key
+        button.icon:SetTexture(icon or "Interface\\Icons\\INV_Misc_QuestionMark")
+        button.text:SetText(key and (name or key) or (button.label .. (zh and "：未配置" or ": not set")))
+    end
+end
+
 local resetButton = CreateFrame(
     "Button",
     "DoiteDPSConfigResetMode",
@@ -1716,6 +1896,16 @@ function C:Refresh()
         end
         usedToggleCount = toggleIndex
 
+    end
+
+    self.weaponRow:Hide()
+    if profile and profile.SaveWeapons then
+        self:InstallWeaponDragTracking()
+        self.weaponRow:ClearAllPoints()
+        self.weaponRow:SetPoint("TOPLEFT", panel, "TOPLEFT", CONTENT_LEFT, nextY)
+        self.weaponRow:Show()
+        self:UpdateWeaponSlots(profile)
+        nextY = nextY - 140
     end
 
     self.generalTitle:ClearAllPoints()
