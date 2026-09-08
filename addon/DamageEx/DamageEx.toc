@@ -1,0 +1,14 @@
+﻿## Interface: 11200
+## Title:DamageEx
+## Notes:在屏幕指定位置显示玩家对目标造成的伤害、治疗量的数值。|N命令：/dex
+## Title-zhCN:|CFFFF0000[战斗]|R增强伤害显示器(Dex)
+## Notes-zhCN:|CFFFF0000DamageEx|R|N在屏幕指定位置显示玩家对目标造成的伤害、治疗量的数值。|N命令：/dex
+## X-Repple: 战斗
+## Author: MH, 武藤纯子酱, 妖姬变
+## SavedVariables: DEX_SAVE
+## OptionalDeps: myAddOns
+## Dependencies: 
+DamageEx.xml
+DEXoptions.xml
+
+## X-Turtle-Shell-Version: 1693786884

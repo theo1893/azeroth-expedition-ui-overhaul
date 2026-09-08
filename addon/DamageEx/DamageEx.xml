@@ -1,0 +1,150 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"   xsi:schemaLocation="http://www.blizzard.com/wow/ui/"> 
+    <Script file="localization.lua"/>
+    <Script file="damageEx.lua"/>
+    
+    <FontString name="damageExFont" font="Fonts\FZJZJW.TTF" virtual="true">
+        <FontHeight>
+            <AbsValue val="22"/>
+        </FontHeight>
+        <Anchors>
+            <Anchor point="CENTER">
+                <Offset>
+                    <AbsDimension x="0" y="0"/>
+                </Offset>
+            </Anchor>
+        </Anchors>
+        <Shadow />
+    </FontString>
+    
+    <Frame name="DEX_TEXT" toplevel="true" enableMouse="false" parent="UIParent" frameStrata="HIGH">
+        <Size>
+            <AbsDimension x="24" y="24"/>
+        </Size>
+        <Anchors>
+            <Anchor point="CENTER">
+                <Offset>
+                    <AbsDimension x="0" y="60"/>
+                </Offset>
+            </Anchor>
+        </Anchors>
+    
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="DEXaniIcon1"/>
+                <Texture name="DEXaniIcon2"/>
+                <Texture name="DEXaniIcon3"/>
+                <Texture name="DEXaniIcon4"/>
+                <Texture name="DEXaniIcon5"/>
+                <Texture name="DEXaniIcon6"/>
+                <Texture name="DEXaniIcon7"/>
+                <Texture name="DEXaniIcon8"/>
+                <Texture name="DEXaniIcon9"/>
+                <Texture name="DEXaniIcon10"/>
+                <Texture name="DEXaniIcon11"/>
+                <Texture name="DEXaniIcon12"/>
+                <Texture name="DEXaniIcon13"/>
+                <Texture name="DEXaniIcon14"/>
+                <Texture name="DEXaniIcon15"/>
+                <Texture name="DEXaniIcon16"/>
+                <Texture name="DEXaniIcon17"/>
+                <Texture name="DEXaniIcon18"/>
+                <Texture name="DEXaniIcon19"/>
+                <Texture name="DEXaniIcon20"/>
+                <Texture name="DEXaniIcon21"/>
+                <Texture name="DEXaniIcon22"/>
+                <Texture name="DEXaniIcon23"/>
+                <Texture name="DEXaniIcon24"/>
+                <Texture name="DEXaniIcon25"/>
+                <Texture name="DEXaniIcon26"/>
+                <Texture name="DEXaniIcon27"/>
+                <Texture name="DEXaniIcon28"/>
+                <Texture name="DEXaniIcon29"/>
+                <Texture name="DEXaniIcon30"/>
+                <Texture name="DEXaniIcon31"/>
+                <Texture name="DEXaniIcon32"/>
+                <Texture name="DEXaniIcon33"/>
+                <Texture name="DEXaniIcon34"/>
+                <Texture name="DEXaniIcon35"/>
+                <Texture name="DEXaniIcon36"/>
+                <Texture name="DEXaniIcon37"/>
+                <Texture name="DEXaniIcon38"/>
+                <Texture name="DEXaniIcon39"/>
+                <Texture name="DEXaniIcon40"/>
+                <Texture name="DEXaniIcon41"/>
+                <Texture name="DEXaniIcon42"/>
+                <Texture name="DEXaniIcon43"/>
+                <Texture name="DEXaniIcon44"/>
+                <Texture name="DEXaniIcon45"/>
+                <Texture name="DEXaniIcon46"/>
+                <Texture name="DEXaniIcon47"/>
+                <Texture name="DEXaniIcon48"/>
+                <Texture name="DEXaniIcon49"/>
+                <Texture name="DEXaniIcon50"/>
+            </Layer>
+            <Layer level="ARTWORK">
+                <FontString name="DEXaniText1" inherits="damageExFont"/>
+                <FontString name="DEXaniText2" inherits="damageExFont"/>
+                <FontString name="DEXaniText3" inherits="damageExFont"/>
+                <FontString name="DEXaniText4" inherits="damageExFont"/>
+                <FontString name="DEXaniText5" inherits="damageExFont"/>
+                <FontString name="DEXaniText6" inherits="damageExFont"/>
+                <FontString name="DEXaniText7" inherits="damageExFont"/>
+                <FontString name="DEXaniText8" inherits="damageExFont"/>
+                <FontString name="DEXaniText9" inherits="damageExFont"/>
+                <FontString name="DEXaniText10" inherits="damageExFont"/>
+                <FontString name="DEXaniText11" inherits="damageExFont"/>
+                <FontString name="DEXaniText12" inherits="damageExFont"/>
+                <FontString name="DEXaniText13" inherits="damageExFont"/>
+                <FontString name="DEXaniText14" inherits="damageExFont"/>
+                <FontString name="DEXaniText15" inherits="damageExFont"/>
+                <FontString name="DEXaniText16" inherits="damageExFont"/>
+                <FontString name="DEXaniText17" inherits="damageExFont"/>
+                <FontString name="DEXaniText18" inherits="damageExFont"/>
+                <FontString name="DEXaniText19" inherits="damageExFont"/>
+                <FontString name="DEXaniText20" inherits="damageExFont"/>
+                <FontString name="DEXaniText21" inherits="damageExFont"/>
+                <FontString name="DEXaniText22" inherits="damageExFont"/>
+                <FontString name="DEXaniText23" inherits="damageExFont"/>
+                <FontString name="DEXaniText24" inherits="damageExFont"/>
+                <FontString name="DEXaniText25" inherits="damageExFont"/>
+                <FontString name="DEXaniText26" inherits="damageExFont"/>
+                <FontString name="DEXaniText27" inherits="damageExFont"/>
+                <FontString name="DEXaniText28" inherits="damageExFont"/>
+                <FontString name="DEXaniText29" inherits="damageExFont"/>
+                <FontString name="DEXaniText30" inherits="damageExFont"/>
+                <FontString name="DEXaniText31" inherits="damageExFont"/>
+                <FontString name="DEXaniText32" inherits="damageExFont"/>
+                <FontString name="DEXaniText33" inherits="damageExFont"/>
+                <FontString name="DEXaniText34" inherits="damageExFont"/>
+                <FontString name="DEXaniText35" inherits="damageExFont"/>
+                <FontString name="DEXaniText36" inherits="damageExFont"/>
+                <FontString name="DEXaniText37" inherits="damageExFont"/>
+                <FontString name="DEXaniText38" inherits="damageExFont"/>
+                <FontString name="DEXaniText39" inherits="damageExFont"/>
+                <FontString name="DEXaniText40" inherits="damageExFont"/>
+                <FontString name="DEXaniText41" inherits="damageExFont"/>
+                <FontString name="DEXaniText42" inherits="damageExFont"/>
+                <FontString name="DEXaniText43" inherits="damageExFont"/>
+                <FontString name="DEXaniText44" inherits="damageExFont"/>
+                <FontString name="DEXaniText45" inherits="damageExFont"/>
+                <FontString name="DEXaniText46" inherits="damageExFont"/>
+                <FontString name="DEXaniText47" inherits="damageExFont"/>
+                <FontString name="DEXaniText48" inherits="damageExFont"/>
+                <FontString name="DEXaniText49" inherits="damageExFont"/>
+                <FontString name="DEXaniText50" inherits="damageExFont"/>
+            </Layer>        
+        </Layers>
+        
+        <Scripts>
+            <OnLoad>
+                DEX_OnLoad();
+            </OnLoad>
+            <OnEvent>
+                DEX_OnEvent(event, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+            </OnEvent>     
+            <OnUpdate>
+                DEX_GameUpdate();
+            </OnUpdate>         
+        </Scripts>
+    </Frame>    
+</Ui>

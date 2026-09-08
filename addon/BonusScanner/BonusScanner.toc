@@ -1,0 +1,12 @@
+## Interface: 11200
+## Title: 装备属性 BonusScanner
+## Notes: 扫描您的装备累积属性，并总结他们。
+## Title-zhCN:|CFF00FF00[|r|CFFDD66DD界面|r|CFF00FF00] 装备属性比较-依赖
+## Notes-zhCN:|CFFFFFF00BonusScanner|R|N扫描您的装备累积属性，并总结它们。|cFFFFFF00|n 乌龟服定制版 by Sunelegy
+## X-Repple: 职业
+## Version: 2.9.8
+## Author: crowley@headshot.de, Sunelegy
+## SavedVariables: 
+## OptionalDeps: 
+## Dependencies: 
+BonusScanner.xml

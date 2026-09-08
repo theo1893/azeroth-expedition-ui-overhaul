@@ -1,0 +1,59 @@
+<Bindings>
+	<Binding name="TOGGLESUPERMACROPLUS" header="SUPERMACROPLUSHEADER">
+		if ( not SuperMacroPlusFrame:IsVisible() ) then
+			ShowUIPanel(SuperMacroPlusFrame);
+		else
+			HideUIPanel(SuperMacroPlusFrame);
+		end;
+	</Binding>
+	<Binding name="SMP_CATEGORY_MACRO1">RunSuperMacroPlus(1);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO2">RunSuperMacroPlus(2);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO3">RunSuperMacroPlus(3);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO4">RunSuperMacroPlus(4);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO5">RunSuperMacroPlus(5);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO6">RunSuperMacroPlus(6);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO7">RunSuperMacroPlus(7);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO8">RunSuperMacroPlus(8);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO9">RunSuperMacroPlus(9);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO10">RunSuperMacroPlus(10);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO11">RunSuperMacroPlus(11);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO12">RunSuperMacroPlus(12);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO13">RunSuperMacroPlus(13);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO14">RunSuperMacroPlus(14);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO15">RunSuperMacroPlus(15);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO16">RunSuperMacroPlus(16);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO17">RunSuperMacroPlus(17);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO18">RunSuperMacroPlus(18);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO19">RunSuperMacroPlus(19);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO20">RunSuperMacroPlus(20);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO21">RunSuperMacroPlus(21);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO22">RunSuperMacroPlus(22);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO23">RunSuperMacroPlus(23);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO24">RunSuperMacroPlus(24);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO25">RunSuperMacroPlus(25);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO26">RunSuperMacroPlus(26);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO27">RunSuperMacroPlus(27);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO28">RunSuperMacroPlus(28);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO29">RunSuperMacroPlus(29);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO30">RunSuperMacroPlus(30);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO31">RunSuperMacroPlus(31);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO32">RunSuperMacroPlus(32);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO33">RunSuperMacroPlus(33);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO34">RunSuperMacroPlus(34);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO35">RunSuperMacroPlus(35);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO36">RunSuperMacroPlus(36);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO37">RunSuperMacroPlus(37);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO38">RunSuperMacroPlus(38);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO39">RunSuperMacroPlus(39);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO40">RunSuperMacroPlus(40);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO41">RunSuperMacroPlus(41);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO42">RunSuperMacroPlus(42);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO43">RunSuperMacroPlus(43);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO44">RunSuperMacroPlus(44);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO45">RunSuperMacroPlus(45);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO46">RunSuperMacroPlus(46);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO47">RunSuperMacroPlus(47);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO48">RunSuperMacroPlus(48);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO49">RunSuperMacroPlus(49);</Binding>
+	<Binding name="SMP_CATEGORY_MACRO50">RunSuperMacroPlus(50);</Binding>
+</Bindings>

@@ -1,0 +1,9 @@
+﻿## Title: |cFF00FF00自动出售灰色物品
+## Title-zhCN: |cFF00FF00自动出售灰色物品
+## Interface: 11200
+## Version: 3.11a
+## SavedVariables: autoProfitExceptions, autoSell, autoSilent
+## X-Credits: Roadblock
+## Notes: 点开NPC时，自动向NPC贩卖灰色物品。设置指令/ap  |cFFFFFF00|n 乌龟服定制版 by Sunelegy
+## Notes-zhCN: 点开NPC时，自动向NPC贩卖灰色物品。设置指令/ap  |cFFFFFF00|n 乌龟服定制版 by Sunelegy
+AutoProfit.xml

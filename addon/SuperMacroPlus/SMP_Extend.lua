@@ -1,0 +1,2 @@
+-- Optional file for user-defined SuperMacroPlus helper functions.
+-- Keep this file present so the XML script reference is always valid.

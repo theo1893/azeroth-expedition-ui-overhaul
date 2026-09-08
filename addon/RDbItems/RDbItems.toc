@@ -1,0 +1,9 @@
+## Interface: 11200
+## Title: |cFF00FF00物品出售价格显示
+## Notes: 在物品信息下方显示该物品出售给NPC的价格。 |cFFFFFF00|n 乌龟服定制版 by Sunelegy
+## OptionalDeps: RDbItemsEnchant
+## SavedVariables: RDbItemsCC
+## Author: Shagu, Sunelegy
+## Version: 1.2
+
+RDbItems.xml

@@ -1,0 +1,9 @@
+## Interface: 11200
+## Title: 信息收集调节
+## Notes: /FW 更改战斗记录收集范围，电脑配置低可调低，会影响DPS收集插件精度
+## Title-zhCN:|CFF33AAFF[辅助]|R信息范围调节
+## Notes-zhCN:更改战斗记录收集范围，减少资源占用。电脑配置低可调低，但会影响DPS收集插件范围。|n输入/FW调整设置。
+## Version: 1.0
+## Author: 缺德不呀
+
+RangeController.lua

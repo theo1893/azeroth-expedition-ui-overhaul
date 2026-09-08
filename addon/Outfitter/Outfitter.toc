@@ -1,0 +1,18 @@
+## Interface: 11200
+## Title:|cFF00FF00自动一键换装
+## Notes: 很强大的一键换装插件，可以在设定好的特殊场景自动一键换装，包括坐骑/银色黎明/不同变身等等。 |cFFFFFF00|n 乌龟服定制版 by Sunelegy
+## Title-zhCN:|cFF00FF00自动一键换装
+## Notes-zhCN: 很强大的一键换装插件，可以在设定好的特殊场景自动一键换装，包括坐骑/银色黎明/不同变身等等。 |cFFFFFF00|n 乌龟服定制版 by Sunelegy
+## OptionalDeps: TankPoints
+## RequiredDeps: 
+## SavedVariablesPerCharacter: gOutfitter_Settings
+
+OutfitterStrings.lua
+OutfitterStrings_de.lua
+OutfitterStrings_fr.lua
+OutfitterStrings_cn.lua
+OutfitterStrings_tw.lua
+OutfitterStrings_kr.lua
+
+Outfitter.lua
+Outfitter.xml

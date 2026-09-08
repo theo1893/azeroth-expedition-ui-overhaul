@@ -1,0 +1,8 @@
+## Interface:11200
+## Title:|cFF00FF00进战/脱战提示
+## Notes:进入战斗或者脱离战斗会在屏幕中央出现文字提示。 |cFFFFFF00|n 乌龟服定制版 by Sunelegy
+## Title-zhCN:|cFF00FF00进战/脱战提示
+## Notes-zhCN:进入战斗或者脱离战斗会在屏幕中央出现文字提示。 |cFFFFFF00|n 乌龟服定制版 by Sunelegy
+## Author: 1.12 modify by 狗血编剧男
+## Version: 1.0.0
+AlertCombat.lua

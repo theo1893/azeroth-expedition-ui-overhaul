@@ -1,0 +1,10 @@
+## Interface: 11200
+## Title: Tmog幻化仓库 |cffc79c6e-Spit-|r
+## Title-zhCN:|CFF33AAFF[辅助]|R幻化仓库
+## Author: Otari98
+## Version: 3.4 
+## Notes: 添加幻化物品浏览器并在游戏提示框中显示你的幻化收藏信息 v.3.4
+## Notes-zhCN: 能够在任意地点打开幻化仓库，查看幻化收集情况。|n/Tmog show
+## SavedVariablesPerCharacter: TMOG_CACHE, TMOG_PLAYER_OUTFITS, TMOG_TRANSMOG_STATUS, TMOG_POSITION, TMOG_LOCKED
+
+Tmog.xml

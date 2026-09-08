@@ -1,0 +1,31 @@
+## Interface: 11200
+## Title: |cff33ffcc[团队工具]|cffffffff副本进度检查|cffff1450[2.0]
+## Notes: |CFFDD66DDRaidProgress|R|N聊天栏输入/rp 或者点击小地图收纳 检查所有角色的副本进度 |n|cFFFFFF00乌龟服定制版 by 吊儿啷当，德兔 - 表格界面升级版
+## Author: 吊儿啷当，德兔
+## Version: 2.0
+## SavedVariables: RaidProgressDB
+
+## OptionalDeps: Ace2, FuBarPlugin-2.0
+## X-Embeds: Ace2, FuBarPlugin-2.0
+
+Libs\Ace2\AceLibrary\AceLibrary.lua
+
+Libs\Ace2\AceOO-2.0\AceOO-2.0.lua
+Libs\Ace2\AceAddon-2.0\AceAddon-2.0.lua
+Libs\Ace2\AceEvent-2.0\AceEvent-2.0.lua
+Libs\Ace2\AceDB-2.0\AceDB-2.0.lua
+Libs\Ace2\AceConsole-2.0\AceConsole-2.0.lua
+Libs\FuBarPlugin-2.0\FuBarPlugin-2.0.lua
+
+Config.lua
+SimpleCompat.lua
+UltraSimpleTooltip.lua
+QuickSymbolFix.lua
+InlineResetTime.lua
+Utils.lua
+ResetCalculator.lua
+WeeklyQuest.lua
+Display.lua
+RaidProgress.lua
+RealTableGridUI.lua
+VERSION_INFO.lua

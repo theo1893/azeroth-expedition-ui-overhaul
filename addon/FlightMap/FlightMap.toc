@@ -1,0 +1,11 @@
+## Interface: 11200
+## Title: Dhask's FlightMap v1.12-1
+## Notes: Adds a tooltip to the world map showing flightpaths into and out of regions, and region level ranges.
+## Title-zhCN:|CFF00FF00[|r|cffff7d0a地图|r|CFF00FF00] 飞行地图
+## Notes-zhCN:|CFF00FF00FlightMap|R|N显示地图的推荐等级范围，飞行线路，飞机点的坐标。|N命令：/fmap
+## SavedVariables: FlightMap
+## OptionalDeps: myAddOns, Sea
+FlightMapUtil.lua
+FlightMap.xml
+FlightMapTimes.xml
+FlightMapTaxi.xml

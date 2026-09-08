@@ -1,0 +1,25 @@
+## Interface: 11200
+## Title: |cff6FA8DC[DoiteAuras]|r
+## Notes: 适用于经典旧世的轻量级类 WeakAuras 插件，由 Doite 制作。
+## Author: Doite
+## Version: 1.9.10
+## SavedVariablesPerCharacter: DoiteAurasDB
+
+DoiteAuras.lua
+
+Modules\DoiteBuffData.lua
+Modules\DoitePlayerAuras.lua
+Modules\DoitePetAuras.lua
+Modules\DoiteEdit.lua
+Modules\DoiteGlow.lua
+Modules\DoiteConditions.lua
+Modules\DoiteGroup.lua
+Modules\DoiteLogic.lua
+Modules\DoiteExport.lua
+Modules\DoiteTargetAuras.lua
+Modules\DoiteSettings.lua
+Modules\DoiteBars.lua
+Modules\DoiteMonitorGroupLabels.lua
+Modules\DoiteResourceMonitors.lua
+Modules\DoiteWarriorMonitors.lua
+Modules\DoiteShamanMonitors.lua

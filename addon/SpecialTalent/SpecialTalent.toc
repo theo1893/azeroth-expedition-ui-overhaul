@@ -1,0 +1,11 @@
+# Do not delete the following line!
+## Interface: 11200
+## Title: SpecialTalent
+## Notes: Needed to load SpecialTalentUI, an improved talent frame.
+## Title-zhCN:|CFF00FF00[|r|CFFDD66DD界面|r|CFF00FF00] 天赋模拟器
+## Notes-zhCN:|CFFDD66DDSpecialTalent|R需要加载SpecialTalentUI，这是一个改进的天赋框架。
+## Author: KrekoG, Wind, Sunelegy
+## Version: 1.0.0
+## SavedVariables: 
+## First created: Apr 2006
+SpecialTalent.lua

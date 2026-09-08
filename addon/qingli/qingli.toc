@@ -1,0 +1,7 @@
+## Interface: 11200
+## Title: |CFF33AAFF[辅助]|R自动释放内存
+## Notes: 自动清理缓存，减少卡顿
+## Author: 缺德不呀
+## Version: 1.0
+## SavedVariables: QingliDB
+qingli.lua

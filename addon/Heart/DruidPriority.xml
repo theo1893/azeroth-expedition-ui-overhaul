@@ -1,0 +1,117 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+	<Frame name="Heart_GUIDruidPriorityFrame" parent="Heart_GUIPriorities" hidden="false">
+		<Size>
+			<AbsDimension x="370" y="120"/>
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="ClassesInset" relativePoint="BOTTOMLEFT">
+				<Offset>
+					<AbsDimension x="0" y="-5"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Backdrop name="$parentBackdrop" bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<EdgeSize>
+				<AbsValue val="16"/>
+			</EdgeSize>
+			<TileSize>
+				<AbsValue val="16"/>
+			</TileSize>
+			<BackgroundInsets>
+				<AbsInset left="5" right="5" top="5" bottom="5"/>
+			</BackgroundInsets>
+		</Backdrop>
+		<Frames>
+			<Frame name="Heart_GUIRegrowthPriority" inherits="Heart_GUISliderTemplate2">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="10" y="-7"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName() .. "SliderLow"):SetText(Heart_GUI_regrowth_priority)
+						getglobal(this:GetName() .. "Slider").variable = "Heart_Config[\"regrowth_priority\"]"
+					</OnLoad>
+					<OnShow>
+						getglobal(this:GetName() .. "SliderLow"):SetVertexColor(RAID_CLASS_COLORS["DRUID"].r, RAID_CLASS_COLORS["DRUID"].g, RAID_CLASS_COLORS["DRUID"].b)
+						getglobal(this:GetName() .. "SliderHigh"):SetVertexColor(RAID_CLASS_COLORS["DRUID"].r, RAID_CLASS_COLORS["DRUID"].g, RAID_CLASS_COLORS["DRUID"].b)
+						getglobal(this:GetName() .. "Slider"):SetValue(Heart_Config["regrowth_priority"])
+					</OnShow>
+				</Scripts>
+			</Frame>
+			<Frame name="Heart_GUIHealingTouchPriority" inherits="Heart_GUISliderTemplate2">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="Heart_GUIRegrowthPriority" relativePoint="BOTTOM"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName() .. "SliderLow"):SetText(Heart_GUI_healing_touch_priority)
+						getglobal(this:GetName() .. "Slider").variable = "Heart_Config[\"healing_touch_priority\"]"
+					</OnLoad>
+					<OnShow>
+						getglobal(this:GetName() .. "SliderLow"):SetVertexColor(RAID_CLASS_COLORS["DRUID"].r, RAID_CLASS_COLORS["DRUID"].g, RAID_CLASS_COLORS["DRUID"].b)
+						getglobal(this:GetName() .. "SliderHigh"):SetVertexColor(RAID_CLASS_COLORS["DRUID"].r, RAID_CLASS_COLORS["DRUID"].g, RAID_CLASS_COLORS["DRUID"].b)
+						getglobal(this:GetName() .. "Slider"):SetValue(Heart_Config["healing_touch_priority"])
+					</OnShow>
+				</Scripts>
+			</Frame>
+			<Frame name="Heart_GUIEssenceOfElune" inherits="Heart_GUICheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="-10" y="-7"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName() .. "CheckButtonText"):SetText(Heart_GUI_essence_of_elune)
+						getglobal(this:GetName() .. "CheckButton").variable = "Heart_Config[\"essence_of_elune\"]"
+					</OnLoad>
+					<OnShow>
+						getglobal(this:GetName() .. "CheckButton"):SetChecked(Heart_Config["essence_of_elune"])
+					</OnShow>
+				</Scripts>
+			</Frame>
+			<Frame name="Heart_GUIImprovedRegrowth" inherits="Heart_GUICheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="Heart_GUIEssenceOfElune" relativePoint="BOTTOM">
+						<Offset>
+							<AbsDimension x="0" y="3"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName() .. "CheckButtonText"):SetText(Heart_GUI_improved_regrowth)
+						getglobal(this:GetName() .. "CheckButton").variable = "Heart_Config[\"improved_regrowth\"]"
+					</OnLoad>
+					<OnShow>
+						getglobal(this:GetName() .. "CheckButton"):SetChecked(Heart_Config["improved_regrowth"])
+					</OnShow>
+				</Scripts>
+			</Frame>
+			<Frame name="Heart_GUINaturesGraceEffect" inherits="Heart_GUICheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="Heart_GUIImprovedRegrowth" relativePoint="BOTTOM">
+						<Offset>
+							<AbsDimension x="0" y="3"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName() .. "CheckButtonText"):SetText(Heart_GUI_natures_grace_effect)
+						getglobal(this:GetName() .. "CheckButton").variable = "Heart_Config[\"natures_grace_effect\"]"
+					</OnLoad>
+					<OnShow>
+						getglobal(this:GetName() .. "CheckButton"):SetChecked(Heart_Config["natures_grace_effect"])
+					</OnShow>
+				</Scripts>
+			</Frame>
+		</Frames>
+	</Frame>
+</Ui>

@@ -1,0 +1,5 @@
+## Interface: 11200
+## Title:|cFF00FF00法术书增强显示
+## Notes: 如果玩家将法术书内的技能放在动作条上，那么该技能就会在法术书内以红色高亮显示。 |cFFFFFF00|n 乌龟服定制版
+## X-Repple: 界面
+SpellBookTag.xml

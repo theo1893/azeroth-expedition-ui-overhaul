@@ -1,0 +1,46 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Script file="Hook.lua"/>
+	<Script file="RDbItems.lua"/>
+	<Script file="RDbEnchants.lua"/>
+	<Button parent="ChatFrameMenuButton" hidden="true">
+		<Size>
+			<AbsDimension x="22" y="26"/>
+		</Size>
+		<Anchors><Anchor point="BOTTOM" relativePoint="TOP" /></Anchors>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture file="Interface\ToolTips\UI-Tooltip-Border">
+					<Size>
+						<AbsDimension x="26" y="16"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOP"/>
+					</Anchors>
+					<TexCoords left="0.5" right="0.75" top="0" bottom="1"/>
+				</Texture>
+				<Texture file="Interface\ToolTips\UI-Tooltip-Border">
+					<Size>
+						<AbsDimension x="26" y="16"/>
+					</Size>
+					<Anchors>
+						<Anchor point="BOTTOM"/>
+					</Anchors>
+					<TexCoords left="0.75" right="1" top="0" bottom="1"/>
+				</Texture>
+			</Layer>
+		</Layers>
+		<NormalText inherits="GameFontNormal"/>
+		<DisabledText inherits="GameFontDisable"/>
+		<HighlightText inherits="GameFontHighlight"/>
+		<HighlightTexture inherits="UIPanelButtonHighlightTexture"/>
+		<Scripts>
+			<OnLoad>
+				RDbItems.Init(this);
+			</OnLoad>
+			<OnClick>
+				RDbItems.TriStateToggle(this);
+			</OnClick>
+		</Scripts>
+	</Button>
+</Ui>

@@ -1,0 +1,853 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
+	<Script file="WorldBuffsTrackerInit.lua"/>
+	<Script file="WorldBuffs_Darkmoon.lua"/>
+	<Script file="Darkmoon_Faire_Tracker.lua"/>
+
+	<StatusBar name="WorldBuffsTracker_Item_StatusBar_Template" virtual="true">
+		<Size>
+			<AbsDimension x="170" y="15"/>
+		</Size>
+		<BarTexture file="Interface\TargetingFrame\UI-StatusBar">
+			<Anchors>
+				<Anchor point="TOPLEFT">
+					<Offset x="0" y="0"/>
+				</Anchor>
+				<Anchor point="BOTTOMRIGHT"/>
+			</Anchors>
+		</BarTexture>
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="$parent_Text" inherits="GameFontNormal" text="暂无">
+					<Anchors>
+						<Anchor point="RIGHT" relativePoint="RIGHT">	
+							<Offset x="-15" y="0"/>	
+						</Anchor>
+					</Anchors>
+					<Color r="1" g="1" b="1" a="1"/>
+				</FontString>
+			</Layer>
+		</Layers>
+	</StatusBar>
+
+	<Frame name="WorldBuffsTrackerMiniBtnFrame" parent="Minimap" enableMouse="true" hidden="false" movable="true" frameStrata="LOW">
+		<Size>
+			<AbsDimension x="32" y="32"/>
+		</Size>
+		<Anchors>
+			<Anchor point="TOPRIGHT" relativeTo="Minimap" relativePoint="TOPLEFT">
+				<Offset>
+					<AbsDimension x="30" y="0"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Frames>
+			<Button name="WorldBuffsTrackerMiniBtn" >
+				<Size>
+					<AbsDimension x="32" y="32"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<!-- <NormalTexture file="Interface\Icons\INV_Misc_Head_Dragon_01"/> -->
+				<HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight"/>
+				<Scripts>
+					<OnLoad>
+						this:RegisterForDrag("RightButton");
+						this.dragme = false;
+					</OnLoad>
+					<OnClick>
+						<!-- WorldBuffsTrackerMiniBtn_OnClick(); -->
+						if WorldBuffsTrackerMainFrame and WorldBuffsTrackerMainFrame:IsShown() then 
+							WorldBuffsTrackerMainFrame:Hide()
+						else
+							WorldBuffsTrackerMainFrame:Show()
+						end
+					</OnClick>									
+					<OnEnter>
+						GameTooltip:ClearLines();
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT", -(this:GetWidth() / 2), 5);
+						GameTooltip:AddLine("左键-打开或关闭龙头计时器");
+						GameTooltip:AddLine("右键-拖动此按钮");
+						GameTooltip:Show();
+					</OnEnter>
+					<OnDragStart> 
+						this.dragme = true;
+					</OnDragStart> 
+					<OnDragStop>
+						this.dragme = false;
+					</OnDragStop>
+					<OnUpdate>
+						if(this.dragme == true) then
+							WorldBuffsTrackerMiniBtn_BeingDragged();
+						end
+					</OnUpdate>
+					<OnLeave>
+						GameTooltip:Hide();
+					</OnLeave>
+				</Scripts>
+				<Layers>
+					<Layer level="BORDER">
+						<Texture name="$parentIcon" file="Interface\Icons\INV_Misc_Head_Dragon_01">
+							<Size>
+								<AbsDimension x="20" y="20"/>
+							</Size>
+							<Anchors>
+								<Anchor point="CENTER">
+									<Offset>
+										<AbsDimension x="-2" y="1"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+					</Layer>
+					<Layer level="OVERLAY">
+						<Texture name="$parentBorder" file="Interface\Minimap\MiniMap-TrackingBorder">
+							<Size>
+								<AbsDimension x="52" y="52"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+			</Button>			
+		</Frames>
+	</Frame>
+
+	<Frame name="WorldBuffsTrackerMainFrame" parent="UIParent" enableMouse="true" movable="true" >
+		<Scripts>
+			<OnLoad>
+				this:RegisterForDrag("LeftButton");				
+			</OnLoad>
+			<OnDragStart>
+				this:StartMoving();
+				this.isMoving = true;
+			</OnDragStart>
+			<OnDragStop>
+				this:StopMovingOrSizing();
+				this.isMoving = false;
+			</OnDragStop>	
+			<OnClick>
+				WorldBuffsTrackerMiniMenu_Btn_Click();
+			</OnClick>
+			<OnEnter>
+				GameTooltip:ClearLines();
+				GameTooltip:SetOwner(this, "ANCHOR_LEFT", 0, -this:GetHeight());
+				GameTooltip:AddLine("龙头BUFF计时器");
+				GameTooltip:AddLine("根据本地时间计时，请自行校准电脑时间");
+				GameTooltip:Show();
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide();
+			</OnLeave>
+		</Scripts> 
+		<Size>
+			<AbsDimension x="180" y="30"/>
+		</Size>
+		<Anchors>
+			<Anchor point="TOP" relativePoint="TOP">
+				<Offset>
+					<AbsDimension x="0" y="0"/>
+				</Offset>
+			</Anchor>
+		</Anchors> 
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="0" right="0" top="0" bottom="0"/>
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="30"/>
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="30"/>
+			</EdgeSize>
+		</Backdrop>
+		<Frames>
+			<StatusBar name="$parent_Timer_StatusBar" minValue="0" maxValue="7200" defaultValue="0" orientation="HORIZONTAL" reverseFill="false">
+				<Scripts>
+					<OnLoad>
+						this:SetFrameLevel(254);
+					</OnLoad>
+				</Scripts>
+				<Size>
+					<AbsDimension x="170" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT">
+						<Offset x="5" y="0"/>
+					</Anchor>
+				</Anchors>
+				<BarTexture file="Interface\TargetingFrame\UI-StatusBar">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="0" y="0"/>
+						</Anchor>
+						<Anchor point="BOTTOMRIGHT"/>
+					</Anchors>
+				</BarTexture>
+				<BarColor r="1" g="0.502" b="1" a="1"/>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="$parent_Title" inherits="GameFontNormal">
+							<FontHeight val="10"/>
+							<Anchors>
+								<Anchor point="LEFT">	
+									<Offset x="5" y="0"/>	
+								</Anchor>
+							</Anchors>
+							<Color r="1" g="1" b="1" a="1"></Color>
+						</FontString>
+						<FontString name="$parent_Text" inherits="GameFontNormal">
+							<FontHeight val="10"/>
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="$parent_Title" relativePoint="Right">	
+									<Offset x="5" y="0"/>	
+								</Anchor>
+							</Anchors>
+							<Color r="1" g="1" b="1" a="1"></Color>
+						</FontString>
+					</Layer>
+				</Layers>
+			</StatusBar>
+			<Button name="$parent_Config">
+				<Size>
+					<AbsDimension x="15" y="15"/>
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parent" relativePoint="RIGHT">
+						<Offset x="-10" y="0"/>	
+					</Anchor>
+				</Anchors> 
+				<Scripts>
+					<OnLoad>
+						this:SetFrameLevel(255);
+					</OnLoad>
+					<OnClick>
+						WorldBuffsTracker_Config_OnClick();
+					</OnClick>
+					<OnEnter>
+						GameTooltip:ClearLines();
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT", 0, -this:GetHeight());
+						GameTooltip:AddLine("打开报告设置");
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide();
+					</OnLeave>
+				</Scripts>
+				<HighlightTexture file="Interface\AddOns\WorldBuffsTracker\imgs\icon-config" alphaMode="ADD"/>
+				<NormalTexture file="Interface\AddOns\WorldBuffsTracker\imgs\icon-config"/>
+				<PushedTexture file="Interface\AddOns\WorldBuffsTracker\imgs\icon-config"/>				
+			</Button>
+			<Button name="$parent_Report">
+				<Size>
+					<AbsDimension x="15" y="15"/>
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parent_Config" relativePoint="LEFT">
+					</Anchor>
+				</Anchors> 
+				<Scripts>
+					<OnLoad>
+						this:SetFrameLevel(255);
+                        this:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+					</OnLoad>
+					<OnClick>
+						WorldBuffsTracker_Report_OnClick();
+					</OnClick>
+					<OnEnter>
+						GameTooltip:ClearLines();
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT", 0, -this:GetHeight());
+						GameTooltip:AddLine("左键-在选取的频道发送报告");
+                        GameTooltip:AddLine("右键-在世界频道发送报告");
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide();
+					</OnLeave>
+				</Scripts>
+				<HighlightTexture file="Interface\AddOns\WorldBuffsTracker\imgs\UI-GuildButton-MOTD-Up" alphaMode="ADD"/>
+				<NormalTexture file="Interface\AddOns\WorldBuffsTracker\imgs\UI-GuildButton-MOTD-Up"/>
+				<PushedTexture file="Interface\AddOns\WorldBuffsTracker\imgs\UI-GuildButton-MOTD-Up"/>		
+			</Button>
+			<Button name="$parent_Select">
+				<Size>
+					<AbsDimension x="18" y="18"/>
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parent_Report" relativePoint="LEFT">
+					</Anchor>
+				</Anchors> 
+				<Scripts>
+					<OnLoad>
+						this:SetFrameLevel(255);
+					</OnLoad>
+					<OnClick>
+						WorldBuffsTracker_Select_OnClick();
+					</OnClick>
+					<OnEnter>
+						GameTooltip:ClearLines();
+						GameTooltip:SetOwner(this, "ANCHOR_RIGHT", 0, -this:GetHeight());
+						GameTooltip:AddLine("选择当前监视龙头BUFF计时");
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide();
+					</OnLeave>
+				</Scripts>
+				<HighlightTexture file="Interface\AddOns\WorldBuffsTracker\imgs\UI-Panel-ExpandButton-Down" alphaMode="ADD"/>
+				<NormalTexture file="Interface\AddOns\WorldBuffsTracker\imgs\UI-Panel-ExpandButton-Down"/>
+				<PushedTexture file="Interface\AddOns\WorldBuffsTracker\imgs\UI-Panel-ExpandButton-Down"/>		
+			</Button>			
+		</Frames>
+	</Frame>
+
+	<Frame name="WorldBuffsTrackerItemFrame" parent="UIParent" hidden="true"  enableMouse="true">
+		<Size>
+			<AbsDimension x="180" y="100"/>
+		</Size>
+		<Anchors>
+			<Anchor point="TOP" relativeTo="WorldBuffsTrackerMainFrame" relativePoint="BOTTOM">
+				<Offset>
+					<AbsDimension x="0" y="0"/>
+				</Offset>
+			</Anchor>
+		</Anchors> 
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="0" right="0" top="0" bottom="0"/>
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="30"/>
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="30"/>
+			</EdgeSize>
+		</Backdrop>
+		<Frames>
+			<StatusBar name="$parent_Item1" minValue="0" maxValue="7200" defaultValue="0" orientation="HORIZONTAL" reverseFill="false" inherits="WorldBuffsTracker_Item_StatusBar_Template">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" >
+						<Offset x="5" y="0"/>
+					</Anchor>
+				</Anchors>	
+				<BarColor r="0.290" g="0.329" b="0.910" a="1"/>			
+			</StatusBar>
+			<CheckButton name="$parent_Check_Alliance_Onyxia" inherits="OptionsCheckButtonTemplate">
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("[LM-黑龙]")
+						getglobal(this:GetName().."Text"):SetTextColor('1','1','1','1')
+						getglobal(this:GetName().."Text"):SetFont(STANDARD_TEXT_FONT, 10)
+					</OnLoad>
+					<OnClick>
+						WorldBuffsTrackerItemFrame_CheckButton_OnClick('Alliance_Onyxia');
+					</OnClick>
+				</Scripts>
+				<Size>
+					<AbsDimension x="18" y="18"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_Item1" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<StatusBar name="$parent_Item2" minValue="0" maxValue="7200" defaultValue="0" orientation="HORIZONTAL" reverseFill="false" inherits="WorldBuffsTracker_Item_StatusBar_Template">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Item1" relativePoint="BOTTOM">
+						<Offset x="0" y="-5"/>
+					</Anchor>
+				</Anchors>	
+				<BarColor r="0.290" g="0.329" b="0.910" a="1"/>			
+			</StatusBar>
+			<CheckButton name="$parent_Check_Alliance_Nefarian" inherits="OptionsCheckButtonTemplate">
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("[LM-奈法]")
+						getglobal(this:GetName().."Text"):SetTextColor('1','1','1','1')
+						getglobal(this:GetName().."Text"):SetFont(STANDARD_TEXT_FONT, 10)
+					</OnLoad>
+					<OnClick>
+						WorldBuffsTrackerItemFrame_CheckButton_OnClick('Alliance_Nefarian');
+					</OnClick>
+				</Scripts>
+				<Size>
+					<AbsDimension x="18" y="18"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_Item2" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<StatusBar name="$parent_Item3" minValue="0" maxValue="7200" defaultValue="0" orientation="HORIZONTAL" reverseFill="false" inherits="WorldBuffsTracker_Item_StatusBar_Template">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Item2" relativePoint="BOTTOM">
+						<Offset x="0" y="-5"/>
+					</Anchor>
+				</Anchors>	
+				<BarColor r="0.898" g="0.051" b="0.071" a="1"/>	
+			</StatusBar>
+			<CheckButton name="$parent_Check_Horde_Onyxia" inherits="OptionsCheckButtonTemplate">
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("[BL-黑龙]")
+						getglobal(this:GetName().."Text"):SetTextColor('1','1','1','1')
+						getglobal(this:GetName().."Text"):SetFont(STANDARD_TEXT_FONT, 10)
+					</OnLoad>
+					<OnClick>
+						WorldBuffsTrackerItemFrame_CheckButton_OnClick('Horde_Onyxia');
+					</OnClick>
+				</Scripts>
+				<Size>
+					<AbsDimension x="18" y="18"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_Item3" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<StatusBar name="$parent_Item4" minValue="0" maxValue="7200" defaultValue="0" orientation="HORIZONTAL" reverseFill="false" inherits="WorldBuffsTracker_Item_StatusBar_Template">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Item3" relativePoint="BOTTOM">
+						<Offset x="0" y="-5"/>
+					</Anchor>
+				</Anchors>	
+				<BarColor r="0.898" g="0.051" b="0.071" a="1"/>	
+			</StatusBar>
+			<CheckButton name="$parent_Check_Horde_Nefarian" inherits="OptionsCheckButtonTemplate">
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("[BL-奈法]")
+						getglobal(this:GetName().."Text"):SetTextColor('1','1','1','1')
+						getglobal(this:GetName().."Text"):SetFont(STANDARD_TEXT_FONT, 10)
+					</OnLoad>
+					<OnClick>
+						WorldBuffsTrackerItemFrame_CheckButton_OnClick('Horde_Nefarian');
+					</OnClick>
+				</Scripts>
+				<Size>
+					<AbsDimension x="18" y="18"/>
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_Item4" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+            <!-- *************************************新增 ↓ ↓ ↓ by 夜晨*************************************************** -->
+            <CheckButton name="$parent_Check_Priority_display" inherits="OptionsCheckButtonTemplate">
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("优先显示同阵营快到时间的")
+						getglobal(this:GetName().."Text"):SetTextColor('1','1','1','1')
+						getglobal(this:GetName().."Text"):SetFont(STANDARD_TEXT_FONT, 12)
+					</OnLoad>
+					<OnClick>
+                        
+						WorldBuffsTrackerItemFrame_CheckButton_OnClick('Priority_display');
+					</OnClick>
+				</Scripts>
+				<Size>
+					<AbsDimension x="18" y="18"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Check_Horde_Nefarian" relativePoint="BOTTOM">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+            <!-- *************************************新增 ↑ ↑ ↑ *************************************************** -->
+		</Frames>
+	</Frame>
+
+	<Frame name="WorldBuffsTrackerConfigFrame" parent="UIParent" hidden="true">
+		<Size>
+			<AbsDimension x="180" y="250"/>
+		</Size>
+		<Anchors>
+			<Anchor point="TOP" relativeTo="WorldBuffsTrackerMainFrame" relativePoint="BOTTOM">
+				<Offset>
+					<AbsDimension x="0" y="0"/>
+				</Offset>
+			</Anchor>
+		</Anchors> 
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="0" right="0" top="0" bottom="0"/>
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="30"/>
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="30"/>
+			</EdgeSize>
+		</Backdrop>
+		<Layers>
+			<Layer>
+				<FontString name="$parent_ReportToTitle" inherits="GameFontNormal" text="报告发送到">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="5" y="-5"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>				
+		</Layers>
+		<Frames>
+			<Frame name="$parent_ReportTo" inherits="UIDropDownMenuTemplate">
+				<Scripts>
+					<OnLoad>
+						WorldBuffsTrackerConfig_ReportTo_OnLoad();
+					</OnLoad>
+					<OnShow>
+						WorldBuffsTrackerConfig_ReportTo_OnLoad();
+					</OnShow>
+				</Scripts>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parent_ReportToTitle" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="-5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Frame>
+			<CheckButton name="$parent_ReportAlliance_allowed" inherits="OptionsCheckButtonTemplate">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_ReportToTitle" relativePoint="TOPLEFT">
+						<Offset>
+							<AbsDimension x="5" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("报告包含联盟")
+					</OnLoad>
+					<OnClick>
+						WorldBuffsTracker_ReportAlliance_Click();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parent_ReportHorde_allowed" inherits="OptionsCheckButtonTemplate">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_ReportAlliance_allowed" relativePoint="BOTTOM">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("报告包含部落")
+					</OnLoad>
+					<OnClick>
+						WorldBuffsTracker_ReportHorde_Click();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parent_MergeReport_allowed" inherits="OptionsCheckButtonTemplate">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_ReportHorde_allowed" relativePoint="BOTTOM">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("同阵营单行报告")
+					</OnLoad>
+					<OnClick>
+						WorldBuffsTracker_MergeReport_Click();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="$parent_AlarmSwitch" inherits="OptionsCheckButtonTemplate">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_MergeReport_allowed" relativePoint="BOTTOM">
+						<Offset>
+							<AbsDimension x="0" y="-5"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("开启闪电报警")
+						getglobal(this:GetName().."Text"):SetTextColor("0.749","0.271","0","1")
+					</OnLoad>
+					<OnClick>
+						WorldBuffsTracker_AlarmSwitch_Click();
+					</OnClick>
+					<OnEnter>
+						GameTooltip:ClearLines();
+						GameTooltip:SetOwner(this, "ANCHOR_BOTTOM", -(this:GetWidth() / 2), 5);
+						GameTooltip:AddLine("闪电报警：");
+						GameTooltip:AddLine("1.从NPC喊话到闪电劈下来有一段时间");
+						GameTooltip:AddLine("2.开启报警后插件会倒计时读秒");
+						GameTooltip:AddLine("3.是否要炉石回城，请根据蓝条速度自行决定");
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide();
+					</OnLeave>
+				</Scripts>
+			</CheckButton>
+			<!--  -->
+			<CheckButton name="$parent_Hearthstone" inherits="OptionsCheckButtonTemplate">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_AlarmSwitch" relativePoint="BOTTOM">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("鼠标位置显示炉石")
+						getglobal(this:GetName().."Text"):SetTextColor("0","0.93","0.93","1")
+					</OnLoad>
+					<OnClick>
+						WorldBuffsTracker_Hearthstone_Click();
+					</OnClick>
+					<OnEnter>
+						GameTooltip:ClearLines();
+						GameTooltip:SetOwner(this, "ANCHOR_BOTTOM", -(this:GetWidth() / 2), 5);
+						GameTooltip:AddLine("报警时在鼠标位置显示一个炉石动作栏");
+						GameTooltip:AddLine("1.只有报警时人物不在战斗中才生效");
+						GameTooltip:AddLine("2.方便直接点击快速回城");
+						GameTooltip:AddLine("3.是否要炉石回城，请根据蓝条速度自行决定");
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide();
+					</OnLeave>
+				</Scripts>
+			</CheckButton>
+			<!--  -->
+			<CheckButton name="$parent_AlarmSoundSwitch" inherits="OptionsCheckButtonTemplate">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parent_Hearthstone" relativePoint="BOTTOM">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("闪电报警音效")
+						getglobal(this:GetName().."Text"):SetTextColor("0.749","0.271","0","1")
+					</OnLoad>
+					<OnClick>
+						WorldBuffsTracker_AlarmSound_Click();
+					</OnClick>
+				</Scripts>
+			</CheckButton>		
+			<Frame name="$parent_SoundAlliance">
+				<Size>
+					<AbsDimension x="180" y="45"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_AlarmSoundSwitch" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-5"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parent_Title" inherits="GameFontNormal" text="联盟音效">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+									<Offset>
+										<AbsDimension x="5" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+							<Color r="0.749" g="0.271" b="0" a="1"/>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Button name="$parent_playBtn">
+						<Size>
+							<AbsDimension x="15" y="15"/>
+						</Size>
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_Title" relativePoint="RIGHT">
+								<Offset x="10" y="0"/>	
+							</Anchor>
+						</Anchors> 
+						<Scripts>
+							<OnLoad>
+								this:SetFrameLevel(255);
+							</OnLoad>
+							<OnClick>
+								WorldBuffsTracker_PlaySound_OnClick('Alliance');
+							</OnClick>
+							<OnEnter>
+								GameTooltip:ClearLines();
+								GameTooltip:SetOwner(this, "ANCHOR_RIGHT", 0, -this:GetHeight());
+								GameTooltip:AddLine("试听联盟音效");
+								GameTooltip:Show();
+							</OnEnter>
+							<OnLeave>
+								GameTooltip:Hide();
+							</OnLeave>
+						</Scripts>
+						<HighlightTexture file="Interface\AddOns\WorldBuffsTracker\imgs\icon-play2" alphaMode="ADD"/>
+						<NormalTexture file="Interface\AddOns\WorldBuffsTracker\imgs\icon-play2"/>
+						<PushedTexture file="Interface\AddOns\WorldBuffsTracker\imgs\icon-play2"/>	
+					</Button>
+					<Frame name="$parent_List" inherits="UIDropDownMenuTemplate">
+						<Scripts>
+							<OnLoad>
+								WorldBuffsTrackerConfig_SoundAlliance_OnLoad();
+							</OnLoad>
+							<OnShow>
+								WorldBuffsTrackerConfig_SoundAlliance_OnLoad();
+							</OnShow>
+						</Scripts>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Title" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="-5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Frame>
+				</Frames>
+			</Frame>	
+			<Frame name="$parent_SoundHorde">
+				<Size>
+					<AbsDimension x="180" y="60"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent_SoundAlliance" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-5"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString name="$parent_Title" inherits="GameFontNormal" text="部落音效">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+									<Offset>
+										<AbsDimension x="5" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+							<Color r="0.749" g="0.271" b="0" a="1"/>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Button name="$parent_playBtn">
+						<Size>
+							<AbsDimension x="15" y="15"/>
+						</Size>
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parent_Title" relativePoint="RIGHT">
+								<Offset x="10" y="0"/>	
+							</Anchor>
+						</Anchors> 
+						<Scripts>
+							<OnLoad>
+								this:SetFrameLevel(255);
+							</OnLoad>
+							<OnClick>
+								WorldBuffsTracker_PlaySound_OnClick('Horde');
+							</OnClick>
+							<OnEnter>
+								GameTooltip:ClearLines();
+								GameTooltip:SetOwner(this, "ANCHOR_RIGHT", 0, -this:GetHeight());
+								GameTooltip:AddLine("试听部落音效");
+								GameTooltip:Show();
+							</OnEnter>
+							<OnLeave>
+								GameTooltip:Hide();
+							</OnLeave>
+						</Scripts>
+						<HighlightTexture file="Interface\AddOns\WorldBuffsTracker\imgs\icon-play2" alphaMode="ADD"/>
+						<NormalTexture file="Interface\AddOns\WorldBuffsTracker\imgs\icon-play2"/>
+						<PushedTexture file="Interface\AddOns\WorldBuffsTracker\imgs\icon-play2"/>	
+					</Button>
+					<Frame name="$parent_List" inherits="UIDropDownMenuTemplate">
+						<Scripts>
+							<OnLoad>
+								WorldBuffsTrackerConfig_SoundHorde_OnLoad();
+							</OnLoad>
+							<OnShow>
+								WorldBuffsTrackerConfig_SoundHorde_OnLoad();
+							</OnShow>
+						</Scripts>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Title" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="-5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Frame>
+				</Frames>
+			</Frame>
+			
+		</Frames>
+	</Frame>
+
+	<Frame name="WorldBuffsTrackerFrame">
+		<Scripts>
+			<OnLoad>
+				WorldBuffsTracker_OnLoad();
+				WorldBuffsTracker_Darkmoon_OnLoad();
+			</OnLoad>
+			<OnEvent>
+				WorldBuffsTracker_OnEvent(event);
+				WorldBuffsTracker_Darkmoon_OnEvent(event)
+			</OnEvent>
+			<OnUpdate>
+				WorldBuffsTracker_OnUpdate(event);
+			</OnUpdate>
+		</Scripts> 	
+	</Frame>
+	<GameTooltip name="WorldBuffsTrackerTooltip" inherits="GameTooltipTemplate" parent="WorldMapFrame" hidden="true"/>
+</Ui>

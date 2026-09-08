@@ -1,0 +1,12 @@
+## Interface: 11200
+## Title: |cff33ffcc[团队工具]|R团队BUFF分配助手
+## Author: 卡拉赞-魂斗罗工会修改
+## Version: 0.9
+## Notes: 团队BUFF分配和监控插件，支持BUFF自动/手动分配，结果通报，检查及缺失私聊通报，密语自动检查，最后一名死亡成员被复活后自动检查等。|n/run HDLUI.SJQKAmark()可对NAXX小怪一键标记（需要SuperWOW）
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## SavedVariablesPerCharacter: HDLUIBuffList
+
+HDLBUFF.lua
+HDLBUFFUI.lua
+HDLRaidMark.lua

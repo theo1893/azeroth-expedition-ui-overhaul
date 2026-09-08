@@ -1,0 +1,11 @@
+## Interface: 11200
+## Title: SuperMacroPlus
+## Title-zhCN: |cff00ffff超级宏Plus|r
+## Notes: Category-based Super macros with up to 50 macros per category.
+## Notes-zhCN: 按通用和职业分类管理超级宏，每个分类最多 50 个宏。
+## Author: GIT, Sunelegy, 拉风武夫; SuperMacroPlus adaptation
+## Version: 1.0.1
+## OptionalDeps: SuperMacro, pfUI
+## SavedVariables: SMP_VARS SMP_EXTEND SMP_ACTION_SUPER SMP_SUPER
+SuperMacroPlus.xml
+SuperMacroPlusOptions.xml

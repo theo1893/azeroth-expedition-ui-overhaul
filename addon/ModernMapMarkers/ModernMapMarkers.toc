@@ -1,0 +1,11 @@
+## Interface: 11200
+## Title: |cff7fff7fM|cffffffffodern |cff7fff7fM|cffffffffap |cff7fff7fM|cffffffffarkers
+## Notes: Shows dungeon, raid, world boss, boat, zeppelin, and tram locations on the world map
+## Title-zhCN:|CFF00FF00[|r|cffff7d0a地图|r|CFF00FF00] 乌龟服地图标记
+## Notes-zhCN: 在地图上显示所有的副本，团本，世界BOSS，飞艇，船，地铁等位置和相关信息。|n/mmm打开设置，点击副本图标可以链接掉落插件
+## Author: tilr & Heallios, Sunelegy, Hengxin
+## Version: 1.1
+## OptionalDeps: Atlas, AtlasQuest
+## SavedVariables: ModernMapMarkersDB
+
+ModernMapMarkers.lua

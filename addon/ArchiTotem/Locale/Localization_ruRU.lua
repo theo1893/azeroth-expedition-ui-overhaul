@@ -1,0 +1,95 @@
+if GetLocale() == "ruRU" then
+	-- Russian localization by Lichery
+	BINDING_NAME_CAST_EARTH_TOTEM = "Установка тотема земли"
+	BINDING_NAME_CAST_FIRE_TOTEM = "Установка тотема огня"
+	BINDING_NAME_CAST_WATER_TOTEM = "Установка тотема воды"
+	BINDING_NAME_CAST_AIR_TOTEM = "Установка тотема воздуха"
+	
+	-- ArchiTotem 按键绑定
+	BINDING_HEADER_ARCHITOTEM = "ArchiTotem Мастер Тотемов"
+	BINDING_NAME_ARCHITOTEM_CASTALL = "Установить все тотемы"
+	BINDING_NAME_ARCHITOTEM_RECALL = "Отозвать все тотемы"
+	BINDING_NAME_ARCHITOTEM_CASTEARTH = "Установить тотем земли"
+	BINDING_NAME_ARCHITOTEM_CASTFIRE = "Установить тотем огня"
+	BINDING_NAME_ARCHITOTEM_CASTWATER = "Установить тотем воды"
+	BINDING_NAME_ARCHITOTEM_CASTAIR = "Установить тотем воздуха"
+	BINDING_NAME_ARCHITOTEM_TOGGLESKIPEARTH = "Переключить пропуск тотемов земли"
+	BINDING_NAME_ARCHITOTEM_TOGGLESKIPFIRE = "Переключить пропуск тотемов огня"
+	BINDING_NAME_ARCHITOTEM_TOGGLESKIPWATER = "Переключить пропуск тотемов воды"
+	BINDING_NAME_ARCHITOTEM_TOGGLESKIPAIR = "Переключить пропуск тотемов воздуха"
+	
+	ArchiTotemLocale = {
+		["Earthbind Totem"] = "Тотем оков земли",
+		["Tremor Totem"] = "Тотем трепета",
+		["Strength of Earth Totem"] = "Тотем силы земли",
+		["Stoneskin Totem"] = "Тотем каменной кожи",
+		["Stoneclaw Totem"] = "Тотем каменного когтя",
+		["Searing Totem"] = "Опаляющий тотем",
+		["Fire Nova Totem"] = "Тотем кольца огня",
+		["Magma Totem"] = "Тотем магмы",
+		["Frost Resistance Totem"] = "Тотем защиты от магии льда",
+		["Flametongue Totem"] = "Тотем языка пламени",
+		["Mana Spring Totem"] = "Тотем источника маны",
+		["Mana Tide Totem"] = "Тотем прилива маны",
+		["Fire Resistance Totem"] = "Тотем защиты от огня",
+		["Poison Cleansing Totem"] = "Тотем противоядия",
+		["Disease Cleansing Totem"] = "Тотем очищения от болезней",
+		["Healing Stream Totem"] = "Тотем исцеляющего потока",
+		["Tranquil Air Totem"] = "Тотем безветрия",
+		["Grounding Totem"] = "Тотем заземления",
+		["Windfury Totem"] = "Тотем неистовства ветра",
+		["Grace of Air Totem"] = "Тотем легкости воздуха",
+		["Nature Resistance Totem"] = "Тотем защиты от сил природы",
+		["Windwall Totem"] = "Тотем стены ветра",
+		["Sentry Totem"] = "Сторожевой тотем",	
+		
+		["ver."] = "вер.",
+		["loaded"] = "загружен",
+		["Earth totems shown: "] = "Количество отображаемых тотемов Земли: ",
+		["Fire totems shown: "] = "Количество отображаемых тотемов Огня: ",
+		["Water totems shown: "] = "Количество отображаемых тотемов Воды: ",
+		["Air totems shown: "] = "Количество отображаемых тотемов Воздуха: ",
+		["Direction set to: Down"] = "Направление установлено на: Вниз",
+		["Direction set to: Up"] = "Направление установлено на: Вверх",
+		["Order set to: "] = "Порядок установлен на: ",
+		["Scale set to: "] = "Масштаб установлен на: ",
+		["Showing all totems on mouseover"] = "Включено отображение всех тотемов при наведении курсора мыши",
+		["Showing only one element on mouseover"] = "Включено отображение тотемов только одной стихии при наведении курсора мыши",
+		["Totems will move the the bottom line when cast"] = "Тотемы будут перемещаться на панель",
+		["Totems will stay where they are when cast"] = "Тотемы останутся там, где они есть",
+		["Timers are now turned on"] = "Таймеры включены",
+		["Timers are now turned off"] = "Таймеры выключены",
+		["Tooltips are now turned on"] = "Подсказки включены",
+		["Tooltips are now turned off"] = "Подсказки выключены",
+		["Debuging are now turned on"] = "Отладка включена",
+		["Debuging are now turned off"] = "Отладка выключена",
+		["Available commands:"] = "Доступные команды:",
+		["/at set <earth/fire/water/air> # - Sets the totems shown of that element to #."] = "/at set <earth/fire/water/air> # - Устанавливает количество отображаемых тотемов в этой стихии, на #.",
+		["/at direction <up/down> - Set the direction totems pop up."] = "/at direction <up/down> - Устанавливает направление тотемов.",
+		["/at order <element 1, element 2, element 3, element 4> - Sets the order of the totems, from left to right."] = "/at order <стихия 1, стихия 2, стихия 3, стихия 4> - Устанавливает порядок тотемов слева направо.",
+		["/at scale # - Sets the scale of ArchiTotem, default is 1."] = "/at scale # - Устанавливает масштаб ArchiTotem, по умолчанию 1.",
+		["/at showall - Toggles show all mode, displaying all totems on mouseover."] = "/at showall - Вкл./Выкл. отображение всех стихий, отображающих все тотемы при наведении курсора мыши.",
+		["/at bottomcast - Toggles moving totems to the bottom line when cast"] = "/at bottomcast - Вкл./Выкл. перемещение тотемов на панель",
+		["/at timers - Toggles showing timers"] = "/at timers - Вкл./Выкл. отображение таймеров",
+		["/at tooltip - Toggles showing tooltips"] = "/at tooltip - Вкл./Выкл. отображение подсказок",
+		["/at debug - Toggles debuging"] = "/at debug - Вкл./Выкл. отладку",
+		["Moving the bar:"] = "Перемещение панели:",
+		["Ctrl-RightClick and Drag any of the main buttons"] = "Зажмите Ctrl+правую кнопку мыши и перетащите панель любую из основных кнопок",
+		["Ordering totems of same element:"] = "Порядок тотемов:",
+		["Ctrl-LeftClick any of the buttons"] = "Зажмите Ctrl+щелкните левой кнопкой мыши на любую из кнопок",
+		["Unavailable command. Type /at for help."] = "Недоступная команда. Введите /at для помощи.",
+		["Elements must be written in english!"] = "Стихии должны быть записаны на английском!",
+		["Direction must be down or up!"] = "Направление должно быть down или up!",
+		["Scale must be a number!"] = "Масштаб должен быть числом!",
+		["Specify scale"] = "Укажите масштаб!",
+		["Earth totems skip: ON"] = "Пропуск тотемов земли: ВКЛ",
+		["Earth totems skip: OFF"] = "Пропуск тотемов земли: ВЫКЛ",
+		["Fire totems skip: ON"] = "Пропуск тотемов огня: ВКЛ",
+		["Fire totems skip: OFF"] = "Пропуск тотемов огня: ВЫКЛ",
+		["Water totems skip: ON"] = "Пропуск тотемов воды: ВКЛ",
+		["Water totems skip: OFF"] = "Пропуск тотемов воды: ВЫКЛ",
+		["Air totems skip: ON"] = "Пропуск тотемов воздуха: ВКЛ",
+		["Air totems skip: OFF"] = "Пропуск тотемов воздуха: ВЫКЛ",
+		["右键点击切换跳过状态"] = "Правый клик для переключения пропуска",
+	}
+end

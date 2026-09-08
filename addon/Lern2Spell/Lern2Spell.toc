@@ -1,0 +1,13 @@
+## Interface: 11200
+## Title: Lern2Spell
+## Notes: Automatically upgrades spells on your actionbars |cffff4488By Tekkub Stoutwrithe|r
+## Title-zhCN:|CFF33AAFF[辅助]|R自动替换技能
+## Notes-zhCN:|CFF33AAFFLern2Spell|R|N当你学习了高等级的技能后自动替换动作条上的低等级技能。
+## X-Repple: 辅助
+## Author: Tekkub Stoutwrithe
+## OptionalDeps: !Libs
+## Dependencies: !Libs
+
+Lern2Spell.lua
+
+## X-Turtle-Shell-Version: 1693793035

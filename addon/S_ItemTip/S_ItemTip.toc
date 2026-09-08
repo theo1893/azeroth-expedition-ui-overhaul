@@ -1,0 +1,22 @@
+## Interface: 11200
+## Title:|CFF00FF00[|r|CFFDD66DD界面|r|CFF00FF00] 装等
+## Notes: Simple tooltip infomation.
+## Title-zhCN:|CFF00FF00[|r|CFFDD66DD界面|r|CFF00FF00] 装等
+## Notes-zhCN:提示物品在背包/银行的数量，装备评分，副职业需求，售价，类型，最大堆叠数量，物品ID等信息。 |cFFFFFF00|n 乌龟服定制版 by Sunelegy
+## Version: 1.2
+## Author: Shagu, MoonWolf, 狗血编剧男, Sunelegy, 天乖乖, 薄言织虹
+## OptionalDeps: StatCompare
+## SavedVariables: S_CountDB, SellValues, ShowSellValueTooltip, S_ItemTip_EnchantCache
+
+libs\LibStub.lua
+libs\LibItemEnchant.lua
+
+ItemSocre.lua
+ItemCount.lua
+MendeleevGlobals.lua
+Mendeleev.lua
+MendeleevCats.lua
+MajorLevel.lua
+SellValue.xml
+InspectFrame.lua
+InspectGemAndEnchant.lua

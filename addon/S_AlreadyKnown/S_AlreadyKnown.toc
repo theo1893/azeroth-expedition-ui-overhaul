@@ -1,0 +1,10 @@
+## Interface: 11200
+## Title: S_AlreadyKnown
+## Notes: Colorizes the item that is already known in some default frames.
+## Title-zhCN:|CFF33AAFF[辅助]|R已学配方变色
+## Notes-zhCN:|CFF33AAFFS_AlreadyKnown|R|N拍卖行和商人处，将已学的配方变为绿色。
+## X-Repple: 辅助
+## Author: 1.12 modify by 狗血编剧男
+## OptionalDeps: !Libs
+## Dependencies: !Libs
+S_AlreadyKnown.lua

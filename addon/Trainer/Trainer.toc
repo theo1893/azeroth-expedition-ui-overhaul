@@ -1,0 +1,12 @@
+## Interface: 11200
+## Version: 1.01
+## Title: Trainer
+## Author: Taraezor
+## Title-deDE: Lehrer
+## Title-zhCN:|CFF00FF00[|r|cffff7d0a地图|r|CFF00FF00] 乌龟服地图标记-训练师
+## Notes-zhCN:在地图上显示所有的训练师的位置和相关信息。|n/Trainer
+## SavedVariables: TrainerDB
+
+## Q-CAT-Version: 000100
+
+Trainer.lua

@@ -1,0 +1,12 @@
+## X-TocFileBuildNumber: 689
+## Version: 4.28
+## Interface: 11200
+## Title: |CFFFF0000[不可禁用]|RZorlen函数库
+## Author: Marcus S. Zarra / BigRedBrent http://dzrealms.com
+## Notes: 团队框架插件的宏支持。
+## OptionalDeps: myAddOns
+## X-Category: MYADDONS_CATEGORY_OTHERS
+## X-OptionsFrame: ZorlenOptionsFrame
+## X-Website: http://dzrealms.com
+## SavedVariables: ZorlenConfig
+Zorlen.xml

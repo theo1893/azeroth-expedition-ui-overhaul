@@ -1,0 +1,10 @@
+## Interface: 11200
+## Title: CompareStats
+## Notes: Determine the overall stat changes a piece of equipment will have before equiping it.
+## Title-zhCN:|CFF00FF00[|r|CFFDD66DD界面|r|CFF00FF00] 装备属性比较
+## Notes-zhCN:|CFFDD66DDCompareStats|R|N直观的显示目标装备和你身上装备的属性差异。|cFFFFFF00|n 乌龟服定制版 by Sunelegy
+## X-Repple: 界面
+## Author: Dialos (Earthen Ring), Sunelegy
+## Version: 2.9.8
+## Dependencies: BonusScanner
+CompareStats.xml

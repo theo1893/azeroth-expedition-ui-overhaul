@@ -1,0 +1,14 @@
+## Interface: 11200
+## Title: WorldBuffsTracker
+## Author: 狂暴恶棍, Sunelegy, 夜晨
+## Version: 1.2
+## Notes: nothing to say
+## Title-zhCN:|CFF33AAFF[辅助]|R龙头监控计时
+## Notes-zhCN: 世界buff跟踪计时
+## X-Repple: 辅助
+## OptionalDeps: !Libs
+## Dependencies: !Libs
+## SavedVariables: WorldBuffsTracker_SaveData, WorldBuffsTracker_Config
+
+HearthstoneModule.lua
+WorldBuffsTracker.xml

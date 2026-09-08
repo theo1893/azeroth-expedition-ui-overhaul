@@ -1,0 +1,2182 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Script file="SuperMacroPlus.lua"/>
+	<Script file="SMP_Common.lua"/>
+	<Script file="SMP_MacroExtend.lua"/>
+	<Script file="SMP_Super.lua"/>
+	<Script file="SMP_ItemLink.lua"/>
+	<Script file="SMP_Slash.lua"/>
+	<Script file="SMP_Tooltip.lua"/>
+	<Script file="SMP_Extend.lua"/>
+	<Script file="localization.lua"/>
+	<FontString name="SuperMacroPlusButtonFont" virtual="true" inherits="GameFontNormalLarge">
+		<Shadow>
+			<Offset>
+				<AbsDimension x="2" y="-1"/>
+			</Offset>
+			<Color r="0" g="0" b="0"/>
+		</Shadow>
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+				<Offset>
+					<AbsDimension x="0" y="0"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+	</FontString>
+	<CheckButton name="SuperMacroPlusFrameButtonTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="36" y="36"/>
+		</Size>
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="$parentName" inherits="GameFontHighlightSmallOutline">
+					<Size>
+						<AbsDimension x="36" y="10"/>
+					</Size>
+					<Anchors>
+						<Anchor point="BOTTOM">
+							<Offset>
+								<AbsDimension x="0" y="2"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="BACKGROUND">
+				<Texture file="Interface\Buttons\UI-EmptySlot-Disabled">
+					<Size>
+						<AbsDimension x="64" y="64"/>
+					</Size>
+					<Anchors>
+						<Anchor point="CENTER">
+							<Offset>
+								<AbsDimension x="0" y="-1"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<NormalTexture name="$parentIcon">
+			<Size>
+				<AbsDimension x="36" y="36"/>
+			</Size>
+			<Anchors>
+				<Anchor point="CENTER">
+					<Offset>
+						<AbsDimension x="0" y="-1"/>
+					</Offset>
+				</Anchor>
+			</Anchors>
+		</NormalTexture>
+		<HighlightTexture alphaMode="ADD" file="Interface\Buttons\ButtonHilight-Square"/>
+		<CheckedTexture alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight"/>
+	</CheckButton>
+	<Checkbutton name="SuperMacroPlusButtonTemplate" inherits="SuperMacroPlusFrameButtonTemplate" virtual="true">
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="$parentID" inherits="SuperMacroPlusButtonFont">
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+		this:RegisterForDrag("LeftButton");
+		this:RegisterForClicks("LeftButtonUp", "RightButtonUp", "LeftButtonDown");
+			</OnLoad>
+			<OnClick>
+		SuperMacroPlusButton_OnClick(arg1);
+			</OnClick>
+			<OnDragStart>
+		PickupMacro(this:GetID());
+			</OnDragStart>
+		</Scripts>
+	</Checkbutton>
+	<Checkbutton name="SuperMacroPlusSuperButtonTemplate" inherits="SuperMacroPlusFrameButtonTemplate" virtual="true">
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="$parentID" inherits="SuperMacroPlusButtonFont">
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+		this:RegisterForDrag("LeftButton");
+		this:RegisterForClicks("LeftButtonUp", "RightButtonUp", "LeftButtonDown");
+			</OnLoad>
+			<OnClick>
+		SuperMacroPlusSuperButton_OnClick(arg1);
+			</OnClick>
+			<OnDragStart>
+		local supername=GetOrderedSuperMacroPlusInfo(this:GetID());
+		if ( supername ) then
+			PickupMacro(1,supername);
+		end
+			</OnDragStart>
+			<OnReceiveDrag>
+		SuperMacroPlusSuperButton_OnReceiveDrag();
+			</OnReceiveDrag>
+		</Scripts>
+	</Checkbutton>
+	<CheckButton name="SuperMacroPlusPopupButtonTemplate" inherits="SuperMacroPlusFrameButtonTemplate" virtual="true">
+		<Scripts>
+			<OnClick>
+				SuperMacroPlusPopupButton_OnClick();
+			</OnClick>
+		</Scripts>
+	</CheckButton>
+	<Button name="SuperMacroPlusFrameTabTemplate" inherits="CharacterFrameTabButtonTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="62" y="32"/>
+		</Size>
+		<Scripts>
+			<OnMouseDown>
+				if ( arg1=="LeftButton" and SMP_PreserveDragCursor ) then
+					SMP_PreserveDragCursor();
+				end
+			</OnMouseDown>
+			<OnClick>
+				SuperMacroPlusCategoryTab_OnClick(this:GetID());
+			</OnClick>
+		</Scripts>
+	</Button>
+	<Frame name="SuperMacroPlusFrame" toplevel="true" movable="true" parent="UIParent" enableMouse="true" hidden="true" strata="HIGH">
+		<Size>
+			<AbsDimension x="590" y="512"/>
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT">
+				<Offset>
+					<AbsDimension x="0" y="-104"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<HitRectInsets>
+			<AbsInset left="12" right="40" top="12" bottom="71"/>
+		</HitRectInsets>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="SuperMacroPlusFramePortrait" file="Interface\Icons\Ability_Ambush">
+					<Size>
+						<AbsDimension x="55" y="55"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="17" y="-15"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<Gradient orientation="HORIZONTAL">
+						<MinColor r="0" g="0" b="0"/>
+						<MaxColor r="1" g="1" b="1"/>
+					</Gradient>
+				</Texture>
+			</Layer>
+			<Layer level="BORDER">
+				<FontString name="SuperMacroPlusFrameTitle" inherits="GameFontNormal" text="SUPERMACROPLUS_TITLE">
+					<Anchors>
+						<Anchor point="TOP" relativeTo="SuperMacroPlusFrame">
+							<Offset>
+								<AbsDimension x="0" y="-17"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture name="SuperMacroPlusFrameSelectedMacroBackground" file="Interface\Buttons\UI-EmptySlot">
+					<Size>
+						<AbsDimension x="64" y="64"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="16" y="-228"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<FontString name="SuperMacroPlusFrameSelectedMacroName" inherits="GameFontNormalLarge" justifyH="LEFT">
+					<Size>
+						<AbsDimension x="511" y="16"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="SuperMacroPlusFrameSelectedMacroBackground" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="57" y="-5"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="SuperMacroPlusFrameEnterMacroText" inherits="GameFontHighlightSmall" text="ENTER_MACRO_LABEL">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="SuperMacroPlusFrameSelectedMacroBackground" relativePoint="BOTTOMLEFT">
+							<Offset>
+								<AbsDimension x="55" y="20"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="SuperMacroPlusFrameSelectedMacroName" inherits="SuperMacroPlusButtonFont">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="SuperMacroPlusFrameSelectedMacroBackground" relativePoint="TOPRIGHT">
+							<Offset>
+								<AbsDimension x="-4" y="-13"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame name="SuperMacroPlusFrameMainBackground">
+				<Size>
+					<AbsDimension x="555" y="437"/>
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeTo="SuperMacroPlusFrame" relativePoint="BOTTOMRIGHT">
+						<Offset>
+							<AbsDimension x="-32" y="72"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<EdgeSize>
+						<AbsValue val="16"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="16"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="5" right="5" top="5" bottom="5"/>
+					</BackgroundInsets>
+				</Backdrop>
+				<Scripts>
+					<OnLoad>
+						SuperMacroPlusSetDefaultTooltipColor(this)
+						this:SetFrameLevel(0)
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Frame name="SuperMacroPlusFrameRegularFrame" setAllPoints="true">
+				<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="SuperMacroPlusFrameGeneralMacroText" inherits="GameFontNormal" justifyH="CENTER" text="GENERAL_MACROS" letters="511">
+					<Size>
+						<AbsDimension x="256" y="16"/>
+					</Size>
+					<Anchors>
+						<Anchor point="CENTER" relativeTo="SuperMacroPlusFrame" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="162" y="-66"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="SuperMacroPlusFrameCharacterMacroText" inherits="GameFontNormal" justifyH="CENTER" text="CHARACTER_SPECIFIC_MACROS" letters="511">
+					<Size>
+						<AbsDimension x="256" y="16"/>
+					</Size>
+					<Anchors>
+						<Anchor point="CENTER" relativeTo="SuperMacroPlusFrame" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="420" y="-66"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="SuperMacroPlusFrameCharLimitText" inherits="GameFontHighlightSmall">
+					<Anchors>
+						<Anchor point="BOTTOMLEFT">
+							<Offset>
+								<AbsDimension x="25" y="105"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+				</Layers>
+			<Frames>
+			<CheckButton name="SuperMacroPlusFrameSelectedMacroButton" inherits="SuperMacroPlusButtonTemplate" id="0">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="SuperMacroPlusFrameSelectedMacroBackground">
+						<Offset>
+							<AbsDimension x="14" y="-14"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+				this:SetChecked(nil);
+				local id = SuperMacroPlusFrame.selectedMacro;
+				if ( arg1=="RightButton") then
+					RunMacroPlusRegular(id);
+				elseif ( id ) then
+					PickupMacro(id);
+				end
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton1" inherits="SuperMacroPlusButtonTemplate" id="1">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="25" y="-83"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton2" inherits="SuperMacroPlusButtonTemplate" id="2">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton1" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton3" inherits="SuperMacroPlusButtonTemplate" id="3">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton2" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton4" inherits="SuperMacroPlusButtonTemplate" id="4">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton3" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton5" inherits="SuperMacroPlusButtonTemplate" id="5">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton4" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton6" inherits="SuperMacroPlusButtonTemplate" id="6">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton5" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton7" inherits="SuperMacroPlusButtonTemplate" id="7">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="SuperMacroPlusButton1" relativePoint="BOTTOM">
+						<Offset>
+							<AbsDimension x="0" y="-10"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton8" inherits="SuperMacroPlusButtonTemplate" id="8">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton7" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton9" inherits="SuperMacroPlusButtonTemplate" id="9">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton8" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton10" inherits="SuperMacroPlusButtonTemplate" id="10">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton9" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton11" inherits="SuperMacroPlusButtonTemplate" id="11">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton10" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton12" inherits="SuperMacroPlusButtonTemplate" id="12">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton11" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton13" inherits="SuperMacroPlusButtonTemplate" id="13">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="SuperMacroPlusButton7" relativePoint="BOTTOM">
+						<Offset>
+							<AbsDimension x="0" y="-10"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton14" inherits="SuperMacroPlusButtonTemplate" id="14">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton13" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton15" inherits="SuperMacroPlusButtonTemplate" id="15">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton14" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton16" inherits="SuperMacroPlusButtonTemplate" id="16">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton15" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton17" inherits="SuperMacroPlusButtonTemplate" id="17">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton16" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton18" inherits="SuperMacroPlusButtonTemplate" id="18">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton17" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton19" inherits="SuperMacroPlusButtonTemplate" id="19">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton6" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="35" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton20" inherits="SuperMacroPlusButtonTemplate" id="20">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton19" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton21" inherits="SuperMacroPlusButtonTemplate" id="21">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton20" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton22" inherits="SuperMacroPlusButtonTemplate" id="22">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton21" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton23" inherits="SuperMacroPlusButtonTemplate" id="23">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton22" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton24" inherits="SuperMacroPlusButtonTemplate" id="24">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton23" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton25" inherits="SuperMacroPlusButtonTemplate" id="25">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="SuperMacroPlusButton19" relativePoint="BOTTOM">
+						<Offset>
+							<AbsDimension x="0" y="-10"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton26" inherits="SuperMacroPlusButtonTemplate" id="26">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton25" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton27" inherits="SuperMacroPlusButtonTemplate" id="27">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton26" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton28" inherits="SuperMacroPlusButtonTemplate" id="28">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton27" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton29" inherits="SuperMacroPlusButtonTemplate" id="29">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton28" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton30" inherits="SuperMacroPlusButtonTemplate" id="30">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton29" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton31" inherits="SuperMacroPlusButtonTemplate" id="31">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="SuperMacroPlusButton25" relativePoint="BOTTOM">
+						<Offset>
+							<AbsDimension x="0" y="-10"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton32" inherits="SuperMacroPlusButtonTemplate" id="32">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton31" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton33" inherits="SuperMacroPlusButtonTemplate" id="33">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton32" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton34" inherits="SuperMacroPlusButtonTemplate" id="34">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton33" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton35" inherits="SuperMacroPlusButtonTemplate" id="35">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton34" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusButton36" inherits="SuperMacroPlusButtonTemplate" id="36">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusButton35" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<ScrollFrame name="SuperMacroPlusFrameScrollFrame" inherits="UIPanelScrollFrameTemplate">
+				<Size>
+					<AbsDimension x="248" y="100"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="SuperMacroPlusFrameSelectedMacroBackground" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="9" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<ScrollChild>
+					<EditBox name="SuperMacroPlusFrameText" multiLine="true" letters="511" autoFocus="false" nonspacewrap="false">
+						<Size>
+							<AbsDimension x="246" y="100"/>
+						</Size>
+						<Scripts>
+							<OnTextChanged>
+								SuperMacroPlusFrame.textChanged = 1;
+								if ( SuperMacroPlusPopupFrame.mode == "newaccount" or SuperMacroPlusPopupFrame.mode == "newcharacter" ) then
+									SuperMacroPlusPopupFrame:Hide();
+								end
+								SuperMacroPlusFrameCharLimitText:SetText(format(TEXT(MACROFRAME_CHAR_LIMIT), SMP_utf8len(SuperMacroPlusFrameText:GetText())));
+								SuperMacroPlusHandleEditBox(this)
+							</OnTextChanged>
+							<OnEscapePressed>
+								SuperMacroPlusFrame_SaveMacro();
+								this:ClearFocus();
+							</OnEscapePressed>
+						</Scripts>
+						<FontString inherits="GameFontHighlightSmall"/>
+					</EditBox>
+				</ScrollChild>
+			</ScrollFrame>
+			<Button name="SuperMacroPlusFrameTextButton">
+				<Size>
+					<AbsDimension x="246" y="100"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="SuperMacroPlusFrameText"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SuperMacroPlusFrameText:SetFocus();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Frame name="SuperMacroPlusFrameTextBackground">
+				<Size>
+					<AbsDimension x="285" y="112"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="SuperMacroPlusFrameScrollFrame" relativePoint="TOPLEFT">
+						<Offset>
+							<AbsDimension x="-6" y="6"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<EdgeSize>
+						<AbsValue val="16"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="16"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="5" right="5" top="5" bottom="5"/>
+					</BackgroundInsets>
+				</Backdrop>
+				<Scripts>
+					<OnLoad>
+						SuperMacroPlusSetDefaultTooltipColor(this)
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Button name="SuperMacroPlusDeleteButton" inherits="UIPanelButtonGrayTemplate" text="DELETE">
+				<Size>
+					<AbsDimension x="80" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativeTo="SuperMacroPlusFrame">
+						<Offset>
+							<AbsDimension x="115" y="79"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SuperMacroPlusDeleteButton_OnClick();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="SuperMacroPlusSaveButton" inherits="UIPanelButtonTemplate" text="SAVE_MACRO">
+				<Size>
+					<AbsDimension x="80" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativeTo="SuperMacroPlusFrame">
+						<Offset>
+							<AbsDimension x="195" y="79"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SuperMacroPlusFrame_SaveMacro();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="SuperMacroPlusExitButton" inherits="UIPanelButtonTemplate" text="EXIT">
+				<Size>
+					<AbsDimension x="80" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeTo="SuperMacroPlusFrame" relativePoint="BOTTOMRIGHT">
+						<Offset>
+							<AbsDimension x="-36" y="79"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						HideUIPanel(SuperMacroPlusFrame);
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="SuperMacroPlusSaveExtendButton" inherits="UIPanelButtonTemplate" text="SAVE_EXTEND">
+				<Size>
+					<AbsDimension x="100" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeTo="SuperMacroPlusExitButton" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SuperMacroPlusSaveExtendButton_OnClick();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="SuperMacroPlusDeleteExtendButton" inherits="UIPanelButtonGrayTemplate" text="DELETE_EXTEND">
+				<Size>
+					<AbsDimension x="100" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeTo="SuperMacroPlusSaveExtendButton" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SuperMacroPlusDeleteExtendButton_OnClick();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="SuperMacroPlusNewAccountButton" inherits="UIPanelButtonTemplate" text="SUPERMACROPLUS_NEW_ACCOUNT">
+				<Size>
+					<AbsDimension x="160" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="SuperMacroPlusFrame">
+						<Offset>
+							<AbsDimension x="82" y="-37"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SuperMacroPlusNewAccountButton_OnClick();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="SuperMacroPlusNewCharacterButton" inherits="UIPanelButtonTemplate" text="SUPERMACROPLUS_NEW_CHARACTER">
+				<Size>
+					<AbsDimension x="160" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="SuperMacroPlusFrame">
+						<Offset>
+							<AbsDimension x="342" y="-37"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SuperMacroPlusNewCharacterButton_OnClick();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<ScrollFrame name="SuperMacroPlusFrameExtendScrollFrame" inherits="UIPanelScrollFrameTemplate">
+				<Size>
+					<AbsDimension x="209" y="138"/>
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativeTo="SuperMacroPlusFrameScrollFrame" relativePoint="BOTTOMRIGHT">
+						<Offset>
+							<AbsDimension x="40" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<ScrollChild>
+					<EditBox name="SuperMacroPlusFrameExtendText" multiLine="true" autoFocus="false" nonspacewrap="true">
+						<Size>
+							<AbsDimension x="205" y="138"/>
+						</Size>
+						<Scripts>
+							<OnTextChanged>
+								SuperMacroPlusFrameExtendText_OnTextChanged()
+							</OnTextChanged>
+							<OnEscapePressed>
+								this:ClearFocus();
+							</OnEscapePressed>
+							<OnEditFocusGained>
+				
+							</OnEditFocusGained>
+							<OnEditFocusLost>
+				
+							</OnEditFocusLost>
+						</Scripts>
+						<FontString inherits="GameFontHighlightSmall"/>
+					</EditBox>
+				</ScrollChild>
+			</ScrollFrame>
+			<Button name="SuperMacroPlusFrameExtendTextButton">
+				<Size>
+					<AbsDimension x="226" y="138"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="SuperMacroPlusFrameExtendText"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SuperMacroPlusFrameExtendText:SetFocus();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Frame name="SuperMacroPlusFrameExtendTextBackground">
+				<Size>
+					<AbsDimension x="245" y="150"/>
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeTo="SuperMacroPlusFrameExtendScrollFrame" relativePoint="BOTTOMRIGHT">
+						<Offset>
+							<AbsDimension x="27" y="-6"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<EdgeSize>
+						<AbsValue val="16"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="16"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="5" right="5" top="5" bottom="5"/>
+					</BackgroundInsets>
+				</Backdrop>
+				<Layers>
+				<Layer level="ARTWORK">
+					<FontString name="SuperMacroPlusFrameEnterExtendText" inherits="GameFontHighlightSmall" text="ENTER_EXTEND_LABEL">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="8" y="13"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</FontString>
+					<FontString name="SuperMacroPlusFrameExtendCharLimitText" inherits="GameFontHighlightSmall">
+						<Anchors>
+							<Anchor point="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="8" y="-10"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</FontString>
+				</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						SuperMacroPlusSetDefaultTooltipColor(this)
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			</Frames>
+			</Frame>
+			<Frame name="SuperMacroPlusFrameSuperFrame" setAllPoints="true">
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="SuperMacroPlusFrameSuperCharLimitText" inherits="GameFontHighlightSmall">
+							<Anchors>
+								<Anchor point="BOTTOMLEFT">
+									<Offset>
+										<AbsDimension x="25" y="105"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			<Frames>
+			<CheckButton name="SuperMacroPlusFrameSelectedMacroSuperButton" inherits="SuperMacroPlusSuperButtonTemplate" id="0">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="SuperMacroPlusFrameSelectedMacroBackground">
+						<Offset>
+							<AbsDimension x="14" y="-14"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+		this:SetChecked(nil);
+		local id = SuperMacroPlusFrame.selectedSuper;
+		if ( arg1=="RightButton") then
+			RunSuperMacroPlus(id);
+		elseif ( id ) then
+			local supername=GetOrderedSuperMacroPlusInfo(id);
+			PickupMacro(1,supername);
+		end
+					</OnClick>
+					<OnDragStart>
+		local supername=GetOrderedSuperMacroPlusInfo(SuperMacroPlusFrame.selectedSuper);
+		if ( supername ) then
+			PickupMacro(1,supername);
+		end
+					</OnDragStart>
+				</Scripts>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton1" inherits="SuperMacroPlusSuperButtonTemplate" id="1">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="35" y="-83"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton2" inherits="SuperMacroPlusSuperButtonTemplate" id="2">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton1" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton3" inherits="SuperMacroPlusSuperButtonTemplate" id="3">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton2" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton4" inherits="SuperMacroPlusSuperButtonTemplate" id="4">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton3" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton5" inherits="SuperMacroPlusSuperButtonTemplate" id="5">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton4" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton6" inherits="SuperMacroPlusSuperButtonTemplate" id="6">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton5" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton7" inherits="SuperMacroPlusSuperButtonTemplate" id="7">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton6" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton8" inherits="SuperMacroPlusSuperButtonTemplate" id="8">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton7" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton9" inherits="SuperMacroPlusSuperButtonTemplate" id="9">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton8" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton10" inherits="SuperMacroPlusSuperButtonTemplate" id="10">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton9" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton11" inherits="SuperMacroPlusSuperButtonTemplate" id="11">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="SuperMacroPlusSuperButton1" relativePoint="BOTTOM">
+						<Offset>
+							<AbsDimension x="0" y="-10"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton12" inherits="SuperMacroPlusSuperButtonTemplate" id="12">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton11" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton13" inherits="SuperMacroPlusSuperButtonTemplate" id="13">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton12" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton14" inherits="SuperMacroPlusSuperButtonTemplate" id="14">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton13" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton15" inherits="SuperMacroPlusSuperButtonTemplate" id="15">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton14" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton16" inherits="SuperMacroPlusSuperButtonTemplate" id="16">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton15" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton17" inherits="SuperMacroPlusSuperButtonTemplate" id="17">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton16" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton18" inherits="SuperMacroPlusSuperButtonTemplate" id="18">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton17" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton19" inherits="SuperMacroPlusSuperButtonTemplate" id="19">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton18" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton20" inherits="SuperMacroPlusSuperButtonTemplate" id="20">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton19" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton21" inherits="SuperMacroPlusSuperButtonTemplate" id="21">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="SuperMacroPlusSuperButton11" relativePoint="BOTTOM">
+						<Offset>
+							<AbsDimension x="0" y="-10"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton22" inherits="SuperMacroPlusSuperButtonTemplate" id="22">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton21" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton23" inherits="SuperMacroPlusSuperButtonTemplate" id="23">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton22" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton24" inherits="SuperMacroPlusSuperButtonTemplate" id="24">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton23" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton25" inherits="SuperMacroPlusSuperButtonTemplate" id="25">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton24" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton26" inherits="SuperMacroPlusSuperButtonTemplate" id="26">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton25" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton27" inherits="SuperMacroPlusSuperButtonTemplate" id="27">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton26" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton28" inherits="SuperMacroPlusSuperButtonTemplate" id="28">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton27" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton29" inherits="SuperMacroPlusSuperButtonTemplate" id="29">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton28" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusSuperButton30" inherits="SuperMacroPlusSuperButtonTemplate" id="30">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusSuperButton29" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="13" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<ScrollFrame name="SuperMacroPlusFrameSuperScrollFrame" inherits="FauxScrollFrameTemplate" enableMouseWheel="true">
+				<Size>
+					<AbsDimension x="500" y="150"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="SuperMacroPlusFrame" relativePoint="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="-70" y="-74"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnVerticalScroll>
+FauxScrollFrame_OnVerticalScroll(SMP_MACRO_ROW_HEIGHT, SuperMacroPlusFrame_Update);
+					</OnVerticalScroll>
+					<OnMouseWheel>
+ScrollFrameTemplate_OnMouseWheel(arg1);
+					</OnMouseWheel>
+				</Scripts>
+			</ScrollFrame>
+			<ScrollFrame name="SuperMacroPlusFrameSuperEditScrollFrame" inherits="UIPanelScrollFrameTemplate">
+				<Size>
+					<AbsDimension x="494" y="100"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="SuperMacroPlusFrameSelectedMacroBackground" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="9" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<ScrollChild>
+					<EditBox name="SuperMacroPlusFrameSuperText" multiLine="true" letters="50000" autoFocus="false" nonspacewrap="true">
+						<Size>
+							<AbsDimension x="493" y="100"/>
+						</Size>
+						<Scripts>
+							<OnTextChanged>
+								SuperMacroPlusFrame.textChanged = 1;
+								if ( SuperMacroPlusPopupFrame.mode == "newaccount" or SuperMacroPlusPopupFrame.mode == "newcharacter" ) then
+									SuperMacroPlusPopupFrame:Hide();
+								end
+								SuperMacroPlusFrameSuperCharLimitText:SetText(format(TEXT(SUPERMACROPLUSFRAME_SUPER_CHAR_LIMIT), SMP_utf8len(SuperMacroPlusFrameSuperText:GetText())));
+								SuperMacroPlusHandleEditBox(this)
+								SuperMacroPlusFrame_SaveSuperMacroPlus();
+							</OnTextChanged>
+							<OnEscapePressed>
+								SuperMacroPlusFrame_SaveSuperMacroPlus();
+								this:ClearFocus();
+							</OnEscapePressed>
+						</Scripts>
+						<FontString inherits="GameFontHighlightSmall"/>
+					</EditBox>
+				</ScrollChild>
+			</ScrollFrame>
+			<Frame name="SuperMacroPlusFrameSuperTextBackground">
+				<Size>
+					<AbsDimension x="530" y="112"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="SuperMacroPlusFrame">
+						<Offset>
+							<AbsDimension x="18" y="-285"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<EdgeSize>
+						<AbsValue val="16"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="16"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="5" right="5" top="5" bottom="5"/>
+					</BackgroundInsets>
+				</Backdrop>
+				<Scripts>
+					<OnLoad>
+						SuperMacroPlusSetDefaultTooltipColor(this)
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Button name="SuperMacroPlusNewSuperButton" inherits="UIPanelButtonTemplate" text="NEW_SUPERMACROPLUS">
+				<Size>
+					<AbsDimension x="100" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeTo="SuperMacroPlusFrame" relativePoint="BOTTOMRIGHT">
+						<Offset>
+							<AbsDimension x="-120" y="79"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SuperMacroPlusNewSuperButton_OnClick();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="SuperMacroPlusSaveSuperButton" inherits="UIPanelButtonTemplate" text="SAVE_SUPERMACROPLUS">
+				<Size>
+					<AbsDimension x="100" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="SuperMacroPlusNewSuperButton" relativePoint="TOPLEFT">
+						<Offset>
+							<AbsDimension x="3" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SuperMacroPlusFrame_SaveSuperMacroPlus();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="SuperMacroPlusDeleteSuperButton" inherits="UIPanelButtonGrayTemplate" text="DELETE_SUPERMACROPLUS">
+				<Size>
+					<AbsDimension x="100" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="SuperMacroPlusSaveSuperButton" relativePoint="TOPLEFT">
+						<Offset>
+							<AbsDimension x="4" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SuperMacroPlusDeleteSuperButton_OnClick();
+					</OnClick>
+				</Scripts>
+			</Button>
+			</Frames>
+			</Frame>
+			<Button name="SuperMacroPlusEditButton" inherits="UIPanelButtonTemplate" text="CHANGE_MACRO_NAME_ICON">
+				<Size>
+					<AbsDimension x="170" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="SuperMacroPlusFrameSelectedMacroBackground">
+						<Offset>
+							<AbsDimension x="51" y="-21"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SuperMacroPlusEditButton_OnClick();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="SuperMacroPlusOptionsButton" inherits="UIPanelButtonTemplate" text="SUPERMACROPLUS_OPTIONS">
+				<Size>
+					<AbsDimension x="100" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativeTo="SuperMacroPlusFrame">
+						<Offset>
+							<AbsDimension x="15" y="79"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SuperMacroPlusOptionsButton_OnClick();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="SuperMacroPlusFrameCloseButton" inherits="UIPanelCloseButton">
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="SuperMacroPlusFrame" relativePoint="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="-29" y="-8"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="SuperMacroPlusFrameTab1" inherits="SuperMacroPlusFrameTabTemplate" id="1" text="SMP_CATEGORY_GENERAL">
+				<Anchors>
+					<Anchor point="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="11" y="45"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="SuperMacroPlusFrameTab2" inherits="SuperMacroPlusFrameTabTemplate" id="2" text="SMP_CATEGORY_SHAMAN">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusFrameTab1" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="-14" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="SuperMacroPlusFrameTab3" inherits="SuperMacroPlusFrameTabTemplate" id="3" text="SMP_CATEGORY_MAGE">
+				<Anchors><Anchor point="LEFT" relativeTo="SuperMacroPlusFrameTab2" relativePoint="RIGHT"><Offset><AbsDimension x="-14" y="0"/></Offset></Anchor></Anchors>
+			</Button>
+			<Button name="SuperMacroPlusFrameTab4" inherits="SuperMacroPlusFrameTabTemplate" id="4" text="SMP_CATEGORY_PALADIN">
+				<Anchors><Anchor point="LEFT" relativeTo="SuperMacroPlusFrameTab3" relativePoint="RIGHT"><Offset><AbsDimension x="-14" y="0"/></Offset></Anchor></Anchors>
+			</Button>
+			<Button name="SuperMacroPlusFrameTab5" inherits="SuperMacroPlusFrameTabTemplate" id="5" text="SMP_CATEGORY_DRUID">
+				<Anchors><Anchor point="LEFT" relativeTo="SuperMacroPlusFrameTab4" relativePoint="RIGHT"><Offset><AbsDimension x="-14" y="0"/></Offset></Anchor></Anchors>
+			</Button>
+			<Button name="SuperMacroPlusFrameTab6" inherits="SuperMacroPlusFrameTabTemplate" id="6" text="SMP_CATEGORY_HUNTER">
+				<Anchors><Anchor point="LEFT" relativeTo="SuperMacroPlusFrameTab5" relativePoint="RIGHT"><Offset><AbsDimension x="-14" y="0"/></Offset></Anchor></Anchors>
+			</Button>
+			<Button name="SuperMacroPlusFrameTab7" inherits="SuperMacroPlusFrameTabTemplate" id="7" text="SMP_CATEGORY_PRIEST">
+				<Anchors><Anchor point="LEFT" relativeTo="SuperMacroPlusFrameTab6" relativePoint="RIGHT"><Offset><AbsDimension x="-14" y="0"/></Offset></Anchor></Anchors>
+			</Button>
+			<Button name="SuperMacroPlusFrameTab8" inherits="SuperMacroPlusFrameTabTemplate" id="8" text="SMP_CATEGORY_ROGUE">
+				<Anchors><Anchor point="LEFT" relativeTo="SuperMacroPlusFrameTab7" relativePoint="RIGHT"><Offset><AbsDimension x="-14" y="0"/></Offset></Anchor></Anchors>
+			</Button>
+			<Button name="SuperMacroPlusFrameTab9" inherits="SuperMacroPlusFrameTabTemplate" id="9" text="SMP_CATEGORY_WARLOCK">
+				<Anchors><Anchor point="LEFT" relativeTo="SuperMacroPlusFrameTab8" relativePoint="RIGHT"><Offset><AbsDimension x="-14" y="0"/></Offset></Anchor></Anchors>
+			</Button>
+			<Button name="SuperMacroPlusFrameTab10" inherits="SuperMacroPlusFrameTabTemplate" id="10" text="SMP_CATEGORY_WARRIOR">
+				<Anchors><Anchor point="LEFT" relativeTo="SuperMacroPlusFrameTab9" relativePoint="RIGHT"><Offset><AbsDimension x="-14" y="0"/></Offset></Anchor></Anchors>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				SuperMacroPlusFrame_OnLoad();
+			</OnLoad>
+			<OnShow>
+				SuperMacroPlusFrame_OnShow();
+			</OnShow>
+			<OnHide>
+				SuperMacroPlusFrame_OnHide();
+			</OnHide>
+			<OnEvent>
+				SuperMacroPlusFrame_OnEvent(event);
+			</OnEvent>
+			<OnMouseWheel>
+				return;
+			</OnMouseWheel>
+		</Scripts>
+	</Frame>
+	<Frame name="SuperMacroPlusPopupFrame" frameStrata="TOOLTIP" toplevel="true" parent="UIParent" movable="true" enableMouse="true" hidden="true">
+		<Size>
+			<AbsDimension x="297" y="378"/>
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="SuperMacroPlusFrame" relativePoint="TOPRIGHT">
+				<Offset>
+					<AbsDimension x="-40" y="-40"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture file="Interface\MacroFrame\MacroPopup-TopLeft">
+					<Size>
+						<AbsDimension x="256" y="256"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+					</Anchors>
+				</Texture>
+				<Texture file="Interface\MacroFrame\MacroPopup-TopRight">
+					<Size>
+						<AbsDimension x="64" y="256"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="256" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture file="Interface\MacroFrame\MacroPopup-TopLeft">
+					<Size>
+						<AbsDimension x="256" y="100"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="0" y="-256"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0" right="1.0" top="0.5" bottom="0.6"/>
+				</Texture>
+				<Texture file="Interface\MacroFrame\MacroPopup-TopRight">
+					<Size>
+						<AbsDimension x="64" y="100"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="256" y="-256"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+					<TexCoords left="0" right="1.0" top="0.5" bottom="0.6"/>
+				</Texture>
+				<Texture file="Interface\MacroFrame\MacroPopup-BotLeft">
+					<Size>
+						<AbsDimension x="256" y="64"/>
+					</Size>
+					<Anchors>
+						<Anchor point="BOTTOMLEFT">
+							<Offset>
+								<AbsDimension x="0" y="-36"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<Texture file="Interface\MacroFrame\MacroPopup-BotRight">
+					<Size>
+						<AbsDimension x="64" y="64"/>
+					</Size>
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT">
+							<Offset>
+								<AbsDimension x="23" y="-36"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<FontString inherits="GameFontHighlightSmall" text="MACRO_POPUP_TEXT">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="24" y="-21"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString inherits="GameFontHighlightSmall" text="MACRO_POPUP_CHOOSE_ICON">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="24" y="-69"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<EditBox name="SuperMacroPlusPopupEditBox" letters="16" historyLines="0">
+				<Size>
+					<AbsDimension x="200" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="29" y="-35"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="SuperMacroPlusPopupNameLeft" file="Interface\ClassTrainerFrame\UI-ClassTrainer-FilterBorder">
+							<Size>
+								<AbsDimension x="12" y="29"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT">
+									<Offset>
+										<AbsDimension x="-11" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+							<TexCoords left="0" right="0.09375" top="0" bottom="1.0"/>
+						</Texture>
+						<Texture name="SuperMacroPlusPopupNameMiddle" file="Interface\ClassTrainerFrame\UI-ClassTrainer-FilterBorder">
+							<Size>
+								<AbsDimension x="175" y="29"/>
+							</Size>
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupNameLeft" relativePoint="RIGHT"/>
+							</Anchors>
+							<TexCoords left="0.09375" right="0.90625" top="0" bottom="1.0"/>
+						</Texture>
+						<Texture name="SuperMacroPlusPopupNameRight" file="Interface\ClassTrainerFrame\UI-ClassTrainer-FilterBorder">
+							<Size>
+								<AbsDimension x="12" y="29"/>
+							</Size>
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupNameMiddle" relativePoint="RIGHT"/>
+							</Anchors>
+							<TexCoords left="0.90625" right="1.0" top="0" bottom="1.0"/>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnTextChanged>
+						SuperMacroPlusPopupOkayButton_Update();
+						SuperMacroPlusFrameSelectedMacroName:SetText(this:GetText());
+					</OnTextChanged>
+					<OnEscapePressed>
+						SuperMacroPlusPopupFrame:Hide();
+					</OnEscapePressed>
+					<OnEnterPressed>
+						if ( SuperMacroPlusPopupOkayButton:IsEnabled() ~= 0 ) then
+							SuperMacroPlusPopupOkayButton_OnClick();
+						end
+					</OnEnterPressed>
+				</Scripts>
+				<FontString inherits="ChatFontNormal"/>
+			</EditBox>
+			<ScrollFrame name="SuperMacroPlusPopupScrollFrame" inherits="FauxScrollFrameTemplate">
+				<Size>
+					<AbsDimension x="266" y="275"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="SuperMacroPlusPopupFrame" relativePoint="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="-39" y="-67"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+               	<Texture file="Interface\ClassTrainerFrame\UI-ClassTrainer-ScrollBar">
+               		<Size>
+               			<AbsDimension x="30" y="120"/>
+               		</Size>
+               		<Anchors>
+               			<Anchor point="TOPLEFT" relativePoint="TOPRIGHT">
+               				<Offset>
+               					<AbsDimension x="-3" y="2"/>
+               				</Offset>
+               			</Anchor>
+               		</Anchors>
+               		<TexCoords left="0" right="0.46875" top="0.0234375" bottom="0.9609375"/>
+               	</Texture>
+               	<Texture file="Interface\ClassTrainerFrame\UI-ClassTrainer-ScrollBar">
+               		<Size>
+               			<AbsDimension x="30" y="37"/>
+               		</Size>
+               		<Anchors>
+               			<Anchor point="TOPLEFT" relativePoint="TOPRIGHT">
+               				<Offset>
+               					<AbsDimension x="-3" y="-117"/>
+               				</Offset>
+               			</Anchor>
+               		</Anchors>
+               		<TexCoords left="0" right="0.46875" top="0.5" bottom="0.9"/>
+               	</Texture>
+               	<Texture file="Interface\ClassTrainerFrame\UI-ClassTrainer-ScrollBar">
+               		<Size>
+               			<AbsDimension x="30" y="123"/>
+               		</Size>
+               		<Anchors>
+               			<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT">
+               				<Offset>
+               					<AbsDimension x="-3" y="-2"/>
+               				</Offset>
+               			</Anchor>
+               		</Anchors>
+               		<TexCoords left="0.53125" right="1.0" top="0.03125" bottom="1.0"/>
+               	</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnVerticalScroll>
+						FauxScrollFrame_OnVerticalScroll(SMP_MACRO_ICON_ROW_HEIGHT, SuperMacroPlusPopupFrame_Update);
+					</OnVerticalScroll>
+				</Scripts>
+			</ScrollFrame>
+			<CheckButton name="SuperMacroPlusPopupButton1" inherits="SuperMacroPlusPopupButtonTemplate" id="1">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="24" y="-85"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton2" inherits="SuperMacroPlusPopupButtonTemplate" id="2">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton1" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton3" inherits="SuperMacroPlusPopupButtonTemplate" id="3">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton2" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton4" inherits="SuperMacroPlusPopupButtonTemplate" id="4">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton3" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton5" inherits="SuperMacroPlusPopupButtonTemplate" id="5">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton4" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton6" inherits="SuperMacroPlusPopupButtonTemplate" id="6">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="SuperMacroPlusPopupButton1" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-8"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton7" inherits="SuperMacroPlusPopupButtonTemplate" id="7">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton6" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton8" inherits="SuperMacroPlusPopupButtonTemplate" id="8">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton7" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton9" inherits="SuperMacroPlusPopupButtonTemplate" id="9">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton8" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton10" inherits="SuperMacroPlusPopupButtonTemplate" id="10">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton9" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton11" inherits="SuperMacroPlusPopupButtonTemplate" id="11">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="SuperMacroPlusPopupButton6" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-8"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton12" inherits="SuperMacroPlusPopupButtonTemplate" id="12">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton11" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton13" inherits="SuperMacroPlusPopupButtonTemplate" id="13">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton12" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton14" inherits="SuperMacroPlusPopupButtonTemplate" id="14">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton13" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton15" inherits="SuperMacroPlusPopupButtonTemplate" id="15">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton14" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton16" inherits="SuperMacroPlusPopupButtonTemplate" id="16">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="SuperMacroPlusPopupButton11" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-8"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton17" inherits="SuperMacroPlusPopupButtonTemplate" id="17">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton16" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton18" inherits="SuperMacroPlusPopupButtonTemplate" id="18">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton17" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton19" inherits="SuperMacroPlusPopupButtonTemplate" id="19">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton18" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton20" inherits="SuperMacroPlusPopupButtonTemplate" id="20">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton19" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton20" inherits="SuperMacroPlusPopupButtonTemplate" id="20">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton19" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton21" inherits="SuperMacroPlusPopupButtonTemplate" id="21">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="SuperMacroPlusPopupButton16" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-8"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton22" inherits="SuperMacroPlusPopupButtonTemplate" id="22">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton21" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton23" inherits="SuperMacroPlusPopupButtonTemplate" id="23">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton22" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton24" inherits="SuperMacroPlusPopupButtonTemplate" id="24">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton23" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton25" inherits="SuperMacroPlusPopupButtonTemplate" id="25">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton24" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton26" inherits="SuperMacroPlusPopupButtonTemplate" id="26">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="SuperMacroPlusPopupButton21" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-8"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton27" inherits="SuperMacroPlusPopupButtonTemplate" id="27">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton26" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton28" inherits="SuperMacroPlusPopupButtonTemplate" id="28">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton27" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton29" inherits="SuperMacroPlusPopupButtonTemplate" id="29">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton28" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<CheckButton name="SuperMacroPlusPopupButton30" inherits="SuperMacroPlusPopupButtonTemplate" id="30">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="SuperMacroPlusPopupButton29" relativePoint="RIGHT">
+						<Offset>
+							<AbsDimension x="10" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<Button name="SuperMacroPlusPopupCancelButton" inherits="UIPanelButtonTemplate" text="CANCEL">
+				<Size>
+					<AbsDimension x="78" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeTo="SuperMacroPlusPopupFrame">
+						<Offset>
+							<AbsDimension x="-11" y="-1"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						this:GetParent():Hide();
+						SuperMacroPlusFrame_Update();
+						PlaySound("gsTitleOptionOK");
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="SuperMacroPlusPopupOkayButton" inherits="UIPanelButtonTemplate" text="OKAY">
+				<Size>
+					<AbsDimension x="78" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="SuperMacroPlusPopupCancelButton" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="-2" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						SuperMacroPlusPopupOkayButton_OnClick();
+						PlaySound("gsTitleOptionOK");
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnShow>
+				SuperMacroPlusPopupFrame_OnShow();
+			</OnShow>
+			<OnHide>
+				SuperMacroPlusPopupFrame_OnHide();
+			</OnHide>
+			<OnMouseWheel>
+				return;
+			</OnMouseWheel>
+		</Scripts>
+	</Frame>
+<!--
+	<Button name="GameMenuButtonSuperMacroPlus" inherits="GameMenuButtonTemplate" text="SUPERMACROPLUS_TITLE" parent="GameMenuFrame">
+		<Anchors>
+			<Anchor point="TOP" relativeTo="GameMenuButtonKeybindings" relativePoint="BOTTOM">
+				<Offset>
+					<AbsDimension x="0" y="-1"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Scripts>
+			<OnLoad>
+		GameMenuButtonMacros:ClearAllPoints();
+		GameMenuButtonMacros:SetPoint("TOP", this:GetName(), "BOTTOM", 0, -1);
+		GameMenuFrame:SetHeight( GameMenuFrame:GetHeight() + button:GetHeight() + 2 );
+			</OnLoad>
+			<OnClick>
+		PlaySound("igMainMenuOption");
+		HideUIPanel(GameMenuFrame);
+		ShowUIPanel(SuperMacroPlusFrame);
+			</OnClick>
+		</Scripts>
+	</Button>
+-->
+	<Button name="GameMenuButtonSuperMacroPlus" inherits="GameMenuButtonTemplate" text="SUPERMACROPLUS_BUTTON" parent="GameMenuFrame">
+		<Size>
+			<AbsDimension x="20" y="115"/>
+		</Size>
+		<Anchors>
+			<Anchor point="TOPRIGHT" relativeTo="GameMenuButtonOptions" relativePoint="TOPLEFT">
+				<Offset>
+					<AbsDimension x="4" y="-40"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Scripts>
+			<OnClick>
+		PlaySound("igMainMenuOption");
+		HideUIPanel(GameMenuFrame);
+		ShowUIPanel(SuperMacroPlusFrame);
+			</OnClick>
+		</Scripts>
+	</Button>
+	<Button name="SuperMacroPlusMinimapButton" parent="Minimap" enableMouse="true" hidden="true" movable="true" toplevel="true">
+		<Size>
+			<AbsDimension x="33" y="33"/>
+		</Size>
+		<Anchors>
+			<Anchor point="BOTTOM" relativeTo="Minimap">
+				<Offset>
+					<AbsDimension x="0" y="-30"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="SuperMacroPlusMinimapButtonIcon" file="Interface\Icons\INV_Misc_Note_01.blp">								
+					<Size>
+						<AbsDimension x="18" y="18"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="7" y="-6"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture name="SuperMacroPlusMinimapButtonBorder" file="Interface\Minimap\MiniMap-TrackingBorder.tga">
+					<Size>
+						<AbsDimension x="52" y="52"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+		this:RegisterForDrag("LeftButton");
+			</OnLoad>
+			<OnClick>
+		if ( SuperMacroPlusFrame:IsVisible() ) then
+			HideUIPanel(SuperMacroPlusFrame);
+		else
+			ShowUIPanel(SuperMacroPlusFrame);
+		end
+			</OnClick>
+			<OnEnter>
+		GameTooltip:SetOwner(this, "ANCHOR_BOTTOMLEFT");
+		GameTooltip:SetText(SUPERMACROPLUS_MINIMAP);	
+			</OnEnter>				
+			<OnLeave>
+		GameTooltip:Hide();
+			</OnLeave>
+			<OnDragStart>
+		this:StartMoving();
+		this.isMoving = true;
+			</OnDragStart>
+			<OnDragStop>
+		this:StopMovingOrSizing();
+		this.isMoving = false;
+			</OnDragStop>
+		</Scripts>						
+		<HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight"/>
+	</Button>
+	<GameTooltip name="SMP_Tooltip" frameStrata="TOOLTIP" hidden="true" parent="UIParent" inherits="GameTooltipTemplate">
+		<Scripts>
+			<OnLoad>
+		this:SetOwner(WorldFrame, "ANCHOR_NONE");
+			</OnLoad>
+		</Scripts>
+	</GameTooltip>
+	<Frame name="SMP_INFRAME">
+		<Scripts>
+			<OnLoad>
+		this.events={};
+		this.events.n=0;
+			</OnLoad>
+			<OnUpdate>
+		SMP_INFRAME_OnUpdate();
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+	<Frame name="SuperMacroPlus_EventsFrame">
+		<Scripts>
+			<OnLoad>
+		this.events={};
+			</OnLoad>
+			<OnEvent>
+		SuperMacroPlus_EventsFrame_OnEvent();
+			</OnEvent>
+		</Scripts>
+	</Frame>
+</Ui>

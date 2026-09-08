@@ -1,0 +1,9 @@
+## Interface: 11200
+## Title: Goblin Brainwashing Helper
+## Notes: Customise your Goblin Brainwashing Device with specialisation names and colours
+## Title-zhCN:|CFF00FF00[|r|CFFDD66DD界面|r|CFF00FF00] 天赋备注助手
+## Notes-zhCN: 能够给地精洗脑器界面的各个天赋增加自定义的备注。
+## Version: 0.3
+## Author: McPewPew, Sunelegy
+## SavedVariablesPerCharacter: GBHSpec, RGBSpec
+GoblinBrainwashingHelper.lua

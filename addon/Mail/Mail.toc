@@ -1,0 +1,7 @@
+﻿## Interface: 11200
+## Title: |cFF00FF00邮箱增强
+## Notes: 邮箱功能增强，多物品发送，右键摆放，一键收信。 |cFFFFFF00|n 乌龟服定制版 by Sunelegy
+## Author: shirsig, Sunelegy
+## SavedVariablesPerCharacter: Mail_To, S_MailTo_List
+## SavedVariables: Mail_AutoCompleteNames
+Mail.xml
