@@ -26,7 +26,7 @@ local DEFINITIONS = {
         profileKey = "WARRIOR_ARMS",
         mode = "single",
         entry = "single",
-        fallbackLabel = zh and "双手武器战" or "Two-Handed Arms Warrior",
+        fallbackLabel = zh and "双手战士" or "Two-Handed Warrior",
     },
     {
         key = "protection_single",
@@ -42,7 +42,7 @@ local DEFINITIONS = {
         profileKey = "WARRIOR_ARMS",
         mode = "aoe",
         entry = "aoe",
-        fallbackLabel = zh and "双手武器战" or "Two-Handed Arms Warrior",
+        fallbackLabel = zh and "双手战士" or "Two-Handed Warrior",
     },
     {
         key = "protection_aoe",

@@ -1,4 +1,4 @@
--- Focused self-check for the two-handed deep Arms rotation.
+-- Focused self-check for the shared two-handed Arms/Fury rotation.
 -- Run from Interface/AddOns: lua DoiteDPS/Tests/WarriorArms_spec.lua
 
 local now = 100
@@ -6,6 +6,7 @@ local unbridledWrathRank = 0
 local improvedExecuteRank = 0
 local improvedHeroicStrikeRank = 0
 local ravagerRank = 0
+local flurryRank = 0
 table.getn = table.getn or function(value) return #value end
 function GetTime() return now end
 function GetLocale() return "zhCN" end
@@ -22,6 +23,9 @@ function GetTalentInfo(tab, index)
     if tab == 2 and index == 3 then
         return "碾碎", nil, 5, 1, ravagerRank, 3
     end
+    if tab == 2 and index == 4 then
+        return "乱舞", nil, 6, 3, flurryRank, 5
+    end
     return nil
 end
 
@@ -32,6 +36,7 @@ local defs = {
     EXECUTE = { name = "斩杀", cost = 15 },
     OVERPOWER = { name = "压制", cost = 5 },
     MORTAL_STRIKE = { name = "致死打击", cost = 30 },
+    BLOODTHIRST = { name = "嗜血", cost = 30 },
     WHIRLWIND = { name = "旋风斩", cost = 25 },
     SLAM = { name = "猛击", cost = 15 },
     HEROIC_STRIKE = { name = "英勇打击", cost = 15 },
@@ -66,6 +71,7 @@ for key, def in pairs(defs) do
     D.Spells[key] = { spellId = nextSpellId }
     known[key] = true
 end
+known.BLOODTHIRST = false
 
 function D:GetSpellDef(key) return defs[key] end
 function D:GetName(key)
@@ -164,11 +170,11 @@ local function ForecastByKey(forecast, key)
 end
 
 Check(
-    "only the single and AoE deep-Arms modes remain",
+    "the shared two-handed rotation retains its single and AoE modes",
     table.getn(P.ModeOrder) == 2
         and P.ModeOrder[1] == "single"
         and P.ModeOrder[2] == "aoe"
-        and P.ModeLabels.single == "双手武器战"
+        and P.ModeLabels.single == "双手战士"
 )
 Check(
     "Slam exposes a 0.17-second clip limit instead of a safety margin",
@@ -1716,11 +1722,11 @@ Check("forty-two rage funds queued talented Heroic Strike and Mortal Strike",
 
 talented = State({ cooldowns = CoreCooldowns(99, 0) })
 local talentedForecast = P:BuildForecast(talented, { key = "WHIRLWIND" })
-Check("Ravager predicts a seven-second Whirlwind cycle",
-    ForecastByKey(P._candidates, "WHIRLWIND").eta == 7)
+Check("Ravager predicts an eight-second Whirlwind cycle",
+    ForecastByKey(P._candidates, "WHIRLWIND").eta == 8)
 P:OnEvent("SPELL_CAST_EVENT", 1, D.Spells.WHIRLWIND.spellId)
-Check("Ravager event cooldown is seven seconds",
-    P._cooldownUntil.WHIRLWIND == now + 7)
+Check("Ravager event cooldown is eight seconds",
+    P._cooldownUntil.WHIRLWIND == now + 8)
 talented.cooldowns.WHIRLWIND = { remaining = 8, duration = 8 }
 talentedForecast = P:BuildForecast(talented, { key = "WAIT" })
 Check("actual API cooldown overrides prediction without a second talent reduction",
@@ -1762,7 +1768,7 @@ local snapshot = table.concat(debugLines, "\n")
 Check("snapshot distinguishes a detected zero-point talent",
     string.find(snapshot, "怒不可遏=0/5 read=found", 1, true) ~= nil)
 Check("snapshot reports the actual talented costs and cap",
-    string.find(snapshot, "HS=12 Cleave=17 Execute=10 WW-model=7s", 1, true) ~= nil
+    string.find(snapshot, "HS=12 Cleave=17 Execute=10 WW-model=8s", 1, true) ~= nil
         and string.find(snapshot, "apiMax=130 usedMax=130 match=true", 1, true) ~= nil)
 local lineCount = #debugLines
 P:DebugTalents(debugState)
@@ -1787,5 +1793,150 @@ D.debugMode = false
 P:DebugTalents(debugState)
 GetTalentInfo, D.Print, pfUI, UnitManaMax = oldTalentInfo, oldPrint, oldPfUI, oldManaMax
 P:ResetRuntime()
+
+-- The same saved mode must work for Fury with or without Bloodthirst.
+do
+    known.MORTAL_STRIKE = false
+    flurryRank, improvedExecuteRank = 5, 2
+    local function FuryState(values)
+        local options = {
+            targetHP = 20, rage = 40, predictedMainHandRage = 30,
+            cooldowns = CoreCooldowns(99, 4, 99, 30),
+            swing = { active = true, remaining = 0.5, speed = 2.55,
+                slamCast = 1.92, slamCapable = true, slamUsed = true },
+        }
+        for key, value in pairs(values or {}) do options[key] = value end
+        return State(options)
+    end
+    local function Swing(remaining, used)
+        return { active = true, remaining = remaining, speed = 2.55,
+            slamCast = 1.92, slamCapable = true, slamUsed = used }
+    end
+
+    local cases = {
+        { "Fury keeps the formerly blocked 60-rage Whirlwind",
+            { rage = 60, swing = Swing(1.55), cooldowns = CoreCooldowns(99, 0) }, "WHIRLWIND" },
+        { "Fury does not reserve Execute rage before Whirlwind",
+            { rage = 25, swing = Swing(1.55), cooldowns = CoreCooldowns(99, 0) }, "WHIRLWIND" },
+        { "Fury keeps a full-rage Slam window",
+            { rage = 100, swing = Swing(2.55) }, "SLAM" },
+        { "Fury can spend its last fifteen rage on safe Slam",
+            { rage = 15, swing = Swing(2.55) }, "SLAM" },
+        { "Fury tail Execute cannot delete the next fast-swing Slam",
+            {}, "AUTO_ATTACK" },
+        { "Fury can Execute early when the next white funds its core",
+            { rage = 10, swing = Swing(2) }, "EXECUTE" },
+        { "Execute drains all rage and cannot starve the next Slam",
+            { rage = 10, swing = Swing(2), predictedMainHandRage = 10 }, "AUTO_ATTACK" },
+        { "Fury waits for an affordable near-ready Whirlwind",
+            { swing = Swing(2, true), cooldowns = CoreCooldowns(99, 0.4) }, "AUTO_ATTACK" },
+        { "Execute cannot delay a Whirlwind funded by the next white",
+            { rage = 10, swing = Swing(0.8, true), cooldowns = CoreCooldowns(99, 0) }, "AUTO_ATTACK" },
+        { "Fury may queue Heroic Strike below twenty percent",
+            { rage = 95 }, "HEROIC_STRIKE" },
+        { "overflow permits Execute when a queued strike cannot preserve core rage",
+            { predictedMainHandRage = 70, cooldowns = CoreCooldowns(99, 2) }, "EXECUTE" },
+        { "queued Heroic Strike does not suppress an affordable Fury Slam",
+            { rage = 60, swing = { active = true, remaining = 2.55, speed = 2.55,
+                slamCast = 1.92, slamCapable = true, hsQueued = true } }, "SLAM" },
+        { "Fury AoE Whirlwind keeps priority over Execute and Slam",
+            { mode = "aoe", rage = 60, swing = Swing(2.55),
+                cooldowns = CoreCooldowns(99, 0, 99, 30) }, "WHIRLWIND" },
+        { "Fury AoE can Cleave instead of forcing a tail Execute",
+            { mode = "aoe", rage = 95 }, "CLEAVE" },
+        { "Fury AoE does not spend next Whirlwind funding on Cleave or Execute",
+            { mode = "aoe", rage = 25, predictedMainHandRage = 70,
+                cooldowns = CoreCooldowns(99, 0.4, 99, 30) }, "AUTO_ATTACK" },
+        { "Fury prepares learned Sweeping Strikes",
+            { mode = "aoe", rage = 20, cooldowns = CoreCooldowns(99, 4, 99, 0) }, "BATTLE_STANCE" },
+        { "Fury activates learned Sweeping Strikes",
+            { mode = "aoe", rage = 20, stance = 1,
+                cooldowns = CoreCooldowns(99, 4, 99, 0) }, "SWEEPING_STRIKES" },
+        { "Fury returns to Berserker after Sweeping Strikes",
+            { mode = "aoe", stance = 1, sweepingStrikes = true }, "BERSERKER_STANCE" },
+        { "missing swing provider still permits normal Fury instants",
+            { rage = 25, swing = { active = false }, cooldowns = CoreCooldowns(99, 0) }, "WHIRLWIND" },
+        { "missing swing provider pauses automatic Fury Execute",
+            { rage = 10, swing = { active = false } }, "WAIT" },
+    }
+    for _, case in ipairs(cases) do
+        local state = FuryState(case[2])
+        local rec = P:Recommend(state)
+        Check(case[1] .. " (got " .. tostring(rec.key) .. ")", rec.key == case[3])
+    end
+
+    local state = FuryState()
+    local rec, forecast = P:Evaluate(state)
+    Check("Fury forecasts do not invent a per-swing Execute or unknown strikes",
+        rec.key == "AUTO_ATTACK" and not ForecastByKey(forecast, "EXECUTE")
+            and not ForecastByKey(forecast, "MORTAL_STRIKE")
+            and not ForecastByKey(forecast, "BLOODTHIRST"))
+    Check("Flurry identifies Fury without Bloodthirst", P:IsFury())
+    flurryRank = 0
+    Check("Fury selection does not depend on a temporary aura", P:IsFury())
+    P:OnEvent("CHARACTER_POINTS_CHANGED")
+    Check("respec immediately restores the Arms policy", not P:IsFury())
+    flurryRank = 5
+    P:OnEvent("SPELLS_CHANGED")
+    Check("learning Flurry restores Fury without reloading", P:IsFury())
+
+    known.SWEEPING_STRIKES = false
+    state = FuryState({ mode = "aoe", rage = 25, cooldowns = CoreCooldowns(99, 0, 99, 0) })
+    Check("unknown Sweeping Strikes never blocks Fury AoE", P:Recommend(state).key == "WHIRLWIND")
+    known.SWEEPING_STRIKES = true
+
+    known.BLOODTHIRST, flurryRank = true, 0
+    state = FuryState({ rage = 30, swing = Swing(1.55) })
+    state.cooldowns.BLOODTHIRST = { remaining = 0, duration = 6 }
+    Check("learned Bloodthirst participates without requiring Flurry",
+        P:IsFury() and P:Recommend(state).key == "BLOODTHIRST")
+    state.mode = "aoe"
+    Check("learned Bloodthirst participates in AoE", P:Recommend(state).key == "BLOODTHIRST")
+    forecast = P:BuildForecast(state, { key = "WAIT" })
+    Check("learned Bloodthirst appears in the timeline", ForecastByKey(forecast, "BLOODTHIRST") ~= nil)
+    P:OnEvent("SPELL_CAST_EVENT", 1, D.Spells.BLOODTHIRST.spellId)
+    Check("Bloodthirst cast events predict its six-second cooldown",
+        P._cooldownUntil.BLOODTHIRST == now + 6)
+    Check("the predicted Bloodthirst cooldown prevents duplicate recommendations",
+        P:Recommend(state).key ~= "BLOODTHIRST")
+
+    state = FuryState({ rage = 60, swing = Swing(4), cooldowns = CoreCooldowns(99, 0) })
+    state.swing.speed = 4
+    state.cooldowns.BLOODTHIRST = { remaining = 0.3, duration = 6 }
+    Check("waiting for Bloodthirst plus Slam does not slip in an extra Whirlwind",
+        P:Recommend(state).key == "AUTO_ATTACK")
+
+    -- Exercise the actual keypress path, including its final Execute guard.
+    known.BLOODTHIRST, flurryRank = false, 5
+    local live = FuryState({ rage = 10, swing = Swing(2) })
+    local casts = {}
+    D.SetMode = function() end
+    D.BuildState = function() return live end
+    D.PrepareExecutionTarget = function() return false end
+    D.Update = function() end
+    CastSpellByName = function(name) table.insert(casts, "queued:" .. name) end
+    CastSpellByNameNoQueue = function(name) table.insert(casts, name) end
+    Check("Fury executes an approved early opportunity without generic spell queuing",
+        P:Execute("single") and #casts == 1 and casts[1] == "斩杀")
+    live = FuryState()
+    Check("the real execution path rejects a destructive tail Execute",
+        not P:Execute("single") and #casts == 1)
+    live = FuryState({ rage = 10, swing = Swing(2), gcd = 0.2 })
+    Check("Fury Execute cannot enter the spell queue during GCD",
+        not P:Execute("single") and #casts == 1)
+    live = FuryState({ rage = 10, swing = Swing(2), casting = true })
+    Check("Fury never interrupts an active cast for Execute",
+        not P:Execute("single") and #casts == 1)
+    live = FuryState({ rage = 10, swing = Swing(0.2), predictedMainHandRage = 100 })
+    Check("Fury retains the server swing-boundary guard",
+        not P:Execute("single") and #casts == 1)
+    D.SetMode, D.BuildState = oldExecuteSetMode, oldExecuteBuildState
+    D.PrepareExecutionTarget, D.Update = oldExecutePrepareTarget, oldExecuteUpdate
+    CastSpellByName, CastSpellByNameNoQueue = oldExecuteCast, oldExecuteCastNoQueue
+
+    known.MORTAL_STRIKE = true
+    flurryRank, improvedExecuteRank = 0, 0
+    P:ResetRuntime()
+end
 
 print("WarriorArms_spec: " .. passed .. " checks passed")

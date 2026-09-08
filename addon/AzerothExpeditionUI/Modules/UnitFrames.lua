@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local UnitFrames = {}
-UnitFrames.runtimeContract = "2.1"
+UnitFrames.runtimeContract = "2.2"
 
 local MEDIA = addon.media.root .. "UnitFrames\\"
 local HEALTH_TEXTURE = MEDIA .. "UnitFrameHealthFillV1"
@@ -853,8 +853,117 @@ function UnitFrames:IsPortraitConfigurationEnabled()
   return PortraitRouteOwned()
 end
 
+-- Saved per character; provider configuration remains untouched for fallback.
+function UnitFrames:GetNameplateProfile()
+  if not addon.db or not addon.db.unitframes then return end
+  local name, realm = UnitName("player"), GetRealmName()
+  if not name or name == "" or not realm or realm == "" then return end
+  local config = addon.db.unitframes
+  config.nameplateProfiles = config.nameplateProfiles or {}
+  local key = name .. " - " .. realm
+  local profile = config.nameplateProfiles[key]
+  if type(profile) ~= "table" then
+    profile = { mode = "dps" }
+    config.nameplateProfiles[key] = profile
+  end
+  if profile.mode ~= "tank" and profile.mode ~= "healer" and
+    profile.mode ~= "dps" and profile.mode ~= "off" then
+    profile.mode = "dps"
+  end
+  return profile
+end
+
+local NAMEPLATE_ROLE_COLOURS = {
+  safe = { .38, .62, .48 },
+  tank = { .42, .58, .75 },
+  danger = { 1, .32, .12 },
+}
+
+-- ponytail: explicit enUS/zhCN control/immunity names; extend with verified effects.
+-- This list does not classify dangerous casts.
+local NAMEPLATE_IMPORTANT_AURAS = {
+  ["Polymorph"] = true, ["变形术"] = true,
+  ["Banish"] = true, ["放逐术"] = true,
+  ["Shackle Undead"] = true, ["束缚亡灵"] = true,
+  ["Hibernate"] = true, ["休眠"] = true,
+  ["Sap"] = true, ["闷棍"] = true,
+  ["Freezing Trap Effect"] = true, ["冰冻陷阱效果"] = true,
+  ["Fear"] = true, ["恐惧术"] = true,
+  ["Psychic Scream"] = true, ["心灵尖啸"] = true,
+  ["Blind"] = true, ["致盲"] = true,
+  ["Kidney Shot"] = true, ["肾击"] = true,
+  ["Hammer of Justice"] = true, ["制裁之锤"] = true,
+  ["Ice Block"] = true, ["寒冰屏障"] = true,
+  ["Divine Shield"] = true, ["圣盾术"] = true,
+  ["Blessing of Protection"] = true, ["保护祝福"] = true,
+}
+
+function UnitFrames:GetNameplateStyle(mode, friendly, target, threat)
+  local colour
+  if not friendly then
+    if mode == "tank" then
+      colour = threat == "self" and NAMEPLATE_ROLE_COLOURS.safe or
+        threat == "tank" and NAMEPLATE_ROLE_COLOURS.tank or
+        threat == "other" and NAMEPLATE_ROLE_COLOURS.danger or nil
+    elseif threat == "self" then
+      colour = NAMEPLATE_ROLE_COLOURS.danger
+    end
+  end
+  local alpha = target and 1 or friendly and .65 or
+    colour == NAMEPLATE_ROLE_COLOURS.danger and 1 or
+    mode == "healer" and .65 or .85
+  local limit = friendly and (target and 4 or 0) or (target and 6 or 2)
+  return alpha, colour, limit
+end
+
+function UnitFrames:GetNameplateAuraPriority(friendly, target, kind, name, caster)
+  if friendly then return target and (kind == "debuff" and 1 or 2) or nil end
+  if NAMEPLATE_IMPORTANT_AURAS[name] then return 1 end
+  if target and kind == "debuff" and caster == "player" then return 2 end
+end
+
+function UnitFrames:ApplyNameplateMode()
+  local profile = self:GetNameplateProfile()
+  local provider = pfUI and pfUI.nameplates
+  local mode = profile and profile.mode
+  if not ModuleEnabled() or not RouteOwned("unitframes.nameplate-combat-mode") or mode == "off" then
+    mode = nil
+  end
+  self.nameplateMode = mode
+  if provider and provider.SetCombatMode then
+    provider:SetCombatMode(mode, self)
+  end
+end
+
+function UnitFrames:SetNameplateMode(mode)
+  if mode ~= "tank" and mode ~= "healer" and mode ~= "dps" and mode ~= "off" then
+    addon:Print("/aeui plates tank | healer | dps | off | status")
+    return false
+  end
+  local profile = self:GetNameplateProfile()
+  if not profile then return false end
+  profile.mode = mode
+  self:ApplyNameplateMode()
+  self:ApplyNameplateTargetCue()
+  if pfUI and pfUI.gui and pfUI.gui.RefreshConfigVisibility then
+    pfUI.gui:RefreshConfigVisibility()
+  end
+  addon:Print(self:GetNameplateModeStatus())
+  return true
+end
+
+function UnitFrames:GetNameplateModeStatus()
+  local profile = self:GetNameplateProfile()
+  local provider = pfUI and pfUI.nameplates
+  return "plates saved=" .. tostring(profile and profile.mode or "unavailable") ..
+    ", active=" .. tostring(provider and provider.combatMode or "off") ..
+    ", provider=" .. tostring(provider and provider.SetCombatMode ~= nil or false)
+end
+
 function UnitFrames:IsNameplateTargetCueEnabled()
+  local profile = self:GetNameplateProfile()
   return
+    profile and profile.mode ~= "off" and
     ModuleEnabled() and
     RouteOwned(NAMEPLATE_TARGET_CUE.route)
 end
@@ -875,14 +984,16 @@ function UnitFrames:EnsureNameplateTargetCue(nameplate)
     nameplate.aeuiTargetCueFrame = holder
   end
 
-  holder.texture:SetTexture(NAMEPLATE_TARGET_CUE.texture)
-  holder.texture:SetTexCoord(
-    NAMEPLATE_TARGET_CUE.u1,
-    NAMEPLATE_TARGET_CUE.u2,
-    NAMEPLATE_TARGET_CUE.v1,
-    NAMEPLATE_TARGET_CUE.v2
-  )
-  holder.aeuiTargetCueContract = self.runtimeContract
+  if holder.aeuiTargetCueContract ~= self.runtimeContract then
+    holder.texture:SetTexture(NAMEPLATE_TARGET_CUE.texture)
+    holder.texture:SetTexCoord(
+      NAMEPLATE_TARGET_CUE.u1,
+      NAMEPLATE_TARGET_CUE.u2,
+      NAMEPLATE_TARGET_CUE.v1,
+      NAMEPLATE_TARGET_CUE.v2
+    )
+    holder.aeuiTargetCueContract = self.runtimeContract
+  end
   return holder
 end
 
@@ -928,8 +1039,10 @@ function UnitFrames:RestoreNameplateTargetCue(nameplate)
     holder:Hide()
     holder.aeuiTargetCueVisible = false
   end
-  holder.texture:SetTexture(nil)
-  holder.aeuiTargetCueContract = nil
+  if holder.aeuiTargetCueContract then
+    holder.texture:SetTexture(nil)
+    holder.aeuiTargetCueContract = nil
+  end
   return true
 end
 
@@ -987,7 +1100,13 @@ function UnitFrames:InstallNameplateTargetCueHooks()
   local originalOnUpdate = provider.OnUpdate
   provider.OnUpdate = function(frame, state)
     local result = originalOnUpdate(frame, state)
-    UnitFrames:RefreshNameplateTargetCue(frame and frame.nameplate)
+    -- The provider may return early from its throttle. Only the old/new
+    -- selected plate needs a cue refresh; hidden cues have no per-frame work.
+    local plate = frame and frame.nameplate
+    local holder = plate and plate.aeuiTargetCueFrame
+    if plate and (plate.istarget or (holder and holder.aeuiTargetCueVisible)) then
+      UnitFrames:RefreshNameplateTargetCue(plate)
+    end
     return result
   end
 
@@ -1509,6 +1628,7 @@ function UnitFrames:Apply()
   local thinApplied = 0
 
   self:ApplyStandaloneAuraShells()
+  self:ApplyNameplateMode()
   self:ApplyNameplateTargetCue()
 
   if portraitsEnabled then
@@ -1584,6 +1704,7 @@ end
 function UnitFrames:GetRuntimeStatus()
   return
     "contract=" .. tostring(self.runtimeContract) ..
+    ", " .. self:GetNameplateModeStatus() ..
     ", primary-thin-shells=" .. tostring(self.appliedThinShellCount or 0) .. "/4" ..
     ", enabled=" .. tostring(self:IsEnabled()) ..
     ", primary-bars=" .. tostring(self.appliedFrameCount or 0) .. "/4" ..

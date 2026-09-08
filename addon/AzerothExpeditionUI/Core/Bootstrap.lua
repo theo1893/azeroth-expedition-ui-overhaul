@@ -74,6 +74,76 @@ local function ApplyDefaults(target, source)
   end
 end
 
+-- Only fields with an active replacement are hidden. Values stay in pfUI's
+-- character configuration so its own controls work again after fallback.
+local managedNameplateSettings = {
+  notargalpha = true, targetglow = true, glowcolor = true,
+  targetzoom = true, targetzoomval = true, targethighlight = true,
+  highlightcolor = true, targetcastbar = true, showtargetname = true,
+  focusauras = true, guessdebuffs = true, selfdebuff = true,
+  outfriendly = true, outfriendlynpc = true, outneutral = true, outenemy = true,
+  enemynpc = true, enemyplayer = true, neutralnpc = true,
+  friendlynpc = true, friendlyplayer = true, critters = true, totems = true,
+  fullhealth = true, target = true, superwow_color = true,
+  outcombatstate = true, barcombatstate = true,
+  ccombatthreat = true, ccombatofftank = true, ccombatnothreat = true,
+  ccombatstun = true, ccombatcasting = true, combatthreat = true,
+  combatofftank = true, combatnothreat = true, combatstun = true, combatcasting = true,
+}
+local managedChatText = { input_width = true, input_height = true, outline = true }
+local managedChatArt = { frameshadow = true, custombg = true, background = true, border = true }
+local managedPortraitSettings = { portrait = true, portraitwidth = true, portraitheight = true }
+local managedPortraitGlobals = {
+  portraitalpha = true, always2dportrait = true, portraittexture = true,
+  raidmarkershowportrait = true,
+}
+
+function addon:GetManagedConfigState()
+  local state = {}
+  if not self.db or not pfUI then return state end
+  local units = self.modules.UnitFrames
+  local provider = pfUI.nameplates
+  local mode = provider and provider.combatMode
+  state.nameplates = self.db.unitframes and self.db.unitframes.enabled and
+    units and provider and provider.combatPolicy == units and
+    (mode == "tank" or mode == "healer" or mode == "dps") and true or false
+  state.portraits = units and pfUI.uf and units.IsPortraitConfigurationEnabled and
+    units:IsPortraitConfigurationEnabled() and true or false
+  local chat = pfUI.chat
+  state.chat = self.db.chat and self.db.chat.enabled and self.modules.Chat and
+    chat and chat.left and chat.left.aeuiBookRuntimeVersion and true or false
+  -- The pfUI single-chat rule can still apply when AEUI Chat art is disabled.
+  state.singleChat = state.chat or (chat and pfUI.ShouldUseSingleChatFrame and
+    pfUI:ShouldUseSingleChatFrame()) or false
+  return state
+end
+
+function addon:ShouldHidePfUISetting(category, key, state)
+  state = state or self:GetManagedConfigState()
+  if category == "AEUI_NOTE" then return not state[key] end
+  local config = pfUI_config
+  if type(category) ~= "table" or not config then return false end
+  if category == config.nameplates and state.nameplates then
+    return managedNameplateSettings[key] and true or false
+  end
+  local chat = config.chat
+  if chat then
+    if category == chat.right and state.singleChat then
+      return key == "enable" or key == "width" or key == "height"
+    end
+    if state.chat and category == chat.text then return managedChatText[key] and true or false end
+    if state.chat and category == chat.global then return managedChatArt[key] and true or false end
+  end
+  if state.portraits then
+    if category == config.unitframes then return managedPortraitGlobals[key] and true or false end
+    local units = self.modules.UnitFrames
+    if managedPortraitSettings[key] and units and units.GetPortraitConfigKey then
+      return units:GetPortraitConfigKey(category) ~= nil
+    end
+  end
+  return false
+end
+
 function addon:Print(message)
   if DEFAULT_CHAT_FRAME then
     DEFAULT_CHAT_FRAME:AddMessage(
@@ -172,6 +242,7 @@ function addon:Initialize()
   end
 
   self.initialized = true
+  if pfUI and pfUI.gui and pfUI.gui.AddAEUIEntries then pfUI.gui:AddAEUIEntries() end
   self:ScheduleRefresh(0)
 end
 
@@ -182,6 +253,9 @@ function addon:Refresh()
 
   for name, module in pairs(self.modules) do
     self:RunModuleMethod(name, module, "Apply")
+  end
+  if pfUI and pfUI.gui and pfUI.gui.RefreshConfigVisibility then
+    pfUI.gui:RefreshConfigVisibility()
   end
 end
 
@@ -224,7 +298,15 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
   command = string.gsub(command, "^%s+", "")
   command = string.gsub(command, "%s+$", "")
 
-  if command == "actionbars" then
+  if command == "config" then
+    if pfUI and pfUI.gui then
+      pfUI.gui:Show()
+      local page = pfUI.gui.frames and pfUI.gui.frames.AEUI
+      if page then page:Click() end
+    else
+      addon:Print("pfUI 配置模块不可用。")
+    end
+  elseif command == "actionbars" then
     AzerothExpeditionUIDB.actionbars.enabled =
       not AzerothExpeditionUIDB.actionbars.enabled
     addon:Print(
@@ -406,6 +488,17 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
       "; reloading UI."
     )
     ReloadUI()
+  elseif command == "plates" or string.find(command, "^plates%s+") then
+    local _, _, mode = string.find(command, "^plates%s*(.*)$")
+    local module = addon.modules.UnitFrames
+    if module then
+      if mode == "" or mode == "status" then
+        addon:Print(module:GetNameplateModeStatus())
+        addon:Print("/aeui plates tank | healer | dps | off")
+      else
+        module:SetNameplateMode(mode)
+      end
+    end
   elseif command == "unitframes" then
     AzerothExpeditionUIDB.unitframes.enabled =
       not AzerothExpeditionUIDB.unitframes.enabled
@@ -639,7 +732,7 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
     end
   else
     addon:Print(
-      "/aeui actionbars, /aeui supplies [open|on|off|remove slot|status], /aeui fieldkit [bind|unbind|home|status], /aeui focuslayout [apply|comfort|restore|status], /aeui sidebars [bind|unbind|home|status], /aeui markers [on|off|toggle|status], /aeui chat, /aeui quests, /aeui unitframes, /aeui tooltips, /aeui bags, /aeui map, /aeui character, /aeui gear [open|current|stats|plan|wide|status], /aeui refresh, /aeui status"
+      "/aeui config, /aeui actionbars, /aeui supplies [open|on|off|remove slot|status], /aeui fieldkit [bind|unbind|home|status], /aeui focuslayout [apply|comfort|restore|status], /aeui sidebars [bind|unbind|home|status], /aeui markers [on|off|toggle|status], /aeui chat, /aeui quests, /aeui unitframes, /aeui plates [tank|healer|dps|off|status], /aeui tooltips, /aeui bags, /aeui map, /aeui character, /aeui gear [open|current|stats|plan|wide|status], /aeui refresh, /aeui status"
     )
   end
 end

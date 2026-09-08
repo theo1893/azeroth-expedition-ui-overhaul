@@ -379,6 +379,7 @@ D.SpellOrder = {
 D.WarriorCooldownKeys = {
     "INTERCEPT",
     "MORTAL_STRIKE",
+    "BLOODTHIRST",
     "OVERPOWER",
     "WHIRLWIND",
     "SWEEPING_STRIKES",

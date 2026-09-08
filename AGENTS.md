@@ -23,7 +23,7 @@ Codex 进入仓库后先读本文件。这里给出项目边界、文档索引�
 |---|---|---|
 | Bagshui | runtime `1.3 / P5`；皮革外缘与布料内衬已接入背包／银行／钥匙链，所有角色默认启用，`/aeui bags` 回退；工具栏、物品槽与袋位材质已接入，标题回退原生，品质与交互状态仍由 provider 更新 | 完整重启后验证主框、搜索、编辑模式、离线库存和回退 |
 | Tooltips | runtime `1.0 / P5`；六个明确提示框复用 Readout V1 的 1 UI 细边，单位生命条使用现有 2× 填充；`/aeui tooltips` 独立回退 | `/reload` 验证物品／技能／Aura、单位颜色与生命条、双比较、地图、链接关闭按钮和 AtlasLoot |
-| Core／pfUI | AEUI `0.9.0`，scoped ownership `P5`；Gear Planner runtime `1.2-zhCN` 已接入 Character 与 Inspect 两套独立伴随会话并保留独立回退 | 实机验证模块隔离、旧配置迁移、两套伴随栏与配装工具回退 |
+| Core／pfUI | AEUI `0.9.0`，scoped ownership `P5`；`/aeui config` 提供常用／布局／模块与回退入口；配置页按实际接管收起姓名板、右聊天框与头像冲突项，原值保留；pfUI 方案／分享／重置已明确数据范围；Gear Planner 双伴随会话保留 | 实机验证配置动态收起／恢复、搜索与命令入口，再验证模块隔离、旧配置迁移与两套伴随栏 |
 | Chat | runtime `1.22 / P5`；Full V1 主框、Dark V2 Tab、Dark V1 输入已接入；右框隐藏，经典颜色透传 | 实机验证 Tab、缩放、输入、频道颜色和左框消息回收 |
 | Quests | runtime `1.28`、Theme `1.11`；已完成并挂载的书体、目录、奖励槽、火漆／闭合载体均为 2× runtime；事务菜单未启用 | 完整重启后实机验证双纹理书体接缝、奖励槽、火漆滚动裁切；Tracker 重新确认真实区域 |
 | Action Bars | AEUI `0.9.0`；ReadoutArt `1.0 / P5` 玩家／目标施法与攻击细轨已接入2×媒体；Slot／Rail `P6`；Field Kit `3.0`、Supply `2.1`、Focus `3.5`、Sidebar Group `1.0`、Target Markers `2.4` 均 `P5`；AEUI Supply 以每角色固定槽位命名组保存有序精确 itemID 与固定主物品，组可移动或交换，主格左键只使用固定主物品，悬停／右键展开 AEUI 自有候选抽屉，候选左键只使用、右键只设主格；库存仅在 `0` 时红色提示，正库存统一正常显示且无左上告警数字；AutoBar 已从 AEUI 运行时与客户端活动 AddOns 移除，Supply 为左侧唯一补给栏，无配置或关闭时留空；Player／Target 保持 `240×48 / 0.8`、底锚点 `480 UI`、`23 UI / 每排 8` Aura 与 `73 UI` 间距；Aura 语义策略为 Player 仅技能书 Buff／全部 Debuff，敌对单位全部真实 Buff／自己施加与固定 `12` 项关键 Debuff 的并集，友方单位全部真实 Buff／Debuff，TargetTarget 与 Focus 同步按敌友套用；下方读条、Combat Deck 与所有角色 DDPS `(650,-615)` 原位 | 实机验证 Supply 旧配置迁移、组位置／命名、固定主物品、候选点击与 CD、零库存显示、无配置／关闭空态、Action Bars 禁用回退及另一角色配置隔离，再验证四框敌友 Aura、标记方阵、坦克／一键 Button、ArchiTotem、DDPS 中央视野与姿态尺寸 |
@@ -32,7 +32,7 @@ Codex 进入仓库后先读本文件。这里给出项目边界、文档索引�
 | Talents | `P1 / paused`；已与 Spellbook 拆分，真实动态节点／分支边界已对齐 | 等用户明确恢复后制作独立 `TL-SIM-V1` |
 | Character | `P2–P5 / active`；runtime `2.1`，既有 2× PaperDoll 与 Gear Planner 伴随逻辑保留；左右附页皮革、称号／属性下拉、声望／技能控件、PvP 二级 Tabs 与文字对齐已接入，共用纸页以三切片补齐底部 gap | `/reload` 复核左右侧栏、下拉、折叠／滚动、PvP 数值与三类纸页底边；相邻验证装备提示与详情，再验证 Character 禁用回退 |
 | Gear Planner | runtime `1.2-zhCN / P5`；accepted `GEAR-MAIN-V1` 军需官案板与 `GEAR-SLOT-STATES-V1` 黄铜夹签／冷灰蓝修订缝带均为 2× runtime；角色栏使用完整双字文本与深皮革工具签，双栏按真实 Provider 宽度判断，槽位以“差异／新增／未填”与可叠加修订 sprite 表达状态；AtlasLoot 继续持有查询、分页、来源和 Wishlist | 完整重启后实机验证默认双栏、角色栏按钮、案板层序、三种槽位 sprite、保存状态与方案选中反馈，再回归差值、AtlasLoot、方案 CRUD、观察栏及 Provider／Gear 禁用回退 |
-| Unit Frames | `2.1 / P5`；玩家／目标／目标的目标／焦点试用 Raid A2 A／B／C／D 细边框，外扩 `2 UI`、固定边角九切片；V5／V4 厚外壳 route 暂停；Bars、团队、姓名板与动态头像保持原接入 | 实机对比玩家／目标细边框、文字净空、精英龙饰与禁用回退，相邻检查团队边框 |
+| Unit Frames | `2.2 / P5`；四主框 Raid A2 细边框试用保留；姓名板新增每角色坦克／治疗／输出模式，友方未选中仅名字，目标指针与更新节流已修正，`/aeui plates off` 回退 | 实机验证三职责承伤颜色、友方开关帧率、目标切换、光环上限和每角色隔离，再检查四主框细边框与禁用回退 |
 | Group Finder | standalone `0.1.1 / P5`；使用隐藏的 `AEGF1` 自定义频道发布完整团队目录并传递带收件人的申请／回执，身份只取服务器频道事件；不依赖预先组队、LFT、pfUI 或外部服务器 | 双客户端复核“申请已发送→团长已收到”，再验证频道范围、目录同步、邀请／拒绝、频道隐藏、限流与停招过期 |
 
 详细状态以 [docs/PROGRESS.md](docs/PROGRESS.md) 和目标模块的

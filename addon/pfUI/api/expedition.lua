@@ -9,7 +9,7 @@ local STATUS_TEXTURE = "Interface\\TargetingFrame\\UI-StatusBar"
 local PFUI_STATUS_TEXTURE = pfUI.media["img:bar"]
 
 pfUI.expedition = {
-  version = 16,
+  version = 17,
   ownership = "scoped-v1",
 
   -- The main pfUI chat module stays loaded because AEUI uses its frames,
@@ -45,6 +45,7 @@ pfUI.expedition = {
     ["unitframes.primary-aura-rim"] = "unitframes",
     ["unitframes.standalone-aura-rim"] = "unitframes",
     ["unitframes.nameplate-target-cue"] = "unitframes",
+    ["unitframes.nameplate-combat-mode"] = "unitframes",
     ["unitframes.raid-shell"] = "unitframes",
     ["unitframes.raid-aura-rim"] = "unitframes",
     ["unitframes.raid-health-fill"] = "unitframes",

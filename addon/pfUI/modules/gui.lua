@@ -7,6 +7,81 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
   --                             [0] = caption
   --                           [1-X] = parent buttons
   local searchDB = {}
+  local configPages = {}
+
+  local function RefreshConfigPage(page, state)
+    local addon = _G.AzerothExpeditionUI
+    local entries = page.aeuiConfigEntries
+    if not page.setup or not entries then return end
+    local hasChildren, hasVisible = false, false
+    for i = table.getn(entries), 1, -1 do
+      local frame = entries[i]
+      local entry = frame.aeuiConfig
+      if not entry.anchor then entry.anchor = { frame:GetPoint() } end
+      if entry.widget == "header" then
+        entry.hidden = hasChildren and not hasVisible
+        hasChildren, hasVisible = false, false
+      else
+        if entry.category == "AEUI_NOTE" then
+          entry.hidden = not (state and state[entry.key])
+        else
+          entry.hidden = addon and addon.ShouldHidePfUISetting and
+            addon:ShouldHidePfUISetting(entry.category, entry.key, state) or false
+        end
+        hasChildren = true
+        if not entry.hidden then hasVisible = true end
+      end
+      if frame.aeuiCaption and frame.button then frame.button:SetText(frame.aeuiCaption()) end
+      if entry.named == "AEUI" and entry.widget == "dropdown" and frame.input then
+        frame.input:UpdateMenu()
+        frame.input:SetSelection(frame.input.current)
+      end
+      if entry.search then
+        searchDB[tostring(frame)] = not entry.hidden and entry.search or nil
+      end
+      if entry.hidden ~= entry.wasHidden then
+        if entry.hidden then
+          frame:Hide()
+          if frame.highlight then frame.highlight:Hide() end
+          if frame.input and frame.input.HideMenu then frame.input:HideMenu() end
+        else frame:Show() end
+        entry.wasHidden = entry.hidden
+      end
+    end
+
+    -- Preserve original row groups and custom header heights. Widgets are
+    -- created once; switching mode only collapses/restores their existing rows.
+    local removed, i = 0, 1
+    while i <= table.getn(entries) do
+      local first = entries[i].aeuiConfig.anchor
+      local y = first[5] or 0
+      local last, hidden = i, true
+      while last <= table.getn(entries) and (entries[last].aeuiConfig.anchor[5] or 0) == y do
+        if not entries[last].aeuiConfig.hidden then hidden = false end
+        last = last + 1
+      end
+      for index = i, last - 1 do
+        local frame = entries[index]
+        local entry = frame.aeuiConfig
+        local a = entry.anchor
+        local newY = entry.hidden and -5 or y + removed
+        if entry.appliedY ~= newY then
+          frame:SetPoint(a[1], a[2], a[3], a[4], newY)
+          entry.appliedY = newY
+        end
+      end
+      if hidden then
+        local nextEntry = entries[last]
+        local nextY = nextEntry and nextEntry.aeuiConfig.anchor[5] or y - 23
+        removed = removed + math.max(0, y - nextY)
+      end
+      i = last
+    end
+    if page:IsVisible() and page.parent then
+      page.parent:UpdateScrollChildRect()
+      page.parent:Scroll()
+    end
+  end
 
   do -- Core Functions/Variables
     function Reload()
@@ -80,7 +155,7 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
       frame:SetPoint("TOPLEFT", this, "TOPLEFT", 5, (this.objectCount*-23)-5)
 
       -- populate search index
-      if caption and this and this.GetParent and widget ~= "button" and widget ~= "header" then
+      if caption and this and this.GetParent and (widget ~= "button" or named == "AEUI") and widget ~= "header" and widget ~= "note" then
         local id = tostring(frame)
 
         searchDB[id] = searchDB[id] or { }
@@ -99,7 +174,7 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
 
       if not widget or (widget and widget ~= "button") then
 
-        if widget ~= "header" then
+        if widget ~= "header" and widget ~= "note" then
           frame:SetScript("OnUpdate", EntryUpdate)
           frame.tex = frame:CreateTexture(nil, "BACKGROUND")
           frame.tex:SetTexture(1,1,1,.05)
@@ -107,7 +182,7 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
           frame.tex:Hide()
         end
 
-        if not ufunc and widget ~= "header" and C.gui.reloadmarker == "1" then
+        if not ufunc and widget ~= "header" and widget ~= "note" and C.gui.reloadmarker == "1" then
           caption = caption .. " [|cffffaaaa!|r]"
         end
 
@@ -236,6 +311,16 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
         this.objectCount = this.objectCount + 2
         frame.caption:SetJustifyH("CENTER")
         frame.caption:SetJustifyV("CENTER")
+      end
+
+      if widget == "note" then
+        frame.caption:ClearAllPoints()
+        frame.caption:SetPoint("TOPLEFT", 5, -4)
+        frame.caption:SetWidth(frame:GetWidth() - 10)
+        frame.caption:SetTextColor(.7, .7, .7)
+        local rows = math.max(1, math.ceil((frame.caption:GetStringHeight() + 8) / 23))
+        frame:SetHeight(rows * 23 - 1)
+        this.objectCount = this.objectCount + rows - 1
       end
 
       if widget == "header" then
@@ -421,6 +506,12 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
         end)
       end
 
+      frame.aeuiConfig = {
+        category = category, key = config, widget = widget, named = named,
+        search = searchDB[tostring(frame)],
+      }
+      this.aeuiConfigEntries = this.aeuiConfigEntries or {}
+      table.insert(this.aeuiConfigEntries, frame)
       return frame
     end
 
@@ -506,11 +597,14 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
         SetAllPointsOffset(f.scroll, f, 2)
         f.scroll.content = CreateScrollChild(nil, f.scroll)
         f.scroll.content.parent = f.scroll
+        table.insert(configPages, f.scroll.content)
         f.scroll.content:SetScript("OnShow", function()
           if not this.setup then
             func()
             this.setup = true
           end
+          local addon = _G.AzerothExpeditionUI
+          RefreshConfigPage(this, addon and addon.GetManagedConfigState and addon:GetManagedConfigState())
         end)
       end
 
@@ -551,6 +645,8 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
     pfUI.gui:Hide()
 
     pfUI.gui:SetScript("OnShow",function()
+      pfUI.gui:AddAEUIEntries()
+      pfUI.gui:RefreshConfigVisibility()
       pfUI.gui.settingChanged = pfUI.gui.delaySettingChanged
       pfUI.gui.delaySettingChanged = nil
 
@@ -593,6 +689,16 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
     pfUI.gui.CreateConfig = CreateConfig
     pfUI.gui.CreateGUIEntry = CreateGUIEntry
     pfUI.gui.UpdaterFunctions = U
+
+    function pfUI.gui:RefreshConfigVisibility()
+      local addon = _G.AzerothExpeditionUI
+      local state = addon and addon.GetManagedConfigState and addon:GetManagedConfigState()
+      for _, page in ipairs(configPages) do RefreshConfigPage(page, state) end
+      local search = self.frames and self.frames["[" .. T["Search"] .. "]"]
+      if search and search.area:IsVisible() and self.RefreshSearchResults then
+        self:RefreshSearchResults()
+      end
+    end
 
     -- decorations
     pfUI.gui.title = pfUI.gui:CreateFontString("Status", "LOW", "GameFontNormal")
@@ -670,7 +776,7 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
     pfUI.gui.share:SetPoint("LEFT", pfUI.gui.hoverbind, "RIGHT", 5, 0)
     pfUI.gui.share:SetWidth(110)
     pfUI.gui.share:SetHeight(25)
-    pfUI.gui.share:SetText(T["Share"])
+    pfUI.gui.share:SetText("分享 pfUI")
     pfUI.gui.share:SetScript("OnClick", function()
       if pfShare then
         pfShare:Show()
@@ -742,8 +848,9 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
       end
     end)
 
-    pfUI.gui.search:SetScript("OnTextChanged", function()
-      if this:GetText() == T["Search"].."..." then return end
+    function pfUI.gui:RefreshSearchResults()
+      local searchBox = self.search
+      if searchBox:GetText() == T["Search"].."..." then return end
       local defval = "["..T["Search"].."]"
 
       -- initialize search window
@@ -761,10 +868,10 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
         end
       end
 
-      if strlen(this:GetText()) < 1 then return end
+      if strlen(searchBox:GetText()) < 1 then return end
 
       local i = 1
-      local search = strlower(this:GetText())
+      local search = strlower(searchBox:GetText())
       for name, obj in pairs(searchDB) do
         local title = obj[0] and strlower(obj[0])
         if strfind(title, search) then
@@ -795,6 +902,9 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
         parent:UpdateScrollState()
         parent:Scroll()
       end)
+    end
+    pfUI.gui.search:SetScript("OnTextChanged", function()
+      pfUI.gui:RefreshSearchResults()
     end)
 
     pfUI.gui.search:SetScript("OnEditFocusGained", function(self)
@@ -1267,7 +1377,83 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
     end
   end
 
+  local function CreateNameplateModeConfig()
+    local addon = _G.AzerothExpeditionUI
+    local adapter = addon and addon.modules and addon.modules.UnitFrames
+    local profile = adapter and adapter:GetNameplateProfile()
+    if profile then
+      CreateConfig(function() adapter:SetNameplateMode(profile.mode) end,
+        "姓名板职责（当前角色，即时生效）", profile, "mode", "dropdown",
+        { "tank:坦克", "healer:治疗", "dps:输出", "off:关闭，使用 pfUI 设置" }, nil, "AEUI")
+    end
+  end
+
+  local function CreateAEUIAction(label, command, state)
+    local frame = CreateConfig(nil, label, nil, nil, "button", function()
+      local handler = SlashCmdList and SlashCmdList.AZEROTHEXPEDITIONUI
+      if handler then handler(type(command) == "function" and command() or command) end
+      pfUI.gui:RefreshConfigVisibility()
+    end, nil, "AEUI")
+    frame.button:SetWidth(390)
+    if state then
+      frame.aeuiCaption = function() return label .. "：" .. (state() and "已启用" or "已关闭") end
+    end
+    return frame
+  end
+
   do -- Generate Config UI
+    -- pfUI loads before its dependent AEUI addon. Register these pages only
+    -- after AEUI has initialized, regardless of which addon built the GUI first.
+    function pfUI.gui:AddAEUIEntries()
+      local aeui = _G.AzerothExpeditionUI
+      if self.aeuiEntriesAdded or not aeui or not aeui.db then return end
+      self.aeuiEntriesAdded = true
+      CreateGUIEntry("AEUI", "常用", function()
+        CreateConfig(nil, "AEUI 设置与工具", nil, nil, "header")
+        CreateNameplateModeConfig()
+        CreateConfig(nil, "职责按角色保存；敌友姓名板总开关仍在“姓名板”页。", nil, nil, "note")
+        CreateAEUIAction("打开补给管理", "supplies")
+        CreateAEUIAction("打开配装工具", "gear open")
+        CreateAEUIAction("显示当前装备", "gear current")
+        CreateAEUIAction("显示装备属性", "gear stats")
+        CreateAEUIAction("切换补给栏（即时）", "supplies toggle", function() return aeui.db.actionbars.suppliesEnabled end)
+        CreateAEUIAction("切换团队标记方阵（即时）", "markers toggle", function() return aeui.db.actionbars.markersEnabled end)
+        CreateAEUIAction("打印模块状态", "status")
+      end)
+      CreateGUIEntry("AEUI", "布局", function()
+        CreateConfig(nil, "组合布局", nil, nil, "header")
+        CreateConfig(nil, "布局操作沿用原命令；需要脱战时会保留当前布局并提示。", nil, nil, "note")
+        CreateAEUIAction("应用战斗布局（脱战）", "focuslayout apply")
+        CreateAEUIAction("应用舒适缩放（脱战）", "focuslayout comfort")
+        CreateAEUIAction("恢复此前布局（脱战）", "focuslayout restore")
+        CreateAEUIAction("绑定战斗工具组", "fieldkit bind")
+        CreateAEUIAction("解除战斗工具组绑定", "fieldkit unbind")
+        CreateAEUIAction("战斗工具组归位", "fieldkit home")
+        CreateAEUIAction("绑定侧栏组合（脱战）", "sidebars bind")
+        CreateAEUIAction("解除侧栏组合绑定（脱战）", "sidebars unbind")
+        CreateAEUIAction("侧栏组合归位（脱战）", "sidebars home")
+      end)
+      CreateGUIEntry("AEUI", "模块与回退", function()
+        CreateConfig(nil, "AEUI 模块开关", nil, nil, "header")
+        CreateConfig(nil, "这些开关控制 AEUI 接管；pfUI 功能模块仍在原配置页管理。", nil, nil, "note")
+        for _, item in ipairs({
+          {"聊天外观（重载）", "chat", "chat"},
+          {"任务日志外观（重载）", "quests", "quests"},
+          {"动作栏接管（重载）", "actionbars", "actionbars"},
+          {"单位框接管（即时）", "unitframes", "unitframes"},
+          {"小地图外观（即时）", "map", "map"},
+          {"角色外观（即时）", "character", "character"},
+          {"提示框外观（即时）", "tooltips", "tooltips"},
+          {"Bagshui 外观（即时）", "bags", "bagshui"},
+          {"配装伴随栏（即时）", function() return aeui.db.gearplanner.enabled and "gear off" or "gear on" end, "gearplanner"},
+        }) do
+          local key = item[3]
+          CreateAEUIAction("切换" .. item[1], item[2], function() return aeui.db[key].enabled end)
+        end
+        CreateAEUIAction("重新应用已启用模块", "refresh")
+      end)
+    end
+    pfUI.gui:AddAEUIEntries()
     CreateGUIEntry(T["About"], nil, function()
       -- read data
       local lang = T["Unknown"]
@@ -1421,9 +1607,10 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
     end)
 
     CreateGUIEntry(T["Settings"], T["General"], function()
-      local header = CreateConfig(nil, T["Profile"], nil, nil, "header")
+      local header = CreateConfig(nil, "pfUI 配置方案", nil, nil, "header")
       header:GetParent().objectCount = header:GetParent().objectCount - 1
       header:SetHeight(20)
+      CreateConfig(nil, "仅保存／载入 pfUI 设置；AEUI、补给组和其他插件数据不在此方案内。", nil, nil, "note")
 
       CreateConfig(function() return end, T["Select profile"], C.global, "profile", "dropdown", function()
         local values = {}
@@ -1433,9 +1620,9 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
       end, false, "Profile")
 
       -- load profile
-      CreateConfig(nil, T["Load profile"], C.global, "profile", "button", function()
+      CreateConfig(nil, "载入 pfUI", C.global, "profile", "button", function()
         if C.global.profile and pfUI_profiles[C.global.profile] then
-          CreateQuestionDialog(T["Load profile"] .. " '|cff33ffcc" .. C.global.profile .. "|r'?", function()
+          CreateQuestionDialog("仅载入 pfUI 配置；AEUI 设置保持原值。\n载入方案" .. " '|cff33ffcc" .. C.global.profile .. "|r'?", function()
             local selp = C.global.profile
             local rchat = C.chat.right.enable
 
@@ -1455,7 +1642,7 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
       end)
 
       -- delete profile
-      CreateConfig(nil, T["Delete profile"], C.global, "profile", "button", function()
+      CreateConfig(nil, "删除 pfUI", C.global, "profile", "button", function()
         if C.global.profile and pfUI_profiles[C.global.profile] then
           CreateQuestionDialog(T["Delete profile"] .. " '|cff33ffcc" .. C.global.profile .. "|r'?", function()
             pfUI_profiles[C.global.profile] = nil
@@ -1465,9 +1652,9 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
       end, true)
 
       -- save profile
-      CreateConfig(nil, T["Save profile"], C.global, "profile", "button", function()
+      CreateConfig(nil, "保存 pfUI", C.global, "profile", "button", function()
         if C.global.profile and pfUI_profiles[C.global.profile] then
-          CreateQuestionDialog(T["Save current settings to profile"] .. " '|cff33ffcc" .. C.global.profile .. "|r'?", function()
+          CreateQuestionDialog("仅保存 pfUI 配置；不包含 AEUI 设置。\n保存到方案" .. " '|cff33ffcc" .. C.global.profile .. "|r'?", function()
             if pfUI_profiles[C.global.profile] then
               pfUI_profiles[C.global.profile] = CopyTable(C)
             end
@@ -1477,7 +1664,7 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
       end, true)
 
       -- create profile
-      CreateConfig(nil, T["Create Profile"], C.global, "profile", "button", function()
+      CreateConfig(nil, "新建 pfUI", C.global, "profile", "button", function()
         CreateQuestionDialog(T["Please enter a name for the new profile.\nExisting profiles sharing the same name will be overwritten."],
         function()
           local profile = this:GetParent().input:GetText()
@@ -1522,9 +1709,9 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
       CreateConfig(nil, T["Required Damage In Percent"], C.global, "libhealth_dmg", "dropdown", pfUI.gui.dropdowns.percent_small)
 
       -- Delete / Reset
-      CreateConfig(nil, T["Delete / Reset"], nil, nil, "header")
-      CreateConfig(nil, T["|cffff5555EVERYTHING"], C.global, "profile", "button", function()
-        CreateQuestionDialog(T["Do you really want to reset |cffffaaaaEVERYTHING|r?\n\nThis will reset:\n - Current Configuration\n - Current Frame Positions\n - Firstrun Wizard\n - Addon Cache\n - Saved Profiles"],
+      CreateConfig(nil, "pfUI 删除／重置", nil, nil, "header")
+      CreateConfig(nil, "|cffff5555重置 pfUI|r", C.global, "profile", "button", function()
+        CreateQuestionDialog("重置 pfUI 配置、位置与缓存？\n\n包括当前 pfUI 配置、框体位置、首次设置、缓存及保存方案。\n不重置 AEUI、补给组、配装方案或其他插件数据。",
           function()
             _G["pfUI_init"] = {}
             _G["pfUI_config"] = pfUI.api.CopyTable(pfUI_profiles["Modern"])
@@ -1537,8 +1724,8 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
           end)
       end)
 
-      CreateConfig(nil, T["Configuration"], C.global, "profile", "button", function()
-        CreateQuestionDialog(T["Do you really want to reset your configuration?\nThis also includes frame positions"],
+      CreateConfig(nil, "pfUI 设置", C.global, "profile", "button", function()
+        CreateQuestionDialog("重置当前 pfUI 配置及框体位置？\nAEUI 设置和其他插件数据保留。",
           function()
             _G["pfUI_config"] = pfUI.api.CopyTable(pfUI_profiles["Modern"])
             _G["pfUI_init"] = {}
@@ -2011,6 +2198,7 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
     end)
 	
     CreateGUIEntry(T["Unit Frames"], T["General"], function()
+      CreateConfig(nil, "AEUI 已关闭动态头像；关闭单位框接管后恢复头像设置。", "AEUI_NOTE", "portraits", "note")
       CreateConfig(nil, T["Disable pfUI Unit Frames"], C.unitframes, "disable", "checkbox")
       CreateConfig(nil, T["Healthbar Animation Speed"], C.unitframes, "animation_speed", "dropdown", pfUI.gui.dropdowns.uf_animationspeed)
       CreateConfig(nil, T["Portrait Alpha"], C.unitframes, "portraitalpha")
@@ -2770,6 +2958,8 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
     end)
 
     CreateGUIEntry(T["Chat"], nil, function()
+      CreateConfig(nil, "单聊天框规则已接管右框；原设置保留供回退。", "AEUI_NOTE", "singleChat", "note")
+      CreateConfig(nil, "AEUI 管理输入框与外观；正文大小、消息和操作设置仍可调整。", "AEUI_NOTE", "chat", "note")
       CreateConfig(nil, T["Enable \"Loot & Spam\" Chat Window"], C.chat.right, "enable", "checkbox")
       CreateConfig(nil, T["Inputbox Width"], C.chat.text, "input_width")
       CreateConfig(nil, T["Inputbox Height"], C.chat.text, "input_height")
@@ -2816,6 +3006,8 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
     end)
 
     CreateGUIEntry(T["Nameplates"], nil, function()
+      CreateNameplateModeConfig()
+      CreateConfig(nil, "当前职责统一管理显隐、透明度、目标提示和光环筛选。", "AEUI_NOTE", "nameplates", "note")
       CreateConfig(U["nameplates"], T["Show On Hostile Units"], C.nameplates, "showhostile", "checkbox")
       CreateConfig(U["nameplates"], T["Show On Friendly Units"], C.nameplates, "showfriendly", "checkbox")
       CreateConfig(U["nameplates"], T["Disable Hostile Nameplates In Friendly Zones"], C.nameplates, "disable_hostile_in_friendly", "checkbox")

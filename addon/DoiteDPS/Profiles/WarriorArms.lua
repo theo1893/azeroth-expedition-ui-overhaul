@@ -1,9 +1,9 @@
 -- ============================================================================
--- DoiteDPS - two-handed deep Arms Warrior
+-- DoiteDPS - 双手战士循环（武器／狂暴）
 --
 -- 单体与 AOE 循环共用同一套常驻狂暴姿态逻辑。
 -- 只有瞬发后仍能接猛击时才优先瞬发；每个白字周期最多使用一次猛击，允许卡条
--- 不超过配置上限。斩杀阶段只有在下一刀前仍能完成斩杀时，才允许核心技能先消耗怒气。
+-- 不超过配置上限。深武器保留定时斩杀；狂暴按天赋启用常规技能优先的斩杀策略。
 -- ============================================================================
 
 local D = DoiteDPS
@@ -20,11 +20,12 @@ local UNBRIDLED_WRATH_RAGE_PER_RANK = 0.30
 local IMPROVED_EXECUTE = zh and "强化斩杀" or "Improved Execute"
 local IMPROVED_HEROIC_STRIKE = zh and "强化英勇打击" or "Improved Heroic Strike"
 local RAVAGER = zh and "碾碎" or "Ravager"
+local FLURRY = zh and "乱舞" or "Flurry"
 
 P.ModeOrder = { "single", "aoe" }
 P.ModeLabels = {
-    single = zh and "双手武器战" or "Two-Handed Arms Warrior",
-    aoe = zh and "双手武器战" or "Two-Handed Arms Warrior",
+    single = zh and "双手战士" or "Two-Handed Warrior",
+    aoe = zh and "双手战士" or "Two-Handed Warrior",
 }
 P.EntryOrder = { "single", "aoe" }
 P.EntryPoints = {
@@ -45,11 +46,11 @@ P.EntryPoints = {
 }
 P.ModeNotes = {
     single = zh
-        and "常驻狂暴姿态；普通阶段瞬发后仍能接猛击才优先致死/旋风；斩杀阶段按怒气预算安排瞬发、猛击与定时斩杀。"
-        or "Defaults to Berserker Stance; outside Execute, instants lead only when Slam still fits; Execute phase budgets instants, Slam, and timed Execute.",
+        and "常驻狂暴姿态，按天赋适配武器/狂暴；深武器保留定时斩杀，狂暴保护常规技能与下一轮猛击，嗜血仅在学会时参与。"
+        or "Adapts to Arms/Fury talents in Berserker Stance. Arms times Execute; Fury protects core attacks and the next Slam. Bloodthirst is optional.",
     aoe = zh
-        and "横扫后回狂暴姿态；旋风、致死、安全猛击优先，顺劈预留核心怒气，斩杀补空档。"
-        or "Sweeping into Berserker; Whirlwind, Mortal Strike and safe Slam lead, with reserved Cleave dumps.",
+        and "学会横扫时先准备横扫再回狂暴姿态；旋风、安全猛击及已学会的致死/嗜血优先，顺劈预留核心怒气，狂暴斩杀不抢占下一轮技能。"
+        or "Use learned Sweeping Strikes, then Berserker. Prioritize Whirlwind, safe Slam and learned strikes; reserve core rage for Cleave and Fury Execute.",
 }
 
 P.RotationDefaults = {
@@ -69,7 +70,7 @@ P.RotationDefaults = {
 }
 
 P.ConfigSchema = {
-    title = zh and "双手武器战" or "Two-Handed Arms Warrior",
+    title = zh and "双手战士" or "Two-Handed Warrior",
     modes = {
         { key = "single", label = P.ModeLabels.single, note = P.ModeNotes.single },
         { key = "aoe", label = P.ModeLabels.aoe, note = P.ModeNotes.aoe },
@@ -142,19 +143,23 @@ P.ConfigSchema = {
     },
 }
 
+-- 将旧群体模式映射到 aoe，其余入口统一使用 single，兼容已有宏绑定。
 function P:NormalizeMode(mode)
     if mode == "aoe" or mode == "battle_aoe" then return "aoe" end
     return "single"
 end
 
+-- 取得归一化模式的界面名称。
 function P:GetModeLabel(mode)
     return self.ModeLabels[self:NormalizeMode(mode)]
 end
 
+-- 取得单体或群体模式对应的默认配置表。
 function P:GetRotationDefaults(mode)
     return self.RotationDefaults[self:NormalizeMode(mode)]
 end
 
+-- 按版本迁移旧循环参数，再取得当前角色按单体／群体分别保存的配置。
 function P:GetRotationDB(mode)
     mode = self:NormalizeMode(mode)
     local defaults = self:GetRotationDefaults(mode)
@@ -163,7 +168,7 @@ function P:GetRotationDB(mode)
     local profileDB = D:GetProfileDB(self.key)
     local version = tonumber(profileDB.deepArmsRotationVersion) or 0
     if version < 1 then
-        -- The removed stance/Fury-era knobs do not describe this rotation.
+        -- 旧版姿态／狂暴循环的参数已不适用，只在首次迁移时清理。
         profileDB.rotations = { single = {}, aoe = {} }
         version = 1
     end
@@ -181,8 +186,10 @@ end
 
 local R = {
     EXECUTE = zh and "贴近下一次白字清空剩余怒气" or "Dump rage just before the next white hit",
+    FURY_EXECUTE = zh and "常规技能空档斩杀，保护下一轮输出" or "Execute between core attacks without starving the next cycle",
     OVERPOWER = zh and "低怒压制触发" or "Low-rage Overpower proc",
     MORTAL_STRIKE = zh and "致死打击瞬发槽" or "Mortal Strike instant slot",
+    BLOODTHIRST = zh and "嗜血瞬发槽" or "Bloodthirst instant slot",
     WHIRLWIND = zh and "旋风斩瞬发槽" or "Whirlwind instant slot",
     SLAM = zh and "猛击处于允许卡条窗口" or "Slam fits the allowed swing delay",
     HEROIC_STRIKE = zh and "下一刀将溢怒，排队英勇打击" or "Next white hit would cap rage",
@@ -220,27 +227,40 @@ local ON_SWING_QUEUE_GUARD = 0.20
 local TEST_HAMSTRING_NAME = zh and "断筋" or "Hamstring"
 local BASE_COOLDOWNS = {
     MORTAL_STRIKE = 6,
+    BLOODTHIRST = 6,
     OVERPOWER = 5,
     WHIRLWIND = 10,
     SWEEPING_STRIKES = 30,
 }
+local CORE_STRIKES = { "MORTAL_STRIKE", "BLOODTHIRST", "WHIRLWIND" }
 
 local PRIORITY = {
     EXECUTE = 1,
     OVERPOWER = 2,
     SWEEPING_STRIKES = 3,
     MORTAL_STRIKE = 4,
+    BLOODTHIRST = 4,
     WHIRLWIND = 5,
     SLAM = 6,
     CLEAVE = 7,
 }
 
+-- 取得用于事件预估的基础冷却；旋风按碾碎天赋扣除 1／1.5／2 秒。
 local function BaseCooldown(key)
     local duration = BASE_COOLDOWNS[key]
-    if key == "WHIRLWIND" then duration = duration - P:GetRavagerRank() end
+    if key == "WHIRLWIND" then
+        local rank = P:GetRavagerRank()
+        duration = duration - (rank > 0 and (0.5 + 0.5 * rank) or 0)
+    end
     return duration
 end
 
+-- 已学嗜血时选嗜血，否则返回致死键；调用处仍须检查技能是否已学会。
+local function StrikeKey()
+    return D:IsKnown("BLOODTHIRST") and "BLOODTHIRST" or "MORTAL_STRIKE"
+end
+
+-- 计算天赋与套装减耗后的技能成本；斩杀这里只返回最低施放成本，实际会清空余怒。
 local function Cost(state, key)
     local def = D:GetSpellDef(key)
     local cost = def and tonumber(def.cost) or 0
@@ -260,6 +280,7 @@ local function Cost(state, key)
 end
 P._rageCost = Cost
 
+-- 优先读取当前角色的循环设置，未设置的项目回退到该模式默认值。
 local function RotationValue(state, key)
     if state and state.rotationDB and state.rotationDB[key] ~= nil then
         return state.rotationDB[key]
@@ -268,6 +289,7 @@ local function RotationValue(state, key)
     return defaults and defaults[key] or nil
 end
 
+-- 填充复用的建议／预测记录，并清理上一次动作留下的时间线字段。
 local function SetAction(action, key, reason, actionState, eta, uncertain)
     action.key = key
     action.name = D:GetName(key)
@@ -281,6 +303,7 @@ local function SetAction(action, key, reason, actionState, eta, uncertain)
     return action
 end
 
+-- 给普通技能附加 GCD 等待状态；英勇／顺劈属于下一刀排队动作，不附加此标记。
 local function ApplyGCD(action, state)
     if not action or action.key == "HEROIC_STRIKE" or action.key == "CLEAVE" then
         return action
@@ -292,22 +315,26 @@ local function ApplyGCD(action, state)
     return action
 end
 
+-- 构造切姿态建议，并同步当前 GCD 的展示状态。
 local function StanceAction(action, key, reason, state)
     return ApplyGCD(SetAction(action, key, reason, "ready"), state)
 end
 
+-- 检查已确认或仍待确认的英勇／顺劈队列，避免重复排队或误用已预留的怒气。
 local function IsOnSwingQueued(state)
     local swing = state and state.swing
     return swing and (swing.hsQueued or swing.cleaveQueued or swing.queuePending)
         or false
 end
 
+-- 区分顺劈与英勇队列，包含已经发出但尚未得到客户端确认的顺劈请求。
 local function IsCleaveQueued(state)
     local swing = state and state.swing
     return swing and (swing.cleaveQueued
         or (swing.queuePending and swing.pendingKey == "CLEAVE")) or false
 end
 
+-- 扣除已排队英勇／顺劈的成本，得到仍可分配给其他技能的怒气。
 local function AvailableRage(state)
     local rage = tonumber(state and state.rage) or 0
     if IsOnSwingQueued(state) then
@@ -317,11 +344,13 @@ local function AvailableRage(state)
     return rage
 end
 
+-- 当前姿态已知且不同于目标姿态时，才认为需要切换。
 local function NeedsStance(state, stance)
     local current = tonumber(state and state.stance) or 0
     return current > 0 and current ~= stance
 end
 
+-- 优先按技能 ID 匹配施法事件，其他等级的同名技能可通过本地化名称匹配。
 local function SpellEventMatches(key, spellId)
     spellId = tonumber(spellId)
     local spell = D.Spells and D.Spells[key]
@@ -342,6 +371,7 @@ local function SpellEventMatches(key, spellId)
     return eventName ~= nil and eventName == D:GetName(key)
 end
 
+-- 合并客户端独立冷却与施法事件预估，避免冷却尚未同步时重复推荐同一技能。
 local function CooldownRemaining(state, key)
     local now = tonumber(state and state.now) or GetTime()
     local entry = state and state.cooldowns and state.cooldowns[key]
@@ -373,12 +403,14 @@ local function CooldownRemaining(state, key)
     return apiRemaining
 end
 
+-- 只检查已学技能、可用怒气和独立冷却；GCD、姿态与白字窗口由后续决策处理。
 local function Ready(state, key)
     return D:IsKnown(key)
         and AvailableRage(state) >= Cost(state, key)
         and CooldownRemaining(state, key) <= 0.05
 end
 
+-- 收到施法事件后预写冷却截止时间，并对重复回调去重，维护时间线周期编号。
 local function RecordPredictedCooldown(key)
     local duration = BaseCooldown(key)
     if not duration then return end
@@ -392,6 +424,7 @@ local function RecordPredictedCooldown(key)
     end
 end
 
+-- 安全读取可选 API 的数值；接口缺失、调用失败或结果非数值时返回 nil。
 local function ReadNumber(fn, arg1, arg2)
     if type(fn) ~= "function" then return nil end
     local ok, value = pcall(fn, arg1, arg2)
@@ -399,6 +432,7 @@ local function ReadNumber(fn, arg1, arg2)
     return tonumber(value)
 end
 
+-- 按名称或指定行列查找天赋，返回等级与读取状态；失败时以零等级供调用方回退。
 local function TalentRank(tabIndex, wantedName, wantedTier, wantedColumn)
     if type(GetTalentInfo) ~= "function" then return 0, "api-missing" end
     local index = 1
@@ -421,6 +455,7 @@ local function TalentRank(tabIndex, wantedName, wantedTier, wantedColumn)
     return 0, "not-found"
 end
 
+-- 缓存怒不可遏等级，用于下一刀回怒期望；天赋变化事件会清除此缓存。
 function P:GetUnbridledWrathRank()
     if self._unbridledWrathRank == nil then
         self._unbridledWrathRank = TalentRank(2, UNBRIDLED_WRATH)
@@ -428,6 +463,7 @@ function P:GetUnbridledWrathRank()
     return self._unbridledWrathRank
 end
 
+-- 缓存强化斩杀等级，用于计算最低斩杀成本与深武器的预留怒气。
 function P:GetImprovedExecuteRank()
     if self._improvedExecuteRank == nil then
         self._improvedExecuteRank = math.max(0, math.min(2, (TalentRank(2, IMPROVED_EXECUTE))))
@@ -435,6 +471,7 @@ function P:GetImprovedExecuteRank()
     return self._improvedExecuteRank
 end
 
+-- 缓存强化英勇打击等级，使排队成本与实际天赋减耗一致。
 function P:GetImprovedHeroicStrikeRank()
     if self._improvedHeroicStrikeRank == nil then
         self._improvedHeroicStrikeRank = math.max(0, math.min(3,
@@ -443,6 +480,7 @@ function P:GetImprovedHeroicStrikeRank()
     return self._improvedHeroicStrikeRank
 end
 
+-- 缓存碾碎等级，同时用于旋风冷却与顺劈成本的修正。
 function P:GetRavagerRank()
     if self._ravagerRank == nil then
         self._ravagerRank = math.max(0, math.min(3, (TalentRank(2, RAVAGER))))
@@ -450,6 +488,17 @@ function P:GetRavagerRank()
     return self._ravagerRank
 end
 
+-- 按已点乱舞天赋选择狂暴策略，不依赖当前是否有乱舞 Buff。
+-- 嗜血也能识别未点乱舞的深狂暴，但无嗜血的双手狂暴不受影响。
+function P:IsFury()
+    if self._flurryRank == nil then
+        self._flurryRank = TalentRank(2, FLURRY)
+    end
+    return self._flurryRank > 0 or D:IsKnown("BLOODTHIRST")
+end
+
+-- 合并暴击加权伤害项、固定速度项与怒不可遏期望，估算一刀正常白字的回怒。
+-- speed 使用武器基础速度，不是乱舞等加速后的实际白字间隔。
 local function ExpectedWhiteRage(damage, speed, critChance, unbridledWrathRank)
     local crit = math.max(0, math.min(100, tonumber(critChance) or 0)) / 100
     local talentRank = math.max(
@@ -463,6 +512,7 @@ local function ExpectedWhiteRage(damage, speed, critChance, unbridledWrathRank)
 end
 P._expectedWhiteRage = ExpectedWhiteRage
 
+-- 从装备与单位面板读取伤害、基础速度和暴击，估计下一刀回怒；必要数据缺失时返回 nil。
 local function EstimateNextWhiteRage(unbridledWrathRank)
     if type(GetEquippedItem) ~= "function"
         or type(GetItemStatsField) ~= "function"
@@ -489,8 +539,8 @@ local function EstimateNextWhiteRage(unbridledWrathRank)
     return math.floor(rage + 0.5)
 end
 
+-- 清理当前角色会话的冷却、白字周期和天赋缓存，避免切角色或循环后沿用旧状态。
 function P:ResetRuntime()
-    -- 这些锁存状态只属于当前角色会话，切换角色或 Profile 后不得保留。
     self._cooldownUntil = {}
     self._cooldownCycle = {}
     self._apiCooldownActive = {}
@@ -503,9 +553,11 @@ function P:ResetRuntime()
     self._improvedExecuteRank = nil
     self._improvedHeroicStrikeRank = nil
     self._ravagerRank = nil
+    self._flurryRank = nil
     self._talentDebugLogged = nil
 end
 
+-- 通过白字进度回绕识别新周期，重置“每个周期最多一次猛击”的标记。
 function P:ObserveSwingCycle(swing)
     if not swing or not swing.active then
         self._lastSwingProgress = nil
@@ -535,6 +587,7 @@ function P:ObserveSwingCycle(swing)
     swing.slamUsed = self._slamUsedInCycle == true
 end
 
+-- 天赋／技能变化时清缓存；施法事件更新猛击次数、破甲防重标记和独立技能冷却。
 function P:OnEvent(eventName, a1, a2)
     if eventName == "PLAYER_ENTERING_WORLD" then
         self:ResetRuntime()
@@ -547,6 +600,7 @@ function P:OnEvent(eventName, a1, a2)
         self._improvedExecuteRank = nil
         self._improvedHeroicStrikeRank = nil
         self._ravagerRank = nil
+        self._flurryRank = nil
         self._talentDebugLogged = nil
         self._cooldownUntil = {}
         self._apiCooldownActive = {}
@@ -595,6 +649,7 @@ function P:DebugTalents(state)
         { 2, RAVAGER, 3 },
         { 2, IMPROVED_EXECUTE, 2 },
         { 2, UNBRIDLED_WRATH, 5 },
+        { 2, FLURRY, 5 },
     }
     local lines = {}
     local ranks = {}
@@ -607,11 +662,12 @@ function P:DebugTalents(state)
             talent[2], tostring(rank), talent[3], status))
     end
     local actualMax = ReadNumber(UnitManaMax, "player")
+    table.insert(lines, "rotation=" .. (self:IsFury() and "fury" or "arms"))
     local _, wwDuration = D:GetNonGCDCooldown("WHIRLWIND", state.now)
     table.insert(lines, string.format(
-        "computed: HS=%s Cleave=%s Execute=%s WW-model=%ss WW-api=%ss",
+        "computed: HS=%s Cleave=%s Execute=%s WW-model=%gs WW-api=%ss",
         tostring(Cost(state, "HEROIC_STRIKE")), tostring(Cost(state, "CLEAVE")),
-        tostring(Cost(state, "EXECUTE")), tostring(BaseCooldown("WHIRLWIND")),
+        tostring(Cost(state, "EXECUTE")), BaseCooldown("WHIRLWIND"),
         tostring(wwDuration)))
     table.insert(lines, string.format(
         "rage: modelMax=%s apiMax=%s usedMax=%s match=%s; nextWhite=%s",
@@ -633,7 +689,7 @@ function P:DebugTalents(state)
         .. "; WW-api=0 means no active cooldown; nil means unavailable")
 end
 
--- 向 Core.State 补充武器战优先级函数需要的字段。
+-- 向 Core.State 补充双手战士决策所需的怒气、光环、白字时序与真实近战距离。
 function P:BuildState(state)
     -- 资源与配置输入。
     state.resourceType = "rage"
@@ -669,7 +725,8 @@ function P:BuildState(state)
     self:DebugTalents(state)
 
     -- 使用已学会的近战技能作为权威距离探针。
-    local meleeKey = D:IsKnown("MORTAL_STRIKE") and "MORTAL_STRIKE"
+    local strike = StrikeKey()
+    local meleeKey = D:IsKnown(strike) and strike
         or (D:IsKnown("SLAM") and "SLAM" or nil)
     local inMelee = D:IsMeleeRange("target", meleeKey)
     if inMelee == nil and tonumber(state.targetDistance) then
@@ -679,6 +736,7 @@ function P:BuildState(state)
     state.inMelee = state.targetValid and inMelee == true or false
 end
 
+-- 为压制的冷却展示项补充触发状态与触发剩余时间。
 function P:DecorateCooldown(key, entry, state)
     if key == "OVERPOWER" then
         entry.proc = state.overpower
@@ -686,29 +744,35 @@ function P:DecorateCooldown(key, entry, state)
     end
 end
 
+-- 取得允许猛击延迟白字的秒数，默认 0.17 秒，并限制在配置支持的范围内。
+local function SlamClip(state)
+    return math.max(0, math.min(0.30,
+        tonumber(RotationValue(state, "slamClip")) or 0.17))
+end
+
 -- 当前／前置动作锁结束后，若一次猛击能在允许的白字卡条范围内完成，则返回 true。
+-- 此处只检查白字周期和时间，不判断怒气是否足够。
 local function SlamFits(state, minimumLock)
     local swing = state.swing
     if not swing or not swing.active or swing.slamUsed
         or swing.slamCapable == false then
         return false
     end
-    local clip = tonumber(RotationValue(state, "slamClip")) or 0.17
-    if clip < 0 then clip = 0 end
-    if clip > 0.30 then clip = 0.30 end
     local lock = math.max(
         tonumber(state.gcd) or 0,
         tonumber(minimumLock) or 0
     )
     local remaining = (tonumber(swing.remaining) or 0)
         - lock
-    return remaining + clip >= (tonumber(swing.slamCast) or 2.5)
+    return remaining + SlamClip(state) >= (tonumber(swing.slamCast) or 2.5)
 end
 
+-- 已学斩杀且目标生命百分比不高于 20 时，进入斩杀阶段。
 local function IsExecutePhase(state)
     return D:IsKnown("EXECUTE") and (tonumber(state.targetHP) or 100) <= 20
 end
 
+-- 深武器的固定贴刀窗口：GCD 已解锁，白字剩余时间处于 (0.20, 0.55] 秒。
 local function CanCastExecuteOnCurrentSwing(state)
     local swing = state and state.swing
     local remaining = swing and tonumber(swing.remaining)
@@ -718,8 +782,7 @@ local function CanCastExecuteOnCurrentSwing(state)
         and remaining <= (EXECUTE_TAIL_GUARD + EXECUTE_WINDOW)
 end
 
--- A local swing timer trails the server boundary. Never arm an on-next-swing
--- dump inside that tail.
+-- 本地白字计时可能落后于服务器，最后 0.20 秒内不再提交英勇／顺劈排队请求。
 local function CanQueueOnCurrentSwing(state)
     local swing = state and state.swing
     local remaining = swing and tonumber(swing.remaining)
@@ -727,14 +790,8 @@ local function CanQueueOnCurrentSwing(state)
         and remaining > ON_SWING_QUEUE_GUARD
 end
 
-local function ExecuteDue(state)
-    if not IsExecutePhase(state) or not Ready(state, "EXECUTE")
-        or IsOnSwingQueued(state) then
-        return false
-    end
-    return CanCastExecuteOnCurrentSwing(state)
-end
-
+-- 深武器前置瞬发的时间限制：当前 GCD 与一次瞬发结束后，仍留有安全斩杀窗口。
+-- 无白字数据时不额外拦截前置瞬发；斩杀自身仍需单独通过窗口检查。
 local function CanFitExecuteFollowup(state)
     local swing = state.swing
     if not swing or not swing.active or not swing.remaining then return true end
@@ -742,6 +799,7 @@ local function CanFitExecuteFollowup(state)
     return swing.remaining > (lock + EXECUTE_TAIL_GUARD)
 end
 
+-- 计算未来 horizon 秒内预计到达的白字次数；firstAt 可指定第一刀的相对到达时间。
 local function SwingHitsBy(state, horizon, firstAt)
     local swing = state.swing
     horizon = tonumber(horizon)
@@ -754,6 +812,8 @@ local function SwingHitsBy(state, horizon, firstAt)
     return math.floor((horizon - first) / speed) + 1
 end
 
+-- 估算支付固定技能成本后，到 horizon 秒时的怒气；已排队的那刀不计正常白字收入。
+-- 不适用于清空全部余怒的斩杀；firstRageAt 可用于推迟猛击期间的首笔白字回怒。
 local function RageAfterSpendAt(state, key, horizon, firstRageAt)
     local rage = AvailableRage(state) - Cost(state, key)
     local swing = state.swing
@@ -772,6 +832,7 @@ local function RageAfterSpendAt(state, key, horizon, firstRageAt)
     return rage
 end
 
+-- 比较直接等旋风与先做其他动作两条路径，判断后者是否会耗尽横扫层数或拖过持续时间。
 local function SweepingNeedsWhirlwind(state, afterActionAt, actionHits, firstSwingAt)
     if not state.sweepingStrikes or state.stance ~= 3
         or not D:IsKnown("WHIRLWIND") then
@@ -802,6 +863,7 @@ local function SweepingNeedsWhirlwind(state, afterActionAt, actionHits, firstSwi
     return false
 end
 
+-- 检查等待指定瞬发冷却并释放后，是否仍有足够怒气和白字时间完成本轮猛击。
 local function CanWaitForInstantThenSlam(state, key, minimumLock)
     if not D:IsKnown(key)
         or (key == "WHIRLWIND" and state.stance ~= 3)
@@ -824,14 +886,16 @@ local function ShouldUseSlam(state, minimumLock)
     local queued = IsOnSwingQueued(state)
     local aoeCleave = aoe and IsCleaveQueued(state)
     if state.stance == 2 or not Ready(state, "SLAM")
-        or (queued and not aoeCleave) or not SlamFits(state, minimumLock) then
+        or (queued and not aoeCleave and not P:IsFury())
+        or not SlamFits(state, minimumLock) then
         return false
     end
 
-    if IsExecutePhase(state) and not aoe then return true end
+    if IsExecutePhase(state) and not aoe and not P:IsFury() then return true end
 
-    if CanWaitForInstantThenSlam(state, "MORTAL_STRIKE", minimumLock) then
-        return false, "MORTAL_STRIKE"
+    local strike = StrikeKey()
+    if CanWaitForInstantThenSlam(state, strike, minimumLock) then
+        return false, strike
     end
     if CanWaitForInstantThenSlam(state, "WHIRLWIND", minimumLock) then
         return false, "WHIRLWIND"
@@ -866,6 +930,7 @@ local function ShouldUseSlam(state, minimumLock)
     return true
 end
 
+-- 群体中就绪旋风优先；单体还需保留安全猛击及近期嗜血／致死所需的怒气。
 local function ShouldUseWhirlwind(state)
     if not Ready(state, "WHIRLWIND") then return false end
     if P:NormalizeMode(state.mode) == "aoe" then return true end
@@ -876,41 +941,97 @@ local function ShouldUseWhirlwind(state)
         return false
     end
 
-    local msRemaining = CooldownRemaining(state, "MORTAL_STRIKE")
+    local strike = StrikeKey()
+    local strikeRemaining = CooldownRemaining(state, strike)
     local afterWhirlwind = (tonumber(state.gcd) or 0) + GCD_LOCK
-    if D:IsKnown("MORTAL_STRIKE")
-        and msRemaining <= (afterWhirlwind + 0.10) then
-        local mortalStrikeAt = math.max(msRemaining, afterWhirlwind)
-        if RageAfterSpendAt(state, "WHIRLWIND", mortalStrikeAt)
-            < Cost(state, "MORTAL_STRIKE") then
+    if D:IsKnown(strike)
+        and strikeRemaining <= (afterWhirlwind + 0.10) then
+        local strikeAt = math.max(strikeRemaining, afterWhirlwind)
+        if RageAfterSpendAt(state, "WHIRLWIND", strikeAt)
+            < Cost(state, strike) then
             return false
         end
     end
     return true
 end
 
-local function ShouldUseMortalStrikeAoE(state)
-    if not Ready(state, "MORTAL_STRIKE") then return false end
+-- 判断群体中能否穿插已学的嗜血／致死，保护旋风的横扫覆盖和怒气预算。
+local function ShouldUseStrikeAoE(state)
+    local strike = StrikeKey()
+    if not Ready(state, strike) then return false end
     if not D:IsKnown("WHIRLWIND") or state.stance ~= 3 then return true end
 
     local start = tonumber(state.gcd) or 0
     local whirlwindRemaining = CooldownRemaining(state, "WHIRLWIND")
-    local afterMortalStrike = math.max(
+    local afterStrike = math.max(
         whirlwindRemaining,
         start + GCD_LOCK
     )
-    if SweepingNeedsWhirlwind(state, afterMortalStrike, 1) then
+    if SweepingNeedsWhirlwind(state, afterStrike, 1) then
         return false
     end
     if whirlwindRemaining >= start + GCD_LOCK then return true end
     return RageAfterSpendAt(
         state,
-        "MORTAL_STRIKE",
-        afterMortalStrike
+        strike,
+        afterStrike
     ) >= Cost(state, "WHIRLWIND")
 end
 
--- 斩杀阶段的预算门槛：保留斩杀怒气；当前可打猛击时也保留猛击怒气；同时要求
+-- 狂暴斩杀机会判断：保护当前安全猛击、近期可负担的瞬发及下一轮猛击时间／怒气。
+-- 预计溢怒只放宽下一轮猛击限制，不绕过读条、GCD、白字边界和近期瞬发检查。
+-- 斩杀阶段、最低怒气与排队状态由 ExecuteDue 统一检查。
+local function FuryExecuteFits(state)
+    if state.casting or (tonumber(state.gcd) or 0) > 0.05 then return false end
+    local swing = state.swing
+    local remaining = swing and tonumber(swing.remaining)
+    local speed = swing and tonumber(swing.speed)
+    if not swing or not swing.active or not remaining or not speed or speed <= 0
+        or remaining <= EXECUTE_TAIL_GUARD then return false end
+    if Ready(state, "SLAM") and SlamFits(state) then return false end
+
+    local rage = AvailableRage(state)
+    -- ponytail: 只复用正常白字回怒期望，不模拟风怒或受击回怒；实机日志证明必要时再扩展。
+    local predicted = math.max(0, tonumber(state.predictedMainHandRage) or 0)
+    local horizon = math.max(remaining, GCD_LOCK)
+    local i
+    for i = 1, table.getn(CORE_STRIKES) do
+        local key = CORE_STRIKES[i]
+        if D:IsKnown(key) and (key ~= "WHIRLWIND" or state.stance == 3) then
+            local cost = Cost(state, key)
+            local at = math.max(CooldownRemaining(state, key),
+                rage < cost and remaining or 0)
+            if at <= horizon then
+                local income = SwingHitsBy(state, at) * predicted
+                -- 斩杀消耗全部当前怒气；不能让原本可用的瞬发丢失 GCD 窗口或施放资金。
+                if rage + income >= cost
+                    and (at < GCD_LOCK or income < cost) then return false end
+            end
+        end
+    end
+
+    local overflowing = rage + predicted >= (tonumber(state.maxRage) or 100)
+    if not overflowing and D:IsKnown("SLAM") and swing.slamCapable ~= false then
+        local start = math.max(remaining, GCD_LOCK)
+        if start + (tonumber(swing.slamCast) or 2.5)
+            > remaining + speed + SlamClip(state) then return false end
+        local income = SwingHitsBy(state, start) * predicted
+        if rage + income >= Cost(state, "SLAM")
+            and income < Cost(state, "SLAM") then return false end
+    end
+    return true
+end
+
+-- 斩杀的共同入口：确认阶段、怒气与队列状态，再按天赋选择贴刀或机会判定。
+-- 推荐、预测与实际按键执行均复用此处，避免各自放行条件不同。
+local function ExecuteDue(state)
+    if not IsExecutePhase(state) or not Ready(state, "EXECUTE")
+        or IsOnSwingQueued(state) then return false end
+    if P:IsFury() then return FuryExecuteFits(state) end
+    return CanCastExecuteOnCurrentSwing(state)
+end
+
+-- 深武器斩杀阶段的预算门槛：保留斩杀怒气；当前可打猛击时也保留猛击怒气；同时要求
 -- 下一次白字前至少还能容纳一个后续动作窗口。
 local function CanUseInstantBeforeExecute(state, key, slamNow)
     local rage = tonumber(state.rage) or 0
@@ -920,6 +1041,7 @@ local function CanUseInstantBeforeExecute(state, key, slamNow)
         and CanFitExecuteFollowup(state)
 end
 
+-- 按配置检查战斗中是否需要补战吼，同时确认最低怒气与独立冷却。
 local function BattleShoutNeedsRefresh(state)
     if RotationValue(state, "maintainBattleShout") == false
         or not state.inCombat or not Ready(state, "BATTLE_SHOUT") then
@@ -931,6 +1053,7 @@ local function BattleShoutNeedsRefresh(state)
     return remaining ~= nil and remaining <= refresh
 end
 
+-- 首次破甲或剩余不足五秒时请求补破甲，已确认施法的 GCD 内防止重复建议。
 local function SunderNeedsRefresh(state)
     if RotationValue(state, "maintainSunder") ~= true
         or not state.inCombat or not Ready(state, "SUNDER_ARMOR") then
@@ -945,9 +1068,10 @@ local function SunderNeedsRefresh(state)
     return remaining ~= nil and remaining < 5
 end
 
+-- 构造破甲建议；仅深武器在斩杀阶段额外保留后续斩杀的怒气和时间。
 local function RecommendSunder(action, state)
     if not SunderNeedsRefresh(state) then return nil end
-    if IsExecutePhase(state)
+    if IsExecutePhase(state) and not P:IsFury()
         and ((tonumber(state.rage) or 0)
                 < (Cost(state, "SUNDER_ARMOR")
                     + Cost(state, "EXECUTE"))
@@ -958,6 +1082,7 @@ local function RecommendSunder(action, state)
 end
 
 -- 排队会替换眼前白字；下一笔正常白字收入前，先留出计划动作与核心技能成本。
+-- plannedKey 是尚未释放的计划动作；狂暴另外预留下一轮猛击成本。
 local function OnSwingReserve(state, plannedKey)
     local speed = tonumber(state.swing.speed) or 3.5
     if speed <= 0 then speed = 3.5 end
@@ -968,15 +1093,21 @@ local function OnSwingReserve(state, plannedKey)
         and CooldownRemaining(state, "WHIRLWIND") <= nextRageAt then
         reserve = reserve + Cost(state, "WHIRLWIND")
     end
-    if plannedKey ~= "MORTAL_STRIKE" and D:IsKnown("MORTAL_STRIKE")
-        and CooldownRemaining(state, "MORTAL_STRIKE") <= nextRageAt then
-        reserve = reserve + Cost(state, "MORTAL_STRIKE")
+    local strike = StrikeKey()
+    if plannedKey ~= strike and D:IsKnown(strike)
+        and CooldownRemaining(state, strike) <= nextRageAt then
+        reserve = reserve + Cost(state, strike)
+    end
+    if P:IsFury() and D:IsKnown("SLAM") and state.swing.slamCapable ~= false then
+        reserve = reserve + Cost(state, "SLAM")
     end
     return reserve
 end
 
+-- 预计下一刀触顶且核心预算充足时才排队英勇，避开猛击窗口与白字尾部。
+-- 深武器在斩杀阶段关闭此出口，狂暴保留它处理溢怒。
 local function ShouldQueueHeroicStrike(state, plannedKey)
-    if IsExecutePhase(state) or not D:IsKnown("HEROIC_STRIKE")
+    if (IsExecutePhase(state) and not P:IsFury()) or not D:IsKnown("HEROIC_STRIKE")
         or IsOnSwingQueued(state) or not CanQueueOnCurrentSwing(state)
         or SlamFits(state)
         or (tonumber(state.rage) or 0)
@@ -989,14 +1120,15 @@ local function ShouldQueueHeroicStrike(state, plannedKey)
 end
 
 -- 顺劈只用于泄怒，不是核心动作：必须预留当前计划 GCD 技能，以及即将可用的
--- 致死／旋风怒气，并保护横扫层数。
+-- 已学核心瞬发的怒气，并保护横扫层数。
+-- 深武器到点斩杀时禁止顺劈，狂暴则继续按资源与横扫预算判断。
 local function ShouldQueueCleave(
     state,
     sweepingPending,
     plannedKey,
     executeDue
 )
-    if sweepingPending or executeDue or not D:IsKnown("CLEAVE")
+    if sweepingPending or (executeDue and not P:IsFury()) or not D:IsKnown("CLEAVE")
         or IsOnSwingQueued(state)
         or not CanQueueOnCurrentSwing(state) then
         return false
@@ -1044,12 +1176,14 @@ local function ShouldQueueCleave(
     return true
 end
 
+-- 普通回狂暴的保护：排队时不切；战斗中非防御姿态只在可保留的低怒范围内切换。
 local function CanSwitchToBerserkerStance(state)
     if IsOnSwingQueued(state) then return false end
     if not state.inCombat or state.stance == 2 then return true end
     return (tonumber(state.rage) or 0) <= STANCE_RAGE
 end
 
+-- 构造回狂暴姿态建议；压制往返或群体横扫完成后，可绕过普通切姿态的低怒限制。
 local function RecommendBerserkerStance(action, state)
     local returnRequired = state.stance == 1 and not IsOnSwingQueued(state)
         and (P._returnToBerserkerAfterOverpower
@@ -1063,6 +1197,7 @@ local function RecommendBerserkerStance(action, state)
     return nil
 end
 
+-- 有可用压制触发时生成建议，需要转战斗姿态则检查怒气与下一刀队列。
 local function RecommendOverpower(action, state)
     if not state.overpower or not Ready(state, "OVERPOWER") then return nil end
     if state.stance == 1 then
@@ -1075,6 +1210,7 @@ local function RecommendOverpower(action, state)
     return nil
 end
 
+-- 通过旋风优先级检查后生成建议；必要且允许时，先返回切狂暴姿态动作。
 local function RecommendWhirlwind(action, state)
     if not ShouldUseWhirlwind(state) then return nil end
     if NeedsStance(state, 3) then
@@ -1086,14 +1222,18 @@ local function RecommendWhirlwind(action, state)
     return ApplyGCD(SetAction(action, "WHIRLWIND", R.WHIRLWIND), state)
 end
 
+-- 构造斩杀及对应流派的原因说明；防御姿态下先建议转战斗姿态。
+-- 完整斩杀条件由调用方的 ExecuteDue 校验，此处不重复决定技能优先级。
 local function RecommendExecute(action, state)
     if not Ready(state, "EXECUTE") then return nil end
     if state.stance == 2 and D:IsKnown("BATTLE_STANCE") then
         return StanceAction(action, "BATTLE_STANCE", R.BATTLE_STANCE, state)
     end
-    return ApplyGCD(SetAction(action, "EXECUTE", R.EXECUTE), state)
+    return ApplyGCD(SetAction(action, "EXECUTE",
+        P:IsFury() and R.FURY_EXECUTE or R.EXECUTE), state)
 end
 
+-- 按已确认队列、GCD、白字与怒气情况，生成当前无法施放技能的等待说明。
 local function WaitAction(action, state)
     local swing = state.swing or {}
     if swing.hsQueued then
@@ -1111,10 +1251,11 @@ local function WaitAction(action, state)
 end
 
 -- 单体优先级分组（从高到低）：
--- 压制姿态往返 → 安全维护技能 → 斩杀阶段怒气预算 →
--- 普通阶段瞬发／猛击配对 → 泄怒或等待。
+-- 压制姿态往返 → 安全维护技能 → 深武器斩杀阶段怒气预算 →
+-- 常规瞬发／猛击配对 → 泄怒／狂暴机会斩杀或等待。
 local function RecommendSingle(action, state)
     local executePhase = IsExecutePhase(state)
+    local fury = P:IsFury()
 
     if P._returnToBerserkerAfterOverpower then
         local berserkerAction = RecommendBerserkerStance(action, state)
@@ -1125,7 +1266,7 @@ local function RecommendSingle(action, state)
     if overpower then return overpower end
 
     if BattleShoutNeedsRefresh(state)
-        and (not executePhase
+        and (not executePhase or fury
             or ((tonumber(state.rage) or 0)
                     >= (Cost(state, "BATTLE_SHOUT")
                         + Cost(state, "EXECUTE"))
@@ -1136,7 +1277,7 @@ local function RecommendSingle(action, state)
     local sunder = RecommendSunder(action, state)
     if sunder then return sunder end
 
-    if executePhase then
+    if executePhase and not fury then
         local slamNow = ShouldUseSlam(state)
         if Ready(state, "MORTAL_STRIKE")
             and CanUseInstantBeforeExecute(state, "MORTAL_STRIKE", slamNow) then
@@ -1164,22 +1305,23 @@ local function RecommendSingle(action, state)
         return ApplyGCD(SetAction(action, "SLAM", R.SLAM), state)
     end
 
-    if instantBeforeSlam == "WHIRLWIND" then
-        if Ready(state, "WHIRLWIND") then
+    if instantBeforeSlam == "WHIRLWIND" or (fury and instantBeforeSlam) then
+        if Ready(state, instantBeforeSlam) then
             return ApplyGCD(SetAction(
                 action,
-                "WHIRLWIND",
-                R.WHIRLWIND
+                instantBeforeSlam,
+                R[instantBeforeSlam]
             ), state)
         end
         return WaitAction(action, state)
     end
 
-    if Ready(state, "MORTAL_STRIKE") then
+    local strike = StrikeKey()
+    if Ready(state, strike) then
         return ApplyGCD(SetAction(
             action,
-            "MORTAL_STRIKE",
-            R.MORTAL_STRIKE
+            strike,
+            R[strike]
         ), state)
     end
 
@@ -1192,9 +1334,11 @@ local function RecommendSingle(action, state)
     if ShouldQueueHeroicStrike(state) then
         return SetAction(action, "HEROIC_STRIKE", R.HEROIC_STRIKE, "queue")
     end
+    if fury and ExecuteDue(state) then return RecommendExecute(action, state) end
     return WaitAction(action, state)
 end
 
+-- 返回横扫／切姿态建议与“正在准备横扫”标记；未学、关闭或未就绪时跳过准备。
 local function SweepingPending(action, state)
     if RotationValue(state, "useSweepingStrikes") == false
         or state.sweepingStrikes or not Ready(state, "SWEEPING_STRIKES") then
@@ -1216,7 +1360,7 @@ end
 
 -- AOE 优先级分组（从高到低）：
 -- 低怒压制 → 准备／开启横扫 → 返回狂暴姿态 → 旋风 → 受保护的顺劈泄怒 →
--- 猛击／致死／斩杀 → 维护技能。
+-- 猛击／已学致死或嗜血／斩杀 → 维护技能。
 local function RecommendAoE(action, state)
     local overpower = RecommendOverpower(action, state)
     if overpower then return overpower end
@@ -1227,12 +1371,13 @@ local function RecommendAoE(action, state)
     if sweepingPending then
         local rage = AvailableRage(state)
         local reserve = Cost(state, "SWEEPING_STRIKES")
-        if rage >= (Cost(state, "MORTAL_STRIKE") + reserve)
-            and Ready(state, "MORTAL_STRIKE") then
+        local strike = StrikeKey()
+        if rage >= (Cost(state, strike) + reserve)
+            and Ready(state, strike) then
             return ApplyGCD(SetAction(
                 action,
-                "MORTAL_STRIKE",
-                R.MORTAL_STRIKE
+                strike,
+                R[strike]
             ), state)
         end
         if not IsOnSwingQueued(state)
@@ -1251,10 +1396,11 @@ local function RecommendAoE(action, state)
     if whirlwind then return whirlwind end
 
     local slamNow = ShouldUseSlam(state)
-    local mortalNow = ShouldUseMortalStrikeAoE(state)
+    local strike = StrikeKey()
+    local strikeNow = ShouldUseStrikeAoE(state)
     local executeNow = ExecuteDue(state)
     local plannedKey = slamNow and "SLAM"
-        or (mortalNow and "MORTAL_STRIKE" or nil)
+        or (strikeNow and strike or nil)
     if ShouldQueueCleave(
         state,
         sweepingPending,
@@ -1268,11 +1414,11 @@ local function RecommendAoE(action, state)
         return ApplyGCD(SetAction(action, "SLAM", R.SLAM), state)
     end
 
-    if mortalNow then
+    if strikeNow then
         return ApplyGCD(SetAction(
             action,
-            "MORTAL_STRIKE",
-            R.MORTAL_STRIKE
+            strike,
+            R[strike]
         ), state)
     end
 
@@ -1292,6 +1438,7 @@ local function RecommendAoE(action, state)
     return WaitAction(action, state)
 end
 
+-- 统一推荐入口：先处理目标、距离和姿态，再分发单体／群体；GCD 中仍可独立建议排队泄怒。
 function P:Recommend(state)
     local action = self._rec
     if not state.targetValid then
@@ -1324,7 +1471,7 @@ function P:Recommend(state)
 
     -- 等待 GCD 的普通技能不能占住不受 GCD 限制的下一刀排队机会。
     -- 姿态、横扫和斩杀仍独占其原有决策窗口。
-    if action.state == "gcd" and (action.key == "MORTAL_STRIKE"
+    if action.state == "gcd" and (action.key == "MORTAL_STRIKE" or action.key == "BLOODTHIRST"
         or action.key == "WHIRLWIND" or action.key == "SLAM"
         or action.key == "BATTLE_SHOUT" or action.key == "SUNDER_ARMOR") then
         if aoe then
@@ -1340,11 +1487,12 @@ function P:Recommend(state)
     return action
 end
 
+-- 重建候选表；Lua 5.0 的 table.insert 长度缓存可能在旧元素赋 nil 后仍然保留。
 local function ClearCandidates()
-    -- Lua 5.0 caches table.insert's list size beyond nil assignments.
     P._candidates = {}
 end
 
+-- 只添加已学技能的预测候选，规范预计等待时间、排序优先级与不确定标记。
 local function AddCandidate(key, eta, priority, uncertain)
     if not D:IsKnown(key) then return end
     table.insert(P._candidates, {
@@ -1355,6 +1503,7 @@ local function AddCandidate(key, eta, priority, uncertain)
     })
 end
 
+-- 预计时间接近时按技能优先级排序，其余按预计可用时间先后排列。
 local function CandidateSort(a, b)
     if math.abs((a.eta or 0) - (b.eta or 0)) < 0.05 then
         return (a.priority or 50) < (b.priority or 50)
@@ -1362,6 +1511,7 @@ local function CandidateSort(a, b)
     return (a.eta or 0) < (b.eta or 0)
 end
 
+-- 预测下一次可用时间；当前正在推荐的就绪技能视为即将施放，向后推一个基础冷却。
 local function ForecastCooldown(state, current, key)
     local eta = CooldownRemaining(state, key)
     if current.key == key and eta <= 0.05 then
@@ -1396,7 +1546,11 @@ function P:BuildForecast(state, current)
         local eta = nil
         local swing = state.swing
         local remaining = swing and tonumber(swing.remaining)
-        if swing and swing.active and remaining then
+        if self:IsFury() then
+            -- 狂暴斩杀不保证每刀出现；只复用执行条件展示当前确实成立的机会。
+            if (current.key == "WAIT" or current.key == "AUTO_ATTACK")
+                and ExecuteDue(state) then eta = 0 end
+        elseif swing and swing.active and remaining then
             local windowStart = EXECUTE_TAIL_GUARD + EXECUTE_WINDOW
             local wait = math.max(
                 0,
@@ -1449,11 +1603,12 @@ function P:BuildForecast(state, current)
         )
     end
 
+    local strike = StrikeKey()
     AddCandidate(
-        "MORTAL_STRIKE",
-        ForecastCooldown(state, current, "MORTAL_STRIKE"),
-        PRIORITY.MORTAL_STRIKE,
-        AvailableRage(state) < Cost(state, "MORTAL_STRIKE")
+        strike,
+        ForecastCooldown(state, current, strike),
+        PRIORITY[strike],
+        AvailableRage(state) < Cost(state, strike)
     )
     AddCandidate(
         "WHIRLWIND",
@@ -1490,12 +1645,14 @@ function P:BuildForecast(state, current)
     return self._forecast
 end
 
+-- 成对返回当前建议与后续预测，并清除不属于本循环的资源动作列表。
 function P:Evaluate(state)
     local recommendation = self:Recommend(state)
     state.resourceActions = nil
     return recommendation, self:BuildForecast(state, recommendation)
 end
 
+-- 英勇／顺劈／斩杀优先使用不进入通用法术队列的 API，接口缺失时回退到原生施法。
 local function CastRecommendedAction(action)
     if action.key == "HEROIC_STRIKE" or action.key == "CLEAVE"
         or action.key == "EXECUTE" then
@@ -1509,6 +1666,7 @@ local function CastRecommendedAction(action)
     end
 end
 
+-- 向可选白字追踪接口记录本次按键执行结果；追踪器缺失时直接跳过。
 local function TraceExecute(mode, state, action, result)
     if D.TraceSwingExecution then
         D:TraceSwingExecution("arms", mode, state, action, result)
@@ -1516,7 +1674,7 @@ local function TraceExecute(mode, state, action, result)
 end
 
 -- 玩家按键触发的执行路径。任何换目标后都重新构建 State，避免根据旧目标的观测
--- 结果施放技能。
+-- 结果施放技能。读条期间直接退出，斩杀与下一刀排队动作在施放前再次校验条件。
 function P:Execute(mode)
     mode = self:NormalizeMode(mode)
     D:SetMode(mode, true)
@@ -1540,8 +1698,7 @@ function P:Execute(mode)
         D:Update(true)
         return false
     end
-    if action.key == "EXECUTE"
-        and not CanCastExecuteOnCurrentSwing(state) then
+    if action.key == "EXECUTE" and not ExecuteDue(state) then
         TraceExecute(mode, state, action, "execute-window-closed")
         D:Update(true)
         return false

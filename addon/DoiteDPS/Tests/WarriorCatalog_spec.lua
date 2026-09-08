@@ -70,7 +70,7 @@ local function Owner(key, label)
     return owner
 end
 
-local arms = Owner("WARRIOR_ARMS", "双手武器战")
+local arms = Owner("WARRIOR_ARMS", "双手战士")
 local protection = Owner("WARRIOR_PROTECTION", "防战")
 D.Profiles.WarriorArms = arms
 D.Profiles.WarriorProtection = protection
@@ -87,8 +87,8 @@ end
 Check(
     "catalog contains only Arms and Protection single/AoE",
     table.getn(W.ModeOrder) == 4
-        and W.ModeLabels.arms_berserker_single == "双手武器战"
-        and W.ModeLabels.arms_berserker_aoe == "双手武器战"
+        and W.ModeLabels.arms_berserker_single == "双手战士"
+        and W.ModeLabels.arms_berserker_aoe == "双手战士"
         and W.ModeLabels.protection_single == "防战"
         and W.ModeLabels.protection_aoe == "防战"
         and W.ModeLabels.arms_battle_single == nil

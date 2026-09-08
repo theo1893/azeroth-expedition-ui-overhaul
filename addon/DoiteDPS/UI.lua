@@ -87,6 +87,7 @@ local SHORT_NAMES = {
     DEFENSIVE_STANCE = "防",
     BERSERKER_STANCE = "狂",
     MORTAL_STRIKE = "MS",
+    BLOODTHIRST = "BT",
     OVERPOWER = "OP",
     WHIRLWIND = "WW",
     SWEEPING_STRIKES = "SS",

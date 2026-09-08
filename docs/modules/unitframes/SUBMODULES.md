@@ -7,13 +7,13 @@ Button 外缘，复用 Raid A2 细边资源；provider 更新尺寸后刷新外�
 本模块严格对应 `addon/pfUI/api/unitframes.lua` 创建的真实 UnitFrame，以及
 `addon/pfUI/modules/nameplates.lua` 创建的世界姓名板。当前运行时接管登记过的
 静态媒体及其挂载，并通过 `UF.PORTRAIT.DISABLE` 关闭所有 pfUI UnitFrame 动态
-头像呈现；不改变 Frame 锚点、尺寸、事件、点击、单位数据或状态逻辑。头像合同
+头像呈现；除下文明确登记的姓名板职责显示与刷新策略外，不改变 Frame 锚点、尺寸、事件、点击、单位数据或状态逻辑。头像合同
 只写入下文列出的精确配置值，原值保存在 AEUI SavedVariables 中并可完整回退；
 其他 pfUI SavedVariables 不变。
 
 ## 当前四个单位框细边框试用
 
-runtime `2.1` 通过 `unitframes.primary-thin-shell` 为真实 `pfUI.uf.player`、
+runtime `2.2` 通过 `unitframes.primary-thin-shell` 为真实 `pfUI.uf.player`、
 `pfUI.uf.target`、`pfUI.uf.targettarget` 与 `pfUI.uf.focus` 分别复用 Raid A2
 的 A／B／C／D 纹理。九切片为
 `6/62/6 × 6/25/6`，边角不缩放，外扩 `2 UI`；只在 Frame 背景层挂载，不修改
@@ -38,6 +38,22 @@ Unit Frames runtime `2.0` 会把全部 13 组真实配置强制为 `portrait = o
 | `UF.STATE.HOVER.RIM` | `f.hoverglow` | 外壳边缘 | 由每张接受外壳 Alpha 确定性派生 | 暖白短边响应；不改变命中盒 |
 | `UF.STATE.AGGRO.RIM` | `f.glow` | 外壳边缘 | 由每张接受外壳 Alpha 确定性派生 | 暗红／橙褐短边响应；继续使用 pfUI 状态逻辑 |
 
+## 世界姓名板职责模式
+
+`unitframes.nameplate-combat-mode` 只作用于 `pfUI.nameplates` 已创建的真实姓名板。
+AEUI 保存每角色职责并提供纯显示策略；pfUI 保留单位识别、血量、施法、Aura、
+点击和世界姓名板开关。策略通过 `SetCombatMode(mode, policy)` 即时应用，不改写
+pfUI SavedVariables。模式为 `tank／healer／dps`，`off` 恢复 provider 配置。
+
+三模式共用几何与标记；未选中友方只显示名字，选中友方显示血条，普通敌方均显示
+血条。职责色只解释可靠的敌方当前承伤对象，不能作为仇恨数值；施法期间保持已知
+分类。坦克来源只复用 pfUI 手动名单和团队坦克标记，不按职业猜测。
+
+同一组原有 Aura Frame 以关键控制／免疫优先展示，目标敌方／非目标敌方／选中
+友方／未选中友方上限为 `6／2／4／0`；关闭模式恢复 pfUI 原光环规则与排列。
+不增加光环数据库、姓名板追踪器、危险技能推断或自动职责切换。模式及开关的
+当前状态、命令和实机门禁见 `PROGRESS.md`。
+
 ## 世界姓名板选中目标提示
 
 `addon/pfUI/modules/nameplates.lua` 为每个 Blizzard 世界姓名板创建
@@ -48,7 +64,7 @@ Unit Frames runtime `2.0` 会把全部 13 组真实配置强制为 `portrait = o
 | 组件 ID | pfUI 对象 | 展示尺寸 | 状态／所有权 |
 |---|---|---:|---|
 | `UF.NAMEPLATE.TARGET.CUE` | `parent.nameplate` 上的 AEUI 局部装饰 Frame | `20×24 UI`；`40×48` sampled region | 仅 `nameplate.istarget` 为真且姓名可见、非图腾时显示；目标识别、姓名板生命周期与点击继续归 pfUI |
-| `UF.NAMEPLATE.AURA.POLICY` | `nameplate.debuffs[1..16]` | provider 原 `16` 枚动态图标 | pfUI“聚焦光环显示”开启且 Action Bars 策略可用时，敌对姓名板保留自己的／固定关键 Debuff 与全部真实 Buff，友方保留全部真实 Buff／Debuff；Debuff 优先占位。关闭配置或策略缺失时恢复原前 `16` 个 Debuff |
+| `UF.NAMEPLATE.AURA.POLICY` | `nameplate.debuffs[1..16]` | provider 原 `16` 枚动态图标 | 职责模式开启时按上文 `6／2／4／0` 摘要；关闭模式后，pfUI“聚焦光环显示”开启且 Action Bars 策略可用时，敌对姓名板保留自己的／固定关键 Debuff 与全部真实 Buff，友方保留全部真实 Buff／Debuff；Debuff 优先占位。关闭配置或策略缺失时恢复原前 `16` 个 Debuff |
 | provider 团队标记 | `nameplate.raidicon` | pfUI 配置尺寸 | 仍由 pfUI／游戏设置图标和显隐；只把 Parent 从可隐藏的 `nameplate.health` 改为 `nameplate`，不调用 `SetRaidTarget` |
 
 个人目标标记默认以底边锚在姓名上方 `4 UI`；若 provider 团队标记已显示且其
@@ -262,7 +278,7 @@ Frame 中心；透明外扩不能参与 Frame 宽高、点击区域或移动边�
 
 Unit Frames P5 只允许在 `addon/AzerothExpeditionUI` 的作用域 adapter、
 `addon/pfUI/api/unitframes.lua` 的精确挂点，或
-`addon/pfUI/modules/nameplates.lua` 的团队标记 Parent 修正内实现。不得修改
+`addon/pfUI/modules/nameplates.lua` 的团队标记 Parent 修正及上述职责模式接点内实现。除明确登记的姓名板显示模式、更新节流和模式切换布局外，不得修改
 provider Frame 的 Point、Width、Height、事件、点击、Secure 模板或状态语义；
 配置写入只允许上述 13 组 `portrait` 与 `raidmarkershowportrait`，并必须可逆。
 媒体或 route 缺失时局部回退 pfUI 原始 portrait／backdrop／bar／glow，姓名板

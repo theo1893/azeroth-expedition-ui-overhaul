@@ -343,8 +343,8 @@ pfUI:RegisterModule("nameplates", "vanilla", function ()
   end
 
   local function DebuffFilter(effect)
+    if not cache and filter ~= "none" then DebuffFilterPopulate() end
     if filter == "none" then return true end
-    if not cache then DebuffFilterPopulate() end
 
     if filter == "blacklist" and cache[strlower(effect)] then
       return nil
@@ -467,7 +467,7 @@ pfUI:RegisterModule("nameplates", "vanilla", function ()
     local width = tonumber(C.nameplates.width)
     local debuffsize = tonumber(C.nameplates.debuffsize)
     local debuffoffset = tonumber(C.nameplates.debuffoffset)
-    local limit = floor(width / debuffsize)
+    local limit = nameplate.combatMode and 6 or floor(width / debuffsize)
     local font = C.nameplates.use_unitfonts == "1" and pfUI.font_unit or pfUI.font_default
     local font_size = C.nameplates.use_unitfonts == "1" and C.global.font_unit_size or C.global.font_size
     local font_style = C.nameplates.name.fontstyle
@@ -587,7 +587,7 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     
     -- GUID is actual GUID (0xF13000...) from Nampower events
     local plate = guidRegistry[guid]
-    if plate and plate.nameplate then
+    if plate and plate.nameplate and not (self.combatMode and plate.nameplate.namesOnly) then
       -- Mark nameplate for aura update in next OnUpdate cycle
       plate.nameplate.auraUpdate = true
     end
@@ -689,7 +689,7 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     if this.eventcache then
       this.eventcache = nil
       for plate in pairs(registry) do
-        plate.eventcache = true
+        plate.nameplate.eventcache = true
       end
     end
 
@@ -951,6 +951,9 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
   nameplates.OnConfigChange = function(frame)
     local parent = frame
     local nameplate = frame.nameplate
+    nameplate.nameLayout = nil
+    nameplate.glowLayout = nil
+    nameplate.combatMode = nameplates.combatMode
 
     -- 刷新黑名单缓存
     RefreshBlacklistCache()
@@ -1048,11 +1051,40 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
   end
 
   nameplates.OnValueChanged = function(arg1)
-    nameplates:OnDataChanged(this:GetParent().nameplate)
+    local plate = this:GetParent().nameplate
+    -- Coalesce health events; hidden friendly bars need no health work.
+    if plate and (not plate.namesOnly or not nameplates.combatMode) then
+      plate.healthUpdate = true
+    end
+  end
+
+  -- Only reliable live unit tokens participate. Casting preserves the last
+  -- known target category rather than treating a spell target as lost threat.
+  nameplates.GetRoleThreat = function(self, plate, unit)
+    if not unit or not UnitExists(unit) or not UnitAffectingCombat("player") or
+      not UnitAffectingCombat(unit) or not UnitCanAttack("player", unit) then
+      plate.roleThreat = nil
+      return nil
+    end
+    local cast = GetCastInfo(plate.cachedGuid or unit)
+    if cast and cast.endTime and cast.endTime > GetTime() then
+      return plate.roleThreat
+    end
+    local victim = unit .. "target"
+    local victimName = UnitName(victim)
+    local tanks = pfUI.uf and pfUI.uf.raid and pfUI.uf.raid.tankrole
+    local threat
+    if UnitIsUnit(victim, "player") then
+      threat = "self"
+    elseif victimName and UnitCanAssist("player", victim) and UnitIsPlayer(victim) then
+      threat = (offtanks[strlower(victimName)] or (tanks and tanks[victimName])) and "tank" or "other"
+    end
+    plate.roleThreat = threat
+    return threat
   end
 
   nameplates.OnDataChanged = function(self, plate)
-    local visible = plate:IsVisible()
+    if not plate:IsVisible() then return end
     local hp = plate.original.healthbar:GetValue()
     local hpmin, hpmax = plate.original.healthbar:GetMinMaxValues()
     local name = plate.original.name:GetText()
@@ -1106,6 +1138,7 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     if plate.cache.name ~= name then
       plate.cache.name = name
       plate.cache.player = nil
+      plate.roleThreat = nil
     end
 
     -- read and cache unittype
@@ -1122,9 +1155,6 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     elite = plate.original.levelicon:IsShown() and not player and "boss" or elite
     if not class then plate.wait_for_scan = true end
 
-    -- skip data updates on invisible frames
-    if not visible then return end
-
     -- target event sometimes fires too quickly, where nameplate identifiers are not
     -- yet updated. So while being inside this event, we cannot trust the unitstr.
     if event == "PLAYER_TARGET_CHANGED" then unitstr = nil end
@@ -1138,15 +1168,28 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
       hpmax = MobHealth_GetTargetMaxHP() > 0 and MobHealth_GetTargetMaxHP() or hpmax
     end
 
+    plate.friendly = unittype == "FRIENDLY_PLAYER" or unittype == "FRIENDLY_NPC"
+    local mode = nameplates.combatMode
+    local roleColour
+    if mode then
+      local threat = not plate.friendly and nameplates:GetRoleThreat(plate, unitstr) or nil
+      plate.roleAlpha, roleColour, plate.roleAuraLimit =
+        nameplates.combatPolicy:GetNameplateStyle(mode, plate.friendly, target, threat)
+      -- Marked enemies remain easy to locate, including in healer mode.
+      if not plate.friendly and plate.raidicon:IsShown() then plate.roleAlpha = 1 end
+    end
+
     -- always make sure to keep plate visible
     plate:Show()
 
-    if target and cfg.targetglow then
+    if not mode and target and cfg.targetglow then
       plate.glow:Show() else plate.glow:Hide()
     end
 
     -- target indicator
-    if hasNampower and cfg.outcombatstate then
+    if mode then
+      plate.health.backdrop:SetBackdropBorderColor(er,eg,eb,ea)
+    elseif hasNampower and cfg.outcombatstate then
       local guid = plate.parent:GetName(1) or ""
 
       -- determine color based on combat state
@@ -1172,6 +1215,7 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     -- hide frames according to the configuration
     local TotemIcon = TotemPlate(name)
 
+    plate.namesOnly = false
     if TotemIcon then
       -- create totem icon
       plate.totem.icon:SetTexture("Interface\\Icons\\" .. TotemIcon)
@@ -1185,6 +1229,9 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
       plate.totem:Show()
     else
       local hideResult = HidePlate(unittype, name, (hpmax-hp == hpmin), target)
+      if mode and hideResult ~= "BLACKLIST" then
+        hideResult = plate.friendly and not target
+      end
       
       if hideResult == "BLACKLIST" then
         -- 黑名单单位：隐藏所有元素
@@ -1213,30 +1260,40 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
         end
         return  -- ========== 关键修改：直接返回，避免后续debuff显示 ==========
       elseif hideResult then
-        plate.level:SetPoint("RIGHT", plate.name, "LEFT", -3, 0)
-        plate.name:SetParent(plate)
-        plate.guild:SetPoint("BOTTOM", plate.name, "BOTTOM", -2, -(font_size + 2))
+        plate.namesOnly = true
+        if plate.nameLayout ~= "name" then
+          plate.level:SetPoint("RIGHT", plate.name, "LEFT", -3, 0)
+          plate.name:SetParent(plate)
+          plate.guild:SetPoint("BOTTOM", plate.name, "BOTTOM", -2, -(font_size + 2))
+          plate.nameLayout = "name"
+        end
 
         plate.level:Show()
         plate.name:Show()
         plate.health:Hide()
         plate.targetname:Hide()
         plate.glow:Hide()  
-        if guild and C.nameplates.showguildname == "1" then
-          plate.glow:SetPoint("CENTER", plate.name, "CENTER", 0, -(font_size / 2) - 2)
-        else
-          plate.glow:SetPoint("CENTER", plate.name, "CENTER", 0, 0)
+        local glowOffset = guild and C.nameplates.showguildname == "1" and -(font_size / 2) - 2 or 0
+        if plate.glowLayout ~= glowOffset then
+          plate.glow:SetPoint("CENTER", plate.name, "CENTER", 0, glowOffset)
+          plate.glowLayout = glowOffset
         end
         plate.totem:Hide()
       else		
-        plate.level:SetPoint("RIGHT", plate.health, "LEFT", -5, 0)
-        plate.name:SetParent(plate.health)
-        plate.guild:SetPoint("BOTTOM", plate.health, "BOTTOM", 0, -(font_size + 4))
+        if plate.nameLayout ~= "health" then
+          plate.level:SetPoint("RIGHT", plate.health, "LEFT", -5, 0)
+          plate.name:SetParent(plate.health)
+          plate.guild:SetPoint("BOTTOM", plate.health, "BOTTOM", 0, -(font_size + 4))
+          plate.nameLayout = "health"
+        end
 
         plate.level:Show()
         plate.name:Show()
         plate.health:Show()
-        plate.glow:SetPoint("CENTER", plate.health, "CENTER", 0, 0)
+        if plate.glowLayout ~= "health" then
+          plate.glow:SetPoint("CENTER", plate.health, "CENTER", 0, 0)
+          plate.glowLayout = "health"
+        end
         plate.totem:Hide()
       end  
     end
@@ -1260,6 +1317,22 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
       plate.guild:Show()
     else
       plate.guild:Hide()
+    end
+
+    if mode and plate.namesOnly then
+      plate.level:Hide()
+      plate.guild:Hide()
+      plate.castbar:Hide()
+      plate.cluster:Hide()
+      for i = 1, 16 do
+        if plate.debuffs[i] then plate.debuffs[i]:Hide() end
+      end
+      for i = 1, 5 do plate.combopoints[i]:Hide() end
+      if C.nameplates.friendclassnamec == "1" and class and RAID_CLASS_COLORS[class] then
+        local colour = RAID_CLASS_COLORS[class]
+        plate.name:SetTextColor(colour.r, colour.g, colour.b, 1)
+      end
+      return
     end
 
     plate.health:SetMinMaxValues(hpmin, hpmax)
@@ -1323,7 +1396,7 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
       r, g, b, a = .5, .5, .5, .8
     end
 
-    if hasNampower and C.nameplates.barcombatstate == "1" and C.nameplates.superwow_color == "1" then
+    if not mode and hasNampower and C.nameplates.barcombatstate == "1" and C.nameplates.superwow_color == "1" then
       local guid = plate.parent:GetName(1) or ""
       local color = GetCombatStateColor(guid)
 
@@ -1332,14 +1405,16 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
       end
     end
 
+    if roleColour then r, g, b = unpack(roleColour) end
+
     if r ~= plate.cache.r or g ~= plate.cache.g or b ~= plate.cache.b then
       plate.health:SetStatusBarColor(r, g, b, a)
       plate.cache.r, plate.cache.g, plate.cache.b = r, g, b
     end
 
-    if r + g + b ~= plate.cache.namecolor and unittype == "FRIENDLY_PLAYER" and C.nameplates["friendclassnamec"] == "1" and class and RAID_CLASS_COLORS[class] then
-      plate.name:SetTextColor(r, g, b, a)
-      plate.cache.namecolor = r + g + b
+    if unittype == "FRIENDLY_PLAYER" and C.nameplates["friendclassnamec"] == "1" and class and RAID_CLASS_COLORS[class] then
+      local colour = RAID_CLASS_COLORS[class]
+      plate.name:SetTextColor(colour.r, colour.g, colour.b, 1)
     end
 
     -- update combopoints
@@ -1350,7 +1425,7 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 
 
     -- 新增：目标显示逻辑
-    if C.nameplates.showtargetname == "1" and plate.targetname and unitstr and not UnitIsUnit(unitstr, "player") then
+    if not mode and C.nameplates.showtargetname == "1" and plate.targetname and unitstr and not UnitIsUnit(unitstr, "player") then
       local targetName = UnitName(unitstr .. "target")
       if targetName then
         -- 如果目标是玩家，显示"你"
@@ -1383,7 +1458,46 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 
     local isFriendly = unittype == "FRIENDLY_PLAYER" or unittype == "FRIENDLY_NPC"
     local showDebuffsForType = cfg.showdebuffs and (isFriendly and cfg.showdebuffs_friendly or (not isFriendly and cfg.showdebuffs_hostile))
-    if showDebuffsForType then
+    if mode then
+      -- Read each source slot once into reusable per-plate storage, then place
+      -- critical control/immunity before maintenance effects in the same area.
+      if showDebuffsForType and unitstr and libdebuff then
+        local entries = plate.roleAuras or {}
+        plate.roleAuras = entries
+        local count = 0
+        for kindIndex = 1, 2 do
+          local kind = kindIndex == 1 and "debuff" or "buff"
+          for slot = 1, 32 do
+            local effect, texture, stacks, duration, timeleft, caster
+            if kind == "debuff" then
+              local rank, dtype
+              effect, rank, texture, stacks, dtype, duration, timeleft, caster = libdebuff:UnitDebuff(unitstr, slot)
+            else
+              effect, texture, stacks = plate:UnitBuff(unitstr, slot)
+            end
+            -- Aura slots are contiguous in the provider's display-slot API.
+            if not texture then break end
+            local priority = nameplates.combatPolicy:GetNameplateAuraPriority(
+              isFriendly, target, kind, effect, caster)
+            if priority and (kind == "buff" or DebuffFilter(effect)) then
+              count = count + 1
+              local entry = entries[count] or {}
+              entries[count] = entry
+              entry.priority, entry.texture, entry.stacks = priority, texture, stacks
+              entry.duration, entry.timeleft = duration, timeleft
+            end
+          end
+        end
+        for priority = 1, 2 do
+          for slot = 1, count do
+            local entry = entries[slot]
+            if index <= plate.roleAuraLimit and entry.priority == priority then
+              index = ShowAuraIcon(plate, index, entry.texture, entry.stacks, entry.duration, entry.timeleft)
+            end
+          end
+        end
+      end
+    elseif showDebuffsForType then
       local verify = string.format("%s:%s", (name or ""), (level or ""))
       local focused = cfg.focusauras and unitstr and pfUI.api and
         type(pfUI.api.aeuiAuraPolicy) == "function"
@@ -1445,6 +1559,9 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
   nameplates.OnShow = function(frame)
     local frame = frame or this
     local nameplate = frame.nameplate
+    nameplate.cache = {}
+    nameplate.roleThreat = nil
+    nameplate.eventcache = true
 
     -- Register GUID when plate becomes visible
     if hasNampower then
@@ -1501,6 +1618,9 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
         end
         nameplate.cachedGuid = guid
         guidRegistry[guid] = frame
+        nameplate.cache = {}
+        nameplate.roleThreat = nil
+        nameplate.eventcache = true
       end
     end
     
@@ -1508,9 +1628,15 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     -- Use GUID comparison as primary target detection: instant, immune to alpha transitions,
     -- and immediately correct on de-target (unlike istarget which updates one tick later)
     local targetGuid = state and state.targetGuid
-    local target = (targetGuid and nameplate.cachedGuid and targetGuid == nameplate.cachedGuid) or
-                   (state and state.hasTarget and frame:GetAlpha() >= 0.99) or nil
-    local isCasting = nameplate.castbar and nameplate.castbar:IsShown()
+    local target
+    if targetGuid and nameplate.cachedGuid then
+      target = targetGuid == nameplate.cachedGuid and true or nil
+    else
+      target = state and state.hasTarget and frame:GetAlpha() >= 0.99 or nil
+    end
+    if nameplate.istarget ~= target then nameplate.targetUpdate = true end
+    nameplate.istarget = target
+    local isCasting = nameplate.health:IsShown() and nameplate.castbar and nameplate.castbar:IsShown()
     
     local throttle
     if target or isCasting then
@@ -1521,11 +1647,11 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
       throttle = pfUI.throttle:Get("nameplates")         -- Default: 10 FPS
     end
     
-    -- Check for pending event updates (these bypass throttle for immediate response)
-    local hasEventUpdate = nameplate.eventcache or nameplate.auraUpdate or nameplate.castUpdate or nameplate.targetUpdate or nameplate.comboUpdate
+    -- Coalesce pending events; only a target transition bypasses throttling.
+    local hasEventUpdate = nameplate.eventcache or nameplate.auraUpdate or nameplate.castUpdate or nameplate.targetUpdate or nameplate.comboUpdate or nameplate.healthUpdate
     
-    -- Event updates bypass throttle
-    if not hasEventUpdate and (nameplate.lasttick or 0) + throttle > now then return end
+    -- Target changes are immediate. Other events coalesce until the next tick.
+    if not nameplate.targetUpdate and (nameplate.lasttick or 0) + throttle > now then return end
     nameplate.lasttick = now
     
     -- =========================================================================
@@ -1538,7 +1664,7 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     local mouseover = state and state.hasMouseover and original.glow:IsShown() or nil
 
 	       -- 添加任务怪提示
-    if cfg.questicon and nameplate.cluster and pfUI.api and pfUI.api.IsQuestUnit and not nameplate.raidicon:IsShown() then
+    if not nameplate.namesOnly and cfg.questicon and nameplate.cluster and pfUI.api and pfUI.api.IsQuestUnit and not nameplate.raidicon:IsShown() then
         local icon = pfUI.api.IsQuestUnit(name)
         if icon and icon ~= "0" then
             nameplate.cluster:SetTexture(icon)
@@ -1555,7 +1681,8 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 	
     -- trigger queued event update
     if hasEventUpdate then
-      nameplates:OnDataChanged(nameplate)
+      update = true
+      nameplate.healthUpdate = nil
       nameplate.eventcache = nil
       nameplate.auraUpdate = nil
       nameplate.castUpdate = nil
@@ -1615,15 +1742,6 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 
     nameplate.istarget = target
 
-    -- Set non-target plate alpha
-    local configAlpha = cfg.notargalpha or 0.5
-    local desiredAlpha = (target or not state.hasTarget) and 1 or configAlpha
-
-    if nameplate.cachedAlpha ~= desiredAlpha then
-      nameplate:SetAlpha(desiredAlpha)
-      nameplate.cachedAlpha = desiredAlpha
-    end
-
     -- queue update on visual target update
     if nameplate.cache.target ~= target then
       nameplate.cache.target = target
@@ -1652,8 +1770,8 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
       end
     end
     
-    if r + g + b ~= nameplate.cache.namecolor or (cfg.namefightcolor and nameplate.cache.inCombat ~= inCombatWithPlayer) then
-      nameplate.cache.namecolor = r + g + b
+    if r ~= nameplate.cache.nameR or g ~= nameplate.cache.nameG or b ~= nameplate.cache.nameB or (cfg.namefightcolor and nameplate.cache.inCombat ~= inCombatWithPlayer) then
+      nameplate.cache.nameR, nameplate.cache.nameG, nameplate.cache.nameB = r, g, b
       nameplate.cache.inCombat = inCombatWithPlayer
 
       if cfg.namefightcolor then
@@ -1678,7 +1796,7 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     end
 
     -- PERF: scan for debuff timeouts using indexed access instead of pairs()
-    if nameplate.debuffcache then
+    if nameplate.debuffcache and not (nameplates.combatMode and nameplate.namesOnly) then
       for id = 1, 16 do
         local data = nameplate.debuffcache[id]
         if data and ( not data.stop or data.stop < now ) and not data.empty then
@@ -1699,8 +1817,27 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
       nameplate.tick = now + .5
     end
 
+    -- Set non-target plate alpha
+    local configAlpha = cfg.notargalpha or 0.5
+    local desiredAlpha = (target or not state.hasTarget) and 1 or configAlpha
+    if nameplates.combatMode then
+      desiredAlpha = target and 1 or nameplate.roleAlpha or 1
+      -- Never dim an active cast or a team-marked hostile below readability.
+      if not nameplate.friendly and (isCasting or nameplate.raidicon:IsShown()) then
+        desiredAlpha = math.max(desiredAlpha, .9)
+      end
+    end
+
+    if nameplate.cachedAlpha ~= desiredAlpha then
+      nameplate:SetAlpha(desiredAlpha)
+      nameplate.cachedAlpha = desiredAlpha
+    end
+
+    -- Names-only plates retain identity/target checks but no hidden effects.
+    if nameplates.combatMode and nameplate.namesOnly then return end
+
     -- Zoom animation
-    if target and cfg.targetzoom then
+    if target and cfg.targetzoom and not nameplates.combatMode then
       if not nameplate.health.zoomed then
         local zoomval = cfg.zoomval
         local wc = cfg.width * zoomval
@@ -1750,7 +1887,7 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     -- OPTIMIZED: 100% Nampower - libdebuff handles all cast events (SPELL_START/GO/FAILED)
     -- Use multiple checks for target detection (target variable, istarget flag, or zoomed state)
     local isTargetPlate = target or nameplate.istarget or (nameplate.health and nameplate.health.zoomed)
-    if cfg.showcastbar and ( not cfg.targetcastbar or isTargetPlate ) then
+    if nameplate.health:IsShown() and cfg.showcastbar and ( not cfg.targetcastbar or isTargetPlate or nameplates.combatMode ) then
       local unitstr = nil
       local targetGUID = nil
       
@@ -1877,7 +2014,27 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     end
   end
 
-  -- set nameplate game settings
+  -- Change presentation without mutating the provider configuration.
+  nameplates.SetCombatMode = function(self, mode, policy)
+    if mode ~= "tank" and mode ~= "healer" and mode ~= "dps" then mode = nil end
+    if not policy or type(policy.GetNameplateStyle) ~= "function" or
+      type(policy.GetNameplateAuraPriority) ~= "function" then mode = nil end
+    if self.combatMode == mode and self.combatPolicy == policy then return end
+    self.combatMode, self.combatPolicy = mode, policy
+    for frame in pairs(registry) do
+      local plate = frame.nameplate
+      plate.cache = {}
+      plate.roleThreat = nil
+      plate.roleAlpha = nil
+      plate.namesOnly = nil
+      plate.health.zoomed, plate.health.zoomTransition = nil, nil
+      plate.health.targetWidth, plate.health.targetHeight = nil, nil
+      self.OnConfigChange(frame)
+      plate.eventcache = true
+      plate.lasttick = nil
+    end
+  end
+
   nameplates.SetGameVariables = function()
     -- update visibility (hostile)
     if C.nameplates["showhostile"] == "1" then

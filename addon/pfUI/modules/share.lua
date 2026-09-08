@@ -278,6 +278,9 @@ pfUI:RegisterModule("share", "vanilla:tbc", function ()
     CreateBackdrop(f, nil, true, 0.8)
     CreateBackdropShadow(f)
     table.insert(UISpecialFrames, "pfShare")
+    f.scope = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    f.scope:SetPoint("TOPLEFT", 10, -8)
+    f.scope:SetText("pfUI 配置分享（不包含 AEUI 与其他插件数据）")
 
     do -- Edit Box
       f.scroll = pfUI.api.CreateScrollFrame("pfShareScroll", f)
