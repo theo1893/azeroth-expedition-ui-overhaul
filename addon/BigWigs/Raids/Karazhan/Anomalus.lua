@@ -56,10 +56,10 @@ L:RegisterTranslations("enUS", function()
 		msg_arcanePrison = "Arcane Prison on %s!",
 
 		trigger_manaboundStrike = "(.+) is afflicted by Manabound Strikes %((%d+)%)",
-		trigger_manaboundFade = "Manabound Strikes fades from (.+)",
+		trigger_manaboundFade = "Manabound Strikes fades from ([^%.]+)",
 
 		trigger_arcaneDampening = "(.+) is afflicted by Arcane Dampening",
-		trigger_arcaneDampeningFade = "Arcane Dampening fades from (.+)",
+		trigger_arcaneDampeningFade = "Arcane Dampening fades from ([^%.]+)",
 
 		bar_manaboundExpire = "Manabound stacks expire",
 	}
@@ -175,7 +175,7 @@ end
 
 function module:AfflictionEvent(msg)
 	-- Arcane Overload
-	if string.find(msg, L["trigger_arcaneOverloadYou"]) then
+	if string.find(msg, "^" .. L["trigger_arcaneOverloadYou"]) then
 		self:Sync(syncName.arcaneOverload .. " " .. UnitName("player"))
 	else
 		local _, _, player = string.find(msg, L["trigger_arcaneOverloadOther"])
@@ -258,8 +258,8 @@ function module:BigWigs_RecvSync(sync, rest, nick)
 		self:ArcaneOverload(rest)
 	elseif sync == syncName.arcanePrison and rest then
 		self:ArcanePrison(rest)
-	elseif string.find(sync, syncName.manaboundStrike) and rest then
-		local _, _, player, count = string.find(rest, "([^%s]+)(%d+)")
+	elseif sync == syncName.manaboundStrike and rest then
+		local _, _, player, count = string.find(rest, "^(%S+)%s+(%d+)$")
 		if player and count then
 			self:ManaboundStrike(player, count)
 		end

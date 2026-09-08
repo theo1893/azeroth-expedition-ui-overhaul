@@ -1226,7 +1226,7 @@ action = P:Recommend(State({
         slamCapable = true,
     },
 }))
-Check("high current rage permits Cleave while reserving Slam and both cores", action.key == "CLEAVE")
+Check("high current rage preserves the early Slam before Cleave", action.key == "SLAM")
 
 action = P:Recommend(State({
     mode = "aoe",
@@ -1616,6 +1616,24 @@ local forecast = P:BuildForecast(State({
 Check("the QTE timeline keeps a compact forecast", forecast[1] ~= nil)
 Check("each forecast resets Lua 5.0's cached list size", P._candidates ~= previousCandidates)
 
+-- Heroic Strike cannot occupy the start of a swing, even if Slam is blocked.
+do
+    for _, gcd in ipairs({ 0, 1.5 }) do
+        local early = State({ rage = 100, gcd = gcd, cooldowns = CoreCooldowns(0, 5) })
+        early.swing.remaining, early.swing.slamUsed = 3.45, true
+        Check("fresh swing rejects Heroic Strike with GCD " .. gcd,
+            P:Recommend(early).key ~= "HEROIC_STRIKE")
+    end
+    local boundary = State({ rage = 100 })
+    boundary.swing.slamUsed = true
+    boundary.swing.remaining = 1.751
+    Check("Heroic Strike waits until the second half",
+        P:Recommend(boundary).key ~= "HEROIC_STRIKE")
+    boundary.swing.remaining = 1.75
+    Check("funded Heroic Strike can queue at the midpoint",
+        P:Recommend(boundary).key == "HEROIC_STRIKE")
+end
+
 -- A queued dump must remain available while a core action waits for its GCD.
 local dumpState = State({
     rage = 100, gcd = 1, cooldowns = CoreCooldowns(0, 5),
@@ -1673,8 +1691,8 @@ dumpState = State({ mode = "aoe", rage = 100,
     cooldowns = CoreCooldowns(4, 4, 99, 5),
     swing = { active = true, remaining = 3, speed = 3.63, slamCast = 2 },
 })
-Check("high-rage AoE queues Cleave before a funded Slam",
-    P:Recommend(dumpState).key == "CLEAVE")
+Check("high-rage AoE preserves a funded Slam before Cleave",
+    P:Recommend(dumpState).key == "SLAM")
 dumpState.swing.cleaveQueued = true
 Check("queued Cleave preserves the funded Slam",
     P:Recommend(dumpState).key == "SLAM")
@@ -1820,6 +1838,16 @@ do
             { rage = 25, swing = Swing(1.55), cooldowns = CoreCooldowns(99, 0) }, "WHIRLWIND" },
         { "Fury keeps a full-rage Slam window",
             { rage = 100, swing = Swing(2.55) }, "SLAM" },
+        { "Fury AoE keeps a full-rage Slam window before Cleave",
+            { mode = "aoe", rage = 100, swing = Swing(2.55) }, "SLAM" },
+        { "Fury AoE does not queue Cleave at swing start during GCD",
+            { mode = "aoe", rage = 100, gcd = 1.5, swing = Swing(2.55, true) }, "WAIT" },
+        { "Fury single does not queue Heroic Strike at swing start during GCD",
+            { rage = 100, gcd = 1.5, swing = Swing(2.55, true) }, "WAIT" },
+        { "Fury AoE preserves a safe Slam even in the second half",
+            { mode = "aoe", rage = 100, swing = {
+                active = true, remaining = 2, speed = 4, slamCast = 1.5,
+                slamCapable = true } }, "SLAM" },
         { "Fury can spend its last fifteen rage on safe Slam",
             { rage = 15, swing = Swing(2.55) }, "SLAM" },
         { "Fury tail Execute cannot delete the next fast-swing Slam",
@@ -1834,8 +1862,10 @@ do
             { rage = 10, swing = Swing(0.8, true), cooldowns = CoreCooldowns(99, 0) }, "AUTO_ATTACK" },
         { "Fury may queue Heroic Strike below twenty percent",
             { rage = 95 }, "HEROIC_STRIKE" },
-        { "overflow permits Execute when a queued strike cannot preserve core rage",
-            { predictedMainHandRage = 70, cooldowns = CoreCooldowns(99, 2) }, "EXECUTE" },
+        { "overflow does not permit high-rage Execute",
+            { predictedMainHandRage = 70, cooldowns = CoreCooldowns(99, 2) }, "AUTO_ATTACK" },
+        { "overflow does not bypass next Slam timing at low rage",
+            { rage = 10, predictedMainHandRage = 100 }, "AUTO_ATTACK" },
         { "queued Heroic Strike does not suppress an affordable Fury Slam",
             { rage = 60, swing = { active = true, remaining = 2.55, speed = 2.55,
                 slamCast = 1.92, slamCapable = true, hsQueued = true } }, "SLAM" },
@@ -1864,6 +1894,23 @@ do
         local rec = P:Recommend(state)
         Check(case[1] .. " (got " .. tostring(rec.key) .. ")", rec.key == case[3])
     end
+
+    for rank = 0, 2 do
+        improvedExecuteRank = rank
+        P:OnEvent("CHARACTER_POINTS_CHANGED")
+        local cap = P._rageCost(nil, "EXECUTE") + 10
+        for _, mode in ipairs({ "single", "aoe" }) do
+            local low = FuryState({ mode = mode, rage = cap, swing = Swing(2, true) })
+            Check("Fury Execute includes low-rage cap " .. rank .. " " .. mode,
+                P:Recommend(low).key == "EXECUTE")
+            low.rage = cap + 1
+            local rec, forecast = P:Evaluate(low)
+            Check("Fury holds rage above cap " .. rank .. " " .. mode,
+                rec.key == "AUTO_ATTACK" and not ForecastByKey(forecast, "EXECUTE"))
+        end
+    end
+    improvedExecuteRank = 2
+    P:OnEvent("CHARACTER_POINTS_CHANGED")
 
     local state = FuryState()
     local rec, forecast = P:Evaluate(state)
@@ -1918,6 +1965,9 @@ do
     CastSpellByNameNoQueue = function(name) table.insert(casts, name) end
     Check("Fury executes an approved early opportunity without generic spell queuing",
         P:Execute("single") and #casts == 1 and casts[1] == "斩杀")
+    live = FuryState({ rage = 21, swing = Swing(2, true) })
+    Check("the real execution path rejects Execute above the low-rage cap",
+        not P:Execute("single") and #casts == 1)
     live = FuryState()
     Check("the real execution path rejects a destructive tail Execute",
         not P:Execute("single") and #casts == 1)
@@ -1937,6 +1987,40 @@ do
     known.MORTAL_STRIKE = true
     flurryRank, improvedExecuteRank = 0, 0
     P:ResetRuntime()
+end
+
+-- A synchronous spell event can refresh the shared recommendation during casting.
+do
+    local oldSetMode, oldBuildState = D.SetMode, D.BuildState
+    local oldPrepare, oldUpdate = D.PrepareExecutionTarget, D.Update
+    local oldMark, oldTrace = D.MarkOnSwingQueued, D.TraceSwingExecution
+    local oldCast, oldNoQueue = CastSpellByName, CastSpellByNameNoQueue
+    local live, marked, traced, castName
+    D.SetMode = function() end
+    D.BuildState = function() return live end
+    D.PrepareExecutionTarget = function() return false end
+    D.Update = function() end
+    D.MarkOnSwingQueued = function(_, key) marked = key end
+    D.TraceSwingExecution = function(_, _, _, _, action) traced = action.key end
+    for _, key in ipairs({ "SLAM", "HEROIC_STRIKE", "CLEAVE" }) do
+        live = State({ rage = 100, mode = key == "CLEAVE" and "aoe" or "single" })
+        if key == "SLAM" then live.swing.remaining = 3.4 end
+        marked, traced, castName = nil, nil, nil
+        CastSpellByName = function(name)
+            castName = name
+            local refreshed = State({ rage = 100 })
+            if key ~= "SLAM" then refreshed.swing.remaining = 3.4 end
+            P:Recommend(refreshed)
+        end
+        CastSpellByNameNoQueue = CastSpellByName
+        Check(key .. " execution survives a synchronous recommendation refresh",
+            P:Execute(live.mode) and castName == D:GetName(key)
+                and traced == key and marked == (key ~= "SLAM" and key or nil))
+    end
+    D.SetMode, D.BuildState = oldSetMode, oldBuildState
+    D.PrepareExecutionTarget, D.Update = oldPrepare, oldUpdate
+    D.MarkOnSwingQueued, D.TraceSwingExecution = oldMark, oldTrace
+    CastSpellByName, CastSpellByNameNoQueue = oldCast, oldNoQueue
 end
 
 print("WarriorArms_spec: " .. passed .. " checks passed")

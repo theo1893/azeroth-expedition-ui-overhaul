@@ -7,7 +7,7 @@ Codex 进入仓库后先读本文件。这里给出项目边界、文档索引�
 
 - 目标客户端：Turtle WoW `1.18.1`，Interface `11200`。
 - 可部署插件位于 `addon/pfUI/`、`addon/AzerothExpeditionUI/`、
-  `addon/DoiteDPS/` 与 `addon/AzerothExpeditionGroupFinder/`。
+  `addon/DoiteDPS/`、`addon/AzerothExpeditionGroupFinder/` 与 `addon/BigWigs/`。
 - pfUI 保留数据、事件、交互、SavedVariables 与兼容能力；AEUI 只重做明确
   登记模块的视觉、布局及必要连接，不改变无关功能。
 - DoiteDPS 独立持有输出建议、循环配置、执行入口与自检；AEUI 只读取其公开

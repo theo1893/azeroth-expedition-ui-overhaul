@@ -446,7 +446,7 @@ end
 local function EquipLocation(link)
     if not link then return nil end
     local name, itemLink, quality, level, itemType, subType, count, location =
-        GetItemInfo(link)
+        GetItemInfo(WeaponKey(link))
     return location
 end
 
@@ -461,12 +461,24 @@ local function FindWeapon(key)
     end
 end
 
-local function EmptyBackpackSlot()
-    -- ponytail: use the always-general backpack; scan bag families if support
-    -- for an entirely full backpack with empty specialty/normal bags is needed.
-    local slot
-    for slot = 1, GetContainerNumSlots(0) do
-        if not GetContainerItemLink(0, slot) then return slot end
+local function EmptyWeaponBagSlot()
+    local normalBagType = GetAuctionItemSubClasses(3)
+    local bag, slot
+    for bag = 0, 4 do
+        local subType
+        if bag > 0 then
+            local link = GetInventoryItemLink("player", ContainerIDToInventoryID(bag))
+            if link then
+                local name, itemLink, quality, level, itemType
+                name, itemLink, quality, level, itemType, subType = GetItemInfo(WeaponKey(link))
+            end
+        end
+        -- Unknown or specialty bags cannot safely receive a shield.
+        if bag == 0 or (normalBagType and subType == normalBagType) then
+            for slot = 1, GetContainerNumSlots(bag) do
+                if not GetContainerItemLink(bag, slot) then return bag, slot end
+            end
+        end
     end
 end
 
@@ -571,11 +583,11 @@ function W:AdvanceWeaponSwap()
         job.waitSlot = nil
     end
     if not job.set.off and off then
-        local empty = EmptyBackpackSlot()
-        if not empty then self:FinishWeaponSwap(false); return end
+        local bag, empty = EmptyWeaponBagSlot()
+        if not bag then self:FinishWeaponSwap(false); return end
         job.waitSlot, job.waitKey = 17, nil
         PickupInventoryItem(17)
-        if CursorHasItem() then PickupContainerItem(0, empty) end
+        if CursorHasItem() then PickupContainerItem(bag, empty) end
     else
         local inventorySlot = main ~= job.set.main and 16 or 17
         local key = inventorySlot == 16 and job.set.main or job.set.off
@@ -621,9 +633,9 @@ function W:SwitchRole(role)
                 or "Required weapon missing from equipment/bags; no swap started.")
         end
     end
-    if not set.off and EquippedKey(17) and not EmptyBackpackSlot() then
-        return WeaponError(zh and "请在主背包留出一个空格用于收起盾牌。"
-            or "Leave one empty backpack slot to store the shield.")
+    if not set.off and EquippedKey(17) and not EmptyWeaponBagSlot() then
+        return WeaponError(zh and "请在任意普通背包留出一个空格用于收起盾牌。"
+            or "Leave one empty slot in any general-purpose bag to store the shield.")
     end
     self.weaponSwap = {
         role = role, set = set, entry = MODE_BY_KEY[mode].entry,

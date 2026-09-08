@@ -783,9 +783,14 @@ local function CanCastExecuteOnCurrentSwing(state)
 end
 
 -- 本地白字计时可能落后于服务器，最后 0.20 秒内不再提交英勇／顺劈排队请求。
+-- 英勇／顺劈只在后半周期泄怒，不因 GCD 或猛击次数标记而抢占新周期起点。
 local function CanQueueOnCurrentSwing(state)
     local swing = state and state.swing
     local remaining = swing and tonumber(swing.remaining)
+    local speed = swing and tonumber(swing.speed)
+    if not remaining or not speed or speed <= 0 or remaining > speed * 0.5 then
+        return false
+    end
     return swing and swing.active and remaining
         and remaining > ON_SWING_QUEUE_GUARD
 end
@@ -979,7 +984,7 @@ local function ShouldUseStrikeAoE(state)
 end
 
 -- 狂暴斩杀机会判断：保护当前安全猛击、近期可负担的瞬发及下一轮猛击时间／怒气。
--- 预计溢怒只放宽下一轮猛击限制，不绕过读条、GCD、白字边界和近期瞬发检查。
+-- 只在最低消耗加 10 怒以内填充斩杀；溢怒也不放宽下一轮猛击保护。
 -- 斩杀阶段、最低怒气与排队状态由 ExecuteDue 统一检查。
 local function FuryExecuteFits(state)
     if state.casting or (tonumber(state.gcd) or 0) > 0.05 then return false end
@@ -991,6 +996,8 @@ local function FuryExecuteFits(state)
     if Ready(state, "SLAM") and SlamFits(state) then return false end
 
     local rage = AvailableRage(state)
+    -- ponytail: 先用低怒线限制额外耗怒；木桩对比证明需要时再调整余量。
+    if rage > Cost(state, "EXECUTE") + 10 then return false end
     -- ponytail: 只复用正常白字回怒期望，不模拟风怒或受击回怒；实机日志证明必要时再扩展。
     local predicted = math.max(0, tonumber(state.predictedMainHandRage) or 0)
     local horizon = math.max(remaining, GCD_LOCK)
@@ -1010,8 +1017,7 @@ local function FuryExecuteFits(state)
         end
     end
 
-    local overflowing = rage + predicted >= (tonumber(state.maxRage) or 100)
-    if not overflowing and D:IsKnown("SLAM") and swing.slamCapable ~= false then
+    if D:IsKnown("SLAM") and swing.slamCapable ~= false then
         local start = math.max(remaining, GCD_LOCK)
         if start + (tonumber(swing.slamCast) or 2.5)
             > remaining + speed + SlamClip(state) then return false end
@@ -1130,7 +1136,7 @@ local function ShouldQueueCleave(
 )
     if sweepingPending or (executeDue and not P:IsFury()) or not D:IsKnown("CLEAVE")
         or IsOnSwingQueued(state)
-        or not CanQueueOnCurrentSwing(state) then
+        or not CanQueueOnCurrentSwing(state) or SlamFits(state) then
         return false
     end
 
@@ -1710,6 +1716,10 @@ function P:Execute(mode)
         return false
     end
 
+    -- 施法事件可同步刷新 self._rec；队列登记和日志必须保留本次实际提交的动作。
+    local submitted = {}
+    for key, value in pairs(action) do submitted[key] = value end
+    action = submitted
     CastRecommendedAction(action)
     if action.key == "HEROIC_STRIKE" or action.key == "CLEAVE" then
         D:MarkOnSwingQueued(action.key, state.swing)

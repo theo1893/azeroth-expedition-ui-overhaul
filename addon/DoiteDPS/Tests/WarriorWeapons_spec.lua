@@ -5,15 +5,25 @@ local D = DoiteDPS
 local W = D.Profiles.Warrior
 local now, class, cursor, pending = 0, "WARRIOR", nil, nil
 local gear, bags, locked = {}, {}, false
+local extraBags, bagTypes = {}, {}
 local sword, shield, twohand = "item:11:7:0:0", "item:12:0:0:0", "item:13:8:0:0"
 local locations = { [sword] = "INVTYPE_WEAPON", [shield] = "INVTYPE_SHIELD", [twohand] = "INVTYPE_2HWEAPON" }
 function UnitClass() return class, class end
 function GetTime() return now end
-function GetInventoryItemLink(_, slot) return gear[slot] end
-function GetContainerNumSlots(bag) return bag == 0 and 4 or 0 end
-function GetContainerItemLink(_, slot) return bags[slot] end
+local function ItemLink(key)
+    return key and ("|cffffffff|H" .. key .. "|h[Test item]|h|r")
+end
+function GetInventoryItemLink(_, slot) return ItemLink(gear[slot]) end
+function GetContainerNumSlots(bag) return (bag == 0 or extraBags[bag]) and 4 or 0 end
+function GetContainerItemLink(bag, slot) return ItemLink((bag == 0 and bags or extraBags[bag] or {})[slot]) end
+function ContainerIDToInventoryID(bag) return 19 + bag end
+function GetAuctionItemSubClasses() return "Bag", "Soul Bag" end
 function GetContainerItemInfo() return "texture", 1, locked or nil end
-function GetItemInfo(key) return key, key, 1, 1, "", "", 1, locations[key] end
+function GetItemInfo(key)
+    -- Vanilla accepts item strings, not the colored links returned by inventory APIs.
+    if not key or string.find(key, "|", 1, true) then return nil end
+    return key, key, 1, 1, "", bagTypes[key] or "", 1, locations[key]
+end
 function CursorHasItem() return cursor ~= nil end
 function CreateFrame()
     return {
@@ -35,15 +45,16 @@ function PickupInventoryItem(slot)
     assert(not cursor)
     cursor = { key = gear[slot], inventory = slot }
 end
-function PickupContainerItem(_, slot)
+function PickupContainerItem(bag, slot)
+    local contents = bag == 0 and bags or extraBags[bag]
     if cursor then
-        assert(cursor.inventory and not bags[slot])
+        assert(cursor.inventory and not contents[slot])
         local old = cursor
-        pending = function() bags[slot], gear[old.inventory] = old.key, nil end
+        pending = function() contents[slot], gear[old.inventory] = old.key, nil end
         cursor = nil
     else
-        assert(bags[slot])
-        cursor = { key = bags[slot], bagSlot = slot }
+        assert(contents[slot])
+        cursor = { key = contents[slot], bagSlot = slot, contents = contents }
     end
 end
 function EquipCursorItem(slot)
@@ -52,7 +63,7 @@ function EquipCursorItem(slot)
     pending = function()
         assert(slot ~= 17 or locations[gear[16]] ~= "INVTYPE_2HWEAPON", "main hand must precede shield")
         assert(locations[old.key] ~= "INVTYPE_2HWEAPON" or not gear[17], "shield must be stowed first")
-        gear[slot], bags[old.bagSlot] = old.key, gear[slot]
+        gear[slot], old.contents[old.bagSlot] = old.key, gear[slot]
     end
     cursor = nil
 end
@@ -69,6 +80,7 @@ local function Reset()
         single = "arms_berserker_single", aoe = "arms_berserker_aoe",
     }
     gear, bags = { [16] = twohand }, { sword, shield }
+    extraBags, bagTypes = {}, {}
     now, cursor, pending, locked, class = 0, nil, nil, false, "WARRIOR"
 end
 Reset()
@@ -132,6 +144,19 @@ Reset()
 gear, bags = { [16] = sword, [17] = shield }, { twohand, sword, sword, sword }
 D.DB.mode = "protection_single"
 assert(not DoiteDPS_WarriorRole() and gear[17] == shield and not pending, "full backpack aborts before shield removal")
+extraBags[1], gear[20], bagTypes["item:21"] = {}, "item:21", "Soul Bag"
+extraBags[2], gear[21] = {}, "item:22"
+assert(not DoiteDPS_WarriorRole() and not pending, "skip specialty and uncached bags")
+bagTypes["item:22"] = "Bag"
+assert(DoiteDPS_WarriorRole())
+Tick(true); Tick(true)
+assert(gear[16] == twohand and not gear[17] and extraBags[2][1] == shield,
+    "full backpack uses another ordinary bag for shield")
+assert(not extraBags[1][1] and not W.weaponSwap and D.DB.mode == "arms_berserker_single")
+assert(DoiteDPS_WarriorRole())
+Tick(true); Tick(true)
+assert(gear[16] == sword and gear[17] == shield and not W.weaponSwap,
+    "toggle back retrieves shield from another bag")
 Reset()
 assert(DoiteDPS_WarriorRole("tank"))
 Tick(true) -- main hand equipped, shield request still pending
