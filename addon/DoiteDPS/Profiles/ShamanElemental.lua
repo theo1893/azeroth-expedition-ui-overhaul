@@ -631,50 +631,6 @@ function P:Recommend(state)
         return insigniaAction
     end
 
-    if D.testMode then
-        local keys
-        if state.mode == MODE_ELEMENTAL_PVP_CLOSE then
-            keys = {
-                "ELEMENTAL_MASTERY",
-                "WAR_STOMP",
-                "CHAIN_LIGHTNING",
-                "EARTH_SHOCK",
-                "LIGHTNING_BOLT",
-            }
-        elseif state.mode == MODE_ENHANCE_MELEE then
-            keys = {
-                ENHANCE_MELEE_CORE_ORDER[1],
-                ENHANCE_MELEE_CORE_ORDER[2],
-            }
-            local testShockKey = EnhancementShockKey(db)
-            if testShockKey then
-                keys[3] = testShockKey
-            end
-        elseif state.mode == MODE_ENHANCE_RANGED then
-            keys = { "CHAIN_LIGHTNING", "LIGHTNING_BOLT" }
-        else
-            keys = {
-                "LIGHTNING_BOLT",
-                "CHAIN_LIGHTNING",
-                "FLAME_SHOCK",
-                "LAVA_BURST",
-                "EARTHQUAKE",
-            }
-        end
-        local count = table.getn(keys)
-        local value = math.floor(GetTime() / 1.5)
-        local index = value - (math.floor(value / count) * count) + 1
-        return SetAction(
-            action,
-            keys[index],
-            zh and "测试模式：元素萨满图标轮换" or
-                "Test mode: cycling Elemental actions",
-            "ready",
-            nil,
-            false
-        )
-    end
-
     if not state.targetValid then
         return SetAction(action, "WAIT", REASON.NO_TARGET, "disabled", nil, false)
     end

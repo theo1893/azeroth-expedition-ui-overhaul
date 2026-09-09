@@ -57,4 +57,62 @@ assert(core:find('pcall(api.AppendTrace, "DDPS_EXECUTE", detail)', 1, true))
 assert(arms:find('D:TraceSwingExecution("arms"', 1, true))
 assert(protection:find('D:TraceSwingExecution("protection"', 1, true))
 
+-- Exercise the actual writer and DDPS forwarding code without WoW frame setup.
+local compile = loadstring or load
+local traceFactory = assert(compile(assert(source:match(
+  "(local S = .-)%s+local function EndMHStall"
+)) .. "\nreturn S, Trace"))
+local state, trace = traceFactory()
+state.isWarrior = true
+DoiteDPS, WriteCustomFile, pfUI_cache = nil, nil, nil
+assert(not trace("AUTO_ATTACK_SELF", "disabled"))
+assert(not state.traceWriteFailed and state.traceFile == nil and pfUI_cache == nil)
+
+DoiteDPS = {}
+local writes, samples, forwarded = {}, 0, 0
+function GetTime() return 100 end
+function time() return 1700000100 end
+date = os.date
+function WriteCustomFile(name, text, mode)
+  assert(mode == "a")
+  writes[#writes + 1] = { name = name, text = text }
+end
+function GetCurrentCastingInfo()
+  samples = samples + 1
+  return 0, nil, nil, 0, 0, 0, 0
+end
+pfUI = { swingtimer = { api = { AppendTrace = function(kind, detail)
+  forwarded = forwarded + 1
+  return trace(kind, detail)
+end } } }
+assert(compile("local D = DoiteDPS\n" .. assert(core:match(
+  "(function D:TraceSwingExecution.-)\nfunction D:BuildCooldownState"
+))))()
+assert(not DoiteDPS:TraceSwingExecution("arms", "single", {}, {}, "wait"))
+assert(not trace("SESSION", "default"))
+assert(#writes == 0 and samples == 0 and forwarded == 0)
+
+DoiteDPS.debugMode = true
+assert(trace("AUTO_ATTACK_SELF", "enabled"))
+assert(#writes == 2 and writes[1].text:find("# DDPS_SWING_TRACE", 1, true))
+assert(DoiteDPS:TraceSwingExecution("arms", "single", {}, {}, "cast"))
+assert(#writes == 3 and samples == 1 and forwarded == 1
+  and writes[3].text:find("event=DDPS_EXECUTE", 1, true))
+
+DoiteDPS.debugMode = false
+assert(not trace("AUTO_ATTACK_SELF", "disabled after opening"))
+assert(not DoiteDPS:TraceSwingExecution("protection", "single", {}, {}, "wait"))
+assert(#writes == 3 and samples == 1 and forwarded == 1)
+DoiteDPS.debugMode = true
+assert(trace("AUTO_ATTACK_SELF", "enabled again"))
+assert(#writes == 4 and writes[4].name == writes[1].name)
+
+DoiteDPS = nil
+assert(not trace("AUTO_ATTACK_SELF", "DDPS missing with cached file"))
+DoiteDPS = {}
+state, trace = traceFactory()
+state.isWarrior = true
+assert(not trace("SESSION", "reload defaults"))
+assert(#writes == 4 and state.traceFile == nil)
+
 print("swingtimer auto-attack events: PASS")

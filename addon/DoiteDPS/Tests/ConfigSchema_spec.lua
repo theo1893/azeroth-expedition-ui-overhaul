@@ -659,4 +659,48 @@ ClearCursor()
 profile.SaveWeapons = nil
 C:Refresh()
 Expect("weapon controls hide on profile change", not C.weaponRow:IsVisible())
+
+-- Render the real Warrior schema through the same controls used in game.
+D.Profiles = {}
+dofile("DoiteDPS/Profiles/WarriorArms.lua")
+profile = D.Profiles.WarriorArms
+profileDB.rotations, profileDB.deepArmsRotationVersion = {}, 2
+D.DB.mode = "single"
+C:Refresh()
+local function Control(pool, key)
+    for _, control in ipairs(pool) do
+        if control:IsVisible() and control.option.key == key then return control end
+    end
+end
+for _, mode in ipairs({ "single", "aoe" }) do
+    C:SelectMode(mode)
+    for _, key in ipairs({ "useSlam", "useOverpower", "useWhirlwind", "useStrike",
+        "useSlamExecute", "useOverpowerExecute", "useWhirlwindExecute", "useStrikeExecute",
+        "furyProtectNextSlam" }) do
+        local control = Control(C.togglePool, key)
+        Expect(mode .. " renders default-enabled " .. key,
+            control and control.check:GetChecked() == 1)
+    end
+    Expect(mode .. " renders both timing values and the extra rage cap",
+        Control(C.numberPool, "slamClip").value.text == "0.17秒"
+            and Control(C.numberPool, "executeLead").value.text == "0.55秒"
+            and Control(C.numberPool, "furyExecuteExtraRage").value.text == "10")
+end
+local extra = Control(C.numberPool, "furyExecuteExtraRage")
+C:AdjustNumber(extra, 1)
+Expect("real Warrior number control writes only to the selected mode",
+    profile:GetRotationDB("aoe").furyExecuteExtraRage == 15
+        and profile:GetRotationDB("single").furyExecuteExtraRage == 10)
+local slam = Control(C.togglePool, "useSlamExecute")
+C:ApplyOption(profile, "aoe", slam.option, false)
+Expect("disabling Execute-phase Slam hides only its dependent protection control",
+    not Control(C.togglePool, "furyProtectNextSlam")
+        and Control(C.togglePool, "useSlam").check:GetChecked() == 1
+        and profile:GetRotationDB("single").useSlamExecute == true)
+C:ResetEditingMode()
+Expect("real Warrior reset restores phase switches and Execute tuning",
+    Control(C.togglePool, "furyProtectNextSlam")
+        and profile:GetRotationDB("aoe").useSlamExecute == true
+        and profile:GetRotationDB("aoe").furyExecuteExtraRage == 10)
+
 print("ConfigSchema_spec: " .. passed .. " checks passed")

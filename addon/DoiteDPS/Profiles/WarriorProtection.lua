@@ -883,27 +883,6 @@ end
 function P:Recommend(state)
     local action = self._rec
 
-    if D.testMode then
-        local testKeys = {
-            "CONCUSSION_BLOW",
-            "SHIELD_SLAM",
-            "REVENGE",
-            "THUNDER_CLAP",
-        }
-        local index = math.floor(GetTime() / 1.5)
-        index = (index - (math.floor(index / 4) * 4)) + 1
-        return SetAction(
-            action,
-            testKeys[index],
-            zh and "测试模式：盾T图标自动轮换"
-                or "Test mode: cycling tank recommendations",
-            "ready",
-            nil,
-            false,
-            state
-        )
-    end
-
     if not state.targetValid then
         return SetAction(
             action,

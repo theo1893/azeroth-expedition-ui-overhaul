@@ -639,4 +639,43 @@ Expect(
         and uiResetCount == 1
 )
 
+-- New Warrior options preserve per-character, per-mode storage and existing tuning.
+dofile("DoiteDPS/Profiles/WarriorArms.lua")
+local arms = D.Profiles.WarriorArms
+DoiteDPSDB = { profileSettings = { WARRIOR_ARMS = {
+    deepArmsRotationVersion = 2,
+    rotations = { single = { slamClip = 0.12, useSlamExecute = false } },
+} } }
+D:InitializeDB()
+local firstCharacter = DoiteDPSDB
+local single = arms:GetRotationDB("single")
+local aoe = arms:GetRotationDB("aoe")
+Expect("new defaults preserve existing tuning and keep single/AoE independent",
+    single.slamClip == 0.12 and single.useSlamExecute == false
+        and single.useSlam == true and single.executeLead == 0.55
+        and aoe.slamClip == 0.17 and aoe.useSlamExecute == true)
+single.furyExecuteExtraRage = 25
+DoiteDPSDB = {}
+D:InitializeDB()
+Expect("another character starts with independent Warrior defaults",
+    arms:GetRotationDB("single").furyExecuteExtraRage == 10
+        and arms:GetRotationDB("single").useSlamExecute == true)
+DoiteDPSDB = firstCharacter
+D:InitializeDB()
+Expect("returning to the first character restores custom Warrior options",
+    arms:GetRotationDB("single").furyExecuteExtraRage == 25
+        and arms:GetRotationDB("single").useSlamExecute == false)
+D:ResetRotationDB(arms.key, "single", arms:GetRotationDefaults("single"))
+Expect("reset restores new options only in the selected mode",
+    arms:GetRotationDB("single").useSlamExecute == true
+        and arms:GetRotationDB("single").furyExecuteExtraRage == 10
+        and arms:GetRotationDB("aoe") == aoe)
+
+local help
+D.Print = function(_, message) help = message end
+D.DB.enabled = false
+D:HandleSlash("test")
+Expect("removed test command only shows help and cannot enable the addon",
+    D.DB.enabled == false and help and not string.find(help, "|test|", 1, true))
+
 print("CoreReactive_spec: " .. passed .. " checks passed")

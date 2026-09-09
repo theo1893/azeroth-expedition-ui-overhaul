@@ -56,11 +56,18 @@ P.ModeNotes = {
 P.RotationDefaults = {
     single = {
         slamClip = 0.17,
+        executeLead = 0.55,
+        furyExecuteExtraRage = 10,
+        furyProtectNextSlam = true,
         maintainBattleShout = true,
         battleShoutRefresh = 10,
         maintainSunder = false,
     },
     aoe = {
+        slamClip = 0.17,
+        executeLead = 0.55,
+        furyExecuteExtraRage = 10,
+        furyProtectNextSlam = true,
         maintainBattleShout = true,
         battleShoutRefresh = 10,
         maintainSunder = false,
@@ -81,7 +88,7 @@ P.ConfigSchema = {
             section = zh and "白字节奏" or "Swing timing",
             key = "slamClip",
             label = zh and "猛击最大卡条" or "Maximum Slam swing delay",
-            modes = { "single" },
+            modes = { "single", "aoe" },
             min = 0,
             max = 0.30,
             step = 0.01,
@@ -142,6 +149,65 @@ P.ConfigSchema = {
         },
     },
 }
+
+-- 两阶段共用已学技能事实，只按当前模式的开关改变推荐与资源预算。
+local SKILL_OPTIONS = {
+    SLAM = "useSlam",
+    OVERPOWER = "useOverpower",
+    WHIRLWIND = "useWhirlwind",
+    MORTAL_STRIKE = "useStrike",
+    BLOODTHIRST = "useStrike",
+}
+local skills = {
+    { "useSlam", zh and "猛击" or "Slam" },
+    { "useOverpower", zh and "压制" or "Overpower" },
+    { "useWhirlwind", zh and "旋风斩" or "Whirlwind" },
+    { "useStrike", zh and "嗜血／致死打击" or "Bloodthirst / Mortal Strike" },
+}
+for _, suffix in ipairs({ "", "Execute" }) do
+    for index, skill in ipairs(skills) do
+        local key = skill[1] .. suffix
+        for _, defaults in pairs(P.RotationDefaults) do defaults[key] = true end
+        table.insert(P.ConfigSchema.options, {
+            type = "toggle",
+            section = index == 1 and (suffix == ""
+                and (zh and "非斩杀阶段技能" or "Above Execute range")
+                or (zh and "斩杀阶段技能" or "Execute range")) or nil,
+            key = key,
+            label = skill[2],
+            modes = { "single", "aoe" },
+        })
+    end
+end
+table.insert(P.ConfigSchema.options, {
+    type = "number",
+    section = zh and "斩杀节奏" or "Execute timing",
+    key = "executeLead",
+    label = zh and "武器斩杀提前时间" or "Arms Execute lead time",
+    modes = { "single", "aoe" },
+    min = 0.25,
+    max = 1.0,
+    step = 0.05,
+    suffix = zh and "秒" or "s",
+    format = "%.2f",
+})
+table.insert(P.ConfigSchema.options, {
+    type = "number",
+    key = "furyExecuteExtraRage",
+    label = zh and "狂暴斩杀额外怒气上限" or "Fury Execute extra rage cap",
+    modes = { "single", "aoe" },
+    min = 0,
+    max = 30,
+    step = 5,
+    format = "%d",
+})
+table.insert(P.ConfigSchema.options, {
+    type = "toggle",
+    key = "furyProtectNextSlam",
+    label = zh and "狂暴斩杀保护下轮猛击" or "Fury Execute protects next Slam",
+    modes = { "single", "aoe" },
+    visibleWhen = { key = "useSlamExecute", value = true },
+})
 
 -- 将旧群体模式映射到 aoe，其余入口统一使用 single，兼容已有宏绑定。
 function P:NormalizeMode(mode)
@@ -221,10 +287,8 @@ P._swingCycle = 0
 local FORECAST_LIMIT = D.FORECAST_LIMIT or 3
 local GCD_LOCK = 1.5
 local STANCE_RAGE = 25
-local EXECUTE_WINDOW = 0.35
 local EXECUTE_TAIL_GUARD = 0.20
 local ON_SWING_QUEUE_GUARD = 0.20
-local TEST_HAMSTRING_NAME = zh and "断筋" or "Hamstring"
 local BASE_COOLDOWNS = {
     MORTAL_STRIKE = 6,
     BLOODTHIRST = 6,
@@ -287,6 +351,17 @@ local function RotationValue(state, key)
     end
     local defaults = P.RotationDefaults[P:NormalizeMode(state and state.mode)]
     return defaults and defaults[key] or nil
+end
+
+local function IsExecutePhase(state)
+    return D:IsKnown("EXECUTE") and (tonumber(state.targetHP) or 100) <= 20
+end
+
+-- 关闭技能同时从推荐、预测及其他技能的预留预算中移除；不修改天赋与技能书。
+local function Enabled(state, key)
+    local option = SKILL_OPTIONS[key]
+    if option and IsExecutePhase(state) then option = option .. "Execute" end
+    return D:IsKnown(key) and (not option or RotationValue(state, option) ~= false)
 end
 
 -- 填充复用的建议／预测记录，并清理上一次动作留下的时间线字段。
@@ -405,7 +480,7 @@ end
 
 -- 只检查已学技能、可用怒气和独立冷却；GCD、姿态与白字窗口由后续决策处理。
 local function Ready(state, key)
-    return D:IsKnown(key)
+    return Enabled(state, key)
         and AvailableRage(state) >= Cost(state, key)
         and CooldownRemaining(state, key) <= 0.05
 end
@@ -754,7 +829,7 @@ end
 -- 此处只检查白字周期和时间，不判断怒气是否足够。
 local function SlamFits(state, minimumLock)
     local swing = state.swing
-    if not swing or not swing.active or swing.slamUsed
+    if not Enabled(state, "SLAM") or not swing or not swing.active or swing.slamUsed
         or swing.slamCapable == false then
         return false
     end
@@ -767,19 +842,20 @@ local function SlamFits(state, minimumLock)
     return remaining + SlamClip(state) >= (tonumber(swing.slamCast) or 2.5)
 end
 
--- 已学斩杀且目标生命百分比不高于 20 时，进入斩杀阶段。
-local function IsExecutePhase(state)
-    return D:IsKnown("EXECUTE") and (tonumber(state.targetHP) or 100) <= 20
+-- 最后 0.20 秒的提交保护固定，玩家只调整贴刀窗口何时开始。
+local function ExecuteLead(state)
+    return math.max(0.25, math.min(1.0,
+        tonumber(RotationValue(state, "executeLead")) or 0.55))
 end
 
--- 深武器的固定贴刀窗口：GCD 已解锁，白字剩余时间处于 (0.20, 0.55] 秒。
+-- 深武器贴刀窗口：GCD 已解锁，白字剩余时间默认处于 (0.20, 0.55] 秒。
 local function CanCastExecuteOnCurrentSwing(state)
     local swing = state and state.swing
     local remaining = swing and tonumber(swing.remaining)
     if not swing or not swing.active or not remaining then return false end
     return (tonumber(state.gcd) or 0) <= 0.05
         and remaining > EXECUTE_TAIL_GUARD
-        and remaining <= (EXECUTE_TAIL_GUARD + EXECUTE_WINDOW)
+        and remaining <= ExecuteLead(state)
 end
 
 -- 本地白字计时可能落后于服务器，最后 0.20 秒内不再提交英勇／顺劈排队请求。
@@ -840,7 +916,7 @@ end
 -- 比较直接等旋风与先做其他动作两条路径，判断后者是否会耗尽横扫层数或拖过持续时间。
 local function SweepingNeedsWhirlwind(state, afterActionAt, actionHits, firstSwingAt)
     if not state.sweepingStrikes or state.stance ~= 3
-        or not D:IsKnown("WHIRLWIND") then
+        or not Enabled(state, "WHIRLWIND") then
         return false
     end
 
@@ -870,7 +946,7 @@ end
 
 -- 检查等待指定瞬发冷却并释放后，是否仍有足够怒气和白字时间完成本轮猛击。
 local function CanWaitForInstantThenSlam(state, key, minimumLock)
-    if not D:IsKnown(key)
+    if not Enabled(state, key)
         or (key == "WHIRLWIND" and state.stance ~= 3)
         or AvailableRage(state)
             < (Cost(state, key) + Cost(state, "SLAM")) then
@@ -906,7 +982,7 @@ local function ShouldUseSlam(state, minimumLock)
         return false, "WHIRLWIND"
     end
 
-    if aoe and D:IsKnown("WHIRLWIND") then
+    if aoe and Enabled(state, "WHIRLWIND") then
         local swing = state.swing
         local start = math.max(
             tonumber(state.gcd) or 0,
@@ -949,7 +1025,7 @@ local function ShouldUseWhirlwind(state)
     local strike = StrikeKey()
     local strikeRemaining = CooldownRemaining(state, strike)
     local afterWhirlwind = (tonumber(state.gcd) or 0) + GCD_LOCK
-    if D:IsKnown(strike)
+    if Enabled(state, strike)
         and strikeRemaining <= (afterWhirlwind + 0.10) then
         local strikeAt = math.max(strikeRemaining, afterWhirlwind)
         if RageAfterSpendAt(state, "WHIRLWIND", strikeAt)
@@ -964,7 +1040,7 @@ end
 local function ShouldUseStrikeAoE(state)
     local strike = StrikeKey()
     if not Ready(state, strike) then return false end
-    if not D:IsKnown("WHIRLWIND") or state.stance ~= 3 then return true end
+    if not Enabled(state, "WHIRLWIND") or state.stance ~= 3 then return true end
 
     local start = tonumber(state.gcd) or 0
     local whirlwindRemaining = CooldownRemaining(state, "WHIRLWIND")
@@ -984,7 +1060,7 @@ local function ShouldUseStrikeAoE(state)
 end
 
 -- 狂暴斩杀机会判断：保护当前安全猛击、近期可负担的瞬发及下一轮猛击时间／怒气。
--- 只在最低消耗加 10 怒以内填充斩杀；溢怒也不放宽下一轮猛击保护。
+-- 额外耗怒上限默认 10；下轮猛击保护可单独关闭，当前猛击与核心瞬发保护始终保留。
 -- 斩杀阶段、最低怒气与排队状态由 ExecuteDue 统一检查。
 local function FuryExecuteFits(state)
     if state.casting or (tonumber(state.gcd) or 0) > 0.05 then return false end
@@ -996,15 +1072,16 @@ local function FuryExecuteFits(state)
     if Ready(state, "SLAM") and SlamFits(state) then return false end
 
     local rage = AvailableRage(state)
-    -- ponytail: 先用低怒线限制额外耗怒；木桩对比证明需要时再调整余量。
-    if rage > Cost(state, "EXECUTE") + 10 then return false end
+    local extraRage = math.max(0, math.min(30,
+        tonumber(RotationValue(state, "furyExecuteExtraRage")) or 10))
+    if rage > Cost(state, "EXECUTE") + extraRage then return false end
     -- ponytail: 只复用正常白字回怒期望，不模拟风怒或受击回怒；实机日志证明必要时再扩展。
     local predicted = math.max(0, tonumber(state.predictedMainHandRage) or 0)
     local horizon = math.max(remaining, GCD_LOCK)
     local i
     for i = 1, table.getn(CORE_STRIKES) do
         local key = CORE_STRIKES[i]
-        if D:IsKnown(key) and (key ~= "WHIRLWIND" or state.stance == 3) then
+        if Enabled(state, key) and (key ~= "WHIRLWIND" or state.stance == 3) then
             local cost = Cost(state, key)
             local at = math.max(CooldownRemaining(state, key),
                 rage < cost and remaining or 0)
@@ -1017,7 +1094,8 @@ local function FuryExecuteFits(state)
         end
     end
 
-    if D:IsKnown("SLAM") and swing.slamCapable ~= false then
+    if RotationValue(state, "furyProtectNextSlam") ~= false
+        and Enabled(state, "SLAM") and swing.slamCapable ~= false then
         local start = math.max(remaining, GCD_LOCK)
         if start + (tonumber(swing.slamCast) or 2.5)
             > remaining + speed + SlamClip(state) then return false end
@@ -1095,16 +1173,16 @@ local function OnSwingReserve(state, plannedKey)
     local nextRageAt = (tonumber(state.swing.remaining) or 0)
         + speed
     local reserve = plannedKey and Cost(state, plannedKey) or 0
-    if plannedKey ~= "WHIRLWIND" and D:IsKnown("WHIRLWIND")
+    if plannedKey ~= "WHIRLWIND" and Enabled(state, "WHIRLWIND")
         and CooldownRemaining(state, "WHIRLWIND") <= nextRageAt then
         reserve = reserve + Cost(state, "WHIRLWIND")
     end
     local strike = StrikeKey()
-    if plannedKey ~= strike and D:IsKnown(strike)
+    if plannedKey ~= strike and Enabled(state, strike)
         and CooldownRemaining(state, strike) <= nextRageAt then
         reserve = reserve + Cost(state, strike)
     end
-    if P:IsFury() and D:IsKnown("SLAM") and state.swing.slamCapable ~= false then
+    if P:IsFury() and Enabled(state, "SLAM") and state.swing.slamCapable ~= false then
         reserve = reserve + Cost(state, "SLAM")
     end
     return reserve
@@ -1498,9 +1576,9 @@ local function ClearCandidates()
     P._candidates = {}
 end
 
--- 只添加已学技能的预测候选，规范预计等待时间、排序优先级与不确定标记。
-local function AddCandidate(key, eta, priority, uncertain)
-    if not D:IsKnown(key) then return end
+-- 只添加当前阶段启用且已学的预测候选。
+local function AddCandidate(state, key, eta, priority, uncertain)
+    if not Enabled(state, key) then return end
     table.insert(P._candidates, {
         key = key,
         eta = math.max(0, tonumber(eta) or 0),
@@ -1541,6 +1619,7 @@ function P:BuildForecast(state, current)
 
     if state.overpower and current.key ~= "OVERPOWER" then
         AddCandidate(
+            state,
             "OVERPOWER",
             ForecastCooldown(state, current, "OVERPOWER"),
             PRIORITY.OVERPOWER,
@@ -1557,7 +1636,7 @@ function P:BuildForecast(state, current)
             if (current.key == "WAIT" or current.key == "AUTO_ATTACK")
                 and ExecuteDue(state) then eta = 0 end
         elseif swing and swing.active and remaining then
-            local windowStart = EXECUTE_TAIL_GUARD + EXECUTE_WINDOW
+            local windowStart = ExecuteLead(state)
             local wait = math.max(
                 0,
                 tonumber(state.gcd) or 0,
@@ -1574,6 +1653,7 @@ function P:BuildForecast(state, current)
         end
         if eta then
             AddCandidate(
+                state,
                 "EXECUTE",
                 eta,
                 PRIORITY.EXECUTE,
@@ -1586,6 +1666,7 @@ function P:BuildForecast(state, current)
         if RotationValue(state, "useSweepingStrikes") ~= false
             and not state.sweepingStrikes then
             AddCandidate(
+                state,
                 "SWEEPING_STRIKES",
                 ForecastCooldown(state, current, "SWEEPING_STRIKES"),
                 PRIORITY.SWEEPING_STRIKES,
@@ -1594,7 +1675,7 @@ function P:BuildForecast(state, current)
         end
     end
 
-    if current.key ~= "SLAM" and D:IsKnown("SLAM")
+    if current.key ~= "SLAM" and Enabled(state, "SLAM")
         and state.swing and state.swing.active and not state.swing.slamUsed then
         local lock = (current.key == "AUTO_ATTACK" or current.key == "WAIT"
             or current.key == "HEROIC_STRIKE" or current.key == "CLEAVE")
@@ -1602,6 +1683,7 @@ function P:BuildForecast(state, current)
         local eta = state.swing.remaining or 0
         if SlamFits(state, lock) then eta = lock end
         AddCandidate(
+            state,
             "SLAM",
             eta,
             PRIORITY.SLAM,
@@ -1611,12 +1693,14 @@ function P:BuildForecast(state, current)
 
     local strike = StrikeKey()
     AddCandidate(
+        state,
         strike,
         ForecastCooldown(state, current, strike),
         PRIORITY[strike],
         AvailableRage(state) < Cost(state, strike)
     )
     AddCandidate(
+        state,
         "WHIRLWIND",
         ForecastCooldown(state, current, "WHIRLWIND"),
         PRIORITY.WHIRLWIND,
@@ -1695,11 +1779,8 @@ function P:Execute(mode)
     if changed or not state.targetValid then state = D:BuildState() end
 
     local action = self:Recommend(state)
-    if D.testMode and action and action.key == "EXECUTE" then
-        action.name = TEST_HAMSTRING_NAME
-    end
     if not action or not action.key or action.key == "WAIT"
-        or action.key == "AUTO_ATTACK" or not D:IsKnown(action.key) then
+        or action.key == "AUTO_ATTACK" or not Enabled(state, action.key) then
         TraceExecute(mode, state, action, "wait")
         D:Update(true)
         return false

@@ -184,10 +184,13 @@ Check(
         and P.ConfigSchema.options[1].max == 0.30
 )
 Check(
-    "Execute timing is fixed instead of user-configurable",
-    P.RotationDefaults.single.executeSwingWindow == nil
-        and P.RotationDefaults.aoe.executeSwingWindow == nil
-        and P.ConfigSchema.options[2].key == "useSweepingStrikes"
+    "both modes expose Slam timing and retain the original Execute defaults",
+    P.RotationDefaults.aoe.slamClip == 0.17
+        and P.ConfigSchema.options[1].modes[2] == "aoe"
+        and P.RotationDefaults.single.executeLead == 0.55
+        and P.RotationDefaults.aoe.executeLead == 0.55
+        and P.RotationDefaults.single.furyExecuteExtraRage == 10
+        and P.RotationDefaults.aoe.furyProtectNextSlam == true
 )
 Check(
     "white rage prediction applies crit only to the damage component",
@@ -1980,6 +1983,54 @@ do
     live = FuryState({ rage = 10, swing = Swing(0.2), predictedMainHandRage = 100 })
     Check("Fury retains the server swing-boundary guard",
         not P:Execute("single") and #casts == 1)
+
+    live = FuryState({ rage = 25, swing = Swing(2, true),
+        rotationDB = { furyExecuteExtraRage = 15 } })
+    Check("configured extra rage reaches the actual Execute path",
+        P:Execute("single") and #casts == 2 and casts[2] == "斩杀")
+    live.rotationDB.furyExecuteExtraRage = 10
+    Check("lowering the extra rage cap blocks that same keypress",
+        not P:Execute("single") and #casts == 2)
+
+    live = FuryState({ rage = 10,
+        rotationDB = { furyProtectNextSlam = false } })
+    Check("next-Slam protection can be disabled for a real tail Execute",
+        P:Execute("single") and #casts == 3)
+    live.rotationDB.furyProtectNextSlam = true
+    Check("restoring next-Slam protection rejects the same tail Execute",
+        not P:Execute("single") and #casts == 3)
+    live.rotationDB.useSlamExecute = false
+    Check("a disabled Execute-phase Slam keeps no future timing reserve",
+        P:Execute("single") and #casts == 4)
+
+    live = FuryState({ rage = 15, swing = Swing(2.55),
+        rotationDB = { useSlamExecute = false } })
+    Check("disabling Slam frees the current window for Execute",
+        P:Execute("single") and #casts == 5 and casts[5] == "斩杀")
+    live.gcd = 0.2
+    Check("disabled Slam does not bypass the Execute GCD guard",
+        not P:Execute("single") and #casts == 5)
+    live.gcd, live.swing.remaining = 0, 0.2
+    Check("disabled Slam does not bypass the final swing guard",
+        not P:Execute("single") and #casts == 5)
+
+    live = FuryState({ rage = 10, swing = Swing(2),
+        rotationDB = { furyProtectNextSlam = false },
+        cooldowns = CoreCooldowns(99, 0.4) })
+    live.swing.remaining = 0.5
+    Check("disabling next-Slam protection still protects a funded imminent Whirlwind",
+        not P:Execute("single") and #casts == 5)
+    live.rotationDB.useWhirlwindExecute = false
+    Check("disabling Whirlwind removes its Execute hold",
+        P:Execute("single") and #casts == 6)
+
+    live = FuryState({ rage = 41, swing = Swing(2, true),
+        rotationDB = { furyExecuteExtraRage = 999 } })
+    Check("saved extra rage above the supported range is clamped",
+        not P:Execute("single") and #casts == 6)
+    live.rage, live.rotationDB.furyExecuteExtraRage = 10, -10
+    Check("negative saved extra rage clamps to minimum-cost Execute",
+        P:Execute("single") and #casts == 7)
     D.SetMode, D.BuildState = oldExecuteSetMode, oldExecuteBuildState
     D.PrepareExecutionTarget, D.Update = oldExecutePrepareTarget, oldExecuteUpdate
     CastSpellByName, CastSpellByNameNoQueue = oldExecuteCast, oldExecuteCastNoQueue
@@ -2020,6 +2071,119 @@ do
     D.SetMode, D.BuildState = oldSetMode, oldBuildState
     D.PrepareExecutionTarget, D.Update = oldPrepare, oldUpdate
     D.MarkOnSwingQueued, D.TraceSwingExecution = oldMark, oldTrace
+    CastSpellByName, CastSpellByNameNoQueue = oldCast, oldNoQueue
+end
+
+-- Each phase switch changes the public recommendation and forecast in both modes.
+do
+    local cases = {
+        { "SLAM", "useSlam", 15 },
+        { "OVERPOWER", "useOverpower", 5 },
+        { "WHIRLWIND", "useWhirlwind", 55 },
+        { "MORTAL_STRIKE", "useStrike", 60 },
+        { "BLOODTHIRST", "useStrike", 60 },
+    }
+    for _, mode in ipairs({ "single", "aoe" }) do
+        for _, hp in ipairs({ 100, 20 }) do
+            for _, case in ipairs(cases) do
+                known.BLOODTHIRST = case[1] == "BLOODTHIRST"
+                local state = State({ mode = mode, targetHP = hp, rage = case[3],
+                    rotationDB = {}, overpower = case[1] == "OVERPOWER",
+                    stance = case[1] == "OVERPOWER" and 1 or 3,
+                    swing = { active = true, remaining = 3.7, speed = 3.7,
+                        slamCast = 2, slamCapable = true } })
+                state.cooldowns[case[1]] = { remaining = 0, duration = 6 }
+                local label = mode .. " " .. hp .. "% " .. case[1]
+                Check(label .. " baseline recommends the enabled spell",
+                    P:Recommend(state).key == case[1])
+                state.rotationDB[case[2] .. (hp <= 20 and "Execute" or "")] = false
+                local rec, forecast = P:Evaluate(state)
+                Check(label .. " disabled spell leaves recommendations and forecasts",
+                    rec.key ~= case[1] and not ForecastByKey(forecast, case[1]))
+                state.targetHP = hp == 20 and 100 or 20
+                Check(label .. " opposite phase remains enabled",
+                    P:Recommend(state).key == case[1])
+            end
+        end
+    end
+    known.BLOODTHIRST = false
+
+    local state = State({ rage = 25, rotationDB = { useSlam = false },
+        cooldowns = CoreCooldowns(99, 0),
+        swing = { active = true, remaining = 3, speed = 3.5,
+            slamCast = 2, slamCapable = true } })
+    Check("disabled Slam removes Whirlwind's current Slam rage reserve",
+        P:Recommend(state).key == "WHIRLWIND")
+    state = State({ mode = "aoe", rage = 15, predictedMainHandRage = 5,
+        rotationDB = { useWhirlwind = false }, cooldowns = CoreCooldowns(99, 1),
+        sweepingStrikes = true, sweepingRemaining = 4, sweepingStacks = 1,
+        swing = { active = true, remaining = 3, speed = 3.5,
+            slamCast = 2, slamCapable = true } })
+    Check("disabled AoE Whirlwind reserves neither rage nor Sweeping charges",
+        P:Recommend(state).key == "SLAM")
+    state = State({ rage = 5, overpower = true, rotationDB = { useOverpower = false },
+        cooldowns = CoreCooldowns(99, 99, 0) })
+    Check("disabled Overpower does not request a stance dance",
+        P:Recommend(state).key ~= "BATTLE_STANCE")
+
+    known.BLOODTHIRST = true
+    state = State({ rage = 25, rotationDB = { useStrike = false },
+        cooldowns = CoreCooldowns(99, 0) })
+    state.cooldowns.BLOODTHIRST = { remaining = 0.2, duration = 6 }
+    Check("disabled Bloodthirst removes its near-ready rage hold without changing Fury",
+        P:IsFury() and P:Recommend(state).key == "WHIRLWIND")
+    known.BLOODTHIRST = false
+
+    flurryRank = 5
+    state = State({ rage = 45, predictedMainHandRage = 55,
+        rotationDB = { useSlam = false, useStrike = false, useWhirlwind = false },
+        cooldowns = CoreCooldowns(0, 0),
+        swing = { active = true, remaining = 1.5, speed = 3.5,
+            slamCast = 1.5, slamCapable = true } })
+    Check("disabled core skills reserve neither timing nor rage before Heroic Strike",
+        P:Recommend(state).key == "HEROIC_STRIKE")
+    state.mode = "aoe"
+    Check("disabled core skills release the same Cleave budget",
+        P:Recommend(state).key == "CLEAVE")
+    flurryRank = 0
+
+    state = State({ mode = "aoe", rage = 30, rotationDB = { slamClip = 0.25 },
+        swing = { active = true, remaining = 1.8, speed = 3.5,
+            slamCast = 2, slamCapable = true } })
+    Check("AoE uses its configured Slam clip allowance", P:Recommend(state).key == "SLAM")
+    state.rotationDB.slamClip = 0.10
+    Check("lowering AoE clip rejects the same late Slam", P:Recommend(state).key ~= "SLAM")
+
+    local oldSetMode, oldBuildState = D.SetMode, D.BuildState
+    local oldPrepare, oldUpdate = D.PrepareExecutionTarget, D.Update
+    local oldCast, oldNoQueue = CastSpellByName, CastSpellByNameNoQueue
+    local castName
+    D.SetMode, D.Update = function() end, function() end
+    D.PrepareExecutionTarget = function() return false end
+    D.BuildState = function() return state end
+    CastSpellByNameNoQueue = function(name) castName = name end
+    CastSpellByName = function() error("Execute entered the generic queue") end
+    for _, mode in ipairs({ "single", "aoe" }) do
+        state = State({ mode = mode, targetHP = 20, rage = 15,
+            rotationDB = { executeLead = 0.75 },
+            swing = { active = true, remaining = 0.6, speed = 3.5,
+                slamCast = 2, slamCapable = true, slamUsed = true } })
+        castName = nil
+        Check(mode .. " extended lead time changes actual Execute timing",
+            P:Execute(mode) and castName == "斩杀")
+        state.rotationDB.executeLead = 0.35
+        local rec, forecast = P:Evaluate(state)
+        local execute = ForecastByKey(forecast, "EXECUTE")
+        Check(mode .. " shortened lead is shared by recommendation, forecast and execution",
+            rec.key ~= "EXECUTE" and execute and math.abs(execute.eta - 0.25) < 0.001
+                and not P:Execute(mode))
+        state.rotationDB.executeLead, state.swing.remaining = 999, 1.1
+        Check(mode .. " saved lead is clamped before execution", not P:Execute(mode))
+        state.rotationDB.executeLead, state.swing.remaining = 0.75, 0.20
+        Check(mode .. " configured lead preserves the swing boundary", not P:Execute(mode))
+    end
+    D.SetMode, D.BuildState = oldSetMode, oldBuildState
+    D.PrepareExecutionTarget, D.Update = oldPrepare, oldUpdate
     CastSpellByName, CastSpellByNameNoQueue = oldCast, oldNoQueue
 end
 

@@ -66,6 +66,8 @@ local L = pfUI.L or (pfUI_translation and pfUI_translation[GetLocale()]) or {}
   end
 
   local function EnsureTraceFile()
+    -- DDPS owns the shared debug switch; also check before reusing a cached trace.
+    if not DoiteDPS or DoiteDPS.debugMode ~= true then return nil end
     if not S.isWarrior or S.traceWriteFailed then return nil end
     if S.traceFile then return S.traceFile end
     if type(WriteCustomFile) ~= "function" then

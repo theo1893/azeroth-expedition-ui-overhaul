@@ -1817,9 +1817,6 @@ function UI:UpdateResourceText(state, recommendation)
         return
     end
 
-    if D.testMode then
-        text = "|cffffff33TEST|r  " .. text
-    end
     self.info:SetText(text)
     self.info:Show()
 end
@@ -2100,7 +2097,6 @@ function UI:Update(state, recommendation, forecasts, force)
 
     if D.DB.showOnlyCombat
         and not state.inCombat
-        and not D.testMode
         and D.DB.locked then
         CancelSlotPromotion(self)
         self.forecastPresence = {}
@@ -2113,7 +2109,7 @@ function UI:Update(state, recommendation, forecasts, force)
     self:UpdateTankAssistBadge()
     self:UpdateResourceText(state, recommendation)
 
-    local noTarget = not state.targetValid and not D.testMode
+    local noTarget = not state.targetValid
     if noTarget then
         CancelSlotPromotion(self)
         self.forecastPresence = {}

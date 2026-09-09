@@ -2784,6 +2784,7 @@ end
 -- Keep DDPS execution decisions beside pfUI's native swing events. The writer
 -- lives in pfUI; DDPS never opens or reads the trace file.
 function D:TraceSwingExecution(profile, mode, state, action, result)
+    if self.debugMode ~= true then return false end
     local api = pfUI and pfUI.swingtimer and pfUI.swingtimer.api
     if not api or type(api.AppendTrace) ~= "function" then return false end
 
@@ -3168,13 +3169,6 @@ function D:HandleSlash(message)
             ("仅战斗显示：" .. (self.DB.showOnlyCombat and "开启" or "关闭")) or
             ("Combat only: " .. (self.DB.showOnlyCombat and "on" or "off")))
         self:Update(true)
-    elseif command == "test" then
-        self.testMode = not self.testMode
-        self.DB.enabled = true
-        self:Print(zh and
-            ("测试模式：" .. (self.testMode and "开启" or "关闭")) or
-            ("Test mode: " .. (self.testMode and "on" or "off")))
-        self:Update(true)
     elseif command == "cast" then
         if rest == "" then
             self:Execute("single")
@@ -3274,8 +3268,8 @@ function D:HandleSlash(message)
         self:Print(zh and "设置已重置。" or "Settings reset.")
     else
         self:Print(zh and
-            "/ddps show|hide|lock|unlock|mode single|aoe|pvp_close|cast [single|aoe|pvp_close]|role toggle|dps|tank|weapons save dps|tank|tank set|clear|status|macros|config|scale 1.0|combat|test|debug|status|reset" or
-            "/ddps show|hide|lock|unlock|mode single|aoe|pvp_close|cast [single|aoe|pvp_close]|role toggle|dps|tank|weapons save dps|tank|tank set|clear|status|macros|config|scale 1.0|combat|test|debug|status|reset")
+            "/ddps show|hide|lock|unlock|mode single|aoe|pvp_close|cast [single|aoe|pvp_close]|role toggle|dps|tank|weapons save dps|tank|tank set|clear|status|macros|config|scale 1.0|combat|debug|status|reset" or
+            "/ddps show|hide|lock|unlock|mode single|aoe|pvp_close|cast [single|aoe|pvp_close]|role toggle|dps|tank|weapons save dps|tank|tank set|clear|status|macros|config|scale 1.0|combat|debug|status|reset")
     end
 end
 
