@@ -40,6 +40,7 @@ local function loadModule(file, locale)
     BigWigs = { ModuleDeclaration = function() return module, L end }
     function module:RegisterYellEngage() end
     dofile("addon/BigWigs/Raids/Karazhan/" .. file .. ".lua")
+    local doomHandler = module.DoomOfMedivh
     module.db = { profile = module.defaultDB }
     function module:Sync(message) record("sync " .. message) end
     function module:ShacklesDebuff(player) record("shackles " .. player) end
@@ -48,7 +49,7 @@ local function loadModule(file, locale)
         record("mark " .. player .. " " .. mark)
     end
     context = file .. "/" .. locale
-    return module, L
+    return module, L, doomHandler
 end
 
 local function check(module, message, expected)
@@ -74,7 +75,7 @@ for _, locale in ipairs({ "zhCN", "enUS" }) do
         check(module, "An unrelated combat log message.", nil)
     end
 
-    local module = loadModule("EchoOfMedivh", locale)
+    local module, _, doomHandler = loadModule("EchoOfMedivh", locale)
     for _, count in ipairs({ 1, 12 }) do
         local selfLog = locale == "zhCN" and "你受到了麦迪文的灾祸效果的影响（%d）。" or
             "You are afflicted by Doom of Medivh (%d)."
@@ -84,6 +85,42 @@ for _, locale in ipairs({ "zhCN", "enUS" }) do
         for _, player in ipairs(names) do
             check(module, string.format(otherLog, player, count), nil)
         end
+    end
+
+    if locale == "zhCN" then
+        for _, suffix in ipairs({ "（2）。", "(2)。", " （12）。", " (12)。" }) do
+            local count = string.find(suffix, "12", 1, true) and 12 or 2
+            check(module, "你受到了麦迪文的灾祸效果的影响" .. suffix, "doom " .. count)
+            for _, player in ipairs(names) do
+                check(module, player .. "受到了麦迪文的灾祸效果的影响" .. suffix, nil)
+            end
+        end
+    end
+
+    -- Exercise the real timer entry too, rather than stopping at the parsed count.
+    module.DoomOfMedivh = doomHandler
+    local bar, removed
+    function module:RemoveBar(text) removed = text end
+    function module:IntervalBar(text, low, high, icon, custom, color)
+        bar = { text, low, high, icon, custom, color }
+    end
+    for _, count in ipairs({ 1, 2, 3, 4 }) do
+        bar = nil
+        local message = locale == "zhCN" and "你受到了麦迪文的灾祸效果的影响（%d）。"
+            or "You are afflicted by Doom of Medivh (%d)."
+        module:AfflictionEvent(string.format(message, count))
+        local title = locale == "zhCN" and "麦迪文的灾祸(%d)" or "Doom of Medivh (%d)"
+        assert(bar and bar[1] == string.format(title, count)
+            and bar[2] == 14 and bar[3] == 24 and bar[4] == "Spell_Nature_Drowsy"
+            and bar[5] == true and bar[6] == (count >= 4 and "red" or count == 3 and "yellow" or "white")
+            and removed == string.format(title, count - 1), context .. ": real Doom timer " .. count)
+        checks = checks + 1
+        bar = nil
+        module.db.profile.doom = false
+        module:AfflictionEvent(string.format(message, count))
+        assert(not bar, context .. ": disabled Doom must not show a timer")
+        module.db.profile.doom = true
+        checks = checks + 1
     end
 
     local module, L = loadModule("ChessFight", locale)

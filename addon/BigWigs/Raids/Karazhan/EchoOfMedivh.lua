@@ -93,7 +93,7 @@ L:RegisterTranslations("zhCN", function()
 		trigger_corruptionFade = "麦迪文的腐化效果从你身上消失了",
 		trigger_corruptionFadeOther = "麦迪文的腐化效果从(.+)身上消失了",
 
-		trigger_doomYou = "^你受到了麦迪文的灾祸效果的影响%（(%d+)%）",
+		trigger_doomYou = "^你受到了麦迪文的灾祸效果的影响%s*%((%d+)%)",
 		trigger_doomFade = "麦迪文的灾祸效果从",
 
 		msg_corruptionYou = "你中了腐化！远离其他人！",
@@ -103,7 +103,7 @@ L:RegisterTranslations("zhCN", function()
 		yell_corruption = "我被腐化了！离我远点！",
 
 		bar_corruption = "麦迪文的腐化",
-		bar_doom = "麦迪文的腐化(%d)",
+		bar_doom = "麦迪文的灾祸(%d)",
 
 		resto_pot_cancelling = "由于灾祸效果已移除，正在取消滋补效果",
 	}
@@ -160,7 +160,10 @@ function module:AfflictionEvent(msg)
 	end
 
 	-- Doom of Medivh
-	local _, _, count = string.find(msg, L["trigger_doomYou"])
+	-- Normalize full-width punctuation before matching ASCII parentheses.
+	local doomMessage = string.gsub(msg, "（", "(")
+	doomMessage = string.gsub(doomMessage, "）", ")")
+	local _, _, count = string.find(doomMessage, L["trigger_doomYou"])
 	if count then
 		self:DoomOfMedivh(tonumber(count))
 	end
