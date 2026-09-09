@@ -22,9 +22,11 @@ end
 for _, language in ipairs({ "zhCN", "enUS" }) do
     locale = language
     dofile("addon/BigWigs/Raids/Karazhan/Anomalus.lua")
-    check(L.trigger_arcaneOverloadYou .. ".", "观察者")
+    check(language == "zhCN" and "你受到了奥术超载效果的影响。" or
+        "You are afflicted by Arcane Overload.", "观察者")
     for _, player in ipairs({ "李哥保护你", "李哥守护你", "普通团员", "NotYou" }) do
-        check(string.gsub(L.trigger_arcaneOverloadOther, "%(%.%+%)", player) .. ".", player)
+        check(player .. (language == "zhCN" and "受到了奥术超载效果的影响。" or
+            " is afflicted by Arcane Overload."), player)
     end
     local received
     module.ManaboundStrike = function(_, player, count) received = player .. " " .. count end

@@ -89,7 +89,7 @@ L:RegisterTranslations("zhCN", function()
         markdampenedplayers_name = "标记受减益影响的玩家",
         markdampenedplayers_desc = "如果有未使用的团队标记，标记受到奥术减益影响的玩家（需要助手或团长权限）",
 
-        trigger_arcaneOverloadYou = "你受到了奥术超载效果的影响",
+        trigger_arcaneOverloadYou = "^你受到了奥术超载效果的影响",
         trigger_arcaneOverloadOther = "(.+)受到了奥术超载效果的影响",
         msg_arcaneOverloadYou = "你身上有炸弹 - 用力输出然后跑开！",
         msg_arcaneOverloadOther = "%s身上有炸弹！",
@@ -175,7 +175,7 @@ end
 
 function module:AfflictionEvent(msg)
 	-- Arcane Overload
-	if string.find(msg, "^" .. L["trigger_arcaneOverloadYou"]) then
+	if string.find(msg, L["trigger_arcaneOverloadYou"]) then
 		self:Sync(syncName.arcaneOverload .. " " .. UnitName("player"))
 	else
 		local _, _, player = string.find(msg, L["trigger_arcaneOverloadOther"])

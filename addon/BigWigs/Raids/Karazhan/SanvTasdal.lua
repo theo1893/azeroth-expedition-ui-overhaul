@@ -56,7 +56,7 @@ L:RegisterTranslations("zhCN", function()
 		overflowinghatred_name = "仇恨溢出警报",
 		overflowinghatred_desc = "当桑夫·塔斯达尔开始施放仇恨溢出时发出警告",
 
-		trigger_phaseShiftedYou = "你受到了相位转换效果的影响",
+		trigger_phaseShiftedYou = "^你受到了相位转换效果的影响",
 		trigger_phaseShiftedOther = "(.+)受到了相位转换效果的影响",
 		trigger_phaseShiftedFade = "相位转换效果从你身上消失了",
 		trigger_phaseShiftedFadeOther = "相位转换效果从(.+)身上消失了",

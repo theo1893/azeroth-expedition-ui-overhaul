@@ -120,16 +120,16 @@ L:RegisterTranslations("zhCN", function()
 		markmindcontrol_name = "标记被控制目标",
 		markmindcontrol_desc = "用X团队图标标记受国王诅咒影响的玩家（需要助理或领袖权限）",
 
-		trigger_subservienceYou = "你受到了黑暗屈从效果的影响",
+		trigger_subservienceYou = "^你受到了黑暗屈从效果的影响",
 		trigger_subservienceOther = "(.+)受到了黑暗屈从效果的影响",
 		trigger_subservienceFade = "黑暗屈从效果从(.+)身上消失了",
 		trigger_subservienceFailed = "黑暗屈从施放失败。根基图腾生效",
 
-		trigger_kingscurseYou = "你受到了国王的诅咒效果的影响",
+		trigger_kingscurseYou = "^你受到了国王的诅咒效果的影响",
 		trigger_kingscurseOther = "(.+)受到了国王的诅咒效果的影响",
 		trigger_kingscurseFade = "国王的诅咒效果从(.+)身上消失了",
 
-		trigger_charmingPresenceYou = "你受到了魅惑之心效果的影响",
+		trigger_charmingPresenceYou = "^你受到了魅惑之心效果的影响",
 		trigger_charmingPresenceOther = "(.+)受到了魅惑之心效果的影响",
 		trigger_charmingPresenceFade = "魅惑之心效果从(.+)身上消失了",
 
@@ -281,6 +281,9 @@ function module:AfflictionEvent(msg)
 
 	-- Charming Presence
 	local _, _, player = string.find(msg, L["trigger_charmingPresenceOther"])
+	if string.find(msg, L["trigger_charmingPresenceYou"]) then
+		player = UnitName("player")
+	end
 	if player and self.db.profile.markmindcontrol then
 		-- Mark the player with X raid target
 		self:SetRaidTargetForPlayer(player, 7) -- X

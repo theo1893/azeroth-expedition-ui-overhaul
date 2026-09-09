@@ -88,12 +88,12 @@ L:RegisterTranslations("zhCN", function()
 		corruptionyell_name = "腐化聊天消息",
 		corruptionyell_desc = "让受腐化的玩家在聊天频道发出警告",
 
-		trigger_corruptionYou = "你受到了麦迪文的腐化效果的影响",
+		trigger_corruptionYou = "^你受到了麦迪文的腐化效果的影响",
 		trigger_corruptionOther = "(.+)受到了麦迪文的腐化效果的影响",
 		trigger_corruptionFade = "麦迪文的腐化效果从你身上消失了",
 		trigger_corruptionFadeOther = "麦迪文的腐化效果从(.+)身上消失了",
 
-		trigger_doomYou = "你受到了麦迪文的灾祸效果的影响%（(%d+)%）",
+		trigger_doomYou = "^你受到了麦迪文的灾祸效果的影响%（(%d+)%）",
 		trigger_doomFade = "麦迪文的灾祸效果从",
 
 		msg_corruptionYou = "你中了腐化！远离其他人！",

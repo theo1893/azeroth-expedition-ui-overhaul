@@ -90,7 +90,7 @@ L:RegisterTranslations("zhCN", function()
 	proximity_name = "距离警告",
 	proximity_desc = "显示距离警告框体",
 
-	trigger_markofthelordYou = "你受到了大领主印记效果的影响",
+	trigger_markofthelordYou = "^你受到了大领主印记效果的影响",
 	trigger_markofthelordOther = "(.+)受到了大领主印记效果的影响",
 	trigger_markofthelordFade = "大领主印记效果从你身上消失了",
 	trigger_markofthelordFadeOther = "大领主印记效果从(.+)身上消失了",

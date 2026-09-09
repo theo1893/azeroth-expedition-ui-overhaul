@@ -108,15 +108,15 @@ L:RegisterTranslations("zhCN", function()
 
 		-- 触发条件
 		trigger_engage = "我预见到了你的到来", -- CHAT_MSG_MONSTER_YELL
-		trigger_shacklesDebuffYou = "你受到了军团镣铐效果的影响",
+		trigger_shacklesDebuffYou = "^你受到了军团镣铐效果的影响",
 		trigger_shacklesDebuffOther = "(.+)受到了军团镣铐效果的影响",
 		trigger_doomDebuff = "(.+)受到了外域的末日效果的影响",
 		trigger_doomDebuffFade = "外域的末日效果从(.+)身上消失了。",
 
 		trigger_shacklesFade = "军团镣铐效果从(.+)身上消失了。",
 
-		trigger_shackleShatterYou = "你的镣铐碎裂 .-its",
-		trigger_shackleShatterOther = "(.+)的镣铐碎裂 .-its",
+		trigger_shackleShatterYou = "^你的镣铐碎裂",
+		trigger_shackleShatterOther = "(.+)的镣铐碎裂",
 
 		-- 消息和计时条
 		msg_shacklesCast = "军团镣铐即将来袭！>>保持静止<<",

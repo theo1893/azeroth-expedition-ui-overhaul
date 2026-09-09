@@ -308,7 +308,7 @@ function module:CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE(msg)
 			self:WarningSign(icon.redMoon, 5, true, "红")
 		elseif string.find(msg, L["trigger_blueMoon"]) then
 			self:Message(L["msg_blueMoon"], "Important", true, "Alert")
-			self:WarningSign(icon.blueMoon, 5, "蓝")
+			self:WarningSign(icon.blueMoon, 5, true, "蓝")
 		end
 	end
 end
