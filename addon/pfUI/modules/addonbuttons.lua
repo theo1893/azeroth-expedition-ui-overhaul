@@ -326,9 +326,9 @@ pfUI:RegisterModule("addonbuttons", "vanilla:tbc", function ()
 
     if action == "" or (action ~= "reset" and action ~= "add" and action ~= "del") then
       DEFAULT_CHAT_FRAME:AddMessage("|cff33ffccpf|rUI Addon Button Panel:")
-      DEFAULT_CHAT_FRAME:AddMessage("|cff33ffcc/abp add|r - " .. T["Add button to the frame"])
-      DEFAULT_CHAT_FRAME:AddMessage("|cff33ffcc/abp del|r - " .. T["Remove button from the frame"])
-      DEFAULT_CHAT_FRAME:AddMessage("|cff33ffcc/abp reset|r - " .. T["Reset all manually added or ignored buttons"])
+      DEFAULT_CHAT_FRAME:AddMessage("|cff33ffcc/pfabp add|r - " .. T["Add button to the frame"])
+      DEFAULT_CHAT_FRAME:AddMessage("|cff33ffcc/pfabp del|r - " .. T["Remove button from the frame"])
+      DEFAULT_CHAT_FRAME:AddMessage("|cff33ffcc/pfabp reset|r - " .. T["Reset all manually added or ignored buttons"])
       return
     end
 
@@ -440,6 +440,6 @@ pfUI:RegisterModule("addonbuttons", "vanilla:tbc", function ()
 
   pfUI.addonbuttons:UpdateConfig()
 
-  _G.SLASH_PFABP1, _G.SLASH_PFABP2 = "/abp", "/pfabp"
+  _G.SLASH_PFABP1 = "/pfabp"
   _G.SlashCmdList.PFABP = ManualAddOrRemove
 end)

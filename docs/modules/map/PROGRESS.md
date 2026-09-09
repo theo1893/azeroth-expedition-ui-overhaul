@@ -29,6 +29,8 @@
   V4／V3 回退，FarmMode、Map 禁用和 provider 缺失继续恢复 pfUI。
 - `pfMinimap` 保存锚点与缩放仍由 pfUI 所有；adapter 不循环改写 provider，也不
   改变扫描、缓存、手动 add／del／reset、战斗隐藏或父级恢复逻辑。
+- 插件按钮收纳命令只保留 `/pfabp`，支持 add／del／reset；`/abp` 留给
+  ActionBarProfiles，帮助文字同步使用 `/pfabp`。
 
 ## 子模块状态
 
@@ -43,6 +45,9 @@
 | `MAP.MINI.VISIBILITY／FARMMODE` | `P5` | 全局显隐同步；FarmMode 使用独立 pfUI provider | 实机验证迁移、退出恢复和模块禁用回退 |
 
 ## 下一步
+
+`/reload` 后验证 `/pfabp` 帮助、图标加入／移出及 `/abp` 动作条方案入口；
+关闭 AEUI Map 时 `/pfabp` 继续由 pfUI 提供。
 
 完整重启客户端后验证 contract 7.6：确认 V7 bottom 徽记与罗盘右下外缘自然压接，
 并检查 left／top／right V4 2× 九切片无断边、拉伸或 UI 尺寸变化。袋内图标整体左下

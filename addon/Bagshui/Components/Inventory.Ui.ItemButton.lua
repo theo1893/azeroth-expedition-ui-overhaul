@@ -1035,9 +1035,10 @@ function Inventory:ItemButton_OnClick(mouseButton, isDrag)
 			elseif
 				-- Blizzard Mail Attachments - Right-click/Alt+click.
 				self:IsItemClickActionAllowed(mouseButton, "InboxFrame", "SendMailFrame")
-				-- Doing two checks here for "Mail" addon in case another addon ends up replicating
+				-- Check Mail/TurtleMail as well as the native attachment button in case another addon replicates
 				-- the way it handles attachments.
 				and not _G.IsAddOnLoaded("Mail")
+				and not _G.IsAddOnLoaded("TurtleMail")
 				and _G.SendMailPackageButton:IsEnabled() == 1
 			then
 				-- Switch to the Send Mail tab and attach the item.
@@ -1049,13 +1050,13 @@ function Inventory:ItemButton_OnClick(mouseButton, isDrag)
 
 
 			elseif
-				-- "Mail" addon - Alt+click (it only provides right-click).	
+				-- Mail/TurtleMail - Alt+click (they only provide right-click).
 				(mouseButton == "LeftButton" and _G.IsAltKeyDown())
 				and self.settings.altClickAttach
 				and self.ui:IsFrameVisible("MailFrame")
-				and _G.IsAddOnLoaded("Mail")
+				and (_G.IsAddOnLoaded("Mail") or _G.IsAddOnLoaded("TurtleMail"))
 			then
-				-- Pretend Alt isn't down so Mail's UseContainerItem will do the work.
+				-- Pretend Alt isn't down so the mail addon's UseContainerItem will do the work.
 				self:ContainerItemAction(item, "Use", false)
 
 

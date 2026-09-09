@@ -156,4 +156,52 @@ assert(inv.settings.itemMargin==2 and rawget(inv.settings,'itemMargin')==nil)
 inv.failLayout=false
 AzerothExpeditionUI.db.bagshui.enabled=false; skin:Apply()
 assert(inv.layoutMargin==2)
-print('Bagshui checks passed: scope, states, restore, compact layout without saved writes')
+-- Mail replacement must preserve Alt+click attachment through the provider hook.
+do
+  local proto = {}
+  Bagshui = {prototypes={Inventory=proto, InventoryUi={}}}
+  function Bagshui:AddComponent(callback) callback() end
+  dofile('addon/Bagshui/Components/Inventory.Ui.ItemButton.lua')
+  local mailAddon, mailOpen, altDown, calls = 'TurtleMail', true, true, {}
+  BsUtil = {ReturnTrue=function() return true end, ReturnFalse=function() return false end}
+  IsAddOnLoaded = function(name) return name == mailAddon end
+  IsAltKeyDown = function() return altDown end
+  IsControlKeyDown = BsUtil.ReturnFalse
+  IsShiftKeyDown = BsUtil.ReturnFalse
+  CursorHasItem = BsUtil.ReturnFalse
+  SendMailPackageButton = {IsEnabled=function() return mailAddon == '' and 1 or 0 end}
+  this = {bagshuiData={bagNum=0, slotNum=1}}
+  local function record(action) table.insert(calls, action) end
+  UseContainerItem = function(bag, slot)
+    assert(bag == 0 and slot == 1 and not IsAltKeyDown())
+    record('use')
+  end
+  PickupContainerItem = function() record('pickup') end
+  MailFrameTab_OnClick = function(tab) assert(tab == 2) end
+  ClickSendMailItemButton = function() record('attach') end
+  ContainerFrameItemButton_OnClick = function(button)
+    assert(button == 'RightButton'); UseContainerItem(0, 1)
+  end
+  function Bagshui:PickupItem() record('pickup') end
+  local inventory = setmetatable({online=true, inventory={[0]={{bagNum=0, slotNum=1}}},
+    settings={altClickAttach=true, rightClickAttach=true},
+    ui={IsFrameVisible=function(_, name)
+      return mailOpen and (name == 'MailFrame' or name == 'SendMailFrame')
+    end}, ClearItemPendingSale=function() end, ItemButton_OnLeave=function() end,
+    ForceUpdateWindow=function() end, IsInitiateTradeAllowed=BsUtil.ReturnFalse}, {__index=proto})
+  local function click(button, expected)
+    calls = {}
+    inventory:ItemButton_OnClick(button)
+    assert(table.concat(calls, ',') == expected, mailAddon .. ': ' .. table.concat(calls, ','))
+    assert(IsAltKeyDown() == altDown, 'mail action must restore the Alt key state')
+  end
+  for _, provider in ipairs({'TurtleMail', 'Mail'}) do
+    mailAddon = provider; altDown = true; click('LeftButton', 'use')
+    altDown = false; click('RightButton', 'use')
+    click('LeftButton', 'pickup')
+  end
+  mailAddon = ''; altDown = true; click('LeftButton', 'pickup,attach')
+  mailAddon = 'TurtleMail'; mailOpen = false; click('LeftButton', 'pickup')
+  mailOpen = true; inventory.settings.altClickAttach = false; click('LeftButton', 'pickup')
+end
+print('Bagshui checks passed: scope, states, restore, compact layout, mail attachment and fallback')

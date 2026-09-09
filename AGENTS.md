@@ -12,6 +12,8 @@ Codex 进入仓库后先读本文件。这里给出项目边界、文档索引�
   登记模块的视觉、布局及必要连接，不改变无关功能。
 - DoiteDPS 独立持有输出建议、循环配置、执行入口与自检；AEUI 只读取其公开
   Frame、SavedVariables 与坦克协助接口，不接管循环决策。
+- 邮箱保留 TurtleMail，拾取界面由 pfUI 持有；分发不包含 Mail 与 XLoot，
+  复制更新旧客户端时也需移除这两个 AddOns 目录。
 - 改模块 A 时只修改模块 A 的真实 pfUI／Blizzard／第三方对象。未登记对象
   必须继续由 provider 正常加载并可局部回退。
 - `addon/` 只放运行时代码、媒体、分发许可证与插件自检，不放 Markdown。

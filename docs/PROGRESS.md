@@ -3,6 +3,10 @@
 本文件只记录模块当前阶段和下一门禁。实现历史由 Git 保存，组件细节见模块
 `PROGRESS.md`。
 
+插件分发保留 TurtleMail 与 pfUI 拾取模块，已移除 Mail／XLoot；Bagshui 的
+Alt+点击附件已识别 TurtleMail。旧客户端复制更新时需移除 Mail／XLoot 目录，
+完整重启后验证批量收信、附件右键／Alt+点击、拾取与背包普通拖动。
+
 ## 阶段
 
 | 阶段 | 含义 |
