@@ -176,17 +176,18 @@ Check(
         and P.ModeOrder[2] == "aoe"
         and P.ModeLabels.single == "双手战士"
 )
+local configOptions = {}
+for _, option in ipairs(P.ConfigSchema.options) do configOptions[option.key] = option end
 Check(
     "Slam exposes a 0.17-second clip limit instead of a safety margin",
     P.RotationDefaults.single.slamClip == 0.17
         and P.RotationDefaults.single.slamSafety == nil
-        and P.ConfigSchema.options[1].key == "slamClip"
-        and P.ConfigSchema.options[1].max == 0.30
+        and configOptions.slamClip.max == 0.30
 )
 Check(
     "both modes expose Slam timing and retain the original Execute defaults",
     P.RotationDefaults.aoe.slamClip == 0.17
-        and P.ConfigSchema.options[1].modes[2] == "aoe"
+        and configOptions.slamClip.modes[2] == "aoe"
         and P.RotationDefaults.single.executeLead == 0.55
         and P.RotationDefaults.aoe.executeLead == 0.55
         and P.RotationDefaults.single.furyExecuteExtraRage == 10
@@ -215,7 +216,7 @@ Check(
     "Sunder maintenance is an opt-in setting for both modes",
     P.RotationDefaults.single.maintainSunder == false
         and P.RotationDefaults.aoe.maintainSunder == false
-        and P.ConfigSchema.options[6].key == "maintainSunder"
+        and configOptions.maintainSunder
 )
 Check("AoE Cleave defaults to a high-rage dump", P.RotationDefaults.aoe.cleaveRage == 95)
 
@@ -233,10 +234,9 @@ D._profileDB = nil
 
 Check(
     "Tier 3 two-piece is one character-wide Arms setting",
-    P.ConfigSchema.options[7].key == "tier3TwoPiece"
-        and P.ConfigSchema.options[7].scope == "general"
-        and P.ConfigSchema.options[7].modes[1] == "single"
-        and P.ConfigSchema.options[7].modes[2] == "aoe"
+    configOptions.tier3TwoPiece.scope == "general"
+        and configOptions.tier3TwoPiece.modes[1] == "single"
+        and configOptions.tier3TwoPiece.modes[2] == "aoe"
 )
 Check(
     "base Sweeping Strikes and Death Wish costs remain unchanged",

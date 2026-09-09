@@ -3631,6 +3631,7 @@ local function CreateSupplyButton(root, index)
   button.stock = button:CreateFontString(
     nil, "OVERLAY", "GameFontNormalSmall"
   )
+  button.stock:SetFont(GetSystemUnitFont(), 12, "OUTLINE")
   button.stock:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -3, 3)
   button.stock:SetJustifyH("RIGHT")
 
@@ -3701,6 +3702,7 @@ local function CreateSupplyPopupButton(parent, index)
   button.stock = button:CreateFontString(
     nil, "OVERLAY", "GameFontNormalSmall"
   )
+  button.stock:SetFont(GetSystemUnitFont(), 12, "OUTLINE")
   button.stock:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -3, 3)
   button.primary = button:CreateFontString(
     nil, "OVERLAY", "GameFontNormalSmall"
@@ -3890,7 +3892,7 @@ function ActionBars:RefreshSupplyPopup()
         button.stock:SetTextColor(1, 0.28, 0.22)
       else
         button.icon:SetVertexColor(1, 1, 1, 1)
-        button.stock:SetTextColor(1, 1, 1)
+        button.stock:SetTextColor(1, .84, .55, 1)
       end
       SetSupplyCooldown(button, item.itemId)
       button:Show()
@@ -4162,7 +4164,7 @@ function ActionBars:RefreshSupplyButtons()
         button.stock:SetTextColor(1, 0.28, 0.22)
       else
         button.icon:SetVertexColor(1, 1, 1, 1)
-        button.stock:SetTextColor(1, 1, 1)
+        button.stock:SetTextColor(1, .84, .55, 1)
       end
       SetSupplyCooldown(button, item.itemId)
     end
@@ -4548,6 +4550,7 @@ local function CreateSupplyManagerCell(parent, index)
   cell.stock = cell:CreateFontString(
     nil, "OVERLAY", "GameFontNormalSmall"
   )
+  cell.stock:SetFont(GetSystemUnitFont(), 12, "OUTLINE")
   cell.stock:SetPoint("BOTTOMRIGHT", cell, "BOTTOMRIGHT", -3, 3)
   cell.plus = cell:CreateFontString(
     nil, "OVERLAY", "GameFontNormalLarge"
@@ -4626,6 +4629,7 @@ local function CreateSupplyManagerMemberCell(parent, index)
   cell.stock = cell:CreateFontString(
     nil, "OVERLAY", "GameFontNormalSmall"
   )
+  cell.stock:SetFont(GetSystemUnitFont(), 12, "OUTLINE")
   cell.stock:SetPoint("BOTTOMRIGHT", cell, "BOTTOMRIGHT", -3, 3)
   cell.plus = cell:CreateFontString(
     nil, "OVERLAY", "GameFontNormalLarge"
@@ -4918,7 +4922,7 @@ function ActionBars:RefreshSupplyManager(refreshSelection)
         cell.stock:SetTextColor(1, 0.28, 0.22)
       else
         cell.icon:SetVertexColor(1, 1, 1, 1)
-        cell.stock:SetTextColor(1, 1, 1)
+        cell.stock:SetTextColor(1, .84, .55, 1)
       end
     else
       cell.icon:Hide()
@@ -4962,7 +4966,7 @@ function ActionBars:RefreshSupplyManager(refreshSelection)
         cell.stock:SetTextColor(1, 0.28, 0.22)
       else
         cell.icon:SetVertexColor(1, 1, 1, 1)
-        cell.stock:SetTextColor(1, 1, 1)
+        cell.stock:SetTextColor(1, .84, .55, 1)
       end
     else
       cell.icon:Hide()

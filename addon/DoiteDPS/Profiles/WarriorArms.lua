@@ -84,20 +84,8 @@ P.ConfigSchema = {
     },
     options = {
         {
-            type = "number",
-            section = zh and "白字节奏" or "Swing timing",
-            key = "slamClip",
-            label = zh and "猛击最大卡条" or "Maximum Slam swing delay",
-            modes = { "single", "aoe" },
-            min = 0,
-            max = 0.30,
-            step = 0.01,
-            suffix = zh and "秒" or "s",
-            format = "%.2f",
-        },
-        {
             type = "toggle",
-            section = zh and "多目标" or "Multi-target",
+            section = zh and "辅助与装备" or "Utility & equipment",
             key = "useSweepingStrikes",
             label = zh and "横扫攻击参与循环" or "Use Sweeping Strikes",
             modes = { "aoe" },
@@ -114,7 +102,7 @@ P.ConfigSchema = {
         },
         {
             type = "toggle",
-            section = zh and "辅助" or "Utility",
+            section = zh and "辅助与装备" or "Utility & equipment",
             key = "maintainBattleShout",
             label = zh and "维持战斗怒吼" or "Maintain Battle Shout",
             modes = { "single", "aoe" },
@@ -141,9 +129,8 @@ P.ConfigSchema = {
         {
             type = "toggle",
             scope = "general",
-            section = zh and "装备效果" or "Equipment effects",
             key = "tier3TwoPiece",
-            label = zh and "T3两件套（横扫/死亡之愿减10怒）"
+            label = zh and "T3两件：横扫/死愿减10怒"
                 or "Tier 3 two-piece (-10 Sweeping/Death Wish rage)",
             modes = { "single", "aoe" },
         },
@@ -164,24 +151,38 @@ local skills = {
     { "useWhirlwind", zh and "旋风斩" or "Whirlwind" },
     { "useStrike", zh and "嗜血／致死打击" or "Bloodthirst / Mortal Strike" },
 }
-for _, suffix in ipairs({ "", "Execute" }) do
-    for index, skill in ipairs(skills) do
+for index, skill in ipairs(skills) do
+    for _, suffix in ipairs({ "", "Execute" }) do
         local key = skill[1] .. suffix
         for _, defaults in pairs(P.RotationDefaults) do defaults[key] = true end
         table.insert(P.ConfigSchema.options, {
             type = "toggle",
-            section = index == 1 and (suffix == ""
-                and (zh and "非斩杀阶段技能" or "Above Execute range")
-                or (zh and "斩杀阶段技能" or "Execute range")) or nil,
+            section = index == 1 and suffix == ""
+                and (zh and "技能开关" or "Skill switches") or nil,
+            layoutGroup = skill[1],
             key = key,
-            label = skill[2],
+            label = (suffix == "" and (zh and "非斩杀：" or "Normal: ")
+                or (zh and "斩杀：" or "Execute: ")) .. skill[2],
             modes = { "single", "aoe" },
         })
     end
 end
 table.insert(P.ConfigSchema.options, {
     type = "number",
-    section = zh and "斩杀节奏" or "Execute timing",
+    section = zh and "节奏与怒气" or "Timing & rage",
+    layoutGroup = "timing",
+    key = "slamClip",
+    label = zh and "猛击最大卡条" or "Maximum Slam swing delay",
+    modes = { "single", "aoe" },
+    min = 0,
+    max = 0.30,
+    step = 0.01,
+    suffix = zh and "秒" or "s",
+    format = "%.2f",
+})
+table.insert(P.ConfigSchema.options, {
+    type = "number",
+    layoutGroup = "timing",
     key = "executeLead",
     label = zh and "武器斩杀提前时间" or "Arms Execute lead time",
     modes = { "single", "aoe" },
@@ -193,6 +194,7 @@ table.insert(P.ConfigSchema.options, {
 })
 table.insert(P.ConfigSchema.options, {
     type = "number",
+    layoutGroup = "timing",
     key = "furyExecuteExtraRage",
     label = zh and "狂暴斩杀额外怒气上限" or "Fury Execute extra rage cap",
     modes = { "single", "aoe" },
@@ -203,6 +205,7 @@ table.insert(P.ConfigSchema.options, {
 })
 table.insert(P.ConfigSchema.options, {
     type = "toggle",
+    layoutGroup = "timing",
     key = "furyProtectNextSlam",
     label = zh and "狂暴斩杀保护下轮猛击" or "Fury Execute protects next Slam",
     modes = { "single", "aoe" },

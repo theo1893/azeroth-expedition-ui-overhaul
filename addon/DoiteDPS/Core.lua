@@ -2862,6 +2862,17 @@ function D:BuildCooldownState(state, keys, profile)
     end
 end
 
+function D:RecordTargetDebuffPeak()
+    if not self.debugMode or not self.DB or not UnitDebuff
+        or not self:IsHostileTarget() then return end
+
+    -- Count aura slots, not stacks; do not impose the usual 16/32-slot UI limit.
+    local count = 0
+    while UnitDebuff("target", count + 1) do count = count + 1 end
+    self.DB.debugMaxTargetDebuffs = math.max(
+        tonumber(self.DB.debugMaxTargetDebuffs) or 0, count)
+end
+
 function D:BuildState()
     local state = self.State
     local now = GetTime()
@@ -2878,6 +2889,7 @@ function D:BuildState()
     )
     state.inCombat = self.inCombat and true or false
     state.targetValid = self:IsHostileTarget()
+    self:RecordTargetDebuffPeak()
     state.targetGUID = self:GetUnitGUID("target")
     state.targetDistance = self:GetDistance("target")
     state.gcd = self:GetGCDRemaining(now)
@@ -3229,14 +3241,21 @@ function D:HandleSlash(message)
             self.Config:Toggle()
         end
     elseif command == "debug" then
+        self:RecordTargetDebuffPeak()
         self.debugMode = not self.debugMode
         EleDPS_Debug = self.debugMode
+        if self.debugMode then
+            self.DB.debugMaxTargetDebuffs = 0
+            self:RecordTargetDebuffPeak()
+        end
         self:Print(zh and
             ("调试：" .. (self.debugMode and "开启" or "关闭")) or
             ("Debug: " .. (self.debugMode and "on" or "off")))
+        self:Print("debugMaxTargetDebuffs=" .. tostring(self.DB.debugMaxTargetDebuffs or 0))
         self:BuildState()
     elseif command == "status" then
         local state = self:BuildState()
+        self:Print("debugMaxTargetDebuffs=" .. tostring(self.DB.debugMaxTargetDebuffs or 0))
         if state.class == "SHAMAN" then
             self:Print(string.format(
                 "mana=%d/%d cc=%d fs=%.1f cast=%s castRem=%.2f moving=%s gcd=%.2f",

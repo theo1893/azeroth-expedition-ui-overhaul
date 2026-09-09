@@ -678,4 +678,42 @@ D:HandleSlash("test")
 Expect("removed test command only shows help and cannot enable the addon",
     D.DB.enabled == false and help and not string.find(help, "|test|", 1, true))
 
+local hostile, debuffCount, debuffReads = true, 48, 0
+local originalHostile, originalBuildState = D.IsHostileTarget, D.BuildState
+D.IsHostileTarget = function() return hostile end
+function UnitDebuff(unit, index)
+    assert(unit == "target")
+    debuffReads = debuffReads + 1
+    if index <= debuffCount then return "debuff", 5 end
+end
+D.BuildState = function() D:RecordTargetDebuffPeak(); return { class = "WARRIOR" } end
+D.debugMode = false
+D:RecordTargetDebuffPeak()
+Expect("debug off performs no debuff scan", debuffReads == 0)
+D:HandleSlash("debug")
+Expect("debug start counts beyond 32 slots without adding stacks", D.DB.debugMaxTargetDebuffs == 48)
+debuffCount = 12
+D:RecordTargetDebuffPeak()
+Expect("fewer auras or a new target cannot lower the peak", D.DB.debugMaxTargetDebuffs == 48)
+hostile, debuffCount = false, 60
+D:RecordTargetDebuffPeak()
+Expect("friendly or missing targets cannot increase the peak", D.DB.debugMaxTargetDebuffs == 48)
+hostile = true
+D:HandleSlash("debug")
+Expect("stopping captures the last sample and preserves it in SavedVariables",
+    not D.debugMode and DoiteDPSDB.debugMaxTargetDebuffs == 60)
+local stoppedReads = debuffReads
+debuffCount = 70
+D:RecordTargetDebuffPeak()
+Expect("stopped recording neither scans nor updates the saved peak",
+    debuffReads == stoppedReads and D.DB.debugMaxTargetDebuffs == 60)
+D:HandleSlash("status")
+Expect("status does not restart recording", not D.debugMode and debuffReads == stoppedReads)
+debuffCount = 0
+D:HandleSlash("debug")
+Expect("a new recording resets the previous peak", D.DB.debugMaxTargetDebuffs == 0)
+D:HandleSlash("debug")
+D.IsHostileTarget, D.BuildState = originalHostile, originalBuildState
+UnitDebuff = nil
+
 print("CoreReactive_spec: " .. passed .. " checks passed")

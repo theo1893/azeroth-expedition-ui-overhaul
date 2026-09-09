@@ -674,6 +674,18 @@ local function Control(pool, key)
 end
 for _, mode in ipairs({ "single", "aoe" }) do
     C:SelectMode(mode)
+    for _, key in ipairs({ "useSlam", "useOverpower", "useWhirlwind", "useStrike" }) do
+        local normal = Control(C.togglePool, key)
+        local execute = Control(C.togglePool, key .. "Execute")
+        Expect(mode .. " aligns both phases of " .. key .. " on one row",
+            normal.point[5] == execute.point[5]
+                and normal.point[4] < execute.point[4])
+    end
+    Expect(mode .. " packs tuning into two rows",
+        Control(C.numberPool, "slamClip").point[5]
+            == Control(C.numberPool, "executeLead").point[5]
+        and Control(C.numberPool, "furyExecuteExtraRage").point[5]
+            == Control(C.togglePool, "furyProtectNextSlam").point[5])
     for _, key in ipairs({ "useSlam", "useOverpower", "useWhirlwind", "useStrike",
         "useSlamExecute", "useOverpowerExecute", "useWhirlwindExecute", "useStrikeExecute",
         "furyProtectNextSlam" }) do
@@ -692,7 +704,12 @@ Expect("real Warrior number control writes only to the selected mode",
     profile:GetRotationDB("aoe").furyExecuteExtraRage == 15
         and profile:GetRotationDB("single").furyExecuteExtraRage == 10)
 local slam = Control(C.togglePool, "useSlamExecute")
+local expandedHeight = C.panel.height
+local strikeY = Control(C.togglePool, "useStrikeExecute").point[5]
 C:ApplyOption(profile, "aoe", slam.option, false)
+Expect("conditional protection does not shift the paired skill grid or panel height",
+    C.panel.height == expandedHeight
+        and Control(C.togglePool, "useStrikeExecute").point[5] == strikeY)
 Expect("disabling Execute-phase Slam hides only its dependent protection control",
     not Control(C.togglePool, "furyProtectNextSlam")
         and Control(C.togglePool, "useSlam").check:GetChecked() == 1
