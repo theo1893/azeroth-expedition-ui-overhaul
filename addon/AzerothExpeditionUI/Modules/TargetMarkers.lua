@@ -3,12 +3,12 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 local TargetMarkers = {}
 
-TargetMarkers.runtimeContract = "2.4"
+TargetMarkers.runtimeContract = "2.5"
 TargetMarkers.compactScale = 0.8
 TargetMarkers.cellSize = 48
 TargetMarkers.cellGap = 3
-TargetMarkers.columns = 4
-TargetMarkers.rows = 2
+TargetMarkers.columns = 8
+TargetMarkers.rows = 1
 TargetMarkers.emptyIconSize = 30
 TargetMarkers.activeIconSize = 15
 TargetMarkers.nameFontSize = 10
@@ -32,7 +32,7 @@ TargetMarkers.healthTexturePath =
 TargetMarkers.raidIconTexturePath =
   "Interface\\TargetingFrame\\UI-RaidTargetingIcons"
 
--- Kill-priority order, matching the familiar GRTT skull-first 4x2 grid.
+-- Kill-priority order, matching the familiar GRTT skull-first order.
 local markerOrder = { 8, 7, 6, 5, 4, 3, 2, 1 }
 
 local panelSliceOrder = {
@@ -1016,7 +1016,7 @@ function TargetMarkers:DisableBrokenBulkButton(errorText)
   end
   if not self.bulkButtonErrorReported then
     addon:Print(
-      "一键标记按钮加载失败；基础 4x2 标记栏仍保持可用。"
+      "一键标记按钮加载失败；基础 8x1 标记栏仍保持可用。"
     )
     self.bulkButtonErrorReported = true
   end
@@ -1206,7 +1206,7 @@ function TargetMarkers:CreateGrid()
   local frame = CreateFrame(
     "Frame", "AzerothExpeditionUIMarkerGrid", UIParent
   )
-  -- The 4x2 grid is the core feature. Own it before constructing any optional
+  -- The manual grid is the core feature. Own it before constructing any optional
   -- provider controls so a provider/UI error can never strand it hidden.
   self.frame = frame
   frame:SetWidth(baseGridWidth)
@@ -1245,9 +1245,13 @@ function TargetMarkers:ApplyAnchor()
     local lowerBar, lowerStatus = GetLowerPfUIBar(main)
     -- Pet actions need their full row; stances share the left of this row.
     local anchor = lowerStatus == "pet" and lowerBar or main
-    frame:SetPoint("TOPRIGHT", anchor, "BOTTOMRIGHT",
-      -self.panelPadding, -(8 / self.compactScale + self.panelPadding))
-    self.anchorStatus = "compact-bottom-right"
+    frame:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT",
+      -self.tankControlSpan, -(8 / self.compactScale + self.panelPadding))
+    if self.bulkButton and self.tankButton then
+      self.bulkButton:ClearAllPoints()
+      self.bulkButton:SetPoint("RIGHT", self.tankButton, "LEFT", -self.bulkButtonGap, 0)
+    end
+    self.anchorStatus = "bottom-single-row"
     local actions = addon.modules and addon.modules.ActionBars
     if actions then actions:ApplyArchiTotemDockPosition(true) end
     return true
@@ -1545,7 +1549,7 @@ function TargetMarkers:GetRuntimeStatus()
   return
     "contract=" .. tostring(self.runtimeContract) ..
     ",enabled=" .. tostring(MarkerEnabled() and "yes" or "no") ..
-    ",layout=4x2-square" ..
+    ",layout=8x1-row" ..
     ",style=shared-leather-board" ..
     ",order=skull-first" ..
     ",active=" .. tostring(self.activeMarkers or 0) ..
@@ -1566,7 +1570,7 @@ function TargetMarkers:GetRuntimeStatus()
     ",tank-offset=" .. tostring(self.tankAnchorOffset or 0) ..
     ",tank-error=" .. tostring(self.tankButtonError or "none") ..
     ",bulk=hdl-one-click" ..
-    ",bulk-layout=conditional-in-frame-right" ..
+    ",bulk-layout=conditional-left-of-tank" ..
     ",bulk-ui=" .. tostring(self.bulkButtonStatus or "pending") ..
     ",bulk-provider=" .. tostring(self.bulkProviderStatus or "pending") ..
     ",bulk-last=" .. tostring(self.lastBulkStatus or "idle") ..

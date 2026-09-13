@@ -1,0 +1,34 @@
+{
+  "module": "unitframes",
+  "component": "UF.DISTANCE.DIRECTION",
+  "phase": "P5",
+  "status": "accepted-runtime-integrated",
+  "source": {
+    "file": "assets/source/unitframes/distance-direction-v1/pointer-source.png",
+    "sha256": "19ab7203eda7bdb74bbc9498dc9c669e6e27d26974e7331f962c7bbbb3da87a8"
+  },
+  "runtime": {
+    "file": "addon/AzerothExpeditionUI/Media/UnitFrames/DistanceDirectionV1.tga",
+    "sha256": "c1e376f08ed36b9d32fe82e2fc13277cd0c28b468b277a115f525001546a093e",
+    "texture_size": [
+      512,
+      256
+    ],
+    "frame_count": 108,
+    "columns": 16,
+    "frame_size": [
+      32,
+      32
+    ],
+    "logical_size": [
+      16,
+      16
+    ],
+    "sampled_size": [
+      32,
+      32
+    ],
+    "texels_per_ui": 2
+  },
+  "rotation": "counterclockwise from up; each frame derived directly from high-resolution source"
+}

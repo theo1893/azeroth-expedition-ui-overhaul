@@ -251,6 +251,7 @@ function BonusScanner:ScanItem(itemlink)
 	local name = GetItemInfo(itemlink);
 	if(name) then
 		BonusScanner.temp.bonuses = {};
+		BonusScanner.temp.details = {};
 		BonusScanner.temp.sets = {};
 		BonusScanner.temp.set = "";
 		BonusScanner.temp.slot = "";
@@ -347,13 +348,13 @@ end;
 
 -- Scans passive bonuses like "Set: " and "Equip: "
 function BonusScanner:CheckPassive(line)
-	local i, p, value, found;
+	local i, p, value, found, start;
 
 	found = nil;
 	for i,p in BONUSSCANNER_PATTERNS_PASSIVE do
-		_, _, value = string.find(line, "^" .. p.pattern);
-		if(value) then
-			BonusScanner:AddValue(p.effect, value)
+		start, _, value = string.find(line, "^" .. p.pattern);
+		if(start and (p.value or value)) then
+			BonusScanner:AddValue(p.effect, p.value or value)
 			found = 1;
 			break; -- prevent duplicated patterns to cause bonuses to be counted several times
 		end

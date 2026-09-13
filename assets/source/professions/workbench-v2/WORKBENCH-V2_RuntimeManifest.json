@@ -1,0 +1,444 @@
+{
+  "schema": 1,
+  "component": "professions.workbench-v2",
+  "texels_per_ui_unit": 2,
+  "source": {
+    "file": "assets/source/professions/workbench-v2/approved.png",
+    "sha256": "cdd0587ad0fc505937ee6cf4fa67e705adc86d0ec614680d05cf4e7623cc9a71"
+  },
+  "runtime": [
+    {
+      "file": "addon/AzerothExpeditionUI/Media/Professions/WorkbenchLeatherV2.tga",
+      "sha256": "068d5212572baf073fb5d9da24132ff076376e5d2b746f585fd3f94e2e09d199",
+      "source_regions": [
+        [
+          1100,
+          700,
+          1228,
+          828
+        ]
+      ],
+      "size": [
+        128,
+        128
+      ],
+      "ui": [
+        64,
+        64
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/Professions/WoodTopV2.tga",
+      "sha256": "611dff5d9d787593181e6b55b048e6c84b9c9d6c088260b1757970c97eee99d0",
+      "source_regions": [
+        [
+          180,
+          8,
+          436,
+          40
+        ]
+      ],
+      "size": [
+        256,
+        32
+      ],
+      "ui": [
+        128,
+        16
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/Professions/WoodBottomV2.tga",
+      "sha256": "b3e28f9a6a8ae2425d367b9259562839ddcfb9ce0341220c912ede5332f94bc0",
+      "source_regions": [
+        [
+          180,
+          1024,
+          436,
+          1056
+        ]
+      ],
+      "size": [
+        256,
+        32
+      ],
+      "ui": [
+        128,
+        16
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/Professions/WoodLeftV2.tga",
+      "sha256": "e8a1f508b42f275ae62c116cd487ed6c69f07ec249d633fc481bb77b0ae50edf",
+      "source_regions": [
+        [
+          8,
+          280,
+          40,
+          536
+        ]
+      ],
+      "size": [
+        32,
+        256
+      ],
+      "ui": [
+        16,
+        128
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/Professions/WoodRightV2.tga",
+      "sha256": "0e421f137112128cc01cdeca993bf0c4bb484c506ea07f0247674bc244e249c6",
+      "source_regions": [
+        [
+          1437,
+          280,
+          1469,
+          536
+        ]
+      ],
+      "size": [
+        32,
+        256
+      ],
+      "ui": [
+        16,
+        128
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/Professions/CornerTLV2.tga",
+      "sha256": "f663ba819352097581db7049b9554b966f8063560f91dbc0b7487f7fdbb8e6d8",
+      "source_regions": [
+        [
+          0,
+          0,
+          64,
+          64
+        ]
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "ui": [
+        16,
+        16
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/Professions/CornerTRV2.tga",
+      "sha256": "c7473770c0855de87c2351792d803faea6eca663110ca66c2cd92f41b8953ef5",
+      "source_regions": [
+        [
+          1413,
+          1001,
+          1477,
+          1065
+        ]
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "ui": [
+        16,
+        16
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/Professions/CornerBLV2.tga",
+      "sha256": "83df17c427d328e16d74615dc75d5414f19257e1eb684ec031b99033c23fe8ae",
+      "source_regions": [
+        [
+          0,
+          1001,
+          64,
+          1065
+        ]
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "ui": [
+        16,
+        16
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/Professions/CornerBRV2.tga",
+      "sha256": "3a616baa270dad34fc009890715ccb3cd155c7b3cbb4a0341432c4d93ed39f8f",
+      "source_regions": [
+        [
+          1413,
+          1001,
+          1477,
+          1065
+        ]
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "ui": [
+        16,
+        16
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/Professions/PanelRimV2.tga",
+      "sha256": "34f2c8b99102ebe298910d4467c843d1f79ac1f580bf5d6b939a1516cb508e15",
+      "source_regions": [
+        [
+          701,
+          207,
+          1428,
+          932
+        ]
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "ui": [
+        16,
+        16
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/Professions/ButtonRimV2.tga",
+      "sha256": "55d8f4c364e6526f3657c0a775c6bc1e1a736a9b1d835413cf04419571342661",
+      "source_regions": [
+        [
+          704,
+          948,
+          867,
+          1010
+        ]
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "ui": [
+        16,
+        16
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/Professions/InputRimV2.tga",
+      "sha256": "10409b5c992845346b641149f53a23e97494e4f668ddc40d02b2773582f0ca26",
+      "source_regions": [
+        [
+          937,
+          948,
+          1044,
+          1010
+        ]
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "ui": [
+        16,
+        16
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/Professions/TitleLeftV2.tga",
+      "sha256": "8abea0caf474428bf96ddcc70a17e22085e40776af94ce11833c4100a74fb4e8",
+      "source_regions": [
+        [
+          520,
+          0,
+          575,
+          65
+        ]
+      ],
+      "size": [
+        64,
+        64
+      ],
+      "ui": [
+        24,
+        32
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/Professions/TitleRightV2.tga",
+      "sha256": "25c81b6837bc59a52f07fad20e61af6a2bfb88563bcd6af916d2b20471adfd88",
+      "source_regions": [
+        [
+          902,
+          0,
+          954,
+          65
+        ]
+      ],
+      "size": [
+        64,
+        64
+      ],
+      "ui": [
+        24,
+        32
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/Professions/TitleMiddleV2.tga",
+      "sha256": "049f6e4c38e53609ac2d09f0bbc3a031959edf114a98f4f6fcbe2f94155ac3ef",
+      "source_regions": [
+        [
+          1100,
+          700,
+          1228,
+          764
+        ],
+        [
+          600,
+          0,
+          728,
+          6
+        ],
+        [
+          600,
+          59,
+          728,
+          65
+        ]
+      ],
+      "size": [
+        128,
+        64
+      ],
+      "ui": [
+        64,
+        32
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/Professions/ThumbV2.tga",
+      "sha256": "354c48cb136285f97bd206cf283a2bea5f1dace5f3f217f9c04d97d6b7b24760",
+      "source_regions": [
+        [
+          628,
+          258,
+          650,
+          294
+        ]
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "ui": [
+        8.0,
+        14.0
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/Professions/ArrowUpV2.tga",
+      "sha256": "bb0c58f6e72dc07d2e7bd782519ac89f17d3bb5e3ec968d6cc376724db900618",
+      "source_regions": [
+        [
+          628,
+          222,
+          653,
+          249
+        ]
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "ui": [
+        10.0,
+        10.0
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/Professions/ArrowDownV2.tga",
+      "sha256": "757b228a6b527692b91aebe001b2853b353e96b6592e8b803951f473637a940a",
+      "source_regions": [
+        [
+          628,
+          925,
+          653,
+          953
+        ]
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "ui": [
+        10.0,
+        10.0
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/Professions/ArrowLeftV2.tga",
+      "sha256": "9f329900f39f89ed3a1f6aa837b5bf97a02726ac9a3fd31a5d73edfdcebb330b",
+      "source_regions": [
+        [
+          895,
+          958,
+          922,
+          994
+        ]
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "ui": [
+        10.0,
+        14.0
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/Professions/ArrowRightV2.tga",
+      "sha256": "b09f50af673e6f6ed6b6664f102ef760227acb81a610bb75cb49a5bcbee73753",
+      "source_regions": [
+        [
+          1052,
+          958,
+          1079,
+          994
+        ]
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "ui": [
+        10.0,
+        14.0
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/Professions/CloseV2.tga",
+      "sha256": "3fbab3ffc661d5b811cdae8a4c80673af6324dd95a7c3e2bfe447b6bb668bd7e",
+      "source_regions": [
+        [
+          1424,
+          23,
+          1450,
+          49
+        ]
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "ui": [
+        10.0,
+        10.0
+      ]
+    }
+  ],
+  "notes": "Only text-free border/fill/glyph regions are exported. Wood strips tile at native density; runtime labels and item icons are never baked."
+}

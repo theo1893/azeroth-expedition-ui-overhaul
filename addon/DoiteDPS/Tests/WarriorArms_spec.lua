@@ -158,6 +158,33 @@ local function Check(label, condition)
     passed = passed + 1
 end
 
+do
+    for _, strike in ipairs({ "MORTAL_STRIKE", "BLOODTHIRST" }) do
+        known.BLOODTHIRST = strike == "BLOODTHIRST"
+        known.MORTAL_STRIKE = strike == "MORTAL_STRIKE"
+        local state = State({ stance = 1, rage = 100, gcd = 1,
+            cooldowns = CoreCooldowns(0, 0) })
+        state.cooldowns[strike] = { remaining = 0, duration = 6 }
+        Check(strike .. " ready during GCD does not force a stance switch",
+            P:Recommend(state).key ~= "BERSERKER_STANCE")
+        state.cooldowns[strike].remaining = 6
+        Check(strike .. " on cooldown immediately returns at high rage",
+            P:Recommend(state).key == "BERSERKER_STANCE")
+        state.swing.hsQueued = true
+        Check(strike .. " waits for an existing Heroic Strike",
+            P:Recommend(state).state == "queued")
+        state.swing.hsQueued = false
+        state.inMelee = false
+        Check(strike .. " on cooldown also returns outside melee",
+            P:Recommend(state).key == "BERSERKER_STANCE")
+        state.mode = "aoe"
+        state.inMelee = true
+        Check(strike .. " cooldown does not force the AoE stance switch",
+            P:Recommend(state).key ~= "BERSERKER_STANCE")
+    end
+    known.BLOODTHIRST, known.MORTAL_STRIKE = false, true
+    P:ResetRuntime()
+end
 local function ForecastByKey(forecast, key)
     local index = 1
     while index <= table.getn(forecast or {}) do

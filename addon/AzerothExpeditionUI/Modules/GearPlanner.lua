@@ -1746,7 +1746,8 @@ function GearPlanner:ScanItem(itemID)
       end
     end
   end
-  self.statCache[itemID] = result
+  -- Failed item queries must be retried after the client cache is populated.
+  if type(scanned) == "table" then self.statCache[itemID] = result end
   return result
 end
 

@@ -1,0 +1,104 @@
+{
+  "module": "unitframes",
+  "component": "UF.NAMEPLATE.TARGET.V2",
+  "phase": "P5",
+  "status": "accepted-runtime-integrated",
+  "route": "unitframes.nameplate-target-cue",
+  "sources": [
+    {
+      "file": "assets/source/unitframes/nameplate-target-v2/pointer-source.png",
+      "sha256": "e559bd5f4f5e13ff8bb140c37a47230a7fd0788097bb0cd3b955439068448529",
+      "size": [
+        431,
+        450
+      ]
+    },
+    {
+      "file": "assets/source/unitframes/nameplate-target-v2/left-source.png",
+      "sha256": "0950e7ca9bba552c88db28219f37acd51b4e6056d90e9d6b208ab51f88d16f97",
+      "size": [
+        278,
+        600
+      ]
+    },
+    {
+      "file": "assets/source/unitframes/nameplate-target-v2/right-source.png",
+      "sha256": "8af6b59bb02eae39f07d3d50048c9207a460779acedc2858ee758ed6d4ed9396",
+      "size": [
+        271,
+        603
+      ]
+    }
+  ],
+  "runtime": [
+    {
+      "file": "addon/AzerothExpeditionUI/Media/UnitFrames/NameplateTargetCueV2.tga",
+      "sha256": "a88665e0d2dea2cd4f04327f52f0b9e87de3ec39bf4ca27b2244c3e7f3dfa1bd",
+      "logical_size": [
+        24,
+        24
+      ],
+      "sampled_size": [
+        48,
+        48
+      ],
+      "texels_per_ui": 2,
+      "texture_size": [
+        64,
+        64
+      ],
+      "sample_box_exclusive": [
+        8,
+        8,
+        56,
+        56
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/UnitFrames/NameplateTargetClaspLEFTV2.tga",
+      "sha256": "26ec2255ad0dce23c5bca194ebb9cb1ffbc256563ac5aa79ff22dbbc3740fd99",
+      "logical_size": [
+        10,
+        20
+      ],
+      "sampled_size": [
+        20,
+        40
+      ],
+      "texels_per_ui": 2,
+      "texture_size": [
+        32,
+        64
+      ],
+      "sample_box_exclusive": [
+        6,
+        12,
+        26,
+        52
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/UnitFrames/NameplateTargetClaspRIGHTV2.tga",
+      "sha256": "8e256d1200ced65a27ef03db66154e96253b0eb8dc67561a35e31c1381df3008",
+      "logical_size": [
+        10,
+        20
+      ],
+      "sampled_size": [
+        20,
+        40
+      ],
+      "texels_per_ui": 2,
+      "texture_size": [
+        32,
+        64
+      ],
+      "sample_box_exclusive": [
+        6,
+        12,
+        26,
+        52
+      ]
+    }
+  ]
+}

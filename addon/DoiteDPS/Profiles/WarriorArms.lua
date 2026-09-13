@@ -1532,6 +1532,20 @@ function P:Recommend(state)
         return SetAction(action, "WAIT", D.Text.WAIT_TARGET, "disabled")
     end
 
+    -- 单体致死／嗜血进入独立 CD 就回狂暴，不等怒气降到 25。
+    if state.inCombat and state.stance == 1
+        and self:NormalizeMode(state.mode) == "single"
+        and D:IsKnown(StrikeKey()) and CooldownRemaining(state, StrikeKey()) > 0.05
+        and D:IsKnown("BERSERKER_STANCE") then
+        -- 保留已切到战斗姿态的压制机会，避免压制往返空转。
+        if state.inMelee and not self._returnToBerserkerAfterOverpower then
+            local overpower = RecommendOverpower(action, state)
+            if overpower then return overpower end
+        end
+        if IsOnSwingQueued(state) then return WaitAction(action, state) end
+        return StanceAction(action, "BERSERKER_STANCE", R.BERSERKER_STANCE, state)
+    end
+
     if not state.inMelee then
         local berserkerAction = RecommendBerserkerStance(action, state)
         if berserkerAction then return berserkerAction end

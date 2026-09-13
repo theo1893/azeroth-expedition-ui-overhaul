@@ -40,7 +40,6 @@ local function frame(parent)
   function f:GetFrameLevel() return 1 end
   function f:SetText(value) self.textValue = value end
   function f:GetText() return self.textValue or "" end
-  function f:GetStringHeight() return 24 end
   function f:CreateTexture() return frame(self) end
   function f:CreateFontString() return frame(self) end
   function f:GetFontString() return self.fontString end
@@ -182,6 +181,9 @@ SlashCmdList.AZEROTHEXPEDITIONUI = function(command)
   commands[#commands + 1] = command
   if command == "gear off" then addon.db.gearplanner.enabled = false end
 end
+-- Vanilla FontString has GetHeight, but no GetStringHeight.
+assert(openPage("AEUI", "常用"))
+assert(openPage("AEUI", "布局"))
 local modules = openPage("AEUI", "模块与回退")
 assert(#commands == 0)
 local gear

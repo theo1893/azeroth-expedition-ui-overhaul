@@ -2,6 +2,25 @@
 
 ## 当前运行时
 
+- 底部布局试用已接入（待实机）：主动作栏 `BOTTOM (-18,80)`，Player／Target
+  原横距与尺寸不变，底锚点 `322`；两主框及动作栏视觉中心对齐。Debuff 只预留两排，主框相对四排版本下移 `60` 本地 UI；每排八枚与筛选规则不变。目标／玩家／攻击
+  读条 Y 为 `195／183／171`，普通角色 X 为 `-22`。每角色默认版本 `9`，底部迁移
+  按角色版本应用；版本 2 清除误解产生的固定姿态坐标，战士姿态随主动作栏停在其
+  左下、标记控制按钮左侧，读条 X 恢复 `-22`。消耗品外框底边对齐主动作栏底边，
+  保持每排四格、按原槽位顺序向上增长，不再挤压下方姿态／标记按钮。
+  实机发现图腾误锚整屏角落、饰品漂移，已改为 ArchiTotem 相对玩家框左上
+  `LEFT → Player.TOPLEFT (-90,+145)`（按两框有效缩放换算），为上方 Buff 留白并原生向上展开，
+  Tooltip 放在主栏右上；关闭绑定／模块恢复会话前锚点及展开方向。TrinketMenu
+  候选使用原生三列，主饰品栏直接锚定真实顶部动作条，以按钮局部 inset／材质外扩
+  对齐，去掉屏幕坐标差计算；原 2 个主饰品槽和全部候选保留，没有重排其他 pfUI 动作条。
+  Target Markers `2.5` 改为 `8×1`，单格仍 `48 UI`；坦克与一键 Button 收到左侧，
+  右下不新增控件，团队框架完全不动。全部沿用 accepted 媒体，不生成新图。
+  `/reload` 后检查图腾最长风图腾列与提示框、两排 Debuff＋三条读条、三列饰品及
+  展开后的团队区净空；战士另核对姿态随动作栏移动、三排以上消耗品与读条间隙。相邻回归标记点击／坦克按钮，
+  再验证 Field Kit 解除绑定与缺失 ArchiTotem 时其余控件正常。当前仅静态／针对性检查，
+  屏幕像素位置以用户实机为准，不标记 P6。
+
+
 - DDPS／pfUI 白字日志统一由 `/ddps debug` 控制，默认关闭；开启后才创建并追加
   `CustomData/ddps-swing-*.log`，再次执行命令立即停止写入，`/reload` 后回到关闭。
   DDPS 执行追踪在关闭时也跳过施法状态采样和日志拼接；pfUI 写入器同时保护原生
@@ -106,7 +125,7 @@
   实机检查两框敌友 Aura、上下排列与换目标，相邻回归 Player／Target，并验证禁用回退。
 
 - AEUI 版本：`0.9.0`。
-- 合同：Slot `1.0`、Rail `1.0`、Field Kit `3.0`、Supply `2.1`、Combat Focus `3.5`、
+- 合同：Slot `1.0`、Rail `1.0`、Field Kit `3.0`、Supply `2.1`、Combat Focus `3.6`、
   Sidebar Group `1.0`、Target Markers `2.3`。
 - AEUI Supply 独立持有背包拖入配置、精确 itemID、当前背包扫描、Button 与每角色配置；
   其他按钮脚本、分类、换装、分页、姿态和 SavedVariables 继续由各原 provider 持有。
@@ -119,7 +138,7 @@
 | `AB.RAIL` | `P6` | Bar 1–12 与合法 merged Bar 1／6 使用自适应外围 Rail，实机验收通过 |
 | AEUI Supply | `P5` | 原生 `24` 组补给栏已接入：每组可独立占用固定槽位，空位不压紧；管理页选中组后右键目标格可移动或交换，前移／后移也可进入空位。每组最多 `12` 个有序精确 itemID、可命名并可设固定主物品；不再配置或显示低库存阈值，主格、候选格和管理格的数量均在右下角，库存为 `0` 时保留红色数字与图标暗化，正库存数量沿用图腾计时的系统字体、12 UI 描边与浅金色，主格左上不再显示组内告警数量。主格左键只使用固定主物品，悬停 `0.30s`／右键展开自有候选抽屉；候选左键只使用、右键只设主格，任何使用／库存／冷却变化都不自动改主格。配置只接受背包拖入；主格和候选均保留真实数量／冷却，Tooltip 为当前物品原生 Tooltip；旧单物品槽原位迁移，每角色 SavedVariables 保持隔离。无有效组或显式关闭时左侧补给位为空，不再回退外部消耗品栏 |
 | TrinketMenu | `P5` | 双饰品挂到主栏右侧 `8 UI`；原候选菜单、左右键换槽和 Queue 保留 |
-| Combat Focus | `P5` | Player／Target 保持 `240×48 / 0.8`、底锚点 `480 UI`，中心分别为 `-160／105`，完整框体之间保留 `73 UI`；`23 UI` Aura 每排 `8` 枚，上 Buff／下 Debuff。Player 仅显示技能书同名 Buff 与全部 Debuff；敌对 Target／TargetTarget／Focus 显示全部真实 Buff，Debuff 为自己施加与固定 `12` 项关键表的并集；友方三框显示全部真实 Buff／Debuff。TargetTarget 保持 `240×60 / 0.68`；策略先扫描全部 `32` 槽再压缩进 provider 现有 Button，并共享给姓名板的可选“聚焦光环显示”：Debuff 优先、Buff 填充剩余 `16` 格，关闭后恢复原前 `16` 个 Debuff。Action Bars 关闭或归属 provider 缺失时 fail-open。三框几何合同仍按角色版本应用并保存独立回退，施法／Swing、姿态及 DDPS 坐标不变 |
+| Combat Focus | `P5` | Player／Target 保持 `240×48 / 0.8`、底锚点 `322 UI`，中心分别为 `-248／192`，完整框体之间保留 `160 UI` 供测距签居中；每角色默认版本 `9` 一次性迁移，保留现有 opt-out 与回退；`23 UI` Aura 每排 `8` 枚，上 Buff／下 Debuff。Player 仅显示技能书同名 Buff 与全部 Debuff；敌对 Target／TargetTarget／Focus 显示全部真实 Buff，Debuff 为自己施加与固定 `12` 项关键表的并集；友方三框显示全部真实 Buff／Debuff。TargetTarget 保持 `240×60 / 0.68`；策略先扫描全部 `32` 槽再压缩进 provider 现有 Button，并共享给姓名板的可选“聚焦光环显示”：Debuff 优先、Buff 填充剩余 `16` 格，关闭后恢复原前 `16` 个 Debuff。Action Bars 关闭或归属 provider 缺失时 fail-open。三框几何合同仍按角色版本应用并保存独立回退，施法／Swing、姿态及 DDPS 坐标不变 |
 | DoiteDPS | `P5` | 双手战士单体／群体与防战单体／群体共用原目录和宏绑定，`WARRIOR_ARMS` 与旧模式键保留。双手循环按已点乱舞或已学嗜血选择狂暴策略，不依赖乱舞 Buff 是否在场；致死、嗜血、横扫只在技能书已学时参与。常驻狂暴姿态，每白字周期最多一次猛击，“猛击最大卡条”默认 `0.17` 秒，读取实际攻速与猛击读条；瞬发后仍能接猛击才先安排瞬发，移动时仍可建议猛击。深武器保留原斩杀怒气预算与白字剩余 `(0.20, 0.55]` 秒的定时斩杀；双手狂暴在斩杀阶段继续安排常规技能，不为每轮斩杀预留怒气或 GCD，只在不会拖延／饿死近期瞬发、下一轮猛击仍能落地且能获得预计回怒时考虑斩杀，怒气必须不超过斩杀最低消耗加 `10`（强化斩杀 `0／1／2` 点对应上限 `25／23／20` 怒），预计溢怒也不放宽下一轮猛击保护。狂暴斩杀仅作低怒填充，也不固定每刀预排到预测栏；所有斩杀仍要求 GCD 解锁且距离白字边界大于 `0.20` 秒。怒气预测复用正常白字期望，不预测风怒或受击回怒。英勇／顺劈按预计溢怒与核心预算排队，狂暴额外预留下轮猛击及已学嗜血／致死，顺劈默认 `95` 怒且保护横扫留给旋风的层数；狂暴不因斩杀贴刀到点强制禁用英勇／顺劈。旋风天赋减 CD 按 `1／1.5／2` 秒，嗜血加入冷却事件与时间线。压制只在可保留的 `25` 怒内切姿态，破甲由配置控制。保留真实 `130` 怒气上限与怒不可遏等级刷新；`/ddps debug` 天赋快照报告 `rotation=arms／fury`。不读取目标实际血量判断击杀、不计算 TTD、不主动中断猛击；既有手动斩杀宏继续先停读条再尝试斩杀。自动选目标只在没有有效手动敌对目标时生效，手动目标超出近战也不自动切换；DDPS 自取目标仍可按可信近战候选切换 |
 | Sidebar Group | `P5` | Bar 2／4／5／3 组合为可逆 `2×2`，每块 `3×4`，只用一个 group mover |
 | Target Markers | `P5` | 骷髅优先的固定 `4×2` 方阵已实机确认共用皮革底板方向；runtime `2.3` 保留空态中央 `30×30 UI` 大标记，占用态改为左下 `15×15 UI` 满亮标记、顶部两行自适应名字、右下血量和底部 `3 UI` 细血条，解决长怪物名覆盖中心水印的问题。目标死亡后仅让 AEUI 对应格立即退回空态并从本地活动计数移除，不调用 `SetRaidTarget`、不要求权限，也不改变世界中或其他插件看到的真实团队标记；标记重新指向存活目标时对应格恢复显示。八格继续复用 accepted `ActionConsumableKitV1` 的 C 九宫格，左右两个 Button 复用同图集 B 薄皮口袋，不新增媒体。左侧盾牌位于 Combination 真实宽度内的固定左槽并始终显示；DDPS 坦克 API 就绪时左键指定当前队伍／团队玩家、右键清除，未就绪时为红色不可用态，装饰或状态刷新异常时降级为基础可点击盾牌而不再隐藏。右侧一键 Button 继续按 HDLRaidTools／SuperWoW provider 条件显示。ArchiTotem 已相对旧居中位整体左移 `128 UI`，方阵反向补偿并保持既有位置，四元素向下候选列不再覆盖皮革 icon list；`BACKGROUND` strata 继续作为异常 scale 回退，手动左右键语义不变 |
@@ -139,18 +158,18 @@
 ## 下一次实机验证
 
 1. 完整退出客户端并重启后确认插件列表不再出现 AutoBar，且 `/aeui status` 含 `version 0.9.0`、
-   `fieldkit-contract=3.0`、`focus-layout-contract=3.5`、
+   `fieldkit-contract=3.0`、`focus-layout-contract=3.6`、
    `supplies-contract=2.1`、
-   `focus-unit-default-version=5`、`focus-unit-default=profile-applied` 或
+   `focus-unit-default-version=9`、`focus-unit-default=profile-applied` 或
    `profile-saved`、`focus-layout-unit-size=240x48`、
-   `focus-layout-unit-y=470`、`focus-layout-primary-gap=73`、
+   `focus-layout-unit-y=322`、`focus-layout-primary-gap=160`、
    `focus-layout-aura-per-row=8`、
    `focus-layout-targettarget-aura-per-row=8`、
    `focus-layout-aura-growth=player-right+target-left`、
    `focus-layout-aura-policy=active` 和
-   `architotem-dock=bottom-left-separated`；另有 `markers contract=2.3`、
+   `architotem-dock=upper-left-upward`；另有 `markers contract=2.3`、
    `anchor=architotem-separated-row`、
-   `layout=4x2-square`、`style=shared-leather-board`、`strata=BACKGROUND`、`bulk=hdl-one-click`、
+   `layout=8x1-row`、`style=shared-leather-board`、`strata=BACKGROUND`、`bulk=hdl-one-click`、
    `bulk-layout=conditional-in-frame-right`、`tank=ddps-assist`、
    `tank-layout=fixed-in-frame-left`、`dead=local-clear-only`；盾牌应始终为
    `tank-ui=visible`，DDPS 坦克 API 就绪时为 `tank-provider=ready`，未就绪时由

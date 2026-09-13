@@ -83,21 +83,18 @@ accepted 像素 source：Health SHA-256 `8d19ffe9…08e1f`，Power SHA-256
 只在两三段高磨损边出现低 Alpha 暖白响应；Aggro 只在两端和一小段下缘出现
 暗红／橙褐响应。不得形成整框连续光圈，派生纹理不得覆盖动态内容或接管鼠标。
 
-## `UF.NAMEPLATE.TARGET.CUE`
+## `UF.NAMEPLATE.TARGET.CUE`／`UF.NAMEPLATE.TARGET.BRACKETS`
 
-这是世界姓名板上方的个人“当前选中目标”指针，不是团队标记。使用一块短宽、
-正面朝向玩家、向下指的远征队指示牌：主体是大面积浅赭黄／羊皮金哑光信号面，
-外围保留足以在亮地形上辨认的墨褐厚边，上方仅有一条深胡桃旧皮夹带。只用
-三组宽块明暗和一个左上暖亮点；在 `20×24 UI` 下必须先读成明确指向，再读出
-材料。禁止阵营染色、外发光、团队图标轮廓、符文、宝石、徽章、现代 HUD 细线、
-文字、血条或动态信息。
+V2 已接受为正式像素：浅赭金哑光信号面、厚墨褐轮廓、深胡桃旧皮上夹带的
+短宽向下指针，配左右独立的短铜端夹与深皮革底衬。继承香草手绘块面、左上暖光、
+粗短磨损和暗哑金属；禁止亮黄直角括号、现代白色描边、霓虹与工业金框。
+只用轮廓及暗亮块面识别目标，不烘焙名字、等级、血量、图标或职责色。
 
-用户已接受 `NP-TARGET-CUE-V1` 候选 3 的 exact visible pixels。accepted source
-为 `assets/source/unitframes/nameplate-target-cue-v1/NameplateTargetCue_SourceV1.png`
-（`774×909 RGBA`，SHA-256 `348593fe…47cfb`）。确定性导出只允许等比缩为
-`40×47`，在 `40×48` sampled region 顶部留 `1px` 透明行，再置于 `64×64`
-TGA 的 `(12,8)-(52,56)`；Lua 以 UV `(12/64,52/64,8/64,56/64)` 映射回
-`20×24 UI`。不得重绘 accepted 像素、插值旧 1× 资产或仿造 Blizzard 团队标记。
+accepted source 与媒体哈希位于 `assets/source/unitframes/nameplate-target-v2/NP-TARGET-V2_RuntimeManifest.json`。
+指针 `24×24 UI`／`48×48` sampled，左右端夹各 `10×20 UI`／`20×40` sampled。
+只允许从已接受高分辨率 source 等比缩小并透明补齐；保留独立左右像素，不镜像重画。
+铜夹各在真实血条外留 `1 UI`，等级向外预留至 `14 UI`；不侵入动态内容。
+旧 V1 source 与 manifest 保留为既有资产，当前采用 V2。
 
 ## `UF.RAID.MEMBER.SHELL.A-D`
 
@@ -145,3 +142,51 @@ Combat／Aggro 角标使用小型撕裂颜料记号；Aura 只增加一像素烟
 若未来启用 `raidgrouplabel`，在既有动态 `Group N` FontString 后放一条克制的
 旧布／薄皮点名签；只容纳文字，不形成小队外框。当前 profile 为关闭状态，
 因此只登记方向，不进入本批正式生产。
+
+## `UF.DISTANCE.TAG`／`UF.DISTANCE.EYE`
+
+已接受薄斥候测距签：深胡桃旧皮革短条，左端轻微手裁尖角，右端仅一小片氧化
+暗铜固定。数字区深而安静，粗眼睛／斜杠眼睛完整放在左侧内部，浅赭象牙颜料面
+与墨褐粗轮廓保证形状可读。继承左上暖光、2004 手绘块面、微小非周期磨损；
+禁止罗盘壳、圆盘底座、现代细线图标、外发光与整框金边。
+
+数字、“近战／盲区”等前缀、宠物读数与状态色均由游戏绘制；“打脸”文字隐藏。
+原图标开关继续有效。默认皮签 `72×18 UI`、眼睛 `20×14 UI`，source 直接等比
+导出为 `144×36`、`40×28` sampled，透明补齐；皮签中央可横向伸缩，左右端不拉宽。
+接受像素及哈希固定于 `assets/source/unitframes/distance-tag-v1/DISTANCE-TAG-V1_RuntimeManifest.json`。
+
+## `UF.NAMEPLATE.HEALTH.FILL`
+
+复用已接受的 `assets/source/actionbars/readouts-v1/CastFill_SourceV1.png` 与
+`CastFillV1.tga`，与主施法条保持同一种灰阶哑光颜料质感：低频横向刷痕、克制
+明暗变化、没有玻璃高光、连续金属梁或霓虹。runtime 为既有 `128×32` 填充，
+不重绘／放大源位图。所有敌友、职业与职责色由 pfUI 运行时乘色，不能烘焙进材质。
+姓名板血条采用 `18 UI` 颜料条与 ReadoutShellV1 的 `1 UI` 深皮革细边，
+总高 `20 UI` 对齐原铜夹；不用 pfUI 方框与阴影。空血区为不透明深烟褐，
+暗填充保持色相提升亮度；铜夹降低高光乘色，几何及 source 不变。
+
+## `UF.NAMEPLATE.IDENTITY`
+
+用户接受“行军身份条”：不选中时保留完整的深胡桃旧皮端口，名字在贴近上沿的
+薄皮签上，等级收入左侧并以短暗铜刻痕分隔。选中只叠加已有铜夹与指针，不改变
+基础身份条的宽度／位置。材料继承早期 WoW 手绘、上左暖光和低频磨损；名字底签
+中央安静，不做第二层厚标题框；不得烘焙名字、等级、血量和动态色。
+
+四张独立接受像素与哈希：`assets/source/unitframes/nameplate-identity-v1/NP-IDENTITY-V1_RuntimeManifest.json`。
+端口 8×20 UI、名字底签 64×10 UI、分隔 2×14 UI，均直接按 2× 采样导出。名字
+使用同一 source 的三切片，端部不拉宽；原 ReadoutShell／CastFill 与铜夹像素不重绘。
+
+## `UF.NAMEPLATE.CAST`／辅助图标
+
+姓名板施法条直接沿用玩家 Readouts V1 的哑光灰阶颜料填充与深皮革 1 UI 细缘；
+不新增玻璃、金属梁或施法背景图。技能／Aura／图腾图标只复用 Raid A2 薄皮革
+外缘，技能图片、倒计时与层数保持动态。连击点复用 NameplateIdentityDividerV1
+有效铜刻痕像素，显示为小型 3×5 UI 记号，不再使用红黄绿方块底板。
+
+## `UF.DISTANCE.DIRECTION`
+
+已接受正面俯视的平面短矛头：浅赭实心颜料、墨褐粗轮廓、无立体侧面、无投影与
+罗盘底座，与眼睛图标保持同一材料语言。数字右侧完整收在皮签内，独立旋转。
+source／哈希位于 `assets/source/unitframes/distance-direction-v1/`；108 帧分别从
+高分辨率 source 旋转缩小为 32×32 sampled，显示 16×16 UI；不得旋转旧低分辨率
+图来伪装高采样。方向索引沿用已实现的计算，无坐标时继续隐藏。

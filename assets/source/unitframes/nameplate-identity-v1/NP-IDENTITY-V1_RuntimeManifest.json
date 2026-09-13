@@ -1,0 +1,135 @@
+{
+  "module": "unitframes",
+  "component": "UF.NAMEPLATE.IDENTITY",
+  "phase": "P5",
+  "status": "accepted-runtime-integrated",
+  "route": "unitframes.nameplate-health-fill",
+  "sources": [
+    {
+      "file": "assets/source/unitframes/nameplate-identity-v1/left-source.png",
+      "sha256": "755c2208016135d1da7cb63840fd30a4721791fbbf175cc0ad56dd54e1076504",
+      "size": [
+        134,
+        341
+      ]
+    },
+    {
+      "file": "assets/source/unitframes/nameplate-identity-v1/right-source.png",
+      "sha256": "e9c8b4ae5b431f682f27be0b6b244d8af5a46db28b817df6adaee51d33feae88",
+      "size": [
+        135,
+        341
+      ]
+    },
+    {
+      "file": "assets/source/unitframes/nameplate-identity-v1/name-source.png",
+      "sha256": "7e05aee0b4307672b2a42c5e77aeb2e4e53f34053d811227360424098c722644",
+      "size": [
+        707,
+        106
+      ]
+    },
+    {
+      "file": "assets/source/unitframes/nameplate-identity-v1/divider-source.png",
+      "sha256": "f006457efd24579ba5c910115bca8cc5e7324e8e6c3df317779a88b25a977b9e",
+      "size": [
+        47,
+        229
+      ]
+    }
+  ],
+  "runtime": [
+    {
+      "file": "addon/AzerothExpeditionUI/Media/UnitFrames/NameplateIdentityCapLEFTV1.tga",
+      "sha256": "92e21d3d96a6c428d141d0a2d69100122b5b06274af96795ff506869d4ee066b",
+      "logical_size": [
+        8,
+        20
+      ],
+      "sampled_size": [
+        16,
+        40
+      ],
+      "texels_per_ui": 2,
+      "texture_size": [
+        32,
+        64
+      ],
+      "sample_box_exclusive": [
+        0,
+        0,
+        16,
+        40
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/UnitFrames/NameplateIdentityCapRIGHTV1.tga",
+      "sha256": "be9be1f270ccc9822ad34be5e06438b331f3d0eaed80d7c9709641145336720e",
+      "logical_size": [
+        8,
+        20
+      ],
+      "sampled_size": [
+        16,
+        40
+      ],
+      "texels_per_ui": 2,
+      "texture_size": [
+        32,
+        64
+      ],
+      "sample_box_exclusive": [
+        0,
+        0,
+        16,
+        40
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/UnitFrames/NameplateIdentityNameV1.tga",
+      "sha256": "853a4ea1a443cf22c6d43b8fd7f2a96c0abe6c7ed04dce84c47877f0f71243e5",
+      "logical_size": [
+        64,
+        10
+      ],
+      "sampled_size": [
+        128,
+        20
+      ],
+      "texels_per_ui": 2,
+      "texture_size": [
+        128,
+        32
+      ],
+      "sample_box_exclusive": [
+        0,
+        0,
+        128,
+        20
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/UnitFrames/NameplateIdentityDividerV1.tga",
+      "sha256": "b4738c2217d513257f27430b7fffe8876020a8a6de5721ac097e16e1d4265c70",
+      "logical_size": [
+        2,
+        14
+      ],
+      "sampled_size": [
+        4,
+        28
+      ],
+      "texels_per_ui": 2,
+      "texture_size": [
+        8,
+        32
+      ],
+      "sample_box_exclusive": [
+        0,
+        0,
+        4,
+        28
+      ]
+    }
+  ]
+}

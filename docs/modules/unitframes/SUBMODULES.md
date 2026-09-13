@@ -63,7 +63,8 @@ pfUI SavedVariables。模式为 `tank／healer／dps`，`off` 恢复 provider �
 
 | 组件 ID | pfUI 对象 | 展示尺寸 | 状态／所有权 |
 |---|---|---:|---|
-| `UF.NAMEPLATE.TARGET.CUE` | `parent.nameplate` 上的 AEUI 局部装饰 Frame | `20×24 UI`；`40×48` sampled region | 仅 `nameplate.istarget` 为真且姓名可见、非图腾时显示；目标识别、姓名板生命周期与点击继续归 pfUI |
+| `UF.NAMEPLATE.TARGET.CUE` | `parent.nameplate` 上的 AEUI 局部装饰 Frame | `24×24 UI`；`48×48` sampled region | 仅 `nameplate.istarget` 为真且姓名可见、非图腾时显示；目标识别、姓名板生命周期与点击继续归 pfUI |
+| `UF.NAMEPLATE.TARGET.BRACKETS` | 目标指针 Frame 下的血条两端装饰 | 各 `10×20 UI`；`20×40` sampled，血条外留 `1 UI` | V2 手绘深皮革／短铜夹；随选中显隐且血条隐藏时隐藏；等级选中距血条 `14 UI`、取消／回退恢复 provider `5 UI`，仅状态切换改锚点。不修改血条、职责色或命中区 |
 | `UF.NAMEPLATE.AURA.POLICY` | `nameplate.debuffs[1..16]` | provider 原 `16` 枚动态图标 | 职责模式开启时按上文 `6／2／4／0` 摘要；关闭模式后，pfUI“聚焦光环显示”开启且 Action Bars 策略可用时，敌对姓名板保留自己的／固定关键 Debuff 与全部真实 Buff，友方保留全部真实 Buff／Debuff；Debuff 优先占位。关闭配置或策略缺失时恢复原前 `16` 个 Debuff |
 | provider 团队标记 | `nameplate.raidicon` | pfUI 配置尺寸 | 仍由 pfUI／游戏设置图标和显隐；只把 Parent 从可隐藏的 `nameplate.health` 改为 `nameplate`，不调用 `SetRaidTarget` |
 
@@ -296,3 +297,93 @@ provider `UpdateConfig` 完成后通过已有框体视觉回调接入，不通�
 持有图标、附魔状态、计时、层数、染色、布局、事件、Tooltip 与取消操作。
 在 provider 配置更新结束时更新边框几何；Buff 刷新只传递颜色，不维护几何。
 禁用模块／route 后恢复原 backdrop、shadow 与图标 DrawLayer。
+
+## 屏幕中心距离读数
+
+`unitframes.distance-indicator` 只作用于 `pfUI.distanceIndicator`（`pfDistanceIndicator`）的
+原始 `text`、`icon`。AEUI 三切片皮签挂在同一 Frame 的 BACKGROUND 层，锚到主文本
+最后一行；默认 `72×18 UI`、横向 `11/47/14` 三切片，长数字与用户字体尺寸按实际
+文字区域适配，几何只在测量尺寸或配置变化时更新。眼睛按用户配置宽度的 85% 显示，默认 `17×11.9 UI`，完整位于
+皮签内；用户原图标尺寸的 85% 用作宽度，高度按 `.7` 比例。没有主读数时隐藏皮签。
+
+`addon/pfUI/modules/unitxp.lua` 继续计算距离、视线、近战／盲区与宠物状态，继续
+持有颜色、声音、刷新、拖动和保存设置。通过可选 `pfUI.aeuiDistanceIndicatorSkin`
+传递视线素材及样式回调；AEUI 开启时只隐藏“打脸”前缀，红色与声音不变，其他
+前缀和宠物读数保留。未组队且仅组队播音时只跳过声音，不提前结束显示刷新。
+禁用 Unit Frames／route 后撤下皮签，恢复原眼睛 UV、尺寸与锚点，provider 恢复
+原生前缀与材质；AEUI 或 UnitXP 缺失时不产生新的测距入口。
+
+距离签整体锚到玩家框 `TOPRIGHT` 与目标框 `TOPLEFT` 之间的无交互参考 Frame，
+底边高出 `15 UI`；皮签完整宽度参与居中，原主文本底部锚定使前缀向上展开。
+锚点仅在接管、文本几何或主框对象变化时设置，不运行坐标轮询维护。
+原 Frame／文本锚点单独保存在运行时，模块禁用或主框缺失时恢复；不改写位置配置。
+
+## 姓名板血条填充
+
+`unitframes.nameplate-health-fill` 仅接管 `pfUI.nameplates` 的真实 `nameplate.health`
+StatusBar 纹理，复用 `ActionBars/Readouts/CastFillV1`。借用已有 OnCreate／
+OnConfigChange 挂点与模块应用遍历，不对 OnUpdate 增加填充工作。颜色、数值、
+方向、动态裁切和姓名板施法条继续归 provider；血条 backdrop／阴影隐藏，
+空血量底色由锚定真实 health 的 BACKGROUND 纹理保留，不扩大命中区。pfUI 配置重建后重新记录
+当前原生纹理，`/aeui plates off`、Unit Frames／route 禁用时恢复该纹理及原 backdrop／阴影显隐。
+
+姓名板职责模式启用且血条 route 有效时，provider 的配置布局使用 `18 UI` 血条，
+同时计算占位、glow 和施法图标；退出模式恢复 `C.nameplates.heighthealth`。
+AEUI 复用 `ReadoutShellV1`，四边外扩 `1 UI`，上下沿总高 `20 UI` 对齐铜夹。
+深烟褐空血底不透明，暗色填充按 RGB 等比提升亮度峰值至 `.65`，不改色相／Alpha。
+选中铜夹沿用原像素及 `10×20 UI` 几何，仅降低乘色亮度。
+
+## 行军身份条布局
+
+沿用 `unitframes.nameplate-health-fill` route。`nameplate.aeuiIdentity.bounds` 是真实
+health 的无交互附属区域，宽度含等级位；真实 StatusBar 宽度为完整身份条减等级位及
+5 UI 分隔净空，中心右移半个 inset，使整体位置保持居中。等级字号乘 .85，
+等级位为字宽加 4 UI、最低 12 UI；禁用恢复原 Parent 与字体。
+身份条以配置宽度为下限，使用无宽度约束的 FontString 测量完整血量读数，
+血量区至少为读数字宽加 12 UI，接管期间保留最大读数宽度以避免抖动。
+
+未选中皮革端口各 8×20 UI，选中铜夹锚到同一 bounds。名字承托 64×10 UI，
+按名字宽度以 6/52/6 三切片伸缩；2× 采样。分隔 source 仍为 2×14 UI，runtime 取有效 UV 显示为 3×16 UI；名字承托
+按实际字宽加 12 UI、字高加 6 UI 设置，文字仍独立绘制。
+施法条、首个 Aura、团队标记等原先锚到 health 的装饰改锚到完整 bounds，退出时
+恢复；后续 Aura 创建同样使用 bounds。原始 OnDataChanged 后仅在等级／名字宽度
+改变时更新布局。配置重建前恢复原几何再捕获新配置；名字模式撤下全部身份装饰。
+
+## 当前目标聚焦
+
+姓名板职责模式开启时使用真实 GUID／provider 目标判定强制显示当前目标完整血条，
+包括图腾与原本仅名字类别。整体 `nameplate` 按原 Scale 的 1.15 倍显示，不使用
+逐帧 Width／Height 缩放；取消／切换恢复原 Scale。已有目标时非目标普通 Alpha
+上限 .45，施法／团队标记／危险承伤上限 .65，目标为 1；无目标恢复职责 Alpha。
+
+`UpdateTargetVisibility` 临时开放原本关闭的目标类别，只允许目标呈现，其他新增
+provider 对象隐藏；取消或模式关闭恢复之前的敌友开关，并识别期间的手动开关变更。
+作用于客户端可创建的世界姓名板，不创建远距离或屏外替代框，不改 SavedVariables。
+
+## 姓名板施法与辅助外观
+
+`unitframes.nameplate-details` 接管真实 `castbar` 的填充、背景细边、技能名／时间
+布局，以及 `castbar.icon`、`debuffs[1..16]`、`totem` 的外缘。复用已接受的
+Readouts V1 与 Raid A2 资源，不接管计时、图标内容、冷却、光环筛选、施法判定。
+Provider 配置阶段使用 12 UI 施法条，禁用恢复配置高度；时间在右侧预留 32 UI，
+技能名限制在剩余区域。创建／配置／新增图标时设置外观，相同尺寸缓存不重复布局。
+
+`combopoints[1..5].tex/backdrop` 隐藏并叠加现有铜刻痕，原五个 Frame 的显隐继续
+表达数量；关闭恢复原纹理显隐。`cluster` 仅调整净空，不重画任务符号；`guild`
+仅重排到姓名或个人目标指针上方。辅助文字和图标均记录原始布局／字体／层序供回退。
+施法结束时首个底部 Aura 锚回完整身份条 bounds，避免误用缩窄的血量区。
+
+测距签方向针为独立 OVERLAY Texture，读取 `DistanceDirectionV1.tga` 的 108 帧图集
+（32×32 每帧、16 列、512×256 容器），仅改变 UV，不改写 pfQuest 路由／任务数据。以 SuperWoW
+UnitPosition 的平面方位减玩家朝向，转换为帧号；朝向优先 GetPlayerFacing，回退
+pfQuestCompat.GetPlayerFacing。读取失败或坐标重合则隐藏，沿用 unitxp 原刷新节流。
+图标 16×16 UI，距离右侧保留 20 UI 区域，禁用恢复原无方向布局。
+官方接口范围参考：https://github.com/balakethelock/SuperWoW/wiki/Features
+
+## 姓名板服务器仇恨输入
+
+Unit Frames 持有临时 TWT／TMT 请求、短期快照与职责颜色策略；pfUI 继续持有真实
+姓名板、GUID、生命值、施法与承伤对象判断。TWT 只用于当前目标，TMT 的完整 GUID
+只对应自己的坦克群怪追赶者摘要，不表示每只怪对自己的绝对仇恨。
+ShaguDPS 保留统计窗口与 TPS，仅在 AEUI 请求器活动时让出重复请求，并剥离 TMT 后缀。
+不写仇恨 SavedVariables，不按怪名合并，不改目标，也不调用逐怪切换轮询。

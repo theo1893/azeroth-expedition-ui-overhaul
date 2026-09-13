@@ -7,12 +7,12 @@ local HEALTH_TEXTURE = MEDIA .. "UnitFrameHealthFillV1"
 local POWER_TEXTURE = MEDIA .. "UnitFramePowerFillV1"
 
 local NAMEPLATE_TARGET_CUE = {
-  texture = MEDIA .. "NameplateTargetCueV1",
+  texture = MEDIA .. "NameplateTargetCueV2",
   route = "unitframes.nameplate-target-cue",
-  width = 20,
+  width = 24,
   height = 24,
-  u1 = 12 / 64,
-  u2 = 52 / 64,
+  u1 = 8 / 64,
+  u2 = 56 / 64,
   v1 = 8 / 64,
   v2 = 56 / 64,
   nameGap = 4,
@@ -874,9 +874,11 @@ function UnitFrames:GetNameplateProfile()
 end
 
 local NAMEPLATE_ROLE_COLOURS = {
+  neutral = { 54/255, 191/255, 224/255 },
   safe = { .38, .62, .48 },
   tank = { .42, .58, .75 },
   danger = { 1, .32, .12 },
+  warning = { 1, .72, .18 },
 }
 
 -- ponytail: explicit enUS/zhCN control/immunity names; extend with verified effects.
@@ -898,20 +900,166 @@ local NAMEPLATE_IMPORTANT_AURAS = {
   ["Blessing of Protection"] = true, ["保护祝福"] = true,
 }
 
-function UnitFrames:GetNameplateStyle(mode, friendly, target, threat)
+-- TWT is an asynchronous target-only snapshot; TMT is GUID-keyed runner-up data.
+-- Never persist either across sessions or infer zero threat from missing rows.
+local function ThreatGUID(value)
+  if type(value) ~= "string" then return nil end
+  value = string.lower(value)
+  local _, _, hex = string.find(value, "^0x(%x+)$")
+  if not hex then
+    if not string.find(value, "^%d+$") or string.len(value) > 20 then return nil end
+    hex = ""
+    while value ~= "" do
+      local quotient, remainder = "", 0
+      for i = 1, string.len(value) do
+        local digit = remainder * 10 + tonumber(string.sub(value, i, i))
+        local q = math.floor(digit / 16)
+        if quotient ~= "" or q > 0 then quotient = quotient .. q end
+        remainder = math.mod(digit, 16)
+      end
+      hex = string.sub("0123456789abcdef", remainder + 1, remainder + 1) .. hex
+      value = quotient
+    end
+  end
+  hex = string.gsub(hex, "^0+", "")
+  if hex == "" or string.len(hex) > 16 then return nil end
+  return hex
+end
+
+local function ThreatNumber(value)
+  local n = tonumber(value)
+  if n and n >= 0 and n < math.huge then return n end
+end
+
+function UnitFrames:ClearNameplateThreat()
+  self.threatSnapshot, self.threatPending = nil, nil
+  self.threatNext = GetTime() + 1.5
+end
+
+function UnitFrames:ReceiveNameplateThreat(prefix, message, channel, sender)
+  local pending, now = self.threatPending, GetTime()
+  -- Match the TWT envelope used by ShaguDPS; reply prefixes need not be exactly TWT.
+  if type(prefix) ~= "string" or not string.find(prefix, "TWT", 1, true) or
+    type(message) ~= "string" or string.len(message) > 16384 then return end
+  local start = string.find(message, "TWTv4=", 1, true)
+  if not start then return end
+  self.threatSeen = (self.threatSeen or 0) + 1
+  self.threatEnvelope = prefix .. "/" .. tostring(channel) .. "/" .. tostring(sender)
+  if not self.nameplateMode or not pending or now - pending.time > 1 or
+    (channel ~= pending.channel and channel ~= "WHISPER") or sender ~= UnitName("player") then return end
+  local _, guid = UnitExists("target")
+  if guid ~= pending.guid or not UnitAffectingCombat("player") then return end
+  local _, _, detail, group = string.find(string.sub(message, start), "^TWTv4=([^#]*)#?(.*)$")
+  if not detail then return end
+  local rows, holder = {}, nil
+  for row in string.gfind(detail, "[^;]+") do
+    local _, _, name, tank, raw, pct, melee = string.find(row, "^([^:]+):([01]):([^:]+):([^:]+):([01])$")
+    raw, pct = ThreatNumber(raw), ThreatNumber(pct)
+    if not name or not raw or not pct or rows[name] then return end
+    rows[name] = {value=raw, percent=pct, tank=tank == "1", melee=melee == "1"}
+    if tank == "1" then
+      if holder then return end
+      holder = name
+    end
+  end
+  -- ponytail: no request ID/GUID in TWT; quarantine and victim check reduce
+  -- late-reply ambiguity. Exact correlation requires a server protocol change.
+  if not holder or holder ~= UnitName("targettarget") then return end
+  local mobs = {}
+  if pending.mode == "tank" and string.sub(group, 1, 6) == "TMTv1=" then
+    for row in string.gfind(string.sub(group, 7), "[^;]+") do
+      local _, _, creature, mob, name, pct = string.find(row, "^([^:]+):([^:]+):([^:]+):([^:]+)$")
+      mob, pct = ThreatGUID(mob), ThreatNumber(pct)
+      if mob and pct and not mobs[mob] then mobs[mob] = {name=name, percent=pct} end
+    end
+  end
+  self.threatSnapshot = {guid=ThreatGUID(guid), time=now, rows=rows, mobs=mobs, holder=holder}
+  self.threatPending = nil
+  self.threatReceived = (self.threatReceived or 0) + 1
+end
+
+function UnitFrames:UpdateNameplateThreat()
+  local now = GetTime()
+  if not self.nameplateMode or not UnitAffectingCombat("player") then
+    self.threatSnapshot, self.threatPending = nil, nil
+    return
+  end
+  if now < (self.threatNext or 0) then return end
+  self.threatNext = now + .5
+  if self.threatPending and now - self.threatPending.time <= 1 then return end
+  self.threatPending = nil
+  local exists, guid = UnitExists("target")
+  local raid, party = GetNumRaidMembers(), GetNumPartyMembers()
+  if not exists or not ThreatGUID(guid) or UnitIsPlayer("target") or UnitIsDead("target") or
+    not UnitCanAttack("player", "target") or (raid == 0 and party == 0) then return end
+  local channel = raid > 0 and "RAID" or "PARTY"
+  self.threatPending = {guid=guid, time=now, channel=channel, mode=self.nameplateMode}
+  SendAddonMessage("TWT_UDTSv4" .. (self.nameplateMode == "tank" and "_TM" or ""), "limit=40", channel)
+end
+
+function UnitFrames:EnsureNameplateThreat()
+  if self.threatFrame then return end
+  local frame = CreateFrame("Frame")
+  frame:RegisterEvent("CHAT_MSG_ADDON")
+  frame:RegisterEvent("PLAYER_TARGET_CHANGED")
+  frame:RegisterEvent("PLAYER_REGEN_ENABLED")
+  frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+  -- 名单刷新不改变当前目标；重置隔离期会让频繁团队更新饿死请求。
+  frame:SetScript("OnEvent", function()
+    if event == "CHAT_MSG_ADDON" then
+      UnitFrames:ReceiveNameplateThreat(arg1, arg2, arg3, arg4)
+    else
+      UnitFrames:ClearNameplateThreat()
+    end
+  end)
+  frame:SetScript("OnUpdate", function() UnitFrames:UpdateNameplateThreat() end)
+  self.threatFrame = frame
+end
+
+function UnitFrames:GetNameplateThreatRisk(guid, victim)
+  local snapshot = self.threatSnapshot
+  if not snapshot or GetTime() - snapshot.time > 2 or not UnitAffectingCombat("player") then return end
+  guid = ThreatGUID(guid)
+  if not guid then return end
+  local mode, me = self.nameplateMode, UnitName("player")
+  if mode == "tank" and victim == "self" then
+    local mob = snapshot.mobs[guid]
+    if mob then return mob.percent >= 85 and "danger" or mob.percent >= 70 and "warning" or nil end
+  end
+  local _, current = UnitExists("target")
+  if guid ~= snapshot.guid or guid ~= ThreatGUID(current) then return end
+  local own, tank = snapshot.rows[me], snapshot.rows[snapshot.holder]
+  if not own or not tank or tank.value <= 0 then return end
+  if mode == "tank" then
+    if victim ~= "self" or not own.tank then return end
+    local ratio = 0
+    for name, row in pairs(snapshot.rows) do
+      if name ~= me then ratio = math.max(ratio, row.value / tank.value * 100) end
+    end
+    return ratio >= 85 and "danger" or ratio >= 70 and "warning" or nil
+  elseif victim ~= "self" and not own.tank then
+    local ratio = own.value / tank.value * 100
+    return ratio >= 85 and "danger" or ratio >= 70 and "warning" or nil
+  end
+end
+
+function UnitFrames:GetNameplateStyle(mode, friendly, target, threat, guid)
   local colour
   if not friendly then
     if mode == "tank" then
       colour = threat == "self" and NAMEPLATE_ROLE_COLOURS.safe or
         threat == "tank" and NAMEPLATE_ROLE_COLOURS.tank or
         threat == "other" and NAMEPLATE_ROLE_COLOURS.danger or nil
-    elseif threat == "self" then
-      colour = NAMEPLATE_ROLE_COLOURS.danger
+    elseif mode == "healer" or mode == "dps" then
+      colour = threat == "self" and NAMEPLATE_ROLE_COLOURS.danger or NAMEPLATE_ROLE_COLOURS.neutral
     end
   end
+  local risk = not friendly and self:GetNameplateThreatRisk(guid, threat)
+  if risk then colour = NAMEPLATE_ROLE_COLOURS[risk] end
   local alpha = target and 1 or friendly and .65 or
     colour == NAMEPLATE_ROLE_COLOURS.danger and 1 or
-    mode == "healer" and .65 or .85
+    colour == NAMEPLATE_ROLE_COLOURS.warning and .9 or
+    (mode == "healer" or mode == "dps") and .75 or .85
   local limit = friendly and (target and 4 or 0) or (target and 6 or 2)
   return alpha, colour, limit
 end
@@ -929,7 +1077,10 @@ function UnitFrames:ApplyNameplateMode()
   if not ModuleEnabled() or not RouteOwned("unitframes.nameplate-combat-mode") or mode == "off" then
     mode = nil
   end
+  if self.nameplateMode ~= mode then self:ClearNameplateThreat() end
   self.nameplateMode = mode
+  self:EnsureNameplateThreat()
+  if mode then self.threatFrame:Show() else self.threatFrame:Hide() end
   if provider and provider.SetCombatMode then
     provider:SetCombatMode(mode, self)
   end
@@ -957,7 +1108,10 @@ function UnitFrames:GetNameplateModeStatus()
   local provider = pfUI and pfUI.nameplates
   return "plates saved=" .. tostring(profile and profile.mode or "unavailable") ..
     ", active=" .. tostring(provider and provider.combatMode or "off") ..
-    ", provider=" .. tostring(provider and provider.SetCombatMode ~= nil or false)
+    ", provider=" .. tostring(provider and provider.SetCombatMode ~= nil or false) ..
+    ", threat-packets=" .. tostring(self.threatReceived or 0) ..
+    "/" .. tostring(self.threatSeen or 0) ..
+    ", threat-source=" .. tostring(self.threatEnvelope or "none")
 end
 
 function UnitFrames:IsNameplateTargetCueEnabled()
@@ -981,6 +1135,20 @@ function UnitFrames:EnsureNameplateTargetCue(nameplate)
 
     holder.texture = holder:CreateTexture(nil, "OVERLAY")
     holder.texture:SetAllPoints(holder)
+    holder.brackets = CreateFrame("Frame", nil, holder)
+    holder.brackets:SetAllPoints(nameplate.health)
+    holder.brackets:EnableMouse(false)
+    for _, side in ipairs({ "LEFT", "RIGHT" }) do
+      local clasp = holder.brackets:CreateTexture(nil, "OVERLAY")
+      holder.brackets[side] = clasp
+      clasp:SetTexture(MEDIA .. "NameplateTargetClasp" .. side .. "V2")
+      clasp:SetTexCoord(6 / 32, 26 / 32, 12 / 64, 52 / 64)
+      clasp:SetWidth(10)
+      clasp:SetHeight(20)
+      clasp:SetVertexColor(.82, .78, .70)
+      clasp:SetPoint(side == "LEFT" and "RIGHT" or "LEFT", nameplate.health,
+        side, side == "LEFT" and -1 or 1, 0)
+    end
     nameplate.aeuiTargetCueFrame = holder
   end
 
@@ -999,6 +1167,19 @@ end
 
 function UnitFrames:LayoutNameplateTargetCue(nameplate, holder)
   if not nameplate or not holder or not nameplate.name then return false end
+
+  local bounds = nameplate.health.aeuiIdentityBounds or nameplate.health
+  if holder.aeuiClaspAnchor ~= bounds then
+    holder.brackets:ClearAllPoints()
+    holder.brackets:SetAllPoints(bounds)
+    for _, side in ipairs({ "LEFT", "RIGHT" }) do
+      local clasp = holder.brackets[side]
+      clasp:ClearAllPoints()
+      clasp:SetPoint(side == "LEFT" and "RIGHT" or "LEFT", bounds, side,
+        side == "LEFT" and -1 or 1, 0)
+    end
+    holder.aeuiClaspAnchor = bounds
+  end
 
   local raidIcon = nameplate.raidicon
   local stackAboveRaid =
@@ -1031,7 +1212,26 @@ function UnitFrames:LayoutNameplateTargetCue(nameplate, holder)
   return true
 end
 
+-- Only selection/visibility transitions move the level; provider layout uses
+-- the same gap when it rebuilds the health/name layout.
+function UnitFrames:SetNameplateClaspState(nameplate, shown)
+  local holder = nameplate.aeuiTargetCueFrame
+  if holder and holder.brackets and holder.aeuiClaspsVisible ~= shown then
+    SetShown(holder.brackets, shown)
+    holder.aeuiClaspsVisible = shown
+  end
+  local inset = nameplate.aeuiIdentity and nameplate.aeuiIdentity.active
+  local gap = not inset and shown and 14 or nil
+  if nameplate.aeuiTargetLevelGap ~= gap then
+    nameplate.aeuiTargetLevelGap = gap
+    if not inset and nameplate.level and FrameShown(nameplate.health) then
+      nameplate.level:SetPoint("RIGHT", nameplate.health, "LEFT", -(gap or 5), 0)
+    end
+  end
+end
+
 function UnitFrames:RestoreNameplateTargetCue(nameplate)
+  if nameplate then self:SetNameplateClaspState(nameplate, false) end
   local holder = nameplate and nameplate.aeuiTargetCueFrame
   if not holder then return false end
 
@@ -1061,11 +1261,267 @@ function UnitFrames:RefreshNameplateTargetCue(nameplate)
     FrameShown(nameplate.name) and
     not FrameShown(nameplate.totem) and
     true or false
+  self:SetNameplateClaspState(nameplate, shown and FrameShown(nameplate.health) or false)
   if holder.aeuiTargetCueVisible ~= shown then
     SetShown(holder, shown)
     holder.aeuiTargetCueVisible = shown
+    if nameplate.aeuiDetailsLayout then nameplate.aeuiDetailsLayout() end
   end
   return true
+end
+
+-- Keep adjacent provider information on the full identity strip, not its inset fill.
+local function ReanchorNameplateDetails(plate, from, to)
+  local function move(object)
+    if not object or not object.GetNumPoints then return end
+    for i = 1, object:GetNumPoints() do
+      local point, relative, relativePoint, x, y = object:GetPoint(i)
+      if relative == from then object:SetPoint(point, to, relativePoint, x, y) end
+    end
+  end
+  move(plate.castbar)
+  move(plate.raidicon)
+  move(plate.guild)
+  move(plate.glow)
+  move(plate.debuffs and plate.debuffs[1])
+  for _, object in ipairs(plate.combopoints or {}) do move(object) end
+end
+
+function UnitFrames:RestoreNameplateIdentity(plate)
+  local art = plate and plate.aeuiIdentity
+  if not art or not art.active then return end
+  local health = plate.health
+  ReanchorNameplateDetails(plate, art.bounds, health)
+  health:ClearAllPoints()
+  health:SetPoint(unpack(art.healthPoint))
+  health:SetWidth(art.healthWidth)
+  health.text:SetJustifyH(art.justify)
+  if art.levelParent then plate.level:SetParent(art.levelParent) end
+  if art.levelFont then plate.level:SetFont(unpack(art.levelFont)) end
+  plate.level:ClearAllPoints()
+  if plate.namesOnly then plate.level:SetPoint("RIGHT", plate.name, "LEFT", -3, 0)
+  else plate.level:SetPoint(unpack(art.levelPoint)) end
+  health.aeuiIdentityBounds, health.aeuiIdentityWidth = nil, nil
+  art.bounds:Hide()
+  art.active, art.layout, art.readoutWidth, art.measureKey = false, nil, nil, nil
+  if health.aeuiNameplateChrome and health.aeuiNameplateChrome.active then
+    self:SetNameplateHealthBorder(health, true)
+  end
+end
+
+function UnitFrames:RefreshNameplateIdentity(plate)
+  if not plate or not plate.health or not plate.level or not plate.name then return end
+  local profile = self:GetNameplateProfile()
+  local enabled = profile and profile.mode ~= "off" and ModuleEnabled() and
+    RouteOwned("unitframes.nameplate-health-fill")
+  local health = plate.health
+  if not enabled or plate.namesOnly or not FrameShown(health) or FrameShown(plate.totem) then
+    self:RestoreNameplateIdentity(plate)
+    return
+  end
+  local art = plate.aeuiIdentity
+  if not art then
+    art = { names = {} }
+    art.measure = health:CreateFontString(nil, "OVERLAY")
+    art.measure:Hide()
+    art.bounds = CreateFrame("Frame", nil, health)
+    art.bounds:SetFrameLevel(health:GetFrameLevel())
+    art.bounds:EnableMouse(false)
+    art.bed = art.bounds:CreateTexture(nil, "BACKGROUND")
+    art.bed:SetTexture(.10, .075, .05, 1)
+    art.divider = art.bounds:CreateTexture(nil, "ARTWORK")
+    art.divider:SetTexture(MEDIA .. "NameplateIdentityDividerV1")
+    art.divider:SetTexCoord(0, 4/8, 4/32, 23/32)
+    art.divider:SetWidth(3)
+    art.divider:SetHeight(16)
+    for _, side in ipairs({ "LEFT", "RIGHT" }) do
+      local cap = art.bounds:CreateTexture(nil, "ARTWORK")
+      cap:SetTexture(MEDIA .. "NameplateIdentityCap" .. side .. "V1")
+      cap:SetTexCoord(0, 16/32, 0, 40/64)
+      cap:SetWidth(8)
+      cap:SetHeight(20)
+      cap:SetPoint(side == "LEFT" and "RIGHT" or "LEFT", art.bounds, side, 0, 0)
+    end
+    local edges = { 0, 12, 116, 128 }
+    for i = 1, 3 do
+      local backing = art.bounds:CreateTexture(nil, "BACKGROUND")
+      backing:SetTexture(MEDIA .. "NameplateIdentityNameV1")
+      backing:SetTexCoord(edges[i]/128, edges[i+1]/128, 0, 20/32)
+      backing:SetHeight(10)
+      art.names[i] = backing
+    end
+    plate.aeuiIdentity = art
+  end
+  if not art.active then
+    art.healthPoint, art.levelPoint = { health:GetPoint() }, { plate.level:GetPoint() }
+    art.healthWidth, art.justify = health:GetWidth(), health.text:GetJustifyH()
+    art.levelParent = plate.level:GetParent()
+    art.levelFont = { plate.level:GetFont() }
+    plate.level:SetFont(art.levelFont[1], art.levelFont[2] * .85, art.levelFont[3])
+    plate.level:SetParent(health)
+    art.active = true
+  end
+  local levelWidth = math.max(12, plate.level:GetStringWidth() + 4)
+  local inset = levelWidth + 5
+  local font, size, flags = health.text:GetFont()
+  local text = health.text:GetText() or ""
+  local measureKey = font .. ":" .. size .. ":" .. tostring(flags) .. ":" .. text
+  if art.measureKey ~= measureKey then
+    art.measure:SetFont(font, size, flags)
+    art.measure:SetText(text)
+    -- Measure an unbounded copy, since the visible FontString can be ellipsized.
+    -- Keep the widest reading this activation to avoid width jitter each tick.
+    art.readoutWidth = math.max(art.readoutWidth or 0, art.measure:GetStringWidth())
+    art.measureKey = measureKey
+  end
+  local fullWidth = math.max(art.healthWidth, inset + math.max(40, (art.readoutWidth or 0) + 12))
+  local nameWidth = math.max(16, plate.name:GetStringWidth() + 12)
+  local nameHeight = math.max(10, plate.name:GetHeight() + 6)
+  local key = fullWidth .. ":" .. levelWidth .. ":" .. nameWidth .. ":" .. nameHeight
+  if art.layout ~= key then
+    health:ClearAllPoints()
+    health:SetPoint("TOP", plate.name, "BOTTOM", inset / 2, -4)
+    health:SetWidth(fullWidth - inset)
+    art.bounds:ClearAllPoints()
+    art.bounds:SetPoint("TOPLEFT", health, "TOPLEFT", -inset, 0)
+    art.bounds:SetPoint("BOTTOMRIGHT", health, "BOTTOMRIGHT", 0, 0)
+    art.bed:ClearAllPoints()
+    art.bed:SetPoint("TOPLEFT", art.bounds, "TOPLEFT", 0, 0)
+    art.bed:SetPoint("BOTTOMRIGHT", health, "BOTTOMLEFT", 0, 0)
+    art.divider:ClearAllPoints()
+    art.divider:SetPoint("CENTER", art.bounds, "LEFT", levelWidth + 1.5, 0)
+    plate.level:ClearAllPoints()
+    plate.level:SetPoint("CENTER", art.bounds, "LEFT", levelWidth / 2, 0)
+    health.text:SetJustifyH("CENTER")
+    local widths = { 6, nameWidth - 12, 6 }
+    for i = 1, 3 do
+      local backing = art.names[i]
+      backing:ClearAllPoints()
+      backing:SetWidth(widths[i])
+      backing:SetHeight(nameHeight)
+      if i == 1 then backing:SetPoint("BOTTOMLEFT", plate.name, "BOTTOM", -nameWidth/2, -3)
+      else backing:SetPoint("BOTTOMLEFT", art.names[i-1], "BOTTOMRIGHT", 0, 0) end
+    end
+    health.aeuiIdentityBounds, health.aeuiIdentityWidth = art.bounds, fullWidth
+    ReanchorNameplateDetails(plate, health, art.bounds)
+    art.layout = key
+    if health.aeuiNameplateChrome and health.aeuiNameplateChrome.active then
+      self:SetNameplateHealthBorder(health, true)
+    end
+  end
+  art.bounds:Show()
+end
+
+function UnitFrames:GetNameplateHealthHeight()
+  if ModuleEnabled() and RouteOwned("unitframes.nameplate-health-fill") then return 18 end
+end
+
+function UnitFrames:GetNameplateHealthColour(r, g, b, a)
+  if not self:GetNameplateHealthHeight() then return r, g, b, a end
+  local peak = math.max(r, g, b)
+  if peak > 0 and peak < .65 then
+    local gain = .65 / peak
+    return r * gain, g * gain, b * gain, a
+  elseif peak == 0 then
+    return .45, .45, .45, a
+  end
+  return r, g, b, a
+end
+
+function UnitFrames:SetNameplateHealthBorder(health, enabled)
+  local chrome = health.aeuiNameplateChrome
+  if enabled and health.backdrop then
+    if not chrome then
+      chrome = { bed = health:CreateTexture(nil, "BACKGROUND") }
+      chrome.bed:SetAllPoints(health)
+      health.aeuiNameplateChrome = chrome
+    end
+    if not chrome.active then
+      chrome.backdrop = FrameShown(health.backdrop)
+      chrome.shadow = FrameShown(health.backdrop_shadow)
+    end
+    -- Opaque empty-health bed and the accepted cast-rail's 1 UI leather rim.
+    chrome.bed:SetTexture(.10, .075, .05, 1)
+    chrome.rim = EnsurePrimarySlices(health, "aeuiNameplateRim", "BACKGROUND")
+    local anchor = health.aeuiIdentityBounds or health
+    if chrome.anchor ~= anchor then
+      -- Match the player's readout shell: both ends of every slice follow
+      -- the live StatusBar bounds, even when hidden frames finish layout later.
+      local u, v = {0, 4/512, 258/512, 262/512}, {0, 1/16, 13/16, 14/16}
+      local x, y = {-1, 3, -3, 1}, {1, 0, 0, -1}
+      local names = { {"topLeft","top","topRight"}, {"left","centre","right"}, {"bottomLeft","bottom","bottomRight"} }
+      for row = 1, 3 do
+        for column = 1, 3 do
+          local texture = chrome.rim[names[row][column]]
+          texture:ClearAllPoints()
+          texture:SetTexture(addon.media.root .. "ActionBars\\Readouts\\ReadoutShellV1")
+          texture:SetTexCoord(u[column],u[column+1],v[row],v[row+1])
+          texture:SetPoint("TOPLEFT", anchor,
+            (row <= 2 and "TOP" or "BOTTOM") .. (column <= 2 and "LEFT" or "RIGHT"), x[column],y[row])
+          texture:SetPoint("BOTTOMRIGHT", anchor,
+            (row+1 <= 2 and "TOP" or "BOTTOM") .. (column+1 <= 2 and "LEFT" or "RIGHT"), x[column+1],y[row+1])
+        end
+      end
+      chrome.anchor = anchor
+    end
+    SetPrimarySlicesShown(chrome.rim, true)
+    chrome.bed:Show()
+    health.backdrop:Hide()
+    SetShown(health.backdrop_shadow, false)
+    chrome.active = true
+  elseif chrome and chrome.active then
+    chrome.bed:Hide()
+    SetPrimarySlicesShown(chrome.rim, false)
+    SetShown(health.backdrop, chrome.backdrop)
+    SetShown(health.backdrop_shadow, chrome.shadow)
+    chrome.active = false
+  end
+end
+
+function UnitFrames:ApplyNameplateHealthFill(nameplate)
+  local profile = self:GetNameplateProfile()
+  local enabled = profile and profile.mode ~= "off" and ModuleEnabled() and
+    RouteOwned("unitframes.nameplate-health-fill")
+  return self:SetNameplateBarFill(nameplate and nameplate.health, enabled)
+end
+
+function UnitFrames:SetNameplateBarFill(health, enabled)
+  if not CanSetTexture(health) then return false end
+  local path = addon.media.root .. "ActionBars\\Readouts\\CastFillV1"
+  local texture = health.GetStatusBarTexture and health:GetStatusBarTexture()
+  local current = type(texture) == "string" and texture or
+    (texture and texture.GetTexture and texture:GetTexture())
+  if enabled then
+    if current ~= path then
+      -- Config changes supply a fresh provider texture before this hook runs.
+      if not current then return false end
+      health.aeuiNameplateHealthTexture = current
+      health:SetStatusBarTexture(path)
+    end
+    -- Native StatusBars may expose their fill on BACKGROUND. Our opaque bed
+    -- must never cover that fill; leave UVs and progress clipping to StatusBar.
+    local fill = health:GetStatusBarTexture()
+    if type(fill) ~= "string" and fill and fill.GetDrawLayer and fill.SetDrawLayer then
+      if not health.aeuiNameplateFillLayer then
+        health.aeuiNameplateFillLayer = fill:GetDrawLayer()
+      end
+      fill:SetDrawLayer("ARTWORK")
+    end
+    self:SetNameplateHealthBorder(health, true)
+    return true
+  elseif health.aeuiNameplateHealthTexture then
+    health:SetStatusBarTexture(current and current ~= path and current or health.aeuiNameplateHealthTexture)
+    health.aeuiNameplateHealthTexture = nil
+  end
+  if health.aeuiNameplateFillLayer then
+    local fill = health:GetStatusBarTexture()
+    if type(fill) ~= "string" and fill and fill.SetDrawLayer then
+      fill:SetDrawLayer(health.aeuiNameplateFillLayer)
+    end
+    health.aeuiNameplateFillLayer = nil
+  end
+  self:SetNameplateHealthBorder(health, false)
+  return false
 end
 
 function UnitFrames:InstallNameplateTargetCueHooks()
@@ -1080,19 +1536,34 @@ function UnitFrames:InstallNameplateTargetCueHooks()
     return false
   end
 
+  local originalOnDataChanged = provider.OnDataChanged
+  if type(originalOnDataChanged) == "function" then
+    provider.OnDataChanged = function(owner, plate)
+      local result = originalOnDataChanged(owner, plate)
+      UnitFrames:RefreshNameplateIdentity(plate)
+      UnitFrames:ApplyNameplateDetails(plate)
+      return result
+    end
+  end
+
   local originalOnCreate = provider.OnCreate
   provider.OnCreate = function(frame)
     local result = originalOnCreate(frame)
+    UnitFrames:ApplyNameplateHealthFill(frame and frame.nameplate)
     UnitFrames:RefreshNameplateTargetCue(frame and frame.nameplate)
     return result
   end
 
   local originalOnConfigChange = provider.OnConfigChange
   provider.OnConfigChange = function(frame)
+    UnitFrames:RestoreNameplateIdentity(frame and frame.nameplate)
+    UnitFrames:ApplyNameplateDetails(frame and frame.nameplate, true)
     local result = originalOnConfigChange(frame)
     local nameplate = frame and frame.nameplate
     local holder = nameplate and nameplate.aeuiTargetCueFrame
     if holder then holder.aeuiTargetCueAnchor = nil end
+    UnitFrames:ApplyNameplateHealthFill(nameplate)
+    UnitFrames:ApplyNameplateDetails(nameplate)
     UnitFrames:RefreshNameplateTargetCue(nameplate)
     return result
   end
@@ -1121,6 +1592,9 @@ function UnitFrames:ApplyNameplateTargetCue()
   local applied = 0
 
   ForEachWorldNameplate(function(nameplate)
+    self:RefreshNameplateIdentity(nameplate)
+    self:ApplyNameplateHealthFill(nameplate)
+    self:ApplyNameplateDetails(nameplate)
     if self:RefreshNameplateTargetCue(nameplate) then
       applied = applied + 1
     end
@@ -1160,6 +1634,9 @@ end
 function UnitFrames:IsEnabled()
   return
     self:IsPrimaryEnabled() or
+    (ModuleEnabled() and RouteOwned("unitframes.nameplate-details")) or
+    (ModuleEnabled() and RouteOwned("unitframes.nameplate-health-fill")) or
+    (ModuleEnabled() and RouteOwned("unitframes.distance-indicator")) or
     (ModuleEnabled() and RouteOwned("unitframes.standalone-aura-rim")) or
     (ModuleEnabled() and RouteOwned("unitframes.primary-thin-shell")) or
     self:IsPlayerShellV5Enabled() or
@@ -1484,13 +1961,13 @@ end
 local function ApplyAuraButtonThinShell(button, path)
   local width = FrameDimension(button, "GetWidth", "width")
   local height = FrameDimension(button, "GetHeight", "height")
-  if path and width and height and width > 8 and height > 8 and button.backdrop then
+  if path and width and height and width > 8 and height > 8 then
     local slices = EnsurePrimarySlices(button, "aeuiAuraThinSlices", "BACKGROUND")
     if LayoutPrimarySlices(slices, path, button, width + 4, height + 4, THIN_GEOMETRY) then
-      if button.aeuiAuraBackdropShown == nil then
-        button.aeuiAuraBackdropShown = FrameShown(button.backdrop)
+      if button.backdrop then
+        if button.aeuiAuraBackdropShown == nil then button.aeuiAuraBackdropShown = FrameShown(button.backdrop) end
+        button.backdrop:Hide()
       end
-      button.backdrop:Hide()
       if button.backdrop_shadow then
         if button.aeuiAuraShadowShown == nil then
           button.aeuiAuraShadowShown = FrameShown(button.backdrop_shadow)
@@ -1498,11 +1975,13 @@ local function ApplyAuraButtonThinShell(button, path)
         button.backdrop_shadow:Hide()
       end
       -- The standalone provider creates icons on BACKGROUND, unlike unit-frame auras.
-      if button.texture and button.texture.GetDrawLayer and button.texture.SetDrawLayer then
+      local icon = button.texture or button.icon or button.tex
+      if icon and icon.GetDrawLayer and icon.SetDrawLayer then
         if not button.aeuiAuraIconLayer then
-          button.aeuiAuraIconLayer = button.texture:GetDrawLayer()
+          button.aeuiAuraIconLayer = icon:GetDrawLayer()
+          button.aeuiAuraIcon = icon
         end
-        button.texture:SetDrawLayer("ARTWORK")
+        icon:SetDrawLayer("ARTWORK")
       end
       SetPrimarySlicesColour(slices, 1, 1, 1, 1)
       button.aeuiAuraTint = TintAuraThinShell
@@ -1519,11 +1998,124 @@ local function ApplyAuraButtonThinShell(button, path)
     button.aeuiAuraShadowShown = nil
   end
   if button.aeuiAuraIconLayer then
-    button.texture:SetDrawLayer(button.aeuiAuraIconLayer)
+    button.aeuiAuraIcon:SetDrawLayer(button.aeuiAuraIconLayer)
+    button.aeuiAuraIcon = nil
     button.aeuiAuraIconLayer = nil
   end
   button.aeuiAuraTint = nil
   return false
+end
+
+function UnitFrames:GetNameplateCastHeight()
+  local profile = self:GetNameplateProfile()
+  if profile and profile.mode ~= "off" and ModuleEnabled() and RouteOwned("unitframes.nameplate-details") then
+    return 12
+  end
+end
+
+function UnitFrames:LayoutNameplateDetails(plate)
+  local art = plate and plate.aeuiDetails
+  if not art or not art.active then return end
+  if plate.guild then
+    local cue = plate.aeuiTargetCueFrame
+    local anchor = cue and FrameShown(cue) and cue or plate.name
+    local _, relative = plate.guild:GetPoint()
+    if art.guildAnchor ~= anchor or relative ~= anchor then
+      plate.guild:ClearAllPoints()
+      plate.guild:SetPoint("BOTTOM", anchor, "TOP", 0, 2)
+      art.guildAnchor = anchor
+    end
+  end
+  if not plate.cluster then return end
+  local cast = plate.castbar
+  local offset = cast and FrameShown(cast) and cast.icon:GetWidth() + 6 or 12
+  local bounds = plate.health.aeuiIdentityBounds or plate.health
+  if art.clusterOffset ~= offset or art.clusterAnchor ~= bounds then
+    plate.cluster:ClearAllPoints()
+    plate.cluster:SetPoint("LEFT", bounds, "RIGHT", offset, 0)
+    art.clusterOffset, art.clusterAnchor = offset, bounds
+  end
+end
+
+function UnitFrames:ApplyNameplateDetails(plate, restore)
+  if not plate or not plate.castbar or not plate.castbar.spell then return end
+  local enabled = not restore and self:GetNameplateCastHeight() ~= nil
+  local cast = plate.castbar
+  local art = plate.aeuiDetails
+  if enabled and not art then art = {}; plate.aeuiDetails = art end
+  local materialKey = tostring(enabled) .. ":" .. cast:GetWidth() .. ":" .. cast:GetHeight()
+  if not art or art.materialKey ~= materialKey then
+    self:SetNameplateBarFill(cast, enabled)
+    if art then art.materialKey = materialKey end
+  end
+  if enabled and not art.active then
+    art.timePoint, art.spellPoint = {cast.text:GetPoint()}, {cast.spell:GetPoint()}
+    art.timeWidth, art.timeJustify = cast.text:GetWidth(), cast.text:GetJustifyH()
+    art.spellJustify = cast.spell:GetJustifyH()
+    art.timeFont, art.spellFont = {cast.text:GetFont()}, {cast.spell:GetFont()}
+    art.timeColour = {cast.text:GetTextColor()}
+    art.guildPoint = plate.guild and {plate.guild:GetPoint()}
+    art.clusterPoint = plate.cluster and {plate.cluster:GetPoint()}
+    local size = math.max(8, math.min(art.spellFont[2], cast:GetHeight()-2))
+    cast.text:ClearAllPoints()
+    cast.text:SetPoint("RIGHT", cast, "RIGHT", -3, 0)
+    cast.text:SetWidth(32)
+    cast.text:SetJustifyH("RIGHT")
+    cast.text:SetFont(art.timeFont[1], size, art.timeFont[3])
+    cast.text:SetTextColor(1,1,1,1)
+    cast.spell:ClearAllPoints()
+    cast.spell:SetPoint("LEFT", cast, "LEFT", 3, 0)
+    cast.spell:SetPoint("RIGHT", cast.text, "LEFT", -3, 0)
+    cast.spell:SetJustifyH("LEFT")
+    cast.spell:SetFont(art.spellFont[1], size, art.spellFont[3])
+    if plate.guild then
+      plate.guild:ClearAllPoints()
+      plate.guild:SetPoint("BOTTOM", plate.name, "TOP", 0, 2)
+    end
+    art.active = true
+    plate.aeuiDetailsLayout = function() UnitFrames:LayoutNameplateDetails(plate) end
+  elseif not enabled and art and art.active then
+    cast.text:ClearAllPoints(); cast.text:SetPoint(unpack(art.timePoint))
+    cast.text:SetWidth(art.timeWidth); cast.text:SetJustifyH(art.timeJustify)
+    cast.text:SetFont(unpack(art.timeFont)); cast.text:SetTextColor(unpack(art.timeColour))
+    cast.spell:ClearAllPoints(); cast.spell:SetPoint(unpack(art.spellPoint))
+    cast.spell:SetJustifyH(art.spellJustify); cast.spell:SetFont(unpack(art.spellFont))
+    if art.guildPoint then plate.guild:ClearAllPoints(); plate.guild:SetPoint(unpack(art.guildPoint)) end
+    if art.clusterPoint then plate.cluster:ClearAllPoints(); plate.cluster:SetPoint(unpack(art.clusterPoint)) end
+    art.active, art.clusterOffset, art.clusterAnchor, art.guildAnchor = false, nil, nil, nil
+    plate.aeuiDetailsLayout = nil
+  end
+  local function icon(button)
+    if not button then return end
+    local key = tostring(enabled) .. ":" .. button:GetWidth() .. ":" .. button:GetHeight()
+    if button.aeuiNameplateIconSize ~= key then
+      ApplyAuraButtonThinShell(button, enabled and RAID_TEXTURES.A or nil)
+      button.aeuiNameplateIconSize = key
+    end
+  end
+  icon(cast.icon)
+  icon(plate.totem)
+  for _, button in ipairs(plate.debuffs or {}) do icon(button) end
+  for _, button in ipairs(plate.combopoints or {}) do
+    local pip = button.aeuiCopperPip
+    if enabled and not pip then
+      pip = button:CreateTexture(nil, "OVERLAY")
+      pip:SetTexture(MEDIA .. "NameplateIdentityDividerV1")
+      pip:SetTexCoord(0, 4/8, 4/32, 23/32)
+      pip:SetWidth(3); pip:SetHeight(5); pip:SetPoint("CENTER", button, "CENTER", 0, 0)
+      button.aeuiCopperPip = pip
+    end
+    if enabled then
+      if button.aeuiPipOriginal == nil then
+        button.aeuiPipOriginal = {texture=FrameShown(button.tex), backdrop=FrameShown(button.backdrop)}
+      end
+      SetShown(button.tex, false); SetShown(button.backdrop, false); pip:Show()
+    elseif button.aeuiPipOriginal then
+      SetShown(pip, false); SetShown(button.tex, button.aeuiPipOriginal.texture)
+      SetShown(button.backdrop, button.aeuiPipOriginal.backdrop); button.aeuiPipOriginal = nil
+    end
+  end
+  if enabled then self:LayoutNameplateDetails(plate) end
 end
 
 function UnitFrames:ApplyAuraThinShells(frame, path)
@@ -1615,6 +2207,181 @@ function UnitFrames:ApplyThinShell(frame, role)
   return true
 end
 
+function UnitFrames:RestoreDistanceIndicatorDock(frame)
+  local art = frame and frame.aeuiDistanceArt
+  if not art or not art.framePoint then return end
+  frame:ClearAllPoints()
+  frame:SetPoint(unpack(art.framePoint))
+  frame.text:ClearAllPoints()
+  frame.text:SetPoint(unpack(art.textPoint))
+  art.framePoint, art.textPoint = nil, nil
+end
+
+-- The provider retains distance/state updates; these textures only wrap its readout.
+-- SuperWoW world XY uses north/west axes. Like pfQuest, convert the bearing
+-- relative to player facing into one of the existing arrow atlas's 108 cells.
+function UnitFrames:GetDistanceDirectionCell()
+  local facing = GetPlayerFacing or (pfQuestCompat and pfQuestCompat.GetPlayerFacing)
+  if type(UnitPosition) ~= "function" or type(facing) ~= "function" or
+    type(math.atan2) ~= "function" or not UnitExists("target") then return nil end
+  local okPlayer, px, py = pcall(UnitPosition, "player")
+  local okTarget, tx, ty = pcall(UnitPosition, "target")
+  local okFacing, heading = pcall(facing)
+  if not okPlayer or not okTarget or not okFacing then return nil end
+  for _, value in ipairs({px or false, py or false, tx or false, ty or false, heading or false}) do
+    if type(value) ~= "number" or value ~= value or math.abs(value) == math.huge then return nil end
+  end
+  local dx, dy = tx - px, ty - py
+  if dx*dx + dy*dy < .0001 then return nil end
+  local turn = math.atan2(dy, dx) - heading
+  return math.mod(math.mod(math.floor(turn / (2*math.pi) * 108 + .5), 108) + 108, 108)
+end
+
+function UnitFrames:RefreshDistanceIndicator(frame)
+  if not frame or not frame.text or not frame.icon then return end
+  local art = frame.aeuiDistanceArt
+  if not art then
+    art = { slices = {} }
+    for i = 1, 3 do
+      local texture = frame:CreateTexture(nil, "BACKGROUND")
+      texture:SetTexture(MEDIA .. "DistanceTagV1")
+      texture:SetVertexColor(.75, .75, .75, .85)
+      local starts, ends = { 0, 22, 116 }, { 22, 116, 144 }
+      texture:SetTexCoord(starts[i] / 256, ends[i] / 256, 0, 36 / 64)
+      art.slices[i] = texture
+    end
+    art.direction = frame:CreateTexture(nil, "OVERLAY")
+    art.direction:SetTexture(MEDIA .. "DistanceDirectionV1")
+    art.direction:SetWidth(16)
+    art.direction:SetHeight(16)
+    art.direction:SetVertexColor(1, 1, 1, 1)
+    art.direction:Hide()
+    frame.aeuiDistanceArt = art
+  end
+  if not art.active then
+    art.point, art.uv = { frame.icon:GetPoint() }, { frame.icon:GetTexCoord() }
+    art.width, art.height = frame.icon:GetWidth(), frame.icon:GetHeight()
+    art.alpha = frame.icon:GetAlpha()
+    frame.icon:SetAlpha(.8)
+    art.active = true
+  end
+  -- Also handles immediate activation while an old provider readout is visible.
+  local value = frame.text:GetText() or ""
+  if string.find(value, "^打脸\n") then
+    value = string.gsub(value, "^打脸\n", "")
+    frame.text:SetText(value)
+  end
+  local shown = value ~= ""
+  if art.shown ~= shown then
+    for i = 1, 3 do SetShown(art.slices[i], shown) end
+    art.shown = shown
+  end
+  if not shown then art.direction:Hide(); return end
+  local directionCell = self:GetDistanceDirectionCell()
+  SetShown(art.direction, directionCell ~= nil)
+  if directionCell ~= nil and art.directionCell ~= directionCell then
+    local column, row = math.mod(directionCell, 16), math.floor(directionCell / 16)
+    art.direction:SetTexCoord(column*32/512, (column+1)*32/512, row*32/256, (row+1)*32/256)
+    art.directionCell = directionCell
+  end
+  local cfg = pfUI_config.unitframes
+  local fontSize = tonumber(cfg.distance_indicator_font_size) or 13
+  local iconShown = FrameShown(frame.icon)
+  local iconWidth = (tonumber(cfg.distance_indicator_icon_size) or 20) * .85
+  local iconHeight = iconWidth * .7
+  local left = -(iconShown and (iconWidth + 18) or 11)
+  -- Reserve the entire brass cap plus 6 UI of clear space after the digits.
+  local textWidth = math.max(frame.text:GetWidth(), frame.text:GetStringWidth())
+  local width = math.max(72, textWidth - left + 14 + 6 + (directionCell ~= nil and 20 or 0))
+  local height = math.max(18, fontSize + 5, iconShown and iconHeight + 4 or 0)
+  local player = pfUI.uf and pfUI.uf.player
+  local target = pfUI.uf and pfUI.uf.target
+  local key = width .. ":" .. height .. ":" .. fontSize .. ":" .. iconWidth .. ":" .. tostring(iconShown) ..
+    ":" .. tostring(player) .. ":" .. tostring(target)
+  if art.layout ~= key then
+    if player and target then
+      if not art.dock then
+        art.dock = CreateFrame("Frame", nil, UIParent)
+        art.dock:EnableMouse(false)
+        art.dock:SetHeight(1)
+      end
+      -- Native relative anchors follow both unit frames, including their scale,
+      -- without polling screen coordinates or rewriting anchors every update.
+      if art.player ~= player or art.target ~= target then
+        art.dock:ClearAllPoints()
+        art.dock:SetPoint("LEFT", player, "RIGHT", 0, 0)
+        art.dock:SetPoint("RIGHT", target, "LEFT", 0, 0)
+        art.player, art.target = player, target
+      end
+      if not art.framePoint then
+        art.framePoint, art.textPoint = { frame:GetPoint() }, { frame.text:GetPoint() }
+        frame:ClearAllPoints()
+        frame:SetPoint("BOTTOM", art.dock, "CENTER", 0, 0)
+      end
+      -- Center the complete tag in the gap, below Buffs and above Debuffs.
+      -- Keep the numeric baseline fixed when provider prefix lines appear.
+      frame.text:ClearAllPoints()
+      frame.text:SetPoint("BOTTOM", frame, "BOTTOM",
+        textWidth / 2 - left - width / 2, -fontSize / 2)
+    else
+      self:RestoreDistanceIndicatorDock(frame)
+    end
+    local sizes = { 11, width - 25, 14 }
+    for i = 1, 3 do
+      local texture = art.slices[i]
+      texture:ClearAllPoints()
+      texture:SetWidth(sizes[i])
+      texture:SetHeight(height)
+      if i == 1 then
+        texture:SetPoint("BOTTOMLEFT", frame.text, "BOTTOMLEFT", left, -(height - fontSize) / 2)
+      else
+        texture:SetPoint("BOTTOMLEFT", art.slices[i-1], "BOTTOMRIGHT", 0, 0)
+      end
+    end
+    art.direction:ClearAllPoints()
+    art.direction:SetPoint("BOTTOMLEFT", frame.text, "BOTTOMRIGHT", 6, (fontSize - 16) / 2)
+    frame.icon:ClearAllPoints()
+    frame.icon:SetPoint("BOTTOMLEFT", frame.text, "BOTTOMLEFT", -(iconWidth + 7), (fontSize - iconHeight) / 2)
+    frame.icon:SetWidth(iconWidth)
+    frame.icon:SetHeight(iconHeight)
+    frame.icon:SetTexCoord(0, 40 / 64, 0, 28 / 32)
+    art.layout = key
+  end
+end
+
+function UnitFrames:ApplyDistanceIndicator()
+  if not pfUI then return end
+  local enabled = ModuleEnabled() and RouteOwned("unitframes.distance-indicator")
+  if enabled then
+    if not self.distanceSkin then
+      self.distanceSkin = {
+        insight = MEDIA .. "DistanceEyeOpenV1", outsight = MEDIA .. "DistanceEyeBlockedV1",
+        refresh = function(frame) UnitFrames:RefreshDistanceIndicator(frame) end,
+      }
+    end
+    pfUI.aeuiDistanceIndicatorSkin = self.distanceSkin
+    self:RefreshDistanceIndicator(pfUI.distanceIndicator)
+  else
+    pfUI.aeuiDistanceIndicatorSkin = nil
+    local frame = pfUI.distanceIndicator
+    local art = frame and frame.aeuiDistanceArt
+    if art then
+      self:RestoreDistanceIndicatorDock(frame)
+      art.direction:Hide()
+      for i = 1, 3 do art.slices[i]:Hide() end
+      frame.icon:ClearAllPoints()
+      frame.icon:SetPoint(unpack(art.point))
+      frame.icon:SetWidth(art.width)
+      frame.icon:SetHeight(art.height)
+      frame.icon:SetAlpha(art.alpha or 1)
+      frame.icon:SetTexCoord(unpack(art.uv))
+      frame.icon:SetTexture(pfUI.media[frame.aeuiDistanceOutOfSight and "img:ceye" or "img:oeye"])
+      art.shown, art.layout, art.active = false, nil, false
+    end
+  end
+  self.distanceIndicatorActive = enabled
+end
+
 function UnitFrames:Apply()
   local frames = pfUI and pfUI.uf
   local primaryEnabled = self:IsPrimaryEnabled()
@@ -1627,6 +2394,7 @@ function UnitFrames:Apply()
   local raidApplied = 0
   local thinApplied = 0
 
+  self:ApplyDistanceIndicator()
   self:ApplyStandaloneAuraShells()
   self:ApplyNameplateMode()
   self:ApplyNameplateTargetCue()
@@ -1705,6 +2473,7 @@ function UnitFrames:GetRuntimeStatus()
   return
     "contract=" .. tostring(self.runtimeContract) ..
     ", " .. self:GetNameplateModeStatus() ..
+    ", distance-tag=" .. tostring(self.distanceIndicatorActive) ..
     ", primary-thin-shells=" .. tostring(self.appliedThinShellCount or 0) .. "/4" ..
     ", enabled=" .. tostring(self:IsEnabled()) ..
     ", primary-bars=" .. tostring(self.appliedFrameCount or 0) .. "/4" ..

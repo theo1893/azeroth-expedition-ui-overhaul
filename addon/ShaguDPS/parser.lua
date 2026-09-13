@@ -4493,6 +4493,7 @@ local function parseThreatPacket(msg)
     local start = string.find(msg, prefix, 1, true)
     if not start then return end
     local content = string.sub(msg, start + string.len(prefix))
+    content = string.gsub(content, "#.*$", "")
     if not content or content == "" then return end
     data.threat = {}
     for playerData in string.gfind(content, "[^;]+") do

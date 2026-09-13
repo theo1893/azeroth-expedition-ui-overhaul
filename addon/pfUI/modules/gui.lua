@@ -318,7 +318,7 @@ pfUI:RegisterModule("gui", "vanilla:tbc", function ()
         frame.caption:SetPoint("TOPLEFT", 5, -4)
         frame.caption:SetWidth(frame:GetWidth() - 10)
         frame.caption:SetTextColor(.7, .7, .7)
-        local rows = math.max(1, math.ceil((frame.caption:GetStringHeight() + 8) / 23))
+        local rows = math.max(1, math.ceil((frame.caption:GetHeight() + 8) / 23))
         frame:SetHeight(rows * 23 - 1)
         this.objectCount = this.objectCount + rows - 1
       end

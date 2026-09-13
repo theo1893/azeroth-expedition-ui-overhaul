@@ -98,6 +98,7 @@ pfUI:RegisterModule("unitxp", "vanilla", function ()
       frame:SetScript("OnUpdate", function()
         if GetTime() - lastCheck < 0.1 then return end
         lastCheck = GetTime()
+        local skin = pfUI.aeuiDistanceIndicatorSkin
 
         this:Show()
 
@@ -132,9 +133,12 @@ pfUI:RegisterModule("unitxp", "vanilla", function ()
             local successL, inSight = pcall(UnitXP, "inSight", "player", "target")
             local outSight = (successL and inSight == false)
 
+            this.aeuiDistanceOutOfSight = outSight
+
             -- 处理图标
             if show_outsight_icon then
-              this.icon:SetTexture(outSight and OUTSIGHT_TEXTURE or INSIGHT_TEXTURE)
+              this.icon:SetTexture(outSight and (skin and skin.outsight or OUTSIGHT_TEXTURE) or
+                (skin and skin.insight or INSIGHT_TEXTURE))
               this.icon:SetVertexColor(1, 1, 1)
               this.icon:Show()
             else
@@ -159,19 +163,12 @@ pfUI:RegisterModule("unitxp", "vanilla", function ()
                 prefix = show_prefix and "近战\n" or ""   -- 开关控制
                 r, g, b = back_color[1], back_color[2], back_color[3]
               else
-                prefix = show_prefix and "打脸\n" or ""   -- 开关控制
+                prefix = not skin and show_prefix and "打脸\n" or ""   -- 开关控制
                 r, g, b = face_color[1], face_color[2], face_color[3]
 
                 -- 语音提醒
-                if play_sound and UnitAffectingCombat("player") then
-                  -- 如果启用了“仅组队”选项，且当前不在任何队伍/团队中，则跳过播放
-                  if sound_only_group then
-                    local inGroup = GetNumPartyMembers() > 0 or GetNumRaidMembers() > 0
-                    if not inGroup then
-                      return
-                    end
-                  end
-
+                if play_sound and UnitAffectingCombat("player") and
+                  (not sound_only_group or GetNumPartyMembers() > 0 or GetNumRaidMembers() > 0) then
                   local ttime = GetTime()
                   if ttime > nextSoundPlayTime then
                     PlaySoundFile(pfUI.media["img:warn.ogg"])
@@ -268,6 +265,7 @@ pfUI:RegisterModule("unitxp", "vanilla", function ()
         else
           this:SetHeight(30)  -- 默认高度
         end
+        if skin then skin.refresh(this) end
       end)
 
       pfUI.distanceIndicator = frame

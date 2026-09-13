@@ -105,6 +105,7 @@ BONUSSCANNER_PATTERNS_PASSIVE = {
 	{ pattern = "提高法术和魔法效果所造成的治疗效果，最多(%d+)点。",	effect = "HEAL"},
 	{ pattern = "使法术的治疗效果提高最多(%d+)点。",			effect = "HEAL" }, 	-- thanks kkk36@mop 
 	{ pattern = "法术伤害和治疗效果增加(%d+)。", effect = {"HEAL", "DMG"} }, 
+	{ pattern = "法术伤害和治疗效果提高(%d+)点。", effect = {"HEAL", "DMG"} },
 	{ pattern = "[提]*高所有法术和魔法效果所造成的伤害和治疗效果，最多(%d+)点。", effect = {"HEAL", "DMG"} }, -- thanks 旋律8246@mop
 	{ pattern = "使你的神圣系法术的致命一击和极效治疗几率提高(%d+)%%。",	effect = "HOLYCRIT" },
 	{ pattern = "使你的神圣法术造成致命一击的几率提高(%d+)%%。",		effect = "HOLYCRIT" },

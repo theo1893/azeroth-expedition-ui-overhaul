@@ -1,0 +1,104 @@
+{
+  "module": "unitframes",
+  "component": "UF.DISTANCE.TAG",
+  "phase": "P5",
+  "status": "accepted-runtime-integrated",
+  "route": "unitframes.distance-indicator",
+  "sources": [
+    {
+      "file": "assets/source/unitframes/distance-tag-v1/tag-source.png",
+      "sha256": "6aa1f07753ba29ab62eb56bd692a80816e4c607d543809468aaba8f82e32369d",
+      "size": [
+        688,
+        195
+      ]
+    },
+    {
+      "file": "assets/source/unitframes/distance-tag-v1/open-source.png",
+      "sha256": "5d7b51552e7ebd47ee08128667f8b480561adeaaf10187b9563c5fe1270fe981",
+      "size": [
+        347,
+        234
+      ]
+    },
+    {
+      "file": "assets/source/unitframes/distance-tag-v1/blocked-source.png",
+      "sha256": "aff6d2f7a9cf2b1d2998b97137dc60b669dda372234f4f9b4c907cd83f13f40b",
+      "size": [
+        349,
+        288
+      ]
+    }
+  ],
+  "runtime": [
+    {
+      "file": "addon/AzerothExpeditionUI/Media/UnitFrames/DistanceTagV1.tga",
+      "sha256": "ca73c295a36acf0164ae7a9dbaead7ae7b0bd230f34e4f94c9e739368c94e676",
+      "logical_size": [
+        72,
+        18
+      ],
+      "sampled_size": [
+        144,
+        36
+      ],
+      "texels_per_ui": 2,
+      "texture_size": [
+        256,
+        64
+      ],
+      "sample_box_exclusive": [
+        0,
+        0,
+        144,
+        36
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/UnitFrames/DistanceEyeOpenV1.tga",
+      "sha256": "b0fdd3030e4b334a6508b1ac346960ed2a051879ab5af8617c17de0e7904042d",
+      "logical_size": [
+        20,
+        14
+      ],
+      "sampled_size": [
+        40,
+        28
+      ],
+      "texels_per_ui": 2,
+      "texture_size": [
+        64,
+        32
+      ],
+      "sample_box_exclusive": [
+        0,
+        0,
+        40,
+        28
+      ]
+    },
+    {
+      "file": "addon/AzerothExpeditionUI/Media/UnitFrames/DistanceEyeBlockedV1.tga",
+      "sha256": "0b0476b2962a7141bbd0aa20d494b4cb56fda8055b215ced910a760755462000",
+      "logical_size": [
+        20,
+        14
+      ],
+      "sampled_size": [
+        40,
+        28
+      ],
+      "texels_per_ui": 2,
+      "texture_size": [
+        64,
+        32
+      ],
+      "sample_box_exclusive": [
+        0,
+        0,
+        40,
+        28
+      ]
+    }
+  ]
+}
