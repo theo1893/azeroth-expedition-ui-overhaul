@@ -1,4 +1,4 @@
-﻿--[[
+--[[
 Name: Babble-Boss-2.2
 Revision: 20006
 Author(s): ckknight (ckknight@gmail.com)
@@ -466,6 +466,18 @@ BabbleBoss:RegisterTranslations("enUS", function()
 		["Keeper Gnarlmoon"] = true,
 		["Rupturan"] = true,
 		["Mephistroth"] = true,
+		["Karrsh the Sentinel"] = true,
+		["Archdruid Kronn"] = true,
+		["Dreamform of Kronn"] = true,
+		["Loktanag the Vile"] = true,
+		["Chieftain Partath"] = true,
+		["Ormanos the Cracked"] = true,
+		["Rotgrowl"] = true,
+		["Ursol"] = true,
+		["Selenaxx Foulheart"] = true,
+		["Peroth'arn"] = true,
+		["Trioch"] = true,
+		["Timbermaw Trash"] = true,
 		["Unknown boss Upper Kara"]  = true,
 		["Cla'ckora"] = true,
 
@@ -2112,6 +2124,18 @@ BabbleBoss:RegisterTranslations("zhCN", function()
 		["Keeper Gnarlmoon"] = "守护者纳尔穆恩";
 		["Rupturan"] = "破碎者鲁普图兰";
 		["Mephistroth"] = "孟菲斯托斯";
+		["Karrsh the Sentinel"] = "哨兵卡什",
+		["Archdruid Kronn"] = "大德鲁伊科罗恩",
+		["Dreamform of Kronn"] = "梦境中的科罗恩",
+		["Loktanag the Vile"] = "落潭",
+		["Chieftain Partath"] = "大酋长帕萨斯",
+		["Ormanos the Cracked"] = "裂地者欧曼诺斯",
+		["Rotgrowl"] = "腐嚎",
+		["Ursol"] = "乌索尔",
+		["Selenaxx Foulheart"] = "塞雷纳克斯·腐心",
+		["Peroth'arn"] = "佩罗萨恩",
+		["Trioch"] = "吞噬者提里奥克",
+		["Timbermaw Trash"] = "木喉要塞小怪",
 		["Unknown boss Upper Kara"]  = "其他";
 		["Cla'ckora"] = "|CFF00FF00克拉科拉";
 

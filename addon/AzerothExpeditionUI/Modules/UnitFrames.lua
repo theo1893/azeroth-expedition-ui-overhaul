@@ -980,7 +980,7 @@ end
 
 function UnitFrames:UpdateNameplateThreat()
   local now = GetTime()
-  if not self.nameplateMode or not UnitAffectingCombat("player") then
+  if self.threatMockStart or not self.nameplateMode or not UnitAffectingCombat("player") then
     self.threatSnapshot, self.threatPending = nil, nil
     return
   end
@@ -1024,7 +1024,7 @@ function UnitFrames:GetNameplateThreatRisk(guid, victim)
   local mode, me = self.nameplateMode, UnitName("player")
   if mode == "tank" and victim == "self" then
     local mob = snapshot.mobs[guid]
-    if mob then return mob.percent >= 85 and "danger" or mob.percent >= 70 and "warning" or nil end
+    if mob then return mob.percent >= 85 and "danger" or mob.percent >= 70 and "warning" or nil, mob.percent end
   end
   local _, current = UnitExists("target")
   if guid ~= snapshot.guid or guid ~= ThreatGUID(current) then return end
@@ -1036,10 +1036,10 @@ function UnitFrames:GetNameplateThreatRisk(guid, victim)
     for name, row in pairs(snapshot.rows) do
       if name ~= me then ratio = math.max(ratio, row.value / tank.value * 100) end
     end
-    return ratio >= 85 and "danger" or ratio >= 70 and "warning" or nil
-  elseif victim ~= "self" and not own.tank then
+    return ratio >= 85 and "danger" or ratio >= 70 and "warning" or nil, ratio
+  elseif mode == "dps" or mode == "healer" then
     local ratio = own.value / tank.value * 100
-    return ratio >= 85 and "danger" or ratio >= 70 and "warning" or nil
+    return ratio >= 85 and "danger" or ratio >= 70 and "warning" or nil, ratio
   end
 end
 
@@ -1054,14 +1054,37 @@ function UnitFrames:GetNameplateStyle(mode, friendly, target, threat, guid)
       colour = threat == "self" and NAMEPLATE_ROLE_COLOURS.danger or NAMEPLATE_ROLE_COLOURS.neutral
     end
   end
-  local risk = not friendly and self:GetNameplateThreatRisk(guid, threat)
+  local baseColour = colour
+  local risk, ratio
+  if not friendly then
+    if self.threatMockStart and target then
+      -- Local preview only: 12 seconds to full, hold 2 seconds, then repeat.
+      ratio = math.min(100, math.mod(GetTime() - self.threatMockStart, 14) / 12 * 100)
+      risk = ratio >= 85 and "danger" or ratio >= 70 and "warning" or nil
+      baseColour = mode == "tank" and NAMEPLATE_ROLE_COLOURS.safe or NAMEPLATE_ROLE_COLOURS.neutral
+      colour = baseColour
+    else
+      risk, ratio = self:GetNameplateThreatRisk(guid, threat)
+    end
+  end
   if risk then colour = NAMEPLATE_ROLE_COLOURS[risk] end
   local alpha = target and 1 or friendly and .65 or
     colour == NAMEPLATE_ROLE_COLOURS.danger and 1 or
     colour == NAMEPLATE_ROLE_COLOURS.warning and .9 or
     (mode == "healer" or mode == "dps") and .75 or .85
+  -- Interpolate RGB by the latest ratio; alpha still uses the discrete risk tier.
+  if baseColour and ratio and ratio > 50 and ratio < 85 then
+    local from = ratio < 70 and baseColour or NAMEPLATE_ROLE_COLOURS.warning
+    local to = ratio < 70 and NAMEPLATE_ROLE_COLOURS.warning or NAMEPLATE_ROLE_COLOURS.danger
+    local fraction = ratio < 70 and (ratio - 50) / 20 or (ratio - 70) / 15
+    colour = {
+      from[1] + (to[1] - from[1]) * fraction,
+      from[2] + (to[2] - from[2]) * fraction,
+      from[3] + (to[3] - from[3]) * fraction,
+    }
+  end
   local limit = friendly and (target and 4 or 0) or (target and 6 or 2)
-  return alpha, colour, limit
+  return alpha, colour, limit, ratio
 end
 
 function UnitFrames:GetNameplateAuraPriority(friendly, target, kind, name, caster)
@@ -1079,6 +1102,7 @@ function UnitFrames:ApplyNameplateMode()
   end
   if self.nameplateMode ~= mode then self:ClearNameplateThreat() end
   self.nameplateMode = mode
+  if not mode then self.threatMockStart = nil end
   self:EnsureNameplateThreat()
   if mode then self.threatFrame:Show() else self.threatFrame:Hide() end
   if provider and provider.SetCombatMode then
@@ -1087,8 +1111,20 @@ function UnitFrames:ApplyNameplateMode()
 end
 
 function UnitFrames:SetNameplateMode(mode)
+  if mode == "mock" or mode == "mock off" then
+    if mode == "mock" and not self.nameplateMode then
+      addon:Print("请先 /aeui plates dps 启用姓名板职责，再 /aeui plates mock。")
+      return false
+    end
+    self.threatMockStart = mode == "mock" and GetTime() or nil
+    self:ClearNameplateThreat()
+    addon:Print(self.threatMockStart and
+      "仇恨 MOCK 已开启：选中敌方目标，12 秒从 0% 增至 100%，停留 2 秒后循环；非真实仇恨。/aeui plates mock off 关闭，重载自动清除。" or
+      "仇恨 MOCK 已关闭，恢复真实数据。")
+    return true
+  end
   if mode ~= "tank" and mode ~= "healer" and mode ~= "dps" and mode ~= "off" then
-    addon:Print("/aeui plates tank | healer | dps | off | status")
+    addon:Print("/aeui plates tank | healer | dps | off | status | mock | mock off")
     return false
   end
   local profile = self:GetNameplateProfile()
@@ -1111,7 +1147,8 @@ function UnitFrames:GetNameplateModeStatus()
     ", provider=" .. tostring(provider and provider.SetCombatMode ~= nil or false) ..
     ", threat-packets=" .. tostring(self.threatReceived or 0) ..
     "/" .. tostring(self.threatSeen or 0) ..
-    ", threat-source=" .. tostring(self.threatEnvelope or "none")
+    ", threat-source=" .. tostring(self.threatEnvelope or "none") ..
+    ", threat-mock=" .. (self.threatMockStart and "ON (not real threat)" or "off")
 end
 
 function UnitFrames:IsNameplateTargetCueEnabled()
@@ -1169,6 +1206,13 @@ function UnitFrames:LayoutNameplateTargetCue(nameplate, holder)
   if not nameplate or not holder or not nameplate.name then return false end
 
   local bounds = nameplate.health.aeuiIdentityBounds or nameplate.health
+  local claspHeight = nameplate.health:GetHeight() + 2 +
+    (FrameShown(nameplate.threatRail) and 8 or 0)
+  if holder.aeuiClaspHeight ~= claspHeight then
+    holder.brackets.LEFT:SetHeight(claspHeight)
+    holder.brackets.RIGHT:SetHeight(claspHeight)
+    holder.aeuiClaspHeight = claspHeight
+  end
   if holder.aeuiClaspAnchor ~= bounds then
     holder.brackets:ClearAllPoints()
     holder.brackets:SetAllPoints(bounds)
@@ -1321,7 +1365,7 @@ function UnitFrames:RefreshNameplateIdentity(plate)
   end
   local art = plate.aeuiIdentity
   if not art then
-    art = { names = {} }
+    art = { names = {}, caps = {} }
     art.measure = health:CreateFontString(nil, "OVERLAY")
     art.measure:Hide()
     art.bounds = CreateFrame("Frame", nil, health)
@@ -1341,6 +1385,7 @@ function UnitFrames:RefreshNameplateIdentity(plate)
       cap:SetWidth(8)
       cap:SetHeight(20)
       cap:SetPoint(side == "LEFT" and "RIGHT" or "LEFT", art.bounds, side, 0, 0)
+      art.caps[side] = cap
     end
     local edges = { 0, 12, 116, 128 }
     for i = 1, 3 do
@@ -1377,21 +1422,31 @@ function UnitFrames:RefreshNameplateIdentity(plate)
   local fullWidth = math.max(art.healthWidth, inset + math.max(40, (art.readoutWidth or 0) + 12))
   local nameWidth = math.max(16, plate.name:GetStringWidth() + 12)
   local nameHeight = math.max(10, plate.name:GetHeight() + 6)
-  local key = fullWidth .. ":" .. levelWidth .. ":" .. nameWidth .. ":" .. nameHeight
+  local extra = FrameShown(plate.threatRail) and 8 or 0
+  if plate.threatRail and not plate.threatRail.aeuiFill then
+    local rail = plate.threatRail
+    rail:SetStatusBarTexture(addon.media.root .. "ActionBars\\Readouts\\CastFillV1")
+    local fill = rail:GetStatusBarTexture()
+    if type(fill) == "table" or type(fill) == "userdata" then fill:SetDrawLayer("ARTWORK") end
+    rail.aeuiFill = true
+  end
+  local key = fullWidth .. ":" .. levelWidth .. ":" .. nameWidth .. ":" .. nameHeight .. ":" .. extra
   if art.layout ~= key then
     health:ClearAllPoints()
     health:SetPoint("TOP", plate.name, "BOTTOM", inset / 2, -4)
     health:SetWidth(fullWidth - inset)
     art.bounds:ClearAllPoints()
     art.bounds:SetPoint("TOPLEFT", health, "TOPLEFT", -inset, 0)
-    art.bounds:SetPoint("BOTTOMRIGHT", health, "BOTTOMRIGHT", 0, 0)
+    art.bounds:SetPoint("BOTTOMRIGHT", health, "BOTTOMRIGHT", 0, -extra)
     art.bed:ClearAllPoints()
     art.bed:SetPoint("TOPLEFT", art.bounds, "TOPLEFT", 0, 0)
-    art.bed:SetPoint("BOTTOMRIGHT", health, "BOTTOMLEFT", 0, 0)
+    art.bed:SetPoint("BOTTOMRIGHT", health, "BOTTOMLEFT", 0, -extra)
     art.divider:ClearAllPoints()
     art.divider:SetPoint("CENTER", art.bounds, "LEFT", levelWidth + 1.5, 0)
+    art.divider:SetHeight(16 + extra)
+    for _, cap in pairs(art.caps) do cap:SetHeight(health:GetHeight() + extra + 2) end
     plate.level:ClearAllPoints()
-    plate.level:SetPoint("CENTER", art.bounds, "LEFT", levelWidth / 2, 0)
+    plate.level:SetPoint("CENTER", art.bounds, "LEFT", levelWidth / 2, extra / 2)
     health.text:SetJustifyH("CENTER")
     local widths = { 6, nameWidth - 12, 6 }
     for i = 1, 3 do

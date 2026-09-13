@@ -21,7 +21,7 @@ SCCN_PURGEWEEKS = 4;
 	if( not SCCN_Highlight ) then SCCN_Highlight = 0; end;
 	if( not SCCN_AutoBGMap ) then SCCN_AutoBGMap = 0; end;
 	----------------------------- 以下新增 -----------------------------------
-	if( not SCCN_AutoSendWho ) then SCCN_AutoSendWho = 1; end;					-- 自动查询未知职业
+	if( not SCCN_AutoSendWho ) then SCCN_AutoSendWho = 0; end;					-- 自动查询未知职业
 	if( not SCCN_HC ) then SCCN_HC = 1; end;									-- HC播报信息汉化
 	if( not SCCN_SENDWHOMESSAGE_SHOW ) then SCCN_SENDWHOMESSAGE_SHOW = 1; end;	-- 屏蔽查询信息
 	----------------------------- 以上新增 -----------------------------------
@@ -304,6 +304,7 @@ end
 
 function solColorChatNicks_OnEvent(event)
  if strsub(event, 1, 16) == "VARIABLES_LOADED" then
+		SCCN_AutoSendWho = 0; -- AEUI: disable automatic WHO after saved settings load.
 		-- Fade controll
 		if SCCN_NOFADE == 1 then
 			SCCNnofade();

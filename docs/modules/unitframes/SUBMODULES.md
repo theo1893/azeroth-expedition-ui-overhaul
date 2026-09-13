@@ -54,6 +54,13 @@ pfUI SavedVariables。模式为 `tank／healer／dps`，`off` 恢复 provider �
 不增加光环数据库、姓名板追踪器、危险技能推断或自动职责切换。模式及开关的
 当前状态、命令和实机门禁见 `PROGRESS.md`。
 
+仇恨细轨由 provider 在真实 `plate.health` 内创建 `plate.threatRail`，AEUI 的
+`GetNameplateStyle` 第四返回值提供有效比例；轨道只负责显示，不持有或推断仇恨。
+生命 StatusBar 高度不变，`plate.threatRail` 等宽紧接其底部、高 `8 UI`，只显示百分比。
+`aeuiIdentity.bounds` 向下延伸包住两区，外缘／两端端口／选中铜夹共用整体高度；
+等级保持生命区原位，施法及下方附属内容跟随整体底边。无有效比例、友方或职责关闭时
+隐藏仇恨区并收回延伸，不修改生命区文字大小或生命值几何。
+
 ## 世界姓名板选中目标提示
 
 `addon/pfUI/modules/nameplates.lua` 为每个 Blizzard 世界姓名板创建

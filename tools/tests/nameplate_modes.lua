@@ -288,6 +288,18 @@ adapter:RefreshNameplateIdentity(identity)
 assert(identity.health.calls.SetPoint==identityWrites, "stable identity must not relayout")
 identity.level:SetText("60+"); adapter:RefreshNameplateIdentity(identity)
 assert(identity.health.width==96 and identity.health.aeuiIdentityWidth==120)
+local originalHealthHeight=identity.health.height
+identity.threatRail=node()
+adapter:RefreshNameplateIdentity(identity)
+assert(identity.health.height==originalHealthHeight,'threat extension must not stretch health')
+assert(identity.aeuiIdentity.bounds.pointsByAnchor.BOTTOMRIGHT[5]==-8,'common shell extends down by 8')
+assert(identity.aeuiIdentity.caps.LEFT.height==originalHealthHeight+10,'caps enclose both areas')
+assert(identity.castbar.point[2]==identity.aeuiIdentity.bounds,'cast follows extended shell')
+local extendedWrites=identity.health.calls.SetPoint
+adapter:RefreshNameplateIdentity(identity)
+assert(identity.health.calls.SetPoint==extendedWrites,'steady threat must not rewrite layout')
+identity.threatRail:Hide(); adapter:RefreshNameplateIdentity(identity)
+assert(identity.aeuiIdentity.bounds.pointsByAnchor.BOTTOMRIGHT[5]==0,'missing threat collapses shell')
 identity.health.text:SetText("7.07m / 55m extended readout")
 adapter:RefreshNameplateIdentity(identity)
 assert(identity.health.width >= identity.health.text:GetStringWidth()+12, "full readout must fit without ellipsis")
@@ -530,4 +542,28 @@ for _, mode in ipairs({'healer','dps'}) do
   plate.raidicon:Hide()
 end
 provider.OnDataChanged = dataChanged
+-- The rail inherits health visibility; missing data and disabled roles hide it.
+do
+  local testPlate = {health=node()}
+  provider.combatMode='dps'
+  provider:UpdateThreatRail(testPlate,nil,{1,.7,.2})
+  assert(not testPlate.threatRail,'missing data must not allocate a rail')
+  provider:UpdateThreatRail(testPlate,78,{1,.7,.2})
+  local rail=testPlate.threatRail
+  assert(rail:IsShown() and rail.parent==testPlate.health and rail.height==8)
+  assert(rail.text:GetText()=='78%','threat label contains only the percentage')
+  assert(rail.pointsByAnchor.TOPLEFT[3]=='BOTTOMLEFT','threat sits below original health')
+  local value
+  function rail:SetValue(v) value=v end
+  for _, ratio in ipairs({0,35,120}) do
+    provider:UpdateThreatRail(testPlate,ratio,{1,.7,.2})
+    assert(value==math.min(100,ratio) and rail:IsShown())
+  end
+  assert(rail.calls.SetPoint==2,'updates must not rewrite rail geometry')
+  provider:UpdateThreatRail(testPlate,nil,{1,.7,.2}); assert(not rail:IsShown())
+  testPlate.friendly=true
+  provider:UpdateThreatRail(testPlate,78,{1,.7,.2}); assert(not rail:IsShown())
+  testPlate.friendly=false; provider.combatMode=nil
+  provider:UpdateThreatRail(testPlate,78,{1,.7,.2}); assert(not rail:IsShown())
+end
 print("PASS nameplate modes: profiles, roles, threat, aura priority, cue caching, names-only, event coalescing, target transitions, hostile readability")

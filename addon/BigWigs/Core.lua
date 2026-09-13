@@ -79,6 +79,7 @@ L:RegisterTranslations("enUS", function()
 		["The Black Morass"] = "BlackMorass",
 		["Silithus"] = true,
 		["Outdoor Raid Bosses"] = "Outdoor",
+		["Timbermaw Hold"] = "TMH",
 		["Outdoor Raid Bosses Zone"] = "Outdoor Raid Bosses", -- DO NOT EVER TRANSLATE untill I find a more elegant option
 
 		["Battlegrounds"] = true,
@@ -357,6 +358,7 @@ L:RegisterTranslations("zhCN", function()
 	["Silithus"] = "希利苏斯",
 	["Outdoor Raid Bosses"] = "世界Boss",
 	["Outdoor Raid Bosses Zone"] = "世界Boss区域", -- DO NOT EVER TRANSLATE untill I find a more elegant option
+	["Timbermaw Hold"] = "木喉要塞",
 
 	["Battlegrounds"] = "战场",
 	["Alterac Valley"] = "奥特兰克山谷",

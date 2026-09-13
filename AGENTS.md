@@ -64,7 +64,7 @@ docs/modules/<module>/
 [unitframes](docs/modules/unitframes/)、
 [spellbook](docs/modules/spellbook/)、[talents](docs/modules/talents/)、
 [gearplanner](docs/modules/gearplanner/)、
-[groupfinder](docs/modules/groupfinder/)、
+[bigwigs](docs/modules/bigwigs/)、[groupfinder](docs/modules/groupfinder/)、
 [professions](docs/modules/professions/)。Group Finder 为纯逻辑模块，当前只维护对象边界与进度，
 不创建无用的美术 baseline。
 

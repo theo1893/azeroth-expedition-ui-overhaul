@@ -1056,6 +1056,41 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     nameplates:OnDataChanged(nameplate)
   end
 
+  nameplates.UpdateThreatRail = function(self, plate, ratio, colour)
+    local rail = plate.threatRail
+    if not self.combatMode or plate.friendly or not ratio or not colour then
+      if rail then rail:Hide() end
+      return
+    end
+    if not rail then
+      rail = CreateFrame("StatusBar", nil, plate.health)
+      rail:SetFrameLevel(plate.health:GetFrameLevel() + 1)
+      rail:EnableMouse(false)
+      rail:SetPoint("TOPLEFT", plate.health, "BOTTOMLEFT", 0, 0)
+      rail:SetPoint("TOPRIGHT", plate.health, "BOTTOMRIGHT", 0, 0)
+      rail:SetHeight(8)
+      rail:SetMinMaxValues(0, 100)
+      rail:SetStatusBarTexture(pfUI.media["img:dot"])
+      rail.background = rail:CreateTexture(nil, "BACKGROUND")
+      rail.background:SetAllPoints(rail)
+      rail.background:SetTexture(.08, .09, .09, 1)
+      rail.divider = rail:CreateTexture(nil, "OVERLAY")
+      rail.divider:SetPoint("TOPLEFT", rail, "TOPLEFT", 0, 0)
+      rail.divider:SetPoint("TOPRIGHT", rail, "TOPRIGHT", 0, 0)
+      rail.divider:SetHeight(1)
+      rail.divider:SetTexture(.07, .05, .035, 1)
+      rail.text = rail:CreateFontString(nil, "OVERLAY")
+      rail.text:SetAllPoints(rail)
+      rail.text:SetFont(pfUI.font_unit or pfUI.font_default, 7, "OUTLINE")
+      rail.text:SetTextColor(.95, .91, .82, 1)
+      plate.threatRail = rail
+    end
+    rail:SetValue(math.max(0, math.min(100, ratio)))
+    rail:SetStatusBarColor(unpack(colour))
+    rail.text:SetText(string.format("%d%%", math.floor(ratio + .5)))
+    rail:Show()
+  end
+
   nameplates.OnValueChanged = function(arg1)
     local plate = this:GetParent().nameplate
     -- Coalesce health events; hidden friendly bars need no health work.
@@ -1187,14 +1222,16 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 
     plate.friendly = unittype == "FRIENDLY_PLAYER" or unittype == "FRIENDLY_NPC"
     local mode = nameplates.combatMode
-    local roleColour
+    local roleColour, threatRatio
     if mode then
       local threat = not plate.friendly and nameplates:GetRoleThreat(plate, unitstr) or nil
-      plate.roleAlpha, roleColour, plate.roleAuraLimit =
+      plate.roleAlpha, roleColour, plate.roleAuraLimit, threatRatio =
         nameplates.combatPolicy:GetNameplateStyle(mode, plate.friendly, target, threat, plate.cachedGuid)
       -- Marked enemies remain easy to locate, including in healer mode.
       if not plate.friendly and plate.raidicon:IsShown() then plate.roleAlpha = 1 end
     end
+
+    nameplates:UpdateThreatRail(plate, threatRatio, roleColour)
 
     -- always make sure to keep plate visible
     plate:Show()
@@ -1583,6 +1620,7 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     local nameplate = frame.nameplate
     nameplate.cache = {}
     nameplate.roleThreat = nil
+    if nameplate.threatRail then nameplate.threatRail:Hide() end
     nameplate.eventcache = true
     if nameplates.combatMode then
       -- The engine can fire OnShow while this recycled plate still has its old
@@ -2097,6 +2135,7 @@ nameplates:RegisterEvent("ZONE_CHANGED_NEW_AREA")
       plate.cache = {}
       plate.roleThreat = nil
       plate.roleAlpha = nil
+      if plate.threatRail then plate.threatRail:Hide() end
       plate.namesOnly = nil
       plate.health.zoomed, plate.health.zoomTransition = nil, nil
       plate.health.targetWidth, plate.health.targetHeight = nil, nil

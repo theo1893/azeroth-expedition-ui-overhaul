@@ -30,6 +30,25 @@ local spellCasting = nil
 local timeToShutdown = nil
 local shutdownBigWarning = nil
 
+local auraProtocol = "2.16.1"
+local zh = GetLocale() == "zhCN"
+local turtleAuras = {
+	BWCABS = {key="barkskin", name=zh and "树皮术" or "Barkskin", duration=12,
+		icon="Spell_Nature_StoneClawTotem", color="Orange", order=14.1},
+	BWCAFR = {key="berserk", name=zh and "狂暴" or "Berserk", duration=20,
+		icon="Ability_Druid_Berserk", color="Red", order=14.2},
+	BWCASL = {key="spiritlink", name=zh and "灵魂连接" or "Spirit Link", duration=20,
+		icon="Spell_Shaman_SpiritLink", color="Cyan", order=14.3},
+}
+
+local function SupportedAuraProtocol(version)
+	if type(version) ~= "string" then return false end
+	local _, _, major, minor, patch = string.find(version, "^(%d+)%.(%d+)%.(%d+)$")
+	major, minor, patch = tonumber(major), tonumber(minor), tonumber(patch)
+	return major and (major > 2 or (major == 2 and
+		(minor > 16 or (minor == 16 and patch >= 1)))) or false
+end
+
 L:RegisterTranslations("enUS", function()
 	return {
 		-- iconPrefix = "Interface\\Icons\\",
@@ -319,6 +338,9 @@ BigWigsCommonAuras.defaultDB = {
 	shieldwall = true,
 	
 	challengingroar = true,
+	barkskin = true,
+	berserk = true,
+	spiritlink = true,
 	
 	bop = true,
 	deepwood = true,
@@ -604,6 +626,16 @@ BigWigsCommonAuras.consoleOptions = {
 	}
 }
 
+for _, entry in pairs(turtleAuras) do
+	local aura = entry
+	BigWigsCommonAuras.consoleOptions.args[aura.key] = {
+		type="toggle", name=aura.name, order=aura.order,
+		desc=string.format(L["Toggle %s display."], aura.name),
+		get=function() return BigWigsCommonAuras.db.profile[aura.key] end,
+		set=function(value) BigWigsCommonAuras.db.profile[aura.key]=value end,
+	}
+end
+
 local timer = {
 	fearward = 30,
 	laststand = 20,
@@ -647,6 +679,7 @@ function BigWigsCommonAuras:OnEnable()
 
 	self:RegisterEvent("CHAT_MSG_MONSTER_EMOTE")--trigger_wormhole, trigger_orange, trigger_soulwell
 	self:RegisterEvent("CHAT_MSG_SYSTEM")--trigger_shutdown, trigger_restart
+	self:RegisterEvent("CHAT_MSG_SPELL_SELF_BUFF")
 
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_SELF_BUFFS")
 	self:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_SELF")
@@ -678,9 +711,19 @@ function BigWigsCommonAuras:OnEnable()
 	self:TriggerEvent("BigWigs_ThrottleSync", "BWCAWH", .4) -- Wormhole
 	self:TriggerEvent("BigWigs_ThrottleSync", "BWCAOR", .4) -- Orange
 	self:TriggerEvent("BigWigs_ThrottleSync", "BWCAWL", .4) -- Soulwell
+	for sync in pairs(turtleAuras) do self:TriggerEvent("BigWigs_ThrottleSync", sync, .4) end
 end
 
 function BigWigsCommonAuras:SpellStatus_SpellCastInstant(sId, sName, sRank, sFullName, sCastTime)
+	-- SpellStatus's sId is a spellbook slot, not a spell ID.
+	local _, class = UnitClass("player")
+	if class == "DRUID" then
+		if sName == BS["Barkskin"] or sName == "Barkskin" then
+			self:TriggerEvent("BigWigs_SendSync", "BWCABS " .. auraProtocol)
+		elseif sName == "狂暴" or sName == "Berserk" then
+			self:TriggerEvent("BigWigs_SendSync", "BWCAFR " .. auraProtocol)
+		end
+	end
 	if sName == BS["Fear Ward"] then
 		local targetName = nil
 		if spellTarget then
@@ -712,6 +755,23 @@ function BigWigsCommonAuras:SpellStatus_SpellCastInstant(sId, sName, sRank, sFul
 		self:TriggerEvent("BigWigs_SendSync", "BWCACS")
 	elseif sName == BS["Challenging Roar"] then
 		self:TriggerEvent("BigWigs_SendSync", "BWCACR")
+	end
+end
+
+function BigWigsCommonAuras:CHAT_MSG_SPELL_SELF_BUFF(msg)
+	if type(msg) ~= "string" then return end
+	local _, class = UnitClass("player")
+	if class == "DRUID" then
+		if msg == "你施放了树皮术。" or msg == "You cast Barkskin." then
+			self:TriggerEvent("BigWigs_SendSync", "BWCABS " .. auraProtocol)
+		elseif msg == "你施放了狂暴。" or msg == "You cast Berserk." then
+			self:TriggerEvent("BigWigs_SendSync", "BWCAFR " .. auraProtocol)
+		end
+	elseif class == "SHAMAN" then
+		local _, _, target = string.find(msg, "^你对(.+)施放了灵魂连接。$")
+		if not target then _, _, target = string.find(msg, "^You cast Spirit Link on (.+)%.$") end
+		if msg == "你施放了灵魂连接。" or msg == "You cast Spirit Link." then target=UnitName("player") end
+		if target then self:TriggerEvent("BigWigs_SendSync", "BWCASL " .. auraProtocol .. " " .. target) end
 	end
 end
 
@@ -880,6 +940,24 @@ end
 function BigWigsCommonAuras:BigWigs_RecvSync(sync, rest, nick)
 	if not nick then
 		nick = UnitName("player")
+	end
+	local aura = turtleAuras[sync]
+	if aura then
+		if not self.db.profile[aura.key] then return end
+		local version, target = rest, nick
+		if sync == "BWCASL" then
+			if type(rest) ~= "string" then return end
+			local _, _, ver, unit = string.find(rest, "^(%S+)%s+(.+)$")
+			version, target = ver, unit
+		end
+		if not SupportedAuraProtocol(version) or not target then return end
+		local bar = target .. " " .. aura.name
+		self:TriggerEvent("BigWigs_Message", nick .. " " .. aura.name ..
+			(sync == "BWCASL" and (": " .. target) or ""), "Urgent", false, nil, false)
+		self:TriggerEvent("BigWigs_StartBar", self, bar, aura.duration,
+			"Interface\\Icons\\" .. aura.icon, true, aura.color)
+		self:SetCandyBarOnClick("BigWigsBar " .. bar, function(_, _, unit) TargetByName(unit, true) end, target)
+		return
 	end
 
 	if self.db.profile.fearward and sync == "BWCAFW" and rest then

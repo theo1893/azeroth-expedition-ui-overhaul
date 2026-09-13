@@ -91,6 +91,65 @@ for i=1,4 do
   u.threatFrame.scripts.OnUpdate()
 end
 assert(#sent > before, 'roster refreshes must not starve threat polling')
+
+-- RGB interpolation changes colour, not the existing discrete opacity tiers.
+guid='0x1234'; combat=true
+for _, mode in ipairs({'dps','healer','tank'}) do
+  u.nameplateMode=mode
+  local base=mode=='tank' and {.38,.62,.48} or {54/255,191/255,224/255}
+  local warning, danger={1,.72,.18},{1,.32,.12}
+  for _, sample in ipairs({{0,base},{50,base},{60,{(base[1]+1)/2,(base[2]+.72)/2,(base[3]+.18)/2}},
+    {70,warning},{77.5,{1,.52,.15}},{85,danger},{120,danger}}) do
+    local ratio=sample[1]
+    u.threatSnapshot={time=now,guid='1234',holder='Tank',mobs={['1234']={percent=ratio}},
+      rows={Tank={value=1000},Me={value=ratio*10}}}
+    local alpha, colour, _, displayedRatio=u:GetNameplateStyle(mode,false,false,mode=='tank' and 'self' or 'tank',guid)
+    assert(displayedRatio==ratio,'rail receives valid ratios including zero and over-cap values')
+    for i=1,3 do assert(math.abs(colour[i]-sample[2][i])<.00001,'linear RGB endpoints/midpoints') end
+    local expected=ratio>=85 and 1 or ratio>=70 and .9 or mode=='tank' and .85 or .75
+    assert(alpha==expected,'gradient must preserve opacity tiers')
+  end
+  u.threatSnapshot.time=now-3
+  assert(select(4,u:GetNameplateStyle(mode,false,false,mode=='tank' and 'self' or 'tank',guid))==nil,
+    'expired data must hide the rail, not display zero')
+  local _, colour=u:GetNameplateStyle(mode,false,false,mode=='tank' and 'self' or 'tank',guid)
+  for i=1,3 do assert(math.abs(colour[i]-base[i])<.00001,'expired data restores base colour') end
+end
+print('PASS threat gradient: all roles, endpoints, midpoints, opacity tiers, stale fallback')
 event='PLAYER_TARGET_CHANGED'; u.threatFrame.scripts.OnEvent()
 assert(not u.threatPending and u.threatNext == now+1.5, 'target changes still quarantine replies')
 print('PASS server threat: polling, origin checks, stale/invalid packets, target and GUID isolation, roles')
+
+-- Outdoor parties use the same request path; taking aggro must not hide valid data.
+function GetNumRaidMembers() return 0 end
+function GetNumPartyMembers() return 1 end
+for _, mode in ipairs({'dps','healer'}) do
+  u.nameplateMode=mode; victim='Me'; guid='0x1234'; combat=true
+  u:ClearNameplateThreat(); now=now+2
+  u:UpdateNameplateThreat()
+  assert(sent[#sent][3]=='PARTY','ordinary parties must request on PARTY')
+  u:ReceiveNameplateThreat('TWT','TWTv4=Me:1:1000:100:1;Other:0:300:30:1;','PARTY','Me')
+  local _, colour, _, ratio=u:GetNameplateStyle(mode,false,true,'self',guid)
+  assert(ratio==100 and colour[1]==1 and colour[2]==.32,
+    'self-held aggro must retain a full danger rail in DPS and healer modes')
+  assert(select(4,u:GetNameplateStyle(mode,true,true,'self',guid))==nil,'friendly plates have no rail')
+end
+print('PASS outdoor party: PARTY replies, DPS/healer self aggro, friendly exclusion')
+
+-- Preview needs neither combat nor a GUID and never fabricates server snapshots.
+AzerothExpeditionUI.Print=function() end
+combat=false; u.threatSnapshot=nil
+assert(u:SetNameplateMode('mock'))
+local mockStart=now
+for _, sample in ipairs({{0,0},{6,50},{9,75},{12,100},{13,100},{14,0}}) do
+  now=mockStart+sample[1]
+  assert(select(4,u:GetNameplateStyle('dps',false,true,nil,nil))==sample[2])
+  assert(select(4,u:GetNameplateStyle('dps',false,false,nil,nil))==nil)
+  assert(select(4,u:GetNameplateStyle('dps',true,true,nil,nil))==nil)
+end
+local beforeMock=#sent
+combat=true; u:UpdateNameplateThreat()
+assert(#sent==beforeMock and not u.threatSnapshot,'mock stays local and sends no requests')
+assert(u:SetNameplateMode('mock off') and not u.threatMockStart)
+assert(select(4,u:GetNameplateStyle('dps',false,true,nil,guid))==nil)
+print('PASS threat mock: growth, full hold, loop, target scope, no network, off fallback')
