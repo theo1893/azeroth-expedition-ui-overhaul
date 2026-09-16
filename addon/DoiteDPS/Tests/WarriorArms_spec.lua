@@ -345,7 +345,7 @@ action = P:Recommend(State({
 Check("configured Slam clip also permits an instant before Slam", action.key == "MORTAL_STRIKE")
 
 action = P:Recommend(State({
-    rage = 130,
+    rage = 110,
     maxRage = 130,
     cooldowns = CoreCooldowns(0, 0),
     rotationDB = { slamClip = 0.15 },
@@ -1256,7 +1256,7 @@ action = P:Recommend(State({
         slamCapable = true,
     },
 }))
-Check("high current rage preserves the early Slam before Cleave", action.key == "SLAM")
+Check("high current rage queues Cleave before the early Slam", action.key == "CLEAVE")
 
 action = P:Recommend(State({
     mode = "aoe",
@@ -1646,19 +1646,19 @@ local forecast = P:BuildForecast(State({
 Check("the QTE timeline keeps a compact forecast", forecast[1] ~= nil)
 Check("each forecast resets Lua 5.0's cached list size", P._candidates ~= previousCandidates)
 
--- Heroic Strike cannot occupy the start of a swing, even if Slam is blocked.
+-- Queueing is independent of the swing midpoint, while ready core skills lead.
 do
     for _, gcd in ipairs({ 0, 1.5 }) do
         local early = State({ rage = 100, gcd = gcd, cooldowns = CoreCooldowns(0, 5) })
         early.swing.remaining, early.swing.slamUsed = 3.45, true
-        Check("fresh swing rejects Heroic Strike with GCD " .. gcd,
-            P:Recommend(early).key ~= "HEROIC_STRIKE")
+        Check("fresh-swing Heroic Strike preserves an unlocked core skill with GCD " .. gcd,
+            P:Recommend(early).key == (gcd == 0 and "MORTAL_STRIKE" or "HEROIC_STRIKE"))
     end
     local boundary = State({ rage = 100 })
     boundary.swing.slamUsed = true
     boundary.swing.remaining = 1.751
-    Check("Heroic Strike waits until the second half",
-        P:Recommend(boundary).key ~= "HEROIC_STRIKE")
+    Check("Heroic Strike can queue before the swing midpoint without Slam",
+        P:Recommend(boundary).key == "HEROIC_STRIKE")
     boundary.swing.remaining = 1.75
     Check("funded Heroic Strike can queue at the midpoint",
         P:Recommend(boundary).key == "HEROIC_STRIKE")
@@ -1694,8 +1694,11 @@ dumpState = State({ rage = 100, gcd = 0.5,
     cooldowns = CoreCooldowns(0, 5),
     swing = { active = true, remaining = 3, speed = 3.5, slamCast = 1.5 },
 })
-Check("a safe single-target Slam window is not replaced by Heroic Strike",
-    P:Recommend(dumpState).key ~= "HEROIC_STRIKE")
+Check("full rage queues Heroic Strike before a GCD-locked safe Slam",
+    P:Recommend(dumpState).key == "HEROIC_STRIKE")
+dumpState.swing.queuePending, dumpState.swing.pendingKey = true, "HEROIC_STRIKE"
+Check("pending Heroic Strike leaves the funded Slam waiting only for GCD",
+    P:Recommend(dumpState).key == "SLAM" and P:Recommend(dumpState).state == "gcd")
 
 dumpState = State({ mode = "aoe", rage = 100, gcd = 1,
     cooldowns = CoreCooldowns(5, 0),
@@ -1721,8 +1724,8 @@ dumpState = State({ mode = "aoe", rage = 100,
     cooldowns = CoreCooldowns(4, 4, 99, 5),
     swing = { active = true, remaining = 3, speed = 3.63, slamCast = 2 },
 })
-Check("high-rage AoE preserves a funded Slam before Cleave",
-    P:Recommend(dumpState).key == "SLAM")
+Check("high-rage AoE queues Cleave before a funded Slam",
+    P:Recommend(dumpState).key == "CLEAVE")
 dumpState.swing.cleaveQueued = true
 Check("queued Cleave preserves the funded Slam",
     P:Recommend(dumpState).key == "SLAM")
@@ -1731,6 +1734,340 @@ dumpState = State({ mode = "aoe", rage = 100, gcd = 1,
     cooldowns = CoreCooldowns(0, 5, 99, 0) })
 Check("GCD dump cannot bypass preparation for Sweeping Strikes",
     P:Recommend(dumpState).key ~= "CLEAVE")
+
+-- Turtle permits Heroic Strike/Cleave then Slam in one swing; both stay funded.
+do
+    local function PairedState(values)
+        local state = State({ rage = 100, cooldowns = CoreCooldowns(4, 4),
+            swing = { active = true, remaining = 3, speed = 3.5,
+                slamCast = 2, slamCapable = true } })
+        for key, value in pairs(values or {}) do state[key] = value end
+        return state
+    end
+    for _, mode in ipairs({ "single", "aoe" }) do
+        local key = mode == "single" and "HEROIC_STRIKE" or "CLEAVE"
+        for _, fury in ipairs({ false, true }) do
+            flurryRank = fury and 5 or 0
+            for _, hp in ipairs({ 100, 20 }) do
+                local state = PairedState({ mode = mode, targetHP = hp, rage = 130, maxRage = 130 })
+                local paired = mode == "aoe" or fury or hp > 20
+                Check(key .. " before Slam respects spec and phase " .. tostring(fury) .. "/" .. hp,
+                    P:Recommend(state).key == (paired and key or "SLAM"))
+                state.gcd = 0.5
+                Check(key .. " can precede the planned Slam during GCD",
+                    P:Recommend(state).key == (paired and key or "SLAM"))
+                state.gcd = 0
+                state.swing.queuePending, state.swing.pendingKey = true, key
+                Check("pending " .. key .. " permits the same-cycle funded Slam",
+                    P:Recommend(state).key == "SLAM")
+                state.swing.queuePending = false
+                state.swing[key == "CLEAVE" and "cleaveQueued" or "hsQueued"] = true
+                Check("confirmed " .. key .. " permits the same-cycle funded Slam",
+                    P:Recommend(state).key == "SLAM")
+                state.rage = (key == "CLEAVE" and 20 or 15) + 14
+                Check("queued " .. key .. " cannot spend its own reserved rage on Slam",
+                    P:Recommend(state).key ~= "SLAM")
+            end
+            -- On-swing + current Slam + MS + WW (+ next Fury Slam).
+            local required = (fury and 100 or 85) + (mode == "aoe" and 5 or 0)
+            local state = PairedState({ mode = mode, rage = required - 1,
+                maxRage = 130, predictedMainHandRage = 100 })
+            Check(key .. " cannot spend current/core/next-Slam reserves " .. tostring(fury),
+                P:Recommend(state).key == "SLAM")
+            state.rage = required
+            Check("exact current/core/next-Slam budget permits " .. key .. " " .. tostring(fury),
+                P:Recommend(state).key == key)
+        end
+    end
+    flurryRank = 0
+    local state = PairedState({ rage = 99 })
+    Check("planned Slam does not hide the current rage dump opportunity",
+        P:Recommend(state).key == "HEROIC_STRIKE")
+    state.rage, state.maxRage, state.predictedMainHandRage = 99, 130, 30
+    Check("paired overflow respects the actual 130-rage cap",
+        P:Recommend(state).key == "SLAM")
+    state.rage = 100
+    Check("paired overflow starts at the current-rage 130-rage boundary",
+        P:Recommend(state).key == "HEROIC_STRIKE")
+    state.rage, state.predictedMainHandRage = 130, nil
+    Check("full rage permits the pair without white-rage prediction",
+        P:Recommend(state).key == "HEROIC_STRIKE")
+    state.rage = 129
+    Check("missing prediction cannot invent pre-Slam overflow below the cap",
+        P:Recommend(state).key == "SLAM")
+
+    local oldHeroicRank = improvedHeroicStrikeRank
+    improvedHeroicStrikeRank = 3
+    state = PairedState({ rage = 105, maxRage = 130, predictedMainHandRage = 39,
+        gcd = 1.3, cooldowns = CoreCooldowns(2, 10),
+        swing = { active = true, remaining = 3.152, speed = 3.555,
+            slamCast = 2, slamCapable = true } })
+    Check("logged 105-rage GCD window queues talented Heroic Strike before Slam",
+        P:Recommend(state).key == "HEROIC_STRIKE")
+    state.swing.queuePending, state.swing.pendingKey = true, "HEROIC_STRIKE"
+    Check("logged Heroic Strike then leaves the funded Slam waiting for its GCD",
+        P:Recommend(state).key == "SLAM" and P:Recommend(state).state == "gcd")
+    state.swing.queuePending, state.swing.pendingKey, state.rage = false, nil, 90
+    Check("90 rage plus 39 predicted remains below the paired dump boundary",
+        P:Recommend(state).key == "SLAM")
+    state.rage = 91
+    Check("91 rage plus 39 predicted opens the paired dump boundary",
+        P:Recommend(state).key == "HEROIC_STRIKE")
+    state.rage, state.predictedMainHandRage = 56, 100
+    Check("predicted overflow cannot consume the 57-rage Heroic/Slam/core budget",
+        P:Recommend(state).key == "SLAM")
+    state.rage = 57
+    Check("the exact talented 57-rage budget permits the funded pair",
+        P:Recommend(state).key == "HEROIC_STRIKE")
+    improvedHeroicStrikeRank = oldHeroicRank
+    P:ResetRuntime()
+
+    state = PairedState({ rage = 29, predictedMainHandRage = 100,
+        rotationDB = { useStrike = false, useWhirlwind = false } })
+    Check("even without core skills the pair reserves both spell costs",
+        P:Recommend(state).key == "SLAM")
+    state.rage = 30
+    Check("exact Heroic Strike plus Slam cost suffices without core reserves",
+        P:Recommend(state).key == "HEROIC_STRIKE")
+    state = PairedState()
+    state.swing.remaining = 1.84
+    Check("paired Heroic Strike allows the configured 0.16-second Slam delay",
+        P:Recommend(state).key == "HEROIC_STRIKE")
+    state.swing.queuePending, state.swing.pendingKey = true, "HEROIC_STRIKE"
+    Check("the clipped Slam follows pending Heroic Strike",
+        P:Recommend(state).key == "SLAM")
+    state = PairedState()
+    state.swing.remaining = 1.82
+    Check("a missed Slam clip window still permits independent Heroic Strike",
+        P:Recommend(state).key == "HEROIC_STRIKE")
+    state.swing.remaining, state.swing.slamUsed = 0.20, true
+    Check("full rage retains the 0.20-second next-swing submission guard",
+        P:Recommend(state).key ~= "HEROIC_STRIKE")
+    state = PairedState({ rotationDB = { useSlam = false } })
+    Check("disabled Slam does not prevent early Heroic Strike",
+        P:Recommend(state).key == "HEROIC_STRIKE")
+    state = PairedState({ swing = { active = false } })
+    Check("missing swing provider cannot schedule the pair",
+        P:Recommend(state).key == "WAIT")
+
+    state = PairedState({ mode = "aoe", rage = 94 })
+    Check("pre-Slam Cleave retains its configured current-rage threshold",
+        P:Recommend(state).key == "SLAM")
+    state.rage = 95
+    Check("pre-Slam Cleave opens at the funded current-rage threshold",
+        P:Recommend(state).key == "CLEAVE")
+    state.rage, state.predictedMainHandRage = 90, 24
+    Check("Cleave overflow prediction accounts for Slam's rage cost",
+        P:Recommend(state).key == "SLAM")
+    state.predictedMainHandRage = 25
+    Check("post-Slam overflow permits Cleave below the configured threshold",
+        P:Recommend(state).key == "CLEAVE")
+    state = PairedState({ mode = "aoe", sweepingStrikes = true,
+        sweepingStacks = 3, sweepingRemaining = 6 })
+    Check("Cleave plus Slam cannot exhaust Sweeping before Whirlwind",
+        P:Recommend(state).key == "SLAM")
+    state.sweepingStacks = 4
+    Check("Cleave plus Slam may leave one Sweeping charge for Whirlwind",
+        P:Recommend(state).key == "CLEAVE")
+    state = PairedState({ mode = "aoe" })
+    state.swing.remaining = 1.84
+    Check("Cleave can precede a Slam with the allowed 0.16-second clip",
+        P:Recommend(state).key == "CLEAVE")
+    state.swing.queuePending, state.swing.pendingKey = true, "CLEAVE"
+    Check("a clipped Slam follows pending Cleave without requeuing",
+        P:Recommend(state).key == "SLAM")
+    state.mode = "single"
+    Check("switching to single target preserves Slam after queued Cleave",
+        P:Recommend(state).key == "SLAM")
+    state = PairedState({ mode = "aoe" })
+    state.swing.remaining, state.swing.slamUsed = 0.20, true
+    Check("pre-Slam Cleave changes retain the next-swing tail guard",
+        P:Recommend(state).key ~= "CLEAVE")
+    state = PairedState({ mode = "aoe", rotationDB = { useSlam = false } })
+    Check("disabled Slam does not prevent early Cleave",
+        P:Recommend(state).key == "CLEAVE")
+    known.SLAM = false
+    state = PairedState({ mode = "aoe" })
+    Check("unlearned Slam does not prevent early Cleave",
+        P:Recommend(state).key == "CLEAVE")
+    known.SLAM = true
+    state = PairedState({ mode = "aoe", swing = { active = false } })
+    Check("Cleave plus Slam falls back without the swing provider",
+        P:Recommend(state).key == "WAIT")
+
+    for _, mode in ipairs({ "single", "aoe" }) do
+        local key = mode == "single" and "HEROIC_STRIKE" or "CLEAVE"
+        for _, fury in ipairs({ false, true }) do
+            flurryRank = fury and 5 or 0
+            state = PairedState({ mode = mode, gcd = 1.4, rage = 130, maxRage = 130 })
+            Check(key .. " queues independently when GCD leaves no Slam window " .. tostring(fury),
+                P:Recommend(state).key == key)
+            local required = (mode == "single" and 70 or 75) + (fury and 15 or 0)
+            state.rage, state.predictedMainHandRage = required - 1, 100
+            Check(key .. " still protects core and next-Slam costs without a current Slam",
+                P:Recommend(state).key ~= key)
+            state.rage = required
+            Check(key .. " permits an exactly funded independent queue",
+                P:Recommend(state).key == key)
+            state.swing.queuePending, state.swing.pendingKey = true, key
+            Check("pending independent " .. key .. " neither repeats nor invents a Slam window",
+                P:Recommend(state).key ~= key and P:Recommend(state).key ~= "SLAM")
+        end
+        flurryRank = 0
+        state = PairedState({ mode = mode })
+        state.swing.slamUsed = true
+        Check("a consumed current-cycle Slam does not prevent early " .. key,
+            P:Recommend(state).key == key)
+    end
+    state = PairedState({ mode = "aoe", gcd = 1.4, sweepingStrikes = true,
+        sweepingStacks = 2, sweepingRemaining = 6 })
+    Check("independent early Cleave preserves Whirlwind's last Sweeping charge",
+        P:Recommend(state).key ~= "CLEAVE")
+    state.sweepingStacks = 3
+    Check("independent early Cleave may leave a Sweeping charge for Whirlwind",
+        P:Recommend(state).key == "CLEAVE")
+
+    for _, fury in ipairs({ false, true }) do
+        flurryRank = fury and 5 or 0
+        local required = fury and 130 or 115
+        state = PairedState({ rage = required - 1, maxRage = 130, predictedMainHandRage = 100,
+            gcd = 0.5, cooldowns = CoreCooldowns(0, 4),
+            swing = { active = true, remaining = 3.5, speed = 3.5,
+                slamCast = 1.5, slamCapable = true } })
+        Check("GCD-locked Mortal Strike reserves current Slam and both core uses " .. tostring(fury),
+            P:Recommend(state).key == "MORTAL_STRIKE")
+        state.rage = required
+        Check("exact GCD-locked core and Slam budget permits Heroic Strike " .. tostring(fury),
+            P:Recommend(state).key == "HEROIC_STRIKE")
+        state = PairedState({ rage = required - 1, maxRage = 130, predictedMainHandRage = 100,
+            cooldowns = CoreCooldowns(0.5, 4),
+            swing = { active = true, remaining = 4, speed = 4,
+                slamCast = 2, slamCapable = true } })
+        Check("waiting for Mortal Strike protects two uses before the next white " .. tostring(fury),
+            P:Recommend(state).key == "AUTO_ATTACK")
+        state.rage = required
+        Check("funded Heroic Strike may queue while waiting for Mortal Strike " .. tostring(fury),
+            P:Recommend(state).key == "HEROIC_STRIKE")
+        state.swing.slamCast = 3
+        state.rage = required - 31
+        Check("planned long Slam retains one core use and its current/next Slam budgets",
+            P:Recommend(state).key == "SLAM")
+        state.rage = required - 30
+        Check("planned long Slam shifts the second Mortal Strike beyond the next white",
+            P:Recommend(state).key == "HEROIC_STRIKE")
+    end
+    flurryRank = 0
+    state = PairedState({ cooldowns = CoreCooldowns(4, 0.3),
+        swing = { active = true, remaining = 4, speed = 4,
+            slamCast = 1.5, slamCapable = true } })
+    Check("funded Heroic Strike may queue while waiting for Whirlwind",
+        P:Recommend(state).key == "HEROIC_STRIKE")
+
+    local oldSetMode, oldBuildState = D.SetMode, D.BuildState
+    local oldPrepare, oldUpdate, oldMark = D.PrepareExecutionTarget, D.Update, D.MarkOnSwingQueued
+    local oldCast, oldNoQueue = CastSpellByName, CastSpellByNameNoQueue
+    local casts = {}
+    D.SetMode, D.Update = function() end, function() end
+    D.BuildState = function() return state end
+    D.PrepareExecutionTarget = function() return false end
+    D.MarkOnSwingQueued = function(_, key, swing)
+        swing.queuePending, swing.pendingKey = true, key
+    end
+    CastSpellByNameNoQueue = function(name) table.insert(casts, name) end
+    CastSpellByName = function(name)
+        table.insert(casts, name)
+        state.casting = true
+    end
+    for _, mode in ipairs({ "single", "aoe" }) do
+        local key = mode == "single" and "HEROIC_STRIKE" or "CLEAVE"
+        state, casts = PairedState({ mode = mode }), {}
+        Check("first keypress queues only " .. key .. " before the swing midpoint",
+            P:Execute(mode) and #casts == 1 and casts[1] == D:GetName(key))
+        Check("second keypress starts Slam while " .. key .. " confirmation is pending",
+            P:Execute(mode) and #casts == 2 and casts[2] == D:GetName("SLAM"))
+        Check("further keypresses cannot repeat " .. key .. " or interrupt Slam",
+            not P:Execute(mode) and #casts == 2)
+        state, casts = PairedState({ mode = mode, gcd = 1.4 }), {}
+        Check("execution queues " .. key .. " even when the current GCD prevents Slam",
+            P:Execute(mode) and #casts == 1 and casts[1] == D:GetName(key))
+        Check("execution does not repeat independent " .. key .. " during its pending window",
+            not P:Execute(mode) and #casts == 1)
+        state.gcd = 0
+        Check("a later unlocked keypress may Slam after independently queued " .. key,
+            P:Execute(mode) and #casts == 2 and casts[2] == D:GetName("SLAM"))
+        state, casts = PairedState({ mode = mode }), {}
+        state.swing.remaining = 0.20
+        Check("execution retains the final swing submission guard for " .. key,
+            not P:Execute(mode) and #casts == 0)
+    end
+    local oldGetRage, oldNow = D.GetRage, now
+    D.GetRage = function() return state.rage end
+    for _, mode in ipairs({ "single", "aoe" }) do
+        local key = mode == "single" and "HEROIC_STRIKE" or "CLEAVE"
+        state, casts = PairedState({ mode = mode, rage = 70, maxRage = 130 }), {}
+        Check(mode .. " Slam does not wait without a recent damaging white hit",
+            P:Recommend(state).key == "SLAM")
+        P:OnEvent("AUTO_ATTACK_SELF", "player", "target", 1570)
+        now = now + 0.012
+        state.now = now
+        Check(mode .. " keypress 12ms after white hit waits for stale 70 rage",
+            P:Recommend(state).key == "WAIT" and not P:Execute(mode) and #casts == 0)
+        now = now + 0.196
+        state.now, state.rage = now, 130
+        P:OnEvent("UNIT_RAGE", "player")
+        Check(mode .. " settled 130 rage first executes " .. key,
+            P._swingRagePendingUntil == nil and P._swingRageBefore == nil
+                and P:Execute(mode) and #casts == 1 and casts[1] == D:GetName(key))
+        Check(mode .. " settled queue then permits Slam on the next keypress",
+            P:Execute(mode) and #casts == 2 and casts[2] == D:GetName("SLAM"))
+
+        state = PairedState({ mode = mode, rage = 70, maxRage = 130 })
+        P:OnEvent("AUTO_ATTACK_SELF", "player", "target", 0)
+        Check(mode .. " zero-damage white hit does not delay Slam",
+            P:Recommend(state).key == "SLAM")
+        P:OnEvent("AUTO_ATTACK_SELF", "player", "target", 1570)
+        P:OnEvent("UNIT_RAGE", "target")
+        Check(mode .. " another unit's resource update does not release stale player rage",
+            P:Recommend(state).key == "WAIT")
+        state.rage = 71
+        Check(mode .. " changed rage releases Slam without a UNIT_RAGE event",
+            P:Recommend(state).key == "SLAM" and P._swingRagePendingUntil == nil)
+        P:OnEvent("AUTO_ATTACK_SELF", "player", "target", 1570)
+        state.now = P._swingRagePendingUntil - 0.001
+        Check(mode .. " unchanged rage remains held just before the bounded deadline",
+            P:Recommend(state).key == "WAIT")
+        state.now = P._swingRagePendingUntil
+        Check(mode .. " missing rage events cannot hold Slam beyond 0.30 seconds",
+            P:Recommend(state).key == "SLAM" and P._swingRagePendingUntil == nil)
+
+        state = PairedState({ mode = mode, rage = 70, maxRage = 130 })
+        P:OnEvent("AUTO_ATTACK_SELF", "player", "target", 1570)
+        state.swing.queuePending, state.swing.pendingKey = true, key
+        Check(mode .. " an existing on-swing queue permits immediate Slam",
+            P:Recommend(state).key == "SLAM")
+        state = PairedState({ mode = mode, rage = 130, maxRage = 130 })
+        P:OnEvent("AUTO_ATTACK_SELF", "player", "target", 1570)
+        Check(mode .. " already full rage can immediately queue its dump",
+            P:Recommend(state).key == key)
+        state = PairedState({ mode = mode, rage = 70, maxRage = 130,
+            cooldowns = CoreCooldowns(0, 0),
+            swing = { active = true, remaining = 4, speed = 4,
+                slamCast = 1.5, slamCapable = true } })
+        P:OnEvent("AUTO_ATTACK_SELF", "player", "target", 1570)
+        Check(mode .. " the settlement wait does not hold an immediate core skill",
+            P:Recommend(state).key == (mode == "single" and "MORTAL_STRIKE" or "WHIRLWIND"))
+        state = PairedState({ mode = mode, rage = 70, maxRage = 130 })
+        P:OnEvent("AUTO_ATTACK_SELF", "player", "target", 1570)
+        P:ResetRuntime()
+        Check(mode .. " runtime reset clears pending rage settlement",
+            P:Recommend(state).key == "SLAM" and P._swingRageBefore == nil)
+    end
+    D.GetRage, now = oldGetRage, oldNow
+    D.SetMode, D.BuildState = oldSetMode, oldBuildState
+    D.PrepareExecutionTarget, D.Update, D.MarkOnSwingQueued = oldPrepare, oldUpdate, oldMark
+    CastSpellByName, CastSpellByNameNoQueue = oldCast, oldNoQueue
+    P:ResetRuntime()
+end
 
 for rank = 0, 3 do
     improvedHeroicStrikeRank = rank
@@ -1866,18 +2203,18 @@ do
             { rage = 60, swing = Swing(1.55), cooldowns = CoreCooldowns(99, 0) }, "WHIRLWIND" },
         { "Fury does not reserve Execute rage before Whirlwind",
             { rage = 25, swing = Swing(1.55), cooldowns = CoreCooldowns(99, 0) }, "WHIRLWIND" },
-        { "Fury keeps a full-rage Slam window",
-            { rage = 100, swing = Swing(2.55) }, "SLAM" },
-        { "Fury AoE keeps a full-rage Slam window before Cleave",
-            { mode = "aoe", rage = 100, swing = Swing(2.55) }, "SLAM" },
-        { "Fury AoE does not queue Cleave at swing start during GCD",
-            { mode = "aoe", rage = 100, gcd = 1.5, swing = Swing(2.55, true) }, "WAIT" },
-        { "Fury single does not queue Heroic Strike at swing start during GCD",
-            { rage = 100, gcd = 1.5, swing = Swing(2.55, true) }, "WAIT" },
-        { "Fury AoE preserves a safe Slam even in the second half",
+        { "Fury queues Heroic Strike before a full-rage Slam",
+            { rage = 100, swing = Swing(2.55) }, "HEROIC_STRIKE" },
+        { "Fury AoE queues Cleave before a full-rage Slam",
+            { mode = "aoe", rage = 100, swing = Swing(2.55) }, "CLEAVE" },
+        { "Fury AoE can queue Cleave at swing start during GCD",
+            { mode = "aoe", rage = 100, gcd = 1.5, swing = Swing(2.55, true) }, "CLEAVE" },
+        { "Fury single can queue Heroic Strike at swing start during GCD",
+            { rage = 100, gcd = 1.5, swing = Swing(2.55, true) }, "HEROIC_STRIKE" },
+        { "Fury AoE queues Cleave before a safe second-half Slam",
             { mode = "aoe", rage = 100, swing = {
                 active = true, remaining = 2, speed = 4, slamCast = 1.5,
-                slamCapable = true } }, "SLAM" },
+                slamCapable = true } }, "CLEAVE" },
         { "Fury can spend its last fifteen rage on safe Slam",
             { rage = 15, swing = Swing(2.55) }, "SLAM" },
         { "Fury tail Execute cannot delete the next fast-swing Slam",
@@ -2082,12 +2419,12 @@ do
     D.TraceSwingExecution = function(_, _, _, _, action) traced = action.key end
     for _, key in ipairs({ "SLAM", "HEROIC_STRIKE", "CLEAVE" }) do
         live = State({ rage = 100, mode = key == "CLEAVE" and "aoe" or "single" })
-        if key == "SLAM" then live.swing.remaining = 3.4 end
+        if key == "SLAM" then live.swing.remaining, live.rage = 3.4, 80 end
         marked, traced, castName = nil, nil, nil
         CastSpellByName = function(name)
             castName = name
             local refreshed = State({ rage = 100 })
-            if key ~= "SLAM" then refreshed.swing.remaining = 3.4 end
+            if key ~= "SLAM" then refreshed.swing.remaining, refreshed.rage = 3.4, 30 end
             P:Recommend(refreshed)
         end
         CastSpellByNameNoQueue = CastSpellByName
@@ -2095,6 +2432,38 @@ do
             P:Execute(live.mode) and castName == D:GetName(key)
                 and traced == key and marked == (key ~= "SLAM" and key or nil))
     end
+    local oldDebug, oldPending, oldFlurry = D.debugMode, D._pendingOnSwing, flurryRank
+    local tracedReason
+    flurryRank = 5
+    D.TraceSwingExecution = function(_, _, _, _, action) tracedReason = action.reason end
+    for _, debug in ipairs({ true, false }) do
+        D.debugMode = debug
+        D._pendingOnSwing = { key = "HEROIC_STRIKE", queuedAt = now - 0.25 }
+        live = State({ rage = 130, maxRage = 130, cooldowns = CoreCooldowns(4, 4),
+            swing = { active = true, remaining = 3.5, speed = 3.5, slamCast = 1.92,
+                slamCapable = true, queuePending = true, pendingKey = "HEROIC_STRIKE" } })
+        live.cooldowns.BLOODTHIRST = { remaining = 4, duration = 6 }
+        CastSpellByName = function()
+            live.rage, live.maxRage = 12, 100
+            live.swing.queuePending, live.swing.pendingKey, live.swing.slamUsed = false, nil, true
+            D._pendingOnSwing = nil
+            P:Recommend(live)
+        end
+        tracedReason = nil
+        Check("pending full-rage Slam executes with diagnostic mode " .. tostring(debug),
+            P:Execute("single") and tracedReason ~= nil)
+        if debug then
+            Check("Slam diagnostics freeze pre-cast budget, rage, queue and age despite synchronous events",
+                string.find(tracedReason,
+                    "dump=HEROIC_STRIKE need=100 rage=130/130 hs=false cleave=false pending=true pendingAge=0.250 expectedId="
+                        .. D.Spells.HEROIC_STRIKE.spellId .. " fury=true hp=100.0 gcd=0.000", 1, true) ~= nil)
+        else
+            Check("ordinary Slam execution does not append dump diagnostics",
+                string.find(tracedReason, "dump=", 1, true) == nil)
+        end
+    end
+    D.debugMode, D._pendingOnSwing, flurryRank = oldDebug, oldPending, oldFlurry
+    P:ResetRuntime()
     D.SetMode, D.BuildState = oldSetMode, oldBuildState
     D.PrepareExecutionTarget, D.Update = oldPrepare, oldUpdate
     D.MarkOnSwingQueued, D.TraceSwingExecution = oldMark, oldTrace

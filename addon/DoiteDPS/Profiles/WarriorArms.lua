@@ -627,6 +627,8 @@ function P:ResetRuntime()
     self._slamUsedInCycle = false
     self._returnToBerserkerAfterOverpower = false
     self._pendingSunderUntil = nil
+    self._swingRagePendingUntil = nil
+    self._swingRageBefore = nil
     self._unbridledWrathRank = nil
     self._improvedExecuteRank = nil
     self._improvedHeroicStrikeRank = nil
@@ -666,9 +668,20 @@ function P:ObserveSwingCycle(swing)
 end
 
 -- 天赋／技能变化时清缓存；施法事件更新猛击次数、破甲防重标记和独立技能冷却。
-function P:OnEvent(eventName, a1, a2)
+function P:OnEvent(eventName, a1, a2, a3)
     if eventName == "PLAYER_ENTERING_WORLD" then
         self:ResetRuntime()
+        return
+    end
+    if eventName == "AUTO_ATTACK_SELF" and (tonumber(a3) or 0) > 0 then
+        -- 白字周期先重置，UNIT_RAGE 可能稍后才到；不能抢先按旧怒气读猛击。
+        -- ponytail: 最多等 0.30 秒；若实机同步更慢，再按日志调整上限。
+        self._swingRageBefore = D:GetRage()
+        self._swingRagePendingUntil = GetTime() + 0.30
+        return
+    elseif eventName == "UNIT_RAGE" and a1 == "player" then
+        self._swingRagePendingUntil = nil
+        self._swingRageBefore = nil
         return
     end
     if eventName == "SPELLS_CHANGED"
@@ -862,12 +875,12 @@ local function CanCastExecuteOnCurrentSwing(state)
 end
 
 -- 本地白字计时可能落后于服务器，最后 0.20 秒内不再提交英勇／顺劈排队请求。
--- 英勇／顺劈只在后半周期泄怒，不因 GCD 或猛击次数标记而抢占新周期起点。
+-- 排队独立于 GCD 和猛击窗口；是否泄怒由成本与核心预算决定。
 local function CanQueueOnCurrentSwing(state)
     local swing = state and state.swing
     local remaining = swing and tonumber(swing.remaining)
     local speed = swing and tonumber(swing.speed)
-    if not remaining or not speed or speed <= 0 or remaining > speed * 0.5 then
+    if not remaining or not speed or speed <= 0 then
         return false
     end
     return swing and swing.active and remaining
@@ -964,13 +977,10 @@ local function CanWaitForInstantThenSlam(state, key, minimumLock)
 end
 
 -- 返回 (useSlamNow, instantBeforeSlam)。第二个值表示先打该瞬发后，仍保留足够
--- 怒气和白字时间接一次猛击。
+-- 怒气和白字时间接一次猛击。英勇／顺劈队列不排斥猛击，Ready 已扣除其预留怒气。
 local function ShouldUseSlam(state, minimumLock)
     local aoe = P:NormalizeMode(state.mode) == "aoe"
-    local queued = IsOnSwingQueued(state)
-    local aoeCleave = aoe and IsCleaveQueued(state)
     if state.stance == 2 or not Ready(state, "SLAM")
-        or (queued and not aoeCleave and not P:IsFury())
         or not SlamFits(state, minimumLock) then
         return false
     end
@@ -1176,14 +1186,25 @@ local function OnSwingReserve(state, plannedKey)
     local nextRageAt = (tonumber(state.swing.remaining) or 0)
         + speed
     local reserve = plannedKey and Cost(state, plannedKey) or 0
-    if plannedKey ~= "WHIRLWIND" and Enabled(state, "WHIRLWIND")
-        and CooldownRemaining(state, "WHIRLWIND") <= nextRageAt then
-        reserve = reserve + Cost(state, "WHIRLWIND")
+    if plannedKey ~= "SLAM" and SlamFits(state) then
+        reserve = reserve + Cost(state, "SLAM")
     end
     local strike = StrikeKey()
-    if plannedKey ~= strike and Enabled(state, strike)
-        and CooldownRemaining(state, strike) <= nextRageAt then
-        reserve = reserve + Cost(state, strike)
+    local start = math.max(tonumber(state.gcd) or 0,
+        plannedKey and CooldownRemaining(state, plannedKey) or 0)
+    local actionLock = plannedKey == "SLAM"
+        and math.max(GCD_LOCK, tonumber(state.swing.slamCast) or 2.5)
+        or (plannedKey and GCD_LOCK or 0)
+    -- 提前排队可能覆盖两次核心冷却；计划动作的时间和成本只计一次。
+    for _, key in ipairs(CORE_STRIKES) do
+        if (key == strike or key == "WHIRLWIND") and Enabled(state, key) then
+            local firstAt = math.max(CooldownRemaining(state, key),
+                start + (plannedKey == key and 0 or actionLock))
+            local casts = firstAt <= nextRageAt
+                and math.floor((nextRageAt - firstAt) / BaseCooldown(key)) + 1 or 0
+            if plannedKey == key then casts = math.max(0, casts - 1) end
+            reserve = reserve + casts * Cost(state, key)
+        end
     end
     if P:IsFury() and Enabled(state, "SLAM") and state.swing.slamCapable ~= false then
         reserve = reserve + Cost(state, "SLAM")
@@ -1191,23 +1212,24 @@ local function OnSwingReserve(state, plannedKey)
     return reserve
 end
 
--- 预计下一刀触顶且核心预算充足时才排队英勇，避开猛击窗口与白字尾部。
+-- 预计下一刀触顶且核心预算充足时才排队英勇；猛击前排队保留两者及核心成本。
 -- 深武器在斩杀阶段关闭此出口，狂暴保留它处理溢怒。
 local function ShouldQueueHeroicStrike(state, plannedKey)
     if (IsExecutePhase(state) and not P:IsFury()) or not D:IsKnown("HEROIC_STRIKE")
         or IsOnSwingQueued(state) or not CanQueueOnCurrentSwing(state)
-        or SlamFits(state)
         or (tonumber(state.rage) or 0)
             < Cost(state, "HEROIC_STRIKE") + OnSwingReserve(state, plannedKey) then
         return false
     end
     local predicted = tonumber(state.predictedMainHandRage) or 0
-    return (tonumber(state.rage) or 0) + predicted
-        >= (tonumber(state.maxRage) or 100)
+    local rage = tonumber(state.rage) or 0
+    local maxRage = tonumber(state.maxRage) or 100
+    -- 猛击成本已在预算中保留，不能再拿尚未施放的猛击抵消眼前的泄怒机会。
+    return rage >= maxRage or rage + predicted >= maxRage
 end
 
 -- 顺劈只用于泄怒，不是核心动作：必须预留当前计划 GCD 技能，以及即将可用的
--- 已学核心瞬发的怒气，并保护横扫层数。
+-- 已学核心瞬发的怒气，并保护横扫层数；可先排顺劈再接计划猛击。
 -- 深武器到点斩杀时禁止顺劈，狂暴则继续按资源与横扫预算判断。
 local function ShouldQueueCleave(
     state,
@@ -1217,7 +1239,7 @@ local function ShouldQueueCleave(
 )
     if sweepingPending or (executeDue and not P:IsFury()) or not D:IsKnown("CLEAVE")
         or IsOnSwingQueued(state)
-        or not CanQueueOnCurrentSwing(state) or SlamFits(state) then
+        or not CanQueueOnCurrentSwing(state) then
         return false
     end
 
@@ -1389,6 +1411,9 @@ local function RecommendSingle(action, state)
 
     local slamNow, instantBeforeSlam = ShouldUseSlam(state)
     if slamNow then
+        if ShouldQueueHeroicStrike(state, "SLAM") then
+            return SetAction(action, "HEROIC_STRIKE", R.HEROIC_STRIKE, "queue")
+        end
         return ApplyGCD(SetAction(action, "SLAM", R.SLAM), state)
     end
 
@@ -1399,6 +1424,9 @@ local function RecommendSingle(action, state)
                 instantBeforeSlam,
                 R[instantBeforeSlam]
             ), state)
+        end
+        if ShouldQueueHeroicStrike(state, instantBeforeSlam) then
+            return SetAction(action, "HEROIC_STRIKE", R.HEROIC_STRIKE, "queue")
         end
         return WaitAction(action, state)
     end
@@ -1528,6 +1556,13 @@ end
 -- 统一推荐入口：先处理目标、距离和姿态，再分发单体／群体；GCD 中仍可独立建议排队泄怒。
 function P:Recommend(state)
     local action = self._rec
+    local rageWait = self._swingRagePendingUntil
+        and self._swingRagePendingUntil - (tonumber(state.now) or GetTime()) or 0
+    if rageWait <= 0 or state.rage ~= self._swingRageBefore then
+        self._swingRagePendingUntil = nil
+        self._swingRageBefore = nil
+        rageWait = 0
+    end
     if not state.targetValid then
         return SetAction(action, "WAIT", D.Text.WAIT_TARGET, "disabled")
     end
@@ -1581,9 +1616,13 @@ function P:Recommend(state)
             if ShouldQueueCleave(state, sweepingPending, action.key, ExecuteDue(state)) then
                 return SetAction(action, "CLEAVE", R.CLEAVE, "queue")
             end
-        elseif action.key ~= "SLAM" and ShouldQueueHeroicStrike(state, action.key) then
+        elseif ShouldQueueHeroicStrike(state, action.key) then
             return SetAction(action, "HEROIC_STRIKE", R.HEROIC_STRIKE, "queue")
         end
+    end
+    if action.key == "SLAM" and rageWait > 0 and not IsOnSwingQueued(state)
+        and (tonumber(state.rage) or 0) < (tonumber(state.maxRage) or 100) then
+        return SetAction(action, "WAIT", R.WAIT_RAGE, "wait", rageWait)
     end
     return action
 end
@@ -1818,6 +1857,23 @@ function P:Execute(mode)
     local submitted = {}
     for key, value in pairs(action) do submitted[key] = value end
     action = submitted
+    -- 只在调试时冻结按键当刻的泄怒预算／队列，避免施法事件刷新 State 后丢失原因。
+    if D.debugMode and action.key == "SLAM" then
+        local dumpKey = mode == "aoe" and "CLEAVE" or "HEROIC_STRIKE"
+        local swing = state.swing or {}
+        local pending = D._pendingOnSwing
+        local spell = D.Spells and D.Spells[dumpKey]
+        action.reason = string.format(
+            "%s | dump=%s need=%d rage=%d/%d hs=%s cleave=%s pending=%s pendingAge=%.3f expectedId=%s fury=%s hp=%.1f gcd=%.3f",
+            action.reason or "", dumpKey,
+            Cost(state, dumpKey) + OnSwingReserve(state, "SLAM"),
+            tonumber(state.rage) or 0, tonumber(state.maxRage) or 100,
+            tostring(swing.hsQueued == true), tostring(swing.cleaveQueued == true),
+            tostring(swing.queuePending == true),
+            pending and GetTime() - (tonumber(pending.queuedAt) or GetTime()) or -1,
+            tostring(spell and spell.spellId), tostring(self:IsFury()),
+            tonumber(state.targetHP) or 100, tonumber(state.gcd) or 0)
+    end
     CastRecommendedAction(action)
     if action.key == "HEROIC_STRIKE" or action.key == "CLEAVE" then
         D:MarkOnSwingQueued(action.key, state.swing)
