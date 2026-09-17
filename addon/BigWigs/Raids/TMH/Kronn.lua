@@ -73,7 +73,7 @@ L:RegisterTranslations("zhCN", function() return {
     dreamfever_name = "狂热梦境警报",
     dreamfever_desc = "当有人受到狂热梦境影响时发出警告并标记",
 
-    trigger_feverYou = "你受到了狂热梦境效果的影响",
+    trigger_feverYou = "^你受到了狂热梦境效果的影响",
     trigger_feverOther = "(.+)受到了狂热梦境效果的影响",
     trigger_feverFadeYou = "狂热梦境效果从你身上消失了",
     trigger_feverFadeOther = "狂热梦境效果从(.+)身上消失",

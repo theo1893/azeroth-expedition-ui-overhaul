@@ -50,7 +50,7 @@ L:RegisterTranslations("zhCN", function() return {
     trigger_spearFade = "木喉之矛效果从哨兵卡什身上消失",
     trigger_roarCast = "哨兵卡什的狂怒咆哮击中",
 
-    trigger_seedYou = "你受到了腐蚀之种效果的影响",
+    trigger_seedYou = "^你受到了腐蚀之种效果的影响",
     trigger_seedOther = "(.+)受到了腐蚀之种效果的影响",
     trigger_seedFadeYou = "腐蚀之种效果从你身上消失了",
     trigger_seedFadeOther = "腐蚀之种效果从(.+)身上消失",

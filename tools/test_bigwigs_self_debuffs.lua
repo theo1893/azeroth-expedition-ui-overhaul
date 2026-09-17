@@ -1,5 +1,5 @@
 -- Run from repository root: lua tools/test_bigwigs_self_debuffs.lua
-local names = { "李哥保护你", "李哥守护你", "你哥", "普通团员", "NotYou" }
+local names = { "你哥守护你", "李哥保护你", "李哥守护你", "你哥", "普通团员", "NotYou" }
 local logs = {
     zhCN = { self = "你受到了%s效果的影响。", other = "%s受到了%s效果的影响。" },
     enUS = { self = "You are afflicted by %s.", other = "%s is afflicted by %s." },
@@ -30,7 +30,7 @@ end
 local observed, context
 local checks, patternChecks = 0, 0
 local function record(value) table.insert(observed, value) end
-local function loadModule(file, locale)
+local function loadModule(file, locale, folder)
     local module, L = {}, {}
     function L:RegisterTranslations(language, factory)
         if language == locale then
@@ -39,7 +39,7 @@ local function loadModule(file, locale)
     end
     BigWigs = { ModuleDeclaration = function() return module, L end }
     function module:RegisterYellEngage() end
-    dofile("addon/BigWigs/Raids/Karazhan/" .. file .. ".lua")
+    dofile("addon/BigWigs/Raids/" .. (folder or "Karazhan") .. "/" .. file .. ".lua")
     local doomHandler = module.DoomOfMedivh
     module.db = { profile = module.defaultDB }
     function module:Sync(message) record("sync " .. message) end
@@ -52,9 +52,9 @@ local function loadModule(file, locale)
     return module, L, doomHandler
 end
 
-local function check(module, message, expected)
+local function check(module, message, expected, method)
     observed = {}
-    local handler = module.AfflictionEvent or module.Event
+    local handler = method and module[method] or module.AfflictionEvent or module.Event
     handler(module, message)
     assert(#observed == (expected and 1 or 0) and observed[1] == expected,
         context .. ": " .. message .. " => " .. table.concat(observed, "; ") ..
@@ -158,6 +158,41 @@ for _, locale in ipairs({ "zhCN", "enUS" }) do
     check(module, "An unrelated combat log message.", nil)
     module.db.profile.shackleshatter = false
     check(module, selfShatter .. damage, nil)
+
+    for _, case in ipairs({
+        {file="Karrsh", zhCN="腐蚀之种", enUS="Seed of Corruption",
+            gain="KarrshSeedGain30000 ", fade="KarrshSeedFade30000 ", method="Event"},
+        {file="Kronn", zhCN="狂热梦境", enUS="Dream Fever",
+            gain="KronnFeverGain30002", fade="KronnFeverFade30002", method="FadeEvent"},
+    }) do
+        local m = loadModule(case.file, locale, "TMH")
+        check(m, string.format(logs[locale].self, case[locale]), "sync " .. case.gain .. "观察者")
+        local fade = locale == "zhCN" and case.zhCN .. "效果从%s身上消失了。" or
+            case.enUS .. " fades from %s."
+        check(m, string.format(fade, locale == "zhCN" and "你" or "you"),
+            "sync " .. case.fade .. "观察者", case.method)
+        for _, player in ipairs(names) do
+            check(m, string.format(logs[locale].other, player, case[locale]),
+                "sync " .. case.gain .. player)
+            check(m, string.format(fade, player), "sync " .. case.fade .. player, case.method)
+        end
+    end
+
+    local m = loadModule("Perotharn", locale, "TMH")
+    function m:Sound() end
+    function m:WarningSign() record("warning") end
+    function m:RemoveWarningSign() record("clear") end
+    local dirk = locale == "zhCN" and "野蛮短刃" or "Dirk of the Beast"
+    local fade = locale == "zhCN" and "野蛮短刃效果从%s身上消失了。" or
+        "Dirk of the Beast fades from %s."
+    check(m, string.format(logs[locale].self, dirk), "warning", "DamageEvent")
+    check(m, string.format(fade, locale == "zhCN" and "你" or "you"), "clear", "FadeEvent")
+    for _, player in ipairs(names) do
+        check(m, string.format(logs[locale].other, player, dirk), nil, "DamageEvent")
+        check(m, string.format(fade, player), nil, "FadeEvent")
+    end
+    m.db.profile.dirk = false
+    check(m, string.format(logs[locale].self, dirk), nil, "DamageEvent")
 end
-print("PASS: BigWigs self-debuffs: " .. checks .. " handler checks across 6 bosses / 2 locales; " ..
+print("PASS: BigWigs self-debuffs: " .. checks .. " handler checks across 9 bosses / 2 locales; " ..
     patternChecks .. " King's Curse pattern-only checks")

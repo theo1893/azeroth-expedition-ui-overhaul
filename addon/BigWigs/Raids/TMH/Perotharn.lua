@@ -141,7 +141,7 @@ L:RegisterTranslations("zhCN", function()
 		msg_flames = "%s中了净化火焰",
 		msg_flamesYou = "你中了净化火焰-效果结束时远离人群",
 
-		trigger_dirk = "你受到了野蛮短刃效果的影响",
+		trigger_dirk = "^你受到了野蛮短刃效果的影响",
 		trigger_dirkFade = "野蛮短刃效果从你身上消失",
 		warn_dirk = "离开光束",
 		warn_summon = "召唤萨特！",
