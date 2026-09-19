@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>世界Boss 冷却查询</title>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --panel: #ffffff;
+    --text: #1f2329;
+    --muted: #6b7280;
+    --accent: #c0392b;
+    --ok: #e74c3c;
+    --wait: #27ae60;
+    --border: #e5e7eb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 24px;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .sub { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .status-big {
+    text-align: center;
+    padding: 24px 0;
+  }
+  .status-label { font-size: 14px; color: var(--muted); }
+  .cd-num { font-size: 52px; font-weight: 700; margin: 8px 0; }
+  .cd-num.avail { color: var(--ok); }
+  .cd-num.wait { color: var(--wait); }
+  .cd-sub { font-size: 14px; color: var(--muted); }
+  .row { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+  button {
+    border: 0;
+    border-radius: 8px;
+    padding: 12px 18px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-ghost { background: #eef0f3; color: var(--text); }
+  .btn-danger { background: #fdecea; color: var(--accent); }
+  .btn-primary:active { transform: scale(0.97); }
+  .history { margin-top: 4px; }
+  .history h2 { font-size: 15px; margin: 0 0 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 500; }
+  .empty { color: var(--muted); font-size: 14px; padding: 12px 0; }
+  .tip { font-size: 12px; color: var(--muted); margin-top: 8px; }
+  .del { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 13px; padding: 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>世界 Boss 冷却查询</h1>
+  <div class="sub">服务器限制：同一世界 Boss 每 7 天只能击杀一次。击杀后记录时间，自动计算下一次可击杀时间。</div>
+
+  <div class="card">
+    <div class="status-big">
+      <div class="status-label">下一次可击杀</div>
+      <div id="cdNum" class="cd-num">—</div>
+      <div id="cdSub" class="cd-sub">暂无记录</div>
+    </div>
+    <div class="row">
+      <button class="btn-primary" id="killBtn">✅ 记录本次击杀</button>
+      <button class="btn-ghost" id="clearBtn">清空记录</button>
+    </div>
+    <div class="tip">数据保存在本浏览器本地（localStorage），不会上传。</div>
+  </div>
+
+  <div class="card history">
+    <h2>击杀记录</h2>
+    <div id="historyBox"></div>
+  </div>
+</div>
+
+<script>
+  const COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
+  const KEY = "worldboss_kills_v1";
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY)) || []; }
+    catch (e) { return []; }
+  }
+  function save(arr) {
+    localStorage.setItem(KEY, JSON.stringify(arr));
+  }
+  function fmt(dt) {
+    const p = n => (n < 10 ? "0" : "") + n;
+    return dt.getFullYear() + "-" + p(dt.getMonth() + 1) + "-" + p(dt.getDate()) +
+           " " + p(dt.getHours()) + ":" + p(dt.getMinutes());
+  }
+
+  function render() {
+    const kills = load().sort((a, b) => b - a);
+    const cdNum = document.getElementById("cdNum");
+    const cdSub = document.getElementById("cdSub");
+
+    if (kills.length === 0) {
+      cdNum.textContent = "—";
+      cdNum.className = "cd-num";
+      cdSub.textContent = "暂无记录";
+    } else {
+      const last = kills[0];
+      const next = last + COOLDOWN_MS;
+      const now = Date.now();
+      if (now >= next) {
+        cdNum.textContent = "可击杀";
+        cdNum.className = "cd-num avail";
+        cdSub.textContent = "上次：" + fmt(new Date(last)) + "（已冷却完成）";
+      } else {
+        const left = next - now;
+        const days = Math.floor(left / 86400000);
+        const hours = Math.floor((left % 86400000) / 3600000);
+        const mins = Math.floor((left % 3600000) / 60000);
+        cdNum.textContent = days + "天 " + hours + "时";
+        cdNum.className = "cd-num wait";
+        cdSub.textContent = "上次：" + fmt(new Date(last)) + " → 下次可打：" + fmt(new Date(next));
+      }
+    }
+
+    const box = document.getElementById("historyBox");
+    if (kills.length === 0) {
+      box.innerHTML = '<div class="empty">还没有击杀记录，点上方按钮记录第一次。</div>';
+    } else {
+      let html = '<table><thead><tr><th>击杀时间</th><th>下次可打</th><th></th></tr></thead><tbody>';
+      kills.forEach((t, i) => {
+        html += '<tr><td>' + fmt(new Date(t)) + '</td><td>' + fmt(new Date(t + COOLDOWN_MS)) + '</td>' +
+                '<td><button class="del" data-i="' + i + '">删除</button></td></tr>';
+      });
+      html += '</tbody></table>';
+      box.innerHTML = html;
+      box.querySelectorAll(".del").forEach(b => {
+        b.addEventListener("click", () => {
+          const arr = load();
+          arr.splice(parseInt(b.dataset.i), 1);
+          save(arr);
+          render();
+        });
+      });
+    }
+  }
+
+  document.getElementById("killBtn").addEventListener("click", () => {
+    const arr = load();
+    arr.push(Date.now());
+    save(arr);
+    render();
+  });
+  document.getElementById("clearBtn").addEventListener("click", () => {
+    if (confirm("⚠️ 此操作非常危险，可能导致不可逆的数据丢失！确定清空所有击杀记录？")) {
+      localStorage.removeItem(KEY);
+      render();
+    }
+  });
+
+  render();
+  setInterval(render, 60000); // 每分钟刷新倒计时
+</script>
+</body>
+</html>

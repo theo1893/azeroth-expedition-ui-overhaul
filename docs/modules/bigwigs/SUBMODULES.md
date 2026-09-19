@@ -3,6 +3,14 @@
 BigWigs 独立持有副本事件、同步、计时条、文字／声音警告和团队标记；AEUI 不接管
 战斗判断。本模块仅维护逻辑，不生产美术资产。
 
+## 外部分支参考
+
+用户提供的另一位开发者维护版本完整保留在
+[`third-party/reference-addons/BigWigs/`](../../../third-party/reference-addons/BigWigs/)，
+TOC 自报 `Golden / 2.0.0 / revision 30139`。仅供后续源码比较与优化参考，
+不由客户端加载或加入 AddOns 分发；来源说明见
+[参考快照说明](../../../third-party/reference-addons/README.md)。运行版本仍为 `addon/BigWigs/`。
+
 ## 常见光环
 
 `Plugins/CommonAuras.lua` 持有团队关键技能的施法识别、同步、独立显示开关和计时条。
