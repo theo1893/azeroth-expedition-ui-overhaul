@@ -2,7 +2,7 @@
 
 ## 当前运行时
 
-- Unit Frames contract：`2.2`；SavedVariables `artVersion = 7`。
+- Unit Frames contract：`2.3`；SavedVariables `artVersion = 7`。
 - 团队 Buff／Debuff 图标接入 Raid A2 A／B 细边框（`P5`），保留原尺寸、间距、
   排列与 Debuff 类型色；单人／小队别名同样生效。待 `/reload` 验证团队 Aura、
   相邻团队血条及禁用回退；框内 Buff／驱散指示器保持 provider 原样。
@@ -24,6 +24,29 @@
 - Bars、Raid A2、动态头像配置保持原有接入；姓名板新增三职责显示，关闭模式时恢复 pfUI 原有显示与聚焦光环规则。
   TargetTarget、Focus 旧独立厚外壳仍暂停，当前采用细边框。没有改动团队框架的原三切片或高度合同。
 - 阶段保持 `P5 / 待实机`；客户端 AddOns 目录链接直接读取仓库 runtime。
+
+## 目标框架仇恨区（P5）
+
+- 已按用户确认的两排 Debuff 联合预演接入 `unitframes.target-threat`：仅为真实
+  `pfUI.uf.target` 底部增加同宽 `12 UI` 仇恨区，使用现有 CastFillV1，百分比字号
+  `10 UI`。显示时原 Raid A2 细外缘向下包住仇恨区；目标框主体、生命／资源、
+  位置、缩放、命中区和 pfUI-eliteoverlay 龙饰锚点不变。
+- 功能启用期间固定预留 `12 UI`，目标下方 Aura 在 pfUI 自己的排列中整体让位；
+  当前两排 Debuff 保持 `23 UI／每排 8 个／右起向左`，上方 Buff 不移动。
+  数据缺失、过期、脱战、友方和切目标时只隐藏仇恨内容并收回视觉外缘，保留 Aura
+  预留，避免跳动。沿用 provider 的图标层级 12、冷却层级 14，高于龙饰的层级 8；
+  不接管冷却、层数、Tooltip 或点击。
+- 数据、职责语义、70／85 风险档与颜色渐变均复用姓名板同一份 TWT／TMT 缓存，
+  不要求世界姓名板实际可见，不新增请求或定时器。有效零值显示 `0%`；填充最多
+  `100%`，文字保留真实比例（例如 `115%`）。现有 `/aeui plates mock` 同步预演
+  两处显示，状态仍明确标记 MOCK，关闭或重载恢复真实数据。
+- `/aeui threat on|off|status` 独立控制目标仇恨区，默认开启；关闭立即取消 Aura
+  预留，姓名板继续工作。关闭姓名板职责、Unit Frames 或精确 route 时同步回退。
+  `/aeui status` 的 `target-threat=visible|waiting|off` 与 `aura-inset=12|0` 可核对状态。
+- 待 `/reload` 后组队战斗验证两处比例／颜色一致、0%／超额数值、切目标与脱战清理，
+  以及数据暂缺时两排 Debuff 不回弹；相邻检查倒计时／层数不被龙尾盖住与 Tooltip。
+  再用 `/aeui threat off`／`on` 检查恢复原位置与重新让位，并确认关闭 Unit Frames、
+  职责模式或缺少 pfUI 目标框时安全回退。仅针对性检查通过，未标记 P6。
 
 ## 屏幕中心测距签（P5）
 

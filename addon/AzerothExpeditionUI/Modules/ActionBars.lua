@@ -4052,11 +4052,27 @@ function ActionBars:SaveSupplyFreePosition()
   then
     return false
   end
+  local scale = root:GetEffectiveScale() / UIParent:GetEffectiveScale()
   profile.position = {
-    x = RoundCoordinate(x - parentX),
-    y = RoundCoordinate(y - parentY),
+    x = RoundCoordinate(x * scale - parentX),
+    y = RoundCoordinate(y * scale - parentY),
   }
   return true
+end
+
+local function GetActionBarStackOverlap()
+  local bars = pfUI_config and pfUI_config.bars
+  local configured = bars and bars.bar1 and bars.bar1.spacing
+  return tonumber(configured) or ActionBars.actionBarStackOverlap
+end
+
+local function SizeSupplyIcons(root, size)
+  for _, button in ipairs(root.buttons) do
+    button.icon:ClearAllPoints()
+    button.icon:SetPoint("CENTER", button, "CENTER", 0, 0)
+    button.icon:SetWidth(size)
+    button.icon:SetHeight(size)
+  end
 end
 
 function ActionBars:ApplySupplyDockPosition()
@@ -4067,13 +4083,42 @@ function ActionBars:ApplySupplyDockPosition()
   if FieldKitBound() then
     local main = GetMainActionBarFrame()
     if not main then
+      root:SetScale(1)
+      SizeSupplyIcons(root, self.supplyButtonSize - 2)
       self.supplyDockStatus = "unavailable"
       return false
     end
+    local anchor = self:GetActionBarVisualFrame(main)
+    local top = GetTopActionBarFrame()
+    local upper = top and self:GetActionBarVisualFrame(top)
+    if main.mergedBackdrop and anchor == main.mergedBackdrop.backdrop then upper = anchor end
+    root:SetScale(main:GetEffectiveScale() / UIParent:GetEffectiveScale())
+    if top and top:IsShown() and main._size and top._size then
+      -- Screen bounds can be stale while pfUI moves/rebuilds the bars.
+      -- Only the provider's explicit row heights determine button scale.
+      local height = main._size[2] * main:GetEffectiveScale() +
+        (top._size[2] - GetActionBarStackOverlap()) * top:GetEffectiveScale()
+      for _, edges in ipairs({{anchor,main},{upper,top}}) do
+        if edges[1] ~= edges[2] then
+          local point, _, _, _, inset = edges[1]:GetPoint(1)
+          if point == "TOPLEFT" then
+            height = height + (tonumber(inset) or 0) * edges[1]:GetEffectiveScale()
+          end
+        end
+      end
+      local twoRows = self.fieldKitShellPadding * 2 +
+        self.supplyButtonSize * 2 + self.supplyButtonGap
+      -- Fit the two-row reference; additional supply rows keep growing upward.
+      if height > 0 then root:SetScale(height / twoRows / UIParent:GetEffectiveScale()) end
+    end
+    local action = GetButton(1, 1)
+    SizeSupplyIcons(root, action and
+      action:GetWidth() * action:GetEffectiveScale() / root:GetEffectiveScale() or
+      self.supplyButtonSize - 2)
     root:ClearAllPoints()
     root:SetPoint(
-      "BOTTOMRIGHT", main, "BOTTOMLEFT",
-      -self.supplyDockGap, 0
+      "BOTTOMRIGHT", anchor, "BOTTOMLEFT",
+      -self.supplyDockGap * main:GetEffectiveScale() / root:GetEffectiveScale(), 0
     )
     root.aeuiSupplyWasBound = true
     self.supplyDockStatus = "left"
@@ -4083,6 +4128,8 @@ function ActionBars:ApplySupplyDockPosition()
   if root.aeuiSupplyWasBound then
     self:SaveSupplyFreePosition()
   end
+  root:SetScale(1)
+  SizeSupplyIcons(root, self.supplyButtonSize - 2)
   local position = profile.position or { x = -260, y = -160 }
   root:ClearAllPoints()
   root:SetPoint(
@@ -4093,6 +4140,14 @@ function ActionBars:ApplySupplyDockPosition()
   root.aeuiSupplyWasBound = nil
   self.supplyDockStatus = "free"
   return true
+end
+
+function ActionBars:GetActionBarVisualFrame(bar)
+  local merged = bar.mergedBackdrop
+  if merged and merged:IsShown() and merged.backdrop then
+    return merged.backdrop
+  end
+  return bar.backdrop and bar.backdrop:IsShown() and bar.backdrop or bar
 end
 
 function ActionBars:LayoutSupplyButtons()
@@ -5314,12 +5369,6 @@ function ActionBars:InstallFieldKitUnlockHooks()
   return true
 end
 
-local function GetActionBarStackOverlap()
-  local bars = pfUI_config and pfUI_config.bars
-  local configured = bars and bars.bar1 and bars.bar1.spacing
-  return tonumber(configured) or ActionBars.actionBarStackOverlap
-end
-
 function ActionBars:ApplyBottomLayoutTrial()
   if type(InCombatLockdown) == "function" and InCombatLockdown() then return false end
   local state = GetFocusUnitDefaultState(true)
@@ -5448,6 +5497,14 @@ function ActionBars:ApplyStanceDockPosition(enabled)
   )
   if CombatFocusLayoutActive() and frame.SetScale then
     frame:SetScale(self.focusStanceScale)
+  end
+  local markers = addon.modules and addon.modules.TargetMarkers
+  if markers and markers.tankButton and addon.db.actionbars.markersEnabled ~= false then
+    local anchor = markers.bulkButton and markers.bulkButton:IsShown() and
+      markers.bulkButton or markers.tankButton
+    frame:ClearAllPoints()
+    frame:SetPoint("TOPRIGHT", anchor, "TOPLEFT",
+      -self.combatDeckStanceGap * main:GetEffectiveScale() / frame:GetEffectiveScale(), 0)
   end
   self.stanceDockApplied = true
   self.stanceDockStatus = "lower-left-of-markers"

@@ -1106,7 +1106,8 @@ function pfUI.uf:UpdateConfig()
       local buffoffy = f.config.buffoffy and tonumber(f.config.buffoffy) or 0
       f.buffs[i]:SetPoint(af, anchor, f.config.buffs,
       invert_v * (i-1-row*perrow)*(multiply*default_border + f.config.buffsize + 1) + buffoffx,
-      invert_h * (row*(multiply*default_border + f.config.buffsize + 1) + (multiply*default_border + 1)) + buffoffy)
+      invert_h * (row*(multiply*default_border + f.config.buffsize + 1) + (multiply*default_border + 1)) + buffoffy
+        - (invert_h == -1 and f.aeuiBottomAuraInset or 0))
 
       f.buffs[i]:SetWidth(f.config.buffsize)
       f.buffs[i]:SetHeight(f.config.buffsize)
@@ -2425,7 +2426,8 @@ function pfUI.uf:RefreshUnit(unit, component)
         unit.buffs[i]:ClearAllPoints()
         unit.buffs[i]:SetPoint(af, anchor, unit.config.buffs,
           invert_v * (i-1-row*perrow)*(unit.config.buffsize + auraSpacing) + buffoffx,
-          invert_h * (row*(unit.config.buffsize + auraSpacing) + auraSpacing) + buffoffy)
+          invert_h * (row*(unit.config.buffsize + auraSpacing) + auraSpacing) + buffoffy
+            - (invert_h == -1 and unit.aeuiBottomAuraInset or 0))
 
         unit.buffs[i].texture:SetTexture(buff_data.texture)
         unit.buffs[i].aura_id = buff_data.id
@@ -2583,7 +2585,8 @@ function pfUI.uf:RefreshUnit(unit, component)
         unit.debuffs[i]:ClearAllPoints()
         unit.debuffs[i]:SetPoint(af, anchor, unit.config.debuffs,
           invert_v * (i-1-row*perrow)*(unit.config.debuffsize + auraSpacing) + debuffoffx,
-          invert_h * ((row+buffrow)*(unit.config.debuffsize + auraSpacing) + auraSpacing) + debuffoffy)
+          invert_h * ((row+buffrow)*(unit.config.debuffsize + auraSpacing) + auraSpacing) + debuffoffy
+            - (invert_h == -1 and unit.aeuiBottomAuraInset or 0))
 
         unit.debuffs[i].texture:SetTexture(debuff_data.texture)
         unit.debuffs[i].aura_id = debuff_data.id

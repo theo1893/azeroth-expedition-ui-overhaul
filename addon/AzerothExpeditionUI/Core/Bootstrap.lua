@@ -37,6 +37,7 @@ local defaults = {
   },
   unitframes = {
     enabled = true,
+    targetThreatEnabled = true,
     artVersion = 7,
   },
   map = {
@@ -499,6 +500,18 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
         module:SetNameplateMode(mode)
       end
     end
+  elseif command == "threat" or string.find(command, "^threat%s+") then
+    local _, _, mode = string.find(command, "^threat%s*(.*)$")
+    local module = addon.modules.UnitFrames
+    if module then
+      if mode == "on" or mode == "off" then
+        module:SetTargetThreatEnabled(mode == "on")
+      elseif mode ~= "" and mode ~= "status" then
+        addon:Print("/aeui threat [on|off|status]")
+        return
+      end
+      addon:Print(module:GetTargetThreatStatus())
+    end
   elseif command == "unitframes" then
     AzerothExpeditionUIDB.unitframes.enabled =
       not AzerothExpeditionUIDB.unitframes.enabled
@@ -732,7 +745,7 @@ SlashCmdList["AZEROTHEXPEDITIONUI"] = function(message)
     end
   else
     addon:Print(
-      "/aeui config, /aeui actionbars, /aeui supplies [open|on|off|remove slot|status], /aeui fieldkit [bind|unbind|home|status], /aeui focuslayout [apply|comfort|restore|status], /aeui sidebars [bind|unbind|home|status], /aeui markers [on|off|toggle|status], /aeui chat, /aeui quests, /aeui unitframes, /aeui plates [tank|healer|dps|off|status], /aeui tooltips, /aeui bags, /aeui map, /aeui character, /aeui gear [open|current|stats|plan|wide|status], /aeui refresh, /aeui status"
+      "/aeui config, /aeui actionbars, /aeui supplies [open|on|off|remove slot|status], /aeui fieldkit [bind|unbind|home|status], /aeui focuslayout [apply|comfort|restore|status], /aeui sidebars [bind|unbind|home|status], /aeui markers [on|off|toggle|status], /aeui chat, /aeui quests, /aeui unitframes, /aeui threat [on|off|status], /aeui plates [tank|healer|dps|off|status], /aeui tooltips, /aeui bags, /aeui map, /aeui character, /aeui gear [open|current|stats|plan|wide|status], /aeui refresh, /aeui status"
     )
   end
 end

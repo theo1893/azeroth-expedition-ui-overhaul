@@ -7,13 +7,13 @@ Button 外缘，复用 Raid A2 细边资源；provider 更新尺寸后刷新外�
 本模块严格对应 `addon/pfUI/api/unitframes.lua` 创建的真实 UnitFrame，以及
 `addon/pfUI/modules/nameplates.lua` 创建的世界姓名板。当前运行时接管登记过的
 静态媒体及其挂载，并通过 `UF.PORTRAIT.DISABLE` 关闭所有 pfUI UnitFrame 动态
-头像呈现；除下文明确登记的姓名板职责显示与刷新策略外，不改变 Frame 锚点、尺寸、事件、点击、单位数据或状态逻辑。头像合同
+头像呈现；除下文明确登记的姓名板职责、目标仇恨显示与刷新策略外，不改变 Frame 锚点、尺寸、事件、点击、单位数据或状态逻辑。头像合同
 只写入下文列出的精确配置值，原值保存在 AEUI SavedVariables 中并可完整回退；
 其他 pfUI SavedVariables 不变。
 
 ## 当前四个单位框细边框试用
 
-runtime `2.2` 通过 `unitframes.primary-thin-shell` 为真实 `pfUI.uf.player`、
+runtime `2.3` 通过 `unitframes.primary-thin-shell` 为真实 `pfUI.uf.player`、
 `pfUI.uf.target`、`pfUI.uf.targettarget` 与 `pfUI.uf.focus` 分别复用 Raid A2
 的 A／B／C／D 纹理。九切片为
 `6/62/6 × 6/25/6`，边角不缩放，外扩 `2 UI`；只在 Frame 背景层挂载，不修改
@@ -37,6 +37,22 @@ Unit Frames runtime `2.0` 会把全部 13 组真实配置强制为 `portrait = o
 | `UF.BAR.POWER.FILL` | 每个对象的 `f.power.bar` | provider 裁切宽度 | `64×16` 可横向拉伸纹理 | 无色灰阶窄颜料纹；继续由 pfUI 按资源类型着色 |
 | `UF.STATE.HOVER.RIM` | `f.hoverglow` | 外壳边缘 | 由每张接受外壳 Alpha 确定性派生 | 暖白短边响应；不改变命中盒 |
 | `UF.STATE.AGGRO.RIM` | `f.glow` | 外壳边缘 | 由每张接受外壳 Alpha 确定性派生 | 暗红／橙褐短边响应；继续使用 pfUI 状态逻辑 |
+
+## 目标框架仇恨区
+
+`UF.TARGET.THREAT`／`unitframes.target-threat` 只持有真实
+`pfUI.uf.target.aeuiTargetThreatRail`，复用 Unit Frames 的姓名板职责和仇恨缓存。
+轨道等宽紧接整个目标框底部、高 `12 UI`、不接收鼠标，百分比为 `10 UI` 字号；
+有效比例时 Raid A2 细外缘向下延伸包住轨道，生命／资源、原框尺寸和龙饰锚点不变。
+
+`aeuiBottomAuraInset = 12` 仅写在该目标框上，由 pfUI 创建／刷新下方 Buff、Debuff
+时统一计入纵向偏移，上方 Aura 保持原位。预留只跟随功能开关，比例刷新和无数据
+不移动 Aura；禁用清除该会话字段并恢复原锚点。图标、冷却、层数、筛选、顺序和
+点击仍归 provider，既有层级高于第三方龙饰，不另外改写层级。
+
+该显示依赖已启用的姓名板职责和目标细边框 route，不新增网络请求或独立计时器。
+`/aeui threat off` 独立隐藏轨道并撤销预留，姓名板不受影响；模块／route／职责
+关闭时同样回退。共享缓存的时效、GUID、承伤者校验及 MOCK 语义均沿用姓名板。
 
 ## 世界姓名板职责模式
 

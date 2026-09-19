@@ -3,16 +3,15 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 local TargetMarkers = {}
 
-TargetMarkers.runtimeContract = "2.5"
+TargetMarkers.runtimeContract = "2.6"
 TargetMarkers.compactScale = 0.8
 TargetMarkers.cellSize = 48
 TargetMarkers.cellGap = 3
 TargetMarkers.columns = 8
 TargetMarkers.rows = 1
-TargetMarkers.emptyIconSize = 30
-TargetMarkers.activeIconSize = 15
+TargetMarkers.iconSize = 28
 TargetMarkers.nameFontSize = 10
-TargetMarkers.longNameFontSize = 9
+TargetMarkers.compactFontSize = 9
 TargetMarkers.panelCap = 6
 TargetMarkers.panelPadding = 6
 TargetMarkers.tankButtonGap = 8
@@ -327,74 +326,101 @@ local function ConfigureMarkerIcon(texture, index)
   texture:SetTexCoord(left, left + 0.25, top, top + 0.5)
 end
 
-local function SetCellFont(fontString, size)
-  fontString:SetFont(GetSystemFont(), size, "OUTLINE")
+local function SetCellFont(fontString, size, flags)
+  fontString:SetFont(GetSystemFont(), size, flags or "OUTLINE")
   fontString:SetTextColor(1, 1, 1, 1)
   fontString:SetShadowColor(0, 0, 0, 0.9)
   fontString:SetShadowOffset(1, -1)
 end
 
-local function Utf8CharacterCount(text)
-  if type(text) ~= "string" or text == "" then
-    return 0
-  end
-  local _, count = string.gsub(text, "[^\128-\191]", "")
-  return count
-end
-
 local function SetAdaptiveCellName(cell, name)
-  local characters = Utf8CharacterCount(name)
-  local bytes = string.len(name or "")
-  local hasMultibyteCharacters = bytes > characters
-  local fontSize = TargetMarkers.nameFontSize
-  if (hasMultibyteCharacters and characters > 8) or
-    (not hasMultibyteCharacters and characters > 14)
-  then
-    fontSize = TargetMarkers.longNameFontSize
-  end
-  if cell.nameFontSize ~= fontSize then
-    SetCellFont(cell.name, fontSize)
-    cell.nameFontSize = fontSize
-  end
-  cell.name:SetText(name)
-end
-
-local function SetMarkerIdentityLayout(cell, active)
-  local layout = active and "active-corner" or "empty-center"
-  if cell.identityLayout == layout then
+  if cell.nameSource == name then return end
+  cell.nameSource = name
+  local measure = TargetMarkers.nameMeasure
+  SetCellFont(measure, cell.nameFontSize, "")
+  measure:SetText(name)
+  local width = cell:GetWidth() - 6
+  if measure:GetStringWidth() <= width then
+    cell.name:SetText(name)
     return
   end
 
-  cell.icon:ClearAllPoints()
-  cell.iconShadow:ClearAllPoints()
-  if active then
-    cell.iconShadow:SetWidth(TargetMarkers.activeIconSize + 2)
-    cell.iconShadow:SetHeight(TargetMarkers.activeIconSize + 2)
-    cell.iconShadow:SetPoint("BOTTOMLEFT", cell, "BOTTOMLEFT", 2, 6)
-    cell.iconShadow:SetAlpha(0.72)
-
-    cell.icon:SetWidth(TargetMarkers.activeIconSize)
-    cell.icon:SetHeight(TargetMarkers.activeIconSize)
-    cell.icon:SetPoint("BOTTOMLEFT", cell, "BOTTOMLEFT", 3, 7)
-    cell.icon:SetAlpha(1)
-  else
-    cell.iconShadow:SetWidth(TargetMarkers.emptyIconSize + 2)
-    cell.iconShadow:SetHeight(TargetMarkers.emptyIconSize + 2)
-    cell.iconShadow:SetPoint("CENTER", cell, "CENTER", 1, 1)
-    cell.iconShadow:SetAlpha(0.52)
-
-    cell.icon:SetWidth(TargetMarkers.emptyIconSize)
-    cell.icon:SetHeight(TargetMarkers.emptyIconSize)
-    cell.icon:SetPoint("CENTER", cell, "CENTER", 0, 2)
-    cell.icon:SetAlpha(0.92)
+  local characters = {}
+  for character in string.gfind(name, "[^\128-\191][\128-\191]*") do
+    table.insert(characters, character)
   end
-  cell.identityLayout = layout
+  local count = table.getn(characters)
+  -- ponytail: search short unit names only when they change; use prefix widths
+  -- if this ever needs to handle long, frequently changing free-form text.
+  for last = count, 2, -1 do
+    local suffix = last < count and "…" or ""
+    local best, difference
+    for split = 1, last - 1 do
+      local first = table.concat(characters, "", 1, split)
+      local second = table.concat(characters, "", split + 1, last) .. suffix
+      measure:SetText(first)
+      local firstWidth = measure:GetStringWidth()
+      measure:SetText(second)
+      local secondWidth = measure:GetStringWidth()
+      local delta = math.abs(firstWidth - secondWidth)
+      if firstWidth <= width and secondWidth <= width and
+        (not difference or delta < difference)
+      then
+        best, difference = first .. "\n" .. second, delta
+      end
+    end
+    if best then
+      cell.name:SetText(best)
+      return
+    end
+  end
+  cell.name:SetText("…")
+end
+
+local function SetMarkerIdentity(cell, active)
+  cell.icon:SetAlpha(active and 1 or 0.56)
+  cell.iconShadow:SetAlpha(active and 0.72 or 0.4)
+end
+
+local function LayoutCellContents(cell)
+  local height = cell:GetHeight()
+  local compact = height < 72
+  local iconSize = compact and math.min(TargetMarkers.iconSize, height - 36) or
+    TargetMarkers.iconSize
+  local fontSize = compact and TargetMarkers.compactFontSize or TargetMarkers.nameFontSize
+  local iconTop = compact and 1 or 3
+  local nameTop = compact and iconSize + 2 or math.min(34, height - 40)
+
+  cell.icon:SetWidth(iconSize)
+  cell.icon:SetHeight(iconSize)
+  cell.icon:SetPoint("TOP", cell, "TOP", 0, -iconTop)
+  cell.iconShadow:SetWidth(iconSize + 2)
+  cell.iconShadow:SetHeight(iconSize + 2)
+  cell.iconShadow:SetPoint("CENTER", cell.icon, "CENTER", 1, -1)
+  cell.name:SetPoint("TOPLEFT", cell, "TOPLEFT", 3, -nameTop)
+  cell.name:SetPoint("TOPRIGHT", cell, "TOPRIGHT", -3, -nameTop)
+  cell.name:SetHeight(compact and 20 or 22)
+  SetCellFont(cell.name, fontSize, "")
+  cell.name:SetTextColor(0.945, 0.918, 0.867, 1)
+  cell.nameFontSize = fontSize
+  cell.nameSource = nil
+  if cell.unitName then SetAdaptiveCellName(cell, cell.unitName) end
+
+  local healthBottom = compact and 5 or 7
+  cell.healthText:SetPoint("BOTTOMLEFT", cell, "BOTTOMLEFT", 3, healthBottom)
+  cell.healthText:SetPoint("BOTTOMRIGHT", cell, "BOTTOMRIGHT", -3, healthBottom)
+  cell.healthText:SetHeight(fontSize)
+  SetCellFont(cell.healthText, fontSize, "")
+  cell.healthBackground:SetPoint("BOTTOMLEFT", cell, "BOTTOMLEFT", 3, compact and 1 or 3)
+  cell.healthBackground:SetPoint("BOTTOMRIGHT", cell, "BOTTOMRIGHT", -3, compact and 1 or 3)
+  cell.healthBackground:SetHeight(compact and 2 or 3)
 end
 
 local function ResetCellDisplay(cell)
   cell:SetAlpha(1)
-  SetMarkerIdentityLayout(cell, false)
+  SetMarkerIdentity(cell, false)
   cell.name:SetText("")
+  cell.nameSource = nil
   cell.healthText:SetText("")
   cell.health:SetValue(0)
   cell.health:Hide()
@@ -515,20 +541,13 @@ function TargetMarkers:CreateCell(parent, position, markerIndex, leftOffset)
 
   cell.icon = cell:CreateTexture(nil, "ARTWORK")
   ConfigureMarkerIcon(cell.icon, markerIndex)
-  SetMarkerIdentityLayout(cell, false)
+  SetMarkerIdentity(cell, false)
 
   cell.healthBackground = cell:CreateTexture(nil, "ARTWORK")
-  cell.healthBackground:SetPoint("BOTTOMLEFT", cell, "BOTTOMLEFT", 3, 3)
-  cell.healthBackground:SetPoint(
-    "BOTTOMRIGHT", cell, "BOTTOMRIGHT", -3, 3
-  )
-  cell.healthBackground:SetHeight(3)
   cell.healthBackground:SetTexture(0.05, 0.025, 0.015, 0.95)
 
   cell.health = CreateFrame("StatusBar", nil, cell)
-  cell.health:SetPoint("BOTTOMLEFT", cell, "BOTTOMLEFT", 3, 3)
-  cell.health:SetPoint("BOTTOMRIGHT", cell, "BOTTOMRIGHT", -3, 3)
-  cell.health:SetHeight(3)
+  cell.health:SetAllPoints(cell.healthBackground)
   cell.health:SetMinMaxValues(0, 1)
   cell.health:SetValue(0)
   cell.health:SetStatusBarTexture(self.healthTexturePath)
@@ -538,37 +557,25 @@ function TargetMarkers:CreateCell(parent, position, markerIndex, leftOffset)
   )
 
   cell.name = cell:CreateFontString(nil, "OVERLAY")
-  cell.name:SetPoint("TOPLEFT", cell, "TOPLEFT", 3, -3)
-  cell.name:SetPoint("TOPRIGHT", cell, "TOPRIGHT", -3, -3)
-  cell.name:SetHeight(22)
   cell.name:SetJustifyH("CENTER")
-  cell.name:SetJustifyV("TOP")
-  SetCellFont(cell.name, self.nameFontSize)
-  cell.nameFontSize = self.nameFontSize
+  cell.name:SetJustifyV("MIDDLE")
 
   cell.healthText = cell:CreateFontString(nil, "OVERLAY")
-  cell.healthText:SetPoint("BOTTOMRIGHT", cell, "BOTTOMRIGHT", -3, 7)
-  cell.healthText:SetWidth(26)
-  cell.healthText:SetHeight(10)
-  cell.healthText:SetJustifyH("RIGHT")
-  SetCellFont(cell.healthText, 9)
+  cell.healthText:SetJustifyH("CENTER")
+  LayoutCellContents(cell)
 
   cell.selected = cell:CreateTexture(nil, "OVERLAY")
-  cell.selected:SetWidth(38)
-  cell.selected:SetHeight(38)
-  cell.selected:SetPoint("CENTER", cell, "CENTER", 0, 1)
-  cell.selected:SetTexture("Interface\\Buttons\\ButtonHilight-Square")
-  cell.selected:SetBlendMode("ADD")
-  cell.selected:SetVertexColor(color[1], color[2], color[3], 0.9)
+  cell.selected:SetPoint("TOPLEFT", cell, "TOPLEFT", 8, 0)
+  cell.selected:SetPoint("TOPRIGHT", cell, "TOPRIGHT", -8, 0)
+  cell.selected:SetHeight(1.2)
+  cell.selected:SetTexture(0.77, 0.65, 0.43, 0.95)
   cell.selected:Hide()
 
   cell.hover = cell:CreateTexture(nil, "HIGHLIGHT")
-  cell.hover:SetWidth(38)
-  cell.hover:SetHeight(38)
-  cell.hover:SetPoint("CENTER", cell, "CENTER", 0, 1)
+  cell.hover:SetAllPoints(cell)
   cell.hover:SetTexture("Interface\\Buttons\\ButtonHilight-Square")
   cell.hover:SetBlendMode("ADD")
-  cell.hover:SetVertexColor(1, 0.82, 0.42, 0.65)
+  cell.hover:SetVertexColor(1, 0.82, 0.42, 0.18)
 
   cell:SetScript("OnClick", function()
     TargetMarkers:HandleCellClick(this, arg1)
@@ -675,14 +682,16 @@ function TargetMarkers:InstallTankButtonFallback(button)
   end
   button:SetWidth(self.cellSize)
   button:SetHeight(self.cellSize)
+  local scale = (self.frame:GetHeight() + self.panelPadding * 2) / self.cellSize
+  button:SetScale(scale)
   button:ClearAllPoints()
-  button:SetPoint("TOPLEFT", self.frame, "TOPLEFT", 0, self.panelPadding)
+  button:SetPoint("TOPLEFT", self.frame, "TOPLEFT", 0, self.panelPadding / scale)
   button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 
   if not button.base then
     button.base = button:CreateTexture(nil, "BACKGROUND")
     button.base:SetWidth(self.cellSize)
-    button.base:SetHeight(self.cellSize - 1)
+    button.base:SetHeight(self.cellSize)
     button.base:SetPoint("CENTER", button, "CENTER", 0, 0)
     button.base:SetTexture(0.16, 0.055, 0.025, 0.96)
   end
@@ -870,10 +879,13 @@ function TargetMarkers:CreateTankButton(parent)
   self.tankButton = button
   button:SetWidth(self.cellSize)
   button:SetHeight(self.cellSize)
-  button:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, self.panelPadding)
+  local scale = (self.cellSize + self.panelPadding * 2) / self.cellSize
+  button:SetScale(scale)
+  button:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, self.panelPadding / scale)
   button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 
   button.base = CreateBulkPocket(button)
+  button.base:SetHeight(self.cellSize)
 
   button.icon = button:CreateTexture(nil, "ARTWORK")
   button.icon:SetWidth(30)
@@ -1194,7 +1206,7 @@ function TargetMarkers:CreateGrid()
 
   local manualGridWidth = self.columns * self.cellSize +
     (self.columns - 1) * self.cellGap
-  local tankControlSpan = self.cellSize + self.tankButtonGap
+  local tankControlSpan = self.cellSize + self.panelPadding * 3 + self.tankButtonGap
   local baseGridWidth = tankControlSpan + manualGridWidth
   local bulkGridWidth = baseGridWidth + self.bulkButtonGap + self.cellSize
   local height = self.rows * self.cellSize +
@@ -1218,6 +1230,8 @@ function TargetMarkers:CreateGrid()
   frame:EnableMouse(false)
   frame:Hide()
 
+  self.nameMeasure = frame:CreateFontString(nil, "OVERLAY")
+  self.nameMeasure:Hide()
   self.panel = CreateMarkerPanel(
     frame, manualGridWidth, height, tankControlSpan
   )
@@ -1232,6 +1246,34 @@ function TargetMarkers:CreateGrid()
   return frame
 end
 
+function TargetMarkers:LayoutGrid(height)
+  local padding = self.panelPadding
+  self.tankControlSpan = height + padding * 3 + self.tankButtonGap
+  self.baseGridWidth = self.tankControlSpan + self.manualGridWidth
+  self.bulkGridWidth = self.baseGridWidth + self.bulkButtonGap + self.cellSize
+  self.frame:SetWidth(self.baseGridWidth)
+  self.frame:SetHeight(height)
+  self.panel:SetPoint("TOPLEFT", self.frame, "TOPLEFT", self.tankControlSpan - padding, padding)
+  self.panel:SetHeight(height + padding * 2)
+  for position, markerIndex in ipairs(markerOrder) do
+    local cell = self.cells[markerIndex]
+    cell:SetHeight(height)
+    LayoutCellContents(cell)
+    cell:SetPoint("TOPLEFT", self.frame, "TOPLEFT",
+      self.tankControlSpan + (position - 1) * (self.cellSize + self.cellGap), 0)
+  end
+  if self.tankButton then
+    local scale = (height + padding * 2) / self.cellSize
+    self.tankButton:SetScale(scale)
+    self.tankButton:SetPoint("TOPLEFT", self.frame, "TOPLEFT", 0, padding / scale)
+  end
+  if self.bulkButton then
+    self.bulkButton:ClearAllPoints()
+    self.bulkButton:SetPoint("TOPLEFT", self.frame, "TOPLEFT",
+      self.baseGridWidth + self.bulkButtonGap, padding)
+  end
+end
+
 function TargetMarkers:ApplyAnchor()
   local frame = self:CreateGrid()
   local main = GetMainActionBar()
@@ -1241,22 +1283,53 @@ function TargetMarkers:ApplyAnchor()
 
   local config = addon.db and addon.db.actionbars
   if main and config and config.enabled and config.fieldKitBound then
-    frame:SetScale(main:GetEffectiveScale() / UIParent:GetEffectiveScale() * self.compactScale)
+    local actions = addon.modules and addon.modules.ActionBars
+    local shell = actions and actions:GetActionBarVisualFrame(main) or main
+    -- The merged shell spans scaled anchors; its width readback is not the
+    -- action bar's local width in Vanilla. Use the provider's explicit size.
+    local width = (main._size and main._size[1] or main:GetWidth()) * main:GetEffectiveScale()
+    if shell ~= main then
+      local point, _, _, inset = shell:GetPoint(1)
+      if point == "TOPLEFT" then
+        width = width - 2 * (tonumber(inset) or 0) * shell:GetEffectiveScale()
+      end
+    end
+    local scale = width / UIParent:GetEffectiveScale() /
+      (self.manualGridWidth + self.panelPadding * 2)
+    if scale <= 0 then
+      scale = main:GetEffectiveScale() / UIParent:GetEffectiveScale() * self.compactScale
+    end
+    frame:SetScale(scale)
     local lowerBar, lowerStatus = GetLowerPfUIBar(main)
     -- Pet actions need their full row; stances share the left of this row.
-    local anchor = lowerStatus == "pet" and lowerBar or main
-    frame:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT",
-      -self.tankControlSpan, -(8 / self.compactScale + self.panelPadding))
+    local anchor = lowerStatus == "pet" and lowerBar or shell
+    if lowerStatus == "pet" and actions then
+      anchor = actions:GetActionBarVisualFrame(lowerBar)
+    end
+    local gap = 8 * main:GetEffectiveScale() / frame:GetEffectiveScale()
+    local bottom = anchor:GetBottom()
+    local height = bottom and bottom * anchor:GetEffectiveScale() /
+      frame:GetEffectiveScale() - gap - self.panelPadding * 2 or self.cellSize
+    self:LayoutGrid(math.max(self.cellSize, height))
+    local petOffset = anchor ~= shell and bottom and shell:GetBottom() and
+      (bottom * anchor:GetEffectiveScale() - shell:GetBottom() * shell:GetEffectiveScale()) /
+      frame:GetEffectiveScale() or 0
+    frame:SetPoint("TOPLEFT", shell, "BOTTOMLEFT",
+      self.panelPadding - self.tankControlSpan,
+      petOffset - gap - self.panelPadding)
     if self.bulkButton and self.tankButton then
       self.bulkButton:ClearAllPoints()
       self.bulkButton:SetPoint("RIGHT", self.tankButton, "LEFT", -self.bulkButtonGap, 0)
     end
     self.anchorStatus = "bottom-single-row"
-    local actions = addon.modules and addon.modules.ActionBars
-    if actions then actions:ApplyArchiTotemDockPosition(true) end
+    if actions then
+      actions:ApplyArchiTotemDockPosition(true)
+      actions:ApplyStanceDockPosition(true)
+    end
     return true
   end
   frame:SetScale(1)
+  self:LayoutGrid(self.cellSize)
 
   local archiTotem = ArchiTotemVisible()
   if archiTotem then
@@ -1333,13 +1406,12 @@ function TargetMarkers:UpdateCell(cell)
   end
 
   cell:SetAlpha(1)
-  SetMarkerIdentityLayout(cell, true)
+  SetMarkerIdentity(cell, true)
   SetAdaptiveCellName(cell, name)
   cell.health:SetValue(percent)
   cell.health:Show()
   cell.healthBackground:Show()
   cell.healthText:SetText(math.floor(percent * 100 + 0.5) .. "%")
-  cell.name:SetTextColor(1, 1, 1, 1)
 
   local selected = type(UnitIsUnit) == "function" and
     SafeUnitExists("target") and UnitIsUnit("target", token)
@@ -1556,8 +1628,8 @@ function TargetMarkers:GetRuntimeStatus()
     ",tokens=" .. tostring(self.tokenStatus or "pending") ..
     ",anchor=" .. tostring(self.anchorStatus or "pending") ..
     ",strata=BACKGROUND" ..
-    ",identity=empty-center+active-bottom-left" ..
-    ",text=top-two-line-adaptive" ..
+    ",identity=fixed-top+active-bright" ..
+    ",text=middle-two-line-fitted+full-width-health" ..
     ",dead=local-clear-only" ..
     ",input=left-target+right-mark+shift-right-clear" ..
     ",tank=ddps-assist" ..

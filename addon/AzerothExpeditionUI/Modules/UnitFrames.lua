@@ -1,10 +1,11 @@
 local addon = AzerothExpeditionUI
 local UnitFrames = {}
-UnitFrames.runtimeContract = "2.2"
+UnitFrames.runtimeContract = "2.3"
 
 local MEDIA = addon.media.root .. "UnitFrames\\"
 local HEALTH_TEXTURE = MEDIA .. "UnitFrameHealthFillV1"
 local POWER_TEXTURE = MEDIA .. "UnitFramePowerFillV1"
+local TARGET_THREAT_HEIGHT = 12
 
 local NAMEPLATE_TARGET_CUE = {
   texture = MEDIA .. "NameplateTargetCueV2",
@@ -934,6 +935,7 @@ end
 function UnitFrames:ClearNameplateThreat()
   self.threatSnapshot, self.threatPending = nil, nil
   self.threatNext = GetTime() + 1.5
+  self:UpdateTargetThreat()
 end
 
 function UnitFrames:ReceiveNameplateThreat(prefix, message, channel, sender)
@@ -976,16 +978,19 @@ function UnitFrames:ReceiveNameplateThreat(prefix, message, channel, sender)
   self.threatSnapshot = {guid=ThreatGUID(guid), time=now, rows=rows, mobs=mobs, holder=holder}
   self.threatPending = nil
   self.threatReceived = (self.threatReceived or 0) + 1
+  self:UpdateTargetThreat()
 end
 
 function UnitFrames:UpdateNameplateThreat()
   local now = GetTime()
   if self.threatMockStart or not self.nameplateMode or not UnitAffectingCombat("player") then
     self.threatSnapshot, self.threatPending = nil, nil
+    self:UpdateTargetThreat()
     return
   end
   if now < (self.threatNext or 0) then return end
   self.threatNext = now + .5
+  self:UpdateTargetThreat()
   if self.threatPending and now - self.threatPending.time <= 1 then return end
   self.threatPending = nil
   local exists, guid = UnitExists("target")
@@ -1093,6 +1098,113 @@ function UnitFrames:GetNameplateAuraPriority(friendly, target, kind, name, caste
   if target and kind == "debuff" and caster == "player" then return 2 end
 end
 
+function UnitFrames:IsTargetThreatEnabled()
+  return ModuleEnabled() and self.nameplateMode ~= nil and
+    addon.db.unitframes.targetThreatEnabled ~= false and
+    RouteOwned("unitframes.target-threat") and RouteOwned("unitframes.primary-thin-shell")
+end
+
+function UnitFrames:ApplyTargetThreat(frame)
+  local target = pfUI and pfUI.uf and pfUI.uf.target
+  frame = frame or target
+  if not frame or frame ~= target then return end
+  local width = FrameDimension(frame, "GetWidth", "width")
+  local height = FrameDimension(frame, "GetHeight", "height")
+  local enabled = self:IsTargetThreatEnabled() and width and height and width > 8 and height > 8
+  local rail = frame.aeuiTargetThreatRail
+  if enabled and not rail then
+    rail = CreateFrame("StatusBar", nil, frame)
+    frame.aeuiTargetThreatRail = rail
+    rail:SetFrameLevel(frame:GetFrameLevel() + 1)
+    rail:EnableMouse(false)
+    rail:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 0, 0)
+    rail:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", 0, 0)
+    rail:SetHeight(TARGET_THREAT_HEIGHT)
+    rail:SetMinMaxValues(0, 100)
+    rail:SetStatusBarTexture(addon.media.root .. "ActionBars\\Readouts\\CastFillV1")
+    local fill = rail:GetStatusBarTexture()
+    if type(fill) == "table" or type(fill) == "userdata" then fill:SetDrawLayer("ARTWORK") end
+    rail.background = rail:CreateTexture(nil, "BACKGROUND")
+    rail.background:SetAllPoints(rail)
+    rail.background:SetTexture(.08, .09, .09, 1)
+    rail.divider = rail:CreateTexture(nil, "OVERLAY")
+    rail.divider:SetPoint("TOPLEFT", rail, "TOPLEFT", 0, 0)
+    rail.divider:SetPoint("TOPRIGHT", rail, "TOPRIGHT", 0, 0)
+    rail.divider:SetHeight(1)
+    rail.divider:SetTexture(.07, .05, .035, 1)
+    rail.text = rail:CreateFontString(nil, "OVERLAY")
+    rail.text:SetAllPoints(rail)
+    rail.text:SetTextColor(.95, .91, .82, 1)
+    rail:Hide()
+  end
+  local inset = enabled and TARGET_THREAT_HEIGHT or nil
+  if frame.aeuiBottomAuraInset ~= inset then
+    frame.aeuiBottomAuraInset = inset
+    frame.update_aura = true
+  end
+  if rail then
+    rail.active = enabled and true or false
+    rail.text:SetFont(pfUI.font_unit or pfUI.font_default or STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF", 10, "OUTLINE")
+    self:UpdateTargetThreat()
+  end
+end
+
+function UnitFrames:UpdateTargetThreat()
+  local frame = pfUI and pfUI.uf and pfUI.uf.target
+  local rail = frame and frame.aeuiTargetThreatRail
+  if not rail then return end
+  local exists, guid = UnitExists("target")
+  if rail.cachedGuid ~= guid then
+    rail.cachedGuid, rail.roleThreat = guid, nil
+  end
+  local colour, ratio
+  if rail.active and exists and not UnitIsPlayer("target") and not UnitIsDead("target") and
+    UnitCanAttack("player", "target")
+  then
+    local provider = pfUI.nameplates
+    local victim
+    if provider and provider.GetRoleThreat then
+      victim = provider:GetRoleThreat(rail, "target")
+    elseif UnitIsUnit("targettarget", "player") then
+      victim = "self"
+    end
+    local alpha, limit
+    alpha, colour, limit, ratio = self:GetNameplateStyle(self.nameplateMode, false, true, victim, guid)
+  end
+  local shown = ratio ~= nil and colour ~= nil
+  if shown then
+    rail:SetValue(math.max(0, math.min(100, ratio)))
+    rail:SetStatusBarColor(unpack(colour))
+    rail.text:SetText(string.format("%d%%", math.floor(ratio + .5)))
+  end
+  if rail.shown ~= shown then
+    rail.shown = shown
+    SetShown(rail, shown)
+    -- Only the visual shell grows. The provider frame, dragon and hitbox stay fixed;
+    -- the aura inset is owned by enable/disable, never by snapshot availability.
+    frame.aeuiTargetThreatExtent = shown and TARGET_THREAT_HEIGHT or 0
+    if frame.aeuiThinShell then
+      LayoutPrimarySlices(frame.aeuiThinShellSlices, frame.aeuiThinShell, frame,
+        frame:GetWidth() + 4, frame:GetHeight() + 4 + frame.aeuiTargetThreatExtent, THIN_GEOMETRY)
+    end
+  end
+end
+
+function UnitFrames:SetTargetThreatEnabled(enabled)
+  if not addon.db or not addon.db.unitframes then return end
+  addon.db.unitframes.targetThreatEnabled = enabled and true or false
+  self:ApplyTargetThreat()
+end
+
+function UnitFrames:GetTargetThreatStatus()
+  local frame = pfUI and pfUI.uf and pfUI.uf.target
+  local rail = frame and frame.aeuiTargetThreatRail
+  return "target-threat=" .. (rail and rail.active and (rail.shown and "visible" or "waiting") or "off") ..
+    ", aura-inset=" .. tostring(frame and frame.aeuiBottomAuraInset or 0) ..
+    ", source=shared-nameplate-threat" ..
+    ", mock=" .. (self.threatMockStart and "ON (not real threat)" or "off")
+end
+
 function UnitFrames:ApplyNameplateMode()
   local profile = self:GetNameplateProfile()
   local provider = pfUI and pfUI.nameplates
@@ -1108,6 +1220,7 @@ function UnitFrames:ApplyNameplateMode()
   if provider and provider.SetCombatMode then
     provider:SetCombatMode(mode, self)
   end
+  self:ApplyTargetThreat()
 end
 
 function UnitFrames:SetNameplateMode(mode)
@@ -1119,7 +1232,7 @@ function UnitFrames:SetNameplateMode(mode)
     self.threatMockStart = mode == "mock" and GetTime() or nil
     self:ClearNameplateThreat()
     addon:Print(self.threatMockStart and
-      "仇恨 MOCK 已开启：选中敌方目标，12 秒从 0% 增至 100%，停留 2 秒后循环；非真实仇恨。/aeui plates mock off 关闭，重载自动清除。" or
+      "仇恨 MOCK 已开启：姓名板与目标框架同步预演，12 秒从 0% 增至 100%，停留 2 秒后循环；非真实仇恨。/aeui plates mock off 关闭，重载自动清除。" or
       "仇恨 MOCK 已关闭，恢复真实数据。")
     return true
   end
@@ -2241,6 +2354,7 @@ function UnitFrames:ApplyThinShell(frame, role)
     not pfUI or not pfUI.uf or pfUI.uf[role] ~= frame then return false end
   local width = FrameDimension(frame, "GetWidth", "width")
   local height = FrameDimension(frame, "GetHeight", "height")
+  if role == "target" then self:ApplyTargetThreat(frame) end
   if not ModuleEnabled() or not RouteOwned("unitframes.primary-thin-shell") or
     not width or not height or width <= 8 or height <= 8 then
     self:RestoreThinShell(frame)
@@ -2248,7 +2362,8 @@ function UnitFrames:ApplyThinShell(frame, role)
   end
   local slices = EnsurePrimarySlices(frame, "aeuiThinShellSlices", "BACKGROUND")
   local path = RAID_TEXTURES[THIN_VARIANTS[role]]
-  if not LayoutPrimarySlices(slices, path, frame, width + 4, height + 4, THIN_GEOMETRY) then
+  if not LayoutPrimarySlices(slices, path, frame, width + 4,
+    height + 4 + (frame.aeuiTargetThreatExtent or 0), THIN_GEOMETRY) then
     self:RestoreThinShell(frame)
     return false
   end
@@ -2527,6 +2642,7 @@ end
 function UnitFrames:GetRuntimeStatus()
   return
     "contract=" .. tostring(self.runtimeContract) ..
+    ", " .. self:GetTargetThreatStatus() ..
     ", " .. self:GetNameplateModeStatus() ..
     ", distance-tag=" .. tostring(self.distanceIndicatorActive) ..
     ", primary-thin-shells=" .. tostring(self.appliedThinShellCount or 0) .. "/4" ..
