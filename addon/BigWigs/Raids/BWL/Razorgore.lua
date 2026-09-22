@@ -1,4 +1,3 @@
-
 local module, L = BigWigs:ModuleDeclaration("Razorgore the Untamed", "Blackwing Lair")
 local BC = AceLibrary("Babble-Class-2.2")
 local controller = AceLibrary("Babble-Boss-2.2")["Grethok the Controller"]
@@ -97,7 +96,7 @@ L:RegisterTranslations("enUS", function() return {
 	
 		--check for eggCast, if no re-cast or mindExhaustionFade within 3sec -> destroyed
     bar_eggsCounter = "剩余龙蛋",
-    msg_eggCounter = "/30 已摧毁龙蛋",
+    msg_eggCounter = "/20 已摧毁龙蛋",
 	
 	trigger_mindExhaustionYou = "You are afflicted by Mind Exhaustion.", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
 	trigger_mindExhaustionOther = "(.+) is afflicted by Mind Exhaustion.", --CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE
@@ -129,7 +128,7 @@ L:RegisterTranslations("enUS", function() return {
     msg_conflagration = " 燃烧",
 	
 	trigger_conflagHitYou = "Conflagration hits you for", --CHAT_MSG_SPELL_SELF_DAMAGE
-    msg_conflagHitYou = "远离被燃烧的人，笨蛋！！！",
+    msg_conflagHitYou = "远离被燃烧的人，笨蛋！",
 	
 	trigger_warStomp = "Razorgore the Untamed's War Stomp", --CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE // CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE // CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
     bar_warStompDur = "战争践踏",
@@ -138,7 +137,7 @@ L:RegisterTranslations("enUS", function() return {
 } end)
 
 L:RegisterTranslations("zhCN", function() return {
-	-- Wind汉化修复Turtle-WOW中文数据
+	-- Sunelegy，Wind汉化修复Turtle-WOW中文数据
 	-- Last update: 2024-06-22
     cmd = "Razorgore",
 
@@ -225,7 +224,7 @@ L:RegisterTranslations("zhCN", function() return {
 	
 		--check for eggCast, if no re-cast or mindExhaustionFade within 3sec -> destroyed
     bar_eggsCounter = "剩余龙蛋",
-    msg_eggCounter = "/30 已摧毁龙蛋",
+    msg_eggCounter = "/20 已摧毁龙蛋",
 	
 	trigger_mindExhaustionYou = "你受到了心灵疲惫效果的影响。", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
 	trigger_mindExhaustionOther = "(.+)受到了心灵疲惫效果的影响。", --CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE
@@ -275,8 +274,8 @@ local timer = {
 	orb = 90,
 	mindExhaustion = 60,
 	
-	eggCast = 0.1,
-	eggCd = 7,
+	eggCast = 3,
+	eggCd = 10,
 	
 	volleyFirstCd = 10,
 	volleyCd = {14,16.5}, -- {16,18.5} - 2sec cast, saw 17.632 and 18.271
@@ -366,6 +365,7 @@ local eggsDestroyed = 0
 local orbController = nil
 local destroyEggTime = 0
 local addDead = 0
+local exhaustedMinds = {}
 
 function module:OnEnable()
 	--self:RegisterEvent("CHAT_MSG_SAY", "Event") --Debug
@@ -428,9 +428,10 @@ function module:OnEngage()
 	orbController = nil
 	destroyEggTime = 0
 	addDead = 0
+	exhaustedMinds = {}
 	
 	if self.db.profile.eggs then
-		self:TriggerEvent("BigWigs_StartCounterBar", self, L["bar_eggsCounter"], 30, "Interface\\Icons\\"..icon.egg, true, color.eggBar)
+		self:TriggerEvent("BigWigs_StartCounterBar", self, L["bar_eggsCounter"], 20, "Interface\\Icons\\"..icon.egg, true, color.eggBar)
 		self:TriggerEvent("BigWigs_SetCounterBar", self, L["bar_eggsCounter"], eggsDestroyed)
 	end
 	self:ScheduleRepeatingEvent("Razorgore_OrbControlCheck", self.OrbControlCheck, 0.5, self)
@@ -469,11 +470,6 @@ end
 function module:CHAT_MSG_MONSTER_EMOTE(msg)
 	if string.find(msg, L["trigger_phase3"]) then
 		self:Sync(syncName.phase3)
-		
-	elseif string.find(msg, L["trigger_destroyEggCast"]) then
-		self:Sync(syncName.destroyEggCast)
-		self:CancelScheduledEvent("Razorgore_DestroyEgg")
-		self:ScheduleEvent("Razorgore_DestroyEgg", self.Razorgore_DestroyEgg, 0.1, self)
 	end
 end
 
@@ -510,11 +506,11 @@ function module:Event(msg)
 		
 		
 --phase 2
---	elseif string.find(msg, L["trigger_destroyEggCast"]) then
---		self:Sync(syncName.destroyEggCast)
+	elseif msg == L["trigger_destroyEggCast"] then
+		self:Sync(syncName.destroyEggCast)
 		
---		self:CancelScheduledEvent("Razorgore_DestroyEgg")
---		self:ScheduleEvent("Razorgore_DestroyEgg", self.Razorgore_DestroyEgg, 3, self)
+		self:CancelScheduledEvent("Razorgore_DestroyEgg")
+		self:ScheduleEvent("Razorgore_DestroyEgg", self.Razorgore_DestroyEgg, 3, self)
 		
 	
 	
@@ -702,6 +698,7 @@ end
 
 function module:MindExhaustion(rest)
 	self:Bar(rest..L["bar_mindExhaustion"], timer.mindExhaustion, icon.mindExhaustion, true, color.mindExhaustion)
+	table.insert(exhaustedMinds, rest)
 	
 	--can cast volley in p1, volley stops on orb control
 	self:RemoveBar(L["bar_volleyCast"])
@@ -720,6 +717,12 @@ function module:MindExhaustion(rest)
 end
 function module:MindExhaustionFade(rest)
 	self:RemoveBar(rest..L["bar_mindExhaustion"])
+	for i=1,table.getn(exhaustedMinds) do
+		if exhaustedMinds[i] == rest then
+			table.remove(exhaustedMinds, i)
+			break
+		end
+	end
 end
 
 function module:DestroyEggCast()
@@ -743,9 +746,18 @@ function module:Phase3()
 	phase = "phase3"
 	
 	self:CancelScheduledEvent("Razorgore_OrbControlCheck")
+	if orbController then
+		self:RemoveBar(orbController..L["bar_orb"])
+	end
+	for i=1,table.getn(exhaustedMinds) do
+		self:RemoveBar(exhaustedMinds[i]..L["bar_mindExhaustion"])
+	end
+	exhaustedMinds = {}
 	
 	self:CancelScheduledEvent("Razorgore_DestroyEgg")
 	self:TriggerEvent("BigWigs_StopCounterBar", self, L["bar_eggsCounter"])
+	self:CancelDelayedBar(L["bar_destroyEggCd"])
+	self:RemoveBar(L["bar_destroyEggCd"])
 	
 	if self.db.profile.phase then
 		self:Message(L["msg_phase3"], "Important", false, nil, false)

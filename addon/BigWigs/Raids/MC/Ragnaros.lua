@@ -5,44 +5,70 @@ local bzragnaroslair = AceLibrary("Babble-Zone-2.2")["Ragnaros' Lair"]
 
 module.revision = 30078
 module.enabletrigger = module.translatedName
-module.toggleoptions = {"emerge", "wrathofragnaros", "lava", "adds", "melt", "elementalfire", "bosskill"}
+module.toggleoptions = {"emerge", "wrathofragnaros", "lava", "adds", "melt", "elementalfire", -1, "tankalert", "tankwrathhit", "tankwrathresist", "tankmark", "bosskill"}
 module.wipemobs = {"Son of Flame"}
 module.defaultDB = {
+	emerge = true,
+	wrathofragnaros = true,
+	lava = false,
 	adds = false,
+	melt = false,
+	elementalfire = false,
+	tankalert = true,
+	tankwrathhit = true,
+	tankwrathresist = true,
+	tankmark = true,
 }
+
 
 L:RegisterTranslations("enUS", function() return {
 	cmd = "Ragnaros",
 
 	emerge_cmd = "emerge",
-    emerge_name = "出现/消失警报",
-    emerge_desc = "拉格纳罗斯出现/消失时进行警告",
+	emerge_name = "Emerge Alert",
+	emerge_desc = "Warn for Ragnaros Emerge",
 	
 	wrathofragnaros_cmd = "wrathofragnaros",
-    wrathofragnaros_name = "拉格纳罗斯之怒（击退）警报",
-    wrathofragnaros_desc = "拉格纳罗斯之怒击退时进行警告",
+	wrathofragnaros_name = "Wrath of Ragnaros (Knockback) Alert",
+	wrathofragnaros_desc = "Warn for Wrath of Ragnaros Knockback",
 	
 	lava_cmd = "lava",
-    lava_name = "接触岩浆警报",
-    lava_desc = "接触岩浆时进行警告",
+	lava_name = "Touching Lava Alert",
+	lava_desc = "Warn for Touching Lava",
 	
 	adds_cmd = "adds",
-    adds_name = "烈焰之子死亡警报",
-    adds_desc = "烈焰之子死亡时进行警告",
+	adds_name = "Son of Flame Dies Alert",
+	adds_desc = "Warn for Son of Flame Deaths",
 	
 	melt_cmd = "melt",
-    melt_name = "熔化武器警报",
-    melt_desc = "熔化武器时进行警告",
+	melt_name = "Melt Weapon Alert",
+	melt_desc = "Warn for Melt Weapon",
 	
 	elementalfire_cmd = "elementalfire",
-    elementalfire_name = "元素火焰警报",
-    elementalfire_desc = "元素火焰出现时进行警告",
+	elementalfire_name = "Elemental Fire Bars",
+	elementalfire_desc = "Show a duration bar for all current victims of Elemental Fire",
+
+	tankalert_cmd = "tankalert",
+	tankalert_name = "Tank Swap Alert",
+	tankalert_desc = "Warning message whenever the character receiving melee hits changes",
+
+	tankwrathhit_cmd = "tankwrathhit",
+	tankwrathhit_name = "Tank Knockback Alert",
+	tankwrathhit_desc = "Warns when the current tank gets knocked back by Wrath of Ragnaros",
+
+	tankwrathresist_cmd = "tankwrathresist",
+	tankwrathresist_name = "Tank Knockback Resist",
+	tankwrathresist_desc = "Confirms that the current tank resisted Wrath of Ragnaros' knockback",
+
+	tankmark_cmd = "tankmark",
+	tankmark_name = "Tank Mark",
+	tankmark_desc = "Marks the current tank with Skull, clears mark on knockback",
 	
 
 		--74.137
 	trigger_domoStart1 = "Imprudent whelps! You've rushed headlong to your own deaths! See now, the master stirs!", --CHAT_MSG_MONSTER_YELL
-    bar_domoStart = "拉格纳罗斯战斗开始",
-    msg_domoStart = "拉格纳罗斯剧情已经开始 - 坦克们，装备你的火焰抗性装备！",
+	bar_domoStart = "Ragnaros Engage",
+	msg_domoStart = "Ragnaros RP has started - Tanks, equip your Fire Resist!",
 		--58.792
 	trigger_domoStart2 = "Behold Ragnaros, the Firelord! He who was ancient when this world was young! Bow before him, mortals! Bow before your ending!", --CHAT_MSG_MONSTER_YELL
 		--45.457
@@ -56,67 +82,95 @@ L:RegisterTranslations("enUS", function() return {
 	
 	trigger_submerge = "COME FORTH, MY SERVANTS! DEFEND YOUR MASTER!", --CHAT_MSG_MONSTER_YELL (to be confirmed)
 	trigger_submerge2 = "YOU CANNOT DEFEAT THE LIVING FLAME! COME YOU MINIONS OF FIRE! COME FORTH YOU CREATURES OF HATE! YOUR MASTER CALLS!", --CHAT_MSG_MONSTER_YELL (to be confirmed)
-    bar_nextEmerge = "出现",
-    msg_submerge = "拉格纳罗斯已消失 - 烈焰之子即将出现！",
+	bar_nextEmerge = "Emerge",
+	msg_submerge = "Ragnaros Submerged - Incoming Sons of Flame!",
 	
-    msg_emergeSoon = "10秒后出现！",
-    msg_emerge = "拉格纳罗斯已出现！",
-    bar_nextSubmerge = "消失",
-    msg_submergeSoon = "10秒后消失！",
+	msg_emergeSoon = "Emerge in 10 seconds!",
+	msg_emerge = "Ragnaros Emerged!",
 	
 		--melee knockback
 	trigger_knockback = "TASTE THE FLAMES OF SULFURON!", --CHAT_MSG_MONSTER_YELL
-    bar_knockbackCd = "击退冷却",
-    bar_knockbackSoon = "即将击退...",
-    msg_knockbackSoon = "即将击退 - 近战撤退！",
-    msg_knockback = "击退 - 近战进场！",
+	bar_knockbackCd = "Knockback CD",
+	bar_knockbackSoon = "Knockback Soon...",
+	msg_knockbackSoon = "Knockback Soon - Melee Out!",
+	msg_knockback = "Knockback - Melee In!",
 	
 	trigger_lavaYou = "You lose (.+) health for swimming in lava.", --CHAT_MSG_COMBAT_SELF_HITS
-    msg_lavaYou = "你站在岩浆里！",
+	msg_lavaYou = "You're standing in lava!",
 
-    msg_addDead = "/8 烈焰之子死亡",
+	msg_addDead = "/10 Son of Flame Dead",
 	
 	trigger_meltWeapon = "Ragnaros casts Melt Weapon on you: (.+) damaged.", --CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE
-    bar_melt = "熔化伤害：",
+	bar_melt = "Melt Damage: ",
 	
 	trigger_elementalFireYou = "You are afflicted by Elemental Fire.", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
 	trigger_elementalFireOther = "(.+) is afflicted by Elemental Fire.", --CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE //CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE
-	trigger_elementalFireFade = "Elemental Fire fades from (.+).", --CHAT_MSG_SPELL_AURA_GONE_SELF // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_OTHERà
-    bar_elementalFire = "元素火焰",
+	trigger_elementalFireFade = "Elemental Fire fades from (.+).", --CHAT_MSG_SPELL_AURA_GONE_SELF // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_OTHER
+	bar_elementalFire = "%s - Elemental Fire",
     
-    c_sonofflame = "Son of Flame",
-    c_majordomoexecutus = "Majordomo Executus",
+	trigger_hitCrit = "Ragnaros .-its (.+) for",
+	trigger_miss = "Ragnaros misses (.+)%.",
+	trigger_dodgeParry = "Ragnaros attacks. (.+) .-%.$",
+	msg_newTank = "%s is tanking",
+	msg_youTank = "YOU are tanking",
+
+	trigger_wrathHit = "Wrath of Ragnaros hits (.+) for",
+	trigger_wrathResist = "Wrath of Ragnaros was resisted by (.+)%.",
+	trigger_wrathResistYou = "Wrath of Ragnaros was resisted%.",
+	msg_tankWrathHit = "Knockback on Tank! %s is flying.",
+	msg_tankWrathResist = "Resisted Knockback. %s still tanking.",
+
+	sonofflame = "Son of Flame",
+    majordomoexecutus = "Majordomo Executus",
 	you = "you",
 } end)
 
+
+
 L:RegisterTranslations("zhCN", function() return {
-	-- Wind汉化修复Turtle-WOW中文数据
+	-- Sunelegy，Wind汉化修复Turtle-WOW中文数据
 	-- Last update: 2024-06-22
     cmd = "Ragnaros",
 
 	emerge_cmd = "emerge",
-    emerge_name = "出现/消失警报",
-    emerge_desc = "拉格纳罗斯出现/消失时进行警告",
+    emerge_name = "出现警报",
+    emerge_desc = "拉格纳罗斯出现进行警告",
 	
 	wrathofragnaros_cmd = "wrathofragnaros",
     wrathofragnaros_name = "拉格纳罗斯之怒（击退）警报",
-    wrathofragnaros_desc = "拉格纳罗斯之怒击退时进行警告",
+    wrathofragnaros_desc = "当拉格纳罗斯之怒击退时发出警报",
 	
-	lava_cmd = "lava",
-    lava_name = "接触岩浆警报",
-    lava_desc = "接触岩浆时进行警告",
+    lava_cmd = "lava",
+    lava_name = "接触熔岩警报",
+    lava_desc = "当接触熔岩时发出警告",
 	
-	adds_cmd = "adds",
-    adds_name = "烈焰之子死亡警报",
-    adds_desc = "烈焰之子死亡时进行警告",
+    adds_cmd = "adds",
+    adds_name = "火焰之子死亡警报",
+    adds_desc = "当火焰之子死亡时发出警报",
 	
-	melt_cmd = "melt",
+    melt_cmd = "melt",
     melt_name = "熔化武器警报",
-    melt_desc = "熔化武器时进行警告",
+    melt_desc = "当武器被熔化时发出警报",
 	
-	elementalfire_cmd = "elementalfire",
-    elementalfire_name = "元素火焰警报",
-    elementalfire_desc = "元素火焰出现时进行警告",
+    elementalfire_cmd = "elementalfire",
+    elementalfire_name = "元素火焰持续时间条",
+    elementalfire_desc = "为所有当前受到元素火焰影响的玩家显示持续时间条",
+
+    tankalert_cmd = "tankalert",
+    tankalert_name = "坦克交换警报",
+    tankalert_desc = "当承受近战攻击的角色发生变化时显示警告信息",
+
+    tankwrathhit_cmd = "tankwrathhit",
+    tankwrathhit_name = "坦克击退警报",
+    tankwrathhit_desc = "当当前坦克被拉格纳罗斯之怒击退时发出警报",
+
+    tankwrathresist_cmd = "tankwrathresist",
+    tankwrathresist_name = "坦克抵抗击退警报",
+    tankwrathresist_desc = "确认当前坦克抵抗了拉格纳罗斯之怒的击退效果",
+
+    tankmark_cmd = "tankmark",
+    tankmark_name = "坦克标记",
+    tankmark_desc = "用骷髅标记当前坦克，击退时清除标记",
 	
 
 		--74.137
@@ -136,27 +190,26 @@ L:RegisterTranslations("zhCN", function() return {
 	
 	trigger_submerge = "出来吧，我的仆人们！保卫你的主人！", --CHAT_MSG_MONSTER_YELL (to be confirmed)
 	trigger_submerge2 = "^你们无法击败生命之焰", --CHAT_MSG_MONSTER_YELL (to be confirmed)
-    bar_nextEmerge = "出现",
-    msg_submerge = "拉格纳罗斯已消失 - 烈焰之子即将出现！",
+
+	bar_nextEmerge = "现身",
+    msg_submerge = "拉格纳罗斯潜入熔岩 - 火焰之子即将出现！",
 	
     msg_emergeSoon = "10秒后出现！",
     msg_emerge = "拉格纳罗斯已出现！",
-    bar_nextSubmerge = "消失",
-    msg_submergeSoon = "10秒后消失！",
 	
 		--melee knockback
 	trigger_knockback = "品尝萨弗隆的火焰！", --CHAT_MSG_MONSTER_YELL
     bar_knockbackCd = "击退冷却",
     bar_knockbackSoon = "即将击退...",
     msg_knockbackSoon = "即将击退 - 近战撤退！",
-    msg_knockback = "击退 - 近战进场！",
+    msg_knockback = "近战进场！",
 	
-	trigger_lavaYou = "你泡在岩浆中，损失了(.+)点生命值。", --CHAT_MSG_COMBAT_SELF_HITS
+	trigger_lavaYou = "你泡在岩浆中，损失了", --CHAT_MSG_COMBAT_SELF_HITS
     msg_lavaYou = "你站在岩浆里！",
 
-    msg_addDead = "/8 烈焰之子死亡",
+    msg_addDead = "/10 烈焰之子死亡",
 	
-	trigger_meltWeapon = "拉格纳罗斯对你施放了熔化武器，造成(.+)点伤害。", --CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE
+	trigger_meltWeapon = "拉格纳罗斯对你施放了熔化武器", --CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE
     bar_melt = "熔化伤害：",
 	
 	trigger_elementalFireYou = "你受到了元素火焰效果的影响。", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
@@ -164,10 +217,23 @@ L:RegisterTranslations("zhCN", function() return {
 	trigger_elementalFireFade = "元素火焰效果从(.+)身上消失了。", --CHAT_MSG_SPELL_AURA_GONE_SELF // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_OTHERà
     bar_elementalFire = "元素火焰",
     
-    c_sonofflame = "烈焰之子",
-    c_majordomoexecutus = "管理者埃克索图斯",
+	trigger_hitCrit = "拉格纳罗斯击中(.+)造成",
+    trigger_miss = "拉格纳罗斯没有击中(.+)",
+    trigger_dodgeParry = "拉格纳罗斯击中(.+)",
+    msg_newTank = "%s担任坦克",
+    msg_youTank = "你担任坦克",
+
+	trigger_wrathHit = "拉格纳罗斯之怒击中(.+)造成",
+    trigger_wrathResist = "拉格纳罗斯之怒被(.+)抵抗了",
+    trigger_wrathResistYou = "拉格纳罗斯之怒被抵抗了",
+    msg_tankWrathHit = "坦克被击退！%s被击飞",
+    msg_tankWrathResist = "抵抗击退！%s仍在担任坦克",
+
+    sonofflame = "烈焰之子",
+    majordomoexecutus = "管理者埃克索图斯",
 	you = "你",
 } end)
+
 
 local timer = {
 	domoStart1 = 74.137,
@@ -177,7 +243,6 @@ local timer = {
 	domoStart5 = 23.9,
 	
 	nextEmerge = 90,
-	nextSubmerge = 180,
 	
 	knockbackCd = 25, --supposed to be 25,30
 	knockbackSoon = 8,
@@ -188,7 +253,6 @@ local icon = {
 	domoStart = "inv_misc_pocketwatch_01",
 	
 	emerge = "ability_stealth",
-	submerge = "spell_fire_lavaspawn",
 	
 	knockback = "ability_smash",
 	
@@ -220,6 +284,10 @@ local syncName = {
 	
 	elementalFire = "RagnarosElementalFire"..module.revision,
 	elementalFireFade = "RagnarosElementalFireFade"..module.revision,
+
+	newTank = "RagnarosNewTank"..module.revision,
+	tankWrathHit = "RagnarosTankWrathHit"..module.revision,
+	tankWrathResist = "RagnarosTankWrathResist"..module.revision,
 }
 
 local addDead = 0
@@ -236,7 +304,8 @@ local phase = nil
 
 local lastKnockTime = 0
 local submergeTime = 0
-local emergeTime = 0
+
+local knownTank = nil
 
 function module:OnRegister()
 	self:RegisterEvent("MINIMAP_ZONE_CHANGED")
@@ -249,7 +318,9 @@ function module:OnEnable()
 	
 	self:RegisterEvent("CHAT_MSG_COMBAT_SELF_HITS", "Event") --trigger_lavaYou
 	
-	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE", "Event") --trigger_meltWeapon
+	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE", "SpellHitEvent") --trigger_meltWeapon, trigger_wrathHit, trigger_wrathResistYou
+	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE", "SpellHitEvent") --trigger_wrathHit, trigger_wrathResist
+	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE", "SpellHitEvent") --trigger_wrathHit, trigger_wrathResist
 	
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE", "Event") --trigger_elementalFireYou
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE", "Event") --trigger_elementalFireOther
@@ -259,6 +330,13 @@ function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_PARTY", "Event") --trigger_elementalFireFade
 	self:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_OTHER", "Event") --trigger_elementalFireFade
 	
+	self:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_SELF_HITS", "MeleeHitEvent")
+	self:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES", "MeleeHitEvent")
+	self:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_PARTY_HITS", "MeleeHitEvent")
+	self:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_PARTY_MISSES", "MeleeHitEvent")
+	self:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_HITS", "MeleeHitEvent") --non-party raid members
+	self:RegisterEvent("CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_MISSES", "MeleeHitEvent") --non-party raid members
+
 	
 	self:ThrottleSync(5, syncName.knockback)
 	self:ThrottleSync(5, syncName.submerge)
@@ -266,6 +344,9 @@ function module:OnEnable()
 	self:ThrottleSync(0.5, syncName.addDead)
 	self:ThrottleSync(1, syncName.elementalFire)
 	self:ThrottleSync(0.1, syncName.elementalFireFade)
+	self:ThrottleSync(1, syncName.newTank)
+	self:ThrottleSync(5, syncName.tankWrathHit)
+	self:ThrottleSync(5, syncName.tankWrathResist)
 end
 
 function module:OnSetup()
@@ -291,10 +372,12 @@ function module:OnEngage()
 	
 	lastKnockTime = 0
 	submergeTime = 0
-	emergeTime = 0
+
+	knownTank = nil
 end
 
 function module:OnDisengage()
+	self:ClearKnownTank()
 end
 
 function module:MINIMAP_ZONE_CHANGED(msg)
@@ -308,9 +391,9 @@ end
 function module:CHAT_MSG_COMBAT_HOSTILE_DEATH(msg)
 	BigWigs:CheckForBossDeath(msg, self)
 
-	if (msg == string.format(UNITDIESOTHER, L["c_sonofflame"])) then
+	if (msg == string.format(UNITDIESOTHER, "sonofflame")) then
 		addDead = addDead + 1
-		if addDead <= 8 then
+		if addDead <= 10 then
 			self:Sync(syncName.addDead .. " " .. addDead)
 		end
 	end
@@ -347,16 +430,11 @@ function module:TrueEngage()
 		self:Bar(L["bar_knockbackCd"], timer.knockbackCd, icon.knockback, true, color.knockbackCd)
 		self:DelayedBar(timer.knockbackCd, L["bar_knockbackSoon"], timer.knockbackSoon, icon.knockback, true, color.knockbackSoon)
 		
-		if not (UnitClass("Player") == BC["Mage"] or UnitClass("Player") == BC["Priest"] or UnitClass("Player") == BC["Warlock"]) then
+		if not (UnitClass("Player") == "Mage" or UnitClass("Player") == "Priest" or UnitClass("Player") == "Warlock") then
 			self:DelayedWarningSign(timer.knockbackCd - 3, icon.knockback, 10)
 			self:DelayedMessage(timer.knockbackCd - 3, L["msg_knockbackSoon"], "Urgent", false, nil, false)
 			self:DelayedSound(timer.knockbackCd - 3, "RunAway")
 		end
-	end
-	
-	if self.db.profile.emerge then
-		self:Bar(L["bar_nextSubmerge"], timer.nextSubmerge, icon.submerge, true, color.emerge)
-		self:DelayedMessage(timer.nextSubmerge - 10, L["msg_submergeSoon"], "Attention", false, nil, false)
 	end
 end
 
@@ -364,13 +442,9 @@ function module:Event(msg)
 	if string.find(msg, L["trigger_lavaYou"]) and self.db.profile.lava then
 		self:LavaYou()
 		
-	elseif string.find(msg, L["trigger_meltWeapon"]) and self.db.profile.melt then
-		local _,_, meltWeapon, _ = string.find(msg, L["trigger_meltWeapon"])
-		self:MeltWeapon(meltWeapon)
-		
-		
 	elseif msg == L["trigger_elementalFireYou"] then
-		self:Sync(syncName.elementalFire .. " " .. UnitName("Player"))
+		local elementalFirePerson = UnitName("Player")
+		self:Sync(syncName.elementalFire .. " " .. elementalFirePerson)
 	
 	elseif string.find(msg, L["trigger_elementalFireOther"]) then
 		local _,_, elementalFirePerson, _ = string.find(msg, L["trigger_elementalFireOther"])
@@ -378,8 +452,59 @@ function module:Event(msg)
 	
 	elseif string.find(msg, L["trigger_elementalFireFade"]) then
 		local _,_, elementalFireFadePerson, _ = string.find(msg, L["trigger_elementalFireFade"])
-		if elementalFireFadePerson == L["you"] then elementalFireFadePerson = UnitName("Player") end
+		if elementalFireFadePerson == "you" then elementalFireFadePerson = UnitName("Player") end
 		self:Sync(syncName.elementalFireFade .. " " .. elementalFireFadePerson)
+	end
+end
+
+
+function module:SpellHitEvent(msg)
+	if string.find(msg, L["trigger_meltWeapon"]) and self.db.profile.melt then
+		local _,_, meltWeapon, _ = string.find(msg, L["trigger_meltWeapon"])
+		self:MeltWeapon(meltWeapon)
+		return
+	end
+
+	local _,_, wrathHitPerson = string.find(msg, L["trigger_wrathHit"])
+	if wrathHitPerson then
+		if wrathHitPerson == "you" then wrathHitPerson = UnitName("Player") end
+		if wrathHitPerson == knownTank then
+			self:Sync(syncName.tankWrathHit .. " " .. wrathHitPerson)
+		end
+		return
+	end
+
+	local _,_, wrathResistPerson = string.find(msg, L["trigger_wrathResist"])
+	if wrathResistPerson and wrathResistPerson == knownTank then
+		self:Sync(syncName.tankWrathResist .. " " .. wrathResistPerson)
+		return
+	end
+
+	if string.find(msg, L["trigger_wrathResistYou"]) and knownTank == UnitName("Player") then
+		self:Sync(syncName.tankWrathResist .. " " .. UnitName("Player"))
+		return
+	end
+end
+
+
+function module:MeleeHitEvent(msg)
+	local victim = "none"
+
+	local _,_, player = string.find(msg, L["trigger_hitCrit"])
+	victim = player or victim
+
+	local _,_, player = string.find(msg, L["trigger_miss"])
+	victim = player or victim
+
+	local _,_, player = string.find(msg, L["trigger_dodgeParry"])
+	victim = player or victim
+
+	if victim ~= "none" then
+		if string.lower(victim) == "you" then victim = UnitName("Player") end
+
+		if victim ~= knownTank then
+			self:Sync(syncName.newTank .. " " .. victim)
+		end
 	end
 end
 
@@ -392,13 +517,20 @@ function module:BigWigs_RecvSync(sync, rest, nick)
 		self:Submerge()
 	elseif sync == syncName.emerge then
 		self:Emerge()
-	elseif sync == syncName.addDead and rest and self.db.profile.adds then
+	elseif sync == syncName.addDead and rest then
 		self:AddDead(rest)
 		
-	elseif sync == syncName.elementalFire and rest and self.db.profile.elementalfire then
+	elseif sync == syncName.elementalFire and rest then
 		self:ElementalFire(rest)
-	elseif sync == syncName.elementalFireFade and rest and self.db.profile.elementalfire then
+	elseif sync == syncName.elementalFireFade and rest then
 		self:ElementalFireFade(rest)
+
+	elseif sync == syncName.newTank and rest then
+		self:NewTank(rest)
+	elseif sync == syncName.tankWrathHit and rest then
+		self:TankKnockbackHit(rest)
+	elseif sync == syncName.tankWrathResist and rest then
+		self:TankKnockbackResist(rest)
 	end
 end
 
@@ -449,11 +581,8 @@ function module:Knockback()
 end
 
 function module:Submerge()
-	if UnitName("Player") == "Dreadsome" or UnitName("Player") == "Relar" then
-		DEFAULT_CHAT_FRAME:AddMessage("   BigWigs_Ragnaros:Debug -- Submerge")
-	end
-	
 	phase = "submerged"
+	self:ClearKnownTank()
 	
 		--knockback stuff
 	self:RemoveBar(L["bar_knockbackCd"])
@@ -463,10 +592,6 @@ function module:Submerge()
 	self:RemoveWarningSign(icon.knockback)
 	self:CancelDelayedMessage(L["msg_knockbackSoon"])
 	self:CancelDelayedSound("RunAway")
-	
-		--submerge stuff
-	self:RemoveBar(L["bar_nextSubmerge"])
-	self:CancelDelayedMessage(L["msg_submergeSoon"])
 	
 	submergeTime = GetTime()
 
@@ -481,24 +606,16 @@ function module:Submerge()
 end
 
 function module:Emerge()
-	if UnitName("Player") == "Dreadsome" or UnitName("Player") == "Relar" then
-		DEFAULT_CHAT_FRAME:AddMessage("   BigWigs_Ragnaros:Debug -- Emerge")
-	end
-	
 	self:CancelScheduledEvent("CheckForEmerge")
 	
 	phase = "emerged"
 	addDead = 0
-	emergeTime = GetTime()
 	
 	self:RemoveBar(L["bar_nextEmerge"])
 	self:CancelDelayedMessage(L["msg_emergeSoon"])
 	
 	if self.db.profile.emerge then
 		self:Message(L["msg_emerge"], "Attention", false, nil, false)
-		
-		self:Bar(L["bar_nextSubmerge"], timer.nextSubmerge, icon.submerge, true, color.emerge)
-		self:DelayedMessage(timer.nextSubmerge - 10, L["msg_submergeSoon"], "Attention", false, nil, false)
 	end
 	
 	
@@ -539,11 +656,11 @@ function module:Emerge()
 end
 
 function module:CheckForEmerge()
-	if UnitExists("Target") and UnitName("Target") == module.translatedName and UnitExists("TargetTarget") and UnitName("TargetTarget") ~= L["c_majordomoexecutus"] then
+	if UnitExists("Target") and UnitName("Target") == module.translatedName and UnitExists("TargetTarget") and UnitName("TargetTarget") ~= "majordomoexecutus" then
 		self:Sync(syncName.emerge)
 	else
 		for i=1,GetNumRaidMembers() do
-			if UnitExists("raid"..i.."Target") and UnitName("raid"..i.."Target") == module.translatedName and UnitExists("raid"..i.."TargetTarget") and UnitName("raid"..i.."TargetTarget") ~= L["c_majordomoexecutus"] then
+			if UnitExists("raid"..i.."Target") and UnitName("raid"..i.."Target") == module.translatedName and UnitExists("raid"..i.."TargetTarget") and UnitName("raid"..i.."TargetTarget") ~= "majordomoexecutus" then
 				self:Sync(syncName.emerge)
 				break
 			end
@@ -558,9 +675,11 @@ function module:LavaYou()
 end
 
 function module:AddDead(rest)
-	self:Message(rest..L["msg_addDead"], "Positive", false, nil, false)
+	if self.db.profile.adds then
+		self:Message(rest..L["msg_addDead"], "Positive", false, nil, false)
+	end
 	
-	if tonumber(rest) == 8 and phase == "submerged" then
+	if tonumber(rest) == 10 and phase == "submerged" then
 		self:Sync(syncName.emerge)
 	end
 end
@@ -592,10 +711,82 @@ function module:MeltWeapon(rest)
 	end
 end
 
-function module:ElementalFire(rest)
-	self:Bar(rest..L["bar_elementalFire"], timer.elementalFire, icon.elementalFire, true, color.elementalFire)
+function module:ElementalFire(player)
+	if self.db.profile.elementalfire then
+		self:Bar(string.format(L["bar_elementalFire"], player), timer.elementalFire, icon.elementalFire, true, color.elementalFire)
+	end
 end
 
-function module:ElementalFireFade(rest)
-	self:RemoveBar(rest..L["bar_elementalFire"])
+function module:ElementalFireFade(player)
+	self:RemoveBar(string.format(L["bar_elementalFire"], player))
+end
+
+function module:OnFriendlyDeath(msg)
+	local _, _, player = string.find(msg, "(.+)死亡了")
+	if player then
+		if player == "You" then player = UnitName("player") end
+
+		-- remove Elemental Fire bar when a player dies
+		self:ElementalFireFade(player)
+
+		-- clear mark and variable if tank dies
+		if player == knownTank then
+			self:ClearKnownTank()
+		end
+	end
+end
+
+function module:NewTank(newTank)
+	-- sanity check in case remote player has a different knownTank
+	if newTank == knownTank then return end
+
+	if self.db.profile.tankalert then
+		if newTank == UnitName("player") then
+			-- infer whether player is a tank from fire resist
+			local _, FR = UnitResistance("player",2)
+
+			if FR < 200 then -- warn for aggro pull
+				self:Message(L["msg_youTank"], "Important", true, "Beware")
+			else -- player is tanking
+				self:Message(L["msg_youTank"], "Positive", true, "Long")
+			end
+		else
+			self:Message(string.format(L["msg_newTank"], newTank), "Attention", true, "Alarm")
+		end
+	end
+
+	self:ClearKnownTank()
+	knownTank = newTank
+
+	if self.db.profile.tankmark then
+		self:SetRaidTargetForPlayer(newTank, 8)
+	end
+end
+
+function module:ClearKnownTank()
+	if self.db.profile.tankmark and knownTank then
+		self:RestorePreviousRaidTargetForPlayer(knownTank)
+	end
+
+	knownTank = nil
+end
+
+function module:TankKnockbackHit(player)
+	-- sanity check in case remote player has a different knownTank
+	if player ~= knownTank then return end
+
+	if self.db.profile.tankwrathhit then
+		self:Message(string.format(L["msg_tankWrathHit"], knownTank), "Urgent", true, "Beware")
+	end
+
+	self:ClearKnownTank()
+end
+
+function module:TankKnockbackResist(player)
+	-- sanity check in case remote player has a different knownTank
+	if player ~= knownTank then return end
+
+	if self.db.profile.tankwrathresist then
+		self:Message(string.format(L["msg_tankWrathResist"], knownTank), "Positive", true, "Long")
+	end
 end

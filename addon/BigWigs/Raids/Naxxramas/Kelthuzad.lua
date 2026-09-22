@@ -154,8 +154,8 @@ L:RegisterTranslations("enUS", function() return {
     msg_detonate = "自爆法力在 ",
 	
 	trigger_frostbolt = "Kel'Thuzad begins to cast Frostbolt.", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
-    bar_frostbolt = "寒冰箭",
-    msg_frostbolt = "寒冰箭 - 打断！",
+    bar_frostbolt = "冰霜箭",
+    msg_frostbolt = "冰霜箭 - 打断！",
 	
 	trigger_attack1 = "Kel'Thuzad attacks", --CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES // CHAT_MSG_COMBAT_CREATURE_VS_PARTY_MISSES // CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_MISSES
 	trigger_attack2 = "Kel'Thuzad misses", --CHAT_MSG_COMBAT_CREATURE_VS_SELF_MISSES // CHAT_MSG_COMBAT_CREATURE_VS_PARTY_MISSES // CHAT_MSG_COMBAT_CREATURE_VS_CREATURE_MISSES
@@ -191,7 +191,7 @@ L:RegisterTranslations("enUS", function() return {
 } end )
 
 L:RegisterTranslations("zhCN", function() return {
-	-- Wind汉化修复Turtle-WOW中文数据
+	-- Sunelegy，Wind汉化修复Turtle-WOW中文数据
 	-- Last update: 2024-06-22
     cmd = "Kelthuzad",
 
@@ -258,18 +258,18 @@ L:RegisterTranslations("zhCN", function() return {
 	
 	--Mortal Wound from Unstoppable Abomination, stacking, -10% healing, 15sec
 	
-	trigger_engage = "冰冷黑暗的爪牙、仆人、士兵，听从克尔苏加德的召唤！", --CHAT_MSG_MONSTER_YELL
+	trigger_engage = "冰冷黑暗的爪牙、仆人、士兵，听从克尔苏加德的召唤", --CHAT_MSG_MONSTER_YELL
     bar_phase1 = "第一阶段",
 	
-	trigger_phase2_1 = "祈求怜悯！", --CHAT_MSG_MONSTER_YELL
-	trigger_phase2_2 = "尖叫出你的临终呼吸！", --CHAT_MSG_MONSTER_YELL
-	trigger_phase2_3 = "末日就在你身上！", --CHAT_MSG_MONSTER_YELL
+	trigger_phase2_1 = "祈求怜悯", --CHAT_MSG_MONSTER_YELL
+	trigger_phase2_2 = "尖叫出你的临终呼吸", --CHAT_MSG_MONSTER_YELL
+	trigger_phase2_3 = "末日就在你身上", --CHAT_MSG_MONSTER_YELL
     bar_phase2 = "克尔苏加德激活",
-    msg_phase2 = "第二阶段 - 15秒后克尔苏加德激活！",
+    msg_phase2 = "第二阶段 - 15秒后克尔苏加德激活",
 	
     msg_phase3soon = "即将进入第三阶段 - 在40%血量时开始",
 	
-	trigger_phase3 = "掌握！我需要援助！", --CHAT_MSG_MONSTER_YELL
+	trigger_phase3 = "掌握！我需要援助", --CHAT_MSG_MONSTER_YELL
     msg_phase3 = "第三阶段 - 5个小强即将到来 - 最多束缚 3 个！",
 	
 	--supposedly 14 of each, saw 13 weaver in logs. Also 117 Soldier of the Frozen Wastes, useful?
@@ -279,38 +279,38 @@ L:RegisterTranslations("zhCN", function() return {
     msg_abom = "憎恶已刷新 ",
     msg_weaver = "女妖已刷新 ",
 		
-	trigger_mcYell1 = "你的灵魂，现在与我绑定了！",
-	trigger_mcYell2 = "将无处可逃！",
+	trigger_mcYell1 = "你的灵魂，现在与我绑定了",
+	trigger_mcYell2 = "将无处可逃",
     msg_mc = "精神控制！",
 	
-	trigger_mcYou = "你受到了克尔苏加德锁链效果的影响。", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
-	trigger_mcOther = "(.+)受到了克尔苏加德锁链效果的影响。", --CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE
-	trigger_mcFade = "克尔苏加德的锁链效果从(.+)身上消失了。", --CHAT_MSG_SPELL_AURA_GONE_SELF // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_OTHER
+	trigger_mcYou = "你受到了克尔苏加德锁链效果的影响", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
+	trigger_mcOther = "(.+)受到了克尔苏加德锁链效果的影响", --CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE
+	trigger_mcFade = "克尔苏加德的锁链效果从(.+)身上消失了", --CHAT_MSG_SPELL_AURA_GONE_SELF // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_OTHER
     bar_mcAfflic = " 精神控制",
     bar_mcCd = "精神控制 CD",
-	trigger_friendlyDead = "(.+)死亡了。", --CHAT_MSG_COMBAT_FRIENDLY_DEATH
+	trigger_friendlyDead = "(.+)死亡了", --CHAT_MSG_COMBAT_FRIENDLY_DEATH
 	
-	trigger_fissure = "克尔苏加德施放了暗影裂隙。", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
+	trigger_fissure = "克尔苏加德施放了暗影裂隙", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
     bar_fissure = "离开红圈！",
     msg_fissure = "红圈！",
 	
-	trigger_frostBlastYell = "我要冻结你血管里的血液！", --CHAT_MSG_MONSTER_YELL
-	trigger_frostBlastYou = "你受到了冰霜冲击效果的影响。", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
-	trigger_frostBlastOther = "(.+)受到了冰霜冲击效果的影响。", --CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE, CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE // CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE
+	trigger_frostBlastYell = "我要冻结你血管里的血液", --CHAT_MSG_MONSTER_YELL
+	trigger_frostBlastYou = "你受到了冰霜冲击效果的影响", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
+	trigger_frostBlastOther = "(.+)受到了冰霜冲击效果的影响", --CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE, CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE // CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE
     bar_frostBlastCd = "冰墓 CD",
     bar_frostBlastAfflic = "冰墓",
     msg_frostBlast = "冰墓！",
 		--unused
-	trigger_frostBlastFade = "冰霜冲击效果从(.+)身上消失。", --CHAT_MSG_SPELL_AURA_GONE_SELF // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_OTHER
+	trigger_frostBlastFade = "冰霜冲击效果从(.+)身上消失", --CHAT_MSG_SPELL_AURA_GONE_SELF // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_OTHER
 
-	trigger_detonateYou = "你受到了自爆法力效果的影响。", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
-	trigger_detonateOther = "(.+)受到了自爆法力效果的影响。", --CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE // CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE
-	trigger_detonateFade = "自爆法力效果从(.+)身上消失。", --CHAT_MSG_SPELL_AURA_GONE_SELF // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_OTHER
+	trigger_detonateYou = "你受到了自爆法力效果的影响", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
+	trigger_detonateOther = "(.+)受到了自爆法力效果的影响", --CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE // CHAT_MSG_SPELL_PERIODIC_HOSTILEPLAYER_DAMAGE
+	trigger_detonateFade = "自爆法力效果从(.+)身上消失", --CHAT_MSG_SPELL_AURA_GONE_SELF // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_OTHER
 	bar_detonateAfflic = " 法力爆炸",
 	bar_detonateCd = "法力爆炸 CD",
 	msg_detonate = "法力爆炸在 ",
 
-	trigger_frostbolt = "克尔苏加德开始施放冰霜箭。", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
+	trigger_frostbolt = "克尔苏加德开始施放冰霜箭", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
 	bar_frostbolt = "冰霜箭",
 	msg_frostbolt = "冰霜箭 - 打断！",
 	
@@ -335,12 +335,12 @@ L:RegisterTranslations("zhCN", function() return {
 
 	bar_guardian = "小强 %d",
 
-	trigger_shackle = "寒冰皇冠卫士受到了束缚亡灵效果的影响。", --CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE
-	trigger_shackleFade = "束缚亡灵效果从寒冰皇冠卫士身上消失。", --CHAT_MSG_SPELL_AURA_GONE_OTHER
+	trigger_shackle = "寒冰皇冠卫士受到了束缚亡灵效果的影响", --CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE
+	trigger_shackleFade = "束缚亡灵效果从寒冰皇冠卫士身上消失", --CHAT_MSG_SPELL_AURA_GONE_OTHER
 	bar_shackle = "束缚亡灵（最多3个）",
 	msg_shackle = "%s/3",
 
-	trigger_bloodTap = "寒冰皇冠卫士获得了鲜血分流的效果%（(.+)%）。", --CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS
+	trigger_bloodTap = "寒冰皇冠卫士获得了鲜血分流的效果（(.+)）", --CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS
 	bar_bloodTapA = "血液分流 +",
 	bar_bloodTapB = "% 伤害",
 	clickme = " >点击我！<",
@@ -692,9 +692,9 @@ function module:UNIT_HEALTH(msg)
 		local healthPct = UnitHealth(msg) * 100 / UnitHealthMax(msg)
 		if healthPct > 40 and healthPct <= 45 and p3warn == nil then
 			self:Sync(syncName.phase3soon)
-		elseif healthPct > 45 and p3warn == true then
+		elseif healthPct > 45 and p2warn == true then
 			p3warn = nil
-		elseif healthPct <= 40 and p3warn == nil then
+		elseif healthPct <= 40 and p2warn == nil then
 			p3warn = true
 		end
 	end

@@ -41,7 +41,7 @@ L:RegisterTranslations("enUS", function() return {
 } end )
 
 L:RegisterTranslations("zhCN", function() return {
-	-- Wind汉化修复Turtle-WOW中文数据
+	-- Sunelegy，Wind汉化修复Turtle-WOW中文数据
 	-- Last update: 2024-06-22
     cmd = "Wyrmguard",
     
@@ -60,7 +60,7 @@ L:RegisterTranslations("zhCN", function() return {
 	warstomp_trigger = "死爪龙人护卫的战争践踏",
     warstomp_bar = "战争践踏 CD",
 	
-	vulnerability_direct_test = "^[%w\u4e00-\u9fa5]+[%s的]*([%w\u4e00-\u9fa5]+)[%s]*击中死爪龙人护卫造成[%s]*([%d]+)[%s]*点([%w\u4e00-\u9fa5]+)伤害%。?[%s%(]*([%d]*)?",
+	vulnerability_direct_test = "^[^%s]+的([^%s]+)[%s]*([^%s]+)死爪龙人护卫造成[%s]*([%d]+)[%s]*点([^%s]+)伤害%。?[%s%(]*([%d]*)?",
 	vulnerability_dots_test = "^[^%s]+的([^%s]+)使死爪龙人护卫受到了(%d+)点([^%s]+)伤害。",
     vulnerability_message = "弱点：%s！",
     
@@ -327,4 +327,3 @@ function module:IdentifyVulnerability(school)
 		bwWyrmguardsShadowBar = true
 	end
 end
-

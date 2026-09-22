@@ -1,4 +1,3 @@
-
 local module, L = BigWigs:ModuleDeclaration("C'Thun", "Ahn'Qiraj")
 local bbqirajimindslayer = AceLibrary("Babble-Boss-2.2")["Qiraji Mindslayer"]
 local bbeyeofcthun = AceLibrary("Babble-Boss-2.2")["Eye of C'Thun"]
@@ -10,7 +9,7 @@ local bbcthun = AceLibrary("Babble-Boss-2.2")["C'Thun"]
 local bzthescarabwall = AceLibrary("Babble-Zone-2.2")["The Scarab Wall"]
 local bzgatesofahnqiraj = AceLibrary("Babble-Zone-2.2")["Gates of Ahn'Qiraj"]
 
-module.revision = 30078
+module.revision = 30080
 module.enabletrigger = {bbeyeofcthun, bbcthun}
 module.toggleoptions = {
 	"cthuneyebeam",
@@ -32,232 +31,237 @@ module.toggleoptions = {
 	"raidicon",
 	"bosskill"
 }
+module.defaultDB = {
+	window = false,
+}
 
-L:RegisterTranslations("enUS", function() return {
-	cmd = "Cthun",
+L:RegisterTranslations("enUS", function()
+	return {
+		cmd = "Cthun",
 	
-	cthuneyebeam_cmd = "cthuneyebeam",
-    cthuneyebeam_name = "克苏恩的眼棱警报",
-    cthuneyebeam_desc = "克苏恩的眼棱出现时进行警告",
+		cthuneyebeam_cmd = "cthuneyebeam",
+		cthuneyebeam_name = "C'Thun's Eye Beam Alert",
+		cthuneyebeam_desc = "Warn for C'Thun's Eye Beam",
 	
-	darkglare_cmd = "darkglare",
-    darkglare_name = "黑暗闪耀警报",
-    darkglare_desc = "黑暗闪耀出现时进行警告",
+		darkglare_cmd = "darkglare",
+		darkglare_name = "Dark Glare Alert",
+		darkglare_desc = "Warn for Dark Glare",
 	
-	smalltentacle_cmd = "smalltentacle",
-    smalltentacle_name = "小眼触须警报",
-    smalltentacle_desc = "小眼触须出现时进行警告",
+		smalltentacle_cmd = "smalltentacle",
+		smalltentacle_name = "Small Eye Tentacles Alert",
+		smalltentacle_desc = "Warn for Small Eye Tentacles",
 	
-	smallclaw_cmd = "smallclaw",
-    smallclaw_name = "小爪子警报",
-    smallclaw_desc = "小爪触须出现时进行警告",
+		smallclaw_cmd = "smallclaw",
+		smallclaw_name = "Small Claw Alert",
+		smallclaw_desc = "Warn for Small Claw Tentacle",
 	
-	gianttimer_cmd = "gianttimer",
-    gianttimer_name = "巨型利爪触须/眼睛刷新警报",
-    gianttimer_desc = "巨型利爪触须和巨眼触须刷新时进行警告",
+		gianttimer_cmd = "gianttimer",
+		gianttimer_name = "Giant Claw/Eye Spawn Alert",
+		gianttimer_desc = "Warn for Giant Claw and Giant Eye spawns",
 	
-	gianteyeeyebeam_cmd = "gianteyeeyebeam",
-    gianteyeeyebeam_name = "巨眼眼棱警报",
-    gianteyeeyebeam_desc = "巨眼眼棱出现时进行警告",
+		gianteyeeyebeam_cmd = "gianteyeeyebeam",
+		gianteyeeyebeam_name = "Giant Eye's Eye Beam Alert",
+		gianteyeeyebeam_desc = "Warn for Giant Eye's Eye Beam",
 	
-	groundtremor_cmd = "groundtremor",
-    groundtremor_name = "大地震颤警报",
-    groundtremor_desc = "大地震颤出现时进行警告",
+		groundtremor_cmd = "groundtremor",
+		groundtremor_name = "Ground Tremor Alert",
+		groundtremor_desc = "Warn for Ground Tremor",
 	
-	window_cmd = "window",
-    window_name = "机会窗口警报",
-    window_desc = "提示最佳削弱时机",
+		window_cmd = "window",
+		window_name = "Window of Opportunity Alert",
+		window_desc = "Warn for best time to push weaken",
 	
-	weakened_cmd = "weakened",
-    weakened_name = "虚弱状态警报",
-    weakened_desc = "虚弱状态出现时进行警告",
+		weakened_cmd = "weakened",
+		weakened_name = "Weakened Alert",
+		weakened_desc = "Warn for Weakened State",
 	
-	acid_cmd = "acid",
-    acid_name = "消化酸液警报",
-    acid_desc = "消化酸层数过高时进行警告",
+		acid_cmd = "acid",
+		acid_name = "Digestive Acid Alert",
+		acid_desc = "Warn for High Digestive Acid Stacks",
 	
-	stomachhp_cmd = "stomachhp",
-    stomachhp_name = "胃部触须血量",
-    stomachhp_desc = "显示胃部触须的血量条和警告",
+		stomachhp_cmd = "stomachhp",
+		stomachhp_name = "Stomach Tentacle HP",
+		stomachhp_desc = "Bars and Warnings for Stomach Tentacles' HP",
 	
-	proximity_cmd = "proximity",
-    proximity_name = "距离警告框",
-    proximity_desc = "显示距离警告框",
+		proximity_cmd = "proximity",
+		proximity_name = "Proximity Warning Frame",
+		proximity_desc = "Show Proximity Warning Frame",
 	
-	stomachplayers_cmd = "stomachplayers",
-    stomachplayers_name = "胃部玩家框体",
-    stomachplayers_desc = "显示胃部的玩家框体",
+		stomachplayers_cmd = "stomachplayers",
+		stomachplayers_name = "Players in Stomach Frame",
+		stomachplayers_desc = "Show Players in Stomach Frame",
 	
-	raidicon_cmd = "raidicon",
-    raidicon_name = "在眼棱目标上标记骷髅",
-    raidicon_desc = "在眼棱目标上标记骷髅",
+		raidicon_cmd = "raidicon",
+		raidicon_name = "Skull on Eye Beams",
+		raidicon_desc = "Put a Skull on Eye Beam targets",
 	
 	
-    bar_startRandomBeams = "随机眼棱开始！",
+		bar_startRandomBeams = "Start of Random Beams!",
 
-	trigger_cthun_eyeBeam = "Eye of C'Thun begins to cast Eye Beam.", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
-    bar_eyeBeam = "眼棱即将攻击 ",
+		trigger_cthun_eyeBeam = "Eye of C'Thun begins to cast Eye Beam.", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
+		bar_eyeBeam = "Eye Beam on ",
 	
-	--no dark glare trigger
-    bar_darkGlareCd = "下一次黑暗闪耀",
-    bar_darkGlareCasting = "正在施放黑暗闪耀！",
-    bar_darkGlareDur = "黑暗闪耀！",
-    msg_darkGlareCasting = "黑暗闪耀！",
-    msg_darkGlareEndsSoon = "黑暗闪耀将在5秒内结束",
+		--no dark glare trigger
+		bar_darkGlareCd = "Next Dark Glare",
+		bar_darkGlareCasting = "Casting Dark Glare!",
+		bar_darkGlareDur = "Dark Glare!",
+		msg_darkGlareCasting = "Dark Glare!",
+		msg_darkGlareEndsSoon = "Dark Glare ends in 5 sec",
 	
-	trigger_smallEyeTentacles = "Eye Tentacle begins to cast Birth.", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF
-    msg_smallEyeTentaclesSoon = "小眼触须将在3秒内出现",
-	bar_smallEyeTentacles = "小眼触须",
-	bar_smallEyesDead = "/8 小眼触须已死",
+		trigger_smallEyeTentacles = "Eye Tentacle begins to cast Birth.", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF
+		msg_smallEyeTentaclesSoon = "Small Eye Tentacles in 3 sec",
+		bar_smallEyeTentacles = "Small Eye Tentacles",
+		bar_smallEyesDead = "/8 Eye Tentacles Dead",
 	
-	trigger_smallClaw = "Claw Tentacle begins to cast Birth.", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF
-    bar_smallClaw = "小爪刷新",
+		trigger_smallClaw = "Claw Tentacle begins to cast Birth.", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF
+		bar_smallClaw = "Small Claw Spawn",
 
-    msg_phase2 = "眼睛已死 - 本体即将出现！",
+		msg_phase2 = "The Eye is dead - Body incoming!",
 	
-	trigger_giantClaw = "Giant Claw Tentacle begins to cast Birth.", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF
-    bar_giantClaw = "巨型利爪触须刷新",
+		trigger_giantClaw = "Giant Claw Tentacle begins to cast Birth.", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF
+		bar_giantClaw = "Giant Claw Spawns",
 	
-	trigger_giantEye = "Giant Eye Tentacle begins to cast Birth.", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF
-    bar_giantEye = "巨眼触须刷新",
+		trigger_giantEye = "Giant Eye Tentacle begins to cast Birth.", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF
+		bar_giantEye = "Giant Eye Spawns",
 	
-	trigger_giantEye_eyeBeam = "Giant Eye Tentacle begins to cast Eye Beam.", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
-	--bar_eyeBeam = "Eye Beam on ",
+		trigger_giantEye_eyeBeam = "Giant Eye Tentacle begins to cast Eye Beam.", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
+		--bar_eyeBeam = "Eye Beam on ",
 	
-	trigger_groundTremor = "afflicted by Ground Tremor.", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE
-    bar_groundTremorDur = "大地震颤昏迷",
+		trigger_groundTremor = "afflicted by Ground Tremor.", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE
+		bar_groundTremorDur = "Ground Tremor Stun",
 	
-    bar_windowOfOpportunity = "机会窗口",
+		bar_windowOfOpportunity = "Window of Opportunity",
 	
 		--must be a string.find
-	trigger_weakened = "is weakened!", --CHAT_MSG_MONSTER_EMOTE
-    bar_weakened = "克苏恩虚弱了！",
-    msg_weakened = "克苏恩虚弱了！",
-    msg_weakenedFade = "虚弱结束",
+		trigger_weakened = "is weakened!", --CHAT_MSG_MONSTER_EMOTE
+		bar_weakened = "C'Thun is Weakened!",
+		msg_weakened = "C'Thun is Weakened!",
+		msg_weakenedFade = "Weaken is Over",
 	
-	trigger_digestiveAcid = "You are afflicted by Digestive Acid %((.+)%).", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
-    msg_digestiveAcid = " 消化酸层数过高 - 考虑离开胃部",
+		trigger_digestiveAcid = "You are afflicted by Digestive Acid %((.+)%).", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
+		msg_digestiveAcid = " Acid Stacks - Consider getting out of the Stomach",
 	
-    hpBar_firstTentacle = "第一个触须",
-    hpBar_secondTentacle = "第二个触须",
-    msg_firstTentacleDead = "第一个触须已死",
+		unit_fleshTentacle = "Flesh Tentacle",
+		msg_firstTentacleDead = "First Tentacle Dead",
+		msg_secondTentacleLow = "Second Tentacle at %s%% HP",
 	
-    frameHeader_playersInStomach = "胃部玩家",
-} end )
+		frameHeader_playersInStomach = "Players in Stomach",
+	}
+end)
 
-L:RegisterTranslations("zhCN", function() return {
-	-- Wind汉化修复Turtle-WOW中文数据
-	-- Last update: 2024-06-22
-    cmd = "Cthun",
+L:RegisterTranslations("zhCN", function()
+	return {
+		cmd = "Cthun",
 	
-	cthuneyebeam_cmd = "cthuneyebeam",
-    cthuneyebeam_name = "克苏恩的眼棱警报",
-    cthuneyebeam_desc = "克苏恩的眼棱出现时进行警告",
+		cthuneyebeam_cmd = "cthuneyebeam",
+		cthuneyebeam_name = "克苏恩眼棱警报",
+		cthuneyebeam_desc = "克苏恩眼棱技能警报",
 	
-	darkglare_cmd = "darkglare",
-    darkglare_name = "黑暗闪耀警报",
-    darkglare_desc = "黑暗闪耀出现时进行警告",
+		darkglare_cmd = "darkglare",
+		darkglare_name = "红光警报",
+		darkglare_desc = "红光技能警报",
 	
-	smalltentacle_cmd = "smalltentacle",
-    smalltentacle_name = "小眼触须警报",
-    smalltentacle_desc = "小眼触须出现时进行警告",
+		smalltentacle_cmd = "smalltentacle",
+		smalltentacle_name = "小眼警报",
+		smalltentacle_desc = "小眼刷新警报",
 	
-	smallclaw_cmd = "smallclaw",
-    smallclaw_name = "小爪子警报",
-    smallclaw_desc = "小爪触须出现时进行警告",
+		smallclaw_cmd = "smallclaw",
+		smallclaw_name = "小爪须警报",
+		smallclaw_desc = "小爪刷新警报",
 	
-	gianttimer_cmd = "gianttimer",
-    gianttimer_name = "巨型利爪触须/眼睛刷新警报",
-    gianttimer_desc = "巨型利爪触须和巨眼触须刷新时进行警告",
+		gianttimer_cmd = "gianttimer",
+		gianttimer_name = "巨型爪/眼刷新警报",
+		gianttimer_desc = "巨爪和巨眼须刷新警报",
 	
-	gianteyeeyebeam_cmd = "gianteyeeyebeam",
-    gianteyeeyebeam_name = "巨眼眼棱警报",
-    gianteyeeyebeam_desc = "巨眼眼棱出现时进行警告",
+		gianteyeeyebeam_cmd = "gianteyeeyebeam",
+		gianteyeeyebeam_name = "巨眼的眼棱警报",
+		gianteyeeyebeam_desc = "巨眼的眼棱技能警报",
 	
-	groundtremor_cmd = "groundtremor",
-    groundtremor_name = "大地震颤警报",
-    groundtremor_desc = "大地震颤出现时进行警告",
+		groundtremor_cmd = "groundtremor",
+		groundtremor_name = "大地震颤警报",
+		groundtremor_desc = "大地震颤技能警报",
 	
-	window_cmd = "window",
-    window_name = "机会窗口警报",
-    window_desc = "提示最佳削弱时机",
+		window_cmd = "window",
+		window_name = "最佳输出窗口警报",
+		window_desc = "提示进入虚弱状态的最佳时机",
 	
-	weakened_cmd = "weakened",
-    weakened_name = "虚弱状态警报",
-    weakened_desc = "虚弱状态出现时进行警告",
+		weakened_cmd = "weakened",
+		weakened_name = "虚弱状态警报",
+		weakened_desc = "虚弱状态提示",
 	
-	acid_cmd = "acid",
-    acid_name = "消化酸液警报",
-    acid_desc = "消化酸层数过高时进行警告",
+		acid_cmd = "acid",
+		acid_name = "消化酸液层数警报",
+		acid_desc = "高消化酸液层数警告",
 	
-	stomachhp_cmd = "stomachhp",
-    stomachhp_name = "胃部触须血量",
-    stomachhp_desc = "显示胃部触须的血量条和警告",
+		stomachhp_cmd = "stomachhp",
+		stomachhp_name = "胃内触须血量",
+		stomachhp_desc = "胃内触须血量条和警告",
 	
-	proximity_cmd = "proximity",
-    proximity_name = "距离警告框",
-    proximity_desc = "显示距离警告框",
+	    proximity_cmd = "proximity",
+        proximity_name = "距离警告框",
+        proximity_desc = "显示距离警告框",
 	
-	stomachplayers_cmd = "stomachplayers",
-    stomachplayers_name = "胃部玩家框体",
-    stomachplayers_desc = "显示胃部的玩家框体",
+		stomachplayers_cmd = "stomachplayers",
+		stomachplayers_name = "胃内玩家框架",
+		stomachplayers_desc = "显示胃内玩家框架",
 	
-	raidicon_cmd = "raidicon",
-    raidicon_name = "在眼棱目标上标记骷髅",
-    raidicon_desc = "在眼棱目标上标记骷髅",
+		raidicon_cmd = "raidicon",
+		raidicon_name = "眼棱目标标记骷髅",
+		raidicon_desc = "为眼棱目标标记骷髅图标",
 	
 	
-    bar_startRandomBeams = "随机眼棱开始！",
+		bar_startRandomBeams = "开始随机眼棱！",
 
-	trigger_cthun_eyeBeam = "克苏恩之眼开始施放眼棱。", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
-    bar_eyeBeam = "眼棱即将攻击 ",
+		trigger_cthun_eyeBeam = "克苏恩之眼开始施放眼棱", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
+		bar_eyeBeam = "眼棱->",
 	
-	--no dark glare trigger
-    bar_darkGlareCd = "下一次黑暗闪耀（红光）",
-    bar_darkGlareCasting = "正在施放黑暗闪耀！",
-    bar_darkGlareDur = "黑暗闪耀！",
-    msg_darkGlareCasting = "黑暗闪耀！",
-    msg_darkGlareEndsSoon = "黑暗闪耀将在5秒内结束",
+		--no dark glare trigger
+		bar_darkGlareCd = "下一次黑暗闪耀（红光）",
+		bar_darkGlareCasting = "正在施放黑暗闪耀（红光）！",
+		bar_darkGlareDur = "黑暗闪耀！",
+		msg_darkGlareCasting = "黑暗闪耀！",
+		msg_darkGlareEndsSoon = "黑暗闪耀5秒后结束",
 	
-	trigger_smallEyeTentacles = "眼球触须开始施放出生。", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF
-    msg_smallEyeTentaclesSoon = "小眼触须将在3秒内出现",
-	bar_smallEyeTentacles = "小眼触须",
-	bar_smallEyesDead = "/8 小眼触须已死",
+		trigger_smallEyeTentacles = "眼球触须开始施放出生", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF
+		msg_smallEyeTentaclesSoon = "3秒后刷新小眼",
+		bar_smallEyeTentacles = "小眼",
+		bar_smallEyesDead = "/8小眼触须已死",
 	
-	trigger_smallClaw = "利爪触须开始施放出生。", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF
-    bar_smallClaw = "小爪刷新",
+		trigger_smallClaw = "爪触须开始施放出生。", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF
+		bar_smallClaw = "小爪刷新",
 
-    msg_phase2 = "眼睛已死 - 本体即将出现！",
+		msg_phase2 = "眼睛已死-本体即将出现！",
 	
-	trigger_giantClaw = "巨型利爪触须开始施放出生。", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF
-    bar_giantClaw = "巨型利爪触须刷新",
+		trigger_giantClaw = "巨型利爪触须开始施放出生", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF
+		bar_giantClaw = "巨爪刷新",
 	
-	trigger_giantEye = "巨眼触须开始施放出生。", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF
-    bar_giantEye = "巨眼触须刷新",
+		trigger_giantEye = "巨眼触须开始施放出生", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF
+		bar_giantEye = "巨眼刷新",
 	
-	trigger_giantEye_eyeBeam = "巨眼触须开始施放眼棱。", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
-	--bar_eyeBeam = "Eye Beam on ",
+		trigger_giantEye_eyeBeam = "巨眼触须开始施放眼棱", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
+		--bar_eyeBeam = "眼棱 -> ",
 	
-	trigger_groundTremor = "受到了大地震颤效果的影响。", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE
-    bar_groundTremorDur = "大地震颤昏迷",
+		trigger_groundTremor = "受到了大地震颤效果的影响", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE
+		bar_groundTremorDur = "大地震颤昏迷",
 	
-    bar_windowOfOpportunity = "机会窗口",
+		bar_windowOfOpportunity = "最佳输出窗口",
 	
 		--must be a string.find
-	trigger_weakened = "被削弱了！", --CHAT_MSG_MONSTER_EMOTE
-    bar_weakened = "虚弱时间，全力输出！",
-    msg_weakened = "克苏恩虚弱了！",
-    msg_weakenedFade = "虚弱结束",
+		trigger_weakened = "被削弱了！", --CHAT_MSG_MONSTER_EMOTE
+		bar_weakened = "克苏恩进入虚弱状态！",
+		msg_weakened = "克苏恩进入虚弱状态！",
+		msg_weakenedFade = "虚弱状态结束",
 	
-	trigger_digestiveAcid = "你受到了消化酸液效果的影响%（(.+)%）。", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
-    msg_digestiveAcid = " 消化酸层数过高 - 考虑离开胃部",
+		trigger_digestiveAcid = "你受到了消化酸液效果的影响（(%d+)）", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
+		msg_digestiveAcid = "消化酸层数过高-离开胃部",
 	
-    hpBar_firstTentacle = "第一个触须",
-    hpBar_secondTentacle = "第二个触须",
-    msg_firstTentacleDead = "第一个触须已死",
+		unit_fleshTentacle = "血肉触须",
+		msg_firstTentacleDead = "第一根触须已死",
+		msg_secondTentacleLow = "第二根触须%s%%血量",
 	
-    frameHeader_playersInStomach = "胃部玩家",
-} end )
+		frameHeader_playersInStomach = "胃内玩家",
+	}
+end)
 
 local timer = {
 	p1_startRandomBeams = 8,
@@ -306,7 +310,7 @@ local icon = {
 	
 	digestiveAcid = "ability_creature_disease_02",
 	
-	stomachTentacle = "inv_misc_ahnqirajtrinket_05",
+	stomachTentacle = "INV_Misc_AhnQirajTrinket_05",
 }
 local color = {
 	startRandomBeams = "Cyan",
@@ -331,40 +335,45 @@ local color = {
 	stomachTentacle = "Magenta",
 }
 local syncName = {
-	eyeBeam = "CThunEyeBeam"..module.revision,
+	eyeBeam = "CThunEyeBeam" .. module.revision,
 	
-	smallEyeTentacles = "CThunSmallEyeTentaclesSpawn"..module.revision,
-	allSmallEyeTentaclesDead = "CThunAllSmallEyeTentaclesDead"..module.revision,
+	smallEyeTentacles = "CThunSmallEyeTentaclesSpawn" .. module.revision,
+	allSmallEyeTentaclesDead = "CThunAllSmallEyeTentaclesDead" .. module.revision,
 	
-	smallClaw = "CThunSmallClawTentacleSpawn"..module.revision,
+	smallClaw = "CThunSmallClawTentacleSpawn" .. module.revision,
 	
-	phase2 = "CThunP2Start"..module.revision,
+	phase2 = "CThunP2Start" .. module.revision,
 	
-	giantClaw = "CThunGiantClaw"..module.revision,
-	giantEye = "CThunGiantEye"..module.revision,
+	giantClaw = "CThunGiantClaw" .. module.revision,
+	giantEye = "CThunGiantEye" .. module.revision,
 	
-	groundTremor = "CThunGroundTremor"..module.revision,
+	groundTremor = "CThunGroundTremor" .. module.revision,
 	
-	window = "CThunWindow"..module.revision,
+	window = "CThunWindow" .. module.revision,
 	
-	weakened = "CThunWeakened"..module.revision,
-	weakenedOver = "CThunWeakenedOver2"..module.revision,
+	weakened = "CThunWeakened" .. module.revision,
+	weakenedOver = "CThunWeakenedOver2" .. module.revision,
 	
-	firstStomachTentacleDead = "CThunFleshTentacleDead2"..module.revision,
+	firstStomachTentacleDead = "CThunFleshTentacleDead2" .. module.revision,
+}
+local guid = {
+	stomachL = nil,
+	stomachR = nil,
 }
 
-module.proximityCheck = function(unit) return CheckInteractDistance(unit, 2) end
+module.proximityCheck = function(unit)
+	return CheckInteractDistance(unit, 2)
+end
 module.proximitySilent = false
 
 local doCheckForWipe = false
 local cthunStarted = nil
 local phase = "phase1"
 local eyeTarget = nil
+local lastEyeTarget = nil
 
 local firstStomachTentacleDead = nil
 local secondTentacleLowWarn = nil
-local firstTentacleHP = 100
-local secondTentacleHP = 100
 
 local smallEyeDead = 0
 local smallEyeDeadCounter = 8
@@ -376,11 +385,8 @@ function module:OnRegister()
 end
 
 function module:OnEnable()
-	--self:RegisterEvent("CHAT_MSG_SAY", "Event") --Debug
 	
 	self:RegisterEvent("CHAT_MSG_MONSTER_EMOTE") --trigger_weakened
-	
-	--self:RegisterEvent("UNIT_HEALTH") --stomach tentacles hp
 	
 	self:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE", "Event") --trigger_cthun_eyeBeam, trigger_giantEye_eyeBeam
 	
@@ -420,17 +426,18 @@ function module:OnSetup()
 end
 
 function module:OnEngage()
-	if self.core:IsModuleActive(bbqirajimindslayer, "Ahn'Qiraj") then self.core:DisableModule(bbqirajimindslayer, "Ahn'Qiraj") end
+	if self.core:IsModuleActive(bbqirajimindslayer, "Ahn'Qiraj") then
+		self.core:DisableModule(bbqirajimindslayer, "Ahn'Qiraj")
+	end
 	
 	doCheckForWipe = false
 	cthunStarted = nil
 	phase = "phase1"
 	eyeTarget = nil
+	lastEyeTarget = nil
 
 	firstStomachTentacleDead = nil
 	secondTentacleLowWarn = nil
-	firstTentacleHP = 100
-	secondTentacleHP = 100
 	
 	smallEyeDead = 0
 	smallEyeDeadCounter = 8
@@ -465,6 +472,7 @@ function module:OnEngage()
 end
 
 function module:OnDisengage()
+
 	self:TriggerEvent("BigWigs_HideProximity")
 	self:TriggerEvent("BigWigs_StopDebuffTrack")
 	
@@ -472,7 +480,10 @@ function module:OnDisengage()
 	self:CancelScheduledEvent("CthunDarkGlare")
 	self:CancelScheduledEvent("CThunDelayedEyeBeamCheck")
 	self:CancelScheduledEvent("CthunCheckTarget")
-	self:CancelScheduledEvent("CThunCheckTentacleHP")
+	self:CancelScheduledEvent("CthunFindFleshTentacle")
+	self:CancelScheduledEvent("CthunCheckFleshTentacles")
+	self:RemoveBar("stomachL")
+    self:RemoveBar("stomachR")
 end
 
 function module:MINIMAP_ZONE_CHANGED(msg)
@@ -492,8 +503,6 @@ function module:ResetModule()
 
 	firstStomachTentacleDead = nil
 	secondTentacleLowWarn = nil
-	firstTentacleHP = 100
-	secondTentacleHP = 100
 	
 	smallEyeDead = 0
 	smallEyeDeadCounter = 8
@@ -507,7 +516,10 @@ function module:ResetModule()
 	self:CancelScheduledEvent("CthunDarkGlare")
 	self:CancelScheduledEvent("CThunDelayedEyeBeamCheck")
 	self:CancelScheduledEvent("CthunCheckTarget")
-	self:CancelScheduledEvent("CThunCheckTentacleHP")
+	self:CancelScheduledEvent("CthunFindFleshTentacle")
+	self:CancelScheduledEvent("CthunCheckFleshTentacles")
+    self:RemoveBar("stomachL")
+    self:RemoveBar("stomachR")
 end
 
 function module:CHAT_MSG_COMBAT_HOSTILE_DEATH(msg)
@@ -547,45 +559,6 @@ function module:CHAT_MSG_MONSTER_EMOTE(msg)
 	end
 end
 
---[[
-function module:UNIT_HEALTH(msg)
-	if UnitName(msg) == bbfleshtentacle then
-		local healthPct = UnitHealth(msg) * 100 / UnitHealthMax(msg)
-		
-		if secondTentacleLowWarn == true and healthPct >= 20 then
-			secondTentacleLowWarn = nil
-			firstTentacleHP = 1
-			secondTentacleHP = 100
-			self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_firstTentacle"], 100 - firstTentacleHP)
-			self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_secondTentacle"], 100 - secondTentacleHP)
-		end
-		
-		if not firstStomachTentacleDead then
-			if healthPct < firstTentacleHP then
-				firstTentacleHP = healthPct
-				self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_firstTentacle"], 100 - firstTentacleHP)
-				self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_secondTentacle"], 100 - secondTentacleHP)
-			elseif healthPct > firstTentacleHP and healthPct < secondTentacleHP then
-				secondTentacleHP = healthPct
-				self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_firstTentacle"], 100 - firstTentacleHP)
-				self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_secondTentacle"], 100 - secondTentacleHP)
-			end
-		elseif firstStomachTentacleDead then
-			firstTentacleHP = 1
-			if healthPct < secondTentacleHP then
-				secondTentacleHP = healthPct
-				self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_firstTentacle"], 100 - firstTentacleHP)
-				self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_secondTentacle"], 100 - secondTentacleHP)
-			end
-			if secondTentacleHP <= 20 and not secondTentacleLowWarn then
-				self:Message("第二个触须在 "..secondTentacleHP.."% HP")
-				secondTentacleLowWarn = true
-			end
-		end
-	end
-end
-]]--
-
 function module:Event(msg)
 	if msg == L["trigger_cthun_eyeBeam"] then
 		if not cthunStarted then
@@ -613,13 +586,12 @@ function module:Event(msg)
 		self:Sync(syncName.groundTremor)
 	
 	elseif string.find(msg, L["trigger_digestiveAcid"]) and self.db.profile.acid then
-		local _,_,acidQty,_ = string.find(msg, L["trigger_digestiveAcid"])
+		local _, _, acidQty, _ = string.find(msg, L["trigger_digestiveAcid"])
 		if tonumber(acidQty) >= 5 then
 			self:DigestiveAcid(acidQty)
 		end
 	end
 end
-
 
 function module:BigWigs_RecvSync(sync, rest, nick)
 	if sync == syncName.eyeBeam then
@@ -659,66 +631,68 @@ function module:BigWigs_RecvSync(sync, rest, nick)
 	end
 end
 
-
 function module:EyeBeam()
-	self:ScheduleEvent("CThunDelayedEyeBeamCheck", self.DelayedEyeBeamCheck, 0.1, self) -- has to be done delayed since the target change is delayed
+	self:ScheduleEvent("CThunDelayedEyeBeamCheck", self.DelayedEyeBeamCheck, 0.2, self) -- has to be done delayed since the target change is delayed
 end
-	function module:DelayedEyeBeamCheck()
-		local name = "Unknown"
-		self:CheckTarget()
-		
-		if eyeTarget then
-			name = eyeTarget
-				
-			if self.db.profile.raidicon and (IsRaidLeader() or IsRaidOfficer()) then
-				for i=1,GetNumRaidMembers() do
-					if UnitName("raid"..i) == name then
-						SetRaidTarget("raid"..i, 8)
-					end
-				end
-			end
-			
-			if name == UnitName("player") then
-				self:WarningSign(icon.eyeBeam, 2 - 0.1)
-				SendChatMessage("我受到眼棱攻击！", "SAY")
-			else
-				for i = 1, GetNumRaidMembers(), 1 do
-					if name == UnitName('Raid' .. i) and CheckInteractDistance("Raid" .. i, 3) then
-						if (phase == "phase1" and self.db.profile.cthuneyebeam) or (phase == "phase2" and self.db.profile.gianteyeeyebeam) then
-							self:Message("眼棱即将攻击 " .. name .. " ! 快离开！", "Important", false, nil, false)
-						end
-					end
-				end
-			end
-		end
-		
-		if (phase == "phase1" and self.db.profile.cthuneyebeam) or (phase == "phase2" and self.db.profile.gianteyeeyebeam) then
-			self:Bar(L["bar_eyeBeam"]..name, timer.eyeBeamCast - 0.1, icon.giantEye, true, color.eyeBeam)
-		end
-	end
-	function module:CheckTarget()
-		local newtarget = nil
-		local enemy = bbeyeofcthun
 
-		if phase == "phase2" then
-			enemy = bbgianteyetentacle
+function module:DelayedEyeBeamCheck()
+	local name = "Unknown"
+	self:CheckTarget()
+		
+	if eyeTarget then
+		name = eyeTarget
+				
+		if self.db.profile.raidicon and name ~= lastEyeTarget then
+			self:RestorePreviousRaidTargetForPlayer(lastEyeTarget)
+			lastEyeTarget = name
+			self:SetRaidTargetForPlayer(name, 8)
 		end
-		if UnitName("Target") == enemy then
-			newtarget = UnitName("TargetTarget")
+			
+		if name == UnitName("player") then
+			self:WarningSign(icon.eyeBeam, 2 - 0.1)
+			SendChatMessage("我受到眼棱攻击！", "SAY")
 		else
-			for i=1,GetNumRaidMembers() do
-				if UnitName("Raid"..i.."Target") == enemy then
-					newtarget = UnitName("Raid"..i.."TargetTarget")
-					break
+			for i = 1, GetNumRaidMembers(), 1 do
+				if name == UnitName('Raid' .. i) and CheckInteractDistance("Raid" .. i, 3) then
+					if (phase == "phase1" and self.db.profile.cthuneyebeam) or (phase == "phase2" and self.db.profile.gianteyeeyebeam) then
+						self:Message("眼棱即将攻击 " .. name .. " ! 快离开！", "Important", false, nil, false)
+					end
 				end
 			end
 		end
-		if newtarget then
-			eyeTarget = newtarget
+	end
+		
+	if (phase == "phase1" and self.db.profile.cthuneyebeam) or (phase == "phase2" and self.db.profile.gianteyeeyebeam) then
+		self:Bar(L["bar_eyeBeam"] .. name, timer.eyeBeamCast - 0.1, icon.giantEye, true, color.eyeBeam)
+	end
+end
+
+function module:CheckTarget()
+	local newtarget = nil
+	local enemy = bbeyeofcthun
+
+	if phase == "phase2" then
+		enemy = bbgianteyetentacle
+	end
+	if UnitName("Target") == enemy then
+		newtarget = UnitName("TargetTarget")
+	else
+		for i = 1, GetNumRaidMembers() do
+			if UnitName("Raid" .. i .. "Target") == enemy then
+				newtarget = UnitName("Raid" .. i .. "TargetTarget")
+				break
+			end
 		end
 	end
+	if newtarget then
+		eyeTarget = newtarget
+	end
+end
 
 function module:DarkGlare()
+	self:RestorePreviousRaidTargetForPlayer(lastEyeTarget)
+	lastEyeTarget = nil
+
 	self:Bar(L["bar_darkGlareCasting"], timer.darkGlareCasting, icon.darkGlare, true, color.darkGlareCast)
 	self:WarningSign(icon.darkGlare, timer.darkGlareCasting)
 	self:Message(L["msg_darkGlareCasting"], "Urgent", false, nil, false)
@@ -735,7 +709,7 @@ function module:SmallEyeTentacles()
 	self:CancelDelayedMessage(L["msg_smallEyeTentaclesSoon"])
 	self:CancelDelayedSound("Alert")
 	
-	self:TriggerEvent("BigWigs_StartCounterBar", self, L["bar_smallEyesDead"], 8, "Interface\\Icons\\"..icon.smallEyeTentacles, true, color.smallEyesDead)
+	self:TriggerEvent("BigWigs_StartCounterBar", self, L["bar_smallEyesDead"], 8, "Interface\\Icons\\" .. icon.smallEyeTentacles, true, color.smallEyesDead)
 	self:TriggerEvent("BigWigs_SetCounterBar", self, L["bar_smallEyesDead"], (8 - 0.1))
 	
 	smallEyeDead = 0
@@ -771,24 +745,23 @@ function module:Phase2()
 	doCheckForWipe = false -- disable wipe check since we get out of combat, enable it later again
 	
 	self:Message(L["msg_phase2"], "Positive", false, nil, false)
+	-- cancel dark glare
+	self:CancelScheduledEvent("CthunDarkGlare")
+	self:CancelDelayedBar(L["bar_darkGlareCd"])
+	self:CancelDelayedBar(L["bar_darkGlareDur"])
+	self:RemoveBar(L["bar_darkGlareCasting"])
+	self:RemoveBar(L["bar_darkGlareCd"])
+	self:RemoveBar(L["bar_darkGlareDur"])
+	self:CancelDelayedMessage(L["msg_darkGlareEndsSoon"])
+	self:RemoveWarningSign(icon.darkGlare)
 
-		-- cancel dark glare
-		self:CancelScheduledEvent("CthunDarkGlare")
-		self:CancelDelayedBar(L["bar_darkGlareCd"])
-		self:CancelDelayedBar(L["bar_darkGlareDur"])
-		self:RemoveBar(L["bar_darkGlareCasting"])
-		self:RemoveBar(L["bar_darkGlareCd"])
-		self:RemoveBar(L["bar_darkGlareDur"])
-		self:CancelDelayedMessage(L["msg_darkGlareEndsSoon"])
-		self:RemoveWarningSign(icon.darkGlare)
+	-- cancel small eye tentacles
+	self:CancelDelayedMessage(L["msg_smallEyeTentaclesSoon"])
+	self:CancelDelayedSound("Alert")
+	self:RemoveBar(L["bar_smallEyeTentacles"])
 
-		-- cancel small eye tentacles
-		self:CancelDelayedMessage(L["msg_smallEyeTentaclesSoon"])
-		self:CancelDelayedSound("Alert")
-		self:RemoveBar(L["bar_smallEyeTentacles"])
-
-		-- cancel small claw tentacle
-		self:RemoveBar(L["bar_smallClaw"])
+	-- cancel small claw tentacle
+	self:RemoveBar(L["bar_smallClaw"])
 
 	if self.db.profile.smalltentacle then
 		self:DelayedMessage(timer.p2_smallEyeTentaclesFirstCd - 3, L["msg_smallEyeTentaclesSoon"], "Urgent", false, nil, false)
@@ -803,15 +776,8 @@ function module:Phase2()
 	if self.db.profile.stomachhp then
 		firstStomachTentacleDead = nil
 		secondTentacleLowWarn = nil
-		firstTentacleHP = 100
-		secondTentacleHP = 100
 	
-		self:TriggerEvent("BigWigs_StartHPBar", self, L["hpBar_firstTentacle"], 100, "Interface\\Icons\\"..icon.stomachTentacle, true, color.stomachTentacle)
-		self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_firstTentacle"], 0)
-		self:TriggerEvent("BigWigs_StartHPBar", self, L["hpBar_secondTentacle"], 100, "Interface\\Icons\\"..icon.stomachTentacle, true, color.stomachTentacle)
-		self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_secondTentacle"], 0)
-		
-		self:ScheduleRepeatingEvent("CThunCheckTentacleHP", self.CheckTentacleHP, 0.5, self)
+		self:ScheduleEvent("CthunFindFleshTentacle", self.FindFleshTentacle, 12, self)
 	end
 
 	if self.db.profile.stomachplayers then
@@ -851,17 +817,17 @@ end
 function module:Weakened()
 	firstStomachTentacleDead = nil
 	secondTentacleLowWarn = nil
-	firstTentacleHP = 100
-	secondTentacleHP = 100
-	self:TriggerEvent("BigWigs_StopHPBar", self, L["hpBar_firstTentacle"])
-	self:TriggerEvent("BigWigs_StopHPBar", self, L["hpBar_secondTentacle"])
+	self:RemoveBar("stomachL")
+	self:RemoveBar("stomachR")
 		
-		self:CancelDelayedMessage(L["msg_smallEyeTentaclesSoon"])
-		self:CancelDelayedSound("Alert")
-		self:RemoveBar(L["bar_smallEyeTentacles"])
+	self:CancelDelayedMessage(L["msg_smallEyeTentaclesSoon"])
+	self:CancelDelayedSound("Alert")
+	self:RemoveBar(L["bar_smallEyeTentacles"])
 		
-		self:RemoveBar(L["bar_giantEye"])
-		self:RemoveBar(L["bar_giantClaw"])
+	self:RemoveBar(L["bar_giantEye"])
+	self:RemoveBar(L["bar_giantClaw"])
+
+	self:CancelScheduledEvent("CthunCheckFleshTentacles")
 	
 	if self.db.profile.weakened then
 		self:Message(L["msg_weakened"], "Positive", false, nil, false)
@@ -893,18 +859,13 @@ function module:WeakenedOver()
 	if self.db.profile.stomachhp then
 		firstStomachTentacleDead = nil
 		secondTentacleLowWarn = nil
-		firstTentacleHP = 100
-		secondTentacleHP = 100
 	
-		self:TriggerEvent("BigWigs_StartHPBar", self, L["hpBar_firstTentacle"], 100, "Interface\\Icons\\"..icon.stomachTentacle, true, color.stomachTentacle)
-		self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_firstTentacle"], 0)
-		self:TriggerEvent("BigWigs_StartHPBar", self, L["hpBar_secondTentacle"], 100, "Interface\\Icons\\"..icon.stomachTentacle, true, color.stomachTentacle)
-		self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_secondTentacle"], 0)
+		self:ScheduleEvent("CthunFindFleshTentacle", self.FindFleshTentacle, 12, self)
 	end
 end
 
 function module:DigestiveAcid(rest)
-	self:Message(rest..L["msg_digestiveAcid"], "Personal", false, nil, false)
+	self:Message(rest .. L["msg_digestiveAcid"], "Personal", false, nil, false)
 	self:WarningSign(icon.digestiveAcid, 0.7)
 end
 
@@ -914,55 +875,58 @@ function module:FleshTentacleDead()
 		secondTentacleLowWarn = nil
 		
 		self:Message(L["msg_firstTentacleDead"], "Important", false, nil, false)
-		
-		firstTentacleHP = 1
-		secondTentacleHP = 100
-		self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_firstTentacle"], 100 - firstTentacleHP)
-		self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_secondTentacle"], 100 - secondTentacleHP)
 	end
 end
 
-function module:CheckTentacleHP()
-	local health
-	if UnitName("Target") == bbfleshtentacle and not UnitIsDeadOrGhost("Target") then
-		health = math.floor(UnitHealth("Target")/UnitHealthMax("Target")*100)
+function module:FindFleshTentacle()
+	local found = BigWigs:GetGUIDByName(L["unit_fleshTentacle"], 1)
+	if found then
+		self:GetSecondFleshTentacle(found)
 	else
-		for i=1,GetNumRaidMembers() do
-			if UnitName("Raid"..i.."Target") == bbfleshtentacle and not UnitIsDeadOrGhost("Raid"..i.."Target") then
-				health = math.floor(UnitHealth("Raid"..i.."Target")/UnitHealthMax("Raid"..i.."Target")*100)
-				break
-			end
-		end
+		self:ScheduleEvent("CthunFindFleshTentacle", self.FindFleshTentacle, 0.5, self)
+	end
+end
+
+function module:GetSecondFleshTentacle(firstGUID)
+	local other = BigWigs:GetGUIDByName(L["unit_fleshTentacle"], 1, {firstGUID})
+	local minus = BigWigs:OffsetGUID(firstGUID,-1)
+	local plus = BigWigs:OffsetGUID(firstGUID,1)
+	if other then
+		guid.stomachL, guid.stomachR = firstGUID, other
+	elseif minus and UnitExists(minus) and UnitName(minus) == L["unit_fleshTentacle"] then
+		guid.stomachL = firstGUID
+		guid.stomachR = minus
+	elseif plus and UnitExists(plus) and UnitName(plus) == L["unit_fleshTentacle"] then
+		guid.stomachL = plus
+		guid.stomachR = firstGUID
+	else
+		-- A second live target can appear later; don't depend on consecutive spawn GUIDs.
+		self:MonitorBar("stomachL", icon.stomachTentacle, firstGUID, "health", L["unit_fleshTentacle"])
+		self:ScheduleEvent("CthunFindFleshTentacle", self.FindFleshTentacle, 0.5, self)
+		return
 	end
 	
-	if secondTentacleLowWarn == true and health and health >= 20 then
-		secondTentacleLowWarn = nil
-		firstTentacleHP = 1
-		secondTentacleHP = 100
-		self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_firstTentacle"], 100 - firstTentacleHP)
-		self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_secondTentacle"], 100 - secondTentacleHP)
+	self:MonitorBar("stomachL", icon.stomachTentacle, guid.stomachL, "health", "一根胃触须")
+	self:MonitorBar("stomachR", icon.stomachTentacle, guid.stomachR, "health", "二根胃触须")
+	self:ScheduleRepeatingEvent("CthunCheckFleshTentacles", self.CheckFleshTentacles, 0.5, self)
+end
+
+function module:CheckFleshTentacles()
+	if secondTentacleLowWarn or not firstStomachTentacleDead then
+		return
 	end
 	
-	if not firstStomachTentacleDead then
-		if health and health < firstTentacleHP then
-			firstTentacleHP = health
-			self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_firstTentacle"], 100 - firstTentacleHP)
-			self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_secondTentacle"], 100 - secondTentacleHP)
-		elseif health and health > firstTentacleHP and health < secondTentacleHP then
-			secondTentacleHP = health
-			self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_firstTentacle"], 100 - firstTentacleHP)
-			self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_secondTentacle"], 100 - secondTentacleHP)
-		end
-	elseif firstStomachTentacleDead then
-		firstTentacleHP = 1
-		if health and health < secondTentacleHP then
-			secondTentacleHP = health
-			self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_firstTentacle"], 100 - firstTentacleHP)
-			self:TriggerEvent("BigWigs_SetHPBar", self, L["hpBar_secondTentacle"], 100 - secondTentacleHP)
-		end
-		if secondTentacleHP <= 20 and not secondTentacleLowWarn then
-			self:Message("Second Tentacle at "..secondTentacleHP.."% HP")
-			secondTentacleLowWarn = true
-		end
+	local guidSecond
+	if UnitExists(guid.stomachL) and not UnitIsDead(guid.stomachL) then
+		guidSecond = guid.stomachL
+	elseif UnitExists(guid.stomachR) and not UnitIsDead(guid.stomachR) then
+		guidSecond = guid.stomachR
+	end
+
+	local percent = UnitHealth(guidSecond) / UnitHealthMax(guidSecond) * 100
+	if percent <= 20 then
+		self:Message(string.format(L["msg_secondTentacleLow"],math.ceil(percent)), "Urgent")
+		secondTentacleLowWarn = true
+		self:CancelScheduledEvent("CthunCheckFleshTentacles")
 	end
 end

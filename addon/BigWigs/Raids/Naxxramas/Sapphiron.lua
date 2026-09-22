@@ -98,7 +98,7 @@ L:RegisterTranslations("enUS", function() return {
 } end )
 
 L:RegisterTranslations("zhCN", function() return {
-	-- Wind汉化修复Turtle-WOW中文数据
+	-- Sunelegy，Wind汉化修复Turtle-WOW中文数据
 	-- Last update: 2024-06-22
     cmd = "Sapphiron",
 
@@ -143,17 +143,17 @@ L:RegisterTranslations("zhCN", function() return {
     bar_frostBreath = "核弹爆炸！",
     msg_frostBreath = "即将遭受冰霜核弹 - 躲避！",
 	
-	trigger_lifeDrain = "受到了生命吸取效果的影响。", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE
+	trigger_lifeDrain = "受到了生命吸取效果的影响", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE
 	trigger_lifeDrainResist = "Life Drain was resisted by", --CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE // CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE // CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
     msg_lifeDrain = "生命吸取，快驱散！",
     bar_lifeDrain = "生命吸取",
 	
 	trigger_iceboltYou = "你受到了寒冰箭效果的影响。", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
-	trigger_iceboltOther = "(.+)受到了寒冰箭效果的影响。", --CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE
+	trigger_iceboltOther = "(.+)受到了寒冰箭效果的影响", --CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE
     msg_iceBlock = "冰冻术在 ",
 	
 		--unused
-	trigger_iceboltFade = "寒冰箭效果从(.+)身上消失了。", --CHAT_MSG_SPELL_AURA_GONE_SELF // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_OTHER
+	trigger_iceboltFade = "寒冰箭效果从(.+)身上消失了", --CHAT_MSG_SPELL_AURA_GONE_SELF // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_OTHER
 	
 	trigger_iceboltHits = "萨菲隆的寒冰箭击中", --CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE // CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE // CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
     --bar_iceBlock1 = "冰块 1",
@@ -162,13 +162,13 @@ L:RegisterTranslations("zhCN", function() return {
     bar_iceBlock4 = "冰块 4",
     bar_iceBlock5 = "冰块 5",
 	
-	trigger_enrage = "萨菲隆获得了狂暴的效果。", --to be confirmed
+	trigger_enrage = "萨菲隆获得了狂暴的效果", --to be confirmed
     bar_enrage = "狂暴",
     msg_enrage60 = "距离狂暴还有60秒！",
     msg_enrage10 = "距离狂暴还有10秒！",
 	
 	
-	trigger_blizzardYou = "你受到了寒冷效果的影响。", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
+	trigger_blizzardYou = "你受到了寒冷效果的影响", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
 	trigger_blizzardYouFade = "寒冷效果从你身上消失了。", --CHAT_MSG_SPELL_AURA_GONE_SELF
 	
 	trigger_tailSweepYou = "萨菲隆的龙尾扫击击中你", --CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE
@@ -180,10 +180,10 @@ L:RegisterTranslations("zhCN", function() return {
     bar_timeToGroundPhase = "下一地面阶段",
     msg_groundPhase = "地面阶段！",
 	
-    msg_lowHp = "萨菲隆血量低于10% - 不再有空中阶段！",
+    msg_lowHp = "萨菲隆血量低于10%-不再有空中阶段！",
 	
 	trigger_parryYou = "你发起了攻击。萨菲隆招架住了。", --CHAT_MSG_COMBAT_SELF_MISSES
-    msg_parryYou = "你的攻击被萨菲隆招架了 - 别再当坦克了，笨蛋！",
+    msg_parryYou = "你的攻击被萨菲隆招架了",
 } end )
 
 local timer = {
@@ -496,7 +496,7 @@ end
 
 function module:Blizzard()
 	self:WarningSign(icon.blizzard, timer.blizzard)
-	self:Sound("Info")
+	self:Sound("RunAway")
 end
 
 function module:BlizzardFade()

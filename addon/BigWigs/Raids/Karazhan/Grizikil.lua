@@ -38,13 +38,13 @@ L:RegisterTranslations("enUS", function() return {
 } end )
 
 L:RegisterTranslations("zhCN", function() return {
-	-- Wind汉化修复Turtle-WOW中文数据
+	-- Sunelegy，Wind汉化修复Turtle-WOW中文数据
 	-- Last update: 2024-06-22
     cmd = "Grizikil",
 
     rainoffire_cmd = "rainoffire",
-    rainoffire_name = "火焰之雨警报",
-    rainoffire_desc = "火焰之雨出现时进行警告",
+    rainoffire_name = "劣魔火雨警报",
+    rainoffire_desc = "劣魔火雨出现时进行警告",
 
     flamewave_cmd = "flamewave",
     flamewave_name = "烈焰波警报",
@@ -52,11 +52,11 @@ L:RegisterTranslations("zhCN", function() return {
     
 
     
-    trigger_rainOfFireYou = "You suffer (.+) Fire damage from Grizikil's Grellkin Rain of Fire.",--CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
+    trigger_rainOfFireYou = "你受到(.+)点火焰伤害（格里齐基尔的劣魔火雨）",--CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
     msg_rainOfFireYou = "离开火焰之雨区域！",
     
-    trigger_flamewave = "Grizikil is afflicted by Flamewave.",--CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE
-    trigger_flamewaveFade = "Flamewave fades from Grizikil.",--CHAT_MSG_SPELL_AURA_GONE_OTHER
+    trigger_flamewave = "格里齐基尔受到了烈焰波效果的影响",--CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE
+    trigger_flamewaveFade = "烈焰波效果从格里齐基尔身上消失",--CHAT_MSG_SPELL_AURA_GONE_OTHER
     bar_flamewave = "烈焰波",
     msg_flamewave = "烈焰波，近战快躲开！",
     

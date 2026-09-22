@@ -21,16 +21,17 @@ L:RegisterTranslations("enUS", function() return {
 } end)
 
 L:RegisterTranslations("zhCN", function() return {
-	cmd = "因辛迪斯",
+	cmd = "Incindis",
 
-	firenova_cmd = "火焰新星",
-	firenova_name = "火焰新星警报",
-	firenova_desc = "震地践踏后火焰新星来临警告",
+    firenova_cmd = "firenova",
+    firenova_name = "火焰新星警报",
+    firenova_desc = "震颤践踏后提示即将到来的火焰新星",
 
-	trigger_quakingStomp = "因辛迪斯的震地践踏击中了(.+)造成",
-	bar_fireNova = "火焰新星！",
-	msg_fireNova = "火焰新星 - 快跑开！",
+    trigger_quakingStomp = "因辛迪斯的震颤践踏击中(.+)",
+    bar_fireNova = "火焰新星！",
+    msg_fireNova = "火焰新星即将发动 - 迅速远离！",
 } end)
+
 
 local timer = {
 	fireNova = 5.5,

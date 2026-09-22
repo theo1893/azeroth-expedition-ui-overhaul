@@ -27,7 +27,7 @@ L:RegisterTranslations("enUS", function() return {
 } end )
 
 L:RegisterTranslations("zhCN", function() return {
-	-- Wind汉化修复Turtle-WOW中文数据
+	-- Sunelegy，Wind汉化修复Turtle-WOW中文数据
 	-- Last update: 2024-06-22
     cmd = "darkriderchampion",
 
@@ -36,7 +36,7 @@ L:RegisterTranslations("zhCN", function() return {
     reaverstorm_desc = "掠夺者风暴施放时进行警告",
 
 
-    trigger_reaverstorm = "Dark Rider Champion begins to perform Reaver Storm.",--CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
+    trigger_reaverstorm = "黑暗骑士勇士开始施展掠夺者风暴",--CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
     bar_reaverstormCd = "掠夺者风暴冷却",
     bar_reaverstormCast = "掠夺者风暴施放",
 

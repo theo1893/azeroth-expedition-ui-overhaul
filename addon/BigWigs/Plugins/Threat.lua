@@ -48,7 +48,7 @@ end)
 ----------------------------------
 
 BigWigsThreat = BigWigs:NewModule(L["Threat"])
-BigWigsThreat.revision = 20011
+BigWigsThreat.revision = 20012
 BigWigsThreat.defaultDB = {
 	active = false,
 	debug = false,
@@ -71,9 +71,9 @@ BigWigsThreat.consoleOptions = {
 			set = function(v)
 				BigWigsThreat.db.profile.active = v
 				if v then
-					BigWigsThreat:Enable()
+					BigWigsThreat:StartListening()
 				else
-					BigWigsThreat:Disable()
+					BigWigsThreat:StopListening()
 				end
 			end,
 		},
@@ -106,7 +106,9 @@ BigWigsThreat.playerNamesToNotify = {} -- c
 ------------------------------
 
 function BigWigsThreat:OnEnable()
-	BigWigsThreat:StartListening()
+	if self.db and self.db.profile and self.db.profile.active then
+		self:StartListening()
+	end
 end
 
 function BigWigsThreat:OnDisable()

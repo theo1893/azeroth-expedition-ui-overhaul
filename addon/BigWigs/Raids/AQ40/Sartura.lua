@@ -51,7 +51,7 @@ L:RegisterTranslations("enUS", function() return {
 } end )
 
 L:RegisterTranslations("zhCN", function() return {
-	-- Wind汉化修复Turtle-WOW中文数据
+	-- Sunelegy，Wind汉化修复Turtle-WOW中文数据
 	-- Last update: 2024-06-22
     cmd = "Sartura",
 
@@ -75,10 +75,10 @@ L:RegisterTranslations("zhCN", function() return {
     trigger_engage = "你将因玷污这些神圣的土地而受到审判！上古法则不容挑战！入侵者将被消灭！", --CHAT_MSG_MONSTER_YELL
     trigger_bossDead = "我服务到最后！", --CHAT_MSG_MONSTER_YELL
 
-    trigger_addDead = "沙尔图拉皇家卫士死亡了。", --CHAT_MSG_COMBAT_HOSTILE_DEATH
+    trigger_addDead = "沙尔图拉皇家卫士死亡了", --CHAT_MSG_COMBAT_HOSTILE_DEATH
     msg_addDead = "%d/3 沙尔图拉皇家卫士死亡！",
 
-    trigger_whirlwind = "沙尔图拉获得了旋风斩的效果。", --CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS
+    trigger_whirlwind = "沙尔图拉获得了旋风斩的效果", --CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS
     bar_whirlwind = "旋风斩！",
     msg_whirlwind = "旋风斩！",
     bar_whirlwindCd = "旋风斩 CD",

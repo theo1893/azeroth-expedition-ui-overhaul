@@ -1,6 +1,6 @@
 --[[
 Name: Babble-Boss-2.2
-Revision: 20006
+Revision: 20008
 Author(s): ckknight (ckknight@gmail.com)
 Website: http://ckknight.wowinterface.com/
 Documentation: http://wiki.wowace.com/index.php/Babble-Boss-2.2
@@ -14,7 +14,7 @@ Dependencies: AceLibrary, AceLocale-2.2
 -- Last update: 2025-06-18
 
 local MAJOR_VERSION = "Babble-Boss-2.2"
-local MINOR_VERSION = 20007
+local MINOR_VERSION = 20008
 
 if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
 
@@ -32,6 +32,15 @@ local BabbleBoss = AceLibrary("AceLocale-2.2"):new(MAJOR_VERSION)
 
 BabbleBoss:RegisterTranslations("enUS", function()
 	return {
+		["Ezzel Darkbrewer"] = true,
+		["Blackwing Alchemist"] = true,
+		["Incindis"] = true,
+		["Sorcerer-Thane Thaurissan"] = true,
+		["Twin Golems"] = true,
+		["Basalthar"] = true,
+		["Smoldaris"] = true,
+		["Patchwork Golem"] = true,
+		["Kara Trash"] = true,
 		["Avalanchion"] = true,
 		["The Windreaver"] = true,
 		["Baron Charr"] = true,
@@ -1689,6 +1698,15 @@ end)
 
 BabbleBoss:RegisterTranslations("zhCN", function()
 	return {
+		["Ezzel Darkbrewer"] = "伊泽尔·黑酿",
+		["Blackwing Alchemist"] = "黑翼炼金师",
+		["Incindis"] = "因辛迪斯",
+		["Sorcerer-Thane Thaurissan"] = "巫王索瑞森",
+		["Twin Golems"] = "巴萨尔萨与斯摩达利斯",
+		["Basalthar"] = "巴萨尔萨",
+		["Smoldaris"] = "斯摩达利斯",
+		["Patchwork Golem"] = "缝补傀儡",
+		["Kara Trash"] = "卡拉赞小怪",
 
 		["Avalanchion"] = "阿瓦兰奇奥";
 		["The Windreaver"] = "烈风掠夺者";

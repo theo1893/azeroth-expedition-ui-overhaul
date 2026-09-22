@@ -1,4 +1,3 @@
-
 local module, L = BigWigs:ModuleDeclaration("Clawlord Howlfang", "Karazhan")
 local BC = AceLibrary("Babble-Class-2.2")
 local bbclawlordhowlfang = AceLibrary("Babble-Boss-2.2")["Clawlord Howlfang"]
@@ -42,7 +41,7 @@ L:RegisterTranslations("enUS", function() return {
 } end )
 
 L:RegisterTranslations("zhCN", function() return {
-	-- Wind汉化修复Turtle-WOW中文数据
+	-- Sunelegy，Wind汉化修复Turtle-WOW中文数据
 	-- Last update: 2024-06-22
     cmd = "ClawlordHowlfang",
 
@@ -60,12 +59,12 @@ L:RegisterTranslations("zhCN", function() return {
     
 
 
-    trigger_terrifyingPresenceSelf = "You are afflicted by Terrifying Presence %((.+)%).",--CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
+    trigger_terrifyingPresenceSelf = "你受到了恐怖之力效果的影响%（(.+)%）.",--CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
     --trigger_terrifyingPresence = "(.+) is afflicted by Terrifying Presence %((.+)%).",--CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE
-    bar_terrifyingPresence = "% 减益效果",
+    bar_terrifyingPresence = "%减益效果",
     
-    trigger_curse = "afflicted by Shadowbane Curse.",--CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
-    msg_curse = "影刃诅咒，快驱散！",
+    trigger_curse = "受到了影爪诅咒效果的影响",--CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
+    msg_curse = "影爪诅咒，快驱散！",
     
     trigger_yellEnrage = "My pack shall tear you apart, bone by bone!",--CHAT_MSG_MONSTER_YELL
     msg_enrage = "激怒！",

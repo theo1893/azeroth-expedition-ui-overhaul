@@ -20,6 +20,7 @@ local cases = {
 }
 
 function UnitName() return "观察者" end
+function GetTime() return 100 end
 function UnitClass() return "Warrior", "WARRIOR" end
 function AceLibrary()
     return setmetatable({ new = function() return {} end }, {
@@ -44,6 +45,7 @@ local function loadModule(file, locale, folder)
     module.db = { profile = module.defaultDB }
     function module:Sync(message) record("sync " .. message) end
     function module:ShacklesDebuff(player) record("shackles " .. player) end
+    function module:Subservience() end
     function module:DoomOfMedivh(count) record("doom " .. count) end
     function module:SetRaidTargetForPlayer(player, mark)
         record("mark " .. player .. " " .. mark)
@@ -54,9 +56,10 @@ end
 
 local function check(module, message, expected, method)
     observed = {}
-    local handler = method and module[method] or module.AfflictionEvent or module.Event
+    local handler = method and module[method] or module.AfflictionEvent or module.DebuffEvent or module.Event
     handler(module, message)
-    assert(#observed == (expected and 1 or 0) and observed[1] == expected,
+    local expectedList = type(expected) == "table" and expected or (expected and {expected} or {})
+    assert(table.concat(observed, "; ") == table.concat(expectedList, "; "),
         context .. ": " .. message .. " => " .. table.concat(observed, "; ") ..
         "; expected " .. tostring(expected))
     checks = checks + 1
@@ -65,12 +68,13 @@ end
 for _, locale in ipairs({ "zhCN", "enUS" }) do
     for _, case in ipairs(cases) do
         local module = loadModule(case.file, locale)
-        local expected = "sync " .. case.sync .. "观察者"
-        if case.file == "Mephistroth" then expected = "shackles 观察者" end
+        local sync = string.gsub(case.sync, "%d+", tostring(module.revision))
+        local expected = "sync " .. sync .. "观察者"
+        if case.file == "Mephistroth" then expected = {"shackles 观察者", expected} end
         check(module, string.format(logs[locale].self, case[locale]), expected)
         for _, player in ipairs(names) do
             check(module, string.format(logs[locale].other, player, case[locale]),
-                "sync " .. case.sync .. player)
+                "sync " .. sync .. player)
         end
         check(module, "An unrelated combat log message.", nil)
     end
@@ -147,17 +151,21 @@ for _, locale in ipairs({ "zhCN", "enUS" }) do
 
     module = loadModule("Mephistroth", locale)
     module.db.profile.shackleshatter = true
-    local shatter = "sync MephistrothShackleShatter30002 "
+    local shatter = "sync MephistrothShackleShatter" .. module.revision .. " "
     local selfShatter = locale == "zhCN" and "你的镣铐碎裂" or "Your Shackle Shatter "
     local otherShatter = locale == "zhCN" and "%s的镣铐碎裂" or "%s's Shackle Shatter "
     local damage = locale == "zhCN" and "击中普通团员造成100点奥术伤害。" or "hits Raider for 100 Arcane damage."
-    check(module, selfShatter .. damage, shatter .. "观察者")
+    check(module, selfShatter .. damage, shatter .. "观察者", "CastEvent")
     for _, player in ipairs(names) do
-        check(module, string.format(otherShatter, player) .. damage, shatter .. player)
+        check(module, string.format(otherShatter, player) .. damage, shatter .. player, "CastEvent")
     end
-    check(module, "An unrelated combat log message.", nil)
+    check(module, "An unrelated combat log message.", nil, "CastEvent")
+    if locale == "zhCN" then
+        check(module, "你的挣脱镣铐" .. damage, shatter .. "观察者", "CastEvent")
+        check(module, names[1] .. "的挣脱镣铐" .. damage, shatter .. names[1], "CastEvent")
+    end
     module.db.profile.shackleshatter = false
-    check(module, selfShatter .. damage, nil)
+    check(module, selfShatter .. damage, nil, "CastEvent")
 
     for _, case in ipairs({
         {file="Karrsh", zhCN="腐蚀之种", enUS="Seed of Corruption",

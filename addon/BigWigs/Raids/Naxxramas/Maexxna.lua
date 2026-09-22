@@ -1,66 +1,69 @@
 local module, L = BigWigs:ModuleDeclaration("Maexxna", "Naxxramas")
 local BC = AceLibrary("Babble-Class-2.2")
 
-module.revision = 30071
+module.revision = 30135
 module.enabletrigger = module.translatedName
 module.toggleoptions = { "cocoon", "webspray", "poison", "enrage", "spiderlings", "bosskill" }
 
-L:RegisterTranslations("enUS", function() return {
-	cmd = "Maexxna",
+L:RegisterTranslations("enUS", function()
+	return {
+		cmd = "Maexxna",
 	
-	cocoon_cmd = "cocoon",
-    cocoon_name = "蛛网之茧警报",
-    cocoon_desc = "警告被蛛网之茧的玩家",
+		cocoon_cmd = "cocoon",
+		cocoon_name = "Cocoon Alert",
+		cocoon_desc = "Warn for Cocooned Players",
 
-    webspray_cmd = "spray",
-    webspray_name = "撒网警报",
-    webspray_desc = "即将撒网时进行警告",
+		webspray_cmd = "spray",
+		webspray_name = "Web Spray Alert",
+		webspray_desc = "Warn for Web Spray",
 
-    poison_cmd = "Poison",
-    poison_name = "死灵之毒警报",
-    poison_desc = "死灵之毒出现时进行警告",
+		poison_cmd = "Poison",
+		poison_name = "Necrotic Poison Alert",
+		poison_desc = "Warn for Necrotic Poison",
 
-    enrage_cmd = "enrage",
-    enrage_name = "激怒警报",
-    enrage_desc = "激怒出现时进行警告",
+		enrage_cmd = "enrage",
+		enrage_name = "Enrage Alert",
+		enrage_desc = "Warn for Enrage",
 
-    spiderlings_cmd = "spiderlings",
-    spiderlings_name = "小蜘蛛警报",
-    spiderlings_desc = "小蜘蛛出现时进行警告",
+		spiderlings_cmd = "spiderlings",
+		spiderlings_name = "Spiderlings Alert",
+		spiderlings_desc = "Warn for Spiderlings",
 
 
-	trigger_cocoonGain = "(.+) is afflicted by Web Wrap.",--CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE
-	trigger_cocoonGainYou = "You are afflicted by Web Wrap.",--CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
-	trigger_cocoonFade = "Web Wrap fades from (.+).",--CHAT_MSG_SPELL_AURA_GONE_OTHER // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_SELF
-    bar_cocoonGain = "蛛网之茧 ",
-    bar_cocoonCD = "蛛网之茧 CD",
+		trigger_cocoonGain = "(.+) is afflicted by Web Wrap.", --CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE
+		trigger_cocoonGainYou = "You are afflicted by Web Wrap.", --CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
+		trigger_cocoonFade = "Web Wrap fades from (.+).", --CHAT_MSG_SPELL_AURA_GONE_OTHER // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_SELF
+		trigger_friendlyDeath = "(.+) dies.",
+		bar_cocoonGain = "Cocoon %s",
+		bar_cocoonCD = "Cocoon CD",
 
-	trigger_webSprayGain = "afflicted by Web Spray.",--CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
-    bar_webSprayGain = "撒网",
-    bar_webSprayCD = "撒网 CD",
+		trigger_webSprayGain = "afflicted by Web Spray.", --CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
+		bar_webSprayGain = "Web Spray",
+		bar_webSprayCD = "Web Spray CD",
 	
-	trigger_webSprayFade = "Web Spray fades from",--CHAT_MSG_SPELL_AURA_GONE_OTHER // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_SELF
+		trigger_webSprayFade = "Web Spray fades from", --CHAT_MSG_SPELL_AURA_GONE_OTHER // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_SELF
 
-	trigger_poisonGain = "afflicted by Necrotic Poison.",--CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
-    bar_poisonGain = "坦克身上的腐蚀！",
-    bar_poisonCD = "死灵之毒 CD",
+		trigger_poisonGain = "afflicted by Necrotic Poison.", --CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
+		bar_poisonGain = "Necrotic on tank!",
+		bar_poisonCD = "Necrotic Poison CD",
 	
-	trigger_poisonFade = "Necrotic Poison fades",--CHAT_MSG_SPELL_AURA_GONE_OTHER // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_SELF
+		trigger_poisonFade = "Necrotic Poison fades", --CHAT_MSG_SPELL_AURA_GONE_OTHER // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_SELF
 	
-	trigger_enrageGain = "Maexxna gains Enrage.",--CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS
-    msg_enrageGain = "迈克斯纳激怒了！",
-    msg_enrageSoon = "迈克斯纳血量低于35% - 30%时会激怒！",
+		trigger_enrageGain = "Maexxna gains Enrage.", --CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS
+		msg_enrageGain = "Maexxna is Enraged!",
+		msg_enrageSoon = "Maexxna is below 35% - Enrages at 30%!",
 	
-    bar_spiderlings = "小蜘蛛",
+		bar_spiderlings = "Spiderlings", --Maexxna Spiderling dies. CHAT_MSG_COMBAT_HOSTILE_DEATH
 	
-	--spray every 40sec
+		--spray every 40sec
 		--last for 8sec
-	--cocoon after 20sec
-	--lings after 35sec
-} end )
+		--cocoon after 20sec
+		--lings after 35sec
+	}
+end)
 
 L:RegisterTranslations("zhCN", function() return {
-	-- Wind汉化修复Turtle-WOW中文数据
+	-- Sunelegy，Wind汉化修复Turtle-WOW中文数据
 	-- Last update: 2024-06-22
 	cmd = "Maexxna",
 	
@@ -85,27 +88,28 @@ L:RegisterTranslations("zhCN", function() return {
     spiderlings_desc = "小蜘蛛出现时进行警告",
 
 
-	trigger_cocoonGain = "(.+)受到了蛛网之茧效果的影响。",--CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE
-	trigger_cocoonGainYou = "你受到了蛛网之茧效果的影响。",--CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
+	trigger_cocoonGain = "(.+)受到了蛛网裹体效果的影响",--CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE
+	trigger_cocoonGainYou = "你受到了蛛网裹体效果的影响",--CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
 	trigger_cocoonFade = "蛛网之茧效果从(.+)身上消失了。",--CHAT_MSG_SPELL_AURA_GONE_OTHER // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_SELF
-    bar_cocoonGain = "蛛网之茧",
-    bar_cocoonCD = "蛛网之茧 CD",
+    trigger_friendlyDeath = "(.+)死亡了",
+	bar_cocoonGain = "蛛网之茧%s",
+    bar_cocoonCD = "蛛网之茧CD",
 
-	trigger_webSprayGain = "受到了蛛网喷射效果的影响。",--CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
+	trigger_webSprayGain = "受到了蛛网喷射效果的影响",--CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
     bar_webSprayGain = "群体被网",
     bar_webSprayCD = "群体蛛网 CD",
 	
 	trigger_webSprayFade = "蛛网喷射效果从",--CHAT_MSG_SPELL_AURA_GONE_OTHER // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_SELF
 
 	trigger_poisonGain = "受到了死灵之毒效果的影响。",--CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
-    bar_poisonGain = "死灵之毒持续！",
+    bar_poisonGain = "坦克身上有死灵之毒！",
     bar_poisonCD = "死灵之毒 CD",
 	
 	trigger_poisonFade = "死灵之毒效果从",--CHAT_MSG_SPELL_AURA_GONE_OTHER // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_SELF
 	
-	trigger_enrageGain = "迈克斯纳获得了激怒的效果。",--CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS
+	trigger_enrageGain = "迈克斯纳获得了激怒的效果",--CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS
     msg_enrageGain = "迈克斯纳激怒了！",
-    msg_enrageSoon = "迈克斯纳血量低于35% - 30%时会激怒！",
+    msg_enrageSoon = "迈克斯纳血量低于35%-30%时会激怒！",
 	
     bar_spiderlings = "小蜘蛛",
 	
@@ -117,19 +121,19 @@ L:RegisterTranslations("zhCN", function() return {
 
 local timer = {
 	cocoonDuration = 600,
-    cocoonCD = 20,
+	cocoonCD = 20,
 	websprayDuration = 10,
 	websprayCD = 40,
 	poisonDuration = 30,
-    firstPoison = 15,--14.89
-    spiderlings = 30,
+	firstPoison = 15, --14.89
+	spiderlings = 30,
 }
 local icon = {
 	cocoon = "Spell_Nature_Web",
 	webspray = "Ability_Ensnare",
 	poison = "Ability_Creature_Poison_03",
 	enrage = "Spell_shadow_unholyfrenzy",
-    spiderlings = "INV_Misc_MonsterSpiderCarapace_01",
+	spiderlings = "INV_Misc_MonsterSpiderCarapace_01",
 }
 local color = {
 	poison = "Green",
@@ -140,11 +144,11 @@ local color = {
 local syncName = {
 	cocoon = "MaexxnaCocoon" .. module.revision,
 	cocoonFade = "MaexxnaCocoonFade" .. module.revision,
-    webspray = "MaexxnaWebspray" .. module.revision,
+	webspray = "MaexxnaWebspray" .. module.revision,
 	websprayFade = "MaexxnaWebsprayFade" .. module.revision,
-    poison = "MaexxnaPoison" .. module.revision,
+	poison = "MaexxnaPoison" .. module.revision,
 	poisonFade = "MaexxnaPoisonFade" .. module.revision,
-    enrage = "MaexxnaEnrage" .. module.revision,
+	enrage = "MaexxnaEnrage" .. module.revision,
 	lowHp = "MaexxnaLowHp" .. module.revision,
 }
 
@@ -163,12 +167,9 @@ function module:OnEnable()
 	
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS", "Event") --trigger_enrageGain
 	
-	
-	self:ThrottleSync(0, syncName.cocoon)
-	self:ThrottleSync(0, syncName.cocoonFade)
-    self:ThrottleSync(8, syncName.webspray)
+	self:ThrottleSync(8, syncName.webspray)
 	self:ThrottleSync(8, syncName.websprayFade)
-    self:ThrottleSync(2, syncName.poison)
+	self:ThrottleSync(2, syncName.poison)
 	self:ThrottleSync(2, syncName.poisonFade)
 	self:ThrottleSync(10, syncName.enrage)
 	self:ThrottleSync(10, syncName.lowHp)
@@ -178,7 +179,7 @@ function module:OnSetup()
 end
 
 function module:OnEngage()
-    lowHp = nil
+	lowHp = nil
 	
 	if self.db.profile.poison then
 		self:Bar(L["bar_poisonCD"], timer.firstPoison, icon.poison, true, color.poison)
@@ -212,15 +213,15 @@ function module:UNIT_HEALTH(msg)
 end
 
 function module:Event(msg)
-    if string.find(msg, L["trigger_cocoonGain"]) then
+	if string.find(msg, L["trigger_cocoonGain"]) then
 		local _, _, cocoonedPlayer, _ = string.find(msg, L["trigger_cocoonGain"])
-		self:Sync(syncName.cocoon .. " " .. cocoonedPlayer)
+		self:Sync(syncName.cocoon .. cocoonedPlayer) -- bake player into sync name to throttle per player
 	elseif msg == L["trigger_cocoonGainYou"] then
 		cocoonedPlayer = UnitName("Player")
-		self:Sync(syncName.cocoon .. " " .. cocoonedPlayer)
+		self:Sync(syncName.cocoon .. cocoonedPlayer)
 	elseif string.find(msg, L["trigger_cocoonFade"]) then
 		local _, _, cocoonedPlayerFade, _ = string.find(msg, L["trigger_cocoonFade"])
-		self:Sync(syncName.cocoonFade .. " " .. cocoonedPlayerFade)
+		self:Sync(syncName.cocoonFade .. cocoonedPlayerFade)
 	
 	
 	elseif string.find(msg, L["trigger_webSprayGain"]) then
@@ -238,35 +239,47 @@ function module:Event(msg)
 	end
 end
 
+function module:OnFriendlyDeath(msg)
+	local _, _, deadPlayer, _ = string.find(msg, L["trigger_friendlyDeath"])
+	if deadPlayer then
+		self:Sync(syncName.cocoonFade .. deadPlayer)
+	end
+end
 
 function module:BigWigs_RecvSync(sync, rest)
-    if sync == syncName.cocoon and rest and self.db.profile.cocoon then
-        self:Cocoon(rest)
-	elseif sync == syncName.cocoonFade and rest and self.db.profile.cocoon then
-        self:CocoonFade(rest)
-	elseif sync == syncName.webspray and self.db.profile.webspray then
-        self:Webspray()
+	local _, _, cocoonPlayer = string.find(sync, syncName.cocoon .. "(.+)")
+	if cocoonPlayer and self.db.profile.cocoon then
+		self:Cocoon(cocoonPlayer)
+		return
+	end
+	local _, _, cocoonPlayer = string.find(sync, syncName.cocoonFade .. "(.+)")
+	if cocoonPlayer and self.db.profile.cocoon then
+		self:CocoonFade(cocoonPlayer)
+		return
+	end
+
+	if sync == syncName.webspray and self.db.profile.webspray then
+		self:Webspray()
 	elseif sync == syncName.websprayFade then
-        self:WebsprayFade()
-    elseif sync == syncName.poison and self.db.profile.poison then
-        self:Poison()
-    elseif sync == syncName.poisonFade and self.db.profile.poison then
-        self:PoisonFade()
-    elseif sync == syncName.enrage and self.db.profile.enrage then
-        self:Enrage()
+		self:WebsprayFade()
+	elseif sync == syncName.poison and self.db.profile.poison then
+		self:Poison()
+	elseif sync == syncName.poisonFade and self.db.profile.poison then
+		self:PoisonFade()
+	elseif sync == syncName.enrage and self.db.profile.enrage then
+		self:Enrage()
 	elseif sync == syncName.lowHp and self.db.profile.enrage then
-        self:LowHp()
-    end
+		self:LowHp()
+	end
 end
 
-
-function module:Cocoon(rest)
-    self:RemoveBar(L["bar_cocoonCD"])
-	self:Bar(L["bar_cocoonGain"]..rest, timer.cocoonDuration, icon.cocoon, true, color.cocoon)
+function module:Cocoon(player)
+	self:RemoveBar(L["bar_cocoonCD"])
+	self:MonitorBar(string.format(L["bar_cocoonGain"], player), icon.cocoon, BigWigs:GetGUIDByName(player, 0))
 end
 
-function module:CocoonFade(rest)
-	self:RemoveBar(L["bar_cocoonGain"]..rest)
+function module:CocoonFade(player)
+	self:RemoveBar(string.format(L["bar_cocoonGain"], player))
 end
 
 function module:Webspray()
@@ -309,6 +322,6 @@ end
 
 function module:LowHp()
 	lowHp = true
-	self:Sound("BikeHorn")
+	self:Sound("Alarm")
 	self:Message(L["msg_enrageSoon"], "Attention", false, nil, false)
 end

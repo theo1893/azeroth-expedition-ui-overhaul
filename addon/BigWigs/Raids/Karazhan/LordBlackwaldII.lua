@@ -3,11 +3,12 @@ local module, L = BigWigs:ModuleDeclaration("Lord Blackwald II", "Karazhan")
 local BC = AceLibrary("Babble-Class-2.2")
 
 module.revision = 30027
-module.enabletrigger = module.translatedName
+module.enabletrigger = { module.translatedName, "Lord Blackwald II", "布莱克沃尔德勋爵二世" }
 module.toggleoptions = {"reaverstorm", "boon", "empoweredsoul", "summon", "bosskill"}
 module.zonename = {
 	AceLibrary("AceLocale-2.2"):new("BigWigs")["Karazhan"],
 	AceLibrary("Babble-Zone-2.2")["Karazhan"],
+	"卡拉赞",
 }
 
 L:RegisterTranslations("enUS", function() return {
@@ -49,6 +50,7 @@ L:RegisterTranslations("enUS", function() return {
     msg_yellSummon = "影刃怒牙已被召唤！",
     
     trigger_engage = "You dare disturb the Dark Rider Lord?",--CHAT_MSG_MONSTER_YELL
+    trigger_bossDeath = "Lord Blackwald II dies", -- Fallback
     clickme = " >点击我！<",
     you = "you",
 } end )
@@ -89,11 +91,12 @@ L:RegisterTranslations("zhCN", function() return {
     trigger_empoweredSoulOther = "(.+) is afflicted by Empowered Soul.",--CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE // CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE
     bar_empoweredSoul = " 强化灵魂",
     
-    trigger_yellSummon = "I call upon the Scythe of Elune, grant me your power!",--CHAT_MSG_MONSTER_YELL
+    trigger_yellSummon = "艾露恩之镰.*力量",
     bar_summon = "召唤小怪",
     msg_yellSummon = "影刃怒牙已被召唤！",
     
     trigger_engage = "You dare disturb the Dark Rider Lord?",--CHAT_MSG_MONSTER_YELL
+    trigger_bossDeath = "Lord Blackwald II dies", -- Fallback
     clickme = " >点击我！<",
     you = "you",
 } end )
@@ -104,7 +107,7 @@ local timer = {
 	boon = 15,--timer TBD
 	empoweredSoul = 10,
 	firstSummon = 30,
-	summon = 60,--unknown, is more than 40sec
+	summon = 45,--unknown, is more than 40sec
 }
 local icon = {
 	reaverstorm = "Ability_Whirlwind",
@@ -140,6 +143,7 @@ function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_PARTY", "Event")--trigger_boonFade
 	self:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_OTHER", "Event")--trigger_boonFade
 	
+	self:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_OTHER", "Event")--trigger_boonFade
 	self:RegisterEvent("CHAT_MSG_MONSTER_YELL")--trigger_yellSummon
 	
 	self:ThrottleSync(5, syncName.reaverstorm)
@@ -147,6 +151,8 @@ function module:OnEnable()
 	self:ThrottleSync(5, syncName.boonFade)
 	self:ThrottleSync(5, syncName.empoweredSoul)
 	self:ThrottleSync(5, syncName.summon)
+
+	self:ScheduleRepeatingEvent("LordBlackwaldCheck", self.CheckStatus, 1, self)
 end
 
 function module:OnSetup()
@@ -154,22 +160,81 @@ function module:OnSetup()
 end
 
 function module:OnEngage()
+	self.engaged = true
+	self:CancelScheduledEvent("LordBlackwaldCheck")
 	self:Bar(L["bar_summon"], timer.firstSummon, icon.summon, true, color.summon)
+	self:ScheduleRepeatingEvent("LordBlackwaldDeathCheck", self.CheckForBossDeath, 2, self)
 end
 
 function module:OnDisengage()
+	self.engaged = nil
+	self:CancelScheduledEvent("LordBlackwaldDeathCheck")
+	self:CancelScheduledEvent("LordBlackwaldCheck")
+	self.combatExitTime = nil
 end
 
 function module:CHAT_MSG_MONSTER_YELL(msg, sender)
 	if msg == L["trigger_engage"] then
 		module:SendEngageSync()
 	
-	elseif msg == L["trigger_yellSummon"] then
+	elseif msg == L["trigger_yellSummon"] or string.find(msg, "艾露恩之镰") or string.find(msg, "Scythe of Elune") then
 		self:Sync(syncName.summon)
 	end
 end
 
+function module:CheckForBossDeath(msg)
+	if not self.engaged then return end
+	if type(msg) == "string" then
+		BigWigs:CheckForBossDeath(msg, self)
+		return
+	end
+	if UnitExists("target") and (UnitName("target") == "Lord Blackwald II" or UnitName("target") == "布莱克沃尔德勋爵二世") then
+		if UnitIsDead("target") then
+			self:SendBossDeathSync()
+			return
+		end
+	end
+
+	if not UnitAffectingCombat("player") then
+		-- Robust fallback: only disengage if NO ONE in the raid is in combat for 5 seconds
+		if not self.combatExitTime then self.combatExitTime = GetTime() end
+		local raidInCombat = nil
+		for i=1,GetNumRaidMembers() do
+			if UnitAffectingCombat("raid"..i) then
+				raidInCombat = true
+				break
+			end
+		end
+
+		if not raidInCombat then
+			if GetTime() - self.combatExitTime > 5 then
+				self:Disengage()
+			end
+		else
+			self.combatExitTime = nil
+		end
+	else
+		self.combatExitTime = nil
+	end
+end
+
+function module:CheckStatus()
+	if self.engaged then
+		self:CancelScheduledEvent("LordBlackwaldCheck")
+		return
+	end
+
+	-- Use the provider's real-unit/combat check; map coordinates are not boss identity.
+	self:CheckForEngage()
+end
+
 function module:Event(msg)
+	if not self.engaged then
+		if (self.translatedName and string.find(msg, self.translatedName)) or string.find(msg, "Lord Blackwald II") or string.find(msg, "布莱克沃尔德勋爵二世") then
+			self:Engage()
+		end
+	end
+
 	if msg == L["trigger_reaverstorm"] then
 		self:Sync(syncName.reaverstorm)
 	
@@ -249,5 +314,14 @@ end
 
 function module:Summon()
 	self:Message(L["msg_yellSummon"], "Urgent", false, nil, false)
+	-- Smart Reset: Only start bar if it's not already running with >10s
+	-- This allows the bar to reach the 10s mark and trigger the "Jump" to emphasized anchor
+	local registered, time, elapsed, running = self:BarStatus(L["bar_summon"])
+	if registered and running then
+		local remaining = time - elapsed
+		if remaining > 10 then
+			return
+		end
+	end
 	self:Bar(L["bar_summon"], timer.summon, icon.summon, true, color.summon)
 end

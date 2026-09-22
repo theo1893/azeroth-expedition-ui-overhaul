@@ -135,19 +135,19 @@ L:RegisterTranslations("zhCN", function() return {
     trigger_markBlaumeux = "受到了布劳缪克丝印记效果的影响",
     trigger_markMograine = "受到了莫格莱尼印记效果的影响",
     
-    trigger_markZeliekFade = "Mark of Zeliek fades from you.", --CHAT_MSG_SPELL_AURA_GONE_SELF
-    trigger_markKorthAzzFade = "Mark of Korth'azz fades from you.", --CHAT_MSG_SPELL_AURA_GONE_SELF
-    trigger_markBlaumeuxFade = "Mark of Blaumeux fades from you.", --CHAT_MSG_SPELL_AURA_GONE_SELF
-    trigger_markMograineFade = "Mark of Mograine fades from you.", --CHAT_MSG_SPELL_AURA_GONE_SELF
-    msg_zeliekTankReady = "准备好对瑟里耶克爵士进行坦克",
-    msg_korthAzzTankReady = "准备好对库尔塔兹领主进行坦克",
-    msg_blaumeuxTankReady = "准备好对女公爵布劳缪克丝进行坦克",
-    msg_mograineTankReady = "准备好对大领主莫格莱尼进行坦克",
+    trigger_markZeliekFade = "瑟里耶克印记效果从你身上消失了", --CHAT_MSG_SPELL_AURA_GONE_SELF
+    trigger_markKorthAzzFade = "库尔塔兹印记效果从你身上消失了", --CHAT_MSG_SPELL_AURA_GONE_SELF
+    trigger_markBlaumeuxFade = "布劳缪克丝记效果从你身上消失了", --CHAT_MSG_SPELL_AURA_GONE_SELF
+    trigger_markMograineFade = "莫格莱尼印记效果从你身上消失了", --CHAT_MSG_SPELL_AURA_GONE_SELF
+    msg_zeliekTankReady = "准备好对白马进行坦克",
+    msg_korthAzzTankReady = "准备好对矮子进行坦克",
+    msg_blaumeuxTankReady = "准备好对黑马进行坦克",
+    msg_mograineTankReady = "准备好对大领主进行坦克",
     
     trigger_markYou = "你受到了(.+)印记效果的影响",
     msg_doubleMark = "你被超过一个印记命中 - 注意位置！",
     
-    trigger_mark4 = "你受到了(.+)印记效果的影响%（4%）",
+    trigger_mark4 = "你受到了(.+)印记效果的影响（4）",
     msg_mark4 = "你身上有4层印记 - 快跑开/吃暗抗！",
     msg_mark4Tank = "身上有4层印记 - 替换我！",
 	
@@ -164,17 +164,17 @@ L:RegisterTranslations("zhCN", function() return {
     trigger_wrath2 = "我别无选择，只能服从！",
     bar_wrath = "神圣之怒 CD",
     
-    trigger_shieldWall = "(.*)获得了盾墙的效果。",
+    trigger_shieldWall = "(.*)获得了盾墙的效果",
     bar_shieldWall = " - 盾墙",
     msg_shieldWallUp = " - 盾墙持续20秒",
     msg_shieldWallFade = " - 盾墙结束！",
     
-    trigger_tauntResist = "你的嘲讽被(.+)抵抗了。", --CHAT_MSG_SPELL_SELF_DAMAGE
-    trigger_growlResist = "你的低吼被(.+)抵抗了。", --CHAT_MSG_SPELL_SELF_DAMAGE
+    trigger_tauntResist = "你的嘲讽被(.+)抵抗了", --CHAT_MSG_SPELL_SELF_DAMAGE
+    trigger_growlResist = "你的低吼被(.+)抵抗了", --CHAT_MSG_SPELL_SELF_DAMAGE
     msg_tauntResist = "嘲讽被抵抗",
     
-    trigger_tauntSuccess = "你对(.+)使用嘲讽。", --CHAT_MSG_SPELL_SELF_DAMAGE
-    trigger_growlSuccess = "你对(.+)使用低吼。", --CHAT_MSG_SPELL_SELF_DAMAGE
+    trigger_tauntSuccess = "你对(.+)使用嘲讽", --CHAT_MSG_SPELL_SELF_DAMAGE
+    trigger_growlSuccess = "你对(.+)使用低吼", --CHAT_MSG_SPELL_SELF_DAMAGE
     msg_tauntSuccess = "嘲讽成功",
 } end )
 
@@ -306,8 +306,27 @@ function module:OnEngage()
 	]]--
 end
 
+
 function module:OnDisengage()
 end
+
+function HasBuff(buffName)
+    for i = 1, 32 do
+        local name = UnitBuff("player", i)
+        if not name then break end
+        if name == buffName then
+            return true
+        end
+    end
+    return false
+end
+
+function MPGetShape(id)
+    local _,_,a = GetShapeshiftFormInfo(id)
+    if a then return true end
+    return false
+end
+
 
 function module:CHAT_MSG_COMBAT_HOSTILE_DEATH(msg)
 	if msg == string.format(UNITDIESOTHER, thane) then
@@ -445,46 +464,17 @@ end
 
 function module:TankCheck()
 	if UnitClass("Player") == BC["Warrior"] and UnitHealthMax("Player") >= 8000 then
-		local numTabs = GetNumTalentTabs()
-		for t=1, numTabs do
-			local numTalents = GetNumTalents(t)
-			for i=1, numTalents do
-				local nameTalent, icon, tier, column, currRank, maxRank= GetTalentInfo(t,i)
-				if nameTalent == bsdefiance then
-					if currRank == 5 then
-						isTank = true
-					end
-				end
-			end
-		end
-	
-	elseif UnitClass("Player") == BC["Druid"] and UnitHealthMax("Player") >= 8000 then
-		local numTabs = GetNumTalentTabs()
-		for t=1, numTabs do
-			local numTalents = GetNumTalents(t)
-			for i=1, numTalents do
-				local nameTalent, icon, tier, column, currRank, maxRank= GetTalentInfo(t,i)
-				if nameTalent == bsferalinstinct then
-					if currRank == 3 then
-						isTank = true
-					end
-				end
-			end
-		end
-		
-	elseif UnitClass("Player") == BC["Paladin"] and UnitHealthMax("Player") >= 8000 then
-		local numTabs = GetNumTalentTabs()
-		for t=1, numTabs do
-			local numTalents = GetNumTalents(t)
-			for i=1, numTalents do
-				local nameTalent, icon, tier, column, currRank, maxRank= GetTalentInfo(t,i)
-				if nameTalent == bsimprovedsealofjustice then
-					if currRank == 3 then
-						isTank = true
-					end
-				end
-			end
-		end
+        if MPGetShape(2) then
+            isTank = true
+        end
+	elseif UnitClass("Player") == BC["Druid"] and UnitHealthMax("Player") >= 8500 then
+        if MPGetShape(1) then
+            isTank = true
+        end
+	elseif UnitClass("Player") == BC["Paladin"] and UnitHealthMax("Player") >= 7500 then
+        if HasBuff("正义之怒") then
+            isTank = true
+        end
 	end
 	
 	if isTank == nil then
@@ -799,4 +789,3 @@ function horsemenIsRL()
     return false
 end
 ]]--
-

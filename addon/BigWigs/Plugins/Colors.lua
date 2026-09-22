@@ -590,7 +590,25 @@ BigWigsColors.consoleOptions = {
 --      Initialization      --
 ------------------------------
 
+local function RegisterRaidTargetColors()
+	local raidTargetColors = {
+		unmarked = "bababa",
+		Star = "ffff00",
+		Circle = "ffa500",
+		Diamond = "ff20ff",
+		Triangle = "00ff00",
+		Moon = "e0ffff",
+		Square = "00baff",
+		Cross = "ff2020",
+		Skull = "ffffff"
+	}
+	for k,v in pairs(raidTargetColors) do
+		PaintChips:RegisterColor(k, v)
+	end
+end
+
 function BigWigsColors:OnRegister()
+	RegisterRaidTargetColors()
 	self:RegHex(self.db.profile)
 end
 
@@ -672,3 +690,12 @@ function BigWigsColors:BarColor(time)
 	elseif n == 1 then return d[1] end
 end
 
+
+function BigWigsColors:ColorizeString(input, color)
+	if not color then color = input end
+	local hex = PaintChips:GetHex(color)
+	if hex then
+		input = "|cff"..hex..input.."|r"
+	end
+	return input
+end

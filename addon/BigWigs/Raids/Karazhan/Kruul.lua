@@ -2,22 +2,25 @@ local module, L = BigWigs:ModuleDeclaration("Kruul", "Karazhan")
 
 -- module variables
 module.revision = 30001
-module.enabletrigger = module.translatedName
+module.enabletrigger = { module.translatedName, "库鲁尔", "Kruul" }
 module.toggleoptions = { "markofthelord", "markofthelordmark", "remorsestrikes", "proximity", "bosskill" }
 module.zonename = {
  AceLibrary("AceLocale-2.2"):new("BigWigs")["Tower of Karazhan"],
  AceLibrary("Babble-Zone-2.2")["Tower of Karazhan"],
- "荒芜巨岩"
+  "The Rock of Desolation",
+  "外域",
+  "荒芜王座",
 }
 
+local BC = AceLibrary("Babble-Class-2.2")
 local _, playerClass = UnitClass("player")
 
 -- module defaults
 module.defaultDB = {
  markofthelord = true,
  markofthelordmark = true,
- remorsestrikes = playerClass ~= "MAGE" and playerClass ~= "WARLOCK" and playerClass ~= "HUNTER",
- proximity = playerClass ~= "WARRIOR" and playerClass ~= "ROGUE",
+ remorsestrikes = playerClass ~= BC["MAGE"] and playerClass ~= BC["WARLOCK"] and playerClass ~= BC["HUNTER"],
+ proximity = playerClass ~= BC["WARRIOR"] and playerClass ~= BC["ROGUE"],
 }
 
 local syncName = {
@@ -52,6 +55,7 @@ L:RegisterTranslations("enUS", function()
   trigger_markofthelordFade = "Mark of the Highlord fades from you",
   trigger_markofthelordFadeOther = "Mark of the Highlord fades from (.+)",
   trigger_wrathOfTheHighlord = "Kruul gains Wrath of the Highlord",
+  trigger_markofthelordFaderemove = "(.+) Highlord is removed",
 
   msg_markofthelordYou = "Mark of the Highlord on YOU - GET OUT!",
   msg_markofthelordOther = "Mark of the Highlord on %s!",
@@ -72,44 +76,44 @@ end)
 
 L:RegisterTranslations("zhCN", function()
  return {
-	cmd = "Kruul",
+   cmd = "Kruul",
 
-	markofthelord_cmd = "markofthelord",
-	markofthelord_name = "大领主印记警报",
-	markofthelord_desc = "当玩家受到大领主印记效果影响时发出警告",
+   markofthelord_cmd = "markofthelord",
+   markofthelord_name = "大领主印记警报",
+   markofthelord_desc = "当玩家受到大领主印记效果影响时发出警告",
 
-	markofthelordmark_cmd = "markofthelordmark",
-	markofthelordmark_name = "大领主印记团队标记",
-	markofthelordmark_desc = "为受到大领主印记影响的玩家添加团队标记，并在效果消失时恢复之前的标记",
+   markofthelordmark_cmd = "markofthelordmark",
+   markofthelordmark_name = "大领主印记团队标记",
+   markofthelordmark_desc = "为受到大领主印记影响的玩家添加团队标记，并在效果消失时恢复之前的标记",
 
-	remorsestrikes_cmd = "remorsestrikes",
-	remorsestrikes_name = "下一次冷漠打击警报",
-	remorsestrikes_desc = "显示库鲁尔下一次冷漠打击的计时器",
+   remorsestrikes_cmd = "remorsestrikes",
+   remorsestrikes_name = "下一次冷漠打击警报",
+   remorsestrikes_desc = "显示库鲁尔下一次冷漠打击的计时器",
 
-	proximity_cmd = "proximity",
-	proximity_name = "距离警告",
-	proximity_desc = "显示距离警告框体",
+   proximity_cmd = "proximity",
+   proximity_name = "距离警告",
+   proximity_desc = "显示距离警告框体",
 
-	trigger_markofthelordYou = "^你受到了大领主印记效果的影响",
-	trigger_markofthelordOther = "(.+)受到了大领主印记效果的影响",
-	trigger_markofthelordFade = "大领主印记效果从你身上消失了",
-	trigger_markofthelordFadeOther = "大领主印记效果从(.+)身上消失了",
-	trigger_wrathOfTheHighlord = "库鲁尔获得了大领主之怒",
+   trigger_markofthelordYou = "^你受到了大领主印记效果的影响",
+   trigger_markofthelordOther = "(.+)受到了大领主印记效果的影响",
+   trigger_markofthelordFade = "大领主印记效果从你身上消失了",
+   trigger_markofthelordFadeOther = "大领主印记效果从(.+)身上消失",
+   trigger_wrathOfTheHighlord = "库鲁尔获得了大领主之怒",
 
-	msg_markofthelordYou = "你身上有大领主印记 - 快躲开！",
-	msg_markofthelordOther = "%s身上有大领主印记！",
-	msg_wrathOfTheHighlord = "库鲁尔激怒了 - 祝好运！",
+   msg_markofthelordYou = "你身上有大领主印记 - 快躲开！",
+   msg_markofthelordOther = "%s身上有大领主印记！",
+   msg_wrathOfTheHighlord = "库鲁尔激怒了-祝好运！",
 
-	bar_markofthelordExpires = "你身上有印记！快躲开！",
-	bar_nextCurses = "下一次诅咒",
+   bar_markofthelordExpires = "你身上有印记！躲开！",
+   bar_nextCurses = "下一次诅咒",
 
-	sync_markofthelord = syncName.markofthelord .. "(.*)", 
-	sync_markofthelordfade = syncName.markofthelordFade .. "(.*)", 
+   sync_markofthelord = syncName.markofthelord .. "(.*)",
+   sync_markofthelordfade = syncName.markofthelordFade .. "(.*)",
 
-	bar_nextRemorselessStrikes = "下一次冷漠打击",
-	trigger_remorselessStrikes = "库鲁尔的冷漠打击",
+   bar_nextRemorselessStrikes = "下一次冷漠打击",
+   trigger_remorselessStrikes = "库鲁尔的冷漠打击",
 
-	trigger_engage = "军团将会像它毁灭了无数其他世界一样焚烧这个世界！",
+   trigger_engage = "军团将会像它毁灭了无数其他世界一样焚烧这个世界！",
  }
 end)
 
@@ -156,11 +160,13 @@ function module:OnEnable()
 
  -- other syncs will default to 1 second throttle
  self:ThrottleSync(1, syncName.remorselessStrikes)
+ self:Message("友情提示：佩戴勇士印记/恶魔套装", "Important", false, nil, false)
 end
 
 function module:OnSetup()
  self.started = nil
  self.enragePhase = false
+
 
  -- Enable proximity warning
  if self.db.profile.proximity then
@@ -239,7 +245,7 @@ function module:CHAT_MSG_SPELL_AURA_GONE_OTHER(msg)
 end
 
 function module:OnFriendlyDeath(msg)
- local _, _, player = string.find(msg, "(.+) dies")
+ local _, _, player = string.find(msg, "(.+)死亡了")
  if player then
   self:Sync(syncName.markofthelordFade .. player)
  end
@@ -270,7 +276,7 @@ function module:MarkOfTheLord(player)
   if player == UnitName("player") then
    self:Sound("Beware")
    self:Message(L["msg_markofthelordYou"], "Important", true, "Alarm")
-   self:WarningSign(icon.markofthelord, 5, true, "GET OUT")
+   self:WarningSign(icon.markofthelord, 5, true, "离开！")
    self:Bar(L["bar_markofthelordExpires"], timer.markofthelordDuration, icon.markofthelord, true, color.red)
   else
    self:Message(string.format(L["msg_markofthelordOther"], player), "Important", nil, "Alert")
@@ -308,174 +314,3 @@ end
 function module:RestoreMark(player)
  self:RestorePreviousRaidTargetForPlayer(player)
 end
-
-function module:Test()
- -- Initialize module state
- self:OnSetup()
- self:Engage()
-
- -- Get test player names
- local testPlayerName1 = UnitName("raid1") or "TestPlayer1"
- local testPlayerName2 = UnitName("raid2") or "TestPlayer2"
- local testPlayerName3 = UnitName("raid3") or "TestPlayer3"
-
- local events = {
-  -- Mark of the Highlord events - all 3 players at once
-  { time = 1, func = function()
-   local msg = testPlayerName1 .. " is afflicted by Mark of the Highlord"
-   print("Test: " .. msg)
-   module:AfflictionEvent(msg)
-  end },
-
-  { time = 1.1, func = function()
-   local msg = testPlayerName2 .. " is afflicted by Mark of the Highlord"
-   print("Test: " .. msg)
-   module:AfflictionEvent(msg)
-  end },
-
-  { time = 1.2, func = function()
-   local msg = testPlayerName3 .. " is afflicted by Mark of the Highlord"
-   print("Test: " .. msg)
-   module:AfflictionEvent(msg)
-  end },
-
-  -- Marks fade after duration
-  { time = 11, func = function()
-   local msg = "Mark of the Highlord fades from " .. testPlayerName1
-   print("Test: " .. msg)
-   module:CHAT_MSG_SPELL_AURA_GONE_OTHER(msg)
-  end },
-
-  { time = 11.1, func = function()
-   local msg = "Mark of the Highlord fades from " .. testPlayerName2
-   print("Test: " .. msg)
-   module:CHAT_MSG_SPELL_AURA_GONE_OTHER(msg)
-  end },
-
-  { time = 13.2, func = function()
-   local msg = "Mark of the Highlord fades from " .. testPlayerName3
-   print("Test: " .. msg)
-   module:CHAT_MSG_SPELL_AURA_GONE_OTHER(msg)
-  end },
-
-  -- Second wave of marks
-  { time = 15, func = function()
-   local msg = "You are afflicted by Mark of the Highlord"
-   print("Test: " .. msg)
-   module:AfflictionEvent(msg)
-  end },
-
-  { time = 15.3, func = function()
-   local msg = testPlayerName1 .. " is afflicted by Mark of the Highlord"
-   print("Test: " .. msg)
-   module:AfflictionEvent(msg)
-  end },
-
-  { time = 15.5, func = function()
-   local msg = testPlayerName2 .. " is afflicted by Mark of the Highlord"
-   print("Test: " .. msg)
-   module:AfflictionEvent(msg)
-  end },
-
-  -- One player dies with mark
-  { time = 20, func = function()
-   local msg = testPlayerName1 .. " dies"
-   print("Test: " .. msg)
-   module:OnFriendlyDeath(msg)
-  end },
-
-  -- Test enrage phase
-  { time = 20, func = function()
-   local msg = "Kruul gains Wrath of the Highlord"
-   print("Test: " .. msg)
-   module:CHAT_MSG_SPELL_PERIODIC_CREATURE_BUFFS(msg)
-  end },
-
-  -- Other marks fade
-  { time = 22, func = function()
-   local msg = "Mark of the Highlord fades from you"
-   print("Test: " .. msg)
-   module:CHAT_MSG_SPELL_AURA_GONE_SELF(msg)
-  end },
-
-  { time = 23.1, func = function()
-   local msg = "Mark of the Highlord fades from " .. testPlayerName2
-   print("Test: " .. msg)
-   module:CHAT_MSG_SPELL_AURA_GONE_OTHER(msg)
-  end },
-
-  { time = 25, func = function()
-   local msg = "You are afflicted by Mark of the Highlord"
-   print("Test: " .. msg)
-   module:AfflictionEvent(msg)
-  end },
-
-  { time = 40, func = function()
-   local msg = "You are afflicted by Mark of the Highlord"
-   print("Test: " .. msg)
-   module:AfflictionEvent(msg)
-  end },
-
-  -- Test Remorseless Strikes scenarios
-  { time = 5, func = function()
-   local msg = "Kruul's Remorseless Strikes misses you."
-   print("Test: " .. msg)
-   module:DamageEvent(msg)
-  end },
-
-  { time = 10, func = function()
-   local msg = "Kruul's Remorseless Strikes hits " .. testPlayerName1 .. " for 1507."
-   print("Test: " .. msg)
-   module:DamageEvent(msg)
-  end },
-
-  -- Test rapid Remorseless Strikes events (should only trigger once with throttle)
-  { time = 14.9, func = function()
-   local msg = "Kruul's Remorseless Strikes misses you."
-   print("Test: " .. msg)
-   module:DamageEvent(msg)
-  end },
-
-  { time = 15.2, func = function()
-   local msg = "Kruul's Remorseless Strikes hits " .. testPlayerName2 .. " for 1507."
-   print("Test: " .. msg)
-   module:DamageEvent(msg)
-  end },
-
-  { time = 20, func = function()
-   local msg = "Kruul's Remorseless Strikes hits " .. testPlayerName2 .. " for 1507."
-   print("Test: " .. msg)
-   module:DamageEvent(msg)
-  end },
-
-
-  { time = 25, func = function()
-   local msg = "Kruul's Remorseless Strikes hits " .. testPlayerName2 .. " for 1507."
-   print("Test: " .. msg)
-   module:DamageEvent(msg)
-  end },
-
-  { time = 30, func = function()
-   local msg = "Kruul's Remorseless Strikes hits " .. testPlayerName2 .. " for 1507."
-   print("Test: " .. msg)
-   module:DamageEvent(msg)
-  end },
-
-  -- End test
-  { time = 35, func = function()
-   print("Test: Disengage")
-   module:Disengage()
-  end },
- }
-
- -- Schedule each event at its absolute time
- for i, event in ipairs(events) do
-  self:ScheduleEvent("KruulTest" .. i, event.func, event.time)
- end
-
- self:Message("Kruul test started", "Positive")
- return true
-end
-
--- Test command:
--- /run local m=BigWigs:GetModule("Kruul"); BigWigs:SetupModule("Kruul");m:Test();

@@ -96,21 +96,26 @@ assert(ormanos:GetCastTimeCoefficient()==1, "missing live unit uses base timing"
 local selenaxx=modules["Selenaxx Foulheart"]
 units.raid1target=selenaxx.translatedName
 selenaxx:CheckBossHealth(); assert(selenaxx.hp85, "health thresholds use live raid targets")
-selenaxx:AfflictionEvent("你受到了毁灭之雨效果的影响")
+selenaxx:AfflictionEvent(locale=="zhCN" and "你受到了毁灭之雨效果的影响"
+    or "You are afflicted by Rain of Destruction.")
 assert(selenaxx.warned and selenaxx.lastSound=="Info", "rain gain shows warning and sound")
 selenaxx.lastSound=nil
-selenaxx:AfflictionEvent("塞雷纳克斯·腐心的毁灭之雨使你受到100点伤害")
+selenaxx:AfflictionEvent(locale=="zhCN" and "塞雷纳克斯·腐心的毁灭之雨使你受到100点伤害"
+    or "You suffer 100 Fire damage from Selenaxx Foulheart's Rain of Destruction.")
 assert(selenaxx.lastSound=="Info", "rain damage ticks repeat the sound")
-selenaxx:FadesEvent("毁灭之雨效果从你身上消失了")
+selenaxx:FadesEvent(locale=="zhCN" and "毁灭之雨效果从你身上消失了"
+    or "Rain of Destruction fades from you.")
 assert(not selenaxx.warned and selenaxx.lastSound=="Long", "rain fade clears warning")
 local peroth=modules["Peroth'arn"]
 assert(peroth.events.CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE=="DamageEvent")
 peroth:BigWigs_RecvSync("PerothShieldGain"..peroth.revision)
 peroth:BigWigs_RecvSync("PerothShieldFade"..peroth.revision)
 assert(peroth.events.CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE=="DamageEvent", "shield fade keeps flame events")
-peroth:DamageEvent("你受到了净化烈焰效果的影响")
+peroth:DamageEvent(locale=="zhCN" and "你受到了净化烈焰效果的影响"
+    or "You are afflicted by Flames of Purgation.")
 local trioch=modules.Trioch
-trioch:Event("提里奥克用巨大的冰锥瞄准了%t和Me")
+trioch:Event(locale=="zhCN" and "提里奥克用巨大的冰锥瞄准了%t和Me"
+    or "Trioch aims a giant ice lance at %t and Me")
 assert(trioch.iceTargets.Me, "unresolved first target must not discard the second")
 trioch:CorrosionMark("Me"); trioch:OozeDead(); trioch:OozePoisonEnd()
 trioch:CorrosionMark("Me"); assert(not trioch.oozeDeadFired, "each ooze wave resets death detection")

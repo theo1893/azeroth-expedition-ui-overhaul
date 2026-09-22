@@ -65,7 +65,7 @@ L:RegisterTranslations("enUS", function() return {
 } end )
 
 L:RegisterTranslations("zhCN", function() return {
-	-- Wind汉化修复Turtle-WOW中文数据
+	-- Sunelegy，Wind汉化修复Turtle-WOW中文数据
 	-- Last update: 2024-06-22
     cmd = "Ouro",
 
@@ -94,14 +94,14 @@ L:RegisterTranslations("zhCN", function() return {
     targeticon_desc = "在奥罗的目标头上标记骷髅团队标志",
 	
 	
-    trigger_engage = "奥罗开始施放出生。", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF
+    trigger_engage = "奥罗开始施放出生", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF
     
-    trigger_sweep = "奥罗开始施放横扫。", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
+    trigger_sweep = "奥罗开始施放横扫", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
     bar_sweepCd = "横扫 CD",
     bar_sweepCast = "横扫！",
     msg_sweep = "正在施放横扫！",
     
-    trigger_sandBlast = "奥罗开始施展沙尘爆裂。", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
+    trigger_sandBlast = "奥罗开始施展沙尘爆裂", --CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
     bar_sandBlastCd = "沙尘爆裂 CD",
     bar_sandBlastCast = "沙尘爆裂！快跑！",
     msg_sandBlast = "正在施放沙尘爆裂！",

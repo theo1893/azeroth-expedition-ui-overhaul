@@ -8,6 +8,24 @@ local L = AceLibrary("AceLocale-2.2"):new("BigWigsSound")
 --~~ local dewdrop = DewdropLib:GetInstance("1.0")
 
 local sounds = {
+	Run = "Interface\\AddOns\\BigWigs\\Sounds\\Run.wav",
+	stop = "Interface\\AddOns\\BigWigs\\Sounds\\stop.mp3",
+	zjd = "Interface\\AddOns\\BigWigs\\Sounds\\zjd.mp3",
+	DropIgnite = "Interface\\AddOns\\BigWigs\\Sounds\\DropIgnite.mp3",
+	GoBow = "Interface\\AddOns\\BigWigs\\Sounds\\GoBow.mp3",
+	fire = "Interface\\AddOns\\BigWigs\\Sounds\\fire.mp3",
+	cleave = "Interface\\AddOns\\BigWigs\\Sounds\\cleave.mp3",
+	daduan = "Interface\\AddOns\\BigWigs\\Sounds\\daduan.mp3",
+	tingzhiyidong = "Interface\\AddOns\\BigWigs\\Sounds\\tingzhiyidong.mp3",
+	yuexiang = "Interface\\AddOns\\BigWigs\\Sounds\\yuexiang.mp3",
+	tingzhishifa = "Interface\\AddOns\\BigWigs\\Sounds\\tingzhishifa.mp3",
+	zhadan = "Interface\\AddOns\\BigWigs\\Sounds\\zhadan.mp3",
+	xiagui = "Interface\\AddOns\\BigWigs\\Sounds\\xiagui.mp3",
+	huoyan = "Interface\\AddOns\\BigWigs\\Sounds\\huoyan.mp3",
+	heishui = "Interface\\AddOns\\BigWigs\\Sounds\\heishui.mp3",
+	buyaodong = "Interface\\AddOns\\BigWigs\\Sounds\\buyaodong.mp3",
+	anquan = "Interface\\AddOns\\BigWigs\\Sounds\\anquan.mp3",
+	Hide = "Interface\\AddOns\\BigWigs\\Sounds\\hide.mp3",
 	Long = "Interface\\AddOns\\BigWigs\\Sounds\\Long.mp3",
 	Info = "Interface\\AddOns\\BigWigs\\Sounds\\Info.ogg",
 	Alert = "Interface\\AddOns\\BigWigs\\Sounds\\Alert.mp3",
@@ -33,7 +51,7 @@ local sounds = {
 	Shakira = "Interface\\AddOns\\BigWigs\\Sounds\\Shakira.mp3",
 
 	BikeHorn = "Interface\\AddOns\\BigWigs\\Sounds\\BikeHorn.ogg",
-	AirHorn = "Interface\\AddOns\\BigWigs\\Sounds\\custom2\\AirHorn.ogg",
+	AirHorn = "Interface\\AddOns\\BigWigs\\Sounds\\AirHorn.ogg",
 
 	Scorch = "Interface\\AddOns\\BigWigs\\Sounds\\Scorch.mp3",
 	ScorchResist = "Interface\\AddOns\\BigWigs\\Sounds\\ScorchResist.mp3",

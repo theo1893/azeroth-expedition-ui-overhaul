@@ -17,7 +17,7 @@ HUD。
 addon/pfUI/                 pfUI 功能底座的项目维护分支
 addon/AzerothExpeditionUI/  模块级视觉替换与运行时媒体
 addon/DoiteDPS/             输出建议、循环配置、执行入口与独立自检
-addon/BigWigs/              客户端现用 2.16 团队首领技能预警
+addon/BigWigs/              2.16.2 团队首领技能预警与 Golden 功能整合
 addon/AzerothExpeditionGroupFinder/  专用频道团队目录与申请闭环
 assets/                     锁定基准、参考和确认后的源资产
 docs/                       精简的全局与模块设计状态

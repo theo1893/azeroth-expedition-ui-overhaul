@@ -30,7 +30,7 @@ L:RegisterTranslations("enUS", function() return {
 } end )
 
 L:RegisterTranslations("zhCN", function() return {
-	-- Wind汉化修复Turtle-WOW中文数据
+	-- Sunelegy，Wind汉化修复Turtle-WOW中文数据
 	-- Last update: 2024-06-22
     cmd = "Monstrosity",
 
@@ -45,7 +45,7 @@ L:RegisterTranslations("zhCN", function() return {
     trigger_totemUp = "畸形妖开始施放闪电图腾。",--CHAT_MSG_SPELL_CREATURE_VS_CREATURE_BUFF
     msg_totemUp = "转火闪电图腾！",
 
-    trigger_totemDead = "闪电图腾死亡了。",--CHAT_MSG_COMBAT_HOSTILE_DEATH
+    trigger_totemDead = "闪电图腾死亡了",--CHAT_MSG_COMBAT_HOSTILE_DEATH
     msg_totemDead = "图腾死了 =)",
 } end )
 

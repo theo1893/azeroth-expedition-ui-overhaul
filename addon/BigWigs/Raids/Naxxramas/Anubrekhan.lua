@@ -55,10 +55,11 @@ L:RegisterTranslations("enUS", function() return {
     trigger_web2 = "Web fails.", --CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE // CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE // CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
     bar_webCd = "网 CD",
     bar_webDur = "被网住了！",
+    trigger_bossdead  = "boss die",
 } end )
 
 L:RegisterTranslations("zhCN", function() return {
-	-- Wind汉化修复Turtle-WOW中文数据
+	-- Sunelegy，Wind汉化修复Turtle-WOW中文数据
 	-- Last update: 2024-06-22
     cmd = "Anubrekhan",
 
@@ -108,6 +109,7 @@ L:RegisterTranslations("zhCN", function() return {
     trigger_web2 = "蛛网效果从", --CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE // CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE // CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE
     bar_webCd = "蛛网 CD",
     bar_webDur = "被网住了！",
+    trigger_bossdead  = "阿努布雷坎死亡了",
 } end )
 
 local timer = {

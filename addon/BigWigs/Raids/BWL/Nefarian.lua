@@ -4,7 +4,7 @@ local BC = AceLibrary("Babble-Class-2.2")
 local bbvictor = AceLibrary("Babble-Boss-2.2")["Lord Victor Nefarius"]
 local bbnefarian = AceLibrary("Babble-Boss-2.2")["Nefarian"]
 
-module.revision = 30085
+module.revision = 30086
 module.enabletrigger = {bbnefarian, bbvictor}
 module.toggleoptions = {
 	"mc",
@@ -162,7 +162,7 @@ L:RegisterTranslations("enUS", function() return {
 	
     msg_classCall_Druid = "德鲁伊职业点名 - 被困在猫形态！",
     msg_classCall_Hunter = "猎人职业点名 - 远程武器损坏！",
-    msg_classCall_Mage = "法师职业点名 - 随机变羊 - 法师使用冰箱或远离！",
+    msg_classCall_Mage = "法师职业点名 - 当前服务器该效果已失效，无负面效果（原为随机变羊）",
     msg_classCall_Paladin = "圣骑士职业点名 - 奈法利安受到保护祝福！",
     msg_classCall_Priest = "牧师职业点名 - 直接治疗会造成伤害 - 请只使用恢复/盾！",
     msg_classCall_Rogue = "潜行者职业点名 - 潜行者被传送到Boss前方并定身 - 转换Boss方向！",
@@ -330,7 +330,7 @@ L:RegisterTranslations("zhCN", function() return {
 
 	trigger_classCall_Druid = "德鲁伊和你们愚蠢的变形法术", --CHAT_MSG_MONSTER_YELL
 	trigger_classCall_Hunter = "猎人们，还有你们那讨厌的玩具", --CHAT_MSG_MONSTER_YELL
-	trigger_classCall_Mage = "你们也是法师？", --CHAT_MSG_MONSTER_YELL
+	trigger_classCall_Mage = "你们也是法师", --CHAT_MSG_MONSTER_YELL --2026-09-04 服内喊话改为「你们也是法师？小心别玩火自焚......」，去掉标点以兼容新旧文本
 	trigger_classCall_Paladin = "听说你们有无数条命", --CHAT_MSG_MONSTER_YELL
 	trigger_classCall_Priest = "牧师们！如果你们要继续这么治疗", --CHAT_MSG_MONSTER_YELL
 	trigger_classCall_Rogue = "潜行者？不要躲躲藏藏了", --CHAT_MSG_MONSTER_YELL
@@ -342,7 +342,7 @@ L:RegisterTranslations("zhCN", function() return {
 	
     msg_classCall_Druid = "德鲁伊职业点名 - 被困在猫形态！",
     msg_classCall_Hunter = "猎人职业点名 - 远程武器损坏！",
-    msg_classCall_Mage = "法师职业点名 - 随机变羊 - 法师使用冰箱或远离！",
+    msg_classCall_Mage = "法师职业点名 - 当前服务器该效果已失效，无负面效果（原为随机变羊）",
     msg_classCall_Paladin = "圣骑士职业点名 - 奈法利安受到保护祝福！",
     msg_classCall_Priest = "牧师职业点名 - 直接治疗会造成伤害 - 请只使用恢复/盾！",
     msg_classCall_Rogue = "潜行者职业点名 - 潜行者被传送到Boss前方并定身 - 转换Boss方向！",
@@ -518,6 +518,8 @@ local syncName = {
 	boneConstructs = "NefarianBoneConstructs"..module.revision,
 }
 
+local classCallClasses = { "Druid", "Hunter", "Mage", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" }
+
 local drakonidsSelfCount = 0
 local drakonidsDead = 0
 local lowHp = nil
@@ -575,7 +577,11 @@ function module:OnEnable()
 	self:ThrottleSync(3, syncName.curse)
 	self:ThrottleSync(3, syncName.curseFade)
 	
-	self:ThrottleSync(3, syncName.classCall)
+	-- sync token 为 "前缀..职业名"，每个职业独立节流，互不影响（支持一次点名多个职业）
+	local i
+	for i = 1, table.getn(classCallClasses) do
+		self:ThrottleSync(3, syncName.classCall .. classCallClasses[i])
+	end
 	
 	self:ThrottleSync(0.5, syncName.wildPolymorph)
 	self:ThrottleSync(0.25, syncName.wildPolymorphFade)
@@ -666,27 +672,31 @@ function module:CHAT_MSG_MONSTER_YELL(msg)
 	elseif string.find(msg, L["trigger_landingNow"]) then
 		self:Sync(syncName.landingNow)
 	
-	elseif string.find(msg, L["trigger_classCall_Druid"]) then
-		self:Sync(syncName.classCall.." ".."Druid")
-	elseif string.find(msg, L["trigger_classCall_Hunter"]) then
-		self:Sync(syncName.classCall.." ".."Hunter")
-	elseif string.find(msg, L["trigger_classCall_Mage"]) then
-		self:Sync(syncName.classCall.." ".."Mage")
-	elseif string.find(msg, L["trigger_classCall_Paladin"]) then
-		self:Sync(syncName.classCall.." ".."Paladin")
-	elseif string.find(msg, L["trigger_classCall_Priest"]) then
-		self:Sync(syncName.classCall.." ".."Priest")
-	elseif string.find(msg, L["trigger_classCall_Rogue"]) then
-		self:Sync(syncName.classCall.." ".."Rogue")
-	elseif string.find(msg, L["trigger_classCall_Shaman"]) then
-		self:Sync(syncName.classCall.." ".."Shaman")
-	elseif string.find(msg, L["trigger_classCall_Warlock"]) then
-		self:Sync(syncName.classCall.." ".."Warlock")
-	elseif string.find(msg, L["trigger_classCall_Warrior"]) then
-		self:Sync(syncName.classCall.." ".."Warrior")
+	else
+		-- 职业点名：一条喊话可能同时点名多个职业，逐个匹配并分别同步
+		local i, matched
+		for i = 1, table.getn(classCallClasses) do
+			local cls = classCallClasses[i]
+			if string.find(msg, L["trigger_classCall_" .. cls]) then
+				self:Sync(syncName.classCall .. cls)
+				matched = true
+			end
+		end
 		
-	elseif msg == L["trigger_boneConstructs"] then
-		self:Sync(syncName.boneConstructs)
+		-- 兜底：服内喊话文本经常改，若触发词都没命中，直接按本地化职业名匹配
+		if not matched and phase == "phase2" then
+			for i = 1, table.getn(classCallClasses) do
+				local clsName = BC[classCallClasses[i]]
+				if clsName and string.find(msg, clsName) then
+					self:Sync(syncName.classCall .. classCallClasses[i])
+					matched = true
+				end
+			end
+		end
+
+		if not matched and msg == L["trigger_boneConstructs"] then
+			self:Sync(syncName.boneConstructs)
+		end
 	end
 end
 
@@ -812,8 +822,12 @@ function module:BigWigs_RecvSync(sync, rest, nick)
 	elseif sync == syncName.curseFade and rest and self.db.profile.curse then
 		self:CurseFade(rest)
 		
-	elseif sync == syncName.classCall and rest and self.db.profile.classcall then
-		self:ClassCall(rest)
+	elseif sync and string.find(sync, syncName.classCall, 1, true) == 1 and self.db.profile.classcall then
+		-- sync token = "NefarianClassCall<revision><职业名>"，职业名直接缀在 token 后
+		local ccClass = string.sub(sync, string.len(syncName.classCall) + 1)
+		if ccClass ~= "" then
+			self:ClassCall(ccClass)
+		end
 		
 	elseif sync == syncName.wildPolymorph and rest and self.db.profile.wildpolymorph then
 		self:WildPolymorph(rest)
@@ -1005,15 +1019,19 @@ function module:CurseFade(rest)
 end
 
 function module:ClassCall(rest)
+        self:Sound("stopcasting")  -- 新增：点名时播放自定义声音
 	self:RemoveBar(L["bar_classCall"].." CD")
 	self:CancelDelayedBar(L["bar_classCall"].." Soon")
 	self:RemoveBar(L["bar_classCall"].." Soon")
 		
-	self:Bar(rest.." "..L["bar_classCall"], timer.classCallDur, icon.classCall, true, color.classCallDur)
+	-- rest 是内部英文职业键（如 "Mage"），显示和本人判定都要走 Babble-Class 本地化
+	local className = BC[rest] or rest
+
+	self:Bar(className.." "..L["bar_classCall"], timer.classCallDur, icon.classCall, true, color.classCallDur)
 	self:Message(L["msg_classCall_"..rest], "Positive", false, nil, false)
 	--self:WarningSign("classicon_"..rest, 0.7)
 	
-	if UnitClass("Player") == rest then
+	if UnitClass("Player") == className then
 		self:Sound("Beware")
 	end
 	

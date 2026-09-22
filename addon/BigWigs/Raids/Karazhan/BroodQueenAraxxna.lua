@@ -44,7 +44,7 @@ L:RegisterTranslations("enUS", function() return {
 } end )
 
 L:RegisterTranslations("zhCN", function() return {
-	-- Wind汉化修复Turtle-WOW中文数据
+	-- Sunelegy，Wind汉化修复Turtle-WOW中文数据
 	-- Last update: 2024-06-22
 	cmd = "BroodQueenAraxxna",
 
@@ -62,20 +62,20 @@ L:RegisterTranslations("zhCN", function() return {
 	
 	
 	
-	trigger_volley = "Brood Queen Araxxna's Brood Venom Volley hits",--CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE // CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE // CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE
+	trigger_volley = "巢穴女王阿拉克萨娜的巢毒齐射",--CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE // CHAT_MSG_SPELL_CREATURE_VS_PARTY_DAMAGE // CHAT_MSG_SPELL_CREATURE_VS_SELF_DAMAGE
 	bar_volley = "巢毒齐射",
 	
-	trigger_leechingBiteYou = "You are afflicted by Leeching Bite.",--CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
-	trigger_leechingBiteOther = "(.+) is afflicted by Leeching Bite.",--CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE
-	trigger_leechingBiteFade = "Leeching Bite fades from (.+).",--CHAT_MSG_SPELL_AURA_GONE_OTHER // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_SELF
-	bar_leechingBite = " 水蛭叮咬",
+	trigger_leechingBiteYou = "你受到了水蛭叮咬效果的影响",--CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
+	trigger_leechingBiteOther = "(.+)受到了水蛭叮咬效果的影响",--CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE // CHAT_MSG_SPELL_PERIODIC_PARTY_DAMAGE
+	trigger_leechingBiteFade = "水蛭叮咬效果从(.+)身上消失",--CHAT_MSG_SPELL_AURA_GONE_OTHER // CHAT_MSG_SPELL_AURA_GONE_PARTY // CHAT_MSG_SPELL_AURA_GONE_SELF
+	bar_leechingBite = "水蛭叮咬",
 
 	trigger_eggSpawn = "My minions shall consume you!",--CHAT_MSG_MONSTER_YELL
 	bar_eggHatch = "掠网蛛卵孵化",
 	msg_eggSpawn = "2个卵即将孵化！",
 	
 	trigger_engage = "What goes there, new prey to be entangled?",--CHAT_MSG_MONSTER_YELL
-	you = "you",
+	you = "你",
 } end )
 
 local timer = {

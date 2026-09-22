@@ -1,11 +1,12 @@
 ## Interface: 11200
-## Title: |cff33ffcc[团队工具]|RBOSS技能预警|cffff1450[2.16]|R
+## Title: |cff33ffcc[团队工具]|RBOSS技能预警|cffff1450[2.16.2]|R
 ## Notes:|CFFDD66DDBigWigs|R 预警并提示BOSS技能
-## Title-zhCN: |cff33ffcc[团队工具]|RBOSS技能预警|cffff1450[2.16]|R
+## Title-zhCN: |cff33ffcc[团队工具]|RBOSS技能预警|cffff1450[2.16.2]|R
 ## Notes-zhCN:|CFFDD66DDBigWigs|R 预警并提示BOSS技能
 ## X-Repple: 团队
-## Author: Relar, Bethy, Tekkub Stoutwrithe, Ammo, Shyva, Rabbit, LYQ, Dorann, Hosq, Wind
-## Version: 2.16
+## Author: Relar, Bethy, Tekkub Stoutwrithe, Ammo, Shyva, Rabbit, LYQ, Dorann, Hosq, Wind, Elesion, Balake, Pepopo & Others
+## Version: 2.16.2
+## X-AEUI-Integration: Golden alerts, tools and encounters
 ## X-Website: https://github.com/madScripting
 ## X-Category: Raid
 ## X-RelSite-WoWI: 5086
@@ -27,6 +28,7 @@ Plugins\Comm.lua
 Plugins\Colors.lua
 Plugins\TargetMonitor.lua
 Plugins\Bars.lua
+Plugins\VerticalBars.lua
 Plugins\Messages.lua
 Plugins\Sound.lua
 Plugins\RaidWarn.lua
@@ -43,6 +45,7 @@ Plugins\ZombieFood.lua
 Plugins\RespawnTimers.lua
 Plugins\WarningSign.lua
 Plugins\BossRecords.lua
+Plugins\WorldBossCooldown.lua
 Plugins\RaidOfficer.lua
 Plugins\AutoReply.lua
 Plugins\Proximity.lua
@@ -52,6 +55,7 @@ Plugins\FRBuffMacro.lua
 Plugins\Farclip.lua
 Plugins\FrostBlast.lua
 Plugins\Pulltimer.lua
+Plugins\ResistCheck.lua
 
 Raids\ZG\Arlokk.lua
 Raids\ZG\Jeklik.lua
@@ -98,6 +102,7 @@ Raids\AQ40\Brainwasher.lua
 
 Raids\BWL\Chromaggus.lua
 Raids\BWL\Ebonroc.lua
+Raids\BWL\Ezzel.lua
 Raids\BWL\Firemaw.lua
 Raids\BWL\Flamegor.lua
 Raids\BWL\Nefarian.lua
@@ -105,6 +110,7 @@ Raids\BWL\Vaelastrasz.lua
 Raids\BWL\Broodlord.lua
 Raids\BWL\Razorgore.lua
 Raids\BWL\Wyrmguards.lua
+Raids\BWL\Alchemists.lua
 
 Raids\MC\Lucifron.lua
 Raids\MC\BaronGeddon.lua
@@ -116,10 +122,13 @@ Raids\MC\Shazzrah.lua
 Raids\MC\Garr.lua
 Raids\MC\Sulfuron.lua
 Raids\MC\Golemagg.lua
+Raids\MC\Incindis.lua
+Raids\MC\Thaurissan.lua
 Raids\MC\AncientCoreHound.lua
 Raids\MC\FlameImp.lua
 Raids\MC\Surger.lua
 Raids\MC\CoreHound.lua
+Raids\MC\TwinGolems.lua
 
 Raids\DireMaul\CaptainKromcrush.lua
 Raids\DireMaul\Gordok.lua
@@ -130,7 +139,6 @@ Raids\Other\Lethon.lua
 Raids\Other\Taerar.lua
 Raids\Other\Ysondre.lua
 Raids\Other\Kazzak.lua
-Raids\Other\Nerubian.lua
 Raids\Other\DarkReaverOfKarazhan.lua
 Raids\Other\NerubianOverseer.lua
 Raids\Other\TwilightCorrupter.lua
@@ -163,6 +171,7 @@ Raids\Naxxramas\DeathknightCaptain.lua
 Raids\Naxxramas\LivingMonstrosity.lua
 Raids\Naxxramas\SpiderTrash.lua
 Raids\Naxxramas\DeathknightCavalier.lua
+Raids\Naxxramas\ConstructTrash.lua
 
 Raids\UBRS\Beast.lua
 Raids\UBRS\Drakkisath.lua
@@ -216,6 +225,7 @@ Raids\Karazhan\Kruul.lua
 Raids\Karazhan\SanvTasdal.lua
 Raids\Karazhan\Rupturan.lua
 Raids\Karazhan\Mephistroth.lua
+Raids\Karazhan\KaraTrash.lua
 
 Battlegrounds\AlteracValley.lua
 Battlegrounds\ArathiBasin.lua

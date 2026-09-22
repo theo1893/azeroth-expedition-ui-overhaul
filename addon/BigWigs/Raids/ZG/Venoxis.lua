@@ -94,7 +94,7 @@ L:RegisterTranslations("enUS", function() return {
 } end )
 
 L:RegisterTranslations("zhCN", function() return {
-	-- Wind汉化修复Turtle-WOW中文数据
+	-- Sunelegy，Wind汉化修复Turtle-WOW中文数据
 	-- Last update: 2024-06-22
     cmd = "Venoxis",
 
@@ -480,7 +480,7 @@ function module:VenomSpit(rest)
 	self:Bar(rest..L["bar_venomSpit"], timer.venomSpit, icon.venomSpit, true, color.venomSpit)
 	
 	if UnitClass("Player") == BC["Druid"] or UnitClass("Player") == BC["Paladin"] or UnitClass("Player") == BC["Shaman"] then 
-		self:Message(L["msg_venomSpot"], "Attention", false, nil, false)
+		self:Message(L["msg_venomSpit"], "Attention", false, nil, false)
 		self:Sound("Alarm")
 		self:WarningSign(icon.venomSpit, 0.7)
 	end

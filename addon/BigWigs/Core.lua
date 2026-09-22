@@ -22,6 +22,16 @@ surface:Register("BantoBar", "Interface\\AddOns\\BigWigs\\Textures\\default")
 
 L:RegisterTranslations("enUS", function()
 	return {
+		["Star"] = "Star",
+		["Circle"] = "Circle",
+		["Diamond"] = "Diamond",
+		["Triangle"] = "Triangle",
+		["Moon"] = "Moon",
+		["Square"] = "Square",
+		["Cross"] = "Cross",
+		["Skull"] = "Skull",
+		["none"] = "none",
+		["unmarked"] = "unmarked",
 		["%s mod enabled"] = true,
 		["Target monitoring enabled"] = true,
 		["Target monitoring disabled"] = true,
@@ -298,6 +308,16 @@ end)
 
 L:RegisterTranslations("zhCN", function()
 	return {
+		["Star"] = "星星",
+		["Circle"] = "大饼",
+		["Diamond"] = "菱形",
+		["Triangle"] = "三角",
+		["Moon"] = "月亮",
+		["Square"] = "方块",
+		["Cross"] = "叉子",
+		["Skull"] = "骷髅",
+		["none"] = "无",
+		["unmarked"] = "未标记",
 	-- Wind汉化修复Turtle-WOW中文数据
 	-- Last update: 2024-06-22
 	["%s mod enabled"] = "%s 模块开启",
@@ -432,7 +452,7 @@ BigWigs.cmdtable = { type = "group", handler = BigWigs, args = {
 } }
 BigWigs:RegisterChatCommand({ "/bw", "/BigWigs" }, BigWigs.cmdtable)
 BigWigs.debugFrame = ChatFrame1
-BigWigs.revision = 30113
+BigWigs.revision = 30140
 BigWigs.markUnitsWhenNotRaidLeader = false -- too many people marking causes issues, can turn on if needed
 
 function BigWigs:EditLayout()
@@ -592,6 +612,9 @@ function BigWigs.modulePrototype:Victory()
 		end
 
 		BigWigsBossRecords:EndBossfight(self)
+		if BigWigsWorldBossCooldown and BigWigs:IsModuleActive(BigWigsWorldBossCooldown) then
+			BigWigsWorldBossCooldown:EndBossfight(self)
+		end
 
 		self:DebugMessage("Boss已击败，关闭模块 ["..self:ToString().."].")
 		self.core:DisableModule(self:ToString())
@@ -659,6 +682,8 @@ function BigWigs.modulePrototype:SetRaidTargetForPlayer(player, mark)
 	end
 	self.storedPlayerMarks[player] = previousMark
 
+	if type(mark) == "string" then mark = BigWigs:RaidTargetLookup(mark) end
+	if type(mark) ~= "number" or mark < 0 or mark > 8 then return false end
 	SetRaidTarget(playerUnit, mark)
 	return true
 end
@@ -952,7 +977,7 @@ function BigWigs.modulePrototype:Test()
 	BigWigs:Print("模块未定义测试 " .. self:ToString())
 end
 
-if SUPERWOW_STRING then
+if SUPERWOW_STRING or SUPERWOW_VERSION or SetAutoloot then
 	local testGuids = {
 		["0xF13000F1F3276A33"] = "Keeper Gnarlmoon",
 	}
@@ -1027,11 +1052,17 @@ function BigWigs.modulePrototype:CancelDelayedMessage(text)
 	self:CancelScheduledEvent(delayPrefix .. "Message" .. self:ToString() .. text)
 end
 
-function BigWigs.modulePrototype:Bar(text, time, icon, otherColor, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10)
-	self:TriggerEvent("BigWigs_StartBar", self, text, time, "Interface\\Icons\\" .. icon, otherColor, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10)
+function BigWigs.modulePrototype:Bar(text, time, icon, otherColor, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, emphasize, target, spell)
+	self:TriggerEvent("BigWigs_StartBar", self, text, time, "Interface\\Icons\\" .. icon, otherColor, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, emphasize, target, spell)
 end
 function BigWigs.modulePrototype:RemoveBar(text)
 	self:TriggerEvent("BigWigs_StopBar", self, text)
+end
+function BigWigs.modulePrototype:DelayedBar(delay, text, time, icon, otherColor, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, emphasize, target, spell)
+	return self:ScheduleEvent(delayPrefix .. "Bar" .. self:ToString() .. text, "BigWigs_StartBar", delay, self, text, time, "Interface\\Icons\\" .. icon, otherColor, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, emphasize, target, spell)
+end
+function BigWigs.modulePrototype:CancelDelayedBar(text)
+	self:CancelScheduledEvent(delayPrefix .. "Bar" .. self:ToString() .. text)
 end
 
 function BigWigs.modulePrototype:IntervalBar(text, intervalMin, intervalMax, icon, otherColor, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10)
@@ -1041,12 +1072,20 @@ function BigWigs.modulePrototype:DelayedIntervalBar(delay, text, intervalMin, in
 	return self:ScheduleEvent(delayPrefix .. "Bar" .. self:ToString() .. text, "BigWigs_StartIntervalBar", delay, self, text, intervalMin, intervalMax, "Interface\\Icons\\" .. icon, otherColor, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10)
 end
 
-function BigWigs.modulePrototype:DelayedBar(delay, text, time, icon, otherColor, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10)
-	return self:ScheduleEvent(delayPrefix .. "Bar" .. self:ToString() .. text, "BigWigs_StartBar", delay, self, text, time, "Interface\\Icons\\" .. icon, otherColor, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10)
+function BigWigs.modulePrototype:ClickBar(text, time, icon, target, spell, otherColor, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, emphasize)
+	self:TriggerEvent("BigWigs_StartBar", self, text, time, "Interface\\Icons\\" .. icon, otherColor, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, emphasize, target, spell)
 end
-function BigWigs.modulePrototype:CancelDelayedBar(text)
-	self:CancelScheduledEvent(delayPrefix .. "Bar" .. self:ToString() .. text)
+function BigWigs.modulePrototype:DelayedClickBar(delay, text, time, icon, target, spell, otherColor, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, emphasize)
+	return self:ScheduleEvent(delayPrefix .. "Bar" .. self:ToString() .. text, "BigWigs_StartBar", delay, self, text, time, "Interface\\Icons\\" .. icon, otherColor, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, emphasize, target, spell)
 end
+
+function BigWigs.modulePrototype:MonitorBar(barName, icon, guid, type, displayText, insertMark, emphazise, otherColor, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10)
+	self:TriggerEvent("BigWigs_StartMonitorBar", self, barName, "Interface\\Icons\\" .. icon, guid, type, displayText, insertMark, emphazise, otherColor, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10)
+end
+function BigWigs.modulePrototype:DelayedMonitorBar(delay, barName, icon, guid, type, displayText, insertMark, emphazise, otherColor, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10)
+	return self:ScheduleEvent(delayPrefix .. "Bar" .. self:ToString() .. barName, "BigWigs_StartMonitorBar", delay, self, barName, "Interface\\Icons\\" .. icon, guid, type, displayText, insertMark, emphazise, otherColor, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10)
+end
+
 function BigWigs.modulePrototype:BarStatus(text)
 	local registered, time, elapsed, running = BigWigsBars:GetBarStatus(self, text)
 	return registered, time, elapsed, running
@@ -1235,7 +1274,7 @@ function BigWigs:ModuleDeclaration(bossName, zoneName)
 	module.bossSync = bossName
 
 	-- zone
-	local raidZones = { "Blackwing Lair", "Ruins of Ahn'Qiraj", "Ahn'Qiraj", "Molten Core", "Naxxramas", "Emerald Sanctum", "Zul'Gurub" }
+	local raidZones = { "Blackwing Lair", "Ruins of Ahn'Qiraj", "Ahn'Qiraj", "Molten Core", "Naxxramas", "Emerald Sanctum", "Zul'Gurub", "Timbermaw Hold", "Karazhan" }
 	local isOutdoorraid = true
 	for i, value in ipairs(raidZones) do
 		if value == zoneName then
@@ -1265,6 +1304,7 @@ function BigWigs:RegisterModule(name, module)
 	local opts
 	if module:IsBossModule() and module.toggleoptions then
 		opts = {}
+		for key, value in pairs(module.defaultDB or {}) do opts[key] = value end
 		for _, v in pairs(module.toggleoptions) do
 			if module.defaultDB and module.defaultDB[v] ~= nil then
 				opts[v] = module.defaultDB[v]
@@ -1369,7 +1409,19 @@ function BigWigs:RegisterModule(name, module)
 					}
 				else
 					local l = v == "bosskill" and L or L2
-					if l:HasTranslation(v .. "_validate") then
+					local range = module.optionRanges and module.optionRanges[val]
+					if range then
+						cons.args[l[v .. "_cmd"]] = {
+							type = "range", order = x,
+							name = l[v .. "_name"], desc = l[v .. "_desc"],
+							min = range[1], max = range[2], step = range[3],
+							get = function() return m.db.profile[val] end,
+							set = function(value)
+								m.db.profile[val] = value
+								m:TriggerEvent("BigWigs_SetConfigureOption", m, val, value)
+							end,
+						}
+					elseif l:HasTranslation(v .. "_validate") then
 						cons.args[l[v .. "_cmd"]] = {
 							type = "text",
 							order = v == "bosskill" and -1 or x,
@@ -1380,6 +1432,7 @@ function BigWigs:RegisterModule(name, module)
 							end,
 							set = function(v)
 								m.db.profile[val] = v
+								m:TriggerEvent("BigWigs_SetConfigureOption", m, val, v)
 							end,
 							validate = l[v .. "_validate"],
 						}
@@ -1394,6 +1447,7 @@ function BigWigs:RegisterModule(name, module)
 							end,
 							set = function(v)
 								m.db.profile[val] = v
+								m:TriggerEvent("BigWigs_SetConfigureOption", m, val, v)
 							end,
 						}
 					end
@@ -1472,8 +1526,8 @@ function BigWigs:SetupModule(moduleName)
 	if m and m:IsBossModule() then
 		m:RegisterEvent("PLAYER_REGEN_DISABLED", "CheckForEngage") -- addition
 		m:RegisterEvent("PLAYER_REGEN_ENABLED", "CheckForWipe")
-		m:RegisterEvent("CHAT_MSG_COMBAT_FRIENDLY_DEATH", "CheckForWipe")
-		m:RegisterEvent("CHAT_MSG_COMBAT_HOSTILE_DEATH", "CheckForBossDeath") -- addition
+		m:RegisterEvent("CHAT_MSG_COMBAT_FRIENDLY_DEATH")
+		m:RegisterEvent("CHAT_MSG_COMBAT_HOSTILE_DEATH") -- addition
 
 		m:RegisterEvent("BigWigs_RecvSync")
 
@@ -1694,5 +1748,275 @@ function BigWigs:AddLoDMenu(zonename)
 		-- end
 		-- }
 		-- end
+	end
+end
+
+-- Requires Superwow for GetPlayerBuffID
+function BigWigs:CancelAuraId(spellId)
+	if not GetPlayerBuffID then
+		self:Print("Superwow required for CancelAuraId")
+		return false
+	end
+
+	local i = 0
+	while true do
+		local buffIndex = GetPlayerBuff(i, "HELPFUL")
+		i = i + 1
+		if buffIndex == -1 then
+			break
+		end
+		local buffId = GetPlayerBuffID(buffIndex)
+		buffId = (buffId < -1) and (buffId + 65536) or buffId
+		if buffId == spellId then
+			CancelPlayerBuff(buffIndex)
+			return true
+		end
+	end
+	return false
+end
+
+function BigWigs:CancelAuraTexture(texture)
+	local i = 0
+	while true do
+		local buffIndex = GetPlayerBuff(i, "HELPFUL")
+		i = i + 1
+		if buffIndex == -1 then
+			break
+		end
+		local buffTexture = GetPlayerBuffTexture(buffIndex)
+		if string.find(buffTexture, texture) then
+			CancelPlayerBuff(buffIndex)
+			return true
+		end
+	end
+
+	return false
+end
+
+-- Virtual Tooltip to scan for strings
+BigWigs.VTT = CreateFrame("GameTooltip", "BigWigsVTT", nil, "GameTooltipTemplate")
+BigWigs.VTT:SetOwner(BigWigsVTT, "ANCHOR_NONE")
+
+function BigWigs:BuffNameByIndex(buffIndex)
+	BigWigsVTT:SetPlayerBuff(buffIndex)
+
+	local line = getglobal("BigWigsVTTTextLeft1")
+	if line and line:IsVisible() then
+		return line:GetText()
+	else -- SetPlayerBuff() with non-existing buffIndex will remove the owner, breaking the tooltip; should never happen but let's recover from it anyway
+		BigWigs.VTT:SetOwner(BigWigsVTT, "ANCHOR_NONE")
+	end
+end
+-- /run local i=0 DEFAULT_CHAT_FRAME:AddMessage("Buff "..(i+1)..": "..BigWigs:BuffNameByIndex(i))
+
+
+function BigWigs:GetUnitIdByName(name, depth)
+	if type(name) ~= "string" then return end
+	depth = depth or 0 -- default to raid members
+	local suffix = ""
+	for i = 1,depth do
+		suffix = suffix .. "target"
+	end
+
+	-- Include solo/party targets as well as raid targets; never keep spawn-specific GUIDs.
+	local direct = depth == 0 and "player" or suffix
+	if UnitName(direct) == name then return direct end
+	for i = 1, GetNumPartyMembers() do
+		local id = "party" .. i .. suffix
+		if UnitName(id) == name then return id end
+	end
+	for i = 1, GetNumRaidMembers() do
+		local id = "raid" .. i .. suffix
+		if UnitName(id) == name then
+			return id
+		end
+	end
+end
+
+function BigWigs:GetTargetByName(name, depth)
+	depth = depth or 1 -- default to targets of raid members
+	local unitId = BigWigs:GetUnitIdByName(name, depth)
+	if unitId then
+		return UnitName(unitId.."target")
+	end
+end
+
+function BigWigs:GetGUIDByName(name, depth, ignoredGUIDs)
+	if type(name) ~= "string" then return end
+	depth = depth or 1 -- default to targets of raid members
+	local suffix = ""
+	for i = 1,depth do
+		suffix = suffix .. "target"
+	end
+
+	local units = { depth == 0 and "player" or suffix }
+	for i = 1, GetNumPartyMembers() do table.insert(units, "party" .. i .. suffix) end
+	for i = 1, GetNumRaidMembers() do table.insert(units, "raid" .. i .. suffix) end
+	for _, id in ipairs(units) do
+		if UnitName(id) == name then
+			local _, targetGUID = UnitExists(id)
+			if not targetGUID and GetUnitGUID then targetGUID = GetUnitGUID(id) end
+			-- name matched, now check exclusion list
+			if type(ignoredGUIDs) == "table" then
+				for _, excludedGUID in pairs(ignoredGUIDs) do
+					if targetGUID == excludedGUID then
+						targetGUID = nil
+						break
+					end
+				end
+			end
+			if type(targetGUID) == "string" and string.find(targetGUID, "^0x%x+$") then
+				return targetGUID
+			end
+		end
+	end
+end
+
+function BigWigs:OffsetGUID(input, offset)
+	if type(input) ~= "string" or not string.find(input, "^0x%x+$")
+		or string.len(input) < 18 or type(offset) ~= "number" then return end
+	local max = 4294967295 -- 32 bit limitation of tonumber and string.format
+	local prefix, highInput, lowInput = string.sub(input,1,-17), string.sub(input,-16,-9), string.sub(input,-8)
+
+	local lowOutput = tonumber(lowInput,16) + offset
+	local highOutput = tonumber(highInput,16)
+	if lowOutput < 0 then
+		lowOutput = lowOutput + max + 1
+		highOutput = highOutput - 1
+	elseif lowOutput > max then
+		lowOutput = lowOutput - max - 1
+		highOutput = highOutput + 1
+	end
+
+	return prefix..string.format("%08X",highOutput)..string.format("%08X",lowOutput)
+end
+
+function BigWigs:RaidTargetLookup(input, colorize)
+	local raidTargets = {
+		[0] = "none", -- following pattern of SetRaidTarget()
+		[1] = "Star",
+		[2] = "Circle",
+		[3] = "Diamond",
+		[4] = "Triangle",
+		[5] = "Moon",
+		[6] = "Square",
+		[7] = "Cross",
+		[8] = "Skull"
+	}
+
+	-- convert index to name
+	if type(input) == "number" then
+		local output = raidTargets[input]
+		if output then --localize output for displaying
+			if colorize then
+				return BigWigsColors:ColorizeString(L[output], output)
+			else
+				return L[output]
+			end
+		end
+
+	-- convert name to index
+	elseif type(input) == "string" then
+		input = string.lower(input)
+		for i=0,8 do
+			if input == string.lower(raidTargets[i]) then
+				return i
+			end
+		end
+
+	-- nil means unmarked following pattern of GetRaidTargetIndex()
+	elseif type(input) == "nil" then
+		if colorize then
+			return BigWigsColors:ColorizeString(L["unmarked"], "unmarked")
+		else
+			return L["unmarked"]
+		end
+	end
+end
+
+function BigWigs:FormatLargeNumber(integer)
+	local integerString = tostring(integer)
+	local length = string.len(integerString)
+
+	-- following the design of the default UI we want to return no more than 4 significant digits
+	if length < 5 then return integerString end
+
+	-- the 1.12 client uses signed 32 bit integers for values like health, so we don't need to worry about anything above 2 billion
+	local suffix = "k"
+	if length > 7 then
+		suffix = "m"
+		length = length - 3
+	end
+
+	if length == 5 then
+		return string.sub(integerString,1,2).."."..string.sub(integerString,3,4)..suffix
+	elseif length == 6 then
+		return string.sub(integerString,1,3).."."..string.sub(integerString,4,4)..suffix
+	elseif length == 7 then
+		return string.sub(integerString,1,4)..suffix
+	end
+end
+
+function BigWigs:BuffIsPresent(unitId, spellId)
+	if unitId and UnitExists(unitId) then
+		local i = 1
+		while UnitBuff(unitId, i) do
+			local _,_,foundId = UnitBuff(unitId, i)
+			if foundId == spellId then
+				return true
+			end
+			i = i + 1
+		end
+	end
+end
+
+function BigWigs:DebuffIsPresent(unitId, spellId)
+	if unitId and UnitExists(unitId) then
+		local i = 1
+		while UnitDebuff(unitId, i) do
+			local _,_,_,foundId = UnitDebuff(unitId, i)
+			if foundId == spellId then
+				return true
+			end
+			i = i + 1
+		end
+	end
+end
+
+function BigWigs:AuraIsPresent(unitId, spellId)
+	return BigWigs:DebuffIsPresent(unitId, spellId) or BigWigs:BuffIsPresent(unitId, spellId)
+end
+
+function BigWigs:GetCastTimeCoefficient(unitId)
+	local debuffs = { -- {spellId, multiplier, skip next if found}
+		[1] = {11719, 1.6, 1}, -- Curse of Tongues Rank 2
+		[2] = {1714, 1.5, 0}, -- Curse of Tongues Rank 1
+		[3] = {11398, 1.6, 2}, -- Mind-numbing Poison III
+		[4] = {8692, 1.5, 1}, -- Mind-numbing Poison II
+		[5] = {5760, 1.4, 0}, -- Mind-numbing Poison I
+	}
+	local coefficient = 1
+
+	if unitId and UnitExists(unitId) then
+		local i = 1
+		while i <= table.getn(debuffs) do
+			if BigWigs:AuraIsPresent(unitId, debuffs[i][1]) then
+				coefficient = coefficient * debuffs[i][2]
+				i = i + debuffs[i][3] -- skip checking lower ranks
+			end
+			i = i + 1
+		end
+	end
+
+	return coefficient
+end
+
+function BigWigs:GetHealthPercent(unitId, round)
+	if unitId and UnitExists(unitId) and UnitHealthMax(unitId) > 0 then
+		if round then
+			return math.floor(UnitHealth(unitId)/UnitHealthMax(unitId) * 100)
+		else
+			return UnitHealth(unitId)/UnitHealthMax(unitId) * 100
+		end
 	end
 end

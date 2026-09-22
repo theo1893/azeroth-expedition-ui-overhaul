@@ -68,7 +68,7 @@ L:RegisterTranslations("enUS", function() return {
 } end )
 
 L:RegisterTranslations("zhCN", function() return {
-	-- Wind汉化修复Turtle-WOW中文数据
+	-- Sunelegy，Wind汉化修复Turtle-WOW中文数据
 	-- Last update: 2024-06-22
     cmd = "Twins",
     
@@ -105,8 +105,8 @@ L:RegisterTranslations("zhCN", function() return {
     msg_enrage10 = "10秒后狂暴",
     msg_enrage = "双子狂暴了",
     
-    trigger_blizzard = "你受到了暴风雪效果的影响。",--CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
-    trigger_blizzardFade = "暴风雪效果从你身上消失。",--CHAT_MSG_SPELL_AURA_GONE_SELF
+    trigger_blizzard = "你受到了暴风雪效果的影响",--CHAT_MSG_SPELL_PERIODIC_SELF_DAMAGE
+    trigger_blizzardFade = "暴风雪效果从你身上消失",--CHAT_MSG_SPELL_AURA_GONE_SELF
     msg_blizzard = "远离暴风雪！",
     
     trigger_heal = "治疗兄弟",--??

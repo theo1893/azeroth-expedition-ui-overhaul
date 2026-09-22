@@ -1,12 +1,13 @@
 local module, L = BigWigs:ModuleDeclaration("Echo of Medivh", "Karazhan")
+local BC = AceLibrary("Babble-Class-2.2")
 
 -- module variables
 module.revision = 30001
-module.enabletrigger = module.translatedName
+module.enabletrigger = { module.translatedName, "麦迪文的回响", "Echo of Medivh" }
 module.toggleoptions = { "corruption", "doom", "cancelrestopot", "corruptionmark", "corruptionyell", "bosskill" }
 module.zonename = {
-	AceLibrary("AceLocale-2.2"):new("BigWigs")["Tower of Karazhan"],
-	AceLibrary("Babble-Zone-2.2")["Tower of Karazhan"],
+    AceLibrary("AceLocale-2.2"):new("BigWigs")["Tower of Karazhan"],
+    AceLibrary("Babble-Zone-2.2")["Tower of Karazhan"],
 }
 
 -- module defaults
@@ -65,48 +66,49 @@ L:RegisterTranslations("enUS", function()
 end)
 
 L:RegisterTranslations("zhCN", function()
-	return {
-		cmd = "EchoMedivh",
+    return {
+        cmd = "EchoMedivh",
 
-		corruption_cmd = "corruption",
-		corruption_name = "麦迪文的腐化警报",
-		corruption_desc = "当玩家受到麦迪文的腐化影响时发出警告",
+        corruption_cmd = "corruption",
+        corruption_name = "麦迪文的腐化警报",
+        corruption_desc = "当玩家受到麦迪文的腐化影响时发出警告",
 
-		doom_cmd = "doom",
-		doom_name = "麦迪文的灾祸警报",
-		doom_desc = "显示麦迪文的灾祸层数的计时器",
+        doom_cmd = "doom",
+        doom_name = "麦迪文的灾祸警报",
+        doom_desc = "显示麦迪文的灾祸层数的计时器",
 
-		cancelrestopot_cmd = "cancelrestopot",
-		cancelrestopot_name = "自动取消滋补药剂",
-		cancelrestopot_desc = "当麦迪文的灾祸效果消失时，自动取消你的滋补药剂效果",
+        cancelrestopot_cmd = "cancelrestopot",
+        cancelrestopot_name = "自动取消滋补药剂",
+        cancelrestopot_desc = "当麦迪文的灾祸效果消失时，自动取消你的滋补药剂效果",
 
-		corruptionmark_cmd = "corruptionmark",
-		corruptionmark_name = "腐化团队标记",
-		corruptionmark_desc = "标记受到麦迪文的腐化的玩家，并在腐化效果消失时恢复之前的标记",
+        corruptionmark_cmd = "corruptionmark",
+        corruptionmark_name = "腐化玩家团队标记",
+        corruptionmark_desc = "标记受到麦迪文的腐化的玩家，并在腐化效果消失时恢复之前的标记",
 
-		corruptionyell_cmd = "corruptionyell",
-		corruptionyell_name = "腐化聊天消息",
-		corruptionyell_desc = "让受腐化的玩家在聊天频道发出警告",
+        corruptionyell_cmd = "corruptionyell",
+        corruptionyell_name = "腐化聊天消息",
+        corruptionyell_desc = "让受腐化的玩家在聊天频道发出警告",
 
-		trigger_corruptionYou = "^你受到了麦迪文的腐化效果的影响",
-		trigger_corruptionOther = "(.+)受到了麦迪文的腐化效果的影响",
-		trigger_corruptionFade = "麦迪文的腐化效果从你身上消失了",
-		trigger_corruptionFadeOther = "麦迪文的腐化效果从(.+)身上消失了",
+        trigger_corruptionYou = "^你受到了麦迪文的腐化效果的影响",
+        trigger_corruptionOther = "(.+)受到了麦迪文的腐化效果的影响",
+        trigger_corruptionFade = "麦迪文的腐化效果从你身上消失了",
+        trigger_corruptionFadeOther = "麦迪文的腐化效果从(.+)身上消失",
 
 		trigger_doomYou = "^你受到了麦迪文的灾祸效果的影响%s*%((%d+)%)",
-		trigger_doomFade = "麦迪文的灾祸效果从",
+		trigger_doomFade = "麦迪文的灾祸效果从你身上消失了",
 
-		msg_corruptionYou = "你中了腐化！远离其他人！",
-		msg_corruptionOther = "%s中了腐化！远离其他人！",
+        msg_corruptionYou = "你中了腐化！远离其他人！",
+        msg_corruptionOther = "%s中了腐化！远离其他人！",
 
-		warning_corruptedGetAway = "已被腐化，快躲开",
-		yell_corruption = "我被腐化了！离我远点！",
 
-		bar_corruption = "麦迪文的腐化",
-		bar_doom = "麦迪文的灾祸(%d)",
+        warning_corruptedGetAway = "已被腐化",
+        yell_corruption = "我被腐化了！远离我！",
 
-		resto_pot_cancelling = "由于灾祸效果已移除，正在取消滋补效果",
-	}
+        bar_corruption = "麦迪文的腐化",
+        bar_doom = "麦迪文的灾祸(%d)",
+
+        resto_pot_cancelling = "正在取消滋补药剂效果",
+    }
 end)
 
 -- timer and icon variables
@@ -125,7 +127,6 @@ local syncName = {
 	corruption = "EchoMedivhCorruption" .. module.revision,
 }
 
-local maxCorruptedPlayers = 10
 local doomStackCount = 0
 local playerMarks = {}
 
@@ -134,6 +135,8 @@ function module:OnEnable()
 	self:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_FRIENDLYPLAYER_DAMAGE", "AfflictionEvent")
 	self:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_SELF")
 	self:RegisterEvent("CHAT_MSG_SPELL_AURA_GONE_OTHER")
+	self:RegisterEvent("CHAT_MSG_COMBAT_FRIENDLY_DEATH", "OnFriendlyDeath")
+	self:Message("友情提示：佩戴勇士印记/中腐化跑右侧", "Important", false, nil, false)
 end
 
 function module:OnSetup()
@@ -160,7 +163,6 @@ function module:AfflictionEvent(msg)
 	end
 
 	-- Doom of Medivh
-	-- Normalize full-width punctuation before matching ASCII parentheses.
 	local doomMessage = string.gsub(msg, "（", "(")
 	doomMessage = string.gsub(doomMessage, "）", ")")
 	local _, _, count = string.find(doomMessage, L["trigger_doomYou"])
@@ -180,7 +182,7 @@ function module:CHAT_MSG_SPELL_AURA_GONE_SELF(msg)
 
 		-- Auto-cancel restoration potion if enabled
 		if self.db.profile.cancelrestopot then
-			self:CancelAura(11359) -- Restoration Potion
+			self:CancelRestoPot()
 		end
 	end
 end
@@ -194,7 +196,7 @@ end
 
 function module:OnFriendlyDeath(msg)
 	-- Remove raid marker when a player dies
-	local _, _, player = string.find(msg, "(.+)死亡了。")
+	local _, _, player = string.find(msg, "(.+)死亡了")
 	if player then
 		self:CorruptionFade(player)
 	end
@@ -203,8 +205,6 @@ end
 function module:BigWigs_RecvSync(sync, rest, nick)
 	if sync == syncName.corruption and rest then
 		self:CorruptionOfMedivh(rest)
-	elseif sync == syncName.corruptionFade and rest then
-		self:CorruptionFade(rest)
 	end
 end
 
@@ -269,134 +269,15 @@ function module:DoomOfMedivh(count)
 	self:IntervalBar(string.format(L["bar_doom"], count), timer.doomMin, timer.doomMax, icon.doom, true, barColor)
 end
 
-function module:CancelAura(spellId)
-	local i = 0
-	while true do
-		local buffIndex = GetPlayerBuff(i, "HELPFUL")
-		i = i + 1
-		if buffIndex == -1 then
-			break
+function module:CancelRestoPot()
+	if GetPlayerBuffID then
+		-- use spell id if superwow available to avoid potentially canceling the wrong buff
+		if BigWigs:CancelAuraId(11359) then
+			self:Message(L["resto_pot_cancelling"], "Positive", true, false)
 		end
-		local buffId = GetPlayerBuffID(buffIndex)
-		buffId = (buffId < -1) and (buffId + 65536) or buffId
-		if buffId == spellId then
-			self:Message(L["resto_pot_cancelling"], "Positive")
-			CancelPlayerBuff(buffIndex)
-			break
+	else
+		if BigWigs:CancelAuraTexture("Spell_Holy_DispelMagic") then
+			self:Message(L["resto_pot_cancelling"], "Positive", true, false)
 		end
 	end
 end
-
-function module:Test()
-	-- Initialize module state
-	self:OnSetup()
-	self:Engage()
-
-	local events = {
-		-- Corruption events
-		{ time = 1, func = function()
-			local member = UnitName("player")
-			print("Test: " .. member .. " is afflicted by Corruption of Medivh")
-			module:AfflictionEvent("You are afflicted by Corruption of Medivh")
-		end },
-
-		{ time = 3, func = function()
-			local member = UnitName("raid1") or "Player1"
-			print("Test: " .. member .. " is afflicted by Corruption of Medivh")
-			module:AfflictionEvent(member .. " is afflicted by Corruption of Medivh")
-		end },
-
-		{ time = 5, func = function()
-			local member = UnitName("raid2") or "Player2"
-			print("Test: " .. member .. " is afflicted by Corruption of Medivh")
-			module:AfflictionEvent(member .. " is afflicted by Corruption of Medivh")
-		end },
-
-		-- Doom events for self
-		{ time = 10, func = function()
-			print("Test: You are afflicted by Doom of Medivh (1)")
-			module:AfflictionEvent("You are afflicted by Doom of Medivh (1)")
-		end },
-
-		{ time = 15, func = function()
-			print("Test: You are afflicted by Doom of Medivh (2)")
-			module:AfflictionEvent("You are afflicted by Doom of Medivh (2)")
-		end },
-
-		-- Corruptions start to fade
-		{ time = 17, func = function()
-			local member = UnitName("raid1") or "Player1"
-			print("Test: Corruption of Medivh fades from " .. member)
-			module:CHAT_MSG_SPELL_AURA_GONE_OTHER("Corruption of Medivh fades from " .. member)
-		end },
-
-		{ time = 18, func = function()
-			local member = UnitName("raid2") or "Player2"
-			print("Test: Corruption of Medivh fades from " .. member)
-			module:CHAT_MSG_SPELL_AURA_GONE_OTHER("Corruption of Medivh fades from " .. member)
-		end },
-
-		{ time = 20, func = function()
-			print("Test: You are afflicted by Doom of Medivh (3)")
-			module:AfflictionEvent("You are afflicted by Doom of Medivh (3)")
-		end },
-
-		-- New corruption wave
-		{ time = 21, func = function()
-			local member = UnitName("raid3") or "Player3"
-			print("Test: " .. member .. " is afflicted by Corruption of Medivh")
-			module:AfflictionEvent(member .. " is afflicted by Corruption of Medivh")
-		end },
-
-		{ time = 25, func = function()
-			print("Test: You are afflicted by Doom of Medivh (4)")
-			module:AfflictionEvent("You are afflicted by Doom of Medivh (4)")
-		end },
-
-		-- Player corruption fades
-		{ time = 28, func = function()
-			print("Test: Corruption fades from you")
-			module:CHAT_MSG_SPELL_AURA_GONE_SELF("Corruption of Medivh fades from you")
-		end },
-
-		-- Last corruption fades
-		{ time = 33, func = function()
-			local member = UnitName("raid3") or "Player3"
-			print("Test: Corruption of Medivh fades from " .. member)
-			module:CHAT_MSG_SPELL_AURA_GONE_OTHER("Corruption of Medivh fades from " .. member)
-		end },
-
-		-- Doom fades
-		{ time = 35, func = function()
-			print("Test: Doom fades from you")
-			module:CHAT_MSG_SPELL_AURA_GONE_SELF("Doom of Medivh fades from")
-		end },
-
-		-- Test player death with corruption
-		{ time = 37, func = function()
-			local member = UnitName("raid4") or "Player4"
-			print("Test: " .. member .. " is afflicted by Corruption of Medivh")
-			module:AfflictionEvent(member .. " is afflicted by Corruption of Medivh")
-
-			print("Test: " .. member .. " dies")
-			module:CHAT_MSG_COMBAT_FRIENDLY_DEATH(member .. " dies")
-		end },
-
-		-- Disengage
-		{ time = 40, func = function()
-			print("Test: Disengage")
-			module:Disengage()
-		end },
-	}
-
-	-- Schedule each event at its absolute time
-	for i, event in ipairs(events) do
-		self:ScheduleEvent("EchoMedivhTest" .. i, event.func, event.time)
-	end
-
-	self:Message("Echo of Medivh test started", "Positive")
-	return true
-end
-
--- Test command:
--- /run local m=BigWigs:GetModule("Echo of Medivh"); BigWigs:SetupModule("Echo of Medivh");m:Test();

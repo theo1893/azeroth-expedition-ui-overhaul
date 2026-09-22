@@ -13,6 +13,7 @@ function AceLibrary()
     })
 end
 function UnitName() return "观察者" end
+function GetTime() return 100 end
 function module:Sync(message) sent = message end
 local function check(message, player)
     sent = nil
