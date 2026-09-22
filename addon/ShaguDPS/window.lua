@@ -5114,8 +5114,8 @@ local function Refresh(self, force, report)
                 -- BOSS 战中：使用实时当前战斗回放
                 self.segment = ShaguDPS.cached_current_playback or data.playback[1]
             elseif currentBossFight then
-                if ShaguDPS_Playback.boss and ShaguDPS_Playback.boss[ShaguDPS.current_boss_index] then
-                    self.segment = ShaguDPS_Playback.boss[ShaguDPS.current_boss_index]
+                if ShaguDPS.playback.boss and ShaguDPS.playback.boss[ShaguDPS.current_boss_index] then
+                    self.segment = ShaguDPS.playback.boss[ShaguDPS.current_boss_index]
                 else
                     self.segment = {}
                 end
@@ -5125,8 +5125,8 @@ local function Refresh(self, force, report)
         elseif isRecentFightView then
             if currentRecentFight then
                 local idx = config[wid].recent_fight_index or ShaguDPS.current_recent_index
-                if ShaguDPS_Playback.recent and ShaguDPS_Playback.recent[idx] then
-                    self.segment = ShaguDPS_Playback.recent[idx]
+                if ShaguDPS.playback.recent and ShaguDPS.playback.recent[idx] then
+                    self.segment = ShaguDPS.playback.recent[idx]
                 else
                     self.segment = {}
                 end

@@ -2,9 +2,9 @@
 
 ## 当前运行时
 
-- Quests contract：`1.28`；Quest Visual Theme：`1.11`。
-- 用户已在游戏中确认 Quest Log 左页字体／字重、左右页布局、详情完整滚动、
-  奖励区域几何及此前截断问题的修复。
+- Quests contract：`1.30`；Quest Visual Theme：`1.13`。
+- 标题使用封皮上的暖浅色无描边字，目录以 `2×12 UI` 细墨线标识真实选中行；计数及奖励金额恢复纸面墨色，正文增加行距。pfQuest 语言／ID 的后续文字刷新统一去除内联亮色，中文语言名缩写；底部原按钮移入书体，字号统一，地图操作与详情开合明确标注，放弃保留原确认并使用警示色。火漆降低视觉权重，继续无鼠标装饰。
+- 用户已实机确认长任务滚动、奖励显示和按钮操作正常；标题、语言／ID、选中墨线与金额的新样式已生效。底部八个原按钮现挂载 QL-ACTIONS V1 短皮革签，`64／58／50×20 UI` 三种尺寸各自由高分辨率 donor 等比导出为 2×；普通／悬停／按下／禁用共用 Alpha，按下下沉 `1 UI`。顶部语言／ID 仍保持现有皮肤，缺失新素材时底部回退可用的旧按钮皮肤；新美术待实机确认。
 - 已完成且正在挂载的 Quest Log 外壳、目录墨记、奖励槽、闭合载体均从 accepted
   source 直接导出为 `2 texels / UI unit`；火漆四态原先已经是 2×。逻辑尺寸、
   锚点、滚动区、Button 与命中区均未改变。
@@ -15,8 +15,10 @@
 |---|---:|---|
 | `QL-A1/A2` 双页卷宗外壳 | `P6 geometry / 2× refresh P5` | 两张 2× half texture 在原 `676×464 UI` 书体内重组；连续书页与中央页沟保持固定结构 |
 | `QL-B1` 地区目录墨记／18 行排版 | `P6 geometry / 2× refresh P5` | 四态墨记改为 2× atlas；任务行仍使用 pfUI 默认字体 `12px`、无描边／shadow，行末追踪圈隐藏 |
-| `QL-B2` 选择书签 | `P5 asset-retained / runtime-hidden` | accepted source 保留，但当前不显示；恢复前需重新确认 |
+| `QL-B2` 选择书签 | `P5 asset-retained / runtime-hidden` | accepted source 保留且不挂载；当前选择反馈由真实行上的独立细墨线承担 |
 | `QL-B3` 类型／计时／状态章 | `paused` | 未完成，不接入、不占位 |
+| 日志排版／原按钮交互 | `P6 behavior` | 用户确认长任务滚动、奖励显示和按钮操作正常，业务逻辑与点击对象保持 |
+| `QL-ACTIONS V1` 底部皮革签 | `P5` | 三种尺寸、四态、2× atlas 已接入；原命中区、文字、ID、确认与点击脚本保留，新材质待实机确认 |
 | `QL-C / QS-A1 / QS-B1` 火漆与闭合载体 | `P5` | 火漆与闭合载体均以 2× runtime 挂载；火漆固定在详情 ScrollChild 右上并随内容滚动；七功能纹章／代理未完成，事务菜单 inactive，旧按钮保持可用 |
 | `QL-D` 奖励槽 | `P5` | 用户选择的 V3 第 4 稿已直接导出为 2× 四态 atlas；真实 Button、图标、名称、数量和双列几何不变 |
 | pfQuest Tracker | `P5 temporary / display-region-blocked` | 当前使用大块纸面；用户否决外置书框和额外端帽，尚未按真实 live Frame 区域重新确认 |
@@ -35,6 +37,7 @@
   `QuestToolWaxSealStatesV1.tga`、`QuestLogSealPurityRibbonV1.tga`。
 - 奖励槽：`assets/source/quests/ql-d/` →
   `QuestLogRewardSlotStatesV1.tga`。
+- 底部皮革签：`assets/source/quests/ql-actions/` → `QuestLogActionTabsV1.tga`；同目录 `QL-ACTIONS_RuntimeManifest_v1.json` 固定 source、采样变换及十二个 UV。
 - Tracker 临时纸面：`assets/source/quests/qt-a1/` →
   `QuestTrackerPaperV1.tga`。
 
@@ -42,10 +45,8 @@
 
 ## 下一次实机验证
 
-1. 完整重启客户端后检查双纹理书体的中央接缝、四周外缘和纸面清晰度，确认
-   `676×464 UI` 几何、左右安全区与滚动范围未改变。
-2. 检查 QL-D TGA 方向、normal／hover／pressed／disabled、pressed `1px`、
-   图标／名称安全区，以及 0／1／2／4／6 奖励和长详情滚动。
+1. 完整重启客户端后检查底部皮革签与封皮的连接、三种宽度的文字净空、普通／悬停／按下／禁用反馈；原任务操作、确认与地图工具继续一一对应。`/aeui status` 应包含 `frame=1.30`、`theme=1.13` 与 `footer=leather-tabs-v1-2x`。
+2. 长任务滚动和奖励显示已通过；后续按钮美术接入时仅作相邻回归，不重新扩大为整模块审计。
 3. 检查详情页右上火漆确实压在闭合载体上，随 ScrollChild 向下滚动而离开
    viewport；不得悬空、遮挡正文、跑到翻页或书封区域。
 4. 菜单仍应 inactive，旧分享／放弃／退出／详情及 pfQuest 控件继续可见可用；

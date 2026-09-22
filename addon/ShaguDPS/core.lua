@@ -429,24 +429,19 @@ ShaguDPS.boss_fights = ShaguDPS.boss_fights or {}
 ShaguDPS.recent_fights = ShaguDPS.recent_fights or {}
 ShaguDPS.current_recent_index = nil
 
--- 动作回放独立保存（SavedVariablesPerCharacter: ShaguDPS_Playback）
--- 注意：ShaguDPS_Playback 必须保持独立表，不能与 ShaguDPS_Cache 的任何字段共享引用，
--- 否则 WoW 序列化 SavedVariables 时会把重复引用判定为"已保存"而跳过，导致独立变量保存失败。
-ShaguDPS_Playback = ShaguDPS_Playback or {
+-- 动作回放只保留在本次 UI 会话，退出或 /reload 后释放。
+ShaguDPS.playback = {
     current = nil,  -- 当前战斗回放
     recent = {},    -- [index] = playback，与 ShaguDPS.recent_fights 对应
     boss = {},      -- [index] = playback，与 ShaguDPS.boss_fights 对应
 }
-ShaguDPS.cached_current_playback = ShaguDPS_Playback.current
+ShaguDPS.cached_current_playback = ShaguDPS.playback.current
 
 function ShaguDPS.ClearBossFights()
     for i = table.getn(ShaguDPS.boss_fights), 1, -1 do
         table.remove(ShaguDPS.boss_fights, i)
     end
-    ShaguDPS_Playback.boss = {}
-    if ShaguDPS_Cache then
-        ShaguDPS_Cache.boss_fights = {}
-    end
+    ShaguDPS.playback.boss = {}
 end
 
 -- ============================================================================
@@ -465,289 +460,92 @@ ShaguDPS.cached_current_death_replays = nil
 -- 附近非队伍玩家职业映射（用于职业图标，不参与染色）
 ShaguDPS.classIcons = ShaguDPS.classIcons or {}
 
-ShaguDPS_Cache = ShaguDPS_Cache or {}
+-- Only cumulative aggregates cross sessions. Event histories stay in memory.
+local cacheLoaded = false
+local cacheKeys = {
+    "damage", "heal", "death", "spellcast", "spellcast_details",
+    "friendly_fire", "dispel", "sunder", "damage_taken", "enemy_damage_taken",
+    "energize", "invalid_damage", "heal_taken", "dot_ticks", "hit_breakdown",
+    "revive", "buff_coverage", "weakness_coverage", "interrupt",
+}
 
--- 将当前全部统计数据快照写入 ShaguDPS_Cache（SavedVariables），供下次登录恢复。
--- 命名约定：`xxx0` = 全程段 data[key][0]，`xxx1` = 当前战斗段 data[key][1]。
-function ShaguDPS.SaveDataToCache()
-    if not ShaguDPS_Cache then ShaguDPS_Cache = {} end
-
-    local dataEmpty = true
-    local statKeys = {
-        "damage", "heal", "death", "spellcast", "spellcast_details",
-        "friendly_fire", "dispel", "sunder", "damage_taken",
-        "enemy_damage_taken", "energize", "invalid_damage",
-        "heal_taken", "dot_ticks", "hit_breakdown", "revive",
-        "buff_coverage", "weakness_coverage", "interrupt",
-    }
-    for _, key in ipairs(statKeys) do
-        local seg = data[key]
-        if seg and ((seg[0] and next(seg[0])) or (seg[1] and next(seg[1]))) then
-            dataEmpty = false
-            break
+local function copySummary(value)
+    if type(value) ~= "table" then
+        if type(value) == "number" then
+            if value - value == 0 then return value end -- finite numbers only (Lua 5.0)
+        elseif type(value) == "string" or type(value) == "boolean" then
+            return value
+        end
+        return nil
+    end
+    local result = {}
+    for key, child in pairs(value) do
+        if key == "_history" or key == "_by_target" then
+            -- Empty containers are also type markers used by the parser and UI.
+            result[key] = {}
+        elseif key ~= "_tick" and key ~= "_detail_history" and key ~= "_detail_heal_history" then
+            result[key] = copySummary(child)
         end
     end
-    if dataEmpty then
-        local cacheHasData = false
-        for _, key in ipairs(statKeys) do
-            local cached = ShaguDPS_Cache[key .. "0"] or ShaguDPS_Cache[key .. "1"]
-            if cached and next(cached) then
-                cacheHasData = true
-                break
-            end
-        end
-        if cacheHasData then
-            return
-        end
-    end
-
-    ShaguDPS_Cache.version = 1
-    ShaguDPS_Cache.timestamp = GetTime()
-    ShaguDPS_Cache.damage0 = data.damage[0]
-    ShaguDPS_Cache.heal0 = data.heal[0]
-    ShaguDPS_Cache.death0 = data.death[0]
-    ShaguDPS_Cache.spellcast0 = data.spellcast[0]
-    ShaguDPS_Cache.spellcast_details0 = data.spellcast_details[0]
-    ShaguDPS_Cache.friendly_fire0 = data.friendly_fire[0]
-    ShaguDPS_Cache.dispel0 = data.dispel[0]
-    ShaguDPS_Cache.sunder0 = data.sunder[0]
-    ShaguDPS_Cache.damage_taken0 = data.damage_taken[0]
-    ShaguDPS_Cache.enemy_damage_taken0 = data.enemy_damage_taken[0]
-    ShaguDPS_Cache.energize0 = data.energize[0]
-    ShaguDPS_Cache.invalid_damage0 = data.invalid_damage[0]
-    ShaguDPS_Cache.heal_taken0 = data.heal_taken[0]
-    ShaguDPS_Cache.dot_ticks0 = data.dot_ticks[0]
-    ShaguDPS_Cache.hit_breakdown0 = data.hit_breakdown[0]
-    ShaguDPS_Cache.revive0 = data.revive[0]
-    ShaguDPS_Cache.buff_coverage0 = data.buff_coverage[0]
-    ShaguDPS_Cache.weakness_coverage0 = data.weakness_coverage[0]
-    ShaguDPS_Cache.interrupt0 = data.interrupt[0]
-    ShaguDPS_Cache.damage1 = data.damage[1]
-    ShaguDPS_Cache.heal1 = data.heal[1]
-    ShaguDPS_Cache.death1 = data.death[1]
-    ShaguDPS_Cache.spellcast1 = data.spellcast[1]
-    ShaguDPS_Cache.spellcast_details1 = data.spellcast_details[1]
-    ShaguDPS_Cache.friendly_fire1 = data.friendly_fire[1]
-    ShaguDPS_Cache.dispel1 = data.dispel[1]
-    ShaguDPS_Cache.sunder1 = data.sunder[1]
-    ShaguDPS_Cache.damage_taken1 = data.damage_taken[1]
-    ShaguDPS_Cache.enemy_damage_taken1 = data.enemy_damage_taken[1]
-    ShaguDPS_Cache.energize1 = data.energize[1]
-    ShaguDPS_Cache.invalid_damage1 = data.invalid_damage[1]
-    ShaguDPS_Cache.heal_taken1 = data.heal_taken[1]
-    ShaguDPS_Cache.dot_ticks1 = data.dot_ticks[1]
-    ShaguDPS_Cache.hit_breakdown1 = data.hit_breakdown[1]
-    ShaguDPS_Cache.revive1 = data.revive[1]
-    ShaguDPS_Cache.buff_coverage1 = data.buff_coverage[1]
-    ShaguDPS_Cache.weakness_coverage1 = data.weakness_coverage[1]
-    ShaguDPS_Cache.interrupt1 = data.interrupt[1]
-    ShaguDPS_Cache.cached_current_death_replays = ShaguDPS.cached_current_death_replays
-    ShaguDPS_Cache.all_death_replays = data.all_death_replays
-    ShaguDPS_Cache.classes = data.classes
-    ShaguDPS_Cache.boss_fights = ShaguDPS.boss_fights
-    ShaguDPS_Cache.recent_fights = ShaguDPS.recent_fights
-    ShaguDPS_Cache.current_recent_index = ShaguDPS.current_recent_index
-    ShaguDPS_Cache.death_timestamps = data.death_timestamps
-    ShaguDPS_Cache.total_combat_time = data.total_combat_time
-    ShaguDPS_Cache.revive_noncombat = data.revive_noncombat
-    ShaguDPS_Cache.combat_start_time = data.combat_start_time
-    ShaguDPS_Cache.last_fight_duration = data.last_fight_duration
-    ShaguDPS_Cache.small_fight = data.small_fight
-    ShaguDPS_Cache.small_fight_total_time = ShaguDPS.small_fight_total_time or 0
+    if type(result._ctime) == "number" and result._ctime <= 0 then result._ctime = 1 end
+    return result
 end
 
--- 登录时从 ShaguDPS_Cache 恢复统计，必须在 PLAYER_ENTERING_WORLD 中调用
--- （早于此时机调用会因 data 尚未填充而读到空数据，详见 SaveDataToCache 守卫）。
--- @return true 表示缓存存在并成功恢复，false 表示无有效缓存
+function ShaguDPS.SaveDataToCache()
+    -- Combat events can fire before the first PLAYER_ENTERING_WORLD restores data.
+    if not cacheLoaded then return end
+    local cache = {
+        version = 2,
+        classes = copySummary(data.classes),
+        total_combat_time = data.total_combat_time,
+        small_fight_total_time = ShaguDPS.small_fight_total_time or 0,
+        revive_noncombat = copySummary(data.revive_noncombat),
+        small_fight = {},
+    }
+    for _, key in ipairs(cacheKeys) do
+        cache[key .. "0"] = copySummary(data[key][0])
+        cache.small_fight[key] = copySummary(data.small_fight[key])
+    end
+    -- Never alias live tables: later combat must not grow the saved snapshot.
+    ShaguDPS_Cache = cache
+end
+
 function ShaguDPS.LoadDataFromCache()
-    -- 数据源变更后需让 BOSS 汇总视图的缓存失效
-    if ShaguDPS.InvalidateBossSummaryCache then ShaguDPS.InvalidateBossSummaryCache() end
-    if not ShaguDPS_Cache or not ShaguDPS_Cache.version then
+    -- Zoning also fires PLAYER_ENTERING_WORLD; restore only once per UI session.
+    if cacheLoaded then return false end
+    cacheLoaded = true
+    ShaguDPS_Playback = nil -- release the legacy SavedVariable, never restore it
+    local cache = ShaguDPS_Cache
+    if type(cache) ~= "table" or (cache.version ~= 1 and cache.version ~= 2) then
+        ShaguDPS_Cache = {}
         return false
     end
-    -- 恢复全程数据
-    if ShaguDPS_Cache.damage0 then data.damage[0] = ShaguDPS_Cache.damage0 end
-    if ShaguDPS_Cache.heal0 then data.heal[0] = ShaguDPS_Cache.heal0 end
-    if ShaguDPS_Cache.death0 then data.death[0] = ShaguDPS_Cache.death0 end
-    if ShaguDPS_Cache.spellcast0 then data.spellcast[0] = ShaguDPS_Cache.spellcast0 end
-    if ShaguDPS_Cache.spellcast_details0 then data.spellcast_details[0] = ShaguDPS_Cache.spellcast_details0 end
-    if ShaguDPS_Cache.friendly_fire0 then data.friendly_fire[0] = ShaguDPS_Cache.friendly_fire0 end
-    if ShaguDPS_Cache.dispel0 then data.dispel[0] = ShaguDPS_Cache.dispel0 end
-    if ShaguDPS_Cache.sunder0 then data.sunder[0] = ShaguDPS_Cache.sunder0 end
-    if ShaguDPS_Cache.damage_taken0 then data.damage_taken[0] = ShaguDPS_Cache.damage_taken0 end
-    if ShaguDPS_Cache.enemy_damage_taken0 then data.enemy_damage_taken[0] = ShaguDPS_Cache.enemy_damage_taken0 end
-    if ShaguDPS_Cache.energize0 then data.energize[0] = ShaguDPS_Cache.energize0 end
-    if ShaguDPS_Cache.invalid_damage0 then data.invalid_damage[0] = ShaguDPS_Cache.invalid_damage0 end
-    if ShaguDPS_Cache.heal_taken0 then data.heal_taken[0] = ShaguDPS_Cache.heal_taken0 end
-    if ShaguDPS_Cache.dot_ticks0 then data.dot_ticks[0] = ShaguDPS_Cache.dot_ticks0 end
-    if ShaguDPS_Cache.hit_breakdown0 then data.hit_breakdown[0] = ShaguDPS_Cache.hit_breakdown0 end
-    if ShaguDPS_Cache.revive0 then data.revive[0] = ShaguDPS_Cache.revive0 end
-    if ShaguDPS_Cache.buff_coverage0 then data.buff_coverage[0] = ShaguDPS_Cache.buff_coverage0 end
-    if ShaguDPS_Cache.weakness_coverage0 then data.weakness_coverage[0] = ShaguDPS_Cache.weakness_coverage0 end
-    if ShaguDPS_Cache.interrupt0 then data.interrupt[0] = ShaguDPS_Cache.interrupt0 end
-
-    -- 恢复当前战斗缓存（作为"上一场战斗"快照显示）。
-    -- 恢复时统一把 data[key][1] 置空，确保新登录后的第一场战斗从空当前段开始，
-    -- 避免旧数据被计入新战斗；脱战时再由 resetCurrentSegment() 完成同样的清空。
-    if ShaguDPS_Cache.damage1 then
-        ShaguDPS.cached_current_damage = ShaguDPS_Cache.damage1
-        data.damage[1] = {}
-    end
-    if ShaguDPS_Cache.heal1 then
-        ShaguDPS.cached_current_heal = ShaguDPS_Cache.heal1
-        data.heal[1] = {}
-    end
-    if ShaguDPS_Cache.death1 then
-        ShaguDPS.cached_current_death = ShaguDPS_Cache.death1
-        data.death[1] = {}
-    end
-    if ShaguDPS_Cache.spellcast1 then
-        ShaguDPS.cached_current_spellcast = ShaguDPS_Cache.spellcast1
-        data.spellcast[1] = {}
-    end
-    if ShaguDPS_Cache.spellcast_details1 then
-        ShaguDPS.cached_current_spellcast_details = ShaguDPS_Cache.spellcast_details1
-        data.spellcast_details[1] = {}
-    end
-    if ShaguDPS_Cache.friendly_fire1 then
-        ShaguDPS.cached_current_friendly_fire = ShaguDPS_Cache.friendly_fire1
-        data.friendly_fire[1] = {}
-    end
-    if ShaguDPS_Cache.dispel1 then
-        ShaguDPS.cached_current_dispel = ShaguDPS_Cache.dispel1
-        data.dispel[1] = {}
-    end
-    if ShaguDPS_Cache.sunder1 then
-        ShaguDPS.cached_current_sunder = ShaguDPS_Cache.sunder1
-        data.sunder[1] = {}
-    end
-    if ShaguDPS_Cache.damage_taken1 then
-        ShaguDPS.cached_current_damage_taken = ShaguDPS_Cache.damage_taken1
-        data.damage_taken[1] = {}
-    end
-    if ShaguDPS_Cache.enemy_damage_taken1 then
-        ShaguDPS.cached_current_enemy_damage_taken = ShaguDPS_Cache.enemy_damage_taken1
-        data.enemy_damage_taken[1] = {}
-    end
-    if ShaguDPS_Cache.energize1 then
-        ShaguDPS.cached_current_energize = ShaguDPS_Cache.energize1
-        data.energize[1] = {}
-    end
-    if ShaguDPS_Cache.invalid_damage1 then
-        ShaguDPS.cached_current_invalid_damage = ShaguDPS_Cache.invalid_damage1
-        data.invalid_damage[1] = {}
-    end
-    if ShaguDPS_Cache.heal_taken1 then
-        ShaguDPS.cached_current_heal_taken = ShaguDPS_Cache.heal_taken1
-        data.heal_taken[1] = {}
-    end
-    if ShaguDPS_Cache.dot_ticks1 then
-        ShaguDPS.cached_current_dot_ticks = ShaguDPS_Cache.dot_ticks1
-        data.dot_ticks[1] = {}
-    end
-    if ShaguDPS_Cache.hit_breakdown1 then
-        ShaguDPS.cached_current_hit_breakdown = ShaguDPS_Cache.hit_breakdown1
-        data.hit_breakdown[1] = {}
-    end
-    if ShaguDPS_Cache.revive1 then
-        ShaguDPS.cached_current_revive = ShaguDPS_Cache.revive1
-        data.revive[1] = {}
-    end
-    if ShaguDPS_Cache.buff_coverage1 then
-        ShaguDPS.cached_current_buff_coverage = ShaguDPS_Cache.buff_coverage1
-        data.buff_coverage[1] = {}
-    end
-    if ShaguDPS_Cache.weakness_coverage1 then
-        ShaguDPS.cached_current_weakness_coverage = ShaguDPS_Cache.weakness_coverage1
-        data.weakness_coverage[1] = {}
-    end
-    if ShaguDPS_Cache.interrupt1 then
-        ShaguDPS.cached_current_interrupt = ShaguDPS_Cache.interrupt1
-        data.interrupt[1] = {}
-    end
-    if ShaguDPS_Cache.cached_current_death_replays then
-        ShaguDPS.cached_current_death_replays = ShaguDPS_Cache.cached_current_death_replays
-    end
-    if ShaguDPS_Cache.all_death_replays then
-        data.all_death_replays = ShaguDPS_Cache.all_death_replays
-    end
-    if ShaguDPS_Cache.classes then data.classes = ShaguDPS_Cache.classes end
-    if ShaguDPS_Cache.boss_fights then ShaguDPS.boss_fights = ShaguDPS_Cache.boss_fights end
-    if ShaguDPS_Cache.recent_fights then ShaguDPS.recent_fights = ShaguDPS_Cache.recent_fights end
-    if ShaguDPS_Cache.current_recent_index then ShaguDPS.current_recent_index = ShaguDPS_Cache.current_recent_index end
-    if ShaguDPS_Cache.death_timestamps then data.death_timestamps = ShaguDPS_Cache.death_timestamps end
-    if ShaguDPS_Cache.total_combat_time then data.total_combat_time = ShaguDPS_Cache.total_combat_time end
-    if ShaguDPS_Cache.revive_noncombat then data.revive_noncombat = ShaguDPS_Cache.revive_noncombat end
-    if ShaguDPS_Cache.combat_start_time then data.combat_start_time = ShaguDPS_Cache.combat_start_time end
-    if ShaguDPS_Cache.last_fight_duration then data.last_fight_duration = ShaguDPS_Cache.last_fight_duration end
-    if ShaguDPS_Cache.small_fight then data.small_fight = ShaguDPS_Cache.small_fight end
-    if ShaguDPS_Cache.small_fight_total_time then
-        ShaguDPS.small_fight_total_time = ShaguDPS_Cache.small_fight_total_time
-    end
-    -- 确保 small_fight 结构完整（旧版缓存可能缺失较新的数据段，如 hit_breakdown）
-    if data.small_fight then
-        local smallSegDefaults = {
-            damage = {}, heal = {}, death = {}, spellcast = {},
-            spellcast_details = {}, friendly_fire = {}, dispel = {},
-            sunder = {}, damage_taken = {}, enemy_damage_taken = {},
-            energize = {}, invalid_damage = {}, heal_taken = {},
-            dot_ticks = {}, hit_breakdown = {}, revive = {},
-            buff_coverage = {}, weakness_coverage = {}, interrupt = {},
-        }
-        for key, init in pairs(smallSegDefaults) do
-            if not data.small_fight[key] then data.small_fight[key] = init end
+    for _, key in ipairs(cacheKeys) do
+        if type(cache[key .. "0"]) == "table" then
+            data[key][0] = copySummary(cache[key .. "0"])
+        end
+        if type(cache.small_fight) == "table" and type(cache.small_fight[key]) == "table" then
+            data.small_fight[key] = copySummary(cache.small_fight[key])
         end
     end
-    -- 动作回放：从独立保存变量恢复
-    if ShaguDPS_Playback and ShaguDPS_Playback.current then
-        ShaguDPS.cached_current_playback = ShaguDPS_Playback.current
-        ShaguDPS.playback_damaged = ShaguDPS.playback_damaged or {}
+    if type(cache.classes) == "table" then data.classes = copySummary(cache.classes) end
+    if type(cache.revive_noncombat) == "table" then
+        data.revive_noncombat = copySummary(cache.revive_noncombat)
     end
-    -- 确保 Playback.recent 与 recent_fights 索引对齐（长度不一致时截断到较小者）
-    if ShaguDPS_Playback and ShaguDPS_Playback.recent and ShaguDPS.recent_fights then
-        local rLen = table.getn(ShaguDPS_Playback.recent)
-        local fLen = table.getn(ShaguDPS.recent_fights)
-        if rLen > fLen then
-            for i = fLen + 1, rLen do ShaguDPS_Playback.recent[i] = nil end
-        end
+    data.total_combat_time = tonumber(cache.total_combat_time) or 0
+    ShaguDPS.small_fight_total_time = tonumber(cache.small_fight_total_time) or 0
+    -- Old caches may have been saved mid-fight. Recover elapsed time, not the old clock.
+    if cache.version == 1 and type(cache.combat_start_time) == "number"
+        and cache.combat_start_time > 0 and type(cache.timestamp) == "number" then
+        data.total_combat_time = data.total_combat_time
+            + math.max(0, cache.timestamp - cache.combat_start_time)
     end
-    if ShaguDPS_Playback and ShaguDPS_Playback.boss and ShaguDPS.boss_fights then
-        local bLen = table.getn(ShaguDPS_Playback.boss)
-        local fLen = table.getn(ShaguDPS.boss_fights)
-        if bLen > fLen then
-            for i = fLen + 1, bLen do ShaguDPS_Playback.boss[i] = nil end
-        end
-    end
-
-    -- 修正异常 _ctime
-    local function fixCtime(tbl)
-        if type(tbl) ~= "table" then return end
-        for k, v in pairs(tbl) do
-            if type(v) == "table" then
-                if v._ctime and v._ctime <= 0 then
-                    v._ctime = 1
-                end
-                fixCtime(v)
-            end
-        end
-    end
-    fixCtime(data.damage)
-    fixCtime(data.heal)
-    fixCtime(data.energize)
-    fixCtime(data.invalid_damage)
-    if data.small_fight then
-        fixCtime(data.small_fight.damage)
-        fixCtime(data.small_fight.heal)
-        fixCtime(data.small_fight.energize)
-        fixCtime(data.small_fight.invalid_damage)
-    end
+    if ShaguDPS.InvalidateBossSummaryCache then ShaguDPS.InvalidateBossSummaryCache() end
+    ShaguDPS.SaveDataToCache()
     return true
 end
 
--- 清空全部统计与缓存（用户点"清空数据"时调用）。
--- 注意：本函数只显式重置 sunder/承伤/能量/无效伤害/受疗/DOT/命中/复活/覆盖率/打断等
--- 数据段，以及播放相关数据；damage/heal/death/spellcast/spellcast_details/friendly_fire/dispel
--- 这 6 类主统计段（[0] 与 [1]）不在重置列表中，由 window.lua 的 ResetData 另行清空。
+-- The UI reset clears primary counters before clearing session details here.
 function ShaguDPS.ClearCache()
     if ShaguDPS.InvalidateBossSummaryCache then ShaguDPS.InvalidateBossSummaryCache() end
     ShaguDPS_Cache = {}
@@ -772,7 +570,7 @@ function ShaguDPS.ClearCache()
     ShaguDPS.cached_current_death_replays = nil
     data.playback[1] = {}
     ShaguDPS.cached_current_playback = nil
-    ShaguDPS_Playback = {
+    ShaguDPS.playback = {
         current = nil,
         recent = {},
         boss = {},

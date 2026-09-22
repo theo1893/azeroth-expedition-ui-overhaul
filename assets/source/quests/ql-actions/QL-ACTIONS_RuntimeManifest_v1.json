@@ -1,0 +1,276 @@
+{
+  "schema_version": 1,
+  "module": "quests",
+  "component": "QL-ACTIONS-V1",
+  "status": "runtime-integrated-P5",
+  "source": {
+    "file": "assets/source/quests/ql-actions/QuestLogActionTabs_Master_v1.png",
+    "sha256": "dc9234944e587481f0815fb300765479990ef042db0379d50aa49079ec0a95b6",
+    "size": [
+      1254,
+      1254
+    ],
+    "generator": "Codex native image_gen"
+  },
+  "transform": {
+    "alpha_cleanup": "alpha <= 8 becomes 0; retained RGB unchanged",
+    "resize": "uniform LANCZOS containment plus transparent padding, never stretch or upscale",
+    "alpha_identical_across_states": true,
+    "hover_brightness": 1.16,
+    "pressed_brightness": 0.78,
+    "disabled_grayscale_mix": 0.65,
+    "disabled_brightness": 0.76,
+    "pressed_runtime_offset_ui": [
+      0,
+      -1
+    ]
+  },
+  "runtime": {
+    "file": "addon/AzerothExpeditionUI/Media/Quests/QuestLogActionTabsV1.tga",
+    "sha256": "f0d3a9799efeefeb32aa40a72431a87eb3aaf202bb26b4e1c4a75f1b665d2481",
+    "texture_size": [
+      512,
+      256
+    ],
+    "mode": "RGBA",
+    "variants": [
+      {
+        "logical_size_ui": [
+          64,
+          20
+        ],
+        "sampled_size": [
+          128,
+          40
+        ],
+        "texels_per_ui_unit": 2,
+        "source_bbox": [
+          102,
+          88,
+          1152,
+          402
+        ],
+        "fitted_source_size": [
+          128,
+          38
+        ],
+        "states": {
+          "normal": {
+            "atlas_xyxy": [
+              0,
+              12,
+              128,
+              52
+            ],
+            "texcoord": [
+              0.0,
+              0.25,
+              0.046875,
+              0.203125
+            ]
+          },
+          "hover": {
+            "atlas_xyxy": [
+              128,
+              12,
+              256,
+              52
+            ],
+            "texcoord": [
+              0.25,
+              0.5,
+              0.046875,
+              0.203125
+            ]
+          },
+          "pressed": {
+            "atlas_xyxy": [
+              256,
+              12,
+              384,
+              52
+            ],
+            "texcoord": [
+              0.5,
+              0.75,
+              0.046875,
+              0.203125
+            ]
+          },
+          "disabled": {
+            "atlas_xyxy": [
+              384,
+              12,
+              512,
+              52
+            ],
+            "texcoord": [
+              0.75,
+              1.0,
+              0.046875,
+              0.203125
+            ]
+          }
+        }
+      },
+      {
+        "logical_size_ui": [
+          58,
+          20
+        ],
+        "sampled_size": [
+          116,
+          40
+        ],
+        "texels_per_ui_unit": 2,
+        "source_bbox": [
+          178,
+          510,
+          1079,
+          804
+        ],
+        "fitted_source_size": [
+          116,
+          38
+        ],
+        "states": {
+          "normal": {
+            "atlas_xyxy": [
+              6,
+              76,
+              122,
+              116
+            ],
+            "texcoord": [
+              0.01171875,
+              0.23828125,
+              0.296875,
+              0.453125
+            ]
+          },
+          "hover": {
+            "atlas_xyxy": [
+              134,
+              76,
+              250,
+              116
+            ],
+            "texcoord": [
+              0.26171875,
+              0.48828125,
+              0.296875,
+              0.453125
+            ]
+          },
+          "pressed": {
+            "atlas_xyxy": [
+              262,
+              76,
+              378,
+              116
+            ],
+            "texcoord": [
+              0.51171875,
+              0.73828125,
+              0.296875,
+              0.453125
+            ]
+          },
+          "disabled": {
+            "atlas_xyxy": [
+              390,
+              76,
+              506,
+              116
+            ],
+            "texcoord": [
+              0.76171875,
+              0.98828125,
+              0.296875,
+              0.453125
+            ]
+          }
+        }
+      },
+      {
+        "logical_size_ui": [
+          50,
+          20
+        ],
+        "sampled_size": [
+          100,
+          40
+        ],
+        "texels_per_ui_unit": 2,
+        "source_bbox": [
+          260,
+          900,
+          999,
+          1186
+        ],
+        "fitted_source_size": [
+          100,
+          39
+        ],
+        "states": {
+          "normal": {
+            "atlas_xyxy": [
+              14,
+              140,
+              114,
+              180
+            ],
+            "texcoord": [
+              0.02734375,
+              0.22265625,
+              0.546875,
+              0.703125
+            ]
+          },
+          "hover": {
+            "atlas_xyxy": [
+              142,
+              140,
+              242,
+              180
+            ],
+            "texcoord": [
+              0.27734375,
+              0.47265625,
+              0.546875,
+              0.703125
+            ]
+          },
+          "pressed": {
+            "atlas_xyxy": [
+              270,
+              140,
+              370,
+              180
+            ],
+            "texcoord": [
+              0.52734375,
+              0.72265625,
+              0.546875,
+              0.703125
+            ]
+          },
+          "disabled": {
+            "atlas_xyxy": [
+              398,
+              140,
+              498,
+              180
+            ],
+            "texcoord": [
+              0.77734375,
+              0.97265625,
+              0.546875,
+              0.703125
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 local addon = AzerothExpeditionUI
 local Quests = {}
-Quests.runtimeContract = "1.28"
+Quests.runtimeContract = "1.30"
 
 local THEME = addon.questVisualTheme
 local SHELL_TEXTURE = THEME.media.questLogShell
@@ -62,10 +62,11 @@ local LAYOUT = {
   controlsTop = 44,
   closeRight = 18,
   closeTop = 20,
-  actionLeft = 62,
-  actionBottom = 19,
-  actionWidth = 78,
-  actionHeight = 22,
+  actionLeft = 64,
+  actionBottom = 38,
+  actionWidth = 64,
+  actionHeight = 20,
+  detailToggleWidth = 50,
   actionGap = 5,
 }
 
@@ -138,7 +139,7 @@ local REWARD_SLOT = {
 }
 
 local DIRECTORY = {
-  contract = "1.5",
+  contract = "1.6",
   rowCount = 18,
   providerRowCeiling = 23,
   rowWidth = 246,
@@ -195,6 +196,12 @@ local CONTROL = {
   },
 }
 
+-- QL-ACTIONS-V1: 512x256 atlas, four 128px state columns and three 64px rows.
+local ACTION_TABS = {
+  rows = { [64] = 0, [58] = 1, [50] = 2 },
+  columns = { normal = 0, hover = 1, pressed = 2, disabled = 3 },
+}
+
 local PFQUEST = {
   addons = {
     pfQuest = true,
@@ -204,8 +211,8 @@ local PFQUEST = {
   },
   utilityWidth = 72,
   languageWidth = 86,
-  utilityHeight = 16,
-  actionWidth = 52,
+  utilityHeight = 18,
+  actionWidth = 58,
   actionHeight = 20,
   actionGap = 4,
 }
@@ -316,6 +323,10 @@ local function SetSinglePoint(
 end
 
 local function MakeBackdropTransparent(frame)
+  -- pfUI SkinButton uses a legacy backdrop on the Button itself, not a child.
+  if frame and frame.SetBackdrop then
+    frame:SetBackdrop(nil)
+  end
   if frame and frame.backdrop then
     if frame.backdrop.SetBackdropColor then
       frame.backdrop:SetBackdropColor(0, 0, 0, 0)
@@ -1821,6 +1832,36 @@ local function GetButtonText(button)
   return nil
 end
 
+-- Only chrome text loses provider inline colors; quest difficulty, objectives
+-- and item quality keep their own semantic colors. No provider scripts change.
+local function StyleChromeText(text, kind)
+  if not text or not text.SetText then return end
+  text.aeuiQuestChromeKind = kind
+  if not text.aeuiQuestChromeTextSetter then
+    local original = text.SetText
+    text.aeuiQuestChromeTextSetter = original
+    text.SetText = function(self, value)
+      if addon.db and addon.db.quests and addon.db.quests.enabled
+        and type(value) == "string" then
+        value = string.gsub(value, "|c%x%x%x%x%x%x%x%x", "")
+        value = string.gsub(value, "|r", "")
+        if self.aeuiQuestChromeKind == "language" then
+          local locale = GetLocale()
+          if locale == "zhCN" or locale == "zhTW" then
+            value = string.gsub(value, "Chinese %(Simplified%)", "简体中文")
+            value = string.gsub(value, "Chinese %(Traditional%)", "繁體中文")
+          end
+        elseif self.aeuiQuestChromeKind == "online" then
+          value = string.gsub(value, "%[id:%s*(%d+)%]", "ID %1")
+        end
+      end
+      return original(self, value)
+    end
+  end
+  if text.GetText then text:SetText(text:GetText()) end
+  ClearTextShadow(text)
+end
+
 local function ClearButtonStateTextures(button)
   if not button then
     return
@@ -1897,11 +1938,29 @@ local function UpdateLeatherButtonState(button)
     return
   end
 
-  local disabled =
-    button.IsEnabled and not button:IsEnabled()
+  local enabled = true
+  if button.IsEnabled then enabled = button:IsEnabled() end
+  local disabled = not enabled or enabled == 0
   button.aeuiQuestLeatherHover:Hide()
   button.aeuiQuestLeatherPressed:Hide()
   button.aeuiQuestLeatherDisabled:Hide()
+
+  if button.aeuiQuestActionTabWidth then
+    if disabled then button.aeuiQuestControlPressed = nil end
+    local state = disabled and "disabled"
+      or (button.aeuiQuestControlPressed and "pressed")
+      or (button.aeuiQuestControlHovered and "hover") or "normal"
+    local width = button.aeuiQuestActionTabWidth
+    local x = ACTION_TABS.columns[state] * 128 + (128 - width * 2) / 2
+    local y = ACTION_TABS.rows[width] * 64 + 12
+    local texture = button.aeuiQuestActionArt
+    texture:SetTexCoord(x / 512, (x + width * 2) / 512, y / 256, (y + 40) / 256)
+    SetSinglePoint(texture, "TOPLEFT", button, "TOPLEFT", 0, state == "pressed" and -1 or 0)
+    texture:Show()
+    SetButtonTextColor(button, state == "normal" and button == QuestLogFrameAbandonButton
+      and THEME.ink.control.danger or THEME.ink.actionTab[state])
+    return
+  end
 
   if disabled then
     button.aeuiQuestControlPressed = nil
@@ -1914,7 +1973,9 @@ local function UpdateLeatherButtonState(button)
     button.aeuiQuestLeatherHover:Show()
     SetButtonTextColor(button, CONTROL.text.hover)
   else
-    SetButtonTextColor(button, CONTROL.text.normal)
+    SetButtonTextColor(button,
+      button == QuestLogFrameAbandonButton and
+        THEME.ink.control.danger or CONTROL.text.normal)
   end
 end
 
@@ -1968,6 +2029,14 @@ local function InstallLeatherButtonHooks(button)
       end
     end
   )
+end
+
+local function IsQuestFooterButton(button)
+  return button == QuestLogFrameAbandonButton or button == QuestFramePushQuestButton
+    or button == QuestFrameExitButton or button == QuestLogFrameCancelButton
+    or button == QuestLogFrameExpandButton
+    or (pfQuest and (button == pfQuest.buttonShow or button == pfQuest.buttonHide
+      or button == pfQuest.buttonClean or button == pfQuest.buttonReset))
 end
 
 local function StyleLeatherButton(button, width, height)
@@ -2092,12 +2161,29 @@ local function StyleLeatherButton(button, width, height)
     InstallLeatherButtonHooks(button)
   end
 
-  if button.SetFont then
-    button:SetFont(
-      QUEST_TITLE_FONT,
-      12,
-      THEME.fonts.panelTitle.flags
-    )
+  button.aeuiQuestActionTabWidth = nil
+  if IsQuestFooterButton(button) and ACTION_TABS.rows[width] and height == 20
+    and THEME.media.actionTabStates then
+    local texture = EnsureControlTexture(button, "aeuiQuestActionArt", "ARTWORK")
+    local loaded = texture:SetTexture(THEME.media.actionTabStates)
+    if loaded and loaded ~= 0 then
+      SetSize(texture, width, height)
+      button.aeuiQuestActionTabWidth = width
+      if button.SetPushedTextOffset then button:SetPushedTextOffset(0, -1) end
+    end
+  end
+  if button.aeuiQuestActionArt and not button.aeuiQuestActionTabWidth then
+    button.aeuiQuestActionArt:Hide()
+  end
+  for _, key in ipairs({ "aeuiQuestLeatherBase", "aeuiQuestLeatherTop", "aeuiQuestLeatherBottom",
+    "aeuiQuestLeatherLeft", "aeuiQuestLeatherRight" }) do
+    if button.aeuiQuestActionTabWidth then button[key]:Hide() else button[key]:Show() end
+  end
+
+  local text = GetButtonText(button)
+  if text and text.SetFont then
+    text:SetFont(ResolveThemeFontPath(THEME.fonts.questName), 10, "")
+    ClearTextShadow(text)
   end
   UpdateLeatherButtonState(button)
 end
@@ -2134,6 +2220,8 @@ local function StylePfQuestButton(button, width, height, fontSize)
         role.flags or ""
       )
     end
+    if text.SetJustifyH then text:SetJustifyH("CENTER") end
+    ClearTextShadow(text)
   end
   button.aeuiQuestPfQuestManaged = true
 end
@@ -2181,8 +2269,9 @@ function Quests:ApplyPfQuestQuestLogCompatibility()
       online,
       PFQUEST.utilityWidth,
       PFQUEST.utilityHeight,
-      9
+      10
     )
+    StyleChromeText(GetButtonText(online), "online")
     SetSinglePoint(
       online,
       "TOPRIGHT",
@@ -2198,8 +2287,9 @@ function Quests:ApplyPfQuestQuestLogCompatibility()
       language,
       PFQUEST.languageWidth,
       PFQUEST.utilityHeight,
-      9
+      10
     )
+    StyleChromeText(GetButtonText(language), "language")
     if online then
       SetSinglePoint(
         language,
@@ -2221,15 +2311,14 @@ function Quests:ApplyPfQuestQuestLogCompatibility()
     end
   end
 
-  local actions = {
-    provider.buttonShow,
-    provider.buttonHide,
-    provider.buttonClean,
-    provider.buttonReset,
-  }
+  local actions = { "buttonShow", "buttonHide", "buttonClean", "buttonReset" }
+  local labels = { "显示标记", "隐藏标记", "清空标记", "重置标记" }
+  local chinese = GetLocale() == "zhCN" or GetLocale() == "zhTW"
   local visibleActions = {}
-  for _, button in ipairs(actions) do
+  for index, name in ipairs(actions) do
+    local button = provider[name]
     if button then
+      if chinese and button.SetText then button:SetText(labels[index]) end
       table.insert(visibleActions, button)
     end
   end
@@ -2742,6 +2831,12 @@ function Quests:LayoutDirectoryRows(force)
         row.aeuiQuestSelection:Hide()
       end
 
+      local selected = EnsureControlTexture(row, "aeuiQuestSelectedMark", "ARTWORK")
+      SetTextureColor(selected, THEME.ink.body)
+      SetSize(selected, 2, 12)
+      SetSinglePoint(selected, "LEFT", row, "LEFT", 9, 0)
+      selected:Hide()
+
       if not row.aeuiQuestRegionToggle then
         row.aeuiQuestRegionToggle =
           row:CreateTexture(nil, "ARTWORK")
@@ -2778,7 +2873,7 @@ function Quests:LayoutDirectoryRows(force)
       THEME.fonts.panelTitle.flags
     )
   end
-  SetTextColor(QuestLogTitleText, THEME.ink.body)
+  SetTextColor(QuestLogTitleText, THEME.ink.control.normal)
   ClearTextShadow(QuestLogTitleText)
   QuestLogFrame.aeuiQuestDirectoryLayout = DIRECTORY.contract
   return true
@@ -2825,6 +2920,7 @@ function Quests:UpdateDirectoryRows()
   end
 
   local count = GetNumQuestLogEntries() or 0
+  local selectedIndex = type(GetQuestLogSelection) == "function" and GetQuestLogSelection()
   local offset = 0
   if
     type(FauxScrollFrame_GetOffset) == "function" and
@@ -2882,6 +2978,11 @@ function Quests:UpdateDirectoryRows()
               DIRECTORY.states.collapsed or
               DIRECTORY.states.expanded
           )
+        end
+
+        if title and not isHeader and questIndex == selectedIndex
+          and row.aeuiQuestSelectedMark then
+          row.aeuiQuestSelectedMark:Show()
         end
 
       end
@@ -3881,6 +3982,7 @@ function Quests:ApplyDetailTextTheme()
     ApplyThemeFontFixed(text, THEME.fonts.detailBody)
     SetTextColor(text, THEME.ink.body)
     ClearTextShadow(text)
+    if text and text.SetSpacing then text:SetSpacing(THEME.fonts.detailBody.spacing) end
   end
 
   local objectiveCount = tonumber(MAX_OBJECTIVES) or 10
@@ -3910,6 +4012,18 @@ function Quests:ApplyDetailTextTheme()
     ApplyThemeFontFixed(objective, THEME.fonts.detailBody)
     SetTextColor(objective, color)
     ClearTextShadow(objective)
+    if objective and objective.SetSpacing then objective:SetSpacing(2) end
+  end
+
+  -- Native coin buttons use outlined white numbers; leave required-money
+  -- warning colors intact while bringing reward amounts onto the paper.
+  for _, name in ipairs({ "QuestLogMoneyFrame", "QuestLogRewardMoneyFrame", "QuestLogRequiredMoneyFrame" }) do
+    for _, coin in ipairs({ "Gold", "Silver", "Copper" }) do
+      local text = GetButtonText(_G[name .. coin .. "Button"])
+      ApplyThemeFontFixed(text, THEME.fonts.detailBody)
+      ClearTextShadow(text)
+      if name ~= "QuestLogRequiredMoneyFrame" then SetTextColor(text, THEME.ink.body) end
+    end
   end
 end
 
@@ -3946,9 +4060,8 @@ function Quests:ApplyDetailTextGeometry(skipDeferred)
     end
   end
 
-  ApplyDetailRewardGeometry()
-
   self:ApplyDetailTextTheme()
+  ApplyDetailRewardGeometry()
   UpdateDetailScrollChildHeight()
 
   self:HideDetailScrollbar()
@@ -4032,6 +4145,7 @@ function Quests:EnsureQuestLogChromeSeal(frame)
     end
     local fallback = frame.aeuiQuestChromeSeal
     ConfigureQuestSealTexture(fallback, "normal")
+    fallback:SetAlpha(0.7)
     SetSize(
       fallback,
       QUEST_SEAL.questLog.width,
@@ -4071,6 +4185,7 @@ function Quests:EnsureQuestLogChromeSeal(frame)
 
   local texture = frame.aeuiQuestChromeSeal
   ConfigureQuestSealTexture(texture, "normal")
+  texture:SetAlpha(0.7) -- decorative until the real menu is implemented
   SetSize(
     texture,
     QUEST_SEAL.questLog.width,
@@ -4191,12 +4306,9 @@ function Quests:ApplyControlVisuals()
 
   local count = QuestLogQuestCount or QuestLogCount
   if count and count.SetFont then
-    count:SetFont(
-      QUEST_TITLE_FONT,
-      12,
-      THEME.fonts.panelTitle.flags
-    )
+    count:SetFont(ResolveThemeFontPath(THEME.fonts.questName), 11, "")
   end
+  StyleChromeText(count, "count")
   SetTextColor(count, CONTROL.text.ink)
   ClearTextShadow(count)
 
@@ -4206,7 +4318,7 @@ function Quests:ApplyControlVisuals()
       levelsText:SetFont(
         QUEST_TITLE_FONT,
         11,
-        THEME.fonts.panelTitle.flags
+        ""
       )
     end
     SetTextColor(levelsText, CONTROL.text.ink)
@@ -4233,7 +4345,7 @@ function Quests:ApplyControlVisuals()
   )
   StyleLeatherButton(
     QuestLogFrameExpandButton,
-    24,
+    LAYOUT.detailToggleWidth,
     LAYOUT.actionHeight
   )
 
@@ -4407,7 +4519,9 @@ function Quests:UpdateDetailToggle()
   end
 
   if button.SetText then
-    button:SetText(detail:IsShown() and "<" or ">")
+    local chinese = GetLocale() == "zhCN" or GetLocale() == "zhTW"
+    button:SetText(detail:IsShown() and (chinese and "收起详情" or "Fold")
+      or (chinese and "展开详情" or "Unfold"))
   end
   button.aeuiQuestDetailVisible = detail:IsShown() and true or nil
 end
@@ -4549,6 +4663,8 @@ function Quests:GetRuntimeStatus()
     ", seal=" .. tostring(sealStatus) ..
     ", carrier=" .. tostring(carrierStatus) ..
     ", seal-menu=inactive-provider-buttons-live" ..
+    ", footer=" .. ((QuestLogFrameAbandonButton and QuestLogFrameAbandonButton.aeuiQuestActionTabWidth)
+      and "leather-tabs-v1-2x" or "fallback") ..
     ", tag=semantic-setter-lock" ..
     ", reward=atlas-v1-native-content-acyclic-gap-8" ..
     ", font=" .. tostring(fontPath) ..

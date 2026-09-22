@@ -728,7 +728,7 @@ end
 -- 将当前战斗（伤害/治疗段 1）保存为"最近战斗"快照（最多保留 5 场）。
 -- 条件：有伤害或治疗数据，且战斗时长 ≥ 10 秒。
 -- 名称取本场战斗血量最高的敌人（近似判断 BOSS 名）。
--- 同时把当前回放数据压入 ShaguDPS_Playback.recent，并保持与
+-- 同时把当前回放数据压入 ShaguDPS.playback.recent，并保持与
 -- ShaguDPS.recent_fights 长度一致（同步截断）。
 local function storeRecentFight()
     if not next(data.damage[1]) and not next(data.heal[1]) then
@@ -775,10 +775,10 @@ local function storeRecentFight()
         death_replays = deepcopy(data.death_replays),
     }
     table.insert(ShaguDPS.recent_fights, recentFight)
-    table.insert(ShaguDPS_Playback.recent, deepcopy(data.playback[1]))
+    table.insert(ShaguDPS.playback.recent, deepcopy(data.playback[1]))
     while table.getn(ShaguDPS.recent_fights) > 5 do
         table.remove(ShaguDPS.recent_fights, 1)
-        table.remove(ShaguDPS_Playback.recent, 1)
+        table.remove(ShaguDPS.playback.recent, 1)
     end
     local count = table.getn(ShaguDPS.recent_fights)
     for i = 1, count do
@@ -865,7 +865,7 @@ function parser.combat:UpdateState(forceNoCombat)
             if next(data.death_replays) then ShaguDPS.cached_current_death_replays = deepcopy(data.death_replays) end
             if next(data.playback[1]) then
                 ShaguDPS.cached_current_playback = deepcopy(data.playback[1])
-                ShaguDPS_Playback.current = ShaguDPS.cached_current_playback
+                ShaguDPS.playback.current = ShaguDPS.cached_current_playback
             end
 
             storeRecentFight()
@@ -924,7 +924,7 @@ function parser.combat:UpdateState(forceNoCombat)
                             for _, existingName in ipairs(fight.bosses) do
                                 if name == existingName then
                                     ShaguDPS.boss_fights[i] = bossFight
-                                    ShaguDPS_Playback.boss[i] = deepcopy(data.playback[1])
+                                    ShaguDPS.playback.boss[i] = deepcopy(data.playback[1])
                                     replaced = true
                                     break
                                 end
@@ -937,7 +937,7 @@ function parser.combat:UpdateState(forceNoCombat)
 
                 if not replaced then
                     table.insert(ShaguDPS.boss_fights, bossFight)
-                    table.insert(ShaguDPS_Playback.boss, deepcopy(data.playback[1]))
+                    table.insert(ShaguDPS.playback.boss, deepcopy(data.playback[1]))
                     ShaguDPS.current_boss_index = table.getn(ShaguDPS.boss_fights)
                 else
                     ShaguDPS.current_boss_index = i
@@ -1011,12 +1011,8 @@ parser.combat:SetScript("OnEvent", function()
     if event == "PLAYER_UNGHOST" then
         this:UpdateState(true)
     elseif event == "PLAYER_LOGOUT" then
-        -- 战斗中直接退出：把当前战斗回放深拷贝到 ShaguDPS_Playback.current 并保存缓存，
-        -- 避免当前战斗回放在未脱战就退出时丢失
-        if data and data.playback and data.playback[1] and next(data.playback[1]) then
-            ShaguDPS.cached_current_playback = deepcopy(data.playback[1])
-            ShaguDPS_Playback.current = ShaguDPS.cached_current_playback
-        end
+        -- Finalize time, coverage and trash totals before saving cumulative data.
+        this:UpdateState(true)
         ShaguDPS.SaveDataToCache()
     else
         this:UpdateState()

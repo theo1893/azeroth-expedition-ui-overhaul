@@ -6,7 +6,7 @@ local media = addon.media.root
 -- book versus field note), while all shared materials, typography roles and
 -- semantic ink colors live here so a later art revision has one entry point.
 addon.questVisualTheme = {
-  contract = "1.11",
+  contract = "1.13",
   media = {
     questLogShell = media .. "Quests\\QuestLogShellV4",
     questLogShellLeft = media .. "Quests\\QuestLogShellLeftV4",
@@ -16,12 +16,13 @@ addon.questVisualTheme = {
     toolSeal = media .. "Quests\\QuestToolWaxSealStatesV1",
     sealMenuCarrier = media .. "Quests\\QuestLogSealPurityRibbonV1",
     rewardSlotStates = media .. "Quests\\QuestLogRewardSlotStatesV1",
+    actionTabStates = media .. "Quests\\QuestLogActionTabsV1",
   },
   fonts = {
     panelTitle = {
       path = media .. "Fonts\\NotoSerifSC-SemiBold.ttf",
       size = 15,
-      flags = "OUTLINE",
+      flags = "",
     },
     questName = {
       -- Quest names follow the same pfUI standard face used by the rest of
@@ -46,6 +47,7 @@ addon.questVisualTheme = {
       fallbackPath = media .. "Fonts\\NotoSansSC-Medium.ttf",
       size = 12,
       flags = "",
+      spacing = 3,
     },
     trackerQuestName = {
       providerOwned = true,
@@ -88,6 +90,13 @@ addon.questVisualTheme = {
       hover = { 1, 0.91, 0.62, 1 },
       pressed = { 0.86, 0.64, 0.28, 1 },
       disabled = { 0.48, 0.40, 0.30, 1 },
+      danger = { 0.87, 0.56, 0.45, 1 },
+    },
+    actionTab = {
+      normal = { 0.87, 0.77, 0.59, 1 },
+      hover = { 0.95, 0.83, 0.63, 1 },
+      pressed = { 0.78, 0.65, 0.45, 1 },
+      disabled = { 0.58, 0.53, 0.46, 1 },
     },
   },
   leather = {

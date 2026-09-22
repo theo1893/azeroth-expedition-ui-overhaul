@@ -282,7 +282,7 @@ settings:SetScript("OnEvent", function()
     if config.perCharConfig == nil then config.perCharConfig = 1 end
     SaveConfig()
     if ShaguDPS.LoadDataFromCache() then
-        DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00ShaguDPS: 已从缓存恢复上次统计的数据。|r")
+        DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00ShaguDPS: 已恢复全程与汇总统计；逐场记录和回放仅保留本次登录。|r")
     end
     window.Refresh(true)
     -- 重新加载所有窗口位置
