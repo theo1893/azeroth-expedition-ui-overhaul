@@ -3,7 +3,7 @@ AzerothExpeditionUI = AzerothExpeditionUI or {}
 local addon = AzerothExpeditionUI
 local TargetMarkers = {}
 
-TargetMarkers.runtimeContract = "2.6"
+TargetMarkers.runtimeContract = "2.9"
 TargetMarkers.compactScale = 0.8
 TargetMarkers.cellSize = 48
 TargetMarkers.cellGap = 3
@@ -14,6 +14,7 @@ TargetMarkers.nameFontSize = 10
 TargetMarkers.compactFontSize = 9
 TargetMarkers.panelCap = 6
 TargetMarkers.panelPadding = 6
+TargetMarkers.panelDividerHeight = 3
 TargetMarkers.tankButtonGap = 8
 TargetMarkers.bulkButtonGap = 8
 TargetMarkers.fallbackGap = 20
@@ -378,42 +379,74 @@ local function SetAdaptiveCellName(cell, name)
 end
 
 local function SetMarkerIdentity(cell, active)
-  cell.icon:SetAlpha(active and 1 or 0.56)
+  cell.icon:SetAlpha(active and 1 or 0.70)
   cell.iconShadow:SetAlpha(active and 0.72 or 0.4)
 end
 
-local function LayoutCellContents(cell)
-  local height = cell:GetHeight()
-  local compact = height < 72
-  local iconSize = compact and math.min(TargetMarkers.iconSize, height - 36) or
-    TargetMarkers.iconSize
-  local fontSize = compact and TargetMarkers.compactFontSize or TargetMarkers.nameFontSize
-  local iconTop = compact and 1 or 3
-  local nameTop = compact and iconSize + 2 or math.min(34, height - 40)
+local function GetCellLayout(height)
+  local padding = TargetMarkers.panelPadding
+  if height < 72 then
+    -- A pet row or an unbound grid cannot fit two separated readout regions and the
+    -- target readout. Keep its existing compact layout in one complete shell.
+    local iconSize = math.min(TargetMarkers.iconSize, height - 36)
+    return {
+      split = false, headerHeight = height + padding * 2,
+      iconSize = iconSize, iconTop = 1, nameTop = iconSize + 2,
+      nameHeight = 20, fontSize = TargetMarkers.compactFontSize,
+      healthBottom = 5, barBottom = 1, barHeight = 2, selectedTop = 0,
+    }
+  end
+
+  local cap = TargetMarkers.panelCap
+  local fontSize = height >= 80 and TargetMarkers.nameFontSize or TargetMarkers.compactFontSize
+  local nameHeight = fontSize * 2 + 2
+  -- Reserve edge clearance, two name lines, percent, health rail and spacing
+  -- before sizing the icon section, so short bound layouts never overlap text.
+  local detailsHeight = cap * 2 + nameHeight + fontSize + 3 + 2
+  local headerHeight = math.min(TargetMarkers.iconSize + cap * 2,
+    height + padding * 2 - TargetMarkers.panelDividerHeight - detailsHeight)
+  local iconSize = math.min(TargetMarkers.iconSize, headerHeight - cap * 2)
+  local nameTop = headerHeight + TargetMarkers.panelDividerHeight - padding + cap
+  local healthTop = height - 4 - fontSize
+  nameTop = nameTop + math.max(0, math.floor((healthTop - 1 - nameTop - nameHeight) / 2))
+  return {
+    split = true, headerHeight = headerHeight,
+    iconSize = iconSize, iconTop = (headerHeight - iconSize) / 2 - padding,
+    nameTop = nameTop, nameHeight = nameHeight, fontSize = fontSize,
+    healthBottom = 4, barBottom = 0, barHeight = 3, selectedTop = 2,
+  }
+end
+
+local function LayoutCellContents(cell, layout)
+  layout = layout or GetCellLayout(cell:GetHeight())
+  local iconSize, fontSize = layout.iconSize, layout.fontSize
 
   cell.icon:SetWidth(iconSize)
   cell.icon:SetHeight(iconSize)
-  cell.icon:SetPoint("TOP", cell, "TOP", 0, -iconTop)
+  cell.icon:SetPoint("TOP", cell, "TOP", 0, -layout.iconTop)
   cell.iconShadow:SetWidth(iconSize + 2)
   cell.iconShadow:SetHeight(iconSize + 2)
   cell.iconShadow:SetPoint("CENTER", cell.icon, "CENTER", 1, -1)
-  cell.name:SetPoint("TOPLEFT", cell, "TOPLEFT", 3, -nameTop)
-  cell.name:SetPoint("TOPRIGHT", cell, "TOPRIGHT", -3, -nameTop)
-  cell.name:SetHeight(compact and 20 or 22)
+  cell.name:SetPoint("TOPLEFT", cell, "TOPLEFT", 3, -layout.nameTop)
+  cell.name:SetPoint("TOPRIGHT", cell, "TOPRIGHT", -3, -layout.nameTop)
+  cell.name:SetHeight(layout.nameHeight)
   SetCellFont(cell.name, fontSize, "")
   cell.name:SetTextColor(0.945, 0.918, 0.867, 1)
   cell.nameFontSize = fontSize
   cell.nameSource = nil
   if cell.unitName then SetAdaptiveCellName(cell, cell.unitName) end
 
-  local healthBottom = compact and 5 or 7
-  cell.healthText:SetPoint("BOTTOMLEFT", cell, "BOTTOMLEFT", 3, healthBottom)
-  cell.healthText:SetPoint("BOTTOMRIGHT", cell, "BOTTOMRIGHT", -3, healthBottom)
+  cell.healthText:SetPoint("BOTTOMLEFT", cell, "BOTTOMLEFT", 3, layout.healthBottom)
+  cell.healthText:SetPoint("BOTTOMRIGHT", cell, "BOTTOMRIGHT", -3, layout.healthBottom)
   cell.healthText:SetHeight(fontSize)
   SetCellFont(cell.healthText, fontSize, "")
-  cell.healthBackground:SetPoint("BOTTOMLEFT", cell, "BOTTOMLEFT", 3, compact and 1 or 3)
-  cell.healthBackground:SetPoint("BOTTOMRIGHT", cell, "BOTTOMRIGHT", -3, compact and 1 or 3)
-  cell.healthBackground:SetHeight(compact and 2 or 3)
+  cell.healthBackground:SetPoint("BOTTOMLEFT", cell, "BOTTOMLEFT", 3, layout.barBottom)
+  cell.healthBackground:SetPoint("BOTTOMRIGHT", cell, "BOTTOMRIGHT", -3, layout.barBottom)
+  cell.healthBackground:SetHeight(layout.barHeight)
+  if cell.selected then
+    cell.selected:SetPoint("TOPLEFT", cell, "TOPLEFT", 8, layout.selectedTop)
+    cell.selected:SetPoint("TOPRIGHT", cell, "TOPRIGHT", -8, layout.selectedTop)
+  end
 end
 
 local function ResetCellDisplay(cell)
@@ -439,16 +472,9 @@ local function SetTextureCoordinates(texture, texcoord)
   )
 end
 
-local function CreateMarkerPanel(parent, width, height, leftOffset)
-  local padding = TargetMarkers.panelPadding
+local function CreateMarkerPanelShell(parent)
   local cap = TargetMarkers.panelCap
   local panel = CreateFrame("Frame", nil, parent)
-  panel:SetPoint(
-    "TOPLEFT", parent, "TOPLEFT",
-    (leftOffset or 0) - padding, padding
-  )
-  panel:SetWidth(width + padding * 2)
-  panel:SetHeight(height + padding * 2)
   if panel.SetFrameLevel and parent.GetFrameLevel then
     panel:SetFrameLevel(parent:GetFrameLevel())
   end
@@ -496,6 +522,23 @@ local function CreateMarkerPanel(parent, width, height, leftOffset)
   slices.bottomRight:SetHeight(cap)
 
   panel.slices = slices
+  return panel
+end
+
+local function CreateMarkerPanel(parent, width, height, leftOffset)
+  local padding = TargetMarkers.panelPadding
+  -- The two original leather surfaces share a filled backing and continuous
+  -- outer rim. Their facing folds define the seam without a separate rail.
+  local panel = CreateMarkerPanelShell(parent)
+  panel:SetPoint("TOPLEFT", parent, "TOPLEFT", (leftOffset or 0) - padding, padding)
+  panel:SetWidth(width + padding * 2)
+  panel:SetHeight(height + padding * 2)
+  panel.upper = CreateMarkerPanelShell(panel)
+  panel.lower = CreateMarkerPanelShell(panel)
+  panel.rim = CreateMarkerPanelShell(panel)
+  panel.rim:SetAllPoints(panel)
+  panel.rim:SetFrameLevel(panel:GetFrameLevel() + 1)
+  panel.rim.slices.center:Hide()
   return panel
 end
 
@@ -1248,6 +1291,7 @@ end
 
 function TargetMarkers:LayoutGrid(height)
   local padding = self.panelPadding
+  local layout = GetCellLayout(height)
   self.tankControlSpan = height + padding * 3 + self.tankButtonGap
   self.baseGridWidth = self.tankControlSpan + self.manualGridWidth
   self.bulkGridWidth = self.baseGridWidth + self.bulkButtonGap + self.cellSize
@@ -1255,10 +1299,22 @@ function TargetMarkers:LayoutGrid(height)
   self.frame:SetHeight(height)
   self.panel:SetPoint("TOPLEFT", self.frame, "TOPLEFT", self.tankControlSpan - padding, padding)
   self.panel:SetHeight(height + padding * 2)
+  self.panel.upper:SetPoint("TOPLEFT", self.panel, "TOPLEFT", 0, 0)
+  self.panel.upper:SetWidth(self.panel:GetWidth())
+  self.panel.upper:SetHeight(layout.headerHeight)
+  if layout.split then
+    self.panel.lower:SetPoint("TOPLEFT", self.panel, "TOPLEFT", 0, -layout.headerHeight - self.panelDividerHeight)
+    self.panel.lower:SetWidth(self.panel:GetWidth())
+    self.panel.lower:SetHeight(self.panel:GetHeight() - layout.headerHeight - self.panelDividerHeight)
+    self.panel.lower:Show()
+  else
+    self.panel.lower:Hide()
+  end
+  self.panel.split = layout.split
   for position, markerIndex in ipairs(markerOrder) do
     local cell = self.cells[markerIndex]
     cell:SetHeight(height)
-    LayoutCellContents(cell)
+    LayoutCellContents(cell, layout)
     cell:SetPoint("TOPLEFT", self.frame, "TOPLEFT",
       self.tankControlSpan + (position - 1) * (self.cellSize + self.cellGap), 0)
   end
@@ -1622,7 +1678,7 @@ function TargetMarkers:GetRuntimeStatus()
     "contract=" .. tostring(self.runtimeContract) ..
     ",enabled=" .. tostring(MarkerEnabled() and "yes" or "no") ..
     ",layout=8x1-row" ..
-    ",style=shared-leather-board" ..
+    ",style=" .. ((self.panel and self.panel.split) and "joined-fold-leather-board" or "compact-leather-board") ..
     ",order=skull-first" ..
     ",active=" .. tostring(self.activeMarkers or 0) ..
     ",tokens=" .. tostring(self.tokenStatus or "pending") ..

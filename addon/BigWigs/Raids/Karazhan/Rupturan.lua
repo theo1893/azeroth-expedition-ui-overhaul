@@ -283,7 +283,7 @@ local spellIds = {
 }
 
 local function BossUnit()
-	return BigWigs:GetUnitIdByName(module.translatedName, 1) or "none"
+	return BigWigs:GetUnitIdByName(module.translatedName, 1)
 end
 
 local guid = {
@@ -662,11 +662,8 @@ function module:ThrowBoulderOutcome(outcome)
 end
 
 function module:GetHealth()
-	local health = 100 -- set to 9 to test window of opportunity
-	if UnitExists(BossUnit()) then
-		health = math.floor((UnitHealth(BossUnit())/UnitHealthMax(BossUnit())) * 100)
-	end
-	return health
+	-- No live boss means no low-health kill window, including during city tests.
+	return BigWigs:GetHealthPercent(BossUnit(), true) or 100
 end
 
 function module:CheckOpportunity()

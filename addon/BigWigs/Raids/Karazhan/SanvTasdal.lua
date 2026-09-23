@@ -188,7 +188,7 @@ local syncName = {
 }
 
 local function BossUnit()
-	return BigWigs:GetUnitIdByName(module.translatedName, 1) or "none"
+	return BigWigs:GetUnitIdByName(module.translatedName, 1)
 end
 
 

@@ -27,7 +27,7 @@ Frame。美术见 [ART_BASELINE.md](ART_BASELINE.md)，状态见
 | ID | 真实对象 | 状态／资产合同 |
 |---|---|---|
 | `QUEST.LOG.SHELL` | `QuestLogFrame` | `676 × 464` 固定非交互空卷宗背景；不拉伸，不包含任何动态内容或交互状态 |
-| `QUEST.LOG.TITLE` | `QuestLogTitleText` | layout-only 动态文字 |
+| `QUEST.LOG.TITLE` | `QuestLogTitleText` | runtime 隐藏；保留 provider 文字对象 |
 | `QUEST.LOG.COUNT` | `QuestLogQuestCount`；兼容 `QuestLogCount` | layout-only；使用纸面深墨文字，不新增外框 |
 | `QUEST.LOG.CLOSE` | `QuestLogFrameCloseButton` | 普通／悬停／按下／禁用 |
 | `QUEST.LOG.EMPTY` | `EmptyQuestLogFrame`、`QuestLogNoQuestsText` | 安静纸面，不生成空状态卡片 |
@@ -147,7 +147,7 @@ QL-B0／B1 当前 runtime 已接入
 `addon/AzerothExpeditionUI/Modules/Quests.lua`：atlas 为
 `QuestLogDirectoryMarksV1.tga`，四个 `16 × 16` cell 的内部 content box
 保留 `12 × 12` 箭头和 `10 × 10` 墨圈；任务行只挂载箭头，墨圈继续供顶部
-等级／追踪 CheckButton 使用。覆盖 Texture 不接收鼠标；
+等级 CheckButton 使用；计数旁追踪按钮隐藏。覆盖 Texture 不接收鼠标；
 原 `QuestLogTitleN` Button、脚本、滚动、选择和追踪数据均保持。字体仅按
 模块基线把主标题设为 Noto Serif SC、任务及状态行恢复为
 `pfUI.font_default` 的 `12px` 无描边字体，并清除 shadow，仍需实机加载
@@ -187,7 +187,7 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 | `QUEST.LOG.DETAIL.REWARD_TEXT` | 奖励文字 FontString 集 | Theme `1.10`：标题 `14px`，标签 `12px`，均无 outline／shadow |
 | `QUEST.LOG.DETAIL.DIVIDER` | adapter 非交互 Texture | 可横向三段式短墨线 |
 | `QUEST.LOG.REWARD.SLOT` | `QuestLogItem1..MAX_NUM_ITEMS`；原生 `IconTexture／Count／Name／NameFrame`；adapter-owned `aeuiRewardContainer` | accepted 四态 atlas 已由 runtime `1.27`／Theme `1.10` 接入。真实 Button、Tooltip、动态图标、名称、数量、品质色与 provider 脚本保持；`108×41px`、名称安全宽 `64px`、`8px` 列距／`4px` 行距不变；pressed 只移动 adapter 容器及真实子内容 `1px`，不移动命中区。当前 `P5`，等待实机 |
-| `QUEST.LOG.TRACK` | `QuestLogTrack`、`QuestLogTrackTracking` | 复用 QL-B1 开放墨圈／墨勾 atlas；保留原状态控制 |
+| `QUEST.LOG.TRACK` | `QuestLogTrack`、`QuestLogTrackTracking` | 计数旁按钮隐藏且不接收鼠标；保留 provider 追踪数据与列表操作 |
 | `QUEST.LOG.ACTION.ABANDON` | `QuestLogFrameAbandonButton` | QL-ACTIONS V1 `64×20 UI` 四态皮革签；原 OnClick 与原生确认保留 |
 | `QUEST.LOG.ACTION.SHARE` | `QuestFramePushQuestButton`；兼容名需探测 | QL-ACTIONS V1 `64×20 UI` 四态皮革签；原 Button 与禁用状态保留 |
 | `QUEST.LOG.ACTION.EXIT` | `QuestFrameExitButton`；兼容 `QuestLogFrameCancelButton` | 目标视觉不重复收纳；右上真实 Close 保持独立，fallback 在迁移验收前继续存在 |
@@ -213,19 +213,19 @@ runtime、占位 Texture 或 fallback 分支。`REGION.BACKPLATE` 与
 | `QUEST.LOG.ACTION.SEAL_MENU.BUTTON.ABANDON` | planned 独立 Button；代理 `QuestLogFrameAbandonButton` | 动态取行；点击仍进入原生确认。只让纹章使用暗酒红，不把整段背景染红 |
 | `QUEST.LOG.ACTION.SEAL_MENU.PAGE_EDGE_MASK` | 无 runtime；V9／V10 superseded proposal | V11 不再从页外展开，故不创建／复用 `[604,102,24,180]` 页边遮根 mask；该旧 ID 只保留为明确废止的兼容记录，不得进入新资产或 adapter |
 | `QUEST.LOG.LEVELS` | pfUI `QuestLogFrameLevelsCheckButton` | 复用 QL-B1 开放墨圈／墨勾 atlas；保留原脚本与文字 |
-| `QUEST.LOG.PFQUEST.ONLINE` | `pfQuest.buttonOnline`／`pfQuestOnline` | `72 × 18`，右页顶部固定工具行；短文本 `ID n` 去除内联亮色，动态 ID 与原 OnClick 不变 |
-| `QUEST.LOG.PFQUEST.LANGUAGE` | `pfQuest.buttonLanguage`／`pfQuestLanguage` | `86 × 18`，与 ONLINE 同行；文字去除内联亮色，中文语言名缩写，动态语言、下拉与原 OnUpdate／OnClick 不变 |
+| `QUEST.LOG.PFQUEST.ONLINE` | `pfQuest.buttonOnline`／`pfQuestOnline` | `58 × 20 UI`，距书体顶部 `40 UI`，右对齐正文安全区；复用 QL-ACTIONS 四态皮革签，暖骨色短文本 `ID n`，动态 ID 与原 OnClick 不变 |
+| `QUEST.LOG.PFQUEST.LANGUAGE` | `pfQuest.buttonLanguage`／`pfQuestLanguage` | `64 × 20 UI`，位于 ONLINE 左侧、间隔 `4 UI`；复用 QL-ACTIONS 四态皮革签，文字去除内联亮色与方括号，中文语言名缩写，动态语言、下拉与原 OnUpdate／OnClick 不变 |
 | `QUEST.LOG.PFQUEST.SHOW` | `pfQuest.buttonShow`／`pfQuestShow` | `58 × 20`，距书体底部 `38 UI`；第 1 格，中文显示“显示标记” |
 | `QUEST.LOG.PFQUEST.HIDE` | `pfQuest.buttonHide`／`pfQuestHide` | `58 × 20`，第 2 格，“隐藏标记” |
 | `QUEST.LOG.PFQUEST.CLEAN` | `pfQuest.buttonClean`／`pfQuestClean` | `58 × 20`，第 3 格，“清空标记” |
 | `QUEST.LOG.PFQUEST.RESET` | `pfQuest.buttonReset`／`pfQuestReset` | `58 × 20`，第 4 格，“重置标记” |
 
-底部八个明确 Button 通过各自无鼠标 `aeuiQuestActionArt` Texture 挂载
-`QuestLogActionTabsV1.tga`；退出为 `64×20 UI`，四个地图操作为 `58×20 UI`。
+底部八个明确 Button 及顶部语言／ID 通过各自无鼠标 `aeuiQuestActionArt` Texture 挂载
+`QuestLogActionTabsV1.tga`；退出与语言为 `64×20 UI`，四个地图操作与 ID 为 `58×20 UI`。
 三种宽度与四态 UV 由 `assets/source/quests/ql-actions/QL-ACTIONS_RuntimeManifest_v1.json`
 固定，字体和状态文字均独立绘制。普通／悬停／按下／禁用选择同一 atlas 中各自
 cell，按下只移动视觉与文字 `1 UI`，不改变 Button 命中区。新媒体缺失时恢复
-程序化皮革；顶部语言／ID、其他 Button 不在 QL-ACTIONS 的接管范围。
+程序化皮革；其他 Button 不在 QL-ACTIONS 的接管范围。
 
 右页仍由 `QuestLogDetailScrollFrame` 承担裁切与滚动；左页仍由
 `QuestLogListScrollFrame`、FauxScrollFrame offset 与隐藏的真实 Slider

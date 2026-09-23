@@ -86,7 +86,9 @@ source 为 `assets/source/quests/ql-actions/QuestLogActionTabs_Master_v1.png`；
 透明补边，不能横向拉伸边缘。`QuestLogActionTabsV1.tga` 为 `512×256` RGBA
 图集，提供 2× normal／hover／pressed／disabled，四态共用 Alpha；按下只在运行时
 下沉 `1 UI`。接入对象继续使用原 Button，文字、确认和点击始终动态，不能烘焙进素材。
-缺失素材时回退程序化皮革；顶部语言／ID 不使用该 atlas。火漆事务菜单仍为独立后续范围。
+顶部语言／ID 以 `64／58×20 UI` 原尺寸复用同一 atlas，作为贴近上页缘的短皮革工具签；
+取消规整金色矩形边框，动态文字使用暖骨色，语言不带方括号，四态与底部一致。
+缺失素材时回退程序化皮革。火漆事务菜单仍为独立后续范围。
 关闭按钮、等级／追踪墨圈及所有真实命中区仍是独立组件。
 
 ## 奖励槽与分隔

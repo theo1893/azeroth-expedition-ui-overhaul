@@ -61,7 +61,8 @@ L:RegisterTranslations("enUS", function()
 		trigger_arcanePrison = "(.+) is afflicted by Arcane Prison",
 		msg_arcanePrison = "Arcane Prison on %s!",
 
-		trigger_manaboundStrike = "(.+) is afflicted by Manabound Strikes %((%d+)%)",
+		trigger_manaboundStrike = "^(.+) is afflicted by Manabound Strikes%s*%((%d+)%)",
+		trigger_manaboundStrikeYou = "^You are afflicted by Manabound Strikes%s*%((%d+)%)",
 		trigger_manaboundFade = "Manabound Strikes fades from ([^%.]+)",
 
 		trigger_arcaneDampening = "(.+) is afflicted by Arcane Dampening",
@@ -132,7 +133,8 @@ L:RegisterTranslations("zhCN", function()
         trigger_arcanePrison = "(.+)受到奥术牢笼",
         msg_arcanePrison = "%s受到奥术牢笼影响！",
 
-        trigger_manaboundStrike = "(.+)受到了法力束缚打击",
+        trigger_manaboundStrike = "^(.+)受到了法力束缚打击效果的影响%s*%((%d+)%)",
+        trigger_manaboundStrikeYou = "^你受到了法力束缚打击效果的影响%s*%((%d+)%)",
         trigger_manaboundFade = "法力束缚打击效果从(.+)身上消失",
 
         trigger_arcaneDampening = "(.+) is afflicted by 奥术抑制",
@@ -369,7 +371,15 @@ function module:AfflictionEvent(msg)
 	end
 
 	-- Manabound Strikes
-	local _, _, player, count = string.find(msg, L["trigger_manaboundStrike"])
+	local stackMessage = string.gsub(msg, "（", "(")
+	stackMessage = string.gsub(stackMessage, "）", ")")
+	local _, _, count = string.find(stackMessage, L["trigger_manaboundStrikeYou"])
+	local player
+	if count then
+		player = UnitName("player")
+	else
+		_, _, player, count = string.find(stackMessage, L["trigger_manaboundStrike"])
+	end
 	if player and count then
 		self:Sync(syncName.manaboundStrike .. " " .. player .. " " .. count)
 	end
@@ -506,6 +516,7 @@ function module:BigWigs_RecvSync(sync, rest, nick)
 			self:ManaboundStrike(player, count)
 		end
 	elseif sync == syncName.manaboundStrikeFade and rest then
+		if rest == "你" or rest == "you" or rest == "You" then rest = UnitName("player") end
 		self:ManaboundStrikeFade(rest)
 	elseif sync == syncName.arcaneDampening and rest then
 		if rest == "你" or rest == "You" then rest = UnitName("player") end

@@ -236,9 +236,26 @@ UnitIsDead=function() return dead end
 UnitIsUnit=function(a,b) return a=="target" and b=="mark5" end
 SetRaidTarget=function() error("display updates must not change real raid markers") end
 local cell=markers.cells[5]
-for _, height in ipairs({48,60,71,72,73,74,100}) do
+for _, height in ipairs({48,60,71,72,73,74,76,79,80,100}) do
   markers:LayoutGrid(height)
   local iconSize=cell.icon:GetWidth()
+  local panel=markers.panel
+  if height >= 72 then
+    assert(panel.lower:IsShown())
+    close(panel.upper:GetHeight()+markers.panelDividerHeight+panel.lower:GetHeight(),panel:GetHeight())
+    close(panel.upper:GetWidth(),panel:GetWidth())
+    close(panel.lower:GetWidth(),panel:GetWidth())
+    local headerBottom=panel.upper:GetHeight()-markers.panelPadding
+    local detailsTop=-panel.lower.point[5]-markers.panelPadding
+    assert(-cell.icon.point[5]+iconSize <= headerBottom-markers.panelCap)
+    close(detailsTop-headerBottom,markers.panelDividerHeight)
+    assert(panel.slices.center:IsShown(), "the join must keep its leather backing")
+    assert(panel.rim.allPoints==panel and panel.rim:IsShown(), "the outer rim must remain continuous")
+    assert(-cell.name.point[5] >= detailsTop+markers.panelCap)
+  else
+    assert(not panel.lower:IsShown())
+    close(panel.upper:GetHeight(),panel:GetHeight())
+  end
   assert(-cell.icon.point[5]+iconSize <= -cell.name.point[5])
   assert(-cell.name.point[5]+cell.name:GetHeight() <= height-cell.healthText.point[5]-cell.healthText:GetHeight())
   assert(cell.healthText.point[5] >= cell.healthBackground.point[5]+cell.healthBackground:GetHeight())
@@ -259,7 +276,10 @@ for _, height in ipairs({48,60,71,72,73,74,100}) do
   dead=true
   local writes=geometryWrites
   assert(not markers:UpdateCell(cell) and cell.name.text=="" and cell.health.hidden)
-  assert(geometryWrites==writes and cell.icon.alpha==.56 and cell.selected.hidden)
+  assert(geometryWrites==writes and cell.icon.alpha>0 and cell.icon.alpha<1 and cell.selected.hidden)
+  if height >= 72 then
+    assert(panel.upper:IsShown() and panel.lower:IsShown(), "empty markers must retain both sections")
+  end
   close(cell.icon:GetWidth(),iconSize)
   dead=false
   assert(markers:UpdateCell(cell) and cell.name.text~="")

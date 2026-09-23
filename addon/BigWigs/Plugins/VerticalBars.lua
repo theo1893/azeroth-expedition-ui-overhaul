@@ -42,6 +42,8 @@ L:RegisterTranslations("enUS", function()
 		["Lock the vertical bar anchor so it cannot be dragged."] = true,
 		["Show labels"] = true,
 		["Show the spell name text next to each icon."] = true,
+		["Show background"] = true,
+		["Show the vertical track background."] = true,
 	}
 end)
 
@@ -77,6 +79,8 @@ L:RegisterTranslations("zhCN", function()
 		["Lock the vertical bar anchor so it cannot be dragged."] = "锁定竖行条锚点，禁止拖动.",
 		["Show labels"] = "显示名称",
 		["Show the spell name text next to each icon."] = "在图标旁显示技能名称.",
+		["Show background"] = "显示轨道背景",
+		["Show the vertical track background."] = "显示竖向轨道背景；关闭后完全透明。",
 	}
 end)
 
@@ -85,16 +89,16 @@ end)
 ------------------------------
 
 BigWigsVerticalBars = BigWigs:NewModule(L["VerticalBars"])
-BigWigsVerticalBars.revision = tonumber(string.sub("$Revision: 20004 $", 12, -3))
+BigWigsVerticalBars.revision = tonumber(string.sub("$Revision: 20005 $", 12, -3))
 BigWigsVerticalBars.defaultDB = {
 	enabled = false,
 	maxIcons = 5,
 	iconSize = 32,
 	trackHeight = 300,
 	scale = 1.0,
-	showLabels = true,
+	showLabels = false,
 	locked = false,
-	bgVisible = true,
+	bgVisible = false,
 	posx = nil,
 	posy = nil,
 }
@@ -184,6 +188,19 @@ BigWigsVerticalBars.consoleOptions = {
 			end,
 			set = function(v)
 				BigWigsVerticalBars.db.profile.showLabels = v
+			end,
+		},
+		bgVisible = {
+			type = "toggle",
+			name = L["Show background"],
+			desc = L["Show the vertical track background."],
+			order = 6.5,
+			get = function()
+				return BigWigsVerticalBars.db.profile.bgVisible
+			end,
+			set = function(v)
+				BigWigsVerticalBars.db.profile.bgVisible = v
+				BigWigsVerticalBars:UpdateBackground()
 			end,
 		},
 		locked = {
@@ -309,14 +326,40 @@ end
 -- Icon frames
 ------------------------------
 
+local function ShowIconTooltip(frame)
+	if not frame.tooltipText then return end
+	GameTooltip:SetOwner(frame, "ANCHOR_RIGHT")
+	GameTooltip:SetText(frame.tooltipText, 1, 1, 1)
+	GameTooltip:Show()
+end
+
+local function HideIconTooltip(frame)
+	if GameTooltip:IsOwned(frame) then
+		GameTooltip:Hide()
+	end
+end
+
 local function CreateIconFrame(self)
 	local f = CreateFrame("Button", nil, self.frames.anchor)
+	f:SetFrameLevel(self.frames.anchor:GetFrameLevel() + 2)
+	f:EnableMouse(true)
 	f:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 	f:SetScript("OnClick", function()
 		local bar = this.barId and candybar.var.handlers[this.barId]
 		if bar and bar.onclick then
 			bar.onclick(this.barId, arg1, bar.onclick1, bar.onclick2, bar.onclick3, bar.onclick4, bar.onclick5, bar.onclick6, bar.onclick7, bar.onclick8, bar.onclick9, bar.onclick10)
 		end
+	end)
+	f:SetScript("OnEnter", function()
+		ShowIconTooltip(this)
+	end)
+	f:SetScript("OnLeave", function()
+		HideIconTooltip(this)
+	end)
+	f:SetScript("OnHide", function()
+		local frame = this
+		HideIconTooltip(frame)
+		frame.tooltipText = nil
 	end)
 	f:SetWidth(self.db.profile.iconSize)
 	f:SetHeight(self.db.profile.iconSize)
@@ -433,8 +476,15 @@ function BigWigsVerticalBars:UpdateAllIcons()
 			(x_track + iconSize / 2) / curScale,
 			y / curScale)
 		iconFrame.barId = data.barId
+		local tooltipText = data.text or "?"
+		local tooltipChanged = iconFrame.tooltipText ~= tooltipText
+		iconFrame.tooltipText = tooltipText
 		iconFrame:Show()
 		iconFrame.icon:SetTexture(data.icon or DEFAULT_ICON)
+		-- Pooled icons can change timers while the mouse remains over them.
+		if tooltipChanged and GameTooltip:IsOwned(iconFrame) and GameTooltip:IsShown() then
+			ShowIconTooltip(iconFrame)
+		end
 
 		local fontSize = math.floor(iconSize * curScale * 0.45)
 		iconFrame.cooldown:SetFont(FONT, fontSize, "OUTLINE")
@@ -454,7 +504,7 @@ function BigWigsVerticalBars:UpdateAllIcons()
 		end
 
 		if db.showLabels then
-			iconFrame.text:SetText(data.text or "?")
+			iconFrame.text:SetText(tooltipText)
 		else
 			iconFrame.text:SetText("")
 		end
@@ -554,6 +604,12 @@ function BigWigsVerticalBars:ApplyLayout()
 	end
 end
 
+function BigWigsVerticalBars:UpdateBackground()
+	if self.frames and self.frames.anchor then
+		self.frames.anchor.pathBG:SetAlpha(self.db.profile.bgVisible and 1 or 0)
+	end
+end
+
 function BigWigsVerticalBars:UpdateLockState()
 	local db = self.db.profile
 	if not self.frames.anchor then
@@ -561,14 +617,14 @@ function BigWigsVerticalBars:UpdateLockState()
 	end
 	local anchor = self.frames.anchor
 	local lockBtn = anchor.lockBtn
+	-- Only the track handles dragging; the empty label area must pass mouse input through.
+	anchor:EnableMouse(false)
 	if db.locked then
-		anchor:EnableMouse(false)
 		anchor.trackHit:EnableMouse(false)
 		lockBtn:SetBackdropColor(0.7, 0.2, 0.2, 0.85)
 		lockBtn:SetBackdropBorderColor(1, 0.5, 0.5, 1)
 		lockBtn.text:SetText(L["Locked"])
 	else
-		anchor:EnableMouse(true)
 		anchor.trackHit:EnableMouse(true)
 		lockBtn:SetBackdropColor(0.2, 0.7, 1, 0.7)
 		lockBtn:SetBackdropBorderColor(0.2, 0.7, 1, 0.9)
@@ -685,26 +741,16 @@ function BigWigsVerticalBars:SetupFrames()
 	anchor:SetWidth(db.iconSize + 100)
 	anchor:SetHeight(db.trackHeight)
 	anchor:SetMovable(true)
-	anchor:RegisterForDrag("LeftButton")
-	anchor:EnableMouse(not db.locked)
+	anchor:EnableMouse(false)
 	anchor:SetPoint("CENTER", UIParent, "CENTER", 400, 0)
 
-	anchor:SetScript("OnDragStart", function()
-		if not BigWigsVerticalBars.db.profile.locked then
-			this:StartMoving()
-		end
-	end)
-	anchor:SetScript("OnDragStop", function()
-		this:StopMovingOrSizing()
-		BigWigsVerticalBars:SavePosition()
-	end)
 	anchor:SetScript("OnHide", function()
 		this:StopMovingOrSizing()
 	end)
 
 	-- 锁定按钮（悬停可见，点击切换锁定）
 	local lockBtn = CreateFrame("Button", nil, anchor)
-	lockBtn:SetFrameLevel(3)
+	lockBtn:SetFrameLevel(anchor:GetFrameLevel() + 3)
 	lockBtn:SetBackdrop({
 		bgFile = WHITE,
 		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
@@ -746,7 +792,7 @@ function BigWigsVerticalBars:SetupFrames()
 	-- 用一个透明 Frame 覆盖轨道来捕获拖动与右键
 	local trackHit = CreateFrame("Frame", nil, anchor)
 	trackHit:EnableMouse(true)
-	trackHit:SetFrameLevel(2)
+	trackHit:SetFrameLevel(anchor:GetFrameLevel() + 1)
 	trackHit:SetScript("OnMouseDown", function()
 		if arg1 == "LeftButton" and not BigWigsVerticalBars.db.profile.locked then
 			anchor:StartMoving()
@@ -758,7 +804,7 @@ function BigWigsVerticalBars:SetupFrames()
 		if arg1 == "RightButton" then
 			local db = BigWigsVerticalBars.db.profile
 			db.bgVisible = not db.bgVisible
-			pathBG:SetAlpha(db.bgVisible and 1 or 0.05)
+			BigWigsVerticalBars:UpdateBackground()
 			if db.bgVisible then
 				BigWigs:Print(L["Background shown"])
 			else
@@ -772,10 +818,7 @@ function BigWigsVerticalBars:SetupFrames()
 	anchor.pathBG = pathBG
 	anchor.trackHit = trackHit
 
-	if not db.bgVisible then
-		pathBG:SetAlpha(0.05)
-	end
-
+	self:UpdateBackground()
 	self:ApplyLayout()
 	self:UpdateLockState()
 	self:RestorePosition()

@@ -129,15 +129,18 @@ exporter 把 `[160,160,864,864)` 的完整 `704²` crop 等比缩小一次为 `1
 
 | ID | provider／对象 | 合同 |
 |---|---|---|
-| `AB.MARKER.GRID` | `AzerothExpeditionUIMarkerGrid` 与八个 AEUI Button；数据来自 `mark1..mark8` | 固定 `4×2`，每格为透明 `48×48 UI` 命中位、间距 `3 UI`，八格下方共用一块外扩 `6 UI` 的缝制皮革九宫格；顺序为骷髅／叉／方块／月亮／三角／菱形／圆／星。八个位置始终稳定：未使用格在中央显示 `30×30 UI` 原生团队标记；已有存活目标时切换为左下 `15×15 UI` 满亮标记与轻微暗影，顶部显示两行真实名字，超长名字从 `10 UI` 降至 `9 UI`，右下显示血量百分比，底部为 `3 UI` 窄血条；死亡目标直接按本地空态绘制。标记身份与文字不再互相覆盖。整个方阵固定为 `BACKGROUND` strata，低于 ArchiTotem 的 `LOW` 主 Frame，作为未知 provider scale 下的防御性回退；正常绑定布局不再依赖重叠区抢占鼠标。ArchiTotem 可见时沿用其闭合主行的垂直锚点，但以 `128 UI` 反向水平补偿保持既有 Combat Deck 位置，使四元素候选列与皮革 icon list 横向分离；否则若真实姿态／宠物栏位于主栏下方则接在该栏下方；再否则直接占用主栏下方预留的职业卫星位置。没有独立 mover，不以 `OnUpdate` 改写任何 Frame 几何 |
+| `AB.MARKER.GRID` | `AzerothExpeditionUIMarkerGrid` 与八个 AEUI Button；数据来自 `mark1..mark8` | 固定 `8×1`，每格宽 `48 UI`、间距 `3 UI`，外扩 `6 UI`；绑定时高度填满主动作栏下方可用空间，整体边界、左侧盾牌与八个透明命中区不随占用变化。顺序为骷髅／叉／方块／月亮／三角／菱形／圆／星。共用一个连续九切片皮革外壳，上下皮面使用各自的 C 九切片折边接合，原 `3 UI` 分隔由共同底皮填满，并以连续外圈统一收口，底面不镂空，全空也保留分区；低于 `72 UI` 的矮格回退原单块紧凑布局。当前目标以图标上方短暖金线提示，名字与百分比不压边框。整体保持 `BACKGROUND` strata，仍随动作栏／职业卫星锚点链，不以 `OnUpdate` 改写几何 |
+| `AB.MARKER.GRID.UPPER` | `TargetMarkers.panel.upper`，无鼠标 Frame 与 C 九切片 | 与下区共用连续 C 九切片外框；八个动态标记固定在其上，空态 `70%`、占用态满亮。正常图标 `28 UI`，较矮双段按净空适配；紧凑回退时此布局区覆盖完整外框 |
+| `AB.MARKER.GRID.LOWER` | `TargetMarkers.panel.lower`，无鼠标 Frame 与 C 九切片 | 与上区共用连续 C 九切片外框，常规布局始终显示；承载真实名字、全宽居中百分比与 `3 UI` 细血条。两行名字使用固定 `10／9 UI` 字号、按真实字宽均衡分行，超长省略且 Tooltip 保留全名；紧凑回退时隐藏下皮面并合并布局，数据保持 |
+| `AB.MARKER.GRID.RIM` | `TargetMarkers.panel.rim`，无鼠标 Frame 与八块外边缘 Texture | 中心保持隐藏，仅沿整体边界统一收口；共同底皮覆盖上下接合处。无独立横梁、整区调色或额外阴影，内容位置及命中区保持 |
 | `AB.MARKER.TANK` | 方阵左侧 `AzerothExpeditionUIDDPSTankButton`；可选 provider 为 DDPS 的 `SetTankAssistFromUnit`／`ClearTankAssist` | `48×48 UI` 盾牌 Button 复用 accepted 图集 B 薄皮口袋；左键把当前队伍／团队玩家交给 DDPS 设为协助坦克，右键清除。状态色与 Tooltip 只读取 DDPS 的公开状态 API；目标切换、手动敌对目标优先级、SavedVariables 和输出循环继续完全由 DDPS 持有。Button 是方阵 Frame 真实宽度内固定的左槽，Action Bars／Markers 启用时始终显示；DDPS 尚未加载或版本过旧时保留红色不可用态并只给出反馈，装饰或状态刷新异常时降级为基础盾牌而不再隐藏。它复用方阵锚点链且没有独立 mover；Combat Deck／Combination 随 Bar 1 移动时整体跟随 |
 | `AB.MARKER.CELL` | 对应 `markN` unit token 与原生团队标记 API | 左键只选中当前已解析的标记目标；右键只把当前目标设为该标记，同标记再次右键取消；`Shift+右键` 清除该标记，这些显式操作在团队中仍遵守队长／团长／助理权限。已标记目标死亡时只把 AEUI 本地格退回空态并从活动计数移除，不调用 `SetRaidTarget`、不要求权限，也不修改世界中或其他插件看到的真实团队标记；标记重新解析为存活目标时再次显示。名字、血量和选中态由事件刷新，并仅以 `0.50s` 数据轮询补偿标记目标进入范围却不触发事件的情况；不扫描 `raid1..40 target`，不广播插件消息，不接管 GRTT／Banana 的 Frame 或 SavedVariables |
 | `AB.MARKER.BULK` | 方阵右侧独立 `48×48 UI`“一键标记”Button；可选 provider 为 HDLRaidTools／SuperWoW | 左键以当前未标记目标触发 `HDLUI.SJQKAmark()`；调用前验证 provider、原始 GUID、登记怪群与团队标记权限，调用后以原始 GUID 恢复目标并报告怪群编号／登记数量。只有 `SUPERWOW_VERSION`、`HDLUI.SJQKAmark` 与 `HDLUI.markToUid` 全部就绪时才把 Button 纳入模块真实宽度并显示；任一依赖缺失或 Button 异常时隐藏并收回右侧占位，手动八格保持居中可用；不复制 `markToUid`、不猜测未登记怪群、不自动启用外部插件 |
 
-`TargetMarkers runtime 2.3` 位于
+`TargetMarkers runtime 2.9` 位于
 [TargetMarkers.lua](../../../addon/AzerothExpeditionUI/Modules/TargetMarkers.lua)，
 复用 accepted [ActionConsumableKitV1.tga](../../../addon/AzerothExpeditionUI/Media/ActionBars/ActionConsumableKitV1.tga)
-的 C 九宫格作为八格共用的连续皮革底板，并用 B 薄皮口袋承载 Frame 边界内的
+的 C 九宫格作为八格共用的连续完整皮革外壳，内部折边复用上下两块 C 九切片皮面，并用 B 薄皮口袋承载 Frame 边界内的
 固定左侧 DDPS 坦克 Button 与右侧条件式一键 Button；
 不修改图集像素、UV 或 Supply 的既有用法，也不新增媒体。八个真实 Button 不再
 各画独立方框。`/aeui markers

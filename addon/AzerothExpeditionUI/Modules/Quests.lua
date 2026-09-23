@@ -209,9 +209,10 @@ local PFQUEST = {
     ["pfQuest-wotlk"] = true,
     ["pfQuest-turtle"] = true,
   },
-  utilityWidth = 72,
-  languageWidth = 86,
-  utilityHeight = 18,
+  utilityWidth = 58,
+  languageWidth = 64,
+  utilityHeight = 20,
+  utilityTop = 40,
   actionWidth = 58,
   actionHeight = 20,
   actionGap = 4,
@@ -1846,6 +1847,7 @@ local function StyleChromeText(text, kind)
         value = string.gsub(value, "|c%x%x%x%x%x%x%x%x", "")
         value = string.gsub(value, "|r", "")
         if self.aeuiQuestChromeKind == "language" then
+          value = string.gsub(value, "^%[(.*)%]$", "%1")
           local locale = GetLocale()
           if locale == "zhCN" or locale == "zhTW" then
             value = string.gsub(value, "Chinese %(Simplified%)", "简体中文")
@@ -1957,6 +1959,12 @@ local function UpdateLeatherButtonState(button)
     texture:SetTexCoord(x / 512, (x + width * 2) / 512, y / 256, (y + 40) / 256)
     SetSinglePoint(texture, "TOPLEFT", button, "TOPLEFT", 0, state == "pressed" and -1 or 0)
     texture:Show()
+    -- pfQuest utility labels are separate FontStrings, so the native pushed
+    -- text offset does not move them with the leather tab.
+    if button.txt then
+      SetSize(button.txt, width - 12, PFQUEST.utilityHeight)
+      SetSinglePoint(button.txt, "CENTER", button, "CENTER", 0, state == "pressed" and -1 or 0)
+    end
     SetButtonTextColor(button, state == "normal" and button == QuestLogFrameAbandonButton
       and THEME.ink.control.danger or THEME.ink.actionTab[state])
     return
@@ -2031,12 +2039,13 @@ local function InstallLeatherButtonHooks(button)
   )
 end
 
-local function IsQuestFooterButton(button)
+local function IsQuestActionTabButton(button)
   return button == QuestLogFrameAbandonButton or button == QuestFramePushQuestButton
     or button == QuestFrameExitButton or button == QuestLogFrameCancelButton
     or button == QuestLogFrameExpandButton
     or (pfQuest and (button == pfQuest.buttonShow or button == pfQuest.buttonHide
-      or button == pfQuest.buttonClean or button == pfQuest.buttonReset))
+      or button == pfQuest.buttonClean or button == pfQuest.buttonReset
+      or button == pfQuest.buttonLanguage or button == pfQuest.buttonOnline))
 end
 
 local function StyleLeatherButton(button, width, height)
@@ -2162,7 +2171,7 @@ local function StyleLeatherButton(button, width, height)
   end
 
   button.aeuiQuestActionTabWidth = nil
-  if IsQuestFooterButton(button) and ACTION_TABS.rows[width] and height == 20
+  if IsQuestActionTabButton(button) and ACTION_TABS.rows[width] and height == 20
     and THEME.media.actionTabStates then
     local texture = EnsureControlTexture(button, "aeuiQuestActionArt", "ARTWORK")
     local loaded = texture:SetTexture(THEME.media.actionTabStates)
@@ -2198,6 +2207,10 @@ function Quests:UpdateActionButtonStates()
     QuestFrameExitButton or QuestLogFrameCancelButton
   )
   UpdateLeatherButtonState(QuestLogFrameExpandButton)
+  if pfQuest then
+    UpdateLeatherButtonState(pfQuest.buttonLanguage)
+    UpdateLeatherButtonState(pfQuest.buttonOnline)
+  end
 end
 
 local function StylePfQuestButton(button, width, height, fontSize)
@@ -2278,7 +2291,7 @@ function Quests:ApplyPfQuestQuestLogCompatibility()
       frame,
       "TOPLEFT",
       utilityRight,
-      -LAYOUT.controlsTop
+      -PFQUEST.utilityTop
     )
   end
 
@@ -2306,7 +2319,7 @@ function Quests:ApplyPfQuestQuestLogCompatibility()
         frame,
         "TOPLEFT",
         utilityRight,
-        -LAYOUT.controlsTop
+        -PFQUEST.utilityTop
       )
     end
   end
@@ -4301,8 +4314,25 @@ end
 
 function Quests:ApplyControlVisuals()
   self:HideCollapseAllButton()
+  HideFrame(QuestLogTitleText)
+  if QuestLogTitleText and QuestLogTitleText.SetAlpha then
+    QuestLogTitleText:SetAlpha(0)
+  end
   StyleTrackToggle(QuestLogFrameLevelsCheckButton)
-  StyleTrackToggle(QuestLogTrack)
+  local track = QuestLogTrack
+  if track then
+    AppendScript(
+      track,
+      "OnShow",
+      "aeuiQuestTrackSuppressed",
+      function()
+        if addon.db and addon.db.quests and addon.db.quests.enabled then
+          HideFrame(track)
+        end
+      end
+    )
+    HideFrame(track)
+  end
 
   local count = QuestLogQuestCount or QuestLogCount
   if count and count.SetFont then

@@ -286,11 +286,16 @@ function BigWigsWarningSign:BigWigs_ShowWarningSign(texturePath, duration, force
 		c.force = force;
 
 		self.texture:SetTexture(texturePath)
-		if type(text) == "string" then
-			self.text:SetText(text)
-		else
-			self.text:SetText("")
-		end
+		-- Measure without the previous caption's bounds. The client's automatic
+		-- CJK width can clip the last glyph; reserve one font-size of horizontal slack.
+		self.text:SetWidth(0)
+		self.text:SetHeight(0)
+		self.text:SetText(type(text) == "string" and text or "")
+		local _, fontSize = self.text:GetFont()
+		local padding = math.max(4, fontSize or 32)
+		self.text:SetWidth(math.ceil(self.text:GetStringWidth()) + padding)
+		-- Vanilla exposes the laid-out FontString height through GetHeight.
+		self.text:SetHeight(math.ceil(math.max(self.text:GetHeight(), fontSize or 32)) + 4)
 
 		self.frames.sign:Show()
 		self.db.profile.isVisible = true
@@ -547,7 +552,9 @@ function BigWigsWarningSign:CreateWarningSignFrame()
 	self.texture:SetTexCoord(0.08, 0.92, 0.08, 0.92) -- zoom in to hide border
 
 	self.text = self.frames.sign:CreateFontString(nil, "OVERLAY", "ZoneTextFont")
-	--self.text:SetAllPoints(self.frames.sign)
+	self.text:SetJustifyH("CENTER")
+	self.text:SetJustifyV("MIDDLE")
+	self.text:SetNonSpaceWrap(false)
 	self.text:SetPoint("CENTER", self.frames.sign, "CENTER", 0, 0)
 	--[[local x = self.db.profile.posx
 	local y = self.db.profile.posy
