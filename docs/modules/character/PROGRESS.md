@@ -2,6 +2,17 @@
 
 ## 当前结论
 
+- Character runtime `2.2 / P5`：观察装备／荣誉／可选竞技场／观察天赋、试穿、
+  战袍设计与书籍／信件阅读窗已复用自身角色页的外壳、模型底材、槽框、分页签
+  和附页纸张；所有 accepted source、2× runtime 媒体与 manifest 保持不变。
+  四个外围宿主各自要求对应 pfUI skin 和 `384×512` 几何；缺失、禁用或不支持
+  时只回退该窗口。观察槽保留只读点击与提示，TWTalentFrame 仅在观察宿主内
+  换节点／分支入口外缘，自身天赋模块仍暂停。
+  观察 PaperDoll 的现有装备／属性／双方对照附页也复用角色伴随页的皮革；分页
+  离开后恢复。窗口不改 provider Parent、Point、宽高或命中，不增加逐帧维护。
+  首次观察的延迟 skin、后续物品缓存更新和翻页按钮启禁均按原生命周期重新接入。
+  等待实机核对模型层序、文字净空、观察四页、试穿重置、战袍五项选择与书籍翻页；
+  相邻回归自身角色页与观察伴随栏，用 `/aeui character` 检查整体恢复。
 - 本轮角色页材质、布局、分页滚动及 PvP 高亮处理均为 overhaul 的所有角色
   默认行为，直接使用统一 Character runtime；不按角色保存外观覆盖。
   `character.enabled` 默认开启，保存在账号级 `AzerothExpeditionUIDB`，
@@ -15,13 +26,13 @@
   backdrop、HIGHLIGHT 纹理及命名 Highlight region／child，并在原 OnEnter 完成后
   清除其重新显示的高亮。保留原悬停逻辑与点击，禁用时恢复原底框与 Alpha，
   等待鼠标移入／移出复核。
-- Character runtime `2.1 / P5`：依据七项实机反馈，称号／左右属性下拉、
+- Character runtime `2.2 / P5` 保留自身角色页控件：称号／左右属性下拉、
   声望／技能折叠件与滚动条、状态条、荣誉／竞技场二级 Tabs 已接入现有
   Gear Planner 皮革／黄铜 donor；状态条复用 Unit Frames 填充，保留 provider
   数值、颜色与点击。共享下拉列表只在角色下拉打开时接管，其他菜单恢复原底材。
 - StatCompareSelfFrame 与 S_ItemTip_InspectFrame 的角色伴随页改为不透明皮革
   与固定边角包框，包含等级小框与装备部位签；随实际 provider 尺寸伸展，
-  离开角色 PaperDoll 或禁用 Character 时恢复，观察会话仍由原 provider 持有。
+  离开角色／观察 PaperDoll 或禁用 Character 时恢复；数据与会话仍由原 provider 持有。
 - 实机反馈仍有声望表头越过纸页上边、技能“全部”换行、PvP 数值贴右边。
   已修正为声望表头位于纸内 `y=76`、分组折叠件至少距纸左边 `8 UI`，
   技能“全部”移至纸内右上 `70×18` 独立区并保留至少 `48 UI` 文字宽度；
@@ -90,7 +101,7 @@
   分别挂载到声望、技能、Honor／PVP 和存在时的 Arena provider 的 `BACKGROUND`，
   以三切片覆盖 `301×382 @ 25,66` 视觉区；列表、文字、状态条、按钮、滚动条和
   页面显隐保持动态，阶段 `P5`。
-- 当前运行时：Character runtime `2.1` 接管 `CharacterFrame` 外壳、PaperDoll
+- 当前运行时：Character runtime `2.2` 接管 `CharacterFrame` 外壳、PaperDoll
   页模型背景、连续属性纸、五个独立抗性槽和 19 个装备槽普通态外框，并隐藏
   可能存在的左上肖像；实时 3D 人物、装备图标／计数／冷却／点击／提示／
   ShaguScore、属性文字／下拉框、抗性图标／数值、Tab 文字／显隐／重排／点击
@@ -107,7 +118,8 @@
   属于后续 E2-B。
   声望／技能／荣誉／PvP／可选竞技场页采用共用档案页及独立控件材质，各页 provider
   自己控制叶片、列表与控件显隐。
-  Inspect 与 DressUp 仍使用 pfUI 默认 skins。
+  Inspect、DressUp、Tabard 与 ItemText 保留 pfUI provider，并通过四条精确 route
+  复用上述角色页美术。
 - 最新实机图显示，属性组原 `230 UI @ x=67` 的中心为 `x=182`，相对当前
   `x=69..312` 中央底材的中心 `x=190.5` 明显偏左。adapter 已把原生
   `CharacterAttributesFrame`、可选 `BetterCharacterAttributesFrame` 与属性纸同步右移
@@ -132,7 +144,7 @@
   `560×555`，19 槽与“当前／配装／变化”属性对比同屏，水平合同为 `996 UI`；
   第三方当前装备视图在
   有效宽度至少 `1072 UI` 且左右净空足够时仍可选双栏，配装视图不重复双开
-  StatCompare。Character runtime 仍为 `2.0`，既有外壳与动态内容所有权不变，
+  StatCompare。Character runtime 为 `2.2`，既有外壳与动态内容所有权不变，
   阶段 `P5` 等待实机。
 - 同一 runtime 以独立会话接入 `InspectFrame / InspectPaperDollFrame`：“装／属”
   默认互斥，“比”只在左右净空足够时显示目标／自身 StatCompare 并隐藏 S_ItemTip，
@@ -158,7 +170,8 @@
 | `CHAR.COMPANION` | `P5` | Gear Planner `1.2-zhCN`；Character／PaperDoll 子控制器、`40 UI`“装备／属性／配装／双栏”深皮革伴随栏、按真实 Provider 宽度判断的默认双栏、`560×555` 装备／属性对比同屏配装视图；不改 Provider Parent／尺寸／数据 | 实机验证按 C 默认双栏、角色栏按钮、`996 UI` 配装净空、四项互斥、当前／配装／变化列、分页显隐、ESC、Provider 缺失及 Character／Gear Planner 禁用回退 |
 | `CHAR.INSPECT.COMPANION` | `P5` | 独立 Inspect／PaperDoll 子控制器、`28 UI`“装／属／比／存”栏、单 Provider 默认、显式双方比较、数据就绪快照与 Provider 状态恢复已接入 | 实机验证观察首次加载、目标切换、装／属互斥、宽／窄屏“比”、分页收口、17／19 槽快照、方案箭头、缺失 Provider 与 Gear 禁用回退 |
 | `CHAR.REPUTATION／SKILLS／HONOR／ARENA` 控件 | `P5` | runtime `2.1`；独立皮革／黄铜控件与动态填充、文字对齐、382 UI 高三切片纸页已接入 | 实机复核折叠／滚动、二级 Tabs、数值颜色、详情及禁用回退 |
-| `CHAR.PET／INSPECT 外壳／DRESSUP` | `P1` | 基础 pfUI skin 对象已审计；Inspect 伴随逻辑单独登记为 P5 | 确认复用与只读视觉差异 |
+| `CHAR.INSPECT／DRESSUP／TABARD／ITEMTEXT` | `P5` | runtime `2.2`；四条独立 route 复用 Character 现有 2× 资产；动态内容、只读观察、按钮／分页及局部回退保留 | 实机核对四类宿主、观察天赋、模型／文字层序、按钮状态、伴随页与禁用回退 |
+| `CHAR.PET` | `P1` | 基础 pfUI skin 对象已审计，未新增接管 | 单独确认宠物页复用与数据边界 |
 
 ## 已否决方向
 

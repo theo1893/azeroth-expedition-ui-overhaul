@@ -65,6 +65,10 @@ pfUI.expedition = {
     ["character.ammo-slot-v3"] = "character",
     ["character.secondary-leaf-v3"] = "character",
     ["character.controls"] = "character",
+    ["character.inspect-windows"] = "character",
+    ["character.dressup-window"] = "character",
+    ["character.tabard-window"] = "character",
+    ["character.itemtext-window"] = "character",
   },
 }
 

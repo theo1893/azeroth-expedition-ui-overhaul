@@ -1,7 +1,7 @@
 local addon = AzerothExpeditionUI
 local Character = {}
 
-Character.runtimeContract = "2.1"
+Character.runtimeContract = "2.2"
 Character.texelDensity = 2
 
 local COMPONENT_ROUTES = {
@@ -2135,10 +2135,13 @@ local function ControlScrollbar(bar)
 end
 
 function Character:RefreshCompanionArt()
-  local active = ControlsEnabled() and CharacterFrame and CharacterFrame:IsVisible()
+  local personal = ControlsEnabled() and CharacterFrame and CharacterFrame:IsVisible()
     and PaperDollFrame and PaperDollFrame:IsVisible()
-  for _, name in ipairs({"StatCompareSelfFrame", "S_ItemTip_InspectFrame"}) do
+  local inspect = ControlsEnabled() and InspectFrame and InspectFrame:IsVisible() and
+    InspectFrame.aeuiCharacterPeripheralContract and InspectPaperDollFrame and InspectPaperDollFrame:IsVisible()
+  for _, name in ipairs({"StatCompareSelfFrame", "StatCompareTargetFrame", "S_ItemTip_InspectFrame"}) do
     local frame = _G[name]
+    local active = inspect or (personal and name ~= "StatCompareTargetFrame")
     if frame then
       if active then
         ControlChrome(frame, 6, true)
@@ -2345,7 +2348,442 @@ function Character:InstallControlHooks()
   end
 end
 
+-- The neighbouring windows reuse the accepted Character media. Keep the pfUI
+-- skins loaded: they still own models, inventory, talent data and interaction.
+do
+  local windows = {
+    { name = "InspectFrame", key = "inspect", route = "character.inspect-windows", skin = "Inspect" },
+    { name = "DressUpFrame", key = "dressup", route = "character.dressup-window", skin = "Dress Up Frame" },
+    { name = "TabardFrame", key = "tabard", route = "character.tabard-window", skin = "Guild Tabard" },
+    { name = "ItemTextFrame", key = "itemtext", route = "character.itemtext-window", skin = "Books" },
+  }
+  local states, backdrops, backdropHooks, scriptHooks, functionHooks = {}, {}, {}, {}, {}
+  local methodHooks = {}
+  local refreshing = false
+  local W = {}
+
+  function W.enabled(spec)
+    return ModuleEnabled() and ScopedOwnershipActive() and
+      pfUI:GetExpeditionComponentOwner(spec.route) == "character" and
+      (not pfUI.IsSkinEnabled or pfUI:IsSkinEnabled(spec.skin))
+  end
+
+  function W.belongs(frame, host)
+    for i = 1, 16 do
+      if not frame then return false end
+      if frame == host then return true end
+      frame = frame.GetParent and frame:GetParent()
+    end
+    return false
+  end
+
+  function W.hide(state, region)
+    if not region or not region.SetAlpha then return end
+    if state.hidden[region] == nil then state.hidden[region] = region:GetAlpha() end
+    region:SetAlpha(0)
+  end
+
+  function W.clear(state, frame)
+    if not frame or not frame.GetBackdrop then return end
+    if not backdrops[frame] then
+      backdrops[frame] = {value = frame:GetBackdrop(), color = {frame:GetBackdropColor()},
+        border = {frame:GetBackdropBorderColor()}}
+      state.backdrops[frame] = true
+    end
+    if not backdropHooks[frame] then
+      local original = {set = frame.SetBackdrop, color = frame.SetBackdropColor,
+        border = frame.SetBackdropBorderColor}
+      backdropHooks[frame] = original
+      frame.SetBackdrop = function(self, value)
+        local saved = backdrops[self]
+        if saved then saved.value = value; value = nil end
+        return original.set(self, value)
+      end
+      frame.SetBackdropColor = function(self, r, g, b, a)
+        if backdrops[self] then backdrops[self].color = {r, g, b, a or 1} end
+        return original.color(self, r, g, b, a)
+      end
+      frame.SetBackdropBorderColor = function(self, r, g, b, a)
+        if backdrops[self] then backdrops[self].border = {r, g, b, a or 1} end
+        return original.border(self, r, g, b, a)
+      end
+    end
+    -- Do not Hide() a backdrop: Inspect icons can be parented to it by pfUI.
+    backdropHooks[frame].set(frame, nil)
+  end
+
+  function W.chrome(state, frame)
+    if not frame then return end
+    W.clear(state, frame)
+    W.clear(state, frame.backdrop)
+    W.hide(state, frame.backdrop_border)
+    W.hide(state, frame.backdrop_shadow)
+  end
+
+  function W.texture(state, key, owner, layer)
+    if not state.art[key] then state.art[key] = owner:CreateTexture(nil, layer or "BACKGROUND") end
+    state.art[key]:Show()
+    return state.art[key]
+  end
+
+  -- Slice only quiet centres; all samples remain in the existing 2x TGAs.
+  function W.surface(state, key, owner, anchor, definition, x, y, width, height, paper)
+    if width <= 0 or height <= 0 then return end
+    local signature = x .. ":" .. y .. ":" .. width .. ":" .. height
+    local first = state.art[key .. "11"]
+    if state.layouts[key] == signature and first and first:GetTexture() == definition.path then return end
+    state.layouts[key] = signature
+    local cap = math.min(8, width / 2 - .1, height / 2 - .1)
+    cap = math.max(0, cap)
+    local uv = definition.texCoord
+    local tw = paper and 1024 or 512
+    local th = paper and 1024 or 512
+    local u = {uv[1], uv[1] + cap * 2 / tw, uv[2] - cap * 2 / tw, uv[2]}
+    local v = {uv[3], uv[3] + cap * 2 / th, uv[4] - cap * 2 / th, uv[4]}
+    local xs, ys = {0, cap, width - cap, width}, {0, cap, height - cap, height}
+    -- ItemText keeps the provider's dark ink, so use the accepted paper at
+    -- full brightness; the character's white-label pages retain their tint.
+    local color = paper and paper ~= "reading" and PARCHMENT_VERTEX_COLOR or {1, 1, 1}
+    for row = 1, 3 do
+      for column = 1, 3 do
+        local texture = W.texture(state, key .. row .. column, owner)
+        texture:SetTexture(definition.path)
+        texture:SetTexCoord(u[column], u[column+1], v[row], v[row+1])
+        texture:ClearAllPoints()
+        texture:SetPoint("TOPLEFT", anchor, "TOPLEFT", x + xs[column], -y - ys[row])
+        texture:SetWidth(xs[column+1] - xs[column])
+        texture:SetHeight(ys[row+1] - ys[row])
+        texture:SetVertexColor(unpack(color))
+      end
+    end
+  end
+
+  function W.script(frame, script, callback)
+    if not frame then return end
+    scriptHooks[frame] = scriptHooks[frame] or {}
+    local installed = scriptHooks[frame][script]
+    if installed and frame:GetScript(script) == installed then return end
+    local previous = frame:GetScript(script)
+    local wrapper = function()
+      if previous then previous() end
+      callback()
+    end
+    scriptHooks[frame][script] = wrapper
+    frame:SetScript(script, wrapper)
+  end
+
+  function W.buttonMethod(button, method, callback)
+    methodHooks[button] = methodHooks[button] or {}
+    if methodHooks[button][method] or not button[method] then return end
+    local previous = button[method]
+    button[method] = function(self)
+      previous(self)
+      callback()
+    end
+    methodHooks[button][method] = true
+  end
+
+  function W.button(state, button, panel, id)
+    if not button or not W.belongs(button, state.host) then return end
+    state.buttons[button] = {panel = panel, id = id}
+    W.chrome(state, button)
+    W.hide(state, button.GetHighlightTexture and button:GetHighlightTexture())
+    -- Native close/arrow glyphs and FontStrings stay above the leather bed.
+    local function refresh()
+      if not state.active then return end
+      local spec = state.buttons[button]
+      local enabled = not button.IsEnabled or button:IsEnabled()
+      local selected = spec.panel and (spec.panel.selectedTab == spec.id or enabled == 0 or enabled == false)
+      local name = selected and "selected" or "normal"
+      if not selected and enabled ~= 0 and enabled ~= false then
+        if button.GetButtonState and button:GetButtonState() == "PUSHED" then name = "pressed"
+        elseif MouseIsOver and MouseIsOver(button) then name = "hover" end
+      end
+      local alpha = (not selected and (enabled == 0 or enabled == false)) and .45 or 1
+      local signature = name .. ":" .. alpha
+      local first = state.art[tostring(button) .. "left"]
+      if state.buttonVisuals[button] == signature and first and first:GetTexture() == CHARACTER_TABS.path then return end
+      state.buttonVisuals[button] = signature
+      local parts = CHARACTER_TABS.states[name]
+      for _, part in ipairs({"left", "center", "right"}) do
+        local texture = W.texture(state, tostring(button) .. part, button)
+        texture:SetTexture(CHARACTER_TABS.path)
+        texture:SetTexCoord(unpack(parts[part]))
+        texture:ClearAllPoints()
+        if part == "center" then
+          texture:SetPoint("TOPLEFT", button, "TOPLEFT", 6, 0)
+          texture:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -6, 0)
+        else
+          local side = part == "left" and "LEFT" or "RIGHT"
+          texture:SetPoint("TOP" .. side, button, "TOP" .. side, 0, 0)
+          texture:SetPoint("BOTTOM" .. side, button, "BOTTOM" .. side, 0, 0)
+          texture:SetWidth(6)
+        end
+        texture:SetAlpha(alpha)
+      end
+    end
+    for _, script in ipairs({"OnEnter", "OnLeave", "OnMouseDown", "OnMouseUp", "OnClick", "OnShow"}) do
+      W.script(button, script, refresh)
+    end
+    W.buttonMethod(button, "Enable", refresh)
+    W.buttonMethod(button, "Disable", refresh)
+    refresh()
+  end
+
+  function W.slot(state, button, variant)
+    if not button or not W.belongs(button, state.host) then return end
+    W.chrome(state, button)
+    -- Inspect and its talents are read-only. Retain tooltips and link clicks,
+    -- without borrowing the player's equip/pressed or disabled slot state.
+    W.hide(state, button.GetPushedTexture and button:GetPushedTexture())
+    if button.GetHighlightTexture and button.SetHighlightTexture then
+      if not state.slotHighlights[button] then
+        state.slotHighlights[button] = CaptureTextureState(button:GetHighlightTexture())
+      end
+      ConfigureSlotInteractionTexture(button, "SetHighlightTexture", "GetHighlightTexture",
+        SLOT_INTERACTION.states.highlight,
+        {path = SLOT_INTERACTION.path, width = button:GetWidth(), height = button:GetHeight()})
+    end
+    local texture = W.texture(state, tostring(button) .. "slot", button, "ARTWORK")
+    texture:SetTexture(SLOT_BASE.path)
+    texture:SetTexCoord(unpack(SLOT_BASE.variants[variant or "C"]))
+    texture:ClearAllPoints()
+    texture:SetAllPoints(button)
+  end
+
+  function W.scrollbar(state, bar)
+    if not bar or not W.belongs(bar, state.host) then return end
+    W.chrome(state, bar.bg)
+    if bar.bg then
+      W.surface(state, tostring(bar) .. "track", bar.bg, bar.bg, MODEL_BACKGROUND,
+        0, 0, bar.bg:GetWidth(), bar.bg:GetHeight())
+    end
+    local name = bar:GetName()
+    if name then
+      W.button(state, _G[name .. "ScrollUpButton"])
+      W.button(state, _G[name .. "ScrollDownButton"])
+    end
+    local thumb = bar.thumb or (bar.GetThumbTexture and bar:GetThumbTexture())
+    if thumb then
+      if not state.textures[thumb] then state.textures[thumb] = CaptureTextureState(thumb) end
+      thumb:SetTexture(CONTROL_MEDIA .. "GearPlannerControlsAtlasV1")
+      thumb:SetTexCoord(50/1024, 88/1024, 5/128, 34/128)
+      thumb:SetVertexColor(1, 1, 1, 1)
+    end
+  end
+
+  function W.bar(state, bar)
+    if not bar or not W.belongs(bar, state.host) then return end
+    W.chrome(state, bar)
+    local texture = bar.GetStatusBarTexture and bar:GetStatusBarTexture()
+    if not texture then return end
+    if not state.bars[bar] then
+      state.bars[bar] = type(texture) == "string" and texture or texture:GetTexture()
+    end
+    local color = {bar:GetStatusBarColor()}
+    bar:SetStatusBarTexture(addon.media.root .. "UnitFrames\\UnitFrameHealthFillV1")
+    bar:SetStatusBarColor(unpack(color))
+  end
+
+  function W.restore(state)
+    state.active = false
+    for _, texture in pairs(state.art) do texture:Hide() end
+    for frame in pairs(state.backdrops) do
+      local saved = backdrops[frame]
+      backdrops[frame] = nil
+      if saved then
+        frame:SetBackdrop(saved.value)
+        frame:SetBackdropColor(unpack(saved.color))
+        frame:SetBackdropBorderColor(unpack(saved.border))
+      end
+    end
+    for region, alpha in pairs(state.hidden) do region:SetAlpha(alpha) end
+    for texture, saved in pairs(state.textures) do
+      texture:SetTexture(saved.path)
+      if saved.texCoord then texture:SetTexCoord(unpack(saved.texCoord)) end
+      if saved.vertexColor then texture:SetVertexColor(unpack(saved.vertexColor)) end
+    end
+    for bar, path in pairs(state.bars) do bar:SetStatusBarTexture(path) end
+    for button, saved in pairs(state.slotHighlights) do
+      RestoreTextureState(button, "SetHighlightTexture", "GetHighlightTexture", saved)
+    end
+    state.backdrops, state.hidden, state.textures, state.bars = {}, {}, {}, {}
+    state.layouts, state.buttonVisuals, state.slotHighlights = {}, {}, {}
+    state.host.aeuiCharacterPeripheralContract = nil
+  end
+
+  function W.inspect(state)
+    local host = state.host
+    local paperdoll = InspectPaperDollFrame
+    if paperdoll and W.belongs(paperdoll, host) then
+      W.surface(state, "model", paperdoll, host, MODEL_BACKGROUND, 69, 75, 243, 369)
+    end
+    for slot, variant in pairs(SLOT_VARIANTS) do W.slot(state, _G["Inspect" .. slot], variant) end
+    for i = 1, 4 do W.button(state, _G["InspectFrameTab" .. i], host, i) end
+    for _, name in ipairs({"InspectHonorFrame", "InspectArenaFrame", "InspectTalentsFrame"}) do
+      local page = _G[name]
+      if page and W.belongs(page, host) then
+        W.chrome(state, page)
+        W.surface(state, name, page, host, SECONDARY_LEAF, 25, 66, 301, 382, true)
+      end
+    end
+    W.bar(state, InspectHonorFrameProgressBar)
+    for i = 1, 5 do
+      local team = _G["InspectArenaTeam" .. i]
+      if team and W.belongs(team, host) then W.chrome(state, team) end
+    end
+    local talents = TWTalentFrame
+    if talents and W.belongs(talents, host) then
+      -- The provider's class backgrounds, branch lines, ranks and selection
+      -- stay live. Only nodes, tabs and scrollbar receive existing materials.
+      for i = 1, (MAX_NUM_TALENTS or 100) do W.slot(state, _G["TWTalentFrameTalent" .. i]) end
+      for i = 1, 3 do W.button(state, _G["TWTalentFrameTab" .. i], talents, i) end
+      W.scrollbar(state, TWTalentFrameScrollFrameScrollBar)
+    end
+    W.button(state, InspectFrameCloseButton)
+  end
+
+  function W.model(state, key)
+    -- The backdrop remains a live parent for pfUI-owned controls. Its draw
+    -- layer is available even when the host has disabled BACKGROUND.
+    W.surface(state, "model", state.host.backdrop, state.host, MODEL_BACKGROUND, 25, 66, 301, 382)
+    if key == "dressup" then
+      W.button(state, DressUpFrameCloseButton)
+      W.button(state, DressUpFrameResetButton)
+      W.button(state, DressUpFrameCancelButton)
+    else
+      W.button(state, TabardFrameCloseButton)
+      W.button(state, TabardFrameAcceptButton)
+      W.button(state, TabardFrameCancelButton)
+      for i = 1, 5 do
+        local name = "TabardFrameCustomization" .. i
+        local row = _G[name]
+        if row and W.belongs(row, state.host) then
+          W.chrome(state, row)
+          W.surface(state, name, row, row, MODEL_BACKGROUND, 0, 0,
+            row:GetWidth(), row:GetHeight())
+        end
+        W.button(state, _G[name .. "LeftButton"])
+        W.button(state, _G[name .. "RightButton"])
+      end
+    end
+  end
+
+  function W.itemtext(state)
+    local scroll = ItemTextScrollFrame
+    if scroll and W.belongs(scroll, state.host) then
+      -- pfUI owns an anonymous stationary texture, updated through
+      -- ItemTextMaterialTopLeft. Suppress only that art, never the HTML child.
+      for _, region in ipairs({scroll:GetRegions()}) do
+        local path = region.GetTexture and region:GetTexture()
+        if type(path) == "string" and string.find(string.lower(path), "interface\\stationery\\", 1, true) then
+          W.hide(state, region)
+        end
+      end
+      W.chrome(state, scroll)
+      W.surface(state, "paper", scroll, scroll, SECONDARY_LEAF, 0, 0,
+        scroll:GetWidth(), scroll:GetHeight(), "reading")
+    end
+    W.scrollbar(state, ItemTextScrollFrameScrollBar)
+    W.button(state, ItemTextCloseButton)
+    W.button(state, ItemTextPrevPageButton)
+    W.button(state, ItemTextNextPageButton)
+    W.bar(state, ItemTextStatusBar)
+  end
+
+  function Character:RestorePeripheralWindows()
+    for _, state in pairs(states) do W.restore(state) end
+    self.peripheralStatus = "inactive"
+  end
+
+  function Character:RefreshPeripheralWindows()
+    if refreshing then return end
+    refreshing = true
+    local status = {}
+    for _, spec in ipairs(windows) do
+      local host, state = _G[spec.name], states[spec.name]
+      local ready = host and host.backdrop and W.enabled(spec) and
+        math.abs(host:GetWidth() - 384) <= 2 and math.abs(host:GetHeight() - 512) <= 2
+      if ready then
+        if not state then
+          state = {host = host, art = {}, backdrops = {}, hidden = {}, textures = {}, bars = {},
+            buttons = {}, layouts = {}, buttonVisuals = {}, slotHighlights = {}}
+          states[spec.name] = state
+        end
+        state.active = true
+        local ok, error = pcall(function()
+          W.chrome(state, host)
+          for key, definition in pairs(ART) do
+            ConfigureTexture(W.texture(state, key, host, "BORDER"), definition,
+              {relativeTo = host, relativePoint = "TOPLEFT", x = definition.x, y = -definition.y})
+          end
+          if spec.key == "inspect" then W.inspect(state)
+          elseif spec.key == "itemtext" then W.itemtext(state)
+          else W.model(state, spec.key) end
+        end)
+        if ok then
+          host.aeuiCharacterPeripheralContract = self.runtimeContract
+          table.insert(status, spec.key .. "=active")
+        else
+          W.restore(state)
+          table.insert(status, spec.key .. "=fallback:" .. tostring(error))
+        end
+      else
+        if state then W.restore(state) end
+        table.insert(status, spec.key .. "=" .. (host and "provider-fallback" or "not-loaded"))
+      end
+    end
+    self.peripheralStatus = table.concat(status, ";")
+    refreshing = false
+    self:RefreshCompanionArt()
+  end
+
+  function Character:InstallPeripheralHooks()
+    for _, spec in ipairs(windows) do
+      local host = _G[spec.name]
+      if host then
+        W.script(host, "OnShow", function() Character:RefreshPeripheralWindows() end)
+      end
+    end
+    for _, frame in pairs({InspectFrame, InspectPaperDollFrame}) do
+      W.script(frame, "OnHide", function() Character:RefreshCompanionArt() end)
+    end
+    if InspectPaperDollFrame then
+      W.script(InspectPaperDollFrame, "OnShow", function() Character:RefreshCompanionArt() end)
+    end
+    if type(hooksecurefunc) == "function" then
+      for _, name in ipairs({"InspectPaperDollItemSlotButton_Update", "InspectFrame_Show", "InspectFrame_ShowSubFrame",
+        "InspectHonorFrame_Update", "InspectArenaFrame_Update", "TWTalentFrame_Update",
+        "ItemTextFrame_OnEvent", "TabardFrame_OnEvent"}) do
+        if type(_G[name]) == "function" and not functionHooks[name] then
+          hooksecurefunc(name, function() Character:RefreshPeripheralWindows() end)
+          functionHooks[name] = true
+        end
+      end
+      if type(PanelTemplates_SetTab) == "function" and not functionHooks.tabs then
+        hooksecurefunc("PanelTemplates_SetTab", function(panel)
+          if panel == InspectFrame or (TWTalentFrame and panel == TWTalentFrame and
+            InspectFrame and W.belongs(panel, InspectFrame)) then Character:RefreshPeripheralWindows() end
+        end)
+        functionHooks.tabs = true
+      end
+    end
+    if not self.peripheralEvents then
+      local events = CreateFrame("Frame")
+      events:RegisterEvent("ADDON_LOADED")
+      events:RegisterEvent("INSPECT_READY")
+      events:RegisterEvent("ITEM_TEXT_READY")
+      events:SetScript("OnEvent", function()
+        Character:InstallPeripheralHooks()
+        Character:RefreshPeripheralWindows()
+      end)
+      self.peripheralEvents = events
+    end
+  end
+end
+
 function Character:Restore()
+  self:RestorePeripheralWindows()
   RestoreControls()
   if CharacterFrame then
     HideArt()
@@ -2685,7 +3123,8 @@ function Character:GetRuntimeStatus()
     "/leaf-texture=" .. tostring(leafTexture) ..
     ", provider-dynamic-content=live" ..
     ", texel-density=2x/provider-geometry-unchanged" ..
-    ", top-left-portrait=hidden"
+    ", top-left-portrait=hidden" ..
+    ", peripheral-windows=" .. tostring(self.peripheralStatus or "unapplied")
 end
 
 function Character:Initialize()
@@ -2706,6 +3145,7 @@ end
 function Character:Apply()
   self.applyStage = "apply-entered"
   self:InstallHooks()
+  self:InstallPeripheralHooks()
   if not ModuleEnabled() then
     self:Restore()
     return
@@ -2716,6 +3156,7 @@ function Character:Apply()
     return
   end
   self:ApplyFrame()
+  self:RefreshPeripheralWindows()
 end
 
 addon:RegisterModule("Character", Character)

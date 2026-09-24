@@ -32,7 +32,7 @@ Alt+点击附件已识别 TurtleMail。旧客户端复制更新时需移除 Mail
 | Map | `P5` | runtime `7.6`；WorldMap 暂停；mask、V4 non-bottom 托盘与 V7 bottom 收纳袋为高分辨率 runtime；V3 罗盘／扣具／插槽因仅存 1× accepted source 登记明确例外且未伪放大；逻辑几何不变 | 完整重启后实机验证 mask、V4 九切片、V7 徽记压接、袋内净空、0／6／12／22／30、图标层序、缩放、显隐及回退 |
 | Spellbook | `P4 / integration paused` | accepted `SB-A2-DONOR V1` source/runtime 保留；AEUI Spellbook adapter 与精确 ownership 暂停，客户端恢复 pfUI 技能书 | 依据 handoff 实机图核对四块 TGA 对位、层序、provider region 和动态控件净空，再恢复接入 |
 | Talents | `P1 / paused` | 已对齐动态背景、4×8 节点、Rank、分支／箭头、Tab 与 Turtle Inspect 边界；不再与 Spellbook 共用模块进度 | 等用户明确恢复后制作独立预演 |
-| Character | `P2–P5 / active` | runtime `2.1`；保留既有 2× PaperDoll 与 Gear Planner 伴随逻辑，补齐侧栏皮革、称号／属性下拉、分页控件与文字对齐；三切片纸页覆盖底部 gap | `/reload` 验证侧栏、下拉、折叠／滚动、PvP 与纸页底边；相邻装备提示／详情和 Character 禁用回退 |
+| Character | `P2–P5 / active` | runtime `2.2`；既有 2× PaperDoll、控件与双伴随逻辑保留；观察装备／天赋、试穿、战袍设计及书籍／信件阅读复用自身角色页资产，四条精确 route 保留 provider 与独立回退 | `/reload` 验证外围四窗、观察分页／附页、模型／正文层序及按钮状态；相邻复核自身角色页，再验证 Character 禁用与缺失 skin 回退 |
 | Gear Planner | `P5` | runtime `1.2-zhCN`；角色栏按钮复用深皮革工具签且双栏按真实 Provider 宽度判断；accepted `GEAR-MAIN-V1` 军需官案板与 `GEAR-SLOT-STATES-V1` 强／弱黄铜夹签、冷灰蓝修订缝带均为 2× runtime；AtlasLoot 仍持有查询、分页、来源和 Wishlist | 完整重启后实机验证角色栏按钮、默认双栏、三种槽位 sprite、保存状态与方案选中反馈，再回归案板层序、武器差值、AtlasLoot、方案 CRUD 与观察栏 |
 | Unit Frames | `P5 / 姓名板三职责与细边框试用` | runtime `2.3`；姓名板支持每角色坦克／治疗／输出模式、友方名字轻量更新、固定目标指针及光环上限；四主框细边框试用保留 | 实机验证姓名板帧率、目标切换、承伤颜色、模式回退与角色隔离，再比较四主框细边框 |
 | Professions | `P5` | runtime `2.0`；普通生产／附魔工作台布局，确认稿 V2 专用木质外缘与独立控件媒体已接入，新增当前专业递归补材料及基础原料数量标注的连续制作，制作／全部制作规划材料链，跨配方点击继续，Aux 成本保留 | 完整重启后验证两宿主、专业切换、搜索筛选、数量制作、八材料与禁用回退 |

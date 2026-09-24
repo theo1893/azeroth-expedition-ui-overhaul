@@ -10,6 +10,8 @@
 | [`skins/blizzard/character.lua`](../../../addon/pfUI/skins/blizzard/character.lua) | `CharacterFrame`、`PaperDollFrame`、装备槽、属性、抗性、Pet、Reputation、Skills、Honor／Arena 与底部 Tabs | 当前由 pfUI 正常加载；以后只在 Character 接管范围内按子模块换肤 |
 | [`skins/blizzard/inspect.lua`](../../../addon/pfUI/skins/blizzard/inspect.lua) | `InspectFrame`、纸娃娃、装备槽、Honor／Arena／Turtle talent tabs | 复用角色组件，但保持只读语义 |
 | [`skins/blizzard/dressup.lua`](../../../addon/pfUI/skins/blizzard/dressup.lua) | `DressUpFrame`、模型、旋转、Reset／Cancel | 复用外壳、按钮和模型背景 |
+| [`skins/blizzard/tabard.lua`](../../../addon/pfUI/skins/blizzard/tabard.lua) | `TabardFrame`、`TabardModel`、五项定制、费用、购买／取消 | 复用角色外壳、模型底材与控件，保留真实选择和购买 |
+| [`skins/blizzard/itemtext.lua`](../../../addon/pfUI/skins/blizzard/itemtext.lua) | `ItemTextFrame`、滚动正文、页码、翻页与读取进度 | 复用角色外壳与附页纸张，不改写文本／翻页 API |
 
 锁定结构参考只使用
 [香草截图](../../../assets/references/香草60级角色面板_结构参考.webp)左侧的
@@ -72,7 +74,9 @@ HonorFrameProgressBar／ArenaFramePointsBar 与 ArenaTeam1..5／ArenaFrameTeam1.
 真实进度条、队伍框体或其交互，禁用时恢复附加底框原 Alpha。
 真实文字与数值保持动态，名称与数值只调整对齐。Character 伴随状态下另接管
 StatCompareSelfFrame／S_ItemTip_InspectFrame 的外底材、等级框与装备部位签；
-不改变第三方的 Parent、尺寸、数据和交互，离开角色 PaperDoll 恢复原材质。
+不改变第三方的 Parent、尺寸、数据和交互。观察 PaperDoll 接管时，同样覆盖
+StatCompareTargetFrame 及现有装备／自身对照附页；两类 PaperDoll 会话都结束后
+恢复原材质，不在观察荣誉／竞技场／天赋页遗留伴随底材。
 资产复用 Gear Planner FrameAtlas／LeatherFill／ControlsAtlas 的现有 2× 像素，
 滑块取 ControlsAtlas 的扣具 `x=50..88,y=5..34`，状态条复用 UnitFrameHealthFillV1。
 
@@ -124,6 +128,35 @@ StatCompareSelfFrame／S_ItemTip_InspectFrame 的外底材、等级框与装备�
 | `CHAR.PET` | `PetPaperDollFrame`、`PetModelFrame`、属性、抗性、经验条 | 复用外壳／槽／状态条，保留宠物数据 |
 | `CHAR.INSPECT` | `InspectFrame`、`InspectPaperDollFrame`、`InspectModelFrame`、Tabs | 复用只读槽与外壳；观察伴随栏只协调第三方附页，不创建可装备语义 |
 | `CHAR.DRESSUP` | `DressUpFrame`、`DressUpModel`、Reset／Cancel | 复用模型背景、外壳和按钮 |
+| `CHAR.TABARD` | `TabardFrame`、`TabardModel`、Customization1..5、Accept／Cancel | 五项定制的箭头、文字、费用与实时模型独立；底材复用 Character 模型皮革 |
+| `CHAR.ITEMTEXT` | `ItemTextFrame`、`ItemTextScrollFrame`、`ItemTextPageText`、翻页 Button、StatusBar | 复用 SecondaryLeaf 纸页；滚动正文、材质事件、页码与读取进度仍归 provider |
+
+### 外围窗口精确接管
+
+Character runtime `2.2` 使用 `character.inspect-windows`、
+`character.dressup-window`、`character.tabard-window` 与
+`character.itemtext-window` 四条独立 route。保留四个 pfUI skin 的加载与行为；
+仅在对应宿主为 `384×512`、pfUI backdrop 存在且皮肤启用时挂载同一套
+CharacterFrameShell 四块 2× TGA。未满足条件时只回退该宿主。
+
+- Inspect：`InspectPaperDollFrame` 的模型底材复用 B1，19 个真实装备 Button
+  使用 E1 与 E2 hover；不接入可装备的按下状态，不改 Tooltip、物品链接、
+  评分或缓存。四个可选主 Tab 复用 F1；Honor／Arena／Talents 页复用 G1。
+- `TWTalentFrame` 只有确实属于 `InspectFrame` 时才接管节点外缘、三分支 Tab
+  和滚动条；动态背景、连线、Rank 与分支选择由 provider 保留。自身 TalentFrame
+  不在此 route 内，Talents 独立模块仍暂停。
+- DressUp／Tabard：B1 作为模型底材；Reset／Cancel、购买、关闭及定制箭头
+  使用 F1 皮革状态底材，保留真实文字／箭头和所有原操作。
+- ItemText：G1 只覆盖正文背景，精确抑制 pfUI 创建的 Stationery 纹理；保留
+  SimpleHTML 与滚动子对象，纸面保留原像素亮度以承托 provider 的深色墨字。
+  翻页／关闭使用 F1，滚动扣具与读取进度复用自身
+  角色页已使用的 Gear Planner／Unit Frames 资产。
+
+所有原生对象的 Parent、Point、宽高、命中与显隐保持 provider 控制；新底材
+仅伸展纹理的安静中部，固定边角保持原采样。图标可能依附于 backdrop，故仅
+清除底框的绘制定义，不隐藏承载图标的 Frame。更新按显示、加载、分页及数据
+事件触发，不增加几何维护循环。禁用恢复原纹理与 provider 最新写入的底框／颜色；
+共享 `/aeui character` 回退，不改 accepted source、runtime 媒体或 manifest。
 
 ## 功能不变量
 

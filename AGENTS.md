@@ -32,7 +32,7 @@ Codex 进入仓库后先读本文件。这里给出项目边界、文档索引�
 | Map | WorldMap 继续暂停；Minimap runtime `7.6`，mask、V4 non-bottom 托盘与 V7 bottom 收纳袋为高分辨率 runtime；V3 罗盘／扣具／插槽因只保留 1× accepted source 登记明确例外且未伪放大 | 完整重启后实机验证 mask、V4 九切片、V7 徽记压接、袋内净空、0／6／12／22／30 排布、缩放、显隐及回退 |
 | Spellbook | accepted `SB-A2-DONOR V1` source/runtime 保留，AEUI adapter 与 Spellbook ownership 暂停；当前回退 pfUI 技能书 | 明天依据 handoff 实机图核对四块 TGA 对位、层序、provider region 与控件净空 |
 | Talents | `P1 / paused`；已与 Spellbook 拆分，真实动态节点／分支边界已对齐 | 等用户明确恢复后制作独立 `TL-SIM-V1` |
-| Character | `P2–P5 / active`；runtime `2.1`，既有 2× PaperDoll 与 Gear Planner 伴随逻辑保留；左右附页皮革、称号／属性下拉、声望／技能控件、PvP 二级 Tabs 与文字对齐已接入，共用纸页以三切片补齐底部 gap | `/reload` 复核左右侧栏、下拉、折叠／滚动、PvP 数值与三类纸页底边；相邻验证装备提示与详情，再验证 Character 禁用回退 |
+| Character | `P2–P5 / active`；runtime `2.2`，既有 2× PaperDoll、控件与双伴随逻辑保留；观察装备／天赋、试穿、战袍与书籍／信件阅读窗复用自身角色页资产，四个宿主独立接管与回退 | `/reload` 验证四类外围窗、观察分页／附页、模型与正文层序、按钮状态；相邻复核自身角色页，再验证 Character 禁用及缺失 skin 回退 |
 | Gear Planner | runtime `1.2-zhCN / P5`；accepted `GEAR-MAIN-V1` 军需官案板与 `GEAR-SLOT-STATES-V1` 黄铜夹签／冷灰蓝修订缝带均为 2× runtime；角色栏使用完整双字文本与深皮革工具签，双栏按真实 Provider 宽度判断，槽位以“差异／新增／未填”与可叠加修订 sprite 表达状态；AtlasLoot 继续持有查询、分页、来源和 Wishlist | 完整重启后实机验证默认双栏、角色栏按钮、案板层序、三种槽位 sprite、保存状态与方案选中反馈，再回归差值、AtlasLoot、方案 CRUD、观察栏及 Provider／Gear 禁用回退 |
 | Unit Frames | `2.3 / P5`；四主框 Raid A2 细边框试用保留；目标新增同源仇恨区与固定 `12 UI` Aura 让位，`/aeui threat off` 独立回退；姓名板新增每角色坦克／治疗／输出模式，友方未选中仅名字，目标指针与更新节流已修正，`/aeui plates off` 回退 | 实机验证三职责承伤颜色、友方开关帧率、目标切换、光环上限和每角色隔离，再检查四主框细边框与禁用回退 |
 | Professions | runtime `2.0 / P5`；普通生产与附魔统一为工匠工作台，22 行目录、独立搜索／筛选、两列材料与底部制作操作，用户确认的 V2 木质外缘／低纹理皮革／黄铜控件专用媒体已接入；下拉、滚动、折叠、技能／选中条与按钮状态已补齐，新增当前专业内的连续制作／递归补材料及基础原料数量标注，制作／全部制作规划材料链，同配方批量、跨配方点击继续，Aux 保留 | 完整重启后验证附魔及普通生产专业、过滤／切换／数量制作、长详情与八材料，再验证 Profession 皮肤禁用回退 |
